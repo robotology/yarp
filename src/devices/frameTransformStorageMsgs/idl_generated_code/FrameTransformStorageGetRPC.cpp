@@ -22,16 +22,23 @@ public:
     bool read(yarp::os::ConnectionReader& connection) override;
 
     return_getAllTransforms m_return_helper{};
+
+    static constexpr const char* s_tag{"getTransformsRPC"};
+    static constexpr size_t s_tag_len{1};
+    static constexpr size_t s_cmd_len{1};
+    static constexpr size_t s_reply_len{2};
+    static constexpr const char* s_prototype{"return_getAllTransforms FrameTransformStorageGetRPC::getTransformsRPC()"};
+    static constexpr const char* s_help{""};
 };
 
 // getTransformsRPC helper class implementation
 bool FrameTransformStorageGetRPC_getTransformsRPC_helper::write(yarp::os::ConnectionWriter& connection) const
 {
     yarp::os::idl::WireWriter writer(connection);
-    if (!writer.writeListHeader(1)) {
+    if (!writer.writeListHeader(s_cmd_len)) {
         return false;
     }
-    if (!writer.writeTag("getTransformsRPC", 1, 1)) {
+    if (!writer.writeTag(s_tag, 1, s_tag_len)) {
         return false;
     }
     return true;
@@ -59,7 +66,7 @@ FrameTransformStorageGetRPC::FrameTransformStorageGetRPC()
 return_getAllTransforms FrameTransformStorageGetRPC::getTransformsRPC()
 {
     if (!yarp().canWrite()) {
-        yError("Missing server method '%s'?", "return_getAllTransforms FrameTransformStorageGetRPC::getTransformsRPC()");
+        yError("Missing server method '%s'?", FrameTransformStorageGetRPC_getTransformsRPC_helper::s_prototype);
     }
     FrameTransformStorageGetRPC_getTransformsRPC_helper helper{};
     bool ok = yarp().write(helper, helper);
@@ -73,11 +80,11 @@ std::vector<std::string> FrameTransformStorageGetRPC::help(const std::string& fu
     std::vector<std::string> helpString;
     if (showAll) {
         helpString.emplace_back("*** Available commands:");
-        helpString.emplace_back("getTransformsRPC");
+        helpString.emplace_back(FrameTransformStorageGetRPC_getTransformsRPC_helper::s_tag);
         helpString.emplace_back("help");
     } else {
-        if (functionName == "getTransformsRPC") {
-            helpString.emplace_back("return_getAllTransforms getTransformsRPC() ");
+        if (functionName == FrameTransformStorageGetRPC_getTransformsRPC_helper::s_tag) {
+            helpString.emplace_back(FrameTransformStorageGetRPC_getTransformsRPC_helper::s_prototype);
         }
         if (functionName == "help") {
             helpString.emplace_back("std::vector<std::string> help(const std::string& functionName = \"--all\")");
@@ -108,12 +115,12 @@ bool FrameTransformStorageGetRPC::read(yarp::os::ConnectionReader& connection)
         tag = reader.readTag();
     }
     while (!reader.isError()) {
-        if (tag == "getTransformsRPC") {
+        if (tag == FrameTransformStorageGetRPC_getTransformsRPC_helper::s_tag) {
             FrameTransformStorageGetRPC_getTransformsRPC_helper helper{};
             helper.m_return_helper = getTransformsRPC();
             yarp::os::idl::WireWriter writer(reader);
             if (!writer.isNull()) {
-                if (!writer.writeListHeader(2)) {
+                if (!writer.writeListHeader(FrameTransformStorageGetRPC_getTransformsRPC_helper::s_reply_len)) {
                     return false;
                 }
                 if (!writer.write(helper.m_return_helper)) {

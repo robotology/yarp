@@ -22,16 +22,25 @@ public:
     bool read(yarp::os::ConnectionReader& connection) override;
 
     SensorRPCData m_return_helper{};
+
+    static constexpr const char* s_tag{"getMetadata"};
+    static constexpr size_t s_tag_len{1};
+    static constexpr size_t s_cmd_len{1};
+    static constexpr size_t s_reply_len{10};
+    static constexpr const char* s_prototype{"SensorRPCData MultipleAnalogSensorsMetadata::getMetadata()"};
+    static constexpr const char* s_help{
+        "Read the sensor metadata necessary to configure the MultipleAnalogSensorsClient device."
+    };
 };
 
 // getMetadata helper class implementation
 bool MultipleAnalogSensorsMetadata_getMetadata_helper::write(yarp::os::ConnectionWriter& connection) const
 {
     yarp::os::idl::WireWriter writer(connection);
-    if (!writer.writeListHeader(1)) {
+    if (!writer.writeListHeader(s_cmd_len)) {
         return false;
     }
-    if (!writer.writeTag("getMetadata", 1, 1)) {
+    if (!writer.writeTag(s_tag, 1, s_tag_len)) {
         return false;
     }
     return true;
@@ -59,7 +68,7 @@ MultipleAnalogSensorsMetadata::MultipleAnalogSensorsMetadata()
 SensorRPCData MultipleAnalogSensorsMetadata::getMetadata()
 {
     if (!yarp().canWrite()) {
-        yError("Missing server method '%s'?", "SensorRPCData MultipleAnalogSensorsMetadata::getMetadata()");
+        yError("Missing server method '%s'?", MultipleAnalogSensorsMetadata_getMetadata_helper::s_prototype);
     }
     MultipleAnalogSensorsMetadata_getMetadata_helper helper{};
     bool ok = yarp().write(helper, helper);
@@ -73,12 +82,12 @@ std::vector<std::string> MultipleAnalogSensorsMetadata::help(const std::string& 
     std::vector<std::string> helpString;
     if (showAll) {
         helpString.emplace_back("*** Available commands:");
-        helpString.emplace_back("getMetadata");
+        helpString.emplace_back(MultipleAnalogSensorsMetadata_getMetadata_helper::s_tag);
         helpString.emplace_back("help");
     } else {
-        if (functionName == "getMetadata") {
-            helpString.emplace_back("SensorRPCData getMetadata() ");
-            helpString.emplace_back("Read the sensor metadata necessary to configure the MultipleAnalogSensorsClient device. ");
+        if (functionName == MultipleAnalogSensorsMetadata_getMetadata_helper::s_tag) {
+            helpString.emplace_back(MultipleAnalogSensorsMetadata_getMetadata_helper::s_prototype);
+            helpString.emplace_back(MultipleAnalogSensorsMetadata_getMetadata_helper::s_help);
         }
         if (functionName == "help") {
             helpString.emplace_back("std::vector<std::string> help(const std::string& functionName = \"--all\")");
@@ -109,12 +118,12 @@ bool MultipleAnalogSensorsMetadata::read(yarp::os::ConnectionReader& connection)
         tag = reader.readTag();
     }
     while (!reader.isError()) {
-        if (tag == "getMetadata") {
+        if (tag == MultipleAnalogSensorsMetadata_getMetadata_helper::s_tag) {
             MultipleAnalogSensorsMetadata_getMetadata_helper helper{};
             helper.m_return_helper = getMetadata();
             yarp::os::idl::WireWriter writer(reader);
             if (!writer.isNull()) {
-                if (!writer.writeListHeader(10)) {
+                if (!writer.writeListHeader(MultipleAnalogSensorsMetadata_getMetadata_helper::s_reply_len)) {
                     return false;
                 }
                 if (!writer.write(helper.m_return_helper)) {

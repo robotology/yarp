@@ -3595,6 +3595,7 @@ void t_yarp_generator::generate_service_helper_classes_decl(t_function* function
     const auto& returntype = function->get_returntype();
     const auto helper_class = std::string{service_name_ + "_" + fname + "_helper"};
     auto returnfield = t_field{returntype, "m_return_helper"};
+    const size_t tag_len = std::count(fname.begin(), fname.end(), '_') + 1;
 
     f_cpp_ << indent_cpp() << "// " << fname << " helper class declaration\n";
     f_cpp_ << indent_cpp() << "class " << helper_class << " :\n";
@@ -3626,6 +3627,36 @@ void t_yarp_generator::generate_service_helper_classes_decl(t_function* function
         if (!returntype->is_void()) {
             f_cpp_ << '\n';
             f_cpp_ << indent_cpp() << declare_field(&returnfield) << "{};\n";
+        }
+
+        f_cpp_ << '\n';
+        f_cpp_ << indent_cpp() << "static constexpr const char* s_tag{\"" << fname << "\"};\n";
+        f_cpp_ << indent_cpp() << "static constexpr size_t s_tag_len{" << tag_len << "};\n";
+        f_cpp_ << indent_cpp() << "static constexpr size_t s_cmd_len{" << flat_element_count(function) + tag_len << "};\n";
+        f_cpp_ << indent_cpp() << "static constexpr size_t s_reply_len{" << flat_element_count(returntype) << "};\n";
+        f_cpp_ << indent_cpp() << "static constexpr const char* s_prototype{\"" << replaceInString(function_prototype(function, false, true, true, service_name_), "\"", "\\\"") << "\"};\n";
+
+        std::vector<std::string> helpList;
+        quote_doc(helpList, function);
+        f_cpp_ << indent_cpp() << "static constexpr const char* s_help{";
+        if (helpList.empty()) {
+            f_cpp_ << "\"\"};\n";
+        } else {
+            indent_up_cpp();
+            {
+                bool first = true;
+                for (const auto& helpStr : helpList) {
+                    if (!first) {
+                        f_cpp_ << "\\n\"";
+                    }
+                    first = false;
+                    f_cpp_ << '\n';
+                    f_cpp_ << indent_cpp() << "\"" << replaceInString(helpStr, "\"", "\\\"");
+                }
+            }
+            indent_down_cpp();
+            f_cpp_ << "\"\n";
+            f_cpp_ << indent_cpp() << "};\n";
         }
     }
     indent_down_cpp();
@@ -3698,15 +3729,14 @@ void t_yarp_generator::generate_service_helper_classes_impl_write(t_function* fu
     const auto& fname = function->get_name();
     const auto& args = function->get_arglist()->get_members();
     const auto helper_class = std::string{service_name_ + "_" + fname + "_helper"};
-    const size_t sz = std::count(fname.begin(), fname.end(), '_') + 1;
 
     f_cpp_ << indent_cpp() << "bool " << helper_class << "::write(yarp::os::ConnectionWriter& connection) const\n";
     f_cpp_ << indent_cpp() << "{\n";
     indent_up_cpp();
     {
         f_cpp_ << indent_cpp() << "yarp::os::idl::WireWriter writer(connection);\n";
-        f_cpp_ << indent_cpp() << "if (!writer.writeListHeader(" << flat_element_count(function) + sz << "))" << inline_return_cpp("false");
-        f_cpp_ << indent_cpp() << "if (!writer.writeTag(\"" << fname << "\", 1, " << sz << "))" << inline_return_cpp("false");
+        f_cpp_ << indent_cpp() << "if (!writer.writeListHeader(s_cmd_len))" << inline_return_cpp("false");
+        f_cpp_ << indent_cpp() << "if (!writer.writeTag(s_tag, 1, s_tag_len))" << inline_return_cpp("false");
         for(const auto& arg : args) {
             generate_serialize_field(f_cpp_, arg, "m_");
         }
@@ -3795,9 +3825,7 @@ void t_yarp_generator::generate_service_method(t_service* tservice, t_function* 
         f_cpp_ << indent_cpp() << "if (!yarp().canWrite()) {\n";
         indent_up_cpp();
         {
-            f_cpp_ << indent_cpp() << "yError(\"Missing server method '%s'?\", \"";
-            f_cpp_ << function_prototype(function, false, true, true, service_name_);
-            f_cpp_ << "\");\n";
+            f_cpp_ << indent_cpp() << "yError(\"Missing server method '%s'?\", " << helper_class << "::s_prototype);\n";
         }
         indent_down_cpp();
         f_cpp_ << indent_cpp() << "}\n";
@@ -3855,7 +3883,9 @@ void t_yarp_generator::generate_service_help(t_service* tservice, std::ostringst
         {
             f_cpp_ << indent_cpp() << "helpString.emplace_back(\"*** Available commands:\");\n";
             for (const auto& function : tservice->get_functions()) {
-                f_cpp_ << indent_cpp() << "helpString.emplace_back(\"" << function->get_name() << "\");\n";
+                const auto& fname = function->get_name();
+                const auto helper_class = std::string{service_name_ + "_" + fname + "_helper"};
+                f_cpp_ << indent_cpp() << "helpString.emplace_back(" << helper_class << "::s_tag);\n";
             }
             f_cpp_ << indent_cpp() << "helpString.emplace_back(\"help\");\n";
         }
@@ -3864,12 +3894,15 @@ void t_yarp_generator::generate_service_help(t_service* tservice, std::ostringst
         indent_up_cpp();
         {
             for (const auto& function : tservice->get_functions()) {
-                f_cpp_ << indent_cpp() << "if (functionName == \"" << function->get_name() << "\") {\n";
+                const auto& fname = function->get_name();
+                const auto helper_class = std::string{service_name_ + "_" + fname + "_helper"};
+
+                f_cpp_ << indent_cpp() << "if (functionName == " << helper_class << "::s_tag) {\n";
                 indent_up_cpp();
                 {
-                    auto helpList = print_help(function);
-                    for (const auto& helpStr : helpList) {
-                        f_cpp_ << indent_cpp() << "helpString.emplace_back(\"" << helpStr << " \");" << '\n';
+                    f_cpp_ << indent_cpp() << "helpString.emplace_back(" << helper_class << "::s_prototype);\n";
+                    if (function->has_doc()) {
+                        f_cpp_ << indent_cpp() << "helpString.emplace_back(" << helper_class << "::s_help);\n";
                     }
                 }
                 indent_down_cpp();
@@ -3953,7 +3986,7 @@ void t_yarp_generator::generate_service_read(t_service* tservice, std::ostringst
                 const auto helper_class = std::string{service_name_ + "_" + fname + "_helper"};
                 auto returnfield = t_field{returntype, "m_return_helper"};
 
-                f_cpp_ << indent_cpp() << "if (tag == \"" << fname << "\") {\n";
+                f_cpp_ << indent_cpp() << "if (tag == " << helper_class << "::s_tag) {\n";
                 indent_up_cpp();
                 {
                     for (const auto& arg : args) {
@@ -4031,7 +4064,7 @@ void t_yarp_generator::generate_service_read(t_service* tservice, std::ostringst
                                 // to be able to serialize by themselves, therefore there is
                                 // no need to write them as lists.
                                 // For all the other types, append the number of fields
-                                f_cpp_ << indent_cpp() << "if (!writer.writeListHeader(" << flat_element_count(returntype) << "))" << inline_return_cpp("false");
+                                f_cpp_ << indent_cpp() << "if (!writer.writeListHeader(" << helper_class << "::s_reply_len))" << inline_return_cpp("false");
                             }
                             if (!returntype->is_void()) {
                                 generate_serialize_field(f_cpp_, &returnfield, "helper.");
