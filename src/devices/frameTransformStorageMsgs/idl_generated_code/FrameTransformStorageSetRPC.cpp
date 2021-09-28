@@ -100,7 +100,7 @@ bool FrameTransformStorageSetRPC_setTransformsRPC_helper::write(yarp::os::Connec
     return true;
 }
 
-bool FrameTransformStorageSetRPC_setTransformsRPC_helper::read(yarp::os::ConnectionReader& connection)
+bool FrameTransformStorageSetRPC_setTransformsRPC_helper::read(yarp::os::ConnectionReader& connection [[maybe_unused]])
 {
     yarp::os::idl::WireReader reader(connection);
     if (!reader.readListReturn()) {
@@ -135,7 +135,7 @@ bool FrameTransformStorageSetRPC_setTransformRPC_helper::write(yarp::os::Connect
     return true;
 }
 
-bool FrameTransformStorageSetRPC_setTransformRPC_helper::read(yarp::os::ConnectionReader& connection)
+bool FrameTransformStorageSetRPC_setTransformRPC_helper::read(yarp::os::ConnectionReader& connection [[maybe_unused]])
 {
     yarp::os::idl::WireReader reader(connection);
     if (!reader.readListReturn()) {
@@ -174,7 +174,7 @@ bool FrameTransformStorageSetRPC_deleteTransformRPC_helper::write(yarp::os::Conn
     return true;
 }
 
-bool FrameTransformStorageSetRPC_deleteTransformRPC_helper::read(yarp::os::ConnectionReader& connection)
+bool FrameTransformStorageSetRPC_deleteTransformRPC_helper::read(yarp::os::ConnectionReader& connection [[maybe_unused]])
 {
     yarp::os::idl::WireReader reader(connection);
     if (!reader.readListReturn()) {
@@ -200,7 +200,7 @@ bool FrameTransformStorageSetRPC_clearAllRPC_helper::write(yarp::os::ConnectionW
     return true;
 }
 
-bool FrameTransformStorageSetRPC_clearAllRPC_helper::read(yarp::os::ConnectionReader& connection)
+bool FrameTransformStorageSetRPC_clearAllRPC_helper::read(yarp::os::ConnectionReader& connection [[maybe_unused]])
 {
     yarp::os::idl::WireReader reader(connection);
     if (!reader.readListReturn()) {

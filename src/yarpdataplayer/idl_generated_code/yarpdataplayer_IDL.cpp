@@ -154,7 +154,7 @@ bool yarpdataplayer_IDL_step_helper::write(yarp::os::ConnectionWriter& connectio
     return true;
 }
 
-bool yarpdataplayer_IDL_step_helper::read(yarp::os::ConnectionReader& connection)
+bool yarpdataplayer_IDL_step_helper::read(yarp::os::ConnectionReader& connection [[maybe_unused]])
 {
     yarp::os::idl::WireReader reader(connection);
     if (!reader.readListReturn()) {
@@ -189,7 +189,7 @@ bool yarpdataplayer_IDL_setFrame_helper::write(yarp::os::ConnectionWriter& conne
     return true;
 }
 
-bool yarpdataplayer_IDL_setFrame_helper::read(yarp::os::ConnectionReader& connection)
+bool yarpdataplayer_IDL_setFrame_helper::read(yarp::os::ConnectionReader& connection [[maybe_unused]])
 {
     yarp::os::idl::WireReader reader(connection);
     if (!reader.readListReturn()) {
@@ -224,7 +224,7 @@ bool yarpdataplayer_IDL_getFrame_helper::write(yarp::os::ConnectionWriter& conne
     return true;
 }
 
-bool yarpdataplayer_IDL_getFrame_helper::read(yarp::os::ConnectionReader& connection)
+bool yarpdataplayer_IDL_getFrame_helper::read(yarp::os::ConnectionReader& connection [[maybe_unused]])
 {
     yarp::os::idl::WireReader reader(connection);
     if (!reader.readListReturn()) {
@@ -259,7 +259,7 @@ bool yarpdataplayer_IDL_load_helper::write(yarp::os::ConnectionWriter& connectio
     return true;
 }
 
-bool yarpdataplayer_IDL_load_helper::read(yarp::os::ConnectionReader& connection)
+bool yarpdataplayer_IDL_load_helper::read(yarp::os::ConnectionReader& connection [[maybe_unused]])
 {
     yarp::os::idl::WireReader reader(connection);
     if (!reader.readListReturn()) {
@@ -285,7 +285,7 @@ bool yarpdataplayer_IDL_getSliderPercentage_helper::write(yarp::os::ConnectionWr
     return true;
 }
 
-bool yarpdataplayer_IDL_getSliderPercentage_helper::read(yarp::os::ConnectionReader& connection)
+bool yarpdataplayer_IDL_getSliderPercentage_helper::read(yarp::os::ConnectionReader& connection [[maybe_unused]])
 {
     yarp::os::idl::WireReader reader(connection);
     if (!reader.readListReturn()) {
@@ -311,7 +311,7 @@ bool yarpdataplayer_IDL_getStatus_helper::write(yarp::os::ConnectionWriter& conn
     return true;
 }
 
-bool yarpdataplayer_IDL_getStatus_helper::read(yarp::os::ConnectionReader& connection)
+bool yarpdataplayer_IDL_getStatus_helper::read(yarp::os::ConnectionReader& connection [[maybe_unused]])
 {
     yarp::os::idl::WireReader reader(connection);
     if (!reader.readListReturn()) {
@@ -337,7 +337,7 @@ bool yarpdataplayer_IDL_play_helper::write(yarp::os::ConnectionWriter& connectio
     return true;
 }
 
-bool yarpdataplayer_IDL_play_helper::read(yarp::os::ConnectionReader& connection)
+bool yarpdataplayer_IDL_play_helper::read(yarp::os::ConnectionReader& connection [[maybe_unused]])
 {
     yarp::os::idl::WireReader reader(connection);
     if (!reader.readListReturn()) {
@@ -363,7 +363,7 @@ bool yarpdataplayer_IDL_pause_helper::write(yarp::os::ConnectionWriter& connecti
     return true;
 }
 
-bool yarpdataplayer_IDL_pause_helper::read(yarp::os::ConnectionReader& connection)
+bool yarpdataplayer_IDL_pause_helper::read(yarp::os::ConnectionReader& connection [[maybe_unused]])
 {
     yarp::os::idl::WireReader reader(connection);
     if (!reader.readListReturn()) {
@@ -389,7 +389,7 @@ bool yarpdataplayer_IDL_stop_helper::write(yarp::os::ConnectionWriter& connectio
     return true;
 }
 
-bool yarpdataplayer_IDL_stop_helper::read(yarp::os::ConnectionReader& connection)
+bool yarpdataplayer_IDL_stop_helper::read(yarp::os::ConnectionReader& connection [[maybe_unused]])
 {
     yarp::os::idl::WireReader reader(connection);
     if (!reader.readListReturn()) {
@@ -415,7 +415,7 @@ bool yarpdataplayer_IDL_quit_helper::write(yarp::os::ConnectionWriter& connectio
     return true;
 }
 
-bool yarpdataplayer_IDL_quit_helper::read(yarp::os::ConnectionReader& connection)
+bool yarpdataplayer_IDL_quit_helper::read(yarp::os::ConnectionReader& connection [[maybe_unused]])
 {
     yarp::os::idl::WireReader reader(connection);
     if (!reader.readListReturn()) {

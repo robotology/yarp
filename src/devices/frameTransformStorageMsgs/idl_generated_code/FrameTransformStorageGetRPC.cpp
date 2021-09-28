@@ -37,7 +37,7 @@ bool FrameTransformStorageGetRPC_getTransformsRPC_helper::write(yarp::os::Connec
     return true;
 }
 
-bool FrameTransformStorageGetRPC_getTransformsRPC_helper::read(yarp::os::ConnectionReader& connection)
+bool FrameTransformStorageGetRPC_getTransformsRPC_helper::read(yarp::os::ConnectionReader& connection [[maybe_unused]])
 {
     yarp::os::idl::WireReader reader(connection);
     if (!reader.readListReturn()) {

@@ -521,7 +521,7 @@ bool IMap2DMsgs_clear_all_maps_RPC_helper::write(yarp::os::ConnectionWriter& con
     return true;
 }
 
-bool IMap2DMsgs_clear_all_maps_RPC_helper::read(yarp::os::ConnectionReader& connection)
+bool IMap2DMsgs_clear_all_maps_RPC_helper::read(yarp::os::ConnectionReader& connection [[maybe_unused]])
 {
     yarp::os::idl::WireReader reader(connection);
     if (!reader.readListReturn()) {
@@ -556,7 +556,7 @@ bool IMap2DMsgs_store_map_RPC_helper::write(yarp::os::ConnectionWriter& connecti
     return true;
 }
 
-bool IMap2DMsgs_store_map_RPC_helper::read(yarp::os::ConnectionReader& connection)
+bool IMap2DMsgs_store_map_RPC_helper::read(yarp::os::ConnectionReader& connection [[maybe_unused]])
 {
     yarp::os::idl::WireReader reader(connection);
     if (!reader.readListReturn()) {
@@ -590,7 +590,7 @@ bool IMap2DMsgs_get_map_RPC_helper::write(yarp::os::ConnectionWriter& connection
     return true;
 }
 
-bool IMap2DMsgs_get_map_RPC_helper::read(yarp::os::ConnectionReader& connection)
+bool IMap2DMsgs_get_map_RPC_helper::read(yarp::os::ConnectionReader& connection [[maybe_unused]])
 {
     yarp::os::idl::WireReader reader(connection);
     if (!reader.readListReturn()) {
@@ -616,7 +616,7 @@ bool IMap2DMsgs_get_map_names_RPC_helper::write(yarp::os::ConnectionWriter& conn
     return true;
 }
 
-bool IMap2DMsgs_get_map_names_RPC_helper::read(yarp::os::ConnectionReader& connection)
+bool IMap2DMsgs_get_map_names_RPC_helper::read(yarp::os::ConnectionReader& connection [[maybe_unused]])
 {
     yarp::os::idl::WireReader reader(connection);
     if (!reader.readListReturn()) {
@@ -651,7 +651,7 @@ bool IMap2DMsgs_remove_map_RPC_helper::write(yarp::os::ConnectionWriter& connect
     return true;
 }
 
-bool IMap2DMsgs_remove_map_RPC_helper::read(yarp::os::ConnectionReader& connection)
+bool IMap2DMsgs_remove_map_RPC_helper::read(yarp::os::ConnectionReader& connection [[maybe_unused]])
 {
     yarp::os::idl::WireReader reader(connection);
     if (!reader.readListReturn()) {
@@ -690,7 +690,7 @@ bool IMap2DMsgs_store_location_RPC_helper::write(yarp::os::ConnectionWriter& con
     return true;
 }
 
-bool IMap2DMsgs_store_location_RPC_helper::read(yarp::os::ConnectionReader& connection)
+bool IMap2DMsgs_store_location_RPC_helper::read(yarp::os::ConnectionReader& connection [[maybe_unused]])
 {
     yarp::os::idl::WireReader reader(connection);
     if (!reader.readListReturn()) {
@@ -729,7 +729,7 @@ bool IMap2DMsgs_store_area_RPC_helper::write(yarp::os::ConnectionWriter& connect
     return true;
 }
 
-bool IMap2DMsgs_store_area_RPC_helper::read(yarp::os::ConnectionReader& connection)
+bool IMap2DMsgs_store_area_RPC_helper::read(yarp::os::ConnectionReader& connection [[maybe_unused]])
 {
     yarp::os::idl::WireReader reader(connection);
     if (!reader.readListReturn()) {
@@ -768,7 +768,7 @@ bool IMap2DMsgs_store_path_RPC_helper::write(yarp::os::ConnectionWriter& connect
     return true;
 }
 
-bool IMap2DMsgs_store_path_RPC_helper::read(yarp::os::ConnectionReader& connection)
+bool IMap2DMsgs_store_path_RPC_helper::read(yarp::os::ConnectionReader& connection [[maybe_unused]])
 {
     yarp::os::idl::WireReader reader(connection);
     if (!reader.readListReturn()) {
@@ -802,7 +802,7 @@ bool IMap2DMsgs_get_location_RPC_helper::write(yarp::os::ConnectionWriter& conne
     return true;
 }
 
-bool IMap2DMsgs_get_location_RPC_helper::read(yarp::os::ConnectionReader& connection)
+bool IMap2DMsgs_get_location_RPC_helper::read(yarp::os::ConnectionReader& connection [[maybe_unused]])
 {
     yarp::os::idl::WireReader reader(connection);
     if (!reader.readListReturn()) {
@@ -836,7 +836,7 @@ bool IMap2DMsgs_get_area_RPC_helper::write(yarp::os::ConnectionWriter& connectio
     return true;
 }
 
-bool IMap2DMsgs_get_area_RPC_helper::read(yarp::os::ConnectionReader& connection)
+bool IMap2DMsgs_get_area_RPC_helper::read(yarp::os::ConnectionReader& connection [[maybe_unused]])
 {
     yarp::os::idl::WireReader reader(connection);
     if (!reader.readListReturn()) {
@@ -870,7 +870,7 @@ bool IMap2DMsgs_get_path_RPC_helper::write(yarp::os::ConnectionWriter& connectio
     return true;
 }
 
-bool IMap2DMsgs_get_path_RPC_helper::read(yarp::os::ConnectionReader& connection)
+bool IMap2DMsgs_get_path_RPC_helper::read(yarp::os::ConnectionReader& connection [[maybe_unused]])
 {
     yarp::os::idl::WireReader reader(connection);
     if (!reader.readListReturn()) {
@@ -896,7 +896,7 @@ bool IMap2DMsgs_get_locations_list_RPC_helper::write(yarp::os::ConnectionWriter&
     return true;
 }
 
-bool IMap2DMsgs_get_locations_list_RPC_helper::read(yarp::os::ConnectionReader& connection)
+bool IMap2DMsgs_get_locations_list_RPC_helper::read(yarp::os::ConnectionReader& connection [[maybe_unused]])
 {
     yarp::os::idl::WireReader reader(connection);
     if (!reader.readListReturn()) {
@@ -922,7 +922,7 @@ bool IMap2DMsgs_get_areas_list_RPC_helper::write(yarp::os::ConnectionWriter& con
     return true;
 }
 
-bool IMap2DMsgs_get_areas_list_RPC_helper::read(yarp::os::ConnectionReader& connection)
+bool IMap2DMsgs_get_areas_list_RPC_helper::read(yarp::os::ConnectionReader& connection [[maybe_unused]])
 {
     yarp::os::idl::WireReader reader(connection);
     if (!reader.readListReturn()) {
@@ -948,7 +948,7 @@ bool IMap2DMsgs_get_paths_list_RPC_helper::write(yarp::os::ConnectionWriter& con
     return true;
 }
 
-bool IMap2DMsgs_get_paths_list_RPC_helper::read(yarp::os::ConnectionReader& connection)
+bool IMap2DMsgs_get_paths_list_RPC_helper::read(yarp::os::ConnectionReader& connection [[maybe_unused]])
 {
     yarp::os::idl::WireReader reader(connection);
     if (!reader.readListReturn()) {
@@ -974,7 +974,7 @@ bool IMap2DMsgs_get_all_locations_RPC_helper::write(yarp::os::ConnectionWriter& 
     return true;
 }
 
-bool IMap2DMsgs_get_all_locations_RPC_helper::read(yarp::os::ConnectionReader& connection)
+bool IMap2DMsgs_get_all_locations_RPC_helper::read(yarp::os::ConnectionReader& connection [[maybe_unused]])
 {
     yarp::os::idl::WireReader reader(connection);
     if (!reader.readListReturn()) {
@@ -1000,7 +1000,7 @@ bool IMap2DMsgs_get_all_areas_RPC_helper::write(yarp::os::ConnectionWriter& conn
     return true;
 }
 
-bool IMap2DMsgs_get_all_areas_RPC_helper::read(yarp::os::ConnectionReader& connection)
+bool IMap2DMsgs_get_all_areas_RPC_helper::read(yarp::os::ConnectionReader& connection [[maybe_unused]])
 {
     yarp::os::idl::WireReader reader(connection);
     if (!reader.readListReturn()) {
@@ -1026,7 +1026,7 @@ bool IMap2DMsgs_get_all_paths_RPC_helper::write(yarp::os::ConnectionWriter& conn
     return true;
 }
 
-bool IMap2DMsgs_get_all_paths_RPC_helper::read(yarp::os::ConnectionReader& connection)
+bool IMap2DMsgs_get_all_paths_RPC_helper::read(yarp::os::ConnectionReader& connection [[maybe_unused]])
 {
     yarp::os::idl::WireReader reader(connection);
     if (!reader.readListReturn()) {
@@ -1065,7 +1065,7 @@ bool IMap2DMsgs_rename_location_RPC_helper::write(yarp::os::ConnectionWriter& co
     return true;
 }
 
-bool IMap2DMsgs_rename_location_RPC_helper::read(yarp::os::ConnectionReader& connection)
+bool IMap2DMsgs_rename_location_RPC_helper::read(yarp::os::ConnectionReader& connection [[maybe_unused]])
 {
     yarp::os::idl::WireReader reader(connection);
     if (!reader.readListReturn()) {
@@ -1100,7 +1100,7 @@ bool IMap2DMsgs_delete_location_RPC_helper::write(yarp::os::ConnectionWriter& co
     return true;
 }
 
-bool IMap2DMsgs_delete_location_RPC_helper::read(yarp::os::ConnectionReader& connection)
+bool IMap2DMsgs_delete_location_RPC_helper::read(yarp::os::ConnectionReader& connection [[maybe_unused]])
 {
     yarp::os::idl::WireReader reader(connection);
     if (!reader.readListReturn()) {
@@ -1135,7 +1135,7 @@ bool IMap2DMsgs_delete_path_RPC_helper::write(yarp::os::ConnectionWriter& connec
     return true;
 }
 
-bool IMap2DMsgs_delete_path_RPC_helper::read(yarp::os::ConnectionReader& connection)
+bool IMap2DMsgs_delete_path_RPC_helper::read(yarp::os::ConnectionReader& connection [[maybe_unused]])
 {
     yarp::os::idl::WireReader reader(connection);
     if (!reader.readListReturn()) {
@@ -1174,7 +1174,7 @@ bool IMap2DMsgs_rename_area_RPC_helper::write(yarp::os::ConnectionWriter& connec
     return true;
 }
 
-bool IMap2DMsgs_rename_area_RPC_helper::read(yarp::os::ConnectionReader& connection)
+bool IMap2DMsgs_rename_area_RPC_helper::read(yarp::os::ConnectionReader& connection [[maybe_unused]])
 {
     yarp::os::idl::WireReader reader(connection);
     if (!reader.readListReturn()) {
@@ -1213,7 +1213,7 @@ bool IMap2DMsgs_rename_path_RPC_helper::write(yarp::os::ConnectionWriter& connec
     return true;
 }
 
-bool IMap2DMsgs_rename_path_RPC_helper::read(yarp::os::ConnectionReader& connection)
+bool IMap2DMsgs_rename_path_RPC_helper::read(yarp::os::ConnectionReader& connection [[maybe_unused]])
 {
     yarp::os::idl::WireReader reader(connection);
     if (!reader.readListReturn()) {
@@ -1248,7 +1248,7 @@ bool IMap2DMsgs_delete_area_RPC_helper::write(yarp::os::ConnectionWriter& connec
     return true;
 }
 
-bool IMap2DMsgs_delete_area_RPC_helper::read(yarp::os::ConnectionReader& connection)
+bool IMap2DMsgs_delete_area_RPC_helper::read(yarp::os::ConnectionReader& connection [[maybe_unused]])
 {
     yarp::os::idl::WireReader reader(connection);
     if (!reader.readListReturn()) {
@@ -1274,7 +1274,7 @@ bool IMap2DMsgs_clear_all_locations_RPC_helper::write(yarp::os::ConnectionWriter
     return true;
 }
 
-bool IMap2DMsgs_clear_all_locations_RPC_helper::read(yarp::os::ConnectionReader& connection)
+bool IMap2DMsgs_clear_all_locations_RPC_helper::read(yarp::os::ConnectionReader& connection [[maybe_unused]])
 {
     yarp::os::idl::WireReader reader(connection);
     if (!reader.readListReturn()) {
@@ -1300,7 +1300,7 @@ bool IMap2DMsgs_clear_all_areas_RPC_helper::write(yarp::os::ConnectionWriter& co
     return true;
 }
 
-bool IMap2DMsgs_clear_all_areas_RPC_helper::read(yarp::os::ConnectionReader& connection)
+bool IMap2DMsgs_clear_all_areas_RPC_helper::read(yarp::os::ConnectionReader& connection [[maybe_unused]])
 {
     yarp::os::idl::WireReader reader(connection);
     if (!reader.readListReturn()) {
@@ -1326,7 +1326,7 @@ bool IMap2DMsgs_clear_all_paths_RPC_helper::write(yarp::os::ConnectionWriter& co
     return true;
 }
 
-bool IMap2DMsgs_clear_all_paths_RPC_helper::read(yarp::os::ConnectionReader& connection)
+bool IMap2DMsgs_clear_all_paths_RPC_helper::read(yarp::os::ConnectionReader& connection [[maybe_unused]])
 {
     yarp::os::idl::WireReader reader(connection);
     if (!reader.readListReturn()) {
@@ -1352,7 +1352,7 @@ bool IMap2DMsgs_clear_all_maps_temporary_flags_RPC_helper::write(yarp::os::Conne
     return true;
 }
 
-bool IMap2DMsgs_clear_all_maps_temporary_flags_RPC_helper::read(yarp::os::ConnectionReader& connection)
+bool IMap2DMsgs_clear_all_maps_temporary_flags_RPC_helper::read(yarp::os::ConnectionReader& connection [[maybe_unused]])
 {
     yarp::os::idl::WireReader reader(connection);
     if (!reader.readListReturn()) {
@@ -1387,7 +1387,7 @@ bool IMap2DMsgs_clear_map_temporary_flags_RPC_helper::write(yarp::os::Connection
     return true;
 }
 
-bool IMap2DMsgs_clear_map_temporary_flags_RPC_helper::read(yarp::os::ConnectionReader& connection)
+bool IMap2DMsgs_clear_map_temporary_flags_RPC_helper::read(yarp::os::ConnectionReader& connection [[maybe_unused]])
 {
     yarp::os::idl::WireReader reader(connection);
     if (!reader.readListReturn()) {
@@ -1422,7 +1422,7 @@ bool IMap2DMsgs_save_maps_collection_RPC_helper::write(yarp::os::ConnectionWrite
     return true;
 }
 
-bool IMap2DMsgs_save_maps_collection_RPC_helper::read(yarp::os::ConnectionReader& connection)
+bool IMap2DMsgs_save_maps_collection_RPC_helper::read(yarp::os::ConnectionReader& connection [[maybe_unused]])
 {
     yarp::os::idl::WireReader reader(connection);
     if (!reader.readListReturn()) {
@@ -1457,7 +1457,7 @@ bool IMap2DMsgs_load_maps_collection_RPC_helper::write(yarp::os::ConnectionWrite
     return true;
 }
 
-bool IMap2DMsgs_load_maps_collection_RPC_helper::read(yarp::os::ConnectionReader& connection)
+bool IMap2DMsgs_load_maps_collection_RPC_helper::read(yarp::os::ConnectionReader& connection [[maybe_unused]])
 {
     yarp::os::idl::WireReader reader(connection);
     if (!reader.readListReturn()) {
@@ -1492,7 +1492,7 @@ bool IMap2DMsgs_save_locations_and_extras_RPC_helper::write(yarp::os::Connection
     return true;
 }
 
-bool IMap2DMsgs_save_locations_and_extras_RPC_helper::read(yarp::os::ConnectionReader& connection)
+bool IMap2DMsgs_save_locations_and_extras_RPC_helper::read(yarp::os::ConnectionReader& connection [[maybe_unused]])
 {
     yarp::os::idl::WireReader reader(connection);
     if (!reader.readListReturn()) {
@@ -1527,7 +1527,7 @@ bool IMap2DMsgs_load_locations_and_extras_RPC_helper::write(yarp::os::Connection
     return true;
 }
 
-bool IMap2DMsgs_load_locations_and_extras_RPC_helper::read(yarp::os::ConnectionReader& connection)
+bool IMap2DMsgs_load_locations_and_extras_RPC_helper::read(yarp::os::ConnectionReader& connection [[maybe_unused]])
 {
     yarp::os::idl::WireReader reader(connection);
     if (!reader.readListReturn()) {
@@ -1566,7 +1566,7 @@ bool IMap2DMsgs_save_map_to_disk_RPC_helper::write(yarp::os::ConnectionWriter& c
     return true;
 }
 
-bool IMap2DMsgs_save_map_to_disk_RPC_helper::read(yarp::os::ConnectionReader& connection)
+bool IMap2DMsgs_save_map_to_disk_RPC_helper::read(yarp::os::ConnectionReader& connection [[maybe_unused]])
 {
     yarp::os::idl::WireReader reader(connection);
     if (!reader.readListReturn()) {
@@ -1601,7 +1601,7 @@ bool IMap2DMsgs_load_map_from_disk_RPC_helper::write(yarp::os::ConnectionWriter&
     return true;
 }
 
-bool IMap2DMsgs_load_map_from_disk_RPC_helper::read(yarp::os::ConnectionReader& connection)
+bool IMap2DMsgs_load_map_from_disk_RPC_helper::read(yarp::os::ConnectionReader& connection [[maybe_unused]])
 {
     yarp::os::idl::WireReader reader(connection);
     if (!reader.readListReturn()) {
@@ -1636,7 +1636,7 @@ bool IMap2DMsgs_enable_maps_compression_RPC_helper::write(yarp::os::ConnectionWr
     return true;
 }
 
-bool IMap2DMsgs_enable_maps_compression_RPC_helper::read(yarp::os::ConnectionReader& connection)
+bool IMap2DMsgs_enable_maps_compression_RPC_helper::read(yarp::os::ConnectionReader& connection [[maybe_unused]])
 {
     yarp::os::idl::WireReader reader(connection);
     if (!reader.readListReturn()) {

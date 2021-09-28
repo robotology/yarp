@@ -326,7 +326,7 @@ bool yarpdataplayer_console_IDL_step_helper::write(yarp::os::ConnectionWriter& c
     return true;
 }
 
-bool yarpdataplayer_console_IDL_step_helper::read(yarp::os::ConnectionReader& connection)
+bool yarpdataplayer_console_IDL_step_helper::read(yarp::os::ConnectionReader& connection [[maybe_unused]])
 {
     yarp::os::idl::WireReader reader(connection);
     if (!reader.readListReturn()) {
@@ -361,7 +361,7 @@ bool yarpdataplayer_console_IDL_setFrame_helper::write(yarp::os::ConnectionWrite
     return true;
 }
 
-bool yarpdataplayer_console_IDL_setFrame_helper::read(yarp::os::ConnectionReader& connection)
+bool yarpdataplayer_console_IDL_setFrame_helper::read(yarp::os::ConnectionReader& connection [[maybe_unused]])
 {
     yarp::os::idl::WireReader reader(connection);
     if (!reader.readListReturn()) {
@@ -396,7 +396,7 @@ bool yarpdataplayer_console_IDL_getFrame_helper::write(yarp::os::ConnectionWrite
     return true;
 }
 
-bool yarpdataplayer_console_IDL_getFrame_helper::read(yarp::os::ConnectionReader& connection)
+bool yarpdataplayer_console_IDL_getFrame_helper::read(yarp::os::ConnectionReader& connection [[maybe_unused]])
 {
     yarp::os::idl::WireReader reader(connection);
     if (!reader.readListReturn()) {
@@ -431,7 +431,7 @@ bool yarpdataplayer_console_IDL_load_helper::write(yarp::os::ConnectionWriter& c
     return true;
 }
 
-bool yarpdataplayer_console_IDL_load_helper::read(yarp::os::ConnectionReader& connection)
+bool yarpdataplayer_console_IDL_load_helper::read(yarp::os::ConnectionReader& connection [[maybe_unused]])
 {
     yarp::os::idl::WireReader reader(connection);
     if (!reader.readListReturn()) {
@@ -457,7 +457,7 @@ bool yarpdataplayer_console_IDL_play_helper::write(yarp::os::ConnectionWriter& c
     return true;
 }
 
-bool yarpdataplayer_console_IDL_play_helper::read(yarp::os::ConnectionReader& connection)
+bool yarpdataplayer_console_IDL_play_helper::read(yarp::os::ConnectionReader& connection [[maybe_unused]])
 {
     yarp::os::idl::WireReader reader(connection);
     if (!reader.readListReturn()) {
@@ -483,7 +483,7 @@ bool yarpdataplayer_console_IDL_pause_helper::write(yarp::os::ConnectionWriter& 
     return true;
 }
 
-bool yarpdataplayer_console_IDL_pause_helper::read(yarp::os::ConnectionReader& connection)
+bool yarpdataplayer_console_IDL_pause_helper::read(yarp::os::ConnectionReader& connection [[maybe_unused]])
 {
     yarp::os::idl::WireReader reader(connection);
     if (!reader.readListReturn()) {
@@ -509,7 +509,7 @@ bool yarpdataplayer_console_IDL_stop_helper::write(yarp::os::ConnectionWriter& c
     return true;
 }
 
-bool yarpdataplayer_console_IDL_stop_helper::read(yarp::os::ConnectionReader& connection)
+bool yarpdataplayer_console_IDL_stop_helper::read(yarp::os::ConnectionReader& connection [[maybe_unused]])
 {
     yarp::os::idl::WireReader reader(connection);
     if (!reader.readListReturn()) {
@@ -544,7 +544,7 @@ bool yarpdataplayer_console_IDL_enable_helper::write(yarp::os::ConnectionWriter&
     return true;
 }
 
-bool yarpdataplayer_console_IDL_enable_helper::read(yarp::os::ConnectionReader& connection)
+bool yarpdataplayer_console_IDL_enable_helper::read(yarp::os::ConnectionReader& connection [[maybe_unused]])
 {
     yarp::os::idl::WireReader reader(connection);
     if (!reader.readListReturn()) {
@@ -579,7 +579,7 @@ bool yarpdataplayer_console_IDL_disable_helper::write(yarp::os::ConnectionWriter
     return true;
 }
 
-bool yarpdataplayer_console_IDL_disable_helper::read(yarp::os::ConnectionReader& connection)
+bool yarpdataplayer_console_IDL_disable_helper::read(yarp::os::ConnectionReader& connection [[maybe_unused]])
 {
     yarp::os::idl::WireReader reader(connection);
     if (!reader.readListReturn()) {
@@ -605,7 +605,7 @@ bool yarpdataplayer_console_IDL_getAllParts_helper::write(yarp::os::ConnectionWr
     return true;
 }
 
-bool yarpdataplayer_console_IDL_getAllParts_helper::read(yarp::os::ConnectionReader& connection)
+bool yarpdataplayer_console_IDL_getAllParts_helper::read(yarp::os::ConnectionReader& connection [[maybe_unused]])
 {
     yarp::os::idl::WireReader reader(connection);
     if (!reader.readListReturn()) {
@@ -648,7 +648,7 @@ bool yarpdataplayer_console_IDL_getPortName_helper::write(yarp::os::ConnectionWr
     return true;
 }
 
-bool yarpdataplayer_console_IDL_getPortName_helper::read(yarp::os::ConnectionReader& connection)
+bool yarpdataplayer_console_IDL_getPortName_helper::read(yarp::os::ConnectionReader& connection [[maybe_unused]])
 {
     yarp::os::idl::WireReader reader(connection);
     if (!reader.readListReturn()) {
@@ -687,7 +687,7 @@ bool yarpdataplayer_console_IDL_setPortName_helper::write(yarp::os::ConnectionWr
     return true;
 }
 
-bool yarpdataplayer_console_IDL_setPortName_helper::read(yarp::os::ConnectionReader& connection)
+bool yarpdataplayer_console_IDL_setPortName_helper::read(yarp::os::ConnectionReader& connection [[maybe_unused]])
 {
     yarp::os::idl::WireReader reader(connection);
     if (!reader.readListReturn()) {
@@ -722,7 +722,7 @@ bool yarpdataplayer_console_IDL_setSpeed_helper::write(yarp::os::ConnectionWrite
     return true;
 }
 
-bool yarpdataplayer_console_IDL_setSpeed_helper::read(yarp::os::ConnectionReader& connection)
+bool yarpdataplayer_console_IDL_setSpeed_helper::read(yarp::os::ConnectionReader& connection [[maybe_unused]])
 {
     yarp::os::idl::WireReader reader(connection);
     if (!reader.readListReturn()) {
@@ -748,7 +748,7 @@ bool yarpdataplayer_console_IDL_getSpeed_helper::write(yarp::os::ConnectionWrite
     return true;
 }
 
-bool yarpdataplayer_console_IDL_getSpeed_helper::read(yarp::os::ConnectionReader& connection)
+bool yarpdataplayer_console_IDL_getSpeed_helper::read(yarp::os::ConnectionReader& connection [[maybe_unused]])
 {
     yarp::os::idl::WireReader reader(connection);
     if (!reader.readListReturn()) {
@@ -783,7 +783,7 @@ bool yarpdataplayer_console_IDL_repeat_helper::write(yarp::os::ConnectionWriter&
     return true;
 }
 
-bool yarpdataplayer_console_IDL_repeat_helper::read(yarp::os::ConnectionReader& connection)
+bool yarpdataplayer_console_IDL_repeat_helper::read(yarp::os::ConnectionReader& connection [[maybe_unused]])
 {
     yarp::os::idl::WireReader reader(connection);
     if (!reader.readListReturn()) {
@@ -818,7 +818,7 @@ bool yarpdataplayer_console_IDL_setStrict_helper::write(yarp::os::ConnectionWrit
     return true;
 }
 
-bool yarpdataplayer_console_IDL_setStrict_helper::read(yarp::os::ConnectionReader& connection)
+bool yarpdataplayer_console_IDL_setStrict_helper::read(yarp::os::ConnectionReader& connection [[maybe_unused]])
 {
     yarp::os::idl::WireReader reader(connection);
     if (!reader.readListReturn()) {
@@ -853,7 +853,7 @@ bool yarpdataplayer_console_IDL_forward_helper::write(yarp::os::ConnectionWriter
     return true;
 }
 
-bool yarpdataplayer_console_IDL_forward_helper::read(yarp::os::ConnectionReader& connection)
+bool yarpdataplayer_console_IDL_forward_helper::read(yarp::os::ConnectionReader& connection [[maybe_unused]])
 {
     yarp::os::idl::WireReader reader(connection);
     if (!reader.readListReturn()) {
@@ -888,7 +888,7 @@ bool yarpdataplayer_console_IDL_backward_helper::write(yarp::os::ConnectionWrite
     return true;
 }
 
-bool yarpdataplayer_console_IDL_backward_helper::read(yarp::os::ConnectionReader& connection)
+bool yarpdataplayer_console_IDL_backward_helper::read(yarp::os::ConnectionReader& connection [[maybe_unused]])
 {
     yarp::os::idl::WireReader reader(connection);
     if (!reader.readListReturn()) {
@@ -914,7 +914,7 @@ bool yarpdataplayer_console_IDL_getProgress_helper::write(yarp::os::ConnectionWr
     return true;
 }
 
-bool yarpdataplayer_console_IDL_getProgress_helper::read(yarp::os::ConnectionReader& connection)
+bool yarpdataplayer_console_IDL_getProgress_helper::read(yarp::os::ConnectionReader& connection [[maybe_unused]])
 {
     yarp::os::idl::WireReader reader(connection);
     if (!reader.readListReturn()) {
@@ -940,7 +940,7 @@ bool yarpdataplayer_console_IDL_getStatus_helper::write(yarp::os::ConnectionWrit
     return true;
 }
 
-bool yarpdataplayer_console_IDL_getStatus_helper::read(yarp::os::ConnectionReader& connection)
+bool yarpdataplayer_console_IDL_getStatus_helper::read(yarp::os::ConnectionReader& connection [[maybe_unused]])
 {
     yarp::os::idl::WireReader reader(connection);
     if (!reader.readListReturn()) {
@@ -966,7 +966,7 @@ bool yarpdataplayer_console_IDL_resume_helper::write(yarp::os::ConnectionWriter&
     return true;
 }
 
-bool yarpdataplayer_console_IDL_resume_helper::read(yarp::os::ConnectionReader& connection)
+bool yarpdataplayer_console_IDL_resume_helper::read(yarp::os::ConnectionReader& connection [[maybe_unused]])
 {
     yarp::os::idl::WireReader reader(connection);
     if (!reader.readListReturn()) {
@@ -992,7 +992,7 @@ bool yarpdataplayer_console_IDL_quit_helper::write(yarp::os::ConnectionWriter& c
     return true;
 }
 
-bool yarpdataplayer_console_IDL_quit_helper::read(yarp::os::ConnectionReader& connection)
+bool yarpdataplayer_console_IDL_quit_helper::read(yarp::os::ConnectionReader& connection [[maybe_unused]])
 {
     yarp::os::idl::WireReader reader(connection);
     if (!reader.readListReturn()) {

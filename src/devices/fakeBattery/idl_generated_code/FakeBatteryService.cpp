@@ -170,9 +170,8 @@ bool FakeBatteryService_setBatteryVoltage_helper::write(yarp::os::ConnectionWrit
     return true;
 }
 
-bool FakeBatteryService_setBatteryVoltage_helper::read(yarp::os::ConnectionReader& connection)
+bool FakeBatteryService_setBatteryVoltage_helper::read(yarp::os::ConnectionReader& connection [[maybe_unused]])
 {
-    YARP_UNUSED(connection);
     return true;
 }
 
@@ -197,9 +196,8 @@ bool FakeBatteryService_setBatteryCurrent_helper::write(yarp::os::ConnectionWrit
     return true;
 }
 
-bool FakeBatteryService_setBatteryCurrent_helper::read(yarp::os::ConnectionReader& connection)
+bool FakeBatteryService_setBatteryCurrent_helper::read(yarp::os::ConnectionReader& connection [[maybe_unused]])
 {
-    YARP_UNUSED(connection);
     return true;
 }
 
@@ -224,9 +222,8 @@ bool FakeBatteryService_setBatteryCharge_helper::write(yarp::os::ConnectionWrite
     return true;
 }
 
-bool FakeBatteryService_setBatteryCharge_helper::read(yarp::os::ConnectionReader& connection)
+bool FakeBatteryService_setBatteryCharge_helper::read(yarp::os::ConnectionReader& connection [[maybe_unused]])
 {
-    YARP_UNUSED(connection);
     return true;
 }
 
@@ -251,9 +248,8 @@ bool FakeBatteryService_setBatteryInfo_helper::write(yarp::os::ConnectionWriter&
     return true;
 }
 
-bool FakeBatteryService_setBatteryInfo_helper::read(yarp::os::ConnectionReader& connection)
+bool FakeBatteryService_setBatteryInfo_helper::read(yarp::os::ConnectionReader& connection [[maybe_unused]])
 {
-    YARP_UNUSED(connection);
     return true;
 }
 
@@ -278,9 +274,8 @@ bool FakeBatteryService_setBatteryTemperature_helper::write(yarp::os::Connection
     return true;
 }
 
-bool FakeBatteryService_setBatteryTemperature_helper::read(yarp::os::ConnectionReader& connection)
+bool FakeBatteryService_setBatteryTemperature_helper::read(yarp::os::ConnectionReader& connection [[maybe_unused]])
 {
-    YARP_UNUSED(connection);
     return true;
 }
 
@@ -297,7 +292,7 @@ bool FakeBatteryService_getBatteryVoltage_helper::write(yarp::os::ConnectionWrit
     return true;
 }
 
-bool FakeBatteryService_getBatteryVoltage_helper::read(yarp::os::ConnectionReader& connection)
+bool FakeBatteryService_getBatteryVoltage_helper::read(yarp::os::ConnectionReader& connection [[maybe_unused]])
 {
     yarp::os::idl::WireReader reader(connection);
     if (!reader.readListReturn()) {
@@ -323,7 +318,7 @@ bool FakeBatteryService_getBatteryCurrent_helper::write(yarp::os::ConnectionWrit
     return true;
 }
 
-bool FakeBatteryService_getBatteryCurrent_helper::read(yarp::os::ConnectionReader& connection)
+bool FakeBatteryService_getBatteryCurrent_helper::read(yarp::os::ConnectionReader& connection [[maybe_unused]])
 {
     yarp::os::idl::WireReader reader(connection);
     if (!reader.readListReturn()) {
@@ -349,7 +344,7 @@ bool FakeBatteryService_getBatteryCharge_helper::write(yarp::os::ConnectionWrite
     return true;
 }
 
-bool FakeBatteryService_getBatteryCharge_helper::read(yarp::os::ConnectionReader& connection)
+bool FakeBatteryService_getBatteryCharge_helper::read(yarp::os::ConnectionReader& connection [[maybe_unused]])
 {
     yarp::os::idl::WireReader reader(connection);
     if (!reader.readListReturn()) {
@@ -375,7 +370,7 @@ bool FakeBatteryService_getBatteryStatus_helper::write(yarp::os::ConnectionWrite
     return true;
 }
 
-bool FakeBatteryService_getBatteryStatus_helper::read(yarp::os::ConnectionReader& connection)
+bool FakeBatteryService_getBatteryStatus_helper::read(yarp::os::ConnectionReader& connection [[maybe_unused]])
 {
     yarp::os::idl::WireReader reader(connection);
     if (!reader.readListReturn()) {
@@ -401,7 +396,7 @@ bool FakeBatteryService_getBatteryInfo_helper::write(yarp::os::ConnectionWriter&
     return true;
 }
 
-bool FakeBatteryService_getBatteryInfo_helper::read(yarp::os::ConnectionReader& connection)
+bool FakeBatteryService_getBatteryInfo_helper::read(yarp::os::ConnectionReader& connection [[maybe_unused]])
 {
     yarp::os::idl::WireReader reader(connection);
     if (!reader.readListReturn()) {
@@ -427,7 +422,7 @@ bool FakeBatteryService_getBatteryTemperature_helper::write(yarp::os::Connection
     return true;
 }
 
-bool FakeBatteryService_getBatteryTemperature_helper::read(yarp::os::ConnectionReader& connection)
+bool FakeBatteryService_getBatteryTemperature_helper::read(yarp::os::ConnectionReader& connection [[maybe_unused]])
 {
     yarp::os::idl::WireReader reader(connection);
     if (!reader.readListReturn()) {

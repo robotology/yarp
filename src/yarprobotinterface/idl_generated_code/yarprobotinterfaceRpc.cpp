@@ -109,7 +109,7 @@ bool yarprobotinterfaceRpc_get_phase_helper::write(yarp::os::ConnectionWriter& c
     return true;
 }
 
-bool yarprobotinterfaceRpc_get_phase_helper::read(yarp::os::ConnectionReader& connection)
+bool yarprobotinterfaceRpc_get_phase_helper::read(yarp::os::ConnectionReader& connection [[maybe_unused]])
 {
     yarp::os::idl::WireReader reader(connection);
     if (!reader.readListReturn()) {
@@ -135,7 +135,7 @@ bool yarprobotinterfaceRpc_get_level_helper::write(yarp::os::ConnectionWriter& c
     return true;
 }
 
-bool yarprobotinterfaceRpc_get_level_helper::read(yarp::os::ConnectionReader& connection)
+bool yarprobotinterfaceRpc_get_level_helper::read(yarp::os::ConnectionReader& connection [[maybe_unused]])
 {
     yarp::os::idl::WireReader reader(connection);
     if (!reader.readListReturn()) {
@@ -161,7 +161,7 @@ bool yarprobotinterfaceRpc_get_robot_helper::write(yarp::os::ConnectionWriter& c
     return true;
 }
 
-bool yarprobotinterfaceRpc_get_robot_helper::read(yarp::os::ConnectionReader& connection)
+bool yarprobotinterfaceRpc_get_robot_helper::read(yarp::os::ConnectionReader& connection [[maybe_unused]])
 {
     yarp::os::idl::WireReader reader(connection);
     if (!reader.readListReturn()) {
@@ -187,7 +187,7 @@ bool yarprobotinterfaceRpc_is_ready_helper::write(yarp::os::ConnectionWriter& co
     return true;
 }
 
-bool yarprobotinterfaceRpc_is_ready_helper::read(yarp::os::ConnectionReader& connection)
+bool yarprobotinterfaceRpc_is_ready_helper::read(yarp::os::ConnectionReader& connection [[maybe_unused]])
 {
     yarp::os::idl::WireReader reader(connection);
     if (!reader.readListReturn()) {
@@ -213,7 +213,7 @@ bool yarprobotinterfaceRpc_quit_helper::write(yarp::os::ConnectionWriter& connec
     return true;
 }
 
-bool yarprobotinterfaceRpc_quit_helper::read(yarp::os::ConnectionReader& connection)
+bool yarprobotinterfaceRpc_quit_helper::read(yarp::os::ConnectionReader& connection [[maybe_unused]])
 {
     yarp::os::idl::WireReader reader(connection);
     if (!reader.readListReturn()) {
@@ -239,7 +239,7 @@ bool yarprobotinterfaceRpc_bye_helper::write(yarp::os::ConnectionWriter& connect
     return true;
 }
 
-bool yarprobotinterfaceRpc_bye_helper::read(yarp::os::ConnectionReader& connection)
+bool yarprobotinterfaceRpc_bye_helper::read(yarp::os::ConnectionReader& connection [[maybe_unused]])
 {
     yarp::os::idl::WireReader reader(connection);
     if (!reader.readListReturn()) {
@@ -265,7 +265,7 @@ bool yarprobotinterfaceRpc_exit_helper::write(yarp::os::ConnectionWriter& connec
     return true;
 }
 
-bool yarprobotinterfaceRpc_exit_helper::read(yarp::os::ConnectionReader& connection)
+bool yarprobotinterfaceRpc_exit_helper::read(yarp::os::ConnectionReader& connection [[maybe_unused]])
 {
     yarp::os::idl::WireReader reader(connection);
     if (!reader.readListReturn()) {

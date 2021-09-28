@@ -76,7 +76,7 @@ bool MobileBaseVelocityControlRPC_applyVelocityCommandRPC_helper::write(yarp::os
     return true;
 }
 
-bool MobileBaseVelocityControlRPC_applyVelocityCommandRPC_helper::read(yarp::os::ConnectionReader& connection)
+bool MobileBaseVelocityControlRPC_applyVelocityCommandRPC_helper::read(yarp::os::ConnectionReader& connection [[maybe_unused]])
 {
     yarp::os::idl::WireReader reader(connection);
     if (!reader.readListReturn()) {
@@ -102,7 +102,7 @@ bool MobileBaseVelocityControlRPC_getLastVelocityCommandRPC_helper::write(yarp::
     return true;
 }
 
-bool MobileBaseVelocityControlRPC_getLastVelocityCommandRPC_helper::read(yarp::os::ConnectionReader& connection)
+bool MobileBaseVelocityControlRPC_getLastVelocityCommandRPC_helper::read(yarp::os::ConnectionReader& connection [[maybe_unused]])
 {
     yarp::os::idl::WireReader reader(connection);
     if (!reader.readListReturn()) {

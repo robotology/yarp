@@ -37,7 +37,7 @@ bool MultipleAnalogSensorsMetadata_getMetadata_helper::write(yarp::os::Connectio
     return true;
 }
 
-bool MultipleAnalogSensorsMetadata_getMetadata_helper::read(yarp::os::ConnectionReader& connection)
+bool MultipleAnalogSensorsMetadata_getMetadata_helper::read(yarp::os::ConnectionReader& connection [[maybe_unused]])
 {
     yarp::os::idl::WireReader reader(connection);
     if (!reader.readListReturn()) {
