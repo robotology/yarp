@@ -12,6 +12,7 @@
 
 #include <yarp/os/idl/WireTypes.h>
 
+// getMetadata helper class declaration
 class MultipleAnalogSensorsMetadata_getMetadata_helper :
         public yarp::os::Portable
 {
@@ -23,6 +24,7 @@ public:
     SensorRPCData m_return_helper{};
 };
 
+// getMetadata helper class implementation
 bool MultipleAnalogSensorsMetadata_getMetadata_helper::write(yarp::os::ConnectionWriter& connection) const
 {
     yarp::os::idl::WireWriter writer(connection);

@@ -12,6 +12,7 @@
 
 #include <yarp/os/idl/WireTypes.h>
 
+// applyVelocityCommandRPC helper class declaration
 class MobileBaseVelocityControlRPC_applyVelocityCommandRPC_helper :
         public yarp::os::Portable
 {
@@ -29,6 +30,19 @@ public:
     bool m_return_helper{};
 };
 
+// getLastVelocityCommandRPC helper class declaration
+class MobileBaseVelocityControlRPC_getLastVelocityCommandRPC_helper :
+        public yarp::os::Portable
+{
+public:
+    MobileBaseVelocityControlRPC_getLastVelocityCommandRPC_helper() = default;
+    bool write(yarp::os::ConnectionWriter& connection) const override;
+    bool read(yarp::os::ConnectionReader& connection) override;
+
+    return_getLastVelocityCommand m_return_helper{};
+};
+
+// applyVelocityCommandRPC helper class implementation
 MobileBaseVelocityControlRPC_applyVelocityCommandRPC_helper::MobileBaseVelocityControlRPC_applyVelocityCommandRPC_helper(const double x_vel, const double y_vel, const double theta_vel, const double timeout) :
         m_x_vel{x_vel},
         m_y_vel{y_vel},
@@ -75,17 +89,7 @@ bool MobileBaseVelocityControlRPC_applyVelocityCommandRPC_helper::read(yarp::os:
     return true;
 }
 
-class MobileBaseVelocityControlRPC_getLastVelocityCommandRPC_helper :
-        public yarp::os::Portable
-{
-public:
-    MobileBaseVelocityControlRPC_getLastVelocityCommandRPC_helper() = default;
-    bool write(yarp::os::ConnectionWriter& connection) const override;
-    bool read(yarp::os::ConnectionReader& connection) override;
-
-    return_getLastVelocityCommand m_return_helper{};
-};
-
+// getLastVelocityCommandRPC helper class implementation
 bool MobileBaseVelocityControlRPC_getLastVelocityCommandRPC_helper::write(yarp::os::ConnectionWriter& connection) const
 {
     yarp::os::idl::WireWriter writer(connection);

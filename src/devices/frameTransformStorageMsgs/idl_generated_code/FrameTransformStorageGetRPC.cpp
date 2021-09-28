@@ -12,6 +12,7 @@
 
 #include <yarp/os/idl/WireTypes.h>
 
+// getTransformsRPC helper class declaration
 class FrameTransformStorageGetRPC_getTransformsRPC_helper :
         public yarp::os::Portable
 {
@@ -23,6 +24,7 @@ public:
     return_getAllTransforms m_return_helper{};
 };
 
+// getTransformsRPC helper class implementation
 bool FrameTransformStorageGetRPC_getTransformsRPC_helper::write(yarp::os::ConnectionWriter& connection) const
 {
     yarp::os::idl::WireWriter writer(connection);

@@ -345,6 +345,7 @@ public:
     void generate_service(t_service* tservice) override;
     void generate_service_helper_classes(t_service* tservice, std::ostringstream& f_cpp_);
     void generate_service_helper_classes_decl(t_function* function, std::ostringstream& f_cpp);
+    void generate_service_helper_classes_impl(t_function* function, std::ostringstream& f_cpp);
     void generate_service_helper_classes_impl_ctor(t_function* function, std::ostringstream& f_cpp_);
     void generate_service_helper_classes_impl_write(t_function* function, std::ostringstream& f_cpp_);
     void generate_service_helper_classes_impl_read(t_function* function, std::ostringstream& f_cpp_);
@@ -3572,20 +3573,17 @@ void t_yarp_generator::generate_service_helper_classes(t_service* tservice, std:
 {
     THRIFT_DEBUG_COMMENT(f_cpp_);
 
+    // Helper classes declarations
     for (const auto& function : tservice->get_functions()) {
-        // Helper classes declarations
         generate_service_helper_classes_decl(function, f_cpp_);
-
-        // Helper classes implementations
-        if (!function->get_arglist()->get_members().empty()) {
-            generate_service_helper_classes_impl_ctor(function, f_cpp_);
-        }
-        generate_service_helper_classes_impl_write(function, f_cpp_);
-        generate_service_helper_classes_impl_read(function, f_cpp_);
-
-        assert(indent_count_h() == 1);
-        assert(indent_count_cpp() == 0);
     }
+
+    // Helper classes implementations
+    for (const auto& function : tservice->get_functions()) {
+        generate_service_helper_classes_impl(function, f_cpp_);
+    }
+
+    assert(indent_count_cpp() == 0);
 }
 
 void t_yarp_generator::generate_service_helper_classes_decl(t_function* function, std::ostringstream& f_cpp_)
@@ -3598,7 +3596,8 @@ void t_yarp_generator::generate_service_helper_classes_decl(t_function* function
     const auto helper_class = std::string{service_name_ + "_" + fname + "_helper"};
     auto returnfield = t_field{returntype, "m_return_helper"};
 
-    f_cpp_ << "class " << helper_class << " :\n";
+    f_cpp_ << indent_cpp() << "// " << fname << " helper class declaration\n";
+    f_cpp_ << indent_cpp() << "class " << helper_class << " :\n";
     f_cpp_ << indent_initializer_cpp() << "public yarp::os::Portable\n";
     f_cpp_ << indent_cpp() << "{\n";
     indent_up_cpp();
@@ -3632,6 +3631,24 @@ void t_yarp_generator::generate_service_helper_classes_decl(t_function* function
     indent_down_cpp();
     f_cpp_ << indent_cpp() << "};\n";
     f_cpp_ << '\n';
+
+    assert(indent_count_cpp() == 0);
+}
+
+void t_yarp_generator::generate_service_helper_classes_impl(t_function* function, std::ostringstream& f_cpp_)
+{
+    THRIFT_DEBUG_COMMENT(f_cpp_);
+    const auto& fname = function->get_name();
+
+    f_cpp_ << indent_cpp() << "// " << fname << " helper class implementation\n";
+
+    if (!function->get_arglist()->get_members().empty()) {
+        generate_service_helper_classes_impl_ctor(function, f_cpp_);
+    }
+    generate_service_helper_classes_impl_write(function, f_cpp_);
+    generate_service_helper_classes_impl_read(function, f_cpp_);
+
+    assert(indent_count_cpp() == 0);
 }
 
 void t_yarp_generator::generate_service_helper_classes_impl_ctor(t_function* function, std::ostringstream& f_cpp_)
@@ -3670,6 +3687,8 @@ void t_yarp_generator::generate_service_helper_classes_impl_ctor(t_function* fun
     f_cpp_ << indent_cpp() << "{\n";
     f_cpp_ << indent_cpp() << "}\n";
     f_cpp_ << '\n';
+
+    assert(indent_count_cpp() == 0);
 }
 
 void t_yarp_generator::generate_service_helper_classes_impl_write(t_function* function, std::ostringstream& f_cpp_)

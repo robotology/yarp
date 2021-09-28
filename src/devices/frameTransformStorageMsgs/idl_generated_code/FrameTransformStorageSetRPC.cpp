@@ -12,6 +12,7 @@
 
 #include <yarp/os/idl/WireTypes.h>
 
+// setTransformsRPC helper class declaration
 class FrameTransformStorageSetRPC_setTransformsRPC_helper :
         public yarp::os::Portable
 {
@@ -26,6 +27,50 @@ public:
     bool m_return_helper{};
 };
 
+// setTransformRPC helper class declaration
+class FrameTransformStorageSetRPC_setTransformRPC_helper :
+        public yarp::os::Portable
+{
+public:
+    FrameTransformStorageSetRPC_setTransformRPC_helper() = default;
+    explicit FrameTransformStorageSetRPC_setTransformRPC_helper(const yarp::math::FrameTransform& transform);
+    bool write(yarp::os::ConnectionWriter& connection) const override;
+    bool read(yarp::os::ConnectionReader& connection) override;
+
+    yarp::math::FrameTransform m_transform;
+
+    bool m_return_helper{};
+};
+
+// deleteTransformRPC helper class declaration
+class FrameTransformStorageSetRPC_deleteTransformRPC_helper :
+        public yarp::os::Portable
+{
+public:
+    FrameTransformStorageSetRPC_deleteTransformRPC_helper() = default;
+    FrameTransformStorageSetRPC_deleteTransformRPC_helper(const std::string& src, const std::string& dst);
+    bool write(yarp::os::ConnectionWriter& connection) const override;
+    bool read(yarp::os::ConnectionReader& connection) override;
+
+    std::string m_src;
+    std::string m_dst;
+
+    bool m_return_helper{};
+};
+
+// clearAllRPC helper class declaration
+class FrameTransformStorageSetRPC_clearAllRPC_helper :
+        public yarp::os::Portable
+{
+public:
+    FrameTransformStorageSetRPC_clearAllRPC_helper() = default;
+    bool write(yarp::os::ConnectionWriter& connection) const override;
+    bool read(yarp::os::ConnectionReader& connection) override;
+
+    bool m_return_helper{};
+};
+
+// setTransformsRPC helper class implementation
 FrameTransformStorageSetRPC_setTransformsRPC_helper::FrameTransformStorageSetRPC_setTransformsRPC_helper(const std::vector<yarp::math::FrameTransform>& transforms) :
         m_transforms{transforms},
         m_return_helper{}
@@ -68,20 +113,7 @@ bool FrameTransformStorageSetRPC_setTransformsRPC_helper::read(yarp::os::Connect
     return true;
 }
 
-class FrameTransformStorageSetRPC_setTransformRPC_helper :
-        public yarp::os::Portable
-{
-public:
-    FrameTransformStorageSetRPC_setTransformRPC_helper() = default;
-    explicit FrameTransformStorageSetRPC_setTransformRPC_helper(const yarp::math::FrameTransform& transform);
-    bool write(yarp::os::ConnectionWriter& connection) const override;
-    bool read(yarp::os::ConnectionReader& connection) override;
-
-    yarp::math::FrameTransform m_transform;
-
-    bool m_return_helper{};
-};
-
+// setTransformRPC helper class implementation
 FrameTransformStorageSetRPC_setTransformRPC_helper::FrameTransformStorageSetRPC_setTransformRPC_helper(const yarp::math::FrameTransform& transform) :
         m_transform{transform},
         m_return_helper{}
@@ -116,21 +148,7 @@ bool FrameTransformStorageSetRPC_setTransformRPC_helper::read(yarp::os::Connecti
     return true;
 }
 
-class FrameTransformStorageSetRPC_deleteTransformRPC_helper :
-        public yarp::os::Portable
-{
-public:
-    FrameTransformStorageSetRPC_deleteTransformRPC_helper() = default;
-    FrameTransformStorageSetRPC_deleteTransformRPC_helper(const std::string& src, const std::string& dst);
-    bool write(yarp::os::ConnectionWriter& connection) const override;
-    bool read(yarp::os::ConnectionReader& connection) override;
-
-    std::string m_src;
-    std::string m_dst;
-
-    bool m_return_helper{};
-};
-
+// deleteTransformRPC helper class implementation
 FrameTransformStorageSetRPC_deleteTransformRPC_helper::FrameTransformStorageSetRPC_deleteTransformRPC_helper(const std::string& src, const std::string& dst) :
         m_src{src},
         m_dst{dst},
@@ -169,17 +187,7 @@ bool FrameTransformStorageSetRPC_deleteTransformRPC_helper::read(yarp::os::Conne
     return true;
 }
 
-class FrameTransformStorageSetRPC_clearAllRPC_helper :
-        public yarp::os::Portable
-{
-public:
-    FrameTransformStorageSetRPC_clearAllRPC_helper() = default;
-    bool write(yarp::os::ConnectionWriter& connection) const override;
-    bool read(yarp::os::ConnectionReader& connection) override;
-
-    bool m_return_helper{};
-};
-
+// clearAllRPC helper class implementation
 bool FrameTransformStorageSetRPC_clearAllRPC_helper::write(yarp::os::ConnectionWriter& connection) const
 {
     yarp::os::idl::WireWriter writer(connection);

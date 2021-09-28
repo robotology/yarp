@@ -12,6 +12,7 @@
 
 #include <yarp/os/idl/WireTypes.h>
 
+// step helper class declaration
 class yarpdataplayer_console_IDL_step_helper :
         public yarp::os::Portable
 {
@@ -23,6 +24,296 @@ public:
     bool m_return_helper{};
 };
 
+// setFrame helper class declaration
+class yarpdataplayer_console_IDL_setFrame_helper :
+        public yarp::os::Portable
+{
+public:
+    yarpdataplayer_console_IDL_setFrame_helper() = default;
+    explicit yarpdataplayer_console_IDL_setFrame_helper(const std::int32_t frameNum);
+    bool write(yarp::os::ConnectionWriter& connection) const override;
+    bool read(yarp::os::ConnectionReader& connection) override;
+
+    std::int32_t m_frameNum;
+
+    bool m_return_helper{};
+};
+
+// getFrame helper class declaration
+class yarpdataplayer_console_IDL_getFrame_helper :
+        public yarp::os::Portable
+{
+public:
+    yarpdataplayer_console_IDL_getFrame_helper() = default;
+    explicit yarpdataplayer_console_IDL_getFrame_helper(const std::string& name);
+    bool write(yarp::os::ConnectionWriter& connection) const override;
+    bool read(yarp::os::ConnectionReader& connection) override;
+
+    std::string m_name;
+
+    std::int32_t m_return_helper{};
+};
+
+// load helper class declaration
+class yarpdataplayer_console_IDL_load_helper :
+        public yarp::os::Portable
+{
+public:
+    yarpdataplayer_console_IDL_load_helper() = default;
+    explicit yarpdataplayer_console_IDL_load_helper(const std::string& path);
+    bool write(yarp::os::ConnectionWriter& connection) const override;
+    bool read(yarp::os::ConnectionReader& connection) override;
+
+    std::string m_path;
+
+    bool m_return_helper{};
+};
+
+// play helper class declaration
+class yarpdataplayer_console_IDL_play_helper :
+        public yarp::os::Portable
+{
+public:
+    yarpdataplayer_console_IDL_play_helper() = default;
+    bool write(yarp::os::ConnectionWriter& connection) const override;
+    bool read(yarp::os::ConnectionReader& connection) override;
+
+    bool m_return_helper{};
+};
+
+// pause helper class declaration
+class yarpdataplayer_console_IDL_pause_helper :
+        public yarp::os::Portable
+{
+public:
+    yarpdataplayer_console_IDL_pause_helper() = default;
+    bool write(yarp::os::ConnectionWriter& connection) const override;
+    bool read(yarp::os::ConnectionReader& connection) override;
+
+    bool m_return_helper{};
+};
+
+// stop helper class declaration
+class yarpdataplayer_console_IDL_stop_helper :
+        public yarp::os::Portable
+{
+public:
+    yarpdataplayer_console_IDL_stop_helper() = default;
+    bool write(yarp::os::ConnectionWriter& connection) const override;
+    bool read(yarp::os::ConnectionReader& connection) override;
+
+    bool m_return_helper{};
+};
+
+// enable helper class declaration
+class yarpdataplayer_console_IDL_enable_helper :
+        public yarp::os::Portable
+{
+public:
+    yarpdataplayer_console_IDL_enable_helper() = default;
+    explicit yarpdataplayer_console_IDL_enable_helper(const std::string& part);
+    bool write(yarp::os::ConnectionWriter& connection) const override;
+    bool read(yarp::os::ConnectionReader& connection) override;
+
+    std::string m_part;
+
+    bool m_return_helper{};
+};
+
+// disable helper class declaration
+class yarpdataplayer_console_IDL_disable_helper :
+        public yarp::os::Portable
+{
+public:
+    yarpdataplayer_console_IDL_disable_helper() = default;
+    explicit yarpdataplayer_console_IDL_disable_helper(const std::string& part);
+    bool write(yarp::os::ConnectionWriter& connection) const override;
+    bool read(yarp::os::ConnectionReader& connection) override;
+
+    std::string m_part;
+
+    bool m_return_helper{};
+};
+
+// getAllParts helper class declaration
+class yarpdataplayer_console_IDL_getAllParts_helper :
+        public yarp::os::Portable
+{
+public:
+    yarpdataplayer_console_IDL_getAllParts_helper() = default;
+    bool write(yarp::os::ConnectionWriter& connection) const override;
+    bool read(yarp::os::ConnectionReader& connection) override;
+
+    std::vector<std::string> m_return_helper{};
+};
+
+// getPortName helper class declaration
+class yarpdataplayer_console_IDL_getPortName_helper :
+        public yarp::os::Portable
+{
+public:
+    yarpdataplayer_console_IDL_getPortName_helper() = default;
+    explicit yarpdataplayer_console_IDL_getPortName_helper(const std::string& part);
+    bool write(yarp::os::ConnectionWriter& connection) const override;
+    bool read(yarp::os::ConnectionReader& connection) override;
+
+    std::string m_part;
+
+    std::string m_return_helper{};
+};
+
+// setPortName helper class declaration
+class yarpdataplayer_console_IDL_setPortName_helper :
+        public yarp::os::Portable
+{
+public:
+    yarpdataplayer_console_IDL_setPortName_helper() = default;
+    yarpdataplayer_console_IDL_setPortName_helper(const std::string& part, const std::string& new_name);
+    bool write(yarp::os::ConnectionWriter& connection) const override;
+    bool read(yarp::os::ConnectionReader& connection) override;
+
+    std::string m_part;
+    std::string m_new_name;
+
+    bool m_return_helper{};
+};
+
+// setSpeed helper class declaration
+class yarpdataplayer_console_IDL_setSpeed_helper :
+        public yarp::os::Portable
+{
+public:
+    yarpdataplayer_console_IDL_setSpeed_helper() = default;
+    explicit yarpdataplayer_console_IDL_setSpeed_helper(const double speed);
+    bool write(yarp::os::ConnectionWriter& connection) const override;
+    bool read(yarp::os::ConnectionReader& connection) override;
+
+    double m_speed;
+
+    bool m_return_helper{};
+};
+
+// getSpeed helper class declaration
+class yarpdataplayer_console_IDL_getSpeed_helper :
+        public yarp::os::Portable
+{
+public:
+    yarpdataplayer_console_IDL_getSpeed_helper() = default;
+    bool write(yarp::os::ConnectionWriter& connection) const override;
+    bool read(yarp::os::ConnectionReader& connection) override;
+
+    double m_return_helper{};
+};
+
+// repeat helper class declaration
+class yarpdataplayer_console_IDL_repeat_helper :
+        public yarp::os::Portable
+{
+public:
+    yarpdataplayer_console_IDL_repeat_helper() = default;
+    explicit yarpdataplayer_console_IDL_repeat_helper(const bool val);
+    bool write(yarp::os::ConnectionWriter& connection) const override;
+    bool read(yarp::os::ConnectionReader& connection) override;
+
+    bool m_val;
+
+    bool m_return_helper{};
+};
+
+// setStrict helper class declaration
+class yarpdataplayer_console_IDL_setStrict_helper :
+        public yarp::os::Portable
+{
+public:
+    yarpdataplayer_console_IDL_setStrict_helper() = default;
+    explicit yarpdataplayer_console_IDL_setStrict_helper(const bool val);
+    bool write(yarp::os::ConnectionWriter& connection) const override;
+    bool read(yarp::os::ConnectionReader& connection) override;
+
+    bool m_val;
+
+    bool m_return_helper{};
+};
+
+// forward helper class declaration
+class yarpdataplayer_console_IDL_forward_helper :
+        public yarp::os::Portable
+{
+public:
+    yarpdataplayer_console_IDL_forward_helper() = default;
+    explicit yarpdataplayer_console_IDL_forward_helper(const std::int32_t steps);
+    bool write(yarp::os::ConnectionWriter& connection) const override;
+    bool read(yarp::os::ConnectionReader& connection) override;
+
+    std::int32_t m_steps;
+
+    bool m_return_helper{};
+};
+
+// backward helper class declaration
+class yarpdataplayer_console_IDL_backward_helper :
+        public yarp::os::Portable
+{
+public:
+    yarpdataplayer_console_IDL_backward_helper() = default;
+    explicit yarpdataplayer_console_IDL_backward_helper(const std::int32_t steps);
+    bool write(yarp::os::ConnectionWriter& connection) const override;
+    bool read(yarp::os::ConnectionReader& connection) override;
+
+    std::int32_t m_steps;
+
+    bool m_return_helper{};
+};
+
+// getProgress helper class declaration
+class yarpdataplayer_console_IDL_getProgress_helper :
+        public yarp::os::Portable
+{
+public:
+    yarpdataplayer_console_IDL_getProgress_helper() = default;
+    bool write(yarp::os::ConnectionWriter& connection) const override;
+    bool read(yarp::os::ConnectionReader& connection) override;
+
+    double m_return_helper{};
+};
+
+// getStatus helper class declaration
+class yarpdataplayer_console_IDL_getStatus_helper :
+        public yarp::os::Portable
+{
+public:
+    yarpdataplayer_console_IDL_getStatus_helper() = default;
+    bool write(yarp::os::ConnectionWriter& connection) const override;
+    bool read(yarp::os::ConnectionReader& connection) override;
+
+    std::string m_return_helper{};
+};
+
+// resume helper class declaration
+class yarpdataplayer_console_IDL_resume_helper :
+        public yarp::os::Portable
+{
+public:
+    yarpdataplayer_console_IDL_resume_helper() = default;
+    bool write(yarp::os::ConnectionWriter& connection) const override;
+    bool read(yarp::os::ConnectionReader& connection) override;
+
+    bool m_return_helper{};
+};
+
+// quit helper class declaration
+class yarpdataplayer_console_IDL_quit_helper :
+        public yarp::os::Portable
+{
+public:
+    yarpdataplayer_console_IDL_quit_helper() = default;
+    bool write(yarp::os::ConnectionWriter& connection) const override;
+    bool read(yarp::os::ConnectionReader& connection) override;
+
+    bool m_return_helper{};
+};
+
+// step helper class implementation
 bool yarpdataplayer_console_IDL_step_helper::write(yarp::os::ConnectionWriter& connection) const
 {
     yarp::os::idl::WireWriter writer(connection);
@@ -48,20 +339,7 @@ bool yarpdataplayer_console_IDL_step_helper::read(yarp::os::ConnectionReader& co
     return true;
 }
 
-class yarpdataplayer_console_IDL_setFrame_helper :
-        public yarp::os::Portable
-{
-public:
-    yarpdataplayer_console_IDL_setFrame_helper() = default;
-    explicit yarpdataplayer_console_IDL_setFrame_helper(const std::int32_t frameNum);
-    bool write(yarp::os::ConnectionWriter& connection) const override;
-    bool read(yarp::os::ConnectionReader& connection) override;
-
-    std::int32_t m_frameNum;
-
-    bool m_return_helper{};
-};
-
+// setFrame helper class implementation
 yarpdataplayer_console_IDL_setFrame_helper::yarpdataplayer_console_IDL_setFrame_helper(const std::int32_t frameNum) :
         m_frameNum{frameNum},
         m_return_helper{}
@@ -96,20 +374,7 @@ bool yarpdataplayer_console_IDL_setFrame_helper::read(yarp::os::ConnectionReader
     return true;
 }
 
-class yarpdataplayer_console_IDL_getFrame_helper :
-        public yarp::os::Portable
-{
-public:
-    yarpdataplayer_console_IDL_getFrame_helper() = default;
-    explicit yarpdataplayer_console_IDL_getFrame_helper(const std::string& name);
-    bool write(yarp::os::ConnectionWriter& connection) const override;
-    bool read(yarp::os::ConnectionReader& connection) override;
-
-    std::string m_name;
-
-    std::int32_t m_return_helper{};
-};
-
+// getFrame helper class implementation
 yarpdataplayer_console_IDL_getFrame_helper::yarpdataplayer_console_IDL_getFrame_helper(const std::string& name) :
         m_name{name},
         m_return_helper{}
@@ -144,20 +409,7 @@ bool yarpdataplayer_console_IDL_getFrame_helper::read(yarp::os::ConnectionReader
     return true;
 }
 
-class yarpdataplayer_console_IDL_load_helper :
-        public yarp::os::Portable
-{
-public:
-    yarpdataplayer_console_IDL_load_helper() = default;
-    explicit yarpdataplayer_console_IDL_load_helper(const std::string& path);
-    bool write(yarp::os::ConnectionWriter& connection) const override;
-    bool read(yarp::os::ConnectionReader& connection) override;
-
-    std::string m_path;
-
-    bool m_return_helper{};
-};
-
+// load helper class implementation
 yarpdataplayer_console_IDL_load_helper::yarpdataplayer_console_IDL_load_helper(const std::string& path) :
         m_path{path},
         m_return_helper{}
@@ -192,17 +444,7 @@ bool yarpdataplayer_console_IDL_load_helper::read(yarp::os::ConnectionReader& co
     return true;
 }
 
-class yarpdataplayer_console_IDL_play_helper :
-        public yarp::os::Portable
-{
-public:
-    yarpdataplayer_console_IDL_play_helper() = default;
-    bool write(yarp::os::ConnectionWriter& connection) const override;
-    bool read(yarp::os::ConnectionReader& connection) override;
-
-    bool m_return_helper{};
-};
-
+// play helper class implementation
 bool yarpdataplayer_console_IDL_play_helper::write(yarp::os::ConnectionWriter& connection) const
 {
     yarp::os::idl::WireWriter writer(connection);
@@ -228,17 +470,7 @@ bool yarpdataplayer_console_IDL_play_helper::read(yarp::os::ConnectionReader& co
     return true;
 }
 
-class yarpdataplayer_console_IDL_pause_helper :
-        public yarp::os::Portable
-{
-public:
-    yarpdataplayer_console_IDL_pause_helper() = default;
-    bool write(yarp::os::ConnectionWriter& connection) const override;
-    bool read(yarp::os::ConnectionReader& connection) override;
-
-    bool m_return_helper{};
-};
-
+// pause helper class implementation
 bool yarpdataplayer_console_IDL_pause_helper::write(yarp::os::ConnectionWriter& connection) const
 {
     yarp::os::idl::WireWriter writer(connection);
@@ -264,17 +496,7 @@ bool yarpdataplayer_console_IDL_pause_helper::read(yarp::os::ConnectionReader& c
     return true;
 }
 
-class yarpdataplayer_console_IDL_stop_helper :
-        public yarp::os::Portable
-{
-public:
-    yarpdataplayer_console_IDL_stop_helper() = default;
-    bool write(yarp::os::ConnectionWriter& connection) const override;
-    bool read(yarp::os::ConnectionReader& connection) override;
-
-    bool m_return_helper{};
-};
-
+// stop helper class implementation
 bool yarpdataplayer_console_IDL_stop_helper::write(yarp::os::ConnectionWriter& connection) const
 {
     yarp::os::idl::WireWriter writer(connection);
@@ -300,20 +522,7 @@ bool yarpdataplayer_console_IDL_stop_helper::read(yarp::os::ConnectionReader& co
     return true;
 }
 
-class yarpdataplayer_console_IDL_enable_helper :
-        public yarp::os::Portable
-{
-public:
-    yarpdataplayer_console_IDL_enable_helper() = default;
-    explicit yarpdataplayer_console_IDL_enable_helper(const std::string& part);
-    bool write(yarp::os::ConnectionWriter& connection) const override;
-    bool read(yarp::os::ConnectionReader& connection) override;
-
-    std::string m_part;
-
-    bool m_return_helper{};
-};
-
+// enable helper class implementation
 yarpdataplayer_console_IDL_enable_helper::yarpdataplayer_console_IDL_enable_helper(const std::string& part) :
         m_part{part},
         m_return_helper{}
@@ -348,20 +557,7 @@ bool yarpdataplayer_console_IDL_enable_helper::read(yarp::os::ConnectionReader& 
     return true;
 }
 
-class yarpdataplayer_console_IDL_disable_helper :
-        public yarp::os::Portable
-{
-public:
-    yarpdataplayer_console_IDL_disable_helper() = default;
-    explicit yarpdataplayer_console_IDL_disable_helper(const std::string& part);
-    bool write(yarp::os::ConnectionWriter& connection) const override;
-    bool read(yarp::os::ConnectionReader& connection) override;
-
-    std::string m_part;
-
-    bool m_return_helper{};
-};
-
+// disable helper class implementation
 yarpdataplayer_console_IDL_disable_helper::yarpdataplayer_console_IDL_disable_helper(const std::string& part) :
         m_part{part},
         m_return_helper{}
@@ -396,17 +592,7 @@ bool yarpdataplayer_console_IDL_disable_helper::read(yarp::os::ConnectionReader&
     return true;
 }
 
-class yarpdataplayer_console_IDL_getAllParts_helper :
-        public yarp::os::Portable
-{
-public:
-    yarpdataplayer_console_IDL_getAllParts_helper() = default;
-    bool write(yarp::os::ConnectionWriter& connection) const override;
-    bool read(yarp::os::ConnectionReader& connection) override;
-
-    std::vector<std::string> m_return_helper{};
-};
-
+// getAllParts helper class implementation
 bool yarpdataplayer_console_IDL_getAllParts_helper::write(yarp::os::ConnectionWriter& connection) const
 {
     yarp::os::idl::WireWriter writer(connection);
@@ -440,20 +626,7 @@ bool yarpdataplayer_console_IDL_getAllParts_helper::read(yarp::os::ConnectionRea
     return true;
 }
 
-class yarpdataplayer_console_IDL_getPortName_helper :
-        public yarp::os::Portable
-{
-public:
-    yarpdataplayer_console_IDL_getPortName_helper() = default;
-    explicit yarpdataplayer_console_IDL_getPortName_helper(const std::string& part);
-    bool write(yarp::os::ConnectionWriter& connection) const override;
-    bool read(yarp::os::ConnectionReader& connection) override;
-
-    std::string m_part;
-
-    std::string m_return_helper{};
-};
-
+// getPortName helper class implementation
 yarpdataplayer_console_IDL_getPortName_helper::yarpdataplayer_console_IDL_getPortName_helper(const std::string& part) :
         m_part{part},
         m_return_helper{}
@@ -488,21 +661,7 @@ bool yarpdataplayer_console_IDL_getPortName_helper::read(yarp::os::ConnectionRea
     return true;
 }
 
-class yarpdataplayer_console_IDL_setPortName_helper :
-        public yarp::os::Portable
-{
-public:
-    yarpdataplayer_console_IDL_setPortName_helper() = default;
-    yarpdataplayer_console_IDL_setPortName_helper(const std::string& part, const std::string& new_name);
-    bool write(yarp::os::ConnectionWriter& connection) const override;
-    bool read(yarp::os::ConnectionReader& connection) override;
-
-    std::string m_part;
-    std::string m_new_name;
-
-    bool m_return_helper{};
-};
-
+// setPortName helper class implementation
 yarpdataplayer_console_IDL_setPortName_helper::yarpdataplayer_console_IDL_setPortName_helper(const std::string& part, const std::string& new_name) :
         m_part{part},
         m_new_name{new_name},
@@ -541,20 +700,7 @@ bool yarpdataplayer_console_IDL_setPortName_helper::read(yarp::os::ConnectionRea
     return true;
 }
 
-class yarpdataplayer_console_IDL_setSpeed_helper :
-        public yarp::os::Portable
-{
-public:
-    yarpdataplayer_console_IDL_setSpeed_helper() = default;
-    explicit yarpdataplayer_console_IDL_setSpeed_helper(const double speed);
-    bool write(yarp::os::ConnectionWriter& connection) const override;
-    bool read(yarp::os::ConnectionReader& connection) override;
-
-    double m_speed;
-
-    bool m_return_helper{};
-};
-
+// setSpeed helper class implementation
 yarpdataplayer_console_IDL_setSpeed_helper::yarpdataplayer_console_IDL_setSpeed_helper(const double speed) :
         m_speed{speed},
         m_return_helper{}
@@ -589,17 +735,7 @@ bool yarpdataplayer_console_IDL_setSpeed_helper::read(yarp::os::ConnectionReader
     return true;
 }
 
-class yarpdataplayer_console_IDL_getSpeed_helper :
-        public yarp::os::Portable
-{
-public:
-    yarpdataplayer_console_IDL_getSpeed_helper() = default;
-    bool write(yarp::os::ConnectionWriter& connection) const override;
-    bool read(yarp::os::ConnectionReader& connection) override;
-
-    double m_return_helper{};
-};
-
+// getSpeed helper class implementation
 bool yarpdataplayer_console_IDL_getSpeed_helper::write(yarp::os::ConnectionWriter& connection) const
 {
     yarp::os::idl::WireWriter writer(connection);
@@ -625,20 +761,7 @@ bool yarpdataplayer_console_IDL_getSpeed_helper::read(yarp::os::ConnectionReader
     return true;
 }
 
-class yarpdataplayer_console_IDL_repeat_helper :
-        public yarp::os::Portable
-{
-public:
-    yarpdataplayer_console_IDL_repeat_helper() = default;
-    explicit yarpdataplayer_console_IDL_repeat_helper(const bool val);
-    bool write(yarp::os::ConnectionWriter& connection) const override;
-    bool read(yarp::os::ConnectionReader& connection) override;
-
-    bool m_val;
-
-    bool m_return_helper{};
-};
-
+// repeat helper class implementation
 yarpdataplayer_console_IDL_repeat_helper::yarpdataplayer_console_IDL_repeat_helper(const bool val) :
         m_val{val},
         m_return_helper{}
@@ -673,20 +796,7 @@ bool yarpdataplayer_console_IDL_repeat_helper::read(yarp::os::ConnectionReader& 
     return true;
 }
 
-class yarpdataplayer_console_IDL_setStrict_helper :
-        public yarp::os::Portable
-{
-public:
-    yarpdataplayer_console_IDL_setStrict_helper() = default;
-    explicit yarpdataplayer_console_IDL_setStrict_helper(const bool val);
-    bool write(yarp::os::ConnectionWriter& connection) const override;
-    bool read(yarp::os::ConnectionReader& connection) override;
-
-    bool m_val;
-
-    bool m_return_helper{};
-};
-
+// setStrict helper class implementation
 yarpdataplayer_console_IDL_setStrict_helper::yarpdataplayer_console_IDL_setStrict_helper(const bool val) :
         m_val{val},
         m_return_helper{}
@@ -721,20 +831,7 @@ bool yarpdataplayer_console_IDL_setStrict_helper::read(yarp::os::ConnectionReade
     return true;
 }
 
-class yarpdataplayer_console_IDL_forward_helper :
-        public yarp::os::Portable
-{
-public:
-    yarpdataplayer_console_IDL_forward_helper() = default;
-    explicit yarpdataplayer_console_IDL_forward_helper(const std::int32_t steps);
-    bool write(yarp::os::ConnectionWriter& connection) const override;
-    bool read(yarp::os::ConnectionReader& connection) override;
-
-    std::int32_t m_steps;
-
-    bool m_return_helper{};
-};
-
+// forward helper class implementation
 yarpdataplayer_console_IDL_forward_helper::yarpdataplayer_console_IDL_forward_helper(const std::int32_t steps) :
         m_steps{steps},
         m_return_helper{}
@@ -769,20 +866,7 @@ bool yarpdataplayer_console_IDL_forward_helper::read(yarp::os::ConnectionReader&
     return true;
 }
 
-class yarpdataplayer_console_IDL_backward_helper :
-        public yarp::os::Portable
-{
-public:
-    yarpdataplayer_console_IDL_backward_helper() = default;
-    explicit yarpdataplayer_console_IDL_backward_helper(const std::int32_t steps);
-    bool write(yarp::os::ConnectionWriter& connection) const override;
-    bool read(yarp::os::ConnectionReader& connection) override;
-
-    std::int32_t m_steps;
-
-    bool m_return_helper{};
-};
-
+// backward helper class implementation
 yarpdataplayer_console_IDL_backward_helper::yarpdataplayer_console_IDL_backward_helper(const std::int32_t steps) :
         m_steps{steps},
         m_return_helper{}
@@ -817,17 +901,7 @@ bool yarpdataplayer_console_IDL_backward_helper::read(yarp::os::ConnectionReader
     return true;
 }
 
-class yarpdataplayer_console_IDL_getProgress_helper :
-        public yarp::os::Portable
-{
-public:
-    yarpdataplayer_console_IDL_getProgress_helper() = default;
-    bool write(yarp::os::ConnectionWriter& connection) const override;
-    bool read(yarp::os::ConnectionReader& connection) override;
-
-    double m_return_helper{};
-};
-
+// getProgress helper class implementation
 bool yarpdataplayer_console_IDL_getProgress_helper::write(yarp::os::ConnectionWriter& connection) const
 {
     yarp::os::idl::WireWriter writer(connection);
@@ -853,17 +927,7 @@ bool yarpdataplayer_console_IDL_getProgress_helper::read(yarp::os::ConnectionRea
     return true;
 }
 
-class yarpdataplayer_console_IDL_getStatus_helper :
-        public yarp::os::Portable
-{
-public:
-    yarpdataplayer_console_IDL_getStatus_helper() = default;
-    bool write(yarp::os::ConnectionWriter& connection) const override;
-    bool read(yarp::os::ConnectionReader& connection) override;
-
-    std::string m_return_helper{};
-};
-
+// getStatus helper class implementation
 bool yarpdataplayer_console_IDL_getStatus_helper::write(yarp::os::ConnectionWriter& connection) const
 {
     yarp::os::idl::WireWriter writer(connection);
@@ -889,17 +953,7 @@ bool yarpdataplayer_console_IDL_getStatus_helper::read(yarp::os::ConnectionReade
     return true;
 }
 
-class yarpdataplayer_console_IDL_resume_helper :
-        public yarp::os::Portable
-{
-public:
-    yarpdataplayer_console_IDL_resume_helper() = default;
-    bool write(yarp::os::ConnectionWriter& connection) const override;
-    bool read(yarp::os::ConnectionReader& connection) override;
-
-    bool m_return_helper{};
-};
-
+// resume helper class implementation
 bool yarpdataplayer_console_IDL_resume_helper::write(yarp::os::ConnectionWriter& connection) const
 {
     yarp::os::idl::WireWriter writer(connection);
@@ -925,17 +979,7 @@ bool yarpdataplayer_console_IDL_resume_helper::read(yarp::os::ConnectionReader& 
     return true;
 }
 
-class yarpdataplayer_console_IDL_quit_helper :
-        public yarp::os::Portable
-{
-public:
-    yarpdataplayer_console_IDL_quit_helper() = default;
-    bool write(yarp::os::ConnectionWriter& connection) const override;
-    bool read(yarp::os::ConnectionReader& connection) override;
-
-    bool m_return_helper{};
-};
-
+// quit helper class implementation
 bool yarpdataplayer_console_IDL_quit_helper::write(yarp::os::ConnectionWriter& connection) const
 {
     yarp::os::idl::WireWriter writer(connection);
