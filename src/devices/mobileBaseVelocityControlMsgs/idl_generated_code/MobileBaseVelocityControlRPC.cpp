@@ -123,20 +123,20 @@ MobileBaseVelocityControlRPC::MobileBaseVelocityControlRPC()
 
 bool MobileBaseVelocityControlRPC::applyVelocityCommandRPC(const double x_vel, const double y_vel, const double theta_vel, const double timeout)
 {
-    MobileBaseVelocityControlRPC_applyVelocityCommandRPC_helper helper{x_vel, y_vel, theta_vel, timeout};
     if (!yarp().canWrite()) {
         yError("Missing server method '%s'?", "bool MobileBaseVelocityControlRPC::applyVelocityCommandRPC(const double x_vel, const double y_vel, const double theta_vel, const double timeout)");
     }
+    MobileBaseVelocityControlRPC_applyVelocityCommandRPC_helper helper{x_vel, y_vel, theta_vel, timeout};
     bool ok = yarp().write(helper, helper);
     return ok ? helper.m_return_helper : bool{};
 }
 
 return_getLastVelocityCommand MobileBaseVelocityControlRPC::getLastVelocityCommandRPC()
 {
-    MobileBaseVelocityControlRPC_getLastVelocityCommandRPC_helper helper{};
     if (!yarp().canWrite()) {
         yError("Missing server method '%s'?", "return_getLastVelocityCommand MobileBaseVelocityControlRPC::getLastVelocityCommandRPC()");
     }
+    MobileBaseVelocityControlRPC_getLastVelocityCommandRPC_helper helper{};
     bool ok = yarp().write(helper, helper);
     return ok ? helper.m_return_helper : return_getLastVelocityCommand{};
 }

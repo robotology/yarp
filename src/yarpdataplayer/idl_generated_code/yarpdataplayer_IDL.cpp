@@ -436,100 +436,100 @@ yarpdataplayer_IDL::yarpdataplayer_IDL()
 
 bool yarpdataplayer_IDL::step()
 {
-    yarpdataplayer_IDL_step_helper helper{};
     if (!yarp().canWrite()) {
         yError("Missing server method '%s'?", "bool yarpdataplayer_IDL::step()");
     }
+    yarpdataplayer_IDL_step_helper helper{};
     bool ok = yarp().write(helper, helper);
     return ok ? helper.m_return_helper : bool{};
 }
 
 bool yarpdataplayer_IDL::setFrame(const std::int32_t frameNum)
 {
-    yarpdataplayer_IDL_setFrame_helper helper{frameNum};
     if (!yarp().canWrite()) {
         yError("Missing server method '%s'?", "bool yarpdataplayer_IDL::setFrame(const std::int32_t frameNum)");
     }
+    yarpdataplayer_IDL_setFrame_helper helper{frameNum};
     bool ok = yarp().write(helper, helper);
     return ok ? helper.m_return_helper : bool{};
 }
 
 std::int32_t yarpdataplayer_IDL::getFrame(const std::string& name)
 {
-    yarpdataplayer_IDL_getFrame_helper helper{name};
     if (!yarp().canWrite()) {
         yError("Missing server method '%s'?", "std::int32_t yarpdataplayer_IDL::getFrame(const std::string& name)");
     }
+    yarpdataplayer_IDL_getFrame_helper helper{name};
     bool ok = yarp().write(helper, helper);
     return ok ? helper.m_return_helper : std::int32_t{};
 }
 
 bool yarpdataplayer_IDL::load(const std::string& path)
 {
-    yarpdataplayer_IDL_load_helper helper{path};
     if (!yarp().canWrite()) {
         yError("Missing server method '%s'?", "bool yarpdataplayer_IDL::load(const std::string& path)");
     }
+    yarpdataplayer_IDL_load_helper helper{path};
     bool ok = yarp().write(helper, helper);
     return ok ? helper.m_return_helper : bool{};
 }
 
 std::int32_t yarpdataplayer_IDL::getSliderPercentage()
 {
-    yarpdataplayer_IDL_getSliderPercentage_helper helper{};
     if (!yarp().canWrite()) {
         yError("Missing server method '%s'?", "std::int32_t yarpdataplayer_IDL::getSliderPercentage()");
     }
+    yarpdataplayer_IDL_getSliderPercentage_helper helper{};
     bool ok = yarp().write(helper, helper);
     return ok ? helper.m_return_helper : std::int32_t{};
 }
 
 std::string yarpdataplayer_IDL::getStatus()
 {
-    yarpdataplayer_IDL_getStatus_helper helper{};
     if (!yarp().canWrite()) {
         yError("Missing server method '%s'?", "std::string yarpdataplayer_IDL::getStatus()");
     }
+    yarpdataplayer_IDL_getStatus_helper helper{};
     bool ok = yarp().write(helper, helper);
     return ok ? helper.m_return_helper : std::string{};
 }
 
 bool yarpdataplayer_IDL::play()
 {
-    yarpdataplayer_IDL_play_helper helper{};
     if (!yarp().canWrite()) {
         yError("Missing server method '%s'?", "bool yarpdataplayer_IDL::play()");
     }
+    yarpdataplayer_IDL_play_helper helper{};
     bool ok = yarp().write(helper, helper);
     return ok ? helper.m_return_helper : bool{};
 }
 
 bool yarpdataplayer_IDL::pause()
 {
-    yarpdataplayer_IDL_pause_helper helper{};
     if (!yarp().canWrite()) {
         yError("Missing server method '%s'?", "bool yarpdataplayer_IDL::pause()");
     }
+    yarpdataplayer_IDL_pause_helper helper{};
     bool ok = yarp().write(helper, helper);
     return ok ? helper.m_return_helper : bool{};
 }
 
 bool yarpdataplayer_IDL::stop()
 {
-    yarpdataplayer_IDL_stop_helper helper{};
     if (!yarp().canWrite()) {
         yError("Missing server method '%s'?", "bool yarpdataplayer_IDL::stop()");
     }
+    yarpdataplayer_IDL_stop_helper helper{};
     bool ok = yarp().write(helper, helper);
     return ok ? helper.m_return_helper : bool{};
 }
 
 bool yarpdataplayer_IDL::quit()
 {
-    yarpdataplayer_IDL_quit_helper helper{};
     if (!yarp().canWrite()) {
         yError("Missing server method '%s'?", "bool yarpdataplayer_IDL::quit()");
     }
+    yarpdataplayer_IDL_quit_helper helper{};
     bool ok = yarp().write(helper, helper);
     return ok ? helper.m_return_helper : bool{};
 }

@@ -3792,6 +3792,16 @@ void t_yarp_generator::generate_service_method(t_service* tservice, t_function* 
     f_cpp_ << indent_cpp() << "{\n";
     indent_up_cpp();
     {
+        f_cpp_ << indent_cpp() << "if (!yarp().canWrite()) {\n";
+        indent_up_cpp();
+        {
+            f_cpp_ << indent_cpp() << "yError(\"Missing server method '%s'?\", \"";
+            f_cpp_ << function_prototype(function, false, true, true, service_name_);
+            f_cpp_ << "\");\n";
+        }
+        indent_down_cpp();
+        f_cpp_ << indent_cpp() << "}\n";
+
         f_cpp_ << indent_cpp() << helper_class << " helper{";
         bool first = true;
         for (const auto& arg : function->get_arglist()->get_members()) {
@@ -3802,15 +3812,6 @@ void t_yarp_generator::generate_service_method(t_service* tservice, t_function* 
             f_cpp_ << arg->get_name();
         }
         f_cpp_ << "};\n";
-        f_cpp_ << indent_cpp() << "if (!yarp().canWrite()) {\n";
-        indent_up_cpp();
-        {
-            f_cpp_ << indent_cpp() << "yError(\"Missing server method '%s'?\", \"";
-            f_cpp_ << function_prototype(function, false, true, true, service_name_);
-            f_cpp_ << "\");\n";
-        }
-        indent_down_cpp();
-        f_cpp_ << indent_cpp() << "}\n";
 
         f_cpp_ << indent_cpp()
                     << (!returntype->is_void() ? "bool ok = " : "")

@@ -58,10 +58,10 @@ MultipleAnalogSensorsMetadata::MultipleAnalogSensorsMetadata()
 
 SensorRPCData MultipleAnalogSensorsMetadata::getMetadata()
 {
-    MultipleAnalogSensorsMetadata_getMetadata_helper helper{};
     if (!yarp().canWrite()) {
         yError("Missing server method '%s'?", "SensorRPCData MultipleAnalogSensorsMetadata::getMetadata()");
     }
+    MultipleAnalogSensorsMetadata_getMetadata_helper helper{};
     bool ok = yarp().write(helper, helper);
     return ok ? helper.m_return_helper : SensorRPCData{};
 }

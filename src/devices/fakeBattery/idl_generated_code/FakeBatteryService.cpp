@@ -443,105 +443,105 @@ FakeBatteryService::FakeBatteryService()
 
 void FakeBatteryService::setBatteryVoltage(const double voltage)
 {
-    FakeBatteryService_setBatteryVoltage_helper helper{voltage};
     if (!yarp().canWrite()) {
         yError("Missing server method '%s'?", "void FakeBatteryService::setBatteryVoltage(const double voltage)");
     }
+    FakeBatteryService_setBatteryVoltage_helper helper{voltage};
     yarp().write(helper);
 }
 
 void FakeBatteryService::setBatteryCurrent(const double current)
 {
-    FakeBatteryService_setBatteryCurrent_helper helper{current};
     if (!yarp().canWrite()) {
         yError("Missing server method '%s'?", "void FakeBatteryService::setBatteryCurrent(const double current)");
     }
+    FakeBatteryService_setBatteryCurrent_helper helper{current};
     yarp().write(helper);
 }
 
 void FakeBatteryService::setBatteryCharge(const double charge)
 {
-    FakeBatteryService_setBatteryCharge_helper helper{charge};
     if (!yarp().canWrite()) {
         yError("Missing server method '%s'?", "void FakeBatteryService::setBatteryCharge(const double charge)");
     }
+    FakeBatteryService_setBatteryCharge_helper helper{charge};
     yarp().write(helper);
 }
 
 void FakeBatteryService::setBatteryInfo(const std::string& info)
 {
-    FakeBatteryService_setBatteryInfo_helper helper{info};
     if (!yarp().canWrite()) {
         yError("Missing server method '%s'?", "void FakeBatteryService::setBatteryInfo(const std::string& info)");
     }
+    FakeBatteryService_setBatteryInfo_helper helper{info};
     yarp().write(helper);
 }
 
 void FakeBatteryService::setBatteryTemperature(const double temperature)
 {
-    FakeBatteryService_setBatteryTemperature_helper helper{temperature};
     if (!yarp().canWrite()) {
         yError("Missing server method '%s'?", "void FakeBatteryService::setBatteryTemperature(const double temperature)");
     }
+    FakeBatteryService_setBatteryTemperature_helper helper{temperature};
     yarp().write(helper);
 }
 
 double FakeBatteryService::getBatteryVoltage()
 {
-    FakeBatteryService_getBatteryVoltage_helper helper{};
     if (!yarp().canWrite()) {
         yError("Missing server method '%s'?", "double FakeBatteryService::getBatteryVoltage()");
     }
+    FakeBatteryService_getBatteryVoltage_helper helper{};
     bool ok = yarp().write(helper, helper);
     return ok ? helper.m_return_helper : double{};
 }
 
 double FakeBatteryService::getBatteryCurrent()
 {
-    FakeBatteryService_getBatteryCurrent_helper helper{};
     if (!yarp().canWrite()) {
         yError("Missing server method '%s'?", "double FakeBatteryService::getBatteryCurrent()");
     }
+    FakeBatteryService_getBatteryCurrent_helper helper{};
     bool ok = yarp().write(helper, helper);
     return ok ? helper.m_return_helper : double{};
 }
 
 double FakeBatteryService::getBatteryCharge()
 {
-    FakeBatteryService_getBatteryCharge_helper helper{};
     if (!yarp().canWrite()) {
         yError("Missing server method '%s'?", "double FakeBatteryService::getBatteryCharge()");
     }
+    FakeBatteryService_getBatteryCharge_helper helper{};
     bool ok = yarp().write(helper, helper);
     return ok ? helper.m_return_helper : double{};
 }
 
 std::string FakeBatteryService::getBatteryStatus()
 {
-    FakeBatteryService_getBatteryStatus_helper helper{};
     if (!yarp().canWrite()) {
         yError("Missing server method '%s'?", "std::string FakeBatteryService::getBatteryStatus()");
     }
+    FakeBatteryService_getBatteryStatus_helper helper{};
     bool ok = yarp().write(helper, helper);
     return ok ? helper.m_return_helper : std::string{};
 }
 
 std::string FakeBatteryService::getBatteryInfo()
 {
-    FakeBatteryService_getBatteryInfo_helper helper{};
     if (!yarp().canWrite()) {
         yError("Missing server method '%s'?", "std::string FakeBatteryService::getBatteryInfo()");
     }
+    FakeBatteryService_getBatteryInfo_helper helper{};
     bool ok = yarp().write(helper, helper);
     return ok ? helper.m_return_helper : std::string{};
 }
 
 double FakeBatteryService::getBatteryTemperature()
 {
-    FakeBatteryService_getBatteryTemperature_helper helper{};
     if (!yarp().canWrite()) {
         yError("Missing server method '%s'?", "double FakeBatteryService::getBatteryTemperature()");
     }
+    FakeBatteryService_getBatteryTemperature_helper helper{};
     bool ok = yarp().write(helper, helper);
     return ok ? helper.m_return_helper : double{};
 }

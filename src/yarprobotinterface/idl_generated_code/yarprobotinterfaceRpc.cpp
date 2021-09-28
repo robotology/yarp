@@ -286,70 +286,70 @@ yarprobotinterfaceRpc::yarprobotinterfaceRpc()
 
 std::string yarprobotinterfaceRpc::get_phase()
 {
-    yarprobotinterfaceRpc_get_phase_helper helper{};
     if (!yarp().canWrite()) {
         yError("Missing server method '%s'?", "std::string yarprobotinterfaceRpc::get_phase()");
     }
+    yarprobotinterfaceRpc_get_phase_helper helper{};
     bool ok = yarp().write(helper, helper);
     return ok ? helper.m_return_helper : std::string{};
 }
 
 std::int32_t yarprobotinterfaceRpc::get_level()
 {
-    yarprobotinterfaceRpc_get_level_helper helper{};
     if (!yarp().canWrite()) {
         yError("Missing server method '%s'?", "std::int32_t yarprobotinterfaceRpc::get_level()");
     }
+    yarprobotinterfaceRpc_get_level_helper helper{};
     bool ok = yarp().write(helper, helper);
     return ok ? helper.m_return_helper : std::int32_t{};
 }
 
 std::string yarprobotinterfaceRpc::get_robot()
 {
-    yarprobotinterfaceRpc_get_robot_helper helper{};
     if (!yarp().canWrite()) {
         yError("Missing server method '%s'?", "std::string yarprobotinterfaceRpc::get_robot()");
     }
+    yarprobotinterfaceRpc_get_robot_helper helper{};
     bool ok = yarp().write(helper, helper);
     return ok ? helper.m_return_helper : std::string{};
 }
 
 bool yarprobotinterfaceRpc::is_ready()
 {
-    yarprobotinterfaceRpc_is_ready_helper helper{};
     if (!yarp().canWrite()) {
         yError("Missing server method '%s'?", "bool yarprobotinterfaceRpc::is_ready()");
     }
+    yarprobotinterfaceRpc_is_ready_helper helper{};
     bool ok = yarp().write(helper, helper);
     return ok ? helper.m_return_helper : bool{};
 }
 
 std::string yarprobotinterfaceRpc::quit()
 {
-    yarprobotinterfaceRpc_quit_helper helper{};
     if (!yarp().canWrite()) {
         yError("Missing server method '%s'?", "std::string yarprobotinterfaceRpc::quit()");
     }
+    yarprobotinterfaceRpc_quit_helper helper{};
     bool ok = yarp().write(helper, helper);
     return ok ? helper.m_return_helper : std::string{};
 }
 
 std::string yarprobotinterfaceRpc::bye()
 {
-    yarprobotinterfaceRpc_bye_helper helper{};
     if (!yarp().canWrite()) {
         yError("Missing server method '%s'?", "std::string yarprobotinterfaceRpc::bye()");
     }
+    yarprobotinterfaceRpc_bye_helper helper{};
     bool ok = yarp().write(helper, helper);
     return ok ? helper.m_return_helper : std::string{};
 }
 
 std::string yarprobotinterfaceRpc::exit()
 {
-    yarprobotinterfaceRpc_exit_helper helper{};
     if (!yarp().canWrite()) {
         yError("Missing server method '%s'?", "std::string yarprobotinterfaceRpc::exit()");
     }
+    yarprobotinterfaceRpc_exit_helper helper{};
     bool ok = yarp().write(helper, helper);
     return ok ? helper.m_return_helper : std::string{};
 }

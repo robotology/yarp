@@ -1657,350 +1657,350 @@ IMap2DMsgs::IMap2DMsgs()
 
 bool IMap2DMsgs::clear_all_maps_RPC()
 {
-    IMap2DMsgs_clear_all_maps_RPC_helper helper{};
     if (!yarp().canWrite()) {
         yError("Missing server method '%s'?", "bool IMap2DMsgs::clear_all_maps_RPC()");
     }
+    IMap2DMsgs_clear_all_maps_RPC_helper helper{};
     bool ok = yarp().write(helper, helper);
     return ok ? helper.m_return_helper : bool{};
 }
 
 bool IMap2DMsgs::store_map_RPC(const yarp::dev::Nav2D::MapGrid2D& themap)
 {
-    IMap2DMsgs_store_map_RPC_helper helper{themap};
     if (!yarp().canWrite()) {
         yError("Missing server method '%s'?", "bool IMap2DMsgs::store_map_RPC(const yarp::dev::Nav2D::MapGrid2D& themap)");
     }
+    IMap2DMsgs_store_map_RPC_helper helper{themap};
     bool ok = yarp().write(helper, helper);
     return ok ? helper.m_return_helper : bool{};
 }
 
 return_get_map IMap2DMsgs::get_map_RPC(const std::string& map_name)
 {
-    IMap2DMsgs_get_map_RPC_helper helper{map_name};
     if (!yarp().canWrite()) {
         yError("Missing server method '%s'?", "return_get_map IMap2DMsgs::get_map_RPC(const std::string& map_name)");
     }
+    IMap2DMsgs_get_map_RPC_helper helper{map_name};
     bool ok = yarp().write(helper, helper);
     return ok ? helper.m_return_helper : return_get_map{};
 }
 
 return_get_map_names IMap2DMsgs::get_map_names_RPC()
 {
-    IMap2DMsgs_get_map_names_RPC_helper helper{};
     if (!yarp().canWrite()) {
         yError("Missing server method '%s'?", "return_get_map_names IMap2DMsgs::get_map_names_RPC()");
     }
+    IMap2DMsgs_get_map_names_RPC_helper helper{};
     bool ok = yarp().write(helper, helper);
     return ok ? helper.m_return_helper : return_get_map_names{};
 }
 
 bool IMap2DMsgs::remove_map_RPC(const std::string& map_name)
 {
-    IMap2DMsgs_remove_map_RPC_helper helper{map_name};
     if (!yarp().canWrite()) {
         yError("Missing server method '%s'?", "bool IMap2DMsgs::remove_map_RPC(const std::string& map_name)");
     }
+    IMap2DMsgs_remove_map_RPC_helper helper{map_name};
     bool ok = yarp().write(helper, helper);
     return ok ? helper.m_return_helper : bool{};
 }
 
 bool IMap2DMsgs::store_location_RPC(const std::string& location_name, const yarp::dev::Nav2D::Map2DLocation& loc)
 {
-    IMap2DMsgs_store_location_RPC_helper helper{location_name, loc};
     if (!yarp().canWrite()) {
         yError("Missing server method '%s'?", "bool IMap2DMsgs::store_location_RPC(const std::string& location_name, const yarp::dev::Nav2D::Map2DLocation& loc)");
     }
+    IMap2DMsgs_store_location_RPC_helper helper{location_name, loc};
     bool ok = yarp().write(helper, helper);
     return ok ? helper.m_return_helper : bool{};
 }
 
 bool IMap2DMsgs::store_area_RPC(const std::string& area_name, const yarp::dev::Nav2D::Map2DArea& area)
 {
-    IMap2DMsgs_store_area_RPC_helper helper{area_name, area};
     if (!yarp().canWrite()) {
         yError("Missing server method '%s'?", "bool IMap2DMsgs::store_area_RPC(const std::string& area_name, const yarp::dev::Nav2D::Map2DArea& area)");
     }
+    IMap2DMsgs_store_area_RPC_helper helper{area_name, area};
     bool ok = yarp().write(helper, helper);
     return ok ? helper.m_return_helper : bool{};
 }
 
 bool IMap2DMsgs::store_path_RPC(const std::string& path_name, const yarp::dev::Nav2D::Map2DPath& path)
 {
-    IMap2DMsgs_store_path_RPC_helper helper{path_name, path};
     if (!yarp().canWrite()) {
         yError("Missing server method '%s'?", "bool IMap2DMsgs::store_path_RPC(const std::string& path_name, const yarp::dev::Nav2D::Map2DPath& path)");
     }
+    IMap2DMsgs_store_path_RPC_helper helper{path_name, path};
     bool ok = yarp().write(helper, helper);
     return ok ? helper.m_return_helper : bool{};
 }
 
 return_get_location IMap2DMsgs::get_location_RPC(const std::string& location_name)
 {
-    IMap2DMsgs_get_location_RPC_helper helper{location_name};
     if (!yarp().canWrite()) {
         yError("Missing server method '%s'?", "return_get_location IMap2DMsgs::get_location_RPC(const std::string& location_name)");
     }
+    IMap2DMsgs_get_location_RPC_helper helper{location_name};
     bool ok = yarp().write(helper, helper);
     return ok ? helper.m_return_helper : return_get_location{};
 }
 
 return_get_area IMap2DMsgs::get_area_RPC(const std::string& area_name)
 {
-    IMap2DMsgs_get_area_RPC_helper helper{area_name};
     if (!yarp().canWrite()) {
         yError("Missing server method '%s'?", "return_get_area IMap2DMsgs::get_area_RPC(const std::string& area_name)");
     }
+    IMap2DMsgs_get_area_RPC_helper helper{area_name};
     bool ok = yarp().write(helper, helper);
     return ok ? helper.m_return_helper : return_get_area{};
 }
 
 return_get_path IMap2DMsgs::get_path_RPC(const std::string& path_name)
 {
-    IMap2DMsgs_get_path_RPC_helper helper{path_name};
     if (!yarp().canWrite()) {
         yError("Missing server method '%s'?", "return_get_path IMap2DMsgs::get_path_RPC(const std::string& path_name)");
     }
+    IMap2DMsgs_get_path_RPC_helper helper{path_name};
     bool ok = yarp().write(helper, helper);
     return ok ? helper.m_return_helper : return_get_path{};
 }
 
 return_get_locations_list IMap2DMsgs::get_locations_list_RPC()
 {
-    IMap2DMsgs_get_locations_list_RPC_helper helper{};
     if (!yarp().canWrite()) {
         yError("Missing server method '%s'?", "return_get_locations_list IMap2DMsgs::get_locations_list_RPC()");
     }
+    IMap2DMsgs_get_locations_list_RPC_helper helper{};
     bool ok = yarp().write(helper, helper);
     return ok ? helper.m_return_helper : return_get_locations_list{};
 }
 
 return_get_areas_list IMap2DMsgs::get_areas_list_RPC()
 {
-    IMap2DMsgs_get_areas_list_RPC_helper helper{};
     if (!yarp().canWrite()) {
         yError("Missing server method '%s'?", "return_get_areas_list IMap2DMsgs::get_areas_list_RPC()");
     }
+    IMap2DMsgs_get_areas_list_RPC_helper helper{};
     bool ok = yarp().write(helper, helper);
     return ok ? helper.m_return_helper : return_get_areas_list{};
 }
 
 return_get_paths_list IMap2DMsgs::get_paths_list_RPC()
 {
-    IMap2DMsgs_get_paths_list_RPC_helper helper{};
     if (!yarp().canWrite()) {
         yError("Missing server method '%s'?", "return_get_paths_list IMap2DMsgs::get_paths_list_RPC()");
     }
+    IMap2DMsgs_get_paths_list_RPC_helper helper{};
     bool ok = yarp().write(helper, helper);
     return ok ? helper.m_return_helper : return_get_paths_list{};
 }
 
 return_get_all_locations IMap2DMsgs::get_all_locations_RPC()
 {
-    IMap2DMsgs_get_all_locations_RPC_helper helper{};
     if (!yarp().canWrite()) {
         yError("Missing server method '%s'?", "return_get_all_locations IMap2DMsgs::get_all_locations_RPC()");
     }
+    IMap2DMsgs_get_all_locations_RPC_helper helper{};
     bool ok = yarp().write(helper, helper);
     return ok ? helper.m_return_helper : return_get_all_locations{};
 }
 
 return_get_all_areas IMap2DMsgs::get_all_areas_RPC()
 {
-    IMap2DMsgs_get_all_areas_RPC_helper helper{};
     if (!yarp().canWrite()) {
         yError("Missing server method '%s'?", "return_get_all_areas IMap2DMsgs::get_all_areas_RPC()");
     }
+    IMap2DMsgs_get_all_areas_RPC_helper helper{};
     bool ok = yarp().write(helper, helper);
     return ok ? helper.m_return_helper : return_get_all_areas{};
 }
 
 return_get_all_paths IMap2DMsgs::get_all_paths_RPC()
 {
-    IMap2DMsgs_get_all_paths_RPC_helper helper{};
     if (!yarp().canWrite()) {
         yError("Missing server method '%s'?", "return_get_all_paths IMap2DMsgs::get_all_paths_RPC()");
     }
+    IMap2DMsgs_get_all_paths_RPC_helper helper{};
     bool ok = yarp().write(helper, helper);
     return ok ? helper.m_return_helper : return_get_all_paths{};
 }
 
 bool IMap2DMsgs::rename_location_RPC(const std::string& original_name, const std::string& new_name)
 {
-    IMap2DMsgs_rename_location_RPC_helper helper{original_name, new_name};
     if (!yarp().canWrite()) {
         yError("Missing server method '%s'?", "bool IMap2DMsgs::rename_location_RPC(const std::string& original_name, const std::string& new_name)");
     }
+    IMap2DMsgs_rename_location_RPC_helper helper{original_name, new_name};
     bool ok = yarp().write(helper, helper);
     return ok ? helper.m_return_helper : bool{};
 }
 
 bool IMap2DMsgs::delete_location_RPC(const std::string& location_name)
 {
-    IMap2DMsgs_delete_location_RPC_helper helper{location_name};
     if (!yarp().canWrite()) {
         yError("Missing server method '%s'?", "bool IMap2DMsgs::delete_location_RPC(const std::string& location_name)");
     }
+    IMap2DMsgs_delete_location_RPC_helper helper{location_name};
     bool ok = yarp().write(helper, helper);
     return ok ? helper.m_return_helper : bool{};
 }
 
 bool IMap2DMsgs::delete_path_RPC(const std::string& path_name)
 {
-    IMap2DMsgs_delete_path_RPC_helper helper{path_name};
     if (!yarp().canWrite()) {
         yError("Missing server method '%s'?", "bool IMap2DMsgs::delete_path_RPC(const std::string& path_name)");
     }
+    IMap2DMsgs_delete_path_RPC_helper helper{path_name};
     bool ok = yarp().write(helper, helper);
     return ok ? helper.m_return_helper : bool{};
 }
 
 bool IMap2DMsgs::rename_area_RPC(const std::string& original_name, const std::string& new_name)
 {
-    IMap2DMsgs_rename_area_RPC_helper helper{original_name, new_name};
     if (!yarp().canWrite()) {
         yError("Missing server method '%s'?", "bool IMap2DMsgs::rename_area_RPC(const std::string& original_name, const std::string& new_name)");
     }
+    IMap2DMsgs_rename_area_RPC_helper helper{original_name, new_name};
     bool ok = yarp().write(helper, helper);
     return ok ? helper.m_return_helper : bool{};
 }
 
 bool IMap2DMsgs::rename_path_RPC(const std::string& original_name, const std::string& new_name)
 {
-    IMap2DMsgs_rename_path_RPC_helper helper{original_name, new_name};
     if (!yarp().canWrite()) {
         yError("Missing server method '%s'?", "bool IMap2DMsgs::rename_path_RPC(const std::string& original_name, const std::string& new_name)");
     }
+    IMap2DMsgs_rename_path_RPC_helper helper{original_name, new_name};
     bool ok = yarp().write(helper, helper);
     return ok ? helper.m_return_helper : bool{};
 }
 
 bool IMap2DMsgs::delete_area_RPC(const std::string& area_name)
 {
-    IMap2DMsgs_delete_area_RPC_helper helper{area_name};
     if (!yarp().canWrite()) {
         yError("Missing server method '%s'?", "bool IMap2DMsgs::delete_area_RPC(const std::string& area_name)");
     }
+    IMap2DMsgs_delete_area_RPC_helper helper{area_name};
     bool ok = yarp().write(helper, helper);
     return ok ? helper.m_return_helper : bool{};
 }
 
 bool IMap2DMsgs::clear_all_locations_RPC()
 {
-    IMap2DMsgs_clear_all_locations_RPC_helper helper{};
     if (!yarp().canWrite()) {
         yError("Missing server method '%s'?", "bool IMap2DMsgs::clear_all_locations_RPC()");
     }
+    IMap2DMsgs_clear_all_locations_RPC_helper helper{};
     bool ok = yarp().write(helper, helper);
     return ok ? helper.m_return_helper : bool{};
 }
 
 bool IMap2DMsgs::clear_all_areas_RPC()
 {
-    IMap2DMsgs_clear_all_areas_RPC_helper helper{};
     if (!yarp().canWrite()) {
         yError("Missing server method '%s'?", "bool IMap2DMsgs::clear_all_areas_RPC()");
     }
+    IMap2DMsgs_clear_all_areas_RPC_helper helper{};
     bool ok = yarp().write(helper, helper);
     return ok ? helper.m_return_helper : bool{};
 }
 
 bool IMap2DMsgs::clear_all_paths_RPC()
 {
-    IMap2DMsgs_clear_all_paths_RPC_helper helper{};
     if (!yarp().canWrite()) {
         yError("Missing server method '%s'?", "bool IMap2DMsgs::clear_all_paths_RPC()");
     }
+    IMap2DMsgs_clear_all_paths_RPC_helper helper{};
     bool ok = yarp().write(helper, helper);
     return ok ? helper.m_return_helper : bool{};
 }
 
 bool IMap2DMsgs::clear_all_maps_temporary_flags_RPC()
 {
-    IMap2DMsgs_clear_all_maps_temporary_flags_RPC_helper helper{};
     if (!yarp().canWrite()) {
         yError("Missing server method '%s'?", "bool IMap2DMsgs::clear_all_maps_temporary_flags_RPC()");
     }
+    IMap2DMsgs_clear_all_maps_temporary_flags_RPC_helper helper{};
     bool ok = yarp().write(helper, helper);
     return ok ? helper.m_return_helper : bool{};
 }
 
 bool IMap2DMsgs::clear_map_temporary_flags_RPC(const std::string& map_name)
 {
-    IMap2DMsgs_clear_map_temporary_flags_RPC_helper helper{map_name};
     if (!yarp().canWrite()) {
         yError("Missing server method '%s'?", "bool IMap2DMsgs::clear_map_temporary_flags_RPC(const std::string& map_name)");
     }
+    IMap2DMsgs_clear_map_temporary_flags_RPC_helper helper{map_name};
     bool ok = yarp().write(helper, helper);
     return ok ? helper.m_return_helper : bool{};
 }
 
 bool IMap2DMsgs::save_maps_collection_RPC(const std::string& maps_collection_file)
 {
-    IMap2DMsgs_save_maps_collection_RPC_helper helper{maps_collection_file};
     if (!yarp().canWrite()) {
         yError("Missing server method '%s'?", "bool IMap2DMsgs::save_maps_collection_RPC(const std::string& maps_collection_file)");
     }
+    IMap2DMsgs_save_maps_collection_RPC_helper helper{maps_collection_file};
     bool ok = yarp().write(helper, helper);
     return ok ? helper.m_return_helper : bool{};
 }
 
 bool IMap2DMsgs::load_maps_collection_RPC(const std::string& maps_collection_file)
 {
-    IMap2DMsgs_load_maps_collection_RPC_helper helper{maps_collection_file};
     if (!yarp().canWrite()) {
         yError("Missing server method '%s'?", "bool IMap2DMsgs::load_maps_collection_RPC(const std::string& maps_collection_file)");
     }
+    IMap2DMsgs_load_maps_collection_RPC_helper helper{maps_collection_file};
     bool ok = yarp().write(helper, helper);
     return ok ? helper.m_return_helper : bool{};
 }
 
 bool IMap2DMsgs::save_locations_and_extras_RPC(const std::string& locations_collection_file)
 {
-    IMap2DMsgs_save_locations_and_extras_RPC_helper helper{locations_collection_file};
     if (!yarp().canWrite()) {
         yError("Missing server method '%s'?", "bool IMap2DMsgs::save_locations_and_extras_RPC(const std::string& locations_collection_file)");
     }
+    IMap2DMsgs_save_locations_and_extras_RPC_helper helper{locations_collection_file};
     bool ok = yarp().write(helper, helper);
     return ok ? helper.m_return_helper : bool{};
 }
 
 bool IMap2DMsgs::load_locations_and_extras_RPC(const std::string& locations_collection_file)
 {
-    IMap2DMsgs_load_locations_and_extras_RPC_helper helper{locations_collection_file};
     if (!yarp().canWrite()) {
         yError("Missing server method '%s'?", "bool IMap2DMsgs::load_locations_and_extras_RPC(const std::string& locations_collection_file)");
     }
+    IMap2DMsgs_load_locations_and_extras_RPC_helper helper{locations_collection_file};
     bool ok = yarp().write(helper, helper);
     return ok ? helper.m_return_helper : bool{};
 }
 
 bool IMap2DMsgs::save_map_to_disk_RPC(const std::string& map_name, const std::string& file_name)
 {
-    IMap2DMsgs_save_map_to_disk_RPC_helper helper{map_name, file_name};
     if (!yarp().canWrite()) {
         yError("Missing server method '%s'?", "bool IMap2DMsgs::save_map_to_disk_RPC(const std::string& map_name, const std::string& file_name)");
     }
+    IMap2DMsgs_save_map_to_disk_RPC_helper helper{map_name, file_name};
     bool ok = yarp().write(helper, helper);
     return ok ? helper.m_return_helper : bool{};
 }
 
 bool IMap2DMsgs::load_map_from_disk_RPC(const std::string& file_name)
 {
-    IMap2DMsgs_load_map_from_disk_RPC_helper helper{file_name};
     if (!yarp().canWrite()) {
         yError("Missing server method '%s'?", "bool IMap2DMsgs::load_map_from_disk_RPC(const std::string& file_name)");
     }
+    IMap2DMsgs_load_map_from_disk_RPC_helper helper{file_name};
     bool ok = yarp().write(helper, helper);
     return ok ? helper.m_return_helper : bool{};
 }
 
 bool IMap2DMsgs::enable_maps_compression_RPC(const bool enable_compression)
 {
-    IMap2DMsgs_enable_maps_compression_RPC_helper helper{enable_compression};
     if (!yarp().canWrite()) {
         yError("Missing server method '%s'?", "bool IMap2DMsgs::enable_maps_compression_RPC(const bool enable_compression)");
     }
+    IMap2DMsgs_enable_maps_compression_RPC_helper helper{enable_compression};
     bool ok = yarp().write(helper, helper);
     return ok ? helper.m_return_helper : bool{};
 }

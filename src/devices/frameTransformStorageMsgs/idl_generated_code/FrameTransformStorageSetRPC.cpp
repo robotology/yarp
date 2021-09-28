@@ -221,40 +221,40 @@ FrameTransformStorageSetRPC::FrameTransformStorageSetRPC()
 
 bool FrameTransformStorageSetRPC::setTransformsRPC(const std::vector<yarp::math::FrameTransform>& transforms)
 {
-    FrameTransformStorageSetRPC_setTransformsRPC_helper helper{transforms};
     if (!yarp().canWrite()) {
         yError("Missing server method '%s'?", "bool FrameTransformStorageSetRPC::setTransformsRPC(const std::vector<yarp::math::FrameTransform>& transforms)");
     }
+    FrameTransformStorageSetRPC_setTransformsRPC_helper helper{transforms};
     bool ok = yarp().write(helper, helper);
     return ok ? helper.m_return_helper : bool{};
 }
 
 bool FrameTransformStorageSetRPC::setTransformRPC(const yarp::math::FrameTransform& transform)
 {
-    FrameTransformStorageSetRPC_setTransformRPC_helper helper{transform};
     if (!yarp().canWrite()) {
         yError("Missing server method '%s'?", "bool FrameTransformStorageSetRPC::setTransformRPC(const yarp::math::FrameTransform& transform)");
     }
+    FrameTransformStorageSetRPC_setTransformRPC_helper helper{transform};
     bool ok = yarp().write(helper, helper);
     return ok ? helper.m_return_helper : bool{};
 }
 
 bool FrameTransformStorageSetRPC::deleteTransformRPC(const std::string& src, const std::string& dst)
 {
-    FrameTransformStorageSetRPC_deleteTransformRPC_helper helper{src, dst};
     if (!yarp().canWrite()) {
         yError("Missing server method '%s'?", "bool FrameTransformStorageSetRPC::deleteTransformRPC(const std::string& src, const std::string& dst)");
     }
+    FrameTransformStorageSetRPC_deleteTransformRPC_helper helper{src, dst};
     bool ok = yarp().write(helper, helper);
     return ok ? helper.m_return_helper : bool{};
 }
 
 bool FrameTransformStorageSetRPC::clearAllRPC()
 {
-    FrameTransformStorageSetRPC_clearAllRPC_helper helper{};
     if (!yarp().canWrite()) {
         yError("Missing server method '%s'?", "bool FrameTransformStorageSetRPC::clearAllRPC()");
     }
+    FrameTransformStorageSetRPC_clearAllRPC_helper helper{};
     bool ok = yarp().write(helper, helper);
     return ok ? helper.m_return_helper : bool{};
 }
