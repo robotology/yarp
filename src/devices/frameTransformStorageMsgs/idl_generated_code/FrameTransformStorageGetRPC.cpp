@@ -35,6 +35,7 @@ public:
 
     bool readReply(yarp::os::idl::WireReader& reader);
 
+    using funcptr_t = return_getAllTransforms (*)();
     void call(FrameTransformStorageGetRPC* ptr);
 
     return_getAllTransforms m_return_helper{};

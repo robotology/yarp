@@ -35,6 +35,7 @@ public:
 
     bool readReply(yarp::os::idl::WireReader& reader);
 
+    using funcptr_t = SensorRPCData (*)();
     void call(MultipleAnalogSensorsMetadata* ptr);
 
     SensorRPCData m_return_helper{};

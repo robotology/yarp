@@ -36,6 +36,7 @@ public:
 
     bool readReply(yarp::os::idl::WireReader& reader);
 
+    using funcptr_t = bool (*)(const std::vector<yarp::math::FrameTransform>&);
     void call(FrameTransformStorageSetRPC* ptr);
 
     std::vector<yarp::math::FrameTransform> m_transforms;
@@ -74,6 +75,7 @@ public:
 
     bool readReply(yarp::os::idl::WireReader& reader);
 
+    using funcptr_t = bool (*)(const yarp::math::FrameTransform&);
     void call(FrameTransformStorageSetRPC* ptr);
 
     yarp::math::FrameTransform m_transform;
@@ -112,6 +114,7 @@ public:
 
     bool readReply(yarp::os::idl::WireReader& reader);
 
+    using funcptr_t = bool (*)(const std::string&, const std::string&);
     void call(FrameTransformStorageSetRPC* ptr);
 
     std::string m_src;
@@ -150,6 +153,7 @@ public:
 
     bool readReply(yarp::os::idl::WireReader& reader);
 
+    using funcptr_t = bool (*)();
     void call(FrameTransformStorageSetRPC* ptr);
 
     bool m_return_helper{};

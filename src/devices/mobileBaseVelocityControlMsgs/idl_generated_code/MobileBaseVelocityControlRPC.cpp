@@ -36,6 +36,7 @@ public:
 
     bool readReply(yarp::os::idl::WireReader& reader);
 
+    using funcptr_t = bool (*)(const double, const double, const double, const double);
     void call(MobileBaseVelocityControlRPC* ptr);
 
     double m_x_vel;
@@ -76,6 +77,7 @@ public:
 
     bool readReply(yarp::os::idl::WireReader& reader);
 
+    using funcptr_t = return_getLastVelocityCommand (*)();
     void call(MobileBaseVelocityControlRPC* ptr);
 
     return_getLastVelocityCommand m_return_helper{};

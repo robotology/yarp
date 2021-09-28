@@ -36,6 +36,7 @@ public:
 
     bool readReply(yarp::os::idl::WireReader& reader);
 
+    using funcptr_t = void (*)(const double);
     void call(FakeBatteryService* ptr) const;
 
     double m_voltage;
@@ -72,6 +73,7 @@ public:
 
     bool readReply(yarp::os::idl::WireReader& reader);
 
+    using funcptr_t = void (*)(const double);
     void call(FakeBatteryService* ptr) const;
 
     double m_current;
@@ -108,6 +110,7 @@ public:
 
     bool readReply(yarp::os::idl::WireReader& reader);
 
+    using funcptr_t = void (*)(const double);
     void call(FakeBatteryService* ptr) const;
 
     double m_charge;
@@ -144,6 +147,7 @@ public:
 
     bool readReply(yarp::os::idl::WireReader& reader);
 
+    using funcptr_t = void (*)(const std::string&);
     void call(FakeBatteryService* ptr) const;
 
     std::string m_info;
@@ -180,6 +184,7 @@ public:
 
     bool readReply(yarp::os::idl::WireReader& reader);
 
+    using funcptr_t = void (*)(const double);
     void call(FakeBatteryService* ptr) const;
 
     double m_temperature;
@@ -215,6 +220,7 @@ public:
 
     bool readReply(yarp::os::idl::WireReader& reader);
 
+    using funcptr_t = double (*)();
     void call(FakeBatteryService* ptr);
 
     double m_return_helper{};
@@ -250,6 +256,7 @@ public:
 
     bool readReply(yarp::os::idl::WireReader& reader);
 
+    using funcptr_t = double (*)();
     void call(FakeBatteryService* ptr);
 
     double m_return_helper{};
@@ -285,6 +292,7 @@ public:
 
     bool readReply(yarp::os::idl::WireReader& reader);
 
+    using funcptr_t = double (*)();
     void call(FakeBatteryService* ptr);
 
     double m_return_helper{};
@@ -320,6 +328,7 @@ public:
 
     bool readReply(yarp::os::idl::WireReader& reader);
 
+    using funcptr_t = std::string (*)();
     void call(FakeBatteryService* ptr);
 
     std::string m_return_helper{};
@@ -355,6 +364,7 @@ public:
 
     bool readReply(yarp::os::idl::WireReader& reader);
 
+    using funcptr_t = std::string (*)();
     void call(FakeBatteryService* ptr);
 
     std::string m_return_helper{};
@@ -390,6 +400,7 @@ public:
 
     bool readReply(yarp::os::idl::WireReader& reader);
 
+    using funcptr_t = double (*)();
     void call(FakeBatteryService* ptr);
 
     double m_return_helper{};

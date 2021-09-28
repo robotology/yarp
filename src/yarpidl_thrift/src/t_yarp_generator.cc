@@ -3666,6 +3666,7 @@ void t_yarp_generator::generate_service_helper_classes_decl(t_function* function
         f_cpp_ << '\n';
         f_cpp_ << indent_cpp() << "bool readReply(yarp::os::idl::WireReader& reader);\n";
         f_cpp_ << '\n';
+        f_cpp_ << indent_cpp() << "using funcptr_t = " << function_prototype(function, true, false, false, false, "", "(*)" /*, service_name_ + "*" */) << ";\n";
         f_cpp_ << indent_cpp() << "void call(" << service_name_ << "* ptr)";
         if (returntype->is_void()) {
             f_cpp_ << " const";

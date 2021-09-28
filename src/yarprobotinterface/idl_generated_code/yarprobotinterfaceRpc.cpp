@@ -35,6 +35,7 @@ public:
 
     bool readReply(yarp::os::idl::WireReader& reader);
 
+    using funcptr_t = std::string (*)();
     void call(yarprobotinterfaceRpc* ptr);
 
     std::string m_return_helper{};
@@ -72,6 +73,7 @@ public:
 
     bool readReply(yarp::os::idl::WireReader& reader);
 
+    using funcptr_t = std::int32_t (*)();
     void call(yarprobotinterfaceRpc* ptr);
 
     std::int32_t m_return_helper{};
@@ -109,6 +111,7 @@ public:
 
     bool readReply(yarp::os::idl::WireReader& reader);
 
+    using funcptr_t = std::string (*)();
     void call(yarprobotinterfaceRpc* ptr);
 
     std::string m_return_helper{};
@@ -146,6 +149,7 @@ public:
 
     bool readReply(yarp::os::idl::WireReader& reader);
 
+    using funcptr_t = bool (*)();
     void call(yarprobotinterfaceRpc* ptr);
 
     bool m_return_helper{};
@@ -184,6 +188,7 @@ public:
 
     bool readReply(yarp::os::idl::WireReader& reader);
 
+    using funcptr_t = std::string (*)();
     void call(yarprobotinterfaceRpc* ptr);
 
     std::string m_return_helper{};
@@ -221,6 +226,7 @@ public:
 
     bool readReply(yarp::os::idl::WireReader& reader);
 
+    using funcptr_t = std::string (*)();
     void call(yarprobotinterfaceRpc* ptr);
 
     std::string m_return_helper{};
@@ -258,6 +264,7 @@ public:
 
     bool readReply(yarp::os::idl::WireReader& reader);
 
+    using funcptr_t = std::string (*)();
     void call(yarprobotinterfaceRpc* ptr);
 
     std::string m_return_helper{};

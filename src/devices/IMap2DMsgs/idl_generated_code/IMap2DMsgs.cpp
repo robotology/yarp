@@ -35,6 +35,7 @@ public:
 
     bool readReply(yarp::os::idl::WireReader& reader);
 
+    using funcptr_t = bool (*)();
     void call(IMap2DMsgs* ptr);
 
     bool m_return_helper{};
@@ -71,6 +72,7 @@ public:
 
     bool readReply(yarp::os::idl::WireReader& reader);
 
+    using funcptr_t = bool (*)(const yarp::dev::Nav2D::MapGrid2D&);
     void call(IMap2DMsgs* ptr);
 
     yarp::dev::Nav2D::MapGrid2D m_themap;
@@ -109,6 +111,7 @@ public:
 
     bool readReply(yarp::os::idl::WireReader& reader);
 
+    using funcptr_t = return_get_map (*)(const std::string&);
     void call(IMap2DMsgs* ptr);
 
     std::string m_map_name;
@@ -146,6 +149,7 @@ public:
 
     bool readReply(yarp::os::idl::WireReader& reader);
 
+    using funcptr_t = return_get_map_names (*)();
     void call(IMap2DMsgs* ptr);
 
     return_get_map_names m_return_helper{};
@@ -182,6 +186,7 @@ public:
 
     bool readReply(yarp::os::idl::WireReader& reader);
 
+    using funcptr_t = bool (*)(const std::string&);
     void call(IMap2DMsgs* ptr);
 
     std::string m_map_name;
@@ -220,6 +225,7 @@ public:
 
     bool readReply(yarp::os::idl::WireReader& reader);
 
+    using funcptr_t = bool (*)(const std::string&, const yarp::dev::Nav2D::Map2DLocation&);
     void call(IMap2DMsgs* ptr);
 
     std::string m_location_name;
@@ -259,6 +265,7 @@ public:
 
     bool readReply(yarp::os::idl::WireReader& reader);
 
+    using funcptr_t = bool (*)(const std::string&, const yarp::dev::Nav2D::Map2DArea&);
     void call(IMap2DMsgs* ptr);
 
     std::string m_area_name;
@@ -298,6 +305,7 @@ public:
 
     bool readReply(yarp::os::idl::WireReader& reader);
 
+    using funcptr_t = bool (*)(const std::string&, const yarp::dev::Nav2D::Map2DPath&);
     void call(IMap2DMsgs* ptr);
 
     std::string m_path_name;
@@ -337,6 +345,7 @@ public:
 
     bool readReply(yarp::os::idl::WireReader& reader);
 
+    using funcptr_t = return_get_location (*)(const std::string&);
     void call(IMap2DMsgs* ptr);
 
     std::string m_location_name;
@@ -375,6 +384,7 @@ public:
 
     bool readReply(yarp::os::idl::WireReader& reader);
 
+    using funcptr_t = return_get_area (*)(const std::string&);
     void call(IMap2DMsgs* ptr);
 
     std::string m_area_name;
@@ -413,6 +423,7 @@ public:
 
     bool readReply(yarp::os::idl::WireReader& reader);
 
+    using funcptr_t = return_get_path (*)(const std::string&);
     void call(IMap2DMsgs* ptr);
 
     std::string m_path_name;
@@ -450,6 +461,7 @@ public:
 
     bool readReply(yarp::os::idl::WireReader& reader);
 
+    using funcptr_t = return_get_locations_list (*)();
     void call(IMap2DMsgs* ptr);
 
     return_get_locations_list m_return_helper{};
@@ -485,6 +497,7 @@ public:
 
     bool readReply(yarp::os::idl::WireReader& reader);
 
+    using funcptr_t = return_get_areas_list (*)();
     void call(IMap2DMsgs* ptr);
 
     return_get_areas_list m_return_helper{};
@@ -520,6 +533,7 @@ public:
 
     bool readReply(yarp::os::idl::WireReader& reader);
 
+    using funcptr_t = return_get_paths_list (*)();
     void call(IMap2DMsgs* ptr);
 
     return_get_paths_list m_return_helper{};
@@ -555,6 +569,7 @@ public:
 
     bool readReply(yarp::os::idl::WireReader& reader);
 
+    using funcptr_t = return_get_all_locations (*)();
     void call(IMap2DMsgs* ptr);
 
     return_get_all_locations m_return_helper{};
@@ -590,6 +605,7 @@ public:
 
     bool readReply(yarp::os::idl::WireReader& reader);
 
+    using funcptr_t = return_get_all_areas (*)();
     void call(IMap2DMsgs* ptr);
 
     return_get_all_areas m_return_helper{};
@@ -625,6 +641,7 @@ public:
 
     bool readReply(yarp::os::idl::WireReader& reader);
 
+    using funcptr_t = return_get_all_paths (*)();
     void call(IMap2DMsgs* ptr);
 
     return_get_all_paths m_return_helper{};
@@ -661,6 +678,7 @@ public:
 
     bool readReply(yarp::os::idl::WireReader& reader);
 
+    using funcptr_t = bool (*)(const std::string&, const std::string&);
     void call(IMap2DMsgs* ptr);
 
     std::string m_original_name;
@@ -700,6 +718,7 @@ public:
 
     bool readReply(yarp::os::idl::WireReader& reader);
 
+    using funcptr_t = bool (*)(const std::string&);
     void call(IMap2DMsgs* ptr);
 
     std::string m_location_name;
@@ -738,6 +757,7 @@ public:
 
     bool readReply(yarp::os::idl::WireReader& reader);
 
+    using funcptr_t = bool (*)(const std::string&);
     void call(IMap2DMsgs* ptr);
 
     std::string m_path_name;
@@ -776,6 +796,7 @@ public:
 
     bool readReply(yarp::os::idl::WireReader& reader);
 
+    using funcptr_t = bool (*)(const std::string&, const std::string&);
     void call(IMap2DMsgs* ptr);
 
     std::string m_original_name;
@@ -815,6 +836,7 @@ public:
 
     bool readReply(yarp::os::idl::WireReader& reader);
 
+    using funcptr_t = bool (*)(const std::string&, const std::string&);
     void call(IMap2DMsgs* ptr);
 
     std::string m_original_name;
@@ -854,6 +876,7 @@ public:
 
     bool readReply(yarp::os::idl::WireReader& reader);
 
+    using funcptr_t = bool (*)(const std::string&);
     void call(IMap2DMsgs* ptr);
 
     std::string m_area_name;
@@ -891,6 +914,7 @@ public:
 
     bool readReply(yarp::os::idl::WireReader& reader);
 
+    using funcptr_t = bool (*)();
     void call(IMap2DMsgs* ptr);
 
     bool m_return_helper{};
@@ -926,6 +950,7 @@ public:
 
     bool readReply(yarp::os::idl::WireReader& reader);
 
+    using funcptr_t = bool (*)();
     void call(IMap2DMsgs* ptr);
 
     bool m_return_helper{};
@@ -961,6 +986,7 @@ public:
 
     bool readReply(yarp::os::idl::WireReader& reader);
 
+    using funcptr_t = bool (*)();
     void call(IMap2DMsgs* ptr);
 
     bool m_return_helper{};
@@ -996,6 +1022,7 @@ public:
 
     bool readReply(yarp::os::idl::WireReader& reader);
 
+    using funcptr_t = bool (*)();
     void call(IMap2DMsgs* ptr);
 
     bool m_return_helper{};
@@ -1032,6 +1059,7 @@ public:
 
     bool readReply(yarp::os::idl::WireReader& reader);
 
+    using funcptr_t = bool (*)(const std::string&);
     void call(IMap2DMsgs* ptr);
 
     std::string m_map_name;
@@ -1070,6 +1098,7 @@ public:
 
     bool readReply(yarp::os::idl::WireReader& reader);
 
+    using funcptr_t = bool (*)(const std::string&);
     void call(IMap2DMsgs* ptr);
 
     std::string m_maps_collection_file;
@@ -1108,6 +1137,7 @@ public:
 
     bool readReply(yarp::os::idl::WireReader& reader);
 
+    using funcptr_t = bool (*)(const std::string&);
     void call(IMap2DMsgs* ptr);
 
     std::string m_maps_collection_file;
@@ -1146,6 +1176,7 @@ public:
 
     bool readReply(yarp::os::idl::WireReader& reader);
 
+    using funcptr_t = bool (*)(const std::string&);
     void call(IMap2DMsgs* ptr);
 
     std::string m_locations_collection_file;
@@ -1184,6 +1215,7 @@ public:
 
     bool readReply(yarp::os::idl::WireReader& reader);
 
+    using funcptr_t = bool (*)(const std::string&);
     void call(IMap2DMsgs* ptr);
 
     std::string m_locations_collection_file;
@@ -1222,6 +1254,7 @@ public:
 
     bool readReply(yarp::os::idl::WireReader& reader);
 
+    using funcptr_t = bool (*)(const std::string&, const std::string&);
     void call(IMap2DMsgs* ptr);
 
     std::string m_map_name;
@@ -1261,6 +1294,7 @@ public:
 
     bool readReply(yarp::os::idl::WireReader& reader);
 
+    using funcptr_t = bool (*)(const std::string&);
     void call(IMap2DMsgs* ptr);
 
     std::string m_file_name;
@@ -1299,6 +1333,7 @@ public:
 
     bool readReply(yarp::os::idl::WireReader& reader);
 
+    using funcptr_t = bool (*)(const bool);
     void call(IMap2DMsgs* ptr);
 
     bool m_enable_compression;

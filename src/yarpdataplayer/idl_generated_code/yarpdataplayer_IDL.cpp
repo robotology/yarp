@@ -35,6 +35,7 @@ public:
 
     bool readReply(yarp::os::idl::WireReader& reader);
 
+    using funcptr_t = bool (*)();
     void call(yarpdataplayer_IDL* ptr);
 
     bool m_return_helper{};
@@ -75,6 +76,7 @@ public:
 
     bool readReply(yarp::os::idl::WireReader& reader);
 
+    using funcptr_t = bool (*)(const std::int32_t);
     void call(yarpdataplayer_IDL* ptr);
 
     std::int32_t m_frameNum;
@@ -118,6 +120,7 @@ public:
 
     bool readReply(yarp::os::idl::WireReader& reader);
 
+    using funcptr_t = std::int32_t (*)(const std::string&);
     void call(yarpdataplayer_IDL* ptr);
 
     std::string m_name;
@@ -161,6 +164,7 @@ public:
 
     bool readReply(yarp::os::idl::WireReader& reader);
 
+    using funcptr_t = bool (*)(const std::string&);
     void call(yarpdataplayer_IDL* ptr);
 
     std::string m_path;
@@ -201,6 +205,7 @@ public:
 
     bool readReply(yarp::os::idl::WireReader& reader);
 
+    using funcptr_t = std::int32_t (*)();
     void call(yarpdataplayer_IDL* ptr);
 
     std::int32_t m_return_helper{};
@@ -239,6 +244,7 @@ public:
 
     bool readReply(yarp::os::idl::WireReader& reader);
 
+    using funcptr_t = std::string (*)();
     void call(yarpdataplayer_IDL* ptr);
 
     std::string m_return_helper{};
@@ -277,6 +283,7 @@ public:
 
     bool readReply(yarp::os::idl::WireReader& reader);
 
+    using funcptr_t = bool (*)();
     void call(yarpdataplayer_IDL* ptr);
 
     bool m_return_helper{};
@@ -315,6 +322,7 @@ public:
 
     bool readReply(yarp::os::idl::WireReader& reader);
 
+    using funcptr_t = bool (*)();
     void call(yarpdataplayer_IDL* ptr);
 
     bool m_return_helper{};
@@ -353,6 +361,7 @@ public:
 
     bool readReply(yarp::os::idl::WireReader& reader);
 
+    using funcptr_t = bool (*)();
     void call(yarpdataplayer_IDL* ptr);
 
     bool m_return_helper{};
@@ -391,6 +400,7 @@ public:
 
     bool readReply(yarp::os::idl::WireReader& reader);
 
+    using funcptr_t = bool (*)();
     void call(yarpdataplayer_IDL* ptr);
 
     bool m_return_helper{};
