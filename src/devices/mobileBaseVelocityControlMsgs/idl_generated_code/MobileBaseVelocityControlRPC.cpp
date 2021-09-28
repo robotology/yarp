@@ -22,6 +22,22 @@ public:
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
 
+    bool writeCmd(yarp::os::idl::WireWriter& writer) const;
+    bool writeCmdLen(yarp::os::idl::WireWriter& writer) const;
+    bool writeCmdTag(yarp::os::idl::WireWriter& writer) const;
+    bool writeCmdArgs(yarp::os::idl::WireWriter& writer) const;
+
+    bool readCmd(yarp::os::idl::WireReader& reader);
+    bool readCmdLen(yarp::os::idl::WireReader& reader);
+    bool readCmdTag(yarp::os::idl::WireReader& reader);
+    bool readCmdArgs(yarp::os::idl::WireReader& reader);
+
+    bool writeReply(yarp::os::idl::WireWriter& writer) const;
+
+    bool readReply(yarp::os::idl::WireReader& reader);
+
+    void call(MobileBaseVelocityControlRPC* ptr);
+
     double m_x_vel;
     double m_y_vel;
     double m_theta_vel;
@@ -46,6 +62,22 @@ public:
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
 
+    bool writeCmd(yarp::os::idl::WireWriter& writer) const;
+    bool writeCmdLen(yarp::os::idl::WireWriter& writer) const;
+    bool writeCmdTag(yarp::os::idl::WireWriter& writer) const;
+    bool writeCmdArgs(yarp::os::idl::WireWriter& writer) const;
+
+    bool readCmd(yarp::os::idl::WireReader& reader);
+    bool readCmdLen(yarp::os::idl::WireReader& reader);
+    bool readCmdTag(yarp::os::idl::WireReader& reader);
+    bool readCmdArgs(yarp::os::idl::WireReader& reader);
+
+    bool writeReply(yarp::os::idl::WireWriter& writer) const;
+
+    bool readReply(yarp::os::idl::WireReader& reader);
+
+    void call(MobileBaseVelocityControlRPC* ptr);
+
     return_getLastVelocityCommand m_return_helper{};
 
     static constexpr const char* s_tag{"getLastVelocityCommandRPC"};
@@ -69,12 +101,47 @@ MobileBaseVelocityControlRPC_applyVelocityCommandRPC_helper::MobileBaseVelocityC
 bool MobileBaseVelocityControlRPC_applyVelocityCommandRPC_helper::write(yarp::os::ConnectionWriter& connection) const
 {
     yarp::os::idl::WireWriter writer(connection);
+    return writeCmd(writer);
+}
+
+bool MobileBaseVelocityControlRPC_applyVelocityCommandRPC_helper::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    return readReply(reader);
+}
+
+bool MobileBaseVelocityControlRPC_applyVelocityCommandRPC_helper::writeCmd(yarp::os::idl::WireWriter& writer) const
+{
+    if (!writeCmdLen(writer)) {
+        return false;
+    }
+    if (!writeCmdTag(writer)) {
+        return false;
+    }
+    if (!writeCmdArgs(writer)) {
+        return false;
+    }
+    return true;
+}
+
+bool MobileBaseVelocityControlRPC_applyVelocityCommandRPC_helper::writeCmdLen(yarp::os::idl::WireWriter& writer) const
+{
     if (!writer.writeListHeader(s_cmd_len)) {
         return false;
     }
+    return true;
+}
+
+bool MobileBaseVelocityControlRPC_applyVelocityCommandRPC_helper::writeCmdTag(yarp::os::idl::WireWriter& writer) const
+{
     if (!writer.writeTag(s_tag, 1, s_tag_len)) {
         return false;
     }
+    return true;
+}
+
+bool MobileBaseVelocityControlRPC_applyVelocityCommandRPC_helper::writeCmdArgs(yarp::os::idl::WireWriter& writer [[maybe_unused]]) const
+{
     if (!writer.writeFloat64(m_x_vel)) {
         return false;
     }
@@ -90,9 +157,78 @@ bool MobileBaseVelocityControlRPC_applyVelocityCommandRPC_helper::write(yarp::os
     return true;
 }
 
-bool MobileBaseVelocityControlRPC_applyVelocityCommandRPC_helper::read(yarp::os::ConnectionReader& connection [[maybe_unused]])
+bool MobileBaseVelocityControlRPC_applyVelocityCommandRPC_helper::readCmd(yarp::os::idl::WireReader& reader)
 {
-    yarp::os::idl::WireReader reader(connection);
+    if (!readCmdLen(reader)) {
+        return false;
+    }
+    if (!readCmdTag(reader)) {
+        return false;
+    }
+    if (!readCmdArgs(reader)) {
+        return false;
+    }
+    return true;
+}
+
+bool MobileBaseVelocityControlRPC_applyVelocityCommandRPC_helper::readCmdLen(yarp::os::idl::WireReader& reader)
+{
+    if (!reader.readListHeader()) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool MobileBaseVelocityControlRPC_applyVelocityCommandRPC_helper::readCmdTag(yarp::os::idl::WireReader& reader)
+{
+    std::string tag = reader.readTag();
+    if (reader.isError()) {
+        return false;
+    }
+    if (tag != s_tag) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool MobileBaseVelocityControlRPC_applyVelocityCommandRPC_helper::readCmdArgs(yarp::os::idl::WireReader& reader [[maybe_unused]])
+{
+    if (!reader.readFloat64(m_x_vel)) {
+        reader.fail();
+        return false;
+    }
+    if (!reader.readFloat64(m_y_vel)) {
+        reader.fail();
+        return false;
+    }
+    if (!reader.readFloat64(m_theta_vel)) {
+        reader.fail();
+        return false;
+    }
+    if (!reader.readFloat64(m_timeout)) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool MobileBaseVelocityControlRPC_applyVelocityCommandRPC_helper::writeReply(yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.isNull()) {
+        if (!writer.writeListHeader(s_reply_len)) {
+            return false;
+        }
+        if (!writer.writeBool(m_return_helper)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+bool MobileBaseVelocityControlRPC_applyVelocityCommandRPC_helper::readReply(yarp::os::idl::WireReader& reader [[maybe_unused]])
+{
     if (!reader.readListReturn()) {
         return false;
     }
@@ -103,22 +239,115 @@ bool MobileBaseVelocityControlRPC_applyVelocityCommandRPC_helper::read(yarp::os:
     return true;
 }
 
+void MobileBaseVelocityControlRPC_applyVelocityCommandRPC_helper::call(MobileBaseVelocityControlRPC* ptr)
+{
+    m_return_helper = ptr->applyVelocityCommandRPC(m_x_vel, m_y_vel, m_theta_vel, m_timeout);
+}
+
 // getLastVelocityCommandRPC helper class implementation
 bool MobileBaseVelocityControlRPC_getLastVelocityCommandRPC_helper::write(yarp::os::ConnectionWriter& connection) const
 {
     yarp::os::idl::WireWriter writer(connection);
+    return writeCmd(writer);
+}
+
+bool MobileBaseVelocityControlRPC_getLastVelocityCommandRPC_helper::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    return readReply(reader);
+}
+
+bool MobileBaseVelocityControlRPC_getLastVelocityCommandRPC_helper::writeCmd(yarp::os::idl::WireWriter& writer) const
+{
+    if (!writeCmdLen(writer)) {
+        return false;
+    }
+    if (!writeCmdTag(writer)) {
+        return false;
+    }
+    if (!writeCmdArgs(writer)) {
+        return false;
+    }
+    return true;
+}
+
+bool MobileBaseVelocityControlRPC_getLastVelocityCommandRPC_helper::writeCmdLen(yarp::os::idl::WireWriter& writer) const
+{
     if (!writer.writeListHeader(s_cmd_len)) {
         return false;
     }
+    return true;
+}
+
+bool MobileBaseVelocityControlRPC_getLastVelocityCommandRPC_helper::writeCmdTag(yarp::os::idl::WireWriter& writer) const
+{
     if (!writer.writeTag(s_tag, 1, s_tag_len)) {
         return false;
     }
     return true;
 }
 
-bool MobileBaseVelocityControlRPC_getLastVelocityCommandRPC_helper::read(yarp::os::ConnectionReader& connection [[maybe_unused]])
+bool MobileBaseVelocityControlRPC_getLastVelocityCommandRPC_helper::writeCmdArgs(yarp::os::idl::WireWriter& writer [[maybe_unused]]) const
 {
-    yarp::os::idl::WireReader reader(connection);
+    return true;
+}
+
+bool MobileBaseVelocityControlRPC_getLastVelocityCommandRPC_helper::readCmd(yarp::os::idl::WireReader& reader)
+{
+    if (!readCmdLen(reader)) {
+        return false;
+    }
+    if (!readCmdTag(reader)) {
+        return false;
+    }
+    if (!readCmdArgs(reader)) {
+        return false;
+    }
+    return true;
+}
+
+bool MobileBaseVelocityControlRPC_getLastVelocityCommandRPC_helper::readCmdLen(yarp::os::idl::WireReader& reader)
+{
+    if (!reader.readListHeader()) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool MobileBaseVelocityControlRPC_getLastVelocityCommandRPC_helper::readCmdTag(yarp::os::idl::WireReader& reader)
+{
+    std::string tag = reader.readTag();
+    if (reader.isError()) {
+        return false;
+    }
+    if (tag != s_tag) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool MobileBaseVelocityControlRPC_getLastVelocityCommandRPC_helper::readCmdArgs(yarp::os::idl::WireReader& reader [[maybe_unused]])
+{
+    return true;
+}
+
+bool MobileBaseVelocityControlRPC_getLastVelocityCommandRPC_helper::writeReply(yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.isNull()) {
+        if (!writer.writeListHeader(s_reply_len)) {
+            return false;
+        }
+        if (!writer.write(m_return_helper)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+bool MobileBaseVelocityControlRPC_getLastVelocityCommandRPC_helper::readReply(yarp::os::idl::WireReader& reader [[maybe_unused]])
+{
     if (!reader.readListReturn()) {
         return false;
     }
@@ -127,6 +356,11 @@ bool MobileBaseVelocityControlRPC_getLastVelocityCommandRPC_helper::read(yarp::o
         return false;
     }
     return true;
+}
+
+void MobileBaseVelocityControlRPC_getLastVelocityCommandRPC_helper::call(MobileBaseVelocityControlRPC* ptr)
+{
+    m_return_helper = ptr->getLastVelocityCommandRPC();
 }
 
 // Constructor
@@ -202,51 +436,31 @@ bool MobileBaseVelocityControlRPC::read(yarp::os::ConnectionReader& connection)
     }
     while (!reader.isError()) {
         if (tag == MobileBaseVelocityControlRPC_applyVelocityCommandRPC_helper::s_tag) {
-            double x_vel;
-            double y_vel;
-            double theta_vel;
-            double timeout;
-            if (!reader.readFloat64(x_vel)) {
-                reader.fail();
+            MobileBaseVelocityControlRPC_applyVelocityCommandRPC_helper helper;
+            if (!helper.readCmdArgs(reader)) {
                 return false;
             }
-            if (!reader.readFloat64(y_vel)) {
-                reader.fail();
-                return false;
-            }
-            if (!reader.readFloat64(theta_vel)) {
-                reader.fail();
-                return false;
-            }
-            if (!reader.readFloat64(timeout)) {
-                reader.fail();
-                return false;
-            }
-            MobileBaseVelocityControlRPC_applyVelocityCommandRPC_helper helper{x_vel, y_vel, theta_vel, timeout};
-            helper.m_return_helper = applyVelocityCommandRPC(x_vel, y_vel, theta_vel, timeout);
+
+            helper.call(this);
+
             yarp::os::idl::WireWriter writer(reader);
-            if (!writer.isNull()) {
-                if (!writer.writeListHeader(MobileBaseVelocityControlRPC_applyVelocityCommandRPC_helper::s_reply_len)) {
-                    return false;
-                }
-                if (!writer.writeBool(helper.m_return_helper)) {
-                    return false;
-                }
+            if (!helper.writeReply(writer)) {
+                return false;
             }
             reader.accept();
             return true;
         }
         if (tag == MobileBaseVelocityControlRPC_getLastVelocityCommandRPC_helper::s_tag) {
-            MobileBaseVelocityControlRPC_getLastVelocityCommandRPC_helper helper{};
-            helper.m_return_helper = getLastVelocityCommandRPC();
+            MobileBaseVelocityControlRPC_getLastVelocityCommandRPC_helper helper;
+            if (!helper.readCmdArgs(reader)) {
+                return false;
+            }
+
+            helper.call(this);
+
             yarp::os::idl::WireWriter writer(reader);
-            if (!writer.isNull()) {
-                if (!writer.writeListHeader(MobileBaseVelocityControlRPC_getLastVelocityCommandRPC_helper::s_reply_len)) {
-                    return false;
-                }
-                if (!writer.write(helper.m_return_helper)) {
-                    return false;
-                }
+            if (!helper.writeReply(writer)) {
+                return false;
             }
             reader.accept();
             return true;

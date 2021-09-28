@@ -21,6 +21,22 @@ public:
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
 
+    bool writeCmd(yarp::os::idl::WireWriter& writer) const;
+    bool writeCmdLen(yarp::os::idl::WireWriter& writer) const;
+    bool writeCmdTag(yarp::os::idl::WireWriter& writer) const;
+    bool writeCmdArgs(yarp::os::idl::WireWriter& writer) const;
+
+    bool readCmd(yarp::os::idl::WireReader& reader);
+    bool readCmdLen(yarp::os::idl::WireReader& reader);
+    bool readCmdTag(yarp::os::idl::WireReader& reader);
+    bool readCmdArgs(yarp::os::idl::WireReader& reader);
+
+    bool writeReply(yarp::os::idl::WireWriter& writer) const;
+
+    bool readReply(yarp::os::idl::WireReader& reader);
+
+    void call(IMap2DMsgs* ptr);
+
     bool m_return_helper{};
 
     static constexpr const char* s_tag{"clear_all_maps_RPC"};
@@ -40,6 +56,22 @@ public:
     explicit IMap2DMsgs_store_map_RPC_helper(const yarp::dev::Nav2D::MapGrid2D& themap);
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
+
+    bool writeCmd(yarp::os::idl::WireWriter& writer) const;
+    bool writeCmdLen(yarp::os::idl::WireWriter& writer) const;
+    bool writeCmdTag(yarp::os::idl::WireWriter& writer) const;
+    bool writeCmdArgs(yarp::os::idl::WireWriter& writer) const;
+
+    bool readCmd(yarp::os::idl::WireReader& reader);
+    bool readCmdLen(yarp::os::idl::WireReader& reader);
+    bool readCmdTag(yarp::os::idl::WireReader& reader);
+    bool readCmdArgs(yarp::os::idl::WireReader& reader);
+
+    bool writeReply(yarp::os::idl::WireWriter& writer) const;
+
+    bool readReply(yarp::os::idl::WireReader& reader);
+
+    void call(IMap2DMsgs* ptr);
 
     yarp::dev::Nav2D::MapGrid2D m_themap;
 
@@ -63,6 +95,22 @@ public:
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
 
+    bool writeCmd(yarp::os::idl::WireWriter& writer) const;
+    bool writeCmdLen(yarp::os::idl::WireWriter& writer) const;
+    bool writeCmdTag(yarp::os::idl::WireWriter& writer) const;
+    bool writeCmdArgs(yarp::os::idl::WireWriter& writer) const;
+
+    bool readCmd(yarp::os::idl::WireReader& reader);
+    bool readCmdLen(yarp::os::idl::WireReader& reader);
+    bool readCmdTag(yarp::os::idl::WireReader& reader);
+    bool readCmdArgs(yarp::os::idl::WireReader& reader);
+
+    bool writeReply(yarp::os::idl::WireWriter& writer) const;
+
+    bool readReply(yarp::os::idl::WireReader& reader);
+
+    void call(IMap2DMsgs* ptr);
+
     std::string m_map_name;
 
     return_get_map m_return_helper{};
@@ -84,6 +132,22 @@ public:
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
 
+    bool writeCmd(yarp::os::idl::WireWriter& writer) const;
+    bool writeCmdLen(yarp::os::idl::WireWriter& writer) const;
+    bool writeCmdTag(yarp::os::idl::WireWriter& writer) const;
+    bool writeCmdArgs(yarp::os::idl::WireWriter& writer) const;
+
+    bool readCmd(yarp::os::idl::WireReader& reader);
+    bool readCmdLen(yarp::os::idl::WireReader& reader);
+    bool readCmdTag(yarp::os::idl::WireReader& reader);
+    bool readCmdArgs(yarp::os::idl::WireReader& reader);
+
+    bool writeReply(yarp::os::idl::WireWriter& writer) const;
+
+    bool readReply(yarp::os::idl::WireReader& reader);
+
+    void call(IMap2DMsgs* ptr);
+
     return_get_map_names m_return_helper{};
 
     static constexpr const char* s_tag{"get_map_names_RPC"};
@@ -103,6 +167,22 @@ public:
     explicit IMap2DMsgs_remove_map_RPC_helper(const std::string& map_name);
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
+
+    bool writeCmd(yarp::os::idl::WireWriter& writer) const;
+    bool writeCmdLen(yarp::os::idl::WireWriter& writer) const;
+    bool writeCmdTag(yarp::os::idl::WireWriter& writer) const;
+    bool writeCmdArgs(yarp::os::idl::WireWriter& writer) const;
+
+    bool readCmd(yarp::os::idl::WireReader& reader);
+    bool readCmdLen(yarp::os::idl::WireReader& reader);
+    bool readCmdTag(yarp::os::idl::WireReader& reader);
+    bool readCmdArgs(yarp::os::idl::WireReader& reader);
+
+    bool writeReply(yarp::os::idl::WireWriter& writer) const;
+
+    bool readReply(yarp::os::idl::WireReader& reader);
+
+    void call(IMap2DMsgs* ptr);
 
     std::string m_map_name;
 
@@ -125,6 +205,22 @@ public:
     IMap2DMsgs_store_location_RPC_helper(const std::string& location_name, const yarp::dev::Nav2D::Map2DLocation& loc);
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
+
+    bool writeCmd(yarp::os::idl::WireWriter& writer) const;
+    bool writeCmdLen(yarp::os::idl::WireWriter& writer) const;
+    bool writeCmdTag(yarp::os::idl::WireWriter& writer) const;
+    bool writeCmdArgs(yarp::os::idl::WireWriter& writer) const;
+
+    bool readCmd(yarp::os::idl::WireReader& reader);
+    bool readCmdLen(yarp::os::idl::WireReader& reader);
+    bool readCmdTag(yarp::os::idl::WireReader& reader);
+    bool readCmdArgs(yarp::os::idl::WireReader& reader);
+
+    bool writeReply(yarp::os::idl::WireWriter& writer) const;
+
+    bool readReply(yarp::os::idl::WireReader& reader);
+
+    void call(IMap2DMsgs* ptr);
 
     std::string m_location_name;
     yarp::dev::Nav2D::Map2DLocation m_loc;
@@ -149,6 +245,22 @@ public:
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
 
+    bool writeCmd(yarp::os::idl::WireWriter& writer) const;
+    bool writeCmdLen(yarp::os::idl::WireWriter& writer) const;
+    bool writeCmdTag(yarp::os::idl::WireWriter& writer) const;
+    bool writeCmdArgs(yarp::os::idl::WireWriter& writer) const;
+
+    bool readCmd(yarp::os::idl::WireReader& reader);
+    bool readCmdLen(yarp::os::idl::WireReader& reader);
+    bool readCmdTag(yarp::os::idl::WireReader& reader);
+    bool readCmdArgs(yarp::os::idl::WireReader& reader);
+
+    bool writeReply(yarp::os::idl::WireWriter& writer) const;
+
+    bool readReply(yarp::os::idl::WireReader& reader);
+
+    void call(IMap2DMsgs* ptr);
+
     std::string m_area_name;
     yarp::dev::Nav2D::Map2DArea m_area;
 
@@ -171,6 +283,22 @@ public:
     IMap2DMsgs_store_path_RPC_helper(const std::string& path_name, const yarp::dev::Nav2D::Map2DPath& path);
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
+
+    bool writeCmd(yarp::os::idl::WireWriter& writer) const;
+    bool writeCmdLen(yarp::os::idl::WireWriter& writer) const;
+    bool writeCmdTag(yarp::os::idl::WireWriter& writer) const;
+    bool writeCmdArgs(yarp::os::idl::WireWriter& writer) const;
+
+    bool readCmd(yarp::os::idl::WireReader& reader);
+    bool readCmdLen(yarp::os::idl::WireReader& reader);
+    bool readCmdTag(yarp::os::idl::WireReader& reader);
+    bool readCmdArgs(yarp::os::idl::WireReader& reader);
+
+    bool writeReply(yarp::os::idl::WireWriter& writer) const;
+
+    bool readReply(yarp::os::idl::WireReader& reader);
+
+    void call(IMap2DMsgs* ptr);
 
     std::string m_path_name;
     yarp::dev::Nav2D::Map2DPath m_path;
@@ -195,6 +323,22 @@ public:
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
 
+    bool writeCmd(yarp::os::idl::WireWriter& writer) const;
+    bool writeCmdLen(yarp::os::idl::WireWriter& writer) const;
+    bool writeCmdTag(yarp::os::idl::WireWriter& writer) const;
+    bool writeCmdArgs(yarp::os::idl::WireWriter& writer) const;
+
+    bool readCmd(yarp::os::idl::WireReader& reader);
+    bool readCmdLen(yarp::os::idl::WireReader& reader);
+    bool readCmdTag(yarp::os::idl::WireReader& reader);
+    bool readCmdArgs(yarp::os::idl::WireReader& reader);
+
+    bool writeReply(yarp::os::idl::WireWriter& writer) const;
+
+    bool readReply(yarp::os::idl::WireReader& reader);
+
+    void call(IMap2DMsgs* ptr);
+
     std::string m_location_name;
 
     return_get_location m_return_helper{};
@@ -216,6 +360,22 @@ public:
     explicit IMap2DMsgs_get_area_RPC_helper(const std::string& area_name);
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
+
+    bool writeCmd(yarp::os::idl::WireWriter& writer) const;
+    bool writeCmdLen(yarp::os::idl::WireWriter& writer) const;
+    bool writeCmdTag(yarp::os::idl::WireWriter& writer) const;
+    bool writeCmdArgs(yarp::os::idl::WireWriter& writer) const;
+
+    bool readCmd(yarp::os::idl::WireReader& reader);
+    bool readCmdLen(yarp::os::idl::WireReader& reader);
+    bool readCmdTag(yarp::os::idl::WireReader& reader);
+    bool readCmdArgs(yarp::os::idl::WireReader& reader);
+
+    bool writeReply(yarp::os::idl::WireWriter& writer) const;
+
+    bool readReply(yarp::os::idl::WireReader& reader);
+
+    void call(IMap2DMsgs* ptr);
 
     std::string m_area_name;
 
@@ -239,6 +399,22 @@ public:
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
 
+    bool writeCmd(yarp::os::idl::WireWriter& writer) const;
+    bool writeCmdLen(yarp::os::idl::WireWriter& writer) const;
+    bool writeCmdTag(yarp::os::idl::WireWriter& writer) const;
+    bool writeCmdArgs(yarp::os::idl::WireWriter& writer) const;
+
+    bool readCmd(yarp::os::idl::WireReader& reader);
+    bool readCmdLen(yarp::os::idl::WireReader& reader);
+    bool readCmdTag(yarp::os::idl::WireReader& reader);
+    bool readCmdArgs(yarp::os::idl::WireReader& reader);
+
+    bool writeReply(yarp::os::idl::WireWriter& writer) const;
+
+    bool readReply(yarp::os::idl::WireReader& reader);
+
+    void call(IMap2DMsgs* ptr);
+
     std::string m_path_name;
 
     return_get_path m_return_helper{};
@@ -260,6 +436,22 @@ public:
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
 
+    bool writeCmd(yarp::os::idl::WireWriter& writer) const;
+    bool writeCmdLen(yarp::os::idl::WireWriter& writer) const;
+    bool writeCmdTag(yarp::os::idl::WireWriter& writer) const;
+    bool writeCmdArgs(yarp::os::idl::WireWriter& writer) const;
+
+    bool readCmd(yarp::os::idl::WireReader& reader);
+    bool readCmdLen(yarp::os::idl::WireReader& reader);
+    bool readCmdTag(yarp::os::idl::WireReader& reader);
+    bool readCmdArgs(yarp::os::idl::WireReader& reader);
+
+    bool writeReply(yarp::os::idl::WireWriter& writer) const;
+
+    bool readReply(yarp::os::idl::WireReader& reader);
+
+    void call(IMap2DMsgs* ptr);
+
     return_get_locations_list m_return_helper{};
 
     static constexpr const char* s_tag{"get_locations_list_RPC"};
@@ -278,6 +470,22 @@ public:
     IMap2DMsgs_get_areas_list_RPC_helper() = default;
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
+
+    bool writeCmd(yarp::os::idl::WireWriter& writer) const;
+    bool writeCmdLen(yarp::os::idl::WireWriter& writer) const;
+    bool writeCmdTag(yarp::os::idl::WireWriter& writer) const;
+    bool writeCmdArgs(yarp::os::idl::WireWriter& writer) const;
+
+    bool readCmd(yarp::os::idl::WireReader& reader);
+    bool readCmdLen(yarp::os::idl::WireReader& reader);
+    bool readCmdTag(yarp::os::idl::WireReader& reader);
+    bool readCmdArgs(yarp::os::idl::WireReader& reader);
+
+    bool writeReply(yarp::os::idl::WireWriter& writer) const;
+
+    bool readReply(yarp::os::idl::WireReader& reader);
+
+    void call(IMap2DMsgs* ptr);
 
     return_get_areas_list m_return_helper{};
 
@@ -298,6 +506,22 @@ public:
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
 
+    bool writeCmd(yarp::os::idl::WireWriter& writer) const;
+    bool writeCmdLen(yarp::os::idl::WireWriter& writer) const;
+    bool writeCmdTag(yarp::os::idl::WireWriter& writer) const;
+    bool writeCmdArgs(yarp::os::idl::WireWriter& writer) const;
+
+    bool readCmd(yarp::os::idl::WireReader& reader);
+    bool readCmdLen(yarp::os::idl::WireReader& reader);
+    bool readCmdTag(yarp::os::idl::WireReader& reader);
+    bool readCmdArgs(yarp::os::idl::WireReader& reader);
+
+    bool writeReply(yarp::os::idl::WireWriter& writer) const;
+
+    bool readReply(yarp::os::idl::WireReader& reader);
+
+    void call(IMap2DMsgs* ptr);
+
     return_get_paths_list m_return_helper{};
 
     static constexpr const char* s_tag{"get_paths_list_RPC"};
@@ -316,6 +540,22 @@ public:
     IMap2DMsgs_get_all_locations_RPC_helper() = default;
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
+
+    bool writeCmd(yarp::os::idl::WireWriter& writer) const;
+    bool writeCmdLen(yarp::os::idl::WireWriter& writer) const;
+    bool writeCmdTag(yarp::os::idl::WireWriter& writer) const;
+    bool writeCmdArgs(yarp::os::idl::WireWriter& writer) const;
+
+    bool readCmd(yarp::os::idl::WireReader& reader);
+    bool readCmdLen(yarp::os::idl::WireReader& reader);
+    bool readCmdTag(yarp::os::idl::WireReader& reader);
+    bool readCmdArgs(yarp::os::idl::WireReader& reader);
+
+    bool writeReply(yarp::os::idl::WireWriter& writer) const;
+
+    bool readReply(yarp::os::idl::WireReader& reader);
+
+    void call(IMap2DMsgs* ptr);
 
     return_get_all_locations m_return_helper{};
 
@@ -336,6 +576,22 @@ public:
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
 
+    bool writeCmd(yarp::os::idl::WireWriter& writer) const;
+    bool writeCmdLen(yarp::os::idl::WireWriter& writer) const;
+    bool writeCmdTag(yarp::os::idl::WireWriter& writer) const;
+    bool writeCmdArgs(yarp::os::idl::WireWriter& writer) const;
+
+    bool readCmd(yarp::os::idl::WireReader& reader);
+    bool readCmdLen(yarp::os::idl::WireReader& reader);
+    bool readCmdTag(yarp::os::idl::WireReader& reader);
+    bool readCmdArgs(yarp::os::idl::WireReader& reader);
+
+    bool writeReply(yarp::os::idl::WireWriter& writer) const;
+
+    bool readReply(yarp::os::idl::WireReader& reader);
+
+    void call(IMap2DMsgs* ptr);
+
     return_get_all_areas m_return_helper{};
 
     static constexpr const char* s_tag{"get_all_areas_RPC"};
@@ -354,6 +610,22 @@ public:
     IMap2DMsgs_get_all_paths_RPC_helper() = default;
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
+
+    bool writeCmd(yarp::os::idl::WireWriter& writer) const;
+    bool writeCmdLen(yarp::os::idl::WireWriter& writer) const;
+    bool writeCmdTag(yarp::os::idl::WireWriter& writer) const;
+    bool writeCmdArgs(yarp::os::idl::WireWriter& writer) const;
+
+    bool readCmd(yarp::os::idl::WireReader& reader);
+    bool readCmdLen(yarp::os::idl::WireReader& reader);
+    bool readCmdTag(yarp::os::idl::WireReader& reader);
+    bool readCmdArgs(yarp::os::idl::WireReader& reader);
+
+    bool writeReply(yarp::os::idl::WireWriter& writer) const;
+
+    bool readReply(yarp::os::idl::WireReader& reader);
+
+    void call(IMap2DMsgs* ptr);
 
     return_get_all_paths m_return_helper{};
 
@@ -374,6 +646,22 @@ public:
     IMap2DMsgs_rename_location_RPC_helper(const std::string& original_name, const std::string& new_name);
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
+
+    bool writeCmd(yarp::os::idl::WireWriter& writer) const;
+    bool writeCmdLen(yarp::os::idl::WireWriter& writer) const;
+    bool writeCmdTag(yarp::os::idl::WireWriter& writer) const;
+    bool writeCmdArgs(yarp::os::idl::WireWriter& writer) const;
+
+    bool readCmd(yarp::os::idl::WireReader& reader);
+    bool readCmdLen(yarp::os::idl::WireReader& reader);
+    bool readCmdTag(yarp::os::idl::WireReader& reader);
+    bool readCmdArgs(yarp::os::idl::WireReader& reader);
+
+    bool writeReply(yarp::os::idl::WireWriter& writer) const;
+
+    bool readReply(yarp::os::idl::WireReader& reader);
+
+    void call(IMap2DMsgs* ptr);
 
     std::string m_original_name;
     std::string m_new_name;
@@ -398,6 +686,22 @@ public:
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
 
+    bool writeCmd(yarp::os::idl::WireWriter& writer) const;
+    bool writeCmdLen(yarp::os::idl::WireWriter& writer) const;
+    bool writeCmdTag(yarp::os::idl::WireWriter& writer) const;
+    bool writeCmdArgs(yarp::os::idl::WireWriter& writer) const;
+
+    bool readCmd(yarp::os::idl::WireReader& reader);
+    bool readCmdLen(yarp::os::idl::WireReader& reader);
+    bool readCmdTag(yarp::os::idl::WireReader& reader);
+    bool readCmdArgs(yarp::os::idl::WireReader& reader);
+
+    bool writeReply(yarp::os::idl::WireWriter& writer) const;
+
+    bool readReply(yarp::os::idl::WireReader& reader);
+
+    void call(IMap2DMsgs* ptr);
+
     std::string m_location_name;
 
     bool m_return_helper{};
@@ -420,6 +724,22 @@ public:
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
 
+    bool writeCmd(yarp::os::idl::WireWriter& writer) const;
+    bool writeCmdLen(yarp::os::idl::WireWriter& writer) const;
+    bool writeCmdTag(yarp::os::idl::WireWriter& writer) const;
+    bool writeCmdArgs(yarp::os::idl::WireWriter& writer) const;
+
+    bool readCmd(yarp::os::idl::WireReader& reader);
+    bool readCmdLen(yarp::os::idl::WireReader& reader);
+    bool readCmdTag(yarp::os::idl::WireReader& reader);
+    bool readCmdArgs(yarp::os::idl::WireReader& reader);
+
+    bool writeReply(yarp::os::idl::WireWriter& writer) const;
+
+    bool readReply(yarp::os::idl::WireReader& reader);
+
+    void call(IMap2DMsgs* ptr);
+
     std::string m_path_name;
 
     bool m_return_helper{};
@@ -441,6 +761,22 @@ public:
     IMap2DMsgs_rename_area_RPC_helper(const std::string& original_name, const std::string& new_name);
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
+
+    bool writeCmd(yarp::os::idl::WireWriter& writer) const;
+    bool writeCmdLen(yarp::os::idl::WireWriter& writer) const;
+    bool writeCmdTag(yarp::os::idl::WireWriter& writer) const;
+    bool writeCmdArgs(yarp::os::idl::WireWriter& writer) const;
+
+    bool readCmd(yarp::os::idl::WireReader& reader);
+    bool readCmdLen(yarp::os::idl::WireReader& reader);
+    bool readCmdTag(yarp::os::idl::WireReader& reader);
+    bool readCmdArgs(yarp::os::idl::WireReader& reader);
+
+    bool writeReply(yarp::os::idl::WireWriter& writer) const;
+
+    bool readReply(yarp::os::idl::WireReader& reader);
+
+    void call(IMap2DMsgs* ptr);
 
     std::string m_original_name;
     std::string m_new_name;
@@ -465,6 +801,22 @@ public:
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
 
+    bool writeCmd(yarp::os::idl::WireWriter& writer) const;
+    bool writeCmdLen(yarp::os::idl::WireWriter& writer) const;
+    bool writeCmdTag(yarp::os::idl::WireWriter& writer) const;
+    bool writeCmdArgs(yarp::os::idl::WireWriter& writer) const;
+
+    bool readCmd(yarp::os::idl::WireReader& reader);
+    bool readCmdLen(yarp::os::idl::WireReader& reader);
+    bool readCmdTag(yarp::os::idl::WireReader& reader);
+    bool readCmdArgs(yarp::os::idl::WireReader& reader);
+
+    bool writeReply(yarp::os::idl::WireWriter& writer) const;
+
+    bool readReply(yarp::os::idl::WireReader& reader);
+
+    void call(IMap2DMsgs* ptr);
+
     std::string m_original_name;
     std::string m_new_name;
 
@@ -488,6 +840,22 @@ public:
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
 
+    bool writeCmd(yarp::os::idl::WireWriter& writer) const;
+    bool writeCmdLen(yarp::os::idl::WireWriter& writer) const;
+    bool writeCmdTag(yarp::os::idl::WireWriter& writer) const;
+    bool writeCmdArgs(yarp::os::idl::WireWriter& writer) const;
+
+    bool readCmd(yarp::os::idl::WireReader& reader);
+    bool readCmdLen(yarp::os::idl::WireReader& reader);
+    bool readCmdTag(yarp::os::idl::WireReader& reader);
+    bool readCmdArgs(yarp::os::idl::WireReader& reader);
+
+    bool writeReply(yarp::os::idl::WireWriter& writer) const;
+
+    bool readReply(yarp::os::idl::WireReader& reader);
+
+    void call(IMap2DMsgs* ptr);
+
     std::string m_area_name;
 
     bool m_return_helper{};
@@ -509,6 +877,22 @@ public:
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
 
+    bool writeCmd(yarp::os::idl::WireWriter& writer) const;
+    bool writeCmdLen(yarp::os::idl::WireWriter& writer) const;
+    bool writeCmdTag(yarp::os::idl::WireWriter& writer) const;
+    bool writeCmdArgs(yarp::os::idl::WireWriter& writer) const;
+
+    bool readCmd(yarp::os::idl::WireReader& reader);
+    bool readCmdLen(yarp::os::idl::WireReader& reader);
+    bool readCmdTag(yarp::os::idl::WireReader& reader);
+    bool readCmdArgs(yarp::os::idl::WireReader& reader);
+
+    bool writeReply(yarp::os::idl::WireWriter& writer) const;
+
+    bool readReply(yarp::os::idl::WireReader& reader);
+
+    void call(IMap2DMsgs* ptr);
+
     bool m_return_helper{};
 
     static constexpr const char* s_tag{"clear_all_locations_RPC"};
@@ -527,6 +911,22 @@ public:
     IMap2DMsgs_clear_all_areas_RPC_helper() = default;
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
+
+    bool writeCmd(yarp::os::idl::WireWriter& writer) const;
+    bool writeCmdLen(yarp::os::idl::WireWriter& writer) const;
+    bool writeCmdTag(yarp::os::idl::WireWriter& writer) const;
+    bool writeCmdArgs(yarp::os::idl::WireWriter& writer) const;
+
+    bool readCmd(yarp::os::idl::WireReader& reader);
+    bool readCmdLen(yarp::os::idl::WireReader& reader);
+    bool readCmdTag(yarp::os::idl::WireReader& reader);
+    bool readCmdArgs(yarp::os::idl::WireReader& reader);
+
+    bool writeReply(yarp::os::idl::WireWriter& writer) const;
+
+    bool readReply(yarp::os::idl::WireReader& reader);
+
+    void call(IMap2DMsgs* ptr);
 
     bool m_return_helper{};
 
@@ -547,6 +947,22 @@ public:
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
 
+    bool writeCmd(yarp::os::idl::WireWriter& writer) const;
+    bool writeCmdLen(yarp::os::idl::WireWriter& writer) const;
+    bool writeCmdTag(yarp::os::idl::WireWriter& writer) const;
+    bool writeCmdArgs(yarp::os::idl::WireWriter& writer) const;
+
+    bool readCmd(yarp::os::idl::WireReader& reader);
+    bool readCmdLen(yarp::os::idl::WireReader& reader);
+    bool readCmdTag(yarp::os::idl::WireReader& reader);
+    bool readCmdArgs(yarp::os::idl::WireReader& reader);
+
+    bool writeReply(yarp::os::idl::WireWriter& writer) const;
+
+    bool readReply(yarp::os::idl::WireReader& reader);
+
+    void call(IMap2DMsgs* ptr);
+
     bool m_return_helper{};
 
     static constexpr const char* s_tag{"clear_all_paths_RPC"};
@@ -565,6 +981,22 @@ public:
     IMap2DMsgs_clear_all_maps_temporary_flags_RPC_helper() = default;
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
+
+    bool writeCmd(yarp::os::idl::WireWriter& writer) const;
+    bool writeCmdLen(yarp::os::idl::WireWriter& writer) const;
+    bool writeCmdTag(yarp::os::idl::WireWriter& writer) const;
+    bool writeCmdArgs(yarp::os::idl::WireWriter& writer) const;
+
+    bool readCmd(yarp::os::idl::WireReader& reader);
+    bool readCmdLen(yarp::os::idl::WireReader& reader);
+    bool readCmdTag(yarp::os::idl::WireReader& reader);
+    bool readCmdArgs(yarp::os::idl::WireReader& reader);
+
+    bool writeReply(yarp::os::idl::WireWriter& writer) const;
+
+    bool readReply(yarp::os::idl::WireReader& reader);
+
+    void call(IMap2DMsgs* ptr);
 
     bool m_return_helper{};
 
@@ -585,6 +1017,22 @@ public:
     explicit IMap2DMsgs_clear_map_temporary_flags_RPC_helper(const std::string& map_name);
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
+
+    bool writeCmd(yarp::os::idl::WireWriter& writer) const;
+    bool writeCmdLen(yarp::os::idl::WireWriter& writer) const;
+    bool writeCmdTag(yarp::os::idl::WireWriter& writer) const;
+    bool writeCmdArgs(yarp::os::idl::WireWriter& writer) const;
+
+    bool readCmd(yarp::os::idl::WireReader& reader);
+    bool readCmdLen(yarp::os::idl::WireReader& reader);
+    bool readCmdTag(yarp::os::idl::WireReader& reader);
+    bool readCmdArgs(yarp::os::idl::WireReader& reader);
+
+    bool writeReply(yarp::os::idl::WireWriter& writer) const;
+
+    bool readReply(yarp::os::idl::WireReader& reader);
+
+    void call(IMap2DMsgs* ptr);
 
     std::string m_map_name;
 
@@ -608,6 +1056,22 @@ public:
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
 
+    bool writeCmd(yarp::os::idl::WireWriter& writer) const;
+    bool writeCmdLen(yarp::os::idl::WireWriter& writer) const;
+    bool writeCmdTag(yarp::os::idl::WireWriter& writer) const;
+    bool writeCmdArgs(yarp::os::idl::WireWriter& writer) const;
+
+    bool readCmd(yarp::os::idl::WireReader& reader);
+    bool readCmdLen(yarp::os::idl::WireReader& reader);
+    bool readCmdTag(yarp::os::idl::WireReader& reader);
+    bool readCmdArgs(yarp::os::idl::WireReader& reader);
+
+    bool writeReply(yarp::os::idl::WireWriter& writer) const;
+
+    bool readReply(yarp::os::idl::WireReader& reader);
+
+    void call(IMap2DMsgs* ptr);
+
     std::string m_maps_collection_file;
 
     bool m_return_helper{};
@@ -629,6 +1093,22 @@ public:
     explicit IMap2DMsgs_load_maps_collection_RPC_helper(const std::string& maps_collection_file);
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
+
+    bool writeCmd(yarp::os::idl::WireWriter& writer) const;
+    bool writeCmdLen(yarp::os::idl::WireWriter& writer) const;
+    bool writeCmdTag(yarp::os::idl::WireWriter& writer) const;
+    bool writeCmdArgs(yarp::os::idl::WireWriter& writer) const;
+
+    bool readCmd(yarp::os::idl::WireReader& reader);
+    bool readCmdLen(yarp::os::idl::WireReader& reader);
+    bool readCmdTag(yarp::os::idl::WireReader& reader);
+    bool readCmdArgs(yarp::os::idl::WireReader& reader);
+
+    bool writeReply(yarp::os::idl::WireWriter& writer) const;
+
+    bool readReply(yarp::os::idl::WireReader& reader);
+
+    void call(IMap2DMsgs* ptr);
 
     std::string m_maps_collection_file;
 
@@ -652,6 +1132,22 @@ public:
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
 
+    bool writeCmd(yarp::os::idl::WireWriter& writer) const;
+    bool writeCmdLen(yarp::os::idl::WireWriter& writer) const;
+    bool writeCmdTag(yarp::os::idl::WireWriter& writer) const;
+    bool writeCmdArgs(yarp::os::idl::WireWriter& writer) const;
+
+    bool readCmd(yarp::os::idl::WireReader& reader);
+    bool readCmdLen(yarp::os::idl::WireReader& reader);
+    bool readCmdTag(yarp::os::idl::WireReader& reader);
+    bool readCmdArgs(yarp::os::idl::WireReader& reader);
+
+    bool writeReply(yarp::os::idl::WireWriter& writer) const;
+
+    bool readReply(yarp::os::idl::WireReader& reader);
+
+    void call(IMap2DMsgs* ptr);
+
     std::string m_locations_collection_file;
 
     bool m_return_helper{};
@@ -674,6 +1170,22 @@ public:
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
 
+    bool writeCmd(yarp::os::idl::WireWriter& writer) const;
+    bool writeCmdLen(yarp::os::idl::WireWriter& writer) const;
+    bool writeCmdTag(yarp::os::idl::WireWriter& writer) const;
+    bool writeCmdArgs(yarp::os::idl::WireWriter& writer) const;
+
+    bool readCmd(yarp::os::idl::WireReader& reader);
+    bool readCmdLen(yarp::os::idl::WireReader& reader);
+    bool readCmdTag(yarp::os::idl::WireReader& reader);
+    bool readCmdArgs(yarp::os::idl::WireReader& reader);
+
+    bool writeReply(yarp::os::idl::WireWriter& writer) const;
+
+    bool readReply(yarp::os::idl::WireReader& reader);
+
+    void call(IMap2DMsgs* ptr);
+
     std::string m_locations_collection_file;
 
     bool m_return_helper{};
@@ -695,6 +1207,22 @@ public:
     IMap2DMsgs_save_map_to_disk_RPC_helper(const std::string& map_name, const std::string& file_name);
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
+
+    bool writeCmd(yarp::os::idl::WireWriter& writer) const;
+    bool writeCmdLen(yarp::os::idl::WireWriter& writer) const;
+    bool writeCmdTag(yarp::os::idl::WireWriter& writer) const;
+    bool writeCmdArgs(yarp::os::idl::WireWriter& writer) const;
+
+    bool readCmd(yarp::os::idl::WireReader& reader);
+    bool readCmdLen(yarp::os::idl::WireReader& reader);
+    bool readCmdTag(yarp::os::idl::WireReader& reader);
+    bool readCmdArgs(yarp::os::idl::WireReader& reader);
+
+    bool writeReply(yarp::os::idl::WireWriter& writer) const;
+
+    bool readReply(yarp::os::idl::WireReader& reader);
+
+    void call(IMap2DMsgs* ptr);
 
     std::string m_map_name;
     std::string m_file_name;
@@ -719,6 +1247,22 @@ public:
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
 
+    bool writeCmd(yarp::os::idl::WireWriter& writer) const;
+    bool writeCmdLen(yarp::os::idl::WireWriter& writer) const;
+    bool writeCmdTag(yarp::os::idl::WireWriter& writer) const;
+    bool writeCmdArgs(yarp::os::idl::WireWriter& writer) const;
+
+    bool readCmd(yarp::os::idl::WireReader& reader);
+    bool readCmdLen(yarp::os::idl::WireReader& reader);
+    bool readCmdTag(yarp::os::idl::WireReader& reader);
+    bool readCmdArgs(yarp::os::idl::WireReader& reader);
+
+    bool writeReply(yarp::os::idl::WireWriter& writer) const;
+
+    bool readReply(yarp::os::idl::WireReader& reader);
+
+    void call(IMap2DMsgs* ptr);
+
     std::string m_file_name;
 
     bool m_return_helper{};
@@ -741,6 +1285,22 @@ public:
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
 
+    bool writeCmd(yarp::os::idl::WireWriter& writer) const;
+    bool writeCmdLen(yarp::os::idl::WireWriter& writer) const;
+    bool writeCmdTag(yarp::os::idl::WireWriter& writer) const;
+    bool writeCmdArgs(yarp::os::idl::WireWriter& writer) const;
+
+    bool readCmd(yarp::os::idl::WireReader& reader);
+    bool readCmdLen(yarp::os::idl::WireReader& reader);
+    bool readCmdTag(yarp::os::idl::WireReader& reader);
+    bool readCmdArgs(yarp::os::idl::WireReader& reader);
+
+    bool writeReply(yarp::os::idl::WireWriter& writer) const;
+
+    bool readReply(yarp::os::idl::WireReader& reader);
+
+    void call(IMap2DMsgs* ptr);
+
     bool m_enable_compression;
 
     bool m_return_helper{};
@@ -757,18 +1317,106 @@ public:
 bool IMap2DMsgs_clear_all_maps_RPC_helper::write(yarp::os::ConnectionWriter& connection) const
 {
     yarp::os::idl::WireWriter writer(connection);
+    return writeCmd(writer);
+}
+
+bool IMap2DMsgs_clear_all_maps_RPC_helper::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    return readReply(reader);
+}
+
+bool IMap2DMsgs_clear_all_maps_RPC_helper::writeCmd(yarp::os::idl::WireWriter& writer) const
+{
+    if (!writeCmdLen(writer)) {
+        return false;
+    }
+    if (!writeCmdTag(writer)) {
+        return false;
+    }
+    if (!writeCmdArgs(writer)) {
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_clear_all_maps_RPC_helper::writeCmdLen(yarp::os::idl::WireWriter& writer) const
+{
     if (!writer.writeListHeader(s_cmd_len)) {
         return false;
     }
+    return true;
+}
+
+bool IMap2DMsgs_clear_all_maps_RPC_helper::writeCmdTag(yarp::os::idl::WireWriter& writer) const
+{
     if (!writer.writeTag(s_tag, 1, s_tag_len)) {
         return false;
     }
     return true;
 }
 
-bool IMap2DMsgs_clear_all_maps_RPC_helper::read(yarp::os::ConnectionReader& connection [[maybe_unused]])
+bool IMap2DMsgs_clear_all_maps_RPC_helper::writeCmdArgs(yarp::os::idl::WireWriter& writer [[maybe_unused]]) const
 {
-    yarp::os::idl::WireReader reader(connection);
+    return true;
+}
+
+bool IMap2DMsgs_clear_all_maps_RPC_helper::readCmd(yarp::os::idl::WireReader& reader)
+{
+    if (!readCmdLen(reader)) {
+        return false;
+    }
+    if (!readCmdTag(reader)) {
+        return false;
+    }
+    if (!readCmdArgs(reader)) {
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_clear_all_maps_RPC_helper::readCmdLen(yarp::os::idl::WireReader& reader)
+{
+    if (!reader.readListHeader()) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_clear_all_maps_RPC_helper::readCmdTag(yarp::os::idl::WireReader& reader)
+{
+    std::string tag = reader.readTag();
+    if (reader.isError()) {
+        return false;
+    }
+    if (tag != s_tag) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_clear_all_maps_RPC_helper::readCmdArgs(yarp::os::idl::WireReader& reader [[maybe_unused]])
+{
+    return true;
+}
+
+bool IMap2DMsgs_clear_all_maps_RPC_helper::writeReply(yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.isNull()) {
+        if (!writer.writeListHeader(s_reply_len)) {
+            return false;
+        }
+        if (!writer.writeBool(m_return_helper)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+bool IMap2DMsgs_clear_all_maps_RPC_helper::readReply(yarp::os::idl::WireReader& reader [[maybe_unused]])
+{
     if (!reader.readListReturn()) {
         return false;
     }
@@ -777,6 +1425,11 @@ bool IMap2DMsgs_clear_all_maps_RPC_helper::read(yarp::os::ConnectionReader& conn
         return false;
     }
     return true;
+}
+
+void IMap2DMsgs_clear_all_maps_RPC_helper::call(IMap2DMsgs* ptr)
+{
+    m_return_helper = ptr->clear_all_maps_RPC();
 }
 
 // store_map_RPC helper class implementation
@@ -789,21 +1442,113 @@ IMap2DMsgs_store_map_RPC_helper::IMap2DMsgs_store_map_RPC_helper(const yarp::dev
 bool IMap2DMsgs_store_map_RPC_helper::write(yarp::os::ConnectionWriter& connection) const
 {
     yarp::os::idl::WireWriter writer(connection);
+    return writeCmd(writer);
+}
+
+bool IMap2DMsgs_store_map_RPC_helper::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    return readReply(reader);
+}
+
+bool IMap2DMsgs_store_map_RPC_helper::writeCmd(yarp::os::idl::WireWriter& writer) const
+{
+    if (!writeCmdLen(writer)) {
+        return false;
+    }
+    if (!writeCmdTag(writer)) {
+        return false;
+    }
+    if (!writeCmdArgs(writer)) {
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_store_map_RPC_helper::writeCmdLen(yarp::os::idl::WireWriter& writer) const
+{
     if (!writer.writeListHeader(s_cmd_len)) {
         return false;
     }
+    return true;
+}
+
+bool IMap2DMsgs_store_map_RPC_helper::writeCmdTag(yarp::os::idl::WireWriter& writer) const
+{
     if (!writer.writeTag(s_tag, 1, s_tag_len)) {
         return false;
     }
+    return true;
+}
+
+bool IMap2DMsgs_store_map_RPC_helper::writeCmdArgs(yarp::os::idl::WireWriter& writer [[maybe_unused]]) const
+{
     if (!writer.write(m_themap)) {
         return false;
     }
     return true;
 }
 
-bool IMap2DMsgs_store_map_RPC_helper::read(yarp::os::ConnectionReader& connection [[maybe_unused]])
+bool IMap2DMsgs_store_map_RPC_helper::readCmd(yarp::os::idl::WireReader& reader)
 {
-    yarp::os::idl::WireReader reader(connection);
+    if (!readCmdLen(reader)) {
+        return false;
+    }
+    if (!readCmdTag(reader)) {
+        return false;
+    }
+    if (!readCmdArgs(reader)) {
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_store_map_RPC_helper::readCmdLen(yarp::os::idl::WireReader& reader)
+{
+    if (!reader.readListHeader()) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_store_map_RPC_helper::readCmdTag(yarp::os::idl::WireReader& reader)
+{
+    std::string tag = reader.readTag();
+    if (reader.isError()) {
+        return false;
+    }
+    if (tag != s_tag) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_store_map_RPC_helper::readCmdArgs(yarp::os::idl::WireReader& reader [[maybe_unused]])
+{
+    if (!reader.readNested(m_themap)) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_store_map_RPC_helper::writeReply(yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.isNull()) {
+        if (!writer.writeListHeader(s_reply_len)) {
+            return false;
+        }
+        if (!writer.writeBool(m_return_helper)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+bool IMap2DMsgs_store_map_RPC_helper::readReply(yarp::os::idl::WireReader& reader [[maybe_unused]])
+{
     if (!reader.readListReturn()) {
         return false;
     }
@@ -812,6 +1557,11 @@ bool IMap2DMsgs_store_map_RPC_helper::read(yarp::os::ConnectionReader& connectio
         return false;
     }
     return true;
+}
+
+void IMap2DMsgs_store_map_RPC_helper::call(IMap2DMsgs* ptr)
+{
+    m_return_helper = ptr->store_map_RPC(m_themap);
 }
 
 // get_map_RPC helper class implementation
@@ -823,21 +1573,113 @@ IMap2DMsgs_get_map_RPC_helper::IMap2DMsgs_get_map_RPC_helper(const std::string& 
 bool IMap2DMsgs_get_map_RPC_helper::write(yarp::os::ConnectionWriter& connection) const
 {
     yarp::os::idl::WireWriter writer(connection);
+    return writeCmd(writer);
+}
+
+bool IMap2DMsgs_get_map_RPC_helper::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    return readReply(reader);
+}
+
+bool IMap2DMsgs_get_map_RPC_helper::writeCmd(yarp::os::idl::WireWriter& writer) const
+{
+    if (!writeCmdLen(writer)) {
+        return false;
+    }
+    if (!writeCmdTag(writer)) {
+        return false;
+    }
+    if (!writeCmdArgs(writer)) {
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_get_map_RPC_helper::writeCmdLen(yarp::os::idl::WireWriter& writer) const
+{
     if (!writer.writeListHeader(s_cmd_len)) {
         return false;
     }
+    return true;
+}
+
+bool IMap2DMsgs_get_map_RPC_helper::writeCmdTag(yarp::os::idl::WireWriter& writer) const
+{
     if (!writer.writeTag(s_tag, 1, s_tag_len)) {
         return false;
     }
+    return true;
+}
+
+bool IMap2DMsgs_get_map_RPC_helper::writeCmdArgs(yarp::os::idl::WireWriter& writer [[maybe_unused]]) const
+{
     if (!writer.writeString(m_map_name)) {
         return false;
     }
     return true;
 }
 
-bool IMap2DMsgs_get_map_RPC_helper::read(yarp::os::ConnectionReader& connection [[maybe_unused]])
+bool IMap2DMsgs_get_map_RPC_helper::readCmd(yarp::os::idl::WireReader& reader)
 {
-    yarp::os::idl::WireReader reader(connection);
+    if (!readCmdLen(reader)) {
+        return false;
+    }
+    if (!readCmdTag(reader)) {
+        return false;
+    }
+    if (!readCmdArgs(reader)) {
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_get_map_RPC_helper::readCmdLen(yarp::os::idl::WireReader& reader)
+{
+    if (!reader.readListHeader()) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_get_map_RPC_helper::readCmdTag(yarp::os::idl::WireReader& reader)
+{
+    std::string tag = reader.readTag();
+    if (reader.isError()) {
+        return false;
+    }
+    if (tag != s_tag) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_get_map_RPC_helper::readCmdArgs(yarp::os::idl::WireReader& reader [[maybe_unused]])
+{
+    if (!reader.readString(m_map_name)) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_get_map_RPC_helper::writeReply(yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.isNull()) {
+        if (!writer.writeListHeader(s_reply_len)) {
+            return false;
+        }
+        if (!writer.write(m_return_helper)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+bool IMap2DMsgs_get_map_RPC_helper::readReply(yarp::os::idl::WireReader& reader [[maybe_unused]])
+{
     if (!reader.readListReturn()) {
         return false;
     }
@@ -846,24 +1688,117 @@ bool IMap2DMsgs_get_map_RPC_helper::read(yarp::os::ConnectionReader& connection 
         return false;
     }
     return true;
+}
+
+void IMap2DMsgs_get_map_RPC_helper::call(IMap2DMsgs* ptr)
+{
+    m_return_helper = ptr->get_map_RPC(m_map_name);
 }
 
 // get_map_names_RPC helper class implementation
 bool IMap2DMsgs_get_map_names_RPC_helper::write(yarp::os::ConnectionWriter& connection) const
 {
     yarp::os::idl::WireWriter writer(connection);
+    return writeCmd(writer);
+}
+
+bool IMap2DMsgs_get_map_names_RPC_helper::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    return readReply(reader);
+}
+
+bool IMap2DMsgs_get_map_names_RPC_helper::writeCmd(yarp::os::idl::WireWriter& writer) const
+{
+    if (!writeCmdLen(writer)) {
+        return false;
+    }
+    if (!writeCmdTag(writer)) {
+        return false;
+    }
+    if (!writeCmdArgs(writer)) {
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_get_map_names_RPC_helper::writeCmdLen(yarp::os::idl::WireWriter& writer) const
+{
     if (!writer.writeListHeader(s_cmd_len)) {
         return false;
     }
+    return true;
+}
+
+bool IMap2DMsgs_get_map_names_RPC_helper::writeCmdTag(yarp::os::idl::WireWriter& writer) const
+{
     if (!writer.writeTag(s_tag, 1, s_tag_len)) {
         return false;
     }
     return true;
 }
 
-bool IMap2DMsgs_get_map_names_RPC_helper::read(yarp::os::ConnectionReader& connection [[maybe_unused]])
+bool IMap2DMsgs_get_map_names_RPC_helper::writeCmdArgs(yarp::os::idl::WireWriter& writer [[maybe_unused]]) const
 {
-    yarp::os::idl::WireReader reader(connection);
+    return true;
+}
+
+bool IMap2DMsgs_get_map_names_RPC_helper::readCmd(yarp::os::idl::WireReader& reader)
+{
+    if (!readCmdLen(reader)) {
+        return false;
+    }
+    if (!readCmdTag(reader)) {
+        return false;
+    }
+    if (!readCmdArgs(reader)) {
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_get_map_names_RPC_helper::readCmdLen(yarp::os::idl::WireReader& reader)
+{
+    if (!reader.readListHeader()) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_get_map_names_RPC_helper::readCmdTag(yarp::os::idl::WireReader& reader)
+{
+    std::string tag = reader.readTag();
+    if (reader.isError()) {
+        return false;
+    }
+    if (tag != s_tag) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_get_map_names_RPC_helper::readCmdArgs(yarp::os::idl::WireReader& reader [[maybe_unused]])
+{
+    return true;
+}
+
+bool IMap2DMsgs_get_map_names_RPC_helper::writeReply(yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.isNull()) {
+        if (!writer.writeListHeader(s_reply_len)) {
+            return false;
+        }
+        if (!writer.write(m_return_helper)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+bool IMap2DMsgs_get_map_names_RPC_helper::readReply(yarp::os::idl::WireReader& reader [[maybe_unused]])
+{
     if (!reader.readListReturn()) {
         return false;
     }
@@ -872,6 +1807,11 @@ bool IMap2DMsgs_get_map_names_RPC_helper::read(yarp::os::ConnectionReader& conne
         return false;
     }
     return true;
+}
+
+void IMap2DMsgs_get_map_names_RPC_helper::call(IMap2DMsgs* ptr)
+{
+    m_return_helper = ptr->get_map_names_RPC();
 }
 
 // remove_map_RPC helper class implementation
@@ -884,21 +1824,113 @@ IMap2DMsgs_remove_map_RPC_helper::IMap2DMsgs_remove_map_RPC_helper(const std::st
 bool IMap2DMsgs_remove_map_RPC_helper::write(yarp::os::ConnectionWriter& connection) const
 {
     yarp::os::idl::WireWriter writer(connection);
+    return writeCmd(writer);
+}
+
+bool IMap2DMsgs_remove_map_RPC_helper::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    return readReply(reader);
+}
+
+bool IMap2DMsgs_remove_map_RPC_helper::writeCmd(yarp::os::idl::WireWriter& writer) const
+{
+    if (!writeCmdLen(writer)) {
+        return false;
+    }
+    if (!writeCmdTag(writer)) {
+        return false;
+    }
+    if (!writeCmdArgs(writer)) {
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_remove_map_RPC_helper::writeCmdLen(yarp::os::idl::WireWriter& writer) const
+{
     if (!writer.writeListHeader(s_cmd_len)) {
         return false;
     }
+    return true;
+}
+
+bool IMap2DMsgs_remove_map_RPC_helper::writeCmdTag(yarp::os::idl::WireWriter& writer) const
+{
     if (!writer.writeTag(s_tag, 1, s_tag_len)) {
         return false;
     }
+    return true;
+}
+
+bool IMap2DMsgs_remove_map_RPC_helper::writeCmdArgs(yarp::os::idl::WireWriter& writer [[maybe_unused]]) const
+{
     if (!writer.writeString(m_map_name)) {
         return false;
     }
     return true;
 }
 
-bool IMap2DMsgs_remove_map_RPC_helper::read(yarp::os::ConnectionReader& connection [[maybe_unused]])
+bool IMap2DMsgs_remove_map_RPC_helper::readCmd(yarp::os::idl::WireReader& reader)
 {
-    yarp::os::idl::WireReader reader(connection);
+    if (!readCmdLen(reader)) {
+        return false;
+    }
+    if (!readCmdTag(reader)) {
+        return false;
+    }
+    if (!readCmdArgs(reader)) {
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_remove_map_RPC_helper::readCmdLen(yarp::os::idl::WireReader& reader)
+{
+    if (!reader.readListHeader()) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_remove_map_RPC_helper::readCmdTag(yarp::os::idl::WireReader& reader)
+{
+    std::string tag = reader.readTag();
+    if (reader.isError()) {
+        return false;
+    }
+    if (tag != s_tag) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_remove_map_RPC_helper::readCmdArgs(yarp::os::idl::WireReader& reader [[maybe_unused]])
+{
+    if (!reader.readString(m_map_name)) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_remove_map_RPC_helper::writeReply(yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.isNull()) {
+        if (!writer.writeListHeader(s_reply_len)) {
+            return false;
+        }
+        if (!writer.writeBool(m_return_helper)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+bool IMap2DMsgs_remove_map_RPC_helper::readReply(yarp::os::idl::WireReader& reader [[maybe_unused]])
+{
     if (!reader.readListReturn()) {
         return false;
     }
@@ -907,6 +1939,11 @@ bool IMap2DMsgs_remove_map_RPC_helper::read(yarp::os::ConnectionReader& connecti
         return false;
     }
     return true;
+}
+
+void IMap2DMsgs_remove_map_RPC_helper::call(IMap2DMsgs* ptr)
+{
+    m_return_helper = ptr->remove_map_RPC(m_map_name);
 }
 
 // store_location_RPC helper class implementation
@@ -920,12 +1957,47 @@ IMap2DMsgs_store_location_RPC_helper::IMap2DMsgs_store_location_RPC_helper(const
 bool IMap2DMsgs_store_location_RPC_helper::write(yarp::os::ConnectionWriter& connection) const
 {
     yarp::os::idl::WireWriter writer(connection);
+    return writeCmd(writer);
+}
+
+bool IMap2DMsgs_store_location_RPC_helper::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    return readReply(reader);
+}
+
+bool IMap2DMsgs_store_location_RPC_helper::writeCmd(yarp::os::idl::WireWriter& writer) const
+{
+    if (!writeCmdLen(writer)) {
+        return false;
+    }
+    if (!writeCmdTag(writer)) {
+        return false;
+    }
+    if (!writeCmdArgs(writer)) {
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_store_location_RPC_helper::writeCmdLen(yarp::os::idl::WireWriter& writer) const
+{
     if (!writer.writeListHeader(s_cmd_len)) {
         return false;
     }
+    return true;
+}
+
+bool IMap2DMsgs_store_location_RPC_helper::writeCmdTag(yarp::os::idl::WireWriter& writer) const
+{
     if (!writer.writeTag(s_tag, 1, s_tag_len)) {
         return false;
     }
+    return true;
+}
+
+bool IMap2DMsgs_store_location_RPC_helper::writeCmdArgs(yarp::os::idl::WireWriter& writer [[maybe_unused]]) const
+{
     if (!writer.writeString(m_location_name)) {
         return false;
     }
@@ -935,9 +2007,70 @@ bool IMap2DMsgs_store_location_RPC_helper::write(yarp::os::ConnectionWriter& con
     return true;
 }
 
-bool IMap2DMsgs_store_location_RPC_helper::read(yarp::os::ConnectionReader& connection [[maybe_unused]])
+bool IMap2DMsgs_store_location_RPC_helper::readCmd(yarp::os::idl::WireReader& reader)
 {
-    yarp::os::idl::WireReader reader(connection);
+    if (!readCmdLen(reader)) {
+        return false;
+    }
+    if (!readCmdTag(reader)) {
+        return false;
+    }
+    if (!readCmdArgs(reader)) {
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_store_location_RPC_helper::readCmdLen(yarp::os::idl::WireReader& reader)
+{
+    if (!reader.readListHeader()) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_store_location_RPC_helper::readCmdTag(yarp::os::idl::WireReader& reader)
+{
+    std::string tag = reader.readTag();
+    if (reader.isError()) {
+        return false;
+    }
+    if (tag != s_tag) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_store_location_RPC_helper::readCmdArgs(yarp::os::idl::WireReader& reader [[maybe_unused]])
+{
+    if (!reader.readString(m_location_name)) {
+        reader.fail();
+        return false;
+    }
+    if (!reader.readNested(m_loc)) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_store_location_RPC_helper::writeReply(yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.isNull()) {
+        if (!writer.writeListHeader(s_reply_len)) {
+            return false;
+        }
+        if (!writer.writeBool(m_return_helper)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+bool IMap2DMsgs_store_location_RPC_helper::readReply(yarp::os::idl::WireReader& reader [[maybe_unused]])
+{
     if (!reader.readListReturn()) {
         return false;
     }
@@ -946,6 +2079,11 @@ bool IMap2DMsgs_store_location_RPC_helper::read(yarp::os::ConnectionReader& conn
         return false;
     }
     return true;
+}
+
+void IMap2DMsgs_store_location_RPC_helper::call(IMap2DMsgs* ptr)
+{
+    m_return_helper = ptr->store_location_RPC(m_location_name, m_loc);
 }
 
 // store_area_RPC helper class implementation
@@ -959,12 +2097,47 @@ IMap2DMsgs_store_area_RPC_helper::IMap2DMsgs_store_area_RPC_helper(const std::st
 bool IMap2DMsgs_store_area_RPC_helper::write(yarp::os::ConnectionWriter& connection) const
 {
     yarp::os::idl::WireWriter writer(connection);
+    return writeCmd(writer);
+}
+
+bool IMap2DMsgs_store_area_RPC_helper::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    return readReply(reader);
+}
+
+bool IMap2DMsgs_store_area_RPC_helper::writeCmd(yarp::os::idl::WireWriter& writer) const
+{
+    if (!writeCmdLen(writer)) {
+        return false;
+    }
+    if (!writeCmdTag(writer)) {
+        return false;
+    }
+    if (!writeCmdArgs(writer)) {
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_store_area_RPC_helper::writeCmdLen(yarp::os::idl::WireWriter& writer) const
+{
     if (!writer.writeListHeader(s_cmd_len)) {
         return false;
     }
+    return true;
+}
+
+bool IMap2DMsgs_store_area_RPC_helper::writeCmdTag(yarp::os::idl::WireWriter& writer) const
+{
     if (!writer.writeTag(s_tag, 1, s_tag_len)) {
         return false;
     }
+    return true;
+}
+
+bool IMap2DMsgs_store_area_RPC_helper::writeCmdArgs(yarp::os::idl::WireWriter& writer [[maybe_unused]]) const
+{
     if (!writer.writeString(m_area_name)) {
         return false;
     }
@@ -974,9 +2147,70 @@ bool IMap2DMsgs_store_area_RPC_helper::write(yarp::os::ConnectionWriter& connect
     return true;
 }
 
-bool IMap2DMsgs_store_area_RPC_helper::read(yarp::os::ConnectionReader& connection [[maybe_unused]])
+bool IMap2DMsgs_store_area_RPC_helper::readCmd(yarp::os::idl::WireReader& reader)
 {
-    yarp::os::idl::WireReader reader(connection);
+    if (!readCmdLen(reader)) {
+        return false;
+    }
+    if (!readCmdTag(reader)) {
+        return false;
+    }
+    if (!readCmdArgs(reader)) {
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_store_area_RPC_helper::readCmdLen(yarp::os::idl::WireReader& reader)
+{
+    if (!reader.readListHeader()) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_store_area_RPC_helper::readCmdTag(yarp::os::idl::WireReader& reader)
+{
+    std::string tag = reader.readTag();
+    if (reader.isError()) {
+        return false;
+    }
+    if (tag != s_tag) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_store_area_RPC_helper::readCmdArgs(yarp::os::idl::WireReader& reader [[maybe_unused]])
+{
+    if (!reader.readString(m_area_name)) {
+        reader.fail();
+        return false;
+    }
+    if (!reader.readNested(m_area)) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_store_area_RPC_helper::writeReply(yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.isNull()) {
+        if (!writer.writeListHeader(s_reply_len)) {
+            return false;
+        }
+        if (!writer.writeBool(m_return_helper)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+bool IMap2DMsgs_store_area_RPC_helper::readReply(yarp::os::idl::WireReader& reader [[maybe_unused]])
+{
     if (!reader.readListReturn()) {
         return false;
     }
@@ -985,6 +2219,11 @@ bool IMap2DMsgs_store_area_RPC_helper::read(yarp::os::ConnectionReader& connecti
         return false;
     }
     return true;
+}
+
+void IMap2DMsgs_store_area_RPC_helper::call(IMap2DMsgs* ptr)
+{
+    m_return_helper = ptr->store_area_RPC(m_area_name, m_area);
 }
 
 // store_path_RPC helper class implementation
@@ -998,12 +2237,47 @@ IMap2DMsgs_store_path_RPC_helper::IMap2DMsgs_store_path_RPC_helper(const std::st
 bool IMap2DMsgs_store_path_RPC_helper::write(yarp::os::ConnectionWriter& connection) const
 {
     yarp::os::idl::WireWriter writer(connection);
+    return writeCmd(writer);
+}
+
+bool IMap2DMsgs_store_path_RPC_helper::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    return readReply(reader);
+}
+
+bool IMap2DMsgs_store_path_RPC_helper::writeCmd(yarp::os::idl::WireWriter& writer) const
+{
+    if (!writeCmdLen(writer)) {
+        return false;
+    }
+    if (!writeCmdTag(writer)) {
+        return false;
+    }
+    if (!writeCmdArgs(writer)) {
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_store_path_RPC_helper::writeCmdLen(yarp::os::idl::WireWriter& writer) const
+{
     if (!writer.writeListHeader(s_cmd_len)) {
         return false;
     }
+    return true;
+}
+
+bool IMap2DMsgs_store_path_RPC_helper::writeCmdTag(yarp::os::idl::WireWriter& writer) const
+{
     if (!writer.writeTag(s_tag, 1, s_tag_len)) {
         return false;
     }
+    return true;
+}
+
+bool IMap2DMsgs_store_path_RPC_helper::writeCmdArgs(yarp::os::idl::WireWriter& writer [[maybe_unused]]) const
+{
     if (!writer.writeString(m_path_name)) {
         return false;
     }
@@ -1013,9 +2287,70 @@ bool IMap2DMsgs_store_path_RPC_helper::write(yarp::os::ConnectionWriter& connect
     return true;
 }
 
-bool IMap2DMsgs_store_path_RPC_helper::read(yarp::os::ConnectionReader& connection [[maybe_unused]])
+bool IMap2DMsgs_store_path_RPC_helper::readCmd(yarp::os::idl::WireReader& reader)
 {
-    yarp::os::idl::WireReader reader(connection);
+    if (!readCmdLen(reader)) {
+        return false;
+    }
+    if (!readCmdTag(reader)) {
+        return false;
+    }
+    if (!readCmdArgs(reader)) {
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_store_path_RPC_helper::readCmdLen(yarp::os::idl::WireReader& reader)
+{
+    if (!reader.readListHeader()) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_store_path_RPC_helper::readCmdTag(yarp::os::idl::WireReader& reader)
+{
+    std::string tag = reader.readTag();
+    if (reader.isError()) {
+        return false;
+    }
+    if (tag != s_tag) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_store_path_RPC_helper::readCmdArgs(yarp::os::idl::WireReader& reader [[maybe_unused]])
+{
+    if (!reader.readString(m_path_name)) {
+        reader.fail();
+        return false;
+    }
+    if (!reader.readNested(m_path)) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_store_path_RPC_helper::writeReply(yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.isNull()) {
+        if (!writer.writeListHeader(s_reply_len)) {
+            return false;
+        }
+        if (!writer.writeBool(m_return_helper)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+bool IMap2DMsgs_store_path_RPC_helper::readReply(yarp::os::idl::WireReader& reader [[maybe_unused]])
+{
     if (!reader.readListReturn()) {
         return false;
     }
@@ -1024,6 +2359,11 @@ bool IMap2DMsgs_store_path_RPC_helper::read(yarp::os::ConnectionReader& connecti
         return false;
     }
     return true;
+}
+
+void IMap2DMsgs_store_path_RPC_helper::call(IMap2DMsgs* ptr)
+{
+    m_return_helper = ptr->store_path_RPC(m_path_name, m_path);
 }
 
 // get_location_RPC helper class implementation
@@ -1035,21 +2375,113 @@ IMap2DMsgs_get_location_RPC_helper::IMap2DMsgs_get_location_RPC_helper(const std
 bool IMap2DMsgs_get_location_RPC_helper::write(yarp::os::ConnectionWriter& connection) const
 {
     yarp::os::idl::WireWriter writer(connection);
+    return writeCmd(writer);
+}
+
+bool IMap2DMsgs_get_location_RPC_helper::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    return readReply(reader);
+}
+
+bool IMap2DMsgs_get_location_RPC_helper::writeCmd(yarp::os::idl::WireWriter& writer) const
+{
+    if (!writeCmdLen(writer)) {
+        return false;
+    }
+    if (!writeCmdTag(writer)) {
+        return false;
+    }
+    if (!writeCmdArgs(writer)) {
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_get_location_RPC_helper::writeCmdLen(yarp::os::idl::WireWriter& writer) const
+{
     if (!writer.writeListHeader(s_cmd_len)) {
         return false;
     }
+    return true;
+}
+
+bool IMap2DMsgs_get_location_RPC_helper::writeCmdTag(yarp::os::idl::WireWriter& writer) const
+{
     if (!writer.writeTag(s_tag, 1, s_tag_len)) {
         return false;
     }
+    return true;
+}
+
+bool IMap2DMsgs_get_location_RPC_helper::writeCmdArgs(yarp::os::idl::WireWriter& writer [[maybe_unused]]) const
+{
     if (!writer.writeString(m_location_name)) {
         return false;
     }
     return true;
 }
 
-bool IMap2DMsgs_get_location_RPC_helper::read(yarp::os::ConnectionReader& connection [[maybe_unused]])
+bool IMap2DMsgs_get_location_RPC_helper::readCmd(yarp::os::idl::WireReader& reader)
 {
-    yarp::os::idl::WireReader reader(connection);
+    if (!readCmdLen(reader)) {
+        return false;
+    }
+    if (!readCmdTag(reader)) {
+        return false;
+    }
+    if (!readCmdArgs(reader)) {
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_get_location_RPC_helper::readCmdLen(yarp::os::idl::WireReader& reader)
+{
+    if (!reader.readListHeader()) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_get_location_RPC_helper::readCmdTag(yarp::os::idl::WireReader& reader)
+{
+    std::string tag = reader.readTag();
+    if (reader.isError()) {
+        return false;
+    }
+    if (tag != s_tag) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_get_location_RPC_helper::readCmdArgs(yarp::os::idl::WireReader& reader [[maybe_unused]])
+{
+    if (!reader.readString(m_location_name)) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_get_location_RPC_helper::writeReply(yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.isNull()) {
+        if (!writer.writeListHeader(s_reply_len)) {
+            return false;
+        }
+        if (!writer.write(m_return_helper)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+bool IMap2DMsgs_get_location_RPC_helper::readReply(yarp::os::idl::WireReader& reader [[maybe_unused]])
+{
     if (!reader.readListReturn()) {
         return false;
     }
@@ -1058,6 +2490,11 @@ bool IMap2DMsgs_get_location_RPC_helper::read(yarp::os::ConnectionReader& connec
         return false;
     }
     return true;
+}
+
+void IMap2DMsgs_get_location_RPC_helper::call(IMap2DMsgs* ptr)
+{
+    m_return_helper = ptr->get_location_RPC(m_location_name);
 }
 
 // get_area_RPC helper class implementation
@@ -1069,21 +2506,113 @@ IMap2DMsgs_get_area_RPC_helper::IMap2DMsgs_get_area_RPC_helper(const std::string
 bool IMap2DMsgs_get_area_RPC_helper::write(yarp::os::ConnectionWriter& connection) const
 {
     yarp::os::idl::WireWriter writer(connection);
+    return writeCmd(writer);
+}
+
+bool IMap2DMsgs_get_area_RPC_helper::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    return readReply(reader);
+}
+
+bool IMap2DMsgs_get_area_RPC_helper::writeCmd(yarp::os::idl::WireWriter& writer) const
+{
+    if (!writeCmdLen(writer)) {
+        return false;
+    }
+    if (!writeCmdTag(writer)) {
+        return false;
+    }
+    if (!writeCmdArgs(writer)) {
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_get_area_RPC_helper::writeCmdLen(yarp::os::idl::WireWriter& writer) const
+{
     if (!writer.writeListHeader(s_cmd_len)) {
         return false;
     }
+    return true;
+}
+
+bool IMap2DMsgs_get_area_RPC_helper::writeCmdTag(yarp::os::idl::WireWriter& writer) const
+{
     if (!writer.writeTag(s_tag, 1, s_tag_len)) {
         return false;
     }
+    return true;
+}
+
+bool IMap2DMsgs_get_area_RPC_helper::writeCmdArgs(yarp::os::idl::WireWriter& writer [[maybe_unused]]) const
+{
     if (!writer.writeString(m_area_name)) {
         return false;
     }
     return true;
 }
 
-bool IMap2DMsgs_get_area_RPC_helper::read(yarp::os::ConnectionReader& connection [[maybe_unused]])
+bool IMap2DMsgs_get_area_RPC_helper::readCmd(yarp::os::idl::WireReader& reader)
 {
-    yarp::os::idl::WireReader reader(connection);
+    if (!readCmdLen(reader)) {
+        return false;
+    }
+    if (!readCmdTag(reader)) {
+        return false;
+    }
+    if (!readCmdArgs(reader)) {
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_get_area_RPC_helper::readCmdLen(yarp::os::idl::WireReader& reader)
+{
+    if (!reader.readListHeader()) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_get_area_RPC_helper::readCmdTag(yarp::os::idl::WireReader& reader)
+{
+    std::string tag = reader.readTag();
+    if (reader.isError()) {
+        return false;
+    }
+    if (tag != s_tag) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_get_area_RPC_helper::readCmdArgs(yarp::os::idl::WireReader& reader [[maybe_unused]])
+{
+    if (!reader.readString(m_area_name)) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_get_area_RPC_helper::writeReply(yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.isNull()) {
+        if (!writer.writeListHeader(s_reply_len)) {
+            return false;
+        }
+        if (!writer.write(m_return_helper)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+bool IMap2DMsgs_get_area_RPC_helper::readReply(yarp::os::idl::WireReader& reader [[maybe_unused]])
+{
     if (!reader.readListReturn()) {
         return false;
     }
@@ -1092,6 +2621,11 @@ bool IMap2DMsgs_get_area_RPC_helper::read(yarp::os::ConnectionReader& connection
         return false;
     }
     return true;
+}
+
+void IMap2DMsgs_get_area_RPC_helper::call(IMap2DMsgs* ptr)
+{
+    m_return_helper = ptr->get_area_RPC(m_area_name);
 }
 
 // get_path_RPC helper class implementation
@@ -1103,21 +2637,113 @@ IMap2DMsgs_get_path_RPC_helper::IMap2DMsgs_get_path_RPC_helper(const std::string
 bool IMap2DMsgs_get_path_RPC_helper::write(yarp::os::ConnectionWriter& connection) const
 {
     yarp::os::idl::WireWriter writer(connection);
+    return writeCmd(writer);
+}
+
+bool IMap2DMsgs_get_path_RPC_helper::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    return readReply(reader);
+}
+
+bool IMap2DMsgs_get_path_RPC_helper::writeCmd(yarp::os::idl::WireWriter& writer) const
+{
+    if (!writeCmdLen(writer)) {
+        return false;
+    }
+    if (!writeCmdTag(writer)) {
+        return false;
+    }
+    if (!writeCmdArgs(writer)) {
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_get_path_RPC_helper::writeCmdLen(yarp::os::idl::WireWriter& writer) const
+{
     if (!writer.writeListHeader(s_cmd_len)) {
         return false;
     }
+    return true;
+}
+
+bool IMap2DMsgs_get_path_RPC_helper::writeCmdTag(yarp::os::idl::WireWriter& writer) const
+{
     if (!writer.writeTag(s_tag, 1, s_tag_len)) {
         return false;
     }
+    return true;
+}
+
+bool IMap2DMsgs_get_path_RPC_helper::writeCmdArgs(yarp::os::idl::WireWriter& writer [[maybe_unused]]) const
+{
     if (!writer.writeString(m_path_name)) {
         return false;
     }
     return true;
 }
 
-bool IMap2DMsgs_get_path_RPC_helper::read(yarp::os::ConnectionReader& connection [[maybe_unused]])
+bool IMap2DMsgs_get_path_RPC_helper::readCmd(yarp::os::idl::WireReader& reader)
 {
-    yarp::os::idl::WireReader reader(connection);
+    if (!readCmdLen(reader)) {
+        return false;
+    }
+    if (!readCmdTag(reader)) {
+        return false;
+    }
+    if (!readCmdArgs(reader)) {
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_get_path_RPC_helper::readCmdLen(yarp::os::idl::WireReader& reader)
+{
+    if (!reader.readListHeader()) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_get_path_RPC_helper::readCmdTag(yarp::os::idl::WireReader& reader)
+{
+    std::string tag = reader.readTag();
+    if (reader.isError()) {
+        return false;
+    }
+    if (tag != s_tag) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_get_path_RPC_helper::readCmdArgs(yarp::os::idl::WireReader& reader [[maybe_unused]])
+{
+    if (!reader.readString(m_path_name)) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_get_path_RPC_helper::writeReply(yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.isNull()) {
+        if (!writer.writeListHeader(s_reply_len)) {
+            return false;
+        }
+        if (!writer.write(m_return_helper)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+bool IMap2DMsgs_get_path_RPC_helper::readReply(yarp::os::idl::WireReader& reader [[maybe_unused]])
+{
     if (!reader.readListReturn()) {
         return false;
     }
@@ -1126,24 +2752,117 @@ bool IMap2DMsgs_get_path_RPC_helper::read(yarp::os::ConnectionReader& connection
         return false;
     }
     return true;
+}
+
+void IMap2DMsgs_get_path_RPC_helper::call(IMap2DMsgs* ptr)
+{
+    m_return_helper = ptr->get_path_RPC(m_path_name);
 }
 
 // get_locations_list_RPC helper class implementation
 bool IMap2DMsgs_get_locations_list_RPC_helper::write(yarp::os::ConnectionWriter& connection) const
 {
     yarp::os::idl::WireWriter writer(connection);
+    return writeCmd(writer);
+}
+
+bool IMap2DMsgs_get_locations_list_RPC_helper::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    return readReply(reader);
+}
+
+bool IMap2DMsgs_get_locations_list_RPC_helper::writeCmd(yarp::os::idl::WireWriter& writer) const
+{
+    if (!writeCmdLen(writer)) {
+        return false;
+    }
+    if (!writeCmdTag(writer)) {
+        return false;
+    }
+    if (!writeCmdArgs(writer)) {
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_get_locations_list_RPC_helper::writeCmdLen(yarp::os::idl::WireWriter& writer) const
+{
     if (!writer.writeListHeader(s_cmd_len)) {
         return false;
     }
+    return true;
+}
+
+bool IMap2DMsgs_get_locations_list_RPC_helper::writeCmdTag(yarp::os::idl::WireWriter& writer) const
+{
     if (!writer.writeTag(s_tag, 1, s_tag_len)) {
         return false;
     }
     return true;
 }
 
-bool IMap2DMsgs_get_locations_list_RPC_helper::read(yarp::os::ConnectionReader& connection [[maybe_unused]])
+bool IMap2DMsgs_get_locations_list_RPC_helper::writeCmdArgs(yarp::os::idl::WireWriter& writer [[maybe_unused]]) const
 {
-    yarp::os::idl::WireReader reader(connection);
+    return true;
+}
+
+bool IMap2DMsgs_get_locations_list_RPC_helper::readCmd(yarp::os::idl::WireReader& reader)
+{
+    if (!readCmdLen(reader)) {
+        return false;
+    }
+    if (!readCmdTag(reader)) {
+        return false;
+    }
+    if (!readCmdArgs(reader)) {
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_get_locations_list_RPC_helper::readCmdLen(yarp::os::idl::WireReader& reader)
+{
+    if (!reader.readListHeader()) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_get_locations_list_RPC_helper::readCmdTag(yarp::os::idl::WireReader& reader)
+{
+    std::string tag = reader.readTag();
+    if (reader.isError()) {
+        return false;
+    }
+    if (tag != s_tag) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_get_locations_list_RPC_helper::readCmdArgs(yarp::os::idl::WireReader& reader [[maybe_unused]])
+{
+    return true;
+}
+
+bool IMap2DMsgs_get_locations_list_RPC_helper::writeReply(yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.isNull()) {
+        if (!writer.writeListHeader(s_reply_len)) {
+            return false;
+        }
+        if (!writer.write(m_return_helper)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+bool IMap2DMsgs_get_locations_list_RPC_helper::readReply(yarp::os::idl::WireReader& reader [[maybe_unused]])
+{
     if (!reader.readListReturn()) {
         return false;
     }
@@ -1152,24 +2871,117 @@ bool IMap2DMsgs_get_locations_list_RPC_helper::read(yarp::os::ConnectionReader& 
         return false;
     }
     return true;
+}
+
+void IMap2DMsgs_get_locations_list_RPC_helper::call(IMap2DMsgs* ptr)
+{
+    m_return_helper = ptr->get_locations_list_RPC();
 }
 
 // get_areas_list_RPC helper class implementation
 bool IMap2DMsgs_get_areas_list_RPC_helper::write(yarp::os::ConnectionWriter& connection) const
 {
     yarp::os::idl::WireWriter writer(connection);
+    return writeCmd(writer);
+}
+
+bool IMap2DMsgs_get_areas_list_RPC_helper::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    return readReply(reader);
+}
+
+bool IMap2DMsgs_get_areas_list_RPC_helper::writeCmd(yarp::os::idl::WireWriter& writer) const
+{
+    if (!writeCmdLen(writer)) {
+        return false;
+    }
+    if (!writeCmdTag(writer)) {
+        return false;
+    }
+    if (!writeCmdArgs(writer)) {
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_get_areas_list_RPC_helper::writeCmdLen(yarp::os::idl::WireWriter& writer) const
+{
     if (!writer.writeListHeader(s_cmd_len)) {
         return false;
     }
+    return true;
+}
+
+bool IMap2DMsgs_get_areas_list_RPC_helper::writeCmdTag(yarp::os::idl::WireWriter& writer) const
+{
     if (!writer.writeTag(s_tag, 1, s_tag_len)) {
         return false;
     }
     return true;
 }
 
-bool IMap2DMsgs_get_areas_list_RPC_helper::read(yarp::os::ConnectionReader& connection [[maybe_unused]])
+bool IMap2DMsgs_get_areas_list_RPC_helper::writeCmdArgs(yarp::os::idl::WireWriter& writer [[maybe_unused]]) const
 {
-    yarp::os::idl::WireReader reader(connection);
+    return true;
+}
+
+bool IMap2DMsgs_get_areas_list_RPC_helper::readCmd(yarp::os::idl::WireReader& reader)
+{
+    if (!readCmdLen(reader)) {
+        return false;
+    }
+    if (!readCmdTag(reader)) {
+        return false;
+    }
+    if (!readCmdArgs(reader)) {
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_get_areas_list_RPC_helper::readCmdLen(yarp::os::idl::WireReader& reader)
+{
+    if (!reader.readListHeader()) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_get_areas_list_RPC_helper::readCmdTag(yarp::os::idl::WireReader& reader)
+{
+    std::string tag = reader.readTag();
+    if (reader.isError()) {
+        return false;
+    }
+    if (tag != s_tag) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_get_areas_list_RPC_helper::readCmdArgs(yarp::os::idl::WireReader& reader [[maybe_unused]])
+{
+    return true;
+}
+
+bool IMap2DMsgs_get_areas_list_RPC_helper::writeReply(yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.isNull()) {
+        if (!writer.writeListHeader(s_reply_len)) {
+            return false;
+        }
+        if (!writer.write(m_return_helper)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+bool IMap2DMsgs_get_areas_list_RPC_helper::readReply(yarp::os::idl::WireReader& reader [[maybe_unused]])
+{
     if (!reader.readListReturn()) {
         return false;
     }
@@ -1178,24 +2990,117 @@ bool IMap2DMsgs_get_areas_list_RPC_helper::read(yarp::os::ConnectionReader& conn
         return false;
     }
     return true;
+}
+
+void IMap2DMsgs_get_areas_list_RPC_helper::call(IMap2DMsgs* ptr)
+{
+    m_return_helper = ptr->get_areas_list_RPC();
 }
 
 // get_paths_list_RPC helper class implementation
 bool IMap2DMsgs_get_paths_list_RPC_helper::write(yarp::os::ConnectionWriter& connection) const
 {
     yarp::os::idl::WireWriter writer(connection);
+    return writeCmd(writer);
+}
+
+bool IMap2DMsgs_get_paths_list_RPC_helper::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    return readReply(reader);
+}
+
+bool IMap2DMsgs_get_paths_list_RPC_helper::writeCmd(yarp::os::idl::WireWriter& writer) const
+{
+    if (!writeCmdLen(writer)) {
+        return false;
+    }
+    if (!writeCmdTag(writer)) {
+        return false;
+    }
+    if (!writeCmdArgs(writer)) {
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_get_paths_list_RPC_helper::writeCmdLen(yarp::os::idl::WireWriter& writer) const
+{
     if (!writer.writeListHeader(s_cmd_len)) {
         return false;
     }
+    return true;
+}
+
+bool IMap2DMsgs_get_paths_list_RPC_helper::writeCmdTag(yarp::os::idl::WireWriter& writer) const
+{
     if (!writer.writeTag(s_tag, 1, s_tag_len)) {
         return false;
     }
     return true;
 }
 
-bool IMap2DMsgs_get_paths_list_RPC_helper::read(yarp::os::ConnectionReader& connection [[maybe_unused]])
+bool IMap2DMsgs_get_paths_list_RPC_helper::writeCmdArgs(yarp::os::idl::WireWriter& writer [[maybe_unused]]) const
 {
-    yarp::os::idl::WireReader reader(connection);
+    return true;
+}
+
+bool IMap2DMsgs_get_paths_list_RPC_helper::readCmd(yarp::os::idl::WireReader& reader)
+{
+    if (!readCmdLen(reader)) {
+        return false;
+    }
+    if (!readCmdTag(reader)) {
+        return false;
+    }
+    if (!readCmdArgs(reader)) {
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_get_paths_list_RPC_helper::readCmdLen(yarp::os::idl::WireReader& reader)
+{
+    if (!reader.readListHeader()) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_get_paths_list_RPC_helper::readCmdTag(yarp::os::idl::WireReader& reader)
+{
+    std::string tag = reader.readTag();
+    if (reader.isError()) {
+        return false;
+    }
+    if (tag != s_tag) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_get_paths_list_RPC_helper::readCmdArgs(yarp::os::idl::WireReader& reader [[maybe_unused]])
+{
+    return true;
+}
+
+bool IMap2DMsgs_get_paths_list_RPC_helper::writeReply(yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.isNull()) {
+        if (!writer.writeListHeader(s_reply_len)) {
+            return false;
+        }
+        if (!writer.write(m_return_helper)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+bool IMap2DMsgs_get_paths_list_RPC_helper::readReply(yarp::os::idl::WireReader& reader [[maybe_unused]])
+{
     if (!reader.readListReturn()) {
         return false;
     }
@@ -1204,24 +3109,117 @@ bool IMap2DMsgs_get_paths_list_RPC_helper::read(yarp::os::ConnectionReader& conn
         return false;
     }
     return true;
+}
+
+void IMap2DMsgs_get_paths_list_RPC_helper::call(IMap2DMsgs* ptr)
+{
+    m_return_helper = ptr->get_paths_list_RPC();
 }
 
 // get_all_locations_RPC helper class implementation
 bool IMap2DMsgs_get_all_locations_RPC_helper::write(yarp::os::ConnectionWriter& connection) const
 {
     yarp::os::idl::WireWriter writer(connection);
+    return writeCmd(writer);
+}
+
+bool IMap2DMsgs_get_all_locations_RPC_helper::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    return readReply(reader);
+}
+
+bool IMap2DMsgs_get_all_locations_RPC_helper::writeCmd(yarp::os::idl::WireWriter& writer) const
+{
+    if (!writeCmdLen(writer)) {
+        return false;
+    }
+    if (!writeCmdTag(writer)) {
+        return false;
+    }
+    if (!writeCmdArgs(writer)) {
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_get_all_locations_RPC_helper::writeCmdLen(yarp::os::idl::WireWriter& writer) const
+{
     if (!writer.writeListHeader(s_cmd_len)) {
         return false;
     }
+    return true;
+}
+
+bool IMap2DMsgs_get_all_locations_RPC_helper::writeCmdTag(yarp::os::idl::WireWriter& writer) const
+{
     if (!writer.writeTag(s_tag, 1, s_tag_len)) {
         return false;
     }
     return true;
 }
 
-bool IMap2DMsgs_get_all_locations_RPC_helper::read(yarp::os::ConnectionReader& connection [[maybe_unused]])
+bool IMap2DMsgs_get_all_locations_RPC_helper::writeCmdArgs(yarp::os::idl::WireWriter& writer [[maybe_unused]]) const
 {
-    yarp::os::idl::WireReader reader(connection);
+    return true;
+}
+
+bool IMap2DMsgs_get_all_locations_RPC_helper::readCmd(yarp::os::idl::WireReader& reader)
+{
+    if (!readCmdLen(reader)) {
+        return false;
+    }
+    if (!readCmdTag(reader)) {
+        return false;
+    }
+    if (!readCmdArgs(reader)) {
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_get_all_locations_RPC_helper::readCmdLen(yarp::os::idl::WireReader& reader)
+{
+    if (!reader.readListHeader()) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_get_all_locations_RPC_helper::readCmdTag(yarp::os::idl::WireReader& reader)
+{
+    std::string tag = reader.readTag();
+    if (reader.isError()) {
+        return false;
+    }
+    if (tag != s_tag) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_get_all_locations_RPC_helper::readCmdArgs(yarp::os::idl::WireReader& reader [[maybe_unused]])
+{
+    return true;
+}
+
+bool IMap2DMsgs_get_all_locations_RPC_helper::writeReply(yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.isNull()) {
+        if (!writer.writeListHeader(s_reply_len)) {
+            return false;
+        }
+        if (!writer.write(m_return_helper)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+bool IMap2DMsgs_get_all_locations_RPC_helper::readReply(yarp::os::idl::WireReader& reader [[maybe_unused]])
+{
     if (!reader.readListReturn()) {
         return false;
     }
@@ -1230,24 +3228,117 @@ bool IMap2DMsgs_get_all_locations_RPC_helper::read(yarp::os::ConnectionReader& c
         return false;
     }
     return true;
+}
+
+void IMap2DMsgs_get_all_locations_RPC_helper::call(IMap2DMsgs* ptr)
+{
+    m_return_helper = ptr->get_all_locations_RPC();
 }
 
 // get_all_areas_RPC helper class implementation
 bool IMap2DMsgs_get_all_areas_RPC_helper::write(yarp::os::ConnectionWriter& connection) const
 {
     yarp::os::idl::WireWriter writer(connection);
+    return writeCmd(writer);
+}
+
+bool IMap2DMsgs_get_all_areas_RPC_helper::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    return readReply(reader);
+}
+
+bool IMap2DMsgs_get_all_areas_RPC_helper::writeCmd(yarp::os::idl::WireWriter& writer) const
+{
+    if (!writeCmdLen(writer)) {
+        return false;
+    }
+    if (!writeCmdTag(writer)) {
+        return false;
+    }
+    if (!writeCmdArgs(writer)) {
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_get_all_areas_RPC_helper::writeCmdLen(yarp::os::idl::WireWriter& writer) const
+{
     if (!writer.writeListHeader(s_cmd_len)) {
         return false;
     }
+    return true;
+}
+
+bool IMap2DMsgs_get_all_areas_RPC_helper::writeCmdTag(yarp::os::idl::WireWriter& writer) const
+{
     if (!writer.writeTag(s_tag, 1, s_tag_len)) {
         return false;
     }
     return true;
 }
 
-bool IMap2DMsgs_get_all_areas_RPC_helper::read(yarp::os::ConnectionReader& connection [[maybe_unused]])
+bool IMap2DMsgs_get_all_areas_RPC_helper::writeCmdArgs(yarp::os::idl::WireWriter& writer [[maybe_unused]]) const
 {
-    yarp::os::idl::WireReader reader(connection);
+    return true;
+}
+
+bool IMap2DMsgs_get_all_areas_RPC_helper::readCmd(yarp::os::idl::WireReader& reader)
+{
+    if (!readCmdLen(reader)) {
+        return false;
+    }
+    if (!readCmdTag(reader)) {
+        return false;
+    }
+    if (!readCmdArgs(reader)) {
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_get_all_areas_RPC_helper::readCmdLen(yarp::os::idl::WireReader& reader)
+{
+    if (!reader.readListHeader()) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_get_all_areas_RPC_helper::readCmdTag(yarp::os::idl::WireReader& reader)
+{
+    std::string tag = reader.readTag();
+    if (reader.isError()) {
+        return false;
+    }
+    if (tag != s_tag) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_get_all_areas_RPC_helper::readCmdArgs(yarp::os::idl::WireReader& reader [[maybe_unused]])
+{
+    return true;
+}
+
+bool IMap2DMsgs_get_all_areas_RPC_helper::writeReply(yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.isNull()) {
+        if (!writer.writeListHeader(s_reply_len)) {
+            return false;
+        }
+        if (!writer.write(m_return_helper)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+bool IMap2DMsgs_get_all_areas_RPC_helper::readReply(yarp::os::idl::WireReader& reader [[maybe_unused]])
+{
     if (!reader.readListReturn()) {
         return false;
     }
@@ -1256,24 +3347,117 @@ bool IMap2DMsgs_get_all_areas_RPC_helper::read(yarp::os::ConnectionReader& conne
         return false;
     }
     return true;
+}
+
+void IMap2DMsgs_get_all_areas_RPC_helper::call(IMap2DMsgs* ptr)
+{
+    m_return_helper = ptr->get_all_areas_RPC();
 }
 
 // get_all_paths_RPC helper class implementation
 bool IMap2DMsgs_get_all_paths_RPC_helper::write(yarp::os::ConnectionWriter& connection) const
 {
     yarp::os::idl::WireWriter writer(connection);
+    return writeCmd(writer);
+}
+
+bool IMap2DMsgs_get_all_paths_RPC_helper::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    return readReply(reader);
+}
+
+bool IMap2DMsgs_get_all_paths_RPC_helper::writeCmd(yarp::os::idl::WireWriter& writer) const
+{
+    if (!writeCmdLen(writer)) {
+        return false;
+    }
+    if (!writeCmdTag(writer)) {
+        return false;
+    }
+    if (!writeCmdArgs(writer)) {
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_get_all_paths_RPC_helper::writeCmdLen(yarp::os::idl::WireWriter& writer) const
+{
     if (!writer.writeListHeader(s_cmd_len)) {
         return false;
     }
+    return true;
+}
+
+bool IMap2DMsgs_get_all_paths_RPC_helper::writeCmdTag(yarp::os::idl::WireWriter& writer) const
+{
     if (!writer.writeTag(s_tag, 1, s_tag_len)) {
         return false;
     }
     return true;
 }
 
-bool IMap2DMsgs_get_all_paths_RPC_helper::read(yarp::os::ConnectionReader& connection [[maybe_unused]])
+bool IMap2DMsgs_get_all_paths_RPC_helper::writeCmdArgs(yarp::os::idl::WireWriter& writer [[maybe_unused]]) const
 {
-    yarp::os::idl::WireReader reader(connection);
+    return true;
+}
+
+bool IMap2DMsgs_get_all_paths_RPC_helper::readCmd(yarp::os::idl::WireReader& reader)
+{
+    if (!readCmdLen(reader)) {
+        return false;
+    }
+    if (!readCmdTag(reader)) {
+        return false;
+    }
+    if (!readCmdArgs(reader)) {
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_get_all_paths_RPC_helper::readCmdLen(yarp::os::idl::WireReader& reader)
+{
+    if (!reader.readListHeader()) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_get_all_paths_RPC_helper::readCmdTag(yarp::os::idl::WireReader& reader)
+{
+    std::string tag = reader.readTag();
+    if (reader.isError()) {
+        return false;
+    }
+    if (tag != s_tag) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_get_all_paths_RPC_helper::readCmdArgs(yarp::os::idl::WireReader& reader [[maybe_unused]])
+{
+    return true;
+}
+
+bool IMap2DMsgs_get_all_paths_RPC_helper::writeReply(yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.isNull()) {
+        if (!writer.writeListHeader(s_reply_len)) {
+            return false;
+        }
+        if (!writer.write(m_return_helper)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+bool IMap2DMsgs_get_all_paths_RPC_helper::readReply(yarp::os::idl::WireReader& reader [[maybe_unused]])
+{
     if (!reader.readListReturn()) {
         return false;
     }
@@ -1282,6 +3466,11 @@ bool IMap2DMsgs_get_all_paths_RPC_helper::read(yarp::os::ConnectionReader& conne
         return false;
     }
     return true;
+}
+
+void IMap2DMsgs_get_all_paths_RPC_helper::call(IMap2DMsgs* ptr)
+{
+    m_return_helper = ptr->get_all_paths_RPC();
 }
 
 // rename_location_RPC helper class implementation
@@ -1295,12 +3484,47 @@ IMap2DMsgs_rename_location_RPC_helper::IMap2DMsgs_rename_location_RPC_helper(con
 bool IMap2DMsgs_rename_location_RPC_helper::write(yarp::os::ConnectionWriter& connection) const
 {
     yarp::os::idl::WireWriter writer(connection);
+    return writeCmd(writer);
+}
+
+bool IMap2DMsgs_rename_location_RPC_helper::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    return readReply(reader);
+}
+
+bool IMap2DMsgs_rename_location_RPC_helper::writeCmd(yarp::os::idl::WireWriter& writer) const
+{
+    if (!writeCmdLen(writer)) {
+        return false;
+    }
+    if (!writeCmdTag(writer)) {
+        return false;
+    }
+    if (!writeCmdArgs(writer)) {
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_rename_location_RPC_helper::writeCmdLen(yarp::os::idl::WireWriter& writer) const
+{
     if (!writer.writeListHeader(s_cmd_len)) {
         return false;
     }
+    return true;
+}
+
+bool IMap2DMsgs_rename_location_RPC_helper::writeCmdTag(yarp::os::idl::WireWriter& writer) const
+{
     if (!writer.writeTag(s_tag, 1, s_tag_len)) {
         return false;
     }
+    return true;
+}
+
+bool IMap2DMsgs_rename_location_RPC_helper::writeCmdArgs(yarp::os::idl::WireWriter& writer [[maybe_unused]]) const
+{
     if (!writer.writeString(m_original_name)) {
         return false;
     }
@@ -1310,9 +3534,70 @@ bool IMap2DMsgs_rename_location_RPC_helper::write(yarp::os::ConnectionWriter& co
     return true;
 }
 
-bool IMap2DMsgs_rename_location_RPC_helper::read(yarp::os::ConnectionReader& connection [[maybe_unused]])
+bool IMap2DMsgs_rename_location_RPC_helper::readCmd(yarp::os::idl::WireReader& reader)
 {
-    yarp::os::idl::WireReader reader(connection);
+    if (!readCmdLen(reader)) {
+        return false;
+    }
+    if (!readCmdTag(reader)) {
+        return false;
+    }
+    if (!readCmdArgs(reader)) {
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_rename_location_RPC_helper::readCmdLen(yarp::os::idl::WireReader& reader)
+{
+    if (!reader.readListHeader()) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_rename_location_RPC_helper::readCmdTag(yarp::os::idl::WireReader& reader)
+{
+    std::string tag = reader.readTag();
+    if (reader.isError()) {
+        return false;
+    }
+    if (tag != s_tag) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_rename_location_RPC_helper::readCmdArgs(yarp::os::idl::WireReader& reader [[maybe_unused]])
+{
+    if (!reader.readString(m_original_name)) {
+        reader.fail();
+        return false;
+    }
+    if (!reader.readString(m_new_name)) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_rename_location_RPC_helper::writeReply(yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.isNull()) {
+        if (!writer.writeListHeader(s_reply_len)) {
+            return false;
+        }
+        if (!writer.writeBool(m_return_helper)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+bool IMap2DMsgs_rename_location_RPC_helper::readReply(yarp::os::idl::WireReader& reader [[maybe_unused]])
+{
     if (!reader.readListReturn()) {
         return false;
     }
@@ -1321,6 +3606,11 @@ bool IMap2DMsgs_rename_location_RPC_helper::read(yarp::os::ConnectionReader& con
         return false;
     }
     return true;
+}
+
+void IMap2DMsgs_rename_location_RPC_helper::call(IMap2DMsgs* ptr)
+{
+    m_return_helper = ptr->rename_location_RPC(m_original_name, m_new_name);
 }
 
 // delete_location_RPC helper class implementation
@@ -1333,21 +3623,113 @@ IMap2DMsgs_delete_location_RPC_helper::IMap2DMsgs_delete_location_RPC_helper(con
 bool IMap2DMsgs_delete_location_RPC_helper::write(yarp::os::ConnectionWriter& connection) const
 {
     yarp::os::idl::WireWriter writer(connection);
+    return writeCmd(writer);
+}
+
+bool IMap2DMsgs_delete_location_RPC_helper::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    return readReply(reader);
+}
+
+bool IMap2DMsgs_delete_location_RPC_helper::writeCmd(yarp::os::idl::WireWriter& writer) const
+{
+    if (!writeCmdLen(writer)) {
+        return false;
+    }
+    if (!writeCmdTag(writer)) {
+        return false;
+    }
+    if (!writeCmdArgs(writer)) {
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_delete_location_RPC_helper::writeCmdLen(yarp::os::idl::WireWriter& writer) const
+{
     if (!writer.writeListHeader(s_cmd_len)) {
         return false;
     }
+    return true;
+}
+
+bool IMap2DMsgs_delete_location_RPC_helper::writeCmdTag(yarp::os::idl::WireWriter& writer) const
+{
     if (!writer.writeTag(s_tag, 1, s_tag_len)) {
         return false;
     }
+    return true;
+}
+
+bool IMap2DMsgs_delete_location_RPC_helper::writeCmdArgs(yarp::os::idl::WireWriter& writer [[maybe_unused]]) const
+{
     if (!writer.writeString(m_location_name)) {
         return false;
     }
     return true;
 }
 
-bool IMap2DMsgs_delete_location_RPC_helper::read(yarp::os::ConnectionReader& connection [[maybe_unused]])
+bool IMap2DMsgs_delete_location_RPC_helper::readCmd(yarp::os::idl::WireReader& reader)
 {
-    yarp::os::idl::WireReader reader(connection);
+    if (!readCmdLen(reader)) {
+        return false;
+    }
+    if (!readCmdTag(reader)) {
+        return false;
+    }
+    if (!readCmdArgs(reader)) {
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_delete_location_RPC_helper::readCmdLen(yarp::os::idl::WireReader& reader)
+{
+    if (!reader.readListHeader()) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_delete_location_RPC_helper::readCmdTag(yarp::os::idl::WireReader& reader)
+{
+    std::string tag = reader.readTag();
+    if (reader.isError()) {
+        return false;
+    }
+    if (tag != s_tag) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_delete_location_RPC_helper::readCmdArgs(yarp::os::idl::WireReader& reader [[maybe_unused]])
+{
+    if (!reader.readString(m_location_name)) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_delete_location_RPC_helper::writeReply(yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.isNull()) {
+        if (!writer.writeListHeader(s_reply_len)) {
+            return false;
+        }
+        if (!writer.writeBool(m_return_helper)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+bool IMap2DMsgs_delete_location_RPC_helper::readReply(yarp::os::idl::WireReader& reader [[maybe_unused]])
+{
     if (!reader.readListReturn()) {
         return false;
     }
@@ -1356,6 +3738,11 @@ bool IMap2DMsgs_delete_location_RPC_helper::read(yarp::os::ConnectionReader& con
         return false;
     }
     return true;
+}
+
+void IMap2DMsgs_delete_location_RPC_helper::call(IMap2DMsgs* ptr)
+{
+    m_return_helper = ptr->delete_location_RPC(m_location_name);
 }
 
 // delete_path_RPC helper class implementation
@@ -1368,21 +3755,113 @@ IMap2DMsgs_delete_path_RPC_helper::IMap2DMsgs_delete_path_RPC_helper(const std::
 bool IMap2DMsgs_delete_path_RPC_helper::write(yarp::os::ConnectionWriter& connection) const
 {
     yarp::os::idl::WireWriter writer(connection);
+    return writeCmd(writer);
+}
+
+bool IMap2DMsgs_delete_path_RPC_helper::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    return readReply(reader);
+}
+
+bool IMap2DMsgs_delete_path_RPC_helper::writeCmd(yarp::os::idl::WireWriter& writer) const
+{
+    if (!writeCmdLen(writer)) {
+        return false;
+    }
+    if (!writeCmdTag(writer)) {
+        return false;
+    }
+    if (!writeCmdArgs(writer)) {
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_delete_path_RPC_helper::writeCmdLen(yarp::os::idl::WireWriter& writer) const
+{
     if (!writer.writeListHeader(s_cmd_len)) {
         return false;
     }
+    return true;
+}
+
+bool IMap2DMsgs_delete_path_RPC_helper::writeCmdTag(yarp::os::idl::WireWriter& writer) const
+{
     if (!writer.writeTag(s_tag, 1, s_tag_len)) {
         return false;
     }
+    return true;
+}
+
+bool IMap2DMsgs_delete_path_RPC_helper::writeCmdArgs(yarp::os::idl::WireWriter& writer [[maybe_unused]]) const
+{
     if (!writer.writeString(m_path_name)) {
         return false;
     }
     return true;
 }
 
-bool IMap2DMsgs_delete_path_RPC_helper::read(yarp::os::ConnectionReader& connection [[maybe_unused]])
+bool IMap2DMsgs_delete_path_RPC_helper::readCmd(yarp::os::idl::WireReader& reader)
 {
-    yarp::os::idl::WireReader reader(connection);
+    if (!readCmdLen(reader)) {
+        return false;
+    }
+    if (!readCmdTag(reader)) {
+        return false;
+    }
+    if (!readCmdArgs(reader)) {
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_delete_path_RPC_helper::readCmdLen(yarp::os::idl::WireReader& reader)
+{
+    if (!reader.readListHeader()) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_delete_path_RPC_helper::readCmdTag(yarp::os::idl::WireReader& reader)
+{
+    std::string tag = reader.readTag();
+    if (reader.isError()) {
+        return false;
+    }
+    if (tag != s_tag) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_delete_path_RPC_helper::readCmdArgs(yarp::os::idl::WireReader& reader [[maybe_unused]])
+{
+    if (!reader.readString(m_path_name)) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_delete_path_RPC_helper::writeReply(yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.isNull()) {
+        if (!writer.writeListHeader(s_reply_len)) {
+            return false;
+        }
+        if (!writer.writeBool(m_return_helper)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+bool IMap2DMsgs_delete_path_RPC_helper::readReply(yarp::os::idl::WireReader& reader [[maybe_unused]])
+{
     if (!reader.readListReturn()) {
         return false;
     }
@@ -1391,6 +3870,11 @@ bool IMap2DMsgs_delete_path_RPC_helper::read(yarp::os::ConnectionReader& connect
         return false;
     }
     return true;
+}
+
+void IMap2DMsgs_delete_path_RPC_helper::call(IMap2DMsgs* ptr)
+{
+    m_return_helper = ptr->delete_path_RPC(m_path_name);
 }
 
 // rename_area_RPC helper class implementation
@@ -1404,12 +3888,47 @@ IMap2DMsgs_rename_area_RPC_helper::IMap2DMsgs_rename_area_RPC_helper(const std::
 bool IMap2DMsgs_rename_area_RPC_helper::write(yarp::os::ConnectionWriter& connection) const
 {
     yarp::os::idl::WireWriter writer(connection);
+    return writeCmd(writer);
+}
+
+bool IMap2DMsgs_rename_area_RPC_helper::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    return readReply(reader);
+}
+
+bool IMap2DMsgs_rename_area_RPC_helper::writeCmd(yarp::os::idl::WireWriter& writer) const
+{
+    if (!writeCmdLen(writer)) {
+        return false;
+    }
+    if (!writeCmdTag(writer)) {
+        return false;
+    }
+    if (!writeCmdArgs(writer)) {
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_rename_area_RPC_helper::writeCmdLen(yarp::os::idl::WireWriter& writer) const
+{
     if (!writer.writeListHeader(s_cmd_len)) {
         return false;
     }
+    return true;
+}
+
+bool IMap2DMsgs_rename_area_RPC_helper::writeCmdTag(yarp::os::idl::WireWriter& writer) const
+{
     if (!writer.writeTag(s_tag, 1, s_tag_len)) {
         return false;
     }
+    return true;
+}
+
+bool IMap2DMsgs_rename_area_RPC_helper::writeCmdArgs(yarp::os::idl::WireWriter& writer [[maybe_unused]]) const
+{
     if (!writer.writeString(m_original_name)) {
         return false;
     }
@@ -1419,9 +3938,70 @@ bool IMap2DMsgs_rename_area_RPC_helper::write(yarp::os::ConnectionWriter& connec
     return true;
 }
 
-bool IMap2DMsgs_rename_area_RPC_helper::read(yarp::os::ConnectionReader& connection [[maybe_unused]])
+bool IMap2DMsgs_rename_area_RPC_helper::readCmd(yarp::os::idl::WireReader& reader)
 {
-    yarp::os::idl::WireReader reader(connection);
+    if (!readCmdLen(reader)) {
+        return false;
+    }
+    if (!readCmdTag(reader)) {
+        return false;
+    }
+    if (!readCmdArgs(reader)) {
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_rename_area_RPC_helper::readCmdLen(yarp::os::idl::WireReader& reader)
+{
+    if (!reader.readListHeader()) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_rename_area_RPC_helper::readCmdTag(yarp::os::idl::WireReader& reader)
+{
+    std::string tag = reader.readTag();
+    if (reader.isError()) {
+        return false;
+    }
+    if (tag != s_tag) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_rename_area_RPC_helper::readCmdArgs(yarp::os::idl::WireReader& reader [[maybe_unused]])
+{
+    if (!reader.readString(m_original_name)) {
+        reader.fail();
+        return false;
+    }
+    if (!reader.readString(m_new_name)) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_rename_area_RPC_helper::writeReply(yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.isNull()) {
+        if (!writer.writeListHeader(s_reply_len)) {
+            return false;
+        }
+        if (!writer.writeBool(m_return_helper)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+bool IMap2DMsgs_rename_area_RPC_helper::readReply(yarp::os::idl::WireReader& reader [[maybe_unused]])
+{
     if (!reader.readListReturn()) {
         return false;
     }
@@ -1430,6 +4010,11 @@ bool IMap2DMsgs_rename_area_RPC_helper::read(yarp::os::ConnectionReader& connect
         return false;
     }
     return true;
+}
+
+void IMap2DMsgs_rename_area_RPC_helper::call(IMap2DMsgs* ptr)
+{
+    m_return_helper = ptr->rename_area_RPC(m_original_name, m_new_name);
 }
 
 // rename_path_RPC helper class implementation
@@ -1443,12 +4028,47 @@ IMap2DMsgs_rename_path_RPC_helper::IMap2DMsgs_rename_path_RPC_helper(const std::
 bool IMap2DMsgs_rename_path_RPC_helper::write(yarp::os::ConnectionWriter& connection) const
 {
     yarp::os::idl::WireWriter writer(connection);
+    return writeCmd(writer);
+}
+
+bool IMap2DMsgs_rename_path_RPC_helper::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    return readReply(reader);
+}
+
+bool IMap2DMsgs_rename_path_RPC_helper::writeCmd(yarp::os::idl::WireWriter& writer) const
+{
+    if (!writeCmdLen(writer)) {
+        return false;
+    }
+    if (!writeCmdTag(writer)) {
+        return false;
+    }
+    if (!writeCmdArgs(writer)) {
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_rename_path_RPC_helper::writeCmdLen(yarp::os::idl::WireWriter& writer) const
+{
     if (!writer.writeListHeader(s_cmd_len)) {
         return false;
     }
+    return true;
+}
+
+bool IMap2DMsgs_rename_path_RPC_helper::writeCmdTag(yarp::os::idl::WireWriter& writer) const
+{
     if (!writer.writeTag(s_tag, 1, s_tag_len)) {
         return false;
     }
+    return true;
+}
+
+bool IMap2DMsgs_rename_path_RPC_helper::writeCmdArgs(yarp::os::idl::WireWriter& writer [[maybe_unused]]) const
+{
     if (!writer.writeString(m_original_name)) {
         return false;
     }
@@ -1458,9 +4078,70 @@ bool IMap2DMsgs_rename_path_RPC_helper::write(yarp::os::ConnectionWriter& connec
     return true;
 }
 
-bool IMap2DMsgs_rename_path_RPC_helper::read(yarp::os::ConnectionReader& connection [[maybe_unused]])
+bool IMap2DMsgs_rename_path_RPC_helper::readCmd(yarp::os::idl::WireReader& reader)
 {
-    yarp::os::idl::WireReader reader(connection);
+    if (!readCmdLen(reader)) {
+        return false;
+    }
+    if (!readCmdTag(reader)) {
+        return false;
+    }
+    if (!readCmdArgs(reader)) {
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_rename_path_RPC_helper::readCmdLen(yarp::os::idl::WireReader& reader)
+{
+    if (!reader.readListHeader()) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_rename_path_RPC_helper::readCmdTag(yarp::os::idl::WireReader& reader)
+{
+    std::string tag = reader.readTag();
+    if (reader.isError()) {
+        return false;
+    }
+    if (tag != s_tag) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_rename_path_RPC_helper::readCmdArgs(yarp::os::idl::WireReader& reader [[maybe_unused]])
+{
+    if (!reader.readString(m_original_name)) {
+        reader.fail();
+        return false;
+    }
+    if (!reader.readString(m_new_name)) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_rename_path_RPC_helper::writeReply(yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.isNull()) {
+        if (!writer.writeListHeader(s_reply_len)) {
+            return false;
+        }
+        if (!writer.writeBool(m_return_helper)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+bool IMap2DMsgs_rename_path_RPC_helper::readReply(yarp::os::idl::WireReader& reader [[maybe_unused]])
+{
     if (!reader.readListReturn()) {
         return false;
     }
@@ -1469,6 +4150,11 @@ bool IMap2DMsgs_rename_path_RPC_helper::read(yarp::os::ConnectionReader& connect
         return false;
     }
     return true;
+}
+
+void IMap2DMsgs_rename_path_RPC_helper::call(IMap2DMsgs* ptr)
+{
+    m_return_helper = ptr->rename_path_RPC(m_original_name, m_new_name);
 }
 
 // delete_area_RPC helper class implementation
@@ -1481,21 +4167,113 @@ IMap2DMsgs_delete_area_RPC_helper::IMap2DMsgs_delete_area_RPC_helper(const std::
 bool IMap2DMsgs_delete_area_RPC_helper::write(yarp::os::ConnectionWriter& connection) const
 {
     yarp::os::idl::WireWriter writer(connection);
+    return writeCmd(writer);
+}
+
+bool IMap2DMsgs_delete_area_RPC_helper::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    return readReply(reader);
+}
+
+bool IMap2DMsgs_delete_area_RPC_helper::writeCmd(yarp::os::idl::WireWriter& writer) const
+{
+    if (!writeCmdLen(writer)) {
+        return false;
+    }
+    if (!writeCmdTag(writer)) {
+        return false;
+    }
+    if (!writeCmdArgs(writer)) {
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_delete_area_RPC_helper::writeCmdLen(yarp::os::idl::WireWriter& writer) const
+{
     if (!writer.writeListHeader(s_cmd_len)) {
         return false;
     }
+    return true;
+}
+
+bool IMap2DMsgs_delete_area_RPC_helper::writeCmdTag(yarp::os::idl::WireWriter& writer) const
+{
     if (!writer.writeTag(s_tag, 1, s_tag_len)) {
         return false;
     }
+    return true;
+}
+
+bool IMap2DMsgs_delete_area_RPC_helper::writeCmdArgs(yarp::os::idl::WireWriter& writer [[maybe_unused]]) const
+{
     if (!writer.writeString(m_area_name)) {
         return false;
     }
     return true;
 }
 
-bool IMap2DMsgs_delete_area_RPC_helper::read(yarp::os::ConnectionReader& connection [[maybe_unused]])
+bool IMap2DMsgs_delete_area_RPC_helper::readCmd(yarp::os::idl::WireReader& reader)
 {
-    yarp::os::idl::WireReader reader(connection);
+    if (!readCmdLen(reader)) {
+        return false;
+    }
+    if (!readCmdTag(reader)) {
+        return false;
+    }
+    if (!readCmdArgs(reader)) {
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_delete_area_RPC_helper::readCmdLen(yarp::os::idl::WireReader& reader)
+{
+    if (!reader.readListHeader()) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_delete_area_RPC_helper::readCmdTag(yarp::os::idl::WireReader& reader)
+{
+    std::string tag = reader.readTag();
+    if (reader.isError()) {
+        return false;
+    }
+    if (tag != s_tag) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_delete_area_RPC_helper::readCmdArgs(yarp::os::idl::WireReader& reader [[maybe_unused]])
+{
+    if (!reader.readString(m_area_name)) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_delete_area_RPC_helper::writeReply(yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.isNull()) {
+        if (!writer.writeListHeader(s_reply_len)) {
+            return false;
+        }
+        if (!writer.writeBool(m_return_helper)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+bool IMap2DMsgs_delete_area_RPC_helper::readReply(yarp::os::idl::WireReader& reader [[maybe_unused]])
+{
     if (!reader.readListReturn()) {
         return false;
     }
@@ -1504,24 +4282,117 @@ bool IMap2DMsgs_delete_area_RPC_helper::read(yarp::os::ConnectionReader& connect
         return false;
     }
     return true;
+}
+
+void IMap2DMsgs_delete_area_RPC_helper::call(IMap2DMsgs* ptr)
+{
+    m_return_helper = ptr->delete_area_RPC(m_area_name);
 }
 
 // clear_all_locations_RPC helper class implementation
 bool IMap2DMsgs_clear_all_locations_RPC_helper::write(yarp::os::ConnectionWriter& connection) const
 {
     yarp::os::idl::WireWriter writer(connection);
+    return writeCmd(writer);
+}
+
+bool IMap2DMsgs_clear_all_locations_RPC_helper::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    return readReply(reader);
+}
+
+bool IMap2DMsgs_clear_all_locations_RPC_helper::writeCmd(yarp::os::idl::WireWriter& writer) const
+{
+    if (!writeCmdLen(writer)) {
+        return false;
+    }
+    if (!writeCmdTag(writer)) {
+        return false;
+    }
+    if (!writeCmdArgs(writer)) {
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_clear_all_locations_RPC_helper::writeCmdLen(yarp::os::idl::WireWriter& writer) const
+{
     if (!writer.writeListHeader(s_cmd_len)) {
         return false;
     }
+    return true;
+}
+
+bool IMap2DMsgs_clear_all_locations_RPC_helper::writeCmdTag(yarp::os::idl::WireWriter& writer) const
+{
     if (!writer.writeTag(s_tag, 1, s_tag_len)) {
         return false;
     }
     return true;
 }
 
-bool IMap2DMsgs_clear_all_locations_RPC_helper::read(yarp::os::ConnectionReader& connection [[maybe_unused]])
+bool IMap2DMsgs_clear_all_locations_RPC_helper::writeCmdArgs(yarp::os::idl::WireWriter& writer [[maybe_unused]]) const
 {
-    yarp::os::idl::WireReader reader(connection);
+    return true;
+}
+
+bool IMap2DMsgs_clear_all_locations_RPC_helper::readCmd(yarp::os::idl::WireReader& reader)
+{
+    if (!readCmdLen(reader)) {
+        return false;
+    }
+    if (!readCmdTag(reader)) {
+        return false;
+    }
+    if (!readCmdArgs(reader)) {
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_clear_all_locations_RPC_helper::readCmdLen(yarp::os::idl::WireReader& reader)
+{
+    if (!reader.readListHeader()) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_clear_all_locations_RPC_helper::readCmdTag(yarp::os::idl::WireReader& reader)
+{
+    std::string tag = reader.readTag();
+    if (reader.isError()) {
+        return false;
+    }
+    if (tag != s_tag) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_clear_all_locations_RPC_helper::readCmdArgs(yarp::os::idl::WireReader& reader [[maybe_unused]])
+{
+    return true;
+}
+
+bool IMap2DMsgs_clear_all_locations_RPC_helper::writeReply(yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.isNull()) {
+        if (!writer.writeListHeader(s_reply_len)) {
+            return false;
+        }
+        if (!writer.writeBool(m_return_helper)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+bool IMap2DMsgs_clear_all_locations_RPC_helper::readReply(yarp::os::idl::WireReader& reader [[maybe_unused]])
+{
     if (!reader.readListReturn()) {
         return false;
     }
@@ -1530,24 +4401,117 @@ bool IMap2DMsgs_clear_all_locations_RPC_helper::read(yarp::os::ConnectionReader&
         return false;
     }
     return true;
+}
+
+void IMap2DMsgs_clear_all_locations_RPC_helper::call(IMap2DMsgs* ptr)
+{
+    m_return_helper = ptr->clear_all_locations_RPC();
 }
 
 // clear_all_areas_RPC helper class implementation
 bool IMap2DMsgs_clear_all_areas_RPC_helper::write(yarp::os::ConnectionWriter& connection) const
 {
     yarp::os::idl::WireWriter writer(connection);
+    return writeCmd(writer);
+}
+
+bool IMap2DMsgs_clear_all_areas_RPC_helper::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    return readReply(reader);
+}
+
+bool IMap2DMsgs_clear_all_areas_RPC_helper::writeCmd(yarp::os::idl::WireWriter& writer) const
+{
+    if (!writeCmdLen(writer)) {
+        return false;
+    }
+    if (!writeCmdTag(writer)) {
+        return false;
+    }
+    if (!writeCmdArgs(writer)) {
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_clear_all_areas_RPC_helper::writeCmdLen(yarp::os::idl::WireWriter& writer) const
+{
     if (!writer.writeListHeader(s_cmd_len)) {
         return false;
     }
+    return true;
+}
+
+bool IMap2DMsgs_clear_all_areas_RPC_helper::writeCmdTag(yarp::os::idl::WireWriter& writer) const
+{
     if (!writer.writeTag(s_tag, 1, s_tag_len)) {
         return false;
     }
     return true;
 }
 
-bool IMap2DMsgs_clear_all_areas_RPC_helper::read(yarp::os::ConnectionReader& connection [[maybe_unused]])
+bool IMap2DMsgs_clear_all_areas_RPC_helper::writeCmdArgs(yarp::os::idl::WireWriter& writer [[maybe_unused]]) const
 {
-    yarp::os::idl::WireReader reader(connection);
+    return true;
+}
+
+bool IMap2DMsgs_clear_all_areas_RPC_helper::readCmd(yarp::os::idl::WireReader& reader)
+{
+    if (!readCmdLen(reader)) {
+        return false;
+    }
+    if (!readCmdTag(reader)) {
+        return false;
+    }
+    if (!readCmdArgs(reader)) {
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_clear_all_areas_RPC_helper::readCmdLen(yarp::os::idl::WireReader& reader)
+{
+    if (!reader.readListHeader()) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_clear_all_areas_RPC_helper::readCmdTag(yarp::os::idl::WireReader& reader)
+{
+    std::string tag = reader.readTag();
+    if (reader.isError()) {
+        return false;
+    }
+    if (tag != s_tag) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_clear_all_areas_RPC_helper::readCmdArgs(yarp::os::idl::WireReader& reader [[maybe_unused]])
+{
+    return true;
+}
+
+bool IMap2DMsgs_clear_all_areas_RPC_helper::writeReply(yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.isNull()) {
+        if (!writer.writeListHeader(s_reply_len)) {
+            return false;
+        }
+        if (!writer.writeBool(m_return_helper)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+bool IMap2DMsgs_clear_all_areas_RPC_helper::readReply(yarp::os::idl::WireReader& reader [[maybe_unused]])
+{
     if (!reader.readListReturn()) {
         return false;
     }
@@ -1556,24 +4520,117 @@ bool IMap2DMsgs_clear_all_areas_RPC_helper::read(yarp::os::ConnectionReader& con
         return false;
     }
     return true;
+}
+
+void IMap2DMsgs_clear_all_areas_RPC_helper::call(IMap2DMsgs* ptr)
+{
+    m_return_helper = ptr->clear_all_areas_RPC();
 }
 
 // clear_all_paths_RPC helper class implementation
 bool IMap2DMsgs_clear_all_paths_RPC_helper::write(yarp::os::ConnectionWriter& connection) const
 {
     yarp::os::idl::WireWriter writer(connection);
+    return writeCmd(writer);
+}
+
+bool IMap2DMsgs_clear_all_paths_RPC_helper::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    return readReply(reader);
+}
+
+bool IMap2DMsgs_clear_all_paths_RPC_helper::writeCmd(yarp::os::idl::WireWriter& writer) const
+{
+    if (!writeCmdLen(writer)) {
+        return false;
+    }
+    if (!writeCmdTag(writer)) {
+        return false;
+    }
+    if (!writeCmdArgs(writer)) {
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_clear_all_paths_RPC_helper::writeCmdLen(yarp::os::idl::WireWriter& writer) const
+{
     if (!writer.writeListHeader(s_cmd_len)) {
         return false;
     }
+    return true;
+}
+
+bool IMap2DMsgs_clear_all_paths_RPC_helper::writeCmdTag(yarp::os::idl::WireWriter& writer) const
+{
     if (!writer.writeTag(s_tag, 1, s_tag_len)) {
         return false;
     }
     return true;
 }
 
-bool IMap2DMsgs_clear_all_paths_RPC_helper::read(yarp::os::ConnectionReader& connection [[maybe_unused]])
+bool IMap2DMsgs_clear_all_paths_RPC_helper::writeCmdArgs(yarp::os::idl::WireWriter& writer [[maybe_unused]]) const
 {
-    yarp::os::idl::WireReader reader(connection);
+    return true;
+}
+
+bool IMap2DMsgs_clear_all_paths_RPC_helper::readCmd(yarp::os::idl::WireReader& reader)
+{
+    if (!readCmdLen(reader)) {
+        return false;
+    }
+    if (!readCmdTag(reader)) {
+        return false;
+    }
+    if (!readCmdArgs(reader)) {
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_clear_all_paths_RPC_helper::readCmdLen(yarp::os::idl::WireReader& reader)
+{
+    if (!reader.readListHeader()) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_clear_all_paths_RPC_helper::readCmdTag(yarp::os::idl::WireReader& reader)
+{
+    std::string tag = reader.readTag();
+    if (reader.isError()) {
+        return false;
+    }
+    if (tag != s_tag) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_clear_all_paths_RPC_helper::readCmdArgs(yarp::os::idl::WireReader& reader [[maybe_unused]])
+{
+    return true;
+}
+
+bool IMap2DMsgs_clear_all_paths_RPC_helper::writeReply(yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.isNull()) {
+        if (!writer.writeListHeader(s_reply_len)) {
+            return false;
+        }
+        if (!writer.writeBool(m_return_helper)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+bool IMap2DMsgs_clear_all_paths_RPC_helper::readReply(yarp::os::idl::WireReader& reader [[maybe_unused]])
+{
     if (!reader.readListReturn()) {
         return false;
     }
@@ -1582,24 +4639,117 @@ bool IMap2DMsgs_clear_all_paths_RPC_helper::read(yarp::os::ConnectionReader& con
         return false;
     }
     return true;
+}
+
+void IMap2DMsgs_clear_all_paths_RPC_helper::call(IMap2DMsgs* ptr)
+{
+    m_return_helper = ptr->clear_all_paths_RPC();
 }
 
 // clear_all_maps_temporary_flags_RPC helper class implementation
 bool IMap2DMsgs_clear_all_maps_temporary_flags_RPC_helper::write(yarp::os::ConnectionWriter& connection) const
 {
     yarp::os::idl::WireWriter writer(connection);
+    return writeCmd(writer);
+}
+
+bool IMap2DMsgs_clear_all_maps_temporary_flags_RPC_helper::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    return readReply(reader);
+}
+
+bool IMap2DMsgs_clear_all_maps_temporary_flags_RPC_helper::writeCmd(yarp::os::idl::WireWriter& writer) const
+{
+    if (!writeCmdLen(writer)) {
+        return false;
+    }
+    if (!writeCmdTag(writer)) {
+        return false;
+    }
+    if (!writeCmdArgs(writer)) {
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_clear_all_maps_temporary_flags_RPC_helper::writeCmdLen(yarp::os::idl::WireWriter& writer) const
+{
     if (!writer.writeListHeader(s_cmd_len)) {
         return false;
     }
+    return true;
+}
+
+bool IMap2DMsgs_clear_all_maps_temporary_flags_RPC_helper::writeCmdTag(yarp::os::idl::WireWriter& writer) const
+{
     if (!writer.writeTag(s_tag, 1, s_tag_len)) {
         return false;
     }
     return true;
 }
 
-bool IMap2DMsgs_clear_all_maps_temporary_flags_RPC_helper::read(yarp::os::ConnectionReader& connection [[maybe_unused]])
+bool IMap2DMsgs_clear_all_maps_temporary_flags_RPC_helper::writeCmdArgs(yarp::os::idl::WireWriter& writer [[maybe_unused]]) const
 {
-    yarp::os::idl::WireReader reader(connection);
+    return true;
+}
+
+bool IMap2DMsgs_clear_all_maps_temporary_flags_RPC_helper::readCmd(yarp::os::idl::WireReader& reader)
+{
+    if (!readCmdLen(reader)) {
+        return false;
+    }
+    if (!readCmdTag(reader)) {
+        return false;
+    }
+    if (!readCmdArgs(reader)) {
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_clear_all_maps_temporary_flags_RPC_helper::readCmdLen(yarp::os::idl::WireReader& reader)
+{
+    if (!reader.readListHeader()) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_clear_all_maps_temporary_flags_RPC_helper::readCmdTag(yarp::os::idl::WireReader& reader)
+{
+    std::string tag = reader.readTag();
+    if (reader.isError()) {
+        return false;
+    }
+    if (tag != s_tag) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_clear_all_maps_temporary_flags_RPC_helper::readCmdArgs(yarp::os::idl::WireReader& reader [[maybe_unused]])
+{
+    return true;
+}
+
+bool IMap2DMsgs_clear_all_maps_temporary_flags_RPC_helper::writeReply(yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.isNull()) {
+        if (!writer.writeListHeader(s_reply_len)) {
+            return false;
+        }
+        if (!writer.writeBool(m_return_helper)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+bool IMap2DMsgs_clear_all_maps_temporary_flags_RPC_helper::readReply(yarp::os::idl::WireReader& reader [[maybe_unused]])
+{
     if (!reader.readListReturn()) {
         return false;
     }
@@ -1608,6 +4758,11 @@ bool IMap2DMsgs_clear_all_maps_temporary_flags_RPC_helper::read(yarp::os::Connec
         return false;
     }
     return true;
+}
+
+void IMap2DMsgs_clear_all_maps_temporary_flags_RPC_helper::call(IMap2DMsgs* ptr)
+{
+    m_return_helper = ptr->clear_all_maps_temporary_flags_RPC();
 }
 
 // clear_map_temporary_flags_RPC helper class implementation
@@ -1620,21 +4775,113 @@ IMap2DMsgs_clear_map_temporary_flags_RPC_helper::IMap2DMsgs_clear_map_temporary_
 bool IMap2DMsgs_clear_map_temporary_flags_RPC_helper::write(yarp::os::ConnectionWriter& connection) const
 {
     yarp::os::idl::WireWriter writer(connection);
+    return writeCmd(writer);
+}
+
+bool IMap2DMsgs_clear_map_temporary_flags_RPC_helper::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    return readReply(reader);
+}
+
+bool IMap2DMsgs_clear_map_temporary_flags_RPC_helper::writeCmd(yarp::os::idl::WireWriter& writer) const
+{
+    if (!writeCmdLen(writer)) {
+        return false;
+    }
+    if (!writeCmdTag(writer)) {
+        return false;
+    }
+    if (!writeCmdArgs(writer)) {
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_clear_map_temporary_flags_RPC_helper::writeCmdLen(yarp::os::idl::WireWriter& writer) const
+{
     if (!writer.writeListHeader(s_cmd_len)) {
         return false;
     }
+    return true;
+}
+
+bool IMap2DMsgs_clear_map_temporary_flags_RPC_helper::writeCmdTag(yarp::os::idl::WireWriter& writer) const
+{
     if (!writer.writeTag(s_tag, 1, s_tag_len)) {
         return false;
     }
+    return true;
+}
+
+bool IMap2DMsgs_clear_map_temporary_flags_RPC_helper::writeCmdArgs(yarp::os::idl::WireWriter& writer [[maybe_unused]]) const
+{
     if (!writer.writeString(m_map_name)) {
         return false;
     }
     return true;
 }
 
-bool IMap2DMsgs_clear_map_temporary_flags_RPC_helper::read(yarp::os::ConnectionReader& connection [[maybe_unused]])
+bool IMap2DMsgs_clear_map_temporary_flags_RPC_helper::readCmd(yarp::os::idl::WireReader& reader)
 {
-    yarp::os::idl::WireReader reader(connection);
+    if (!readCmdLen(reader)) {
+        return false;
+    }
+    if (!readCmdTag(reader)) {
+        return false;
+    }
+    if (!readCmdArgs(reader)) {
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_clear_map_temporary_flags_RPC_helper::readCmdLen(yarp::os::idl::WireReader& reader)
+{
+    if (!reader.readListHeader()) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_clear_map_temporary_flags_RPC_helper::readCmdTag(yarp::os::idl::WireReader& reader)
+{
+    std::string tag = reader.readTag();
+    if (reader.isError()) {
+        return false;
+    }
+    if (tag != s_tag) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_clear_map_temporary_flags_RPC_helper::readCmdArgs(yarp::os::idl::WireReader& reader [[maybe_unused]])
+{
+    if (!reader.readString(m_map_name)) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_clear_map_temporary_flags_RPC_helper::writeReply(yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.isNull()) {
+        if (!writer.writeListHeader(s_reply_len)) {
+            return false;
+        }
+        if (!writer.writeBool(m_return_helper)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+bool IMap2DMsgs_clear_map_temporary_flags_RPC_helper::readReply(yarp::os::idl::WireReader& reader [[maybe_unused]])
+{
     if (!reader.readListReturn()) {
         return false;
     }
@@ -1643,6 +4890,11 @@ bool IMap2DMsgs_clear_map_temporary_flags_RPC_helper::read(yarp::os::ConnectionR
         return false;
     }
     return true;
+}
+
+void IMap2DMsgs_clear_map_temporary_flags_RPC_helper::call(IMap2DMsgs* ptr)
+{
+    m_return_helper = ptr->clear_map_temporary_flags_RPC(m_map_name);
 }
 
 // save_maps_collection_RPC helper class implementation
@@ -1655,21 +4907,113 @@ IMap2DMsgs_save_maps_collection_RPC_helper::IMap2DMsgs_save_maps_collection_RPC_
 bool IMap2DMsgs_save_maps_collection_RPC_helper::write(yarp::os::ConnectionWriter& connection) const
 {
     yarp::os::idl::WireWriter writer(connection);
+    return writeCmd(writer);
+}
+
+bool IMap2DMsgs_save_maps_collection_RPC_helper::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    return readReply(reader);
+}
+
+bool IMap2DMsgs_save_maps_collection_RPC_helper::writeCmd(yarp::os::idl::WireWriter& writer) const
+{
+    if (!writeCmdLen(writer)) {
+        return false;
+    }
+    if (!writeCmdTag(writer)) {
+        return false;
+    }
+    if (!writeCmdArgs(writer)) {
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_save_maps_collection_RPC_helper::writeCmdLen(yarp::os::idl::WireWriter& writer) const
+{
     if (!writer.writeListHeader(s_cmd_len)) {
         return false;
     }
+    return true;
+}
+
+bool IMap2DMsgs_save_maps_collection_RPC_helper::writeCmdTag(yarp::os::idl::WireWriter& writer) const
+{
     if (!writer.writeTag(s_tag, 1, s_tag_len)) {
         return false;
     }
+    return true;
+}
+
+bool IMap2DMsgs_save_maps_collection_RPC_helper::writeCmdArgs(yarp::os::idl::WireWriter& writer [[maybe_unused]]) const
+{
     if (!writer.writeString(m_maps_collection_file)) {
         return false;
     }
     return true;
 }
 
-bool IMap2DMsgs_save_maps_collection_RPC_helper::read(yarp::os::ConnectionReader& connection [[maybe_unused]])
+bool IMap2DMsgs_save_maps_collection_RPC_helper::readCmd(yarp::os::idl::WireReader& reader)
 {
-    yarp::os::idl::WireReader reader(connection);
+    if (!readCmdLen(reader)) {
+        return false;
+    }
+    if (!readCmdTag(reader)) {
+        return false;
+    }
+    if (!readCmdArgs(reader)) {
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_save_maps_collection_RPC_helper::readCmdLen(yarp::os::idl::WireReader& reader)
+{
+    if (!reader.readListHeader()) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_save_maps_collection_RPC_helper::readCmdTag(yarp::os::idl::WireReader& reader)
+{
+    std::string tag = reader.readTag();
+    if (reader.isError()) {
+        return false;
+    }
+    if (tag != s_tag) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_save_maps_collection_RPC_helper::readCmdArgs(yarp::os::idl::WireReader& reader [[maybe_unused]])
+{
+    if (!reader.readString(m_maps_collection_file)) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_save_maps_collection_RPC_helper::writeReply(yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.isNull()) {
+        if (!writer.writeListHeader(s_reply_len)) {
+            return false;
+        }
+        if (!writer.writeBool(m_return_helper)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+bool IMap2DMsgs_save_maps_collection_RPC_helper::readReply(yarp::os::idl::WireReader& reader [[maybe_unused]])
+{
     if (!reader.readListReturn()) {
         return false;
     }
@@ -1678,6 +5022,11 @@ bool IMap2DMsgs_save_maps_collection_RPC_helper::read(yarp::os::ConnectionReader
         return false;
     }
     return true;
+}
+
+void IMap2DMsgs_save_maps_collection_RPC_helper::call(IMap2DMsgs* ptr)
+{
+    m_return_helper = ptr->save_maps_collection_RPC(m_maps_collection_file);
 }
 
 // load_maps_collection_RPC helper class implementation
@@ -1690,21 +5039,113 @@ IMap2DMsgs_load_maps_collection_RPC_helper::IMap2DMsgs_load_maps_collection_RPC_
 bool IMap2DMsgs_load_maps_collection_RPC_helper::write(yarp::os::ConnectionWriter& connection) const
 {
     yarp::os::idl::WireWriter writer(connection);
+    return writeCmd(writer);
+}
+
+bool IMap2DMsgs_load_maps_collection_RPC_helper::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    return readReply(reader);
+}
+
+bool IMap2DMsgs_load_maps_collection_RPC_helper::writeCmd(yarp::os::idl::WireWriter& writer) const
+{
+    if (!writeCmdLen(writer)) {
+        return false;
+    }
+    if (!writeCmdTag(writer)) {
+        return false;
+    }
+    if (!writeCmdArgs(writer)) {
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_load_maps_collection_RPC_helper::writeCmdLen(yarp::os::idl::WireWriter& writer) const
+{
     if (!writer.writeListHeader(s_cmd_len)) {
         return false;
     }
+    return true;
+}
+
+bool IMap2DMsgs_load_maps_collection_RPC_helper::writeCmdTag(yarp::os::idl::WireWriter& writer) const
+{
     if (!writer.writeTag(s_tag, 1, s_tag_len)) {
         return false;
     }
+    return true;
+}
+
+bool IMap2DMsgs_load_maps_collection_RPC_helper::writeCmdArgs(yarp::os::idl::WireWriter& writer [[maybe_unused]]) const
+{
     if (!writer.writeString(m_maps_collection_file)) {
         return false;
     }
     return true;
 }
 
-bool IMap2DMsgs_load_maps_collection_RPC_helper::read(yarp::os::ConnectionReader& connection [[maybe_unused]])
+bool IMap2DMsgs_load_maps_collection_RPC_helper::readCmd(yarp::os::idl::WireReader& reader)
 {
-    yarp::os::idl::WireReader reader(connection);
+    if (!readCmdLen(reader)) {
+        return false;
+    }
+    if (!readCmdTag(reader)) {
+        return false;
+    }
+    if (!readCmdArgs(reader)) {
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_load_maps_collection_RPC_helper::readCmdLen(yarp::os::idl::WireReader& reader)
+{
+    if (!reader.readListHeader()) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_load_maps_collection_RPC_helper::readCmdTag(yarp::os::idl::WireReader& reader)
+{
+    std::string tag = reader.readTag();
+    if (reader.isError()) {
+        return false;
+    }
+    if (tag != s_tag) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_load_maps_collection_RPC_helper::readCmdArgs(yarp::os::idl::WireReader& reader [[maybe_unused]])
+{
+    if (!reader.readString(m_maps_collection_file)) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_load_maps_collection_RPC_helper::writeReply(yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.isNull()) {
+        if (!writer.writeListHeader(s_reply_len)) {
+            return false;
+        }
+        if (!writer.writeBool(m_return_helper)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+bool IMap2DMsgs_load_maps_collection_RPC_helper::readReply(yarp::os::idl::WireReader& reader [[maybe_unused]])
+{
     if (!reader.readListReturn()) {
         return false;
     }
@@ -1713,6 +5154,11 @@ bool IMap2DMsgs_load_maps_collection_RPC_helper::read(yarp::os::ConnectionReader
         return false;
     }
     return true;
+}
+
+void IMap2DMsgs_load_maps_collection_RPC_helper::call(IMap2DMsgs* ptr)
+{
+    m_return_helper = ptr->load_maps_collection_RPC(m_maps_collection_file);
 }
 
 // save_locations_and_extras_RPC helper class implementation
@@ -1725,21 +5171,113 @@ IMap2DMsgs_save_locations_and_extras_RPC_helper::IMap2DMsgs_save_locations_and_e
 bool IMap2DMsgs_save_locations_and_extras_RPC_helper::write(yarp::os::ConnectionWriter& connection) const
 {
     yarp::os::idl::WireWriter writer(connection);
+    return writeCmd(writer);
+}
+
+bool IMap2DMsgs_save_locations_and_extras_RPC_helper::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    return readReply(reader);
+}
+
+bool IMap2DMsgs_save_locations_and_extras_RPC_helper::writeCmd(yarp::os::idl::WireWriter& writer) const
+{
+    if (!writeCmdLen(writer)) {
+        return false;
+    }
+    if (!writeCmdTag(writer)) {
+        return false;
+    }
+    if (!writeCmdArgs(writer)) {
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_save_locations_and_extras_RPC_helper::writeCmdLen(yarp::os::idl::WireWriter& writer) const
+{
     if (!writer.writeListHeader(s_cmd_len)) {
         return false;
     }
+    return true;
+}
+
+bool IMap2DMsgs_save_locations_and_extras_RPC_helper::writeCmdTag(yarp::os::idl::WireWriter& writer) const
+{
     if (!writer.writeTag(s_tag, 1, s_tag_len)) {
         return false;
     }
+    return true;
+}
+
+bool IMap2DMsgs_save_locations_and_extras_RPC_helper::writeCmdArgs(yarp::os::idl::WireWriter& writer [[maybe_unused]]) const
+{
     if (!writer.writeString(m_locations_collection_file)) {
         return false;
     }
     return true;
 }
 
-bool IMap2DMsgs_save_locations_and_extras_RPC_helper::read(yarp::os::ConnectionReader& connection [[maybe_unused]])
+bool IMap2DMsgs_save_locations_and_extras_RPC_helper::readCmd(yarp::os::idl::WireReader& reader)
 {
-    yarp::os::idl::WireReader reader(connection);
+    if (!readCmdLen(reader)) {
+        return false;
+    }
+    if (!readCmdTag(reader)) {
+        return false;
+    }
+    if (!readCmdArgs(reader)) {
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_save_locations_and_extras_RPC_helper::readCmdLen(yarp::os::idl::WireReader& reader)
+{
+    if (!reader.readListHeader()) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_save_locations_and_extras_RPC_helper::readCmdTag(yarp::os::idl::WireReader& reader)
+{
+    std::string tag = reader.readTag();
+    if (reader.isError()) {
+        return false;
+    }
+    if (tag != s_tag) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_save_locations_and_extras_RPC_helper::readCmdArgs(yarp::os::idl::WireReader& reader [[maybe_unused]])
+{
+    if (!reader.readString(m_locations_collection_file)) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_save_locations_and_extras_RPC_helper::writeReply(yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.isNull()) {
+        if (!writer.writeListHeader(s_reply_len)) {
+            return false;
+        }
+        if (!writer.writeBool(m_return_helper)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+bool IMap2DMsgs_save_locations_and_extras_RPC_helper::readReply(yarp::os::idl::WireReader& reader [[maybe_unused]])
+{
     if (!reader.readListReturn()) {
         return false;
     }
@@ -1748,6 +5286,11 @@ bool IMap2DMsgs_save_locations_and_extras_RPC_helper::read(yarp::os::ConnectionR
         return false;
     }
     return true;
+}
+
+void IMap2DMsgs_save_locations_and_extras_RPC_helper::call(IMap2DMsgs* ptr)
+{
+    m_return_helper = ptr->save_locations_and_extras_RPC(m_locations_collection_file);
 }
 
 // load_locations_and_extras_RPC helper class implementation
@@ -1760,21 +5303,113 @@ IMap2DMsgs_load_locations_and_extras_RPC_helper::IMap2DMsgs_load_locations_and_e
 bool IMap2DMsgs_load_locations_and_extras_RPC_helper::write(yarp::os::ConnectionWriter& connection) const
 {
     yarp::os::idl::WireWriter writer(connection);
+    return writeCmd(writer);
+}
+
+bool IMap2DMsgs_load_locations_and_extras_RPC_helper::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    return readReply(reader);
+}
+
+bool IMap2DMsgs_load_locations_and_extras_RPC_helper::writeCmd(yarp::os::idl::WireWriter& writer) const
+{
+    if (!writeCmdLen(writer)) {
+        return false;
+    }
+    if (!writeCmdTag(writer)) {
+        return false;
+    }
+    if (!writeCmdArgs(writer)) {
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_load_locations_and_extras_RPC_helper::writeCmdLen(yarp::os::idl::WireWriter& writer) const
+{
     if (!writer.writeListHeader(s_cmd_len)) {
         return false;
     }
+    return true;
+}
+
+bool IMap2DMsgs_load_locations_and_extras_RPC_helper::writeCmdTag(yarp::os::idl::WireWriter& writer) const
+{
     if (!writer.writeTag(s_tag, 1, s_tag_len)) {
         return false;
     }
+    return true;
+}
+
+bool IMap2DMsgs_load_locations_and_extras_RPC_helper::writeCmdArgs(yarp::os::idl::WireWriter& writer [[maybe_unused]]) const
+{
     if (!writer.writeString(m_locations_collection_file)) {
         return false;
     }
     return true;
 }
 
-bool IMap2DMsgs_load_locations_and_extras_RPC_helper::read(yarp::os::ConnectionReader& connection [[maybe_unused]])
+bool IMap2DMsgs_load_locations_and_extras_RPC_helper::readCmd(yarp::os::idl::WireReader& reader)
 {
-    yarp::os::idl::WireReader reader(connection);
+    if (!readCmdLen(reader)) {
+        return false;
+    }
+    if (!readCmdTag(reader)) {
+        return false;
+    }
+    if (!readCmdArgs(reader)) {
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_load_locations_and_extras_RPC_helper::readCmdLen(yarp::os::idl::WireReader& reader)
+{
+    if (!reader.readListHeader()) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_load_locations_and_extras_RPC_helper::readCmdTag(yarp::os::idl::WireReader& reader)
+{
+    std::string tag = reader.readTag();
+    if (reader.isError()) {
+        return false;
+    }
+    if (tag != s_tag) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_load_locations_and_extras_RPC_helper::readCmdArgs(yarp::os::idl::WireReader& reader [[maybe_unused]])
+{
+    if (!reader.readString(m_locations_collection_file)) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_load_locations_and_extras_RPC_helper::writeReply(yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.isNull()) {
+        if (!writer.writeListHeader(s_reply_len)) {
+            return false;
+        }
+        if (!writer.writeBool(m_return_helper)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+bool IMap2DMsgs_load_locations_and_extras_RPC_helper::readReply(yarp::os::idl::WireReader& reader [[maybe_unused]])
+{
     if (!reader.readListReturn()) {
         return false;
     }
@@ -1783,6 +5418,11 @@ bool IMap2DMsgs_load_locations_and_extras_RPC_helper::read(yarp::os::ConnectionR
         return false;
     }
     return true;
+}
+
+void IMap2DMsgs_load_locations_and_extras_RPC_helper::call(IMap2DMsgs* ptr)
+{
+    m_return_helper = ptr->load_locations_and_extras_RPC(m_locations_collection_file);
 }
 
 // save_map_to_disk_RPC helper class implementation
@@ -1796,12 +5436,47 @@ IMap2DMsgs_save_map_to_disk_RPC_helper::IMap2DMsgs_save_map_to_disk_RPC_helper(c
 bool IMap2DMsgs_save_map_to_disk_RPC_helper::write(yarp::os::ConnectionWriter& connection) const
 {
     yarp::os::idl::WireWriter writer(connection);
+    return writeCmd(writer);
+}
+
+bool IMap2DMsgs_save_map_to_disk_RPC_helper::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    return readReply(reader);
+}
+
+bool IMap2DMsgs_save_map_to_disk_RPC_helper::writeCmd(yarp::os::idl::WireWriter& writer) const
+{
+    if (!writeCmdLen(writer)) {
+        return false;
+    }
+    if (!writeCmdTag(writer)) {
+        return false;
+    }
+    if (!writeCmdArgs(writer)) {
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_save_map_to_disk_RPC_helper::writeCmdLen(yarp::os::idl::WireWriter& writer) const
+{
     if (!writer.writeListHeader(s_cmd_len)) {
         return false;
     }
+    return true;
+}
+
+bool IMap2DMsgs_save_map_to_disk_RPC_helper::writeCmdTag(yarp::os::idl::WireWriter& writer) const
+{
     if (!writer.writeTag(s_tag, 1, s_tag_len)) {
         return false;
     }
+    return true;
+}
+
+bool IMap2DMsgs_save_map_to_disk_RPC_helper::writeCmdArgs(yarp::os::idl::WireWriter& writer [[maybe_unused]]) const
+{
     if (!writer.writeString(m_map_name)) {
         return false;
     }
@@ -1811,9 +5486,70 @@ bool IMap2DMsgs_save_map_to_disk_RPC_helper::write(yarp::os::ConnectionWriter& c
     return true;
 }
 
-bool IMap2DMsgs_save_map_to_disk_RPC_helper::read(yarp::os::ConnectionReader& connection [[maybe_unused]])
+bool IMap2DMsgs_save_map_to_disk_RPC_helper::readCmd(yarp::os::idl::WireReader& reader)
 {
-    yarp::os::idl::WireReader reader(connection);
+    if (!readCmdLen(reader)) {
+        return false;
+    }
+    if (!readCmdTag(reader)) {
+        return false;
+    }
+    if (!readCmdArgs(reader)) {
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_save_map_to_disk_RPC_helper::readCmdLen(yarp::os::idl::WireReader& reader)
+{
+    if (!reader.readListHeader()) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_save_map_to_disk_RPC_helper::readCmdTag(yarp::os::idl::WireReader& reader)
+{
+    std::string tag = reader.readTag();
+    if (reader.isError()) {
+        return false;
+    }
+    if (tag != s_tag) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_save_map_to_disk_RPC_helper::readCmdArgs(yarp::os::idl::WireReader& reader [[maybe_unused]])
+{
+    if (!reader.readString(m_map_name)) {
+        reader.fail();
+        return false;
+    }
+    if (!reader.readString(m_file_name)) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_save_map_to_disk_RPC_helper::writeReply(yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.isNull()) {
+        if (!writer.writeListHeader(s_reply_len)) {
+            return false;
+        }
+        if (!writer.writeBool(m_return_helper)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+bool IMap2DMsgs_save_map_to_disk_RPC_helper::readReply(yarp::os::idl::WireReader& reader [[maybe_unused]])
+{
     if (!reader.readListReturn()) {
         return false;
     }
@@ -1822,6 +5558,11 @@ bool IMap2DMsgs_save_map_to_disk_RPC_helper::read(yarp::os::ConnectionReader& co
         return false;
     }
     return true;
+}
+
+void IMap2DMsgs_save_map_to_disk_RPC_helper::call(IMap2DMsgs* ptr)
+{
+    m_return_helper = ptr->save_map_to_disk_RPC(m_map_name, m_file_name);
 }
 
 // load_map_from_disk_RPC helper class implementation
@@ -1834,21 +5575,113 @@ IMap2DMsgs_load_map_from_disk_RPC_helper::IMap2DMsgs_load_map_from_disk_RPC_help
 bool IMap2DMsgs_load_map_from_disk_RPC_helper::write(yarp::os::ConnectionWriter& connection) const
 {
     yarp::os::idl::WireWriter writer(connection);
+    return writeCmd(writer);
+}
+
+bool IMap2DMsgs_load_map_from_disk_RPC_helper::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    return readReply(reader);
+}
+
+bool IMap2DMsgs_load_map_from_disk_RPC_helper::writeCmd(yarp::os::idl::WireWriter& writer) const
+{
+    if (!writeCmdLen(writer)) {
+        return false;
+    }
+    if (!writeCmdTag(writer)) {
+        return false;
+    }
+    if (!writeCmdArgs(writer)) {
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_load_map_from_disk_RPC_helper::writeCmdLen(yarp::os::idl::WireWriter& writer) const
+{
     if (!writer.writeListHeader(s_cmd_len)) {
         return false;
     }
+    return true;
+}
+
+bool IMap2DMsgs_load_map_from_disk_RPC_helper::writeCmdTag(yarp::os::idl::WireWriter& writer) const
+{
     if (!writer.writeTag(s_tag, 1, s_tag_len)) {
         return false;
     }
+    return true;
+}
+
+bool IMap2DMsgs_load_map_from_disk_RPC_helper::writeCmdArgs(yarp::os::idl::WireWriter& writer [[maybe_unused]]) const
+{
     if (!writer.writeString(m_file_name)) {
         return false;
     }
     return true;
 }
 
-bool IMap2DMsgs_load_map_from_disk_RPC_helper::read(yarp::os::ConnectionReader& connection [[maybe_unused]])
+bool IMap2DMsgs_load_map_from_disk_RPC_helper::readCmd(yarp::os::idl::WireReader& reader)
 {
-    yarp::os::idl::WireReader reader(connection);
+    if (!readCmdLen(reader)) {
+        return false;
+    }
+    if (!readCmdTag(reader)) {
+        return false;
+    }
+    if (!readCmdArgs(reader)) {
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_load_map_from_disk_RPC_helper::readCmdLen(yarp::os::idl::WireReader& reader)
+{
+    if (!reader.readListHeader()) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_load_map_from_disk_RPC_helper::readCmdTag(yarp::os::idl::WireReader& reader)
+{
+    std::string tag = reader.readTag();
+    if (reader.isError()) {
+        return false;
+    }
+    if (tag != s_tag) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_load_map_from_disk_RPC_helper::readCmdArgs(yarp::os::idl::WireReader& reader [[maybe_unused]])
+{
+    if (!reader.readString(m_file_name)) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_load_map_from_disk_RPC_helper::writeReply(yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.isNull()) {
+        if (!writer.writeListHeader(s_reply_len)) {
+            return false;
+        }
+        if (!writer.writeBool(m_return_helper)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+bool IMap2DMsgs_load_map_from_disk_RPC_helper::readReply(yarp::os::idl::WireReader& reader [[maybe_unused]])
+{
     if (!reader.readListReturn()) {
         return false;
     }
@@ -1857,6 +5690,11 @@ bool IMap2DMsgs_load_map_from_disk_RPC_helper::read(yarp::os::ConnectionReader& 
         return false;
     }
     return true;
+}
+
+void IMap2DMsgs_load_map_from_disk_RPC_helper::call(IMap2DMsgs* ptr)
+{
+    m_return_helper = ptr->load_map_from_disk_RPC(m_file_name);
 }
 
 // enable_maps_compression_RPC helper class implementation
@@ -1869,21 +5707,113 @@ IMap2DMsgs_enable_maps_compression_RPC_helper::IMap2DMsgs_enable_maps_compressio
 bool IMap2DMsgs_enable_maps_compression_RPC_helper::write(yarp::os::ConnectionWriter& connection) const
 {
     yarp::os::idl::WireWriter writer(connection);
+    return writeCmd(writer);
+}
+
+bool IMap2DMsgs_enable_maps_compression_RPC_helper::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    return readReply(reader);
+}
+
+bool IMap2DMsgs_enable_maps_compression_RPC_helper::writeCmd(yarp::os::idl::WireWriter& writer) const
+{
+    if (!writeCmdLen(writer)) {
+        return false;
+    }
+    if (!writeCmdTag(writer)) {
+        return false;
+    }
+    if (!writeCmdArgs(writer)) {
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_enable_maps_compression_RPC_helper::writeCmdLen(yarp::os::idl::WireWriter& writer) const
+{
     if (!writer.writeListHeader(s_cmd_len)) {
         return false;
     }
+    return true;
+}
+
+bool IMap2DMsgs_enable_maps_compression_RPC_helper::writeCmdTag(yarp::os::idl::WireWriter& writer) const
+{
     if (!writer.writeTag(s_tag, 1, s_tag_len)) {
         return false;
     }
+    return true;
+}
+
+bool IMap2DMsgs_enable_maps_compression_RPC_helper::writeCmdArgs(yarp::os::idl::WireWriter& writer [[maybe_unused]]) const
+{
     if (!writer.writeBool(m_enable_compression)) {
         return false;
     }
     return true;
 }
 
-bool IMap2DMsgs_enable_maps_compression_RPC_helper::read(yarp::os::ConnectionReader& connection [[maybe_unused]])
+bool IMap2DMsgs_enable_maps_compression_RPC_helper::readCmd(yarp::os::idl::WireReader& reader)
 {
-    yarp::os::idl::WireReader reader(connection);
+    if (!readCmdLen(reader)) {
+        return false;
+    }
+    if (!readCmdTag(reader)) {
+        return false;
+    }
+    if (!readCmdArgs(reader)) {
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_enable_maps_compression_RPC_helper::readCmdLen(yarp::os::idl::WireReader& reader)
+{
+    if (!reader.readListHeader()) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_enable_maps_compression_RPC_helper::readCmdTag(yarp::os::idl::WireReader& reader)
+{
+    std::string tag = reader.readTag();
+    if (reader.isError()) {
+        return false;
+    }
+    if (tag != s_tag) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_enable_maps_compression_RPC_helper::readCmdArgs(yarp::os::idl::WireReader& reader [[maybe_unused]])
+{
+    if (!reader.readBool(m_enable_compression)) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_enable_maps_compression_RPC_helper::writeReply(yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.isNull()) {
+        if (!writer.writeListHeader(s_reply_len)) {
+            return false;
+        }
+        if (!writer.writeBool(m_return_helper)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+bool IMap2DMsgs_enable_maps_compression_RPC_helper::readReply(yarp::os::idl::WireReader& reader [[maybe_unused]])
+{
     if (!reader.readListReturn()) {
         return false;
     }
@@ -1892,6 +5822,11 @@ bool IMap2DMsgs_enable_maps_compression_RPC_helper::read(yarp::os::ConnectionRea
         return false;
     }
     return true;
+}
+
+void IMap2DMsgs_enable_maps_compression_RPC_helper::call(IMap2DMsgs* ptr)
+{
+    m_return_helper = ptr->enable_maps_compression_RPC(m_enable_compression);
 }
 
 // Constructor
@@ -2429,676 +6364,526 @@ bool IMap2DMsgs::read(yarp::os::ConnectionReader& connection)
     }
     while (!reader.isError()) {
         if (tag == IMap2DMsgs_clear_all_maps_RPC_helper::s_tag) {
-            IMap2DMsgs_clear_all_maps_RPC_helper helper{};
-            helper.m_return_helper = clear_all_maps_RPC();
+            IMap2DMsgs_clear_all_maps_RPC_helper helper;
+            if (!helper.readCmdArgs(reader)) {
+                return false;
+            }
+
+            helper.call(this);
+
             yarp::os::idl::WireWriter writer(reader);
-            if (!writer.isNull()) {
-                if (!writer.writeListHeader(IMap2DMsgs_clear_all_maps_RPC_helper::s_reply_len)) {
-                    return false;
-                }
-                if (!writer.writeBool(helper.m_return_helper)) {
-                    return false;
-                }
+            if (!helper.writeReply(writer)) {
+                return false;
             }
             reader.accept();
             return true;
         }
         if (tag == IMap2DMsgs_store_map_RPC_helper::s_tag) {
-            yarp::dev::Nav2D::MapGrid2D themap;
-            if (!reader.readNested(themap)) {
-                reader.fail();
+            IMap2DMsgs_store_map_RPC_helper helper;
+            if (!helper.readCmdArgs(reader)) {
                 return false;
             }
-            IMap2DMsgs_store_map_RPC_helper helper{themap};
-            helper.m_return_helper = store_map_RPC(themap);
+
+            helper.call(this);
+
             yarp::os::idl::WireWriter writer(reader);
-            if (!writer.isNull()) {
-                if (!writer.writeListHeader(IMap2DMsgs_store_map_RPC_helper::s_reply_len)) {
-                    return false;
-                }
-                if (!writer.writeBool(helper.m_return_helper)) {
-                    return false;
-                }
+            if (!helper.writeReply(writer)) {
+                return false;
             }
             reader.accept();
             return true;
         }
         if (tag == IMap2DMsgs_get_map_RPC_helper::s_tag) {
-            std::string map_name;
-            if (!reader.readString(map_name)) {
-                reader.fail();
+            IMap2DMsgs_get_map_RPC_helper helper;
+            if (!helper.readCmdArgs(reader)) {
                 return false;
             }
-            IMap2DMsgs_get_map_RPC_helper helper{map_name};
-            helper.m_return_helper = get_map_RPC(map_name);
+
+            helper.call(this);
+
             yarp::os::idl::WireWriter writer(reader);
-            if (!writer.isNull()) {
-                if (!writer.writeListHeader(IMap2DMsgs_get_map_RPC_helper::s_reply_len)) {
-                    return false;
-                }
-                if (!writer.write(helper.m_return_helper)) {
-                    return false;
-                }
+            if (!helper.writeReply(writer)) {
+                return false;
             }
             reader.accept();
             return true;
         }
         if (tag == IMap2DMsgs_get_map_names_RPC_helper::s_tag) {
-            IMap2DMsgs_get_map_names_RPC_helper helper{};
-            helper.m_return_helper = get_map_names_RPC();
+            IMap2DMsgs_get_map_names_RPC_helper helper;
+            if (!helper.readCmdArgs(reader)) {
+                return false;
+            }
+
+            helper.call(this);
+
             yarp::os::idl::WireWriter writer(reader);
-            if (!writer.isNull()) {
-                if (!writer.writeListHeader(IMap2DMsgs_get_map_names_RPC_helper::s_reply_len)) {
-                    return false;
-                }
-                if (!writer.write(helper.m_return_helper)) {
-                    return false;
-                }
+            if (!helper.writeReply(writer)) {
+                return false;
             }
             reader.accept();
             return true;
         }
         if (tag == IMap2DMsgs_remove_map_RPC_helper::s_tag) {
-            std::string map_name;
-            if (!reader.readString(map_name)) {
-                reader.fail();
+            IMap2DMsgs_remove_map_RPC_helper helper;
+            if (!helper.readCmdArgs(reader)) {
                 return false;
             }
-            IMap2DMsgs_remove_map_RPC_helper helper{map_name};
-            helper.m_return_helper = remove_map_RPC(map_name);
+
+            helper.call(this);
+
             yarp::os::idl::WireWriter writer(reader);
-            if (!writer.isNull()) {
-                if (!writer.writeListHeader(IMap2DMsgs_remove_map_RPC_helper::s_reply_len)) {
-                    return false;
-                }
-                if (!writer.writeBool(helper.m_return_helper)) {
-                    return false;
-                }
+            if (!helper.writeReply(writer)) {
+                return false;
             }
             reader.accept();
             return true;
         }
         if (tag == IMap2DMsgs_store_location_RPC_helper::s_tag) {
-            std::string location_name;
-            yarp::dev::Nav2D::Map2DLocation loc;
-            if (!reader.readString(location_name)) {
-                reader.fail();
+            IMap2DMsgs_store_location_RPC_helper helper;
+            if (!helper.readCmdArgs(reader)) {
                 return false;
             }
-            if (!reader.readNested(loc)) {
-                reader.fail();
-                return false;
-            }
-            IMap2DMsgs_store_location_RPC_helper helper{location_name, loc};
-            helper.m_return_helper = store_location_RPC(location_name, loc);
+
+            helper.call(this);
+
             yarp::os::idl::WireWriter writer(reader);
-            if (!writer.isNull()) {
-                if (!writer.writeListHeader(IMap2DMsgs_store_location_RPC_helper::s_reply_len)) {
-                    return false;
-                }
-                if (!writer.writeBool(helper.m_return_helper)) {
-                    return false;
-                }
+            if (!helper.writeReply(writer)) {
+                return false;
             }
             reader.accept();
             return true;
         }
         if (tag == IMap2DMsgs_store_area_RPC_helper::s_tag) {
-            std::string area_name;
-            yarp::dev::Nav2D::Map2DArea area;
-            if (!reader.readString(area_name)) {
-                reader.fail();
+            IMap2DMsgs_store_area_RPC_helper helper;
+            if (!helper.readCmdArgs(reader)) {
                 return false;
             }
-            if (!reader.readNested(area)) {
-                reader.fail();
-                return false;
-            }
-            IMap2DMsgs_store_area_RPC_helper helper{area_name, area};
-            helper.m_return_helper = store_area_RPC(area_name, area);
+
+            helper.call(this);
+
             yarp::os::idl::WireWriter writer(reader);
-            if (!writer.isNull()) {
-                if (!writer.writeListHeader(IMap2DMsgs_store_area_RPC_helper::s_reply_len)) {
-                    return false;
-                }
-                if (!writer.writeBool(helper.m_return_helper)) {
-                    return false;
-                }
+            if (!helper.writeReply(writer)) {
+                return false;
             }
             reader.accept();
             return true;
         }
         if (tag == IMap2DMsgs_store_path_RPC_helper::s_tag) {
-            std::string path_name;
-            yarp::dev::Nav2D::Map2DPath path;
-            if (!reader.readString(path_name)) {
-                reader.fail();
+            IMap2DMsgs_store_path_RPC_helper helper;
+            if (!helper.readCmdArgs(reader)) {
                 return false;
             }
-            if (!reader.readNested(path)) {
-                reader.fail();
-                return false;
-            }
-            IMap2DMsgs_store_path_RPC_helper helper{path_name, path};
-            helper.m_return_helper = store_path_RPC(path_name, path);
+
+            helper.call(this);
+
             yarp::os::idl::WireWriter writer(reader);
-            if (!writer.isNull()) {
-                if (!writer.writeListHeader(IMap2DMsgs_store_path_RPC_helper::s_reply_len)) {
-                    return false;
-                }
-                if (!writer.writeBool(helper.m_return_helper)) {
-                    return false;
-                }
+            if (!helper.writeReply(writer)) {
+                return false;
             }
             reader.accept();
             return true;
         }
         if (tag == IMap2DMsgs_get_location_RPC_helper::s_tag) {
-            std::string location_name;
-            if (!reader.readString(location_name)) {
-                reader.fail();
+            IMap2DMsgs_get_location_RPC_helper helper;
+            if (!helper.readCmdArgs(reader)) {
                 return false;
             }
-            IMap2DMsgs_get_location_RPC_helper helper{location_name};
-            helper.m_return_helper = get_location_RPC(location_name);
+
+            helper.call(this);
+
             yarp::os::idl::WireWriter writer(reader);
-            if (!writer.isNull()) {
-                if (!writer.writeListHeader(IMap2DMsgs_get_location_RPC_helper::s_reply_len)) {
-                    return false;
-                }
-                if (!writer.write(helper.m_return_helper)) {
-                    return false;
-                }
+            if (!helper.writeReply(writer)) {
+                return false;
             }
             reader.accept();
             return true;
         }
         if (tag == IMap2DMsgs_get_area_RPC_helper::s_tag) {
-            std::string area_name;
-            if (!reader.readString(area_name)) {
-                reader.fail();
+            IMap2DMsgs_get_area_RPC_helper helper;
+            if (!helper.readCmdArgs(reader)) {
                 return false;
             }
-            IMap2DMsgs_get_area_RPC_helper helper{area_name};
-            helper.m_return_helper = get_area_RPC(area_name);
+
+            helper.call(this);
+
             yarp::os::idl::WireWriter writer(reader);
-            if (!writer.isNull()) {
-                if (!writer.writeListHeader(IMap2DMsgs_get_area_RPC_helper::s_reply_len)) {
-                    return false;
-                }
-                if (!writer.write(helper.m_return_helper)) {
-                    return false;
-                }
+            if (!helper.writeReply(writer)) {
+                return false;
             }
             reader.accept();
             return true;
         }
         if (tag == IMap2DMsgs_get_path_RPC_helper::s_tag) {
-            std::string path_name;
-            if (!reader.readString(path_name)) {
-                reader.fail();
+            IMap2DMsgs_get_path_RPC_helper helper;
+            if (!helper.readCmdArgs(reader)) {
                 return false;
             }
-            IMap2DMsgs_get_path_RPC_helper helper{path_name};
-            helper.m_return_helper = get_path_RPC(path_name);
+
+            helper.call(this);
+
             yarp::os::idl::WireWriter writer(reader);
-            if (!writer.isNull()) {
-                if (!writer.writeListHeader(IMap2DMsgs_get_path_RPC_helper::s_reply_len)) {
-                    return false;
-                }
-                if (!writer.write(helper.m_return_helper)) {
-                    return false;
-                }
+            if (!helper.writeReply(writer)) {
+                return false;
             }
             reader.accept();
             return true;
         }
         if (tag == IMap2DMsgs_get_locations_list_RPC_helper::s_tag) {
-            IMap2DMsgs_get_locations_list_RPC_helper helper{};
-            helper.m_return_helper = get_locations_list_RPC();
+            IMap2DMsgs_get_locations_list_RPC_helper helper;
+            if (!helper.readCmdArgs(reader)) {
+                return false;
+            }
+
+            helper.call(this);
+
             yarp::os::idl::WireWriter writer(reader);
-            if (!writer.isNull()) {
-                if (!writer.writeListHeader(IMap2DMsgs_get_locations_list_RPC_helper::s_reply_len)) {
-                    return false;
-                }
-                if (!writer.write(helper.m_return_helper)) {
-                    return false;
-                }
+            if (!helper.writeReply(writer)) {
+                return false;
             }
             reader.accept();
             return true;
         }
         if (tag == IMap2DMsgs_get_areas_list_RPC_helper::s_tag) {
-            IMap2DMsgs_get_areas_list_RPC_helper helper{};
-            helper.m_return_helper = get_areas_list_RPC();
+            IMap2DMsgs_get_areas_list_RPC_helper helper;
+            if (!helper.readCmdArgs(reader)) {
+                return false;
+            }
+
+            helper.call(this);
+
             yarp::os::idl::WireWriter writer(reader);
-            if (!writer.isNull()) {
-                if (!writer.writeListHeader(IMap2DMsgs_get_areas_list_RPC_helper::s_reply_len)) {
-                    return false;
-                }
-                if (!writer.write(helper.m_return_helper)) {
-                    return false;
-                }
+            if (!helper.writeReply(writer)) {
+                return false;
             }
             reader.accept();
             return true;
         }
         if (tag == IMap2DMsgs_get_paths_list_RPC_helper::s_tag) {
-            IMap2DMsgs_get_paths_list_RPC_helper helper{};
-            helper.m_return_helper = get_paths_list_RPC();
+            IMap2DMsgs_get_paths_list_RPC_helper helper;
+            if (!helper.readCmdArgs(reader)) {
+                return false;
+            }
+
+            helper.call(this);
+
             yarp::os::idl::WireWriter writer(reader);
-            if (!writer.isNull()) {
-                if (!writer.writeListHeader(IMap2DMsgs_get_paths_list_RPC_helper::s_reply_len)) {
-                    return false;
-                }
-                if (!writer.write(helper.m_return_helper)) {
-                    return false;
-                }
+            if (!helper.writeReply(writer)) {
+                return false;
             }
             reader.accept();
             return true;
         }
         if (tag == IMap2DMsgs_get_all_locations_RPC_helper::s_tag) {
-            IMap2DMsgs_get_all_locations_RPC_helper helper{};
-            helper.m_return_helper = get_all_locations_RPC();
+            IMap2DMsgs_get_all_locations_RPC_helper helper;
+            if (!helper.readCmdArgs(reader)) {
+                return false;
+            }
+
+            helper.call(this);
+
             yarp::os::idl::WireWriter writer(reader);
-            if (!writer.isNull()) {
-                if (!writer.writeListHeader(IMap2DMsgs_get_all_locations_RPC_helper::s_reply_len)) {
-                    return false;
-                }
-                if (!writer.write(helper.m_return_helper)) {
-                    return false;
-                }
+            if (!helper.writeReply(writer)) {
+                return false;
             }
             reader.accept();
             return true;
         }
         if (tag == IMap2DMsgs_get_all_areas_RPC_helper::s_tag) {
-            IMap2DMsgs_get_all_areas_RPC_helper helper{};
-            helper.m_return_helper = get_all_areas_RPC();
+            IMap2DMsgs_get_all_areas_RPC_helper helper;
+            if (!helper.readCmdArgs(reader)) {
+                return false;
+            }
+
+            helper.call(this);
+
             yarp::os::idl::WireWriter writer(reader);
-            if (!writer.isNull()) {
-                if (!writer.writeListHeader(IMap2DMsgs_get_all_areas_RPC_helper::s_reply_len)) {
-                    return false;
-                }
-                if (!writer.write(helper.m_return_helper)) {
-                    return false;
-                }
+            if (!helper.writeReply(writer)) {
+                return false;
             }
             reader.accept();
             return true;
         }
         if (tag == IMap2DMsgs_get_all_paths_RPC_helper::s_tag) {
-            IMap2DMsgs_get_all_paths_RPC_helper helper{};
-            helper.m_return_helper = get_all_paths_RPC();
+            IMap2DMsgs_get_all_paths_RPC_helper helper;
+            if (!helper.readCmdArgs(reader)) {
+                return false;
+            }
+
+            helper.call(this);
+
             yarp::os::idl::WireWriter writer(reader);
-            if (!writer.isNull()) {
-                if (!writer.writeListHeader(IMap2DMsgs_get_all_paths_RPC_helper::s_reply_len)) {
-                    return false;
-                }
-                if (!writer.write(helper.m_return_helper)) {
-                    return false;
-                }
+            if (!helper.writeReply(writer)) {
+                return false;
             }
             reader.accept();
             return true;
         }
         if (tag == IMap2DMsgs_rename_location_RPC_helper::s_tag) {
-            std::string original_name;
-            std::string new_name;
-            if (!reader.readString(original_name)) {
-                reader.fail();
+            IMap2DMsgs_rename_location_RPC_helper helper;
+            if (!helper.readCmdArgs(reader)) {
                 return false;
             }
-            if (!reader.readString(new_name)) {
-                reader.fail();
-                return false;
-            }
-            IMap2DMsgs_rename_location_RPC_helper helper{original_name, new_name};
-            helper.m_return_helper = rename_location_RPC(original_name, new_name);
+
+            helper.call(this);
+
             yarp::os::idl::WireWriter writer(reader);
-            if (!writer.isNull()) {
-                if (!writer.writeListHeader(IMap2DMsgs_rename_location_RPC_helper::s_reply_len)) {
-                    return false;
-                }
-                if (!writer.writeBool(helper.m_return_helper)) {
-                    return false;
-                }
+            if (!helper.writeReply(writer)) {
+                return false;
             }
             reader.accept();
             return true;
         }
         if (tag == IMap2DMsgs_delete_location_RPC_helper::s_tag) {
-            std::string location_name;
-            if (!reader.readString(location_name)) {
-                reader.fail();
+            IMap2DMsgs_delete_location_RPC_helper helper;
+            if (!helper.readCmdArgs(reader)) {
                 return false;
             }
-            IMap2DMsgs_delete_location_RPC_helper helper{location_name};
-            helper.m_return_helper = delete_location_RPC(location_name);
+
+            helper.call(this);
+
             yarp::os::idl::WireWriter writer(reader);
-            if (!writer.isNull()) {
-                if (!writer.writeListHeader(IMap2DMsgs_delete_location_RPC_helper::s_reply_len)) {
-                    return false;
-                }
-                if (!writer.writeBool(helper.m_return_helper)) {
-                    return false;
-                }
+            if (!helper.writeReply(writer)) {
+                return false;
             }
             reader.accept();
             return true;
         }
         if (tag == IMap2DMsgs_delete_path_RPC_helper::s_tag) {
-            std::string path_name;
-            if (!reader.readString(path_name)) {
-                reader.fail();
+            IMap2DMsgs_delete_path_RPC_helper helper;
+            if (!helper.readCmdArgs(reader)) {
                 return false;
             }
-            IMap2DMsgs_delete_path_RPC_helper helper{path_name};
-            helper.m_return_helper = delete_path_RPC(path_name);
+
+            helper.call(this);
+
             yarp::os::idl::WireWriter writer(reader);
-            if (!writer.isNull()) {
-                if (!writer.writeListHeader(IMap2DMsgs_delete_path_RPC_helper::s_reply_len)) {
-                    return false;
-                }
-                if (!writer.writeBool(helper.m_return_helper)) {
-                    return false;
-                }
+            if (!helper.writeReply(writer)) {
+                return false;
             }
             reader.accept();
             return true;
         }
         if (tag == IMap2DMsgs_rename_area_RPC_helper::s_tag) {
-            std::string original_name;
-            std::string new_name;
-            if (!reader.readString(original_name)) {
-                reader.fail();
+            IMap2DMsgs_rename_area_RPC_helper helper;
+            if (!helper.readCmdArgs(reader)) {
                 return false;
             }
-            if (!reader.readString(new_name)) {
-                reader.fail();
-                return false;
-            }
-            IMap2DMsgs_rename_area_RPC_helper helper{original_name, new_name};
-            helper.m_return_helper = rename_area_RPC(original_name, new_name);
+
+            helper.call(this);
+
             yarp::os::idl::WireWriter writer(reader);
-            if (!writer.isNull()) {
-                if (!writer.writeListHeader(IMap2DMsgs_rename_area_RPC_helper::s_reply_len)) {
-                    return false;
-                }
-                if (!writer.writeBool(helper.m_return_helper)) {
-                    return false;
-                }
+            if (!helper.writeReply(writer)) {
+                return false;
             }
             reader.accept();
             return true;
         }
         if (tag == IMap2DMsgs_rename_path_RPC_helper::s_tag) {
-            std::string original_name;
-            std::string new_name;
-            if (!reader.readString(original_name)) {
-                reader.fail();
+            IMap2DMsgs_rename_path_RPC_helper helper;
+            if (!helper.readCmdArgs(reader)) {
                 return false;
             }
-            if (!reader.readString(new_name)) {
-                reader.fail();
-                return false;
-            }
-            IMap2DMsgs_rename_path_RPC_helper helper{original_name, new_name};
-            helper.m_return_helper = rename_path_RPC(original_name, new_name);
+
+            helper.call(this);
+
             yarp::os::idl::WireWriter writer(reader);
-            if (!writer.isNull()) {
-                if (!writer.writeListHeader(IMap2DMsgs_rename_path_RPC_helper::s_reply_len)) {
-                    return false;
-                }
-                if (!writer.writeBool(helper.m_return_helper)) {
-                    return false;
-                }
+            if (!helper.writeReply(writer)) {
+                return false;
             }
             reader.accept();
             return true;
         }
         if (tag == IMap2DMsgs_delete_area_RPC_helper::s_tag) {
-            std::string area_name;
-            if (!reader.readString(area_name)) {
-                reader.fail();
+            IMap2DMsgs_delete_area_RPC_helper helper;
+            if (!helper.readCmdArgs(reader)) {
                 return false;
             }
-            IMap2DMsgs_delete_area_RPC_helper helper{area_name};
-            helper.m_return_helper = delete_area_RPC(area_name);
+
+            helper.call(this);
+
             yarp::os::idl::WireWriter writer(reader);
-            if (!writer.isNull()) {
-                if (!writer.writeListHeader(IMap2DMsgs_delete_area_RPC_helper::s_reply_len)) {
-                    return false;
-                }
-                if (!writer.writeBool(helper.m_return_helper)) {
-                    return false;
-                }
+            if (!helper.writeReply(writer)) {
+                return false;
             }
             reader.accept();
             return true;
         }
         if (tag == IMap2DMsgs_clear_all_locations_RPC_helper::s_tag) {
-            IMap2DMsgs_clear_all_locations_RPC_helper helper{};
-            helper.m_return_helper = clear_all_locations_RPC();
+            IMap2DMsgs_clear_all_locations_RPC_helper helper;
+            if (!helper.readCmdArgs(reader)) {
+                return false;
+            }
+
+            helper.call(this);
+
             yarp::os::idl::WireWriter writer(reader);
-            if (!writer.isNull()) {
-                if (!writer.writeListHeader(IMap2DMsgs_clear_all_locations_RPC_helper::s_reply_len)) {
-                    return false;
-                }
-                if (!writer.writeBool(helper.m_return_helper)) {
-                    return false;
-                }
+            if (!helper.writeReply(writer)) {
+                return false;
             }
             reader.accept();
             return true;
         }
         if (tag == IMap2DMsgs_clear_all_areas_RPC_helper::s_tag) {
-            IMap2DMsgs_clear_all_areas_RPC_helper helper{};
-            helper.m_return_helper = clear_all_areas_RPC();
+            IMap2DMsgs_clear_all_areas_RPC_helper helper;
+            if (!helper.readCmdArgs(reader)) {
+                return false;
+            }
+
+            helper.call(this);
+
             yarp::os::idl::WireWriter writer(reader);
-            if (!writer.isNull()) {
-                if (!writer.writeListHeader(IMap2DMsgs_clear_all_areas_RPC_helper::s_reply_len)) {
-                    return false;
-                }
-                if (!writer.writeBool(helper.m_return_helper)) {
-                    return false;
-                }
+            if (!helper.writeReply(writer)) {
+                return false;
             }
             reader.accept();
             return true;
         }
         if (tag == IMap2DMsgs_clear_all_paths_RPC_helper::s_tag) {
-            IMap2DMsgs_clear_all_paths_RPC_helper helper{};
-            helper.m_return_helper = clear_all_paths_RPC();
+            IMap2DMsgs_clear_all_paths_RPC_helper helper;
+            if (!helper.readCmdArgs(reader)) {
+                return false;
+            }
+
+            helper.call(this);
+
             yarp::os::idl::WireWriter writer(reader);
-            if (!writer.isNull()) {
-                if (!writer.writeListHeader(IMap2DMsgs_clear_all_paths_RPC_helper::s_reply_len)) {
-                    return false;
-                }
-                if (!writer.writeBool(helper.m_return_helper)) {
-                    return false;
-                }
+            if (!helper.writeReply(writer)) {
+                return false;
             }
             reader.accept();
             return true;
         }
         if (tag == IMap2DMsgs_clear_all_maps_temporary_flags_RPC_helper::s_tag) {
-            IMap2DMsgs_clear_all_maps_temporary_flags_RPC_helper helper{};
-            helper.m_return_helper = clear_all_maps_temporary_flags_RPC();
+            IMap2DMsgs_clear_all_maps_temporary_flags_RPC_helper helper;
+            if (!helper.readCmdArgs(reader)) {
+                return false;
+            }
+
+            helper.call(this);
+
             yarp::os::idl::WireWriter writer(reader);
-            if (!writer.isNull()) {
-                if (!writer.writeListHeader(IMap2DMsgs_clear_all_maps_temporary_flags_RPC_helper::s_reply_len)) {
-                    return false;
-                }
-                if (!writer.writeBool(helper.m_return_helper)) {
-                    return false;
-                }
+            if (!helper.writeReply(writer)) {
+                return false;
             }
             reader.accept();
             return true;
         }
         if (tag == IMap2DMsgs_clear_map_temporary_flags_RPC_helper::s_tag) {
-            std::string map_name;
-            if (!reader.readString(map_name)) {
-                reader.fail();
+            IMap2DMsgs_clear_map_temporary_flags_RPC_helper helper;
+            if (!helper.readCmdArgs(reader)) {
                 return false;
             }
-            IMap2DMsgs_clear_map_temporary_flags_RPC_helper helper{map_name};
-            helper.m_return_helper = clear_map_temporary_flags_RPC(map_name);
+
+            helper.call(this);
+
             yarp::os::idl::WireWriter writer(reader);
-            if (!writer.isNull()) {
-                if (!writer.writeListHeader(IMap2DMsgs_clear_map_temporary_flags_RPC_helper::s_reply_len)) {
-                    return false;
-                }
-                if (!writer.writeBool(helper.m_return_helper)) {
-                    return false;
-                }
+            if (!helper.writeReply(writer)) {
+                return false;
             }
             reader.accept();
             return true;
         }
         if (tag == IMap2DMsgs_save_maps_collection_RPC_helper::s_tag) {
-            std::string maps_collection_file;
-            if (!reader.readString(maps_collection_file)) {
-                reader.fail();
+            IMap2DMsgs_save_maps_collection_RPC_helper helper;
+            if (!helper.readCmdArgs(reader)) {
                 return false;
             }
-            IMap2DMsgs_save_maps_collection_RPC_helper helper{maps_collection_file};
-            helper.m_return_helper = save_maps_collection_RPC(maps_collection_file);
+
+            helper.call(this);
+
             yarp::os::idl::WireWriter writer(reader);
-            if (!writer.isNull()) {
-                if (!writer.writeListHeader(IMap2DMsgs_save_maps_collection_RPC_helper::s_reply_len)) {
-                    return false;
-                }
-                if (!writer.writeBool(helper.m_return_helper)) {
-                    return false;
-                }
+            if (!helper.writeReply(writer)) {
+                return false;
             }
             reader.accept();
             return true;
         }
         if (tag == IMap2DMsgs_load_maps_collection_RPC_helper::s_tag) {
-            std::string maps_collection_file;
-            if (!reader.readString(maps_collection_file)) {
-                reader.fail();
+            IMap2DMsgs_load_maps_collection_RPC_helper helper;
+            if (!helper.readCmdArgs(reader)) {
                 return false;
             }
-            IMap2DMsgs_load_maps_collection_RPC_helper helper{maps_collection_file};
-            helper.m_return_helper = load_maps_collection_RPC(maps_collection_file);
+
+            helper.call(this);
+
             yarp::os::idl::WireWriter writer(reader);
-            if (!writer.isNull()) {
-                if (!writer.writeListHeader(IMap2DMsgs_load_maps_collection_RPC_helper::s_reply_len)) {
-                    return false;
-                }
-                if (!writer.writeBool(helper.m_return_helper)) {
-                    return false;
-                }
+            if (!helper.writeReply(writer)) {
+                return false;
             }
             reader.accept();
             return true;
         }
         if (tag == IMap2DMsgs_save_locations_and_extras_RPC_helper::s_tag) {
-            std::string locations_collection_file;
-            if (!reader.readString(locations_collection_file)) {
-                reader.fail();
+            IMap2DMsgs_save_locations_and_extras_RPC_helper helper;
+            if (!helper.readCmdArgs(reader)) {
                 return false;
             }
-            IMap2DMsgs_save_locations_and_extras_RPC_helper helper{locations_collection_file};
-            helper.m_return_helper = save_locations_and_extras_RPC(locations_collection_file);
+
+            helper.call(this);
+
             yarp::os::idl::WireWriter writer(reader);
-            if (!writer.isNull()) {
-                if (!writer.writeListHeader(IMap2DMsgs_save_locations_and_extras_RPC_helper::s_reply_len)) {
-                    return false;
-                }
-                if (!writer.writeBool(helper.m_return_helper)) {
-                    return false;
-                }
+            if (!helper.writeReply(writer)) {
+                return false;
             }
             reader.accept();
             return true;
         }
         if (tag == IMap2DMsgs_load_locations_and_extras_RPC_helper::s_tag) {
-            std::string locations_collection_file;
-            if (!reader.readString(locations_collection_file)) {
-                reader.fail();
+            IMap2DMsgs_load_locations_and_extras_RPC_helper helper;
+            if (!helper.readCmdArgs(reader)) {
                 return false;
             }
-            IMap2DMsgs_load_locations_and_extras_RPC_helper helper{locations_collection_file};
-            helper.m_return_helper = load_locations_and_extras_RPC(locations_collection_file);
+
+            helper.call(this);
+
             yarp::os::idl::WireWriter writer(reader);
-            if (!writer.isNull()) {
-                if (!writer.writeListHeader(IMap2DMsgs_load_locations_and_extras_RPC_helper::s_reply_len)) {
-                    return false;
-                }
-                if (!writer.writeBool(helper.m_return_helper)) {
-                    return false;
-                }
+            if (!helper.writeReply(writer)) {
+                return false;
             }
             reader.accept();
             return true;
         }
         if (tag == IMap2DMsgs_save_map_to_disk_RPC_helper::s_tag) {
-            std::string map_name;
-            std::string file_name;
-            if (!reader.readString(map_name)) {
-                reader.fail();
+            IMap2DMsgs_save_map_to_disk_RPC_helper helper;
+            if (!helper.readCmdArgs(reader)) {
                 return false;
             }
-            if (!reader.readString(file_name)) {
-                reader.fail();
-                return false;
-            }
-            IMap2DMsgs_save_map_to_disk_RPC_helper helper{map_name, file_name};
-            helper.m_return_helper = save_map_to_disk_RPC(map_name, file_name);
+
+            helper.call(this);
+
             yarp::os::idl::WireWriter writer(reader);
-            if (!writer.isNull()) {
-                if (!writer.writeListHeader(IMap2DMsgs_save_map_to_disk_RPC_helper::s_reply_len)) {
-                    return false;
-                }
-                if (!writer.writeBool(helper.m_return_helper)) {
-                    return false;
-                }
+            if (!helper.writeReply(writer)) {
+                return false;
             }
             reader.accept();
             return true;
         }
         if (tag == IMap2DMsgs_load_map_from_disk_RPC_helper::s_tag) {
-            std::string file_name;
-            if (!reader.readString(file_name)) {
-                reader.fail();
+            IMap2DMsgs_load_map_from_disk_RPC_helper helper;
+            if (!helper.readCmdArgs(reader)) {
                 return false;
             }
-            IMap2DMsgs_load_map_from_disk_RPC_helper helper{file_name};
-            helper.m_return_helper = load_map_from_disk_RPC(file_name);
+
+            helper.call(this);
+
             yarp::os::idl::WireWriter writer(reader);
-            if (!writer.isNull()) {
-                if (!writer.writeListHeader(IMap2DMsgs_load_map_from_disk_RPC_helper::s_reply_len)) {
-                    return false;
-                }
-                if (!writer.writeBool(helper.m_return_helper)) {
-                    return false;
-                }
+            if (!helper.writeReply(writer)) {
+                return false;
             }
             reader.accept();
             return true;
         }
         if (tag == IMap2DMsgs_enable_maps_compression_RPC_helper::s_tag) {
-            bool enable_compression;
-            if (!reader.readBool(enable_compression)) {
-                reader.fail();
+            IMap2DMsgs_enable_maps_compression_RPC_helper helper;
+            if (!helper.readCmdArgs(reader)) {
                 return false;
             }
-            IMap2DMsgs_enable_maps_compression_RPC_helper helper{enable_compression};
-            helper.m_return_helper = enable_maps_compression_RPC(enable_compression);
+
+            helper.call(this);
+
             yarp::os::idl::WireWriter writer(reader);
-            if (!writer.isNull()) {
-                if (!writer.writeListHeader(IMap2DMsgs_enable_maps_compression_RPC_helper::s_reply_len)) {
-                    return false;
-                }
-                if (!writer.writeBool(helper.m_return_helper)) {
-                    return false;
-                }
+            if (!helper.writeReply(writer)) {
+                return false;
             }
             reader.accept();
             return true;
