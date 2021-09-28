@@ -319,7 +319,7 @@ set(YARP_CUSTOM_REASON_QGVCore "customized version")
 find_package(QGVCore QUIET)
 checkbuildandset_dependency(QGVCore Qt5 Graphviz)
 
-set(SWIG_REQUIRED_VERSION 3.0.12)
+set(SWIG_REQUIRED_VERSION 4)
 find_package(SWIG ${SWIG_REQUIRED_VERSION} QUIET)
 checkandset_dependency(SWIG)
 
