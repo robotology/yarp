@@ -494,9 +494,17 @@ bool FakeBatteryService_setBatteryVoltage_helper::readCmdTag(yarp::os::idl::Wire
     return true;
 }
 
-bool FakeBatteryService_setBatteryVoltage_helper::readCmdArgs(yarp::os::idl::WireReader& reader [[maybe_unused]])
+bool FakeBatteryService_setBatteryVoltage_helper::readCmdArgs(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readFloat64(m_voltage)) {
+        reader.fail();
+        return false;
+    }
+    if (!reader.noMore()) {
         reader.fail();
         return false;
     }
@@ -615,9 +623,17 @@ bool FakeBatteryService_setBatteryCurrent_helper::readCmdTag(yarp::os::idl::Wire
     return true;
 }
 
-bool FakeBatteryService_setBatteryCurrent_helper::readCmdArgs(yarp::os::idl::WireReader& reader [[maybe_unused]])
+bool FakeBatteryService_setBatteryCurrent_helper::readCmdArgs(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readFloat64(m_current)) {
+        reader.fail();
+        return false;
+    }
+    if (!reader.noMore()) {
         reader.fail();
         return false;
     }
@@ -736,9 +752,17 @@ bool FakeBatteryService_setBatteryCharge_helper::readCmdTag(yarp::os::idl::WireR
     return true;
 }
 
-bool FakeBatteryService_setBatteryCharge_helper::readCmdArgs(yarp::os::idl::WireReader& reader [[maybe_unused]])
+bool FakeBatteryService_setBatteryCharge_helper::readCmdArgs(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readFloat64(m_charge)) {
+        reader.fail();
+        return false;
+    }
+    if (!reader.noMore()) {
         reader.fail();
         return false;
     }
@@ -857,9 +881,17 @@ bool FakeBatteryService_setBatteryInfo_helper::readCmdTag(yarp::os::idl::WireRea
     return true;
 }
 
-bool FakeBatteryService_setBatteryInfo_helper::readCmdArgs(yarp::os::idl::WireReader& reader [[maybe_unused]])
+bool FakeBatteryService_setBatteryInfo_helper::readCmdArgs(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readString(m_info)) {
+        reader.fail();
+        return false;
+    }
+    if (!reader.noMore()) {
         reader.fail();
         return false;
     }
@@ -978,9 +1010,17 @@ bool FakeBatteryService_setBatteryTemperature_helper::readCmdTag(yarp::os::idl::
     return true;
 }
 
-bool FakeBatteryService_setBatteryTemperature_helper::readCmdArgs(yarp::os::idl::WireReader& reader [[maybe_unused]])
+bool FakeBatteryService_setBatteryTemperature_helper::readCmdArgs(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readFloat64(m_temperature)) {
+        reader.fail();
+        return false;
+    }
+    if (!reader.noMore()) {
         reader.fail();
         return false;
     }
@@ -1091,8 +1131,12 @@ bool FakeBatteryService_getBatteryVoltage_helper::readCmdTag(yarp::os::idl::Wire
     return true;
 }
 
-bool FakeBatteryService_getBatteryVoltage_helper::readCmdArgs(yarp::os::idl::WireReader& reader [[maybe_unused]])
+bool FakeBatteryService_getBatteryVoltage_helper::readCmdArgs(yarp::os::idl::WireReader& reader)
 {
+    if (!reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     return true;
 }
 
@@ -1112,6 +1156,10 @@ bool FakeBatteryService_getBatteryVoltage_helper::writeReply(yarp::os::idl::Wire
 bool FakeBatteryService_getBatteryVoltage_helper::readReply(yarp::os::idl::WireReader& reader [[maybe_unused]])
 {
     if (!reader.readListReturn()) {
+        return false;
+    }
+    if (reader.noMore()) {
+        reader.fail();
         return false;
     }
     if (!reader.readFloat64(m_return_helper)) {
@@ -1210,8 +1258,12 @@ bool FakeBatteryService_getBatteryCurrent_helper::readCmdTag(yarp::os::idl::Wire
     return true;
 }
 
-bool FakeBatteryService_getBatteryCurrent_helper::readCmdArgs(yarp::os::idl::WireReader& reader [[maybe_unused]])
+bool FakeBatteryService_getBatteryCurrent_helper::readCmdArgs(yarp::os::idl::WireReader& reader)
 {
+    if (!reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     return true;
 }
 
@@ -1231,6 +1283,10 @@ bool FakeBatteryService_getBatteryCurrent_helper::writeReply(yarp::os::idl::Wire
 bool FakeBatteryService_getBatteryCurrent_helper::readReply(yarp::os::idl::WireReader& reader [[maybe_unused]])
 {
     if (!reader.readListReturn()) {
+        return false;
+    }
+    if (reader.noMore()) {
+        reader.fail();
         return false;
     }
     if (!reader.readFloat64(m_return_helper)) {
@@ -1329,8 +1385,12 @@ bool FakeBatteryService_getBatteryCharge_helper::readCmdTag(yarp::os::idl::WireR
     return true;
 }
 
-bool FakeBatteryService_getBatteryCharge_helper::readCmdArgs(yarp::os::idl::WireReader& reader [[maybe_unused]])
+bool FakeBatteryService_getBatteryCharge_helper::readCmdArgs(yarp::os::idl::WireReader& reader)
 {
+    if (!reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     return true;
 }
 
@@ -1350,6 +1410,10 @@ bool FakeBatteryService_getBatteryCharge_helper::writeReply(yarp::os::idl::WireW
 bool FakeBatteryService_getBatteryCharge_helper::readReply(yarp::os::idl::WireReader& reader [[maybe_unused]])
 {
     if (!reader.readListReturn()) {
+        return false;
+    }
+    if (reader.noMore()) {
+        reader.fail();
         return false;
     }
     if (!reader.readFloat64(m_return_helper)) {
@@ -1448,8 +1512,12 @@ bool FakeBatteryService_getBatteryStatus_helper::readCmdTag(yarp::os::idl::WireR
     return true;
 }
 
-bool FakeBatteryService_getBatteryStatus_helper::readCmdArgs(yarp::os::idl::WireReader& reader [[maybe_unused]])
+bool FakeBatteryService_getBatteryStatus_helper::readCmdArgs(yarp::os::idl::WireReader& reader)
 {
+    if (!reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     return true;
 }
 
@@ -1469,6 +1537,10 @@ bool FakeBatteryService_getBatteryStatus_helper::writeReply(yarp::os::idl::WireW
 bool FakeBatteryService_getBatteryStatus_helper::readReply(yarp::os::idl::WireReader& reader [[maybe_unused]])
 {
     if (!reader.readListReturn()) {
+        return false;
+    }
+    if (reader.noMore()) {
+        reader.fail();
         return false;
     }
     if (!reader.readString(m_return_helper)) {
@@ -1567,8 +1639,12 @@ bool FakeBatteryService_getBatteryInfo_helper::readCmdTag(yarp::os::idl::WireRea
     return true;
 }
 
-bool FakeBatteryService_getBatteryInfo_helper::readCmdArgs(yarp::os::idl::WireReader& reader [[maybe_unused]])
+bool FakeBatteryService_getBatteryInfo_helper::readCmdArgs(yarp::os::idl::WireReader& reader)
 {
+    if (!reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     return true;
 }
 
@@ -1588,6 +1664,10 @@ bool FakeBatteryService_getBatteryInfo_helper::writeReply(yarp::os::idl::WireWri
 bool FakeBatteryService_getBatteryInfo_helper::readReply(yarp::os::idl::WireReader& reader [[maybe_unused]])
 {
     if (!reader.readListReturn()) {
+        return false;
+    }
+    if (reader.noMore()) {
+        reader.fail();
         return false;
     }
     if (!reader.readString(m_return_helper)) {
@@ -1686,8 +1766,12 @@ bool FakeBatteryService_getBatteryTemperature_helper::readCmdTag(yarp::os::idl::
     return true;
 }
 
-bool FakeBatteryService_getBatteryTemperature_helper::readCmdArgs(yarp::os::idl::WireReader& reader [[maybe_unused]])
+bool FakeBatteryService_getBatteryTemperature_helper::readCmdArgs(yarp::os::idl::WireReader& reader)
 {
+    if (!reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     return true;
 }
 
@@ -1707,6 +1791,10 @@ bool FakeBatteryService_getBatteryTemperature_helper::writeReply(yarp::os::idl::
 bool FakeBatteryService_getBatteryTemperature_helper::readReply(yarp::os::idl::WireReader& reader [[maybe_unused]])
 {
     if (!reader.readListReturn()) {
+        return false;
+    }
+    if (reader.noMore()) {
+        reader.fail();
         return false;
     }
     if (!reader.readFloat64(m_return_helper)) {

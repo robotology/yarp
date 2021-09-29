@@ -356,8 +356,12 @@ bool yarprobotinterfaceRpc_get_phase_helper::readCmdTag(yarp::os::idl::WireReade
     return true;
 }
 
-bool yarprobotinterfaceRpc_get_phase_helper::readCmdArgs(yarp::os::idl::WireReader& reader [[maybe_unused]])
+bool yarprobotinterfaceRpc_get_phase_helper::readCmdArgs(yarp::os::idl::WireReader& reader)
 {
+    if (!reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     return true;
 }
 
@@ -377,6 +381,10 @@ bool yarprobotinterfaceRpc_get_phase_helper::writeReply(yarp::os::idl::WireWrite
 bool yarprobotinterfaceRpc_get_phase_helper::readReply(yarp::os::idl::WireReader& reader [[maybe_unused]])
 {
     if (!reader.readListReturn()) {
+        return false;
+    }
+    if (reader.noMore()) {
+        reader.fail();
         return false;
     }
     if (!reader.readString(m_return_helper)) {
@@ -475,8 +483,12 @@ bool yarprobotinterfaceRpc_get_level_helper::readCmdTag(yarp::os::idl::WireReade
     return true;
 }
 
-bool yarprobotinterfaceRpc_get_level_helper::readCmdArgs(yarp::os::idl::WireReader& reader [[maybe_unused]])
+bool yarprobotinterfaceRpc_get_level_helper::readCmdArgs(yarp::os::idl::WireReader& reader)
 {
+    if (!reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     return true;
 }
 
@@ -496,6 +508,10 @@ bool yarprobotinterfaceRpc_get_level_helper::writeReply(yarp::os::idl::WireWrite
 bool yarprobotinterfaceRpc_get_level_helper::readReply(yarp::os::idl::WireReader& reader [[maybe_unused]])
 {
     if (!reader.readListReturn()) {
+        return false;
+    }
+    if (reader.noMore()) {
+        reader.fail();
         return false;
     }
     if (!reader.readI32(m_return_helper)) {
@@ -594,8 +610,12 @@ bool yarprobotinterfaceRpc_get_robot_helper::readCmdTag(yarp::os::idl::WireReade
     return true;
 }
 
-bool yarprobotinterfaceRpc_get_robot_helper::readCmdArgs(yarp::os::idl::WireReader& reader [[maybe_unused]])
+bool yarprobotinterfaceRpc_get_robot_helper::readCmdArgs(yarp::os::idl::WireReader& reader)
 {
+    if (!reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     return true;
 }
 
@@ -615,6 +635,10 @@ bool yarprobotinterfaceRpc_get_robot_helper::writeReply(yarp::os::idl::WireWrite
 bool yarprobotinterfaceRpc_get_robot_helper::readReply(yarp::os::idl::WireReader& reader [[maybe_unused]])
 {
     if (!reader.readListReturn()) {
+        return false;
+    }
+    if (reader.noMore()) {
+        reader.fail();
         return false;
     }
     if (!reader.readString(m_return_helper)) {
@@ -713,8 +737,12 @@ bool yarprobotinterfaceRpc_is_ready_helper::readCmdTag(yarp::os::idl::WireReader
     return true;
 }
 
-bool yarprobotinterfaceRpc_is_ready_helper::readCmdArgs(yarp::os::idl::WireReader& reader [[maybe_unused]])
+bool yarprobotinterfaceRpc_is_ready_helper::readCmdArgs(yarp::os::idl::WireReader& reader)
 {
+    if (!reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     return true;
 }
 
@@ -734,6 +762,10 @@ bool yarprobotinterfaceRpc_is_ready_helper::writeReply(yarp::os::idl::WireWriter
 bool yarprobotinterfaceRpc_is_ready_helper::readReply(yarp::os::idl::WireReader& reader [[maybe_unused]])
 {
     if (!reader.readListReturn()) {
+        return false;
+    }
+    if (reader.noMore()) {
+        reader.fail();
         return false;
     }
     if (!reader.readBool(m_return_helper)) {
@@ -832,8 +864,12 @@ bool yarprobotinterfaceRpc_quit_helper::readCmdTag(yarp::os::idl::WireReader& re
     return true;
 }
 
-bool yarprobotinterfaceRpc_quit_helper::readCmdArgs(yarp::os::idl::WireReader& reader [[maybe_unused]])
+bool yarprobotinterfaceRpc_quit_helper::readCmdArgs(yarp::os::idl::WireReader& reader)
 {
+    if (!reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     return true;
 }
 
@@ -853,6 +889,10 @@ bool yarprobotinterfaceRpc_quit_helper::writeReply(yarp::os::idl::WireWriter& wr
 bool yarprobotinterfaceRpc_quit_helper::readReply(yarp::os::idl::WireReader& reader [[maybe_unused]])
 {
     if (!reader.readListReturn()) {
+        return false;
+    }
+    if (reader.noMore()) {
+        reader.fail();
         return false;
     }
     if (!reader.readString(m_return_helper)) {
@@ -951,8 +991,12 @@ bool yarprobotinterfaceRpc_bye_helper::readCmdTag(yarp::os::idl::WireReader& rea
     return true;
 }
 
-bool yarprobotinterfaceRpc_bye_helper::readCmdArgs(yarp::os::idl::WireReader& reader [[maybe_unused]])
+bool yarprobotinterfaceRpc_bye_helper::readCmdArgs(yarp::os::idl::WireReader& reader)
 {
+    if (!reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     return true;
 }
 
@@ -972,6 +1016,10 @@ bool yarprobotinterfaceRpc_bye_helper::writeReply(yarp::os::idl::WireWriter& wri
 bool yarprobotinterfaceRpc_bye_helper::readReply(yarp::os::idl::WireReader& reader [[maybe_unused]])
 {
     if (!reader.readListReturn()) {
+        return false;
+    }
+    if (reader.noMore()) {
+        reader.fail();
         return false;
     }
     if (!reader.readString(m_return_helper)) {
@@ -1070,8 +1118,12 @@ bool yarprobotinterfaceRpc_exit_helper::readCmdTag(yarp::os::idl::WireReader& re
     return true;
 }
 
-bool yarprobotinterfaceRpc_exit_helper::readCmdArgs(yarp::os::idl::WireReader& reader [[maybe_unused]])
+bool yarprobotinterfaceRpc_exit_helper::readCmdArgs(yarp::os::idl::WireReader& reader)
 {
+    if (!reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     return true;
 }
 
@@ -1091,6 +1143,10 @@ bool yarprobotinterfaceRpc_exit_helper::writeReply(yarp::os::idl::WireWriter& wr
 bool yarprobotinterfaceRpc_exit_helper::readReply(yarp::os::idl::WireReader& reader [[maybe_unused]])
 {
     if (!reader.readListReturn()) {
+        return false;
+    }
+    if (reader.noMore()) {
+        reader.fail();
         return false;
     }
     if (!reader.readString(m_return_helper)) {

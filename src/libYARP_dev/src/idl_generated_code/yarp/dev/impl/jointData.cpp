@@ -2114,6 +2114,10 @@ void jointData::Editor::dirty_flags(bool flag)
 // read jointPosition field
 bool jointData::read_jointPosition(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.read(jointPosition)) {
         reader.fail();
         return false;
@@ -2133,6 +2137,10 @@ bool jointData::write_jointPosition(const yarp::os::idl::WireWriter& writer) con
 // read (nested) jointPosition field
 bool jointData::nested_read_jointPosition(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readNested(jointPosition)) {
         reader.fail();
         return false;
@@ -2152,6 +2160,10 @@ bool jointData::nested_write_jointPosition(const yarp::os::idl::WireWriter& writ
 // read jointPosition_isValid field
 bool jointData::read_jointPosition_isValid(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readBool(jointPosition_isValid)) {
         reader.fail();
         return false;
@@ -2171,6 +2183,10 @@ bool jointData::write_jointPosition_isValid(const yarp::os::idl::WireWriter& wri
 // read (nested) jointPosition_isValid field
 bool jointData::nested_read_jointPosition_isValid(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readBool(jointPosition_isValid)) {
         reader.fail();
         return false;
@@ -2190,6 +2206,10 @@ bool jointData::nested_write_jointPosition_isValid(const yarp::os::idl::WireWrit
 // read jointVelocity field
 bool jointData::read_jointVelocity(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.read(jointVelocity)) {
         reader.fail();
         return false;
@@ -2209,6 +2229,10 @@ bool jointData::write_jointVelocity(const yarp::os::idl::WireWriter& writer) con
 // read (nested) jointVelocity field
 bool jointData::nested_read_jointVelocity(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readNested(jointVelocity)) {
         reader.fail();
         return false;
@@ -2228,6 +2252,10 @@ bool jointData::nested_write_jointVelocity(const yarp::os::idl::WireWriter& writ
 // read jointVelocity_isValid field
 bool jointData::read_jointVelocity_isValid(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readBool(jointVelocity_isValid)) {
         reader.fail();
         return false;
@@ -2247,6 +2275,10 @@ bool jointData::write_jointVelocity_isValid(const yarp::os::idl::WireWriter& wri
 // read (nested) jointVelocity_isValid field
 bool jointData::nested_read_jointVelocity_isValid(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readBool(jointVelocity_isValid)) {
         reader.fail();
         return false;
@@ -2266,6 +2298,10 @@ bool jointData::nested_write_jointVelocity_isValid(const yarp::os::idl::WireWrit
 // read jointAcceleration field
 bool jointData::read_jointAcceleration(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.read(jointAcceleration)) {
         reader.fail();
         return false;
@@ -2285,6 +2321,10 @@ bool jointData::write_jointAcceleration(const yarp::os::idl::WireWriter& writer)
 // read (nested) jointAcceleration field
 bool jointData::nested_read_jointAcceleration(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readNested(jointAcceleration)) {
         reader.fail();
         return false;
@@ -2304,6 +2344,10 @@ bool jointData::nested_write_jointAcceleration(const yarp::os::idl::WireWriter& 
 // read jointAcceleration_isValid field
 bool jointData::read_jointAcceleration_isValid(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readBool(jointAcceleration_isValid)) {
         reader.fail();
         return false;
@@ -2323,6 +2367,10 @@ bool jointData::write_jointAcceleration_isValid(const yarp::os::idl::WireWriter&
 // read (nested) jointAcceleration_isValid field
 bool jointData::nested_read_jointAcceleration_isValid(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readBool(jointAcceleration_isValid)) {
         reader.fail();
         return false;
@@ -2342,6 +2390,10 @@ bool jointData::nested_write_jointAcceleration_isValid(const yarp::os::idl::Wire
 // read motorPosition field
 bool jointData::read_motorPosition(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.read(motorPosition)) {
         reader.fail();
         return false;
@@ -2361,6 +2413,10 @@ bool jointData::write_motorPosition(const yarp::os::idl::WireWriter& writer) con
 // read (nested) motorPosition field
 bool jointData::nested_read_motorPosition(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readNested(motorPosition)) {
         reader.fail();
         return false;
@@ -2380,6 +2436,10 @@ bool jointData::nested_write_motorPosition(const yarp::os::idl::WireWriter& writ
 // read motorPosition_isValid field
 bool jointData::read_motorPosition_isValid(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readBool(motorPosition_isValid)) {
         reader.fail();
         return false;
@@ -2399,6 +2459,10 @@ bool jointData::write_motorPosition_isValid(const yarp::os::idl::WireWriter& wri
 // read (nested) motorPosition_isValid field
 bool jointData::nested_read_motorPosition_isValid(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readBool(motorPosition_isValid)) {
         reader.fail();
         return false;
@@ -2418,6 +2482,10 @@ bool jointData::nested_write_motorPosition_isValid(const yarp::os::idl::WireWrit
 // read motorVelocity field
 bool jointData::read_motorVelocity(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.read(motorVelocity)) {
         reader.fail();
         return false;
@@ -2437,6 +2505,10 @@ bool jointData::write_motorVelocity(const yarp::os::idl::WireWriter& writer) con
 // read (nested) motorVelocity field
 bool jointData::nested_read_motorVelocity(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readNested(motorVelocity)) {
         reader.fail();
         return false;
@@ -2456,6 +2528,10 @@ bool jointData::nested_write_motorVelocity(const yarp::os::idl::WireWriter& writ
 // read motorVelocity_isValid field
 bool jointData::read_motorVelocity_isValid(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readBool(motorVelocity_isValid)) {
         reader.fail();
         return false;
@@ -2475,6 +2551,10 @@ bool jointData::write_motorVelocity_isValid(const yarp::os::idl::WireWriter& wri
 // read (nested) motorVelocity_isValid field
 bool jointData::nested_read_motorVelocity_isValid(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readBool(motorVelocity_isValid)) {
         reader.fail();
         return false;
@@ -2494,6 +2574,10 @@ bool jointData::nested_write_motorVelocity_isValid(const yarp::os::idl::WireWrit
 // read motorAcceleration field
 bool jointData::read_motorAcceleration(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.read(motorAcceleration)) {
         reader.fail();
         return false;
@@ -2513,6 +2597,10 @@ bool jointData::write_motorAcceleration(const yarp::os::idl::WireWriter& writer)
 // read (nested) motorAcceleration field
 bool jointData::nested_read_motorAcceleration(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readNested(motorAcceleration)) {
         reader.fail();
         return false;
@@ -2532,6 +2620,10 @@ bool jointData::nested_write_motorAcceleration(const yarp::os::idl::WireWriter& 
 // read motorAcceleration_isValid field
 bool jointData::read_motorAcceleration_isValid(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readBool(motorAcceleration_isValid)) {
         reader.fail();
         return false;
@@ -2551,6 +2643,10 @@ bool jointData::write_motorAcceleration_isValid(const yarp::os::idl::WireWriter&
 // read (nested) motorAcceleration_isValid field
 bool jointData::nested_read_motorAcceleration_isValid(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readBool(motorAcceleration_isValid)) {
         reader.fail();
         return false;
@@ -2570,6 +2666,10 @@ bool jointData::nested_write_motorAcceleration_isValid(const yarp::os::idl::Wire
 // read torque field
 bool jointData::read_torque(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.read(torque)) {
         reader.fail();
         return false;
@@ -2589,6 +2689,10 @@ bool jointData::write_torque(const yarp::os::idl::WireWriter& writer) const
 // read (nested) torque field
 bool jointData::nested_read_torque(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readNested(torque)) {
         reader.fail();
         return false;
@@ -2608,6 +2712,10 @@ bool jointData::nested_write_torque(const yarp::os::idl::WireWriter& writer) con
 // read torque_isValid field
 bool jointData::read_torque_isValid(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readBool(torque_isValid)) {
         reader.fail();
         return false;
@@ -2627,6 +2735,10 @@ bool jointData::write_torque_isValid(const yarp::os::idl::WireWriter& writer) co
 // read (nested) torque_isValid field
 bool jointData::nested_read_torque_isValid(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readBool(torque_isValid)) {
         reader.fail();
         return false;
@@ -2646,6 +2758,10 @@ bool jointData::nested_write_torque_isValid(const yarp::os::idl::WireWriter& wri
 // read pwmDutycycle field
 bool jointData::read_pwmDutycycle(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.read(pwmDutycycle)) {
         reader.fail();
         return false;
@@ -2665,6 +2781,10 @@ bool jointData::write_pwmDutycycle(const yarp::os::idl::WireWriter& writer) cons
 // read (nested) pwmDutycycle field
 bool jointData::nested_read_pwmDutycycle(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readNested(pwmDutycycle)) {
         reader.fail();
         return false;
@@ -2684,6 +2804,10 @@ bool jointData::nested_write_pwmDutycycle(const yarp::os::idl::WireWriter& write
 // read pwmDutycycle_isValid field
 bool jointData::read_pwmDutycycle_isValid(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readBool(pwmDutycycle_isValid)) {
         reader.fail();
         return false;
@@ -2703,6 +2827,10 @@ bool jointData::write_pwmDutycycle_isValid(const yarp::os::idl::WireWriter& writ
 // read (nested) pwmDutycycle_isValid field
 bool jointData::nested_read_pwmDutycycle_isValid(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readBool(pwmDutycycle_isValid)) {
         reader.fail();
         return false;
@@ -2722,6 +2850,10 @@ bool jointData::nested_write_pwmDutycycle_isValid(const yarp::os::idl::WireWrite
 // read current field
 bool jointData::read_current(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.read(current)) {
         reader.fail();
         return false;
@@ -2741,6 +2873,10 @@ bool jointData::write_current(const yarp::os::idl::WireWriter& writer) const
 // read (nested) current field
 bool jointData::nested_read_current(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readNested(current)) {
         reader.fail();
         return false;
@@ -2760,6 +2896,10 @@ bool jointData::nested_write_current(const yarp::os::idl::WireWriter& writer) co
 // read current_isValid field
 bool jointData::read_current_isValid(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readBool(current_isValid)) {
         reader.fail();
         return false;
@@ -2779,6 +2919,10 @@ bool jointData::write_current_isValid(const yarp::os::idl::WireWriter& writer) c
 // read (nested) current_isValid field
 bool jointData::nested_read_current_isValid(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readBool(current_isValid)) {
         reader.fail();
         return false;
@@ -2798,6 +2942,10 @@ bool jointData::nested_write_current_isValid(const yarp::os::idl::WireWriter& wr
 // read controlMode field
 bool jointData::read_controlMode(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.read(controlMode)) {
         reader.fail();
         return false;
@@ -2817,6 +2965,10 @@ bool jointData::write_controlMode(const yarp::os::idl::WireWriter& writer) const
 // read (nested) controlMode field
 bool jointData::nested_read_controlMode(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readNested(controlMode)) {
         reader.fail();
         return false;
@@ -2836,6 +2988,10 @@ bool jointData::nested_write_controlMode(const yarp::os::idl::WireWriter& writer
 // read controlMode_isValid field
 bool jointData::read_controlMode_isValid(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readBool(controlMode_isValid)) {
         reader.fail();
         return false;
@@ -2855,6 +3011,10 @@ bool jointData::write_controlMode_isValid(const yarp::os::idl::WireWriter& write
 // read (nested) controlMode_isValid field
 bool jointData::nested_read_controlMode_isValid(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readBool(controlMode_isValid)) {
         reader.fail();
         return false;
@@ -2874,6 +3034,10 @@ bool jointData::nested_write_controlMode_isValid(const yarp::os::idl::WireWriter
 // read interactionMode field
 bool jointData::read_interactionMode(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.read(interactionMode)) {
         reader.fail();
         return false;
@@ -2893,6 +3057,10 @@ bool jointData::write_interactionMode(const yarp::os::idl::WireWriter& writer) c
 // read (nested) interactionMode field
 bool jointData::nested_read_interactionMode(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readNested(interactionMode)) {
         reader.fail();
         return false;
@@ -2912,6 +3080,10 @@ bool jointData::nested_write_interactionMode(const yarp::os::idl::WireWriter& wr
 // read interactionMode_isValid field
 bool jointData::read_interactionMode_isValid(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readBool(interactionMode_isValid)) {
         reader.fail();
         return false;
@@ -2931,6 +3103,10 @@ bool jointData::write_interactionMode_isValid(const yarp::os::idl::WireWriter& w
 // read (nested) interactionMode_isValid field
 bool jointData::nested_read_interactionMode_isValid(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readBool(interactionMode_isValid)) {
         reader.fail();
         return false;

@@ -442,6 +442,10 @@ void return_getAllTransforms::Editor::dirty_flags(bool flag)
 // read retvalue field
 bool return_getAllTransforms::read_retvalue(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readBool(retvalue)) {
         reader.fail();
         return false;
@@ -461,6 +465,10 @@ bool return_getAllTransforms::write_retvalue(const yarp::os::idl::WireWriter& wr
 // read (nested) retvalue field
 bool return_getAllTransforms::nested_read_retvalue(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readBool(retvalue)) {
         reader.fail();
         return false;
@@ -480,12 +488,20 @@ bool return_getAllTransforms::nested_write_retvalue(const yarp::os::idl::WireWri
 // read transforms_list field
 bool return_getAllTransforms::read_transforms_list(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     transforms_list.clear();
     uint32_t _size0;
     yarp::os::idl::WireState _etype3;
     reader.readListBegin(_etype3, _size0);
     transforms_list.resize(_size0);
     for (size_t _i4 = 0; _i4 < _size0; ++_i4) {
+        if (reader.noMore()) {
+            reader.fail();
+            return false;
+        }
         if (!reader.readNested(transforms_list[_i4])) {
             reader.fail();
             return false;
@@ -515,12 +531,20 @@ bool return_getAllTransforms::write_transforms_list(const yarp::os::idl::WireWri
 // read (nested) transforms_list field
 bool return_getAllTransforms::nested_read_transforms_list(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     transforms_list.clear();
     uint32_t _size6;
     yarp::os::idl::WireState _etype9;
     reader.readListBegin(_etype9, _size6);
     transforms_list.resize(_size6);
     for (size_t _i10 = 0; _i10 < _size6; ++_i10) {
+        if (reader.noMore()) {
+            reader.fail();
+            return false;
+        }
         if (!reader.readNested(transforms_list[_i10])) {
             reader.fail();
             return false;

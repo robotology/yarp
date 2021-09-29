@@ -468,6 +468,10 @@ bool return_get_area::nested_write_retval(const yarp::os::idl::WireWriter& write
 // read area field
 bool return_get_area::read_area(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.read(area)) {
         reader.fail();
         return false;
@@ -487,6 +491,10 @@ bool return_get_area::write_area(const yarp::os::idl::WireWriter& writer) const
 // read (nested) area field
 bool return_get_area::nested_read_area(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readNested(area)) {
         reader.fail();
         return false;

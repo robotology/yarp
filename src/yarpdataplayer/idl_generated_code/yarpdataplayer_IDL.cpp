@@ -490,8 +490,12 @@ bool yarpdataplayer_IDL_step_helper::readCmdTag(yarp::os::idl::WireReader& reade
     return true;
 }
 
-bool yarpdataplayer_IDL_step_helper::readCmdArgs(yarp::os::idl::WireReader& reader [[maybe_unused]])
+bool yarpdataplayer_IDL_step_helper::readCmdArgs(yarp::os::idl::WireReader& reader)
 {
+    if (!reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     return true;
 }
 
@@ -511,6 +515,10 @@ bool yarpdataplayer_IDL_step_helper::writeReply(yarp::os::idl::WireWriter& write
 bool yarpdataplayer_IDL_step_helper::readReply(yarp::os::idl::WireReader& reader [[maybe_unused]])
 {
     if (!reader.readListReturn()) {
+        return false;
+    }
+    if (reader.noMore()) {
+        reader.fail();
         return false;
     }
     if (!reader.readBool(m_return_helper)) {
@@ -618,9 +626,17 @@ bool yarpdataplayer_IDL_setFrame_helper::readCmdTag(yarp::os::idl::WireReader& r
     return true;
 }
 
-bool yarpdataplayer_IDL_setFrame_helper::readCmdArgs(yarp::os::idl::WireReader& reader [[maybe_unused]])
+bool yarpdataplayer_IDL_setFrame_helper::readCmdArgs(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readI32(m_frameNum)) {
+        reader.fail();
+        return false;
+    }
+    if (!reader.noMore()) {
         reader.fail();
         return false;
     }
@@ -643,6 +659,10 @@ bool yarpdataplayer_IDL_setFrame_helper::writeReply(yarp::os::idl::WireWriter& w
 bool yarpdataplayer_IDL_setFrame_helper::readReply(yarp::os::idl::WireReader& reader [[maybe_unused]])
 {
     if (!reader.readListReturn()) {
+        return false;
+    }
+    if (reader.noMore()) {
+        reader.fail();
         return false;
     }
     if (!reader.readBool(m_return_helper)) {
@@ -750,9 +770,17 @@ bool yarpdataplayer_IDL_getFrame_helper::readCmdTag(yarp::os::idl::WireReader& r
     return true;
 }
 
-bool yarpdataplayer_IDL_getFrame_helper::readCmdArgs(yarp::os::idl::WireReader& reader [[maybe_unused]])
+bool yarpdataplayer_IDL_getFrame_helper::readCmdArgs(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readString(m_name)) {
+        reader.fail();
+        return false;
+    }
+    if (!reader.noMore()) {
         reader.fail();
         return false;
     }
@@ -775,6 +803,10 @@ bool yarpdataplayer_IDL_getFrame_helper::writeReply(yarp::os::idl::WireWriter& w
 bool yarpdataplayer_IDL_getFrame_helper::readReply(yarp::os::idl::WireReader& reader [[maybe_unused]])
 {
     if (!reader.readListReturn()) {
+        return false;
+    }
+    if (reader.noMore()) {
+        reader.fail();
         return false;
     }
     if (!reader.readI32(m_return_helper)) {
@@ -882,9 +914,17 @@ bool yarpdataplayer_IDL_load_helper::readCmdTag(yarp::os::idl::WireReader& reade
     return true;
 }
 
-bool yarpdataplayer_IDL_load_helper::readCmdArgs(yarp::os::idl::WireReader& reader [[maybe_unused]])
+bool yarpdataplayer_IDL_load_helper::readCmdArgs(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readString(m_path)) {
+        reader.fail();
+        return false;
+    }
+    if (!reader.noMore()) {
         reader.fail();
         return false;
     }
@@ -907,6 +947,10 @@ bool yarpdataplayer_IDL_load_helper::writeReply(yarp::os::idl::WireWriter& write
 bool yarpdataplayer_IDL_load_helper::readReply(yarp::os::idl::WireReader& reader [[maybe_unused]])
 {
     if (!reader.readListReturn()) {
+        return false;
+    }
+    if (reader.noMore()) {
+        reader.fail();
         return false;
     }
     if (!reader.readBool(m_return_helper)) {
@@ -1005,8 +1049,12 @@ bool yarpdataplayer_IDL_getSliderPercentage_helper::readCmdTag(yarp::os::idl::Wi
     return true;
 }
 
-bool yarpdataplayer_IDL_getSliderPercentage_helper::readCmdArgs(yarp::os::idl::WireReader& reader [[maybe_unused]])
+bool yarpdataplayer_IDL_getSliderPercentage_helper::readCmdArgs(yarp::os::idl::WireReader& reader)
 {
+    if (!reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     return true;
 }
 
@@ -1026,6 +1074,10 @@ bool yarpdataplayer_IDL_getSliderPercentage_helper::writeReply(yarp::os::idl::Wi
 bool yarpdataplayer_IDL_getSliderPercentage_helper::readReply(yarp::os::idl::WireReader& reader [[maybe_unused]])
 {
     if (!reader.readListReturn()) {
+        return false;
+    }
+    if (reader.noMore()) {
+        reader.fail();
         return false;
     }
     if (!reader.readI32(m_return_helper)) {
@@ -1124,8 +1176,12 @@ bool yarpdataplayer_IDL_getStatus_helper::readCmdTag(yarp::os::idl::WireReader& 
     return true;
 }
 
-bool yarpdataplayer_IDL_getStatus_helper::readCmdArgs(yarp::os::idl::WireReader& reader [[maybe_unused]])
+bool yarpdataplayer_IDL_getStatus_helper::readCmdArgs(yarp::os::idl::WireReader& reader)
 {
+    if (!reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     return true;
 }
 
@@ -1145,6 +1201,10 @@ bool yarpdataplayer_IDL_getStatus_helper::writeReply(yarp::os::idl::WireWriter& 
 bool yarpdataplayer_IDL_getStatus_helper::readReply(yarp::os::idl::WireReader& reader [[maybe_unused]])
 {
     if (!reader.readListReturn()) {
+        return false;
+    }
+    if (reader.noMore()) {
+        reader.fail();
         return false;
     }
     if (!reader.readString(m_return_helper)) {
@@ -1243,8 +1303,12 @@ bool yarpdataplayer_IDL_play_helper::readCmdTag(yarp::os::idl::WireReader& reade
     return true;
 }
 
-bool yarpdataplayer_IDL_play_helper::readCmdArgs(yarp::os::idl::WireReader& reader [[maybe_unused]])
+bool yarpdataplayer_IDL_play_helper::readCmdArgs(yarp::os::idl::WireReader& reader)
 {
+    if (!reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     return true;
 }
 
@@ -1264,6 +1328,10 @@ bool yarpdataplayer_IDL_play_helper::writeReply(yarp::os::idl::WireWriter& write
 bool yarpdataplayer_IDL_play_helper::readReply(yarp::os::idl::WireReader& reader [[maybe_unused]])
 {
     if (!reader.readListReturn()) {
+        return false;
+    }
+    if (reader.noMore()) {
+        reader.fail();
         return false;
     }
     if (!reader.readBool(m_return_helper)) {
@@ -1362,8 +1430,12 @@ bool yarpdataplayer_IDL_pause_helper::readCmdTag(yarp::os::idl::WireReader& read
     return true;
 }
 
-bool yarpdataplayer_IDL_pause_helper::readCmdArgs(yarp::os::idl::WireReader& reader [[maybe_unused]])
+bool yarpdataplayer_IDL_pause_helper::readCmdArgs(yarp::os::idl::WireReader& reader)
 {
+    if (!reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     return true;
 }
 
@@ -1383,6 +1455,10 @@ bool yarpdataplayer_IDL_pause_helper::writeReply(yarp::os::idl::WireWriter& writ
 bool yarpdataplayer_IDL_pause_helper::readReply(yarp::os::idl::WireReader& reader [[maybe_unused]])
 {
     if (!reader.readListReturn()) {
+        return false;
+    }
+    if (reader.noMore()) {
+        reader.fail();
         return false;
     }
     if (!reader.readBool(m_return_helper)) {
@@ -1481,8 +1557,12 @@ bool yarpdataplayer_IDL_stop_helper::readCmdTag(yarp::os::idl::WireReader& reade
     return true;
 }
 
-bool yarpdataplayer_IDL_stop_helper::readCmdArgs(yarp::os::idl::WireReader& reader [[maybe_unused]])
+bool yarpdataplayer_IDL_stop_helper::readCmdArgs(yarp::os::idl::WireReader& reader)
 {
+    if (!reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     return true;
 }
 
@@ -1502,6 +1582,10 @@ bool yarpdataplayer_IDL_stop_helper::writeReply(yarp::os::idl::WireWriter& write
 bool yarpdataplayer_IDL_stop_helper::readReply(yarp::os::idl::WireReader& reader [[maybe_unused]])
 {
     if (!reader.readListReturn()) {
+        return false;
+    }
+    if (reader.noMore()) {
+        reader.fail();
         return false;
     }
     if (!reader.readBool(m_return_helper)) {
@@ -1600,8 +1684,12 @@ bool yarpdataplayer_IDL_quit_helper::readCmdTag(yarp::os::idl::WireReader& reade
     return true;
 }
 
-bool yarpdataplayer_IDL_quit_helper::readCmdArgs(yarp::os::idl::WireReader& reader [[maybe_unused]])
+bool yarpdataplayer_IDL_quit_helper::readCmdArgs(yarp::os::idl::WireReader& reader)
 {
+    if (!reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     return true;
 }
 
@@ -1621,6 +1709,10 @@ bool yarpdataplayer_IDL_quit_helper::writeReply(yarp::os::idl::WireWriter& write
 bool yarpdataplayer_IDL_quit_helper::readReply(yarp::os::idl::WireReader& reader [[maybe_unused]])
 {
     if (!reader.readListReturn()) {
+        return false;
+    }
+    if (reader.noMore()) {
+        reader.fail();
         return false;
     }
     if (!reader.readBool(m_return_helper)) {

@@ -701,6 +701,10 @@ void Map2DLocationData::Editor::dirty_flags(bool flag)
 // read map_id field
 bool Map2DLocationData::read_map_id(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readString(map_id)) {
         reader.fail();
         return false;
@@ -720,6 +724,10 @@ bool Map2DLocationData::write_map_id(const yarp::os::idl::WireWriter& writer) co
 // read (nested) map_id field
 bool Map2DLocationData::nested_read_map_id(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readString(map_id)) {
         reader.fail();
         return false;
@@ -739,6 +747,10 @@ bool Map2DLocationData::nested_write_map_id(const yarp::os::idl::WireWriter& wri
 // read x field
 bool Map2DLocationData::read_x(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readFloat64(x)) {
         reader.fail();
         return false;
@@ -758,6 +770,10 @@ bool Map2DLocationData::write_x(const yarp::os::idl::WireWriter& writer) const
 // read (nested) x field
 bool Map2DLocationData::nested_read_x(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readFloat64(x)) {
         reader.fail();
         return false;
@@ -777,6 +793,10 @@ bool Map2DLocationData::nested_write_x(const yarp::os::idl::WireWriter& writer) 
 // read y field
 bool Map2DLocationData::read_y(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readFloat64(y)) {
         reader.fail();
         return false;
@@ -796,6 +816,10 @@ bool Map2DLocationData::write_y(const yarp::os::idl::WireWriter& writer) const
 // read (nested) y field
 bool Map2DLocationData::nested_read_y(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readFloat64(y)) {
         reader.fail();
         return false;
@@ -815,6 +839,10 @@ bool Map2DLocationData::nested_write_y(const yarp::os::idl::WireWriter& writer) 
 // read theta field
 bool Map2DLocationData::read_theta(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readFloat64(theta)) {
         reader.fail();
         return false;
@@ -834,6 +862,10 @@ bool Map2DLocationData::write_theta(const yarp::os::idl::WireWriter& writer) con
 // read (nested) theta field
 bool Map2DLocationData::nested_read_theta(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readFloat64(theta)) {
         reader.fail();
         return false;
@@ -853,6 +885,10 @@ bool Map2DLocationData::nested_write_theta(const yarp::os::idl::WireWriter& writ
 // read description field
 bool Map2DLocationData::read_description(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readString(description)) {
         reader.fail();
         return false;
@@ -872,6 +908,10 @@ bool Map2DLocationData::write_description(const yarp::os::idl::WireWriter& write
 // read (nested) description field
 bool Map2DLocationData::nested_read_description(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readString(description)) {
         reader.fail();
         return false;

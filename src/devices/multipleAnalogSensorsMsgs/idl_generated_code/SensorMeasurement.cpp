@@ -432,6 +432,10 @@ void SensorMeasurement::Editor::dirty_flags(bool flag)
 // read measurement field
 bool SensorMeasurement::read_measurement(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.read(measurement)) {
         reader.fail();
         return false;
@@ -451,6 +455,10 @@ bool SensorMeasurement::write_measurement(const yarp::os::idl::WireWriter& write
 // read (nested) measurement field
 bool SensorMeasurement::nested_read_measurement(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readNested(measurement)) {
         reader.fail();
         return false;
@@ -470,6 +478,10 @@ bool SensorMeasurement::nested_write_measurement(const yarp::os::idl::WireWriter
 // read timestamp field
 bool SensorMeasurement::read_timestamp(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readFloat64(timestamp)) {
         reader.fail();
         return false;
@@ -489,6 +501,10 @@ bool SensorMeasurement::write_timestamp(const yarp::os::idl::WireWriter& writer)
 // read (nested) timestamp field
 bool SensorMeasurement::nested_read_timestamp(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readFloat64(timestamp)) {
         reader.fail();
         return false;

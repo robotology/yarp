@@ -600,6 +600,10 @@ void return_getLastVelocityCommand::Editor::dirty_flags(bool flag)
 // read retvalue field
 bool return_getLastVelocityCommand::read_retvalue(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readBool(retvalue)) {
         reader.fail();
         return false;
@@ -619,6 +623,10 @@ bool return_getLastVelocityCommand::write_retvalue(const yarp::os::idl::WireWrit
 // read (nested) retvalue field
 bool return_getLastVelocityCommand::nested_read_retvalue(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readBool(retvalue)) {
         reader.fail();
         return false;
@@ -638,6 +646,10 @@ bool return_getLastVelocityCommand::nested_write_retvalue(const yarp::os::idl::W
 // read x_vel field
 bool return_getLastVelocityCommand::read_x_vel(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readFloat64(x_vel)) {
         reader.fail();
         return false;
@@ -657,6 +669,10 @@ bool return_getLastVelocityCommand::write_x_vel(const yarp::os::idl::WireWriter&
 // read (nested) x_vel field
 bool return_getLastVelocityCommand::nested_read_x_vel(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readFloat64(x_vel)) {
         reader.fail();
         return false;
@@ -676,6 +692,10 @@ bool return_getLastVelocityCommand::nested_write_x_vel(const yarp::os::idl::Wire
 // read y_vel field
 bool return_getLastVelocityCommand::read_y_vel(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readFloat64(y_vel)) {
         reader.fail();
         return false;
@@ -695,6 +715,10 @@ bool return_getLastVelocityCommand::write_y_vel(const yarp::os::idl::WireWriter&
 // read (nested) y_vel field
 bool return_getLastVelocityCommand::nested_read_y_vel(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readFloat64(y_vel)) {
         reader.fail();
         return false;
@@ -714,6 +738,10 @@ bool return_getLastVelocityCommand::nested_write_y_vel(const yarp::os::idl::Wire
 // read theta_vel field
 bool return_getLastVelocityCommand::read_theta_vel(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readFloat64(theta_vel)) {
         reader.fail();
         return false;
@@ -733,6 +761,10 @@ bool return_getLastVelocityCommand::write_theta_vel(const yarp::os::idl::WireWri
 // read (nested) theta_vel field
 bool return_getLastVelocityCommand::nested_read_theta_vel(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readFloat64(theta_vel)) {
         reader.fail();
         return false;

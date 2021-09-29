@@ -1049,6 +1049,10 @@ void OdometryData::Editor::dirty_flags(bool flag)
 // read odom_x field
 bool OdometryData::read_odom_x(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readFloat64(odom_x)) {
         reader.fail();
         return false;
@@ -1068,6 +1072,10 @@ bool OdometryData::write_odom_x(const yarp::os::idl::WireWriter& writer) const
 // read (nested) odom_x field
 bool OdometryData::nested_read_odom_x(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readFloat64(odom_x)) {
         reader.fail();
         return false;
@@ -1087,6 +1095,10 @@ bool OdometryData::nested_write_odom_x(const yarp::os::idl::WireWriter& writer) 
 // read odom_y field
 bool OdometryData::read_odom_y(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readFloat64(odom_y)) {
         reader.fail();
         return false;
@@ -1106,6 +1118,10 @@ bool OdometryData::write_odom_y(const yarp::os::idl::WireWriter& writer) const
 // read (nested) odom_y field
 bool OdometryData::nested_read_odom_y(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readFloat64(odom_y)) {
         reader.fail();
         return false;
@@ -1125,6 +1141,10 @@ bool OdometryData::nested_write_odom_y(const yarp::os::idl::WireWriter& writer) 
 // read odom_theta field
 bool OdometryData::read_odom_theta(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readFloat64(odom_theta)) {
         reader.fail();
         return false;
@@ -1144,6 +1164,10 @@ bool OdometryData::write_odom_theta(const yarp::os::idl::WireWriter& writer) con
 // read (nested) odom_theta field
 bool OdometryData::nested_read_odom_theta(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readFloat64(odom_theta)) {
         reader.fail();
         return false;
@@ -1163,6 +1187,10 @@ bool OdometryData::nested_write_odom_theta(const yarp::os::idl::WireWriter& writ
 // read base_vel_x field
 bool OdometryData::read_base_vel_x(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readFloat64(base_vel_x)) {
         reader.fail();
         return false;
@@ -1182,6 +1210,10 @@ bool OdometryData::write_base_vel_x(const yarp::os::idl::WireWriter& writer) con
 // read (nested) base_vel_x field
 bool OdometryData::nested_read_base_vel_x(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readFloat64(base_vel_x)) {
         reader.fail();
         return false;
@@ -1201,6 +1233,10 @@ bool OdometryData::nested_write_base_vel_x(const yarp::os::idl::WireWriter& writ
 // read base_vel_y field
 bool OdometryData::read_base_vel_y(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readFloat64(base_vel_y)) {
         reader.fail();
         return false;
@@ -1220,6 +1256,10 @@ bool OdometryData::write_base_vel_y(const yarp::os::idl::WireWriter& writer) con
 // read (nested) base_vel_y field
 bool OdometryData::nested_read_base_vel_y(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readFloat64(base_vel_y)) {
         reader.fail();
         return false;
@@ -1239,6 +1279,10 @@ bool OdometryData::nested_write_base_vel_y(const yarp::os::idl::WireWriter& writ
 // read base_vel_theta field
 bool OdometryData::read_base_vel_theta(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readFloat64(base_vel_theta)) {
         reader.fail();
         return false;
@@ -1258,6 +1302,10 @@ bool OdometryData::write_base_vel_theta(const yarp::os::idl::WireWriter& writer)
 // read (nested) base_vel_theta field
 bool OdometryData::nested_read_base_vel_theta(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readFloat64(base_vel_theta)) {
         reader.fail();
         return false;
@@ -1277,6 +1325,10 @@ bool OdometryData::nested_write_base_vel_theta(const yarp::os::idl::WireWriter& 
 // read odom_vel_x field
 bool OdometryData::read_odom_vel_x(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readFloat64(odom_vel_x)) {
         reader.fail();
         return false;
@@ -1296,6 +1348,10 @@ bool OdometryData::write_odom_vel_x(const yarp::os::idl::WireWriter& writer) con
 // read (nested) odom_vel_x field
 bool OdometryData::nested_read_odom_vel_x(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readFloat64(odom_vel_x)) {
         reader.fail();
         return false;
@@ -1315,6 +1371,10 @@ bool OdometryData::nested_write_odom_vel_x(const yarp::os::idl::WireWriter& writ
 // read odom_vel_y field
 bool OdometryData::read_odom_vel_y(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readFloat64(odom_vel_y)) {
         reader.fail();
         return false;
@@ -1334,6 +1394,10 @@ bool OdometryData::write_odom_vel_y(const yarp::os::idl::WireWriter& writer) con
 // read (nested) odom_vel_y field
 bool OdometryData::nested_read_odom_vel_y(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readFloat64(odom_vel_y)) {
         reader.fail();
         return false;
@@ -1353,6 +1417,10 @@ bool OdometryData::nested_write_odom_vel_y(const yarp::os::idl::WireWriter& writ
 // read odom_vel_theta field
 bool OdometryData::read_odom_vel_theta(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readFloat64(odom_vel_theta)) {
         reader.fail();
         return false;
@@ -1372,6 +1440,10 @@ bool OdometryData::write_odom_vel_theta(const yarp::os::idl::WireWriter& writer)
 // read (nested) odom_vel_theta field
 bool OdometryData::nested_read_odom_vel_theta(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readFloat64(odom_vel_theta)) {
         reader.fail();
         return false;

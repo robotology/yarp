@@ -468,6 +468,10 @@ bool return_get_location::nested_write_retval(const yarp::os::idl::WireWriter& w
 // read loc field
 bool return_get_location::read_loc(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.read(loc)) {
         reader.fail();
         return false;
@@ -487,6 +491,10 @@ bool return_get_location::write_loc(const yarp::os::idl::WireWriter& writer) con
 // read (nested) loc field
 bool return_get_location::nested_read_loc(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readNested(loc)) {
         reader.fail();
         return false;

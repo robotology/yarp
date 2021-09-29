@@ -468,6 +468,10 @@ bool return_get_map::nested_write_retval(const yarp::os::idl::WireWriter& writer
 // read themap field
 bool return_get_map::read_themap(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.read(themap)) {
         reader.fail();
         return false;
@@ -487,6 +491,10 @@ bool return_get_map::write_themap(const yarp::os::idl::WireWriter& writer) const
 // read (nested) themap field
 bool return_get_map::nested_read_themap(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readNested(themap)) {
         reader.fail();
         return false;

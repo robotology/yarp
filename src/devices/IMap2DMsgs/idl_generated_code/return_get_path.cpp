@@ -468,6 +468,10 @@ bool return_get_path::nested_write_retval(const yarp::os::idl::WireWriter& write
 // read path field
 bool return_get_path::read_path(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.read(path)) {
         reader.fail();
         return false;
@@ -487,6 +491,10 @@ bool return_get_path::write_path(const yarp::os::idl::WireWriter& writer) const
 // read (nested) path field
 bool return_get_path::nested_read_path(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readNested(path)) {
         reader.fail();
         return false;

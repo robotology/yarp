@@ -1832,6 +1832,10 @@ void OdometryData6D::Editor::dirty_flags(bool flag)
 // read odom_x field
 bool OdometryData6D::read_odom_x(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readFloat64(odom_x)) {
         reader.fail();
         return false;
@@ -1851,6 +1855,10 @@ bool OdometryData6D::write_odom_x(const yarp::os::idl::WireWriter& writer) const
 // read (nested) odom_x field
 bool OdometryData6D::nested_read_odom_x(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readFloat64(odom_x)) {
         reader.fail();
         return false;
@@ -1870,6 +1878,10 @@ bool OdometryData6D::nested_write_odom_x(const yarp::os::idl::WireWriter& writer
 // read odom_y field
 bool OdometryData6D::read_odom_y(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readFloat64(odom_y)) {
         reader.fail();
         return false;
@@ -1889,6 +1901,10 @@ bool OdometryData6D::write_odom_y(const yarp::os::idl::WireWriter& writer) const
 // read (nested) odom_y field
 bool OdometryData6D::nested_read_odom_y(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readFloat64(odom_y)) {
         reader.fail();
         return false;
@@ -1908,6 +1924,10 @@ bool OdometryData6D::nested_write_odom_y(const yarp::os::idl::WireWriter& writer
 // read odom_z field
 bool OdometryData6D::read_odom_z(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readFloat64(odom_z)) {
         reader.fail();
         return false;
@@ -1927,6 +1947,10 @@ bool OdometryData6D::write_odom_z(const yarp::os::idl::WireWriter& writer) const
 // read (nested) odom_z field
 bool OdometryData6D::nested_read_odom_z(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readFloat64(odom_z)) {
         reader.fail();
         return false;
@@ -1946,6 +1970,10 @@ bool OdometryData6D::nested_write_odom_z(const yarp::os::idl::WireWriter& writer
 // read odom_roll field
 bool OdometryData6D::read_odom_roll(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readFloat64(odom_roll)) {
         reader.fail();
         return false;
@@ -1965,6 +1993,10 @@ bool OdometryData6D::write_odom_roll(const yarp::os::idl::WireWriter& writer) co
 // read (nested) odom_roll field
 bool OdometryData6D::nested_read_odom_roll(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readFloat64(odom_roll)) {
         reader.fail();
         return false;
@@ -1984,6 +2016,10 @@ bool OdometryData6D::nested_write_odom_roll(const yarp::os::idl::WireWriter& wri
 // read odom_pitch field
 bool OdometryData6D::read_odom_pitch(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readFloat64(odom_pitch)) {
         reader.fail();
         return false;
@@ -2003,6 +2039,10 @@ bool OdometryData6D::write_odom_pitch(const yarp::os::idl::WireWriter& writer) c
 // read (nested) odom_pitch field
 bool OdometryData6D::nested_read_odom_pitch(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readFloat64(odom_pitch)) {
         reader.fail();
         return false;
@@ -2022,6 +2062,10 @@ bool OdometryData6D::nested_write_odom_pitch(const yarp::os::idl::WireWriter& wr
 // read odom_yaw field
 bool OdometryData6D::read_odom_yaw(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readFloat64(odom_yaw)) {
         reader.fail();
         return false;
@@ -2041,6 +2085,10 @@ bool OdometryData6D::write_odom_yaw(const yarp::os::idl::WireWriter& writer) con
 // read (nested) odom_yaw field
 bool OdometryData6D::nested_read_odom_yaw(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readFloat64(odom_yaw)) {
         reader.fail();
         return false;
@@ -2060,6 +2108,10 @@ bool OdometryData6D::nested_write_odom_yaw(const yarp::os::idl::WireWriter& writ
 // read base_vel_x field
 bool OdometryData6D::read_base_vel_x(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readFloat64(base_vel_x)) {
         reader.fail();
         return false;
@@ -2079,6 +2131,10 @@ bool OdometryData6D::write_base_vel_x(const yarp::os::idl::WireWriter& writer) c
 // read (nested) base_vel_x field
 bool OdometryData6D::nested_read_base_vel_x(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readFloat64(base_vel_x)) {
         reader.fail();
         return false;
@@ -2098,6 +2154,10 @@ bool OdometryData6D::nested_write_base_vel_x(const yarp::os::idl::WireWriter& wr
 // read base_vel_y field
 bool OdometryData6D::read_base_vel_y(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readFloat64(base_vel_y)) {
         reader.fail();
         return false;
@@ -2117,6 +2177,10 @@ bool OdometryData6D::write_base_vel_y(const yarp::os::idl::WireWriter& writer) c
 // read (nested) base_vel_y field
 bool OdometryData6D::nested_read_base_vel_y(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readFloat64(base_vel_y)) {
         reader.fail();
         return false;
@@ -2136,6 +2200,10 @@ bool OdometryData6D::nested_write_base_vel_y(const yarp::os::idl::WireWriter& wr
 // read base_vel_z field
 bool OdometryData6D::read_base_vel_z(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readFloat64(base_vel_z)) {
         reader.fail();
         return false;
@@ -2155,6 +2223,10 @@ bool OdometryData6D::write_base_vel_z(const yarp::os::idl::WireWriter& writer) c
 // read (nested) base_vel_z field
 bool OdometryData6D::nested_read_base_vel_z(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readFloat64(base_vel_z)) {
         reader.fail();
         return false;
@@ -2174,6 +2246,10 @@ bool OdometryData6D::nested_write_base_vel_z(const yarp::os::idl::WireWriter& wr
 // read base_vel_roll field
 bool OdometryData6D::read_base_vel_roll(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readFloat64(base_vel_roll)) {
         reader.fail();
         return false;
@@ -2193,6 +2269,10 @@ bool OdometryData6D::write_base_vel_roll(const yarp::os::idl::WireWriter& writer
 // read (nested) base_vel_roll field
 bool OdometryData6D::nested_read_base_vel_roll(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readFloat64(base_vel_roll)) {
         reader.fail();
         return false;
@@ -2212,6 +2292,10 @@ bool OdometryData6D::nested_write_base_vel_roll(const yarp::os::idl::WireWriter&
 // read base_vel_pitch field
 bool OdometryData6D::read_base_vel_pitch(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readFloat64(base_vel_pitch)) {
         reader.fail();
         return false;
@@ -2231,6 +2315,10 @@ bool OdometryData6D::write_base_vel_pitch(const yarp::os::idl::WireWriter& write
 // read (nested) base_vel_pitch field
 bool OdometryData6D::nested_read_base_vel_pitch(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readFloat64(base_vel_pitch)) {
         reader.fail();
         return false;
@@ -2250,6 +2338,10 @@ bool OdometryData6D::nested_write_base_vel_pitch(const yarp::os::idl::WireWriter
 // read base_vel_yaw field
 bool OdometryData6D::read_base_vel_yaw(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readFloat64(base_vel_yaw)) {
         reader.fail();
         return false;
@@ -2269,6 +2361,10 @@ bool OdometryData6D::write_base_vel_yaw(const yarp::os::idl::WireWriter& writer)
 // read (nested) base_vel_yaw field
 bool OdometryData6D::nested_read_base_vel_yaw(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readFloat64(base_vel_yaw)) {
         reader.fail();
         return false;
@@ -2288,6 +2384,10 @@ bool OdometryData6D::nested_write_base_vel_yaw(const yarp::os::idl::WireWriter& 
 // read odom_vel_x field
 bool OdometryData6D::read_odom_vel_x(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readFloat64(odom_vel_x)) {
         reader.fail();
         return false;
@@ -2307,6 +2407,10 @@ bool OdometryData6D::write_odom_vel_x(const yarp::os::idl::WireWriter& writer) c
 // read (nested) odom_vel_x field
 bool OdometryData6D::nested_read_odom_vel_x(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readFloat64(odom_vel_x)) {
         reader.fail();
         return false;
@@ -2326,6 +2430,10 @@ bool OdometryData6D::nested_write_odom_vel_x(const yarp::os::idl::WireWriter& wr
 // read odom_vel_y field
 bool OdometryData6D::read_odom_vel_y(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readFloat64(odom_vel_y)) {
         reader.fail();
         return false;
@@ -2345,6 +2453,10 @@ bool OdometryData6D::write_odom_vel_y(const yarp::os::idl::WireWriter& writer) c
 // read (nested) odom_vel_y field
 bool OdometryData6D::nested_read_odom_vel_y(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readFloat64(odom_vel_y)) {
         reader.fail();
         return false;
@@ -2364,6 +2476,10 @@ bool OdometryData6D::nested_write_odom_vel_y(const yarp::os::idl::WireWriter& wr
 // read odom_vel_z field
 bool OdometryData6D::read_odom_vel_z(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readFloat64(odom_vel_z)) {
         reader.fail();
         return false;
@@ -2383,6 +2499,10 @@ bool OdometryData6D::write_odom_vel_z(const yarp::os::idl::WireWriter& writer) c
 // read (nested) odom_vel_z field
 bool OdometryData6D::nested_read_odom_vel_z(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readFloat64(odom_vel_z)) {
         reader.fail();
         return false;
@@ -2402,6 +2522,10 @@ bool OdometryData6D::nested_write_odom_vel_z(const yarp::os::idl::WireWriter& wr
 // read odom_vel_roll field
 bool OdometryData6D::read_odom_vel_roll(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readFloat64(odom_vel_roll)) {
         reader.fail();
         return false;
@@ -2421,6 +2545,10 @@ bool OdometryData6D::write_odom_vel_roll(const yarp::os::idl::WireWriter& writer
 // read (nested) odom_vel_roll field
 bool OdometryData6D::nested_read_odom_vel_roll(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readFloat64(odom_vel_roll)) {
         reader.fail();
         return false;
@@ -2440,6 +2568,10 @@ bool OdometryData6D::nested_write_odom_vel_roll(const yarp::os::idl::WireWriter&
 // read odom_vel_pitch field
 bool OdometryData6D::read_odom_vel_pitch(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readFloat64(odom_vel_pitch)) {
         reader.fail();
         return false;
@@ -2459,6 +2591,10 @@ bool OdometryData6D::write_odom_vel_pitch(const yarp::os::idl::WireWriter& write
 // read (nested) odom_vel_pitch field
 bool OdometryData6D::nested_read_odom_vel_pitch(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readFloat64(odom_vel_pitch)) {
         reader.fail();
         return false;
@@ -2478,6 +2614,10 @@ bool OdometryData6D::nested_write_odom_vel_pitch(const yarp::os::idl::WireWriter
 // read odom_vel_yaw field
 bool OdometryData6D::read_odom_vel_yaw(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readFloat64(odom_vel_yaw)) {
         reader.fail();
         return false;
@@ -2497,6 +2637,10 @@ bool OdometryData6D::write_odom_vel_yaw(const yarp::os::idl::WireWriter& writer)
 // read (nested) odom_vel_yaw field
 bool OdometryData6D::nested_read_odom_vel_yaw(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readFloat64(odom_vel_yaw)) {
         reader.fail();
         return false;

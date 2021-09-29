@@ -602,6 +602,10 @@ void audioBufferSizeData::Editor::dirty_flags(bool flag)
 // read m_samples field
 bool audioBufferSizeData::read_m_samples(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readI32(m_samples)) {
         reader.fail();
         return false;
@@ -621,6 +625,10 @@ bool audioBufferSizeData::write_m_samples(const yarp::os::idl::WireWriter& write
 // read (nested) m_samples field
 bool audioBufferSizeData::nested_read_m_samples(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readI32(m_samples)) {
         reader.fail();
         return false;
@@ -640,6 +648,10 @@ bool audioBufferSizeData::nested_write_m_samples(const yarp::os::idl::WireWriter
 // read m_channels field
 bool audioBufferSizeData::read_m_channels(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readI32(m_channels)) {
         reader.fail();
         return false;
@@ -659,6 +671,10 @@ bool audioBufferSizeData::write_m_channels(const yarp::os::idl::WireWriter& writ
 // read (nested) m_channels field
 bool audioBufferSizeData::nested_read_m_channels(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readI32(m_channels)) {
         reader.fail();
         return false;
@@ -678,6 +694,10 @@ bool audioBufferSizeData::nested_write_m_channels(const yarp::os::idl::WireWrite
 // read m_depth field
 bool audioBufferSizeData::read_m_depth(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readI32(m_depth)) {
         reader.fail();
         return false;
@@ -697,6 +717,10 @@ bool audioBufferSizeData::write_m_depth(const yarp::os::idl::WireWriter& writer)
 // read (nested) m_depth field
 bool audioBufferSizeData::nested_read_m_depth(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readI32(m_depth)) {
         reader.fail();
         return false;
@@ -716,6 +740,10 @@ bool audioBufferSizeData::nested_write_m_depth(const yarp::os::idl::WireWriter& 
 // read size field
 bool audioBufferSizeData::read_size(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readI32(size)) {
         reader.fail();
         return false;
@@ -735,6 +763,10 @@ bool audioBufferSizeData::write_size(const yarp::os::idl::WireWriter& writer) co
 // read (nested) size field
 bool audioBufferSizeData::nested_read_size(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readI32(size)) {
         reader.fail();
         return false;

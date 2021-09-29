@@ -193,9 +193,17 @@ bool MobileBaseVelocityControlRPC_applyVelocityCommandRPC_helper::readCmdTag(yar
     return true;
 }
 
-bool MobileBaseVelocityControlRPC_applyVelocityCommandRPC_helper::readCmdArgs(yarp::os::idl::WireReader& reader [[maybe_unused]])
+bool MobileBaseVelocityControlRPC_applyVelocityCommandRPC_helper::readCmdArgs(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readFloat64(m_x_vel)) {
+        reader.fail();
+        return false;
+    }
+    if (reader.noMore()) {
         reader.fail();
         return false;
     }
@@ -203,11 +211,23 @@ bool MobileBaseVelocityControlRPC_applyVelocityCommandRPC_helper::readCmdArgs(ya
         reader.fail();
         return false;
     }
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readFloat64(m_theta_vel)) {
         reader.fail();
         return false;
     }
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readFloat64(m_timeout)) {
+        reader.fail();
+        return false;
+    }
+    if (!reader.noMore()) {
         reader.fail();
         return false;
     }
@@ -230,6 +250,10 @@ bool MobileBaseVelocityControlRPC_applyVelocityCommandRPC_helper::writeReply(yar
 bool MobileBaseVelocityControlRPC_applyVelocityCommandRPC_helper::readReply(yarp::os::idl::WireReader& reader [[maybe_unused]])
 {
     if (!reader.readListReturn()) {
+        return false;
+    }
+    if (reader.noMore()) {
+        reader.fail();
         return false;
     }
     if (!reader.readBool(m_return_helper)) {
@@ -328,8 +352,12 @@ bool MobileBaseVelocityControlRPC_getLastVelocityCommandRPC_helper::readCmdTag(y
     return true;
 }
 
-bool MobileBaseVelocityControlRPC_getLastVelocityCommandRPC_helper::readCmdArgs(yarp::os::idl::WireReader& reader [[maybe_unused]])
+bool MobileBaseVelocityControlRPC_getLastVelocityCommandRPC_helper::readCmdArgs(yarp::os::idl::WireReader& reader)
 {
+    if (!reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     return true;
 }
 
@@ -349,6 +377,10 @@ bool MobileBaseVelocityControlRPC_getLastVelocityCommandRPC_helper::writeReply(y
 bool MobileBaseVelocityControlRPC_getLastVelocityCommandRPC_helper::readReply(yarp::os::idl::WireReader& reader [[maybe_unused]])
 {
     if (!reader.readListReturn()) {
+        return false;
+    }
+    if (reader.noMore()) {
+        reader.fail();
         return false;
     }
     if (!reader.read(m_return_helper)) {

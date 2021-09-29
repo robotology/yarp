@@ -131,8 +131,12 @@ bool FrameTransformStorageGetRPC_getTransformsRPC_helper::readCmdTag(yarp::os::i
     return true;
 }
 
-bool FrameTransformStorageGetRPC_getTransformsRPC_helper::readCmdArgs(yarp::os::idl::WireReader& reader [[maybe_unused]])
+bool FrameTransformStorageGetRPC_getTransformsRPC_helper::readCmdArgs(yarp::os::idl::WireReader& reader)
 {
+    if (!reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     return true;
 }
 
@@ -152,6 +156,10 @@ bool FrameTransformStorageGetRPC_getTransformsRPC_helper::writeReply(yarp::os::i
 bool FrameTransformStorageGetRPC_getTransformsRPC_helper::readReply(yarp::os::idl::WireReader& reader [[maybe_unused]])
 {
     if (!reader.readListReturn()) {
+        return false;
+    }
+    if (reader.noMore()) {
+        reader.fail();
         return false;
     }
     if (!reader.read(m_return_helper)) {

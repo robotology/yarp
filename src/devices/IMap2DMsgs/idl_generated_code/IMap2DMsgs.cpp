@@ -1397,8 +1397,12 @@ bool IMap2DMsgs_clear_all_maps_RPC_helper::readCmdTag(yarp::os::idl::WireReader&
     return true;
 }
 
-bool IMap2DMsgs_clear_all_maps_RPC_helper::readCmdArgs(yarp::os::idl::WireReader& reader [[maybe_unused]])
+bool IMap2DMsgs_clear_all_maps_RPC_helper::readCmdArgs(yarp::os::idl::WireReader& reader)
 {
+    if (!reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     return true;
 }
 
@@ -1418,6 +1422,10 @@ bool IMap2DMsgs_clear_all_maps_RPC_helper::writeReply(yarp::os::idl::WireWriter&
 bool IMap2DMsgs_clear_all_maps_RPC_helper::readReply(yarp::os::idl::WireReader& reader [[maybe_unused]])
 {
     if (!reader.readListReturn()) {
+        return false;
+    }
+    if (reader.noMore()) {
+        reader.fail();
         return false;
     }
     if (!reader.readBool(m_return_helper)) {
@@ -1525,9 +1533,17 @@ bool IMap2DMsgs_store_map_RPC_helper::readCmdTag(yarp::os::idl::WireReader& read
     return true;
 }
 
-bool IMap2DMsgs_store_map_RPC_helper::readCmdArgs(yarp::os::idl::WireReader& reader [[maybe_unused]])
+bool IMap2DMsgs_store_map_RPC_helper::readCmdArgs(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readNested(m_themap)) {
+        reader.fail();
+        return false;
+    }
+    if (!reader.noMore()) {
         reader.fail();
         return false;
     }
@@ -1550,6 +1566,10 @@ bool IMap2DMsgs_store_map_RPC_helper::writeReply(yarp::os::idl::WireWriter& writ
 bool IMap2DMsgs_store_map_RPC_helper::readReply(yarp::os::idl::WireReader& reader [[maybe_unused]])
 {
     if (!reader.readListReturn()) {
+        return false;
+    }
+    if (reader.noMore()) {
+        reader.fail();
         return false;
     }
     if (!reader.readBool(m_return_helper)) {
@@ -1656,9 +1676,17 @@ bool IMap2DMsgs_get_map_RPC_helper::readCmdTag(yarp::os::idl::WireReader& reader
     return true;
 }
 
-bool IMap2DMsgs_get_map_RPC_helper::readCmdArgs(yarp::os::idl::WireReader& reader [[maybe_unused]])
+bool IMap2DMsgs_get_map_RPC_helper::readCmdArgs(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readString(m_map_name)) {
+        reader.fail();
+        return false;
+    }
+    if (!reader.noMore()) {
         reader.fail();
         return false;
     }
@@ -1681,6 +1709,10 @@ bool IMap2DMsgs_get_map_RPC_helper::writeReply(yarp::os::idl::WireWriter& writer
 bool IMap2DMsgs_get_map_RPC_helper::readReply(yarp::os::idl::WireReader& reader [[maybe_unused]])
 {
     if (!reader.readListReturn()) {
+        return false;
+    }
+    if (reader.noMore()) {
+        reader.fail();
         return false;
     }
     if (!reader.read(m_return_helper)) {
@@ -1779,8 +1811,12 @@ bool IMap2DMsgs_get_map_names_RPC_helper::readCmdTag(yarp::os::idl::WireReader& 
     return true;
 }
 
-bool IMap2DMsgs_get_map_names_RPC_helper::readCmdArgs(yarp::os::idl::WireReader& reader [[maybe_unused]])
+bool IMap2DMsgs_get_map_names_RPC_helper::readCmdArgs(yarp::os::idl::WireReader& reader)
 {
+    if (!reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     return true;
 }
 
@@ -1800,6 +1836,10 @@ bool IMap2DMsgs_get_map_names_RPC_helper::writeReply(yarp::os::idl::WireWriter& 
 bool IMap2DMsgs_get_map_names_RPC_helper::readReply(yarp::os::idl::WireReader& reader [[maybe_unused]])
 {
     if (!reader.readListReturn()) {
+        return false;
+    }
+    if (reader.noMore()) {
+        reader.fail();
         return false;
     }
     if (!reader.read(m_return_helper)) {
@@ -1907,9 +1947,17 @@ bool IMap2DMsgs_remove_map_RPC_helper::readCmdTag(yarp::os::idl::WireReader& rea
     return true;
 }
 
-bool IMap2DMsgs_remove_map_RPC_helper::readCmdArgs(yarp::os::idl::WireReader& reader [[maybe_unused]])
+bool IMap2DMsgs_remove_map_RPC_helper::readCmdArgs(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readString(m_map_name)) {
+        reader.fail();
+        return false;
+    }
+    if (!reader.noMore()) {
         reader.fail();
         return false;
     }
@@ -1932,6 +1980,10 @@ bool IMap2DMsgs_remove_map_RPC_helper::writeReply(yarp::os::idl::WireWriter& wri
 bool IMap2DMsgs_remove_map_RPC_helper::readReply(yarp::os::idl::WireReader& reader [[maybe_unused]])
 {
     if (!reader.readListReturn()) {
+        return false;
+    }
+    if (reader.noMore()) {
+        reader.fail();
         return false;
     }
     if (!reader.readBool(m_return_helper)) {
@@ -2043,13 +2095,25 @@ bool IMap2DMsgs_store_location_RPC_helper::readCmdTag(yarp::os::idl::WireReader&
     return true;
 }
 
-bool IMap2DMsgs_store_location_RPC_helper::readCmdArgs(yarp::os::idl::WireReader& reader [[maybe_unused]])
+bool IMap2DMsgs_store_location_RPC_helper::readCmdArgs(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readString(m_location_name)) {
         reader.fail();
         return false;
     }
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readNested(m_loc)) {
+        reader.fail();
+        return false;
+    }
+    if (!reader.noMore()) {
         reader.fail();
         return false;
     }
@@ -2072,6 +2136,10 @@ bool IMap2DMsgs_store_location_RPC_helper::writeReply(yarp::os::idl::WireWriter&
 bool IMap2DMsgs_store_location_RPC_helper::readReply(yarp::os::idl::WireReader& reader [[maybe_unused]])
 {
     if (!reader.readListReturn()) {
+        return false;
+    }
+    if (reader.noMore()) {
+        reader.fail();
         return false;
     }
     if (!reader.readBool(m_return_helper)) {
@@ -2183,13 +2251,25 @@ bool IMap2DMsgs_store_area_RPC_helper::readCmdTag(yarp::os::idl::WireReader& rea
     return true;
 }
 
-bool IMap2DMsgs_store_area_RPC_helper::readCmdArgs(yarp::os::idl::WireReader& reader [[maybe_unused]])
+bool IMap2DMsgs_store_area_RPC_helper::readCmdArgs(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readString(m_area_name)) {
         reader.fail();
         return false;
     }
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readNested(m_area)) {
+        reader.fail();
+        return false;
+    }
+    if (!reader.noMore()) {
         reader.fail();
         return false;
     }
@@ -2212,6 +2292,10 @@ bool IMap2DMsgs_store_area_RPC_helper::writeReply(yarp::os::idl::WireWriter& wri
 bool IMap2DMsgs_store_area_RPC_helper::readReply(yarp::os::idl::WireReader& reader [[maybe_unused]])
 {
     if (!reader.readListReturn()) {
+        return false;
+    }
+    if (reader.noMore()) {
+        reader.fail();
         return false;
     }
     if (!reader.readBool(m_return_helper)) {
@@ -2323,13 +2407,25 @@ bool IMap2DMsgs_store_path_RPC_helper::readCmdTag(yarp::os::idl::WireReader& rea
     return true;
 }
 
-bool IMap2DMsgs_store_path_RPC_helper::readCmdArgs(yarp::os::idl::WireReader& reader [[maybe_unused]])
+bool IMap2DMsgs_store_path_RPC_helper::readCmdArgs(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readString(m_path_name)) {
         reader.fail();
         return false;
     }
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readNested(m_path)) {
+        reader.fail();
+        return false;
+    }
+    if (!reader.noMore()) {
         reader.fail();
         return false;
     }
@@ -2352,6 +2448,10 @@ bool IMap2DMsgs_store_path_RPC_helper::writeReply(yarp::os::idl::WireWriter& wri
 bool IMap2DMsgs_store_path_RPC_helper::readReply(yarp::os::idl::WireReader& reader [[maybe_unused]])
 {
     if (!reader.readListReturn()) {
+        return false;
+    }
+    if (reader.noMore()) {
+        reader.fail();
         return false;
     }
     if (!reader.readBool(m_return_helper)) {
@@ -2458,9 +2558,17 @@ bool IMap2DMsgs_get_location_RPC_helper::readCmdTag(yarp::os::idl::WireReader& r
     return true;
 }
 
-bool IMap2DMsgs_get_location_RPC_helper::readCmdArgs(yarp::os::idl::WireReader& reader [[maybe_unused]])
+bool IMap2DMsgs_get_location_RPC_helper::readCmdArgs(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readString(m_location_name)) {
+        reader.fail();
+        return false;
+    }
+    if (!reader.noMore()) {
         reader.fail();
         return false;
     }
@@ -2483,6 +2591,10 @@ bool IMap2DMsgs_get_location_RPC_helper::writeReply(yarp::os::idl::WireWriter& w
 bool IMap2DMsgs_get_location_RPC_helper::readReply(yarp::os::idl::WireReader& reader [[maybe_unused]])
 {
     if (!reader.readListReturn()) {
+        return false;
+    }
+    if (reader.noMore()) {
+        reader.fail();
         return false;
     }
     if (!reader.read(m_return_helper)) {
@@ -2589,9 +2701,17 @@ bool IMap2DMsgs_get_area_RPC_helper::readCmdTag(yarp::os::idl::WireReader& reade
     return true;
 }
 
-bool IMap2DMsgs_get_area_RPC_helper::readCmdArgs(yarp::os::idl::WireReader& reader [[maybe_unused]])
+bool IMap2DMsgs_get_area_RPC_helper::readCmdArgs(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readString(m_area_name)) {
+        reader.fail();
+        return false;
+    }
+    if (!reader.noMore()) {
         reader.fail();
         return false;
     }
@@ -2614,6 +2734,10 @@ bool IMap2DMsgs_get_area_RPC_helper::writeReply(yarp::os::idl::WireWriter& write
 bool IMap2DMsgs_get_area_RPC_helper::readReply(yarp::os::idl::WireReader& reader [[maybe_unused]])
 {
     if (!reader.readListReturn()) {
+        return false;
+    }
+    if (reader.noMore()) {
+        reader.fail();
         return false;
     }
     if (!reader.read(m_return_helper)) {
@@ -2720,9 +2844,17 @@ bool IMap2DMsgs_get_path_RPC_helper::readCmdTag(yarp::os::idl::WireReader& reade
     return true;
 }
 
-bool IMap2DMsgs_get_path_RPC_helper::readCmdArgs(yarp::os::idl::WireReader& reader [[maybe_unused]])
+bool IMap2DMsgs_get_path_RPC_helper::readCmdArgs(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readString(m_path_name)) {
+        reader.fail();
+        return false;
+    }
+    if (!reader.noMore()) {
         reader.fail();
         return false;
     }
@@ -2745,6 +2877,10 @@ bool IMap2DMsgs_get_path_RPC_helper::writeReply(yarp::os::idl::WireWriter& write
 bool IMap2DMsgs_get_path_RPC_helper::readReply(yarp::os::idl::WireReader& reader [[maybe_unused]])
 {
     if (!reader.readListReturn()) {
+        return false;
+    }
+    if (reader.noMore()) {
+        reader.fail();
         return false;
     }
     if (!reader.read(m_return_helper)) {
@@ -2843,8 +2979,12 @@ bool IMap2DMsgs_get_locations_list_RPC_helper::readCmdTag(yarp::os::idl::WireRea
     return true;
 }
 
-bool IMap2DMsgs_get_locations_list_RPC_helper::readCmdArgs(yarp::os::idl::WireReader& reader [[maybe_unused]])
+bool IMap2DMsgs_get_locations_list_RPC_helper::readCmdArgs(yarp::os::idl::WireReader& reader)
 {
+    if (!reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     return true;
 }
 
@@ -2864,6 +3004,10 @@ bool IMap2DMsgs_get_locations_list_RPC_helper::writeReply(yarp::os::idl::WireWri
 bool IMap2DMsgs_get_locations_list_RPC_helper::readReply(yarp::os::idl::WireReader& reader [[maybe_unused]])
 {
     if (!reader.readListReturn()) {
+        return false;
+    }
+    if (reader.noMore()) {
+        reader.fail();
         return false;
     }
     if (!reader.read(m_return_helper)) {
@@ -2962,8 +3106,12 @@ bool IMap2DMsgs_get_areas_list_RPC_helper::readCmdTag(yarp::os::idl::WireReader&
     return true;
 }
 
-bool IMap2DMsgs_get_areas_list_RPC_helper::readCmdArgs(yarp::os::idl::WireReader& reader [[maybe_unused]])
+bool IMap2DMsgs_get_areas_list_RPC_helper::readCmdArgs(yarp::os::idl::WireReader& reader)
 {
+    if (!reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     return true;
 }
 
@@ -2983,6 +3131,10 @@ bool IMap2DMsgs_get_areas_list_RPC_helper::writeReply(yarp::os::idl::WireWriter&
 bool IMap2DMsgs_get_areas_list_RPC_helper::readReply(yarp::os::idl::WireReader& reader [[maybe_unused]])
 {
     if (!reader.readListReturn()) {
+        return false;
+    }
+    if (reader.noMore()) {
+        reader.fail();
         return false;
     }
     if (!reader.read(m_return_helper)) {
@@ -3081,8 +3233,12 @@ bool IMap2DMsgs_get_paths_list_RPC_helper::readCmdTag(yarp::os::idl::WireReader&
     return true;
 }
 
-bool IMap2DMsgs_get_paths_list_RPC_helper::readCmdArgs(yarp::os::idl::WireReader& reader [[maybe_unused]])
+bool IMap2DMsgs_get_paths_list_RPC_helper::readCmdArgs(yarp::os::idl::WireReader& reader)
 {
+    if (!reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     return true;
 }
 
@@ -3102,6 +3258,10 @@ bool IMap2DMsgs_get_paths_list_RPC_helper::writeReply(yarp::os::idl::WireWriter&
 bool IMap2DMsgs_get_paths_list_RPC_helper::readReply(yarp::os::idl::WireReader& reader [[maybe_unused]])
 {
     if (!reader.readListReturn()) {
+        return false;
+    }
+    if (reader.noMore()) {
+        reader.fail();
         return false;
     }
     if (!reader.read(m_return_helper)) {
@@ -3200,8 +3360,12 @@ bool IMap2DMsgs_get_all_locations_RPC_helper::readCmdTag(yarp::os::idl::WireRead
     return true;
 }
 
-bool IMap2DMsgs_get_all_locations_RPC_helper::readCmdArgs(yarp::os::idl::WireReader& reader [[maybe_unused]])
+bool IMap2DMsgs_get_all_locations_RPC_helper::readCmdArgs(yarp::os::idl::WireReader& reader)
 {
+    if (!reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     return true;
 }
 
@@ -3221,6 +3385,10 @@ bool IMap2DMsgs_get_all_locations_RPC_helper::writeReply(yarp::os::idl::WireWrit
 bool IMap2DMsgs_get_all_locations_RPC_helper::readReply(yarp::os::idl::WireReader& reader [[maybe_unused]])
 {
     if (!reader.readListReturn()) {
+        return false;
+    }
+    if (reader.noMore()) {
+        reader.fail();
         return false;
     }
     if (!reader.read(m_return_helper)) {
@@ -3319,8 +3487,12 @@ bool IMap2DMsgs_get_all_areas_RPC_helper::readCmdTag(yarp::os::idl::WireReader& 
     return true;
 }
 
-bool IMap2DMsgs_get_all_areas_RPC_helper::readCmdArgs(yarp::os::idl::WireReader& reader [[maybe_unused]])
+bool IMap2DMsgs_get_all_areas_RPC_helper::readCmdArgs(yarp::os::idl::WireReader& reader)
 {
+    if (!reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     return true;
 }
 
@@ -3340,6 +3512,10 @@ bool IMap2DMsgs_get_all_areas_RPC_helper::writeReply(yarp::os::idl::WireWriter& 
 bool IMap2DMsgs_get_all_areas_RPC_helper::readReply(yarp::os::idl::WireReader& reader [[maybe_unused]])
 {
     if (!reader.readListReturn()) {
+        return false;
+    }
+    if (reader.noMore()) {
+        reader.fail();
         return false;
     }
     if (!reader.read(m_return_helper)) {
@@ -3438,8 +3614,12 @@ bool IMap2DMsgs_get_all_paths_RPC_helper::readCmdTag(yarp::os::idl::WireReader& 
     return true;
 }
 
-bool IMap2DMsgs_get_all_paths_RPC_helper::readCmdArgs(yarp::os::idl::WireReader& reader [[maybe_unused]])
+bool IMap2DMsgs_get_all_paths_RPC_helper::readCmdArgs(yarp::os::idl::WireReader& reader)
 {
+    if (!reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     return true;
 }
 
@@ -3459,6 +3639,10 @@ bool IMap2DMsgs_get_all_paths_RPC_helper::writeReply(yarp::os::idl::WireWriter& 
 bool IMap2DMsgs_get_all_paths_RPC_helper::readReply(yarp::os::idl::WireReader& reader [[maybe_unused]])
 {
     if (!reader.readListReturn()) {
+        return false;
+    }
+    if (reader.noMore()) {
+        reader.fail();
         return false;
     }
     if (!reader.read(m_return_helper)) {
@@ -3570,13 +3754,25 @@ bool IMap2DMsgs_rename_location_RPC_helper::readCmdTag(yarp::os::idl::WireReader
     return true;
 }
 
-bool IMap2DMsgs_rename_location_RPC_helper::readCmdArgs(yarp::os::idl::WireReader& reader [[maybe_unused]])
+bool IMap2DMsgs_rename_location_RPC_helper::readCmdArgs(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readString(m_original_name)) {
         reader.fail();
         return false;
     }
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readString(m_new_name)) {
+        reader.fail();
+        return false;
+    }
+    if (!reader.noMore()) {
         reader.fail();
         return false;
     }
@@ -3599,6 +3795,10 @@ bool IMap2DMsgs_rename_location_RPC_helper::writeReply(yarp::os::idl::WireWriter
 bool IMap2DMsgs_rename_location_RPC_helper::readReply(yarp::os::idl::WireReader& reader [[maybe_unused]])
 {
     if (!reader.readListReturn()) {
+        return false;
+    }
+    if (reader.noMore()) {
+        reader.fail();
         return false;
     }
     if (!reader.readBool(m_return_helper)) {
@@ -3706,9 +3906,17 @@ bool IMap2DMsgs_delete_location_RPC_helper::readCmdTag(yarp::os::idl::WireReader
     return true;
 }
 
-bool IMap2DMsgs_delete_location_RPC_helper::readCmdArgs(yarp::os::idl::WireReader& reader [[maybe_unused]])
+bool IMap2DMsgs_delete_location_RPC_helper::readCmdArgs(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readString(m_location_name)) {
+        reader.fail();
+        return false;
+    }
+    if (!reader.noMore()) {
         reader.fail();
         return false;
     }
@@ -3731,6 +3939,10 @@ bool IMap2DMsgs_delete_location_RPC_helper::writeReply(yarp::os::idl::WireWriter
 bool IMap2DMsgs_delete_location_RPC_helper::readReply(yarp::os::idl::WireReader& reader [[maybe_unused]])
 {
     if (!reader.readListReturn()) {
+        return false;
+    }
+    if (reader.noMore()) {
+        reader.fail();
         return false;
     }
     if (!reader.readBool(m_return_helper)) {
@@ -3838,9 +4050,17 @@ bool IMap2DMsgs_delete_path_RPC_helper::readCmdTag(yarp::os::idl::WireReader& re
     return true;
 }
 
-bool IMap2DMsgs_delete_path_RPC_helper::readCmdArgs(yarp::os::idl::WireReader& reader [[maybe_unused]])
+bool IMap2DMsgs_delete_path_RPC_helper::readCmdArgs(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readString(m_path_name)) {
+        reader.fail();
+        return false;
+    }
+    if (!reader.noMore()) {
         reader.fail();
         return false;
     }
@@ -3863,6 +4083,10 @@ bool IMap2DMsgs_delete_path_RPC_helper::writeReply(yarp::os::idl::WireWriter& wr
 bool IMap2DMsgs_delete_path_RPC_helper::readReply(yarp::os::idl::WireReader& reader [[maybe_unused]])
 {
     if (!reader.readListReturn()) {
+        return false;
+    }
+    if (reader.noMore()) {
+        reader.fail();
         return false;
     }
     if (!reader.readBool(m_return_helper)) {
@@ -3974,13 +4198,25 @@ bool IMap2DMsgs_rename_area_RPC_helper::readCmdTag(yarp::os::idl::WireReader& re
     return true;
 }
 
-bool IMap2DMsgs_rename_area_RPC_helper::readCmdArgs(yarp::os::idl::WireReader& reader [[maybe_unused]])
+bool IMap2DMsgs_rename_area_RPC_helper::readCmdArgs(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readString(m_original_name)) {
         reader.fail();
         return false;
     }
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readString(m_new_name)) {
+        reader.fail();
+        return false;
+    }
+    if (!reader.noMore()) {
         reader.fail();
         return false;
     }
@@ -4003,6 +4239,10 @@ bool IMap2DMsgs_rename_area_RPC_helper::writeReply(yarp::os::idl::WireWriter& wr
 bool IMap2DMsgs_rename_area_RPC_helper::readReply(yarp::os::idl::WireReader& reader [[maybe_unused]])
 {
     if (!reader.readListReturn()) {
+        return false;
+    }
+    if (reader.noMore()) {
+        reader.fail();
         return false;
     }
     if (!reader.readBool(m_return_helper)) {
@@ -4114,13 +4354,25 @@ bool IMap2DMsgs_rename_path_RPC_helper::readCmdTag(yarp::os::idl::WireReader& re
     return true;
 }
 
-bool IMap2DMsgs_rename_path_RPC_helper::readCmdArgs(yarp::os::idl::WireReader& reader [[maybe_unused]])
+bool IMap2DMsgs_rename_path_RPC_helper::readCmdArgs(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readString(m_original_name)) {
         reader.fail();
         return false;
     }
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readString(m_new_name)) {
+        reader.fail();
+        return false;
+    }
+    if (!reader.noMore()) {
         reader.fail();
         return false;
     }
@@ -4143,6 +4395,10 @@ bool IMap2DMsgs_rename_path_RPC_helper::writeReply(yarp::os::idl::WireWriter& wr
 bool IMap2DMsgs_rename_path_RPC_helper::readReply(yarp::os::idl::WireReader& reader [[maybe_unused]])
 {
     if (!reader.readListReturn()) {
+        return false;
+    }
+    if (reader.noMore()) {
+        reader.fail();
         return false;
     }
     if (!reader.readBool(m_return_helper)) {
@@ -4250,9 +4506,17 @@ bool IMap2DMsgs_delete_area_RPC_helper::readCmdTag(yarp::os::idl::WireReader& re
     return true;
 }
 
-bool IMap2DMsgs_delete_area_RPC_helper::readCmdArgs(yarp::os::idl::WireReader& reader [[maybe_unused]])
+bool IMap2DMsgs_delete_area_RPC_helper::readCmdArgs(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readString(m_area_name)) {
+        reader.fail();
+        return false;
+    }
+    if (!reader.noMore()) {
         reader.fail();
         return false;
     }
@@ -4275,6 +4539,10 @@ bool IMap2DMsgs_delete_area_RPC_helper::writeReply(yarp::os::idl::WireWriter& wr
 bool IMap2DMsgs_delete_area_RPC_helper::readReply(yarp::os::idl::WireReader& reader [[maybe_unused]])
 {
     if (!reader.readListReturn()) {
+        return false;
+    }
+    if (reader.noMore()) {
+        reader.fail();
         return false;
     }
     if (!reader.readBool(m_return_helper)) {
@@ -4373,8 +4641,12 @@ bool IMap2DMsgs_clear_all_locations_RPC_helper::readCmdTag(yarp::os::idl::WireRe
     return true;
 }
 
-bool IMap2DMsgs_clear_all_locations_RPC_helper::readCmdArgs(yarp::os::idl::WireReader& reader [[maybe_unused]])
+bool IMap2DMsgs_clear_all_locations_RPC_helper::readCmdArgs(yarp::os::idl::WireReader& reader)
 {
+    if (!reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     return true;
 }
 
@@ -4394,6 +4666,10 @@ bool IMap2DMsgs_clear_all_locations_RPC_helper::writeReply(yarp::os::idl::WireWr
 bool IMap2DMsgs_clear_all_locations_RPC_helper::readReply(yarp::os::idl::WireReader& reader [[maybe_unused]])
 {
     if (!reader.readListReturn()) {
+        return false;
+    }
+    if (reader.noMore()) {
+        reader.fail();
         return false;
     }
     if (!reader.readBool(m_return_helper)) {
@@ -4492,8 +4768,12 @@ bool IMap2DMsgs_clear_all_areas_RPC_helper::readCmdTag(yarp::os::idl::WireReader
     return true;
 }
 
-bool IMap2DMsgs_clear_all_areas_RPC_helper::readCmdArgs(yarp::os::idl::WireReader& reader [[maybe_unused]])
+bool IMap2DMsgs_clear_all_areas_RPC_helper::readCmdArgs(yarp::os::idl::WireReader& reader)
 {
+    if (!reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     return true;
 }
 
@@ -4513,6 +4793,10 @@ bool IMap2DMsgs_clear_all_areas_RPC_helper::writeReply(yarp::os::idl::WireWriter
 bool IMap2DMsgs_clear_all_areas_RPC_helper::readReply(yarp::os::idl::WireReader& reader [[maybe_unused]])
 {
     if (!reader.readListReturn()) {
+        return false;
+    }
+    if (reader.noMore()) {
+        reader.fail();
         return false;
     }
     if (!reader.readBool(m_return_helper)) {
@@ -4611,8 +4895,12 @@ bool IMap2DMsgs_clear_all_paths_RPC_helper::readCmdTag(yarp::os::idl::WireReader
     return true;
 }
 
-bool IMap2DMsgs_clear_all_paths_RPC_helper::readCmdArgs(yarp::os::idl::WireReader& reader [[maybe_unused]])
+bool IMap2DMsgs_clear_all_paths_RPC_helper::readCmdArgs(yarp::os::idl::WireReader& reader)
 {
+    if (!reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     return true;
 }
 
@@ -4632,6 +4920,10 @@ bool IMap2DMsgs_clear_all_paths_RPC_helper::writeReply(yarp::os::idl::WireWriter
 bool IMap2DMsgs_clear_all_paths_RPC_helper::readReply(yarp::os::idl::WireReader& reader [[maybe_unused]])
 {
     if (!reader.readListReturn()) {
+        return false;
+    }
+    if (reader.noMore()) {
+        reader.fail();
         return false;
     }
     if (!reader.readBool(m_return_helper)) {
@@ -4730,8 +5022,12 @@ bool IMap2DMsgs_clear_all_maps_temporary_flags_RPC_helper::readCmdTag(yarp::os::
     return true;
 }
 
-bool IMap2DMsgs_clear_all_maps_temporary_flags_RPC_helper::readCmdArgs(yarp::os::idl::WireReader& reader [[maybe_unused]])
+bool IMap2DMsgs_clear_all_maps_temporary_flags_RPC_helper::readCmdArgs(yarp::os::idl::WireReader& reader)
 {
+    if (!reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     return true;
 }
 
@@ -4751,6 +5047,10 @@ bool IMap2DMsgs_clear_all_maps_temporary_flags_RPC_helper::writeReply(yarp::os::
 bool IMap2DMsgs_clear_all_maps_temporary_flags_RPC_helper::readReply(yarp::os::idl::WireReader& reader [[maybe_unused]])
 {
     if (!reader.readListReturn()) {
+        return false;
+    }
+    if (reader.noMore()) {
+        reader.fail();
         return false;
     }
     if (!reader.readBool(m_return_helper)) {
@@ -4858,9 +5158,17 @@ bool IMap2DMsgs_clear_map_temporary_flags_RPC_helper::readCmdTag(yarp::os::idl::
     return true;
 }
 
-bool IMap2DMsgs_clear_map_temporary_flags_RPC_helper::readCmdArgs(yarp::os::idl::WireReader& reader [[maybe_unused]])
+bool IMap2DMsgs_clear_map_temporary_flags_RPC_helper::readCmdArgs(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readString(m_map_name)) {
+        reader.fail();
+        return false;
+    }
+    if (!reader.noMore()) {
         reader.fail();
         return false;
     }
@@ -4883,6 +5191,10 @@ bool IMap2DMsgs_clear_map_temporary_flags_RPC_helper::writeReply(yarp::os::idl::
 bool IMap2DMsgs_clear_map_temporary_flags_RPC_helper::readReply(yarp::os::idl::WireReader& reader [[maybe_unused]])
 {
     if (!reader.readListReturn()) {
+        return false;
+    }
+    if (reader.noMore()) {
+        reader.fail();
         return false;
     }
     if (!reader.readBool(m_return_helper)) {
@@ -4990,9 +5302,17 @@ bool IMap2DMsgs_save_maps_collection_RPC_helper::readCmdTag(yarp::os::idl::WireR
     return true;
 }
 
-bool IMap2DMsgs_save_maps_collection_RPC_helper::readCmdArgs(yarp::os::idl::WireReader& reader [[maybe_unused]])
+bool IMap2DMsgs_save_maps_collection_RPC_helper::readCmdArgs(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readString(m_maps_collection_file)) {
+        reader.fail();
+        return false;
+    }
+    if (!reader.noMore()) {
         reader.fail();
         return false;
     }
@@ -5015,6 +5335,10 @@ bool IMap2DMsgs_save_maps_collection_RPC_helper::writeReply(yarp::os::idl::WireW
 bool IMap2DMsgs_save_maps_collection_RPC_helper::readReply(yarp::os::idl::WireReader& reader [[maybe_unused]])
 {
     if (!reader.readListReturn()) {
+        return false;
+    }
+    if (reader.noMore()) {
+        reader.fail();
         return false;
     }
     if (!reader.readBool(m_return_helper)) {
@@ -5122,9 +5446,17 @@ bool IMap2DMsgs_load_maps_collection_RPC_helper::readCmdTag(yarp::os::idl::WireR
     return true;
 }
 
-bool IMap2DMsgs_load_maps_collection_RPC_helper::readCmdArgs(yarp::os::idl::WireReader& reader [[maybe_unused]])
+bool IMap2DMsgs_load_maps_collection_RPC_helper::readCmdArgs(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readString(m_maps_collection_file)) {
+        reader.fail();
+        return false;
+    }
+    if (!reader.noMore()) {
         reader.fail();
         return false;
     }
@@ -5147,6 +5479,10 @@ bool IMap2DMsgs_load_maps_collection_RPC_helper::writeReply(yarp::os::idl::WireW
 bool IMap2DMsgs_load_maps_collection_RPC_helper::readReply(yarp::os::idl::WireReader& reader [[maybe_unused]])
 {
     if (!reader.readListReturn()) {
+        return false;
+    }
+    if (reader.noMore()) {
+        reader.fail();
         return false;
     }
     if (!reader.readBool(m_return_helper)) {
@@ -5254,9 +5590,17 @@ bool IMap2DMsgs_save_locations_and_extras_RPC_helper::readCmdTag(yarp::os::idl::
     return true;
 }
 
-bool IMap2DMsgs_save_locations_and_extras_RPC_helper::readCmdArgs(yarp::os::idl::WireReader& reader [[maybe_unused]])
+bool IMap2DMsgs_save_locations_and_extras_RPC_helper::readCmdArgs(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readString(m_locations_collection_file)) {
+        reader.fail();
+        return false;
+    }
+    if (!reader.noMore()) {
         reader.fail();
         return false;
     }
@@ -5279,6 +5623,10 @@ bool IMap2DMsgs_save_locations_and_extras_RPC_helper::writeReply(yarp::os::idl::
 bool IMap2DMsgs_save_locations_and_extras_RPC_helper::readReply(yarp::os::idl::WireReader& reader [[maybe_unused]])
 {
     if (!reader.readListReturn()) {
+        return false;
+    }
+    if (reader.noMore()) {
+        reader.fail();
         return false;
     }
     if (!reader.readBool(m_return_helper)) {
@@ -5386,9 +5734,17 @@ bool IMap2DMsgs_load_locations_and_extras_RPC_helper::readCmdTag(yarp::os::idl::
     return true;
 }
 
-bool IMap2DMsgs_load_locations_and_extras_RPC_helper::readCmdArgs(yarp::os::idl::WireReader& reader [[maybe_unused]])
+bool IMap2DMsgs_load_locations_and_extras_RPC_helper::readCmdArgs(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readString(m_locations_collection_file)) {
+        reader.fail();
+        return false;
+    }
+    if (!reader.noMore()) {
         reader.fail();
         return false;
     }
@@ -5411,6 +5767,10 @@ bool IMap2DMsgs_load_locations_and_extras_RPC_helper::writeReply(yarp::os::idl::
 bool IMap2DMsgs_load_locations_and_extras_RPC_helper::readReply(yarp::os::idl::WireReader& reader [[maybe_unused]])
 {
     if (!reader.readListReturn()) {
+        return false;
+    }
+    if (reader.noMore()) {
+        reader.fail();
         return false;
     }
     if (!reader.readBool(m_return_helper)) {
@@ -5522,13 +5882,25 @@ bool IMap2DMsgs_save_map_to_disk_RPC_helper::readCmdTag(yarp::os::idl::WireReade
     return true;
 }
 
-bool IMap2DMsgs_save_map_to_disk_RPC_helper::readCmdArgs(yarp::os::idl::WireReader& reader [[maybe_unused]])
+bool IMap2DMsgs_save_map_to_disk_RPC_helper::readCmdArgs(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readString(m_map_name)) {
         reader.fail();
         return false;
     }
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readString(m_file_name)) {
+        reader.fail();
+        return false;
+    }
+    if (!reader.noMore()) {
         reader.fail();
         return false;
     }
@@ -5551,6 +5923,10 @@ bool IMap2DMsgs_save_map_to_disk_RPC_helper::writeReply(yarp::os::idl::WireWrite
 bool IMap2DMsgs_save_map_to_disk_RPC_helper::readReply(yarp::os::idl::WireReader& reader [[maybe_unused]])
 {
     if (!reader.readListReturn()) {
+        return false;
+    }
+    if (reader.noMore()) {
+        reader.fail();
         return false;
     }
     if (!reader.readBool(m_return_helper)) {
@@ -5658,9 +6034,17 @@ bool IMap2DMsgs_load_map_from_disk_RPC_helper::readCmdTag(yarp::os::idl::WireRea
     return true;
 }
 
-bool IMap2DMsgs_load_map_from_disk_RPC_helper::readCmdArgs(yarp::os::idl::WireReader& reader [[maybe_unused]])
+bool IMap2DMsgs_load_map_from_disk_RPC_helper::readCmdArgs(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readString(m_file_name)) {
+        reader.fail();
+        return false;
+    }
+    if (!reader.noMore()) {
         reader.fail();
         return false;
     }
@@ -5683,6 +6067,10 @@ bool IMap2DMsgs_load_map_from_disk_RPC_helper::writeReply(yarp::os::idl::WireWri
 bool IMap2DMsgs_load_map_from_disk_RPC_helper::readReply(yarp::os::idl::WireReader& reader [[maybe_unused]])
 {
     if (!reader.readListReturn()) {
+        return false;
+    }
+    if (reader.noMore()) {
+        reader.fail();
         return false;
     }
     if (!reader.readBool(m_return_helper)) {
@@ -5790,9 +6178,17 @@ bool IMap2DMsgs_enable_maps_compression_RPC_helper::readCmdTag(yarp::os::idl::Wi
     return true;
 }
 
-bool IMap2DMsgs_enable_maps_compression_RPC_helper::readCmdArgs(yarp::os::idl::WireReader& reader [[maybe_unused]])
+bool IMap2DMsgs_enable_maps_compression_RPC_helper::readCmdArgs(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readBool(m_enable_compression)) {
+        reader.fail();
+        return false;
+    }
+    if (!reader.noMore()) {
         reader.fail();
         return false;
     }
@@ -5815,6 +6211,10 @@ bool IMap2DMsgs_enable_maps_compression_RPC_helper::writeReply(yarp::os::idl::Wi
 bool IMap2DMsgs_enable_maps_compression_RPC_helper::readReply(yarp::os::idl::WireReader& reader [[maybe_unused]])
 {
     if (!reader.readListReturn()) {
+        return false;
+    }
+    if (reader.noMore()) {
+        reader.fail();
         return false;
     }
     if (!reader.readBool(m_return_helper)) {

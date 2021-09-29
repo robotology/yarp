@@ -478,12 +478,20 @@ bool return_get_all_paths::nested_write_retval(const yarp::os::idl::WireWriter& 
 // read paths field
 bool return_get_all_paths::read_paths(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     paths.clear();
     uint32_t _size72;
     yarp::os::idl::WireState _etype75;
     reader.readListBegin(_etype75, _size72);
     paths.resize(_size72);
     for (size_t _i76 = 0; _i76 < _size72; ++_i76) {
+        if (reader.noMore()) {
+            reader.fail();
+            return false;
+        }
         if (!reader.readNested(paths[_i76])) {
             reader.fail();
             return false;
@@ -513,12 +521,20 @@ bool return_get_all_paths::write_paths(const yarp::os::idl::WireWriter& writer) 
 // read (nested) paths field
 bool return_get_all_paths::nested_read_paths(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     paths.clear();
     uint32_t _size78;
     yarp::os::idl::WireState _etype81;
     reader.readListBegin(_etype81, _size78);
     paths.resize(_size78);
     for (size_t _i82 = 0; _i82 < _size78; ++_i82) {
+        if (reader.noMore()) {
+            reader.fail();
+            return false;
+        }
         if (!reader.readNested(paths[_i82])) {
             reader.fail();
             return false;

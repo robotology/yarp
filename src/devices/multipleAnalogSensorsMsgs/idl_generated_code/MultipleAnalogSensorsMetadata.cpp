@@ -133,8 +133,12 @@ bool MultipleAnalogSensorsMetadata_getMetadata_helper::readCmdTag(yarp::os::idl:
     return true;
 }
 
-bool MultipleAnalogSensorsMetadata_getMetadata_helper::readCmdArgs(yarp::os::idl::WireReader& reader [[maybe_unused]])
+bool MultipleAnalogSensorsMetadata_getMetadata_helper::readCmdArgs(yarp::os::idl::WireReader& reader)
 {
+    if (!reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     return true;
 }
 
@@ -154,6 +158,10 @@ bool MultipleAnalogSensorsMetadata_getMetadata_helper::writeReply(yarp::os::idl:
 bool MultipleAnalogSensorsMetadata_getMetadata_helper::readReply(yarp::os::idl::WireReader& reader [[maybe_unused]])
 {
     if (!reader.readListReturn()) {
+        return false;
+    }
+    if (reader.noMore()) {
+        reader.fail();
         return false;
     }
     if (!reader.read(m_return_helper)) {

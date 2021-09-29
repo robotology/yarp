@@ -478,12 +478,20 @@ bool return_get_areas_list::nested_write_retval(const yarp::os::idl::WireWriter&
 // read areas field
 bool return_get_areas_list::read_areas(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     areas.clear();
     uint32_t _size24;
     yarp::os::idl::WireState _etype27;
     reader.readListBegin(_etype27, _size24);
     areas.resize(_size24);
     for (size_t _i28 = 0; _i28 < _size24; ++_i28) {
+        if (reader.noMore()) {
+            reader.fail();
+            return false;
+        }
         if (!reader.readString(areas[_i28])) {
             reader.fail();
             return false;
@@ -513,12 +521,20 @@ bool return_get_areas_list::write_areas(const yarp::os::idl::WireWriter& writer)
 // read (nested) areas field
 bool return_get_areas_list::nested_read_areas(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     areas.clear();
     uint32_t _size30;
     yarp::os::idl::WireState _etype33;
     reader.readListBegin(_etype33, _size30);
     areas.resize(_size30);
     for (size_t _i34 = 0; _i34 < _size30; ++_i34) {
+        if (reader.noMore()) {
+            reader.fail();
+            return false;
+        }
         if (!reader.readString(areas[_i34])) {
             reader.fail();
             return false;

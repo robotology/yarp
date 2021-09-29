@@ -478,12 +478,20 @@ bool return_get_locations_list::nested_write_retval(const yarp::os::idl::WireWri
 // read locations field
 bool return_get_locations_list::read_locations(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     locations.clear();
     uint32_t _size12;
     yarp::os::idl::WireState _etype15;
     reader.readListBegin(_etype15, _size12);
     locations.resize(_size12);
     for (size_t _i16 = 0; _i16 < _size12; ++_i16) {
+        if (reader.noMore()) {
+            reader.fail();
+            return false;
+        }
         if (!reader.readString(locations[_i16])) {
             reader.fail();
             return false;
@@ -513,12 +521,20 @@ bool return_get_locations_list::write_locations(const yarp::os::idl::WireWriter&
 // read (nested) locations field
 bool return_get_locations_list::nested_read_locations(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     locations.clear();
     uint32_t _size18;
     yarp::os::idl::WireState _etype21;
     reader.readListBegin(_etype21, _size18);
     locations.resize(_size18);
     for (size_t _i22 = 0; _i22 < _size18; ++_i22) {
+        if (reader.noMore()) {
+            reader.fail();
+            return false;
+        }
         if (!reader.readString(locations[_i22])) {
             reader.fail();
             return false;

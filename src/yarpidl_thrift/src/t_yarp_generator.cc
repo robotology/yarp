@@ -1282,6 +1282,18 @@ void t_yarp_generator::generate_deserialize_field(std::ostringstream& f_cpp_,
 
     std::string name = prefix + tfield->get_name() + suffix;
 
+    // If the field does not have a default value, fail if the message is incomplete
+    if (tfield->get_value() == nullptr) {
+        f_cpp_ << indent_cpp() << "if (reader.noMore()) {\n";
+        indent_up_cpp();
+        {
+            f_cpp_ << indent_cpp() << "reader.fail();\n";
+            f_cpp_ << indent_cpp() << "return false;\n";
+        }
+        indent_down_cpp();
+        f_cpp_ << indent_cpp() << "}\n";
+    }
+
     if (type->is_struct() || type->is_xception()) {
         f_cpp_ << indent_cpp() << "if (!reader.";
         generate_deserialize_struct(f_cpp_, static_cast<t_struct*>(type), name, force_nested);
@@ -3999,7 +4011,7 @@ void t_yarp_generator::generate_service_helper_classes_impl_readcmdargs(t_functi
     const auto helper_class = std::string{service_name_ + "_" + fname + "_helper"};
     auto returnfield = t_field{returntype, "m_return_helper"};
 
-    f_cpp_ << indent_cpp() << "bool " << helper_class << "::readCmdArgs(yarp::os::idl::WireReader& reader [[maybe_unused]])\n";
+    f_cpp_ << indent_cpp() << "bool " << helper_class << "::readCmdArgs(yarp::os::idl::WireReader& reader)\n";
     f_cpp_ << indent_cpp() << "{\n";
     indent_up_cpp();
     {
@@ -4007,6 +4019,14 @@ void t_yarp_generator::generate_service_helper_classes_impl_readcmdargs(t_functi
             bool force_nested = (returntype->annotations_.find("yarp.name") == (returntype->annotations_.end()));
             generate_deserialize_field(f_cpp_, arg, "m_", "", force_nested);
         }
+        f_cpp_ << indent_cpp() << "if (!reader.noMore()) {\n";
+        indent_up_cpp();
+        {
+            f_cpp_ << indent_cpp() << "reader.fail();\n";
+            f_cpp_ << indent_cpp() << "return false;\n";
+        }
+        indent_down_cpp();
+        f_cpp_ << indent_cpp() << "}\n";
         f_cpp_ << indent_cpp() << "return true;\n";
     }
     indent_down_cpp();

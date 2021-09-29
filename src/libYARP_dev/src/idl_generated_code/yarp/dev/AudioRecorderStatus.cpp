@@ -527,6 +527,10 @@ void AudioRecorderStatus::Editor::dirty_flags(bool flag)
 // read enabled field
 bool AudioRecorderStatus::read_enabled(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readBool(enabled)) {
         reader.fail();
         return false;
@@ -546,6 +550,10 @@ bool AudioRecorderStatus::write_enabled(const yarp::os::idl::WireWriter& writer)
 // read (nested) enabled field
 bool AudioRecorderStatus::nested_read_enabled(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readBool(enabled)) {
         reader.fail();
         return false;
@@ -565,6 +573,10 @@ bool AudioRecorderStatus::nested_write_enabled(const yarp::os::idl::WireWriter& 
 // read current_buffer_size field
 bool AudioRecorderStatus::read_current_buffer_size(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readSizeT(current_buffer_size)) {
         reader.fail();
         return false;
@@ -584,6 +596,10 @@ bool AudioRecorderStatus::write_current_buffer_size(const yarp::os::idl::WireWri
 // read (nested) current_buffer_size field
 bool AudioRecorderStatus::nested_read_current_buffer_size(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readSizeT(current_buffer_size)) {
         reader.fail();
         return false;
@@ -603,6 +619,10 @@ bool AudioRecorderStatus::nested_write_current_buffer_size(const yarp::os::idl::
 // read max_buffer_size field
 bool AudioRecorderStatus::read_max_buffer_size(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readSizeT(max_buffer_size)) {
         reader.fail();
         return false;
@@ -622,6 +642,10 @@ bool AudioRecorderStatus::write_max_buffer_size(const yarp::os::idl::WireWriter&
 // read (nested) max_buffer_size field
 bool AudioRecorderStatus::nested_read_max_buffer_size(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readSizeT(max_buffer_size)) {
         reader.fail();
         return false;
