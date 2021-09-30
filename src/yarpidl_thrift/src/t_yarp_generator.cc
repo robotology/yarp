@@ -1570,7 +1570,6 @@ std::string t_yarp_generator::declare_field(t_field* tfield,
                                             const std::string& force_type,
                                             const std::string& prefix)
 {
-    // TODO: do we ever need to initialize the field?
     std::string result;
     if (is_constant) {
         result += "const ";
@@ -1597,32 +1596,37 @@ std::string t_yarp_generator::declare_field(t_field* tfield,
         t_type* type = get_true_type(tfield->get_type());
 
         if (type->is_base_type()) {
-            t_base_type::t_base tbase = ((t_base_type*)type)->get_base();
+            t_base_type::t_base tbase = static_cast<t_base_type*>(type)->get_base();
             switch (tbase) {
             case t_base_type::TYPE_VOID:
                 break;
             case t_base_type::TYPE_STRING:
-                result += " = \"\"";
+                result += "{}";
                 break;
             case t_base_type::TYPE_BOOL:
-                result += " = false";
+                result += "{false}";
                 break;
             case t_base_type::TYPE_I8:
             case t_base_type::TYPE_I16:
             case t_base_type::TYPE_I32:
             case t_base_type::TYPE_I64:
-                result += " = 0";
+                result += "{0}";
                 break;
             case t_base_type::TYPE_DOUBLE:
-                result += " = 0.0";
+                result += "{0.0}";
                 break;
             default:
                 throw "compiler error: no C++ initializer for base type " + t_base_type::t_base_name(tbase);
             }
         } else if (type->is_enum()) {
-            result += " = static_cast<" + type_name(type) + ">(0)";
+            auto* tenum = static_cast<t_enum*>(type);
+            if (tenum->get_constants().empty()) {
+                result += "{}";
+            } else {
+                result += "{" + tenum->get_constants()[0]->get_name() + "}";
+            }
         } else {
-            result += " = {}";
+            result += "{}";
         }
     }
 
