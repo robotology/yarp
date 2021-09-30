@@ -22,24 +22,48 @@ public:
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
 
-    bool writeCmd(yarp::os::idl::WireWriter& writer) const;
-    bool writeCmdLen(yarp::os::idl::WireWriter& writer) const;
-    bool writeCmdTag(yarp::os::idl::WireWriter& writer) const;
-    bool writeCmdArgs(yarp::os::idl::WireWriter& writer) const;
+    class Command :
+            public yarp::os::idl::WirePortable
+    {
+    public:
+        Command() = default;
+        explicit Command(const double voltage);
 
-    bool readCmd(yarp::os::idl::WireReader& reader);
-    bool readCmdLen(yarp::os::idl::WireReader& reader);
-    bool readCmdTag(yarp::os::idl::WireReader& reader);
-    bool readCmdArgs(yarp::os::idl::WireReader& reader);
+        ~Command() override = default;
 
-    bool writeReply(yarp::os::idl::WireWriter& writer) const;
+        bool write(yarp::os::ConnectionWriter& connection) const override;
+        bool read(yarp::os::ConnectionReader& connection) override;
 
-    bool readReply(yarp::os::idl::WireReader& reader);
+        bool write(const yarp::os::idl::WireWriter& writer) const override;
+        bool writeTag(const yarp::os::idl::WireWriter& writer) const;
+        bool writeArgs(const yarp::os::idl::WireWriter& writer) const;
+
+        bool read(yarp::os::idl::WireReader& reader) override;
+        bool readTag(yarp::os::idl::WireReader& reader);
+        bool readArgs(yarp::os::idl::WireReader& reader);
+
+        double voltage{0.0};
+    };
+
+    class Reply :
+            public yarp::os::idl::WirePortable
+    {
+    public:
+        Reply() = default;
+        ~Reply() override = default;
+
+        bool write(yarp::os::ConnectionWriter& connection) const override;
+        bool read(yarp::os::ConnectionReader& connection) override;
+
+        bool write(const yarp::os::idl::WireWriter& writer) const override;
+        bool read(yarp::os::idl::WireReader& reader) override;
+    };
 
     using funcptr_t = void (*)(const double);
     void call(FakeBatteryService* ptr) const;
 
-    double m_voltage;
+    Command cmd;
+    Reply reply;
 
     static constexpr const char* s_tag{"setBatteryVoltage"};
     static constexpr size_t s_tag_len{1};
@@ -59,24 +83,48 @@ public:
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
 
-    bool writeCmd(yarp::os::idl::WireWriter& writer) const;
-    bool writeCmdLen(yarp::os::idl::WireWriter& writer) const;
-    bool writeCmdTag(yarp::os::idl::WireWriter& writer) const;
-    bool writeCmdArgs(yarp::os::idl::WireWriter& writer) const;
+    class Command :
+            public yarp::os::idl::WirePortable
+    {
+    public:
+        Command() = default;
+        explicit Command(const double current);
 
-    bool readCmd(yarp::os::idl::WireReader& reader);
-    bool readCmdLen(yarp::os::idl::WireReader& reader);
-    bool readCmdTag(yarp::os::idl::WireReader& reader);
-    bool readCmdArgs(yarp::os::idl::WireReader& reader);
+        ~Command() override = default;
 
-    bool writeReply(yarp::os::idl::WireWriter& writer) const;
+        bool write(yarp::os::ConnectionWriter& connection) const override;
+        bool read(yarp::os::ConnectionReader& connection) override;
 
-    bool readReply(yarp::os::idl::WireReader& reader);
+        bool write(const yarp::os::idl::WireWriter& writer) const override;
+        bool writeTag(const yarp::os::idl::WireWriter& writer) const;
+        bool writeArgs(const yarp::os::idl::WireWriter& writer) const;
+
+        bool read(yarp::os::idl::WireReader& reader) override;
+        bool readTag(yarp::os::idl::WireReader& reader);
+        bool readArgs(yarp::os::idl::WireReader& reader);
+
+        double current{0.0};
+    };
+
+    class Reply :
+            public yarp::os::idl::WirePortable
+    {
+    public:
+        Reply() = default;
+        ~Reply() override = default;
+
+        bool write(yarp::os::ConnectionWriter& connection) const override;
+        bool read(yarp::os::ConnectionReader& connection) override;
+
+        bool write(const yarp::os::idl::WireWriter& writer) const override;
+        bool read(yarp::os::idl::WireReader& reader) override;
+    };
 
     using funcptr_t = void (*)(const double);
     void call(FakeBatteryService* ptr) const;
 
-    double m_current;
+    Command cmd;
+    Reply reply;
 
     static constexpr const char* s_tag{"setBatteryCurrent"};
     static constexpr size_t s_tag_len{1};
@@ -96,24 +144,48 @@ public:
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
 
-    bool writeCmd(yarp::os::idl::WireWriter& writer) const;
-    bool writeCmdLen(yarp::os::idl::WireWriter& writer) const;
-    bool writeCmdTag(yarp::os::idl::WireWriter& writer) const;
-    bool writeCmdArgs(yarp::os::idl::WireWriter& writer) const;
+    class Command :
+            public yarp::os::idl::WirePortable
+    {
+    public:
+        Command() = default;
+        explicit Command(const double charge);
 
-    bool readCmd(yarp::os::idl::WireReader& reader);
-    bool readCmdLen(yarp::os::idl::WireReader& reader);
-    bool readCmdTag(yarp::os::idl::WireReader& reader);
-    bool readCmdArgs(yarp::os::idl::WireReader& reader);
+        ~Command() override = default;
 
-    bool writeReply(yarp::os::idl::WireWriter& writer) const;
+        bool write(yarp::os::ConnectionWriter& connection) const override;
+        bool read(yarp::os::ConnectionReader& connection) override;
 
-    bool readReply(yarp::os::idl::WireReader& reader);
+        bool write(const yarp::os::idl::WireWriter& writer) const override;
+        bool writeTag(const yarp::os::idl::WireWriter& writer) const;
+        bool writeArgs(const yarp::os::idl::WireWriter& writer) const;
+
+        bool read(yarp::os::idl::WireReader& reader) override;
+        bool readTag(yarp::os::idl::WireReader& reader);
+        bool readArgs(yarp::os::idl::WireReader& reader);
+
+        double charge{0.0};
+    };
+
+    class Reply :
+            public yarp::os::idl::WirePortable
+    {
+    public:
+        Reply() = default;
+        ~Reply() override = default;
+
+        bool write(yarp::os::ConnectionWriter& connection) const override;
+        bool read(yarp::os::ConnectionReader& connection) override;
+
+        bool write(const yarp::os::idl::WireWriter& writer) const override;
+        bool read(yarp::os::idl::WireReader& reader) override;
+    };
 
     using funcptr_t = void (*)(const double);
     void call(FakeBatteryService* ptr) const;
 
-    double m_charge;
+    Command cmd;
+    Reply reply;
 
     static constexpr const char* s_tag{"setBatteryCharge"};
     static constexpr size_t s_tag_len{1};
@@ -133,24 +205,48 @@ public:
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
 
-    bool writeCmd(yarp::os::idl::WireWriter& writer) const;
-    bool writeCmdLen(yarp::os::idl::WireWriter& writer) const;
-    bool writeCmdTag(yarp::os::idl::WireWriter& writer) const;
-    bool writeCmdArgs(yarp::os::idl::WireWriter& writer) const;
+    class Command :
+            public yarp::os::idl::WirePortable
+    {
+    public:
+        Command() = default;
+        explicit Command(const std::string& info);
 
-    bool readCmd(yarp::os::idl::WireReader& reader);
-    bool readCmdLen(yarp::os::idl::WireReader& reader);
-    bool readCmdTag(yarp::os::idl::WireReader& reader);
-    bool readCmdArgs(yarp::os::idl::WireReader& reader);
+        ~Command() override = default;
 
-    bool writeReply(yarp::os::idl::WireWriter& writer) const;
+        bool write(yarp::os::ConnectionWriter& connection) const override;
+        bool read(yarp::os::ConnectionReader& connection) override;
 
-    bool readReply(yarp::os::idl::WireReader& reader);
+        bool write(const yarp::os::idl::WireWriter& writer) const override;
+        bool writeTag(const yarp::os::idl::WireWriter& writer) const;
+        bool writeArgs(const yarp::os::idl::WireWriter& writer) const;
+
+        bool read(yarp::os::idl::WireReader& reader) override;
+        bool readTag(yarp::os::idl::WireReader& reader);
+        bool readArgs(yarp::os::idl::WireReader& reader);
+
+        std::string info{};
+    };
+
+    class Reply :
+            public yarp::os::idl::WirePortable
+    {
+    public:
+        Reply() = default;
+        ~Reply() override = default;
+
+        bool write(yarp::os::ConnectionWriter& connection) const override;
+        bool read(yarp::os::ConnectionReader& connection) override;
+
+        bool write(const yarp::os::idl::WireWriter& writer) const override;
+        bool read(yarp::os::idl::WireReader& reader) override;
+    };
 
     using funcptr_t = void (*)(const std::string&);
     void call(FakeBatteryService* ptr) const;
 
-    std::string m_info;
+    Command cmd;
+    Reply reply;
 
     static constexpr const char* s_tag{"setBatteryInfo"};
     static constexpr size_t s_tag_len{1};
@@ -170,24 +266,48 @@ public:
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
 
-    bool writeCmd(yarp::os::idl::WireWriter& writer) const;
-    bool writeCmdLen(yarp::os::idl::WireWriter& writer) const;
-    bool writeCmdTag(yarp::os::idl::WireWriter& writer) const;
-    bool writeCmdArgs(yarp::os::idl::WireWriter& writer) const;
+    class Command :
+            public yarp::os::idl::WirePortable
+    {
+    public:
+        Command() = default;
+        explicit Command(const double temperature);
 
-    bool readCmd(yarp::os::idl::WireReader& reader);
-    bool readCmdLen(yarp::os::idl::WireReader& reader);
-    bool readCmdTag(yarp::os::idl::WireReader& reader);
-    bool readCmdArgs(yarp::os::idl::WireReader& reader);
+        ~Command() override = default;
 
-    bool writeReply(yarp::os::idl::WireWriter& writer) const;
+        bool write(yarp::os::ConnectionWriter& connection) const override;
+        bool read(yarp::os::ConnectionReader& connection) override;
 
-    bool readReply(yarp::os::idl::WireReader& reader);
+        bool write(const yarp::os::idl::WireWriter& writer) const override;
+        bool writeTag(const yarp::os::idl::WireWriter& writer) const;
+        bool writeArgs(const yarp::os::idl::WireWriter& writer) const;
+
+        bool read(yarp::os::idl::WireReader& reader) override;
+        bool readTag(yarp::os::idl::WireReader& reader);
+        bool readArgs(yarp::os::idl::WireReader& reader);
+
+        double temperature{0.0};
+    };
+
+    class Reply :
+            public yarp::os::idl::WirePortable
+    {
+    public:
+        Reply() = default;
+        ~Reply() override = default;
+
+        bool write(yarp::os::ConnectionWriter& connection) const override;
+        bool read(yarp::os::ConnectionReader& connection) override;
+
+        bool write(const yarp::os::idl::WireWriter& writer) const override;
+        bool read(yarp::os::idl::WireReader& reader) override;
+    };
 
     using funcptr_t = void (*)(const double);
     void call(FakeBatteryService* ptr) const;
 
-    double m_temperature;
+    Command cmd;
+    Reply reply;
 
     static constexpr const char* s_tag{"setBatteryTemperature"};
     static constexpr size_t s_tag_len{1};
@@ -206,24 +326,46 @@ public:
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
 
-    bool writeCmd(yarp::os::idl::WireWriter& writer) const;
-    bool writeCmdLen(yarp::os::idl::WireWriter& writer) const;
-    bool writeCmdTag(yarp::os::idl::WireWriter& writer) const;
-    bool writeCmdArgs(yarp::os::idl::WireWriter& writer) const;
+    class Command :
+            public yarp::os::idl::WirePortable
+    {
+    public:
+        Command() = default;
+        ~Command() override = default;
 
-    bool readCmd(yarp::os::idl::WireReader& reader);
-    bool readCmdLen(yarp::os::idl::WireReader& reader);
-    bool readCmdTag(yarp::os::idl::WireReader& reader);
-    bool readCmdArgs(yarp::os::idl::WireReader& reader);
+        bool write(yarp::os::ConnectionWriter& connection) const override;
+        bool read(yarp::os::ConnectionReader& connection) override;
 
-    bool writeReply(yarp::os::idl::WireWriter& writer) const;
+        bool write(const yarp::os::idl::WireWriter& writer) const override;
+        bool writeTag(const yarp::os::idl::WireWriter& writer) const;
+        bool writeArgs(const yarp::os::idl::WireWriter& writer) const;
 
-    bool readReply(yarp::os::idl::WireReader& reader);
+        bool read(yarp::os::idl::WireReader& reader) override;
+        bool readTag(yarp::os::idl::WireReader& reader);
+        bool readArgs(yarp::os::idl::WireReader& reader);
+    };
+
+    class Reply :
+            public yarp::os::idl::WirePortable
+    {
+    public:
+        Reply() = default;
+        ~Reply() override = default;
+
+        bool write(yarp::os::ConnectionWriter& connection) const override;
+        bool read(yarp::os::ConnectionReader& connection) override;
+
+        bool write(const yarp::os::idl::WireWriter& writer) const override;
+        bool read(yarp::os::idl::WireReader& reader) override;
+
+        double return_helper{0.0};
+    };
 
     using funcptr_t = double (*)();
     void call(FakeBatteryService* ptr);
 
-    double m_return_helper{};
+    Command cmd;
+    Reply reply;
 
     static constexpr const char* s_tag{"getBatteryVoltage"};
     static constexpr size_t s_tag_len{1};
@@ -242,24 +384,46 @@ public:
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
 
-    bool writeCmd(yarp::os::idl::WireWriter& writer) const;
-    bool writeCmdLen(yarp::os::idl::WireWriter& writer) const;
-    bool writeCmdTag(yarp::os::idl::WireWriter& writer) const;
-    bool writeCmdArgs(yarp::os::idl::WireWriter& writer) const;
+    class Command :
+            public yarp::os::idl::WirePortable
+    {
+    public:
+        Command() = default;
+        ~Command() override = default;
 
-    bool readCmd(yarp::os::idl::WireReader& reader);
-    bool readCmdLen(yarp::os::idl::WireReader& reader);
-    bool readCmdTag(yarp::os::idl::WireReader& reader);
-    bool readCmdArgs(yarp::os::idl::WireReader& reader);
+        bool write(yarp::os::ConnectionWriter& connection) const override;
+        bool read(yarp::os::ConnectionReader& connection) override;
 
-    bool writeReply(yarp::os::idl::WireWriter& writer) const;
+        bool write(const yarp::os::idl::WireWriter& writer) const override;
+        bool writeTag(const yarp::os::idl::WireWriter& writer) const;
+        bool writeArgs(const yarp::os::idl::WireWriter& writer) const;
 
-    bool readReply(yarp::os::idl::WireReader& reader);
+        bool read(yarp::os::idl::WireReader& reader) override;
+        bool readTag(yarp::os::idl::WireReader& reader);
+        bool readArgs(yarp::os::idl::WireReader& reader);
+    };
+
+    class Reply :
+            public yarp::os::idl::WirePortable
+    {
+    public:
+        Reply() = default;
+        ~Reply() override = default;
+
+        bool write(yarp::os::ConnectionWriter& connection) const override;
+        bool read(yarp::os::ConnectionReader& connection) override;
+
+        bool write(const yarp::os::idl::WireWriter& writer) const override;
+        bool read(yarp::os::idl::WireReader& reader) override;
+
+        double return_helper{0.0};
+    };
 
     using funcptr_t = double (*)();
     void call(FakeBatteryService* ptr);
 
-    double m_return_helper{};
+    Command cmd;
+    Reply reply;
 
     static constexpr const char* s_tag{"getBatteryCurrent"};
     static constexpr size_t s_tag_len{1};
@@ -278,24 +442,46 @@ public:
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
 
-    bool writeCmd(yarp::os::idl::WireWriter& writer) const;
-    bool writeCmdLen(yarp::os::idl::WireWriter& writer) const;
-    bool writeCmdTag(yarp::os::idl::WireWriter& writer) const;
-    bool writeCmdArgs(yarp::os::idl::WireWriter& writer) const;
+    class Command :
+            public yarp::os::idl::WirePortable
+    {
+    public:
+        Command() = default;
+        ~Command() override = default;
 
-    bool readCmd(yarp::os::idl::WireReader& reader);
-    bool readCmdLen(yarp::os::idl::WireReader& reader);
-    bool readCmdTag(yarp::os::idl::WireReader& reader);
-    bool readCmdArgs(yarp::os::idl::WireReader& reader);
+        bool write(yarp::os::ConnectionWriter& connection) const override;
+        bool read(yarp::os::ConnectionReader& connection) override;
 
-    bool writeReply(yarp::os::idl::WireWriter& writer) const;
+        bool write(const yarp::os::idl::WireWriter& writer) const override;
+        bool writeTag(const yarp::os::idl::WireWriter& writer) const;
+        bool writeArgs(const yarp::os::idl::WireWriter& writer) const;
 
-    bool readReply(yarp::os::idl::WireReader& reader);
+        bool read(yarp::os::idl::WireReader& reader) override;
+        bool readTag(yarp::os::idl::WireReader& reader);
+        bool readArgs(yarp::os::idl::WireReader& reader);
+    };
+
+    class Reply :
+            public yarp::os::idl::WirePortable
+    {
+    public:
+        Reply() = default;
+        ~Reply() override = default;
+
+        bool write(yarp::os::ConnectionWriter& connection) const override;
+        bool read(yarp::os::ConnectionReader& connection) override;
+
+        bool write(const yarp::os::idl::WireWriter& writer) const override;
+        bool read(yarp::os::idl::WireReader& reader) override;
+
+        double return_helper{0.0};
+    };
 
     using funcptr_t = double (*)();
     void call(FakeBatteryService* ptr);
 
-    double m_return_helper{};
+    Command cmd;
+    Reply reply;
 
     static constexpr const char* s_tag{"getBatteryCharge"};
     static constexpr size_t s_tag_len{1};
@@ -314,24 +500,46 @@ public:
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
 
-    bool writeCmd(yarp::os::idl::WireWriter& writer) const;
-    bool writeCmdLen(yarp::os::idl::WireWriter& writer) const;
-    bool writeCmdTag(yarp::os::idl::WireWriter& writer) const;
-    bool writeCmdArgs(yarp::os::idl::WireWriter& writer) const;
+    class Command :
+            public yarp::os::idl::WirePortable
+    {
+    public:
+        Command() = default;
+        ~Command() override = default;
 
-    bool readCmd(yarp::os::idl::WireReader& reader);
-    bool readCmdLen(yarp::os::idl::WireReader& reader);
-    bool readCmdTag(yarp::os::idl::WireReader& reader);
-    bool readCmdArgs(yarp::os::idl::WireReader& reader);
+        bool write(yarp::os::ConnectionWriter& connection) const override;
+        bool read(yarp::os::ConnectionReader& connection) override;
 
-    bool writeReply(yarp::os::idl::WireWriter& writer) const;
+        bool write(const yarp::os::idl::WireWriter& writer) const override;
+        bool writeTag(const yarp::os::idl::WireWriter& writer) const;
+        bool writeArgs(const yarp::os::idl::WireWriter& writer) const;
 
-    bool readReply(yarp::os::idl::WireReader& reader);
+        bool read(yarp::os::idl::WireReader& reader) override;
+        bool readTag(yarp::os::idl::WireReader& reader);
+        bool readArgs(yarp::os::idl::WireReader& reader);
+    };
+
+    class Reply :
+            public yarp::os::idl::WirePortable
+    {
+    public:
+        Reply() = default;
+        ~Reply() override = default;
+
+        bool write(yarp::os::ConnectionWriter& connection) const override;
+        bool read(yarp::os::ConnectionReader& connection) override;
+
+        bool write(const yarp::os::idl::WireWriter& writer) const override;
+        bool read(yarp::os::idl::WireReader& reader) override;
+
+        std::string return_helper{};
+    };
 
     using funcptr_t = std::string (*)();
     void call(FakeBatteryService* ptr);
 
-    std::string m_return_helper{};
+    Command cmd;
+    Reply reply;
 
     static constexpr const char* s_tag{"getBatteryStatus"};
     static constexpr size_t s_tag_len{1};
@@ -350,24 +558,46 @@ public:
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
 
-    bool writeCmd(yarp::os::idl::WireWriter& writer) const;
-    bool writeCmdLen(yarp::os::idl::WireWriter& writer) const;
-    bool writeCmdTag(yarp::os::idl::WireWriter& writer) const;
-    bool writeCmdArgs(yarp::os::idl::WireWriter& writer) const;
+    class Command :
+            public yarp::os::idl::WirePortable
+    {
+    public:
+        Command() = default;
+        ~Command() override = default;
 
-    bool readCmd(yarp::os::idl::WireReader& reader);
-    bool readCmdLen(yarp::os::idl::WireReader& reader);
-    bool readCmdTag(yarp::os::idl::WireReader& reader);
-    bool readCmdArgs(yarp::os::idl::WireReader& reader);
+        bool write(yarp::os::ConnectionWriter& connection) const override;
+        bool read(yarp::os::ConnectionReader& connection) override;
 
-    bool writeReply(yarp::os::idl::WireWriter& writer) const;
+        bool write(const yarp::os::idl::WireWriter& writer) const override;
+        bool writeTag(const yarp::os::idl::WireWriter& writer) const;
+        bool writeArgs(const yarp::os::idl::WireWriter& writer) const;
 
-    bool readReply(yarp::os::idl::WireReader& reader);
+        bool read(yarp::os::idl::WireReader& reader) override;
+        bool readTag(yarp::os::idl::WireReader& reader);
+        bool readArgs(yarp::os::idl::WireReader& reader);
+    };
+
+    class Reply :
+            public yarp::os::idl::WirePortable
+    {
+    public:
+        Reply() = default;
+        ~Reply() override = default;
+
+        bool write(yarp::os::ConnectionWriter& connection) const override;
+        bool read(yarp::os::ConnectionReader& connection) override;
+
+        bool write(const yarp::os::idl::WireWriter& writer) const override;
+        bool read(yarp::os::idl::WireReader& reader) override;
+
+        std::string return_helper{};
+    };
 
     using funcptr_t = std::string (*)();
     void call(FakeBatteryService* ptr);
 
-    std::string m_return_helper{};
+    Command cmd;
+    Reply reply;
 
     static constexpr const char* s_tag{"getBatteryInfo"};
     static constexpr size_t s_tag_len{1};
@@ -386,24 +616,46 @@ public:
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
 
-    bool writeCmd(yarp::os::idl::WireWriter& writer) const;
-    bool writeCmdLen(yarp::os::idl::WireWriter& writer) const;
-    bool writeCmdTag(yarp::os::idl::WireWriter& writer) const;
-    bool writeCmdArgs(yarp::os::idl::WireWriter& writer) const;
+    class Command :
+            public yarp::os::idl::WirePortable
+    {
+    public:
+        Command() = default;
+        ~Command() override = default;
 
-    bool readCmd(yarp::os::idl::WireReader& reader);
-    bool readCmdLen(yarp::os::idl::WireReader& reader);
-    bool readCmdTag(yarp::os::idl::WireReader& reader);
-    bool readCmdArgs(yarp::os::idl::WireReader& reader);
+        bool write(yarp::os::ConnectionWriter& connection) const override;
+        bool read(yarp::os::ConnectionReader& connection) override;
 
-    bool writeReply(yarp::os::idl::WireWriter& writer) const;
+        bool write(const yarp::os::idl::WireWriter& writer) const override;
+        bool writeTag(const yarp::os::idl::WireWriter& writer) const;
+        bool writeArgs(const yarp::os::idl::WireWriter& writer) const;
 
-    bool readReply(yarp::os::idl::WireReader& reader);
+        bool read(yarp::os::idl::WireReader& reader) override;
+        bool readTag(yarp::os::idl::WireReader& reader);
+        bool readArgs(yarp::os::idl::WireReader& reader);
+    };
+
+    class Reply :
+            public yarp::os::idl::WirePortable
+    {
+    public:
+        Reply() = default;
+        ~Reply() override = default;
+
+        bool write(yarp::os::ConnectionWriter& connection) const override;
+        bool read(yarp::os::ConnectionReader& connection) override;
+
+        bool write(const yarp::os::idl::WireWriter& writer) const override;
+        bool read(yarp::os::idl::WireReader& reader) override;
+
+        double return_helper{0.0};
+    };
 
     using funcptr_t = double (*)();
     void call(FakeBatteryService* ptr);
 
-    double m_return_helper{};
+    Command cmd;
+    Reply reply;
 
     static constexpr const char* s_tag{"getBatteryTemperature"};
     static constexpr size_t s_tag_len{1};
@@ -415,45 +667,56 @@ public:
 
 // setBatteryVoltage helper class implementation
 FakeBatteryService_setBatteryVoltage_helper::FakeBatteryService_setBatteryVoltage_helper(const double voltage) :
-        m_voltage{voltage}
+        cmd{voltage}
 {
 }
 
 bool FakeBatteryService_setBatteryVoltage_helper::write(yarp::os::ConnectionWriter& connection) const
 {
-    yarp::os::idl::WireWriter writer(connection);
-    return writeCmd(writer);
+    return cmd.write(connection);
 }
 
 bool FakeBatteryService_setBatteryVoltage_helper::read(yarp::os::ConnectionReader& connection)
 {
-    yarp::os::idl::WireReader reader(connection);
-    return readReply(reader);
+    return reply.read(connection);
 }
 
-bool FakeBatteryService_setBatteryVoltage_helper::writeCmd(yarp::os::idl::WireWriter& writer) const
+FakeBatteryService_setBatteryVoltage_helper::Command::Command(const double voltage) :
+        voltage{voltage}
 {
-    if (!writeCmdLen(writer)) {
-        return false;
-    }
-    if (!writeCmdTag(writer)) {
-        return false;
-    }
-    if (!writeCmdArgs(writer)) {
-        return false;
-    }
-    return true;
 }
 
-bool FakeBatteryService_setBatteryVoltage_helper::writeCmdLen(yarp::os::idl::WireWriter& writer) const
+bool FakeBatteryService_setBatteryVoltage_helper::Command::write(yarp::os::ConnectionWriter& connection) const
 {
+    yarp::os::idl::WireWriter writer(connection);
     if (!writer.writeListHeader(s_cmd_len)) {
         return false;
     }
+    return write(writer);
+}
+
+bool FakeBatteryService_setBatteryVoltage_helper::Command::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    if (!reader.readListHeader()) {
+        reader.fail();
+        return false;
+    }
+    return read(reader);
+}
+
+bool FakeBatteryService_setBatteryVoltage_helper::Command::write(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writeTag(writer)) {
+        return false;
+    }
+    if (!writeArgs(writer)) {
+        return false;
+    }
     return true;
 }
 
-bool FakeBatteryService_setBatteryVoltage_helper::writeCmdTag(yarp::os::idl::WireWriter& writer) const
+bool FakeBatteryService_setBatteryVoltage_helper::Command::writeTag(const yarp::os::idl::WireWriter& writer) const
 {
     if (!writer.writeTag(s_tag, 1, s_tag_len)) {
         return false;
@@ -461,38 +724,26 @@ bool FakeBatteryService_setBatteryVoltage_helper::writeCmdTag(yarp::os::idl::Wir
     return true;
 }
 
-bool FakeBatteryService_setBatteryVoltage_helper::writeCmdArgs(yarp::os::idl::WireWriter& writer [[maybe_unused]]) const
+bool FakeBatteryService_setBatteryVoltage_helper::Command::writeArgs(const yarp::os::idl::WireWriter& writer) const
 {
-    if (!writer.writeFloat64(m_voltage)) {
+    if (!writer.writeFloat64(voltage)) {
         return false;
     }
     return true;
 }
 
-bool FakeBatteryService_setBatteryVoltage_helper::readCmd(yarp::os::idl::WireReader& reader)
+bool FakeBatteryService_setBatteryVoltage_helper::Command::read(yarp::os::idl::WireReader& reader)
 {
-    if (!readCmdLen(reader)) {
+    if (!readTag(reader)) {
         return false;
     }
-    if (!readCmdTag(reader)) {
-        return false;
-    }
-    if (!readCmdArgs(reader)) {
+    if (!readArgs(reader)) {
         return false;
     }
     return true;
 }
 
-bool FakeBatteryService_setBatteryVoltage_helper::readCmdLen(yarp::os::idl::WireReader& reader)
-{
-    if (!reader.readListHeader()) {
-        reader.fail();
-        return false;
-    }
-    return true;
-}
-
-bool FakeBatteryService_setBatteryVoltage_helper::readCmdTag(yarp::os::idl::WireReader& reader)
+bool FakeBatteryService_setBatteryVoltage_helper::Command::readTag(yarp::os::idl::WireReader& reader)
 {
     std::string tag = reader.readTag();
     if (reader.isError()) {
@@ -505,13 +756,13 @@ bool FakeBatteryService_setBatteryVoltage_helper::readCmdTag(yarp::os::idl::Wire
     return true;
 }
 
-bool FakeBatteryService_setBatteryVoltage_helper::readCmdArgs(yarp::os::idl::WireReader& reader)
+bool FakeBatteryService_setBatteryVoltage_helper::Command::readArgs(yarp::os::idl::WireReader& reader)
 {
     if (reader.noMore()) {
         reader.fail();
         return false;
     }
-    if (!reader.readFloat64(m_voltage)) {
+    if (!reader.readFloat64(voltage)) {
         reader.fail();
         return false;
     }
@@ -522,7 +773,19 @@ bool FakeBatteryService_setBatteryVoltage_helper::readCmdArgs(yarp::os::idl::Wir
     return true;
 }
 
-bool FakeBatteryService_setBatteryVoltage_helper::writeReply(yarp::os::idl::WireWriter& writer) const
+bool FakeBatteryService_setBatteryVoltage_helper::Reply::write(yarp::os::ConnectionWriter& connection) const
+{
+    yarp::os::idl::WireWriter writer(connection);
+    return write(writer);
+}
+
+bool FakeBatteryService_setBatteryVoltage_helper::Reply::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    return read(reader);
+}
+
+bool FakeBatteryService_setBatteryVoltage_helper::Reply::write(const yarp::os::idl::WireWriter& writer) const
 {
     if (!writer.isNull()) {
         if (!writer.writeOnewayResponse()) {
@@ -532,57 +795,68 @@ bool FakeBatteryService_setBatteryVoltage_helper::writeReply(yarp::os::idl::Wire
     return true;
 }
 
-bool FakeBatteryService_setBatteryVoltage_helper::readReply(yarp::os::idl::WireReader& reader [[maybe_unused]])
+bool FakeBatteryService_setBatteryVoltage_helper::Reply::read(yarp::os::idl::WireReader& reader [[maybe_unused]])
 {
     return true;
 }
 
 void FakeBatteryService_setBatteryVoltage_helper::call(FakeBatteryService* ptr) const
 {
-    ptr->setBatteryVoltage(m_voltage);
+    ptr->setBatteryVoltage(cmd.voltage);
 }
 
 // setBatteryCurrent helper class implementation
 FakeBatteryService_setBatteryCurrent_helper::FakeBatteryService_setBatteryCurrent_helper(const double current) :
-        m_current{current}
+        cmd{current}
 {
 }
 
 bool FakeBatteryService_setBatteryCurrent_helper::write(yarp::os::ConnectionWriter& connection) const
 {
-    yarp::os::idl::WireWriter writer(connection);
-    return writeCmd(writer);
+    return cmd.write(connection);
 }
 
 bool FakeBatteryService_setBatteryCurrent_helper::read(yarp::os::ConnectionReader& connection)
 {
-    yarp::os::idl::WireReader reader(connection);
-    return readReply(reader);
+    return reply.read(connection);
 }
 
-bool FakeBatteryService_setBatteryCurrent_helper::writeCmd(yarp::os::idl::WireWriter& writer) const
+FakeBatteryService_setBatteryCurrent_helper::Command::Command(const double current) :
+        current{current}
 {
-    if (!writeCmdLen(writer)) {
-        return false;
-    }
-    if (!writeCmdTag(writer)) {
-        return false;
-    }
-    if (!writeCmdArgs(writer)) {
-        return false;
-    }
-    return true;
 }
 
-bool FakeBatteryService_setBatteryCurrent_helper::writeCmdLen(yarp::os::idl::WireWriter& writer) const
+bool FakeBatteryService_setBatteryCurrent_helper::Command::write(yarp::os::ConnectionWriter& connection) const
 {
+    yarp::os::idl::WireWriter writer(connection);
     if (!writer.writeListHeader(s_cmd_len)) {
         return false;
     }
+    return write(writer);
+}
+
+bool FakeBatteryService_setBatteryCurrent_helper::Command::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    if (!reader.readListHeader()) {
+        reader.fail();
+        return false;
+    }
+    return read(reader);
+}
+
+bool FakeBatteryService_setBatteryCurrent_helper::Command::write(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writeTag(writer)) {
+        return false;
+    }
+    if (!writeArgs(writer)) {
+        return false;
+    }
     return true;
 }
 
-bool FakeBatteryService_setBatteryCurrent_helper::writeCmdTag(yarp::os::idl::WireWriter& writer) const
+bool FakeBatteryService_setBatteryCurrent_helper::Command::writeTag(const yarp::os::idl::WireWriter& writer) const
 {
     if (!writer.writeTag(s_tag, 1, s_tag_len)) {
         return false;
@@ -590,38 +864,26 @@ bool FakeBatteryService_setBatteryCurrent_helper::writeCmdTag(yarp::os::idl::Wir
     return true;
 }
 
-bool FakeBatteryService_setBatteryCurrent_helper::writeCmdArgs(yarp::os::idl::WireWriter& writer [[maybe_unused]]) const
+bool FakeBatteryService_setBatteryCurrent_helper::Command::writeArgs(const yarp::os::idl::WireWriter& writer) const
 {
-    if (!writer.writeFloat64(m_current)) {
+    if (!writer.writeFloat64(current)) {
         return false;
     }
     return true;
 }
 
-bool FakeBatteryService_setBatteryCurrent_helper::readCmd(yarp::os::idl::WireReader& reader)
+bool FakeBatteryService_setBatteryCurrent_helper::Command::read(yarp::os::idl::WireReader& reader)
 {
-    if (!readCmdLen(reader)) {
+    if (!readTag(reader)) {
         return false;
     }
-    if (!readCmdTag(reader)) {
-        return false;
-    }
-    if (!readCmdArgs(reader)) {
+    if (!readArgs(reader)) {
         return false;
     }
     return true;
 }
 
-bool FakeBatteryService_setBatteryCurrent_helper::readCmdLen(yarp::os::idl::WireReader& reader)
-{
-    if (!reader.readListHeader()) {
-        reader.fail();
-        return false;
-    }
-    return true;
-}
-
-bool FakeBatteryService_setBatteryCurrent_helper::readCmdTag(yarp::os::idl::WireReader& reader)
+bool FakeBatteryService_setBatteryCurrent_helper::Command::readTag(yarp::os::idl::WireReader& reader)
 {
     std::string tag = reader.readTag();
     if (reader.isError()) {
@@ -634,13 +896,13 @@ bool FakeBatteryService_setBatteryCurrent_helper::readCmdTag(yarp::os::idl::Wire
     return true;
 }
 
-bool FakeBatteryService_setBatteryCurrent_helper::readCmdArgs(yarp::os::idl::WireReader& reader)
+bool FakeBatteryService_setBatteryCurrent_helper::Command::readArgs(yarp::os::idl::WireReader& reader)
 {
     if (reader.noMore()) {
         reader.fail();
         return false;
     }
-    if (!reader.readFloat64(m_current)) {
+    if (!reader.readFloat64(current)) {
         reader.fail();
         return false;
     }
@@ -651,7 +913,19 @@ bool FakeBatteryService_setBatteryCurrent_helper::readCmdArgs(yarp::os::idl::Wir
     return true;
 }
 
-bool FakeBatteryService_setBatteryCurrent_helper::writeReply(yarp::os::idl::WireWriter& writer) const
+bool FakeBatteryService_setBatteryCurrent_helper::Reply::write(yarp::os::ConnectionWriter& connection) const
+{
+    yarp::os::idl::WireWriter writer(connection);
+    return write(writer);
+}
+
+bool FakeBatteryService_setBatteryCurrent_helper::Reply::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    return read(reader);
+}
+
+bool FakeBatteryService_setBatteryCurrent_helper::Reply::write(const yarp::os::idl::WireWriter& writer) const
 {
     if (!writer.isNull()) {
         if (!writer.writeOnewayResponse()) {
@@ -661,57 +935,68 @@ bool FakeBatteryService_setBatteryCurrent_helper::writeReply(yarp::os::idl::Wire
     return true;
 }
 
-bool FakeBatteryService_setBatteryCurrent_helper::readReply(yarp::os::idl::WireReader& reader [[maybe_unused]])
+bool FakeBatteryService_setBatteryCurrent_helper::Reply::read(yarp::os::idl::WireReader& reader [[maybe_unused]])
 {
     return true;
 }
 
 void FakeBatteryService_setBatteryCurrent_helper::call(FakeBatteryService* ptr) const
 {
-    ptr->setBatteryCurrent(m_current);
+    ptr->setBatteryCurrent(cmd.current);
 }
 
 // setBatteryCharge helper class implementation
 FakeBatteryService_setBatteryCharge_helper::FakeBatteryService_setBatteryCharge_helper(const double charge) :
-        m_charge{charge}
+        cmd{charge}
 {
 }
 
 bool FakeBatteryService_setBatteryCharge_helper::write(yarp::os::ConnectionWriter& connection) const
 {
-    yarp::os::idl::WireWriter writer(connection);
-    return writeCmd(writer);
+    return cmd.write(connection);
 }
 
 bool FakeBatteryService_setBatteryCharge_helper::read(yarp::os::ConnectionReader& connection)
 {
-    yarp::os::idl::WireReader reader(connection);
-    return readReply(reader);
+    return reply.read(connection);
 }
 
-bool FakeBatteryService_setBatteryCharge_helper::writeCmd(yarp::os::idl::WireWriter& writer) const
+FakeBatteryService_setBatteryCharge_helper::Command::Command(const double charge) :
+        charge{charge}
 {
-    if (!writeCmdLen(writer)) {
-        return false;
-    }
-    if (!writeCmdTag(writer)) {
-        return false;
-    }
-    if (!writeCmdArgs(writer)) {
-        return false;
-    }
-    return true;
 }
 
-bool FakeBatteryService_setBatteryCharge_helper::writeCmdLen(yarp::os::idl::WireWriter& writer) const
+bool FakeBatteryService_setBatteryCharge_helper::Command::write(yarp::os::ConnectionWriter& connection) const
 {
+    yarp::os::idl::WireWriter writer(connection);
     if (!writer.writeListHeader(s_cmd_len)) {
         return false;
     }
+    return write(writer);
+}
+
+bool FakeBatteryService_setBatteryCharge_helper::Command::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    if (!reader.readListHeader()) {
+        reader.fail();
+        return false;
+    }
+    return read(reader);
+}
+
+bool FakeBatteryService_setBatteryCharge_helper::Command::write(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writeTag(writer)) {
+        return false;
+    }
+    if (!writeArgs(writer)) {
+        return false;
+    }
     return true;
 }
 
-bool FakeBatteryService_setBatteryCharge_helper::writeCmdTag(yarp::os::idl::WireWriter& writer) const
+bool FakeBatteryService_setBatteryCharge_helper::Command::writeTag(const yarp::os::idl::WireWriter& writer) const
 {
     if (!writer.writeTag(s_tag, 1, s_tag_len)) {
         return false;
@@ -719,38 +1004,26 @@ bool FakeBatteryService_setBatteryCharge_helper::writeCmdTag(yarp::os::idl::Wire
     return true;
 }
 
-bool FakeBatteryService_setBatteryCharge_helper::writeCmdArgs(yarp::os::idl::WireWriter& writer [[maybe_unused]]) const
+bool FakeBatteryService_setBatteryCharge_helper::Command::writeArgs(const yarp::os::idl::WireWriter& writer) const
 {
-    if (!writer.writeFloat64(m_charge)) {
+    if (!writer.writeFloat64(charge)) {
         return false;
     }
     return true;
 }
 
-bool FakeBatteryService_setBatteryCharge_helper::readCmd(yarp::os::idl::WireReader& reader)
+bool FakeBatteryService_setBatteryCharge_helper::Command::read(yarp::os::idl::WireReader& reader)
 {
-    if (!readCmdLen(reader)) {
+    if (!readTag(reader)) {
         return false;
     }
-    if (!readCmdTag(reader)) {
-        return false;
-    }
-    if (!readCmdArgs(reader)) {
+    if (!readArgs(reader)) {
         return false;
     }
     return true;
 }
 
-bool FakeBatteryService_setBatteryCharge_helper::readCmdLen(yarp::os::idl::WireReader& reader)
-{
-    if (!reader.readListHeader()) {
-        reader.fail();
-        return false;
-    }
-    return true;
-}
-
-bool FakeBatteryService_setBatteryCharge_helper::readCmdTag(yarp::os::idl::WireReader& reader)
+bool FakeBatteryService_setBatteryCharge_helper::Command::readTag(yarp::os::idl::WireReader& reader)
 {
     std::string tag = reader.readTag();
     if (reader.isError()) {
@@ -763,13 +1036,13 @@ bool FakeBatteryService_setBatteryCharge_helper::readCmdTag(yarp::os::idl::WireR
     return true;
 }
 
-bool FakeBatteryService_setBatteryCharge_helper::readCmdArgs(yarp::os::idl::WireReader& reader)
+bool FakeBatteryService_setBatteryCharge_helper::Command::readArgs(yarp::os::idl::WireReader& reader)
 {
     if (reader.noMore()) {
         reader.fail();
         return false;
     }
-    if (!reader.readFloat64(m_charge)) {
+    if (!reader.readFloat64(charge)) {
         reader.fail();
         return false;
     }
@@ -780,7 +1053,19 @@ bool FakeBatteryService_setBatteryCharge_helper::readCmdArgs(yarp::os::idl::Wire
     return true;
 }
 
-bool FakeBatteryService_setBatteryCharge_helper::writeReply(yarp::os::idl::WireWriter& writer) const
+bool FakeBatteryService_setBatteryCharge_helper::Reply::write(yarp::os::ConnectionWriter& connection) const
+{
+    yarp::os::idl::WireWriter writer(connection);
+    return write(writer);
+}
+
+bool FakeBatteryService_setBatteryCharge_helper::Reply::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    return read(reader);
+}
+
+bool FakeBatteryService_setBatteryCharge_helper::Reply::write(const yarp::os::idl::WireWriter& writer) const
 {
     if (!writer.isNull()) {
         if (!writer.writeOnewayResponse()) {
@@ -790,57 +1075,68 @@ bool FakeBatteryService_setBatteryCharge_helper::writeReply(yarp::os::idl::WireW
     return true;
 }
 
-bool FakeBatteryService_setBatteryCharge_helper::readReply(yarp::os::idl::WireReader& reader [[maybe_unused]])
+bool FakeBatteryService_setBatteryCharge_helper::Reply::read(yarp::os::idl::WireReader& reader [[maybe_unused]])
 {
     return true;
 }
 
 void FakeBatteryService_setBatteryCharge_helper::call(FakeBatteryService* ptr) const
 {
-    ptr->setBatteryCharge(m_charge);
+    ptr->setBatteryCharge(cmd.charge);
 }
 
 // setBatteryInfo helper class implementation
 FakeBatteryService_setBatteryInfo_helper::FakeBatteryService_setBatteryInfo_helper(const std::string& info) :
-        m_info{info}
+        cmd{info}
 {
 }
 
 bool FakeBatteryService_setBatteryInfo_helper::write(yarp::os::ConnectionWriter& connection) const
 {
-    yarp::os::idl::WireWriter writer(connection);
-    return writeCmd(writer);
+    return cmd.write(connection);
 }
 
 bool FakeBatteryService_setBatteryInfo_helper::read(yarp::os::ConnectionReader& connection)
 {
-    yarp::os::idl::WireReader reader(connection);
-    return readReply(reader);
+    return reply.read(connection);
 }
 
-bool FakeBatteryService_setBatteryInfo_helper::writeCmd(yarp::os::idl::WireWriter& writer) const
+FakeBatteryService_setBatteryInfo_helper::Command::Command(const std::string& info) :
+        info{info}
 {
-    if (!writeCmdLen(writer)) {
-        return false;
-    }
-    if (!writeCmdTag(writer)) {
-        return false;
-    }
-    if (!writeCmdArgs(writer)) {
-        return false;
-    }
-    return true;
 }
 
-bool FakeBatteryService_setBatteryInfo_helper::writeCmdLen(yarp::os::idl::WireWriter& writer) const
+bool FakeBatteryService_setBatteryInfo_helper::Command::write(yarp::os::ConnectionWriter& connection) const
 {
+    yarp::os::idl::WireWriter writer(connection);
     if (!writer.writeListHeader(s_cmd_len)) {
         return false;
     }
+    return write(writer);
+}
+
+bool FakeBatteryService_setBatteryInfo_helper::Command::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    if (!reader.readListHeader()) {
+        reader.fail();
+        return false;
+    }
+    return read(reader);
+}
+
+bool FakeBatteryService_setBatteryInfo_helper::Command::write(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writeTag(writer)) {
+        return false;
+    }
+    if (!writeArgs(writer)) {
+        return false;
+    }
     return true;
 }
 
-bool FakeBatteryService_setBatteryInfo_helper::writeCmdTag(yarp::os::idl::WireWriter& writer) const
+bool FakeBatteryService_setBatteryInfo_helper::Command::writeTag(const yarp::os::idl::WireWriter& writer) const
 {
     if (!writer.writeTag(s_tag, 1, s_tag_len)) {
         return false;
@@ -848,38 +1144,26 @@ bool FakeBatteryService_setBatteryInfo_helper::writeCmdTag(yarp::os::idl::WireWr
     return true;
 }
 
-bool FakeBatteryService_setBatteryInfo_helper::writeCmdArgs(yarp::os::idl::WireWriter& writer [[maybe_unused]]) const
+bool FakeBatteryService_setBatteryInfo_helper::Command::writeArgs(const yarp::os::idl::WireWriter& writer) const
 {
-    if (!writer.writeString(m_info)) {
+    if (!writer.writeString(info)) {
         return false;
     }
     return true;
 }
 
-bool FakeBatteryService_setBatteryInfo_helper::readCmd(yarp::os::idl::WireReader& reader)
+bool FakeBatteryService_setBatteryInfo_helper::Command::read(yarp::os::idl::WireReader& reader)
 {
-    if (!readCmdLen(reader)) {
+    if (!readTag(reader)) {
         return false;
     }
-    if (!readCmdTag(reader)) {
-        return false;
-    }
-    if (!readCmdArgs(reader)) {
+    if (!readArgs(reader)) {
         return false;
     }
     return true;
 }
 
-bool FakeBatteryService_setBatteryInfo_helper::readCmdLen(yarp::os::idl::WireReader& reader)
-{
-    if (!reader.readListHeader()) {
-        reader.fail();
-        return false;
-    }
-    return true;
-}
-
-bool FakeBatteryService_setBatteryInfo_helper::readCmdTag(yarp::os::idl::WireReader& reader)
+bool FakeBatteryService_setBatteryInfo_helper::Command::readTag(yarp::os::idl::WireReader& reader)
 {
     std::string tag = reader.readTag();
     if (reader.isError()) {
@@ -892,13 +1176,13 @@ bool FakeBatteryService_setBatteryInfo_helper::readCmdTag(yarp::os::idl::WireRea
     return true;
 }
 
-bool FakeBatteryService_setBatteryInfo_helper::readCmdArgs(yarp::os::idl::WireReader& reader)
+bool FakeBatteryService_setBatteryInfo_helper::Command::readArgs(yarp::os::idl::WireReader& reader)
 {
     if (reader.noMore()) {
         reader.fail();
         return false;
     }
-    if (!reader.readString(m_info)) {
+    if (!reader.readString(info)) {
         reader.fail();
         return false;
     }
@@ -909,7 +1193,19 @@ bool FakeBatteryService_setBatteryInfo_helper::readCmdArgs(yarp::os::idl::WireRe
     return true;
 }
 
-bool FakeBatteryService_setBatteryInfo_helper::writeReply(yarp::os::idl::WireWriter& writer) const
+bool FakeBatteryService_setBatteryInfo_helper::Reply::write(yarp::os::ConnectionWriter& connection) const
+{
+    yarp::os::idl::WireWriter writer(connection);
+    return write(writer);
+}
+
+bool FakeBatteryService_setBatteryInfo_helper::Reply::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    return read(reader);
+}
+
+bool FakeBatteryService_setBatteryInfo_helper::Reply::write(const yarp::os::idl::WireWriter& writer) const
 {
     if (!writer.isNull()) {
         if (!writer.writeOnewayResponse()) {
@@ -919,57 +1215,68 @@ bool FakeBatteryService_setBatteryInfo_helper::writeReply(yarp::os::idl::WireWri
     return true;
 }
 
-bool FakeBatteryService_setBatteryInfo_helper::readReply(yarp::os::idl::WireReader& reader [[maybe_unused]])
+bool FakeBatteryService_setBatteryInfo_helper::Reply::read(yarp::os::idl::WireReader& reader [[maybe_unused]])
 {
     return true;
 }
 
 void FakeBatteryService_setBatteryInfo_helper::call(FakeBatteryService* ptr) const
 {
-    ptr->setBatteryInfo(m_info);
+    ptr->setBatteryInfo(cmd.info);
 }
 
 // setBatteryTemperature helper class implementation
 FakeBatteryService_setBatteryTemperature_helper::FakeBatteryService_setBatteryTemperature_helper(const double temperature) :
-        m_temperature{temperature}
+        cmd{temperature}
 {
 }
 
 bool FakeBatteryService_setBatteryTemperature_helper::write(yarp::os::ConnectionWriter& connection) const
 {
-    yarp::os::idl::WireWriter writer(connection);
-    return writeCmd(writer);
+    return cmd.write(connection);
 }
 
 bool FakeBatteryService_setBatteryTemperature_helper::read(yarp::os::ConnectionReader& connection)
 {
-    yarp::os::idl::WireReader reader(connection);
-    return readReply(reader);
+    return reply.read(connection);
 }
 
-bool FakeBatteryService_setBatteryTemperature_helper::writeCmd(yarp::os::idl::WireWriter& writer) const
+FakeBatteryService_setBatteryTemperature_helper::Command::Command(const double temperature) :
+        temperature{temperature}
 {
-    if (!writeCmdLen(writer)) {
-        return false;
-    }
-    if (!writeCmdTag(writer)) {
-        return false;
-    }
-    if (!writeCmdArgs(writer)) {
-        return false;
-    }
-    return true;
 }
 
-bool FakeBatteryService_setBatteryTemperature_helper::writeCmdLen(yarp::os::idl::WireWriter& writer) const
+bool FakeBatteryService_setBatteryTemperature_helper::Command::write(yarp::os::ConnectionWriter& connection) const
 {
+    yarp::os::idl::WireWriter writer(connection);
     if (!writer.writeListHeader(s_cmd_len)) {
         return false;
     }
+    return write(writer);
+}
+
+bool FakeBatteryService_setBatteryTemperature_helper::Command::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    if (!reader.readListHeader()) {
+        reader.fail();
+        return false;
+    }
+    return read(reader);
+}
+
+bool FakeBatteryService_setBatteryTemperature_helper::Command::write(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writeTag(writer)) {
+        return false;
+    }
+    if (!writeArgs(writer)) {
+        return false;
+    }
     return true;
 }
 
-bool FakeBatteryService_setBatteryTemperature_helper::writeCmdTag(yarp::os::idl::WireWriter& writer) const
+bool FakeBatteryService_setBatteryTemperature_helper::Command::writeTag(const yarp::os::idl::WireWriter& writer) const
 {
     if (!writer.writeTag(s_tag, 1, s_tag_len)) {
         return false;
@@ -977,38 +1284,26 @@ bool FakeBatteryService_setBatteryTemperature_helper::writeCmdTag(yarp::os::idl:
     return true;
 }
 
-bool FakeBatteryService_setBatteryTemperature_helper::writeCmdArgs(yarp::os::idl::WireWriter& writer [[maybe_unused]]) const
+bool FakeBatteryService_setBatteryTemperature_helper::Command::writeArgs(const yarp::os::idl::WireWriter& writer) const
 {
-    if (!writer.writeFloat64(m_temperature)) {
+    if (!writer.writeFloat64(temperature)) {
         return false;
     }
     return true;
 }
 
-bool FakeBatteryService_setBatteryTemperature_helper::readCmd(yarp::os::idl::WireReader& reader)
+bool FakeBatteryService_setBatteryTemperature_helper::Command::read(yarp::os::idl::WireReader& reader)
 {
-    if (!readCmdLen(reader)) {
+    if (!readTag(reader)) {
         return false;
     }
-    if (!readCmdTag(reader)) {
-        return false;
-    }
-    if (!readCmdArgs(reader)) {
+    if (!readArgs(reader)) {
         return false;
     }
     return true;
 }
 
-bool FakeBatteryService_setBatteryTemperature_helper::readCmdLen(yarp::os::idl::WireReader& reader)
-{
-    if (!reader.readListHeader()) {
-        reader.fail();
-        return false;
-    }
-    return true;
-}
-
-bool FakeBatteryService_setBatteryTemperature_helper::readCmdTag(yarp::os::idl::WireReader& reader)
+bool FakeBatteryService_setBatteryTemperature_helper::Command::readTag(yarp::os::idl::WireReader& reader)
 {
     std::string tag = reader.readTag();
     if (reader.isError()) {
@@ -1021,13 +1316,13 @@ bool FakeBatteryService_setBatteryTemperature_helper::readCmdTag(yarp::os::idl::
     return true;
 }
 
-bool FakeBatteryService_setBatteryTemperature_helper::readCmdArgs(yarp::os::idl::WireReader& reader)
+bool FakeBatteryService_setBatteryTemperature_helper::Command::readArgs(yarp::os::idl::WireReader& reader)
 {
     if (reader.noMore()) {
         reader.fail();
         return false;
     }
-    if (!reader.readFloat64(m_temperature)) {
+    if (!reader.readFloat64(temperature)) {
         reader.fail();
         return false;
     }
@@ -1038,7 +1333,19 @@ bool FakeBatteryService_setBatteryTemperature_helper::readCmdArgs(yarp::os::idl:
     return true;
 }
 
-bool FakeBatteryService_setBatteryTemperature_helper::writeReply(yarp::os::idl::WireWriter& writer) const
+bool FakeBatteryService_setBatteryTemperature_helper::Reply::write(yarp::os::ConnectionWriter& connection) const
+{
+    yarp::os::idl::WireWriter writer(connection);
+    return write(writer);
+}
+
+bool FakeBatteryService_setBatteryTemperature_helper::Reply::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    return read(reader);
+}
+
+bool FakeBatteryService_setBatteryTemperature_helper::Reply::write(const yarp::os::idl::WireWriter& writer) const
 {
     if (!writer.isNull()) {
         if (!writer.writeOnewayResponse()) {
@@ -1048,52 +1355,58 @@ bool FakeBatteryService_setBatteryTemperature_helper::writeReply(yarp::os::idl::
     return true;
 }
 
-bool FakeBatteryService_setBatteryTemperature_helper::readReply(yarp::os::idl::WireReader& reader [[maybe_unused]])
+bool FakeBatteryService_setBatteryTemperature_helper::Reply::read(yarp::os::idl::WireReader& reader [[maybe_unused]])
 {
     return true;
 }
 
 void FakeBatteryService_setBatteryTemperature_helper::call(FakeBatteryService* ptr) const
 {
-    ptr->setBatteryTemperature(m_temperature);
+    ptr->setBatteryTemperature(cmd.temperature);
 }
 
 // getBatteryVoltage helper class implementation
 bool FakeBatteryService_getBatteryVoltage_helper::write(yarp::os::ConnectionWriter& connection) const
 {
-    yarp::os::idl::WireWriter writer(connection);
-    return writeCmd(writer);
+    return cmd.write(connection);
 }
 
 bool FakeBatteryService_getBatteryVoltage_helper::read(yarp::os::ConnectionReader& connection)
 {
-    yarp::os::idl::WireReader reader(connection);
-    return readReply(reader);
+    return reply.read(connection);
 }
 
-bool FakeBatteryService_getBatteryVoltage_helper::writeCmd(yarp::os::idl::WireWriter& writer) const
+bool FakeBatteryService_getBatteryVoltage_helper::Command::write(yarp::os::ConnectionWriter& connection) const
 {
-    if (!writeCmdLen(writer)) {
-        return false;
-    }
-    if (!writeCmdTag(writer)) {
-        return false;
-    }
-    if (!writeCmdArgs(writer)) {
-        return false;
-    }
-    return true;
-}
-
-bool FakeBatteryService_getBatteryVoltage_helper::writeCmdLen(yarp::os::idl::WireWriter& writer) const
-{
+    yarp::os::idl::WireWriter writer(connection);
     if (!writer.writeListHeader(s_cmd_len)) {
         return false;
     }
+    return write(writer);
+}
+
+bool FakeBatteryService_getBatteryVoltage_helper::Command::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    if (!reader.readListHeader()) {
+        reader.fail();
+        return false;
+    }
+    return read(reader);
+}
+
+bool FakeBatteryService_getBatteryVoltage_helper::Command::write(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writeTag(writer)) {
+        return false;
+    }
+    if (!writeArgs(writer)) {
+        return false;
+    }
     return true;
 }
 
-bool FakeBatteryService_getBatteryVoltage_helper::writeCmdTag(yarp::os::idl::WireWriter& writer) const
+bool FakeBatteryService_getBatteryVoltage_helper::Command::writeTag(const yarp::os::idl::WireWriter& writer) const
 {
     if (!writer.writeTag(s_tag, 1, s_tag_len)) {
         return false;
@@ -1101,35 +1414,23 @@ bool FakeBatteryService_getBatteryVoltage_helper::writeCmdTag(yarp::os::idl::Wir
     return true;
 }
 
-bool FakeBatteryService_getBatteryVoltage_helper::writeCmdArgs(yarp::os::idl::WireWriter& writer [[maybe_unused]]) const
+bool FakeBatteryService_getBatteryVoltage_helper::Command::writeArgs(const yarp::os::idl::WireWriter& writer [[maybe_unused]]) const
 {
     return true;
 }
 
-bool FakeBatteryService_getBatteryVoltage_helper::readCmd(yarp::os::idl::WireReader& reader)
+bool FakeBatteryService_getBatteryVoltage_helper::Command::read(yarp::os::idl::WireReader& reader)
 {
-    if (!readCmdLen(reader)) {
+    if (!readTag(reader)) {
         return false;
     }
-    if (!readCmdTag(reader)) {
-        return false;
-    }
-    if (!readCmdArgs(reader)) {
-        return false;
-    }
-    return true;
-}
-
-bool FakeBatteryService_getBatteryVoltage_helper::readCmdLen(yarp::os::idl::WireReader& reader)
-{
-    if (!reader.readListHeader()) {
-        reader.fail();
+    if (!readArgs(reader)) {
         return false;
     }
     return true;
 }
 
-bool FakeBatteryService_getBatteryVoltage_helper::readCmdTag(yarp::os::idl::WireReader& reader)
+bool FakeBatteryService_getBatteryVoltage_helper::Command::readTag(yarp::os::idl::WireReader& reader)
 {
     std::string tag = reader.readTag();
     if (reader.isError()) {
@@ -1142,7 +1443,7 @@ bool FakeBatteryService_getBatteryVoltage_helper::readCmdTag(yarp::os::idl::Wire
     return true;
 }
 
-bool FakeBatteryService_getBatteryVoltage_helper::readCmdArgs(yarp::os::idl::WireReader& reader)
+bool FakeBatteryService_getBatteryVoltage_helper::Command::readArgs(yarp::os::idl::WireReader& reader)
 {
     if (!reader.noMore()) {
         reader.fail();
@@ -1151,20 +1452,32 @@ bool FakeBatteryService_getBatteryVoltage_helper::readCmdArgs(yarp::os::idl::Wir
     return true;
 }
 
-bool FakeBatteryService_getBatteryVoltage_helper::writeReply(yarp::os::idl::WireWriter& writer) const
+bool FakeBatteryService_getBatteryVoltage_helper::Reply::write(yarp::os::ConnectionWriter& connection) const
+{
+    yarp::os::idl::WireWriter writer(connection);
+    return write(writer);
+}
+
+bool FakeBatteryService_getBatteryVoltage_helper::Reply::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    return read(reader);
+}
+
+bool FakeBatteryService_getBatteryVoltage_helper::Reply::write(const yarp::os::idl::WireWriter& writer) const
 {
     if (!writer.isNull()) {
         if (!writer.writeListHeader(s_reply_len)) {
             return false;
         }
-        if (!writer.writeFloat64(m_return_helper)) {
+        if (!writer.writeFloat64(return_helper)) {
             return false;
         }
     }
     return true;
 }
 
-bool FakeBatteryService_getBatteryVoltage_helper::readReply(yarp::os::idl::WireReader& reader [[maybe_unused]])
+bool FakeBatteryService_getBatteryVoltage_helper::Reply::read(yarp::os::idl::WireReader& reader)
 {
     if (!reader.readListReturn()) {
         return false;
@@ -1173,7 +1486,7 @@ bool FakeBatteryService_getBatteryVoltage_helper::readReply(yarp::os::idl::WireR
         reader.fail();
         return false;
     }
-    if (!reader.readFloat64(m_return_helper)) {
+    if (!reader.readFloat64(return_helper)) {
         reader.fail();
         return false;
     }
@@ -1182,45 +1495,51 @@ bool FakeBatteryService_getBatteryVoltage_helper::readReply(yarp::os::idl::WireR
 
 void FakeBatteryService_getBatteryVoltage_helper::call(FakeBatteryService* ptr)
 {
-    m_return_helper = ptr->getBatteryVoltage();
+    reply.return_helper = ptr->getBatteryVoltage();
 }
 
 // getBatteryCurrent helper class implementation
 bool FakeBatteryService_getBatteryCurrent_helper::write(yarp::os::ConnectionWriter& connection) const
 {
-    yarp::os::idl::WireWriter writer(connection);
-    return writeCmd(writer);
+    return cmd.write(connection);
 }
 
 bool FakeBatteryService_getBatteryCurrent_helper::read(yarp::os::ConnectionReader& connection)
 {
-    yarp::os::idl::WireReader reader(connection);
-    return readReply(reader);
+    return reply.read(connection);
 }
 
-bool FakeBatteryService_getBatteryCurrent_helper::writeCmd(yarp::os::idl::WireWriter& writer) const
+bool FakeBatteryService_getBatteryCurrent_helper::Command::write(yarp::os::ConnectionWriter& connection) const
 {
-    if (!writeCmdLen(writer)) {
-        return false;
-    }
-    if (!writeCmdTag(writer)) {
-        return false;
-    }
-    if (!writeCmdArgs(writer)) {
-        return false;
-    }
-    return true;
-}
-
-bool FakeBatteryService_getBatteryCurrent_helper::writeCmdLen(yarp::os::idl::WireWriter& writer) const
-{
+    yarp::os::idl::WireWriter writer(connection);
     if (!writer.writeListHeader(s_cmd_len)) {
         return false;
     }
+    return write(writer);
+}
+
+bool FakeBatteryService_getBatteryCurrent_helper::Command::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    if (!reader.readListHeader()) {
+        reader.fail();
+        return false;
+    }
+    return read(reader);
+}
+
+bool FakeBatteryService_getBatteryCurrent_helper::Command::write(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writeTag(writer)) {
+        return false;
+    }
+    if (!writeArgs(writer)) {
+        return false;
+    }
     return true;
 }
 
-bool FakeBatteryService_getBatteryCurrent_helper::writeCmdTag(yarp::os::idl::WireWriter& writer) const
+bool FakeBatteryService_getBatteryCurrent_helper::Command::writeTag(const yarp::os::idl::WireWriter& writer) const
 {
     if (!writer.writeTag(s_tag, 1, s_tag_len)) {
         return false;
@@ -1228,35 +1547,23 @@ bool FakeBatteryService_getBatteryCurrent_helper::writeCmdTag(yarp::os::idl::Wir
     return true;
 }
 
-bool FakeBatteryService_getBatteryCurrent_helper::writeCmdArgs(yarp::os::idl::WireWriter& writer [[maybe_unused]]) const
+bool FakeBatteryService_getBatteryCurrent_helper::Command::writeArgs(const yarp::os::idl::WireWriter& writer [[maybe_unused]]) const
 {
     return true;
 }
 
-bool FakeBatteryService_getBatteryCurrent_helper::readCmd(yarp::os::idl::WireReader& reader)
+bool FakeBatteryService_getBatteryCurrent_helper::Command::read(yarp::os::idl::WireReader& reader)
 {
-    if (!readCmdLen(reader)) {
+    if (!readTag(reader)) {
         return false;
     }
-    if (!readCmdTag(reader)) {
-        return false;
-    }
-    if (!readCmdArgs(reader)) {
-        return false;
-    }
-    return true;
-}
-
-bool FakeBatteryService_getBatteryCurrent_helper::readCmdLen(yarp::os::idl::WireReader& reader)
-{
-    if (!reader.readListHeader()) {
-        reader.fail();
+    if (!readArgs(reader)) {
         return false;
     }
     return true;
 }
 
-bool FakeBatteryService_getBatteryCurrent_helper::readCmdTag(yarp::os::idl::WireReader& reader)
+bool FakeBatteryService_getBatteryCurrent_helper::Command::readTag(yarp::os::idl::WireReader& reader)
 {
     std::string tag = reader.readTag();
     if (reader.isError()) {
@@ -1269,7 +1576,7 @@ bool FakeBatteryService_getBatteryCurrent_helper::readCmdTag(yarp::os::idl::Wire
     return true;
 }
 
-bool FakeBatteryService_getBatteryCurrent_helper::readCmdArgs(yarp::os::idl::WireReader& reader)
+bool FakeBatteryService_getBatteryCurrent_helper::Command::readArgs(yarp::os::idl::WireReader& reader)
 {
     if (!reader.noMore()) {
         reader.fail();
@@ -1278,20 +1585,32 @@ bool FakeBatteryService_getBatteryCurrent_helper::readCmdArgs(yarp::os::idl::Wir
     return true;
 }
 
-bool FakeBatteryService_getBatteryCurrent_helper::writeReply(yarp::os::idl::WireWriter& writer) const
+bool FakeBatteryService_getBatteryCurrent_helper::Reply::write(yarp::os::ConnectionWriter& connection) const
+{
+    yarp::os::idl::WireWriter writer(connection);
+    return write(writer);
+}
+
+bool FakeBatteryService_getBatteryCurrent_helper::Reply::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    return read(reader);
+}
+
+bool FakeBatteryService_getBatteryCurrent_helper::Reply::write(const yarp::os::idl::WireWriter& writer) const
 {
     if (!writer.isNull()) {
         if (!writer.writeListHeader(s_reply_len)) {
             return false;
         }
-        if (!writer.writeFloat64(m_return_helper)) {
+        if (!writer.writeFloat64(return_helper)) {
             return false;
         }
     }
     return true;
 }
 
-bool FakeBatteryService_getBatteryCurrent_helper::readReply(yarp::os::idl::WireReader& reader [[maybe_unused]])
+bool FakeBatteryService_getBatteryCurrent_helper::Reply::read(yarp::os::idl::WireReader& reader)
 {
     if (!reader.readListReturn()) {
         return false;
@@ -1300,7 +1619,7 @@ bool FakeBatteryService_getBatteryCurrent_helper::readReply(yarp::os::idl::WireR
         reader.fail();
         return false;
     }
-    if (!reader.readFloat64(m_return_helper)) {
+    if (!reader.readFloat64(return_helper)) {
         reader.fail();
         return false;
     }
@@ -1309,45 +1628,51 @@ bool FakeBatteryService_getBatteryCurrent_helper::readReply(yarp::os::idl::WireR
 
 void FakeBatteryService_getBatteryCurrent_helper::call(FakeBatteryService* ptr)
 {
-    m_return_helper = ptr->getBatteryCurrent();
+    reply.return_helper = ptr->getBatteryCurrent();
 }
 
 // getBatteryCharge helper class implementation
 bool FakeBatteryService_getBatteryCharge_helper::write(yarp::os::ConnectionWriter& connection) const
 {
-    yarp::os::idl::WireWriter writer(connection);
-    return writeCmd(writer);
+    return cmd.write(connection);
 }
 
 bool FakeBatteryService_getBatteryCharge_helper::read(yarp::os::ConnectionReader& connection)
 {
-    yarp::os::idl::WireReader reader(connection);
-    return readReply(reader);
+    return reply.read(connection);
 }
 
-bool FakeBatteryService_getBatteryCharge_helper::writeCmd(yarp::os::idl::WireWriter& writer) const
+bool FakeBatteryService_getBatteryCharge_helper::Command::write(yarp::os::ConnectionWriter& connection) const
 {
-    if (!writeCmdLen(writer)) {
-        return false;
-    }
-    if (!writeCmdTag(writer)) {
-        return false;
-    }
-    if (!writeCmdArgs(writer)) {
-        return false;
-    }
-    return true;
-}
-
-bool FakeBatteryService_getBatteryCharge_helper::writeCmdLen(yarp::os::idl::WireWriter& writer) const
-{
+    yarp::os::idl::WireWriter writer(connection);
     if (!writer.writeListHeader(s_cmd_len)) {
         return false;
     }
+    return write(writer);
+}
+
+bool FakeBatteryService_getBatteryCharge_helper::Command::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    if (!reader.readListHeader()) {
+        reader.fail();
+        return false;
+    }
+    return read(reader);
+}
+
+bool FakeBatteryService_getBatteryCharge_helper::Command::write(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writeTag(writer)) {
+        return false;
+    }
+    if (!writeArgs(writer)) {
+        return false;
+    }
     return true;
 }
 
-bool FakeBatteryService_getBatteryCharge_helper::writeCmdTag(yarp::os::idl::WireWriter& writer) const
+bool FakeBatteryService_getBatteryCharge_helper::Command::writeTag(const yarp::os::idl::WireWriter& writer) const
 {
     if (!writer.writeTag(s_tag, 1, s_tag_len)) {
         return false;
@@ -1355,35 +1680,23 @@ bool FakeBatteryService_getBatteryCharge_helper::writeCmdTag(yarp::os::idl::Wire
     return true;
 }
 
-bool FakeBatteryService_getBatteryCharge_helper::writeCmdArgs(yarp::os::idl::WireWriter& writer [[maybe_unused]]) const
+bool FakeBatteryService_getBatteryCharge_helper::Command::writeArgs(const yarp::os::idl::WireWriter& writer [[maybe_unused]]) const
 {
     return true;
 }
 
-bool FakeBatteryService_getBatteryCharge_helper::readCmd(yarp::os::idl::WireReader& reader)
+bool FakeBatteryService_getBatteryCharge_helper::Command::read(yarp::os::idl::WireReader& reader)
 {
-    if (!readCmdLen(reader)) {
+    if (!readTag(reader)) {
         return false;
     }
-    if (!readCmdTag(reader)) {
-        return false;
-    }
-    if (!readCmdArgs(reader)) {
-        return false;
-    }
-    return true;
-}
-
-bool FakeBatteryService_getBatteryCharge_helper::readCmdLen(yarp::os::idl::WireReader& reader)
-{
-    if (!reader.readListHeader()) {
-        reader.fail();
+    if (!readArgs(reader)) {
         return false;
     }
     return true;
 }
 
-bool FakeBatteryService_getBatteryCharge_helper::readCmdTag(yarp::os::idl::WireReader& reader)
+bool FakeBatteryService_getBatteryCharge_helper::Command::readTag(yarp::os::idl::WireReader& reader)
 {
     std::string tag = reader.readTag();
     if (reader.isError()) {
@@ -1396,7 +1709,7 @@ bool FakeBatteryService_getBatteryCharge_helper::readCmdTag(yarp::os::idl::WireR
     return true;
 }
 
-bool FakeBatteryService_getBatteryCharge_helper::readCmdArgs(yarp::os::idl::WireReader& reader)
+bool FakeBatteryService_getBatteryCharge_helper::Command::readArgs(yarp::os::idl::WireReader& reader)
 {
     if (!reader.noMore()) {
         reader.fail();
@@ -1405,20 +1718,32 @@ bool FakeBatteryService_getBatteryCharge_helper::readCmdArgs(yarp::os::idl::Wire
     return true;
 }
 
-bool FakeBatteryService_getBatteryCharge_helper::writeReply(yarp::os::idl::WireWriter& writer) const
+bool FakeBatteryService_getBatteryCharge_helper::Reply::write(yarp::os::ConnectionWriter& connection) const
+{
+    yarp::os::idl::WireWriter writer(connection);
+    return write(writer);
+}
+
+bool FakeBatteryService_getBatteryCharge_helper::Reply::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    return read(reader);
+}
+
+bool FakeBatteryService_getBatteryCharge_helper::Reply::write(const yarp::os::idl::WireWriter& writer) const
 {
     if (!writer.isNull()) {
         if (!writer.writeListHeader(s_reply_len)) {
             return false;
         }
-        if (!writer.writeFloat64(m_return_helper)) {
+        if (!writer.writeFloat64(return_helper)) {
             return false;
         }
     }
     return true;
 }
 
-bool FakeBatteryService_getBatteryCharge_helper::readReply(yarp::os::idl::WireReader& reader [[maybe_unused]])
+bool FakeBatteryService_getBatteryCharge_helper::Reply::read(yarp::os::idl::WireReader& reader)
 {
     if (!reader.readListReturn()) {
         return false;
@@ -1427,7 +1752,7 @@ bool FakeBatteryService_getBatteryCharge_helper::readReply(yarp::os::idl::WireRe
         reader.fail();
         return false;
     }
-    if (!reader.readFloat64(m_return_helper)) {
+    if (!reader.readFloat64(return_helper)) {
         reader.fail();
         return false;
     }
@@ -1436,45 +1761,51 @@ bool FakeBatteryService_getBatteryCharge_helper::readReply(yarp::os::idl::WireRe
 
 void FakeBatteryService_getBatteryCharge_helper::call(FakeBatteryService* ptr)
 {
-    m_return_helper = ptr->getBatteryCharge();
+    reply.return_helper = ptr->getBatteryCharge();
 }
 
 // getBatteryStatus helper class implementation
 bool FakeBatteryService_getBatteryStatus_helper::write(yarp::os::ConnectionWriter& connection) const
 {
-    yarp::os::idl::WireWriter writer(connection);
-    return writeCmd(writer);
+    return cmd.write(connection);
 }
 
 bool FakeBatteryService_getBatteryStatus_helper::read(yarp::os::ConnectionReader& connection)
 {
-    yarp::os::idl::WireReader reader(connection);
-    return readReply(reader);
+    return reply.read(connection);
 }
 
-bool FakeBatteryService_getBatteryStatus_helper::writeCmd(yarp::os::idl::WireWriter& writer) const
+bool FakeBatteryService_getBatteryStatus_helper::Command::write(yarp::os::ConnectionWriter& connection) const
 {
-    if (!writeCmdLen(writer)) {
-        return false;
-    }
-    if (!writeCmdTag(writer)) {
-        return false;
-    }
-    if (!writeCmdArgs(writer)) {
-        return false;
-    }
-    return true;
-}
-
-bool FakeBatteryService_getBatteryStatus_helper::writeCmdLen(yarp::os::idl::WireWriter& writer) const
-{
+    yarp::os::idl::WireWriter writer(connection);
     if (!writer.writeListHeader(s_cmd_len)) {
         return false;
     }
+    return write(writer);
+}
+
+bool FakeBatteryService_getBatteryStatus_helper::Command::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    if (!reader.readListHeader()) {
+        reader.fail();
+        return false;
+    }
+    return read(reader);
+}
+
+bool FakeBatteryService_getBatteryStatus_helper::Command::write(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writeTag(writer)) {
+        return false;
+    }
+    if (!writeArgs(writer)) {
+        return false;
+    }
     return true;
 }
 
-bool FakeBatteryService_getBatteryStatus_helper::writeCmdTag(yarp::os::idl::WireWriter& writer) const
+bool FakeBatteryService_getBatteryStatus_helper::Command::writeTag(const yarp::os::idl::WireWriter& writer) const
 {
     if (!writer.writeTag(s_tag, 1, s_tag_len)) {
         return false;
@@ -1482,35 +1813,23 @@ bool FakeBatteryService_getBatteryStatus_helper::writeCmdTag(yarp::os::idl::Wire
     return true;
 }
 
-bool FakeBatteryService_getBatteryStatus_helper::writeCmdArgs(yarp::os::idl::WireWriter& writer [[maybe_unused]]) const
+bool FakeBatteryService_getBatteryStatus_helper::Command::writeArgs(const yarp::os::idl::WireWriter& writer [[maybe_unused]]) const
 {
     return true;
 }
 
-bool FakeBatteryService_getBatteryStatus_helper::readCmd(yarp::os::idl::WireReader& reader)
+bool FakeBatteryService_getBatteryStatus_helper::Command::read(yarp::os::idl::WireReader& reader)
 {
-    if (!readCmdLen(reader)) {
+    if (!readTag(reader)) {
         return false;
     }
-    if (!readCmdTag(reader)) {
-        return false;
-    }
-    if (!readCmdArgs(reader)) {
-        return false;
-    }
-    return true;
-}
-
-bool FakeBatteryService_getBatteryStatus_helper::readCmdLen(yarp::os::idl::WireReader& reader)
-{
-    if (!reader.readListHeader()) {
-        reader.fail();
+    if (!readArgs(reader)) {
         return false;
     }
     return true;
 }
 
-bool FakeBatteryService_getBatteryStatus_helper::readCmdTag(yarp::os::idl::WireReader& reader)
+bool FakeBatteryService_getBatteryStatus_helper::Command::readTag(yarp::os::idl::WireReader& reader)
 {
     std::string tag = reader.readTag();
     if (reader.isError()) {
@@ -1523,7 +1842,7 @@ bool FakeBatteryService_getBatteryStatus_helper::readCmdTag(yarp::os::idl::WireR
     return true;
 }
 
-bool FakeBatteryService_getBatteryStatus_helper::readCmdArgs(yarp::os::idl::WireReader& reader)
+bool FakeBatteryService_getBatteryStatus_helper::Command::readArgs(yarp::os::idl::WireReader& reader)
 {
     if (!reader.noMore()) {
         reader.fail();
@@ -1532,20 +1851,32 @@ bool FakeBatteryService_getBatteryStatus_helper::readCmdArgs(yarp::os::idl::Wire
     return true;
 }
 
-bool FakeBatteryService_getBatteryStatus_helper::writeReply(yarp::os::idl::WireWriter& writer) const
+bool FakeBatteryService_getBatteryStatus_helper::Reply::write(yarp::os::ConnectionWriter& connection) const
+{
+    yarp::os::idl::WireWriter writer(connection);
+    return write(writer);
+}
+
+bool FakeBatteryService_getBatteryStatus_helper::Reply::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    return read(reader);
+}
+
+bool FakeBatteryService_getBatteryStatus_helper::Reply::write(const yarp::os::idl::WireWriter& writer) const
 {
     if (!writer.isNull()) {
         if (!writer.writeListHeader(s_reply_len)) {
             return false;
         }
-        if (!writer.writeString(m_return_helper)) {
+        if (!writer.writeString(return_helper)) {
             return false;
         }
     }
     return true;
 }
 
-bool FakeBatteryService_getBatteryStatus_helper::readReply(yarp::os::idl::WireReader& reader [[maybe_unused]])
+bool FakeBatteryService_getBatteryStatus_helper::Reply::read(yarp::os::idl::WireReader& reader)
 {
     if (!reader.readListReturn()) {
         return false;
@@ -1554,7 +1885,7 @@ bool FakeBatteryService_getBatteryStatus_helper::readReply(yarp::os::idl::WireRe
         reader.fail();
         return false;
     }
-    if (!reader.readString(m_return_helper)) {
+    if (!reader.readString(return_helper)) {
         reader.fail();
         return false;
     }
@@ -1563,45 +1894,51 @@ bool FakeBatteryService_getBatteryStatus_helper::readReply(yarp::os::idl::WireRe
 
 void FakeBatteryService_getBatteryStatus_helper::call(FakeBatteryService* ptr)
 {
-    m_return_helper = ptr->getBatteryStatus();
+    reply.return_helper = ptr->getBatteryStatus();
 }
 
 // getBatteryInfo helper class implementation
 bool FakeBatteryService_getBatteryInfo_helper::write(yarp::os::ConnectionWriter& connection) const
 {
-    yarp::os::idl::WireWriter writer(connection);
-    return writeCmd(writer);
+    return cmd.write(connection);
 }
 
 bool FakeBatteryService_getBatteryInfo_helper::read(yarp::os::ConnectionReader& connection)
 {
-    yarp::os::idl::WireReader reader(connection);
-    return readReply(reader);
+    return reply.read(connection);
 }
 
-bool FakeBatteryService_getBatteryInfo_helper::writeCmd(yarp::os::idl::WireWriter& writer) const
+bool FakeBatteryService_getBatteryInfo_helper::Command::write(yarp::os::ConnectionWriter& connection) const
 {
-    if (!writeCmdLen(writer)) {
-        return false;
-    }
-    if (!writeCmdTag(writer)) {
-        return false;
-    }
-    if (!writeCmdArgs(writer)) {
-        return false;
-    }
-    return true;
-}
-
-bool FakeBatteryService_getBatteryInfo_helper::writeCmdLen(yarp::os::idl::WireWriter& writer) const
-{
+    yarp::os::idl::WireWriter writer(connection);
     if (!writer.writeListHeader(s_cmd_len)) {
         return false;
     }
+    return write(writer);
+}
+
+bool FakeBatteryService_getBatteryInfo_helper::Command::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    if (!reader.readListHeader()) {
+        reader.fail();
+        return false;
+    }
+    return read(reader);
+}
+
+bool FakeBatteryService_getBatteryInfo_helper::Command::write(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writeTag(writer)) {
+        return false;
+    }
+    if (!writeArgs(writer)) {
+        return false;
+    }
     return true;
 }
 
-bool FakeBatteryService_getBatteryInfo_helper::writeCmdTag(yarp::os::idl::WireWriter& writer) const
+bool FakeBatteryService_getBatteryInfo_helper::Command::writeTag(const yarp::os::idl::WireWriter& writer) const
 {
     if (!writer.writeTag(s_tag, 1, s_tag_len)) {
         return false;
@@ -1609,35 +1946,23 @@ bool FakeBatteryService_getBatteryInfo_helper::writeCmdTag(yarp::os::idl::WireWr
     return true;
 }
 
-bool FakeBatteryService_getBatteryInfo_helper::writeCmdArgs(yarp::os::idl::WireWriter& writer [[maybe_unused]]) const
+bool FakeBatteryService_getBatteryInfo_helper::Command::writeArgs(const yarp::os::idl::WireWriter& writer [[maybe_unused]]) const
 {
     return true;
 }
 
-bool FakeBatteryService_getBatteryInfo_helper::readCmd(yarp::os::idl::WireReader& reader)
+bool FakeBatteryService_getBatteryInfo_helper::Command::read(yarp::os::idl::WireReader& reader)
 {
-    if (!readCmdLen(reader)) {
+    if (!readTag(reader)) {
         return false;
     }
-    if (!readCmdTag(reader)) {
-        return false;
-    }
-    if (!readCmdArgs(reader)) {
-        return false;
-    }
-    return true;
-}
-
-bool FakeBatteryService_getBatteryInfo_helper::readCmdLen(yarp::os::idl::WireReader& reader)
-{
-    if (!reader.readListHeader()) {
-        reader.fail();
+    if (!readArgs(reader)) {
         return false;
     }
     return true;
 }
 
-bool FakeBatteryService_getBatteryInfo_helper::readCmdTag(yarp::os::idl::WireReader& reader)
+bool FakeBatteryService_getBatteryInfo_helper::Command::readTag(yarp::os::idl::WireReader& reader)
 {
     std::string tag = reader.readTag();
     if (reader.isError()) {
@@ -1650,7 +1975,7 @@ bool FakeBatteryService_getBatteryInfo_helper::readCmdTag(yarp::os::idl::WireRea
     return true;
 }
 
-bool FakeBatteryService_getBatteryInfo_helper::readCmdArgs(yarp::os::idl::WireReader& reader)
+bool FakeBatteryService_getBatteryInfo_helper::Command::readArgs(yarp::os::idl::WireReader& reader)
 {
     if (!reader.noMore()) {
         reader.fail();
@@ -1659,20 +1984,32 @@ bool FakeBatteryService_getBatteryInfo_helper::readCmdArgs(yarp::os::idl::WireRe
     return true;
 }
 
-bool FakeBatteryService_getBatteryInfo_helper::writeReply(yarp::os::idl::WireWriter& writer) const
+bool FakeBatteryService_getBatteryInfo_helper::Reply::write(yarp::os::ConnectionWriter& connection) const
+{
+    yarp::os::idl::WireWriter writer(connection);
+    return write(writer);
+}
+
+bool FakeBatteryService_getBatteryInfo_helper::Reply::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    return read(reader);
+}
+
+bool FakeBatteryService_getBatteryInfo_helper::Reply::write(const yarp::os::idl::WireWriter& writer) const
 {
     if (!writer.isNull()) {
         if (!writer.writeListHeader(s_reply_len)) {
             return false;
         }
-        if (!writer.writeString(m_return_helper)) {
+        if (!writer.writeString(return_helper)) {
             return false;
         }
     }
     return true;
 }
 
-bool FakeBatteryService_getBatteryInfo_helper::readReply(yarp::os::idl::WireReader& reader [[maybe_unused]])
+bool FakeBatteryService_getBatteryInfo_helper::Reply::read(yarp::os::idl::WireReader& reader)
 {
     if (!reader.readListReturn()) {
         return false;
@@ -1681,7 +2018,7 @@ bool FakeBatteryService_getBatteryInfo_helper::readReply(yarp::os::idl::WireRead
         reader.fail();
         return false;
     }
-    if (!reader.readString(m_return_helper)) {
+    if (!reader.readString(return_helper)) {
         reader.fail();
         return false;
     }
@@ -1690,45 +2027,51 @@ bool FakeBatteryService_getBatteryInfo_helper::readReply(yarp::os::idl::WireRead
 
 void FakeBatteryService_getBatteryInfo_helper::call(FakeBatteryService* ptr)
 {
-    m_return_helper = ptr->getBatteryInfo();
+    reply.return_helper = ptr->getBatteryInfo();
 }
 
 // getBatteryTemperature helper class implementation
 bool FakeBatteryService_getBatteryTemperature_helper::write(yarp::os::ConnectionWriter& connection) const
 {
-    yarp::os::idl::WireWriter writer(connection);
-    return writeCmd(writer);
+    return cmd.write(connection);
 }
 
 bool FakeBatteryService_getBatteryTemperature_helper::read(yarp::os::ConnectionReader& connection)
 {
-    yarp::os::idl::WireReader reader(connection);
-    return readReply(reader);
+    return reply.read(connection);
 }
 
-bool FakeBatteryService_getBatteryTemperature_helper::writeCmd(yarp::os::idl::WireWriter& writer) const
+bool FakeBatteryService_getBatteryTemperature_helper::Command::write(yarp::os::ConnectionWriter& connection) const
 {
-    if (!writeCmdLen(writer)) {
-        return false;
-    }
-    if (!writeCmdTag(writer)) {
-        return false;
-    }
-    if (!writeCmdArgs(writer)) {
-        return false;
-    }
-    return true;
-}
-
-bool FakeBatteryService_getBatteryTemperature_helper::writeCmdLen(yarp::os::idl::WireWriter& writer) const
-{
+    yarp::os::idl::WireWriter writer(connection);
     if (!writer.writeListHeader(s_cmd_len)) {
         return false;
     }
+    return write(writer);
+}
+
+bool FakeBatteryService_getBatteryTemperature_helper::Command::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    if (!reader.readListHeader()) {
+        reader.fail();
+        return false;
+    }
+    return read(reader);
+}
+
+bool FakeBatteryService_getBatteryTemperature_helper::Command::write(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writeTag(writer)) {
+        return false;
+    }
+    if (!writeArgs(writer)) {
+        return false;
+    }
     return true;
 }
 
-bool FakeBatteryService_getBatteryTemperature_helper::writeCmdTag(yarp::os::idl::WireWriter& writer) const
+bool FakeBatteryService_getBatteryTemperature_helper::Command::writeTag(const yarp::os::idl::WireWriter& writer) const
 {
     if (!writer.writeTag(s_tag, 1, s_tag_len)) {
         return false;
@@ -1736,35 +2079,23 @@ bool FakeBatteryService_getBatteryTemperature_helper::writeCmdTag(yarp::os::idl:
     return true;
 }
 
-bool FakeBatteryService_getBatteryTemperature_helper::writeCmdArgs(yarp::os::idl::WireWriter& writer [[maybe_unused]]) const
+bool FakeBatteryService_getBatteryTemperature_helper::Command::writeArgs(const yarp::os::idl::WireWriter& writer [[maybe_unused]]) const
 {
     return true;
 }
 
-bool FakeBatteryService_getBatteryTemperature_helper::readCmd(yarp::os::idl::WireReader& reader)
+bool FakeBatteryService_getBatteryTemperature_helper::Command::read(yarp::os::idl::WireReader& reader)
 {
-    if (!readCmdLen(reader)) {
+    if (!readTag(reader)) {
         return false;
     }
-    if (!readCmdTag(reader)) {
-        return false;
-    }
-    if (!readCmdArgs(reader)) {
-        return false;
-    }
-    return true;
-}
-
-bool FakeBatteryService_getBatteryTemperature_helper::readCmdLen(yarp::os::idl::WireReader& reader)
-{
-    if (!reader.readListHeader()) {
-        reader.fail();
+    if (!readArgs(reader)) {
         return false;
     }
     return true;
 }
 
-bool FakeBatteryService_getBatteryTemperature_helper::readCmdTag(yarp::os::idl::WireReader& reader)
+bool FakeBatteryService_getBatteryTemperature_helper::Command::readTag(yarp::os::idl::WireReader& reader)
 {
     std::string tag = reader.readTag();
     if (reader.isError()) {
@@ -1777,7 +2108,7 @@ bool FakeBatteryService_getBatteryTemperature_helper::readCmdTag(yarp::os::idl::
     return true;
 }
 
-bool FakeBatteryService_getBatteryTemperature_helper::readCmdArgs(yarp::os::idl::WireReader& reader)
+bool FakeBatteryService_getBatteryTemperature_helper::Command::readArgs(yarp::os::idl::WireReader& reader)
 {
     if (!reader.noMore()) {
         reader.fail();
@@ -1786,20 +2117,32 @@ bool FakeBatteryService_getBatteryTemperature_helper::readCmdArgs(yarp::os::idl:
     return true;
 }
 
-bool FakeBatteryService_getBatteryTemperature_helper::writeReply(yarp::os::idl::WireWriter& writer) const
+bool FakeBatteryService_getBatteryTemperature_helper::Reply::write(yarp::os::ConnectionWriter& connection) const
+{
+    yarp::os::idl::WireWriter writer(connection);
+    return write(writer);
+}
+
+bool FakeBatteryService_getBatteryTemperature_helper::Reply::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    return read(reader);
+}
+
+bool FakeBatteryService_getBatteryTemperature_helper::Reply::write(const yarp::os::idl::WireWriter& writer) const
 {
     if (!writer.isNull()) {
         if (!writer.writeListHeader(s_reply_len)) {
             return false;
         }
-        if (!writer.writeFloat64(m_return_helper)) {
+        if (!writer.writeFloat64(return_helper)) {
             return false;
         }
     }
     return true;
 }
 
-bool FakeBatteryService_getBatteryTemperature_helper::readReply(yarp::os::idl::WireReader& reader [[maybe_unused]])
+bool FakeBatteryService_getBatteryTemperature_helper::Reply::read(yarp::os::idl::WireReader& reader)
 {
     if (!reader.readListReturn()) {
         return false;
@@ -1808,7 +2151,7 @@ bool FakeBatteryService_getBatteryTemperature_helper::readReply(yarp::os::idl::W
         reader.fail();
         return false;
     }
-    if (!reader.readFloat64(m_return_helper)) {
+    if (!reader.readFloat64(return_helper)) {
         reader.fail();
         return false;
     }
@@ -1817,7 +2160,7 @@ bool FakeBatteryService_getBatteryTemperature_helper::readReply(yarp::os::idl::W
 
 void FakeBatteryService_getBatteryTemperature_helper::call(FakeBatteryService* ptr)
 {
-    m_return_helper = ptr->getBatteryTemperature();
+    reply.return_helper = ptr->getBatteryTemperature();
 }
 
 // Constructor
@@ -1878,7 +2221,7 @@ double FakeBatteryService::getBatteryVoltage()
     }
     FakeBatteryService_getBatteryVoltage_helper helper{};
     bool ok = yarp().write(helper, helper);
-    return ok ? helper.m_return_helper : double{};
+    return ok ? helper.reply.return_helper : double{};
 }
 
 double FakeBatteryService::getBatteryCurrent()
@@ -1888,7 +2231,7 @@ double FakeBatteryService::getBatteryCurrent()
     }
     FakeBatteryService_getBatteryCurrent_helper helper{};
     bool ok = yarp().write(helper, helper);
-    return ok ? helper.m_return_helper : double{};
+    return ok ? helper.reply.return_helper : double{};
 }
 
 double FakeBatteryService::getBatteryCharge()
@@ -1898,7 +2241,7 @@ double FakeBatteryService::getBatteryCharge()
     }
     FakeBatteryService_getBatteryCharge_helper helper{};
     bool ok = yarp().write(helper, helper);
-    return ok ? helper.m_return_helper : double{};
+    return ok ? helper.reply.return_helper : double{};
 }
 
 std::string FakeBatteryService::getBatteryStatus()
@@ -1908,7 +2251,7 @@ std::string FakeBatteryService::getBatteryStatus()
     }
     FakeBatteryService_getBatteryStatus_helper helper{};
     bool ok = yarp().write(helper, helper);
-    return ok ? helper.m_return_helper : std::string{};
+    return ok ? helper.reply.return_helper : std::string{};
 }
 
 std::string FakeBatteryService::getBatteryInfo()
@@ -1918,7 +2261,7 @@ std::string FakeBatteryService::getBatteryInfo()
     }
     FakeBatteryService_getBatteryInfo_helper helper{};
     bool ok = yarp().write(helper, helper);
-    return ok ? helper.m_return_helper : std::string{};
+    return ok ? helper.reply.return_helper : std::string{};
 }
 
 double FakeBatteryService::getBatteryTemperature()
@@ -1928,7 +2271,7 @@ double FakeBatteryService::getBatteryTemperature()
     }
     FakeBatteryService_getBatteryTemperature_helper helper{};
     bool ok = yarp().write(helper, helper);
-    return ok ? helper.m_return_helper : double{};
+    return ok ? helper.reply.return_helper : double{};
 }
 
 // help method
@@ -2015,7 +2358,7 @@ bool FakeBatteryService::read(yarp::os::ConnectionReader& connection)
     while (!reader.isError()) {
         if (tag == FakeBatteryService_setBatteryVoltage_helper::s_tag) {
             FakeBatteryService_setBatteryVoltage_helper helper;
-            if (!helper.readCmdArgs(reader)) {
+            if (!helper.cmd.readArgs(reader)) {
                 return false;
             }
 
@@ -2026,7 +2369,7 @@ bool FakeBatteryService::read(yarp::os::ConnectionReader& connection)
             }
 
             yarp::os::idl::WireWriter writer(reader);
-            if (!helper.writeReply(writer)) {
+            if (!helper.reply.write(writer)) {
                 return false;
             }
             reader.accept();
@@ -2034,7 +2377,7 @@ bool FakeBatteryService::read(yarp::os::ConnectionReader& connection)
         }
         if (tag == FakeBatteryService_setBatteryCurrent_helper::s_tag) {
             FakeBatteryService_setBatteryCurrent_helper helper;
-            if (!helper.readCmdArgs(reader)) {
+            if (!helper.cmd.readArgs(reader)) {
                 return false;
             }
 
@@ -2045,7 +2388,7 @@ bool FakeBatteryService::read(yarp::os::ConnectionReader& connection)
             }
 
             yarp::os::idl::WireWriter writer(reader);
-            if (!helper.writeReply(writer)) {
+            if (!helper.reply.write(writer)) {
                 return false;
             }
             reader.accept();
@@ -2053,7 +2396,7 @@ bool FakeBatteryService::read(yarp::os::ConnectionReader& connection)
         }
         if (tag == FakeBatteryService_setBatteryCharge_helper::s_tag) {
             FakeBatteryService_setBatteryCharge_helper helper;
-            if (!helper.readCmdArgs(reader)) {
+            if (!helper.cmd.readArgs(reader)) {
                 return false;
             }
 
@@ -2064,7 +2407,7 @@ bool FakeBatteryService::read(yarp::os::ConnectionReader& connection)
             }
 
             yarp::os::idl::WireWriter writer(reader);
-            if (!helper.writeReply(writer)) {
+            if (!helper.reply.write(writer)) {
                 return false;
             }
             reader.accept();
@@ -2072,7 +2415,7 @@ bool FakeBatteryService::read(yarp::os::ConnectionReader& connection)
         }
         if (tag == FakeBatteryService_setBatteryInfo_helper::s_tag) {
             FakeBatteryService_setBatteryInfo_helper helper;
-            if (!helper.readCmdArgs(reader)) {
+            if (!helper.cmd.readArgs(reader)) {
                 return false;
             }
 
@@ -2083,7 +2426,7 @@ bool FakeBatteryService::read(yarp::os::ConnectionReader& connection)
             }
 
             yarp::os::idl::WireWriter writer(reader);
-            if (!helper.writeReply(writer)) {
+            if (!helper.reply.write(writer)) {
                 return false;
             }
             reader.accept();
@@ -2091,7 +2434,7 @@ bool FakeBatteryService::read(yarp::os::ConnectionReader& connection)
         }
         if (tag == FakeBatteryService_setBatteryTemperature_helper::s_tag) {
             FakeBatteryService_setBatteryTemperature_helper helper;
-            if (!helper.readCmdArgs(reader)) {
+            if (!helper.cmd.readArgs(reader)) {
                 return false;
             }
 
@@ -2102,7 +2445,7 @@ bool FakeBatteryService::read(yarp::os::ConnectionReader& connection)
             }
 
             yarp::os::idl::WireWriter writer(reader);
-            if (!helper.writeReply(writer)) {
+            if (!helper.reply.write(writer)) {
                 return false;
             }
             reader.accept();
@@ -2110,14 +2453,14 @@ bool FakeBatteryService::read(yarp::os::ConnectionReader& connection)
         }
         if (tag == FakeBatteryService_getBatteryVoltage_helper::s_tag) {
             FakeBatteryService_getBatteryVoltage_helper helper;
-            if (!helper.readCmdArgs(reader)) {
+            if (!helper.cmd.readArgs(reader)) {
                 return false;
             }
 
             helper.call(this);
 
             yarp::os::idl::WireWriter writer(reader);
-            if (!helper.writeReply(writer)) {
+            if (!helper.reply.write(writer)) {
                 return false;
             }
             reader.accept();
@@ -2125,14 +2468,14 @@ bool FakeBatteryService::read(yarp::os::ConnectionReader& connection)
         }
         if (tag == FakeBatteryService_getBatteryCurrent_helper::s_tag) {
             FakeBatteryService_getBatteryCurrent_helper helper;
-            if (!helper.readCmdArgs(reader)) {
+            if (!helper.cmd.readArgs(reader)) {
                 return false;
             }
 
             helper.call(this);
 
             yarp::os::idl::WireWriter writer(reader);
-            if (!helper.writeReply(writer)) {
+            if (!helper.reply.write(writer)) {
                 return false;
             }
             reader.accept();
@@ -2140,14 +2483,14 @@ bool FakeBatteryService::read(yarp::os::ConnectionReader& connection)
         }
         if (tag == FakeBatteryService_getBatteryCharge_helper::s_tag) {
             FakeBatteryService_getBatteryCharge_helper helper;
-            if (!helper.readCmdArgs(reader)) {
+            if (!helper.cmd.readArgs(reader)) {
                 return false;
             }
 
             helper.call(this);
 
             yarp::os::idl::WireWriter writer(reader);
-            if (!helper.writeReply(writer)) {
+            if (!helper.reply.write(writer)) {
                 return false;
             }
             reader.accept();
@@ -2155,14 +2498,14 @@ bool FakeBatteryService::read(yarp::os::ConnectionReader& connection)
         }
         if (tag == FakeBatteryService_getBatteryStatus_helper::s_tag) {
             FakeBatteryService_getBatteryStatus_helper helper;
-            if (!helper.readCmdArgs(reader)) {
+            if (!helper.cmd.readArgs(reader)) {
                 return false;
             }
 
             helper.call(this);
 
             yarp::os::idl::WireWriter writer(reader);
-            if (!helper.writeReply(writer)) {
+            if (!helper.reply.write(writer)) {
                 return false;
             }
             reader.accept();
@@ -2170,14 +2513,14 @@ bool FakeBatteryService::read(yarp::os::ConnectionReader& connection)
         }
         if (tag == FakeBatteryService_getBatteryInfo_helper::s_tag) {
             FakeBatteryService_getBatteryInfo_helper helper;
-            if (!helper.readCmdArgs(reader)) {
+            if (!helper.cmd.readArgs(reader)) {
                 return false;
             }
 
             helper.call(this);
 
             yarp::os::idl::WireWriter writer(reader);
-            if (!helper.writeReply(writer)) {
+            if (!helper.reply.write(writer)) {
                 return false;
             }
             reader.accept();
@@ -2185,14 +2528,14 @@ bool FakeBatteryService::read(yarp::os::ConnectionReader& connection)
         }
         if (tag == FakeBatteryService_getBatteryTemperature_helper::s_tag) {
             FakeBatteryService_getBatteryTemperature_helper helper;
-            if (!helper.readCmdArgs(reader)) {
+            if (!helper.cmd.readArgs(reader)) {
                 return false;
             }
 
             helper.call(this);
 
             yarp::os::idl::WireWriter writer(reader);
-            if (!helper.writeReply(writer)) {
+            if (!helper.reply.write(writer)) {
                 return false;
             }
             reader.accept();

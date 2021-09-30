@@ -21,24 +21,46 @@ public:
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
 
-    bool writeCmd(yarp::os::idl::WireWriter& writer) const;
-    bool writeCmdLen(yarp::os::idl::WireWriter& writer) const;
-    bool writeCmdTag(yarp::os::idl::WireWriter& writer) const;
-    bool writeCmdArgs(yarp::os::idl::WireWriter& writer) const;
+    class Command :
+            public yarp::os::idl::WirePortable
+    {
+    public:
+        Command() = default;
+        ~Command() override = default;
 
-    bool readCmd(yarp::os::idl::WireReader& reader);
-    bool readCmdLen(yarp::os::idl::WireReader& reader);
-    bool readCmdTag(yarp::os::idl::WireReader& reader);
-    bool readCmdArgs(yarp::os::idl::WireReader& reader);
+        bool write(yarp::os::ConnectionWriter& connection) const override;
+        bool read(yarp::os::ConnectionReader& connection) override;
 
-    bool writeReply(yarp::os::idl::WireWriter& writer) const;
+        bool write(const yarp::os::idl::WireWriter& writer) const override;
+        bool writeTag(const yarp::os::idl::WireWriter& writer) const;
+        bool writeArgs(const yarp::os::idl::WireWriter& writer) const;
 
-    bool readReply(yarp::os::idl::WireReader& reader);
+        bool read(yarp::os::idl::WireReader& reader) override;
+        bool readTag(yarp::os::idl::WireReader& reader);
+        bool readArgs(yarp::os::idl::WireReader& reader);
+    };
+
+    class Reply :
+            public yarp::os::idl::WirePortable
+    {
+    public:
+        Reply() = default;
+        ~Reply() override = default;
+
+        bool write(yarp::os::ConnectionWriter& connection) const override;
+        bool read(yarp::os::ConnectionReader& connection) override;
+
+        bool write(const yarp::os::idl::WireWriter& writer) const override;
+        bool read(yarp::os::idl::WireReader& reader) override;
+
+        SensorRPCData return_helper{};
+    };
 
     using funcptr_t = SensorRPCData (*)();
     void call(MultipleAnalogSensorsMetadata* ptr);
 
-    SensorRPCData m_return_helper{};
+    Command cmd;
+    Reply reply;
 
     static constexpr const char* s_tag{"getMetadata"};
     static constexpr size_t s_tag_len{1};
@@ -53,39 +75,45 @@ public:
 // getMetadata helper class implementation
 bool MultipleAnalogSensorsMetadata_getMetadata_helper::write(yarp::os::ConnectionWriter& connection) const
 {
-    yarp::os::idl::WireWriter writer(connection);
-    return writeCmd(writer);
+    return cmd.write(connection);
 }
 
 bool MultipleAnalogSensorsMetadata_getMetadata_helper::read(yarp::os::ConnectionReader& connection)
 {
-    yarp::os::idl::WireReader reader(connection);
-    return readReply(reader);
+    return reply.read(connection);
 }
 
-bool MultipleAnalogSensorsMetadata_getMetadata_helper::writeCmd(yarp::os::idl::WireWriter& writer) const
+bool MultipleAnalogSensorsMetadata_getMetadata_helper::Command::write(yarp::os::ConnectionWriter& connection) const
 {
-    if (!writeCmdLen(writer)) {
-        return false;
-    }
-    if (!writeCmdTag(writer)) {
-        return false;
-    }
-    if (!writeCmdArgs(writer)) {
-        return false;
-    }
-    return true;
-}
-
-bool MultipleAnalogSensorsMetadata_getMetadata_helper::writeCmdLen(yarp::os::idl::WireWriter& writer) const
-{
+    yarp::os::idl::WireWriter writer(connection);
     if (!writer.writeListHeader(s_cmd_len)) {
         return false;
     }
+    return write(writer);
+}
+
+bool MultipleAnalogSensorsMetadata_getMetadata_helper::Command::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    if (!reader.readListHeader()) {
+        reader.fail();
+        return false;
+    }
+    return read(reader);
+}
+
+bool MultipleAnalogSensorsMetadata_getMetadata_helper::Command::write(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writeTag(writer)) {
+        return false;
+    }
+    if (!writeArgs(writer)) {
+        return false;
+    }
     return true;
 }
 
-bool MultipleAnalogSensorsMetadata_getMetadata_helper::writeCmdTag(yarp::os::idl::WireWriter& writer) const
+bool MultipleAnalogSensorsMetadata_getMetadata_helper::Command::writeTag(const yarp::os::idl::WireWriter& writer) const
 {
     if (!writer.writeTag(s_tag, 1, s_tag_len)) {
         return false;
@@ -93,35 +121,23 @@ bool MultipleAnalogSensorsMetadata_getMetadata_helper::writeCmdTag(yarp::os::idl
     return true;
 }
 
-bool MultipleAnalogSensorsMetadata_getMetadata_helper::writeCmdArgs(yarp::os::idl::WireWriter& writer [[maybe_unused]]) const
+bool MultipleAnalogSensorsMetadata_getMetadata_helper::Command::writeArgs(const yarp::os::idl::WireWriter& writer [[maybe_unused]]) const
 {
     return true;
 }
 
-bool MultipleAnalogSensorsMetadata_getMetadata_helper::readCmd(yarp::os::idl::WireReader& reader)
+bool MultipleAnalogSensorsMetadata_getMetadata_helper::Command::read(yarp::os::idl::WireReader& reader)
 {
-    if (!readCmdLen(reader)) {
+    if (!readTag(reader)) {
         return false;
     }
-    if (!readCmdTag(reader)) {
-        return false;
-    }
-    if (!readCmdArgs(reader)) {
-        return false;
-    }
-    return true;
-}
-
-bool MultipleAnalogSensorsMetadata_getMetadata_helper::readCmdLen(yarp::os::idl::WireReader& reader)
-{
-    if (!reader.readListHeader()) {
-        reader.fail();
+    if (!readArgs(reader)) {
         return false;
     }
     return true;
 }
 
-bool MultipleAnalogSensorsMetadata_getMetadata_helper::readCmdTag(yarp::os::idl::WireReader& reader)
+bool MultipleAnalogSensorsMetadata_getMetadata_helper::Command::readTag(yarp::os::idl::WireReader& reader)
 {
     std::string tag = reader.readTag();
     if (reader.isError()) {
@@ -134,7 +150,7 @@ bool MultipleAnalogSensorsMetadata_getMetadata_helper::readCmdTag(yarp::os::idl:
     return true;
 }
 
-bool MultipleAnalogSensorsMetadata_getMetadata_helper::readCmdArgs(yarp::os::idl::WireReader& reader)
+bool MultipleAnalogSensorsMetadata_getMetadata_helper::Command::readArgs(yarp::os::idl::WireReader& reader)
 {
     if (!reader.noMore()) {
         reader.fail();
@@ -143,20 +159,32 @@ bool MultipleAnalogSensorsMetadata_getMetadata_helper::readCmdArgs(yarp::os::idl
     return true;
 }
 
-bool MultipleAnalogSensorsMetadata_getMetadata_helper::writeReply(yarp::os::idl::WireWriter& writer) const
+bool MultipleAnalogSensorsMetadata_getMetadata_helper::Reply::write(yarp::os::ConnectionWriter& connection) const
+{
+    yarp::os::idl::WireWriter writer(connection);
+    return write(writer);
+}
+
+bool MultipleAnalogSensorsMetadata_getMetadata_helper::Reply::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    return read(reader);
+}
+
+bool MultipleAnalogSensorsMetadata_getMetadata_helper::Reply::write(const yarp::os::idl::WireWriter& writer) const
 {
     if (!writer.isNull()) {
         if (!writer.writeListHeader(s_reply_len)) {
             return false;
         }
-        if (!writer.write(m_return_helper)) {
+        if (!writer.write(return_helper)) {
             return false;
         }
     }
     return true;
 }
 
-bool MultipleAnalogSensorsMetadata_getMetadata_helper::readReply(yarp::os::idl::WireReader& reader [[maybe_unused]])
+bool MultipleAnalogSensorsMetadata_getMetadata_helper::Reply::read(yarp::os::idl::WireReader& reader)
 {
     if (!reader.readListReturn()) {
         return false;
@@ -165,7 +193,7 @@ bool MultipleAnalogSensorsMetadata_getMetadata_helper::readReply(yarp::os::idl::
         reader.fail();
         return false;
     }
-    if (!reader.read(m_return_helper)) {
+    if (!reader.read(return_helper)) {
         reader.fail();
         return false;
     }
@@ -174,7 +202,7 @@ bool MultipleAnalogSensorsMetadata_getMetadata_helper::readReply(yarp::os::idl::
 
 void MultipleAnalogSensorsMetadata_getMetadata_helper::call(MultipleAnalogSensorsMetadata* ptr)
 {
-    m_return_helper = ptr->getMetadata();
+    reply.return_helper = ptr->getMetadata();
 }
 
 // Constructor
@@ -190,7 +218,7 @@ SensorRPCData MultipleAnalogSensorsMetadata::getMetadata()
     }
     MultipleAnalogSensorsMetadata_getMetadata_helper helper{};
     bool ok = yarp().write(helper, helper);
-    return ok ? helper.m_return_helper : SensorRPCData{};
+    return ok ? helper.reply.return_helper : SensorRPCData{};
 }
 
 // help method
@@ -238,14 +266,14 @@ bool MultipleAnalogSensorsMetadata::read(yarp::os::ConnectionReader& connection)
     while (!reader.isError()) {
         if (tag == MultipleAnalogSensorsMetadata_getMetadata_helper::s_tag) {
             MultipleAnalogSensorsMetadata_getMetadata_helper helper;
-            if (!helper.readCmdArgs(reader)) {
+            if (!helper.cmd.readArgs(reader)) {
                 return false;
             }
 
             helper.call(this);
 
             yarp::os::idl::WireWriter writer(reader);
-            if (!helper.writeReply(writer)) {
+            if (!helper.reply.write(writer)) {
                 return false;
             }
             reader.accept();
