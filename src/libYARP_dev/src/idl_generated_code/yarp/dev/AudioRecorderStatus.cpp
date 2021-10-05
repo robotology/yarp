@@ -12,15 +12,6 @@
 
 namespace yarp::dev {
 
-// Default constructor
-AudioRecorderStatus::AudioRecorderStatus() :
-        WirePortable(),
-        enabled(0),
-        current_buffer_size(0),
-        max_buffer_size(0)
-{
-}
-
 // Constructor with field values
 AudioRecorderStatus::AudioRecorderStatus(const bool enabled,
                                          const size_t current_buffer_size,

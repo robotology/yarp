@@ -20,11 +20,11 @@ class return_getAllTransforms :
 {
 public:
     // Fields
-    bool retvalue;
-    std::vector<yarp::math::FrameTransform> transforms_list;
+    bool retvalue{false};
+    std::vector<yarp::math::FrameTransform> transforms_list{};
 
     // Default constructor
-    return_getAllTransforms();
+    return_getAllTransforms() = default;
 
     // Constructor with field values
     return_getAllTransforms(const bool retvalue,

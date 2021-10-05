@@ -12,15 +12,6 @@
 
 namespace yarp::dev {
 
-// Default constructor
-Map2DAreaData::Map2DAreaData() :
-        WirePortable(),
-        map_id(""),
-        points(),
-        description("")
-{
-}
-
 // Constructor with field values
 Map2DAreaData::Map2DAreaData(const std::string& map_id,
                              const std::vector<yarp::math::Vec2D<double>>& points,

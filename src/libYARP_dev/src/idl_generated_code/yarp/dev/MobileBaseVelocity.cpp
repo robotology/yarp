@@ -12,15 +12,6 @@
 
 namespace yarp::dev {
 
-// Default constructor
-MobileBaseVelocity::MobileBaseVelocity() :
-        WirePortable(),
-        vel_x(0),
-        vel_y(0),
-        vel_theta(0)
-{
-}
-
 // Constructor with field values
 MobileBaseVelocity::MobileBaseVelocity(const double vel_x,
                                        const double vel_y,

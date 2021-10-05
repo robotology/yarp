@@ -10,22 +10,6 @@
 
 #include <SensorStreamingData.h>
 
-// Default constructor
-SensorStreamingData::SensorStreamingData() :
-        WirePortable(),
-        ThreeAxisGyroscopes(),
-        ThreeAxisLinearAccelerometers(),
-        ThreeAxisMagnetometers(),
-        OrientationSensors(),
-        TemperatureSensors(),
-        SixAxisForceTorqueSensors(),
-        ContactLoadCellArrays(),
-        EncoderArrays(),
-        SkinPatches(),
-        PositionSensors()
-{
-}
-
 // Constructor with field values
 SensorStreamingData::SensorStreamingData(const SensorMeasurements& ThreeAxisGyroscopes,
                                          const SensorMeasurements& ThreeAxisLinearAccelerometers,

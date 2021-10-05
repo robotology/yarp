@@ -20,11 +20,11 @@ class return_get_all_areas :
 {
 public:
     // Fields
-    bool retval;
-    std::vector<yarp::dev::Nav2D::Map2DArea> areas;
+    bool retval{false};
+    std::vector<yarp::dev::Nav2D::Map2DArea> areas{};
 
     // Default constructor
-    return_get_all_areas();
+    return_get_all_areas() = default;
 
     // Constructor with field values
     return_get_all_areas(const bool retval,

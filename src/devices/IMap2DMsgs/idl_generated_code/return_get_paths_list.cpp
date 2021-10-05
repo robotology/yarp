@@ -10,14 +10,6 @@
 
 #include <return_get_paths_list.h>
 
-// Default constructor
-return_get_paths_list::return_get_paths_list() :
-        WirePortable(),
-        retval(false),
-        paths()
-{
-}
-
 // Constructor with field values
 return_get_paths_list::return_get_paths_list(const bool retval,
                                              const std::vector<std::string>& paths) :

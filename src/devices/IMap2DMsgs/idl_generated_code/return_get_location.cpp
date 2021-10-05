@@ -10,14 +10,6 @@
 
 #include <return_get_location.h>
 
-// Default constructor
-return_get_location::return_get_location() :
-        WirePortable(),
-        retval(false),
-        loc()
-{
-}
-
 // Constructor with field values
 return_get_location::return_get_location(const bool retval,
                                          const yarp::dev::Nav2D::Map2DLocation& loc) :

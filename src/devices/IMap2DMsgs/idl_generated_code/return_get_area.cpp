@@ -10,14 +10,6 @@
 
 #include <return_get_area.h>
 
-// Default constructor
-return_get_area::return_get_area() :
-        WirePortable(),
-        retval(false),
-        area()
-{
-}
-
 // Constructor with field values
 return_get_area::return_get_area(const bool retval,
                                  const yarp::dev::Nav2D::Map2DArea& area) :

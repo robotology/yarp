@@ -20,19 +20,19 @@ class SensorRPCData :
 {
 public:
     // Fields
-    std::vector<SensorMetadata> ThreeAxisGyroscopes;
-    std::vector<SensorMetadata> ThreeAxisLinearAccelerometers;
-    std::vector<SensorMetadata> ThreeAxisMagnetometers;
-    std::vector<SensorMetadata> OrientationSensors;
-    std::vector<SensorMetadata> TemperatureSensors;
-    std::vector<SensorMetadata> SixAxisForceTorqueSensors;
-    std::vector<SensorMetadata> ContactLoadCellArrays;
-    std::vector<SensorMetadata> EncoderArrays;
-    std::vector<SensorMetadata> SkinPatches;
-    std::vector<SensorMetadata> PositionSensors;
+    std::vector<SensorMetadata> ThreeAxisGyroscopes{};
+    std::vector<SensorMetadata> ThreeAxisLinearAccelerometers{};
+    std::vector<SensorMetadata> ThreeAxisMagnetometers{};
+    std::vector<SensorMetadata> OrientationSensors{};
+    std::vector<SensorMetadata> TemperatureSensors{};
+    std::vector<SensorMetadata> SixAxisForceTorqueSensors{};
+    std::vector<SensorMetadata> ContactLoadCellArrays{};
+    std::vector<SensorMetadata> EncoderArrays{};
+    std::vector<SensorMetadata> SkinPatches{};
+    std::vector<SensorMetadata> PositionSensors{};
 
     // Default constructor
-    SensorRPCData();
+    SensorRPCData() = default;
 
     // Constructor with field values
     SensorRPCData(const std::vector<SensorMetadata>& ThreeAxisGyroscopes,

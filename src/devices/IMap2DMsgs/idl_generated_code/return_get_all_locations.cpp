@@ -10,14 +10,6 @@
 
 #include <return_get_all_locations.h>
 
-// Default constructor
-return_get_all_locations::return_get_all_locations() :
-        WirePortable(),
-        retval(false),
-        locations()
-{
-}
-
 // Constructor with field values
 return_get_all_locations::return_get_all_locations(const bool retval,
                                                    const std::vector<yarp::dev::Nav2D::Map2DLocation>& locations) :

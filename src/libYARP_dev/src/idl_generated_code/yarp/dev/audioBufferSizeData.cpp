@@ -12,16 +12,6 @@
 
 namespace yarp::dev {
 
-// Default constructor
-audioBufferSizeData::audioBufferSizeData() :
-        WirePortable(),
-        m_samples(0),
-        m_channels(0),
-        m_depth(0),
-        size(0)
-{
-}
-
 // Constructor with field values
 audioBufferSizeData::audioBufferSizeData(const std::int32_t m_samples,
                                          const std::int32_t m_channels,

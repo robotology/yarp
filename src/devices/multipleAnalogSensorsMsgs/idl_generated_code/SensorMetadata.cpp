@@ -10,15 +10,6 @@
 
 #include <SensorMetadata.h>
 
-// Default constructor
-SensorMetadata::SensorMetadata() :
-        WirePortable(),
-        name(""),
-        frameName(""),
-        additionalMetadata("")
-{
-}
-
 // Constructor with field values
 SensorMetadata::SensorMetadata(const std::string& name,
                                const std::string& frameName,

@@ -26,18 +26,18 @@ public:
     /**
      * velocity of the robot [m/s]
      */
-    double vel_x;
+    double vel_x{0.0};
     /**
      * velocity of the robot [m/s]
      */
-    double vel_y;
+    double vel_y{0.0};
     /**
      * angular velocity of the robot [deg/s]
      */
-    double vel_theta;
+    double vel_theta{0.0};
 
     // Default constructor
-    MobileBaseVelocity();
+    MobileBaseVelocity() = default;
 
     // Constructor with field values
     MobileBaseVelocity(const double vel_x,

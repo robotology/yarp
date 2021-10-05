@@ -12,17 +12,6 @@
 
 namespace yarp::dev {
 
-// Default constructor
-Map2DLocationData::Map2DLocationData() :
-        WirePortable(),
-        map_id(""),
-        x(0),
-        y(0),
-        theta(0),
-        description("")
-{
-}
-
 // Constructor with field values
 Map2DLocationData::Map2DLocationData(const std::string& map_id,
                                      const double x,

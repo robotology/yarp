@@ -10,14 +10,6 @@
 
 #include <return_get_all_paths.h>
 
-// Default constructor
-return_get_all_paths::return_get_all_paths() :
-        WirePortable(),
-        retval(false),
-        paths()
-{
-}
-
 // Constructor with field values
 return_get_all_paths::return_get_all_paths(const bool retval,
                                            const std::vector<yarp::dev::Nav2D::Map2DPath>& paths) :

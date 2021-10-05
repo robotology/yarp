@@ -10,14 +10,6 @@
 
 #include <return_get_areas_list.h>
 
-// Default constructor
-return_get_areas_list::return_get_areas_list() :
-        WirePortable(),
-        retval(false),
-        areas()
-{
-}
-
 // Constructor with field values
 return_get_areas_list::return_get_areas_list(const bool retval,
                                              const std::vector<std::string>& areas) :

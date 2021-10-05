@@ -10,14 +10,6 @@
 
 #include <SensorMeasurement.h>
 
-// Default constructor
-SensorMeasurement::SensorMeasurement() :
-        WirePortable(),
-        measurement(),
-        timestamp(0)
-{
-}
-
 // Constructor with field values
 SensorMeasurement::SensorMeasurement(const yarp::sig::Vector& measurement,
                                      const double timestamp) :

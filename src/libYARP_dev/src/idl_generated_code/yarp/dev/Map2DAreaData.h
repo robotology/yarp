@@ -27,18 +27,18 @@ public:
     /**
      * name of the map
      */
-    std::string map_id;
+    std::string map_id{};
     /**
      * list of points which define the vertices of the area
      */
-    std::vector<yarp::math::Vec2D<double>> points;
+    std::vector<yarp::math::Vec2D<double>> points{};
     /**
      * user defined string
      */
-    std::string description;
+    std::string description{};
 
     // Default constructor
-    Map2DAreaData();
+    Map2DAreaData() = default;
 
     // Constructor with field values
     Map2DAreaData(const std::string& map_id,

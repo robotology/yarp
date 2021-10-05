@@ -10,14 +10,6 @@
 
 #include <return_get_path.h>
 
-// Default constructor
-return_get_path::return_get_path() :
-        WirePortable(),
-        retval(false),
-        path()
-{
-}
-
 // Constructor with field values
 return_get_path::return_get_path(const bool retval,
                                  const yarp::dev::Nav2D::Map2DPath& path) :

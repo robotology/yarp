@@ -20,11 +20,11 @@ class return_get_all_paths :
 {
 public:
     // Fields
-    bool retval;
-    std::vector<yarp::dev::Nav2D::Map2DPath> paths;
+    bool retval{false};
+    std::vector<yarp::dev::Nav2D::Map2DPath> paths{};
 
     // Default constructor
-    return_get_all_paths();
+    return_get_all_paths() = default;
 
     // Constructor with field values
     return_get_all_paths(const bool retval,

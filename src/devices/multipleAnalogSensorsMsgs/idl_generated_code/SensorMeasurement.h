@@ -20,11 +20,11 @@ class SensorMeasurement :
 {
 public:
     // Fields
-    yarp::sig::Vector measurement;
-    double timestamp;
+    yarp::sig::Vector measurement{};
+    double timestamp{0.0};
 
     // Default constructor
-    SensorMeasurement();
+    SensorMeasurement() = default;
 
     // Constructor with field values
     SensorMeasurement(const yarp::sig::Vector& measurement,

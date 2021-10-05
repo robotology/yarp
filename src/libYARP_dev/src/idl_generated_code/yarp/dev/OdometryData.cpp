@@ -12,21 +12,6 @@
 
 namespace yarp::dev {
 
-// Default constructor
-OdometryData::OdometryData() :
-        WirePortable(),
-        odom_x(0),
-        odom_y(0),
-        odom_theta(0),
-        base_vel_x(0),
-        base_vel_y(0),
-        base_vel_theta(0),
-        odom_vel_x(0),
-        odom_vel_y(0),
-        odom_vel_theta(0)
-{
-}
-
 // Constructor with field values
 OdometryData::OdometryData(const double odom_x,
                            const double odom_y,

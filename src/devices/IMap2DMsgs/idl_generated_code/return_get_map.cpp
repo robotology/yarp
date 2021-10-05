@@ -10,14 +10,6 @@
 
 #include <return_get_map.h>
 
-// Default constructor
-return_get_map::return_get_map() :
-        WirePortable(),
-        retval(false),
-        themap()
-{
-}
-
 // Constructor with field values
 return_get_map::return_get_map(const bool retval,
                                const yarp::dev::Nav2D::MapGrid2D& themap) :

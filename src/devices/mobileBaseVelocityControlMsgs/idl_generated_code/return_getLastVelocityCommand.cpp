@@ -10,16 +10,6 @@
 
 #include <return_getLastVelocityCommand.h>
 
-// Default constructor
-return_getLastVelocityCommand::return_getLastVelocityCommand() :
-        WirePortable(),
-        retvalue(0),
-        x_vel(0),
-        y_vel(0),
-        theta_vel(0)
-{
-}
-
 // Constructor with field values
 return_getLastVelocityCommand::return_getLastVelocityCommand(const bool retvalue,
                                                              const double x_vel,

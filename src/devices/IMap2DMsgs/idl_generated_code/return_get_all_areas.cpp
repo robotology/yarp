@@ -10,14 +10,6 @@
 
 #include <return_get_all_areas.h>
 
-// Default constructor
-return_get_all_areas::return_get_all_areas() :
-        WirePortable(),
-        retval(false),
-        areas()
-{
-}
-
 // Constructor with field values
 return_get_all_areas::return_get_all_areas(const bool retval,
                                            const std::vector<yarp::dev::Nav2D::Map2DArea>& areas) :

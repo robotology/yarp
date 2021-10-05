@@ -10,14 +10,6 @@
 
 #include <return_get_map_names.h>
 
-// Default constructor
-return_get_map_names::return_get_map_names() :
-        WirePortable(),
-        retval(false),
-        map_names()
-{
-}
-
 // Constructor with field values
 return_get_map_names::return_get_map_names(const bool retval,
                                            const std::vector<std::string>& map_names) :

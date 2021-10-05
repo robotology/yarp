@@ -23,13 +23,13 @@ class YARP_dev_API audioBufferSizeData :
 {
 public:
     // Fields
-    std::int32_t m_samples;
-    std::int32_t m_channels;
-    std::int32_t m_depth;
-    std::int32_t size;
+    std::int32_t m_samples{0};
+    std::int32_t m_channels{0};
+    std::int32_t m_depth{0};
+    std::int32_t size{0};
 
     // Default constructor
-    audioBufferSizeData();
+    audioBufferSizeData() = default;
 
     // Constructor with field values
     audioBufferSizeData(const std::int32_t m_samples,

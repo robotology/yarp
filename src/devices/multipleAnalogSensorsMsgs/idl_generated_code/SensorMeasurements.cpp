@@ -10,13 +10,6 @@
 
 #include <SensorMeasurements.h>
 
-// Default constructor
-SensorMeasurements::SensorMeasurements() :
-        WirePortable(),
-        measurements()
-{
-}
-
 // Constructor with field values
 SensorMeasurements::SensorMeasurements(const std::vector<SensorMeasurement>& measurements) :
         WirePortable(),

@@ -12,34 +12,6 @@
 
 namespace yarp::dev::impl {
 
-// Default constructor
-jointData::jointData() :
-        WirePortable(),
-        jointPosition(),
-        jointPosition_isValid(0),
-        jointVelocity(),
-        jointVelocity_isValid(0),
-        jointAcceleration(),
-        jointAcceleration_isValid(0),
-        motorPosition(),
-        motorPosition_isValid(0),
-        motorVelocity(),
-        motorVelocity_isValid(0),
-        motorAcceleration(),
-        motorAcceleration_isValid(0),
-        torque(),
-        torque_isValid(0),
-        pwmDutycycle(),
-        pwmDutycycle_isValid(0),
-        current(),
-        current_isValid(0),
-        controlMode(),
-        controlMode_isValid(0),
-        interactionMode(),
-        interactionMode_isValid(0)
-{
-}
-
 // Constructor with field values
 jointData::jointData(const yarp::sig::VectorOf<double>& jointPosition,
                      const bool jointPosition_isValid,

@@ -10,14 +10,6 @@
 
 #include <return_getAllTransforms.h>
 
-// Default constructor
-return_getAllTransforms::return_getAllTransforms() :
-        WirePortable(),
-        retvalue(0),
-        transforms_list()
-{
-}
-
 // Constructor with field values
 return_getAllTransforms::return_getAllTransforms(const bool retvalue,
                                                  const std::vector<yarp::math::FrameTransform>& transforms_list) :

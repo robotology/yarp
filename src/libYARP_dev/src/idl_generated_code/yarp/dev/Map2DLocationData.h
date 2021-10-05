@@ -26,26 +26,26 @@ public:
     /**
      * name of the map
      */
-    std::string map_id;
+    std::string map_id{};
     /**
      * x position of the location [m], expressed in the map reference frame
      */
-    double x;
+    double x{0.0};
     /**
      * y position of the location [m], expressed in the map reference frame
      */
-    double y;
+    double y{0.0};
     /**
      * orientation [deg] in the map reference frame
      */
-    double theta;
+    double theta{0.0};
     /**
      * user defined string
      */
-    std::string description;
+    std::string description{};
 
     // Default constructor
-    Map2DLocationData();
+    Map2DLocationData() = default;
 
     // Constructor with field values
     Map2DLocationData(const std::string& map_id,

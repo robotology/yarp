@@ -10,22 +10,6 @@
 
 #include <SensorRPCData.h>
 
-// Default constructor
-SensorRPCData::SensorRPCData() :
-        WirePortable(),
-        ThreeAxisGyroscopes(),
-        ThreeAxisLinearAccelerometers(),
-        ThreeAxisMagnetometers(),
-        OrientationSensors(),
-        TemperatureSensors(),
-        SixAxisForceTorqueSensors(),
-        ContactLoadCellArrays(),
-        EncoderArrays(),
-        SkinPatches(),
-        PositionSensors()
-{
-}
-
 // Constructor with field values
 SensorRPCData::SensorRPCData(const std::vector<SensorMetadata>& ThreeAxisGyroscopes,
                              const std::vector<SensorMetadata>& ThreeAxisLinearAccelerometers,

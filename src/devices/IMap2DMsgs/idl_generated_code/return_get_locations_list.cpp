@@ -10,14 +10,6 @@
 
 #include <return_get_locations_list.h>
 
-// Default constructor
-return_get_locations_list::return_get_locations_list() :
-        WirePortable(),
-        retval(false),
-        locations()
-{
-}
-
 // Constructor with field values
 return_get_locations_list::return_get_locations_list(const bool retval,
                                                      const std::vector<std::string>& locations) :

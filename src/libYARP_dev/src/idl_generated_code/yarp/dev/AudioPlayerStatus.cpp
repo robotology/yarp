@@ -12,15 +12,6 @@
 
 namespace yarp::dev {
 
-// Default constructor
-AudioPlayerStatus::AudioPlayerStatus() :
-        WirePortable(),
-        enabled(0),
-        current_buffer_size(0),
-        max_buffer_size(0)
-{
-}
-
 // Constructor with field values
 AudioPlayerStatus::AudioPlayerStatus(const bool enabled,
                                      const size_t current_buffer_size,

@@ -2211,11 +2211,8 @@ void t_yarp_generator::generate_struct_fields(t_struct* tstruct, std::ostringstr
 
     f_h_ << indent_h() << "// Fields\n";
     for (const auto& member : tstruct->get_members()) {
-        const auto& mname = member->get_name();
-        std::string mtype = type_name(member->get_type());
-
         print_doc(f_h_, member);
-        f_h_ << indent_h() << mtype << " " << mname << ";\n";
+        f_h_ << indent_h() << declare_field(member, true) << ";\n";
     }
 
     f_h_ << '\n';
@@ -2230,40 +2227,10 @@ void t_yarp_generator::generate_struct_default_constructor(t_struct* tstruct, st
     THRIFT_DEBUG_COMMENT(f_cpp_);
 
     const auto& name = tstruct->get_name();
-    const auto& members = tstruct->get_members();
 
     f_h_ << indent_h() << "// Default constructor\n";
-    f_h_ << indent_h() << name << "();\n";
+    f_h_ << indent_h() << name << "() = default;\n";
     f_h_ << '\n';
-
-    f_cpp_ << indent_cpp() << "// Default constructor\n";
-    f_cpp_ << indent_cpp() << name << "::" << name << "() :\n";
-    f_cpp_ << indent_initializer_cpp() << "WirePortable()";
-
-    for (const auto& member : members) {
-        f_cpp_ << ",\n";
-        t_type* t = get_true_type(member->get_type());
-        if (t->is_base_type() || t->is_enum()) {
-            std::string dval;
-            if (t->is_enum()) {
-                dval += "(" + type_name(t) + ")";
-            }
-            dval += t->is_string() ? "\"\"" : "0";
-            t_const_value* cv = member->get_value();
-            if (cv != nullptr) {
-                dval = render_const_value(f_cpp_, member->get_name(), t, cv);
-            }
-            f_cpp_ << indent_initializer_cpp() << member->get_name() << "(" << dval << ")";
-        } else {
-            f_cpp_ << indent_initializer_cpp() << member->get_name() << "()";
-        }
-    }
-    f_cpp_ << '\n';
-    f_cpp_ << indent_cpp() << "{\n";
-    indent_up_cpp();
-    indent_down_cpp();
-    f_cpp_ << indent_cpp() << "}\n";
-    f_cpp_ << '\n';
 
     assert(indent_count_h() == 1);
     assert(indent_count_cpp() == 0);

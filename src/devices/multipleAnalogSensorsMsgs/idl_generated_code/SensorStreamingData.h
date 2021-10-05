@@ -20,19 +20,19 @@ class SensorStreamingData :
 {
 public:
     // Fields
-    SensorMeasurements ThreeAxisGyroscopes;
-    SensorMeasurements ThreeAxisLinearAccelerometers;
-    SensorMeasurements ThreeAxisMagnetometers;
-    SensorMeasurements OrientationSensors;
-    SensorMeasurements TemperatureSensors;
-    SensorMeasurements SixAxisForceTorqueSensors;
-    SensorMeasurements ContactLoadCellArrays;
-    SensorMeasurements EncoderArrays;
-    SensorMeasurements SkinPatches;
-    SensorMeasurements PositionSensors;
+    SensorMeasurements ThreeAxisGyroscopes{};
+    SensorMeasurements ThreeAxisLinearAccelerometers{};
+    SensorMeasurements ThreeAxisMagnetometers{};
+    SensorMeasurements OrientationSensors{};
+    SensorMeasurements TemperatureSensors{};
+    SensorMeasurements SixAxisForceTorqueSensors{};
+    SensorMeasurements ContactLoadCellArrays{};
+    SensorMeasurements EncoderArrays{};
+    SensorMeasurements SkinPatches{};
+    SensorMeasurements PositionSensors{};
 
     // Default constructor
-    SensorStreamingData();
+    SensorStreamingData() = default;
 
     // Constructor with field values
     SensorStreamingData(const SensorMeasurements& ThreeAxisGyroscopes,

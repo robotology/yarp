@@ -26,78 +26,78 @@ public:
     /**
      * position of the robot [m], expressed in the world reference frame
      */
-    double odom_x;
+    double odom_x{0.0};
     /**
      * position of the robot [m], expressed in the world reference frame
      */
-    double odom_y;
+    double odom_y{0.0};
     /**
      * position of the robot [m], expressed in the world reference frame
      */
-    double odom_z;
+    double odom_z{0.0};
     /**
      * orientation the robot [deg], expressed in the world reference frame
      */
-    double odom_roll;
+    double odom_roll{0.0};
     /**
      * orientation the robot [deg], expressed in the world reference frame
      */
-    double odom_pitch;
+    double odom_pitch{0.0};
     /**
      * orientation the robot [deg], expressed in the world reference frame
      */
-    double odom_yaw;
+    double odom_yaw{0.0};
     /**
      * velocity of the robot [m/s] expressed in the robot reference frame
      */
-    double base_vel_x;
+    double base_vel_x{0.0};
     /**
      * velocity of the robot [m/s] expressed in the robot reference frame
      */
-    double base_vel_y;
+    double base_vel_y{0.0};
     /**
      * velocity of the robot [m/s] expressed in the robot reference frame
      */
-    double base_vel_z;
+    double base_vel_z{0.0};
     /**
      * angular velocity of the robot [deg/s] expressed in the robot reference frame
      */
-    double base_vel_roll;
+    double base_vel_roll{0.0};
     /**
      * angular velocity of the robot [deg/s] expressed in the robot reference frame
      */
-    double base_vel_pitch;
+    double base_vel_pitch{0.0};
     /**
      * angular velocity of the robot [deg/s] expressed in the robot reference frame
      */
-    double base_vel_yaw;
+    double base_vel_yaw{0.0};
     /**
      * velocity of the robot [m/s] expressed in the world reference frame
      */
-    double odom_vel_x;
+    double odom_vel_x{0.0};
     /**
      * velocity of the robot [m/s] expressed in the world reference frame
      */
-    double odom_vel_y;
+    double odom_vel_y{0.0};
     /**
      * velocity of the robot [m/s] expressed in the world reference frame
      */
-    double odom_vel_z;
+    double odom_vel_z{0.0};
     /**
      * angular velocity of the robot [deg/s] expressed in the world reference frame
      */
-    double odom_vel_roll;
+    double odom_vel_roll{0.0};
     /**
      * angular velocity of the robot [deg/s] expressed in the world reference frame
      */
-    double odom_vel_pitch;
+    double odom_vel_pitch{0.0};
     /**
      * angular velocity of the robot [deg/s] expressed in the world reference frame
      */
-    double odom_vel_yaw;
+    double odom_vel_yaw{0.0};
 
     // Default constructor
-    OdometryData6D();
+    OdometryData6D() = default;
 
     // Constructor with field values
     OdometryData6D(const double odom_x,

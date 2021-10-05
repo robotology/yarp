@@ -12,14 +12,6 @@
 
 namespace yarp::dev {
 
-// Default constructor
-Map2DPathData::Map2DPathData() :
-        WirePortable(),
-        waypoints(),
-        description("")
-{
-}
-
 // Constructor with field values
 Map2DPathData::Map2DPathData(const std::vector<yarp::dev::Nav2D::Map2DLocation>& waypoints,
                              const std::string& description) :

@@ -32,18 +32,18 @@ public:
     /**
      * true if the playback is currently enabled
      */
-    bool enabled;
+    bool enabled{false};
     /**
      * the size of the audio buffer [samples]
      */
-    size_t current_buffer_size;
+    size_t current_buffer_size{0};
     /**
      * the max_size of the audio buffer [samples]
      */
-    size_t max_buffer_size;
+    size_t max_buffer_size{0};
 
     // Default constructor
-    AudioPlayerStatus();
+    AudioPlayerStatus() = default;
 
     // Constructor with field values
     AudioPlayerStatus(const bool enabled,

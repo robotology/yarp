@@ -19,11 +19,11 @@ class return_get_map_names :
 {
 public:
     // Fields
-    bool retval;
-    std::vector<std::string> map_names;
+    bool retval{false};
+    std::vector<std::string> map_names{};
 
     // Default constructor
-    return_get_map_names();
+    return_get_map_names() = default;
 
     // Constructor with field values
     return_get_map_names(const bool retval,

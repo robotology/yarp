@@ -27,14 +27,14 @@ public:
     /**
      * list of waypoints which define the path
      */
-    std::vector<yarp::dev::Nav2D::Map2DLocation> waypoints;
+    std::vector<yarp::dev::Nav2D::Map2DLocation> waypoints{};
     /**
      * user defined string
      */
-    std::string description;
+    std::string description{};
 
     // Default constructor
-    Map2DPathData();
+    Map2DPathData() = default;
 
     // Constructor with field values
     Map2DPathData(const std::vector<yarp::dev::Nav2D::Map2DLocation>& waypoints,

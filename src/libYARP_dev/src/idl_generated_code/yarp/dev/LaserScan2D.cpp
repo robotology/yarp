@@ -12,18 +12,6 @@
 
 namespace yarp::dev {
 
-// Default constructor
-LaserScan2D::LaserScan2D() :
-        WirePortable(),
-        angle_min(0),
-        angle_max(0),
-        range_min(0),
-        range_max(0),
-        scans(),
-        status(0)
-{
-}
-
 // Constructor with field values
 LaserScan2D::LaserScan2D(const double angle_min,
                          const double angle_max,
