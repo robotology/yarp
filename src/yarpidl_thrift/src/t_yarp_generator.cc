@@ -1426,13 +1426,15 @@ void t_yarp_generator::generate_deserialize_field(std::ostringstream& f_cpp_,
             generate_deserialize_field_fallback(f_cpp_, tfield, prefix, suffix);
         }
         indent_down_cpp();
-        f_cpp_ << indent_cpp() << "} else {\n";
-        indent_up_cpp();
-        {
-            f_cpp_ << indent_cpp() << name << " = static_cast<" << type_name(type) << ">(" << t << ");\n";
+        if (tfield->get_value() != nullptr) {
+            f_cpp_ << indent_cpp() << "} else {\n";
+        } else {
+            f_cpp_ << indent_cpp() << "}\n";
         }
-        indent_down_cpp();
-        f_cpp_ << indent_cpp() << "}\n";
+        f_cpp_ << indent_cpp() << name << " = static_cast<" << type_name(type) << ">(" << t << ");\n";
+        if (tfield->get_value() != nullptr) {
+            f_cpp_ << indent_cpp() << "}\n";
+        }
     } else {
         printf("DO NOT KNOW HOW TO DESERIALIZE FIELD '%s' TYPE '%s'\n",
                tfield->get_name().c_str(),
