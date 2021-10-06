@@ -63,7 +63,7 @@ return_get_localization_status ILocalization2DRPCd::get_localization_status_RPC(
     if (m_getdata_using_periodic_thread)
     {
         ret.ret = true;
-        ret.status = yarp_dev_Nav2D_LocalizationStatusEnum(m_current_status);
+        ret.status = yarp::dev::Nav2D::LocalizationStatusEnum(m_current_status);
         return ret;
     }
 
@@ -74,12 +74,12 @@ return_get_localization_status ILocalization2DRPCd::get_localization_status_RPC(
     {
         yCError(LOCALIZATION2DSERVER, "Unable to getLocalizationStatus");
         ret.ret=false;
-        ret.status = yarp_dev_Nav2D_LocalizationStatusEnum (yarp::dev::Nav2D::LocalizationStatusEnum::localization_status_error) ;
+        ret.status = yarp::dev::Nav2D::LocalizationStatusEnum(yarp::dev::Nav2D::LocalizationStatusEnum::localization_status_error) ;
     }
     else
     {
         ret.ret=true;
-        ret.status = yarp_dev_Nav2D_LocalizationStatusEnum(status);
+        ret.status = yarp::dev::Nav2D::LocalizationStatusEnum(status);
     }
     return ret;
 }
