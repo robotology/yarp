@@ -63,7 +63,6 @@ public:
     bool close() override;
 
     bool getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb> & image) override;
-    virtual bool sendImage(const cv::Mat & frame, yarp::sig::ImageOf<yarp::sig::PixelRgb> & image);
 
 
     /** Get the height of images a grabber produces.
@@ -83,9 +82,9 @@ public:
 protected:
 
     /** Width of the images a grabber produces. */
-    size_t m_w;
+    int m_w;
     /** Height of the images a grabber produces. */
-    size_t m_h;
+    int m_h;
 
     /** Whether to loop or not. */
     bool m_loop;
