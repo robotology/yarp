@@ -88,7 +88,7 @@ private:
     yarp::os::Stamp time; // envelope to attach to the state port
 
     yarp::dev::DeviceDriver* subdevice_ptr{nullptr};
-    bool subdevice_owned {true};
+    bool subdevice_owned = false;
     size_t subdevice_joints {0};
     bool subdevice_ready = false;
 
