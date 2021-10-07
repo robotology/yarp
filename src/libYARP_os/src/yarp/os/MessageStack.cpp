@@ -10,7 +10,6 @@
 #include <yarp/os/Bottle.h>
 #include <yarp/os/DummyConnector.h>
 #include <yarp/os/Log.h>
-#include <yarp/os/Semaphore.h>
 #include <yarp/os/Thread.h>
 
 #include <condition_variable>
