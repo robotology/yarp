@@ -217,13 +217,14 @@ public:
                                   bool force_nested = false);
 
     void generate_serialize_struct(std::ostringstream& out,
-                                   t_struct* tstruct,
+                                   t_field* tfield,
                                    const std::string& prefix = "",
+                                   const std::string& suffix = "",
                                    bool force_nested = false);
 
     void generate_serialize_container(std::ostringstream& out,
                                       t_type* ttype,
-                                      const std::string& prefix = "");
+                                      const std::string& name);
 
     void generate_serialize_map_element(std::ostringstream& out,
                                         t_map* tmap,
@@ -255,13 +256,14 @@ public:
                                     bool force_nested = false);
 
     void generate_deserialize_struct(std::ostringstream& out,
-                                     t_struct* tstruct,
+                                     t_field* tfield,
                                      const std::string& prefix = "",
+                                     const std::string& suffix = "",
                                      bool force_nested = true);
 
     void generate_deserialize_container(std::ostringstream& out,
                                         t_type* ttype,
-                                        const std::string& prefix = "");
+                                        const std::string& name);
 
     void generate_deserialize_set_element(std::ostringstream& out,
                                           t_set* tset,
@@ -1061,12 +1063,11 @@ void t_yarp_generator::generate_serialize_field(std::ostringstream& f_cpp_,
     }
 
     if (type->is_struct() || type->is_xception()) {
-        f_cpp_ << indent_cpp() << "if (!writer.";
         generate_serialize_struct(f_cpp_,
-                                  static_cast<t_struct*>(type),
-                                  name,
+                                  tfield,
+                                  prefix,
+                                  suffix,
                                   force_nested);
-        f_cpp_ << ")" << inline_return_cpp("false");
     } else if (type->is_container()) {
         generate_serialize_container(f_cpp_, type, name);
     } else if (type->is_base_type() || type->is_enum()) {
@@ -1167,22 +1168,21 @@ void t_yarp_generator::generate_serialize_field(std::ostringstream& f_cpp_,
 }
 
 void t_yarp_generator::generate_serialize_struct(std::ostringstream& f_cpp_,
-                                                 t_struct* tstruct,
+                                                 t_field* tfield,
                                                  const std::string& prefix,
+                                                 const std::string& suffix,
                                                  bool force_nested)
 {
     THRIFT_DEBUG_COMMENT(f_cpp_);
 
-    if (force_nested) {
-        f_cpp_ << "writeNested(" << prefix << ")";
-    } else {
-        f_cpp_ << "write(" << prefix << ")";
-    }
+    std::string name = prefix + tfield->get_name() + suffix;
+
+    f_cpp_ << indent_cpp() << "if (!writer.write" << (force_nested ? "Nested" : "") << "(" << name << "))" << inline_return_cpp("false");
 }
 
 void t_yarp_generator::generate_serialize_container(std::ostringstream& f_cpp_,
                                                     t_type* ttype,
-                                                    const std::string& prefix)
+                                                    const std::string& name)
 {
     THRIFT_DEBUG_COMMENT(f_cpp_);
 
@@ -1198,10 +1198,10 @@ void t_yarp_generator::generate_serialize_container(std::ostringstream& f_cpp_,
         f_cpp_ << indent_cpp() << "if (!writer.writeListBegin("
                         << type_to_enum(static_cast<t_list*>(ttype)->get_elem_type());
     }
-    f_cpp_ << ", " << "static_cast<uint32_t>(" << prefix << ".size())))" << inline_return_cpp("false");
+    f_cpp_ << ", " << "static_cast<uint32_t>(" << name << ".size())))" << inline_return_cpp("false");
 
     std::string item = tmp("_item");
-    f_cpp_ << indent_cpp() << "for (const auto& " << item << " : " << prefix << ") {\n";
+    f_cpp_ << indent_cpp() << "for (const auto& " << item << " : " << name << ") {\n";
     indent_up_cpp();
     {
         if (ttype->is_map()) {
@@ -1307,15 +1307,7 @@ void t_yarp_generator::generate_deserialize_field(std::ostringstream& f_cpp_,
     }
 
     if (type->is_struct() || type->is_xception()) {
-        f_cpp_ << indent_cpp() << "if (!reader.";
-        generate_deserialize_struct(f_cpp_, static_cast<t_struct*>(type), name, force_nested);
-        f_cpp_ << ") {\n";
-        indent_up_cpp();
-        {
-            generate_deserialize_field_fallback(f_cpp_, tfield, prefix, suffix);
-        }
-        indent_down_cpp();
-        f_cpp_ << indent_cpp() << "}\n";
+        generate_deserialize_struct(f_cpp_, tfield, prefix, suffix, force_nested);
     } else if (type->is_container()) {
         generate_deserialize_container(f_cpp_, type, name);
     } else if (type->is_base_type()) {
@@ -1443,14 +1435,22 @@ void t_yarp_generator::generate_deserialize_field(std::ostringstream& f_cpp_,
 }
 
 void t_yarp_generator::generate_deserialize_struct(std::ostringstream& f_cpp_,
-                                                   t_struct* tstruct,
+                                                   t_field* tfield,
                                                    const std::string& prefix,
+                                                   const std::string& suffix,
                                                    bool force_nested)
 {
     THRIFT_DEBUG_COMMENT(f_cpp_);
 
-    (void /* unused */)tstruct;
-    f_cpp_ << "read" << (force_nested ? "Nested" : "") << "(" << prefix << ")";
+    std::string name = prefix + tfield->get_name() + suffix;
+
+    f_cpp_ << indent_cpp() << "if (!reader.read" << (force_nested ? "Nested" : "") << "(" << name << ")) {\n";
+    indent_up_cpp();
+    {
+        generate_deserialize_field_fallback(f_cpp_, tfield, prefix, suffix);
+    }
+    indent_down_cpp();
+    f_cpp_ << indent_cpp() << "}\n";
 }
 
 void t_yarp_generator::generate_deserialize_container(std::ostringstream& f_cpp_,
