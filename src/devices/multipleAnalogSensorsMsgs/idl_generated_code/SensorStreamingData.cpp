@@ -78,37 +78,7 @@ bool SensorStreamingData::read(yarp::os::ConnectionReader& connection)
     if (!reader.readListHeader(10)) {
         return false;
     }
-    if (!read_ThreeAxisGyroscopes(reader)) {
-        return false;
-    }
-    if (!read_ThreeAxisLinearAccelerometers(reader)) {
-        return false;
-    }
-    if (!read_ThreeAxisMagnetometers(reader)) {
-        return false;
-    }
-    if (!read_OrientationSensors(reader)) {
-        return false;
-    }
-    if (!read_TemperatureSensors(reader)) {
-        return false;
-    }
-    if (!read_SixAxisForceTorqueSensors(reader)) {
-        return false;
-    }
-    if (!read_ContactLoadCellArrays(reader)) {
-        return false;
-    }
-    if (!read_EncoderArrays(reader)) {
-        return false;
-    }
-    if (!read_SkinPatches(reader)) {
-        return false;
-    }
-    if (!read_PositionSensors(reader)) {
-        return false;
-    }
-    return !reader.isError();
+    return read(reader);
 }
 
 // Write structure on a Wire
@@ -154,37 +124,7 @@ bool SensorStreamingData::write(yarp::os::ConnectionWriter& connection) const
     if (!writer.writeListHeader(10)) {
         return false;
     }
-    if (!write_ThreeAxisGyroscopes(writer)) {
-        return false;
-    }
-    if (!write_ThreeAxisLinearAccelerometers(writer)) {
-        return false;
-    }
-    if (!write_ThreeAxisMagnetometers(writer)) {
-        return false;
-    }
-    if (!write_OrientationSensors(writer)) {
-        return false;
-    }
-    if (!write_TemperatureSensors(writer)) {
-        return false;
-    }
-    if (!write_SixAxisForceTorqueSensors(writer)) {
-        return false;
-    }
-    if (!write_ContactLoadCellArrays(writer)) {
-        return false;
-    }
-    if (!write_EncoderArrays(writer)) {
-        return false;
-    }
-    if (!write_SkinPatches(writer)) {
-        return false;
-    }
-    if (!write_PositionSensors(writer)) {
-        return false;
-    }
-    return !writer.isError();
+    return write(writer);
 }
 
 // Convert to a printable string

@@ -40,13 +40,7 @@ bool Map2DPathData::read(yarp::os::ConnectionReader& connection)
     if (!reader.readListHeader(2)) {
         return false;
     }
-    if (!read_waypoints(reader)) {
-        return false;
-    }
-    if (!read_description(reader)) {
-        return false;
-    }
-    return !reader.isError();
+    return read(reader);
 }
 
 // Write structure on a Wire
@@ -68,13 +62,7 @@ bool Map2DPathData::write(yarp::os::ConnectionWriter& connection) const
     if (!writer.writeListHeader(2)) {
         return false;
     }
-    if (!write_waypoints(writer)) {
-        return false;
-    }
-    if (!write_description(writer)) {
-        return false;
-    }
-    return !writer.isError();
+    return write(writer);
 }
 
 // Convert to a printable string

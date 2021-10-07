@@ -44,7 +44,7 @@ bool LaserScan2D::read(yarp::os::idl::WireReader& reader)
     if (!read_range_max(reader)) {
         return false;
     }
-    if (!read_scans(reader)) {
+    if (!nested_read_scans(reader)) {
         return false;
     }
     if (!read_status(reader)) {
@@ -60,25 +60,7 @@ bool LaserScan2D::read(yarp::os::ConnectionReader& connection)
     if (!reader.readListHeader(6)) {
         return false;
     }
-    if (!read_angle_min(reader)) {
-        return false;
-    }
-    if (!read_angle_max(reader)) {
-        return false;
-    }
-    if (!read_range_min(reader)) {
-        return false;
-    }
-    if (!read_range_max(reader)) {
-        return false;
-    }
-    if (!read_scans(reader)) {
-        return false;
-    }
-    if (!read_status(reader)) {
-        return false;
-    }
-    return !reader.isError();
+    return read(reader);
 }
 
 // Write structure on a Wire
@@ -96,7 +78,7 @@ bool LaserScan2D::write(const yarp::os::idl::WireWriter& writer) const
     if (!write_range_max(writer)) {
         return false;
     }
-    if (!write_scans(writer)) {
+    if (!nested_write_scans(writer)) {
         return false;
     }
     if (!write_status(writer)) {
@@ -112,25 +94,7 @@ bool LaserScan2D::write(yarp::os::ConnectionWriter& connection) const
     if (!writer.writeListHeader(6)) {
         return false;
     }
-    if (!write_angle_min(writer)) {
-        return false;
-    }
-    if (!write_angle_max(writer)) {
-        return false;
-    }
-    if (!write_range_min(writer)) {
-        return false;
-    }
-    if (!write_range_max(writer)) {
-        return false;
-    }
-    if (!write_scans(writer)) {
-        return false;
-    }
-    if (!write_status(writer)) {
-        return false;
-    }
-    return !writer.isError();
+    return write(writer);
 }
 
 // Convert to a printable string

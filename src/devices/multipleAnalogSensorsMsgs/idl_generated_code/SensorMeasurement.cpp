@@ -22,7 +22,7 @@ SensorMeasurement::SensorMeasurement(const yarp::sig::Vector& measurement,
 // Read structure on a Wire
 bool SensorMeasurement::read(yarp::os::idl::WireReader& reader)
 {
-    if (!read_measurement(reader)) {
+    if (!nested_read_measurement(reader)) {
         return false;
     }
     if (!read_timestamp(reader)) {
@@ -38,19 +38,13 @@ bool SensorMeasurement::read(yarp::os::ConnectionReader& connection)
     if (!reader.readListHeader(2)) {
         return false;
     }
-    if (!read_measurement(reader)) {
-        return false;
-    }
-    if (!read_timestamp(reader)) {
-        return false;
-    }
-    return !reader.isError();
+    return read(reader);
 }
 
 // Write structure on a Wire
 bool SensorMeasurement::write(const yarp::os::idl::WireWriter& writer) const
 {
-    if (!write_measurement(writer)) {
+    if (!nested_write_measurement(writer)) {
         return false;
     }
     if (!write_timestamp(writer)) {
@@ -66,13 +60,7 @@ bool SensorMeasurement::write(yarp::os::ConnectionWriter& connection) const
     if (!writer.writeListHeader(2)) {
         return false;
     }
-    if (!write_measurement(writer)) {
-        return false;
-    }
-    if (!write_timestamp(writer)) {
-        return false;
-    }
-    return !writer.isError();
+    return write(writer);
 }
 
 // Convert to a printable string

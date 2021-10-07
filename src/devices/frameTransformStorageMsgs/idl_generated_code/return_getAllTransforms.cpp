@@ -38,13 +38,7 @@ bool return_getAllTransforms::read(yarp::os::ConnectionReader& connection)
     if (!reader.readListHeader(2)) {
         return false;
     }
-    if (!read_retvalue(reader)) {
-        return false;
-    }
-    if (!read_transforms_list(reader)) {
-        return false;
-    }
-    return !reader.isError();
+    return read(reader);
 }
 
 // Write structure on a Wire
@@ -66,13 +60,7 @@ bool return_getAllTransforms::write(yarp::os::ConnectionWriter& connection) cons
     if (!writer.writeListHeader(2)) {
         return false;
     }
-    if (!write_retvalue(writer)) {
-        return false;
-    }
-    if (!write_transforms_list(writer)) {
-        return false;
-    }
-    return !writer.isError();
+    return write(writer);
 }
 
 // Convert to a printable string

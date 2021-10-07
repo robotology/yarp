@@ -45,16 +45,7 @@ bool MobileBaseVelocity::read(yarp::os::ConnectionReader& connection)
     if (!reader.readListHeader(3)) {
         return false;
     }
-    if (!read_vel_x(reader)) {
-        return false;
-    }
-    if (!read_vel_y(reader)) {
-        return false;
-    }
-    if (!read_vel_theta(reader)) {
-        return false;
-    }
-    return !reader.isError();
+    return read(reader);
 }
 
 // Write structure on a Wire
@@ -79,16 +70,7 @@ bool MobileBaseVelocity::write(yarp::os::ConnectionWriter& connection) const
     if (!writer.writeListHeader(3)) {
         return false;
     }
-    if (!write_vel_x(writer)) {
-        return false;
-    }
-    if (!write_vel_y(writer)) {
-        return false;
-    }
-    if (!write_vel_theta(writer)) {
-        return false;
-    }
-    return !writer.isError();
+    return write(writer);
 }
 
 // Convert to a printable string

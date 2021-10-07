@@ -285,6 +285,8 @@ public:
     std::string get_struct_name(t_struct* tstruct);
     std::string get_enum_base(t_enum* tenum);
 
+    bool is_member_nested(t_field* field);
+
     void print_const_value(std::ostringstream& out, const std::string& name, t_type* type, t_const_value* value);
     std::string render_const_value(std::ostringstream& out, const std::string& name, t_type* type, t_const_value* value);
 
@@ -490,6 +492,32 @@ std::string t_yarp_generator::get_enum_base(t_enum* tenum)
     }
     return enum_bases_[name];
 }
+
+bool t_yarp_generator::is_member_nested(t_field* member)
+{
+    const auto* mtype = member->get_type();
+
+    // Force nesting for fields annotated as "yarp.nested"
+    auto it = member->annotations_.find("yarp.nested");
+    if (it != member->annotations_.end() && it->second == "true") {
+        return true;
+    }
+
+    // Force nesting for types annotated as "yarp.name", unless "yarp.size" was specified
+    // Note: The only difference when calling the nested version, is that for types that
+    //       are both WirePortable and Portable, the Portable::read(ConnectionReader) method
+    //       is called instead of the WirePortable::read(WireReader).
+    //       If this method is well written, it writes in a Bottle style, hence starts with
+    //       BOTTLE_TAG_LIST <size>, therefore nesting the struct.
+    auto it2 = mtype->annotations_.find("yarp.name");
+    auto it3 = mtype->annotations_.find("yarp.size");
+    if (it2 != mtype->annotations_.end() && it3 == mtype->annotations_.end()) {
+        return true;
+    }
+
+    return false;
+}
+
 
 
 std::string t_yarp_generator::copyright_comment() const
@@ -2307,14 +2335,7 @@ void t_yarp_generator::generate_struct_read_wirereader(t_struct* tstruct, std::o
     indent_up_cpp();
     {
         for (const auto& member : members) {
-            const auto& mname = member->get_name();
-            // Force nesting for fields annotated as "yarp.nested"
-            auto it = member->annotations_.find("yarp.nested");
-            if (it != member->annotations_.end() && it->second == "true") {
-                f_cpp_ << indent_cpp() << "if (!nested_read_" << mname << "(reader))" << inline_return_cpp("false");
-            } else {
-                f_cpp_ << indent_cpp() << "if (!read_" << mname << "(reader))" << inline_return_cpp("false");
-            }
+            f_cpp_ << indent_cpp() << "if (!" << (is_member_nested(member) ? "nested_" : "") << "read_" << member->get_name() << "(reader))" << inline_return_cpp("false");
         }
         f_cpp_ << indent_cpp() << "return !reader.isError();\n";
     }
@@ -2332,7 +2353,6 @@ void t_yarp_generator::generate_struct_read_connectionreader(t_struct* tstruct, 
     THRIFT_DEBUG_COMMENT(f_cpp_);
 
     const auto& name = tstruct->get_name();
-    const auto& members = tstruct->get_members();
 
     f_h_ << indent_h() << "// Read structure on a Connection\n";
     f_h_ << indent_h() << "bool read(yarp::os::ConnectionReader& connection) override;\n";
@@ -2345,16 +2365,7 @@ void t_yarp_generator::generate_struct_read_connectionreader(t_struct* tstruct, 
     {
         f_cpp_ << indent_cpp() << "yarp::os::idl::WireReader reader(connection);\n";
         f_cpp_ << indent_cpp() << "if (!reader.readListHeader(" << flat_element_count(tstruct) << "))" << inline_return_cpp("false");
-        for (const auto& member : members) {
-            const auto& mname = member->get_name();
-            auto it = member->annotations_.find("yarp.nested");
-            if (it != member->annotations_.end() && it->second == "true") {
-                f_cpp_ << indent_cpp() << "if (!nested_read_" << mname << "(reader))" << inline_return_cpp("false");
-            } else {
-                f_cpp_ << indent_cpp() << "if (!read_" << mname << "(reader))" << inline_return_cpp("false");
-            }
-        }
-        f_cpp_ << indent_cpp() << "return !reader.isError();\n";
+        f_cpp_ << indent_cpp() << "return read(reader);\n";
     }
     indent_down_cpp();
     f_cpp_ << indent_cpp() << "}\n";
@@ -2382,13 +2393,7 @@ void t_yarp_generator::generate_struct_write_wirewriter(t_struct* tstruct, std::
     indent_up_cpp();
     {
         for (const auto& member : members) {
-            const auto& mname = member->get_name();
-            auto it = member->annotations_.find("yarp.nested");
-            if (it != member->annotations_.end() && it->second == "true") {
-                f_cpp_ << indent_cpp() << "if (!nested_write_" << mname << "(writer))" << inline_return_cpp("false");
-            } else {
-                f_cpp_ << indent_cpp() << "if (!write_" << mname << "(writer))" << inline_return_cpp("false");
-            }
+            f_cpp_ << indent_cpp() << "if (!" << (is_member_nested(member) ? "nested_" : "") << "write_" << member->get_name() << "(writer))" << inline_return_cpp("false");
         }
         f_cpp_ << indent_cpp() << "return !writer.isError();\n";
     }
@@ -2406,7 +2411,6 @@ void t_yarp_generator::generate_struct_write_connectionwriter(t_struct* tstruct,
     THRIFT_DEBUG_COMMENT(f_cpp_);
 
     const auto& name = tstruct->get_name();
-    const auto& members = tstruct->get_members();
 
     f_h_ << indent_h() << "// Write structure on a Connection\n";
     f_h_ << indent_h() << "bool write(yarp::os::ConnectionWriter& connection) const override;\n";
@@ -2419,16 +2423,7 @@ void t_yarp_generator::generate_struct_write_connectionwriter(t_struct* tstruct,
     {
         f_cpp_ << indent_cpp() << "yarp::os::idl::WireWriter writer(connection);\n";
         f_cpp_ << indent_cpp() << "if (!writer.writeListHeader(" << flat_element_count(tstruct) << "))" << inline_return_cpp("false");
-        for (const auto& member : members) {
-            const auto& mname = member->get_name();
-            auto it = member->annotations_.find("yarp.nested");
-            if (it != member->annotations_.end() && it->second == "true") {
-                f_cpp_ << indent_cpp() << "if (!nested_write_" << mname << "(writer))" << inline_return_cpp("false");
-            } else {
-                f_cpp_ << indent_cpp() << "if (!write_" << mname << "(writer))" << inline_return_cpp("false");
-            }
-        }
-        f_cpp_ << indent_cpp() << "return !writer.isError();\n";
+        f_cpp_ << indent_cpp() << "return write(writer);\n";
     }
     indent_down_cpp();
     f_cpp_ << indent_cpp() << "}\n";
@@ -3986,8 +3981,7 @@ void t_yarp_generator::generate_service_helper_classes_impl_command_writeargs(t_
     indent_up_cpp();
     {
         for (const auto& arg : args) {
-            bool force_nested = (arg->annotations_.find("yarp.name") == (arg->annotations_.end()));
-            generate_serialize_field(f_cpp_, arg, "", "", force_nested);
+            generate_serialize_field(f_cpp_, arg, "", "", is_member_nested(arg));
         }
         f_cpp_ << indent_cpp() << "return true;\n";
     }
@@ -4052,7 +4046,6 @@ void t_yarp_generator::generate_service_helper_classes_impl_command_readargs(t_f
 
     const auto& fname = function->get_name();
     const auto& args = function->get_arglist()->get_members();
-    const auto& returntype = function->get_returntype();
     const auto helper_class = std::string{service_name_ + "_" + fname + "_helper"};
 
     f_cpp_ << indent_cpp() << "bool " << helper_class << "::Command::readArgs(yarp::os::idl::WireReader& reader)\n";
@@ -4060,8 +4053,7 @@ void t_yarp_generator::generate_service_helper_classes_impl_command_readargs(t_f
     indent_up_cpp();
     {
         for (const auto& arg : args) {
-            bool force_nested = (returntype->annotations_.find("yarp.name") == (returntype->annotations_.end()));
-            generate_deserialize_field(f_cpp_, arg, "", "", force_nested);
+            generate_deserialize_field(f_cpp_, arg, "", "", is_member_nested(arg));
         }
         f_cpp_ << indent_cpp() << "if (!reader.noMore()) {\n";
         indent_up_cpp();

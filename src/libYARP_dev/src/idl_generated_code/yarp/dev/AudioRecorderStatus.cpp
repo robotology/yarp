@@ -45,16 +45,7 @@ bool AudioRecorderStatus::read(yarp::os::ConnectionReader& connection)
     if (!reader.readListHeader(3)) {
         return false;
     }
-    if (!read_enabled(reader)) {
-        return false;
-    }
-    if (!read_current_buffer_size(reader)) {
-        return false;
-    }
-    if (!read_max_buffer_size(reader)) {
-        return false;
-    }
-    return !reader.isError();
+    return read(reader);
 }
 
 // Write structure on a Wire
@@ -79,16 +70,7 @@ bool AudioRecorderStatus::write(yarp::os::ConnectionWriter& connection) const
     if (!writer.writeListHeader(3)) {
         return false;
     }
-    if (!write_enabled(writer)) {
-        return false;
-    }
-    if (!write_current_buffer_size(writer)) {
-        return false;
-    }
-    if (!write_max_buffer_size(writer)) {
-        return false;
-    }
-    return !writer.isError();
+    return write(writer);
 }
 
 // Convert to a printable string

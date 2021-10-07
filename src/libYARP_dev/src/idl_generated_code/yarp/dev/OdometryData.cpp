@@ -75,34 +75,7 @@ bool OdometryData::read(yarp::os::ConnectionReader& connection)
     if (!reader.readListHeader(9)) {
         return false;
     }
-    if (!read_odom_x(reader)) {
-        return false;
-    }
-    if (!read_odom_y(reader)) {
-        return false;
-    }
-    if (!read_odom_theta(reader)) {
-        return false;
-    }
-    if (!read_base_vel_x(reader)) {
-        return false;
-    }
-    if (!read_base_vel_y(reader)) {
-        return false;
-    }
-    if (!read_base_vel_theta(reader)) {
-        return false;
-    }
-    if (!read_odom_vel_x(reader)) {
-        return false;
-    }
-    if (!read_odom_vel_y(reader)) {
-        return false;
-    }
-    if (!read_odom_vel_theta(reader)) {
-        return false;
-    }
-    return !reader.isError();
+    return read(reader);
 }
 
 // Write structure on a Wire
@@ -145,34 +118,7 @@ bool OdometryData::write(yarp::os::ConnectionWriter& connection) const
     if (!writer.writeListHeader(9)) {
         return false;
     }
-    if (!write_odom_x(writer)) {
-        return false;
-    }
-    if (!write_odom_y(writer)) {
-        return false;
-    }
-    if (!write_odom_theta(writer)) {
-        return false;
-    }
-    if (!write_base_vel_x(writer)) {
-        return false;
-    }
-    if (!write_base_vel_y(writer)) {
-        return false;
-    }
-    if (!write_base_vel_theta(writer)) {
-        return false;
-    }
-    if (!write_odom_vel_x(writer)) {
-        return false;
-    }
-    if (!write_odom_vel_y(writer)) {
-        return false;
-    }
-    if (!write_odom_vel_theta(writer)) {
-        return false;
-    }
-    return !writer.isError();
+    return write(writer);
 }
 
 // Convert to a printable string

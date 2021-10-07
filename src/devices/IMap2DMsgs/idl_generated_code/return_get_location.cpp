@@ -25,7 +25,7 @@ bool return_get_location::read(yarp::os::idl::WireReader& reader)
     if (!read_retval(reader)) {
         return false;
     }
-    if (!read_loc(reader)) {
+    if (!nested_read_loc(reader)) {
         return false;
     }
     return !reader.isError();
@@ -38,13 +38,7 @@ bool return_get_location::read(yarp::os::ConnectionReader& connection)
     if (!reader.readListHeader(2)) {
         return false;
     }
-    if (!read_retval(reader)) {
-        return false;
-    }
-    if (!read_loc(reader)) {
-        return false;
-    }
-    return !reader.isError();
+    return read(reader);
 }
 
 // Write structure on a Wire
@@ -53,7 +47,7 @@ bool return_get_location::write(const yarp::os::idl::WireWriter& writer) const
     if (!write_retval(writer)) {
         return false;
     }
-    if (!write_loc(writer)) {
+    if (!nested_write_loc(writer)) {
         return false;
     }
     return !writer.isError();
@@ -66,13 +60,7 @@ bool return_get_location::write(yarp::os::ConnectionWriter& connection) const
     if (!writer.writeListHeader(2)) {
         return false;
     }
-    if (!write_retval(writer)) {
-        return false;
-    }
-    if (!write_loc(writer)) {
-        return false;
-    }
-    return !writer.isError();
+    return write(writer);
 }
 
 // Convert to a printable string

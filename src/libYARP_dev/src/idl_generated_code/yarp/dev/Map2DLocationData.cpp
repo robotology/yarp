@@ -55,22 +55,7 @@ bool Map2DLocationData::read(yarp::os::ConnectionReader& connection)
     if (!reader.readListHeader(5)) {
         return false;
     }
-    if (!read_map_id(reader)) {
-        return false;
-    }
-    if (!read_x(reader)) {
-        return false;
-    }
-    if (!read_y(reader)) {
-        return false;
-    }
-    if (!read_theta(reader)) {
-        return false;
-    }
-    if (!read_description(reader)) {
-        return false;
-    }
-    return !reader.isError();
+    return read(reader);
 }
 
 // Write structure on a Wire
@@ -101,22 +86,7 @@ bool Map2DLocationData::write(yarp::os::ConnectionWriter& connection) const
     if (!writer.writeListHeader(5)) {
         return false;
     }
-    if (!write_map_id(writer)) {
-        return false;
-    }
-    if (!write_x(writer)) {
-        return false;
-    }
-    if (!write_y(writer)) {
-        return false;
-    }
-    if (!write_theta(writer)) {
-        return false;
-    }
-    if (!write_description(writer)) {
-        return false;
-    }
-    return !writer.isError();
+    return write(writer);
 }
 
 // Convert to a printable string
