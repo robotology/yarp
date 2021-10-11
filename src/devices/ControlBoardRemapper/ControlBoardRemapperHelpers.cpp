@@ -244,12 +244,12 @@ bool ControlBoardSubControlBoardAxesDecomposition::configure(const RemappedContr
         m_jointsInSubControlBoard[subIndex].push_back(off);
     }
 
-    // Reserve enough space in buffers
+    // Allocate enough space in buffers
     for(size_t ctrlBrd=0; ctrlBrd < nrOfSubControlBoards; ctrlBrd++)
     {
-        m_bufferForSubControlBoard[ctrlBrd].reserve(m_nJointsInSubControlBoard[ctrlBrd]);
-        m_bufferForSubControlBoardControlModes[ctrlBrd].reserve(m_nJointsInSubControlBoard[ctrlBrd]);
-        m_bufferForSubControlBoardInteractionModes[ctrlBrd].reserve(m_nJointsInSubControlBoard[ctrlBrd]);
+        m_bufferForSubControlBoard[ctrlBrd].resize(m_nJointsInSubControlBoard[ctrlBrd]);
+        m_bufferForSubControlBoardControlModes[ctrlBrd].resize(m_nJointsInSubControlBoard[ctrlBrd]);
+        m_bufferForSubControlBoardInteractionModes[ctrlBrd].resize(m_nJointsInSubControlBoard[ctrlBrd]);
 
         m_counterForControlBoard[ctrlBrd] = 0;
     }
@@ -379,15 +379,15 @@ bool ControlBoardArbitraryAxesDecomposition::configure(const RemappedControlBoar
         m_nJointsInSubControlBoard[subIndex]++;
     }
 
-    // Reserve enough space in buffers
+    // Allocate enough space in buffers
     for(size_t ctrlBrd=0; ctrlBrd < nrOfSubControlBoards; ctrlBrd++)
     {
-        m_bufferForSubControlBoard[ctrlBrd].reserve(m_nJointsInSubControlBoard[ctrlBrd]);
-        m_bufferForSubControlBoardControlModes[ctrlBrd].reserve(m_nJointsInSubControlBoard[ctrlBrd]);
-        m_bufferForSubControlBoardInteractionModes[ctrlBrd].reserve(m_nJointsInSubControlBoard[ctrlBrd]);
+        m_bufferForSubControlBoard[ctrlBrd].resize(m_nJointsInSubControlBoard[ctrlBrd]);
+        m_bufferForSubControlBoardControlModes[ctrlBrd].resize(m_nJointsInSubControlBoard[ctrlBrd]);
+        m_bufferForSubControlBoardInteractionModes[ctrlBrd].resize(m_nJointsInSubControlBoard[ctrlBrd]);
 
         m_counterForControlBoard[ctrlBrd] = 0;
-        m_jointsInSubControlBoard[ctrlBrd].reserve(m_nJointsInSubControlBoard[ctrlBrd]);
+        m_jointsInSubControlBoard[ctrlBrd].resize(m_nJointsInSubControlBoard[ctrlBrd]);
     }
 
     return true;
