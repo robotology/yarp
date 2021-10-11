@@ -99,7 +99,7 @@ bool FrameTransformGet_nwc_yarp::open(yarp::os::Searchable& config)
             yCWarning(FRAMETRANSFORMGETNWCYARP) << "no output_streaming_port_prefix param found. The resulting port name will be: " << m_streaming_output_port_name;
         }
 
-        // rpc inizialisation
+        // data receiver initialization
         m_dataReader = new FrameTransformGet_nwc_yarp::DataReader();
         if(!m_dataReader->open(m_streaming_input_port_name))
         {
@@ -112,6 +112,8 @@ bool FrameTransformGet_nwc_yarp::open(yarp::os::Searchable& config)
             yCError(FRAMETRANSFORMGETNWCYARP,"Could not connect \"%s\" to \"%s\" port",m_streaming_output_port_name.c_str(), m_streaming_input_port_name.c_str());
             return false;
         }
+        //useCallback
+        m_dataReader->useCallback();
     }
     else
     {

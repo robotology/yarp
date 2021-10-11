@@ -385,14 +385,17 @@ bool FrameTransformClient::allFramesAsString(std::string &all_frames)
 {
     FrameTransformContainer* p_cont = nullptr;
     bool br = m_ift_util->getInternalContainer(p_cont);
-    if (br && p_cont)
+    if (!br || p_cont == nullptr) { yCError(FRAMETRANSFORMCLIENT) << "Failure"; return false; }
+
+    //protect the internal container from concurrent access
+    std::lock_guard<std::recursive_mutex> l(p_cont->m_trf_mutex);
+
+    //process data
+    for (auto it = p_cont->begin(); it != p_cont->end(); it++)
     {
-        for (auto it = p_cont->begin(); it != p_cont->end(); it++) {
-            all_frames += it->toString() + " ";
-        }
-        return true;
+         all_frames += it->toString() + " ";
     }
-    return false;
+    return true;
 }
 
 FrameTransformClient::ConnectionType FrameTransformClient::priv_getConnectionType(const std::string &target_frame, const std::string &source_frame, std::string* commonAncestor = nullptr)
@@ -408,7 +411,11 @@ FrameTransformClient::ConnectionType FrameTransformClient::priv_getConnectionTyp
     std::vector<std::string>   src2root_vec;
     std::string                ancestor, child;
     child = target_frame;
+
+    //protect the internal container from concurrent access
     std::lock_guard<std::recursive_mutex> l(p_cont->m_trf_mutex);
+
+    //process data
     while(getParent(child, ancestor))
     {
         if(ancestor == source_frame)
@@ -472,6 +479,10 @@ bool FrameTransformClient::frameExists(const std::string &frame_id)
     bool br = m_ift_util->getInternalContainer(p_cont);
     if (!br || p_cont == nullptr) { yCError(FRAMETRANSFORMCLIENT) << "Failure"; return false; }
 
+    //protect the internal container from concurrent access
+    std::lock_guard<std::recursive_mutex> l(p_cont->m_trf_mutex);
+
+    //process data
     for (auto it = p_cont->begin(); it != p_cont->end(); it++)
     {
         if (it->src_frame_id == frame_id) { return true; }
@@ -488,6 +499,10 @@ bool FrameTransformClient::getAllFrameIds(std::vector<std::string> &ids)
     bool br = m_ift_util->getInternalContainer(p_cont);
     if (!br || p_cont == nullptr) { yCError(FRAMETRANSFORMCLIENT) << "Failure"; return false; }
 
+    //protect the internal container from concurrent access
+    std::lock_guard<std::recursive_mutex> l(p_cont->m_trf_mutex);
+
+    //process data
     for (auto it = p_cont->begin(); it != p_cont->end(); it++)
     {
         bool found = false;
@@ -521,12 +536,15 @@ bool FrameTransformClient::getParent(const std::string &frame_id, std::string &p
     bool br = m_ift_util->getInternalContainer(p_cont);
     if (!br || p_cont == nullptr) { yCError(FRAMETRANSFORMCLIENT) << "Failure"; return false; }
 
+    //protect the internal container from concurrent access
+    std::lock_guard<std::recursive_mutex> l(p_cont->m_trf_mutex);
+
+    //process data
     for (auto it = p_cont->begin(); it != p_cont->end(); it++)
     {
         std::string par(it->dst_frame_id);
         if (it->dst_frame_id == frame_id)
         {
-
             parent_frame_id = it->src_frame_id;
             return true;
         }
@@ -538,8 +556,12 @@ bool FrameTransformClient::priv_canExplicitTransform(const std::string& target_f
 {
     FrameTransformContainer* p_cont = nullptr;
     bool br = m_ift_util->getInternalContainer(p_cont);
-    if (!br || p_cont==nullptr) {yCError(FRAMETRANSFORMCLIENT) << "Failure"; return false; }
+    if (!br || p_cont == nullptr) {yCError(FRAMETRANSFORMCLIENT) << "Failure"; return false; }
 
+    //protect the internal container from concurrent access
+    std::lock_guard<std::recursive_mutex> l(p_cont->m_trf_mutex);
+
+    //process data
     for (auto it = p_cont->begin(); it != p_cont->end(); it++)
     {
         if (it->dst_frame_id == target_frame_id && it->src_frame_id == source_frame_id)
@@ -556,8 +578,10 @@ bool FrameTransformClient::priv_getChainedTransform(const std::string& target_fr
     bool br = m_ift_util->getInternalContainer(p_cont);
     if (!br || p_cont == nullptr) { yCError(FRAMETRANSFORMCLIENT) << "Failure"; return false; }
 
+    //protect the internal container from concurrent access
     std::lock_guard<std::recursive_mutex> l(p_cont->m_trf_mutex);
 
+    //process data
     for (auto it = p_cont->begin(); it != p_cont->end(); it++)
     {
         if (it->dst_frame_id == target_frame_id)
@@ -869,6 +893,10 @@ bool FrameTransformClient::priv_generate_view()
     bool br = m_ift_util->getInternalContainer(p_cont);
     if (!br || p_cont == nullptr) { yCError(FRAMETRANSFORMCLIENT) << "Failure"; return false; }
 
+    //protect the internal container from concurrent access
+    std::lock_guard<std::recursive_mutex> l(p_cont->m_trf_mutex);
+
+    //process data
     std::string dot_string = "digraph G { ";
     for (auto it = p_cont->begin(); it != p_cont->end(); it++)
     {
