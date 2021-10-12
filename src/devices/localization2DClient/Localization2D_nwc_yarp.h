@@ -3,8 +3,8 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later
  */
 
-#ifndef YARP_DEV_LOCALIZATION2DCLIENT_H
-#define YARP_DEV_LOCALIZATION2DCLIENT_H
+#ifndef YARP_DEV_LOCALIZATION2D_NWC_YARP_H
+#define YARP_DEV_LOCALIZATION2D_NWC_YARP_H
 
 
 #include <yarp/os/Network.h>
@@ -21,32 +21,31 @@
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/Map2DLocation.h>
 #include <yarp/dev/ILocalization2D.h>
-
+#include "ILocalization2DMsgs.h"
 
 /**
  *  @ingroup dev_impl_network_clients dev_impl_navigation
  *
- * \section Localization2DClient
+ * \section Localization2D_nwc_yarp
  *
- * \brief `localization2DClient` A device which allows a user application retrieve the current position of the robot in the world.
+ * \brief `Localization2D_nwc_yarp` A device which allows a user application retrieve the current position of the robot in the world.
  *
  *  Parameters required by this device are:
  * | Parameter name | SubParameter   | Type    | Units          | Default Value | Required     | Description                                                       | Notes |
  * |:--------------:|:--------------:|:-------:|:--------------:|:-------------:|:-----------: |:-----------------------------------------------------------------:|:-----:|
- * | local          |      -         | string  | -   |   -           | Yes          | Full port name opened by the Localization2DClient device.                             |       |
- * | remote         |      -         | string  | -   |   -           | Yes          | Full port name of the port opened on the server side, to which the Localization2DClient connects to.         |     |
- * | carrier        |     -          | string  | -   | tcp           | No           | The carier used for the connection with the server.                          |       |
+ * | local          |      -         | string  | -   |   -           | Yes          | Full port name opened by the Localization2D_nwc_yarp device.                             |       |
+ * | remote         |      -         | string  | -   |   -           | Yes          | Full port name of the port opened on the server side, to which the Localization2D_nwc_yarp connects to.   |     |
  */
-class Localization2DClient :
+class Localization2D_nwc_yarp :
         public yarp::dev::DeviceDriver,
         public yarp::dev::Nav2D::ILocalization2D
 {
 protected:
-    std::mutex               m_mutex;
+    std::mutex                    m_mutex;
     yarp::os::Port                m_rpc_port_localization_server;
-    std::string         m_local_name;
-    std::string         m_remote_name;
-    std::string         m_carrier;
+    std::string                   m_local_name;
+    std::string                   m_remote_name;
+    ILocalization2DMsgs           m_RPC;
 
 public:
     /* DeviceDriver methods */
@@ -65,4 +64,4 @@ public:
     bool   stopLocalizationService() override;
 };
 
-#endif // YARP_DEV_LOCALIZATION2DCLIENT_H
+#endif // YARP_DEV_LOCALIZATION2D_NWC_YARP_H

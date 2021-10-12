@@ -113,16 +113,7 @@ constexpr yarp::conf::vocab32_t VOCAB_NAV_GET_LIST_X            = yarp::os::crea
 constexpr yarp::conf::vocab32_t VOCAB_NAV_GET_ABS_TARGET        = yarp::os::createVocab32('g','a','b','s');
 constexpr yarp::conf::vocab32_t VOCAB_NAV_GET_REL_TARGET        = yarp::os::createVocab32('g','r','e','l');
 constexpr yarp::conf::vocab32_t VOCAB_NAV_GET_NAME_TARGET       = yarp::os::createVocab32('g','n','a','m');
-constexpr yarp::conf::vocab32_t VOCAB_NAV_GET_ESTIMATED_ODOM    = yarp::os::createVocab32('g','o','d','m');
-constexpr yarp::conf::vocab32_t VOCAB_NAV_GET_CURRENT_POS       = yarp::os::createVocab32('g','p','o','s');
-constexpr yarp::conf::vocab32_t VOCAB_NAV_SET_INITIAL_POS       = yarp::os::createVocab32('i','p','o','s');
-constexpr yarp::conf::vocab32_t VOCAB_NAV_GET_CURRENT_POSCOV    = yarp::os::createVocab32('g','c','o','v');
-constexpr yarp::conf::vocab32_t VOCAB_NAV_SET_INITIAL_POSCOV    = yarp::os::createVocab32('i','c','o','v');
-constexpr yarp::conf::vocab32_t VOCAB_NAV_LOCALIZATION_START    = yarp::os::createVocab32('l','c','g','o');
-constexpr yarp::conf::vocab32_t VOCAB_NAV_LOCALIZATION_STOP     = yarp::os::createVocab32('l','c','s','t');
 constexpr yarp::conf::vocab32_t VOCAB_NAV_GET_NAVIGATION_STATUS = yarp::os::createVocab32('n','s','t','s');
-constexpr yarp::conf::vocab32_t VOCAB_NAV_GET_LOCALIZER_STATUS  = yarp::os::createVocab32('l','s','t','s');
-constexpr yarp::conf::vocab32_t VOCAB_NAV_GET_LOCALIZER_POSES   = yarp::os::createVocab32('l','p','s','s');
 constexpr yarp::conf::vocab32_t VOCAB_NAV_CLEARALL_X               = yarp::os::createVocab32('c','l','r');
 constexpr yarp::conf::vocab32_t VOCAB_NAV_DELETE_X              = yarp::os::createVocab32('d','e','l');
 constexpr yarp::conf::vocab32_t VOCAB_NAV_RENAME_X              = yarp::os::createVocab32('r','e','n','m');
@@ -132,5 +123,16 @@ constexpr yarp::conf::vocab32_t VOCAB_NAV_LOCATION              = yarp::os::crea
 constexpr yarp::conf::vocab32_t VOCAB_NAV_PATH                  = yarp::os::createVocab32('p','a','t','h');
 constexpr yarp::conf::vocab32_t VOCAB_NAV_TEMPORARY_FLAGS       = yarp::os::createVocab32('t','f','l','g');
 
+//This section of vocabs is used just by deprecated device Localization2DServer and Localization2DClient
+//It can be thus safely eliminated as soon as these devices are removed from yarp
+constexpr yarp::conf::vocab32_t VOCAB_NAV_GET_ESTIMATED_ODOM    = yarp::os::createVocab32('g','o','d','m');
+constexpr yarp::conf::vocab32_t VOCAB_NAV_GET_CURRENT_POS       = yarp::os::createVocab32('g','p','o','s');
+constexpr yarp::conf::vocab32_t VOCAB_NAV_SET_INITIAL_POS       = yarp::os::createVocab32('i','p','o','s');
+constexpr yarp::conf::vocab32_t VOCAB_NAV_GET_CURRENT_POSCOV    = yarp::os::createVocab32('g','c','o','v');
+constexpr yarp::conf::vocab32_t VOCAB_NAV_SET_INITIAL_POSCOV    = yarp::os::createVocab32('i','c','o','v');
+constexpr yarp::conf::vocab32_t VOCAB_NAV_LOCALIZATION_START    = yarp::os::createVocab32('l','c','g','o');
+constexpr yarp::conf::vocab32_t VOCAB_NAV_LOCALIZATION_STOP     = yarp::os::createVocab32('l','c','s','t');
+constexpr yarp::conf::vocab32_t VOCAB_NAV_GET_LOCALIZER_STATUS  = yarp::os::createVocab32('l','s','t','s');
+constexpr yarp::conf::vocab32_t VOCAB_NAV_GET_LOCALIZER_POSES   = yarp::os::createVocab32('l','p','s','s');
 
 #endif // YARP_DEV_ILOCALIZATION2D_H

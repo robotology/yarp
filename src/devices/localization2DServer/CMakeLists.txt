@@ -67,7 +67,12 @@ if(NOT SKIP_localization2D_nws_yarp)
     PRIVATE
       Localization2D_nws_yarp.h
       Localization2D_nws_yarp.cpp
+      ILocalization2DServerImpl.cpp
+      ILocalization2DServerImpl.h
   )
+
+  target_sources(yarp_localization2D_nws_yarp PRIVATE $<TARGET_OBJECTS:ILocalization2DMsgs>)
+  target_include_directories(yarp_localization2D_nws_yarp PRIVATE $<TARGET_PROPERTY:ILocalization2DMsgs,INTERFACE_INCLUDE_DIRECTORIES>)
 
   target_link_libraries(yarp_localization2D_nws_yarp
     YARP::YARP_os
