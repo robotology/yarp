@@ -33,6 +33,12 @@ using namespace yarp::dev::Nav2D;
 
 bool FakeLaser::open(yarp::os::Searchable& config)
 {
+    if (config.check("test_open_failure"))
+    {
+        yCError(FAKE_LASER) << "Open failed on user request";
+        return false;
+    }
+
     m_info = "Fake Laser device for test/debugging";
     m_device_status = DEVICE_OK_STANBY;
 

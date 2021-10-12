@@ -34,6 +34,12 @@ FakeBattery::FakeBattery() :
 
 bool FakeBattery::open(yarp::os::Searchable& config)
 {
+    if (config.check("test_open_failure"))
+    {
+        yCError(FAKEBATTERY) << "Open failed on user request";
+        return false;
+    }
+
     double period = config.check("thread_period", Value(default_period), "Thread period (smaller implies faster charge/discharge)").asFloat64();
     setPeriod(period);
 

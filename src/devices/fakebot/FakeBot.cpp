@@ -87,6 +87,13 @@ void scramble(unsigned char& ch, float f) {
 
 
 bool FakeBot::open(yarp::os::Searchable& config) {
+
+    if (config.check("test_open_failure"))
+    {
+        yCError(FAKEBOT) << "Open failed on user request";
+        return false;
+    }
+
     std::string backFile = config.check("background",Value("textures/back.ppm"),
                                         "background image to use").asString();
     if (backFile!="") {

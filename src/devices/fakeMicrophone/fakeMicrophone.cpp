@@ -42,6 +42,12 @@ fakeMicrophone::~fakeMicrophone()
 
 bool fakeMicrophone::open(yarp::os::Searchable &config)
 {
+    if (config.check("test_open_failure"))
+    {
+        yCError(FAKEMICROPHONE) << "Open failed on user request";
+        return false;
+    }
+
     if (config.check("help"))
     {
         yCInfo(FAKEMICROPHONE, "Some examples:");

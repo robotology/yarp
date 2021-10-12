@@ -494,6 +494,12 @@ void FakeMotionControl::threadRelease()
 
 bool FakeMotionControl::open(yarp::os::Searchable &config)
 {
+    if (config.check("test_open_failure"))
+    {
+        yCError(FAKEMOTIONCONTROL) << "Open failed on user request";
+        return false;
+    }
+
     std::string str;
 
 //     if (!config.findGroup("GENERAL").find("MotioncontrolVersion").isInt32())

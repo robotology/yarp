@@ -38,6 +38,12 @@ fakeDepthCameraDriver::~fakeDepthCameraDriver() = default;
 
 bool fakeDepthCameraDriver::open(Searchable& config)
 {
+    if (config.check("test_open_failure"))
+    {
+        yCError(FAKEDEPTHCAMERA) << "Open failed on user request";
+        return false;
+    }
+
     Property cfg;
     cfg.fromString(config.toString());
     cfg.unput("device");

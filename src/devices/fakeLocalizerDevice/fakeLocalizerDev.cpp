@@ -212,6 +212,12 @@ void fakeLocalizerThread::threadRelease()
 
 bool fakeLocalizer::open(yarp::os::Searchable& config)
 {
+    if (config.check("test_open_failure"))
+    {
+        yCError(FAKELOCALIZER) << "Open failed on user request";
+        return false;
+    }
+
     yarp::os::Property p;
     locThread = new fakeLocalizerThread(0.010, p);
 

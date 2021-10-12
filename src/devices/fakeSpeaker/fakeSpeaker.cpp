@@ -37,6 +37,12 @@ fakeSpeaker::~fakeSpeaker()
 
 bool fakeSpeaker::open(yarp::os::Searchable &config)
 {
+    if (config.check("test_open_failure"))
+    {
+        yCError(FAKESPEAKER) << "Open failed on user request";
+        return false;
+    }
+
     if (config.check("help"))
     {
         yCInfo(FAKESPEAKER, "Some examples:");

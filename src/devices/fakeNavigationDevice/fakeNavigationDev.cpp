@@ -24,6 +24,12 @@ YARP_LOG_COMPONENT(FAKENAVIGATION, "yarp.device.fakeNavigation")
 
 bool fakeNavigation :: open(yarp::os::Searchable& config)
 {
+    if (config.check("test_open_failure"))
+    {
+        yCError(FAKENAVIGATION) << "Open failed on user request";
+        return false;
+    }
+
 #if 1
 
     yCDebug(FAKENAVIGATION) << "config configuration: \n" << config.toString().c_str();

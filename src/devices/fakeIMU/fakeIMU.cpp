@@ -55,6 +55,12 @@ fakeIMU::~fakeIMU()
 
 bool fakeIMU::open(yarp::os::Searchable &config)
 {
+    if (config.check("test_open_failure"))
+    {
+        yCError(FAKEIMU) << "Open failed on user request";
+        return false;
+    }
+
     double period;
     if( config.check("period")) {
         period = config.find("period").asInt32() / 1000.0;

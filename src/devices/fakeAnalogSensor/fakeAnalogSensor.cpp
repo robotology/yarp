@@ -35,6 +35,12 @@ bool FakeAnalogSensor::open(yarp::os::Searchable& config)
     yCTrace(FAKEANALOGSENSOR);
     bool correct=true;
 
+    if (config.check("test_open_failure"))
+    {
+        yCError(FAKEANALOGSENSOR) << "Open failed on user request";
+        return false;
+    }
+
     //debug
     fprintf(stderr, "%s\n", config.toString().c_str());
 
