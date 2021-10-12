@@ -20,11 +20,11 @@ class return_get_all_locations :
 {
 public:
     // Fields
-    bool retval;
-    std::vector<yarp::dev::Nav2D::Map2DLocation> locations;
+    bool retval{false};
+    std::vector<yarp::dev::Nav2D::Map2DLocation> locations{};
 
     // Default constructor
-    return_get_all_locations();
+    return_get_all_locations() = default;
 
     // Constructor with field values
     return_get_all_locations(const bool retval,

@@ -20,11 +20,11 @@ class return_get_map :
 {
 public:
     // Fields
-    bool retval;
-    yarp::dev::Nav2D::MapGrid2D themap;
+    bool retval{false};
+    yarp::dev::Nav2D::MapGrid2D themap{};
 
     // Default constructor
-    return_get_map();
+    return_get_map() = default;
 
     // Constructor with field values
     return_get_map(const bool retval,

@@ -10,14 +10,6 @@
 
 #include <return_get_paths_list.h>
 
-// Default constructor
-return_get_paths_list::return_get_paths_list() :
-        WirePortable(),
-        retval(false),
-        paths()
-{
-}
-
 // Constructor with field values
 return_get_paths_list::return_get_paths_list(const bool retval,
                                              const std::vector<std::string>& paths) :
@@ -431,7 +423,7 @@ void return_get_paths_list::Editor::dirty_flags(bool flag)
 bool return_get_paths_list::read_retval(yarp::os::idl::WireReader& reader)
 {
     if (!reader.readBool(retval)) {
-        retval = 0;
+        retval = false;
     }
     return true;
 }
@@ -449,7 +441,7 @@ bool return_get_paths_list::write_retval(const yarp::os::idl::WireWriter& writer
 bool return_get_paths_list::nested_read_retval(yarp::os::idl::WireReader& reader)
 {
     if (!reader.readBool(retval)) {
-        retval = 0;
+        retval = false;
     }
     return true;
 }
@@ -466,12 +458,20 @@ bool return_get_paths_list::nested_write_retval(const yarp::os::idl::WireWriter&
 // read paths field
 bool return_get_paths_list::read_paths(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     paths.clear();
     uint32_t _size36;
     yarp::os::idl::WireState _etype39;
     reader.readListBegin(_etype39, _size36);
     paths.resize(_size36);
     for (size_t _i40 = 0; _i40 < _size36; ++_i40) {
+        if (reader.noMore()) {
+            reader.fail();
+            return false;
+        }
         if (!reader.readString(paths[_i40])) {
             reader.fail();
             return false;
@@ -501,12 +501,20 @@ bool return_get_paths_list::write_paths(const yarp::os::idl::WireWriter& writer)
 // read (nested) paths field
 bool return_get_paths_list::nested_read_paths(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     paths.clear();
     uint32_t _size42;
     yarp::os::idl::WireState _etype45;
     reader.readListBegin(_etype45, _size42);
     paths.resize(_size42);
     for (size_t _i46 = 0; _i46 < _size42; ++_i46) {
+        if (reader.noMore()) {
+            reader.fail();
+            return false;
+        }
         if (!reader.readString(paths[_i46])) {
             reader.fail();
             return false;

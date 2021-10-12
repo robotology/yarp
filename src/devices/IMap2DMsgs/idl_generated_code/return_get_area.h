@@ -20,11 +20,11 @@ class return_get_area :
 {
 public:
     // Fields
-    bool retval;
-    yarp::dev::Nav2D::Map2DArea area;
+    bool retval{false};
+    yarp::dev::Nav2D::Map2DArea area{};
 
     // Default constructor
-    return_get_area();
+    return_get_area() = default;
 
     // Constructor with field values
     return_get_area(const bool retval,

@@ -10,17 +10,7 @@
 
 #include <yarp/dev/AudioPlayerStatus.h>
 
-namespace yarp {
-namespace dev {
-
-// Default constructor
-AudioPlayerStatus::AudioPlayerStatus() :
-        WirePortable(),
-        enabled(0),
-        current_buffer_size(0),
-        max_buffer_size(0)
-{
-}
+namespace yarp::dev {
 
 // Constructor with field values
 AudioPlayerStatus::AudioPlayerStatus(const bool enabled,
@@ -510,6 +500,10 @@ void AudioPlayerStatus::Editor::dirty_flags(bool flag)
 // read enabled field
 bool AudioPlayerStatus::read_enabled(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readBool(enabled)) {
         reader.fail();
         return false;
@@ -529,6 +523,10 @@ bool AudioPlayerStatus::write_enabled(const yarp::os::idl::WireWriter& writer) c
 // read (nested) enabled field
 bool AudioPlayerStatus::nested_read_enabled(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readBool(enabled)) {
         reader.fail();
         return false;
@@ -548,6 +546,10 @@ bool AudioPlayerStatus::nested_write_enabled(const yarp::os::idl::WireWriter& wr
 // read current_buffer_size field
 bool AudioPlayerStatus::read_current_buffer_size(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readSizeT(current_buffer_size)) {
         reader.fail();
         return false;
@@ -567,6 +569,10 @@ bool AudioPlayerStatus::write_current_buffer_size(const yarp::os::idl::WireWrite
 // read (nested) current_buffer_size field
 bool AudioPlayerStatus::nested_read_current_buffer_size(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readSizeT(current_buffer_size)) {
         reader.fail();
         return false;
@@ -586,6 +592,10 @@ bool AudioPlayerStatus::nested_write_current_buffer_size(const yarp::os::idl::Wi
 // read max_buffer_size field
 bool AudioPlayerStatus::read_max_buffer_size(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readSizeT(max_buffer_size)) {
         reader.fail();
         return false;
@@ -605,6 +615,10 @@ bool AudioPlayerStatus::write_max_buffer_size(const yarp::os::idl::WireWriter& w
 // read (nested) max_buffer_size field
 bool AudioPlayerStatus::nested_read_max_buffer_size(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readSizeT(max_buffer_size)) {
         reader.fail();
         return false;
@@ -621,5 +635,4 @@ bool AudioPlayerStatus::nested_write_max_buffer_size(const yarp::os::idl::WireWr
     return true;
 }
 
-} // namespace yarp
-} // namespace dev
+} // namespace yarp::dev

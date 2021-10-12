@@ -12,465 +12,2866 @@
 
 #include <yarp/os/idl/WireTypes.h>
 
+// step helper class declaration
 class yarpdataplayer_console_IDL_step_helper :
         public yarp::os::Portable
 {
 public:
-    explicit yarpdataplayer_console_IDL_step_helper();
+    yarpdataplayer_console_IDL_step_helper() = default;
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
 
-    thread_local static bool s_return_helper;
+    class Command :
+            public yarp::os::idl::WirePortable
+    {
+    public:
+        Command() = default;
+        ~Command() override = default;
+
+        bool write(yarp::os::ConnectionWriter& connection) const override;
+        bool read(yarp::os::ConnectionReader& connection) override;
+
+        bool write(const yarp::os::idl::WireWriter& writer) const override;
+        bool writeTag(const yarp::os::idl::WireWriter& writer) const;
+        bool writeArgs(const yarp::os::idl::WireWriter& writer) const;
+
+        bool read(yarp::os::idl::WireReader& reader) override;
+        bool readTag(yarp::os::idl::WireReader& reader);
+        bool readArgs(yarp::os::idl::WireReader& reader);
+    };
+
+    class Reply :
+            public yarp::os::idl::WirePortable
+    {
+    public:
+        Reply() = default;
+        ~Reply() override = default;
+
+        bool write(yarp::os::ConnectionWriter& connection) const override;
+        bool read(yarp::os::ConnectionReader& connection) override;
+
+        bool write(const yarp::os::idl::WireWriter& writer) const override;
+        bool read(yarp::os::idl::WireReader& reader) override;
+
+        bool return_helper{false};
+    };
+
+    using funcptr_t = bool (*)();
+    void call(yarpdataplayer_console_IDL* ptr);
+
+    Command cmd;
+    Reply reply;
+
+    static constexpr const char* s_tag{"step"};
+    static constexpr size_t s_tag_len{1};
+    static constexpr size_t s_cmd_len{1};
+    static constexpr size_t s_reply_len{1};
+    static constexpr const char* s_prototype{"bool yarpdataplayer_console_IDL::step()"};
+    static constexpr const char* s_help{
+        "Steps the player once. The player will be stepped\n"
+        "until all parts have sent data\n"
+        "@return true/false on success/failure"
+    };
 };
 
-thread_local bool yarpdataplayer_console_IDL_step_helper::s_return_helper = {};
-
-yarpdataplayer_console_IDL_step_helper::yarpdataplayer_console_IDL_step_helper()
-{
-    s_return_helper = {};
-}
-
-bool yarpdataplayer_console_IDL_step_helper::write(yarp::os::ConnectionWriter& connection) const
-{
-    yarp::os::idl::WireWriter writer(connection);
-    if (!writer.writeListHeader(1)) {
-        return false;
-    }
-    if (!writer.writeTag("step", 1, 1)) {
-        return false;
-    }
-    return true;
-}
-
-bool yarpdataplayer_console_IDL_step_helper::read(yarp::os::ConnectionReader& connection)
-{
-    yarp::os::idl::WireReader reader(connection);
-    if (!reader.readListReturn()) {
-        return false;
-    }
-    if (!reader.readBool(s_return_helper)) {
-        reader.fail();
-        return false;
-    }
-    return true;
-}
-
+// setFrame helper class declaration
 class yarpdataplayer_console_IDL_setFrame_helper :
         public yarp::os::Portable
 {
 public:
+    yarpdataplayer_console_IDL_setFrame_helper() = default;
     explicit yarpdataplayer_console_IDL_setFrame_helper(const std::int32_t frameNum);
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
 
-    std::int32_t m_frameNum;
+    class Command :
+            public yarp::os::idl::WirePortable
+    {
+    public:
+        Command() = default;
+        explicit Command(const std::int32_t frameNum);
 
-    thread_local static bool s_return_helper;
+        ~Command() override = default;
+
+        bool write(yarp::os::ConnectionWriter& connection) const override;
+        bool read(yarp::os::ConnectionReader& connection) override;
+
+        bool write(const yarp::os::idl::WireWriter& writer) const override;
+        bool writeTag(const yarp::os::idl::WireWriter& writer) const;
+        bool writeArgs(const yarp::os::idl::WireWriter& writer) const;
+
+        bool read(yarp::os::idl::WireReader& reader) override;
+        bool readTag(yarp::os::idl::WireReader& reader);
+        bool readArgs(yarp::os::idl::WireReader& reader);
+
+        std::int32_t frameNum{0};
+    };
+
+    class Reply :
+            public yarp::os::idl::WirePortable
+    {
+    public:
+        Reply() = default;
+        ~Reply() override = default;
+
+        bool write(yarp::os::ConnectionWriter& connection) const override;
+        bool read(yarp::os::ConnectionReader& connection) override;
+
+        bool write(const yarp::os::idl::WireWriter& writer) const override;
+        bool read(yarp::os::idl::WireReader& reader) override;
+
+        bool return_helper{false};
+    };
+
+    using funcptr_t = bool (*)(const std::int32_t);
+    void call(yarpdataplayer_console_IDL* ptr);
+
+    Command cmd;
+    Reply reply;
+
+    static constexpr const char* s_tag{"setFrame"};
+    static constexpr size_t s_tag_len{1};
+    static constexpr size_t s_cmd_len{2};
+    static constexpr size_t s_reply_len{1};
+    static constexpr const char* s_prototype{"bool yarpdataplayer_console_IDL::setFrame(const std::int32_t frameNum)"};
+    static constexpr const char* s_help{
+        "Sets the frame number to the user desired frame.\n"
+        "@param frameNum specifies the frame number the user\n"
+        " would like to skip to\n"
+        "@return true/false on success/failure"
+    };
 };
 
-thread_local bool yarpdataplayer_console_IDL_setFrame_helper::s_return_helper = {};
-
-yarpdataplayer_console_IDL_setFrame_helper::yarpdataplayer_console_IDL_setFrame_helper(const std::int32_t frameNum) :
-        m_frameNum{frameNum}
-{
-    s_return_helper = {};
-}
-
-bool yarpdataplayer_console_IDL_setFrame_helper::write(yarp::os::ConnectionWriter& connection) const
-{
-    yarp::os::idl::WireWriter writer(connection);
-    if (!writer.writeListHeader(2)) {
-        return false;
-    }
-    if (!writer.writeTag("setFrame", 1, 1)) {
-        return false;
-    }
-    if (!writer.writeI32(m_frameNum)) {
-        return false;
-    }
-    return true;
-}
-
-bool yarpdataplayer_console_IDL_setFrame_helper::read(yarp::os::ConnectionReader& connection)
-{
-    yarp::os::idl::WireReader reader(connection);
-    if (!reader.readListReturn()) {
-        return false;
-    }
-    if (!reader.readBool(s_return_helper)) {
-        reader.fail();
-        return false;
-    }
-    return true;
-}
-
+// getFrame helper class declaration
 class yarpdataplayer_console_IDL_getFrame_helper :
         public yarp::os::Portable
 {
 public:
+    yarpdataplayer_console_IDL_getFrame_helper() = default;
     explicit yarpdataplayer_console_IDL_getFrame_helper(const std::string& name);
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
 
-    std::string m_name;
+    class Command :
+            public yarp::os::idl::WirePortable
+    {
+    public:
+        Command() = default;
+        explicit Command(const std::string& name);
 
-    thread_local static std::int32_t s_return_helper;
+        ~Command() override = default;
+
+        bool write(yarp::os::ConnectionWriter& connection) const override;
+        bool read(yarp::os::ConnectionReader& connection) override;
+
+        bool write(const yarp::os::idl::WireWriter& writer) const override;
+        bool writeTag(const yarp::os::idl::WireWriter& writer) const;
+        bool writeArgs(const yarp::os::idl::WireWriter& writer) const;
+
+        bool read(yarp::os::idl::WireReader& reader) override;
+        bool readTag(yarp::os::idl::WireReader& reader);
+        bool readArgs(yarp::os::idl::WireReader& reader);
+
+        std::string name{};
+    };
+
+    class Reply :
+            public yarp::os::idl::WirePortable
+    {
+    public:
+        Reply() = default;
+        ~Reply() override = default;
+
+        bool write(yarp::os::ConnectionWriter& connection) const override;
+        bool read(yarp::os::ConnectionReader& connection) override;
+
+        bool write(const yarp::os::idl::WireWriter& writer) const override;
+        bool read(yarp::os::idl::WireReader& reader) override;
+
+        std::int32_t return_helper{0};
+    };
+
+    using funcptr_t = std::int32_t (*)(const std::string&);
+    void call(yarpdataplayer_console_IDL* ptr);
+
+    Command cmd;
+    Reply reply;
+
+    static constexpr const char* s_tag{"getFrame"};
+    static constexpr size_t s_tag_len{1};
+    static constexpr size_t s_cmd_len{2};
+    static constexpr size_t s_reply_len{1};
+    static constexpr const char* s_prototype{"std::int32_t yarpdataplayer_console_IDL::getFrame(const std::string& name)"};
+    static constexpr const char* s_help{
+        "Gets the frame number the user is requesting\n"
+        "@param name specifies the name of the data to modify\n"
+        " would like to skip to\n"
+        "@return i32 returns the current frame index"
+    };
 };
 
-thread_local std::int32_t yarpdataplayer_console_IDL_getFrame_helper::s_return_helper = {};
-
-yarpdataplayer_console_IDL_getFrame_helper::yarpdataplayer_console_IDL_getFrame_helper(const std::string& name) :
-        m_name{name}
-{
-    s_return_helper = {};
-}
-
-bool yarpdataplayer_console_IDL_getFrame_helper::write(yarp::os::ConnectionWriter& connection) const
-{
-    yarp::os::idl::WireWriter writer(connection);
-    if (!writer.writeListHeader(2)) {
-        return false;
-    }
-    if (!writer.writeTag("getFrame", 1, 1)) {
-        return false;
-    }
-    if (!writer.writeString(m_name)) {
-        return false;
-    }
-    return true;
-}
-
-bool yarpdataplayer_console_IDL_getFrame_helper::read(yarp::os::ConnectionReader& connection)
-{
-    yarp::os::idl::WireReader reader(connection);
-    if (!reader.readListReturn()) {
-        return false;
-    }
-    if (!reader.readI32(s_return_helper)) {
-        reader.fail();
-        return false;
-    }
-    return true;
-}
-
+// load helper class declaration
 class yarpdataplayer_console_IDL_load_helper :
         public yarp::os::Portable
 {
 public:
+    yarpdataplayer_console_IDL_load_helper() = default;
     explicit yarpdataplayer_console_IDL_load_helper(const std::string& path);
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
 
-    std::string m_path;
+    class Command :
+            public yarp::os::idl::WirePortable
+    {
+    public:
+        Command() = default;
+        explicit Command(const std::string& path);
 
-    thread_local static bool s_return_helper;
+        ~Command() override = default;
+
+        bool write(yarp::os::ConnectionWriter& connection) const override;
+        bool read(yarp::os::ConnectionReader& connection) override;
+
+        bool write(const yarp::os::idl::WireWriter& writer) const override;
+        bool writeTag(const yarp::os::idl::WireWriter& writer) const;
+        bool writeArgs(const yarp::os::idl::WireWriter& writer) const;
+
+        bool read(yarp::os::idl::WireReader& reader) override;
+        bool readTag(yarp::os::idl::WireReader& reader);
+        bool readArgs(yarp::os::idl::WireReader& reader);
+
+        std::string path{};
+    };
+
+    class Reply :
+            public yarp::os::idl::WirePortable
+    {
+    public:
+        Reply() = default;
+        ~Reply() override = default;
+
+        bool write(yarp::os::ConnectionWriter& connection) const override;
+        bool read(yarp::os::ConnectionReader& connection) override;
+
+        bool write(const yarp::os::idl::WireWriter& writer) const override;
+        bool read(yarp::os::idl::WireReader& reader) override;
+
+        bool return_helper{false};
+    };
+
+    using funcptr_t = bool (*)(const std::string&);
+    void call(yarpdataplayer_console_IDL* ptr);
+
+    Command cmd;
+    Reply reply;
+
+    static constexpr const char* s_tag{"load"};
+    static constexpr size_t s_tag_len{1};
+    static constexpr size_t s_cmd_len{2};
+    static constexpr size_t s_reply_len{1};
+    static constexpr const char* s_prototype{"bool yarpdataplayer_console_IDL::load(const std::string& path)"};
+    static constexpr const char* s_help{
+        "Loads a dataset from a path\n"
+        "@return true/false on success/failure"
+    };
 };
 
-thread_local bool yarpdataplayer_console_IDL_load_helper::s_return_helper = {};
-
-yarpdataplayer_console_IDL_load_helper::yarpdataplayer_console_IDL_load_helper(const std::string& path) :
-        m_path{path}
-{
-    s_return_helper = {};
-}
-
-bool yarpdataplayer_console_IDL_load_helper::write(yarp::os::ConnectionWriter& connection) const
-{
-    yarp::os::idl::WireWriter writer(connection);
-    if (!writer.writeListHeader(2)) {
-        return false;
-    }
-    if (!writer.writeTag("load", 1, 1)) {
-        return false;
-    }
-    if (!writer.writeString(m_path)) {
-        return false;
-    }
-    return true;
-}
-
-bool yarpdataplayer_console_IDL_load_helper::read(yarp::os::ConnectionReader& connection)
-{
-    yarp::os::idl::WireReader reader(connection);
-    if (!reader.readListReturn()) {
-        return false;
-    }
-    if (!reader.readBool(s_return_helper)) {
-        reader.fail();
-        return false;
-    }
-    return true;
-}
-
+// play helper class declaration
 class yarpdataplayer_console_IDL_play_helper :
         public yarp::os::Portable
 {
 public:
-    explicit yarpdataplayer_console_IDL_play_helper();
+    yarpdataplayer_console_IDL_play_helper() = default;
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
 
-    thread_local static bool s_return_helper;
+    class Command :
+            public yarp::os::idl::WirePortable
+    {
+    public:
+        Command() = default;
+        ~Command() override = default;
+
+        bool write(yarp::os::ConnectionWriter& connection) const override;
+        bool read(yarp::os::ConnectionReader& connection) override;
+
+        bool write(const yarp::os::idl::WireWriter& writer) const override;
+        bool writeTag(const yarp::os::idl::WireWriter& writer) const;
+        bool writeArgs(const yarp::os::idl::WireWriter& writer) const;
+
+        bool read(yarp::os::idl::WireReader& reader) override;
+        bool readTag(yarp::os::idl::WireReader& reader);
+        bool readArgs(yarp::os::idl::WireReader& reader);
+    };
+
+    class Reply :
+            public yarp::os::idl::WirePortable
+    {
+    public:
+        Reply() = default;
+        ~Reply() override = default;
+
+        bool write(yarp::os::ConnectionWriter& connection) const override;
+        bool read(yarp::os::ConnectionReader& connection) override;
+
+        bool write(const yarp::os::idl::WireWriter& writer) const override;
+        bool read(yarp::os::idl::WireReader& reader) override;
+
+        bool return_helper{false};
+    };
+
+    using funcptr_t = bool (*)();
+    void call(yarpdataplayer_console_IDL* ptr);
+
+    Command cmd;
+    Reply reply;
+
+    static constexpr const char* s_tag{"play"};
+    static constexpr size_t s_tag_len{1};
+    static constexpr size_t s_cmd_len{1};
+    static constexpr size_t s_reply_len{1};
+    static constexpr const char* s_prototype{"bool yarpdataplayer_console_IDL::play()"};
+    static constexpr const char* s_help{
+        "Plays the dataSets\n"
+        "@return true/false on success/failure"
+    };
 };
 
-thread_local bool yarpdataplayer_console_IDL_play_helper::s_return_helper = {};
-
-yarpdataplayer_console_IDL_play_helper::yarpdataplayer_console_IDL_play_helper()
-{
-    s_return_helper = {};
-}
-
-bool yarpdataplayer_console_IDL_play_helper::write(yarp::os::ConnectionWriter& connection) const
-{
-    yarp::os::idl::WireWriter writer(connection);
-    if (!writer.writeListHeader(1)) {
-        return false;
-    }
-    if (!writer.writeTag("play", 1, 1)) {
-        return false;
-    }
-    return true;
-}
-
-bool yarpdataplayer_console_IDL_play_helper::read(yarp::os::ConnectionReader& connection)
-{
-    yarp::os::idl::WireReader reader(connection);
-    if (!reader.readListReturn()) {
-        return false;
-    }
-    if (!reader.readBool(s_return_helper)) {
-        reader.fail();
-        return false;
-    }
-    return true;
-}
-
+// pause helper class declaration
 class yarpdataplayer_console_IDL_pause_helper :
         public yarp::os::Portable
 {
 public:
-    explicit yarpdataplayer_console_IDL_pause_helper();
+    yarpdataplayer_console_IDL_pause_helper() = default;
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
 
-    thread_local static bool s_return_helper;
+    class Command :
+            public yarp::os::idl::WirePortable
+    {
+    public:
+        Command() = default;
+        ~Command() override = default;
+
+        bool write(yarp::os::ConnectionWriter& connection) const override;
+        bool read(yarp::os::ConnectionReader& connection) override;
+
+        bool write(const yarp::os::idl::WireWriter& writer) const override;
+        bool writeTag(const yarp::os::idl::WireWriter& writer) const;
+        bool writeArgs(const yarp::os::idl::WireWriter& writer) const;
+
+        bool read(yarp::os::idl::WireReader& reader) override;
+        bool readTag(yarp::os::idl::WireReader& reader);
+        bool readArgs(yarp::os::idl::WireReader& reader);
+    };
+
+    class Reply :
+            public yarp::os::idl::WirePortable
+    {
+    public:
+        Reply() = default;
+        ~Reply() override = default;
+
+        bool write(yarp::os::ConnectionWriter& connection) const override;
+        bool read(yarp::os::ConnectionReader& connection) override;
+
+        bool write(const yarp::os::idl::WireWriter& writer) const override;
+        bool read(yarp::os::idl::WireReader& reader) override;
+
+        bool return_helper{false};
+    };
+
+    using funcptr_t = bool (*)();
+    void call(yarpdataplayer_console_IDL* ptr);
+
+    Command cmd;
+    Reply reply;
+
+    static constexpr const char* s_tag{"pause"};
+    static constexpr size_t s_tag_len{1};
+    static constexpr size_t s_cmd_len{1};
+    static constexpr size_t s_reply_len{1};
+    static constexpr const char* s_prototype{"bool yarpdataplayer_console_IDL::pause()"};
+    static constexpr const char* s_help{
+        "Pauses the dataSets\n"
+        "@return true/false on success/failure"
+    };
 };
 
-thread_local bool yarpdataplayer_console_IDL_pause_helper::s_return_helper = {};
-
-yarpdataplayer_console_IDL_pause_helper::yarpdataplayer_console_IDL_pause_helper()
-{
-    s_return_helper = {};
-}
-
-bool yarpdataplayer_console_IDL_pause_helper::write(yarp::os::ConnectionWriter& connection) const
-{
-    yarp::os::idl::WireWriter writer(connection);
-    if (!writer.writeListHeader(1)) {
-        return false;
-    }
-    if (!writer.writeTag("pause", 1, 1)) {
-        return false;
-    }
-    return true;
-}
-
-bool yarpdataplayer_console_IDL_pause_helper::read(yarp::os::ConnectionReader& connection)
-{
-    yarp::os::idl::WireReader reader(connection);
-    if (!reader.readListReturn()) {
-        return false;
-    }
-    if (!reader.readBool(s_return_helper)) {
-        reader.fail();
-        return false;
-    }
-    return true;
-}
-
+// stop helper class declaration
 class yarpdataplayer_console_IDL_stop_helper :
         public yarp::os::Portable
 {
 public:
-    explicit yarpdataplayer_console_IDL_stop_helper();
+    yarpdataplayer_console_IDL_stop_helper() = default;
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
 
-    thread_local static bool s_return_helper;
+    class Command :
+            public yarp::os::idl::WirePortable
+    {
+    public:
+        Command() = default;
+        ~Command() override = default;
+
+        bool write(yarp::os::ConnectionWriter& connection) const override;
+        bool read(yarp::os::ConnectionReader& connection) override;
+
+        bool write(const yarp::os::idl::WireWriter& writer) const override;
+        bool writeTag(const yarp::os::idl::WireWriter& writer) const;
+        bool writeArgs(const yarp::os::idl::WireWriter& writer) const;
+
+        bool read(yarp::os::idl::WireReader& reader) override;
+        bool readTag(yarp::os::idl::WireReader& reader);
+        bool readArgs(yarp::os::idl::WireReader& reader);
+    };
+
+    class Reply :
+            public yarp::os::idl::WirePortable
+    {
+    public:
+        Reply() = default;
+        ~Reply() override = default;
+
+        bool write(yarp::os::ConnectionWriter& connection) const override;
+        bool read(yarp::os::ConnectionReader& connection) override;
+
+        bool write(const yarp::os::idl::WireWriter& writer) const override;
+        bool read(yarp::os::idl::WireReader& reader) override;
+
+        bool return_helper{false};
+    };
+
+    using funcptr_t = bool (*)();
+    void call(yarpdataplayer_console_IDL* ptr);
+
+    Command cmd;
+    Reply reply;
+
+    static constexpr const char* s_tag{"stop"};
+    static constexpr size_t s_tag_len{1};
+    static constexpr size_t s_cmd_len{1};
+    static constexpr size_t s_reply_len{1};
+    static constexpr const char* s_prototype{"bool yarpdataplayer_console_IDL::stop()"};
+    static constexpr const char* s_help{
+        "Stops the dataSets\n"
+        "@return true/false on success/failure"
+    };
 };
 
-thread_local bool yarpdataplayer_console_IDL_stop_helper::s_return_helper = {};
-
-yarpdataplayer_console_IDL_stop_helper::yarpdataplayer_console_IDL_stop_helper()
-{
-    s_return_helper = {};
-}
-
-bool yarpdataplayer_console_IDL_stop_helper::write(yarp::os::ConnectionWriter& connection) const
-{
-    yarp::os::idl::WireWriter writer(connection);
-    if (!writer.writeListHeader(1)) {
-        return false;
-    }
-    if (!writer.writeTag("stop", 1, 1)) {
-        return false;
-    }
-    return true;
-}
-
-bool yarpdataplayer_console_IDL_stop_helper::read(yarp::os::ConnectionReader& connection)
-{
-    yarp::os::idl::WireReader reader(connection);
-    if (!reader.readListReturn()) {
-        return false;
-    }
-    if (!reader.readBool(s_return_helper)) {
-        reader.fail();
-        return false;
-    }
-    return true;
-}
-
+// enable helper class declaration
 class yarpdataplayer_console_IDL_enable_helper :
         public yarp::os::Portable
 {
 public:
+    yarpdataplayer_console_IDL_enable_helper() = default;
     explicit yarpdataplayer_console_IDL_enable_helper(const std::string& part);
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
 
-    std::string m_part;
+    class Command :
+            public yarp::os::idl::WirePortable
+    {
+    public:
+        Command() = default;
+        explicit Command(const std::string& part);
 
-    thread_local static bool s_return_helper;
+        ~Command() override = default;
+
+        bool write(yarp::os::ConnectionWriter& connection) const override;
+        bool read(yarp::os::ConnectionReader& connection) override;
+
+        bool write(const yarp::os::idl::WireWriter& writer) const override;
+        bool writeTag(const yarp::os::idl::WireWriter& writer) const;
+        bool writeArgs(const yarp::os::idl::WireWriter& writer) const;
+
+        bool read(yarp::os::idl::WireReader& reader) override;
+        bool readTag(yarp::os::idl::WireReader& reader);
+        bool readArgs(yarp::os::idl::WireReader& reader);
+
+        std::string part{};
+    };
+
+    class Reply :
+            public yarp::os::idl::WirePortable
+    {
+    public:
+        Reply() = default;
+        ~Reply() override = default;
+
+        bool write(yarp::os::ConnectionWriter& connection) const override;
+        bool read(yarp::os::ConnectionReader& connection) override;
+
+        bool write(const yarp::os::idl::WireWriter& writer) const override;
+        bool read(yarp::os::idl::WireReader& reader) override;
+
+        bool return_helper{false};
+    };
+
+    using funcptr_t = bool (*)(const std::string&);
+    void call(yarpdataplayer_console_IDL* ptr);
+
+    Command cmd;
+    Reply reply;
+
+    static constexpr const char* s_tag{"enable"};
+    static constexpr size_t s_tag_len{1};
+    static constexpr size_t s_cmd_len{2};
+    static constexpr size_t s_reply_len{1};
+    static constexpr const char* s_prototype{"bool yarpdataplayer_console_IDL::enable(const std::string& part)"};
+    static constexpr const char* s_help{
+        "Enables the specified part.\n"
+        "@param name specifies the name of the loaded data\n"
+        "@return true/false on success/failure"
+    };
 };
 
-thread_local bool yarpdataplayer_console_IDL_enable_helper::s_return_helper = {};
-
-yarpdataplayer_console_IDL_enable_helper::yarpdataplayer_console_IDL_enable_helper(const std::string& part) :
-        m_part{part}
-{
-    s_return_helper = {};
-}
-
-bool yarpdataplayer_console_IDL_enable_helper::write(yarp::os::ConnectionWriter& connection) const
-{
-    yarp::os::idl::WireWriter writer(connection);
-    if (!writer.writeListHeader(2)) {
-        return false;
-    }
-    if (!writer.writeTag("enable", 1, 1)) {
-        return false;
-    }
-    if (!writer.writeString(m_part)) {
-        return false;
-    }
-    return true;
-}
-
-bool yarpdataplayer_console_IDL_enable_helper::read(yarp::os::ConnectionReader& connection)
-{
-    yarp::os::idl::WireReader reader(connection);
-    if (!reader.readListReturn()) {
-        return false;
-    }
-    if (!reader.readBool(s_return_helper)) {
-        reader.fail();
-        return false;
-    }
-    return true;
-}
-
+// disable helper class declaration
 class yarpdataplayer_console_IDL_disable_helper :
         public yarp::os::Portable
 {
 public:
+    yarpdataplayer_console_IDL_disable_helper() = default;
     explicit yarpdataplayer_console_IDL_disable_helper(const std::string& part);
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
 
-    std::string m_part;
+    class Command :
+            public yarp::os::idl::WirePortable
+    {
+    public:
+        Command() = default;
+        explicit Command(const std::string& part);
 
-    thread_local static bool s_return_helper;
+        ~Command() override = default;
+
+        bool write(yarp::os::ConnectionWriter& connection) const override;
+        bool read(yarp::os::ConnectionReader& connection) override;
+
+        bool write(const yarp::os::idl::WireWriter& writer) const override;
+        bool writeTag(const yarp::os::idl::WireWriter& writer) const;
+        bool writeArgs(const yarp::os::idl::WireWriter& writer) const;
+
+        bool read(yarp::os::idl::WireReader& reader) override;
+        bool readTag(yarp::os::idl::WireReader& reader);
+        bool readArgs(yarp::os::idl::WireReader& reader);
+
+        std::string part{};
+    };
+
+    class Reply :
+            public yarp::os::idl::WirePortable
+    {
+    public:
+        Reply() = default;
+        ~Reply() override = default;
+
+        bool write(yarp::os::ConnectionWriter& connection) const override;
+        bool read(yarp::os::ConnectionReader& connection) override;
+
+        bool write(const yarp::os::idl::WireWriter& writer) const override;
+        bool read(yarp::os::idl::WireReader& reader) override;
+
+        bool return_helper{false};
+    };
+
+    using funcptr_t = bool (*)(const std::string&);
+    void call(yarpdataplayer_console_IDL* ptr);
+
+    Command cmd;
+    Reply reply;
+
+    static constexpr const char* s_tag{"disable"};
+    static constexpr size_t s_tag_len{1};
+    static constexpr size_t s_cmd_len{2};
+    static constexpr size_t s_reply_len{1};
+    static constexpr const char* s_prototype{"bool yarpdataplayer_console_IDL::disable(const std::string& part)"};
+    static constexpr const char* s_help{
+        "Disable the specified part.\n"
+        "@param name specifies the name of the loaded data\n"
+        "@return true/false on success/failure"
+    };
 };
 
-thread_local bool yarpdataplayer_console_IDL_disable_helper::s_return_helper = {};
-
-yarpdataplayer_console_IDL_disable_helper::yarpdataplayer_console_IDL_disable_helper(const std::string& part) :
-        m_part{part}
+// getAllParts helper class declaration
+class yarpdataplayer_console_IDL_getAllParts_helper :
+        public yarp::os::Portable
 {
-    s_return_helper = {};
+public:
+    yarpdataplayer_console_IDL_getAllParts_helper() = default;
+    bool write(yarp::os::ConnectionWriter& connection) const override;
+    bool read(yarp::os::ConnectionReader& connection) override;
+
+    class Command :
+            public yarp::os::idl::WirePortable
+    {
+    public:
+        Command() = default;
+        ~Command() override = default;
+
+        bool write(yarp::os::ConnectionWriter& connection) const override;
+        bool read(yarp::os::ConnectionReader& connection) override;
+
+        bool write(const yarp::os::idl::WireWriter& writer) const override;
+        bool writeTag(const yarp::os::idl::WireWriter& writer) const;
+        bool writeArgs(const yarp::os::idl::WireWriter& writer) const;
+
+        bool read(yarp::os::idl::WireReader& reader) override;
+        bool readTag(yarp::os::idl::WireReader& reader);
+        bool readArgs(yarp::os::idl::WireReader& reader);
+    };
+
+    class Reply :
+            public yarp::os::idl::WirePortable
+    {
+    public:
+        Reply() = default;
+        ~Reply() override = default;
+
+        bool write(yarp::os::ConnectionWriter& connection) const override;
+        bool read(yarp::os::ConnectionReader& connection) override;
+
+        bool write(const yarp::os::idl::WireWriter& writer) const override;
+        bool read(yarp::os::idl::WireReader& reader) override;
+
+        std::vector<std::string> return_helper{};
+    };
+
+    using funcptr_t = std::vector<std::string> (*)();
+    void call(yarpdataplayer_console_IDL* ptr);
+
+    Command cmd;
+    Reply reply;
+
+    static constexpr const char* s_tag{"getAllParts"};
+    static constexpr size_t s_tag_len{1};
+    static constexpr size_t s_cmd_len{1};
+    static constexpr size_t s_reply_len{1};
+    static constexpr const char* s_prototype{"std::vector<std::string> yarpdataplayer_console_IDL::getAllParts()"};
+    static constexpr const char* s_help{
+        "Gets the names of all parts loaded.\n"
+        "@return list of names of the loaded parts."
+    };
+};
+
+// getPortName helper class declaration
+class yarpdataplayer_console_IDL_getPortName_helper :
+        public yarp::os::Portable
+{
+public:
+    yarpdataplayer_console_IDL_getPortName_helper() = default;
+    explicit yarpdataplayer_console_IDL_getPortName_helper(const std::string& part);
+    bool write(yarp::os::ConnectionWriter& connection) const override;
+    bool read(yarp::os::ConnectionReader& connection) override;
+
+    class Command :
+            public yarp::os::idl::WirePortable
+    {
+    public:
+        Command() = default;
+        explicit Command(const std::string& part);
+
+        ~Command() override = default;
+
+        bool write(yarp::os::ConnectionWriter& connection) const override;
+        bool read(yarp::os::ConnectionReader& connection) override;
+
+        bool write(const yarp::os::idl::WireWriter& writer) const override;
+        bool writeTag(const yarp::os::idl::WireWriter& writer) const;
+        bool writeArgs(const yarp::os::idl::WireWriter& writer) const;
+
+        bool read(yarp::os::idl::WireReader& reader) override;
+        bool readTag(yarp::os::idl::WireReader& reader);
+        bool readArgs(yarp::os::idl::WireReader& reader);
+
+        std::string part{};
+    };
+
+    class Reply :
+            public yarp::os::idl::WirePortable
+    {
+    public:
+        Reply() = default;
+        ~Reply() override = default;
+
+        bool write(yarp::os::ConnectionWriter& connection) const override;
+        bool read(yarp::os::ConnectionReader& connection) override;
+
+        bool write(const yarp::os::idl::WireWriter& writer) const override;
+        bool read(yarp::os::idl::WireReader& reader) override;
+
+        std::string return_helper{};
+    };
+
+    using funcptr_t = std::string (*)(const std::string&);
+    void call(yarpdataplayer_console_IDL* ptr);
+
+    Command cmd;
+    Reply reply;
+
+    static constexpr const char* s_tag{"getPortName"};
+    static constexpr size_t s_tag_len{1};
+    static constexpr size_t s_cmd_len{2};
+    static constexpr size_t s_reply_len{1};
+    static constexpr const char* s_prototype{"std::string yarpdataplayer_console_IDL::getPortName(const std::string& part)"};
+    static constexpr const char* s_help{
+        "Gets the name of the port associated to the specified part\n"
+        "@param name specifies the name of the data to modify\n"
+        "@return port name"
+    };
+};
+
+// setPortName helper class declaration
+class yarpdataplayer_console_IDL_setPortName_helper :
+        public yarp::os::Portable
+{
+public:
+    yarpdataplayer_console_IDL_setPortName_helper() = default;
+    yarpdataplayer_console_IDL_setPortName_helper(const std::string& part, const std::string& new_name);
+    bool write(yarp::os::ConnectionWriter& connection) const override;
+    bool read(yarp::os::ConnectionReader& connection) override;
+
+    class Command :
+            public yarp::os::idl::WirePortable
+    {
+    public:
+        Command() = default;
+        Command(const std::string& part, const std::string& new_name);
+
+        ~Command() override = default;
+
+        bool write(yarp::os::ConnectionWriter& connection) const override;
+        bool read(yarp::os::ConnectionReader& connection) override;
+
+        bool write(const yarp::os::idl::WireWriter& writer) const override;
+        bool writeTag(const yarp::os::idl::WireWriter& writer) const;
+        bool writeArgs(const yarp::os::idl::WireWriter& writer) const;
+
+        bool read(yarp::os::idl::WireReader& reader) override;
+        bool readTag(yarp::os::idl::WireReader& reader);
+        bool readArgs(yarp::os::idl::WireReader& reader);
+
+        std::string part{};
+        std::string new_name{};
+    };
+
+    class Reply :
+            public yarp::os::idl::WirePortable
+    {
+    public:
+        Reply() = default;
+        ~Reply() override = default;
+
+        bool write(yarp::os::ConnectionWriter& connection) const override;
+        bool read(yarp::os::ConnectionReader& connection) override;
+
+        bool write(const yarp::os::idl::WireWriter& writer) const override;
+        bool read(yarp::os::idl::WireReader& reader) override;
+
+        bool return_helper{false};
+    };
+
+    using funcptr_t = bool (*)(const std::string&, const std::string&);
+    void call(yarpdataplayer_console_IDL* ptr);
+
+    Command cmd;
+    Reply reply;
+
+    static constexpr const char* s_tag{"setPortName"};
+    static constexpr size_t s_tag_len{1};
+    static constexpr size_t s_cmd_len{3};
+    static constexpr size_t s_reply_len{1};
+    static constexpr const char* s_prototype{"bool yarpdataplayer_console_IDL::setPortName(const std::string& part, const std::string& new_name)"};
+    static constexpr const char* s_help{
+        "Sets the name of the port associated to the specified part\n"
+        "@param part specifies the name of the data to modify\n"
+        "@param new_name specifies the new name to assign to the port\n"
+        "@return true/false on success/failure"
+    };
+};
+
+// setSpeed helper class declaration
+class yarpdataplayer_console_IDL_setSpeed_helper :
+        public yarp::os::Portable
+{
+public:
+    yarpdataplayer_console_IDL_setSpeed_helper() = default;
+    explicit yarpdataplayer_console_IDL_setSpeed_helper(const double speed);
+    bool write(yarp::os::ConnectionWriter& connection) const override;
+    bool read(yarp::os::ConnectionReader& connection) override;
+
+    class Command :
+            public yarp::os::idl::WirePortable
+    {
+    public:
+        Command() = default;
+        explicit Command(const double speed);
+
+        ~Command() override = default;
+
+        bool write(yarp::os::ConnectionWriter& connection) const override;
+        bool read(yarp::os::ConnectionReader& connection) override;
+
+        bool write(const yarp::os::idl::WireWriter& writer) const override;
+        bool writeTag(const yarp::os::idl::WireWriter& writer) const;
+        bool writeArgs(const yarp::os::idl::WireWriter& writer) const;
+
+        bool read(yarp::os::idl::WireReader& reader) override;
+        bool readTag(yarp::os::idl::WireReader& reader);
+        bool readArgs(yarp::os::idl::WireReader& reader);
+
+        double speed{0.0};
+    };
+
+    class Reply :
+            public yarp::os::idl::WirePortable
+    {
+    public:
+        Reply() = default;
+        ~Reply() override = default;
+
+        bool write(yarp::os::ConnectionWriter& connection) const override;
+        bool read(yarp::os::ConnectionReader& connection) override;
+
+        bool write(const yarp::os::idl::WireWriter& writer) const override;
+        bool read(yarp::os::idl::WireReader& reader) override;
+
+        bool return_helper{false};
+    };
+
+    using funcptr_t = bool (*)(const double);
+    void call(yarpdataplayer_console_IDL* ptr);
+
+    Command cmd;
+    Reply reply;
+
+    static constexpr const char* s_tag{"setSpeed"};
+    static constexpr size_t s_tag_len{1};
+    static constexpr size_t s_cmd_len{2};
+    static constexpr size_t s_reply_len{1};
+    static constexpr const char* s_prototype{"bool yarpdataplayer_console_IDL::setSpeed(const double speed)"};
+    static constexpr const char* s_help{
+        "Sets the player speed\n"
+        "@param speed specifies\n"
+        "@return true/false on success/failure"
+    };
+};
+
+// getSpeed helper class declaration
+class yarpdataplayer_console_IDL_getSpeed_helper :
+        public yarp::os::Portable
+{
+public:
+    yarpdataplayer_console_IDL_getSpeed_helper() = default;
+    bool write(yarp::os::ConnectionWriter& connection) const override;
+    bool read(yarp::os::ConnectionReader& connection) override;
+
+    class Command :
+            public yarp::os::idl::WirePortable
+    {
+    public:
+        Command() = default;
+        ~Command() override = default;
+
+        bool write(yarp::os::ConnectionWriter& connection) const override;
+        bool read(yarp::os::ConnectionReader& connection) override;
+
+        bool write(const yarp::os::idl::WireWriter& writer) const override;
+        bool writeTag(const yarp::os::idl::WireWriter& writer) const;
+        bool writeArgs(const yarp::os::idl::WireWriter& writer) const;
+
+        bool read(yarp::os::idl::WireReader& reader) override;
+        bool readTag(yarp::os::idl::WireReader& reader);
+        bool readArgs(yarp::os::idl::WireReader& reader);
+    };
+
+    class Reply :
+            public yarp::os::idl::WirePortable
+    {
+    public:
+        Reply() = default;
+        ~Reply() override = default;
+
+        bool write(yarp::os::ConnectionWriter& connection) const override;
+        bool read(yarp::os::ConnectionReader& connection) override;
+
+        bool write(const yarp::os::idl::WireWriter& writer) const override;
+        bool read(yarp::os::idl::WireReader& reader) override;
+
+        double return_helper{0.0};
+    };
+
+    using funcptr_t = double (*)();
+    void call(yarpdataplayer_console_IDL* ptr);
+
+    Command cmd;
+    Reply reply;
+
+    static constexpr const char* s_tag{"getSpeed"};
+    static constexpr size_t s_tag_len{1};
+    static constexpr size_t s_cmd_len{1};
+    static constexpr size_t s_reply_len{1};
+    static constexpr const char* s_prototype{"double yarpdataplayer_console_IDL::getSpeed()"};
+    static constexpr const char* s_help{
+        "Gets the player speed\n"
+        "@return value of the player speed"
+    };
+};
+
+// repeat helper class declaration
+class yarpdataplayer_console_IDL_repeat_helper :
+        public yarp::os::Portable
+{
+public:
+    yarpdataplayer_console_IDL_repeat_helper() = default;
+    explicit yarpdataplayer_console_IDL_repeat_helper(const bool val);
+    bool write(yarp::os::ConnectionWriter& connection) const override;
+    bool read(yarp::os::ConnectionReader& connection) override;
+
+    class Command :
+            public yarp::os::idl::WirePortable
+    {
+    public:
+        Command() = default;
+        explicit Command(const bool val);
+
+        ~Command() override = default;
+
+        bool write(yarp::os::ConnectionWriter& connection) const override;
+        bool read(yarp::os::ConnectionReader& connection) override;
+
+        bool write(const yarp::os::idl::WireWriter& writer) const override;
+        bool writeTag(const yarp::os::idl::WireWriter& writer) const;
+        bool writeArgs(const yarp::os::idl::WireWriter& writer) const;
+
+        bool read(yarp::os::idl::WireReader& reader) override;
+        bool readTag(yarp::os::idl::WireReader& reader);
+        bool readArgs(yarp::os::idl::WireReader& reader);
+
+        bool val{false};
+    };
+
+    class Reply :
+            public yarp::os::idl::WirePortable
+    {
+    public:
+        Reply() = default;
+        ~Reply() override = default;
+
+        bool write(yarp::os::ConnectionWriter& connection) const override;
+        bool read(yarp::os::ConnectionReader& connection) override;
+
+        bool write(const yarp::os::idl::WireWriter& writer) const override;
+        bool read(yarp::os::idl::WireReader& reader) override;
+
+        bool return_helper{false};
+    };
+
+    using funcptr_t = bool (*)(const bool);
+    void call(yarpdataplayer_console_IDL* ptr);
+
+    Command cmd;
+    Reply reply;
+
+    static constexpr const char* s_tag{"repeat"};
+    static constexpr size_t s_tag_len{1};
+    static constexpr size_t s_cmd_len{2};
+    static constexpr size_t s_reply_len{1};
+    static constexpr const char* s_prototype{"bool yarpdataplayer_console_IDL::repeat(const bool val)"};
+    static constexpr const char* s_help{
+        "Sets repeat mode\n"
+        "@param val if true repeat mode is active.\n"
+        "@return true/false on success/failure"
+    };
+};
+
+// setStrict helper class declaration
+class yarpdataplayer_console_IDL_setStrict_helper :
+        public yarp::os::Portable
+{
+public:
+    yarpdataplayer_console_IDL_setStrict_helper() = default;
+    explicit yarpdataplayer_console_IDL_setStrict_helper(const bool val);
+    bool write(yarp::os::ConnectionWriter& connection) const override;
+    bool read(yarp::os::ConnectionReader& connection) override;
+
+    class Command :
+            public yarp::os::idl::WirePortable
+    {
+    public:
+        Command() = default;
+        explicit Command(const bool val);
+
+        ~Command() override = default;
+
+        bool write(yarp::os::ConnectionWriter& connection) const override;
+        bool read(yarp::os::ConnectionReader& connection) override;
+
+        bool write(const yarp::os::idl::WireWriter& writer) const override;
+        bool writeTag(const yarp::os::idl::WireWriter& writer) const;
+        bool writeArgs(const yarp::os::idl::WireWriter& writer) const;
+
+        bool read(yarp::os::idl::WireReader& reader) override;
+        bool readTag(yarp::os::idl::WireReader& reader);
+        bool readArgs(yarp::os::idl::WireReader& reader);
+
+        bool val{false};
+    };
+
+    class Reply :
+            public yarp::os::idl::WirePortable
+    {
+    public:
+        Reply() = default;
+        ~Reply() override = default;
+
+        bool write(yarp::os::ConnectionWriter& connection) const override;
+        bool read(yarp::os::ConnectionReader& connection) override;
+
+        bool write(const yarp::os::idl::WireWriter& writer) const override;
+        bool read(yarp::os::idl::WireReader& reader) override;
+
+        bool return_helper{false};
+    };
+
+    using funcptr_t = bool (*)(const bool);
+    void call(yarpdataplayer_console_IDL* ptr);
+
+    Command cmd;
+    Reply reply;
+
+    static constexpr const char* s_tag{"setStrict"};
+    static constexpr size_t s_tag_len{1};
+    static constexpr size_t s_cmd_len{2};
+    static constexpr size_t s_reply_len{1};
+    static constexpr const char* s_prototype{"bool yarpdataplayer_console_IDL::setStrict(const bool val)"};
+    static constexpr const char* s_help{
+        "Sets strict mode\n"
+        "@param val if true strict mode is active.\n"
+        "@return true/false on success/failure"
+    };
+};
+
+// forward helper class declaration
+class yarpdataplayer_console_IDL_forward_helper :
+        public yarp::os::Portable
+{
+public:
+    yarpdataplayer_console_IDL_forward_helper() = default;
+    explicit yarpdataplayer_console_IDL_forward_helper(const std::int32_t steps);
+    bool write(yarp::os::ConnectionWriter& connection) const override;
+    bool read(yarp::os::ConnectionReader& connection) override;
+
+    class Command :
+            public yarp::os::idl::WirePortable
+    {
+    public:
+        Command() = default;
+        explicit Command(const std::int32_t steps);
+
+        ~Command() override = default;
+
+        bool write(yarp::os::ConnectionWriter& connection) const override;
+        bool read(yarp::os::ConnectionReader& connection) override;
+
+        bool write(const yarp::os::idl::WireWriter& writer) const override;
+        bool writeTag(const yarp::os::idl::WireWriter& writer) const;
+        bool writeArgs(const yarp::os::idl::WireWriter& writer) const;
+
+        bool read(yarp::os::idl::WireReader& reader) override;
+        bool readTag(yarp::os::idl::WireReader& reader);
+        bool readArgs(yarp::os::idl::WireReader& reader);
+
+        std::int32_t steps{0};
+    };
+
+    class Reply :
+            public yarp::os::idl::WirePortable
+    {
+    public:
+        Reply() = default;
+        ~Reply() override = default;
+
+        bool write(yarp::os::ConnectionWriter& connection) const override;
+        bool read(yarp::os::ConnectionReader& connection) override;
+
+        bool write(const yarp::os::idl::WireWriter& writer) const override;
+        bool read(yarp::os::idl::WireReader& reader) override;
+
+        bool return_helper{false};
+    };
+
+    using funcptr_t = bool (*)(const std::int32_t);
+    void call(yarpdataplayer_console_IDL* ptr);
+
+    Command cmd;
+    Reply reply;
+
+    static constexpr const char* s_tag{"forward"};
+    static constexpr size_t s_tag_len{1};
+    static constexpr size_t s_cmd_len{2};
+    static constexpr size_t s_reply_len{1};
+    static constexpr const char* s_prototype{"bool yarpdataplayer_console_IDL::forward(const std::int32_t steps)"};
+    static constexpr const char* s_help{
+        "Steps forward\n"
+        "@param steps number of steps to go forward (default=5).\n"
+        "@return true/false on success/failure"
+    };
+};
+
+// backward helper class declaration
+class yarpdataplayer_console_IDL_backward_helper :
+        public yarp::os::Portable
+{
+public:
+    yarpdataplayer_console_IDL_backward_helper() = default;
+    explicit yarpdataplayer_console_IDL_backward_helper(const std::int32_t steps);
+    bool write(yarp::os::ConnectionWriter& connection) const override;
+    bool read(yarp::os::ConnectionReader& connection) override;
+
+    class Command :
+            public yarp::os::idl::WirePortable
+    {
+    public:
+        Command() = default;
+        explicit Command(const std::int32_t steps);
+
+        ~Command() override = default;
+
+        bool write(yarp::os::ConnectionWriter& connection) const override;
+        bool read(yarp::os::ConnectionReader& connection) override;
+
+        bool write(const yarp::os::idl::WireWriter& writer) const override;
+        bool writeTag(const yarp::os::idl::WireWriter& writer) const;
+        bool writeArgs(const yarp::os::idl::WireWriter& writer) const;
+
+        bool read(yarp::os::idl::WireReader& reader) override;
+        bool readTag(yarp::os::idl::WireReader& reader);
+        bool readArgs(yarp::os::idl::WireReader& reader);
+
+        std::int32_t steps{0};
+    };
+
+    class Reply :
+            public yarp::os::idl::WirePortable
+    {
+    public:
+        Reply() = default;
+        ~Reply() override = default;
+
+        bool write(yarp::os::ConnectionWriter& connection) const override;
+        bool read(yarp::os::ConnectionReader& connection) override;
+
+        bool write(const yarp::os::idl::WireWriter& writer) const override;
+        bool read(yarp::os::idl::WireReader& reader) override;
+
+        bool return_helper{false};
+    };
+
+    using funcptr_t = bool (*)(const std::int32_t);
+    void call(yarpdataplayer_console_IDL* ptr);
+
+    Command cmd;
+    Reply reply;
+
+    static constexpr const char* s_tag{"backward"};
+    static constexpr size_t s_tag_len{1};
+    static constexpr size_t s_cmd_len{2};
+    static constexpr size_t s_reply_len{1};
+    static constexpr const char* s_prototype{"bool yarpdataplayer_console_IDL::backward(const std::int32_t steps)"};
+    static constexpr const char* s_help{
+        "Steps backward\n"
+        "@param steps number of steps to go backward (default=5).\n"
+        "@return true/false on success/failure"
+    };
+};
+
+// getProgress helper class declaration
+class yarpdataplayer_console_IDL_getProgress_helper :
+        public yarp::os::Portable
+{
+public:
+    yarpdataplayer_console_IDL_getProgress_helper() = default;
+    bool write(yarp::os::ConnectionWriter& connection) const override;
+    bool read(yarp::os::ConnectionReader& connection) override;
+
+    class Command :
+            public yarp::os::idl::WirePortable
+    {
+    public:
+        Command() = default;
+        ~Command() override = default;
+
+        bool write(yarp::os::ConnectionWriter& connection) const override;
+        bool read(yarp::os::ConnectionReader& connection) override;
+
+        bool write(const yarp::os::idl::WireWriter& writer) const override;
+        bool writeTag(const yarp::os::idl::WireWriter& writer) const;
+        bool writeArgs(const yarp::os::idl::WireWriter& writer) const;
+
+        bool read(yarp::os::idl::WireReader& reader) override;
+        bool readTag(yarp::os::idl::WireReader& reader);
+        bool readArgs(yarp::os::idl::WireReader& reader);
+    };
+
+    class Reply :
+            public yarp::os::idl::WirePortable
+    {
+    public:
+        Reply() = default;
+        ~Reply() override = default;
+
+        bool write(yarp::os::ConnectionWriter& connection) const override;
+        bool read(yarp::os::ConnectionReader& connection) override;
+
+        bool write(const yarp::os::idl::WireWriter& writer) const override;
+        bool read(yarp::os::idl::WireReader& reader) override;
+
+        double return_helper{0.0};
+    };
+
+    using funcptr_t = double (*)();
+    void call(yarpdataplayer_console_IDL* ptr);
+
+    Command cmd;
+    Reply reply;
+
+    static constexpr const char* s_tag{"getProgress"};
+    static constexpr size_t s_tag_len{1};
+    static constexpr size_t s_cmd_len{1};
+    static constexpr size_t s_reply_len{1};
+    static constexpr const char* s_prototype{"double yarpdataplayer_console_IDL::getProgress()"};
+    static constexpr const char* s_help{
+        "Get the progress of the parts\n"
+        "@return the progress of the parts"
+    };
+};
+
+// getStatus helper class declaration
+class yarpdataplayer_console_IDL_getStatus_helper :
+        public yarp::os::Portable
+{
+public:
+    yarpdataplayer_console_IDL_getStatus_helper() = default;
+    bool write(yarp::os::ConnectionWriter& connection) const override;
+    bool read(yarp::os::ConnectionReader& connection) override;
+
+    class Command :
+            public yarp::os::idl::WirePortable
+    {
+    public:
+        Command() = default;
+        ~Command() override = default;
+
+        bool write(yarp::os::ConnectionWriter& connection) const override;
+        bool read(yarp::os::ConnectionReader& connection) override;
+
+        bool write(const yarp::os::idl::WireWriter& writer) const override;
+        bool writeTag(const yarp::os::idl::WireWriter& writer) const;
+        bool writeArgs(const yarp::os::idl::WireWriter& writer) const;
+
+        bool read(yarp::os::idl::WireReader& reader) override;
+        bool readTag(yarp::os::idl::WireReader& reader);
+        bool readArgs(yarp::os::idl::WireReader& reader);
+    };
+
+    class Reply :
+            public yarp::os::idl::WirePortable
+    {
+    public:
+        Reply() = default;
+        ~Reply() override = default;
+
+        bool write(yarp::os::ConnectionWriter& connection) const override;
+        bool read(yarp::os::ConnectionReader& connection) override;
+
+        bool write(const yarp::os::idl::WireWriter& writer) const override;
+        bool read(yarp::os::idl::WireReader& reader) override;
+
+        std::string return_helper{};
+    };
+
+    using funcptr_t = std::string (*)();
+    void call(yarpdataplayer_console_IDL* ptr);
+
+    Command cmd;
+    Reply reply;
+
+    static constexpr const char* s_tag{"getStatus"};
+    static constexpr size_t s_tag_len{1};
+    static constexpr size_t s_cmd_len{1};
+    static constexpr size_t s_reply_len{1};
+    static constexpr const char* s_prototype{"std::string yarpdataplayer_console_IDL::getStatus()"};
+    static constexpr const char* s_help{
+        "Get the status of playing\n"
+        "@return the status (playing, paused, stopped)"
+    };
+};
+
+// resume helper class declaration
+class yarpdataplayer_console_IDL_resume_helper :
+        public yarp::os::Portable
+{
+public:
+    yarpdataplayer_console_IDL_resume_helper() = default;
+    bool write(yarp::os::ConnectionWriter& connection) const override;
+    bool read(yarp::os::ConnectionReader& connection) override;
+
+    class Command :
+            public yarp::os::idl::WirePortable
+    {
+    public:
+        Command() = default;
+        ~Command() override = default;
+
+        bool write(yarp::os::ConnectionWriter& connection) const override;
+        bool read(yarp::os::ConnectionReader& connection) override;
+
+        bool write(const yarp::os::idl::WireWriter& writer) const override;
+        bool writeTag(const yarp::os::idl::WireWriter& writer) const;
+        bool writeArgs(const yarp::os::idl::WireWriter& writer) const;
+
+        bool read(yarp::os::idl::WireReader& reader) override;
+        bool readTag(yarp::os::idl::WireReader& reader);
+        bool readArgs(yarp::os::idl::WireReader& reader);
+    };
+
+    class Reply :
+            public yarp::os::idl::WirePortable
+    {
+    public:
+        Reply() = default;
+        ~Reply() override = default;
+
+        bool write(yarp::os::ConnectionWriter& connection) const override;
+        bool read(yarp::os::ConnectionReader& connection) override;
+
+        bool write(const yarp::os::idl::WireWriter& writer) const override;
+        bool read(yarp::os::idl::WireReader& reader) override;
+
+        bool return_helper{false};
+    };
+
+    using funcptr_t = bool (*)();
+    void call(yarpdataplayer_console_IDL* ptr);
+
+    Command cmd;
+    Reply reply;
+
+    static constexpr const char* s_tag{"resume"};
+    static constexpr size_t s_tag_len{1};
+    static constexpr size_t s_cmd_len{1};
+    static constexpr size_t s_reply_len{1};
+    static constexpr const char* s_prototype{"bool yarpdataplayer_console_IDL::resume()"};
+    static constexpr const char* s_help{
+        "Resume dataset from where it was paused\n"
+        "@return true/false on success/failure"
+    };
+};
+
+// quit helper class declaration
+class yarpdataplayer_console_IDL_quit_helper :
+        public yarp::os::Portable
+{
+public:
+    yarpdataplayer_console_IDL_quit_helper() = default;
+    bool write(yarp::os::ConnectionWriter& connection) const override;
+    bool read(yarp::os::ConnectionReader& connection) override;
+
+    class Command :
+            public yarp::os::idl::WirePortable
+    {
+    public:
+        Command() = default;
+        ~Command() override = default;
+
+        bool write(yarp::os::ConnectionWriter& connection) const override;
+        bool read(yarp::os::ConnectionReader& connection) override;
+
+        bool write(const yarp::os::idl::WireWriter& writer) const override;
+        bool writeTag(const yarp::os::idl::WireWriter& writer) const;
+        bool writeArgs(const yarp::os::idl::WireWriter& writer) const;
+
+        bool read(yarp::os::idl::WireReader& reader) override;
+        bool readTag(yarp::os::idl::WireReader& reader);
+        bool readArgs(yarp::os::idl::WireReader& reader);
+    };
+
+    class Reply :
+            public yarp::os::idl::WirePortable
+    {
+    public:
+        Reply() = default;
+        ~Reply() override = default;
+
+        bool write(yarp::os::ConnectionWriter& connection) const override;
+        bool read(yarp::os::ConnectionReader& connection) override;
+
+        bool write(const yarp::os::idl::WireWriter& writer) const override;
+        bool read(yarp::os::idl::WireReader& reader) override;
+
+        bool return_helper{false};
+    };
+
+    using funcptr_t = bool (*)();
+    void call(yarpdataplayer_console_IDL* ptr);
+
+    Command cmd;
+    Reply reply;
+
+    static constexpr const char* s_tag{"quit"};
+    static constexpr size_t s_tag_len{1};
+    static constexpr size_t s_cmd_len{1};
+    static constexpr size_t s_reply_len{1};
+    static constexpr const char* s_prototype{"bool yarpdataplayer_console_IDL::quit()"};
+    static constexpr const char* s_help{
+        "Quit the module.\n"
+        "@return true/false on success/failure"
+    };
+};
+
+// step helper class implementation
+bool yarpdataplayer_console_IDL_step_helper::write(yarp::os::ConnectionWriter& connection) const
+{
+    return cmd.write(connection);
 }
 
-bool yarpdataplayer_console_IDL_disable_helper::write(yarp::os::ConnectionWriter& connection) const
+bool yarpdataplayer_console_IDL_step_helper::read(yarp::os::ConnectionReader& connection)
+{
+    return reply.read(connection);
+}
+
+bool yarpdataplayer_console_IDL_step_helper::Command::write(yarp::os::ConnectionWriter& connection) const
 {
     yarp::os::idl::WireWriter writer(connection);
-    if (!writer.writeListHeader(2)) {
+    if (!writer.writeListHeader(s_cmd_len)) {
         return false;
     }
-    if (!writer.writeTag("disable", 1, 1)) {
+    return write(writer);
+}
+
+bool yarpdataplayer_console_IDL_step_helper::Command::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    if (!reader.readListHeader()) {
+        reader.fail();
         return false;
     }
-    if (!writer.writeString(m_part)) {
+    return read(reader);
+}
+
+bool yarpdataplayer_console_IDL_step_helper::Command::write(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writeTag(writer)) {
+        return false;
+    }
+    if (!writeArgs(writer)) {
         return false;
     }
     return true;
 }
 
-bool yarpdataplayer_console_IDL_disable_helper::read(yarp::os::ConnectionReader& connection)
+bool yarpdataplayer_console_IDL_step_helper::Command::writeTag(const yarp::os::idl::WireWriter& writer) const
 {
-    yarp::os::idl::WireReader reader(connection);
-    if (!reader.readListReturn()) {
+    if (!writer.writeTag(s_tag, 1, s_tag_len)) {
         return false;
     }
-    if (!reader.readBool(s_return_helper)) {
+    return true;
+}
+
+bool yarpdataplayer_console_IDL_step_helper::Command::writeArgs(const yarp::os::idl::WireWriter& writer [[maybe_unused]]) const
+{
+    return true;
+}
+
+bool yarpdataplayer_console_IDL_step_helper::Command::read(yarp::os::idl::WireReader& reader)
+{
+    if (!readTag(reader)) {
+        return false;
+    }
+    if (!readArgs(reader)) {
+        return false;
+    }
+    return true;
+}
+
+bool yarpdataplayer_console_IDL_step_helper::Command::readTag(yarp::os::idl::WireReader& reader)
+{
+    std::string tag = reader.readTag();
+    if (reader.isError()) {
+        return false;
+    }
+    if (tag != s_tag) {
         reader.fail();
         return false;
     }
     return true;
 }
 
-class yarpdataplayer_console_IDL_getAllParts_helper :
-        public yarp::os::Portable
+bool yarpdataplayer_console_IDL_step_helper::Command::readArgs(yarp::os::idl::WireReader& reader)
 {
-public:
-    explicit yarpdataplayer_console_IDL_getAllParts_helper();
-    bool write(yarp::os::ConnectionWriter& connection) const override;
-    bool read(yarp::os::ConnectionReader& connection) override;
-
-    thread_local static std::vector<std::string> s_return_helper;
-};
-
-thread_local std::vector<std::string> yarpdataplayer_console_IDL_getAllParts_helper::s_return_helper = {};
-
-yarpdataplayer_console_IDL_getAllParts_helper::yarpdataplayer_console_IDL_getAllParts_helper()
-{
-}
-
-bool yarpdataplayer_console_IDL_getAllParts_helper::write(yarp::os::ConnectionWriter& connection) const
-{
-    yarp::os::idl::WireWriter writer(connection);
-    if (!writer.writeListHeader(1)) {
-        return false;
-    }
-    if (!writer.writeTag("getAllParts", 1, 1)) {
+    if (!reader.noMore()) {
+        reader.fail();
         return false;
     }
     return true;
 }
 
-bool yarpdataplayer_console_IDL_getAllParts_helper::read(yarp::os::ConnectionReader& connection)
+bool yarpdataplayer_console_IDL_step_helper::Reply::write(yarp::os::ConnectionWriter& connection) const
+{
+    yarp::os::idl::WireWriter writer(connection);
+    return write(writer);
+}
+
+bool yarpdataplayer_console_IDL_step_helper::Reply::read(yarp::os::ConnectionReader& connection)
 {
     yarp::os::idl::WireReader reader(connection);
+    return read(reader);
+}
+
+bool yarpdataplayer_console_IDL_step_helper::Reply::write(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.isNull()) {
+        if (!writer.writeListHeader(s_reply_len)) {
+            return false;
+        }
+        if (!writer.writeBool(return_helper)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+bool yarpdataplayer_console_IDL_step_helper::Reply::read(yarp::os::idl::WireReader& reader)
+{
     if (!reader.readListReturn()) {
         return false;
     }
-    s_return_helper.clear();
-    uint32_t _size0;
-    yarp::os::idl::WireState _etype3;
-    reader.readListBegin(_etype3, _size0);
-    s_return_helper.resize(_size0);
-    for (size_t _i4 = 0; _i4 < _size0; ++_i4) {
-        if (!reader.readString(s_return_helper[_i4])) {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
+    if (!reader.readBool(return_helper)) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+void yarpdataplayer_console_IDL_step_helper::call(yarpdataplayer_console_IDL* ptr)
+{
+    reply.return_helper = ptr->step();
+}
+
+// setFrame helper class implementation
+yarpdataplayer_console_IDL_setFrame_helper::yarpdataplayer_console_IDL_setFrame_helper(const std::int32_t frameNum) :
+        cmd{frameNum}
+{
+}
+
+bool yarpdataplayer_console_IDL_setFrame_helper::write(yarp::os::ConnectionWriter& connection) const
+{
+    return cmd.write(connection);
+}
+
+bool yarpdataplayer_console_IDL_setFrame_helper::read(yarp::os::ConnectionReader& connection)
+{
+    return reply.read(connection);
+}
+
+yarpdataplayer_console_IDL_setFrame_helper::Command::Command(const std::int32_t frameNum) :
+        frameNum{frameNum}
+{
+}
+
+bool yarpdataplayer_console_IDL_setFrame_helper::Command::write(yarp::os::ConnectionWriter& connection) const
+{
+    yarp::os::idl::WireWriter writer(connection);
+    if (!writer.writeListHeader(s_cmd_len)) {
+        return false;
+    }
+    return write(writer);
+}
+
+bool yarpdataplayer_console_IDL_setFrame_helper::Command::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    if (!reader.readListHeader()) {
+        reader.fail();
+        return false;
+    }
+    return read(reader);
+}
+
+bool yarpdataplayer_console_IDL_setFrame_helper::Command::write(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writeTag(writer)) {
+        return false;
+    }
+    if (!writeArgs(writer)) {
+        return false;
+    }
+    return true;
+}
+
+bool yarpdataplayer_console_IDL_setFrame_helper::Command::writeTag(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.writeTag(s_tag, 1, s_tag_len)) {
+        return false;
+    }
+    return true;
+}
+
+bool yarpdataplayer_console_IDL_setFrame_helper::Command::writeArgs(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.writeI32(frameNum)) {
+        return false;
+    }
+    return true;
+}
+
+bool yarpdataplayer_console_IDL_setFrame_helper::Command::read(yarp::os::idl::WireReader& reader)
+{
+    if (!readTag(reader)) {
+        return false;
+    }
+    if (!readArgs(reader)) {
+        return false;
+    }
+    return true;
+}
+
+bool yarpdataplayer_console_IDL_setFrame_helper::Command::readTag(yarp::os::idl::WireReader& reader)
+{
+    std::string tag = reader.readTag();
+    if (reader.isError()) {
+        return false;
+    }
+    if (tag != s_tag) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool yarpdataplayer_console_IDL_setFrame_helper::Command::readArgs(yarp::os::idl::WireReader& reader)
+{
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
+    if (!reader.readI32(frameNum)) {
+        reader.fail();
+        return false;
+    }
+    if (!reader.noMore()) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool yarpdataplayer_console_IDL_setFrame_helper::Reply::write(yarp::os::ConnectionWriter& connection) const
+{
+    yarp::os::idl::WireWriter writer(connection);
+    return write(writer);
+}
+
+bool yarpdataplayer_console_IDL_setFrame_helper::Reply::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    return read(reader);
+}
+
+bool yarpdataplayer_console_IDL_setFrame_helper::Reply::write(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.isNull()) {
+        if (!writer.writeListHeader(s_reply_len)) {
+            return false;
+        }
+        if (!writer.writeBool(return_helper)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+bool yarpdataplayer_console_IDL_setFrame_helper::Reply::read(yarp::os::idl::WireReader& reader)
+{
+    if (!reader.readListReturn()) {
+        return false;
+    }
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
+    if (!reader.readBool(return_helper)) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+void yarpdataplayer_console_IDL_setFrame_helper::call(yarpdataplayer_console_IDL* ptr)
+{
+    reply.return_helper = ptr->setFrame(cmd.frameNum);
+}
+
+// getFrame helper class implementation
+yarpdataplayer_console_IDL_getFrame_helper::yarpdataplayer_console_IDL_getFrame_helper(const std::string& name) :
+        cmd{name}
+{
+}
+
+bool yarpdataplayer_console_IDL_getFrame_helper::write(yarp::os::ConnectionWriter& connection) const
+{
+    return cmd.write(connection);
+}
+
+bool yarpdataplayer_console_IDL_getFrame_helper::read(yarp::os::ConnectionReader& connection)
+{
+    return reply.read(connection);
+}
+
+yarpdataplayer_console_IDL_getFrame_helper::Command::Command(const std::string& name) :
+        name{name}
+{
+}
+
+bool yarpdataplayer_console_IDL_getFrame_helper::Command::write(yarp::os::ConnectionWriter& connection) const
+{
+    yarp::os::idl::WireWriter writer(connection);
+    if (!writer.writeListHeader(s_cmd_len)) {
+        return false;
+    }
+    return write(writer);
+}
+
+bool yarpdataplayer_console_IDL_getFrame_helper::Command::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    if (!reader.readListHeader()) {
+        reader.fail();
+        return false;
+    }
+    return read(reader);
+}
+
+bool yarpdataplayer_console_IDL_getFrame_helper::Command::write(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writeTag(writer)) {
+        return false;
+    }
+    if (!writeArgs(writer)) {
+        return false;
+    }
+    return true;
+}
+
+bool yarpdataplayer_console_IDL_getFrame_helper::Command::writeTag(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.writeTag(s_tag, 1, s_tag_len)) {
+        return false;
+    }
+    return true;
+}
+
+bool yarpdataplayer_console_IDL_getFrame_helper::Command::writeArgs(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.writeString(name)) {
+        return false;
+    }
+    return true;
+}
+
+bool yarpdataplayer_console_IDL_getFrame_helper::Command::read(yarp::os::idl::WireReader& reader)
+{
+    if (!readTag(reader)) {
+        return false;
+    }
+    if (!readArgs(reader)) {
+        return false;
+    }
+    return true;
+}
+
+bool yarpdataplayer_console_IDL_getFrame_helper::Command::readTag(yarp::os::idl::WireReader& reader)
+{
+    std::string tag = reader.readTag();
+    if (reader.isError()) {
+        return false;
+    }
+    if (tag != s_tag) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool yarpdataplayer_console_IDL_getFrame_helper::Command::readArgs(yarp::os::idl::WireReader& reader)
+{
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
+    if (!reader.readString(name)) {
+        reader.fail();
+        return false;
+    }
+    if (!reader.noMore()) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool yarpdataplayer_console_IDL_getFrame_helper::Reply::write(yarp::os::ConnectionWriter& connection) const
+{
+    yarp::os::idl::WireWriter writer(connection);
+    return write(writer);
+}
+
+bool yarpdataplayer_console_IDL_getFrame_helper::Reply::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    return read(reader);
+}
+
+bool yarpdataplayer_console_IDL_getFrame_helper::Reply::write(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.isNull()) {
+        if (!writer.writeListHeader(s_reply_len)) {
+            return false;
+        }
+        if (!writer.writeI32(return_helper)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+bool yarpdataplayer_console_IDL_getFrame_helper::Reply::read(yarp::os::idl::WireReader& reader)
+{
+    if (!reader.readListReturn()) {
+        return false;
+    }
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
+    if (!reader.readI32(return_helper)) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+void yarpdataplayer_console_IDL_getFrame_helper::call(yarpdataplayer_console_IDL* ptr)
+{
+    reply.return_helper = ptr->getFrame(cmd.name);
+}
+
+// load helper class implementation
+yarpdataplayer_console_IDL_load_helper::yarpdataplayer_console_IDL_load_helper(const std::string& path) :
+        cmd{path}
+{
+}
+
+bool yarpdataplayer_console_IDL_load_helper::write(yarp::os::ConnectionWriter& connection) const
+{
+    return cmd.write(connection);
+}
+
+bool yarpdataplayer_console_IDL_load_helper::read(yarp::os::ConnectionReader& connection)
+{
+    return reply.read(connection);
+}
+
+yarpdataplayer_console_IDL_load_helper::Command::Command(const std::string& path) :
+        path{path}
+{
+}
+
+bool yarpdataplayer_console_IDL_load_helper::Command::write(yarp::os::ConnectionWriter& connection) const
+{
+    yarp::os::idl::WireWriter writer(connection);
+    if (!writer.writeListHeader(s_cmd_len)) {
+        return false;
+    }
+    return write(writer);
+}
+
+bool yarpdataplayer_console_IDL_load_helper::Command::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    if (!reader.readListHeader()) {
+        reader.fail();
+        return false;
+    }
+    return read(reader);
+}
+
+bool yarpdataplayer_console_IDL_load_helper::Command::write(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writeTag(writer)) {
+        return false;
+    }
+    if (!writeArgs(writer)) {
+        return false;
+    }
+    return true;
+}
+
+bool yarpdataplayer_console_IDL_load_helper::Command::writeTag(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.writeTag(s_tag, 1, s_tag_len)) {
+        return false;
+    }
+    return true;
+}
+
+bool yarpdataplayer_console_IDL_load_helper::Command::writeArgs(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.writeString(path)) {
+        return false;
+    }
+    return true;
+}
+
+bool yarpdataplayer_console_IDL_load_helper::Command::read(yarp::os::idl::WireReader& reader)
+{
+    if (!readTag(reader)) {
+        return false;
+    }
+    if (!readArgs(reader)) {
+        return false;
+    }
+    return true;
+}
+
+bool yarpdataplayer_console_IDL_load_helper::Command::readTag(yarp::os::idl::WireReader& reader)
+{
+    std::string tag = reader.readTag();
+    if (reader.isError()) {
+        return false;
+    }
+    if (tag != s_tag) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool yarpdataplayer_console_IDL_load_helper::Command::readArgs(yarp::os::idl::WireReader& reader)
+{
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
+    if (!reader.readString(path)) {
+        reader.fail();
+        return false;
+    }
+    if (!reader.noMore()) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool yarpdataplayer_console_IDL_load_helper::Reply::write(yarp::os::ConnectionWriter& connection) const
+{
+    yarp::os::idl::WireWriter writer(connection);
+    return write(writer);
+}
+
+bool yarpdataplayer_console_IDL_load_helper::Reply::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    return read(reader);
+}
+
+bool yarpdataplayer_console_IDL_load_helper::Reply::write(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.isNull()) {
+        if (!writer.writeListHeader(s_reply_len)) {
+            return false;
+        }
+        if (!writer.writeBool(return_helper)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+bool yarpdataplayer_console_IDL_load_helper::Reply::read(yarp::os::idl::WireReader& reader)
+{
+    if (!reader.readListReturn()) {
+        return false;
+    }
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
+    if (!reader.readBool(return_helper)) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+void yarpdataplayer_console_IDL_load_helper::call(yarpdataplayer_console_IDL* ptr)
+{
+    reply.return_helper = ptr->load(cmd.path);
+}
+
+// play helper class implementation
+bool yarpdataplayer_console_IDL_play_helper::write(yarp::os::ConnectionWriter& connection) const
+{
+    return cmd.write(connection);
+}
+
+bool yarpdataplayer_console_IDL_play_helper::read(yarp::os::ConnectionReader& connection)
+{
+    return reply.read(connection);
+}
+
+bool yarpdataplayer_console_IDL_play_helper::Command::write(yarp::os::ConnectionWriter& connection) const
+{
+    yarp::os::idl::WireWriter writer(connection);
+    if (!writer.writeListHeader(s_cmd_len)) {
+        return false;
+    }
+    return write(writer);
+}
+
+bool yarpdataplayer_console_IDL_play_helper::Command::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    if (!reader.readListHeader()) {
+        reader.fail();
+        return false;
+    }
+    return read(reader);
+}
+
+bool yarpdataplayer_console_IDL_play_helper::Command::write(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writeTag(writer)) {
+        return false;
+    }
+    if (!writeArgs(writer)) {
+        return false;
+    }
+    return true;
+}
+
+bool yarpdataplayer_console_IDL_play_helper::Command::writeTag(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.writeTag(s_tag, 1, s_tag_len)) {
+        return false;
+    }
+    return true;
+}
+
+bool yarpdataplayer_console_IDL_play_helper::Command::writeArgs(const yarp::os::idl::WireWriter& writer [[maybe_unused]]) const
+{
+    return true;
+}
+
+bool yarpdataplayer_console_IDL_play_helper::Command::read(yarp::os::idl::WireReader& reader)
+{
+    if (!readTag(reader)) {
+        return false;
+    }
+    if (!readArgs(reader)) {
+        return false;
+    }
+    return true;
+}
+
+bool yarpdataplayer_console_IDL_play_helper::Command::readTag(yarp::os::idl::WireReader& reader)
+{
+    std::string tag = reader.readTag();
+    if (reader.isError()) {
+        return false;
+    }
+    if (tag != s_tag) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool yarpdataplayer_console_IDL_play_helper::Command::readArgs(yarp::os::idl::WireReader& reader)
+{
+    if (!reader.noMore()) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool yarpdataplayer_console_IDL_play_helper::Reply::write(yarp::os::ConnectionWriter& connection) const
+{
+    yarp::os::idl::WireWriter writer(connection);
+    return write(writer);
+}
+
+bool yarpdataplayer_console_IDL_play_helper::Reply::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    return read(reader);
+}
+
+bool yarpdataplayer_console_IDL_play_helper::Reply::write(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.isNull()) {
+        if (!writer.writeListHeader(s_reply_len)) {
+            return false;
+        }
+        if (!writer.writeBool(return_helper)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+bool yarpdataplayer_console_IDL_play_helper::Reply::read(yarp::os::idl::WireReader& reader)
+{
+    if (!reader.readListReturn()) {
+        return false;
+    }
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
+    if (!reader.readBool(return_helper)) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+void yarpdataplayer_console_IDL_play_helper::call(yarpdataplayer_console_IDL* ptr)
+{
+    reply.return_helper = ptr->play();
+}
+
+// pause helper class implementation
+bool yarpdataplayer_console_IDL_pause_helper::write(yarp::os::ConnectionWriter& connection) const
+{
+    return cmd.write(connection);
+}
+
+bool yarpdataplayer_console_IDL_pause_helper::read(yarp::os::ConnectionReader& connection)
+{
+    return reply.read(connection);
+}
+
+bool yarpdataplayer_console_IDL_pause_helper::Command::write(yarp::os::ConnectionWriter& connection) const
+{
+    yarp::os::idl::WireWriter writer(connection);
+    if (!writer.writeListHeader(s_cmd_len)) {
+        return false;
+    }
+    return write(writer);
+}
+
+bool yarpdataplayer_console_IDL_pause_helper::Command::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    if (!reader.readListHeader()) {
+        reader.fail();
+        return false;
+    }
+    return read(reader);
+}
+
+bool yarpdataplayer_console_IDL_pause_helper::Command::write(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writeTag(writer)) {
+        return false;
+    }
+    if (!writeArgs(writer)) {
+        return false;
+    }
+    return true;
+}
+
+bool yarpdataplayer_console_IDL_pause_helper::Command::writeTag(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.writeTag(s_tag, 1, s_tag_len)) {
+        return false;
+    }
+    return true;
+}
+
+bool yarpdataplayer_console_IDL_pause_helper::Command::writeArgs(const yarp::os::idl::WireWriter& writer [[maybe_unused]]) const
+{
+    return true;
+}
+
+bool yarpdataplayer_console_IDL_pause_helper::Command::read(yarp::os::idl::WireReader& reader)
+{
+    if (!readTag(reader)) {
+        return false;
+    }
+    if (!readArgs(reader)) {
+        return false;
+    }
+    return true;
+}
+
+bool yarpdataplayer_console_IDL_pause_helper::Command::readTag(yarp::os::idl::WireReader& reader)
+{
+    std::string tag = reader.readTag();
+    if (reader.isError()) {
+        return false;
+    }
+    if (tag != s_tag) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool yarpdataplayer_console_IDL_pause_helper::Command::readArgs(yarp::os::idl::WireReader& reader)
+{
+    if (!reader.noMore()) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool yarpdataplayer_console_IDL_pause_helper::Reply::write(yarp::os::ConnectionWriter& connection) const
+{
+    yarp::os::idl::WireWriter writer(connection);
+    return write(writer);
+}
+
+bool yarpdataplayer_console_IDL_pause_helper::Reply::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    return read(reader);
+}
+
+bool yarpdataplayer_console_IDL_pause_helper::Reply::write(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.isNull()) {
+        if (!writer.writeListHeader(s_reply_len)) {
+            return false;
+        }
+        if (!writer.writeBool(return_helper)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+bool yarpdataplayer_console_IDL_pause_helper::Reply::read(yarp::os::idl::WireReader& reader)
+{
+    if (!reader.readListReturn()) {
+        return false;
+    }
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
+    if (!reader.readBool(return_helper)) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+void yarpdataplayer_console_IDL_pause_helper::call(yarpdataplayer_console_IDL* ptr)
+{
+    reply.return_helper = ptr->pause();
+}
+
+// stop helper class implementation
+bool yarpdataplayer_console_IDL_stop_helper::write(yarp::os::ConnectionWriter& connection) const
+{
+    return cmd.write(connection);
+}
+
+bool yarpdataplayer_console_IDL_stop_helper::read(yarp::os::ConnectionReader& connection)
+{
+    return reply.read(connection);
+}
+
+bool yarpdataplayer_console_IDL_stop_helper::Command::write(yarp::os::ConnectionWriter& connection) const
+{
+    yarp::os::idl::WireWriter writer(connection);
+    if (!writer.writeListHeader(s_cmd_len)) {
+        return false;
+    }
+    return write(writer);
+}
+
+bool yarpdataplayer_console_IDL_stop_helper::Command::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    if (!reader.readListHeader()) {
+        reader.fail();
+        return false;
+    }
+    return read(reader);
+}
+
+bool yarpdataplayer_console_IDL_stop_helper::Command::write(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writeTag(writer)) {
+        return false;
+    }
+    if (!writeArgs(writer)) {
+        return false;
+    }
+    return true;
+}
+
+bool yarpdataplayer_console_IDL_stop_helper::Command::writeTag(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.writeTag(s_tag, 1, s_tag_len)) {
+        return false;
+    }
+    return true;
+}
+
+bool yarpdataplayer_console_IDL_stop_helper::Command::writeArgs(const yarp::os::idl::WireWriter& writer [[maybe_unused]]) const
+{
+    return true;
+}
+
+bool yarpdataplayer_console_IDL_stop_helper::Command::read(yarp::os::idl::WireReader& reader)
+{
+    if (!readTag(reader)) {
+        return false;
+    }
+    if (!readArgs(reader)) {
+        return false;
+    }
+    return true;
+}
+
+bool yarpdataplayer_console_IDL_stop_helper::Command::readTag(yarp::os::idl::WireReader& reader)
+{
+    std::string tag = reader.readTag();
+    if (reader.isError()) {
+        return false;
+    }
+    if (tag != s_tag) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool yarpdataplayer_console_IDL_stop_helper::Command::readArgs(yarp::os::idl::WireReader& reader)
+{
+    if (!reader.noMore()) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool yarpdataplayer_console_IDL_stop_helper::Reply::write(yarp::os::ConnectionWriter& connection) const
+{
+    yarp::os::idl::WireWriter writer(connection);
+    return write(writer);
+}
+
+bool yarpdataplayer_console_IDL_stop_helper::Reply::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    return read(reader);
+}
+
+bool yarpdataplayer_console_IDL_stop_helper::Reply::write(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.isNull()) {
+        if (!writer.writeListHeader(s_reply_len)) {
+            return false;
+        }
+        if (!writer.writeBool(return_helper)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+bool yarpdataplayer_console_IDL_stop_helper::Reply::read(yarp::os::idl::WireReader& reader)
+{
+    if (!reader.readListReturn()) {
+        return false;
+    }
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
+    if (!reader.readBool(return_helper)) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+void yarpdataplayer_console_IDL_stop_helper::call(yarpdataplayer_console_IDL* ptr)
+{
+    reply.return_helper = ptr->stop();
+}
+
+// enable helper class implementation
+yarpdataplayer_console_IDL_enable_helper::yarpdataplayer_console_IDL_enable_helper(const std::string& part) :
+        cmd{part}
+{
+}
+
+bool yarpdataplayer_console_IDL_enable_helper::write(yarp::os::ConnectionWriter& connection) const
+{
+    return cmd.write(connection);
+}
+
+bool yarpdataplayer_console_IDL_enable_helper::read(yarp::os::ConnectionReader& connection)
+{
+    return reply.read(connection);
+}
+
+yarpdataplayer_console_IDL_enable_helper::Command::Command(const std::string& part) :
+        part{part}
+{
+}
+
+bool yarpdataplayer_console_IDL_enable_helper::Command::write(yarp::os::ConnectionWriter& connection) const
+{
+    yarp::os::idl::WireWriter writer(connection);
+    if (!writer.writeListHeader(s_cmd_len)) {
+        return false;
+    }
+    return write(writer);
+}
+
+bool yarpdataplayer_console_IDL_enable_helper::Command::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    if (!reader.readListHeader()) {
+        reader.fail();
+        return false;
+    }
+    return read(reader);
+}
+
+bool yarpdataplayer_console_IDL_enable_helper::Command::write(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writeTag(writer)) {
+        return false;
+    }
+    if (!writeArgs(writer)) {
+        return false;
+    }
+    return true;
+}
+
+bool yarpdataplayer_console_IDL_enable_helper::Command::writeTag(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.writeTag(s_tag, 1, s_tag_len)) {
+        return false;
+    }
+    return true;
+}
+
+bool yarpdataplayer_console_IDL_enable_helper::Command::writeArgs(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.writeString(part)) {
+        return false;
+    }
+    return true;
+}
+
+bool yarpdataplayer_console_IDL_enable_helper::Command::read(yarp::os::idl::WireReader& reader)
+{
+    if (!readTag(reader)) {
+        return false;
+    }
+    if (!readArgs(reader)) {
+        return false;
+    }
+    return true;
+}
+
+bool yarpdataplayer_console_IDL_enable_helper::Command::readTag(yarp::os::idl::WireReader& reader)
+{
+    std::string tag = reader.readTag();
+    if (reader.isError()) {
+        return false;
+    }
+    if (tag != s_tag) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool yarpdataplayer_console_IDL_enable_helper::Command::readArgs(yarp::os::idl::WireReader& reader)
+{
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
+    if (!reader.readString(part)) {
+        reader.fail();
+        return false;
+    }
+    if (!reader.noMore()) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool yarpdataplayer_console_IDL_enable_helper::Reply::write(yarp::os::ConnectionWriter& connection) const
+{
+    yarp::os::idl::WireWriter writer(connection);
+    return write(writer);
+}
+
+bool yarpdataplayer_console_IDL_enable_helper::Reply::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    return read(reader);
+}
+
+bool yarpdataplayer_console_IDL_enable_helper::Reply::write(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.isNull()) {
+        if (!writer.writeListHeader(s_reply_len)) {
+            return false;
+        }
+        if (!writer.writeBool(return_helper)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+bool yarpdataplayer_console_IDL_enable_helper::Reply::read(yarp::os::idl::WireReader& reader)
+{
+    if (!reader.readListReturn()) {
+        return false;
+    }
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
+    if (!reader.readBool(return_helper)) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+void yarpdataplayer_console_IDL_enable_helper::call(yarpdataplayer_console_IDL* ptr)
+{
+    reply.return_helper = ptr->enable(cmd.part);
+}
+
+// disable helper class implementation
+yarpdataplayer_console_IDL_disable_helper::yarpdataplayer_console_IDL_disable_helper(const std::string& part) :
+        cmd{part}
+{
+}
+
+bool yarpdataplayer_console_IDL_disable_helper::write(yarp::os::ConnectionWriter& connection) const
+{
+    return cmd.write(connection);
+}
+
+bool yarpdataplayer_console_IDL_disable_helper::read(yarp::os::ConnectionReader& connection)
+{
+    return reply.read(connection);
+}
+
+yarpdataplayer_console_IDL_disable_helper::Command::Command(const std::string& part) :
+        part{part}
+{
+}
+
+bool yarpdataplayer_console_IDL_disable_helper::Command::write(yarp::os::ConnectionWriter& connection) const
+{
+    yarp::os::idl::WireWriter writer(connection);
+    if (!writer.writeListHeader(s_cmd_len)) {
+        return false;
+    }
+    return write(writer);
+}
+
+bool yarpdataplayer_console_IDL_disable_helper::Command::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    if (!reader.readListHeader()) {
+        reader.fail();
+        return false;
+    }
+    return read(reader);
+}
+
+bool yarpdataplayer_console_IDL_disable_helper::Command::write(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writeTag(writer)) {
+        return false;
+    }
+    if (!writeArgs(writer)) {
+        return false;
+    }
+    return true;
+}
+
+bool yarpdataplayer_console_IDL_disable_helper::Command::writeTag(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.writeTag(s_tag, 1, s_tag_len)) {
+        return false;
+    }
+    return true;
+}
+
+bool yarpdataplayer_console_IDL_disable_helper::Command::writeArgs(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.writeString(part)) {
+        return false;
+    }
+    return true;
+}
+
+bool yarpdataplayer_console_IDL_disable_helper::Command::read(yarp::os::idl::WireReader& reader)
+{
+    if (!readTag(reader)) {
+        return false;
+    }
+    if (!readArgs(reader)) {
+        return false;
+    }
+    return true;
+}
+
+bool yarpdataplayer_console_IDL_disable_helper::Command::readTag(yarp::os::idl::WireReader& reader)
+{
+    std::string tag = reader.readTag();
+    if (reader.isError()) {
+        return false;
+    }
+    if (tag != s_tag) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool yarpdataplayer_console_IDL_disable_helper::Command::readArgs(yarp::os::idl::WireReader& reader)
+{
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
+    if (!reader.readString(part)) {
+        reader.fail();
+        return false;
+    }
+    if (!reader.noMore()) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool yarpdataplayer_console_IDL_disable_helper::Reply::write(yarp::os::ConnectionWriter& connection) const
+{
+    yarp::os::idl::WireWriter writer(connection);
+    return write(writer);
+}
+
+bool yarpdataplayer_console_IDL_disable_helper::Reply::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    return read(reader);
+}
+
+bool yarpdataplayer_console_IDL_disable_helper::Reply::write(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.isNull()) {
+        if (!writer.writeListHeader(s_reply_len)) {
+            return false;
+        }
+        if (!writer.writeBool(return_helper)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+bool yarpdataplayer_console_IDL_disable_helper::Reply::read(yarp::os::idl::WireReader& reader)
+{
+    if (!reader.readListReturn()) {
+        return false;
+    }
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
+    if (!reader.readBool(return_helper)) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+void yarpdataplayer_console_IDL_disable_helper::call(yarpdataplayer_console_IDL* ptr)
+{
+    reply.return_helper = ptr->disable(cmd.part);
+}
+
+// getAllParts helper class implementation
+bool yarpdataplayer_console_IDL_getAllParts_helper::write(yarp::os::ConnectionWriter& connection) const
+{
+    return cmd.write(connection);
+}
+
+bool yarpdataplayer_console_IDL_getAllParts_helper::read(yarp::os::ConnectionReader& connection)
+{
+    return reply.read(connection);
+}
+
+bool yarpdataplayer_console_IDL_getAllParts_helper::Command::write(yarp::os::ConnectionWriter& connection) const
+{
+    yarp::os::idl::WireWriter writer(connection);
+    if (!writer.writeListHeader(s_cmd_len)) {
+        return false;
+    }
+    return write(writer);
+}
+
+bool yarpdataplayer_console_IDL_getAllParts_helper::Command::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    if (!reader.readListHeader()) {
+        reader.fail();
+        return false;
+    }
+    return read(reader);
+}
+
+bool yarpdataplayer_console_IDL_getAllParts_helper::Command::write(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writeTag(writer)) {
+        return false;
+    }
+    if (!writeArgs(writer)) {
+        return false;
+    }
+    return true;
+}
+
+bool yarpdataplayer_console_IDL_getAllParts_helper::Command::writeTag(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.writeTag(s_tag, 1, s_tag_len)) {
+        return false;
+    }
+    return true;
+}
+
+bool yarpdataplayer_console_IDL_getAllParts_helper::Command::writeArgs(const yarp::os::idl::WireWriter& writer [[maybe_unused]]) const
+{
+    return true;
+}
+
+bool yarpdataplayer_console_IDL_getAllParts_helper::Command::read(yarp::os::idl::WireReader& reader)
+{
+    if (!readTag(reader)) {
+        return false;
+    }
+    if (!readArgs(reader)) {
+        return false;
+    }
+    return true;
+}
+
+bool yarpdataplayer_console_IDL_getAllParts_helper::Command::readTag(yarp::os::idl::WireReader& reader)
+{
+    std::string tag = reader.readTag();
+    if (reader.isError()) {
+        return false;
+    }
+    if (tag != s_tag) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool yarpdataplayer_console_IDL_getAllParts_helper::Command::readArgs(yarp::os::idl::WireReader& reader)
+{
+    if (!reader.noMore()) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool yarpdataplayer_console_IDL_getAllParts_helper::Reply::write(yarp::os::ConnectionWriter& connection) const
+{
+    yarp::os::idl::WireWriter writer(connection);
+    return write(writer);
+}
+
+bool yarpdataplayer_console_IDL_getAllParts_helper::Reply::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    return read(reader);
+}
+
+bool yarpdataplayer_console_IDL_getAllParts_helper::Reply::write(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.isNull()) {
+        if (!writer.writeListHeader(s_reply_len)) {
+            return false;
+        }
+        if (!writer.writeListBegin(BOTTLE_TAG_STRING, static_cast<uint32_t>(return_helper.size()))) {
+            return false;
+        }
+        for (const auto& _item0 : return_helper) {
+            if (!writer.writeString(_item0)) {
+                return false;
+            }
+        }
+        if (!writer.writeListEnd()) {
+            return false;
+        }
+    }
+    return true;
+}
+
+bool yarpdataplayer_console_IDL_getAllParts_helper::Reply::read(yarp::os::idl::WireReader& reader)
+{
+    if (!reader.readListReturn()) {
+        return false;
+    }
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
+    return_helper.clear();
+    uint32_t _size1;
+    yarp::os::idl::WireState _etype4;
+    reader.readListBegin(_etype4, _size1);
+    return_helper.resize(_size1);
+    for (size_t _i5 = 0; _i5 < _size1; ++_i5) {
+        if (reader.noMore()) {
+            reader.fail();
+            return false;
+        }
+        if (!reader.readString(return_helper[_i5])) {
             reader.fail();
             return false;
         }
@@ -479,567 +2880,1744 @@ bool yarpdataplayer_console_IDL_getAllParts_helper::read(yarp::os::ConnectionRea
     return true;
 }
 
-class yarpdataplayer_console_IDL_getPortName_helper :
-        public yarp::os::Portable
+void yarpdataplayer_console_IDL_getAllParts_helper::call(yarpdataplayer_console_IDL* ptr)
 {
-public:
-    explicit yarpdataplayer_console_IDL_getPortName_helper(const std::string& part);
-    bool write(yarp::os::ConnectionWriter& connection) const override;
-    bool read(yarp::os::ConnectionReader& connection) override;
+    reply.return_helper = ptr->getAllParts();
+}
 
-    std::string m_part;
-
-    thread_local static std::string s_return_helper;
-};
-
-thread_local std::string yarpdataplayer_console_IDL_getPortName_helper::s_return_helper = {};
-
+// getPortName helper class implementation
 yarpdataplayer_console_IDL_getPortName_helper::yarpdataplayer_console_IDL_getPortName_helper(const std::string& part) :
-        m_part{part}
+        cmd{part}
 {
-    s_return_helper = {};
 }
 
 bool yarpdataplayer_console_IDL_getPortName_helper::write(yarp::os::ConnectionWriter& connection) const
 {
-    yarp::os::idl::WireWriter writer(connection);
-    if (!writer.writeListHeader(2)) {
-        return false;
-    }
-    if (!writer.writeTag("getPortName", 1, 1)) {
-        return false;
-    }
-    if (!writer.writeString(m_part)) {
-        return false;
-    }
-    return true;
+    return cmd.write(connection);
 }
 
 bool yarpdataplayer_console_IDL_getPortName_helper::read(yarp::os::ConnectionReader& connection)
 {
-    yarp::os::idl::WireReader reader(connection);
-    if (!reader.readListReturn()) {
+    return reply.read(connection);
+}
+
+yarpdataplayer_console_IDL_getPortName_helper::Command::Command(const std::string& part) :
+        part{part}
+{
+}
+
+bool yarpdataplayer_console_IDL_getPortName_helper::Command::write(yarp::os::ConnectionWriter& connection) const
+{
+    yarp::os::idl::WireWriter writer(connection);
+    if (!writer.writeListHeader(s_cmd_len)) {
         return false;
     }
-    if (!reader.readString(s_return_helper)) {
+    return write(writer);
+}
+
+bool yarpdataplayer_console_IDL_getPortName_helper::Command::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    if (!reader.readListHeader()) {
+        reader.fail();
+        return false;
+    }
+    return read(reader);
+}
+
+bool yarpdataplayer_console_IDL_getPortName_helper::Command::write(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writeTag(writer)) {
+        return false;
+    }
+    if (!writeArgs(writer)) {
+        return false;
+    }
+    return true;
+}
+
+bool yarpdataplayer_console_IDL_getPortName_helper::Command::writeTag(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.writeTag(s_tag, 1, s_tag_len)) {
+        return false;
+    }
+    return true;
+}
+
+bool yarpdataplayer_console_IDL_getPortName_helper::Command::writeArgs(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.writeString(part)) {
+        return false;
+    }
+    return true;
+}
+
+bool yarpdataplayer_console_IDL_getPortName_helper::Command::read(yarp::os::idl::WireReader& reader)
+{
+    if (!readTag(reader)) {
+        return false;
+    }
+    if (!readArgs(reader)) {
+        return false;
+    }
+    return true;
+}
+
+bool yarpdataplayer_console_IDL_getPortName_helper::Command::readTag(yarp::os::idl::WireReader& reader)
+{
+    std::string tag = reader.readTag();
+    if (reader.isError()) {
+        return false;
+    }
+    if (tag != s_tag) {
         reader.fail();
         return false;
     }
     return true;
 }
 
-class yarpdataplayer_console_IDL_setPortName_helper :
-        public yarp::os::Portable
+bool yarpdataplayer_console_IDL_getPortName_helper::Command::readArgs(yarp::os::idl::WireReader& reader)
 {
-public:
-    explicit yarpdataplayer_console_IDL_setPortName_helper(const std::string& part, const std::string& new_name);
-    bool write(yarp::os::ConnectionWriter& connection) const override;
-    bool read(yarp::os::ConnectionReader& connection) override;
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
+    if (!reader.readString(part)) {
+        reader.fail();
+        return false;
+    }
+    if (!reader.noMore()) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
 
-    std::string m_part;
-    std::string m_new_name;
+bool yarpdataplayer_console_IDL_getPortName_helper::Reply::write(yarp::os::ConnectionWriter& connection) const
+{
+    yarp::os::idl::WireWriter writer(connection);
+    return write(writer);
+}
 
-    thread_local static bool s_return_helper;
-};
+bool yarpdataplayer_console_IDL_getPortName_helper::Reply::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    return read(reader);
+}
 
-thread_local bool yarpdataplayer_console_IDL_setPortName_helper::s_return_helper = {};
+bool yarpdataplayer_console_IDL_getPortName_helper::Reply::write(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.isNull()) {
+        if (!writer.writeListHeader(s_reply_len)) {
+            return false;
+        }
+        if (!writer.writeString(return_helper)) {
+            return false;
+        }
+    }
+    return true;
+}
 
+bool yarpdataplayer_console_IDL_getPortName_helper::Reply::read(yarp::os::idl::WireReader& reader)
+{
+    if (!reader.readListReturn()) {
+        return false;
+    }
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
+    if (!reader.readString(return_helper)) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+void yarpdataplayer_console_IDL_getPortName_helper::call(yarpdataplayer_console_IDL* ptr)
+{
+    reply.return_helper = ptr->getPortName(cmd.part);
+}
+
+// setPortName helper class implementation
 yarpdataplayer_console_IDL_setPortName_helper::yarpdataplayer_console_IDL_setPortName_helper(const std::string& part, const std::string& new_name) :
-        m_part{part},
-        m_new_name{new_name}
+        cmd{part, new_name}
 {
-    s_return_helper = {};
 }
 
 bool yarpdataplayer_console_IDL_setPortName_helper::write(yarp::os::ConnectionWriter& connection) const
 {
-    yarp::os::idl::WireWriter writer(connection);
-    if (!writer.writeListHeader(3)) {
-        return false;
-    }
-    if (!writer.writeTag("setPortName", 1, 1)) {
-        return false;
-    }
-    if (!writer.writeString(m_part)) {
-        return false;
-    }
-    if (!writer.writeString(m_new_name)) {
-        return false;
-    }
-    return true;
+    return cmd.write(connection);
 }
 
 bool yarpdataplayer_console_IDL_setPortName_helper::read(yarp::os::ConnectionReader& connection)
 {
-    yarp::os::idl::WireReader reader(connection);
-    if (!reader.readListReturn()) {
+    return reply.read(connection);
+}
+
+yarpdataplayer_console_IDL_setPortName_helper::Command::Command(const std::string& part, const std::string& new_name) :
+        part{part},
+        new_name{new_name}
+{
+}
+
+bool yarpdataplayer_console_IDL_setPortName_helper::Command::write(yarp::os::ConnectionWriter& connection) const
+{
+    yarp::os::idl::WireWriter writer(connection);
+    if (!writer.writeListHeader(s_cmd_len)) {
         return false;
     }
-    if (!reader.readBool(s_return_helper)) {
+    return write(writer);
+}
+
+bool yarpdataplayer_console_IDL_setPortName_helper::Command::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    if (!reader.readListHeader()) {
+        reader.fail();
+        return false;
+    }
+    return read(reader);
+}
+
+bool yarpdataplayer_console_IDL_setPortName_helper::Command::write(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writeTag(writer)) {
+        return false;
+    }
+    if (!writeArgs(writer)) {
+        return false;
+    }
+    return true;
+}
+
+bool yarpdataplayer_console_IDL_setPortName_helper::Command::writeTag(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.writeTag(s_tag, 1, s_tag_len)) {
+        return false;
+    }
+    return true;
+}
+
+bool yarpdataplayer_console_IDL_setPortName_helper::Command::writeArgs(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.writeString(part)) {
+        return false;
+    }
+    if (!writer.writeString(new_name)) {
+        return false;
+    }
+    return true;
+}
+
+bool yarpdataplayer_console_IDL_setPortName_helper::Command::read(yarp::os::idl::WireReader& reader)
+{
+    if (!readTag(reader)) {
+        return false;
+    }
+    if (!readArgs(reader)) {
+        return false;
+    }
+    return true;
+}
+
+bool yarpdataplayer_console_IDL_setPortName_helper::Command::readTag(yarp::os::idl::WireReader& reader)
+{
+    std::string tag = reader.readTag();
+    if (reader.isError()) {
+        return false;
+    }
+    if (tag != s_tag) {
         reader.fail();
         return false;
     }
     return true;
 }
 
-class yarpdataplayer_console_IDL_setSpeed_helper :
-        public yarp::os::Portable
+bool yarpdataplayer_console_IDL_setPortName_helper::Command::readArgs(yarp::os::idl::WireReader& reader)
 {
-public:
-    explicit yarpdataplayer_console_IDL_setSpeed_helper(const double speed);
-    bool write(yarp::os::ConnectionWriter& connection) const override;
-    bool read(yarp::os::ConnectionReader& connection) override;
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
+    if (!reader.readString(part)) {
+        reader.fail();
+        return false;
+    }
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
+    if (!reader.readString(new_name)) {
+        reader.fail();
+        return false;
+    }
+    if (!reader.noMore()) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
 
-    double m_speed;
+bool yarpdataplayer_console_IDL_setPortName_helper::Reply::write(yarp::os::ConnectionWriter& connection) const
+{
+    yarp::os::idl::WireWriter writer(connection);
+    return write(writer);
+}
 
-    thread_local static bool s_return_helper;
-};
+bool yarpdataplayer_console_IDL_setPortName_helper::Reply::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    return read(reader);
+}
 
-thread_local bool yarpdataplayer_console_IDL_setSpeed_helper::s_return_helper = {};
+bool yarpdataplayer_console_IDL_setPortName_helper::Reply::write(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.isNull()) {
+        if (!writer.writeListHeader(s_reply_len)) {
+            return false;
+        }
+        if (!writer.writeBool(return_helper)) {
+            return false;
+        }
+    }
+    return true;
+}
 
+bool yarpdataplayer_console_IDL_setPortName_helper::Reply::read(yarp::os::idl::WireReader& reader)
+{
+    if (!reader.readListReturn()) {
+        return false;
+    }
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
+    if (!reader.readBool(return_helper)) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+void yarpdataplayer_console_IDL_setPortName_helper::call(yarpdataplayer_console_IDL* ptr)
+{
+    reply.return_helper = ptr->setPortName(cmd.part, cmd.new_name);
+}
+
+// setSpeed helper class implementation
 yarpdataplayer_console_IDL_setSpeed_helper::yarpdataplayer_console_IDL_setSpeed_helper(const double speed) :
-        m_speed{speed}
+        cmd{speed}
 {
-    s_return_helper = {};
 }
 
 bool yarpdataplayer_console_IDL_setSpeed_helper::write(yarp::os::ConnectionWriter& connection) const
 {
-    yarp::os::idl::WireWriter writer(connection);
-    if (!writer.writeListHeader(2)) {
-        return false;
-    }
-    if (!writer.writeTag("setSpeed", 1, 1)) {
-        return false;
-    }
-    if (!writer.writeFloat64(m_speed)) {
-        return false;
-    }
-    return true;
+    return cmd.write(connection);
 }
 
 bool yarpdataplayer_console_IDL_setSpeed_helper::read(yarp::os::ConnectionReader& connection)
 {
-    yarp::os::idl::WireReader reader(connection);
-    if (!reader.readListReturn()) {
+    return reply.read(connection);
+}
+
+yarpdataplayer_console_IDL_setSpeed_helper::Command::Command(const double speed) :
+        speed{speed}
+{
+}
+
+bool yarpdataplayer_console_IDL_setSpeed_helper::Command::write(yarp::os::ConnectionWriter& connection) const
+{
+    yarp::os::idl::WireWriter writer(connection);
+    if (!writer.writeListHeader(s_cmd_len)) {
         return false;
     }
-    if (!reader.readBool(s_return_helper)) {
+    return write(writer);
+}
+
+bool yarpdataplayer_console_IDL_setSpeed_helper::Command::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    if (!reader.readListHeader()) {
+        reader.fail();
+        return false;
+    }
+    return read(reader);
+}
+
+bool yarpdataplayer_console_IDL_setSpeed_helper::Command::write(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writeTag(writer)) {
+        return false;
+    }
+    if (!writeArgs(writer)) {
+        return false;
+    }
+    return true;
+}
+
+bool yarpdataplayer_console_IDL_setSpeed_helper::Command::writeTag(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.writeTag(s_tag, 1, s_tag_len)) {
+        return false;
+    }
+    return true;
+}
+
+bool yarpdataplayer_console_IDL_setSpeed_helper::Command::writeArgs(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.writeFloat64(speed)) {
+        return false;
+    }
+    return true;
+}
+
+bool yarpdataplayer_console_IDL_setSpeed_helper::Command::read(yarp::os::idl::WireReader& reader)
+{
+    if (!readTag(reader)) {
+        return false;
+    }
+    if (!readArgs(reader)) {
+        return false;
+    }
+    return true;
+}
+
+bool yarpdataplayer_console_IDL_setSpeed_helper::Command::readTag(yarp::os::idl::WireReader& reader)
+{
+    std::string tag = reader.readTag();
+    if (reader.isError()) {
+        return false;
+    }
+    if (tag != s_tag) {
         reader.fail();
         return false;
     }
     return true;
 }
 
-class yarpdataplayer_console_IDL_getSpeed_helper :
-        public yarp::os::Portable
+bool yarpdataplayer_console_IDL_setSpeed_helper::Command::readArgs(yarp::os::idl::WireReader& reader)
 {
-public:
-    explicit yarpdataplayer_console_IDL_getSpeed_helper();
-    bool write(yarp::os::ConnectionWriter& connection) const override;
-    bool read(yarp::os::ConnectionReader& connection) override;
-
-    thread_local static double s_return_helper;
-};
-
-thread_local double yarpdataplayer_console_IDL_getSpeed_helper::s_return_helper = {};
-
-yarpdataplayer_console_IDL_getSpeed_helper::yarpdataplayer_console_IDL_getSpeed_helper()
-{
-    s_return_helper = {};
-}
-
-bool yarpdataplayer_console_IDL_getSpeed_helper::write(yarp::os::ConnectionWriter& connection) const
-{
-    yarp::os::idl::WireWriter writer(connection);
-    if (!writer.writeListHeader(1)) {
+    if (reader.noMore()) {
+        reader.fail();
         return false;
     }
-    if (!writer.writeTag("getSpeed", 1, 1)) {
+    if (!reader.readFloat64(speed)) {
+        reader.fail();
+        return false;
+    }
+    if (!reader.noMore()) {
+        reader.fail();
         return false;
     }
     return true;
+}
+
+bool yarpdataplayer_console_IDL_setSpeed_helper::Reply::write(yarp::os::ConnectionWriter& connection) const
+{
+    yarp::os::idl::WireWriter writer(connection);
+    return write(writer);
+}
+
+bool yarpdataplayer_console_IDL_setSpeed_helper::Reply::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    return read(reader);
+}
+
+bool yarpdataplayer_console_IDL_setSpeed_helper::Reply::write(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.isNull()) {
+        if (!writer.writeListHeader(s_reply_len)) {
+            return false;
+        }
+        if (!writer.writeBool(return_helper)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+bool yarpdataplayer_console_IDL_setSpeed_helper::Reply::read(yarp::os::idl::WireReader& reader)
+{
+    if (!reader.readListReturn()) {
+        return false;
+    }
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
+    if (!reader.readBool(return_helper)) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+void yarpdataplayer_console_IDL_setSpeed_helper::call(yarpdataplayer_console_IDL* ptr)
+{
+    reply.return_helper = ptr->setSpeed(cmd.speed);
+}
+
+// getSpeed helper class implementation
+bool yarpdataplayer_console_IDL_getSpeed_helper::write(yarp::os::ConnectionWriter& connection) const
+{
+    return cmd.write(connection);
 }
 
 bool yarpdataplayer_console_IDL_getSpeed_helper::read(yarp::os::ConnectionReader& connection)
 {
-    yarp::os::idl::WireReader reader(connection);
-    if (!reader.readListReturn()) {
+    return reply.read(connection);
+}
+
+bool yarpdataplayer_console_IDL_getSpeed_helper::Command::write(yarp::os::ConnectionWriter& connection) const
+{
+    yarp::os::idl::WireWriter writer(connection);
+    if (!writer.writeListHeader(s_cmd_len)) {
         return false;
     }
-    if (!reader.readFloat64(s_return_helper)) {
+    return write(writer);
+}
+
+bool yarpdataplayer_console_IDL_getSpeed_helper::Command::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    if (!reader.readListHeader()) {
+        reader.fail();
+        return false;
+    }
+    return read(reader);
+}
+
+bool yarpdataplayer_console_IDL_getSpeed_helper::Command::write(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writeTag(writer)) {
+        return false;
+    }
+    if (!writeArgs(writer)) {
+        return false;
+    }
+    return true;
+}
+
+bool yarpdataplayer_console_IDL_getSpeed_helper::Command::writeTag(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.writeTag(s_tag, 1, s_tag_len)) {
+        return false;
+    }
+    return true;
+}
+
+bool yarpdataplayer_console_IDL_getSpeed_helper::Command::writeArgs(const yarp::os::idl::WireWriter& writer [[maybe_unused]]) const
+{
+    return true;
+}
+
+bool yarpdataplayer_console_IDL_getSpeed_helper::Command::read(yarp::os::idl::WireReader& reader)
+{
+    if (!readTag(reader)) {
+        return false;
+    }
+    if (!readArgs(reader)) {
+        return false;
+    }
+    return true;
+}
+
+bool yarpdataplayer_console_IDL_getSpeed_helper::Command::readTag(yarp::os::idl::WireReader& reader)
+{
+    std::string tag = reader.readTag();
+    if (reader.isError()) {
+        return false;
+    }
+    if (tag != s_tag) {
         reader.fail();
         return false;
     }
     return true;
 }
 
-class yarpdataplayer_console_IDL_repeat_helper :
-        public yarp::os::Portable
+bool yarpdataplayer_console_IDL_getSpeed_helper::Command::readArgs(yarp::os::idl::WireReader& reader)
 {
-public:
-    explicit yarpdataplayer_console_IDL_repeat_helper(const bool val);
-    bool write(yarp::os::ConnectionWriter& connection) const override;
-    bool read(yarp::os::ConnectionReader& connection) override;
+    if (!reader.noMore()) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
 
-    bool m_val;
+bool yarpdataplayer_console_IDL_getSpeed_helper::Reply::write(yarp::os::ConnectionWriter& connection) const
+{
+    yarp::os::idl::WireWriter writer(connection);
+    return write(writer);
+}
 
-    thread_local static bool s_return_helper;
-};
+bool yarpdataplayer_console_IDL_getSpeed_helper::Reply::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    return read(reader);
+}
 
-thread_local bool yarpdataplayer_console_IDL_repeat_helper::s_return_helper = {};
+bool yarpdataplayer_console_IDL_getSpeed_helper::Reply::write(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.isNull()) {
+        if (!writer.writeListHeader(s_reply_len)) {
+            return false;
+        }
+        if (!writer.writeFloat64(return_helper)) {
+            return false;
+        }
+    }
+    return true;
+}
 
+bool yarpdataplayer_console_IDL_getSpeed_helper::Reply::read(yarp::os::idl::WireReader& reader)
+{
+    if (!reader.readListReturn()) {
+        return false;
+    }
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
+    if (!reader.readFloat64(return_helper)) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+void yarpdataplayer_console_IDL_getSpeed_helper::call(yarpdataplayer_console_IDL* ptr)
+{
+    reply.return_helper = ptr->getSpeed();
+}
+
+// repeat helper class implementation
 yarpdataplayer_console_IDL_repeat_helper::yarpdataplayer_console_IDL_repeat_helper(const bool val) :
-        m_val{val}
+        cmd{val}
 {
-    s_return_helper = {};
 }
 
 bool yarpdataplayer_console_IDL_repeat_helper::write(yarp::os::ConnectionWriter& connection) const
 {
-    yarp::os::idl::WireWriter writer(connection);
-    if (!writer.writeListHeader(2)) {
-        return false;
-    }
-    if (!writer.writeTag("repeat", 1, 1)) {
-        return false;
-    }
-    if (!writer.writeBool(m_val)) {
-        return false;
-    }
-    return true;
+    return cmd.write(connection);
 }
 
 bool yarpdataplayer_console_IDL_repeat_helper::read(yarp::os::ConnectionReader& connection)
 {
-    yarp::os::idl::WireReader reader(connection);
-    if (!reader.readListReturn()) {
+    return reply.read(connection);
+}
+
+yarpdataplayer_console_IDL_repeat_helper::Command::Command(const bool val) :
+        val{val}
+{
+}
+
+bool yarpdataplayer_console_IDL_repeat_helper::Command::write(yarp::os::ConnectionWriter& connection) const
+{
+    yarp::os::idl::WireWriter writer(connection);
+    if (!writer.writeListHeader(s_cmd_len)) {
         return false;
     }
-    if (!reader.readBool(s_return_helper)) {
+    return write(writer);
+}
+
+bool yarpdataplayer_console_IDL_repeat_helper::Command::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    if (!reader.readListHeader()) {
+        reader.fail();
+        return false;
+    }
+    return read(reader);
+}
+
+bool yarpdataplayer_console_IDL_repeat_helper::Command::write(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writeTag(writer)) {
+        return false;
+    }
+    if (!writeArgs(writer)) {
+        return false;
+    }
+    return true;
+}
+
+bool yarpdataplayer_console_IDL_repeat_helper::Command::writeTag(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.writeTag(s_tag, 1, s_tag_len)) {
+        return false;
+    }
+    return true;
+}
+
+bool yarpdataplayer_console_IDL_repeat_helper::Command::writeArgs(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.writeBool(val)) {
+        return false;
+    }
+    return true;
+}
+
+bool yarpdataplayer_console_IDL_repeat_helper::Command::read(yarp::os::idl::WireReader& reader)
+{
+    if (!readTag(reader)) {
+        return false;
+    }
+    if (!readArgs(reader)) {
+        return false;
+    }
+    return true;
+}
+
+bool yarpdataplayer_console_IDL_repeat_helper::Command::readTag(yarp::os::idl::WireReader& reader)
+{
+    std::string tag = reader.readTag();
+    if (reader.isError()) {
+        return false;
+    }
+    if (tag != s_tag) {
         reader.fail();
         return false;
     }
     return true;
 }
 
-class yarpdataplayer_console_IDL_setStrict_helper :
-        public yarp::os::Portable
+bool yarpdataplayer_console_IDL_repeat_helper::Command::readArgs(yarp::os::idl::WireReader& reader)
 {
-public:
-    explicit yarpdataplayer_console_IDL_setStrict_helper(const bool val);
-    bool write(yarp::os::ConnectionWriter& connection) const override;
-    bool read(yarp::os::ConnectionReader& connection) override;
+    if (!reader.readBool(val)) {
+        val = false;
+    }
+    if (!reader.noMore()) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
 
-    bool m_val;
+bool yarpdataplayer_console_IDL_repeat_helper::Reply::write(yarp::os::ConnectionWriter& connection) const
+{
+    yarp::os::idl::WireWriter writer(connection);
+    return write(writer);
+}
 
-    thread_local static bool s_return_helper;
-};
+bool yarpdataplayer_console_IDL_repeat_helper::Reply::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    return read(reader);
+}
 
-thread_local bool yarpdataplayer_console_IDL_setStrict_helper::s_return_helper = {};
+bool yarpdataplayer_console_IDL_repeat_helper::Reply::write(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.isNull()) {
+        if (!writer.writeListHeader(s_reply_len)) {
+            return false;
+        }
+        if (!writer.writeBool(return_helper)) {
+            return false;
+        }
+    }
+    return true;
+}
 
+bool yarpdataplayer_console_IDL_repeat_helper::Reply::read(yarp::os::idl::WireReader& reader)
+{
+    if (!reader.readListReturn()) {
+        return false;
+    }
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
+    if (!reader.readBool(return_helper)) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+void yarpdataplayer_console_IDL_repeat_helper::call(yarpdataplayer_console_IDL* ptr)
+{
+    reply.return_helper = ptr->repeat(cmd.val);
+}
+
+// setStrict helper class implementation
 yarpdataplayer_console_IDL_setStrict_helper::yarpdataplayer_console_IDL_setStrict_helper(const bool val) :
-        m_val{val}
+        cmd{val}
 {
-    s_return_helper = {};
 }
 
 bool yarpdataplayer_console_IDL_setStrict_helper::write(yarp::os::ConnectionWriter& connection) const
 {
-    yarp::os::idl::WireWriter writer(connection);
-    if (!writer.writeListHeader(2)) {
-        return false;
-    }
-    if (!writer.writeTag("setStrict", 1, 1)) {
-        return false;
-    }
-    if (!writer.writeBool(m_val)) {
-        return false;
-    }
-    return true;
+    return cmd.write(connection);
 }
 
 bool yarpdataplayer_console_IDL_setStrict_helper::read(yarp::os::ConnectionReader& connection)
 {
-    yarp::os::idl::WireReader reader(connection);
-    if (!reader.readListReturn()) {
+    return reply.read(connection);
+}
+
+yarpdataplayer_console_IDL_setStrict_helper::Command::Command(const bool val) :
+        val{val}
+{
+}
+
+bool yarpdataplayer_console_IDL_setStrict_helper::Command::write(yarp::os::ConnectionWriter& connection) const
+{
+    yarp::os::idl::WireWriter writer(connection);
+    if (!writer.writeListHeader(s_cmd_len)) {
         return false;
     }
-    if (!reader.readBool(s_return_helper)) {
+    return write(writer);
+}
+
+bool yarpdataplayer_console_IDL_setStrict_helper::Command::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    if (!reader.readListHeader()) {
+        reader.fail();
+        return false;
+    }
+    return read(reader);
+}
+
+bool yarpdataplayer_console_IDL_setStrict_helper::Command::write(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writeTag(writer)) {
+        return false;
+    }
+    if (!writeArgs(writer)) {
+        return false;
+    }
+    return true;
+}
+
+bool yarpdataplayer_console_IDL_setStrict_helper::Command::writeTag(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.writeTag(s_tag, 1, s_tag_len)) {
+        return false;
+    }
+    return true;
+}
+
+bool yarpdataplayer_console_IDL_setStrict_helper::Command::writeArgs(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.writeBool(val)) {
+        return false;
+    }
+    return true;
+}
+
+bool yarpdataplayer_console_IDL_setStrict_helper::Command::read(yarp::os::idl::WireReader& reader)
+{
+    if (!readTag(reader)) {
+        return false;
+    }
+    if (!readArgs(reader)) {
+        return false;
+    }
+    return true;
+}
+
+bool yarpdataplayer_console_IDL_setStrict_helper::Command::readTag(yarp::os::idl::WireReader& reader)
+{
+    std::string tag = reader.readTag();
+    if (reader.isError()) {
+        return false;
+    }
+    if (tag != s_tag) {
         reader.fail();
         return false;
     }
     return true;
 }
 
-class yarpdataplayer_console_IDL_forward_helper :
-        public yarp::os::Portable
+bool yarpdataplayer_console_IDL_setStrict_helper::Command::readArgs(yarp::os::idl::WireReader& reader)
 {
-public:
-    explicit yarpdataplayer_console_IDL_forward_helper(const std::int32_t steps);
-    bool write(yarp::os::ConnectionWriter& connection) const override;
-    bool read(yarp::os::ConnectionReader& connection) override;
+    if (!reader.readBool(val)) {
+        val = false;
+    }
+    if (!reader.noMore()) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
 
-    std::int32_t m_steps;
+bool yarpdataplayer_console_IDL_setStrict_helper::Reply::write(yarp::os::ConnectionWriter& connection) const
+{
+    yarp::os::idl::WireWriter writer(connection);
+    return write(writer);
+}
 
-    thread_local static bool s_return_helper;
-};
+bool yarpdataplayer_console_IDL_setStrict_helper::Reply::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    return read(reader);
+}
 
-thread_local bool yarpdataplayer_console_IDL_forward_helper::s_return_helper = {};
+bool yarpdataplayer_console_IDL_setStrict_helper::Reply::write(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.isNull()) {
+        if (!writer.writeListHeader(s_reply_len)) {
+            return false;
+        }
+        if (!writer.writeBool(return_helper)) {
+            return false;
+        }
+    }
+    return true;
+}
 
+bool yarpdataplayer_console_IDL_setStrict_helper::Reply::read(yarp::os::idl::WireReader& reader)
+{
+    if (!reader.readListReturn()) {
+        return false;
+    }
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
+    if (!reader.readBool(return_helper)) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+void yarpdataplayer_console_IDL_setStrict_helper::call(yarpdataplayer_console_IDL* ptr)
+{
+    reply.return_helper = ptr->setStrict(cmd.val);
+}
+
+// forward helper class implementation
 yarpdataplayer_console_IDL_forward_helper::yarpdataplayer_console_IDL_forward_helper(const std::int32_t steps) :
-        m_steps{steps}
+        cmd{steps}
 {
-    s_return_helper = {};
 }
 
 bool yarpdataplayer_console_IDL_forward_helper::write(yarp::os::ConnectionWriter& connection) const
 {
-    yarp::os::idl::WireWriter writer(connection);
-    if (!writer.writeListHeader(2)) {
-        return false;
-    }
-    if (!writer.writeTag("forward", 1, 1)) {
-        return false;
-    }
-    if (!writer.writeI32(m_steps)) {
-        return false;
-    }
-    return true;
+    return cmd.write(connection);
 }
 
 bool yarpdataplayer_console_IDL_forward_helper::read(yarp::os::ConnectionReader& connection)
 {
-    yarp::os::idl::WireReader reader(connection);
-    if (!reader.readListReturn()) {
+    return reply.read(connection);
+}
+
+yarpdataplayer_console_IDL_forward_helper::Command::Command(const std::int32_t steps) :
+        steps{steps}
+{
+}
+
+bool yarpdataplayer_console_IDL_forward_helper::Command::write(yarp::os::ConnectionWriter& connection) const
+{
+    yarp::os::idl::WireWriter writer(connection);
+    if (!writer.writeListHeader(s_cmd_len)) {
         return false;
     }
-    if (!reader.readBool(s_return_helper)) {
+    return write(writer);
+}
+
+bool yarpdataplayer_console_IDL_forward_helper::Command::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    if (!reader.readListHeader()) {
+        reader.fail();
+        return false;
+    }
+    return read(reader);
+}
+
+bool yarpdataplayer_console_IDL_forward_helper::Command::write(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writeTag(writer)) {
+        return false;
+    }
+    if (!writeArgs(writer)) {
+        return false;
+    }
+    return true;
+}
+
+bool yarpdataplayer_console_IDL_forward_helper::Command::writeTag(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.writeTag(s_tag, 1, s_tag_len)) {
+        return false;
+    }
+    return true;
+}
+
+bool yarpdataplayer_console_IDL_forward_helper::Command::writeArgs(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.writeI32(steps)) {
+        return false;
+    }
+    return true;
+}
+
+bool yarpdataplayer_console_IDL_forward_helper::Command::read(yarp::os::idl::WireReader& reader)
+{
+    if (!readTag(reader)) {
+        return false;
+    }
+    if (!readArgs(reader)) {
+        return false;
+    }
+    return true;
+}
+
+bool yarpdataplayer_console_IDL_forward_helper::Command::readTag(yarp::os::idl::WireReader& reader)
+{
+    std::string tag = reader.readTag();
+    if (reader.isError()) {
+        return false;
+    }
+    if (tag != s_tag) {
         reader.fail();
         return false;
     }
     return true;
 }
 
-class yarpdataplayer_console_IDL_backward_helper :
-        public yarp::os::Portable
+bool yarpdataplayer_console_IDL_forward_helper::Command::readArgs(yarp::os::idl::WireReader& reader)
 {
-public:
-    explicit yarpdataplayer_console_IDL_backward_helper(const std::int32_t steps);
-    bool write(yarp::os::ConnectionWriter& connection) const override;
-    bool read(yarp::os::ConnectionReader& connection) override;
+    if (!reader.readI32(steps)) {
+        steps = 5;
+    }
+    if (!reader.noMore()) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
 
-    std::int32_t m_steps;
+bool yarpdataplayer_console_IDL_forward_helper::Reply::write(yarp::os::ConnectionWriter& connection) const
+{
+    yarp::os::idl::WireWriter writer(connection);
+    return write(writer);
+}
 
-    thread_local static bool s_return_helper;
-};
+bool yarpdataplayer_console_IDL_forward_helper::Reply::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    return read(reader);
+}
 
-thread_local bool yarpdataplayer_console_IDL_backward_helper::s_return_helper = {};
+bool yarpdataplayer_console_IDL_forward_helper::Reply::write(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.isNull()) {
+        if (!writer.writeListHeader(s_reply_len)) {
+            return false;
+        }
+        if (!writer.writeBool(return_helper)) {
+            return false;
+        }
+    }
+    return true;
+}
 
+bool yarpdataplayer_console_IDL_forward_helper::Reply::read(yarp::os::idl::WireReader& reader)
+{
+    if (!reader.readListReturn()) {
+        return false;
+    }
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
+    if (!reader.readBool(return_helper)) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+void yarpdataplayer_console_IDL_forward_helper::call(yarpdataplayer_console_IDL* ptr)
+{
+    reply.return_helper = ptr->forward(cmd.steps);
+}
+
+// backward helper class implementation
 yarpdataplayer_console_IDL_backward_helper::yarpdataplayer_console_IDL_backward_helper(const std::int32_t steps) :
-        m_steps{steps}
+        cmd{steps}
 {
-    s_return_helper = {};
 }
 
 bool yarpdataplayer_console_IDL_backward_helper::write(yarp::os::ConnectionWriter& connection) const
 {
-    yarp::os::idl::WireWriter writer(connection);
-    if (!writer.writeListHeader(2)) {
-        return false;
-    }
-    if (!writer.writeTag("backward", 1, 1)) {
-        return false;
-    }
-    if (!writer.writeI32(m_steps)) {
-        return false;
-    }
-    return true;
+    return cmd.write(connection);
 }
 
 bool yarpdataplayer_console_IDL_backward_helper::read(yarp::os::ConnectionReader& connection)
 {
-    yarp::os::idl::WireReader reader(connection);
-    if (!reader.readListReturn()) {
+    return reply.read(connection);
+}
+
+yarpdataplayer_console_IDL_backward_helper::Command::Command(const std::int32_t steps) :
+        steps{steps}
+{
+}
+
+bool yarpdataplayer_console_IDL_backward_helper::Command::write(yarp::os::ConnectionWriter& connection) const
+{
+    yarp::os::idl::WireWriter writer(connection);
+    if (!writer.writeListHeader(s_cmd_len)) {
         return false;
     }
-    if (!reader.readBool(s_return_helper)) {
+    return write(writer);
+}
+
+bool yarpdataplayer_console_IDL_backward_helper::Command::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    if (!reader.readListHeader()) {
+        reader.fail();
+        return false;
+    }
+    return read(reader);
+}
+
+bool yarpdataplayer_console_IDL_backward_helper::Command::write(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writeTag(writer)) {
+        return false;
+    }
+    if (!writeArgs(writer)) {
+        return false;
+    }
+    return true;
+}
+
+bool yarpdataplayer_console_IDL_backward_helper::Command::writeTag(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.writeTag(s_tag, 1, s_tag_len)) {
+        return false;
+    }
+    return true;
+}
+
+bool yarpdataplayer_console_IDL_backward_helper::Command::writeArgs(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.writeI32(steps)) {
+        return false;
+    }
+    return true;
+}
+
+bool yarpdataplayer_console_IDL_backward_helper::Command::read(yarp::os::idl::WireReader& reader)
+{
+    if (!readTag(reader)) {
+        return false;
+    }
+    if (!readArgs(reader)) {
+        return false;
+    }
+    return true;
+}
+
+bool yarpdataplayer_console_IDL_backward_helper::Command::readTag(yarp::os::idl::WireReader& reader)
+{
+    std::string tag = reader.readTag();
+    if (reader.isError()) {
+        return false;
+    }
+    if (tag != s_tag) {
         reader.fail();
         return false;
     }
     return true;
 }
 
-class yarpdataplayer_console_IDL_getProgress_helper :
-        public yarp::os::Portable
+bool yarpdataplayer_console_IDL_backward_helper::Command::readArgs(yarp::os::idl::WireReader& reader)
 {
-public:
-    explicit yarpdataplayer_console_IDL_getProgress_helper();
-    bool write(yarp::os::ConnectionWriter& connection) const override;
-    bool read(yarp::os::ConnectionReader& connection) override;
-
-    thread_local static double s_return_helper;
-};
-
-thread_local double yarpdataplayer_console_IDL_getProgress_helper::s_return_helper = {};
-
-yarpdataplayer_console_IDL_getProgress_helper::yarpdataplayer_console_IDL_getProgress_helper()
-{
-    s_return_helper = {};
-}
-
-bool yarpdataplayer_console_IDL_getProgress_helper::write(yarp::os::ConnectionWriter& connection) const
-{
-    yarp::os::idl::WireWriter writer(connection);
-    if (!writer.writeListHeader(1)) {
-        return false;
+    if (!reader.readI32(steps)) {
+        steps = 5;
     }
-    if (!writer.writeTag("getProgress", 1, 1)) {
+    if (!reader.noMore()) {
+        reader.fail();
         return false;
     }
     return true;
+}
+
+bool yarpdataplayer_console_IDL_backward_helper::Reply::write(yarp::os::ConnectionWriter& connection) const
+{
+    yarp::os::idl::WireWriter writer(connection);
+    return write(writer);
+}
+
+bool yarpdataplayer_console_IDL_backward_helper::Reply::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    return read(reader);
+}
+
+bool yarpdataplayer_console_IDL_backward_helper::Reply::write(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.isNull()) {
+        if (!writer.writeListHeader(s_reply_len)) {
+            return false;
+        }
+        if (!writer.writeBool(return_helper)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+bool yarpdataplayer_console_IDL_backward_helper::Reply::read(yarp::os::idl::WireReader& reader)
+{
+    if (!reader.readListReturn()) {
+        return false;
+    }
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
+    if (!reader.readBool(return_helper)) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+void yarpdataplayer_console_IDL_backward_helper::call(yarpdataplayer_console_IDL* ptr)
+{
+    reply.return_helper = ptr->backward(cmd.steps);
+}
+
+// getProgress helper class implementation
+bool yarpdataplayer_console_IDL_getProgress_helper::write(yarp::os::ConnectionWriter& connection) const
+{
+    return cmd.write(connection);
 }
 
 bool yarpdataplayer_console_IDL_getProgress_helper::read(yarp::os::ConnectionReader& connection)
 {
-    yarp::os::idl::WireReader reader(connection);
-    if (!reader.readListReturn()) {
+    return reply.read(connection);
+}
+
+bool yarpdataplayer_console_IDL_getProgress_helper::Command::write(yarp::os::ConnectionWriter& connection) const
+{
+    yarp::os::idl::WireWriter writer(connection);
+    if (!writer.writeListHeader(s_cmd_len)) {
         return false;
     }
-    if (!reader.readFloat64(s_return_helper)) {
+    return write(writer);
+}
+
+bool yarpdataplayer_console_IDL_getProgress_helper::Command::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    if (!reader.readListHeader()) {
+        reader.fail();
+        return false;
+    }
+    return read(reader);
+}
+
+bool yarpdataplayer_console_IDL_getProgress_helper::Command::write(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writeTag(writer)) {
+        return false;
+    }
+    if (!writeArgs(writer)) {
+        return false;
+    }
+    return true;
+}
+
+bool yarpdataplayer_console_IDL_getProgress_helper::Command::writeTag(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.writeTag(s_tag, 1, s_tag_len)) {
+        return false;
+    }
+    return true;
+}
+
+bool yarpdataplayer_console_IDL_getProgress_helper::Command::writeArgs(const yarp::os::idl::WireWriter& writer [[maybe_unused]]) const
+{
+    return true;
+}
+
+bool yarpdataplayer_console_IDL_getProgress_helper::Command::read(yarp::os::idl::WireReader& reader)
+{
+    if (!readTag(reader)) {
+        return false;
+    }
+    if (!readArgs(reader)) {
+        return false;
+    }
+    return true;
+}
+
+bool yarpdataplayer_console_IDL_getProgress_helper::Command::readTag(yarp::os::idl::WireReader& reader)
+{
+    std::string tag = reader.readTag();
+    if (reader.isError()) {
+        return false;
+    }
+    if (tag != s_tag) {
         reader.fail();
         return false;
     }
     return true;
 }
 
-class yarpdataplayer_console_IDL_getStatus_helper :
-        public yarp::os::Portable
+bool yarpdataplayer_console_IDL_getProgress_helper::Command::readArgs(yarp::os::idl::WireReader& reader)
 {
-public:
-    explicit yarpdataplayer_console_IDL_getStatus_helper();
-    bool write(yarp::os::ConnectionWriter& connection) const override;
-    bool read(yarp::os::ConnectionReader& connection) override;
-
-    thread_local static std::string s_return_helper;
-};
-
-thread_local std::string yarpdataplayer_console_IDL_getStatus_helper::s_return_helper = {};
-
-yarpdataplayer_console_IDL_getStatus_helper::yarpdataplayer_console_IDL_getStatus_helper()
-{
-    s_return_helper = {};
-}
-
-bool yarpdataplayer_console_IDL_getStatus_helper::write(yarp::os::ConnectionWriter& connection) const
-{
-    yarp::os::idl::WireWriter writer(connection);
-    if (!writer.writeListHeader(1)) {
-        return false;
-    }
-    if (!writer.writeTag("getStatus", 1, 1)) {
+    if (!reader.noMore()) {
+        reader.fail();
         return false;
     }
     return true;
+}
+
+bool yarpdataplayer_console_IDL_getProgress_helper::Reply::write(yarp::os::ConnectionWriter& connection) const
+{
+    yarp::os::idl::WireWriter writer(connection);
+    return write(writer);
+}
+
+bool yarpdataplayer_console_IDL_getProgress_helper::Reply::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    return read(reader);
+}
+
+bool yarpdataplayer_console_IDL_getProgress_helper::Reply::write(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.isNull()) {
+        if (!writer.writeListHeader(s_reply_len)) {
+            return false;
+        }
+        if (!writer.writeFloat64(return_helper)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+bool yarpdataplayer_console_IDL_getProgress_helper::Reply::read(yarp::os::idl::WireReader& reader)
+{
+    if (!reader.readListReturn()) {
+        return false;
+    }
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
+    if (!reader.readFloat64(return_helper)) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+void yarpdataplayer_console_IDL_getProgress_helper::call(yarpdataplayer_console_IDL* ptr)
+{
+    reply.return_helper = ptr->getProgress();
+}
+
+// getStatus helper class implementation
+bool yarpdataplayer_console_IDL_getStatus_helper::write(yarp::os::ConnectionWriter& connection) const
+{
+    return cmd.write(connection);
 }
 
 bool yarpdataplayer_console_IDL_getStatus_helper::read(yarp::os::ConnectionReader& connection)
 {
-    yarp::os::idl::WireReader reader(connection);
-    if (!reader.readListReturn()) {
+    return reply.read(connection);
+}
+
+bool yarpdataplayer_console_IDL_getStatus_helper::Command::write(yarp::os::ConnectionWriter& connection) const
+{
+    yarp::os::idl::WireWriter writer(connection);
+    if (!writer.writeListHeader(s_cmd_len)) {
         return false;
     }
-    if (!reader.readString(s_return_helper)) {
+    return write(writer);
+}
+
+bool yarpdataplayer_console_IDL_getStatus_helper::Command::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    if (!reader.readListHeader()) {
+        reader.fail();
+        return false;
+    }
+    return read(reader);
+}
+
+bool yarpdataplayer_console_IDL_getStatus_helper::Command::write(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writeTag(writer)) {
+        return false;
+    }
+    if (!writeArgs(writer)) {
+        return false;
+    }
+    return true;
+}
+
+bool yarpdataplayer_console_IDL_getStatus_helper::Command::writeTag(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.writeTag(s_tag, 1, s_tag_len)) {
+        return false;
+    }
+    return true;
+}
+
+bool yarpdataplayer_console_IDL_getStatus_helper::Command::writeArgs(const yarp::os::idl::WireWriter& writer [[maybe_unused]]) const
+{
+    return true;
+}
+
+bool yarpdataplayer_console_IDL_getStatus_helper::Command::read(yarp::os::idl::WireReader& reader)
+{
+    if (!readTag(reader)) {
+        return false;
+    }
+    if (!readArgs(reader)) {
+        return false;
+    }
+    return true;
+}
+
+bool yarpdataplayer_console_IDL_getStatus_helper::Command::readTag(yarp::os::idl::WireReader& reader)
+{
+    std::string tag = reader.readTag();
+    if (reader.isError()) {
+        return false;
+    }
+    if (tag != s_tag) {
         reader.fail();
         return false;
     }
     return true;
 }
 
-class yarpdataplayer_console_IDL_resume_helper :
-        public yarp::os::Portable
+bool yarpdataplayer_console_IDL_getStatus_helper::Command::readArgs(yarp::os::idl::WireReader& reader)
 {
-public:
-    explicit yarpdataplayer_console_IDL_resume_helper();
-    bool write(yarp::os::ConnectionWriter& connection) const override;
-    bool read(yarp::os::ConnectionReader& connection) override;
-
-    thread_local static bool s_return_helper;
-};
-
-thread_local bool yarpdataplayer_console_IDL_resume_helper::s_return_helper = {};
-
-yarpdataplayer_console_IDL_resume_helper::yarpdataplayer_console_IDL_resume_helper()
-{
-    s_return_helper = {};
-}
-
-bool yarpdataplayer_console_IDL_resume_helper::write(yarp::os::ConnectionWriter& connection) const
-{
-    yarp::os::idl::WireWriter writer(connection);
-    if (!writer.writeListHeader(1)) {
-        return false;
-    }
-    if (!writer.writeTag("resume", 1, 1)) {
+    if (!reader.noMore()) {
+        reader.fail();
         return false;
     }
     return true;
+}
+
+bool yarpdataplayer_console_IDL_getStatus_helper::Reply::write(yarp::os::ConnectionWriter& connection) const
+{
+    yarp::os::idl::WireWriter writer(connection);
+    return write(writer);
+}
+
+bool yarpdataplayer_console_IDL_getStatus_helper::Reply::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    return read(reader);
+}
+
+bool yarpdataplayer_console_IDL_getStatus_helper::Reply::write(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.isNull()) {
+        if (!writer.writeListHeader(s_reply_len)) {
+            return false;
+        }
+        if (!writer.writeString(return_helper)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+bool yarpdataplayer_console_IDL_getStatus_helper::Reply::read(yarp::os::idl::WireReader& reader)
+{
+    if (!reader.readListReturn()) {
+        return false;
+    }
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
+    if (!reader.readString(return_helper)) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+void yarpdataplayer_console_IDL_getStatus_helper::call(yarpdataplayer_console_IDL* ptr)
+{
+    reply.return_helper = ptr->getStatus();
+}
+
+// resume helper class implementation
+bool yarpdataplayer_console_IDL_resume_helper::write(yarp::os::ConnectionWriter& connection) const
+{
+    return cmd.write(connection);
 }
 
 bool yarpdataplayer_console_IDL_resume_helper::read(yarp::os::ConnectionReader& connection)
 {
-    yarp::os::idl::WireReader reader(connection);
-    if (!reader.readListReturn()) {
+    return reply.read(connection);
+}
+
+bool yarpdataplayer_console_IDL_resume_helper::Command::write(yarp::os::ConnectionWriter& connection) const
+{
+    yarp::os::idl::WireWriter writer(connection);
+    if (!writer.writeListHeader(s_cmd_len)) {
         return false;
     }
-    if (!reader.readBool(s_return_helper)) {
+    return write(writer);
+}
+
+bool yarpdataplayer_console_IDL_resume_helper::Command::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    if (!reader.readListHeader()) {
+        reader.fail();
+        return false;
+    }
+    return read(reader);
+}
+
+bool yarpdataplayer_console_IDL_resume_helper::Command::write(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writeTag(writer)) {
+        return false;
+    }
+    if (!writeArgs(writer)) {
+        return false;
+    }
+    return true;
+}
+
+bool yarpdataplayer_console_IDL_resume_helper::Command::writeTag(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.writeTag(s_tag, 1, s_tag_len)) {
+        return false;
+    }
+    return true;
+}
+
+bool yarpdataplayer_console_IDL_resume_helper::Command::writeArgs(const yarp::os::idl::WireWriter& writer [[maybe_unused]]) const
+{
+    return true;
+}
+
+bool yarpdataplayer_console_IDL_resume_helper::Command::read(yarp::os::idl::WireReader& reader)
+{
+    if (!readTag(reader)) {
+        return false;
+    }
+    if (!readArgs(reader)) {
+        return false;
+    }
+    return true;
+}
+
+bool yarpdataplayer_console_IDL_resume_helper::Command::readTag(yarp::os::idl::WireReader& reader)
+{
+    std::string tag = reader.readTag();
+    if (reader.isError()) {
+        return false;
+    }
+    if (tag != s_tag) {
         reader.fail();
         return false;
     }
     return true;
 }
 
-class yarpdataplayer_console_IDL_quit_helper :
-        public yarp::os::Portable
+bool yarpdataplayer_console_IDL_resume_helper::Command::readArgs(yarp::os::idl::WireReader& reader)
 {
-public:
-    explicit yarpdataplayer_console_IDL_quit_helper();
-    bool write(yarp::os::ConnectionWriter& connection) const override;
-    bool read(yarp::os::ConnectionReader& connection) override;
-
-    thread_local static bool s_return_helper;
-};
-
-thread_local bool yarpdataplayer_console_IDL_quit_helper::s_return_helper = {};
-
-yarpdataplayer_console_IDL_quit_helper::yarpdataplayer_console_IDL_quit_helper()
-{
-    s_return_helper = {};
-}
-
-bool yarpdataplayer_console_IDL_quit_helper::write(yarp::os::ConnectionWriter& connection) const
-{
-    yarp::os::idl::WireWriter writer(connection);
-    if (!writer.writeListHeader(1)) {
-        return false;
-    }
-    if (!writer.writeTag("quit", 1, 1)) {
+    if (!reader.noMore()) {
+        reader.fail();
         return false;
     }
     return true;
+}
+
+bool yarpdataplayer_console_IDL_resume_helper::Reply::write(yarp::os::ConnectionWriter& connection) const
+{
+    yarp::os::idl::WireWriter writer(connection);
+    return write(writer);
+}
+
+bool yarpdataplayer_console_IDL_resume_helper::Reply::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    return read(reader);
+}
+
+bool yarpdataplayer_console_IDL_resume_helper::Reply::write(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.isNull()) {
+        if (!writer.writeListHeader(s_reply_len)) {
+            return false;
+        }
+        if (!writer.writeBool(return_helper)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+bool yarpdataplayer_console_IDL_resume_helper::Reply::read(yarp::os::idl::WireReader& reader)
+{
+    if (!reader.readListReturn()) {
+        return false;
+    }
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
+    if (!reader.readBool(return_helper)) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+void yarpdataplayer_console_IDL_resume_helper::call(yarpdataplayer_console_IDL* ptr)
+{
+    reply.return_helper = ptr->resume();
+}
+
+// quit helper class implementation
+bool yarpdataplayer_console_IDL_quit_helper::write(yarp::os::ConnectionWriter& connection) const
+{
+    return cmd.write(connection);
 }
 
 bool yarpdataplayer_console_IDL_quit_helper::read(yarp::os::ConnectionReader& connection)
 {
-    yarp::os::idl::WireReader reader(connection);
-    if (!reader.readListReturn()) {
+    return reply.read(connection);
+}
+
+bool yarpdataplayer_console_IDL_quit_helper::Command::write(yarp::os::ConnectionWriter& connection) const
+{
+    yarp::os::idl::WireWriter writer(connection);
+    if (!writer.writeListHeader(s_cmd_len)) {
         return false;
     }
-    if (!reader.readBool(s_return_helper)) {
+    return write(writer);
+}
+
+bool yarpdataplayer_console_IDL_quit_helper::Command::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    if (!reader.readListHeader()) {
+        reader.fail();
+        return false;
+    }
+    return read(reader);
+}
+
+bool yarpdataplayer_console_IDL_quit_helper::Command::write(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writeTag(writer)) {
+        return false;
+    }
+    if (!writeArgs(writer)) {
+        return false;
+    }
+    return true;
+}
+
+bool yarpdataplayer_console_IDL_quit_helper::Command::writeTag(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.writeTag(s_tag, 1, s_tag_len)) {
+        return false;
+    }
+    return true;
+}
+
+bool yarpdataplayer_console_IDL_quit_helper::Command::writeArgs(const yarp::os::idl::WireWriter& writer [[maybe_unused]]) const
+{
+    return true;
+}
+
+bool yarpdataplayer_console_IDL_quit_helper::Command::read(yarp::os::idl::WireReader& reader)
+{
+    if (!readTag(reader)) {
+        return false;
+    }
+    if (!readArgs(reader)) {
+        return false;
+    }
+    return true;
+}
+
+bool yarpdataplayer_console_IDL_quit_helper::Command::readTag(yarp::os::idl::WireReader& reader)
+{
+    std::string tag = reader.readTag();
+    if (reader.isError()) {
+        return false;
+    }
+    if (tag != s_tag) {
         reader.fail();
         return false;
     }
     return true;
+}
+
+bool yarpdataplayer_console_IDL_quit_helper::Command::readArgs(yarp::os::idl::WireReader& reader)
+{
+    if (!reader.noMore()) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool yarpdataplayer_console_IDL_quit_helper::Reply::write(yarp::os::ConnectionWriter& connection) const
+{
+    yarp::os::idl::WireWriter writer(connection);
+    return write(writer);
+}
+
+bool yarpdataplayer_console_IDL_quit_helper::Reply::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    return read(reader);
+}
+
+bool yarpdataplayer_console_IDL_quit_helper::Reply::write(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.isNull()) {
+        if (!writer.writeListHeader(s_reply_len)) {
+            return false;
+        }
+        if (!writer.writeBool(return_helper)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+bool yarpdataplayer_console_IDL_quit_helper::Reply::read(yarp::os::idl::WireReader& reader)
+{
+    if (!reader.readListReturn()) {
+        return false;
+    }
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
+    if (!reader.readBool(return_helper)) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+void yarpdataplayer_console_IDL_quit_helper::call(yarpdataplayer_console_IDL* ptr)
+{
+    reply.return_helper = ptr->quit();
 }
 
 // Constructor
@@ -1050,222 +4628,222 @@ yarpdataplayer_console_IDL::yarpdataplayer_console_IDL()
 
 bool yarpdataplayer_console_IDL::step()
 {
-    yarpdataplayer_console_IDL_step_helper helper{};
     if (!yarp().canWrite()) {
-        yError("Missing server method '%s'?", "bool yarpdataplayer_console_IDL::step()");
+        yError("Missing server method '%s'?", yarpdataplayer_console_IDL_step_helper::s_prototype);
     }
+    yarpdataplayer_console_IDL_step_helper helper{};
     bool ok = yarp().write(helper, helper);
-    return ok ? yarpdataplayer_console_IDL_step_helper::s_return_helper : bool{};
+    return ok ? helper.reply.return_helper : bool{};
 }
 
 bool yarpdataplayer_console_IDL::setFrame(const std::int32_t frameNum)
 {
-    yarpdataplayer_console_IDL_setFrame_helper helper{frameNum};
     if (!yarp().canWrite()) {
-        yError("Missing server method '%s'?", "bool yarpdataplayer_console_IDL::setFrame(const std::int32_t frameNum)");
+        yError("Missing server method '%s'?", yarpdataplayer_console_IDL_setFrame_helper::s_prototype);
     }
+    yarpdataplayer_console_IDL_setFrame_helper helper{frameNum};
     bool ok = yarp().write(helper, helper);
-    return ok ? yarpdataplayer_console_IDL_setFrame_helper::s_return_helper : bool{};
+    return ok ? helper.reply.return_helper : bool{};
 }
 
 std::int32_t yarpdataplayer_console_IDL::getFrame(const std::string& name)
 {
-    yarpdataplayer_console_IDL_getFrame_helper helper{name};
     if (!yarp().canWrite()) {
-        yError("Missing server method '%s'?", "std::int32_t yarpdataplayer_console_IDL::getFrame(const std::string& name)");
+        yError("Missing server method '%s'?", yarpdataplayer_console_IDL_getFrame_helper::s_prototype);
     }
+    yarpdataplayer_console_IDL_getFrame_helper helper{name};
     bool ok = yarp().write(helper, helper);
-    return ok ? yarpdataplayer_console_IDL_getFrame_helper::s_return_helper : std::int32_t{};
+    return ok ? helper.reply.return_helper : std::int32_t{};
 }
 
 bool yarpdataplayer_console_IDL::load(const std::string& path)
 {
-    yarpdataplayer_console_IDL_load_helper helper{path};
     if (!yarp().canWrite()) {
-        yError("Missing server method '%s'?", "bool yarpdataplayer_console_IDL::load(const std::string& path)");
+        yError("Missing server method '%s'?", yarpdataplayer_console_IDL_load_helper::s_prototype);
     }
+    yarpdataplayer_console_IDL_load_helper helper{path};
     bool ok = yarp().write(helper, helper);
-    return ok ? yarpdataplayer_console_IDL_load_helper::s_return_helper : bool{};
+    return ok ? helper.reply.return_helper : bool{};
 }
 
 bool yarpdataplayer_console_IDL::play()
 {
-    yarpdataplayer_console_IDL_play_helper helper{};
     if (!yarp().canWrite()) {
-        yError("Missing server method '%s'?", "bool yarpdataplayer_console_IDL::play()");
+        yError("Missing server method '%s'?", yarpdataplayer_console_IDL_play_helper::s_prototype);
     }
+    yarpdataplayer_console_IDL_play_helper helper{};
     bool ok = yarp().write(helper, helper);
-    return ok ? yarpdataplayer_console_IDL_play_helper::s_return_helper : bool{};
+    return ok ? helper.reply.return_helper : bool{};
 }
 
 bool yarpdataplayer_console_IDL::pause()
 {
-    yarpdataplayer_console_IDL_pause_helper helper{};
     if (!yarp().canWrite()) {
-        yError("Missing server method '%s'?", "bool yarpdataplayer_console_IDL::pause()");
+        yError("Missing server method '%s'?", yarpdataplayer_console_IDL_pause_helper::s_prototype);
     }
+    yarpdataplayer_console_IDL_pause_helper helper{};
     bool ok = yarp().write(helper, helper);
-    return ok ? yarpdataplayer_console_IDL_pause_helper::s_return_helper : bool{};
+    return ok ? helper.reply.return_helper : bool{};
 }
 
 bool yarpdataplayer_console_IDL::stop()
 {
-    yarpdataplayer_console_IDL_stop_helper helper{};
     if (!yarp().canWrite()) {
-        yError("Missing server method '%s'?", "bool yarpdataplayer_console_IDL::stop()");
+        yError("Missing server method '%s'?", yarpdataplayer_console_IDL_stop_helper::s_prototype);
     }
+    yarpdataplayer_console_IDL_stop_helper helper{};
     bool ok = yarp().write(helper, helper);
-    return ok ? yarpdataplayer_console_IDL_stop_helper::s_return_helper : bool{};
+    return ok ? helper.reply.return_helper : bool{};
 }
 
 bool yarpdataplayer_console_IDL::enable(const std::string& part)
 {
-    yarpdataplayer_console_IDL_enable_helper helper{part};
     if (!yarp().canWrite()) {
-        yError("Missing server method '%s'?", "bool yarpdataplayer_console_IDL::enable(const std::string& part)");
+        yError("Missing server method '%s'?", yarpdataplayer_console_IDL_enable_helper::s_prototype);
     }
+    yarpdataplayer_console_IDL_enable_helper helper{part};
     bool ok = yarp().write(helper, helper);
-    return ok ? yarpdataplayer_console_IDL_enable_helper::s_return_helper : bool{};
+    return ok ? helper.reply.return_helper : bool{};
 }
 
 bool yarpdataplayer_console_IDL::disable(const std::string& part)
 {
-    yarpdataplayer_console_IDL_disable_helper helper{part};
     if (!yarp().canWrite()) {
-        yError("Missing server method '%s'?", "bool yarpdataplayer_console_IDL::disable(const std::string& part)");
+        yError("Missing server method '%s'?", yarpdataplayer_console_IDL_disable_helper::s_prototype);
     }
+    yarpdataplayer_console_IDL_disable_helper helper{part};
     bool ok = yarp().write(helper, helper);
-    return ok ? yarpdataplayer_console_IDL_disable_helper::s_return_helper : bool{};
+    return ok ? helper.reply.return_helper : bool{};
 }
 
 std::vector<std::string> yarpdataplayer_console_IDL::getAllParts()
 {
-    yarpdataplayer_console_IDL_getAllParts_helper helper{};
     if (!yarp().canWrite()) {
-        yError("Missing server method '%s'?", "std::vector<std::string> yarpdataplayer_console_IDL::getAllParts()");
+        yError("Missing server method '%s'?", yarpdataplayer_console_IDL_getAllParts_helper::s_prototype);
     }
+    yarpdataplayer_console_IDL_getAllParts_helper helper{};
     bool ok = yarp().write(helper, helper);
-    return ok ? yarpdataplayer_console_IDL_getAllParts_helper::s_return_helper : std::vector<std::string>{};
+    return ok ? helper.reply.return_helper : std::vector<std::string>{};
 }
 
 std::string yarpdataplayer_console_IDL::getPortName(const std::string& part)
 {
-    yarpdataplayer_console_IDL_getPortName_helper helper{part};
     if (!yarp().canWrite()) {
-        yError("Missing server method '%s'?", "std::string yarpdataplayer_console_IDL::getPortName(const std::string& part)");
+        yError("Missing server method '%s'?", yarpdataplayer_console_IDL_getPortName_helper::s_prototype);
     }
+    yarpdataplayer_console_IDL_getPortName_helper helper{part};
     bool ok = yarp().write(helper, helper);
-    return ok ? yarpdataplayer_console_IDL_getPortName_helper::s_return_helper : std::string{};
+    return ok ? helper.reply.return_helper : std::string{};
 }
 
 bool yarpdataplayer_console_IDL::setPortName(const std::string& part, const std::string& new_name)
 {
-    yarpdataplayer_console_IDL_setPortName_helper helper{part, new_name};
     if (!yarp().canWrite()) {
-        yError("Missing server method '%s'?", "bool yarpdataplayer_console_IDL::setPortName(const std::string& part, const std::string& new_name)");
+        yError("Missing server method '%s'?", yarpdataplayer_console_IDL_setPortName_helper::s_prototype);
     }
+    yarpdataplayer_console_IDL_setPortName_helper helper{part, new_name};
     bool ok = yarp().write(helper, helper);
-    return ok ? yarpdataplayer_console_IDL_setPortName_helper::s_return_helper : bool{};
+    return ok ? helper.reply.return_helper : bool{};
 }
 
 bool yarpdataplayer_console_IDL::setSpeed(const double speed)
 {
-    yarpdataplayer_console_IDL_setSpeed_helper helper{speed};
     if (!yarp().canWrite()) {
-        yError("Missing server method '%s'?", "bool yarpdataplayer_console_IDL::setSpeed(const double speed)");
+        yError("Missing server method '%s'?", yarpdataplayer_console_IDL_setSpeed_helper::s_prototype);
     }
+    yarpdataplayer_console_IDL_setSpeed_helper helper{speed};
     bool ok = yarp().write(helper, helper);
-    return ok ? yarpdataplayer_console_IDL_setSpeed_helper::s_return_helper : bool{};
+    return ok ? helper.reply.return_helper : bool{};
 }
 
 double yarpdataplayer_console_IDL::getSpeed()
 {
-    yarpdataplayer_console_IDL_getSpeed_helper helper{};
     if (!yarp().canWrite()) {
-        yError("Missing server method '%s'?", "double yarpdataplayer_console_IDL::getSpeed()");
+        yError("Missing server method '%s'?", yarpdataplayer_console_IDL_getSpeed_helper::s_prototype);
     }
+    yarpdataplayer_console_IDL_getSpeed_helper helper{};
     bool ok = yarp().write(helper, helper);
-    return ok ? yarpdataplayer_console_IDL_getSpeed_helper::s_return_helper : double{};
+    return ok ? helper.reply.return_helper : double{};
 }
 
 bool yarpdataplayer_console_IDL::repeat(const bool val)
 {
-    yarpdataplayer_console_IDL_repeat_helper helper{val};
     if (!yarp().canWrite()) {
-        yError("Missing server method '%s'?", "bool yarpdataplayer_console_IDL::repeat(const bool val)");
+        yError("Missing server method '%s'?", yarpdataplayer_console_IDL_repeat_helper::s_prototype);
     }
+    yarpdataplayer_console_IDL_repeat_helper helper{val};
     bool ok = yarp().write(helper, helper);
-    return ok ? yarpdataplayer_console_IDL_repeat_helper::s_return_helper : bool{};
+    return ok ? helper.reply.return_helper : bool{};
 }
 
 bool yarpdataplayer_console_IDL::setStrict(const bool val)
 {
-    yarpdataplayer_console_IDL_setStrict_helper helper{val};
     if (!yarp().canWrite()) {
-        yError("Missing server method '%s'?", "bool yarpdataplayer_console_IDL::setStrict(const bool val)");
+        yError("Missing server method '%s'?", yarpdataplayer_console_IDL_setStrict_helper::s_prototype);
     }
+    yarpdataplayer_console_IDL_setStrict_helper helper{val};
     bool ok = yarp().write(helper, helper);
-    return ok ? yarpdataplayer_console_IDL_setStrict_helper::s_return_helper : bool{};
+    return ok ? helper.reply.return_helper : bool{};
 }
 
 bool yarpdataplayer_console_IDL::forward(const std::int32_t steps)
 {
-    yarpdataplayer_console_IDL_forward_helper helper{steps};
     if (!yarp().canWrite()) {
-        yError("Missing server method '%s'?", "bool yarpdataplayer_console_IDL::forward(const std::int32_t steps)");
+        yError("Missing server method '%s'?", yarpdataplayer_console_IDL_forward_helper::s_prototype);
     }
+    yarpdataplayer_console_IDL_forward_helper helper{steps};
     bool ok = yarp().write(helper, helper);
-    return ok ? yarpdataplayer_console_IDL_forward_helper::s_return_helper : bool{};
+    return ok ? helper.reply.return_helper : bool{};
 }
 
 bool yarpdataplayer_console_IDL::backward(const std::int32_t steps)
 {
-    yarpdataplayer_console_IDL_backward_helper helper{steps};
     if (!yarp().canWrite()) {
-        yError("Missing server method '%s'?", "bool yarpdataplayer_console_IDL::backward(const std::int32_t steps)");
+        yError("Missing server method '%s'?", yarpdataplayer_console_IDL_backward_helper::s_prototype);
     }
+    yarpdataplayer_console_IDL_backward_helper helper{steps};
     bool ok = yarp().write(helper, helper);
-    return ok ? yarpdataplayer_console_IDL_backward_helper::s_return_helper : bool{};
+    return ok ? helper.reply.return_helper : bool{};
 }
 
 double yarpdataplayer_console_IDL::getProgress()
 {
-    yarpdataplayer_console_IDL_getProgress_helper helper{};
     if (!yarp().canWrite()) {
-        yError("Missing server method '%s'?", "double yarpdataplayer_console_IDL::getProgress()");
+        yError("Missing server method '%s'?", yarpdataplayer_console_IDL_getProgress_helper::s_prototype);
     }
+    yarpdataplayer_console_IDL_getProgress_helper helper{};
     bool ok = yarp().write(helper, helper);
-    return ok ? yarpdataplayer_console_IDL_getProgress_helper::s_return_helper : double{};
+    return ok ? helper.reply.return_helper : double{};
 }
 
 std::string yarpdataplayer_console_IDL::getStatus()
 {
-    yarpdataplayer_console_IDL_getStatus_helper helper{};
     if (!yarp().canWrite()) {
-        yError("Missing server method '%s'?", "std::string yarpdataplayer_console_IDL::getStatus()");
+        yError("Missing server method '%s'?", yarpdataplayer_console_IDL_getStatus_helper::s_prototype);
     }
+    yarpdataplayer_console_IDL_getStatus_helper helper{};
     bool ok = yarp().write(helper, helper);
-    return ok ? yarpdataplayer_console_IDL_getStatus_helper::s_return_helper : std::string{};
+    return ok ? helper.reply.return_helper : std::string{};
 }
 
 bool yarpdataplayer_console_IDL::resume()
 {
-    yarpdataplayer_console_IDL_resume_helper helper{};
     if (!yarp().canWrite()) {
-        yError("Missing server method '%s'?", "bool yarpdataplayer_console_IDL::resume()");
+        yError("Missing server method '%s'?", yarpdataplayer_console_IDL_resume_helper::s_prototype);
     }
+    yarpdataplayer_console_IDL_resume_helper helper{};
     bool ok = yarp().write(helper, helper);
-    return ok ? yarpdataplayer_console_IDL_resume_helper::s_return_helper : bool{};
+    return ok ? helper.reply.return_helper : bool{};
 }
 
 bool yarpdataplayer_console_IDL::quit()
 {
-    yarpdataplayer_console_IDL_quit_helper helper{};
     if (!yarp().canWrite()) {
-        yError("Missing server method '%s'?", "bool yarpdataplayer_console_IDL::quit()");
+        yError("Missing server method '%s'?", yarpdataplayer_console_IDL_quit_helper::s_prototype);
     }
+    yarpdataplayer_console_IDL_quit_helper helper{};
     bool ok = yarp().write(helper, helper);
-    return ok ? yarpdataplayer_console_IDL_quit_helper::s_return_helper : bool{};
+    return ok ? helper.reply.return_helper : bool{};
 }
 
 // help method
@@ -1275,154 +4853,117 @@ std::vector<std::string> yarpdataplayer_console_IDL::help(const std::string& fun
     std::vector<std::string> helpString;
     if (showAll) {
         helpString.emplace_back("*** Available commands:");
-        helpString.emplace_back("step");
-        helpString.emplace_back("setFrame");
-        helpString.emplace_back("getFrame");
-        helpString.emplace_back("load");
-        helpString.emplace_back("play");
-        helpString.emplace_back("pause");
-        helpString.emplace_back("stop");
-        helpString.emplace_back("enable");
-        helpString.emplace_back("disable");
-        helpString.emplace_back("getAllParts");
-        helpString.emplace_back("getPortName");
-        helpString.emplace_back("setPortName");
-        helpString.emplace_back("setSpeed");
-        helpString.emplace_back("getSpeed");
-        helpString.emplace_back("repeat");
-        helpString.emplace_back("setStrict");
-        helpString.emplace_back("forward");
-        helpString.emplace_back("backward");
-        helpString.emplace_back("getProgress");
-        helpString.emplace_back("getStatus");
-        helpString.emplace_back("resume");
-        helpString.emplace_back("quit");
+        helpString.emplace_back(yarpdataplayer_console_IDL_step_helper::s_tag);
+        helpString.emplace_back(yarpdataplayer_console_IDL_setFrame_helper::s_tag);
+        helpString.emplace_back(yarpdataplayer_console_IDL_getFrame_helper::s_tag);
+        helpString.emplace_back(yarpdataplayer_console_IDL_load_helper::s_tag);
+        helpString.emplace_back(yarpdataplayer_console_IDL_play_helper::s_tag);
+        helpString.emplace_back(yarpdataplayer_console_IDL_pause_helper::s_tag);
+        helpString.emplace_back(yarpdataplayer_console_IDL_stop_helper::s_tag);
+        helpString.emplace_back(yarpdataplayer_console_IDL_enable_helper::s_tag);
+        helpString.emplace_back(yarpdataplayer_console_IDL_disable_helper::s_tag);
+        helpString.emplace_back(yarpdataplayer_console_IDL_getAllParts_helper::s_tag);
+        helpString.emplace_back(yarpdataplayer_console_IDL_getPortName_helper::s_tag);
+        helpString.emplace_back(yarpdataplayer_console_IDL_setPortName_helper::s_tag);
+        helpString.emplace_back(yarpdataplayer_console_IDL_setSpeed_helper::s_tag);
+        helpString.emplace_back(yarpdataplayer_console_IDL_getSpeed_helper::s_tag);
+        helpString.emplace_back(yarpdataplayer_console_IDL_repeat_helper::s_tag);
+        helpString.emplace_back(yarpdataplayer_console_IDL_setStrict_helper::s_tag);
+        helpString.emplace_back(yarpdataplayer_console_IDL_forward_helper::s_tag);
+        helpString.emplace_back(yarpdataplayer_console_IDL_backward_helper::s_tag);
+        helpString.emplace_back(yarpdataplayer_console_IDL_getProgress_helper::s_tag);
+        helpString.emplace_back(yarpdataplayer_console_IDL_getStatus_helper::s_tag);
+        helpString.emplace_back(yarpdataplayer_console_IDL_resume_helper::s_tag);
+        helpString.emplace_back(yarpdataplayer_console_IDL_quit_helper::s_tag);
         helpString.emplace_back("help");
     } else {
-        if (functionName == "step") {
-            helpString.emplace_back("bool step() ");
-            helpString.emplace_back("Steps the player once. The player will be stepped ");
-            helpString.emplace_back("until all parts have sent data ");
-            helpString.emplace_back("@return true/false on success/failure ");
+        if (functionName == yarpdataplayer_console_IDL_step_helper::s_tag) {
+            helpString.emplace_back(yarpdataplayer_console_IDL_step_helper::s_prototype);
+            helpString.emplace_back(yarpdataplayer_console_IDL_step_helper::s_help);
         }
-        if (functionName == "setFrame") {
-            helpString.emplace_back("bool setFrame(const std::int32_t frameNum) ");
-            helpString.emplace_back("Sets the frame number to the user desired frame. ");
-            helpString.emplace_back("@param frameNum specifies the frame number the user ");
-            helpString.emplace_back(" would like to skip to ");
-            helpString.emplace_back("@return true/false on success/failure ");
+        if (functionName == yarpdataplayer_console_IDL_setFrame_helper::s_tag) {
+            helpString.emplace_back(yarpdataplayer_console_IDL_setFrame_helper::s_prototype);
+            helpString.emplace_back(yarpdataplayer_console_IDL_setFrame_helper::s_help);
         }
-        if (functionName == "getFrame") {
-            helpString.emplace_back("std::int32_t getFrame(const std::string& name) ");
-            helpString.emplace_back("Gets the frame number the user is requesting ");
-            helpString.emplace_back("@param name specifies the name of the data to modify ");
-            helpString.emplace_back(" would like to skip to ");
-            helpString.emplace_back("@return i32 returns the current frame index ");
+        if (functionName == yarpdataplayer_console_IDL_getFrame_helper::s_tag) {
+            helpString.emplace_back(yarpdataplayer_console_IDL_getFrame_helper::s_prototype);
+            helpString.emplace_back(yarpdataplayer_console_IDL_getFrame_helper::s_help);
         }
-        if (functionName == "load") {
-            helpString.emplace_back("bool load(const std::string& path) ");
-            helpString.emplace_back("Loads a dataset from a path ");
-            helpString.emplace_back("@return true/false on success/failure ");
+        if (functionName == yarpdataplayer_console_IDL_load_helper::s_tag) {
+            helpString.emplace_back(yarpdataplayer_console_IDL_load_helper::s_prototype);
+            helpString.emplace_back(yarpdataplayer_console_IDL_load_helper::s_help);
         }
-        if (functionName == "play") {
-            helpString.emplace_back("bool play() ");
-            helpString.emplace_back("Plays the dataSets ");
-            helpString.emplace_back("@return true/false on success/failure ");
+        if (functionName == yarpdataplayer_console_IDL_play_helper::s_tag) {
+            helpString.emplace_back(yarpdataplayer_console_IDL_play_helper::s_prototype);
+            helpString.emplace_back(yarpdataplayer_console_IDL_play_helper::s_help);
         }
-        if (functionName == "pause") {
-            helpString.emplace_back("bool pause() ");
-            helpString.emplace_back("Pauses the dataSets ");
-            helpString.emplace_back("@return true/false on success/failure ");
+        if (functionName == yarpdataplayer_console_IDL_pause_helper::s_tag) {
+            helpString.emplace_back(yarpdataplayer_console_IDL_pause_helper::s_prototype);
+            helpString.emplace_back(yarpdataplayer_console_IDL_pause_helper::s_help);
         }
-        if (functionName == "stop") {
-            helpString.emplace_back("bool stop() ");
-            helpString.emplace_back("Stops the dataSets ");
-            helpString.emplace_back("@return true/false on success/failure ");
+        if (functionName == yarpdataplayer_console_IDL_stop_helper::s_tag) {
+            helpString.emplace_back(yarpdataplayer_console_IDL_stop_helper::s_prototype);
+            helpString.emplace_back(yarpdataplayer_console_IDL_stop_helper::s_help);
         }
-        if (functionName == "enable") {
-            helpString.emplace_back("bool enable(const std::string& part) ");
-            helpString.emplace_back("Enables the specified part. ");
-            helpString.emplace_back("@param name specifies the name of the loaded data ");
-            helpString.emplace_back("@return true/false on success/failure ");
+        if (functionName == yarpdataplayer_console_IDL_enable_helper::s_tag) {
+            helpString.emplace_back(yarpdataplayer_console_IDL_enable_helper::s_prototype);
+            helpString.emplace_back(yarpdataplayer_console_IDL_enable_helper::s_help);
         }
-        if (functionName == "disable") {
-            helpString.emplace_back("bool disable(const std::string& part) ");
-            helpString.emplace_back("Disable the specified part. ");
-            helpString.emplace_back("@param name specifies the name of the loaded data ");
-            helpString.emplace_back("@return true/false on success/failure ");
+        if (functionName == yarpdataplayer_console_IDL_disable_helper::s_tag) {
+            helpString.emplace_back(yarpdataplayer_console_IDL_disable_helper::s_prototype);
+            helpString.emplace_back(yarpdataplayer_console_IDL_disable_helper::s_help);
         }
-        if (functionName == "getAllParts") {
-            helpString.emplace_back("std::vector<std::string> getAllParts() ");
-            helpString.emplace_back("Gets the names of all parts loaded. ");
-            helpString.emplace_back("@return list of names of the loaded parts. ");
+        if (functionName == yarpdataplayer_console_IDL_getAllParts_helper::s_tag) {
+            helpString.emplace_back(yarpdataplayer_console_IDL_getAllParts_helper::s_prototype);
+            helpString.emplace_back(yarpdataplayer_console_IDL_getAllParts_helper::s_help);
         }
-        if (functionName == "getPortName") {
-            helpString.emplace_back("std::string getPortName(const std::string& part) ");
-            helpString.emplace_back("Gets the name of the port associated to the specified part ");
-            helpString.emplace_back("@param name specifies the name of the data to modify ");
-            helpString.emplace_back("@return port name ");
+        if (functionName == yarpdataplayer_console_IDL_getPortName_helper::s_tag) {
+            helpString.emplace_back(yarpdataplayer_console_IDL_getPortName_helper::s_prototype);
+            helpString.emplace_back(yarpdataplayer_console_IDL_getPortName_helper::s_help);
         }
-        if (functionName == "setPortName") {
-            helpString.emplace_back("bool setPortName(const std::string& part, const std::string& new_name) ");
-            helpString.emplace_back("Sets the name of the port associated to the specified part ");
-            helpString.emplace_back("@param part specifies the name of the data to modify ");
-            helpString.emplace_back("@param new_name specifies the new name to assign to the port ");
-            helpString.emplace_back("@return true/false on success/failure ");
+        if (functionName == yarpdataplayer_console_IDL_setPortName_helper::s_tag) {
+            helpString.emplace_back(yarpdataplayer_console_IDL_setPortName_helper::s_prototype);
+            helpString.emplace_back(yarpdataplayer_console_IDL_setPortName_helper::s_help);
         }
-        if (functionName == "setSpeed") {
-            helpString.emplace_back("bool setSpeed(const double speed) ");
-            helpString.emplace_back("Sets the player speed ");
-            helpString.emplace_back("@param speed specifies ");
-            helpString.emplace_back("@return true/false on success/failure ");
+        if (functionName == yarpdataplayer_console_IDL_setSpeed_helper::s_tag) {
+            helpString.emplace_back(yarpdataplayer_console_IDL_setSpeed_helper::s_prototype);
+            helpString.emplace_back(yarpdataplayer_console_IDL_setSpeed_helper::s_help);
         }
-        if (functionName == "getSpeed") {
-            helpString.emplace_back("double getSpeed() ");
-            helpString.emplace_back("Gets the player speed ");
-            helpString.emplace_back("@return value of the player speed ");
+        if (functionName == yarpdataplayer_console_IDL_getSpeed_helper::s_tag) {
+            helpString.emplace_back(yarpdataplayer_console_IDL_getSpeed_helper::s_prototype);
+            helpString.emplace_back(yarpdataplayer_console_IDL_getSpeed_helper::s_help);
         }
-        if (functionName == "repeat") {
-            helpString.emplace_back("bool repeat(const bool val = 0) ");
-            helpString.emplace_back("Sets repeat mode ");
-            helpString.emplace_back("@param val if true repeat mode is active. ");
-            helpString.emplace_back("@return true/false on success/failure ");
+        if (functionName == yarpdataplayer_console_IDL_repeat_helper::s_tag) {
+            helpString.emplace_back(yarpdataplayer_console_IDL_repeat_helper::s_prototype);
+            helpString.emplace_back(yarpdataplayer_console_IDL_repeat_helper::s_help);
         }
-        if (functionName == "setStrict") {
-            helpString.emplace_back("bool setStrict(const bool val = 0) ");
-            helpString.emplace_back("Sets strict mode ");
-            helpString.emplace_back("@param val if true strict mode is active. ");
-            helpString.emplace_back("@return true/false on success/failure ");
+        if (functionName == yarpdataplayer_console_IDL_setStrict_helper::s_tag) {
+            helpString.emplace_back(yarpdataplayer_console_IDL_setStrict_helper::s_prototype);
+            helpString.emplace_back(yarpdataplayer_console_IDL_setStrict_helper::s_help);
         }
-        if (functionName == "forward") {
-            helpString.emplace_back("bool forward(const std::int32_t steps = 5) ");
-            helpString.emplace_back("Steps forward ");
-            helpString.emplace_back("@param steps number of steps to go forward (default=5). ");
-            helpString.emplace_back("@return true/false on success/failure ");
+        if (functionName == yarpdataplayer_console_IDL_forward_helper::s_tag) {
+            helpString.emplace_back(yarpdataplayer_console_IDL_forward_helper::s_prototype);
+            helpString.emplace_back(yarpdataplayer_console_IDL_forward_helper::s_help);
         }
-        if (functionName == "backward") {
-            helpString.emplace_back("bool backward(const std::int32_t steps = 5) ");
-            helpString.emplace_back("Steps backward ");
-            helpString.emplace_back("@param steps number of steps to go backward (default=5). ");
-            helpString.emplace_back("@return true/false on success/failure ");
+        if (functionName == yarpdataplayer_console_IDL_backward_helper::s_tag) {
+            helpString.emplace_back(yarpdataplayer_console_IDL_backward_helper::s_prototype);
+            helpString.emplace_back(yarpdataplayer_console_IDL_backward_helper::s_help);
         }
-        if (functionName == "getProgress") {
-            helpString.emplace_back("double getProgress() ");
-            helpString.emplace_back("Get the progress of the parts ");
-            helpString.emplace_back("@return the progress of the parts ");
+        if (functionName == yarpdataplayer_console_IDL_getProgress_helper::s_tag) {
+            helpString.emplace_back(yarpdataplayer_console_IDL_getProgress_helper::s_prototype);
+            helpString.emplace_back(yarpdataplayer_console_IDL_getProgress_helper::s_help);
         }
-        if (functionName == "getStatus") {
-            helpString.emplace_back("std::string getStatus() ");
-            helpString.emplace_back("Get the status of playing ");
-            helpString.emplace_back("@return the status (playing, paused, stopped) ");
+        if (functionName == yarpdataplayer_console_IDL_getStatus_helper::s_tag) {
+            helpString.emplace_back(yarpdataplayer_console_IDL_getStatus_helper::s_prototype);
+            helpString.emplace_back(yarpdataplayer_console_IDL_getStatus_helper::s_help);
         }
-        if (functionName == "resume") {
-            helpString.emplace_back("bool resume() ");
-            helpString.emplace_back("Resume dataset from where it was paused ");
-            helpString.emplace_back("@return true/false on success/failure ");
+        if (functionName == yarpdataplayer_console_IDL_resume_helper::s_tag) {
+            helpString.emplace_back(yarpdataplayer_console_IDL_resume_helper::s_prototype);
+            helpString.emplace_back(yarpdataplayer_console_IDL_resume_helper::s_help);
         }
-        if (functionName == "quit") {
-            helpString.emplace_back("bool quit() ");
-            helpString.emplace_back("Quit the module. ");
-            helpString.emplace_back("@return true/false on success/failure ");
+        if (functionName == yarpdataplayer_console_IDL_quit_helper::s_tag) {
+            helpString.emplace_back(yarpdataplayer_console_IDL_quit_helper::s_prototype);
+            helpString.emplace_back(yarpdataplayer_console_IDL_quit_helper::s_help);
         }
         if (functionName == "help") {
             helpString.emplace_back("std::vector<std::string> help(const std::string& functionName = \"--all\")");
@@ -1453,379 +4994,332 @@ bool yarpdataplayer_console_IDL::read(yarp::os::ConnectionReader& connection)
         tag = reader.readTag();
     }
     while (!reader.isError()) {
-        if (tag == "step") {
-            yarpdataplayer_console_IDL_step_helper::s_return_helper = step();
-            yarp::os::idl::WireWriter writer(reader);
-            if (!writer.isNull()) {
-                if (!writer.writeListHeader(1)) {
-                    return false;
-                }
-                if (!writer.writeBool(yarpdataplayer_console_IDL_step_helper::s_return_helper)) {
-                    return false;
-                }
-            }
-            reader.accept();
-            return true;
-        }
-        if (tag == "setFrame") {
-            std::int32_t frameNum;
-            if (!reader.readI32(frameNum)) {
-                reader.fail();
+        if (tag == yarpdataplayer_console_IDL_step_helper::s_tag) {
+            yarpdataplayer_console_IDL_step_helper helper;
+            if (!helper.cmd.readArgs(reader)) {
                 return false;
             }
-            yarpdataplayer_console_IDL_setFrame_helper::s_return_helper = setFrame(frameNum);
+
+            helper.call(this);
+
             yarp::os::idl::WireWriter writer(reader);
-            if (!writer.isNull()) {
-                if (!writer.writeListHeader(1)) {
-                    return false;
-                }
-                if (!writer.writeBool(yarpdataplayer_console_IDL_setFrame_helper::s_return_helper)) {
-                    return false;
-                }
-            }
-            reader.accept();
-            return true;
-        }
-        if (tag == "getFrame") {
-            std::string name;
-            if (!reader.readString(name)) {
-                reader.fail();
+            if (!helper.reply.write(writer)) {
                 return false;
             }
-            yarpdataplayer_console_IDL_getFrame_helper::s_return_helper = getFrame(name);
-            yarp::os::idl::WireWriter writer(reader);
-            if (!writer.isNull()) {
-                if (!writer.writeListHeader(1)) {
-                    return false;
-                }
-                if (!writer.writeI32(yarpdataplayer_console_IDL_getFrame_helper::s_return_helper)) {
-                    return false;
-                }
-            }
             reader.accept();
             return true;
         }
-        if (tag == "load") {
-            std::string path;
-            if (!reader.readString(path)) {
-                reader.fail();
+        if (tag == yarpdataplayer_console_IDL_setFrame_helper::s_tag) {
+            yarpdataplayer_console_IDL_setFrame_helper helper;
+            if (!helper.cmd.readArgs(reader)) {
                 return false;
             }
-            yarpdataplayer_console_IDL_load_helper::s_return_helper = load(path);
+
+            helper.call(this);
+
             yarp::os::idl::WireWriter writer(reader);
-            if (!writer.isNull()) {
-                if (!writer.writeListHeader(1)) {
-                    return false;
-                }
-                if (!writer.writeBool(yarpdataplayer_console_IDL_load_helper::s_return_helper)) {
-                    return false;
-                }
-            }
-            reader.accept();
-            return true;
-        }
-        if (tag == "play") {
-            yarpdataplayer_console_IDL_play_helper::s_return_helper = play();
-            yarp::os::idl::WireWriter writer(reader);
-            if (!writer.isNull()) {
-                if (!writer.writeListHeader(1)) {
-                    return false;
-                }
-                if (!writer.writeBool(yarpdataplayer_console_IDL_play_helper::s_return_helper)) {
-                    return false;
-                }
-            }
-            reader.accept();
-            return true;
-        }
-        if (tag == "pause") {
-            yarpdataplayer_console_IDL_pause_helper::s_return_helper = pause();
-            yarp::os::idl::WireWriter writer(reader);
-            if (!writer.isNull()) {
-                if (!writer.writeListHeader(1)) {
-                    return false;
-                }
-                if (!writer.writeBool(yarpdataplayer_console_IDL_pause_helper::s_return_helper)) {
-                    return false;
-                }
-            }
-            reader.accept();
-            return true;
-        }
-        if (tag == "stop") {
-            yarpdataplayer_console_IDL_stop_helper::s_return_helper = stop();
-            yarp::os::idl::WireWriter writer(reader);
-            if (!writer.isNull()) {
-                if (!writer.writeListHeader(1)) {
-                    return false;
-                }
-                if (!writer.writeBool(yarpdataplayer_console_IDL_stop_helper::s_return_helper)) {
-                    return false;
-                }
-            }
-            reader.accept();
-            return true;
-        }
-        if (tag == "enable") {
-            std::string part;
-            if (!reader.readString(part)) {
-                reader.fail();
+            if (!helper.reply.write(writer)) {
                 return false;
             }
-            yarpdataplayer_console_IDL_enable_helper::s_return_helper = enable(part);
-            yarp::os::idl::WireWriter writer(reader);
-            if (!writer.isNull()) {
-                if (!writer.writeListHeader(1)) {
-                    return false;
-                }
-                if (!writer.writeBool(yarpdataplayer_console_IDL_enable_helper::s_return_helper)) {
-                    return false;
-                }
-            }
             reader.accept();
             return true;
         }
-        if (tag == "disable") {
-            std::string part;
-            if (!reader.readString(part)) {
-                reader.fail();
+        if (tag == yarpdataplayer_console_IDL_getFrame_helper::s_tag) {
+            yarpdataplayer_console_IDL_getFrame_helper helper;
+            if (!helper.cmd.readArgs(reader)) {
                 return false;
             }
-            yarpdataplayer_console_IDL_disable_helper::s_return_helper = disable(part);
+
+            helper.call(this);
+
             yarp::os::idl::WireWriter writer(reader);
-            if (!writer.isNull()) {
-                if (!writer.writeListHeader(1)) {
-                    return false;
-                }
-                if (!writer.writeBool(yarpdataplayer_console_IDL_disable_helper::s_return_helper)) {
-                    return false;
-                }
-            }
-            reader.accept();
-            return true;
-        }
-        if (tag == "getAllParts") {
-            yarpdataplayer_console_IDL_getAllParts_helper::s_return_helper = getAllParts();
-            yarp::os::idl::WireWriter writer(reader);
-            if (!writer.isNull()) {
-                if (!writer.writeListHeader(1)) {
-                    return false;
-                }
-                if (!writer.writeListBegin(BOTTLE_TAG_STRING, static_cast<uint32_t>(yarpdataplayer_console_IDL_getAllParts_helper::s_return_helper.size()))) {
-                    return false;
-                }
-                for (const auto& _item5 : yarpdataplayer_console_IDL_getAllParts_helper::s_return_helper) {
-                    if (!writer.writeString(_item5)) {
-                        return false;
-                    }
-                }
-                if (!writer.writeListEnd()) {
-                    return false;
-                }
-            }
-            reader.accept();
-            return true;
-        }
-        if (tag == "getPortName") {
-            std::string part;
-            if (!reader.readString(part)) {
-                reader.fail();
+            if (!helper.reply.write(writer)) {
                 return false;
             }
-            yarpdataplayer_console_IDL_getPortName_helper::s_return_helper = getPortName(part);
-            yarp::os::idl::WireWriter writer(reader);
-            if (!writer.isNull()) {
-                if (!writer.writeListHeader(1)) {
-                    return false;
-                }
-                if (!writer.writeString(yarpdataplayer_console_IDL_getPortName_helper::s_return_helper)) {
-                    return false;
-                }
-            }
             reader.accept();
             return true;
         }
-        if (tag == "setPortName") {
-            std::string part;
-            std::string new_name;
-            if (!reader.readString(part)) {
-                reader.fail();
+        if (tag == yarpdataplayer_console_IDL_load_helper::s_tag) {
+            yarpdataplayer_console_IDL_load_helper helper;
+            if (!helper.cmd.readArgs(reader)) {
                 return false;
             }
-            if (!reader.readString(new_name)) {
-                reader.fail();
+
+            helper.call(this);
+
+            yarp::os::idl::WireWriter writer(reader);
+            if (!helper.reply.write(writer)) {
                 return false;
             }
-            yarpdataplayer_console_IDL_setPortName_helper::s_return_helper = setPortName(part, new_name);
-            yarp::os::idl::WireWriter writer(reader);
-            if (!writer.isNull()) {
-                if (!writer.writeListHeader(1)) {
-                    return false;
-                }
-                if (!writer.writeBool(yarpdataplayer_console_IDL_setPortName_helper::s_return_helper)) {
-                    return false;
-                }
-            }
             reader.accept();
             return true;
         }
-        if (tag == "setSpeed") {
-            double speed;
-            if (!reader.readFloat64(speed)) {
-                reader.fail();
+        if (tag == yarpdataplayer_console_IDL_play_helper::s_tag) {
+            yarpdataplayer_console_IDL_play_helper helper;
+            if (!helper.cmd.readArgs(reader)) {
                 return false;
             }
-            yarpdataplayer_console_IDL_setSpeed_helper::s_return_helper = setSpeed(speed);
+
+            helper.call(this);
+
             yarp::os::idl::WireWriter writer(reader);
-            if (!writer.isNull()) {
-                if (!writer.writeListHeader(1)) {
-                    return false;
-                }
-                if (!writer.writeBool(yarpdataplayer_console_IDL_setSpeed_helper::s_return_helper)) {
-                    return false;
-                }
+            if (!helper.reply.write(writer)) {
+                return false;
             }
             reader.accept();
             return true;
         }
-        if (tag == "getSpeed") {
-            yarpdataplayer_console_IDL_getSpeed_helper::s_return_helper = getSpeed();
+        if (tag == yarpdataplayer_console_IDL_pause_helper::s_tag) {
+            yarpdataplayer_console_IDL_pause_helper helper;
+            if (!helper.cmd.readArgs(reader)) {
+                return false;
+            }
+
+            helper.call(this);
+
             yarp::os::idl::WireWriter writer(reader);
-            if (!writer.isNull()) {
-                if (!writer.writeListHeader(1)) {
-                    return false;
-                }
-                if (!writer.writeFloat64(yarpdataplayer_console_IDL_getSpeed_helper::s_return_helper)) {
-                    return false;
-                }
+            if (!helper.reply.write(writer)) {
+                return false;
             }
             reader.accept();
             return true;
         }
-        if (tag == "repeat") {
-            bool val;
-            if (!reader.readBool(val)) {
-                val = 0;
+        if (tag == yarpdataplayer_console_IDL_stop_helper::s_tag) {
+            yarpdataplayer_console_IDL_stop_helper helper;
+            if (!helper.cmd.readArgs(reader)) {
+                return false;
             }
-            yarpdataplayer_console_IDL_repeat_helper::s_return_helper = repeat(val);
+
+            helper.call(this);
+
             yarp::os::idl::WireWriter writer(reader);
-            if (!writer.isNull()) {
-                if (!writer.writeListHeader(1)) {
-                    return false;
-                }
-                if (!writer.writeBool(yarpdataplayer_console_IDL_repeat_helper::s_return_helper)) {
-                    return false;
-                }
+            if (!helper.reply.write(writer)) {
+                return false;
             }
             reader.accept();
             return true;
         }
-        if (tag == "setStrict") {
-            bool val;
-            if (!reader.readBool(val)) {
-                val = 0;
+        if (tag == yarpdataplayer_console_IDL_enable_helper::s_tag) {
+            yarpdataplayer_console_IDL_enable_helper helper;
+            if (!helper.cmd.readArgs(reader)) {
+                return false;
             }
-            yarpdataplayer_console_IDL_setStrict_helper::s_return_helper = setStrict(val);
+
+            helper.call(this);
+
             yarp::os::idl::WireWriter writer(reader);
-            if (!writer.isNull()) {
-                if (!writer.writeListHeader(1)) {
-                    return false;
-                }
-                if (!writer.writeBool(yarpdataplayer_console_IDL_setStrict_helper::s_return_helper)) {
-                    return false;
-                }
+            if (!helper.reply.write(writer)) {
+                return false;
             }
             reader.accept();
             return true;
         }
-        if (tag == "forward") {
-            std::int32_t steps;
-            if (!reader.readI32(steps)) {
-                steps = 5;
+        if (tag == yarpdataplayer_console_IDL_disable_helper::s_tag) {
+            yarpdataplayer_console_IDL_disable_helper helper;
+            if (!helper.cmd.readArgs(reader)) {
+                return false;
             }
-            yarpdataplayer_console_IDL_forward_helper::s_return_helper = forward(steps);
+
+            helper.call(this);
+
             yarp::os::idl::WireWriter writer(reader);
-            if (!writer.isNull()) {
-                if (!writer.writeListHeader(1)) {
-                    return false;
-                }
-                if (!writer.writeBool(yarpdataplayer_console_IDL_forward_helper::s_return_helper)) {
-                    return false;
-                }
+            if (!helper.reply.write(writer)) {
+                return false;
             }
             reader.accept();
             return true;
         }
-        if (tag == "backward") {
-            std::int32_t steps;
-            if (!reader.readI32(steps)) {
-                steps = 5;
+        if (tag == yarpdataplayer_console_IDL_getAllParts_helper::s_tag) {
+            yarpdataplayer_console_IDL_getAllParts_helper helper;
+            if (!helper.cmd.readArgs(reader)) {
+                return false;
             }
-            yarpdataplayer_console_IDL_backward_helper::s_return_helper = backward(steps);
+
+            helper.call(this);
+
             yarp::os::idl::WireWriter writer(reader);
-            if (!writer.isNull()) {
-                if (!writer.writeListHeader(1)) {
-                    return false;
-                }
-                if (!writer.writeBool(yarpdataplayer_console_IDL_backward_helper::s_return_helper)) {
-                    return false;
-                }
+            if (!helper.reply.write(writer)) {
+                return false;
             }
             reader.accept();
             return true;
         }
-        if (tag == "getProgress") {
-            yarpdataplayer_console_IDL_getProgress_helper::s_return_helper = getProgress();
+        if (tag == yarpdataplayer_console_IDL_getPortName_helper::s_tag) {
+            yarpdataplayer_console_IDL_getPortName_helper helper;
+            if (!helper.cmd.readArgs(reader)) {
+                return false;
+            }
+
+            helper.call(this);
+
             yarp::os::idl::WireWriter writer(reader);
-            if (!writer.isNull()) {
-                if (!writer.writeListHeader(1)) {
-                    return false;
-                }
-                if (!writer.writeFloat64(yarpdataplayer_console_IDL_getProgress_helper::s_return_helper)) {
-                    return false;
-                }
+            if (!helper.reply.write(writer)) {
+                return false;
             }
             reader.accept();
             return true;
         }
-        if (tag == "getStatus") {
-            yarpdataplayer_console_IDL_getStatus_helper::s_return_helper = getStatus();
+        if (tag == yarpdataplayer_console_IDL_setPortName_helper::s_tag) {
+            yarpdataplayer_console_IDL_setPortName_helper helper;
+            if (!helper.cmd.readArgs(reader)) {
+                return false;
+            }
+
+            helper.call(this);
+
             yarp::os::idl::WireWriter writer(reader);
-            if (!writer.isNull()) {
-                if (!writer.writeListHeader(1)) {
-                    return false;
-                }
-                if (!writer.writeString(yarpdataplayer_console_IDL_getStatus_helper::s_return_helper)) {
-                    return false;
-                }
+            if (!helper.reply.write(writer)) {
+                return false;
             }
             reader.accept();
             return true;
         }
-        if (tag == "resume") {
-            yarpdataplayer_console_IDL_resume_helper::s_return_helper = resume();
+        if (tag == yarpdataplayer_console_IDL_setSpeed_helper::s_tag) {
+            yarpdataplayer_console_IDL_setSpeed_helper helper;
+            if (!helper.cmd.readArgs(reader)) {
+                return false;
+            }
+
+            helper.call(this);
+
             yarp::os::idl::WireWriter writer(reader);
-            if (!writer.isNull()) {
-                if (!writer.writeListHeader(1)) {
-                    return false;
-                }
-                if (!writer.writeBool(yarpdataplayer_console_IDL_resume_helper::s_return_helper)) {
-                    return false;
-                }
+            if (!helper.reply.write(writer)) {
+                return false;
             }
             reader.accept();
             return true;
         }
-        if (tag == "quit") {
-            yarpdataplayer_console_IDL_quit_helper::s_return_helper = quit();
+        if (tag == yarpdataplayer_console_IDL_getSpeed_helper::s_tag) {
+            yarpdataplayer_console_IDL_getSpeed_helper helper;
+            if (!helper.cmd.readArgs(reader)) {
+                return false;
+            }
+
+            helper.call(this);
+
             yarp::os::idl::WireWriter writer(reader);
-            if (!writer.isNull()) {
-                if (!writer.writeListHeader(1)) {
-                    return false;
-                }
-                if (!writer.writeBool(yarpdataplayer_console_IDL_quit_helper::s_return_helper)) {
-                    return false;
-                }
+            if (!helper.reply.write(writer)) {
+                return false;
+            }
+            reader.accept();
+            return true;
+        }
+        if (tag == yarpdataplayer_console_IDL_repeat_helper::s_tag) {
+            yarpdataplayer_console_IDL_repeat_helper helper;
+            if (!helper.cmd.readArgs(reader)) {
+                return false;
+            }
+
+            helper.call(this);
+
+            yarp::os::idl::WireWriter writer(reader);
+            if (!helper.reply.write(writer)) {
+                return false;
+            }
+            reader.accept();
+            return true;
+        }
+        if (tag == yarpdataplayer_console_IDL_setStrict_helper::s_tag) {
+            yarpdataplayer_console_IDL_setStrict_helper helper;
+            if (!helper.cmd.readArgs(reader)) {
+                return false;
+            }
+
+            helper.call(this);
+
+            yarp::os::idl::WireWriter writer(reader);
+            if (!helper.reply.write(writer)) {
+                return false;
+            }
+            reader.accept();
+            return true;
+        }
+        if (tag == yarpdataplayer_console_IDL_forward_helper::s_tag) {
+            yarpdataplayer_console_IDL_forward_helper helper;
+            if (!helper.cmd.readArgs(reader)) {
+                return false;
+            }
+
+            helper.call(this);
+
+            yarp::os::idl::WireWriter writer(reader);
+            if (!helper.reply.write(writer)) {
+                return false;
+            }
+            reader.accept();
+            return true;
+        }
+        if (tag == yarpdataplayer_console_IDL_backward_helper::s_tag) {
+            yarpdataplayer_console_IDL_backward_helper helper;
+            if (!helper.cmd.readArgs(reader)) {
+                return false;
+            }
+
+            helper.call(this);
+
+            yarp::os::idl::WireWriter writer(reader);
+            if (!helper.reply.write(writer)) {
+                return false;
+            }
+            reader.accept();
+            return true;
+        }
+        if (tag == yarpdataplayer_console_IDL_getProgress_helper::s_tag) {
+            yarpdataplayer_console_IDL_getProgress_helper helper;
+            if (!helper.cmd.readArgs(reader)) {
+                return false;
+            }
+
+            helper.call(this);
+
+            yarp::os::idl::WireWriter writer(reader);
+            if (!helper.reply.write(writer)) {
+                return false;
+            }
+            reader.accept();
+            return true;
+        }
+        if (tag == yarpdataplayer_console_IDL_getStatus_helper::s_tag) {
+            yarpdataplayer_console_IDL_getStatus_helper helper;
+            if (!helper.cmd.readArgs(reader)) {
+                return false;
+            }
+
+            helper.call(this);
+
+            yarp::os::idl::WireWriter writer(reader);
+            if (!helper.reply.write(writer)) {
+                return false;
+            }
+            reader.accept();
+            return true;
+        }
+        if (tag == yarpdataplayer_console_IDL_resume_helper::s_tag) {
+            yarpdataplayer_console_IDL_resume_helper helper;
+            if (!helper.cmd.readArgs(reader)) {
+                return false;
+            }
+
+            helper.call(this);
+
+            yarp::os::idl::WireWriter writer(reader);
+            if (!helper.reply.write(writer)) {
+                return false;
+            }
+            reader.accept();
+            return true;
+        }
+        if (tag == yarpdataplayer_console_IDL_quit_helper::s_tag) {
+            yarpdataplayer_console_IDL_quit_helper helper;
+            if (!helper.cmd.readArgs(reader)) {
+                return false;
+            }
+
+            helper.call(this);
+
+            yarp::os::idl::WireWriter writer(reader);
+            if (!helper.reply.write(writer)) {
+                return false;
             }
             reader.accept();
             return true;
@@ -1864,7 +5358,7 @@ bool yarpdataplayer_console_IDL::read(yarp::os::ConnectionReader& connection)
             return false;
         }
         std::string next_tag = reader.readTag();
-        if (next_tag == "") {
+        if (next_tag.empty()) {
             break;
         }
         tag.append("_").append(next_tag);

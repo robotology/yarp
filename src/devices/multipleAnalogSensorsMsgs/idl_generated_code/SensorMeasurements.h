@@ -20,10 +20,10 @@ class SensorMeasurements :
 {
 public:
     // Fields
-    std::vector<SensorMeasurement> measurements;
+    std::vector<SensorMeasurement> measurements{};
 
     // Default constructor
-    SensorMeasurements();
+    SensorMeasurements() = default;
 
     // Constructor with field values
     SensorMeasurements(const std::vector<SensorMeasurement>& measurements);

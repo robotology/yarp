@@ -16,21 +16,20 @@
 #include <yarp/os/Wire.h>
 #include <yarp/os/idl/WireTypes.h>
 
-namespace yarp {
-namespace dev {
+namespace yarp::dev {
 
 class YARP_dev_API audioBufferSizeData :
         public yarp::os::idl::WirePortable
 {
 public:
     // Fields
-    std::int32_t m_samples;
-    std::int32_t m_channels;
-    std::int32_t m_depth;
-    std::int32_t size;
+    std::int32_t m_samples{0};
+    std::int32_t m_channels{0};
+    std::int32_t m_depth{0};
+    std::int32_t size{0};
 
     // Default constructor
-    audioBufferSizeData();
+    audioBufferSizeData() = default;
 
     // Constructor with field values
     audioBufferSizeData(const std::int32_t m_samples,
@@ -196,7 +195,6 @@ private:
     bool nested_write_size(const yarp::os::idl::WireWriter& writer) const;
 };
 
-} // namespace yarp
-} // namespace dev
+} // namespace yarp::dev
 
 #endif // YARP_THRIFT_GENERATOR_STRUCT_AUDIOBUFFERSIZEDATA_H

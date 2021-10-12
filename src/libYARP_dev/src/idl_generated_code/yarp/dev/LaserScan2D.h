@@ -17,8 +17,7 @@
 #include <yarp/os/idl/WireTypes.h>
 #include <yarp/sig/Vector.h>
 
-namespace yarp {
-namespace dev {
+namespace yarp::dev {
 
 class YARP_dev_API LaserScan2D :
         public yarp::os::idl::WirePortable
@@ -28,27 +27,27 @@ public:
     /**
      * first angle of the scan [deg]
      */
-    double angle_min;
+    double angle_min{0.0};
     /**
      * last angle of the scan [deg]
      */
-    double angle_max;
+    double angle_max{0.0};
     /**
      * the minimum distance of the scan [m]
      */
-    double range_min;
+    double range_min{0.0};
     /**
      * the maximum distance of the scan [m]
      */
-    double range_max;
+    double range_max{0.0};
     /**
      * the scan data, measured in [m]. The angular increment of each ray is obtained by (angle_max-angle_min)/num_of_elements. Invalid data are represented as std::inf.
      */
-    yarp::sig::Vector scans;
-    std::int32_t status;
+    yarp::sig::Vector scans{};
+    std::int32_t status{0};
 
     // Default constructor
-    LaserScan2D();
+    LaserScan2D() = default;
 
     // Constructor with field values
     LaserScan2D(const double angle_min,
@@ -244,7 +243,6 @@ private:
     bool nested_write_status(const yarp::os::idl::WireWriter& writer) const;
 };
 
-} // namespace yarp
-} // namespace dev
+} // namespace yarp::dev
 
 #endif // YARP_THRIFT_GENERATOR_STRUCT_LASERSCAN2D_H

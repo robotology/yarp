@@ -214,6 +214,12 @@ foreach my $filename (@files) {
         next;
     }
 
+    if ("$filename" =~ /\.(clang-tidy|clang-format)$/) {
+        print_if_verbose "[SKIP (other - $1)] $filename\n";
+        $skip++;
+        next;
+    }
+
 
     # Read the file
     my $txt = "";

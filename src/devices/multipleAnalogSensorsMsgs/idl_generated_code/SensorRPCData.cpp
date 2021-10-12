@@ -10,22 +10,6 @@
 
 #include <SensorRPCData.h>
 
-// Default constructor
-SensorRPCData::SensorRPCData() :
-        WirePortable(),
-        ThreeAxisGyroscopes(),
-        ThreeAxisLinearAccelerometers(),
-        ThreeAxisMagnetometers(),
-        OrientationSensors(),
-        TemperatureSensors(),
-        SixAxisForceTorqueSensors(),
-        ContactLoadCellArrays(),
-        EncoderArrays(),
-        SkinPatches(),
-        PositionSensors()
-{
-}
-
 // Constructor with field values
 SensorRPCData::SensorRPCData(const std::vector<SensorMetadata>& ThreeAxisGyroscopes,
                              const std::vector<SensorMetadata>& ThreeAxisLinearAccelerometers,
@@ -1144,12 +1128,20 @@ void SensorRPCData::Editor::dirty_flags(bool flag)
 // read ThreeAxisGyroscopes field
 bool SensorRPCData::read_ThreeAxisGyroscopes(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     ThreeAxisGyroscopes.clear();
     uint32_t _size12;
     yarp::os::idl::WireState _etype15;
     reader.readListBegin(_etype15, _size12);
     ThreeAxisGyroscopes.resize(_size12);
     for (size_t _i16 = 0; _i16 < _size12; ++_i16) {
+        if (reader.noMore()) {
+            reader.fail();
+            return false;
+        }
         if (!reader.readNested(ThreeAxisGyroscopes[_i16])) {
             reader.fail();
             return false;
@@ -1179,12 +1171,20 @@ bool SensorRPCData::write_ThreeAxisGyroscopes(const yarp::os::idl::WireWriter& w
 // read (nested) ThreeAxisGyroscopes field
 bool SensorRPCData::nested_read_ThreeAxisGyroscopes(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     ThreeAxisGyroscopes.clear();
     uint32_t _size18;
     yarp::os::idl::WireState _etype21;
     reader.readListBegin(_etype21, _size18);
     ThreeAxisGyroscopes.resize(_size18);
     for (size_t _i22 = 0; _i22 < _size18; ++_i22) {
+        if (reader.noMore()) {
+            reader.fail();
+            return false;
+        }
         if (!reader.readNested(ThreeAxisGyroscopes[_i22])) {
             reader.fail();
             return false;
@@ -1214,12 +1214,20 @@ bool SensorRPCData::nested_write_ThreeAxisGyroscopes(const yarp::os::idl::WireWr
 // read ThreeAxisLinearAccelerometers field
 bool SensorRPCData::read_ThreeAxisLinearAccelerometers(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     ThreeAxisLinearAccelerometers.clear();
     uint32_t _size24;
     yarp::os::idl::WireState _etype27;
     reader.readListBegin(_etype27, _size24);
     ThreeAxisLinearAccelerometers.resize(_size24);
     for (size_t _i28 = 0; _i28 < _size24; ++_i28) {
+        if (reader.noMore()) {
+            reader.fail();
+            return false;
+        }
         if (!reader.readNested(ThreeAxisLinearAccelerometers[_i28])) {
             reader.fail();
             return false;
@@ -1249,12 +1257,20 @@ bool SensorRPCData::write_ThreeAxisLinearAccelerometers(const yarp::os::idl::Wir
 // read (nested) ThreeAxisLinearAccelerometers field
 bool SensorRPCData::nested_read_ThreeAxisLinearAccelerometers(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     ThreeAxisLinearAccelerometers.clear();
     uint32_t _size30;
     yarp::os::idl::WireState _etype33;
     reader.readListBegin(_etype33, _size30);
     ThreeAxisLinearAccelerometers.resize(_size30);
     for (size_t _i34 = 0; _i34 < _size30; ++_i34) {
+        if (reader.noMore()) {
+            reader.fail();
+            return false;
+        }
         if (!reader.readNested(ThreeAxisLinearAccelerometers[_i34])) {
             reader.fail();
             return false;
@@ -1284,12 +1300,20 @@ bool SensorRPCData::nested_write_ThreeAxisLinearAccelerometers(const yarp::os::i
 // read ThreeAxisMagnetometers field
 bool SensorRPCData::read_ThreeAxisMagnetometers(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     ThreeAxisMagnetometers.clear();
     uint32_t _size36;
     yarp::os::idl::WireState _etype39;
     reader.readListBegin(_etype39, _size36);
     ThreeAxisMagnetometers.resize(_size36);
     for (size_t _i40 = 0; _i40 < _size36; ++_i40) {
+        if (reader.noMore()) {
+            reader.fail();
+            return false;
+        }
         if (!reader.readNested(ThreeAxisMagnetometers[_i40])) {
             reader.fail();
             return false;
@@ -1319,12 +1343,20 @@ bool SensorRPCData::write_ThreeAxisMagnetometers(const yarp::os::idl::WireWriter
 // read (nested) ThreeAxisMagnetometers field
 bool SensorRPCData::nested_read_ThreeAxisMagnetometers(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     ThreeAxisMagnetometers.clear();
     uint32_t _size42;
     yarp::os::idl::WireState _etype45;
     reader.readListBegin(_etype45, _size42);
     ThreeAxisMagnetometers.resize(_size42);
     for (size_t _i46 = 0; _i46 < _size42; ++_i46) {
+        if (reader.noMore()) {
+            reader.fail();
+            return false;
+        }
         if (!reader.readNested(ThreeAxisMagnetometers[_i46])) {
             reader.fail();
             return false;
@@ -1354,12 +1386,20 @@ bool SensorRPCData::nested_write_ThreeAxisMagnetometers(const yarp::os::idl::Wir
 // read OrientationSensors field
 bool SensorRPCData::read_OrientationSensors(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     OrientationSensors.clear();
     uint32_t _size48;
     yarp::os::idl::WireState _etype51;
     reader.readListBegin(_etype51, _size48);
     OrientationSensors.resize(_size48);
     for (size_t _i52 = 0; _i52 < _size48; ++_i52) {
+        if (reader.noMore()) {
+            reader.fail();
+            return false;
+        }
         if (!reader.readNested(OrientationSensors[_i52])) {
             reader.fail();
             return false;
@@ -1389,12 +1429,20 @@ bool SensorRPCData::write_OrientationSensors(const yarp::os::idl::WireWriter& wr
 // read (nested) OrientationSensors field
 bool SensorRPCData::nested_read_OrientationSensors(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     OrientationSensors.clear();
     uint32_t _size54;
     yarp::os::idl::WireState _etype57;
     reader.readListBegin(_etype57, _size54);
     OrientationSensors.resize(_size54);
     for (size_t _i58 = 0; _i58 < _size54; ++_i58) {
+        if (reader.noMore()) {
+            reader.fail();
+            return false;
+        }
         if (!reader.readNested(OrientationSensors[_i58])) {
             reader.fail();
             return false;
@@ -1424,12 +1472,20 @@ bool SensorRPCData::nested_write_OrientationSensors(const yarp::os::idl::WireWri
 // read TemperatureSensors field
 bool SensorRPCData::read_TemperatureSensors(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     TemperatureSensors.clear();
     uint32_t _size60;
     yarp::os::idl::WireState _etype63;
     reader.readListBegin(_etype63, _size60);
     TemperatureSensors.resize(_size60);
     for (size_t _i64 = 0; _i64 < _size60; ++_i64) {
+        if (reader.noMore()) {
+            reader.fail();
+            return false;
+        }
         if (!reader.readNested(TemperatureSensors[_i64])) {
             reader.fail();
             return false;
@@ -1459,12 +1515,20 @@ bool SensorRPCData::write_TemperatureSensors(const yarp::os::idl::WireWriter& wr
 // read (nested) TemperatureSensors field
 bool SensorRPCData::nested_read_TemperatureSensors(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     TemperatureSensors.clear();
     uint32_t _size66;
     yarp::os::idl::WireState _etype69;
     reader.readListBegin(_etype69, _size66);
     TemperatureSensors.resize(_size66);
     for (size_t _i70 = 0; _i70 < _size66; ++_i70) {
+        if (reader.noMore()) {
+            reader.fail();
+            return false;
+        }
         if (!reader.readNested(TemperatureSensors[_i70])) {
             reader.fail();
             return false;
@@ -1494,12 +1558,20 @@ bool SensorRPCData::nested_write_TemperatureSensors(const yarp::os::idl::WireWri
 // read SixAxisForceTorqueSensors field
 bool SensorRPCData::read_SixAxisForceTorqueSensors(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     SixAxisForceTorqueSensors.clear();
     uint32_t _size72;
     yarp::os::idl::WireState _etype75;
     reader.readListBegin(_etype75, _size72);
     SixAxisForceTorqueSensors.resize(_size72);
     for (size_t _i76 = 0; _i76 < _size72; ++_i76) {
+        if (reader.noMore()) {
+            reader.fail();
+            return false;
+        }
         if (!reader.readNested(SixAxisForceTorqueSensors[_i76])) {
             reader.fail();
             return false;
@@ -1529,12 +1601,20 @@ bool SensorRPCData::write_SixAxisForceTorqueSensors(const yarp::os::idl::WireWri
 // read (nested) SixAxisForceTorqueSensors field
 bool SensorRPCData::nested_read_SixAxisForceTorqueSensors(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     SixAxisForceTorqueSensors.clear();
     uint32_t _size78;
     yarp::os::idl::WireState _etype81;
     reader.readListBegin(_etype81, _size78);
     SixAxisForceTorqueSensors.resize(_size78);
     for (size_t _i82 = 0; _i82 < _size78; ++_i82) {
+        if (reader.noMore()) {
+            reader.fail();
+            return false;
+        }
         if (!reader.readNested(SixAxisForceTorqueSensors[_i82])) {
             reader.fail();
             return false;
@@ -1564,12 +1644,20 @@ bool SensorRPCData::nested_write_SixAxisForceTorqueSensors(const yarp::os::idl::
 // read ContactLoadCellArrays field
 bool SensorRPCData::read_ContactLoadCellArrays(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     ContactLoadCellArrays.clear();
     uint32_t _size84;
     yarp::os::idl::WireState _etype87;
     reader.readListBegin(_etype87, _size84);
     ContactLoadCellArrays.resize(_size84);
     for (size_t _i88 = 0; _i88 < _size84; ++_i88) {
+        if (reader.noMore()) {
+            reader.fail();
+            return false;
+        }
         if (!reader.readNested(ContactLoadCellArrays[_i88])) {
             reader.fail();
             return false;
@@ -1599,12 +1687,20 @@ bool SensorRPCData::write_ContactLoadCellArrays(const yarp::os::idl::WireWriter&
 // read (nested) ContactLoadCellArrays field
 bool SensorRPCData::nested_read_ContactLoadCellArrays(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     ContactLoadCellArrays.clear();
     uint32_t _size90;
     yarp::os::idl::WireState _etype93;
     reader.readListBegin(_etype93, _size90);
     ContactLoadCellArrays.resize(_size90);
     for (size_t _i94 = 0; _i94 < _size90; ++_i94) {
+        if (reader.noMore()) {
+            reader.fail();
+            return false;
+        }
         if (!reader.readNested(ContactLoadCellArrays[_i94])) {
             reader.fail();
             return false;
@@ -1634,12 +1730,20 @@ bool SensorRPCData::nested_write_ContactLoadCellArrays(const yarp::os::idl::Wire
 // read EncoderArrays field
 bool SensorRPCData::read_EncoderArrays(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     EncoderArrays.clear();
     uint32_t _size96;
     yarp::os::idl::WireState _etype99;
     reader.readListBegin(_etype99, _size96);
     EncoderArrays.resize(_size96);
     for (size_t _i100 = 0; _i100 < _size96; ++_i100) {
+        if (reader.noMore()) {
+            reader.fail();
+            return false;
+        }
         if (!reader.readNested(EncoderArrays[_i100])) {
             reader.fail();
             return false;
@@ -1669,12 +1773,20 @@ bool SensorRPCData::write_EncoderArrays(const yarp::os::idl::WireWriter& writer)
 // read (nested) EncoderArrays field
 bool SensorRPCData::nested_read_EncoderArrays(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     EncoderArrays.clear();
     uint32_t _size102;
     yarp::os::idl::WireState _etype105;
     reader.readListBegin(_etype105, _size102);
     EncoderArrays.resize(_size102);
     for (size_t _i106 = 0; _i106 < _size102; ++_i106) {
+        if (reader.noMore()) {
+            reader.fail();
+            return false;
+        }
         if (!reader.readNested(EncoderArrays[_i106])) {
             reader.fail();
             return false;
@@ -1704,12 +1816,20 @@ bool SensorRPCData::nested_write_EncoderArrays(const yarp::os::idl::WireWriter& 
 // read SkinPatches field
 bool SensorRPCData::read_SkinPatches(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     SkinPatches.clear();
     uint32_t _size108;
     yarp::os::idl::WireState _etype111;
     reader.readListBegin(_etype111, _size108);
     SkinPatches.resize(_size108);
     for (size_t _i112 = 0; _i112 < _size108; ++_i112) {
+        if (reader.noMore()) {
+            reader.fail();
+            return false;
+        }
         if (!reader.readNested(SkinPatches[_i112])) {
             reader.fail();
             return false;
@@ -1739,12 +1859,20 @@ bool SensorRPCData::write_SkinPatches(const yarp::os::idl::WireWriter& writer) c
 // read (nested) SkinPatches field
 bool SensorRPCData::nested_read_SkinPatches(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     SkinPatches.clear();
     uint32_t _size114;
     yarp::os::idl::WireState _etype117;
     reader.readListBegin(_etype117, _size114);
     SkinPatches.resize(_size114);
     for (size_t _i118 = 0; _i118 < _size114; ++_i118) {
+        if (reader.noMore()) {
+            reader.fail();
+            return false;
+        }
         if (!reader.readNested(SkinPatches[_i118])) {
             reader.fail();
             return false;
@@ -1774,12 +1902,20 @@ bool SensorRPCData::nested_write_SkinPatches(const yarp::os::idl::WireWriter& wr
 // read PositionSensors field
 bool SensorRPCData::read_PositionSensors(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     PositionSensors.clear();
     uint32_t _size120;
     yarp::os::idl::WireState _etype123;
     reader.readListBegin(_etype123, _size120);
     PositionSensors.resize(_size120);
     for (size_t _i124 = 0; _i124 < _size120; ++_i124) {
+        if (reader.noMore()) {
+            reader.fail();
+            return false;
+        }
         if (!reader.readNested(PositionSensors[_i124])) {
             reader.fail();
             return false;
@@ -1809,12 +1945,20 @@ bool SensorRPCData::write_PositionSensors(const yarp::os::idl::WireWriter& write
 // read (nested) PositionSensors field
 bool SensorRPCData::nested_read_PositionSensors(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     PositionSensors.clear();
     uint32_t _size126;
     yarp::os::idl::WireState _etype129;
     reader.readListBegin(_etype129, _size126);
     PositionSensors.resize(_size126);
     for (size_t _i130 = 0; _i130 < _size126; ++_i130) {
+        if (reader.noMore()) {
+            reader.fail();
+            return false;
+        }
         if (!reader.readNested(PositionSensors[_i130])) {
             reader.fail();
             return false;

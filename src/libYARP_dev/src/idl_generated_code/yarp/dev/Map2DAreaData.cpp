@@ -10,17 +10,7 @@
 
 #include <yarp/dev/Map2DAreaData.h>
 
-namespace yarp {
-namespace dev {
-
-// Default constructor
-Map2DAreaData::Map2DAreaData() :
-        WirePortable(),
-        map_id(""),
-        points(),
-        description("")
-{
-}
+namespace yarp::dev {
 
 // Constructor with field values
 Map2DAreaData::Map2DAreaData(const std::string& map_id,
@@ -520,6 +510,10 @@ void Map2DAreaData::Editor::dirty_flags(bool flag)
 // read map_id field
 bool Map2DAreaData::read_map_id(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readString(map_id)) {
         reader.fail();
         return false;
@@ -539,6 +533,10 @@ bool Map2DAreaData::write_map_id(const yarp::os::idl::WireWriter& writer) const
 // read (nested) map_id field
 bool Map2DAreaData::nested_read_map_id(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readString(map_id)) {
         reader.fail();
         return false;
@@ -558,12 +556,20 @@ bool Map2DAreaData::nested_write_map_id(const yarp::os::idl::WireWriter& writer)
 // read points field
 bool Map2DAreaData::read_points(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     points.clear();
     uint32_t _size0;
     yarp::os::idl::WireState _etype3;
     reader.readListBegin(_etype3, _size0);
     points.resize(_size0);
     for (size_t _i4 = 0; _i4 < _size0; ++_i4) {
+        if (reader.noMore()) {
+            reader.fail();
+            return false;
+        }
         if (!reader.readNested(points[_i4])) {
             reader.fail();
             return false;
@@ -593,12 +599,20 @@ bool Map2DAreaData::write_points(const yarp::os::idl::WireWriter& writer) const
 // read (nested) points field
 bool Map2DAreaData::nested_read_points(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     points.clear();
     uint32_t _size6;
     yarp::os::idl::WireState _etype9;
     reader.readListBegin(_etype9, _size6);
     points.resize(_size6);
     for (size_t _i10 = 0; _i10 < _size6; ++_i10) {
+        if (reader.noMore()) {
+            reader.fail();
+            return false;
+        }
         if (!reader.readNested(points[_i10])) {
             reader.fail();
             return false;
@@ -628,6 +642,10 @@ bool Map2DAreaData::nested_write_points(const yarp::os::idl::WireWriter& writer)
 // read description field
 bool Map2DAreaData::read_description(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readString(description)) {
         reader.fail();
         return false;
@@ -647,6 +665,10 @@ bool Map2DAreaData::write_description(const yarp::os::idl::WireWriter& writer) c
 // read (nested) description field
 bool Map2DAreaData::nested_read_description(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readString(description)) {
         reader.fail();
         return false;
@@ -663,5 +685,4 @@ bool Map2DAreaData::nested_write_description(const yarp::os::idl::WireWriter& wr
     return true;
 }
 
-} // namespace yarp
-} // namespace dev
+} // namespace yarp::dev

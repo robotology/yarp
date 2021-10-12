@@ -44,6 +44,6 @@ struct Box3D
 
 struct SurfaceMeshWithBoundingBox
 {
-1:SurfaceMesh mesh;
-2:Box3D boundingBox;
+1: SurfaceMesh mesh;
+2: Box3D boundingBox;
 }

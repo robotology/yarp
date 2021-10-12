@@ -109,7 +109,12 @@ bool yarp::os::NullConnectionWriter::isNull() const
     return true;
 }
 
-yarp::os::SizedWriter* yarp::os::NullConnectionWriter::getBuffer() const
+yarp::os::SizedWriter* yarp::os::NullConnectionWriter::getBuffer()
+{
+    return nullptr;
+}
+
+const yarp::os::SizedWriter* yarp::os::NullConnectionWriter::getBuffer() const
 {
     return nullptr;
 }

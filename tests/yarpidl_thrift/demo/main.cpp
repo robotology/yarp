@@ -135,7 +135,7 @@ public:
         return demoStructMap;
     }
 
-    bool this_is_a_const_method() const {
+    bool this_is_a_const_method() const override {
         return true;
     }
 };
@@ -154,8 +154,12 @@ class WrappingServer : public Wrapping
 {
 public:
     int32_t check(const yarp::os::Value& param) override {
-        if (param.isInt32()) return param.asInt32()+1;
-        if (param.asString()=="6*7") return 42;
+        if (param.isInt32()) {
+            return param.asInt32()+1;
+        }
+        if (param.asString()=="6*7") {
+            return 42;
+        }
         return 9;
     }
 
@@ -238,7 +242,7 @@ public:
 TEST_CASE("IdlThriftTest", "[yarp::idl::thrift]")
 {
     Network yarp;
-    yarp.setLocalMode(true);
+    yarp::os::Network::setLocalMode(true);
 
     SECTION("add one")
     {
@@ -330,7 +334,8 @@ TEST_CASE("IdlThriftTest", "[yarp::idl::thrift]")
 
         // Check regular RPC works, even with oneways
 
-        Bottle cmd, reply;
+        Bottle cmd;
+        Bottle reply;
 
         cmd.fromString("[add] [one] 5");
         client_port.write(cmd,reply);
@@ -411,7 +416,8 @@ TEST_CASE("IdlThriftTest", "[yarp::idl::thrift]")
         REQUIRE(yarp.connect(client_port.getName(), server_port.getName()));
         server.yarp().attachAsServer(server_port);
 
-        Bottle msg, reply;
+        Bottle msg;
+        Bottle reply;
         msg.fromString("add pair 4 3");
         client_port.write(msg,reply);
         INFO(msg.toString() << " -> " << reply.toString());
@@ -471,7 +477,8 @@ TEST_CASE("IdlThriftTest", "[yarp::idl::thrift]")
         REQUIRE(yarp.connect(client_port.getName(), server_port.getName()));
         server.yarp().attachAsServer(server_port);
 
-        Bottle msg, reply;
+        Bottle msg;
+        Bottle reply;
         msg.fromString("test_tail_defaults");
         client_port.write(msg,reply);
         INFO(msg.toString() << " -> " << reply.toString());
@@ -490,7 +497,7 @@ TEST_CASE("IdlThriftTest", "[yarp::idl::thrift]")
         msg.fromString("test longer tail defaults 888");
         client_port.write(msg,reply);
         INFO(msg.toString() << " -> " << reply.toString());
-        CHECK(reply.get(0).asInt32() == 999);;
+        CHECK(reply.get(0).asInt32() == 999);
 
         msg.fromString("test longer tail defaults 888 ENUM2 47");
         client_port.write(msg,reply);
@@ -509,7 +516,8 @@ TEST_CASE("IdlThriftTest", "[yarp::idl::thrift]")
         REQUIRE(yarp.connect(client_port.getName(), server_port.getName()));
         server.yarp().attachAsServer(server_port);
 
-        Bottle msg, reply;
+        Bottle msg;
+        Bottle reply;
         msg.fromString("add_one 42");
         client_port.write(msg,reply);
         INFO(msg.toString() << " -> " << reply.toString());
@@ -582,7 +590,8 @@ TEST_CASE("IdlThriftTest", "[yarp::idl::thrift]")
         INFO("Bottle is " << b.toString());
         CHECK(b.size() == 5);
 
-        Bottle cmd, reply;
+        Bottle cmd;
+        Bottle reply;
         cmd.fromString("getBottle");
         client_port.write(cmd,reply);
         INFO("Bottle is " << reply.get(0).toString());
@@ -771,7 +780,7 @@ TEST_CASE("IdlThriftTest", "[yarp::idl::thrift]")
         bot.read(con.getReader());
         INFO("Structure general help is " << bot.toString());
         std::string help = bot.toString();
-        CHECK(help.find("x") != std::string::npos);
+        CHECK(help.find('x') != std::string::npos);
     }
 
     SECTION("test structure specific help")
@@ -792,7 +801,8 @@ TEST_CASE("IdlThriftTest", "[yarp::idl::thrift]")
 
     SECTION("test primitives")
     {
-        TestSomeMoreTypes a, b;
+        TestSomeMoreTypes a;
+        TestSomeMoreTypes b;
         Bottle tmp;
         a.a_bool = true;
         a.a_i8 = 8;
@@ -809,7 +819,8 @@ TEST_CASE("IdlThriftTest", "[yarp::idl::thrift]")
 
     SECTION("test annotated types")
     {
-        TestAnnotatedTypes a, b;
+        TestAnnotatedTypes a;
+        TestAnnotatedTypes b;
         Bottle tmp;
         a.a_vocab = yarp::os::createVocab32('d', 'e', 'm', 'o');
         a.a_ui8 = 0xff;
@@ -861,7 +872,8 @@ TEST_CASE("IdlThriftTest", "[yarp::idl::thrift]")
         CHECK(receiver.state().id == 6); // int group
         CHECK(receiver.state().name == "world"); // string group
 
-        yarp::os::Bottle cmd, reply;
+        yarp::os::Bottle cmd;
+        yarp::os::Bottle reply;
         cmd.fromString("patch (set id 3) (set name frog)");
         sender_port.write(cmd,reply);
         CHECK(reply.toString() == "[ok]"); // return on success
@@ -943,6 +955,5 @@ TEST_CASE("IdlThriftTest", "[yarp::idl::thrift]")
 
         INFO("calling a const method");
         CHECK(const_cast<const Demo&>(client).this_is_a_const_method());
-
     }
 }

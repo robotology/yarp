@@ -17,40 +17,38 @@
 #include <yarp/os/idl/WireTypes.h>
 #include <yarp/sig/Vector.h>
 
-namespace yarp {
-namespace dev {
-namespace impl {
+namespace yarp::dev::impl {
 
 class YARP_dev_API jointData :
         public yarp::os::idl::WirePortable
 {
 public:
     // Fields
-    yarp::sig::VectorOf<double> jointPosition;
-    bool jointPosition_isValid;
-    yarp::sig::VectorOf<double> jointVelocity;
-    bool jointVelocity_isValid;
-    yarp::sig::VectorOf<double> jointAcceleration;
-    bool jointAcceleration_isValid;
-    yarp::sig::VectorOf<double> motorPosition;
-    bool motorPosition_isValid;
-    yarp::sig::VectorOf<double> motorVelocity;
-    bool motorVelocity_isValid;
-    yarp::sig::VectorOf<double> motorAcceleration;
-    bool motorAcceleration_isValid;
-    yarp::sig::VectorOf<double> torque;
-    bool torque_isValid;
-    yarp::sig::VectorOf<double> pwmDutycycle;
-    bool pwmDutycycle_isValid;
-    yarp::sig::VectorOf<double> current;
-    bool current_isValid;
-    yarp::sig::VectorOf<int> controlMode;
-    bool controlMode_isValid;
-    yarp::sig::VectorOf<int> interactionMode;
-    bool interactionMode_isValid;
+    yarp::sig::VectorOf<double> jointPosition{};
+    bool jointPosition_isValid{false};
+    yarp::sig::VectorOf<double> jointVelocity{};
+    bool jointVelocity_isValid{false};
+    yarp::sig::VectorOf<double> jointAcceleration{};
+    bool jointAcceleration_isValid{false};
+    yarp::sig::VectorOf<double> motorPosition{};
+    bool motorPosition_isValid{false};
+    yarp::sig::VectorOf<double> motorVelocity{};
+    bool motorVelocity_isValid{false};
+    yarp::sig::VectorOf<double> motorAcceleration{};
+    bool motorAcceleration_isValid{false};
+    yarp::sig::VectorOf<double> torque{};
+    bool torque_isValid{false};
+    yarp::sig::VectorOf<double> pwmDutycycle{};
+    bool pwmDutycycle_isValid{false};
+    yarp::sig::VectorOf<double> current{};
+    bool current_isValid{false};
+    yarp::sig::VectorOf<int> controlMode{};
+    bool controlMode_isValid{false};
+    yarp::sig::VectorOf<int> interactionMode{};
+    bool interactionMode_isValid{false};
 
     // Default constructor
-    jointData();
+    jointData() = default;
 
     // Constructor with field values
     jointData(const yarp::sig::VectorOf<double>& jointPosition,
@@ -486,8 +484,6 @@ private:
     bool nested_write_interactionMode_isValid(const yarp::os::idl::WireWriter& writer) const;
 };
 
-} // namespace yarp
-} // namespace dev
-} // namespace impl
+} // namespace yarp::dev::impl
 
 #endif // YARP_THRIFT_GENERATOR_STRUCT_JOINTDATA_H

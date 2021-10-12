@@ -10,22 +10,6 @@
 
 #include <SensorStreamingData.h>
 
-// Default constructor
-SensorStreamingData::SensorStreamingData() :
-        WirePortable(),
-        ThreeAxisGyroscopes(),
-        ThreeAxisLinearAccelerometers(),
-        ThreeAxisMagnetometers(),
-        OrientationSensors(),
-        TemperatureSensors(),
-        SixAxisForceTorqueSensors(),
-        ContactLoadCellArrays(),
-        EncoderArrays(),
-        SkinPatches(),
-        PositionSensors()
-{
-}
-
 // Constructor with field values
 SensorStreamingData::SensorStreamingData(const SensorMeasurements& ThreeAxisGyroscopes,
                                          const SensorMeasurements& ThreeAxisLinearAccelerometers,
@@ -1044,6 +1028,10 @@ void SensorStreamingData::Editor::dirty_flags(bool flag)
 // read ThreeAxisGyroscopes field
 bool SensorStreamingData::read_ThreeAxisGyroscopes(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.read(ThreeAxisGyroscopes)) {
         reader.fail();
         return false;
@@ -1063,6 +1051,10 @@ bool SensorStreamingData::write_ThreeAxisGyroscopes(const yarp::os::idl::WireWri
 // read (nested) ThreeAxisGyroscopes field
 bool SensorStreamingData::nested_read_ThreeAxisGyroscopes(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readNested(ThreeAxisGyroscopes)) {
         reader.fail();
         return false;
@@ -1082,6 +1074,10 @@ bool SensorStreamingData::nested_write_ThreeAxisGyroscopes(const yarp::os::idl::
 // read ThreeAxisLinearAccelerometers field
 bool SensorStreamingData::read_ThreeAxisLinearAccelerometers(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.read(ThreeAxisLinearAccelerometers)) {
         reader.fail();
         return false;
@@ -1101,6 +1097,10 @@ bool SensorStreamingData::write_ThreeAxisLinearAccelerometers(const yarp::os::id
 // read (nested) ThreeAxisLinearAccelerometers field
 bool SensorStreamingData::nested_read_ThreeAxisLinearAccelerometers(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readNested(ThreeAxisLinearAccelerometers)) {
         reader.fail();
         return false;
@@ -1120,6 +1120,10 @@ bool SensorStreamingData::nested_write_ThreeAxisLinearAccelerometers(const yarp:
 // read ThreeAxisMagnetometers field
 bool SensorStreamingData::read_ThreeAxisMagnetometers(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.read(ThreeAxisMagnetometers)) {
         reader.fail();
         return false;
@@ -1139,6 +1143,10 @@ bool SensorStreamingData::write_ThreeAxisMagnetometers(const yarp::os::idl::Wire
 // read (nested) ThreeAxisMagnetometers field
 bool SensorStreamingData::nested_read_ThreeAxisMagnetometers(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readNested(ThreeAxisMagnetometers)) {
         reader.fail();
         return false;
@@ -1158,6 +1166,10 @@ bool SensorStreamingData::nested_write_ThreeAxisMagnetometers(const yarp::os::id
 // read OrientationSensors field
 bool SensorStreamingData::read_OrientationSensors(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.read(OrientationSensors)) {
         reader.fail();
         return false;
@@ -1177,6 +1189,10 @@ bool SensorStreamingData::write_OrientationSensors(const yarp::os::idl::WireWrit
 // read (nested) OrientationSensors field
 bool SensorStreamingData::nested_read_OrientationSensors(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readNested(OrientationSensors)) {
         reader.fail();
         return false;
@@ -1196,6 +1212,10 @@ bool SensorStreamingData::nested_write_OrientationSensors(const yarp::os::idl::W
 // read TemperatureSensors field
 bool SensorStreamingData::read_TemperatureSensors(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.read(TemperatureSensors)) {
         reader.fail();
         return false;
@@ -1215,6 +1235,10 @@ bool SensorStreamingData::write_TemperatureSensors(const yarp::os::idl::WireWrit
 // read (nested) TemperatureSensors field
 bool SensorStreamingData::nested_read_TemperatureSensors(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readNested(TemperatureSensors)) {
         reader.fail();
         return false;
@@ -1234,6 +1258,10 @@ bool SensorStreamingData::nested_write_TemperatureSensors(const yarp::os::idl::W
 // read SixAxisForceTorqueSensors field
 bool SensorStreamingData::read_SixAxisForceTorqueSensors(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.read(SixAxisForceTorqueSensors)) {
         reader.fail();
         return false;
@@ -1253,6 +1281,10 @@ bool SensorStreamingData::write_SixAxisForceTorqueSensors(const yarp::os::idl::W
 // read (nested) SixAxisForceTorqueSensors field
 bool SensorStreamingData::nested_read_SixAxisForceTorqueSensors(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readNested(SixAxisForceTorqueSensors)) {
         reader.fail();
         return false;
@@ -1272,6 +1304,10 @@ bool SensorStreamingData::nested_write_SixAxisForceTorqueSensors(const yarp::os:
 // read ContactLoadCellArrays field
 bool SensorStreamingData::read_ContactLoadCellArrays(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.read(ContactLoadCellArrays)) {
         reader.fail();
         return false;
@@ -1291,6 +1327,10 @@ bool SensorStreamingData::write_ContactLoadCellArrays(const yarp::os::idl::WireW
 // read (nested) ContactLoadCellArrays field
 bool SensorStreamingData::nested_read_ContactLoadCellArrays(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readNested(ContactLoadCellArrays)) {
         reader.fail();
         return false;
@@ -1310,6 +1350,10 @@ bool SensorStreamingData::nested_write_ContactLoadCellArrays(const yarp::os::idl
 // read EncoderArrays field
 bool SensorStreamingData::read_EncoderArrays(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.read(EncoderArrays)) {
         reader.fail();
         return false;
@@ -1329,6 +1373,10 @@ bool SensorStreamingData::write_EncoderArrays(const yarp::os::idl::WireWriter& w
 // read (nested) EncoderArrays field
 bool SensorStreamingData::nested_read_EncoderArrays(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readNested(EncoderArrays)) {
         reader.fail();
         return false;
@@ -1348,6 +1396,10 @@ bool SensorStreamingData::nested_write_EncoderArrays(const yarp::os::idl::WireWr
 // read SkinPatches field
 bool SensorStreamingData::read_SkinPatches(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.read(SkinPatches)) {
         reader.fail();
         return false;
@@ -1367,6 +1419,10 @@ bool SensorStreamingData::write_SkinPatches(const yarp::os::idl::WireWriter& wri
 // read (nested) SkinPatches field
 bool SensorStreamingData::nested_read_SkinPatches(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readNested(SkinPatches)) {
         reader.fail();
         return false;
@@ -1386,6 +1442,10 @@ bool SensorStreamingData::nested_write_SkinPatches(const yarp::os::idl::WireWrit
 // read PositionSensors field
 bool SensorStreamingData::read_PositionSensors(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.read(PositionSensors)) {
         reader.fail();
         return false;
@@ -1405,6 +1465,10 @@ bool SensorStreamingData::write_PositionSensors(const yarp::os::idl::WireWriter&
 // read (nested) PositionSensors field
 bool SensorStreamingData::nested_read_PositionSensors(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readNested(PositionSensors)) {
         reader.fail();
         return false;

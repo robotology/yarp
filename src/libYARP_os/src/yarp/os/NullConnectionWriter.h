@@ -40,7 +40,8 @@ public:
     bool isError() const override;
     void requestDrop() override;
     bool isNull() const override;
-    SizedWriter* getBuffer() const override;
+    SizedWriter* getBuffer() override;
+    const SizedWriter* getBuffer() const override;
 };
 
 } // namespace yarp::os

@@ -10,15 +10,6 @@
 
 #include <SensorMetadata.h>
 
-// Default constructor
-SensorMetadata::SensorMetadata() :
-        WirePortable(),
-        name(""),
-        frameName(""),
-        additionalMetadata("")
-{
-}
-
 // Constructor with field values
 SensorMetadata::SensorMetadata(const std::string& name,
                                const std::string& frameName,
@@ -498,6 +489,10 @@ void SensorMetadata::Editor::dirty_flags(bool flag)
 // read name field
 bool SensorMetadata::read_name(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readString(name)) {
         reader.fail();
         return false;
@@ -517,6 +512,10 @@ bool SensorMetadata::write_name(const yarp::os::idl::WireWriter& writer) const
 // read (nested) name field
 bool SensorMetadata::nested_read_name(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readString(name)) {
         reader.fail();
         return false;
@@ -536,6 +535,10 @@ bool SensorMetadata::nested_write_name(const yarp::os::idl::WireWriter& writer) 
 // read frameName field
 bool SensorMetadata::read_frameName(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readString(frameName)) {
         reader.fail();
         return false;
@@ -555,6 +558,10 @@ bool SensorMetadata::write_frameName(const yarp::os::idl::WireWriter& writer) co
 // read (nested) frameName field
 bool SensorMetadata::nested_read_frameName(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readString(frameName)) {
         reader.fail();
         return false;
@@ -574,6 +581,10 @@ bool SensorMetadata::nested_write_frameName(const yarp::os::idl::WireWriter& wri
 // read additionalMetadata field
 bool SensorMetadata::read_additionalMetadata(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readString(additionalMetadata)) {
         reader.fail();
         return false;
@@ -593,6 +604,10 @@ bool SensorMetadata::write_additionalMetadata(const yarp::os::idl::WireWriter& w
 // read (nested) additionalMetadata field
 bool SensorMetadata::nested_read_additionalMetadata(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readString(additionalMetadata)) {
         reader.fail();
         return false;

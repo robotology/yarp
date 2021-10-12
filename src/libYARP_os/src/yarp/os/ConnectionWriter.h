@@ -259,11 +259,14 @@ public:
 
 
     /**
-     *
      * @return a buffer if one is present.
-     *
      */
-    virtual SizedWriter* getBuffer() const = 0;
+    virtual SizedWriter* getBuffer() = 0;
+
+    /**
+     * @return a buffer if one is present (const version).
+     */
+    virtual const SizedWriter* getBuffer() const = 0;
 
     /**
      *

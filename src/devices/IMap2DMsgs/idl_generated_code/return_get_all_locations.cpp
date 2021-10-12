@@ -10,14 +10,6 @@
 
 #include <return_get_all_locations.h>
 
-// Default constructor
-return_get_all_locations::return_get_all_locations() :
-        WirePortable(),
-        retval(false),
-        locations()
-{
-}
-
 // Constructor with field values
 return_get_all_locations::return_get_all_locations(const bool retval,
                                                    const std::vector<yarp::dev::Nav2D::Map2DLocation>& locations) :
@@ -431,7 +423,7 @@ void return_get_all_locations::Editor::dirty_flags(bool flag)
 bool return_get_all_locations::read_retval(yarp::os::idl::WireReader& reader)
 {
     if (!reader.readBool(retval)) {
-        retval = 0;
+        retval = false;
     }
     return true;
 }
@@ -449,7 +441,7 @@ bool return_get_all_locations::write_retval(const yarp::os::idl::WireWriter& wri
 bool return_get_all_locations::nested_read_retval(yarp::os::idl::WireReader& reader)
 {
     if (!reader.readBool(retval)) {
-        retval = 0;
+        retval = false;
     }
     return true;
 }
@@ -466,12 +458,20 @@ bool return_get_all_locations::nested_write_retval(const yarp::os::idl::WireWrit
 // read locations field
 bool return_get_all_locations::read_locations(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     locations.clear();
     uint32_t _size48;
     yarp::os::idl::WireState _etype51;
     reader.readListBegin(_etype51, _size48);
     locations.resize(_size48);
     for (size_t _i52 = 0; _i52 < _size48; ++_i52) {
+        if (reader.noMore()) {
+            reader.fail();
+            return false;
+        }
         if (!reader.readNested(locations[_i52])) {
             reader.fail();
             return false;
@@ -501,12 +501,20 @@ bool return_get_all_locations::write_locations(const yarp::os::idl::WireWriter& 
 // read (nested) locations field
 bool return_get_all_locations::nested_read_locations(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     locations.clear();
     uint32_t _size54;
     yarp::os::idl::WireState _etype57;
     reader.readListBegin(_etype57, _size54);
     locations.resize(_size54);
     for (size_t _i58 = 0; _i58 < _size54; ++_i58) {
+        if (reader.noMore()) {
+            reader.fail();
+            return false;
+        }
         if (!reader.readNested(locations[_i58])) {
             reader.fail();
             return false;

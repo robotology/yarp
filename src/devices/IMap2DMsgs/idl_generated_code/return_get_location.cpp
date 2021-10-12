@@ -10,14 +10,6 @@
 
 #include <return_get_location.h>
 
-// Default constructor
-return_get_location::return_get_location() :
-        WirePortable(),
-        retval(false),
-        loc()
-{
-}
-
 // Constructor with field values
 return_get_location::return_get_location(const bool retval,
                                          const yarp::dev::Nav2D::Map2DLocation& loc) :
@@ -33,7 +25,7 @@ bool return_get_location::read(yarp::os::idl::WireReader& reader)
     if (!read_retval(reader)) {
         return false;
     }
-    if (!read_loc(reader)) {
+    if (!nested_read_loc(reader)) {
         return false;
     }
     return !reader.isError();
@@ -55,7 +47,7 @@ bool return_get_location::write(const yarp::os::idl::WireWriter& writer) const
     if (!write_retval(writer)) {
         return false;
     }
-    if (!write_loc(writer)) {
+    if (!nested_write_loc(writer)) {
         return false;
     }
     return !writer.isError();
@@ -421,7 +413,7 @@ void return_get_location::Editor::dirty_flags(bool flag)
 bool return_get_location::read_retval(yarp::os::idl::WireReader& reader)
 {
     if (!reader.readBool(retval)) {
-        retval = 0;
+        retval = false;
     }
     return true;
 }
@@ -439,7 +431,7 @@ bool return_get_location::write_retval(const yarp::os::idl::WireWriter& writer) 
 bool return_get_location::nested_read_retval(yarp::os::idl::WireReader& reader)
 {
     if (!reader.readBool(retval)) {
-        retval = 0;
+        retval = false;
     }
     return true;
 }
@@ -456,6 +448,10 @@ bool return_get_location::nested_write_retval(const yarp::os::idl::WireWriter& w
 // read loc field
 bool return_get_location::read_loc(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.read(loc)) {
         reader.fail();
         return false;
@@ -475,6 +471,10 @@ bool return_get_location::write_loc(const yarp::os::idl::WireWriter& writer) con
 // read (nested) loc field
 bool return_get_location::nested_read_loc(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readNested(loc)) {
         reader.fail();
         return false;

@@ -20,11 +20,11 @@ class return_get_path :
 {
 public:
     // Fields
-    bool retval;
-    yarp::dev::Nav2D::Map2DPath path;
+    bool retval{false};
+    yarp::dev::Nav2D::Map2DPath path{};
 
     // Default constructor
-    return_get_path();
+    return_get_path() = default;
 
     // Constructor with field values
     return_get_path(const bool retval,

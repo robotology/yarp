@@ -18,8 +18,7 @@
 
 #include <yarp/dev/AudioRecorderStatus_common.h>
 
-namespace yarp {
-namespace dev {
+namespace yarp::dev {
 
 /**
  * \brief `AudioRecorderStatus`: A class used to describe the status of an audio recorder device.
@@ -33,18 +32,18 @@ public:
     /**
      * true if the playback is currently enabled
      */
-    bool enabled;
+    bool enabled{false};
     /**
      * the size of the audio buffer [samples]
      */
-    size_t current_buffer_size;
+    size_t current_buffer_size{0};
     /**
      * the max_size of the audio buffer [samples]
      */
-    size_t max_buffer_size;
+    size_t max_buffer_size{0};
 
     // Default constructor
-    AudioRecorderStatus();
+    AudioRecorderStatus() = default;
 
     // Constructor with field values
     AudioRecorderStatus(const bool enabled,
@@ -195,7 +194,6 @@ private:
     bool nested_write_max_buffer_size(const yarp::os::idl::WireWriter& writer) const;
 };
 
-} // namespace yarp
-} // namespace dev
+} // namespace yarp::dev
 
 #endif // YARP_THRIFT_GENERATOR_STRUCT_AUDIORECORDERSTATUS_H

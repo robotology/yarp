@@ -10,14 +10,6 @@
 
 #include <return_get_path.h>
 
-// Default constructor
-return_get_path::return_get_path() :
-        WirePortable(),
-        retval(false),
-        path()
-{
-}
-
 // Constructor with field values
 return_get_path::return_get_path(const bool retval,
                                  const yarp::dev::Nav2D::Map2DPath& path) :
@@ -33,7 +25,7 @@ bool return_get_path::read(yarp::os::idl::WireReader& reader)
     if (!read_retval(reader)) {
         return false;
     }
-    if (!read_path(reader)) {
+    if (!nested_read_path(reader)) {
         return false;
     }
     return !reader.isError();
@@ -55,7 +47,7 @@ bool return_get_path::write(const yarp::os::idl::WireWriter& writer) const
     if (!write_retval(writer)) {
         return false;
     }
-    if (!write_path(writer)) {
+    if (!nested_write_path(writer)) {
         return false;
     }
     return !writer.isError();
@@ -421,7 +413,7 @@ void return_get_path::Editor::dirty_flags(bool flag)
 bool return_get_path::read_retval(yarp::os::idl::WireReader& reader)
 {
     if (!reader.readBool(retval)) {
-        retval = 0;
+        retval = false;
     }
     return true;
 }
@@ -439,7 +431,7 @@ bool return_get_path::write_retval(const yarp::os::idl::WireWriter& writer) cons
 bool return_get_path::nested_read_retval(yarp::os::idl::WireReader& reader)
 {
     if (!reader.readBool(retval)) {
-        retval = 0;
+        retval = false;
     }
     return true;
 }
@@ -456,6 +448,10 @@ bool return_get_path::nested_write_retval(const yarp::os::idl::WireWriter& write
 // read path field
 bool return_get_path::read_path(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.read(path)) {
         reader.fail();
         return false;
@@ -475,6 +471,10 @@ bool return_get_path::write_path(const yarp::os::idl::WireWriter& writer) const
 // read (nested) path field
 bool return_get_path::nested_read_path(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readNested(path)) {
         reader.fail();
         return false;

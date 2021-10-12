@@ -19,11 +19,11 @@ class return_get_areas_list :
 {
 public:
     // Fields
-    bool retval;
-    std::vector<std::string> areas;
+    bool retval{false};
+    std::vector<std::string> areas{};
 
     // Default constructor
-    return_get_areas_list();
+    return_get_areas_list() = default;
 
     // Constructor with field values
     return_get_areas_list(const bool retval,

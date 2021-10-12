@@ -17,8 +17,7 @@
 #include <yarp/os/idl/WireTypes.h>
 #include <yarp/dev/Map2DLocation.h>
 
-namespace yarp {
-namespace dev {
+namespace yarp::dev {
 
 class YARP_dev_API Map2DPathData :
         public yarp::os::idl::WirePortable
@@ -28,14 +27,14 @@ public:
     /**
      * list of waypoints which define the path
      */
-    std::vector<yarp::dev::Nav2D::Map2DLocation> waypoints;
+    std::vector<yarp::dev::Nav2D::Map2DLocation> waypoints{};
     /**
      * user defined string
      */
-    std::string description;
+    std::string description{};
 
     // Default constructor
-    Map2DPathData();
+    Map2DPathData() = default;
 
     // Constructor with field values
     Map2DPathData(const std::vector<yarp::dev::Nav2D::Map2DLocation>& waypoints,
@@ -172,7 +171,6 @@ private:
     bool nested_write_description(const yarp::os::idl::WireWriter& writer) const;
 };
 
-} // namespace yarp
-} // namespace dev
+} // namespace yarp::dev
 
 #endif // YARP_THRIFT_GENERATOR_STRUCT_MAP2DPATHDATA_H

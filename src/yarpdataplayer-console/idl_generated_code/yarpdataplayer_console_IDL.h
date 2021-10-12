@@ -125,14 +125,14 @@ public:
      * @param val if true repeat mode is active.
      * @return true/false on success/failure
      */
-    virtual bool repeat(const bool val = 0);
+    virtual bool repeat(const bool val = false);
 
     /**
      * Sets strict mode
      * @param val if true strict mode is active.
      * @return true/false on success/failure
      */
-    virtual bool setStrict(const bool val = 0);
+    virtual bool setStrict(const bool val = false);
 
     /**
      * Steps forward

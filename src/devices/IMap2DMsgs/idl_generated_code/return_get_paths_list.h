@@ -19,11 +19,11 @@ class return_get_paths_list :
 {
 public:
     // Fields
-    bool retval;
-    std::vector<std::string> paths;
+    bool retval{false};
+    std::vector<std::string> paths{};
 
     // Default constructor
-    return_get_paths_list();
+    return_get_paths_list() = default;
 
     // Constructor with field values
     return_get_paths_list(const bool retval,

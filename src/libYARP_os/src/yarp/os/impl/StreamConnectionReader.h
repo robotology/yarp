@@ -50,7 +50,6 @@ public:
     virtual std::string expectString(int len);
 #endif
     virtual std::string expectLine();
-    virtual void flushWriter();
     virtual void setReference(yarp::os::Portable* obj);
 
     /**** OVERRIDES ****/
@@ -79,6 +78,7 @@ public:
     void requestDrop() override;
     const yarp::os::Searchable& getConnectionModifiers() const override;
     void setParentConnectionReader(ConnectionReader* parentConnectionReader) override;
+    void flushWriter() override;
 
 private:
     bool isGood();

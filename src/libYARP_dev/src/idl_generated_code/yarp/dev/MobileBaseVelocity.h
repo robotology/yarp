@@ -16,8 +16,7 @@
 #include <yarp/os/Wire.h>
 #include <yarp/os/idl/WireTypes.h>
 
-namespace yarp {
-namespace dev {
+namespace yarp::dev {
 
 class YARP_dev_API MobileBaseVelocity :
         public yarp::os::idl::WirePortable
@@ -27,18 +26,18 @@ public:
     /**
      * velocity of the robot [m/s]
      */
-    double vel_x;
+    double vel_x{0.0};
     /**
      * velocity of the robot [m/s]
      */
-    double vel_y;
+    double vel_y{0.0};
     /**
      * angular velocity of the robot [deg/s]
      */
-    double vel_theta;
+    double vel_theta{0.0};
 
     // Default constructor
-    MobileBaseVelocity();
+    MobileBaseVelocity() = default;
 
     // Constructor with field values
     MobileBaseVelocity(const double vel_x,
@@ -189,7 +188,6 @@ private:
     bool nested_write_vel_theta(const yarp::os::idl::WireWriter& writer) const;
 };
 
-} // namespace yarp
-} // namespace dev
+} // namespace yarp::dev
 
 #endif // YARP_THRIFT_GENERATOR_STRUCT_MOBILEBASEVELOCITY_H

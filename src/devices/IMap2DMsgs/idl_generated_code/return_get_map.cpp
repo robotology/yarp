@@ -10,14 +10,6 @@
 
 #include <return_get_map.h>
 
-// Default constructor
-return_get_map::return_get_map() :
-        WirePortable(),
-        retval(false),
-        themap()
-{
-}
-
 // Constructor with field values
 return_get_map::return_get_map(const bool retval,
                                const yarp::dev::Nav2D::MapGrid2D& themap) :
@@ -33,7 +25,7 @@ bool return_get_map::read(yarp::os::idl::WireReader& reader)
     if (!read_retval(reader)) {
         return false;
     }
-    if (!read_themap(reader)) {
+    if (!nested_read_themap(reader)) {
         return false;
     }
     return !reader.isError();
@@ -55,7 +47,7 @@ bool return_get_map::write(const yarp::os::idl::WireWriter& writer) const
     if (!write_retval(writer)) {
         return false;
     }
-    if (!write_themap(writer)) {
+    if (!nested_write_themap(writer)) {
         return false;
     }
     return !writer.isError();
@@ -421,7 +413,7 @@ void return_get_map::Editor::dirty_flags(bool flag)
 bool return_get_map::read_retval(yarp::os::idl::WireReader& reader)
 {
     if (!reader.readBool(retval)) {
-        retval = 0;
+        retval = false;
     }
     return true;
 }
@@ -439,7 +431,7 @@ bool return_get_map::write_retval(const yarp::os::idl::WireWriter& writer) const
 bool return_get_map::nested_read_retval(yarp::os::idl::WireReader& reader)
 {
     if (!reader.readBool(retval)) {
-        retval = 0;
+        retval = false;
     }
     return true;
 }
@@ -456,6 +448,10 @@ bool return_get_map::nested_write_retval(const yarp::os::idl::WireWriter& writer
 // read themap field
 bool return_get_map::read_themap(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.read(themap)) {
         reader.fail();
         return false;
@@ -475,6 +471,10 @@ bool return_get_map::write_themap(const yarp::os::idl::WireWriter& writer) const
 // read (nested) themap field
 bool return_get_map::nested_read_themap(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readNested(themap)) {
         reader.fail();
         return false;

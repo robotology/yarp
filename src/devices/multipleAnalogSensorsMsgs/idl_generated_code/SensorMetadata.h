@@ -19,12 +19,12 @@ class SensorMetadata :
 {
 public:
     // Fields
-    std::string name;
-    std::string frameName;
-    std::string additionalMetadata;
+    std::string name{};
+    std::string frameName{};
+    std::string additionalMetadata{};
 
     // Default constructor
-    SensorMetadata();
+    SensorMetadata() = default;
 
     // Constructor with field values
     SensorMetadata(const std::string& name,

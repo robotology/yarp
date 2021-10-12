@@ -19,13 +19,13 @@ class return_getLastVelocityCommand :
 {
 public:
     // Fields
-    bool retvalue;
-    double x_vel;
-    double y_vel;
-    double theta_vel;
+    bool retvalue{false};
+    double x_vel{0.0};
+    double y_vel{0.0};
+    double theta_vel{0.0};
 
     // Default constructor
-    return_getLastVelocityCommand();
+    return_getLastVelocityCommand() = default;
 
     // Constructor with field values
     return_getLastVelocityCommand(const bool retvalue,

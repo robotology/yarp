@@ -19,11 +19,11 @@ class return_get_locations_list :
 {
 public:
     // Fields
-    bool retval;
-    std::vector<std::string> locations;
+    bool retval{false};
+    std::vector<std::string> locations{};
 
     // Default constructor
-    return_get_locations_list();
+    return_get_locations_list() = default;
 
     // Constructor with field values
     return_get_locations_list(const bool retval,

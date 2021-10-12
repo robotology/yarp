@@ -10,17 +10,7 @@
 
 #include <yarp/dev/MobileBaseVelocity.h>
 
-namespace yarp {
-namespace dev {
-
-// Default constructor
-MobileBaseVelocity::MobileBaseVelocity() :
-        WirePortable(),
-        vel_x(0),
-        vel_y(0),
-        vel_theta(0)
-{
-}
+namespace yarp::dev {
 
 // Constructor with field values
 MobileBaseVelocity::MobileBaseVelocity(const double vel_x,
@@ -510,6 +500,10 @@ void MobileBaseVelocity::Editor::dirty_flags(bool flag)
 // read vel_x field
 bool MobileBaseVelocity::read_vel_x(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readFloat64(vel_x)) {
         reader.fail();
         return false;
@@ -529,6 +523,10 @@ bool MobileBaseVelocity::write_vel_x(const yarp::os::idl::WireWriter& writer) co
 // read (nested) vel_x field
 bool MobileBaseVelocity::nested_read_vel_x(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readFloat64(vel_x)) {
         reader.fail();
         return false;
@@ -548,6 +546,10 @@ bool MobileBaseVelocity::nested_write_vel_x(const yarp::os::idl::WireWriter& wri
 // read vel_y field
 bool MobileBaseVelocity::read_vel_y(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readFloat64(vel_y)) {
         reader.fail();
         return false;
@@ -567,6 +569,10 @@ bool MobileBaseVelocity::write_vel_y(const yarp::os::idl::WireWriter& writer) co
 // read (nested) vel_y field
 bool MobileBaseVelocity::nested_read_vel_y(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readFloat64(vel_y)) {
         reader.fail();
         return false;
@@ -586,6 +592,10 @@ bool MobileBaseVelocity::nested_write_vel_y(const yarp::os::idl::WireWriter& wri
 // read vel_theta field
 bool MobileBaseVelocity::read_vel_theta(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readFloat64(vel_theta)) {
         reader.fail();
         return false;
@@ -605,6 +615,10 @@ bool MobileBaseVelocity::write_vel_theta(const yarp::os::idl::WireWriter& writer
 // read (nested) vel_theta field
 bool MobileBaseVelocity::nested_read_vel_theta(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readFloat64(vel_theta)) {
         reader.fail();
         return false;
@@ -621,5 +635,4 @@ bool MobileBaseVelocity::nested_write_vel_theta(const yarp::os::idl::WireWriter&
     return true;
 }
 
-} // namespace yarp
-} // namespace dev
+} // namespace yarp::dev

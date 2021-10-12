@@ -20,11 +20,11 @@ class return_get_location :
 {
 public:
     // Fields
-    bool retval;
-    yarp::dev::Nav2D::Map2DLocation loc;
+    bool retval{false};
+    yarp::dev::Nav2D::Map2DLocation loc{};
 
     // Default constructor
-    return_get_location();
+    return_get_location() = default;
 
     // Constructor with field values
     return_get_location(const bool retval,

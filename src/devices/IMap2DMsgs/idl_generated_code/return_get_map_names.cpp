@@ -10,14 +10,6 @@
 
 #include <return_get_map_names.h>
 
-// Default constructor
-return_get_map_names::return_get_map_names() :
-        WirePortable(),
-        retval(false),
-        map_names()
-{
-}
-
 // Constructor with field values
 return_get_map_names::return_get_map_names(const bool retval,
                                            const std::vector<std::string>& map_names) :
@@ -431,7 +423,7 @@ void return_get_map_names::Editor::dirty_flags(bool flag)
 bool return_get_map_names::read_retval(yarp::os::idl::WireReader& reader)
 {
     if (!reader.readBool(retval)) {
-        retval = 0;
+        retval = false;
     }
     return true;
 }
@@ -449,7 +441,7 @@ bool return_get_map_names::write_retval(const yarp::os::idl::WireWriter& writer)
 bool return_get_map_names::nested_read_retval(yarp::os::idl::WireReader& reader)
 {
     if (!reader.readBool(retval)) {
-        retval = 0;
+        retval = false;
     }
     return true;
 }
@@ -466,12 +458,20 @@ bool return_get_map_names::nested_write_retval(const yarp::os::idl::WireWriter& 
 // read map_names field
 bool return_get_map_names::read_map_names(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     map_names.clear();
     uint32_t _size0;
     yarp::os::idl::WireState _etype3;
     reader.readListBegin(_etype3, _size0);
     map_names.resize(_size0);
     for (size_t _i4 = 0; _i4 < _size0; ++_i4) {
+        if (reader.noMore()) {
+            reader.fail();
+            return false;
+        }
         if (!reader.readString(map_names[_i4])) {
             reader.fail();
             return false;
@@ -501,12 +501,20 @@ bool return_get_map_names::write_map_names(const yarp::os::idl::WireWriter& writ
 // read (nested) map_names field
 bool return_get_map_names::nested_read_map_names(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     map_names.clear();
     uint32_t _size6;
     yarp::os::idl::WireState _etype9;
     reader.readListBegin(_etype9, _size6);
     map_names.resize(_size6);
     for (size_t _i10 = 0; _i10 < _size6; ++_i10) {
+        if (reader.noMore()) {
+            reader.fail();
+            return false;
+        }
         if (!reader.readString(map_names[_i10])) {
             reader.fail();
             return false;

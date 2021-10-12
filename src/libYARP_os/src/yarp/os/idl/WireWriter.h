@@ -128,11 +128,14 @@ public:
     }
 #endif // YARP_NO_DEPRECATED
 
+    void flush();
+
 private:
-    bool get_mode;
+    bool get_mode {false};
     YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string) get_string;
-    bool get_is_vocab32;
-    mutable bool need_ok;
+    bool get_is_vocab32 {false};
+    mutable bool need_ok {false};
+    ConnectionReader* reader {nullptr};
     ConnectionWriter& writer;
 };
 
