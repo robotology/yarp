@@ -121,6 +121,7 @@ if(TARGET YARP::YARP_math)
     yarp/dev/ILocalization2D.h
     yarp/dev/IMap2D.h
     yarp/dev/INavigation2D.h
+    yarp/dev/IOdometry2D.h
     yarp/dev/Map2DLocation.h
     yarp/dev/Map2DArea.h
     yarp/dev/MapGrid2D.h
@@ -233,6 +234,7 @@ if(TARGET YARP::YARP_math)
     yarp/dev/IFrameTransformClientControl.cpp
     yarp/dev/IMap2D.cpp
     yarp/dev/INavigation2D.cpp
+    yarp/dev/IOdometry2D.cpp
     yarp/dev/MapGrid2D.cpp
     yarp/dev/Map2DLocation.cpp
     yarp/dev/Map2DArea.cpp
