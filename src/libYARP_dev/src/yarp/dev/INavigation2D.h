@@ -8,6 +8,7 @@
 
 #include <yarp/os/Vocab.h>
 #include <yarp/dev/api.h>
+#include <yarp/dev/IMap2D.h>
 #include <yarp/dev/ILocalization2D.h>
 #include <yarp/dev/Map2DLocation.h>
 #include <yarp/dev/Map2DPath.h>
@@ -259,51 +260,6 @@ public:
     virtual bool storeCurrentPosition(std::string location_name) = 0;
 
     /**
-     * Store a location specified by the user in the world reference frame
-     * @param location_name the name of the location
-     * @param loc the location of the robot
-     * @return true/false
-     */
-    virtual bool storeLocation(std::string location_name, Nav2D::Map2DLocation loc) = 0;
-
-    /**
-     * Retrieves a location previously stored by the user
-     * @param location_name the name of the location
-     * @param loc the location on the map
-     * @return true/false
-     */
-    virtual bool getLocation(std::string location_name, Nav2D::Map2DLocation& loc) = 0;
-
-
-    /**
-     * Retrieves an area previously stored by the user
-     * @param area_name the name of the area
-     * @param area the area on the map
-     * @return true/false
-     */
-    virtual bool getArea(std::string area_name, Nav2D::Map2DArea& area) = 0;
-
-    /**
-     * Get a list of all stored locations
-     * @param the returned list of locations
-     * @return true/false
-     */
-    virtual bool getLocationsList(std::vector<std::string>& locations) = 0;
-
-    /**
-     * Delete a location
-     * @param location_name the name of the location
-     * @return true/false
-     */
-    virtual bool deleteLocation(std::string location_name) = 0;
-
-    /**
-     * Delete all stored locations
-     * @return true/false
-     */
-    virtual bool clearAllLocations() = 0;
-
-    /**
      * Destructor.
      */
     virtual ~INavigation2DExtraActions() {}
@@ -318,6 +274,7 @@ class YARP_dev_API yarp::dev::Nav2D::INavigation2D :  public yarp::dev::Nav2D::I
                                                       public yarp::dev::Nav2D::INavigation2DControlActions,
                                                       public yarp::dev::Nav2D::INavigation2DVelocityActions,
                                                       public yarp::dev::Nav2D::INavigation2DExtraActions,
+                                                      public yarp::dev::Nav2D::IMap2D,
                                                       public yarp::dev::Nav2D::ILocalization2D
 {
 public:
