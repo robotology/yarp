@@ -20,11 +20,11 @@ class return_get_estimated_odometry :
 {
 public:
     // Fields
-    bool ret;
-    yarp::dev::OdometryData odom;
+    bool ret{false};
+    yarp::dev::OdometryData odom{};
 
     // Default constructor
-    return_get_estimated_odometry();
+    return_get_estimated_odometry() = default;
 
     // Constructor with field values
     return_get_estimated_odometry(const bool ret,

@@ -10,14 +10,6 @@
 
 #include <return_get_estimated_odometry.h>
 
-// Default constructor
-return_get_estimated_odometry::return_get_estimated_odometry() :
-        WirePortable(),
-        ret(false),
-        odom()
-{
-}
-
 // Constructor with field values
 return_get_estimated_odometry::return_get_estimated_odometry(const bool ret,
                                                              const yarp::dev::OdometryData& odom) :
@@ -33,7 +25,7 @@ bool return_get_estimated_odometry::read(yarp::os::idl::WireReader& reader)
     if (!read_ret(reader)) {
         return false;
     }
-    if (!read_odom(reader)) {
+    if (!nested_read_odom(reader)) {
         return false;
     }
     return !reader.isError();
@@ -55,7 +47,7 @@ bool return_get_estimated_odometry::write(const yarp::os::idl::WireWriter& write
     if (!write_ret(writer)) {
         return false;
     }
-    if (!write_odom(writer)) {
+    if (!nested_write_odom(writer)) {
         return false;
     }
     return !writer.isError();
@@ -421,7 +413,7 @@ void return_get_estimated_odometry::Editor::dirty_flags(bool flag)
 bool return_get_estimated_odometry::read_ret(yarp::os::idl::WireReader& reader)
 {
     if (!reader.readBool(ret)) {
-        ret = 0;
+        ret = false;
     }
     return true;
 }
@@ -439,7 +431,7 @@ bool return_get_estimated_odometry::write_ret(const yarp::os::idl::WireWriter& w
 bool return_get_estimated_odometry::nested_read_ret(yarp::os::idl::WireReader& reader)
 {
     if (!reader.readBool(ret)) {
-        ret = 0;
+        ret = false;
     }
     return true;
 }
@@ -456,6 +448,10 @@ bool return_get_estimated_odometry::nested_write_ret(const yarp::os::idl::WireWr
 // read odom field
 bool return_get_estimated_odometry::read_odom(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.read(odom)) {
         reader.fail();
         return false;
@@ -475,6 +471,10 @@ bool return_get_estimated_odometry::write_odom(const yarp::os::idl::WireWriter& 
 // read (nested) odom field
 bool return_get_estimated_odometry::nested_read_odom(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readNested(odom)) {
         reader.fail();
         return false;

@@ -21,12 +21,12 @@ class return_get_current_position2 :
 {
 public:
     // Fields
-    bool ret;
-    yarp::dev::Nav2D::Map2DLocation loc;
-    yarp::sig::Matrix cov;
+    bool ret{false};
+    yarp::dev::Nav2D::Map2DLocation loc{};
+    yarp::sig::Matrix cov{};
 
     // Default constructor
-    return_get_current_position2();
+    return_get_current_position2() = default;
 
     // Constructor with field values
     return_get_current_position2(const bool ret,

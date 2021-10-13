@@ -20,11 +20,11 @@ class return_get_estimated_poses :
 {
 public:
     // Fields
-    bool ret;
-    std::vector<yarp::dev::Nav2D::Map2DLocation> poses;
+    bool ret{false};
+    std::vector<yarp::dev::Nav2D::Map2DLocation> poses{};
 
     // Default constructor
-    return_get_estimated_poses();
+    return_get_estimated_poses() = default;
 
     // Constructor with field values
     return_get_estimated_poses(const bool ret,

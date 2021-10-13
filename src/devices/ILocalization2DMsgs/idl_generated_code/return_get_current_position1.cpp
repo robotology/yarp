@@ -10,14 +10,6 @@
 
 #include <return_get_current_position1.h>
 
-// Default constructor
-return_get_current_position1::return_get_current_position1() :
-        WirePortable(),
-        ret(false),
-        loc()
-{
-}
-
 // Constructor with field values
 return_get_current_position1::return_get_current_position1(const bool ret,
                                                            const yarp::dev::Nav2D::Map2DLocation& loc) :
@@ -33,7 +25,7 @@ bool return_get_current_position1::read(yarp::os::idl::WireReader& reader)
     if (!read_ret(reader)) {
         return false;
     }
-    if (!read_loc(reader)) {
+    if (!nested_read_loc(reader)) {
         return false;
     }
     return !reader.isError();
@@ -55,7 +47,7 @@ bool return_get_current_position1::write(const yarp::os::idl::WireWriter& writer
     if (!write_ret(writer)) {
         return false;
     }
-    if (!write_loc(writer)) {
+    if (!nested_write_loc(writer)) {
         return false;
     }
     return !writer.isError();
@@ -421,7 +413,7 @@ void return_get_current_position1::Editor::dirty_flags(bool flag)
 bool return_get_current_position1::read_ret(yarp::os::idl::WireReader& reader)
 {
     if (!reader.readBool(ret)) {
-        ret = 0;
+        ret = false;
     }
     return true;
 }
@@ -439,7 +431,7 @@ bool return_get_current_position1::write_ret(const yarp::os::idl::WireWriter& wr
 bool return_get_current_position1::nested_read_ret(yarp::os::idl::WireReader& reader)
 {
     if (!reader.readBool(ret)) {
-        ret = 0;
+        ret = false;
     }
     return true;
 }
@@ -456,6 +448,10 @@ bool return_get_current_position1::nested_write_ret(const yarp::os::idl::WireWri
 // read loc field
 bool return_get_current_position1::read_loc(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.read(loc)) {
         reader.fail();
         return false;
@@ -475,6 +471,10 @@ bool return_get_current_position1::write_loc(const yarp::os::idl::WireWriter& wr
 // read (nested) loc field
 bool return_get_current_position1::nested_read_loc(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readNested(loc)) {
         reader.fail();
         return false;
