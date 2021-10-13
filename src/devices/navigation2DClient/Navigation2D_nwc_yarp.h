@@ -15,6 +15,7 @@
 #include <yarp/dev/INavigation2D.h>
 #include "IMap2DMsgs.h"
 #include "ILocalization2DMsgs.h"
+#include "INavigation2DMsgs.h"
 
 #include <mutex>
 #include <string>
@@ -47,6 +48,7 @@ protected:
     //thrift stuff
     IMap2DMsgs                    m_map_RPC;
     ILocalization2DMsgs           m_loc_RPC;
+    INavigation2DMsgs             m_nav_RPC;
 
 protected:
     std::mutex                    m_mutex;
@@ -60,9 +62,6 @@ protected:
     std::string                   m_localization_server_name;
     int                           m_period;
 
-private: //math stuff
-    double                        normalize_angle(double angle);
-
 public:
 
     /* DeviceDriver methods */
@@ -74,24 +73,34 @@ public:
     virtual bool read(yarp::os::ConnectionReader& connection) override;
 
     /* The following methods belong to INavigation2D interface */
+           // subcategory: INavigation2DExtraActions
     bool   checkInsideArea(yarp::dev::Nav2D::Map2DArea area) override;
     bool   checkInsideArea(std::string area_name)  override;
     bool   checkNearToLocation(yarp::dev::Nav2D::Map2DLocation loc, double linear_tolerance, double angular_tolerance = std::numeric_limits<double>::infinity()) override;
     bool   checkNearToLocation(std::string location_name, double linear_tolerance, double angular_tolerance = std::numeric_limits<double>::infinity()) override;
-
+    bool   storeCurrentPosition(std::string location_name) override;
+           // subcategory: INavigation2DControlActions
+    bool   getNavigationStatus(yarp::dev::Nav2D::NavigationStatusEnum& status) override;
+    bool   recomputeCurrentNavigationPath() override;
+    bool   stopNavigation() override;
+    bool   suspendNavigation(const double time_s) override;
+    bool   resumeNavigation() override;
+    bool   getAllNavigationWaypoints(yarp::dev::Nav2D::TrajectoryTypeEnum trajectory_type, yarp::dev::Nav2D::Map2DPath& waypoints) override;
+    bool   getCurrentNavigationWaypoint(yarp::dev::Nav2D::Map2DLocation& curr_waypoint) override;
+    bool   getCurrentNavigationMap(yarp::dev::Nav2D::NavigationMapTypeEnum map_type, yarp::dev::Nav2D::MapGrid2D& map) override;
+           // subcategory: INavigation2DTargetActions
     bool   gotoTargetByAbsoluteLocation(yarp::dev::Nav2D::Map2DLocation loc) override;
     bool   gotoTargetByLocationName(std::string location_name) override;
     bool   gotoTargetByRelativeLocation(double x, double y, double theta) override;
     bool   gotoTargetByRelativeLocation(double x, double y) override;
-    bool   applyVelocityCommand(double x_vel, double y_vel, double theta_vel, double timeout = 0.1) override;
-    bool   getLastVelocityCommand(double& x_vel, double& y_vel, double& theta_vel) override;
-
-    bool   recomputeCurrentNavigationPath() override;
-
     bool   getAbsoluteLocationOfCurrentTarget(yarp::dev::Nav2D::Map2DLocation& loc) override;
     bool   getNameOfCurrentTarget(std::string& location_name) override;
     bool   getRelativeLocationOfCurrentTarget(double& x, double& y, double& theta) override;
+           // subcategory: INavigation2DVelocityActions
+    bool   applyVelocityCommand(double x_vel, double y_vel, double theta_vel, double timeout = 0.1) override;
+    bool   getLastVelocityCommand(double& x_vel, double& y_vel, double& theta_vel) override;
 
+    /* The following methods belong to INavigation2D, inherited from ILocalization2D interface */
     bool   getCurrentPosition(yarp::dev::Nav2D::Map2DLocation &loc) override;
     bool   getEstimatedOdometry(yarp::dev::OdometryData& odom) override;
     bool   setInitialPose(const yarp::dev::Nav2D::Map2DLocation& loc) override;
@@ -101,16 +110,6 @@ public:
     bool   getCurrentPosition(yarp::dev::Nav2D::Map2DLocation& loc, yarp::sig::Matrix& cov) override;
     bool   startLocalizationService() override;
     bool   stopLocalizationService() override;
-
-    bool   storeCurrentPosition(std::string location_name) override;
-
-    bool   getNavigationStatus(yarp::dev::Nav2D::NavigationStatusEnum& status) override;
-    bool   stopNavigation() override;
-    bool   suspendNavigation(const double time_s) override;
-    bool   resumeNavigation() override;
-    bool   getAllNavigationWaypoints(yarp::dev::Nav2D::TrajectoryTypeEnum trajectory_type, yarp::dev::Nav2D::Map2DPath& waypoints) override;
-    bool   getCurrentNavigationWaypoint(yarp::dev::Nav2D::Map2DLocation& curr_waypoint) override;
-    bool   getCurrentNavigationMap(yarp::dev::Nav2D::NavigationMapTypeEnum map_type, yarp::dev::Nav2D::MapGrid2D& map) override;
 
     /* The following methods belong to INavigation2D, inherited from IMap2D interface */
     bool   storeLocation(std::string location_name, yarp::dev::Nav2D::Map2DLocation loc) override;

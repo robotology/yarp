@@ -13,7 +13,7 @@
 #include <yarp/dev/WrapperSingle.h>
 #include <yarp/dev/ControlBoardInterfaces.h>
 #include <yarp/dev/INavigation2D.h>
-#include <yarp/dev/ILocalization2D.h>
+#include "INavigation2DServerImpl.h"
 #include <math.h>
 
 #ifndef NAV_SERVER_H
@@ -34,8 +34,10 @@
   * |:--------------:|:--------------:|:-------:|:------------------:|:------------------------:|:-----------: |:-----------------------------------------------------------------:|:-----:|
   * | GENERAL        |  period        | double  | s                  | 0.01                     | No           | The period of the working thread                                  |       |
   * | GENERAL        |  name          | string  |  -                 | /navigation_nws_yarp     | No           | The name of the server, used as a prefix for the opened ports     | -     |
-  * | subdevice      |  -             | string  |  -                 |  -                       | Yes          | The name of the of Navigation device to be used                 | -     |
+  * | subdevice      |  -             | string  |  -                 |  -                       | Yes          | The name of the of Navigation device to be used                   | -     |
   */
+
+#define DEF_m_RPC 1
 
 class navigation2D_nws_yarp : public yarp::dev::DeviceDriver,
                          public yarp::os::PeriodicThread,
@@ -44,9 +46,7 @@ class navigation2D_nws_yarp : public yarp::dev::DeviceDriver,
 {
 protected:
     //thrift
-#if  DEF_m_RPC
-    //INavigation2DRPCd                          m_RPC;
-#endif
+    INavigation2DRPCd                            m_RPC;
 
     std::string                                  m_local_name = "/navigation_nws_yarp";
     yarp::os::Port                               m_rpcPort;
@@ -58,6 +58,7 @@ protected:
     yarp::dev::Nav2D::INavigation2DControlActions*   iNav_ctrl = nullptr;
     yarp::dev::Nav2D::INavigation2DTargetActions*    iNav_target = nullptr;
     yarp::dev::Nav2D::INavigation2DVelocityActions*  iNav_vel = nullptr;
+    yarp::dev::Nav2D::INavigation2DExtraActions*     iNav_extra = nullptr;
 
     double                                  m_period;
     double                                  m_stats_time_last;
@@ -80,13 +81,6 @@ public:
 
 private:
     std::string getStatusAsString(yarp::dev::Nav2D::NavigationStatusEnum status);
-    bool parse_respond_vocab(const yarp::os::Bottle& command, yarp::os::Bottle& reply);
-
-private:
-    std::string m_current_goal_name;
-    bool set_current_goal_name(const std::string& name);
-    bool get_current_goal_name(std::string& name);
-    bool clear_current_goal_name();
 };
 
 #endif
