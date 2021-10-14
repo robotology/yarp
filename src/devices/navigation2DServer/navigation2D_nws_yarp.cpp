@@ -37,19 +37,17 @@ bool navigation2D_nws_yarp::attach(PolyDriver* driver)
         driver->view(iNav_target);
         driver->view(iNav_ctrl);
         driver->view(iNav_vel);
-        driver->view(iNav_extra);
     }
 
     if (nullptr == iNav_target ||
         nullptr == iNav_ctrl ||
-        nullptr == iNav_vel ||
-        nullptr == iNav_extra)
+        nullptr == iNav_vel)
     {
         yCError(NAVIGATION2D_NWS_YARP, "Subdevice passed to attach method is invalid");
         return false;
     }
 
-    m_RPC.setInterfaces(iNav_target, iNav_ctrl, iNav_vel, iNav_extra);
+    m_RPC.setInterfaces(iNav_target, iNav_ctrl, iNav_vel);
 
     PeriodicThread::setPeriod(m_period);
     return PeriodicThread::start();

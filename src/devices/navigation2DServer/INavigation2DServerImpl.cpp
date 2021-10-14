@@ -20,12 +20,11 @@ YARP_LOG_COMPONENT(NAVIGATION2DSERVER, "yarp.device.navigation2DServer")
 
 #define CHECK_POINTER(xxx) {if (xxx==nullptr) {yCError(NAVIGATION2DSERVER, "Invalid interface"); return false;}}
 
-void INavigation2DRPCd::setInterfaces(yarp::dev::Nav2D::INavigation2DTargetActions* iNav_target, yarp::dev::Nav2D::INavigation2DControlActions* iNav_ctrl, yarp::dev::Nav2D::INavigation2DVelocityActions* iNav_vel, yarp::dev::Nav2D::INavigation2DExtraActions* iNav_extra)
+void INavigation2DRPCd::setInterfaces(yarp::dev::Nav2D::INavigation2DTargetActions* iNav_target, yarp::dev::Nav2D::INavigation2DControlActions* iNav_ctrl, yarp::dev::Nav2D::INavigation2DVelocityActions* iNav_vel)
 {
     m_iNav_target = iNav_target;
     m_iNav_ctrl = iNav_ctrl;
     m_iNav_vel = iNav_vel;
-    m_iNav_extra = iNav_extra;
 }
 
 // ------------     INavigation2DControlActions
@@ -39,6 +38,7 @@ bool INavigation2DRPCd::stop_navigation_RPC()
         yCError(NAVIGATION2DSERVER, "Unable to stopNavigation");
         return false;
     }
+    m_current_goal_name.clear();
     return true;
 }
 
@@ -182,6 +182,7 @@ bool INavigation2DRPCd::goto_target_by_absolute_location_RPC(const yarp::dev::Na
         yCError(NAVIGATION2DSERVER, "Unable to gotoTargetByAbsoluteLocation");
         return false;
     }
+    m_current_goal_name.clear();
     return true;
 }
 
@@ -195,6 +196,7 @@ bool INavigation2DRPCd::goto_target_by_relative_location1_RPC(double x, double y
         yCError(NAVIGATION2DSERVER, "Unable to gotoTargetByRelativeLocation");
         return false;
     }
+    m_current_goal_name.clear();
     return true;
 }
 
@@ -208,6 +210,7 @@ bool INavigation2DRPCd::goto_target_by_relative_location2_RPC(double x, double y
         yCError(NAVIGATION2DSERVER, "Unable to gotoTargetByRelativeLocation");
         return false;
     }
+    m_current_goal_name.clear();
     return true;
 }
 
@@ -222,8 +225,7 @@ bool INavigation2DRPCd::goto_target_by_absolute_location_and_set_name_RPC(const 
         return false;
     }
 
-    this->set_current_goal_name(name);
-
+    m_current_goal_name.set_current_goal_name(name);
     return true;
 }
 
@@ -318,40 +320,38 @@ return_get_name_of_current_target  INavigation2DRPCd::get_name_of_current_target
 
     return_get_name_of_current_target ret;
 
-    {if (m_iNav_extra == nullptr) { yCError(NAVIGATION2DSERVER, "Invalid interface"); return ret; }}
-
-    std::string name;
-    if (!m_iNav_extra->getNameOfCurrentTarget(name))
+    if (m_current_goal_name.get_current_goal_name(ret.name))
+    {
+        ret.ret = true;
+    }
+    else
     {
         yCError(NAVIGATION2DSERVER, "Unable to getNameOfCurrentTarget");
         ret.ret = false;
     }
-    else
-    {
-        ret.ret = true;
-        ret.name = name;
-    }
+
+    std::string name;
     return ret;
 }
 
 // ------------  internal stuff
-bool INavigation2DRPCd::set_current_goal_name(const std::string& name)
+bool LastGoalStorage::set_current_goal_name(const std::string& name)
 {
     m_current_goal_name = name;
     return true;
 }
 
-bool INavigation2DRPCd::get_current_goal_name(std::string& name)
+bool LastGoalStorage::get_current_goal_name(std::string& name)
 {
     if (m_current_goal_name == "")
     {
-        return false;
+        return true;
     }
     name = m_current_goal_name;
     return true;
 }
 
-bool INavigation2DRPCd::clear_current_goal_name()
+bool LastGoalStorage::clear()
 {
     m_current_goal_name = "";
     return true;

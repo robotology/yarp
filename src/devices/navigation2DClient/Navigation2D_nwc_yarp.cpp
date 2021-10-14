@@ -260,7 +260,8 @@ bool Navigation2D_nwc_yarp::gotoTargetByLocationName(std::string location_name)
     //...if it is neither a location, nor an area then quit...
     if (found == false)
     {
-        yCError(NAVIGATION2D_NWC_YARP) << "Location not found";
+        yCError(NAVIGATION2D_NWC_YARP) << "Location not found, stopping navigation";
+        m_nav_RPC.stop_navigation_RPC();
         return false;
     }
 

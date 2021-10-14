@@ -593,7 +593,8 @@ bool Navigation2DClient::gotoTargetByLocationName(std::string location_name)
     //...if it is neither a location, nor an area then quit...
     if (found == false)
     {
-        yCError(NAVIGATION2DCLIENT) << "Location not found";
+        yCError(NAVIGATION2DCLIENT) << "Location not found, stopping navigation";
+        this->stopNavigation();
         return false;
     }
 

@@ -48,7 +48,7 @@ protected:
     //thrift
     INavigation2DRPCd                            m_RPC;
 
-    std::string                                  m_local_name = "/navigation_nws_yarp";
+    std::string                                  m_local_name = "/navigation2D_nws_yarp";
     yarp::os::Port                               m_rpcPort;
     std::string                                  m_rpcPortName;
     yarp::dev::Nav2D::NavigationStatusEnum       m_navigation_status;
@@ -58,7 +58,6 @@ protected:
     yarp::dev::Nav2D::INavigation2DControlActions*   iNav_ctrl = nullptr;
     yarp::dev::Nav2D::INavigation2DTargetActions*    iNav_target = nullptr;
     yarp::dev::Nav2D::INavigation2DVelocityActions*  iNav_vel = nullptr;
-    yarp::dev::Nav2D::INavigation2DExtraActions*     iNav_extra = nullptr;
 
     double                                  m_period;
     double                                  m_stats_time_last;
