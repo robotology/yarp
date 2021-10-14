@@ -654,6 +654,7 @@ bool Map2DStorage::saveLocationsAndExtras(std::string locations_file)
     }
 
     std::string s = " ";
+    std::string q = "\"";
 
     file << "Version:\n";
     file << "3\n";
@@ -666,7 +667,7 @@ bool Map2DStorage::saveLocationsAndExtras(std::string locations_file)
         {
             tmp_loc = it->second;
             file << it->first << s << tmp_loc.map_id << s << tmp_loc.x << s << tmp_loc.y << s << tmp_loc.theta << s;
-            file << tmp_loc.description << "\n";
+            file << q << tmp_loc.description << q << "\n";
         }
     }
 
@@ -683,7 +684,7 @@ bool Map2DStorage::saveLocationsAndExtras(std::string locations_file)
                 file << tmp_area.points[i].x << s;
                 file << tmp_area.points[i].y << s;
             }
-            file << tmp_area.description;
+            file << q << tmp_area.description << q;
             file << "\n";
         }
     }
@@ -702,7 +703,7 @@ bool Map2DStorage::saveLocationsAndExtras(std::string locations_file)
                 Map2DLocation tmp_loc = tmp_path[i];
                 file << "( " << tmp_loc.map_id << s << tmp_loc.x << s << tmp_loc.y << s << tmp_loc.theta << ") ";
             }
-            file << tmp_path.description;
+            file << q << tmp_path.description << q;
             file << "\n";
         }
     }
