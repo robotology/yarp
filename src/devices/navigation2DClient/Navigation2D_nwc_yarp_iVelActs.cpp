@@ -19,43 +19,28 @@ using namespace yarp::os;
 using namespace yarp::sig;
 
 namespace {
-    YARP_LOG_COMPONENT(NAVIGATION2D_NWC, "yarp.device.navigation2D_nwc_yarp")
+    YARP_LOG_COMPONENT(NAVIGATION2D_NWC_YARP, "yarp.device.navigation2D_nwc_yarp")
 }
 
 //------------------------------------------------------------------------------------------------------------------------------
 
 bool  Navigation2D_nwc_yarp::getLastVelocityCommand(double& x_vel, double& y_vel, double& theta_vel)
 {
-    yCError(NAVIGATION2D_NWC) << "getLastVelocityCommand() not yet implemented";
-    return false;
+    std::lock_guard <std::mutex> lg(m_mutex);
+    auto ret = m_nav_RPC.get_last_velocity_command_RPC();
+    if (!ret.ret)
+    {
+        yCError(NAVIGATION2D_NWC_YARP, "Unable to get_last_velocity_command_RPC");
+        return false;
+    }
+    x_vel = ret.x_vel;
+    y_vel = ret.y_vel;
+    theta_vel = ret.theta_vel;
+    return true;
 }
 
 bool  Navigation2D_nwc_yarp::applyVelocityCommand(double x_vel, double y_vel, double theta_vel, double timeout)
 {
-    yarp::os::Bottle b;
-    yarp::os::Bottle resp;
-
-    b.addVocab32(VOCAB_INAVIGATION);
-    b.addVocab32(VOCAB_NAV_VELOCITY_CMD);
-    b.addFloat64(x_vel);
-    b.addFloat64(y_vel);
-    b.addFloat64(theta_vel);
-    b.addFloat64(timeout);
-
-    bool ret = m_rpc_port_to_navigation_server.write(b, resp);
-    if (ret)
-    {
-        if (resp.get(0).asVocab32() != VOCAB_OK)
-        {
-            yCError(NAVIGATION2D_NWC) << "applyVelocityCommand() received error from navigation server";
-            return false;
-        }
-    }
-    else
-    {
-        yCError(NAVIGATION2D_NWC) << "applyVelocityCommand() error on writing on rpc port";
-        return false;
-    }
-
-    return true;
+    std::lock_guard <std::mutex> lg(m_mutex);
+    return m_nav_RPC.apply_velocity_command_RPC(x_vel,y_vel,theta_vel, timeout);
 }

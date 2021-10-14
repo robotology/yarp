@@ -75,6 +75,10 @@ bool navigation2DServer::detachAll()
 
 bool navigation2DServer::open(Searchable& config)
 {
+    yCWarning(NAVIGATION2DSERVER) << "The 'navigation2DServer' device is deprecated in favour of 'navigation2D_nws_yarp'.";
+    yCWarning(NAVIGATION2DSERVER) << "The old device is no longer supported, and it will be deprecated in YARP 3.6 and removed in YARP 4.";
+    yCWarning(NAVIGATION2DSERVER) << "Please update your scripts.";
+
     Property params;
     params.fromString(config.toString().c_str());
     yCDebug(NAVIGATION2DSERVER) << "Configuration: \n" << config.toString().c_str();

@@ -168,7 +168,7 @@ bool Localization2D_nws_yarp::open(Searchable& config)
 
         if (!attach(&pLoc))
         {
-            yCError(LOCALIZATION2D_NWS_YARP) << "Failed to open subdevice.. check params";
+            yCError(LOCALIZATION2D_NWS_YARP) << "Failed to attach subdevice.. check params";
             return false;
         }
     }

@@ -13,22 +13,22 @@
 
 #include <yarp/os/Wire.h>
 #include <yarp/os/idl/WireTypes.h>
-#include <yarp_dev_Nav2D_LocalizationStatusEnum.h>
+#include <yarp/dev/ILocalization2D.h>
 
 class return_get_localization_status :
         public yarp::os::idl::WirePortable
 {
 public:
     // Fields
-    bool ret;
-    yarp_dev_Nav2D_LocalizationStatusEnum status;
+    bool ret{false};
+    yarp::dev::Nav2D::LocalizationStatusEnum status{};
 
     // Default constructor
-    return_get_localization_status();
+    return_get_localization_status() = default;
 
     // Constructor with field values
     return_get_localization_status(const bool ret,
-                                   const yarp_dev_Nav2D_LocalizationStatusEnum status);
+                                   const yarp::dev::Nav2D::LocalizationStatusEnum status);
 
     // Read structure on a Wire
     bool read(yarp::os::idl::WireReader& reader) override;
@@ -106,8 +106,8 @@ public:
         virtual bool did_set_ret();
 
         // Editor: status field
-        void set_status(const yarp_dev_Nav2D_LocalizationStatusEnum status);
-        yarp_dev_Nav2D_LocalizationStatusEnum get_status() const;
+        void set_status(const yarp::dev::Nav2D::LocalizationStatusEnum status);
+        yarp::dev::Nav2D::LocalizationStatusEnum get_status() const;
         virtual bool will_set_status();
         virtual bool did_set_status();
 

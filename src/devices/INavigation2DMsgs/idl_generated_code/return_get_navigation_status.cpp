@@ -8,11 +8,11 @@
 // This is an automatically generated file.
 // It could get re-generated if the ALLOW_IDL_GENERATION flag is on.
 
-#include <return_get_localization_status.h>
+#include <return_get_navigation_status.h>
 
 // Constructor with field values
-return_get_localization_status::return_get_localization_status(const bool ret,
-                                                               const yarp::dev::Nav2D::LocalizationStatusEnum status) :
+return_get_navigation_status::return_get_navigation_status(const bool ret,
+                                                           const yarp::dev::Nav2D::NavigationStatusEnum status) :
         WirePortable(),
         ret(ret),
         status(status)
@@ -20,7 +20,7 @@ return_get_localization_status::return_get_localization_status(const bool ret,
 }
 
 // Read structure on a Wire
-bool return_get_localization_status::read(yarp::os::idl::WireReader& reader)
+bool return_get_navigation_status::read(yarp::os::idl::WireReader& reader)
 {
     if (!read_ret(reader)) {
         return false;
@@ -32,7 +32,7 @@ bool return_get_localization_status::read(yarp::os::idl::WireReader& reader)
 }
 
 // Read structure on a Connection
-bool return_get_localization_status::read(yarp::os::ConnectionReader& connection)
+bool return_get_navigation_status::read(yarp::os::ConnectionReader& connection)
 {
     yarp::os::idl::WireReader reader(connection);
     if (!reader.readListHeader(2)) {
@@ -42,7 +42,7 @@ bool return_get_localization_status::read(yarp::os::ConnectionReader& connection
 }
 
 // Write structure on a Wire
-bool return_get_localization_status::write(const yarp::os::idl::WireWriter& writer) const
+bool return_get_navigation_status::write(const yarp::os::idl::WireWriter& writer) const
 {
     if (!write_ret(writer)) {
         return false;
@@ -54,7 +54,7 @@ bool return_get_localization_status::write(const yarp::os::idl::WireWriter& writ
 }
 
 // Write structure on a Connection
-bool return_get_localization_status::write(yarp::os::ConnectionWriter& connection) const
+bool return_get_navigation_status::write(yarp::os::ConnectionWriter& connection) const
 {
     yarp::os::idl::WireWriter writer(connection);
     if (!writer.writeListHeader(2)) {
@@ -64,7 +64,7 @@ bool return_get_localization_status::write(yarp::os::ConnectionWriter& connectio
 }
 
 // Convert to a printable string
-std::string return_get_localization_status::toString() const
+std::string return_get_navigation_status::toString() const
 {
     yarp::os::Bottle b;
     b.read(*this);
@@ -72,17 +72,17 @@ std::string return_get_localization_status::toString() const
 }
 
 // Editor: default constructor
-return_get_localization_status::Editor::Editor()
+return_get_navigation_status::Editor::Editor()
 {
     group = 0;
     obj_owned = true;
-    obj = new return_get_localization_status;
+    obj = new return_get_navigation_status;
     dirty_flags(false);
     yarp().setOwner(*this);
 }
 
 // Editor: constructor with base class
-return_get_localization_status::Editor::Editor(return_get_localization_status& obj)
+return_get_navigation_status::Editor::Editor(return_get_navigation_status& obj)
 {
     group = 0;
     obj_owned = false;
@@ -91,7 +91,7 @@ return_get_localization_status::Editor::Editor(return_get_localization_status& o
 }
 
 // Editor: destructor
-return_get_localization_status::Editor::~Editor()
+return_get_navigation_status::Editor::~Editor()
 {
     if (obj_owned) {
         delete obj;
@@ -99,7 +99,7 @@ return_get_localization_status::Editor::~Editor()
 }
 
 // Editor: edit
-bool return_get_localization_status::Editor::edit(return_get_localization_status& obj, bool dirty)
+bool return_get_navigation_status::Editor::edit(return_get_navigation_status& obj, bool dirty)
 {
     if (obj_owned) {
         delete this->obj;
@@ -111,25 +111,25 @@ bool return_get_localization_status::Editor::edit(return_get_localization_status
 }
 
 // Editor: validity check
-bool return_get_localization_status::Editor::isValid() const
+bool return_get_navigation_status::Editor::isValid() const
 {
     return obj != nullptr;
 }
 
 // Editor: state
-return_get_localization_status& return_get_localization_status::Editor::state()
+return_get_navigation_status& return_get_navigation_status::Editor::state()
 {
     return *obj;
 }
 
 // Editor: grouping begin
-void return_get_localization_status::Editor::start_editing()
+void return_get_navigation_status::Editor::start_editing()
 {
     group++;
 }
 
 // Editor: grouping end
-void return_get_localization_status::Editor::stop_editing()
+void return_get_navigation_status::Editor::stop_editing()
 {
     group--;
     if (group == 0 && is_dirty) {
@@ -137,7 +137,7 @@ void return_get_localization_status::Editor::stop_editing()
     }
 }
 // Editor: ret setter
-void return_get_localization_status::Editor::set_ret(const bool ret)
+void return_get_navigation_status::Editor::set_ret(const bool ret)
 {
     will_set_ret();
     obj->ret = ret;
@@ -147,25 +147,25 @@ void return_get_localization_status::Editor::set_ret(const bool ret)
 }
 
 // Editor: ret getter
-bool return_get_localization_status::Editor::get_ret() const
+bool return_get_navigation_status::Editor::get_ret() const
 {
     return obj->ret;
 }
 
 // Editor: ret will_set
-bool return_get_localization_status::Editor::will_set_ret()
+bool return_get_navigation_status::Editor::will_set_ret()
 {
     return true;
 }
 
 // Editor: ret did_set
-bool return_get_localization_status::Editor::did_set_ret()
+bool return_get_navigation_status::Editor::did_set_ret()
 {
     return true;
 }
 
 // Editor: status setter
-void return_get_localization_status::Editor::set_status(const yarp::dev::Nav2D::LocalizationStatusEnum status)
+void return_get_navigation_status::Editor::set_status(const yarp::dev::Nav2D::NavigationStatusEnum status)
 {
     will_set_status();
     obj->status = status;
@@ -175,31 +175,31 @@ void return_get_localization_status::Editor::set_status(const yarp::dev::Nav2D::
 }
 
 // Editor: status getter
-yarp::dev::Nav2D::LocalizationStatusEnum return_get_localization_status::Editor::get_status() const
+yarp::dev::Nav2D::NavigationStatusEnum return_get_navigation_status::Editor::get_status() const
 {
     return obj->status;
 }
 
 // Editor: status will_set
-bool return_get_localization_status::Editor::will_set_status()
+bool return_get_navigation_status::Editor::will_set_status()
 {
     return true;
 }
 
 // Editor: status did_set
-bool return_get_localization_status::Editor::did_set_status()
+bool return_get_navigation_status::Editor::did_set_status()
 {
     return true;
 }
 
 // Editor: clean
-void return_get_localization_status::Editor::clean()
+void return_get_navigation_status::Editor::clean()
 {
     dirty_flags(false);
 }
 
 // Editor: read
-bool return_get_localization_status::Editor::read(yarp::os::ConnectionReader& connection)
+bool return_get_navigation_status::Editor::read(yarp::os::ConnectionReader& connection)
 {
     if (!isValid()) {
         return false;
@@ -253,7 +253,7 @@ bool return_get_localization_status::Editor::read(yarp::os::ConnectionReader& co
                 if (!writer.writeListHeader(1)) {
                     return false;
                 }
-                if (!writer.writeString("yarp::dev::Nav2D::LocalizationStatusEnum status")) {
+                if (!writer.writeString("yarp::dev::Nav2D::NavigationStatusEnum status")) {
                     return false;
                 }
             }
@@ -317,7 +317,7 @@ bool return_get_localization_status::Editor::read(yarp::os::ConnectionReader& co
 }
 
 // Editor: write
-bool return_get_localization_status::Editor::write(yarp::os::ConnectionWriter& connection) const
+bool return_get_navigation_status::Editor::write(yarp::os::ConnectionWriter& connection) const
 {
     if (!isValid()) {
         return false;
@@ -361,7 +361,7 @@ bool return_get_localization_status::Editor::write(yarp::os::ConnectionWriter& c
 }
 
 // Editor: send if possible
-void return_get_localization_status::Editor::communicate()
+void return_get_navigation_status::Editor::communicate()
 {
     if (group != 0) {
         return;
@@ -373,13 +373,13 @@ void return_get_localization_status::Editor::communicate()
 }
 
 // Editor: mark dirty overall
-void return_get_localization_status::Editor::mark_dirty()
+void return_get_navigation_status::Editor::mark_dirty()
 {
     is_dirty = true;
 }
 
 // Editor: ret mark_dirty
-void return_get_localization_status::Editor::mark_dirty_ret()
+void return_get_navigation_status::Editor::mark_dirty_ret()
 {
     if (is_dirty_ret) {
         return;
@@ -390,7 +390,7 @@ void return_get_localization_status::Editor::mark_dirty_ret()
 }
 
 // Editor: status mark_dirty
-void return_get_localization_status::Editor::mark_dirty_status()
+void return_get_navigation_status::Editor::mark_dirty_status()
 {
     if (is_dirty_status) {
         return;
@@ -401,7 +401,7 @@ void return_get_localization_status::Editor::mark_dirty_status()
 }
 
 // Editor: dirty_flags
-void return_get_localization_status::Editor::dirty_flags(bool flag)
+void return_get_navigation_status::Editor::dirty_flags(bool flag)
 {
     is_dirty = flag;
     is_dirty_ret = flag;
@@ -410,7 +410,7 @@ void return_get_localization_status::Editor::dirty_flags(bool flag)
 }
 
 // read ret field
-bool return_get_localization_status::read_ret(yarp::os::idl::WireReader& reader)
+bool return_get_navigation_status::read_ret(yarp::os::idl::WireReader& reader)
 {
     if (!reader.readBool(ret)) {
         ret = false;
@@ -419,7 +419,7 @@ bool return_get_localization_status::read_ret(yarp::os::idl::WireReader& reader)
 }
 
 // write ret field
-bool return_get_localization_status::write_ret(const yarp::os::idl::WireWriter& writer) const
+bool return_get_navigation_status::write_ret(const yarp::os::idl::WireWriter& writer) const
 {
     if (!writer.writeBool(ret)) {
         return false;
@@ -428,7 +428,7 @@ bool return_get_localization_status::write_ret(const yarp::os::idl::WireWriter& 
 }
 
 // read (nested) ret field
-bool return_get_localization_status::nested_read_ret(yarp::os::idl::WireReader& reader)
+bool return_get_navigation_status::nested_read_ret(yarp::os::idl::WireReader& reader)
 {
     if (!reader.readBool(ret)) {
         ret = false;
@@ -437,7 +437,7 @@ bool return_get_localization_status::nested_read_ret(yarp::os::idl::WireReader& 
 }
 
 // write (nested) ret field
-bool return_get_localization_status::nested_write_ret(const yarp::os::idl::WireWriter& writer) const
+bool return_get_navigation_status::nested_write_ret(const yarp::os::idl::WireWriter& writer) const
 {
     if (!writer.writeBool(ret)) {
         return false;
@@ -446,7 +446,7 @@ bool return_get_localization_status::nested_write_ret(const yarp::os::idl::WireW
 }
 
 // read status field
-bool return_get_localization_status::read_status(yarp::os::idl::WireReader& reader)
+bool return_get_navigation_status::read_status(yarp::os::idl::WireReader& reader)
 {
     if (reader.noMore()) {
         reader.fail();
@@ -457,12 +457,12 @@ bool return_get_localization_status::read_status(yarp::os::idl::WireReader& read
         reader.fail();
         return false;
     }
-    status = static_cast<yarp::dev::Nav2D::LocalizationStatusEnum>(ecast0);
+    status = static_cast<yarp::dev::Nav2D::NavigationStatusEnum>(ecast0);
     return true;
 }
 
 // write status field
-bool return_get_localization_status::write_status(const yarp::os::idl::WireWriter& writer) const
+bool return_get_navigation_status::write_status(const yarp::os::idl::WireWriter& writer) const
 {
     if (!writer.writeVocab32(static_cast<yarp::conf::vocab32_t>(status))) {
         return false;
@@ -471,7 +471,7 @@ bool return_get_localization_status::write_status(const yarp::os::idl::WireWrite
 }
 
 // read (nested) status field
-bool return_get_localization_status::nested_read_status(yarp::os::idl::WireReader& reader)
+bool return_get_navigation_status::nested_read_status(yarp::os::idl::WireReader& reader)
 {
     if (reader.noMore()) {
         reader.fail();
@@ -482,12 +482,12 @@ bool return_get_localization_status::nested_read_status(yarp::os::idl::WireReade
         reader.fail();
         return false;
     }
-    status = static_cast<yarp::dev::Nav2D::LocalizationStatusEnum>(ecast1);
+    status = static_cast<yarp::dev::Nav2D::NavigationStatusEnum>(ecast1);
     return true;
 }
 
 // write (nested) status field
-bool return_get_localization_status::nested_write_status(const yarp::os::idl::WireWriter& writer) const
+bool return_get_navigation_status::nested_write_status(const yarp::os::idl::WireWriter& writer) const
 {
     if (!writer.writeVocab32(static_cast<yarp::conf::vocab32_t>(status))) {
         return false;

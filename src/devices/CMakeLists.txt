@@ -38,6 +38,7 @@ yarp_begin_plugin_library(yarpmod
   add_subdirectory(portaudioRecorder)
   add_subdirectory(imuBosch_BNO055)
   add_subdirectory(IMap2DMsgs)
+  add_subdirectory(INavigation2DMsgs)
   add_subdirectory(ILocalization2DMsgs)
   add_subdirectory(DynamixelAX12Ftdi)
   add_subdirectory(fakeLaser)

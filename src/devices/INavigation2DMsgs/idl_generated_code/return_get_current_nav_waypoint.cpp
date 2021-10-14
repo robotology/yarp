@@ -8,31 +8,31 @@
 // This is an automatically generated file.
 // It could get re-generated if the ALLOW_IDL_GENERATION flag is on.
 
-#include <return_get_localization_status.h>
+#include <return_get_current_nav_waypoint.h>
 
 // Constructor with field values
-return_get_localization_status::return_get_localization_status(const bool ret,
-                                                               const yarp::dev::Nav2D::LocalizationStatusEnum status) :
+return_get_current_nav_waypoint::return_get_current_nav_waypoint(const bool ret,
+                                                                 const yarp::dev::Nav2D::Map2DLocation& waypoint) :
         WirePortable(),
         ret(ret),
-        status(status)
+        waypoint(waypoint)
 {
 }
 
 // Read structure on a Wire
-bool return_get_localization_status::read(yarp::os::idl::WireReader& reader)
+bool return_get_current_nav_waypoint::read(yarp::os::idl::WireReader& reader)
 {
     if (!read_ret(reader)) {
         return false;
     }
-    if (!nested_read_status(reader)) {
+    if (!nested_read_waypoint(reader)) {
         return false;
     }
     return !reader.isError();
 }
 
 // Read structure on a Connection
-bool return_get_localization_status::read(yarp::os::ConnectionReader& connection)
+bool return_get_current_nav_waypoint::read(yarp::os::ConnectionReader& connection)
 {
     yarp::os::idl::WireReader reader(connection);
     if (!reader.readListHeader(2)) {
@@ -42,19 +42,19 @@ bool return_get_localization_status::read(yarp::os::ConnectionReader& connection
 }
 
 // Write structure on a Wire
-bool return_get_localization_status::write(const yarp::os::idl::WireWriter& writer) const
+bool return_get_current_nav_waypoint::write(const yarp::os::idl::WireWriter& writer) const
 {
     if (!write_ret(writer)) {
         return false;
     }
-    if (!nested_write_status(writer)) {
+    if (!nested_write_waypoint(writer)) {
         return false;
     }
     return !writer.isError();
 }
 
 // Write structure on a Connection
-bool return_get_localization_status::write(yarp::os::ConnectionWriter& connection) const
+bool return_get_current_nav_waypoint::write(yarp::os::ConnectionWriter& connection) const
 {
     yarp::os::idl::WireWriter writer(connection);
     if (!writer.writeListHeader(2)) {
@@ -64,7 +64,7 @@ bool return_get_localization_status::write(yarp::os::ConnectionWriter& connectio
 }
 
 // Convert to a printable string
-std::string return_get_localization_status::toString() const
+std::string return_get_current_nav_waypoint::toString() const
 {
     yarp::os::Bottle b;
     b.read(*this);
@@ -72,17 +72,17 @@ std::string return_get_localization_status::toString() const
 }
 
 // Editor: default constructor
-return_get_localization_status::Editor::Editor()
+return_get_current_nav_waypoint::Editor::Editor()
 {
     group = 0;
     obj_owned = true;
-    obj = new return_get_localization_status;
+    obj = new return_get_current_nav_waypoint;
     dirty_flags(false);
     yarp().setOwner(*this);
 }
 
 // Editor: constructor with base class
-return_get_localization_status::Editor::Editor(return_get_localization_status& obj)
+return_get_current_nav_waypoint::Editor::Editor(return_get_current_nav_waypoint& obj)
 {
     group = 0;
     obj_owned = false;
@@ -91,7 +91,7 @@ return_get_localization_status::Editor::Editor(return_get_localization_status& o
 }
 
 // Editor: destructor
-return_get_localization_status::Editor::~Editor()
+return_get_current_nav_waypoint::Editor::~Editor()
 {
     if (obj_owned) {
         delete obj;
@@ -99,7 +99,7 @@ return_get_localization_status::Editor::~Editor()
 }
 
 // Editor: edit
-bool return_get_localization_status::Editor::edit(return_get_localization_status& obj, bool dirty)
+bool return_get_current_nav_waypoint::Editor::edit(return_get_current_nav_waypoint& obj, bool dirty)
 {
     if (obj_owned) {
         delete this->obj;
@@ -111,25 +111,25 @@ bool return_get_localization_status::Editor::edit(return_get_localization_status
 }
 
 // Editor: validity check
-bool return_get_localization_status::Editor::isValid() const
+bool return_get_current_nav_waypoint::Editor::isValid() const
 {
     return obj != nullptr;
 }
 
 // Editor: state
-return_get_localization_status& return_get_localization_status::Editor::state()
+return_get_current_nav_waypoint& return_get_current_nav_waypoint::Editor::state()
 {
     return *obj;
 }
 
 // Editor: grouping begin
-void return_get_localization_status::Editor::start_editing()
+void return_get_current_nav_waypoint::Editor::start_editing()
 {
     group++;
 }
 
 // Editor: grouping end
-void return_get_localization_status::Editor::stop_editing()
+void return_get_current_nav_waypoint::Editor::stop_editing()
 {
     group--;
     if (group == 0 && is_dirty) {
@@ -137,7 +137,7 @@ void return_get_localization_status::Editor::stop_editing()
     }
 }
 // Editor: ret setter
-void return_get_localization_status::Editor::set_ret(const bool ret)
+void return_get_current_nav_waypoint::Editor::set_ret(const bool ret)
 {
     will_set_ret();
     obj->ret = ret;
@@ -147,59 +147,59 @@ void return_get_localization_status::Editor::set_ret(const bool ret)
 }
 
 // Editor: ret getter
-bool return_get_localization_status::Editor::get_ret() const
+bool return_get_current_nav_waypoint::Editor::get_ret() const
 {
     return obj->ret;
 }
 
 // Editor: ret will_set
-bool return_get_localization_status::Editor::will_set_ret()
+bool return_get_current_nav_waypoint::Editor::will_set_ret()
 {
     return true;
 }
 
 // Editor: ret did_set
-bool return_get_localization_status::Editor::did_set_ret()
+bool return_get_current_nav_waypoint::Editor::did_set_ret()
 {
     return true;
 }
 
-// Editor: status setter
-void return_get_localization_status::Editor::set_status(const yarp::dev::Nav2D::LocalizationStatusEnum status)
+// Editor: waypoint setter
+void return_get_current_nav_waypoint::Editor::set_waypoint(const yarp::dev::Nav2D::Map2DLocation& waypoint)
 {
-    will_set_status();
-    obj->status = status;
-    mark_dirty_status();
+    will_set_waypoint();
+    obj->waypoint = waypoint;
+    mark_dirty_waypoint();
     communicate();
-    did_set_status();
+    did_set_waypoint();
 }
 
-// Editor: status getter
-yarp::dev::Nav2D::LocalizationStatusEnum return_get_localization_status::Editor::get_status() const
+// Editor: waypoint getter
+const yarp::dev::Nav2D::Map2DLocation& return_get_current_nav_waypoint::Editor::get_waypoint() const
 {
-    return obj->status;
+    return obj->waypoint;
 }
 
-// Editor: status will_set
-bool return_get_localization_status::Editor::will_set_status()
+// Editor: waypoint will_set
+bool return_get_current_nav_waypoint::Editor::will_set_waypoint()
 {
     return true;
 }
 
-// Editor: status did_set
-bool return_get_localization_status::Editor::did_set_status()
+// Editor: waypoint did_set
+bool return_get_current_nav_waypoint::Editor::did_set_waypoint()
 {
     return true;
 }
 
 // Editor: clean
-void return_get_localization_status::Editor::clean()
+void return_get_current_nav_waypoint::Editor::clean()
 {
     dirty_flags(false);
 }
 
 // Editor: read
-bool return_get_localization_status::Editor::read(yarp::os::ConnectionReader& connection)
+bool return_get_current_nav_waypoint::Editor::read(yarp::os::ConnectionReader& connection)
 {
     if (!isValid()) {
         return false;
@@ -249,11 +249,11 @@ bool return_get_localization_status::Editor::read(yarp::os::ConnectionReader& co
                     return false;
                 }
             }
-            if (field == "status") {
+            if (field == "waypoint") {
                 if (!writer.writeListHeader(1)) {
                     return false;
                 }
-                if (!writer.writeString("yarp::dev::Nav2D::LocalizationStatusEnum status")) {
+                if (!writer.writeString("yarp::dev::Nav2D::Map2DLocation waypoint")) {
                     return false;
                 }
             }
@@ -263,7 +263,7 @@ bool return_get_localization_status::Editor::read(yarp::os::ConnectionReader& co
         }
         writer.writeString("*** Available fields:");
         writer.writeString("ret");
-        writer.writeString("status");
+        writer.writeString("waypoint");
         return true;
     }
     bool nested = true;
@@ -296,12 +296,12 @@ bool return_get_localization_status::Editor::read(yarp::os::ConnectionReader& co
                 return false;
             }
             did_set_ret();
-        } else if (key == "status") {
-            will_set_status();
-            if (!obj->nested_read_status(reader)) {
+        } else if (key == "waypoint") {
+            will_set_waypoint();
+            if (!obj->nested_read_waypoint(reader)) {
                 return false;
             }
-            did_set_status();
+            did_set_waypoint();
         } else {
             // would be useful to have a fallback here
         }
@@ -317,7 +317,7 @@ bool return_get_localization_status::Editor::read(yarp::os::ConnectionReader& co
 }
 
 // Editor: write
-bool return_get_localization_status::Editor::write(yarp::os::ConnectionWriter& connection) const
+bool return_get_current_nav_waypoint::Editor::write(yarp::os::ConnectionWriter& connection) const
 {
     if (!isValid()) {
         return false;
@@ -343,17 +343,17 @@ bool return_get_localization_status::Editor::write(yarp::os::ConnectionWriter& c
             return false;
         }
     }
-    if (is_dirty_status) {
+    if (is_dirty_waypoint) {
         if (!writer.writeListHeader(3)) {
             return false;
         }
         if (!writer.writeString("set")) {
             return false;
         }
-        if (!writer.writeString("status")) {
+        if (!writer.writeString("waypoint")) {
             return false;
         }
-        if (!obj->nested_write_status(writer)) {
+        if (!obj->nested_write_waypoint(writer)) {
             return false;
         }
     }
@@ -361,7 +361,7 @@ bool return_get_localization_status::Editor::write(yarp::os::ConnectionWriter& c
 }
 
 // Editor: send if possible
-void return_get_localization_status::Editor::communicate()
+void return_get_current_nav_waypoint::Editor::communicate()
 {
     if (group != 0) {
         return;
@@ -373,13 +373,13 @@ void return_get_localization_status::Editor::communicate()
 }
 
 // Editor: mark dirty overall
-void return_get_localization_status::Editor::mark_dirty()
+void return_get_current_nav_waypoint::Editor::mark_dirty()
 {
     is_dirty = true;
 }
 
 // Editor: ret mark_dirty
-void return_get_localization_status::Editor::mark_dirty_ret()
+void return_get_current_nav_waypoint::Editor::mark_dirty_ret()
 {
     if (is_dirty_ret) {
         return;
@@ -389,28 +389,28 @@ void return_get_localization_status::Editor::mark_dirty_ret()
     mark_dirty();
 }
 
-// Editor: status mark_dirty
-void return_get_localization_status::Editor::mark_dirty_status()
+// Editor: waypoint mark_dirty
+void return_get_current_nav_waypoint::Editor::mark_dirty_waypoint()
 {
-    if (is_dirty_status) {
+    if (is_dirty_waypoint) {
         return;
     }
     dirty_count++;
-    is_dirty_status = true;
+    is_dirty_waypoint = true;
     mark_dirty();
 }
 
 // Editor: dirty_flags
-void return_get_localization_status::Editor::dirty_flags(bool flag)
+void return_get_current_nav_waypoint::Editor::dirty_flags(bool flag)
 {
     is_dirty = flag;
     is_dirty_ret = flag;
-    is_dirty_status = flag;
+    is_dirty_waypoint = flag;
     dirty_count = flag ? 2 : 0;
 }
 
 // read ret field
-bool return_get_localization_status::read_ret(yarp::os::idl::WireReader& reader)
+bool return_get_current_nav_waypoint::read_ret(yarp::os::idl::WireReader& reader)
 {
     if (!reader.readBool(ret)) {
         ret = false;
@@ -419,7 +419,7 @@ bool return_get_localization_status::read_ret(yarp::os::idl::WireReader& reader)
 }
 
 // write ret field
-bool return_get_localization_status::write_ret(const yarp::os::idl::WireWriter& writer) const
+bool return_get_current_nav_waypoint::write_ret(const yarp::os::idl::WireWriter& writer) const
 {
     if (!writer.writeBool(ret)) {
         return false;
@@ -428,7 +428,7 @@ bool return_get_localization_status::write_ret(const yarp::os::idl::WireWriter& 
 }
 
 // read (nested) ret field
-bool return_get_localization_status::nested_read_ret(yarp::os::idl::WireReader& reader)
+bool return_get_current_nav_waypoint::nested_read_ret(yarp::os::idl::WireReader& reader)
 {
     if (!reader.readBool(ret)) {
         ret = false;
@@ -437,7 +437,7 @@ bool return_get_localization_status::nested_read_ret(yarp::os::idl::WireReader& 
 }
 
 // write (nested) ret field
-bool return_get_localization_status::nested_write_ret(const yarp::os::idl::WireWriter& writer) const
+bool return_get_current_nav_waypoint::nested_write_ret(const yarp::os::idl::WireWriter& writer) const
 {
     if (!writer.writeBool(ret)) {
         return false;
@@ -445,51 +445,47 @@ bool return_get_localization_status::nested_write_ret(const yarp::os::idl::WireW
     return true;
 }
 
-// read status field
-bool return_get_localization_status::read_status(yarp::os::idl::WireReader& reader)
+// read waypoint field
+bool return_get_current_nav_waypoint::read_waypoint(yarp::os::idl::WireReader& reader)
 {
     if (reader.noMore()) {
         reader.fail();
         return false;
     }
-    yarp::conf::vocab32_t ecast0;
-    if (!reader.readVocab32(ecast0)) {
+    if (!reader.read(waypoint)) {
         reader.fail();
         return false;
     }
-    status = static_cast<yarp::dev::Nav2D::LocalizationStatusEnum>(ecast0);
     return true;
 }
 
-// write status field
-bool return_get_localization_status::write_status(const yarp::os::idl::WireWriter& writer) const
+// write waypoint field
+bool return_get_current_nav_waypoint::write_waypoint(const yarp::os::idl::WireWriter& writer) const
 {
-    if (!writer.writeVocab32(static_cast<yarp::conf::vocab32_t>(status))) {
+    if (!writer.write(waypoint)) {
         return false;
     }
     return true;
 }
 
-// read (nested) status field
-bool return_get_localization_status::nested_read_status(yarp::os::idl::WireReader& reader)
+// read (nested) waypoint field
+bool return_get_current_nav_waypoint::nested_read_waypoint(yarp::os::idl::WireReader& reader)
 {
     if (reader.noMore()) {
         reader.fail();
         return false;
     }
-    yarp::conf::vocab32_t ecast1;
-    if (!reader.readVocab32(ecast1)) {
+    if (!reader.readNested(waypoint)) {
         reader.fail();
         return false;
     }
-    status = static_cast<yarp::dev::Nav2D::LocalizationStatusEnum>(ecast1);
     return true;
 }
 
-// write (nested) status field
-bool return_get_localization_status::nested_write_status(const yarp::os::idl::WireWriter& writer) const
+// write (nested) waypoint field
+bool return_get_current_nav_waypoint::nested_write_waypoint(const yarp::os::idl::WireWriter& writer) const
 {
-    if (!writer.writeVocab32(static_cast<yarp::conf::vocab32_t>(status))) {
+    if (!writer.writeNested(waypoint)) {
         return false;
     }
     return true;

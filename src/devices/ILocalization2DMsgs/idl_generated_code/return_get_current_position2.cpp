@@ -10,15 +10,6 @@
 
 #include <return_get_current_position2.h>
 
-// Default constructor
-return_get_current_position2::return_get_current_position2() :
-        WirePortable(),
-        ret(false),
-        loc(),
-        cov()
-{
-}
-
 // Constructor with field values
 return_get_current_position2::return_get_current_position2(const bool ret,
                                                            const yarp::dev::Nav2D::Map2DLocation& loc,
@@ -36,10 +27,10 @@ bool return_get_current_position2::read(yarp::os::idl::WireReader& reader)
     if (!read_ret(reader)) {
         return false;
     }
-    if (!read_loc(reader)) {
+    if (!nested_read_loc(reader)) {
         return false;
     }
-    if (!read_cov(reader)) {
+    if (!nested_read_cov(reader)) {
         return false;
     }
     return !reader.isError();
@@ -61,10 +52,10 @@ bool return_get_current_position2::write(const yarp::os::idl::WireWriter& writer
     if (!write_ret(writer)) {
         return false;
     }
-    if (!write_loc(writer)) {
+    if (!nested_write_loc(writer)) {
         return false;
     }
-    if (!write_cov(writer)) {
+    if (!nested_write_cov(writer)) {
         return false;
     }
     return !writer.isError();
@@ -499,7 +490,7 @@ void return_get_current_position2::Editor::dirty_flags(bool flag)
 bool return_get_current_position2::read_ret(yarp::os::idl::WireReader& reader)
 {
     if (!reader.readBool(ret)) {
-        ret = 0;
+        ret = false;
     }
     return true;
 }
@@ -517,7 +508,7 @@ bool return_get_current_position2::write_ret(const yarp::os::idl::WireWriter& wr
 bool return_get_current_position2::nested_read_ret(yarp::os::idl::WireReader& reader)
 {
     if (!reader.readBool(ret)) {
-        ret = 0;
+        ret = false;
     }
     return true;
 }
@@ -534,6 +525,10 @@ bool return_get_current_position2::nested_write_ret(const yarp::os::idl::WireWri
 // read loc field
 bool return_get_current_position2::read_loc(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.read(loc)) {
         reader.fail();
         return false;
@@ -553,6 +548,10 @@ bool return_get_current_position2::write_loc(const yarp::os::idl::WireWriter& wr
 // read (nested) loc field
 bool return_get_current_position2::nested_read_loc(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readNested(loc)) {
         reader.fail();
         return false;
@@ -572,6 +571,10 @@ bool return_get_current_position2::nested_write_loc(const yarp::os::idl::WireWri
 // read cov field
 bool return_get_current_position2::read_cov(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.read(cov)) {
         reader.fail();
         return false;
@@ -591,6 +594,10 @@ bool return_get_current_position2::write_cov(const yarp::os::idl::WireWriter& wr
 // read (nested) cov field
 bool return_get_current_position2::nested_read_cov(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     if (!reader.readNested(cov)) {
         reader.fail();
         return false;

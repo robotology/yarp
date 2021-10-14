@@ -10,14 +10,6 @@
 
 #include <return_get_estimated_poses.h>
 
-// Default constructor
-return_get_estimated_poses::return_get_estimated_poses() :
-        WirePortable(),
-        ret(false),
-        poses()
-{
-}
-
 // Constructor with field values
 return_get_estimated_poses::return_get_estimated_poses(const bool ret,
                                                        const std::vector<yarp::dev::Nav2D::Map2DLocation>& poses) :
@@ -431,7 +423,7 @@ void return_get_estimated_poses::Editor::dirty_flags(bool flag)
 bool return_get_estimated_poses::read_ret(yarp::os::idl::WireReader& reader)
 {
     if (!reader.readBool(ret)) {
-        ret = 0;
+        ret = false;
     }
     return true;
 }
@@ -449,7 +441,7 @@ bool return_get_estimated_poses::write_ret(const yarp::os::idl::WireWriter& writ
 bool return_get_estimated_poses::nested_read_ret(yarp::os::idl::WireReader& reader)
 {
     if (!reader.readBool(ret)) {
-        ret = 0;
+        ret = false;
     }
     return true;
 }
@@ -466,13 +458,21 @@ bool return_get_estimated_poses::nested_write_ret(const yarp::os::idl::WireWrite
 // read poses field
 bool return_get_estimated_poses::read_poses(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     poses.clear();
-    uint32_t _size4;
-    yarp::os::idl::WireState _etype7;
-    reader.readListBegin(_etype7, _size4);
-    poses.resize(_size4);
-    for (size_t _i8 = 0; _i8 < _size4; ++_i8) {
-        if (!reader.readNested(poses[_i8])) {
+    uint32_t _size2;
+    yarp::os::idl::WireState _etype5;
+    reader.readListBegin(_etype5, _size2);
+    poses.resize(_size2);
+    for (size_t _i6 = 0; _i6 < _size2; ++_i6) {
+        if (reader.noMore()) {
+            reader.fail();
+            return false;
+        }
+        if (!reader.readNested(poses[_i6])) {
             reader.fail();
             return false;
         }
@@ -487,8 +487,8 @@ bool return_get_estimated_poses::write_poses(const yarp::os::idl::WireWriter& wr
     if (!writer.writeListBegin(BOTTLE_TAG_LIST, static_cast<uint32_t>(poses.size()))) {
         return false;
     }
-    for (const auto& _item9 : poses) {
-        if (!writer.writeNested(_item9)) {
+    for (const auto& _item7 : poses) {
+        if (!writer.writeNested(_item7)) {
             return false;
         }
     }
@@ -501,13 +501,21 @@ bool return_get_estimated_poses::write_poses(const yarp::os::idl::WireWriter& wr
 // read (nested) poses field
 bool return_get_estimated_poses::nested_read_poses(yarp::os::idl::WireReader& reader)
 {
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
     poses.clear();
-    uint32_t _size10;
-    yarp::os::idl::WireState _etype13;
-    reader.readListBegin(_etype13, _size10);
-    poses.resize(_size10);
-    for (size_t _i14 = 0; _i14 < _size10; ++_i14) {
-        if (!reader.readNested(poses[_i14])) {
+    uint32_t _size8;
+    yarp::os::idl::WireState _etype11;
+    reader.readListBegin(_etype11, _size8);
+    poses.resize(_size8);
+    for (size_t _i12 = 0; _i12 < _size8; ++_i12) {
+        if (reader.noMore()) {
+            reader.fail();
+            return false;
+        }
+        if (!reader.readNested(poses[_i12])) {
             reader.fail();
             return false;
         }
@@ -522,8 +530,8 @@ bool return_get_estimated_poses::nested_write_poses(const yarp::os::idl::WireWri
     if (!writer.writeListBegin(BOTTLE_TAG_LIST, static_cast<uint32_t>(poses.size()))) {
         return false;
     }
-    for (const auto& _item15 : poses) {
-        if (!writer.writeNested(_item15)) {
+    for (const auto& _item13 : poses) {
+        if (!writer.writeNested(_item13)) {
             return false;
         }
     }

@@ -93,6 +93,8 @@ if(NOT SKIP_navigation2D_nwc_yarp)
   target_include_directories(yarp_navigation2D_nwc_yarp PRIVATE $<TARGET_PROPERTY:IMap2DMsgs,INTERFACE_INCLUDE_DIRECTORIES>)
   target_sources(yarp_navigation2D_nwc_yarp PRIVATE $<TARGET_OBJECTS:ILocalization2DMsgs>)
   target_include_directories(yarp_navigation2D_nwc_yarp PRIVATE $<TARGET_PROPERTY:ILocalization2DMsgs,INTERFACE_INCLUDE_DIRECTORIES>)
+  target_sources(yarp_navigation2D_nwc_yarp PRIVATE $<TARGET_OBJECTS:INavigation2DMsgs>)
+  target_include_directories(yarp_navigation2D_nwc_yarp PRIVATE $<TARGET_PROPERTY:INavigation2DMsgs,INTERFACE_INCLUDE_DIRECTORIES>)
 
   yarp_install(
     TARGETS yarp_navigation2D_nwc_yarp

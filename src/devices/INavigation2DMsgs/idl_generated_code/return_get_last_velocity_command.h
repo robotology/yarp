@@ -8,27 +8,30 @@
 // This is an automatically generated file.
 // It could get re-generated if the ALLOW_IDL_GENERATION flag is on.
 
-#ifndef YARP_THRIFT_GENERATOR_STRUCT_RETURN_GET_ESTIMATED_ODOMETRY_H
-#define YARP_THRIFT_GENERATOR_STRUCT_RETURN_GET_ESTIMATED_ODOMETRY_H
+#ifndef YARP_THRIFT_GENERATOR_STRUCT_RETURN_GET_LAST_VELOCITY_COMMAND_H
+#define YARP_THRIFT_GENERATOR_STRUCT_RETURN_GET_LAST_VELOCITY_COMMAND_H
 
 #include <yarp/os/Wire.h>
 #include <yarp/os/idl/WireTypes.h>
-#include <yarp/dev/OdometryData.h>
 
-class return_get_estimated_odometry :
+class return_get_last_velocity_command :
         public yarp::os::idl::WirePortable
 {
 public:
     // Fields
     bool ret{false};
-    yarp::dev::OdometryData odom{};
+    double x_vel{0.0};
+    double y_vel{0.0};
+    double theta_vel{0.0};
 
     // Default constructor
-    return_get_estimated_odometry() = default;
+    return_get_last_velocity_command() = default;
 
     // Constructor with field values
-    return_get_estimated_odometry(const bool ret,
-                                  const yarp::dev::OdometryData& odom);
+    return_get_last_velocity_command(const bool ret,
+                                     const double x_vel,
+                                     const double y_vel,
+                                     const double theta_vel);
 
     // Read structure on a Wire
     bool read(yarp::os::idl::WireReader& reader) override;
@@ -46,7 +49,7 @@ public:
     std::string toString() const;
 
     // If you want to serialize this class without nesting, use this helper
-    typedef yarp::os::idl::Unwrapped<return_get_estimated_odometry> unwrapped;
+    typedef yarp::os::idl::Unwrapped<return_get_last_velocity_command> unwrapped;
 
     class Editor :
             public yarp::os::Wire,
@@ -57,7 +60,7 @@ public:
         Editor();
 
         // Editor: constructor with base class
-        Editor(return_get_estimated_odometry& obj);
+        Editor(return_get_last_velocity_command& obj);
 
         // Editor: destructor
         ~Editor() override;
@@ -69,13 +72,13 @@ public:
         Editor& operator=(Editor&& rhs) = delete;
 
         // Editor: edit
-        bool edit(return_get_estimated_odometry& obj, bool dirty = true);
+        bool edit(return_get_last_velocity_command& obj, bool dirty = true);
 
         // Editor: validity check
         bool isValid() const;
 
         // Editor: state
-        return_get_estimated_odometry& state();
+        return_get_last_velocity_command& state();
 
         // Editor: start editing
         void start_editing();
@@ -105,11 +108,23 @@ public:
         virtual bool will_set_ret();
         virtual bool did_set_ret();
 
-        // Editor: odom field
-        void set_odom(const yarp::dev::OdometryData& odom);
-        const yarp::dev::OdometryData& get_odom() const;
-        virtual bool will_set_odom();
-        virtual bool did_set_odom();
+        // Editor: x_vel field
+        void set_x_vel(const double x_vel);
+        double get_x_vel() const;
+        virtual bool will_set_x_vel();
+        virtual bool did_set_x_vel();
+
+        // Editor: y_vel field
+        void set_y_vel(const double y_vel);
+        double get_y_vel() const;
+        virtual bool will_set_y_vel();
+        virtual bool did_set_y_vel();
+
+        // Editor: theta_vel field
+        void set_theta_vel(const double theta_vel);
+        double get_theta_vel() const;
+        virtual bool will_set_theta_vel();
+        virtual bool did_set_theta_vel();
 
         // Editor: clean
         void clean();
@@ -122,14 +137,16 @@ public:
 
     private:
         // Editor: state
-        return_get_estimated_odometry* obj;
+        return_get_last_velocity_command* obj;
         bool obj_owned;
         int group;
 
         // Editor: dirty variables
         bool is_dirty;
         bool is_dirty_ret;
-        bool is_dirty_odom;
+        bool is_dirty_x_vel;
+        bool is_dirty_y_vel;
+        bool is_dirty_theta_vel;
         int dirty_count;
 
         // Editor: send if possible
@@ -140,7 +157,9 @@ public:
 
         // Editor: mark dirty single fields
         void mark_dirty_ret();
-        void mark_dirty_odom();
+        void mark_dirty_x_vel();
+        void mark_dirty_y_vel();
+        void mark_dirty_theta_vel();
 
         // Editor: dirty_flags
         void dirty_flags(bool flag);
@@ -153,11 +172,23 @@ private:
     bool nested_read_ret(yarp::os::idl::WireReader& reader);
     bool nested_write_ret(const yarp::os::idl::WireWriter& writer) const;
 
-    // read/write odom field
-    bool read_odom(yarp::os::idl::WireReader& reader);
-    bool write_odom(const yarp::os::idl::WireWriter& writer) const;
-    bool nested_read_odom(yarp::os::idl::WireReader& reader);
-    bool nested_write_odom(const yarp::os::idl::WireWriter& writer) const;
+    // read/write x_vel field
+    bool read_x_vel(yarp::os::idl::WireReader& reader);
+    bool write_x_vel(const yarp::os::idl::WireWriter& writer) const;
+    bool nested_read_x_vel(yarp::os::idl::WireReader& reader);
+    bool nested_write_x_vel(const yarp::os::idl::WireWriter& writer) const;
+
+    // read/write y_vel field
+    bool read_y_vel(yarp::os::idl::WireReader& reader);
+    bool write_y_vel(const yarp::os::idl::WireWriter& writer) const;
+    bool nested_read_y_vel(yarp::os::idl::WireReader& reader);
+    bool nested_write_y_vel(const yarp::os::idl::WireWriter& writer) const;
+
+    // read/write theta_vel field
+    bool read_theta_vel(yarp::os::idl::WireReader& reader);
+    bool write_theta_vel(const yarp::os::idl::WireWriter& writer) const;
+    bool nested_read_theta_vel(yarp::os::idl::WireReader& reader);
+    bool nested_write_theta_vel(const yarp::os::idl::WireWriter& writer) const;
 };
 
-#endif // YARP_THRIFT_GENERATOR_STRUCT_RETURN_GET_ESTIMATED_ODOMETRY_H
+#endif // YARP_THRIFT_GENERATOR_STRUCT_RETURN_GET_LAST_VELOCITY_COMMAND_H
