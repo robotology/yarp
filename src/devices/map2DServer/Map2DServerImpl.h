@@ -10,8 +10,6 @@
 #include <yarp/dev/IMap2D.h>
 #include <yarp/os/Stamp.h>
 
-class Localization2DServer;
-
 class IMap2DRPCd : public IMap2DMsgs
 {
     private:
@@ -54,4 +52,4 @@ class IMap2DRPCd : public IMap2DMsgs
     std::mutex* getMutex() {return &m_mutex;}
 };
 
-#endif // YARP_DEV_LOCALIZATION2DSERVERIMPL_H
+#endif // YARP_DEV_MAP2DSERVERIMPL_H
