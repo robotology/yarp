@@ -10,7 +10,10 @@ target_sources(harness_dev
     FrameTransformClientTest.cpp
     TransformClientTest.cpp
     GroupDriverTest.cpp
+    IMap2DTest.cpp
     MapGrid2DTest.cpp
+    Map2DClientTest.cpp
+    Map2DnwcTest.cpp
     Navigation2DClientTest.cpp
     MultipleAnalogSensorsInterfacesTest.cpp
     PolyDriverTest.cpp
@@ -35,7 +38,9 @@ else()
   set(_disabled_files
     TransformClientTest.cpp
     FrameTransformClientTest.cpp
+    IMap2DTest.cpp
     Map2DClientTest.cpp
+    Map2DnwcTest.cpp
     Navigation2DClientTest.cpp
     MapGrid2DTest.cpp
   )
