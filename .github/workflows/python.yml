@@ -83,7 +83,7 @@ jobs:
         run: python -m cibuildwheel --output-dir wheelhouse scripts/pip
         env:
           CIBW_BUILD_VERBOSITY: 1
-          CIBW_BUILD: cp37-manylinux_x86_64 cp38-manylinux_x86_64 cp39-manylinux_x86_64
+          CIBW_BUILD: cp37-manylinux_x86_64 cp38-manylinux_x86_64 cp39-manylinux_x86_64 cp310-manylinux_x86_64
           CIBW_MANYLINUX_X86_64_IMAGE: manylinux_2_24
           CIBW_ENVIRONMENT_LINUX: "AUDITWHEEL_PLAT=manylinux_2_24_x86_64 CC=clang-7 CXX=clang++-7"
           CIBW_BEFORE_ALL_LINUX: |
