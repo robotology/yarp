@@ -21,6 +21,7 @@ yarp_begin_plugin_library(yarpmod
   add_subdirectory(fakeAnalogSensor)
   add_subdirectory(fakeBattery)
   add_subdirectory(fakeIMU)
+  add_subdirectory(fakeOdometry)
   add_subdirectory(frameTransformClient)
   add_subdirectory(frameTransformGet)
   add_subdirectory(frameTransformServer)
