@@ -409,12 +409,10 @@ void exec_frameTransform_test_2(IFrameTransform* itf)
     // test setTransform
     CHECK(itf->setTransform("/finger", "/hand", handToFinger));
     CHECK(!itf->setTransform("/finger", "/arm", result));
-    std::this_thread::sleep_for(std::chrono::milliseconds(250));
 
     // test getTransform
     yarp::sig::Matrix resultFromTransform(4, 4);
     CHECK(itf->getTransform("/finger", "/arm", resultFromTransform));
-    std::this_thread::sleep_for(std::chrono::milliseconds(250));
     for (int i = 0; i < 4; i++) {
         for (int j = 0; j < 4; j++) {
             CHECK((resultFromTransform(i, j) - result(i, j)) <= pow(10, -14));
