@@ -131,13 +131,14 @@ bool FrameTransformContainer::checkAndRemoveExpired()
 {
     std::lock_guard<std::recursive_mutex> lock(m_trf_mutex);
     double curr_t = yarp::os::Time::now();
+    check_vector:
     for (auto it= m_transforms.begin(); it!= m_transforms.end(); it++)
     {
-        if (it->timestamp- curr_t >m_timeout &&
+        if (curr_t - it->timestamp > m_timeout &&
             it->isStatic == false)
         {
             m_transforms.erase(it);
-            it = m_transforms.begin();
+            goto check_vector;
         }
     }
     return true;

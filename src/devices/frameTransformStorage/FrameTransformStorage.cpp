@@ -27,7 +27,8 @@ bool FrameTransformStorage::getInternalContainer(FrameTransformContainer*& conta
 bool FrameTransformStorage::open(yarp::os::Searchable& config)
 {
     yCTrace(FRAMETRANSFORSTORAGE);
-    return true;
+    bool b = this->start();
+    return b;
 }
 
 bool FrameTransformStorage::close()
@@ -63,10 +64,14 @@ void FrameTransformStorage::run()
     m_tf_container.checkAndRemoveExpired();
 
     // get new transforms
-    std::vector<yarp::math::FrameTransform> tfs;
-    bool b=iGetIf->getTransforms(tfs);
-    if (b) {
-        this->setTransforms(tfs);
+    if (iGetIf)
+    {
+        std::vector<yarp::math::FrameTransform> tfs;
+        bool b=iGetIf->getTransforms(tfs);
+        if (b)
+        {
+            this->setTransforms(tfs);
+        }
     }
 }
 
@@ -88,11 +93,6 @@ bool FrameTransformStorage::attach(yarp::dev::PolyDriver* driver)
     if (driver->isValid())
     {
         pDriver = driver;
-        if (pDriver->view(iGetIf) && iGetIf!=nullptr)
-        {
-            start();
-            return true;
-        }
     }
 
     return false;
