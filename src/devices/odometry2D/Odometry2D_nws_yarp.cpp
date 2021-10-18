@@ -157,7 +157,7 @@ void Odometry2D_nws_yarp::run()
 {
     if (m_odometry2D_interface!=nullptr)
     {
-        yarp::os::Stamp timeStamp(static_cast<int>(m_stampCount), yarp::os::Time::now());
+        yarp::os::Stamp timeStamp(static_cast<int>(m_stampCount++), yarp::os::Time::now());
         yarp::dev::OdometryData odometryData;
         m_odometry2D_interface->getOdometry(odometryData);
         if (m_port_odometry.getOutputCount()>0)
