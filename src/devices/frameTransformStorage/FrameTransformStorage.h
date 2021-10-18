@@ -67,8 +67,8 @@ public:
     bool detach() override;
 private:
     mutable std::mutex  m_pd_mutex;
-    yarp::dev::PolyDriver* pDriver;
-    IFrameTransformStorageGet* iGetIf;
+    yarp::dev::PolyDriver* pDriver = nullptr;
+    IFrameTransformStorageGet* iGetIf = nullptr;
 
     //periodicThread
     void     run() override;
