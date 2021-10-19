@@ -356,6 +356,7 @@ QHash<int, QByteArray> LogModel::roleNames() const
 
 void LogModel::addMessages(const std::list<yarp::yarpLogger::MessageEntry> &m_messages)
 {
+    if (m_messages.size()==0) return;
     beginInsertRows(QModelIndex(),
                     rowCount(),
                     rowCount() + m_messages.size() - 1);
