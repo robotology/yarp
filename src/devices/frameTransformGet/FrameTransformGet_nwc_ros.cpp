@@ -70,11 +70,13 @@ bool FrameTransformGet_nwc_ros::open(yarp::os::Searchable& config)
             yCError(FRAMETRANSFORGETNWCROS) << "Unable to publish data on " << m_topic << " topic, check your yarp-ROS network configuration";
             return false;
         }
+        m_rosSubscriberPort_tf_timed.setStrict();
         if (!m_rosSubscriberPort_tf_static.topic(m_topic_static))
         {
             yCError(FRAMETRANSFORGETNWCROS) << "Unable to publish data on " << m_topic_static << " topic, check your yarp-ROS network configuration";
             return false;
         }
+        m_rosSubscriberPort_tf_static.setStrict();
     }
     else
     {
@@ -83,9 +85,9 @@ bool FrameTransformGet_nwc_ros::open(yarp::os::Searchable& config)
         return false;
     }
 
-    start();
+    bool resp = start();
 
-    return true;
+    return resp;
 }
 
 bool FrameTransformGet_nwc_ros::close()
