@@ -18,6 +18,8 @@
 
 #include <cmath>
 #include <vector>
+#include <chrono>
+#include <thread>
 
 #include <catch.hpp>
 #include <harness.h>
@@ -252,10 +254,21 @@ void exec_frameTransform_test_1(IFrameTransform* itf)
         itf->setTransformStatic("frame_test", "frame1", m1);
         yarp::os::Time::delay(1);
         bool del_bool = itf->frameExists("frame_test");
-        itf->deleteTransform("frame_test", "frame1");
-        yarp::os::Time::delay(1);
-        del_bool &= (!itf->frameExists("frame_test"));
+        CHECK(del_bool); // frame exists
+        del_bool &= itf->deleteTransform("frame_test", "frame1");
         CHECK(del_bool); // deleteTransform ok
+        del_bool &= (!itf->frameExists("frame_test"));
+        CHECK(del_bool); // check if frame has been successfully removed
+
+        //let's wait some time and check gain to be sure that
+        //frame does not reappears....
+        yarp::os::Time::delay(1);
+
+        del_bool &= (!itf->frameExists("frame_test"));
+        std::string strs;
+        del_bool &= itf->allFramesAsString(strs);
+        INFO("Existing frames:" << strs);
+        CHECK(del_bool); // confirmed: frame does not exist anymore
     }
 
     //test 9
@@ -403,8 +416,14 @@ void exec_frameTransform_test_2(IFrameTransform* itf)
     result = armToHand * handToFinger;
 
     // test setTransformStatic
+    // static transforms cannot be set if they already exists
     CHECK(itf->setTransformStatic("/hand", "/arm", armToHand));
     CHECK(!itf->setTransformStatic("/hand", "/arm", handToFinger));
+
+    // static transforms cannot be set if an indirect connection already exists
+    //CHECK(itf->setTransformStatic("/wrong_transform", "/hand", handToFinger));
+   //CHECK(!itf->setTransformStatic("/wrong_transform", "/arm", handToFinger));
+   // CHECK(itf->deleteTransform("/wrong_transform", "/hand"));
 
     // test setTransform
     CHECK(itf->setTransform("/finger", "/hand", handToFinger));
