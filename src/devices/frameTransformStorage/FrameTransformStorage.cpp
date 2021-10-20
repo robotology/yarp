@@ -93,6 +93,11 @@ bool FrameTransformStorage::attach(yarp::dev::PolyDriver* driver)
     if (driver->isValid())
     {
         pDriver = driver;
+        pDriver->view(iGetIf);
+        if(iGetIf)
+        {
+            return true;
+        }
     }
 
     return false;
