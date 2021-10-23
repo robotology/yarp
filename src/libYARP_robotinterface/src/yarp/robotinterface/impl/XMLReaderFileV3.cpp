@@ -417,7 +417,7 @@ yarp::robotinterface::Param yarp::robotinterface::impl::XMLReaderFileV3::Private
     std::string extern_name;
     if (paramElem->QueryStringAttribute("extern-name", &extern_name) == TIXML_SUCCESS && config && config->check(extern_name)) {
         // FIXME Check DTD >= 3.1
-        param.value() = config->find(extern_name).asString();
+        param.value() = config->find(extern_name).toString();
     } else {
         param.value() = valueText;
     }
