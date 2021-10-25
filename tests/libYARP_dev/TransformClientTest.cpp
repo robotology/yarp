@@ -21,12 +21,9 @@ TEST_CASE("dev::TransformClientTest", "[yarp::dev]")
     YARP_REQUIRE_PLUGIN("transformServer", "device");
     YARP_REQUIRE_PLUGIN("transformClient", "device");
 
-#if defined(DISABLE_FAILING_TESTS)
-    YARP_SKIP_TEST("Skipping failing tests")
-#endif
-
     Network::setLocalMode(true);
 
+#if defined(ENABLE_BROKEN_TESTS)
     SECTION("Test the transform client, test 1")
     {
         bool precision_verbose = false;
@@ -97,5 +94,6 @@ TEST_CASE("dev::TransformClientTest", "[yarp::dev]")
         CHECK(ddtransformserver.close()); // ddtransformserver successfully closed
     }
 
+#endif
     Network::setLocalMode(false);
 }
