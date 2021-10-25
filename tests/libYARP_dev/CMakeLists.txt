@@ -10,6 +10,7 @@ target_sources(harness_dev
     FrameTransformClientTest.cpp
     TransformClientTest.cpp
     GroupDriverTest.cpp
+    IFrameTransformTest.cpp
     IMap2DTest.cpp
     MapGrid2DTest.cpp
     Map2DClientTest.cpp
@@ -38,6 +39,7 @@ else()
   set(_disabled_files
     TransformClientTest.cpp
     FrameTransformClientTest.cpp
+    IFrameTransformTest.cpp
     IMap2DTest.cpp
     Map2DClientTest.cpp
     Map2DnwcTest.cpp
