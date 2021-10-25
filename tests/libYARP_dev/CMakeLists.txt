@@ -7,8 +7,8 @@ target_sources(harness_dev
     AnalogWrapperTest.cpp
     ControlBoardRemapperTest.cpp
     ControlBoardWrapper2Test.cpp
-    FrameTransformClientTest.cpp
-    newFrameTransformClientTest.cpp
+#    FrameTransformClientTest.cpp
+#    newFrameTransformClientTest.cpp
     GroupDriverTest.cpp
     MapGrid2DTest.cpp
     Navigation2DClientTest.cpp
@@ -33,8 +33,8 @@ if(TARGET YARP::YARP_math)
   target_link_libraries(harness_dev PRIVATE YARP::YARP_math)
 else()
   set(_disabled_files
-    FrameTransformClientTest.cpp
-    newFrameTransformClientTest.cpp
+#    FrameTransformClientTest.cpp
+#    newFrameTransformClientTest.cpp
     Map2DClientTest.cpp
     Navigation2DClientTest.cpp
     MapGrid2DTest.cpp
