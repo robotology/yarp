@@ -16,6 +16,7 @@
   *
   * Example usage:
   * yarp connect /src /dest tcp+send.portmonitor+file.bottle_compression_zlib+recv.portmonitor+file.bottle_compression_zlib+type.dll
+  * yarp connect /src /dest tcp+send.portmonitor+file.bottle_compression_zlib+recv.portmonitor+file.bottle_compression_zlib+type.dll+debug_compression_info
   */
 class BottleZlibMonitorObject : public yarp::os::MonitorObject
 {
@@ -37,6 +38,7 @@ private:
     yarp::os::Things m_th;
     yarp::os::Bottle m_data;
     bool             m_shouldCompress;
+    bool             m_debug_compression_size = false;
 };
 
 #endif
