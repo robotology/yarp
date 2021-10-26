@@ -16,6 +16,8 @@ target_sources(harness_dev
     Map2DClientTest.cpp
     Map2DnwcTest.cpp
     Navigation2DClientTest.cpp
+    Navigation2DnwcTest.cpp
+    INavigation2DTest.cpp
     MultipleAnalogSensorsInterfacesTest.cpp
     PolyDriverTest.cpp
     robotDescriptionTest.cpp
@@ -43,6 +45,8 @@ else()
     IMap2DTest.cpp
     Map2DClientTest.cpp
     Map2DnwcTest.cpp
+    INavigation2DTest.cpp
+    Navigation2DnwcTest.cpp
     Navigation2DClientTest.cpp
     MapGrid2DTest.cpp
   )

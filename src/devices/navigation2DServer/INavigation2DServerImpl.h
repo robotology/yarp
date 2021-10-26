@@ -10,27 +10,32 @@
 #include <yarp/dev/INavigation2D.h>
 #include <yarp/os/Stamp.h>
 
+class LastGoalStorage
+{
+    private:
+    std::string m_current_goal_name;
+
+    public:
+    bool set_current_goal_name(const std::string& name);
+    bool get_current_goal_name(std::string& name);
+    bool clear();
+};
+
 class INavigation2DRPCd : public INavigation2DMsgs
 {
     private:
     yarp::dev::Nav2D::INavigation2DControlActions*   m_iNav_ctrl = nullptr;
     yarp::dev::Nav2D::INavigation2DTargetActions*    m_iNav_target = nullptr;
     yarp::dev::Nav2D::INavigation2DVelocityActions*  m_iNav_vel = nullptr;
-    yarp::dev::Nav2D::INavigation2DExtraActions*     m_iNav_extra = nullptr;
     std::mutex                                       m_mutex;
 
     private:
-    //goal name settings
-    std::string m_current_goal_name;
-    bool set_current_goal_name(const std::string& name);
-    bool get_current_goal_name(std::string& name);
-    bool clear_current_goal_name();
+    LastGoalStorage m_current_goal_name;
 
     public:
     void setInterfaces(yarp::dev::Nav2D::INavigation2DTargetActions* iNav_target,
                        yarp::dev::Nav2D::INavigation2DControlActions* iNav_ctrl,
-                       yarp::dev::Nav2D::INavigation2DVelocityActions*  iNav_vel,
-                       yarp::dev::Nav2D::INavigation2DExtraActions* iNav_extra);
+                       yarp::dev::Nav2D::INavigation2DVelocityActions*  iNav_vel);
     std::mutex* getMutex() { return &m_mutex; }
 
     //INavigation2DControlActions
