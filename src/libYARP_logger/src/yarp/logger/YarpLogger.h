@@ -143,14 +143,14 @@ class yarp::yarpLogger::LogEntryInfo
     unsigned int  number_of_fatals;
 
     public:
-    std::string   port_system;
-    std::string   port_prefix;
-    std::string   port_complete;
-    std::string   process_name;
-    std::string   process_pid;
-    std::string   ip_address;
-    std::time_t   last_update;
-    unsigned int  logsize;
+    std::string   port_system = "null";
+    std::string   port_prefix = "null";
+    std::string   port_complete = "null";
+    std::string   process_name = "null";
+    std::string   process_pid = "null";
+    std::string   ip_address = "null";
+    std::time_t   last_update = 0;
+    unsigned int  logsize = 0;
 
     LogEntryInfo  ()  {clear();}
     void          clear ();
@@ -180,9 +180,9 @@ class yarp::yarpLogger::LogEntry
     bool                          append_logEntry(MessageEntry entry);
 
     public:
-    LogEntry(int _entry_list_max_size=10000) :
+    LogEntry(bool _max_size_enabled, int _entry_list_max_size) :
         entry_list_max_size(_entry_list_max_size),
-        entry_list_max_size_enabled(true),
+        entry_list_max_size_enabled(_max_size_enabled),
         logging_enabled(true),
         last_read_message(-1)
     {
@@ -210,6 +210,8 @@ class yarp::yarpLogger::LoggerEngine
         unsigned int         log_list_max_size;
         bool                 log_list_max_size_enabled;
         std::list<LogEntry>  log_list;
+        unsigned int         logs_max_lines;
+        bool                 logs_max_lines_enabled;
         yarp::os::BufferedPort<yarp::os::Bottle> logger_port;
         std::string          logger_portName;
         int                  unknown_format_received;
