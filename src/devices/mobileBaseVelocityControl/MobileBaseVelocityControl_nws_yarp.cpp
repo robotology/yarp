@@ -24,9 +24,24 @@ YARP_LOG_COMPONENT(MOBVEL_NWS_YARP, "yarp.device.MobileBaseVelocityControl_nws_y
 
 //------------------------------------------------------------------------------------------------------------------------------
 
+void VelocityInputPortProcessor::onRead(yarp::dev::MobileBaseVelocity& v)
+{
+    if (m_iVel)
+    {
+        m_iVel->applyVelocityCommand(v.vel_x, v.vel_y, v.vel_theta, m_timeout);
+    }
+    else
+    {
+        yCError(MOBVEL_NWS_YARP, "received data on streaming port, but no device attached yet");
+    }
+}
+
+
+//------------------------------------------------------------------------------------------------------------------------------
+
 bool MobileBaseVelocityControl_nws_yarp::open(yarp::os::Searchable &config)
 {
-    m_local_name.clear();
+    //param configuration
     m_local_name = config.find("local").asString();
 
     if (m_local_name.empty())
@@ -35,20 +50,60 @@ bool MobileBaseVelocityControl_nws_yarp::open(yarp::os::Searchable &config)
         return false;
     }
 
-    std::string local_rpc_1;
-
-    local_rpc_1           = m_local_name + "/navigation/rpc";
-
-    if (!m_rpc_port_navigation_server.open(local_rpc_1))
+    //rpc block
     {
-        yCError(MOBVEL_NWS_YARP, "open() error could not open rpc port %s, check network", local_rpc_1.c_str());
-        return false;
+        std::string local_rpc_1;
+        local_rpc_1           = m_local_name + ":rpc";
+
+        if (!m_rpc_port_navigation_server.open(local_rpc_1))
+        {
+            yCError(MOBVEL_NWS_YARP, "open() error could not open rpc port %s, check network", local_rpc_1.c_str());
+            return false;
+        }
+
+        if (!this->yarp().attachAsServer(m_rpc_port_navigation_server))
+        {
+            yCError(MOBVEL_NWS_YARP, "Error! Cannot attach the port as a server");
+            return false;
+        }
     }
 
-    if (!this->yarp().attachAsServer(m_rpc_port_navigation_server))
+    //streaming input block
     {
-        yCError(MOBVEL_NWS_YARP, "Error! Cannot attach the port as a server");
-        return false;
+        std::string local_stream_1;
+        local_stream_1 = m_local_name + ":i";
+
+        if (!m_StreamingInput.open(local_stream_1))
+        {
+            yCError(MOBVEL_NWS_YARP, "open() error could not open port %s, check network", local_stream_1.c_str());
+            return false;
+        }
+        m_StreamingInput.setStrict();
+        m_StreamingInput.useCallback();
+    }
+
+    //attach subdevice if required
+    if (config.check("subdevice"))
+    {
+        Property       p;
+        p.fromString(config.toString(), false);
+        p.put("device", config.find("subdevice").asString());
+
+        if (!m_subdev.open(p) || !m_subdev.isValid())
+        {
+            yCError(MOBVEL_NWS_YARP) << "Failed to open subdevice.. check params";
+            return false;
+        }
+
+        if (!attach(&m_subdev))
+        {
+            yCError(MOBVEL_NWS_YARP) << "Failed to attach subdevice.. check params";
+            return false;
+        }
+    }
+    else
+    {
+        yCInfo(MOBVEL_NWS_YARP) << "Waiting for device to attach";
     }
 
     return true;
@@ -57,6 +112,8 @@ bool MobileBaseVelocityControl_nws_yarp::open(yarp::os::Searchable &config)
 bool MobileBaseVelocityControl_nws_yarp::close()
 {
     m_rpc_port_navigation_server.close();
+    m_StreamingInput.close();
+    if (m_subdev.isValid()) m_subdev.close();
     return true;
 }
 
@@ -78,14 +135,47 @@ bool MobileBaseVelocityControl_nws_yarp::attach(PolyDriver* driver)
         yCError(MOBVEL_NWS_YARP, "Subdevice passed to attach method is invalid");
         return false;
     }
+    m_StreamingInput.m_iVel = m_iNavVel;
 
     return true;
+}
+
+bool MobileBaseVelocityControl_nws_yarp::applyVelocityCommand(double x_vel, double y_vel, double theta_vel, double timeout)
+{
+    std::lock_guard <std::mutex> lg(m_mutex);
+    if (nullptr == m_iNavVel)
+    {
+        yCError(MOBVEL_NWS_YARP, "Unable to applyVelocityCommandRPC");
+        return false;
+    }
+
+    return m_iNavVel->applyVelocityCommand(x_vel, y_vel, theta_vel, timeout);
+}
+
+bool MobileBaseVelocityControl_nws_yarp::getLastVelocityCommand(double& x_vel, double& y_vel, double& theta_vel)
+{
+    std::lock_guard <std::mutex> lg(m_mutex);
+    if (nullptr == m_iNavVel)
+    {
+        yCError(MOBVEL_NWS_YARP, "Unable to getLastVelocityCommand");
+        return false;
+    }
+
+    return m_iNavVel->getLastVelocityCommand(x_vel, y_vel, theta_vel);
 }
 
 bool MobileBaseVelocityControl_nws_yarp::applyVelocityCommandRPC(const double x_vel, const double y_vel, const double theta_vel, const double timeout)
 {
     std::lock_guard <std::mutex> lg(m_mutex);
-    if (!m_iNavVel->applyVelocityCommand(x_vel,y_vel,theta_vel,timeout))
+    if (nullptr == m_iNavVel)
+    {
+        yCError(MOBVEL_NWS_YARP, "Unable to applyVelocityCommandRPC");
+        return false;
+    }
+
+    bool b =m_iNavVel->applyVelocityCommand(x_vel, y_vel, theta_vel, timeout);
+
+    if (!b)
     {
         yCError(MOBVEL_NWS_YARP, "Unable to applyVelocityCommandRPC");
         return false;
@@ -95,12 +185,20 @@ bool MobileBaseVelocityControl_nws_yarp::applyVelocityCommandRPC(const double x_
 
 return_getLastVelocityCommand MobileBaseVelocityControl_nws_yarp::getLastVelocityCommandRPC()
 {
+    return_getLastVelocityCommand retrievedFromRPC;
+    std::lock_guard <std::mutex> lg(m_mutex);
+    if (nullptr == m_iNavVel)
+    {
+        yCError(MOBVEL_NWS_YARP, "Unable to getLastVelocityCommand");
+        retrievedFromRPC.retvalue = false;
+        return retrievedFromRPC;
+    }
+
     double x_vel = 0;
     double y_vel = 0;
     double t_vel = 0;
     bool b = m_iNavVel->getLastVelocityCommand(x_vel, y_vel, t_vel);
 
-    return_getLastVelocityCommand retrievedFromRPC;
     retrievedFromRPC.retvalue = b;
     retrievedFromRPC.x_vel = x_vel;
     retrievedFromRPC.y_vel = x_vel;
