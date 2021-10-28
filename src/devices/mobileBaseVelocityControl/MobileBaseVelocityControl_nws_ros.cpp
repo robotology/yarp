@@ -56,6 +56,30 @@ bool MobileBaseVelocityControl_nws_ros::open(yarp::os::Searchable& config)
         yCWarning(MOBVEL_NWS_ROS, "Using default period of %f s", m_period);
     }
 
+    //attach subdevice if required
+    if (config.check("subdevice"))
+    {
+        Property       p;
+        p.fromString(config.toString(), false);
+        p.put("device", config.find("subdevice").asString());
+
+        if (!m_subdev.open(p) || !m_subdev.isValid())
+        {
+            yCError(MOBVEL_NWS_ROS) << "Failed to open subdevice.. check params";
+            return false;
+        }
+
+        if (!attach(&m_subdev))
+        {
+            yCError(MOBVEL_NWS_ROS) << "Failed to attach subdevice.. check params";
+            return false;
+        }
+    }
+    else
+    {
+        yCInfo(MOBVEL_NWS_ROS) << "Waiting for device to attach";
+    }
+
     return true;
 }
 
@@ -63,6 +87,7 @@ bool MobileBaseVelocityControl_nws_ros::close()
 {
     m_ros_subscriber.close();
     delete m_ros_node;
+    if (m_subdev.isValid()) m_subdev.close();
     return true;
 }
 
@@ -101,4 +126,26 @@ bool MobileBaseVelocityControl_nws_ros::attach(PolyDriver* driver)
     }
 
     return true;
+}
+
+bool MobileBaseVelocityControl_nws_ros::applyVelocityCommand(double x_vel, double y_vel, double theta_vel, double timeout)
+{
+    if (nullptr == m_iNavVel)
+    {
+        yCError(MOBVEL_NWS_ROS, "Unable to applyVelocityCommandRPC");
+        return false;
+    }
+
+    return m_iNavVel->applyVelocityCommand(x_vel, y_vel, theta_vel, timeout);
+}
+
+bool MobileBaseVelocityControl_nws_ros::getLastVelocityCommand(double& x_vel, double& y_vel, double& theta_vel)
+{
+    if (nullptr == m_iNavVel)
+    {
+        yCError(MOBVEL_NWS_ROS, "Unable to getLastVelocityCommand");
+        return false;
+    }
+
+    return m_iNavVel->getLastVelocityCommand(x_vel, y_vel, theta_vel);
 }

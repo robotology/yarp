@@ -73,10 +73,12 @@ public:
     bool attach(yarp::dev::PolyDriver* driver) override;
 
 public:
+    //* INavigation2DVelocityActions methods */
     bool applyVelocityCommand(double x_vel, double y_vel, double theta_vel, double timeout = 0.1) override;
     bool getLastVelocityCommand(double& x_vel, double& y_vel, double& theta_vel) override;
 
 public:
+    //* MobileBaseVelocityControlRPC methods*/
     bool applyVelocityCommandRPC(const double x_vel, const double y_vel, const double theta_vel, const double timeout) override;
     return_getLastVelocityCommand getLastVelocityCommandRPC() override;
 };

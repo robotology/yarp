@@ -10,3 +10,8 @@ Important Changes
 * Added input streaming port as an alternative to rpc command `applyVelocityCommandRPC()`
 * Added `subdevice` option.
 * Added the possibility to view the device through the interface `yarp::dev::Nav2D::INavigation2DVelocityActions`
+
+
+#### `MobileBaseVelocityControl_nws_ros`
+* Added `subdevice` option.
+* Added the possibility to view the device through the interface `yarp::dev::Nav2D::INavigation2DVelocityActions`

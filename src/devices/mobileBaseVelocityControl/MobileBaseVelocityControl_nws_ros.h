@@ -41,7 +41,8 @@
 class MobileBaseVelocityControl_nws_ros :
     public yarp::dev::DeviceDriver,
     public yarp::os::PeriodicThread,
-    public yarp::dev::WrapperSingle
+    public yarp::dev::WrapperSingle,
+    public yarp::dev::Nav2D::INavigation2DVelocityActions
 {
 protected:
     std::string                   m_ros_node_name = "/mobileBase_VelControl_nws_ros";
@@ -50,6 +51,8 @@ protected:
     yarp::os::Subscriber<yarp::rosmsg::geometry_msgs::Twist> m_ros_subscriber;
 
     double                        m_period;
+
+    yarp::dev::PolyDriver                           m_subdev;
     yarp::dev::Nav2D::INavigation2DVelocityActions* m_iNavVel = nullptr;
 
 public:
@@ -58,6 +61,11 @@ public:
     /* DeviceDriver methods */
     bool open(yarp::os::Searchable& config) override;
     bool close() override;
+
+public:
+    //* INavigation2DVelocityActions methods */
+    bool applyVelocityCommand(double x_vel, double y_vel, double theta_vel, double timeout = 0.1) override;
+    bool getLastVelocityCommand(double& x_vel, double& y_vel, double& theta_vel) override;
 
 private:
     bool detach() override;
