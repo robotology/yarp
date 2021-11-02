@@ -219,7 +219,7 @@ bool PortAudioDeviceDriver::open(yarp::os::Searchable& config)
     m_driverConfig.recChannels = config.check("channels", Value(0), "number of audio channels (0=automatic, max is 2)").asInt32();
     m_driverConfig.wantRead = (bool)config.check("read","if present, just deal with reading audio (microphone)");
     m_driverConfig.wantWrite = (bool)config.check("write","if present, just deal with writing audio (speaker)");
-    m_driverConfig.deviceNumber = config.check("id",Value(-1),"which portaudio index to use (-1=automatic)").asInt32();
+    m_driverConfig.deviceNumber = config.check("dev_id",Value(-1),"which portaudio index to use (-1=automatic)").asInt32();
 
     if (!(m_driverConfig.wantRead|| m_driverConfig.wantWrite))
     {
