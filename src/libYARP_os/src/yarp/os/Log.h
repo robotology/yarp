@@ -56,10 +56,27 @@ public:
         const Predicate pred = nullptr,
         const LogComponent& comp = defaultLogComponent());
 
+    // constructor with id
+    Log(const char* file,
+        const unsigned int line,
+        const char* func,
+        const std::string_view id,
+        const Predicate pred = nullptr,
+        const LogComponent& comp = defaultLogComponent());
+
     // constructor with externaltime
     Log(const char* file,
         const unsigned int line,
         const char* func,
+        const double externaltime,
+        const Predicate pred = nullptr,
+        const LogComponent& comp = defaultLogComponent());
+
+    // constructor with id and external time
+    Log(const char* file,
+        const unsigned int line,
+        const char* func,
+        const std::string_view id,
         const double externaltime,
         const Predicate pred = nullptr,
         const LogComponent& comp = defaultLogComponent());
@@ -101,7 +118,8 @@ public:
                                  double systemtime,
                                  double networktime,
                                  double externaltime,
-                                 const char* comp_name);
+                                 const char* comp_name,
+                                 const char* id);
 
 #ifndef YARP_NO_DEPRECATED // Since YARP 3.4
     YARP_DEPRECATED_MSG("Use setPrintCallback instead")
@@ -151,7 +169,8 @@ private:
                        double systemtime,
                        double networktime,
                        double externaltime,
-                       const LogComponent& comp_name);
+                       const LogComponent& comp_name,
+                       const std::string_view id);
 
     // This component is used for yDebug-family output, and is called by LogStream
     static const LogComponent& defaultLogComponent();
@@ -203,88 +222,161 @@ private:
 
 
 #ifndef NDEBUG
-#  define yTrace(...)                                                 yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__).trace(__VA_ARGS__)
-#  define yTraceOnce(...)                                             yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, YARP_ONCE_CALLBACK).trace(__VA_ARGS__)
-#  define yTraceThreadOnce(...)                                       yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, YARP_THREADONCE_CALLBACK).trace(__VA_ARGS__)
-#  define yTraceThrottle(period, ...)                                 yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, YARP_THROTTLE_CALLBACK(period)).trace(__VA_ARGS__)
-#  define yTraceThreadThrottle(period, ...)                           yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, YARP_THREADTHROTTLE_CALLBACK(period)).trace(__VA_ARGS__)
-#  define yTraceExternalTime(externaltime, ...)                       yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, externaltime).trace(__VA_ARGS__)
-#  define yTraceExternalTimeOnce(externaltime, ...)                   yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, externaltime, YARP_ONCE_CALLBACK).trace(__VA_ARGS__)
-#  define yTraceExternalTimeThreadOnce(externaltime, ...)             yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, externaltime, YARP_THREADONCE_CALLBACK).trace(__VA_ARGS__)
-#  define yTraceExternalTimeThrottle(externaltime, period, ...)       yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, externaltime, YARP_THROTTLE_CALLBACK(period)).trace(__VA_ARGS__)
-#  define yTraceExternalTimeThreadThrottle(externaltime, period, ...) yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, externaltime, YARP_THREADTHROTTLE_CALLBACK(period)).trace(__VA_ARGS__)
+#  define yTrace(...)                                                      yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__).trace(__VA_ARGS__)
+#  define yTraceOnce(...)                                                  yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, YARP_ONCE_CALLBACK).trace(__VA_ARGS__)
+#  define yTraceThreadOnce(...)                                            yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, YARP_THREADONCE_CALLBACK).trace(__VA_ARGS__)
+#  define yTraceThrottle(period, ...)                                      yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, YARP_THROTTLE_CALLBACK(period)).trace(__VA_ARGS__)
+#  define yTraceThreadThrottle(period, ...)                                yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, YARP_THREADTHROTTLE_CALLBACK(period)).trace(__VA_ARGS__)
+#  define yTraceExternalTime(externaltime, ...)                            yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, externaltime).trace(__VA_ARGS__)
+#  define yTraceExternalTimeOnce(externaltime, ...)                        yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, externaltime, YARP_ONCE_CALLBACK).trace(__VA_ARGS__)
+#  define yTraceExternalTimeThreadOnce(externaltime, ...)                  yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, externaltime, YARP_THREADONCE_CALLBACK).trace(__VA_ARGS__)
+#  define yTraceExternalTimeThrottle(externaltime, period, ...)            yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, externaltime, YARP_THROTTLE_CALLBACK(period)).trace(__VA_ARGS__)
+#  define yTraceExternalTimeThreadThrottle(externaltime, period, ...)      yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, externaltime, YARP_THREADTHROTTLE_CALLBACK(period)).trace(__VA_ARGS__)
+#  define yITrace(id, ...)                                                 yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, id).trace(__VA_ARGS__)
+#  define yITraceOnce(id, ...)                                             yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, id, YARP_ONCE_CALLBACK).trace(__VA_ARGS__)
+#  define yITraceThreadOnce(id, ...)                                       yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, id, YARP_THREADONCE_CALLBACK).trace(__VA_ARGS__)
+#  define yITraceThrottle(id, period, ...)                                 yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, id, YARP_THROTTLE_CALLBACK(period)).trace(__VA_ARGS__)
+#  define yITraceThreadThrottle(id, period, ...)                           yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, id, YARP_THREADTHROTTLE_CALLBACK(period)).trace(__VA_ARGS__)
+#  define yITraceExternalTime(id, externaltime, ...)                       yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, id, externaltime).trace(__VA_ARGS__)
+#  define yITraceExternalTimeOnce(id, externaltime, ...)                   yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, id, externaltime, YARP_ONCE_CALLBACK).trace(__VA_ARGS__)
+#  define yITraceExternalTimeThreadOnce(id, externaltime, ...)             yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, id, externaltime, YARP_THREADONCE_CALLBACK).trace(__VA_ARGS__)
+#  define yITraceExternalTimeThrottle(id, externaltime, period, ...)       yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, id, externaltime, YARP_THROTTLE_CALLBACK(period)).trace(__VA_ARGS__)
+#  define yITraceExternalTimeThreadThrottle(id, externaltime, period, ...) yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, id, externaltime, YARP_THREADTHROTTLE_CALLBACK(period)).trace(__VA_ARGS__)
 #else
-#  define yTrace(...)                                                 yarp::os::Log::nolog(__VA_ARGS__)
-#  define yTraceOnce(...)                                             yarp::os::Log::nolog(__VA_ARGS__)
-#  define yTraceThreadOnce(...)                                       yarp::os::Log::nolog(__VA_ARGS__)
-#  define yTraceThrottle(period, ...)                                 yarp::os::Log::nolog(__VA_ARGS__)
-#  define yTraceThreadThrottle(period, ...)                           yarp::os::Log::nolog(__VA_ARGS__)
-#  define yTraceExternalTime(externaltime, ...)                       yarp::os::Log::nolog(__VA_ARGS__)
-#  define yTraceExternalTimeOnce(externaltime, ...)                   yarp::os::Log::nolog(__VA_ARGS__)
-#  define yTraceExternalTimeThreadOnce(externaltime, ...)             yarp::os::Log::nolog(__VA_ARGS__)
-#  define yTraceExternalTimeThrottle(externaltime, period, ...)       yarp::os::Log::nolog(__VA_ARGS__)
-#  define yTraceExternalTimeThreadThrottle(externaltime, period, ...) yarp::os::Log::nolog(__VA_ARGS__)
+#  define yTrace(...)                                                      yarp::os::Log::nolog(__VA_ARGS__)
+#  define yTraceOnce(...)                                                  yarp::os::Log::nolog(__VA_ARGS__)
+#  define yTraceThreadOnce(...)                                            yarp::os::Log::nolog(__VA_ARGS__)
+#  define yTraceThrottle(period, ...)                                      yarp::os::Log::nolog(__VA_ARGS__)
+#  define yTraceThreadThrottle(period, ...)                                yarp::os::Log::nolog(__VA_ARGS__)
+#  define yTraceExternalTime(externaltime, ...)                            yarp::os::Log::nolog(__VA_ARGS__)
+#  define yTraceExternalTimeOnce(externaltime, ...)                        yarp::os::Log::nolog(__VA_ARGS__)
+#  define yTraceExternalTimeThreadOnce(externaltime, ...)                  yarp::os::Log::nolog(__VA_ARGS__)
+#  define yTraceExternalTimeThrottle(externaltime, period, ...)            yarp::os::Log::nolog(__VA_ARGS__)
+#  define yTraceExternalTimeThreadThrottle(externaltime, period, ...)      yarp::os::Log::nolog(__VA_ARGS__)
+#  define yITrace(id, ...)                                                 yarp::os::Log::nolog(__VA_ARGS__)
+#  define yITraceOnce(id, ...)                                             yarp::os::Log::nolog(__VA_ARGS__)
+#  define yITraceThreadOnce(id, ...)                                       yarp::os::Log::nolog(__VA_ARGS__)
+#  define yITraceThrottle(id, period, ...)                                 yarp::os::Log::nolog(__VA_ARGS__)
+#  define yITraceThreadThrottle(id, period, ...)                           yarp::os::Log::nolog(__VA_ARGS__)
+#  define yITraceExternalTime(id, externaltime, ...)                       yarp::os::Log::nolog(__VA_ARGS__)
+#  define yITraceExternalTimeOnce(id, externaltime, ...)                   yarp::os::Log::nolog(__VA_ARGS__)
+#  define yITraceExternalTimeThreadOnce(id, externaltime, ...)             yarp::os::Log::nolog(__VA_ARGS__)
+#  define yITraceExternalTimeThrottle(id, externaltime, period, ...)       yarp::os::Log::nolog(__VA_ARGS__)
+#  define yITraceExternalTimeThreadThrottle(id, externaltime, period, ...) yarp::os::Log::nolog(__VA_ARGS__)
 #endif
 
 #ifndef YARP_NO_DEBUG_OUTPUT
-#  define yDebug(...)                                                 yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__).debug(__VA_ARGS__)
-#  define yDebugOnce(...)                                             yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, YARP_ONCE_CALLBACK).debug(__VA_ARGS__)
-#  define yDebugThreadOnce(...)                                       yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, YARP_THREADONCE_CALLBACK).debug(__VA_ARGS__)
-#  define yDebugThrottle(period, ...)                                 yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, YARP_THROTTLE_CALLBACK(period)).debug(__VA_ARGS__)
-#  define yDebugThreadThrottle(period, ...)                           yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, YARP_THREADTHROTTLE_CALLBACK(period)).debug(__VA_ARGS__)
-#  define yDebugExternalTime(externaltime, ...)                       yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, externaltime).debug(__VA_ARGS__)
-#  define yDebugExternalTimeOnce(externaltime, ...)                   yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, externaltime, YARP_ONCE_CALLBACK).debug(__VA_ARGS__)
-#  define yDebugExternalTimeThreadOnce(externaltime, ...)             yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, externaltime, YARP_THREADONCE_CALLBACK).debug(__VA_ARGS__)
-#  define yDebugExternalTimeThrottle(externaltime, period, ...)       yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, externaltime, YARP_THROTTLE_CALLBACK(period)).debug(__VA_ARGS__)
-#  define yDebugExternalTimeThreadThrottle(externaltime, period, ...) yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, externaltime, YARP_THREADTHROTTLE_CALLBACK(period)).debug(__VA_ARGS__)
+#  define yDebug(...)                                                      yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__).debug(__VA_ARGS__)
+#  define yDebugOnce(...)                                                  yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, YARP_ONCE_CALLBACK).debug(__VA_ARGS__)
+#  define yDebugThreadOnce(...)                                            yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, YARP_THREADONCE_CALLBACK).debug(__VA_ARGS__)
+#  define yDebugThrottle(period, ...)                                      yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, YARP_THROTTLE_CALLBACK(period)).debug(__VA_ARGS__)
+#  define yDebugThreadThrottle(period, ...)                                yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, YARP_THREADTHROTTLE_CALLBACK(period)).debug(__VA_ARGS__)
+#  define yDebugExternalTime(externaltime, ...)                            yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, externaltime).debug(__VA_ARGS__)
+#  define yDebugExternalTimeOnce(externaltime, ...)                        yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, externaltime, YARP_ONCE_CALLBACK).debug(__VA_ARGS__)
+#  define yDebugExternalTimeThreadOnce(externaltime, ...)                  yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, externaltime, YARP_THREADONCE_CALLBACK).debug(__VA_ARGS__)
+#  define yDebugExternalTimeThrottle(externaltime, period, ...)            yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, externaltime, YARP_THROTTLE_CALLBACK(period)).debug(__VA_ARGS__)
+#  define yDebugExternalTimeThreadThrottle(externaltime, period, ...)      yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, externaltime, YARP_THREADTHROTTLE_CALLBACK(period)).debug(__VA_ARGS__)
+#  define yIDebug(id, ...)                                                 yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, id).debug(__VA_ARGS__)
+#  define yIDebugOnce(id, ...)                                             yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, id, YARP_ONCE_CALLBACK).debug(__VA_ARGS__)
+#  define yIDebugThreadOnce(id, ...)                                       yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, id, YARP_THREADONCE_CALLBACK).debug(__VA_ARGS__)
+#  define yIDebugThrottle(id, period, ...)                                 yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, id, YARP_THROTTLE_CALLBACK(period)).debug(__VA_ARGS__)
+#  define yIDebugThreadThrottle(id, period, ...)                           yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, id, YARP_THREADTHROTTLE_CALLBACK(period)).debug(__VA_ARGS__)
+#  define yIDebugExternalTime(id, externaltime, ...)                       yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, id, externaltime).debug(__VA_ARGS__)
+#  define yIDebugExternalTimeOnce(id, externaltime, ...)                   yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, id, externaltime, YARP_ONCE_CALLBACK).debug(__VA_ARGS__)
+#  define yIDebugExternalTimeThreadOnce(id, externaltime, ...)             yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, id, externaltime, YARP_THREADONCE_CALLBACK).debug(__VA_ARGS__)
+#  define yIDebugExternalTimeThrottle(id, externaltime, period, ...)       yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, id, externaltime, YARP_THROTTLE_CALLBACK(period)).debug(__VA_ARGS__)
+#  define yIDebugExternalTimeThreadThrottle(id, externaltime, period, ...) yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, id, externaltime, YARP_THREADTHROTTLE_CALLBACK(period)).debug(__VA_ARGS__)
 #else
-#  define yDebug(...)                                                 yarp::os::Log::nolog(__VA_ARGS__)
-#  define yDebugOnce(...)                                             yarp::os::Log::nolog(__VA_ARGS__)
-#  define yDebugThreadOnce(...)                                       yarp::os::Log::nolog(__VA_ARGS__)
-#  define yDebugThrottle(period, ...)                                 yarp::os::Log::nolog(__VA_ARGS__)
-#  define yDebugThreadThrottle(period, ...)                           yarp::os::Log::nolog(__VA_ARGS__)
-#  define yDebugExternalTime(externaltime, ...)                       yarp::os::Log::nolog(__VA_ARGS__)
-#  define yDebugExternalTimeOnce(externaltime, ...)                   yarp::os::Log::nolog(__VA_ARGS__)
-#  define yDebugExternalTimeThreadOnce(externaltime, ...)             yarp::os::Log::nolog(__VA_ARGS__)
-#  define yDebugExternalTimeThrottle(externaltime, period, ...)       yarp::os::Log::nolog(__VA_ARGS__)
-#  define yDebugExternalTimeThreadThrottle(externaltime, period, ...) yarp::os::Log::nolog(__VA_ARGS__)
+#  define yDebug(...)                                                      yarp::os::Log::nolog(__VA_ARGS__)
+#  define yDebugOnce(...)                                                  yarp::os::Log::nolog(__VA_ARGS__)
+#  define yDebugThreadOnce(...)                                            yarp::os::Log::nolog(__VA_ARGS__)
+#  define yDebugThrottle(period, ...)                                      yarp::os::Log::nolog(__VA_ARGS__)
+#  define yDebugThreadThrottle(period, ...)                                yarp::os::Log::nolog(__VA_ARGS__)
+#  define yDebugExternalTime(externaltime, ...)                            yarp::os::Log::nolog(__VA_ARGS__)
+#  define yDebugExternalTimeOnce(externaltime, ...)                        yarp::os::Log::nolog(__VA_ARGS__)
+#  define yDebugExternalTimeThreadOnce(externaltime, ...)                  yarp::os::Log::nolog(__VA_ARGS__)
+#  define yDebugExternalTimeThrottle(externaltime, period, ...)            yarp::os::Log::nolog(__VA_ARGS__)
+#  define yDebugExternalTimeThreadThrottle(externaltime, period, ...)      yarp::os::Log::nolog(__VA_ARGS__)
+#  define yIDebug(id, ...)                                                 yarp::os::Log::nolog(__VA_ARGS__)
+#  define yIDebugOnce(id, ...)                                             yarp::os::Log::nolog(__VA_ARGS__)
+#  define yIDebugThreadOnce(id, ...)                                       yarp::os::Log::nolog(__VA_ARGS__)
+#  define yIDebugThrottle(id, period, ...)                                 yarp::os::Log::nolog(__VA_ARGS__)
+#  define yIDebugThreadThrottle(id, period, ...)                           yarp::os::Log::nolog(__VA_ARGS__)
+#  define yIDebugExternalTime(id, externaltime, ...)                       yarp::os::Log::nolog(__VA_ARGS__)
+#  define yIDebugExternalTimeOnce(id, externaltime, ...)                   yarp::os::Log::nolog(__VA_ARGS__)
+#  define yIDebugExternalTimeThreadOnce(id, externaltime, ...)             yarp::os::Log::nolog(__VA_ARGS__)
+#  define yIDebugExternalTimeThrottle(id, externaltime, period, ...)       yarp::os::Log::nolog(__VA_ARGS__)
+#  define yIDebugExternalTimeThreadThrottle(id, externaltime, period, ...) yarp::os::Log::nolog(__VA_ARGS__)
+
 #endif
 
-#define yInfo(...)                                                    yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__).info(__VA_ARGS__)
-#define yInfoOnce(...)                                                yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, YARP_ONCE_CALLBACK).info(__VA_ARGS__)
-#define yInfoThreadOnce(...)                                          yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, YARP_THREADONCE_CALLBACK).info(__VA_ARGS__)
-#define yInfoThrottle(period, ...)                                    yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, YARP_THROTTLE_CALLBACK(period)).info(__VA_ARGS__)
-#define yInfoThreadThrottle(period, ...)                              yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, YARP_THREADTHROTTLE_CALLBACK(period)).info(__VA_ARGS__)
-#define yInfoExternalTime(externaltime, ...)                          yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, externaltime).info(__VA_ARGS__)
-#define yInfoExternalTimeOnce(externaltime, ...)                      yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, externaltime, YARP_ONCE_CALLBACK).info(__VA_ARGS__)
-#define yInfoExternalTimeThreadOnce(externaltime, ...)                yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, externaltime, YARP_THREADONCE_CALLBACK).info(__VA_ARGS__)
-#define yInfoExternalTimeThrottle(externaltime, period, ...)          yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, externaltime, YARP_THROTTLE_CALLBACK(period)).info(__VA_ARGS__)
-#define yInfoExternalTimeThreadThrottle(externaltime, period, ...)    yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, externaltime, YARP_THREADTHROTTLE_CALLBACK(period)).info(__VA_ARGS__)
+#define yInfo(...)                                                         yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__).info(__VA_ARGS__)
+#define yInfoOnce(...)                                                     yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, YARP_ONCE_CALLBACK).info(__VA_ARGS__)
+#define yInfoThreadOnce(...)                                               yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, YARP_THREADONCE_CALLBACK).info(__VA_ARGS__)
+#define yInfoThrottle(period, ...)                                         yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, YARP_THROTTLE_CALLBACK(period)).info(__VA_ARGS__)
+#define yInfoThreadThrottle(period, ...)                                   yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, YARP_THREADTHROTTLE_CALLBACK(period)).info(__VA_ARGS__)
+#define yInfoExternalTime(externaltime, ...)                               yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, externaltime).info(__VA_ARGS__)
+#define yInfoExternalTimeOnce(externaltime, ...)                           yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, externaltime, YARP_ONCE_CALLBACK).info(__VA_ARGS__)
+#define yInfoExternalTimeThreadOnce(externaltime, ...)                     yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, externaltime, YARP_THREADONCE_CALLBACK).info(__VA_ARGS__)
+#define yInfoExternalTimeThrottle(externaltime, period, ...)               yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, externaltime, YARP_THROTTLE_CALLBACK(period)).info(__VA_ARGS__)
+#define yInfoExternalTimeThreadThrottle(externaltime, period, ...)         yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, externaltime, YARP_THREADTHROTTLE_CALLBACK(period)).info(__VA_ARGS__)
+#define yIInfo(id, ...)                                                    yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, id).info(__VA_ARGS__)
+#define yIInfoOnce(id, ...)                                                yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, id, YARP_ONCE_CALLBACK).info(__VA_ARGS__)
+#define yIInfoThreadOnce(id, ...)                                          yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, id, YARP_THREADONCE_CALLBACK).info(__VA_ARGS__)
+#define yIInfoThrottle(id, period, ...)                                    yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, id, YARP_THROTTLE_CALLBACK(period)).info(__VA_ARGS__)
+#define yIInfoThreadThrottle(id, period, ...)                              yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, id, YARP_THREADTHROTTLE_CALLBACK(period)).info(__VA_ARGS__)
+#define yIInfoExternalTime(id, externaltime, ...)                          yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, id, externaltime).info(__VA_ARGS__)
+#define yIInfoExternalTimeOnce(id, externaltime, ...)                      yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, id, externaltime, YARP_ONCE_CALLBACK).info(__VA_ARGS__)
+#define yIInfoExternalTimeThreadOnce(id, externaltime, ...)                yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, id, externaltime, YARP_THREADONCE_CALLBACK).info(__VA_ARGS__)
+#define yIInfoExternalTimeThrottle(id, externaltime, period, ...)          yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, id, externaltime, YARP_THROTTLE_CALLBACK(period)).info(__VA_ARGS__)
+#define yIInfoExternalTimeThreadThrottle(id, externaltime, period, ...)    yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, id, externaltime, YARP_THREADTHROTTLE_CALLBACK(period)).info(__VA_ARGS__)
 
-#define yWarning(...)                                                 yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__).warning(__VA_ARGS__)
-#define yWarningOnce(...)                                             yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, YARP_ONCE_CALLBACK).warning(__VA_ARGS__)
-#define yWarningThreadOnce(...)                                       yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, YARP_THREADONCE_CALLBACK).warning(__VA_ARGS__)
-#define yWarningThrottle(period, ...)                                 yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, YARP_THROTTLE_CALLBACK(period)).warning(__VA_ARGS__)
-#define yWarningThreadThrottle(period, ...)                           yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, YARP_THREADTHROTTLE_CALLBACK(period)).warning(__VA_ARGS__)
-#define yWarningExternalTime(externaltime, ...)                       yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, externaltime).warning(__VA_ARGS__)
-#define yWarningExternalTimeOnce(externaltime, ...)                   yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, externaltime, YARP_ONCE_CALLBACK).warning(__VA_ARGS__)
-#define yWarningExternalTimeThreadOnce(externaltime, ...)             yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, externaltime, YARP_THREADONCE_CALLBACK).warning(__VA_ARGS__)
-#define yWarningExternalTimeThrottle(externaltime, period, ...)       yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, externaltime, YARP_THROTTLE_CALLBACK(period)).warning(__VA_ARGS__)
-#define yWarningExternalTimeThreadThrottle(externaltime, period, ...) yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, externaltime, YARP_THREADTHROTTLE_CALLBACK(period)).warning(__VA_ARGS__)
+#define yWarning(...)                                                      yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__).warning(__VA_ARGS__)
+#define yWarningOnce(...)                                                  yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, YARP_ONCE_CALLBACK).warning(__VA_ARGS__)
+#define yWarningThreadOnce(...)                                            yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, YARP_THREADONCE_CALLBACK).warning(__VA_ARGS__)
+#define yWarningThrottle(period, ...)                                      yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, YARP_THROTTLE_CALLBACK(period)).warning(__VA_ARGS__)
+#define yWarningThreadThrottle(period, ...)                                yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, YARP_THREADTHROTTLE_CALLBACK(period)).warning(__VA_ARGS__)
+#define yWarningExternalTime(externaltime, ...)                            yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, externaltime).warning(__VA_ARGS__)
+#define yWarningExternalTimeOnce(externaltime, ...)                        yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, externaltime, YARP_ONCE_CALLBACK).warning(__VA_ARGS__)
+#define yWarningExternalTimeThreadOnce(externaltime, ...)                  yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, externaltime, YARP_THREADONCE_CALLBACK).warning(__VA_ARGS__)
+#define yWarningExternalTimeThrottle(externaltime, period, ...)            yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, externaltime, YARP_THROTTLE_CALLBACK(period)).warning(__VA_ARGS__)
+#define yWarningExternalTimeThreadThrottle(externaltime, period, ...)      yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, externaltime, YARP_THREADTHROTTLE_CALLBACK(period)).warning(__VA_ARGS__)
+#define yIWarning(id, ...)                                                 yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, id).warning(__VA_ARGS__)
+#define yIWarningOnce(id, ...)                                             yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, id, YARP_ONCE_CALLBACK).warning(__VA_ARGS__)
+#define yIWarningThreadOnce(id, ...)                                       yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, id, YARP_THREADONCE_CALLBACK).warning(__VA_ARGS__)
+#define yIWarningThrottle(id, period, ...)                                 yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, id, YARP_THROTTLE_CALLBACK(period)).warning(__VA_ARGS__)
+#define yIWarningThreadThrottle(id, period, ...)                           yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, id, YARP_THREADTHROTTLE_CALLBACK(period)).warning(__VA_ARGS__)
+#define yIWarningExternalTime(id, externaltime, ...)                       yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, id, externaltime).warning(__VA_ARGS__)
+#define yIWarningExternalTimeOnce(id, externaltime, ...)                   yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, id, externaltime, YARP_ONCE_CALLBACK).warning(__VA_ARGS__)
+#define yIWarningExternalTimeThreadOnce(id, externaltime, ...)             yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, id, externaltime, YARP_THREADONCE_CALLBACK).warning(__VA_ARGS__)
+#define yIWarningExternalTimeThrottle(id, externaltime, period, ...)       yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, id, externaltime, YARP_THROTTLE_CALLBACK(period)).warning(__VA_ARGS__)
+#define yIWarningExternalTimeThreadThrottle(id, externaltime, period, ...) yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, id, externaltime, YARP_THREADTHROTTLE_CALLBACK(period)).warning(__VA_ARGS__)
 
-#define yError(...)                                                   yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__).error(__VA_ARGS__)
-#define yErrorOnce(...)                                               yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, YARP_ONCE_CALLBACK).error(__VA_ARGS__)
-#define yErrorThreadOnce(...)                                         yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, YARP_THREADONCE_CALLBACK).error(__VA_ARGS__)
-#define yErrorThrottle(period, ...)                                   yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, YARP_THROTTLE_CALLBACK(period)).error(__VA_ARGS__)
-#define yErrorThreadThrottle(period, ...)                             yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, YARP_THREADTHROTTLE_CALLBACK(period)).error(__VA_ARGS__)
-#define yErrorExternalTime(externaltime, ...)                         yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, externaltime).error(__VA_ARGS__)
-#define yErrorExternalTimeOnce(externaltime, ...)                     yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, externaltime, YARP_ONCE_CALLBACK).error(__VA_ARGS__)
-#define yErrorExternalTimeThreadOnce(externaltime, ...)               yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, externaltime, YARP_THREADONCE_CALLBACK).error(__VA_ARGS__)
-#define yErrorExternalTimeThrottle(externaltime, period, ...)         yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, externaltime, YARP_THROTTLE_CALLBACK(period)).error(__VA_ARGS__)
-#define yErrorExternalTimeThreadThrottle(externaltime, period, ...)   yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, externaltime, YARP_THREADTHROTTLE_CALLBACK(period)).error(__VA_ARGS__)
+#define yError(...)                                                        yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__).error(__VA_ARGS__)
+#define yErrorOnce(...)                                                    yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, YARP_ONCE_CALLBACK).error(__VA_ARGS__)
+#define yErrorThreadOnce(...)                                              yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, YARP_THREADONCE_CALLBACK).error(__VA_ARGS__)
+#define yErrorThrottle(period, ...)                                        yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, YARP_THROTTLE_CALLBACK(period)).error(__VA_ARGS__)
+#define yErrorThreadThrottle(period, ...)                                  yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, YARP_THREADTHROTTLE_CALLBACK(period)).error(__VA_ARGS__)
+#define yErrorExternalTime(externaltime, ...)                              yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, externaltime).error(__VA_ARGS__)
+#define yErrorExternalTimeOnce(externaltime, ...)                          yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, externaltime, YARP_ONCE_CALLBACK).error(__VA_ARGS__)
+#define yErrorExternalTimeThreadOnce(externaltime, ...)                    yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, externaltime, YARP_THREADONCE_CALLBACK).error(__VA_ARGS__)
+#define yErrorExternalTimeThrottle(externaltime, period, ...)              yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, externaltime, YARP_THROTTLE_CALLBACK(period)).error(__VA_ARGS__)
+#define yErrorExternalTimeThreadThrottle(externaltime, period, ...)        yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, externaltime, YARP_THREADTHROTTLE_CALLBACK(period)).error(__VA_ARGS__)
+#define yIError(id, ...)                                                   yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, id).error(__VA_ARGS__)
+#define yIErrorOnce(id, ...)                                               yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, id, YARP_ONCE_CALLBACK).error(__VA_ARGS__)
+#define yIErrorThreadOnce(id, ...)                                         yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, id, YARP_THREADONCE_CALLBACK).error(__VA_ARGS__)
+#define yIErrorThrottle(id, period, ...)                                   yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, id, YARP_THROTTLE_CALLBACK(period)).error(__VA_ARGS__)
+#define yIErrorThreadThrottle(id, period, ...)                             yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, id, YARP_THREADTHROTTLE_CALLBACK(period)).error(__VA_ARGS__)
+#define yIErrorExternalTime(id, externaltime, ...)                         yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, id, externaltime).error(__VA_ARGS__)
+#define yIErrorExternalTimeOnce(id, externaltime, ...)                     yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, id, externaltime, YARP_ONCE_CALLBACK).error(__VA_ARGS__)
+#define yIErrorExternalTimeThreadOnce(id, externaltime, ...)               yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, id, externaltime, YARP_THREADONCE_CALLBACK).error(__VA_ARGS__)
+#define yIErrorExternalTimeThrottle(id, externaltime, period, ...)         yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, id, externaltime, YARP_THROTTLE_CALLBACK(period)).error(__VA_ARGS__)
+#define yIErrorExternalTimeThreadThrottle(id, externaltime, period, ...)   yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, id, externaltime, YARP_THREADTHROTTLE_CALLBACK(period)).error(__VA_ARGS__)
 
-#define yFatal(...)                                                   yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__).fatal(__VA_ARGS__)
-#define yFatalExternalTime(externaltime, ...)                         yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, externaltime).fatal(__VA_ARGS__)
+#define yFatal(...)                                                        yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__).fatal(__VA_ARGS__)
+#define yFatalExternalTime(externaltime, ...)                              yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, externaltime).fatal(__VA_ARGS__)
+#define yIFatal(id, ...)                                                   yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, id).fatal(__VA_ARGS__)
+#define yIFatalExternalTime(id, externaltime, ...)                         yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, id, externaltime).fatal(__VA_ARGS__)
 
 #ifndef NDEBUG
 #  define yAssert(x)                                                       \
@@ -295,9 +387,19 @@ private:
     if (!(x)) {                                                            \
         yFatalExternalTime(externaltime, "Assertion failure at %s:%d (%s)", __FILE__, __LINE__, #x); \
     }
+#  define yIAssert(id, x)                                                       \
+    if (!(x)) {                                                            \
+        yIFatal(id, "Assertion failure at %s:%d (%s)", __FILE__, __LINE__, #x); \
+    }
+#  define yIAssertExternalTime(id, externaltime, x)                                                       \
+    if (!(x)) {                                                            \
+        yIFatalExternalTime(id, externaltime, "Assertion failure at %s:%d (%s)", __FILE__, __LINE__, #x); \
+    }
 #else
 #  define yAssert(x)
 #  define yAssertExternalTime(externaltime, x) { YARP_UNUSED(externaltime); }
+#  define yIAssert(x) { YARP_UNUSED(id); }
+#  define yIAssertExternalTime(externaltime, x) { YARP_UNUSED(id); YARP_UNUSED(externaltime); }
 #endif
 
 #define YARP_FIXME_NOTIMPLEMENTED(what) yWarning("FIXME: %s not yet implemented", what);

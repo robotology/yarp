@@ -53,6 +53,7 @@ public:
     LogPrivate(const char* file,
                const unsigned int line,
                const char* func,
+               const char* id,
                const double externaltime,
                const yarp::os::Log::Predicate pred,
                const LogComponent& comp);
@@ -69,7 +70,8 @@ public:
                                double systemtime,
                                double networktime,
                                double externaltime,
-                               const char* comp_name);
+                               const char* comp_name,
+                               const char* id);
 
     static void forward_callback(yarp::os::Log::LogType t,
                                  const char* msg,
@@ -79,7 +81,8 @@ public:
                                  double systemtime,
                                  double networktime,
                                  double externaltime,
-                                 const char* comp_name);
+                                 const char* comp_name,
+                                 const char* id);
 
     // Calls the right print and forward callbacks
     static void do_log(yarp::os::Log::LogType type,
@@ -90,7 +93,8 @@ public:
                        double systemtime,
                        double networktime,
                        double externaltime,
-                       const LogComponent& comp_name);
+                       const LogComponent& comp_name,
+                       const std::string_view id);
 
     // This is a LogCallback that calls the print callback that is currently
     // set, even if this is changed later
@@ -102,10 +106,11 @@ public:
                                             double systemtime,
                                             double networktime,
                                             double externaltime,
-                                            const char* comp_name)
+                                            const char* comp_name,
+                                            const char* id)
     {
         if (auto cb = current_print_callback.load()) {
-            cb(type, msg, file, line, func, systemtime, networktime, externaltime, comp_name);
+            cb(type, msg, file, line, func, systemtime, networktime, externaltime, comp_name, id);
         }
     }
 
@@ -119,10 +124,11 @@ public:
                                               double systemtime,
                                               double networktime,
                                               double externaltime,
-                                              const char* comp_name)
+                                              const char* comp_name,
+                                              const char* id)
     {
         if (auto cb = current_forward_callback.load()) {
-            cb(type, msg, file, line, func, systemtime, networktime, externaltime, comp_name);
+            cb(type, msg, file, line, func, systemtime, networktime, externaltime, comp_name, id);
         }
     }
 
@@ -140,6 +146,7 @@ public:
     double externaltime;
     const yarp::os::Log::Predicate pred;
     const LogComponent& comp;
+    const char* id;
 
     static std::atomic<bool> yarprun_format;
     static std::atomic<bool> colored_output;
@@ -263,33 +270,55 @@ inline const char* compNameToColor(const char* comp_name)
     // invasive option.
     // Anyway, this is enabled only when YARP_COLORED_OUTPUT is set, therefore
     // it can be easily disabled if this slows down the execution.
-    static std::hash<std::string> hsh; // FIXME C++17: Use string_view
-    std::size_t comp_hash = hsh(comp_name) % 12;
+    static std::hash<std::string_view> hsh;
+    std::size_t comp_hash = hsh(comp_name) % 6;
     switch (comp_hash) {
+        // BOLD_RED is not used, since this is easily confused with an error
+    case 0:
+        return BOLD_GREEN;
+    case 1:
+        return BOLD_YELLOW;
+    case 2:
+        return BOLD_BLUE;
+    case 3:
+        return BOLD_MAGENTA;
+    case 4:
+        return BOLD_CYAN;
+    case 5:
+        return BOLD_WHITE;
+    default:
+        return "";
+    }
+}
+
+inline const char* idToColor(const char* id)
+{
+    if (!id || id[0] == '\0' || !yarp::os::impl::LogPrivate::colored_output.load()) {
+        return "";
+    }
+
+    // Hashing the component for every log line is probably not optimal, but in
+    // using a hash table will have the hash + a search, and since the
+    // LogCallback has only the name of the component, we cannot store the color
+    // in the LogComponent without breaking the API, therefore this is the less
+    // invasive option.
+    // Anyway, this is enabled only when YARP_COLORED_OUTPUT is set, therefore
+    // it can be easily disabled if this slows down the execution.
+    static std::hash<std::string_view> hsh;
+    std::size_t id_hash = hsh(id) % 6;
+    switch (id_hash) {
     case 0:
         return RED;
     case 1:
-        return BOLD_RED;
-    case 2:
         return GREEN;
-    case 3:
-        return BOLD_GREEN;
-    case 4:
+    case 2:
         return YELLOW;
-    case 5:
-        return BOLD_YELLOW;
-    case 6:
+    case 3:
         return BLUE;
-    case 7:
-        return BOLD_BLUE;
-    case 8:
+    case 4:
         return MAGENTA;
-    case 9:
-        return BOLD_MAGENTA;
-    case 10:
+    case 5:
         return CYAN;
-    case 11:
-        return BOLD_CYAN;
     default:
         return "";
     }
@@ -330,7 +359,8 @@ inline void forwardable_output(std::ostream* ost,
                                double systemtime,
                                double networktime,
                                double externaltime,
-                               const char* comp_name)
+                               const char* comp_name,
+                               const char* id)
 {
     const char *level = logTypeToString(t);
 
@@ -348,6 +378,7 @@ inline void forwardable_output(std::ostream* ost,
     // * pid (if YARP_FORWARD_PROCESSINFO_ENABLE is enabled)
     // * thread_id (if YARP_FORWARD_PROCESSINFO_ENABLE is enabled)
     // * component (if defined)
+    // * id (if defined)
     // * message (if any)
     // * backtrace (for FATAL or if requested using YARP_FORWARD_BACKTRACE_ENABLE)
 
@@ -380,6 +411,9 @@ inline void forwardable_output(std::ostream* ost,
     if (comp_name) {
         *ost << " (component " << yarp::os::impl::StoreString::quotedString(comp_name) << ")";
     }
+    if (id && id[0] != '\0') {
+        *ost << " (id " << yarp::os::impl::StoreString::quotedString(id) << ")";
+    }
     if (msg[0]) {
         *ost << " (message " << yarp::os::impl::StoreString::quotedString(msg) << ")";
     }
@@ -397,7 +431,8 @@ inline void printable_output(std::ostream* ost,
                              double systemtime,
                              double networktime,
                              double externaltime,
-                             const char* comp_name)
+                             const char* comp_name,
+                             const char* id)
 {
     YARP_UNUSED(file);
     YARP_UNUSED(line);
@@ -416,6 +451,7 @@ inline void printable_output(std::ostream* ost,
     const char* level_bgcolor = logTypeToBgColor(t);
     static const char *reserved_color = logTypeToColor(yarp::os::Log::LogTypeReserved);
     const char* comp_color = compNameToColor(comp_name);
+    const char* id_color = idToColor(id);
 
     // Print Level
     if (yarp::os::impl::LogPrivate::colored_output.load() && yarp::os::impl::LogPrivate::compact_output.load()) {
@@ -429,9 +465,17 @@ inline void printable_output(std::ostream* ost,
         *ost << level_color << func << CLEAR << ((msg[0] || comp_name) ? ": " : "");
     }
 
-    // Print component
+    // Print component and id
     if (comp_name) {
-        *ost << "|" << comp_color << comp_name << CLEAR << "| ";
+        *ost << "|" << comp_color << comp_name << CLEAR << "|";
+    }
+    if (id && id[0] != '\0') {
+        if (!comp_name) {
+            *ost << "|";
+        }
+        *ost << id_color << id << CLEAR << "| ";
+    } else if (comp_name) {
+        *ost << " ";
     }
 
     // Finally print the message
@@ -453,7 +497,8 @@ inline void printable_output_verbose(std::ostream* ost,
                                      double systemtime,
                                      double networktime,
                                      double externaltime,
-                                     const char* comp_name)
+                                     const char* comp_name,
+                                     const char* id)
 {
     YARP_UNUSED(systemtime);
 
@@ -462,6 +507,7 @@ inline void printable_output_verbose(std::ostream* ost,
     const char *level_bgcolor = logTypeToBgColor(t);
     static const char *reserved_color = logTypeToColor(yarp::os::Log::LogTypeReserved);
     const char* comp_color = compNameToColor(comp_name);
+    const char* id_color = idToColor(comp_name);
 
     // Print external time
     if (externaltime != 0.0) {
@@ -481,9 +527,17 @@ inline void printable_output_verbose(std::ostream* ost,
     // Print thread id
     *ost << "(0x" << std::setfill('0') << std::setw(8) << yarp::conf::numeric::to_hex_string(yarp::os::impl::ThreadImpl::getKeyOfCaller()) << ") ";
 
-    // Print component
+    // Print component and id
     if (comp_name) {
-        *ost << "|" << comp_color << comp_name << CLEAR << "| ";
+        *ost << "|" << comp_color << comp_name << CLEAR << "|";
+    }
+    if (id && id[0] != '\0') {
+        if (!comp_name) {
+            *ost << "|";
+        }
+        *ost << id_color << id << CLEAR << "| ";
+    } else if (comp_name) {
+        *ost << " ";
     }
 
     // Finally print the message
@@ -574,6 +628,7 @@ const yarp::os::LogComponent yarp::os::impl::LogPrivate::log_internal_component(
 yarp::os::impl::LogPrivate::LogPrivate(const char* file,
                                        unsigned int line,
                                        const char* func,
+                                       const char* id,
                                        const double externaltime,
                                        const yarp::os::Log::Predicate pred,
                                        const LogComponent& comp) :
@@ -584,7 +639,8 @@ yarp::os::impl::LogPrivate::LogPrivate(const char* file,
         networktime(!yarp::os::NetworkBase::isNetworkInitialized() ? 0.0 : (yarp::os::Time::isSystemClock() ? systemtime : yarp::os::Time::now())),
         externaltime(externaltime),
         pred(pred),
-        comp(comp)
+        comp(comp),
+        id(id)
 {
 #ifdef YARP_HAS_WIN_VT_SUPPORT
     if (colored_output.load() && !yarp::os::impl::LogPrivate::vt_colors_enabled.load()) {
@@ -601,7 +657,8 @@ void yarp::os::impl::LogPrivate::print_callback(yarp::os::Log::LogType t,
                                                 double systemtime,
                                                 double networktime,
                                                 double externaltime,
-                                                const char* comp_name)
+                                                const char* comp_name,
+                                                const char* id)
 {
     std::ostream *ost;
     if(t == yarp::os::Log::TraceType ||
@@ -617,11 +674,11 @@ void yarp::os::impl::LogPrivate::print_callback(yarp::os::Log::LogType t,
 
     if (yarprun_format.load()) {
         // Same output as forward_callback
-        forwardable_output(ost, t, msg, file, line, func, systemtime, networktime, externaltime, comp_name);
+        forwardable_output(ost, t, msg, file, line, func, systemtime, networktime, externaltime, comp_name, id);
     } else if (verbose_output.load()) {
-        printable_output_verbose(ost, t, msg, file, line, func, systemtime, networktime, externaltime, comp_name);
+        printable_output_verbose(ost, t, msg, file, line, func, systemtime, networktime, externaltime, comp_name, id);
     } else {
-        printable_output(ost, t, msg, file, line, func, systemtime, networktime, externaltime, comp_name);
+        printable_output(ost, t, msg, file, line, func, systemtime, networktime, externaltime, comp_name, id);
     }
     *ost << std::endl;
 }
@@ -634,7 +691,8 @@ void yarp::os::impl::LogPrivate::forward_callback(yarp::os::Log::LogType t,
                                                   double systemtime,
                                                   double networktime,
                                                   double externaltime,
-                                                  const char* comp_name)
+                                                  const char* comp_name,
+                                                  const char* id)
 {
     if (!yarp::os::NetworkBase::isNetworkInitialized()) {
         // Network is not initialized. Don't forward any log.
@@ -642,7 +700,7 @@ void yarp::os::impl::LogPrivate::forward_callback(yarp::os::Log::LogType t,
         return;
     }
     std::stringstream stringstream_buffer;
-    forwardable_output(&stringstream_buffer, t, msg, file, line, func, systemtime, networktime, externaltime, comp_name);
+    forwardable_output(&stringstream_buffer, t, msg, file, line, func, systemtime, networktime, externaltime, comp_name, id);
     LogForwarder::getInstance().forward(stringstream_buffer.str());
 }
 
@@ -696,7 +754,7 @@ void yarp::os::impl::LogPrivate::log(yarp::os::Log::LogType type,
                 out[p] = 0;
             }
 
-            do_log(type, out, file, line, func, systemtime, networktime, externaltime, comp);
+            do_log(type, out, file, line, func, systemtime, networktime, externaltime, comp, id);
 
             if (dyn_buf) {
                 yarp::os::Log(file, line, func, nullptr, log_internal_component).warning("Previous message was longer than the static buffer size, dynamic allocation was used");
@@ -716,11 +774,12 @@ void yarp::os::impl::LogPrivate::do_log(yarp::os::Log::LogType type,
                                         double systemtime,
                                         double networktime,
                                         double externaltime,
-                                        const LogComponent& comp)
+                                        const LogComponent& comp,
+                                        const std::string_view id)
 {
     auto* print_cb = (yarprun_format && comp != log_internal_component) ? yarp::os::impl::LogPrivate::print_callback : comp.printCallback(type);
     if (print_cb) {
-        print_cb(type, msg, file, line, func, systemtime, networktime, externaltime, comp.name());
+        print_cb(type, msg, file, line, func, systemtime, networktime, externaltime, comp.name(), id.data());
     } else {
         if (comp != log_internal_component) {
             if (comp.name()) {
@@ -733,7 +792,7 @@ void yarp::os::impl::LogPrivate::do_log(yarp::os::Log::LogType type,
 
     auto* forward_cb = comp.forwardCallback(type);
     if(forward_cb) {
-        forward_cb(type, msg, file, line, func, systemtime, networktime, externaltime, comp.name());
+        forward_cb(type, msg, file, line, func, systemtime, networktime, externaltime, comp.name(), id.data());
     } else {
         if (comp != log_internal_component) {
             if (comp.name()) {
@@ -876,7 +935,18 @@ yarp::os::Log::Log(const char* file,
                    const char* func,
                    const Predicate pred,
                    const LogComponent& comp) :
-        mPriv(new yarp::os::impl::LogPrivate(file, line, func, 0.0, pred, comp))
+        mPriv(new yarp::os::impl::LogPrivate(file, line, func, "", 0.0, pred, comp))
+{
+}
+
+// method for Log with id
+yarp::os::Log::Log(const char* file,
+                   unsigned int line,
+                   const char* func,
+                   std::string_view id,
+                   const Predicate pred,
+                   const LogComponent& comp) :
+        mPriv(new yarp::os::impl::LogPrivate(file, line, func, id.data(), 0.0, pred, comp))
 {
 }
 
@@ -887,12 +957,25 @@ yarp::os::Log::Log(const char* file,
                    const double externaltime,
                    const Predicate pred,
                    const LogComponent& comp) :
-        mPriv(new yarp::os::impl::LogPrivate(file, line, func, externaltime, pred, comp))
+        mPriv(new yarp::os::impl::LogPrivate(file, line, func, "", externaltime, pred, comp))
+{
+}
+
+// method for Log with id and externaltime
+
+yarp::os::Log::Log(const char* file,
+                   unsigned int line,
+                   const char* func,
+                   std::string_view id,
+                   const double externaltime,
+                   const Predicate pred,
+                   const LogComponent& comp) :
+        mPriv(new yarp::os::impl::LogPrivate(file, line, func, id.data(), externaltime, pred, comp))
 {
 }
 
 yarp::os::Log::Log() :
-        mPriv(new yarp::os::impl::LogPrivate(nullptr, 0, nullptr, 0.0, nullptr, nullptr))
+        mPriv(new yarp::os::impl::LogPrivate(nullptr, 0, nullptr, nullptr, 0.0, nullptr, nullptr))
 {
 }
 
@@ -909,9 +992,10 @@ void yarp::os::Log::do_log(yarp::os::Log::LogType type,
                            double systemtime,
                            double networktime,
                            double externaltime,
-                           const LogComponent& comp)
+                           const LogComponent& comp,
+                           const std::string_view id)
 {
-    yarp::os::impl::LogPrivate::do_log(type, msg, file, line, func, systemtime, networktime, externaltime, comp);
+    yarp::os::impl::LogPrivate::do_log(type, msg, file, line, func, systemtime, networktime, externaltime, comp, id);
 }
 
 
@@ -929,6 +1013,7 @@ yarp::os::LogStream yarp::os::Log::trace() const
                                mPriv->file,
                                mPriv->line,
                                mPriv->func,
+                               mPriv->id,
                                mPriv->externaltime,
                                mPriv->pred,
                                mPriv->comp);
@@ -949,6 +1034,7 @@ yarp::os::LogStream yarp::os::Log::debug() const
                                mPriv->file,
                                mPriv->line,
                                mPriv->func,
+                               mPriv->id,
                                mPriv->externaltime,
                                mPriv->pred,
                                mPriv->comp);
@@ -968,6 +1054,7 @@ yarp::os::LogStream yarp::os::Log::info() const
                                mPriv->file,
                                mPriv->line,
                                mPriv->func,
+                               mPriv->id,
                                mPriv->externaltime,
                                mPriv->pred,
                                mPriv->comp);
@@ -988,6 +1075,7 @@ yarp::os::LogStream yarp::os::Log::warning() const
                                mPriv->file,
                                mPriv->line,
                                mPriv->func,
+                               mPriv->id,
                                mPriv->externaltime,
                                mPriv->pred,
                                mPriv->comp);
@@ -1008,6 +1096,7 @@ yarp::os::LogStream yarp::os::Log::error() const
                                mPriv->file,
                                mPriv->line,
                                mPriv->func,
+                               mPriv->id,
                                mPriv->externaltime,
                                mPriv->pred,
                                mPriv->comp);
@@ -1029,6 +1118,7 @@ yarp::os::LogStream yarp::os::Log::fatal() const
                                mPriv->file,
                                mPriv->line,
                                mPriv->func,
+                               mPriv->id,
                                mPriv->externaltime,
                                mPriv->pred,
                                mPriv->comp);
