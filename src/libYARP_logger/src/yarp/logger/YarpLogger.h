@@ -132,6 +132,7 @@ struct yarp::yarpLogger::MessageEntry
     int           pid;
     long          thread_id;
     std::string   component;
+    std::string   id;
     double        systemtime;
     double        networktime;
     double        externaltime;

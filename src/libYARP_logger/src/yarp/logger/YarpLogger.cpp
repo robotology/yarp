@@ -372,6 +372,12 @@ void LoggerEngine::logger_thread::run()
                     body.component.clear();
                 }
 
+                if (p.check("id")) {
+                    body.id = p.find("id").asString();
+                } else {
+                    body.id.clear();
+                }
+
                 if (p.check("systemtime")) {
                     body.systemtime = p.find("systemtime").asFloat64();
                 } else {
