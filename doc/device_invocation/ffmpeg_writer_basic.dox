@@ -43,6 +43,7 @@ So this is just an example
 <table>
 <tr><td>PROPERTY</td><td>DESCRIPTION</td><td>DEFAULT</td></tr>
 <tr><td>device</td><td></td><td></td></tr>
+<tr><td>id</td><td>Id assigned to this device</td><td>pipe</td></tr>
 <tr><td>source</td><td>device to read from (string or nested properties)</td><td></td></tr>
 <tr><td>sink</td><td>device to write to (string or nested properties)</td><td></td></tr>
 </table>

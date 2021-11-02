@@ -33,6 +33,7 @@ So this is just an example
 <table>
 <tr><td>PROPERTY</td><td>DESCRIPTION</td><td>DEFAULT</td></tr>
 <tr><td>device</td><td></td><td></td></tr>
+<tr><td>id</td><td>Id assigned to this device</td><td>AudioRecorderWrapper</td></tr>
 <tr><td>period</td><td></td><td></td></tr>
 <tr><td>subdevice</td><td></td><td></td></tr>
 <tr><td>min_samples_over_network</td><td></td><td></td></tr>

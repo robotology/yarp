@@ -31,6 +31,7 @@ So this is just an example
 <table>
 <tr><td>PROPERTY</td><td>DESCRIPTION</td><td>DEFAULT</td></tr>
 <tr><td>device</td><td></td><td></td></tr>
+<tr><td>id</td><td>Id assigned to this device</td><td>AudioPlayerWrapper</td></tr>
 <tr><td>debug</td><td></td><td></td></tr>
 <tr><td>period</td><td></td><td></td></tr>
 <tr><td>name</td><td></td><td></td></tr>
