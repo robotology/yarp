@@ -312,11 +312,11 @@ bool Port::open(const Contact& contact, bool registerName, const char* fakeName)
         }
 
         if (address.getRegName().empty()) {
-            yCInfo(PORT,
+            yCIInfo(PORT, core.getName(),
                    "Anonymous port active at %s",
                    address.toURI().c_str());
         } else {
-            yCInfo(PORT,
+            yCIInfo(PORT, core.getName(),
                    "Port %s active at %s",
                    address.getRegName().c_str(),
                    address.toURI().c_str());
@@ -329,7 +329,9 @@ bool Port::open(const Contact& contact, bool registerName, const char* fakeName)
     }
 
     if (!success) {
-        yCError(PORT, "Port %s failed to activate%s%s (%s)",
+        yCIError(PORT,
+                core.getName().c_str(),
+                "Port %s failed to activate%s%s (%s)",
                 (address.isValid() ? (address.getRegName().c_str()) : (contact2.getName().c_str())),
                 (address.isValid() ? " at " : ""),
                 (address.isValid() ? address.toURI().c_str() : ""),
@@ -703,7 +705,10 @@ bool Port::removeCallbackLock()
 bool Port::lockCallback()
 {
     if (!IMPL().lockCallback()) {
-        yCError(PORT,"Cannot do lockCallback() without setCallbackLock() before opening port");
+        PortCoreAdapter& core = IMPL();
+        yCIError(PORT,
+                core.getName(),
+                "Cannot do lockCallback() without setCallbackLock() before opening port");
     }
     return true;
 }

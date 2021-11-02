@@ -73,6 +73,11 @@ public:
         return finished;
     }
 
+    const std::string& getName()
+    {
+        return name;
+    }
+
     // documented in PortCoreUnit
     Route getRoute() override;
 
@@ -108,6 +113,7 @@ private:
     bool running;       ///< is a thread running
     bool threaded;      ///< do we need a thread for background writing
     bool sending;       ///< are we sending something right now
+    std::string name;
     yarp::os::Semaphore phase;        ///< let main thread kick sending thread
     yarp::os::Semaphore activate;     ///< signal when we have a new tracker
     std::mutex trackerMutex; ///< protect the tracker during outside access
