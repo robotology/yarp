@@ -34,6 +34,7 @@ LogTab::LogTab(yarp::yarpLogger::LoggerEngine* _theLogger,
         displayArgs_enabled(false),
         displayThreadId_enabled(false),
         displayComponent_enabled(true),
+        displayId_enabled(true),
         displayColors_enabled(true),
         displayGrid_enabled(true),
         toggleLineExpansion(false),
@@ -75,6 +76,7 @@ LogTab::LogTab(yarp::yarpLogger::LoggerEngine* _theLogger,
     ui->listView->horizontalHeader()->setSectionResizeMode(LogModel::CMD_COLUMN, QHeaderView::ResizeToContents);
     ui->listView->horizontalHeader()->setSectionResizeMode(LogModel::THREADID_COLUMN, QHeaderView::ResizeToContents);
     ui->listView->horizontalHeader()->setSectionResizeMode(LogModel::COMPONENT_COLUMN, QHeaderView::ResizeToContents);
+    ui->listView->horizontalHeader()->setSectionResizeMode(LogModel::ID_COLUMN, QHeaderView::ResizeToContents);
 
     ui->listView->verticalHeader()->setSectionResizeMode(QHeaderView::Fixed);
 
@@ -146,6 +148,7 @@ void LogTab::on_copy_to_clipboard_action()
         if (displayArgs_enabled)             { list.append(logModel->data(prox_index, LogModel::ArgsRole).toString()); }
         if (displayThreadId_enabled)         { list.append(logModel->data(prox_index, LogModel::ThreadIdRole).toString()); }
         if (displayComponent_enabled)        { list.append(logModel->data(prox_index, LogModel::ComponentRole).toString()); }
+        if (displayId_enabled)               { list.append(logModel->data(prox_index, LogModel::IdRole).toString()); }
         list.append(logModel->data(prox_index, LogModel::TextRole).toString());
         selected_test += list.join(separator);
         selected_test += '\n';
@@ -194,6 +197,7 @@ void LogTab::updateLog(bool from_beginning)
     ui->listView->setColumnHidden(LogModel::CMD_COLUMN,              !displayCmd_enabled);
     ui->listView->setColumnHidden(LogModel::ARGS_COLUMN,             !displayArgs_enabled);
     ui->listView->setColumnHidden(LogModel::COMPONENT_COLUMN,        !displayComponent_enabled);
+    ui->listView->setColumnHidden(LogModel::ID_COLUMN,               !displayId_enabled);
     ui->listView->setShowGrid(displayGrid_enabled);
     mutex.unlock();
 }
@@ -296,6 +300,12 @@ void LogTab::displayComponent(bool enabled)
 {
     displayComponent_enabled = enabled;
     ui->listView->setColumnHidden(LogModel::COMPONENT_COLUMN, !displayComponent_enabled);
+}
+
+void LogTab::displayId(bool enabled)
+{
+    displayId_enabled = enabled;
+    ui->listView->setColumnHidden(LogModel::ID_COLUMN, !displayId_enabled);
 }
 
 void LogTab::displayColors(bool enabled)

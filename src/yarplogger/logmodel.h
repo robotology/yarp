@@ -41,6 +41,7 @@ public:
         ThreadIdRole,
         ThreadIdStringRole,
         ComponentRole,
+        IdRole,
         TextRole,
         BacktraceRole,
     };
@@ -60,8 +61,9 @@ public:
     static constexpr int ARGS_COLUMN             = 12;
     static constexpr int THREADID_COLUMN         = 13;
     static constexpr int COMPONENT_COLUMN        = 14;
-    static constexpr int TEXT_COLUMN             = 15;
-    static constexpr int COLUMN_COUNT            = 16;
+    static constexpr int ID_COLUMN               = 15;
+    static constexpr int TEXT_COLUMN             = 16;
+    static constexpr int COLUMN_COUNT            = 17;
 
     explicit LogModel(QObject *parent = nullptr);
     ~LogModel() override;

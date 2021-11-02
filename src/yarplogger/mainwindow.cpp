@@ -443,6 +443,7 @@ void MainWindow::on_yarprunTreeView_doubleClicked(const QModelIndex &pre_index)
         tmpLogTab->displayArgs(ui->actionShow_Args->isChecked());
         tmpLogTab->displayThreadId(ui->actionShow_Thread_Id->isChecked());
         tmpLogTab->displayComponent(ui->actionShow_Component->isChecked());
+        tmpLogTab->displayId(ui->actionShow_Id->isChecked());
         tmpLogTab->displayGrid(ui->actionShow_Grid->isChecked());
         tmpLogTab->displayColors(ui->actionShow_Colors->isChecked());
         l->addWidget(tmpLogTab);
@@ -733,6 +734,18 @@ void MainWindow::on_actionShow_Component_toggled(bool checked)
         if (logtab)
         {
             logtab->displayComponent(checked);
+        }
+    }
+}
+
+void MainWindow::on_actionShow_Id_toggled(bool checked)
+{
+    for (int i=0; i<ui->logtabs->count(); i++)
+    {
+        auto* logtab = ui->logtabs->widget(i)->findChild<LogTab*>("logtab");
+        if (logtab)
+        {
+            logtab->displayId(checked);
         }
     }
 }

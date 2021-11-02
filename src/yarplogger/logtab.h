@@ -54,6 +54,7 @@ private:
     bool                            displayArgs_enabled;
     bool                            displayThreadId_enabled;
     bool                            displayComponent_enabled;
+    bool                            displayId_enabled;
     bool                            displayColors_enabled;
     bool                            displayGrid_enabled;
     bool                            toggleLineExpansion;
@@ -90,6 +91,7 @@ public:
     void displayArgs            (bool enabled);
     void displayThreadId        (bool enabled);
     void displayComponent       (bool enabled);
+    void displayId              (bool enabled);
     void displayColors          (bool enabled);
     void displayGrid            (bool enabled);
 
