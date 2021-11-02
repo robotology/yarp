@@ -113,7 +113,7 @@ bool MobileBaseVelocityControl_nws_yarp::close()
 {
     m_rpc_port_navigation_server.close();
     m_StreamingInput.close();
-    if (m_subdev.isValid()) m_subdev.close();
+    if (m_subdev.isValid()) { m_subdev.close(); }
     return true;
 }
 

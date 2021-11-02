@@ -36,6 +36,7 @@
   * | node_name      |      -         | string  | -              | /mobileBase_VelControl_nws_ros | No           | Full name of the opened ROS node                                  |       |
   * | topic_name     |     -          | string  | -              | /velocity_input                | No           | Full name of the opened ROS topic                                 |       |
   * | period         |     -          | float   | s              | 0.010                          | No           | Thread period           |  |
+  * | subdevice      |      -         | string  | -              |   -                            | No           | name of the subdevice to instantiate                              | when used, parameters for the subdevice must be provided as well |
   */
 
 class MobileBaseVelocityControl_nws_ros :

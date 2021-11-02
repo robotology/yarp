@@ -87,7 +87,7 @@ bool MobileBaseVelocityControl_nws_ros::close()
 {
     m_ros_subscriber.close();
     delete m_ros_node;
-    if (m_subdev.isValid()) m_subdev.close();
+    if (m_subdev.isValid()) { m_subdev.close(); }
     return true;
 }
 

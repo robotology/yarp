@@ -33,6 +33,7 @@
  * | Parameter name | SubParameter   | Type    | Units | Default Value | Required | Description                                                       | Notes |
  * |:--------------:|:--------------:|:-------:|:-----:|:-------------:|:-------: |:-----------------------------------------------------------------:|:-----:|
  * | local          |      -         | string  | -     |   -           | Yes      | Full name of the port opened by the device. For both ports (i.e. :rpc, :i) the corresponding suffix is automatically added |       |
+ * | subdevice      |      -         | string  | -     |   -           | No       | name of the subdevice to instantiate                              | when used, parameters for the subdevice must be provided as well |
  *
  * Example usage:
  * yarpdev --device mobileBaseVelocityControl_nws_yarp --subdevice velocityInputHandler --local /input1
