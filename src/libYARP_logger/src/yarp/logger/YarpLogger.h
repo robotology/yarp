@@ -67,16 +67,25 @@ public:
         return static_cast<int>(e_level);
     }
 
-    std::string toString() const
+    std::string_view toString() const
     {
-        if (e_level == LOGLEVEL_UNDEFINED) { return "<UNDEFINED>"; }
-        if (e_level == LOGLEVEL_TRACE) { return "<TRACE>"; }
-        if (e_level == LOGLEVEL_DEBUG) { return "<DEBUG>"; }
-        if (e_level == LOGLEVEL_INFO) { return "<INFO>"; }
-        if (e_level == LOGLEVEL_WARNING) { return "<WARNING>"; }
-        if (e_level == LOGLEVEL_ERROR) { return "<ERROR>"; }
-        if (e_level == LOGLEVEL_FATAL) { return "<FATAL>"; }
-        else { return "<UNDEFINED>"; }
+        switch(e_level) {
+        case LOGLEVEL_TRACE:
+            return "TRACE";
+        case LOGLEVEL_DEBUG:
+            return "DEBUG";
+        case LOGLEVEL_INFO:
+            return "INFO";
+        case LOGLEVEL_WARNING:
+            return "WARNING";
+        case LOGLEVEL_ERROR:
+            return "ERROR";
+        case LOGLEVEL_FATAL:
+            return "FATAL";
+        case LOGLEVEL_UNDEFINED:
+        default:
+            return "UNDEFINED";
+        }
     }
 
     void operator=(LogLevelEnum level)

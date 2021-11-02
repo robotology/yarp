@@ -270,7 +270,7 @@ bool PolyDriver::coreOpen(yarp::os::Searchable& prop)
     DriverCreator *creator = Drivers::factory().find(str.c_str());
     if (creator!=nullptr) {
         Value *val;
-        if (config->check("wrapped",val)&&(creator->getWrapper()!="")) {
+        if (config->check("wrapped",val) && (!creator->getWrapper().empty())) {
             std::string wrapper = creator->getWrapper();
             DriverCreator *wrapCreator =
                 Drivers::factory().find(wrapper.c_str());
@@ -279,8 +279,8 @@ bool PolyDriver::coreOpen(yarp::os::Searchable& prop)
                 p.unput("wrapped");
                 config = &p;
                 if (wrapCreator!=creator) {
-                    p.put("subdevice",str);
-                    p.put("device",wrapper);
+                    p.put("subdevice", str);
+                    p.put("device", wrapper);
                     p.setMonitor(prop.getMonitor(),
                                  wrapper.c_str()); // pass on any monitoring
                     driver = wrapCreator->create();

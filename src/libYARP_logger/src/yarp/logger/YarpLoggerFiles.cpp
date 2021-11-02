@@ -38,7 +38,7 @@ bool LoggerEngine::export_log_to_text_file   (std::string  filename, std::string
             std::vector<MessageEntry>::iterator it1;
             for (it1 = it->entry_list.begin(); it1 != it->entry_list.end(); it1++)
             {
-                file1 << it1->yarprun_timestamp << " " << it1->local_timestamp << " " << it1->level.toString() << " " << it1->text << '\n';
+                file1 << it1->yarprun_timestamp << " " << it1->local_timestamp << " <" << it1->level.toString() << "> " << it1->text << '\n';
             }
             file1.close();
         }
@@ -198,7 +198,7 @@ bool LoggerEngine::load_all_logs_from_file   (std::string  filename)
         LoadFromFile(file1, size_log_list);
 
         log_updater->log_list.clear();
-        for (int i=0; i< size_log_list; i++)
+        for (unsigned int i=0; i< size_log_list; i++)
         {
             LogEntry l_tmp(true, 10000);
             unsigned int      dummy;
