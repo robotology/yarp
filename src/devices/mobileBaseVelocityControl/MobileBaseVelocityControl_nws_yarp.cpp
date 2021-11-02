@@ -140,30 +140,6 @@ bool MobileBaseVelocityControl_nws_yarp::attach(PolyDriver* driver)
     return true;
 }
 
-bool MobileBaseVelocityControl_nws_yarp::applyVelocityCommand(double x_vel, double y_vel, double theta_vel, double timeout)
-{
-    std::lock_guard <std::mutex> lg(m_mutex);
-    if (nullptr == m_iNavVel)
-    {
-        yCError(MOBVEL_NWS_YARP, "Unable to applyVelocityCommandRPC");
-        return false;
-    }
-
-    return m_iNavVel->applyVelocityCommand(x_vel, y_vel, theta_vel, timeout);
-}
-
-bool MobileBaseVelocityControl_nws_yarp::getLastVelocityCommand(double& x_vel, double& y_vel, double& theta_vel)
-{
-    std::lock_guard <std::mutex> lg(m_mutex);
-    if (nullptr == m_iNavVel)
-    {
-        yCError(MOBVEL_NWS_YARP, "Unable to getLastVelocityCommand");
-        return false;
-    }
-
-    return m_iNavVel->getLastVelocityCommand(x_vel, y_vel, theta_vel);
-}
-
 bool MobileBaseVelocityControl_nws_yarp::applyVelocityCommandRPC(const double x_vel, const double y_vel, const double theta_vel, const double timeout)
 {
     std::lock_guard <std::mutex> lg(m_mutex);

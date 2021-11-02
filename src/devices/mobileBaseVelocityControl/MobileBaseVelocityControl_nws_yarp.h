@@ -53,8 +53,7 @@ public:
 class MobileBaseVelocityControl_nws_yarp:
         public yarp::dev::DeviceDriver,
         public yarp::dev::WrapperSingle,
-        public MobileBaseVelocityControlRPC,
-        public yarp::dev::Nav2D::INavigation2DVelocityActions
+        public MobileBaseVelocityControlRPC
 {
 protected:
     std::mutex                    m_mutex;
@@ -72,11 +71,6 @@ public:
     bool close() override;
     bool detach() override;
     bool attach(yarp::dev::PolyDriver* driver) override;
-
-public:
-    //* INavigation2DVelocityActions methods */
-    bool applyVelocityCommand(double x_vel, double y_vel, double theta_vel, double timeout = 0.1) override;
-    bool getLastVelocityCommand(double& x_vel, double& y_vel, double& theta_vel) override;
 
 public:
     //* MobileBaseVelocityControlRPC methods*/
