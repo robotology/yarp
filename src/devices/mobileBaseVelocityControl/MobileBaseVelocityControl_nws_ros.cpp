@@ -26,6 +26,41 @@ namespace {
 
 //------------------------------------------------------------------------------------------------------------------------------
 
+void commandSubscriber::init(yarp::dev::Nav2D::INavigation2DVelocityActions* _iNavVel)
+{
+    m_iNavVel = _iNavVel;
+}
+
+void commandSubscriber::deinit()
+{
+    m_iNavVel = nullptr;
+}
+
+commandSubscriber::commandSubscriber()
+{
+    //this->setStrict();
+    this->useCallback();
+}
+
+commandSubscriber::~commandSubscriber()
+{
+    this->close();
+}
+
+void commandSubscriber::onRead(yarp::rosmsg::geometry_msgs::Twist& v)
+{
+    if (m_iNavVel)
+    {
+        m_iNavVel->applyVelocityCommand(v.linear.x, v.linear.y, v.angular.z * 180 / M_PI);
+    }
+    else
+    {
+        yCError(MOBVEL_NWS_ROS, "Subdevice interface not yet initialized");
+    }
+}
+
+//------------------------------------------------------------------------------------------------------------------------------
+
 bool MobileBaseVelocityControl_nws_ros::open(yarp::os::Searchable& config)
 {
     if (config.check("node_name") == true)
@@ -38,22 +73,38 @@ bool MobileBaseVelocityControl_nws_ros::open(yarp::os::Searchable& config)
         m_ros_topic_name = config.find("topic_name").asString();
     }
 
-    m_ros_node = new yarp::os::Node (m_ros_node_name);
-
-    if (!m_ros_subscriber.topic(m_ros_topic_name))
+    //attach subdevice if required
+    if (config.check("subdevice"))
     {
-        yCError(MOBVEL_NWS_ROS) << " opening " << m_ros_topic_name << " Topic, check your yarp-ROS network configuration\n";
-        return false;
-    }
+        Property       p;
+        p.fromString(config.toString(), false);
+        p.put("device", config.find("subdevice").asString());
 
-    if (config.check("period"))
-    {
-        m_period = config.find("period").asFloat32();
-        this->setPeriod (m_period);
+        if (!m_subdev.open(p) || !m_subdev.isValid())
+        {
+            yCError(MOBVEL_NWS_ROS) << "Failed to open subdevice.. check params";
+            return false;
+        }
+
+        if (!attach(&m_subdev))
+        {
+            yCError(MOBVEL_NWS_ROS) << "Failed to attach subdevice.. check params";
+            return false;
+        }
     }
     else
     {
-        yCWarning(MOBVEL_NWS_ROS, "Using default period of %f s", m_period);
+        yCInfo(MOBVEL_NWS_ROS) << "Waiting for device to attach";
+    }
+
+    //open the subscriber
+    m_ros_node = new yarp::os::Node(m_ros_node_name);
+    m_command_subscriber = new commandSubscriber();
+
+    if (!m_command_subscriber->topic(m_ros_topic_name))
+    {
+        yCError(MOBVEL_NWS_ROS) << " opening " << m_ros_topic_name << " Topic, check your yarp-ROS network configuration\n";
+        return false;
     }
 
     return true;
@@ -61,44 +112,35 @@ bool MobileBaseVelocityControl_nws_ros::open(yarp::os::Searchable& config)
 
 bool MobileBaseVelocityControl_nws_ros::close()
 {
-    m_ros_subscriber.close();
-    delete m_ros_node;
+    if (m_command_subscriber) {delete m_command_subscriber;}
+    if (m_ros_node) {delete m_ros_node;}
+    if (m_subdev.isValid()) { m_subdev.close(); }
     return true;
 }
 
-bool MobileBaseVelocityControl_nws_ros::threadInit()
-{
-    return true;
-}
-
-void  MobileBaseVelocityControl_nws_ros::run()
-{
-    if (yarp::rosmsg::geometry_msgs::Twist* rosTwist = m_ros_subscriber.read(false))
-    {
-        this->m_iNavVel->applyVelocityCommand(rosTwist->linear.x,
-                                              rosTwist->linear.y,
-                                              rosTwist->angular.z * 180 / M_PI);
-    }
-}
 
 bool MobileBaseVelocityControl_nws_ros::detach()
 {
-    m_iNavVel = nullptr;
+    m_command_subscriber->deinit();
     return true;
 }
 
 bool MobileBaseVelocityControl_nws_ros::attach(PolyDriver* driver)
 {
+    yarp::dev::Nav2D::INavigation2DVelocityActions* iNavVel=nullptr;
+
     if (driver->isValid())
     {
-        driver->view(m_iNavVel);
+        driver->view(iNavVel);
     }
 
-    if (nullptr == m_iNavVel)
+    if (nullptr == iNavVel)
     {
         yCError(MOBVEL_NWS_ROS, "Subdevice passed to attach method is invalid");
         return false;
     }
+
+    m_command_subscriber->init(iNavVel);
 
     return true;
 }

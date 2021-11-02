@@ -12,7 +12,6 @@
 #include <yarp/sig/Vector.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/Subscriber.h>
-#include <yarp/os/PeriodicThread.h>
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/INavigation2D.h>
 #include <yarp/os/Node.h>
@@ -35,25 +34,39 @@
   * |:--------------:|:--------------:|:-------:|:--------------:|:------------------------------:|:------------:|:-----------------------------------------------------------------:|:-----:|
   * | node_name      |      -         | string  | -              | /mobileBase_VelControl_nws_ros | No           | Full name of the opened ROS node                                  |       |
   * | topic_name     |     -          | string  | -              | /velocity_input                | No           | Full name of the opened ROS topic                                 |       |
-  * | period         |     -          | float   | s              | 0.010                          | No           | Thread period           |  |
+  * | subdevice      |      -         | string  | -              |   -                            | No           | name of the subdevice to instantiate                              | when used, parameters for the subdevice must be provided as well |
   */
+
+class commandSubscriber :
+    public yarp::os::Subscriber<yarp::rosmsg::geometry_msgs::Twist>
+{
+    public:
+    void init(yarp::dev::Nav2D::INavigation2DVelocityActions* m_iNavVel);
+    void deinit();
+
+    ~commandSubscriber ();
+    commandSubscriber ();
+    yarp::dev::Nav2D::INavigation2DVelocityActions* m_iNavVel = nullptr;
+
+    using yarp::os::Subscriber<yarp::rosmsg::geometry_msgs::Twist>::onRead;
+    virtual void onRead (yarp::rosmsg::geometry_msgs::Twist& v) override;
+};
 
 class MobileBaseVelocityControl_nws_ros :
     public yarp::dev::DeviceDriver,
-    public yarp::os::PeriodicThread,
     public yarp::dev::WrapperSingle
 {
 protected:
     std::string                   m_ros_node_name = "/mobileBase_VelControl_nws_ros";
     std::string                   m_ros_topic_name = "/velocity_input";
     yarp::os::Node*               m_ros_node = nullptr;
-    yarp::os::Subscriber<yarp::rosmsg::geometry_msgs::Twist> m_ros_subscriber;
+    commandSubscriber*            m_command_subscriber = nullptr;
 
-    double                        m_period;
-    yarp::dev::Nav2D::INavigation2DVelocityActions* m_iNavVel = nullptr;
+    yarp::dev::PolyDriver         m_subdev;
 
 public:
-    MobileBaseVelocityControl_nws_ros(double tperiod = 0.010) : PeriodicThread(tperiod) { m_period =tperiod; };
+    virtual ~MobileBaseVelocityControl_nws_ros () {};
+    MobileBaseVelocityControl_nws_ros() {};
 
     /* DeviceDriver methods */
     bool open(yarp::os::Searchable& config) override;
@@ -62,8 +75,6 @@ public:
 private:
     bool detach() override;
     bool attach(yarp::dev::PolyDriver* driver) override;
-    bool threadInit() override;
-    void run() override;
 };
 
 #endif // YARP_DEV_MOBILEBASEVELOCITYCONTROL_NWS_ROS

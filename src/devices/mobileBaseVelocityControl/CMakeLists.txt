@@ -108,7 +108,7 @@ endif()
 
 
 
-yarp_prepare_plugin(mobileBaseVelocityControl_nwc_ros
+yarp_prepare_plugin(mobileBaseVelocityControl_nws_ros
   CATEGORY device
   TYPE MobileBaseVelocityControl_nws_ros
   INCLUDE MobileBaseVelocityControl_nws_ros.h
@@ -116,7 +116,7 @@ yarp_prepare_plugin(mobileBaseVelocityControl_nwc_ros
   DEFAULT ON
 )
 
-if(NOT SKIP_mobileBaseVelocityControl_nwc_ros)
+if(NOT SKIP_mobileBaseVelocityControl_nws_ros)
   yarp_add_plugin(yarp_mobileBaseVelocityControl_nws_ros)
 
   target_sources(yarp_mobileBaseVelocityControl_nws_ros
