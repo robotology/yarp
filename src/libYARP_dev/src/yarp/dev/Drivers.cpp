@@ -219,6 +219,22 @@ public:
         return dev.getContent().close();
     }
 
+    void setId(const std::string& id) override
+    {
+        if (!isValid()) {
+            return;
+        }
+        dev.getContent().setId(id);
+    }
+
+    std::string id() const override
+    {
+        if (!isValid()) {
+            return "StubDriver";
+        }
+        return dev.getContent().id();
+    }
+
     DeviceDriver *getImplementation() override {
         return &dev.getContent();
     }
