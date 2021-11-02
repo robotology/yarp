@@ -14,6 +14,7 @@ set(YARP_logger_IMPL_HDRS )
 
 set(YARP_logger_SRCS
   yarp/logger/YarpLogger.cpp
+  yarp/logger/YarpLoggerFiles.cpp
 )
 
 source_group(

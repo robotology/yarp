@@ -204,9 +204,9 @@ class yarp::yarpLogger::LoggerEngine
     class logger_thread : public yarp::os::PeriodicThread
     {
         public:
-        logger_thread (std::string _portname, double _period=0.01, int _log_list_max_size=100);
+        logger_thread (std::string _portname, double _period=0.01, int _log_list_max_size=100, int _logs_max_lines=10000);
         public:
-        std::mutex      mutex;
+        std::mutex           mutex;
         unsigned int         log_list_max_size;
         bool                 log_list_max_size_enabled;
         std::list<LogEntry>  log_list;
@@ -220,21 +220,21 @@ class yarp::yarpLogger::LoggerEngine
         std::string getPortName();
         void        run() override;
         void        threadRelease() override;
-        bool        listen_to_LOGLEVEL_UNDEFINED;
-        bool        listen_to_LOGLEVEL_TRACE;
-        bool        listen_to_LOGLEVEL_DEBUG;
-        bool        listen_to_LOGLEVEL_INFO;
-        bool        listen_to_LOGLEVEL_WARNING;
-        bool        listen_to_LOGLEVEL_ERROR;
-        bool        listen_to_LOGLEVEL_FATAL;
-        bool        listen_to_YARP_MESSAGES;
-        bool        listen_to_YARPRUN_MESSAGES;
+        bool        listen_to_LOGLEVEL_UNDEFINED = true;
+        bool        listen_to_LOGLEVEL_TRACE = true;
+        bool        listen_to_LOGLEVEL_DEBUG = true;
+        bool        listen_to_LOGLEVEL_INFO = true;
+        bool        listen_to_LOGLEVEL_WARNING = true;
+        bool        listen_to_LOGLEVEL_ERROR = true;
+        bool        listen_to_LOGLEVEL_FATAL = true;
+        bool        listen_to_YARP_MESSAGES = true;
+        bool        listen_to_YARPRUN_MESSAGES = true;
     };
 
     private:
     bool           logging;
     bool           discovering;
-    logger_thread* log_updater;
+    logger_thread* log_updater = nullptr;
 
     public:
     void discover             (std::list<std::string>& ports);
