@@ -257,6 +257,7 @@ Value PolyDriver::getValue(const char *option)
 
 bool PolyDriver::coreOpen(yarp::os::Searchable& prop)
 {
+    setId(prop.check("id", prop.check("device", Value("")), "Id assigned to this device").toString());
     yarp::os::Searchable *config = &prop;
     Property p;
     std::string str = prop.toString();
@@ -307,6 +308,7 @@ bool PolyDriver::coreOpen(yarp::os::Searchable& prop)
         }
 
         yCTrace(POLYDRIVER, "Parameters are %s", config->toString().c_str());
+        driver->setId(id());
         bool ok = driver->open(*config);
         if (!ok) {
             yCError(POLYDRIVER, "Driver <%s> was found but could not open", config->find("device").toString().c_str());
