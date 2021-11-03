@@ -12,6 +12,7 @@
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/os/Network.h>
 #include <yarp/os/Time.h>
+#include <yarp/os/LogStream.h>
 
 #include <yarp/math/Math.h>
 #include <yarp/math/FrameTransform.h>
@@ -125,118 +126,151 @@ void exec_frameTransform_test_1(IFrameTransform* itf)
     yarp::os::Time::delay(1);
 
     //test 0
-    std::vector<std::string> ids;
-    itf->getAllFrameIds(ids);
-    char buff[1024]; buff[0] = 0;
-    for (size_t i = 0; i < ids.size(); i++)
     {
-        sprintf(buff +strlen(buff), "%s ", ids[i].c_str());
+        yInfo("Running Sub-test0");
+        std::vector<std::string> ids;
+        itf->getAllFrameIds(ids);
+        char buff[1024]; buff[0] = 0;
+        for (size_t i = 0; i < ids.size(); i++)
+        {
+            sprintf(buff +strlen(buff), "%s ", ids[i].c_str());
+        }
+        INFO("Found frames: " << buff);
+        bool b_ids = (ids.size() == 8);
+        CHECK(b_ids); // getAllFrameIds ok
+        yInfo() << "Sub-test complete";
     }
-    INFO("Found frames: " << buff);
-    bool b_ids = (ids.size() == 8);
-    CHECK(b_ids); // getAllFrameIds ok
 
     //test 1
-    std::string parent;
-    itf->getParent("frame3", parent);
-    CHECK(parent == "frame2"); // getParent ok
+    {
+        yInfo() << "Running Sub-test1";
+        std::string parent;
+        itf->getParent("frame3", parent);
+        CHECK(parent == "frame2"); // getParent ok
+        yInfo() << "Sub-test complete";
+    }
 
     //test 2
-    yarp::sig::Matrix mt(4, 4);
-    bool b_gt = itf->getTransform("frame3", "frame1", mt);
-    isEqual(mt, m3, precision);
-    CHECK(b_gt); // getTransform ok
-    if (precision_verbose || b_gt==false)
     {
-        INFO("Precision error:\n" + (mt - m3).toString());
+        yInfo() << "Running Sub-test2";
+        yarp::sig::Matrix mt(4, 4);
+        bool b_gt = itf->getTransform("frame3", "frame1", mt);
+        isEqual(mt, m3, precision);
+        CHECK(b_gt); // getTransform ok
+        if (precision_verbose || b_gt==false)
+        {
+            INFO("Precision error:\n" + (mt - m3).toString());
+        }
+        yInfo() << "Sub-test complete";
     }
 
     //test3
-    CHECK(itf->frameExists("frame3"));
-    CHECK_FALSE(itf->frameExists("frame3_err")); // frameExists ok
+    {
+        yInfo() << "Running Sub-test3";
+        CHECK(itf->frameExists("frame3"));
+        CHECK_FALSE(itf->frameExists("frame3_err")); // frameExists ok
+        yInfo() << "Sub-test complete";
+    }
 
     //test4
-    CHECK(itf->canTransform("frame2", "frame1"));
-    CHECK_FALSE(itf->canTransform("frame11", "frame1")); // canTransform ok
+    {
+        yInfo() << "Running Sub-test4";
+        CHECK(itf->canTransform("frame2", "frame1"));
+        CHECK_FALSE(itf->canTransform("frame11", "frame1")); // canTransform ok
+        yInfo() << "Sub-test complete";
+    }
 
     //test4bis
     {
+        yInfo() << "Running Sub-test4b";
         bool b_canb1;
         b_canb1 = itf->canTransform("frame3b", "frame1");
         CHECK(b_canb1); // canTransform Bis ok
+        yInfo() << "Sub-test complete";
     }
 
     //test4 tris (transform between sibilings)
     {
+        yInfo() << "Running Sub-test4c";
         yarp::sig::Matrix sib;
         CHECK(itf->canTransform("sibiling_test_frame", "frame3")); // canTransform between sibilings ok
         CHECK(itf->getTransform("sibiling_test_frame", "frame3", sib)); // getTransform between sibilings ok
         CHECK(isEqual(sib, SE3inv(m2) * SE3inv(m1) * sibiling, precision)); // transform between sibilings ok
+        yInfo() << "Sub-test complete";
     }
 
     //test 5
-    yarp::sig::Matrix mti(4, 4);
-    itf->getTransform("frame1", "frame3b", mti);
-    bool b_gt_inv = isEqual(mti, yarp::math::SE3inv(m3), precision);
-    CHECK(b_gt_inv); // inverted getTransform ok
-    if (precision_verbose || b_gt_inv==false) {
-        INFO("Precision error: " + (mti - yarp::math::SE3inv(m3)).toString());
+    {
+        yInfo() << "Running Sub-test5";
+        yarp::sig::Matrix mti(4, 4);
+        itf->getTransform("frame1", "frame3b", mti);
+        bool b_gt_inv = isEqual(mti, yarp::math::SE3inv(m3), precision);
+        CHECK(b_gt_inv); // inverted getTransform ok
+        if (precision_verbose || b_gt_inv==false) {
+            INFO("Precision error: " + (mti - yarp::math::SE3inv(m3)).toString());
+        }
+        yInfo() << "Sub-test complete";
     }
 
     //test 6
-    yarp::sig::Vector in_point1(3), out_point1(3), verPoint1(4);
-    yarp::sig::Vector in_pose1(6),  out_pose1(6),  verPose(6);
-    yarp::math::Quaternion in_quat1,  out_quat1,   verQuat;
+    {
+        yInfo() << "Running Sub-test6";
+        yarp::sig::Vector in_point1(3), out_point1(3), verPoint1(4);
+        yarp::sig::Vector in_pose1(6),  out_pose1(6),  verPose(6);
+        yarp::math::Quaternion in_quat1,  out_quat1,   verQuat;
 
-    in_quat1.fromRotationMatrix(m4);
+        in_quat1.fromRotationMatrix(m4);
 
-    in_pose1[0] = 1;  in_pose1[1] = 2;  in_pose1[2] = 3;
-    in_pose1[3] = 30; in_pose1[4] = 60; in_pose1[5] = 90;
+        in_pose1[0] = 1;  in_pose1[1] = 2;  in_pose1[2] = 3;
+        in_pose1[3] = 30; in_pose1[4] = 60; in_pose1[5] = 90;
 
-    in_point1[0] = 10; in_point1[1] = 15; in_point1[2] = 5;
+        in_point1[0] = 10; in_point1[1] = 15; in_point1[2] = 5;
 
-    in_point1.push_back(1);
-    verPoint1 = m1*m2*in_point1;
-    verPoint1.pop_back();
-    in_point1.pop_back();
+        in_point1.push_back(1);
+        verPoint1 = m1*m2*in_point1;
+        verPoint1.pop_back();
+        in_point1.pop_back();
 
-    yarp::sig::Matrix mat(4, 4);
-    yarp::sig::Vector temp(3);
+        yarp::sig::Matrix mat(4, 4);
+        yarp::sig::Vector temp(3);
 
-    double rot[3]     = { in_pose1[3], in_pose1[4], in_pose1[5] };
-    mat               = yarp::math::rpy2dcm(yarp::sig::Vector(3, rot));
-    mat[0][3]         = in_pose1[0]; mat[1][3] = in_pose1[1]; mat[2][3] = in_pose1[2];
-    mat               = m3 * mat;
-    verPose[0]        = mat[0][3]; verPose[1] = mat[1][3]; verPose[2] = mat[2][3];
-    temp              = yarp::math::dcm2rpy(mat);
-    verPose[3]        = temp[0]; verPose[4] = temp[1]; verPose[5] = temp[2];
+        double rot[3]     = { in_pose1[3], in_pose1[4], in_pose1[5] };
+        mat               = yarp::math::rpy2dcm(yarp::sig::Vector(3, rot));
+        mat[0][3]         = in_pose1[0]; mat[1][3] = in_pose1[1]; mat[2][3] = in_pose1[2];
+        mat               = m3 * mat;
+        verPose[0]        = mat[0][3]; verPose[1] = mat[1][3]; verPose[2] = mat[2][3];
+        temp              = yarp::math::dcm2rpy(mat);
+        verPose[3]        = temp[0]; verPose[4] = temp[1]; verPose[5] = temp[2];
 
-    verQuat.fromRotationMatrix(m1 * m2 * m4);
+        verQuat.fromRotationMatrix(m1 * m2 * m4);
 
-    itf->transformPoint("frame3", "frame1", in_point1, out_point1);
-    itf->transformPose("frame3", "frame1", in_pose1, out_pose1);
-    itf->transformQuaternion("frame3", "frame1", in_quat1, out_quat1);
+        itf->transformPoint("frame3", "frame1", in_point1, out_point1);
+        itf->transformPose("frame3", "frame1", in_pose1, out_pose1);
+        itf->transformQuaternion("frame3", "frame1", in_quat1, out_quat1);
 
-    bool b_tpoint = isEqual(verPoint1, out_point1, precision);
-    CHECK(b_tpoint); // transformPoint ok
-    if (precision_verbose || b_tpoint == false) {
-        INFO("Precision error:" << (verPoint1 - out_point1).toString());
-    }
+        bool b_tpoint = isEqual(verPoint1, out_point1, precision);
+        CHECK(b_tpoint); // transformPoint ok
+        if (precision_verbose || b_tpoint == false) {
+            INFO("Precision error:" << (verPoint1 - out_point1).toString());
+        }
 
-    bool b_tpose = isEqual(verPose, out_pose1, precision);
-    CHECK(b_tpose); // transformPose ok
-    if (precision_verbose || b_tpose == false) {
-        INFO("Precision error:" << (verPose - out_pose1).toString());
-    }
+        bool b_tpose = isEqual(verPose, out_pose1, precision);
+        CHECK(b_tpose); // transformPose ok
+        if (precision_verbose || b_tpose == false) {
+            INFO("Precision error:" << (verPose - out_pose1).toString());
+        }
 
-    bool b_tquat = isEqual(verQuat, out_quat1, precision);
-    CHECK(b_tquat); // transformQuaternion ok
-    if (precision_verbose || b_tquat == false) {
-        INFO("Precision error:" << (verQuat.toVector() - out_quat1.toVector()).toString());
+        bool b_tquat = isEqual(verQuat, out_quat1, precision);
+        CHECK(b_tquat); // transformQuaternion ok
+        if (precision_verbose || b_tquat == false) {
+            INFO("Precision error:" << (verQuat.toVector() - out_quat1.toVector()).toString());
+        }
+        yInfo() << "Sub-test complete";
     }
 
     //test 7
     {
+        yInfo() << "Running Sub-test7";
         std::string all_frames;
         CHECK(itf->allFramesAsString(all_frames));
         CHECK(all_frames.find("frame1") != std::string::npos);
@@ -247,10 +281,12 @@ void exec_frameTransform_test_1(IFrameTransform* itf)
         CHECK(all_frames.find("frame11") != std::string::npos);
         CHECK(all_frames.find("frame3b") != std::string::npos);
         // allFramesAsString ok
+        yInfo() << "Sub-test complete";
     }
 
     //test 8
     {
+        yInfo() << "Running Sub-test8";
         itf->setTransformStatic("frame_test", "frame1", m1);
         yarp::os::Time::delay(1);
         bool del_bool = itf->frameExists("frame_test");
@@ -262,25 +298,41 @@ void exec_frameTransform_test_1(IFrameTransform* itf)
 
         //let's wait some time and check gain to be sure that
         //frame does not reappears....
-        yarp::os::Time::delay(1);
-
+        yarp::os::Time::delay(0.5);
         del_bool &= (!itf->frameExists("frame_test"));
+        CHECK(del_bool);
+
+        //just print
         std::string strs;
         del_bool &= itf->allFramesAsString(strs);
         INFO("Existing frames:" << strs);
         CHECK(del_bool); // confirmed: frame does not exist anymore
+        yInfo() << "Sub-test complete";
+    }
+
+    //test 8b
+    {
+        yInfo() << "Running Sub-test8b";
+        //trying to delete non existing frame. It should return false.
+        //Nothing bad should happen...
+        bool del_bool = itf->deleteTransform("not-exist1", "not-exist2");
+        CHECK_FALSE(del_bool);
+        yInfo() << "Sub-test complete";
     }
 
     //test 9
     {
+        yInfo() << "Running Sub-test9";
         itf->clear();
         std::vector<std::string> cids;
         itf->getAllFrameIds(cids);
         CHECK(cids.size() == 0); // clear ok
+        yInfo() << "Sub-test complete";
     }
 
     //test 10
     {
+        yInfo() << "Running Sub-test10";
         itf->setTransform("frame2", "frame10", m1);
         yarp::os::Time::delay(0.050);
         bool b_can;
@@ -289,10 +341,12 @@ void exec_frameTransform_test_1(IFrameTransform* itf)
         yarp::os::Time::delay(0.6);
         b_can = itf->canTransform("frame2", "frame10");
         CHECK_FALSE(b_can); // itf->setTransform successfully expired after 0.6s
+        yInfo() << "Sub-test complete";
     }
 
     //test 11
     {
+        yInfo() << "Running Sub-test11";
         itf->clear();
         bool set_b1 = itf->setTransform("frame2", "frame10", m1);
         yarp::os::Time::delay(0.050);
@@ -309,10 +363,12 @@ void exec_frameTransform_test_1(IFrameTransform* itf)
         CHECK(set_b2);
         CHECK(a);
         CHECK(b); // itf->setTransform successfully updated
+        yInfo() << "Sub-test complete";
     }
 
     //test 11b
     {
+        yInfo() << "Running Sub-test11b";
         itf->clear();
         bool set_b1 = itf->setTransformStatic("frame2", "frame10", m1);
         yarp::os::Time::delay(0.050);
@@ -326,10 +382,12 @@ void exec_frameTransform_test_1(IFrameTransform* itf)
         CHECK_FALSE(set_b2);
         CHECK(isEqual(m1, mt1, precision));
         CHECK_FALSE(isEqual(m2, mt2, precision)); // itf->setTransformStatic successfully not-updated
+        yInfo() << "Sub-test complete";
     }
 
     //test 12
     {
+        yInfo() << "Running Sub-test12";
         itf->clear();
         CHECK(itf->setTransform("frame2", "frame1", m1));
         yarp::os::Time::delay(0.050);
@@ -348,32 +406,46 @@ void exec_frameTransform_test_1(IFrameTransform* itf)
         CHECK(isEqual(mt2, m2, precision));
         CHECK(isEqual(mt3, (m1*m2), precision));
         // itf->setTransform still working after duplicate transform
+        yInfo() << "Sub-test complete";
     }
 
     //test 12b
     {
+        yInfo() << "Running Sub-test12b";
         itf->clear();
+        std::string strs;
+        itf->allFramesAsString(strs); yInfo() << "Existing frames:" << strs;
+
         CHECK(itf->setTransformStatic("frame2", "frame1", m1));
         yarp::os::Time::delay(0.050);
+        itf->allFramesAsString(strs); yInfo() << "Existing frames:" << strs;
+
         CHECK(itf->setTransformStatic("frame3", "frame2", m2));
         yarp::os::Time::delay(0.050);
+        itf->allFramesAsString(strs); yInfo() << "Existing frames:" << strs;
+
         CHECK_FALSE(itf->setTransformStatic("frame3", "frame1", m1));
-        // itf->setTransformStatic duplicate transform successfully skipped
+        //Here I checked false because itf->setTransformStatic of a duplicate transform must be skipped
+        itf->allFramesAsString(strs); yInfo() << "Existing frames:" << strs;
 
         yarp::sig::Matrix mt1;
         yarp::sig::Matrix mt2;
         yarp::sig::Matrix mt3;
         itf->getTransform("frame2", "frame1", mt1);
         itf->getTransform("frame3", "frame2", mt2);
-        itf->getTransform("frame3", "frame1", mt3);
         CHECK(isEqual(mt1, m1, precision));
         CHECK(isEqual(mt2, m2, precision));
+
+        // checking that the last itf->setTransformStatic had no effect on the values
+        itf->getTransform("frame3", "frame1", mt3);
+        CHECK_FALSE(isEqual(mt3, m1, precision));
         CHECK(isEqual(mt3, (m1*m2), precision));
-        // itf->setTransformStatic still working after duplicate transform
+        yInfo() << "Sub-test complete";
     }
 
     //test 13
     {
+        yInfo() << "Running Sub-test13";
         itf->clear();
         bool bcan = false;
         bcan = itf->canTransform("not_existing_frame", "not_existing_frame");
@@ -391,6 +463,7 @@ void exec_frameTransform_test_1(IFrameTransform* itf)
         CHECK(isEqual(mt1, eyemat, precision));
         itf->getTransform("frame2", "frame2", mt1);
         CHECK(isEqual(mt1, eyemat, precision));
+        yInfo() << "Sub-test complete";
     }
 }
 
@@ -421,15 +494,19 @@ void exec_frameTransform_test_2(IFrameTransform* itf)
     CHECK(!itf->setTransformStatic("/hand", "/arm", handToFinger));
 
     // static transforms cannot be set if an indirect connection already exists
-    //CHECK(itf->setTransformStatic("/wrong_transform", "/hand", handToFinger));
-   //CHECK(!itf->setTransformStatic("/wrong_transform", "/arm", handToFinger));
-   // CHECK(itf->deleteTransform("/wrong_transform", "/hand"));
+    CHECK(itf->setTransformStatic("/a", "/b", handToFinger));
+    CHECK(itf->setTransformStatic("/b", "/c", handToFinger));
+    CHECK(!itf->setTransformStatic("/a", "/c", handToFinger));
+    CHECK(itf->deleteTransform("/a", "/b"));
+    CHECK(itf->deleteTransform("/b", "/c"));
 
     // test setTransform
     CHECK(itf->setTransform("/finger", "/hand", handToFinger));
     CHECK(!itf->setTransform("/finger", "/arm", result));
 
     // test getTransform
+    CHECK(itf->clear());
+    CHECK(itf->setTransform("/finger", "/arm", result));
     yarp::sig::Matrix resultFromTransform(4, 4);
     CHECK(itf->getTransform("/finger", "/arm", resultFromTransform));
     for (int i = 0; i < 4; i++) {
@@ -447,6 +524,9 @@ void exec_frameTransform_test_2(IFrameTransform* itf)
     CHECK(!itf->frameExists("/head"));
 
     // test getAllFrameIds
+    CHECK(itf->clear());
+    CHECK(itf->setTransformStatic("/hand", "/arm", armToHand));
+    CHECK(itf->setTransformStatic("/finger", "/hand", handToFinger));
     std::vector<std::string> frameIdsReturned;
     std::vector<std::string> correctFrameIdsReturned{
         "/arm",

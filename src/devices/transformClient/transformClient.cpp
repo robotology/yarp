@@ -24,6 +24,31 @@ namespace {
 YARP_LOG_COMPONENT(TRANSFORMCLIENT, "yarp.device.transformClient")
 }
 
+bool Transforms_client_storage::set_transform(yarp::math::FrameTransform t)
+{
+    std::lock_guard<std::recursive_mutex> l(m_mutex);
+
+    m_transforms.push_back(t);
+    return true;
+}
+
+bool Transforms_client_storage::delete_transform(std::string t1, std::string t2)
+{
+    std::lock_guard<std::recursive_mutex> l(m_mutex);
+
+    for (size_t i = 0; i < m_transforms.size(); i++)
+    {
+        if ((m_transforms[i].dst_frame_id == t1 && m_transforms[i].src_frame_id == t2) ||
+            (m_transforms[i].dst_frame_id == t2 && m_transforms[i].src_frame_id == t1))
+        {
+            m_transforms.erase(m_transforms.begin() + i);
+            return true;
+        }
+    }
+
+    return false;
+}
+
 inline void Transforms_client_storage::resetStat()
 {
     std::lock_guard<std::recursive_mutex> l(m_mutex);
@@ -547,6 +572,7 @@ bool TransformClient::canTransform(const std::string &target_frame, const std::s
 
 bool TransformClient::clear()
 {
+    //first delete it on the server
     yarp::os::Bottle b;
     yarp::os::Bottle resp;
     b.addVocab32(VOCAB_ITRANSFORM);
@@ -566,6 +592,7 @@ bool TransformClient::clear()
         return false;
     }
 
+    //then delete it also in the local client
     m_transform_storage->clear();
     return true;
 }
@@ -582,30 +609,33 @@ bool TransformClient::frameExists(const std::string &frame_id)
 
 bool TransformClient::getAllFrameIds(std::vector< std::string > &ids)
 {
-    for (size_t i = 0; i < m_transform_storage->size(); i++)
+    for (size_t i = 0; i < m_transform_storage->size();)
     {
-        bool found = false;
-        for (const auto& id : ids)
+        search_src:
         {
-            if (((*m_transform_storage)[i].src_frame_id) == id) { found = true; break; }
+            std::string frame_to_add = (*m_transform_storage)[i].src_frame_id;
+            for (const auto& id : ids)
+            {
+                //if the frame already exists, skip it
+                if (id == frame_to_add) {goto search_dst;}
+            }
+            ids.push_back(frame_to_add);
         }
-        if (found == false) {
-            ids.push_back((*m_transform_storage)[i].src_frame_id);
-        }
-    }
 
-    for (size_t i = 0; i < m_transform_storage->size(); i++)
-    {
-        bool found = false;
-        for (const auto& id : ids)
+        search_dst:
         {
-            if (((*m_transform_storage)[i].dst_frame_id) == id) { found = true; break; }
+            std::string frame_to_add = (*m_transform_storage)[i].dst_frame_id;
+            for (const auto& id : ids)
+            {
+                //if the frame already exists, skip it
+                if (id == frame_to_add) {goto search_end;}
+            }
+            ids.push_back(frame_to_add);
         }
-        if (found == false) {
-            ids.push_back((*m_transform_storage)[i].dst_frame_id);
-        }
-    }
 
+        search_end:
+        i++;
+    }
     return true;
 }
 
@@ -731,6 +761,10 @@ bool TransformClient::setTransform(const std::string& target_frame_id, const std
         return false;
     }
 
+    //first add it to the server
+    tf.src_frame_id = source_frame_id;
+    tf.dst_frame_id = target_frame_id;
+    tf.isStatic = false;
     b.addVocab32(VOCAB_ITRANSFORM);
     b.addVocab32(VOCAB_TRANSFORM_SET);
     b.addString(source_frame_id);
@@ -756,6 +790,16 @@ bool TransformClient::setTransform(const std::string& target_frame_id, const std
     {
         yCError(TRANSFORMCLIENT) << "setTransform(): Error on writing on rpc port";
         return false;
+    }
+
+    //then add it also locally
+    if (m_transform_storage)
+    {
+        if (m_transform_storage->set_transform(tf) == false)
+        {
+            yCError(TRANSFORMCLIENT) << "setTransform(): Error while adding frame from local storage";
+            return false;
+        }
     }
     return true;
 }
@@ -785,6 +829,10 @@ bool TransformClient::setTransformStatic(const std::string &target_frame_id, con
         return false;
     }
 
+    //first add it to the server
+    tf.src_frame_id = source_frame_id;
+    tf.dst_frame_id = target_frame_id;
+    tf.isStatic = true;
     b.addVocab32(VOCAB_ITRANSFORM);
     b.addVocab32(VOCAB_TRANSFORM_SET);
     b.addString(source_frame_id);
@@ -811,11 +859,22 @@ bool TransformClient::setTransformStatic(const std::string &target_frame_id, con
         yCError(TRANSFORMCLIENT) << "setTransform(): Error on writing on rpc port";
         return false;
     }
+
+    //then add it also locally
+    if (m_transform_storage)
+    {
+        if (m_transform_storage->set_transform(tf) == false)
+        {
+            yCError(TRANSFORMCLIENT) << "setTransformStatic(): Error while adding frame from local storage";
+            return false;
+        }
+    }
     return true;
 }
 
 bool TransformClient::deleteTransform(const std::string &target_frame_id, const std::string &source_frame_id)
 {
+    //first delete it on the server
     yarp::os::Bottle b;
     yarp::os::Bottle resp;
     b.addVocab32(VOCAB_ITRANSFORM);
@@ -836,6 +895,17 @@ bool TransformClient::deleteTransform(const std::string &target_frame_id, const 
         yCError(TRANSFORMCLIENT) << "deleteFrame(): Error on writing on rpc port";
         return false;
     }
+
+    //then delete it also locally
+    if (m_transform_storage)
+    {
+        if (m_transform_storage->delete_transform(target_frame_id, source_frame_id) == false)
+        {
+            yCError(TRANSFORMCLIENT) << "deleteFrame(): Error while removing frame from local storage";
+            return false;
+        }
+    }
+
     return true;
 }
 
