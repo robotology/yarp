@@ -30,6 +30,7 @@ PortCoreOutputUnit::PortCoreOutputUnit(PortCore& owner, int index, OutputProtoco
         running(false),
         threaded(false),
         sending(false),
+        name(owner.getName()),
         phase(1),
         activate(0),
         trackerMutex(),
@@ -38,7 +39,7 @@ PortCoreOutputUnit::PortCoreOutputUnit(PortCore& owner, int index, OutputProtoco
         cachedCallback(nullptr),
         cachedTracker(nullptr)
 {
-    yCAssert(PORTCOREOUTPUTUNIT, op != nullptr);
+    yCIAssert(PORTCOREOUTPUTUNIT, getName(), op != nullptr);
 }
 
 PortCoreOutputUnit::~PortCoreOutputUnit()
@@ -85,14 +86,14 @@ void PortCoreOutputUnit::run()
         phase.post();
         Route r = getRoute();
         while (!closing) {
-            yCDebug(PORTCOREOUTPUTUNIT, "waiting");
+            yCIDebug(PORTCOREOUTPUTUNIT, getName(), "waiting");
             activate.wait();
-            yCDebug(PORTCOREOUTPUTUNIT, "woken");
+            yCIDebug(PORTCOREOUTPUTUNIT, getName(), "woken");
             if (!closing) {
                 if (sending) {
-                    yCDebug(PORTCOREOUTPUTUNIT, "write something in background");
+                    yCIDebug(PORTCOREOUTPUTUNIT, getName(), "write something in background");
                     sendHelper();
-                    yCDebug(PORTCOREOUTPUTUNIT, "wrote something in background");
+                    yCIDebug(PORTCOREOUTPUTUNIT, getName(), "wrote something in background");
                     trackerMutex.lock();
                     if (cachedTracker != nullptr) {
                         void* t = cachedTracker;
@@ -105,9 +106,9 @@ void PortCoreOutputUnit::run()
                     trackerMutex.unlock();
                 }
             }
-            yCDebug(PORTCOREOUTPUTUNIT, "wrote something in background");
+            yCIDebug(PORTCOREOUTPUTUNIT, getName(), "wrote something in background");
         }
-        yCDebug(PORTCOREOUTPUTUNIT, "thread closing");
+        yCIDebug(PORTCOREOUTPUTUNIT, getName(), "thread closing");
         sending = false;
     }
 }
@@ -123,7 +124,7 @@ void PortCoreOutputUnit::runSingleThreaded()
         std::string msg = std::string("Sending output from ") + route.getFromName() + " to " + route.getToName() + " using " + route.getCarrierName();
         if (Name(route.getToName()).isRooted()) {
             if (Name(route.getFromName()).isRooted()) {
-                yCInfo(PORTCOREOUTPUTUNIT, "%s", msg.c_str());
+                yCIInfo(PORTCOREOUTPUTUNIT, getName(), "%s", msg.c_str());
             }
         }
 
@@ -151,7 +152,7 @@ void PortCoreOutputUnit::closeBasic()
         op->getConnection().prepareDisconnect();
         Route route = op->getRoute();
         if (op->getConnection().isConnectionless() || op->getConnection().isBroadcast()) {
-            yCInfo(PORTCOREOUTPUTUNIT, "output for route %s asking other side to close by out-of-band means",
+            yCIInfo(PORTCOREOUTPUTUNIT, getName(), "output for route %s asking other side to close by out-of-band means",
                        route.toString().c_str());
             NetworkBase::disconnectInput(route.getToName(),
                                          route.getFromName(),
@@ -172,7 +173,7 @@ void PortCoreOutputUnit::closeBasic()
 
         if (Name(route.getToName()).isRooted()) {
             if (Name(route.getFromName()).isRooted()) {
-                yCInfo(PORTCOREOUTPUTUNIT, "%s", msg.c_str());
+                yCIInfo(PORTCOREOUTPUTUNIT, getName(), "%s", msg.c_str());
             }
         }
 
@@ -213,7 +214,7 @@ void PortCoreOutputUnit::closeMain()
         return;
     }
 
-    yCDebug(PORTCOREOUTPUTUNIT, "closing");
+    yCIDebug(PORTCOREOUTPUTUNIT, getName(), "closing");
 
     if (running) {
         // give a kick (unfortunately unavoidable)
@@ -228,14 +229,14 @@ void PortCoreOutputUnit::closeMain()
         join();
     }
 
-    yCDebug(PORTCOREOUTPUTUNIT, "internal join");
+    yCIDebug(PORTCOREOUTPUTUNIT, getName(), "internal join");
 
     closeBasic();
     running = false;
     closing = false;
     finished = true;
 
-    yCDebug(PORTCOREOUTPUTUNIT, "closed");
+    yCIDebug(PORTCOREOUTPUTUNIT, getName(), "closed");
 }
 
 
@@ -276,12 +277,12 @@ bool PortCoreOutputUnit::sendHelper()
             auto* pw = const_cast<yarp::os::PortWriter*>(cachedWriter);
             auto* p = dynamic_cast<yarp::os::Portable*>(pw);
             if (p == nullptr) {
-                yCError(PORTCOREOUTPUTUNIT, "cast failed.");
+                yCIError(PORTCOREOUTPUTUNIT, getName(), "cast failed.");
                 return false;
             }
             buf.setReference(p);
         } else {
-            yCAssert(PORTCOREOUTPUTUNIT, cachedWriter != nullptr);
+            yCIAssert(PORTCOREOUTPUTUNIT, getName(), cachedWriter != nullptr);
             bool ok = cachedWriter->write(buf);
             if (!ok) {
                 done = true;
@@ -361,14 +362,14 @@ void* PortCoreOutputUnit::send(const yarp::os::PortWriter& writer,
         if (!running) {
             // we must have a thread if we're going to be skipping waits
             threaded = true;
-            yCDebug(PORTCOREOUTPUTUNIT, "starting a thread for output");
+            yCIDebug(PORTCOREOUTPUTUNIT, getName(), "starting a thread for output");
             start();
-            yCDebug(PORTCOREOUTPUTUNIT, "started a thread for output");
+            yCIDebug(PORTCOREOUTPUTUNIT, getName(), "started a thread for output");
         }
     }
 
     if ((!waitBefore) && waitAfter) {
-        yCError(PORTCOREOUTPUTUNIT, "chosen port wait combination not yet implemented");
+        yCIError(PORTCOREOUTPUTUNIT, getName(), "chosen port wait combination not yet implemented");
     }
     if (!sending) {
         cachedWriter = &writer;
@@ -389,7 +390,7 @@ void* PortCoreOutputUnit::send(const yarp::os::PortWriter& writer,
             trackerMutex.unlock();
         }
     } else {
-        yCDebug(PORTCOREOUTPUTUNIT, "skipping connection tagged as sending something");
+        yCIDebug(PORTCOREOUTPUTUNIT, getName(), "skipping connection tagged as sending something");
     }
 
     if (waitAfter) {

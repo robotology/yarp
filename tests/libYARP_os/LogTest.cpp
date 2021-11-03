@@ -34,6 +34,7 @@ YARP_LOG_COMPONENT(LOG_COMPONENT_NULL,
                    yarp::os::Log::LogTypeReserved,
                    nullptr,
                    nullptr)
+constexpr const char* id = "test_id";
 } // namespace
 
 #if 1
@@ -76,6 +77,22 @@ TEST_CASE("os::LogTest", "[yarp::os]")
         CNT yCTraceExternalTime(LOG_COMPONENT, start, "The end of line is removed from this trace with a component\n");
         CNT yCTraceExternalTime(LOG_COMPONENT_NOFW, start, "This trace with a component is not forwarded");
         CNT yCTraceExternalTime(LOG_COMPONENT_NULL, start, "This trace with a component is neither not printed nor forwarded");
+        CNT yITrace(id, "This is a trace with an id");
+        CNT yITrace(id, "This is %s (%d)", "a trace with an id", i);
+        CNT yITrace(id, "The end of line is removed from this trace with an id\n");
+        CNT yCITrace(LOG_COMPONENT, id, "This is a trace with a component and an id");
+        CNT yCITrace(LOG_COMPONENT, id, "This is %s (%d)", "a trace with a component and an id", i);
+        CNT yCITrace(LOG_COMPONENT, id, "The end of line is removed from this trace with a component and an id\n");
+        CNT yCITrace(LOG_COMPONENT_NOFW, id, "This trace with a component and an id is not forwarded");
+        CNT yCITrace(LOG_COMPONENT_NULL, id, "This trace with a component and an id is neither not printed nor forwarded");
+        CNT yITraceExternalTime(id, start, "This is a trace with an id");
+        CNT yITraceExternalTime(id, start, "This is %s (%d)", "a trace with an id", i);
+        CNT yITraceExternalTime(id, start, "The end of line is removed from this trace with an id\n");
+        CNT yCITraceExternalTime(LOG_COMPONENT, id, start, "This is a trace with a component and an id");
+        CNT yCITraceExternalTime(LOG_COMPONENT, id, start, "This is %s (%d)", "a trace with a component and an id", i);
+        CNT yCITraceExternalTime(LOG_COMPONENT, id, start, "The end of line is removed from this trace with a component and an id\n");
+        CNT yCITraceExternalTime(LOG_COMPONENT_NOFW, id, start, "This trace with a component and an id is not forwarded");
+        CNT yCITraceExternalTime(LOG_COMPONENT_NULL, id, start, "This trace with a component and an id is neither not printed nor forwarded");
     }
 
     SECTION("Test yDebug")
@@ -91,7 +108,7 @@ TEST_CASE("os::LogTest", "[yarp::os]")
         CNT yCDebug(LOG_COMPONENT, "This is %s (%d)", "a debug with a component", i);
         CNT yCDebug(LOG_COMPONENT, "The end of line is removed from this debug with a component\n");
         CNT yCDebug(LOG_COMPONENT_NOFW, "This debug with a component is not forwarded");
-        CNT yCDebug(LOG_COMPONENT_NULL, "This trace with a component is neither not printed nor forwarded");
+        CNT yCDebug(LOG_COMPONENT_NULL, "This debug with a component is neither not printed nor forwarded");
         CNT yDebugExternalTime(start, "This is a debug");
         CNT yDebugExternalTime(start, "This is %s (%d)", "a debug", i);
         CNT yDebugExternalTime(start, "The end of line is removed from this debug\n");
@@ -99,7 +116,23 @@ TEST_CASE("os::LogTest", "[yarp::os]")
         CNT yCDebugExternalTime(LOG_COMPONENT, start, "This is %s (%d)", "a debug with a component", i);
         CNT yCDebugExternalTime(LOG_COMPONENT, start, "The end of line is removed from this debug with a component\n");
         CNT yCDebugExternalTime(LOG_COMPONENT_NOFW, start, "This debug with a component is not forwarded");
-        CNT yCDebugExternalTime(LOG_COMPONENT_NULL, start, "This trace with a component is neither not printed nor forwarded");
+        CNT yCDebugExternalTime(LOG_COMPONENT_NULL, start, "This debug with a component is neither not printed nor forwarded");
+        CNT yIDebug(id, "This is a debug with an id");
+        CNT yIDebug(id, "This is %s (%d)", "a debug with an id", i);
+        CNT yIDebug(id, "The end of line is removed from this debug with an id\n");
+        CNT yCIDebug(LOG_COMPONENT, id, "This is a debug with a component and an id");
+        CNT yCIDebug(LOG_COMPONENT, id, "This is %s (%d)", "a debug with a component and an id", i);
+        CNT yCIDebug(LOG_COMPONENT, id, "The end of line is removed from this debug with a component and an id\n");
+        CNT yCIDebug(LOG_COMPONENT_NOFW, id, "This debug with a component and an id is not forwarded");
+        CNT yCIDebug(LOG_COMPONENT_NULL, id, "This debug with a component and an id is neither not printed nor forwarded");
+        CNT yIDebugExternalTime(id, start, "This is a debug with an id");
+        CNT yIDebugExternalTime(id, start, "This is %s (%d)", "a debug with an id", i);
+        CNT yIDebugExternalTime(id, start, "The end of line is removed from this debug with an id\n");
+        CNT yCIDebugExternalTime(LOG_COMPONENT, id, start, "This is a debug with a component and an id");
+        CNT yCIDebugExternalTime(LOG_COMPONENT, id, start, "This is %s (%d)", "a debug with a component and an id", i);
+        CNT yCIDebugExternalTime(LOG_COMPONENT, id, start, "The end of line is removed from this debug with a component and an id\n");
+        CNT yCIDebugExternalTime(LOG_COMPONENT_NOFW, id, start, "This debug with a component and an id is not forwarded");
+        CNT yCIDebugExternalTime(LOG_COMPONENT_NULL, id, start, "This debug with a component and an id is neither not printed nor forwarded");
     }
 
     SECTION("Test yInfo")
@@ -115,7 +148,7 @@ TEST_CASE("os::LogTest", "[yarp::os]")
         CNT yCInfo(LOG_COMPONENT, "This is %s (%d)", "info with a component", i);
         CNT yCInfo(LOG_COMPONENT, "The end of line is removed from this info with a component\n");
         CNT yCInfo(LOG_COMPONENT_NOFW, "This info with a component is not forwarded");
-        CNT yCInfo(LOG_COMPONENT_NULL, "This trace with a component is neither not printed nor forwarded");
+        CNT yCInfo(LOG_COMPONENT_NULL, "This info with a component is neither not printed nor forwarded");
         CNT yInfoExternalTime(start, "This is info");
         CNT yInfoExternalTime(start, "This is %s (%d)", "info", i);
         CNT yInfoExternalTime(start, "The end of line is removed from this info\n");
@@ -123,7 +156,23 @@ TEST_CASE("os::LogTest", "[yarp::os]")
         CNT yCInfoExternalTime(LOG_COMPONENT, start, "This is %s (%d)", "info with a component", i);
         CNT yCInfoExternalTime(LOG_COMPONENT, start, "The end of line is removed from this info with a component\n");
         CNT yCInfoExternalTime(LOG_COMPONENT_NOFW, start, "This info with a component is not forwarded");
-        CNT yCInfoExternalTime(LOG_COMPONENT_NULL, start, "This trace with a component is neither not printed nor forwarded");
+        CNT yCInfoExternalTime(LOG_COMPONENT_NULL, start, "This info with a component is neither not printed nor forwarded");
+        CNT yIInfo(id, "This is info with an id");
+        CNT yIInfo(id, "This is %s (%d)", "info with an id", i);
+        CNT yIInfo(id, "The end of line is removed from this info with an id\n");
+        CNT yCIInfo(LOG_COMPONENT, id, "This is info with a component and an id");
+        CNT yCIInfo(LOG_COMPONENT, id, "This is %s (%d)", "info with a component and an id", i);
+        CNT yCIInfo(LOG_COMPONENT, id, "The end of line is removed from this info with a component and an id\n");
+        CNT yCIInfo(LOG_COMPONENT_NOFW, id, "This info with a component and an id is not forwarded");
+        CNT yCIInfo(LOG_COMPONENT_NULL, id, "This info with a component and an id is neither not printed nor forwarded");
+        CNT yIInfoExternalTime(id, start, "This is info with an id");
+        CNT yIInfoExternalTime(id, start, "This is %s (%d)", "info with an id", i);
+        CNT yIInfoExternalTime(id, start, "The end of line is removed from this info with an id\n");
+        CNT yCIInfoExternalTime(LOG_COMPONENT, id, start, "This is info with a component and an id");
+        CNT yCIInfoExternalTime(LOG_COMPONENT, id, start, "This is %s (%d)", "info with a component and an id", i);
+        CNT yCIInfoExternalTime(LOG_COMPONENT, id, start, "The end of line is removed from this info with a component and an id\n");
+        CNT yCIInfoExternalTime(LOG_COMPONENT_NOFW, id, start, "This info with a component and an id is not forwarded");
+        CNT yCIInfoExternalTime(LOG_COMPONENT_NULL, id, start, "This info with a component and an id is neither not printed nor forwarded");
     }
 
     SECTION("Test yWarning")
@@ -148,6 +197,22 @@ TEST_CASE("os::LogTest", "[yarp::os]")
         CNT yCWarningExternalTime(LOG_COMPONENT, start, "The end of line is removed from this warning with a component\n");
         CNT yCWarningExternalTime(LOG_COMPONENT_NOFW, start, "This warning with a component is not forwarded");
         CNT yCWarningExternalTime(LOG_COMPONENT_NULL, start, "This warning with a component is neither not printed nor forwarded");
+        CNT yIWarning(id, "This is a warning with an id");
+        CNT yIWarning(id, "This is %s (%d)", "a warning with an id", i);
+        CNT yIWarning(id, "The end of line is removed from this warning with an id\n");
+        CNT yCIWarning(LOG_COMPONENT, id, "This is a warning with a component and an id");
+        CNT yCIWarning(LOG_COMPONENT, id, "This is %s (%d)", "a warning with a component and an id", i);
+        CNT yCIWarning(LOG_COMPONENT, id, "The end of line is removed from this warning with a component and an id\n");
+        CNT yCIWarning(LOG_COMPONENT_NOFW, id, "This warning with a component and an id is not forwarded");
+        CNT yCIWarning(LOG_COMPONENT_NULL, id, "This warning with a component and an id is neither not printed nor forwarded");
+        CNT yIWarningExternalTime(id, start, "This is a warning with an id");
+        CNT yIWarningExternalTime(id, start, "This is %s (%d)", "a warning with an id", i);
+        CNT yIWarningExternalTime(id, start, "The end of line is removed from this warning with an id\n");
+        CNT yCIWarningExternalTime(LOG_COMPONENT, id, start, "This is a warning with a component and an id");
+        CNT yCIWarningExternalTime(LOG_COMPONENT, id, start, "This is %s (%d)", "a warning with a component and an id", i);
+        CNT yCIWarningExternalTime(LOG_COMPONENT, id, start, "The end of line is removed from this warning with a component and an id\n");
+        CNT yCIWarningExternalTime(LOG_COMPONENT_NOFW, id, start, "This warning with a component and an id is not forwarded");
+        CNT yCIWarningExternalTime(LOG_COMPONENT_NULL, id, start, "This warning with a component and an id is neither not printed nor forwarded");
     }
 
     SECTION("Test yError")
@@ -172,6 +237,22 @@ TEST_CASE("os::LogTest", "[yarp::os]")
         CNT yCErrorExternalTime(LOG_COMPONENT, start, "The end of line is removed from this error with a component\n");
         CNT yCErrorExternalTime(LOG_COMPONENT_NOFW, start, "This error with a component is not forwarded");
         CNT yCErrorExternalTime(LOG_COMPONENT_NULL, start, "This error with a component is neither not printed nor forwarded");
+        CNT yIError(id, "This is an error with an id");
+        CNT yIError(id, "This is %s (%d)", "an error with an id", i);
+        CNT yIError(id, "The end of line is removed from this error with an id\n");
+        CNT yCIError(LOG_COMPONENT, id, "This is an error with a component and an id");
+        CNT yCIError(LOG_COMPONENT, id, "This is %s (%d)", "an error with a component and an id", i);
+        CNT yCIError(LOG_COMPONENT, id, "The end of line is removed from this error with a component and an id\n");
+        CNT yCIError(LOG_COMPONENT_NOFW, id, "This error with a component and an id is not forwarded");
+        CNT yCIError(LOG_COMPONENT_NULL, id, "This error with a component and an id is neither not printed nor forwarded");
+        CNT yIErrorExternalTime(id, start, "This is an error with an id");
+        CNT yIErrorExternalTime(id, start, "This is %s (%d)", "an error with an id", i);
+        CNT yIErrorExternalTime(id, start, "The end of line is removed from this error with an id\n");
+        CNT yCIErrorExternalTime(LOG_COMPONENT, id, start, "This is an error with a component and an id");
+        CNT yCIErrorExternalTime(LOG_COMPONENT, id, start, "This is %s (%d)", "an error with a component and an id", i);
+        CNT yCIErrorExternalTime(LOG_COMPONENT, id, start, "The end of line is removed from this error with a component and an id\n");
+        CNT yCIErrorExternalTime(LOG_COMPONENT_NOFW, id, start, "This error with a component and an id is not forwarded");
+        CNT yCIErrorExternalTime(LOG_COMPONENT_NULL, id, start, "This error with a component and an id is neither not printed nor forwarded");
     }
 
     SECTION("Test yTraceOnce, yTraceThrottle")
@@ -262,6 +343,78 @@ TEST_CASE("os::LogTest", "[yarp::os]")
                         yarp::conf::numeric::to_hex_string(yarp::os::Thread::getKeyOfCaller()).c_str(),
                         period);
                     CNT yCTraceExternalTimeThreadThrottle(LOG_COMPONENT, start, period,
+                        "[Time: %f][Thread id: 0x%s] This line is printed at most once every %fs by every thread",
+                        now - start,
+                        yarp::conf::numeric::to_hex_string(yarp::os::Thread::getKeyOfCaller()).c_str(),
+                        period);
+                    CNT yITraceOnce(id,
+                        "[Time: %f][Thread id: 0x%s] This line is printed only by the first thread coming here",
+                        now - start,
+                        yarp::conf::numeric::to_hex_string(yarp::os::Thread::getKeyOfCaller()).c_str());
+                    CNT yITraceThreadOnce(id,
+                        "[Time: %f][Thread id: 0x%s] This line is printed by every thread",
+                        now - start,
+                        yarp::conf::numeric::to_hex_string(yarp::os::Thread::getKeyOfCaller()).c_str());
+                    CNT yITraceThrottle(id, period,
+                        "[Time: %f][Thread id: 0x%s] This line is printed at most once every %fs",
+                        now - start,
+                        yarp::conf::numeric::to_hex_string(yarp::os::Thread::getKeyOfCaller()).c_str(),
+                        period);
+                    CNT yITraceThreadThrottle(id, period,
+                        "[Time: %f][Thread id: 0x%s] This line is printed at most once every %fs by every thread",
+                        now - start,
+                        yarp::conf::numeric::to_hex_string(yarp::os::Thread::getKeyOfCaller()).c_str(),
+                        period);
+                    CNT yCITraceOnce(LOG_COMPONENT, id,
+                        "[Time: %f][Thread id: 0x%s] This line is printed only by the first thread coming here",
+                        now - start,
+                        yarp::conf::numeric::to_hex_string(yarp::os::Thread::getKeyOfCaller()).c_str());
+                    CNT yCITraceThreadOnce(LOG_COMPONENT, id,
+                        "[Time: %f][Thread id: 0x%s] This line is printed by every thread",
+                        now - start,
+                        yarp::conf::numeric::to_hex_string(yarp::os::Thread::getKeyOfCaller()).c_str());
+                    CNT yCITraceThrottle(LOG_COMPONENT, id, period,
+                        "[Time: %f][Thread id: 0x%s] This line is printed at most once every %fs",
+                        now - start,
+                        yarp::conf::numeric::to_hex_string(yarp::os::Thread::getKeyOfCaller()).c_str(),
+                        period);
+                    CNT yCITraceThreadThrottle(LOG_COMPONENT, id, period,
+                        "[Time: %f][Thread id: 0x%s] This line is printed at most once every %fs by every thread",
+                        now - start,
+                        yarp::conf::numeric::to_hex_string(yarp::os::Thread::getKeyOfCaller()).c_str(),
+                        period);
+                    CNT yITraceExternalTimeOnce(id, start,
+                        "[Time: %f][Thread id: 0x%s] This line is printed only by the first thread coming here",
+                        now - start,
+                        yarp::conf::numeric::to_hex_string(yarp::os::Thread::getKeyOfCaller()).c_str());
+                    CNT yITraceExternalTimeThreadOnce(id, start,
+                        "[Time: %f][Thread id: 0x%s] This line is printed by every thread",
+                        now - start,
+                        yarp::conf::numeric::to_hex_string(yarp::os::Thread::getKeyOfCaller()).c_str());
+                    CNT yITraceExternalTimeThrottle(id, start, period,
+                        "[Time: %f][Thread id: 0x%s] This line is printed at most once every %fs",
+                        now - start,
+                        yarp::conf::numeric::to_hex_string(yarp::os::Thread::getKeyOfCaller()).c_str(),
+                        period);
+                    CNT yITraceExternalTimeThreadThrottle(id, start, period,
+                        "[Time: %f][Thread id: 0x%s] This line is printed at most once every %fs by every thread",
+                        now - start,
+                        yarp::conf::numeric::to_hex_string(yarp::os::Thread::getKeyOfCaller()).c_str(),
+                        period);
+                    CNT yCITraceExternalTimeOnce(LOG_COMPONENT, id, start,
+                        "[Time: %f][Thread id: 0x%s] This line is printed only by the first thread coming here",
+                        now - start,
+                        yarp::conf::numeric::to_hex_string(yarp::os::Thread::getKeyOfCaller()).c_str());
+                    CNT yCITraceExternalTimeThreadOnce(LOG_COMPONENT, id, start,
+                        "[Time: %f][Thread id: 0x%s] This line is printed by every thread",
+                        now - start,
+                        yarp::conf::numeric::to_hex_string(yarp::os::Thread::getKeyOfCaller()).c_str());
+                    CNT yCITraceExternalTimeThrottle(LOG_COMPONENT, id, start, period,
+                        "[Time: %f][Thread id: 0x%s] This line is printed at most once every %fs",
+                        now - start,
+                        yarp::conf::numeric::to_hex_string(yarp::os::Thread::getKeyOfCaller()).c_str(),
+                        period);
+                    CNT yCITraceExternalTimeThreadThrottle(LOG_COMPONENT, id, start, period,
                         "[Time: %f][Thread id: 0x%s] This line is printed at most once every %fs by every thread",
                         now - start,
                         yarp::conf::numeric::to_hex_string(yarp::os::Thread::getKeyOfCaller()).c_str(),
@@ -366,6 +519,78 @@ TEST_CASE("os::LogTest", "[yarp::os]")
                         now - start,
                         yarp::conf::numeric::to_hex_string(yarp::os::Thread::getKeyOfCaller()).c_str(),
                         period);
+                    CNT yIDebugOnce(id,
+                        "[Time: %f][Thread id: 0x%s] This line is printed only by the first thread coming here",
+                        now - start,
+                        yarp::conf::numeric::to_hex_string(yarp::os::Thread::getKeyOfCaller()).c_str());
+                    CNT yIDebugThreadOnce(id,
+                        "[Time: %f][Thread id: 0x%s] This line is printed by every thread",
+                        now - start,
+                        yarp::conf::numeric::to_hex_string(yarp::os::Thread::getKeyOfCaller()).c_str());
+                    CNT yIDebugThrottle(id, period,
+                        "[Time: %f][Thread id: 0x%s] This line is printed at most once every %fs",
+                        now - start,
+                        yarp::conf::numeric::to_hex_string(yarp::os::Thread::getKeyOfCaller()).c_str(),
+                        period);
+                    CNT yIDebugThreadThrottle(id, period,
+                        "[Time: %f][Thread id: 0x%s] This line is printed at most once every %fs by every thread",
+                        now - start,
+                        yarp::conf::numeric::to_hex_string(yarp::os::Thread::getKeyOfCaller()).c_str(),
+                        period);
+                    CNT yCIDebugOnce(LOG_COMPONENT, id,
+                        "[Time: %f][Thread id: 0x%s] This line is printed only by the first thread coming here",
+                        now - start,
+                        yarp::conf::numeric::to_hex_string(yarp::os::Thread::getKeyOfCaller()).c_str());
+                    CNT yCIDebugThreadOnce(LOG_COMPONENT, id,
+                        "[Time: %f][Thread id: 0x%s] This line is printed by every thread",
+                        now - start,
+                        yarp::conf::numeric::to_hex_string(yarp::os::Thread::getKeyOfCaller()).c_str());
+                    CNT yCIDebugThrottle(LOG_COMPONENT, id, period,
+                        "[Time: %f][Thread id: 0x%s] This line is printed at most once every %fs",
+                        now - start,
+                        yarp::conf::numeric::to_hex_string(yarp::os::Thread::getKeyOfCaller()).c_str(),
+                        period);
+                    CNT yCIDebugThreadThrottle(LOG_COMPONENT, id, period,
+                        "[Time: %f][Thread id: 0x%s] This line is printed at most once every %fs by every thread",
+                        now - start,
+                        yarp::conf::numeric::to_hex_string(yarp::os::Thread::getKeyOfCaller()).c_str(),
+                        period);
+                    CNT yIDebugExternalTimeOnce(id, start,
+                        "[Time: %f][Thread id: 0x%s] This line is printed only by the first thread coming here",
+                        now - start,
+                        yarp::conf::numeric::to_hex_string(yarp::os::Thread::getKeyOfCaller()).c_str());
+                    CNT yIDebugExternalTimeThreadOnce(id, start,
+                        "[Time: %f][Thread id: 0x%s] This line is printed by every thread",
+                        now - start,
+                        yarp::conf::numeric::to_hex_string(yarp::os::Thread::getKeyOfCaller()).c_str());
+                    CNT yIDebugExternalTimeThrottle(id, start, period,
+                        "[Time: %f][Thread id: 0x%s] This line is printed at most once every %fs",
+                        now - start,
+                        yarp::conf::numeric::to_hex_string(yarp::os::Thread::getKeyOfCaller()).c_str(),
+                        period);
+                    CNT yIDebugExternalTimeThreadThrottle(id, start, period,
+                        "[Time: %f][Thread id: 0x%s] This line is printed at most once every %fs by every thread",
+                        now - start,
+                        yarp::conf::numeric::to_hex_string(yarp::os::Thread::getKeyOfCaller()).c_str(),
+                        period);
+                    CNT yCIDebugExternalTimeOnce(LOG_COMPONENT, id, start,
+                        "[Time: %f][Thread id: 0x%s] This line is printed only by the first thread coming here",
+                        now - start,
+                        yarp::conf::numeric::to_hex_string(yarp::os::Thread::getKeyOfCaller()).c_str());
+                    CNT yCIDebugExternalTimeThreadOnce(LOG_COMPONENT, id, start,
+                        "[Time: %f][Thread id: 0x%s] This line is printed by every thread",
+                        now - start,
+                        yarp::conf::numeric::to_hex_string(yarp::os::Thread::getKeyOfCaller()).c_str());
+                    CNT yCIDebugExternalTimeThrottle(LOG_COMPONENT, id, start, period,
+                        "[Time: %f][Thread id: 0x%s] This line is printed at most once every %fs",
+                        now - start,
+                        yarp::conf::numeric::to_hex_string(yarp::os::Thread::getKeyOfCaller()).c_str(),
+                        period);
+                    CNT yCIDebugExternalTimeThreadThrottle(LOG_COMPONENT, id, start, period,
+                        "[Time: %f][Thread id: 0x%s] This line is printed at most once every %fs by every thread",
+                        now - start,
+                        yarp::conf::numeric::to_hex_string(yarp::os::Thread::getKeyOfCaller()).c_str(),
+                        period);
                 }
             });
         }
@@ -466,6 +691,79 @@ TEST_CASE("os::LogTest", "[yarp::os]")
                         now - start,
                         yarp::conf::numeric::to_hex_string(yarp::os::Thread::getKeyOfCaller()).c_str(),
                         period);
+                    CNT yIInfoOnce(id,
+                        "[Time: %f][Thread id: 0x%s] This line is printed only by the first thread coming here",
+                        now - start,
+                        yarp::conf::numeric::to_hex_string(yarp::os::Thread::getKeyOfCaller()).c_str());
+                    CNT yIInfoThreadOnce(id,
+                        "[Time: %f][Thread id: 0x%s] This line is printed by every thread",
+                        now - start,
+                        yarp::conf::numeric::to_hex_string(yarp::os::Thread::getKeyOfCaller()).c_str());
+                    CNT yIInfoThrottle(id, period,
+                        "[Time: %f][Thread id: 0x%s] This line is printed at most once every %fs",
+                        now - start,
+                        yarp::conf::numeric::to_hex_string(yarp::os::Thread::getKeyOfCaller()).c_str(),
+                        period);
+                    CNT yIInfoThreadThrottle(id, period,
+                        "[Time: %f][Thread id: 0x%s] This line is printed at most once every %fs by every thread",
+                        now - start,
+                        yarp::conf::numeric::to_hex_string(yarp::os::Thread::getKeyOfCaller()).c_str(),
+                        period);
+                    CNT yCIInfoOnce(LOG_COMPONENT, id,
+                        "[Time: %f][Thread id: 0x%s] This line is printed only by the first thread coming here",
+                        now - start,
+                        yarp::conf::numeric::to_hex_string(yarp::os::Thread::getKeyOfCaller()).c_str());
+                    CNT yCIInfoThreadOnce(LOG_COMPONENT, id,
+                        "[Time: %f][Thread id: 0x%s] This line is printed by every thread",
+                        now - start,
+                        yarp::conf::numeric::to_hex_string(yarp::os::Thread::getKeyOfCaller()).c_str());
+                    CNT yCIInfoThrottle(LOG_COMPONENT, id, period,
+                        "[Time: %f][Thread id: 0x%s] This line is printed at most once every %fs",
+                        now - start,
+                        yarp::conf::numeric::to_hex_string(yarp::os::Thread::getKeyOfCaller()).c_str(),
+                        period);
+                    CNT yCIInfoThreadThrottle(LOG_COMPONENT, id, period,
+                        "[Time: %f][Thread id: 0x%s] This line is printed at most once every %fs by every thread",
+                        now - start,
+                        yarp::conf::numeric::to_hex_string(yarp::os::Thread::getKeyOfCaller()).c_str(),
+                        period);
+                    CNT yIInfoExternalTimeOnce(id, start,
+                        "[Time: %f][Thread id: 0x%s] This line is printed only by the first thread coming here",
+                        now - start,
+                        yarp::conf::numeric::to_hex_string(yarp::os::Thread::getKeyOfCaller()).c_str());
+                    CNT yIInfoExternalTimeThreadOnce(id, start,
+                        "[Time: %f][Thread id: 0x%s] This line is printed by every thread",
+                        now - start,
+                        yarp::conf::numeric::to_hex_string(yarp::os::Thread::getKeyOfCaller()).c_str());
+                    CNT yIInfoExternalTimeThrottle(id, start, period,
+                        "[Time: %f][Thread id: 0x%s] This line is printed at most once every %fs",
+                        now - start,
+                        yarp::conf::numeric::to_hex_string(yarp::os::Thread::getKeyOfCaller()).c_str(),
+                        period);
+                    CNT yIInfoExternalTimeThreadThrottle(id, start, period,
+                        "[Time: %f][Thread id: 0x%s] This line is printed at most once every %fs by every thread",
+                        now - start,
+                        yarp::conf::numeric::to_hex_string(yarp::os::Thread::getKeyOfCaller()).c_str(),
+                        period);
+                    CNT yCIInfoExternalTimeOnce(LOG_COMPONENT, id, start,
+                        "[Time: %f][Thread id: 0x%s] This line is printed only by the first thread coming here",
+                        now - start,
+                        yarp::conf::numeric::to_hex_string(yarp::os::Thread::getKeyOfCaller()).c_str());
+                    CNT yCIInfoExternalTimeThreadOnce(LOG_COMPONENT, id, start,
+                        "[Time: %f][Thread id: 0x%s] This line is printed by every thread",
+                        now - start,
+                        yarp::conf::numeric::to_hex_string(yarp::os::Thread::getKeyOfCaller()).c_str());
+                    CNT yCIInfoExternalTimeThrottle(LOG_COMPONENT, id, start, period,
+                        "[Time: %f][Thread id: 0x%s] This line is printed at most once every %fs",
+                        now - start,
+                        yarp::conf::numeric::to_hex_string(yarp::os::Thread::getKeyOfCaller()).c_str(),
+                        period);
+                    CNT yCIInfoExternalTimeThreadThrottle(LOG_COMPONENT, id, start, period,
+                        "[Time: %f][Thread id: 0x%s] This line is printed at most once every %fs by every thread",
+                        now - start,
+                        yarp::conf::numeric::to_hex_string(yarp::os::Thread::getKeyOfCaller()).c_str(),
+                        period);
+
                 }
             });
         }
@@ -566,6 +864,78 @@ TEST_CASE("os::LogTest", "[yarp::os]")
                         now - start,
                         yarp::conf::numeric::to_hex_string(yarp::os::Thread::getKeyOfCaller()).c_str(),
                         period);
+                    CNT yIWarningOnce(id,
+                        "[Time: %f][Thread id: 0x%s] This line is printed only by the first thread coming here",
+                        now - start,
+                        yarp::conf::numeric::to_hex_string(yarp::os::Thread::getKeyOfCaller()).c_str());
+                    CNT yIWarningThreadOnce(id,
+                        "[Time: %f][Thread id: 0x%s] This line is printed by every thread",
+                        now - start,
+                        yarp::conf::numeric::to_hex_string(yarp::os::Thread::getKeyOfCaller()).c_str());
+                    CNT yIWarningThrottle(id, period,
+                        "[Time: %f][Thread id: 0x%s] This line is printed at most once every %fs",
+                        now - start,
+                        yarp::conf::numeric::to_hex_string(yarp::os::Thread::getKeyOfCaller()).c_str(),
+                        period);
+                    CNT yIWarningThreadThrottle(id, period,
+                        "[Time: %f][Thread id: 0x%s] This line is printed at most once every %fs by every thread",
+                        now - start,
+                        yarp::conf::numeric::to_hex_string(yarp::os::Thread::getKeyOfCaller()).c_str(),
+                        period);
+                    CNT yCIWarningOnce(LOG_COMPONENT, id,
+                        "[Time: %f][Thread id: 0x%s] This line is printed only by the first thread coming here",
+                        now - start,
+                        yarp::conf::numeric::to_hex_string(yarp::os::Thread::getKeyOfCaller()).c_str());
+                    CNT yCIWarningThreadOnce(LOG_COMPONENT, id,
+                        "[Time: %f][Thread id: 0x%s] This line is printed by every thread",
+                        now - start,
+                        yarp::conf::numeric::to_hex_string(yarp::os::Thread::getKeyOfCaller()).c_str());
+                    CNT yCIWarningThrottle(LOG_COMPONENT, id, period,
+                        "[Time: %f][Thread id: 0x%s] This line is printed at most once every %fs",
+                        now - start,
+                        yarp::conf::numeric::to_hex_string(yarp::os::Thread::getKeyOfCaller()).c_str(),
+                        period);
+                    CNT yCIWarningThreadThrottle(LOG_COMPONENT, id, period,
+                        "[Time: %f][Thread id: 0x%s] This line is printed at most once every %fs by every thread",
+                        now - start,
+                        yarp::conf::numeric::to_hex_string(yarp::os::Thread::getKeyOfCaller()).c_str(),
+                        period);
+                    CNT yIWarningExternalTimeOnce(id, start,
+                        "[Time: %f][Thread id: 0x%s] This line is printed only by the first thread coming here",
+                        now - start,
+                        yarp::conf::numeric::to_hex_string(yarp::os::Thread::getKeyOfCaller()).c_str());
+                    CNT yIWarningExternalTimeThreadOnce(id, start,
+                        "[Time: %f][Thread id: 0x%s] This line is printed by every thread",
+                        now - start,
+                        yarp::conf::numeric::to_hex_string(yarp::os::Thread::getKeyOfCaller()).c_str());
+                    CNT yIWarningExternalTimeThrottle(id, start, period,
+                        "[Time: %f][Thread id: 0x%s] This line is printed at most once every %fs",
+                        now - start,
+                        yarp::conf::numeric::to_hex_string(yarp::os::Thread::getKeyOfCaller()).c_str(),
+                        period);
+                    CNT yIWarningExternalTimeThreadThrottle(id, start, period,
+                        "[Time: %f][Thread id: 0x%s] This line is printed at most once every %fs by every thread",
+                        now - start,
+                        yarp::conf::numeric::to_hex_string(yarp::os::Thread::getKeyOfCaller()).c_str(),
+                        period);
+                    CNT yCIWarningExternalTimeOnce(LOG_COMPONENT, id, start,
+                        "[Time: %f][Thread id: 0x%s] This line is printed only by the first thread coming here",
+                        now - start,
+                        yarp::conf::numeric::to_hex_string(yarp::os::Thread::getKeyOfCaller()).c_str());
+                    CNT yCIWarningExternalTimeThreadOnce(LOG_COMPONENT, id, start,
+                        "[Time: %f][Thread id: 0x%s] This line is printed by every thread",
+                        now - start,
+                        yarp::conf::numeric::to_hex_string(yarp::os::Thread::getKeyOfCaller()).c_str());
+                    CNT yCIWarningExternalTimeThrottle(LOG_COMPONENT, id, start, period,
+                        "[Time: %f][Thread id: 0x%s] This line is printed at most once every %fs",
+                        now - start,
+                        yarp::conf::numeric::to_hex_string(yarp::os::Thread::getKeyOfCaller()).c_str(),
+                        period);
+                    CNT yCIWarningExternalTimeThreadThrottle(LOG_COMPONENT, id, start, period,
+                        "[Time: %f][Thread id: 0x%s] This line is printed at most once every %fs by every thread",
+                        now - start,
+                        yarp::conf::numeric::to_hex_string(yarp::os::Thread::getKeyOfCaller()).c_str(),
+                        period);
                 }
             });
         }
@@ -662,6 +1032,78 @@ TEST_CASE("os::LogTest", "[yarp::os]")
                         yarp::conf::numeric::to_hex_string(yarp::os::Thread::getKeyOfCaller()).c_str(),
                         period);
                     CNT yCErrorExternalTimeThreadThrottle(LOG_COMPONENT, start, period,
+                        "[Time: %f][Thread id: 0x%s] This line is printed at most once every %fs by every thread",
+                        now - start,
+                        yarp::conf::numeric::to_hex_string(yarp::os::Thread::getKeyOfCaller()).c_str(),
+                        period);
+                    CNT yIErrorOnce(id,
+                        "[Time: %f][Thread id: 0x%s] This line is printed only by the first thread coming here",
+                        now - start,
+                        yarp::conf::numeric::to_hex_string(yarp::os::Thread::getKeyOfCaller()).c_str());
+                    CNT yIErrorThreadOnce(id,
+                        "[Time: %f][Thread id: 0x%s] This line is printed by every thread",
+                        now - start,
+                        yarp::conf::numeric::to_hex_string(yarp::os::Thread::getKeyOfCaller()).c_str());
+                    CNT yIErrorThrottle(id, period,
+                        "[Time: %f][Thread id: 0x%s] This line is printed at most once every %fs",
+                        now - start,
+                        yarp::conf::numeric::to_hex_string(yarp::os::Thread::getKeyOfCaller()).c_str(),
+                        period);
+                    CNT yIErrorThreadThrottle(id, period,
+                        "[Time: %f][Thread id: 0x%s] This line is printed at most once every %fs by every thread",
+                        now - start,
+                        yarp::conf::numeric::to_hex_string(yarp::os::Thread::getKeyOfCaller()).c_str(),
+                        period);
+                    CNT yCIErrorOnce(LOG_COMPONENT, id,
+                        "[Time: %f][Thread id: 0x%s] This line is printed only by the first thread coming here",
+                        now - start,
+                        yarp::conf::numeric::to_hex_string(yarp::os::Thread::getKeyOfCaller()).c_str());
+                    CNT yCIErrorThreadOnce(LOG_COMPONENT, id,
+                        "[Time: %f][Thread id: 0x%s] This line is printed by every thread",
+                        now - start,
+                        yarp::conf::numeric::to_hex_string(yarp::os::Thread::getKeyOfCaller()).c_str());
+                    CNT yCIErrorThrottle(LOG_COMPONENT, id, period,
+                        "[Time: %f][Thread id: 0x%s] This line is printed at most once every %fs",
+                        now - start,
+                        yarp::conf::numeric::to_hex_string(yarp::os::Thread::getKeyOfCaller()).c_str(),
+                        period);
+                    CNT yCIErrorThreadThrottle(LOG_COMPONENT, id, period,
+                        "[Time: %f][Thread id: 0x%s] This line is printed at most once every %fs by every thread",
+                        now - start,
+                        yarp::conf::numeric::to_hex_string(yarp::os::Thread::getKeyOfCaller()).c_str(),
+                        period);
+                    CNT yIErrorExternalTimeOnce(id, start,
+                        "[Time: %f][Thread id: 0x%s] This line is printed only by the first thread coming here",
+                        now - start,
+                        yarp::conf::numeric::to_hex_string(yarp::os::Thread::getKeyOfCaller()).c_str());
+                    CNT yIErrorExternalTimeThreadOnce(id, start,
+                        "[Time: %f][Thread id: 0x%s] This line is printed by every thread",
+                        now - start,
+                        yarp::conf::numeric::to_hex_string(yarp::os::Thread::getKeyOfCaller()).c_str());
+                    CNT yIErrorExternalTimeThrottle(id, start, period,
+                        "[Time: %f][Thread id: 0x%s] This line is printed at most once every %fs",
+                        now - start,
+                        yarp::conf::numeric::to_hex_string(yarp::os::Thread::getKeyOfCaller()).c_str(),
+                        period);
+                    CNT yIErrorExternalTimeThreadThrottle(id, start, period,
+                        "[Time: %f][Thread id: 0x%s] This line is printed at most once every %fs by every thread",
+                        now - start,
+                        yarp::conf::numeric::to_hex_string(yarp::os::Thread::getKeyOfCaller()).c_str(),
+                        period);
+                    CNT yCIErrorExternalTimeOnce(LOG_COMPONENT, id, start,
+                        "[Time: %f][Thread id: 0x%s] This line is printed only by the first thread coming here",
+                        now - start,
+                        yarp::conf::numeric::to_hex_string(yarp::os::Thread::getKeyOfCaller()).c_str());
+                    CNT yCIErrorExternalTimeThreadOnce(LOG_COMPONENT, id, start,
+                        "[Time: %f][Thread id: 0x%s] This line is printed by every thread",
+                        now - start,
+                        yarp::conf::numeric::to_hex_string(yarp::os::Thread::getKeyOfCaller()).c_str());
+                    CNT yCIErrorExternalTimeThrottle(LOG_COMPONENT, id, start, period,
+                        "[Time: %f][Thread id: 0x%s] This line is printed at most once every %fs",
+                        now - start,
+                        yarp::conf::numeric::to_hex_string(yarp::os::Thread::getKeyOfCaller()).c_str(),
+                        period);
+                    CNT yCIErrorExternalTimeThreadThrottle(LOG_COMPONENT, id, start, period,
                         "[Time: %f][Thread id: 0x%s] This line is printed at most once every %fs by every thread",
                         now - start,
                         yarp::conf::numeric::to_hex_string(yarp::os::Thread::getKeyOfCaller()).c_str(),

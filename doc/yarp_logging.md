@@ -177,6 +177,42 @@ Like for the `yDebug` family, there is no need to add a whitespace between the
 fields, nor `\n` at the end of the stream.
 
 
+
+## Id
+
+Sometimes, when 2 or more objects of the same type are running at the same time
+in the same executable, it is not possible to understand which one of the
+objects is producing the output, even using components.
+
+While Components are defined at runtime, and can be enabled or disabled with the
+component configuration, id can be set by the application at runtime, and it is
+just a string that can be used to identify the object that produces the output.
+
+For example, ports use this field to add the name of the port (that can be
+defined at runtime) to the log; devices use this field to show the device id,
+that is either a field defined at runtime by passing the `id` parameter to the
+open method, or set manually by the device using
+`yarp::dev::DeviceDriver::setId()`.
+
+| Level       | Id C-Style                                             | Id Stream                        |
+|:-----------:|--------------------------------------------------------|----------------------------------|
+| `[TRACE]`   | `yITrace(std::string_view id, const char* msg, ...)`   | `yITrace(std::string_view id)`   |
+| `[DEBUG]`   | `yIDebug(std::string_view id, const char* msg, ...)`   | `yIDebug(std::string_view id)`   |
+| `[INFO]`    | `yIInfo(std::string_view id, const char* msg, ...)`    | `yIInfo(std::string_view id)`    |
+| `[WARNING]` | `yIWarning(std::string_view id, const char* msg, ...)` | `yIWarning(std::string_view id)` |
+| `[ERROR]`   | `yIError(std::string_view id, const char* msg, ...)`   | `yIError(std::string_view id)`   |
+| `[FATAL]`   | `yIFatal(std::string_view id, const char* msg, ...)`   | `yIFatal(std::string_view id)`   |
+
+| Level       | Component and Id C-Style                                                                    | Component and Id Stream                                               |
+|:-----------:|---------------------------------------------------------------------------------------------|-----------------------------------------------------------------------|
+| `[TRACE]`   | `yCITrace(const yarp::os::Logcomponent& comp, std::string_view id, const char* msg, ...)`   | `yCITrace(const yarp::os::Logcomponent& comp, std::string_view id)`   |
+| `[DEBUG]`   | `yCIDebug(const yarp::os::Logcomponent& comp, std::string_view id, const char* msg, ...)`   | `yCIDebug(const yarp::os::Logcomponent& comp, std::string_view id)`   |
+| `[INFO]`    | `yCIInfo(const yarp::os::Logcomponent& comp, std::string_view id, const char* msg, ...)`    | `yCIInfo(const yarp::os::Logcomponent& comp, std::string_view id)`    |
+| `[WARNING]` | `yCIWarning(const yarp::os::Logcomponent& comp, std::string_view id, const char* msg, ...)` | `yCIWarning(const yarp::os::Logcomponent& comp, std::string_view id)` |
+| `[ERROR]`   | `yCIError(const yarp::os::Logcomponent& comp, std::string_view id, const char* msg, ...)`   | `yCIError(const yarp::os::Logcomponent& comp, std::string_view id)`   |
+| `[FATAL]`   | `yCIFatal(const yarp::os::Logcomponent& comp, std::string_view id, const char* msg, ...)`   | `yCIFatal(const yarp::os::Logcomponent& comp, std::string_view id)`   |
+
+
 ## External timestamp
 
 Users have the possibility of logging information using an external source which
@@ -192,15 +228,32 @@ These macros expand on the previous macros by including a external time term.
 | `[ERROR]`   | `yErrorExternalTime(double externaltime, const char* msg, ...)`   | `yErrorExternalTime(double externaltime)`   |
 | `[FATAL]`   | `yFatalExternalTime(double externaltime, const char* msg, ...)`   | `yFatalExternalTime(double externaltime)`   |
 
-
 | Level       | Component C-Style                                                                                      | Component Stream                                                                 |
 |:-----------:|--------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------|
-| `[TRACE]`   | `yCTraceExternalTime(double externaltime, const yarp::os::Logcomponent& comp, const char* msg, ...)`   | `yCTraceExternalTime(double externaltime, const yarp::os::Logcomponent& comp)`   |
-| `[DEBUG]`   | `yCDebugExternalTime(double externaltime, const yarp::os::Logcomponent& comp, const char* msg, ...)`   | `yCDebugExternalTime(double externaltime, const yarp::os::Logcomponent& comp)`   |
-| `[INFO]`    | `yCInfoExternalTime(double externaltime, const yarp::os::Logcomponent& comp, const char* msg, ...)`    | `yCInfoExternalTime(double externaltime, const yarp::os::Logcomponent& comp)`    |
-| `[WARNING]` | `yCWarningExternalTime(double externaltime, const yarp::os::Logcomponent& comp, const char* msg, ...)` | `yCWarningExternalTime(double externaltime, const yarp::os::Logcomponent& comp)` |
-| `[ERROR]`   | `yCErrorExternalTime(double externaltime, const yarp::os::Logcomponent& comp, const char* msg, ...)`   | `yCErrorExternalTime(double externaltime, const yarp::os::Logcomponent& comp)`   |
-| `[FATAL]`   | `yCFatalExternalTime(double externaltime, const yarp::os::Logcomponent& comp, const char* msg, ...)`   | `yCFatalExternalTime(double externaltime, const yarp::os::Logcomponent& comp)`   |
+| `[TRACE]`   | `yCTraceExternalTime(const yarp::os::Logcomponent& comp, double externaltime, const char* msg, ...)`   | `yCTraceExternalTime(const yarp::os::Logcomponent& comp, double externaltime)`   |
+| `[DEBUG]`   | `yCDebugExternalTime(const yarp::os::Logcomponent& comp, double externaltime, const char* msg, ...)`   | `yCDebugExternalTime(const yarp::os::Logcomponent& comp, double externaltime)`   |
+| `[INFO]`    | `yCInfoExternalTime(const yarp::os::Logcomponent& comp, double externaltime, const char* msg, ...)`    | `yCInfoExternalTime(const yarp::os::Logcomponent& comp, double externaltime)`    |
+| `[WARNING]` | `yCWarningExternalTime(const yarp::os::Logcomponent& comp, double externaltime, const char* msg, ...)` | `yCWarningExternalTime(const yarp::os::Logcomponent& comp, double externaltime)` |
+| `[ERROR]`   | `yCErrorExternalTime(const yarp::os::Logcomponent& comp, double externaltime, const char* msg, ...)`   | `yCErrorExternalTime(const yarp::os::Logcomponent& comp, double externaltime)`   |
+| `[FATAL]`   | `yCFatalExternalTime(const yarp::os::Logcomponent& comp, double externaltime, const char* msg, ...)`   | `yCFatalExternalTime(const yarp::os::Logcomponent& comp, double externaltime)`   |
+
+| Level       | Id C-Style                                                                              | Id Stream                                                         |
+|:-----------:|-----------------------------------------------------------------------------------------|-------------------------------------------------------------------|
+| `[TRACE]`   | `yITraceExternalTime(std::string_view id, double externaltime, const char* msg, ...)`   | `yITraceExternalTime(std::string_view id, double externaltime)`   |
+| `[DEBUG]`   | `yIDebugExternalTime(std::string_view id, double externaltime, const char* msg, ...)`   | `yIDebugExternalTime(std::string_view id, double externaltime)`   |
+| `[INFO]`    | `yIInfoExternalTime(std::string_view id, double externaltime, const char* msg, ...)`    | `yIInfoExternalTime(std::string_view id, double externaltime)`    |
+| `[WARNING]` | `yIWarningExternalTime(std::string_view id, double externaltime, const char* msg, ...)` | `yIWarningExternalTime(std::string_view id, double externaltime)` |
+| `[ERROR]`   | `yIErrorExternalTime(std::string_view id, double externaltime, const char* msg, ...)`   | `yIErrorExternalTime(std::string_view id, double externaltime)`   |
+| `[FATAL]`   | `yIFatalExternalTime(std::string_view id, double externaltime, const char* msg, ...)`   | `yIFatalExternalTime(std::string_view id, double externaltime)`   |
+
+| Level       | Component and Id C-Style                                                                                                     | Component and Id Stream                                                                                |
+|:-----------:|------------------------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------|
+| `[TRACE]`   | `yCITraceExternalTime(const yarp::os::Logcomponent& comp, std::string_view id, double externaltime, const char* msg, ...)`   | `yCITraceExternalTime(const yarp::os::Logcomponent& comp, std::string_view id, double externaltime)`   |
+| `[DEBUG]`   | `yCIDebugExternalTime(const yarp::os::Logcomponent& comp, std::string_view id, double externaltime, const char* msg, ...)`   | `yCIDebugExternalTime(const yarp::os::Logcomponent& comp, std::string_view id, double externaltime)`   |
+| `[INFO]`    | `yCIInfoExternalTime(const yarp::os::Logcomponent& comp, std::string_view id, double externaltime, const char* msg, ...)`    | `yCIInfoExternalTime(const yarp::os::Logcomponent& comp, std::string_view id, double externaltime)`    |
+| `[WARNING]` | `yCIWarningExternalTime(const yarp::os::Logcomponent& comp, std::string_view id, double externaltime, const char* msg, ...)` | `yCIWarningExternalTime(const yarp::os::Logcomponent& comp, std::string_view id, double externaltime)` |
+| `[ERROR]`   | `yCIErrorExternalTime(const yarp::os::Logcomponent& comp, std::string_view id, double externaltime, const char* msg, ...)`   | `yCIErrorExternalTime(const yarp::os::Logcomponent& comp, std::string_view id, double externaltime)`   |
+| `[FATAL]`   | `yCIFatalExternalTime(const yarp::os::Logcomponent& comp, std::string_view id, double externaltime, const char* msg, ...)`   | `yCIFatalExternalTime(const yarp::os::Logcomponent& comp, std::string_view id, double externaltime)`   |
 
 
 ## Limited Macros
@@ -223,7 +276,6 @@ These log lines are printed only once in the execution of the program.
 | `[ERROR]`   | `yErrorOnce(const char* msg, ...)`   | `yErrorOnce()`   |
 | `[FATAL]`   | N/A                                  | N/A              |
 
-
 | Level       | Component C-Style                                                         | Component Stream                                    |
 |:-----------:|---------------------------------------------------------------------------|-----------------------------------------------------|
 | `[TRACE]`   | `yCTraceOnce(const yarp::os::Logcomponent& comp, const char* msg, ...)`   | `yCTraceOnce(const yarp::os::Logcomponent& comp)`   |
@@ -233,6 +285,24 @@ These log lines are printed only once in the execution of the program.
 | `[ERROR]`   | `yCErrorOnce(const yarp::os::Logcomponent& comp, const char* msg, ...)`   | `yCErrorOnce(const yarp::os::Logcomponent& comp)`   |
 | `[FATAL]`   | N/A                                                                       | N/A                                                 |
 
+| Level       | Id C-Style                                                 | Id Stream                            |
+|:-----------:|------------------------------------------------------------|--------------------------------------|
+| `[TRACE]`   | `yITraceOnce(std::string_view id, const char* msg, ...)`   | `yITraceOnce(std::string_view id)`   |
+| `[DEBUG]`   | `yIDebugOnce(std::string_view id, const char* msg, ...)`   | `yIDebugOnce(std::string_view id)`   |
+| `[INFO]`    | `yIInfoOnce(std::string_view id, const char* msg, ...)`    | `yIInfoOnce(std::string_view id)`    |
+| `[WARNING]` | `yIWarningOnce(std::string_view id, const char* msg, ...)` | `yIWarningOnce(std::string_view id)` |
+| `[ERROR]`   | `yIErrorOnce(std::string_view id, const char* msg, ...)`   | `yIErrorOnce(std::string_view id)`   |
+| `[FATAL]`   | N/A                                                        | N/A                                  |
+
+| Level       | Component and Id C-Style                                                                        | Component and Id Stream                                                   |
+|:-----------:|-------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------|
+| `[TRACE]`   | `yCITraceOnce(const yarp::os::Logcomponent& comp, std::string_view id, const char* msg, ...)`   | `yCITraceOnce(const yarp::os::Logcomponent& comp, std::string_view id)`   |
+| `[DEBUG]`   | `yCIDebugOnce(const yarp::os::Logcomponent& comp, std::string_view id, const char* msg, ...)`   | `yCIDebugOnce(const yarp::os::Logcomponent& comp, std::string_view id)`   |
+| `[INFO]`    | `yCIInfoOnce(const yarp::os::Logcomponent& comp, std::string_view id, const char* msg, ...)`    | `yCIInfoOnce(const yarp::os::Logcomponent& comp, std::string_view id)`    |
+| `[WARNING]` | `yCIWarningOnce(const yarp::os::Logcomponent& comp, std::string_view id, const char* msg, ...)` | `yCIWarningOnce(const yarp::os::Logcomponent& comp, std::string_view id)` |
+| `[ERROR]`   | `yCIErrorOnce(const yarp::os::Logcomponent& comp, std::string_view id, const char* msg, ...)`   | `yCIErrorOnce(const yarp::os::Logcomponent& comp, std::string_view id)`   |
+| `[FATAL]`   | N/A                                                                                             | N/A                                                                       |
+
 | Level       | C-Style w/ External time                                              | Stream w/ External time                         |
 |:-----------:|-----------------------------------------------------------------------|-------------------------------------------------|
 | `[TRACE]`   | `yTraceExternalTimeOnce(double externaltime, const char* msg, ...)`   | `yTraceExternalTimeOnce(double externaltime)`   |
@@ -240,17 +310,34 @@ These log lines are printed only once in the execution of the program.
 | `[INFO]`    | `yInfoExternalTimeOnce(double externaltime, const char* msg, ...)`    | `yInfoExternalTimeOnce(double externaltime)`    |
 | `[WARNING]` | `yWarningExternalTimeOnce(double externaltime, const char* msg, ...)` | `yWarningExternalTimeOnce(double externaltime)` |
 | `[ERROR]`   | `yErrorExternalTimeOnce(double externaltime, const char* msg, ...)`   | `yErrorExternalTimeOnce(double externaltime)`   |
-| `[FATAL]`   | N/A                                                                   | N/A                                             |
-
+| `[FATAL]`   | N/A                                                                                                       | N/A                                             |
 
 | Level       | Component C-Style w/ External time                                                                         | Component Stream w/ External time                                                    |
 |:-----------:|------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------|
-| `[TRACE]`   | `yCTraceExternalTimeOnce(double externaltime, const yarp::os::Logcomponent& comp, const char* msg, ...)`   | `yCTraceExternalTimeOnce(double externaltime, const yarp::os::Logcomponent& comp)`   |
-| `[DEBUG]`   | `yCDebugExternalTimeOnce(double externaltime, const yarp::os::Logcomponent& comp, const char* msg, ...)`   | `yCDebugExternalTimeOnce(double externaltime, const yarp::os::Logcomponent& comp)`   |
-| `[INFO]`    | `yCInfoExternalTimeOnce(double externaltime, const yarp::os::Logcomponent& comp, const char* msg, ...)`    | `yCInfoExternalTimeOnce(double externaltime, const yarp::os::Logcomponent& comp)`    |
-| `[WARNING]` | `yCWarningExternalTimeOnce(double externaltime, const yarp::os::Logcomponent& comp, const char* msg, ...)` | `yCWarningExternalTimeOnce(double externaltime, const yarp::os::Logcomponent& comp)` |
-| `[ERROR]`   | `yCErrorExternalTimeOnce(double externaltime, const yarp::os::Logcomponent& comp, const char* msg, ...)`   | `yCErrorExternalTimeOnce(double externaltime, const yarp::os::Logcomponent& comp)`   |
+| `[TRACE]`   | `yCTraceExternalTimeOnce(const yarp::os::Logcomponent& comp, double externaltime, const char* msg, ...)`   | `yCTraceExternalTimeOnce(const yarp::os::Logcomponent& comp, double externaltime)`   |
+| `[DEBUG]`   | `yCDebugExternalTimeOnce(const yarp::os::Logcomponent& comp, double externaltime, const char* msg, ...)`   | `yCDebugExternalTimeOnce(const yarp::os::Logcomponent& comp, double externaltime)`   |
+| `[INFO]`    | `yCInfoExternalTimeOnce(const yarp::os::Logcomponent& comp, double externaltime, const char* msg, ...)`    | `yCInfoExternalTimeOnce(const yarp::os::Logcomponent& comp, double externaltime)`    |
+| `[WARNING]` | `yCWarningExternalTimeOnce(const yarp::os::Logcomponent& comp, double externaltime, const char* msg, ...)` | `yCWarningExternalTimeOnce(const yarp::os::Logcomponent& comp, double externaltime)` |
+| `[ERROR]`   | `yCErrorExternalTimeOnce(const yarp::os::Logcomponent& comp, double externaltime, const char* msg, ...)`   | `yCErrorExternalTimeOnce(const yarp::os::Logcomponent& comp, double externaltime)`   |
 | `[FATAL]`   | N/A                                                                                                        | N/A                                                                                  |
+
+| Level       | Id C-Style w/ External time                                                                 | Id Stream w/ External time                                            |
+|:-----------:|---------------------------------------------------------------------------------------------|-----------------------------------------------------------------------|
+| `[TRACE]`   | `yITraceExternalTimeOnce(std::string_view id, double externaltime, const char* msg, ...)`   | `yITraceExternalTimeOnce(std::string_view id, double externaltime)`   |
+| `[DEBUG]`   | `yIDebugExternalTimeOnce(std::string_view id, double externaltime, const char* msg, ...)`   | `yIDebugExternalTimeOnce(std::string_view id, double externaltime)`   |
+| `[INFO]`    | `yIInfoExternalTimeOnce(std::string_view id, double externaltime, const char* msg, ...)`    | `yIInfoExternalTimeOnce(std::string_view id, double externaltime)`    |
+| `[WARNING]` | `yIWarningExternalTimeOnce(std::string_view id, double externaltime, const char* msg, ...)` | `yIWarningExternalTimeOnce(std::string_view id, double externaltime)` |
+| `[ERROR]`   | `yIErrorExternalTimeOnce(std::string_view id, double externaltime, const char* msg, ...)`   | `yIErrorExternalTimeOnce(std::string_view id, double externaltime)`   |
+| `[FATAL]`   | N/A                                                                                                                             | N/A                                                                   |
+
+| Level       | Component and Id C-Style w/ External time                                                                                        | Component and Id Stream w/ External time                                                                   |
+|:-----------:|----------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------|
+| `[TRACE]`   | `yCITraceExternalTimeOnce(const yarp::os::Logcomponent& comp, std::string_view id, double externaltime, const char* msg, ...)`   | `yCITraceExternalTimeOnce(const yarp::os::Logcomponent& comp, std::string_view id, double externaltime)`   |
+| `[DEBUG]`   | `yCIDebugExternalTimeOnce(const yarp::os::Logcomponent& comp, std::string_view id, double externaltime, const char* msg, ...)`   | `yCIDebugExternalTimeOnce(const yarp::os::Logcomponent& comp, std::string_view id, double externaltime)`   |
+| `[INFO]`    | `yCIInfoExternalTimeOnce(const yarp::os::Logcomponent& comp, std::string_view id, double externaltime, const char* msg, ...)`    | `yCIInfoExternalTimeOnce(const yarp::os::Logcomponent& comp, std::string_view id, double externaltime)`    |
+| `[WARNING]` | `yCIWarningExternalTimeOnce(const yarp::os::Logcomponent& comp, std::string_view id, double externaltime, const char* msg, ...)` | `yCIWarningExternalTimeOnce(const yarp::os::Logcomponent& comp, std::string_view id, double externaltime)` |
+| `[ERROR]`   | `yCIErrorExternalTimeOnce(const yarp::os::Logcomponent& comp, std::string_view id, double externaltime, const char* msg, ...)`   | `yCIErrorExternalTimeOnce(const yarp::os::Logcomponent& comp, std::string_view id, double externaltime)`   |
+| `[FATAL]`   | N/A                                                                                                                              | N/A                                                                                                        |
 
 
 ### yDebugThreadOnce() Family
@@ -267,7 +354,6 @@ the program.
 | `[ERROR]`   | `yErrorThreadOnce(const char* msg, ...)`   | `yErrorThreadOnce()`   |
 | `[FATAL]`   | N/A                                        | N/A                    |
 
-
 | Level       | Component C-Style                                                               | Component Stream                                          |
 |:-----------:|---------------------------------------------------------------------------------|-----------------------------------------------------------|
 | `[TRACE]`   | `yCTraceThreadOnce(const yarp::os::Logcomponent& comp, const char* msg, ...)`   | `yCTraceThreadOnce(const yarp::os::Logcomponent& comp)`   |
@@ -276,6 +362,24 @@ the program.
 | `[WARNING]` | `yCWarningThreadOnce(const yarp::os::Logcomponent& comp, const char* msg, ...)` | `yCWarningThreadOnce(const yarp::os::Logcomponent& comp)` |
 | `[ERROR]`   | `yCErrorThreadOnce(const yarp::os::Logcomponent& comp, const char* msg, ...)`   | `yCErrorThreadOnce(const yarp::os::Logcomponent& comp)`   |
 | `[FATAL]`   | N/A                                                                             | N/A                                                       |
+
+| Level       | Id C-Style                                                       | Id Stream                                  |
+|:-----------:|------------------------------------------------------------------|--------------------------------------------|
+| `[TRACE]`   | `yITraceThreadOnce(std::string_view id, const char* msg, ...)`   | `yITraceThreadOnce(std::string_view id)`   |
+| `[DEBUG]`   | `yIDebugThreadOnce(std::string_view id, const char* msg, ...)`   | `yIDebugThreadOnce(std::string_view id)`   |
+| `[INFO]`    | `yIInfoThreadOnce(std::string_view id, const char* msg, ...)`    | `yIInfoThreadOnce(std::string_view id)`    |
+| `[WARNING]` | `yIWarningThreadOnce(std::string_view id, const char* msg, ...)` | `yIWarningThreadOnce(std::string_view id)` |
+| `[ERROR]`   | `yIErrorThreadOnce(std::string_view id, const char* msg, ...)`   | `yIErrorThreadOnce(std::string_view id)`   |
+| `[FATAL]`   | N/A                                                              | N/A                                        |
+
+| Level       | Component and Id C-Style                                                                              | Component and Id Stream                                                         |
+|:-----------:|-------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------|
+| `[TRACE]`   | `yCITraceThreadOnce(const yarp::os::Logcomponent& comp, std::string_view id, const char* msg, ...)`   | `yCITraceThreadOnce(const yarp::os::Logcomponent& comp, std::string_view id)`   |
+| `[DEBUG]`   | `yCIDebugThreadOnce(const yarp::os::Logcomponent& comp, std::string_view id, const char* msg, ...)`   | `yCIDebugThreadOnce(const yarp::os::Logcomponent& comp, std::string_view id)`   |
+| `[INFO]`    | `yCIInfoThreadOnce(const yarp::os::Logcomponent& comp, std::string_view id, const char* msg, ...)`    | `yCIInfoThreadOnce(const yarp::os::Logcomponent& comp, std::string_view id)`    |
+| `[WARNING]` | `yCIWarningThreadOnce(const yarp::os::Logcomponent& comp, std::string_view id, const char* msg, ...)` | `yCIWarningThreadOnce(const yarp::os::Logcomponent& comp, std::string_view id)` |
+| `[ERROR]`   | `yCIErrorThreadOnce(const yarp::os::Logcomponent& comp, std::string_view id, const char* msg, ...)`   | `yCIErrorThreadOnce(const yarp::os::Logcomponent& comp, std::string_view id)`   |
+| `[FATAL]`   | N/A                                                                                                   | N/A                                                                             |
 
 | Level       | C-Style w/ External time                                                    | Stream w/ External time                               |
 |:-----------:|-----------------------------------------------------------------------------|-------------------------------------------------------|
@@ -286,15 +390,32 @@ the program.
 | `[ERROR]`   | `yErrorExternalTimeThreadOnce(double externaltime, const char* msg, ...)`   | `yErrorExternalTimeThreadOnce(double externaltime)`   |
 | `[FATAL]`   | N/A                                                                         | N/A                                                   |
 
-
 | Level       | Component C-Style w/ External time                                                                               | Component Stream w/ External time                                                          |
 |:-----------:|------------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------|
-| `[TRACE]`   | `yCTraceExternalTimeThreadOnce(double externaltime, const yarp::os::Logcomponent& comp, const char* msg, ...)`   | `yCTraceExternalTimeThreadOnce(double externaltime, const yarp::os::Logcomponent& comp)`   |
-| `[DEBUG]`   | `yCDebugExternalTimeThreadOnce(double externaltime, const yarp::os::Logcomponent& comp, const char* msg, ...)`   | `yCDebugExternalTimeThreadOnce(double externaltime, const yarp::os::Logcomponent& comp)`   |
-| `[INFO]`    | `yCInfoExternalTimeThreadOnce(double externaltime, const yarp::os::Logcomponent& comp, const char* msg, ...)`    | `yCInfoExternalTimeThreadOnce(double externaltime, const yarp::os::Logcomponent& comp)`    |
-| `[WARNING]` | `yCWarningExternalTimeThreadOnce(double externaltime, const yarp::os::Logcomponent& comp, const char* msg, ...)` | `yCWarningExternalTimeThreadOnce(double externaltime, const yarp::os::Logcomponent& comp)` |
-| `[ERROR]`   | `yCErrorExternalTimeThreadOnce(double externaltime, const yarp::os::Logcomponent& comp, const char* msg, ...)`   | `yCErrorExternalTimeThreadOnce(double externaltime, const yarp::os::Logcomponent& comp)`   |
+| `[TRACE]`   | `yCTraceExternalTimeThreadOnce(const yarp::os::Logcomponent& comp, double externaltime, const char* msg, ...)`   | `yCTraceExternalTimeThreadOnce(const yarp::os::Logcomponent& comp, double externaltime)`   |
+| `[DEBUG]`   | `yCDebugExternalTimeThreadOnce(const yarp::os::Logcomponent& comp, double externaltime, const char* msg, ...)`   | `yCDebugExternalTimeThreadOnce(const yarp::os::Logcomponent& comp, double externaltime)`   |
+| `[INFO]`    | `yCInfoExternalTimeThreadOnce(const yarp::os::Logcomponent& comp, double externaltime, const char* msg, ...)`    | `yCInfoExternalTimeThreadOnce(const yarp::os::Logcomponent& comp, double externaltime)`    |
+| `[WARNING]` | `yCWarningExternalTimeThreadOnce(const yarp::os::Logcomponent& comp, double externaltime, const char* msg, ...)` | `yCWarningExternalTimeThreadOnce(const yarp::os::Logcomponent& comp, double externaltime)` |
+| `[ERROR]`   | `yCErrorExternalTimeThreadOnce(const yarp::os::Logcomponent& comp, double externaltime, const char* msg, ...)`   | `yCErrorExternalTimeThreadOnce(const yarp::os::Logcomponent& comp, double externaltime)`   |
 | `[FATAL]`   | N/A                                                                                                              | N/A                                                                                        |
+
+| Level       | Id C-Style w/ External time                                                                       | Id Stream w/ External time                                                  |
+|:-----------:|---------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------|
+| `[TRACE]`   | `yITraceExternalTimeThreadOnce(std::string_view id, double externaltime, const char* msg, ...)`   | `yITraceExternalTimeThreadOnce(std::string_view id, double externaltime)`   |
+| `[DEBUG]`   | `yIDebugExternalTimeThreadOnce(std::string_view id, double externaltime, const char* msg, ...)`   | `yIDebugExternalTimeThreadOnce(std::string_view id, double externaltime)`   |
+| `[INFO]`    | `yIInfoExternalTimeThreadOnce(std::string_view id, double externaltime, const char* msg, ...)`    | `yIInfoExternalTimeThreadOnce(std::string_view id, double externaltime)`    |
+| `[WARNING]` | `yIWarningExternalTimeThreadOnce(std::string_view id, double externaltime, const char* msg, ...)` | `yIWarningExternalTimeThreadOnce(std::string_view id, double externaltime)` |
+| `[ERROR]`   | `yIErrorExternalTimeThreadOnce(std::string_view id, double externaltime, const char* msg, ...)`   | `yIErrorExternalTimeThreadOnce(std::string_view id, double externaltime)`   |
+| `[FATAL]`   | N/A                                                                                               | N/A                                                                         |
+
+| Level       | Component and Id C-Style w/ External time                                                                                              | Component and Id Stream w/ External time                                                                         |
+|:-----------:|----------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------|
+| `[TRACE]`   | `yCITraceExternalTimeThreadOnce(const yarp::os::Logcomponent& comp, std::string_view id, double externaltime, const char* msg, ...)`   | `yCITraceExternalTimeThreadOnce(const yarp::os::Logcomponent& comp, std::string_view id, double externaltime)`   |
+| `[DEBUG]`   | `yCIDebugExternalTimeThreadOnce(const yarp::os::Logcomponent& comp, std::string_view id, double externaltime, const char* msg, ...)`   | `yCIDebugExternalTimeThreadOnce(const yarp::os::Logcomponent& comp, std::string_view id, double externaltime)`   |
+| `[INFO]`    | `yCIInfoExternalTimeThreadOnce(const yarp::os::Logcomponent& comp, std::string_view id, double externaltime, const char* msg, ...)`    | `yCIInfoExternalTimeThreadOnce(const yarp::os::Logcomponent& comp, std::string_view id, double externaltime)`    |
+| `[WARNING]` | `yCIWarningExternalTimeThreadOnce(const yarp::os::Logcomponent& comp, std::string_view id, double externaltime, const char* msg, ...)` | `yCIWarningExternalTimeThreadOnce(const yarp::os::Logcomponent& comp, std::string_view id, double externaltime)` |
+| `[ERROR]`   | `yCIErrorExternalTimeThreadOnce(const yarp::os::Logcomponent& comp, std::string_view id, double externaltime, const char* msg, ...)`   | `yCIErrorExternalTimeThreadOnce(const yarp::os::Logcomponent& comp, std::string_view id, double externaltime)`   |
+| `[FATAL]`   | N/A                                                                                                                                    | N/A                                                                                                              |
 
 
 ### yDebugThrottle() Family
@@ -310,7 +431,6 @@ These log lines are printed at most once every `period` seconds.
 | `[ERROR]`   | `yErrorThrottle(double period, const char* msg, ...)`   | `yErrorThrottle(double period)`   |
 | `[FATAL]`   | N/A                                                     | N/A                               |
 
-
 | Level       | Component C-Style                                                                            | Component Stream                                                       |
 |:-----------:|----------------------------------------------------------------------------------------------|------------------------------------------------------------------------|
 | `[TRACE]`   | `yCTraceThrottle(const yarp::os::Logcomponent& comp, double period, const char* msg, ...)`   | `yCTraceThrottle(const yarp::os::Logcomponent& comp, double period)`   |
@@ -319,6 +439,24 @@ These log lines are printed at most once every `period` seconds.
 | `[WARNING]` | `yCWarningThrottle(const yarp::os::Logcomponent& comp, double period, const char* msg, ...)` | `yCWarningThrottle(const yarp::os::Logcomponent& comp, double period)` |
 | `[ERROR]`   | `yCErrorThrottle(const yarp::os::Logcomponent& comp, double period, const char* msg, ...)`   | `yCErrorThrottle(const yarp::os::Logcomponent& comp, double period)`   |
 | `[FATAL]`   | N/A                                                                                          | N/A                                                                    |
+
+| Level       | Id C-Style                                                                    | Id Stream                                               |
+|:-----------:|-------------------------------------------------------------------------------|---------------------------------------------------------|
+| `[TRACE]`   | `yITraceThrottle(std::string_view id, double period, const char* msg, ...)`   | `yITraceThrottle(std::string_view id, double period)`   |
+| `[DEBUG]`   | `yIDebugThrottle(std::string_view id, double period, const char* msg, ...)`   | `yIDebugThrottle(std::string_view id, double period)`   |
+| `[INFO]`    | `yIInfoThrottle(std::string_view id, double period, const char* msg, ...)`    | `yIInfoThrottle(std::string_view id, double period)`    |
+| `[WARNING]` | `yIWarningThrottle(std::string_view id, double period, const char* msg, ...)` | `yIWarningThrottle(std::string_view id, double period)` |
+| `[ERROR]`   | `yIErrorThrottle(std::string_view id, double period, const char* msg, ...)`   | `yIErrorThrottle(std::string_view id, double period)`   |
+| `[FATAL]`   | N/A                                                                           | N/A                                                     |
+
+| Level       | Component and Id C-Style                                                                                           | Component and Id Stream                                                                      |
+|:-----------:|--------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------|
+| `[TRACE]`   | `yCITraceThrottle(const yarp::os::Logcomponent& comp, std::string_view id, double period, const char* msg, ...)`   | `yCITraceThrottle(const yarp::os::Logcomponent& comp, std::string_view id, double period)`   |
+| `[DEBUG]`   | `yCIDebugThrottle(const yarp::os::Logcomponent& comp, std::string_view id, double period, const char* msg, ...)`   | `yCIDebugThrottle(const yarp::os::Logcomponent& comp, std::string_view id, double period)`   |
+| `[INFO]`    | `yCIInfoThrottle(const yarp::os::Logcomponent& comp, std::string_view id, double period, const char* msg, ...)`    | `yCIInfoThrottle(const yarp::os::Logcomponent& comp, std::string_view id, double period)`    |
+| `[WARNING]` | `yCIWarningThrottle(const yarp::os::Logcomponent& comp, std::string_view id, double period, const char* msg, ...)` | `yCIWarningThrottle(const yarp::os::Logcomponent& comp, std::string_view id, double period)` |
+| `[ERROR]`   | `yCIErrorThrottle(const yarp::os::Logcomponent& comp, std::string_view id, double period, const char* msg, ...)`   | `yCIErrorThrottle(const yarp::os::Logcomponent& comp, std::string_view id, double period)`   |
+| `[FATAL]`   | N/A                                                                                                                | N/A                                                                                          |
 
 | Level       | C-Style w/ External time                                                                 | Stream w/ External time                                            |
 |:-----------:|------------------------------------------------------------------------------------------|--------------------------------------------------------------------|
@@ -329,15 +467,32 @@ These log lines are printed at most once every `period` seconds.
 | `[ERROR]`   | `yErrorExternalTimeThrottle(double externaltime, double period, const char* msg, ...)`   | `yErrorExternalTimeThrottle(double externaltime, double period)`   |
 | `[FATAL]`   | N/A                                                                                      | N/A                                                                |
 
-
 | Level       | Component C-Style w/ External time                                                                                            | Component Stream w/ External time                                                                       |
 |:-----------:|-------------------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------|
-| `[TRACE]`   | `yCTraceExternalTimeThrottle(double externaltime, const yarp::os::Logcomponent& comp, double period, const char* msg, ...)`   | `yCTraceExternalTimeThrottle(double externaltime, const yarp::os::Logcomponent& comp, double period)`   |
-| `[DEBUG]`   | `yCDebugExternalTimeThrottle(double externaltime, const yarp::os::Logcomponent& comp, double period, const char* msg, ...)`   | `yCDebugExternalTimeThrottle(double externaltime, const yarp::os::Logcomponent& comp, double period)`   |
-| `[INFO]`    | `yCInfoExternalTimeThrottle(double externaltime, const yarp::os::Logcomponent& comp, double period, const char* msg, ...)`    | `yCInfoExternalTimeThrottle(double externaltime, const yarp::os::Logcomponent& comp, double period)`    |
-| `[WARNING]` | `yCWarningExternalTimeThrottle(double externaltime, const yarp::os::Logcomponent& comp, double period, const char* msg, ...)` | `yCWarningExternalTimeThrottle(double externaltime, const yarp::os::Logcomponent& comp, double period)` |
-| `[ERROR]`   | `yCErrorExternalTimeThrottle(double externaltime, const yarp::os::Logcomponent& comp, double period, const char* msg, ...)`   | `yCErrorExternalTimeThrottle(double externaltime, const yarp::os::Logcomponent& comp, double period)`   |
+| `[TRACE]`   | `yCTraceExternalTimeThrottle(const yarp::os::Logcomponent& comp, double externaltime, double period, const char* msg, ...)`   | `yCTraceExternalTimeThrottle(const yarp::os::Logcomponent& comp, double externaltime, double period)`   |
+| `[DEBUG]`   | `yCDebugExternalTimeThrottle(const yarp::os::Logcomponent& comp, double externaltime, double period, const char* msg, ...)`   | `yCDebugExternalTimeThrottle(const yarp::os::Logcomponent& comp, double externaltime, double period)`   |
+| `[INFO]`    | `yCInfoExternalTimeThrottle(const yarp::os::Logcomponent& comp, double externaltime, double period, const char* msg, ...)`    | `yCInfoExternalTimeThrottle(const yarp::os::Logcomponent& comp, double externaltime, double period)`    |
+| `[WARNING]` | `yCWarningExternalTimeThrottle(const yarp::os::Logcomponent& comp, double externaltime, double period, const char* msg, ...)` | `yCWarningExternalTimeThrottle(const yarp::os::Logcomponent& comp, double externaltime, double period)` |
+| `[ERROR]`   | `yCErrorExternalTimeThrottle(const yarp::os::Logcomponent& comp, double externaltime, double period, const char* msg, ...)`   | `yCErrorExternalTimeThrottle(const yarp::os::Logcomponent& comp, double externaltime, double period)`   |
 | `[FATAL]`   | N/A                                                                                                                           | N/A                                                                                                     |
+
+| Level       | Id C-Style w/ External time                                                                                    | Id Stream w/ External time                                                               |
+|:-----------:|----------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------|
+| `[TRACE]`   | `yITraceExternalTimeThrottle(std::string_view id, double externaltime, double period, const char* msg, ...)`   | `yITraceExternalTimeThrottle(std::string_view id, double externaltime, double period)`   |
+| `[DEBUG]`   | `yIDebugExternalTimeThrottle(std::string_view id, double externaltime, double period, const char* msg, ...)`   | `yIDebugExternalTimeThrottle(std::string_view id, double externaltime, double period)`   |
+| `[INFO]`    | `yIInfoExternalTimeThrottle(std::string_view id, double externaltime, double period, const char* msg, ...)`    | `yIInfoExternalTimeThrottle(std::string_view id, double externaltime, double period)`    |
+| `[WARNING]` | `yIWarningExternalTimeThrottle(std::string_view id, double externaltime, double period, const char* msg, ...)` | `yIWarningExternalTimeThrottle(std::string_view id, double externaltime, double period)` |
+| `[ERROR]`   | `yIErrorExternalTimeThrottle(std::string_view id, double externaltime, double period, const char* msg, ...)`   | `yIErrorExternalTimeThrottle(std::string_view id, double externaltime, double period)`   |
+| `[FATAL]`   | N/A                                                                                      | N/A                                                                |
+
+| Level       | Component and Id C-Style w/ External time                                                                                                           | Component and Id Stream w/ External time                                                                                      |
+|:-----------:|-----------------------------------------------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------|
+| `[TRACE]`   | `yCITraceExternalTimeThrottle(const yarp::os::Logcomponent& comp, std::string_view id, double externaltime, double period, const char* msg, ...)`   | `yCITraceExternalTimeThrottle(const yarp::os::Logcomponent& comp, std::string_view id, double externaltime, double period)`   |
+| `[DEBUG]`   | `yCIDebugExternalTimeThrottle(const yarp::os::Logcomponent& comp, std::string_view id, double externaltime, double period, const char* msg, ...)`   | `yCIDebugExternalTimeThrottle(const yarp::os::Logcomponent& comp, std::string_view id, double externaltime, double period)`   |
+| `[INFO]`    | `yCIInfoExternalTimeThrottle(const yarp::os::Logcomponent& comp, std::string_view id, double externaltime, double period, const char* msg, ...)`    | `yCIInfoExternalTimeThrottle(const yarp::os::Logcomponent& comp, std::string_view id, double externaltime, double period)`    |
+| `[WARNING]` | `yCIWarningExternalTimeThrottle(const yarp::os::Logcomponent& comp, std::string_view id, double externaltime, double period, const char* msg, ...)` | `yCIWarningExternalTimeThrottle(const yarp::os::Logcomponent& comp, std::string_view id, double externaltime, double period)` |
+| `[ERROR]`   | `yCIErrorExternalTimeThrottle(const yarp::os::Logcomponent& comp, std::string_view id, double externaltime, double period, const char* msg, ...)`   | `yCIErrorExternalTimeThrottle(const yarp::os::Logcomponent& comp, std::string_view id, double externaltime, double period)`   |
+| `[FATAL]`   | N/A                                                                                                                                                 | N/A                                                                                                                           |
 
 
 ### yDebugThreadThrottle() Family
@@ -363,7 +518,26 @@ These log lines are printed at most once by every thread every `period` seconds.
 | `[ERROR]`   | `yCErrorThreadThrottle(const yarp::os::Logcomponent& comp, double period, const char* msg, ...)`   | `yCErrorThreadThrottle(const yarp::os::Logcomponent& comp, double period)`   |
 | `[FATAL]`   | N/A                                                                                                | N/A                                                                          |
 
-| Level       | C-Style                                                                                        | Stream                                                                   |
+| Level       | Id C-Style                                                                          | Id Stream                                                     |
+|:-----------:|-------------------------------------------------------------------------------------|---------------------------------------------------------------|
+| `[TRACE]`   | `yITraceThreadThrottle(std::string_view id, double period, const char* msg, ...)`   | `yITraceThreadThrottle(std::string_view id, double period)`   |
+| `[DEBUG]`   | `yIDebugThreadThrottle(std::string_view id, double period, const char* msg, ...)`   | `yIDebugThreadThrottle(std::string_view id, double period)`   |
+| `[INFO]`    | `yIInfoThreadThrottle(std::string_view id, double period, const char* msg, ...)`    | `yIInfoThreadThrottle(std::string_view id, double period)`    |
+| `[WARNING]` | `yIWarningThreadThrottle(std::string_view id, double period, const char* msg, ...)` | `yIWarningThreadThrottle(std::string_view id, double period)` |
+| `[ERROR]`   | `yIErrorThreadThrottle(std::string_view id, double period, const char* msg, ...)`   | `yIErrorThreadThrottle(std::string_view id, double period)`   |
+| `[FATAL]`   | N/A                                                                                 | N/A                                                           |
+
+| Level       | Component and Id C-Style                                                                                                 | Component and Id Stream                                                                            |
+|:-----------:|--------------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------|
+| `[TRACE]`   | `yCITraceThreadThrottle(const yarp::os::Logcomponent& comp, std::string_view id, double period, const char* msg, ...)`   | `yCITraceThreadThrottle(const yarp::os::Logcomponent& comp, std::string_view id, double period)`   |
+| `[DEBUG]`   | `yCIDebugThreadThrottle(const yarp::os::Logcomponent& comp, std::string_view id, double period, const char* msg, ...)`   | `yCIDebugThreadThrottle(const yarp::os::Logcomponent& comp, std::string_view id, double period)`   |
+| `[INFO]`    | `yCIInfoThreadThrottle(const yarp::os::Logcomponent& comp, std::string_view id, double period, const char* msg, ...)`    | `yCIInfoThreadThrottle(const yarp::os::Logcomponent& comp, std::string_view id, double period)`    |
+| `[WARNING]` | `yCIWarningThreadThrottle(const yarp::os::Logcomponent& comp, std::string_view id, double period, const char* msg, ...)` | `yCIWarningThreadThrottle(const yarp::os::Logcomponent& comp, std::string_view id, double period)` |
+| `[ERROR]`   | `yCIErrorThreadThrottle(const yarp::os::Logcomponent& comp, std::string_view id, double period, const char* msg, ...)`   | `yCIErrorThreadThrottle(const yarp::os::Logcomponent& comp, std::string_view id, double period)`   |
+| `[FATAL]`   | N/A                                                                                                                      | N/A                                                                                                |
+
+
+| Level       | C-Style w/ External time                                                                       | Stream w/ External time                                                  |
 |:-----------:|------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------|
 | `[TRACE]`   | `yTraceExternalTimeThreadThrottle(double externaltime, double period, const char* msg, ...)`   | `yTraceExternalTimeThreadThrottle(double externaltime, double period)`   |
 | `[DEBUG]`   | `yDebugExternalTimeThreadThrottle(double externaltime, double period, const char* msg, ...)`   | `yDebugExternalTimeThreadThrottle(double externaltime, double period)`   |
@@ -375,12 +549,31 @@ These log lines are printed at most once by every thread every `period` seconds.
 
 | Level       | Component C-Style                                                                                                                   | Component Stream                                                                                              |
 |:-----------:|-------------------------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------|
-| `[TRACE]`   | `yCTraceExternalTimeThreadThrottle(double externaltime, const yarp::os::Logcomponent& comp, double period, const char* msg, ...)`   | `yCTraceExternalTimeThreadThrottle(double externaltime, const yarp::os::Logcomponent& comp, double period)`   |
-| `[DEBUG]`   | `yCDebugExternalTimeThreadThrottle(double externaltime, const yarp::os::Logcomponent& comp, double period, const char* msg, ...)`   | `yCDebugExternalTimeThreadThrottle(double externaltime, const yarp::os::Logcomponent& comp, double period)`   |
-| `[INFO]`    | `yCInfoExternalTimeThreadThrottle(double externaltime, const yarp::os::Logcomponent& comp, double period, const char* msg, ...)`    | `yCInfoExternalTimeThreadThrottle(double externaltime, const yarp::os::Logcomponent& comp, double period)`    |
-| `[WARNING]` | `yCWarningExternalTimeThreadThrottle(double externaltime, const yarp::os::Logcomponent& comp, double period, const char* msg, ...)` | `yCWarningExternalTimeThreadThrottle(double externaltime, const yarp::os::Logcomponent& comp, double period)` |
-| `[ERROR]`   | `yCErrorExternalTimeThreadThrottle(double externaltime, const yarp::os::Logcomponent& comp, double period, const char* msg, ...)`   | `yCErrorExternalTimeThreadThrottle(double externaltime, const yarp::os::Logcomponent& comp, double period)`   |
+| `[TRACE]`   | `yCTraceExternalTimeThreadThrottle(const yarp::os::Logcomponent& comp, double externaltime, double period, const char* msg, ...)`   | `yCTraceExternalTimeThreadThrottle(const yarp::os::Logcomponent& comp, double externaltime, double period)`   |
+| `[DEBUG]`   | `yCDebugExternalTimeThreadThrottle(const yarp::os::Logcomponent& comp, double externaltime, double period, const char* msg, ...)`   | `yCDebugExternalTimeThreadThrottle(const yarp::os::Logcomponent& comp, double externaltime, double period)`   |
+| `[INFO]`    | `yCInfoExternalTimeThreadThrottle(const yarp::os::Logcomponent& comp, double externaltime, double period, const char* msg, ...)`    | `yCInfoExternalTimeThreadThrottle(const yarp::os::Logcomponent& comp, double externaltime, double period)`    |
+| `[WARNING]` | `yCWarningExternalTimeThreadThrottle(const yarp::os::Logcomponent& comp, double externaltime, double period, const char* msg, ...)` | `yCWarningExternalTimeThreadThrottle(const yarp::os::Logcomponent& comp, double externaltime, double period)` |
+| `[ERROR]`   | `yCErrorExternalTimeThreadThrottle(const yarp::os::Logcomponent& comp, double externaltime, double period, const char* msg, ...)`   | `yCErrorExternalTimeThreadThrottle(const yarp::os::Logcomponent& comp, double externaltime, double period)`   |
 | `[FATAL]`   | N/A                                                                                                                                 | N/A                                                                                                           |
+
+| Level       | Id C-Style w/ External time                                                                                          | Id Stream w/ External time                                                                     |
+|:-----------:|----------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------|
+| `[TRACE]`   | `yITraceExternalTimeThreadThrottle(std::string_view id, double externaltime, double period, const char* msg, ...)`   | `yITraceExternalTimeThreadThrottle(std::string_view id, double externaltime, double period)`   |
+| `[DEBUG]`   | `yIDebugExternalTimeThreadThrottle(std::string_view id, double externaltime, double period, const char* msg, ...)`   | `yIDebugExternalTimeThreadThrottle(std::string_view id, double externaltime, double period)`   |
+| `[INFO]`    | `yIInfoExternalTimeThreadThrottle(std::string_view id, double externaltime, double period, const char* msg, ...)`    | `yIInfoExternalTimeThreadThrottle(std::string_view id, double externaltime, double period)`    |
+| `[WARNING]` | `yIWarningExternalTimeThreadThrottle(std::string_view id, double externaltime, double period, const char* msg, ...)` | `yIWarningExternalTimeThreadThrottle(std::string_view id, double externaltime, double period)` |
+| `[ERROR]`   | `yIErrorExternalTimeThreadThrottle(std::string_view id, double externaltime, double period, const char* msg, ...)`   | `yIErrorExternalTimeThreadThrottle(std::string_view id, double externaltime, double period)`   |
+| `[FATAL]`   | N/A                                                                                                                  | N/A                                                                                            |
+
+
+| Level       | Component and Id C-Style                                                                                                                                  | Component and Id Stream                                                                                                             |
+|:-----------:|-----------------------------------------------------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------|
+| `[TRACE]`   | `yCITraceExternalTimeThreadThrottle(const yarp::os::Logcomponent& comp, std::string_view id, double externaltime, double period, const char* msg, ...)`   | `yCITraceExternalTimeThreadThrottle(const yarp::os::Logcomponent& comp, std::string_view id, double externaltime, double period)`   |
+| `[DEBUG]`   | `yCIDebugExternalTimeThreadThrottle(const yarp::os::Logcomponent& comp, std::string_view id, double externaltime, double period, const char* msg, ...)`   | `yCIDebugExternalTimeThreadThrottle(const yarp::os::Logcomponent& comp, std::string_view id, double externaltime, double period)`   |
+| `[INFO]`    | `yCIInfoExternalTimeThreadThrottle(const yarp::os::Logcomponent& comp, std::string_view id, double externaltime, double period, const char* msg, ...)`    | `yCIInfoExternalTimeThreadThrottle(const yarp::os::Logcomponent& comp, std::string_view id, double externaltime, double period)`    |
+| `[WARNING]` | `yCIWarningExternalTimeThreadThrottle(const yarp::os::Logcomponent& comp, std::string_view id, double externaltime, double period, const char* msg, ...)` | `yCIWarningExternalTimeThreadThrottle(const yarp::os::Logcomponent& comp, std::string_view id, double externaltime, double period)` |
+| `[ERROR]`   | `yCIErrorExternalTimeThreadThrottle(const yarp::os::Logcomponent& comp, std::string_view id, double externaltime, double period, const char* msg, ...)`   | `yCIErrorExternalTimeThreadThrottle(const yarp::os::Logcomponent& comp, std::string_view id, double externaltime, double period)`   |
+| `[FATAL]`   | N/A                                                                                                                                                       | N/A                                                                                                                                 |
 
 
 ## Assert
@@ -390,13 +583,14 @@ and stop the execution of the program when some unexpected situation happens.
 
 The macros
 
-| Assert               | Component Assert                                          |
-|:--------------------:|:---------------------------------------------------------:|
-| `yAssert(condition)` | `yCAssert(const yarp::os::Logcomponent& comp, condition)` |
+| Assert               | Component Assert                                          | Id Assert                                 | Component and Id Assert                                                         |
+|:--------------------:|:---------------------------------------------------------:|:-----------------------------------------:|:-------------------------------------------------------------------------------:|
+| `yAssert(condition)` | `yCAssert(const yarp::os::Logcomponent& comp, condition)` |`yIAssert(std::string_view id, condition)` | `yCIAssert(const yarp::os::Logcomponent& comp, std::string_view id, condition)` |
 
-| Assert w/ External time          | Component Assert                                                      |
-|:--------------------------------:|:---------------------------------------------------------------------:|
-| `yAssertExternalTime(condition)` | `yCAssertExternalTime(const yarp::os::Logcomponent& comp, condition)` |
+| Assert w/ External time                               | Component Assert w/ External time                                                          | Id Assert w/ External time                                                  | Component and Id Assert w/ External time                                                                         |
+|:-----------------------------------------------------:|:------------------------------------------------------------------------------------------:|:---------------------------------------------------------------------------:|:----------------------------------------------------------------------------------------------------------------:|
+| `yAssertExternalTime(double externaltime, condition)` | `yCAssertExternalTime(const yarp::os::Logcomponent& comp, double externaltime, condition)` | `yIAssertExternalTime(std::string_view id, double externaltime, condition)` | `yCIAssertExternalTime(const yarp::os::Logcomponent& comp, std::string_view id, double externaltime, condition)` |
+
 
 will check the value of the condition, and throw a fatal error, if the assertion
 is not true.

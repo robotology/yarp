@@ -29,6 +29,7 @@ So this is just an example
 <table>
 <tr><td>PROPERTY</td><td>DESCRIPTION</td><td>DEFAULT</td></tr>
 <tr><td>device</td><td></td><td></td></tr>
+<tr><td>id</td><td>Id assigned to this device</td><td>usbCamera</td></tr>
 </table>
 
 \sa USBCameraDriverRgb

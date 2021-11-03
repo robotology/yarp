@@ -33,10 +33,12 @@ So this is just an example
 <table>
 <tr><td>PROPERTY</td><td>DESCRIPTION</td><td>DEFAULT</td></tr>
 <tr><td>device</td><td></td><td></td></tr>
+<tr><td>id</td><td>Id assigned to this device</td><td>controlboardwrapper2</td></tr>
 <tr><td>rootName</td><td>starting '/' if needed.</td><td>/</td></tr>
 <tr><td>name</td><td>prefix for port names</td><td>controlboard</td></tr>
 <tr><td>subdevice</td><td></td><td></td></tr>
 <tr><td>fakeMotionControl.device</td><td></td><td></td></tr>
+<tr><td>fakeMotionControl.id</td><td>Id assigned to this device</td><td>fakeMotionControl</td></tr>
 <tr><td>fakeMotionControl.wrapped</td><td></td><td></td></tr>
 <tr><td>fakeMotionControl.GENERAL</td><td></td><td></td></tr>
 <tr><td>fakeMotionControl.GENERAL.Joints</td><td>Number of degrees of freedom</td><td>1</td></tr>

@@ -43,9 +43,11 @@ So this is just an example
 <table>
 <tr><td>PROPERTY</td><td>DESCRIPTION</td><td>DEFAULT</td></tr>
 <tr><td>device</td><td></td><td></td></tr>
+<tr><td>id</td><td>Id assigned to this device</td><td>group</td></tr>
 <tr><td>part</td><td>a list of section names, with each section containing a device</td><td></td></tr>
 <tr><td>mymotor</td><td></td><td></td></tr>
 <tr><td>mymotor.device</td><td></td><td></td></tr>
+<tr><td>mymotor.id</td><td>Id assigned to this device</td><td>mymotor</td></tr>
 <tr><td>mymotor.wrapped</td><td></td><td></td></tr>
 <tr><td>mymotor.GENERAL</td><td></td><td></td></tr>
 <tr><td>mymotor.GENERAL.Joints</td><td>Number of degrees of freedom</td><td>1</td></tr>
@@ -57,6 +59,7 @@ So this is just an example
 <tr><td>mymotor.GENERAL.Encoder</td><td></td><td></td></tr>
 <tr><td>mycam</td><td></td><td></td></tr>
 <tr><td>mycam.device</td><td></td><td></td></tr>
+<tr><td>mycam.id</td><td>Id assigned to this device</td><td>fakeFrameGrabber</td></tr>
 <tr><td>mycam.wrapped</td><td></td><td></td></tr>
 <tr><td>mycam.fakeFrameGrabber_rpc_port</td><td>rpc port for the fakeFrameGrabber</td><td>/fakeFrameGrabber/rpc</td></tr>
 <tr><td>mycam.width</td><td>desired width of test image</td><td>320</td></tr>
@@ -89,6 +92,7 @@ So this is just an example
 <tr><td>mycam.mono</td><td>should emit a monochrome image?</td><td></td></tr>
 <tr><td>broadcast</td><td></td><td></td></tr>
 <tr><td>broadcast.device</td><td></td><td></td></tr>
+<tr><td>broadcast.id</td><td>Id assigned to this device</td><td>controlboardwrapper2</td></tr>
 <tr><td>broadcast.wrapped</td><td></td><td></td></tr>
 <tr><td>broadcast.rootName</td><td></td><td></td></tr>
 <tr><td>broadcast.name</td><td></td><td></td></tr>

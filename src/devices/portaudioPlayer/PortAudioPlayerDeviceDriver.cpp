@@ -260,7 +260,7 @@ bool PortAudioPlayerDeviceDriver::open(yarp::os::Searchable& config)
     bool b = configurePlayerAudioDevice(config.findGroup("AUDIO_BASE"), "portaudioPlayer");
     if (!b) { return false; }
 
-    m_device_id = config.check("id", Value(-1), "which portaudio index to use (-1=automatic)").asInt32();
+    m_device_id = config.check("dev_id", Value(-1), "which portaudio index to use (-1=automatic)").asInt32();
     m_driver_frame_size = config.check("driver_frame_size", Value(0), "").asInt32();
     if (m_driver_frame_size == 0) {
         m_driver_frame_size = DEFAULT_FRAMES_PER_BUFFER;

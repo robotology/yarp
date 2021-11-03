@@ -31,6 +31,7 @@ class YARP_os_API LogStream
                const char* fn,
                unsigned int l,
                const char* f,
+               const char* id,
                const double ct,
                const yarp::os::Log::Predicate pred,
                const LogComponent& c) :
@@ -38,6 +39,7 @@ class YARP_os_API LogStream
                 file(fn),
                 line(l),
                 func(f),
+                id(id),
                 systemtime(yarp::os::SystemClock::nowSystem()),
                 networktime(!yarp::os::Time::isClockInitialized() ? 0.0 : (yarp::os::Time::isSystemClock() ? systemtime : yarp::os::Time::now())),
                 externaltime(ct),
@@ -51,6 +53,7 @@ class YARP_os_API LogStream
         const char* file;
         unsigned int line;
         const char* func;
+        const char* id;
         double systemtime;
         double networktime;
         double externaltime;
@@ -65,10 +68,11 @@ public:
                      const char* file,
                      unsigned int line,
                      const char* func,
+                     const char* id,
                      const double externaltime,
                      const yarp::os::Log::Predicate pred = nullptr,
                      const LogComponent& comp = Log::defaultLogComponent()) :
-            stream(new Stream(type, file, line, func, externaltime, pred, comp))
+            stream(new Stream(type, file, line, func, id, externaltime, pred, comp))
     {
     }
 
@@ -108,7 +112,8 @@ public:
                             stream->systemtime,
                             stream->networktime,
                             stream->externaltime,
-                            stream->comp);
+                            stream->comp,
+                            stream->id);
             }
 
             if (stream->type == yarp::os::Log::FatalType) {

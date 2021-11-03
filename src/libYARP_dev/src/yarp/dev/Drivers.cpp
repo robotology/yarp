@@ -219,6 +219,22 @@ public:
         return dev.getContent().close();
     }
 
+    void setId(const std::string& id) override
+    {
+        if (!isValid()) {
+            return;
+        }
+        dev.getContent().setId(id);
+    }
+
+    std::string id() const override
+    {
+        if (!isValid()) {
+            return "StubDriver";
+        }
+        return dev.getContent().id();
+    }
+
     DeviceDriver *getImplementation() override {
         return &dev.getContent();
     }
@@ -310,9 +326,9 @@ DriverCreator* Drivers::Private::load(const char *name) {
 
 // helper method for "yarpdev" body
 static void toDox(PolyDriver& dd) {
-    yCDebug(DRIVERS, "===============================================================");
-    yCDebug(DRIVERS, "== Options checked by device:");
-    yCDebug(DRIVERS, "==");
+    yCIDebug(DRIVERS, dd.id(), "===============================================================");
+    yCIDebug(DRIVERS, dd.id(), "== Options checked by device:");
+    yCIDebug(DRIVERS, dd.id(), "==");
     Bottle order = dd.getOptions();
     for (size_t i=0; i<order.size(); i++) {
         std::string name = order.get(i).toString();
@@ -345,13 +361,13 @@ static void toDox(PolyDriver& dd) {
                 out += "]";
             }
         }
-        yCDebug(DRIVERS, "%s", out.c_str());
+        yCIDebug(DRIVERS, dd.id(), "%s", out.c_str());
         if (!desc.empty()) {
-            yCDebug(DRIVERS, "    %s", desc.c_str());
+            yCIDebug(DRIVERS, dd.id(), "    %s", desc.c_str());
         }
     }
-    yCDebug(DRIVERS, "==");
-    yCDebug(DRIVERS, "===============================================================");
+    yCIDebug(DRIVERS, dd.id(), "==");
+    yCIDebug(DRIVERS, dd.id(), "===============================================================");
 }
 
 
@@ -481,17 +497,18 @@ int Drivers::yarpdev(int argc, char *argv[]) {
 
     PolyDriver dd(options);
     toDox(dd);
+    std::string id = dd.id();
     if (!dd.isValid()) {
-        yCError(DRIVERS, "yarpdev: ***ERROR*** device not available.");
+        yCIError(DRIVERS, id, "yarpdev: ***ERROR*** device not available.");
         if (argc==1)
         {
-            yCInfo(DRIVERS, "Here are the known devices:");
-            yCInfo(DRIVERS, "%s", Drivers::factory().toString().c_str());
+            yCIInfo(DRIVERS, id, "Here are the known devices:");
+            yCIInfo(DRIVERS, id, "%s", Drivers::factory().toString().c_str());
         }
         else
         {
-            yCInfo(DRIVERS, "Suggestions:");
-            yCInfo(DRIVERS, "+ Do \"yarpdev --list\" to see list of supported devices.");
+            yCIInfo(DRIVERS, id, "Suggestions:");
+            yCIInfo(DRIVERS, id, "+ Do \"yarpdev --list\" to see list of supported devices.");
         }
         return 1;
     }
@@ -511,7 +528,7 @@ int Drivers::yarpdev(int argc, char *argv[]) {
                     for (size_t i = 0; i < options.size(); ++i) {
                         auto opt = options.get(i).toString();
                         if (opt.length() > 5 && opt.compare(opt.length() - 5, 5, ".name") == 0) { // C++20 opt.ends_with(".name")
-                            yCWarning(DRIVERS, "%s", opt.c_str());
+                            yCIWarning(DRIVERS, id, "%s", opt.c_str());
                             name = dd.getDefaultValue(opt.c_str()).toString();
                             break;
                         }
@@ -531,13 +548,13 @@ int Drivers::yarpdev(int argc, char *argv[]) {
             terminee = new Terminee(s.c_str());
             terminatorKey = s;
             if (terminee == nullptr) {
-                yCError(DRIVERS, "Can't allocate terminator port");
+                yCIError(DRIVERS, id, "Can't allocate terminator port");
                 terminatorKey = "";
                 dd.close();
                 return 1;
             }
             if (!terminee->isOk()) {
-                yCError(DRIVERS, "Failed to create terminator port");
+                yCIError(DRIVERS, id, "Failed to create terminator port");
                 terminatorKey = "";
                 delete terminee;
                 terminee = nullptr;
@@ -556,7 +573,7 @@ int Drivers::yarpdev(int argc, char *argv[]) {
         if (backgrounded) {
             // we don't need to poll this, so forget about the
             // service interface
-            yCDebug(DRIVERS, "yarpdev: service backgrounded");
+            yCIDebug(DRIVERS, id, "yarpdev: service backgrounded");
             service = nullptr;
         }
     }
@@ -564,20 +581,20 @@ int Drivers::yarpdev(int argc, char *argv[]) {
         if (service!=nullptr) {
             double now = Time::now();
             if (now-startTime>dnow) {
-                yCInfo(DRIVERS, "device active...");
+                yCIInfo(DRIVERS, id, "device active...");
                 startTime += dnow;
             }
             // we requested single threading, so need to
             // give the device its chance
             if(!service->updateService()) {
                 if(!service->stopService()) {
-                    yCWarning(DRIVERS, "Error while stopping device");
+                    yCIWarning(DRIVERS, id, "Error while stopping device");
                 }
                 terminated = true;
             }
         } else {
             // we don't need to do anything
-            yCInfo(DRIVERS, "device active in background...");
+            yCIInfo(DRIVERS, id, "device active in background...");
             SystemClock::delaySystem(dnow);
         }
     }
@@ -588,7 +605,7 @@ int Drivers::yarpdev(int argc, char *argv[]) {
     }
     dd.close();
 
-    yCInfo(DRIVERS, "yarpdev is finished.");
+    yCIInfo(DRIVERS, id, "yarpdev is finished.");
 
     return 0;
 }

@@ -29,10 +29,13 @@ class DeviceResponder;
 class YARP_dev_API yarp::dev::DeviceDriver : public yarp::os::IConfig
 {
 public:
-    /**
-     * Destructor.
-     */
-    ~DeviceDriver() override = default;
+    DeviceDriver();
+    DeviceDriver(const DeviceDriver& other) = delete;
+    DeviceDriver(DeviceDriver&& other) noexcept = delete;
+    DeviceDriver& operator=(const DeviceDriver& other) = delete;
+    DeviceDriver& operator=(DeviceDriver&& other) noexcept = delete;
+
+    ~DeviceDriver() override;
 
     /**
      * Open the DeviceDriver.
@@ -55,6 +58,22 @@ public:
      */
     bool close() override { return true; }
 
+
+    /**
+     * Return the id assigned to the PolyDriver.
+     * If no name was assigned, returns the name of the device (if set) or an
+     * empty string.
+     * The value can be set by passing the `id` option when opening the device
+     * or with the `setId()` method.
+     *
+     * @return the id for this device.
+     */
+    virtual std::string id() const;
+
+    /**
+     * Set the id for this device
+     */
+    virtual void setId(const std::string& id);
 
     /**
      * Get an interface to the device driver.
@@ -93,6 +112,12 @@ public:
     virtual DeviceDriver *getImplementation() {
         return this;
     }
+
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+private:
+    class Private;
+    Private* mPriv = nullptr;
+#endif
 };
 
 /**

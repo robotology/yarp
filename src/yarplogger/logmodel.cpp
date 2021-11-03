@@ -42,6 +42,7 @@ LogModel::LogModel(QObject *parent) :
     m_names[ThreadIdRole] = "thread_id";
     m_names[ThreadIdStringRole] = "thread_id_string";
     m_names[ComponentRole] = "component";
+    m_names[IdRole] = "id";
     m_names[TextRole] = "text";
     m_names[BacktraceRole] = "backtrace";
 }
@@ -109,6 +110,8 @@ QVariant LogModel::headerData(int section, Qt::Orientation orientation, int role
         return tr("thread id");
     case COMPONENT_COLUMN:
         return tr("component");
+    case ID_COLUMN:
+        return tr("id");
     case TEXT_COLUMN:
         return tr("message");
     default:
@@ -154,6 +157,8 @@ QVariant LogModel::data(const QModelIndex &index, int role) const
             return data(index, ThreadIdStringRole);
         case COMPONENT_COLUMN:
             return data(index, ComponentRole);
+        case ID_COLUMN:
+            return data(index, IdRole);
         case TEXT_COLUMN:
             return data(index, TextRole);
         default:
@@ -217,6 +222,7 @@ QVariant LogModel::data(const QModelIndex &index, int role) const
         case CMD_COLUMN:
         case ARGS_COLUMN:
         case COMPONENT_COLUMN:
+        case ID_COLUMN:
         case TEXT_COLUMN:
         default:
             return QVariant(Qt::AlignLeft | (m_wordwrap ? Qt::AlignTop :  Qt::AlignVCenter));
@@ -336,6 +342,10 @@ QVariant LogModel::data(const QModelIndex &index, int role) const
 
     if (role == ComponentRole) {
         return QString(m_messages.at(index.row()).component.c_str());
+    }
+
+    if (role == IdRole) {
+        return QString(m_messages.at(index.row()).id.c_str());
     }
 
     if (role == TextRole) {

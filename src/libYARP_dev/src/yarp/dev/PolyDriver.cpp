@@ -257,6 +257,7 @@ Value PolyDriver::getValue(const char *option)
 
 bool PolyDriver::coreOpen(yarp::os::Searchable& prop)
 {
+    setId(prop.check("id", prop.check("device", Value("")), "Id assigned to this device").toString());
     yarp::os::Searchable *config = &prop;
     Property p;
     std::string str = prop.toString();
@@ -295,7 +296,7 @@ bool PolyDriver::coreOpen(yarp::os::Searchable& prop)
         }
     } else {
         // FIXME do not use yarpdev here
-        yCError(POLYDRIVER, "Could not find device <%s>", str.c_str());
+        yCIError(POLYDRIVER, id(), "Could not find device <%s>", str.c_str());
         return false;
     }
 
@@ -306,10 +307,11 @@ bool PolyDriver::coreOpen(yarp::os::Searchable& prop)
             return true;
         }
 
-        yCTrace(POLYDRIVER, "Parameters are %s", config->toString().c_str());
+        yCIDebug(POLYDRIVER, id(), "Parameters are %s", config->toString().c_str());
+        driver->setId(id());
         bool ok = driver->open(*config);
         if (!ok) {
-            yCError(POLYDRIVER, "Driver <%s> was found but could not open", config->find("device").toString().c_str());
+            yCIError(POLYDRIVER, id(), "Driver <%s> was found but could not open", config->find("device").toString().c_str());
             delete driver;
             driver = nullptr;
         } else {
@@ -317,9 +319,9 @@ bool PolyDriver::coreOpen(yarp::os::Searchable& prop)
             driver->view(ddd);
             if(ddd) {
                 if(config->check("allow-deprecated-devices")) {
-                    yCWarning(POLYDRIVER, R"(Device "%s" is deprecated. Opening since the "allow-deprecated-devices" option was passed in the configuration.)", str.c_str());
+                    yCIWarning(POLYDRIVER, id(), R"(Device "%s" is deprecated. Opening since the "allow-deprecated-devices" option was passed in the configuration.)", str.c_str());
                 } else {
-                    yCError(POLYDRIVER, R"(Device "%s" is deprecated. Pass the "allow-deprecated-devices" option in the configuration if you want to open it anyway.)", str.c_str());
+                    yCIError(POLYDRIVER, id(), R"(Device "%s" is deprecated. Pass the "allow-deprecated-devices" option in the configuration if you want to open it anyway.)", str.c_str());
                     driver->close();
                     delete driver;
                     return false;
@@ -328,7 +330,7 @@ bool PolyDriver::coreOpen(yarp::os::Searchable& prop)
             std::string name = creator->getName();
             std::string wrapper = creator->getWrapper();
             std::string code = creator->getCode();
-            yCInfo(POLYDRIVER, "Created %s <%s>. See C++ class %s for documentation.",
+            yCIInfo(POLYDRIVER, id(), "Created %s <%s>. See C++ class %s for documentation.",
                   ((name==wrapper)?"wrapper":"device"),
                   name.c_str(),
                   code.c_str());

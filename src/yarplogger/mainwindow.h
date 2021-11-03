@@ -99,6 +99,8 @@ private slots:
 
     void on_actionShow_Component_toggled(bool checked);
 
+    void on_actionShow_Id_toggled(bool checked);
+
     void on_actionShow_Colors_toggled(bool checked);
 
     void on_actionShow_Grid_toggled(bool checked);

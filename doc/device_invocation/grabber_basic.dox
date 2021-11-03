@@ -34,6 +34,7 @@ So this is just an example
 <table>
 <tr><td>PROPERTY</td><td>DESCRIPTION</td><td>DEFAULT</td></tr>
 <tr><td>device</td><td></td><td></td></tr>
+<tr><td>id</td><td>Id assigned to this device</td><td>grabberDual</td></tr>
 <tr><td>period</td><td>refresh period(in ms) of the broadcasted values through yarp ports</td><td></td></tr>
 <tr><td>subdevice</td><td>name of the subdevice to use as a data source</td><td></td></tr>
 <tr><td>left_config</td><td></td><td></td></tr>

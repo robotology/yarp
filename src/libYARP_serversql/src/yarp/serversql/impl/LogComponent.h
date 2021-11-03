@@ -19,7 +19,8 @@ void print_callback(yarp::os::Log::LogType type,
                     double systemtime,
                     double networktime,
                     double externaltime,
-                    const char* comp_name);
+                    const char* comp_name,
+                    const char* id);
 
 void setMinumumLogType(yarp::os::Log::LogType minumumLogType);
 

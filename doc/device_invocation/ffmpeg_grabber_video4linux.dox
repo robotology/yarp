@@ -33,6 +33,7 @@ So this is just an example
 <table>
 <tr><td>PROPERTY</td><td>DESCRIPTION</td><td>DEFAULT</td></tr>
 <tr><td>device</td><td></td><td></td></tr>
+<tr><td>id</td><td>Id assigned to this device</td><td>ffmpeg_grabber</td></tr>
 <tr><td>source</td><td>media file to read from</td><td>default.avi</td></tr>
 <tr><td>loop</td><td>media should loop (default)</td><td></td></tr>
 <tr><td>noloop</td><td>media should not loop</td><td></td></tr>

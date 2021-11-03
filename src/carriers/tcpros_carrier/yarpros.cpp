@@ -27,7 +27,8 @@ void print_callback(yarp::os::Log::LogType type,
                     double systemtime,
                     double networktime,
                     double externaltime,
-                    const char* comp_name)
+                    const char* comp_name,
+                    const char* id)
 {
     YARP_UNUSED(type);
     YARP_UNUSED(file);
@@ -37,6 +38,7 @@ void print_callback(yarp::os::Log::LogType type,
     YARP_UNUSED(networktime);
     YARP_UNUSED(externaltime);
     YARP_UNUSED(comp_name);
+    YARP_UNUSED(id);
     static const char* err_str = "[ERROR] ";
     static const char* warn_str = "[WARNING] ";
     static const char* no_str = "";

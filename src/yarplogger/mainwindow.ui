@@ -572,6 +572,7 @@
     <addaction name="actionShow_Args"/>
     <addaction name="actionShow_Thread_Id"/>
     <addaction name="actionShow_Component"/>
+    <addaction name="actionShow_Id"/>
     <addaction name="separator"/>
     <addaction name="actionShow_Colors"/>
     <addaction name="actionShow_Grid"/>
@@ -808,6 +809,17 @@
    </property>
    <property name="text">
     <string>Show Component</string>
+   </property>
+  </action>
+  <action name="actionShow_Id">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Show Id</string>
    </property>
   </action>
   <action name="actionShow_System_Time">

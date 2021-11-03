@@ -18,6 +18,33 @@ namespace {
     YARP_LOG_COMPONENT(DEVICERESPONDER, "yarp.dev.DeviceResponder")
 }
 
+
+class DeviceDriver::Private
+{
+public:
+    std::string device_id;
+};
+
+DeviceDriver::DeviceDriver() :
+        mPriv(new Private)
+{
+}
+
+DeviceDriver::~DeviceDriver()
+{
+    delete mPriv;
+}
+
+void DeviceDriver::setId(const std::string& id)
+{
+    mPriv->device_id = id;
+}
+
+std::string DeviceDriver::id() const
+{
+    return mPriv->device_id;
+}
+
 DeviceResponder::DeviceResponder() {
     makeUsage();
 }
