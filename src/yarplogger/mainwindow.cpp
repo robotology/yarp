@@ -342,6 +342,14 @@ MainWindow::MainWindow(QWidget *parent) :
         on_actionStart_Logger_triggered();
     }
 
+    bool unlimited = rf.check("unlimited_size");
+    if (unlimited)
+    {
+        system_message->addMessage("unlimited_size option found");
+        theLogger->set_log_lines_max_size(false, 1000000);
+        theLogger->set_log_list_max_size(false, 1000000);
+    }
+
     //set headers
     resetMainWindowHeaders();
 

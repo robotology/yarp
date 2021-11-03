@@ -144,7 +144,7 @@ void LoggerEngine::discover  (std::list<std::string>& ports)
     std::list<std::string>::iterator ports_it;
     for (ports_it=ports.begin(); ports_it!=ports.end(); ports_it++)
     {
-        LogEntry entry;
+        LogEntry entry (log_updater->logs_max_lines_enabled, log_updater->logs_max_lines);
         entry.logInfo.port_complete = (*ports_it);
         yarp::os::Contact contact = yarp::os::Network::queryName(entry.logInfo.port_complete);
         if (contact.isValid())
@@ -206,37 +206,37 @@ std::string LoggerEngine::logger_thread::getPortName()
     return logger_portName;
 }
 
-LoggerEngine::logger_thread::logger_thread (std::string _portname, double _period,  int _log_list_max_size) : PeriodicThread(_period, ShouldUseSystemClock::Yes)
+LoggerEngine::logger_thread::logger_thread (std::string _portname, double _period,  int _log_list_max_size, int _logs_max_lines) :
+              PeriodicThread(_period, ShouldUseSystemClock::Yes)
 {
         logger_portName              = _portname;
         log_list_max_size            = _log_list_max_size;
         log_list_max_size_enabled    = true;
-        listen_to_LOGLEVEL_UNDEFINED = true;
-        listen_to_LOGLEVEL_TRACE     = true;
-        listen_to_LOGLEVEL_DEBUG     = true;
-        listen_to_LOGLEVEL_INFO      = true;
-        listen_to_LOGLEVEL_WARNING   = true;
-        listen_to_LOGLEVEL_ERROR     = true;
-        listen_to_LOGLEVEL_FATAL     = true;
-        listen_to_YARP_MESSAGES      = true;
-        listen_to_YARPRUN_MESSAGES   = true;
+        logs_max_lines               = _logs_max_lines;
+        logs_max_lines_enabled       = true;
         unknown_format_received      = 0;
 }
 
 void LoggerEngine::logger_thread::run()
 {
-    //if (is_discovering()==true)
-    {
-        //yarp::os::Network::
-    }
-
     //yarp::os::SystemClock::delaySystem(0.001);
+
     //if (logger_port.getInputCount()>0)
     {
         int bufferport_size = logger_port.getPendingReads();
+        int processed_events = 0;
 
         while (bufferport_size>0)
         {
+            //the following check allows to exit from the run every xxx processed events,
+            //in order to free some CPU and avoid the system to be blocked forever inside the while.
+            if (processed_events > 1000)
+            {
+                fprintf(stderr, "DEBUG: processing log events... Remaining events: %d\n", bufferport_size);
+                return;
+            }
+            processed_events++;
+
             std::time_t machine_current_time = std::time(nullptr);
             char machine_current_time_c [50];
             //strftime(machine_current_time_s, 20, "%Y-%m-%d %H:%M:%S", localtime(&machine_current_time));
@@ -442,8 +442,7 @@ void LoggerEngine::logger_thread::run()
             if (body.level == LOGLEVEL_ERROR     && listen_to_LOGLEVEL_ERROR     == false) {continue;}
             if (body.level == LOGLEVEL_FATAL     && listen_to_LOGLEVEL_FATAL     == false) {continue;}
 
-            this->mutex.lock();
-            LogEntry entry;
+            LogEntry entry (this->logs_max_lines_enabled, this->logs_max_lines);
             entry.logInfo.port_complete = header;
             entry.logInfo.port_complete.erase(0,1);
             entry.logInfo.port_complete.erase(entry.logInfo.port_complete.size()-1);
@@ -461,6 +460,9 @@ void LoggerEngine::logger_thread::run()
                 continue;
             }
 
+            //-------- enter the critical section.
+            // the following variables must be protected: log_list
+            this->mutex.lock();
             std::list<LogEntry>::iterator it;
             for (it = log_list.begin(); it != log_list.end(); it++)
             {
@@ -502,8 +504,8 @@ void LoggerEngine::logger_thread::run()
                 //    printf("WARNING: exceeded log_list_max_size=%d\n",log_list_max_size);
                 //}
             }
-
             this->mutex.unlock();
+            //-------- end of the critical section.
         }
     }
 
@@ -549,6 +551,7 @@ void LoggerEngine::logger_thread::threadRelease()
 bool LoggerEngine::stop_logging()
 {
     if (log_updater == nullptr) {
+        fprintf(stdout, "Logger stop internal error");
         return false;
     }
 
@@ -556,21 +559,26 @@ bool LoggerEngine::stop_logging()
     if (log_updater->isRunning() == true) {
         log_updater->stop();
     }
+
+    fprintf(stdout, "Logger successfully stopped");
     return true;
 }
 
 void LoggerEngine::start_discover()
 {
     if (log_updater == nullptr) {
+        fprintf(stdout, "Logger start_discoverry internal error");
         return;
     }
 
+    fprintf(stdout, "Logger discovery started");
     log_updater->start();
     discovering=true;
 }
 
 void LoggerEngine::stop_discover()
 {
+    fprintf(stdout, "Logger discovery stopped");
     discovering=false;
 }
 
@@ -862,223 +870,15 @@ bool LoggerEngine::get_listen_option               (LogSystemEnum   logSystem)
     return false;
 }
 
-bool LoggerEngine::export_log_to_text_file   (std::string  filename, std::string portname)
-{
-    if (log_updater == nullptr) {
-        return false;
-    }
-    if (filename.size() == 0) {
-        return false;
-    }
-
-    log_updater->mutex.lock();
-    std::list<LogEntry>::iterator it;
-    for (it = log_updater->log_list.begin(); it != log_updater->log_list.end(); it++)
-    {
-        if (it->logInfo.port_complete == portname)
-        {
-            std::ofstream file1;
-            file1.open(filename.c_str());
-            if (file1.is_open() == false) {log_updater->mutex.unlock(); return false;}
-            std::vector<MessageEntry>::iterator it1;
-            for (it1 = it->entry_list.begin(); it1 != it->entry_list.end(); it1++)
-            {
-                file1 << it1->yarprun_timestamp << " " << it1->local_timestamp << " " << it1->level.toString() << " " << it1->text << '\n';
-            }
-            file1.close();
-        }
-    }
-    log_updater->mutex.unlock();
-    return true;
-}
-
-bool LoggerEngine::save_all_logs_to_file   (std::string  filename)
-{
-    std::string start_string ="<#STRING_START#>";
-    std::string end_string ="<#STRING_END#>";
-
-    if (log_updater == nullptr) {
-        return false;
-    }
-    if (filename.size() == 0) {
-        return false;
-    }
-
-    const int      LOGFILE_VERSION = 1;
-
-    std::ofstream file1;
-    file1.open(filename.c_str());
-    if (file1.is_open() == false) {
-        return false;
-    }
-
-    bool wasRunning = log_updater->isRunning();
-    if (wasRunning) {
-        log_updater->stop();
-    }
-    std::list<LogEntry>::iterator it;
-    file1 << LOGFILE_VERSION << '\n';
-    file1 << log_updater->log_list.size() << '\n';
-    for (it = log_updater->log_list.begin(); it != log_updater->log_list.end(); it++)
-    {
-        file1 << it->logInfo.ip_address << '\n';
-        file1 << it->logInfo.port_complete << '\n';
-        file1 << it->logInfo.port_prefix << '\n';
-        file1 << it->logInfo.port_system << '\n';
-        file1 << it->logInfo.process_name << '\n';
-        file1 << it->logInfo.process_pid << '\n';
-        file1 << it->logInfo.get_number_of_traces() << '\n';
-        file1 << it->logInfo.get_number_of_debugs() << '\n';
-        file1 << it->logInfo.get_number_of_infos() << '\n';
-        file1 << it->logInfo.get_number_of_warnings() << '\n';
-        file1 << it->logInfo.get_number_of_errors() << '\n';
-        file1 << it->logInfo.get_number_of_fatals() << '\n';
-        file1 << it->logInfo.logsize << '\n';
-        file1 << it->entry_list.size() << '\n';
-        std::vector<MessageEntry>::iterator it1;
-        for (it1 = it->entry_list.begin(); it1 != it->entry_list.end(); it1++)
-        {
-            file1 << it1->yarprun_timestamp << '\n';
-            file1 << it1->local_timestamp << '\n';
-            file1 << it1->level.toInt() << '\n';
-            file1 << start_string;
-            for (char s : it1->text) {
-                file1.put(s);
-            }
-            file1 << end_string <<'\n';
-        }
-    }
-    file1.close();
-    if (wasRunning) {
-        log_updater->start();
-    }
-    return true;
-}
-
-std::streamoff get_tag(std::ifstream& file, const char* tag)
-{
-    std::streamoff pos=file.tellg();
-    int tag_size=strlen(tag);
-    char* buff = new char[tag_size+2];
-    for (int i = 0; i < tag_size + 2; i++) {
-        buff[i] = 0;
-    }
-    std::streamoff off=0;
-    for (; ;off++)
-    {
-        file.seekg(pos+off);
-        file.read(buff,tag_size);
-        if (file.good()==false)
-        {
-            delete [] buff;
-            return -1;
-        }
-        if (strcmp(buff, tag) == 0) {
-            break;
-        }
-    }
-    delete [] buff;
-    return pos+off;
-}
-
-bool LoggerEngine::load_all_logs_from_file   (std::string  filename)
-{
-    std::string start_string ="<#STRING_START#>";
-    int start_string_size=strlen(start_string.c_str());
-    std::string end_string ="<#STRING_END#>";
-    int end_string_size=strlen(end_string.c_str());
-
-    if (log_updater == nullptr) {
-        return false;
-    }
-    if (filename.size() == 0) {
-        return false;
-    }
-
-    const int      LOGFILE_VERSION = 1;
-
-    std::ifstream file1;
-    file1.open(filename.c_str(),std::ifstream::binary);
-    if (file1.is_open() == false) {
-        return false;
-    }
-
-    int log_file_version;
-    bool wasRunning = log_updater->isRunning();
-    if (wasRunning) {
-        log_updater->stop();
-    }
-    file1 >> log_file_version;
-    if (log_file_version == LOGFILE_VERSION)
-    {
-        int size_log_list;
-        file1 >> size_log_list;
-        log_updater->log_list.clear();
-        for (int i=0; i< size_log_list; i++)
-        {
-            LogEntry l_tmp;
-            int      dummy;
-            file1 >> l_tmp.logInfo.ip_address;
-            file1 >> l_tmp.logInfo.port_complete;
-            file1 >> l_tmp.logInfo.port_prefix;
-            file1 >> l_tmp.logInfo.port_system;
-            file1 >> l_tmp.logInfo.process_name;
-            file1 >> l_tmp.logInfo.process_pid;
-            file1 >> dummy; //l_tmp.logInfo.number_of_traces;
-            file1 >> dummy; //l_tmp.logInfo.number_of_debugs;
-            file1 >> dummy; //l_tmp.logInfo.number_of_infos;
-            file1 >> dummy; //l_tmp.logInfo.number_of_warning;
-            file1 >> dummy; //l_tmp.logInfo.number_of_errors;
-            file1 >> dummy; //l_tmp.logInfo.number_of_fatals;
-            file1 >> l_tmp.logInfo.logsize;
-            int size_entry_list;
-            file1 >> size_entry_list;
-            for (int j=0; j< size_entry_list; j++)
-            {
-                MessageEntry m_tmp;
-                file1 >> m_tmp.yarprun_timestamp;
-                file1 >> m_tmp.local_timestamp;
-                int tmp_level;
-                file1 >> tmp_level;
-                m_tmp.level.setLevel(tmp_level);
-                std::streamoff start_p = get_tag(file1, start_string.c_str());
-                std::streamoff end_p = get_tag(file1, end_string.c_str());
-                //validity check
-                if (start_p < 0 || end_p < 0 || end_p - start_p + start_string_size <= 0) {
-                    return false;
-                }
-                char *buff = new char[(unsigned int)(end_p-start_p+start_string_size)];
-                //memset(buff,0,end_p-start_p+start_string_size);
-                file1.seekg(start_p+start_string_size);
-                if (end_p-start_p-start_string_size!=1)
-                {
-                    file1.get(buff,end_p-start_p-start_string_size);
-                }
-                else
-                {
-                    //skip empty strings
-                }
-                file1.seekg(end_p+end_string_size);
-                m_tmp.text=buff;
-                delete [] buff;
-                l_tmp.entry_list.push_back(m_tmp);
-            }
-            log_updater->log_list.push_back(l_tmp);
-        }
-    }
-    file1.close();
-    if (wasRunning) {
-        log_updater->start();
-    }
-    return true;
-}
-
 void LoggerEngine::set_log_lines_max_size (bool  enabled,  int new_size)
 {
     if (log_updater == nullptr) {
         return;
     }
+
     log_updater->mutex.lock();
+    log_updater->logs_max_lines_enabled = enabled;
+    log_updater->logs_max_lines = new_size;
 
     std::list<LogEntry>::iterator it;
     for (it = log_updater->log_list.begin(); it != log_updater->log_list.end(); it++)
@@ -1107,13 +907,10 @@ void LoggerEngine::get_log_lines_max_size          (bool& enabled, int& current_
     if (log_updater == nullptr) {
         return;
     }
-    if (log_updater->log_list.empty() == true) {
-        return;
-    }
+
     log_updater->mutex.lock();
-    auto it = log_updater->log_list.begin();
-    current_size = it->getLogEntryMaxSize();
-    enabled = it->getLogEntryMaxSizeEnabled();
+    enabled = log_updater->logs_max_lines_enabled;
+    current_size = log_updater->logs_max_lines;
     log_updater->mutex.unlock();
 }
 
