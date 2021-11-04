@@ -837,7 +837,7 @@ bool TransformClient::setTransformStatic(const std::string &target_frame_id, con
     b.addVocab32(VOCAB_TRANSFORM_SET);
     b.addString(source_frame_id);
     b.addString(target_frame_id);
-    b.addFloat64(-1);
+    b.addFloat64(-1);  //transform lifetime
     b.addFloat64(tf.translation.tX);
     b.addFloat64(tf.translation.tY);
     b.addFloat64(tf.translation.tZ);

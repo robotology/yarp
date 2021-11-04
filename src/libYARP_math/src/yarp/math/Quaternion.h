@@ -51,6 +51,11 @@ public:
     void normalize();
 
     /**
+    * Check if the quaternion is valid.
+    */
+    bool isValid() const;
+
+    /**
     * Computes the inverse of the quaternion.
     */
     Quaternion inverse() const;

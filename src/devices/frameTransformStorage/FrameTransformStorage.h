@@ -61,6 +61,8 @@ public:
     bool size(size_t& size) const override;
     bool clearAll() override;
     bool getInternalContainer(FrameTransformContainer*&  container) override;
+    bool startStorageThread() override;
+    bool stopStorageThread() override;
 
     //wrapper and interfaces
     bool attach(yarp::dev::PolyDriver* driver) override;
