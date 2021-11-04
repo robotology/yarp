@@ -777,6 +777,7 @@ void ApplicationViewWidget::onItemChanged(QTreeWidgetItem *it,int col)
             }
         }
         ui->connectionList->blockSignals(false);
+        disconnect(ui->connectionList,SIGNAL(itemChanged(QTreeWidgetItem*,int)),this,SLOT(onItemChanged(QTreeWidgetItem*,int)));
         break;
     }
     case yarp::manager::MODULE:
@@ -784,7 +785,6 @@ void ApplicationViewWidget::onItemChanged(QTreeWidgetItem *it,int col)
     default:
         break;
     }
-    disconnect(ui->connectionList,SIGNAL(itemChanged(QTreeWidgetItem*,int)),this,SLOT(onItemChanged(QTreeWidgetItem*,int)));
 }
 
 /*! \brief Return the editable state of an item
