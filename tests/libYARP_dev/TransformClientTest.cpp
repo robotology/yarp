@@ -23,7 +23,6 @@ TEST_CASE("dev::TransformClientTest", "[yarp::dev]")
 
     Network::setLocalMode(true);
 
-#if defined(ENABLE_BROKEN_TESTS)
     SECTION("Test the transform client, test 1")
     {
         bool precision_verbose = false;
@@ -87,13 +86,12 @@ TEST_CASE("dev::TransformClientTest", "[yarp::dev]")
         REQUIRE(itf != nullptr); // iTransform interface open reported successful
 
         //execute the test
-        //exec_frameTransform_test_2(itf);
+        exec_frameTransform_test_2(itf);
 
         // Close devices
         CHECK(ddtransformclient.close()); // ddtransformclient successfully closed
         CHECK(ddtransformserver.close()); // ddtransformserver successfully closed
     }
 
-#endif
     Network::setLocalMode(false);
 }
