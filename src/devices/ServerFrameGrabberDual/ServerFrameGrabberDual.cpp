@@ -42,7 +42,7 @@ bool ServerGrabberResponder::configure(ServerGrabber* _server)
         server=_server;
         return true;
     }
-    yCIError(SERVERGRABBER, _server->id()) << "ServerGrabberResponder: invalid server pointer";
+    yCError(SERVERGRABBER) << "ServerGrabberResponder: invalid server pointer";
     return false;
 }
 
