@@ -152,6 +152,7 @@ public:
 
         yarp::os::Property prop;
         prop.put("device", type);
+        prop.put("id", name);
 
         for (yarp::robotinterface::ParamList::const_iterator it = p.begin(); it != p.end(); ++it) {
             const yarp::robotinterface::Param& param = *it;
