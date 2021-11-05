@@ -447,17 +447,6 @@ bool Rangefinder2DWrapper::threadInit()
     return true;
 }
 
-void Rangefinder2DWrapper::setId(const std::string &id)
-{
-    sensorId=id;
-}
-
-std::string Rangefinder2DWrapper::getId()
-{
-    return sensorId;
-}
-
-
 bool Rangefinder2DWrapper::open(yarp::os::Searchable &config)
 {
     yCWarning(RANGEFINDER2DWRAPPER) << "The 'Rangefinder2DWrapper' device is deprecated in favour of 'rangefinder2D_nws_yarp'.";
@@ -485,7 +474,6 @@ bool Rangefinder2DWrapper::open(yarp::os::Searchable &config)
     {
         streamingPortName  = config.find("name").asString();
         rpcPortName = streamingPortName + "/rpc:i";
-        setId("Rangefinder2DWrapper");
     }
 
     checkROSParams(config);

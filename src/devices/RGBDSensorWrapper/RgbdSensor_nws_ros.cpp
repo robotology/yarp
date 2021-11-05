@@ -77,8 +77,6 @@ bool RgbdSensor_nws_ros::open(yarp::os::Searchable &config)
         isSubdeviceOwned=false;
     }
 
-    setId("RGBDSensorWrapper for " + nodeName);
-
     if(!initialize_ROS(config))
     {
         return false;
@@ -246,16 +244,6 @@ bool RgbdSensor_nws_ros::initialize_ROS(yarp::os::Searchable &params)
         return false;
     }
     return true;
-}
-
-void RgbdSensor_nws_ros::setId(const std::string &id)
-{
-    sensorId=id;
-}
-
-std::string RgbdSensor_nws_ros::getId()
-{
-    return sensorId;
 }
 
 /**

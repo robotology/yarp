@@ -204,8 +204,6 @@ bool RgbdSensor_nws_yarp::open(yarp::os::Searchable &config)
         return false;
     }
 
-    setId("RGBDSensorWrapper for " + depthFrame_StreamingPort_Name);
-
     if(!initialize_YARP(config))
     {
         yCError(RGBDSENSORNWSYARP) << sensorId << "Error initializing YARP ports";
@@ -357,16 +355,6 @@ bool RgbdSensor_nws_yarp::initialize_YARP(yarp::os::Searchable &params)
     }
 
     return bRet;
-}
-
-void RgbdSensor_nws_yarp::setId(const std::string &id)
-{
-    sensorId=id;
-}
-
-std::string RgbdSensor_nws_yarp::getId()
-{
-    return sensorId;
 }
 
 /**

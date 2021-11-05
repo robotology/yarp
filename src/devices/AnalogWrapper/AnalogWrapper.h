@@ -200,9 +200,6 @@ public:
     bool close() override;
     yarp::os::Bottle getOptions();
 
-    void setId(const std::string &id);
-    std::string getId();
-
     /**
       * Specify which analog sensor this thread has to read from.
       */

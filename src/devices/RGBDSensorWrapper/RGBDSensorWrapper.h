@@ -232,9 +232,6 @@ public:
     bool        fromConfig(yarp::os::Searchable &params);
     bool        close() override;
 
-    void        setId(const std::string &id);
-    std::string getId();
-
     /**
       * Specify which sensor this thread has to read from.
       */

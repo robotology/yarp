@@ -393,16 +393,6 @@ bool AnalogWrapper::threadInit()
     return true;
 }
 
-void AnalogWrapper::setId(const std::string &id)
-{
-    sensorId=id;
-}
-
-std::string AnalogWrapper::getId()
-{
-    return sensorId;
-}
-
 bool AnalogWrapper::checkROSParams(Searchable &config)
 {
     // check for ROS parameter group
@@ -732,7 +722,6 @@ bool AnalogWrapper::open(yarp::os::Searchable &config)
     else
     {
         streamingPortName  = config.find("name").asString();
-        setId("AnalogServer");
     }
 
     if(!checkROSParams(config) )
