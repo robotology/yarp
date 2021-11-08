@@ -176,8 +176,8 @@ bool FrameTransformSet_nwc_ros::setTransform(const yarp::math::FrameTransform& t
 void  FrameTransformSet_nwc_ros::yarpTransformToROSTransform(const yarp::math::FrameTransform &input, yarp::rosmsg::geometry_msgs::TransformStamped& output)
 {
     output.child_frame_id = input.dst_frame_id;
-    output.header.frame_id = input.src_frame_id;;
-    output.header.stamp = input.isStatic ? yarp::os::Time::now() : input.timestamp; ; //@@@check timestamp of static transform?
+    output.header.frame_id = input.src_frame_id;
+    output.header.stamp = input.timestamp;
     output.transform.rotation.x = input.rotation.x();
     output.transform.rotation.y = input.rotation.y();
     output.transform.rotation.z = input.rotation.z();
