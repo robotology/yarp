@@ -105,6 +105,7 @@ public:
     yarp::dev::PolyDriverList externalDevices;
     yarp::robotinterface::ActionPhase currentPhase {ActionPhaseUnknown};
     unsigned int currentLevel {0};
+    bool dryrun {false};
 }; // class yarp::robotinterface::Robot::Private
 
 bool yarp::robotinterface::Robot::Private::hasDevice(const std::string& name) const
@@ -191,7 +192,11 @@ bool yarp::robotinterface::Robot::Private::openDevices()
 {
     bool ret = true;
     for (auto& device : devices) {
-        // yDebug() << device;
+        yInfo() << "Opening device" << device.name();
+
+        if (dryrun) {
+            continue;
+        }
 
         if (!device.open()) {
             yWarning() << "Cannot open device" << device.name();
@@ -212,6 +217,12 @@ bool yarp::robotinterface::Robot::Private::closeDevices()
     bool ret = true;
     for (auto it = devices.rbegin(); it != devices.rend(); ++it) {
         yarp::robotinterface::Device& device = *it;
+
+        yInfo() << "Closing device" << device.name();
+
+        if (dryrun) {
+            continue;
+        }
 
         // yDebug() << device;
 
@@ -289,6 +300,11 @@ bool yarp::robotinterface::Robot::Private::calibrate(const yarp::robotinterface:
         yError() << "Target device" << targetDeviceName << "does not exist.";
         return false;
     }
+
+    if (dryrun) {
+        return true;
+    }
+
     yarp::dev::PolyDriverDescriptor targetDevice = findDeviceIncludingExternal(targetDeviceName);
 
     return device.calibrate(targetDevice);
@@ -327,19 +343,24 @@ bool yarp::robotinterface::Robot::Private::attach(const yarp::robotinterface::De
             yError() << "Target device" << targetDeviceName << "(network =" << targetNetwork << ") does not exist.";
             return false;
         }
-        yarp::dev::PolyDriverDescriptor targetDevice = findDeviceIncludingExternal(targetDeviceName);
 
-        // yDebug() << "Attach device" << device.name() << "to" << targetDevice.name() << "as" << targetNetwork;
-        drivers.push(targetDevice.poly, targetNetwork.c_str());
+        if (!dryrun) {
+            yarp::dev::PolyDriverDescriptor targetDevice = findDeviceIncludingExternal(targetDeviceName);
 
-    } else if (yarp::robotinterface::hasParam(params, "all")) {
-        for (auto& device : devices) {
-            drivers.push(device.driver(), "all");
+            // yDebug() << "Attach device" << device.name() << "to" << targetDevice.name() << "as" << targetNetwork;
+            drivers.push(targetDevice.poly, targetNetwork.c_str());
         }
 
-        for (int i = 0; i < externalDevices.size(); i++) {
-            const yarp::dev::PolyDriverDescriptor* externalDevice = externalDevices[i];
-            drivers.push(externalDevice->poly, "all");
+    } else if (yarp::robotinterface::hasParam(params, "all")) {
+        if (!dryrun) {
+            for (auto& device : devices) {
+                drivers.push(device.driver(), "all");
+            }
+
+            for (int i = 0; i < externalDevices.size(); i++) {
+                const yarp::dev::PolyDriverDescriptor* externalDevice = externalDevices[i];
+                drivers.push(externalDevice->poly, "all");
+            }
         }
     } else if (yarp::robotinterface::hasParam(params, "networks")) {
         yarp::os::Value v;
@@ -358,14 +379,21 @@ bool yarp::robotinterface::Robot::Private::attach(const yarp::robotinterface::De
                 yError() << "Target device" << targetDeviceName << "(network =" << targetNetwork << ") does not exist.";
                 return false;
             }
-            yarp::dev::PolyDriverDescriptor targetDevice = findDeviceIncludingExternal(targetDeviceName);
 
-            // yDebug() << "Attach device" << device.name() << "to" << targetDevice.name() << "as" << targetNetwork;
-            drivers.push(targetDevice.poly, targetNetwork.c_str());
+            if (!dryrun) {
+                yarp::dev::PolyDriverDescriptor targetDevice = findDeviceIncludingExternal(targetDeviceName);
+
+                // yDebug() << "Attach device" << device.name() << "to" << targetDevice.name() << "as" << targetNetwork;
+                drivers.push(targetDevice.poly, targetNetwork.c_str());
+            }
         }
     } else {
         yError() << "Action \"" << ActionTypeToString(ActionTypeAttach) << R"(" requires either "network" or "networks" parameter)";
         return false;
+    }
+
+    if (dryrun) {
+        return true;
     }
 
     if (!drivers.size()) {
@@ -390,6 +418,10 @@ bool yarp::robotinterface::Robot::Private::detach(const yarp::robotinterface::De
         yWarning() << "Action \"" << ActionTypeToString(ActionTypeDetach) << "\" cannot have any parameter. Ignoring them.";
     }
 
+    if (dryrun) {
+        return true;
+    }
+
     return device.detach();
 }
 
@@ -406,6 +438,11 @@ bool yarp::robotinterface::Robot::Private::park(const yarp::robotinterface::Devi
         yError() << "Target device" << targetDeviceName << "does not exist.";
         return false;
     }
+
+    if (dryrun) {
+        return true;
+    }
+
     yarp::dev::PolyDriverDescriptor targetDevice = findDeviceIncludingExternal(targetDeviceName);
 
     return device.park(targetDevice);
@@ -437,6 +474,7 @@ yarp::robotinterface::Robot::Robot(const yarp::robotinterface::Robot& other) :
     mPriv->portprefix = other.mPriv->portprefix;
     mPriv->currentPhase = other.mPriv->currentPhase;
     mPriv->currentLevel = other.mPriv->currentLevel;
+    mPriv->dryrun = other.mPriv->dryrun;
     mPriv->devices = other.mPriv->devices;
     mPriv->params = other.mPriv->params;
 }
@@ -449,6 +487,7 @@ yarp::robotinterface::Robot& yarp::robotinterface::Robot::operator=(const yarp::
         mPriv->portprefix = other.mPriv->portprefix;
         mPriv->currentPhase = other.mPriv->currentPhase;
         mPriv->currentLevel = other.mPriv->currentLevel;
+        mPriv->dryrun = other.mPriv->dryrun;
 
         mPriv->devices.clear();
         mPriv->devices = other.mPriv->devices;
@@ -500,6 +539,11 @@ void yarp::robotinterface::Robot::setAllowDeprecatedDevices(bool allowDeprecated
             device.params().push_back(Param("allow-deprecated-devices", "1"));
         }
     }
+}
+
+void yarp::robotinterface::Robot::setDryRun(bool dryrun)
+{
+    mPriv->dryrun = dryrun;
 }
 
 yarp::robotinterface::ParamList& yarp::robotinterface::Robot::params()
@@ -640,6 +684,8 @@ bool yarp::robotinterface::Robot::enterPhase(yarp::robotinterface::ActionPhase p
                 ret = false;
                 break;
             }
+
+            yInfo() << "Executing" << ActionTypeToString(action.type()) << "action, level" << action.level() << "on device" << device.name() << "with parameters" << action.params();
 
             switch (action.type()) {
             case ActionTypeConfigure:

@@ -113,6 +113,8 @@ bool yarprobotinterface::Module::configure(yarp::os::ResourceFinder& rf)
 
     bool verbosity = rf.check("verbose");
     bool deprecated = rf.check("allow-deprecated-dtd");
+    bool dryrun = rf.check("dryrun");
+
     yarp::robotinterface::XMLReader reader;
     reader.setVerbose(verbosity);
     reader.setEnableDeprecated(deprecated);
@@ -140,6 +142,7 @@ bool yarprobotinterface::Module::configure(yarp::os::ResourceFinder& rf)
 
     mPriv->robot.setVerbose(verbosity);
     mPriv->robot.setAllowDeprecatedDevices(rf.check("allow-deprecated-devices"));
+    mPriv->robot.setDryRun(dryrun);
 
     std::string rpcPortName("/" + getName() + "/yarprobotinterface");
     mPriv->rpcPort.open(rpcPortName);

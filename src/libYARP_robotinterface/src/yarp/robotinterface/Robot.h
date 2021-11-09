@@ -28,6 +28,7 @@ public:
 
     void setVerbose(bool verbose);
     void setAllowDeprecatedDevices(bool allowDeprecatedDevices);
+    void setDryRun(bool dryrun);
 
     ParamList& params();
     DeviceList& devices();
