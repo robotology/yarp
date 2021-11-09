@@ -38,7 +38,10 @@ bool Odometry2D_nws_yarp::attach(yarp::dev::PolyDriver* driver)
         yCError(ODOMETRY2D_NWS_YARP, "Subdevice passed to attach method is invalid");
         return false;
     }
-    return true;
+
+    bool b = PeriodicThread::start();
+
+    return b;
 }
 
 
@@ -140,7 +143,7 @@ bool Odometry2D_nws_yarp::open(yarp::os::Searchable &config)
     }
 
     PeriodicThread::setPeriod(m_period);
-    return PeriodicThread::start();
+    return true;
 }
 
 void Odometry2D_nws_yarp::threadRelease()
