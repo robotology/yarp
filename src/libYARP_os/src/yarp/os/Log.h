@@ -11,6 +11,7 @@
 #include <cstdint>
 #include <iosfwd>
 #include <mutex>
+#include <string_view>
 
 #if defined(__GNUC__)
 #    define __YFUNCTION__ __PRETTY_FUNCTION__
