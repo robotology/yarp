@@ -41,10 +41,7 @@ yarp::os::LogStream operator<<(yarp::os::LogStream dbg, const yarp::robotinterfa
 class yarp::robotinterface::Robot::Private
 {
 public:
-    Private(Robot* /*parent*/) :
-            build(0),
-            currentPhase(ActionPhaseUnknown),
-            currentLevel(0)
+    Private(Robot* /*parent*/)
     {
     }
 
@@ -101,13 +98,13 @@ public:
     bool custom(const Device& device, const ParamList& params);
 
     std::string name;
-    unsigned int build;
+    unsigned int build {0};
     std::string portprefix;
     ParamList params;
     DeviceList devices;
     yarp::dev::PolyDriverList externalDevices;
-    yarp::robotinterface::ActionPhase currentPhase;
-    unsigned int currentLevel;
+    yarp::robotinterface::ActionPhase currentPhase {ActionPhaseUnknown};
+    unsigned int currentLevel {0};
 }; // class yarp::robotinterface::Robot::Private
 
 bool yarp::robotinterface::Robot::Private::hasDevice(const std::string& name) const
@@ -280,7 +277,7 @@ bool yarp::robotinterface::Robot::Private::configure(const yarp::robotinterface:
 }
 
 bool yarp::robotinterface::Robot::Private::calibrate(const yarp::robotinterface::Device& device,
-                                                                   const yarp::robotinterface::ParamList& params)
+                                                     const yarp::robotinterface::ParamList& params)
 {
     if (!yarp::robotinterface::hasParam(params, "target")) {
         yError() << "Action \"" << ActionTypeToString(ActionTypeCalibrate) << R"(" requires "target" parameter)";
@@ -298,7 +295,7 @@ bool yarp::robotinterface::Robot::Private::calibrate(const yarp::robotinterface:
 }
 
 bool yarp::robotinterface::Robot::Private::attach(const yarp::robotinterface::Device& device,
-                                                                const yarp::robotinterface::ParamList& params)
+                                                  const yarp::robotinterface::ParamList& params)
 {
     int check = 0;
     if (yarp::robotinterface::hasParam(params, "network")) {
@@ -618,10 +615,8 @@ bool yarp::robotinterface::Robot::enterPhase(yarp::robotinterface::ActionPhase p
     std::vector<unsigned int> levels = mPriv->getLevels(phase);
 
     bool ret = true;
-    for (std::vector<unsigned int>::const_iterator lit = levels.begin(); lit != levels.end(); ++lit) {
+    for (unsigned int level : levels) {
         // for each level
-        const unsigned int level = *lit;
-
         yInfo() << "Entering action level" << level << "of phase" << ActionPhaseToString(phase);
         mPriv->currentLevel = level;
 
