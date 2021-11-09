@@ -106,6 +106,7 @@ public:
     yarp::robotinterface::ActionPhase currentPhase {ActionPhaseUnknown};
     unsigned int currentLevel {0};
     bool dryrun {false};
+    bool reverseShutdownActionOrder {false};
 }; // class yarp::robotinterface::Robot::Private
 
 bool yarp::robotinterface::Robot::Private::hasDevice(const std::string& name) const
@@ -475,6 +476,7 @@ yarp::robotinterface::Robot::Robot(const yarp::robotinterface::Robot& other) :
     mPriv->currentPhase = other.mPriv->currentPhase;
     mPriv->currentLevel = other.mPriv->currentLevel;
     mPriv->dryrun = other.mPriv->dryrun;
+    mPriv->reverseShutdownActionOrder = other.mPriv->reverseShutdownActionOrder;
     mPriv->devices = other.mPriv->devices;
     mPriv->params = other.mPriv->params;
 }
@@ -488,6 +490,7 @@ yarp::robotinterface::Robot& yarp::robotinterface::Robot::operator=(const yarp::
         mPriv->currentPhase = other.mPriv->currentPhase;
         mPriv->currentLevel = other.mPriv->currentLevel;
         mPriv->dryrun = other.mPriv->dryrun;
+        mPriv->reverseShutdownActionOrder = other.mPriv->reverseShutdownActionOrder;
 
         mPriv->devices.clear();
         mPriv->devices = other.mPriv->devices;
@@ -544,6 +547,11 @@ void yarp::robotinterface::Robot::setAllowDeprecatedDevices(bool allowDeprecated
 void yarp::robotinterface::Robot::setDryRun(bool dryrun)
 {
     mPriv->dryrun = dryrun;
+}
+
+void yarp::robotinterface::Robot::setReverseShutdownActionOrder(bool reverseShutdownActionOrder)
+{
+    mPriv->reverseShutdownActionOrder = reverseShutdownActionOrder;
 }
 
 yarp::robotinterface::ParamList& yarp::robotinterface::Robot::params()
@@ -657,6 +665,12 @@ bool yarp::robotinterface::Robot::enterPhase(yarp::robotinterface::ActionPhase p
     }
 
     std::vector<unsigned int> levels = mPriv->getLevels(phase);
+    if (mPriv->reverseShutdownActionOrder && (phase == ActionPhaseShutdown ||
+                                              phase == ActionPhaseInterrupt1 ||
+                                              phase == ActionPhaseInterrupt2 ||
+                                              phase == ActionPhaseInterrupt3)) {
+        std::reverse(levels.begin(), levels.end());
+    }
 
     bool ret = true;
     for (unsigned int level : levels) {
