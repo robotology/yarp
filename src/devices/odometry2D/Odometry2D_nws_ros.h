@@ -117,6 +117,7 @@ private:
     std::string m_nodeName;
     std::string m_odomFrame;
     std::string m_baseFrame;
+    bool m_enable_publish_tf = true;
 
     // stamp count for timestamp
     size_t m_stampCount{0};
@@ -131,6 +132,8 @@ private:
     yarp::dev::PolyDriver m_driver;
     yarp::dev::Nav2D::IOdometry2D *m_odometry2D_interface{nullptr};
     yarp::os::Publisher<yarp::rosmsg::nav_msgs::Odometry>          rosPublisherPort_odometry;
+    yarp::os::Publisher<yarp::rosmsg::tf2_msgs::TFMessage>         rosPublisherPort_tf;
+
 };
 
 #endif // YARP_ODOMETRY2D_NWS_YARP_H

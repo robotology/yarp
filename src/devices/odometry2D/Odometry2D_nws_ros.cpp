@@ -62,6 +62,13 @@ bool Odometry2D_nws_ros::open(yarp::os::Searchable &config)
     yarp::os::Property params;
     params.fromString(config.toString());
 
+    if (config.check("publish_tf_topic")) {
+        m_enable_publish_tf = true;
+    }
+    if (config.check("skip_tf_topic")) {
+        m_enable_publish_tf = false;
+    }
+
     if (!config.check("period")) {
         yCWarning(ODOMETRY2D_NWS_ROS) << "missing 'period' parameter, using default value of" << DEFAULT_THREAD_PERIOD;
     } else {
@@ -125,6 +132,14 @@ bool Odometry2D_nws_ros::open(yarp::os::Searchable &config)
         yCError(ODOMETRY2D_NWS_ROS) << " opening " << m_topicName << " Topic, check your yarp-ROS network configuration\n";
         return false;
     }
+
+    if (m_enable_publish_tf)
+    {
+        if (!rosPublisherPort_tf.topic("/tf")) {
+            yCError(ODOMETRY2D_NWS_ROS) << " opening " << "/tf" << " Topic, check your yarp-ROS network configuration\n";
+            return false;
+        }
+    }
     return true;
 }
 
@@ -134,38 +149,74 @@ void Odometry2D_nws_ros::threadRelease()
 
 void Odometry2D_nws_ros::run()
 {
-
-    if (m_odometry2D_interface!=nullptr) {
+    if (m_odometry2D_interface!=nullptr)
+    {
         yarp::os::Stamp timeStamp(static_cast<int>(m_stampCount++), yarp::os::Time::now());
         yarp::dev::OdometryData odometryData;
         m_odometry2D_interface->getOdometry(odometryData);
 
-        yarp::rosmsg::nav_msgs::Odometry& rosData = rosPublisherPort_odometry.prepare();
-        rosData.header.seq = timeStamp.getCount();
-        rosData.header.stamp = timeStamp.getTime();
-        rosData.header.frame_id = m_odomFrame;
-        rosData.child_frame_id = m_baseFrame;
+        if (1)
+        {
+            yarp::rosmsg::nav_msgs::Odometry& rosData = rosPublisherPort_odometry.prepare();
+            rosData.header.seq = timeStamp.getCount();
+            rosData.header.stamp = timeStamp.getTime();
+            rosData.header.frame_id = m_odomFrame;
+            rosData.child_frame_id = m_baseFrame;
 
-        rosData.pose.pose.position.x = odometryData.odom_x;
-        rosData.pose.pose.position.y = odometryData.odom_y;
-        rosData.pose.pose.position.z = 0.0;
-        yarp::rosmsg::geometry_msgs::Quaternion odom_quat;
-        double halfYaw = odometryData.odom_theta * DEG2RAD * 0.5;
-        double cosYaw = cos(halfYaw);
-        double sinYaw = sin(halfYaw);
-        odom_quat.x = 0;
-        odom_quat.y = 0;
-        odom_quat.z = sinYaw;
-        odom_quat.w = cosYaw;
-        rosData.pose.pose.orientation = odom_quat;
-        rosData.twist.twist.linear.x = odometryData.base_vel_x;
-        rosData.twist.twist.linear.y = odometryData.base_vel_y;
-        rosData.twist.twist.linear.z = 0;
-        rosData.twist.twist.angular.x = 0;
-        rosData.twist.twist.angular.y = 0;
-        rosData.twist.twist.angular.z = odometryData.base_vel_theta * DEG2RAD;
+            rosData.pose.pose.position.x = odometryData.odom_x;
+            rosData.pose.pose.position.y = odometryData.odom_y;
+            rosData.pose.pose.position.z = 0.0;
+            yarp::rosmsg::geometry_msgs::Quaternion odom_quat;
+            double halfYaw = odometryData.odom_theta * DEG2RAD * 0.5;
+            double cosYaw = cos(halfYaw);
+            double sinYaw = sin(halfYaw);
+            odom_quat.x = 0;
+            odom_quat.y = 0;
+            odom_quat.z = sinYaw;
+            odom_quat.w = cosYaw;
+            rosData.pose.pose.orientation = odom_quat;
+            rosData.twist.twist.linear.x = odometryData.base_vel_x;
+            rosData.twist.twist.linear.y = odometryData.base_vel_y;
+            rosData.twist.twist.linear.z = 0;
+            rosData.twist.twist.angular.x = 0;
+            rosData.twist.twist.angular.y = 0;
+            rosData.twist.twist.angular.z = odometryData.base_vel_theta * DEG2RAD;
+            rosPublisherPort_odometry.write();
+        }
 
-        rosPublisherPort_odometry.write();
+        if (m_enable_publish_tf)
+        {
+            yarp::rosmsg::tf2_msgs::TFMessage& rosData = rosPublisherPort_tf.prepare();
+            yarp::rosmsg::geometry_msgs::TransformStamped transform;
+            transform.header.frame_id = m_odomFrame;
+            transform.child_frame_id = m_baseFrame;
+            transform.header.seq = timeStamp.getCount();
+            transform.header.stamp = timeStamp.getTime();
+            double halfYaw = odometryData.odom_theta * DEG2RAD * 0.5;
+            double cosYaw = cos(halfYaw);
+            double sinYaw = sin(halfYaw);
+            transform.transform.rotation.x = 0;
+            transform.transform.rotation.y = 0;
+            transform.transform.rotation.z = sinYaw;
+            transform.transform.rotation.w = cosYaw;
+            transform.transform.translation.x = odometryData.odom_x;
+            transform.transform.translation.y = odometryData.odom_y;
+            transform.transform.translation.z = 0;
+            if (rosData.transforms.size() == 0)
+            {
+                rosData.transforms.push_back(transform);
+            }
+            else if (rosData.transforms.size() == 1)
+            {
+                rosData.transforms[0] = transform;
+            }
+            else
+            {
+                yCWarning(ODOMETRY2D_NWS_ROS) << "Size of /tf topic should be 1, instead it is:" << rosData.transforms.size();
+            }
+            rosPublisherPort_tf.write();
+        }
+
     } else{
         yCError(ODOMETRY2D_NWS_ROS) << "the interface is not valid";
     }
@@ -173,6 +224,25 @@ void Odometry2D_nws_ros::run()
 
 bool Odometry2D_nws_ros::close()
 {
-    yCTrace(ODOMETRY2D_NWS_ROS, "Odometry2D_nws_ros::Close");
-    return detach();
+    yCTrace(ODOMETRY2D_NWS_ROS, "Close");
+    if (PeriodicThread::isRunning())
+    {
+        PeriodicThread::stop();
+    }
+
+    detach();
+
+    if (m_node)
+    {
+        rosPublisherPort_odometry.close();
+        if (m_enable_publish_tf)
+        {
+           rosPublisherPort_tf.close();
+        }
+        delete m_node;
+        m_node = nullptr;
+    }
+
+    yCDebug(ODOMETRY2D_NWS_ROS) << "Execution terminated";
+    return true;
 }
