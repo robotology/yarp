@@ -106,6 +106,7 @@ private:
     void selectAllNestedApplicationModule(QTreeWidgetItem *it, bool check);
     bool scanAvailableCarriers(QString carrier, bool isConnection = true);
     void updateConnection(int index, std::vector<int> &CIDs);
+    void updateConnectionItem(QTreeWidgetItem *it);
 
 
 
@@ -172,6 +173,7 @@ private slots:
     void selectAllConnections();
     void selectAllResources();
     void onItemDoubleClicked(QTreeWidgetItem*,int);
+    void onItemChanged(QTreeWidgetItem*,int);
     bool onRun();
     bool onStop();
     bool onKill();

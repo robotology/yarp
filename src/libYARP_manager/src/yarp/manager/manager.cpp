@@ -735,8 +735,15 @@ bool Manager::existPortFrom(unsigned int id)
         logger->addError("Connection id is out of range.");
         return false;
     }
+    std::string portName(connections[id].from());
+    if(portName.find(' ') != std::string::npos)
+    {
+        std::string message = "Port name \"" + portName + "\" contains spaces.";
+        logger->addError(message.c_str());
+        return false;
+    }
 
-    bool exists = connector.exists(connections[id].from());
+    bool exists = connector.exists(portName.c_str());
     connections[id].setFromExists(exists);
     return exists;
 }
@@ -749,8 +756,15 @@ bool Manager::existPortTo(unsigned int id)
         logger->addError("Connection id is out of range.");
         return false;
     }
+    std::string portName(connections[id].to());
+    if(portName.find(' ') != std::string::npos)
+    {
+        std::string message = "Port name \"" + portName + "\" contains spaces.";
+        logger->addError(message.c_str());
+        return false;
+    }
 
-    bool exists = connector.exists(connections[id].to());
+    bool exists = connector.exists(portName.c_str());
     connections[id].setToExists(exists);
     return exists;
 }

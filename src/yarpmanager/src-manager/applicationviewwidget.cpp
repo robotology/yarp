@@ -742,8 +742,48 @@ void ApplicationViewWidget::onItemDoubleClicked(QTreeWidgetItem *it,int col)
     Qt::ItemFlags tmp = it->flags();
     if (isEditable(it, col)) {
         it->setFlags(tmp | Qt::ItemIsEditable);
+        disconnect(ui->connectionList,SIGNAL(itemChanged(QTreeWidgetItem*,int)),this,SLOT(onItemChanged(QTreeWidgetItem*,int)));
+        connect(ui->connectionList,SIGNAL(itemChanged(QTreeWidgetItem*,int)),this,SLOT(onItemChanged(QTreeWidgetItem*,int)));
     } else if (tmp & Qt::ItemIsEditable) {
         it->setFlags(tmp ^ Qt::ItemIsEditable);
+        disconnect(ui->connectionList,SIGNAL(itemChanged(QTreeWidgetItem*,int)),this,SLOT(onItemChanged(QTreeWidgetItem*,int)));
+        connect(ui->connectionList,SIGNAL(itemChanged(QTreeWidgetItem*,int)),this,SLOT(onItemChanged(QTreeWidgetItem*,int)));
+    }
+}
+
+/*! \brief Called when an item has been changed by the user */
+void ApplicationViewWidget::onItemChanged(QTreeWidgetItem *it,int col)
+{
+    yarp::manager::NodeType type = (yarp::manager::NodeType)it->data(0,Qt::UserRole).toInt();
+    switch (type) {
+    case yarp::manager::INOUTD:{
+        ui->connectionList->blockSignals(true);
+        if (col == 3) {
+            updateConnectionItem(it);
+            bool res = safeManager.existPortFrom(it->text(1).toInt());
+            it->setForeground(3,QColor(res ? "#008C00" : "#BF0303"));
+            if (!res)
+            {
+                reportErrors();
+            }
+        }
+        if (col == 4) {
+            updateConnectionItem(it);
+            bool res = safeManager.existPortTo(it->text(1).toInt());
+            it->setForeground(3,QColor(res ? "#008C00" : "#BF0303"));
+            if (!res)
+            {
+                reportErrors();
+            }
+        }
+        ui->connectionList->blockSignals(false);
+        disconnect(ui->connectionList,SIGNAL(itemChanged(QTreeWidgetItem*,int)),this,SLOT(onItemChanged(QTreeWidgetItem*,int)));
+        break;
+    }
+    case yarp::manager::MODULE:
+    case yarp::manager::RESOURCE:
+    default:
+        break;
     }
 }
 
@@ -1520,44 +1560,50 @@ void ApplicationViewWidget::updateConnection(int index, std::vector<int>& CIDs)
 {
     QTreeWidgetItem *it = ui->connectionList->topLevelItem(index);
     if (it->isSelected()) {
-        auto* box = qobject_cast<QComboBox*>(ui->connectionList->itemWidget((QTreeWidgetItem *)it, 5));
-        QString carrier, modifier;
-        if (box)
-        {
-            carrier = box->currentText();
+        updateConnectionItem(it);
 
-        }
-        else
-        {
-            carrier=it->text(5);
-        }
-
-        //checking if in the carrier has been added a modifier
-
-        size_t pos = carrier.toStdString().find('+');
-        if(pos != std::string::npos)
-        {
-            modifier = carrier.mid(pos);
-            QStringList myStringList = carrier.split('+');
-            carrier = myStringList.first();
-            box->setCurrentText(carrier);
-            it->setText(6,modifier);
-        }
-
-        // scan the available carriers in the system where yarpmanager is launched.
-        scanAvailableCarriers(carrier);
-        carrier = carrier + it->text(6); //adding modifier.
         CIDs.push_back(it->text(1).toInt());
-        safeManager.updateConnection(it->text(1).toInt(),
-                                 it->text(3).toLatin1().data(),
-                                 it->text(4).toLatin1().data(),
-                                 carrier.toLatin1().data());
 
         it->setText(2,"waiting");
         it->setIcon(0,QIcon(":/refresh22.svg"));
         it->setForeground(2,QColor("#000000"));
     }
 
+}
+
+void ApplicationViewWidget::updateConnectionItem(QTreeWidgetItem *it)
+{
+    auto* box = qobject_cast<QComboBox*>(ui->connectionList->itemWidget((QTreeWidgetItem *)it, 5));
+    QString carrier, modifier;
+    if (box)
+    {
+        carrier = box->currentText();
+
+    }
+    else
+    {
+        carrier=it->text(5);
+    }
+
+    //checking if in the carrier has been added a modifier
+
+    size_t pos = carrier.toStdString().find('+');
+    if(pos != std::string::npos)
+    {
+        modifier = carrier.mid(pos);
+        QStringList myStringList = carrier.split('+');
+        carrier = myStringList.first();
+        box->setCurrentText(carrier);
+        it->setText(6,modifier);
+    }
+
+    // scan the available carriers in the system where yarpmanager is launched.
+    scanAvailableCarriers(carrier);
+    carrier = carrier + it->text(6); //adding modifier.
+    safeManager.updateConnection(it->text(1).toInt(),
+                                 it->text(3).toLatin1().data(),
+                                 it->text(4).toLatin1().data(),
+                                 carrier.toLatin1().data());
 }
 
 /*! \brief Select/deselect all connections
