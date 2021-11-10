@@ -46,9 +46,13 @@ public:
     virtual bool deleteTransform(std::string t1, std::string t2) override;
     virtual bool clearAll() override;
 
+    void startThreads();
+    void stopThreads();
+
 private:
     int    m_verbose{4};
-    std::vector<IFrameTransformStorageSet*> m_iFrameTransformStorageSetList;
+    std::vector<yarp::dev::IFrameTransformStorageSet*> m_iFrameTransformStorageSetList;
+    std::vector<yarp::dev::IFrameTransformStorageUtils*> m_iFrameTransformStorageUtilsList;
     std::vector<std::vector<yarp::math::FrameTransform>> m_transformVector;
     std::vector<std::mutex> m_mutexSettingFromAttachedDevices;
 };

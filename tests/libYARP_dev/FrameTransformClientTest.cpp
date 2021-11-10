@@ -21,7 +21,6 @@ TEST_CASE("dev::FrameTransformClientTest", "[yarp::dev]")
 
     yarp::os::Network::setLocalMode(true);
 
-#if defined(ENABLE_BROKEN_TESTS)
     SECTION("test the frameTransformClient local only mode, case 1")
     {
         yarp::dev::IFrameTransform* ift;
@@ -96,6 +95,5 @@ TEST_CASE("dev::FrameTransformClientTest", "[yarp::dev]")
         REQUIRE(server_pd.close());
     }
 
-#endif
     yarp::os::Network::setLocalMode(false);
 }

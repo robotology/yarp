@@ -3,11 +3,6 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-/*
- * SPDX-FileCopyrightText: 2006-2021 Istituto Italiano di Tecnologia (IIT)
- * SPDX-License-Identifier: BSD-3-Clause
- */
-
 #include "FrameTransformSetMultiplexer.h"
 
 #include <yarp/os/LogComponent.h>
@@ -54,7 +49,11 @@ bool FrameTransformSetMultiplexer::attachAll(const yarp::dev::PolyDriverList& de
         yarp::dev::PolyDriver* polyDriverLocal = devices2attach[i]->poly;
         if (polyDriverLocal->isValid())
         {
-            yarp::dev::IFrameTransformStorageSet* iFrameTransformStorageSet=nullptr;
+            yarp::dev::IFrameTransformStorageSet*   iFrameTransformStorageSet=nullptr;
+            yarp::dev::IFrameTransformStorageUtils* iFrameTransformStorageUtils=nullptr;
+
+            //all attached devices must have iFrameTransformStorageSet interface while
+            //only FrameTransformStorage have iFrameTransformStorageUtils
             if (polyDriverLocal->view(iFrameTransformStorageSet) && iFrameTransformStorageSet!=nullptr)
             {
                 m_iFrameTransformStorageSetList.push_back(iFrameTransformStorageSet);
@@ -64,6 +63,10 @@ bool FrameTransformSetMultiplexer::attachAll(const yarp::dev::PolyDriverList& de
                 yCError(FRAMETRANSFORMSETMULTIPLEXER) << "failed to attach all the devices";
                 return false;
             }
+
+            //attempt to iFrameTransformStorageUtils
+            polyDriverLocal->view(iFrameTransformStorageUtils);
+            m_iFrameTransformStorageUtilsList.push_back(iFrameTransformStorageUtils);
         }
         else
         {
@@ -108,21 +111,31 @@ bool FrameTransformSetMultiplexer::setTransform(const yarp::math::FrameTransform
 
 bool FrameTransformSetMultiplexer::deleteTransform(std::string t1, std::string t2)
 {
+    //stopThreads();
+
+    bool frame_deleted = true;
+
     for (size_t i = 0; i < m_iFrameTransformStorageSetList.size(); i++)
     {
-        if (m_iFrameTransformStorageSetList[i] != nullptr) {
-            m_iFrameTransformStorageSetList[i]->deleteTransform(t1,t2);
+        if (m_iFrameTransformStorageSetList[i] != nullptr)
+        {
+            frame_deleted &= m_iFrameTransformStorageSetList[i]->deleteTransform(t1,t2);
         }
         else {
             yCError(FRAMETRANSFORMSETMULTIPLEXER) << "pointer to interface IFrameTransformStorageSet not valid";
             return false;
         }
     }
-    return true;
+
+    //startThreads();
+
+    return frame_deleted;
 }
 
 bool FrameTransformSetMultiplexer::clearAll()
 {
+    //stopThreads();
+
     for (size_t i = 0; i < m_iFrameTransformStorageSetList.size(); i++)
     {
         if (m_iFrameTransformStorageSetList[i] != nullptr) {
@@ -133,5 +146,28 @@ bool FrameTransformSetMultiplexer::clearAll()
             return false;
         }
     }
+
+    //startThreads();
+
     return true;
+}
+
+void FrameTransformSetMultiplexer::stopThreads()
+{
+    for (size_t i = 0; i < m_iFrameTransformStorageSetList.size(); i++)
+    {
+        if (m_iFrameTransformStorageUtilsList[i] != nullptr) {
+            m_iFrameTransformStorageUtilsList[i]->stopStorageThread();
+        }
+    }
+}
+
+void FrameTransformSetMultiplexer::startThreads()
+{
+    for (size_t i = 0; i < m_iFrameTransformStorageSetList.size(); i++)
+    {
+        if (m_iFrameTransformStorageUtilsList[i] != nullptr) {
+            m_iFrameTransformStorageUtilsList[i]->startStorageThread();
+        }
+    }
 }

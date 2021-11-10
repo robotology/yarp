@@ -702,7 +702,7 @@ bool FrameTransformClient::setTransformStatic(const std::string &target_frame_id
     tf.src_frame_id = source_frame_id;
     tf.dst_frame_id = target_frame_id;
     tf.isStatic = true;
-    tf.timestamp=-1;
+    tf.timestamp= yarp::os::Time::now();
 
     if (m_ift_set)
     {
