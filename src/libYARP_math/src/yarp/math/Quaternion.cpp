@@ -54,6 +54,15 @@ double* Quaternion::data()
     return internal_data;
 }
 
+bool Quaternion::isValid() const
+{
+    if (internal_data[0] == 0 &&
+        internal_data[1] == 0 &&
+        internal_data[2] == 0 &&
+        internal_data[3] == 0) {return false;}
+    return true;
+}
+
 yarp::sig::Vector Quaternion::toVector()  const
 {
     yarp::sig::Vector v(4);

@@ -38,6 +38,8 @@ public:
 
     Quaternion rotation;
 
+    bool isValid() const;
+
     FrameTransform();
 
     FrameTransform(const std::string& parent,

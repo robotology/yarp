@@ -26,6 +26,8 @@ bool FrameTransformStorage::getInternalContainer(FrameTransformContainer*& conta
 
 bool FrameTransformStorage::open(yarp::os::Searchable& config)
 {
+    std::string sstr = config.toString();
+
     yCTrace(FRAMETRANSFORSTORAGE);
     bool b = this->start();
     return b;
@@ -38,21 +40,25 @@ bool FrameTransformStorage::close()
 
 bool FrameTransformStorage::getTransforms(std::vector<yarp::math::FrameTransform>& transforms) const
 {
+    std::lock_guard <std::mutex> lg(m_pd_mutex);
     return m_tf_container.getTransforms(transforms);
 }
 
 bool FrameTransformStorage::setTransforms(const std::vector<yarp::math::FrameTransform>& transforms)
 {
+    std::lock_guard <std::mutex> lg(m_pd_mutex);
     return m_tf_container.setTransforms(transforms);
 }
 
 bool FrameTransformStorage::setTransform(const yarp::math::FrameTransform& t)
 {
+    std::lock_guard <std::mutex> lg(m_pd_mutex);
     return m_tf_container.setTransform (t);
 }
 
 bool FrameTransformStorage::deleteTransform(std::string t1, std::string t2)
 {
+    std::lock_guard <std::mutex> lg(m_pd_mutex);
     return m_tf_container.deleteTransform(t1,t2);
 }
 
@@ -70,7 +76,7 @@ void FrameTransformStorage::run()
         bool b=iGetIf->getTransforms(tfs);
         if (b)
         {
-            this->setTransforms(tfs);
+            m_tf_container.setTransforms(tfs);
         }
     }
 }
@@ -111,4 +117,20 @@ bool FrameTransformStorage::clearAll()
 bool FrameTransformStorage::size(size_t& size) const
 {
     return m_tf_container.size(size);
+}
+
+bool FrameTransformStorage::startStorageThread()
+{
+    return this->start();
+}
+
+bool FrameTransformStorage::stopStorageThread()
+{
+    this->askToStop();
+    do
+    {
+        yarp::os::Time::delay(0.001);
+    }
+    while (this->isRunning());
+    return true;
 }

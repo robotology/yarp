@@ -38,6 +38,14 @@ yarp::math::FrameTransform::FrameTransform (const std::string& parent,
 {
 }
 
+bool yarp::math::FrameTransform::isValid() const
+{
+    //if (isStatic==false && timestamp < 0 ) { return false; }
+    //if (std::isnan(timestamp)) { return false; }
+    if (rotation.isValid()==false) { return false;}
+    return true;
+}
+
 yarp::math::FrameTransform::~FrameTransform() = default;
 
 void yarp::math::FrameTransform::transFromVec(double X, double Y, double Z)

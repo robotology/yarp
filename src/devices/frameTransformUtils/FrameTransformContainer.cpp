@@ -8,6 +8,7 @@
 #include <yarp/os/Log.h>
 #include <yarp/os/LogComponent.h>
 #include <yarp/os/LogStream.h>
+#include <algorithm>
 
 using namespace yarp::dev;
 using namespace yarp::os;
@@ -15,7 +16,15 @@ using namespace yarp::sig;
 using namespace yarp::math;
 
 namespace {
-YARP_LOG_COMPONENT(FRAMETRANSFORSTORAGE, "yarp.device.frameTransformUtils")
+YARP_LOG_COMPONENT(FRAMETRANSFORMCONTAINER, "yarp.device.frameTransformContainer")
+
+void invalidateTransform(yarp::math::FrameTransform& trf)
+{
+    trf.timestamp = yarp::os::Time::now();
+    trf.isStatic = false;
+    trf.translation = { 0,0,0 };
+    trf.rotation = { 0,0,0,0 };
+}
 }
 
 //------------------------------------------------------------------------------------------------------------------------------
@@ -23,7 +32,7 @@ YARP_LOG_COMPONENT(FRAMETRANSFORSTORAGE, "yarp.device.frameTransformUtils")
 bool FrameTransformContainer::getTransforms(std::vector<yarp::math::FrameTransform>& transforms) const
 {
     std::lock_guard<std::recursive_mutex> lock(m_trf_mutex);
-    transforms = m_transforms;
+    std::copy_if (m_transforms.begin(), m_transforms.end(), std::back_inserter(transforms), [](const yarp::math::FrameTransform& trf){return trf.isValid();});
     return true;
 }
 
@@ -36,22 +45,41 @@ bool FrameTransformContainer::setTransforms(const std::vector<yarp::math::FrameT
     return true;
 }
 
-bool FrameTransformContainer::setTransform(const yarp::math::FrameTransform& t)
+bool FrameTransformContainer::setTransform(const yarp::math::FrameTransform& new_tr)
 {
+    if (new_tr.isValid()==false) return true;
+
     std::lock_guard<std::recursive_mutex> lock(m_trf_mutex);
     for (auto& it : m_transforms)
     {
         //this linear search may require some optimization
-        if (it.dst_frame_id == t.dst_frame_id && it.src_frame_id == t.src_frame_id)
+        if (it.dst_frame_id == new_tr.dst_frame_id && it.src_frame_id == new_tr.src_frame_id)
         {
-            //transform already exists, update it
-            it = t;
-            return true;
+            //if transform already exists and
+            //its timestamp is more recent than the currently stored transform
+            //than update it
+            if (it.isStatic == false)
+            {
+                if (new_tr.timestamp > it.timestamp)
+                {
+                    it = new_tr;
+                    return true;
+                }
+                else
+                {
+                    //yCDebug(FRAMETRANSFORMCONTAINER) << "Received old transform" << it.dst_frame_id << it.src_frame_id << std::to_string(it.timestamp) << it.isStatic;
+                    return true;
+                }
+            }
+            else
+            {
+                return true;
+            }
         }
     }
 
     //add a new transform
-    m_transforms.push_back(t);
+    m_transforms.push_back(new_tr);
     return true;
 }
 
@@ -60,24 +88,22 @@ bool FrameTransformContainer::deleteTransform(std::string t1, std::string t2)
     std::lock_guard<std::recursive_mutex> lock(m_trf_mutex);
     if (t1 == "*" && t2 == "*")
     {
-        m_transforms.clear();
+        for (size_t i = 0; i < m_transforms.size(); i++)
+        {
+            invalidateTransform(m_transforms[i]);
+        }
         return true;
     }
     else
     {
         if (t1 == "*")
         {
-            for (size_t i = 0; i < m_transforms.size(); )
+            for (size_t i = 0; i < m_transforms.size(); i++)
             {
                 //source frame is jolly, thus delete all frames with destination == t2
                 if (m_transforms[i].dst_frame_id == t2)
                 {
-                    m_transforms.erase(m_transforms.begin() + i);
-                    i = 0; //the erase operation invalidates the iteration, loop restart is required
-                }
-                else
-                {
-                    i++;
+                    invalidateTransform(m_transforms[i]);
                 }
             }
             return true;
@@ -86,17 +112,12 @@ bool FrameTransformContainer::deleteTransform(std::string t1, std::string t2)
         {
             if (t2 == "*")
             {
-                for (size_t i = 0; i < m_transforms.size(); )
+                for (size_t i = 0; i < m_transforms.size(); i++)
                 {
                     //destination frame is jolly, thus delete all frames with source == t1
                     if (m_transforms[i].src_frame_id == t1)
                     {
-                        m_transforms.erase(m_transforms.begin() + i);
-                        i = 0; //the erase operation invalidates the iteration, loop restart is required
-                    }
-                    else
-                    {
-                        i++;
+                        invalidateTransform(m_transforms[i]);
                     }
                 }
                 return true;
@@ -108,7 +129,7 @@ bool FrameTransformContainer::deleteTransform(std::string t1, std::string t2)
                     if ((m_transforms[i].dst_frame_id == t1 && m_transforms[i].src_frame_id == t2) ||
                         (m_transforms[i].dst_frame_id == t2 && m_transforms[i].src_frame_id == t1))
                     {
-                        m_transforms.erase(m_transforms.begin() + i);
+                        invalidateTransform(m_transforms[i]);
                         return true;
                     }
                 }
@@ -116,14 +137,17 @@ bool FrameTransformContainer::deleteTransform(std::string t1, std::string t2)
         }
     }
 
-    yCError(FRAMETRANSFORSTORAGE) << "Transformation deletion not successful";
+    yCError(FRAMETRANSFORMCONTAINER) << "Transformation deletion not successful";
     return false;
 }
 
 bool FrameTransformContainer::clearAll()
 {
     std::lock_guard<std::recursive_mutex> lock(m_trf_mutex);
-    m_transforms.clear();
+    for (size_t i = 0; i < m_transforms.size(); i++)
+    {
+        invalidateTransform(m_transforms[i]);
+    }
     return true;
 }
 
@@ -155,22 +179,3 @@ bool FrameTransformContainer::size(size_t& size) const
     size = m_transforms.size();
     return true;
 }
-
-/*
-bool FrameTransformStorage::delete_transform(int id)
-{
-    std::lock_guard<std::mutex> lock(m_mutex);
-    if (id >= 0 && (size_t)id < m_transforms.size())
-    {
-        m_transforms.erase(m_transforms.begin() + id);
-        return true;
-    }
-    return false;
-}
-
-
-yarp::math::FrameTransform& operator[]   (std::size_t idx)
-{
-    return m_transforms[idx];
-}
-*/

@@ -78,7 +78,6 @@ public:
     * @return true/false
     */
     virtual bool getTransforms(std::vector<yarp::math::FrameTransform>& transforms) const = 0;
-
 };
 
 /**
@@ -94,6 +93,10 @@ public:
     virtual bool size (size_t& size) const =0;
 
     virtual bool getInternalContainer(FrameTransformContainer*& container)  =0;
+
+    virtual bool startStorageThread() = 0;
+
+    virtual bool stopStorageThread() = 0;
 };
 
 #endif // YARP_DEV_IFRAMETRANSFORM_STORAGE_H

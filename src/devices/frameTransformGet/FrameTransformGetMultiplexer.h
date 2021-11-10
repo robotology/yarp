@@ -43,8 +43,6 @@ public:
     // yarp::dev::IFrameTransformStorageGet
     bool getTransforms(std::vector<yarp::math::FrameTransform>& transforms) const override;
 
-    // yarp::os::PeriodicThread
-
 private:
     int    m_verbose{4};
     std::vector<IFrameTransformStorageGet*> m_iFrameTransformStorageGetList;

@@ -31,6 +31,59 @@ class FrameTransformContainer :
 {
     using ContainerType = std::vector<yarp::math::FrameTransform>;
 
+public:
+    struct Iterator
+    {
+        using iterator_category = std::forward_iterator_tag;
+        using difference_type = ContainerType::difference_type;
+        using value_type = ContainerType::value_type;
+        using pointer = ContainerType::iterator;
+        using reference = value_type&;
+
+        //constructor
+        Iterator(ContainerType& data, ContainerType::iterator ptr) :
+            m_data(data),
+            m_ptr(ptr)
+        {
+            while (m_ptr != m_data.end() && !m_ptr->isValid()) {
+                ++m_ptr;
+            }
+        }
+
+        reference operator*() const { return *m_ptr; }
+        pointer operator->() { return m_ptr; }
+
+        // Prefix increment
+        Iterator& operator++()
+        {
+            do {
+                ++m_ptr;
+            } while (m_ptr != m_data.end() && !m_ptr->isValid());
+            return *this;
+        }
+
+        // Postfix increment
+        Iterator operator++(int) { Iterator tmp = *this; ++(*this); return tmp; }
+
+        friend bool operator== (const Iterator& a, const Iterator& b) { return a.m_ptr == b.m_ptr; };
+        friend bool operator!= (const Iterator& a, const Iterator& b) { return a.m_ptr != b.m_ptr; };
+
+    private:
+        ContainerType::iterator m_ptr;
+        ContainerType& m_data;
+    };
+
+public:
+    Iterator begin()
+    {
+        return Iterator(m_transforms, m_transforms.begin());
+    }
+
+    Iterator end()
+    {
+        return Iterator(m_transforms, m_transforms.end());
+    }
+
 protected:
     ContainerType m_transforms;
 
@@ -62,11 +115,6 @@ public:
     //other
     bool checkAndRemoveExpired();
     bool checkAndRemoveExpired() const;
-    ContainerType::iterator begin() {return m_transforms.begin();}
-    ContainerType::iterator end()   {return m_transforms.end();}
-
-    //yarp::math::FrameTransform& operator[]   (std::size_t idx) { return m_transforms[idx]; }
-    //bool     delete_transform(int id);
 };
 
 #endif // YARP_DEV_FRAMETRANSFORM_UTILS_H
