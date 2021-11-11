@@ -193,7 +193,11 @@ bool yarp::robotinterface::Robot::Private::openDevices()
 {
     bool ret = true;
     for (auto& device : devices) {
-        yInfo() << "Opening device" << device.name();
+        for (auto& param : params) {
+            device.params().push_back(param);
+        }
+
+        yInfo() << "Opening device" << device.name() << "with parameters" << device.params();
 
         if (dryrun) {
             continue;
