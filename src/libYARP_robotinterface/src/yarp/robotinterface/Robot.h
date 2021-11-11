@@ -28,6 +28,8 @@ public:
 
     void setVerbose(bool verbose);
     void setAllowDeprecatedDevices(bool allowDeprecatedDevices);
+    void setDryRun(bool dryrun);
+    void setReverseShutdownActionOrder(bool reverseShutdownActionOrder);
 
     ParamList& params();
     DeviceList& devices();

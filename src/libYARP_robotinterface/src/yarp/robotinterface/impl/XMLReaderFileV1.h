@@ -23,11 +23,11 @@ public:
     ~XMLReaderFileV1() override;
 
     yarp::robotinterface::XMLReaderResult getRobotFromFile(const std::string& filename,
-                                                                         const yarp::os::Searchable& config,
-                                                                         bool verbose = false) override;
+                                                           const yarp::os::Searchable& config,
+                                                           bool verbose = false) override;
     yarp::robotinterface::XMLReaderResult getRobotFromString(const std::string& xmlString,
-                                                                           const yarp::os::Searchable& config,
-                                                                           bool verbose = false) override;
+                                                             const yarp::os::Searchable& config,
+                                                             bool verbose = false) override;
 
 private:
     class Private;

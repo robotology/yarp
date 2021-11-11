@@ -25,7 +25,7 @@
     <device name="wrapper_left" type="grabberDual"> <!-- frameGrabber_nws_yarp -->
         <param name="name">/left</param>
         <param name="period">33</param>
-        <action phase="startup" level="10" type="attach">
+        <action phase="startup" level="5" type="attach">
             <param name="device"> grabber_left </param>
         </action>
         <action phase="shutdown" level="5" type="detach" />
@@ -37,6 +37,6 @@
         <action phase="startup" level="10" type="attach">
             <param name="device"> grabber_right </param>
         </action>
-        <action phase="shutdown" level="5" type="detach" />
+        <action phase="shutdown" level="10" type="detach" />
     </device>
 </devices>

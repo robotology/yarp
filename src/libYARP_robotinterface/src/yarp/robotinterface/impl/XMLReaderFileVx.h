@@ -24,11 +24,11 @@ public:
     bool verbose;
     virtual ~XMLReaderFileVx(){};
     virtual yarp::robotinterface::XMLReaderResult getRobotFromFile(const std::string& filename,
-                                                                                 const yarp::os::Searchable& config,
-                                                                                 bool verbose = false) = 0;
+                                                                   const yarp::os::Searchable& config,
+                                                                   bool verbose = false) = 0;
     virtual yarp::robotinterface::XMLReaderResult getRobotFromString(const std::string& xmlString,
-                                                                                   const yarp::os::Searchable& config,
-                                                                                   bool verbose = false) = 0;
+                                                                     const yarp::os::Searchable& config,
+                                                                     bool verbose = false) = 0;
 };
 
 } // namespace yarp::robotinterface::impl

@@ -257,6 +257,14 @@ yarp::robotinterface::XMLReaderResult yarp::robotinterface::impl::XMLReaderFileV
         result.robot.portprefix() = result.robot.name();
     }
 
+    // FIXME DTD >= 4 Make this the default behaviour
+    bool reverse = false;
+    if (robotElem->QueryBoolAttribute("reverse-shutdown-action-order", &reverse) == TIXML_WRONG_TYPE) {
+        SYNTAX_ERROR(robotElem->Row()) << R"(The "reverse-shutdown-action-order" attribute in the "robot" element should be a bool.)";
+        return yarp::robotinterface::XMLReaderResult::ParsingFailed();
+    }
+    result.robot.setReverseShutdownActionOrder(reverse);
+
     // yDebug() << "Found robot [" << robot.name() << "] build [" << robot.build() << "] portprefix [" << robot.portprefix() << "]";
 
     for (TiXmlElement* childElem = robotElem->FirstChildElement(); childElem != nullptr; childElem = childElem->NextSiblingElement()) {
