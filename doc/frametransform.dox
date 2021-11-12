@@ -38,6 +38,9 @@ libyarp_dev interfaces:
 
  This particular device can be decomposed into client and server if needed, as can be seen below, and each client and
  server can have various submodules so the user can choose a different structure depending on his need.
+.
+ To see how different client and server configurations can be coupled, see the following page:
+ \ref Fts_ftc_config Fts_ftc_config
 
 \section FrameTransformClient
 
