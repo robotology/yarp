@@ -19,7 +19,9 @@
 #include <iosfwd>
 #include <sstream>
 #include <string>
-#include <vector>
+#include <tuple>
+#include <type_traits>
+#include <utility>
 
 namespace yarp::os {
 
@@ -247,18 +249,55 @@ public:
         return *this;
     }
 
-    template <typename T>
-    inline LogStream& operator<<(const std::vector<T>& t)
+#if !defined(SWIG)
+    template <typename T1, typename T2>
+    inline LogStream& operator<<(const std::pair<T1, T2>& t)
+    {
+        bool nospace = stream->nospace;
+        stream->nospace = true;
+        stream->oss << '{';
+        *this << t.first;
+        stream->oss << ", ";
+        *this << t.second << '}';
+        stream->nospace = nospace;
+        if (!stream->nospace) {
+            stream->oss << ' ';
+        }
+        return *this;
+    }
+
+    template <typename Container, typename = typename Container::value_type>
+    inline LogStream& operator<<(const Container& cont)
+    {
+        return streamInternal(cont);
+    }
+
+    template <typename Arr, typename std::enable_if_t<std::is_array_v<Arr>, bool> = true>
+    inline LogStream& operator<<(const Arr& arr)
+    {
+        return streamInternal(arr);
+    }
+
+    template <typename... Args>
+    inline LogStream& operator<<(const std::tuple<Args...>& t)
+    {
+        bool nospace = stream->nospace;
+        stream->nospace = true;
+        return tupleInternal<0>(t, nospace);
+    }
+
+private:
+    template <typename C>
+    inline LogStream& streamInternal(const C& c)
     {
         bool nospace = stream->nospace;
         stream->nospace = true;
         stream->oss << '[';
-        for (typename std::vector<T>::const_iterator it = t.begin(); it != t.end(); ++it) {
-            const T& p = *it;
-            if (it != t.begin()) {
+        for (auto it = std::begin(c); it != std::end(c); ++it) {
+            if (it != std::begin(c)) {
                 stream->oss << ", ";
             }
-            *this << p;
+            *this << *it;
         }
         stream->oss << ']';
         stream->nospace = nospace;
@@ -266,7 +305,30 @@ public:
             stream->oss << ' ';
         }
         return *this;
-}
+    }
+
+    template <std::size_t I, typename... Args>
+    inline LogStream& tupleInternal(const std::tuple<Args...>& t, bool nospace)
+    {
+        if constexpr (I == 0) {
+            stream->oss << '{';
+        }
+        if constexpr (I < sizeof...(Args)) {
+            if constexpr (I != 0) {
+                stream->oss << ", ";
+            }
+            *this << std::get<I>(t);
+            return tupleInternal<I + 1>(t, nospace);
+        } else {
+            stream->oss << '}';
+            stream->nospace = nospace;
+            if (!stream->nospace) {
+                stream->oss << ' ';
+            }
+        }
+        return *this;
+    }
+#endif // !defined(SWIG)
 
 }; // class LogStream
 
