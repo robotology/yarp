@@ -356,10 +356,25 @@ yarp::robotinterface::DeviceList yarp::robotinterface::impl::XMLReaderFileV3::Pr
     //const std::string &valueStr = devicesElem->ValueStr();
 
     yarp::robotinterface::DeviceList devices;
+    yarp::robotinterface::ParamList params;
+
     for (TiXmlElement* childElem = devicesElem->FirstChildElement(); childElem != nullptr; childElem = childElem->NextSiblingElement()) {
-        for (const auto& childDevice : readDevices(childElem, result)) {
-            devices.push_back(childDevice);
+        // FIXME Check DTD >= 3.2
+        // "subdevice" is not allowed in the "devices" tag
+        if (childElem->ValueStr() == "param" || childElem->ValueStr() == "group" || childElem->ValueStr() == "paramlist" || childElem->ValueStr() == "params") {
+            for (const auto& childParam : readParams(childElem, result)) {
+                params.push_back(childParam);
+            }
+        } else {
+            for (const auto& childDevice : readDevices(childElem, result)) {
+                devices.push_back(childDevice);
+            }
         }
+    }
+
+
+    for (auto& device : devices) {
+        device.params().insert(device.params().begin(), params.begin(), params.end());
     }
 
     return devices;
