@@ -285,7 +285,7 @@ yarp::robotinterface::XMLReaderResult yarp::robotinterface::impl::XMLReaderFileV
 
 
 yarp::robotinterface::DeviceList yarp::robotinterface::impl::XMLReaderFileV3::Private::readDevices(TiXmlElement* devicesElem,
-                                                                                                                 yarp::robotinterface::XMLReaderResult& result)
+                                                                                                   yarp::robotinterface::XMLReaderResult& result)
 {
     const std::string& valueStr = devicesElem->ValueStr();
 
@@ -306,7 +306,7 @@ yarp::robotinterface::DeviceList yarp::robotinterface::impl::XMLReaderFileV3::Pr
 }
 
 yarp::robotinterface::Device yarp::robotinterface::impl::XMLReaderFileV3::Private::readDeviceTag(TiXmlElement* deviceElem,
-                                                                                                               yarp::robotinterface::XMLReaderResult& result)
+                                                                                                 yarp::robotinterface::XMLReaderResult& result)
 {
     const std::string& valueStr = deviceElem->ValueStr();
 
@@ -351,7 +351,7 @@ yarp::robotinterface::Device yarp::robotinterface::impl::XMLReaderFileV3::Privat
 }
 
 yarp::robotinterface::DeviceList yarp::robotinterface::impl::XMLReaderFileV3::Private::readDevicesTag(TiXmlElement* devicesElem,
-                                                                                                                    yarp::robotinterface::XMLReaderResult& result)
+                                                                                                      yarp::robotinterface::XMLReaderResult& result)
 {
     //const std::string &valueStr = devicesElem->ValueStr();
 
@@ -366,7 +366,7 @@ yarp::robotinterface::DeviceList yarp::robotinterface::impl::XMLReaderFileV3::Pr
 }
 
 yarp::robotinterface::ParamList yarp::robotinterface::impl::XMLReaderFileV3::Private::readParams(TiXmlElement* paramsElem,
-                                                                                                               yarp::robotinterface::XMLReaderResult& result)
+                                                                                                 yarp::robotinterface::XMLReaderResult& result)
 {
     const std::string& valueStr = paramsElem->ValueStr();
 
@@ -397,7 +397,7 @@ yarp::robotinterface::ParamList yarp::robotinterface::impl::XMLReaderFileV3::Pri
 
 
 yarp::robotinterface::Param yarp::robotinterface::impl::XMLReaderFileV3::Private::readParamTag(TiXmlElement* paramElem,
-                                                                                                             yarp::robotinterface::XMLReaderResult& result)
+                                                                                               yarp::robotinterface::XMLReaderResult& result)
 {
     if (paramElem->ValueStr() != "param") {
         SYNTAX_ERROR(paramElem->Row()) << "Expected \"param\". Found" << paramElem->ValueStr();
@@ -435,7 +435,7 @@ yarp::robotinterface::Param yarp::robotinterface::impl::XMLReaderFileV3::Private
 }
 
 yarp::robotinterface::Param yarp::robotinterface::impl::XMLReaderFileV3::Private::readGroupTag(TiXmlElement* groupElem,
-                                                                                                             yarp::robotinterface::XMLReaderResult& result)
+                                                                                               yarp::robotinterface::XMLReaderResult& result)
 {
     if (groupElem->ValueStr() != "group") {
         SYNTAX_ERROR(groupElem->Row()) << "Expected \"group\". Found" << groupElem->ValueStr();
@@ -479,7 +479,7 @@ yarp::robotinterface::Param yarp::robotinterface::impl::XMLReaderFileV3::Private
 }
 
 yarp::robotinterface::ParamList yarp::robotinterface::impl::XMLReaderFileV3::Private::readParamListTag(TiXmlElement* paramListElem,
-                                                                                                                     yarp::robotinterface::XMLReaderResult& result)
+                                                                                                       yarp::robotinterface::XMLReaderResult& result)
 {
     if (paramListElem->ValueStr() != "paramlist") {
         SYNTAX_ERROR(paramListElem->Row()) << "Expected \"paramlist\". Found" << paramListElem->ValueStr();
@@ -544,7 +544,7 @@ yarp::robotinterface::ParamList yarp::robotinterface::impl::XMLReaderFileV3::Pri
 }
 
 yarp::robotinterface::ParamList yarp::robotinterface::impl::XMLReaderFileV3::Private::readSubDeviceTag(TiXmlElement* subDeviceElem,
-                                                                                                                     yarp::robotinterface::XMLReaderResult& result)
+                                                                                                       yarp::robotinterface::XMLReaderResult& result)
 {
     if (subDeviceElem->ValueStr() != "subdevice") {
         SYNTAX_ERROR(subDeviceElem->Row()) << "Expected \"subdevice\". Found" << subDeviceElem->ValueStr();
@@ -586,7 +586,7 @@ yarp::robotinterface::ParamList yarp::robotinterface::impl::XMLReaderFileV3::Pri
 }
 
 yarp::robotinterface::ParamList yarp::robotinterface::impl::XMLReaderFileV3::Private::readParamsTag(TiXmlElement* paramsElem,
-                                                                                                                  yarp::robotinterface::XMLReaderResult& result)
+                                                                                                    yarp::robotinterface::XMLReaderResult& result)
 {
     //const std::string &valueStr = paramsElem->ValueStr();
 
@@ -601,7 +601,7 @@ yarp::robotinterface::ParamList yarp::robotinterface::impl::XMLReaderFileV3::Pri
 }
 
 yarp::robotinterface::ActionList yarp::robotinterface::impl::XMLReaderFileV3::Private::readActions(TiXmlElement* actionsElem,
-                                                                                                                 yarp::robotinterface::XMLReaderResult& result)
+                                                                                                   yarp::robotinterface::XMLReaderResult& result)
 {
     const std::string& valueStr = actionsElem->ValueStr();
 
@@ -619,7 +619,7 @@ yarp::robotinterface::ActionList yarp::robotinterface::impl::XMLReaderFileV3::Pr
 }
 
 yarp::robotinterface::Action yarp::robotinterface::impl::XMLReaderFileV3::Private::readActionTag(TiXmlElement* actionElem,
-                                                                                                               yarp::robotinterface::XMLReaderResult& result)
+                                                                                                 yarp::robotinterface::XMLReaderResult& result)
 {
     if (actionElem->ValueStr() != "action") {
         SYNTAX_ERROR(actionElem->Row()) << "Expected \"action\". Found" << actionElem->ValueStr();
@@ -669,7 +669,7 @@ yarp::robotinterface::Action yarp::robotinterface::impl::XMLReaderFileV3::Privat
 }
 
 yarp::robotinterface::ActionList yarp::robotinterface::impl::XMLReaderFileV3::Private::readActionsTag(TiXmlElement* actionsElem,
-                                                                                                                    yarp::robotinterface::XMLReaderResult& result)
+                                                                                                      yarp::robotinterface::XMLReaderResult& result)
 {
     //const std::string &valueStr = actionsElem->ValueStr();
 
@@ -714,8 +714,8 @@ yarp::robotinterface::ActionList yarp::robotinterface::impl::XMLReaderFileV3::Pr
 
 
 yarp::robotinterface::XMLReaderResult yarp::robotinterface::impl::XMLReaderFileV3::getRobotFromFile(const std::string& filename,
-                                                                                                                  const yarp::os::Searchable& config,
-                                                                                                                  bool verb)
+                                                                                                    const yarp::os::Searchable& config,
+                                                                                                    bool verb)
 {
     mPriv->config = &config;
     mPriv->verbose_output = verb;
@@ -725,8 +725,8 @@ yarp::robotinterface::XMLReaderResult yarp::robotinterface::impl::XMLReaderFileV
 }
 
 yarp::robotinterface::XMLReaderResult yarp::robotinterface::impl::XMLReaderFileV3::getRobotFromString(const std::string& xmlString,
-                                                                                                                    const yarp::os::Searchable& config,
-                                                                                                                    bool verb)
+                                                                                                      const yarp::os::Searchable& config,
+                                                                                                      bool verb)
 {
     mPriv->config = &config;
     mPriv->verbose_output = verb;
