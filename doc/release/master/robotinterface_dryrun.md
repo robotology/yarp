@@ -7,4 +7,5 @@ robotinterface_dryrun {#master}
 * Added `reverse-shutdown-action-order` attribute for the `robot` tag.
   This reverses the order of actions in shutdown and interrupt phase, making it
   easier to write the actions when multiple attach and detach are involved.
-* All `robot` tag parameters are now passed to all devices.
+* All `device` tag parameters are now passed to all devices defined inside that
+  tag.
