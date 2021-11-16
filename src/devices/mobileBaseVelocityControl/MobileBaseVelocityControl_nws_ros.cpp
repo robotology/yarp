@@ -38,8 +38,6 @@ void commandSubscriber::deinit()
 
 commandSubscriber::commandSubscriber()
 {
-    //this->setStrict();
-    this->useCallback();
 }
 
 commandSubscriber::~commandSubscriber()
@@ -107,6 +105,9 @@ bool MobileBaseVelocityControl_nws_ros::open(yarp::os::Searchable& config)
         return false;
     }
 
+    //m_command_subscriber->setStrict();
+    m_command_subscriber->useCallback();
+    
     return true;
 }
 
