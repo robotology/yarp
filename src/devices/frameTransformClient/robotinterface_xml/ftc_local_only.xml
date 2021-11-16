@@ -11,6 +11,7 @@
     <param name="getDeviceName"> ftc_storage </param>
     <param name="setDeviceName"> ftc_storage </param>
     <devices>
+        <param extern-name="FrameTransform_verbose_debug" name="FrameTransform_verbose_debug">0</param>
         <device name="ftc_storage" type="frameTransformStorage">
         </device>
     </devices>

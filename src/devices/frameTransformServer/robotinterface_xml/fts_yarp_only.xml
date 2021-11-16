@@ -9,6 +9,7 @@
 
 <robot name="frameTransformServer" build="2" portprefix="frameTransformServer" xmlns:xi="http://www.w3.org/2001/XInclude">
     <devices>
+        <param extern-name="FrameTransform_verbose_debug" name="FrameTransform_verbose_debug">0</param>
         <!-- **************** YARP NWS **************** -->
         <device name="ftSet_nws_yarp" type="frameTransformSet_nws_yarp">
             <param extern-name="ft_server_prefix" name="nws_thrift_port_prefix">""</param>

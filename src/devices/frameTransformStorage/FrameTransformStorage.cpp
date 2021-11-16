@@ -28,6 +28,13 @@ bool FrameTransformStorage::open(yarp::os::Searchable& config)
 {
     std::string sstr = config.toString();
 
+    if (config.check("FrameTransform_verbose_debug") &&
+        config.find("FrameTransform_verbose_debug").asInt32() == 1)
+    {
+        m_tf_container.m_verbose_debug=true;
+        m_tf_container.m_name = this->id() + ".container";
+    }
+
     yCTrace(FRAMETRANSFORSTORAGE);
     bool b = this->start();
     return b;

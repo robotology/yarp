@@ -67,8 +67,9 @@ bool FrameTransformServer::open(yarp::os::Searchable &config)
 {
     yCWarning(FRAMETRANSFORMSERVER) << "The 'FrameTransformServer' device is experimental and could be modified without any warning";
 
+    std::string cfg_string = config.toString();
     yarp::os::Property cfg;
-    cfg.fromString(config.toString());
+    cfg.fromString(cfg_string);
 
     std::string configuration_to_open;
     std::string innerFilePath="config_xml/fts_yarp_only.xml";
@@ -96,6 +97,12 @@ bool FrameTransformServer::open(yarp::os::Searchable &config)
     if (cfg.check("local_rpc")) { m_local_rpcUser=cfg.find("local_rpc").toString();}
     cfg.unput("local_rpc");
 
+    if (config.check("FrameTransform_verbose_debug"))
+    {
+        yarp::os::Value vval = config.find("FrameTransform_verbose_debug");
+        cfg.put("FrameTransform_verbose_debug", vval);
+    }
+
     yarp::robotinterface::XMLReader reader;
     yarp::robotinterface::XMLReaderResult result = reader.getRobotFromString(configuration_to_open, cfg);
     yCAssert(FRAMETRANSFORMSERVER, result.parsingIsSuccessful);
@@ -122,9 +129,13 @@ bool FrameTransformServer::open(yarp::os::Searchable &config)
 
 bool FrameTransformServer::close()
 {
+    this->askToStop();
+    m_rpc_InterfaceToUser.close();
+    yCDebug(FRAMETRANSFORMSERVER, "rpc port closed");
+
     m_robot.enterPhase(yarp::robotinterface::ActionPhaseInterrupt1);
     m_robot.enterPhase(yarp::robotinterface::ActionPhaseShutdown);
-    m_rpc_InterfaceToUser.close();
+
     return true;
 }
 

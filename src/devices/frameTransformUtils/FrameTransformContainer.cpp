@@ -18,16 +18,22 @@ using namespace yarp::math;
 namespace {
 YARP_LOG_COMPONENT(FRAMETRANSFORMCONTAINER, "yarp.device.frameTransformContainer")
 
-void invalidateTransform(yarp::math::FrameTransform& trf)
+}
+
+//------------------------------------------------------------------------------------------------------------------------------
+
+void FrameTransformContainer::invalidateTransform(yarp::math::FrameTransform& trf)
 {
     trf.timestamp = yarp::os::Time::now();
     trf.isStatic = false;
     trf.translation = { 0,0,0 };
     trf.rotation = { 0,0,0,0 };
+    if (m_verbose_debug)
+    {
+        yCIDebug(FRAMETRANSFORMCONTAINER, m_name) << "At time" << std::to_string(trf.timestamp)
+            << "deleted transform (marked invalid):" << trf.src_frame_id << "->" << trf.dst_frame_id << ", assigned timestamp" << std::to_string(trf.timestamp);
+    }
 }
-}
-
-//------------------------------------------------------------------------------------------------------------------------------
 
 bool FrameTransformContainer::getTransforms(std::vector<yarp::math::FrameTransform>& transforms) const
 {
@@ -161,6 +167,15 @@ bool FrameTransformContainer::checkAndRemoveExpired()
         if (curr_t - it->timestamp > m_timeout &&
             it->isStatic == false)
         {
+            if (m_verbose_debug)
+            {
+                if (it->isValid())
+                {yCIDebug(FRAMETRANSFORMCONTAINER, m_name) << "At time" << std::to_string(curr_t)
+                 <<"Transform expired:" << it->src_frame_id << "->" << it->dst_frame_id << "with timestamp" << std::to_string(it->timestamp);}
+                else
+                {yCIDebug(FRAMETRANSFORMCONTAINER, m_name) << "At time" << std::to_string(curr_t)
+                 << "Invalid transform expired:" << it->src_frame_id << "->"<< it->dst_frame_id << "with timestamp" << std::to_string(it->timestamp);}
+            }
             m_transforms.erase(it);
             goto check_vector;
         }

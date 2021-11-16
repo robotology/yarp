@@ -10,6 +10,7 @@
 <robot name="frameTransformClient" build="2" portprefix="frameTransformClient" xmlns:xi="http://www.w3.org/2001/XInclude">
     <param name="setDeviceName"> ftSet_nwc_yarp  </param>
     <devices>
+        <param extern-name="FrameTransform_verbose_debug" name="FrameTransform_verbose_debug">0</param>
         <!-- **************** YARP NWC **************** -->
         <device name="ftSet_nwc_yarp" type="frameTransformSet_nwc_yarp">
             <param extern-name="ft_client_prefix" name="nwc_thrift_port_prefix">""</param>

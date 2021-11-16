@@ -20,14 +20,34 @@ TEST_CASE("dev::FrameTransformClientTest", "[yarp::dev]")
     YARP_REQUIRE_PLUGIN("frameTransformClient", "device");
 
     yarp::os::Network::setLocalMode(true);
+    const bool verboseDebug = true;
+
+    SECTION("test the frameTransformClient/Server open/close, case 0")
+    {
+        yarp::dev::PolyDriver pd;
+        yarp::os::Property p;
+
+        p.put("device", "frameTransformClient");
+        p.put("filexml_option", "ftc_local_only.xml");
+        REQUIRE(pd.open(p));
+        yarp::os::Time::delay(0.5);
+        REQUIRE(pd.close());
+
+        p.put("device", "frameTransformServer");
+        p.put("filexml_option", "fts_yarp_only.xml");
+        REQUIRE(pd.open(p));
+        yarp::os::Time::delay(0.5);
+        REQUIRE(pd.close());
+    }
 
     SECTION("test the frameTransformClient local only mode, case 1")
     {
-        yarp::dev::IFrameTransform* ift;
+        yarp::dev::IFrameTransform* ift = nullptr;
         yarp::dev::PolyDriver pd;
         yarp::os::Property p;
         p.put("device","frameTransformClient");
         p.put("filexml_option","ftc_local_only.xml");
+        if(verboseDebug) {p.put("FrameTransform_verbose_debug","1"); }
         REQUIRE(pd.open(p));
         REQUIRE(pd.view(ift));
 
@@ -38,11 +58,12 @@ TEST_CASE("dev::FrameTransformClientTest", "[yarp::dev]")
 
     SECTION("test the frameTransformClient local only mode, case 2")
     {
-        yarp::dev::IFrameTransform* ift;
+        yarp::dev::IFrameTransform* ift = nullptr;
         yarp::dev::PolyDriver pd;
         yarp::os::Property p;
         p.put("device", "frameTransformClient");
         p.put("filexml_option", "ftc_local_only.xml");
+        if (verboseDebug) { p.put("FrameTransform_verbose_debug", "1"); }
         REQUIRE(pd.open(p));
         REQUIRE(pd.view(ift));
 
@@ -57,13 +78,15 @@ TEST_CASE("dev::FrameTransformClientTest", "[yarp::dev]")
         yarp::os::Property server_prop;
         server_prop.put("device", "frameTransformServer");
         server_prop.put("filexml_option", "fts_yarp_only.xml");
+        if (verboseDebug) { server_prop.put("FrameTransform_verbose_debug", "1"); }
         REQUIRE(server_pd.open(server_prop));
 
-        yarp::dev::IFrameTransform* ift;
+        yarp::dev::IFrameTransform* ift = nullptr;
         yarp::dev::PolyDriver client_pd;
         yarp::os::Property client_prop;
         client_prop.put("device", "frameTransformClient");
         client_prop.put("filexml_option", "ftc_yarp_only.xml");
+        if (verboseDebug) { client_prop.put("FrameTransform_verbose_debug", "1"); }
         REQUIRE(client_pd.open(client_prop));
         REQUIRE(client_pd.view(ift));
 
@@ -79,13 +102,15 @@ TEST_CASE("dev::FrameTransformClientTest", "[yarp::dev]")
         yarp::os::Property server_prop;
         server_prop.put("device", "frameTransformServer");
         server_prop.put("filexml_option", "fts_yarp_only.xml");
+        if (verboseDebug) { server_prop.put("FrameTransform_verbose_debug", "1"); }
         REQUIRE(server_pd.open(server_prop));
 
-        yarp::dev::IFrameTransform* ift;
+        yarp::dev::IFrameTransform* ift = nullptr;
         yarp::dev::PolyDriver client_pd;
         yarp::os::Property client_prop;
         client_prop.put("device", "frameTransformClient");
         client_prop.put("filexml_option", "ftc_yarp_only.xml");
+        if (verboseDebug) { client_prop.put("FrameTransform_verbose_debug", "1"); }
         REQUIRE(client_pd.open(client_prop));
         REQUIRE(client_pd.view(ift));
 

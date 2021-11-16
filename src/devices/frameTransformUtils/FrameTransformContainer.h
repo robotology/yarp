@@ -86,6 +86,7 @@ public:
 
 protected:
     ContainerType m_transforms;
+    void invalidateTransform(yarp::math::FrameTransform& trf);
 
 public:
     mutable std::recursive_mutex  m_trf_mutex;
@@ -93,6 +94,8 @@ public:
 public:
     //non-static transforms older than value (seconds) will be removed by method checkAndRemoveExpired()
     double m_timeout = 0.2;
+    bool   m_verbose_debug = false;
+    std::string m_name;
 
 public:
     FrameTransformContainer() {}

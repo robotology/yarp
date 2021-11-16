@@ -11,6 +11,7 @@
     <param name="getDeviceName"> ftc_storage </param>
     <param name="setDeviceName"> ftc_mpxSet  </param>
     <devices>
+        <param extern-name="FrameTransform_verbose_debug" name="FrameTransform_verbose_debug">0</param>
         <!-- **************** YARP NWC **************** -->
         <device name="ftSet_nwc_yarp" type="frameTransformSet_nwc_yarp">
             <param extern-name="ft_client_prefix" name="nwc_thrift_port_prefix">""</param>
