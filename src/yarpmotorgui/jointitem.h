@@ -70,7 +70,8 @@ class JointItem : public QWidget
     void setDutyVisible(bool);
     void setCurrentsVisible(bool);
     void setUnits(yarp::dev::JointTypeEnum t);
-    void viewPositionTarget(bool);
+    void viewPositionTargetBox(bool);
+    void viewPositionTargetValue(bool);
     void enableControlVelocity(bool control);
     void enableControlMixed(bool control);
     void enableControlPositionDirect(bool control);

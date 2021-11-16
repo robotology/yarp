@@ -1959,12 +1959,21 @@ void PartItem::onViewCurrentValues(bool view)
     }
 }
 
-void PartItem::onViewPositionTarget(bool ena)
+void PartItem::onViewPositionTargetBox(bool ena)
 {
     for (int i = 0; i<m_layout->count(); i++)
     {
         auto* joint = (JointItem*)m_layout->itemAt(i)->widget();
-        joint->viewPositionTarget(ena);
+        joint->viewPositionTargetBox(ena);
+    }
+}
+
+void PartItem::onViewPositionTargetValue(bool ena)
+{
+    for (int i = 0; i < m_layout->count(); i++)
+    {
+        auto* joint = (JointItem*)m_layout->itemAt(i)->widget();
+        joint->viewPositionTargetValue(ena);
     }
 }
 
