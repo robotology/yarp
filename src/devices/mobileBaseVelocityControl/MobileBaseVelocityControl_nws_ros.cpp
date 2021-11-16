@@ -107,7 +107,7 @@ bool MobileBaseVelocityControl_nws_ros::open(yarp::os::Searchable& config)
 
     //m_command_subscriber->setStrict();
     m_command_subscriber->useCallback();
-    
+
     return true;
 }
 
