@@ -88,7 +88,8 @@ class ControlBoardRemapper :
         public yarp::dev::IAxisInfo,
         public yarp::dev::IPreciselyTimed,
         public yarp::dev::IInteractionMode,
-        public yarp::dev::IRemoteVariables {
+        public yarp::dev::IRemoteVariables,
+        public yarp::dev::IJointFault {
 private:
     std::vector<std::string> axesNames;
     RemappedControlBoards remappedControlBoards;
@@ -301,6 +302,10 @@ public:
     bool stop() override;
 
     bool stop(const int n_joints, const int *joints) override;
+
+    /* IJointFault */
+
+    bool getLastJointFault(int j, int& fault, std::string& message) override;
 
     /* IVelocityControl */
     bool velocityMove(int j, double v) override;

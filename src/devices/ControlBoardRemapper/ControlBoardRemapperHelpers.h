@@ -64,6 +64,7 @@ public:
     yarp::dev::IRemoteVariables      *iVar;
     yarp::dev::IPWMControl           *iPwm;
     yarp::dev::ICurrentControl       *iCurr;
+    yarp::dev::IJointFault           *iFault;
 
     RemappedSubControlBoard();
 

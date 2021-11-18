@@ -16,6 +16,10 @@ yarpmotorgui_hwfault {#master}
 
 * ControlBoard_nws_yarp now implements IJointFault
 
+#### ControlBoardRemapper
+
+* ControlBoardRemapper now implements IJointFault
+
 #### fakeMotionControl
 
 * fakeMotionControl now simulates an hardware fault when it receives a TorqueCommand > 1Nm
