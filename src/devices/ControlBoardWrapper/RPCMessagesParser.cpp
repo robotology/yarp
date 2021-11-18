@@ -131,6 +131,48 @@ void RPCMessagesParser::handleImpedanceMsg(const yarp::os::Bottle& cmd,
     }
 }
 
+void RPCMessagesParser::handleJointFaultMsg(const yarp::os::Bottle& cmd,
+    yarp::os::Bottle& response,
+    bool* rec,
+    bool* ok)
+{
+    //handle here messages about  IControlMode interface
+    int code = cmd.get(0).asVocab32();
+    *ok = true;
+    *rec = true; //or false
+
+    switch (code)
+    {
+        case VOCAB_GET:
+        yCTrace(CONTROLBOARD, "GET command");
+
+        int method = cmd.get(2).asVocab32();
+
+        switch (method)
+        {
+            case VOCAB_JF_GET_JOINTFAULT:
+                yCTrace(CONTROLBOARD, "getJointFault");
+                int axis = cmd.get(3).asInt32();
+                int faultcode=0;
+                std::string faultmessage;
+                if (rpc_IJointFault)
+                {
+                    *ok = rpc_IJointFault->getLastJointFault(axis, faultcode, faultmessage);
+                    *rec = true;
+                }
+                response.addVocab32(VOCAB_IS);
+                response.addInt32(faultcode);
+                response.addString(faultmessage);
+
+                yCTrace(CONTROLBOARD, "Returning %d %s", faultcode, faultmessage.c_str());
+                *rec = true;
+            break;
+        }
+
+        break;
+    }
+}
+
 void RPCMessagesParser::handleControlModeMsg(const yarp::os::Bottle& cmd,
                                              yarp::os::Bottle& response,
                                              bool* rec,
@@ -313,6 +355,7 @@ void RPCMessagesParser::handleControlModeMsg(const yarp::os::Bottle& cmd,
         int method = cmd.get(2).asVocab32();
 
         switch (method) {
+
         case VOCAB_CM_CONTROL_MODES: {
             yCTrace(CONTROLBOARD, "getControlModes");
             int* p = new int[controlledJoints];
@@ -1344,6 +1387,10 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
             handleTorqueMsg(cmd, response, &rec, &ok);
             break;
 
+        case VOCAB_IJOINTFAULT:
+            handleJointFaultMsg(cmd, response, &rec, &ok);
+            break;
+
         case VOCAB_ICONTROLMODE:
             handleControlModeMsg(cmd, response, &rec, &ok);
             break;
@@ -2314,6 +2361,7 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
             response.addVocab32(VOCAB_OK);
         }
     }
+    std::string ss = response.toString();
 
     return ok;
 }
@@ -2379,6 +2427,7 @@ void RPCMessagesParser::init(yarp::dev::DeviceDriver* x)
     x->view(rpc_IInteract);
     x->view(rpc_ICurrent);
     x->view(rpc_IPWM);
+    x->view(rpc_IJointFault);
     controlledJoints = 0;
 }
 
@@ -2403,5 +2452,6 @@ void RPCMessagesParser::reset()
     rpc_IInteract = nullptr;
     rpc_ICurrent = nullptr;
     rpc_IPWM = nullptr;
+    rpc_IJointFault = nullptr;
     controlledJoints = 0;
 }

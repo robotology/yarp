@@ -73,6 +73,7 @@ protected:
     yarp::dev::IRemoteVariables* rpc_IVar {nullptr};
     yarp::dev::ICurrentControl* rpc_ICurrent {nullptr};
     yarp::dev::IPWMControl* rpc_IPWM {nullptr};
+    yarp::dev::IJointFault* rpc_IJointFault{ nullptr };
     yarp::sig::Vector tmpVect;
     yarp::os::Stamp lastRpcStamp;
     std::mutex mutex;
@@ -99,6 +100,11 @@ public:
                          yarp::os::Bottle& response,
                          bool* rec,
                          bool* ok);
+
+    void handleJointFaultMsg(const yarp::os::Bottle& cmd,
+                              yarp::os::Bottle& response,
+                              bool* rec,
+                              bool* ok);
 
     void handleControlModeMsg(const yarp::os::Bottle& cmd,
                               yarp::os::Bottle& response,

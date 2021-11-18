@@ -1885,6 +1885,30 @@ bool RemoteControlBoard::stop()
 
 // END IPositionControl
 
+// BEGIN IJoint Fault
+bool RemoteControlBoard::getLastJointFault(int j, int& fault, std::string& message)
+{
+    Bottle cmd, response;
+
+    cmd.addVocab32(VOCAB_GET);
+    cmd.addVocab32(VOCAB_IJOINTFAULT);
+    cmd.addVocab32(VOCAB_JF_GET_JOINTFAULT);
+    cmd.addInt32(j);
+
+    bool ok = rpc_p.write(cmd, response);
+
+    std::string ss = response.toString();
+
+    if (CHECK_FAIL(ok, response))
+    {
+        fault = response.get(1).asInt32();
+        message = response.get(2).asString();
+        return true;
+    }
+    return false;
+}
+// END IJointFault
+
 // BEGIN IVelocityControl
 
 bool RemoteControlBoard::velocityMove(int j, double v)

@@ -59,6 +59,7 @@ set(YARP_dev_HDRS
   yarp/dev/IImpedanceControl.h
   yarp/dev/IInteractionMode.h
   yarp/dev/IJoypadController.h
+  yarp/dev/IJointFault.h
   yarp/dev/IMotor.h
   yarp/dev/IMotorEncoders.h
   yarp/dev/IMultipleWrapper.h
@@ -90,6 +91,7 @@ set(YARP_dev_HDRS
   yarp/dev/ImplementEncodersTimed.h
   yarp/dev/ImplementImpedanceControl.h
   yarp/dev/ImplementInteractionMode.h
+  yarp/dev/ImplementJointFault.h
   yarp/dev/ImplementMotor.h
   yarp/dev/ImplementMotorEncoders.h
   yarp/dev/ImplementPWMControl.h
@@ -205,6 +207,7 @@ set(YARP_dev_SRCS
   yarp/dev/ImplementEncodersTimed.cpp
   yarp/dev/ImplementImpedanceControl.cpp
   yarp/dev/ImplementInteractionMode.cpp
+  yarp/dev/ImplementJointFault.cpp
   yarp/dev/ImplementMotor.cpp
   yarp/dev/ImplementMotorEncoders.cpp
   yarp/dev/ImplementPWMControl.cpp
