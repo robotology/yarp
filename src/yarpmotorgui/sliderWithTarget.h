@@ -17,11 +17,12 @@
 class SliderWithTarget : public QSlider
 {
 public:
-    bool enableViewLabel;
-    bool enableViewTarget;
+    bool enableViewLabel = true;
+    bool enableViewTargetBox = true;
+    bool enableViewTargetValue = false;
     bool disableClickOutOfHandle;
-    SliderWithTarget(QWidget * parent = 0, bool _hasTargetOption = true);
-    ~SliderWithTarget() { if (sliderLabel) { delete sliderLabel; sliderLabel = 0; } }
+    SliderWithTarget(QWidget * parent = 0);
+    ~SliderWithTarget();
     void updateSliderTarget(double val);
     void resetTarget();
     void setSliderStep(double val);
@@ -32,11 +33,11 @@ public:
 
 protected:
     bool isDouble;
-    QLabel* sliderLabel;
+    QLabel* sliderCurrentLabel = nullptr;
+    QLabel* sliderTargetLabel = nullptr;
     double target;
     double width_at_target;
-    double sliderStep;
-    bool hasTargetOption;
+    double sliderStep = 1;
     void paintEvent(QPaintEvent *ev) override;
     void mousePressEvent(QMouseEvent * event) override;
 };

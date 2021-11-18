@@ -250,7 +250,8 @@ MainWindow::MainWindow(QWidget *parent) :
     QAction *viewCurrentValues = windows->addAction("View Current Values");
     QAction *viewMotorPosition = windows->addAction("View Motor Position");
     QAction *viewDutyCycles = windows->addAction("View Duty Cycles");
-    QAction *viewPositionTarget = windows->addAction("View Position Target");
+    QAction *viewPositionTargetBox = windows->addAction("View Position Target Box");
+    QAction* viewPositionTargetValue = windows->addAction("View Position Target Value");
     QAction *enableControlVelocity = windows->addAction("Enable Velocity Control");
     QAction *enableControlMixed = windows->addAction("Enable Mixed Control");
     QAction *enableControlPositionDirect = windows->addAction("Enable Position Direct Control");
@@ -269,13 +270,15 @@ MainWindow::MainWindow(QWidget *parent) :
     enableControlPositionDirect->setCheckable(true);
     enableControlPWM->setCheckable(true);
     enableControlCurrent->setCheckable(true);
-    viewPositionTarget->setCheckable(true);
+    viewPositionTargetBox->setCheckable(true);
+    viewPositionTargetValue->setCheckable(true);
 
     QSettings settings("YARP","yarpmotorgui");
     bool bViewGlobalToolbar = settings.value("GlobalToolVisible",true).toBool();
     bool bViewPartToolbar = settings.value("PartToolVisible",true).toBool();
     bool bSpeedValues = settings.value("SpeedValuesVisible",false).toBool();
-    bool bViewPositionTarget = settings.value("ViewPositionTarget", true).toBool();
+    bool bViewPositionTargetBox = settings.value("ViewPositionTargetBox", true).toBool();
+    bool bViewPositionTargetValue = settings.value("ViewPositionTargetValue", false).toBool();
     bool bviewMotorPosition = settings.value("MotorPositionVisible", false).toBool();
     bool bviewDutyCycles = settings.value("DutyCycleVisible", false).toBool();
     bool bCurrentValues = settings.value("CurrentsVisible", false).toBool();
@@ -286,7 +289,8 @@ MainWindow::MainWindow(QWidget *parent) :
     viewCurrentValues->setChecked(bCurrentValues);
     viewMotorPosition->setChecked(bviewMotorPosition);
     viewDutyCycles->setChecked(bviewDutyCycles);
-    viewPositionTarget->setChecked(bViewPositionTarget);
+    viewPositionTargetBox->setChecked(bViewPositionTargetBox);
+    viewPositionTargetValue->setChecked(bViewPositionTargetValue);
     enableControlVelocity->setChecked(false);
     enableControlMixed->setChecked(false);
     enableControlPositionDirect->setChecked(false);
@@ -302,7 +306,8 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(viewCurrentValues, SIGNAL(triggered(bool)), this, SLOT(onViewCurrents(bool)));
     connect(viewMotorPosition, SIGNAL(triggered(bool)), this, SLOT(onViewMotorPositions(bool)));
     connect(viewDutyCycles, SIGNAL(triggered(bool)), this, SLOT(onViewDutyCycles(bool)));
-    connect(viewPositionTarget, SIGNAL(triggered(bool)), this, SLOT(onViewPositionTarget(bool)));
+    connect(viewPositionTargetBox, SIGNAL(triggered(bool)), this, SLOT(onViewPositionTargetBox(bool)));
+    connect(viewPositionTargetValue, SIGNAL(triggered(bool)), this, SLOT(onViewPositionTargetValue(bool)));
     connect(enableControlVelocity, SIGNAL(triggered(bool)), this, SLOT(onEnableControlVelocity(bool)));
     connect(enableControlMixed, SIGNAL(triggered(bool)), this, SLOT(onEnableControlMixed(bool)));
     connect(enableControlPositionDirect, SIGNAL(triggered(bool)), this, SLOT(onEnableControlPositionDirect(bool)));
@@ -477,12 +482,20 @@ void MainWindow::onViewDutyCycles(bool val)
     emit sig_viewDutyCycles(val);
 }
 
-void MainWindow::onViewPositionTarget(bool val)
+void MainWindow::onViewPositionTargetBox(bool val)
 {
     QSettings settings("YARP", "yarpmotorgui");
     settings.setValue("ViewPositionTarget", val);
 
-    emit sig_viewPositionTarget(val);
+    emit sig_viewPositionTargetBox(val);
+}
+
+void MainWindow::onViewPositionTargetValue(bool val)
+{
+    QSettings settings("YARP", "yarpmotorgui");
+    settings.setValue("ViewPositionTarget", val);
+
+    emit sig_viewPositionTargetValue(val);
 }
 
 void MainWindow::onSetPosSliderOptionMW(int choice, double val)
@@ -632,7 +645,8 @@ bool MainWindow::init(QStringList enabledParts,
             connect(this, SIGNAL(sig_setPosSliderOptionMW(int, double)), part, SLOT(onSetPosSliderOptionPI(int, double)));
             connect(this, SIGNAL(sig_setVelSliderOptionMW(int, double)), part, SLOT(onSetVelSliderOptionPI(int, double)));
             connect(this, SIGNAL(sig_setTrqSliderOptionMW(int, double)), part, SLOT(onSetTrqSliderOptionPI(int, double)));
-            connect(this,SIGNAL(sig_viewPositionTarget(bool)), part, SLOT(onViewPositionTarget(bool)));
+            connect(this, SIGNAL(sig_viewPositionTargetBox(bool)), part, SLOT(onViewPositionTargetBox(bool)));
+            connect(this, SIGNAL(sig_viewPositionTargetValue(bool)), part, SLOT(onViewPositionTargetValue(bool)));
             connect(this, SIGNAL(sig_enableControlVelocity(bool)), part, SLOT(onEnableControlVelocity(bool)));
             connect(this, SIGNAL(sig_enableControlMixed(bool)), part, SLOT(onEnableControlMixed(bool)));
             connect(this, SIGNAL(sig_enableControlPositionDirect(bool)), part, SLOT(onEnableControlPositionDirect(bool)));

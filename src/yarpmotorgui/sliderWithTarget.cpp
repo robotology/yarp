@@ -16,23 +16,27 @@ double my_round(double number)
     return number < 0.0 ? ceil(number - 0.5) : floor(number + 0.5);
 }
 
-SliderWithTarget::SliderWithTarget(QWidget * parent, bool _hasTargetOption) : QSlider(Qt::Horizontal, nullptr)
+SliderWithTarget::SliderWithTarget(QWidget * parent) : QSlider(Qt::Horizontal, nullptr)
 {
-    sliderLabel = new QLabel(this);
-    sliderLabel->setObjectName(QStringLiteral("sliderLabel"));
-    sliderLabel->setGeometry(QRect(0, 0, 41, 20));
-    sliderLabel->setMinimumSize(QSize(40, 20));
-    sliderLabel->setMaximumSize(QSize(16777215, 20));
-    sliderLabel->setAlignment(Qt::AlignCenter);
-    sliderLabel->setStyleSheet("background-color: rgba(0,0,0,0%)");
+    sliderCurrentLabel = new QLabel(this);
+    sliderCurrentLabel->setObjectName(QStringLiteral("sliderLabel"));
+    sliderCurrentLabel->setGeometry(QRect(0, 0, 100, 20));
+    sliderCurrentLabel->setMinimumSize(QSize(40, 20));
+    sliderCurrentLabel->setMaximumSize(QSize(16777215, 20));
+    sliderCurrentLabel->setAlignment(Qt::AlignCenter);
+    sliderCurrentLabel->setStyleSheet("background-color: rgba(0,0,0,0%)");
 
-    hasTargetOption = _hasTargetOption;
-    enableViewTarget = true;
-    enableViewLabel = true;
+    sliderTargetLabel = new QLabel(this);
+    sliderTargetLabel->setObjectName(QStringLiteral("sliderTargetLabel"));
+    sliderTargetLabel->setGeometry(QRect(0, 0, 100, 20));
+    sliderTargetLabel->setMinimumSize(QSize(40, 20));
+    sliderTargetLabel->setMaximumSize(QSize(16777215, 20));
+    sliderTargetLabel->setAlignment(Qt::AlignCenter);
+    sliderTargetLabel->setStyleSheet("background-color: rgba(0,0,0,0%)");
+
     disableClickOutOfHandle = true;
     target=-1e50; //default value is intensionally set out of the slider
     width_at_target = this->width() - 30;
-    sliderStep=1;
     isDouble = false;
 }
 
@@ -73,35 +77,46 @@ void SliderWithTarget::updateSliderTarget(double t)
 {
     target = t;
     width_at_target= this->width()-30;
-    this->update(); //force the reapint of the widget
+    this->update(); //force the repaint of the widget
 }
 
 void SliderWithTarget::resetTarget()
 {
     target = -1e50;
     width_at_target = this->width() - 30;
-    this->update(); //force the reapint of the widget
+    this->update(); //force the repaint of the widget
 }
 
 void SliderWithTarget::paintEvent(QPaintEvent *e)
 {
     QSlider::paintEvent(e);
-    if (hasTargetOption && enableViewTarget)
+    double w = this->width() - 30;
+    int totValues = this->maximum() + abs(this->minimum());
+
+    if (enableViewTargetBox)
     {
         QPainter p(this);
-        double current_width = this->width()-30;
-        QRect r(target / width_at_target * current_width, 17, 30, 15);
+        double newX = ((double)w / (double)totValues) * ((double)target + abs(this->minimum()));
+        QRect r(newX, 17, 30, 15);
         p.fillRect(r, QBrush(QColor(128, 128, 255, 128)));
         p.drawRect(r);
     }
     if (enableViewLabel)
     {
-        double  value = this->value();
-        int w = this->width() - 30;
-        int totValues = this->maximum() + abs(this->minimum());
+        double value = this->value();
         double newX = ((double)w / (double)totValues) * ((double)value + abs(this->minimum()));
-        sliderLabel->setGeometry(newX, -10, 40, 20);
-        sliderLabel->setText(QString("%L1").arg((double)value / sliderStep, 0, 'f', 3));
+        sliderCurrentLabel->setGeometry(newX, -10, 40, 20);
+        sliderCurrentLabel->setText(QString("%L1").arg((double)value / sliderStep, 0, 'f', 3));
+    }
+    if (enableViewTargetValue)
+    {
+        double newX = ((double)w / (double)totValues) * ((double)target + abs(this->minimum()));
+        sliderTargetLabel->setGeometry(newX, +10, 80, 20);
+        sliderTargetLabel->setText(QString("Ref:%L1").arg((double)target, 0, 'f', 3));
+    }
+    else
+    {
+        sliderTargetLabel->setText("");
     }
 }
 
@@ -127,4 +142,10 @@ void SliderWithTarget::mousePressEvent(QMouseEvent * event)
         event->accept();
     }
     QSlider::mousePressEvent(event);
+}
+
+SliderWithTarget::~SliderWithTarget()
+{
+    if (sliderCurrentLabel) { delete sliderCurrentLabel; sliderCurrentLabel = nullptr; }
+    if (sliderTargetLabel)  { delete sliderTargetLabel; sliderTargetLabel = nullptr; }
 }

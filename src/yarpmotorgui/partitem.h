@@ -174,7 +174,8 @@ public slots:
     void onSetVelSliderOptionPI(int mode, double step);
     void onSetTrqSliderOptionPI(int mode, double step);
     void onSetCurSliderOptionPI(int mode, double step);
-    void onViewPositionTarget(bool);
+    void onViewPositionTargetBox(bool);
+    void onViewPositionTargetValue(bool);
     void onEnableControlVelocity(bool control);
     void onEnableControlMixed(bool control);
     void onEnableControlPositionDirect(bool control);

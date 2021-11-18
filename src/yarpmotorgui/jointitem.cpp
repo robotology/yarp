@@ -24,24 +24,12 @@ void JointItem::resetTarget()
 
 void JointItem::updateTrajectoryPositionTarget(double val)
 {
-    int w = ui->sliderTrajectoryPosition->width()- 30;
-    double mmin = this->min_position;
-    double mmax = this->max_position;
-    double totValues = fabs(mmax - mmin);
-    double cursor = fabs(val - mmin);
-    double newX = cursor * (double)w / (double)totValues;
-    ui->sliderTrajectoryPosition->updateSliderTarget(newX);
+    ui->sliderTrajectoryPosition->updateSliderTarget(val);
 }
 
 void JointItem::updateMixedPositionTarget(double val)
 {
-    int w = ui->sliderMixedPosition->width() - 30;
-    double mmin = this->min_position;
-    double mmax = this->max_position;
-    double totValues = fabs(mmax - mmin);
-    double cursor = fabs(val - mmin);
-    double newX = cursor * (double)w / (double)totValues;
-    ui->sliderMixedPosition->updateSliderTarget(newX);
+    ui->sliderMixedPosition->updateSliderTarget(val);
 }
 
 JointItem::JointItem(int index,QWidget *parent) :
@@ -101,55 +89,64 @@ JointItem::JointItem(int index,QWidget *parent) :
     connect(ui->sliderTrajectoryPosition,SIGNAL(sliderPressed()),this,SLOT(onSliderTrajectoryPositionPressed()));
     connect(ui->sliderTrajectoryPosition, SIGNAL(sliderReleased()), this, SLOT(onSliderTrajectoryPositionReleased()));
     ui->sliderTrajectoryPosition->disableClickOutOfHandle=true;
-    ui->sliderTrajectoryPosition->enableViewTarget = true;
+    ui->sliderTrajectoryPosition->enableViewTargetBox = true;
+    ui->sliderTrajectoryPosition->enableViewTargetValue = false;
 
     ui->sliderTorqueTorque->installEventFilter(this);
     connect(ui->sliderTorqueTorque,SIGNAL(sliderPressed()),this,SLOT(onSliderTorquePressed()));
     connect(ui->sliderTorqueTorque,SIGNAL(sliderReleased()),this,SLOT(onSliderTorqueReleased()));
     ui->sliderTorqueTorque->disableClickOutOfHandle = true;
-    ui->sliderTorqueTorque->enableViewTarget = false;
+    ui->sliderTorqueTorque->enableViewTargetBox = false;
+    ui->sliderTorqueTorque->enableViewTargetValue = false;
 
     ui->sliderPWMOutput->installEventFilter(this);
     connect(ui->sliderPWMOutput, SIGNAL(sliderPressed()), this, SLOT(onSliderPWMPressed()));
     connect(ui->sliderPWMOutput, SIGNAL(sliderReleased()), this, SLOT(onSliderPWMReleased()));
     ui->sliderPWMOutput->disableClickOutOfHandle = true;
-    ui->sliderPWMOutput->enableViewTarget = false;
+    ui->sliderPWMOutput->enableViewTargetBox = false;
+    ui->sliderPWMOutput->enableViewTargetValue = false;
 
     ui->sliderCurrentOutput->installEventFilter(this);
     connect(ui->sliderCurrentOutput, SIGNAL(sliderPressed()), this, SLOT(onSliderCurrentPressed()));
     connect(ui->sliderCurrentOutput, SIGNAL(sliderReleased()), this, SLOT(onSliderCurrentReleased()));
     ui->sliderCurrentOutput->disableClickOutOfHandle = true;
-    ui->sliderCurrentOutput->enableViewTarget = false;
+    ui->sliderCurrentOutput->enableViewTargetBox = false;
+    ui->sliderCurrentOutput->enableViewTargetValue = false;
 
     ui->sliderDirectPosition->installEventFilter(this);
     connect(ui->sliderDirectPosition, SIGNAL(sliderPressed()), this, SLOT(onSliderDirectPositionPressed()));
     connect(ui->sliderDirectPosition, SIGNAL(sliderReleased()), this, SLOT(onSliderDirectPositionReleased()));
     ui->sliderDirectPosition->disableClickOutOfHandle = true;
-    ui->sliderDirectPosition->enableViewTarget = false;
+    ui->sliderDirectPosition->enableViewTargetBox = false;
+    ui->sliderDirectPosition->enableViewTargetValue = false;
 
     ui->sliderMixedPosition->installEventFilter(this);
     connect(ui->sliderMixedPosition, SIGNAL(sliderPressed()), this, SLOT(onSliderMixedPositionPressed()));
     connect(ui->sliderMixedPosition, SIGNAL(sliderReleased()), this, SLOT(onSliderMixedPositionReleased()));
     ui->sliderMixedPosition->disableClickOutOfHandle = true;
-    ui->sliderMixedPosition->enableViewTarget = true;
+    ui->sliderMixedPosition->enableViewTargetBox = true;
+    ui->sliderMixedPosition->enableViewTargetValue = false;
 
     ui->sliderVelocityVelocity->installEventFilter(this);
     connect(ui->sliderVelocityVelocity,SIGNAL(sliderPressed()),this,SLOT(onSliderVelocityPressed()));
     connect(ui->sliderVelocityVelocity,SIGNAL(sliderReleased()),this,SLOT(onSliderVelocityReleased()));
     ui->sliderVelocityVelocity->disableClickOutOfHandle = true;
-    ui->sliderVelocityVelocity->enableViewTarget = false;
+    ui->sliderVelocityVelocity->enableViewTargetBox = false;
+    ui->sliderVelocityVelocity->enableViewTargetValue = false;
 
     ui->sliderTrajectoryVelocity->installEventFilter(this);
     connect(ui->sliderTrajectoryVelocity, SIGNAL(sliderPressed()), this, SLOT(onSliderTrajectoryVelocityPressed()));
     connect(ui->sliderTrajectoryVelocity, SIGNAL(sliderReleased()), this, SLOT(onSliderTrajectoryVelocityReleased()));
     ui->sliderTrajectoryVelocity->disableClickOutOfHandle = true;
-    ui->sliderTrajectoryVelocity->enableViewTarget = false;
+    ui->sliderTrajectoryVelocity->enableViewTargetBox = false;
+    ui->sliderTrajectoryVelocity->enableViewTargetValue = false;
 
     ui->sliderMixedVelocity->installEventFilter(this);
     connect(ui->sliderMixedVelocity, SIGNAL(sliderPressed()), this, SLOT(onSliderMixedVelocityPressed()));
     connect(ui->sliderMixedVelocity, SIGNAL(sliderReleased()), this, SLOT(onSliderMixedVelocityReleased()));
     ui->sliderMixedVelocity->disableClickOutOfHandle = true;
-    ui->sliderMixedVelocity->enableViewTarget = false;
+    ui->sliderMixedVelocity->enableViewTargetBox = false;
+    ui->sliderMixedVelocity->enableViewTargetValue = false;
 
     connect(ui->buttonHome,SIGNAL(clicked()),this,SLOT(onHomeClicked()));
     connect(ui->buttonIdle,SIGNAL(clicked()),this,SLOT(onIdleClicked()));
@@ -379,10 +376,16 @@ void JointItem::enableControlCurrent(bool control)
     ui->stackedWidget->widget(CURRENT)->setEnabled(control);
 }
 
-void JointItem::viewPositionTarget(bool visible)
+void JointItem::viewPositionTargetBox(bool visible)
 {
-    ui->sliderTrajectoryPosition->enableViewTarget = visible;
-    ui->sliderMixedPosition->enableViewTarget = visible;
+    ui->sliderTrajectoryPosition->enableViewTargetBox = visible;
+    ui->sliderMixedPosition->enableViewTargetBox = visible;
+}
+
+void JointItem::viewPositionTargetValue(bool visible)
+{
+    ui->sliderTrajectoryPosition->enableViewTargetValue = visible;
+    ui->sliderMixedPosition->enableViewTargetValue = visible;
 }
 
 void JointItem::setUnits(yarp::dev::JointTypeEnum t)
