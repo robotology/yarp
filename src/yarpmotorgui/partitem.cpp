@@ -394,6 +394,7 @@ void PartItem::initInterfaces()
     m_ictrlmode = nullptr;
     m_iinteract = nullptr;
     m_iremCalib = nullptr;
+    m_ijointfault = nullptr;
 }
 
 bool PartItem::openInterfaces()
@@ -456,6 +457,11 @@ bool PartItem::openInterfaces()
         }
 
         //optional interfaces
+        if (!m_partsdd->view(m_ijointfault))
+        {
+            yError("...m_iJointFault was not ok...");
+        }
+
         if (!m_partsdd->view(m_iVar))
         {
             yError("...iVar was not ok...");
@@ -506,9 +512,9 @@ QString PartItem::getPartName()
     return m_partName;
 }
 
-void PartItem::onSliderPWMCommand(double torqueVal, int index)
+void PartItem::onSliderPWMCommand(double pwmVal, int index)
 {
-    m_iPWM->setRefDutyCycle(index, torqueVal);
+    m_iPWM->setRefDutyCycle(index, pwmVal);
 }
 
 void PartItem::onSliderCurrentCommand(double currentVal, int index)
@@ -2280,6 +2286,29 @@ bool PartItem::updatePart()
     if(ret==false){
         LOG_ERROR("iint->getInteractionlMode failed\n" );
     }
+
+    //optional
+    if (m_ijointfault)
+    {
+        for (int k = 0; k < number_of_joints; k++)
+        {
+            if (m_controlModes[k]==VOCAB_CM_HW_FAULT)
+            {
+                int fault;
+                std::string message;
+                if (m_ijointfault->getLastJointFault(k,fault,message))
+                {
+                    auto* joint_slow_k = (JointItem*)m_layout->itemAt(m_slow_k)->widget();
+                    joint_slow_k->updateJointFault(fault, message);
+                }
+                else
+                {
+                    LOG_ERROR("Unsuccessful call to getLastJointFault()\n");
+                }
+            }
+        }
+    }
+
 
     for (int k = 0; k < number_of_joints; k++)
     {

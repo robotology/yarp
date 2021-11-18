@@ -207,6 +207,12 @@ bool ControlBoard_nws_yarp::setDevice(yarp::dev::DeviceDriver* driver, bool owne
     subdevice_ptr = driver;
     subdevice_owned = owned;
 
+    // yarp::dev::IJointFault* iJointFault{nullptr};
+    subdevice_ptr->view(iJointFault);
+    if (!iJointFault) {
+        yCWarning(CONTROLBOARD, "Part <%s>: iJointFault interface was not found in subdevice.", partName.c_str());
+    }
+
     // yarp::dev::IPidControl* iPidControl{nullptr};
     subdevice_ptr->view(iPidControl);
     if (!iPidControl) {
@@ -386,6 +392,7 @@ void ControlBoard_nws_yarp::closeDevice()
     iRemoteVariables = nullptr;
     iPWMControl = nullptr;
     iCurrentControl = nullptr;
+    iJointFault = nullptr;
 }
 
 bool ControlBoard_nws_yarp::attach(yarp::dev::PolyDriver* poly)

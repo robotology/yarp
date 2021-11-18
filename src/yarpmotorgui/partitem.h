@@ -149,6 +149,7 @@ private:
     IControlCalibration    *m_ical;
     IControlMode           *m_ictrlmode;
     IInteractionMode        *m_iinteract;
+    IJointFault             *m_ijointfault;
     IRemoteCalibrator   *m_iremCalib;
     int m_slow_k;
 
