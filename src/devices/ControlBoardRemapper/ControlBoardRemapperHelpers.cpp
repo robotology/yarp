@@ -112,6 +112,7 @@ bool RemappedSubControlBoard::attach(yarp::dev::PolyDriver *d, const std::string
         subdevice->view(iVar);
         subdevice->view(iPwm);
         subdevice->view(iCurr);
+        subdevice->view(iFault);
     }
     else
     {
@@ -164,8 +165,13 @@ bool RemappedSubControlBoard::attach(yarp::dev::PolyDriver *d, const std::string
         yCWarning(CONTROLBOARDREMAPPER) << "ICurrentControl not valid interface";
     }
 
+    if ((iFault == nullptr) && (_subDevVerbose))
+    {
+        yCWarning(CONTROLBOARDREMAPPER) << "IJointFault not valid interface";
+    }
 
-    // checking minimum set of intefaces required
+
+    // checking minimum set of interfaces required
     if( !(pos) )
     {
         yCError(CONTROLBOARDREMAPPER, "IPositionControl interface was not found in subdevice. Quitting");

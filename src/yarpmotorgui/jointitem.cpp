@@ -428,6 +428,7 @@ void JointItem::setUnits(yarp::dev::JointTypeEnum t)
         ui->labelPWMposUnits->setText(pos_metric_revolute);
         ui->labelCurrentposUnits->setText(pos_metric_revolute);
         ui->labelVelocityposUnits->setText(pos_metric_revolute);
+        ui->labelFaultposUnits->setText(pos_metric_revolute);
 
         ui->labelIdletrqUnits->setText(trq_metric_revolute);
         ui->labelPositiontrqUnits->setText(trq_metric_revolute);
@@ -466,6 +467,7 @@ void JointItem::setUnits(yarp::dev::JointTypeEnum t)
         ui->labelPWMposUnits->setText(pos_metric_prism);
         ui->labelCurrentposUnits->setText(pos_metric_prism);
         ui->labelVelocityposUnits->setText(pos_metric_prism);
+        ui->labelFaultposUnits->setText(pos_metric_prism);
 
         ui->labelIdletrqUnits->setText(trq_metric_prism);
         ui->labelPositiontrqUnits->setText(trq_metric_prism);
@@ -1485,6 +1487,10 @@ void JointItem::setPosition(double val)
 
     if(ui->stackedWidget->currentIndex() == IDLE){
         ui->editIdleJointPos->setText(sVal);
+    }
+
+    if (ui->stackedWidget->currentIndex() == HW_FAULT) {
+        ui->editFaultJointPos->setText(sVal);
     }
 
     if(ui->stackedWidget->currentIndex() == POSITION){
