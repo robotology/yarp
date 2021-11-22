@@ -46,8 +46,9 @@ yarp::os::impl::LogForwarder::LogForwarder()
     if (!outputPort.open(logPortName)) {
         printf("LogForwarder error while opening port %s\n", logPortName.c_str());
     }
-    outputPort.enableBackgroundWrite(true);
+
     outputPort.addOutput("/yarplogger", "fast_tcp");
+    outputPort_buffer.attach(outputPort);
 
     started = true;
 }
@@ -55,12 +56,12 @@ yarp::os::impl::LogForwarder::LogForwarder()
 void yarp::os::impl::LogForwarder::forward(const std::string& message)
 {
     mutex.lock();
-    static Bottle b;
+    Bottle& b = outputPort_buffer.get();
     b.clear();
     std::string port = "[" + outputPort.getName() + "]";
     b.addString(port);
     b.addString(message);
-    outputPort.write(b);
+    outputPort_buffer.write();
     mutex.unlock();
 }
 

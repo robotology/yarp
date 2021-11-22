@@ -9,6 +9,7 @@
 #include <yarp/os/api.h>
 
 #include <yarp/os/Port.h>
+#include <yarp/os/PortWriterBuffer.h>
 
 #include <mutex>
 #include <string>
@@ -31,6 +32,7 @@ private:
 
     std::mutex mutex;
     yarp::os::Port outputPort;
+    yarp::os::PortWriterBuffer<yarp::os::Bottle> outputPort_buffer;
     static bool started;
 };
 
