@@ -4129,10 +4129,12 @@ void t_yarp_generator::generate_service_helper_classes_impl_reply_write_wirewrit
         indent_up_cpp();
         {
             if (!function->is_oneway()) {
-                if (returntype->annotations_.find("yarp.name") == (returntype->annotations_.end())) {
+                if (returntype->is_enum() || returntype->annotations_.find("yarp.name") == (returntype->annotations_.end())) {
                     // Types annotated with yarp.name therefore are expected
                     // to be able to serialize by themselves, therefore there is
                     // no need to write them as lists.
+                    // Enums are excluded even if annotated with yarp.name, and
+                    // should be handled like any other type
                     // For all the other types, append the number of fields
                     f_cpp_ << indent_cpp() << "if (!writer.writeListHeader(s_reply_len))" << inline_return_cpp("false");
                 }
@@ -4174,10 +4176,12 @@ void t_yarp_generator::generate_service_helper_classes_impl_reply_read_wirereade
     indent_up_cpp();
     {
         if (!function->is_oneway()) {
-            if (returntype->annotations_.find("yarp.name") == (returntype->annotations_.end())) {
+            if (returntype->is_enum() || returntype->annotations_.find("yarp.name") == (returntype->annotations_.end())) {
                 // Types annotated with yarp.name therefore are expected
                 // to be able to serialize by themselves, therefore there is
                 // no need to read them as lists.
+                // Enums are excluded even if annotated with yarp.name, and
+                // should be handled like any other type
                 f_cpp_ << indent_cpp() << "if (!reader.readListReturn())" << inline_return_cpp("false");
             }
             if (!returntype->is_void()) {
