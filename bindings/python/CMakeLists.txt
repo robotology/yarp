@@ -35,7 +35,14 @@ set_target_properties(${SWIG_MODULE_yarp_python_REAL_NAME}
   PROPERTIES
     OUTPUT_NAME "_yarp"
     LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib/python3"
+    # treat Python3_INCLUDE_DIRS as non-system so that it can be overriden
+    NO_SYSTEM_FROM_IMPORTED TRUE
 )
+
+# INCLUDE_DIRECTORIES might have gotten polluted by 3rd-party deps, make sure
+# the Python3 header path has more predecence by overriding the previous value
+# (set by `swig_link_libraries`) and prepending it to the search path
+target_include_directories(${SWIG_MODULE_yarp_python_REAL_NAME} BEFORE PRIVATE ${Python3_INCLUDE_DIRS})
 
 # installation path is determined reliably on most platforms using distutils
 execute_process(
