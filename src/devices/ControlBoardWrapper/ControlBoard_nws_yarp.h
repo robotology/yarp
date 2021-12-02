@@ -111,6 +111,7 @@ private:
     yarp::dev::IRemoteVariables* iRemoteVariables{nullptr};
     yarp::dev::IPWMControl* iPWMControl{nullptr};
     yarp::dev::ICurrentControl* iCurrentControl{nullptr};
+    yarp::dev::IJointFault* iJointFault{ nullptr };
 
     bool setDevice(yarp::dev::DeviceDriver* device, bool owned);
     bool openAndAttachSubDevice(yarp::os::Property& prop);

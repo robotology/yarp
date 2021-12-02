@@ -1623,6 +1623,26 @@ bool ControlBoardRemapper::stop(const int n_joints, const int *joints)
     return ret;
 }
 
+/* IJointFaultControl */
+bool ControlBoardRemapper::getLastJointFault(int j, int& fault, std::string& message)
+{
+    int off = (int)remappedControlBoards.lut[j].axisIndexInSubControlBoard;
+    size_t subIndex = remappedControlBoards.lut[j].subControlBoardIndex;
+
+    RemappedSubControlBoard* p = remappedControlBoards.getSubControlBoard(subIndex);
+
+    if (!p)
+    {
+        return false;
+    }
+
+    if (p->iFault)
+    {
+        return p->iFault->getLastJointFault(off, fault, message);
+    }
+
+    return false;
+}
 
 /* IVelocityControl */
 

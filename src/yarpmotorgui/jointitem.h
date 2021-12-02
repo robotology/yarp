@@ -50,6 +50,7 @@ class JointItem : public QWidget
     void setCurrent(double meas);
     void setRefCurrent(double ref);
     void updateMotionDone(bool done);
+    void updateJointFault(int i, std::string message);
     void setJointName(QString name);
     QString getJointName();
     int getJointIndex();
@@ -149,6 +150,7 @@ private:
     int     TORQUE;
     int     PWM;
     int     CURRENT;
+    int     HW_FAULT;
 
     int shiftPositions;
 

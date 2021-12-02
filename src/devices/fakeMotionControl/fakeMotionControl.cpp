@@ -86,6 +86,14 @@ void FakeMotionControl::run()
         {
             //not yet implemented
         }
+        else if (_controlModes[i] == VOCAB_CM_TORQUE)
+        {
+            //not yet implemented
+        }
+        else if (_controlModes[i] == VOCAB_CM_HW_FAULT)
+        {
+            //not yet implemented
+        }
         else
         {
             //unsupported control mode
@@ -215,6 +223,9 @@ bool FakeMotionControl::alloc(int nj)
     _motorPoles = allocAndCheck<int>(nj);
     _rotorlimits_max = allocAndCheck<double>(nj);
     _rotorlimits_min = allocAndCheck<double>(nj);
+    _hwfault_code = allocAndCheck<int>(nj);
+    _hwfault_message = allocAndCheck<std::string>(nj);
+
 
     _ppids=allocAndCheck<Pid>(nj);
     _tpids=allocAndCheck<Pid>(nj);
@@ -347,6 +358,8 @@ bool FakeMotionControl::dealloc()
     checkAndDestroy(_rotorlimits_min);
     checkAndDestroy(_last_position_move_time);
     checkAndDestroy(_torques);
+    checkAndDestroy(_hwfault_code);
+    checkAndDestroy(_hwfault_message);
 
     return true;
 }
@@ -371,6 +384,7 @@ FakeMotionControl::FakeMotionControl() :
     ImplementMotor(this),
     ImplementAxisInfo(this),
     ImplementVirtualAnalogSensor(this),
+    ImplementJointFault(this),
     _mutex(),
     _njoints       (0),
     _axisMap       (nullptr),
@@ -434,18 +448,6 @@ FakeMotionControl::FakeMotionControl() :
     _torqueControlEnabled   (false),
     _torqueControlUnits     (T_MACHINE_UNITS),
     _positionControlUnits   (P_MACHINE_UNITS),
-    _controlModes           (nullptr),
-    _interactMode           (nullptr),
-    _enabledAmp             (nullptr),
-    _enabledPid             (nullptr),
-    _calibrated             (nullptr),
-    _posCtrl_references     (nullptr),
-    _posDir_references      (nullptr),
-    _ref_speeds             (nullptr),
-    _command_speeds         (nullptr),
-    _ref_accs               (nullptr),
-    _ref_torques            (nullptr),
-    _ref_currents           (nullptr),
     prev_time               (0.0),
     opened                  (false),
     verbose                 (VERY_VERBOSE)
@@ -579,6 +581,7 @@ bool FakeMotionControl::open(yarp::os::Searchable &config)
     ImplementPWMControl::initialize(_njoints, _axisMap, _dutycycleToPWM);
     ImplementCurrentControl::initialize(_njoints, _axisMap, _ampsToSensor);
     ImplementVirtualAnalogSensor::initialize(_njoints, _axisMap, _newtonsToSensor);
+    ImplementJointFault::initialize(_njoints, _axisMap);
 
     //start the rateThread
     bool init = this->start();
@@ -2791,7 +2794,18 @@ bool FakeMotionControl::setRefTorquesRaw(const double *t)
 
 bool FakeMotionControl::setRefTorqueRaw(int j, double t)
 {
-    return false;
+    _mutex.lock();
+    _ref_torques[j]=t;
+
+    if (t>1.0 || t< -1.0)
+    {
+        yCError(FAKEMOTIONCONTROL) << "Joint received a high torque command, and was put in hardware fault";
+        _hwfault_code[j] = 1;
+        _hwfault_message[j] = "test" + std::to_string(j) + " torque";
+        _controlModes[j] =  VOCAB_CM_HW_FAULT;
+    }
+    _mutex.unlock();
+    return true;
 }
 
 bool FakeMotionControl::setRefTorquesRaw(const int n_joint, const int *joints, const double *t)
@@ -2801,12 +2815,19 @@ bool FakeMotionControl::setRefTorquesRaw(const int n_joint, const int *joints, c
 
 bool FakeMotionControl::getRefTorquesRaw(double *t)
 {
-    return false;
+    bool ret = true;
+    for (int j = 0; j < _njoints && ret; j++) {
+        ret &= getRefTorqueRaw(j, &_ref_torques[j]);
+    }
+    return true;
 }
 
 bool FakeMotionControl::getRefTorqueRaw(int j, double *t)
 {
-    return false;
+    _mutex.lock();
+    *t = _ref_torques[j];
+    _mutex.unlock();
+    return true;
 }
 
 bool FakeMotionControl::getImpedanceRaw(int j, double *stiffness, double *damping)
@@ -3242,5 +3263,13 @@ bool FakeMotionControl::updateVirtualAnalogSensorMeasureRaw(int ch, double &meas
     return true;
 }
 
+bool FakeMotionControl::getLastJointFaultRaw(int j, int& fault, std::string& message)
+{
+    _mutex.lock();
+    fault = _hwfault_code[j];
+    message = _hwfault_message[j];
+    _mutex.unlock();
+    return true;
+}
 
 // eof

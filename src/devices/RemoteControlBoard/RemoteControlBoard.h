@@ -30,6 +30,7 @@
 #include <yarp/dev/IRemoteVariables.h>
 #include <yarp/dev/IPWMControl.h>
 #include <yarp/dev/ICurrentControl.h>
+#include <yarp/dev/IJointFault.h>
 #include <yarp/dev/ControlBoardHelpers.h>
 
 #include "stateExtendedReader.h"
@@ -82,7 +83,8 @@ class RemoteControlBoard :
         public yarp::dev::IRemoteCalibrator,
         public yarp::dev::IRemoteVariables,
         public yarp::dev::IPWMControl,
-        public yarp::dev::ICurrentControl
+        public yarp::dev::ICurrentControl,
+        public yarp::dev::IJointFault
 {
 protected:
     yarp::os::Port rpc_p;
@@ -381,6 +383,9 @@ public:
     bool stop(int j) override;
     bool stop(const int len, const int *val1) override;
     bool stop() override;
+
+    // IJointFault
+    bool getLastJointFault(int j, int& fault, std::string& message) override;
 
     // IVelocityControl
     bool velocityMove(int j, double v) override;

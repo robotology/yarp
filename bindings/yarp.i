@@ -416,6 +416,7 @@ MAKE_COMMS(Bottle)
 %include <yarp/dev/ControlBoardPid.h>
 %include <yarp/dev/IControlMode.h>
 %include <yarp/dev/IInteractionMode.h>
+%include <yarp/dev/IJointFault.h>
 %include <yarp/dev/IEncodersTimed.h>
 %include <yarp/dev/IMotor.h>
 %include <yarp/dev/IMotorEncoders.h>
@@ -815,6 +816,7 @@ typedef yarp::os::BufferedPort<ImageRgbFloat> BufferedPortImageRgbFloat;
     CAST_POLYDRIVER_TO_INTERFACE(IImpedanceControl)
     CAST_POLYDRIVER_TO_INTERFACE(ITorqueControl)
     CAST_POLYDRIVER_TO_INTERFACE(IControlMode)
+    CAST_POLYDRIVER_TO_INTERFACE(IJointFault)
 
 #ifndef YARP_NO_DEPRECATED // Since YARP 3.0.0
     yarp::dev::IControlMode *viewIControlMode2() {
@@ -1234,6 +1236,12 @@ typedef yarp::os::BufferedPort<ImageRgbFloat> BufferedPortImageRgbFloat;
 
     bool getVelLimits(int axis, std::vector<double>& min, std::vector<double>& max) {
         return self->getVelLimits(axis, &min[0], &max[0]);
+    }
+}
+
+%extend yarp::dev::IJointFault {
+    bool getLastJointFault(int j, std::vector<int>& fault, std::vector<std::string>& message) {
+        return self->getLastJointFault(j, fault[0], message[0]);
     }
 }
 

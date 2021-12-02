@@ -79,6 +79,7 @@ JointItem::JointItem(int index,QWidget *parent) :
     TORQUE          = 5;
     PWM             = 6;
     CURRENT         = 7;
+    HW_FAULT        = 8;
 
 
 
@@ -427,6 +428,7 @@ void JointItem::setUnits(yarp::dev::JointTypeEnum t)
         ui->labelPWMposUnits->setText(pos_metric_revolute);
         ui->labelCurrentposUnits->setText(pos_metric_revolute);
         ui->labelVelocityposUnits->setText(pos_metric_revolute);
+        ui->labelFaultposUnits->setText(pos_metric_revolute);
 
         ui->labelIdletrqUnits->setText(trq_metric_revolute);
         ui->labelPositiontrqUnits->setText(trq_metric_revolute);
@@ -465,6 +467,7 @@ void JointItem::setUnits(yarp::dev::JointTypeEnum t)
         ui->labelPWMposUnits->setText(pos_metric_prism);
         ui->labelCurrentposUnits->setText(pos_metric_prism);
         ui->labelVelocityposUnits->setText(pos_metric_prism);
+        ui->labelFaultposUnits->setText(pos_metric_prism);
 
         ui->labelIdletrqUnits->setText(trq_metric_prism);
         ui->labelPositiontrqUnits->setText(trq_metric_prism);
@@ -1420,6 +1423,12 @@ void JointItem::updateSliderCurrent(double val)
     ui->sliderCurrentOutput->setValue(val);
 }
 
+void JointItem::updateJointFault(int i, std::string message)
+{
+    ui->labelFaultCodeEntry->setText(QString::fromStdString(std::to_string(i)));
+    ui->labelFaultMessageEntry->setText(QString::fromStdString(message));
+}
+
 void JointItem::updateSliderTorque(double val)
 {
     if(sliderTorquePressed){
@@ -1478,6 +1487,10 @@ void JointItem::setPosition(double val)
 
     if(ui->stackedWidget->currentIndex() == IDLE){
         ui->editIdleJointPos->setText(sVal);
+    }
+
+    if (ui->stackedWidget->currentIndex() == HW_FAULT) {
+        ui->editFaultJointPos->setText(sVal);
     }
 
     if(ui->stackedWidget->currentIndex() == POSITION){
@@ -1777,15 +1790,24 @@ void JointItem::setJointInternalState(int mode)
     if(ui->stackedWidget->widget(mode)){
         QVariant variant = ui->comboMode->itemData(mode,Qt::BackgroundRole);
         QColor c;
-        switch(internalState){
-            case Disconnected:{
+        switch(internalState)
+       {
+            case Disconnected:
                 c = disconnectColor;
                 break;
-            }
-            case HwFault:{
+            case HwFault:
+                ui->groupBox->setTitle(QString("JOINT %1 (%2) -  HARDWARE FAULT").arg(jointIndex).arg(jointName));
+                ui->stackedWidget->setEnabled(false);
+                //ui->buttonsContainer->setEnabled(false);
+                ui->buttonHome->setEnabled(false);
+                ui->buttonCalib->setEnabled(false);
+                ui->buttonRun->setEnabled(false);
+                ui->comboMode->setEnabled(false);
+                ui->comboInteraction->setEnabled(false);
+                ui->buttonIdle->setEnabled(true);
+                ui->buttonPid->setEnabled(true);
                 c = hwFaultColor;
                 break;
-            }
             case Unknown:
             case NotConfigured:
             case Configured:
@@ -1921,22 +1943,7 @@ void JointItem::setJointState(JointState newState)
         break;
     }
     case HwFault:{
-        ui->groupBox->setTitle(QString("JOINT %1 (%2) -  HARDWARE FAULT").arg(jointIndex).arg(jointName));
-        ui->stackedWidget->setEnabled(false);
-        //ui->buttonsContainer->setEnabled(false);
-        ui->buttonHome->setEnabled(false);
-        ui->buttonCalib->setEnabled(false);
-        ui->buttonRun->setEnabled(false);
-        ui->comboMode->setEnabled(false);
-        ui->comboInteraction->setEnabled(false);
-        ui->buttonIdle->setEnabled(true);
-        ui->buttonPid->setEnabled(true);
-
-        int index = ui->stackedWidget->currentIndex();
-        if(ui->stackedWidget->widget(index)){
-            QColor c = hwFaultColor;
-            setStyleSheet(QString("font: 8pt; background-color: rgb(%1,%2,%3); color: rgb(35, 38, 41);").arg(c.red()).arg(c.green()).arg(c.blue()));
-        }
+        setJointInternalState(HW_FAULT);
         break;
     }
     case Disconnected:{

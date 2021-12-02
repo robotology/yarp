@@ -17,6 +17,7 @@
 #include <yarp/dev/ImplementVirtualAnalogSensor.h>
 #include <yarp/dev/ImplementPositionControl.h>
 #include <yarp/dev/ImplementVelocityControl.h>
+#include <yarp/dev/ImplementJointFault.h>
 
 #include <mutex>
 
@@ -104,6 +105,7 @@ class FakeMotionControl :
         public yarp::dev::IInteractionModeRaw,
         public yarp::dev::IAxisInfoRaw,
         public yarp::dev::IVirtualAnalogSensorRaw, //*
+        public yarp::dev::IJointFaultRaw,
         public yarp::dev::ImplementControlCalibration,
         public yarp::dev::ImplementAmplifierControl,
         public yarp::dev::ImplementPidControl,
@@ -112,6 +114,7 @@ class FakeMotionControl :
         public yarp::dev::ImplementVelocityControl,
         public yarp::dev::ImplementControlMode,
         public yarp::dev::ImplementImpedanceControl,
+        public yarp::dev::ImplementJointFault,
         public yarp::dev::ImplementMotorEncoders,
         public yarp::dev::ImplementTorqueControl,
         public yarp::dev::ImplementControlLimits,
@@ -135,7 +138,7 @@ private:
         VERY_VERY_VERBOSE   = 6     // adds messages printed every cycle, so too much verbose for usage, only for deep debugging
     };
 
-    std::mutex _mutex;
+    std::recursive_mutex _mutex;
     int  _njoints;
     int *_axisMap;                              /** axis remapping lookup-table */
     double *_angleToEncoder;                    /** angle to iCubDegrees conversion factors */
@@ -214,18 +217,20 @@ private:
     positionControlUnitsType _positionControlUnits;
 
     // internal stuff
-    int     *_controlModes;
-    int     *_interactMode;
-    bool    *_enabledAmp;           // Middle step toward a full enabled motor controller. Amp (pwm) plus Pid enable command must be sent in order to get the joint into an active state.
-    bool    *_enabledPid;           // Depends on enabledAmp. When both are set, the joint exits the idle mode and goes into position mode. If one of them is disabled, it falls to idle.
-    bool    *_calibrated;           // Flag to know if the calibrate function has been called for the joint
-    double  *_posCtrl_references;   // used for position control.
-    double  *_posDir_references;    // used for position Direct control.
-    double  *_ref_speeds;           // used for position control.
-    double  *_command_speeds;       // used for velocity control.
-    double  *_ref_accs;             // for velocity control, in position min jerk eq is used.
-    double  *_ref_torques;          // for torque control.
-    double  *_ref_currents;
+    int     *_controlModes = nullptr;
+    int     *_hwfault_code = nullptr;
+    std::string  *_hwfault_message = nullptr;
+    int     *_interactMode = nullptr;
+    bool    *_enabledAmp = nullptr;           // Middle step toward a full enabled motor controller. Amp (pwm) plus Pid enable command must be sent in order to get the joint into an active state.
+    bool    *_enabledPid = nullptr;           // Depends on enabledAmp. When both are set, the joint exits the idle mode and goes into position mode. If one of them is disabled, it falls to idle.
+    bool    *_calibrated = nullptr;           // Flag to know if the calibrate function has been called for the joint
+    double  *_posCtrl_references = nullptr;   // used for position control.
+    double  *_posDir_references = nullptr;    // used for position Direct control.
+    double  *_ref_speeds = nullptr;           // used for position control.
+    double  *_command_speeds = nullptr;       // used for velocity control.
+    double  *_ref_accs = nullptr;             // for velocity control, in position min jerk eq is used.
+    double  *_ref_torques = nullptr;          // for torque control.
+    double  *_ref_currents = nullptr;
     yarp::sig::Vector       current, nominalCurrent, maxCurrent, peakCurrent;
     yarp::sig::Vector       pwm, pwmLimit, refpwm, supplyVoltage,last_velocity_command, last_pwm_command;
     yarp::sig::Vector pos, dpos, vel, speed, acc, loc, amp;
@@ -318,6 +323,8 @@ public:
     bool velocityMoveRaw(int j, double sp) override;
     bool velocityMoveRaw(const double *sp) override;
 
+    // IJointFault
+    bool getLastJointFaultRaw(int j, int& fault, std::string& message) override;
 
     // calibration2raw
     bool setCalibrationParametersRaw(int axis, const yarp::dev::CalibrationParameters& params) override;
