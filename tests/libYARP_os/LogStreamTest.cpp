@@ -12,6 +12,17 @@
 #include <yarp/os/impl/LogForwarder.h>
 
 #include <array>
+#include <deque>
+#include <forward_list>
+#include <list>
+#include <map>
+#include <set>
+#include <unordered_map>
+#include <unordered_set>
+#include <vector>
+
+#include <tuple>
+
 #include <thread>
 
 #include <catch.hpp>
@@ -1455,5 +1466,42 @@ TEST_CASE("os::LogStreamTest", "[yarp::os]")
         CNT yInfo() << "This is text contains an end of line at the end of the sentence\n";
 
         CNT yInfo() << "This is text contains special characters that could cause issues like 1-\", 2-(, 3-), 4-[, 5-], 6-{, 7-}, 8-\t, 9-%%";
+    }
+
+    SECTION("Test containers, C arrays and tuples")
+    {
+        CNT_RESET
+
+        CNT yInfo() << "std::array:" << std::array<double, 3> {1.1, 2.2, 3.3};
+
+        CNT yInfo() << "std::deque:" << std::deque<double> {1.1, 2.2, 3.3};
+
+        CNT yInfo() << "std::forward_list:" << std::forward_list<double> {1.1, 2.2, 3.3};
+
+        CNT yInfo() << "std::list:" << std::list<double> {1.1, 2.2, 3.3};
+
+        CNT yInfo() << "std::set:" << std::set<double> {1.1, 2.2, 3.3};
+
+        CNT yInfo() << "std::unordered_set:" << std::unordered_set<double> {1.1, 2.2, 3.3};
+
+        CNT yInfo() << "std::vector:" << std::vector<double> {1.1, 2.2, 3.3};
+
+        CNT yInfo() << "std::map:" << std::map<int, double> {{1, 1.1}, {2, 2.2}, {3, 3.3}};
+
+        CNT yInfo() << "std::unordered_map:" << std::unordered_map<int, double> {{1, 1.1}, {2, 2.2}, {3, 3.3}};
+
+        CNT yInfo() << "C array:" << (double[]) {1.1, 2.2, 3.3};
+
+        CNT yInfo() << "std::pair<int, double>" << std::pair<int, double> {1, 1.1};
+
+        CNT yInfo() << "std::pair<int, std::vector<double>>" << std::pair<int, std::vector<double>> {1, {1.1, 2.2, 3.3}};
+
+        CNT yInfo() << "std::tuple:" << std::tuple<int, double, char> {4, 5.5, 'c'};
+
+        CNT yInfo() << "nested std::vector:" << std::vector<std::vector<int>> {{1, 2, 3}, {4, 5, 6}};
+
+        std::tuple<int, std::set<int>, std::vector<std::map<double, char>>> t {5, {7, 6}, {{{1.1, 'g'}, {5.5, 'f'}}, {{9.0, 'h'}}}};
+
+        CNT yInfo() << "mixed:" << t;
     }
 }
