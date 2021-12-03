@@ -13,6 +13,7 @@
 
 #include <yarp/os/Wire.h>
 #include <yarp/os/idl/WireTypes.h>
+#include <yarp/dev/IBattery.h>
 
 class FakeBatteryService :
         public yarp::os::Wire
@@ -27,6 +28,8 @@ public:
 
     virtual void setBatteryCharge(const double charge);
 
+    virtual void setBatteryStatus(const yarp::dev::IBattery::Battery_status status);
+
     virtual void setBatteryInfo(const std::string& info);
 
     virtual void setBatteryTemperature(const double temperature);
@@ -37,7 +40,9 @@ public:
 
     virtual double getBatteryCharge();
 
-    virtual std::string getBatteryStatus();
+    virtual yarp::dev::IBattery::Battery_status getBatteryStatus();
+
+    virtual std::string getBatteryStatusString();
 
     virtual std::string getBatteryInfo();
 

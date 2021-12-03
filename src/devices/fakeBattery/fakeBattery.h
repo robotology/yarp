@@ -35,6 +35,7 @@ protected:
     double battery_temperature {20.0};
     std::string battery_info {"Fake battery system v2.0"};
     Battery_status battery_status {BATTERY_OK_IN_USE};
+    bool suspend_battery_status_update {false};
 
     bool debugEnable {false};
 
@@ -67,12 +68,14 @@ public:
     void setBatteryVoltage(const double voltage) override;
     void setBatteryCurrent(const double current) override;
     void setBatteryCharge(const double charge) override;
+    void setBatteryStatus(const yarp::dev::IBattery::Battery_status status) override;
     void setBatteryInfo(const std::string& info) override;
     void setBatteryTemperature(const double temperature) override;
     double getBatteryVoltage() override;
     double getBatteryCurrent() override;
     double getBatteryCharge() override;
-    std::string getBatteryStatus() override;
+    Battery_status getBatteryStatus() override;
+    std::string getBatteryStatusString() override;
     std::string getBatteryInfo() override;
     double getBatteryTemperature() override;
 

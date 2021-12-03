@@ -133,6 +133,7 @@ void FakeBattery::setBatteryVoltage(const double voltage)
 {
     std::lock_guard<std::mutex> lock(m_mutex);
     battery_voltage = voltage;
+    suspend_battery_status_update = false;
     updateStatus();
 }
 
@@ -140,6 +141,7 @@ void FakeBattery::setBatteryCurrent(const double current)
 {
     std::lock_guard<std::mutex> lock(m_mutex);
     battery_current = current;
+    suspend_battery_status_update = false;
     updateStatus();
 }
 
@@ -147,7 +149,15 @@ void FakeBattery::setBatteryCharge(const double charge)
 {
     std::lock_guard<std::mutex> lock(m_mutex);
     battery_charge = charge;
+    suspend_battery_status_update = false;
     updateStatus();
+}
+
+void FakeBattery::setBatteryStatus(const yarp::dev::IBattery::Battery_status status)
+{
+    std::lock_guard<std::mutex> lock(m_mutex);
+    battery_status = status;
+    suspend_battery_status_update = true;
 }
 
 void FakeBattery::setBatteryInfo(const std::string& info)
@@ -180,7 +190,14 @@ double FakeBattery::getBatteryCharge()
     return battery_charge;
 }
 
-std::string FakeBattery::getBatteryStatus()
+yarp::dev::IBattery::Battery_status FakeBattery::getBatteryStatus()
+{
+    std::lock_guard<std::mutex> lock(m_mutex);
+    yCInfo(FAKEBATTERY, "getBatteryStatus() -> %d", static_cast<int>(battery_status));
+    return battery_status;
+}
+
+std::string FakeBattery::getBatteryStatusString()
 {
     std::lock_guard<std::mutex> lock(m_mutex);
     switch (battery_status) {
@@ -218,6 +235,9 @@ double FakeBattery::getBatteryTemperature()
 
 void FakeBattery::updateStatus()
 {
+    if (suspend_battery_status_update) {
+        return;
+    }
     battery_charge = yarp::conf::clamp(battery_charge, 0.0, 100.0);
     if (battery_current > 0.1) {
         if (battery_charge > 15.0) {
