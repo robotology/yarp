@@ -1373,7 +1373,7 @@ void MainWindow::updateModesTree(PartItem *part)
             jointNode->jointLabel()->setText(QString("%1 - %2").arg(i).arg(name));
             jointNode->modeLabel()->setText(mode);
             QColor c = getColorMode(modes.at(i));
-            jointNode->setColor(QColor(Qt::black), c);
+            jointNode->setColor(QColor(35, 38, 41), c);
 
 //            if(c == hwFaultColor){
 //                parentNode->setData(0,Qt::UserRole,TREEMODE_WARN);
@@ -1386,7 +1386,6 @@ void MainWindow::updateModesTree(PartItem *part)
 //                parentNode->setIcon(0,QIcon(":/apply.svg"));
 //            }
         }
-        parentNode->uniformLayout();
     } else {
         bool foundFaultPart = false;
         for(int i=0;i<parentNode->numberOfJoints();i++){
@@ -1409,7 +1408,7 @@ void MainWindow::updateModesTree(PartItem *part)
 //            if(parentNode->isExpanded()){
                 if(jointNode->modeLabel()->text() != mode){
                     jointNode->modeLabel()->setText(mode);
-                    jointNode->setColor(QColor(Qt::black), c);
+                    jointNode->setColor(QColor(35, 38, 41), c);
                 }
 //            }
         }

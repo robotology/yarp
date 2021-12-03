@@ -79,3 +79,8 @@ void PartItemTree::uniformLayout()
 
     m_layout->activate(); //Update the layout
 }
+
+void PartItemTree::resizeEvent(QResizeEvent *event)
+{
+    uniformLayout();
+}

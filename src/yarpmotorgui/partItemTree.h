@@ -31,6 +31,8 @@ public:
     QSize sizeHint() const override;
 
     void uniformLayout();
+
+    void resizeEvent(QResizeEvent *event) override;
 };
 
 #endif // PARTITEMTREE_H

@@ -33,12 +33,10 @@ QLabel *JointItemTree::modeLabel()
 void JointItemTree::setColor(const QColor &color, const QColor &background)
 {
     setAutoFillBackground(true);
-    setStyleSheet(QString("color: rbg(%1, %2, %3); background-color:  rbg(%4, %5, %6);").arg(color.red())
-                  .arg(color.green())
-                  .arg(color.blue())
-                  .arg(background.red())
-                  .arg(background.green())
-                  .arg(background.blue()));
+    QString stileSheet = QString("color: rgb(%1, %2, %3); background-color: rgb(%4, %5, %6)")
+            .arg(color.red()).arg(color.green()).arg(color.blue())
+            .arg(background.red()).arg(background.green()).arg(background.blue());
+    setStyleSheet(stileSheet);
 }
 
 QSize JointItemTree::sizeHint() const
