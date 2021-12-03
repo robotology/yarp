@@ -3720,7 +3720,7 @@ void t_yarp_generator::generate_service_helper_classes_decl(t_function* function
                     }
                     first = false;
                     f_cpp_ << '\n';
-                    f_cpp_ << indent_cpp() << "\"" << replaceInString(helpStr, "\"", "\\\"");
+                    f_cpp_ << indent_cpp() << "\"" << helpStr;
                 }
             }
             indent_down_cpp();

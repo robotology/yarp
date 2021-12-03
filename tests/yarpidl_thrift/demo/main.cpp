@@ -796,7 +796,7 @@ TEST_CASE("IdlThriftTest", "[yarp::idl::thrift]")
         bot.read(con.getReader());
         INFO("Structure specific help is " << bot.toString());
         std::string help = bot.toString();
-        CHECK(help.find("this is the x part") != std::string::npos);
+        CHECK(help.find("this is the \\\"x\\\" part") != std::string::npos);
     }
 
     SECTION("test primitives")

@@ -13,7 +13,7 @@
 
 
 /**
- * Documentation for enumerator
+ * Documentation for "enumerator"
  */
 enum DemoEnum {
   /** thing 1 */
@@ -24,13 +24,13 @@ enum DemoEnum {
 }
 
 /**
- * Documentation for structure
+ * Documentation for "structure"
  */
 struct DemoStruct {
-  /** this is the x part */
+  /** this is the "x" part */
   1: i32 x = 0,
 
-  /** this is the y part */
+  /** this is the "y" part */
   2: i32 y
 }
 
@@ -43,10 +43,10 @@ struct DemoStructMap {
 }
 
 struct DemoStructExt {
-  /** this is the x part */
+  /** this is the "x" part */
   1: i32 x = 0,
 
-  /** this is the y part */
+  /** this is the "y" part */
   2: i32 y = 0,
 
   /** this is a list of ints */
@@ -68,10 +68,10 @@ struct TestSomeMoreTypes {
 }
 
 /**
- * Documentation for service
+ * Documentation for "service"
  */
 service Demo {
-  /** This function gets the answer */
+  /** This "function" gets the answer */
   i32 get_answer();
   bool set_answer(1:i32 rightAnswer)
   i32 add_one(1:i32 x);
