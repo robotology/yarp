@@ -514,6 +514,14 @@ void MainWindow::onSetTrqSliderOptionMW(int choice, double val)
     emit sig_setTrqSliderOptionMW(choice, val);
 }
 
+void MainWindow::onJointClicked(int partIndex, int jointIndex)
+{
+    m_tabPanel->setCurrentIndex(partIndex);
+    auto* scroll = (QScrollArea *)m_tabPanel->widget(partIndex);
+    auto* part = (PartItem*)scroll->widget();
+    scroll->ensureWidgetVisible(part->getJointWidget(jointIndex));
+}
+
 void MainWindow::closeEvent(QCloseEvent *event)
 {
 
@@ -618,7 +626,7 @@ bool MainWindow::init(QStringList enabledParts,
     m_ui->treeViewMode->setModel(modesTreeModel);
     m_ui->treeViewMode->setVerticalScrollMode(QAbstractItemView::ScrollMode::ScrollPerPixel);
     m_ui->treeViewMode->setUniformRowHeights(false);
-    m_ui->treeViewMode->setAnimated(false); //Animations look weird with the custom widgets
+    m_ui->treeViewMode->setAnimated(false); //Animations look weird with a custom widget as a leaf element
 
     QStandardItem *parentItem = modesTreeModel->invisibleRootItem();
 
@@ -666,7 +674,7 @@ bool MainWindow::init(QStringList enabledParts,
             connect(this, SIGNAL(sig_enableControlCurrent(bool)), part, SLOT(onEnableControlCurrent(bool)));
 
             scroll->setWidget(part);
-            m_tabPanel->addTab(scroll, part_name.c_str());
+            int tabIndex = m_tabPanel->addTab(scroll, part_name.c_str());
             if (part_id == 0)
             {
                 QString auxName = part_name.c_str();
@@ -686,7 +694,8 @@ bool MainWindow::init(QStringList enabledParts,
             partTreeItem->appendRow(partTreeItemChild);
 
             auto index = partTreeItemChild->index();
-            auto* partTreeWidget = new PartItemTree(m_ui->treeViewMode);
+            auto* partTreeWidget = new PartItemTree(tabIndex, m_ui->treeViewMode);
+            connect(partTreeWidget, SIGNAL(sig_jointClicked(int,int)), this, SLOT(onJointClicked(int,int)));
             m_ui->treeViewMode->setIndexWidget(index, partTreeWidget);
 
             part->setTreeWidgetItem(partTreeWidget);

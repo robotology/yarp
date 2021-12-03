@@ -128,6 +128,7 @@ private slots:
     void onSetPosSliderOptionMW(int, double);
     void onSetVelSliderOptionMW(int, double);
     void onSetTrqSliderOptionMW(int, double);
+    void onJointClicked(int partIndex, int jointIndex);
 
 signals:
     void sig_enableControlVelocity(bool);

@@ -5,9 +5,8 @@
  */
 
 #include "partItemTree.h"
-#include <iostream>
 
-PartItemTree::PartItemTree(QWidget *parent) : QWidget(parent)
+PartItemTree::PartItemTree(int index, QWidget *parent) : QWidget(parent), m_index(index)
 {
     m_layout = new FlowLayout(5, 5, 5);
     setLayout(m_layout);
@@ -22,7 +21,8 @@ int PartItemTree::numberOfJoints() const
 
 JointItemTree *PartItemTree::addJoint()
 {
-    JointItemTree* added = new JointItemTree(this);
+    JointItemTree* added = new JointItemTree(m_layout->count(), this);
+    connect(added, SIGNAL(sig_jointClicked(int)), this, SLOT(onJointClicked(int)));
     m_layout->addWidget(added);
     return added;
 }
@@ -83,4 +83,9 @@ void PartItemTree::uniformLayout()
 void PartItemTree::resizeEvent(QResizeEvent *event)
 {
     uniformLayout();
+}
+
+void PartItemTree::onJointClicked(int index)
+{
+    emit sig_jointClicked(m_index, index);
 }

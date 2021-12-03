@@ -18,9 +18,10 @@ class PartItemTree : public QWidget
 {
     Q_OBJECT
     FlowLayout *m_layout;
+    int m_index;
 
 public:
-    explicit PartItemTree(QWidget *parent = nullptr);
+    explicit PartItemTree(int index, QWidget *parent = nullptr);
 
     int numberOfJoints() const;
 
@@ -33,6 +34,15 @@ public:
     void uniformLayout();
 
     void resizeEvent(QResizeEvent *event) override;
+
+public slots:
+
+    void onJointClicked(int index);
+
+signals:
+
+    void sig_jointClicked(int partIndex, int jointIndex);
+
 };
 
 #endif // PARTITEMTREE_H

@@ -7,9 +7,10 @@
 #include "jointItemTree.h"
 #include "ui_jointItemTree.h"
 
-JointItemTree::JointItemTree(QWidget *parent) :
+JointItemTree::JointItemTree(int index, QWidget *parent) :
     QWidget(parent),
-    m_ui(new Ui::jointItemTree)
+    m_ui(new Ui::jointItemTree),
+    m_index(index)
 {
     m_ui->setupUi(this);
     setAttribute(Qt::WA_StyledBackground, true);
@@ -37,6 +38,11 @@ void JointItemTree::setColor(const QColor &color, const QColor &background)
             .arg(color.red()).arg(color.green()).arg(color.blue())
             .arg(background.red()).arg(background.green()).arg(background.blue());
     setStyleSheet(stileSheet);
+}
+
+void JointItemTree::mouseDoubleClickEvent(QMouseEvent *event)
+{
+    emit sig_jointClicked(m_index);
 }
 
 QSize JointItemTree::sizeHint() const

@@ -20,7 +20,7 @@ class JointItemTree : public QWidget
     Q_OBJECT
 
 public:
-    explicit JointItemTree(QWidget *parent = nullptr);
+    explicit JointItemTree(int index, QWidget *parent = nullptr);
     ~JointItemTree();
 
     QLabel* jointLabel();
@@ -29,14 +29,21 @@ public:
 
     void setColor(const QColor& color, const QColor& background);
 
+    void mouseDoubleClickEvent(QMouseEvent *event) override;
+
     QSize sizeHint() const override;
 
     void setDesiredSize(int w, int h);
+
+signals:
+
+    void sig_jointClicked(int index);
 
 private:
     Ui::jointItemTree *m_ui;
     int m_desiredHeight{-1};
     int m_desiredWidth{-1};
+    int m_index;
 };
 
 #endif // JOINTITEMTREE_H
