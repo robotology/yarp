@@ -12,6 +12,7 @@
 #include "jointitem.h"
 #include "piddlg.h"
 #include "yarpmotorgui.h"
+#include "partItemTree.h"
 
 #include <yarp/os/BufferedPort.h>
 #include <yarp/os/Port.h>
@@ -27,6 +28,7 @@
 
 #include <QWidget>
 #include <QTimer>
+#include <QStandardItem>
 
 
 
@@ -70,13 +72,14 @@ public:
     void calibratePart();
     bool checkAndGo();
     void stopSequence();
-    void setTreeWidgetModeNode(QTreeWidgetItem *node);
+    void setTreeWidgetItem(PartItemTree *node);
     void loadSequence();
     void saveSequence(QString global_filename);
-    QTreeWidgetItem *getTreeWidgetModeNode();
+    PartItemTree *getTreeWidgetItem();
     QString getPartName();
     QList<int> getPartMode();
     void resizeWidget(int w);
+    QString getJointName(int joint);
 
 private:
     void fixedTimeMove(SequenceItem sequence);
@@ -86,7 +89,7 @@ protected:
     void changeEvent(QEvent *event) override;
 
 private:
-    QTreeWidgetItem *m_node;
+    PartItemTree *m_node;
     FlowLayout *m_layout;
     SequenceWindow *m_sequenceWindow;
     QString m_robotPartPort;

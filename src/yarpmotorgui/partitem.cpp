@@ -1069,6 +1069,18 @@ void PartItem::resizeWidget(int w)
     }
 }
 
+QString PartItem::getJointName(int joint)
+{
+    if (joint < 0 || joint >= m_layout->count())
+    {
+        return "";
+    }
+
+    auto* jointWidget = (JointItem*)m_layout->itemAt(joint)->widget();
+
+    return jointWidget->getJointName();
+}
+
 void PartItem::resizeEvent(QResizeEvent *event)
 {
     if(!isVisible()){
@@ -2081,12 +2093,12 @@ void PartItem::onSetTrqSliderOptionPI(int mode, double step)
         }
     }
 }
-QTreeWidgetItem *PartItem::getTreeWidgetModeNode()
+PartItemTree *PartItem::getTreeWidgetItem()
 {
     return m_node;
 }
 
-void PartItem::setTreeWidgetModeNode(QTreeWidgetItem *node)
+void PartItem::setTreeWidgetItem(PartItemTree *node)
 {
     m_node = node;
 }

@@ -10,7 +10,10 @@
 #include "flowlayout.h"
 #include "jointitem.h"
 #include "partitem.h"
+#include "jointItemTree.h"
+#include "partItemTree.h"
 
+#include <QStandardItemModel>
 #include <QToolBar>
 #include <QDebug>
 #include <QHBoxLayout>
@@ -565,7 +568,7 @@ bool MainWindow::init(QStringList enabledParts,
 
     struct robot_type
     {
-        QTreeWidgetItem* tree_pointer;
+        QStandardItem* tree_pointer;
         std::string      robot_name_without_slash;
     };
 
@@ -610,12 +613,21 @@ bool MainWindow::init(QStringList enabledParts,
         parts[ss.substr(b2)] = p;
     }
 
+    QStandardItemModel* modesTreeModel = new QStandardItemModel(m_ui->treeViewMode);
+
+    m_ui->treeViewMode->setModel(modesTreeModel);
+    m_ui->treeViewMode->setVerticalScrollMode(QAbstractItemView::ScrollMode::ScrollPerPixel);
+    m_ui->treeViewMode->setUniformRowHeights(false);
+    m_ui->treeViewMode->setAnimated(false); //Animations look weird with the custom widgets
+
+    QStandardItem *parentItem = modesTreeModel->invisibleRootItem();
+
+
     for (auto& robot : robots)
     {
-        auto* robot_top = new QTreeWidgetItem();
-        robot_top->setText(0, robot.first.c_str());
-        m_ui->treeWidgetMode->addTopLevelItem(robot_top);
-        robot_top->setExpanded(true);
+        auto* robot_top = new QStandardItem(QString(robot.first.c_str()));
+        robot_top->setEditable(false);
+        parentItem->appendRow(robot_top);
         robot.second.tree_pointer = robot_top;
     }
 
@@ -663,12 +675,19 @@ bool MainWindow::init(QStringList enabledParts,
                 this->m_partName->setText(QString("%1 Commands ").arg(auxName));
             }
 
-            auto* mode = new QTreeWidgetItem();
-            mode->setText(0, part_name.c_str());
-            QTreeWidgetItem *tp = robots[i_parts.second.robot_name].tree_pointer;
-            tp->addChild(mode);
-            mode->setExpanded(false);
-            part->setTreeWidgetModeNode(mode);
+            auto* partTreeItem = new QStandardItem(QString(part_name.c_str()));
+            QStandardItem *tp = robots[i_parts.second.robot_name].tree_pointer;
+            partTreeItem->setEditable(false);
+            tp->appendRow(partTreeItem);
+            m_ui->treeViewMode->setExpanded(partTreeItem->index(), true);
+            auto* partTreeItemChild = new QStandardItem();
+            partTreeItem->appendRow(partTreeItemChild);
+
+            auto index = partTreeItemChild->index();
+            auto* partTreeWidget = new PartItemTree(m_ui->treeViewMode);
+            m_ui->treeViewMode->setIndexWidget(index, partTreeWidget);
+
+            part->setTreeWidgetItem(partTreeWidget);
         }
         else
         {
@@ -1338,88 +1357,88 @@ QString MainWindow::getStringMode(int m)
 void MainWindow::updateModesTree(PartItem *part)
 {
 
-    QTreeWidgetItem *parentNode = part->getTreeWidgetModeNode();
+    PartItemTree *parentNode = part->getTreeWidgetItem();
 
     QList <int> modes = part->getPartMode();
 
-    if(modes.count() > 0 && parentNode->childCount() <= 0){
+    if(modes.count() > 0 && parentNode->numberOfJoints() <= 0){
         for(int i=0; i<modes.count(); i++){
-            QString mode;
+            QString name, mode;
             mode = getStringMode(modes.at(i));
-            auto* jointNode = new QTreeWidgetItem(parentNode);
-            jointNode->setText(0,QString("Joint %1").arg(i));
-            jointNode->setText(1,mode);
+            name = part->getJointName(i);
+
+            auto* jointNode = parentNode->addJoint();
+            jointNode->jointLabel()->setText(QString("%1 - %2").arg(i).arg(name));
+            jointNode->modeLabel()->setText(mode);
             QColor c = getColorMode(modes.at(i));
-            jointNode->setBackground(0,c);
-            jointNode->setBackground(1,c);
-            jointNode->setForeground(0,QColor(Qt::black));
-            jointNode->setForeground(1,QColor(Qt::black));
+            jointNode->setColor(QColor(Qt::black), c);
 
-
-            if(c == hwFaultColor){
-                parentNode->setData(0,Qt::UserRole,TREEMODE_WARN);
-                jointNode->setData(0,Qt::UserRole,TREEMODE_WARN);
-                parentNode->setIcon(0,QIcon(":/warning.svg"));
-                jointNode->setIcon(0,QIcon(":/warning.svg"));
-            }else{
-                parentNode->setData(0,Qt::UserRole,TREEMODE_OK);
-                jointNode->setData(0,Qt::UserRole,TREEMODE_OK);
-                parentNode->setIcon(0,QIcon(":/apply.svg"));
-            }
+//            if(c == hwFaultColor){
+//                parentNode->setData(0,Qt::UserRole,TREEMODE_WARN);
+//                jointNode->setData(0,Qt::UserRole,TREEMODE_WARN);
+//                parentNode->setIcon(0,QIcon(":/warning.svg"));
+//                jointNode->setIcon(0,QIcon(":/warning.svg"));
+//            }else{
+//                parentNode->setData(0,Qt::UserRole,TREEMODE_OK);
+//                jointNode->setData(0,Qt::UserRole,TREEMODE_OK);
+//                parentNode->setIcon(0,QIcon(":/apply.svg"));
+//            }
         }
-    }else{
+    } else {
         bool foundFaultPart = false;
-        for(int i=0;i<parentNode->childCount();i++){
-            QTreeWidgetItem *item = parentNode->child(i);
+        for(int i=0;i<parentNode->numberOfJoints();i++){
+            auto* jointNode = parentNode->getJoint(i);
             QString mode;
             QColor c = getColorMode(modes.at(i));
             mode = getStringMode(modes.at(i));
 
-            if(c == hwFaultColor){
-                foundFaultPart = true;
-                if(item->data(0,Qt::UserRole).toInt() != TREEMODE_WARN){
-                    item->setIcon(0,QIcon(":/warning.svg"));
-                    item->setData(0,Qt::UserRole,TREEMODE_WARN);
-                }
-            }else{
-                item->setIcon(0,QIcon());
-                item->setData(0,Qt::UserRole,TREEMODE_OK);
-            }
+//            if(c == hwFaultColor){
+//                foundFaultPart = true;
+//                if(item->data(0,Qt::UserRole).toInt() != TREEMODE_WARN){
+//                    item->setIcon(0,QIcon(":/warning.svg"));
+//                    item->setData(0,Qt::UserRole,TREEMODE_WARN);
+//                }
+//            }else{
+//                item->setIcon(0,QIcon());
+//                item->setData(0,Qt::UserRole,TREEMODE_OK);
+//            }
 
-            if(parentNode->isExpanded()){
-                if(item->text(1) != mode){
-                    item->setText(1,mode);
+//            if(parentNode->isExpanded()){
+                if(jointNode->modeLabel()->text() != mode){
+                    jointNode->modeLabel()->setText(mode);
+                    jointNode->setColor(QColor(Qt::black), c);
                 }
-                if(item->background(0) != c){
-                    item->setBackground(0,c);
-                    item->setBackground(1,c);
-                    item->setForeground(0,QColor(Qt::black));
-                    item->setForeground(1,QColor(Qt::black));
-                }
-            }
+//            }
         }
 
-        if(!foundFaultPart){
-            if(parentNode->data(0,Qt::UserRole).toInt() != TREEMODE_OK){
-                parentNode->setBackground(0,QColor("white"));
-                parentNode->setIcon(0,QIcon(":/apply.svg"));
-                parentNode->setData(0,Qt::UserRole,TREEMODE_OK);
-            }
-        }else{
-            if(parentNode->data(0,Qt::UserRole).toInt() != TREEMODE_WARN){
-                parentNode->setBackground(0,hwFaultColor);
-                parentNode->setIcon(0,QIcon(":/warning.svg"));
-                parentNode->setData(0,Qt::UserRole,TREEMODE_WARN);
-            }
+//        if(!foundFaultPart){
+//            if(parentNode->data(0,Qt::UserRole).toInt() != TREEMODE_OK){
+//                parentNode->setBackground(0,QColor("white"));
+//                parentNode->setIcon(0,QIcon(":/apply.svg"));
+//                parentNode->setData(0,Qt::UserRole,TREEMODE_OK);
+//            }
+//        }else{
+//            if(parentNode->data(0,Qt::UserRole).toInt() != TREEMODE_WARN){
+//                parentNode->setBackground(0,hwFaultColor);
+//                parentNode->setIcon(0,QIcon(":/warning.svg"));
+//                parentNode->setData(0,Qt::UserRole,TREEMODE_WARN);
+//            }
 
-        }
+//        }
     }
-
 }
 
 
 
-ModesTreeWidget::ModesTreeWidget(QWidget *parent) : QTreeWidget(parent)
+ModesTreeWidget::ModesTreeWidget(QWidget *parent) : QTreeView(parent)
 {
 
+}
+
+void ModesTreeWidget::resizeEvent(QResizeEvent *event)
+{
+    if(model() != Q_NULLPTR){
+        emit model()->layoutChanged();
+    }
+    QTreeView::resizeEvent(event);
 }

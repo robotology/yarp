@@ -15,12 +15,13 @@
 #include <QTimer>
 #include <QAction>
 #include <QMutex>
-#include <QTreeWidget>
+#include <QTreeView>
 
 #include "partitem.h"
 #include "sliderOptions.h"
 
 #include <vector>
+#include <unordered_map>
 
 namespace Ui {
 class MainWindow;
@@ -147,14 +148,14 @@ signals:
 
 };
 
-class ModesTreeWidget : public QTreeWidget
+class ModesTreeWidget : public QTreeView
 {
     Q_OBJECT
 
 public:
     ModesTreeWidget(QWidget * parent = 0);
 
-
+    void resizeEvent(QResizeEvent *event) override;
 };
 
 #endif // MAINWINDOW_H

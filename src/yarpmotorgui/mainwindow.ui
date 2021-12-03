@@ -14,7 +14,7 @@
    <string>MainWindow</string>
   </property>
   <property name="windowIcon">
-   <iconset>
+   <iconset resource="../yarplogger/res.qrc">
     <normaloff>:/logo.svg</normaloff>:/logo.svg</iconset>
   </property>
   <widget class="QWidget" name="centralWidget">
@@ -45,38 +45,34 @@
       <property name="orientation">
        <enum>Qt::Horizontal</enum>
       </property>
-      <widget class="ModesTreeWidget" name="treeWidgetMode">
+      <widget class="ModesTreeWidget" name="treeViewMode">
        <property name="sizePolicy">
-        <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
        </property>
        <property name="maximumSize">
         <size>
-         <width>300</width>
+         <width>16777215</width>
          <height>16777215</height>
         </size>
        </property>
        <property name="frameShape">
         <enum>QFrame::NoFrame</enum>
        </property>
+       <property name="rootIsDecorated">
+        <bool>true</bool>
+       </property>
        <property name="animated">
         <bool>true</bool>
        </property>
-       <attribute name="headerDefaultSectionSize">
+       <property name="headerHidden">
+        <bool>true</bool>
+       </property>
+       <attribute name="headerMinimumSectionSize">
         <number>150</number>
        </attribute>
-       <column>
-        <property name="text">
-         <string>Parts</string>
-        </property>
-       </column>
-       <column>
-        <property name="text">
-         <string>Mode</string>
-        </property>
-       </column>
       </widget>
       <widget class="QWidget" name="mainContainer" native="true"/>
      </widget>
@@ -174,10 +170,12 @@
  <customwidgets>
   <customwidget>
    <class>ModesTreeWidget</class>
-   <extends>QTreeWidget</extends>
+   <extends>QTreeView</extends>
    <header>mainwindow.h</header>
   </customwidget>
  </customwidgets>
- <resources/>
+ <resources>
+  <include location="../yarplogger/res.qrc"/>
+ </resources>
  <connections/>
 </ui>
