@@ -29,8 +29,14 @@ public:
 
     void setColor(const QColor& color, const QColor& background);
 
+    QSize sizeHint() const override;
+
+    void setDesiredSize(int w, int h);
+
 private:
     Ui::jointItemTree *m_ui;
+    int m_desiredHeight{-1};
+    int m_desiredWidth{-1};
 };
 
 #endif // JOINTITEMTREE_H

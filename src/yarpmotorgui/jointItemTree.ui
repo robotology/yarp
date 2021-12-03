@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>131</width>
-    <height>101</height>
+    <width>112</width>
+    <height>81</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -21,10 +21,6 @@
   </property>
   <property name="autoFillBackground">
    <bool>true</bool>
-  </property>
-  <property name="styleSheet">
-   <string notr="true">background-color: rgb(138, 226, 52);
-color: rgb(0, 0, 0);</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_2">
    <item>
@@ -44,10 +40,16 @@ color: rgb(0, 0, 0);</string>
      <property name="alignment">
       <set>Qt::AlignCenter</set>
      </property>
+     <property name="textInteractionFlags">
+      <set>Qt::NoTextInteraction</set>
+     </property>
     </widget>
    </item>
    <item>
     <widget class="Line" name="line">
+     <property name="frameShadow">
+      <enum>QFrame::Plain</enum>
+     </property>
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
      </property>
@@ -61,17 +63,11 @@ color: rgb(0, 0, 0);</string>
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
-     <property name="autoFillBackground">
-      <bool>true</bool>
-     </property>
      <property name="text">
       <string>JointMode</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignCenter</set>
-     </property>
-     <property name="margin">
-      <number>10</number>
      </property>
      <property name="textInteractionFlags">
       <set>Qt::NoTextInteraction</set>

@@ -681,6 +681,8 @@ bool MainWindow::init(QStringList enabledParts,
             tp->appendRow(partTreeItem);
             m_ui->treeViewMode->setExpanded(partTreeItem->index(), true);
             auto* partTreeItemChild = new QStandardItem();
+            partTreeItemChild->setEditable(false);
+            partTreeItemChild->setEnabled(false);
             partTreeItem->appendRow(partTreeItemChild);
 
             auto index = partTreeItemChild->index();
@@ -1384,6 +1386,7 @@ void MainWindow::updateModesTree(PartItem *part)
 //                parentNode->setIcon(0,QIcon(":/apply.svg"));
 //            }
         }
+        parentNode->uniformLayout();
     } else {
         bool foundFaultPart = false;
         for(int i=0;i<parentNode->numberOfJoints();i++){

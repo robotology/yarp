@@ -28,7 +28,9 @@ public:
 
     JointItemTree* getJoint(int index);
 
-    virtual QSize sizeHint() const override;
+    QSize sizeHint() const override;
+
+    void uniformLayout();
 };
 
 #endif // PARTITEMTREE_H

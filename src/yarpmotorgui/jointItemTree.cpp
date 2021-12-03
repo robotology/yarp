@@ -12,6 +12,7 @@ JointItemTree::JointItemTree(QWidget *parent) :
     m_ui(new Ui::jointItemTree)
 {
     m_ui->setupUi(this);
+    setAttribute(Qt::WA_StyledBackground, true);
 }
 
 JointItemTree::~JointItemTree()
@@ -31,11 +32,32 @@ QLabel *JointItemTree::modeLabel()
 
 void JointItemTree::setColor(const QColor &color, const QColor &background)
 {
-//    setAutoFillBackground(true);
-//    setStyleSheet(QString("color: rbg(%1, %2, %3); background-color:  rbg(%4, %5, %6);").arg(color.red())
-//                  .arg(color.green())
-//                  .arg(color.blue())
-//                  .arg(background.red())
-//                  .arg(background.green())
-//                  .arg(background.blue()));
+    setAutoFillBackground(true);
+    setStyleSheet(QString("color: rbg(%1, %2, %3); background-color:  rbg(%4, %5, %6);").arg(color.red())
+                  .arg(color.green())
+                  .arg(color.blue())
+                  .arg(background.red())
+                  .arg(background.green())
+                  .arg(background.blue()));
+}
+
+QSize JointItemTree::sizeHint() const
+{
+    QSize size = QWidget::sizeHint();
+    if (m_desiredWidth > 0)
+    {
+        size.setWidth(m_desiredWidth);
+    }
+    if (m_desiredHeight > 0)
+    {
+        size.setHeight(m_desiredHeight);
+    }
+
+    return size;
+}
+
+void JointItemTree::setDesiredSize(int w, int h)
+{
+    m_desiredWidth = w;
+    m_desiredHeight = h;
 }
