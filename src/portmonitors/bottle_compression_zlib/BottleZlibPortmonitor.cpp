@@ -14,6 +14,7 @@
 #include <algorithm>
 
 #include <zlib.h>
+#include <vector>
 
 using namespace yarp::os;
 using namespace yarp::sig;
