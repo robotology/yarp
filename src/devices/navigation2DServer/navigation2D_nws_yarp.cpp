@@ -40,11 +40,15 @@ bool navigation2D_nws_yarp::attach(PolyDriver* driver)
     }
 
     if (nullptr == iNav_target ||
-        nullptr == iNav_ctrl ||
-        nullptr == iNav_vel)
+        nullptr == iNav_ctrl)
     {
-        yCError(NAVIGATION2D_NWS_YARP, "Subdevice passed to attach method is invalid");
+        yCError(NAVIGATION2D_NWS_YARP, "Subdevice passed to attach method is invalid (it does not implement all the required interfaces)");
         return false;
+    }
+
+    if (nullptr == iNav_vel)
+    {
+        yCWarning(NAVIGATION2D_NWS_YARP, "The attached subdevice does not implement INavigation2DVelocityActions interface");
     }
 
     m_RPC.setInterfaces(iNav_target, iNav_ctrl, iNav_vel);
