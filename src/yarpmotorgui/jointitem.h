@@ -103,6 +103,9 @@ class JointItem : public QWidget
     void idle();
     void showPID();
 
+    static QColor GetModeColor(JointState mode);
+    static QString GetModeString(JointState mode);
+
 protected:
     bool eventFilter(QObject *obj, QEvent *event) override;
 

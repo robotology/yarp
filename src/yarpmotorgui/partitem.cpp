@@ -1070,9 +1070,14 @@ void PartItem::resizeWidget(int w)
     }
 }
 
+int PartItem::getNumberOfJoints()
+{
+    return m_layout->count();
+}
+
 QString PartItem::getJointName(int joint)
 {
-    if (joint < 0 || joint >= m_layout->count())
+    if (joint < 0 || joint >= getNumberOfJoints())
     {
         return "";
     }
@@ -2119,9 +2124,9 @@ void PartItem::setParentItem(QStandardItem *item)
     m_parentItem = item;
 }
 
-QList<int> PartItem::getPartMode()
+QList<JointItem::JointState> PartItem::getPartMode()
 {
-    QList <int> modes;
+    QList <JointItem::JointState> modes;
 
     for (int k = 0; k < m_layout->count(); k++){
         switch (m_controlModes[k])

@@ -12,6 +12,8 @@
 #include <QColor>
 #include <QMenu>
 
+#include "jointitem.h"
+
 namespace Ui {
 class jointItemTree;
 }
@@ -24,11 +26,13 @@ public:
     explicit JointItemTree(int index, QWidget *parent = nullptr);
     ~JointItemTree();
 
-    QLabel* jointLabel();
+    void setJointName(const QString& name);
 
-    QLabel* modeLabel();
+    QString jointName() const;
 
-    void setColor(const QColor& color, const QColor& background);
+    void setJointMode(const JointItem::JointState& mode);
+
+    JointItem::JointState jointMode() const;
 
     void mouseDoubleClickEvent(QMouseEvent *event) override;
 
@@ -61,12 +65,21 @@ public slots:
     void onPIDClicked();
 
 private:
+
+    void setColor(const QColor& color, const QColor& background);
+
     Ui::jointItemTree *m_ui;
     QMenu m_rightClickMenu;
     QAction* m_rightClickMenuTitle;
+    QAction* m_homeAction;
+    QAction* m_idleAction;
+    QAction* m_runAction;
+    QAction* m_pidAction;
     int m_desiredHeight{-1};
     int m_desiredWidth{-1};
     int m_index;
+    bool m_modeSet{false};
+    JointItem::JointState m_mode{JointItem::Idle};
 };
 
 #endif // JOINTITEMTREE_H

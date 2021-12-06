@@ -80,8 +80,9 @@ public:
     PartItemTree *getTreeWidgetItem();
     QStandardItem* getParentItem();
     QString getPartName();
-    QList<int> getPartMode();
+    QList<JointItem::JointState> getPartMode();
     void resizeWidget(int w);
+    int getNumberOfJoints();
     QString getJointName(int joint);
     JointItem* getJointWidget(int jointIndex);
 

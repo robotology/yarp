@@ -685,7 +685,7 @@ bool MainWindow::init(QStringList enabledParts,
         auto* robot_top = new QStandardItem(QString(robot.first.c_str()));
         robot_top->setEditable(false);
         parentItem->appendRow(robot_top);
-        m_ui->treeViewMode->setExpanded(robot_top->index(), true);
+        m_ui->treeViewMode->setExpanded(robot_top->index(), false);
         robot.second.tree_pointer = robot_top;
     }
 
@@ -737,7 +737,7 @@ bool MainWindow::init(QStringList enabledParts,
             QStandardItem *tp = robots[i_parts.second.robot_name].tree_pointer;
             partTreeItem->setEditable(false);
             tp->appendRow(partTreeItem);
-            m_ui->treeViewMode->setExpanded(partTreeItem->index(), false);
+            m_ui->treeViewMode->setExpanded(partTreeItem->index(), true);
             partTreeItem->setBackground(Qt::white);
             partTreeItem->setIcon(m_okIcon);
 
@@ -1302,144 +1302,11 @@ void MainWindow::onUpdate()
     m_mutex.unlock();
 }
 
-QColor MainWindow::getColorMode(int m)
-{
-    QColor mode;
-    switch (m) {
-    case JointItem::Idle:{
-        mode = idleColor;
-        break;
-    }
-    case JointItem::Position:{
-        mode = positionColor;
-        break;
-    }
-    case JointItem::PositionDirect:{
-        mode = positionDirectColor;
-        break;
-    }
-    case JointItem::Mixed:{
-        mode = mixedColor;
-        break;
-    }
-    case JointItem::Velocity:{
-        mode = velocityColor;
-        break;
-    }
-    case JointItem::Torque:{
-        mode = torqueColor;
-        break;
-    }
-    case JointItem::Pwm:{
-        mode = pwmColor;
-        break;
-    }
-    case JointItem::Current:{
-        mode = currentColor;
-        break;
-    }
-
-    case JointItem::Disconnected:{
-        mode = disconnectColor;
-        break;
-    }
-    case JointItem::HwFault:{
-        mode = hwFaultColor;
-        break;
-    }
-    case JointItem::Calibrating:{
-        mode = calibratingColor;
-        break;
-    }
-    case JointItem::NotConfigured:{
-        mode = calibratingColor;
-        break;
-    }
-    case JointItem::Configured:{
-        mode = calibratingColor;
-        break;
-    }
-
-    default:
-        mode = calibratingColor;
-        break;
-    }
-
-    return mode;
-}
-
 JointItem *MainWindow::getJointWidget(int partIndex, int jointIndex)
 {
     auto* scroll = (QScrollArea *)m_tabPanel->widget(partIndex);
     auto* part = (PartItem*)scroll->widget();
     return part->getJointWidget(jointIndex);
-}
-
-QString MainWindow::getStringMode(int m)
-{
-    QString mode;
-    switch (m) {
-    case JointItem::Idle:{
-        mode = "Idle";
-        break;
-    }
-    case JointItem::Position:{
-        mode = "Position";
-        break;
-    }
-    case JointItem::PositionDirect:{
-        mode = "Position Direct";
-        break;
-    }
-    case JointItem::Mixed:{
-        mode = "Mixed";
-        break;
-    }
-    case JointItem::Velocity:{
-        mode = "Velocity";
-        break;
-    }
-    case JointItem::Torque:{
-        mode = "Torque";
-        break;
-    }
-    case JointItem::Pwm:{
-        mode = "PWM";
-        break;
-    }
-    case JointItem::Current:{
-        mode = "Current";
-        break;
-    }
-
-    case JointItem::Disconnected:{
-        mode = "Disconnected";
-        break;
-    }
-    case JointItem::HwFault:{
-        mode = "Hardware Fault";
-        break;
-    }
-    case JointItem::Calibrating:{
-        mode = "Calibrating";
-        break;
-    }
-    case JointItem::NotConfigured:{
-        mode = "Not Configured";
-        break;
-    }
-    case JointItem::Configured:{
-        mode = "Configured";
-        break;
-    }
-
-    default:
-        mode = "Unknown";
-        break;
-    }
-
-    return mode;
-
 }
 
 void MainWindow::updateModesTree(PartItem *part)
@@ -1448,35 +1315,24 @@ void MainWindow::updateModesTree(PartItem *part)
     PartItemTree *partWidget = part->getTreeWidgetItem();
     QStandardItem *parentNode = part->getParentItem();
 
-    QList <int> modes = part->getPartMode();
+    QList <JointItem::JointState> modes = part->getPartMode();
 
     if (modes.count() > 0 && partWidget->numberOfJoints() <= 0){
         for (int i = 0; i < modes.count(); i++){
-            QString name, mode;
-            mode = getStringMode(modes.at(i));
+            QString name;
             name = part->getJointName(i);
-
             auto* jointNode = partWidget->addJoint();
-            jointNode->jointLabel()->setText(QString("%1 - %2").arg(i).arg(name));
+            jointNode->setJointName(QString("%1 - %2").arg(i).arg(name));
         }
-        m_ui->treeViewMode->setExpanded(parentNode->index(), true); //Expand only after having filled each part
-        emit m_ui->treeViewMode->model()->layoutChanged({parentNode->index()}); //Notify that the layout changed to avoid whitespaces
     }
 
     bool foundFaultPart = false;
     for (int i = 0; i < partWidget->numberOfJoints(); i++){
         auto* jointNode = partWidget->getJoint(i);
-        QString mode;
-        QColor c = getColorMode(modes.at(i));
-        mode = getStringMode(modes.at(i));
+        jointNode->setJointMode(modes.at(i));
 
-        if (c == hwFaultColor){
+        if (modes.at(i) == JointItem::HwFault){
             foundFaultPart = true;
-        }
-
-        if (jointNode->modeLabel()->text() != mode){
-            jointNode->modeLabel()->setText(mode);
-            jointNode->setColor(QColor(35, 38, 41), c);
         }
     }
 

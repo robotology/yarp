@@ -91,8 +91,6 @@ private:
 
 private:
     void updateModesTree(PartItem *part);
-    QString getStringMode(int mode);
-    QColor getColorMode(int m);
     JointItem* getJointWidget(int partIndex, int jointIndex);
 private slots:
     void onSequenceActivated();

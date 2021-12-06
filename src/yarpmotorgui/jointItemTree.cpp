@@ -25,21 +25,21 @@ JointItemTree::JointItemTree(int index, QWidget *parent) :
     m_rightClickMenu.addAction(m_rightClickMenuTitle);
     m_rightClickMenu.addSeparator();
 
-    QAction* homeAction = new QAction("Home joint", this);
-    connect(homeAction, SIGNAL(triggered()), this, SLOT(onHomeClicked()));
-    m_rightClickMenu.addAction(homeAction);
+    m_homeAction = new QAction("Home joint", this);
+    connect(m_homeAction, SIGNAL(triggered()), this, SLOT(onHomeClicked()));
+    m_rightClickMenu.addAction(m_homeAction);
 
-    QAction* idleAction = new QAction("Idle joint", this);
-    connect(idleAction, SIGNAL(triggered()), this, SLOT(onIdleClicked()));
-    m_rightClickMenu.addAction(idleAction);
+    m_idleAction = new QAction("Idle joint", this);
+    connect(m_idleAction, SIGNAL(triggered()), this, SLOT(onIdleClicked()));
+    m_rightClickMenu.addAction(m_idleAction);
 
-    QAction* runAction = new QAction("Run joint", this);
-    connect(runAction, SIGNAL(triggered()), this, SLOT(onRunClicked()));
-    m_rightClickMenu.addAction(runAction);
+    m_runAction = new QAction("Run joint", this);
+    connect(m_runAction, SIGNAL(triggered()), this, SLOT(onRunClicked()));
+    m_rightClickMenu.addAction(m_runAction);
 
-    QAction* pidAction = new QAction("Show joint PID", this);
-    connect(pidAction, SIGNAL(triggered()), this, SLOT(onPIDClicked()));
-    m_rightClickMenu.addAction(pidAction);
+    m_pidAction = new QAction("Show joint PID", this);
+    connect(m_pidAction, SIGNAL(triggered()), this, SLOT(onPIDClicked()));
+    m_rightClickMenu.addAction(m_pidAction);
 }
 
 JointItemTree::~JointItemTree()
@@ -47,14 +47,77 @@ JointItemTree::~JointItemTree()
     delete m_ui;
 }
 
-QLabel *JointItemTree::jointLabel()
+void JointItemTree::setJointName(const QString &name)
 {
-    return m_ui->jointName;
+    m_ui->jointName->setText(name);
 }
 
-QLabel *JointItemTree::modeLabel()
+QString JointItemTree::jointName() const
 {
-    return m_ui->jointMode;
+    return m_ui->jointName->text();
+}
+
+void JointItemTree::setJointMode(const JointItem::JointState &mode)
+{
+
+    if (!m_modeSet || mode != m_mode)
+    {
+        setColor(QColor(35, 38, 41), JointItem::GetModeColor(mode));
+
+        switch (mode) {
+        case JointItem::Position:
+        case JointItem::PositionDirect:
+        {
+            m_homeAction->setEnabled(true);
+            m_runAction->setEnabled(true);
+            m_idleAction->setEnabled(true);
+            m_pidAction->setEnabled(true);
+            break;
+        }
+        case JointItem::Idle:
+        case JointItem::Mixed:
+        case JointItem::Velocity:
+        case JointItem::Torque:
+        case JointItem::Pwm:
+        case JointItem::Current:
+        {
+            m_homeAction->setEnabled(false);
+            m_runAction->setEnabled(true);
+            m_idleAction->setEnabled(true);
+            m_pidAction->setEnabled(true);
+            break;
+        }
+
+        case JointItem::HwFault:{
+            m_homeAction->setEnabled(false);
+            m_runAction->setEnabled(false);
+            m_idleAction->setEnabled(true);
+            m_pidAction->setEnabled(true);
+            break;
+        }
+        case JointItem::Disconnected:
+        case JointItem::Calibrating:
+        case JointItem::NotConfigured:
+        case JointItem::Configured:
+        default:
+        {
+            m_homeAction->setEnabled(false);
+            m_runAction->setEnabled(false);
+            m_idleAction->setEnabled(false);
+            m_pidAction->setEnabled(false);
+            break;
+        }
+        }
+
+        m_ui->jointMode->setText(JointItem::GetModeString(mode));
+        m_modeSet = true;
+        m_mode = mode;
+    }
+}
+
+JointItem::JointState JointItemTree::jointMode() const
+{
+    return m_mode;
 }
 
 void JointItemTree::setColor(const QColor &color, const QColor &background)
