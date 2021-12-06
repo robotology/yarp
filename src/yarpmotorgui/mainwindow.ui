@@ -14,7 +14,7 @@
    <string>MainWindow</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="../yarplogger/res.qrc">
+   <iconset>
     <normaloff>:/logo.svg</normaloff>:/logo.svg</iconset>
   </property>
   <widget class="QWidget" name="centralWidget">
@@ -174,8 +174,6 @@
    <header>mainwindow.h</header>
   </customwidget>
  </customwidgets>
- <resources>
-  <include location="../yarplogger/res.qrc"/>
- </resources>
+ <resources/>
  <connections/>
 </ui>
