@@ -318,7 +318,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(enableControlCurrent, SIGNAL(triggered(bool)), this, SLOT(onEnableControlCurrent(bool)));
     connect(sliderOptions, SIGNAL(triggered()), this, SLOT(onSliderOptionsClicked()));
 
-    connect(this,SIGNAL(internalClose()),this,SLOT(close()),Qt::QueuedConnection);
+    connect(this,SIGNAL(sig_internalClose()),this,SLOT(close()),Qt::QueuedConnection);
 
 
     m_timer.setInterval(200);
