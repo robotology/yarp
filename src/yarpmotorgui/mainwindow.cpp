@@ -515,13 +515,17 @@ void MainWindow::onSetTrqSliderOptionMW(int choice, double val)
 
 void MainWindow::onJointClicked(int partIndex, int jointIndex)
 {
+    if (!m_tabPanel){
+        return;
+    }
+
     m_tabPanel->setCurrentIndex(partIndex);
     auto* scroll = (QScrollArea *)m_tabPanel->widget(partIndex);
     auto* part = (PartItem*)scroll->widget();
-    auto* partWidget = part->getJointWidget(jointIndex);
-    scroll->ensureWidgetVisible(partWidget);
+    auto* jointWidget = part->getJointWidget(jointIndex);
+    scroll->ensureWidgetVisible(jointWidget);
     m_glowEffect->setEnabled(false);
-    partWidget->setGraphicsEffect(m_glowEffect);
+    jointWidget->setGraphicsEffect(m_glowEffect);
     m_glowEffect->setEnabled(true);
     m_glowTimer.start();
 }
@@ -529,6 +533,42 @@ void MainWindow::onJointClicked(int partIndex, int jointIndex)
 void MainWindow::onGlowTimerExpired()
 {
     m_glowEffect->setEnabled(false);
+}
+
+void MainWindow::onJointHomeFromTree(int partIndex, int jointIndex)
+{
+    if (!m_tabPanel){
+        return;
+    }
+
+    getJointWidget(partIndex, jointIndex)->home();
+}
+
+void MainWindow::onJointRunFromTree(int partIndex, int jointIndex)
+{
+    if (!m_tabPanel){
+        return;
+    }
+
+    getJointWidget(partIndex, jointIndex)->run();
+}
+
+void MainWindow::onJointIdleFromTree(int partIndex, int jointIndex)
+{
+    if (!m_tabPanel){
+        return;
+    }
+
+    getJointWidget(partIndex, jointIndex)->idle();
+}
+
+void MainWindow::onJointPIDFromTree(int partIndex, int jointIndex)
+{
+    if (!m_tabPanel){
+        return;
+    }
+
+    getJointWidget(partIndex, jointIndex)->showPID();
 }
 
 void MainWindow::closeEvent(QCloseEvent *event)
@@ -708,6 +748,11 @@ bool MainWindow::init(QStringList enabledParts,
             auto index = partTreeItemChild->index();
             auto* partTreeWidget = new PartItemTree(tabIndex, m_ui->treeViewMode);
             connect(partTreeWidget, SIGNAL(sig_jointClicked(int,int)), this, SLOT(onJointClicked(int,int)));
+            connect(partTreeWidget, SIGNAL(sig_homeClicked(int,int)), this, SLOT(onJointHomeFromTree(int,int)));
+            connect(partTreeWidget, SIGNAL(sig_runClicked(int,int)), this, SLOT(onJointRunFromTree(int,int)));
+            connect(partTreeWidget, SIGNAL(sig_idleClicked(int,int)), this, SLOT(onJointIdleFromTree(int,int)));
+            connect(partTreeWidget, SIGNAL(sig_PIDClicked(int,int)), this, SLOT(onJointPIDFromTree(int,int)));
+
             m_ui->treeViewMode->setIndexWidget(index, partTreeWidget);
 
             part->setTreeWidgetItem(partTreeWidget);
@@ -1320,6 +1365,13 @@ QColor MainWindow::getColorMode(int m)
     }
 
     return mode;
+}
+
+JointItem *MainWindow::getJointWidget(int partIndex, int jointIndex)
+{
+    auto* scroll = (QScrollArea *)m_tabPanel->widget(partIndex);
+    auto* part = (PartItem*)scroll->widget();
+    return part->getJointWidget(jointIndex);
 }
 
 QString MainWindow::getStringMode(int m)

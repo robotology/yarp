@@ -98,6 +98,11 @@ class JointItem : public QWidget
     void disableTrajectoryVelocitySliderDouble();
     void resetTarget();
 
+    void home();
+    void run();
+    void idle();
+    void showPID();
+
 protected:
     bool eventFilter(QObject *obj, QEvent *event) override;
 

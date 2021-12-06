@@ -10,6 +10,7 @@
 #include <QWidget>
 #include <QLabel>
 #include <QColor>
+#include <QMenu>
 
 namespace Ui {
 class jointItemTree;
@@ -39,8 +40,30 @@ signals:
 
     void sig_jointClicked(int index);
 
+    void sig_homeClicked(int index);
+
+    void sig_runClicked(int index);
+
+    void sig_idleClicked(int index);
+
+    void sig_PIDClicked(int index);
+
+public slots:
+
+    void onShowContextMenu(QPoint pos);
+
+    void onHomeClicked();
+
+    void onRunClicked();
+
+    void onIdleClicked();
+
+    void onPIDClicked();
+
 private:
     Ui::jointItemTree *m_ui;
+    QMenu m_rightClickMenu;
+    QAction* m_rightClickMenuTitle;
     int m_desiredHeight{-1};
     int m_desiredWidth{-1};
     int m_index;

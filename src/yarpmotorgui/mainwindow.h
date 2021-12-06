@@ -21,6 +21,7 @@
 #include <QIcon>
 
 #include "partitem.h"
+#include "jointitem.h"
 #include "sliderOptions.h"
 
 #include <vector>
@@ -92,6 +93,7 @@ private:
     void updateModesTree(PartItem *part);
     QString getStringMode(int mode);
     QColor getColorMode(int m);
+    JointItem* getJointWidget(int partIndex, int jointIndex);
 private slots:
     void onSequenceActivated();
     void onSequenceStopped();
@@ -136,6 +138,10 @@ private slots:
     void onSetTrqSliderOptionMW(int, double);
     void onJointClicked(int partIndex, int jointIndex);
     void onGlowTimerExpired();
+    void onJointHomeFromTree(int partIndex, int jointIndex);
+    void onJointRunFromTree(int partIndex, int jointIndex);
+    void onJointIdleFromTree(int partIndex, int jointIndex);
+    void onJointPIDFromTree(int partIndex, int jointIndex);
 
 signals:
     void sig_enableControlVelocity(bool);

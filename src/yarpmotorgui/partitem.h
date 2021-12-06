@@ -83,7 +83,7 @@ public:
     QList<int> getPartMode();
     void resizeWidget(int w);
     QString getJointName(int joint);
-    QWidget* getJointWidget(int jointIndex);
+    JointItem* getJointWidget(int jointIndex);
 
 
 private:

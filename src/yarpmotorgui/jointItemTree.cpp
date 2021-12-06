@@ -14,6 +14,32 @@ JointItemTree::JointItemTree(int index, QWidget *parent) :
 {
     m_ui->setupUi(this);
     setAttribute(Qt::WA_StyledBackground, true);
+
+    this->setContextMenuPolicy(Qt::CustomContextMenu);
+
+    connect(this, SIGNAL(customContextMenuRequested(QPoint)),
+            this, SLOT(onShowContextMenu(QPoint)));
+
+    m_rightClickMenuTitle = new QAction(this);
+    m_rightClickMenuTitle->setEnabled(false);
+    m_rightClickMenu.addAction(m_rightClickMenuTitle);
+    m_rightClickMenu.addSeparator();
+
+    QAction* homeAction = new QAction("Home joint", this);
+    connect(homeAction, SIGNAL(triggered()), this, SLOT(onHomeClicked()));
+    m_rightClickMenu.addAction(homeAction);
+
+    QAction* idleAction = new QAction("Idle joint", this);
+    connect(idleAction, SIGNAL(triggered()), this, SLOT(onIdleClicked()));
+    m_rightClickMenu.addAction(idleAction);
+
+    QAction* runAction = new QAction("Run joint", this);
+    connect(runAction, SIGNAL(triggered()), this, SLOT(onRunClicked()));
+    m_rightClickMenu.addAction(runAction);
+
+    QAction* pidAction = new QAction("Show joint PID", this);
+    connect(pidAction, SIGNAL(triggered()), this, SLOT(onPIDClicked()));
+    m_rightClickMenu.addAction(pidAction);
 }
 
 JointItemTree::~JointItemTree()
@@ -64,4 +90,30 @@ void JointItemTree::setDesiredSize(int w, int h)
 {
     m_desiredWidth = w;
     m_desiredHeight = h;
+}
+
+void JointItemTree::onShowContextMenu(QPoint pos)
+{
+    m_rightClickMenuTitle->setText(m_ui->jointName->text() + " menu");
+    m_rightClickMenu.exec(mapToGlobal(pos));
+}
+
+void JointItemTree::onHomeClicked()
+{
+    emit sig_homeClicked(m_index);
+}
+
+void JointItemTree::onRunClicked()
+{
+    emit sig_runClicked(m_index);
+}
+
+void JointItemTree::onIdleClicked()
+{
+    emit sig_idleClicked(m_index);
+}
+
+void JointItemTree::onPIDClicked()
+{
+    emit sig_PIDClicked(m_index);
 }

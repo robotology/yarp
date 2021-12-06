@@ -22,6 +22,38 @@ void JointItem::resetTarget()
     ui->sliderMixedPosition->resetTarget();
 }
 
+void JointItem::home()
+{
+    if (this->internalState == Velocity)
+    {
+       velocityTimer.stop();
+    }
+    emit homeClicked(this);
+}
+
+void JointItem::run()
+{
+    if (this->internalState == Velocity)
+    {
+       velocityTimer.stop();
+    }
+    emit runClicked(this);
+}
+
+void JointItem::idle()
+{
+    if (this->internalState == Velocity)
+    {
+       velocityTimer.stop();
+    }
+    emit idleClicked(this);
+}
+
+void JointItem::showPID()
+{
+    emit pidClicked(this);
+}
+
 void JointItem::updateTrajectoryPositionTarget(double val)
 {
     ui->sliderTrajectoryPosition->updateSliderTarget(val);
@@ -2099,34 +2131,22 @@ void JointItem::onCalibClicked()
 
 void JointItem::onHomeClicked()
 {
-    if (this->internalState == Velocity)
-    {
-       velocityTimer.stop();
-    }
-    emit homeClicked(this);
+    home();
 }
 
 void JointItem::onIdleClicked()
 {
-    if (this->internalState == Velocity)
-    {
-       velocityTimer.stop();
-    }
-    emit idleClicked(this);
+    idle();
 }
 
 void JointItem::onRunClicked()
 {
-    if (this->internalState == Velocity)
-    {
-       velocityTimer.stop();
-    }
-    emit runClicked(this);
+    run();
 }
 
 void JointItem::onPidClicked()
 {
-    emit pidClicked(this);
+    showPID();
 }
 
 void JointItem::sequenceActivated()

@@ -1082,9 +1082,9 @@ QString PartItem::getJointName(int joint)
     return jointWidget->getJointName();
 }
 
-QWidget *PartItem::getJointWidget(int jointIndex)
+JointItem *PartItem::getJointWidget(int jointIndex)
 {
-    return m_layout->itemAt(jointIndex)->widget();
+    return (JointItem*)m_layout->itemAt(jointIndex)->widget();
 }
 
 void PartItem::resizeEvent(QResizeEvent *event)

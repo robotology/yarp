@@ -39,9 +39,25 @@ public slots:
 
     void onJointClicked(int index);
 
+    void onHomeClicked(int index);
+
+    void onRunClicked(int index);
+
+    void onIdleClicked(int index);
+
+    void onPIDClicked(int index);
+
 signals:
 
     void sig_jointClicked(int partIndex, int jointIndex);
+
+    void sig_homeClicked(int partIndex, int jointIndex);
+
+    void sig_runClicked(int partIndex, int jointIndex);
+
+    void sig_idleClicked(int partIndex, int jointIndex);
+
+    void sig_PIDClicked(int partIndex, int jointIndex);
 
 };
 
