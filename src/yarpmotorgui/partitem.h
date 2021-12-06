@@ -74,9 +74,11 @@ public:
     bool checkAndGo();
     void stopSequence();
     void setTreeWidgetItem(PartItemTree *node);
+    void setParentItem(QStandardItem* item);
     void loadSequence();
     void saveSequence(QString global_filename);
     PartItemTree *getTreeWidgetItem();
+    QStandardItem* getParentItem();
     QString getPartName();
     QList<int> getPartMode();
     void resizeWidget(int w);
@@ -109,6 +111,7 @@ private:
     QTimer m_runTimeTimer;
     QTimer m_cycleTimer;
     QTimer m_cycleTimeTimer;
+    QStandardItem* m_parentItem;
 
     QList<SequenceItem> m_runValues;
     QList<SequenceItem> m_runTimeValues;

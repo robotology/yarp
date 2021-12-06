@@ -2104,9 +2104,19 @@ PartItemTree *PartItem::getTreeWidgetItem()
     return m_node;
 }
 
+QStandardItem *PartItem::getParentItem()
+{
+    return m_parentItem;
+}
+
 void PartItem::setTreeWidgetItem(PartItemTree *node)
 {
     m_node = node;
+}
+
+void PartItem::setParentItem(QStandardItem *item)
+{
+    m_parentItem = item;
 }
 
 QList<int> PartItem::getPartMode()

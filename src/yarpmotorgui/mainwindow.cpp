@@ -29,12 +29,11 @@
 #include <yarp/os/LogStream.h>
 #include <yarp/os/ResourceFinder.h>
 
-#define TREEMODE_OK     1
-#define TREEMODE_WARN   2
-
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
-    m_ui(new Ui::MainWindow)
+    m_ui(new Ui::MainWindow),
+    m_okIcon(":/apply.svg"),
+    m_warningIcon(":/warning.svg")
 {
     m_ui->setupUi(this);
 
@@ -672,9 +671,9 @@ bool MainWindow::init(QStringList enabledParts,
             connect(this, SIGNAL(sig_viewCurrentValues(bool)), part, SLOT(onViewCurrentValues(bool)));
             connect(this, SIGNAL(sig_viewMotorPositions(bool)), part, SLOT(onViewMotorPositions(bool)));
             connect(this, SIGNAL(sig_viewDutyCycles(bool)), part, SLOT(onViewDutyCycles(bool)));
-            connect(this, SIGNAL(sig_setPosSliderOptionMW(int, double)), part, SLOT(onSetPosSliderOptionPI(int, double)));
-            connect(this, SIGNAL(sig_setVelSliderOptionMW(int, double)), part, SLOT(onSetVelSliderOptionPI(int, double)));
-            connect(this, SIGNAL(sig_setTrqSliderOptionMW(int, double)), part, SLOT(onSetTrqSliderOptionPI(int, double)));
+            connect(this, SIGNAL(sig_setPosSliderOptionMW(int,double)), part, SLOT(onSetPosSliderOptionPI(int,double)));
+            connect(this, SIGNAL(sig_setVelSliderOptionMW(int,double)), part, SLOT(onSetVelSliderOptionPI(int,double)));
+            connect(this, SIGNAL(sig_setTrqSliderOptionMW(int,double)), part, SLOT(onSetTrqSliderOptionPI(int,double)));
             connect(this, SIGNAL(sig_viewPositionTargetBox(bool)), part, SLOT(onViewPositionTargetBox(bool)));
             connect(this, SIGNAL(sig_viewPositionTargetValue(bool)), part, SLOT(onViewPositionTargetValue(bool)));
             connect(this, SIGNAL(sig_enableControlVelocity(bool)), part, SLOT(onEnableControlVelocity(bool)));
@@ -698,6 +697,9 @@ bool MainWindow::init(QStringList enabledParts,
             partTreeItem->setEditable(false);
             tp->appendRow(partTreeItem);
             m_ui->treeViewMode->setExpanded(partTreeItem->index(), true);
+            partTreeItem->setBackground(Qt::white);
+            partTreeItem->setIcon(m_okIcon);
+
             auto* partTreeItemChild = new QStandardItem();
             partTreeItemChild->setEditable(false);
             partTreeItemChild->setEnabled(false);
@@ -709,6 +711,7 @@ bool MainWindow::init(QStringList enabledParts,
             m_ui->treeViewMode->setIndexWidget(index, partTreeWidget);
 
             part->setTreeWidgetItem(partTreeWidget);
+            part->setParentItem(partTreeItem);
         }
         else
         {
@@ -1389,74 +1392,45 @@ QString MainWindow::getStringMode(int m)
 void MainWindow::updateModesTree(PartItem *part)
 {
 
-    PartItemTree *parentNode = part->getTreeWidgetItem();
+    PartItemTree *partWidget = part->getTreeWidgetItem();
+    QStandardItem *parentNode = part->getParentItem();
 
     QList <int> modes = part->getPartMode();
 
-    if(modes.count() > 0 && parentNode->numberOfJoints() <= 0){
-        for(int i=0; i<modes.count(); i++){
+    if (modes.count() > 0 && partWidget->numberOfJoints() <= 0){
+        for (int i = 0; i < modes.count(); i++){
             QString name, mode;
             mode = getStringMode(modes.at(i));
             name = part->getJointName(i);
 
-            auto* jointNode = parentNode->addJoint();
+            auto* jointNode = partWidget->addJoint();
             jointNode->jointLabel()->setText(QString("%1 - %2").arg(i).arg(name));
+        }
+    }
+
+    bool foundFaultPart = false;
+    for (int i = 0; i < partWidget->numberOfJoints(); i++){
+        auto* jointNode = partWidget->getJoint(i);
+        QString mode;
+        QColor c = getColorMode(modes.at(i));
+        mode = getStringMode(modes.at(i));
+
+        if (c == hwFaultColor){
+            foundFaultPart = true;
+        }
+
+        if (jointNode->modeLabel()->text() != mode){
             jointNode->modeLabel()->setText(mode);
-            QColor c = getColorMode(modes.at(i));
             jointNode->setColor(QColor(35, 38, 41), c);
-
-//            if(c == hwFaultColor){
-//                parentNode->setData(0,Qt::UserRole,TREEMODE_WARN);
-//                jointNode->setData(0,Qt::UserRole,TREEMODE_WARN);
-//                parentNode->setIcon(0,QIcon(":/warning.svg"));
-//                jointNode->setIcon(0,QIcon(":/warning.svg"));
-//            }else{
-//                parentNode->setData(0,Qt::UserRole,TREEMODE_OK);
-//                jointNode->setData(0,Qt::UserRole,TREEMODE_OK);
-//                parentNode->setIcon(0,QIcon(":/apply.svg"));
-//            }
         }
+    }
+
+    if (!foundFaultPart){
+        parentNode->setBackground(Qt::white);
+        parentNode->setIcon(m_okIcon);
     } else {
-        bool foundFaultPart = false;
-        for(int i=0;i<parentNode->numberOfJoints();i++){
-            auto* jointNode = parentNode->getJoint(i);
-            QString mode;
-            QColor c = getColorMode(modes.at(i));
-            mode = getStringMode(modes.at(i));
-
-//            if(c == hwFaultColor){
-//                foundFaultPart = true;
-//                if(item->data(0,Qt::UserRole).toInt() != TREEMODE_WARN){
-//                    item->setIcon(0,QIcon(":/warning.svg"));
-//                    item->setData(0,Qt::UserRole,TREEMODE_WARN);
-//                }
-//            }else{
-//                item->setIcon(0,QIcon());
-//                item->setData(0,Qt::UserRole,TREEMODE_OK);
-//            }
-
-//            if(parentNode->isExpanded()){
-                if(jointNode->modeLabel()->text() != mode){
-                    jointNode->modeLabel()->setText(mode);
-                    jointNode->setColor(QColor(35, 38, 41), c);
-                }
-//            }
-        }
-
-//        if(!foundFaultPart){
-//            if(parentNode->data(0,Qt::UserRole).toInt() != TREEMODE_OK){
-//                parentNode->setBackground(0,QColor("white"));
-//                parentNode->setIcon(0,QIcon(":/apply.svg"));
-//                parentNode->setData(0,Qt::UserRole,TREEMODE_OK);
-//            }
-//        }else{
-//            if(parentNode->data(0,Qt::UserRole).toInt() != TREEMODE_WARN){
-//                parentNode->setBackground(0,hwFaultColor);
-//                parentNode->setIcon(0,QIcon(":/warning.svg"));
-//                parentNode->setData(0,Qt::UserRole,TREEMODE_WARN);
-//            }
-
-//        }
+        parentNode->setBackground(hwFaultColor);
+        parentNode->setIcon(m_warningIcon);
     }
 }
 

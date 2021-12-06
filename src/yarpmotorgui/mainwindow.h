@@ -18,6 +18,7 @@
 #include <QTreeView>
 #include <QGraphicsDropShadowEffect>
 #include <QTimer>
+#include <QIcon>
 
 #include "partitem.h"
 #include "sliderOptions.h"
@@ -85,6 +86,7 @@ private:
     QAction *m_script1;
     QGraphicsDropShadowEffect *m_glowEffect;
     QTimer m_glowTimer;
+    QIcon m_okIcon, m_warningIcon;
 
 private:
     void updateModesTree(PartItem *part);
