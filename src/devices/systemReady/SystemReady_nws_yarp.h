@@ -6,7 +6,8 @@
 #ifndef YARP_SYSTEMREADY_NWS_YARP_H
 #define YARP_SYSTEMREADY_NWS_YARP_H
 
-#include <yarp/sig/Vector.h>
+#include <vector>
+#include <yarp/os/Port.h>
 #include <yarp/dev/DeviceDriver.h>
 
 

@@ -45,4 +45,3 @@ if(NOT SKIP_systemReady_nws_yarp)
 
   set_property(TARGET yarp_systemReady_nws_yarp PROPERTY FOLDER "Plugins/Device/NWS")
 endif()
-
