@@ -1130,6 +1130,7 @@ int JointItem::getJointIndex()
 void JointItem::installFilter()
 {
     auto* filter = new WheelEventFilter();
+    filter->setParent(this);
     ui->comboMode->installEventFilter(filter);
     ui->comboInteraction->installEventFilter(filter);
 

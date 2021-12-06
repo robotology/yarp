@@ -29,6 +29,7 @@
 #include <QWidget>
 #include <QTimer>
 #include <QStandardItem>
+#include <vector>
 
 
 
@@ -129,7 +130,7 @@ private:
     bool    m_part_motorPositionVisible;
     bool    m_part_dutyVisible;
     bool    m_part_currentVisible;
-    yarp::dev::InteractionModeEnum* m_interactionModes;
+    std::vector<yarp::dev::InteractionModeEnum> m_interactionModes;
 
     ResourceFinder* m_finder;
     PolyDriver*     m_partsdd;
