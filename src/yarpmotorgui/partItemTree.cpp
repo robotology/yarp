@@ -83,6 +83,7 @@ void PartItemTree::uniformLayout()
 void PartItemTree::resizeEvent(QResizeEvent *event)
 {
     uniformLayout();
+    QWidget::resizeEvent(event);
 }
 
 void PartItemTree::onJointClicked(int index)

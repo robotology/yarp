@@ -519,7 +519,17 @@ void MainWindow::onJointClicked(int partIndex, int jointIndex)
     m_tabPanel->setCurrentIndex(partIndex);
     auto* scroll = (QScrollArea *)m_tabPanel->widget(partIndex);
     auto* part = (PartItem*)scroll->widget();
-    scroll->ensureWidgetVisible(part->getJointWidget(jointIndex));
+    auto* partWidget = part->getJointWidget(jointIndex);
+    scroll->ensureWidgetVisible(partWidget);
+    m_glowEffect->setEnabled(false);
+    partWidget->setGraphicsEffect(m_glowEffect);
+    m_glowEffect->setEnabled(true);
+    m_glowTimer.start();
+}
+
+void MainWindow::onGlowTimerExpired()
+{
+    m_glowEffect->setEnabled(false);
 }
 
 void MainWindow::closeEvent(QCloseEvent *event)
@@ -738,6 +748,17 @@ bool MainWindow::init(QStringList enabledParts,
     onViewCurrents(currentVisible);
     onViewMotorPositions(motorPosVisible);
     onViewDutyCycles(dutyVisible);
+
+    m_glowEffect = new QGraphicsDropShadowEffect(this);
+    m_glowEffect->setOffset(.0);
+    m_glowEffect->setBlurRadius(40.0);
+    m_glowEffect->setColor(Qt::yellow);
+
+    m_glowTimer.setInterval(2000);
+    m_glowTimer.setSingleShot(true);
+
+    connect(&m_glowTimer, SIGNAL(timeout()), this, SLOT(onGlowTimerExpired()));
+
     return true;
 }
 
