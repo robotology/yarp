@@ -101,6 +101,7 @@ yarp_begin_plugin_library(yarpmod
   add_subdirectory(mobileBaseVelocityControl)
   add_subdirectory(mobileBaseVelocityControlMsgs)
   add_subdirectory(odometry2D)
+  add_subdirectory(systemReady)
 
 
   add_subdirectory(portaudio) # DEPRECATED Since YARP 3.2
