@@ -685,6 +685,7 @@ bool MainWindow::init(QStringList enabledParts,
         auto* robot_top = new QStandardItem(QString(robot.first.c_str()));
         robot_top->setEditable(false);
         parentItem->appendRow(robot_top);
+        m_ui->treeViewMode->setExpanded(robot_top->index(), true);
         robot.second.tree_pointer = robot_top;
     }
 
@@ -736,7 +737,7 @@ bool MainWindow::init(QStringList enabledParts,
             QStandardItem *tp = robots[i_parts.second.robot_name].tree_pointer;
             partTreeItem->setEditable(false);
             tp->appendRow(partTreeItem);
-            m_ui->treeViewMode->setExpanded(partTreeItem->index(), true);
+            m_ui->treeViewMode->setExpanded(partTreeItem->index(), false);
             partTreeItem->setBackground(Qt::white);
             partTreeItem->setIcon(m_okIcon);
 
@@ -1458,6 +1459,8 @@ void MainWindow::updateModesTree(PartItem *part)
             auto* jointNode = partWidget->addJoint();
             jointNode->jointLabel()->setText(QString("%1 - %2").arg(i).arg(name));
         }
+        m_ui->treeViewMode->setExpanded(parentNode->index(), true); //Expand only after having filled each part
+        emit m_ui->treeViewMode->model()->layoutChanged({parentNode->index()}); //Notify that the layout changed to avoid whitespaces
     }
 
     bool foundFaultPart = false;
