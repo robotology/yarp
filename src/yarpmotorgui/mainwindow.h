@@ -83,8 +83,6 @@ private:
 
 private:
     void updateModesTree(PartItem *part);
-    QString getStringMode(int mode);
-    QColor getColorMode(int m);
 private slots:
     void onSequenceActivated();
     void onSequenceStopped();

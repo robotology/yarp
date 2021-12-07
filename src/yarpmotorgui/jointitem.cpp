@@ -22,6 +22,172 @@ void JointItem::resetTarget()
     ui->sliderMixedPosition->resetTarget();
 }
 
+void JointItem::home()
+{
+    if (this->internalState == Velocity)
+    {
+       velocityTimer.stop();
+    }
+    emit homeClicked(this);
+}
+
+void JointItem::run()
+{
+    if (this->internalState == Velocity)
+    {
+       velocityTimer.stop();
+    }
+    emit runClicked(this);
+}
+
+void JointItem::idle()
+{
+    if (this->internalState == Velocity)
+    {
+       velocityTimer.stop();
+    }
+    emit idleClicked(this);
+}
+
+void JointItem::showPID()
+{
+    emit pidClicked(this);
+}
+
+QColor JointItem::GetModeColor(JointState mode)
+{
+    QColor output;
+    switch (mode) {
+    case JointItem::Idle:{
+        output = idleColor;
+        break;
+    }
+    case JointItem::Position:{
+        output = positionColor;
+        break;
+    }
+    case JointItem::PositionDirect:{
+        output = positionDirectColor;
+        break;
+    }
+    case JointItem::Mixed:{
+        output = mixedColor;
+        break;
+    }
+    case JointItem::Velocity:{
+        output = velocityColor;
+        break;
+    }
+    case JointItem::Torque:{
+        output = torqueColor;
+        break;
+    }
+    case JointItem::Pwm:{
+        output = pwmColor;
+        break;
+    }
+    case JointItem::Current:{
+        output = currentColor;
+        break;
+    }
+
+    case JointItem::Disconnected:{
+        output = disconnectColor;
+        break;
+    }
+    case JointItem::HwFault:{
+        output = hwFaultColor;
+        break;
+    }
+    case JointItem::Calibrating:{
+        output = calibratingColor;
+        break;
+    }
+    case JointItem::NotConfigured:{
+        output = calibratingColor;
+        break;
+    }
+    case JointItem::Configured:{
+        output = calibratingColor;
+        break;
+    }
+
+    default:
+        output = calibratingColor;
+        break;
+    }
+
+    return output;
+
+}
+
+QString JointItem::GetModeString(JointState mode)
+{
+    QString output;
+    switch (mode) {
+    case JointItem::Idle:{
+        output = "Idle";
+        break;
+    }
+    case JointItem::Position:{
+        output = "Position";
+        break;
+    }
+    case JointItem::PositionDirect:{
+        output = "Position Direct";
+        break;
+    }
+    case JointItem::Mixed:{
+        output = "Mixed";
+        break;
+    }
+    case JointItem::Velocity:{
+        output = "Velocity";
+        break;
+    }
+    case JointItem::Torque:{
+        output = "Torque";
+        break;
+    }
+    case JointItem::Pwm:{
+        output = "PWM";
+        break;
+    }
+    case JointItem::Current:{
+        output = "Current";
+        break;
+    }
+
+    case JointItem::Disconnected:{
+        output = "Disconnected";
+        break;
+    }
+    case JointItem::HwFault:{
+        output = "Hardware Fault";
+        break;
+    }
+    case JointItem::Calibrating:{
+        output = "Calibrating";
+        break;
+    }
+    case JointItem::NotConfigured:{
+        output = "Not Configured";
+        break;
+    }
+    case JointItem::Configured:{
+        output = "Configured";
+        break;
+    }
+
+    default:
+        output = "Unknown";
+        break;
+    }
+
+    return output;
+
+}
+
 void JointItem::updateTrajectoryPositionTarget(double val)
 {
     ui->sliderTrajectoryPosition->updateSliderTarget(val);
@@ -2099,34 +2265,22 @@ void JointItem::onCalibClicked()
 
 void JointItem::onHomeClicked()
 {
-    if (this->internalState == Velocity)
-    {
-       velocityTimer.stop();
-    }
-    emit homeClicked(this);
+    home();
 }
 
 void JointItem::onIdleClicked()
 {
-    if (this->internalState == Velocity)
-    {
-       velocityTimer.stop();
-    }
-    emit idleClicked(this);
+    idle();
 }
 
 void JointItem::onRunClicked()
 {
-    if (this->internalState == Velocity)
-    {
-       velocityTimer.stop();
-    }
-    emit runClicked(this);
+    run();
 }
 
 void JointItem::onPidClicked()
 {
-    emit pidClicked(this);
+    showPID();
 }
 
 void JointItem::sequenceActivated()

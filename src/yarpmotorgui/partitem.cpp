@@ -1072,6 +1072,28 @@ void PartItem::resizeWidget(int w)
     }
 }
 
+int PartItem::getNumberOfJoints()
+{
+    return m_layout->count();
+}
+
+QString PartItem::getJointName(int joint)
+{
+    if (joint < 0 || joint >= getNumberOfJoints())
+    {
+        return "";
+    }
+
+    auto* jointWidget = (JointItem*)m_layout->itemAt(joint)->widget();
+
+    return jointWidget->getJointName();
+}
+
+JointItem *PartItem::getJointWidget(int jointIndex)
+{
+    return (JointItem*)m_layout->itemAt(jointIndex)->widget();
+}
+
 void PartItem::resizeEvent(QResizeEvent *event)
 {
     if(!isVisible()){
@@ -2094,9 +2116,9 @@ void PartItem::setTreeWidgetModeNode(QTreeWidgetItem *node)
     m_node = node;
 }
 
-QList<int> PartItem::getPartMode()
+QList<JointItem::JointState> PartItem::getPartMode()
 {
-    QList <int> modes;
+    QList <JointItem::JointState> modes;
 
     for (int k = 0; k < m_layout->count(); k++){
         switch (m_controlModes[k])

@@ -642,9 +642,9 @@ bool MainWindow::init(QStringList enabledParts,
             connect(this, SIGNAL(sig_viewCurrentValues(bool)), part, SLOT(onViewCurrentValues(bool)));
             connect(this, SIGNAL(sig_viewMotorPositions(bool)), part, SLOT(onViewMotorPositions(bool)));
             connect(this, SIGNAL(sig_viewDutyCycles(bool)), part, SLOT(onViewDutyCycles(bool)));
-            connect(this, SIGNAL(sig_setPosSliderOptionMW(int, double)), part, SLOT(onSetPosSliderOptionPI(int, double)));
-            connect(this, SIGNAL(sig_setVelSliderOptionMW(int, double)), part, SLOT(onSetVelSliderOptionPI(int, double)));
-            connect(this, SIGNAL(sig_setTrqSliderOptionMW(int, double)), part, SLOT(onSetTrqSliderOptionPI(int, double)));
+            connect(this, SIGNAL(sig_setPosSliderOptionMW(int,double)), part, SLOT(onSetPosSliderOptionPI(int,double)));
+            connect(this, SIGNAL(sig_setVelSliderOptionMW(int,double)), part, SLOT(onSetVelSliderOptionPI(int,double)));
+            connect(this, SIGNAL(sig_setTrqSliderOptionMW(int,double)), part, SLOT(onSetTrqSliderOptionPI(int,double)));
             connect(this, SIGNAL(sig_viewPositionTargetBox(bool)), part, SLOT(onViewPositionTargetBox(bool)));
             connect(this, SIGNAL(sig_viewPositionTargetValue(bool)), part, SLOT(onViewPositionTargetValue(bool)));
             connect(this, SIGNAL(sig_enableControlVelocity(bool)), part, SLOT(onEnableControlVelocity(bool)));
@@ -1202,219 +1202,73 @@ void MainWindow::onUpdate()
     m_mutex.unlock();
 }
 
-QColor MainWindow::getColorMode(int m)
-{
-    QColor mode;
-    switch (m) {
-    case JointItem::Idle:{
-        mode = idleColor;
-        break;
-    }
-    case JointItem::Position:{
-        mode = positionColor;
-        break;
-    }
-    case JointItem::PositionDirect:{
-        mode = positionDirectColor;
-        break;
-    }
-    case JointItem::Mixed:{
-        mode = mixedColor;
-        break;
-    }
-    case JointItem::Velocity:{
-        mode = velocityColor;
-        break;
-    }
-    case JointItem::Torque:{
-        mode = torqueColor;
-        break;
-    }
-    case JointItem::Pwm:{
-        mode = pwmColor;
-        break;
-    }
-    case JointItem::Current:{
-        mode = currentColor;
-        break;
-    }
-
-    case JointItem::Disconnected:{
-        mode = disconnectColor;
-        break;
-    }
-    case JointItem::HwFault:{
-        mode = hwFaultColor;
-        break;
-    }
-    case JointItem::Calibrating:{
-        mode = calibratingColor;
-        break;
-    }
-    case JointItem::NotConfigured:{
-        mode = calibratingColor;
-        break;
-    }
-    case JointItem::Configured:{
-        mode = calibratingColor;
-        break;
-    }
-
-    default:
-        mode = calibratingColor;
-        break;
-    }
-
-    return mode;
-}
-
-QString MainWindow::getStringMode(int m)
-{
-    QString mode;
-    switch (m) {
-    case JointItem::Idle:{
-        mode = "Idle";
-        break;
-    }
-    case JointItem::Position:{
-        mode = "Position";
-        break;
-    }
-    case JointItem::PositionDirect:{
-        mode = "Position Direct";
-        break;
-    }
-    case JointItem::Mixed:{
-        mode = "Mixed";
-        break;
-    }
-    case JointItem::Velocity:{
-        mode = "Velocity";
-        break;
-    }
-    case JointItem::Torque:{
-        mode = "Torque";
-        break;
-    }
-    case JointItem::Pwm:{
-        mode = "PWM";
-        break;
-    }
-    case JointItem::Current:{
-        mode = "Current";
-        break;
-    }
-
-    case JointItem::Disconnected:{
-        mode = "Disconnected";
-        break;
-    }
-    case JointItem::HwFault:{
-        mode = "Hardware Fault";
-        break;
-    }
-    case JointItem::Calibrating:{
-        mode = "Calibrating";
-        break;
-    }
-    case JointItem::NotConfigured:{
-        mode = "Not Configured";
-        break;
-    }
-    case JointItem::Configured:{
-        mode = "Configured";
-        break;
-    }
-
-    default:
-        mode = "Unknown";
-        break;
-    }
-
-    return mode;
-
-}
-
 void MainWindow::updateModesTree(PartItem *part)
 {
 
     QTreeWidgetItem *parentNode = part->getTreeWidgetModeNode();
 
-    QList <int> modes = part->getPartMode();
+    QList <JointItem::JointState> modes = part->getPartMode();
 
     if(modes.count() > 0 && parentNode->childCount() <= 0){
         for(int i=0; i<modes.count(); i++){
             QString mode;
-            mode = getStringMode(modes.at(i));
+            mode = JointItem::GetModeString(modes.at(i));
             auto* jointNode = new QTreeWidgetItem(parentNode);
             jointNode->setText(0,QString("Joint %1").arg(i));
             jointNode->setText(1,mode);
-            QColor c = getColorMode(modes.at(i));
+            QColor c = JointItem::GetModeColor(modes.at(i));
             jointNode->setBackground(0,c);
             jointNode->setBackground(1,c);
             jointNode->setForeground(0,QColor(Qt::black));
             jointNode->setForeground(1,QColor(Qt::black));
-
-
-            if(c == hwFaultColor){
-                parentNode->setData(0,Qt::UserRole,TREEMODE_WARN);
-                jointNode->setData(0,Qt::UserRole,TREEMODE_WARN);
-                parentNode->setIcon(0,QIcon(":/warning.svg"));
-                jointNode->setIcon(0,QIcon(":/warning.svg"));
-            }else{
-                parentNode->setData(0,Qt::UserRole,TREEMODE_OK);
-                jointNode->setData(0,Qt::UserRole,TREEMODE_OK);
-                parentNode->setIcon(0,QIcon(":/apply.svg"));
-            }
-        }
-    }else{
-        bool foundFaultPart = false;
-        for(int i=0;i<parentNode->childCount();i++){
-            QTreeWidgetItem *item = parentNode->child(i);
-            QString mode;
-            QColor c = getColorMode(modes.at(i));
-            mode = getStringMode(modes.at(i));
-
-            if(c == hwFaultColor){
-                foundFaultPart = true;
-                if(item->data(0,Qt::UserRole).toInt() != TREEMODE_WARN){
-                    item->setIcon(0,QIcon(":/warning.svg"));
-                    item->setData(0,Qt::UserRole,TREEMODE_WARN);
-                }
-            }else{
-                item->setIcon(0,QIcon());
-                item->setData(0,Qt::UserRole,TREEMODE_OK);
-            }
-
-            if(parentNode->isExpanded()){
-                if(item->text(1) != mode){
-                    item->setText(1,mode);
-                }
-                if(item->background(0) != c){
-                    item->setBackground(0,c);
-                    item->setBackground(1,c);
-                    item->setForeground(0,QColor(Qt::black));
-                    item->setForeground(1,QColor(Qt::black));
-                }
-            }
-        }
-
-        if(!foundFaultPart){
-            if(parentNode->data(0,Qt::UserRole).toInt() != TREEMODE_OK){
-                parentNode->setBackground(0,QColor("white"));
-                parentNode->setIcon(0,QIcon(":/apply.svg"));
-                parentNode->setData(0,Qt::UserRole,TREEMODE_OK);
-            }
-        }else{
-            if(parentNode->data(0,Qt::UserRole).toInt() != TREEMODE_WARN){
-                parentNode->setBackground(0,hwFaultColor);
-                parentNode->setIcon(0,QIcon(":/warning.svg"));
-                parentNode->setData(0,Qt::UserRole,TREEMODE_WARN);
-            }
-
         }
     }
 
+    bool foundFaultPart = false;
+    for(int i=0;i<parentNode->childCount();i++){
+        QTreeWidgetItem *item = parentNode->child(i);
+        QString mode;
+        QColor c = JointItem::GetModeColor(modes.at(i));
+        mode = JointItem::GetModeString(modes.at(i));
+
+        if(modes.at(i) == JointItem::HwFault){
+            foundFaultPart = true;
+            if(item->data(0,Qt::UserRole).toInt() != TREEMODE_WARN){
+                item->setIcon(0,QIcon(":/warning.svg"));
+                item->setData(0,Qt::UserRole,TREEMODE_WARN);
+            }
+        }else{
+            item->setIcon(0,QIcon());
+            item->setData(0,Qt::UserRole,TREEMODE_OK);
+        }
+
+        if(parentNode->isExpanded()){
+            if(item->text(1) != mode){
+                item->setText(1,mode);
+            }
+            if(item->background(0) != c){
+                item->setBackground(0,c);
+                item->setBackground(1,c);
+                item->setForeground(0,QColor(Qt::black));
+                item->setForeground(1,QColor(Qt::black));
+            }
+        }
+    }
+
+    if(!foundFaultPart){
+        if(parentNode->data(0,Qt::UserRole).toInt() != TREEMODE_OK){
+            parentNode->setBackground(0,QColor("white"));
+            parentNode->setIcon(0,QIcon(":/apply.svg"));
+            parentNode->setData(0,Qt::UserRole,TREEMODE_OK);
+        }
+    }else{
+        if(parentNode->data(0,Qt::UserRole).toInt() != TREEMODE_WARN){
+            parentNode->setBackground(0,hwFaultColor);
+            parentNode->setIcon(0,QIcon(":/warning.svg"));
+            parentNode->setData(0,Qt::UserRole,TREEMODE_WARN);
+        }
+
+    }
 }
 
 

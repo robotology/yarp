@@ -75,8 +75,12 @@ public:
     void saveSequence(QString global_filename);
     QTreeWidgetItem *getTreeWidgetModeNode();
     QString getPartName();
-    QList<int> getPartMode();
+    QList<JointItem::JointState> getPartMode();
     void resizeWidget(int w);
+    int getNumberOfJoints();
+    QString getJointName(int joint);
+    JointItem* getJointWidget(int jointIndex);
+
 
 private:
     void fixedTimeMove(SequenceItem sequence);
