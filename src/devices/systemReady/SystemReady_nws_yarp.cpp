@@ -27,12 +27,12 @@ bool SystemReady_nws_yarp::open(yarp::os::Searchable &config)
             token = current_port_property.substr(0, pos);
             std::string current_port_name = port_list.find(token).asString();
             yarp::os::Port* current_port = new yarp::os::Port;
+            port_pointers_list.push_back(current_port);
             if(!current_port->open(current_port_name)){
                 yCError(SYSTEMREADY_NWS_YARP) << "error opening " << current_port_name;
                 close();
                 return false;
             }
-            port_pointers_list.push_back(current_port);
         }
         return true;
     }
@@ -45,6 +45,7 @@ bool SystemReady_nws_yarp::close()
 {
     for (auto elem: port_pointers_list){
         elem->close();
+        delete elem;
     }
     port_pointers_list.clear();
     return true;
