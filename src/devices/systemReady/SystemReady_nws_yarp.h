@@ -12,7 +12,7 @@
 
 
 /**
- * @ingroup dev_impl_network_clients dev_impl_navigation
+ * @ingroup dev_impl_network_servers
  *
  * \section SystemReady_nws_yarp_parameters Device description
  * \brief `SystemReady_nws_yarp`: A yarp nws to open port for synchronization:
