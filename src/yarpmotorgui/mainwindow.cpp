@@ -317,6 +317,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     connect(this,SIGNAL(sig_internalClose()),this,SLOT(close()),Qt::QueuedConnection);
 
+    m_modesTreeManager = new ModesTreeManager(m_ui->treeWidgetMode, this);
 
     m_timer.setInterval(200);
     m_timer.setSingleShot(false);
@@ -565,7 +566,6 @@ bool MainWindow::init(QStringList enabledParts,
 
     struct robot_type
     {
-        QTreeWidgetItem* tree_pointer;
         std::string      robot_name_without_slash;
     };
 
@@ -595,7 +595,6 @@ bool MainWindow::init(QStringList enabledParts,
             if (r.robot_name_without_slash[0] == '/') {
                 r.robot_name_without_slash.erase(0, 1);
             }
-            r.tree_pointer = nullptr;
             robots[cur_robot_name]=r;
         }
         part_type p;
@@ -612,11 +611,7 @@ bool MainWindow::init(QStringList enabledParts,
 
     for (auto& robot : robots)
     {
-        auto* robot_top = new QTreeWidgetItem();
-        robot_top->setText(0, robot.first.c_str());
-        m_ui->treeWidgetMode->addTopLevelItem(robot_top);
-        robot_top->setExpanded(true);
-        robot.second.tree_pointer = robot_top;
+        m_modesTreeManager->addRobot(robot.first.c_str());
     }
 
     for (auto& i_parts : parts)
@@ -663,12 +658,7 @@ bool MainWindow::init(QStringList enabledParts,
                 this->m_partName->setText(QString("%1 Commands ").arg(auxName));
             }
 
-            auto* mode = new QTreeWidgetItem();
-            mode->setText(0, part_name.c_str());
-            QTreeWidgetItem *tp = robots[i_parts.second.robot_name].tree_pointer;
-            tp->addChild(mode);
-            mode->setExpanded(false);
-            part->setTreeWidgetModeNode(mode);
+            m_modesTreeManager->addRobotPart(robot_name, part);
         }
         else
         {
@@ -1190,7 +1180,7 @@ void MainWindow::onUpdate()
         auto* tabScroll = (QScrollArea *)m_tabPanel->widget(i);
         auto* item = (PartItem*)tabScroll->widget();
         item->updateControlMode();
-        updateModesTree(item);
+        m_modesTreeManager->updateRobotPart(item);
         if(item == currentPart)
         {
             if (item->updatePart() == false)
@@ -1200,80 +1190,4 @@ void MainWindow::onUpdate()
         }
     }
     m_mutex.unlock();
-}
-
-void MainWindow::updateModesTree(PartItem *part)
-{
-
-    QTreeWidgetItem *parentNode = part->getTreeWidgetModeNode();
-
-    QList <JointItem::JointState> modes = part->getPartMode();
-
-    if(modes.count() > 0 && parentNode->childCount() <= 0){
-        for(int i=0; i<modes.count(); i++){
-            QString mode;
-            mode = JointItem::GetModeString(modes.at(i));
-            auto* jointNode = new QTreeWidgetItem(parentNode);
-            jointNode->setText(0,QString("Joint %1").arg(i));
-            jointNode->setText(1,mode);
-            QColor c = JointItem::GetModeColor(modes.at(i));
-            jointNode->setBackground(0,c);
-            jointNode->setBackground(1,c);
-            jointNode->setForeground(0,QColor(Qt::black));
-            jointNode->setForeground(1,QColor(Qt::black));
-        }
-    }
-
-    bool foundFaultPart = false;
-    for(int i=0;i<parentNode->childCount();i++){
-        QTreeWidgetItem *item = parentNode->child(i);
-        QString mode;
-        QColor c = JointItem::GetModeColor(modes.at(i));
-        mode = JointItem::GetModeString(modes.at(i));
-
-        if(modes.at(i) == JointItem::HwFault){
-            foundFaultPart = true;
-            if(item->data(0,Qt::UserRole).toInt() != TREEMODE_WARN){
-                item->setIcon(0,QIcon(":/warning.svg"));
-                item->setData(0,Qt::UserRole,TREEMODE_WARN);
-            }
-        }else{
-            item->setIcon(0,QIcon());
-            item->setData(0,Qt::UserRole,TREEMODE_OK);
-        }
-
-        if(parentNode->isExpanded()){
-            if(item->text(1) != mode){
-                item->setText(1,mode);
-            }
-            if(item->background(0) != c){
-                item->setBackground(0,c);
-                item->setBackground(1,c);
-                item->setForeground(0,QColor(Qt::black));
-                item->setForeground(1,QColor(Qt::black));
-            }
-        }
-    }
-
-    if(!foundFaultPart){
-        if(parentNode->data(0,Qt::UserRole).toInt() != TREEMODE_OK){
-            parentNode->setBackground(0,QColor("white"));
-            parentNode->setIcon(0,QIcon(":/apply.svg"));
-            parentNode->setData(0,Qt::UserRole,TREEMODE_OK);
-        }
-    }else{
-        if(parentNode->data(0,Qt::UserRole).toInt() != TREEMODE_WARN){
-            parentNode->setBackground(0,hwFaultColor);
-            parentNode->setIcon(0,QIcon(":/warning.svg"));
-            parentNode->setData(0,Qt::UserRole,TREEMODE_WARN);
-        }
-
-    }
-}
-
-
-
-ModesTreeWidget::ModesTreeWidget(QWidget *parent) : QTreeWidget(parent)
-{
-
 }
