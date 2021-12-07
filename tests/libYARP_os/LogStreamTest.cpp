@@ -1490,7 +1490,9 @@ TEST_CASE("os::LogStreamTest", "[yarp::os]")
 
         CNT yInfo() << "std::unordered_map:" << std::unordered_map<int, double> {{1, 1.1}, {2, 2.2}, {3, 3.3}};
 
+        #if defined(ENABLE_BROKEN_TESTS)
         CNT yInfo() << "C array:" << (double[]) {1.1, 2.2, 3.3};
+        #endif
 
         CNT yInfo() << "std::pair<int, double>" << std::pair<int, double> {1, 1.1};
 
