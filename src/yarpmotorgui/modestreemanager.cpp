@@ -5,21 +5,27 @@
  */
 
 #include "modestreemanager.h"
+#include <QHeaderView>
 #define TREEMODE_OK     1
 #define TREEMODE_WARN   2
 
 ModesTreeWidget::ModesTreeWidget(QWidget *parent) : QTreeWidget(parent)
 {
-
+    setHeaderLabels({"Parts", "Mode"});
+    setMaximumWidth(300);
+    setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
+    setFrameShape(Shape::NoFrame);
+    setAnimated(true);
+    header()->setDefaultSectionSize(150);
 }
 
-ModesTreeManager::ModesTreeManager(ModesTreeWidget *treeToManage, QObject *parent)
+ModesTreeManager::ModesTreeManager(QHBoxLayout *layout, QWidget *parent)
     : QObject(parent),
-      m_tree(treeToManage),
       m_okIcon(":/apply.svg"),
       m_warningIcon(":/warning.svg")
 {
-
+    m_tree = new ModesTreeWidget(parent);
+    layout->addWidget(m_tree);
 }
 
 void ModesTreeManager::addRobot(const std::string &robotName)
@@ -31,10 +37,10 @@ void ModesTreeManager::addRobot(const std::string &robotName)
     m_robotMap[robotName] = robot_top;
 }
 
-void ModesTreeManager::addRobotPart(const std::string &robotName, PartItem* part)
+void ModesTreeManager::addRobotPart(const std::string &robotName, const std::string& partName, PartItem* part)
 {
     auto* partItem = new QTreeWidgetItem();
-    partItem->setText(0, part->getPartName());
+    partItem->setText(0, partName.c_str());
     QTreeWidgetItem *tp = m_robotMap[robotName];
     tp->addChild(partItem);
     partItem->setExpanded(false);
@@ -48,8 +54,8 @@ void ModesTreeManager::addRobotPart(const std::string &robotName, PartItem* part
         QColor c = JointItem::GetModeColor(JointItem::Idle);
         jointNode->setBackground(0,c);
         jointNode->setBackground(1,c);
-        jointNode->setForeground(0,QColor(Qt::black));
-        jointNode->setForeground(1,QColor(Qt::black));
+        jointNode->setForeground(0,Qt::black);
+        jointNode->setForeground(1,Qt::black);
     }
 }
 

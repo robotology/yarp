@@ -9,6 +9,7 @@
 
 #include <QObject>
 #include <QTreeWidget>
+#include <QHBoxLayout>
 #include <QIcon>
 #include <string>
 #include <unordered_map>
@@ -27,11 +28,11 @@ class ModesTreeManager : public QObject
     Q_OBJECT
 
 public:
-    ModesTreeManager(ModesTreeWidget* treeToManage, QObject* parent = nullptr);
+    ModesTreeManager(QHBoxLayout* layout, QWidget* parent = nullptr);
 
     void addRobot(const std::string& robotName);
 
-    void addRobotPart(const std::string& robotName, PartItem* part);
+    void addRobotPart(const std::string& robotName, const std::string &partName, PartItem* part);
 
     void updateRobotPart(PartItem* part);
 

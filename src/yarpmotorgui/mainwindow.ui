@@ -45,39 +45,7 @@
       <property name="orientation">
        <enum>Qt::Horizontal</enum>
       </property>
-      <widget class="ModesTreeWidget" name="treeWidgetMode">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="maximumSize">
-        <size>
-         <width>300</width>
-         <height>16777215</height>
-        </size>
-       </property>
-       <property name="frameShape">
-        <enum>QFrame::NoFrame</enum>
-       </property>
-       <property name="animated">
-        <bool>true</bool>
-       </property>
-       <attribute name="headerDefaultSectionSize">
-        <number>150</number>
-       </attribute>
-       <column>
-        <property name="text">
-         <string>Parts</string>
-        </property>
-       </column>
-       <column>
-        <property name="text">
-         <string>Mode</string>
-        </property>
-       </column>
-      </widget>
+      <widget class="QWidget" name="treeWidgetContainer" native="true"/>
       <widget class="QWidget" name="mainContainer" native="true"/>
      </widget>
     </item>
@@ -171,13 +139,6 @@
   </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
- <customwidgets>
-  <customwidget>
-   <class>ModesTreeWidget</class>
-   <extends>QTreeWidget</extends>
-   <header>mainwindow.h</header>
-  </customwidget>
- </customwidgets>
  <resources/>
  <connections/>
 </ui>

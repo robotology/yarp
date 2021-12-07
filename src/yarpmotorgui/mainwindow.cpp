@@ -26,9 +26,6 @@
 #include <yarp/os/LogStream.h>
 #include <yarp/os/ResourceFinder.h>
 
-#define TREEMODE_OK     1
-#define TREEMODE_WARN   2
-
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     m_ui(new Ui::MainWindow)
@@ -317,7 +314,13 @@ MainWindow::MainWindow(QWidget *parent) :
 
     connect(this,SIGNAL(sig_internalClose()),this,SLOT(close()),Qt::QueuedConnection);
 
-    m_modesTreeManager = new ModesTreeManager(m_ui->treeWidgetMode, this);
+
+    auto* lay = new QHBoxLayout();
+    lay->setMargin(0);
+    lay->setSpacing(0);
+    lay->setSizeConstraint(QLayout::SetMaximumSize);
+    m_ui->treeWidgetContainer->setLayout(lay);
+    m_modesTreeManager = new ModesTreeManager(lay, m_ui->treeWidgetContainer);
 
     m_timer.setInterval(200);
     m_timer.setSingleShot(false);
@@ -658,7 +661,7 @@ bool MainWindow::init(QStringList enabledParts,
                 this->m_partName->setText(QString("%1 Commands ").arg(auxName));
             }
 
-            m_modesTreeManager->addRobotPart(robot_name, part);
+            m_modesTreeManager->addRobotPart(robot_name, part_name, part);
         }
         else
         {
