@@ -57,7 +57,7 @@ void ModesTreeManager::updateRobotPart(PartItem *part)
 {
     QTreeWidgetItem *parentNode = part->getTreeWidgetModeNode();
 
-    QList <JointItem::JointState> modes = part->getPartMode();
+    const QVector<JointItem::JointState>& modes = part->getPartModes();
 
     if (modes.size() != parentNode->childCount())
     {
