@@ -11,16 +11,17 @@
 #include <QTreeWidget>
 #include <QHBoxLayout>
 #include <QIcon>
+#include <QTabWidget>
 #include <string>
 #include <unordered_map>
 #include "partitem.h"
 
-class ModesTreeWidget : public QTreeWidget
+class ModesListWidget : public QTreeWidget
 {
     Q_OBJECT
 
 public:
-    ModesTreeWidget(QWidget * parent = 0);
+    ModesListWidget(QWidget * parent = 0);
 };
 
 class ModesTreeManager : public QObject
@@ -36,9 +37,14 @@ public:
 
     void updateRobotPart(PartItem* part);
 
+private slots:
+
+    void tabChanged(int index);
+
 private:
 
-    ModesTreeWidget* m_tree;
+    QTabWidget* m_tabs;
+    ModesListWidget* m_list;
     std::unordered_map<std::string, QTreeWidgetItem*> m_robotMap;
     QIcon m_okIcon;
     QIcon m_warningIcon;

@@ -9,11 +9,10 @@
 #define TREEMODE_OK     1
 #define TREEMODE_WARN   2
 
-ModesTreeWidget::ModesTreeWidget(QWidget *parent) : QTreeWidget(parent)
+ModesListWidget::ModesListWidget(QWidget *parent) : QTreeWidget(parent)
 {
     setHeaderLabels({"Parts", "Mode"});
     setMaximumWidth(300);
-    setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
     setFrameShape(Shape::NoFrame);
     setAnimated(true);
     header()->setDefaultSectionSize(150);
@@ -24,15 +23,18 @@ ModesTreeManager::ModesTreeManager(QHBoxLayout *layout, QWidget *parent)
       m_okIcon(":/apply.svg"),
       m_warningIcon(":/warning.svg")
 {
-    m_tree = new ModesTreeWidget(parent);
-    layout->addWidget(m_tree);
+    m_tabs = new QTabWidget(parent);
+    m_list = new ModesListWidget(parent);
+    m_tabs->addTab(m_list, "List");
+    m_tabs->setMaximumWidth(m_list->maximumWidth());
+    layout->addWidget(m_tabs);
 }
 
 void ModesTreeManager::addRobot(const std::string &robotName)
 {
     auto* robot_top = new QTreeWidgetItem();
     robot_top->setText(0, robotName.c_str());
-    m_tree->addTopLevelItem(robot_top);
+    m_list->addTopLevelItem(robot_top);
     robot_top->setExpanded(true);
     m_robotMap[robotName] = robot_top;
 }
@@ -115,4 +117,9 @@ void ModesTreeManager::updateRobotPart(PartItem *part)
         }
 
     }
+}
+
+void ModesTreeManager::tabChanged(int index)
+{
+    m_tabs->setMaximumWidth(m_tabs->widget(index)->maximumWidth());
 }
