@@ -6,6 +6,7 @@
 
 #include "modestreemanager.h"
 #include "partItemTree.h"
+
 #include <QHeaderView>
 #include <QScrollArea>
 #include <QGroupBox>
@@ -135,13 +136,17 @@ void ModesTreeManager::addRobotInList(const std::string &robotName)
 
 void ModesTreeManager::addRobotInWidget(const std::string &robotName)
 {
-    QGroupBox* robotFrame = new QGroupBox(m_tabs);
-    robotFrame->setTitle(robotName.c_str());
-    QVBoxLayout *vbox = new QVBoxLayout;
-    robotFrame->setLayout(vbox);
-    robotFrame->setCheckable(true);
-    m_widgetLayout->addWidget(robotFrame);
-    m_robotMapWidget[robotName] = vbox;
+//    QGroupBox* robotFrame = new QGroupBox(m_tabs);
+//    robotFrame->setTitle(robotName.c_str());
+//    QVBoxLayout *vbox = new QVBoxLayout;
+//    robotFrame->setLayout(vbox);
+//    robotFrame->setCheckable(true);
+
+    CustomGroupBox* newGroup = new CustomGroupBox;
+    newGroup->setTitle(robotName.c_str());
+    m_widgetLayout->addWidget(newGroup);
+
+    m_robotMapWidget[robotName] = newGroup;
 }
 
 void ModesTreeManager::addRobotPartInList(const std::string &robotName, const std::string &partName, PartItem *part)
@@ -168,7 +173,7 @@ void ModesTreeManager::addRobotPartInList(const std::string &robotName, const st
 
 void ModesTreeManager::addRobotPartInWidget(const std::string &robotName, const std::string &partName, int partIndex, PartItem *part)
 {
-    PartItemTree* partWidget = new PartItemTree(partIndex, m_tabs);
+    PartItemTree* partWidget = new PartItemTree(partIndex);
 
     for (int i = 0; i < part->getNumberOfJoints(); ++i)
     {
@@ -176,12 +181,16 @@ void ModesTreeManager::addRobotPartInWidget(const std::string &robotName, const 
         jointWidget->setJointName(QString("%1 - %2").arg(i).arg(part->getJointName(i)));
     }
 
-    QGroupBox* partFrame = new QGroupBox(m_tabs);
-    partFrame->setTitle(partName.c_str());
-    QVBoxLayout *vbox = new QVBoxLayout;
-    vbox->addWidget(partWidget);
-    partFrame->setLayout(vbox);
-    partFrame->setCheckable(true);
+//    QGroupBox* partFrame = new QGroupBox(m_tabs);
+//    partFrame->setTitle(partName.c_str());
+//    QVBoxLayout *vbox = new QVBoxLayout;
+//    vbox->addWidget(partWidget);
+//    partFrame->setLayout(vbox);
+//    partFrame->setCheckable(true);
 
-    m_robotMapWidget[robotName]->addWidget(partFrame);
+    CustomGroupBox* newPart = new CustomGroupBox;
+    newPart->setTitle(partName.c_str());
+    newPart->addWidget(partWidget);
+
+    m_robotMapWidget[robotName]->addWidget(newPart);
 }

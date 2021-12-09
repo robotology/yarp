@@ -15,6 +15,7 @@
 #include <string>
 #include <unordered_map>
 #include "partitem.h"
+#include "customgroupbox.h"
 
 class ModesListWidget : public QTreeWidget
 {
@@ -56,7 +57,7 @@ private:
     ModesListWidget* m_list;
     QVBoxLayout* m_widgetLayout;
     std::unordered_map<std::string, QTreeWidgetItem*> m_robotMapList;
-    std::unordered_map<std::string, QLayout*> m_robotMapWidget;
+    std::unordered_map<std::string, CustomGroupBox*> m_robotMapWidget;
     QIcon m_okIcon;
     QIcon m_warningIcon;
 };
