@@ -5,7 +5,10 @@
  */
 
 #include "modestreemanager.h"
+#include "partItemTree.h"
 #include <QHeaderView>
+#include <QScrollArea>
+#include <QGroupBox>
 #define TREEMODE_OK     1
 #define TREEMODE_WARN   2
 
@@ -27,38 +30,35 @@ ModesTreeManager::ModesTreeManager(QHBoxLayout *layout, QWidget *parent)
     m_list = new ModesListWidget(parent);
     m_tabs->addTab(m_list, "List");
     m_tabs->setMaximumWidth(m_list->maximumWidth());
+
+    auto* widgetContainer = new QWidget(parent);
+    m_widgetLayout = new QVBoxLayout(widgetContainer);
+    m_widgetLayout->setAlignment(Qt::AlignLeft | Qt::AlignTop);
+    widgetContainer->setLayout(m_widgetLayout);
+    widgetContainer->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Minimum);
+
+    auto* scroll = new QScrollArea(parent);
+    scroll->setWidgetResizable(true);
+    scroll->setWidget(widgetContainer);
+
+    m_tabs->addTab(scroll, "Widgets");
+
     layout->addWidget(m_tabs);
+
+    connect(m_tabs,SIGNAL(currentChanged(int)),this, SLOT(tabChanged(int)));
+
 }
 
 void ModesTreeManager::addRobot(const std::string &robotName)
 {
-    auto* robot_top = new QTreeWidgetItem();
-    robot_top->setText(0, robotName.c_str());
-    m_list->addTopLevelItem(robot_top);
-    robot_top->setExpanded(true);
-    m_robotMap[robotName] = robot_top;
+    addRobotInList(robotName);
+    addRobotInWidget(robotName);
 }
 
-void ModesTreeManager::addRobotPart(const std::string &robotName, const std::string& partName, PartItem* part)
+void ModesTreeManager::addRobotPart(const std::string &robotName, const std::string& partName, int partIndex, PartItem* part)
 {
-    auto* partItem = new QTreeWidgetItem();
-    partItem->setText(0, partName.c_str());
-    QTreeWidgetItem *tp = m_robotMap[robotName];
-    tp->addChild(partItem);
-    partItem->setExpanded(false);
-    part->setTreeWidgetModeNode(partItem);
-
-    for (int i = 0; i < part->getNumberOfJoints(); ++i)
-    {
-        auto* jointNode = new QTreeWidgetItem(partItem);
-        jointNode->setText(0,QString("Joint %1 (%2)").arg(i).arg(part->getJointName(i)));
-        jointNode->setText(1,JointItem::GetModeString(JointItem::Idle));
-        QColor c = JointItem::GetModeColor(JointItem::Idle);
-        jointNode->setBackground(0,c);
-        jointNode->setBackground(1,c);
-        jointNode->setForeground(0,Qt::black);
-        jointNode->setForeground(1,Qt::black);
-    }
+    addRobotPartInList(robotName, partName, part);
+    addRobotPartInWidget(robotName, partName, partIndex, part);
 }
 
 void ModesTreeManager::updateRobotPart(PartItem *part)
@@ -122,4 +122,66 @@ void ModesTreeManager::updateRobotPart(PartItem *part)
 void ModesTreeManager::tabChanged(int index)
 {
     m_tabs->setMaximumWidth(m_tabs->widget(index)->maximumWidth());
+}
+
+void ModesTreeManager::addRobotInList(const std::string &robotName)
+{
+    auto* robot_top = new QTreeWidgetItem();
+    robot_top->setText(0, robotName.c_str());
+    m_list->addTopLevelItem(robot_top);
+    robot_top->setExpanded(true);
+    m_robotMapList[robotName] = robot_top;
+}
+
+void ModesTreeManager::addRobotInWidget(const std::string &robotName)
+{
+    QGroupBox* robotFrame = new QGroupBox(m_tabs);
+    robotFrame->setTitle(robotName.c_str());
+    QVBoxLayout *vbox = new QVBoxLayout;
+    robotFrame->setLayout(vbox);
+    robotFrame->setCheckable(true);
+    m_widgetLayout->addWidget(robotFrame);
+    m_robotMapWidget[robotName] = vbox;
+}
+
+void ModesTreeManager::addRobotPartInList(const std::string &robotName, const std::string &partName, PartItem *part)
+{
+    auto* partItem = new QTreeWidgetItem();
+    partItem->setText(0, partName.c_str());
+    QTreeWidgetItem *tp = m_robotMapList[robotName];
+    tp->addChild(partItem);
+    partItem->setExpanded(false);
+    part->setTreeWidgetModeNode(partItem);
+
+    for (int i = 0; i < part->getNumberOfJoints(); ++i)
+    {
+        auto* jointNode = new QTreeWidgetItem(partItem);
+        jointNode->setText(0,QString("Joint %1 (%2)").arg(i).arg(part->getJointName(i)));
+        jointNode->setText(1,JointItem::GetModeString(JointItem::Idle));
+        QColor c = JointItem::GetModeColor(JointItem::Idle);
+        jointNode->setBackground(0,c);
+        jointNode->setBackground(1,c);
+        jointNode->setForeground(0,Qt::black);
+        jointNode->setForeground(1,Qt::black);
+    }
+}
+
+void ModesTreeManager::addRobotPartInWidget(const std::string &robotName, const std::string &partName, int partIndex, PartItem *part)
+{
+    PartItemTree* partWidget = new PartItemTree(partIndex, m_tabs);
+
+    for (int i = 0; i < part->getNumberOfJoints(); ++i)
+    {
+        auto* jointWidget = partWidget->addJoint();
+        jointWidget->setJointName(QString("%1 - %2").arg(i).arg(part->getJointName(i)));
+    }
+
+    QGroupBox* partFrame = new QGroupBox(m_tabs);
+    partFrame->setTitle(partName.c_str());
+    QVBoxLayout *vbox = new QVBoxLayout;
+    vbox->addWidget(partWidget);
+    partFrame->setLayout(vbox);
+    partFrame->setCheckable(true);
+
+    m_robotMapWidget[robotName]->addWidget(partFrame);
 }

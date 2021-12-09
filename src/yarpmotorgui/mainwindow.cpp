@@ -652,7 +652,7 @@ bool MainWindow::init(QStringList enabledParts,
             connect(this, SIGNAL(sig_enableControlCurrent(bool)), part, SLOT(onEnableControlCurrent(bool)));
 
             scroll->setWidget(part);
-            m_tabPanel->addTab(scroll, part_name.c_str());
+            int tabIndex = m_tabPanel->addTab(scroll, part_name.c_str());
             if (part_id == 0)
             {
                 QString auxName = part_name.c_str();
@@ -661,7 +661,7 @@ bool MainWindow::init(QStringList enabledParts,
                 this->m_partName->setText(QString("%1 Commands ").arg(auxName));
             }
 
-            m_modesTreeManager->addRobotPart(robot_name, part_name, part);
+            m_modesTreeManager->addRobotPart(robot_name, part_name, tabIndex, part);
         }
         else
         {

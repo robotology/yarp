@@ -9,7 +9,7 @@
 
 #include <QObject>
 #include <QTreeWidget>
-#include <QHBoxLayout>
+#include <QVBoxLayout>
 #include <QIcon>
 #include <QTabWidget>
 #include <string>
@@ -33,7 +33,7 @@ public:
 
     void addRobot(const std::string& robotName);
 
-    void addRobotPart(const std::string& robotName, const std::string &partName, PartItem* part);
+    void addRobotPart(const std::string& robotName, const std::string &partName, int partIndex, PartItem* part);
 
     void updateRobotPart(PartItem* part);
 
@@ -43,9 +43,20 @@ private slots:
 
 private:
 
+    void addRobotInList(const std::string& robotName);
+
+    void addRobotInWidget(const std::string& robotName);
+
+    void addRobotPartInList(const std::string& robotName, const std::string &partName, PartItem* part);
+
+    void addRobotPartInWidget(const std::string& robotName, const std::string &partName, int partIndex, PartItem* part);
+
+
     QTabWidget* m_tabs;
     ModesListWidget* m_list;
-    std::unordered_map<std::string, QTreeWidgetItem*> m_robotMap;
+    QVBoxLayout* m_widgetLayout;
+    std::unordered_map<std::string, QTreeWidgetItem*> m_robotMapList;
+    std::unordered_map<std::string, QLayout*> m_robotMapWidget;
     QIcon m_okIcon;
     QIcon m_warningIcon;
 };
