@@ -17,11 +17,16 @@ class CustomGroupBox;
 
 class CustomGroupBoxLabel : public QPushButton
 {
+    Q_OBJECT
+
 public:
 
     explicit CustomGroupBoxLabel(QWidget* parent = nullptr);
 
     virtual void mouseDoubleClickEvent(QMouseEvent *event) override;
+signals:
+
+    void sig_titleDoubleClick();
 };
 
 class CustomGroupBox : public QWidget
@@ -36,9 +41,18 @@ public:
 
     void addWidget(QWidget* widget);
 
+    void toggle(bool visible);
+
+private slots:
+    void onArrowPressed(QAction*);
+
+    void onTitleDoubleClick();
+
+
 private:
     Ui::CustomGroupBox *ui;
     QVBoxLayout* m_layout;
+    bool m_visible;
 };
 
 #endif // CUSTOMGROUPBOX_H
