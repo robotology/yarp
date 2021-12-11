@@ -44,7 +44,7 @@ public:
     void toggle(bool visible);
 
 private slots:
-    void onArrowPressed(QAction*);
+    void onArrowPressed(bool);
 
     void onTitleDoubleClick();
 

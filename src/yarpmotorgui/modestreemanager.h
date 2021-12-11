@@ -58,6 +58,7 @@ private:
     QVBoxLayout* m_widgetLayout;
     std::unordered_map<std::string, QTreeWidgetItem*> m_robotMapList;
     std::unordered_map<std::string, CustomGroupBox*> m_robotMapWidget;
+    std::unordered_map<int, PartItem*> m_partsMap;
     QIcon m_okIcon;
     QIcon m_warningIcon;
 };

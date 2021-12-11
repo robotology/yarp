@@ -27,7 +27,10 @@ CustomGroupBox::CustomGroupBox(QWidget *parent) :
     m_layout = new QVBoxLayout;
     m_layout->setMargin(0);
     ui->frame->setLayout(m_layout);
-    connect(ui->arrowButton, SIGNAL(triggered(QAction*)), this, SLOT(onArrowPressed(QAction*)));
+
+    toggle(true);
+
+    connect(ui->arrowButton, SIGNAL(clicked(bool)), this, SLOT(onArrowPressed(bool)));
     connect(ui->header, SIGNAL(sig_titleDoubleClick()), this, SLOT(onTitleDoubleClick()));
 
 }
@@ -51,9 +54,10 @@ void CustomGroupBox::toggle(bool visible)
 {
     ui->contentWidget->setVisible(visible);
     m_visible = visible;
+    ui->arrowButton->setArrowType(m_visible ? Qt::ArrowType::DownArrow : Qt::ArrowType::RightArrow);
 }
 
-void CustomGroupBox::onArrowPressed(QAction *)
+void CustomGroupBox::onArrowPressed(bool)
 {
     toggle(!m_visible);
 }

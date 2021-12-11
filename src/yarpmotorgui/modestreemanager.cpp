@@ -27,18 +27,18 @@ ModesTreeManager::ModesTreeManager(QHBoxLayout *layout, QWidget *parent)
       m_okIcon(":/apply.svg"),
       m_warningIcon(":/warning.svg")
 {
-    m_tabs = new QTabWidget(parent);
-    m_list = new ModesListWidget(parent);
+    m_tabs = new QTabWidget();
+    m_list = new ModesListWidget();
     m_tabs->addTab(m_list, "List");
     m_tabs->setMaximumWidth(m_list->maximumWidth());
 
-    auto* widgetContainer = new QWidget(parent);
-    m_widgetLayout = new QVBoxLayout(widgetContainer);
+    auto* widgetContainer = new QWidget();
+    m_widgetLayout = new QVBoxLayout();
     m_widgetLayout->setAlignment(Qt::AlignLeft | Qt::AlignTop);
     widgetContainer->setLayout(m_widgetLayout);
     widgetContainer->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Minimum);
 
-    auto* scroll = new QScrollArea(parent);
+    auto* scroll = new QScrollArea();
     scroll->setWidgetResizable(true);
     scroll->setWidget(widgetContainer);
 
@@ -136,12 +136,6 @@ void ModesTreeManager::addRobotInList(const std::string &robotName)
 
 void ModesTreeManager::addRobotInWidget(const std::string &robotName)
 {
-//    QGroupBox* robotFrame = new QGroupBox(m_tabs);
-//    robotFrame->setTitle(robotName.c_str());
-//    QVBoxLayout *vbox = new QVBoxLayout;
-//    robotFrame->setLayout(vbox);
-//    robotFrame->setCheckable(true);
-
     CustomGroupBox* newGroup = new CustomGroupBox;
     newGroup->setTitle(robotName.c_str());
     m_widgetLayout->addWidget(newGroup);
@@ -180,13 +174,6 @@ void ModesTreeManager::addRobotPartInWidget(const std::string &robotName, const 
         auto* jointWidget = partWidget->addJoint();
         jointWidget->setJointName(QString("%1 - %2").arg(i).arg(part->getJointName(i)));
     }
-
-//    QGroupBox* partFrame = new QGroupBox(m_tabs);
-//    partFrame->setTitle(partName.c_str());
-//    QVBoxLayout *vbox = new QVBoxLayout;
-//    vbox->addWidget(partWidget);
-//    partFrame->setLayout(vbox);
-//    partFrame->setCheckable(true);
 
     CustomGroupBox* newPart = new CustomGroupBox;
     newPart->setTitle(partName.c_str());

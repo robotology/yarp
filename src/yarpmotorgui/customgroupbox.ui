@@ -53,7 +53,7 @@
          <string/>
         </property>
         <property name="checkable">
-         <bool>true</bool>
+         <bool>false</bool>
         </property>
         <property name="checked">
          <bool>false</bool>
@@ -84,7 +84,7 @@
          <string>Header</string>
         </property>
         <property name="checkable">
-         <bool>true</bool>
+         <bool>false</bool>
         </property>
         <property name="flat">
          <bool>true</bool>
@@ -127,6 +127,12 @@
       </item>
       <item>
        <widget class="QFrame" name="frame">
+        <property name="minimumSize">
+         <size>
+          <width>300</width>
+          <height>0</height>
+         </size>
+        </property>
         <property name="frameShape">
          <enum>QFrame::StyledPanel</enum>
         </property>
