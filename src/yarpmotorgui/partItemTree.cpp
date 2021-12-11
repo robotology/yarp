@@ -42,12 +42,6 @@ JointItemTree *PartItemTree::getJoint(int index)
     return (JointItemTree*)m_layout->itemAt(index)->widget();
 }
 
-//QSize PartItemTree::sizeHint() const
-//{
-//    QSize initialHint = QWidget::sizeHint();
-//    return QSize(initialHint.width(), m_layout->heightForWidth(width()));
-//}
-
 void PartItemTree::uniformLayout()
 {
     if (m_layout->count() == 0)

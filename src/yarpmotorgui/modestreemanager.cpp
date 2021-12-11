@@ -113,6 +113,8 @@ void ModesTreeManager::addRobotInWidget(const std::string &robotName)
     newGroup->setTitle(robotName.c_str());
     m_widgetLayout->addWidget(newGroup);
 
+    newGroup->enableCollapseAllContextMenu(true);
+
     m_robotMapWidget[robotName] = newGroup;
 }
 

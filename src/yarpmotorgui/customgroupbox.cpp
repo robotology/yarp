@@ -35,6 +35,12 @@ CustomGroupBox::CustomGroupBox(QWidget *parent) :
 
     ui->header->setAttribute(Qt::WA_StyledBackground, true);
 
+    QAction* expandAll = m_contextMenu.addAction("Expand all");
+    connect(expandAll, SIGNAL(triggered()), this, SLOT(onExpandAll()));
+
+    QAction* collapseAll = m_contextMenu.addAction("Collapse all");
+    connect(collapseAll, SIGNAL(triggered()), this, SLOT(onCollapseAll()));
+
 }
 
 CustomGroupBox::~CustomGroupBox()
@@ -78,6 +84,24 @@ void CustomGroupBox::toggle(bool visible)
     ui->arrowButton->setArrowType(m_visible ? Qt::ArrowType::DownArrow : Qt::ArrowType::RightArrow);
 }
 
+void CustomGroupBox::enableCollapseAllContextMenu(bool enable)
+{
+    if (enable)
+    {
+        ui->header->setContextMenuPolicy(Qt::CustomContextMenu);
+
+        connect(ui->header, SIGNAL(customContextMenuRequested(QPoint)),
+                this, SLOT(onShowContextMenu(QPoint)));
+    }
+    else
+    {
+        ui->header->setContextMenuPolicy(Qt::NoContextMenu);
+
+        disconnect(ui->header, SIGNAL(customContextMenuRequested(QPoint)),
+                   this, SLOT(onShowContextMenu(QPoint)));
+    }
+}
+
 void CustomGroupBox::onArrowPressed(bool)
 {
     toggle(!m_visible);
@@ -88,4 +112,33 @@ void CustomGroupBox::onTitleDoubleClick()
     toggle(!m_visible);
 }
 
+void CustomGroupBox::onExpandAll()
+{
+    for (int i = 0; i < m_layout->count(); ++i)
+    {
+        QWidget* child = m_layout->itemAt(i)->widget();
+        if (child->objectName() == "CustomGroupBox")
+        {
+            CustomGroupBox* casted = (CustomGroupBox*)child;
+            casted->toggle(true);
+        }
+    }
+}
 
+void CustomGroupBox::onCollapseAll()
+{
+    for (int i = 0; i < m_layout->count(); ++i)
+    {
+        QWidget* child = m_layout->itemAt(i)->widget();
+        if (child->objectName() == "CustomGroupBox")
+        {
+            CustomGroupBox* casted = (CustomGroupBox*)child;
+            casted->toggle(false);
+        }
+    }
+}
+
+void CustomGroupBox::onShowContextMenu(QPoint pos)
+{
+    m_contextMenu.exec(mapToGlobal(pos));
+}

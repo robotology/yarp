@@ -29,8 +29,6 @@ public:
 
     JointItemTree* getJoint(int index);
 
-//    QSize sizeHint() const override;
-
     void uniformLayout();
 
     void resizeEvent(QResizeEvent *event) override;

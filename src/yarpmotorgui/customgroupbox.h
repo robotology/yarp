@@ -10,6 +10,7 @@
 #include <QWidget>
 #include <QPushButton>
 #include <QVBoxLayout>
+#include <QMenu>
 
 namespace Ui {
 class CustomGroupBox;
@@ -49,16 +50,24 @@ public:
 
     void toggle(bool visible);
 
+    void enableCollapseAllContextMenu(bool enable);
+
 private slots:
     void onArrowPressed(bool);
 
     void onTitleDoubleClick();
 
+    void onExpandAll();
+
+    void onCollapseAll();
+
+    void onShowContextMenu(QPoint pos);
 
 private:
     Ui::CustomGroupBox *ui;
     QVBoxLayout* m_layout;
     bool m_visible;
+    QMenu m_contextMenu;
 };
 
 #endif // CUSTOMGROUPBOX_H

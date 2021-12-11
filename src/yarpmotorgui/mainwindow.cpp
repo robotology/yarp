@@ -314,18 +314,26 @@ MainWindow::MainWindow(QWidget *parent) :
 
     connect(this,SIGNAL(sig_internalClose()),this,SLOT(close()),Qt::QueuedConnection);
 
-
     auto* lay = new QHBoxLayout();
     lay->setMargin(0);
     lay->setSpacing(0);
     lay->setSizeConstraint(QLayout::SetMaximumSize);
     m_ui->treeWidgetContainer->setLayout(lay);
     m_modesTreeManager = new ModesTreeManager(lay, m_ui->treeWidgetContainer);
+    connect(m_modesTreeManager, SIGNAL(sig_jointClicked(int,int)), this, SLOT(onJointClicked(int,int)));
 
     m_timer.setInterval(200);
     m_timer.setSingleShot(false);
     connect(&m_timer, SIGNAL(timeout()), this, SLOT(onUpdate()), Qt::QueuedConnection);
     m_timer.start();
+
+    m_glowEffect = new QGraphicsDropShadowEffect(this);
+    m_glowEffect->setOffset(.0);
+    m_glowEffect->setBlurRadius(40.0);
+    m_glowEffect->setColor(Qt::yellow);
+    m_glowTimer.setInterval(2000);
+    m_glowTimer.setSingleShot(true);
+    connect(&m_glowTimer, SIGNAL(timeout()), this, SLOT(onGlowTimerExpired()));
 }
 
 MainWindow::~MainWindow()
@@ -513,6 +521,28 @@ void MainWindow::onSetVelSliderOptionMW(int choice, double val)
 void MainWindow::onSetTrqSliderOptionMW(int choice, double val)
 {
     emit sig_setTrqSliderOptionMW(choice, val);
+}
+
+void MainWindow::onJointClicked(int partIndex, int jointIndex)
+{
+    if (!m_tabPanel){
+        return;
+    }
+
+    m_tabPanel->setCurrentIndex(partIndex);
+    auto* scroll = (QScrollArea *)m_tabPanel->widget(partIndex);
+    auto* part = (PartItem*)scroll->widget();
+    auto* jointWidget = part->getJointWidget(jointIndex);
+    scroll->ensureWidgetVisible(jointWidget);
+    m_glowEffect->setEnabled(false);
+    jointWidget->setGraphicsEffect(m_glowEffect);
+    m_glowEffect->setEnabled(true);
+    m_glowTimer.start();
+}
+
+void MainWindow::onGlowTimerExpired()
+{
+    m_glowEffect->setEnabled(false);
 }
 
 void MainWindow::closeEvent(QCloseEvent *event)
