@@ -33,6 +33,8 @@ CustomGroupBox::CustomGroupBox(QWidget *parent) :
     connect(ui->arrowButton, SIGNAL(clicked(bool)), this, SLOT(onArrowPressed(bool)));
     connect(ui->header, SIGNAL(sig_titleDoubleClick()), this, SLOT(onTitleDoubleClick()));
 
+    ui->header->setAttribute(Qt::WA_StyledBackground, true);
+
 }
 
 CustomGroupBox::~CustomGroupBox()
@@ -43,6 +45,25 @@ CustomGroupBox::~CustomGroupBox()
 void CustomGroupBox::setTitle(const QString &string)
 {
     ui->header->setText(string);
+}
+
+void CustomGroupBox::setTitleBackgroundColor(const QColor &backgroundColor)
+{
+
+    QString stileSheet = QString("text-align: left; color: rgb(35, 38, 41); background-color: rgb(%1, %2, %3)")
+            .arg(backgroundColor.red()).arg(backgroundColor.green()).arg(backgroundColor.blue());
+    ui->header->setStyleSheet(stileSheet);
+}
+
+void CustomGroupBox::removeTitleBackground()
+{
+    QString stileSheet = QString("text-align: left; color: rgb(35, 38, 41);");
+    ui->header->setStyleSheet(stileSheet);
+}
+
+void CustomGroupBox::setTitleIcon(const QIcon &icon)
+{
+    ui->header->setIcon(icon);
 }
 
 void CustomGroupBox::addWidget(QWidget *widget)

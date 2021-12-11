@@ -5,7 +5,6 @@
  */
 
 #include "modestreemanager.h"
-#include "partItemTree.h"
 
 #include <QHeaderView>
 #include <QScrollArea>
@@ -46,8 +45,7 @@ ModesTreeManager::ModesTreeManager(QHBoxLayout *layout, QWidget *parent)
 
     layout->addWidget(m_tabs);
 
-    connect(m_tabs,SIGNAL(currentChanged(int)),this, SLOT(tabChanged(int)));
-
+    connect(m_tabs,SIGNAL(currentChanged(int)),this, SLOT(onTabChanged(int)));
 }
 
 void ModesTreeManager::addRobot(const std::string &robotName)
@@ -58,15 +56,116 @@ void ModesTreeManager::addRobot(const std::string &robotName)
 
 void ModesTreeManager::addRobotPart(const std::string &robotName, const std::string& partName, int partIndex, PartItem* part)
 {
-    addRobotPartInList(robotName, partName, part);
+    m_indexToPartMap[partIndex].partItem = part;
+    addRobotPartInList(robotName, partName, partIndex, part);
     addRobotPartInWidget(robotName, partName, partIndex, part);
 }
 
-void ModesTreeManager::updateRobotPart(PartItem *part)
+void ModesTreeManager::updateRobotPart(int index)
 {
-    QTreeWidgetItem *parentNode = part->getTreeWidgetModeNode();
+    const QVector<JointItem::JointState>& modes = m_indexToPartMap[index].partItem->getPartModes();
+    updateRobotPartInList(index, modes);
+    updateRobotPartInWidget(index, modes);
+}
 
-    const QVector<JointItem::JointState>& modes = part->getPartModes();
+void ModesTreeManager::onTabChanged(int index)
+{
+    m_tabs->setMaximumWidth(m_tabs->widget(index)->maximumWidth());
+}
+
+void ModesTreeManager::onJointClicked(int partIndex, int jointIndex)
+{
+    emit sig_jointClicked(partIndex, jointIndex);
+}
+
+void ModesTreeManager::onJointHomeFromTree(int partIndex, int jointIndex)
+{
+    m_indexToPartMap[partIndex].partItem->getJointWidget(jointIndex)->home();
+}
+
+void ModesTreeManager::onJointRunFromTree(int partIndex, int jointIndex)
+{
+    m_indexToPartMap[partIndex].partItem->getJointWidget(jointIndex)->run();
+}
+
+void ModesTreeManager::onJointIdleFromTree(int partIndex, int jointIndex)
+{
+    m_indexToPartMap[partIndex].partItem->getJointWidget(jointIndex)->idle();
+}
+
+void ModesTreeManager::onJointPIDFromTree(int partIndex, int jointIndex)
+{
+    m_indexToPartMap[partIndex].partItem->getJointWidget(jointIndex)->showPID();
+}
+
+void ModesTreeManager::addRobotInList(const std::string &robotName)
+{
+    auto* robot_top = new QTreeWidgetItem();
+    robot_top->setText(0, robotName.c_str());
+    m_list->addTopLevelItem(robot_top);
+    robot_top->setExpanded(true);
+    m_robotMapList[robotName] = robot_top;
+}
+
+void ModesTreeManager::addRobotInWidget(const std::string &robotName)
+{
+    CustomGroupBox* newGroup = new CustomGroupBox;
+    newGroup->setTitle(robotName.c_str());
+    m_widgetLayout->addWidget(newGroup);
+
+    m_robotMapWidget[robotName] = newGroup;
+}
+
+void ModesTreeManager::addRobotPartInList(const std::string &robotName, const std::string &partName, int partIndex, PartItem *part)
+{
+    auto* partItem = new QTreeWidgetItem();
+    partItem->setText(0, partName.c_str());
+    QTreeWidgetItem *tp = m_robotMapList[robotName];
+    tp->addChild(partItem);
+    partItem->setExpanded(false);
+    m_indexToPartMap[partIndex].listWidget = partItem;
+
+    for (int i = 0; i < part->getNumberOfJoints(); ++i)
+    {
+        auto* jointNode = new QTreeWidgetItem(partItem);
+        jointNode->setText(0,QString("Joint %1 (%2)").arg(i).arg(part->getJointName(i)));
+        jointNode->setText(1,JointItem::GetModeString(JointItem::Idle));
+        QColor c = JointItem::GetModeColor(JointItem::Idle);
+        jointNode->setBackground(0,c);
+        jointNode->setBackground(1,c);
+        jointNode->setForeground(0,Qt::black);
+        jointNode->setForeground(1,Qt::black);
+    }
+}
+
+void ModesTreeManager::addRobotPartInWidget(const std::string &robotName, const std::string &partName, int partIndex, PartItem *part)
+{
+    PartItemTree* partWidget = new PartItemTree(partIndex);
+
+    for (int i = 0; i < part->getNumberOfJoints(); ++i)
+    {
+        auto* jointWidget = partWidget->addJoint();
+        jointWidget->setJointName(QString("%1 - %2").arg(i).arg(part->getJointName(i)));
+    }
+
+    CustomGroupBox* newPart = new CustomGroupBox;
+    newPart->setTitle(partName.c_str());
+    newPart->addWidget(partWidget);
+
+    m_robotMapWidget[robotName]->addWidget(newPart);
+    m_indexToPartMap[partIndex].partWidget = partWidget;
+    m_indexToPartMap[partIndex].partWidgetParent = newPart;
+
+    connect(partWidget, SIGNAL(sig_jointClicked(int,int)), this, SLOT(onJointClicked(int,int)));
+    connect(partWidget, SIGNAL(sig_homeClicked(int,int)), this, SLOT(onJointHomeFromTree(int,int)));
+    connect(partWidget, SIGNAL(sig_runClicked(int,int)), this, SLOT(onJointRunFromTree(int,int)));
+    connect(partWidget, SIGNAL(sig_idleClicked(int,int)), this, SLOT(onJointIdleFromTree(int,int)));
+    connect(partWidget, SIGNAL(sig_PIDClicked(int,int)), this, SLOT(onJointPIDFromTree(int,int)));
+}
+
+void ModesTreeManager::updateRobotPartInList(int index, const QVector<JointItem::JointState> &modes)
+{
+    QTreeWidgetItem *parentNode = m_indexToPartMap[index].listWidget;
 
     if (modes.size() != parentNode->childCount())
     {
@@ -116,68 +215,31 @@ void ModesTreeManager::updateRobotPart(PartItem *part)
             parentNode->setIcon(0, m_warningIcon);
             parentNode->setData(0,Qt::UserRole,TREEMODE_WARN);
         }
-
     }
 }
 
-void ModesTreeManager::tabChanged(int index)
+void ModesTreeManager::updateRobotPartInWidget(int index, const QVector<JointItem::JointState> &modes)
 {
-    m_tabs->setMaximumWidth(m_tabs->widget(index)->maximumWidth());
-}
+    PartPointers& partPointers = m_indexToPartMap[index];
+    PartItemTree* partWidget = partPointers.partWidget;
+    CustomGroupBox* partWidgetParent = partPointers.partWidgetParent;
 
-void ModesTreeManager::addRobotInList(const std::string &robotName)
-{
-    auto* robot_top = new QTreeWidgetItem();
-    robot_top->setText(0, robotName.c_str());
-    m_list->addTopLevelItem(robot_top);
-    robot_top->setExpanded(true);
-    m_robotMapList[robotName] = robot_top;
-}
 
-void ModesTreeManager::addRobotInWidget(const std::string &robotName)
-{
-    CustomGroupBox* newGroup = new CustomGroupBox;
-    newGroup->setTitle(robotName.c_str());
-    m_widgetLayout->addWidget(newGroup);
+    bool foundFaultPart = false;
+    for (int i = 0; i < partWidget->numberOfJoints(); i++){
+        auto* jointNode = partWidget->getJoint(i);
+        jointNode->setJointMode(modes.at(i));
 
-    m_robotMapWidget[robotName] = newGroup;
-}
-
-void ModesTreeManager::addRobotPartInList(const std::string &robotName, const std::string &partName, PartItem *part)
-{
-    auto* partItem = new QTreeWidgetItem();
-    partItem->setText(0, partName.c_str());
-    QTreeWidgetItem *tp = m_robotMapList[robotName];
-    tp->addChild(partItem);
-    partItem->setExpanded(false);
-    part->setTreeWidgetModeNode(partItem);
-
-    for (int i = 0; i < part->getNumberOfJoints(); ++i)
-    {
-        auto* jointNode = new QTreeWidgetItem(partItem);
-        jointNode->setText(0,QString("Joint %1 (%2)").arg(i).arg(part->getJointName(i)));
-        jointNode->setText(1,JointItem::GetModeString(JointItem::Idle));
-        QColor c = JointItem::GetModeColor(JointItem::Idle);
-        jointNode->setBackground(0,c);
-        jointNode->setBackground(1,c);
-        jointNode->setForeground(0,Qt::black);
-        jointNode->setForeground(1,Qt::black);
-    }
-}
-
-void ModesTreeManager::addRobotPartInWidget(const std::string &robotName, const std::string &partName, int partIndex, PartItem *part)
-{
-    PartItemTree* partWidget = new PartItemTree(partIndex);
-
-    for (int i = 0; i < part->getNumberOfJoints(); ++i)
-    {
-        auto* jointWidget = partWidget->addJoint();
-        jointWidget->setJointName(QString("%1 - %2").arg(i).arg(part->getJointName(i)));
+        if (modes.at(i) == JointItem::HwFault){
+            foundFaultPart = true;
+        }
     }
 
-    CustomGroupBox* newPart = new CustomGroupBox;
-    newPart->setTitle(partName.c_str());
-    newPart->addWidget(partWidget);
-
-    m_robotMapWidget[robotName]->addWidget(newPart);
+    if (!foundFaultPart){
+        partWidgetParent->removeTitleBackground();
+        partWidgetParent->setTitleIcon(m_okIcon);
+    } else {
+        partWidgetParent->setTitleBackgroundColor(hwFaultColor);
+        partWidgetParent->setTitleIcon(m_warningIcon);
+    }
 }

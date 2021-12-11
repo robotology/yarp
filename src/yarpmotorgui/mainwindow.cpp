@@ -1183,7 +1183,7 @@ void MainWindow::onUpdate()
         auto* tabScroll = (QScrollArea *)m_tabPanel->widget(i);
         auto* item = (PartItem*)tabScroll->widget();
         item->updateControlMode();
-        m_modesTreeManager->updateRobotPart(item);
+        m_modesTreeManager->updateRobotPart(i);
         if(item == currentPart)
         {
             if (item->updatePart() == false)

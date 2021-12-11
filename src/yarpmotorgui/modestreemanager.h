@@ -12,9 +12,11 @@
 #include <QVBoxLayout>
 #include <QIcon>
 #include <QTabWidget>
+#include <QTimer>
 #include <string>
 #include <unordered_map>
 #include "partitem.h"
+#include "partItemTree.h"
 #include "customgroupbox.h"
 
 class ModesListWidget : public QTreeWidget
@@ -36,11 +38,25 @@ public:
 
     void addRobotPart(const std::string& robotName, const std::string &partName, int partIndex, PartItem* part);
 
-    void updateRobotPart(PartItem* part);
+    void updateRobotPart(int index);
+
+signals:
+
+    void sig_jointClicked(int partIndex, int jointIndex);
 
 private slots:
 
-    void tabChanged(int index);
+    void onTabChanged(int index);
+
+    void onJointClicked(int partIndex, int jointIndex);
+
+    void onJointHomeFromTree(int partIndex, int jointIndex);
+
+    void onJointRunFromTree(int partIndex, int jointIndex);
+
+    void onJointIdleFromTree(int partIndex, int jointIndex);
+
+    void onJointPIDFromTree(int partIndex, int jointIndex);
 
 private:
 
@@ -48,17 +64,28 @@ private:
 
     void addRobotInWidget(const std::string& robotName);
 
-    void addRobotPartInList(const std::string& robotName, const std::string &partName, PartItem* part);
+    void addRobotPartInList(const std::string& robotName, const std::string &partName, int partIndex, PartItem* part);
 
     void addRobotPartInWidget(const std::string& robotName, const std::string &partName, int partIndex, PartItem* part);
 
+    void updateRobotPartInList(int index, const QVector<JointItem::JointState>& modes);
+
+    void updateRobotPartInWidget(int index, const QVector<JointItem::JointState>& modes);
+
+    struct PartPointers
+    {
+        PartItem* partItem;
+        QTreeWidgetItem* listWidget;
+        PartItemTree* partWidget;
+        CustomGroupBox* partWidgetParent;
+    };
 
     QTabWidget* m_tabs;
     ModesListWidget* m_list;
     QVBoxLayout* m_widgetLayout;
     std::unordered_map<std::string, QTreeWidgetItem*> m_robotMapList;
     std::unordered_map<std::string, CustomGroupBox*> m_robotMapWidget;
-    std::unordered_map<int, PartItem*> m_partsMap;
+    std::unordered_map<int, PartPointers> m_indexToPartMap;
     QIcon m_okIcon;
     QIcon m_warningIcon;
 };

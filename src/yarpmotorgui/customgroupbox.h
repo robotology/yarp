@@ -39,6 +39,12 @@ public:
 
     void setTitle(const QString& string);
 
+    void setTitleBackgroundColor(const QColor& backgroundColor);
+
+    void removeTitleBackground();
+
+    void setTitleIcon(const QIcon& icon);
+
     void addWidget(QWidget* widget);
 
     void toggle(bool visible);

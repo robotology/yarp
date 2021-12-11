@@ -27,7 +27,6 @@ PartItem::PartItem(QString robotName, int id, QString partName, ResourceFinder& 
                    bool speedview_param_enabled,
                    bool enable_calib_all, QWidget *parent) :
     QWidget(parent),
-    m_node(nullptr),
     m_sequenceWindow(nullptr),
     m_partId(id),
     m_mixedEnabled(false),
@@ -2105,15 +2104,6 @@ void PartItem::onSetTrqSliderOptionPI(int mode, double step)
             joint->disableTorqueSliderDouble();
         }
     }
-}
-QTreeWidgetItem *PartItem::getTreeWidgetModeNode()
-{
-    return m_node;
-}
-
-void PartItem::setTreeWidgetModeNode(QTreeWidgetItem *node)
-{
-    m_node = node;
 }
 
 const QVector<JointItem::JointState> &PartItem::getPartModes()
