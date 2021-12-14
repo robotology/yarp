@@ -380,13 +380,15 @@ void Rangefinder2D_nws_yarp::run()
         bool ret = true;
         IRangefinder2D::Device_status status;
         yarp::sig::Vector ranges;
-        ret &= sens_p->getRawData(ranges);
+        double synchronized_timestamp = 0;
+        ret &= sens_p->getRawData(ranges, &synchronized_timestamp);
         ret &= sens_p->getDeviceStatus(status);
 
         if (ret)
         {
             if (iTimed) {
-                lastStateStamp = iTimed->getLastInputStamp();
+                //lastStateStamp = iTimed->getLastInputStamp();
+                lastStateStamp.update(synchronized_timestamp);
             } else {
                 lastStateStamp.update(yarp::os::Time::now());
             }

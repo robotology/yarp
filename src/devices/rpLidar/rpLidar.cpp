@@ -267,7 +267,7 @@ bool RpLidar::setScanRate(double rate)
 }
 
 
-bool RpLidar::getRawData(yarp::sig::Vector &out)
+bool RpLidar::getRawData(yarp::sig::Vector &out, double* timestamp)
 {
     std::lock_guard<std::mutex> guard(mutex);
     out = laser_data;
@@ -275,7 +275,7 @@ bool RpLidar::getRawData(yarp::sig::Vector &out)
     return true;
 }
 
-bool RpLidar::getLaserMeasurement(std::vector<LaserMeasurementData> &data)
+bool RpLidar::getLaserMeasurement(std::vector<LaserMeasurementData> &data, double* timestamp)
 {
     std::lock_guard<std::mutex> guard(mutex);
 #ifdef LASER_DEBUG

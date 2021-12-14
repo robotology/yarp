@@ -116,14 +116,6 @@ inline int Rangefinder2DInputPortProcessor::getLast(yarp::dev::LaserScan2D&data,
     return ret;
 }
 
-bool Rangefinder2DInputPortProcessor::getData(yarp::sig::Vector &ranges)
-{
-    mutex.lock();
-    ranges= lastScan.scans;
-    mutex.unlock();
-    return true;
-}
-
 yarp::dev::IRangefinder2D::Device_status Rangefinder2DInputPortProcessor::getStatus()
 {
     mutex.lock();
@@ -290,29 +282,41 @@ bool Rangefinder2DClient::close()
     return true;
 }
 
-bool Rangefinder2DClient::getRawData(yarp::sig::Vector &data)
+bool Rangefinder2DClient::getRawData(yarp::sig::Vector &data, double* timestamp)
 {
-    inputPort.getData(data);
+    yarp::dev::LaserScan2D scan;
+    inputPort.getLast(scan, lastTs);
+
+    data = scan.scans;
+
+    if (timestamp != nullptr)
+    {
+        *timestamp = lastTs.getTime();
+    }
     return true;
 }
 
-bool Rangefinder2DClient::getLaserMeasurement(std::vector<LaserMeasurementData> &data)
+bool Rangefinder2DClient::getLaserMeasurement(std::vector<LaserMeasurementData> &data, double* timestamp)
 {
-    yarp::sig::Vector ranges;
-    inputPort.getData(ranges);
-    size_t size = ranges.size();
+    yarp::dev::LaserScan2D scan;
+    inputPort.getLast(scan, lastTs);
+    size_t size = scan.scans.size();
     data.resize(size);
     if (scan_angle_max < scan_angle_min) { yCError(RANGEFINDER2DCLIENT) << "getLaserMeasurement failed"; return false; }
     double laser_angle_of_view = scan_angle_max - scan_angle_min;
     for (size_t i = 0; i < size; i++)
     {
         double angle = (i / double(size)*laser_angle_of_view + device_position_theta + scan_angle_min)* DEG2RAD;
-        double value = ranges[i];
+        double value = scan.scans[i];
 #if 1 //cartesian version is preferable, even if more computationally expensive, since it takes in account device_position
         data[i].set_cartesian(value * cos(angle) + device_position_x, value * sin(angle) + device_position_y);
 #else
         data[i].set_polar(value,angle);
 #endif
+    }
+    if (timestamp!=nullptr)
+    {
+        *timestamp = lastTs.getTime();
     }
     return true;
 }
