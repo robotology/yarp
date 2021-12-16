@@ -12,6 +12,8 @@
 
 #include <yarp/os/idl/WireTypes.h>
 
+#include <algorithm>
+
 // setTransformsRPC helper class declaration
 class FrameTransformStorageSetRPC_setTransformsRPC_helper :
         public yarp::os::Portable
@@ -348,7 +350,7 @@ bool FrameTransformStorageSetRPC_setTransformsRPC_helper::Command::read(yarp::os
 
 bool FrameTransformStorageSetRPC_setTransformsRPC_helper::Command::readTag(yarp::os::idl::WireReader& reader)
 {
-    std::string tag = reader.readTag();
+    std::string tag = reader.readTag(s_tag_len);
     if (reader.isError()) {
         return false;
     }
@@ -514,7 +516,7 @@ bool FrameTransformStorageSetRPC_setTransformRPC_helper::Command::read(yarp::os:
 
 bool FrameTransformStorageSetRPC_setTransformRPC_helper::Command::readTag(yarp::os::idl::WireReader& reader)
 {
-    std::string tag = reader.readTag();
+    std::string tag = reader.readTag(s_tag_len);
     if (reader.isError()) {
         return false;
     }
@@ -672,7 +674,7 @@ bool FrameTransformStorageSetRPC_deleteTransformRPC_helper::Command::read(yarp::
 
 bool FrameTransformStorageSetRPC_deleteTransformRPC_helper::Command::readTag(yarp::os::idl::WireReader& reader)
 {
-    std::string tag = reader.readTag();
+    std::string tag = reader.readTag(s_tag_len);
     if (reader.isError()) {
         return false;
     }
@@ -821,7 +823,7 @@ bool FrameTransformStorageSetRPC_clearAllRPC_helper::Command::read(yarp::os::idl
 
 bool FrameTransformStorageSetRPC_clearAllRPC_helper::Command::readTag(yarp::os::idl::WireReader& reader)
 {
-    std::string tag = reader.readTag();
+    std::string tag = reader.readTag(s_tag_len);
     if (reader.isError()) {
         return false;
     }
@@ -974,6 +976,9 @@ std::vector<std::string> FrameTransformStorageSetRPC::help(const std::string& fu
 // read from ConnectionReader
 bool FrameTransformStorageSetRPC::read(yarp::os::ConnectionReader& connection)
 {
+    constexpr size_t max_tag_len = 1;
+    size_t tag_len = 1;
+
     yarp::os::idl::WireReader reader(connection);
     reader.expectAccept();
     if (!reader.readListHeader()) {
@@ -981,12 +986,12 @@ bool FrameTransformStorageSetRPC::read(yarp::os::ConnectionReader& connection)
         return false;
     }
 
-    std::string tag = reader.readTag();
+    std::string tag = reader.readTag(1);
     bool direct = (tag == "__direct__");
     if (direct) {
-        tag = reader.readTag();
+        tag = reader.readTag(1);
     }
-    while (!reader.isError()) {
+    while (tag_len <= max_tag_len && !reader.isError()) {
         if (tag == FrameTransformStorageSetRPC_setTransformsRPC_helper::s_tag) {
             FrameTransformStorageSetRPC_setTransformsRPC_helper helper;
             if (!helper.cmd.readArgs(reader)) {
@@ -1080,11 +1085,12 @@ bool FrameTransformStorageSetRPC::read(yarp::os::ConnectionReader& connection)
             reader.fail();
             return false;
         }
-        std::string next_tag = reader.readTag();
+        std::string next_tag = reader.readTag(1);
         if (next_tag.empty()) {
             break;
         }
         tag.append("_").append(next_tag);
+        tag_len = std::count(tag.begin(), tag.end(), '_') + 1;
     }
     return false;
 }

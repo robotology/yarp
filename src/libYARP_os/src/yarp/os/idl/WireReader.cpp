@@ -545,7 +545,7 @@ bool WireReader::isError()
     return reader.isError();
 }
 
-std::string WireReader::readTag()
+std::string WireReader::readTag(size_t len)
 {
     flush_if_needed = true;
     std::string str;
@@ -558,7 +558,7 @@ std::string WireReader::readTag()
     if (!is_vocab) {
         return str;
     }
-    while (is_vocab && state->len > 0) {
+    while (--len > 0 && is_vocab && state->len > 0) {
         if (state->code >= 0) {
             is_vocab = (state->code == BOTTLE_TAG_VOCAB32);
         } else {

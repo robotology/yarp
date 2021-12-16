@@ -12,6 +12,8 @@
 
 #include <yarp/os/idl/WireTypes.h>
 
+#include <algorithm>
+
 // stop_navigation_RPC helper class declaration
 class INavigation2DMsgs_stop_navigation_RPC_helper :
         public yarp::os::Portable
@@ -1112,7 +1114,7 @@ bool INavigation2DMsgs_stop_navigation_RPC_helper::Command::read(yarp::os::idl::
 
 bool INavigation2DMsgs_stop_navigation_RPC_helper::Command::readTag(yarp::os::idl::WireReader& reader)
 {
-    std::string tag = reader.readTag();
+    std::string tag = reader.readTag(s_tag_len);
     if (reader.isError()) {
         return false;
     }
@@ -1245,7 +1247,7 @@ bool INavigation2DMsgs_resume_navigation_RPC_helper::Command::read(yarp::os::idl
 
 bool INavigation2DMsgs_resume_navigation_RPC_helper::Command::readTag(yarp::os::idl::WireReader& reader)
 {
-    std::string tag = reader.readTag();
+    std::string tag = reader.readTag(s_tag_len);
     if (reader.isError()) {
         return false;
     }
@@ -1391,7 +1393,7 @@ bool INavigation2DMsgs_suspend_navigation_RPC_helper::Command::read(yarp::os::id
 
 bool INavigation2DMsgs_suspend_navigation_RPC_helper::Command::readTag(yarp::os::idl::WireReader& reader)
 {
-    std::string tag = reader.readTag();
+    std::string tag = reader.readTag(s_tag_len);
     if (reader.isError()) {
         return false;
     }
@@ -1532,7 +1534,7 @@ bool INavigation2DMsgs_recompute_current_navigation_path_RPC_helper::Command::re
 
 bool INavigation2DMsgs_recompute_current_navigation_path_RPC_helper::Command::readTag(yarp::os::idl::WireReader& reader)
 {
-    std::string tag = reader.readTag();
+    std::string tag = reader.readTag(s_tag_len);
     if (reader.isError()) {
         return false;
     }
@@ -1665,7 +1667,7 @@ bool INavigation2DMsgs_get_navigation_status_RPC_helper::Command::read(yarp::os:
 
 bool INavigation2DMsgs_get_navigation_status_RPC_helper::Command::readTag(yarp::os::idl::WireReader& reader)
 {
-    std::string tag = reader.readTag();
+    std::string tag = reader.readTag(s_tag_len);
     if (reader.isError()) {
         return false;
     }
@@ -1798,7 +1800,7 @@ bool INavigation2DMsgs_get_current_nav_waypoint_RPC_helper::Command::read(yarp::
 
 bool INavigation2DMsgs_get_current_nav_waypoint_RPC_helper::Command::readTag(yarp::os::idl::WireReader& reader)
 {
-    std::string tag = reader.readTag();
+    std::string tag = reader.readTag(s_tag_len);
     if (reader.isError()) {
         return false;
     }
@@ -1944,7 +1946,7 @@ bool INavigation2DMsgs_get_all_navigation_waypoints_RPC_helper::Command::read(ya
 
 bool INavigation2DMsgs_get_all_navigation_waypoints_RPC_helper::Command::readTag(yarp::os::idl::WireReader& reader)
 {
-    std::string tag = reader.readTag();
+    std::string tag = reader.readTag(s_tag_len);
     if (reader.isError()) {
         return false;
     }
@@ -2100,7 +2102,7 @@ bool INavigation2DMsgs_get_current_navigation_map_RPC_helper::Command::read(yarp
 
 bool INavigation2DMsgs_get_current_navigation_map_RPC_helper::Command::readTag(yarp::os::idl::WireReader& reader)
 {
-    std::string tag = reader.readTag();
+    std::string tag = reader.readTag(s_tag_len);
     if (reader.isError()) {
         return false;
     }
@@ -2256,7 +2258,7 @@ bool INavigation2DMsgs_goto_target_by_absolute_location_RPC_helper::Command::rea
 
 bool INavigation2DMsgs_goto_target_by_absolute_location_RPC_helper::Command::readTag(yarp::os::idl::WireReader& reader)
 {
-    std::string tag = reader.readTag();
+    std::string tag = reader.readTag(s_tag_len);
     if (reader.isError()) {
         return false;
     }
@@ -2414,7 +2416,7 @@ bool INavigation2DMsgs_goto_target_by_relative_location1_RPC_helper::Command::re
 
 bool INavigation2DMsgs_goto_target_by_relative_location1_RPC_helper::Command::readTag(yarp::os::idl::WireReader& reader)
 {
-    std::string tag = reader.readTag();
+    std::string tag = reader.readTag(s_tag_len);
     if (reader.isError()) {
         return false;
     }
@@ -2584,7 +2586,7 @@ bool INavigation2DMsgs_goto_target_by_relative_location2_RPC_helper::Command::re
 
 bool INavigation2DMsgs_goto_target_by_relative_location2_RPC_helper::Command::readTag(yarp::os::idl::WireReader& reader)
 {
-    std::string tag = reader.readTag();
+    std::string tag = reader.readTag(s_tag_len);
     if (reader.isError()) {
         return false;
     }
@@ -2741,7 +2743,7 @@ bool INavigation2DMsgs_get_absolute_location_of_current_target_RPC_helper::Comma
 
 bool INavigation2DMsgs_get_absolute_location_of_current_target_RPC_helper::Command::readTag(yarp::os::idl::WireReader& reader)
 {
-    std::string tag = reader.readTag();
+    std::string tag = reader.readTag(s_tag_len);
     if (reader.isError()) {
         return false;
     }
@@ -2874,7 +2876,7 @@ bool INavigation2DMsgs_get_relative_location_of_current_target_RPC_helper::Comma
 
 bool INavigation2DMsgs_get_relative_location_of_current_target_RPC_helper::Command::readTag(yarp::os::idl::WireReader& reader)
 {
-    std::string tag = reader.readTag();
+    std::string tag = reader.readTag(s_tag_len);
     if (reader.isError()) {
         return false;
     }
@@ -3024,7 +3026,7 @@ bool INavigation2DMsgs_goto_target_by_absolute_location_and_set_name_RPC_helper:
 
 bool INavigation2DMsgs_goto_target_by_absolute_location_and_set_name_RPC_helper::Command::readTag(yarp::os::idl::WireReader& reader)
 {
-    std::string tag = reader.readTag();
+    std::string tag = reader.readTag(s_tag_len);
     if (reader.isError()) {
         return false;
     }
@@ -3198,7 +3200,7 @@ bool INavigation2DMsgs_apply_velocity_command_RPC_helper::Command::read(yarp::os
 
 bool INavigation2DMsgs_apply_velocity_command_RPC_helper::Command::readTag(yarp::os::idl::WireReader& reader)
 {
-    std::string tag = reader.readTag();
+    std::string tag = reader.readTag(s_tag_len);
     if (reader.isError()) {
         return false;
     }
@@ -3363,7 +3365,7 @@ bool INavigation2DMsgs_get_last_velocity_command_RPC_helper::Command::read(yarp:
 
 bool INavigation2DMsgs_get_last_velocity_command_RPC_helper::Command::readTag(yarp::os::idl::WireReader& reader)
 {
-    std::string tag = reader.readTag();
+    std::string tag = reader.readTag(s_tag_len);
     if (reader.isError()) {
         return false;
     }
@@ -3496,7 +3498,7 @@ bool INavigation2DMsgs_get_name_of_current_target_RPC_helper::Command::read(yarp
 
 bool INavigation2DMsgs_get_name_of_current_target_RPC_helper::Command::readTag(yarp::os::idl::WireReader& reader)
 {
-    std::string tag = reader.readTag();
+    std::string tag = reader.readTag(s_tag_len);
     if (reader.isError()) {
         return false;
     }
@@ -3831,6 +3833,9 @@ std::vector<std::string> INavigation2DMsgs::help(const std::string& functionName
 // read from ConnectionReader
 bool INavigation2DMsgs::read(yarp::os::ConnectionReader& connection)
 {
+    constexpr size_t max_tag_len = 9;
+    size_t tag_len = 1;
+
     yarp::os::idl::WireReader reader(connection);
     reader.expectAccept();
     if (!reader.readListHeader()) {
@@ -3838,12 +3843,12 @@ bool INavigation2DMsgs::read(yarp::os::ConnectionReader& connection)
         return false;
     }
 
-    std::string tag = reader.readTag();
+    std::string tag = reader.readTag(1);
     bool direct = (tag == "__direct__");
     if (direct) {
-        tag = reader.readTag();
+        tag = reader.readTag(1);
     }
-    while (!reader.isError()) {
+    while (tag_len <= max_tag_len && !reader.isError()) {
         if (tag == INavigation2DMsgs_stop_navigation_RPC_helper::s_tag) {
             INavigation2DMsgs_stop_navigation_RPC_helper helper;
             if (!helper.cmd.readArgs(reader)) {
@@ -4132,11 +4137,12 @@ bool INavigation2DMsgs::read(yarp::os::ConnectionReader& connection)
             reader.fail();
             return false;
         }
-        std::string next_tag = reader.readTag();
+        std::string next_tag = reader.readTag(1);
         if (next_tag.empty()) {
             break;
         }
         tag.append("_").append(next_tag);
+        tag_len = std::count(tag.begin(), tag.end(), '_') + 1;
     }
     return false;
 }

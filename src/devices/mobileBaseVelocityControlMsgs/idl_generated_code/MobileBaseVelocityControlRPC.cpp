@@ -12,6 +12,8 @@
 
 #include <yarp/os/idl/WireTypes.h>
 
+#include <algorithm>
+
 // applyVelocityCommandRPC helper class declaration
 class MobileBaseVelocityControlRPC_applyVelocityCommandRPC_helper :
         public yarp::os::Portable
@@ -228,7 +230,7 @@ bool MobileBaseVelocityControlRPC_applyVelocityCommandRPC_helper::Command::read(
 
 bool MobileBaseVelocityControlRPC_applyVelocityCommandRPC_helper::Command::readTag(yarp::os::idl::WireReader& reader)
 {
-    std::string tag = reader.readTag();
+    std::string tag = reader.readTag(s_tag_len);
     if (reader.isError()) {
         return false;
     }
@@ -393,7 +395,7 @@ bool MobileBaseVelocityControlRPC_getLastVelocityCommandRPC_helper::Command::rea
 
 bool MobileBaseVelocityControlRPC_getLastVelocityCommandRPC_helper::Command::readTag(yarp::os::idl::WireReader& reader)
 {
-    std::string tag = reader.readTag();
+    std::string tag = reader.readTag(s_tag_len);
     if (reader.isError()) {
         return false;
     }
@@ -518,6 +520,9 @@ std::vector<std::string> MobileBaseVelocityControlRPC::help(const std::string& f
 // read from ConnectionReader
 bool MobileBaseVelocityControlRPC::read(yarp::os::ConnectionReader& connection)
 {
+    constexpr size_t max_tag_len = 1;
+    size_t tag_len = 1;
+
     yarp::os::idl::WireReader reader(connection);
     reader.expectAccept();
     if (!reader.readListHeader()) {
@@ -525,12 +530,12 @@ bool MobileBaseVelocityControlRPC::read(yarp::os::ConnectionReader& connection)
         return false;
     }
 
-    std::string tag = reader.readTag();
+    std::string tag = reader.readTag(1);
     bool direct = (tag == "__direct__");
     if (direct) {
-        tag = reader.readTag();
+        tag = reader.readTag(1);
     }
-    while (!reader.isError()) {
+    while (tag_len <= max_tag_len && !reader.isError()) {
         if (tag == MobileBaseVelocityControlRPC_applyVelocityCommandRPC_helper::s_tag) {
             MobileBaseVelocityControlRPC_applyVelocityCommandRPC_helper helper;
             if (!helper.cmd.readArgs(reader)) {
@@ -594,11 +599,12 @@ bool MobileBaseVelocityControlRPC::read(yarp::os::ConnectionReader& connection)
             reader.fail();
             return false;
         }
-        std::string next_tag = reader.readTag();
+        std::string next_tag = reader.readTag(1);
         if (next_tag.empty()) {
             break;
         }
         tag.append("_").append(next_tag);
+        tag_len = std::count(tag.begin(), tag.end(), '_') + 1;
     }
     return false;
 }

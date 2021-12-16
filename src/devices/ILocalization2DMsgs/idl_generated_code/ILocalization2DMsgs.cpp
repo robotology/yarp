@@ -12,6 +12,8 @@
 
 #include <yarp/os/idl/WireTypes.h>
 
+#include <algorithm>
+
 // start_localization_service_RPC helper class declaration
 class ILocalization2DMsgs_start_localization_service_RPC_helper :
         public yarp::os::Portable
@@ -612,7 +614,7 @@ bool ILocalization2DMsgs_start_localization_service_RPC_helper::Command::read(ya
 
 bool ILocalization2DMsgs_start_localization_service_RPC_helper::Command::readTag(yarp::os::idl::WireReader& reader)
 {
-    std::string tag = reader.readTag();
+    std::string tag = reader.readTag(s_tag_len);
     if (reader.isError()) {
         return false;
     }
@@ -745,7 +747,7 @@ bool ILocalization2DMsgs_stop_localization_service_RPC_helper::Command::read(yar
 
 bool ILocalization2DMsgs_stop_localization_service_RPC_helper::Command::readTag(yarp::os::idl::WireReader& reader)
 {
-    std::string tag = reader.readTag();
+    std::string tag = reader.readTag(s_tag_len);
     if (reader.isError()) {
         return false;
     }
@@ -878,7 +880,7 @@ bool ILocalization2DMsgs_get_localization_status_RPC_helper::Command::read(yarp:
 
 bool ILocalization2DMsgs_get_localization_status_RPC_helper::Command::readTag(yarp::os::idl::WireReader& reader)
 {
-    std::string tag = reader.readTag();
+    std::string tag = reader.readTag(s_tag_len);
     if (reader.isError()) {
         return false;
     }
@@ -1011,7 +1013,7 @@ bool ILocalization2DMsgs_get_estimated_poses_RPC_helper::Command::read(yarp::os:
 
 bool ILocalization2DMsgs_get_estimated_poses_RPC_helper::Command::readTag(yarp::os::idl::WireReader& reader)
 {
-    std::string tag = reader.readTag();
+    std::string tag = reader.readTag(s_tag_len);
     if (reader.isError()) {
         return false;
     }
@@ -1144,7 +1146,7 @@ bool ILocalization2DMsgs_get_current_position1_RPC_helper::Command::read(yarp::o
 
 bool ILocalization2DMsgs_get_current_position1_RPC_helper::Command::readTag(yarp::os::idl::WireReader& reader)
 {
-    std::string tag = reader.readTag();
+    std::string tag = reader.readTag(s_tag_len);
     if (reader.isError()) {
         return false;
     }
@@ -1277,7 +1279,7 @@ bool ILocalization2DMsgs_get_current_position2_RPC_helper::Command::read(yarp::o
 
 bool ILocalization2DMsgs_get_current_position2_RPC_helper::Command::readTag(yarp::os::idl::WireReader& reader)
 {
-    std::string tag = reader.readTag();
+    std::string tag = reader.readTag(s_tag_len);
     if (reader.isError()) {
         return false;
     }
@@ -1410,7 +1412,7 @@ bool ILocalization2DMsgs_get_estimated_odometry_RPC_helper::Command::read(yarp::
 
 bool ILocalization2DMsgs_get_estimated_odometry_RPC_helper::Command::readTag(yarp::os::idl::WireReader& reader)
 {
-    std::string tag = reader.readTag();
+    std::string tag = reader.readTag(s_tag_len);
     if (reader.isError()) {
         return false;
     }
@@ -1556,7 +1558,7 @@ bool ILocalization2DMsgs_set_initial_pose1_RPC_helper::Command::read(yarp::os::i
 
 bool ILocalization2DMsgs_set_initial_pose1_RPC_helper::Command::readTag(yarp::os::idl::WireReader& reader)
 {
-    std::string tag = reader.readTag();
+    std::string tag = reader.readTag(s_tag_len);
     if (reader.isError()) {
         return false;
     }
@@ -1714,7 +1716,7 @@ bool ILocalization2DMsgs_set_initial_pose2_RPC_helper::Command::read(yarp::os::i
 
 bool ILocalization2DMsgs_set_initial_pose2_RPC_helper::Command::readTag(yarp::os::idl::WireReader& reader)
 {
-    std::string tag = reader.readTag();
+    std::string tag = reader.readTag(s_tag_len);
     if (reader.isError()) {
         return false;
     }
@@ -1953,6 +1955,9 @@ std::vector<std::string> ILocalization2DMsgs::help(const std::string& functionNa
 // read from ConnectionReader
 bool ILocalization2DMsgs::read(yarp::os::ConnectionReader& connection)
 {
+    constexpr size_t max_tag_len = 4;
+    size_t tag_len = 1;
+
     yarp::os::idl::WireReader reader(connection);
     reader.expectAccept();
     if (!reader.readListHeader()) {
@@ -1960,12 +1965,12 @@ bool ILocalization2DMsgs::read(yarp::os::ConnectionReader& connection)
         return false;
     }
 
-    std::string tag = reader.readTag();
+    std::string tag = reader.readTag(1);
     bool direct = (tag == "__direct__");
     if (direct) {
-        tag = reader.readTag();
+        tag = reader.readTag(1);
     }
-    while (!reader.isError()) {
+    while (tag_len <= max_tag_len && !reader.isError()) {
         if (tag == ILocalization2DMsgs_start_localization_service_RPC_helper::s_tag) {
             ILocalization2DMsgs_start_localization_service_RPC_helper helper;
             if (!helper.cmd.readArgs(reader)) {
@@ -2134,11 +2139,12 @@ bool ILocalization2DMsgs::read(yarp::os::ConnectionReader& connection)
             reader.fail();
             return false;
         }
-        std::string next_tag = reader.readTag();
+        std::string next_tag = reader.readTag(1);
         if (next_tag.empty()) {
             break;
         }
         tag.append("_").append(next_tag);
+        tag_len = std::count(tag.begin(), tag.end(), '_') + 1;
     }
     return false;
 }
