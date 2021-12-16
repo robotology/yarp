@@ -331,7 +331,7 @@ bool laserHokuyo::setScanRate(double rate)
     return false;
 }
 
-bool laserHokuyo::getRawData(yarp::sig::Vector &out)
+bool laserHokuyo::getRawData(yarp::sig::Vector &out, double* timestamp)
 {
     if (internal_status != HOKUYO_STATUS_NOT_READY)
     {
@@ -346,7 +346,7 @@ bool laserHokuyo::getRawData(yarp::sig::Vector &out)
     return false;
 }
 
-bool laserHokuyo::getLaserMeasurement(std::vector<LaserMeasurementData> &data)
+bool laserHokuyo::getLaserMeasurement(std::vector<LaserMeasurementData> &data, double* timestamp)
 {
     if (internal_status != HOKUYO_STATUS_NOT_READY)
     {

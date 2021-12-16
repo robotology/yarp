@@ -45,16 +45,18 @@ public:
     /**
     * Get the device measurements
     * @param data a vector containing the measurement data, expressed in cartesian/polar format
-    * @return true/false..
+    * @param timestamp the timestamp of the retrieved data.
+    * @return true/false
     */
-    virtual bool getLaserMeasurement(std::vector<LaserMeasurementData> &data) = 0;
+    virtual bool getLaserMeasurement(std::vector<LaserMeasurementData> &data, double* timestamp = nullptr) = 0;
 
     /**
     * Get the device measurements
     * @param ranges the vector containing the raw measurement data, as acquired by the device.
+    * @param timestamp the timestamp of the retrieved data.
     * @return true/false.
     */
-    virtual bool getRawData(yarp::sig::Vector &data) = 0;
+    virtual bool getRawData(yarp::sig::Vector &data, double* timestamp = nullptr) = 0;
 
     /**
     * get the device status

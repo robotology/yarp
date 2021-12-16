@@ -234,8 +234,8 @@ public:
 
 public:
     //IRangefinder2D interface
-    bool getRawData(yarp::sig::Vector &data) override;
-    bool getLaserMeasurement(std::vector<LaserMeasurementData> &data) override;
+    bool getRawData(yarp::sig::Vector &data, double* timestamp) override;
+    bool getLaserMeasurement(std::vector<LaserMeasurementData> &data, double* timestamp) override;
     bool getDeviceStatus     (Device_status &status) override;
     bool getDeviceInfo       (std::string &device_info) override;
     bool getDistanceRange    (double& min, double& max) override;

@@ -55,7 +55,6 @@ public:
     // time is in ms
     void getEstFrequency(int &ite, double &av, double &min, double &max);
 
-    bool getData(yarp::sig::Vector &data);
     yarp::dev::IRangefinder2D::Device_status getStatus();
 
 };
@@ -115,14 +114,14 @@ public:
     * @param data a vector containing the measurement data, expressed in cartesian/polar format
     * @return true/false..
     */
-    bool getLaserMeasurement(std::vector<yarp::dev::LaserMeasurementData> &data) override;
+    bool getLaserMeasurement(std::vector<yarp::dev::LaserMeasurementData> &data, double* timestamp = nullptr) override;
 
     /**
     * Get the device measurements
     * @param ranges the vector containing the raw measurement data, as acquired by the device.
     * @return true/false.
     */
-    bool getRawData(yarp::sig::Vector &data) override;
+    bool getRawData(yarp::sig::Vector &data, double* timestamp = nullptr) override;
 
     /**
     * get the device status

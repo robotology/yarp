@@ -50,10 +50,14 @@ bool Lidar2DDeviceBase::getDeviceStatus(Device_status& status)
     return true;
 }
 
-bool Lidar2DDeviceBase::getRawData(yarp::sig::Vector& out)
+bool Lidar2DDeviceBase::getRawData(yarp::sig::Vector& out, double* timestamp)
 {
     std::lock_guard<std::mutex> guard(m_mutex);
     out = m_laser_data;
+    if (timestamp != nullptr)
+    {
+        *timestamp = m_timestamp.getTime();
+    }
     return true;
 }
 
@@ -71,7 +75,7 @@ bool Lidar2DDeviceBase::getDeviceInfo(std::string& device_info)
     return true;
 }
 
-bool Lidar2DDeviceBase::getLaserMeasurement(std::vector<LaserMeasurementData>& data)
+bool Lidar2DDeviceBase::getLaserMeasurement(std::vector<LaserMeasurementData>& data, double* timestamp)
 {
     std::lock_guard<std::mutex> guard(m_mutex);
 #ifdef LASER_DEBUG
@@ -85,6 +89,10 @@ bool Lidar2DDeviceBase::getLaserMeasurement(std::vector<LaserMeasurementData>& d
     {
         double angle = (i / double(size) * laser_angle_of_view + m_min_angle) * DEG2RAD;
         data[i].set_polar(m_laser_data[i], angle);
+    }
+    if (timestamp!=nullptr)
+    {
+        *timestamp = m_timestamp.getTime();
     }
     return true;
 }
