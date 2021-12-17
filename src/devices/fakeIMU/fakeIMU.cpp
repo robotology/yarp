@@ -152,11 +152,6 @@ void fakeIMU::run()
     }
 }
 
-yarp::os::Stamp fakeIMU::getLastInputStamp()
-{
-    return lastStamp;
-}
-
 yarp::dev::MAS_status fakeIMU::genericGetStatus(size_t sens_index) const
 {
     if (sens_index!=0) {

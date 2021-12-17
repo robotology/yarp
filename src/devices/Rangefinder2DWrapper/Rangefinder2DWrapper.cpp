@@ -27,7 +27,6 @@ YARP_LOG_COMPONENT(RANGEFINDER2DWRAPPER, "yarp.devices.Rangefinder2DWrapper")
 Rangefinder2DWrapper::Rangefinder2DWrapper() : PeriodicThread(DEFAULT_THREAD_PERIOD),
     partName("Rangefinder2DWrapper"),
     sens_p(nullptr),
-    iTimed(nullptr),
     _period(DEFAULT_THREAD_PERIOD),
     minAngle(0),
     maxAngle(0),
@@ -199,7 +198,6 @@ bool Rangefinder2DWrapper::attachAll(const PolyDriverList &device2attach)
     if (Idevice2attach->isValid())
     {
         Idevice2attach->view(sens_p);
-        Idevice2attach->view(iTimed);
     }
 
     if (nullptr == sens_p)
@@ -549,14 +547,18 @@ void Rangefinder2DWrapper::run()
         bool ret = true;
         IRangefinder2D::Device_status status;
         yarp::sig::Vector ranges;
-        ret &= sens_p->getRawData(ranges);
+        double synchronized_timestamp = 0;
+        ret &= sens_p->getRawData(ranges, &synchronized_timestamp);
         ret &= sens_p->getDeviceStatus(status);
 
         if (ret)
         {
-            if (iTimed) {
-                lastStateStamp = iTimed->getLastInputStamp();
-            } else {
+            if (std::isnan(synchronized_timestamp) == false)
+            {
+                lastStateStamp.update(synchronized_timestamp);
+            }
+            else
+            {
                 lastStateStamp.update(yarp::os::Time::now());
             }
 

@@ -9,7 +9,6 @@
 #include <yarp/dev/IGenericSensor.h>
 #include <yarp/dev/MultipleAnalogSensorsInterfaces.h>
 #include <yarp/os/Stamp.h>
-#include <yarp/dev/IPreciselyTimed.h>
 #include <yarp/math/Math.h>
 
 /**
@@ -32,7 +31,6 @@ class fakeIMU :
         public yarp::dev::DeviceDriver,
         public yarp::dev::IGenericSensor,
         public yarp::os::PeriodicThread,
-        public yarp::dev::IPreciselyTimed,
         public yarp::dev::IThreeAxisGyroscopes,
         public yarp::dev::IThreeAxisLinearAccelerometers,
         public yarp::dev::IThreeAxisMagnetometers,
@@ -55,9 +53,6 @@ public:
     bool read(yarp::sig::Vector &out) override;
     bool getChannels(int *nc) override;
     bool calibrate(int ch, double v) override;
-
-    // IPreciselyTimed interface
-    yarp::os::Stamp getLastInputStamp() override;
 
     /* IThreeAxisGyroscopes methods */
     size_t getNrOfThreeAxisGyroscopes() const override;

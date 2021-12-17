@@ -31,7 +31,6 @@
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/dev/IMultipleWrapper.h>
 #include <yarp/dev/api.h>
-#include <yarp/dev/IPreciselyTimed.h>
 
 // ROS state publisher
 #include <yarp/os/Node.h>
@@ -82,7 +81,6 @@ private:
     yarp::os::Port rpcPort;
     yarp::os::BufferedPort<yarp::dev::LaserScan2D> streamingPort;
     yarp::dev::IRangefinder2D *sens_p;
-    yarp::dev::IPreciselyTimed *iTimed;
     yarp::os::Stamp lastStateStamp;
     double _period;
     std::string sensorId;

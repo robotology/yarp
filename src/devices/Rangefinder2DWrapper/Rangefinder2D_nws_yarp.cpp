@@ -28,7 +28,6 @@ YARP_LOG_COMPONENT(RANGEFINDER2D_NWS_YARP, "yarp.devices.Rangefinder2D_nws_yarp"
 
     Rangefinder2D_nws_yarp::Rangefinder2D_nws_yarp() : PeriodicThread(DEFAULT_THREAD_PERIOD),
     sens_p(nullptr),
-    iTimed(nullptr),
     _period(DEFAULT_THREAD_PERIOD),
     minAngle(0),
     maxAngle(0),
@@ -52,7 +51,6 @@ bool Rangefinder2D_nws_yarp::attach(yarp::dev::PolyDriver* driver)
     if (driver->isValid())
     {
         driver->view(sens_p);
-        driver->view(iTimed);
     }
 
     if (nullptr == sens_p)
@@ -386,10 +384,12 @@ void Rangefinder2D_nws_yarp::run()
 
         if (ret)
         {
-            if (iTimed) {
-                //lastStateStamp = iTimed->getLastInputStamp();
+            if (std::isnan(synchronized_timestamp) == false)
+            {
                 lastStateStamp.update(synchronized_timestamp);
-            } else {
+            }
+            else
+            {
                 lastStateStamp.update(yarp::os::Time::now());
             }
 

@@ -31,7 +31,6 @@
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/dev/WrapperSingle.h>
 #include <yarp/dev/api.h>
-#include <yarp/dev/IPreciselyTimed.h>
 
 #define DEFAULT_THREAD_PERIOD 0.02 //s
 
@@ -94,7 +93,6 @@ private:
     //interfaces
     yarp::dev::PolyDriver m_driver;
     yarp::dev::IRangefinder2D *sens_p;
-    yarp::dev::IPreciselyTimed *iTimed;
 
     //device data
     yarp::os::Stamp lastStateStamp;

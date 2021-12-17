@@ -20,7 +20,6 @@
 #include <yarp/dev/IFrameTransform.h>
 #include <yarp/dev/IFrameTransformClientControl.h>
 #include <yarp/dev/IFrameTransformStorage.h>
-#include <yarp/dev/IPreciselyTimed.h>
 #include <yarp/dev/PolyDriver.h>
 
 #include <yarp/math/FrameTransform.h>

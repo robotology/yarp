@@ -9,7 +9,6 @@
 
 #include <yarp/os/Network.h>
 #include <yarp/os/BufferedPort.h>
-#include <yarp/dev/IPreciselyTimed.h>
 #include <yarp/dev/IMap2D.h>
 #include <yarp/sig/Vector.h>
 #include <yarp/dev/MapGrid2D.h>

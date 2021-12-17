@@ -31,7 +31,6 @@
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/dev/IMultipleWrapper.h>
 #include <yarp/dev/api.h>
-#include <yarp/dev/IPreciselyTimed.h>
 
 /**
  * @ingroup dev_impl_wrapper

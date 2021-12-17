@@ -9,8 +9,6 @@
 
 #include <yarp/os/Network.h>
 #include <yarp/os/BufferedPort.h>
-#include <yarp/dev/IPreciselyTimed.h>
-#include <yarp/dev/ControlBoardInterfaces.h>
 #include <yarp/dev/ControlBoardHelpers.h>
 #include <yarp/sig/Vector.h>
 #include <mutex>

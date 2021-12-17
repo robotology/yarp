@@ -8,8 +8,8 @@
 
 
 #include <yarp/os/Network.h>
+#include <yarp/os/Stamp.h>
 #include <yarp/os/BufferedPort.h>
-#include <yarp/dev/IPreciselyTimed.h>
 #include <yarp/dev/IRangefinder2D.h>
 #include <yarp/dev/ControlBoardInterfaces.h>
 #include <yarp/dev/ControlBoardHelpers.h>
@@ -75,7 +75,6 @@ public:
 */
 class Rangefinder2DClient:
         public yarp::dev::DeviceDriver,
-        public yarp::dev::IPreciselyTimed,
         public yarp::dev::IRangefinder2D
 {
 protected:
@@ -84,7 +83,7 @@ protected:
     std::string local;
     std::string remote;
     std::string m_carrier;
-    yarp::os::Stamp lastTs; //used by IPreciselyTimed
+    yarp::os::Stamp lastTs;
     std::string deviceId;
 
     double scan_angle_min;
@@ -100,14 +99,6 @@ public:
     /* DevideDriver methods */
     bool open(yarp::os::Searchable& config) override;
     bool close() override;
-
-
-    /* IPreciselyTimed methods */
-    /**
-    * Get the time stamp for the last read data
-    * @return last time stamp.
-    */
-    yarp::os::Stamp getLastInputStamp() override;
 
     /**
     * Get the device measurements

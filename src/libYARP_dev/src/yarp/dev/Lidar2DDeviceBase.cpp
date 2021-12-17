@@ -270,13 +270,6 @@ bool Lidar2DDeviceBase::applyLimitsOnLaserData()
     return true;
 }
 
-yarp::os::Stamp Lidar2DDeviceBase::getLastInputStamp()
-{
-    std::lock_guard<std::mutex> guard(m_mutex);
-    return m_timestamp;
-}
-
-
 bool Lidar2DDeviceBase::updateLidarData()
 {
     bool b = true;

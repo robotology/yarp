@@ -31,7 +31,6 @@
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/dev/WrapperSingle.h>
 #include <yarp/dev/api.h>
-#include <yarp/dev/IPreciselyTimed.h>
 
 // ROS state publisher
 #include <yarp/os/Node.h>
@@ -106,7 +105,6 @@ private:
     //interfaces
     yarp::dev::PolyDriver m_driver;
     yarp::dev::IRangefinder2D* sens_p;
-    yarp::dev::IPreciselyTimed* iTimed;
 
 private:
     //device data

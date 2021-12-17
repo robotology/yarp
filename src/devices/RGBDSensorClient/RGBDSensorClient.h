@@ -14,7 +14,6 @@
 
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/IRGBDSensor.h>
-#include <yarp/dev/IPreciselyTimed.h>
 
 #include <yarp/proto/framegrabber/FrameGrabberControls_Forwarder.h>
 #include <yarp/proto/framegrabber/RgbVisualParams_Forwarder.h>

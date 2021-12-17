@@ -454,8 +454,3 @@ bool Rangefinder2DClient::getDeviceInfo(std::string &device_info)
     }
     return false;
 }
-
-Stamp Rangefinder2DClient::getLastInputStamp()
-{
-    return lastTs;
-}

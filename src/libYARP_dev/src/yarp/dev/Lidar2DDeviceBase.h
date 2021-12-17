@@ -5,9 +5,9 @@
 
 #include <vector>
 
+#include <yarp/os/Stamp.h>
 #include <yarp/os/Searchable.h>
 #include <yarp/dev/IRangefinder2D.h>
-#include <yarp/dev/IPreciselyTimed.h>
 #include <yarp/dev/api.h>
 #include <mutex>
 
@@ -26,10 +26,8 @@ struct Range_t
  * @brief The Lidar2DDeviceBase class.
  * This class has been designed to uniform the parsing of lidar yarp devices.
  */
-class YARP_dev_API Lidar2DDeviceBase: public yarp::dev::IRangefinder2D,
-                                      public yarp::dev::IPreciselyTimed
+class YARP_dev_API Lidar2DDeviceBase: public yarp::dev::IRangefinder2D
 {
-
 protected:
     //internal data
     yarp::sig::Vector     m_laser_data;
@@ -100,9 +98,6 @@ public:
     bool getScanLimits(double& min, double& max) override;
     bool getHorizontalResolution(double& step) override;
     bool getScanRate(double& rate) override;
-
-    //IPreciselyTimed interface
-    virtual  yarp::os::Stamp getLastInputStamp() override;
 
 private:
     //utility methods called internally by Lidar2DDeviceBase

@@ -9,7 +9,6 @@
 
 #include <yarp/os/Network.h>
 #include <yarp/os/BufferedPort.h>
-#include <yarp/dev/IPreciselyTimed.h>
 #include <yarp/dev/IFrameTransform.h>
 #include <yarp/dev/IFrameTransformClientControl.h>
 #include <yarp/dev/ControlBoardInterfaces.h>
@@ -17,6 +16,7 @@
 #include <yarp/sig/Vector.h>
 #include <yarp/os/Semaphore.h>
 #include <yarp/os/Time.h>
+#include <yarp/os/Stamp.h>
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/math/FrameTransform.h>
 #include <yarp/os/PeriodicThread.h>
@@ -117,13 +117,6 @@ public:
     bool open(yarp::os::Searchable& config) override;
     bool close() override;
     bool read(yarp::os::ConnectionReader& connection) override;
-
-    /* IPreciselyTimed methods */
-    /**
-    * Get the time stamp for the last read data
-    * @return last time stamp.
-    */
-    yarp::os::Stamp getLastInputStamp();
 
      bool     allFramesAsString(std::string &all_frames) override;
      bool     canTransform(const std::string &target_frame, const std::string &source_frame) override;
