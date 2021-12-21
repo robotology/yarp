@@ -1,10 +1,13 @@
-/**
-\page thrift_tutorial_simple Thrift IDL in YARP: simple tutorial
+Thrift IDL in YARP: simple tutorial                    {#thrift_tutorial_simple}
+===================================
+
+[TOC]
 
 This tutorial shows how to use the Apache Thrift Interface Definition Language
 (and relative compiler) to easily define RPC-based interfaces for YARP Modules.
 
-\section thrift_tutorial_simple_intro Introduction
+Introduction                                     {#thrift_tutorial_simple_intro}
+------------
 
 Apache Thrift allows to define service interfaces in a simple definition file.
 Taking that file as input, a compiler generates source code which handles the
@@ -13,12 +16,13 @@ This source code can therefore be used by a server that executes the commands
 and by clients that send requests to the server by means of simple function
 calls.
 
-\section thrift_tutorial_simple_thriftfile Step One: Interface Definition
+Step One: Interface Definition              {#thrift_tutorial_simple_thriftfile}
+------------------------------
 
 Let's assume that we want to create a new module that can receive commands on a
 RPC port to start/stop execution, and get/set some value. We can create a
-`.thrift` text file that defines a  \em Thrift \em service interface for our
-module like this:
+`.thrift` text file that defines a *Thrift* service interface for our module
+like this:
 
 ~~~{.thrift}
 #demo.thrift
@@ -37,7 +41,8 @@ and `bool` is a boolean value (true or false), one byte. Note that each
 argument of a function is associated to a unique, positive integer identifier.
 For a complete explanation of the Thrift IDL, please see \ref thrift_tutorial.
 
-\section sec_generation Step Two: Source code generation
+Step Two: Source code generation                               {#sec_generation}
+--------------------------------
 
 Now that we have our nice and clear interface definition, we want to generate
 the source code that provides this interface in YARPic terms, and implements the
@@ -68,11 +73,12 @@ yarp_idl_to_dir(INPUT_FILES demo.thrift
 ~~~
 
 We can now run CMake to set up an out-of-source tree build from command line:
-\verbatim
+
+```
 $ cd <where_we_put_demo.thrift_and_CMakeLists.txt>
 $ mkdir build && cd build
 $ cmake -D ALLOW_IDL_GENERATION=ON ../
-\endverbatim
+```
 
 The YarpIDL macro defines a CMake "advanced" option, ALLOW_IDL_GENERATION, which
 is by default set to OFF if generated code is already present in the desired
@@ -98,7 +104,8 @@ public:
 RPC communication, but there's no need to bother with it: all we need to care
 about is the interface!
 
-\section thrift_tutorial_simple_server Step Three: Interface Implementation
+Step Three: Interface Implementation            {#thrift_tutorial_simple_server}
+------------------------------------
 
 It is now time to provide an implementation for the functions we defined in the
 service interface. Let's create a `DemoServer.cpp` file in which:
@@ -158,7 +165,8 @@ int main(int argc, char *argv[])
 }
 ~~~
 
-\section thrift_tutorial_simple_client Client use
+Client use                                      {#thrift_tutorial_simple_client}
+----------
 
 The thirft engine generates all the required code for the client. Clients can
 directly invoke remote procedures on the server using a proxy object (generated
@@ -218,7 +226,8 @@ int main(int argc, char *argv[])
 }
 ~~~
 
-\section thrift_tutorial_simple_module Implementing the server as a RFModule
+Implementing the server as a RFModule           {#thrift_tutorial_simple_module}
+-------------------------------------
 
 A nicer altenative is to create a YARP RFModule that also implements the service
 interface:
@@ -309,13 +318,14 @@ int main(int argc, char *argv[])
 ~~~
 
 
-\section thrift_tutorial_simple_completex Complete example
+Complete example                             {#thrift_tutorial_simple_completex}
+----------------
 
 A complete example of Thrift code generation and server/client creation with
 CMake is available in `example/idl/thriftSimple`
 
 This is what we get when we launch server and client from command line (assuming
-a \em yarpserver is running, and we are in the "build" directory):
+a *yarpserver* is running, and we are in the "build" directory):
 
 <TABLE>
 <TR>
@@ -325,86 +335,86 @@ a \em yarpserver is running, and we are in the "build" directory):
 
 <TR>
 <TD VALIGN="top">
-\verbatim
+```
 $ ./demoClient --server /demoServerModule/cmd
 yarp: Port /demo/client active at tcp://10.255.36.53:10003
-\endverbatim
+```
 </TD>
 <TD VALIGN="top">
-\verbatim
+```
 $ ./demoServerModule
 ||| policy set to YARP_POLICY
 ||| YARP_POLICY:
       <snip>
 I know the answer!
 yarp: Port /demoServerModule/cmd active at tcp://10.255.36.53:10002
-\endverbatim
+```
 </TD>
 </TR>
 
 <TR>
 <TD VALIGN="top">
-\verbatim
+```
 yarp: Sending output from /demo/client to /demoServerModule/cmd using tcp
 Hey are you up and running?
 No? Well... start!
-\endverbatim
+```
 </TD>
 <TD VALIGN="top">
-\verbatim
+```
 yarp: Receiving input from /demo/client to /demoServerModule/cmd using tcp
 Indeed I am not running
 Starting!
 Indeed I am running
-\endverbatim
+```
 </TD>
 </TR>
 
 <TR>
 <TD VALIGN="top">
-\verbatim
+```
 Wonderful! I have a question for you... so, what's the answer??
 What?? 42?? Are you kidding?? It's definitely 43!!
 
-\endverbatim
+```
 </TD>
 <TD VALIGN="top">
-\verbatim
+```
 The answer is 42
 I'm adding one to 42. That's easy :)
 OMG are you serious? The answer is 43?!?
-\endverbatim
+```
 </TD>
 </TR>
 
 <TR>
 <TD VALIGN="top">
-\verbatim
+```
 Got it? So, repeat after me: the answer is ... 43! Great!
 Ok you can relax now, I'll leave you alone
 
-\endverbatim
+```
 </TD>
 <TD VALIGN="top">
-\verbatim
+```
 The answer is 43
 Stopping!
 
-\endverbatim
+```
 </TD>
 </TR>
 
 <TR>
 <TD VALIGN="top">
-\verbatim
+```
 Bye
 yarp: Removing output from /demo/client to /demoServerModule/cmd
-\endverbatim
+```
 </TD>
 <TD VALIGN="top">
-\verbatim
+```
 yarp: Removing input from /demo/client to /demoServerModule/cmd
-\endverbatim
+```
 </TD>
 </TR>
 
@@ -413,7 +423,8 @@ yarp: Removing input from /demo/client to /demoServerModule/cmd
 
 RPC calls can also be sent to the server from command line (note that commands
 with "_" in their name can be split):
-\verbatim
+
+```
 $ yarp rpc /demoServerModule/cmd
 get_answer
 Response: 42
@@ -431,6 +442,4 @@ stop
 Response: [ok]
 is_running
 Response: [fail]
-\endverbatim
-
-*/
+```
