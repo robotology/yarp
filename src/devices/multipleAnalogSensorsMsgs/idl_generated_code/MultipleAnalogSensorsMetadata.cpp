@@ -12,6 +12,8 @@
 
 #include <yarp/os/idl/WireTypes.h>
 
+#include <algorithm>
+
 // getMetadata helper class declaration
 class MultipleAnalogSensorsMetadata_getMetadata_helper :
         public yarp::os::Portable
@@ -139,7 +141,7 @@ bool MultipleAnalogSensorsMetadata_getMetadata_helper::Command::read(yarp::os::i
 
 bool MultipleAnalogSensorsMetadata_getMetadata_helper::Command::readTag(yarp::os::idl::WireReader& reader)
 {
-    std::string tag = reader.readTag();
+    std::string tag = reader.readTag(s_tag_len);
     if (reader.isError()) {
         return false;
     }
@@ -251,6 +253,9 @@ std::vector<std::string> MultipleAnalogSensorsMetadata::help(const std::string& 
 // read from ConnectionReader
 bool MultipleAnalogSensorsMetadata::read(yarp::os::ConnectionReader& connection)
 {
+    constexpr size_t max_tag_len = 1;
+    size_t tag_len = 1;
+
     yarp::os::idl::WireReader reader(connection);
     reader.expectAccept();
     if (!reader.readListHeader()) {
@@ -258,12 +263,12 @@ bool MultipleAnalogSensorsMetadata::read(yarp::os::ConnectionReader& connection)
         return false;
     }
 
-    std::string tag = reader.readTag();
+    std::string tag = reader.readTag(1);
     bool direct = (tag == "__direct__");
     if (direct) {
-        tag = reader.readTag();
+        tag = reader.readTag(1);
     }
-    while (!reader.isError()) {
+    while (tag_len <= max_tag_len && !reader.isError()) {
         if (tag == MultipleAnalogSensorsMetadata_getMetadata_helper::s_tag) {
             MultipleAnalogSensorsMetadata_getMetadata_helper helper;
             if (!helper.cmd.readArgs(reader)) {
@@ -312,11 +317,12 @@ bool MultipleAnalogSensorsMetadata::read(yarp::os::ConnectionReader& connection)
             reader.fail();
             return false;
         }
-        std::string next_tag = reader.readTag();
+        std::string next_tag = reader.readTag(1);
         if (next_tag.empty()) {
             break;
         }
         tag.append("_").append(next_tag);
+        tag_len = std::count(tag.begin(), tag.end(), '_') + 1;
     }
     return false;
 }

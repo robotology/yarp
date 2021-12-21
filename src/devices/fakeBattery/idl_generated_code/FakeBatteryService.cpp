@@ -12,6 +12,8 @@
 
 #include <yarp/os/idl/WireTypes.h>
 
+#include <algorithm>
+
 // setBatteryVoltage helper class declaration
 class FakeBatteryService_setBatteryVoltage_helper :
         public yarp::os::Portable
@@ -864,7 +866,7 @@ bool FakeBatteryService_setBatteryVoltage_helper::Command::read(yarp::os::idl::W
 
 bool FakeBatteryService_setBatteryVoltage_helper::Command::readTag(yarp::os::idl::WireReader& reader)
 {
-    std::string tag = reader.readTag();
+    std::string tag = reader.readTag(s_tag_len);
     if (reader.isError()) {
         return false;
     }
@@ -1004,7 +1006,7 @@ bool FakeBatteryService_setBatteryCurrent_helper::Command::read(yarp::os::idl::W
 
 bool FakeBatteryService_setBatteryCurrent_helper::Command::readTag(yarp::os::idl::WireReader& reader)
 {
-    std::string tag = reader.readTag();
+    std::string tag = reader.readTag(s_tag_len);
     if (reader.isError()) {
         return false;
     }
@@ -1144,7 +1146,7 @@ bool FakeBatteryService_setBatteryCharge_helper::Command::read(yarp::os::idl::Wi
 
 bool FakeBatteryService_setBatteryCharge_helper::Command::readTag(yarp::os::idl::WireReader& reader)
 {
-    std::string tag = reader.readTag();
+    std::string tag = reader.readTag(s_tag_len);
     if (reader.isError()) {
         return false;
     }
@@ -1284,7 +1286,7 @@ bool FakeBatteryService_setBatteryStatus_helper::Command::read(yarp::os::idl::Wi
 
 bool FakeBatteryService_setBatteryStatus_helper::Command::readTag(yarp::os::idl::WireReader& reader)
 {
-    std::string tag = reader.readTag();
+    std::string tag = reader.readTag(s_tag_len);
     if (reader.isError()) {
         return false;
     }
@@ -1426,7 +1428,7 @@ bool FakeBatteryService_setBatteryInfo_helper::Command::read(yarp::os::idl::Wire
 
 bool FakeBatteryService_setBatteryInfo_helper::Command::readTag(yarp::os::idl::WireReader& reader)
 {
-    std::string tag = reader.readTag();
+    std::string tag = reader.readTag(s_tag_len);
     if (reader.isError()) {
         return false;
     }
@@ -1566,7 +1568,7 @@ bool FakeBatteryService_setBatteryTemperature_helper::Command::read(yarp::os::id
 
 bool FakeBatteryService_setBatteryTemperature_helper::Command::readTag(yarp::os::idl::WireReader& reader)
 {
-    std::string tag = reader.readTag();
+    std::string tag = reader.readTag(s_tag_len);
     if (reader.isError()) {
         return false;
     }
@@ -1693,7 +1695,7 @@ bool FakeBatteryService_getBatteryVoltage_helper::Command::read(yarp::os::idl::W
 
 bool FakeBatteryService_getBatteryVoltage_helper::Command::readTag(yarp::os::idl::WireReader& reader)
 {
-    std::string tag = reader.readTag();
+    std::string tag = reader.readTag(s_tag_len);
     if (reader.isError()) {
         return false;
     }
@@ -1826,7 +1828,7 @@ bool FakeBatteryService_getBatteryCurrent_helper::Command::read(yarp::os::idl::W
 
 bool FakeBatteryService_getBatteryCurrent_helper::Command::readTag(yarp::os::idl::WireReader& reader)
 {
-    std::string tag = reader.readTag();
+    std::string tag = reader.readTag(s_tag_len);
     if (reader.isError()) {
         return false;
     }
@@ -1959,7 +1961,7 @@ bool FakeBatteryService_getBatteryCharge_helper::Command::read(yarp::os::idl::Wi
 
 bool FakeBatteryService_getBatteryCharge_helper::Command::readTag(yarp::os::idl::WireReader& reader)
 {
-    std::string tag = reader.readTag();
+    std::string tag = reader.readTag(s_tag_len);
     if (reader.isError()) {
         return false;
     }
@@ -2092,7 +2094,7 @@ bool FakeBatteryService_getBatteryStatus_helper::Command::read(yarp::os::idl::Wi
 
 bool FakeBatteryService_getBatteryStatus_helper::Command::readTag(yarp::os::idl::WireReader& reader)
 {
-    std::string tag = reader.readTag();
+    std::string tag = reader.readTag(s_tag_len);
     if (reader.isError()) {
         return false;
     }
@@ -2227,7 +2229,7 @@ bool FakeBatteryService_getBatteryStatusString_helper::Command::read(yarp::os::i
 
 bool FakeBatteryService_getBatteryStatusString_helper::Command::readTag(yarp::os::idl::WireReader& reader)
 {
-    std::string tag = reader.readTag();
+    std::string tag = reader.readTag(s_tag_len);
     if (reader.isError()) {
         return false;
     }
@@ -2360,7 +2362,7 @@ bool FakeBatteryService_getBatteryInfo_helper::Command::read(yarp::os::idl::Wire
 
 bool FakeBatteryService_getBatteryInfo_helper::Command::readTag(yarp::os::idl::WireReader& reader)
 {
-    std::string tag = reader.readTag();
+    std::string tag = reader.readTag(s_tag_len);
     if (reader.isError()) {
         return false;
     }
@@ -2493,7 +2495,7 @@ bool FakeBatteryService_getBatteryTemperature_helper::Command::read(yarp::os::id
 
 bool FakeBatteryService_getBatteryTemperature_helper::Command::readTag(yarp::os::idl::WireReader& reader)
 {
-    std::string tag = reader.readTag();
+    std::string tag = reader.readTag(s_tag_len);
     if (reader.isError()) {
         return false;
     }
@@ -2766,6 +2768,9 @@ std::vector<std::string> FakeBatteryService::help(const std::string& functionNam
 // read from ConnectionReader
 bool FakeBatteryService::read(yarp::os::ConnectionReader& connection)
 {
+    constexpr size_t max_tag_len = 1;
+    size_t tag_len = 1;
+
     yarp::os::idl::WireReader reader(connection);
     reader.expectAccept();
     if (!reader.readListHeader()) {
@@ -2773,12 +2778,12 @@ bool FakeBatteryService::read(yarp::os::ConnectionReader& connection)
         return false;
     }
 
-    std::string tag = reader.readTag();
+    std::string tag = reader.readTag(1);
     bool direct = (tag == "__direct__");
     if (direct) {
-        tag = reader.readTag();
+        tag = reader.readTag(1);
     }
-    while (!reader.isError()) {
+    while (tag_len <= max_tag_len && !reader.isError()) {
         if (tag == FakeBatteryService_setBatteryVoltage_helper::s_tag) {
             FakeBatteryService_setBatteryVoltage_helper helper;
             if (!helper.cmd.readArgs(reader)) {
@@ -3031,11 +3036,12 @@ bool FakeBatteryService::read(yarp::os::ConnectionReader& connection)
             reader.fail();
             return false;
         }
-        std::string next_tag = reader.readTag();
+        std::string next_tag = reader.readTag(1);
         if (next_tag.empty()) {
             break;
         }
         tag.append("_").append(next_tag);
+        tag_len = std::count(tag.begin(), tag.end(), '_') + 1;
     }
     return false;
 }

@@ -3527,6 +3527,20 @@ void t_yarp_generator::generate_service(t_service* tservice)
     f_cpp_ << '\n';
     f_cpp_ << "#include <yarp/os/idl/WireTypes.h>\n";
     f_cpp_ << '\n';
+    f_cpp_ << "#include <algorithm>\n";
+    f_cpp_ << '\n';
+
+    // Produce an error if a function starts with the same name as another one
+    for (const auto& f1 : tservice->get_functions()) {
+        for (const auto& f2 : tservice->get_functions()) {
+            if ((f1->get_name().rfind(f2->get_name() + '_', 0) == 0)) {
+                 f_cpp_ << "YARP_COMPILER_ERROR(\"'" << f1->get_name() << "' will never be called, since '" << f2->get_name() << "' starts with the same tag\")\n";
+            }
+        }
+        if ((f1->get_name().rfind("help_", 0) == 0)) {
+            f_cpp_ << "YARP_COMPILER_ERROR(\"'" << f1->get_name() << "' will never be called, since it starts with 'help_'\")\n";
+        }
+    }
 
     // Open namespace
     generate_namespace_open(f_h_, f_cpp_);
@@ -4023,7 +4037,7 @@ void t_yarp_generator::generate_service_helper_classes_impl_command_readtag(t_fu
     f_cpp_ << indent_cpp() << "{\n";
     indent_up_cpp();
     {
-        f_cpp_ << indent_cpp() << "std::string tag = reader.readTag();\n";
+        f_cpp_ << indent_cpp() << "std::string tag = reader.readTag(s_tag_len);\n";
         f_cpp_ << indent_cpp() << "if (reader.isError())" << inline_return_cpp("false");
         f_cpp_ << indent_cpp() << "if (tag != s_tag) {\n";
         indent_up_cpp();
@@ -4400,6 +4414,15 @@ void t_yarp_generator::generate_service_read(t_service* tservice, std::ostringst
     THRIFT_DEBUG_COMMENT(f_h_);
     THRIFT_DEBUG_COMMENT(f_cpp_);
 
+    const size_t max_tag_len = [tservice]() {
+        size_t max = 0;
+        for (const auto& function : tservice->get_functions()) {
+            const auto& fname = function->get_name();
+            max = std::max(static_cast<long>(max), std::count(fname.begin(), fname.end(), '_') + 1);
+        }
+        return max;
+    }();
+
     f_h_ << indent_h() << "// read from ConnectionReader\n";
     f_h_ << indent_h() << "bool read(yarp::os::ConnectionReader& connection) override;\n";
 
@@ -4408,6 +4431,10 @@ void t_yarp_generator::generate_service_read(t_service* tservice, std::ostringst
     f_cpp_ << indent_cpp() << "{\n";
     indent_up_cpp();
     {
+        f_cpp_ << indent_cpp() << "constexpr size_t max_tag_len = " << max_tag_len << ";\n";
+        f_cpp_ << indent_cpp() << "size_t tag_len = 1;\n";
+        f_cpp_ << '\n';
+
         f_cpp_ << indent_cpp() << "yarp::os::idl::WireReader reader(connection);\n";
         f_cpp_ << indent_cpp() << "reader.expectAccept();\n";
         f_cpp_ << indent_cpp() << "if (!reader.readListHeader()) {\n";
@@ -4421,16 +4448,16 @@ void t_yarp_generator::generate_service_read(t_service* tservice, std::ostringst
 
         f_cpp_ << '\n';
 
-        f_cpp_ << indent_cpp() << "std::string tag = reader.readTag();\n";
+        f_cpp_ << indent_cpp() << "std::string tag = reader.readTag(1);\n";
         f_cpp_ << indent_cpp() << "bool direct = (tag == \"__direct__\");\n";
         f_cpp_ << indent_cpp() << "if (direct) {\n";
         indent_up_cpp();
         {
-            f_cpp_ << indent_cpp() << "tag = reader.readTag();\n";
+            f_cpp_ << indent_cpp() << "tag = reader.readTag(1);\n";
         }
         indent_down_cpp();
         f_cpp_ << indent_cpp() << "}\n";
-        f_cpp_ << indent_cpp() << "while (!reader.isError()) {\n";
+        f_cpp_ << indent_cpp() << "while (tag_len <= max_tag_len && !reader.isError()) {\n";
         indent_up_cpp();
         {
             // TODO: use quick lookup, this is just a test
@@ -4532,7 +4559,7 @@ void t_yarp_generator::generate_service_read(t_service* tservice, std::ostringst
             indent_down_cpp();
             f_cpp_ << indent_cpp() << "}\n";
 
-            f_cpp_ << indent_cpp() << "std::string next_tag = reader.readTag();\n";
+            f_cpp_ << indent_cpp() << "std::string next_tag = reader.readTag(1);\n";
             f_cpp_ << indent_cpp() << "if (next_tag.empty()) {\n";
             indent_up_cpp();
             {
@@ -4541,6 +4568,7 @@ void t_yarp_generator::generate_service_read(t_service* tservice, std::ostringst
             indent_down_cpp();
             f_cpp_ << indent_cpp() << "}\n";
             f_cpp_ << indent_cpp() << "tag.append(\"_\").append(next_tag);\n";
+            f_cpp_ << indent_cpp() << "tag_len = std::count(tag.begin(), tag.end(), '_') + 1;\n";
         }
         indent_down_cpp();
         f_cpp_ << indent_cpp() << "}\n";

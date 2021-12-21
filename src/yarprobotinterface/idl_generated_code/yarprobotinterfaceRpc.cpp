@@ -12,6 +12,8 @@
 
 #include <yarp/os/idl/WireTypes.h>
 
+#include <algorithm>
+
 // get_phase helper class declaration
 class yarprobotinterfaceRpc_get_phase_helper :
         public yarp::os::Portable
@@ -500,7 +502,7 @@ bool yarprobotinterfaceRpc_get_phase_helper::Command::read(yarp::os::idl::WireRe
 
 bool yarprobotinterfaceRpc_get_phase_helper::Command::readTag(yarp::os::idl::WireReader& reader)
 {
-    std::string tag = reader.readTag();
+    std::string tag = reader.readTag(s_tag_len);
     if (reader.isError()) {
         return false;
     }
@@ -633,7 +635,7 @@ bool yarprobotinterfaceRpc_get_level_helper::Command::read(yarp::os::idl::WireRe
 
 bool yarprobotinterfaceRpc_get_level_helper::Command::readTag(yarp::os::idl::WireReader& reader)
 {
-    std::string tag = reader.readTag();
+    std::string tag = reader.readTag(s_tag_len);
     if (reader.isError()) {
         return false;
     }
@@ -766,7 +768,7 @@ bool yarprobotinterfaceRpc_get_robot_helper::Command::read(yarp::os::idl::WireRe
 
 bool yarprobotinterfaceRpc_get_robot_helper::Command::readTag(yarp::os::idl::WireReader& reader)
 {
-    std::string tag = reader.readTag();
+    std::string tag = reader.readTag(s_tag_len);
     if (reader.isError()) {
         return false;
     }
@@ -899,7 +901,7 @@ bool yarprobotinterfaceRpc_is_ready_helper::Command::read(yarp::os::idl::WireRea
 
 bool yarprobotinterfaceRpc_is_ready_helper::Command::readTag(yarp::os::idl::WireReader& reader)
 {
-    std::string tag = reader.readTag();
+    std::string tag = reader.readTag(s_tag_len);
     if (reader.isError()) {
         return false;
     }
@@ -1032,7 +1034,7 @@ bool yarprobotinterfaceRpc_quit_helper::Command::read(yarp::os::idl::WireReader&
 
 bool yarprobotinterfaceRpc_quit_helper::Command::readTag(yarp::os::idl::WireReader& reader)
 {
-    std::string tag = reader.readTag();
+    std::string tag = reader.readTag(s_tag_len);
     if (reader.isError()) {
         return false;
     }
@@ -1165,7 +1167,7 @@ bool yarprobotinterfaceRpc_bye_helper::Command::read(yarp::os::idl::WireReader& 
 
 bool yarprobotinterfaceRpc_bye_helper::Command::readTag(yarp::os::idl::WireReader& reader)
 {
-    std::string tag = reader.readTag();
+    std::string tag = reader.readTag(s_tag_len);
     if (reader.isError()) {
         return false;
     }
@@ -1298,7 +1300,7 @@ bool yarprobotinterfaceRpc_exit_helper::Command::read(yarp::os::idl::WireReader&
 
 bool yarprobotinterfaceRpc_exit_helper::Command::readTag(yarp::os::idl::WireReader& reader)
 {
-    std::string tag = reader.readTag();
+    std::string tag = reader.readTag(s_tag_len);
     if (reader.isError()) {
         return false;
     }
@@ -1500,6 +1502,9 @@ std::vector<std::string> yarprobotinterfaceRpc::help(const std::string& function
 // read from ConnectionReader
 bool yarprobotinterfaceRpc::read(yarp::os::ConnectionReader& connection)
 {
+    constexpr size_t max_tag_len = 2;
+    size_t tag_len = 1;
+
     yarp::os::idl::WireReader reader(connection);
     reader.expectAccept();
     if (!reader.readListHeader()) {
@@ -1507,12 +1512,12 @@ bool yarprobotinterfaceRpc::read(yarp::os::ConnectionReader& connection)
         return false;
     }
 
-    std::string tag = reader.readTag();
+    std::string tag = reader.readTag(1);
     bool direct = (tag == "__direct__");
     if (direct) {
-        tag = reader.readTag();
+        tag = reader.readTag(1);
     }
-    while (!reader.isError()) {
+    while (tag_len <= max_tag_len && !reader.isError()) {
         if (tag == yarprobotinterfaceRpc_get_phase_helper::s_tag) {
             yarprobotinterfaceRpc_get_phase_helper helper;
             if (!helper.cmd.readArgs(reader)) {
@@ -1651,11 +1656,12 @@ bool yarprobotinterfaceRpc::read(yarp::os::ConnectionReader& connection)
             reader.fail();
             return false;
         }
-        std::string next_tag = reader.readTag();
+        std::string next_tag = reader.readTag(1);
         if (next_tag.empty()) {
             break;
         }
         tag.append("_").append(next_tag);
+        tag_len = std::count(tag.begin(), tag.end(), '_') + 1;
     }
     return false;
 }

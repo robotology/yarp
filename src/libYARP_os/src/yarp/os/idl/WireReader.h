@@ -187,7 +187,7 @@ public:
 
     bool isError();
 
-    std::string readTag();
+    std::string readTag(size_t len = static_cast<size_t>(-1));
 
     void readListBegin(yarp::os::idl::WireState& nstate, std::uint32_t& len);
 

@@ -12,6 +12,8 @@
 
 #include <yarp/os/idl/WireTypes.h>
 
+#include <algorithm>
+
 // getTransformsRPC helper class declaration
 class FrameTransformStorageGetRPC_getTransformsRPC_helper :
         public yarp::os::Portable
@@ -137,7 +139,7 @@ bool FrameTransformStorageGetRPC_getTransformsRPC_helper::Command::read(yarp::os
 
 bool FrameTransformStorageGetRPC_getTransformsRPC_helper::Command::readTag(yarp::os::idl::WireReader& reader)
 {
-    std::string tag = reader.readTag();
+    std::string tag = reader.readTag(s_tag_len);
     if (reader.isError()) {
         return false;
     }
@@ -248,6 +250,9 @@ std::vector<std::string> FrameTransformStorageGetRPC::help(const std::string& fu
 // read from ConnectionReader
 bool FrameTransformStorageGetRPC::read(yarp::os::ConnectionReader& connection)
 {
+    constexpr size_t max_tag_len = 1;
+    size_t tag_len = 1;
+
     yarp::os::idl::WireReader reader(connection);
     reader.expectAccept();
     if (!reader.readListHeader()) {
@@ -255,12 +260,12 @@ bool FrameTransformStorageGetRPC::read(yarp::os::ConnectionReader& connection)
         return false;
     }
 
-    std::string tag = reader.readTag();
+    std::string tag = reader.readTag(1);
     bool direct = (tag == "__direct__");
     if (direct) {
-        tag = reader.readTag();
+        tag = reader.readTag(1);
     }
-    while (!reader.isError()) {
+    while (tag_len <= max_tag_len && !reader.isError()) {
         if (tag == FrameTransformStorageGetRPC_getTransformsRPC_helper::s_tag) {
             FrameTransformStorageGetRPC_getTransformsRPC_helper helper;
             if (!helper.cmd.readArgs(reader)) {
@@ -309,11 +314,12 @@ bool FrameTransformStorageGetRPC::read(yarp::os::ConnectionReader& connection)
             reader.fail();
             return false;
         }
-        std::string next_tag = reader.readTag();
+        std::string next_tag = reader.readTag(1);
         if (next_tag.empty()) {
             break;
         }
         tag.append("_").append(next_tag);
+        tag_len = std::count(tag.begin(), tag.end(), '_') + 1;
     }
     return false;
 }
