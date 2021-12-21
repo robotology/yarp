@@ -371,6 +371,10 @@ public:
     void generate_service_method(t_service* tservice, t_function* function, std::ostringstream&  f_h_, std::ostringstream& f_cpp_);
     void generate_service_help(t_service* tservice, std::ostringstream& f_h_, std::ostringstream& f_cpp_);
     void generate_service_read(t_service* tservice, std::ostringstream& f_h_, std::ostringstream& f_cpp_);
+    void generate_service_monitor(t_service* tservice, std::ostringstream& f_h_, std::ostringstream& f_cpp_);
+    void generate_service_monitor_create(t_service* tservice, std::ostringstream& f_h_, std::ostringstream& f_cpp_);
+    void generate_service_monitor_update(t_service* tservice, std::ostringstream& f_h_, std::ostringstream& f_cpp_);
+    void generate_service_monitor_updatereply(t_service* tservice, std::ostringstream& f_h_, std::ostringstream& f_cpp_);
 
     void generate_xception(t_struct* txception) override;
 };
@@ -3449,6 +3453,7 @@ void t_yarp_generator::generate_service(t_service* tservice)
 
     const auto& service_name = tservice->get_name();
     const auto& extends_service = tservice->get_extends();
+    const auto& annotations = tservice->annotations_;
 
     // Open header file
     std::string f_header_name = get_out_dir() + get_include_prefix(program_) + service_name + ".h";
@@ -3476,9 +3481,22 @@ void t_yarp_generator::generate_service(t_service* tservice)
     f_h_ << "#define YARP_THRIFT_GENERATOR_SERVICE_" << upcase_string(service_name) << "_H\n";
     f_h_ << '\n';
 
+    // Add monitor class, if not disabled
+    bool monitor_enabled = false;
+    if (annotations.find("yarp.monitor") != annotations.end()) {
+        if (annotations.at("yarp.monitor") == "true") {
+            monitor_enabled = true;
+        }
+    }
+
     // Add includes to .h file
     f_h_ << "#include <yarp/os/Wire.h>\n";
     f_h_ << "#include <yarp/os/idl/WireTypes.h>\n";
+    if (monitor_enabled) {
+        f_h_ << "#include <yarp/os/MonitorObject.h>\n";
+        f_h_ << "#include <yarp/os/Port.h>\n";
+        f_h_ << "#include <yarp/os/Things.h>\n";
+    }
 
     if (need_common_) {
         f_h_ << "#include <" << get_include_prefix(program_) << program_->get_name() << "_common.h>" << '\n';
@@ -3508,6 +3526,13 @@ void t_yarp_generator::generate_service(t_service* tservice)
     // Add includes to .cpp file
     f_cpp_ << "#include <" << get_include_prefix(tservice->get_program()) + service_name + ".h>" << '\n';
     f_cpp_ << '\n';
+    if (monitor_enabled) {
+        f_cpp_ << "#include <yarp/os/LogComponent.h>\n";
+        f_cpp_ << "#include <yarp/os/LogStream.h>\n";
+        f_cpp_ << "#include <yarp/os/SystemClock.h>\n";
+        f_cpp_ << "#include <yarp/os/CommandBottle.h>\n";
+        f_cpp_ << "#include <map>\n";
+    }
     f_cpp_ << "#include <yarp/os/idl/WireTypes.h>\n";
     f_cpp_ << '\n';
     f_cpp_ << "#include <algorithm>\n";
@@ -3551,6 +3576,12 @@ void t_yarp_generator::generate_service(t_service* tservice)
 
     generate_service_help(tservice, f_h_, f_cpp_);
     generate_service_read(tservice, f_h_, f_cpp_);
+
+    if (monitor_enabled) {
+        f_h_ << '\n';
+        f_cpp_ << '\n';
+        generate_service_monitor(tservice, f_h_, f_cpp_);
+    }
 
     indent_down_h();
 
@@ -4232,7 +4263,7 @@ void t_yarp_generator::generate_service_helper_classes_impl_call(t_function* fun
     f_cpp_ << '\n';
 }
 
-void t_yarp_generator::generate_service_constructor(t_service* tservice, std::ostringstream&  f_h_, std::ostringstream& f_cpp_)
+void t_yarp_generator::generate_service_constructor(t_service* /*tservice*/, std::ostringstream&  f_h_, std::ostringstream& f_cpp_)
 {
     THRIFT_DEBUG_COMMENT(f_h_);
     THRIFT_DEBUG_COMMENT(f_cpp_);
@@ -4257,7 +4288,7 @@ void t_yarp_generator::generate_service_constructor(t_service* tservice, std::os
     assert(indent_count_cpp() == 0);
 }
 
-void t_yarp_generator::generate_service_method(t_service* tservice, t_function* function, std::ostringstream&  f_h_, std::ostringstream& f_cpp_)
+void t_yarp_generator::generate_service_method(t_service* /*tservice*/, t_function* function, std::ostringstream&  f_h_, std::ostringstream& f_cpp_)
 {
     THRIFT_DEBUG_COMMENT(f_h_);
     THRIFT_DEBUG_COMMENT(f_cpp_);
@@ -4564,6 +4595,340 @@ void t_yarp_generator::generate_service_read(t_service* tservice, std::ostringst
     assert(indent_count_h() == 1);
     assert(indent_count_cpp() == 0);
 }
+
+/******************************************************************************/
+// BEGIN generate_service_monitor
+
+void t_yarp_generator::generate_service_monitor(t_service* tservice, std::ostringstream& f_h_, std::ostringstream& f_cpp_)
+{
+    THRIFT_DEBUG_COMMENT(f_h_);
+    THRIFT_DEBUG_COMMENT(f_cpp_);
+
+    const auto& name = tservice->get_name();
+    const auto log_component = name + "_MONITOR";
+//     const auto& members = tservice->get_members();
+
+    std::string ns = program_->get_namespace("yarp");
+    if (ns.empty()) {
+        ns = "yarp.thrift";
+    }
+
+    f_cpp_ << indent_cpp() << "// Monitor: log component\n";
+    f_cpp_ << indent_cpp() << "namespace {\n";
+    f_cpp_ << indent_cpp() << "YARP_LOG_COMPONENT(" << log_component << ",\n";
+    f_cpp_ << indent_cpp() << "                   \"" << ns << ".monitor." << name << "\",\n";
+    f_cpp_ << indent_cpp() << "                   yarp::os::Log::minimumPrintLevel(),\n";
+    f_cpp_ << indent_cpp() << "                   yarp::os::Log::LogTypeReserved,\n";
+    f_cpp_ << indent_cpp() << "                   yarp::os::Log::printCallback(),\n";
+    f_cpp_ << indent_cpp() << "                   nullptr)\n";
+    f_cpp_ << '\n';
+
+    f_cpp_ << "bool split(const std::string &s, std::map<std::string, std::string>& parameters) {\n";
+    indent_up_cpp();
+    {
+        f_cpp_ << indent_cpp() << "std::istringstream iss(s);\n";
+        f_cpp_ << indent_cpp() << "std::string item;\n";
+        f_cpp_ << indent_cpp() << "while (std::getline(iss, item, '+')) {\n";
+        indent_up_cpp();
+        {
+            f_cpp_ << indent_cpp() << "const auto point = item.find('.');\n";
+            f_cpp_ << indent_cpp() << "parameters[item.substr(0, point)] = item.substr(point + 1);\n";
+        }
+        indent_down_cpp();
+        f_cpp_ << indent_cpp() << "}\n";
+        f_cpp_ << indent_cpp() << "return true;\n";
+    }
+    indent_down_cpp();
+    f_cpp_ << "}\n";
+    f_cpp_ << "} // namespace\n";
+    f_cpp_ << '\n';
+
+    f_h_ << indent_h() << "// Monitor: class declaration\n";
+    f_h_ << indent_h() << "class Monitor :\n";
+    f_h_ << indent_initializer_h() << "public yarp::os::MonitorObject\n";
+    f_h_ << indent_h() << "{\n";
+    indent_up_h();
+    {
+        // Public members
+        f_h_ << indent_access_specifier_h() << "public:\n";
+        f_h_ << indent_h() << "bool create(const yarp::os::Property& options) override;\n";
+        f_h_ << indent_h() << "yarp::os::Things& update(yarp::os::Things& thing) override;\n";
+        f_h_ << indent_h() << "yarp::os::Things& updateReply(yarp::os::Things& thing) override;\n";
+        f_h_ << '\n';
+
+        // Private members
+        f_h_ << indent_access_specifier_h() << "private:\n";
+        f_h_ << indent_h() << "bool sender;\n";
+        f_h_ << indent_h() << "std::string source;\n";
+        f_h_ << indent_h() << "std::string destination;\n";
+        f_h_ << indent_h() << "yarp::os::Port port;\n";
+    }
+    indent_down_h();
+    f_h_ << indent_h() << "};\n";
+    f_h_ << '\n';
+
+    generate_service_monitor_create(tservice, f_h_, f_cpp_);
+    generate_service_monitor_update(tservice, f_h_, f_cpp_);
+    generate_service_monitor_updatereply(tservice, f_h_, f_cpp_);
+
+    assert(indent_count_h() == 1);
+    assert(indent_count_cpp() == 0);
+}
+
+
+void t_yarp_generator::generate_service_monitor_create(t_service* tservice, std::ostringstream& f_h_, std::ostringstream& f_cpp_)
+{
+    THRIFT_DEBUG_COMMENT(f_h_);
+    THRIFT_DEBUG_COMMENT(f_cpp_);
+
+    const auto& name = tservice->get_name();
+    const auto log_component = name + "_MONITOR";
+
+
+    f_cpp_ << indent_cpp() << "// Monitor: create\n";
+    f_cpp_ << indent_cpp() << "bool " << name << "::Monitor::create(const yarp::os::Property& options)\n";
+    f_cpp_ << indent_cpp() << "{\n";
+    indent_up_cpp();
+    {
+        f_cpp_ << indent_cpp() << "sender = options.find(\"sender_side\").asBool();\n";
+        f_cpp_ << indent_cpp() << "source = options.find(\"source\").asString();\n";
+        f_cpp_ << indent_cpp() << "destination = options.find(\"destination\").asString();\n";
+        f_cpp_ << indent_cpp() << "const std::string source_port = (sender ? source : destination) + \"/monitor\";\n";
+
+        f_cpp_ << indent_cpp() << "// Check the 'monitor' parameter\n";
+        f_cpp_ << indent_cpp() << "const std::string carrier = options.find(\"carrier\").asString();\n";
+        f_cpp_ << indent_cpp() << "std::map<std::string, std::string> parameters;\n";
+        f_cpp_ << indent_cpp() << "if (!split(carrier, parameters)) {\n";
+        indent_up_cpp();
+        {
+            f_cpp_ << indent_cpp() << "yCError(" << log_component << ", \"Error parsing the parameters.\");\n";
+            f_cpp_ << indent_cpp() << "return false;\n";
+        }
+        indent_down_cpp();
+        f_cpp_ << indent_cpp() << "}\n";
+        f_cpp_ << indent_cpp() << "const std::string monitor_port = ((parameters.find(\"monitor\") != parameters.end()) ? parameters[\"monitor\"] : \"/monitor\");\n";
+        f_cpp_ << '\n';
+        f_cpp_ << indent_cpp() << "if (!sender) {\n";
+        indent_up_cpp();
+        {
+            f_cpp_ << indent_cpp() << "yCError(" << log_component << ", \"Attaching on receiver side is not supported yet.\");\n";
+            f_cpp_ << indent_cpp() << "return false;\n";
+        }
+        indent_down_cpp();
+        f_cpp_ << indent_cpp() << "}\n";
+
+        f_cpp_ << indent_cpp() << "if (!port.openFake(source_port)) {\n";
+        indent_up_cpp();
+        {
+            f_cpp_ << indent_cpp() << "yCError(" << log_component << ", \"Could not open port %s.\", source_port.c_str());\n";
+            f_cpp_ << indent_cpp() << "return false;\n";
+        }
+        indent_down_cpp();
+        f_cpp_ << indent_cpp() << "}\n";
+        f_cpp_ << indent_cpp() << "if (!port.addOutput(monitor_port)) {\n";
+        indent_up_cpp();
+        {
+            f_cpp_ << indent_cpp() << "yCError(" << log_component << ", \"Could not connect to port %s.\", monitor_port.c_str());\n";
+            f_cpp_ << indent_cpp() << "return false;\n";
+        }
+        indent_down_cpp();
+        f_cpp_ << indent_cpp() << "}\n";
+        f_cpp_ << indent_cpp() << "return true;\n";
+    }
+    indent_down_cpp();
+    f_cpp_ << indent_cpp() << "}\n";
+    f_cpp_ << '\n';
+
+    assert(indent_count_h() == 1);
+    assert(indent_count_cpp() == 0);
+}
+
+void t_yarp_generator::generate_service_monitor_update(t_service* tservice, std::ostringstream& f_h_, std::ostringstream& f_cpp_)
+{
+    THRIFT_DEBUG_COMMENT(f_h_);
+    THRIFT_DEBUG_COMMENT(f_cpp_);
+
+    const auto& name = tservice->get_name();
+    const auto log_component = name + "_MONITOR";
+
+
+    f_cpp_ << indent_cpp() << "// Monitor: update\n";
+    f_cpp_ << indent_cpp() << "yarp::os::Things& " << name << "::Monitor::update(yarp::os::Things& thing)\n";
+    f_cpp_ << indent_cpp() << "{\n";
+    indent_up_cpp();
+    {
+        f_cpp_ << indent_cpp() << "yarp::os::Bottle msg;\n";
+        f_cpp_ << indent_cpp() << "msg.addFloat64(yarp::os::SystemClock::nowSystem());\n";
+        f_cpp_ << indent_cpp() << "msg.addString(source);\n";
+        f_cpp_ << indent_cpp() << "msg.addString(destination);\n";
+        f_cpp_ << indent_cpp() << "msg.addString(\"command\");\n";
+//         f_cpp_ << indent_cpp() << "msg.addVocab32(sender ? '1' : 0);\n"; // NOTE: Check bool definition in Storable
+        f_cpp_ << indent_cpp() << "msg.addString(sender ? \"client\" : \"server\");\n";
+        f_cpp_ << indent_cpp() << "msg.addString(\"" << name << "\");\n";
+        f_cpp_ << indent_cpp() << "auto& bcmd = msg.addList();\n";
+        f_cpp_ << indent_cpp() << "auto& bargs [[maybe_unused]] = msg.addList();\n";
+        f_cpp_ << indent_cpp() << "auto& breply [[maybe_unused]] = msg.addList();\n";
+        f_cpp_ << '\n';
+
+        f_cpp_ << indent_cpp();
+        bool first = true;
+        for (const auto& function : tservice->get_functions()) {
+            const auto& fname = function->get_name();
+            const auto& returntype = function->get_returntype();
+            const auto helper_class = std::string{service_name_ + "_" + fname + "_helper"};
+            auto returnfield = t_field{returntype, "m_return_helper"};
+
+            if (!first) {
+                f_cpp_ << " else ";
+            }
+            first = false;
+
+            f_cpp_ << "if (const auto* cmd = thing.cast_as<" << helper_class << ">()) {\n";
+            indent_up_cpp();
+            {
+                f_cpp_ << indent_cpp() << "bcmd.addString(" << helper_class << "::s_tag);\n";
+                f_cpp_ << indent_cpp() << "yarp::os::Portable::copyPortable(cmd->cmd, bargs);\n";
+            }
+            indent_down_cpp();
+            f_cpp_ << indent_cpp() << "}";
+        }
+
+        // RPC Client is not using the thrift client. Probably yarp rpc or
+        // something custom rpc client
+
+        f_cpp_ << " else if (const auto* reply = thing.cast_as<yarp::os::CommandBottle>()) {\n";
+        indent_up_cpp();
+        {
+            f_cpp_ << indent_cpp() << "bcmd.addString(reply->cmd.get(0).toString());\n";
+            f_cpp_ << indent_cpp() << "yarp::os::Portable::copyPortable(reply->cmd, bargs);\n";
+        }
+        indent_down_cpp();
+        f_cpp_ << indent_cpp() << "}";
+
+        f_cpp_ << " else if (const auto* cmd = thing.cast_as<yarp::os::Bottle>()) {\n";
+        indent_up_cpp();
+        {
+            f_cpp_ << indent_cpp() << "bcmd.addString(cmd->get(0).toString());\n";
+            f_cpp_ << indent_cpp() << "yarp::os::Portable::copyPortable(*cmd, bargs);\n";
+        }
+        indent_down_cpp();
+        f_cpp_ << indent_cpp() << "}";
+
+        f_cpp_ << " else {\n";
+        indent_up_cpp();
+        {
+            f_cpp_ << indent_cpp() << "yCWarning(" << log_component << ") << \"Sending unknown command\";\n";
+            f_cpp_ << indent_cpp() << "bcmd.addString(\"[unknown]\");\n";
+        }
+        indent_down_cpp();
+        f_cpp_ << indent_cpp() << "}\n";
+
+        f_cpp_ << indent_cpp() << "yCDebug(" << log_component << ", \"Writing: %s\", msg.toString().c_str());\n";
+        f_cpp_ << indent_cpp() << "port.write(msg);\n";
+        f_cpp_ << indent_cpp() << "return thing;\n";
+    }
+    indent_down_cpp();
+    f_cpp_ << indent_cpp() << "}\n";
+    f_cpp_ << '\n';
+
+    assert(indent_count_h() == 1);
+    assert(indent_count_cpp() == 0);
+}
+
+void t_yarp_generator::generate_service_monitor_updatereply(t_service* tservice, std::ostringstream& f_h_, std::ostringstream& f_cpp_)
+{
+    THRIFT_DEBUG_COMMENT(f_h_);
+    THRIFT_DEBUG_COMMENT(f_cpp_);
+
+    const auto& name = tservice->get_name();
+    const auto log_component = name + "_MONITOR";
+
+
+    f_cpp_ << indent_cpp() << "// Monitor: updateReply\n";
+    f_cpp_ << indent_cpp() << "yarp::os::Things& " << name << "::Monitor::updateReply(yarp::os::Things& thing)\n";
+    f_cpp_ << indent_cpp() << "{\n";
+    indent_up_cpp();
+    {
+        f_cpp_ << indent_cpp() << "yarp::os::Bottle msg;\n";
+        f_cpp_ << indent_cpp() << "msg.addFloat64(yarp::os::SystemClock::nowSystem());\n";
+        f_cpp_ << indent_cpp() << "msg.addString(source);\n";
+        f_cpp_ << indent_cpp() << "msg.addString(destination);\n";
+        f_cpp_ << indent_cpp() << "msg.addString(\"reply\");\n";
+//         f_cpp_ << indent_cpp() << "msg.addVocab32(sender ? '1' : 0);\n"; // NOTE: Check bool definition in Storable
+        f_cpp_ << indent_cpp() << "msg.addString(sender ? \"rpc client\" : \"rpc server\");\n";
+        f_cpp_ << indent_cpp() << "msg.addString(\"" << name << "\");\n";
+        f_cpp_ << indent_cpp() << "auto& bcmd = msg.addList();\n";
+        f_cpp_ << indent_cpp() << "auto& bargs [[maybe_unused]] = msg.addList();\n";
+        f_cpp_ << indent_cpp() << "auto& breply [[maybe_unused]] = msg.addList();\n";
+        f_cpp_ << '\n';
+
+        f_cpp_ << indent_cpp();
+        bool first = true;
+        for (const auto& function : tservice->get_functions()) {
+            const auto& fname = function->get_name();
+            const auto& returntype = function->get_returntype();
+            const auto helper_class = std::string{service_name_ + "_" + fname + "_helper"};
+            auto returnfield = t_field{returntype, "m_return_helper"};
+
+            if (!first) {
+                f_cpp_ << " else ";
+            }
+            first = false;
+
+            f_cpp_ << "if (const auto* reply = thing.cast_as<" << helper_class << ">()) {\n";
+            indent_up_cpp();
+            {
+                f_cpp_ << indent_cpp() << "bcmd.addString(" << helper_class << "::s_tag);\n";
+                f_cpp_ << indent_cpp() << "yarp::os::Portable::copyPortable(reply->cmd, bargs);\n";
+                f_cpp_ << indent_cpp() << "yarp::os::Portable::copyPortable(reply->reply, breply);\n";
+            }
+            indent_down_cpp();
+            f_cpp_ << indent_cpp() << "}";
+        }
+
+        // RPC Client is not using the thrift client. Probably yarp rpc or
+        // something custom rpc client
+
+        f_cpp_ << " else if (const auto* reply = thing.cast_as<yarp::os::CommandBottle>()) {\n";
+        indent_up_cpp();
+        {
+            f_cpp_ << indent_cpp() << "bcmd.addString(reply->cmd.get(0).toString());\n";
+            f_cpp_ << indent_cpp() << "yarp::os::Portable::copyPortable(reply->cmd, bargs);\n";
+            f_cpp_ << indent_cpp() << "yarp::os::Portable::copyPortable(reply->reply, breply);\n";
+        }
+        indent_down_cpp();
+        f_cpp_ << indent_cpp() << "}";
+
+        f_cpp_ << " else if (const auto* reply = thing.cast_as<yarp::os::Bottle>()) {\n";
+        indent_up_cpp();
+        {
+            f_cpp_ << indent_cpp() << "yarp::os::Portable::copyPortable(*reply, breply);\n";
+        }
+        indent_down_cpp();
+        f_cpp_ << indent_cpp() << "}";
+
+        f_cpp_ << " else {\n";
+        indent_up_cpp();
+        {
+            f_cpp_ << indent_cpp() << "yCWarning(" << log_component << ") << \"Received unknown reply\";\n";
+            f_cpp_ << indent_cpp() << "bcmd.addString(\"[unknown]\");\n";
+        }
+        indent_down_cpp();
+        f_cpp_ << indent_cpp() << "}\n";
+
+        f_cpp_ << indent_cpp() << "yCDebug(" << log_component << ", \"Writing: %s\", msg.toString().c_str());\n";
+        f_cpp_ << indent_cpp() << "port.write(msg);\n";
+        f_cpp_ << indent_cpp() << "return thing;\n";    }
+    indent_down_cpp();
+    f_cpp_ << indent_cpp() << "}\n";
+
+    assert(indent_count_h() == 1);
+    assert(indent_count_cpp() == 0);
+}
+
+
+// END generate_service_monitor
+/******************************************************************************/
 
 // END generate_service
 /******************************************************************************/
