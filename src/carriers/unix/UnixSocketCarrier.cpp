@@ -159,7 +159,7 @@ bool UnixSocketCarrier::sendAck(ConnectionState& proto)
 bool UnixSocketCarrier::expectAck(ConnectionState& proto)
 {
     if (requireAckFlag) {
-        std::array<char, ack_string_size> buf;
+        std::array<char, ack_string_size> buf {'\0', '\0', '\0', '\0'};
         Bytes ack(buf.data(), buf.size());
         yarp::conf::ssize_t hdr = proto.is().readFull(ack);
         if (static_cast<size_t>(hdr) != ack.length()) {

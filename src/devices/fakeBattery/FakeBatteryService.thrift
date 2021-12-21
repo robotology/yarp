@@ -25,6 +25,4 @@ service FakeBatteryService
     string getBatteryStatusString();
     string getBatteryInfo();
     double getBatteryTemperature();
-} (
-    yarp.monitor = "true"
-)
+}
