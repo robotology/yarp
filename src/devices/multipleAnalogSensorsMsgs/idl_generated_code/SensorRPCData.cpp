@@ -143,16 +143,16 @@ bool SensorRPCData::read_ThreeAxisGyroscopes(yarp::os::idl::WireReader& reader)
         return false;
     }
     ThreeAxisGyroscopes.clear();
-    uint32_t _size12;
-    yarp::os::idl::WireState _etype15;
-    reader.readListBegin(_etype15, _size12);
-    ThreeAxisGyroscopes.resize(_size12);
-    for (size_t _i16 = 0; _i16 < _size12; ++_i16) {
+    uint32_t _size;
+    yarp::os::idl::WireState _etype;
+    reader.readListBegin(_etype, _size);
+    ThreeAxisGyroscopes.resize(_size);
+    for (size_t _i = 0; _i < _size; ++_i) {
         if (reader.noMore()) {
             reader.fail();
             return false;
         }
-        if (!reader.readNested(ThreeAxisGyroscopes[_i16])) {
+        if (!reader.readNested(ThreeAxisGyroscopes[_i])) {
             reader.fail();
             return false;
         }
@@ -167,8 +167,8 @@ bool SensorRPCData::write_ThreeAxisGyroscopes(const yarp::os::idl::WireWriter& w
     if (!writer.writeListBegin(BOTTLE_TAG_LIST, static_cast<uint32_t>(ThreeAxisGyroscopes.size()))) {
         return false;
     }
-    for (const auto& _item17 : ThreeAxisGyroscopes) {
-        if (!writer.writeNested(_item17)) {
+    for (const auto& _item : ThreeAxisGyroscopes) {
+        if (!writer.writeNested(_item)) {
             return false;
         }
     }
@@ -186,16 +186,16 @@ bool SensorRPCData::nested_read_ThreeAxisGyroscopes(yarp::os::idl::WireReader& r
         return false;
     }
     ThreeAxisGyroscopes.clear();
-    uint32_t _size18;
-    yarp::os::idl::WireState _etype21;
-    reader.readListBegin(_etype21, _size18);
-    ThreeAxisGyroscopes.resize(_size18);
-    for (size_t _i22 = 0; _i22 < _size18; ++_i22) {
+    uint32_t _size;
+    yarp::os::idl::WireState _etype;
+    reader.readListBegin(_etype, _size);
+    ThreeAxisGyroscopes.resize(_size);
+    for (size_t _i = 0; _i < _size; ++_i) {
         if (reader.noMore()) {
             reader.fail();
             return false;
         }
-        if (!reader.readNested(ThreeAxisGyroscopes[_i22])) {
+        if (!reader.readNested(ThreeAxisGyroscopes[_i])) {
             reader.fail();
             return false;
         }
@@ -210,8 +210,8 @@ bool SensorRPCData::nested_write_ThreeAxisGyroscopes(const yarp::os::idl::WireWr
     if (!writer.writeListBegin(BOTTLE_TAG_LIST, static_cast<uint32_t>(ThreeAxisGyroscopes.size()))) {
         return false;
     }
-    for (const auto& _item23 : ThreeAxisGyroscopes) {
-        if (!writer.writeNested(_item23)) {
+    for (const auto& _item : ThreeAxisGyroscopes) {
+        if (!writer.writeNested(_item)) {
             return false;
         }
     }
@@ -229,16 +229,16 @@ bool SensorRPCData::read_ThreeAxisLinearAccelerometers(yarp::os::idl::WireReader
         return false;
     }
     ThreeAxisLinearAccelerometers.clear();
-    uint32_t _size24;
-    yarp::os::idl::WireState _etype27;
-    reader.readListBegin(_etype27, _size24);
-    ThreeAxisLinearAccelerometers.resize(_size24);
-    for (size_t _i28 = 0; _i28 < _size24; ++_i28) {
+    uint32_t _size;
+    yarp::os::idl::WireState _etype;
+    reader.readListBegin(_etype, _size);
+    ThreeAxisLinearAccelerometers.resize(_size);
+    for (size_t _i = 0; _i < _size; ++_i) {
         if (reader.noMore()) {
             reader.fail();
             return false;
         }
-        if (!reader.readNested(ThreeAxisLinearAccelerometers[_i28])) {
+        if (!reader.readNested(ThreeAxisLinearAccelerometers[_i])) {
             reader.fail();
             return false;
         }
@@ -253,8 +253,8 @@ bool SensorRPCData::write_ThreeAxisLinearAccelerometers(const yarp::os::idl::Wir
     if (!writer.writeListBegin(BOTTLE_TAG_LIST, static_cast<uint32_t>(ThreeAxisLinearAccelerometers.size()))) {
         return false;
     }
-    for (const auto& _item29 : ThreeAxisLinearAccelerometers) {
-        if (!writer.writeNested(_item29)) {
+    for (const auto& _item : ThreeAxisLinearAccelerometers) {
+        if (!writer.writeNested(_item)) {
             return false;
         }
     }
@@ -272,16 +272,16 @@ bool SensorRPCData::nested_read_ThreeAxisLinearAccelerometers(yarp::os::idl::Wir
         return false;
     }
     ThreeAxisLinearAccelerometers.clear();
-    uint32_t _size30;
-    yarp::os::idl::WireState _etype33;
-    reader.readListBegin(_etype33, _size30);
-    ThreeAxisLinearAccelerometers.resize(_size30);
-    for (size_t _i34 = 0; _i34 < _size30; ++_i34) {
+    uint32_t _size;
+    yarp::os::idl::WireState _etype;
+    reader.readListBegin(_etype, _size);
+    ThreeAxisLinearAccelerometers.resize(_size);
+    for (size_t _i = 0; _i < _size; ++_i) {
         if (reader.noMore()) {
             reader.fail();
             return false;
         }
-        if (!reader.readNested(ThreeAxisLinearAccelerometers[_i34])) {
+        if (!reader.readNested(ThreeAxisLinearAccelerometers[_i])) {
             reader.fail();
             return false;
         }
@@ -296,8 +296,8 @@ bool SensorRPCData::nested_write_ThreeAxisLinearAccelerometers(const yarp::os::i
     if (!writer.writeListBegin(BOTTLE_TAG_LIST, static_cast<uint32_t>(ThreeAxisLinearAccelerometers.size()))) {
         return false;
     }
-    for (const auto& _item35 : ThreeAxisLinearAccelerometers) {
-        if (!writer.writeNested(_item35)) {
+    for (const auto& _item : ThreeAxisLinearAccelerometers) {
+        if (!writer.writeNested(_item)) {
             return false;
         }
     }
@@ -315,16 +315,16 @@ bool SensorRPCData::read_ThreeAxisMagnetometers(yarp::os::idl::WireReader& reade
         return false;
     }
     ThreeAxisMagnetometers.clear();
-    uint32_t _size36;
-    yarp::os::idl::WireState _etype39;
-    reader.readListBegin(_etype39, _size36);
-    ThreeAxisMagnetometers.resize(_size36);
-    for (size_t _i40 = 0; _i40 < _size36; ++_i40) {
+    uint32_t _size;
+    yarp::os::idl::WireState _etype;
+    reader.readListBegin(_etype, _size);
+    ThreeAxisMagnetometers.resize(_size);
+    for (size_t _i = 0; _i < _size; ++_i) {
         if (reader.noMore()) {
             reader.fail();
             return false;
         }
-        if (!reader.readNested(ThreeAxisMagnetometers[_i40])) {
+        if (!reader.readNested(ThreeAxisMagnetometers[_i])) {
             reader.fail();
             return false;
         }
@@ -339,8 +339,8 @@ bool SensorRPCData::write_ThreeAxisMagnetometers(const yarp::os::idl::WireWriter
     if (!writer.writeListBegin(BOTTLE_TAG_LIST, static_cast<uint32_t>(ThreeAxisMagnetometers.size()))) {
         return false;
     }
-    for (const auto& _item41 : ThreeAxisMagnetometers) {
-        if (!writer.writeNested(_item41)) {
+    for (const auto& _item : ThreeAxisMagnetometers) {
+        if (!writer.writeNested(_item)) {
             return false;
         }
     }
@@ -358,16 +358,16 @@ bool SensorRPCData::nested_read_ThreeAxisMagnetometers(yarp::os::idl::WireReader
         return false;
     }
     ThreeAxisMagnetometers.clear();
-    uint32_t _size42;
-    yarp::os::idl::WireState _etype45;
-    reader.readListBegin(_etype45, _size42);
-    ThreeAxisMagnetometers.resize(_size42);
-    for (size_t _i46 = 0; _i46 < _size42; ++_i46) {
+    uint32_t _size;
+    yarp::os::idl::WireState _etype;
+    reader.readListBegin(_etype, _size);
+    ThreeAxisMagnetometers.resize(_size);
+    for (size_t _i = 0; _i < _size; ++_i) {
         if (reader.noMore()) {
             reader.fail();
             return false;
         }
-        if (!reader.readNested(ThreeAxisMagnetometers[_i46])) {
+        if (!reader.readNested(ThreeAxisMagnetometers[_i])) {
             reader.fail();
             return false;
         }
@@ -382,8 +382,8 @@ bool SensorRPCData::nested_write_ThreeAxisMagnetometers(const yarp::os::idl::Wir
     if (!writer.writeListBegin(BOTTLE_TAG_LIST, static_cast<uint32_t>(ThreeAxisMagnetometers.size()))) {
         return false;
     }
-    for (const auto& _item47 : ThreeAxisMagnetometers) {
-        if (!writer.writeNested(_item47)) {
+    for (const auto& _item : ThreeAxisMagnetometers) {
+        if (!writer.writeNested(_item)) {
             return false;
         }
     }
@@ -401,16 +401,16 @@ bool SensorRPCData::read_OrientationSensors(yarp::os::idl::WireReader& reader)
         return false;
     }
     OrientationSensors.clear();
-    uint32_t _size48;
-    yarp::os::idl::WireState _etype51;
-    reader.readListBegin(_etype51, _size48);
-    OrientationSensors.resize(_size48);
-    for (size_t _i52 = 0; _i52 < _size48; ++_i52) {
+    uint32_t _size;
+    yarp::os::idl::WireState _etype;
+    reader.readListBegin(_etype, _size);
+    OrientationSensors.resize(_size);
+    for (size_t _i = 0; _i < _size; ++_i) {
         if (reader.noMore()) {
             reader.fail();
             return false;
         }
-        if (!reader.readNested(OrientationSensors[_i52])) {
+        if (!reader.readNested(OrientationSensors[_i])) {
             reader.fail();
             return false;
         }
@@ -425,8 +425,8 @@ bool SensorRPCData::write_OrientationSensors(const yarp::os::idl::WireWriter& wr
     if (!writer.writeListBegin(BOTTLE_TAG_LIST, static_cast<uint32_t>(OrientationSensors.size()))) {
         return false;
     }
-    for (const auto& _item53 : OrientationSensors) {
-        if (!writer.writeNested(_item53)) {
+    for (const auto& _item : OrientationSensors) {
+        if (!writer.writeNested(_item)) {
             return false;
         }
     }
@@ -444,16 +444,16 @@ bool SensorRPCData::nested_read_OrientationSensors(yarp::os::idl::WireReader& re
         return false;
     }
     OrientationSensors.clear();
-    uint32_t _size54;
-    yarp::os::idl::WireState _etype57;
-    reader.readListBegin(_etype57, _size54);
-    OrientationSensors.resize(_size54);
-    for (size_t _i58 = 0; _i58 < _size54; ++_i58) {
+    uint32_t _size;
+    yarp::os::idl::WireState _etype;
+    reader.readListBegin(_etype, _size);
+    OrientationSensors.resize(_size);
+    for (size_t _i = 0; _i < _size; ++_i) {
         if (reader.noMore()) {
             reader.fail();
             return false;
         }
-        if (!reader.readNested(OrientationSensors[_i58])) {
+        if (!reader.readNested(OrientationSensors[_i])) {
             reader.fail();
             return false;
         }
@@ -468,8 +468,8 @@ bool SensorRPCData::nested_write_OrientationSensors(const yarp::os::idl::WireWri
     if (!writer.writeListBegin(BOTTLE_TAG_LIST, static_cast<uint32_t>(OrientationSensors.size()))) {
         return false;
     }
-    for (const auto& _item59 : OrientationSensors) {
-        if (!writer.writeNested(_item59)) {
+    for (const auto& _item : OrientationSensors) {
+        if (!writer.writeNested(_item)) {
             return false;
         }
     }
@@ -487,16 +487,16 @@ bool SensorRPCData::read_TemperatureSensors(yarp::os::idl::WireReader& reader)
         return false;
     }
     TemperatureSensors.clear();
-    uint32_t _size60;
-    yarp::os::idl::WireState _etype63;
-    reader.readListBegin(_etype63, _size60);
-    TemperatureSensors.resize(_size60);
-    for (size_t _i64 = 0; _i64 < _size60; ++_i64) {
+    uint32_t _size;
+    yarp::os::idl::WireState _etype;
+    reader.readListBegin(_etype, _size);
+    TemperatureSensors.resize(_size);
+    for (size_t _i = 0; _i < _size; ++_i) {
         if (reader.noMore()) {
             reader.fail();
             return false;
         }
-        if (!reader.readNested(TemperatureSensors[_i64])) {
+        if (!reader.readNested(TemperatureSensors[_i])) {
             reader.fail();
             return false;
         }
@@ -511,8 +511,8 @@ bool SensorRPCData::write_TemperatureSensors(const yarp::os::idl::WireWriter& wr
     if (!writer.writeListBegin(BOTTLE_TAG_LIST, static_cast<uint32_t>(TemperatureSensors.size()))) {
         return false;
     }
-    for (const auto& _item65 : TemperatureSensors) {
-        if (!writer.writeNested(_item65)) {
+    for (const auto& _item : TemperatureSensors) {
+        if (!writer.writeNested(_item)) {
             return false;
         }
     }
@@ -530,16 +530,16 @@ bool SensorRPCData::nested_read_TemperatureSensors(yarp::os::idl::WireReader& re
         return false;
     }
     TemperatureSensors.clear();
-    uint32_t _size66;
-    yarp::os::idl::WireState _etype69;
-    reader.readListBegin(_etype69, _size66);
-    TemperatureSensors.resize(_size66);
-    for (size_t _i70 = 0; _i70 < _size66; ++_i70) {
+    uint32_t _size;
+    yarp::os::idl::WireState _etype;
+    reader.readListBegin(_etype, _size);
+    TemperatureSensors.resize(_size);
+    for (size_t _i = 0; _i < _size; ++_i) {
         if (reader.noMore()) {
             reader.fail();
             return false;
         }
-        if (!reader.readNested(TemperatureSensors[_i70])) {
+        if (!reader.readNested(TemperatureSensors[_i])) {
             reader.fail();
             return false;
         }
@@ -554,8 +554,8 @@ bool SensorRPCData::nested_write_TemperatureSensors(const yarp::os::idl::WireWri
     if (!writer.writeListBegin(BOTTLE_TAG_LIST, static_cast<uint32_t>(TemperatureSensors.size()))) {
         return false;
     }
-    for (const auto& _item71 : TemperatureSensors) {
-        if (!writer.writeNested(_item71)) {
+    for (const auto& _item : TemperatureSensors) {
+        if (!writer.writeNested(_item)) {
             return false;
         }
     }
@@ -573,16 +573,16 @@ bool SensorRPCData::read_SixAxisForceTorqueSensors(yarp::os::idl::WireReader& re
         return false;
     }
     SixAxisForceTorqueSensors.clear();
-    uint32_t _size72;
-    yarp::os::idl::WireState _etype75;
-    reader.readListBegin(_etype75, _size72);
-    SixAxisForceTorqueSensors.resize(_size72);
-    for (size_t _i76 = 0; _i76 < _size72; ++_i76) {
+    uint32_t _size;
+    yarp::os::idl::WireState _etype;
+    reader.readListBegin(_etype, _size);
+    SixAxisForceTorqueSensors.resize(_size);
+    for (size_t _i = 0; _i < _size; ++_i) {
         if (reader.noMore()) {
             reader.fail();
             return false;
         }
-        if (!reader.readNested(SixAxisForceTorqueSensors[_i76])) {
+        if (!reader.readNested(SixAxisForceTorqueSensors[_i])) {
             reader.fail();
             return false;
         }
@@ -597,8 +597,8 @@ bool SensorRPCData::write_SixAxisForceTorqueSensors(const yarp::os::idl::WireWri
     if (!writer.writeListBegin(BOTTLE_TAG_LIST, static_cast<uint32_t>(SixAxisForceTorqueSensors.size()))) {
         return false;
     }
-    for (const auto& _item77 : SixAxisForceTorqueSensors) {
-        if (!writer.writeNested(_item77)) {
+    for (const auto& _item : SixAxisForceTorqueSensors) {
+        if (!writer.writeNested(_item)) {
             return false;
         }
     }
@@ -616,16 +616,16 @@ bool SensorRPCData::nested_read_SixAxisForceTorqueSensors(yarp::os::idl::WireRea
         return false;
     }
     SixAxisForceTorqueSensors.clear();
-    uint32_t _size78;
-    yarp::os::idl::WireState _etype81;
-    reader.readListBegin(_etype81, _size78);
-    SixAxisForceTorqueSensors.resize(_size78);
-    for (size_t _i82 = 0; _i82 < _size78; ++_i82) {
+    uint32_t _size;
+    yarp::os::idl::WireState _etype;
+    reader.readListBegin(_etype, _size);
+    SixAxisForceTorqueSensors.resize(_size);
+    for (size_t _i = 0; _i < _size; ++_i) {
         if (reader.noMore()) {
             reader.fail();
             return false;
         }
-        if (!reader.readNested(SixAxisForceTorqueSensors[_i82])) {
+        if (!reader.readNested(SixAxisForceTorqueSensors[_i])) {
             reader.fail();
             return false;
         }
@@ -640,8 +640,8 @@ bool SensorRPCData::nested_write_SixAxisForceTorqueSensors(const yarp::os::idl::
     if (!writer.writeListBegin(BOTTLE_TAG_LIST, static_cast<uint32_t>(SixAxisForceTorqueSensors.size()))) {
         return false;
     }
-    for (const auto& _item83 : SixAxisForceTorqueSensors) {
-        if (!writer.writeNested(_item83)) {
+    for (const auto& _item : SixAxisForceTorqueSensors) {
+        if (!writer.writeNested(_item)) {
             return false;
         }
     }
@@ -659,16 +659,16 @@ bool SensorRPCData::read_ContactLoadCellArrays(yarp::os::idl::WireReader& reader
         return false;
     }
     ContactLoadCellArrays.clear();
-    uint32_t _size84;
-    yarp::os::idl::WireState _etype87;
-    reader.readListBegin(_etype87, _size84);
-    ContactLoadCellArrays.resize(_size84);
-    for (size_t _i88 = 0; _i88 < _size84; ++_i88) {
+    uint32_t _size;
+    yarp::os::idl::WireState _etype;
+    reader.readListBegin(_etype, _size);
+    ContactLoadCellArrays.resize(_size);
+    for (size_t _i = 0; _i < _size; ++_i) {
         if (reader.noMore()) {
             reader.fail();
             return false;
         }
-        if (!reader.readNested(ContactLoadCellArrays[_i88])) {
+        if (!reader.readNested(ContactLoadCellArrays[_i])) {
             reader.fail();
             return false;
         }
@@ -683,8 +683,8 @@ bool SensorRPCData::write_ContactLoadCellArrays(const yarp::os::idl::WireWriter&
     if (!writer.writeListBegin(BOTTLE_TAG_LIST, static_cast<uint32_t>(ContactLoadCellArrays.size()))) {
         return false;
     }
-    for (const auto& _item89 : ContactLoadCellArrays) {
-        if (!writer.writeNested(_item89)) {
+    for (const auto& _item : ContactLoadCellArrays) {
+        if (!writer.writeNested(_item)) {
             return false;
         }
     }
@@ -702,16 +702,16 @@ bool SensorRPCData::nested_read_ContactLoadCellArrays(yarp::os::idl::WireReader&
         return false;
     }
     ContactLoadCellArrays.clear();
-    uint32_t _size90;
-    yarp::os::idl::WireState _etype93;
-    reader.readListBegin(_etype93, _size90);
-    ContactLoadCellArrays.resize(_size90);
-    for (size_t _i94 = 0; _i94 < _size90; ++_i94) {
+    uint32_t _size;
+    yarp::os::idl::WireState _etype;
+    reader.readListBegin(_etype, _size);
+    ContactLoadCellArrays.resize(_size);
+    for (size_t _i = 0; _i < _size; ++_i) {
         if (reader.noMore()) {
             reader.fail();
             return false;
         }
-        if (!reader.readNested(ContactLoadCellArrays[_i94])) {
+        if (!reader.readNested(ContactLoadCellArrays[_i])) {
             reader.fail();
             return false;
         }
@@ -726,8 +726,8 @@ bool SensorRPCData::nested_write_ContactLoadCellArrays(const yarp::os::idl::Wire
     if (!writer.writeListBegin(BOTTLE_TAG_LIST, static_cast<uint32_t>(ContactLoadCellArrays.size()))) {
         return false;
     }
-    for (const auto& _item95 : ContactLoadCellArrays) {
-        if (!writer.writeNested(_item95)) {
+    for (const auto& _item : ContactLoadCellArrays) {
+        if (!writer.writeNested(_item)) {
             return false;
         }
     }
@@ -745,16 +745,16 @@ bool SensorRPCData::read_EncoderArrays(yarp::os::idl::WireReader& reader)
         return false;
     }
     EncoderArrays.clear();
-    uint32_t _size96;
-    yarp::os::idl::WireState _etype99;
-    reader.readListBegin(_etype99, _size96);
-    EncoderArrays.resize(_size96);
-    for (size_t _i100 = 0; _i100 < _size96; ++_i100) {
+    uint32_t _size;
+    yarp::os::idl::WireState _etype;
+    reader.readListBegin(_etype, _size);
+    EncoderArrays.resize(_size);
+    for (size_t _i = 0; _i < _size; ++_i) {
         if (reader.noMore()) {
             reader.fail();
             return false;
         }
-        if (!reader.readNested(EncoderArrays[_i100])) {
+        if (!reader.readNested(EncoderArrays[_i])) {
             reader.fail();
             return false;
         }
@@ -769,8 +769,8 @@ bool SensorRPCData::write_EncoderArrays(const yarp::os::idl::WireWriter& writer)
     if (!writer.writeListBegin(BOTTLE_TAG_LIST, static_cast<uint32_t>(EncoderArrays.size()))) {
         return false;
     }
-    for (const auto& _item101 : EncoderArrays) {
-        if (!writer.writeNested(_item101)) {
+    for (const auto& _item : EncoderArrays) {
+        if (!writer.writeNested(_item)) {
             return false;
         }
     }
@@ -788,16 +788,16 @@ bool SensorRPCData::nested_read_EncoderArrays(yarp::os::idl::WireReader& reader)
         return false;
     }
     EncoderArrays.clear();
-    uint32_t _size102;
-    yarp::os::idl::WireState _etype105;
-    reader.readListBegin(_etype105, _size102);
-    EncoderArrays.resize(_size102);
-    for (size_t _i106 = 0; _i106 < _size102; ++_i106) {
+    uint32_t _size;
+    yarp::os::idl::WireState _etype;
+    reader.readListBegin(_etype, _size);
+    EncoderArrays.resize(_size);
+    for (size_t _i = 0; _i < _size; ++_i) {
         if (reader.noMore()) {
             reader.fail();
             return false;
         }
-        if (!reader.readNested(EncoderArrays[_i106])) {
+        if (!reader.readNested(EncoderArrays[_i])) {
             reader.fail();
             return false;
         }
@@ -812,8 +812,8 @@ bool SensorRPCData::nested_write_EncoderArrays(const yarp::os::idl::WireWriter& 
     if (!writer.writeListBegin(BOTTLE_TAG_LIST, static_cast<uint32_t>(EncoderArrays.size()))) {
         return false;
     }
-    for (const auto& _item107 : EncoderArrays) {
-        if (!writer.writeNested(_item107)) {
+    for (const auto& _item : EncoderArrays) {
+        if (!writer.writeNested(_item)) {
             return false;
         }
     }
@@ -831,16 +831,16 @@ bool SensorRPCData::read_SkinPatches(yarp::os::idl::WireReader& reader)
         return false;
     }
     SkinPatches.clear();
-    uint32_t _size108;
-    yarp::os::idl::WireState _etype111;
-    reader.readListBegin(_etype111, _size108);
-    SkinPatches.resize(_size108);
-    for (size_t _i112 = 0; _i112 < _size108; ++_i112) {
+    uint32_t _size;
+    yarp::os::idl::WireState _etype;
+    reader.readListBegin(_etype, _size);
+    SkinPatches.resize(_size);
+    for (size_t _i = 0; _i < _size; ++_i) {
         if (reader.noMore()) {
             reader.fail();
             return false;
         }
-        if (!reader.readNested(SkinPatches[_i112])) {
+        if (!reader.readNested(SkinPatches[_i])) {
             reader.fail();
             return false;
         }
@@ -855,8 +855,8 @@ bool SensorRPCData::write_SkinPatches(const yarp::os::idl::WireWriter& writer) c
     if (!writer.writeListBegin(BOTTLE_TAG_LIST, static_cast<uint32_t>(SkinPatches.size()))) {
         return false;
     }
-    for (const auto& _item113 : SkinPatches) {
-        if (!writer.writeNested(_item113)) {
+    for (const auto& _item : SkinPatches) {
+        if (!writer.writeNested(_item)) {
             return false;
         }
     }
@@ -874,16 +874,16 @@ bool SensorRPCData::nested_read_SkinPatches(yarp::os::idl::WireReader& reader)
         return false;
     }
     SkinPatches.clear();
-    uint32_t _size114;
-    yarp::os::idl::WireState _etype117;
-    reader.readListBegin(_etype117, _size114);
-    SkinPatches.resize(_size114);
-    for (size_t _i118 = 0; _i118 < _size114; ++_i118) {
+    uint32_t _size;
+    yarp::os::idl::WireState _etype;
+    reader.readListBegin(_etype, _size);
+    SkinPatches.resize(_size);
+    for (size_t _i = 0; _i < _size; ++_i) {
         if (reader.noMore()) {
             reader.fail();
             return false;
         }
-        if (!reader.readNested(SkinPatches[_i118])) {
+        if (!reader.readNested(SkinPatches[_i])) {
             reader.fail();
             return false;
         }
@@ -898,8 +898,8 @@ bool SensorRPCData::nested_write_SkinPatches(const yarp::os::idl::WireWriter& wr
     if (!writer.writeListBegin(BOTTLE_TAG_LIST, static_cast<uint32_t>(SkinPatches.size()))) {
         return false;
     }
-    for (const auto& _item119 : SkinPatches) {
-        if (!writer.writeNested(_item119)) {
+    for (const auto& _item : SkinPatches) {
+        if (!writer.writeNested(_item)) {
             return false;
         }
     }
@@ -917,16 +917,16 @@ bool SensorRPCData::read_PositionSensors(yarp::os::idl::WireReader& reader)
         return false;
     }
     PositionSensors.clear();
-    uint32_t _size120;
-    yarp::os::idl::WireState _etype123;
-    reader.readListBegin(_etype123, _size120);
-    PositionSensors.resize(_size120);
-    for (size_t _i124 = 0; _i124 < _size120; ++_i124) {
+    uint32_t _size;
+    yarp::os::idl::WireState _etype;
+    reader.readListBegin(_etype, _size);
+    PositionSensors.resize(_size);
+    for (size_t _i = 0; _i < _size; ++_i) {
         if (reader.noMore()) {
             reader.fail();
             return false;
         }
-        if (!reader.readNested(PositionSensors[_i124])) {
+        if (!reader.readNested(PositionSensors[_i])) {
             reader.fail();
             return false;
         }
@@ -941,8 +941,8 @@ bool SensorRPCData::write_PositionSensors(const yarp::os::idl::WireWriter& write
     if (!writer.writeListBegin(BOTTLE_TAG_LIST, static_cast<uint32_t>(PositionSensors.size()))) {
         return false;
     }
-    for (const auto& _item125 : PositionSensors) {
-        if (!writer.writeNested(_item125)) {
+    for (const auto& _item : PositionSensors) {
+        if (!writer.writeNested(_item)) {
             return false;
         }
     }
@@ -960,16 +960,16 @@ bool SensorRPCData::nested_read_PositionSensors(yarp::os::idl::WireReader& reade
         return false;
     }
     PositionSensors.clear();
-    uint32_t _size126;
-    yarp::os::idl::WireState _etype129;
-    reader.readListBegin(_etype129, _size126);
-    PositionSensors.resize(_size126);
-    for (size_t _i130 = 0; _i130 < _size126; ++_i130) {
+    uint32_t _size;
+    yarp::os::idl::WireState _etype;
+    reader.readListBegin(_etype, _size);
+    PositionSensors.resize(_size);
+    for (size_t _i = 0; _i < _size; ++_i) {
         if (reader.noMore()) {
             reader.fail();
             return false;
         }
-        if (!reader.readNested(PositionSensors[_i130])) {
+        if (!reader.readNested(PositionSensors[_i])) {
             reader.fail();
             return false;
         }
@@ -984,8 +984,8 @@ bool SensorRPCData::nested_write_PositionSensors(const yarp::os::idl::WireWriter
     if (!writer.writeListBegin(BOTTLE_TAG_LIST, static_cast<uint32_t>(PositionSensors.size()))) {
         return false;
     }
-    for (const auto& _item131 : PositionSensors) {
-        if (!writer.writeNested(_item131)) {
+    for (const auto& _item : PositionSensors) {
+        if (!writer.writeNested(_item)) {
             return false;
         }
     }

@@ -114,12 +114,12 @@ bool return_get_navigation_status::read_status(yarp::os::idl::WireReader& reader
         reader.fail();
         return false;
     }
-    yarp::conf::vocab32_t ecast0;
-    if (!reader.readVocab32(ecast0)) {
+    yarp::conf::vocab32_t _ecast;
+    if (!reader.readVocab32(_ecast)) {
         reader.fail();
         return false;
     }
-    status = static_cast<yarp::dev::Nav2D::NavigationStatusEnum>(ecast0);
+    status = static_cast<yarp::dev::Nav2D::NavigationStatusEnum>(_ecast);
     return true;
 }
 
@@ -139,12 +139,12 @@ bool return_get_navigation_status::nested_read_status(yarp::os::idl::WireReader&
         reader.fail();
         return false;
     }
-    yarp::conf::vocab32_t ecast1;
-    if (!reader.readVocab32(ecast1)) {
+    yarp::conf::vocab32_t _ecast;
+    if (!reader.readVocab32(_ecast)) {
         reader.fail();
         return false;
     }
-    status = static_cast<yarp::dev::Nav2D::NavigationStatusEnum>(ecast1);
+    status = static_cast<yarp::dev::Nav2D::NavigationStatusEnum>(_ecast);
     return true;
 }
 

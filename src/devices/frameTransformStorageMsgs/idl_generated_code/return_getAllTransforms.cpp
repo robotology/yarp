@@ -125,16 +125,16 @@ bool return_getAllTransforms::read_transforms_list(yarp::os::idl::WireReader& re
         return false;
     }
     transforms_list.clear();
-    uint32_t _size0;
-    yarp::os::idl::WireState _etype3;
-    reader.readListBegin(_etype3, _size0);
-    transforms_list.resize(_size0);
-    for (size_t _i4 = 0; _i4 < _size0; ++_i4) {
+    uint32_t _size;
+    yarp::os::idl::WireState _etype;
+    reader.readListBegin(_etype, _size);
+    transforms_list.resize(_size);
+    for (size_t _i = 0; _i < _size; ++_i) {
         if (reader.noMore()) {
             reader.fail();
             return false;
         }
-        if (!reader.readNested(transforms_list[_i4])) {
+        if (!reader.readNested(transforms_list[_i])) {
             reader.fail();
             return false;
         }
@@ -149,8 +149,8 @@ bool return_getAllTransforms::write_transforms_list(const yarp::os::idl::WireWri
     if (!writer.writeListBegin(BOTTLE_TAG_LIST, static_cast<uint32_t>(transforms_list.size()))) {
         return false;
     }
-    for (const auto& _item5 : transforms_list) {
-        if (!writer.writeNested(_item5)) {
+    for (const auto& _item : transforms_list) {
+        if (!writer.writeNested(_item)) {
             return false;
         }
     }
@@ -168,16 +168,16 @@ bool return_getAllTransforms::nested_read_transforms_list(yarp::os::idl::WireRea
         return false;
     }
     transforms_list.clear();
-    uint32_t _size6;
-    yarp::os::idl::WireState _etype9;
-    reader.readListBegin(_etype9, _size6);
-    transforms_list.resize(_size6);
-    for (size_t _i10 = 0; _i10 < _size6; ++_i10) {
+    uint32_t _size;
+    yarp::os::idl::WireState _etype;
+    reader.readListBegin(_etype, _size);
+    transforms_list.resize(_size);
+    for (size_t _i = 0; _i < _size; ++_i) {
         if (reader.noMore()) {
             reader.fail();
             return false;
         }
-        if (!reader.readNested(transforms_list[_i10])) {
+        if (!reader.readNested(transforms_list[_i])) {
             reader.fail();
             return false;
         }
@@ -192,8 +192,8 @@ bool return_getAllTransforms::nested_write_transforms_list(const yarp::os::idl::
     if (!writer.writeListBegin(BOTTLE_TAG_LIST, static_cast<uint32_t>(transforms_list.size()))) {
         return false;
     }
-    for (const auto& _item11 : transforms_list) {
-        if (!writer.writeNested(_item11)) {
+    for (const auto& _item : transforms_list) {
+        if (!writer.writeNested(_item)) {
             return false;
         }
     }

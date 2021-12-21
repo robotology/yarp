@@ -115,16 +115,16 @@ bool return_get_locations_list::read_locations(yarp::os::idl::WireReader& reader
         return false;
     }
     locations.clear();
-    uint32_t _size12;
-    yarp::os::idl::WireState _etype15;
-    reader.readListBegin(_etype15, _size12);
-    locations.resize(_size12);
-    for (size_t _i16 = 0; _i16 < _size12; ++_i16) {
+    uint32_t _size;
+    yarp::os::idl::WireState _etype;
+    reader.readListBegin(_etype, _size);
+    locations.resize(_size);
+    for (size_t _i = 0; _i < _size; ++_i) {
         if (reader.noMore()) {
             reader.fail();
             return false;
         }
-        if (!reader.readString(locations[_i16])) {
+        if (!reader.readString(locations[_i])) {
             reader.fail();
             return false;
         }
@@ -139,8 +139,8 @@ bool return_get_locations_list::write_locations(const yarp::os::idl::WireWriter&
     if (!writer.writeListBegin(BOTTLE_TAG_STRING, static_cast<uint32_t>(locations.size()))) {
         return false;
     }
-    for (const auto& _item17 : locations) {
-        if (!writer.writeString(_item17)) {
+    for (const auto& _item : locations) {
+        if (!writer.writeString(_item)) {
             return false;
         }
     }
@@ -158,16 +158,16 @@ bool return_get_locations_list::nested_read_locations(yarp::os::idl::WireReader&
         return false;
     }
     locations.clear();
-    uint32_t _size18;
-    yarp::os::idl::WireState _etype21;
-    reader.readListBegin(_etype21, _size18);
-    locations.resize(_size18);
-    for (size_t _i22 = 0; _i22 < _size18; ++_i22) {
+    uint32_t _size;
+    yarp::os::idl::WireState _etype;
+    reader.readListBegin(_etype, _size);
+    locations.resize(_size);
+    for (size_t _i = 0; _i < _size; ++_i) {
         if (reader.noMore()) {
             reader.fail();
             return false;
         }
-        if (!reader.readString(locations[_i22])) {
+        if (!reader.readString(locations[_i])) {
             reader.fail();
             return false;
         }
@@ -182,8 +182,8 @@ bool return_get_locations_list::nested_write_locations(const yarp::os::idl::Wire
     if (!writer.writeListBegin(BOTTLE_TAG_STRING, static_cast<uint32_t>(locations.size()))) {
         return false;
     }
-    for (const auto& _item23 : locations) {
-        if (!writer.writeString(_item23)) {
+    for (const auto& _item : locations) {
+        if (!writer.writeString(_item)) {
             return false;
         }
     }

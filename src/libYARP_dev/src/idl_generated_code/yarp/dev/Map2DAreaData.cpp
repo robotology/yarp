@@ -135,16 +135,16 @@ bool Map2DAreaData::read_points(yarp::os::idl::WireReader& reader)
         return false;
     }
     points.clear();
-    uint32_t _size0;
-    yarp::os::idl::WireState _etype3;
-    reader.readListBegin(_etype3, _size0);
-    points.resize(_size0);
-    for (size_t _i4 = 0; _i4 < _size0; ++_i4) {
+    uint32_t _size;
+    yarp::os::idl::WireState _etype;
+    reader.readListBegin(_etype, _size);
+    points.resize(_size);
+    for (size_t _i = 0; _i < _size; ++_i) {
         if (reader.noMore()) {
             reader.fail();
             return false;
         }
-        if (!reader.readNested(points[_i4])) {
+        if (!reader.readNested(points[_i])) {
             reader.fail();
             return false;
         }
@@ -159,8 +159,8 @@ bool Map2DAreaData::write_points(const yarp::os::idl::WireWriter& writer) const
     if (!writer.writeListBegin(BOTTLE_TAG_LIST, static_cast<uint32_t>(points.size()))) {
         return false;
     }
-    for (const auto& _item5 : points) {
-        if (!writer.writeNested(_item5)) {
+    for (const auto& _item : points) {
+        if (!writer.writeNested(_item)) {
             return false;
         }
     }
@@ -178,16 +178,16 @@ bool Map2DAreaData::nested_read_points(yarp::os::idl::WireReader& reader)
         return false;
     }
     points.clear();
-    uint32_t _size6;
-    yarp::os::idl::WireState _etype9;
-    reader.readListBegin(_etype9, _size6);
-    points.resize(_size6);
-    for (size_t _i10 = 0; _i10 < _size6; ++_i10) {
+    uint32_t _size;
+    yarp::os::idl::WireState _etype;
+    reader.readListBegin(_etype, _size);
+    points.resize(_size);
+    for (size_t _i = 0; _i < _size; ++_i) {
         if (reader.noMore()) {
             reader.fail();
             return false;
         }
-        if (!reader.readNested(points[_i10])) {
+        if (!reader.readNested(points[_i])) {
             reader.fail();
             return false;
         }
@@ -202,8 +202,8 @@ bool Map2DAreaData::nested_write_points(const yarp::os::idl::WireWriter& writer)
     if (!writer.writeListBegin(BOTTLE_TAG_LIST, static_cast<uint32_t>(points.size()))) {
         return false;
     }
-    for (const auto& _item11 : points) {
-        if (!writer.writeNested(_item11)) {
+    for (const auto& _item : points) {
+        if (!writer.writeNested(_item)) {
             return false;
         }
     }

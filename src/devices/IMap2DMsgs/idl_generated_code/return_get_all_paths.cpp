@@ -115,16 +115,16 @@ bool return_get_all_paths::read_paths(yarp::os::idl::WireReader& reader)
         return false;
     }
     paths.clear();
-    uint32_t _size72;
-    yarp::os::idl::WireState _etype75;
-    reader.readListBegin(_etype75, _size72);
-    paths.resize(_size72);
-    for (size_t _i76 = 0; _i76 < _size72; ++_i76) {
+    uint32_t _size;
+    yarp::os::idl::WireState _etype;
+    reader.readListBegin(_etype, _size);
+    paths.resize(_size);
+    for (size_t _i = 0; _i < _size; ++_i) {
         if (reader.noMore()) {
             reader.fail();
             return false;
         }
-        if (!reader.readNested(paths[_i76])) {
+        if (!reader.readNested(paths[_i])) {
             reader.fail();
             return false;
         }
@@ -139,8 +139,8 @@ bool return_get_all_paths::write_paths(const yarp::os::idl::WireWriter& writer) 
     if (!writer.writeListBegin(BOTTLE_TAG_LIST, static_cast<uint32_t>(paths.size()))) {
         return false;
     }
-    for (const auto& _item77 : paths) {
-        if (!writer.writeNested(_item77)) {
+    for (const auto& _item : paths) {
+        if (!writer.writeNested(_item)) {
             return false;
         }
     }
@@ -158,16 +158,16 @@ bool return_get_all_paths::nested_read_paths(yarp::os::idl::WireReader& reader)
         return false;
     }
     paths.clear();
-    uint32_t _size78;
-    yarp::os::idl::WireState _etype81;
-    reader.readListBegin(_etype81, _size78);
-    paths.resize(_size78);
-    for (size_t _i82 = 0; _i82 < _size78; ++_i82) {
+    uint32_t _size;
+    yarp::os::idl::WireState _etype;
+    reader.readListBegin(_etype, _size);
+    paths.resize(_size);
+    for (size_t _i = 0; _i < _size; ++_i) {
         if (reader.noMore()) {
             reader.fail();
             return false;
         }
-        if (!reader.readNested(paths[_i82])) {
+        if (!reader.readNested(paths[_i])) {
             reader.fail();
             return false;
         }
@@ -182,8 +182,8 @@ bool return_get_all_paths::nested_write_paths(const yarp::os::idl::WireWriter& w
     if (!writer.writeListBegin(BOTTLE_TAG_LIST, static_cast<uint32_t>(paths.size()))) {
         return false;
     }
-    for (const auto& _item83 : paths) {
-        if (!writer.writeNested(_item83)) {
+    for (const auto& _item : paths) {
+        if (!writer.writeNested(_item)) {
             return false;
         }
     }

@@ -115,16 +115,16 @@ bool return_get_map_names::read_map_names(yarp::os::idl::WireReader& reader)
         return false;
     }
     map_names.clear();
-    uint32_t _size0;
-    yarp::os::idl::WireState _etype3;
-    reader.readListBegin(_etype3, _size0);
-    map_names.resize(_size0);
-    for (size_t _i4 = 0; _i4 < _size0; ++_i4) {
+    uint32_t _size;
+    yarp::os::idl::WireState _etype;
+    reader.readListBegin(_etype, _size);
+    map_names.resize(_size);
+    for (size_t _i = 0; _i < _size; ++_i) {
         if (reader.noMore()) {
             reader.fail();
             return false;
         }
-        if (!reader.readString(map_names[_i4])) {
+        if (!reader.readString(map_names[_i])) {
             reader.fail();
             return false;
         }
@@ -139,8 +139,8 @@ bool return_get_map_names::write_map_names(const yarp::os::idl::WireWriter& writ
     if (!writer.writeListBegin(BOTTLE_TAG_STRING, static_cast<uint32_t>(map_names.size()))) {
         return false;
     }
-    for (const auto& _item5 : map_names) {
-        if (!writer.writeString(_item5)) {
+    for (const auto& _item : map_names) {
+        if (!writer.writeString(_item)) {
             return false;
         }
     }
@@ -158,16 +158,16 @@ bool return_get_map_names::nested_read_map_names(yarp::os::idl::WireReader& read
         return false;
     }
     map_names.clear();
-    uint32_t _size6;
-    yarp::os::idl::WireState _etype9;
-    reader.readListBegin(_etype9, _size6);
-    map_names.resize(_size6);
-    for (size_t _i10 = 0; _i10 < _size6; ++_i10) {
+    uint32_t _size;
+    yarp::os::idl::WireState _etype;
+    reader.readListBegin(_etype, _size);
+    map_names.resize(_size);
+    for (size_t _i = 0; _i < _size; ++_i) {
         if (reader.noMore()) {
             reader.fail();
             return false;
         }
-        if (!reader.readString(map_names[_i10])) {
+        if (!reader.readString(map_names[_i])) {
             reader.fail();
             return false;
         }
@@ -182,8 +182,8 @@ bool return_get_map_names::nested_write_map_names(const yarp::os::idl::WireWrite
     if (!writer.writeListBegin(BOTTLE_TAG_STRING, static_cast<uint32_t>(map_names.size()))) {
         return false;
     }
-    for (const auto& _item11 : map_names) {
-        if (!writer.writeString(_item11)) {
+    for (const auto& _item : map_names) {
+        if (!writer.writeString(_item)) {
             return false;
         }
     }

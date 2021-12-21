@@ -1226,16 +1226,15 @@ void t_yarp_generator::generate_serialize_container(std::ostringstream& f_cpp_,
     }
     f_cpp_ << ", " << "static_cast<uint32_t>(" << name << ".size())))" << inline_return_cpp("false");
 
-    std::string item = tmp("_item");
-    f_cpp_ << indent_cpp() << "for (const auto& " << item << " : " << name << ") {\n";
+    f_cpp_ << indent_cpp() << "for (const auto& _item : " << name << ") {\n";
     indent_up_cpp();
     {
         if (ttype->is_map()) {
-            generate_serialize_map_element(f_cpp_, static_cast<t_map*>(ttype), item);
+            generate_serialize_map_element(f_cpp_, static_cast<t_map*>(ttype), "_item");
         } else if (ttype->is_set()) {
-            generate_serialize_set_element(f_cpp_, static_cast<t_set*>(ttype), item);
+            generate_serialize_set_element(f_cpp_, static_cast<t_set*>(ttype), "_item");
         } else if (ttype->is_list()) {
-            generate_serialize_list_element(f_cpp_, static_cast<t_list*>(ttype), item);
+            generate_serialize_list_element(f_cpp_, static_cast<t_list*>(ttype), "_item");
         }
     }
     indent_down_cpp();
@@ -1429,8 +1428,7 @@ void t_yarp_generator::generate_deserialize_field(std::ostringstream& f_cpp_,
     } else if (type->is_enum()) {
         auto* tenum = static_cast<t_enum*>(type);
         const std::string enum_base = get_enum_base(tenum);
-        std::string t = tmp("ecast");
-        f_cpp_ << indent_cpp() << enum_base << " " << t << ";\n";
+        f_cpp_ << indent_cpp() << enum_base << " _ecast;\n";
         f_cpp_ << indent_cpp() << "if (!reader.read";
         auto it = type->annotations_.find("yarp.name");
         if (it != type->annotations_.end()) {
@@ -1438,7 +1436,7 @@ void t_yarp_generator::generate_deserialize_field(std::ostringstream& f_cpp_,
         } else {
             f_cpp_ << "Enum<" << enum_base << ", " << type_name(type) << "Converter>";
         }
-        f_cpp_ << "(" << t << ")) {\n";
+        f_cpp_ << "(_ecast)) {\n";
         indent_up_cpp();
         {
             generate_deserialize_field_fallback(f_cpp_, tfield, prefix, suffix);
@@ -1449,7 +1447,7 @@ void t_yarp_generator::generate_deserialize_field(std::ostringstream& f_cpp_,
         } else {
             f_cpp_ << indent_cpp() << "}\n";
         }
-        f_cpp_ << indent_cpp() << name << " = static_cast<" << type_name(type) << ">(" << t << ");\n";
+        f_cpp_ << indent_cpp() << name << " = static_cast<" << type_name(type) << ">(_ecast);\n";
         if (tfield->get_value() != nullptr) {
             f_cpp_ << indent_cpp() << "}\n";
         }
@@ -1485,37 +1483,31 @@ void t_yarp_generator::generate_deserialize_container(std::ostringstream& f_cpp_
 {
     THRIFT_DEBUG_COMMENT(f_cpp_);
 
-    std::string size = tmp("_size");
-    std::string ktype = tmp("_ktype");
-    std::string vtype = tmp("_vtype");
-    std::string etype = tmp("_etype");
-
     t_container* tcontainer = static_cast<t_container*>(ttype);
     bool use_push = tcontainer->has_cpp_name();
 
     f_cpp_ << indent_cpp() << prefix << ".clear();\n";
-    f_cpp_ << indent_cpp() << "uint32_t " << size << ";\n";
+    f_cpp_ << indent_cpp() << "uint32_t _size;\n";
 
     // Declare variables, read header
     if (ttype->is_map()) {
         // kttpe and vtype available
-        f_cpp_ << indent_cpp() << "yarp::os::idl::WireState " << ktype << ";\n";
-        f_cpp_ << indent_cpp() << "yarp::os::idl::WireState " << vtype << ";\n";
-        f_cpp_ << indent_cpp() << "reader.readMapBegin(" << ktype << ", " << vtype << ", " << size << ");\n";
+        f_cpp_ << indent_cpp() << "yarp::os::idl::WireState _ktype;\n";
+        f_cpp_ << indent_cpp() << "yarp::os::idl::WireState _vtype;\n";
+        f_cpp_ << indent_cpp() << "reader.readMapBegin(_ktype, _vtype, _size);\n";
     } else if (ttype->is_set()) {
-        f_cpp_ << indent_cpp() << "yarp::os::idl::WireState " << etype << ";\n";
-        f_cpp_ << indent_cpp() << "reader.readSetBegin(" << etype << ", " << size << ");\n";
+        f_cpp_ << indent_cpp() << "yarp::os::idl::WireState _etype;\n";
+        f_cpp_ << indent_cpp() << "reader.readSetBegin(_etype, _size);\n";
     } else if (ttype->is_list()) {
-        f_cpp_ << indent_cpp() << "yarp::os::idl::WireState " << etype << ";\n";
-        f_cpp_ << indent_cpp() << "reader.readListBegin(" << etype << ", " << size << ");\n";
+        f_cpp_ << indent_cpp() << "yarp::os::idl::WireState _etype;\n";
+        f_cpp_ << indent_cpp() << "reader.readListBegin(_etype, _size);\n";
         if (!use_push) {
-            f_cpp_ << indent_cpp() << prefix << ".resize(" << size << ");\n";
+            f_cpp_ << indent_cpp() << prefix << ".resize(_size);\n";
         }
     }
 
     // For loop iterates over elements
-    std::string i = tmp("_i");
-    f_cpp_ << indent_cpp() << "for (size_t " << i << " = 0; " << i << " < " << size << "; ++" << i << ") {\n";
+    f_cpp_ << indent_cpp() << "for (size_t _i = 0; _i < _size; ++_i) {\n";
     indent_up_cpp();
     {
         if (ttype->is_map()) {
@@ -1523,7 +1515,7 @@ void t_yarp_generator::generate_deserialize_container(std::ostringstream& f_cpp_
         } else if (ttype->is_set()) {
             generate_deserialize_set_element(f_cpp_, static_cast<t_set*>(ttype), prefix);
         } else if (ttype->is_list()) {
-            generate_deserialize_list_element(f_cpp_, static_cast<t_list*>(ttype), prefix, use_push, prefix + "[" + i + "]");
+            generate_deserialize_list_element(f_cpp_, static_cast<t_list*>(ttype), prefix, use_push, prefix + "[_i]");
         }
     }
     indent_down_cpp();
@@ -1545,21 +1537,17 @@ void t_yarp_generator::generate_deserialize_map_element(std::ostringstream& f_cp
 {
     THRIFT_DEBUG_COMMENT(f_cpp_);
 
-    std::string lst = tmp("_lst");
-    std::string size = tmp("_size");
-    f_cpp_ << indent_cpp() << "uint32_t " << size << ";\n";
-    f_cpp_ << indent_cpp() << "yarp::os::idl::WireState " << lst << ";\n";
-    f_cpp_ << indent_cpp() << "reader.readListBegin(" << lst << ", " << size << ");\n";
+    f_cpp_ << indent_cpp() << "uint32_t _size;\n";
+    f_cpp_ << indent_cpp() << "yarp::os::idl::WireState _lst;\n";
+    f_cpp_ << indent_cpp() << "reader.readListBegin(_lst, _size);\n";
 
-    std::string key = tmp("_key");
-    std::string val = tmp("_val");
-    t_field fkey(tmap->get_key_type(), key);
-    t_field fval(tmap->get_val_type(), val);
+    t_field fkey(tmap->get_key_type(), "_key");
+    t_field fval(tmap->get_val_type(), "_val");
 
     f_cpp_ << indent_cpp() << declare_field(&fkey) << ";\n";
 
     generate_deserialize_field(f_cpp_, &fkey);
-    f_cpp_ << indent_cpp() << declare_field(&fval, false, false, false, true) << " = " << prefix << "[" << key << "];\n";
+    f_cpp_ << indent_cpp() << declare_field(&fval, false, false, false, true) << " = " << prefix << "[_key];\n";
 
     generate_deserialize_field(f_cpp_, &fval, "", "", true);
 
@@ -1572,14 +1560,13 @@ void t_yarp_generator::generate_deserialize_set_element(std::ostringstream& f_cp
 {
     THRIFT_DEBUG_COMMENT(f_cpp_);
 
-    std::string elem = tmp("_elem");
-    t_field felem(tset->get_elem_type(), elem);
+    t_field felem(tset->get_elem_type(), "_elem");
 
     f_cpp_ << indent_cpp() << declare_field(&felem) << ";\n";
 
     generate_deserialize_field(f_cpp_, &felem, "", "", true);
 
-    f_cpp_ << indent_cpp() << prefix << ".insert(" << elem << ");\n";
+    f_cpp_ << indent_cpp() << prefix << ".insert(_elem);\n";
 }
 
 void t_yarp_generator::generate_deserialize_list_element(std::ostringstream& f_cpp_,
@@ -1591,11 +1578,10 @@ void t_yarp_generator::generate_deserialize_list_element(std::ostringstream& f_c
     THRIFT_DEBUG_COMMENT(f_cpp_);
 
     if (use_push) {
-        std::string elem = tmp("_elem");
-        t_field felem(tlist->get_elem_type(), elem);
+        t_field felem(tlist->get_elem_type(), "_elem");
         f_cpp_ << indent_cpp() << declare_field(&felem) << ";\n";
         generate_deserialize_field(f_cpp_, &felem, "", "", true);
-        f_cpp_ << indent_cpp() << prefix << ".push_back(" << elem << ");\n";
+        f_cpp_ << indent_cpp() << prefix << ".push_back(_elem);\n";
     } else {
         t_field felem(tlist->get_elem_type(), list_elem);
         generate_deserialize_field(f_cpp_, &felem, "", "", true);
@@ -1772,10 +1758,9 @@ std::string t_yarp_generator::render_const_value(std::ostringstream& f_cpp_,
     } else if (type->is_enum()) {
         render << "static_cast<" << type_name(type) << ">(" << value->get_integer() << ")";
     } else {
-        std::string t = tmp("tmp");
-        f_cpp_ << indent_cpp() << type_name(type) << " " << t << ";\n";
-        print_const_value(f_cpp_, t, type, value);
-        render << t;
+        f_cpp_ << indent_cpp() << type_name(type) << " _tmp;\n";
+        print_const_value(f_cpp_, "_tmp", type, value);
+        render << "_tmp";
     }
 
     return render.str();

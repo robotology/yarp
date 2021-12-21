@@ -115,16 +115,16 @@ bool return_get_estimated_poses::read_poses(yarp::os::idl::WireReader& reader)
         return false;
     }
     poses.clear();
-    uint32_t _size2;
-    yarp::os::idl::WireState _etype5;
-    reader.readListBegin(_etype5, _size2);
-    poses.resize(_size2);
-    for (size_t _i6 = 0; _i6 < _size2; ++_i6) {
+    uint32_t _size;
+    yarp::os::idl::WireState _etype;
+    reader.readListBegin(_etype, _size);
+    poses.resize(_size);
+    for (size_t _i = 0; _i < _size; ++_i) {
         if (reader.noMore()) {
             reader.fail();
             return false;
         }
-        if (!reader.readNested(poses[_i6])) {
+        if (!reader.readNested(poses[_i])) {
             reader.fail();
             return false;
         }
@@ -139,8 +139,8 @@ bool return_get_estimated_poses::write_poses(const yarp::os::idl::WireWriter& wr
     if (!writer.writeListBegin(BOTTLE_TAG_LIST, static_cast<uint32_t>(poses.size()))) {
         return false;
     }
-    for (const auto& _item7 : poses) {
-        if (!writer.writeNested(_item7)) {
+    for (const auto& _item : poses) {
+        if (!writer.writeNested(_item)) {
             return false;
         }
     }
@@ -158,16 +158,16 @@ bool return_get_estimated_poses::nested_read_poses(yarp::os::idl::WireReader& re
         return false;
     }
     poses.clear();
-    uint32_t _size8;
-    yarp::os::idl::WireState _etype11;
-    reader.readListBegin(_etype11, _size8);
-    poses.resize(_size8);
-    for (size_t _i12 = 0; _i12 < _size8; ++_i12) {
+    uint32_t _size;
+    yarp::os::idl::WireState _etype;
+    reader.readListBegin(_etype, _size);
+    poses.resize(_size);
+    for (size_t _i = 0; _i < _size; ++_i) {
         if (reader.noMore()) {
             reader.fail();
             return false;
         }
-        if (!reader.readNested(poses[_i12])) {
+        if (!reader.readNested(poses[_i])) {
             reader.fail();
             return false;
         }
@@ -182,8 +182,8 @@ bool return_get_estimated_poses::nested_write_poses(const yarp::os::idl::WireWri
     if (!writer.writeListBegin(BOTTLE_TAG_LIST, static_cast<uint32_t>(poses.size()))) {
         return false;
     }
-    for (const auto& _item13 : poses) {
-        if (!writer.writeNested(_item13)) {
+    for (const auto& _item : poses) {
+        if (!writer.writeNested(_item)) {
             return false;
         }
     }

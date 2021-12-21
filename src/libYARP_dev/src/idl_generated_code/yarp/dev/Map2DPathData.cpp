@@ -81,16 +81,16 @@ bool Map2DPathData::read_waypoints(yarp::os::idl::WireReader& reader)
         return false;
     }
     waypoints.clear();
-    uint32_t _size0;
-    yarp::os::idl::WireState _etype3;
-    reader.readListBegin(_etype3, _size0);
-    waypoints.resize(_size0);
-    for (size_t _i4 = 0; _i4 < _size0; ++_i4) {
+    uint32_t _size;
+    yarp::os::idl::WireState _etype;
+    reader.readListBegin(_etype, _size);
+    waypoints.resize(_size);
+    for (size_t _i = 0; _i < _size; ++_i) {
         if (reader.noMore()) {
             reader.fail();
             return false;
         }
-        if (!reader.readNested(waypoints[_i4])) {
+        if (!reader.readNested(waypoints[_i])) {
             reader.fail();
             return false;
         }
@@ -105,8 +105,8 @@ bool Map2DPathData::write_waypoints(const yarp::os::idl::WireWriter& writer) con
     if (!writer.writeListBegin(BOTTLE_TAG_LIST, static_cast<uint32_t>(waypoints.size()))) {
         return false;
     }
-    for (const auto& _item5 : waypoints) {
-        if (!writer.writeNested(_item5)) {
+    for (const auto& _item : waypoints) {
+        if (!writer.writeNested(_item)) {
             return false;
         }
     }
@@ -124,16 +124,16 @@ bool Map2DPathData::nested_read_waypoints(yarp::os::idl::WireReader& reader)
         return false;
     }
     waypoints.clear();
-    uint32_t _size6;
-    yarp::os::idl::WireState _etype9;
-    reader.readListBegin(_etype9, _size6);
-    waypoints.resize(_size6);
-    for (size_t _i10 = 0; _i10 < _size6; ++_i10) {
+    uint32_t _size;
+    yarp::os::idl::WireState _etype;
+    reader.readListBegin(_etype, _size);
+    waypoints.resize(_size);
+    for (size_t _i = 0; _i < _size; ++_i) {
         if (reader.noMore()) {
             reader.fail();
             return false;
         }
-        if (!reader.readNested(waypoints[_i10])) {
+        if (!reader.readNested(waypoints[_i])) {
             reader.fail();
             return false;
         }
@@ -148,8 +148,8 @@ bool Map2DPathData::nested_write_waypoints(const yarp::os::idl::WireWriter& writ
     if (!writer.writeListBegin(BOTTLE_TAG_LIST, static_cast<uint32_t>(waypoints.size()))) {
         return false;
     }
-    for (const auto& _item11 : waypoints) {
-        if (!writer.writeNested(_item11)) {
+    for (const auto& _item : waypoints) {
+        if (!writer.writeNested(_item)) {
             return false;
         }
     }

@@ -326,8 +326,8 @@ bool FrameTransformStorageSetRPC_setTransformsRPC_helper::Command::writeArgs(con
     if (!writer.writeListBegin(BOTTLE_TAG_LIST, static_cast<uint32_t>(transforms.size()))) {
         return false;
     }
-    for (const auto& _item12 : transforms) {
-        if (!writer.writeNested(_item12)) {
+    for (const auto& _item : transforms) {
+        if (!writer.writeNested(_item)) {
             return false;
         }
     }
@@ -368,16 +368,16 @@ bool FrameTransformStorageSetRPC_setTransformsRPC_helper::Command::readArgs(yarp
         return false;
     }
     transforms.clear();
-    uint32_t _size13;
-    yarp::os::idl::WireState _etype16;
-    reader.readListBegin(_etype16, _size13);
-    transforms.resize(_size13);
-    for (size_t _i17 = 0; _i17 < _size13; ++_i17) {
+    uint32_t _size;
+    yarp::os::idl::WireState _etype;
+    reader.readListBegin(_etype, _size);
+    transforms.resize(_size);
+    for (size_t _i = 0; _i < _size; ++_i) {
         if (reader.noMore()) {
             reader.fail();
             return false;
         }
-        if (!reader.readNested(transforms[_i17])) {
+        if (!reader.readNested(transforms[_i])) {
             reader.fail();
             return false;
         }
