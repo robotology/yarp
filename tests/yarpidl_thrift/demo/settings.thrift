@@ -13,4 +13,6 @@ struct Settings {
        2: string name;
        3: Point pt;
        4: list<i32> ints;
-}
+} (
+    yarp.editor = "true"
+)

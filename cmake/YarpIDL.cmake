@@ -21,7 +21,6 @@
 #                   [THRIFT_INCLUDE_PREFIX]
 #                   [THRIFT_NO_NAMESPACE_PREFIX]
 #                   [THRIFT_NO_COPYRIGHT}
-#                   [THRIFT_NO_EDITOR]
 #                   [THRIFT_NO_DOC]
 #                   [THRIFT_DEBUG_GENERATOR]
 #                   [ROSMSG_WITH_ROS]
@@ -62,7 +61,6 @@ function(_YARP_IDL_THRIFT_ARGS _prefix _out_dir _verbose _out_var)
     INCLUDE_PREFIX
     NO_NAMESPACE_PREFIX
     NO_COPYRIGHT
-    NO_EDITOR
     NO_DOC
     DEBUG_GENERATOR
   )
@@ -202,7 +200,6 @@ function(YARP_IDL_TO_DIR)
     THRIFT_INCLUDE_PREFIX
     THRIFT_NO_NAMESPACE_PREFIX
     THRIFT_NO_COPYRIGHT
-    THRIFT_NO_EDITOR
     THRIFT_NO_DOC
     THRIFT_DEBUG_GENERATOR
     ROSMSG_WITH_ROS

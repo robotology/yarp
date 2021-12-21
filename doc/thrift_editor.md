@@ -12,11 +12,12 @@ One recurring desire is a way to manipulate or read just part of a structure.
 This is convenient if that structure represents configuration data for a
 program.
 
-With YARP, every Thrift structure has a corresponding `Editor` service that can
-be used to manipulate or read parts of it.
+With YARP, it is possible to generate an `Editor` service that can be used to
+manipulate or read parts of a corresponding thrift structure, by passing the
+`yarp.editor = "true"` annotation.
 For example, suppose we have the following structure in `settings.thrift`
 
-```{.cpp}
+```{.thrift}
 struct Settings
 {
        1: i32 id;
@@ -75,7 +76,19 @@ Settings 1 sam (1 2 3)
 
 Now, suppose we want to offer a way to change parts of the structure
 individually.
-We can make the following two-line modification:
+We can make the following modification:
+
+
+```{.thrift}
+struct Settings
+{
+       1: i32 id;
+       2: string name;
+       3: list<i32> ints;
+} (
+    yarp.editor = "true"
+)
+```
 
 ```{.cpp}
 int main()

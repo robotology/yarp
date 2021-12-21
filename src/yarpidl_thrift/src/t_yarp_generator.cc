@@ -40,7 +40,6 @@ class t_yarp_generator : public t_oop_generator
     bool use_include_prefix_{false};
     bool no_namespace_prefix_{true};
     bool no_copyright_{false};
-    bool no_editor_{false};
     bool no_doc_{false};
     bool debug_generator_{false};
 
@@ -65,7 +64,6 @@ public:
             use_include_prefix_{parsed_options.find("include_prefix") != parsed_options.end()},
             no_namespace_prefix_{parsed_options.find("no_namespace_prefix") != parsed_options.end()},
             no_copyright_{parsed_options.find("no_copyright") != parsed_options.end()},
-            no_editor_{parsed_options.find("no_editor") != parsed_options.end()},
             no_doc_{parsed_options.find("no_doc") != parsed_options.end()},
             debug_generator_{parsed_options.find("debug_generator") != parsed_options.end()}
     {
@@ -2190,10 +2188,10 @@ void t_yarp_generator::generate_struct(t_struct* tstruct)
     generate_struct_unwrapped_helper(tstruct, f_h_, f_cpp_);
 
     // Add editor class, if not disabled
-    bool editor_enabled = !no_editor_;
+    bool editor_enabled = false;
     if (annotations.find("yarp.editor") != annotations.end()) {
-        if (annotations.at("yarp.editor") == "false") {
-            editor_enabled = false;
+        if (annotations.at("yarp.editor") == "true") {
+            editor_enabled = true;
         }
     }
 
@@ -4592,6 +4590,5 @@ THRIFT_REGISTER_GENERATOR(
     "    include_prefix:       The include prefix to use for the generated files\n"
     "    no_namespace_prefix:  Omit the namespace from the include prefix\n"
     "    no_copyright:         Omit the copyright header.\n"
-    "    no_editor:            Omit the generation of the Editor class for structs.\n"
     "    no_doc:               Omit doxygen documentation.\n"
     "    debug_generator:      Add generator debug information in generated code.\n")
