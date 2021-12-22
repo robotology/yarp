@@ -4418,7 +4418,8 @@ void t_yarp_generator::generate_service_read(t_service* tservice, std::ostringst
         size_t max = 0;
         for (const auto& function : tservice->get_functions()) {
             const auto& fname = function->get_name();
-            max = std::max(static_cast<long>(max), std::count(fname.begin(), fname.end(), '_') + 1);
+            const size_t tag_len = std::count(fname.begin(), fname.end(), '_') + 1;
+            max = std::max(max, tag_len);
         }
         return max;
     }();
