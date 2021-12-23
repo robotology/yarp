@@ -124,7 +124,7 @@ private:
     bool    m_part_motorPositionVisible;
     bool    m_part_dutyVisible;
     bool    m_part_currentVisible;
-    std::vector<yarp::dev::InteractionModeEnum> m_interactionModes;
+    yarp::dev::InteractionModeEnum* m_interactionModes;
 
     ResourceFinder* m_finder;
     PolyDriver*     m_partsdd;

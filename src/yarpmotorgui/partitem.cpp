@@ -179,7 +179,7 @@ PartItem::PartItem(QString robotName, int id, QString partName, ResourceFinder& 
             m_dutyCycles[i] = std::nan("");
         }
         m_done = new bool[number_of_joints];
-        m_interactionModes.resize(number_of_joints);
+        m_interactionModes = new yarp::dev::InteractionModeEnum[number_of_joints];
 
         bool ret = false;
         SystemClock::delaySystem(0.050);
@@ -352,6 +352,7 @@ PartItem::~PartItem()
     if (m_motorPositions) { delete[] m_motorPositions; m_motorPositions = nullptr; }
     if (m_dutyCycles) { delete[] m_dutyCycles; m_dutyCycles = nullptr; }
     if (m_done) { delete[] m_done; m_done = nullptr; }
+    if (m_interactionModes) { delete [] m_interactionModes; m_interactionModes = nullptr; }
 }
 
 bool PartItem::openPolyDrivers()
@@ -2283,7 +2284,7 @@ bool PartItem::updatePart()
     //    if(ret==false){
     //        LOG_ERROR("ictrl->getControlMode failed\n" );
     //    }
-    ret = m_iinteract->getInteractionModes(m_interactionModes.data());
+    ret = m_iinteract->getInteractionModes(m_interactionModes);
     if(ret==false){
         LOG_ERROR("iint->getInteractionlMode failed\n" );
     }
