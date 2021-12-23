@@ -91,13 +91,14 @@
 
 
 #if defined(_MSC_VER)
-  // see https://support.microsoft.com/kb/155196/en-us
+  // see https://yal.cc/emitting-custom-warnings-errors-in-visual-studio-custom-build-events/
   #define __YARP_STR2(x) #x
   #define __YARP_STR1(x) __YARP_STR2(x)
-  #define __YARP_LOC __FILE__ "("__STR1__(__LINE__)")"
-  #define YARP_COMPILER_MESSAGE(x) __pragma(message(__LOC__ " : msg" #x))
-  #define YARP_COMPILER_WARNING(x) __pragma(message(__LOC__ " : warning msg" #x))
-  #define YARP_COMPILER_ERROR(x)  __pragma(message(__LOC__ " : error msg" #x))
+  #define __YARP_LOC __FILE__ "(" __YARP_STR1(__LINE__) ")"
+  #define YARP_COMPILER_MESSAGE(x) __pragma(message(__YARP_LOC ": message : " #x))
+  #define YARP_COMPILER_WARNING(x) __pragma(message(__YARP_LOC " : warning:" #x))
+  #define YARP_COMPILER_ERROR(x)   __pragma(message(__YARP_LOC " : error:" #x))
+
 #elif defined(__GNUC__)
   // see https://gcc.gnu.org/onlinedocs/gcc/Diagnostic-Pragmas.html
   #define __YARP_DO_PRAGMA(x) _Pragma (#x)
