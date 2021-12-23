@@ -681,7 +681,7 @@ bool TransformServer::parseStartingTf(yarp::os::Searchable &config)
 bool TransformServer::open(yarp::os::Searchable &config)
 {
     yCWarning(TRANSFORMSERVER) << "The 'transformServer' device is deprecated in favour of 'frameTransformServer'.";
-    yCWarning(TRANSFORMSERVER) << "The old device is no longer supported, and it will be deprecated in YARP 3.6 and removed in YARP 4.";
+    yCWarning(TRANSFORMSERVER) << "The old device is no longer supported, and it will be deprecated in YARP 3.7 and removed in YARP 4.";
     yCWarning(TRANSFORMSERVER) << "Please update your scripts.";
 
     Property params;

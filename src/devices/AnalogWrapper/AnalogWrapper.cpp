@@ -688,7 +688,7 @@ bool AnalogWrapper::open(yarp::os::Searchable &config)
     yCWarning(ANALOGWRAPPER) << "The 'AnalogWrapper' device is deprecated.";
     yCWarning(ANALOGWRAPPER) << "Possible alternatives, depending on the specific type sensor data, are:";
     yCWarning(ANALOGWRAPPER) << "'MultipleAnalogSensorsRemapper`+`MultipleAnalogSensorsServer`, `PoseStampedRosPublisher`, `WrenchStampedRosPublisher`,`IMURosPublisher`,etc.";
-    yCWarning(ANALOGWRAPPER) << "The old device is no longer supported, and it will be deprecated in YARP 3.6 and removed in YARP 4.";
+    yCWarning(ANALOGWRAPPER) << "The old device is no longer supported, and it will be deprecated in YARP 3.7 and removed in YARP 4.";
     yCWarning(ANALOGWRAPPER) << "Please update your scripts.";
 
     Property params;

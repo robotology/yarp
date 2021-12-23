@@ -104,7 +104,7 @@ bool Localization2DServer::detachAll()
 bool Localization2DServer::open(Searchable& config)
 {
     yCWarning(LOCALIZATION2DSERVER) << "The 'localization2DServer' device is deprecated in favour of 'localization2D_nws_yarp'.";
-    yCWarning(LOCALIZATION2DSERVER) << "The old device is no longer supported, and it will be deprecated in YARP 3.6 and removed in YARP 4.";
+    yCWarning(LOCALIZATION2DSERVER) << "The old device is no longer supported, and it will be deprecated in YARP 3.7 and removed in YARP 4.";
     yCWarning(LOCALIZATION2DSERVER) << "Please update your scripts.";
 
     Property params;

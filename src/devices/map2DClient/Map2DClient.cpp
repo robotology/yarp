@@ -27,7 +27,7 @@ YARP_LOG_COMPONENT(MAP2DCLIENT, "yarp.device.map2DClient")
 bool Map2DClient::open(yarp::os::Searchable &config)
 {
     yCWarning(MAP2DCLIENT) << "The 'Map2DClient' device is deprecated in favour of 'map2D_nwc_yarp'.";
-    yCWarning(MAP2DCLIENT) << "The old device is no longer supported, and it will be deprecated in YARP 3.6 and removed in YARP 4.";
+    yCWarning(MAP2DCLIENT) << "The old device is no longer supported, and it will be deprecated in YARP 3.7 and removed in YARP 4.";
     yCWarning(MAP2DCLIENT) << "Please update your scripts.";
 
     m_local_name.clear();

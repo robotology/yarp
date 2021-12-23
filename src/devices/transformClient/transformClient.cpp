@@ -422,7 +422,7 @@ bool TransformClient::read(yarp::os::ConnectionReader& connection)
 bool TransformClient::open(yarp::os::Searchable &config)
 {
     yCWarning(TRANSFORMCLIENT) << "The 'transformClient' device is deprecated in favour of 'frameTransformClient'.";
-    yCWarning(TRANSFORMCLIENT) << "The old device is no longer supported, and it will be deprecated in YARP 3.6 and removed in YARP 4.";
+    yCWarning(TRANSFORMCLIENT) << "The old device is no longer supported, and it will be deprecated in YARP 3.7 and removed in YARP 4.";
     yCWarning(TRANSFORMCLIENT) << "Please update your scripts.";
 
     m_local_name.clear();

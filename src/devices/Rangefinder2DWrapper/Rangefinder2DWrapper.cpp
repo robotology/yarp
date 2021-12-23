@@ -448,7 +448,7 @@ bool Rangefinder2DWrapper::threadInit()
 bool Rangefinder2DWrapper::open(yarp::os::Searchable &config)
 {
     yCWarning(RANGEFINDER2DWRAPPER) << "The 'Rangefinder2DWrapper' device is deprecated in favour of 'rangefinder2D_nws_yarp'.";
-    yCWarning(RANGEFINDER2DWRAPPER) << "The old device is no longer supported, and it will be deprecated in YARP 3.6 and removed in YARP 4.";
+    yCWarning(RANGEFINDER2DWRAPPER) << "The old device is no longer supported, and it will be deprecated in YARP 3.7 and removed in YARP 4.";
     yCWarning(RANGEFINDER2DWRAPPER) << "Please update your scripts.";
 
     Property params;

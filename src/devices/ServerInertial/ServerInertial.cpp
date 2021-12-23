@@ -273,7 +273,7 @@ bool ServerInertial::openAndAttachSubDevice(yarp::os::Property& prop)
 bool ServerInertial::open(yarp::os::Searchable& config)
 {
     yCWarning(SERVERINERTIAL) << "The 'inertial' device is deprecated in favour of 'multipleanalogsensorsremapper' + 'multipleanalogsensorsserver' + 'IMURosPublisher'.";
-    yCWarning(SERVERINERTIAL) << "The old device is no longer supported, and it will be deprecated in YARP 3.6 and removed in YARP 4.";
+    yCWarning(SERVERINERTIAL) << "The old device is no longer supported, and it will be deprecated in YARP 3.7 and removed in YARP 4.";
     yCWarning(SERVERINERTIAL) << "Please update your scripts.";
 
     Property prop;

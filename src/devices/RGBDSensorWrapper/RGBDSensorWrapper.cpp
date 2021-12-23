@@ -195,7 +195,7 @@ RGBDSensorWrapper::~RGBDSensorWrapper()
 bool RGBDSensorWrapper::open(yarp::os::Searchable &config)
 {
     yCWarning(RGBDSENSORWRAPPER) << "The 'RGBDSensorWrapper' device is deprecated in favour of 'rgbdSensor_nws_yarp'.";
-    yCWarning(RGBDSENSORWRAPPER) << "The old device is no longer supported, and it will be deprecated in YARP 3.6 and removed in YARP 4.";
+    yCWarning(RGBDSENSORWRAPPER) << "The old device is no longer supported, and it will be deprecated in YARP 3.7 and removed in YARP 4.";
     yCWarning(RGBDSENSORWRAPPER) << "Please update your scripts.";
 
 //     DeviceResponder::makeUsage();

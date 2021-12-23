@@ -26,7 +26,7 @@ YARP_LOG_COMPONENT(LOCALIZATION2DCLIENT, "yarp.device.localization2DClient")
 bool Localization2DClient::open(yarp::os::Searchable &config)
 {
     yCWarning(LOCALIZATION2DCLIENT) << "The 'Localization2DClient' device is deprecated in favour of 'localization2D_nwc_yarp'.";
-    yCWarning(LOCALIZATION2DCLIENT) << "The old device is no longer supported, and it will be deprecated in YARP 3.6 and removed in YARP 4.";
+    yCWarning(LOCALIZATION2DCLIENT) << "The old device is no longer supported, and it will be deprecated in YARP 3.7 and removed in YARP 4.";
     yCWarning(LOCALIZATION2DCLIENT) << "Please update your scripts.";
 
     m_local_name.clear();

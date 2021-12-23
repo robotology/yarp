@@ -27,7 +27,7 @@ YARP_LOG_COMPONENT(NAVIGATION2DCLIENT, "yarp.device.navigation2DClient")
 bool Navigation2DClient::open(yarp::os::Searchable &config)
 {
     yCWarning(NAVIGATION2DCLIENT) << "The 'navigation2DClient' device is deprecated in favour of 'navigation2D_nwc_yarp'.";
-    yCWarning(NAVIGATION2DCLIENT) << "The old device is no longer supported, and it will be deprecated in YARP 3.6 and removed in YARP 4.";
+    yCWarning(NAVIGATION2DCLIENT) << "The old device is no longer supported, and it will be deprecated in YARP 3.7 and removed in YARP 4.";
     yCWarning(NAVIGATION2DCLIENT) << "Please update your scripts.";
 
     m_local_name.clear();

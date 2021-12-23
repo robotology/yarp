@@ -188,7 +188,7 @@ void  AnalogSensorClient::removeLeadingTrailingSlashesOnly(std::string &name)
 bool AnalogSensorClient::open(yarp::os::Searchable &config)
 {
     yCWarning(ANALOGSENSORCLIENT) << "The 'inertial' device is deprecated in favour of 'multipleanalogsensorsclient'";
-    yCWarning(ANALOGSENSORCLIENT) << "The old device is no longer supported, and it will be deprecated in YARP 3.6 and removed in YARP 4.";
+    yCWarning(ANALOGSENSORCLIENT) << "The old device is no longer supported, and it will be deprecated in YARP 3.7 and removed in YARP 4.";
     yCWarning(ANALOGSENSORCLIENT) << "Please update your scripts.";
 
     std::string carrier = config.check("carrier", Value("udp"), "default carrier for streaming robot state").asString();

@@ -137,7 +137,7 @@ bool ServerGrabber::close() {
 bool ServerGrabber::open(yarp::os::Searchable& config) {
     yCIWarning(SERVERGRABBER, id()) << config.toString();
     yCIWarning(SERVERGRABBER, id()) << "The 'grabberDual' device is deprecated in favour of 'frameGrabber_nws_yarp' (and eventually 'frameGrabberCropper').";
-    yCIWarning(SERVERGRABBER, id()) << "The old device is no longer supported, and it will be deprecated in YARP 3.6 and removed in YARP 4.";
+    yCIWarning(SERVERGRABBER, id()) << "The old device is no longer supported, and it will be deprecated in YARP 3.7 and removed in YARP 4.";
     yCIWarning(SERVERGRABBER, id()) << "Please update your scripts.";
 
     if (param.active) {
