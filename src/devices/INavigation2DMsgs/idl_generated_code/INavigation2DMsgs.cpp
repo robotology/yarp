@@ -1963,12 +1963,12 @@ bool INavigation2DMsgs_get_all_navigation_waypoints_RPC_helper::Command::readArg
         reader.fail();
         return false;
     }
-    yarp::conf::vocab32_t ecast2;
-    if (!reader.readVocab32(ecast2)) {
+    yarp::conf::vocab32_t _ecast;
+    if (!reader.readVocab32(_ecast)) {
         reader.fail();
         return false;
     }
-    trajectory_type = static_cast<yarp::dev::Nav2D::TrajectoryTypeEnum>(ecast2);
+    trajectory_type = static_cast<yarp::dev::Nav2D::TrajectoryTypeEnum>(_ecast);
     if (!reader.noMore()) {
         reader.fail();
         return false;
@@ -2119,12 +2119,12 @@ bool INavigation2DMsgs_get_current_navigation_map_RPC_helper::Command::readArgs(
         reader.fail();
         return false;
     }
-    yarp::conf::vocab32_t ecast3;
-    if (!reader.readVocab32(ecast3)) {
+    yarp::conf::vocab32_t _ecast;
+    if (!reader.readVocab32(_ecast)) {
         reader.fail();
         return false;
     }
-    map_type = static_cast<yarp::dev::Nav2D::NavigationMapTypeEnum>(ecast3);
+    map_type = static_cast<yarp::dev::Nav2D::NavigationMapTypeEnum>(_ecast);
     if (!reader.noMore()) {
         reader.fail();
         return false;

@@ -225,7 +225,7 @@ server_return_code_t server(double server_wait, std::string datafilename, bool v
             return SERVER_ERROR;
         }
 
-        for (size_t elem = 0, pf=0; elem < payload_reqsize - 1; elem++)
+        for (size_t elem = 0, pf=0; (signed)elem < payload_reqsize - 1; elem++)
         {
             buf[elem] = memblock[pf++];
             if (pf > max_data_size) { pf =0;}

@@ -2842,8 +2842,8 @@ bool yarpdataplayer_console_IDL_getAllParts_helper::Reply::write(const yarp::os:
         if (!writer.writeListBegin(BOTTLE_TAG_STRING, static_cast<uint32_t>(return_helper.size()))) {
             return false;
         }
-        for (const auto& _item0 : return_helper) {
-            if (!writer.writeString(_item0)) {
+        for (const auto& _item : return_helper) {
+            if (!writer.writeString(_item)) {
                 return false;
             }
         }
@@ -2864,16 +2864,16 @@ bool yarpdataplayer_console_IDL_getAllParts_helper::Reply::read(yarp::os::idl::W
         return false;
     }
     return_helper.clear();
-    uint32_t _size1;
-    yarp::os::idl::WireState _etype4;
-    reader.readListBegin(_etype4, _size1);
-    return_helper.resize(_size1);
-    for (size_t _i5 = 0; _i5 < _size1; ++_i5) {
+    uint32_t _size;
+    yarp::os::idl::WireState _etype;
+    reader.readListBegin(_etype, _size);
+    return_helper.resize(_size);
+    for (size_t _i = 0; _i < _size; ++_i) {
         if (reader.noMore()) {
             reader.fail();
             return false;
         }
-        if (!reader.readString(return_helper[_i5])) {
+        if (!reader.readString(return_helper[_i])) {
             reader.fail();
             return false;
         }

@@ -129,7 +129,6 @@ for(@copyright) {s/^\s*:\s*//g};
 @copyright = grep(!/statement follows/, @copyright);
 @copyright = grep(!/this permission notice/, @copyright);
 @copyright = grep(!/\\n\\/, @copyright);
-@copyright = grep(!/NO_EDITOR/, @copyright);
 
 # If we removed all lines reset to "unknown"
 if (scalar(@copyright) == 0) {

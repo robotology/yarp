@@ -25,14 +25,7 @@ class PortWriterBufferBase::Private : public PortWriterBufferManager
 {
 public:
     Private(PortWriterBufferBase& owner) :
-            owner(owner),
-            stateSema(1),
-            completionSema(0),
-            port(nullptr),
-            current(nullptr),
-            callback(nullptr),
-            finishing(false),
-            outCt(0)
+            owner(owner)
     {
     }
 
@@ -40,14 +33,13 @@ public:
     {
         release();
         finishWrites();
-        stateSema.wait();
     }
 
     int getCount()
     {
-        stateSema.wait();
+        stateMutex.lock();
         int ct = packets.getCount();
-        stateSema.post();
+        stateMutex.unlock();
         return ct;
     }
 
@@ -56,7 +48,7 @@ public:
         yCDebug(PORTWRITERBUFFERBASE, "finishing writes");
         bool done = false;
         while (!done) {
-            stateSema.wait();
+            stateMutex.lock();
             if (port != nullptr) {
                 if (!port->isOpen()) {
                     outCt = 0;
@@ -66,7 +58,7 @@ public:
             if (!done) {
                 finishing = true;
             }
-            stateSema.post();
+            stateMutex.unlock();
             if (!done) {
                 completionSema.wait();
             }
@@ -83,7 +75,7 @@ public:
             yCDebug(PORTWRITERBUFFERBASE, "releasing unused buffer");
             release();
         }
-        stateSema.wait();
+        stateMutex.lock();
         PortCorePacket* packet = packets.getFreePacket();
         yCAssert(PORTWRITERBUFFERBASE, packet != nullptr);
         if (packet->getContent() == nullptr) {
@@ -93,7 +85,7 @@ public:
             //packet->setContent(wrapper, true);
             packet->setContent(wrapper->getInternal(), false, wrapper, true);
         }
-        stateSema.post();
+        stateMutex.unlock();
 
         current = packet->getContent();
         callback = packet->getCallback();
@@ -102,15 +94,15 @@ public:
 
     bool release()
     {
-        stateSema.wait();
+        stateMutex.lock();
         const PortWriter* cback = callback;
         current = nullptr;
         callback = nullptr;
-        stateSema.post();
+        stateMutex.unlock();
         if (cback != nullptr) {
-            stateSema.wait();
+            stateMutex.lock();
             outCt++;
-            stateSema.post();
+            stateMutex.unlock();
             cback->onCompletion();
         }
         return cback != nullptr;
@@ -118,13 +110,13 @@ public:
 
     void onCompletion(void* tracker) override
     {
-        stateSema.wait();
+        stateMutex.lock();
         yCDebug(PORTWRITERBUFFERBASE, "freeing up a writer buffer");
         packets.freePacket((PortCorePacket*)tracker, false);
         outCt--;
         bool sig = finishing;
         finishing = false;
-        stateSema.post();
+        stateMutex.unlock();
         if (sig) {
             completionSema.post();
         }
@@ -133,10 +125,10 @@ public:
 
     void attach(Port& port)
     {
-        stateSema.wait();
+        stateMutex.lock();
         this->port = &port;
         port.enableBackgroundWrite(true);
-        stateSema.post();
+        stateMutex.unlock();
     }
 
     void detach()
@@ -149,16 +141,16 @@ public:
         if (strict) {
             finishWrites();
         }
-        stateSema.wait();
+        stateMutex.lock();
         const PortWriter* active = current;
         const PortWriter* cback = callback;
         current = nullptr;
         callback = nullptr;
-        stateSema.post();
+        stateMutex.unlock();
         if (active != nullptr && port != nullptr) {
-            stateSema.wait();
+            stateMutex.lock();
             outCt++;
-            stateSema.post();
+            stateMutex.unlock();
             port->write(*active, cback);
         }
     }
@@ -166,13 +158,13 @@ public:
 private:
     PortWriterBufferBase& owner;
     PortCorePackets packets;
-    yarp::os::Semaphore stateSema;
-    yarp::os::Semaphore completionSema;
-    Port* port;
-    const PortWriter* current;
-    const PortWriter* callback;
-    bool finishing;
-    int outCt;
+    std::mutex stateMutex;
+    yarp::os::Semaphore completionSema {0};
+    Port* port {nullptr};
+    const PortWriter* current {nullptr};
+    const PortWriter* callback {nullptr};
+    bool finishing {false};
+    int outCt {0};
 };
 
 

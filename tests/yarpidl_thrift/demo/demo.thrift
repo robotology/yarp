@@ -32,7 +32,9 @@ struct DemoStruct {
 
   /** this is the "y" part */
   2: i32 y
-}
+} (
+    yarp.editor = "true"
+)
 
 struct DemoStructList {
   1: list<DemoStruct> lst
@@ -54,7 +56,9 @@ struct DemoStructExt {
 
   /** this is a list of structs */
   4: list<DemoStruct> ds_list
-}
+} (
+    yarp.editor = "true"
+)
 
 struct TestSomeMoreTypes {
   1: bool a_bool,

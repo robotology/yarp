@@ -135,996 +135,6 @@ std::string SensorRPCData::toString() const
     return b.toString();
 }
 
-// Editor: default constructor
-SensorRPCData::Editor::Editor()
-{
-    group = 0;
-    obj_owned = true;
-    obj = new SensorRPCData;
-    dirty_flags(false);
-    yarp().setOwner(*this);
-}
-
-// Editor: constructor with base class
-SensorRPCData::Editor::Editor(SensorRPCData& obj)
-{
-    group = 0;
-    obj_owned = false;
-    edit(obj, false);
-    yarp().setOwner(*this);
-}
-
-// Editor: destructor
-SensorRPCData::Editor::~Editor()
-{
-    if (obj_owned) {
-        delete obj;
-    }
-}
-
-// Editor: edit
-bool SensorRPCData::Editor::edit(SensorRPCData& obj, bool dirty)
-{
-    if (obj_owned) {
-        delete this->obj;
-    }
-    this->obj = &obj;
-    obj_owned = false;
-    dirty_flags(dirty);
-    return true;
-}
-
-// Editor: validity check
-bool SensorRPCData::Editor::isValid() const
-{
-    return obj != nullptr;
-}
-
-// Editor: state
-SensorRPCData& SensorRPCData::Editor::state()
-{
-    return *obj;
-}
-
-// Editor: grouping begin
-void SensorRPCData::Editor::start_editing()
-{
-    group++;
-}
-
-// Editor: grouping end
-void SensorRPCData::Editor::stop_editing()
-{
-    group--;
-    if (group == 0 && is_dirty) {
-        communicate();
-    }
-}
-// Editor: ThreeAxisGyroscopes setter
-void SensorRPCData::Editor::set_ThreeAxisGyroscopes(const std::vector<SensorMetadata>& ThreeAxisGyroscopes)
-{
-    will_set_ThreeAxisGyroscopes();
-    obj->ThreeAxisGyroscopes = ThreeAxisGyroscopes;
-    mark_dirty_ThreeAxisGyroscopes();
-    communicate();
-    did_set_ThreeAxisGyroscopes();
-}
-
-// Editor: ThreeAxisGyroscopes setter (list)
-void SensorRPCData::Editor::set_ThreeAxisGyroscopes(size_t index, const SensorMetadata& elem)
-{
-    will_set_ThreeAxisGyroscopes();
-    obj->ThreeAxisGyroscopes[index] = elem;
-    mark_dirty_ThreeAxisGyroscopes();
-    communicate();
-    did_set_ThreeAxisGyroscopes();
-}
-
-// Editor: ThreeAxisGyroscopes getter
-const std::vector<SensorMetadata>& SensorRPCData::Editor::get_ThreeAxisGyroscopes() const
-{
-    return obj->ThreeAxisGyroscopes;
-}
-
-// Editor: ThreeAxisGyroscopes will_set
-bool SensorRPCData::Editor::will_set_ThreeAxisGyroscopes()
-{
-    return true;
-}
-
-// Editor: ThreeAxisGyroscopes did_set
-bool SensorRPCData::Editor::did_set_ThreeAxisGyroscopes()
-{
-    return true;
-}
-
-// Editor: ThreeAxisLinearAccelerometers setter
-void SensorRPCData::Editor::set_ThreeAxisLinearAccelerometers(const std::vector<SensorMetadata>& ThreeAxisLinearAccelerometers)
-{
-    will_set_ThreeAxisLinearAccelerometers();
-    obj->ThreeAxisLinearAccelerometers = ThreeAxisLinearAccelerometers;
-    mark_dirty_ThreeAxisLinearAccelerometers();
-    communicate();
-    did_set_ThreeAxisLinearAccelerometers();
-}
-
-// Editor: ThreeAxisLinearAccelerometers setter (list)
-void SensorRPCData::Editor::set_ThreeAxisLinearAccelerometers(size_t index, const SensorMetadata& elem)
-{
-    will_set_ThreeAxisLinearAccelerometers();
-    obj->ThreeAxisLinearAccelerometers[index] = elem;
-    mark_dirty_ThreeAxisLinearAccelerometers();
-    communicate();
-    did_set_ThreeAxisLinearAccelerometers();
-}
-
-// Editor: ThreeAxisLinearAccelerometers getter
-const std::vector<SensorMetadata>& SensorRPCData::Editor::get_ThreeAxisLinearAccelerometers() const
-{
-    return obj->ThreeAxisLinearAccelerometers;
-}
-
-// Editor: ThreeAxisLinearAccelerometers will_set
-bool SensorRPCData::Editor::will_set_ThreeAxisLinearAccelerometers()
-{
-    return true;
-}
-
-// Editor: ThreeAxisLinearAccelerometers did_set
-bool SensorRPCData::Editor::did_set_ThreeAxisLinearAccelerometers()
-{
-    return true;
-}
-
-// Editor: ThreeAxisMagnetometers setter
-void SensorRPCData::Editor::set_ThreeAxisMagnetometers(const std::vector<SensorMetadata>& ThreeAxisMagnetometers)
-{
-    will_set_ThreeAxisMagnetometers();
-    obj->ThreeAxisMagnetometers = ThreeAxisMagnetometers;
-    mark_dirty_ThreeAxisMagnetometers();
-    communicate();
-    did_set_ThreeAxisMagnetometers();
-}
-
-// Editor: ThreeAxisMagnetometers setter (list)
-void SensorRPCData::Editor::set_ThreeAxisMagnetometers(size_t index, const SensorMetadata& elem)
-{
-    will_set_ThreeAxisMagnetometers();
-    obj->ThreeAxisMagnetometers[index] = elem;
-    mark_dirty_ThreeAxisMagnetometers();
-    communicate();
-    did_set_ThreeAxisMagnetometers();
-}
-
-// Editor: ThreeAxisMagnetometers getter
-const std::vector<SensorMetadata>& SensorRPCData::Editor::get_ThreeAxisMagnetometers() const
-{
-    return obj->ThreeAxisMagnetometers;
-}
-
-// Editor: ThreeAxisMagnetometers will_set
-bool SensorRPCData::Editor::will_set_ThreeAxisMagnetometers()
-{
-    return true;
-}
-
-// Editor: ThreeAxisMagnetometers did_set
-bool SensorRPCData::Editor::did_set_ThreeAxisMagnetometers()
-{
-    return true;
-}
-
-// Editor: OrientationSensors setter
-void SensorRPCData::Editor::set_OrientationSensors(const std::vector<SensorMetadata>& OrientationSensors)
-{
-    will_set_OrientationSensors();
-    obj->OrientationSensors = OrientationSensors;
-    mark_dirty_OrientationSensors();
-    communicate();
-    did_set_OrientationSensors();
-}
-
-// Editor: OrientationSensors setter (list)
-void SensorRPCData::Editor::set_OrientationSensors(size_t index, const SensorMetadata& elem)
-{
-    will_set_OrientationSensors();
-    obj->OrientationSensors[index] = elem;
-    mark_dirty_OrientationSensors();
-    communicate();
-    did_set_OrientationSensors();
-}
-
-// Editor: OrientationSensors getter
-const std::vector<SensorMetadata>& SensorRPCData::Editor::get_OrientationSensors() const
-{
-    return obj->OrientationSensors;
-}
-
-// Editor: OrientationSensors will_set
-bool SensorRPCData::Editor::will_set_OrientationSensors()
-{
-    return true;
-}
-
-// Editor: OrientationSensors did_set
-bool SensorRPCData::Editor::did_set_OrientationSensors()
-{
-    return true;
-}
-
-// Editor: TemperatureSensors setter
-void SensorRPCData::Editor::set_TemperatureSensors(const std::vector<SensorMetadata>& TemperatureSensors)
-{
-    will_set_TemperatureSensors();
-    obj->TemperatureSensors = TemperatureSensors;
-    mark_dirty_TemperatureSensors();
-    communicate();
-    did_set_TemperatureSensors();
-}
-
-// Editor: TemperatureSensors setter (list)
-void SensorRPCData::Editor::set_TemperatureSensors(size_t index, const SensorMetadata& elem)
-{
-    will_set_TemperatureSensors();
-    obj->TemperatureSensors[index] = elem;
-    mark_dirty_TemperatureSensors();
-    communicate();
-    did_set_TemperatureSensors();
-}
-
-// Editor: TemperatureSensors getter
-const std::vector<SensorMetadata>& SensorRPCData::Editor::get_TemperatureSensors() const
-{
-    return obj->TemperatureSensors;
-}
-
-// Editor: TemperatureSensors will_set
-bool SensorRPCData::Editor::will_set_TemperatureSensors()
-{
-    return true;
-}
-
-// Editor: TemperatureSensors did_set
-bool SensorRPCData::Editor::did_set_TemperatureSensors()
-{
-    return true;
-}
-
-// Editor: SixAxisForceTorqueSensors setter
-void SensorRPCData::Editor::set_SixAxisForceTorqueSensors(const std::vector<SensorMetadata>& SixAxisForceTorqueSensors)
-{
-    will_set_SixAxisForceTorqueSensors();
-    obj->SixAxisForceTorqueSensors = SixAxisForceTorqueSensors;
-    mark_dirty_SixAxisForceTorqueSensors();
-    communicate();
-    did_set_SixAxisForceTorqueSensors();
-}
-
-// Editor: SixAxisForceTorqueSensors setter (list)
-void SensorRPCData::Editor::set_SixAxisForceTorqueSensors(size_t index, const SensorMetadata& elem)
-{
-    will_set_SixAxisForceTorqueSensors();
-    obj->SixAxisForceTorqueSensors[index] = elem;
-    mark_dirty_SixAxisForceTorqueSensors();
-    communicate();
-    did_set_SixAxisForceTorqueSensors();
-}
-
-// Editor: SixAxisForceTorqueSensors getter
-const std::vector<SensorMetadata>& SensorRPCData::Editor::get_SixAxisForceTorqueSensors() const
-{
-    return obj->SixAxisForceTorqueSensors;
-}
-
-// Editor: SixAxisForceTorqueSensors will_set
-bool SensorRPCData::Editor::will_set_SixAxisForceTorqueSensors()
-{
-    return true;
-}
-
-// Editor: SixAxisForceTorqueSensors did_set
-bool SensorRPCData::Editor::did_set_SixAxisForceTorqueSensors()
-{
-    return true;
-}
-
-// Editor: ContactLoadCellArrays setter
-void SensorRPCData::Editor::set_ContactLoadCellArrays(const std::vector<SensorMetadata>& ContactLoadCellArrays)
-{
-    will_set_ContactLoadCellArrays();
-    obj->ContactLoadCellArrays = ContactLoadCellArrays;
-    mark_dirty_ContactLoadCellArrays();
-    communicate();
-    did_set_ContactLoadCellArrays();
-}
-
-// Editor: ContactLoadCellArrays setter (list)
-void SensorRPCData::Editor::set_ContactLoadCellArrays(size_t index, const SensorMetadata& elem)
-{
-    will_set_ContactLoadCellArrays();
-    obj->ContactLoadCellArrays[index] = elem;
-    mark_dirty_ContactLoadCellArrays();
-    communicate();
-    did_set_ContactLoadCellArrays();
-}
-
-// Editor: ContactLoadCellArrays getter
-const std::vector<SensorMetadata>& SensorRPCData::Editor::get_ContactLoadCellArrays() const
-{
-    return obj->ContactLoadCellArrays;
-}
-
-// Editor: ContactLoadCellArrays will_set
-bool SensorRPCData::Editor::will_set_ContactLoadCellArrays()
-{
-    return true;
-}
-
-// Editor: ContactLoadCellArrays did_set
-bool SensorRPCData::Editor::did_set_ContactLoadCellArrays()
-{
-    return true;
-}
-
-// Editor: EncoderArrays setter
-void SensorRPCData::Editor::set_EncoderArrays(const std::vector<SensorMetadata>& EncoderArrays)
-{
-    will_set_EncoderArrays();
-    obj->EncoderArrays = EncoderArrays;
-    mark_dirty_EncoderArrays();
-    communicate();
-    did_set_EncoderArrays();
-}
-
-// Editor: EncoderArrays setter (list)
-void SensorRPCData::Editor::set_EncoderArrays(size_t index, const SensorMetadata& elem)
-{
-    will_set_EncoderArrays();
-    obj->EncoderArrays[index] = elem;
-    mark_dirty_EncoderArrays();
-    communicate();
-    did_set_EncoderArrays();
-}
-
-// Editor: EncoderArrays getter
-const std::vector<SensorMetadata>& SensorRPCData::Editor::get_EncoderArrays() const
-{
-    return obj->EncoderArrays;
-}
-
-// Editor: EncoderArrays will_set
-bool SensorRPCData::Editor::will_set_EncoderArrays()
-{
-    return true;
-}
-
-// Editor: EncoderArrays did_set
-bool SensorRPCData::Editor::did_set_EncoderArrays()
-{
-    return true;
-}
-
-// Editor: SkinPatches setter
-void SensorRPCData::Editor::set_SkinPatches(const std::vector<SensorMetadata>& SkinPatches)
-{
-    will_set_SkinPatches();
-    obj->SkinPatches = SkinPatches;
-    mark_dirty_SkinPatches();
-    communicate();
-    did_set_SkinPatches();
-}
-
-// Editor: SkinPatches setter (list)
-void SensorRPCData::Editor::set_SkinPatches(size_t index, const SensorMetadata& elem)
-{
-    will_set_SkinPatches();
-    obj->SkinPatches[index] = elem;
-    mark_dirty_SkinPatches();
-    communicate();
-    did_set_SkinPatches();
-}
-
-// Editor: SkinPatches getter
-const std::vector<SensorMetadata>& SensorRPCData::Editor::get_SkinPatches() const
-{
-    return obj->SkinPatches;
-}
-
-// Editor: SkinPatches will_set
-bool SensorRPCData::Editor::will_set_SkinPatches()
-{
-    return true;
-}
-
-// Editor: SkinPatches did_set
-bool SensorRPCData::Editor::did_set_SkinPatches()
-{
-    return true;
-}
-
-// Editor: PositionSensors setter
-void SensorRPCData::Editor::set_PositionSensors(const std::vector<SensorMetadata>& PositionSensors)
-{
-    will_set_PositionSensors();
-    obj->PositionSensors = PositionSensors;
-    mark_dirty_PositionSensors();
-    communicate();
-    did_set_PositionSensors();
-}
-
-// Editor: PositionSensors setter (list)
-void SensorRPCData::Editor::set_PositionSensors(size_t index, const SensorMetadata& elem)
-{
-    will_set_PositionSensors();
-    obj->PositionSensors[index] = elem;
-    mark_dirty_PositionSensors();
-    communicate();
-    did_set_PositionSensors();
-}
-
-// Editor: PositionSensors getter
-const std::vector<SensorMetadata>& SensorRPCData::Editor::get_PositionSensors() const
-{
-    return obj->PositionSensors;
-}
-
-// Editor: PositionSensors will_set
-bool SensorRPCData::Editor::will_set_PositionSensors()
-{
-    return true;
-}
-
-// Editor: PositionSensors did_set
-bool SensorRPCData::Editor::did_set_PositionSensors()
-{
-    return true;
-}
-
-// Editor: clean
-void SensorRPCData::Editor::clean()
-{
-    dirty_flags(false);
-}
-
-// Editor: read
-bool SensorRPCData::Editor::read(yarp::os::ConnectionReader& connection)
-{
-    if (!isValid()) {
-        return false;
-    }
-    yarp::os::idl::WireReader reader(connection);
-    reader.expectAccept();
-    if (!reader.readListHeader()) {
-        return false;
-    }
-    int len = reader.getLength();
-    if (len == 0) {
-        yarp::os::idl::WireWriter writer(reader);
-        if (writer.isNull()) {
-            return true;
-        }
-        if (!writer.writeListHeader(1)) {
-            return false;
-        }
-        writer.writeString("send: 'help' or 'patch (param1 val1) (param2 val2)'");
-        return true;
-    }
-    std::string tag;
-    if (!reader.readString(tag)) {
-        return false;
-    }
-    if (tag == "help") {
-        yarp::os::idl::WireWriter writer(reader);
-        if (writer.isNull()) {
-            return true;
-        }
-        if (!writer.writeListHeader(2)) {
-            return false;
-        }
-        if (!writer.writeTag("many", 1, 0)) {
-            return false;
-        }
-        if (reader.getLength() > 0) {
-            std::string field;
-            if (!reader.readString(field)) {
-                return false;
-            }
-            if (field == "ThreeAxisGyroscopes") {
-                if (!writer.writeListHeader(1)) {
-                    return false;
-                }
-                if (!writer.writeString("std::vector<SensorMetadata> ThreeAxisGyroscopes")) {
-                    return false;
-                }
-            }
-            if (field == "ThreeAxisLinearAccelerometers") {
-                if (!writer.writeListHeader(1)) {
-                    return false;
-                }
-                if (!writer.writeString("std::vector<SensorMetadata> ThreeAxisLinearAccelerometers")) {
-                    return false;
-                }
-            }
-            if (field == "ThreeAxisMagnetometers") {
-                if (!writer.writeListHeader(1)) {
-                    return false;
-                }
-                if (!writer.writeString("std::vector<SensorMetadata> ThreeAxisMagnetometers")) {
-                    return false;
-                }
-            }
-            if (field == "OrientationSensors") {
-                if (!writer.writeListHeader(1)) {
-                    return false;
-                }
-                if (!writer.writeString("std::vector<SensorMetadata> OrientationSensors")) {
-                    return false;
-                }
-            }
-            if (field == "TemperatureSensors") {
-                if (!writer.writeListHeader(1)) {
-                    return false;
-                }
-                if (!writer.writeString("std::vector<SensorMetadata> TemperatureSensors")) {
-                    return false;
-                }
-            }
-            if (field == "SixAxisForceTorqueSensors") {
-                if (!writer.writeListHeader(1)) {
-                    return false;
-                }
-                if (!writer.writeString("std::vector<SensorMetadata> SixAxisForceTorqueSensors")) {
-                    return false;
-                }
-            }
-            if (field == "ContactLoadCellArrays") {
-                if (!writer.writeListHeader(1)) {
-                    return false;
-                }
-                if (!writer.writeString("std::vector<SensorMetadata> ContactLoadCellArrays")) {
-                    return false;
-                }
-            }
-            if (field == "EncoderArrays") {
-                if (!writer.writeListHeader(1)) {
-                    return false;
-                }
-                if (!writer.writeString("std::vector<SensorMetadata> EncoderArrays")) {
-                    return false;
-                }
-            }
-            if (field == "SkinPatches") {
-                if (!writer.writeListHeader(1)) {
-                    return false;
-                }
-                if (!writer.writeString("std::vector<SensorMetadata> SkinPatches")) {
-                    return false;
-                }
-            }
-            if (field == "PositionSensors") {
-                if (!writer.writeListHeader(1)) {
-                    return false;
-                }
-                if (!writer.writeString("std::vector<SensorMetadata> PositionSensors")) {
-                    return false;
-                }
-            }
-        }
-        if (!writer.writeListHeader(11)) {
-            return false;
-        }
-        writer.writeString("*** Available fields:");
-        writer.writeString("ThreeAxisGyroscopes");
-        writer.writeString("ThreeAxisLinearAccelerometers");
-        writer.writeString("ThreeAxisMagnetometers");
-        writer.writeString("OrientationSensors");
-        writer.writeString("TemperatureSensors");
-        writer.writeString("SixAxisForceTorqueSensors");
-        writer.writeString("ContactLoadCellArrays");
-        writer.writeString("EncoderArrays");
-        writer.writeString("SkinPatches");
-        writer.writeString("PositionSensors");
-        return true;
-    }
-    bool nested = true;
-    bool have_act = false;
-    if (tag != "patch") {
-        if (((len - 1) % 2) != 0) {
-            return false;
-        }
-        len = 1 + ((len - 1) / 2);
-        nested = false;
-        have_act = true;
-    }
-    for (int i = 1; i < len; ++i) {
-        if (nested && !reader.readListHeader(3)) {
-            return false;
-        }
-        std::string act;
-        std::string key;
-        if (have_act) {
-            act = tag;
-        } else if (!reader.readString(act)) {
-            return false;
-        }
-        if (!reader.readString(key)) {
-            return false;
-        }
-        if (key == "ThreeAxisGyroscopes") {
-            will_set_ThreeAxisGyroscopes();
-            if (!obj->nested_read_ThreeAxisGyroscopes(reader)) {
-                return false;
-            }
-            did_set_ThreeAxisGyroscopes();
-        } else if (key == "ThreeAxisLinearAccelerometers") {
-            will_set_ThreeAxisLinearAccelerometers();
-            if (!obj->nested_read_ThreeAxisLinearAccelerometers(reader)) {
-                return false;
-            }
-            did_set_ThreeAxisLinearAccelerometers();
-        } else if (key == "ThreeAxisMagnetometers") {
-            will_set_ThreeAxisMagnetometers();
-            if (!obj->nested_read_ThreeAxisMagnetometers(reader)) {
-                return false;
-            }
-            did_set_ThreeAxisMagnetometers();
-        } else if (key == "OrientationSensors") {
-            will_set_OrientationSensors();
-            if (!obj->nested_read_OrientationSensors(reader)) {
-                return false;
-            }
-            did_set_OrientationSensors();
-        } else if (key == "TemperatureSensors") {
-            will_set_TemperatureSensors();
-            if (!obj->nested_read_TemperatureSensors(reader)) {
-                return false;
-            }
-            did_set_TemperatureSensors();
-        } else if (key == "SixAxisForceTorqueSensors") {
-            will_set_SixAxisForceTorqueSensors();
-            if (!obj->nested_read_SixAxisForceTorqueSensors(reader)) {
-                return false;
-            }
-            did_set_SixAxisForceTorqueSensors();
-        } else if (key == "ContactLoadCellArrays") {
-            will_set_ContactLoadCellArrays();
-            if (!obj->nested_read_ContactLoadCellArrays(reader)) {
-                return false;
-            }
-            did_set_ContactLoadCellArrays();
-        } else if (key == "EncoderArrays") {
-            will_set_EncoderArrays();
-            if (!obj->nested_read_EncoderArrays(reader)) {
-                return false;
-            }
-            did_set_EncoderArrays();
-        } else if (key == "SkinPatches") {
-            will_set_SkinPatches();
-            if (!obj->nested_read_SkinPatches(reader)) {
-                return false;
-            }
-            did_set_SkinPatches();
-        } else if (key == "PositionSensors") {
-            will_set_PositionSensors();
-            if (!obj->nested_read_PositionSensors(reader)) {
-                return false;
-            }
-            did_set_PositionSensors();
-        } else {
-            // would be useful to have a fallback here
-        }
-    }
-    reader.accept();
-    yarp::os::idl::WireWriter writer(reader);
-    if (writer.isNull()) {
-        return true;
-    }
-    writer.writeListHeader(1);
-    writer.writeVocab32('o', 'k');
-    return true;
-}
-
-// Editor: write
-bool SensorRPCData::Editor::write(yarp::os::ConnectionWriter& connection) const
-{
-    if (!isValid()) {
-        return false;
-    }
-    yarp::os::idl::WireWriter writer(connection);
-    if (!writer.writeListHeader(dirty_count + 1)) {
-        return false;
-    }
-    if (!writer.writeString("patch")) {
-        return false;
-    }
-    if (is_dirty_ThreeAxisGyroscopes) {
-        if (!writer.writeListHeader(3)) {
-            return false;
-        }
-        if (!writer.writeString("set")) {
-            return false;
-        }
-        if (!writer.writeString("ThreeAxisGyroscopes")) {
-            return false;
-        }
-        if (!obj->nested_write_ThreeAxisGyroscopes(writer)) {
-            return false;
-        }
-    }
-    if (is_dirty_ThreeAxisLinearAccelerometers) {
-        if (!writer.writeListHeader(3)) {
-            return false;
-        }
-        if (!writer.writeString("set")) {
-            return false;
-        }
-        if (!writer.writeString("ThreeAxisLinearAccelerometers")) {
-            return false;
-        }
-        if (!obj->nested_write_ThreeAxisLinearAccelerometers(writer)) {
-            return false;
-        }
-    }
-    if (is_dirty_ThreeAxisMagnetometers) {
-        if (!writer.writeListHeader(3)) {
-            return false;
-        }
-        if (!writer.writeString("set")) {
-            return false;
-        }
-        if (!writer.writeString("ThreeAxisMagnetometers")) {
-            return false;
-        }
-        if (!obj->nested_write_ThreeAxisMagnetometers(writer)) {
-            return false;
-        }
-    }
-    if (is_dirty_OrientationSensors) {
-        if (!writer.writeListHeader(3)) {
-            return false;
-        }
-        if (!writer.writeString("set")) {
-            return false;
-        }
-        if (!writer.writeString("OrientationSensors")) {
-            return false;
-        }
-        if (!obj->nested_write_OrientationSensors(writer)) {
-            return false;
-        }
-    }
-    if (is_dirty_TemperatureSensors) {
-        if (!writer.writeListHeader(3)) {
-            return false;
-        }
-        if (!writer.writeString("set")) {
-            return false;
-        }
-        if (!writer.writeString("TemperatureSensors")) {
-            return false;
-        }
-        if (!obj->nested_write_TemperatureSensors(writer)) {
-            return false;
-        }
-    }
-    if (is_dirty_SixAxisForceTorqueSensors) {
-        if (!writer.writeListHeader(3)) {
-            return false;
-        }
-        if (!writer.writeString("set")) {
-            return false;
-        }
-        if (!writer.writeString("SixAxisForceTorqueSensors")) {
-            return false;
-        }
-        if (!obj->nested_write_SixAxisForceTorqueSensors(writer)) {
-            return false;
-        }
-    }
-    if (is_dirty_ContactLoadCellArrays) {
-        if (!writer.writeListHeader(3)) {
-            return false;
-        }
-        if (!writer.writeString("set")) {
-            return false;
-        }
-        if (!writer.writeString("ContactLoadCellArrays")) {
-            return false;
-        }
-        if (!obj->nested_write_ContactLoadCellArrays(writer)) {
-            return false;
-        }
-    }
-    if (is_dirty_EncoderArrays) {
-        if (!writer.writeListHeader(3)) {
-            return false;
-        }
-        if (!writer.writeString("set")) {
-            return false;
-        }
-        if (!writer.writeString("EncoderArrays")) {
-            return false;
-        }
-        if (!obj->nested_write_EncoderArrays(writer)) {
-            return false;
-        }
-    }
-    if (is_dirty_SkinPatches) {
-        if (!writer.writeListHeader(3)) {
-            return false;
-        }
-        if (!writer.writeString("set")) {
-            return false;
-        }
-        if (!writer.writeString("SkinPatches")) {
-            return false;
-        }
-        if (!obj->nested_write_SkinPatches(writer)) {
-            return false;
-        }
-    }
-    if (is_dirty_PositionSensors) {
-        if (!writer.writeListHeader(3)) {
-            return false;
-        }
-        if (!writer.writeString("set")) {
-            return false;
-        }
-        if (!writer.writeString("PositionSensors")) {
-            return false;
-        }
-        if (!obj->nested_write_PositionSensors(writer)) {
-            return false;
-        }
-    }
-    return !writer.isError();
-}
-
-// Editor: send if possible
-void SensorRPCData::Editor::communicate()
-{
-    if (group != 0) {
-        return;
-    }
-    if (yarp().canWrite()) {
-        yarp().write(*this);
-        clean();
-    }
-}
-
-// Editor: mark dirty overall
-void SensorRPCData::Editor::mark_dirty()
-{
-    is_dirty = true;
-}
-
-// Editor: ThreeAxisGyroscopes mark_dirty
-void SensorRPCData::Editor::mark_dirty_ThreeAxisGyroscopes()
-{
-    if (is_dirty_ThreeAxisGyroscopes) {
-        return;
-    }
-    dirty_count++;
-    is_dirty_ThreeAxisGyroscopes = true;
-    mark_dirty();
-}
-
-// Editor: ThreeAxisLinearAccelerometers mark_dirty
-void SensorRPCData::Editor::mark_dirty_ThreeAxisLinearAccelerometers()
-{
-    if (is_dirty_ThreeAxisLinearAccelerometers) {
-        return;
-    }
-    dirty_count++;
-    is_dirty_ThreeAxisLinearAccelerometers = true;
-    mark_dirty();
-}
-
-// Editor: ThreeAxisMagnetometers mark_dirty
-void SensorRPCData::Editor::mark_dirty_ThreeAxisMagnetometers()
-{
-    if (is_dirty_ThreeAxisMagnetometers) {
-        return;
-    }
-    dirty_count++;
-    is_dirty_ThreeAxisMagnetometers = true;
-    mark_dirty();
-}
-
-// Editor: OrientationSensors mark_dirty
-void SensorRPCData::Editor::mark_dirty_OrientationSensors()
-{
-    if (is_dirty_OrientationSensors) {
-        return;
-    }
-    dirty_count++;
-    is_dirty_OrientationSensors = true;
-    mark_dirty();
-}
-
-// Editor: TemperatureSensors mark_dirty
-void SensorRPCData::Editor::mark_dirty_TemperatureSensors()
-{
-    if (is_dirty_TemperatureSensors) {
-        return;
-    }
-    dirty_count++;
-    is_dirty_TemperatureSensors = true;
-    mark_dirty();
-}
-
-// Editor: SixAxisForceTorqueSensors mark_dirty
-void SensorRPCData::Editor::mark_dirty_SixAxisForceTorqueSensors()
-{
-    if (is_dirty_SixAxisForceTorqueSensors) {
-        return;
-    }
-    dirty_count++;
-    is_dirty_SixAxisForceTorqueSensors = true;
-    mark_dirty();
-}
-
-// Editor: ContactLoadCellArrays mark_dirty
-void SensorRPCData::Editor::mark_dirty_ContactLoadCellArrays()
-{
-    if (is_dirty_ContactLoadCellArrays) {
-        return;
-    }
-    dirty_count++;
-    is_dirty_ContactLoadCellArrays = true;
-    mark_dirty();
-}
-
-// Editor: EncoderArrays mark_dirty
-void SensorRPCData::Editor::mark_dirty_EncoderArrays()
-{
-    if (is_dirty_EncoderArrays) {
-        return;
-    }
-    dirty_count++;
-    is_dirty_EncoderArrays = true;
-    mark_dirty();
-}
-
-// Editor: SkinPatches mark_dirty
-void SensorRPCData::Editor::mark_dirty_SkinPatches()
-{
-    if (is_dirty_SkinPatches) {
-        return;
-    }
-    dirty_count++;
-    is_dirty_SkinPatches = true;
-    mark_dirty();
-}
-
-// Editor: PositionSensors mark_dirty
-void SensorRPCData::Editor::mark_dirty_PositionSensors()
-{
-    if (is_dirty_PositionSensors) {
-        return;
-    }
-    dirty_count++;
-    is_dirty_PositionSensors = true;
-    mark_dirty();
-}
-
-// Editor: dirty_flags
-void SensorRPCData::Editor::dirty_flags(bool flag)
-{
-    is_dirty = flag;
-    is_dirty_ThreeAxisGyroscopes = flag;
-    is_dirty_ThreeAxisLinearAccelerometers = flag;
-    is_dirty_ThreeAxisMagnetometers = flag;
-    is_dirty_OrientationSensors = flag;
-    is_dirty_TemperatureSensors = flag;
-    is_dirty_SixAxisForceTorqueSensors = flag;
-    is_dirty_ContactLoadCellArrays = flag;
-    is_dirty_EncoderArrays = flag;
-    is_dirty_SkinPatches = flag;
-    is_dirty_PositionSensors = flag;
-    dirty_count = flag ? 10 : 0;
-}
-
 // read ThreeAxisGyroscopes field
 bool SensorRPCData::read_ThreeAxisGyroscopes(yarp::os::idl::WireReader& reader)
 {
@@ -1133,16 +143,16 @@ bool SensorRPCData::read_ThreeAxisGyroscopes(yarp::os::idl::WireReader& reader)
         return false;
     }
     ThreeAxisGyroscopes.clear();
-    uint32_t _size12;
-    yarp::os::idl::WireState _etype15;
-    reader.readListBegin(_etype15, _size12);
-    ThreeAxisGyroscopes.resize(_size12);
-    for (size_t _i16 = 0; _i16 < _size12; ++_i16) {
+    uint32_t _size;
+    yarp::os::idl::WireState _etype;
+    reader.readListBegin(_etype, _size);
+    ThreeAxisGyroscopes.resize(_size);
+    for (size_t _i = 0; _i < _size; ++_i) {
         if (reader.noMore()) {
             reader.fail();
             return false;
         }
-        if (!reader.readNested(ThreeAxisGyroscopes[_i16])) {
+        if (!reader.readNested(ThreeAxisGyroscopes[_i])) {
             reader.fail();
             return false;
         }
@@ -1157,8 +167,8 @@ bool SensorRPCData::write_ThreeAxisGyroscopes(const yarp::os::idl::WireWriter& w
     if (!writer.writeListBegin(BOTTLE_TAG_LIST, static_cast<uint32_t>(ThreeAxisGyroscopes.size()))) {
         return false;
     }
-    for (const auto& _item17 : ThreeAxisGyroscopes) {
-        if (!writer.writeNested(_item17)) {
+    for (const auto& _item : ThreeAxisGyroscopes) {
+        if (!writer.writeNested(_item)) {
             return false;
         }
     }
@@ -1176,16 +186,16 @@ bool SensorRPCData::nested_read_ThreeAxisGyroscopes(yarp::os::idl::WireReader& r
         return false;
     }
     ThreeAxisGyroscopes.clear();
-    uint32_t _size18;
-    yarp::os::idl::WireState _etype21;
-    reader.readListBegin(_etype21, _size18);
-    ThreeAxisGyroscopes.resize(_size18);
-    for (size_t _i22 = 0; _i22 < _size18; ++_i22) {
+    uint32_t _size;
+    yarp::os::idl::WireState _etype;
+    reader.readListBegin(_etype, _size);
+    ThreeAxisGyroscopes.resize(_size);
+    for (size_t _i = 0; _i < _size; ++_i) {
         if (reader.noMore()) {
             reader.fail();
             return false;
         }
-        if (!reader.readNested(ThreeAxisGyroscopes[_i22])) {
+        if (!reader.readNested(ThreeAxisGyroscopes[_i])) {
             reader.fail();
             return false;
         }
@@ -1200,8 +210,8 @@ bool SensorRPCData::nested_write_ThreeAxisGyroscopes(const yarp::os::idl::WireWr
     if (!writer.writeListBegin(BOTTLE_TAG_LIST, static_cast<uint32_t>(ThreeAxisGyroscopes.size()))) {
         return false;
     }
-    for (const auto& _item23 : ThreeAxisGyroscopes) {
-        if (!writer.writeNested(_item23)) {
+    for (const auto& _item : ThreeAxisGyroscopes) {
+        if (!writer.writeNested(_item)) {
             return false;
         }
     }
@@ -1219,16 +229,16 @@ bool SensorRPCData::read_ThreeAxisLinearAccelerometers(yarp::os::idl::WireReader
         return false;
     }
     ThreeAxisLinearAccelerometers.clear();
-    uint32_t _size24;
-    yarp::os::idl::WireState _etype27;
-    reader.readListBegin(_etype27, _size24);
-    ThreeAxisLinearAccelerometers.resize(_size24);
-    for (size_t _i28 = 0; _i28 < _size24; ++_i28) {
+    uint32_t _size;
+    yarp::os::idl::WireState _etype;
+    reader.readListBegin(_etype, _size);
+    ThreeAxisLinearAccelerometers.resize(_size);
+    for (size_t _i = 0; _i < _size; ++_i) {
         if (reader.noMore()) {
             reader.fail();
             return false;
         }
-        if (!reader.readNested(ThreeAxisLinearAccelerometers[_i28])) {
+        if (!reader.readNested(ThreeAxisLinearAccelerometers[_i])) {
             reader.fail();
             return false;
         }
@@ -1243,8 +253,8 @@ bool SensorRPCData::write_ThreeAxisLinearAccelerometers(const yarp::os::idl::Wir
     if (!writer.writeListBegin(BOTTLE_TAG_LIST, static_cast<uint32_t>(ThreeAxisLinearAccelerometers.size()))) {
         return false;
     }
-    for (const auto& _item29 : ThreeAxisLinearAccelerometers) {
-        if (!writer.writeNested(_item29)) {
+    for (const auto& _item : ThreeAxisLinearAccelerometers) {
+        if (!writer.writeNested(_item)) {
             return false;
         }
     }
@@ -1262,16 +272,16 @@ bool SensorRPCData::nested_read_ThreeAxisLinearAccelerometers(yarp::os::idl::Wir
         return false;
     }
     ThreeAxisLinearAccelerometers.clear();
-    uint32_t _size30;
-    yarp::os::idl::WireState _etype33;
-    reader.readListBegin(_etype33, _size30);
-    ThreeAxisLinearAccelerometers.resize(_size30);
-    for (size_t _i34 = 0; _i34 < _size30; ++_i34) {
+    uint32_t _size;
+    yarp::os::idl::WireState _etype;
+    reader.readListBegin(_etype, _size);
+    ThreeAxisLinearAccelerometers.resize(_size);
+    for (size_t _i = 0; _i < _size; ++_i) {
         if (reader.noMore()) {
             reader.fail();
             return false;
         }
-        if (!reader.readNested(ThreeAxisLinearAccelerometers[_i34])) {
+        if (!reader.readNested(ThreeAxisLinearAccelerometers[_i])) {
             reader.fail();
             return false;
         }
@@ -1286,8 +296,8 @@ bool SensorRPCData::nested_write_ThreeAxisLinearAccelerometers(const yarp::os::i
     if (!writer.writeListBegin(BOTTLE_TAG_LIST, static_cast<uint32_t>(ThreeAxisLinearAccelerometers.size()))) {
         return false;
     }
-    for (const auto& _item35 : ThreeAxisLinearAccelerometers) {
-        if (!writer.writeNested(_item35)) {
+    for (const auto& _item : ThreeAxisLinearAccelerometers) {
+        if (!writer.writeNested(_item)) {
             return false;
         }
     }
@@ -1305,16 +315,16 @@ bool SensorRPCData::read_ThreeAxisMagnetometers(yarp::os::idl::WireReader& reade
         return false;
     }
     ThreeAxisMagnetometers.clear();
-    uint32_t _size36;
-    yarp::os::idl::WireState _etype39;
-    reader.readListBegin(_etype39, _size36);
-    ThreeAxisMagnetometers.resize(_size36);
-    for (size_t _i40 = 0; _i40 < _size36; ++_i40) {
+    uint32_t _size;
+    yarp::os::idl::WireState _etype;
+    reader.readListBegin(_etype, _size);
+    ThreeAxisMagnetometers.resize(_size);
+    for (size_t _i = 0; _i < _size; ++_i) {
         if (reader.noMore()) {
             reader.fail();
             return false;
         }
-        if (!reader.readNested(ThreeAxisMagnetometers[_i40])) {
+        if (!reader.readNested(ThreeAxisMagnetometers[_i])) {
             reader.fail();
             return false;
         }
@@ -1329,8 +339,8 @@ bool SensorRPCData::write_ThreeAxisMagnetometers(const yarp::os::idl::WireWriter
     if (!writer.writeListBegin(BOTTLE_TAG_LIST, static_cast<uint32_t>(ThreeAxisMagnetometers.size()))) {
         return false;
     }
-    for (const auto& _item41 : ThreeAxisMagnetometers) {
-        if (!writer.writeNested(_item41)) {
+    for (const auto& _item : ThreeAxisMagnetometers) {
+        if (!writer.writeNested(_item)) {
             return false;
         }
     }
@@ -1348,16 +358,16 @@ bool SensorRPCData::nested_read_ThreeAxisMagnetometers(yarp::os::idl::WireReader
         return false;
     }
     ThreeAxisMagnetometers.clear();
-    uint32_t _size42;
-    yarp::os::idl::WireState _etype45;
-    reader.readListBegin(_etype45, _size42);
-    ThreeAxisMagnetometers.resize(_size42);
-    for (size_t _i46 = 0; _i46 < _size42; ++_i46) {
+    uint32_t _size;
+    yarp::os::idl::WireState _etype;
+    reader.readListBegin(_etype, _size);
+    ThreeAxisMagnetometers.resize(_size);
+    for (size_t _i = 0; _i < _size; ++_i) {
         if (reader.noMore()) {
             reader.fail();
             return false;
         }
-        if (!reader.readNested(ThreeAxisMagnetometers[_i46])) {
+        if (!reader.readNested(ThreeAxisMagnetometers[_i])) {
             reader.fail();
             return false;
         }
@@ -1372,8 +382,8 @@ bool SensorRPCData::nested_write_ThreeAxisMagnetometers(const yarp::os::idl::Wir
     if (!writer.writeListBegin(BOTTLE_TAG_LIST, static_cast<uint32_t>(ThreeAxisMagnetometers.size()))) {
         return false;
     }
-    for (const auto& _item47 : ThreeAxisMagnetometers) {
-        if (!writer.writeNested(_item47)) {
+    for (const auto& _item : ThreeAxisMagnetometers) {
+        if (!writer.writeNested(_item)) {
             return false;
         }
     }
@@ -1391,16 +401,16 @@ bool SensorRPCData::read_OrientationSensors(yarp::os::idl::WireReader& reader)
         return false;
     }
     OrientationSensors.clear();
-    uint32_t _size48;
-    yarp::os::idl::WireState _etype51;
-    reader.readListBegin(_etype51, _size48);
-    OrientationSensors.resize(_size48);
-    for (size_t _i52 = 0; _i52 < _size48; ++_i52) {
+    uint32_t _size;
+    yarp::os::idl::WireState _etype;
+    reader.readListBegin(_etype, _size);
+    OrientationSensors.resize(_size);
+    for (size_t _i = 0; _i < _size; ++_i) {
         if (reader.noMore()) {
             reader.fail();
             return false;
         }
-        if (!reader.readNested(OrientationSensors[_i52])) {
+        if (!reader.readNested(OrientationSensors[_i])) {
             reader.fail();
             return false;
         }
@@ -1415,8 +425,8 @@ bool SensorRPCData::write_OrientationSensors(const yarp::os::idl::WireWriter& wr
     if (!writer.writeListBegin(BOTTLE_TAG_LIST, static_cast<uint32_t>(OrientationSensors.size()))) {
         return false;
     }
-    for (const auto& _item53 : OrientationSensors) {
-        if (!writer.writeNested(_item53)) {
+    for (const auto& _item : OrientationSensors) {
+        if (!writer.writeNested(_item)) {
             return false;
         }
     }
@@ -1434,16 +444,16 @@ bool SensorRPCData::nested_read_OrientationSensors(yarp::os::idl::WireReader& re
         return false;
     }
     OrientationSensors.clear();
-    uint32_t _size54;
-    yarp::os::idl::WireState _etype57;
-    reader.readListBegin(_etype57, _size54);
-    OrientationSensors.resize(_size54);
-    for (size_t _i58 = 0; _i58 < _size54; ++_i58) {
+    uint32_t _size;
+    yarp::os::idl::WireState _etype;
+    reader.readListBegin(_etype, _size);
+    OrientationSensors.resize(_size);
+    for (size_t _i = 0; _i < _size; ++_i) {
         if (reader.noMore()) {
             reader.fail();
             return false;
         }
-        if (!reader.readNested(OrientationSensors[_i58])) {
+        if (!reader.readNested(OrientationSensors[_i])) {
             reader.fail();
             return false;
         }
@@ -1458,8 +468,8 @@ bool SensorRPCData::nested_write_OrientationSensors(const yarp::os::idl::WireWri
     if (!writer.writeListBegin(BOTTLE_TAG_LIST, static_cast<uint32_t>(OrientationSensors.size()))) {
         return false;
     }
-    for (const auto& _item59 : OrientationSensors) {
-        if (!writer.writeNested(_item59)) {
+    for (const auto& _item : OrientationSensors) {
+        if (!writer.writeNested(_item)) {
             return false;
         }
     }
@@ -1477,16 +487,16 @@ bool SensorRPCData::read_TemperatureSensors(yarp::os::idl::WireReader& reader)
         return false;
     }
     TemperatureSensors.clear();
-    uint32_t _size60;
-    yarp::os::idl::WireState _etype63;
-    reader.readListBegin(_etype63, _size60);
-    TemperatureSensors.resize(_size60);
-    for (size_t _i64 = 0; _i64 < _size60; ++_i64) {
+    uint32_t _size;
+    yarp::os::idl::WireState _etype;
+    reader.readListBegin(_etype, _size);
+    TemperatureSensors.resize(_size);
+    for (size_t _i = 0; _i < _size; ++_i) {
         if (reader.noMore()) {
             reader.fail();
             return false;
         }
-        if (!reader.readNested(TemperatureSensors[_i64])) {
+        if (!reader.readNested(TemperatureSensors[_i])) {
             reader.fail();
             return false;
         }
@@ -1501,8 +511,8 @@ bool SensorRPCData::write_TemperatureSensors(const yarp::os::idl::WireWriter& wr
     if (!writer.writeListBegin(BOTTLE_TAG_LIST, static_cast<uint32_t>(TemperatureSensors.size()))) {
         return false;
     }
-    for (const auto& _item65 : TemperatureSensors) {
-        if (!writer.writeNested(_item65)) {
+    for (const auto& _item : TemperatureSensors) {
+        if (!writer.writeNested(_item)) {
             return false;
         }
     }
@@ -1520,16 +530,16 @@ bool SensorRPCData::nested_read_TemperatureSensors(yarp::os::idl::WireReader& re
         return false;
     }
     TemperatureSensors.clear();
-    uint32_t _size66;
-    yarp::os::idl::WireState _etype69;
-    reader.readListBegin(_etype69, _size66);
-    TemperatureSensors.resize(_size66);
-    for (size_t _i70 = 0; _i70 < _size66; ++_i70) {
+    uint32_t _size;
+    yarp::os::idl::WireState _etype;
+    reader.readListBegin(_etype, _size);
+    TemperatureSensors.resize(_size);
+    for (size_t _i = 0; _i < _size; ++_i) {
         if (reader.noMore()) {
             reader.fail();
             return false;
         }
-        if (!reader.readNested(TemperatureSensors[_i70])) {
+        if (!reader.readNested(TemperatureSensors[_i])) {
             reader.fail();
             return false;
         }
@@ -1544,8 +554,8 @@ bool SensorRPCData::nested_write_TemperatureSensors(const yarp::os::idl::WireWri
     if (!writer.writeListBegin(BOTTLE_TAG_LIST, static_cast<uint32_t>(TemperatureSensors.size()))) {
         return false;
     }
-    for (const auto& _item71 : TemperatureSensors) {
-        if (!writer.writeNested(_item71)) {
+    for (const auto& _item : TemperatureSensors) {
+        if (!writer.writeNested(_item)) {
             return false;
         }
     }
@@ -1563,16 +573,16 @@ bool SensorRPCData::read_SixAxisForceTorqueSensors(yarp::os::idl::WireReader& re
         return false;
     }
     SixAxisForceTorqueSensors.clear();
-    uint32_t _size72;
-    yarp::os::idl::WireState _etype75;
-    reader.readListBegin(_etype75, _size72);
-    SixAxisForceTorqueSensors.resize(_size72);
-    for (size_t _i76 = 0; _i76 < _size72; ++_i76) {
+    uint32_t _size;
+    yarp::os::idl::WireState _etype;
+    reader.readListBegin(_etype, _size);
+    SixAxisForceTorqueSensors.resize(_size);
+    for (size_t _i = 0; _i < _size; ++_i) {
         if (reader.noMore()) {
             reader.fail();
             return false;
         }
-        if (!reader.readNested(SixAxisForceTorqueSensors[_i76])) {
+        if (!reader.readNested(SixAxisForceTorqueSensors[_i])) {
             reader.fail();
             return false;
         }
@@ -1587,8 +597,8 @@ bool SensorRPCData::write_SixAxisForceTorqueSensors(const yarp::os::idl::WireWri
     if (!writer.writeListBegin(BOTTLE_TAG_LIST, static_cast<uint32_t>(SixAxisForceTorqueSensors.size()))) {
         return false;
     }
-    for (const auto& _item77 : SixAxisForceTorqueSensors) {
-        if (!writer.writeNested(_item77)) {
+    for (const auto& _item : SixAxisForceTorqueSensors) {
+        if (!writer.writeNested(_item)) {
             return false;
         }
     }
@@ -1606,16 +616,16 @@ bool SensorRPCData::nested_read_SixAxisForceTorqueSensors(yarp::os::idl::WireRea
         return false;
     }
     SixAxisForceTorqueSensors.clear();
-    uint32_t _size78;
-    yarp::os::idl::WireState _etype81;
-    reader.readListBegin(_etype81, _size78);
-    SixAxisForceTorqueSensors.resize(_size78);
-    for (size_t _i82 = 0; _i82 < _size78; ++_i82) {
+    uint32_t _size;
+    yarp::os::idl::WireState _etype;
+    reader.readListBegin(_etype, _size);
+    SixAxisForceTorqueSensors.resize(_size);
+    for (size_t _i = 0; _i < _size; ++_i) {
         if (reader.noMore()) {
             reader.fail();
             return false;
         }
-        if (!reader.readNested(SixAxisForceTorqueSensors[_i82])) {
+        if (!reader.readNested(SixAxisForceTorqueSensors[_i])) {
             reader.fail();
             return false;
         }
@@ -1630,8 +640,8 @@ bool SensorRPCData::nested_write_SixAxisForceTorqueSensors(const yarp::os::idl::
     if (!writer.writeListBegin(BOTTLE_TAG_LIST, static_cast<uint32_t>(SixAxisForceTorqueSensors.size()))) {
         return false;
     }
-    for (const auto& _item83 : SixAxisForceTorqueSensors) {
-        if (!writer.writeNested(_item83)) {
+    for (const auto& _item : SixAxisForceTorqueSensors) {
+        if (!writer.writeNested(_item)) {
             return false;
         }
     }
@@ -1649,16 +659,16 @@ bool SensorRPCData::read_ContactLoadCellArrays(yarp::os::idl::WireReader& reader
         return false;
     }
     ContactLoadCellArrays.clear();
-    uint32_t _size84;
-    yarp::os::idl::WireState _etype87;
-    reader.readListBegin(_etype87, _size84);
-    ContactLoadCellArrays.resize(_size84);
-    for (size_t _i88 = 0; _i88 < _size84; ++_i88) {
+    uint32_t _size;
+    yarp::os::idl::WireState _etype;
+    reader.readListBegin(_etype, _size);
+    ContactLoadCellArrays.resize(_size);
+    for (size_t _i = 0; _i < _size; ++_i) {
         if (reader.noMore()) {
             reader.fail();
             return false;
         }
-        if (!reader.readNested(ContactLoadCellArrays[_i88])) {
+        if (!reader.readNested(ContactLoadCellArrays[_i])) {
             reader.fail();
             return false;
         }
@@ -1673,8 +683,8 @@ bool SensorRPCData::write_ContactLoadCellArrays(const yarp::os::idl::WireWriter&
     if (!writer.writeListBegin(BOTTLE_TAG_LIST, static_cast<uint32_t>(ContactLoadCellArrays.size()))) {
         return false;
     }
-    for (const auto& _item89 : ContactLoadCellArrays) {
-        if (!writer.writeNested(_item89)) {
+    for (const auto& _item : ContactLoadCellArrays) {
+        if (!writer.writeNested(_item)) {
             return false;
         }
     }
@@ -1692,16 +702,16 @@ bool SensorRPCData::nested_read_ContactLoadCellArrays(yarp::os::idl::WireReader&
         return false;
     }
     ContactLoadCellArrays.clear();
-    uint32_t _size90;
-    yarp::os::idl::WireState _etype93;
-    reader.readListBegin(_etype93, _size90);
-    ContactLoadCellArrays.resize(_size90);
-    for (size_t _i94 = 0; _i94 < _size90; ++_i94) {
+    uint32_t _size;
+    yarp::os::idl::WireState _etype;
+    reader.readListBegin(_etype, _size);
+    ContactLoadCellArrays.resize(_size);
+    for (size_t _i = 0; _i < _size; ++_i) {
         if (reader.noMore()) {
             reader.fail();
             return false;
         }
-        if (!reader.readNested(ContactLoadCellArrays[_i94])) {
+        if (!reader.readNested(ContactLoadCellArrays[_i])) {
             reader.fail();
             return false;
         }
@@ -1716,8 +726,8 @@ bool SensorRPCData::nested_write_ContactLoadCellArrays(const yarp::os::idl::Wire
     if (!writer.writeListBegin(BOTTLE_TAG_LIST, static_cast<uint32_t>(ContactLoadCellArrays.size()))) {
         return false;
     }
-    for (const auto& _item95 : ContactLoadCellArrays) {
-        if (!writer.writeNested(_item95)) {
+    for (const auto& _item : ContactLoadCellArrays) {
+        if (!writer.writeNested(_item)) {
             return false;
         }
     }
@@ -1735,16 +745,16 @@ bool SensorRPCData::read_EncoderArrays(yarp::os::idl::WireReader& reader)
         return false;
     }
     EncoderArrays.clear();
-    uint32_t _size96;
-    yarp::os::idl::WireState _etype99;
-    reader.readListBegin(_etype99, _size96);
-    EncoderArrays.resize(_size96);
-    for (size_t _i100 = 0; _i100 < _size96; ++_i100) {
+    uint32_t _size;
+    yarp::os::idl::WireState _etype;
+    reader.readListBegin(_etype, _size);
+    EncoderArrays.resize(_size);
+    for (size_t _i = 0; _i < _size; ++_i) {
         if (reader.noMore()) {
             reader.fail();
             return false;
         }
-        if (!reader.readNested(EncoderArrays[_i100])) {
+        if (!reader.readNested(EncoderArrays[_i])) {
             reader.fail();
             return false;
         }
@@ -1759,8 +769,8 @@ bool SensorRPCData::write_EncoderArrays(const yarp::os::idl::WireWriter& writer)
     if (!writer.writeListBegin(BOTTLE_TAG_LIST, static_cast<uint32_t>(EncoderArrays.size()))) {
         return false;
     }
-    for (const auto& _item101 : EncoderArrays) {
-        if (!writer.writeNested(_item101)) {
+    for (const auto& _item : EncoderArrays) {
+        if (!writer.writeNested(_item)) {
             return false;
         }
     }
@@ -1778,16 +788,16 @@ bool SensorRPCData::nested_read_EncoderArrays(yarp::os::idl::WireReader& reader)
         return false;
     }
     EncoderArrays.clear();
-    uint32_t _size102;
-    yarp::os::idl::WireState _etype105;
-    reader.readListBegin(_etype105, _size102);
-    EncoderArrays.resize(_size102);
-    for (size_t _i106 = 0; _i106 < _size102; ++_i106) {
+    uint32_t _size;
+    yarp::os::idl::WireState _etype;
+    reader.readListBegin(_etype, _size);
+    EncoderArrays.resize(_size);
+    for (size_t _i = 0; _i < _size; ++_i) {
         if (reader.noMore()) {
             reader.fail();
             return false;
         }
-        if (!reader.readNested(EncoderArrays[_i106])) {
+        if (!reader.readNested(EncoderArrays[_i])) {
             reader.fail();
             return false;
         }
@@ -1802,8 +812,8 @@ bool SensorRPCData::nested_write_EncoderArrays(const yarp::os::idl::WireWriter& 
     if (!writer.writeListBegin(BOTTLE_TAG_LIST, static_cast<uint32_t>(EncoderArrays.size()))) {
         return false;
     }
-    for (const auto& _item107 : EncoderArrays) {
-        if (!writer.writeNested(_item107)) {
+    for (const auto& _item : EncoderArrays) {
+        if (!writer.writeNested(_item)) {
             return false;
         }
     }
@@ -1821,16 +831,16 @@ bool SensorRPCData::read_SkinPatches(yarp::os::idl::WireReader& reader)
         return false;
     }
     SkinPatches.clear();
-    uint32_t _size108;
-    yarp::os::idl::WireState _etype111;
-    reader.readListBegin(_etype111, _size108);
-    SkinPatches.resize(_size108);
-    for (size_t _i112 = 0; _i112 < _size108; ++_i112) {
+    uint32_t _size;
+    yarp::os::idl::WireState _etype;
+    reader.readListBegin(_etype, _size);
+    SkinPatches.resize(_size);
+    for (size_t _i = 0; _i < _size; ++_i) {
         if (reader.noMore()) {
             reader.fail();
             return false;
         }
-        if (!reader.readNested(SkinPatches[_i112])) {
+        if (!reader.readNested(SkinPatches[_i])) {
             reader.fail();
             return false;
         }
@@ -1845,8 +855,8 @@ bool SensorRPCData::write_SkinPatches(const yarp::os::idl::WireWriter& writer) c
     if (!writer.writeListBegin(BOTTLE_TAG_LIST, static_cast<uint32_t>(SkinPatches.size()))) {
         return false;
     }
-    for (const auto& _item113 : SkinPatches) {
-        if (!writer.writeNested(_item113)) {
+    for (const auto& _item : SkinPatches) {
+        if (!writer.writeNested(_item)) {
             return false;
         }
     }
@@ -1864,16 +874,16 @@ bool SensorRPCData::nested_read_SkinPatches(yarp::os::idl::WireReader& reader)
         return false;
     }
     SkinPatches.clear();
-    uint32_t _size114;
-    yarp::os::idl::WireState _etype117;
-    reader.readListBegin(_etype117, _size114);
-    SkinPatches.resize(_size114);
-    for (size_t _i118 = 0; _i118 < _size114; ++_i118) {
+    uint32_t _size;
+    yarp::os::idl::WireState _etype;
+    reader.readListBegin(_etype, _size);
+    SkinPatches.resize(_size);
+    for (size_t _i = 0; _i < _size; ++_i) {
         if (reader.noMore()) {
             reader.fail();
             return false;
         }
-        if (!reader.readNested(SkinPatches[_i118])) {
+        if (!reader.readNested(SkinPatches[_i])) {
             reader.fail();
             return false;
         }
@@ -1888,8 +898,8 @@ bool SensorRPCData::nested_write_SkinPatches(const yarp::os::idl::WireWriter& wr
     if (!writer.writeListBegin(BOTTLE_TAG_LIST, static_cast<uint32_t>(SkinPatches.size()))) {
         return false;
     }
-    for (const auto& _item119 : SkinPatches) {
-        if (!writer.writeNested(_item119)) {
+    for (const auto& _item : SkinPatches) {
+        if (!writer.writeNested(_item)) {
             return false;
         }
     }
@@ -1907,16 +917,16 @@ bool SensorRPCData::read_PositionSensors(yarp::os::idl::WireReader& reader)
         return false;
     }
     PositionSensors.clear();
-    uint32_t _size120;
-    yarp::os::idl::WireState _etype123;
-    reader.readListBegin(_etype123, _size120);
-    PositionSensors.resize(_size120);
-    for (size_t _i124 = 0; _i124 < _size120; ++_i124) {
+    uint32_t _size;
+    yarp::os::idl::WireState _etype;
+    reader.readListBegin(_etype, _size);
+    PositionSensors.resize(_size);
+    for (size_t _i = 0; _i < _size; ++_i) {
         if (reader.noMore()) {
             reader.fail();
             return false;
         }
-        if (!reader.readNested(PositionSensors[_i124])) {
+        if (!reader.readNested(PositionSensors[_i])) {
             reader.fail();
             return false;
         }
@@ -1931,8 +941,8 @@ bool SensorRPCData::write_PositionSensors(const yarp::os::idl::WireWriter& write
     if (!writer.writeListBegin(BOTTLE_TAG_LIST, static_cast<uint32_t>(PositionSensors.size()))) {
         return false;
     }
-    for (const auto& _item125 : PositionSensors) {
-        if (!writer.writeNested(_item125)) {
+    for (const auto& _item : PositionSensors) {
+        if (!writer.writeNested(_item)) {
             return false;
         }
     }
@@ -1950,16 +960,16 @@ bool SensorRPCData::nested_read_PositionSensors(yarp::os::idl::WireReader& reade
         return false;
     }
     PositionSensors.clear();
-    uint32_t _size126;
-    yarp::os::idl::WireState _etype129;
-    reader.readListBegin(_etype129, _size126);
-    PositionSensors.resize(_size126);
-    for (size_t _i130 = 0; _i130 < _size126; ++_i130) {
+    uint32_t _size;
+    yarp::os::idl::WireState _etype;
+    reader.readListBegin(_etype, _size);
+    PositionSensors.resize(_size);
+    for (size_t _i = 0; _i < _size; ++_i) {
         if (reader.noMore()) {
             reader.fail();
             return false;
         }
-        if (!reader.readNested(PositionSensors[_i130])) {
+        if (!reader.readNested(PositionSensors[_i])) {
             reader.fail();
             return false;
         }
@@ -1974,8 +984,8 @@ bool SensorRPCData::nested_write_PositionSensors(const yarp::os::idl::WireWriter
     if (!writer.writeListBegin(BOTTLE_TAG_LIST, static_cast<uint32_t>(PositionSensors.size()))) {
         return false;
     }
-    for (const auto& _item131 : PositionSensors) {
-        if (!writer.writeNested(_item131)) {
+    for (const auto& _item : PositionSensors) {
+        if (!writer.writeNested(_item)) {
             return false;
         }
     }

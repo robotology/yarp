@@ -1303,12 +1303,12 @@ bool FakeBatteryService_setBatteryStatus_helper::Command::readArgs(yarp::os::idl
         reader.fail();
         return false;
     }
-    yarp::conf::vocab32_t ecast0;
-    if (!reader.readVocab32(ecast0)) {
+    yarp::conf::vocab32_t _ecast;
+    if (!reader.readVocab32(_ecast)) {
         reader.fail();
         return false;
     }
-    status = static_cast<yarp::dev::IBattery::Battery_status>(ecast0);
+    status = static_cast<yarp::dev::IBattery::Battery_status>(_ecast);
     if (!reader.noMore()) {
         reader.fail();
         return false;
@@ -2148,12 +2148,12 @@ bool FakeBatteryService_getBatteryStatus_helper::Reply::read(yarp::os::idl::Wire
         reader.fail();
         return false;
     }
-    yarp::conf::vocab32_t ecast1;
-    if (!reader.readVocab32(ecast1)) {
+    yarp::conf::vocab32_t _ecast;
+    if (!reader.readVocab32(_ecast)) {
         reader.fail();
         return false;
     }
-    return_helper = static_cast<yarp::dev::IBattery::Battery_status>(ecast1);
+    return_helper = static_cast<yarp::dev::IBattery::Battery_status>(_ecast);
     return true;
 }
 

@@ -24,6 +24,7 @@ set(YARP_os_HDRS
   yarp/os/Carrier.h
   yarp/os/Carriers.h
   yarp/os/Clock.h
+  yarp/os/CommandBottle.h
   yarp/os/Connection.h
   yarp/os/ConnectionReader.h
   yarp/os/ConnectionState.h
@@ -150,6 +151,7 @@ set(YARP_os_SRCS
   yarp/os/Carrier.cpp
   yarp/os/Carriers.cpp
   yarp/os/Clock.cpp
+  yarp/os/CommandBottle.cpp
   yarp/os/Connection.cpp
   yarp/os/ConnectionReader.cpp
   yarp/os/ConnectionState.cpp

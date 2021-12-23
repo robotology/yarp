@@ -119,6 +119,11 @@ possible to annotate the struct using the `yarp.nested` annotation, for example:
 In this case, the `Bar` struct will be serialized as `bar1 (foo1 foo2)`, instead
 of as a flat struct `bar1 foo1 foo2`.
 
+In some cases, structs are not serialized are not serialized as a bottle,
+but as a fixed size list of values (i.e. `foo bar` instead of `(foo bar)`.
+In this case, it is possible to use the `yarp.bottlesize` annotation to specify
+the length of the struct, allowing thrift to include it inside a bottle.
+
 
 ### Typedefs                                     {#thrift_tutorial_subs_typedef}
 
@@ -210,6 +215,20 @@ For each enum, a `.h` and a `.cpp` file are created, which contain the
 definition of the enum and a helper class that handles number/string conversion
 for the enum elements.
 
+Like for structs, in case a certain enum should be translated to an existing
+enum, this can be declared with `yarp.name` and, if needed, `yarp.includefile`
+annotations. It is also possible to specify the base type used to transport the
+enum using the `yarp.enumbase` annotation. For example:
+
+~~~{.thrift}
+enum Status {} (
+  yarp.name = "Status"
+  yarp.includefile="Status.h"
+  yarp.enumbase = "yarp::conf::vocab32_t"
+)
+~~~
+
+
 
 ### Namespaces                                 {#thrift_tutorial_subs_namespace}
 
@@ -286,6 +305,10 @@ Default values can be provided for tail arguments; clients can avoid providing
 values for those parameters, which is especially useful when sending RPC calls
 via command line, as will be shown in section
 \ref thrift_tutorial_completex.
+
+Note: Due to serialization limitations, it is not possible to have a service
+function that starts with the same name as a different function (e.g. `get` and
+`get_all`).
 
 Services support inheritance: a service may optionally inherit from another
 service using the `extends` keyword.

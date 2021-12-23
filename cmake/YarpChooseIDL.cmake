@@ -35,6 +35,8 @@ macro(YARP_CHOOSE_IDL _prefix)
         HEADERS_VAR ${_prefix}_GEN_HDRS
         INCLUDE_DIRS_VAR ${_prefix}_BUILD_INTERFACE_INCLUDE_DIRS
         PLACEMENT MERGED
+        #THRIFT_DEBUG_GENERATOR
+        #VERBOSE
       )
       set(${_prefix}_GEN_FILES ${${_prefix}_GEN_SRCS} ${${_prefix}_GEN_HDRS})
     endif()
