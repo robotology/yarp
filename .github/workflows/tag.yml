@@ -382,7 +382,12 @@ jobs:
       env:
         INPUT_PUSH_TOKEN: ${{ secrets.drdanz_TOKEN }}
       run: |
+        # Checkout the right branch
+        git fetch origin
+        git checkout -f ${YARP_NEXT_STABLE_BRANCH}
+        git reset --hard origin/${YARP_NEXT_STABLE_BRANCH}
 
+        # Prepare the labels
         echo "Create 'Fixed in: ${YARP_NEXT_STABLE_BRANCH}'"
 
         curl -H "Content-Type: application/json" -H "Authorization: token ${INPUT_PUSH_TOKEN}" --request POST --data "
@@ -440,9 +445,6 @@ jobs:
         # Link the next release in the doc/releases.md file
         sed -i "/^\* \\\\subpage v${YARP_VERSION_C}$/i * \\\\subpage ${YARP_NEXT_STABLE_BRANCH_C}" doc/releases.md
 
-        git fetch origin
-        git checkout -f ${YARP_NEXT_STABLE_BRANCH}
-        git reset --hard origin/${YARP_NEXT_STABLE_BRANCH}
         git add -v ${YARP_NEXT_STABLE_RELEASE_NOTES_DIR}/000_${YARP_NEXT_STABLE_BRANCH_C}.md
         git add -v ${YARP_NEXT_STABLE_RELEASE_NOTES_DIR}/README.md
         git add -v doc/releases.md
@@ -469,7 +471,12 @@ jobs:
       env:
         INPUT_PUSH_TOKEN: ${{ secrets.drdanz_TOKEN }}
       run: |
+        # Checkout the right branch
+        git fetch origin
+        git checkout -f ${YARP_NEXT_FEATURE_BRANCH}
+        git reset --hard origin/${YARP_NEXT_FEATURE_BRANCH}
 
+        # Prepare the labels
         echo "Create 'Fixed in: ${YARP_NEXT_FEATURE_BRANCH}'"
 
         curl -H "Content-Type: application/json" -H "Authorization: token ${INPUT_PUSH_TOKEN}" --request POST --data "
@@ -524,19 +531,16 @@ jobs:
         \`\`\`
         EOF
 
-        ############################### FIXME ##########################
-        # Should fix release series as well
-        ############################### FIXME ##########################
-
         # Link the next release in the doc/releases.md file
-        sed -i "/^\* \\\\subpage v${YARP_VERSION_C}$/i * \\\\subpage ${YARP_NEXT_FEATURE_BRANCH_C}" doc/releases.md
+        # WARNING This is based on the line in the file, it could stop working
+        # if the content of the file changes.
+        sed -i "6i\\\\" doc/releases.md
+        sed -i "7i\\## YARP ${YARP_NEXT_FEATURE_VERSION_MAJOR}.${YARP_NEXT_FEATURE_VERSION_MINOR} Series                                            {#yarp_${YARP_NEXT_FEATURE_VERSION_MAJOR}_${YARP_NEXT_FEATURE_VERSION_MINOR}_series}" doc/releases.md
+        sed -i "8i * \\\\subpage ${YARP_NEXT_FEATURE_BRANCH_C}" doc/releases.md
 
         # Bump version in CMakeLists.txt
         sed -i "s/ VERSION [0-9]\+\.[0-9]\+\.[0-9]\+/ VERSION ${YARP_VERSION_MAJOR}.${YARP_VERSION_MINOR}.100/g" CMakeLists.txt
 
-        git fetch origin
-        git checkout -f ${YARP_NEXT_FEATURE_BRANCH}
-        git reset --hard origin/${YARP_NEXT_FEATURE_BRANCH}
         git add -v ${YARP_NEXT_FEATURE_RELEASE_NOTES_DIR}/000_${YARP_NEXT_FEATURE_BRANCH_C}.md
         git add -v ${YARP_NEXT_FEATURE_RELEASE_NOTES_DIR}/README.md
         git add -v doc/releases.md
