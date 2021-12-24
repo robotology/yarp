@@ -1,6 +1,0 @@
-fix_python3_bionic {#yarp_3_5}
------------
-
-### Bindings
-
-* Fixed compilation of Python3 bindings on certain configurations. (#2725)

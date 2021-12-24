@@ -1,0 +1,335 @@
+YARP 3.6.0 (2021-12-24)                                                {#v3_6_0}
+=======================
+
+[TOC]
+
+YARP 3.6.0 Release Notes
+========================
+
+A (partial) list of bug fixed and issues resolved in this release can be found
+[here](https://github.com/robotology/yarp/issues?q=label%3A%22Fixed+in%3A+YARP+v3.6.0%22).
+
+
+Important Changes
+-----------------
+
+### Dependencies
+
+* SWIG 4 or later is now required to build YARP bindings
+* CMake 3.16 or later is now required
+* A compiler that supports C++17 is now required
+
+Deprecation and Behaviour Changes
+---------------------------------
+
+### Devices
+
+* Deprecation of the devices replaced by NWS/NWC was postponed to the next
+  release.
+* The following devices will be replaced by NWS/NWC in the next release, and
+  print a warning when opened:
+  * `localization2DClient` (replaced by `localization2D_nwc_yarp`)
+  * `map2DClient` (replaced by `map2D_nwc_yarp`)
+  * `navigation2DServer` (replaced by `navigation2D_nws_yarp`)
+
+
+New Features
+------------
+
+### Libraries
+
+#### `conf`
+
+* The `YARP_VERSION_COMPARE` macro has been added to version.h to simplify how
+  YARP versions are compared e.g. in `#if` guards. For instance, the condition
+  `#if YARP_VERSION_COMPARE(>=, 3, 6, 0)` will yield true if the current YARP
+  version is equal to or greater than 3.6.0.
+
+#### `os`
+
+* Added `CommandBottle` class.
+  This is a class that contains both the command and the reply.
+  The only advantage of this class compared to using two bottles is that
+  portmonitors are able to know, in the `updateReply` method, what was the
+  request for the reply received.
+
+##### `Log`
+
+* In addition to the previously supported `std::vector`, it is now also possible
+  to call `yInfo() << collection` where the collection is a `std::array`,
+  `std::list`, `std::set`, `std::map`, C-array, `std::tuple`...
+* Added the new family of logging macros with "Id" (`yIDebug`).
+  See [documentation](\ref yarp_logging).
+* The `YARP_LOG_PROCESS_LABEL` environment variable is now checked when output
+  is forwarded. If found, the label is appended to the executable name in the
+  log port name e.g. (`/log/hostname/yarpdev[mylabel]/123123`)
+
+##### `ConnectionWriter`
+
+* Replaced `getBuffer` with const/non-const versions
+
+##### `ConnectionReader`
+
+* `flushWriter` is now an interface method.
+
+
+##### `idl/WireReader`
+
+* Added `getReader()` method.
+
+##### `idl/WireWriter`
+
+* Flush the connection when the object is destroyed.
+
+
+#### `sig`
+
+* Added new method `yarp::sig::soundfilters::resample()` contained in the new
+  header file `yarp/sig/SoundFilters.h`.
+
+
+#### `dev`
+
+* Added new interfaces:
+  * `yarp::dev::IJointFault`.
+  * `yarp::dev::Nav2D::IOdometry2D`.
+
+##### `DeviceDriver`
+
+* Added `id()` and `setId()` methods
+
+##### `PolyDriver`
+
+* The device id can be set passing the `id` option to the `open` method (or
+  passing `--id` to `yarpdev`).
+
+##### `Nav2D::INavigation2DVelocityActions`
+
+* `applyVelocityCommand()` method was moved from
+  `yarp::dev::Nav2D::INavigation2DTargetActions` to a new interface
+  `yarp::dev::Nav2D::INavigation2DVelocityActions`.
+
+##### Nav2D::MapGrid2D
+
+* Added internal lossless compression for datatype
+  `yarp::dev::Nav2D::MapGrid2D` using Zlib: the methods
+  `yarp::os::Portable::write()` and `yarp::os::Portable::read()` handle the
+  compression before sending data to the network.
+  The method `MapGrid2D::enable_map_compression_over_network()` enables/disables
+  the data compression over the network (default true).
+  If the Zlib library is not available, compression will be disabled.
+
+##### Nav2D::Map2DArea
+
+* Added new method `Map2DArea::getCentroid()`.
+* Added new `description` field which can now be filled by the user for generic
+  purposes.
+
+##### Nav2D::Map2DLocation
+
+* Added new `description` field which can now be filled by the user for generic
+  purposes.
+
+##### Nav2D::Map2DPath
+
+* Added new `description` field which can now be filled by the user for generic
+  purposes.
+
+##### Nav2D::IMap2D
+
+* Added the following methods:
+  * `getAllLocations(std::vector<yarp::dev::Nav2D::Map2DLocation>& locations)`
+  * `getAllAreas(std::vector<yarp::dev::Nav2D::Map2DArea>& areas)`
+  * `getAllPaths(std::vector<yarp::dev::Nav2D::Map2DPath>& paths)`
+
+##### Nav2D::INavigation2D
+* `INavigation2D` interface now derives from `IMap2D` interface
+
+
+### Devices
+
+* Most of the clients/nwcs now implement the option `carrier` to set the carrier
+  for the connection with the server.
+
+* Added the following new **EXPERIMENTAL** devices:
+  * `rpLidar3`.
+  * `fakeOdometry` that generates a fake odometry and makes it available from
+    `IOdometry2D` interface.
+
+* Added more **EXPERIMENTAL** devices in order to implement the Network Wrapper
+  Server/Client Architecture described in \ref nws_and_nwc_architecture.
+  These devices do not implement internal logic, therefore they might need to be
+  used together with a different device.
+  This architecture and all these devices are to be considered experimental,
+  and may be modified/renamed/removed at any time without any notice.
+  * `localization2D_nwc_yarp`: YARP NWS which connects to
+    `localization2D_nws_yarp`: and can be used to replace `localization2DClient`
+  * `map2D_nwc_yarp` YARP NWS which connects to `map2D_nws_yarp` and can be used
+    to replace `map2DClient`
+  * `mobileBaseVelocityControl_nws_yarp`: YARP NWS to control the velocity of a
+    mobile base.
+  * `mobileBaseVelocityControl_nwc_yarp`: YARP NWC to control the velocity of a
+    mobile base.
+  * `mobileBaseVelocityControl_nws_ros`: ROS NWS to control the velocity of a
+    mobile base.
+  * `navigation2D_nws_yarp`: YARP NWS that can be used to replace
+    `navigation2DServer`.
+  * `navigation2D_nwc_yarp`: YARP NWC that connects to `map2D_nws_yarp`,
+    `localization2D_nws_yarp` and `navigation2D_nws_yarp`.
+  * `odometry2D_nws_yarp`: YARP NWS which can be attached to a `IOdometry2D`
+    interface and publish the data on a YARP port.
+  * `odometry2D_nws_ros`: ROS NWS which can be attached to a `IOdometry2D`
+    interface and publish the data on a ROS topic.
+
+#### `fakeLaser`
+
+* Can now be connected to `localization2D_nwc_yarp` instead of
+  `localization2DClient`
+
+#### `frameTransformServer`
+
+* Added the option to use an extern xml file (by providing its absolute path).
+
+#### `frameTransformClient`
+
+* Added the option to use an extern xml file (by providing its absolute path).
+
+#### `map2DStorage`
+
+* The new `v3` file format, which includes the description for `Map2DLocation`,
+  `Map2DArea` and `Map2DPath` is now supported.
+
+#### `map2DServer`
+
+* Added rpc command `enable_maps_compression <0/1>`
+
+#### `remote_controlboard`
+
+* The `IJointFault` device is now implemented by the device.
+
+#### `controlBoard_nws_yarp`
+
+* The `IJointFault` device is now implemented by the device.
+
+#### `controlboardremapper`
+
+* The `IJointFault` device is now implemented by the device.
+
+#### `fakeMotionControl`
+
+* A hardware fault is now simulated when a TorqueCommand > 1Nm is received.
+
+#### `portaudio`
+
+* 'id' parameter was renamed to 'dev_id'.
+
+#### `portaudioPlayer`
+
+* 'id' parameter was renamed to 'dev_id'.
+
+#### `portaudioRecorder`
+
+* 'id' parameter was renamed to 'dev_id'.
+
+
+### Port Monitors
+
+* Added `bottle_compression_zlib` portmonitor to compress bottles (or other
+  data types which can be converted to bottle).
+* Added `soundfilter_resample` portmonitor to resample audio streams.
+
+
+### Tools
+
+
+#### `yarp`
+
+* Added option `testdata_filename` to latency-test companion.
+  It allows to load a file which will be transmitted over the network as
+  benchmark.
+  Different files can be used to test latency when using a compression
+  portmonitor (the compression factor will depend on the entropy of the file).
+
+#### `yarprun`
+
+* If the environment variable `YARP_LOG_PROCESS_LABEL` is found, the label is
+  now appended to the executable name in the log port name
+  (e.g. `/log/yaprunname/yarpdev[mylabel]/123123`)
+
+### `robotinterface`
+
+* Added `--dryrun` option to test the xml file without actually opening devices.
+* Added `reverse-shutdown-action-order` attribute for the `robot` tag.
+  This reverses the order of actions in shutdown and interrupt phase, making it
+  easier to write the actions when multiple attach and detach are involved.
+* All `device` tag parameters are now passed to all devices defined inside that
+  tag.
+* Added the `YARP_PORTNUMBER<XXX>` environment variable.
+  This allows to change the port number on which the corresponding port is
+  opened by setting the `YARP_PORTNUMBER<XXX>` environment variable to the
+  desired port number of the port.
+  For example: `YARP_PORTNUMBER_read=20050 yarp read /read` will open a port
+  named `/read` on the `20050` port.
+  Port numbers (if present) are applied before prefixes specified with
+  `YARP_PORT_PREFIX` and renames specified with `YARP_RENAME` (if present).
+  **WARNING**, if the same port is opened with the same name but different port
+  number by two processes, this might lead to port stealing by the latest
+  process executed.
+
+#### `yarpidl_thrift`
+
+* The return variable is again a class member.
+  The updateReply method of a portmonitor is not called on the same thread
+  that reads from the connection, therefore the return variable, as a
+  thread_local variable, causes it to be empty.
+  The flush performed in the WireWriter dtor, ensures that any
+  appendExternalBlock contained in helper serializationis actually written
+  before the helper is destroyed.
+* When rpc command is incomplete or contains extra args, the argument fails.
+* It is no longer possible to have a service function that starts with the same
+  name as a different function (e.g. `get` and `get_all`).
+* Enum handling was heavily refactored.
+  It is now possible to use `yarp.name` and `yarp.includefile` also for enums.
+* The 'yarp.nested' annotation was fixed. It is also now possible to annotate a
+  struct with the `yarp.bottlesize` annotation, when the struct is not
+  serialized as a bottle but as a fixed size bottle-like structure (for example
+  other yarpidl_thrift generated structs).
+* The editor for structs is now disabled by default. The `yarp.editor`
+  annotation should be passed to the struct in order to enable it.
+* Added generation of portmonitor for services.
+  See [documentation](\ref thrift_monitor) for details.
+
+
+### GUIs
+
+#### `yarpmotorgui`
+
+* Added new page "Hardware Fault" which displays the internal hardware error.
+* Improved slider graphics, with displayed reference value (optional, enabled
+  from the menu, default off)
+
+#### `yarplogger`
+
+* Added option `--unlimited_size` which removes all limits on the log size.
+  To be used with caution!
+
+
+Bug Fixes
+---------
+
+### Build System
+
+* Fixed build of lidar sdk with clang.
+
+
+### GUIs
+
+#### `yarplogger`
+
+* Fixed issue related to saving/loading files containing empty strings.
+* Fixed how the limits are applied to new logs added to an on-going session.
+
+
+### Bindings
+
+* Fixed compilation of Python3 bindings on certain configurations. (#2725)
