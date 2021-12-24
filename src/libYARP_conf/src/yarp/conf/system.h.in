@@ -92,6 +92,7 @@
 
 #if defined(_MSC_VER)
   // see https://yal.cc/emitting-custom-warnings-errors-in-visual-studio-custom-build-events/
+  // and https://docs.microsoft.com/en-us/previous-versions/visualstudio/visual-studio-2010/yxkt8b26(v=vs.100)?redirectedfrom=MSDN
   #define __YARP_STR2(x) #x
   #define __YARP_STR1(x) __YARP_STR2(x)
   #define __YARP_LOC __FILE__ "(" __YARP_STR1(__LINE__) ")"
