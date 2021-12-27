@@ -41,6 +41,7 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../../extern/catch2)
 set(IDL_FILES
   annotated.thrift
   demo.thrift
+  mapOfLists.thrift
   namespaced.thrift
   objects3D.thrift
   wrapping.thrift
