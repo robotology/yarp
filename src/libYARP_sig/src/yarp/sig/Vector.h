@@ -267,7 +267,7 @@ public:
     template<typename... _Args>
     inline T& emplace_back(_Args&&... args)
     {
-        bytes.emplace_back(std::forward<_Args>(args)...);
+        return bytes.emplace_back(std::forward<_Args>(args)...);
     }
 
     /**
