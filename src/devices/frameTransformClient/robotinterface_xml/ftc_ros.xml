@@ -12,6 +12,7 @@
     <param name="setDeviceName"> ftc_mpxSet  </param>
     <devices>
         <!-- **************** ROS NWC **************** -->
+        <param extern-name="FrameTransform_verbose_debug" name="FrameTransform_verbose_debug">0</param>
         <device name="ftSet_nwc_ros" type="frameTransformSet_nwc_ros">
             <group name="GENERAL">
                 <param extern-name="ftSet_period" name="period"> 0.01 </param>

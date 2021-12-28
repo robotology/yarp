@@ -389,11 +389,17 @@ void exec_frameTransform_test_1(IFrameTransform* itf)
     {
         yInfo() << "Running Sub-test12";
         itf->clear();
+        yDebug() << "Creating Transform frame2 -> frame1 at time" << std::to_string(yarp::os::Time::now());
         CHECK(itf->setTransform("frame2", "frame1", m1));
-        yarp::os::Time::delay(0.050);
+        yDebug() << "Created at time" << std::to_string(yarp::os::Time::now());
+        yarp::os::Time::delay(0.040);
+        yDebug() << "Creating Transform frame3 -> frame2 at time" << std::to_string(yarp::os::Time::now());
         CHECK(itf->setTransform("frame3", "frame2", m2));
-        yarp::os::Time::delay(0.050);
+        yDebug() << "Created at time" << std::to_string(yarp::os::Time::now());
+        yarp::os::Time::delay(0.040);
+        yDebug() << "Creating Transform frame3 -> frame1 at time" << std::to_string(yarp::os::Time::now());
         CHECK_FALSE(itf->setTransform("frame3", "frame1", m1));
+        yDebug() << "Intentionally skipped at time" << std::to_string(yarp::os::Time::now());
         // itf->setTransform duplicate transform successfully skipped
 
         yarp::sig::Matrix mt1;

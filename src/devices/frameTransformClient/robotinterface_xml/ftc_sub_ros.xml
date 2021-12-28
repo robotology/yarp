@@ -10,6 +10,7 @@
 <robot name="frameTransformClient" build="2" portprefix="frameTransformClient" xmlns:xi="http://www.w3.org/2001/XInclude">
     <param name="getDeviceName"> ftc_storage </param>
     <devices>
+        <param extern-name="FrameTransform_verbose_debug" name="FrameTransform_verbose_debug">0</param>
         <!-- **************** ROS NWC **************** -->
         <device name="ftGet_nwc_ros" type="frameTransformGet_nwc_ros">
             <group name="GENERAL">
