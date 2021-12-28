@@ -115,11 +115,11 @@ bool return_get_map_names::read_map_names(yarp::os::idl::WireReader& reader)
         return false;
     }
     map_names.clear();
-    uint32_t _size;
+    uint32_t _csize;
     yarp::os::idl::WireState _etype;
-    reader.readListBegin(_etype, _size);
-    map_names.resize(_size);
-    for (size_t _i = 0; _i < _size; ++_i) {
+    reader.readListBegin(_etype, _csize);
+    map_names.resize(_csize);
+    for (size_t _i = 0; _i < _csize; ++_i) {
         if (reader.noMore()) {
             reader.fail();
             return false;
@@ -158,11 +158,11 @@ bool return_get_map_names::nested_read_map_names(yarp::os::idl::WireReader& read
         return false;
     }
     map_names.clear();
-    uint32_t _size;
+    uint32_t _csize;
     yarp::os::idl::WireState _etype;
-    reader.readListBegin(_etype, _size);
-    map_names.resize(_size);
-    for (size_t _i = 0; _i < _size; ++_i) {
+    reader.readListBegin(_etype, _csize);
+    map_names.resize(_csize);
+    for (size_t _i = 0; _i < _csize; ++_i) {
         if (reader.noMore()) {
             reader.fail();
             return false;

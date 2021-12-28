@@ -135,11 +135,11 @@ bool Map2DAreaData::read_points(yarp::os::idl::WireReader& reader)
         return false;
     }
     points.clear();
-    uint32_t _size;
+    uint32_t _csize;
     yarp::os::idl::WireState _etype;
-    reader.readListBegin(_etype, _size);
-    points.resize(_size);
-    for (size_t _i = 0; _i < _size; ++_i) {
+    reader.readListBegin(_etype, _csize);
+    points.resize(_csize);
+    for (size_t _i = 0; _i < _csize; ++_i) {
         if (reader.noMore()) {
             reader.fail();
             return false;
@@ -178,11 +178,11 @@ bool Map2DAreaData::nested_read_points(yarp::os::idl::WireReader& reader)
         return false;
     }
     points.clear();
-    uint32_t _size;
+    uint32_t _csize;
     yarp::os::idl::WireState _etype;
-    reader.readListBegin(_etype, _size);
-    points.resize(_size);
-    for (size_t _i = 0; _i < _size; ++_i) {
+    reader.readListBegin(_etype, _csize);
+    points.resize(_csize);
+    for (size_t _i = 0; _i < _csize; ++_i) {
         if (reader.noMore()) {
             reader.fail();
             return false;

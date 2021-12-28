@@ -115,11 +115,11 @@ bool return_get_all_paths::read_paths(yarp::os::idl::WireReader& reader)
         return false;
     }
     paths.clear();
-    uint32_t _size;
+    uint32_t _csize;
     yarp::os::idl::WireState _etype;
-    reader.readListBegin(_etype, _size);
-    paths.resize(_size);
-    for (size_t _i = 0; _i < _size; ++_i) {
+    reader.readListBegin(_etype, _csize);
+    paths.resize(_csize);
+    for (size_t _i = 0; _i < _csize; ++_i) {
         if (reader.noMore()) {
             reader.fail();
             return false;
@@ -158,11 +158,11 @@ bool return_get_all_paths::nested_read_paths(yarp::os::idl::WireReader& reader)
         return false;
     }
     paths.clear();
-    uint32_t _size;
+    uint32_t _csize;
     yarp::os::idl::WireState _etype;
-    reader.readListBegin(_etype, _size);
-    paths.resize(_size);
-    for (size_t _i = 0; _i < _size; ++_i) {
+    reader.readListBegin(_etype, _csize);
+    paths.resize(_csize);
+    for (size_t _i = 0; _i < _csize; ++_i) {
         if (reader.noMore()) {
             reader.fail();
             return false;

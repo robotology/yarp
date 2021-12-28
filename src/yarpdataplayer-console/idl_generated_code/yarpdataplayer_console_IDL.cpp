@@ -2864,11 +2864,11 @@ bool yarpdataplayer_console_IDL_getAllParts_helper::Reply::read(yarp::os::idl::W
         return false;
     }
     return_helper.clear();
-    uint32_t _size;
+    uint32_t _csize;
     yarp::os::idl::WireState _etype;
-    reader.readListBegin(_etype, _size);
-    return_helper.resize(_size);
-    for (size_t _i = 0; _i < _size; ++_i) {
+    reader.readListBegin(_etype, _csize);
+    return_helper.resize(_csize);
+    for (size_t _i = 0; _i < _csize; ++_i) {
         if (reader.noMore()) {
             reader.fail();
             return false;
