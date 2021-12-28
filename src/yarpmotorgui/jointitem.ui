@@ -2438,7 +2438,7 @@ QSlider::groove:horizontal:disabled {
             <item row="0" column="1">
              <widget class="QLabel" name="labelFaultCodeEntry">
               <property name="text">
-               <string>TextLabel</string>
+               <string>UNKNOWN</string>
               </property>
              </widget>
             </item>
@@ -2452,7 +2452,7 @@ QSlider::groove:horizontal:disabled {
             <item row="1" column="1">
              <widget class="QLabel" name="labelFaultMessageEntry">
               <property name="text">
-               <string>TextLabel</string>
+               <string>UNKNOWN</string>
               </property>
              </widget>
             </item>

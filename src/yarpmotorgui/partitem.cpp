@@ -51,7 +51,6 @@ PartItem::PartItem(QString robotName, int id, QString partName, ResourceFinder& 
     m_part_motorPositionVisible(false),
     m_part_dutyVisible(false),
     m_part_currentVisible(false),
-    m_interactionModes(nullptr),
     m_finder(&_finder),
     m_iMot(nullptr),
     m_iinfo(nullptr),
@@ -337,6 +336,8 @@ PartItem::~PartItem()
 
     if (m_partsdd){
         m_partsdd->close();
+        delete m_partsdd;
+        m_partsdd = nullptr;
     }
 
     if (m_controlModes) { delete[] m_controlModes; m_controlModes = nullptr; }
@@ -351,6 +352,7 @@ PartItem::~PartItem()
     if (m_motorPositions) { delete[] m_motorPositions; m_motorPositions = nullptr; }
     if (m_dutyCycles) { delete[] m_dutyCycles; m_dutyCycles = nullptr; }
     if (m_done) { delete[] m_done; m_done = nullptr; }
+    if (m_interactionModes) { delete [] m_interactionModes; m_interactionModes = nullptr; }
 }
 
 bool PartItem::openPolyDrivers()
