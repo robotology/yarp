@@ -51,6 +51,7 @@ PartItem::PartItem(QString robotName, int id, QString partName, ResourceFinder& 
     m_part_motorPositionVisible(false),
     m_part_dutyVisible(false),
     m_part_currentVisible(false),
+    m_interactionModes(nullptr),
     m_finder(&_finder),
     m_iMot(nullptr),
     m_iinfo(nullptr),
