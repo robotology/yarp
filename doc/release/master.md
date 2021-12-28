@@ -322,6 +322,14 @@ Bug Fixes
 * Fixed build of lidar sdk with clang.
 
 
+### Libraries
+
+#### `sig`
+
+* Fixed `VectorOf<T>::emplace_back` returning `void`. Now it returns a
+  reference to the new element as expected.
+
+
 ### GUIs
 
 #### `yarplogger`
