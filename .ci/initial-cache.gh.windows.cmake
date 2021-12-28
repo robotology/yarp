@@ -26,4 +26,5 @@ set(ENABLE_yarpmod_fakeLaser ON CACHE BOOL "")
 set(ENABLE_yarpmod_rpLidar ON CACHE BOOL "")
 set(ENABLE_yarpmod_laserHokuyo ON CACHE BOOL "")
 set(ENABLE_yarpcar_websocket ON CACHE BOOL "")
+set(ENABLE_yarpmod_fakePositionSensor ON CACHE BOOL "")
 

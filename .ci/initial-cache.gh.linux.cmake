@@ -112,5 +112,6 @@ set(ENABLE_yarpmod_grabber ON CACHE BOOL "")
 set(ENABLE_yarpmod_test_segfault ON CACHE BOOL "")
 set(ENABLE_yarpmod_test_nop ON CACHE BOOL "")
 set(ENABLE_yarpcar_websocket ON CACHE BOOL "")
+set(ENABLE_yarpmod_fakePositionSensor ON CACHE BOOL "")
 
 include(${CMAKE_CURRENT_LIST_DIR}/bindings-cache.cmake)
