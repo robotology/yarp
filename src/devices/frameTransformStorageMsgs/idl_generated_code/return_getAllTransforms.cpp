@@ -125,11 +125,11 @@ bool return_getAllTransforms::read_transforms_list(yarp::os::idl::WireReader& re
         return false;
     }
     transforms_list.clear();
-    uint32_t _size;
+    uint32_t _csize;
     yarp::os::idl::WireState _etype;
-    reader.readListBegin(_etype, _size);
-    transforms_list.resize(_size);
-    for (size_t _i = 0; _i < _size; ++_i) {
+    reader.readListBegin(_etype, _csize);
+    transforms_list.resize(_csize);
+    for (size_t _i = 0; _i < _csize; ++_i) {
         if (reader.noMore()) {
             reader.fail();
             return false;
@@ -168,11 +168,11 @@ bool return_getAllTransforms::nested_read_transforms_list(yarp::os::idl::WireRea
         return false;
     }
     transforms_list.clear();
-    uint32_t _size;
+    uint32_t _csize;
     yarp::os::idl::WireState _etype;
-    reader.readListBegin(_etype, _size);
-    transforms_list.resize(_size);
-    for (size_t _i = 0; _i < _size; ++_i) {
+    reader.readListBegin(_etype, _csize);
+    transforms_list.resize(_csize);
+    for (size_t _i = 0; _i < _csize; ++_i) {
         if (reader.noMore()) {
             reader.fail();
             return false;

@@ -1491,27 +1491,27 @@ void t_yarp_generator::generate_deserialize_container(std::ostringstream& f_cpp_
     bool use_push = tcontainer->has_cpp_name();
 
     f_cpp_ << indent_cpp() << prefix << ".clear();\n";
-    f_cpp_ << indent_cpp() << "uint32_t _size;\n";
+    f_cpp_ << indent_cpp() << "uint32_t _csize;\n";
 
     // Declare variables, read header
     if (ttype->is_map()) {
         // kttpe and vtype available
         f_cpp_ << indent_cpp() << "yarp::os::idl::WireState _ktype;\n";
         f_cpp_ << indent_cpp() << "yarp::os::idl::WireState _vtype;\n";
-        f_cpp_ << indent_cpp() << "reader.readMapBegin(_ktype, _vtype, _size);\n";
+        f_cpp_ << indent_cpp() << "reader.readMapBegin(_ktype, _vtype, _csize);\n";
     } else if (ttype->is_set()) {
         f_cpp_ << indent_cpp() << "yarp::os::idl::WireState _etype;\n";
-        f_cpp_ << indent_cpp() << "reader.readSetBegin(_etype, _size);\n";
+        f_cpp_ << indent_cpp() << "reader.readSetBegin(_etype, _csize);\n";
     } else if (ttype->is_list()) {
         f_cpp_ << indent_cpp() << "yarp::os::idl::WireState _etype;\n";
-        f_cpp_ << indent_cpp() << "reader.readListBegin(_etype, _size);\n";
+        f_cpp_ << indent_cpp() << "reader.readListBegin(_etype, _csize);\n";
         if (!use_push) {
-            f_cpp_ << indent_cpp() << prefix << ".resize(_size);\n";
+            f_cpp_ << indent_cpp() << prefix << ".resize(_csize);\n";
         }
     }
 
     // For loop iterates over elements
-    f_cpp_ << indent_cpp() << "for (size_t _i = 0; _i < _size; ++_i) {\n";
+    f_cpp_ << indent_cpp() << "for (size_t _i = 0; _i < _csize; ++_i) {\n";
     indent_up_cpp();
     {
         if (ttype->is_map()) {
@@ -1541,9 +1541,9 @@ void t_yarp_generator::generate_deserialize_map_element(std::ostringstream& f_cp
 {
     THRIFT_DEBUG_COMMENT(f_cpp_);
 
-    f_cpp_ << indent_cpp() << "uint32_t _size;\n";
+    f_cpp_ << indent_cpp() << "uint32_t _msize;\n";
     f_cpp_ << indent_cpp() << "yarp::os::idl::WireState _lst;\n";
-    f_cpp_ << indent_cpp() << "reader.readListBegin(_lst, _size);\n";
+    f_cpp_ << indent_cpp() << "reader.readListBegin(_lst, _msize);\n";
 
     t_field fkey(tmap->get_key_type(), "_key");
     t_field fval(tmap->get_val_type(), "_val");
