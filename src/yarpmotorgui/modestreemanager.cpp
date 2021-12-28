@@ -35,7 +35,7 @@ ModesTreeManager::ModesTreeManager(QHBoxLayout *layout, QWidget *parent)
     m_widgetLayout = new QVBoxLayout();
     m_widgetLayout->setAlignment(Qt::AlignLeft | Qt::AlignTop);
     widgetContainer->setLayout(m_widgetLayout);
-    widgetContainer->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Minimum);
+    widgetContainer->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Maximum);
 
     auto* scroll = new QScrollArea();
     scroll->setWidgetResizable(true);

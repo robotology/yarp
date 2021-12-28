@@ -27,6 +27,7 @@ CustomGroupBox::CustomGroupBox(QWidget *parent) :
     m_layout = new QVBoxLayout;
     m_layout->setMargin(0);
     ui->frame->setLayout(m_layout);
+    ui->contentWidget->setMinimumHeight(10); //This avoids some the containing scroll area to add too much white space
 
     toggle(true);
 

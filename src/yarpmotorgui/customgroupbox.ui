@@ -127,11 +127,11 @@
       </item>
       <item>
        <widget class="QFrame" name="frame">
-        <property name="minimumSize">
-         <size>
-          <width>300</width>
-          <height>0</height>
-         </size>
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
         </property>
         <property name="frameShape">
          <enum>QFrame::StyledPanel</enum>
