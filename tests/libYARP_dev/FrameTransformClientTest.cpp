@@ -17,6 +17,10 @@
 
 TEST_CASE("dev::FrameTransformClientTest", "[yarp::dev]")
 {
+    #if defined(DISABLE_FAILING_TESTS)
+        YARP_SKIP_TEST("Skipping failing tests")
+    #endif
+
     YARP_REQUIRE_PLUGIN("frameTransformClient", "device");
 
     yarp::os::Network::setLocalMode(true);
