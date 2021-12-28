@@ -19,21 +19,22 @@ yarp_begin_plugin_library(yarppm
   add_subdirectory(segmentationimage_to_rgb)
   add_subdirectory(sound_compression_mp3)
   add_subdirectory(soundfilter_resample)
+  add_subdirectory(sensorMeasurements_to_vector)
 yarp_end_plugin_library(yarppm QUIET)
 add_library(YARP::yarppm ALIAS yarppm)
 
 install(
   TARGETS yarppm
-  EXPORT YARP_yarppm
-  COMPONENT yarppm
-  RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
-  LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+        EXPORT YARP_yarppm
+        COMPONENT yarppm
+        RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
+        LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
   ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
 )
 
 include(YarpInstallBasicPackageFiles)
 yarp_install_basic_package_files(YARP_yarppm
-  DEPENDENCIES ${YARP_yarppm_PUBLIC_DEPS}
+                                 DEPENDENCIES ${YARP_yarppm_PUBLIC_DEPS}
   PRIVATE_DEPENDENCIES ${YARP_yarppm_PRIVATE_DEPS}
 )
 

@@ -32,5 +32,6 @@ set(ENABLE_yarpmod_fakeLaser ON CACHE BOOL "")
 set(ENABLE_yarpmod_rpLidar ON CACHE BOOL "")
 set(ENABLE_yarpmod_laserHokuyo ON CACHE BOOL "")
 set(ENABLE_yarpcar_websocket ON CACHE BOOL "")
+set(ENABLE_yarpmod_fakePositionSensor ON CACHE BOOL "")
 
 set(Qt5_DIR "/usr/local/opt/qt5/lib/cmake/Qt5")
