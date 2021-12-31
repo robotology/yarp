@@ -152,9 +152,11 @@ New Features
   for the connection with the server.
 
 * Added the following new **EXPERIMENTAL** devices:
-  * `rpLidar3`.
+  * `rpLidar3` that supports the 3rd revision of the rpLidar hardware.
   * `fakeOdometry` that generates a fake odometry and makes it available from
     `IOdometry2D` interface.
+  * `fakePositionSensor` that simulate a position sensor and makes it available
+    through the `IPositionSensors` and `IOrientationSensors` interfaces.
 
 * Added more **EXPERIMENTAL** devices in order to implement the Network Wrapper
   Server/Client Architecture described in \ref nws_and_nwc_architecture.
@@ -193,6 +195,21 @@ New Features
 #### `frameTransformClient`
 
 * Added the option to use an extern xml file (by providing its absolute path).
+* Added optional parameter `FrameTransform_verbose_debug`
+
+#### `frameTransformStorage`
+
+* Extra debug information is now printed when parameter
+  `FrameTransform_verbose_debug` is set to 1.
+* All xml files now expose the parameter `FrameTransform_verbose_debug`
+  (default = 0)
+
+#### `frameTransformContainer`
+
+* Extra debug information is now printed when parameter
+  `FrameTransform_verbose_debug` is set to 1.
+* All xml files now expose the parameter `FrameTransform_verbose_debug`
+  (default = 0)
 
 #### `map2DStorage`
 
@@ -237,6 +254,8 @@ New Features
 * Added `bottle_compression_zlib` portmonitor to compress bottles (or other
   data types which can be converted to bottle).
 * Added `soundfilter_resample` portmonitor to resample audio streams.
+* Added `sensorMeasurements_to_vector` portmonitor which converts a 6D Pose from
+  a `SensorStreamingData` data type to a `yarp::sig::Vector` data type.
 
 
 ### Tools
