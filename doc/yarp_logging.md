@@ -636,7 +636,7 @@ colored character instead of the log level.
 If `YARP_VERBOSE_OUTPUT` is set to `1`, YARP will print several extra
 information for each log line.
 
-User can set 'YARP_LOG_PROCESS_LABEL` to specify a string which can help in identifying the
+User can set `YARP_LOG_PROCESS_LABEL` to specify a string which can help in identifying the
 process which is currently broadcasting the log over the network. 
 The string will be appended after the process name in the log port and included between
 two square brackets, i.e. `/log/hostname/processname[user_label]/pid`. 
