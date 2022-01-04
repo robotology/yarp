@@ -323,7 +323,7 @@ bool FrameTransformStorageSetRPC_setTransformsRPC_helper::Command::writeTag(cons
 
 bool FrameTransformStorageSetRPC_setTransformsRPC_helper::Command::writeArgs(const yarp::os::idl::WireWriter& writer) const
 {
-    if (!writer.writeListBegin(BOTTLE_TAG_LIST, static_cast<uint32_t>(transforms.size()))) {
+    if (!writer.writeListBegin(BOTTLE_TAG_LIST, transforms.size())) {
         return false;
     }
     for (const auto& _item : transforms) {
@@ -367,10 +367,16 @@ bool FrameTransformStorageSetRPC_setTransformsRPC_helper::Command::readArgs(yarp
         reader.fail();
         return false;
     }
-    transforms.clear();
-    uint32_t _csize;
+    size_t _csize;
     yarp::os::idl::WireState _etype;
     reader.readListBegin(_etype, _csize);
+    // WireReader removes BOTTLE_TAG_LIST from the tag
+    constexpr int expected_tag = ((BOTTLE_TAG_LIST) & (~BOTTLE_TAG_LIST));
+    if constexpr (expected_tag != 0) {
+        if (_csize != 0 && _etype.code != expected_tag) {
+            return false;
+        }
+    }
     transforms.resize(_csize);
     for (size_t _i = 0; _i < _csize; ++_i) {
         if (reader.noMore()) {
@@ -1066,7 +1072,7 @@ bool FrameTransformStorageSetRPC::read(yarp::os::ConnectionReader& connection)
                 if (!writer.writeTag("many", 1, 0)) {
                     return false;
                 }
-                if (!writer.writeListBegin(BOTTLE_TAG_INT32, static_cast<uint32_t>(help_strings.size()))) {
+                if (!writer.writeListBegin(0, help_strings.size())) {
                     return false;
                 }
                 for (const auto& help_string : help_strings) {

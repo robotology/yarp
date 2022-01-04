@@ -248,22 +248,20 @@ bool WireWriter::writeListHeader(int len) const
     return !writer.isError();
 }
 
-
-bool WireWriter::writeListBegin(int tag, std::uint32_t len) const
+bool WireWriter::writeListBegin(int tag, size_t len) const
 {
-    YARP_UNUSED(tag);
-    // this should be optimized for double/int/etc
-    writer.appendInt32(BOTTLE_TAG_LIST);
+    writer.appendInt32(BOTTLE_TAG_LIST | tag);
+    // FIXME check len
     writer.appendInt32(static_cast<int>(len));
     return !writer.isError();
 }
 
-bool WireWriter::writeSetBegin(int tag, std::uint32_t len) const
+bool WireWriter::writeSetBegin(int tag, size_t len) const
 {
     return writeListBegin(tag, len);
 }
 
-bool WireWriter::writeMapBegin(int tag, int tag2, std::uint32_t len) const
+bool WireWriter::writeMapBegin(int tag, int tag2, size_t len) const
 {
     YARP_UNUSED(tag);
     YARP_UNUSED(tag2);

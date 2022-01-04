@@ -128,10 +128,16 @@ bool return_get_areas_list::read_areas(yarp::os::idl::WireReader& reader)
         reader.fail();
         return false;
     }
-    areas.clear();
-    uint32_t _csize;
+    size_t _csize;
     yarp::os::idl::WireState _etype;
     reader.readListBegin(_etype, _csize);
+    // WireReader removes BOTTLE_TAG_LIST from the tag
+    constexpr int expected_tag = ((BOTTLE_TAG_STRING) & (~BOTTLE_TAG_LIST));
+    if constexpr (expected_tag != 0) {
+        if (_csize != 0 && _etype.code != expected_tag) {
+            return false;
+        }
+    }
     areas.resize(_csize);
     for (size_t _i = 0; _i < _csize; ++_i) {
         if (reader.noMore()) {
@@ -150,11 +156,11 @@ bool return_get_areas_list::read_areas(yarp::os::idl::WireReader& reader)
 // write areas field
 bool return_get_areas_list::write_areas(const yarp::os::idl::WireWriter& writer) const
 {
-    if (!writer.writeListBegin(BOTTLE_TAG_STRING, static_cast<uint32_t>(areas.size()))) {
+    if (!writer.writeListBegin(BOTTLE_TAG_STRING, areas.size())) {
         return false;
     }
     for (const auto& _item : areas) {
-        if (!writer.writeString(_item)) {
+        if (!writer.writeString(_item, true)) {
             return false;
         }
     }
@@ -171,10 +177,16 @@ bool return_get_areas_list::nested_read_areas(yarp::os::idl::WireReader& reader)
         reader.fail();
         return false;
     }
-    areas.clear();
-    uint32_t _csize;
+    size_t _csize;
     yarp::os::idl::WireState _etype;
     reader.readListBegin(_etype, _csize);
+    // WireReader removes BOTTLE_TAG_LIST from the tag
+    constexpr int expected_tag = ((BOTTLE_TAG_STRING) & (~BOTTLE_TAG_LIST));
+    if constexpr (expected_tag != 0) {
+        if (_csize != 0 && _etype.code != expected_tag) {
+            return false;
+        }
+    }
     areas.resize(_csize);
     for (size_t _i = 0; _i < _csize; ++_i) {
         if (reader.noMore()) {
@@ -193,11 +205,11 @@ bool return_get_areas_list::nested_read_areas(yarp::os::idl::WireReader& reader)
 // write (nested) areas field
 bool return_get_areas_list::nested_write_areas(const yarp::os::idl::WireWriter& writer) const
 {
-    if (!writer.writeListBegin(BOTTLE_TAG_STRING, static_cast<uint32_t>(areas.size()))) {
+    if (!writer.writeListBegin(BOTTLE_TAG_STRING, areas.size())) {
         return false;
     }
     for (const auto& _item : areas) {
-        if (!writer.writeString(_item)) {
+        if (!writer.writeString(_item, true)) {
             return false;
         }
     }

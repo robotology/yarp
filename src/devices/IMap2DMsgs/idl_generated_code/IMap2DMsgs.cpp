@@ -8464,7 +8464,7 @@ bool IMap2DMsgs::read(yarp::os::ConnectionReader& connection)
                 if (!writer.writeTag("many", 1, 0)) {
                     return false;
                 }
-                if (!writer.writeListBegin(BOTTLE_TAG_INT32, static_cast<uint32_t>(help_strings.size()))) {
+                if (!writer.writeListBegin(0, help_strings.size())) {
                     return false;
                 }
                 for (const auto& help_string : help_strings) {

@@ -94,11 +94,11 @@ public:
 
     bool writeListHeader(int len) const;
 
-    bool writeListBegin(int tag, std::uint32_t len) const;
+    bool writeListBegin(int tag, size_t len) const;
 
-    bool writeSetBegin(int tag, std::uint32_t len) const;
+    bool writeSetBegin(int tag, size_t len) const;
 
-    bool writeMapBegin(int tag, int tag2, std::uint32_t len) const;
+    bool writeMapBegin(int tag, int tag2, size_t len) const;
 
     bool writeListEnd() const;
 

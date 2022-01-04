@@ -138,10 +138,16 @@ bool return_getAllTransforms::read_transforms_list(yarp::os::idl::WireReader& re
         reader.fail();
         return false;
     }
-    transforms_list.clear();
-    uint32_t _csize;
+    size_t _csize;
     yarp::os::idl::WireState _etype;
     reader.readListBegin(_etype, _csize);
+    // WireReader removes BOTTLE_TAG_LIST from the tag
+    constexpr int expected_tag = ((BOTTLE_TAG_LIST) & (~BOTTLE_TAG_LIST));
+    if constexpr (expected_tag != 0) {
+        if (_csize != 0 && _etype.code != expected_tag) {
+            return false;
+        }
+    }
     transforms_list.resize(_csize);
     for (size_t _i = 0; _i < _csize; ++_i) {
         if (reader.noMore()) {
@@ -160,7 +166,7 @@ bool return_getAllTransforms::read_transforms_list(yarp::os::idl::WireReader& re
 // write transforms_list field
 bool return_getAllTransforms::write_transforms_list(const yarp::os::idl::WireWriter& writer) const
 {
-    if (!writer.writeListBegin(BOTTLE_TAG_LIST, static_cast<uint32_t>(transforms_list.size()))) {
+    if (!writer.writeListBegin(BOTTLE_TAG_LIST, transforms_list.size())) {
         return false;
     }
     for (const auto& _item : transforms_list) {
@@ -181,10 +187,16 @@ bool return_getAllTransforms::nested_read_transforms_list(yarp::os::idl::WireRea
         reader.fail();
         return false;
     }
-    transforms_list.clear();
-    uint32_t _csize;
+    size_t _csize;
     yarp::os::idl::WireState _etype;
     reader.readListBegin(_etype, _csize);
+    // WireReader removes BOTTLE_TAG_LIST from the tag
+    constexpr int expected_tag = ((BOTTLE_TAG_LIST) & (~BOTTLE_TAG_LIST));
+    if constexpr (expected_tag != 0) {
+        if (_csize != 0 && _etype.code != expected_tag) {
+            return false;
+        }
+    }
     transforms_list.resize(_csize);
     for (size_t _i = 0; _i < _csize; ++_i) {
         if (reader.noMore()) {
@@ -203,7 +215,7 @@ bool return_getAllTransforms::nested_read_transforms_list(yarp::os::idl::WireRea
 // write (nested) transforms_list field
 bool return_getAllTransforms::nested_write_transforms_list(const yarp::os::idl::WireWriter& writer) const
 {
-    if (!writer.writeListBegin(BOTTLE_TAG_LIST, static_cast<uint32_t>(transforms_list.size()))) {
+    if (!writer.writeListBegin(BOTTLE_TAG_LIST, transforms_list.size())) {
         return false;
     }
     for (const auto& _item : transforms_list) {

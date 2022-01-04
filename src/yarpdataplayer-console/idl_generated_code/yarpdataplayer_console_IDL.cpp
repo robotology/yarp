@@ -2839,11 +2839,11 @@ bool yarpdataplayer_console_IDL_getAllParts_helper::Reply::write(const yarp::os:
         if (!writer.writeListHeader(s_reply_len)) {
             return false;
         }
-        if (!writer.writeListBegin(BOTTLE_TAG_STRING, static_cast<uint32_t>(return_helper.size()))) {
+        if (!writer.writeListBegin(BOTTLE_TAG_STRING, return_helper.size())) {
             return false;
         }
         for (const auto& _item : return_helper) {
-            if (!writer.writeString(_item)) {
+            if (!writer.writeString(_item, true)) {
                 return false;
             }
         }
@@ -2863,10 +2863,16 @@ bool yarpdataplayer_console_IDL_getAllParts_helper::Reply::read(yarp::os::idl::W
         reader.fail();
         return false;
     }
-    return_helper.clear();
-    uint32_t _csize;
+    size_t _csize;
     yarp::os::idl::WireState _etype;
     reader.readListBegin(_etype, _csize);
+    // WireReader removes BOTTLE_TAG_LIST from the tag
+    constexpr int expected_tag = ((BOTTLE_TAG_STRING) & (~BOTTLE_TAG_LIST));
+    if constexpr (expected_tag != 0) {
+        if (_csize != 0 && _etype.code != expected_tag) {
+            return false;
+        }
+    }
     return_helper.resize(_csize);
     for (size_t _i = 0; _i < _csize; ++_i) {
         if (reader.noMore()) {
@@ -5343,7 +5349,7 @@ bool yarpdataplayer_console_IDL::read(yarp::os::ConnectionReader& connection)
                 if (!writer.writeTag("many", 1, 0)) {
                     return false;
                 }
-                if (!writer.writeListBegin(BOTTLE_TAG_INT32, static_cast<uint32_t>(help_strings.size()))) {
+                if (!writer.writeListBegin(0, help_strings.size())) {
                     return false;
                 }
                 for (const auto& help_string : help_strings) {
