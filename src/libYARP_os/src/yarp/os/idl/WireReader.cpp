@@ -421,6 +421,19 @@ bool WireReader::readString(std::string& str, bool* is_vocab)
     return !reader.isError();
 }
 
+bool WireReader::readBlock(char* const data, size_t len)
+{
+    if (state->len <= 0) {
+        return false;
+    }
+    if (noMore()) {
+        return false;
+    }
+    reader.expectBlock(data, len);
+    return !reader.isError();
+}
+
+
 bool WireReader::readBinary(std::string& str)
 {
     if (state->len <= 0) {

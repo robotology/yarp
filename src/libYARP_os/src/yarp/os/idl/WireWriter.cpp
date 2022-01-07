@@ -192,6 +192,13 @@ bool WireWriter::writeString(const std::string& str) const
     return !writer.isError();
 }
 
+bool WireWriter::writeBlock(const char* data, size_t len) const
+{
+    // FIXME Check if data is nullptr or len is 0?
+    writer.appendBlock(data, len);
+    return !writer.isError();
+}
+
 bool WireWriter::writeBinary(const std::string& blob) const
 {
     writer.appendInt32(BOTTLE_TAG_BLOB);

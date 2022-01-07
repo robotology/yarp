@@ -88,6 +88,8 @@ public:
 
     bool writeString(const std::string& str) const;
 
+    bool writeBlock(const char* data, size_t len) const;
+
     bool writeBinary(const std::string& blob) const;
 
     bool writeListHeader(int len) const;

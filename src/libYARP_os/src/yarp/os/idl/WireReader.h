@@ -116,6 +116,8 @@ public:
 
     bool readString(std::string& str, bool* is_vocab = nullptr);
 
+    bool readBlock(char* const data, size_t len);
+
     bool readBinary(std::string& str);
 
     template <typename EnumBase, typename ConverterType>
