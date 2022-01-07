@@ -742,7 +742,6 @@ TEST_CASE("IdlThriftTest", "[yarp::idl::thrift]")
 
     SECTION("test general help")
     {
-
         Server server;
         Bottle bot("[help]");
         DummyConnector con;

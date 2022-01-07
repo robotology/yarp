@@ -184,20 +184,20 @@ bool WireWriter::writeTag(const char* tag, int split, int len) const
     return true;
 }
 
-bool WireWriter::writeString(const std::string& tag) const
+bool WireWriter::writeString(const std::string& str) const
 {
     writer.appendInt32(BOTTLE_TAG_STRING);
-    // WARNING tag.length() value is not checked here
-    writer.appendString(tag);
+    // WARNING str.length() value is not checked here
+    writer.appendString(str);
     return !writer.isError();
 }
 
-bool WireWriter::writeBinary(const std::string& tag) const
+bool WireWriter::writeBinary(const std::string& blob) const
 {
     writer.appendInt32(BOTTLE_TAG_BLOB);
-    // WARNING tag.length() value is not checked here
-    writer.appendInt32(static_cast<int>(tag.length()));
-    writer.appendBlock(tag.c_str(), tag.length());
+    // WARNING blob.length() value is not checked here
+    writer.appendInt32(static_cast<int>(blob.length()));
+    writer.appendBlock(blob.c_str(), blob.length());
     return !writer.isError();
 }
 
@@ -241,6 +241,7 @@ bool WireWriter::writeMapBegin(int tag, int tag2, std::uint32_t len) const
     YARP_UNUSED(tag);
     YARP_UNUSED(tag2);
     writer.appendInt32(BOTTLE_TAG_LIST);
+    // FIXME check len
     writer.appendInt32(static_cast<int>(len));
     return !writer.isError();
 }

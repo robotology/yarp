@@ -86,9 +86,9 @@ public:
 
     bool writeTag(const char* tag, int split, int len) const;
 
-    bool writeString(const std::string& tag) const;
+    bool writeString(const std::string& str) const;
 
-    bool writeBinary(const std::string& tag) const;
+    bool writeBinary(const std::string& blob) const;
 
     bool writeListHeader(int len) const;
 
