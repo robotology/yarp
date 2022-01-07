@@ -60,6 +60,7 @@ class DiagnosticThread;
 * | remote         |       -        | string  | -     |   -           | Yes          | Prefix of the port to which to connect.        |       |
 * | local          |       -        | string  | -     |   -           | Yes          | Port prefix of the port opened by this device. |       |
 * | writeStrict    |       -        | string  | -     | See note      | No           |                                                |       |
+* | carrier        |       -        | string  | -     | udp           | No           | Specify the carrier used for reading state and sending references. This option does not change the carrier used by rpc, that is hardcoded to tcp. |       |
 *
 */
 class RemoteControlBoard :
