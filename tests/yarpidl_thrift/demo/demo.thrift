@@ -71,6 +71,17 @@ struct TestSomeMoreTypes {
   8: binary a_binary
 }
 
+struct TestSomeLists {
+  1: list<bool> a_list_of_bool,
+  2: list<i8> a_list_of_i8,
+  3: list<i16> a_list_of_i16,
+  4: list<i32> a_list_of_i32,
+  5: list<i64> a_list_of_i64,
+  6: list<double> a_list_of_double,
+  7: list<string> a_list_of_string,
+  8: list<binary> a_list_of_binary
+}
+
 /**
  * Documentation for "service"
  */
