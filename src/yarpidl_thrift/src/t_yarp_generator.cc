@@ -118,6 +118,11 @@ public:
     std::string inline_return_impl(const indent_t& indent_fn, const std::string& val = "") const
     {
         std::string str = " {\n";
+        if (debug_generator_) {
+            str += indent_fn();
+            str += indent_str();
+            str += "yWarning(\"%s:%d - %s\", __FILE__, __LINE__, __YFUNCTION__);\n";
+        }
         str += indent_fn();
         str += indent_str();
         str += "return";
