@@ -2446,7 +2446,7 @@ void t_yarp_generator::generate_struct_tostring(t_struct* tstruct, std::ostrings
     indent_up_cpp();
     {
         f_cpp_ << indent_cpp() << "yarp::os::Bottle b;\n";
-        f_cpp_ << indent_cpp() << "b.read(*this);\n";
+        f_cpp_ << indent_cpp() << "if (!yarp::os::Portable::copyPortable(*this, b))" << inline_return_cpp("{}");
         f_cpp_ << indent_cpp() << "return b.toString();\n";
     }
     indent_down_cpp();

@@ -79,7 +79,9 @@ bool return_get_area::write(yarp::os::ConnectionWriter& connection) const
 std::string return_get_area::toString() const
 {
     yarp::os::Bottle b;
-    b.read(*this);
+    if (!yarp::os::Portable::copyPortable(*this, b)) {
+        return {};
+    }
     return b.toString();
 }
 

@@ -79,7 +79,9 @@ bool return_get_current_nav_map::write(yarp::os::ConnectionWriter& connection) c
 std::string return_get_current_nav_map::toString() const
 {
     yarp::os::Bottle b;
-    b.read(*this);
+    if (!yarp::os::Portable::copyPortable(*this, b)) {
+        return {};
+    }
     return b.toString();
 }
 

@@ -71,7 +71,9 @@ bool SensorMeasurements::write(yarp::os::ConnectionWriter& connection) const
 std::string SensorMeasurements::toString() const
 {
     yarp::os::Bottle b;
-    b.read(*this);
+    if (!yarp::os::Portable::copyPortable(*this, b)) {
+        return {};
+    }
     return b.toString();
 }
 

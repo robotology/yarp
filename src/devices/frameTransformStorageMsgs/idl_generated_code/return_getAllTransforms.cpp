@@ -79,7 +79,9 @@ bool return_getAllTransforms::write(yarp::os::ConnectionWriter& connection) cons
 std::string return_getAllTransforms::toString() const
 {
     yarp::os::Bottle b;
-    b.read(*this);
+    if (!yarp::os::Portable::copyPortable(*this, b)) {
+        return {};
+    }
     return b.toString();
 }
 

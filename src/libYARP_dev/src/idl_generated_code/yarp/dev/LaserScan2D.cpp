@@ -113,7 +113,9 @@ bool LaserScan2D::write(yarp::os::ConnectionWriter& connection) const
 std::string LaserScan2D::toString() const
 {
     yarp::os::Bottle b;
-    b.read(*this);
+    if (!yarp::os::Portable::copyPortable(*this, b)) {
+        return {};
+    }
     return b.toString();
 }
 

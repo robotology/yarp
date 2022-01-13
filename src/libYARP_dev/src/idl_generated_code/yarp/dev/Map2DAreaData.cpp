@@ -89,7 +89,9 @@ bool Map2DAreaData::write(yarp::os::ConnectionWriter& connection) const
 std::string Map2DAreaData::toString() const
 {
     yarp::os::Bottle b;
-    b.read(*this);
+    if (!yarp::os::Portable::copyPortable(*this, b)) {
+        return {};
+    }
     return b.toString();
 }
 

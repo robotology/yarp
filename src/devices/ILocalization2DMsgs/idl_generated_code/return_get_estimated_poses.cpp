@@ -79,7 +79,9 @@ bool return_get_estimated_poses::write(yarp::os::ConnectionWriter& connection) c
 std::string return_get_estimated_poses::toString() const
 {
     yarp::os::Bottle b;
-    b.read(*this);
+    if (!yarp::os::Portable::copyPortable(*this, b)) {
+        return {};
+    }
     return b.toString();
 }
 

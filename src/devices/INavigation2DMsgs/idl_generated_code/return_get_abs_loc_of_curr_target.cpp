@@ -79,7 +79,9 @@ bool return_get_abs_loc_of_curr_target::write(yarp::os::ConnectionWriter& connec
 std::string return_get_abs_loc_of_curr_target::toString() const
 {
     yarp::os::Bottle b;
-    b.read(*this);
+    if (!yarp::os::Portable::copyPortable(*this, b)) {
+        return {};
+    }
     return b.toString();
 }
 

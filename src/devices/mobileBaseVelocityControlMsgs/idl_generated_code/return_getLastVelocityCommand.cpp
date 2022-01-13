@@ -95,7 +95,9 @@ bool return_getLastVelocityCommand::write(yarp::os::ConnectionWriter& connection
 std::string return_getLastVelocityCommand::toString() const
 {
     yarp::os::Bottle b;
-    b.read(*this);
+    if (!yarp::os::Portable::copyPortable(*this, b)) {
+        return {};
+    }
     return b.toString();
 }
 

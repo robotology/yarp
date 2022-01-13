@@ -79,7 +79,9 @@ bool return_get_localization_status::write(yarp::os::ConnectionWriter& connectio
 std::string return_get_localization_status::toString() const
 {
     yarp::os::Bottle b;
-    b.read(*this);
+    if (!yarp::os::Portable::copyPortable(*this, b)) {
+        return {};
+    }
     return b.toString();
 }
 
