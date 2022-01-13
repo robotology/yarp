@@ -67,86 +67,102 @@ bool WireWriter::writeNested(const yarp::os::PortWriter& obj) const
     return obj.write(writer);
 }
 
-bool WireWriter::writeBool(bool x) const
+bool WireWriter::writeBool(bool x, bool skip_tag) const
 {
-    writer.appendInt32(BOTTLE_TAG_VOCAB32);
+    if (!skip_tag) {
+        writer.appendInt32(BOTTLE_TAG_VOCAB32);
+    }
     writer.appendInt32(x ? VOCAB_OK : VOCAB_FAIL);
     return !writer.isError();
 }
 
-bool WireWriter::writeI8(std::int8_t x) const
+bool WireWriter::writeI8(std::int8_t x, bool skip_tag) const
 {
-    writer.appendInt32(BOTTLE_TAG_INT8);
+    if (!skip_tag) {
+        writer.appendInt32(BOTTLE_TAG_INT8);
+    }
     writer.appendInt8(x);
     return !writer.isError();
 }
 
-bool WireWriter::writeI16(std::int16_t x) const
+bool WireWriter::writeI16(std::int16_t x, bool skip_tag) const
 {
-    writer.appendInt32(BOTTLE_TAG_INT16);
+    if (!skip_tag) {
+        writer.appendInt32(BOTTLE_TAG_INT16);
+    }
     writer.appendInt16(x);
     return !writer.isError();
 }
 
-bool WireWriter::writeI32(std::int32_t x) const
+bool WireWriter::writeI32(std::int32_t x, bool skip_tag) const
 {
-    writer.appendInt32(BOTTLE_TAG_INT32);
+    if (!skip_tag) {
+        writer.appendInt32(BOTTLE_TAG_INT32);
+    }
     writer.appendInt32(x);
     return !writer.isError();
 }
 
-bool WireWriter::writeI64(std::int64_t x) const
+bool WireWriter::writeI64(std::int64_t x, bool skip_tag) const
 {
-    writer.appendInt32(BOTTLE_TAG_INT64);
+    if (!skip_tag) {
+        writer.appendInt32(BOTTLE_TAG_INT64);
+    }
     writer.appendInt64(x);
     return !writer.isError();
 }
 
-bool WireWriter::writeFloat32(yarp::conf::float32_t x) const
+bool WireWriter::writeFloat32(yarp::conf::float32_t x, bool skip_tag) const
 {
-    writer.appendInt32(BOTTLE_TAG_FLOAT32);
+    if (!skip_tag) {
+        writer.appendInt32(BOTTLE_TAG_FLOAT32);
+    }
     writer.appendFloat32(x);
     return !writer.isError();
 }
 
-bool WireWriter::writeFloat64(yarp::conf::float64_t x) const
+bool WireWriter::writeFloat64(yarp::conf::float64_t x, bool skip_tag) const
 {
-    writer.appendInt32(BOTTLE_TAG_FLOAT64);
+    if (!skip_tag) {
+        writer.appendInt32(BOTTLE_TAG_FLOAT64);
+    }
     writer.appendFloat64(x);
     return !writer.isError();
 }
 
-bool WireWriter::writeUI8(std::uint8_t x) const
+bool WireWriter::writeUI8(std::uint8_t x, bool skip_tag) const
 {
-    return writeI8(reinterpret_cast<std::int8_t&>(x));
+    return writeI8(reinterpret_cast<std::int8_t&>(x), skip_tag);
 }
 
-bool WireWriter::writeUI16(std::uint16_t x) const
+bool WireWriter::writeUI16(std::uint16_t x, bool skip_tag) const
 {
-    return writeI16(reinterpret_cast<std::int16_t&>(x));
+    return writeI16(reinterpret_cast<std::int16_t&>(x), skip_tag);
 }
 
-bool WireWriter::writeUI32(std::uint32_t x) const
+bool WireWriter::writeUI32(std::uint32_t x, bool skip_tag) const
 {
-    return writeI32(reinterpret_cast<std::int32_t&>(x));
+    return writeI32(reinterpret_cast<std::int32_t&>(x), skip_tag);
 }
 
-bool WireWriter::writeUI64(std::uint64_t x) const
+bool WireWriter::writeUI64(std::uint64_t x, bool skip_tag) const
 {
-    return writeI64(reinterpret_cast<std::int64_t&>(x));
+    return writeI64(reinterpret_cast<std::int64_t&>(x), skip_tag);
 }
 
-bool WireWriter::writeVocab32(yarp::conf::vocab32_t x) const
+bool WireWriter::writeVocab32(yarp::conf::vocab32_t x, bool skip_tag) const
 {
-    writer.appendInt32(BOTTLE_TAG_VOCAB32);
+    if (!skip_tag) {
+        writer.appendInt32(BOTTLE_TAG_VOCAB32);
+    }
     writer.appendInt32(x);
     return !writer.isError();
 }
 
-bool WireWriter::writeSizeT(std::size_t x) const
+bool WireWriter::writeSizeT(std::size_t x, bool skip_tag) const
 {
     int tmp = x;
-    return writeI32(tmp);
+    return writeI32(tmp, skip_tag);
 }
 
 bool WireWriter::isValid() const
@@ -184,9 +200,11 @@ bool WireWriter::writeTag(const char* tag, int split, int len) const
     return true;
 }
 
-bool WireWriter::writeString(const std::string& str) const
+bool WireWriter::writeString(const std::string& str, bool skip_tag) const
 {
-    writer.appendInt32(BOTTLE_TAG_STRING);
+    if (!skip_tag) {
+        writer.appendInt32(BOTTLE_TAG_STRING);
+    }
     // WARNING str.length() value is not checked here
     writer.appendString(str);
     return !writer.isError();
@@ -199,9 +217,11 @@ bool WireWriter::writeBlock(const char* data, size_t len) const
     return !writer.isError();
 }
 
-bool WireWriter::writeBinary(const std::string& blob) const
+bool WireWriter::writeBinary(const std::string& blob, bool skip_tag) const
 {
-    writer.appendInt32(BOTTLE_TAG_BLOB);
+    if (!skip_tag) {
+        writer.appendInt32(BOTTLE_TAG_BLOB);
+    }
     // WARNING blob.length() value is not checked here
     writer.appendInt32(static_cast<int>(blob.length()));
     writer.appendBlock(blob.c_str(), blob.length());
