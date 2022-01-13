@@ -130,7 +130,10 @@ bool jointData::read(yarp::os::idl::WireReader& reader)
     if (!read_interactionMode_isValid(reader)) {
         return false;
     }
-    return !reader.isError();
+    if (reader.isError()) {
+        return false;
+    }
+    return true;
 }
 
 // Read structure on a Connection
@@ -140,7 +143,10 @@ bool jointData::read(yarp::os::ConnectionReader& connection)
     if (!reader.readListHeader(22)) {
         return false;
     }
-    return read(reader);
+    if (!read(reader)) {
+        return false;
+    }
+    return true;
 }
 
 // Write structure on a Wire
@@ -212,7 +218,10 @@ bool jointData::write(const yarp::os::idl::WireWriter& writer) const
     if (!write_interactionMode_isValid(writer)) {
         return false;
     }
-    return !writer.isError();
+    if (writer.isError()) {
+        return false;
+    }
+    return true;
 }
 
 // Write structure on a Connection
@@ -222,7 +231,10 @@ bool jointData::write(yarp::os::ConnectionWriter& connection) const
     if (!writer.writeListHeader(22)) {
         return false;
     }
-    return write(writer);
+    if (!write(writer)) {
+        return false;
+    }
+    return true;
 }
 
 // Convert to a printable string

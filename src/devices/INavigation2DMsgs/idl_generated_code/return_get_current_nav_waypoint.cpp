@@ -28,7 +28,10 @@ bool return_get_current_nav_waypoint::read(yarp::os::idl::WireReader& reader)
     if (!nested_read_waypoint(reader)) {
         return false;
     }
-    return !reader.isError();
+    if (reader.isError()) {
+        return false;
+    }
+    return true;
 }
 
 // Read structure on a Connection
@@ -38,7 +41,10 @@ bool return_get_current_nav_waypoint::read(yarp::os::ConnectionReader& connectio
     if (!reader.readListHeader(2)) {
         return false;
     }
-    return read(reader);
+    if (!read(reader)) {
+        return false;
+    }
+    return true;
 }
 
 // Write structure on a Wire
@@ -50,7 +56,10 @@ bool return_get_current_nav_waypoint::write(const yarp::os::idl::WireWriter& wri
     if (!nested_write_waypoint(writer)) {
         return false;
     }
-    return !writer.isError();
+    if (writer.isError()) {
+        return false;
+    }
+    return true;
 }
 
 // Write structure on a Connection
@@ -60,7 +69,10 @@ bool return_get_current_nav_waypoint::write(yarp::os::ConnectionWriter& connecti
     if (!writer.writeListHeader(2)) {
         return false;
     }
-    return write(writer);
+    if (!write(writer)) {
+        return false;
+    }
+    return true;
 }
 
 // Convert to a printable string

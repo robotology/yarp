@@ -2329,7 +2329,8 @@ void t_yarp_generator::generate_struct_read_wirereader(t_struct* tstruct, std::o
         for (const auto& member : members) {
             f_cpp_ << indent_cpp() << "if (!" << (is_member_nested(member) ? "nested_" : "") << "read_" << member->get_name() << "(reader))" << inline_return_cpp("false");
         }
-        f_cpp_ << indent_cpp() << "return !reader.isError();\n";
+        f_cpp_ << indent_cpp() << "if (reader.isError())" << inline_return_cpp("false");
+        f_cpp_ << indent_cpp() << "return true;\n";
     }
     indent_down_cpp();
     f_cpp_ << indent_cpp() << "}\n";
@@ -2357,7 +2358,8 @@ void t_yarp_generator::generate_struct_read_connectionreader(t_struct* tstruct, 
     {
         f_cpp_ << indent_cpp() << "yarp::os::idl::WireReader reader(connection);\n";
         f_cpp_ << indent_cpp() << "if (!reader.readListHeader(" << flat_element_count(tstruct) << "))" << inline_return_cpp("false");
-        f_cpp_ << indent_cpp() << "return read(reader);\n";
+        f_cpp_ << indent_cpp() << "if (!read(reader))" << inline_return_cpp("false");
+        f_cpp_ << indent_cpp() << "return true;\n";
     }
     indent_down_cpp();
     f_cpp_ << indent_cpp() << "}\n";
@@ -2387,7 +2389,8 @@ void t_yarp_generator::generate_struct_write_wirewriter(t_struct* tstruct, std::
         for (const auto& member : members) {
             f_cpp_ << indent_cpp() << "if (!" << (is_member_nested(member) ? "nested_" : "") << "write_" << member->get_name() << "(writer))" << inline_return_cpp("false");
         }
-        f_cpp_ << indent_cpp() << "return !writer.isError();\n";
+        f_cpp_ << indent_cpp() << "if (writer.isError())" << inline_return_cpp("false");
+        f_cpp_ << indent_cpp() << "return true;\n";
     }
     indent_down_cpp();
     f_cpp_ << indent_cpp() << "}\n";
@@ -2415,7 +2418,8 @@ void t_yarp_generator::generate_struct_write_connectionwriter(t_struct* tstruct,
     {
         f_cpp_ << indent_cpp() << "yarp::os::idl::WireWriter writer(connection);\n";
         f_cpp_ << indent_cpp() << "if (!writer.writeListHeader(" << flat_element_count(tstruct) << "))" << inline_return_cpp("false");
-        f_cpp_ << indent_cpp() << "return write(writer);\n";
+        f_cpp_ << indent_cpp() << "if (!write(writer))" << inline_return_cpp("false");
+        f_cpp_ << indent_cpp() << "return true;\n";
     }
     indent_down_cpp();
     f_cpp_ << indent_cpp() << "}\n";

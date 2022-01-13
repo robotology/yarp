@@ -23,7 +23,10 @@ bool SensorMeasurements::read(yarp::os::idl::WireReader& reader)
     if (!read_measurements(reader)) {
         return false;
     }
-    return !reader.isError();
+    if (reader.isError()) {
+        return false;
+    }
+    return true;
 }
 
 // Read structure on a Connection
@@ -33,7 +36,10 @@ bool SensorMeasurements::read(yarp::os::ConnectionReader& connection)
     if (!reader.readListHeader(1)) {
         return false;
     }
-    return read(reader);
+    if (!read(reader)) {
+        return false;
+    }
+    return true;
 }
 
 // Write structure on a Wire
@@ -42,7 +48,10 @@ bool SensorMeasurements::write(const yarp::os::idl::WireWriter& writer) const
     if (!write_measurements(writer)) {
         return false;
     }
-    return !writer.isError();
+    if (writer.isError()) {
+        return false;
+    }
+    return true;
 }
 
 // Write structure on a Connection
@@ -52,7 +61,10 @@ bool SensorMeasurements::write(yarp::os::ConnectionWriter& connection) const
     if (!writer.writeListHeader(1)) {
         return false;
     }
-    return write(writer);
+    if (!write(writer)) {
+        return false;
+    }
+    return true;
 }
 
 // Convert to a printable string
