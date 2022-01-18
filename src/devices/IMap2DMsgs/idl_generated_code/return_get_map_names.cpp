@@ -28,7 +28,10 @@ bool return_get_map_names::read(yarp::os::idl::WireReader& reader)
     if (!read_map_names(reader)) {
         return false;
     }
-    return !reader.isError();
+    if (reader.isError()) {
+        return false;
+    }
+    return true;
 }
 
 // Read structure on a Connection
@@ -38,7 +41,10 @@ bool return_get_map_names::read(yarp::os::ConnectionReader& connection)
     if (!reader.readListHeader(2)) {
         return false;
     }
-    return read(reader);
+    if (!read(reader)) {
+        return false;
+    }
+    return true;
 }
 
 // Write structure on a Wire
@@ -50,7 +56,10 @@ bool return_get_map_names::write(const yarp::os::idl::WireWriter& writer) const
     if (!write_map_names(writer)) {
         return false;
     }
-    return !writer.isError();
+    if (writer.isError()) {
+        return false;
+    }
+    return true;
 }
 
 // Write structure on a Connection
@@ -60,14 +69,19 @@ bool return_get_map_names::write(yarp::os::ConnectionWriter& connection) const
     if (!writer.writeListHeader(2)) {
         return false;
     }
-    return write(writer);
+    if (!write(writer)) {
+        return false;
+    }
+    return true;
 }
 
 // Convert to a printable string
 std::string return_get_map_names::toString() const
 {
     yarp::os::Bottle b;
-    b.read(*this);
+    if (!yarp::os::Portable::copyPortable(*this, b)) {
+        return {};
+    }
     return b.toString();
 }
 
@@ -114,10 +128,16 @@ bool return_get_map_names::read_map_names(yarp::os::idl::WireReader& reader)
         reader.fail();
         return false;
     }
-    map_names.clear();
-    uint32_t _csize;
+    size_t _csize;
     yarp::os::idl::WireState _etype;
     reader.readListBegin(_etype, _csize);
+    // WireReader removes BOTTLE_TAG_LIST from the tag
+    constexpr int expected_tag = ((BOTTLE_TAG_STRING) & (~BOTTLE_TAG_LIST));
+    if constexpr (expected_tag != 0) {
+        if (_csize != 0 && _etype.code != expected_tag) {
+            return false;
+        }
+    }
     map_names.resize(_csize);
     for (size_t _i = 0; _i < _csize; ++_i) {
         if (reader.noMore()) {
@@ -136,11 +156,11 @@ bool return_get_map_names::read_map_names(yarp::os::idl::WireReader& reader)
 // write map_names field
 bool return_get_map_names::write_map_names(const yarp::os::idl::WireWriter& writer) const
 {
-    if (!writer.writeListBegin(BOTTLE_TAG_STRING, static_cast<uint32_t>(map_names.size()))) {
+    if (!writer.writeListBegin(BOTTLE_TAG_STRING, map_names.size())) {
         return false;
     }
     for (const auto& _item : map_names) {
-        if (!writer.writeString(_item)) {
+        if (!writer.writeString(_item, true)) {
             return false;
         }
     }
@@ -157,10 +177,16 @@ bool return_get_map_names::nested_read_map_names(yarp::os::idl::WireReader& read
         reader.fail();
         return false;
     }
-    map_names.clear();
-    uint32_t _csize;
+    size_t _csize;
     yarp::os::idl::WireState _etype;
     reader.readListBegin(_etype, _csize);
+    // WireReader removes BOTTLE_TAG_LIST from the tag
+    constexpr int expected_tag = ((BOTTLE_TAG_STRING) & (~BOTTLE_TAG_LIST));
+    if constexpr (expected_tag != 0) {
+        if (_csize != 0 && _etype.code != expected_tag) {
+            return false;
+        }
+    }
     map_names.resize(_csize);
     for (size_t _i = 0; _i < _csize; ++_i) {
         if (reader.noMore()) {
@@ -179,11 +205,11 @@ bool return_get_map_names::nested_read_map_names(yarp::os::idl::WireReader& read
 // write (nested) map_names field
 bool return_get_map_names::nested_write_map_names(const yarp::os::idl::WireWriter& writer) const
 {
-    if (!writer.writeListBegin(BOTTLE_TAG_STRING, static_cast<uint32_t>(map_names.size()))) {
+    if (!writer.writeListBegin(BOTTLE_TAG_STRING, map_names.size())) {
         return false;
     }
     for (const auto& _item : map_names) {
-        if (!writer.writeString(_item)) {
+        if (!writer.writeString(_item, true)) {
             return false;
         }
     }

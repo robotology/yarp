@@ -28,7 +28,10 @@ bool return_get_all_paths::read(yarp::os::idl::WireReader& reader)
     if (!read_paths(reader)) {
         return false;
     }
-    return !reader.isError();
+    if (reader.isError()) {
+        return false;
+    }
+    return true;
 }
 
 // Read structure on a Connection
@@ -38,7 +41,10 @@ bool return_get_all_paths::read(yarp::os::ConnectionReader& connection)
     if (!reader.readListHeader(2)) {
         return false;
     }
-    return read(reader);
+    if (!read(reader)) {
+        return false;
+    }
+    return true;
 }
 
 // Write structure on a Wire
@@ -50,7 +56,10 @@ bool return_get_all_paths::write(const yarp::os::idl::WireWriter& writer) const
     if (!write_paths(writer)) {
         return false;
     }
-    return !writer.isError();
+    if (writer.isError()) {
+        return false;
+    }
+    return true;
 }
 
 // Write structure on a Connection
@@ -60,14 +69,19 @@ bool return_get_all_paths::write(yarp::os::ConnectionWriter& connection) const
     if (!writer.writeListHeader(2)) {
         return false;
     }
-    return write(writer);
+    if (!write(writer)) {
+        return false;
+    }
+    return true;
 }
 
 // Convert to a printable string
 std::string return_get_all_paths::toString() const
 {
     yarp::os::Bottle b;
-    b.read(*this);
+    if (!yarp::os::Portable::copyPortable(*this, b)) {
+        return {};
+    }
     return b.toString();
 }
 
@@ -114,10 +128,16 @@ bool return_get_all_paths::read_paths(yarp::os::idl::WireReader& reader)
         reader.fail();
         return false;
     }
-    paths.clear();
-    uint32_t _csize;
+    size_t _csize;
     yarp::os::idl::WireState _etype;
     reader.readListBegin(_etype, _csize);
+    // WireReader removes BOTTLE_TAG_LIST from the tag
+    constexpr int expected_tag = ((BOTTLE_TAG_LIST) & (~BOTTLE_TAG_LIST));
+    if constexpr (expected_tag != 0) {
+        if (_csize != 0 && _etype.code != expected_tag) {
+            return false;
+        }
+    }
     paths.resize(_csize);
     for (size_t _i = 0; _i < _csize; ++_i) {
         if (reader.noMore()) {
@@ -136,7 +156,7 @@ bool return_get_all_paths::read_paths(yarp::os::idl::WireReader& reader)
 // write paths field
 bool return_get_all_paths::write_paths(const yarp::os::idl::WireWriter& writer) const
 {
-    if (!writer.writeListBegin(BOTTLE_TAG_LIST, static_cast<uint32_t>(paths.size()))) {
+    if (!writer.writeListBegin(BOTTLE_TAG_LIST, paths.size())) {
         return false;
     }
     for (const auto& _item : paths) {
@@ -157,10 +177,16 @@ bool return_get_all_paths::nested_read_paths(yarp::os::idl::WireReader& reader)
         reader.fail();
         return false;
     }
-    paths.clear();
-    uint32_t _csize;
+    size_t _csize;
     yarp::os::idl::WireState _etype;
     reader.readListBegin(_etype, _csize);
+    // WireReader removes BOTTLE_TAG_LIST from the tag
+    constexpr int expected_tag = ((BOTTLE_TAG_LIST) & (~BOTTLE_TAG_LIST));
+    if constexpr (expected_tag != 0) {
+        if (_csize != 0 && _etype.code != expected_tag) {
+            return false;
+        }
+    }
     paths.resize(_csize);
     for (size_t _i = 0; _i < _csize; ++_i) {
         if (reader.noMore()) {
@@ -179,7 +205,7 @@ bool return_get_all_paths::nested_read_paths(yarp::os::idl::WireReader& reader)
 // write (nested) paths field
 bool return_get_all_paths::nested_write_paths(const yarp::os::idl::WireWriter& writer) const
 {
-    if (!writer.writeListBegin(BOTTLE_TAG_LIST, static_cast<uint32_t>(paths.size()))) {
+    if (!writer.writeListBegin(BOTTLE_TAG_LIST, paths.size())) {
         return false;
     }
     for (const auto& _item : paths) {

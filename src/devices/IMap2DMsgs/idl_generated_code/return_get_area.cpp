@@ -28,7 +28,10 @@ bool return_get_area::read(yarp::os::idl::WireReader& reader)
     if (!nested_read_area(reader)) {
         return false;
     }
-    return !reader.isError();
+    if (reader.isError()) {
+        return false;
+    }
+    return true;
 }
 
 // Read structure on a Connection
@@ -38,7 +41,10 @@ bool return_get_area::read(yarp::os::ConnectionReader& connection)
     if (!reader.readListHeader(2)) {
         return false;
     }
-    return read(reader);
+    if (!read(reader)) {
+        return false;
+    }
+    return true;
 }
 
 // Write structure on a Wire
@@ -50,7 +56,10 @@ bool return_get_area::write(const yarp::os::idl::WireWriter& writer) const
     if (!nested_write_area(writer)) {
         return false;
     }
-    return !writer.isError();
+    if (writer.isError()) {
+        return false;
+    }
+    return true;
 }
 
 // Write structure on a Connection
@@ -60,14 +69,19 @@ bool return_get_area::write(yarp::os::ConnectionWriter& connection) const
     if (!writer.writeListHeader(2)) {
         return false;
     }
-    return write(writer);
+    if (!write(writer)) {
+        return false;
+    }
+    return true;
 }
 
 // Convert to a printable string
 std::string return_get_area::toString() const
 {
     yarp::os::Bottle b;
-    b.read(*this);
+    if (!yarp::os::Portable::copyPortable(*this, b)) {
+        return {};
+    }
     return b.toString();
 }
 

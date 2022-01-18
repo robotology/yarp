@@ -43,42 +43,42 @@ public:
 
     bool writeNested(const yarp::os::PortWriter& obj) const;
 
-    bool writeBool(bool x) const;
+    bool writeBool(bool x, bool skip_tag = false) const;
 
-    bool writeI8(std::int8_t x) const;
+    bool writeI8(std::int8_t x, bool skip_tag = false) const;
 
-    bool writeI16(std::int16_t x) const;
+    bool writeI16(std::int16_t x, bool skip_tag = false) const;
 
-    bool writeI32(std::int32_t x) const;
+    bool writeI32(std::int32_t x, bool skip_tag = false) const;
 
-    bool writeI64(std::int64_t x) const;
+    bool writeI64(std::int64_t x, bool skip_tag = false) const;
 
-    bool writeFloat32(yarp::conf::float32_t x) const;
+    bool writeFloat32(yarp::conf::float32_t x, bool skip_tag = false) const;
 
-    bool writeFloat64(yarp::conf::float64_t x) const;
+    bool writeFloat64(yarp::conf::float64_t x, bool skip_tag = false) const;
 
-    bool writeUI8(std::uint8_t x) const;
+    bool writeUI8(std::uint8_t x, bool skip_tag = false) const;
 
-    bool writeUI16(std::uint16_t x) const;
+    bool writeUI16(std::uint16_t x, bool skip_tag = false) const;
 
-    bool writeUI32(std::uint32_t x) const;
+    bool writeUI32(std::uint32_t x, bool skip_tag = false) const;
 
-    bool writeUI64(std::uint64_t x) const;
+    bool writeUI64(std::uint64_t x, bool skip_tag = false) const;
 
-    bool writeVocab32(yarp::conf::vocab32_t x) const;
+    bool writeVocab32(yarp::conf::vocab32_t x, bool skip_tag = false) const;
 
-    bool writeVocab32(char a, char b = 0, char c = 0, char d = 0) const
+    bool writeVocab32(char a, char b = 0, char c = 0, char d = 0, bool skip_tag = false) const
     {
         return writeVocab32(yarp::os::createVocab32(a, b, c, d));
     }
 
     // If the string is longer than 4 characters, only the first 4 are used.
-    bool writeVocab32(const std::string& str) const
+    bool writeVocab32(const std::string& str, bool skip_tag = false) const
     {
         return writeVocab32(yarp::os::Vocab32::encode(str));
     }
 
-    bool writeSizeT(std::size_t x) const;
+    bool writeSizeT(std::size_t x, bool skip_tag = false) const;
 
     bool isValid() const;
 
@@ -86,17 +86,19 @@ public:
 
     bool writeTag(const char* tag, int split, int len) const;
 
-    bool writeString(const std::string& tag) const;
+    bool writeString(const std::string& str, bool skip_tag = false) const;
 
-    bool writeBinary(const std::string& tag) const;
+    bool writeBlock(const char* data, size_t len) const;
+
+    bool writeBinary(const std::string& blob, bool skip_tag = false) const;
 
     bool writeListHeader(int len) const;
 
-    bool writeListBegin(int tag, std::uint32_t len) const;
+    bool writeListBegin(int tag, size_t len) const;
 
-    bool writeSetBegin(int tag, std::uint32_t len) const;
+    bool writeSetBegin(int tag, size_t len) const;
 
-    bool writeMapBegin(int tag, int tag2, std::uint32_t len) const;
+    bool writeMapBegin(int tag, int tag2, size_t len) const;
 
     bool writeListEnd() const;
 

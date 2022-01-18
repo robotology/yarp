@@ -421,6 +421,19 @@ bool WireReader::readString(std::string& str, bool* is_vocab)
     return !reader.isError();
 }
 
+bool WireReader::readBlock(char* const data, size_t len)
+{
+    if (state->len <= 0) {
+        return false;
+    }
+    if (noMore()) {
+        return false;
+    }
+    reader.expectBlock(data, len);
+    return !reader.isError();
+}
+
+
 bool WireReader::readBinary(std::string& str)
 {
     if (state->len <= 0) {
@@ -582,7 +595,7 @@ std::string WireReader::readTag(size_t len)
     return str;
 }
 
-void WireReader::readListBegin(WireState& nstate, std::uint32_t& len)
+void WireReader::readListBegin(WireState& nstate, size_t& len)
 {
     nstate.parent = state;
     state = &nstate;
@@ -590,17 +603,17 @@ void WireReader::readListBegin(WireState& nstate, std::uint32_t& len)
     if (!readListHeader()) {
         return;
     }
-    len = static_cast<std::uint32_t>(state->len);
+    len = static_cast<size_t>(state->len);
 }
 
-void WireReader::readSetBegin(WireState& nstate, std::uint32_t& len)
+void WireReader::readSetBegin(WireState& nstate, size_t& len)
 {
     readListBegin(nstate, len);
 }
 
 void WireReader::readMapBegin(WireState& nstate,
                               WireState& nstate2,
-                              std::uint32_t& len)
+                              size_t& len)
 {
     YARP_UNUSED(nstate2);
     readListBegin(nstate, len);

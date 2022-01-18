@@ -23,7 +23,10 @@ bool SensorMeasurements::read(yarp::os::idl::WireReader& reader)
     if (!read_measurements(reader)) {
         return false;
     }
-    return !reader.isError();
+    if (reader.isError()) {
+        return false;
+    }
+    return true;
 }
 
 // Read structure on a Connection
@@ -33,7 +36,10 @@ bool SensorMeasurements::read(yarp::os::ConnectionReader& connection)
     if (!reader.readListHeader(1)) {
         return false;
     }
-    return read(reader);
+    if (!read(reader)) {
+        return false;
+    }
+    return true;
 }
 
 // Write structure on a Wire
@@ -42,7 +48,10 @@ bool SensorMeasurements::write(const yarp::os::idl::WireWriter& writer) const
     if (!write_measurements(writer)) {
         return false;
     }
-    return !writer.isError();
+    if (writer.isError()) {
+        return false;
+    }
+    return true;
 }
 
 // Write structure on a Connection
@@ -52,14 +61,19 @@ bool SensorMeasurements::write(yarp::os::ConnectionWriter& connection) const
     if (!writer.writeListHeader(1)) {
         return false;
     }
-    return write(writer);
+    if (!write(writer)) {
+        return false;
+    }
+    return true;
 }
 
 // Convert to a printable string
 std::string SensorMeasurements::toString() const
 {
     yarp::os::Bottle b;
-    b.read(*this);
+    if (!yarp::os::Portable::copyPortable(*this, b)) {
+        return {};
+    }
     return b.toString();
 }
 
@@ -70,10 +84,16 @@ bool SensorMeasurements::read_measurements(yarp::os::idl::WireReader& reader)
         reader.fail();
         return false;
     }
-    measurements.clear();
-    uint32_t _csize;
+    size_t _csize;
     yarp::os::idl::WireState _etype;
     reader.readListBegin(_etype, _csize);
+    // WireReader removes BOTTLE_TAG_LIST from the tag
+    constexpr int expected_tag = ((BOTTLE_TAG_LIST) & (~BOTTLE_TAG_LIST));
+    if constexpr (expected_tag != 0) {
+        if (_csize != 0 && _etype.code != expected_tag) {
+            return false;
+        }
+    }
     measurements.resize(_csize);
     for (size_t _i = 0; _i < _csize; ++_i) {
         if (reader.noMore()) {
@@ -92,7 +112,7 @@ bool SensorMeasurements::read_measurements(yarp::os::idl::WireReader& reader)
 // write measurements field
 bool SensorMeasurements::write_measurements(const yarp::os::idl::WireWriter& writer) const
 {
-    if (!writer.writeListBegin(BOTTLE_TAG_LIST, static_cast<uint32_t>(measurements.size()))) {
+    if (!writer.writeListBegin(BOTTLE_TAG_LIST, measurements.size())) {
         return false;
     }
     for (const auto& _item : measurements) {
@@ -113,10 +133,16 @@ bool SensorMeasurements::nested_read_measurements(yarp::os::idl::WireReader& rea
         reader.fail();
         return false;
     }
-    measurements.clear();
-    uint32_t _csize;
+    size_t _csize;
     yarp::os::idl::WireState _etype;
     reader.readListBegin(_etype, _csize);
+    // WireReader removes BOTTLE_TAG_LIST from the tag
+    constexpr int expected_tag = ((BOTTLE_TAG_LIST) & (~BOTTLE_TAG_LIST));
+    if constexpr (expected_tag != 0) {
+        if (_csize != 0 && _etype.code != expected_tag) {
+            return false;
+        }
+    }
     measurements.resize(_csize);
     for (size_t _i = 0; _i < _csize; ++_i) {
         if (reader.noMore()) {
@@ -135,7 +161,7 @@ bool SensorMeasurements::nested_read_measurements(yarp::os::idl::WireReader& rea
 // write (nested) measurements field
 bool SensorMeasurements::nested_write_measurements(const yarp::os::idl::WireWriter& writer) const
 {
-    if (!writer.writeListBegin(BOTTLE_TAG_LIST, static_cast<uint32_t>(measurements.size()))) {
+    if (!writer.writeListBegin(BOTTLE_TAG_LIST, measurements.size())) {
         return false;
     }
     for (const auto& _item : measurements) {

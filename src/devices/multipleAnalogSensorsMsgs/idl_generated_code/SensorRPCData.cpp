@@ -68,7 +68,10 @@ bool SensorRPCData::read(yarp::os::idl::WireReader& reader)
     if (!read_PositionSensors(reader)) {
         return false;
     }
-    return !reader.isError();
+    if (reader.isError()) {
+        return false;
+    }
+    return true;
 }
 
 // Read structure on a Connection
@@ -78,7 +81,10 @@ bool SensorRPCData::read(yarp::os::ConnectionReader& connection)
     if (!reader.readListHeader(10)) {
         return false;
     }
-    return read(reader);
+    if (!read(reader)) {
+        return false;
+    }
+    return true;
 }
 
 // Write structure on a Wire
@@ -114,7 +120,10 @@ bool SensorRPCData::write(const yarp::os::idl::WireWriter& writer) const
     if (!write_PositionSensors(writer)) {
         return false;
     }
-    return !writer.isError();
+    if (writer.isError()) {
+        return false;
+    }
+    return true;
 }
 
 // Write structure on a Connection
@@ -124,14 +133,19 @@ bool SensorRPCData::write(yarp::os::ConnectionWriter& connection) const
     if (!writer.writeListHeader(10)) {
         return false;
     }
-    return write(writer);
+    if (!write(writer)) {
+        return false;
+    }
+    return true;
 }
 
 // Convert to a printable string
 std::string SensorRPCData::toString() const
 {
     yarp::os::Bottle b;
-    b.read(*this);
+    if (!yarp::os::Portable::copyPortable(*this, b)) {
+        return {};
+    }
     return b.toString();
 }
 
@@ -142,10 +156,16 @@ bool SensorRPCData::read_ThreeAxisGyroscopes(yarp::os::idl::WireReader& reader)
         reader.fail();
         return false;
     }
-    ThreeAxisGyroscopes.clear();
-    uint32_t _csize;
+    size_t _csize;
     yarp::os::idl::WireState _etype;
     reader.readListBegin(_etype, _csize);
+    // WireReader removes BOTTLE_TAG_LIST from the tag
+    constexpr int expected_tag = ((BOTTLE_TAG_LIST) & (~BOTTLE_TAG_LIST));
+    if constexpr (expected_tag != 0) {
+        if (_csize != 0 && _etype.code != expected_tag) {
+            return false;
+        }
+    }
     ThreeAxisGyroscopes.resize(_csize);
     for (size_t _i = 0; _i < _csize; ++_i) {
         if (reader.noMore()) {
@@ -164,7 +184,7 @@ bool SensorRPCData::read_ThreeAxisGyroscopes(yarp::os::idl::WireReader& reader)
 // write ThreeAxisGyroscopes field
 bool SensorRPCData::write_ThreeAxisGyroscopes(const yarp::os::idl::WireWriter& writer) const
 {
-    if (!writer.writeListBegin(BOTTLE_TAG_LIST, static_cast<uint32_t>(ThreeAxisGyroscopes.size()))) {
+    if (!writer.writeListBegin(BOTTLE_TAG_LIST, ThreeAxisGyroscopes.size())) {
         return false;
     }
     for (const auto& _item : ThreeAxisGyroscopes) {
@@ -185,10 +205,16 @@ bool SensorRPCData::nested_read_ThreeAxisGyroscopes(yarp::os::idl::WireReader& r
         reader.fail();
         return false;
     }
-    ThreeAxisGyroscopes.clear();
-    uint32_t _csize;
+    size_t _csize;
     yarp::os::idl::WireState _etype;
     reader.readListBegin(_etype, _csize);
+    // WireReader removes BOTTLE_TAG_LIST from the tag
+    constexpr int expected_tag = ((BOTTLE_TAG_LIST) & (~BOTTLE_TAG_LIST));
+    if constexpr (expected_tag != 0) {
+        if (_csize != 0 && _etype.code != expected_tag) {
+            return false;
+        }
+    }
     ThreeAxisGyroscopes.resize(_csize);
     for (size_t _i = 0; _i < _csize; ++_i) {
         if (reader.noMore()) {
@@ -207,7 +233,7 @@ bool SensorRPCData::nested_read_ThreeAxisGyroscopes(yarp::os::idl::WireReader& r
 // write (nested) ThreeAxisGyroscopes field
 bool SensorRPCData::nested_write_ThreeAxisGyroscopes(const yarp::os::idl::WireWriter& writer) const
 {
-    if (!writer.writeListBegin(BOTTLE_TAG_LIST, static_cast<uint32_t>(ThreeAxisGyroscopes.size()))) {
+    if (!writer.writeListBegin(BOTTLE_TAG_LIST, ThreeAxisGyroscopes.size())) {
         return false;
     }
     for (const auto& _item : ThreeAxisGyroscopes) {
@@ -228,10 +254,16 @@ bool SensorRPCData::read_ThreeAxisLinearAccelerometers(yarp::os::idl::WireReader
         reader.fail();
         return false;
     }
-    ThreeAxisLinearAccelerometers.clear();
-    uint32_t _csize;
+    size_t _csize;
     yarp::os::idl::WireState _etype;
     reader.readListBegin(_etype, _csize);
+    // WireReader removes BOTTLE_TAG_LIST from the tag
+    constexpr int expected_tag = ((BOTTLE_TAG_LIST) & (~BOTTLE_TAG_LIST));
+    if constexpr (expected_tag != 0) {
+        if (_csize != 0 && _etype.code != expected_tag) {
+            return false;
+        }
+    }
     ThreeAxisLinearAccelerometers.resize(_csize);
     for (size_t _i = 0; _i < _csize; ++_i) {
         if (reader.noMore()) {
@@ -250,7 +282,7 @@ bool SensorRPCData::read_ThreeAxisLinearAccelerometers(yarp::os::idl::WireReader
 // write ThreeAxisLinearAccelerometers field
 bool SensorRPCData::write_ThreeAxisLinearAccelerometers(const yarp::os::idl::WireWriter& writer) const
 {
-    if (!writer.writeListBegin(BOTTLE_TAG_LIST, static_cast<uint32_t>(ThreeAxisLinearAccelerometers.size()))) {
+    if (!writer.writeListBegin(BOTTLE_TAG_LIST, ThreeAxisLinearAccelerometers.size())) {
         return false;
     }
     for (const auto& _item : ThreeAxisLinearAccelerometers) {
@@ -271,10 +303,16 @@ bool SensorRPCData::nested_read_ThreeAxisLinearAccelerometers(yarp::os::idl::Wir
         reader.fail();
         return false;
     }
-    ThreeAxisLinearAccelerometers.clear();
-    uint32_t _csize;
+    size_t _csize;
     yarp::os::idl::WireState _etype;
     reader.readListBegin(_etype, _csize);
+    // WireReader removes BOTTLE_TAG_LIST from the tag
+    constexpr int expected_tag = ((BOTTLE_TAG_LIST) & (~BOTTLE_TAG_LIST));
+    if constexpr (expected_tag != 0) {
+        if (_csize != 0 && _etype.code != expected_tag) {
+            return false;
+        }
+    }
     ThreeAxisLinearAccelerometers.resize(_csize);
     for (size_t _i = 0; _i < _csize; ++_i) {
         if (reader.noMore()) {
@@ -293,7 +331,7 @@ bool SensorRPCData::nested_read_ThreeAxisLinearAccelerometers(yarp::os::idl::Wir
 // write (nested) ThreeAxisLinearAccelerometers field
 bool SensorRPCData::nested_write_ThreeAxisLinearAccelerometers(const yarp::os::idl::WireWriter& writer) const
 {
-    if (!writer.writeListBegin(BOTTLE_TAG_LIST, static_cast<uint32_t>(ThreeAxisLinearAccelerometers.size()))) {
+    if (!writer.writeListBegin(BOTTLE_TAG_LIST, ThreeAxisLinearAccelerometers.size())) {
         return false;
     }
     for (const auto& _item : ThreeAxisLinearAccelerometers) {
@@ -314,10 +352,16 @@ bool SensorRPCData::read_ThreeAxisMagnetometers(yarp::os::idl::WireReader& reade
         reader.fail();
         return false;
     }
-    ThreeAxisMagnetometers.clear();
-    uint32_t _csize;
+    size_t _csize;
     yarp::os::idl::WireState _etype;
     reader.readListBegin(_etype, _csize);
+    // WireReader removes BOTTLE_TAG_LIST from the tag
+    constexpr int expected_tag = ((BOTTLE_TAG_LIST) & (~BOTTLE_TAG_LIST));
+    if constexpr (expected_tag != 0) {
+        if (_csize != 0 && _etype.code != expected_tag) {
+            return false;
+        }
+    }
     ThreeAxisMagnetometers.resize(_csize);
     for (size_t _i = 0; _i < _csize; ++_i) {
         if (reader.noMore()) {
@@ -336,7 +380,7 @@ bool SensorRPCData::read_ThreeAxisMagnetometers(yarp::os::idl::WireReader& reade
 // write ThreeAxisMagnetometers field
 bool SensorRPCData::write_ThreeAxisMagnetometers(const yarp::os::idl::WireWriter& writer) const
 {
-    if (!writer.writeListBegin(BOTTLE_TAG_LIST, static_cast<uint32_t>(ThreeAxisMagnetometers.size()))) {
+    if (!writer.writeListBegin(BOTTLE_TAG_LIST, ThreeAxisMagnetometers.size())) {
         return false;
     }
     for (const auto& _item : ThreeAxisMagnetometers) {
@@ -357,10 +401,16 @@ bool SensorRPCData::nested_read_ThreeAxisMagnetometers(yarp::os::idl::WireReader
         reader.fail();
         return false;
     }
-    ThreeAxisMagnetometers.clear();
-    uint32_t _csize;
+    size_t _csize;
     yarp::os::idl::WireState _etype;
     reader.readListBegin(_etype, _csize);
+    // WireReader removes BOTTLE_TAG_LIST from the tag
+    constexpr int expected_tag = ((BOTTLE_TAG_LIST) & (~BOTTLE_TAG_LIST));
+    if constexpr (expected_tag != 0) {
+        if (_csize != 0 && _etype.code != expected_tag) {
+            return false;
+        }
+    }
     ThreeAxisMagnetometers.resize(_csize);
     for (size_t _i = 0; _i < _csize; ++_i) {
         if (reader.noMore()) {
@@ -379,7 +429,7 @@ bool SensorRPCData::nested_read_ThreeAxisMagnetometers(yarp::os::idl::WireReader
 // write (nested) ThreeAxisMagnetometers field
 bool SensorRPCData::nested_write_ThreeAxisMagnetometers(const yarp::os::idl::WireWriter& writer) const
 {
-    if (!writer.writeListBegin(BOTTLE_TAG_LIST, static_cast<uint32_t>(ThreeAxisMagnetometers.size()))) {
+    if (!writer.writeListBegin(BOTTLE_TAG_LIST, ThreeAxisMagnetometers.size())) {
         return false;
     }
     for (const auto& _item : ThreeAxisMagnetometers) {
@@ -400,10 +450,16 @@ bool SensorRPCData::read_OrientationSensors(yarp::os::idl::WireReader& reader)
         reader.fail();
         return false;
     }
-    OrientationSensors.clear();
-    uint32_t _csize;
+    size_t _csize;
     yarp::os::idl::WireState _etype;
     reader.readListBegin(_etype, _csize);
+    // WireReader removes BOTTLE_TAG_LIST from the tag
+    constexpr int expected_tag = ((BOTTLE_TAG_LIST) & (~BOTTLE_TAG_LIST));
+    if constexpr (expected_tag != 0) {
+        if (_csize != 0 && _etype.code != expected_tag) {
+            return false;
+        }
+    }
     OrientationSensors.resize(_csize);
     for (size_t _i = 0; _i < _csize; ++_i) {
         if (reader.noMore()) {
@@ -422,7 +478,7 @@ bool SensorRPCData::read_OrientationSensors(yarp::os::idl::WireReader& reader)
 // write OrientationSensors field
 bool SensorRPCData::write_OrientationSensors(const yarp::os::idl::WireWriter& writer) const
 {
-    if (!writer.writeListBegin(BOTTLE_TAG_LIST, static_cast<uint32_t>(OrientationSensors.size()))) {
+    if (!writer.writeListBegin(BOTTLE_TAG_LIST, OrientationSensors.size())) {
         return false;
     }
     for (const auto& _item : OrientationSensors) {
@@ -443,10 +499,16 @@ bool SensorRPCData::nested_read_OrientationSensors(yarp::os::idl::WireReader& re
         reader.fail();
         return false;
     }
-    OrientationSensors.clear();
-    uint32_t _csize;
+    size_t _csize;
     yarp::os::idl::WireState _etype;
     reader.readListBegin(_etype, _csize);
+    // WireReader removes BOTTLE_TAG_LIST from the tag
+    constexpr int expected_tag = ((BOTTLE_TAG_LIST) & (~BOTTLE_TAG_LIST));
+    if constexpr (expected_tag != 0) {
+        if (_csize != 0 && _etype.code != expected_tag) {
+            return false;
+        }
+    }
     OrientationSensors.resize(_csize);
     for (size_t _i = 0; _i < _csize; ++_i) {
         if (reader.noMore()) {
@@ -465,7 +527,7 @@ bool SensorRPCData::nested_read_OrientationSensors(yarp::os::idl::WireReader& re
 // write (nested) OrientationSensors field
 bool SensorRPCData::nested_write_OrientationSensors(const yarp::os::idl::WireWriter& writer) const
 {
-    if (!writer.writeListBegin(BOTTLE_TAG_LIST, static_cast<uint32_t>(OrientationSensors.size()))) {
+    if (!writer.writeListBegin(BOTTLE_TAG_LIST, OrientationSensors.size())) {
         return false;
     }
     for (const auto& _item : OrientationSensors) {
@@ -486,10 +548,16 @@ bool SensorRPCData::read_TemperatureSensors(yarp::os::idl::WireReader& reader)
         reader.fail();
         return false;
     }
-    TemperatureSensors.clear();
-    uint32_t _csize;
+    size_t _csize;
     yarp::os::idl::WireState _etype;
     reader.readListBegin(_etype, _csize);
+    // WireReader removes BOTTLE_TAG_LIST from the tag
+    constexpr int expected_tag = ((BOTTLE_TAG_LIST) & (~BOTTLE_TAG_LIST));
+    if constexpr (expected_tag != 0) {
+        if (_csize != 0 && _etype.code != expected_tag) {
+            return false;
+        }
+    }
     TemperatureSensors.resize(_csize);
     for (size_t _i = 0; _i < _csize; ++_i) {
         if (reader.noMore()) {
@@ -508,7 +576,7 @@ bool SensorRPCData::read_TemperatureSensors(yarp::os::idl::WireReader& reader)
 // write TemperatureSensors field
 bool SensorRPCData::write_TemperatureSensors(const yarp::os::idl::WireWriter& writer) const
 {
-    if (!writer.writeListBegin(BOTTLE_TAG_LIST, static_cast<uint32_t>(TemperatureSensors.size()))) {
+    if (!writer.writeListBegin(BOTTLE_TAG_LIST, TemperatureSensors.size())) {
         return false;
     }
     for (const auto& _item : TemperatureSensors) {
@@ -529,10 +597,16 @@ bool SensorRPCData::nested_read_TemperatureSensors(yarp::os::idl::WireReader& re
         reader.fail();
         return false;
     }
-    TemperatureSensors.clear();
-    uint32_t _csize;
+    size_t _csize;
     yarp::os::idl::WireState _etype;
     reader.readListBegin(_etype, _csize);
+    // WireReader removes BOTTLE_TAG_LIST from the tag
+    constexpr int expected_tag = ((BOTTLE_TAG_LIST) & (~BOTTLE_TAG_LIST));
+    if constexpr (expected_tag != 0) {
+        if (_csize != 0 && _etype.code != expected_tag) {
+            return false;
+        }
+    }
     TemperatureSensors.resize(_csize);
     for (size_t _i = 0; _i < _csize; ++_i) {
         if (reader.noMore()) {
@@ -551,7 +625,7 @@ bool SensorRPCData::nested_read_TemperatureSensors(yarp::os::idl::WireReader& re
 // write (nested) TemperatureSensors field
 bool SensorRPCData::nested_write_TemperatureSensors(const yarp::os::idl::WireWriter& writer) const
 {
-    if (!writer.writeListBegin(BOTTLE_TAG_LIST, static_cast<uint32_t>(TemperatureSensors.size()))) {
+    if (!writer.writeListBegin(BOTTLE_TAG_LIST, TemperatureSensors.size())) {
         return false;
     }
     for (const auto& _item : TemperatureSensors) {
@@ -572,10 +646,16 @@ bool SensorRPCData::read_SixAxisForceTorqueSensors(yarp::os::idl::WireReader& re
         reader.fail();
         return false;
     }
-    SixAxisForceTorqueSensors.clear();
-    uint32_t _csize;
+    size_t _csize;
     yarp::os::idl::WireState _etype;
     reader.readListBegin(_etype, _csize);
+    // WireReader removes BOTTLE_TAG_LIST from the tag
+    constexpr int expected_tag = ((BOTTLE_TAG_LIST) & (~BOTTLE_TAG_LIST));
+    if constexpr (expected_tag != 0) {
+        if (_csize != 0 && _etype.code != expected_tag) {
+            return false;
+        }
+    }
     SixAxisForceTorqueSensors.resize(_csize);
     for (size_t _i = 0; _i < _csize; ++_i) {
         if (reader.noMore()) {
@@ -594,7 +674,7 @@ bool SensorRPCData::read_SixAxisForceTorqueSensors(yarp::os::idl::WireReader& re
 // write SixAxisForceTorqueSensors field
 bool SensorRPCData::write_SixAxisForceTorqueSensors(const yarp::os::idl::WireWriter& writer) const
 {
-    if (!writer.writeListBegin(BOTTLE_TAG_LIST, static_cast<uint32_t>(SixAxisForceTorqueSensors.size()))) {
+    if (!writer.writeListBegin(BOTTLE_TAG_LIST, SixAxisForceTorqueSensors.size())) {
         return false;
     }
     for (const auto& _item : SixAxisForceTorqueSensors) {
@@ -615,10 +695,16 @@ bool SensorRPCData::nested_read_SixAxisForceTorqueSensors(yarp::os::idl::WireRea
         reader.fail();
         return false;
     }
-    SixAxisForceTorqueSensors.clear();
-    uint32_t _csize;
+    size_t _csize;
     yarp::os::idl::WireState _etype;
     reader.readListBegin(_etype, _csize);
+    // WireReader removes BOTTLE_TAG_LIST from the tag
+    constexpr int expected_tag = ((BOTTLE_TAG_LIST) & (~BOTTLE_TAG_LIST));
+    if constexpr (expected_tag != 0) {
+        if (_csize != 0 && _etype.code != expected_tag) {
+            return false;
+        }
+    }
     SixAxisForceTorqueSensors.resize(_csize);
     for (size_t _i = 0; _i < _csize; ++_i) {
         if (reader.noMore()) {
@@ -637,7 +723,7 @@ bool SensorRPCData::nested_read_SixAxisForceTorqueSensors(yarp::os::idl::WireRea
 // write (nested) SixAxisForceTorqueSensors field
 bool SensorRPCData::nested_write_SixAxisForceTorqueSensors(const yarp::os::idl::WireWriter& writer) const
 {
-    if (!writer.writeListBegin(BOTTLE_TAG_LIST, static_cast<uint32_t>(SixAxisForceTorqueSensors.size()))) {
+    if (!writer.writeListBegin(BOTTLE_TAG_LIST, SixAxisForceTorqueSensors.size())) {
         return false;
     }
     for (const auto& _item : SixAxisForceTorqueSensors) {
@@ -658,10 +744,16 @@ bool SensorRPCData::read_ContactLoadCellArrays(yarp::os::idl::WireReader& reader
         reader.fail();
         return false;
     }
-    ContactLoadCellArrays.clear();
-    uint32_t _csize;
+    size_t _csize;
     yarp::os::idl::WireState _etype;
     reader.readListBegin(_etype, _csize);
+    // WireReader removes BOTTLE_TAG_LIST from the tag
+    constexpr int expected_tag = ((BOTTLE_TAG_LIST) & (~BOTTLE_TAG_LIST));
+    if constexpr (expected_tag != 0) {
+        if (_csize != 0 && _etype.code != expected_tag) {
+            return false;
+        }
+    }
     ContactLoadCellArrays.resize(_csize);
     for (size_t _i = 0; _i < _csize; ++_i) {
         if (reader.noMore()) {
@@ -680,7 +772,7 @@ bool SensorRPCData::read_ContactLoadCellArrays(yarp::os::idl::WireReader& reader
 // write ContactLoadCellArrays field
 bool SensorRPCData::write_ContactLoadCellArrays(const yarp::os::idl::WireWriter& writer) const
 {
-    if (!writer.writeListBegin(BOTTLE_TAG_LIST, static_cast<uint32_t>(ContactLoadCellArrays.size()))) {
+    if (!writer.writeListBegin(BOTTLE_TAG_LIST, ContactLoadCellArrays.size())) {
         return false;
     }
     for (const auto& _item : ContactLoadCellArrays) {
@@ -701,10 +793,16 @@ bool SensorRPCData::nested_read_ContactLoadCellArrays(yarp::os::idl::WireReader&
         reader.fail();
         return false;
     }
-    ContactLoadCellArrays.clear();
-    uint32_t _csize;
+    size_t _csize;
     yarp::os::idl::WireState _etype;
     reader.readListBegin(_etype, _csize);
+    // WireReader removes BOTTLE_TAG_LIST from the tag
+    constexpr int expected_tag = ((BOTTLE_TAG_LIST) & (~BOTTLE_TAG_LIST));
+    if constexpr (expected_tag != 0) {
+        if (_csize != 0 && _etype.code != expected_tag) {
+            return false;
+        }
+    }
     ContactLoadCellArrays.resize(_csize);
     for (size_t _i = 0; _i < _csize; ++_i) {
         if (reader.noMore()) {
@@ -723,7 +821,7 @@ bool SensorRPCData::nested_read_ContactLoadCellArrays(yarp::os::idl::WireReader&
 // write (nested) ContactLoadCellArrays field
 bool SensorRPCData::nested_write_ContactLoadCellArrays(const yarp::os::idl::WireWriter& writer) const
 {
-    if (!writer.writeListBegin(BOTTLE_TAG_LIST, static_cast<uint32_t>(ContactLoadCellArrays.size()))) {
+    if (!writer.writeListBegin(BOTTLE_TAG_LIST, ContactLoadCellArrays.size())) {
         return false;
     }
     for (const auto& _item : ContactLoadCellArrays) {
@@ -744,10 +842,16 @@ bool SensorRPCData::read_EncoderArrays(yarp::os::idl::WireReader& reader)
         reader.fail();
         return false;
     }
-    EncoderArrays.clear();
-    uint32_t _csize;
+    size_t _csize;
     yarp::os::idl::WireState _etype;
     reader.readListBegin(_etype, _csize);
+    // WireReader removes BOTTLE_TAG_LIST from the tag
+    constexpr int expected_tag = ((BOTTLE_TAG_LIST) & (~BOTTLE_TAG_LIST));
+    if constexpr (expected_tag != 0) {
+        if (_csize != 0 && _etype.code != expected_tag) {
+            return false;
+        }
+    }
     EncoderArrays.resize(_csize);
     for (size_t _i = 0; _i < _csize; ++_i) {
         if (reader.noMore()) {
@@ -766,7 +870,7 @@ bool SensorRPCData::read_EncoderArrays(yarp::os::idl::WireReader& reader)
 // write EncoderArrays field
 bool SensorRPCData::write_EncoderArrays(const yarp::os::idl::WireWriter& writer) const
 {
-    if (!writer.writeListBegin(BOTTLE_TAG_LIST, static_cast<uint32_t>(EncoderArrays.size()))) {
+    if (!writer.writeListBegin(BOTTLE_TAG_LIST, EncoderArrays.size())) {
         return false;
     }
     for (const auto& _item : EncoderArrays) {
@@ -787,10 +891,16 @@ bool SensorRPCData::nested_read_EncoderArrays(yarp::os::idl::WireReader& reader)
         reader.fail();
         return false;
     }
-    EncoderArrays.clear();
-    uint32_t _csize;
+    size_t _csize;
     yarp::os::idl::WireState _etype;
     reader.readListBegin(_etype, _csize);
+    // WireReader removes BOTTLE_TAG_LIST from the tag
+    constexpr int expected_tag = ((BOTTLE_TAG_LIST) & (~BOTTLE_TAG_LIST));
+    if constexpr (expected_tag != 0) {
+        if (_csize != 0 && _etype.code != expected_tag) {
+            return false;
+        }
+    }
     EncoderArrays.resize(_csize);
     for (size_t _i = 0; _i < _csize; ++_i) {
         if (reader.noMore()) {
@@ -809,7 +919,7 @@ bool SensorRPCData::nested_read_EncoderArrays(yarp::os::idl::WireReader& reader)
 // write (nested) EncoderArrays field
 bool SensorRPCData::nested_write_EncoderArrays(const yarp::os::idl::WireWriter& writer) const
 {
-    if (!writer.writeListBegin(BOTTLE_TAG_LIST, static_cast<uint32_t>(EncoderArrays.size()))) {
+    if (!writer.writeListBegin(BOTTLE_TAG_LIST, EncoderArrays.size())) {
         return false;
     }
     for (const auto& _item : EncoderArrays) {
@@ -830,10 +940,16 @@ bool SensorRPCData::read_SkinPatches(yarp::os::idl::WireReader& reader)
         reader.fail();
         return false;
     }
-    SkinPatches.clear();
-    uint32_t _csize;
+    size_t _csize;
     yarp::os::idl::WireState _etype;
     reader.readListBegin(_etype, _csize);
+    // WireReader removes BOTTLE_TAG_LIST from the tag
+    constexpr int expected_tag = ((BOTTLE_TAG_LIST) & (~BOTTLE_TAG_LIST));
+    if constexpr (expected_tag != 0) {
+        if (_csize != 0 && _etype.code != expected_tag) {
+            return false;
+        }
+    }
     SkinPatches.resize(_csize);
     for (size_t _i = 0; _i < _csize; ++_i) {
         if (reader.noMore()) {
@@ -852,7 +968,7 @@ bool SensorRPCData::read_SkinPatches(yarp::os::idl::WireReader& reader)
 // write SkinPatches field
 bool SensorRPCData::write_SkinPatches(const yarp::os::idl::WireWriter& writer) const
 {
-    if (!writer.writeListBegin(BOTTLE_TAG_LIST, static_cast<uint32_t>(SkinPatches.size()))) {
+    if (!writer.writeListBegin(BOTTLE_TAG_LIST, SkinPatches.size())) {
         return false;
     }
     for (const auto& _item : SkinPatches) {
@@ -873,10 +989,16 @@ bool SensorRPCData::nested_read_SkinPatches(yarp::os::idl::WireReader& reader)
         reader.fail();
         return false;
     }
-    SkinPatches.clear();
-    uint32_t _csize;
+    size_t _csize;
     yarp::os::idl::WireState _etype;
     reader.readListBegin(_etype, _csize);
+    // WireReader removes BOTTLE_TAG_LIST from the tag
+    constexpr int expected_tag = ((BOTTLE_TAG_LIST) & (~BOTTLE_TAG_LIST));
+    if constexpr (expected_tag != 0) {
+        if (_csize != 0 && _etype.code != expected_tag) {
+            return false;
+        }
+    }
     SkinPatches.resize(_csize);
     for (size_t _i = 0; _i < _csize; ++_i) {
         if (reader.noMore()) {
@@ -895,7 +1017,7 @@ bool SensorRPCData::nested_read_SkinPatches(yarp::os::idl::WireReader& reader)
 // write (nested) SkinPatches field
 bool SensorRPCData::nested_write_SkinPatches(const yarp::os::idl::WireWriter& writer) const
 {
-    if (!writer.writeListBegin(BOTTLE_TAG_LIST, static_cast<uint32_t>(SkinPatches.size()))) {
+    if (!writer.writeListBegin(BOTTLE_TAG_LIST, SkinPatches.size())) {
         return false;
     }
     for (const auto& _item : SkinPatches) {
@@ -916,10 +1038,16 @@ bool SensorRPCData::read_PositionSensors(yarp::os::idl::WireReader& reader)
         reader.fail();
         return false;
     }
-    PositionSensors.clear();
-    uint32_t _csize;
+    size_t _csize;
     yarp::os::idl::WireState _etype;
     reader.readListBegin(_etype, _csize);
+    // WireReader removes BOTTLE_TAG_LIST from the tag
+    constexpr int expected_tag = ((BOTTLE_TAG_LIST) & (~BOTTLE_TAG_LIST));
+    if constexpr (expected_tag != 0) {
+        if (_csize != 0 && _etype.code != expected_tag) {
+            return false;
+        }
+    }
     PositionSensors.resize(_csize);
     for (size_t _i = 0; _i < _csize; ++_i) {
         if (reader.noMore()) {
@@ -938,7 +1066,7 @@ bool SensorRPCData::read_PositionSensors(yarp::os::idl::WireReader& reader)
 // write PositionSensors field
 bool SensorRPCData::write_PositionSensors(const yarp::os::idl::WireWriter& writer) const
 {
-    if (!writer.writeListBegin(BOTTLE_TAG_LIST, static_cast<uint32_t>(PositionSensors.size()))) {
+    if (!writer.writeListBegin(BOTTLE_TAG_LIST, PositionSensors.size())) {
         return false;
     }
     for (const auto& _item : PositionSensors) {
@@ -959,10 +1087,16 @@ bool SensorRPCData::nested_read_PositionSensors(yarp::os::idl::WireReader& reade
         reader.fail();
         return false;
     }
-    PositionSensors.clear();
-    uint32_t _csize;
+    size_t _csize;
     yarp::os::idl::WireState _etype;
     reader.readListBegin(_etype, _csize);
+    // WireReader removes BOTTLE_TAG_LIST from the tag
+    constexpr int expected_tag = ((BOTTLE_TAG_LIST) & (~BOTTLE_TAG_LIST));
+    if constexpr (expected_tag != 0) {
+        if (_csize != 0 && _etype.code != expected_tag) {
+            return false;
+        }
+    }
     PositionSensors.resize(_csize);
     for (size_t _i = 0; _i < _csize; ++_i) {
         if (reader.noMore()) {
@@ -981,7 +1115,7 @@ bool SensorRPCData::nested_read_PositionSensors(yarp::os::idl::WireReader& reade
 // write (nested) PositionSensors field
 bool SensorRPCData::nested_write_PositionSensors(const yarp::os::idl::WireWriter& writer) const
 {
-    if (!writer.writeListBegin(BOTTLE_TAG_LIST, static_cast<uint32_t>(PositionSensors.size()))) {
+    if (!writer.writeListBegin(BOTTLE_TAG_LIST, PositionSensors.size())) {
         return false;
     }
     for (const auto& _item : PositionSensors) {

@@ -110,7 +110,10 @@ bool OdometryData6D::read(yarp::os::idl::WireReader& reader)
     if (!read_odom_vel_yaw(reader)) {
         return false;
     }
-    return !reader.isError();
+    if (reader.isError()) {
+        return false;
+    }
+    return true;
 }
 
 // Read structure on a Connection
@@ -120,7 +123,10 @@ bool OdometryData6D::read(yarp::os::ConnectionReader& connection)
     if (!reader.readListHeader(18)) {
         return false;
     }
-    return read(reader);
+    if (!read(reader)) {
+        return false;
+    }
+    return true;
 }
 
 // Write structure on a Wire
@@ -180,7 +186,10 @@ bool OdometryData6D::write(const yarp::os::idl::WireWriter& writer) const
     if (!write_odom_vel_yaw(writer)) {
         return false;
     }
-    return !writer.isError();
+    if (writer.isError()) {
+        return false;
+    }
+    return true;
 }
 
 // Write structure on a Connection
@@ -190,14 +199,19 @@ bool OdometryData6D::write(yarp::os::ConnectionWriter& connection) const
     if (!writer.writeListHeader(18)) {
         return false;
     }
-    return write(writer);
+    if (!write(writer)) {
+        return false;
+    }
+    return true;
 }
 
 // Convert to a printable string
 std::string OdometryData6D::toString() const
 {
     yarp::os::Bottle b;
-    b.read(*this);
+    if (!yarp::os::Portable::copyPortable(*this, b)) {
+        return {};
+    }
     return b.toString();
 }
 

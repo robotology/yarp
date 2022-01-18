@@ -116,6 +116,8 @@ public:
 
     bool readString(std::string& str, bool* is_vocab = nullptr);
 
+    bool readBlock(char* const data, size_t len);
+
     bool readBinary(std::string& str);
 
     template <typename EnumBase, typename ConverterType>
@@ -189,11 +191,11 @@ public:
 
     std::string readTag(size_t len = static_cast<size_t>(-1));
 
-    void readListBegin(yarp::os::idl::WireState& nstate, std::uint32_t& len);
+    void readListBegin(yarp::os::idl::WireState& nstate, size_t& len);
 
-    void readSetBegin(yarp::os::idl::WireState& nstate, std::uint32_t& len);
+    void readSetBegin(yarp::os::idl::WireState& nstate, size_t& len);
 
-    void readMapBegin(yarp::os::idl::WireState& nstate, yarp::os::idl::WireState& nstate2, std::uint32_t& len);
+    void readMapBegin(yarp::os::idl::WireState& nstate, yarp::os::idl::WireState& nstate2, size_t& len);
 
     void readListEnd();
 

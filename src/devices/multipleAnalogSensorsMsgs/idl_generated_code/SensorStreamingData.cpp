@@ -68,7 +68,10 @@ bool SensorStreamingData::read(yarp::os::idl::WireReader& reader)
     if (!read_PositionSensors(reader)) {
         return false;
     }
-    return !reader.isError();
+    if (reader.isError()) {
+        return false;
+    }
+    return true;
 }
 
 // Read structure on a Connection
@@ -78,7 +81,10 @@ bool SensorStreamingData::read(yarp::os::ConnectionReader& connection)
     if (!reader.readListHeader(10)) {
         return false;
     }
-    return read(reader);
+    if (!read(reader)) {
+        return false;
+    }
+    return true;
 }
 
 // Write structure on a Wire
@@ -114,7 +120,10 @@ bool SensorStreamingData::write(const yarp::os::idl::WireWriter& writer) const
     if (!write_PositionSensors(writer)) {
         return false;
     }
-    return !writer.isError();
+    if (writer.isError()) {
+        return false;
+    }
+    return true;
 }
 
 // Write structure on a Connection
@@ -124,14 +133,19 @@ bool SensorStreamingData::write(yarp::os::ConnectionWriter& connection) const
     if (!writer.writeListHeader(10)) {
         return false;
     }
-    return write(writer);
+    if (!write(writer)) {
+        return false;
+    }
+    return true;
 }
 
 // Convert to a printable string
 std::string SensorStreamingData::toString() const
 {
     yarp::os::Bottle b;
-    b.read(*this);
+    if (!yarp::os::Portable::copyPortable(*this, b)) {
+        return {};
+    }
     return b.toString();
 }
 
