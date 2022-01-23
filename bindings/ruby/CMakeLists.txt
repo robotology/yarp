@@ -50,7 +50,7 @@ else()
   set(CMAKE_INSTALL_FULL_RUBYDIR "${CMAKE_INSTALL_RUBYDIR}")
 endif()
 
-set_target_properties(yarp_ruby_
+set_target_properties(yarp_ruby
   PROPERTIES
     PREFIX ""
     OUTPUT_NAME "yarp"
