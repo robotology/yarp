@@ -14,9 +14,9 @@ swig_add_library(yarp_ruby
   SOURCES ${SWIG_BINDINGS_SOURCE_FILE}
 )
 swig_link_libraries(yarp_ruby ${RUBY_LIBRARY} ${SWIG_YARP_LIBRARIES})
-target_include_directories(${SWIG_MODULE_yarp_ruby_REAL_NAME} SYSTEM PRIVATE ${RUBY_INCLUDE_DIRS})
+target_include_directories(yarp_ruby SYSTEM PRIVATE ${RUBY_INCLUDE_DIRS})
 
-set_target_properties(${SWIG_MODULE_yarp_ruby_REAL_NAME} PROPERTIES PREFIX ""
+set_target_properties(yarp_ruby PROPERTIES PREFIX ""
                                                                     OUTPUT_NAME "yarp")
 
 # Define CMAKE_INSTALL_RUBYDIR for installing Ruby libraries
@@ -50,7 +50,7 @@ else()
   set(CMAKE_INSTALL_FULL_RUBYDIR "${CMAKE_INSTALL_RUBYDIR}")
 endif()
 
-set_target_properties(${SWIG_MODULE_yarp_ruby_REAL_NAME}
+set_target_properties(yarp_ruby_
   PROPERTIES
     PREFIX ""
     OUTPUT_NAME "yarp"
@@ -60,17 +60,17 @@ set_target_properties(${SWIG_MODULE_yarp_ruby_REAL_NAME}
 # Update RPATH
 if(NOT CMAKE_SKIP_RPATH AND NOT CMAKE_SKIP_INSTALL_RPATH)
   file(RELATIVE_PATH _rel_path "${CMAKE_INSTALL_FULL_RUBYDIR}" "${CMAKE_INSTALL_FULL_LIBDIR}")
-  get_target_property(_current_rpath "${SWIG_MODULE_yarp_ruby_REAL_NAME}" INSTALL_RPATH)
+  get_target_property(_current_rpath "yarp_ruby" INSTALL_RPATH)
   if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
     list(APPEND _current_rpath "@loader_path/${_rel_path}")
   else()
     list(APPEND _current_rpath "\$ORIGIN/${_rel_path}")
   endif()
-  set_target_properties(${SWIG_MODULE_yarp_ruby_REAL_NAME} PROPERTIES INSTALL_RPATH "${_current_rpath}")
+  set_target_properties(yarp_ruby PROPERTIES INSTALL_RPATH "${_current_rpath}")
 endif()
 
 install(
-  TARGETS ${SWIG_MODULE_yarp_ruby_REAL_NAME}
+  TARGETS yarp_ruby
   DESTINATION ${CMAKE_INSTALL_RUBYDIR}
 )
 

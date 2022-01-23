@@ -25,7 +25,7 @@ else()
   set(CMAKE_INSTALL_FULL_LUADIR "${CMAKE_INSTALL_LUADIR}")
 endif()
 
-set_target_properties(${SWIG_MODULE_yarp_lua_REAL_NAME}
+set_target_properties(yarp_lua
   PROPERTIES
     PREFIX ""
     OUTPUT_NAME "yarp"
@@ -35,17 +35,17 @@ set_target_properties(${SWIG_MODULE_yarp_lua_REAL_NAME}
 # Update RPATH
 if(NOT CMAKE_SKIP_RPATH AND NOT CMAKE_SKIP_INSTALL_RPATH)
   file(RELATIVE_PATH _rel_path "${CMAKE_INSTALL_FULL_LUADIR}" "${CMAKE_INSTALL_FULL_LIBDIR}")
-  get_target_property(_current_rpath "${SWIG_MODULE_yarp_lua_REAL_NAME}" INSTALL_RPATH)
+  get_target_property(_current_rpath "yarp_lua" INSTALL_RPATH)
   if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
     list(APPEND _current_rpath "@loader_path/${_rel_path}")
   else()
     list(APPEND _current_rpath "\$ORIGIN/${_rel_path}")
   endif()
-  set_target_properties(${SWIG_MODULE_yarp_lua_REAL_NAME} PROPERTIES INSTALL_RPATH "${_current_rpath}")
+  set_target_properties(yarp_lua PROPERTIES INSTALL_RPATH "${_current_rpath}")
 endif()
 
 install(
-  TARGETS ${SWIG_MODULE_yarp_lua_REAL_NAME}
+  TARGETS yarp_lua
   DESTINATION ${CMAKE_INSTALL_LUADIR}
 )
 

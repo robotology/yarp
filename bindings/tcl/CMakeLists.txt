@@ -14,6 +14,6 @@ swig_add_library(yarp_tcl
   SOURCES ${SWIG_BINDINGS_SOURCE_FILE}
 )
 swig_link_libraries(yarp_tcl ${TCL_LIBRARY} ${SWIG_YARP_LIBRARIES})
-target_include_directories(${SWIG_MODULE_yarp_tcl_REAL_NAME} SYSTEM PRIVATE ${TCL_INCLUDE_PATH})
+target_include_directories(yarp_tcl SYSTEM PRIVATE ${TCL_INCLUDE_PATH})
 
-set_target_properties(${SWIG_MODULE_yarp_tcl_REAL_NAME} PROPERTIES OUTPUT_NAME "libtclyarp")
+set_target_properties(yarp_tcl PROPERTIES OUTPUT_NAME "libtclyarp")

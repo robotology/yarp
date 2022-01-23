@@ -28,9 +28,9 @@ swig_add_library(yarp_perl
   SOURCES ${SWIG_BINDINGS_SOURCE_FILE}
 )
 swig_link_libraries(yarp_perl ${SWIG_YARP_LIBRARIES})
-target_include_directories(${SWIG_MODULE_yarp_perl_REAL_NAME} SYSTEM PRIVATE ${PERL_INCLUDE_PATH})
+target_include_directories(yarp_perl SYSTEM PRIVATE ${PERL_INCLUDE_PATH})
 
-set_target_properties(${SWIG_MODULE_yarp_perl_REAL_NAME}
+set_target_properties(yarp_perl
   PROPERTIES
     PREFIX ""
     OUTPUT_NAME "yarp"
@@ -41,17 +41,17 @@ set_target_properties(${SWIG_MODULE_yarp_perl_REAL_NAME}
 # Update RPATH
 if(NOT CMAKE_SKIP_RPATH AND NOT CMAKE_SKIP_INSTALL_RPATH)
   file(RELATIVE_PATH _rel_path "${CMAKE_INSTALL_FULL_PERLDIR}/auto/yarp" "${CMAKE_INSTALL_FULL_LIBDIR}")
-  get_target_property(_current_rpath "${SWIG_MODULE_yarp_perl_REAL_NAME}" INSTALL_RPATH)
+  get_target_property(_current_rpath "yarp_perl" INSTALL_RPATH)
   if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
     list(APPEND _current_rpath "@loader_path/${_rel_path}")
   else()
     list(APPEND _current_rpath "\$ORIGIN/${_rel_path}")
   endif()
-  set_target_properties(${SWIG_MODULE_yarp_perl_REAL_NAME} PROPERTIES INSTALL_RPATH "${_current_rpath}")
+  set_target_properties(yarp_perl PROPERTIES INSTALL_RPATH "${_current_rpath}")
 endif()
 
 install(
-  TARGETS ${SWIG_MODULE_yarp_perl_REAL_NAME}
+  TARGETS yarp_perl
   DESTINATION ${CMAKE_INSTALL_PERLDIR}/auto/yarp
 )
 install(

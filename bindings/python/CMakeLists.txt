@@ -31,7 +31,7 @@ swig_add_library(yarp_python
 )
 swig_link_libraries(yarp_python ${YARP_Python_Module_Target} ${SWIG_YARP_LIBRARIES})
 
-set_target_properties(${SWIG_MODULE_yarp_python_REAL_NAME}
+set_target_properties(yarp_python
   PROPERTIES
     OUTPUT_NAME "_yarp"
     LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib/python3"
@@ -42,7 +42,7 @@ set_target_properties(${SWIG_MODULE_yarp_python_REAL_NAME}
 # INCLUDE_DIRECTORIES might have gotten polluted by 3rd-party deps, make sure
 # the Python3 header path has more predecence by overriding the previous value
 # (set by `swig_link_libraries`) and prepending it to the search path
-target_include_directories(${SWIG_MODULE_yarp_python_REAL_NAME} BEFORE PRIVATE ${Python3_INCLUDE_DIRS})
+target_include_directories(yarp_python BEFORE PRIVATE ${Python3_INCLUDE_DIRS})
 
 # installation path is determined reliably on most platforms using distutils
 execute_process(
@@ -67,17 +67,17 @@ install(FILES ${CMAKE_BINARY_DIR}/lib/python3/yarp.py
 # Update RPATH
 if(NOT CMAKE_SKIP_RPATH AND NOT CMAKE_SKIP_INSTALL_RPATH)
   file(RELATIVE_PATH _rel_path "${CMAKE_INSTALL_FULL_PYTHON3DIR}" "${CMAKE_INSTALL_FULL_LIBDIR}")
-  get_target_property(_current_rpath ${SWIG_MODULE_yarp_python_REAL_NAME} INSTALL_RPATH)
+  get_target_property(_current_rpath yarp_python INSTALL_RPATH)
   if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
     list(APPEND _current_rpath "@loader_path/${_rel_path}")
   else()
     list(APPEND _current_rpath "\$ORIGIN/${_rel_path}")
   endif()
-  set_target_properties(${SWIG_MODULE_yarp_python_REAL_NAME} PROPERTIES INSTALL_RPATH "${_current_rpath}")
+  set_target_properties(yarp_python PROPERTIES INSTALL_RPATH "${_current_rpath}")
 endif()
 
 install(
-  TARGETS ${SWIG_MODULE_yarp_python_REAL_NAME}
+  TARGETS yarp_python_
   DESTINATION ${CMAKE_INSTALL_PYTHON3DIR}
 )
 
