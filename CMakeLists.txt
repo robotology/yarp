@@ -4,16 +4,6 @@
 
 cmake_minimum_required(VERSION 3.16)
 
-# UseSWIG generates now standard target names.
-if(${CMAKE_VERSION} VERSION_GREATER_EQUAL 3.13)
-  cmake_policy(SET CMP0078 OLD)
-endif()
-
-# UseSWIG honors SWIG_MODULE_NAME via -module flag.
-if(${CMAKE_VERSION} VERSION_GREATER_EQUAL 3.14)
-  cmake_policy(SET CMP0086 OLD)
-endif()
-
 # Main project
 project(
   YARP
