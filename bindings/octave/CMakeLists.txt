@@ -15,7 +15,7 @@ swig_add_library(yarp_octave
   SOURCES ${SWIG_BINDINGS_SOURCE_FILE}
 )
 
-target_include_directories(yarp_octave_ SYSTEM PRIVATE ${OCTAVE_INCLUDE_DIRS} ${OCTAVE_INCLUDE_TOP})
+target_include_directories(yarp_octave SYSTEM PRIVATE ${OCTAVE_INCLUDE_DIRS} ${OCTAVE_INCLUDE_TOP})
 swig_link_libraries(yarp_octave ${OCTAVE_LIBRARIES} ${SWIG_YARP_LIBRARIES})
 
 set_target_properties(yarp_octave
