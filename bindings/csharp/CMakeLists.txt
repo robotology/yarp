@@ -17,14 +17,14 @@ if(WIN32 AND NOT CYGWIN)
 
   if(PREPARE_CLASS_FILES)
     add_custom_command(
-      TARGET ${SWIG_MODULE_yarp_csharp_REAL_NAME}
+      TARGET yarp_csharp
       POST_BUILD
       COMMAND IF NOT EXIST .\\generated_src mkdir generated_src
       WORKING_DIRECTORY ${YARP_BASE_DIR}
     )
 
     add_custom_command(
-      TARGET ${SWIG_MODULE_yarp_csharp_REAL_NAME}
+      TARGET yarp_csharp
       POST_BUILD
       COMMAND move *.cs ${YARP_BASE_DIR}/generated_src
       WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
@@ -39,7 +39,7 @@ endif()
 
 swig_link_libraries(yarp_csharp ${SWIG_YARP_LIBRARIES})
 
-set_target_properties(${SWIG_MODULE_yarp_csharp_REAL_NAME} PROPERTIES OUTPUT_NAME "yarp")
+set_target_properties(yarp_csharp PROPERTIES OUTPUT_NAME "yarp")
 
 if(YARP_COMPILE_TESTS)
   add_subdirectory(tests)
