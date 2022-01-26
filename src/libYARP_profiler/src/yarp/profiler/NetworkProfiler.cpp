@@ -30,10 +30,10 @@ void NetworkProfiler::filterConnectionListByName(const connections_set& in, conn
         if (src_name!="*" && dst_name != "*") {
             if (it->src.name == src_name && it->src.name == dst_name) { filtered_out.push_back(*it);}
         }
-        else if (src_name == "*") { 
+        else if (src_name == "*") {
             if (it->dst.name == dst_name) { filtered_out.push_back(*it); }
         }
-        else if (dst_name == "*") { 
+        else if (dst_name == "*") {
             if (it->src.name == src_name) {filtered_out.push_back(*it); }
         }
     }
@@ -88,10 +88,10 @@ bool NetworkProfiler::getPortInfo (const std::string& name, const ports_name_set
     return false;
 }
 
-bool NetworkProfiler::yarpConnectionsList(connections_set& connections)
+bool NetworkProfiler::getConnectionsList(connections_set& connections)
 {
     ports_name_set ports;
-    yarpNameList(ports);
+    getPortsList(ports);
 
     for (auto it = ports.begin(); it != ports.end(); it++)
     {
@@ -129,7 +129,7 @@ bool NetworkProfiler::yarpConnectionsList(connections_set& connections)
     return true;
 }
 
-bool NetworkProfiler::yarpNameList(ports_name_set &ports, bool complete) {
+bool NetworkProfiler::getPortsList(ports_name_set &ports, bool complete) {
     ports.clear();
 
     ContactStyle style;
@@ -166,7 +166,6 @@ bool NetworkProfiler::yarpNameList(ports_name_set &ports, bool complete) {
                 Contact c = Contact::fromConfig(*entry);
                 if (c.getCarrier() != "mcast")
                 {
-//                    ports.push_back(*entry);
                       PortInfo portd;
                       portd.name = entry->find("name").asString();
                       portd.ip = entry->find("ip").asString();

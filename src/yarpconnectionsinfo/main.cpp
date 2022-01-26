@@ -1,6 +1,6 @@
 /*
  * SPDX-FileCopyrightText: 2006-2021 Istituto Italiano di Tecnologia (IIT)
- * SPDX-License-Identifier: GPL-3.0-or-later
+ * SPDX-License-Identifier: BSD-3-Clause
  */
 
 #include <yarp/profiler/NetworkProfiler.h>
@@ -26,7 +26,7 @@ int main(int argc, char *argv[])
     yarp::profiler::NetworkProfiler::connections_set conns;
     yarp::profiler::NetworkProfiler::connections_set conns_filtered;
 
-    prof.yarpConnectionsList(conns);
+    prof.getConnectionsList(conns);
 
     if (from_ip != "*" || to_ip != "*")
     {

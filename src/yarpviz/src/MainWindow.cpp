@@ -563,7 +563,7 @@ void MainWindow::onProfileYarpNetwork() {
 
     messages.append("Getting the ports list...");
     NetworkProfiler::ports_name_set ports;
-    NetworkProfiler::yarpNameList(ports);
+    NetworkProfiler::getPortsList(ports);
 
 
     messages.append("Getting the ports details...");

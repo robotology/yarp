@@ -115,9 +115,8 @@ public:
      * @param ports
      * @return
      */
-    static bool yarpNameList(ports_name_set& ports, bool complete=false);
-
-    static bool yarpConnectionsList(connections_set& connections);
+    static bool getPortsList(ports_name_set& ports, bool complete=false);
+    static bool getConnectionsList(connections_set& connections);
     static bool getPortInfo(const std::string& name, const ports_name_set& ports, PortInfo& p);
 
     static void filterConnectionListByName(const connections_set& in, connections_set& filtered_out, std::string src_name="*", std::string dst_name="*");

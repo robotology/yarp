@@ -1223,7 +1223,7 @@ void MainWindow::onYarpNameList()
     }
     ui->entitiesTree->clearPorts();
     yarp::profiler::NetworkProfiler::ports_name_set ports;
-    yarp::profiler::NetworkProfiler::yarpNameList(ports, true);
+    yarp::profiler::NetworkProfiler::getPortsList(ports, true);
     for(auto& port : ports)
     {
         std::string portName = port.name;
