@@ -31,22 +31,48 @@ public:
         virtual void onProgress(unsigned int percentage) { }
     };
 
-    struct ConnectionInfo
+    struct ConnectedPortInfo
+    {
+        std::string port_name;
+        std::string carrier;
+    };
+
+    struct PortInfo
     {
         std::string name;
+        std::string ip;
+        std::string port_number;
+    };
+
+    struct  ConnectionDetails
+    {
+        PortInfo src;
+        PortInfo dst;
         std::string carrier;
+        bool operator==(const ConnectionDetails& rhs)
+        {
+            return (this->src.name == rhs.src.name &&
+                    this->dst.name == rhs.dst.name &&
+                    this->carrier == rhs.carrier);
+        }
+        bool isValid()
+        {
+            if (src.name != "" &&
+                dst.name != "" &&
+                carrier != "") return true;
+            return false;
+        }
     };
 
     struct MachineInfo
     {
         std::string os;
         std::string hostname;
-
     };
 
     struct ProcessInfo
     {
-        std::string name;
+        std::string process_name;
         std::string arguments;
         std::string os;
         std::string hostname;
@@ -60,38 +86,20 @@ public:
     struct PortDetails
     {
         std::string name;
-        std::vector<ConnectionInfo> outputs;
-        std::vector<ConnectionInfo> inputs;
+        std::vector<ConnectedPortInfo> outputs;
+        std::vector<ConnectedPortInfo> inputs;
         ProcessInfo owner;
-        std::string toString() const {
-            std::ostringstream str;
-            str<<"port name: "<<name<<std::endl;
-            str<<"outputs:"<<std::endl;
-            std::vector<ConnectionInfo>::const_iterator itr;
-            for (itr = outputs.begin(); itr != outputs.end(); itr++) {
-                str << "   + " << (*itr).name << " (" << (*itr).carrier << ")" << std::endl;
-            }
-            str<<"inputs:"<<std::endl;
-            for (itr = inputs.begin(); itr != inputs.end(); itr++) {
-                str << "   + " << (*itr).name << " (" << (*itr).carrier << ")" << std::endl;
-            }
-            str<<"owner:"<<std::endl;
-            str<<"   + name:      "<<owner.name<<std::endl;
-            str<<"   + arguments: "<<owner.arguments<<std::endl;
-            str<<"   + hostname:  "<<owner.hostname<<std::endl;
-            str<<"   + priority:  "<<owner.priority<<std::endl;
-            str<<"   + policy:    "<<owner.policy<<std::endl;
-            str<<"   + os:        "<<owner.os<<std::endl;
-            str<<"   + pid:       "<<owner.pid<<std::endl;
-            return str.str();
-        }
+
+        std::string toString() const;
     };
 
-    typedef  std::vector<yarp::os::Bottle> ports_name_set;
+    typedef  std::vector<PortInfo> ports_name_set;
     typedef  ports_name_set::iterator ports_name_iterator;
 
     typedef  std::vector<PortDetails> ports_detail_set;
     typedef  ports_detail_set::iterator ports_detail_iterator;
+
+    typedef  std::vector<ConnectionDetails> connections_set;
 
 public:
     /**
@@ -108,6 +116,13 @@ public:
      * @return
      */
     static bool yarpNameList(ports_name_set& ports, bool complete=false);
+
+    static bool yarpConnectionsList(connections_set& connections);
+    static bool getPortInfo(const std::string& name, const ports_name_set& ports, PortInfo& p);
+
+    static void filterConnectionListByName(const connections_set& in, connections_set& filtered_out, std::string src_name="*", std::string dst_name="*");
+    static void filterConnectionListByIp(const connections_set& in, connections_set& filtered_out, std::string src_name = "*", std::string dst_name = "*");
+    static void filterConnectionListByPortNumber(const connections_set& in, connections_set& filtered_out, std::string src_name = "*", std::string dst_name = "*");
 
     /**
      * @brief creatNetworkGraph

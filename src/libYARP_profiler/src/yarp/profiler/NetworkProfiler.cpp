@@ -12,6 +12,7 @@
 #include <yarp/os/OutputProtocol.h>
 #include <yarp/os/Carrier.h>
 #include <yarp/companion/impl/Companion.h>
+#include <algorithm>
 
 using namespace yarp::os;
 using namespace yarp::profiler;
@@ -20,6 +21,113 @@ using namespace yarp::profiler::graph;
 
 
 NetworkProfiler::ProgressCallback* NetworkProfiler::progCallback = nullptr;
+
+void NetworkProfiler::filterConnectionListByName(const connections_set& in, connections_set& filtered_out, std::string src_name, std::string dst_name)
+{
+    filtered_out.clear();
+    for (auto it = in.begin(); it != in.end(); it++)
+    {
+        if (src_name!="*" && dst_name != "*") {
+            if (it->src.name == src_name && it->src.name == dst_name) { filtered_out.push_back(*it);}
+        }
+        else if (src_name == "*") { 
+            if (it->dst.name == dst_name) { filtered_out.push_back(*it); }
+        }
+        else if (dst_name == "*") { 
+            if (it->src.name == src_name) {filtered_out.push_back(*it); }
+        }
+    }
+}
+
+void NetworkProfiler::filterConnectionListByIp(const connections_set& in, connections_set& filtered_out, std::string src_portnumber, std::string dst_portnumber)
+{
+    filtered_out.clear();
+    for (auto it = in.begin(); it != in.end(); it++)
+    {
+        if (src_portnumber != "*" && dst_portnumber != "*") {
+            if (it->src.ip == src_portnumber && it->src.ip == dst_portnumber) { filtered_out.push_back(*it); }
+        }
+        else if (src_portnumber == "*") {
+            if (it->dst.ip == dst_portnumber) { filtered_out.push_back(*it); }
+        }
+        else if (dst_portnumber == "*") {
+            if (it->src.ip == src_portnumber) { filtered_out.push_back(*it); }
+        }
+    }
+}
+
+void NetworkProfiler::filterConnectionListByPortNumber(const connections_set& in, connections_set& filtered_out, std::string src_ip, std::string dst_ip)
+{
+    filtered_out.clear();
+    for (auto it = in.begin(); it != in.end(); it++)
+    {
+        if (src_ip != "*" && dst_ip != "*") {
+            if (it->src.port_number == src_ip && it->src.port_number == dst_ip) { filtered_out.push_back(*it); }
+        }
+        else if (src_ip == "*") {
+            if (it->dst.port_number == dst_ip) { filtered_out.push_back(*it); }
+        }
+        else if (dst_ip == "*") {
+            if (it->src.port_number == src_ip) { filtered_out.push_back(*it); }
+        }
+    }
+}
+
+bool NetworkProfiler::getPortInfo (const std::string& name, const ports_name_set& ports, PortInfo& p)
+{
+    for (auto it = ports.begin(); it != ports.end(); it++)
+    {
+        if (name == it->name)
+        {
+            p.name = it->name;
+            p.ip = it->ip;
+            p.port_number = it->port_number;
+            return true;
+        }
+    }
+    return false;
+}
+
+bool NetworkProfiler::yarpConnectionsList(connections_set& connections)
+{
+    ports_name_set ports;
+    yarpNameList(ports);
+
+    for (auto it = ports.begin(); it != ports.end(); it++)
+    {
+        PortDetails info;
+        getPortDetails(it->name, info);
+        ConnectionDetails conn;
+        /*for (auto it2 = info.inputs.begin(); it2 != info.inputs.end(); it2++)
+        {
+            PortInfo p; getPortInfo(it2->name, ports, p);
+            conn.src.name = it2->name;
+            conn.src.ip = p.ip;
+            conn.src.port_number = p.port_number;
+            conn.dst.name = it->name;
+            conn.dst.ip = it->ip;
+            conn.dst.port_number = it->port_number;
+            conn.carrier = it2->carrier;
+        }*/
+        for (auto it2 = info.outputs.begin(); it2 != info.outputs.end(); it2++)
+        {
+            PortInfo p; getPortInfo(it2->port_name, ports, p);
+            conn.src.name = it->name;
+            conn.src.ip = it->ip;
+            conn.src.port_number= it->port_number;
+            conn.dst.name = it2->port_name;
+            conn.dst.ip = p.ip;
+            conn.dst.port_number = p.port_number;
+            conn.carrier = it2->carrier;
+        }
+        if (conn.isValid() &&
+            std::find(connections.begin(), connections.end(), conn) == connections.end())
+        {
+            connections.push_back(conn);
+        }
+    }
+    return true;
+}
 
 bool NetworkProfiler::yarpNameList(ports_name_set &ports, bool complete) {
     ports.clear();
@@ -56,8 +164,14 @@ bool NetworkProfiler::yarpNameList(ports_name_set &ports, bool complete) {
             }
             if (shouldTake) {
                 Contact c = Contact::fromConfig(*entry);
-                if (c.getCarrier() != "mcast") {
-                    ports.push_back(*entry);
+                if (c.getCarrier() != "mcast")
+                {
+//                    ports.push_back(*entry);
+                      PortInfo portd;
+                      portd.name = entry->find("name").asString();
+                      portd.ip = entry->find("ip").asString();
+                      portd.port_number = std::to_string(entry->find("port_number").asInt32());
+                      ports.push_back(portd);
                 }
             }
         }
@@ -70,7 +184,7 @@ bool NetworkProfiler::getPortDetails(const std::string& portName, PortDetails& i
 
     info.name = portName;
     Port ping;
-    ping.open("/yarpviz");
+    ping.open("...");
     ping.setAdminMode(true);
     ping.setTimeout(1.0);
     if(!NetworkBase::connect(ping.getName(), portName)) {
@@ -88,13 +202,13 @@ bool NetworkProfiler::getPortDetails(const std::string& portName, PortDetails& i
         return false;
     }
     for(size_t i=0; i<reply.size(); i++) {
-        ConnectionInfo cnn;
-        cnn.name = reply.get(i).asString();
+        ConnectedPortInfo cnn;
+        cnn.port_name = reply.get(i).asString();
         Bottle reply2;
         cmd.clear();
-        cmd.addString("list"); cmd.addString("out"); cmd.addString(cnn.name);
+        cmd.addString("list"); cmd.addString("out"); cmd.addString(cnn.port_name);
         if (!ping.write(cmd, reply2)) {
-            yWarning()<<"Cannot write (list out"<<cnn.name<<") to"<<portName;
+            yWarning()<<"Cannot write (list out"<<cnn.port_name <<") to"<<portName;
         } else {
             cnn.carrier = reply2.find("carrier").asString();
         }
@@ -110,9 +224,9 @@ bool NetworkProfiler::getPortDetails(const std::string& portName, PortDetails& i
         return false;
     }
     for(size_t i=0; i<reply.size(); i++) {
-        ConnectionInfo cnn;
-        cnn.name = reply.get(i).asString();
-        if (cnn.name != ping.getName()) {
+        ConnectedPortInfo cnn;
+        cnn.port_name = reply.get(i).asString();
+        if (cnn.port_name != ping.getName()) {
             info.inputs.push_back(cnn);
         }
     }
@@ -130,7 +244,7 @@ bool NetworkProfiler::getPortDetails(const std::string& portName, PortDetails& i
     if (!process) {
         yWarning()<<"Cannot find 'process' property of port "<<portName;
     } else {
-        info.owner.name = process->find("name").asString();
+        info.owner.process_name = process->find("name").asString();
         info.owner.arguments = process->find("arguments").asString();
         info.owner.pid = process->find("pid").asInt32();
         info.owner.priority = process->find("priority").asInt32();
@@ -172,7 +286,7 @@ bool NetworkProfiler::creatNetworkGraph(ports_detail_set details, yarp::profiler
         //process node (owner)
         ProcessVertex* process = new ProcessVertex(info.owner.pid, info.owner.hostname);
         //prop.clear();
-        process->property.put("name", info.owner.name);
+        process->property.put("name", info.owner.process_name);
         process->property.put("arguments", info.owner.arguments);
         process->property.put("hostname", info.owner.hostname);
         process->property.put("priority", info.owner.priority);
@@ -210,14 +324,14 @@ bool NetworkProfiler::creatNetworkGraph(ports_detail_set details, yarp::profiler
         pvertex_iterator vi1 = graph.find(PortVertex(info.name));
         yAssert(vi1 != graph.vertices().end());
         for(auto cnn : info.outputs) {
-            pvertex_iterator vi2 = graph.find(PortVertex(cnn.name));
+            pvertex_iterator vi2 = graph.find(PortVertex(cnn.port_name));
             if(vi2 != graph.vertices().end()) {
                 //yInfo()<<"connecting "<<(*vi1)->property.find("name").asString()<<"->"<<(*vi2)->property.find("name").asString();
                 Property edge_prop("(type connection)");
                 edge_prop.put("carrier", cnn.carrier);
                 graph.insertEdge(vi1, vi2, edge_prop);
             } else {
-                yWarning() << "Found a nonexistent port (" << cnn.name << ")"
+                yWarning() << "Found a nonexistent port (" << cnn.port_name << ")"
                            << "in the output list of" << (*vi1)->property.find("name").asString();
             }
         }
@@ -484,4 +598,28 @@ bool NetworkProfiler::getPortmonitorParams(std::string portName, yarp::os::Bottl
         }
     }
     return true;
+}
+
+std::string NetworkProfiler::PortDetails::toString() const
+{
+    std::ostringstream str;
+    str << "port name: " << name << std::endl;
+    str << "outputs:" << std::endl;
+    std::vector<ConnectedPortInfo>::const_iterator itr;
+    for (itr = outputs.begin(); itr != outputs.end(); itr++) {
+        str << "   + " << (*itr).port_name << " (" << (*itr).carrier << ")" << std::endl;
+    }
+    str << "inputs:" << std::endl;
+    for (itr = inputs.begin(); itr != inputs.end(); itr++) {
+        str << "   + " << (*itr).port_name << " (" << (*itr).carrier << ")" << std::endl;
+    }
+    str << "owner:" << std::endl;
+    str << "   + name:      " << owner.process_name << std::endl;
+    str << "   + arguments: " << owner.arguments << std::endl;
+    str << "   + hostname:  " << owner.hostname << std::endl;
+    str << "   + priority:  " << owner.priority << std::endl;
+    str << "   + policy:    " << owner.policy << std::endl;
+    str << "   + os:        " << owner.os << std::endl;
+    str << "   + pid:       " << owner.pid << std::endl;
+    return str.str();
 }

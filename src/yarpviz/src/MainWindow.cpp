@@ -578,7 +578,7 @@ void MainWindow::onProfileYarpNetwork() {
     progressDlg->show();
     for(size_t i=0; i<ports.size(); i++) {
         NetworkProfiler::PortDetails info;
-        std::string portname = ports[i].find("name").asString();
+        std::string portname = ports[i].name;
         std::string msg = std::string("Checking ") + portname + "...";
         messages.append(QString(msg.c_str()));
         if (NetworkProfiler::getPortDetails(portname, info)) {
