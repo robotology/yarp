@@ -14,6 +14,7 @@ yarp_begin_plugin_library(yarppm
   add_subdirectory(depthimage_compression_zlib)
   add_subdirectory(depthimage_to_mono)
   add_subdirectory(depthimage_to_rgb)
+  add_subdirectory(depthimage_to_vector)
   add_subdirectory(image_compression_ffmpeg)
   add_subdirectory(rpc_monitor)
   add_subdirectory(segmentationimage_to_rgb)
