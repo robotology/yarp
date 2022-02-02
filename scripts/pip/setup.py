@@ -59,6 +59,7 @@ setup(
                 "-DYARP_COMPILE_TESTS:BOOL=OFF",
                 "-DYARP_COMPILE_UNMAINTAINED:BOOL=OFF",
                 "-DYARP_COMPILE_libYARP_math:BOOL=ON",
+                "-DYARP_PYTHON_PIP_METADATA_INSTALL:BOOL=OFF".
             ]
             + CIBW_CMAKE_OPTIONS,
         )
