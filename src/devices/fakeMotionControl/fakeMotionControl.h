@@ -191,6 +191,10 @@ private:
     int *_velocityTimeout;                      /** velocity shifts */
     double *_kbemf;                             /** back-emf compensation parameter */
     double *_ktau;                              /** motor torque constant */
+    double *_viscousUp;                         /** viscous up friction */
+    double *_viscousDown;                       /** viscous down friction */
+    double *_coulombUp;                         /** coulomb up friction */
+    double *_coulombDown;                       /** coulomb down friction */
     int *_kbemf_scale;                          /** back-emf compensation parameter */
     int *_ktau_scale;                           /** motor torque constant */
     int * _filterType;                          /** the filter type (int value) used by the force control algorithm */
@@ -504,7 +508,8 @@ private:
     void cleanup();
     bool dealloc();
     bool parsePositionPidsGroup(yarp::os::Bottle& pidsGroup, yarp::dev::Pid myPid[]);
-    bool parseTorquePidsGroup(yarp::os::Bottle& pidsGroup, yarp::dev::Pid myPid[], double kbemf[], double ktau[], int filterType[]);
+    bool parseTorquePidsGroup(yarp::os::Bottle& pidsGroup, yarp::dev::Pid myPid[], double kbemf[], double ktau[], int filterType[], double viscousUp[], double viscousDown[], double coulombUp[], double coulombDown[]);
+
     bool parseImpedanceGroup_NewFormat(yarp::os::Bottle& pidsGroup, ImpedanceParameters vals[]);
 
     bool extractGroup(yarp::os::Bottle &input, yarp::os::Bottle &out, const std::string &key1, const std::string &txt, int size);

@@ -478,8 +478,8 @@ void RPCMessagesParser::handleTorqueMsg(const yarp::os::Bottle& cmd,
                 break;
             }
 
-            if (b->size() != 4) {
-                yCError(CONTROLBOARD, "received a SET VOCAB_MOTOR_PARAMS command not understood, size!=4");
+            if (b->size() != 8) {
+                yCError(CONTROLBOARD, "received a SET VOCAB_MOTOR_PARAMS command not understood, size != 8");
                 break;
             }
 
@@ -487,6 +487,10 @@ void RPCMessagesParser::handleTorqueMsg(const yarp::os::Bottle& cmd,
             params.bemf_scale = b->get(1).asFloat64();
             params.ktau = b->get(2).asFloat64();
             params.ktau_scale = b->get(3).asFloat64();
+            params.viscousUp = b->get(4).asFloat64();
+            params.viscousDown = b->get(5).asFloat64();
+            params.coulombUp = b->get(6).asFloat64();
+            params.coulombDown = b->get(7).asFloat64();
 
             *ok = rpc_ITorque->setMotorTorqueParams(joint, params);
         } break;
@@ -557,6 +561,10 @@ void RPCMessagesParser::handleTorqueMsg(const yarp::os::Bottle& cmd,
             b.addFloat64(params.bemf_scale);
             b.addFloat64(params.ktau);
             b.addFloat64(params.ktau_scale);
+            b.addFloat64(params.viscousUp);
+            b.addFloat64(params.viscousDown);
+            b.addFloat64(params.coulombUp);
+            b.addFloat64(params.coulombDown);
         } break;
         case VOCAB_RANGE: {
             *ok = rpc_ITorque->getTorqueRange(cmd.get(3).asInt32(), &dtmp, &dtmp2);

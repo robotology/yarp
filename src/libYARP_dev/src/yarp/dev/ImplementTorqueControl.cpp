@@ -93,6 +93,10 @@ bool ImplementTorqueControl::setMotorTorqueParams(int j,  const yarp::dev::Motor
     castToMapper(helper)->ktau_user2raw(params.ktau, j, params_raw.ktau, k);
     params_raw.bemf_scale = params.bemf_scale;
     params_raw.ktau_scale = params.ktau_scale;
+    params_raw.viscousUp = params.viscousUp;
+    params_raw.viscousDown = params.viscousDown;
+    params_raw.coulombUp = params.coulombUp;
+    params_raw.coulombDown = params.coulombDown;
 
     return iTorqueRaw->setMotorTorqueParamsRaw(k, params_raw);
 }
@@ -113,6 +117,10 @@ bool ImplementTorqueControl::getMotorTorqueParams(int j,  yarp::dev::MotorTorque
         castToMapper(helper)->ktau_raw2user(params_raw.ktau, k, (*params).ktau, tmp_j);
         (*params).bemf_scale = params_raw.bemf_scale;
         (*params).ktau_scale = params_raw.ktau_scale;
+        (*params).viscousUp = params_raw.viscousUp;
+        (*params).viscousDown = params_raw.viscousDown;
+        (*params).coulombUp = params_raw.coulombUp;
+        (*params).coulombDown = params_raw.coulombDown;
     }
     return b;
 }

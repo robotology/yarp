@@ -22,7 +22,11 @@ class YARP_dev_API yarp::dev::MotorTorqueParameters
     double bemf_scale;
     double ktau;
     double ktau_scale;
-    MotorTorqueParameters() : bemf(0), bemf_scale(0), ktau(0), ktau_scale(0) {};
+    double viscousUp;
+    double viscousDown;
+    double coulombUp;
+    double coulombDown;
+    MotorTorqueParameters() : bemf(0), bemf_scale(0), ktau(0), ktau_scale(0), viscousUp(0), viscousDown(0), coulombUp(0), coulombDown(0) {};
 };
 
 /**
