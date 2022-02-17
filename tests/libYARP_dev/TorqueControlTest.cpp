@@ -74,7 +74,7 @@ TEST_CASE("dev::TorqueControl", "[yarp::dev]")
 
         trq->setMotorTorqueParams(0, params);
         trq->getMotorTorqueParams(0, &res);
-        
+
         //CHECK(res.bemf == 0.1); // interface seems functional
         //CHECK(res.bemf_scale == 0.2); // interface seems functional
         //CHECK(res.ktau == 0.3); // interface seems functional
