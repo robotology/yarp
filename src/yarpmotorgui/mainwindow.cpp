@@ -26,9 +26,6 @@
 #include <yarp/os/LogStream.h>
 #include <yarp/os/ResourceFinder.h>
 
-#define TREEMODE_OK     1
-#define TREEMODE_WARN   2
-
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     m_ui(new Ui::MainWindow)
@@ -318,6 +315,13 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(this,SIGNAL(sig_internalClose()),this,SLOT(close()),Qt::QueuedConnection);
 
 
+    auto* lay = new QHBoxLayout();
+    lay->setMargin(0);
+    lay->setSpacing(0);
+    lay->setSizeConstraint(QLayout::SetMaximumSize);
+    m_ui->treeWidgetContainer->setLayout(lay);
+    m_modesTreeManager = new ModesTreeManager(lay, m_ui->treeWidgetContainer);
+
     m_timer.setInterval(200);
     m_timer.setSingleShot(false);
     connect(&m_timer, SIGNAL(timeout()), this, SLOT(onUpdate()), Qt::QueuedConnection);
@@ -565,7 +569,6 @@ bool MainWindow::init(QStringList enabledParts,
 
     struct robot_type
     {
-        QTreeWidgetItem* tree_pointer;
         std::string      robot_name_without_slash;
     };
 
@@ -595,7 +598,6 @@ bool MainWindow::init(QStringList enabledParts,
             if (r.robot_name_without_slash[0] == '/') {
                 r.robot_name_without_slash.erase(0, 1);
             }
-            r.tree_pointer = nullptr;
             robots[cur_robot_name]=r;
         }
         part_type p;
@@ -612,11 +614,7 @@ bool MainWindow::init(QStringList enabledParts,
 
     for (auto& robot : robots)
     {
-        auto* robot_top = new QTreeWidgetItem();
-        robot_top->setText(0, robot.first.c_str());
-        m_ui->treeWidgetMode->addTopLevelItem(robot_top);
-        robot_top->setExpanded(true);
-        robot.second.tree_pointer = robot_top;
+        m_modesTreeManager->addRobot(robot.first.c_str());
     }
 
     for (auto& i_parts : parts)
@@ -642,9 +640,9 @@ bool MainWindow::init(QStringList enabledParts,
             connect(this, SIGNAL(sig_viewCurrentValues(bool)), part, SLOT(onViewCurrentValues(bool)));
             connect(this, SIGNAL(sig_viewMotorPositions(bool)), part, SLOT(onViewMotorPositions(bool)));
             connect(this, SIGNAL(sig_viewDutyCycles(bool)), part, SLOT(onViewDutyCycles(bool)));
-            connect(this, SIGNAL(sig_setPosSliderOptionMW(int, double)), part, SLOT(onSetPosSliderOptionPI(int, double)));
-            connect(this, SIGNAL(sig_setVelSliderOptionMW(int, double)), part, SLOT(onSetVelSliderOptionPI(int, double)));
-            connect(this, SIGNAL(sig_setTrqSliderOptionMW(int, double)), part, SLOT(onSetTrqSliderOptionPI(int, double)));
+            connect(this, SIGNAL(sig_setPosSliderOptionMW(int,double)), part, SLOT(onSetPosSliderOptionPI(int,double)));
+            connect(this, SIGNAL(sig_setVelSliderOptionMW(int,double)), part, SLOT(onSetVelSliderOptionPI(int,double)));
+            connect(this, SIGNAL(sig_setTrqSliderOptionMW(int,double)), part, SLOT(onSetTrqSliderOptionPI(int,double)));
             connect(this, SIGNAL(sig_viewPositionTargetBox(bool)), part, SLOT(onViewPositionTargetBox(bool)));
             connect(this, SIGNAL(sig_viewPositionTargetValue(bool)), part, SLOT(onViewPositionTargetValue(bool)));
             connect(this, SIGNAL(sig_enableControlVelocity(bool)), part, SLOT(onEnableControlVelocity(bool)));
@@ -663,12 +661,7 @@ bool MainWindow::init(QStringList enabledParts,
                 this->m_partName->setText(QString("%1 Commands ").arg(auxName));
             }
 
-            auto* mode = new QTreeWidgetItem();
-            mode->setText(0, part_name.c_str());
-            QTreeWidgetItem *tp = robots[i_parts.second.robot_name].tree_pointer;
-            tp->addChild(mode);
-            mode->setExpanded(false);
-            part->setTreeWidgetModeNode(mode);
+            m_modesTreeManager->addRobotPart(robot_name, part_name, part);
         }
         else
         {
@@ -1190,7 +1183,7 @@ void MainWindow::onUpdate()
         auto* tabScroll = (QScrollArea *)m_tabPanel->widget(i);
         auto* item = (PartItem*)tabScroll->widget();
         item->updateControlMode();
-        updateModesTree(item);
+        m_modesTreeManager->updateRobotPart(item);
         if(item == currentPart)
         {
             if (item->updatePart() == false)
@@ -1200,226 +1193,4 @@ void MainWindow::onUpdate()
         }
     }
     m_mutex.unlock();
-}
-
-QColor MainWindow::getColorMode(int m)
-{
-    QColor mode;
-    switch (m) {
-    case JointItem::Idle:{
-        mode = idleColor;
-        break;
-    }
-    case JointItem::Position:{
-        mode = positionColor;
-        break;
-    }
-    case JointItem::PositionDirect:{
-        mode = positionDirectColor;
-        break;
-    }
-    case JointItem::Mixed:{
-        mode = mixedColor;
-        break;
-    }
-    case JointItem::Velocity:{
-        mode = velocityColor;
-        break;
-    }
-    case JointItem::Torque:{
-        mode = torqueColor;
-        break;
-    }
-    case JointItem::Pwm:{
-        mode = pwmColor;
-        break;
-    }
-    case JointItem::Current:{
-        mode = currentColor;
-        break;
-    }
-
-    case JointItem::Disconnected:{
-        mode = disconnectColor;
-        break;
-    }
-    case JointItem::HwFault:{
-        mode = hwFaultColor;
-        break;
-    }
-    case JointItem::Calibrating:{
-        mode = calibratingColor;
-        break;
-    }
-    case JointItem::NotConfigured:{
-        mode = calibratingColor;
-        break;
-    }
-    case JointItem::Configured:{
-        mode = calibratingColor;
-        break;
-    }
-
-    default:
-        mode = calibratingColor;
-        break;
-    }
-
-    return mode;
-}
-
-QString MainWindow::getStringMode(int m)
-{
-    QString mode;
-    switch (m) {
-    case JointItem::Idle:{
-        mode = "Idle";
-        break;
-    }
-    case JointItem::Position:{
-        mode = "Position";
-        break;
-    }
-    case JointItem::PositionDirect:{
-        mode = "Position Direct";
-        break;
-    }
-    case JointItem::Mixed:{
-        mode = "Mixed";
-        break;
-    }
-    case JointItem::Velocity:{
-        mode = "Velocity";
-        break;
-    }
-    case JointItem::Torque:{
-        mode = "Torque";
-        break;
-    }
-    case JointItem::Pwm:{
-        mode = "PWM";
-        break;
-    }
-    case JointItem::Current:{
-        mode = "Current";
-        break;
-    }
-
-    case JointItem::Disconnected:{
-        mode = "Disconnected";
-        break;
-    }
-    case JointItem::HwFault:{
-        mode = "Hardware Fault";
-        break;
-    }
-    case JointItem::Calibrating:{
-        mode = "Calibrating";
-        break;
-    }
-    case JointItem::NotConfigured:{
-        mode = "Not Configured";
-        break;
-    }
-    case JointItem::Configured:{
-        mode = "Configured";
-        break;
-    }
-
-    default:
-        mode = "Unknown";
-        break;
-    }
-
-    return mode;
-
-}
-
-void MainWindow::updateModesTree(PartItem *part)
-{
-
-    QTreeWidgetItem *parentNode = part->getTreeWidgetModeNode();
-
-    QList <int> modes = part->getPartMode();
-
-    if(modes.count() > 0 && parentNode->childCount() <= 0){
-        for(int i=0; i<modes.count(); i++){
-            QString mode;
-            mode = getStringMode(modes.at(i));
-            auto* jointNode = new QTreeWidgetItem(parentNode);
-            jointNode->setText(0,QString("Joint %1").arg(i));
-            jointNode->setText(1,mode);
-            QColor c = getColorMode(modes.at(i));
-            jointNode->setBackground(0,c);
-            jointNode->setBackground(1,c);
-            jointNode->setForeground(0,QColor(Qt::black));
-            jointNode->setForeground(1,QColor(Qt::black));
-
-
-            if(c == hwFaultColor){
-                parentNode->setData(0,Qt::UserRole,TREEMODE_WARN);
-                jointNode->setData(0,Qt::UserRole,TREEMODE_WARN);
-                parentNode->setIcon(0,QIcon(":/warning.svg"));
-                jointNode->setIcon(0,QIcon(":/warning.svg"));
-            }else{
-                parentNode->setData(0,Qt::UserRole,TREEMODE_OK);
-                jointNode->setData(0,Qt::UserRole,TREEMODE_OK);
-                parentNode->setIcon(0,QIcon(":/apply.svg"));
-            }
-        }
-    }else{
-        bool foundFaultPart = false;
-        for(int i=0;i<parentNode->childCount();i++){
-            QTreeWidgetItem *item = parentNode->child(i);
-            QString mode;
-            QColor c = getColorMode(modes.at(i));
-            mode = getStringMode(modes.at(i));
-
-            if(c == hwFaultColor){
-                foundFaultPart = true;
-                if(item->data(0,Qt::UserRole).toInt() != TREEMODE_WARN){
-                    item->setIcon(0,QIcon(":/warning.svg"));
-                    item->setData(0,Qt::UserRole,TREEMODE_WARN);
-                }
-            }else{
-                item->setIcon(0,QIcon());
-                item->setData(0,Qt::UserRole,TREEMODE_OK);
-            }
-
-            if(parentNode->isExpanded()){
-                if(item->text(1) != mode){
-                    item->setText(1,mode);
-                }
-                if(item->background(0) != c){
-                    item->setBackground(0,c);
-                    item->setBackground(1,c);
-                    item->setForeground(0,QColor(Qt::black));
-                    item->setForeground(1,QColor(Qt::black));
-                }
-            }
-        }
-
-        if(!foundFaultPart){
-            if(parentNode->data(0,Qt::UserRole).toInt() != TREEMODE_OK){
-                parentNode->setBackground(0,QColor("white"));
-                parentNode->setIcon(0,QIcon(":/apply.svg"));
-                parentNode->setData(0,Qt::UserRole,TREEMODE_OK);
-            }
-        }else{
-            if(parentNode->data(0,Qt::UserRole).toInt() != TREEMODE_WARN){
-                parentNode->setBackground(0,hwFaultColor);
-                parentNode->setIcon(0,QIcon(":/warning.svg"));
-                parentNode->setData(0,Qt::UserRole,TREEMODE_WARN);
-            }
-
-        }
-    }
-
-}
-
-
-
-ModesTreeWidget::ModesTreeWidget(QWidget *parent) : QTreeWidget(parent)
-{
-
 }

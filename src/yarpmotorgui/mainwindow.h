@@ -19,6 +19,7 @@
 
 #include "partitem.h"
 #include "sliderOptions.h"
+#include "modestreemanager.h"
 
 #include <vector>
 
@@ -80,11 +81,8 @@ private:
     QAction *m_idleSinglePart;
     QAction *m_script2;
     QAction *m_script1;
+    ModesTreeManager *m_modesTreeManager;
 
-private:
-    void updateModesTree(PartItem *part);
-    QString getStringMode(int mode);
-    QColor getColorMode(int m);
 private slots:
     void onSequenceActivated();
     void onSequenceStopped();
@@ -144,16 +142,6 @@ signals:
     void sig_viewPositionTargetBox(bool);
     void sig_viewPositionTargetValue(bool);
     void sig_internalClose();
-
-};
-
-class ModesTreeWidget : public QTreeWidget
-{
-    Q_OBJECT
-
-public:
-    ModesTreeWidget(QWidget * parent = 0);
-
 
 };
 

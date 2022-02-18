@@ -19,6 +19,7 @@ if(YARP_COMPILE_yarpmotorgui)
     sliderOptions.cpp
     sliderWithTarget.cpp
     startdlg.cpp
+    modestreemanager.cpp
   )
   set(yarpmotorgui_HDRS
     flowlayout.h
@@ -32,6 +33,7 @@ if(YARP_COMPILE_yarpmotorgui)
     yarpmotorgui.h
     sequencewindow.h
     startdlg.h
+    modestreemanager.h
   )
   set(yarpmotorgui_QRC_FILES
     res.qrc

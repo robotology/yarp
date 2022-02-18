@@ -75,8 +75,12 @@ public:
     void saveSequence(QString global_filename);
     QTreeWidgetItem *getTreeWidgetModeNode();
     QString getPartName();
-    QList<int> getPartMode();
+    const QVector<JointItem::JointState>& getPartModes();
     void resizeWidget(int w);
+    int getNumberOfJoints();
+    QString getJointName(int joint);
+    JointItem* getJointWidget(int jointIndex);
+
 
 private:
     void fixedTimeMove(SequenceItem sequence);
@@ -125,6 +129,7 @@ private:
     bool    m_part_dutyVisible;
     bool    m_part_currentVisible;
     yarp::dev::InteractionModeEnum* m_interactionModes;
+    QVector<JointItem::JointState> m_modesList;
 
     ResourceFinder* m_finder;
     PolyDriver*     m_partsdd;
