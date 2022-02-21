@@ -806,8 +806,6 @@ void ControlBoardHelper::coulombDown_user2raw(double coulombDown_user, int j, do
     k = toHw(j);
 }
 
-// RAW_2_USER
-
 void ControlBoardHelper::bemf_raw2user(double bemf_raw, int k_raw, double &bemf_user, int &j_user)
 {
     j_user = toUser(k_raw);
@@ -828,6 +826,26 @@ double  ControlBoardHelper::bemf_user2raw(double bemf_user, int j)
 double  ControlBoardHelper::ktau_user2raw(double ktau_user, int j)
 {
     return ktau_user * mPriv->ktauToRaws[j];
+}
+
+double  ControlBoardHelper::viscousUp_user2raw(double viscousUp_user, int j)
+{
+    return viscousUp_user * mPriv->viscousUpToRaws[j];
+}
+
+double ControlBoardHelper::viscousDown_user2raw(double viscousDown_user, int j)
+{
+    return viscousDown_user * mPriv->viscousDownToRaws[j];
+}
+
+double ControlBoardHelper::coulombUp_user2raw(double coulombUp_user, int j)
+{
+    return coulombUp_user * mPriv->coulombUpToRaws[j];
+}
+
+double ControlBoardHelper::coulombDown_user2raw(double coulombDown_user, int j)
+{
+    return coulombDown_user * mPriv->coulombDownToRaws[j];
 }
 
 void ControlBoardHelper::viscousUp_raw2user(double viscousUp_raw, int k_raw, double &viscousUp_user, int &j_user)

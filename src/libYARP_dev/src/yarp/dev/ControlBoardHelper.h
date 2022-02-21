@@ -145,6 +145,11 @@ public:
     // *******************************************//
     double bemf_user2raw(double bemf_user, int j);
     double ktau_user2raw(double ktau_user, int j);
+    double viscousUp_user2raw(double viscousUp_user, int j);
+    double viscousDown_user2raw(double viscousDown_user, int j);
+    double coulombUp_user2raw(double coulombUp_user, int j);
+    double coulombDown_user2raw(double coulombDown_user, int j);
+
     void bemf_user2raw(double bemf_user, int j, double &bemf_raw, int &k);
     void ktau_user2raw(double ktau_user, int j, double &ktau_raw, int &k);
     void viscousUp_user2raw(double viscousUp_user, int j, double &viscousUp_raw, int &k);
