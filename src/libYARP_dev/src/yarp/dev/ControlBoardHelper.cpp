@@ -40,6 +40,10 @@ public:
     double *dutycycleToPWMs;
     double *bemfToRaws;
     double *ktauToRaws;
+    double *viscousUpToRaws;
+    double *viscousDownToRaws;
+    double *coulombUpToRaws;
+    double *coulombDownToRaws;
 
     PidUnits* PosPid_units;
     PidUnits* VelPid_units;
@@ -60,6 +64,10 @@ public:
         dutycycleToPWMs(nullptr),
         bemfToRaws(nullptr),
         ktauToRaws(nullptr),
+        viscousUpToRaws(nullptr),
+        viscousDownToRaws(nullptr),
+        coulombUpToRaws(nullptr),
+        coulombDownToRaws(nullptr),
         PosPid_units(nullptr),
         VelPid_units(nullptr),
         CurPid_units(nullptr),
@@ -75,6 +83,10 @@ public:
         std::fill_n(dutycycleToPWMs, size, 1.0);
         std::fill_n(bemfToRaws, size, 1.0);
         std::fill_n(ktauToRaws, size, 1.0);
+        std::fill_n(viscousUpToRaws, size, 1.0);
+        std::fill_n(viscousDownToRaws, size, 1.0);
+        std::fill_n(coulombUpToRaws, size, 1.0);
+        std::fill_n(coulombDownToRaws, size, 1.0);
     }
 
     ~PrivateUnitsHandler()
@@ -94,6 +106,10 @@ public:
         checkAndDestroy<double>(dutycycleToPWMs);
         checkAndDestroy<double>(bemfToRaws);
         checkAndDestroy<double>(ktauToRaws);
+        checkAndDestroy<double>(viscousUpToRaws);
+        checkAndDestroy<double>(viscousDownToRaws);
+        checkAndDestroy<double>(coulombUpToRaws);
+        checkAndDestroy<double>(coulombDownToRaws);
     }
 
     void alloc(int n)
@@ -114,6 +130,10 @@ public:
         CurPid_units = new PidUnits[nj];
         bemfToRaws = new double[nj];
         ktauToRaws = new double[nj];
+        viscousUpToRaws = new double[nj];
+        viscousDownToRaws = new double[nj];
+        coulombUpToRaws = new double[nj];
+        coulombDownToRaws = new double[nj];
 
         yAssert(position_zeros != nullptr);
         yAssert(helper_ones != nullptr);
@@ -130,6 +150,10 @@ public:
         yAssert(CurPid_units != nullptr);
         yAssert(bemfToRaws != nullptr);
         yAssert(ktauToRaws != nullptr);
+        yAssert(viscousUpToRaws != nullptr);
+        yAssert(viscousDownToRaws != nullptr);
+        yAssert(coulombUpToRaws != nullptr);
+        yAssert(coulombDownToRaws != nullptr);
 
         pid_units[VOCAB_PIDTYPE_POSITION] = PosPid_units;
         pid_units[VOCAB_PIDTYPE_VELOCITY] = VelPid_units;
@@ -155,6 +179,10 @@ public:
         memcpy(this->CurPid_units, other.CurPid_units, sizeof(*other.CurPid_units)*nj);
         memcpy(this->bemfToRaws, other.bemfToRaws, sizeof(*other.bemfToRaws)*nj);
         memcpy(this->ktauToRaws, other.ktauToRaws, sizeof(*other.ktauToRaws)*nj);
+        memcpy(this->viscousUpToRaws, other.viscousUpToRaws, sizeof(*other.viscousUpToRaws)*nj);
+        memcpy(this->viscousDownToRaws, other.viscousDownToRaws, sizeof(*other.viscousDownToRaws)*nj);
+        memcpy(this->coulombUpToRaws, other.coulombUpToRaws, sizeof(*other.coulombUpToRaws)*nj);
+        memcpy(this->coulombDownToRaws, other.coulombDownToRaws, sizeof(*other.coulombDownToRaws)*nj);
     }
 };
 
@@ -754,6 +782,32 @@ void ControlBoardHelper::ktau_user2raw(double ktau_user, int j, double &ktau_raw
     k = toHw(j);
 }
 
+void ControlBoardHelper::viscousUp_user2raw(double viscousUp_user, int j, double &viscousUp_raw, int &k)
+{
+    viscousUp_raw = viscousUp_user * mPriv->viscousUpToRaws[j];
+    k = toHw(j);
+}
+
+void ControlBoardHelper::viscousDown_user2raw(double viscousDown_user, int j, double &viscousDown_raw, int &k)
+{
+    viscousDown_raw = viscousDown_user * mPriv->viscousDownToRaws[j];
+    k = toHw(j);
+}
+
+void ControlBoardHelper::coulombUp_user2raw(double coulombUp_user, int j, double &coulombUp_raw, int &k)
+{
+    coulombUp_raw = coulombUp_user * mPriv->coulombUpToRaws[j];
+    k = toHw(j);
+}
+
+void ControlBoardHelper::coulombDown_user2raw(double coulombDown_user, int j, double &coulombDown_raw, int &k)
+{
+    coulombDown_raw = coulombDown_user * mPriv->coulombDownToRaws[j];
+    k = toHw(j);
+}
+
+// RAW_2_USER
+
 void ControlBoardHelper::bemf_raw2user(double bemf_raw, int k_raw, double &bemf_user, int &j_user)
 {
     j_user = toUser(k_raw);
@@ -775,6 +829,31 @@ double  ControlBoardHelper::ktau_user2raw(double ktau_user, int j)
 {
     return ktau_user * mPriv->ktauToRaws[j];
 }
+
+void ControlBoardHelper::viscousUp_raw2user(double viscousUp_raw, int k_raw, double &viscousUp_user, int &j_user)
+{
+    j_user = toUser(k_raw);
+    viscousUp_user = viscousUp_raw / mPriv->viscousUpToRaws[j_user];
+}
+
+void ControlBoardHelper::viscousDown_raw2user(double viscousDown_raw, int k_raw, double &viscousDown_user, int &j_user)
+{
+    j_user = toUser(k_raw);
+    viscousDown_user = viscousDown_raw / mPriv->viscousDownToRaws[j_user];
+}
+
+void ControlBoardHelper::coulombUp_raw2user(double coulombUp_raw, int k_raw, double &coulombUp_user, int &j_user)
+{
+    j_user = toUser(k_raw);
+    coulombUp_user = coulombUp_raw / mPriv->coulombUpToRaws[j_user];
+}
+
+void ControlBoardHelper::coulombDown_raw2user(double coulombDown_raw, int k_raw, double &coulombDown_user, int &j_user)
+{
+    j_user = toUser(k_raw);
+    coulombDown_user = coulombDown_raw / mPriv->coulombDownToRaws[j_user];
+}
+
 
 // *******************************************//
 
