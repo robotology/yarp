@@ -67,10 +67,10 @@ TEST_CASE("dev::TorqueControl", "[yarp::dev]")
         //params.bemf_scale = 0.2;
         //params.ktau = 0.3;
         //params.ktau_scale = 0.4;
-        params.viscousUp = 0.5;
-        params.viscousDown = 0.6;
-        params.coulombUp = 0.7;
-        params.coulombDown = 0.8;
+        params.viscousPos = 0.5;
+        params.viscousNeg = 0.6;
+        params.coulombPos = 0.7;
+        params.coulombNeg = 0.8;
 
         trq->setMotorTorqueParams(0, params);
         trq->getMotorTorqueParams(0, &res);
@@ -79,10 +79,10 @@ TEST_CASE("dev::TorqueControl", "[yarp::dev]")
         //CHECK(res.bemf_scale == 0.2); // interface seems functional
         //CHECK(res.ktau == 0.3); // interface seems functional
         //CHECK(res.ktau_scale == 0.4); // interface seems functional
-        CHECK(res.viscousUp == 0.5); // interface seems functional
-        CHECK(res.viscousDown == 0.6); // interface seems functional
-        CHECK(res.coulombUp == 0.7); // interface seems functional
-        CHECK(res.coulombDown == 0.8); // interface seems functional
+        CHECK(res.viscousPos == 0.5); // interface seems functional
+        CHECK(res.viscousNeg == 0.6); // interface seems functional
+        CHECK(res.coulombPos == 0.7); // interface seems functional
+        CHECK(res.coulombNeg == 0.8); // interface seems functional
         CHECK(dd.close()); // close dd reported successful
         CHECK(dd2.close()); // close dd2 reported successful
     }

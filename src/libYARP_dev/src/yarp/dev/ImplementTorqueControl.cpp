@@ -94,10 +94,10 @@ bool ImplementTorqueControl::setMotorTorqueParams(int j,  const yarp::dev::Motor
     params_raw.bemf_scale = params.bemf_scale;
     params_raw.ktau_scale = params.ktau_scale;
 
-    castToMapper(helper)->viscousUp_user2raw(params.viscousUp, j, params_raw.viscousUp, k);
-    castToMapper(helper)->viscousDown_user2raw(params.viscousDown, j, params_raw.viscousDown, k);
-    castToMapper(helper)->coulombUp_user2raw(params.coulombUp, j, params_raw.coulombUp, k);
-    castToMapper(helper)->coulombDown_user2raw(params.coulombDown, j, params_raw.coulombDown, k);
+    castToMapper(helper)->viscousPos_user2raw(params.viscousPos, j, params_raw.viscousPos, k);
+    castToMapper(helper)->viscousNeg_user2raw(params.viscousNeg, j, params_raw.viscousNeg, k);
+    castToMapper(helper)->coulombPos_user2raw(params.coulombPos, j, params_raw.coulombPos, k);
+    castToMapper(helper)->coulombNeg_user2raw(params.coulombNeg, j, params_raw.coulombNeg, k);
 
     return iTorqueRaw->setMotorTorqueParamsRaw(k, params_raw);
 }
@@ -118,10 +118,10 @@ bool ImplementTorqueControl::getMotorTorqueParams(int j,  yarp::dev::MotorTorque
         castToMapper(helper)->ktau_raw2user(params_raw.ktau, k, (*params).ktau, tmp_j);
         (*params).bemf_scale = params_raw.bemf_scale;
         (*params).ktau_scale = params_raw.ktau_scale;
-        castToMapper(helper)->viscousUp_raw2user(params_raw.viscousUp, k, (*params).viscousUp, tmp_j);
-        castToMapper(helper)->viscousDown_raw2user(params_raw.viscousDown, k, (*params).viscousDown, tmp_j);
-        castToMapper(helper)->coulombUp_raw2user(params_raw.coulombUp, k, (*params).coulombUp, tmp_j);
-        castToMapper(helper)->coulombDown_raw2user(params_raw.coulombDown, k, (*params).coulombDown, tmp_j);
+        castToMapper(helper)->viscousPos_raw2user(params_raw.viscousPos, k, (*params).viscousPos, tmp_j);
+        castToMapper(helper)->viscousNeg_raw2user(params_raw.viscousNeg, k, (*params).viscousNeg, tmp_j);
+        castToMapper(helper)->coulombPos_raw2user(params_raw.coulombPos, k, (*params).coulombPos, tmp_j);
+        castToMapper(helper)->coulombNeg_raw2user(params_raw.coulombNeg, k, (*params).coulombNeg, tmp_j);
     }
     return b;
 }

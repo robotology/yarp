@@ -191,12 +191,12 @@ private:
     int *_velocityTimeout;                      /** velocity shifts */
     double *_kbemf;                             /** back-emf compensation parameter */
     double *_ktau;                              /** motor torque constant */
-    double *_viscousUp;                         /** viscous up friction */
-    double *_viscousDown;                       /** viscous down friction */
-    double *_coulombUp;                         /** coulomb up friction */
-    double *_coulombDown;                       /** coulomb down friction */
     int *_kbemf_scale;                          /** back-emf compensation parameter */
     int *_ktau_scale;                           /** motor torque constant */
+    double *_viscousPos;                         /** viscous pos friction */
+    double *_viscousNeg;                       /** viscous neg friction */
+    double *_coulombPos;                         /** coulomb up friction */
+    double *_coulombNeg;                       /** coulomb neg friction */
     int * _filterType;                          /** the filter type (int value) used by the force control algorithm */
     int *_torqueSensorId;                       /** Id of associated Joint Torque Sensor */
     int *_torqueSensorChan;                     /** Channel of associated Joint Torque Sensor */
@@ -508,7 +508,7 @@ private:
     void cleanup();
     bool dealloc();
     bool parsePositionPidsGroup(yarp::os::Bottle& pidsGroup, yarp::dev::Pid myPid[]);
-    bool parseTorquePidsGroup(yarp::os::Bottle& pidsGroup, yarp::dev::Pid myPid[], double kbemf[], double ktau[], int filterType[], double viscousUp[], double viscousDown[], double coulombUp[], double coulombDown[]);
+    bool parseTorquePidsGroup(yarp::os::Bottle& pidsGroup, yarp::dev::Pid myPid[], double kbemf[], double ktau[], int filterType[], double viscousPos[], double viscousNeg[], double coulombPos[], double coulombNeg[]);
 
     bool parseImpedanceGroup_NewFormat(yarp::os::Bottle& pidsGroup, ImpedanceParameters vals[]);
 

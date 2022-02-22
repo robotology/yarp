@@ -145,23 +145,23 @@ public:
     // *******************************************//
     double bemf_user2raw(double bemf_user, int j);
     double ktau_user2raw(double ktau_user, int j);
-    double viscousUp_user2raw(double viscousUp_user, int j);
-    double viscousDown_user2raw(double viscousDown_user, int j);
-    double coulombUp_user2raw(double coulombUp_user, int j);
-    double coulombDown_user2raw(double coulombDown_user, int j);
+    double viscousPos_user2raw(double viscousPos_user, int j);
+    double viscousNeg_user2raw(double viscousNeg_user, int j);
+    double coulombPos_user2raw(double coulombPos_user, int j);
+    double coulombNeg_user2raw(double coulombNeg_user, int j);
 
     void bemf_user2raw(double bemf_user, int j, double &bemf_raw, int &k);
     void ktau_user2raw(double ktau_user, int j, double &ktau_raw, int &k);
-    void viscousUp_user2raw(double viscousUp_user, int j, double &viscousUp_raw, int &k);
-    void viscousDown_user2raw(double viscousDown_user, int j, double &viscousDown_raw, int &k);
-    void coulombUp_user2raw(double coulombUp_user, int j, double &coulombUp_raw, int &k);
-    void coulombDown_user2raw(double coulombDown_user, int j, double &coulombDown_raw, int &k);
+    void viscousPos_user2raw(double viscousPos_user, int j, double &viscousPos_raw, int &k);
+    void viscousNeg_user2raw(double viscousNeg_user, int j, double &viscousNeg_raw, int &k);
+    void coulombPos_user2raw(double coulombPos_user, int j, double &coulombPos_raw, int &k);
+    void coulombNeg_user2raw(double coulombNeg_user, int j, double &coulombNeg_raw, int &k);
     void bemf_raw2user(double bemf_raw, int k_raw, double &bemf_user, int &j_user);
     void ktau_raw2user(double ktau_raw, int k_raw, double &ktau_user, int &j_user);
-    void viscousUp_raw2user(double viscousUp_raw, int k_raw, double &viscousUp_user, int &j_user);
-    void viscousDown_raw2user(double viscousDown_raw, int k_raw, double &viscousDown_user, int &j_user);
-    void coulombUp_raw2user(double coulombUp_raw, int k_raw, double &coulombUp_user, int &j_user);
-    void coulombDown_raw2user(double coulombDown_raw, int k_raw, double &coulombDown_user, int &j_user);
+    void viscousPos_raw2user(double viscousPos_raw, int k_raw, double &viscousPos_user, int &j_user);
+    void viscousNeg_raw2user(double viscousNeg_raw, int k_raw, double &viscousNeg_user, int &j_user);
+    void coulombPos_raw2user(double coulombPos_raw, int k_raw, double &coulombPos_user, int &j_user);
+    void coulombNeg_raw2user(double coulombNeg_raw, int k_raw, double &coulombNeg_user, int &j_user);
 
     int axes();
 

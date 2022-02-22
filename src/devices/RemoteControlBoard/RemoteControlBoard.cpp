@@ -2211,10 +2211,10 @@ bool RemoteControlBoard::setMotorTorqueParams(int j, const MotorTorqueParameters
     b.addFloat64(params.bemf_scale);
     b.addFloat64(params.ktau);
     b.addFloat64(params.ktau_scale);
-    b.addFloat64(params.viscousUp);
-    b.addFloat64(params.viscousDown);
-    b.addFloat64(params.coulombUp);
-    b.addFloat64(params.coulombDown);
+    b.addFloat64(params.viscousPos);
+    b.addFloat64(params.viscousNeg);
+    b.addFloat64(params.coulombPos);
+    b.addFloat64(params.coulombNeg);
     bool ok = rpc_p.write(cmd, response);
     return CHECK_FAIL(ok, response);
 }
@@ -2242,10 +2242,10 @@ bool RemoteControlBoard::getMotorTorqueParams(int j, MotorTorqueParameters *para
         params->bemf_scale  = l.get(1).asFloat64();
         params->ktau        = l.get(2).asFloat64();
         params->ktau_scale  = l.get(3).asFloat64();
-        params->viscousUp   = l.get(4).asFloat64();
-        params->viscousDown = l.get(5).asFloat64();
-        params->coulombUp   = l.get(6).asFloat64();
-        params->coulombDown = l.get(7).asFloat64();
+        params->viscousPos   = l.get(4).asFloat64();
+        params->viscousNeg = l.get(5).asFloat64();
+        params->coulombPos   = l.get(6).asFloat64();
+        params->coulombNeg = l.get(7).asFloat64();
         return true;
     }
     return false;

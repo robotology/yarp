@@ -264,10 +264,10 @@ bool FakeMotionControl::alloc(int nj)
     _ktau_scale = allocAndCheck<int>(nj);
     _filterType=allocAndCheck<int>(nj);
     _last_position_move_time=allocAndCheck<double>(nj);
-    _viscousUp=allocAndCheck<double>(nj);
-    _viscousDown=allocAndCheck<double>(nj);
-    _coulombUp=allocAndCheck<double>(nj);
-    _coulombDown=allocAndCheck<double>(nj);
+    _viscousPos=allocAndCheck<double>(nj);
+    _viscousNeg=allocAndCheck<double>(nj);
+    _coulombPos=allocAndCheck<double>(nj);
+    _coulombNeg=allocAndCheck<double>(nj);
 
     // Reserve space for data stored locally. values are initialized to 0
     _posCtrl_references = allocAndCheck<double>(nj);
@@ -340,10 +340,10 @@ bool FakeMotionControl::dealloc()
     checkAndDestroy(_kbemf_scale);
     checkAndDestroy(_ktau_scale);
     checkAndDestroy(_filterType);
-    checkAndDestroy(_viscousUp);
-    checkAndDestroy(_viscousDown);
-    checkAndDestroy(_coulombUp);
-    checkAndDestroy(_coulombDown);
+    checkAndDestroy(_viscousPos);
+    checkAndDestroy(_viscousNeg);
+    checkAndDestroy(_coulombPos);
+    checkAndDestroy(_coulombNeg);
     checkAndDestroy(_posCtrl_references);
     checkAndDestroy(_posDir_references);
     checkAndDestroy(_command_speeds);
@@ -442,10 +442,10 @@ FakeMotionControl::FakeMotionControl() :
     _ktau                   (nullptr),
     _kbemf_scale            (nullptr),
     _ktau_scale             (nullptr),
-    _viscousUp              (nullptr),
-    _viscousDown            (nullptr),
-    _coulombUp              (nullptr),
-    _coulombDown            (nullptr),
+    _viscousPos             (nullptr),
+    _viscousNeg             (nullptr),
+    _coulombPos             (nullptr),
+    _coulombNeg             (nullptr),
     _filterType             (nullptr),
     _torqueSensorId         (nullptr),
     _torqueSensorChan       (nullptr),
@@ -744,7 +744,7 @@ bool FakeMotionControl::parsePositionPidsGroup(Bottle& pidsGroup, Pid myPid[])
     return true;
 }
 
-bool FakeMotionControl::parseTorquePidsGroup(Bottle& pidsGroup, Pid myPid[], double kbemf[], double ktau[], int filterType[], double viscousUp[], double viscousDown[], double coulombUp[], double coulombDown[])
+bool FakeMotionControl::parseTorquePidsGroup(Bottle& pidsGroup, Pid myPid[], double kbemf[], double ktau[], int filterType[], double viscousPos[], double viscousNeg[], double coulombPos[], double coulombNeg[])
 {
     int j=0;
     Bottle xtmp;
@@ -839,32 +839,32 @@ bool FakeMotionControl::parseTorquePidsGroup(Bottle& pidsGroup, Pid myPid[], dou
         filterType[j] = xtmp.get(j+1).asInt32();
     }
 
-    if (!extractGroup(pidsGroup, xtmp, "viscousUp", "viscous up parameter", _njoints)) {
+    if (!extractGroup(pidsGroup, xtmp, "viscousPos", "viscous pos parameter", _njoints)) {
         return false;
     }
     for (j=0; j<_njoints; j++) {
-        viscousUp[j] = xtmp.get(j+1).asFloat64();
+        viscousPos[j] = xtmp.get(j+1).asFloat64();
     }
 
-    if (!extractGroup(pidsGroup, xtmp, "viscousDown", "viscous down parameter", _njoints)) {
+    if (!extractGroup(pidsGroup, xtmp, "viscousNeg", "viscous neg parameter", _njoints)) {
         return false;
     }
     for (j=0; j<_njoints; j++) {
-        viscousDown[j] = xtmp.get(j+1).asFloat64();
+        viscousNeg[j] = xtmp.get(j+1).asFloat64();
     }
 
-    if (!extractGroup(pidsGroup, xtmp, "coulombUp", "coulomb up parameter", _njoints)) {
+    if (!extractGroup(pidsGroup, xtmp, "coulombPos", "coulomb pos parameter", _njoints)) {
         return false;
     }
     for (j=0; j<_njoints; j++) {
-        coulombUp[j] = xtmp.get(j+1).asFloat64();
+        coulombPos[j] = xtmp.get(j+1).asFloat64();
     }
 
-    if (!extractGroup(pidsGroup, xtmp, "coulombDown", "coulomb up parameter", _njoints)) {
+    if (!extractGroup(pidsGroup, xtmp, "coulombNeg", "coulomb neg parameter", _njoints)) {
         return false;
     }
     for (j=0; j<_njoints; j++) {
-        coulombDown[j] = xtmp.get(j+1).asFloat64();
+        coulombNeg[j] = xtmp.get(j+1).asFloat64();
     }
 
     //conversion from metric to machine units (if applicable)
@@ -2901,18 +2901,18 @@ bool FakeMotionControl::getMotorTorqueParamsRaw(int j, MotorTorqueParameters *pa
     params->bemf_scale = _kbemf_scale[j];
     params->ktau = _ktau[j];
     params->ktau_scale = _ktau_scale[j];
-    params->viscousUp = _viscousUp[j];
-    params->viscousDown = _viscousDown[j];
-    params->coulombUp = _coulombUp[j];
-    params->coulombDown = _coulombDown[j];
+    params->viscousPos = _viscousPos[j];
+    params->viscousNeg = _viscousNeg[j];
+    params->coulombPos = _coulombPos[j];
+    params->coulombNeg = _coulombNeg[j];
     yCDebug(FAKEMOTIONCONTROL) << "getMotorTorqueParamsRaw" << params->bemf
                                                             << params->bemf_scale
                                                             << params->ktau
                                                             << params->ktau_scale
-                                                            << params->viscousUp
-                                                            << params->viscousDown
-                                                            << params->coulombUp
-                                                            << params->coulombDown;
+                                                            << params->viscousPos
+                                                            << params->viscousNeg
+                                                            << params->coulombPos
+                                                            << params->coulombNeg;
     return true;
 }
 
@@ -2922,18 +2922,18 @@ bool FakeMotionControl::setMotorTorqueParamsRaw(int j, const MotorTorqueParamete
     _ktau[j] = params.ktau;
     _kbemf_scale[j] = params.bemf_scale;
     _ktau_scale[j] = params.ktau_scale;
-    _viscousUp[j] = params.viscousUp;
-    _viscousDown[j] = params.viscousDown;
-    _coulombUp[j] = params.coulombUp;
-    _coulombDown[j] = params.coulombDown;
+    _viscousPos[j] = params.viscousPos;
+    _viscousNeg[j] = params.viscousNeg;
+    _coulombPos[j] = params.coulombPos;
+    _coulombNeg[j] = params.coulombNeg;
     yCDebug(FAKEMOTIONCONTROL) << "setMotorTorqueParamsRaw" << params.bemf
                                                             << params.bemf_scale
                                                             << params.ktau
                                                             << params.ktau_scale
-                                                            << params.viscousUp
-                                                            << params.viscousDown
-                                                            << params.coulombUp
-                                                            << params.coulombDown;
+                                                            << params.viscousPos
+                                                            << params.viscousNeg
+                                                            << params.coulombPos
+                                                            << params.coulombNeg;
     return true;
 }
 
