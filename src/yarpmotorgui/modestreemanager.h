@@ -27,6 +27,31 @@ public:
     ModesListWidget(QWidget * parent = 0);
 };
 
+class RobotWidgetTree : public CustomGroupBox
+{
+    Q_OBJECT
+
+    struct PartPointers
+    {
+        PartItemTree* partWidget;
+        CustomGroupBox* partWidgetParent;
+    };
+
+    std::unordered_map<int, PartPointers> m_indexToPartMap;
+    QIcon m_okIcon;
+    QIcon m_warningIcon;
+
+public:
+
+    void setIcons(const QIcon& okIcon, const QIcon& warningIcon);
+
+    void addPart(const std::string &partName, int partIndex, PartItemTree* partTreeWidget);
+
+    void updateRobotPart(int index, const QVector<JointItem::JointState>& modes);
+
+//    void resizeEvent(QResizeEvent *event) override;
+};
+
 class ModesTreeManager : public QObject
 {
     Q_OBJECT
@@ -76,15 +101,14 @@ private:
     {
         PartItem* partItem;
         QTreeWidgetItem* listWidget;
-        PartItemTree* partWidget;
-        CustomGroupBox* partWidgetParent;
+        RobotWidgetTree* robotWidget;
     };
 
     QTabWidget* m_tabs;
     ModesListWidget* m_list;
     QVBoxLayout* m_widgetLayout;
     std::unordered_map<std::string, QTreeWidgetItem*> m_robotMapList;
-    std::unordered_map<std::string, CustomGroupBox*> m_robotMapWidget;
+    std::unordered_map<std::string, RobotWidgetTree*> m_robotMapWidget;
     std::unordered_map<int, PartPointers> m_indexToPartMap;
     QIcon m_okIcon;
     QIcon m_warningIcon;

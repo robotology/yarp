@@ -109,13 +109,14 @@ void ModesTreeManager::addRobotInList(const std::string &robotName)
 
 void ModesTreeManager::addRobotInWidget(const std::string &robotName)
 {
-    CustomGroupBox* newGroup = new CustomGroupBox;
-    newGroup->setTitle(robotName.c_str());
-    m_widgetLayout->addWidget(newGroup);
+    RobotWidgetTree* newRobot = new RobotWidgetTree;
+    newRobot->setTitle(robotName.c_str());
+    m_widgetLayout->addWidget(newRobot);
 
-    newGroup->enableCollapseAllContextMenu(true);
+    newRobot->enableCollapseAllContextMenu(true);
+    newRobot->setIcons(m_okIcon, m_warningIcon);
 
-    m_robotMapWidget[robotName] = newGroup;
+    m_robotMapWidget[robotName] = newRobot;
 }
 
 void ModesTreeManager::addRobotPartInList(const std::string &robotName, const std::string &partName, int partIndex, PartItem *part)
@@ -150,19 +151,17 @@ void ModesTreeManager::addRobotPartInWidget(const std::string &robotName, const 
         jointWidget->setJointName(QString("%1 - %2").arg(i).arg(part->getJointName(i)));
     }
 
-    CustomGroupBox* newPart = new CustomGroupBox;
-    newPart->setTitle(partName.c_str());
-    newPart->addWidget(partWidget);
+    RobotWidgetTree* robotWidget = m_robotMapWidget[robotName];
 
-    m_robotMapWidget[robotName]->addWidget(newPart);
-    m_indexToPartMap[partIndex].partWidget = partWidget;
-    m_indexToPartMap[partIndex].partWidgetParent = newPart;
+    robotWidget->addPart(partName, partIndex, partWidget);
 
     connect(partWidget, SIGNAL(sig_jointClicked(int,int)), this, SLOT(onJointClicked(int,int)));
     connect(partWidget, SIGNAL(sig_homeClicked(int,int)), this, SLOT(onJointHomeFromTree(int,int)));
     connect(partWidget, SIGNAL(sig_runClicked(int,int)), this, SLOT(onJointRunFromTree(int,int)));
     connect(partWidget, SIGNAL(sig_idleClicked(int,int)), this, SLOT(onJointIdleFromTree(int,int)));
     connect(partWidget, SIGNAL(sig_PIDClicked(int,int)), this, SLOT(onJointPIDFromTree(int,int)));
+
+    m_indexToPartMap[partIndex].robotWidget = robotWidget;
 }
 
 void ModesTreeManager::updateRobotPartInList(int index, const QVector<JointItem::JointState> &modes)
@@ -221,6 +220,28 @@ void ModesTreeManager::updateRobotPartInList(int index, const QVector<JointItem:
 }
 
 void ModesTreeManager::updateRobotPartInWidget(int index, const QVector<JointItem::JointState> &modes)
+{
+    m_indexToPartMap[index].robotWidget->updateRobotPart(index, modes);
+}
+
+void RobotWidgetTree::setIcons(const QIcon &okIcon, const QIcon &warningIcon)
+{
+    m_okIcon = okIcon;
+    m_warningIcon = warningIcon;
+}
+
+void RobotWidgetTree::addPart(const std::string &partName, int partIndex, PartItemTree *partTreeWidget)
+{
+    CustomGroupBox* newPart = new CustomGroupBox;
+    newPart->setTitle(partName.c_str());
+    newPart->addWidget(partTreeWidget);
+
+    this->addWidget(newPart);
+    m_indexToPartMap[partIndex].partWidget = partTreeWidget;
+    m_indexToPartMap[partIndex].partWidgetParent = newPart;
+}
+
+void RobotWidgetTree::updateRobotPart(int index, const QVector<JointItem::JointState> &modes)
 {
     PartPointers& partPointers = m_indexToPartMap[index];
     PartItemTree* partWidget = partPointers.partWidget;
