@@ -266,3 +266,20 @@ void RobotWidgetTree::updateRobotPart(int index, const QVector<JointItem::JointS
         partWidgetParent->setTitleIcon(m_warningIcon);
     }
 }
+
+void RobotWidgetTree::resizeEvent(QResizeEvent *event)
+{
+    QSize maxSize;
+    for (auto& part : m_indexToPartMap)
+    {
+        maxSize = maxSize.expandedTo(part.second.partWidget->getMaxElementSize());
+    }
+
+    for (auto& part : m_indexToPartMap)
+    {
+        part.second.partWidget->setDesiredElementSize(maxSize);
+    }
+
+    QWidget::resizeEvent(event);
+
+}

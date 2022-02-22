@@ -19,6 +19,7 @@ class PartItemTree : public QWidget
     Q_OBJECT
     FlowLayout *m_layout;
     int m_index;
+    QSize m_desiredElementSize;
 
 public:
     explicit PartItemTree(int index, QWidget *parent = nullptr);
@@ -32,6 +33,10 @@ public:
     void uniformLayout();
 
     void resizeEvent(QResizeEvent *event) override;
+
+    QSize getMaxElementSize();
+
+    void setDesiredElementSize(const QSize &maxSize);
 
 public slots:
 

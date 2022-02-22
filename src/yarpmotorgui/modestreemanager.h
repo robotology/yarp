@@ -49,7 +49,7 @@ public:
 
     void updateRobotPart(int index, const QVector<JointItem::JointState>& modes);
 
-//    void resizeEvent(QResizeEvent *event) override;
+    void resizeEvent(QResizeEvent *event) override;
 };
 
 class ModesTreeManager : public QObject
