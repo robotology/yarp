@@ -23,6 +23,7 @@ if(YARP_COMPILE_yarpmotorgui)
     jointItemTree.cpp
     partItemTree.cpp
     customgroupbox.cpp
+    robotWidgetTree.cpp
   )
   set(yarpmotorgui_HDRS
     flowlayout.h
@@ -40,6 +41,7 @@ if(YARP_COMPILE_yarpmotorgui)
     jointItemTree.h
     partItemTree.h
     customgroupbox.h
+    robotWidgetTree.h
   )
   set(yarpmotorgui_QRC_FILES
     res.qrc
