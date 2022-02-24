@@ -53,6 +53,10 @@
 #define     TORQUE_BEMFSCALE    11
 #define     TORQUE_KTAUGAIN     12
 #define     TORQUE_KTAUSCALE    13
+#define     TORQUE_VISCOUSPOS   14
+#define     TORQUE_VISCOUSNEG   15
+#define     TORQUE_COULOMBPOS   16
+#define     TORQUE_COULOMBNEG   17
 
 #define     CURRENT_KP         0
 #define     CURRENT_KD         1
@@ -185,6 +189,16 @@ void PidDlg::initTorque(Pid myPid, MotorTorqueParameters TrqParam)
 
     ui->tableTorque->item(TORQUE_KTAUSCALE,0)->setText(QString("%1").arg((int)TrqParam.ktau_scale));
     ui->tableTorque->item(TORQUE_KTAUSCALE,1)->setText(QString("%1").arg((int)TrqParam.ktau_scale));
+
+    ui->tableTorque->item(TORQUE_VISCOUSPOS, 0)->setText(QString("%1").arg((double)TrqParam.viscousPos));
+    ui->tableTorque->item(TORQUE_VISCOUSPOS, 1)->setText(QString("%1").arg((double)TrqParam.viscousPos));
+    ui->tableTorque->item(TORQUE_VISCOUSNEG, 0)->setText(QString("%1").arg((double)TrqParam.viscousNeg));
+    ui->tableTorque->item(TORQUE_VISCOUSNEG, 1)->setText(QString("%1").arg((double)TrqParam.viscousNeg));
+
+    ui->tableTorque->item(TORQUE_COULOMBPOS, 0)->setText(QString("%1").arg((double)TrqParam.coulombPos));
+    ui->tableTorque->item(TORQUE_COULOMBPOS, 1)->setText(QString("%1").arg((double)TrqParam.coulombPos));
+    ui->tableTorque->item(TORQUE_COULOMBNEG, 0)->setText(QString("%1").arg((double)TrqParam.coulombNeg));
+    ui->tableTorque->item(TORQUE_COULOMBNEG, 1)->setText(QString("%1").arg((double)TrqParam.coulombNeg));
 
     ui->tableTorque->item(TORQUE_KI,0)->setText(QString("%1").arg((double)myPid.ki));
     ui->tableTorque->item(TORQUE_KI,1)->setText(QString("%1").arg((double)myPid.ki));
@@ -392,6 +406,10 @@ void PidDlg::onSend()
         newMotorTorqueParams.bemf_scale = ui->tableTorque->item(TORQUE_BEMFSCALE,1)->text().toDouble();
         newMotorTorqueParams.ktau = ui->tableTorque->item(TORQUE_KTAUGAIN,1)->text().toDouble();
         newMotorTorqueParams.ktau_scale = ui->tableTorque->item(TORQUE_KTAUSCALE,1)->text().toDouble();
+        newMotorTorqueParams.viscousPos = ui->tableTorque->item(TORQUE_VISCOUSPOS,1)->text().toDouble();
+        newMotorTorqueParams.viscousNeg = ui->tableTorque->item(TORQUE_VISCOUSNEG,1)->text().toDouble();
+        newMotorTorqueParams.coulombPos = ui->tableTorque->item(TORQUE_COULOMBPOS,1)->text().toDouble();
+        newMotorTorqueParams.coulombNeg = ui->tableTorque->item(TORQUE_COULOMBNEG,1)->text().toDouble();
         newPid.ki = ui->tableTorque->item(TORQUE_KI,1)->text().toDouble();
         newPid.scale = ui->tableTorque->item(TORQUE_SCALE,1)->text().toDouble();
         newPid.offset = ui->tableTorque->item(TORQUE_OFFSET,1)->text().toDouble();
