@@ -916,6 +916,26 @@
            <string>Torque Ktau Scale</string>
           </property>
          </row>
+         <row>
+          <property name="text">
+           <string>Torque ViscouUp</string>
+          </property>
+         </row>
+         <row>
+          <property name="text">
+           <string>Torque ViscouDown</string>
+          </property>
+         </row>
+         <row>
+          <property name="text">
+           <string>Torque CoulombUp</string>
+          </property>
+         </row>
+         <row>
+          <property name="text">
+           <string>Torque CoulombDown</string>
+          </property>
+         </row>
          <column>
           <property name="text">
            <string>Current</string>
