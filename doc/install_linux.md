@@ -15,12 +15,12 @@ your system.
 Install from binaries                             {#install_linux_from_binaries}
 ---------------------
 
-Add www.icub.org to your sources.list.
+Add www.icub.eu to your sources.list.
 
 On Ubuntu:
 
 ~~~{.sh}
-sudo sh -c 'echo "deb http://www.icub.org/ubuntu focal contrib/science" > /etc/apt/sources.list.d/icub.list'
+sudo sh -c 'echo "deb http://www.icub.eu/ubuntu focal contrib/science" > /etc/apt/sources.list.d/icub.list'
 ~~~
 
 (replace `focal` with the code name of the installed version).
@@ -29,7 +29,7 @@ sudo sh -c 'echo "deb http://www.icub.org/ubuntu focal contrib/science" > /etc/a
 On Debian:
 
 ~~~{.sh}
-sudo sh -c 'echo "deb http://www.icub.org/debian buster contrib/science" > /etc/apt/sources.list.d/icub.list'
+sudo sh -c 'echo "deb http://www.icub.eu/debian buster contrib/science" > /etc/apt/sources.list.d/icub.list'
 ~~~
 
 (replace `buster` with the code name of the installed version).
@@ -73,7 +73,7 @@ Ubuntu 18.04, see
 
 
 Install [YCM](https://github.com/robotology/ycm/) from sources or install it
-from binaries by configuring the icub.org repository (Follow the instructions at
+from binaries by configuring the icub.eu repository (Follow the instructions at
 \ref install_linux_from_binaries), and install it with
 
 ~~~{.sh}
