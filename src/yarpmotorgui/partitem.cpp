@@ -1072,6 +1072,28 @@ void PartItem::resizeWidget(int w)
     }
 }
 
+int PartItem::getNumberOfJoints()
+{
+    return m_layout->count();
+}
+
+QString PartItem::getJointName(int joint)
+{
+    if (joint < 0 || joint >= getNumberOfJoints())
+    {
+        return "";
+    }
+
+    auto* jointWidget = (JointItem*)m_layout->itemAt(joint)->widget();
+
+    return jointWidget->getJointName();
+}
+
+JointItem *PartItem::getJointWidget(int jointIndex)
+{
+    return (JointItem*)m_layout->itemAt(jointIndex)->widget();
+}
+
 void PartItem::resizeEvent(QResizeEvent *event)
 {
     if(!isVisible()){
@@ -2094,60 +2116,9 @@ void PartItem::setTreeWidgetModeNode(QTreeWidgetItem *node)
     m_node = node;
 }
 
-QList<int> PartItem::getPartMode()
+const QVector<JointItem::JointState> &PartItem::getPartModes()
 {
-    QList <int> modes;
-
-    for (int k = 0; k < m_layout->count(); k++){
-        switch (m_controlModes[k])
-        {
-        case VOCAB_CM_IDLE:
-            modes.append(JointItem::Idle);
-            break;
-        case VOCAB_CM_POSITION:
-            modes.append(JointItem::Position);
-            break;
-        case VOCAB_CM_POSITION_DIRECT:
-            modes.append(JointItem::PositionDirect);
-            break;
-        case VOCAB_CM_MIXED:
-            modes.append(JointItem::Mixed);
-            break;
-        case VOCAB_CM_VELOCITY:
-            modes.append(JointItem::Velocity);
-            break;
-        case VOCAB_CM_TORQUE:
-            modes.append(JointItem::Torque);
-            break;
-        case VOCAB_CM_PWM:
-            modes.append(JointItem::Pwm);
-            break;
-        case VOCAB_CM_CURRENT:
-            modes.append(JointItem::Current);
-            break;
-        case VOCAB_CM_HW_FAULT:
-            modes.append(JointItem::HwFault);
-            break;
-        case VOCAB_CM_CALIBRATING:
-            modes.append(JointItem::Calibrating);
-            break;
-        case VOCAB_CM_CALIB_DONE:
-            modes.append(JointItem::CalibDone);
-            break;
-        case VOCAB_CM_NOT_CONFIGURED:
-            modes.append(JointItem::NotConfigured);
-            break;
-        case VOCAB_CM_CONFIGURED:
-            modes.append(JointItem::Configured);
-            break;
-        default:
-        case VOCAB_CM_UNKNOWN:
-            modes.append(JointItem::Unknown);
-            break;
-        }
-    }
-
-    return modes;
+    return m_modesList;
 }
 
 void PartItem::updateControlMode()
@@ -2156,7 +2127,57 @@ void PartItem::updateControlMode()
 
 
     if(ret==false){
-        LOG_ERROR("ictrl->getControlMode failed\n" );
+        LOG_ERROR("ictrl->getControlMode failed on %s\n", getPartName().toStdString().c_str());
+    }
+
+    m_modesList.resize(m_layout->count());
+    for (int k = 0; k < m_layout->count(); k++){
+        switch (m_controlModes[k])
+        {
+        case VOCAB_CM_IDLE:
+            m_modesList[k] = JointItem::Idle;
+            break;
+        case VOCAB_CM_POSITION:
+            m_modesList[k] = JointItem::Position;
+            break;
+        case VOCAB_CM_POSITION_DIRECT:
+            m_modesList[k] = JointItem::PositionDirect;
+            break;
+        case VOCAB_CM_MIXED:
+            m_modesList[k] = JointItem::Mixed;
+            break;
+        case VOCAB_CM_VELOCITY:
+            m_modesList[k] = JointItem::Velocity;
+            break;
+        case VOCAB_CM_TORQUE:
+            m_modesList[k] = JointItem::Torque;
+            break;
+        case VOCAB_CM_PWM:
+            m_modesList[k] = JointItem::Pwm;
+            break;
+        case VOCAB_CM_CURRENT:
+            m_modesList[k] = JointItem::Current;
+            break;
+        case VOCAB_CM_HW_FAULT:
+            m_modesList[k] = JointItem::HwFault;
+            break;
+        case VOCAB_CM_CALIBRATING:
+            m_modesList[k] = JointItem::Calibrating;
+            break;
+        case VOCAB_CM_CALIB_DONE:
+            m_modesList[k] = JointItem::CalibDone;
+            break;
+        case VOCAB_CM_NOT_CONFIGURED:
+            m_modesList[k] = JointItem::NotConfigured;
+            break;
+        case VOCAB_CM_CONFIGURED:
+            m_modesList[k] = JointItem::Configured;
+            break;
+        default:
+        case VOCAB_CM_UNKNOWN:
+            m_modesList[k] = JointItem::Unknown;
+            break;
+        }
     }
 }
 
