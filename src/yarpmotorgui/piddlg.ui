@@ -918,22 +918,22 @@
          </row>
          <row>
           <property name="text">
-           <string>Torque ViscouUp</string>
+           <string>Torque ViscousPos</string>
           </property>
          </row>
          <row>
           <property name="text">
-           <string>Torque ViscouDown</string>
+           <string>Torque ViscousNeg</string>
           </property>
          </row>
          <row>
           <property name="text">
-           <string>Torque CoulombUp</string>
+           <string>Torque CoulombPos</string>
           </property>
          </row>
          <row>
           <property name="text">
-           <string>Torque CoulombDown</string>
+           <string>Torque CoulombNeg</string>
           </property>
          </row>
          <column>
@@ -1423,6 +1423,9 @@
           </property>
          </item>
          <item row="14" column="0">
+          <property name="text">
+           <string/>
+          </property>
           <property name="background">
            <brush brushstyle="SolidPattern">
             <color alpha="255">
@@ -1443,9 +1446,17 @@
           </property>
           <property name="flags">
            <set>ItemIsEnabled</set>
+          </property>
+         </item>
+         <item row="14" column="1">
+          <property name="flags">
+           <set>ItemIsSelectable|ItemIsEditable|ItemIsDragEnabled|ItemIsUserCheckable|ItemIsEnabled</set>
           </property>
          </item>
          <item row="15" column="0">
+          <property name="text">
+           <string/>
+          </property>
           <property name="background">
            <brush brushstyle="SolidPattern">
             <color alpha="255">
@@ -1466,9 +1477,17 @@
           </property>
           <property name="flags">
            <set>ItemIsEnabled</set>
+          </property>
+         </item>
+         <item row="15" column="1">
+          <property name="flags">
+           <set>ItemIsSelectable|ItemIsEditable|ItemIsDragEnabled|ItemIsUserCheckable|ItemIsEnabled</set>
           </property>
          </item>
          <item row="16" column="0">
+          <property name="text">
+           <string/>
+          </property>
           <property name="background">
            <brush brushstyle="SolidPattern">
             <color alpha="255">
@@ -1491,7 +1510,15 @@
            <set>ItemIsEnabled</set>
           </property>
          </item>
+         <item row="16" column="1">
+          <property name="flags">
+           <set>ItemIsSelectable|ItemIsEditable|ItemIsDragEnabled|ItemIsUserCheckable|ItemIsEnabled</set>
+          </property>
+         </item>
          <item row="17" column="0">
+          <property name="text">
+           <string/>
+          </property>
           <property name="background">
            <brush brushstyle="SolidPattern">
             <color alpha="255">
@@ -1512,6 +1539,11 @@
           </property>
           <property name="flags">
            <set>ItemIsEnabled</set>
+          </property>
+         </item>
+         <item row="17" column="1">
+          <property name="flags">
+           <set>ItemIsSelectable|ItemIsEditable|ItemIsDragEnabled|ItemIsUserCheckable|ItemIsEnabled</set>
           </property>
          </item>
         </widget>
