@@ -181,7 +181,7 @@ bool MjpegCarrier::write(ConnectionState& proto, SizedWriter& writer) {
     cinfo.image_width = w;
     cinfo.image_height = h;
 #ifndef LIBJPEG_TURBO_VERSION
-    if((img->getPixelCode() == VOCAB_PIXEL_RGBA) || 
+    if((img->getPixelCode() == VOCAB_PIXEL_RGBA) ||
        (img->getPixelCode() == VOCAB_PIXEL_BGRA) ||
        (img->getPixelCode() == VOCAB_PIXEL_BGR)) {
         yCTrace(MJPEGCARRIER, "Pixel format not supported, please compile YARP with libjpeg-turbo to support it.");
