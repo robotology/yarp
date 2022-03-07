@@ -94,6 +94,11 @@ bool ImplementTorqueControl::setMotorTorqueParams(int j,  const yarp::dev::Motor
     params_raw.bemf_scale = params.bemf_scale;
     params_raw.ktau_scale = params.ktau_scale;
 
+    castToMapper(helper)->viscousPos_user2raw(params.viscousPos, j, params_raw.viscousPos, k);
+    castToMapper(helper)->viscousNeg_user2raw(params.viscousNeg, j, params_raw.viscousNeg, k);
+    castToMapper(helper)->coulombPos_user2raw(params.coulombPos, j, params_raw.coulombPos, k);
+    castToMapper(helper)->coulombNeg_user2raw(params.coulombNeg, j, params_raw.coulombNeg, k);
+
     return iTorqueRaw->setMotorTorqueParamsRaw(k, params_raw);
 }
 
@@ -113,6 +118,10 @@ bool ImplementTorqueControl::getMotorTorqueParams(int j,  yarp::dev::MotorTorque
         castToMapper(helper)->ktau_raw2user(params_raw.ktau, k, (*params).ktau, tmp_j);
         (*params).bemf_scale = params_raw.bemf_scale;
         (*params).ktau_scale = params_raw.ktau_scale;
+        castToMapper(helper)->viscousPos_raw2user(params_raw.viscousPos, k, (*params).viscousPos, tmp_j);
+        castToMapper(helper)->viscousNeg_raw2user(params_raw.viscousNeg, k, (*params).viscousNeg, tmp_j);
+        castToMapper(helper)->coulombPos_raw2user(params_raw.coulombPos, k, (*params).coulombPos, tmp_j);
+        castToMapper(helper)->coulombNeg_raw2user(params_raw.coulombNeg, k, (*params).coulombNeg, tmp_j);
     }
     return b;
 }

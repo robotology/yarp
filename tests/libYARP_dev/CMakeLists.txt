@@ -25,6 +25,7 @@ target_sources(harness_dev
     frameGrabberCropperTest.cpp
     frameGrabber_nws_yarpTest.cpp
     grabberDualTest.cpp
+    TorqueControlTest.cpp
 )
 
 target_link_libraries(harness_dev
