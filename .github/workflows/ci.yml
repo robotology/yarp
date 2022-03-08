@@ -524,7 +524,7 @@ jobs:
           }
         - {
             id: '23',
-            os: windows-latest,
+            os: windows-2019,
             build_type: "Release",
             cc: "cl",
             cxx: "cl",
@@ -537,7 +537,7 @@ jobs:
           }
         - {
             id: '24',
-            os: windows-latest,
+            os: windows-2019,
             build_type: "Release",
             cc: "cl",
             cxx: "cl",
@@ -550,7 +550,7 @@ jobs:
           }
         - {
             id: '25',
-            os: windows-latest,
+            os: windows-2019,
             build_type: "Release",
             cc: "cl",
             cxx: "cl",
@@ -562,7 +562,7 @@ jobs:
           }
         - {
             id: '26',
-            os: windows-latest,
+            os: windows-2019,
             build_type: "Release",
             cc: "cl",
             cxx: "cl",
