@@ -137,6 +137,9 @@ public:
     // Defined in Companion.cmdTopic.cpp
     int cmdTopic(int argc, char *argv[]);
 
+    // Defined in Companion.cmdTopicTest.cpp
+    int cmdTopicTest(int argc, char* argv[]);
+
     // Defined in Companion.cmdTrafficGen.cpp
     int cmdTrafficGen(int argc, char* argv[]);
 
