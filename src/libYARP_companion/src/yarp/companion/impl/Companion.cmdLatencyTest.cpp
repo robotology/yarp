@@ -44,6 +44,7 @@ int Companion::cmdLatencyTest(int argc, char* argv[])
     if (p.check("help") || argc==0)
     {
         yCInfo(COMPANION, "This is yarp latency-test");
+        yCInfo(COMPANION, "Payload are sent FROM the server TO the client on client request");
         yCInfo(COMPANION, "Syntax for the server:");
         yCInfo(COMPANION, "yarp latency-test --server [--details]");
         yCInfo(COMPANION, "--server_wait <time>");
@@ -302,6 +303,7 @@ client_return_code_t client(int nframes, int payload_size, std::string proto, do
     {
         double latency=0;
         double copytime=0;
+        double bandwidth=0;
     };
     std::vector<stats> test_data;
     test_data.resize(nframes);
@@ -380,6 +382,7 @@ client_return_code_t client(int nframes, int payload_size, std::string proto, do
         double latency_ms = (finaltime - time - copytime) * 1000;
         test_data[clientframecounter].latency = latency_ms;
         test_data[clientframecounter].copytime = copytime;
+        test_data[clientframecounter].bandwidth = double(payload_size) * 8.0 / 1000000.0 * 1000.0 / latency_ms;
         if (latency_ms > latency_max) {
             latency_max = latency_ms;
         }
@@ -428,7 +431,9 @@ client_return_code_t client(int nframes, int payload_size, std::string proto, do
         latency_stdev+=pow(test_data[i].latency-latency_mean,2);
     }
     latency_stdev=sqrt(latency_stdev/nframes);
-    yCInfo(COMPANION, "Processed %d frames of %d bytes, average latency %.3lf[ms], max %.3lf[ms], min %.3lf[ms], stdev %.3lf[ms]\n", clientframecounter, payload_size, latency_mean, latency_max, latency_min, latency_stdev);
+    double payload_size_Mb = double(payload_size)*8.0/1000000.0;
+    double estimated_bandwidth = payload_size_Mb*1000.0/latency_mean;
+    yCInfo(COMPANION, "Processed %d frames of %d bytes, estimated bandwidth %.3lf[Mb/s], average latency %.3lf[ms], max %.3lf[ms], min %.3lf[ms], stdev %.3lf[ms]\n", clientframecounter, payload_size, estimated_bandwidth, latency_mean, latency_max, latency_min, latency_stdev);
 
     //save the stats to a logfile
     {
@@ -439,7 +444,7 @@ client_return_code_t client(int nframes, int payload_size, std::string proto, do
         fs.open(filename, std::fstream::out );
         for (int i = 0; i < nframes; i++)
         {
-            fs << test_data[i].latency << " " << test_data[i].copytime << std::endl;
+            fs << test_data[i].latency << " " << test_data[i].copytime << " " << test_data[i].bandwidth << std::endl;
         }
         fs.close();
         yCInfo(COMPANION, "Test complete. Data saved to file: %s", filename.c_str());
@@ -461,7 +466,7 @@ client_return_code_t client(int nframes, int payload_size, std::string proto, do
             //..otherwise append to existing file
             fs.open(filename, std::fstream::out | std::fstream::app);
         }
-        fs << payload_size << " " << latency_mean << " " << latency_stdev << "\n";
+        fs << payload_size << " " << latency_mean << " " << latency_stdev << " " << estimated_bandwidth << "\n";
         fs.close();
         yCInfo(COMPANION, "Report written to file: %s", filename.c_str());
     }
