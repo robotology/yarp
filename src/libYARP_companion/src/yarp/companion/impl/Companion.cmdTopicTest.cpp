@@ -21,7 +21,6 @@
 using yarp::companion::impl::Companion;
 
 bool interrupt = false;
-
 void signal_callback_handler(int signum)
 {
     interrupt = true;
@@ -30,7 +29,7 @@ void signal_callback_handler(int signum)
 int print_help()
 {
     yCInfo(COMPANION, "Available options:");
-    yCInfo(COMPANION, "'--publish <topic> <size_bytes>' to test a topic publisher");
+    yCInfo(COMPANION, "'--publish <topic> <size_bytes> <period_s>' to test a topic publisher");
     yCInfo(COMPANION, "'--subscribe <topic> to test a topic subscriber");
     return 1;
 }
@@ -55,6 +54,11 @@ int Companion::cmdTopicTest(int argc, char *argv[])
     }
     else if (argc == 3 && std::string(argv[0]) == "--publish")
     {
+        yCError(COMPANION) << "Invalid params";
+        return print_help();
+    }
+    else if (argc == 4 && std::string(argv[0]) == "--publish")
+    {
         //parse command line
         std::string topicname = std::string(argv[1]);
         if (topicname.empty())
@@ -66,6 +70,12 @@ int Companion::cmdTopicTest(int argc, char *argv[])
         if (blobsize == 0)
         {
             yCError(COMPANION) << "Invalid/missing payload size";
+            return print_help();
+        }
+        double period = std::atof(argv[3]);
+        if (period == 0)
+        {
+            yCError(COMPANION) << "Invalid period";
             return print_help();
         }
 
@@ -99,7 +109,7 @@ int Companion::cmdTopicTest(int argc, char *argv[])
         size_t count=0;
         std::vector<int8_t> blob;
         blob.resize(blobsize);
-        yCInfo(COMPANION) << "Publisher will use a payload of "<< blobsize << " bytes";
+        yCInfo(COMPANION) << "Publisher will use a payload of "<< blobsize << " bytes, period" << period << "s (" << (double)(blobsize)*8.0/period/1000000 << " Mb/s)";
 
         //publisher loop
         signal(SIGINT, signal_callback_handler);
@@ -131,10 +141,11 @@ int Companion::cmdTopicTest(int argc, char *argv[])
             rosPublisherPort_odom.write();
             rosPublisherPort_arr.write();
 
-            yarp::os::Time::delay(0.1);
+            yarp::os::Time::delay(period);
         }
 
         //cleanup
+        yCDebug(COMPANION) << "yarp topic-test completed";
         rosPublisherPort_odom.close();
         rosPublisherPort_arr.close();
         delete m_node;
@@ -202,6 +213,7 @@ int Companion::cmdTopicTest(int argc, char *argv[])
         }
 
         //cleanup
+        yCDebug(COMPANION) << "yarp topic-test completed";
         rosPublisherPort_odom.close();
         rosPublisherPort_arr.close();
         delete m_node;

@@ -15,6 +15,7 @@
 #include <yarp/os/Stamp.h>
 #include <yarp/os/TypedReaderCallback.h>
 #include <yarp/os/Value.h>
+#include <signal.h>
 
 using yarp::companion::impl::Companion;
 using yarp::os::Bottle;
@@ -32,6 +33,12 @@ using yarp::os::PortReader;
 using yarp::os::ConnectionReader;
 
 namespace {
+
+bool interrupt = false;
+void signal_callback_handler(int signum)
+{
+    interrupt = true;
+}
 
 class CompanionStatsInput
 {
@@ -190,7 +197,9 @@ int Companion::cmdStats(int argc, char *argv[])
     double total_bottles_received = 0;
     double total_bytes_received = 0;
     size_t periods=0;
-    while(true)
+
+    signal(SIGINT, signal_callback_handler);
+    while (!interrupt)
     {
         double curr_time= yarp::os::Time::now();
         if (curr_time- period_time >=1.0)
@@ -220,5 +229,6 @@ int Companion::cmdStats(int argc, char *argv[])
     delete localPort;
     delete inData;
 
+    yCDebug(COMPANION) << "yarp stats completed";
     return 0;
 }
