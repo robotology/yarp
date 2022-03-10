@@ -639,9 +639,6 @@ void DgramTwoWayStream::interrupt()
                 tmp.write(empty.bytes());
                 tmp.flush();
                 tmp.close();
-                if (happy) {
-                    yarp::os::SystemClock::delaySystem(0.25);
-                }
             }
             yCDebug(DGRAMTWOWAYSTREAM, "dgram interrupt done");
         }
