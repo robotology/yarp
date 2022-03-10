@@ -126,12 +126,12 @@ periodically check it.
 \section yarp_resources YARP resources
 \li <a href="http://github.com/robotology/yarp">YARP project on GitHub</a>
 \li <a href="http://github.com/robotology/yarp/issues">YARP issue tracker</a>
-\li <a href="http://wiki.icub.org/wiki/YARP">Wiki</a>
-\li <a href="http://wiki.icub.org/wiki/Robotcub-hackers">Mailing&nbsp;list</a>
+\li <a href="http://wiki.icub.eu/wiki/YARP">Wiki</a>
+\li <a href="http://wiki.icub.eu/wiki/Robotcub-hackers">Mailing&nbsp;list</a>
 
 \section yarp_related_links Related links
 \li <a href="https://github.com/robotology/">The Robotology organization on GitHub</a>
-\li <a href="http://www.icub.org">iCub family</a>
+\li <a href="http://www.icub.eu">iCub family</a>
 \li <a href="http://playerstage.sourceforge.net/">Player/Stage</a>
 \li <a href="http://www.orocos.org/">Orocos</a>
 \li <a href="http://www.ros.org">ROS</a>

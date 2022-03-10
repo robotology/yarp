@@ -26,27 +26,27 @@ namespace).
 
 - \ref yarpdataplayer "yarpdataplayer"
 - \ref yarpview "yarpdataplayer"
-- <a href="http://www.icub.org/software_documentation/group__icub__gui.html">iCubGui</a>
+- <a href="http://www.icub.eu/software_documentation/group__icub__gui.html">iCubGui</a>
 
 \section yarpdataplayer_example_howto How to run the Application
 
 This example uses the
-<a href="http://www.icub.org/software_documentation/group__icub__gui.html">iCubGui</a>
+<a href="http://www.icub.eu/software_documentation/group__icub__gui.html">iCubGui</a>
 from the
 <a href="https://github.com/robotology/icub-main">iCub Software Repository</a>
 Make sure you compiled \ref yarpview "yarpview" and
 \ref yarpdataplayer "yarpdataplayer" (in YARP) and the
-<a href="http://www.icub.org/software_documentation/group__icub__gui.html">iCubGui</a>
+<a href="http://www.icub.eu/software_documentation/group__icub__gui.html">iCubGui</a>
 in iCub) if you want to execute this tutorial on your computer.
 
 Download example sequence. This sequence was recorded while the iCub was
 tracking and grasping a red ball:
 
 Use this link if you **have opencv** installed (images are jpg compressed 46MB zipped).
- - <a href="http://www.icub.org/download/software/datasetplayer-demo/testData_20120803_095402.zip">`testData_20120803_095402.zip`</a>
+ - <a href="http://www.icub.eu/download/software/datasetplayer-demo/testData_20120803_095402.zip">`testData_20120803_095402.zip`</a>
 
 Use this link if you **do not have opencv** installed (images are ppm 642MB zipped).
- - <a href="http://www.icub.org/download/software/datasetplayer-demo/testData_20151023_100400.zip">`testData_20151023_100400.zip`</a>
+ - <a href="http://www.icub.eu/download/software/datasetplayer-demo/testData_20151023_100400.zip">`testData_20151023_100400.zip`</a>
 
 Unpack the content of the archive in a directory of your choice, e.g.
 `/home/\<user\>`. You should now have a directory called
