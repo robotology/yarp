@@ -68,15 +68,15 @@ public:
     {
         std::string os;
         std::string hostname;
+        std::string ip;
     };
 
     struct ProcessInfo
     {
+        MachineInfo owner_machine;
         std::string process_name;
         std::string arguments;
-        std::string os;
-        std::string hostname;
-        MachineInfo owner;
+        std::string process_fullname;
         int pid;
         int priority;
         int policy;
@@ -85,10 +85,10 @@ public:
 
     struct PortDetails
     {
-        std::string name;
+        PortInfo info;
         std::vector<ConnectedPortInfo> outputs;
         std::vector<ConnectedPortInfo> inputs;
-        ProcessInfo owner;
+        ProcessInfo owner_process;
 
         std::string toString() const;
     };
@@ -100,6 +100,9 @@ public:
     typedef  ports_detail_set::iterator ports_detail_iterator;
 
     typedef  std::vector<ConnectionDetails> connections_set;
+
+    typedef  std::vector<std::string> machines_list;
+    typedef  std::vector<std::string> processes_list;
 
 public:
     /**
@@ -115,13 +118,21 @@ public:
      * @param ports
      * @return
      */
+    static bool getMachinesList (const ports_detail_set& ports, machines_list& l);
+    static bool getProcessesList(const ports_detail_set& ports, processes_list& l);
+
     static bool getPortsList(ports_name_set& ports, bool complete=false);
+    static bool getPortsDetailedList(ports_detail_set& ports, bool complete = false);
     static bool getConnectionsList(connections_set& connections);
     static bool getPortInfo(const std::string& name, const ports_name_set& ports, PortInfo& p);
 
     static void filterConnectionListByName(const connections_set& in, connections_set& filtered_out, std::string src_name="*", std::string dst_name="*");
     static void filterConnectionListByIp(const connections_set& in, connections_set& filtered_out, std::string src_name = "*", std::string dst_name = "*");
     static void filterConnectionListByPortNumber(const connections_set& in, connections_set& filtered_out, std::string src_name = "*", std::string dst_name = "*");
+
+    static void filterPortsListByIp(const ports_detail_set& in, ports_detail_set& filtered_out, std::string ip = "*");
+    static void filterPortsListByProcess(const ports_detail_set& in, ports_detail_set& filtered_out, std::string fullprocess = "*");
+
 
     /**
      * @brief creatNetworkGraph

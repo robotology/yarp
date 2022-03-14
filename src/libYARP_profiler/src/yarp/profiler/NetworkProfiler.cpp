@@ -22,6 +22,74 @@ using namespace yarp::profiler::graph;
 
 NetworkProfiler::ProgressCallback* NetworkProfiler::progCallback = nullptr;
 
+bool NetworkProfiler::getMachinesList(const ports_detail_set& ports, machines_list& l)
+{
+    l.clear();
+    for (auto it = ports.begin(); it != ports.end(); it++)
+    {
+        std::string ip = it->owner_process.owner_machine.ip;
+        if (std::find(l.begin(), l.end(), ip) == l.end())
+        {
+            l.push_back(ip);
+        }
+    }
+    return true;
+}
+
+bool NetworkProfiler::getProcessesList(const ports_detail_set& ports, processes_list& l)
+{
+    l.clear();
+    for (auto it = ports.begin(); it != ports.end(); it++)
+    {
+        //int pid = it->owner.pid;
+        std::string pid = it->owner_process.process_fullname;
+        if (std::find(l.begin(), l.end(), pid) == l.end())
+        {
+            l.push_back(pid);
+        }
+    }
+    return true;
+}
+
+bool NetworkProfiler::getPortsDetailedList(ports_detail_set& ports, bool complete)
+{
+    ports_name_set port_names;
+    bool r = getPortsList(port_names, complete);
+    if (!r) return false;
+
+    ports_detail_set port_details;
+    for (auto it = port_names.begin(); it != port_names.end(); it++)
+    {
+        PortDetails details;
+        r = getPortDetails(it->name, details);
+        if (!r) { yError() << "getPortDetails of `" << it->name << "`failed"; }
+        ports.push_back(details);
+    }
+    return r;
+}
+
+void NetworkProfiler::filterPortsListByIp(const ports_detail_set& in, ports_detail_set& filtered_out, std::string ip)
+{
+    filtered_out.clear();
+    for (auto it = in.begin(); it != in.end(); it++)
+    {
+        if (ip != "*") {
+            if (it->owner_process.owner_machine.hostname == ip) { filtered_out.push_back(*it); }
+        }
+    }
+}
+
+void NetworkProfiler::filterPortsListByProcess(const ports_detail_set& in, ports_detail_set& filtered_out, std::string process_fullname)
+{
+    filtered_out.clear();
+    for (auto it = in.begin(); it != in.end(); it++)
+    {
+        if (process_fullname != "*") {
+            if (it->owner_process.process_fullname == process_fullname) { filtered_out.push_back(*it); }
+        }
+    }
+}
+
 void NetworkProfiler::filterConnectionListByName(const connections_set& in, connections_set& filtered_out, std::string src_name, std::string dst_name)
 {
     filtered_out.clear();
@@ -179,9 +247,9 @@ bool NetworkProfiler::getPortsList(ports_name_set &ports, bool complete) {
     return true;
 }
 
-bool NetworkProfiler::getPortDetails(const std::string& portName, PortDetails& info) {
+bool NetworkProfiler::getPortDetails(const std::string& portName, PortDetails& details) {
 
-    info.name = portName;
+    details.info.name = portName;
     Port ping;
     ping.open("...");
     ping.setAdminMode(true);
@@ -211,7 +279,7 @@ bool NetworkProfiler::getPortDetails(const std::string& portName, PortDetails& i
         } else {
             cnn.carrier = reply2.find("carrier").asString();
         }
-        info.outputs.push_back(cnn);
+        details.outputs.push_back(cnn);
     }
 
     // Getting input connections list
@@ -226,7 +294,7 @@ bool NetworkProfiler::getPortDetails(const std::string& portName, PortDetails& i
         ConnectedPortInfo cnn;
         cnn.port_name = reply.get(i).asString();
         if (cnn.port_name != ping.getName()) {
-            info.inputs.push_back(cnn);
+            details.inputs.push_back(cnn);
         }
     }
 
@@ -243,19 +311,23 @@ bool NetworkProfiler::getPortDetails(const std::string& portName, PortDetails& i
     if (!process) {
         yWarning()<<"Cannot find 'process' property of port "<<portName;
     } else {
-        info.owner.process_name = process->find("name").asString();
-        info.owner.arguments = process->find("arguments").asString();
-        info.owner.pid = process->find("pid").asInt32();
-        info.owner.priority = process->find("priority").asInt32();
-        info.owner.policy = process->find("policy").asInt32();
+        std::string process_str = process->toString();
+        details.owner_process.process_name = process->find("name").asString();
+        details.owner_process.arguments = process->find("arguments").asString();
+        details.owner_process.pid = process->find("pid").asInt32();
+        details.owner_process.priority = process->find("priority").asInt32();
+        details.owner_process.policy = process->find("policy").asInt32();
+        details.owner_process.process_fullname = details.owner_process.process_name + "(" + std::to_string(details.owner_process.pid) + ")";
     }
 
     Property* platform = reply.find("platform").asDict();
     if (!platform) {
         yWarning()<<"Cannot find 'platform' property of port "<<portName;
     } else {
-        info.owner.os = platform->find("os").asString();
-        info.owner.hostname = platform->find("hostname").asString();
+        std::string platform_str = platform->toString();
+        details.owner_process.owner_machine.os = platform->find("os").asString();
+        details.owner_process.owner_machine.hostname = platform->find("hostname").asString();
+        details.owner_process.owner_machine.ip = platform->find("hostname").asString();
     }
 
     ping.close();
@@ -263,7 +335,7 @@ bool NetworkProfiler::getPortDetails(const std::string& portName, PortDetails& i
 }
 
 
-bool NetworkProfiler::creatNetworkGraph(ports_detail_set details, yarp::profiler::graph::Graph& graph) {
+bool NetworkProfiler::creatNetworkGraph(ports_detail_set details_set, yarp::profiler::graph::Graph& graph) {
 
     // adding the ports and processor nodes
     if (NetworkProfiler::progCallback) {
@@ -272,25 +344,25 @@ bool NetworkProfiler::creatNetworkGraph(ports_detail_set details, yarp::profiler
 
     ports_detail_iterator itr;
     unsigned int itr_count = 0;
-    for(itr = details.begin(); itr!=details.end(); itr++) {
-        PortDetails info = (*itr);
+    for(itr = details_set.begin(); itr!= details_set.end(); itr++) {
+        PortDetails details = (*itr);
 
         // port node
-        PortVertex* port = new PortVertex(info.name);
-        if (!info.inputs.size() && !info.outputs.size()) {
+        PortVertex* port = new PortVertex(details.info.name);
+        if (!details.inputs.size() && !details.outputs.size()) {
             port->property.put("orphan", true);
         }
         graph.insert(*port);
 
         //process node (owner)
-        ProcessVertex* process = new ProcessVertex(info.owner.pid, info.owner.hostname);
+        ProcessVertex* process = new ProcessVertex(details.owner_process.pid, details.owner_process.owner_machine.hostname);
         //prop.clear();
-        process->property.put("name", info.owner.process_name);
-        process->property.put("arguments", info.owner.arguments);
-        process->property.put("hostname", info.owner.hostname);
-        process->property.put("priority", info.owner.priority);
-        process->property.put("policy", info.owner.policy);
-        process->property.put("os", info.owner.os);
+        process->property.put("name", details.owner_process.process_name);
+        process->property.put("arguments", details.owner_process.arguments);
+        process->property.put("hostname", details.owner_process.owner_machine.hostname);
+        process->property.put("priority", details.owner_process.priority);
+        process->property.put("policy", details.owner_process.policy);
+        process->property.put("os", details.owner_process.owner_machine.os);
         process->property.put("hidden", false);
         auto itrVert=graph.insert(*process);
         // create connection between ports and its process
@@ -300,29 +372,29 @@ bool NetworkProfiler::creatNetworkGraph(ports_detail_set details, yarp::profiler
 
 
         //machine node (owner of the process)
-        MachineVertex* machine = new MachineVertex(info.owner.os, info.owner.hostname);
+        MachineVertex* machine = new MachineVertex(details.owner_process.owner_machine.os, details.owner_process.owner_machine.hostname);
         graph.insert(*machine);
         //todo do the same done for the process.
         process->setOwner(machine);
 
-        if (!info.inputs.size() && !info.outputs.size()) {
+        if (!details.inputs.size() && !details.outputs.size()) {
             graph.insertEdge(*process, *port, Property("(type ownership) (dir unknown)"));
         }
 
         // calculate progress
         if(NetworkProfiler::progCallback) {
-            NetworkProfiler::progCallback->onProgress((unsigned int) (++itr_count/((float)(details.size()*2)) * 100.0) );
+            NetworkProfiler::progCallback->onProgress((unsigned int) (++itr_count/((float)(details_set.size()*2)) * 100.0) );
         }
     }
 
 
     // create connection between ports
-    for(itr = details.begin(); itr!=details.end(); itr++) {
-        PortDetails info = (*itr);
+    for(itr = details_set.begin(); itr!= details_set.end(); itr++) {
+        PortDetails details = (*itr);
         // find the current port vertex in the graph
-        pvertex_iterator vi1 = graph.find(PortVertex(info.name));
+        pvertex_iterator vi1 = graph.find(PortVertex(details.info.name));
         yAssert(vi1 != graph.vertices().end());
-        for(auto cnn : info.outputs) {
+        for(auto cnn : details.outputs) {
             pvertex_iterator vi2 = graph.find(PortVertex(cnn.port_name));
             if(vi2 != graph.vertices().end()) {
                 //yInfo()<<"connecting "<<(*vi1)->property.find("name").asString()<<"->"<<(*vi2)->property.find("name").asString();
@@ -336,7 +408,7 @@ bool NetworkProfiler::creatNetworkGraph(ports_detail_set details, yarp::profiler
         }
         // calculate progress
         if(NetworkProfiler::progCallback) {
-            NetworkProfiler::progCallback->onProgress((unsigned int) (++itr_count/((float)(details.size()*2)) * 100.0) );
+            NetworkProfiler::progCallback->onProgress((unsigned int) (++itr_count/((float)(details_set.size()*2)) * 100.0) );
         }
     }
     if (NetworkProfiler::progCallback) {
@@ -602,7 +674,9 @@ bool NetworkProfiler::getPortmonitorParams(std::string portName, yarp::os::Bottl
 std::string NetworkProfiler::PortDetails::toString() const
 {
     std::ostringstream str;
-    str << "port name: " << name << std::endl;
+    str << "port name: " << info.name << std::endl;
+    str << "port ip: " << info.ip << std::endl;
+    str << "port port number: " << info.port_number << std::endl;
     str << "outputs:" << std::endl;
     std::vector<ConnectedPortInfo>::const_iterator itr;
     for (itr = outputs.begin(); itr != outputs.end(); itr++) {
@@ -613,12 +687,12 @@ std::string NetworkProfiler::PortDetails::toString() const
         str << "   + " << (*itr).port_name << " (" << (*itr).carrier << ")" << std::endl;
     }
     str << "owner:" << std::endl;
-    str << "   + name:      " << owner.process_name << std::endl;
-    str << "   + arguments: " << owner.arguments << std::endl;
-    str << "   + hostname:  " << owner.hostname << std::endl;
-    str << "   + priority:  " << owner.priority << std::endl;
-    str << "   + policy:    " << owner.policy << std::endl;
-    str << "   + os:        " << owner.os << std::endl;
-    str << "   + pid:       " << owner.pid << std::endl;
+    str << "   + name:      " << owner_process.process_name << std::endl;
+    str << "   + arguments: " << owner_process.arguments << std::endl;
+    str << "   + hostname:  " << owner_process.owner_machine.hostname << std::endl;
+    str << "   + priority:  " << owner_process.priority << std::endl;
+    str << "   + policy:    " << owner_process.policy << std::endl;
+    str << "   + os:        " << owner_process.owner_machine.os << std::endl;
+    str << "   + pid:       " << owner_process.pid << std::endl;
     return str.str();
 }
