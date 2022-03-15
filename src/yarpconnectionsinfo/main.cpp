@@ -39,9 +39,11 @@ int main(int argc, char *argv[])
     std::string to_dotfile = p.check("to_dotfile", yarp::os::Value(std::string("")), "").asString();
     bool display_yarprun_processes = false;
     bool display_log_ports = false;
+    bool display_clock_ports = false;
     bool display_unconnected_ports = false;
     if (p.check("display_yarprun_processes")) { display_yarprun_processes = true;}
     if (p.check("display_log_ports")) { display_log_ports = true; }
+    if (p.check("display_clock_ports")) { display_clock_ports = true; }
     if (p.check("display_unconnnected_ports")) { display_unconnected_ports = true; }
 
     yarp::profiler::NetworkProfiler prof;
@@ -132,10 +134,17 @@ int main(int argc, char *argv[])
                         if (found != std::string::npos) { continue; }
                     }
 
+                    //this option skips all clock ports
+                    if (display_clock_ports == false)
+                    {
+                        std::size_t found = ports_it->info.name.find("/clock:i");
+                        if (found != std::string::npos) { continue; }
+                    }
+
                     //this option skips all unconnected ports
                     if (display_unconnected_ports == false)
                     {
-                        if (ports_it->inputs.size() == 0 ||
+                        if (ports_it->inputs.size() == 0 &&
                             ports_it->outputs.size() == 0)
                         {
                             continue;
@@ -166,8 +175,26 @@ int main(int argc, char *argv[])
                     foundd != std::string::npos) { continue; }
             }
 
+            //this option skips all clock ports
+            if (display_clock_ports == false)
+            {
+                std::size_t founds = connection_it->src.name.find("/clock:i");
+                std::size_t foundd = connection_it->dst.name.find("/clock:i");
+                if (founds != std::string::npos ||
+                    foundd != std::string::npos) {
+                    continue;
+                }
+            }
+
+            std::string protocol_name = connection_it->carrier; //"unknown"
+            std::string color_connection = "black";
+            if      (protocol_name == "tcp") { color_connection = "blue";}
+            else if (protocol_name == "udp") { color_connection = "red"; }
+            else if (protocol_name == "fast_tcp") { color_connection = "green"; }
+            else if (protocol_name == "mjpeg") { color_connection = "darkorange2"; }
+
             file << "\"" << connection_it->src.name <<  "\"" << " -> "
-                 << "\"" << connection_it->dst.name <<  "\"" << " [label = \"tcp\" color = blue]" << endl;
+                 << "\"" << connection_it->dst.name <<  "\"" << " [label = \""<< protocol_name << "\" color = "<< color_connection <<"]" << endl;
         }
 
         file << "}" << endl;
