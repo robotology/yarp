@@ -25,6 +25,8 @@ int main(int argc, char *argv[])
     std::string from_portname = p.check("from_portname",yarp::os::Value(std::string("*")), "").asString();
     std::string to_portname = p.check("to_portname",yarp::os::Value(std::string("*")), "").asString();
     std::string to_dotfile = p.check("to_dotfile", yarp::os::Value(std::string("")), "").asString();
+    bool display_yarprun_processes = false;
+    if (p.check("display_yarprun_processes")) { display_yarprun_processes = true;}
 
     yarp::profiler::NetworkProfiler prof;
     yarp::profiler::NetworkProfiler::connections_set conns_orig;
@@ -94,6 +96,12 @@ int main(int argc, char *argv[])
             size_t process_counter = 0;
             for (auto process_name_it = pl.begin(); process_name_it != pl.end(); process_name_it++, process_counter++)
             {
+                if (display_yarprun_processes==false)
+                {
+                    std::size_t found = process_name_it->find("yarprun");
+                    if (found != std::string::npos) { process_counter--; continue;}
+                }
+
                 file << "subgraph cluster_process" << process_counter<<" {" << endl;
                 prof.filterPortsListByProcess(detailed_ports_filtered_by_ip, detailed_ports_filtered_by_ip_and_process, *process_name_it);
 
