@@ -597,7 +597,7 @@ if(YARP_COMPILE_yarpmanager-console OR YARP_COMPILE_yarpmanager OR YARP_COMPILE_
 endif()
 
 set(YARP_COMPILE_libYARP_profiler OFF)
-if(YARP_COMPILE_yarpviz OR YARP_COMPILE_yarpmanager)
+if(YARP_COMPILE_yarpviz OR YARP_COMPILE_yarpmanager OR YARP_COMPILE_yarpconnectionsinfo)
   set(YARP_COMPILE_libYARP_profiler ON)
 endif()
 

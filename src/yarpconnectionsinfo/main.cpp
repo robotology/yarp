@@ -192,6 +192,7 @@ int main(int argc, char *argv[])
             else if (protocol_name == "udp") { color_connection = "red"; }
             else if (protocol_name == "fast_tcp") { color_connection = "green"; }
             else if (protocol_name == "mjpeg") { color_connection = "darkorange2"; }
+            else if (protocol_name == "tcpros") { color_connection = "darkgray"; }
 
             file << "\"" << connection_it->src.name <<  "\"" << " -> "
                  << "\"" << connection_it->dst.name <<  "\"" << " [label = \""<< protocol_name << "\" color = "<< color_connection <<"]" << endl;
