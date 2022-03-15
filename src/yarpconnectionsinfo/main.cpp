@@ -18,6 +18,18 @@ int main(int argc, char *argv[])
         p.fromCommand(argc, argv);
     }
 
+    std::vector <string> color_map;
+    color_map.push_back ("cadetblue1"); //0
+    color_map.push_back ("antiquewhite1");
+    color_map.push_back ("darkolivegreen2");
+    color_map.push_back ("gold2");
+    color_map.push_back ("darkorange2");
+    color_map.push_back ("cadetblue4");
+    color_map.push_back ("coral2");
+    color_map.push_back ("firebrick3");
+    color_map.push_back ("forestgreen");
+    color_map.push_back ("cornflowerblue");
+
     std::string from_ip = p.check("from_ip",yarp::os::Value(std::string("*")), "").asString();
     std::string to_ip = p.check("to_ip",yarp::os::Value(std::string("*")), "").asString();
     std::string from_portnumber = p.check("from_portnumber",yarp::os::Value(std::string("*")), "").asString();
@@ -26,7 +38,11 @@ int main(int argc, char *argv[])
     std::string to_portname = p.check("to_portname",yarp::os::Value(std::string("*")), "").asString();
     std::string to_dotfile = p.check("to_dotfile", yarp::os::Value(std::string("")), "").asString();
     bool display_yarprun_processes = false;
+    bool display_log_ports = false;
+    bool display_unconnected_ports = false;
     if (p.check("display_yarprun_processes")) { display_yarprun_processes = true;}
+    if (p.check("display_log_ports")) { display_log_ports = true; }
+    if (p.check("display_unconnnected_ports")) { display_unconnected_ports = true; }
 
     yarp::profiler::NetworkProfiler prof;
     yarp::profiler::NetworkProfiler::connections_set conns_orig;
@@ -88,6 +104,7 @@ int main(int argc, char *argv[])
 
         file << "subgraph cluster_net{" << endl;
         size_t machine_counter = 0;
+        size_t color_map_index = 0;
         for (auto machines_ip_it = ml.begin(); machines_ip_it != ml.end(); machines_ip_it++, machine_counter++)
         {
             prof.filterPortsListByIp(detailed_ports, detailed_ports_filtered_by_ip, *machines_ip_it);
@@ -96,7 +113,8 @@ int main(int argc, char *argv[])
             size_t process_counter = 0;
             for (auto process_name_it = pl.begin(); process_name_it != pl.end(); process_name_it++, process_counter++)
             {
-                if (display_yarprun_processes==false)
+                //this option skips all yarprun processes
+                if (display_yarprun_processes == false)
                 {
                     std::size_t found = process_name_it->find("yarprun");
                     if (found != std::string::npos) { process_counter--; continue;}
@@ -107,18 +125,47 @@ int main(int argc, char *argv[])
 
                 for (auto ports_it = detailed_ports_filtered_by_ip_and_process.begin(); ports_it != detailed_ports_filtered_by_ip_and_process.end(); ports_it++)
                 {
+                    //this option skips all logger ports
+                    if (display_log_ports == false)
+                    {
+                        std::size_t found = ports_it->info.name.find("/log");
+                        if (found != std::string::npos) { continue; }
+                    }
+
+                    //this option skips all unconnected ports
+                    if (display_unconnected_ports == false)
+                    {
+                        if (ports_it->inputs.size() == 0 ||
+                            ports_it->outputs.size() == 0)
+                        {
+                            continue;
+                        }
+                    }
+
                     file <<  "\"" << ports_it->info.name <<  "\";" << endl;
                 }
                 file << "label = \""<< *process_name_it << "\";" << endl;
                 file << "}" << endl;
             }
             file << "label = \"" << *machines_ip_it << "\";" << endl;
+            file << "style = filled" << endl;
+            file << "color = " << color_map[color_map_index++] << endl;
+            if (color_map_index >=10) color_map_index=0;
             file << "}" << endl;
         }
         file << "}" << endl;
 
         for (auto connection_it = conns.begin(); connection_it != conns.end(); connection_it++)
         {
+            //this option skips all logger ports
+            if (display_log_ports == false)
+            {
+                std::size_t founds = connection_it->src.name.find("/log");
+                std::size_t foundd = connection_it->dst.name.find("/log");
+                if (founds != std::string::npos ||
+                    foundd != std::string::npos) { continue; }
+            }
+
             file << "\"" << connection_it->src.name <<  "\"" << " -> "
                  << "\"" << connection_it->dst.name <<  "\"" << " [label = \"tcp\" color = blue]" << endl;
         }
