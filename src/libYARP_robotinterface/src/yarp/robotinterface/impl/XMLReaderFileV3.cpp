@@ -57,7 +57,7 @@ public:
     yarp::robotinterface::ActionList readActionsTag(TiXmlElement* actionsElem, yarp::robotinterface::XMLReaderResult& result);
 
     bool PerformInclusions(TiXmlNode* pParent, const std::string& parent_fileName, const std::string& current_path);
-
+    void ReplaceAllStrings(std::string& str, const std::string& from, const std::string& to);
     XMLReaderFileV3* const parent;
 
 #ifdef USE_DTD
@@ -65,7 +65,7 @@ public:
 #endif
 
     bool verbose_output;
-    const yarp::os::Searchable* config;
+    yarp::os::Property config;
     std::string curr_filename;
     unsigned int minorVersion;
     unsigned int majorVersion;
@@ -252,9 +252,16 @@ yarp::robotinterface::XMLReaderResult yarp::robotinterface::impl::XMLReaderFileV
     result.robot.build() = static_cast<unsigned>(tmp);
 #endif
 
-    if (robotElem->QueryStringAttribute("portprefix", &result.robot.portprefix()) != TIXML_SUCCESS) {
-        SYNTAX_WARNING(robotElem->Row()) << R"("robot" element should contain the "portprefix" attribute. Using "name" attribute)";
-        result.robot.portprefix() = result.robot.name();
+    // If portprefix is already present in config we use that one
+    if (!config.check("portprefix"))
+    {
+        if (robotElem->QueryStringAttribute("portprefix", &result.robot.portprefix()) != TIXML_SUCCESS) {
+            SYNTAX_WARNING(robotElem->Row()) << R"("robot" element should contain the "portprefix" attribute. Using "name" attribute)";
+            result.robot.portprefix() = result.robot.name();
+        }
+        config.put("portprefix",result.robot.portprefix());
+    } else {
+        result.robot.portprefix() = config.find("portprefix").asString();
     }
 
     // FIXME DTD >= 4 Make this the default behaviour
@@ -410,6 +417,17 @@ yarp::robotinterface::ParamList yarp::robotinterface::impl::XMLReaderFileV3::Pri
     return yarp::robotinterface::ParamList();
 }
 
+void yarp::robotinterface::impl::XMLReaderFileV3::Private::ReplaceAllStrings(std::string& str, const std::string& from, const std::string& to)
+{
+    if(from.empty())
+        return;
+    size_t start_pos = 0;
+    while((start_pos = str.find(from, start_pos)) != std::string::npos) {
+        str.replace(start_pos, from.length(), to);
+        start_pos += to.length();
+    }
+}
+
 
 yarp::robotinterface::Param yarp::robotinterface::impl::XMLReaderFileV3::Private::readParamTag(TiXmlElement* paramElem,
                                                                                                yarp::robotinterface::XMLReaderResult& result)
@@ -437,13 +455,23 @@ yarp::robotinterface::Param yarp::robotinterface::impl::XMLReaderFileV3::Private
         return yarp::robotinterface::Param();
     }
 
+    // First process extern-name
     std::string extern_name;
-    if (paramElem->QueryStringAttribute("extern-name", &extern_name) == TIXML_SUCCESS && config && config->check(extern_name)) {
+    if (paramElem->QueryStringAttribute("extern-name", &extern_name) == TIXML_SUCCESS && config.check(extern_name)) {
         // FIXME Check DTD >= 3.1
-        param.value() = config->find(extern_name).toString();
+        param.value() = config.find(extern_name).toString();
     } else {
         param.value() = valueText;
     }
+
+    // After process ${portprefix}
+    std::string paramValueBefore = param.value();
+    std::string paramValueAfter = paramValueBefore;
+    std::string portprefix = config.find("portprefix").toString();
+    ReplaceAllStrings(paramValueAfter, "${portprefix}", portprefix);
+    param.value() = paramValueAfter;
+
+
 
     // yDebug() << param;
     return param;
@@ -732,10 +760,10 @@ yarp::robotinterface::XMLReaderResult yarp::robotinterface::impl::XMLReaderFileV
                                                                                                     const yarp::os::Searchable& config,
                                                                                                     bool verb)
 {
-    mPriv->config = &config;
+    mPriv->config.fromString(config.toString());
     mPriv->verbose_output = verb;
     auto ret = mPriv->readRobotFromFile(filename);
-    mPriv->config = nullptr;
+    mPriv->config.clear();
     return ret;
 }
 
@@ -743,10 +771,10 @@ yarp::robotinterface::XMLReaderResult yarp::robotinterface::impl::XMLReaderFileV
                                                                                                       const yarp::os::Searchable& config,
                                                                                                       bool verb)
 {
-    mPriv->config = &config;
+    mPriv->config.fromString(config.toString());
     mPriv->verbose_output = verb;
     auto ret = mPriv->readRobotFromString(xmlString);
-    mPriv->config = nullptr;
+    mPriv->config.clear();
     return ret;
 }
 
