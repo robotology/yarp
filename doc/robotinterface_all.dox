@@ -1,0 +1,49 @@
+/**
+\defgroup robointerface_all yarp::robotinterface YARP RobotInterface library
+
+The `libYARP_robotinterface` library is useful to programatically launch YARP devices
+from C++ code using the same xml files used with the \ref yarprobotinterface "yarprobotinterface tool",
+that are described in \ref yarp_robotinterface_xml_config_files .
+
+An example of use of this library is:
+\code
+// Load the XML configuration file
+std::string pathToXmlConfigurationFile = ...;
+yarp::robotinterface::XMLReader reader;
+yarp::robotinterface::XMLReaderResult result = reader.getRobotFromFile(pathToXmlConfigurationFile);
+
+if (!result.isParsingSuccessful) {
+    // Handle error
+    // ...
+}
+
+// Optional: specify externally created devices to which robotinterface's devices can attach
+// It is assumed that the devices contained in externalDriverList will remain valid and open until
+// result.robot.enterPhase(yarp::robotinterface::ActionPhaseShutdown) will be called
+// bool ok = result.robot.setExternalDevices(externalDriverList);
+
+// Enter the startup phase, that will open all the devices and  call attach if necessary
+bool ok = result.robot.enterPhase(yarp::robotinterface::ActionPhaseStartup);
+
+if (!ok) {
+    // Handle error
+    // ...
+}
+
+
+// At this point, the system is running and the thread that called the
+// enterPhase methods does not need to do anything else
+
+// This code need to be executed when you want to close the robot
+// Close robot, that will close all the devices and  call detach if necessary
+ok = result.robot.enterPhase(yarp::robotinterface::ActionPhaseInterrupt1);
+ok = ok && result.robot.enterPhase(yarp::robotinterface::ActionPhaseShutdown);
+if (!ok) {
+    // Handle error
+    // ...
+}
+\endcode
+
+
+*/
+
