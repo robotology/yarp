@@ -10,7 +10,9 @@
 
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/dev/IOdometry2D.h>
+#include "Odometry2DServerImpl.h"
 #include <yarp/dev/WrapperSingle.h>
+#include <yarp/os/RpcServer.h>
 
 #define DEFAULT_THREAD_PERIOD 0.02 //s
 
@@ -79,7 +81,8 @@
 class Odometry2D_nws_yarp :
         public yarp::os::PeriodicThread,
         public yarp::dev::DeviceDriver,
-        public yarp::dev::WrapperSingle
+        public yarp::dev::WrapperSingle,
+        public yarp::os::PortReader
 {
 public:
     Odometry2D_nws_yarp();
@@ -99,15 +102,23 @@ public:
     void run() override;
 
 private:
+    //thrift
+    IOdometry2DRPCd  m_RPC;
+
+    //rpc port
+    bool read(yarp::os::ConnectionReader& connection) override;
+
     //buffered ports
     yarp::os::BufferedPort<yarp::dev::OdometryData> m_port_odometry;
     yarp::os::BufferedPort<yarp::os::Bottle> m_port_velocity;
     yarp::os::BufferedPort<yarp::os::Bottle> m_port_odometer;
+    yarp::os::RpcServer                      m_rpcPort;
 
     //yarp streaming data
     std::string m_odometerStreamingPortName;
     std::string m_odometryStreamingPortName;
     std::string m_velocityStreamingPortName;
+    std::string m_rpcPortName;
     std::string m_deviceName;
     size_t m_stampCount{0};
     yarp::dev::OdometryData m_oldOdometryData{0,0,0,0,0,0,0,0,0};

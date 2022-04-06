@@ -18,7 +18,12 @@ if(NOT SKIP_odometry2D_nws_yarp)
     PRIVATE
       Odometry2D_nws_yarp.cpp
       Odometry2D_nws_yarp.h
+      Odometry2DServerImpl.cpp
+      Odometry2DServerImpl.h
   )
+
+  target_sources(yarp_odometry2D_nws_yarp PRIVATE $<TARGET_OBJECTS:IOdometry2DMsgs>)
+  target_include_directories(yarp_odometry2D_nws_yarp PRIVATE $<TARGET_PROPERTY:IOdometry2DMsgs,INTERFACE_INCLUDE_DIRECTORIES>)
 
   target_link_libraries(yarp_odometry2D_nws_yarp
     PRIVATE

@@ -124,6 +124,14 @@ bool Odometry2D_nws_yarp::open(yarp::os::Searchable &config)
         }
     }
 
+    //open rpc port
+    if (!m_rpcPort.open(m_rpcPortName))
+    {
+        yCError(ODOMETRY2D_NWS_YARP, "Failed to open port %s", m_rpcPortName.c_str());
+        return false;
+    }
+    m_rpcPort.setReader(*this);
+
     if (!m_port_odometer.open(m_odometerStreamingPortName))
     {
         yCError(ODOMETRY2D_NWS_YARP, "failed to open port %s", m_odometerStreamingPortName.c_str());
@@ -214,4 +222,15 @@ bool Odometry2D_nws_yarp::close()
 {
     yCTrace(ODOMETRY2D_NWS_YARP, "Odometry2D_nws_yarp::Close");
     return detach();
+}
+
+bool Odometry2D_nws_yarp::read(yarp::os::ConnectionReader& connection)
+{
+    bool b = m_RPC.read(connection);
+    if (b)
+    {
+        return true;
+    }
+    yCDebug(ODOMETRY2D_NWS_YARP) << "read() Command failed";
+    return false;
 }
