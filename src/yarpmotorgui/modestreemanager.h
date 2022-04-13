@@ -43,6 +43,8 @@ signals:
 
     void sig_jointClicked(int partIndex, int jointIndex);
 
+    void sig_partDoubleClicked(int index);
+
 private slots:
 
     void onTabChanged(int index);
@@ -56,6 +58,8 @@ private slots:
     void onJointIdleFromTree(int partIndex, int jointIndex);
 
     void onJointPIDFromTree(int partIndex, int jointIndex);
+
+    void onPartDoubleClicked(int partIndex);
 
 private:
 

@@ -32,6 +32,8 @@ class RobotWidgetTree : public CustomGroupBox
 
 public:
 
+    explicit RobotWidgetTree(QWidget *parent = nullptr);
+
     void setIcons(const QIcon& okIcon, const QIcon& warningIcon);
 
     void addPart(const std::string &partName, int partIndex, PartItemTree* partTreeWidget);
@@ -39,6 +41,17 @@ public:
     void updateRobotPart(int index, const QVector<JointItem::JointState>& modes);
 
     void resizeEvent(QResizeEvent *event) override;
+
+signals:
+
+    void sig_partDoubleClicked(int index);
+
+private slots:
+
+    void onRobotTitleDoubleClick();
+
+    void onPartTitleDoubleClick(int index);
+
 };
 
 #endif // ROBOTWIDGETTREE_H

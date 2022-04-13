@@ -130,6 +130,7 @@ private slots:
     void onSetTrqSliderOptionMW(int, double);
     void onJointClicked(int partIndex, int jointIndex);
     void onGlowTimerExpired();
+    void onPartDoubleClicked(int partIndex);
 
 signals:
     void sig_enableControlVelocity(bool);

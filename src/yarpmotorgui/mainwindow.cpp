@@ -321,6 +321,7 @@ MainWindow::MainWindow(QWidget *parent) :
     m_ui->treeWidgetContainer->setLayout(lay);
     m_modesTreeManager = new ModesTreeManager(lay, m_ui->treeWidgetContainer);
     connect(m_modesTreeManager, SIGNAL(sig_jointClicked(int,int)), this, SLOT(onJointClicked(int,int)));
+    connect(m_modesTreeManager, SIGNAL(sig_partDoubleClicked(int)), this, SLOT(onPartDoubleClicked(int)));
 
     m_timer.setInterval(200);
     m_timer.setSingleShot(false);
@@ -543,6 +544,15 @@ void MainWindow::onJointClicked(int partIndex, int jointIndex)
 void MainWindow::onGlowTimerExpired()
 {
     m_glowEffect->setEnabled(false);
+}
+
+void MainWindow::onPartDoubleClicked(int partIndex)
+{
+    if (!m_tabPanel){
+        return;
+    }
+
+    m_tabPanel->setCurrentIndex(partIndex);
 }
 
 void MainWindow::closeEvent(QCloseEvent *event)

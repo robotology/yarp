@@ -52,6 +52,12 @@ public:
 
     void enableCollapseAllContextMenu(bool enable);
 
+    bool visible() const;
+
+signals:
+
+    void sig_titleDoubleClick();
+
 private slots:
     void onArrowPressed(bool);
 

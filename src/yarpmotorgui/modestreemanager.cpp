@@ -98,6 +98,11 @@ void ModesTreeManager::onJointPIDFromTree(int partIndex, int jointIndex)
     m_indexToPartMap[partIndex].partItem->getJointWidget(jointIndex)->showPID();
 }
 
+void ModesTreeManager::onPartDoubleClicked(int partIndex)
+{
+    emit sig_partDoubleClicked(partIndex);
+}
+
 void ModesTreeManager::addRobotInList(const std::string &robotName)
 {
     auto* robot_top = new QTreeWidgetItem();
@@ -117,6 +122,8 @@ void ModesTreeManager::addRobotInWidget(const std::string &robotName)
     newRobot->setIcons(m_okIcon, m_warningIcon);
 
     m_robotMapWidget[robotName] = newRobot;
+
+    connect(newRobot, SIGNAL(sig_partDoubleClicked(int)), this, SLOT(onPartDoubleClicked(int)));
 }
 
 void ModesTreeManager::addRobotPartInList(const std::string &robotName, const std::string &partName, int partIndex, PartItem *part)

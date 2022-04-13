@@ -6,7 +6,13 @@
 
 #include "robotWidgetTree.h"
 #include "yarpmotorgui.h"
+#include "yarp/os/LogStream.h"
 
+RobotWidgetTree::RobotWidgetTree(QWidget *parent)
+    : CustomGroupBox(parent)
+{
+    connect(this, SIGNAL(sig_titleDoubleClick()), this, SLOT(onRobotTitleDoubleClick()));
+}
 
 void RobotWidgetTree::setIcons(const QIcon &okIcon, const QIcon &warningIcon)
 {
@@ -23,6 +29,8 @@ void RobotWidgetTree::addPart(const std::string &partName, int partIndex, PartIt
     this->addWidget(newPart);
     m_indexToPartMap[partIndex].partWidget = partTreeWidget;
     m_indexToPartMap[partIndex].partWidgetParent = newPart;
+
+    connect(newPart, &CustomGroupBox::sig_titleDoubleClick, this, [this, partIndex]{onPartTitleDoubleClick(partIndex);});
 }
 
 void RobotWidgetTree::updateRobotPart(int index, const QVector<JointItem::JointState> &modes)
@@ -66,4 +74,14 @@ void RobotWidgetTree::resizeEvent(QResizeEvent *event)
 
     QWidget::resizeEvent(event);
 
+}
+
+void RobotWidgetTree::onRobotTitleDoubleClick()
+{
+    toggle(!visible());
+}
+
+void RobotWidgetTree::onPartTitleDoubleClick(int index)
+{
+    emit sig_partDoubleClicked(index);
 }

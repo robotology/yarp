@@ -103,6 +103,11 @@ void CustomGroupBox::enableCollapseAllContextMenu(bool enable)
     }
 }
 
+bool CustomGroupBox::visible() const
+{
+    return m_visible;
+}
+
 void CustomGroupBox::onArrowPressed(bool)
 {
     toggle(!m_visible);
@@ -110,7 +115,7 @@ void CustomGroupBox::onArrowPressed(bool)
 
 void CustomGroupBox::onTitleDoubleClick()
 {
-    toggle(!m_visible);
+    emit sig_titleDoubleClick();
 }
 
 void CustomGroupBox::onExpandAll()
