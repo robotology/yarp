@@ -26,7 +26,10 @@
 * if save_mode == "overwrite_file", the output file is written every time the stop() method is called or when the module terminates.
 * If the file already exists, it will be overwritten with the new data.
 *
-* if save_mode = "rename_file", the output file is written every time the stop() method is called or when the module terminates.
+* if save_mode = "rename_file", the output file is written to a NEW file every time the stop() method is called or when the module terminates.
+* The file name is modified, using an incremental counter appended at the end of the file name.
+*
+* if save_mode = "break_file", the output file is written to a NEW file every time a yarp::sig::sound is received or when the module terminates.
 * The file name is modified, using an incremental counter appended at the end of the file name.
 *
 * This device driver derives from AudioPlayerDeviceBase base class. Please check its documentation for additional details.
@@ -76,7 +79,8 @@ private:
     {
         save_overwrite_file = 0,
         save_append_data =1,
-        save_rename_file =2
+        save_rename_file =2,
+        save_break_file =3
     } m_save_mode = save_overwrite_file;
 
     void save_to_file();
