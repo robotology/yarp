@@ -99,19 +99,23 @@ yarp::os::Things & Sound_marker::update(yarp::os::Things &thing)
         yCWarning(SOUND_MARKER, "expected type Sound but got wrong data type!\n");
         return thing;
     }
-    m_s2 = *s;
 
-    size_t ss_size = m_s2.getSamples();
-    size_t ch_size = m_s2.getChannels();
+    size_t ss_size = s->getSamples();
+    size_t ch_size = s->getChannels();
+    m_s2 = *s;
     m_s2.resize(ss_size+5, ch_size);
 
     for (size_t c = 0; c < ch_size; c++)
     {
+        for (size_t i = 0; i < ss_size; i++)
+        {
+            m_s2.set(s->get(i,c), i, c);
+        }
         for (size_t i = ss_size; i < ss_size+5; i++)
         {
-            m_s2.setSafe(65000,i,c);
+            m_s2.set(32000,i,c);
         }
-        m_s2.setSafe(0, 0, c);
+        m_s2.set(-32000, 0, c);
     }
 
     //send data

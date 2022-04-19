@@ -68,7 +68,7 @@ bool audioToFileDevice::open(yarp::os::Searchable &config)
     else if (m_save_mode == save_mode_t::save_append_data)    { yCInfo(AUDIOTOFILE) << "append_data mode selected. File will be saved on exit only"; }
     else if (m_save_mode == save_mode_t::save_rename_file)    { yCInfo(AUDIOTOFILE) << "rename_file mode selected. File will be saved both on exit and on stop"; }
     else if (m_save_mode == save_mode_t::save_break_file)     { yCInfo(AUDIOTOFILE) << "break_file mode selected."; }
-    else                                                      { return false; } 
+    else                                                      { return false; }
 
     return true;
 }
