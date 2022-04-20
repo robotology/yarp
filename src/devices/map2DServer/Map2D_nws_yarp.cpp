@@ -8,18 +8,12 @@
 #include <yarp/os/Log.h>
 #include <yarp/os/LogComponent.h>
 #include <yarp/os/LogStream.h>
-#include <yarp/os/Node.h>
-#include <yarp/os/Publisher.h>
-#include <yarp/os/Subscriber.h>
 
 #include <yarp/dev/GenericVocabs.h>
 #include <yarp/dev/IMap2D.h>
 #include <yarp/dev/INavigation2D.h>
 
 #include <yarp/math/Math.h>
-
-#include <yarp/rosmsg/TickDuration.h>
-#include <yarp/rosmsg/TickTime.h>
 
 #include <cstdlib>
 #include <fstream>
