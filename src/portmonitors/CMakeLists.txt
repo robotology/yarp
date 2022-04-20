@@ -20,6 +20,7 @@ yarp_begin_plugin_library(yarppm
   add_subdirectory(segmentationimage_to_rgb)
   add_subdirectory(sound_compression_mp3)
   add_subdirectory(soundfilter_resample)
+  add_subdirectory(sound_marker)
   add_subdirectory(sensorMeasurements_to_vector)
 yarp_end_plugin_library(yarppm QUIET)
 add_library(YARP::yarppm ALIAS yarppm)

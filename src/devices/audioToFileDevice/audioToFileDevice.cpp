@@ -40,7 +40,8 @@ bool audioToFileDevice::open(yarp::os::Searchable &config)
         yCInfo(AUDIOTOFILE, "Some examples:");
         yCInfo(AUDIOTOFILE, "yarpdev --device audioToFileDevice --help");
         yCInfo(AUDIOTOFILE, "yarpdev --device AudioPlayerWrapper --subdevice audioToFileDevice --start");
-        yCInfo(AUDIOTOFILE, "yarpdev --device AudioPlayerWrapper --subdevice audioToFileDevice --start --audio_out.wav --save_mode overwrite_file");
+        yCInfo(AUDIOTOFILE, "yarpdev --device AudioPlayerWrapper --subdevice audioToFileDevice --start --file_name audio_out.wav --save_mode overwrite_file");
+        yCInfo(AUDIOTOFILE, "save_mode can be overwrite_file, append_file, rename_file, break_file");
         return false;
     }
 
@@ -51,7 +52,6 @@ bool audioToFileDevice::open(yarp::os::Searchable &config)
     {
         m_audio_filename=config.find("file_name").asString();
         yCInfo(AUDIOTOFILE) << "Audio will be saved on exit to file:" << m_audio_filename;
-        return true;
     }
     else
     {
@@ -61,11 +61,14 @@ bool audioToFileDevice::open(yarp::os::Searchable &config)
     if      (config.find("save_mode").toString() == "overwrite_file") { m_save_mode = save_mode_t::save_overwrite_file;}
     else if (config.find("save_mode").toString() == "append_data")    { m_save_mode = save_mode_t::save_append_data; }
     else if (config.find("save_mode").toString() == "rename_file")    { m_save_mode = save_mode_t::save_rename_file; }
-    else if (config.check("save_mode")) {yError() << "Unsupported value for save_mode parameter"; return false;}
+    else if (config.find("save_mode").toString() == "break_file")     { m_save_mode = save_mode_t::save_break_file; }
+    else if (config.check("save_mode")) { yError() << "Unsupported value for save_mode parameter"; return false; }
 
     if      (m_save_mode == save_mode_t::save_overwrite_file) { yCInfo(AUDIOTOFILE) << "overwrite_file mode selected. File will be saved both on exit and on stop"; }
     else if (m_save_mode == save_mode_t::save_append_data)    { yCInfo(AUDIOTOFILE) << "append_data mode selected. File will be saved on exit only"; }
     else if (m_save_mode == save_mode_t::save_rename_file)    { yCInfo(AUDIOTOFILE) << "rename_file mode selected. File will be saved both on exit and on stop"; }
+    else if (m_save_mode == save_mode_t::save_break_file)     { yCInfo(AUDIOTOFILE) << "break_file mode selected."; }
+    else                                                      { return false; }
 
     return true;
 }
@@ -96,7 +99,8 @@ void audioToFileDevice::save_to_file()
         trunc_extension = m_audio_filename.substr(lastindex, std::string::npos);
     }
 
-    if (m_save_mode == save_mode_t::save_rename_file)
+    if (m_save_mode == save_mode_t::save_rename_file ||
+        m_save_mode == save_mode_t::save_break_file)
     {
         trunc_filename = trunc_filename +std::to_string(m_filename_counter++);
     }
@@ -142,6 +146,12 @@ bool audioToFileDevice::stopPlayback()
 bool audioToFileDevice::renderSound(const yarp::sig::Sound& sound)
 {
     std::lock_guard<std::recursive_mutex> lock(m_mutex);
+    if (m_save_mode == save_break_file)
+    {
+       m_sounds.push_back(sound);
+       save_to_file();
+       return true;
+    }
     if (m_playback_enabled)
     {
         m_sounds.push_back(sound);
