@@ -42,6 +42,7 @@ yarp_begin_plugin_library(yarpmod
   add_subdirectory(IMap2DMsgs)
   add_subdirectory(INavigation2DMsgs)
   add_subdirectory(ILocalization2DMsgs)
+  add_subdirectory(IOdometry2DMsgs)
   add_subdirectory(DynamixelAX12Ftdi)
   add_subdirectory(fakeLaser)
   add_subdirectory(fakeMicrophone)
@@ -75,6 +76,8 @@ yarp_begin_plugin_library(yarpmod
   add_subdirectory(map2DStorage)
   add_subdirectory(navigation2D_nwc_yarp)
   add_subdirectory(navigation2D_nws_yarp)
+  add_subdirectory(odometry2D_nws_yarp)
+  add_subdirectory(odometry2D_nws_ros)
   add_subdirectory(Rangefinder2DClient)
   add_subdirectory(usbCamera)
   add_subdirectory(fakeLocalizerDevice)
@@ -106,8 +109,6 @@ yarp_begin_plugin_library(yarpmod
   add_subdirectory(frameGrabberCropper)
   add_subdirectory(mobileBaseVelocityControl)
   add_subdirectory(mobileBaseVelocityControlMsgs)
-  add_subdirectory(odometry2D)
-
 
   add_subdirectory(portaudio) # DEPRECATED Since YARP 3.2
   add_subdirectory(ServerSoundGrabber) # DEPRECATED Since YARP 3.2

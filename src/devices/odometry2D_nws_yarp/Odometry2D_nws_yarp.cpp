@@ -39,6 +39,8 @@ bool Odometry2D_nws_yarp::attach(yarp::dev::PolyDriver* driver)
         return false;
     }
 
+    m_RPC.setInterface(m_odometry2D_interface);
+
     bool b = PeriodicThread::start();
 
     return b;
@@ -72,38 +74,20 @@ bool Odometry2D_nws_yarp::open(yarp::os::Searchable &config)
         m_period = config.find("period").asFloat64();
     }
 
-    if (!config.check("odometer_port_name"))
+    if (!config.check("name"))
     {
-        yCError(ODOMETRY2D_NWS_YARP) << "missing odometer_port_name parameter";
-        return false;
+        yCInfo(ODOMETRY2D_NWS_YARP) << "Missing 'name' parameter. Using default value: " << m_local_name;
     }
-    m_odometerStreamingPortName  = config.find("odometer_port_name").asString();
-    if (m_odometerStreamingPortName[0] != '/') {
-        yCError(ODOMETRY2D_NWS_YARP) << "missing initial / in odometer_port_name parameter";
-        return false;
-    }
-
-    if (!config.check("odometry_port_name"))
+    else
     {
-        yCError(ODOMETRY2D_NWS_YARP) << "missing odometry_port_name parameter";
-        return false;
+        m_local_name = config.find("name").asString();
+        if (m_local_name.c_str()[0] != '/') { yCError(ODOMETRY2D_NWS_YARP) << "Missing '/' in name parameter";  return false; }
+        yCInfo(ODOMETRY2D_NWS_YARP) << "Using local name:" << m_local_name;
     }
-    m_odometryStreamingPortName  = config.find("odometry_port_name").asString();
-    if (m_odometryStreamingPortName[0] != '/') {
-        yCError(ODOMETRY2D_NWS_YARP) << "missing initial / in odometry_port_name parameter";
-        return false;
-    }
-
-    if (!config.check("velocity_port_name"))
-    {
-        yCError(ODOMETRY2D_NWS_YARP) << "missing velocity_port_name parameter";
-        return false;
-    }
-    m_velocityStreamingPortName  = config.find("velocity_port_name").asString();
-    if (m_velocityStreamingPortName[0] != '/') {
-        yCError(ODOMETRY2D_NWS_YARP) << "missing initial / in velocity_port_name parameter";
-        return false;
-    }
+    m_rpcPortName = m_local_name + "/rpc";
+    m_odometerStreamingPortName = m_local_name + "/odometer:o";
+    m_odometryStreamingPortName = m_local_name + "/odometry:o";
+    m_velocityStreamingPortName = m_local_name + "/velocity:o";
 
     if(config.check("subdevice"))
     {
@@ -123,6 +107,14 @@ bool Odometry2D_nws_yarp::open(yarp::os::Searchable &config)
             return false;
         }
     }
+
+    //open rpc port
+    if (!m_rpcPort.open(m_rpcPortName))
+    {
+        yCError(ODOMETRY2D_NWS_YARP, "Failed to open port %s", m_rpcPortName.c_str());
+        return false;
+    }
+    m_rpcPort.setReader(*this);
 
     if (!m_port_odometer.open(m_odometerStreamingPortName))
     {
@@ -214,4 +206,15 @@ bool Odometry2D_nws_yarp::close()
 {
     yCTrace(ODOMETRY2D_NWS_YARP, "Odometry2D_nws_yarp::Close");
     return detach();
+}
+
+bool Odometry2D_nws_yarp::read(yarp::os::ConnectionReader& connection)
+{
+    bool b = m_RPC.read(connection);
+    if (b)
+    {
+        return true;
+    }
+    yCDebug(ODOMETRY2D_NWS_YARP) << "read() Command failed";
+    return false;
 }

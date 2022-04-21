@@ -10,7 +10,9 @@
 
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/dev/IOdometry2D.h>
+#include "Odometry2DServerImpl.h"
 #include <yarp/dev/WrapperSingle.h>
+#include <yarp/os/RpcServer.h>
 
 #define DEFAULT_THREAD_PERIOD 0.02 //s
 
@@ -25,22 +27,18 @@
  * The attached device must implement a `yarp::dev::Nav2D::IOdometry2D` interface.
  *
  * Parameters required by this device are:
- * | Parameter name      | SubParameter            | Type    | Units          | Default Value | Required                       | Description                                           | Notes |
- * |:-------------------:|:-----------------------:|:-------:|:--------------:|:-------------:|:-----------------------------: |:-----------------------------------------------------:|:-----:|
- * | period              |      -                  | double  | s              |   0.02        | No                             | refresh period of the broadcasted values in s         | default 0.02s |
- * | odometer_port_name  |      -                  | string  | -              |   -           | Yes                            | name of the port to publish odometer data             |      |
- * | odometry_port_name  |      -                  | string  | -              |   -           | Yes                            | name of the port to publish odometry data             |      |
- * | velocity_port_name  |      -                  | string  | -              |   -           | Yes                            | name of the port to publish velocity data             |      |
- * | subdevice           |      -                  | string  | -              |   -           | alternative to 'attach' action | name of the subdevice to use as a data source         | when used, parameters for the subdevice must be provided as well |
+ * | Parameter name      | SubParameter            | Type    | Units          | Default Value         | Required                       | Description                                           | Notes |
+ * |:-------------------:|:-----------------------:|:-------:|:--------------:|:---------------------:|:-----------------------------: |:-----------------------------------------------------:|:-----:|
+ * | period              |      -                  | double  | s              | 0.02                  | No                             | refresh period of the broadcasted values in s         | default 0.02s |
+ * | name                |      -                  | string  | -              | /odometry2D_nws_yarp  | No                             | The name of the server, used as a prefix for the opened ports   |      |
+ * | subdevice           |      -                  | string  | -              |   -                   | alternative to 'attach' action | name of the subdevice to use as a data source         | when used, parameters for the subdevice must be provided as well |
  *
  * Example of configuration file using .ini format.
  *
  * \code{.unparsed}
  * device odometry2D_nws_yarp
  * period 0.02
- * odometer_port_name /odometer
- * odometry_port_name /odometry
- * velocity_port_name /velocity
+ * name /odometry2D_nws_yarp
  *
  * subdevice fakeOdometry
  * \endcode
@@ -55,9 +53,7 @@
  *     <device xmlns:xi="http://www.w3.org/2001/XInclude" name="fakeOdometry_device" type="fakeOdometry">
  *     </device>
  *     <device xmlns:xi="http://www.w3.org/2001/XInclude" name="odometry_nws_yarp" type="odometry2D_nws_yarp">
- *       <param name="odometer_port_name"> /odometer:o</param>
- *       <param name="odometry_port_name"> /odometry:o</param>
- *       <param name="velocity_port_name"> /velocity:o</param>
+ *       <param name="name"> /odometry2D_nws_yarp </param>
  *       <action phase="startup" level="5" type="attach">
  *           <paramlist name="networks">
  *               <elem name="subdevice_odometry"> fakeOdometry_device </elem>
@@ -72,14 +68,15 @@
  * example of command via terminal.
  *
  * \code{.unparsed}
- * yarpdev --device odometry2D_nws_yarp --odometer_port_name /odometer --odometry_port_name /odometry --velocity_port_name /velocity --subdevice fakeOdometry
+ * yarpdev --device odometry2D_nws_yarp --period 0.01 --subdevice fakeOdometry
  * \endcode
  */
 
 class Odometry2D_nws_yarp :
         public yarp::os::PeriodicThread,
         public yarp::dev::DeviceDriver,
-        public yarp::dev::WrapperSingle
+        public yarp::dev::WrapperSingle,
+        public yarp::os::PortReader
 {
 public:
     Odometry2D_nws_yarp();
@@ -99,15 +96,24 @@ public:
     void run() override;
 
 private:
+    //thrift
+    IOdometry2DRPCd  m_RPC;
+
+    //rpc port
+    bool read(yarp::os::ConnectionReader& connection) override;
+
     //buffered ports
     yarp::os::BufferedPort<yarp::dev::OdometryData> m_port_odometry;
     yarp::os::BufferedPort<yarp::os::Bottle> m_port_velocity;
     yarp::os::BufferedPort<yarp::os::Bottle> m_port_odometer;
+    yarp::os::RpcServer                      m_rpcPort;
 
     //yarp streaming data
+    std::string m_local_name = "/odometry2D_nws_yarp";
     std::string m_odometerStreamingPortName;
     std::string m_odometryStreamingPortName;
     std::string m_velocityStreamingPortName;
+    std::string m_rpcPortName;
     std::string m_deviceName;
     size_t m_stampCount{0};
     yarp::dev::OdometryData m_oldOdometryData{0,0,0,0,0,0,0,0,0};

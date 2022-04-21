@@ -18,6 +18,7 @@ namespace {
 FakeOdometry::FakeOdometry():
 PeriodicThread(default_period)
 {
+    m_period = default_period;
     yCTrace(FAKEODOMETRY);
 }
 
@@ -54,10 +55,11 @@ bool FakeOdometry::open(yarp::os::Searchable& config)
 {
     // check period
     if (!config.check("period", "refresh period of the broadcasted values in s")) {
-        yCInfo(FAKEODOMETRY) << "Using default 'period' parameter of " << default_period << "s";
+        yCInfo(FAKEODOMETRY) << "Using default 'period' parameter";
     }  else {
         m_period = config.find("period").asFloat64();
     }
+    yCInfo(FAKEODOMETRY) << "thread period set to " << m_period << "s";
     PeriodicThread::setPeriod(m_period);
     return PeriodicThread::start();
 }
@@ -91,6 +93,7 @@ bool FakeOdometry::getOdometry(yarp::dev::OdometryData& odom)
 
 bool FakeOdometry::resetOdometry()
 {
+    std::lock_guard lock(m_odometry_mutex);
     m_odometryData.odom_x = 0;
     m_odometryData.odom_y = 0;
     m_odometryData.odom_theta = 0;
