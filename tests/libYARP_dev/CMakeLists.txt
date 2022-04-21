@@ -13,9 +13,7 @@ target_sources(harness_dev
     IFrameTransformTest.cpp
     IMap2DTest.cpp
     MapGrid2DTest.cpp
-    Map2DClientTest.cpp
     Map2DnwcTest.cpp
-    Navigation2DClientTest.cpp
     Navigation2DnwcTest.cpp
     INavigation2DTest.cpp
     MultipleAnalogSensorsInterfacesTest.cpp

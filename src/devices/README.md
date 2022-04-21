@@ -245,18 +245,16 @@ The tables shown hereunder report all the information needed to understand the f
   * ![#ffff00](https://via.placeholder.com/15/ffff00/000000?text=+) laserHokuyo
 
 * localization2DClient
-  * ![#00ff00](https://via.placeholder.com/15/00ff00/000000?text=+) **localization2DClient**
+  * ![#00ff00](https://via.placeholder.com/15/00ff00/000000?text=+) localization2D_nwc_yarp
 
 * localization2DServer
-  * ![#cc6600](https://via.placeholder.com/15/cc6600/000000?text=+) *localization2DServer*
   * ![#00ffff](https://via.placeholder.com/15/00ffff/000000?text=+) localization2D_nws_yarp
   * ![#00ffff](https://via.placeholder.com/15/00ffff/000000?text=+) localization2D_nws_ros
 
 * map2DClient
-  * ![#00ff00](https://via.placeholder.com/15/00ff00/000000?text=+) **map2DClient**
+  * ![#00ff00](https://via.placeholder.com/15/00ff00/000000?text=+) map2D_nwc_yarp
 
 * map2DServer
-  * ![#cc6600](https://via.placeholder.com/15/cc6600/000000?text=+) *map2DServer*
   * ![#00ffff](https://via.placeholder.com/15/00ffff/000000?text=+) map2D_nws_yarp
   * ![#00ffff](https://via.placeholder.com/15/00ffff/000000?text=+) map2D_nws_ros
 
@@ -282,12 +280,10 @@ The tables shown hereunder report all the information needed to understand the f
   * ![#00ffff](https://via.placeholder.com/15/00ffff/000000?text=+) **multipleanalogsensorsserver**
 
 * navigation2DClient
-  * ![#00ff00](https://via.placeholder.com/15/00ff00/000000?text=+) **navigation2DClient**
-    * *To do: PathPlanner2DClient + navigation2DClient*
+  * ![#00ff00](https://via.placeholder.com/15/00ff00/000000?text=+) navigation2D_nwc_yarp
 
 * navigation2DServer
-  * ![#00ffff](https://via.placeholder.com/15/00ffff/000000?text=+) **navigation2DServer**
-    * *To do: PathPlanner2DServer*
+  * ![#00ffff](https://via.placeholder.com/15/00ffff/000000?text=+) navigation2D_nws_yarp
 
 * opencv
   * ![#ffff00](https://via.placeholder.com/15/ffff00/000000?text=+) opencv_grabber
