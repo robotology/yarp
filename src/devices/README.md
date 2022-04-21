@@ -88,9 +88,10 @@ The tables shown hereunder report all the information needed to understand the f
 * Rangefinder2DClient
   * ![#00ff00](https://via.placeholder.com/15/00ff00/000000?text=+) **Rangefinder2DClient**
 
-* Rangefinder2DWrapper
-  * ![#cc6600](https://via.placeholder.com/15/cc6600/000000?text=+) *Rangefinder2DWrapper*
+* Rangefinder2D_nws_ros
   * ![#00ffff](https://via.placeholder.com/15/00ffff/000000?text=+) rangefinder2D_nws_ros
+
+* Rangefinder2D_nws_yarp
   * ![#00ffff](https://via.placeholder.com/15/00ffff/000000?text=+) rangefinder2D_nws_yarp
 
 * RemoteControlBoard
