@@ -62,6 +62,10 @@ yarp_begin_plugin_library(yarpmod
   add_subdirectory(upowerBattery)
   add_subdirectory(Rangefinder2D_nws_yarp)
   add_subdirectory(Rangefinder2D_nws_ros)
+  add_subdirectory(mobileBaseVelocityControl_nwc_yarp)
+  add_subdirectory(mobileBaseVelocityControl_nws_yarp)
+  add_subdirectory(mobileBaseVelocityControl_nws_ros)
+  add_subdirectory(mobileBaseVelocityControlMsgs)
   add_subdirectory(multipleAnalogSensorsMsgs)
   add_subdirectory(multipleanalogsensorsserver)
   add_subdirectory(multipleanalogsensorsclient)
@@ -107,8 +111,6 @@ yarp_begin_plugin_library(yarpmod
   add_subdirectory(JoypadControlClient)
   add_subdirectory(JoypadControlServer)
   add_subdirectory(frameGrabberCropper)
-  add_subdirectory(mobileBaseVelocityControl)
-  add_subdirectory(mobileBaseVelocityControlMsgs)
 
   add_subdirectory(portaudio) # DEPRECATED Since YARP 3.2
   add_subdirectory(ServerSoundGrabber) # DEPRECATED Since YARP 3.2
