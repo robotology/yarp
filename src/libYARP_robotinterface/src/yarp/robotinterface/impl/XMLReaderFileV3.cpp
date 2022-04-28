@@ -255,10 +255,10 @@ yarp::robotinterface::XMLReaderResult yarp::robotinterface::impl::XMLReaderFileV
     // If portprefix is already present in config we use that one
     if (!config.check("portprefix"))
     {
-        if (robotElem->QueryStringAttribute("portprefix", &result.robot.portprefix()) != TIXML_SUCCESS) {
-            SYNTAX_WARNING(robotElem->Row()) << R"("robot" element should contain the "portprefix" attribute. Using "name" attribute)";
-            result.robot.portprefix() = result.robot.name();
-        }
+    if (robotElem->QueryStringAttribute("portprefix", &result.robot.portprefix()) != TIXML_SUCCESS) {
+        SYNTAX_WARNING(robotElem->Row()) << R"("robot" element should contain the "portprefix" attribute. Using "name" attribute)";
+        result.robot.portprefix() = result.robot.name();
+    }
         config.put("portprefix",result.robot.portprefix());
     } else {
         result.robot.portprefix() = config.find("portprefix").asString();
@@ -459,7 +459,14 @@ yarp::robotinterface::Param yarp::robotinterface::impl::XMLReaderFileV3::Private
     std::string extern_name;
     if (paramElem->QueryStringAttribute("extern-name", &extern_name) == TIXML_SUCCESS && config.check(extern_name)) {
         // FIXME Check DTD >= 3.1
-        param.value() = config.find(extern_name).toString();
+        if (config.find(extern_name).isList())
+        {
+            param.value() = "(" + config.find(extern_name).asList()->toString() + ")";
+        }
+        else
+        {
+            param.value() = config.find(extern_name).toString();
+        }
     } else {
         param.value() = valueText;
     }
