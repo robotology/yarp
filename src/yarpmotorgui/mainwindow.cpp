@@ -328,11 +328,13 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(&m_timer, SIGNAL(timeout()), this, SLOT(onUpdate()), Qt::QueuedConnection);
     m_timer.start();
 
+    const qreal blurRadius = 40.0;
+    const int glowDuration_msec = 2000;
     m_glowEffect = new QGraphicsDropShadowEffect(this);
     m_glowEffect->setOffset(.0);
-    m_glowEffect->setBlurRadius(40.0);
+    m_glowEffect->setBlurRadius(blurRadius);
     m_glowEffect->setColor(Qt::yellow);
-    m_glowTimer.setInterval(2000);
+    m_glowTimer.setInterval(glowDuration_msec);
     m_glowTimer.setSingleShot(true);
     connect(&m_glowTimer, SIGNAL(timeout()), this, SLOT(onGlowTimerExpired()));
 }
@@ -531,8 +533,8 @@ void MainWindow::onJointClicked(int partIndex, int jointIndex)
     }
 
     m_tabPanel->setCurrentIndex(partIndex);
-    auto* scroll = (QScrollArea *)m_tabPanel->widget(partIndex);
-    auto* part = (PartItem*)scroll->widget();
+    auto* scroll = static_cast<QScrollArea*>(m_tabPanel->widget(partIndex));
+    auto* part = static_cast<PartItem*>(scroll->widget());
     auto* jointWidget = part->getJointWidget(jointIndex);
     scroll->ensureWidgetVisible(jointWidget);
     m_glowEffect->setEnabled(false);

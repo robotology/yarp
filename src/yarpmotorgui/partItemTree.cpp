@@ -8,7 +8,8 @@
 
 PartItemTree::PartItemTree(int index, QWidget *parent) : QWidget(parent), m_index(index)
 {
-    m_layout = new FlowLayout(5, 5, 5);
+    const int flowLayoutSpacing = 5;
+    m_layout = new FlowLayout(flowLayoutSpacing, flowLayoutSpacing, flowLayoutSpacing);
     setLayout(m_layout);
     setFocusPolicy(Qt::FocusPolicy::NoFocus);
     setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Minimum);
@@ -39,7 +40,7 @@ JointItemTree *PartItemTree::getJoint(int index)
         return nullptr;
     }
 
-    return (JointItemTree*)m_layout->itemAt(index)->widget();
+    return static_cast<JointItemTree*>(m_layout->itemAt(index)->widget());
 }
 
 void PartItemTree::uniformLayout()
@@ -53,7 +54,7 @@ void PartItemTree::uniformLayout()
 
     for (int i = 0; i < m_layout->count(); ++i)
     {
-        JointItemTree* item = (JointItemTree*)(m_layout->itemAt(i)->widget());
+        JointItemTree* item = getJoint(i);
         item->setDesiredSize(desiredSize.width(), desiredSize.height());
     }
 

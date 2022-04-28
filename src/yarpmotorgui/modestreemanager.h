@@ -23,7 +23,7 @@ class ModesListWidget : public QTreeWidget
     Q_OBJECT
 
 public:
-    ModesListWidget(QWidget * parent = 0);
+    ModesListWidget(QWidget * parent = nullptr);
 };
 
 class ModesTreeManager : public QObject

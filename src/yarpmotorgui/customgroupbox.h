@@ -24,7 +24,7 @@ public:
 
     explicit CustomGroupBoxLabel(QWidget* parent = nullptr);
 
-    virtual void mouseDoubleClickEvent(QMouseEvent *event) override;
+    void mouseDoubleClickEvent(QMouseEvent *) override;
 signals:
 
     void sig_titleDoubleClick();
@@ -34,9 +34,14 @@ class CustomGroupBox : public QWidget
 {
     Q_OBJECT
 
+    Ui::CustomGroupBox *ui;
+    QVBoxLayout* m_layout;
+    bool m_visible;
+    QMenu m_contextMenu;
+
 public:
     explicit CustomGroupBox(QWidget *parent = nullptr);
-    ~CustomGroupBox();
+    virtual ~CustomGroupBox();
 
     void setTitle(const QString& string);
 
@@ -68,12 +73,6 @@ private slots:
     void onCollapseAll();
 
     void onShowContextMenu(QPoint pos);
-
-private:
-    Ui::CustomGroupBox *ui;
-    QVBoxLayout* m_layout;
-    bool m_visible;
-    QMenu m_contextMenu;
 };
 
 #endif // CUSTOMGROUPBOX_H

@@ -38,18 +38,6 @@ public:
 
     void setDesiredElementSize(const QSize &maxSize);
 
-public slots:
-
-    void onJointClicked(int index);
-
-    void onHomeClicked(int index);
-
-    void onRunClicked(int index);
-
-    void onIdleClicked(int index);
-
-    void onPIDClicked(int index);
-
 signals:
 
     void sig_jointClicked(int partIndex, int jointIndex);
@@ -61,6 +49,18 @@ signals:
     void sig_idleClicked(int partIndex, int jointIndex);
 
     void sig_PIDClicked(int partIndex, int jointIndex);
+
+public slots:
+
+    void onJointClicked(int index);
+
+    void onHomeClicked(int index);
+
+    void onRunClicked(int index);
+
+    void onIdleClicked(int index);
+
+    void onPIDClicked(int index);
 
 };
 

@@ -24,7 +24,7 @@ class JointItemTree : public QWidget
 
 public:
     explicit JointItemTree(int index, QWidget *parent = nullptr);
-    ~JointItemTree();
+    virtual ~JointItemTree();
 
     void setJointName(const QString& name);
 
@@ -34,7 +34,7 @@ public:
 
     JointItem::JointState jointMode() const;
 
-    void mouseDoubleClickEvent(QMouseEvent *event) override;
+    void mouseDoubleClickEvent(QMouseEvent *) override;
 
     QSize sizeHint() const override;
 

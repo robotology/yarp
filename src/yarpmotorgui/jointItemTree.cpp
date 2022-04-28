@@ -62,7 +62,10 @@ void JointItemTree::setJointMode(const JointItem::JointState &mode)
 
     if (!m_modeSet || mode != m_mode)
     {
-        setColor(QColor(35, 38, 41), JointItem::GetModeColor(mode));
+        const int text_r = 35;
+        const int text_g = 38;
+        const int text_b = 41;
+        setColor(QColor(text_r, text_g, text_b), JointItem::GetModeColor(mode));
 
         switch (mode) {
         case JointItem::Position:
@@ -129,7 +132,7 @@ void JointItemTree::setColor(const QColor &color, const QColor &background)
     setStyleSheet(stileSheet);
 }
 
-void JointItemTree::mouseDoubleClickEvent(QMouseEvent *event)
+void JointItemTree::mouseDoubleClickEvent(QMouseEvent *)
 {
     emit sig_jointClicked(m_index);
 }

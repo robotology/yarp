@@ -13,7 +13,7 @@ CustomGroupBoxLabel::CustomGroupBoxLabel(QWidget *parent)
 
 }
 
-void CustomGroupBoxLabel::mouseDoubleClickEvent(QMouseEvent *event)
+void CustomGroupBoxLabel::mouseDoubleClickEvent(QMouseEvent *)
 {
     emit sig_titleDoubleClick();
 }
@@ -27,7 +27,8 @@ CustomGroupBox::CustomGroupBox(QWidget *parent) :
     m_layout = new QVBoxLayout;
     m_layout->setMargin(0);
     ui->frame->setLayout(m_layout);
-    ui->contentWidget->setMinimumHeight(10); //This avoids some the containing scroll area to add too much white space
+    const int minHeight = 10; //This avoids the containing scroll area to add too much white space
+    ui->contentWidget->setMinimumHeight(minHeight);
 
     toggle(true);
 
@@ -125,7 +126,7 @@ void CustomGroupBox::onExpandAll()
         QWidget* child = m_layout->itemAt(i)->widget();
         if (child->objectName() == "CustomGroupBox")
         {
-            CustomGroupBox* casted = (CustomGroupBox*)child;
+            CustomGroupBox* casted = static_cast<CustomGroupBox*>(child); //using static_cast for downcasting should be safe considering the if clause
             casted->toggle(true);
         }
     }
