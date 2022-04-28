@@ -174,7 +174,7 @@ class SubDevice;
  */
 
 class ControlBoardWrapper :
-        public yarp::dev::DeviceDriver,
+        public yarp::dev::DeprecatedDeviceDriver,
         public yarp::os::PeriodicThread,
         public yarp::dev::IMultipleWrapper,
         virtual public ControlBoardWrapperCommon,

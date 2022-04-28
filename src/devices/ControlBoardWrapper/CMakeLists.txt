@@ -8,7 +8,8 @@ yarp_prepare_plugin(
   INCLUDE ControlBoardWrapper.h
   EXTRA_CONFIG
     WRAPPER=controlboardwrapper2
-  DEFAULT ON
+  DEFAULT OFF
+  DEPENDS "NOT YARP_NO_DEPRECATED" # DEPRECATED Since YARP 3.7
 )
 
 if(NOT SKIP_controlboardwrapper2)
