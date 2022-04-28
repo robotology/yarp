@@ -71,17 +71,6 @@ public:
     }
 
     /**
-     * Read an integer from the network connection.
-     * @return the integer read from the connection
-     * @warning Unsafe, sizeof(int) is platform dependent. Use expectInt32 instead.
-     */
-    YARP_DEPRECATED_MSG("Use expectInt32 instead") // Since YARP 3.5.0
-    virtual int expectInt() final
-    {
-        return static_cast<int>(expectInt32());
-    }
-
-    /**
      * Read a 8-bit integer from the network connection.
      * @return the integer read from the connection
      */
@@ -104,17 +93,6 @@ public:
      * @return the integer read from the connection
      */
     virtual std::int64_t expectInt64() = 0;
-
-    /**
-     * Read a floating point number from the network connection.
-     * @return the floating point number read from the connection
-     * @warning Unsafe, sizeof(double) is platform dependent. Use expectFloat64 instead.
-     */
-    YARP_DEPRECATED_MSG("Use expectFloat64 instead") // Since YARP 3.5.0
-    virtual double expectDouble()
-    {
-        return static_cast<double>(expectFloat64());
-    }
 
     /**
      * Read a 32-bit floating point number from the network connection.
