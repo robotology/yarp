@@ -9,6 +9,8 @@
 #include <yarp/os/Port.h>
 #include <yarp/os/SystemClock.h>
 #include <yarp/os/impl/Terminal.h>
+#include <yarp/os/Network.h>
+#include <yarp/os/LogStream.h>
 
 #ifdef YARP_HAS_Libedit
 #include <yarp/conf/dirs.h>
@@ -24,6 +26,7 @@ using yarp::companion::impl::Companion;
 using yarp::os::Bottle;
 using yarp::os::Port;
 using yarp::os::SystemClock;
+using yarp::os::NetworkBase;
 
 int Companion::write(const char *name, int ntargets, char *targets[]) {
     Port port;
@@ -154,5 +157,14 @@ int Companion::cmdWrite(int argc, char *argv[])
     }
 
     const char *src = argv[0];
+
+    //the following check prevents opening as local port a port which is already registered (and active) on the yarp nameserver
+    bool e = NetworkBase::exists(src, true);
+    if (e)
+    {
+        yCError(COMPANION) << "Port" << src << "already exists! Aborting...";
+        return 1;
+    }
+
     return write(src, argc-1, argv+1);
 }

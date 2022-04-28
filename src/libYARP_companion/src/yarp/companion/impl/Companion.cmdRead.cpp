@@ -8,6 +8,7 @@
 #include <yarp/companion/impl/BottleReader.h>
 #include <yarp/os/ContactStyle.h>
 #include <yarp/os/Network.h>
+#include <yarp/os/LogStream.h>
 
 #include <cstring>
 
@@ -77,5 +78,14 @@ int Companion::cmdRead(int argc, char *argv[])
         argc--;
         argv++;
     }
+
+    //the following check prevents opening as local port a port which is already registered (and active) on the yarp nameserver
+    bool e = NetworkBase::exists(name, true);
+    if (e)
+    {
+        yCError(COMPANION) << "Port"<< name << "already exists! Do you mean yarp read ..."<< name <<"?";
+        return 1;
+    }
+
     return read(name, src, showEnvelope, trim);
 }
