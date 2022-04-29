@@ -41,7 +41,7 @@ class CustomGroupBox : public QWidget
 
 public:
     explicit CustomGroupBox(QWidget *parent = nullptr);
-    virtual ~CustomGroupBox();
+    ~CustomGroupBox() override;
 
     void setTitle(const QString& string);
 
@@ -58,6 +58,8 @@ public:
     void enableCollapseAllContextMenu(bool enable);
 
     bool visible() const;
+
+    void toggleChildren(bool visible);
 
 signals:
 

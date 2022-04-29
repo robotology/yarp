@@ -24,7 +24,7 @@ class JointItemTree : public QWidget
 
 public:
     explicit JointItemTree(int index, QWidget *parent = nullptr);
-    virtual ~JointItemTree();
+    ~JointItemTree() override;
 
     void setJointName(const QString& name);
 

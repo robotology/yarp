@@ -109,6 +109,19 @@ bool CustomGroupBox::visible() const
     return m_visible;
 }
 
+void CustomGroupBox::toggleChildren(bool visible)
+{
+    for (int i = 0; i < m_layout->count(); ++i)
+    {
+        QWidget* child = m_layout->itemAt(i)->widget();
+        if (child->objectName() == "CustomGroupBox")
+        {
+            CustomGroupBox* casted = static_cast<CustomGroupBox*>(child); //using static_cast for downcasting should be safe considering the if clause
+            casted->toggle(visible);
+        }
+    }
+}
+
 void CustomGroupBox::onArrowPressed(bool)
 {
     toggle(!m_visible);
@@ -121,28 +134,12 @@ void CustomGroupBox::onTitleDoubleClick()
 
 void CustomGroupBox::onExpandAll()
 {
-    for (int i = 0; i < m_layout->count(); ++i)
-    {
-        QWidget* child = m_layout->itemAt(i)->widget();
-        if (child->objectName() == "CustomGroupBox")
-        {
-            CustomGroupBox* casted = static_cast<CustomGroupBox*>(child); //using static_cast for downcasting should be safe considering the if clause
-            casted->toggle(true);
-        }
-    }
+    toggleChildren(true);
 }
 
 void CustomGroupBox::onCollapseAll()
 {
-    for (int i = 0; i < m_layout->count(); ++i)
-    {
-        QWidget* child = m_layout->itemAt(i)->widget();
-        if (child->objectName() == "CustomGroupBox")
-        {
-            CustomGroupBox* casted = (CustomGroupBox*)child;
-            casted->toggle(false);
-        }
-    }
+    toggleChildren(false);
 }
 
 void CustomGroupBox::onShowContextMenu(QPoint pos)
