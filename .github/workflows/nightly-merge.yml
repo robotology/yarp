@@ -19,9 +19,6 @@ jobs:
         stable_branch: 'yarp-3.6'
         development_branch: 'master'
         allow_ff: false
-        user_name: 'Daniele E. Domenichelli (Nightly Merge Action)'
-        user_email: 'daniele.domenichelli@iit.it'
-        push_token: 'drdanz_TOKEN'
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        drdanz_TOKEN: ${{ secrets.drdanz_TOKEN }}
+        
