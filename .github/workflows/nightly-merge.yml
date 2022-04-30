@@ -19,6 +19,9 @@ jobs:
         stable_branch: 'yarp-3.6'
         development_branch: 'master'
         allow_ff: false
+        user_name: 'robotology-bot'
+        user_email: 'robotology@iit.it'
+        push_token: 'bot_TOKEN'
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        
+        BOT_TOKEN: ${{ secrets.ROBOTOLOGY_BOT_TOKEN }}
