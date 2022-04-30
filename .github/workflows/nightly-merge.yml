@@ -21,7 +21,7 @@ jobs:
         allow_ff: false
         user_name: 'robotology-bot'
         user_email: 'robotology@iit.it'
-        push_token: 'bot_TOKEN'
+        push_token: 'BOT_TOKEN'
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         BOT_TOKEN: ${{ secrets.ROBOTOLOGY_BOT_TOKEN }}
