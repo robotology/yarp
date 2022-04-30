@@ -81,6 +81,24 @@ install(
   DESTINATION ${CMAKE_INSTALL_PYTHON3DIR}
 )
 
+# Install pip metadata files to ensure that CMake installations of YARP are listed by pip list
+# See https://packaging.python.org/specifications/recording-installed-packages/
+# and https://packaging.python.org/en/latest/specifications/core-metadata/#core-metadata
+option(YARP_PYTHON_PIP_METADATA_INSTALL "Use CMake to install Python pip metadata. Set to false if some other tool installs it." TRUE)
+mark_as_advanced(YARP_PYTHON_PIP_METADATA_INSTALL)
+set(YARP_PYTHON_PIP_METADATA_INSTALLER "cmake" CACHE STRING "Specify the string to identify the pip Installer. Default: cmake, change this if you are using another tool.")
+mark_as_advanced(YARP_PYTHON_PIP_METADATA_INSTALLER)
+if(YARP_PYTHON_PIP_METADATA_INSTALL)
+  file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/METADATA "")
+  file(APPEND ${CMAKE_CURRENT_BINARY_DIR}/METADATA "Metadata-Version: 2.1\n")
+  file(APPEND ${CMAKE_CURRENT_BINARY_DIR}/METADATA "Name: yarp\n")
+  file(APPEND ${CMAKE_CURRENT_BINARY_DIR}/METADATA "Version: ${YARP_VERSION}\n")
+  file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/INSTALLER "${YARP_PYTHON_PIP_METADATA_INSTALLER}\n")
+  install(
+    FILES "${CMAKE_CURRENT_BINARY_DIR}/METADATA" "${CMAKE_CURRENT_BINARY_DIR}/INSTALLER"
+    DESTINATION ${CMAKE_INSTALL_PYTHON3DIR}/yarp-${YARP_VERSION}.dist-info)
+endif()
+
 if(YARP_COMPILE_TESTS)
   add_subdirectory(tests)
 endif()

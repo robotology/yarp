@@ -85,6 +85,11 @@ function(YARP_MACOS_DUPLICATE_AND_ADD_BUNDLE)
       elseif("${_prop_name}" MATCHES "IMPORTED_GLOBAL")
         # Remove other properties containing "IMPORTED_GLOBAL".
         list(REMOVE_ITEM _all_properties "${_prop_name}")
+      elseif("${_prop_name}" MATCHES "HEADER_SETS")
+        # Remove other properties containing "HEADER_SETS" as they are write only
+        # and in any case are not relevant for these kind of targets
+        # See https://github.com/robotology/robotology-superbuild/issues/1090
+        list(REMOVE_ITEM _all_properties "${_prop_name}")
       endif()
     endforeach()
 
