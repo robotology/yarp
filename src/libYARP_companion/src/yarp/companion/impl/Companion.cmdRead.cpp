@@ -29,12 +29,12 @@ using yarp::os::NetworkBase;
  * @param trim number of characters of the string that should be printed
  * @return 0 on success, non-zero on failure
  */
-int Companion::read(const char *name, const char *src, bool showEnvelope, int trim)
+int Companion::read(const char *name, const char *src, bool showEnvelope, bool justOnce, int trim)
 {
     Companion::installHandler();
     BottleReader reader;
     applyArgs(reader.core);
-    reader.open(name, showEnvelope, trim);
+    reader.open(name, showEnvelope, justOnce, trim);
     if (src != nullptr) {
         ContactStyle style;
         style.quiet = false;
@@ -52,7 +52,7 @@ int Companion::cmdRead(int argc, char *argv[])
 {
     if (argc<1) {
         yCError(COMPANION, "Usage:");
-        yCError(COMPANION, "  yarp read <port> [remote port] [envelope] [trim [length]]");
+        yCError(COMPANION, "  yarp read <port> [remote port] [envelope] [trim [length]] [once]");
         return 1;
     }
 
@@ -60,6 +60,7 @@ int Companion::cmdRead(int argc, char *argv[])
     const char *src = nullptr;
     bool showEnvelope = false;
     size_t trim = -1;
+    bool justOnce = false;
     while (argc>1) {
         if (strcmp(argv[1], "envelope")==0) {
             showEnvelope = true;
@@ -72,7 +73,11 @@ int Companion::cmdRead(int argc, char *argv[])
                 static constexpr int default_trim = 80;
                 trim = default_trim;
             }
-        } else {
+        }
+        else if (strcmp(argv[1], "once") == 0) {
+            justOnce = true;
+        }
+        else {
             src = argv[1];
         }
         argc--;
@@ -86,6 +91,5 @@ int Companion::cmdRead(int argc, char *argv[])
         yCError(COMPANION) << "Port"<< name << "already exists! Do you mean yarp read ..."<< name <<"?";
         return 1;
     }
-
-    return read(name, src, showEnvelope, trim);
+    return read(name, src, showEnvelope, justOnce, trim);
 }

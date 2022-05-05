@@ -25,7 +25,7 @@ int Companion::cmdReadWrite(int argc, char *argv[])
 
     Companion::installHandler();
     BottleReader reader;
-    reader.open(read_port_name, false);
+    reader.open(read_port_name, false, false);
 
     int ret = write(write_port_name, 1, (char**)&verbatim);
 
