@@ -38,6 +38,7 @@ private:
     bool raw;
     bool env;
     std::string::size_type trim;
+    bool justOnce;
     Contact address;
 public:
     Port core;
@@ -46,12 +47,14 @@ public:
         raw = false;
         env = false;
         trim = std::string::npos;
+        justOnce = false;
         core.setReader(*this);
         core.setReadOnly();
     }
 
-    void open(const char *name, bool showEnvelope, int trim_at = -1) {
+    void open(const char *name, bool showEnvelope, bool _justonce, int trim_at = -1) {
         env = showEnvelope;
+        justOnce = _justonce;
         trim = (trim_at > 0 ? static_cast<std::string::size_type>(trim_at) : std::string::npos);
         if (core.open(name)) {
             Companion::setActivePort(&core);
@@ -99,6 +102,10 @@ public:
                 showEnvelope();
                 yCInfo(COMPANION, "%s", bot.toString().substr(0, trim).c_str());
                 fflush(stdout);
+            }
+            if (justOnce) {
+                //this will close everything and terminate the execution after the first received data
+                done.post();
             }
             return true;
         }
