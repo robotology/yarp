@@ -14,7 +14,7 @@
 #include <yarp/dev/impl/jointData.h>
 
 #include <numeric>
-
+#include <math.h>
 
 using namespace yarp::os;
 using namespace yarp::dev;
@@ -112,7 +112,7 @@ bool ControlBoard_nws_yarp::open(Searchable& config)
     }
 
     // Check if we need to create subdevice or if they are
-    // passed later on thorugh attachAll()
+    // passed later on through attachAll()
     if (prop.check("subdevice")) {
         prop.setMonitor(config.getMonitor());
         if (!openAndAttachSubDevice(prop)) {
@@ -438,6 +438,17 @@ void ControlBoard_nws_yarp::run()
     constexpr int reads_for_warning = 20;
     if (inputStreamingPort.getPendingReads() >= reads_for_warning) {
         yCWarning(CONTROLBOARD) << "Number of streaming input messages to be read is " << inputStreamingPort.getPendingReads() << " and can overflow";
+    }
+
+    // Check if the encoders timestamps are consistent.
+    double tt = *times.data();
+    for (auto it = times.begin(); it != times.end(); it++)
+    {
+        if (fabs(tt - *it) > 1.0)
+        {
+            yCError(CONTROLBOARD, "Encoder Timestamps are not consistent! Data will not be published.");
+            return;
+        }
     }
 
     // Update the port envelope time by averaging all timestamps
