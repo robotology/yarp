@@ -103,6 +103,7 @@ yarp_begin_plugin_library(yarpmod
   add_subdirectory(RGBDToPointCloudSensorWrapper)
   add_subdirectory(RGBDSensorFromRosTopic)
   add_subdirectory(ControlBoardWrapper)
+  add_subdirectory(ControlBoard_nws_ros)
   add_subdirectory(ControlBoardRemapper)
   add_subdirectory(RobotDescriptionClient)
   add_subdirectory(RobotDescriptionServer)
