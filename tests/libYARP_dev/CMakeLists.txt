@@ -6,7 +6,7 @@ target_sources(harness_dev
   PRIVATE
     AnalogWrapperTest.cpp
     ControlBoardRemapperTest.cpp
-    ControlBoardWrapper2Test.cpp
+    ControlBoardNwsTest.cpp
     FrameTransformClientTest.cpp
     TransformClientTest.cpp
     GroupDriverTest.cpp

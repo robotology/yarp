@@ -50,7 +50,7 @@ class DiagnosticThread;
 *
 * \brief `remote_controlboard`: The client side of the control board, connects to a remote controlboard using the YARP network.
 *
-* This device communicates using the YARP ports opened the controlboardwrapper2 device
+* This device communicates using the YARP ports opened the controlBoard_nws_yarp device
 * to use a device exposing controlboard method even from a different process (or even computer)
 * from the one that opened the controlboard device.
 *

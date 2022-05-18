@@ -21,7 +21,7 @@ TEST_CASE("dev::GroupDriver", "[yarp::dev]")
 {
     YARP_REQUIRE_PLUGIN("group", "device");
     YARP_REQUIRE_PLUGIN("fakeMotionControl", "device");
-    YARP_REQUIRE_PLUGIN("controlboardwrapper2", "device");
+    YARP_REQUIRE_PLUGIN("controlBoard_nws_yarp", "device");
 
     Network::setLocalMode(true);
 
@@ -36,7 +36,7 @@ device fakeMotionControl\n\
 GENERAL (Joints 10)\n\
 \n\
 [part broadcast]\n\
-device controlboardwrapper2\n\
+device controlBoard_nws_yarp\n\
 subdevice mymotor\n\
 name /mymotor\n\
 ");
