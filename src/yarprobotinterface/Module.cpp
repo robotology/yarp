@@ -144,7 +144,19 @@ bool yarprobotinterface::Module::configure(yarp::os::ResourceFinder& rf)
     mPriv->robot.setAllowDeprecatedDevices(rf.check("allow-deprecated-devices"));
     mPriv->robot.setDryRun(dryrun);
 
-    std::string rpcPortName("/" + getName() + "/yarprobotinterface");
+    std::string portprefix = mPriv->robot.portprefix();
+    if (portprefix[0] != '/') {
+        yWarning() <<
+            "*************************************************************************************\n"
+            "* yarprobotinterface 'portprefix' parameter does not follow convention,  *\n"
+            "* it MUST start with a leading '/' since it is used as the full prefix port name    *\n"
+            "*     name:    full port prefix name with leading '/',  e.g.  /robotName      *\n"
+            "* A temporary automatic fix will be done for you, but please fix your config file   *\n"
+            "*************************************************************************************";
+        portprefix = "/" + portprefix;
+    }
+
+    std::string rpcPortName(portprefix + "/yarprobotinterface");
     mPriv->rpcPort.open(rpcPortName);
     attach(mPriv->rpcPort);
 

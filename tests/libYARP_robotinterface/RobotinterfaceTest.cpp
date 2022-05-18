@@ -30,6 +30,7 @@ TEST_CASE("robotinterface::ParamTest", "[yarp::robotinterface]")
     }
 };
 
+
 // Dummy device used in "Check valid robot file with two devices" test
 namespace yarp::dev {
 class RobotInterfaceTestMockDriver;
@@ -328,6 +329,117 @@ TEST_CASE("robotinterface::XMLReaderTest", "[yarp::robotinterface]")
         CHECK(globalState.mockDriverWasOpened);
         CHECK(globalState.mockDriverWasClosed);
         CHECK(globalState.mockDriverParamValue == "theparam_alt");
+    }
+
+    SECTION("Check valid robot file with portprefix passed via xml")
+    {
+        // Reset test flags
+        globalState.reset();
+
+        // Add dummy devices to YARP drivers factory
+        yarp::dev::Drivers::factory().add(new yarp::dev::DriverCreatorOf<yarp::dev::RobotInterfaceTestMockDriver>("robotinterface_test_mock_device", "", "RobotInterfaceTestMockDriver"));
+
+        // Load empty XML configuration file
+        std::string XMLString = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n"
+                                "<!DOCTYPE robot PUBLIC \"-//YARP//DTD yarprobotinterface 3.1//EN\" \"http://www.yarp.it/DTD/yarprobotinterfaceV3.1.dtd\">\n"
+                                "<robot name=\"RobotWithOneDevice\" portprefix=\"/RobotWithOneDevice\" build=\"0\">\n"
+                                "  <devices>\n"
+                                "    <device name=\"dummy_device\" type=\"robotinterface_test_mock_device\">\n"
+                                "      <param name=\"theparam\"> ${portprefix}/SomethingInTheMiddle${portprefix} </param>\n"
+                                "    </device>\n"
+                                 "  </devices>\n"
+                                "</robot>\n";
+
+        yarp::robotinterface::XMLReader reader;
+        yarp::os::Property config;
+        yarp::robotinterface::XMLReaderResult result = reader.getRobotFromString(XMLString, config);
+
+        // Check parsing fails on empty string
+        CHECK(result.parsingIsSuccessful);
+
+        // Verify that only one device has been loaded
+        CHECK(result.robot.devices().size() == 1);
+
+        // Verify that the devices were not opened and the attach was not called
+        CHECK(!globalState.mockDriverWasOpened);
+        CHECK(!globalState.mockDriverWasClosed);
+        CHECK(globalState.mockDriverParamValue.empty());
+
+        // Start the robot (open the device and call "attach" actions)
+        bool ok = result.robot.enterPhase(yarp::robotinterface::ActionPhaseStartup);
+        CHECK(ok);
+
+        // Check that the device was opened and attach called
+        CHECK(globalState.mockDriverWasOpened);
+        CHECK(!globalState.mockDriverWasClosed);
+        CHECK(globalState.mockDriverParamValue == "/RobotWithOneDevice/SomethingInTheMiddle/RobotWithOneDevice");
+
+        // Stop the robot
+        ok = result.robot.enterPhase(yarp::robotinterface::ActionPhaseInterrupt1);
+        CHECK(ok);
+        ok = result.robot.enterPhase(yarp::robotinterface::ActionPhaseShutdown);
+        CHECK(ok);
+
+        // Check that the device was closed and detach called
+        CHECK(globalState.mockDriverWasOpened);
+        CHECK(globalState.mockDriverWasClosed);
+        CHECK(globalState.mockDriverParamValue == "/RobotWithOneDevice/SomethingInTheMiddle/RobotWithOneDevice");
+    }
+
+    SECTION("Check valid robot file with portprefix overriden via configuration")
+    {
+        // Reset test flags
+        globalState.reset();
+
+        // Add dummy devices to YARP drivers factory
+        yarp::dev::Drivers::factory().add(new yarp::dev::DriverCreatorOf<yarp::dev::RobotInterfaceTestMockDriver>("robotinterface_test_mock_device", "", "RobotInterfaceTestMockDriver"));
+
+        // Load empty XML configuration file
+        std::string XMLString = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n"
+                                "<!DOCTYPE robot PUBLIC \"-//YARP//DTD yarprobotinterface 3.1//EN\" \"http://www.yarp.it/DTD/yarprobotinterfaceV3.1.dtd\">\n"
+                                "<robot name=\"RobotWithOneDevice\" portprefix=\"/RobotWithOneDevice\" build=\"0\">\n"
+                                "  <devices>\n"
+                                "    <device name=\"dummy_device\" type=\"robotinterface_test_mock_device\">\n"
+                                "      <param name=\"theparam\"> ${portprefix}/SomethingInTheMiddle${portprefix} </param>\n"
+                                "    </device>\n"
+                                 "  </devices>\n"
+                                "</robot>\n";
+
+        yarp::robotinterface::XMLReader reader;
+        yarp::os::Property config;
+        config.put("portprefix","/RobotWithOneDeviceAlternativePrefix");
+        yarp::robotinterface::XMLReaderResult result = reader.getRobotFromString(XMLString, config);
+
+        // Check parsing fails on empty string
+        CHECK(result.parsingIsSuccessful);
+
+        // Verify that only one device has been loaded
+        CHECK(result.robot.devices().size() == 1);
+
+        // Verify that the devices were not opened and the attach was not called
+        CHECK(!globalState.mockDriverWasOpened);
+        CHECK(!globalState.mockDriverWasClosed);
+        CHECK(globalState.mockDriverParamValue.empty());
+
+        // Start the robot (open the device and call "attach" actions)
+        bool ok = result.robot.enterPhase(yarp::robotinterface::ActionPhaseStartup);
+        CHECK(ok);
+
+        // Check that the device was opened and attach called
+        CHECK(globalState.mockDriverWasOpened);
+        CHECK(!globalState.mockDriverWasClosed);
+        CHECK(globalState.mockDriverParamValue == "/RobotWithOneDeviceAlternativePrefix/SomethingInTheMiddle/RobotWithOneDeviceAlternativePrefix");
+
+        // Stop the robot
+        ok = result.robot.enterPhase(yarp::robotinterface::ActionPhaseInterrupt1);
+        CHECK(ok);
+        ok = result.robot.enterPhase(yarp::robotinterface::ActionPhaseShutdown);
+        CHECK(ok);
+
+        // Check that the device was closed and detach called
+        CHECK(globalState.mockDriverWasOpened);
+        CHECK(globalState.mockDriverWasClosed);
+        CHECK(globalState.mockDriverParamValue == "/RobotWithOneDeviceAlternativePrefix/SomethingInTheMiddle/RobotWithOneDeviceAlternativePrefix");
     }
 
     SECTION("Check valid robot file with two devices")

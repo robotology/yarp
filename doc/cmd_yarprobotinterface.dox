@@ -1,10 +1,43 @@
 /**
-\page yarprobotinterface yarprobotinterface: start all the devices required by a robot
+\page yarprobotinterface yarprobotinterface: Start multiple YARP devices as specified in an xml file.
 
 \ingroup yarp_tools
 
 \tableofcontents
 
 \section yarprobotinterface_intro Description
+
+The yarprobotinterface is a command line tool that is useful to launch multiple YARP device at once.
+
+Its name derives from the fact that the first and main use of the yarprobotinterface was used as the
+main program to provide a network "interface", via YARP Network Server Wrappers (NWS) devices, to a robot.
+
+However, the yarprobotinterface can be used to launch YARP devices of any kind. In a sense, is an extension of the
+yarpdev command, that instead can be used only to launch one or two devices, while yarprobotinterface can launch an
+arbitrary number of YARP devices.
+
+The details of the xml format of the files loaded by yarprobotinterface are documented in \ref yarp_robotinterface_xml_config_files .
+
+\section yarprobotinterface_parameters Parameters
+
+`--config ./configdir/config.xml`
+- Specify the path of the `.xml` file to load and that
+  describes the YARP devices to launch.
+
+`--portprefix portprefix`
+- If specified, this values override the portprefix attribute
+  of the robot element of the xml file.
+
+`--verbose`
+- If this option is specified, enable verbose output of the xml parser.
+
+`--dryrun`
+- If this option is specified, then xml file is only loaded without actually opening devices.
+  This option is useful to validate if xml files are well formed.
+
+\section yarprobotinterface_conf_file Configuration Files
+
+yarprobotinterface loads the xml file from the location specified in the `--config` option.
+
 
 */

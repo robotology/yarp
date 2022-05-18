@@ -18,7 +18,9 @@
 namespace yarp::robotinterface {
 
 /**
- * Result of the parsing of XMLReader.
+ * \ingroup robointerface_all
+ *
+ * Result of the parsing of yarp::robotinterface::XMLReader.
  */
 class YARP_robotinterface_API XMLReaderResult
 {
@@ -41,6 +43,11 @@ public:
     Robot robot;
 };
 
+/**
+ * \ingroup robointerface_all
+ *
+ * Class to read an XML file.
+ */
 class YARP_robotinterface_API XMLReader
 {
 public:
