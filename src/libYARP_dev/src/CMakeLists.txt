@@ -135,15 +135,6 @@ endif()
 
 if(NOT YARP_NO_DEPRECATED)
   list(APPEND YARP_dev_HDRS
-    yarp/dev/FrameGrabberControl2.h      # DEPRECATED Since YARP 3.0.0
-    yarp/dev/IControlLimits2.h           # DEPRECATED Since YARP 3.0.0
-    yarp/dev/IControlMode2.h             # DEPRECATED Since YARP 3.0.0
-    yarp/dev/IPositionControl2.h         # DEPRECATED Since YARP 3.0.0
-    yarp/dev/IVelocityControl2.h         # DEPRECATED Since YARP 3.0.0
-    yarp/dev/ImplementControlLimits2.h   # DEPRECATED Since YARP 3.0.0
-    yarp/dev/ImplementControlMode2.h     # DEPRECATED Since YARP 3.0.0
-    yarp/dev/ImplementPositionControl2.h # DEPRECATED Since YARP 3.0.0
-    yarp/dev/ImplementVelocityControl2.h # DEPRECATED Since YARP 3.0.0
     yarp/dev/DataSource.h                # DEPRECATED Since YARP 3.3.0
     yarp/dev/GenericSensorInterfaces.h   # DEPRECATED Since YARP 3.3.0
     yarp/dev/PreciselyTimed.h            # DEPRECATED Since YARP 3.3.0

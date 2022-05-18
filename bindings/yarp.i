@@ -431,11 +431,6 @@ MAKE_COMMS(Bottle)
 %include <yarp/dev/IPositionDirect.h>
 %include <yarp/dev/MultipleAnalogSensorsInterfaces.h>
 
-#ifndef YARP_NO_DEPRECATED // Since YARP 3.0.0
-%include <yarp/dev/FrameGrabberControl2.h>
-%include <yarp/dev/IControlMode2.h>
-#endif
-
 #ifndef YARP_NO_DEPRECATED // Since YARP 3.5.0
 %include <yarp/dev/IFrameGrabber.h>
 %include <yarp/dev/IFrameGrabberRgb.h>
@@ -817,28 +812,10 @@ typedef yarp::os::BufferedPort<ImageRgbFloat> BufferedPortImageRgbFloat;
     CAST_POLYDRIVER_TO_INTERFACE(ITorqueControl)
     CAST_POLYDRIVER_TO_INTERFACE(IControlMode)
     CAST_POLYDRIVER_TO_INTERFACE(IJointFault)
-
-#ifndef YARP_NO_DEPRECATED // Since YARP 3.0.0
-    yarp::dev::IControlMode *viewIControlMode2() {
-        yarp::dev::IControlMode *result;
-        self->view(result);
-        return result;
-    }
-#endif
-
     CAST_POLYDRIVER_TO_INTERFACE(IInteractionMode)
     CAST_POLYDRIVER_TO_INTERFACE(IPWMControl)
     CAST_POLYDRIVER_TO_INTERFACE(ICurrentControl)
     CAST_POLYDRIVER_TO_INTERFACE(IAnalogSensor)
-
-#ifndef YARP_NO_DEPRECATED // Since YARP 3.0.0
-    yarp::dev::IFrameGrabberControls *viewIFrameGrabberControls2() {
-        yarp::dev::IFrameGrabberControls *result;
-        self->view(result);
-        return result;
-    }
-#endif
-
     CAST_POLYDRIVER_TO_INTERFACE(IFrameGrabberControls)
     CAST_POLYDRIVER_TO_INTERFACE(IPositionDirect)
     CAST_POLYDRIVER_TO_INTERFACE(IRemoteVariables)

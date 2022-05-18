@@ -40,12 +40,6 @@
 #include <yarp/dev/IWrapper.h>
 #include <yarp/dev/IMultipleWrapper.h>
 
-#ifndef YARP_NO_DEPRECATED // since YARP 3.0
-#define YARP_INCLUDING_DEPRECATED_HEADER_YARP_DEV_FRAMEGRABBERCONTROL2_H_ON_PURPOSE
-#include <yarp/dev/FrameGrabberControl2.h>
-#undef YARP_INCLUDING_DEPRECATED_HEADER_YARP_DEV_FRAMEGRABBERCONTROL2_H_ON_PURPOSE
-#endif // YARP_NO_DEPRECATED
-
 #ifndef YARP_NO_DEPRECATED // since YARP 3.3
 #define YARP_INCLUDING_DEPRECATED_HEADER_YARP_DEV_DATASOURCE_H_ON_PURPOSE
 #include <yarp/dev/DataSource.h>
