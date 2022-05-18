@@ -96,7 +96,7 @@ void SliderWithTarget::paintEvent(QPaintEvent *e)
     if (enableViewTargetBox)
     {
         QPainter p(this);
-        double newX = ((double)w / (double)totValues) * ((double)target + abs(this->minimum()));
+        double newX = ((double)w / (double)totValues) * (target*sliderStep + abs(this->minimum()));
         QRect r(newX, 17, 30, 15);
         p.fillRect(r, QBrush(QColor(128, 128, 255, 128)));
         p.drawRect(r);
