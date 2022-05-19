@@ -90,7 +90,6 @@ protected:
     void changeEvent(QEvent *event) override;
 
 private:
-    QTreeWidgetItem *m_node;
     FlowLayout *m_layout;
     SequenceWindow *m_sequenceWindow;
     QString m_robotPartPort;

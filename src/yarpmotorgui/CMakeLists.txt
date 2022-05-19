@@ -20,6 +20,10 @@ if(YARP_COMPILE_yarpmotorgui)
     sliderWithTarget.cpp
     startdlg.cpp
     modestreemanager.cpp
+    jointItemTree.cpp
+    partItemTree.cpp
+    customgroupbox.cpp
+    robotWidgetTree.cpp
   )
   set(yarpmotorgui_HDRS
     flowlayout.h
@@ -34,6 +38,10 @@ if(YARP_COMPILE_yarpmotorgui)
     sequencewindow.h
     startdlg.h
     modestreemanager.h
+    jointItemTree.h
+    partItemTree.h
+    customgroupbox.h
+    robotWidgetTree.h
   )
   set(yarpmotorgui_QRC_FILES
     res.qrc
@@ -45,6 +53,8 @@ if(YARP_COMPILE_yarpmotorgui)
     sequencewindow.ui
     startdlg.ui
     sliderOptions.ui
+    jointItemTree.ui
+    customgroupbox.ui
   )
 
   qt5_add_resources(yarpmotorgui_QRC_GEN_SRCS ${yarpmotorgui_QRC_FILES})

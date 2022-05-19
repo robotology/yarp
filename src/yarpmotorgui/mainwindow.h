@@ -16,6 +16,7 @@
 #include <QAction>
 #include <QMutex>
 #include <QTreeWidget>
+#include <QGraphicsDropShadowEffect>
 
 #include "partitem.h"
 #include "sliderOptions.h"
@@ -82,6 +83,8 @@ private:
     QAction *m_script2;
     QAction *m_script1;
     ModesTreeManager *m_modesTreeManager;
+    QGraphicsDropShadowEffect *m_glowEffect;
+    QTimer m_glowTimer;
 
 private slots:
     void onSequenceActivated();
@@ -125,6 +128,9 @@ private slots:
     void onSetPosSliderOptionMW(int, double);
     void onSetVelSliderOptionMW(int, double);
     void onSetTrqSliderOptionMW(int, double);
+    void onJointClicked(int partIndex, int jointIndex);
+    void onGlowTimerExpired();
+    void onPartDoubleClicked(int partIndex);
 
 signals:
     void sig_enableControlVelocity(bool);

@@ -5,15 +5,17 @@
  */
 
 #include "modestreemanager.h"
+
 #include <QHeaderView>
+#include <QScrollArea>
+#include <QGroupBox>
 #define TREEMODE_OK     1
 #define TREEMODE_WARN   2
 
-ModesTreeWidget::ModesTreeWidget(QWidget *parent) : QTreeWidget(parent)
+ModesListWidget::ModesListWidget(QWidget *parent) : QTreeWidget(parent)
 {
     setHeaderLabels({"Parts", "Mode"});
     setMaximumWidth(300);
-    setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
     setFrameShape(Shape::NoFrame);
     setAnimated(true);
     header()->setDefaultSectionSize(150);
@@ -24,27 +26,114 @@ ModesTreeManager::ModesTreeManager(QHBoxLayout *layout, QWidget *parent)
       m_okIcon(":/apply.svg"),
       m_warningIcon(":/warning.svg")
 {
-    m_tree = new ModesTreeWidget(parent);
-    layout->addWidget(m_tree);
+    m_tabs = new QTabWidget();
+    m_list = new ModesListWidget();
+    m_tabs->addTab(m_list, "List");
+    m_tabs->setMaximumWidth(m_list->maximumWidth());
+
+    auto* widgetContainer = new QWidget();
+    m_widgetLayout = new QVBoxLayout();
+    m_widgetLayout->setAlignment(Qt::AlignLeft | Qt::AlignTop);
+    widgetContainer->setLayout(m_widgetLayout);
+    widgetContainer->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Maximum);
+
+    auto* scroll = new QScrollArea();
+    scroll->setWidgetResizable(true);
+    scroll->setWidget(widgetContainer);
+
+    m_tabs->addTab(scroll, "Widgets");
+
+    layout->addWidget(m_tabs);
+
+    connect(m_tabs,SIGNAL(currentChanged(int)),this, SLOT(onTabChanged(int)));
 }
 
 void ModesTreeManager::addRobot(const std::string &robotName)
 {
-    auto* robot_top = new QTreeWidgetItem();
-    robot_top->setText(0, robotName.c_str());
-    m_tree->addTopLevelItem(robot_top);
-    robot_top->setExpanded(true);
-    m_robotMap[robotName] = robot_top;
+    addRobotInList(robotName);
+    addRobotInWidget(robotName);
 }
 
-void ModesTreeManager::addRobotPart(const std::string &robotName, const std::string& partName, PartItem* part)
+void ModesTreeManager::addRobotPart(const std::string &robotName, const std::string& partName, int partIndex, PartItem* part)
+{
+    m_indexToPartMap[partIndex].partItem = part;
+    addRobotPartInList(robotName, partName, partIndex, part);
+    addRobotPartInWidget(robotName, partName, partIndex, part);
+}
+
+void ModesTreeManager::updateRobotPart(int index)
+{
+    const QVector<JointItem::JointState>& modes = m_indexToPartMap[index].partItem->getPartModes();
+    updateRobotPartInList(index, modes);
+    updateRobotPartInWidget(index, modes);
+}
+
+void ModesTreeManager::onTabChanged(int index)
+{
+    m_tabs->setMaximumWidth(m_tabs->widget(index)->maximumWidth());
+}
+
+void ModesTreeManager::onJointClicked(int partIndex, int jointIndex)
+{
+    emit sig_jointClicked(partIndex, jointIndex);
+}
+
+void ModesTreeManager::onJointHomeFromTree(int partIndex, int jointIndex)
+{
+    m_indexToPartMap[partIndex].partItem->getJointWidget(jointIndex)->home();
+}
+
+void ModesTreeManager::onJointRunFromTree(int partIndex, int jointIndex)
+{
+    m_indexToPartMap[partIndex].partItem->getJointWidget(jointIndex)->run();
+}
+
+void ModesTreeManager::onJointIdleFromTree(int partIndex, int jointIndex)
+{
+    m_indexToPartMap[partIndex].partItem->getJointWidget(jointIndex)->idle();
+}
+
+void ModesTreeManager::onJointPIDFromTree(int partIndex, int jointIndex)
+{
+    m_indexToPartMap[partIndex].partItem->getJointWidget(jointIndex)->showPID();
+}
+
+void ModesTreeManager::onPartDoubleClicked(int partIndex)
+{
+    emit sig_partDoubleClicked(partIndex);
+}
+
+void ModesTreeManager::addRobotInList(const std::string &robotName)
+{
+    auto* robot_top = new QTreeWidgetItem();
+    robot_top->setText(0, robotName.c_str());
+    m_list->addTopLevelItem(robot_top);
+    robot_top->setExpanded(true);
+    m_robotMapList[robotName] = robot_top;
+}
+
+void ModesTreeManager::addRobotInWidget(const std::string &robotName)
+{
+    RobotWidgetTree* newRobot = new RobotWidgetTree;
+    newRobot->setTitle(robotName.c_str());
+    m_widgetLayout->addWidget(newRobot);
+
+    newRobot->enableCollapseAllContextMenu(true);
+    newRobot->setIcons(m_okIcon, m_warningIcon);
+
+    m_robotMapWidget[robotName] = newRobot;
+
+    connect(newRobot, SIGNAL(sig_partDoubleClicked(int)), this, SLOT(onPartDoubleClicked(int)));
+}
+
+void ModesTreeManager::addRobotPartInList(const std::string &robotName, const std::string &partName, int partIndex, PartItem *part)
 {
     auto* partItem = new QTreeWidgetItem();
     partItem->setText(0, partName.c_str());
-    QTreeWidgetItem *tp = m_robotMap[robotName];
+    QTreeWidgetItem *tp = m_robotMapList[robotName];
     tp->addChild(partItem);
     partItem->setExpanded(false);
-    part->setTreeWidgetModeNode(partItem);
+    m_indexToPartMap[partIndex].listWidget = partItem;
 
     for (int i = 0; i < part->getNumberOfJoints(); ++i)
     {
@@ -59,11 +148,32 @@ void ModesTreeManager::addRobotPart(const std::string &robotName, const std::str
     }
 }
 
-void ModesTreeManager::updateRobotPart(PartItem *part)
+void ModesTreeManager::addRobotPartInWidget(const std::string &robotName, const std::string &partName, int partIndex, PartItem *part)
 {
-    QTreeWidgetItem *parentNode = part->getTreeWidgetModeNode();
+    PartItemTree* partWidget = new PartItemTree(partIndex);
 
-    const QVector<JointItem::JointState>& modes = part->getPartModes();
+    for (int i = 0; i < part->getNumberOfJoints(); ++i)
+    {
+        auto* jointWidget = partWidget->addJoint();
+        jointWidget->setJointName(QString("%1 - %2").arg(i).arg(part->getJointName(i)));
+    }
+
+    RobotWidgetTree* robotWidget = m_robotMapWidget[robotName];
+
+    robotWidget->addPart(partName, partIndex, partWidget);
+
+    connect(partWidget, SIGNAL(sig_jointClicked(int,int)), this, SLOT(onJointClicked(int,int)));
+    connect(partWidget, SIGNAL(sig_homeClicked(int,int)), this, SLOT(onJointHomeFromTree(int,int)));
+    connect(partWidget, SIGNAL(sig_runClicked(int,int)), this, SLOT(onJointRunFromTree(int,int)));
+    connect(partWidget, SIGNAL(sig_idleClicked(int,int)), this, SLOT(onJointIdleFromTree(int,int)));
+    connect(partWidget, SIGNAL(sig_PIDClicked(int,int)), this, SLOT(onJointPIDFromTree(int,int)));
+
+    m_indexToPartMap[partIndex].robotWidget = robotWidget;
+}
+
+void ModesTreeManager::updateRobotPartInList(int index, const QVector<JointItem::JointState> &modes)
+{
+    QTreeWidgetItem *parentNode = m_indexToPartMap[index].listWidget;
 
     if (modes.size() != parentNode->childCount())
     {
@@ -113,6 +223,10 @@ void ModesTreeManager::updateRobotPart(PartItem *part)
             parentNode->setIcon(0, m_warningIcon);
             parentNode->setData(0,Qt::UserRole,TREEMODE_WARN);
         }
-
     }
+}
+
+void ModesTreeManager::updateRobotPartInWidget(int index, const QVector<JointItem::JointState> &modes)
+{
+    m_indexToPartMap[index].robotWidget->updateRobotPart(index, modes);
 }
