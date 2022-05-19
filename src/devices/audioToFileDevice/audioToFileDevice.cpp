@@ -42,6 +42,7 @@ bool audioToFileDevice::open(yarp::os::Searchable &config)
         yCInfo(AUDIOTOFILE, "yarpdev --device AudioPlayerWrapper --subdevice audioToFileDevice --start");
         yCInfo(AUDIOTOFILE, "yarpdev --device AudioPlayerWrapper --subdevice audioToFileDevice --start --file_name audio_out.wav --save_mode overwrite_file");
         yCInfo(AUDIOTOFILE, "save_mode can be overwrite_file, append_file, rename_file, break_file");
+        yCInfo(AUDIOTOFILE, "use --add_marker option to add a marker at the beginning and at the ending of each received waveform");
         return false;
     }
 
@@ -57,6 +58,8 @@ bool audioToFileDevice::open(yarp::os::Searchable &config)
     {
         yCInfo(AUDIOTOFILE) << "No `file_name` option specified. Audio will be saved on exit to default file:" << m_audio_filename;
     }
+
+    if      (config.check("add_marker")) {m_add_marker=true; yCInfo(AUDIOTOFILE) << "Audio marker option enabled";}
 
     if      (config.find("save_mode").toString() == "overwrite_file") { m_save_mode = save_mode_t::save_overwrite_file;}
     else if (config.find("save_mode").toString() == "append_data")    { m_save_mode = save_mode_t::save_append_data; }
@@ -86,7 +89,36 @@ void audioToFileDevice::save_to_file()
     m_audioFile.resize(0, m_sounds.front().getChannels());
     while (!m_sounds.empty())
     {
-        m_audioFile += m_sounds.front();
+        yarp::sig::Sound curr_sound = m_sounds.front();
+        size_t ss_size = curr_sound.getSamples();
+        size_t ch_size = curr_sound.getChannels();
+
+        if (!m_add_marker)
+        {
+            m_audioFile += curr_sound;
+        }
+        else
+        {
+            //if required, create a sound with a marker at the beginning and at the end
+            yarp::sig::Sound marked_sound;
+            marked_sound.setFrequency(curr_sound.getFrequency());
+            marked_sound.resize(ss_size + 5, ch_size);
+
+            for (size_t c = 0; c < ch_size; c++)
+            {
+                for (size_t i = 0; i < ss_size; i++)
+                {
+                    marked_sound.set(curr_sound.get(i, c), i, c);
+                }
+                for (size_t i = ss_size; i < ss_size + 5; i++)
+                {
+                    marked_sound.set(32000, i, c);
+                }
+                marked_sound.set(-32000, 0, c);
+            }
+
+            m_audioFile += marked_sound;
+        }
         m_sounds.pop_front();
     }
 

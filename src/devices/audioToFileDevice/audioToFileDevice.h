@@ -40,6 +40,7 @@
 * | AUDIO_BASE     |     ***        |         | -              |  -                       | No                          | For the documentation of AUDIO_BASE group, please refer to the documentation of the base class AudioPlayerDeviceBase |       |
 * | file_name      |      -         | string  | -              |  audio_out.wav           | No                          | The name of the file written by the module                        | Only .wav and .mp3 files are supported   |
 * | save_mode      |      -         | string  | -              |  overwrite_file          | No                          | Affects the behavior of the module and defines the save mode, as described in the documentation.   |       |
+* | add_marker     |      -         | bool    | -              |  -                       | No                          | If set, it will add a marker at the beginning and at the ending of each received waveform.   |       |
 *
 * See \ref AudioDoc for additional documentation on YARP audio.
 */
@@ -74,6 +75,7 @@ private:
     std::string      m_audio_filename = "audio_out.wav";
     std::deque<yarp::sig::Sound> m_sounds;
     size_t m_filename_counter = 0;
+    bool             m_add_marker=false;
 
     enum save_mode_t
     {
