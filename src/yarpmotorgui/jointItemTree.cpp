@@ -25,10 +25,6 @@ JointItemTree::JointItemTree(int index, QWidget *parent) :
     m_rightClickMenu.addAction(m_rightClickMenuTitle);
     m_rightClickMenu.addSeparator();
 
-    m_homeAction = new QAction("Home joint", this);
-    connect(m_homeAction, SIGNAL(triggered()), this, SLOT(onHomeClicked()));
-    m_rightClickMenu.addAction(m_homeAction);
-
     m_idleAction = new QAction("Idle joint", this);
     connect(m_idleAction, SIGNAL(triggered()), this, SLOT(onIdleClicked()));
     m_rightClickMenu.addAction(m_idleAction);
@@ -40,6 +36,10 @@ JointItemTree::JointItemTree(int index, QWidget *parent) :
     m_pidAction = new QAction("Show joint PID", this);
     connect(m_pidAction, SIGNAL(triggered()), this, SLOT(onPIDClicked()));
     m_rightClickMenu.addAction(m_pidAction);
+
+    m_homeAction = new QAction("Home joint", this);
+    connect(m_homeAction, SIGNAL(triggered()), this, SLOT(onHomeClicked()));
+    m_rightClickMenu.addAction(m_homeAction);
 }
 
 JointItemTree::~JointItemTree()
