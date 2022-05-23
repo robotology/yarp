@@ -67,18 +67,6 @@
 #include <yarp/os/Wire.h>
 #include <yarp/os/WireLink.h>
 
-#ifndef YARP_NO_DEPRECATED
-#define YARP_INCLUDING_DEPRECATED_HEADER_ON_PURPOSE
-     // since YARP 3.0.0
-#    include <yarp/os/ConstString.h>
-#    include <yarp/os/RateThread.h>
-     // since YARP 3.3
-#    include <yarp/os/LockGuard.h>
-#    include <yarp/os/Mutex.h>
-#    include <yarp/os/RecursiveMutex.h>
-#undef YARP_INCLUDING_DEPRECATED_HEADER_ON_PURPOSE
-#endif // YARP_NO_DEPRECATED
-
 
 /**
  * @namespace yarp

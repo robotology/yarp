@@ -10,13 +10,6 @@
 #include <yarp/os/Port.h>
 #include <yarp/os/Semaphore.h>
 #include <yarp/os/impl/PortCore.h>
-
-#ifndef YARP_NO_DEPRECATED // Since YARP 3.3
-#define YARP_INCLUDING_DEPRECATED_HEADER_ON_PURPOSE
-#include <yarp/os/Mutex.h>
-#undef YARP_INCLUDING_DEPRECATED_HEADER_ON_PURPOSE
-#endif // YARP_NO_DEPRECATED
-
 #include <mutex>
 
 namespace yarp::os::impl {
@@ -55,12 +48,6 @@ public:
     bool commitToRpc { false };
     bool active { false };
     std::mutex* recCallbackLock { nullptr };
-#ifndef YARP_NO_DEPRECATED // Since YARP 3.3
-YARP_WARNING_PUSH
-YARP_DISABLE_DEPRECATED_WARNING
-    yarp::os::Mutex* old_recCallbackLock { nullptr };
-YARP_WARNING_POP
-#endif
     bool haveCallbackLock { false };
 
     PortCoreAdapter(Port& owner);
@@ -81,13 +68,6 @@ YARP_WARNING_POP
     void configAdminReader(PortReader& reader);
     void configReadCreator(PortReaderCreator& creator);
     void configWaitAfterSend(bool waitAfterSend);
-#ifndef YARP_NO_DEPRECATED // Since YARP 3.3
-YARP_WARNING_PUSH
-YARP_DISABLE_DEPRECATED_WARNING
-    YARP_DEPRECATED
-    bool configCallbackLock(Mutex* lock);
-YARP_WARNING_POP
-#endif
     bool configCallbackLock(std::mutex* lock);
     bool unconfigCallbackLock();
     PortReader* checkPortReader();

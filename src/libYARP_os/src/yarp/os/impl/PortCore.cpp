@@ -3023,24 +3023,6 @@ void PortCore::setTimeout(float timeout)
     m_timeout = timeout;
 }
 
-#ifndef YARP_NO_DEPRECATED // since YARP 3.3
-YARP_WARNING_PUSH
-YARP_DISABLE_DEPRECATED_WARNING
-bool PortCore::setCallbackLock(yarp::os::Mutex* mutex)
-{
-    removeCallbackLock();
-    if (mutex != nullptr) {
-        m_old_mutex = mutex;
-        m_mutexOwned = false;
-    } else {
-        m_old_mutex = new yarp::os::Mutex();
-        m_mutexOwned = true;
-    }
-    return true;
-}
-YARP_WARNING_POP
-#endif // YARP_NO_DEPRECATED
-
 bool PortCore::setCallbackLock(std::mutex* mutex)
 {
     removeCallbackLock();
@@ -3060,9 +3042,6 @@ bool PortCore::removeCallbackLock()
         delete m_mutex;
     }
     m_mutex = nullptr;
-#ifndef YARP_NO_DEPRECATED // since YARP 3.3
-    m_old_mutex = nullptr;
-#endif // YARP_NO_DEPRECATED
     m_mutexOwned = false;
     return true;
 }
@@ -3070,15 +3049,7 @@ bool PortCore::removeCallbackLock()
 bool PortCore::lockCallback()
 {
     if (m_mutex == nullptr) {
-#ifndef YARP_NO_DEPRECATED // since YARP 3.3
-        if (m_old_mutex == nullptr) {
-            return false;
-        }
-        m_old_mutex->lock();
-        return true;
-#else // YARP_NO_DEPRECATED
         return false;
-#endif // YARP_NO_DEPRECATED
     }
     m_mutex->lock();
     return true;
@@ -3087,14 +3058,7 @@ bool PortCore::lockCallback()
 bool PortCore::tryLockCallback()
 {
     if (m_mutex == nullptr) {
-#ifndef YARP_NO_DEPRECATED // since YARP 3.3
-        if (m_old_mutex == nullptr) {
-            return true;
-        }
-        return m_old_mutex->try_lock();
-#else // YARP_NO_DEPRECATED
         return true;
-#endif // YARP_NO_DEPRECATED
     }
     return m_mutex->try_lock();
 }
@@ -3102,14 +3066,7 @@ bool PortCore::tryLockCallback()
 void PortCore::unlockCallback()
 {
     if (m_mutex == nullptr) {
-#ifndef YARP_NO_DEPRECATED // since YARP 3.3
-        if (m_old_mutex == nullptr) {
-            return;
-        }
-        return m_old_mutex->unlock();
-#else // YARP_NO_DEPRECATED
         return;
-#endif // YARP_NO_DEPRECATED
     }
     m_mutex->unlock();
 }

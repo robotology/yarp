@@ -12,13 +12,6 @@
 #include <cstddef>
 #include <string>
 
-#ifndef YARP_NO_DEPRECATED // Since YARP 3.0.0
-#define YARP_INCLUDING_DEPRECATED_HEADER_ON_PURPOSE
-#    include <yarp/os/ConstString.h>
-#undef YARP_INCLUDING_DEPRECATED_HEADER_ON_PURPOSE
-#endif // YARP_NO_DEPRECATED
-
-
 namespace yarp::os {
 class Value;
 class Bottle;
