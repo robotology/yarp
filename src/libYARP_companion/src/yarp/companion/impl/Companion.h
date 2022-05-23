@@ -154,7 +154,7 @@ public:
     int cmdWhere(int argc, char *argv[]);
 
     // Defined in Companion.cmdWrite.cpp
-    int write(const char *name, int ntargets, char *targets[]);
+    int write(const char *name, int ntargets, char *targets[], double period = 0);
     int cmdWrite(int argc, char *argv[]);
 
     static yarp::os::Contactable* getActivePort() { return getInstance().active_port; }
