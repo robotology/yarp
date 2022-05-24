@@ -158,15 +158,20 @@ bool NetworkProfiler::getPortInfo (const std::string& name, const ports_name_set
 
 bool NetworkProfiler::getConnectionsList(connections_set& connections)
 {
+    //get the list of all the ports
     ports_name_set ports;
     getPortsList(ports);
 
+    //for each port, get the list of its connections...
     for (auto it = ports.begin(); it != ports.end(); it++)
     {
         PortDetails info;
         getPortDetails(it->name, info);
         ConnectionDetails conn;
-        /*for (auto it2 = info.inputs.begin(); it2 != info.inputs.end(); it2++)
+        /*
+        //I will not process incoming connections since probably everything in the system 
+        //is determined just looking at the outgoing connections
+        for (auto it2 = info.inputs.begin(); it2 != info.inputs.end(); it2++)
         {
             PortInfo p; getPortInfo(it2->name, ports, p);
             conn.src.name = it2->name;
@@ -177,6 +182,7 @@ bool NetworkProfiler::getConnectionsList(connections_set& connections)
             conn.dst.port_number = it->port_number;
             conn.carrier = it2->carrier;
         }*/
+        //process all the outgoing connections and put them into a vector
         for (auto it2 = info.outputs.begin(); it2 != info.outputs.end(); it2++)
         {
             PortInfo p; getPortInfo(it2->port_name, ports, p);
@@ -187,11 +193,14 @@ bool NetworkProfiler::getConnectionsList(connections_set& connections)
             conn.dst.ip = p.ip;
             conn.dst.port_number = p.port_number;
             conn.carrier = it2->carrier;
-        }
-        if (conn.isValid() &&
-            std::find(connections.begin(), connections.end(), conn) == connections.end())
-        {
-            connections.push_back(conn);
+
+            //add the connection to the list if it is valid and it is unique
+            //(no other connections with same src/dst/protocol)
+            if (conn.isValid() &&
+                std::find(connections.begin(), connections.end(), conn) == connections.end())
+            {
+                connections.push_back(conn);
+            }
         }
     }
     return true;

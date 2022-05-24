@@ -5,9 +5,40 @@
 
 #include <yarp/profiler/NetworkProfiler.h>
 #include <yarp/os/Network.h>
+#include <yarp/os/LogStream.h>
 #include<fstream>
 
 using namespace std;
+
+namespace
+{
+    YARP_LOG_COMPONENT(YARPCONNINFO, "yarp.yarpconnectioninfo")
+}
+
+void display_help ()
+{
+    yCInfo(YARPCONNINFO) << "This is the tool yarpconnectioninfo.";
+    yCInfo(YARPCONNINFO) << "By default it prints on screen all the connections found on the yarp network.";
+    yCInfo(YARPCONNINFO) << "use the --to_dotfile <filename> to write the list of connections to a file in the dot format.";
+    yCInfo(YARPCONNINFO) << "use an online dot editor (e.g. https://dreampuf.github.io/GraphvizOnline) to visualize the graph.";
+    yCInfo(YARPCONNINFO) << " ";
+    yCInfo(YARPCONNINFO) << "Filter options (filters are added using AND logic):";
+    yCInfo(YARPCONNINFO) << "filters on the ip (default value: *):";
+    yCInfo(YARPCONNINFO) << "--from_ip <ip>";
+    yCInfo(YARPCONNINFO) << "--to_ip <ip>";
+    yCInfo(YARPCONNINFO) << "filters on the portnumbers (default value: *):";
+    yCInfo(YARPCONNINFO) << "--from_portnumber <ip>";
+    yCInfo(YARPCONNINFO) << "--to_portnumber <ip>";
+    yCInfo(YARPCONNINFO) << "filters on the port names (default value: *):";
+    yCInfo(YARPCONNINFO) << "--from_portname <name>";
+    yCInfo(YARPCONNINFO) << "--to_portname name>";
+    yCInfo(YARPCONNINFO) << " ";
+    yCInfo(YARPCONNINFO) << "Additional options (default value: false):";
+    yCInfo(YARPCONNINFO) << "--display_unconnnected_ports";
+    yCInfo(YARPCONNINFO) << "--display_log_ports";
+    yCInfo(YARPCONNINFO) << "--display_clock_ports";
+    yCInfo(YARPCONNINFO) << "--display_yarprun_processes";
+}
 
 int main(int argc, char *argv[])
 {
@@ -41,6 +72,8 @@ int main(int argc, char *argv[])
     bool display_log_ports = false;
     bool display_clock_ports = false;
     bool display_unconnected_ports = false;
+
+    if (p.check("help")) {display_help(); return 1; }
     if (p.check("display_yarprun_processes")) { display_yarprun_processes = true;}
     if (p.check("display_log_ports")) { display_log_ports = true; }
     if (p.check("display_clock_ports")) { display_clock_ports = true; }
@@ -205,70 +238,70 @@ int main(int argc, char *argv[])
     return 1;
 }
 
-/* dot file example
+/********************
+* dot file example
+*********************
 
 digraph G {
 
+    splines="compound"
 
-	splines="compound"
+    rankdir="TB"
+    subgraph cluster_net {
 
-	rankdir="TB"
-	subgraph cluster_net {
+    subgraph cluster_1 {
 
+        subgraph cluster_1a {
 
-	subgraph cluster_1 {
+            node [style=filled];
+            a0;
+            a1;
+            a2;
+            a3;
+            label = "process a";
 
-		subgraph cluster_1a {
+            color=blue
+        }
+        subgraph cluster_1b {
+            node [style=filled];
+            b0;
+            b1;
+            b2;
+            b3;
+            label = "process b";
+            color=blue
+        }
+        label = "machine1";
+    }
 
-			node [style=filled];
-			a0;
-			a1;
-			a2;
-			a3;
-			label = "process a";
+    subgraph cluster_2 {
+            subgraph cluster_2a {
+                node [style=filled];
+                c0 [label="/c0/kkk11"];
+                c1;
+                c2;
+                c3;
+                label = "process c";
+                color=blue
+            }
+            subgraph cluster_2b {
+                node [style=filled];
+                d0;
+                d1;
+                d2;
+                d3;
+                label = "process d";
+                color=blue
+            }
+        label = "machine";
+    }
 
-			color=blue
-		}
-		subgraph cluster_1b {
-			node [style=filled];
-			b0;
-			b1;
-			b2;
-			b3;
-			label = "process b";
-			color=blue
-		}
-		label = "machine1";
-	}
-
-	subgraph cluster_2 {
-			subgraph cluster_2a {
-				node [style=filled];
-				c0 [label="/c0/kkk11"];
-				c1;
-				c2;
-				c3;
-				label = "process c";
-				color=blue
-			}
-			subgraph cluster_2b {
-				node [style=filled];
-				d0;
-				d1;
-				d2;
-				d3;
-				label = "process d";
-				color=blue
-			}
-		label = "machine";
-	}
-
-	a1 -> c1 [label="tcp" color=blue];
-	c1 -> a1 [label="tcp" color=blue];
-	b2 -> c3 [label="tcp" color=blue];
-	a3 -> c0 [label="tcp" color=green];
-	a3 -> d0 [label="tcp" color=green];
-	b3 -> d3 [label="tcp" color=blue];
+    a1 -> c1 [label="tcp" color=blue];
+    c1 -> a1 [label="tcp" color=blue];
+    b2 -> c3 [label="tcp" color=blue];
+    a3 -> c0 [label="tcp" color=green];
+    a3 -> d0 [label="tcp" color=green];
+    b3 -> d3 [label="tcp" color=blue];
 }
 */
 
