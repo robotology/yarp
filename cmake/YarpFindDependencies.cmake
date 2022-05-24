@@ -564,7 +564,10 @@ yarp_dependent_option(
   YARP_COMPILE_yarpviz "Do you want to compile yarpviz?" ON
   "YARP_COMPILE_EXECUTABLES;YARP_COMPILE_GUIS;YARP_HAS_Qt5;YARP_HAS_Graphviz;YARP_HAS_QGVCore" OFF
 )
-
+yarp_dependent_option(
+  YARP_COMPILE_yarpconnectionsinfo "Do you want to compile yarpconnectionsinfo?" ON
+  "YARP_COMPILE_EXECUTABLES" OFF
+)
 yarp_dependent_option(
   YARP_COMPILE_RobotTestingFramework_ADDONS "Compile Robot Testing Framework addons." ON
   "YARP_HAS_RobotTestingFramework" OFF
@@ -594,7 +597,7 @@ if(YARP_COMPILE_yarpmanager-console OR YARP_COMPILE_yarpmanager OR YARP_COMPILE_
 endif()
 
 set(YARP_COMPILE_libYARP_profiler OFF)
-if(YARP_COMPILE_yarpviz OR YARP_COMPILE_yarpmanager)
+if(YARP_COMPILE_yarpviz OR YARP_COMPILE_yarpmanager OR YARP_COMPILE_yarpconnectionsinfo)
   set(YARP_COMPILE_libYARP_profiler ON)
 endif()
 

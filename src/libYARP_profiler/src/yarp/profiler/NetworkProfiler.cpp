@@ -12,6 +12,7 @@
 #include <yarp/os/OutputProtocol.h>
 #include <yarp/os/Carrier.h>
 #include <yarp/companion/impl/Companion.h>
+#include <algorithm>
 
 using namespace yarp::os;
 using namespace yarp::profiler;
@@ -21,136 +22,7 @@ using namespace yarp::profiler::graph;
 
 NetworkProfiler::ProgressCallback* NetworkProfiler::progCallback = nullptr;
 
-bool NetworkProfiler::yarpNameList(ports_name_set &ports, bool complete) {
-    ports.clear();
-
-    ContactStyle style;
-    style.quiet = true;
-    style.timeout = 3.0;
-    std::string nameserver = NetworkBase::getNameServerName();
-    Bottle msg, reply;
-    msg.addString("bot");
-    msg.addString("list");
-    if(!NetworkBase::write(Contact(nameserver), msg, reply, style)) {
-        yError() << "Cannot write to yarp name server";
-        return false;
-    }
-
-    if(reply.size() == 0) {
-        yError() << "Empty reply from yarp name server";
-        return false;
-    }
-
-    for (size_t i=1; i<reply.size(); i++) {
-        Bottle *entry = reply.get(i).asList();
-        if(entry != nullptr) {
-            bool shouldTake = false;
-            std::string portname = entry->check("name", Value("")).asString();
-            if(complete)
-            {
-                shouldTake = portname != "";
-            }
-            else
-            {
-                shouldTake = portname != "" && portname != "fallback" && portname != nameserver;
-            }
-            if (shouldTake) {
-                Contact c = Contact::fromConfig(*entry);
-                if (c.getCarrier() != "mcast") {
-                    ports.push_back(*entry);
-                }
-            }
-        }
-    }
-
-    return true;
-}
-
-bool NetworkProfiler::getPortDetails(const std::string& portName, PortDetails& info) {
-
-    info.name = portName;
-    Port ping;
-    ping.open("/yarpviz");
-    ping.setAdminMode(true);
-    ping.setTimeout(1.0);
-    if(!NetworkBase::connect(ping.getName(), portName)) {
-        yWarning()<<"Cannot connect to"<<portName;
-        ping.close();
-        return false;
-    }
-
-    // Getting output connections list
-    Bottle cmd, reply;
-    cmd.addString("list"); cmd.addString("out");
-    if(!ping.write(cmd, reply)) {
-        yError()<<"Cannot write (list out) to"<<portName;
-        ping.close();
-        return false;
-    }
-    for(size_t i=0; i<reply.size(); i++) {
-        ConnectionInfo cnn;
-        cnn.name = reply.get(i).asString();
-        Bottle reply2;
-        cmd.clear();
-        cmd.addString("list"); cmd.addString("out"); cmd.addString(cnn.name);
-        if (!ping.write(cmd, reply2)) {
-            yWarning()<<"Cannot write (list out"<<cnn.name<<") to"<<portName;
-        } else {
-            cnn.carrier = reply2.find("carrier").asString();
-        }
-        info.outputs.push_back(cnn);
-    }
-
-    // Getting input connections list
-    cmd.clear(); reply.clear();
-    cmd.addString("list"); cmd.addString("in");
-    if(!ping.write(cmd, reply)) {
-        yError()<<"Cannot write (list in) to"<<portName;
-        ping.close();
-        return false;
-    }
-    for(size_t i=0; i<reply.size(); i++) {
-        ConnectionInfo cnn;
-        cnn.name = reply.get(i).asString();
-        if (cnn.name != ping.getName()) {
-            info.inputs.push_back(cnn);
-        }
-    }
-
-    // Getting owner info
-    cmd.clear(); reply.clear();
-    cmd.addString("prop"); cmd.addString("get"); cmd.addString(portName);
-    if(!ping.write(cmd, reply)) {
-        yError()<<"Cannot write (prop get"<<portName<<") to"<<portName;
-        ping.close();
-        return false;
-    }
-
-    Property* process = reply.find("process").asDict();
-    if (!process) {
-        yWarning()<<"Cannot find 'process' property of port "<<portName;
-    } else {
-        info.owner.name = process->find("name").asString();
-        info.owner.arguments = process->find("arguments").asString();
-        info.owner.pid = process->find("pid").asInt32();
-        info.owner.priority = process->find("priority").asInt32();
-        info.owner.policy = process->find("policy").asInt32();
-    }
-
-    Property* platform = reply.find("platform").asDict();
-    if (!platform) {
-        yWarning()<<"Cannot find 'platform' property of port "<<portName;
-    } else {
-        info.owner.os = platform->find("os").asString();
-        info.owner.hostname = platform->find("hostname").asString();
-    }
-
-    ping.close();
-    return true;
-}
-
-
-bool NetworkProfiler::creatNetworkGraph(ports_detail_set details, yarp::profiler::graph::Graph& graph) {
+bool NetworkProfiler::creatNetworkGraph(ports_detail_set details_set, yarp::profiler::graph::Graph& graph) {
 
     // adding the ports and processor nodes
     if (NetworkProfiler::progCallback) {
@@ -159,25 +31,25 @@ bool NetworkProfiler::creatNetworkGraph(ports_detail_set details, yarp::profiler
 
     ports_detail_iterator itr;
     unsigned int itr_count = 0;
-    for(itr = details.begin(); itr!=details.end(); itr++) {
-        PortDetails info = (*itr);
+    for(itr = details_set.begin(); itr!= details_set.end(); itr++) {
+        PortDetails details = (*itr);
 
         // port node
-        PortVertex* port = new PortVertex(info.name);
-        if (!info.inputs.size() && !info.outputs.size()) {
+        PortVertex* port = new PortVertex(details.info.name);
+        if (!details.inputs.size() && !details.outputs.size()) {
             port->property.put("orphan", true);
         }
         graph.insert(*port);
 
         //process node (owner)
-        ProcessVertex* process = new ProcessVertex(info.owner.pid, info.owner.hostname);
+        ProcessVertex* process = new ProcessVertex(details.owner_process.pid, details.owner_process.owner_machine.hostname);
         //prop.clear();
-        process->property.put("name", info.owner.name);
-        process->property.put("arguments", info.owner.arguments);
-        process->property.put("hostname", info.owner.hostname);
-        process->property.put("priority", info.owner.priority);
-        process->property.put("policy", info.owner.policy);
-        process->property.put("os", info.owner.os);
+        process->property.put("name", details.owner_process.process_name);
+        process->property.put("arguments", details.owner_process.arguments);
+        process->property.put("hostname", details.owner_process.owner_machine.hostname);
+        process->property.put("priority", details.owner_process.priority);
+        process->property.put("policy", details.owner_process.policy);
+        process->property.put("os", details.owner_process.owner_machine.os);
         process->property.put("hidden", false);
         auto itrVert=graph.insert(*process);
         // create connection between ports and its process
@@ -187,63 +59,48 @@ bool NetworkProfiler::creatNetworkGraph(ports_detail_set details, yarp::profiler
 
 
         //machine node (owner of the process)
-        MachineVertex* machine = new MachineVertex(info.owner.os, info.owner.hostname);
+        MachineVertex* machine = new MachineVertex(details.owner_process.owner_machine.os, details.owner_process.owner_machine.hostname);
         graph.insert(*machine);
         //todo do the same done for the process.
         process->setOwner(machine);
 
-        if (!info.inputs.size() && !info.outputs.size()) {
+        if (!details.inputs.size() && !details.outputs.size()) {
             graph.insertEdge(*process, *port, Property("(type ownership) (dir unknown)"));
         }
 
         // calculate progress
         if(NetworkProfiler::progCallback) {
-            NetworkProfiler::progCallback->onProgress((unsigned int) (++itr_count/((float)(details.size()*2)) * 100.0) );
+            NetworkProfiler::progCallback->onProgress((unsigned int) (++itr_count/((float)(details_set.size()*2)) * 100.0) );
         }
     }
 
 
     // create connection between ports
-    for(itr = details.begin(); itr!=details.end(); itr++) {
-        PortDetails info = (*itr);
+    for(itr = details_set.begin(); itr!= details_set.end(); itr++) {
+        PortDetails details = (*itr);
         // find the current port vertex in the graph
-        pvertex_iterator vi1 = graph.find(PortVertex(info.name));
+        pvertex_iterator vi1 = graph.find(PortVertex(details.info.name));
         yAssert(vi1 != graph.vertices().end());
-        for(auto cnn : info.outputs) {
-            pvertex_iterator vi2 = graph.find(PortVertex(cnn.name));
+        for(auto cnn : details.outputs) {
+            pvertex_iterator vi2 = graph.find(PortVertex(cnn.port_name));
             if(vi2 != graph.vertices().end()) {
                 //yInfo()<<"connecting "<<(*vi1)->property.find("name").asString()<<"->"<<(*vi2)->property.find("name").asString();
                 Property edge_prop("(type connection)");
                 edge_prop.put("carrier", cnn.carrier);
                 graph.insertEdge(vi1, vi2, edge_prop);
             } else {
-                yWarning() << "Found a nonexistent port (" << cnn.name << ")"
+                yWarning() << "Found a nonexistent port (" << cnn.port_name << ")"
                            << "in the output list of" << (*vi1)->property.find("name").asString();
             }
         }
         // calculate progress
         if(NetworkProfiler::progCallback) {
-            NetworkProfiler::progCallback->onProgress((unsigned int) (++itr_count/((float)(details.size()*2)) * 100.0) );
+            NetworkProfiler::progCallback->onProgress((unsigned int) (++itr_count/((float)(details_set.size()*2)) * 100.0) );
         }
     }
     if (NetworkProfiler::progCallback) {
         NetworkProfiler::progCallback->onProgress(100); // is it really needed? :p
     }
-    return true;
-}
-
-bool NetworkProfiler::yarpClean(float timeout) {
-
-    if (timeout <= 0) {
-        timeout = -1;
-    }
-
-    std::stringstream sstream;
-    sstream<<timeout;
-    char* argv[2];
-    argv[0] = (char*) "--timeout";
-    argv[1] = (char*) sstream.str().c_str();
-    yarp::companion::impl::Companion::getInstance().cmdClean(2,argv);
     return true;
 }
 

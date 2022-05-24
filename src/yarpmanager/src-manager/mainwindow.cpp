@@ -1223,12 +1223,11 @@ void MainWindow::onYarpNameList()
     }
     ui->entitiesTree->clearPorts();
     yarp::profiler::NetworkProfiler::ports_name_set ports;
-    yarp::profiler::NetworkProfiler::yarpNameList(ports, true);
+    yarp::profiler::NetworkProfiler::getPortsList(ports, true);
     for(auto& port : ports)
     {
-        std::string portName = port.find("name").asString();
-        std::string portIp   = port.find("ip").asString() + " port " +
-                    std::to_string(port.find("port_number").asInt32());
+        std::string portName = port.name;
+        std::string portIp   = port.ip + " port " + port.port_number;
         ui->entitiesTree->addPort(QStringList() << QString(portName.c_str())
                                   << QString(portIp.c_str()));
     }
