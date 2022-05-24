@@ -7,11 +7,13 @@ add_library(YARP_profiler STATIC)
 add_library(YARP::YARP_profiler ALIAS YARP_profiler)
 
 set(YARP_profiler_HDRS
+  yarp/profiler/NetworkProfilerBasic.h
   yarp/profiler/NetworkProfiler.h
   yarp/profiler/Graph.h
 )
 
 set(YARP_profiler_SRCS
+  yarp/profiler/NetworkProfilerBasic.cpp
   yarp/profiler/NetworkProfiler.cpp
   yarp/profiler/Graph.cpp
 )
