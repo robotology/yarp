@@ -1,0 +1,114 @@
+YARP 3.7.0 (2022-05-25)                                                {#v3_7_0}
+=======================
+
+[TOC]
+
+YARP 3.7.0 Release Notes
+========================
+
+A (partial) list of bug fixed and issues resolved in this release can be found
+[here](https://github.com/robotology/yarp/issues?q=label%3A%22Fixed+in%3A+YARP+v3.7.0%22).
+
+
+Deprecation and Behaviour Changes
+---------------------------------
+
+### `lib_yarp_os`
+
+* Removed old deprecated functions related to the usage of unsafe network data types
+  (e.g. asVocab() -> asVocab32(), asInt() -> asInt32(), asDouble -> asFloat64() etc.)
+
+### `Devices`
+
+* removed deprecated devices:
+  NavigationServer -> please use: navigation2D_nws_yarp
+  NavigationClient -> please use: navigation2D_nwc_yarp
+  Map2DServer -> please use: map2D_nws_yarp
+  Map2DClient -> please use: map2D_nwc_yarp
+  Localization2DCServer -> please use: localization2D_nws_yarp
+  Localization2DClient -> please use: localization2D_nwc_yarp
+  rangefinder2DWrapper -> please use: rangefinder2D_nws_yarp
+
+
+New Features
+------------
+
+### Libraries
+
+#### `lib_yarp_os`
+
+##### `idl/WireReader`
+
+* Added `readBlock` method.
+
+##### `idl/WireWriter`
+
+* Added `writeBlock` method.
+* Added `skip_tag` flag to all write methods.
+
+#### `lib_yarp_dev`
+
+* ITorqueControl supports four new friction parameters: viscousPos, viscousNeg, coulombPos, coulombNeg.
+  These parameters are used to improve the friction model (and its compensation at FW level).
+
+#### `lib_yarp_companion`
+
+* added `period` option to companion command `yarp write`.
+
+* added `once` option to companion command `yarp read`.
+
+* Companion commands `yarp read` and `yarp write` now perform a check to verify that th
+  target ports do not already exist.
+
+* Added new companion command `yarp topic-test`.
+
+#### `libYARP_robotinterface`
+
+* Added support to `${portprefix}` variable in parameters (#2819).
+
+### Devices
+
+#### `audioToFileDevice`
+* added new option `--add_marker`
+* added new option `--save_mode break_file`
+
+### Port Monitors
+
+* Added new portmonitor `depthimage_to_vector`
+* added new portmonitor `sound_marker`
+
+### Tools
+
+#### `yarpidl_thrift`
+
+* Improved serialization for lists of basic types.
+  When possible, instead of being serialized element by element, lists of basic
+  types are now serialized as blocks.
+
+### GUIs
+
+#### `yarpmotorgui`
+
+* Added an alternative visualization to the tree view on the left of the yarpmotorgui.
+ It is a Widget visualization with the flow layout. In this way, it is possible to see the
+ status of all the joints in a single screen.
+
+
+
+Bug Fixes
+---------
+
+### Catch2
+
+* Imported `Catch v2.13.8` (#2795). This fixes building the unit tests on some configurations.
+
+
+### CMake
+
+* fixed compatibility with `CMake 3.23.1` on macOS.
+
+### GUIs
+
+#### `yarpmotorgui`
+
+* The target box for the joints sliders now lands where expected (#2824).
