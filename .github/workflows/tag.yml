@@ -56,7 +56,7 @@ jobs:
       env:
         INPUT_USER_NAME: 'robotology-bot (Tag Repository Action)'
         INPUT_USER_EMAIL: 'robotology@iit.it'
-        INPUT_PUSH_TOKEN: ${{ secrets.BOT_TOKEN }}
+        INPUT_PUSH_TOKEN: ${{ secrets.ROBOTOLOGY_BOT_TOKEN }}
         YARP_TAG_BRANCH: ${{ github.event.inputs.branch }}
         YARP_MAIN_BRANCH: ${{ github.event.inputs.main_branch }}
       run: |
