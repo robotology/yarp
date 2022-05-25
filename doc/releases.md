@@ -5,7 +5,7 @@ This page lists the main changes introduced in YARP at each release.
 
 
 ## YARP 3.7 Series                                            {#yarp_3_7_series}
-* \subpage master
+* \subpage v3_7_0
 ## YARP 3.6 Series                                            {#yarp_3_6_series}
 * \subpage yarp_3_6
 * \subpage v3_6_0
