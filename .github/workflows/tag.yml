@@ -54,9 +54,9 @@ jobs:
 
     - name: Configure git, Prepare Repository and environment variables
       env:
-        INPUT_USER_NAME: 'Daniele E. Domenichelli (Tag Repository Action)'
-        INPUT_USER_EMAIL: 'daniele.domenichelli@iit.it'
-        INPUT_PUSH_TOKEN: ${{ secrets.drdanz_TOKEN }}
+        INPUT_USER_NAME: 'robotology-bot (Tag Repository Action)'
+        INPUT_USER_EMAIL: 'robotology@iit.it'
+        INPUT_PUSH_TOKEN: ${{ secrets.BOT_TOKEN }}
         YARP_TAG_BRANCH: ${{ github.event.inputs.branch }}
         YARP_MAIN_BRANCH: ${{ github.event.inputs.main_branch }}
       run: |
