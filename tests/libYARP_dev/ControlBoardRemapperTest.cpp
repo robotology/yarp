@@ -38,21 +38,21 @@ const char *fmcC_file_content   =  "device fakeMotionControl\n"
 
 const char *wrapperA_file_content   = "device controlBoard_nws_yarp\n"
                                       "name /testRemapperRobot/a\n"
-                                      "period 10\n"
+                                      "period 0.01\n"
                                       "networks (net_a)\n"
                                       "joints 2\n"
                                       "net_a 0 1 0 1\n";
 
 const char *wrapperB_file_content   = "device controlBoard_nws_yarp\n"
                                       "name /testRemapperRobot/b\n"
-                                      "period 10\n"
+                                      "period 0.01\n"
                                       "networks (net_b)\n"
                                       "joints 3\n"
                                       "net_b 0 2 0 2\n";
 
 const char *wrapperC_file_content   = "device controlBoard_nws_yarp\n"
                                       "name /testRemapperRobot/c\n"
-                                      "period 10\n"
+                                      "period 0.01\n"
                                       "networks (net_c)\n"
                                       "joints 4\n"
                                       "net_c 0 3 0 3\n";
