@@ -114,8 +114,6 @@ yarp_begin_plugin_library(yarpmod
   add_subdirectory(frameGrabberCropper)
 
   add_subdirectory(portaudio) # DEPRECATED Since YARP 3.2
-  add_subdirectory(ServerSoundGrabber) # DEPRECATED Since YARP 3.2
-  add_subdirectory(ServerFrameGrabber) # DEPRECATED Since YARP 3.3
 
   # Test devices
   add_subdirectory(test_segfault)

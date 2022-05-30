@@ -24,13 +24,6 @@ YARP_DISABLE_DEPRECATED_WARNING
 #include <yarp/os/Time.h>
 #include <yarp/os/Log.h>
 
-// #define YARP_INCLUDING_DEPRECATED_HEADER_YARP_OS_RUNNABLE_H_ON_PURPOSE
-#define YARP_INCLUDING_DEPRECATED_HEADER_ON_PURPOSE
-#include <yarp/os/Runnable.h>
-#undef YARP_INCLUDING_DEPRECATED_HEADER_ON_PURPOSE
-// #undef YARP_INCLUDING_DEPRECATED_HEADER_YARP_OS_RUNNABLE_H_ON_PURPOSE
-
-
 #include <yarp/dev/IPreciselyTimed.h>
 
 // These classes are part of the YARP library implementation,

@@ -367,10 +367,6 @@ void setExternal2(yarp::sig::Image *img, PyObject* mem, int w, int h) {
 %include <yarp/os/Wire.h>
 %include <yarp/os/WireLink.h>
 
-#ifndef YARP_NO_DEPRECATED // Since YARP 3.0.0
-%include <yarp/os/RateThread.h>
-#endif
-
 %define MAKE_COMMS(name)
 %feature("notabstract") yarp::os::BufferedPort<name>;
 %feature("notabstract") BufferedPort ## name;

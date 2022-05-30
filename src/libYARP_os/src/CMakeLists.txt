@@ -29,7 +29,6 @@ set(YARP_os_HDRS
   yarp/os/ConnectionReader.h
   yarp/os/ConnectionState.h
   yarp/os/ConnectionWriter.h
-  yarp/os/ConstString.h
   yarp/os/Contactables.h
   yarp/os/Contactable.h
   yarp/os/Contact.h
@@ -241,23 +240,6 @@ set(YARP_os_SRCS
   yarp/os/WireLink.cpp
   yarp/os/QosStyle.cpp
 )
-
-if(NOT YARP_NO_DEPRECATED)
-  list(APPEND YARP_os_HDRS
-    yarp/os/ConstString.h      # DEPRECATED since YARP 3.0.0
-    yarp/os/LockGuard.h        # DEPRECATED since YARP 3.3.0
-    yarp/os/Mutex.h            # DEPRECATED since YARP 3.3.0
-    yarp/os/RateThread.h       # DEPRECATED since YARP 3.3.0
-    yarp/os/RecursiveMutex.h   # DEPRECATED since YARP 3.3.0
-    yarp/os/Runnable.h         # DEPRECATED since YARP 3.3.0
-  )
-  list(APPEND YARP_os_SRCS
-    yarp/os/Mutex.cpp          # DEPRECATED since YARP 3.3.0
-    yarp/os/RateThread.cpp     # DEPRECATED since YARP 3.3.0
-    yarp/os/RecursiveMutex.cpp # DEPRECATED since YARP 3.3.0
-    yarp/os/Runnable.cpp       # DEPRECATED since YARP 3.3.0
-  )
-endif()
 
 set(YARP_os_IDL_HDRS
   yarp/os/idl/BareStyle.h

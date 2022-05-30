@@ -342,17 +342,6 @@ void yarp::os::BufferedPort<T>::includeNodeInName(bool flag)
     return port.includeNodeInName(flag);
 }
 
-#ifndef YARP_NO_DEPRECATED // Since YARP 3.3
-YARP_WARNING_PUSH
-YARP_DISABLE_DEPRECATED_WARNING
-template <typename T>
-bool yarp::os::BufferedPort<T>::setCallbackLock(yarp::os::Mutex* mutex)
-{
-    return port.setCallbackLock(mutex);
-}
-YARP_WARNING_POP
-#endif
-
 template <typename T>
 bool yarp::os::BufferedPort<T>::setCallbackLock(std::mutex* mutex)
 {
