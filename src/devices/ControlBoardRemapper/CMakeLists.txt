@@ -6,7 +6,7 @@ yarp_prepare_plugin(controlboardremapper
   TYPE ControlBoardRemapper
   INCLUDE ControlBoardRemapper.h
   EXTRA_CONFIG
-    WRAPPER=controlboardwrapper2
+    WRAPPER=controlboard_nws_yarp
   DEFAULT ON
 )
 
@@ -15,7 +15,7 @@ yarp_prepare_plugin(remotecontrolboardremapper
   TYPE RemoteControlBoardRemapper
   INCLUDE RemoteControlBoardRemapper.h
   EXTRA_CONFIG
-    WRAPPER=controlboardwrapper2
+    WRAPPER=controlboard_nws_yarp
   DEFAULT ON
 )
 
