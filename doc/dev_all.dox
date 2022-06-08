@@ -34,7 +34,7 @@ yarpdev --device fakeFrameGrabber --width 640 --height 480 --name /test
 \endverbatim
 
 How do you know what options are available?
-You can check our list of \ref dev_examples "device invocation examples".
+You can check the documentation of that device (list of all devices \ref dev_impl here).
 Or When you try to run
 "yarpdev --device yourdevice"
 and add the "--verbose" flag, it will tell you what options it is
@@ -44,6 +44,34 @@ For example, try running:
 \verbatim
 yarpdev --device fakeFrameGrabber --verbose
 \endverbatim
+
+You can also write the parameters in a .ini file a load it from command line.
+For example, you create a grabber_test.ini file with the following text:
+
+\verbatim
+device frameGrabber_nws_yarp
+subdevice fakeFrameGrabber
+name /test
+width 640
+height 480
+\endverbatim
+
+and launch the device with:
+
+\verbatim
+yarpdev --file grabber_test.ini
+\endverbatim
+
+Finally, you can open a device from your C++ application by with:
+
+\code
+yarp::os::Property p;
+p.fromConfigFile("grabber_test.ini");
+// of course you could construct the Property object on-the-fly
+yarp::dev::PolyDriver dev;
+dev.open(p);
+if (dev.isValid()) { /* use the device via view method */ }
+\endcode
 
 */
 

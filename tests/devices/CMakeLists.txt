@@ -46,9 +46,10 @@ foreach(_ini_file ${_inis})
   get_filename_component(_test ${_ini_file} NAME_WE)
   get_filename_component(_ini_file ${_ini_file} ABSOLUTE)
 
-  # need to cache examples for reference
-  set(_out_dox "${CMAKE_SOURCE_DIR}/doc/device_invocation/${_test}.dox")
-  set(_cmd ${YARP_TEST_LAUNCHER} $<TARGET_FILE:harness_devices> --file "${_ini_file}" --doc "${_out_dox}" --verbose)
+  # need to cache examples for reference (2022 change - removed doc stuff)
+  # set(_out_dox "${CMAKE_SOURCE_DIR}/doc/device_invocation/${_test}.dox")
+  # set(_cmd ${YARP_TEST_LAUNCHER} $<TARGET_FILE:harness_devices> --file "${_ini_file}" --doc "${_out_dox}" --verbose)
+  set(_cmd ${YARP_TEST_LAUNCHER} $<TARGET_FILE:harness_devices> --file "${_ini_file}" --verbose)
 
   # Add normal test
   add_test(
