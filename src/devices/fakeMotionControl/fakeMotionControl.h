@@ -79,7 +79,7 @@ struct ImpedanceParameters
  * real motion control device to help testing the high level software.
  *
  * This device is implementing last version of interfaces and it is compatible
- * with ControlBoardWrapper2 device.
+ * with controlBoard_nws_yarp device.
  *
  * WIP - it is very basic now, not all interfaces are implemented yet.
  */

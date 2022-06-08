@@ -38,7 +38,7 @@ TEST_CASE("dev::TorqueControl", "[yarp::dev]")
         pg.put("Joints", 1);
         bool result;
         result = dd.open(p);
-        REQUIRE(result); // controlboardwrapper open reported successful
+        REQUIRE(result); // controlboard_nws_yarp open reported successful
 
         // Check if IMultipleWrapper interface is correctly found
         yarp::dev::IMultipleWrapper * i_mwrapper=nullptr;

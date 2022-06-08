@@ -23,7 +23,7 @@ TEST_CASE("dev::robotDescriptionTest", "[yarp::dev]")
 {
     YARP_REQUIRE_PLUGIN("robotDescriptionServer", "device");
     YARP_REQUIRE_PLUGIN("robotDescriptionClient", "device");
-    YARP_REQUIRE_PLUGIN("controlboardwrapper2", "device");
+    YARP_REQUIRE_PLUGIN("controlBoard_nws_yarp", "device");
 
     Network::setLocalMode(true);
 
@@ -45,8 +45,8 @@ TEST_CASE("dev::robotDescriptionTest", "[yarp::dev]")
 
         REQUIRE(ddclient.view(idesc)); // IRobotDescription interface open reported successful
 
-        DeviceDescription dev1; dev1.device_name = "/icubTest/left_arm"; dev1.device_type = "controlboardwrapper2";
-        DeviceDescription dev2; dev2.device_name = "/icubTest/left_leg"; dev2.device_type = "controlboardwrapper2";
+        DeviceDescription dev1; dev1.device_name = "/icubTest/left_arm"; dev1.device_type = "controlBoard_nws_yarp";
+        DeviceDescription dev2; dev2.device_name = "/icubTest/left_leg"; dev2.device_type = "controlBoard_nws_yarp";
         DeviceDescription dev3; dev3.device_name = "/icubTest/test";     dev3.device_type = "testDevice";
         idesc->registerDevice(dev1);
         idesc->registerDevice(dev2);
@@ -61,7 +61,7 @@ TEST_CASE("dev::robotDescriptionTest", "[yarp::dev]")
         CHECK(std::find(list1.begin(), list1.end(), dev3) != list1.end());
         // IRobotDescription::getAllDevices() successfully tested
 
-        idesc->getAllDevicesByType("controlboardwrapper2", list2);
+        idesc->getAllDevicesByType("controlBoard_nws_yarp", list2);
         CHECK(list2.size() == 2);
         CHECK(std::find(list2.begin(), list2.end(), dev1) != list2.end());
         CHECK(std::find(list2.begin(), list2.end(), dev2) != list2.end());

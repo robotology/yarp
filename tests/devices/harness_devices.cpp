@@ -73,8 +73,8 @@ void usage(const char* name)
 {
     fprintf(stderr, "Usage:\n");
     fprintf(stderr, "\n");
-    fprintf(stderr, "    %s --doc <destination> --file <file>\n", name);
-    fprintf(stderr, "    %s --doc <destination> --device <device> [device options]\n", name);
+    fprintf(stderr, "    %s [--doc <destination>] --file <file>\n", name);
+    fprintf(stderr, "    %s [--doc <destination>] --device <device> [device options]\n", name);
     fprintf(stderr, "\n");
 }
 
@@ -156,6 +156,84 @@ static void setup_Environment()
 
 } // namespace
 
+//generate doxygen documentation
+static void generate_dox(PolyDriver& dd, std::string& deviceName, std::string& fileName, std::string& dest_dox)
+{
+    auto start = fileName.rfind('/');
+    if (start == std::string::npos) {
+        start = fileName.rfind('\\');
+    }
+    if (start == std::string::npos) {
+        start = 0;
+    }
+    else {
+        ++start;
+    }
+    auto len = fileName.find('.', start);
+    if (len != std::string::npos) {
+        len -= start;
+    }
+
+    std::string wrapperName = "";
+    std::string codeName = "";
+
+    DriverCreator* creator = Drivers::factory().find(deviceName.c_str());
+    if (creator != nullptr) {
+        wrapperName = creator->getWrapper();
+        codeName = creator->getCode();
+    }
+    yDebug("wrapperName = %s, codeName = %s", wrapperName.c_str(), codeName.c_str());
+
+    const std::string exampleName = fileName.substr(start, len);
+    const std::string shortFileName = fileName.substr(start);
+
+    FILE* fout = fopen(dest_dox.c_str(), "w");
+    if (fout == nullptr) {
+        yError("Problem writing to %s", dest_dox.c_str());
+        std::exit(1);
+    }
+
+    fprintf(fout, "/**\n");
+    fprintf(fout, " * \\ingroup dev_examples\n");
+    fprintf(fout, " *\n");
+    fprintf(fout, " * \\defgroup %s Example for %s (%s)\n\n",
+        exampleName.c_str(),
+        deviceName.c_str(),
+        exampleName.c_str());
+    fprintf(fout, "Instantiates \\ref cmd_device_%s \"%s\" device implemented by %s.\n",
+        deviceName.c_str(), deviceName.c_str(), codeName.c_str());
+    fprintf(fout, "\\verbatim\n%s\\endverbatim\n",
+        getFile(fileName.c_str()).c_str());
+    fprintf(fout, "If this text is saved in a file called %s then the device can be created by doing:\n",
+        shortFileName.c_str());
+    fprintf(fout, "\\verbatim\nyarpdev --file %s\n\\endverbatim\n",
+        shortFileName.c_str());
+    fprintf(fout, "Of course, the configuration could be passed just as command line options, or as a yarp::os::Property object in a program:\n");
+    fprintf(fout, "\\code\n");
+    fprintf(fout, "Property p;\n");
+    fprintf(fout, "p.fromConfigFile(\"%s\");\n",
+        shortFileName.c_str());
+    fprintf(fout, "// of course you could construct the Property object on-the-fly\n");
+    fprintf(fout, "PolyDriver dev;\n");
+    fprintf(fout, "dev.open(p);\n");
+    fprintf(fout, "if (dev.isValid()) { /* use the device via view method */ }\n");
+    fprintf(fout, "\\endcode\n");
+    fprintf(fout, "Here is a list of properties checked when starting up a device based on this configuration file.\n");
+    fprintf(fout, "Note that which properties are checked can depend on whether other properties are present.\n");
+    fprintf(fout, "In some cases properties can also vary between operating systems.\n");
+    fprintf(fout, "So this is just an example\n\n");
+
+    toDox(dd, fout);
+
+    fprintf(fout, "\n\\sa %s\n\n",
+        codeName.c_str());
+    fprintf(fout, " */\n");
+
+    fclose(fout);
+    fout = nullptr;
+}
+
+//main function
 int main(int argc, char *argv[])
 {
     Property p;
@@ -163,12 +241,7 @@ int main(int argc, char *argv[])
     verbose = p.check("verbose") && p.check("verbose", Value(true)).asBool();
 
     // Check where to put description of device
-    std::string dest = p.check("doc", Value("")).toString();
-    if (dest.empty()) {
-        yError("No destination specified");
-        usage(argv[0]);
-        return 1;
-    }
+    std::string dest_dox = p.check("doc", Value("")).toString();
 
     // Check if the "file" option was specified, and eventually read the file
     std::string fileName = p.check("file", Value("default.ini")).asString();
@@ -184,22 +257,6 @@ int main(int argc, char *argv[])
         return 1;
     }
 
-    auto start = fileName.rfind('/');
-    if (start == std::string::npos) {
-        start = fileName.rfind('\\');
-    }
-    if (start == std::string::npos) {
-        start = 0;
-    } else {
-        ++start;
-    }
-    auto len = fileName.find('.', start);
-    if (len != std::string::npos) {
-        len -= start;
-    }
-    const std::string exampleName = fileName.substr(start, len);
-    const std::string shortFileName = fileName.substr(start);
-
     setup_Environment();
     init_Network();
     Network::setLocalMode(true);
@@ -213,62 +270,9 @@ int main(int argc, char *argv[])
 
     yInfo("PolyDriver opened.");
 
-    std::string wrapperName = "";
-    std::string codeName = "";
-
-    DriverCreator *creator = Drivers::factory().find(deviceName.c_str());
-
-
-    if (creator!=nullptr) {
-        wrapperName = creator->getWrapper();
-        codeName = creator->getCode();
-    }
-    yDebug("wrapperName = %s, codeName = %s", wrapperName.c_str(), codeName.c_str());
-
-    FILE *fout = fopen(dest.c_str(), "w");
-    if (fout == nullptr) {
-        yError("Problem writing to %s", dest.c_str());
-        std::exit(1);
-    }
-
-    fprintf(fout, "/**\n");
-    fprintf(fout, " * \\ingroup dev_examples\n");
-    fprintf(fout, " *\n");
-    fprintf(fout, " * \\defgroup %s Example for %s (%s)\n\n",
-            exampleName.c_str(),
-            deviceName.c_str(),
-            exampleName.c_str());
-    fprintf(fout, "Instantiates \\ref cmd_device_%s \"%s\" device implemented by %s.\n",
-            deviceName.c_str(), deviceName.c_str(), codeName.c_str());
-    fprintf(fout, "\\verbatim\n%s\\endverbatim\n",
-            getFile(fileName.c_str()).c_str());
-    fprintf(fout, "If this text is saved in a file called %s then the device can be created by doing:\n",
-            shortFileName.c_str());
-    fprintf(fout, "\\verbatim\nyarpdev --file %s\n\\endverbatim\n",
-            shortFileName.c_str());
-    fprintf(fout, "Of course, the configuration could be passed just as command line options, or as a yarp::os::Property object in a program:\n");
-    fprintf(fout, "\\code\n");
-    fprintf(fout, "Property p;\n");
-    fprintf(fout, "p.fromConfigFile(\"%s\");\n",
-            shortFileName.c_str());
-    fprintf(fout, "// of course you could construct the Property object on-the-fly\n");
-    fprintf(fout, "PolyDriver dev;\n");
-    fprintf(fout, "dev.open(p);\n");
-    fprintf(fout, "if (dev.isValid()) { /* use the device via view method */ }\n" );
-    fprintf(fout, "\\endcode\n");
-    fprintf(fout, "Here is a list of properties checked when starting up a device based on this configuration file.\n");
-    fprintf(fout, "Note that which properties are checked can depend on whether other properties are present.\n");
-    fprintf(fout, "In some cases properties can also vary between operating systems.\n");
-    fprintf(fout, "So this is just an example\n\n");
-
-    toDox(dd, fout);
-
-    fprintf(fout, "\n\\sa %s\n\n",
-            codeName.c_str());
-    fprintf(fout, " */\n");
-
-    fclose(fout);
-    fout = nullptr;
+    //generate documentation on request
+    if (!dest_dox.empty())
+    { generate_dox(dd, deviceName, fileName, dest_dox); }
 
     yInfo("Starting 1 second delay");
     yarp::os::SystemClock::delaySystem(1);

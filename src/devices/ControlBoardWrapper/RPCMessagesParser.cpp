@@ -54,7 +54,7 @@ void RPCMessagesParser::handleImpedanceMsg(const yarp::os::Bottle& cmd,
 {
     yCTrace(CONTROLBOARD, "Handling IImpedance message");
     if (!rpc_IImpedance) {
-        yCError(CONTROLBOARD, "controlBoardWrapper: I do not have a valid interface");
+        yCError(CONTROLBOARD, "I do not have a valid interface");
         *ok = false;
         return;
     }
@@ -180,7 +180,7 @@ void RPCMessagesParser::handleControlModeMsg(const yarp::os::Bottle& cmd,
 {
     yCTrace(CONTROLBOARD, "Handling IControlMode message");
     if (!(rpc_iCtrlMode)) {
-        yCError(CONTROLBOARD, "ControlBoardWrapper: I do not have a valid iControlMode interface");
+        yCError(CONTROLBOARD, "I do not have a valid iControlMode interface");
         *ok = false;
         return;
     }
@@ -203,7 +203,7 @@ void RPCMessagesParser::handleControlModeMsg(const yarp::os::Bottle& cmd,
             if (rpc_iCtrlMode) {
                 *ok = rpc_iCtrlMode->setControlMode(axis, cmd.get(4).asVocab32());
             } else {
-                yCError(CONTROLBOARD) << "ControlBoardWrapper: Unable to handle setControlMode request! This should not happen!";
+                yCError(CONTROLBOARD) << "Unable to handle setControlMode request! This should not happen!";
                 *rec = false;
             }
         } break;
@@ -768,7 +768,7 @@ void RPCMessagesParser::handleCurrentMsg(const yarp::os::Bottle& cmd, yarp::os::
     yCTrace(CONTROLBOARD, "Handling ICurrentControl message");
 
     if (!rpc_ICurrent) {
-        yCError(CONTROLBOARD, "controlBoardWrapper: I do not have a valid ICurrentControl interface");
+        yCError(CONTROLBOARD, "I do not have a valid ICurrentControl interface");
         *ok = false;
         return;
     }
@@ -875,7 +875,7 @@ void RPCMessagesParser::handlePidMsg(const yarp::os::Bottle& cmd, yarp::os::Bott
     yCTrace(CONTROLBOARD, "Handling IPidControl message");
 
     if (!rpc_IPid) {
-        yCError(CONTROLBOARD, "controlBoardWrapper: I do not have a valid IPidControl interface");
+        yCError(CONTROLBOARD, "I do not have a valid IPidControl interface");
         *ok = false;
         return;
     }
@@ -1145,7 +1145,7 @@ void RPCMessagesParser::handlePWMMsg(const yarp::os::Bottle& cmd, yarp::os::Bott
     yCTrace(CONTROLBOARD, "Handling IPWMControl message");
 
     if (!rpc_IPWM) {
-        yCError(CONTROLBOARD, "controlBoardWrapper: I do not have a valid IPWMControl interface");
+        yCError(CONTROLBOARD, "I do not have a valid IPWMControl interface");
         *ok = false;
         return;
     }
@@ -1235,7 +1235,7 @@ void RPCMessagesParser::handleRemoteVariablesMsg(const yarp::os::Bottle& cmd, ya
     yCTrace(CONTROLBOARD, "Handling IRemoteCalibrator message");
 
     if (!rpc_IRemoteCalibrator) {
-        yCError(CONTROLBOARD, "controlBoardWrapper: I do not have a valid IRemoteCalibrator interface");
+        yCError(CONTROLBOARD, "I do not have a valid IRemoteCalibrator interface");
         *ok = false;
         return;
     }
@@ -1292,7 +1292,7 @@ void RPCMessagesParser::handleRemoteCalibratorMsg(const yarp::os::Bottle& cmd, y
     yCTrace(CONTROLBOARD, "Handling IRemoteCalibrator message");
 
     if (!rpc_IRemoteCalibrator) {
-        yCError(CONTROLBOARD, "controlBoardWrapper: I do not have a valid IRemoteCalibrator interface");
+        yCError(CONTROLBOARD, "I do not have a valid IRemoteCalibrator interface");
         *ok = false;
         return;
     }

@@ -18,27 +18,27 @@
 using namespace yarp::os;
 using namespace yarp::dev;
 
-TEST_CASE("dev::ControlBoardWrapper2", "[yarp::dev]")
+TEST_CASE("dev::controlBoard_nws_yarp", "[yarp::dev]")
 {
     YARP_REQUIRE_PLUGIN("group", "device");
     YARP_REQUIRE_PLUGIN("fakeMotionControl", "device");
-    YARP_REQUIRE_PLUGIN("controlboardwrapper2", "device");
+    YARP_REQUIRE_PLUGIN("controlBoard_nws_yarp", "device");
     YARP_REQUIRE_PLUGIN("remote_controlboard", "device");
 
     Network::setLocalMode(true);
 
-    SECTION("test the controlboardwrapper2 device")
+    SECTION("test the controlBoard_nws_yarp device")
     {
         PolyDriver dd;
         Property p;
-        p.put("device","controlboardwrapper2");
+        p.put("device","controlBoard_nws_yarp");
         p.put("subdevice","fakeMotionControl");
         p.put("name","/motor");
         auto& pg = p.addGroup("GENERAL");
         pg.put("Joints", 16);
         bool result;
         result = dd.open(p);
-        REQUIRE(result); // controlboardwrapper open reported successful
+        REQUIRE(result); // controlBoard_nws_yarp open reported successful
 
         // Check if IMultipleWrapper interface is correctly found
         yarp::dev::IMultipleWrapper * i_mwrapper=nullptr;

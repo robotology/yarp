@@ -52,10 +52,10 @@
  * ...
  * \endcode
  *
- * For compatibility with the controlboardwrapper2, the
+ * For compatibility with the controlBoard_nws_yarp, the
  * networks keyword can also be used to select the desired joints.
  * For more information on the syntax of the networks, see the
- * ControlBoardWrapper class.
+ * controlBoard_nws_yarp class.
  *
  * \code{.unparsed}
  *  networks (net_larm net_lhand)

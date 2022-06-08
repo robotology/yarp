@@ -140,7 +140,7 @@ int main(int argc, char *argv[])
                 desc_driver->view(idesc);
                 if (idesc)
                 {
-                    idesc->getAllDevicesByType("controlboardwrapper2", cbw2_list);
+                    idesc->getAllDevicesByType("controlBoard_nws_yarp", cbw2_list);
                     std::vector<DeviceDescription> wrappers_list;
                     wrappers_list.reserve(cbw2_list.size());
                     wrappers_list.insert(wrappers_list.end(), cbw2_list.begin(), cbw2_list.end());

@@ -36,23 +36,23 @@ const char *fmcC_file_content   =  "device fakeMotionControl\n"
                                   "\n"
                                   "AxisName \"axisC1\" \"axisC2\" \"axisC3\" \"axisC4\"  \n";
 
-const char *wrapperA_file_content   = "device controlboardwrapper2\n"
+const char *wrapperA_file_content   = "device controlBoard_nws_yarp\n"
                                       "name /testRemapperRobot/a\n"
-                                      "period 10\n"
+                                      "period 0.01\n"
                                       "networks (net_a)\n"
                                       "joints 2\n"
                                       "net_a 0 1 0 1\n";
 
-const char *wrapperB_file_content   = "device controlboardwrapper2\n"
+const char *wrapperB_file_content   = "device controlBoard_nws_yarp\n"
                                       "name /testRemapperRobot/b\n"
-                                      "period 10\n"
+                                      "period 0.01\n"
                                       "networks (net_b)\n"
                                       "joints 3\n"
                                       "net_b 0 2 0 2\n";
 
-const char *wrapperC_file_content   = "device controlboardwrapper2\n"
+const char *wrapperC_file_content   = "device controlBoard_nws_yarp\n"
                                       "name /testRemapperRobot/c\n"
-                                      "period 10\n"
+                                      "period 0.01\n"
                                       "networks (net_c)\n"
                                       "joints 4\n"
                                       "net_c 0 3 0 3\n";
@@ -97,7 +97,7 @@ static void checkRemapper(yarp::dev::PolyDriver & ddRemapper, int rand, size_t n
     // Check that the readed control mode is actually position direct
     // Let's try 10 times because if the remapper is using some remotecontrolboards,
     // it is possible that this return false if it is called before the first message
-    // has been received from the controlboardwrapper
+    // has been received from the controlboard_nws_yarp
     bool getControlModesOk = false;
     for(int wait=0; wait < 10 && !getControlModesOk; wait++)
     {
@@ -205,15 +205,15 @@ TEST_CASE("dev::ControlBoardRemapperTest", "[yarp::dev]")
             if(i==1) { p.fromConfig(wrapperB_file_content); }
             if(i==2) { p.fromConfig(wrapperC_file_content); }
 
-            REQUIRE(wrappers[i]->open(p)); // controlboardwrapper2 open reported successful
+            REQUIRE(wrappers[i]->open(p)); // controlBoard_nws_yarp open reported successful
 
             yarp::dev::IMultipleWrapper *iwrap = nullptr;
-            REQUIRE(wrappers[i]->view(iwrap)); // interface for multiple wrapper correctly opened for the controlboardwrapper2
+            REQUIRE(wrappers[i]->view(iwrap)); // interface for multiple wrapper correctly opened for the controlBoard_nws_yarp
 
             PolyDriverList pdList;
             pdList.push(fmcbs[i],wrapperNetworks[i].c_str());
 
-            CHECK(iwrap->attachAll(pdList)); // controlboardwrapper2 attached successfully to the device
+            CHECK(iwrap->attachAll(pdList)); // controlBoard_nws_yarp attached successfully to the device
         }
 
         // Create a list containing all the fake controlboards

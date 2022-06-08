@@ -292,7 +292,7 @@ bool ServerInertial::open(yarp::os::Searchable& config)
         ownDevices=true;
         if(! openAndAttachSubDevice(prop))
         {
-            yCError(SERVERINERTIAL, "ControlBoardWrapper: error while opening subdevice");
+            yCError(SERVERINERTIAL, "error while opening subdevice");
             return false;
         }
     }
@@ -541,7 +541,7 @@ bool ServerInertial::attach(PolyDriver* poly)
     }
     else
     {
-        yCError(SERVERINERTIAL, "ControlBoardWrapper: attach to subdevice failed");
+        yCError(SERVERINERTIAL, "attach to subdevice failed");
     }
     return true;
 }
