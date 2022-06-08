@@ -31,6 +31,8 @@ set(ENABLE_yarpmod_imuBosch_BNO055 ON CACHE BOOL "")
 set(ENABLE_yarpmod_fakeLaser ON CACHE BOOL "")
 set(ENABLE_yarpmod_rpLidar ON CACHE BOOL "")
 set(ENABLE_yarpmod_laserHokuyo ON CACHE BOOL "")
+set(ENABLE_yarpmod_controlboard_nws_yarp ON CACHE BOOL "")
+set(ENABLE_yarpmod_controlboardremapper ON CACHE BOOL "")
 set(ENABLE_yarpcar_websocket ON CACHE BOOL "")
 set(ENABLE_yarpmod_fakePositionSensor ON CACHE BOOL "")
 
