@@ -97,7 +97,7 @@ static void checkRemapper(yarp::dev::PolyDriver & ddRemapper, int rand, size_t n
     // Check that the readed control mode is actually position direct
     // Let's try 10 times because if the remapper is using some remotecontrolboards,
     // it is possible that this return false if it is called before the first message
-    // has been received from the controlboardwrapper
+    // has been received from the controlboard_nws_yarp
     bool getControlModesOk = false;
     for(int wait=0; wait < 10 && !getControlModesOk; wait++)
     {

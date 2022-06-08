@@ -22,7 +22,7 @@ set(_inis
   AudioRecorderWrapper_fakeMicrophone.ini
   AudioRecorderWrapper_portaudio.ini
   AudioRecorderWrapper_portaudioRecorder.ini
-  controlboardwrapper2_basic.ini
+  controlboard_nws_yarp_basic.ini
   ffmpeg_grabber_basic.ini
   ffmpeg_grabber_video4linux.ini
   ffmpeg_writer_basic.ini
