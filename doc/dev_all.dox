@@ -291,12 +291,3 @@ Miscellaneous device implementations.
 
 Devices marked for deprecation in the upcoming Yarp releases
 */
-
-/**
-\ingroup dev_all
-
-\defgroup dev_examples Device invocation examples
-
-Example configuration files.
-
-*/

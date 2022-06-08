@@ -35,7 +35,7 @@ In separate terminals, run:
 yarp server
 yarp read /read
 yarp write /write
-yarpdev --device controlboardwrapper2 --subdevice fakeMotionControl --name /motor --GENERAL::Joints 5
+yarpdev --device controlboard_nws_yarp --subdevice fakeMotionControl --name /motor --GENERAL::Joints 5
 \endverbatim
 
 The `yarp server` command is the yarp name server, which creates a Port called

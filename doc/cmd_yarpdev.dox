@@ -207,13 +207,4 @@ do to make the device match our system.
 Each device class has a description page where input parameters are described in
 more detail. You can find a list of devices in \ref dev_impl "Device implementation page" subdivided by type.
 
-For example the description for the
-
-controlboardwrapper2 device is in the \ref dev_impl "Device implementation" -> Network Wrapper ->  \ref controlboardwrapper2_parameter "controlboardwrapper2 device page" \n
-analogServer         device is in the \ref dev_impl "Device implementation" -> Network Wrapper ->  \ref analogServer_parameter "analogServer device page" \n
-inertial             device is in the \ref dev_impl "Device implementation" -> Network Wrapper ->  \ref inertial_parameter "inertial device page" \n
-batteryWrapper       device is in the \ref dev_impl "Device implementation" -> Network Wrapper ->  \ref batteryWrapper_parameter "batteryWrapper device page" \n
-RGBDSensorWrapper    device is in the \ref dev_impl "Device implementation" -> Network Wrapper ->  \ref RGBDSensorWrapper_device_parameters "RGBDSensorWrapper device page" \n
-grabberDual          device is in the \ref dev_impl "Device implementation" -> Network Wrapper ->  \ref grabberDual_device_parameters "grabberDual device page" \n
-
 */
