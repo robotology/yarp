@@ -164,22 +164,22 @@ print_if_verbose "---\n";
 print_if_verbose "\n";
 
 if ($ok + $skip + $known + $errors != $files) {
-    print_if_verbose "[ERROR: Some file was not counted]\n\n";
+    print "[ERROR: Some file was not counted]\n\n";
     exit 1;
 }
 
 if ($known < scalar(@skip_files)) {
-    print_if_verbose "[ERROR: Some known file was not found and the skip file was not updated]\n\n";
+    print "[ERROR: Some known file was not found and the skip file was not updated]\n\n";
     exit 1;
 }
 
 if ($known > scalar(@skip_files)) {
-    print_if_verbose "[ERROR: Some new known file was added and the skip file was not updated]\n\n";
+    print "[ERROR: Some new known file was added and the skip file was not updated]\n\n";
     exit 1;
 }
 
 if ($errors != 0) {
-    print_if_verbose "[ERROR: Some file has a style problem]\n\n";
+    print "[ERROR: Some file has a style problem]\n\n";
     exit 1;
 }
 
