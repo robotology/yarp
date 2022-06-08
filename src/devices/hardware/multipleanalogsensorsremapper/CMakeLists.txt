@@ -17,8 +17,8 @@ if(ENABLE_multipleanalogsensorsremapper)
       MultipleAnalogSensorsRemapper.h
   )
 
-  target_sources(yarp_multipleanalogsensorsremapper PRIVATE $<TARGET_OBJECTS:multipleAnalogSensorsSerializations>)
-  target_include_directories(yarp_multipleanalogsensorsclient PRIVATE $<TARGET_PROPERTY:multipleAnalogSensorsSerializations,INTERFACE_INCLUDE_DIRECTORIES>)
+#  target_sources(yarp_multipleanalogsensorsremapper PRIVATE $<TARGET_OBJECTS:multipleAnalogSensorsSerializations>)
+#  target_include_directories(yarp_multipleanalogsensorsclient PRIVATE $<TARGET_PROPERTY:multipleAnalogSensorsSerializations,INTERFACE_INCLUDE_DIRECTORIES>)
 
   target_link_libraries(yarp_multipleanalogsensorsremapper
     PRIVATE
