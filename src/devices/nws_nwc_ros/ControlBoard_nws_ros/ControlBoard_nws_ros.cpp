@@ -74,7 +74,7 @@ bool ControlBoard_nws_ros::open(Searchable& config)
     }
 
     // Check if we need to create subdevice or if they are
-    // passed later on thorugh attachAll()
+    // passed later on through attachAll()
     if (prop.check("subdevice")) {
         prop.setMonitor(config.getMonitor());
         if (!openAndAttachSubDevice(prop)) {
@@ -310,6 +310,17 @@ void ControlBoard_nws_ros::run()
     if (iTorqueControl) {
         bool torqueOk = iTorqueControl->getTorques(ros_struct.effort.data());
         YARP_UNUSED(torqueOk);
+    }
+
+    // Check if the encoders timestamps are consistent.
+    double tt = *times.data();
+    for (auto it = times.begin(); it != times.end(); it++)
+    {
+        if (fabs(tt - *it) > 1.0)
+        {
+            yCError(CONTROLBOARD, "Encoder Timestamps are not consistent! Data will not be published.");
+            return;
+        }
     }
 
     // Update the port envelope time by averaging all timestamps
