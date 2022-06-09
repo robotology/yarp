@@ -4,7 +4,6 @@ bindings/java/examples/matlab/simulink/yarpRemotePosEnc.mdl
 bindings/java/examples/matlab/simulink/yarpWriteDoubles.mdl
 cmake/MacOSXBundleInfo.plist.in
 cmake/MacOSXFrameworkInfo.plist.in
-src/devices/DynamixelAX12Ftdi/ax12.cfg
 src/yarpdataplayer/src/RC/yarpdataplayer_resource.rc
 src/yarpmotorgui/sequencewindow.ui
 src/yarpmotorgui/jointitem.ui
