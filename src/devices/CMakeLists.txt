@@ -10,6 +10,7 @@ yarp_begin_plugin_library(yarpmod
   DEFAULT ON
 )
 
+  add_subdirectory(test)
   add_subdirectory(fake)
   add_subdirectory(hardware)
   add_subdirectory(nws_nwc_yarp)

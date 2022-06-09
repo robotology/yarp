@@ -4,7 +4,9 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#include "YarpBuildLocation.h"
+//#include "YarpBuildLocation.h"
+//#define CMAKE_BINARY_DIR "blabla" //defined by CMakeLists.txt
+//#define TEST_DATA_DIR "blabla" //defined by CMakeLists.txt
 
 #include <yarp/conf/environment.h>
 #include <yarp/conf/filesystem.h>
@@ -101,16 +103,14 @@ static void setup_Environment()
 {
     // To make sure that the dev test are able to find all and only the devices
     // compiled by YARP, including the ones compiled as dynamic plugins,
-    // YARP_DATA_DIRS is set to the build directory + the TEST_DATA_DIR
+    // YARP_DATA_DIRS is set to the build directory
     // and YARP_DATA_HOME is set to a non existent directory
     std::string yarp_data_dirs =
             CMAKE_BINARY_DIR +
             std::string{yarp::conf::filesystem::preferred_separator} +
             "share" +
             std::string{yarp::conf::filesystem::preferred_separator} +
-            "yarp" +
-            std::string{yarp::conf::environment::path_separator} +
-            TEST_DATA_DIR;
+            "yarp";
     yarp::conf::environment::set_string("YARP_DATA_DIRS", yarp_data_dirs);
 
     std::string yarp_data_home =
@@ -147,6 +147,7 @@ static void setup_Environment()
     yarp::conf::environment::set_string("YARP_CONFIG_HOME", yarp_config_home);
 
     if (verbose) {
+        printf("CMAKE_BINARY_DIR=\"%s\"\n", CMAKE_BINARY_DIR);
         printf("YARP_DATA_DIRS=\"%s\"\n", yarp::conf::environment::get_string("YARP_DATA_DIRS").c_str());
         printf("YARP_DATA_HOME=\"%s\"\n", yarp::conf::environment::get_string("YARP_DATA_HOME").c_str());
         printf("YARP_CONFIG_DIRS=\"%s\"\n", yarp::conf::environment::get_string("YARP_CONFIG_DIRS").c_str());

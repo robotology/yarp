@@ -103,6 +103,10 @@ if(NOT SKIP_controlboardwrapper2)
   set(YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS ${YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS} PARENT_SCOPE)
 
   set_property(TARGET yarp_controlboardwrapper2 PROPERTY FOLDER "Plugins/Device")
+
+  #CI Test
+  yarp_test_device (controlboardwrapper2  yarp_controlboardwrapper2.ini)
+
 endif()
 
 
@@ -160,4 +164,8 @@ if(NOT SKIP_controlBoard_nws_yarp)
   set(YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS ${YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS} PARENT_SCOPE)
 
   set_property(TARGET yarp_controlBoard_nws_yarp PROPERTY FOLDER "Plugins/Device/NWS")
+
+  #CI Test
+  yarp_test_device (controlBoard_nws_yarp yarp_controlBoard_nws_yarp.ini)
+
 endif()
