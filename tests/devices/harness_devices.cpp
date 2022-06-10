@@ -236,6 +236,9 @@ static void generate_dox(PolyDriver& dd, std::string& deviceName, std::string& f
 //main function
 int main(int argc, char *argv[])
 {
+    yInfo("******************%s",CMAKE_BINARY_DIR);
+    yInfo("******************%s",TEST_DATA_DIR);
+
     Property p;
     p.fromCommand(argc,argv);
     verbose = p.check("verbose") && p.check("verbose", Value(true)).asBool();
