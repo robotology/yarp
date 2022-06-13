@@ -70,7 +70,7 @@ public:
     bool close() override;
 
     // IOdometry2D
-    bool   getOdometry(yarp::dev::OdometryData& odom) override;
+    bool   getOdometry(yarp::dev::OdometryData& odom, double* timestamp=nullptr) override;
     bool   resetOdometry() override;
 
 private:
@@ -78,6 +78,7 @@ private:
 
     std::mutex m_odometry_mutex;
     double m_period;
+    double m_timestamp=0;
 };
 
 #endif // YARP_FAKEODOMETRY_H

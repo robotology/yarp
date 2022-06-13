@@ -44,7 +44,7 @@ public:
 
     /**
     * Get the device measurements
-    * @param data a vector containing the measurement data, expressed in cartesian/polar format
+    * @param data a vector containing the measurement data, expressed in Cartesian/polar format
     * @param timestamp the timestamp of the retrieved data.
     * @return true/false
     */
@@ -98,15 +98,15 @@ public:
     virtual bool setScanLimits(double min, double max) = 0;
 
     /**
-    * get the angular step between two measurments.
-    * @param step the angular step between two measurments
+    * get the angular step between two measurements.
+    * @param step the angular step between two measurements
     * @return true/false.
     */
     virtual bool getHorizontalResolution(double& step) = 0;
 
     /**
-    * get the angular step between two measurments (if available)
-    * @param step the angular step between two measurments
+    * get the angular step between two measurements (if available)
+    * @param step the angular step between two measurements
     * @return true/false on success/failure.
     */
     virtual bool setHorizontalResolution(double step) = 0;
@@ -126,7 +126,7 @@ public:
     virtual bool setScanRate(double rate) = 0;
 
     /**
-    * get the device hardware charactestics
+    * get the device hardware characteristics
     * @param device_info string containing the device infos
     * @return true/false.
     */

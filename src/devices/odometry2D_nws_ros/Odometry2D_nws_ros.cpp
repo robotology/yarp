@@ -151,15 +151,24 @@ void Odometry2D_nws_ros::run()
 {
     if (m_odometry2D_interface!=nullptr)
     {
-        yarp::os::Stamp timeStamp(static_cast<int>(m_stampCount++), yarp::os::Time::now());
         yarp::dev::OdometryData odometryData;
-        m_odometry2D_interface->getOdometry(odometryData);
+        double synchronized_timestamp = 0;
+        m_odometry2D_interface->getOdometry(odometryData, &synchronized_timestamp);
+
+        if (std::isnan(synchronized_timestamp) == false)
+        {
+            m_lastStateStamp.update(synchronized_timestamp);
+        }
+        else
+        {
+            m_lastStateStamp.update(yarp::os::Time::now());
+        }
 
         if (1)
         {
             yarp::rosmsg::nav_msgs::Odometry& rosData = rosPublisherPort_odometry.prepare();
-            rosData.header.seq = timeStamp.getCount();
-            rosData.header.stamp = timeStamp.getTime();
+            rosData.header.seq = m_lastStateStamp.getCount();
+            rosData.header.stamp = m_lastStateStamp.getTime();
             rosData.header.frame_id = m_odomFrame;
             rosData.child_frame_id = m_baseFrame;
 
@@ -190,8 +199,8 @@ void Odometry2D_nws_ros::run()
             yarp::rosmsg::geometry_msgs::TransformStamped transform;
             transform.header.frame_id = m_odomFrame;
             transform.child_frame_id = m_baseFrame;
-            transform.header.seq = timeStamp.getCount();
-            transform.header.stamp = timeStamp.getTime();
+            transform.header.seq = m_lastStateStamp.getCount();
+            transform.header.stamp = m_lastStateStamp.getTime();
             double halfYaw = odometryData.odom_theta * DEG2RAD * 0.5;
             double cosYaw = cos(halfYaw);
             double sinYaw = sin(halfYaw);
