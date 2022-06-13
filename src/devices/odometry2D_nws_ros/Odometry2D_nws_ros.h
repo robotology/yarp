@@ -9,6 +9,7 @@
 #include <yarp/os/Node.h>
 #include <yarp/os/PeriodicThread.h>
 #include <yarp/os/Publisher.h>
+#include <yarp/os/Stamp.h>
 
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/dev/IOdometry2D.h>
@@ -119,8 +120,8 @@ private:
     std::string m_baseFrame;
     bool m_enable_publish_tf = true;
 
-    // stamp count for timestamp
-    size_t m_stampCount{0};
+    // timestamp
+    yarp::os::Stamp m_lastStateStamp;
 
     // period for thread
     double m_period{DEFAULT_THREAD_PERIOD};

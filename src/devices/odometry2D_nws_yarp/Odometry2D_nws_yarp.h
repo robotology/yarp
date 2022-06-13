@@ -7,6 +7,7 @@
 #define YARP_ODOMETRY2D_NWS_YARP_H
 
 #include <yarp/os/PeriodicThread.h>
+#include <yarp/os/Stamp.h>
 
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/dev/IOdometry2D.h>
@@ -120,6 +121,9 @@ private:
 
     // thread
     double m_period{DEFAULT_THREAD_PERIOD};
+
+    // timestamp
+    yarp::os::Stamp m_lastStateStamp;
 
     //interfaces
     yarp::dev::PolyDriver m_driver;

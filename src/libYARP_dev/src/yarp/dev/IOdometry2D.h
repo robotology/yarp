@@ -31,7 +31,7 @@ public:
     * @param odom the odometry.
     * @return true/false
     */
-    virtual bool   getOdometry(yarp::dev::OdometryData& odom) = 0;
+    virtual bool   getOdometry(yarp::dev::OdometryData& odom, double* timestamp = nullptr) = 0;
 
     /**
     * Resets the odometry of the robot to zero
