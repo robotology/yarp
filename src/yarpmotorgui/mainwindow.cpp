@@ -903,7 +903,9 @@ void MainWindow::onHomeAllPartsToCustomPosition(const yarp::os::Bottle& position
     {
         auto* scroll = (QScrollArea *)m_tabPanel->widget(i);
         auto* part = (PartItem*)scroll->widget();
-        if(!part)
+        QString currName = QString("/%1/%2").arg(QString(m_finder.find("robot").asString().c_str())).arg(part->getPartName());
+        bool partPresent = positionElement.check(currName.toStdString() + "_Position") && positionElement.check(currName.toStdString() + "_Velocity");
+        if(!part || ! partPresent)
         {
             continue;
         }
