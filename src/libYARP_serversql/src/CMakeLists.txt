@@ -93,9 +93,9 @@ list(APPEND YARP_serversql_PUBLIC_DEPS
 )
 list(APPEND YARP_serversql_PRIVATE_DEPS YARP_name)
 
-target_include_directories(YARP_serversql SYSTEM PRIVATE ${SQLite_INCLUDE_DIRS})
-target_link_libraries(YARP_serversql PRIVATE ${SQLite_LIBRARIES})
-list(APPEND YARP_serversql_PRIVATE_DEPS SQLite)
+target_include_directories(YARP_serversql SYSTEM PRIVATE ${SQLite3_INCLUDE_DIRS})
+target_link_libraries(YARP_serversql PRIVATE ${SQLite3_LIBRARIES})
+list(APPEND YARP_serversql_PRIVATE_DEPS SQLite3)
 
 
 set_property(TARGET YARP_serversql PROPERTY PUBLIC_HEADER ${YARP_serversql_HDRS})

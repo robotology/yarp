@@ -42,7 +42,7 @@ void FakeOdometry::run()
     m_odometryData.odom_x = m_odometryData.odom_x + m_period * m_odometryData.base_vel_x;
     m_odometryData.odom_y =  m_odometryData.odom_y + m_period * m_odometryData.base_vel_y;
     m_odometryData.odom_theta = m_odometryData.odom_theta + m_period * m_odometryData.base_vel_theta;
-
+    m_timestamp = yarp::os::Time::now();
 }
 
 
@@ -75,7 +75,7 @@ bool FakeOdometry::close()
 }
 
 
-bool FakeOdometry::getOdometry(yarp::dev::OdometryData& odom)
+bool FakeOdometry::getOdometry(yarp::dev::OdometryData& odom, double* timestamp)
 {
     std::lock_guard lock(m_odometry_mutex);
     odom.odom_x = m_odometryData.odom_x;
@@ -87,6 +87,10 @@ bool FakeOdometry::getOdometry(yarp::dev::OdometryData& odom)
     odom.odom_vel_x  = m_odometryData.odom_vel_x;
     odom.odom_vel_y = m_odometryData.odom_vel_y;
     odom.odom_vel_theta = m_odometryData.odom_vel_theta;
+    if (timestamp!=nullptr)
+    {
+        *timestamp = m_timestamp;
+    }
     return true;
 }
 

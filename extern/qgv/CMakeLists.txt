@@ -49,6 +49,9 @@ target_link_libraries(YARP_priv_qgvcore PUBLIC Qt5::Widgets)
 
 target_include_directories(YARP_priv_qgvcore PRIVATE ${Graphviz_INCLUDE_DIR})
 target_link_libraries(YARP_priv_qgvcore PRIVATE ${Graphviz_LIBRARIES})
+if(Graphviz_DEFINITIONS)
+  target_compile_definitions(YARP_priv_qgvcore PRIVATE ${Graphviz_DEFINITIONS})
+endif()
 
 set_property(TARGET YARP_priv_qgvcore PROPERTY FOLDER "Libraries/External")
 

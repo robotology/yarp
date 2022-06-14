@@ -152,12 +152,22 @@ void Odometry2D_nws_yarp::run()
 {
     if (m_odometry2D_interface!=nullptr)
     {
-        yarp::os::Stamp timeStamp(static_cast<int>(m_stampCount++), yarp::os::Time::now());
         yarp::dev::OdometryData odometryData;
-        m_odometry2D_interface->getOdometry(odometryData);
+        double synchronized_timestamp = 0;
+        m_odometry2D_interface->getOdometry(odometryData, &synchronized_timestamp);
+
+        if (std::isnan(synchronized_timestamp) == false)
+        {
+            m_lastStateStamp.update(synchronized_timestamp);
+        }
+        else
+        {
+            m_lastStateStamp.update(yarp::os::Time::now());
+        }
+
         if (m_port_odometry.getOutputCount()>0)
         {
-            m_port_odometry.setEnvelope(timeStamp);
+            m_port_odometry.setEnvelope(m_lastStateStamp);
             yarp::dev::OdometryData &odometryDataFromPort = m_port_odometry.prepare();
             odometryDataFromPort.odom_x= odometryData.odom_x; //position in the odom reference frame
             odometryDataFromPort.odom_y= odometryData.odom_y;
@@ -173,7 +183,7 @@ void Odometry2D_nws_yarp::run()
 
         if (m_port_odometer.getOutputCount()>0)
         {
-            m_port_odometer.setEnvelope(timeStamp);
+            m_port_odometer.setEnvelope(m_lastStateStamp);
             yarp::os::Bottle &odometer_data = m_port_odometer.prepare();
             odometer_data.clear();
             double traveled_distance = sqrt((odometryData.odom_vel_x - m_oldOdometryData.odom_x) *
@@ -189,7 +199,7 @@ void Odometry2D_nws_yarp::run()
 
         if (m_port_velocity.getOutputCount()>0)
         {
-            m_port_velocity.setEnvelope(timeStamp);
+            m_port_velocity.setEnvelope(m_lastStateStamp);
             yarp::os::Bottle &velocityData = m_port_velocity.prepare();
             velocityData.clear();
             velocityData.addFloat64(sqrt(odometryData.odom_vel_x * odometryData.odom_vel_x +
