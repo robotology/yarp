@@ -3,11 +3,14 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later
  */
 
+#define _USE_MATH_DEFINES
+
 #include "Odometry2D_nws_ros.h"
 #include <yarp/os/LogComponent.h>
 #include <yarp/os/LogStream.h>
 #include <yarp/os/Stamp.h>
-#include <math.h>
+
+#include <cmath>
 
 YARP_LOG_COMPONENT(ODOMETRY2D_NWS_ROS, "yarp.devices.Odometry2D_nws_ros")
 
