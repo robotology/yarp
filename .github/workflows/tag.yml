@@ -242,10 +242,15 @@ jobs:
         sed -i "8i\\ + \\\\ref v${YARP_VERSION_C}" doc/download.dox
 
 
+        echo "Update the file './github/nightly-merge.yml'"
+        echo "sed -i \"s/stable_branch: '.*'/stable_branch: '${YARP_TAG_BRANCH_C}'/g\"  ./.github/workflows/nightly-merge.yml"
+        sed -i "s/stable_branch: '.*'/stable_branch: '${YARP_TAG_BRANCH_C}'/g"  ./.github/workflows/nightly-merge.yml
+
         echo "Commit:"
         git add -v CMakeLists.txt
         git add -v doc/releases.md
         git add -v doc/download.dox
+        git add -v ./github/nightly-merge.yml
         git commit -v -m "YARP ${YARP_VERSION}"
 
 
@@ -317,7 +322,7 @@ jobs:
 
     - name: Create GitHub Release
       env:
-        INPUT_PUSH_TOKEN: ${{ secrets.drdanz_TOKEN }}
+        INPUT_PUSH_TOKEN: ${{ secrets.ROBOTOLOGY_BOT_TOKEN }}
       run: |
         echo "Create GitHub Release"
         curl \
@@ -336,7 +341,7 @@ jobs:
 
     - name: Create and Rename Labels
       env:
-        INPUT_PUSH_TOKEN: ${{ secrets.drdanz_TOKEN }}
+        INPUT_PUSH_TOKEN: ${{ secrets.ROBOTOLOGY_BOT_TOKEN }}
       run: |
 
         echo "Rename 'Fixed in: ${YARP_TAG_BRANCH}' to 'Fixed in: v${YARP_VERSION}'"
@@ -380,7 +385,7 @@ jobs:
     - name: Prepare for next stable release
       if: ${{ github.event.inputs.prepare_next_stable == 'true' }}
       env:
-        INPUT_PUSH_TOKEN: ${{ secrets.drdanz_TOKEN }}
+        INPUT_PUSH_TOKEN: ${{ secrets.ROBOTOLOGY_BOT_TOKEN }}
       run: |
         # Checkout the right branch
         git fetch origin
@@ -469,7 +474,7 @@ jobs:
     - name: Prepare for next feature release
       if: ${{ github.event.inputs.prepare_next_feature == 'true' }}
       env:
-        INPUT_PUSH_TOKEN: ${{ secrets.drdanz_TOKEN }}
+        INPUT_PUSH_TOKEN: ${{ secrets.ROBOTOLOGY_BOT_TOKEN }}
       run: |
         # Checkout the right branch
         git fetch origin
