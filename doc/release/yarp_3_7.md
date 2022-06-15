@@ -19,6 +19,10 @@ Bug Fixes
 
 * Migrate to use CMake's official `FindSQLite3.cmake` module.
 
+### Devices
+
+* `GenericSensorRosPublisher` (and derived devices): added checks if the interfaces are available in the Attach phase
+
 ### Libraries
 
 #### `lib_yarp_dev`
