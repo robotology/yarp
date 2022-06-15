@@ -11,8 +11,13 @@ bool TemperatureRosPublisher::viewInterfaces()
 {
     // View all the interfaces
     bool ok = true;
-    ok &= m_poly->view(m_ITemperature);
-    m_ITemperature->getTemperatureSensorFrameName(0,m_framename);
+    ok = m_poly->view(m_ITemperature);
+    if (!ok) {
+        yCError(GENERICSENSORROSPUBLISHER) << "ITemperatureSensors interface is not available";
+        return false;
+    }
+
+    ok = m_ITemperature->getTemperatureSensorFrameName(0,m_framename);
     return ok;
 }
 

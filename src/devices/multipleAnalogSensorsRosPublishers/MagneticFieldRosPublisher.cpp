@@ -11,8 +11,13 @@ bool MagneticFieldRosPublisher::viewInterfaces()
 {
     // View all the interfaces
     bool ok = true;
-    ok &= m_poly->view(m_iThreeAxisMagnetometers);
-    m_iThreeAxisMagnetometers->getThreeAxisMagnetometerFrameName(0, m_framename);
+    ok = m_poly->view(m_iThreeAxisMagnetometers);
+    if (!ok) {
+        yCError(GENERICSENSORROSPUBLISHER) << "IThreeAxisMagnetometers interface is not available";
+        return false;
+    }
+
+    ok = m_iThreeAxisMagnetometers->getThreeAxisMagnetometerFrameName(0, m_framename);
     return ok;
 }
 
