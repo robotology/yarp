@@ -242,10 +242,15 @@ jobs:
         sed -i "8i\\ + \\\\ref v${YARP_VERSION_C}" doc/download.dox
 
 
+        echo "Update the file './github/nightly-merge.yml'"
+        echo "sed -i \"s/stable_branch: '.*'/stable_branch: '${YARP_TAG_BRANCH_C}'/g\"  ./.github/workflows/nightly-merge.yml"
+        sed -i "s/stable_branch: '.*'/stable_branch: '${YARP_TAG_BRANCH_C}'/g"  ./.github/workflows/nightly-merge.yml
+
         echo "Commit:"
         git add -v CMakeLists.txt
         git add -v doc/releases.md
         git add -v doc/download.dox
+        git add -v ./github/nightly-merge.yml
         git commit -v -m "YARP ${YARP_VERSION}"
 
 

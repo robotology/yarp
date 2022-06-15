@@ -15,25 +15,11 @@ your system.
 Install from binaries                             {#install_linux_from_binaries}
 ---------------------
 
-Add www.icub.eu to your sources.list.
-
-On Ubuntu:
+Add www.icub.eu to your APT sources as below (replace `ubuntu` with `debian` according to your system):
 
 ~~~{.sh}
-sudo sh -c 'echo "deb http://www.icub.eu/ubuntu focal contrib/science" > /etc/apt/sources.list.d/icub.list'
+sudo sh -c 'echo "deb http://www.icub.eu/ubuntu `lsb_release -cs` contrib/science" > /etc/apt/sources.list.d/icub.list'
 ~~~
-
-(replace `focal` with the code name of the installed version).
-
-
-On Debian:
-
-~~~{.sh}
-sudo sh -c 'echo "deb http://www.icub.eu/debian buster contrib/science" > /etc/apt/sources.list.d/icub.list'
-~~~
-
-(replace `buster` with the code name of the installed version).
-
 
 Import the repository public key:
 
@@ -41,11 +27,23 @@ Import the repository public key:
 sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 57A5ACB6110576A6
 ~~~
 
-Update the list of packages and install YARP.
+Update the list of packages:
 
 ~~~{.sh}
-sudo apt-get update
-sudo apt-get install yarp
+sudo apt update
+~~~
+
+If you stumble upon an error related to an unsupported `i386` architecture, just add the option `[arch=amd64]` in the file `/etc/apt/sources.list.d/icub.list`
+at the corresponding line, as below (e.g., for a `ubuntu/jammy` distribution):
+
+~~~
+deb [arch=amd64] http://www.icub.eu/ubuntu jammy contrib/science
+~~~
+
+Install YARP:
+
+~~~{.sh}
+sudo apt install yarp
 ~~~
 
 You are now ready to check you installation, see \ref check_your_installation.
