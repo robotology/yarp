@@ -11,7 +11,12 @@ bool WrenchStampedRosPublisher::viewInterfaces()
 {
     // View all the interfaces
     bool ok = m_poly->view(m_iFTsens);
-    m_iFTsens->getSixAxisForceTorqueSensorFrameName(m_sens_index, m_framename);
+    if (!ok) {
+        yCError(GENERICSENSORROSPUBLISHER) << "ISixAxisForceTorqueSensors interface is not available";
+        return false;
+    }
+
+    ok = m_iFTsens->getSixAxisForceTorqueSensorFrameName(m_sens_index, m_framename);
     return ok;
 }
 

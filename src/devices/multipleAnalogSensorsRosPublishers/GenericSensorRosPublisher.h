@@ -214,6 +214,11 @@ bool GenericSensorRosPublisher<ROS_MSG>::attachAll(const yarp::dev::PolyDriverLi
 
     // View all the interfaces
     bool ok = viewInterfaces();
+    if (!ok)
+    {
+        yCError(GENERICSENSORROSPUBLISHER, "viewInterfaces() method failed.");
+        return false;
+    }
 
     // Set rate period
     ok &= this->setPeriod(m_periodInS);

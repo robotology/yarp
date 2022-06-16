@@ -17,9 +17,17 @@ bool PoseStampedRosPublisher::viewInterfaces()
 {
     // View all the interfaces
     bool ok = true;
-    ok &= m_poly->view(m_iOrientationSensors);
-    ok &= m_poly->view(m_iPositionSensors);
-    m_iPositionSensors->getPositionSensorFrameName(m_sens_index, m_framename);
+    ok = m_poly->view(m_iOrientationSensors);
+    if (!ok) {
+        yCError(GENERICSENSORROSPUBLISHER) << "IOrientationSensors interface is not available";
+        return false;
+    }
+    ok = m_poly->view(m_iPositionSensors);
+    if (!ok) {
+        yCError(GENERICSENSORROSPUBLISHER) << "IPositionSensors interface is not available";
+        return false;
+    }
+    ok = m_iPositionSensors->getPositionSensorFrameName(m_sens_index, m_framename);
     return ok;
 }
 

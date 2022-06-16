@@ -15,13 +15,28 @@ bool IMURosPublisher::viewInterfaces()
 {
     // View all the interfaces
     bool ok = true;
-    ok &= m_poly->view(m_iThreeAxisGyroscopes);
-    ok &= m_poly->view(m_iThreeAxisLinearAccelerometers);
-    ok &= m_poly->view(m_iThreeAxisMagnetometers);
-    ok &= m_poly->view(m_iOrientationSensors);
-    if (m_iThreeAxisGyroscopes) {
-        m_iThreeAxisGyroscopes->getThreeAxisGyroscopeFrameName(m_sens_index, m_framename);
+    ok = m_poly->view(m_iThreeAxisGyroscopes);
+    if (!ok) {
+        yCError(GENERICSENSORROSPUBLISHER) << "IThreeAxisGyroscopes interface is not available";
+        return false;
     }
+    ok = m_poly->view(m_iThreeAxisLinearAccelerometers);
+    if (!ok) {
+        yCError(GENERICSENSORROSPUBLISHER) << "IThreeAxisLinearAccelerometers interface is not available";
+        return false;
+    }
+    ok = m_poly->view(m_iThreeAxisMagnetometers);
+    if (!ok) {
+        yCError(GENERICSENSORROSPUBLISHER) << "IThreeAxisMagnetometers interface is not available";
+        return false;
+    }
+    ok = m_poly->view(m_iOrientationSensors);
+    if (!ok) {
+        yCError(GENERICSENSORROSPUBLISHER) << "IOrientationSensors interface is not available";
+        return false;
+    }
+
+    ok = m_iThreeAxisGyroscopes->getThreeAxisGyroscopeFrameName(m_sens_index, m_framename);
     return ok;
 }
 
