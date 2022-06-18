@@ -243,8 +243,8 @@ jobs:
 
 
         echo "Update the file './.github/workflows/nightly-merge.yml'"
-        echo "sed -i \"s/stable_branch: '.*'/stable_branch: '${YARP_TAG_BRANCH_C}'/g\"  ./.github/workflows/nightly-merge.yml"
-        sed -i "s/stable_branch: '.*'/stable_branch: '${YARP_TAG_BRANCH_C}'/g"  ./.github/workflows/nightly-merge.yml
+        echo "sed -i \"s/stable_branch: '.*'/stable_branch: '${YARP_TAG_BRANCH}'/g\"  ./.github/workflows/nightly-merge.yml"
+        sed -i "s/stable_branch: '.*'/stable_branch: '${YARP_TAG_BRANCH}'/g"  ./.github/workflows/nightly-merge.yml
 
         echo "Commit:"
         git add -v CMakeLists.txt
