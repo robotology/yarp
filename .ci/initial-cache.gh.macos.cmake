@@ -12,8 +12,8 @@ set(YARP_COMPILE_libYARP_math ON CACHE BOOL "")
 # Avoid building Qt5 guis twice on macOS.
 set(YARP_DISABLE_MACOS_BUNDLES ON CACHE BOOL "")
 
-# Disable system SQLite (workaround for #2247)
-set(YARP_USE_SYSTEM_SQLite OFF CACHE BOOL "")
+# Disable system SQLite3 (workaround for #2247)
+set(YARP_USE_SYSTEM_SQLite3 OFF CACHE BOOL "")
 
 set(ENABLE_yarpcar_human ON CACHE BOOL "")
 set(ENABLE_yarppm_depthimage_to_mono ON CACHE BOOL "")

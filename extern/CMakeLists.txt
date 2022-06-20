@@ -17,7 +17,7 @@ if(YARP_BUILD_TinyXML)
 endif()
 
 # SQLite
-if(YARP_BUILD_SQLite)
+if(YARP_BUILD_SQLite3)
   add_subdirectory(sqlite)
   set(SQLite3_INCLUDE_DIRS ${SQLite3_INCLUDE_DIRS} PARENT_SCOPE)
   set(SQLite3_LIBRARIES ${SQLite3_LIBRARIES} PARENT_SCOPE)
