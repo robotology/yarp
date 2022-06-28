@@ -14,7 +14,7 @@
 #include <yarp/dev/impl/jointData.h>
 
 #include <numeric>
-#include <math.h>
+#include <cmath>
 
 using namespace yarp::os;
 using namespace yarp::dev;
@@ -441,12 +441,14 @@ void ControlBoard_nws_yarp::run()
     }
 
     // Check if the encoders timestamps are consistent.
-    double tt = *times.data();
-    for (auto it = times.begin(); it != times.end(); it++)
+    for (double tt : times)
     {
-        if (fabs(tt - *it) > 1.0)
+        if (std::abs(times[0] - tt) > 1.0)
         {
             yCError(CONTROLBOARD, "Encoder Timestamps are not consistent! Data will not be published.");
+            yarp::sig::Vector _data(subdevice_joints);
+            // update `times` for the next iteration
+            iEncodersTimed->getEncodersTimed(_data.data(), times.data());
             return;
         }
     }
