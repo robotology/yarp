@@ -6,6 +6,7 @@
 #ifndef YARP_CONF_STRING_H
 #define YARP_CONF_STRING_H
 
+#include <iterator>
 #include <regex>
 #include <sstream>
 #include <string>
