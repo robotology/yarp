@@ -25,6 +25,7 @@
 #include <cstdio>
 #include <cstring>
 #include <string>
+#include <utility>
 
 
 using namespace yarp::sig;
