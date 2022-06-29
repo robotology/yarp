@@ -14,7 +14,7 @@
 #include <yarp/dev/impl/jointData.h>
 
 #include <numeric>
-#include <math.h>
+#include <cmath>
 
 using namespace yarp::os;
 using namespace yarp::dev;
@@ -440,21 +440,6 @@ void ControlBoard_nws_yarp::run()
         yCWarning(CONTROLBOARD) << "Number of streaming input messages to be read is " << inputStreamingPort.getPendingReads() << " and can overflow";
     }
 
-    // Check if the encoders timestamps are consistent.
-    double tt = *times.data();
-    for (auto it = times.begin(); it != times.end(); it++)
-    {
-        if (fabs(tt - *it) > 1.0)
-        {
-            yCError(CONTROLBOARD, "Encoder Timestamps are not consistent! Data will not be published.");
-            return;
-        }
-    }
-
-    // Update the port envelope time by averaging all timestamps
-    time.update(std::accumulate(times.begin(), times.end(), 0.0) / subdevice_joints);
-    yarp::os::Stamp averageTime = time;
-
     // handle stateExt first
     jointData& data = extendedOutputState_buffer.get();
 
@@ -522,6 +507,21 @@ void ControlBoard_nws_yarp::run()
     } else {
         data.interactionMode_isValid = false;
     }
+
+    // Check if the encoders timestamps are consistent.
+    for (double tt : times)
+    {
+        if (std::abs(times[0] - tt) > 1.0)
+        {
+            yCError(CONTROLBOARD, "Encoder Timestamps are not consistent! Data will not be published.");
+            yarp::sig::Vector _data(subdevice_joints);
+            return;
+        }
+    }
+
+    // Update the port envelope time by averaging all timestamps
+    time.update(std::accumulate(times.begin(), times.end(), 0.0) / subdevice_joints);
+    yarp::os::Stamp averageTime = time;
 
     extendedOutputStatePort.setEnvelope(averageTime);
     extendedOutputState_buffer.write();
