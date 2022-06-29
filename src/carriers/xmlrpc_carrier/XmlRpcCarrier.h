@@ -11,7 +11,7 @@
 #include "XmlRpcStream.h"
 
 /**
- *
+ * \ingroup carriers_lists
  * This carrier enables XML/RPC message transmission.
  *
  * Example: at the time of writing, there is a public XML/RPC server at

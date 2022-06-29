@@ -11,6 +11,7 @@
 
 
 /**
+ * \ingroup carriers_lists
  * Communicating between two ports via shared memory.
  */
 class ShmemCarrier : public yarp::os::AbstractCarrier

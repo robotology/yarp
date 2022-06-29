@@ -1,0 +1,123 @@
+/**
+\defgroup yarp-config
+
+\ingroup yarp_tools
+
+\tableofcontents
+
+The yarp-config tool inspects the system and reports information about installed configuration and data files. In addition, it supports the process of customizing data files by copying them from installation to the user private directories (we call this \e importing).
+
+Some commands related to YARP configuration files are:
+
+\li `yarp-config --version` report version information
+\li `yarp-config --namespace` report file that caches the current YARP namespace
+\li `yarp-config --nameserver` report file that caches nameserver contact information
+
+As for data file customization, this tool allows managing \e context and \e robot files (as explained in \ref yarp_data_dirs). This tool knows from the ResourceFinder where all files are located and where to put them given the system and user's environment.
+The main sub-commands are ''context'' to handle files in context directories and ''robot'' to handle robot directories.
+
+\verbatim
+  yarp-config context --list
+\endverbatim
+
+Shows all the contexts visible to the ResourceFinder, <EM> in the order of precedence </EM>. To limit the list to the contexts found in the installed locations you can add:
+
+\verbatim
+  yarp-config context --list --installed
+\endverbatim
+
+To import contexts to the home directory:
+
+\verbatim
+  yarp-config context --import <context-name>
+  yarp-config context --import <context-name> file1 file2
+  yarp-config context --import-all
+\endverbatim
+
+The first two commands affects individual contexts, and allow one to import a whole context (first command) or only some specific files (second one); the third command affects all contexts (not recommended).
+After you finish importing a context, you can go to your local private directory (in Linux usually: $HOME/.local/share/yarp/contexts/) and edit it.
+To remove any local changes and restore the default files, one can do:
+
+\verbatim
+  yarp-config context --remove <context-name>
+\endverbatim
+
+The utility works similarly for robot specific files:
+
+\verbatim
+  yarp-config robot --list
+  yarp-config robot --import <robot-name>
+  yarp-config robot --import <robot-name> file1 file2
+  yarp-config robot --remove <robot-name>
+\endverbatim
+
+In any case:
+
+\verbatim
+  yarp-config help
+\endverbatim
+provides an explanation of the commands supported by the yarp-config tool.
+
+\section yarp-config-example An Example
+
+Suppose you have installed both YARP and the example provided in <YARP_SOURCE_CODE>/examples/resourceFinder and described in \ref yarp_resource_finder_installation .
+
+Type:
+
+\verbatim
+  yarp-config context --list
+\endverbatim
+
+The result should be something like:
+
+\verbatim
+ **LOCAL USER DATA:
+ * Directory : /home/nat/.local/share/yarp/contexts
+ **SYSADMIN DATA:
+ **INSTALLED DATA:
+ * Directory : /usr/local/share/yarp/contexts
+ randomMotion
+ yarpscope
+
+\endverbatim
+
+This shows us that:
+
+\li The local user directory /home/nat.local/share/yarp/contexts is empty, i.e. no contexts have been imported
+\li The shared installation directory for YARP /usr/local/share/yarp/contexts contains two contexts: randomMotion and yarpscope
+
+To be able to modify a contexts, for example to customize one parameter, you have to first import it in the user directory. Suppose for example you want to customize the context ''randomMotion'':
+
+\verbatim
+  yarp-config context --import randomMotion
+\endverbatim
+
+This is the output you should get:
+
+\verbatim
+ Copied context randomMotion from
+ /usr/local/share/yarp/contexts/randomMotion to
+ /home/nat/.local/share/yarp/contexts/randomMotion
+
+ Current locations for this context:
+ /home/nat/.local/share/yarp/contexts/randomMotion
+ /usr/local/share/iCub/contexts/randomMotion
+\endverbatim
+
+Now type:
+
+\verbatim
+  yarp-config context --list
+\endverbatim
+
+To verify that ''randomMotion'' is indeed now present in /home/nat/.local/share/yarp/contexts
+
+This means that files from ''randomMotion'' in /home/nat/.local/share/yarp/contexts/ will take precedence over the ones in /usr/local/share/yarp/contexts. This is indeed what we wanted since the latter contains the default values we are going to modify to customize the behavior of the module.
+
+To undo you can remove the context:
+
+\verbatim
+  yarp-config context --remove randomMotion
+\endverbatim
+
+*/

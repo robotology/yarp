@@ -21,6 +21,10 @@
 #define TCPROS_TRANSLATE_BOTTLE_BLOB (2)
 #define TCPROS_TRANSLATE_TWIDDLER (3)
 
+/**
+ * \ingroup carriers_lists
+ * not documented
+ */
 class TcpRosCarrier :
         public yarp::os::Carrier
 {

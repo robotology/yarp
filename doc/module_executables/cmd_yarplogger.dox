@@ -1,0 +1,11 @@
+/**
+\defgroup yarplogger yarplogger: visualize log from YARP programs
+
+\ingroup yarp_guis
+\ingroup yarp_tools
+
+\tableofcontents
+
+\section yarplogger_intro Description
+
+*/

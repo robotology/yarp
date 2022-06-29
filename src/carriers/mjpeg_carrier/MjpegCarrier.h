@@ -16,7 +16,7 @@
 #include <cstring>
 
 /**
- *
+ * \ingroup carriers_lists
  * A carrier for sending/receiving images via mjpeg over http.
  *
  * Picking a random webcam stream:

@@ -11,7 +11,11 @@
 #include <yarp/sig/Image.h>
 #include <yarp/os/MonitorObject.h>
 
-
+ /**
+  * @ingroup portmonitors_lists
+  * \brief `ZfpMonitorObject`: Portmonitor plugin for compression and decompression of floating point values using zfp library.
+  *
+  */
 class ZfpMonitorObject : public yarp::os::MonitorObject
 {
 public:

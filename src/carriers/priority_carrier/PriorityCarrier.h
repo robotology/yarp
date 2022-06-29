@@ -67,6 +67,7 @@ public:
 
 
 /**
+ * \ingroup carriers_lists
  * Allow priority-based message selection.  Under development.
  * Affected by carrier modifiers.  Examples:
  *   tcp+recv.priority+level.15

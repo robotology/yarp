@@ -1,0 +1,10 @@
+/**
+\defgroup yarpidl_thrift yarpidl_thrift: YARP code generator/compiler for Thrift IDL
+
+\ingroup yarp_tools
+
+\tableofcontents
+
+\section yarpidl_thrift_intro Description
+
+*/

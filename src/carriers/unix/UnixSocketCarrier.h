@@ -18,6 +18,7 @@
 #endif
 
 /**
+ * \ingroup carriers_lists
  * Communicating between two ports(IPC) via Unix Socket.
  */
 class UnixSocketCarrier :

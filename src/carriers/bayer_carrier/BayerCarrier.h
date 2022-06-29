@@ -13,7 +13,7 @@
 #include <yarp/os/DummyConnector.h>
 
 /**
- *
+ * \ingroup carriers_lists
  * Decode bayer images and serve them as regular rgb.
  * Affected by carrier modifiers.  Examples:
  *   tcp+recv.bayer

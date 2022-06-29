@@ -12,6 +12,7 @@
 #include <yarp/os/MonitorObject.h>
 
 /**
+  * @ingroup portmonitors_lists
  * \brief `sound_compression_mp3`: A portmonitor which is able to convert apply mp3 compression/decompression
  * to yarp::sig::Sound data transmitted over the network.
  *

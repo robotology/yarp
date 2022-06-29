@@ -1,0 +1,24 @@
+/**
+\page first_steps First steps with Yarp
+
+\section first_steps_1 Using Yarp / compiling examples
+- \subpage companion_use
+- \subpage yarp_code_examples 
+- \subpage yarp_cmake_hello
+- \subpage using_cmake 
+
+\section first_steps_2 creating modules / writing configuration files 
+- \subpage yarp_rfmodule_tutorial
+- \subpage yarp_config_files
+- \subpage yarp_data_dirs
+- \subpage yarp_resource_finder_tutorials
+- \subpage yarp_external_build
+
+\section first_steps_3 Controlling a robot
+
+- \subpage yarp_motor_control
+
+\section first_steps_4 Other stuff
+
+- \subpage data_rep
+*/

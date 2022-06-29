@@ -34,6 +34,7 @@ public:
 
 
 /**
+ * \ingroup carriers_lists
  * Allow to monitor and modify port data from Lua script  Under development.
  * Affected by carrier modifiers.
  *

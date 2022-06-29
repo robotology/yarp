@@ -12,6 +12,7 @@
 #include <yarp/os/MonitorObject.h>
 
  /**
+  * @ingroup portmonitors_lists
   * \brief `bottle_compression_zlib_portmonitor`: Portmonitor plugin for compression and decompression of bottles (or yarp data types castable to bottle) using zlib library.
   *
   * Example usage:

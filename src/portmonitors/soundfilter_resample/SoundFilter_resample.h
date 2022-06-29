@@ -14,6 +14,10 @@
 #include <yarp/os/LogComponent.h>
 #include <yarp/os/LogStream.h>
 
+ /**
+  * @ingroup portmonitors_lists
+  * \brief `soundfilter_resample`:  Documentation to be added
+  */
 class SoundFilter_resample : public yarp::os::MonitorObject
 {
     yarp::os::Things m_th;

@@ -14,6 +14,7 @@
 
 
 /**
+ * \ingroup carriers_lists
  * Carrier for port communicating via MPI broadcast.
  *
  * Effective collective operations in the one-sender-multiple-receiver scenario.

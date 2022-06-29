@@ -1,0 +1,38 @@
+/**
+\defgroup os_module yarp::os OS-related functionalities
+
+Welcome to the YARP os library.
+This library interfaces with your operating system and provides some basic
+services, the most important of which is network communication.
+
+\section what_is_a_port What is a Port?
+
+A \link yarp::os::Port Port\endlink is an object that can read and write values
+to peer objects spread throughout a network of computers.
+You can create them in your program, and then add and remove connections either
+from that program, from the command line, or from another program.
+Ports are specialized for streaming communication, such as camera images or
+motor commands.
+You can switch network protocols for any or all your connections without
+changing a line of code.
+For more details, see \ref yarp-terms.
+
+For examples, see \ref yarp_code_examples.
+
+*/
+
+/**
+\ingroup os_module
+\defgroup key_class Basic Classes
+
+Some classes for basic services (excluding communication).
+
+*/
+
+/**
+\ingroup os_module
+\defgroup comm_class Communication Classes
+
+The most important classes for getting started with communication
+
+*/
