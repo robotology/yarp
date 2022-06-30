@@ -358,10 +358,17 @@ std::string NameClient::send(const std::string& cmd, bool multi, const ContactSt
             if (alt.isValid()) {
                 address = alt;
                 if (allowSaveScan) {
-                    reportSaveScan = true;
                     NameConfig nc;
                     nc.setAddress(alt);
-                    nc.toFile();
+                    if (nc.toFile())
+                    {
+                        yCInfo(NAMECLIENT, "New configuration stored to file");
+                        reportSaveScan = true;
+                    }
+                    else
+                    {
+                        yCError(NAMECLIENT, "Unable to write configuration");
+                    }
                 }
                 server = getAddress();
                 server.setTimeout(timeout);
