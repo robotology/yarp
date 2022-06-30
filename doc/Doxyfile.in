@@ -906,6 +906,7 @@ INPUT                  = @CMAKE_SOURCE_DIR@/src/libYARP_conf/src \
                          @CMAKE_BINARY_DIR@/src/libYARP_companion/src \
                          @CMAKE_SOURCE_DIR@/src/devices \
                          @CMAKE_SOURCE_DIR@/src/carriers \
+                         @CMAKE_SOURCE_DIR@/src/portmonitors \
                          @CMAKE_SOURCE_DIR@/doc \
                          @CMAKE_SOURCE_DIR@/doc/release \
                          @CMAKE_SOURCE_DIR@/.github
@@ -956,7 +957,13 @@ EXCLUDE                = @CMAKE_SOURCE_DIR@/.github/git-workflow \
                          @CMAKE_SOURCE_DIR@/src/devices/README.md \
                          @CMAKE_SOURCE_DIR@/src/portmonitors/depthimage_compression_zlib/README.md \
                          @CMAKE_SOURCE_DIR@/src/portmonitors/image_compression_ffmpeg/README.md \
-                         @CMAKE_SOURCE_DIR@/src/portmonitors/depthimage_compression_zfp/README.md
+                         @CMAKE_SOURCE_DIR@/src/portmonitors/depthimage_compression_zfp/README.md \
+                         @CMAKE_SOURCE_DIR@/src/portmonitors/bottle_compression_zlib/README.md \
+                         @CMAKE_SOURCE_DIR@/src/portmonitors/depthimage_to_vector/README.md \
+                         @CMAKE_SOURCE_DIR@/src/portmonitors/sensorMeasurements_to_vector/README.md \
+                         @CMAKE_SOURCE_DIR@/src/portmonitors/sound_marker/README.md \
+                         @CMAKE_SOURCE_DIR@/src/portmonitors/soundfilter_resample/README.md
+                         @CMAKE_SOURCE_DIR@/doc/release/yarp_*
 
 # The EXCLUDE_SYMLINKS tag can be used to select whether or not files or
 # directories that are symbolic links (a Unix file system feature) are excluded

@@ -1,0 +1,219 @@
+/**
+\defgroup yarpdatadumper yarpdatadumper: the YARP data recorder
+
+\ingroup yarp_tools
+
+\tableofcontents
+
+Acquires and stores Bottles or Images and Videos from a YARP
+port.
+
+\section yarpdatadumper_intro Description
+
+When launched, the service monitors the presence of incoming
+data (bottles,images,etc.) and stores it within a folder called
+with the same name as the service port (or with a proper suffix
+appended if other data is present in the current path). In this
+folder the file 'data.log' contains the information (taken from
+the envelope field of the port) line by line as follows:
+
+\code
+[pck id] [time stamp] [bottle content (or image_file_name)]
+   0       1.234         0 1 2 3 ...
+   1       1.235         4 5 6 7 ...
+   ...     ...           ...
+\endcode
+
+Note that if the envelope is not valid, then the Time Stamp is
+the reference time of the machine where the service is running.
+Anyway, a selection between these two Time Stamps is available
+for the user through --rxTime option.
+
+Moreover, a file called 'info.log' is produced containing
+information about the data type stored within the 'data.log'
+file as well as the logged time stamps and the name of the
+yarp ports connected or disconnected to the dumper,
+as in the following:
+
+\code
+Type: [Bottle; | Image; | Image:jpg | Image:png | Depth | DepthCompressed | Image; Video:ext(huffyuv);]
+Stamp: [rx; | tx; | tx+rx;]
+[local-timestamp] /yarp-port-name [connected]
+[local-timestamp] /yarp-port-name [disconnected]
+\endcode
+
+Finally, a further file called 'timecodes.log' is also generated
+together with the video, which contains the timecode associated
+to each frame given in millisecond precision. The file content
+looks like the following:
+
+\code
+# timecode format v2
+0
+40
+80
+\endcode
+
+This is useful to recover the exact timing while post-processing
+the video relying for example on the `mkvmerge` tool:
+\code
+mkvmerge -o out.mkv --timecodes 0:timecodes.log video.mkv
+\endcode
+To get \e mkvmerge do: sudo apt-get install mkvtoolnix
+
+The module \ref yarpdataplayer can be used to re-play a dump generated
+by the \ref yarpdatadumper.
+
+\section yarpdatadumper_lib Libraries
+- To record videos: OpenCV 2.4 and the <a
+  href="http://wiki.team-mediaportal.com/9_Glossary/Huffyuv">huffyuv</a>
+  codec for lossless data compression.
+
+\section yarpdatadumper_codec_installation Codec Installation
+- Windows: fetch the dll library from the codec website and
+  simply install it.
+
+- Linux: ffmpeg must be properly installed and recognized by
+  OpenCV. The command "sudo apt-get ffmpeg" seemed not to work.
+  This is a possible alternative procedure:
+
+  -# sudo apt-get install libjpeg62-dev libtiff4-dev
+     libjasper-dev libopenexr-dev libeigen2-dev yasm libfaac-dev
+     libopencore-amrnb-dev libopencore-amrwb-dev libtheora-dev
+     libvorbis-dev libxvidcore-dev
+  -# svn checkout svn://svn.ffmpeg.org/ffmpeg/trunk ffmpeg
+  -# ./configure --enable-gpl --enable-version3 --enable-nonfree
+     --enable-postproc --enable-libfaac --enable-libopencore-amrnb
+     --enable-libopencore-amrwb --enable-libtheora
+     --enable-libvorbis --enable-libxvid --enable-x11grab
+     --enable-swscale --enable-shared
+  -# sudo make install
+  -# recompile OpenCV through cmake
+
+\section yarpdatadumper_parameters Parameters
+`--name portname`
+- The parameter `portname` identifies the name of the listening
+  port open by the service; if not specified `/dump` is
+  assumed. The leading forward slash will be added if not
+  provided.
+
+`--connect portname`
+- The parameter `portname` specifies the name of the port to
+  connect the dumper to at launch time (\e tcp is used).
+
+`--dir dirname`
+- The parameter `dirname` serves to specify the storage
+  directory explicitly (relative to the location where the
+  module has been launched from).
+
+`--overwrite`
+- If this option is specified, then a pre-existing storage
+  directory will be overwritten.
+
+`--type datatype`
+- The parameter `datatype` selects the type of items to be
+  stored. It can be one of the following (if not specified \e bottle is assumed):
+  + \e bottle (text file)
+  + \e image  (standard uncompressed bitmap, ppm (rgb) or pgm (monochrome 8bit)
+  + \e image_jpg (jpg compressed, lossy)
+  + \e image_png (png compression, lossless)
+  + \e depth (32-bit float raw, yarp custom format) 
+  + \e depth_compressed (32-bit float, zlib compressed, yarp custom format) 
+  + \e video (.mkv format)
+  The data type \e video is available if OpenCV is found and the codec \e huffyuv is installed.
+
+`--addVideo`
+- In case images are acquired with this option enabled, a video
+  called 'video.ext' is also produced at the same time. The
+  extension `ext` is determined by the option `videoType`.
+  This option is available if OpenCV is found and the codec
+  \e huffyuv is installed in the system.
+
+`--videoType ext`
+- If it is required to generate a video, the parameter `ext`
+  specifies the type of the video container employed. Available
+  types are: \e mkv (default), \e avi.
+
+`--downsample n`
+- With this option it is possible to reduce the storing rate by
+  a factor `n`, i.e. the parameter `n` specifies how many
+  items (bottles or images) shall be skipped after one
+  acquisition.
+
+`--rxTime`
+- With this option it is possible to select which Time Stamp to
+  assign to the dumped data: normally the sender time is the
+  reference, but if this option is enabled, the time of the
+  receiving machine on which the service is running will be the
+  reference. However, even if `--rxTime` is not selected, the
+  receiver time will be taken as reference in case of invalid
+  message envelope.
+
+`--txTime`
+- Regardless of its availability, the sender time stamp will be
+  inserted in the log straightaway. Moreover, if `txTime` is
+  given in conjunction with the `rxTime` option (or even if
+  `rxTime` is not selected but the sender stamp is invalid),
+  then the following format will be adopted for the logged data:
+
+\code
+[pck id] [tx stamp] [rx stamp] [message content]
+\endcode
+
+\section yarpdatadumper_portsa Ports Accessed
+
+The port the service is listening to.
+
+\section yarpdatadumper_portsc Ports Created
+
+- `<portname>` (e.g. /dump)
+
+- `<portname>/rpc` which is a remote procedure call port useful
+  to shut down the service remotely by sending to this port the
+  'quit' command.
+
+\section yarpdatadumper_in_files Input Data Files
+None.
+
+\section yarpdatadumper_out_data Output Data Files
+Within the directory `./<portname>` the file `data.log` is
+created containing the acquisitions. Besides, if \e image type
+has been selected, all the acquired images are also stored. A
+further file called `info.log` is also produced containing
+meta-data relevant for the logging.
+
+Note that in case an acquisition with the same `<portname>` was
+previously carried out, an increasing suffix will be appended
+to the name of the directory.
+
+\section yarpdatadumper_conf_file Configuration Files
+None.
+
+\section yarpdatadumper_example Example
+By launching the following command:
+
+\code
+yarpdatadumper --name /log --type image --downsample 2
+\endcode
+
+the service will create the listening port `/log` capable of
+storing images within the subdirectory `./log` at a halved rate
+with respect to the rate of the sender.
+
+Then, by connecting the port to the sender with the usual yarp
+command
+
+\code
+yarp connect /grabber /log
+\endcode
+
+the acquisition will start.
+
+By pressing `CTRL+C` the acquisition is terminated.
+
+So, now, have a look inside the directory `./log`
+
+\sa \ref yarpdataplayer
+\sa \ref yarpdatadumperAppGenerator
+
+*/

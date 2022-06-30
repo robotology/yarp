@@ -1,0 +1,24 @@
+/**
+\defgroup sig_module yarp::sig Signal Processing
+
+Basic classes and methods related to signal processing.
+YARP sticks with very basic data types here, with
+an emphasis on easy interoperability with external libraries.
+
+*/
+
+/**
+\ingroup sig_module
+
+\defgroup sig_examples Examples
+
+Examples and tutorials about specific signal classes
+*/
+
+/**
+\ingroup sig_module
+
+\defgroup sig_class yarp::sig  classes
+
+List of signal classes
+*/

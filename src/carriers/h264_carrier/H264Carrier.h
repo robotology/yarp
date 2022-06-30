@@ -12,7 +12,7 @@
 
 
 /**
- *
+ * \ingroup carriers_lists
  * A carrier for receiving frames compressed in h264 over rtp.
  * This carrier uses gstreamer libraries (libgstreamer1.0-dev and libgstreamer-plugins-base1.0-dev) to read rtp packets and to decode the h264 stream.
  *

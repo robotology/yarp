@@ -12,7 +12,10 @@
 #include <yarp/sig/Image.h>
 #include <yarp/sig/Vector.h>
 
-
+ /**
+  * @ingroup portmonitors_lists
+  * \brief `depthimage_to_vector`:  Documentation to be added
+  */
 class DepthImageConverterVec : public yarp::os::MonitorObject
 {
 public:

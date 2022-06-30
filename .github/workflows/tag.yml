@@ -233,13 +233,13 @@ jobs:
         sed -i "s/${YARP_TAG_BRANCH_C}$/v${YARP_VERSION_C}/g" doc/releases.md
 
 
-        echo "Update the file 'doc/download.dox'"
+        echo "Update the file 'doc/001_installation/1_download.dox'"
         # WARNING This is based on the line in the file, it could stop working
         # if the content of the file changes.
         # Move line 8 to line 57
-        sed -i -e '8{h;d};57{p;g}' doc/download.dox
+        sed -i -e '8{h;d};57{p;g}' doc/001_installation/1_download.dox
         # Add the new release at line 8
-        sed -i "8i\\ + \\\\ref v${YARP_VERSION_C}" doc/download.dox
+        sed -i "8i\\ + \\\\ref v${YARP_VERSION_C}" doc/001_installation/1_download.dox
 
 
         echo "Update the file './.github/workflows/nightly-merge.yml'"
@@ -249,7 +249,7 @@ jobs:
         echo "Commit:"
         git add -v CMakeLists.txt
         git add -v doc/releases.md
-        git add -v doc/download.dox
+        git add -v doc/001_installation/1_download.dox
         git add -v ./.github/workflows/nightly-merge.yml
         git commit -v -m "YARP ${YARP_VERSION}"
 
@@ -430,13 +430,14 @@ jobs:
 
         EOF
 
-        #Create the README.md file
-        cat << EOF > ${YARP_NEXT_STABLE_RELEASE_NOTES_DIR}/README.md
+        #Create the README.md_template file
+        cat << EOF > ${YARP_NEXT_STABLE_RELEASE_NOTES_DIR}/README.md_template
         This is a placeholder.
 
         Please add in this folder a \`.md\` file for each branch, pull request or
         important change targeting the relative branch.
-
+        This file will be not included in the documentation (intentionally) because it is not a .md/.dox file.
+        
         Each file should have this format
 
         \`\`\`
@@ -451,7 +452,7 @@ jobs:
         sed -i "/^\* \\\\subpage v${YARP_VERSION_C}$/i * \\\\subpage ${YARP_NEXT_STABLE_BRANCH_C}" doc/releases.md
 
         git add -v ${YARP_NEXT_STABLE_RELEASE_NOTES_DIR}/000_${YARP_NEXT_STABLE_BRANCH_C}.md
-        git add -v ${YARP_NEXT_STABLE_RELEASE_NOTES_DIR}/README.md
+        git add -v ${YARP_NEXT_STABLE_RELEASE_NOTES_DIR}/README.md_template
         git add -v doc/releases.md
         git commit -v -m "Prepare for next stable release (${YARP_NEXT_STABLE_VERSION})"
 
@@ -519,12 +520,13 @@ jobs:
 
         EOF
 
-        #Create the README.md file
-        cat << EOF > ${YARP_NEXT_FEATURE_RELEASE_NOTES_DIR}/README.md
+        #Create the README.md_template file
+        cat << EOF > ${YARP_NEXT_FEATURE_RELEASE_NOTES_DIR}/README.md_template
         This is a placeholder.
 
         Please add in this folder a \`.md\` file for each branch, pull request or
         important change targeting the relative branch.
+        This file will be not included in the documentation (intentionally) because it is not a .md/.dox file.
 
         Each file should have this format
 
@@ -547,7 +549,7 @@ jobs:
         sed -i "s/ VERSION [0-9]\+\.[0-9]\+\.[0-9]\+/ VERSION ${YARP_VERSION_MAJOR}.${YARP_VERSION_MINOR}.100/g" CMakeLists.txt
 
         git add -v ${YARP_NEXT_FEATURE_RELEASE_NOTES_DIR}/000_${YARP_NEXT_FEATURE_BRANCH_C}.md
-        git add -v ${YARP_NEXT_FEATURE_RELEASE_NOTES_DIR}/README.md
+        git add -v ${YARP_NEXT_FEATURE_RELEASE_NOTES_DIR}/README.md_template
         git add -v doc/releases.md
         git add -v CMakeLists.txt
         git commit -v -m "Prepare for next ${YARP_NEXT_FEATURE_TYPE} release (${YARP_NEXT_FEATURE_VERSION})"

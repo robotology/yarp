@@ -1,0 +1,28 @@
+/**
+\defgroup  carriers_module Carriers
+
+\tableofcontents
+
+
+\section what_is What is a carrier?
+In YARP, ports talk to each other via connections.
+Connection data is carried by TCP by default, but this can be switched very easily to other "carriers". 
+Carriers implement the connection mechanism to transfer data across the machines' network.
+*/
+
+
+/**
+\ingroup carriers_module
+
+\defgroup carriers_examples Examples
+
+Examples and tutorials about carriers
+*/
+
+/**
+\ingroup carriers_module
+
+\defgroup carriers_lists Available Carriers
+
+List of available carriers
+*/

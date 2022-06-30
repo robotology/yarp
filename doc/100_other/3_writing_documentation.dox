@@ -1,0 +1,28 @@
+/**
+\page writing_documentation Yarp Doxygen Documentation
+
+Yarp documentation is writteng using Doxygen.
+This files explains how the Yarp documentation is generated, and how to contribute to it if you are not familiar with Doxygen.
+
+\section code documentation
+
+- Software components should be documented using the `\ingroup` directive, so that they will be ordered under a specific yarp module.
+
+\section non-code docuemtnation
+
+- documentation is consituted by a set of .dox and .md files (.md files are parsed by Doxygen too)
+- Doxygen shows the pages in the index in alphabetical order using the .dox filename, not the page name. This is the reason why files are ordered using 000_xxx, 001_yyy folders.
+- Pages are defined through a `\page` directive and automatically put by doxygen in the `Other pages` section.
+- If another page references a page using the `\subpage` directive, then the page is removed from the main level of index tree (i.e. `Other pages` ) and put as child of the parent page.
+- If you want to avoid this, use the `\ref` directive. This directive will not generate a parent-child relationship (and thus it will be not dislayed in the index tree).
+
+- modules are defined using the `\defgroup` directive and are tipically used to define stand-alone components such as libraries.
+- a component can be associated to a module using the `\ingroup` directive.
+- pages and modules should not be mixed!
+- a module can refer to other pages using the `\ref` directive. (e.g. to provide a link to a tutorial). 
+
+- The entrypoint of the documentation is the file main.dox. This only uses `/ref` directives and not `subpage` directives in order not to have child pages. All pages should be independent.
+- The `\section` directive is always allowed, both in main.dox and in all other pages.
+
+*/
+

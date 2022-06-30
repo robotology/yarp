@@ -1,0 +1,119 @@
+/**
+\ingroup carriers_examples
+\defgroup carrier_config_mpi mpi carriers
+
+\tableofcontents
+
+The MPI carriers are supposed be a high-performance equivalent to YARPs standard carriers  (Shared memory, TCP, Mcast) while also adding the possibility for using
+Infiniband (Highspeed node interconnect). But they do not allow for process-local connections.
+
+\note They are still work in progress and should be considered experimental. Please report any problems.
+
+\section carrier_config_mpi_usage Using the MPI carriers
+If you have compiled one or both mpi carriers (see \ref carrier_config_mpi_compliation), you can connect as usual:
+\code
+yarp connect /port1 /port2 mpi
+// or
+yarp connect /port1 /port2 bcast
+\endcode
+
+\par mpi
+\li The 'mpi' carrier is using point-to-point communication (like tcp), i.e. for every receiver there is a sender-thread which sends a copy of the data. This leads to a linear transmission time, O(n).
+\li It supports replies.
+\li The disconnect works as usual
+\code
+yarp disconnect /port1 /port2
+\endcode
+
+
+\par bcast
+\li The 'bcast' carrier is using collective broadcasting (similar to mcast but reliable ), i.e. the data is only send once by the sender and passed on by the receivers as needed. This leads to a decreased transmission time, roughly O(log_2(n)).
+\li It does not support replies.
+\li As of SVN rev. 8752, the disconnect (should) works as usual.
+\li Older versions: the disconnect does not works properly: it is not possible to disconnect only one receiver. And in order to disconnect all at once you need to disconnect the connection which was created first.
+
+\section carrier_config_mpi_intro What is MPI?
+
+<b> Quote from the MPI-1 standard: </b>
+ MPI-1 provides an interface that allows processes in a parallel program to communicate with one another. MPI-1 specifies neither how the processes are created, nor how they establish communication. Moreover, an MPI-1 application is static; that is, no processes can be added to or deleted from an application after it has been started.
+
+In the specification of MPI-2 (\a http://www.mpi-forum.org/docs/mpi-20-html/node89.htm#Node89), these issues were addressed with the process management model. So MPI-2 can be used as an interface for port communication in YARP, where processes need to establish a connection at runtime.
+
+\section carrier_config_mpi_benefits Benefits of using MPI
+\li It has become a de facto standard for communication among processes that model a parallel program running on a distributed memory system
+\li Is widely used and has many open-source implementations
+\li Due to the tight binding between processes it allows for high-performance communication.
+According to some first bandwidth tests, it is more efficient than YARPs standard TCP implementation using ACE
+\li Offers different channels/protocols for communication: Shared memory, Ethernet sockets, Infiniband (implementation dependent)
+\li Broadcast functionality: Increased efficiency for one-sender-mulitple-receiver scenario
+
+\section carrier_config_mpi_sideeffects Sideeffects of using MPI
+\li MPI creates a tight binding between processes. Therefore, terminating a process without a proper 'yarp disconnect' can (or probably will) crash all other processes to which it was connected.
+\li Induces a high load onto the processor due to busy polling (at least for broadcasting). This can hurt the performance in the oversubscription case (more compute-processes than cores).
+
+
+
+
+\section carrier_config_mpi_compliation Compiling YARP with MPI support
+Enable the creation of one or both carriers in cmake:
+\code
+ENABLE_yarpcar_mpi_carrier          => ON
+ENABLE_yarpcar_mpibcast_carrier     => ON
+\endcode
+If you have MPI installed in a standard location, cmake-configure should find all the relevant information. Otherwise explicitly specify the location of your mpiexec
+\code
+MPIEXEC   => /path/to/mpi_binaries/mpiexec
+\endcode
+and the other cmake-variables should be deduced. BUT in this case, you probably will either need to start your program explicitly with mpi (i.e. mpiexec _your_program_) or change the $PATH variable such that your custom mpiexec will be the first one to be found!!
+
+Finally, configure and recompile.
+
+\par Requirements
+There are two requirements for the MPI implementation you would like to use:
+\li It needs to support the MPI-2 standard. This should be fulfilled for any recent version of the major implementations. \n
+If not it probably will fail with some 'unknown function' error for MPI_Open_port. Haven't tested that....
+\li It needs to provide highest thread-safety support, i.e. MPI_THREAD_MULTIPLE
+This is maybe not available in all implementations, or at least it needs to be enabled during the compilation of the MPI library. \n
+If not available, the connection attempt will fail with 'MpiComm: MPI implementation doesn't provide required thread safety'.
+
+
+\section carrier_config_mpi_implementations Open source MPI implementations
+\par OpenMPI
+\a http://www.open-mpi.org/ \n
+If you use precompiled binaries (usually available for all major Linux distributions), please check availability of thread safety with
+\code
+ompi_info | grep -i thread
+# => Thread support: posix (mpi: yes/no)
+\endcode
+Compiler flag:
+\code
+  --enable-mpi-threads    Enable threads for MPI applications (default:
+                          disabled)
+\endcode
+
+\par MPICH2
+\a http://www.mcs.anl.gov/research/projects/mpich2/index.php \n
+Compiler flag:
+\code
+  --enable-threads - Build MPICH2 with support for multi-threaded
+                     applications. Only the sock and nemesis channels
+                     support MPI_THREAD_MULTIPLE.
+\endcode
+
+\par MVAPICH2
+\a http://mvapich.cse.ohio-state.edu/overview/mvapich2/ \n
+Compiler flag (use default):
+\code
+  --enable-threads=level - Control the level of thread support in the
+                           MPICH implementation.  The following levels
+                           are supported.
+         default         - Choose thread level at runtime based on parameters
+                           passed to MPI_Init_thread (default)
+\endcode
+But again, only the ch3:sock and ch3:nemesis channels support MPI_THREAD_MULTIPLE. \n \n
+When running an application which should use MPI connections, you need to enable dynamic process management with an environment variable:
+\code
+export MV2_SUPPORT_DPM=1
+\endcode
+
+*/
