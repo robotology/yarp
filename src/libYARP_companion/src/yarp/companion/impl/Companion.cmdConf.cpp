@@ -31,7 +31,9 @@ int Companion::cmdConf(int argc, char *argv[])
         } else {
             nc.setMode("yarp");
         }
-        nc.toFile();
+        if (!nc.toFile()) {
+            yCError(COMPANION, "Unable to write configuration file");
+        }
         nc.fromFile();
         Contact current = nc.getAddress();
         std::string currentMode = nc.getMode();
@@ -63,9 +65,13 @@ int Companion::cmdConf(int argc, char *argv[])
     }
     if (argc==1) {
         if (std::string(argv[0])=="--clean") {
-            nc.toFile(true);
-            yCInfo(COMPANION, "Cleared configuration file:");
-            yCInfo(COMPANION, "  %s", nc.getConfigFileName().c_str());
+            if (nc.toFile(true)) {
+                yCInfo(COMPANION, "Cleared configuration file:");
+                yCInfo(COMPANION, "  %s", nc.getConfigFileName().c_str());
+            }
+            else {
+                yCError(COMPANION, "Unable to clear configuration file");
+            }
             return 0;
         }
     }

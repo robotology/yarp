@@ -17,6 +17,12 @@ Bug Fixes
 
 * Major improvements to Yarp documentation
 
+### Libraries
+
+#### `lib_yarp_os`
+
+* Yarp now displays an error message if it is unable to save its configuration file
+
 ### Devices
 
 #### `controlBoard_nws_yarp`

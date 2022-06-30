@@ -192,10 +192,12 @@ Contact NameConfig::getAddress()
 bool NameConfig::writeConfig(const std::string& fileName, const std::string& text)
 {
     if (yarp::os::mkdir_p(fileName.c_str(), 1) != 0) {
+        yCError(NAMECONFIG, "Unable to create dir for file %s, check your permissions",fileName.c_str());
         return false;
     }
     FILE* fout = fopen(fileName.c_str(), "w");
     if (fout == nullptr) {
+        yCError(NAMECONFIG, "Unable to write file %s, check your permissions",fileName.c_str());
         return false;
     }
     fprintf(fout, "%s", text.c_str());
