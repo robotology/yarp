@@ -26,7 +26,8 @@ extern "C" {
 }
 
 /**
- * @brief This class extends the MonitorObject class and uses Ffmpeg to compress and decompress video streams with a specified codec.
+ * @ingroup portmonitors_lists
+ * @brief `image_compression_ffmpeg`: This portmonitor uses Ffmpeg to compress and decompress video streams with a specified codec.
  *
  */
 class FfmpegMonitorObject : public yarp::os::MonitorObject

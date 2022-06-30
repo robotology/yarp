@@ -21,6 +21,10 @@ struct rgbColor
     char b;
 };
 
+ /**
+  * @ingroup portmonitors_lists
+  * \brief `segmentationimage_to_rgb`:  Documentation to be added
+  */
 class SegmentationImageConverter : public yarp::os::MonitorObject
 {
 public:

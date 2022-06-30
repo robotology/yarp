@@ -1,0 +1,15 @@
+/**
+\page idl_rosmsg ROS message types
+
+\tableofcontents
+
+\section idl_rosmsg_tutorials yarpidl_rosmsg tutorials
+
+\li \subpage rostypes_tutorial_portable
+\li \subpage rostypes_tutorial_continued
+
+\section ros_msg_files ros .msg files
+
+See http://wiki.ros.org/Messages for an explanation of how ros .msg files work and their format. 
+
+*/

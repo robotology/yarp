@@ -1,0 +1,10 @@
+/**
+\defgroup yarpidl_rosmsg yarpidl_rosmsg: YARP code generator/compiler for ROS IDL
+
+\ingroup yarp_tools
+
+\tableofcontents
+
+\section yarpidl_rosmsg_intro Description
+
+*/

@@ -1,0 +1,16 @@
+/**
+\page yarp_installation Installation and setup
+
+\subpage download
+
+\subpage dependencies
+
+\subpage installing_yarp
+
+\subpage yarp_environment
+
+\subpage check_your_installation
+
+\subpage yarp_cluster
+
+*/

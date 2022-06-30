@@ -1,0 +1,502 @@
+/**
+\page name_server The name server protocol
+
+\tableofcontents
+
+The name server is a YARP program that maintains a list of
+all YARP Ports and how to connect to them.  The name server
+itself has a YARP Port, usually named "/root".  All other
+YARP programs communicate with the name server through this
+port.  This communication is usually hidden within
+YARP library calls, but we document it here in order to
+allow communication with the name server by clients not
+using the YARP libraries.
+
+\section name_server_port The name server is just another Port
+
+Connecting to the name server is just like connecting to any
+other YARP Port (see \ref yarp_protocol "Port Protocol").
+The one problem is that you have to find out where the
+name server is (what machine, what socket port number)
+somehow.  For other YARP Ports, you can solve that problem
+by asking the name server, but that option isn't available
+for the name server itself.
+
+One option is simply to make sure the name server is
+started on a particular known machine on your lab
+(say 192.168.0.3) on a known socket port number
+(say 10000, the default).
+
+The name server itself, once started, records its
+contact information in a configuration file
+(you can type "yarp conf" to find out where that
+file is).  Other YARP programs will check this file
+to see how to reach the name server.  If that doesn't
+work, there is a multicast protocol for discovering
+the server.  This is discussed in \ref name_server_discovery.
+
+\section name_server_content What the name server stores
+
+The name server maintains a set of records, whose key is a text
+string (the name of a Port).
+The rest of the record contains whatever information is
+needed to make an initial connection to a given Port; for tcp this
+is at least a hostname and a socket number.  There is also
+a description of what kinds of connections the port can or is willing
+to participate in after the initial connection.
+The set of protocols (called ``carrier'' in this context)
+that  the port can accept an
+incoming data connection for are recorded as a set called the ``accept''
+set.
+The set of carries the port can create an outgoing data connection
+for are recorded as a set called the the ``offer'' set.
+
+For example, suppose you want to communicate with a Port called
+``/write''.  The first step is to ask the name server about this
+Port.  The name server runs on a known socket-port of a known machine,
+listening for tcp connections.
+It is usually queried through a library call, but for illustration
+purposes we describe
+querying it using telnet.  Suppose the name server is running on
+machine 192.168.0.3 and listening on socket-port 10000 (we will
+discuss a procedure for discovering this information later).
+Then we can query the name server about the Port /write as follows:
+
+
+\verbatim
+telnet 192.168.0.3 10000
+\endverbatim
+
+The name server should start listening -- if the connection is refused,
+something is wrong.  Once the connection is made, type:
+
+\verbatim
+CONNECT foo
+d
+query /write
+\endverbatim
+
+The server will respond with something of the form:
+
+\verbatim
+Welcome foo
+registration name /write ip 5.255.112.227 port 10001 type tcp
+*** end of message
+\endverbatim
+
+So the Port named /write is listening on the machine with
+IP address 5.255.112.227, on port 10001, and it expects TCP
+connections.
+
+How do Ports get registered in the same place?  Here's how to create a
+(fake) registration
+manually (usually it is of course done through a library call).
+Telnet to the name server as before, and type:
+
+\verbatim
+register /write
+\endverbatim
+
+The server will respond with something of the form:
+
+\verbatim
+registration name /write ip 5.255.112.227 port 10001 type tcp
+*** end of message
+\endverbatim
+
+The name server takes responsibility for allocating
+socket-ports and identifying the machine the Port runs on.
+
+\section all_yarpserver_commands The nameserver commands
+
+We now enumerate commands you can send to the name server,
+and the nature of its response.
+
+\subsection protocol_name_query query
+
+\verbatim
+query PORT
+\endverbatim
+
+Requests registration information for the named port.  Response is of
+the following form:
+\verbatim
+registration name PORT ip ADDRESS port NUMBER type CARRIER
+*** end of message
+\endverbatim
+For example:
+\verbatim
+registration name /write ip 5.255.112.227 port 10001 type tcp
+*** end of message
+\endverbatim
+If there is no registration for the port, the registration line
+is omitted, and instead the response is simply:
+\verbatim
+*** end of message
+\endverbatim
+
+See \ref protocol_name_bot_query "bot query" for a version of this
+command that is easier to use in automation.
+
+
+\subsection protocol_name_register register
+
+\verbatim
+register PORT
+\endverbatim
+
+Requests creation of registration information for the named port.
+Response is of the following form:
+\verbatim
+registration name PORT ip ADDRESS port NUMBER type CARRIER
+*** end of message
+\endverbatim
+For example:
+\verbatim
+registration name /write ip 5.255.112.227 port 10001 type tcp
+*** end of message
+\endverbatim
+
+Optionally, the user can take responsibility for more, and
+issue commands in one of the following forms:
+\verbatim
+register PORT CARRIER
+register PORT CARRIER IP
+register PORT CARRIER IP NUMBER
+\endverbatim
+Any value (including the port name) can be replaced by ``...'' to leave it
+up to the name-server to choose it.  For example:
+\verbatim
+register ... tcp 127.0.0.1 8080
+\endverbatim
+Gives something of the form:
+\verbatim
+registration name /tmp/port/1 ip 127.0.0.1 port 8080 type tcp
+*** end of message
+\endverbatim
+If you choose to set the ip yourself, be careful -- there is the
+possibility of problems with multiple ways to identify the same
+machine.  It is best to let the name server choose a name,
+which it should do in a consistent way.  If a machine has
+multiple ip addresses on multiple networks, that can be
+handled -- see the
+discussion of the ips property in the section on set.
+That is important for the purposes of controlling which
+network is used for connections from one port to another.
+
+
+
+
+\subsection protocol_name_unregister unregister
+
+\verbatim
+unregister PORT
+\endverbatim
+
+Removes registration information for the named port.
+Response is of the following form:
+\verbatim
+*** end of message
+\endverbatim
+
+
+\subsection protocol_name_list list
+
+\verbatim
+list
+\endverbatim
+
+Gives registration information of all known ports.
+Response is of the following form:
+\verbatim
+registration name /write ip 130.251.4.159 port 10021 type tcp
+registration name /read ip 130.251.4.159 port 10031 type tcp
+registration name /tmp/port/4 ip 130.251.4.159 port 10011 type tcp
+registration name /tmp/port/3 ip 130.251.4.52 port 10021 type tcp
+registration name /tmp/port/2 ip 130.251.4.52 port 10011 type tcp
+registration name /tmp/port/1 ip 130.251.4.159 port 10001 type tcp
+*** end of message
+\endverbatim
+
+See \ref protocol_name_bot_list "bot list" for a version of this
+command that is easier to use in automation.
+
+
+\subsection protocol_name_set set
+
+\verbatim
+set PORT PROPERTY VALUE1 VALUE2 ...
+\endverbatim
+
+The name server can store extra properties of a port, beyond the
+bare details associated with registration.  The  set command
+is used to do this.  For example, the command:
+\verbatim
+set /write offers tcp udp mcast
+\endverbatim
+Gets the following response:
+\verbatim
+port /write property offers = tcp udp mcast
+\endverbatim
+The get and check commands can then be used to query
+such properties.
+
+There are some special properties used by YARP.  Property ``ips''
+can list multiple identifiers of a machine.  Property ``offers''
+lists carriers that an output port can support.  Property ``accepts''
+lists carriers that an input port can support.
+
+
+
+
+
+\subsection protocol_name_get get
+
+\verbatim
+get PORT PROPERTY
+\endverbatim
+
+Gets the values of a stored property. For example,
+after the set command example shown earlier, the command:
+\verbatim
+get /write offers
+\endverbatim
+Returns the following response:
+\verbatim
+port /write property offers = tcp udp mcast
+\endverbatim
+
+
+\subsection protocol_name_check check
+
+\verbatim
+check PORT PROPERTY VALUE
+\endverbatim
+
+Checks if a stored property can take the given value. For example,
+after the set command example shown earlier, the command:
+\verbatim
+check /write offers tcp
+\endverbatim
+Returns the following response:
+\verbatim
+port /write property offers value tcp present true
+\endverbatim
+
+\subsection protocol_name_route route
+
+\verbatim
+route PORT1 PORT2
+\endverbatim
+
+Finds a good way to connect an output port to an input port, based
+on the carriers they have in common (preferred carriers can optionally
+be added to this command in decreasing order of preference) and
+which carriers are physically possible (for example, `shmem'
+requires ports to be on the same machine, and `local' requires
+ports to belong to threads with a shared memory space).
+For example, the command:
+\verbatim
+route /write /read
+\endverbatim
+Returns the following response:
+\verbatim
+port /write route /read = shmem://read
+\endverbatim
+Suggesting that shmem is the best carrier to use.
+
+\subsection protocol_name_bot_query bot query
+
+\verbatim
+bot query /PORT
+\endverbatim
+
+Returns information about a port in an easy-to-parse,
+Bottle-compatible format.  Less easy to read for a human, but much
+better for automation.
+
+The return format is a list with the string "port" as its
+first item, followed by one sub-list containing a series of key-value
+pairs.  One important key is "name", whose value is the name of the port.
+If the port requested does not exist, this key will not be present, and
+instead there will be an error key.
+
+\subsection protocol_name_bot_list bot list
+
+\verbatim
+bot list
+bot list /PREFIX
+\endverbatim
+
+Returns a list of ports in an easy-to-parse, Bottle-compatible
+format.  Less easy to read for a human, but much better for
+automation.
+
+The return format is a list with the string "ports" as its
+first item, followed by one sub-list for each matching port
+(if `/PREFIX` is supplied, this is all ports named `/PREFIX` or
+`/PREFIX/*`; if no prefix is supplied, it is all ports).
+The sublist contains a series of key-value pairs.  One
+important key is "name", whose value is the name of the port.
+
+\section name_server_discovery Finding the name server
+
+For yarp utilities to correctly discover how
+to contact the name server,
+there should be a file `yarp.conf` in the directory `$HOME/.yarp/conf/`
+that looks like this:
+\verbatim
+192.168.0.3 10000
+\endverbatim
+This gives the machine and socket-port that the name server is assumed
+to be running on.
+
+(The name of this file will be different if
+\ref name_server_namespaces "namespaces"
+are in use.  You can always determine the name of this file
+and its expected location by typing \ref yarp_conf).
+
+If this file does not exist, or is incorrect, yarp utilities will
+attempt to contact the nameserver using multi-cast broadcasts to
+224.2.1.1 port 10001 (this is a YARP2 feature, not available in
+YARP1).  If the nameserver is running a machine reachable from
+multi-cast, it will respond with its ``true'' tcp address, which will
+then be used by the utility.  The configuration file will be updated
+automatically for future reference.  The multi-cast protocol is
+identical to the normal tcp protocol.  Clients can broadcast
+``NAME_SERVER query /root'' to trigger the name server to send a record
+of the form ``registration name /root ip ADDRESS port NUMBER type
+CARRIER''.  Multi-cast broadcasts should not generally be used
+by clients to communicate with the name server, since the output of
+the name server is not tagged with the recipient, so there is the
+potential for cross-talk.  But for queries like this it is safe.
+
+
+\section name_server_namespaces Name server namespaces
+
+It is sometimes useful to have multiple name servers running
+on the same network.  This is possible, although you have
+to take some care.
+
+Normally it is a good idea to run just one yarp name server on a given
+local network.  The name server keeps track of resources (such as
+socket port numbers) available on different machines, and if two name
+servers are in use, there can be conflicts as each server assigns
+resources without being aware of the other.
+
+If you are aware of the potential for resource conflict, and take
+steps to avoid it, it is sometimes useful to run multiple name
+servers.  Here's how.
+
+We've said that the name server is just a Port, with the name
+"/root".  In fact, you can change the Port name you expect
+a name server to have.  The Port name is called the "namespace".
+
+Type:
+\verbatim
+  yarp namespace
+\endverbatim
+It will report something like:
+\verbatim
+  No namespace specified, using default
+  YARP namespace: /root
+\endverbatim
+
+This means that we expect to use a server called "/root".  This is the
+default.  Let's assume there's already a name server running somewhere
+on your local network.  It will be called "/root".  Now suppose we
+want to avoid using that name server, and use one on our own machine
+temporarily.  Pick a name you like, for example "/my/root" and type:
+
+\verbatim
+  yarp namespace /my/root
+\endverbatim
+
+This will report something like:
+
+\verbatim
+  Setting namespace in: /home/paulfitz/.yarp/conf/yarp_namespace.conf
+  Remove this file to revert to the default namespace (/root)
+  YARP namespace: /my/root
+\endverbatim
+
+All further queries of the form:
+\verbatim
+  yarp namespace
+\endverbatim
+report:
+\verbatim
+  YARP namespace: /my/root
+\endverbatim
+Typing:
+\verbatim
+  yarp where
+\endverbatim
+should fail right now, since the "/root" name server will be ignored,
+and there is no name server with the name "/my/root" available.  Let's
+rectify that.  On your machine, type:
+\verbatim
+  yarp server
+\endverbatim
+This will start up a server with the name "/my/root".
+Now "yarp where" should start working, and if you type:
+\verbatim
+  yarp check
+\endverbatim
+it should work, and you should see ports being registered on your personal
+name server.  If it does not work (perhaps you are on a wireless network,
+or multicast search is failing for some other reason), type "yarp conf" and
+edit/create the named file in the same way as described in
+\ref name_server_discovery.
+
+To switch back to using the main name server, type:
+\verbatim
+  yarp namespace /root
+\endverbatim
+
+Be careful switching from one to the other, since names registered in
+one namespace are not registered in the other.
+
+If you want to simultaneously use both name servers, you'll need to be
+very careful.  At a minimum, you'll want to start up your personal
+name server to allocate socket port numbers in a different range to
+the default (10000-):
+\verbatim
+  yarp server 20000
+\endverbatim
+
+
+\section name_server_history An older name server protocol
+
+The name server used to use its own non-standard protocol, rather than
+the standard Port protocol.  This older protocol is still supported.
+It is very simple: make a tcp connection, and send commands with
+the string "" prefixed.  For example, if we connect to
+the name server:
+
+\verbatim
+telnet 192.168.0.3 10000
+\endverbatim
+
+And type:
+
+\verbatim
+NAME_SERVER query /write
+\endverbatim
+
+The server will respond with something of the form:
+
+\verbatim
+registration name /write ip 5.255.112.227 port 10001 type tcp
+*** end of message
+\endverbatim
+
+\section additional_info_namserver Additional infos
+
+Additional infos about yarp nameserver and protocol can be found here:
+
+- \subpage yarp_protocol
+- \subpage yarp_without_nameserver
+- \subpage yarp_without_yarp
+
+*/

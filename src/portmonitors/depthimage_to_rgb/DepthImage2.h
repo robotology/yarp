@@ -11,9 +11,12 @@
 #include <yarp/os/MonitorObject.h>
 #include <yarp/sig/Image.h>
 
-//example usage:
-//yarp connect /grabber/depth:o /yarpview/img:i tcp+recv.portmonitor+type.dll+file.depthimage_to_rgb
-
+ /**
+  * @ingroup portmonitors_lists
+  * \brief `depthimage_to_rgb`: Documentation to be added
+  * example usage:
+  * yarp connect /grabber/depth:o /yarpview/img:i tcp+recv.portmonitor+type.dll+file.depthimage_to_rgb
+  */
 class DepthImageConverter : public yarp::os::MonitorObject
 {
 public:

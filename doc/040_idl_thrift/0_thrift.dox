@@ -1,0 +1,13 @@
+/**
+\page idls Using IDLs in Yarp (and also ROS)
+
+\tableofcontents
+
+IDLs offers a convenient way to define structures and services and separate interfaces from their implementation.
+
+\section idls_list List of IDLs (Interface Description Languages) used in YARP
+
+\li \subpage idl_thrift
+\li \subpage idl_rosmsg
+
+*/

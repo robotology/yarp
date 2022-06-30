@@ -1,0 +1,85 @@
+/**
+\defgroup yarpdev_module yarp::dev Interfaces
+
+*/
+
+/**
+\ingroup yarpdev_module
+
+\defgroup dev_iface Device Interfaces
+
+Device interfaces, specified independently of specific implementations.
+
+*/
+
+
+/**
+\ingroup yarpdev_module
+
+\defgroup dev_iface_tutorials Tutorials
+
+Interface tutorials.
+
+*/
+
+/**
+\ingroup dev_iface
+
+\defgroup dev_iface_motor Motor Interfaces
+
+Motor control and monitoring.
+
+*/
+
+
+/**
+\ingroup dev_iface
+
+\defgroup dev_iface_navigation Navigation Interfaces
+
+Interfaces for navigation, localization and mapping.
+
+*/
+
+
+/**
+\ingroup dev_iface
+
+\defgroup dev_iface_media Media Interfaces
+
+Images and sounds.
+
+*/
+
+
+/**
+\ingroup dev_iface
+\defgroup dev_iface_multiple_analog Multiple Analog Sensor Interfaces
+
+The interfaces present in this group are meant to be implemented by
+devices that expose sensor that can be efficiently expressed as vector of
+real numbers, so-called "analog" sensors.
+
+For more information see the documentation of server, client and remapper devices that operate on these interfaces:
+
+* yarp::dev::MultipleAnalogSensorsServer
+* yarp::dev::MultipleAnalogSensorsClient
+* yarp::dev::MultipleAnalogSensorsRemapper
+
+*/
+
+
+/**
+\ingroup dev_iface
+\defgroup dev_iface_transform Frame Transform Interfaces
+The interfaces in this group are to be implemented by devices who are meant to manage and/or store frame transformations
+*/
+
+/**
+\ingroup dev_iface
+
+\defgroup dev_iface_other Other Device Interfaces
+
+Sundry, miscellaneous.
+
+*/

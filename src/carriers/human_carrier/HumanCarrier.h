@@ -9,6 +9,10 @@
 #include <yarp/os/SizedWriter.h>
 #include "HumanStream.h"
 
+/**
+ * \ingroup carriers_lists
+ * No documentation available
+ */
 class HumanCarrier : public Carrier {
 public:
 

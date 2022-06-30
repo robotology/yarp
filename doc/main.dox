@@ -40,11 +40,11 @@ YARP is free and open, under the BSD-3-Clause license [\ref bsd_note "*"].
 The general philosophy that has guided the development of YARP is described in
 [\ref Fitzpatrick2014 "1"], [\ref Fitzpatrick2008 "2"] and [\ref Metta2006 "3"],
 while [\ref Paikan2014a "4"] and [\ref Paikan2014b "5"] describe some recent
-development (\subpage portmonitor "Port Monitor").
+development (\ref portmonitor "Port Monitor").
 
 Performances are fundamental in robotics. YARP provides features that allow
 developers to assign priorities to individual connections. We call this channel
-\subpage channelprioritization. Experimental validation demonstrated that these
+\ref channelprioritization. Experimental validation demonstrated that these
 features allow reducing communication latency and improves determinism for
 selected channels in a YARP network [\ref Paikan2015a "6"] and
 [\ref Paikan2015b "7"].
@@ -54,74 +54,82 @@ libraries are not licensed under the BSD-3-Clause.
 
 
 \section yarp_setup Getting set up
-\li \subpage download
-\li \subpage install
-\li \subpage yarp_cluster
+\li \ref download
+\li \ref yarp_installation
+\li \ref yarp_cluster
 
 \section yarp_basics_usage The basics of using YARP
-\li \subpage yarp_cmake_hello
-\li \subpage note_ports
-\li \subpage note_devices
-\li \subpage yarp_data_dirs
-\li \subpage yarp_logging
+\li \ref yarp_cmake_hello
+\li \ref note_ports
+\li \ref note_devices
+\li \ref yarp_data_dirs
+\li \ref yarp_logging
 
 \section yarp_learning Learning YARP
 The best way to learn how to use YARP is to read the tutorials and documentation
-pages that are reported in the page \subpage tutorials.
+pages that are reported in the page \ref yarp-tutorials.
 Do not forget to checkout the command line tools and guis sections below.
 Advanced topics for interoperability and technical papers are reported at the
 end of this page.
-The page \subpage tutorials is continuously updated so it is a good idea to
+The page \ref yarp-tutorials is continuously updated so it is a good idea to
 periodically check it.
 
+\section yarp_core_modules Core Yarp Modules
+\li \ref os_module
+\li \ref yarpdev_module
+\li \ref dev_all
+\li \ref sig_class
+\li \ref robointerface_all
+\li \ref carriers_module
+\li \ref portmonitors_module
+
 \section yarp_command_line_tools Command line tools
-\li \subpage yarp
-\li \subpage yarpserver
-\li \subpage yarpdev
-\li \subpage yarprobotinterface
-\li \subpage yarprun
-\li \subpage yarp-config
-\li \subpage yarpdatadumper
-\li \subpage yarpdatadumperAppGenerator
-\li \subpage yarphear
-\li \subpage yarplogger-console
-\li \subpage yarpmanager-console
-\li \subpage yarpidl_rosmsg
-\li \subpage yarpidl_thrift
-\li \subpage yarpros
+A comprenshive list of all yarp command tools is provided here: \ref yarp_tools
+
+Here is a list of the main modules:
+\li \ref yarp
+\li \ref yarpserver
+\li \ref yarpdev
+\li \ref yarprobotinterface
+\li \ref yarprun
+\li \ref yarp-config
+\li \ref yarpdatadumper
+\li \ref yarphear
+\li \ref yarpidl_rosmsg
+\li \ref yarpidl_thrift
+\li \ref yarpros
 
 \section yarp_guis GUIs
-\li \subpage yarplogger
-\li \subpage yarpview
-\li \subpage yarpscope
-\li \subpage yarpmanager
-\li \subpage yarpdataplayer
-\li \subpage yarpmotorgui
-\li \subpage yarpbatterygui
-\li \subpage yarplaserscannergui
-\li \subpage yarpviz
-\li \subpage yarpmobilebasegui
+A comprenshive list of all yarp command GUIs is provided here: \ref yarp_guis
+
+Here is a list of the main modules:
+\li \ref yarplogger
+\li \ref yarpview
+\li \ref yarpscope
+\li \ref yarpmanager
+\li \ref yarpdataplayer
+\li \ref yarpmotorgui
+\li \ref yarpviz
 
 \section yarp_advanced_usage Interoperability and advanced use
-\li \subpage channelprioritization.
-\li \subpage yarp_without_yarp
-\li \subpage yarp_with_ros
-\li \subpage yarp_swig
-\li \subpage portmonitor
-\li \subpage yarp_env_variables
-\li \subpage robottestingframework_plugins
-\li \subpage yarp_pointcloud
-\li \subpage carrier_h264_howto
+\li \ref channelprioritization.
+\li \ref yarp_without_yarp
+\li \ref yarp_with_ros
+\li \ref yarp_swig
+\li \ref yarp_env_variables
+\li \ref robottestingframework_plugins
+\li \ref yarp_pointcloud
 
 \section YARP Interfaces and Devices
-\li \subpage dev_all
-\li \subpage nws_and_nwc_architecture
-\li \subpage FrameTransform
+\li \ref dev_all
+\li \ref yarpdev_module
+\li \ref nws_and_nwc_architecture
+\li \ref FrameTransform
 
 \section yarp_more_info More information
-\li \subpage what_is_yarp
-\li \subpage contributing
-\li \subpage changelog
+\li \ref what_is_yarp
+\li \ref contributing
+\li \ref changelog
 
 \section yarp_resources YARP resources
 \li <a href="http://github.com/robotology/yarp">YARP project on GitHub</a>

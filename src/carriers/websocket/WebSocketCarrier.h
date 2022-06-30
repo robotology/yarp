@@ -21,6 +21,10 @@
 using namespace yarp::os;
 using namespace yarp::os::impl;
 
+/**
+ * \ingroup carriers_lists
+ * not documented
+ */
 class WebSocketCarrier :
         public TcpCarrier
 {

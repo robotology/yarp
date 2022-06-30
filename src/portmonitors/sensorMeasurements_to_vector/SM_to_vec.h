@@ -11,9 +11,12 @@
 #include <yarp/os/MonitorObject.h>
 #include <yarp/sig/Vector.h>
 
-//example usage:
-//yarp connect /tracking/measures:o /in tcp+recv.portmonitor+type.dll+file.sensorMeasurements_to_vector
-
+ /**
+  * @ingroup portmonitors_lists
+  * \brief `sensorMeasurements_to_vector`:  Documentation to be added
+  * example usage:
+  * yarp connect /tracking/measures:o /in tcp+recv.portmonitor+type.dll+file.sensorMeasurements_to_vector
+  */
 class SensorMeasurements_to_vector : public yarp::os::MonitorObject
 {
     yarp::sig::Vector    out;

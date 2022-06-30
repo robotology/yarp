@@ -12,6 +12,10 @@
 
 #include <string>
 
+ /**
+  * @ingroup portmonitors_lists
+  * \brief `rpc_monitor`:  Documentation to be added
+  */
 class RpcMonitor :
         public yarp::os::MonitorObject
 {

@@ -12,6 +12,7 @@
 #include <yarp/os/MonitorObject.h>
 
  /**
+  * @ingroup portmonitors_lists
   * \brief `depthimage_compression_zlib_portmonitor`: Portmonitor plugin for compression and decompression of depth images using zlib library.
   * Example usage:
   * yarp connect /depthCamera/depthImage:o /view tcp+send.portmonitor+file.depthimage_compression_zlib+recv.portmonitor+file.depthimage_compression_zlib+type.dll

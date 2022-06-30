@@ -11,7 +11,10 @@
 #include <yarp/os/MonitorObject.h>
 #include <yarp/sig/Image.h>
 
-
+ /**
+  * @ingroup portmonitors_lists
+  * \brief `depthimage_to_mono`:  Documentation to be added
+  */
 class DepthImageConverter : public yarp::os::MonitorObject
 {
 public:
