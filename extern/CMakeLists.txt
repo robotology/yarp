@@ -62,9 +62,6 @@ set(THRIFT_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/thrift/thrift" PARENT_SCOPE)
 # libdc1394_bayer
 set(libdc1394_bayer_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/libdc1394_bayer" PARENT_SCOPE)
 
-# rplidar SDK
-set(RPLIDAR_SDK_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/rplidar/sdk" PARENT_SCOPE)
-
 # diff_match_patch
 set(diff_match_patch_INCLUDE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/diff_match_patch" PARENT_SCOPE)
 
