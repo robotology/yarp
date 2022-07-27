@@ -909,6 +909,7 @@ INPUT                  = @CMAKE_SOURCE_DIR@/src/libYARP_conf/src \
                          @CMAKE_SOURCE_DIR@/src/portmonitors \
                          @CMAKE_SOURCE_DIR@/doc \
                          @CMAKE_SOURCE_DIR@/doc/release \
+                         @CMAKE_SOURCE_DIR@/opt-modules \
                          @CMAKE_SOURCE_DIR@/.github
 
 # This tag can be used to specify the character encoding of the source files
