@@ -1435,6 +1435,7 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
             // fallback for old interfaces with no specific name
             switch (code) {
             case VOCAB_CALIBRATE_JOINT: {
+                if (!rpc_Icalib) { ok = false; break; }
                 rec = true;
                 yCTrace(CONTROLBOARD, "Calling calibrate joint");
 
@@ -1451,6 +1452,7 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
             } break;
 
             case VOCAB_CALIBRATE_JOINT_PARAMS: {
+                if (!rpc_Icalib) { ok = false; break; }
                 rec = true;
                 yCTrace(CONTROLBOARD, "Calling calibrate joint");
 
@@ -1469,12 +1471,14 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
             } break;
 
             case VOCAB_CALIBRATE: {
+                if (!rpc_Icalib) { ok = false; break; }
                 rec = true;
                 yCTrace(CONTROLBOARD, "Calling calibrate");
                 ok = rpc_Icalib->calibrateRobot();
             } break;
 
             case VOCAB_CALIBRATE_DONE: {
+                if (!rpc_Icalib) { ok = false; break; }
                 rec = true;
                 yCTrace(CONTROLBOARD, "Calling calibrate done");
                 int j = cmd.get(1).asInt32();
@@ -1482,6 +1486,7 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
             } break;
 
             case VOCAB_PARK: {
+                if (!rpc_Icalib) { ok = false; break; }
                 rec = true;
                 yCTrace(CONTROLBOARD, "Calling park function");
                 int flag = cmd.get(1).asInt32();
@@ -1495,11 +1500,13 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
 
                 switch (cmd.get(1).asVocab32()) {
                 case VOCAB_POSITION_MOVE: {
+                    if (!rpc_IPosCtrl) { ok = false; break; }
                     ok = rpc_IPosCtrl->positionMove(cmd.get(2).asInt32(), cmd.get(3).asFloat64());
                 } break;
 
                     // this operation is also available on "command" port
                 case VOCAB_POSITION_MOVES: {
+                    if (!rpc_IPosCtrl) { ok = false; break; }
                     Bottle* b = cmd.get(2).asList();
                     if (b == nullptr) {
                         break;
@@ -1519,6 +1526,7 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
                 } break;
 
                 case VOCAB_POSITION_MOVE_GROUP: {
+                    if (!rpc_IPosCtrl) { ok = false; break; }
                     auto len = static_cast<size_t>(cmd.get(2).asInt32());
                     Bottle* jlut = cmd.get(3).asList();
                     Bottle* pos_val = cmd.get(4).asList();
@@ -1549,6 +1557,7 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
 
                     // this operation is also available on "command" port
                 case VOCAB_VELOCITY_MOVES: {
+                    if (!rpc_IVelCtrl) { ok = false; break; }
                     Bottle* b = cmd.get(2).asList();
                     if (b == nullptr) {
                         break;
@@ -1568,10 +1577,12 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
                 } break;
 
                 case VOCAB_RELATIVE_MOVE: {
+                    if (!rpc_IPosCtrl) { ok = false; break; }
                     ok = rpc_IPosCtrl->relativeMove(cmd.get(2).asInt32(), cmd.get(3).asFloat64());
                 } break;
 
                 case VOCAB_RELATIVE_MOVE_GROUP: {
+                    if (!rpc_IPosCtrl) { ok = false; break; }
                     auto len = static_cast<size_t>(cmd.get(2).asInt32());
                     Bottle* jBottle_p = cmd.get(3).asList();
                     Bottle* posBottle_p = cmd.get(4).asList();
@@ -1605,6 +1616,7 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
                 } break;
 
                 case VOCAB_RELATIVE_MOVES: {
+                    if (!rpc_IPosCtrl) { ok = false; break; }
                     Bottle* b = cmd.get(2).asList();
 
                     if (b == nullptr) {
@@ -1624,10 +1636,12 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
                 } break;
 
                 case VOCAB_REF_SPEED: {
+                    if (!rpc_IPosCtrl) { ok = false; break; }
                     ok = rpc_IPosCtrl->setRefSpeed(cmd.get(2).asInt32(), cmd.get(3).asFloat64());
                 } break;
 
                 case VOCAB_REF_SPEED_GROUP: {
+                    if (!rpc_IPosCtrl) { ok = false; break; }
                     auto len = static_cast<size_t>(cmd.get(2).asInt32());
                     Bottle* jBottle_p = cmd.get(3).asList();
                     Bottle* velBottle_p = cmd.get(4).asList();
@@ -1660,6 +1674,7 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
                 } break;
 
                 case VOCAB_REF_SPEEDS: {
+                    if (!rpc_IPosCtrl) { ok = false; break; }
                     Bottle* b = cmd.get(2).asList();
 
                     if (b == nullptr) {
@@ -1679,10 +1694,12 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
                 } break;
 
                 case VOCAB_REF_ACCELERATION: {
+                    if (!rpc_IPosCtrl) { ok = false; break; }
                     ok = rpc_IPosCtrl->setRefAcceleration(cmd.get(2).asInt32(), cmd.get(3).asFloat64());
                 } break;
 
                 case VOCAB_REF_ACCELERATION_GROUP: {
+                    if (!rpc_IPosCtrl) { ok = false; break; }
                     auto len = static_cast<size_t>(cmd.get(2).asInt32());
                     Bottle* jBottle_p = cmd.get(3).asList();
                     Bottle* accBottle_p = cmd.get(4).asList();
@@ -1715,6 +1732,7 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
                 } break;
 
                 case VOCAB_REF_ACCELERATIONS: {
+                    if (!rpc_IPosCtrl) { ok = false; break; }
                     Bottle* b = cmd.get(2).asList();
 
                     if (b == nullptr) {
@@ -1734,10 +1752,12 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
                 } break;
 
                 case VOCAB_STOP: {
+                    if (!rpc_IPosCtrl) { ok = false; break; }
                     ok = rpc_IPosCtrl->stop(cmd.get(2).asInt32());
                 } break;
 
                 case VOCAB_STOP_GROUP: {
+                    if (!rpc_IPosCtrl) { ok = false; break; }
                     auto len = static_cast<size_t>(cmd.get(2).asInt32());
                     Bottle* jBottle_p = cmd.get(3).asList();
 
@@ -1763,22 +1783,27 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
                 } break;
 
                 case VOCAB_STOPS: {
+                    if (!rpc_IPosCtrl) { ok = false; break; }
                     ok = rpc_IPosCtrl->stop();
                 } break;
 
                 case VOCAB_E_RESET: {
+                    if (!rpc_IEncTimed) { ok = false; break; }
                     ok = rpc_IEncTimed->resetEncoder(cmd.get(2).asInt32());
                 } break;
 
                 case VOCAB_E_RESETS: {
+                    if (!rpc_IEncTimed) { ok = false; break; }
                     ok = rpc_IEncTimed->resetEncoders();
                 } break;
 
                 case VOCAB_ENCODER: {
+                    if (!rpc_IEncTimed) { ok = false; break; }
                     ok = rpc_IEncTimed->setEncoder(cmd.get(2).asInt32(), cmd.get(3).asFloat64());
                 } break;
 
                 case VOCAB_ENCODERS: {
+                    if (!rpc_IEncTimed) { ok = false; break; }
                     Bottle* b = cmd.get(2).asList();
 
                     if (b == nullptr) {
@@ -1798,22 +1823,27 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
                 } break;
 
                 case VOCAB_MOTOR_CPR: {
+                    if (!rpc_IMotEnc) { ok = false; break; }
                     ok = rpc_IMotEnc->setMotorEncoderCountsPerRevolution(cmd.get(2).asInt32(), cmd.get(3).asFloat64());
                 } break;
 
                 case VOCAB_MOTOR_E_RESET: {
+                    if (!rpc_IMotEnc) { ok = false; break; }
                     ok = rpc_IMotEnc->resetMotorEncoder(cmd.get(2).asInt32());
                 } break;
 
                 case VOCAB_MOTOR_E_RESETS: {
+                    if (!rpc_IMotEnc) { ok = false; break; }
                     ok = rpc_IMotEnc->resetMotorEncoders();
                 } break;
 
                 case VOCAB_MOTOR_ENCODER: {
+                    if (!rpc_IMotEnc) { ok = false; break; }
                     ok = rpc_IMotEnc->setMotorEncoder(cmd.get(2).asInt32(), cmd.get(3).asFloat64());
                 } break;
 
                 case VOCAB_MOTOR_ENCODERS: {
+                    if (!rpc_IMotEnc) { ok = false; break; }
                     Bottle* b = cmd.get(2).asList();
 
                     if (b == nullptr) {
@@ -1833,43 +1863,53 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
                 } break;
 
                 case VOCAB_AMP_ENABLE: {
+                    if (!rcp_IAmp) { ok = false; break; }
                     ok = rcp_IAmp->enableAmp(cmd.get(2).asInt32());
                 } break;
 
                 case VOCAB_AMP_DISABLE: {
+                    if (!rcp_IAmp) { ok = false; break; }
                     ok = rcp_IAmp->disableAmp(cmd.get(2).asInt32());
                 } break;
 
                 case VOCAB_AMP_MAXCURRENT: {
+                    if (!rcp_IAmp) { ok = false; break; }
                     ok = rcp_IAmp->setMaxCurrent(cmd.get(2).asInt32(), cmd.get(3).asFloat64());
                 } break;
 
                 case VOCAB_AMP_PEAK_CURRENT: {
+                    if (!rcp_IAmp) { ok = false; break; }
                     ok = rcp_IAmp->setPeakCurrent(cmd.get(2).asInt32(), cmd.get(3).asFloat64());
                 } break;
 
                 case VOCAB_AMP_NOMINAL_CURRENT: {
+                    if (!rcp_IAmp) { ok = false; break; }
                     ok = rcp_IAmp->setNominalCurrent(cmd.get(2).asInt32(), cmd.get(3).asFloat64());
                 } break;
 
                 case VOCAB_AMP_PWM_LIMIT: {
+                    if (!rcp_IAmp) { ok = false; break; }
                     ok = rcp_IAmp->setPWMLimit(cmd.get(2).asInt32(), cmd.get(3).asFloat64());
                 } break;
 
                 case VOCAB_LIMITS: {
+                    if (!rcp_Ilim) {ok= false; break;}
                     ok = rcp_Ilim->setLimits(cmd.get(2).asInt32(), cmd.get(3).asFloat64(), cmd.get(4).asFloat64());
                 } break;
 
 
                 case VOCAB_TEMPERATURE_LIMIT: {
+                    if (!rpc_IMotor) { ok = false; break; }
                     ok = rpc_IMotor->setTemperatureLimit(cmd.get(2).asInt32(), cmd.get(3).asFloat64());
                 } break;
 
                 case VOCAB_GEARBOX_RATIO: {
+                    if (!rpc_IMotor) { ok = false; break; }
                     ok = rpc_IMotor->setGearboxRatio(cmd.get(2).asInt32(), cmd.get(3).asFloat64());
                 } break;
 
                 case VOCAB_VEL_LIMITS: {
+                    if (!rcp_Ilim) { ok = false; break; }
                     ok = rcp_Ilim->setVelLimits(cmd.get(2).asInt32(), cmd.get(3).asFloat64(), cmd.get(4).asFloat64());
                 } break;
 
@@ -1893,21 +1933,25 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
                 switch (cmd.get(1).asVocab32()) {
 
                 case VOCAB_TEMPERATURE_LIMIT: {
+                    if (!rpc_IMotor) { ok = false; break; }
                     ok = rpc_IMotor->getTemperatureLimit(cmd.get(2).asInt32(), &dtmp);
                     response.addFloat64(dtmp);
                 } break;
 
                 case VOCAB_TEMPERATURE: {
+                    if (!rpc_IMotor) { ok = false; break; }
                     ok = rpc_IMotor->getTemperature(cmd.get(2).asInt32(), &dtmp);
                     response.addFloat64(dtmp);
                 } break;
 
                 case VOCAB_GEARBOX_RATIO: {
+                    if (!rpc_IMotor) { ok = false; break; }
                     ok = rpc_IMotor->getGearboxRatio(cmd.get(2).asInt32(), &dtmp);
                     response.addFloat64(dtmp);
                 } break;
 
                 case VOCAB_TEMPERATURES: {
+                    if (!rpc_IMotor) { ok = false; break; }
                     auto* p = new double[controlledJoints];
                     ok = rpc_IMotor->getTemperatures(p);
                     Bottle& b = response.addList();
@@ -1918,11 +1962,13 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
                 } break;
 
                 case VOCAB_AMP_MAXCURRENT: {
+                    if (!rcp_IAmp) { ok = false; break; }
                     ok = rcp_IAmp->getMaxCurrent(cmd.get(2).asInt32(), &dtmp);
                     response.addFloat64(dtmp);
                 } break;
 
                 case VOCAB_POSITION_MOVE: {
+                    if (!rpc_IPosCtrl) { ok = false; break; }
                     yCTrace(CONTROLBOARD, "getTargetPosition");
                     ok = rpc_IPosCtrl->getTargetPosition(cmd.get(2).asInt32(), &dtmp);
 
@@ -1931,6 +1977,7 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
                 } break;
 
                 case VOCAB_POSITION_MOVE_GROUP: {
+                    if (!rpc_IPosCtrl) { ok = false; break; }
                     int len = cmd.get(2).asInt32();
                     Bottle& in = *(cmd.get(3).asList());
                     int* jointList = new int[len];
@@ -1951,6 +1998,7 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
                 } break;
 
                 case VOCAB_POSITION_MOVES: {
+                    if (!rpc_IPosCtrl) { ok = false; break; }
                     auto* refs = new double[controlledJoints];
                     ok = rpc_IPosCtrl->getTargetPositions(refs);
                     Bottle& b = response.addList();
@@ -1961,6 +2009,7 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
                 } break;
 
                 case VOCAB_POSITION_DIRECT: {
+                    if (!rpc_IPosDirect) { ok = false; break; }
                     yCTrace(CONTROLBOARD, "getRefPosition");
                     ok = rpc_IPosDirect->getRefPosition(cmd.get(2).asInt32(), &dtmp);
 
@@ -1969,6 +2018,7 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
                 } break;
 
                 case VOCAB_POSITION_DIRECT_GROUP: {
+                    if (!rpc_IPosDirect) { ok = false; break; }
                     int len = cmd.get(2).asInt32();
                     Bottle& in = *(cmd.get(3).asList());
                     int* jointList = new int[len];
@@ -1999,6 +2049,7 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
                 } break;
 
                 case VOCAB_VELOCITY_MOVE: {
+                    if (!rpc_IVelCtrl) { ok = false; break; }
                     yCTrace(CONTROLBOARD, "getVelocityMove - cmd: %s", cmd.toString().c_str());
                     ok = rpc_IVelCtrl->getRefVelocity(cmd.get(2).asInt32(), &dtmp);
 
@@ -2007,6 +2058,7 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
                 } break;
 
                 case VOCAB_VELOCITY_MOVE_GROUP: {
+                    if (!rpc_IVelCtrl) { ok = false; break; }
                     yCTrace(CONTROLBOARD, "getVelocityMove_group - cmd: %s", cmd.toString().c_str());
 
                     int len = cmd.get(2).asInt32();
@@ -2029,6 +2081,7 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
                 } break;
 
                 case VOCAB_VELOCITY_MOVES: {
+                    if (!rpc_IVelCtrl) { ok = false; break; }
                     yCTrace(CONTROLBOARD, "getVelocityMoves - cmd: %s", cmd.toString().c_str());
 
                     auto* refs = new double[controlledJoints];
@@ -2041,18 +2094,21 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
                 } break;
 
                 case VOCAB_MOTORS_NUMBER: {
+                    if (!rpc_IMotor) { ok = false; break; }
                     int tmp;
                     ok = rpc_IMotor->getNumberOfMotors(&tmp);
                     response.addInt32(tmp);
                 } break;
 
                 case VOCAB_AXES: {
+                    if (!rpc_IPosCtrl) { ok = false; break; }
                     int tmp;
                     ok = rpc_IPosCtrl->getAxes(&tmp);
                     response.addInt32(tmp);
                 } break;
 
                 case VOCAB_MOTION_DONE: {
+                    if (!rpc_IPosCtrl) { ok = false; break; }
                     bool x = false;
                     ;
                     ok = rpc_IPosCtrl->checkMotionDone(cmd.get(2).asInt32(), &x);
@@ -2060,6 +2116,7 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
                 } break;
 
                 case VOCAB_MOTION_DONE_GROUP: {
+                    if (!rpc_IPosCtrl) { ok = false; break; }
                     bool x = false;
                     int len = cmd.get(2).asInt32();
                     Bottle& in = *(cmd.get(3).asList());
@@ -2076,17 +2133,20 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
                 } break;
 
                 case VOCAB_MOTION_DONES: {
+                    if (!rpc_IPosCtrl) { ok = false; break; }
                     bool x = false;
                     ok = rpc_IPosCtrl->checkMotionDone(&x);
                     response.addInt32(x);
                 } break;
 
                 case VOCAB_REF_SPEED: {
+                    if (!rpc_IPosCtrl) { ok = false; break; }
                     ok = rpc_IPosCtrl->getRefSpeed(cmd.get(2).asInt32(), &dtmp);
                     response.addFloat64(dtmp);
                 } break;
 
                 case VOCAB_REF_SPEED_GROUP: {
+                    if (!rpc_IPosCtrl) { ok = false; break; }
                     int len = cmd.get(2).asInt32();
                     Bottle& in = *(cmd.get(3).asList());
                     int* jointList = new int[len];
@@ -2107,6 +2167,7 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
                 } break;
 
                 case VOCAB_REF_SPEEDS: {
+                    if (!rpc_IPosCtrl) { ok = false; break; }
                     auto* p = new double[controlledJoints];
                     ok = rpc_IPosCtrl->getRefSpeeds(p);
                     Bottle& b = response.addList();
@@ -2117,11 +2178,13 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
                 } break;
 
                 case VOCAB_REF_ACCELERATION: {
+                    if (!rpc_IPosCtrl) { ok = false; break; }
                     ok = rpc_IPosCtrl->getRefAcceleration(cmd.get(2).asInt32(), &dtmp);
                     response.addFloat64(dtmp);
                 } break;
 
                 case VOCAB_REF_ACCELERATION_GROUP: {
+                    if (!rpc_IPosCtrl) { ok = false; break; }
                     int len = cmd.get(2).asInt32();
                     Bottle& in = *(cmd.get(3).asList());
                     int* jointList = new int[len];
@@ -2142,6 +2205,7 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
                 } break;
 
                 case VOCAB_REF_ACCELERATIONS: {
+                    if (!rpc_IPosCtrl) { ok = false; break; }
                     auto* p = new double[controlledJoints];
                     ok = rpc_IPosCtrl->getRefAccelerations(p);
                     Bottle& b = response.addList();
@@ -2152,11 +2216,13 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
                 } break;
 
                 case VOCAB_ENCODER: {
+                    if (!rpc_IEncTimed) { ok = false; break; }
                     ok = rpc_IEncTimed->getEncoder(cmd.get(2).asInt32(), &dtmp);
                     response.addFloat64(dtmp);
                 } break;
 
                 case VOCAB_ENCODERS: {
+                    if (!rpc_IEncTimed) { ok = false; break; }
                     auto* p = new double[controlledJoints];
                     ok = rpc_IEncTimed->getEncoders(p);
                     Bottle& b = response.addList();
@@ -2167,11 +2233,13 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
                 } break;
 
                 case VOCAB_ENCODER_SPEED: {
+                    if (!rpc_IEncTimed) { ok = false; break; }
                     ok = rpc_IEncTimed->getEncoderSpeed(cmd.get(2).asInt32(), &dtmp);
                     response.addFloat64(dtmp);
                 } break;
 
                 case VOCAB_ENCODER_SPEEDS: {
+                    if (!rpc_IEncTimed) { ok = false; break; }
                     auto* p = new double[controlledJoints];
                     ok = rpc_IEncTimed->getEncoderSpeeds(p);
                     Bottle& b = response.addList();
@@ -2182,11 +2250,13 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
                 } break;
 
                 case VOCAB_ENCODER_ACCELERATION: {
+                    if (!rpc_IEncTimed) { ok = false; break; }
                     ok = rpc_IEncTimed->getEncoderAcceleration(cmd.get(2).asInt32(), &dtmp);
                     response.addFloat64(dtmp);
                 } break;
 
                 case VOCAB_ENCODER_ACCELERATIONS: {
+                    if (!rpc_IEncTimed) { ok = false; break; }
                     auto* p = new double[controlledJoints];
                     ok = rpc_IEncTimed->getEncoderAccelerations(p);
                     Bottle& b = response.addList();
@@ -2197,16 +2267,19 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
                 } break;
 
                 case VOCAB_MOTOR_CPR: {
+                    if (!rpc_IMotEnc) { ok = false; break; }
                     ok = rpc_IMotEnc->getMotorEncoderCountsPerRevolution(cmd.get(2).asInt32(), &dtmp);
                     response.addFloat64(dtmp);
                 } break;
 
                 case VOCAB_MOTOR_ENCODER: {
+                    if (!rpc_IMotEnc) { ok = false; break; }
                     ok = rpc_IMotEnc->getMotorEncoder(cmd.get(2).asInt32(), &dtmp);
                     response.addFloat64(dtmp);
                 } break;
 
                 case VOCAB_MOTOR_ENCODERS: {
+                    if (!rpc_IMotEnc) { ok = false; break; }
                     auto* p = new double[controlledJoints];
                     ok = rpc_IMotEnc->getMotorEncoders(p);
                     Bottle& b = response.addList();
@@ -2217,11 +2290,13 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
                 } break;
 
                 case VOCAB_MOTOR_ENCODER_SPEED: {
+                    if (!rpc_IMotEnc) { ok = false; break; }
                     ok = rpc_IMotEnc->getMotorEncoderSpeed(cmd.get(2).asInt32(), &dtmp);
                     response.addFloat64(dtmp);
                 } break;
 
                 case VOCAB_MOTOR_ENCODER_SPEEDS: {
+                    if (!rpc_IMotEnc) { ok = false; break; }
                     auto* p = new double[controlledJoints];
                     ok = rpc_IMotEnc->getMotorEncoderSpeeds(p);
                     Bottle& b = response.addList();
@@ -2232,12 +2307,14 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
                 } break;
 
                 case VOCAB_MOTOR_ENCODER_ACCELERATION: {
+                    if (!rpc_IMotEnc) { ok = false; break; }
                     ok = rpc_IMotEnc->getMotorEncoderAcceleration(cmd.get(2).asInt32(), &dtmp);
                     response.addFloat64(dtmp);
                 } break;
 
                 case VOCAB_MOTOR_ENCODER_ACCELERATIONS: {
                     auto* p = new double[controlledJoints];
+                    if (!rpc_IMotEnc) { ok = false; break; }
                     ok = rpc_IMotEnc->getMotorEncoderAccelerations(p);
                     Bottle& b = response.addList();
                     for (size_t i = 0; i < controlledJoints; i++) {
@@ -2248,16 +2325,19 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
 
                 case VOCAB_MOTOR_ENCODER_NUMBER: {
                     int num = 0;
+                    if (!rpc_IMotEnc) { ok = false; break; }
                     ok = rpc_IMotEnc->getNumberOfMotorEncoders(&num);
                     response.addInt32(num);
                 } break;
 
                 case VOCAB_AMP_CURRENT: {
+                    if (!rcp_IAmp) { ok = false; break; }
                     ok = rcp_IAmp->getCurrent(cmd.get(2).asInt32(), &dtmp);
                     response.addFloat64(dtmp);
                 } break;
 
                 case VOCAB_AMP_CURRENTS: {
+                    if (!rcp_IAmp) { ok = false; break; }
                     auto* p = new double[controlledJoints];
                     ok = rcp_IAmp->getCurrents(p);
                     Bottle& b = response.addList();
@@ -2268,6 +2348,7 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
                 } break;
 
                 case VOCAB_AMP_STATUS: {
+                    if (!rcp_IAmp) { ok = false; break; }
                     int* p = new int[controlledJoints];
                     ok = rcp_IAmp->getAmpStatus(p);
                     Bottle& b = response.addList();
@@ -2280,24 +2361,28 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
                 case VOCAB_AMP_STATUS_SINGLE: {
                     int j = cmd.get(2).asInt32();
                     int itmp;
+                    if (!rcp_IAmp) { ok = false; break; }
                     ok = rcp_IAmp->getAmpStatus(j, &itmp);
                     response.addInt32(itmp);
                 } break;
 
                 case VOCAB_AMP_NOMINAL_CURRENT: {
                     int m = cmd.get(2).asInt32();
+                    if (!rcp_IAmp) { ok = false; break; }
                     ok = rcp_IAmp->getNominalCurrent(m, &dtmp);
                     response.addFloat64(dtmp);
                 } break;
 
                 case VOCAB_AMP_PEAK_CURRENT: {
                     int m = cmd.get(2).asInt32();
+                    if (!rcp_IAmp) { ok = false; break; }
                     ok = rcp_IAmp->getPeakCurrent(m, &dtmp);
                     response.addFloat64(dtmp);
                 } break;
 
                 case VOCAB_AMP_PWM: {
                     int m = cmd.get(2).asInt32();
+                    if (!rcp_IAmp) { ok = false; break; }
                     ok = rcp_IAmp->getPWM(m, &dtmp);
                     yCTrace(CONTROLBOARD) << "RPC parser::getPWM: j" << m << " val " << dtmp;
                     response.addFloat64(dtmp);
@@ -2305,12 +2390,14 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
 
                 case VOCAB_AMP_PWM_LIMIT: {
                     int m = cmd.get(2).asInt32();
+                    if (!rcp_IAmp) { ok = false; break; }
                     ok = rcp_IAmp->getPWMLimit(m, &dtmp);
                     response.addFloat64(dtmp);
                 } break;
 
                 case VOCAB_AMP_VOLTAGE_SUPPLY: {
                     int m = cmd.get(2).asInt32();
+                    if (!rcp_IAmp) { ok = false; break; }
                     ok = rcp_IAmp->getPowerSupplyVoltage(m, &dtmp);
                     response.addFloat64(dtmp);
                 } break;
@@ -2318,6 +2405,7 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
                 case VOCAB_LIMITS: {
                     double min = 0.0;
                     double max = 0.0;
+                    if (!rcp_Ilim) { ok = false; break; }
                     ok = rcp_Ilim->getLimits(cmd.get(2).asInt32(), &min, &max);
                     response.addFloat64(min);
                     response.addFloat64(max);
@@ -2326,6 +2414,7 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
                 case VOCAB_VEL_LIMITS: {
                     double min = 0.0;
                     double max = 0.0;
+                    if (!rcp_Ilim) { ok = false; break; }
                     ok = rcp_Ilim->getVelLimits(cmd.get(2).asInt32(), &min, &max);
                     response.addFloat64(min);
                     response.addFloat64(max);
@@ -2333,12 +2422,14 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
 
                 case VOCAB_INFO_NAME: {
                     std::string name = "undocumented";
+                    if (!rpc_AxisInfo) { ok = false; break; }
                     ok = rpc_AxisInfo->getAxisName(cmd.get(2).asInt32(), name);
                     response.addString(name.c_str());
                 } break;
 
                 case VOCAB_INFO_TYPE: {
                     yarp::dev::JointTypeEnum type;
+                    if (!rpc_AxisInfo) { ok = false; break; }
                     ok = rpc_AxisInfo->getJointType(cmd.get(2).asInt32(), type);
                     response.addInt32(type);
                 } break;

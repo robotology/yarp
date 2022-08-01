@@ -203,8 +203,6 @@ bool FakeMotionControl::alloc(int nj)
     _encodersStamp = allocAndCheck<double>(nj);
     _DEPRECATED_encoderconversionoffset = allocAndCheck<float>(nj);
     _DEPRECATED_encoderconversionfactor = allocAndCheck<float>(nj);
-//     _jointEncoderType = allocAndCheck<uint8_t>(nj);
-//     _rotorEncoderType = allocAndCheck<uint8_t>(nj);
     _jointEncoderRes = allocAndCheck<int>(nj);
     _rotorEncoderRes = allocAndCheck<int>(nj);
     _gearbox = allocAndCheck<double>(nj);
