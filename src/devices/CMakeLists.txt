@@ -47,6 +47,7 @@ yarp_begin_plugin_library(yarpmod
   add_subdirectory(IOdometry2DMsgs)
   add_subdirectory(DynamixelAX12Ftdi)
   add_subdirectory(fakeLaser)
+  add_subdirectory(fakeLaserWithMotor)
   add_subdirectory(fakeMicrophone)
   add_subdirectory(fakeSpeaker)
   add_subdirectory(laserFromDepth)
