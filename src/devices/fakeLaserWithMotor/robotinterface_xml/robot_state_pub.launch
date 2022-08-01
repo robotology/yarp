@@ -1,0 +1,9 @@
+<launch>
+
+  <arg name="model" default="./robot.urdf"/>
+
+  <param name="robot_description" command="$(find xacro)/xacro --inorder $(arg model)" />
+
+  <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
+
+</launch>
