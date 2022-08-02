@@ -40,6 +40,14 @@ public:
      */
     virtual ~IAxisInfo() {}
 
+    /**
+     * Get the number of controlled axes. This command asks the number of controlled
+     * axes for the current physical interface.
+     * @param ax storage to return param
+     * @return true/false.
+     */
+    virtual bool getAxes(int* ax) = 0;
+
     /* Get the name for a particular axis.
     * @param axis joint number
     * @param name the axis name
@@ -65,6 +73,14 @@ public:
     * Destructor.
     */
     virtual ~IAxisInfoRaw() {}
+
+    /**
+     * Get the number of controlled axes. This command asks the number of controlled
+     * axes for the current physical interface.
+     * @param ax storage to return param
+     * @return true/false.
+     */
+    virtual bool getAxes(int* ax) = 0;
 
     /* Get the name for a particular axis.
     * @param axis joint number
