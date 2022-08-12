@@ -110,6 +110,16 @@ up to work across the network.
 /**
 \ingroup dev_impl
 
+\defgroup dev_impl_network_clients Network Clients (Clients - pre NWC/NWS architecture)
+
+These devices are meant to communicate to YARP ports opened by \ref dev_impl_wrapper
+to provide device interfaces in a transparent way over a YARP network.
+
+*/
+
+/**
+\ingroup dev_impl
+
 \defgroup dev_impl_nws_yarp YARP Network Wrapper Servers (NWS)
 
 These devices take implementations of existing interfaces and wrap them
@@ -124,6 +134,16 @@ up to work across the YARP network (see \ref nws_and_nwc_architecture).
 
 These devices take implementations of existing interfaces and wrap them
 up to work across the ROS network (see \ref nws_and_nwc_architecture).
+
+*/
+
+/**
+\ingroup dev_impl
+
+\defgroup dev_impl_nws_ros2 ROS2 Network Wrapper Servers (NWS)
+
+These devices take implementations of existing interfaces and wrap them
+up to work across the ROS2 network (see \ref nws_and_nwc_architecture).
 
 */
 
@@ -147,16 +167,17 @@ These devices connects to ROS network and expose a yarp::dev interface
 
 */
 
-
 /**
 \ingroup dev_impl
 
-\defgroup dev_impl_network_clients Network Clients (pre NWC/NWS architecture)
+\defgroup dev_impl_nwc_ros2 ROS2 Network Wrapper Clients (NWC)
 
-These devices are meant to communicate to YARP ports opened by \ref dev_impl_wrapper
-to provide device interfaces in a transparent way over a YARP network.
+These devices connects to ROS2 network and expose a yarp::dev interface
+(see \ref nws_and_nwc_architecture).
 
 */
+
+
 
 
 /**
