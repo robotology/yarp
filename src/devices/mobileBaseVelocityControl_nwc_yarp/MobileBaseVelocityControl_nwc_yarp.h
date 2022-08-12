@@ -19,7 +19,7 @@
 #include <string>
 
 /**
- *  @ingroup dev_impl_network_clients dev_impl_navigation
+ *  @ingroup dev_impl_nwc_yarp dev_impl_navigation
  *
  * \section MobileBaseVelocityControl_nwc_yarp
  *

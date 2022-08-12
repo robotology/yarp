@@ -21,22 +21,6 @@
 #include <mutex>
 #include <string>
 
- /**
-  *  @ingroup dev_impl_network_clients dev_impl_navigation
-  *
-  * \section MobileBaseVelocityControl_nws_ros
-  *
-  * \brief `MobileBaseVelocityControl_nws_ros`: A device which allows a client application to control the velocity of a mobile base from ROS.
-  * The device opens a topic of type `yarp::rosmsg::geometry_msgs::Twist` to receive user commands
-  *
-  *  Parameters required by this device are:
-  * | Parameter name | SubParameter   | Type    | Units          | Default Value                  | Required     | Description                                                       | Notes |
-  * |:--------------:|:--------------:|:-------:|:--------------:|:------------------------------:|:------------:|:-----------------------------------------------------------------:|:-----:|
-  * | node_name      |      -         | string  | -              | /mobileBase_VelControl_nws_ros | No           | Full name of the opened ROS node                                  |       |
-  * | topic_name     |     -          | string  | -              | /velocity_input                | No           | Full name of the opened ROS topic                                 |       |
-  * | subdevice      |      -         | string  | -              |   -                            | No           | name of the subdevice to instantiate                              | when used, parameters for the subdevice must be provided as well |
-  */
-
 class commandSubscriber :
     public yarp::os::Subscriber<yarp::rosmsg::geometry_msgs::Twist>
 {
@@ -51,6 +35,22 @@ class commandSubscriber :
     using yarp::os::Subscriber<yarp::rosmsg::geometry_msgs::Twist>::onRead;
     virtual void onRead (yarp::rosmsg::geometry_msgs::Twist& v) override;
 };
+
+/**
+ *  @ingroup dev_impl_nws_ros dev_impl_navigation
+ *
+ * \section MobileBaseVelocityControl_nws_ros
+ *
+ * \brief `MobileBaseVelocityControl_nws_ros`: A device which allows a client application to control the velocity of a mobile base from ROS.
+ * The device opens a topic of type `yarp::rosmsg::geometry_msgs::Twist` to receive user commands
+ *
+ *  Parameters required by this device are:
+ * | Parameter name | SubParameter   | Type    | Units          | Default Value                  | Required     | Description                                                       | Notes |
+ * |:--------------:|:--------------:|:-------:|:--------------:|:------------------------------:|:------------:|:-----------------------------------------------------------------:|:-----:|
+ * | node_name      |      -         | string  | -              | /mobileBase_VelControl_nws_ros | No           | Full name of the opened ROS node                                  |       |
+ * | topic_name     |     -          | string  | -              | /velocity_input                | No           | Full name of the opened ROS topic                                 |       |
+ * | subdevice      |      -         | string  | -              |   -                            | No           | name of the subdevice to instantiate                              | when used, parameters for the subdevice must be provided as well |
+ */
 
 class MobileBaseVelocityControl_nws_ros :
     public yarp::dev::DeviceDriver,

@@ -18,7 +18,7 @@
 #define DEFAULT_THREAD_PERIOD 0.02 //s
 
 /**
- * @ingroup dev_impl_network_clients dev_impl_navigation
+ * @ingroup dev_impl_nws_yarp dev_impl_navigation
  *
  * \section Odometry2D_nws_yarp_parameters Device description
  * \brief `Odometry2D_nws_yarp`: A yarp nws to get the odometry and publish it on 3 yarp ports:
