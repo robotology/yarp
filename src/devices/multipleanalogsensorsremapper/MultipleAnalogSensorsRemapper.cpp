@@ -203,7 +203,7 @@ bool MultipleAnalogSensorsRemapper::genericAttachAll(const MAS_SensorType sensor
             yCError(MULTIPLEANALOGSENSORSREMAPPER) << "    Names of available sensors are:";
             for(auto& availableDevice: sensorLocationMap)
             {
-                yCError(MULTIPLEANALOGSENSORSREMAPPER) << "    * " << availableDevice->first;
+                yCError(MULTIPLEANALOGSENSORSREMAPPER) << "    * " << availableDevice.first;
             }
             return false;
         }
