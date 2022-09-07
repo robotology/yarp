@@ -118,7 +118,6 @@ endif()
 
 option(BUILD_SHARED_LIBS "Compile shared libraries rather than linking statically" ON)
 mark_as_advanced(BUILD_SHARED_LIBS)
-yarp_renamed_option(CREATE_SHARED_LIBRARY BUILD_SHARED_LIBS) # Since YARP 2.3.68.1
 
 set(YARP_DLL OFF)
 if(BUILD_SHARED_LIBS)
@@ -169,7 +168,6 @@ mark_as_advanced(YARP_ENABLE_BROKEN_TESTS)
 
 cmake_dependent_option(YARP_ENABLE_INTEGRATION_TESTS OFF "Run integration tests" "YARP_COMPILE_TESTS;UNIX" OFF)
 mark_as_advanced(YARP_ENABLE_INTEGRATION_TESTS)
-yarp_renamed_option(YARP_TEST_INTEGRATION YARP_ENABLE_INTEGRATION_TESTS) # since YARP 3.2.0
 
 cmake_dependent_option(YARP_ENABLE_EXAMPLES_AS_TESTS OFF "Compile examples as unit tests" YARP_COMPILE_TESTS OFF)
 mark_as_advanced(YARP_ENABLE_EXAMPLES_AS_TESTS)

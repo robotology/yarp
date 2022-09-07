@@ -573,21 +573,6 @@ yarp_dependent_option(
   "YARP_HAS_RobotTestingFramework" OFF
 )
 
-yarp_renamed_option(CREATE_YARPROBOTINTERFACE YARP_COMPILE_yarprobotinterface) # Deprecated since YARP 3.2
-yarp_renamed_option(CREATE_YARPMANAGER_CONSOLE YARP_COMPILE_yarpmanager-console) # Deprecated since YARP 3.2
-yarp_renamed_option(CREATE_YARPDATADUMPER YARP_COMPILE_yarpdatadumper) # Deprecated since YARP 3.2
-yarp_renamed_option(CREATE_YARPVIEW YARP_COMPILE_yarpview) # Deprecated since YARP 3.2
-yarp_renamed_option(CREATE_YARPMANAGER YARP_COMPILE_yarpmanager) # Deprecated since YARP 3.2
-yarp_renamed_option(CREATE_YARPLOGGER YARP_COMPILE_yarplogger) # Deprecated since YARP 3.2
-yarp_renamed_option(CREATE_YARPSCOPE YARP_COMPILE_yarpscope) # Deprecated since YARP 3.2
-yarp_renamed_option(CREATE_YARPDATAPLAYER YARP_COMPILE_yarpdataplayer) # Deprecated since YARP 3.2
-yarp_renamed_option(CREATE_YARPMOTORGUI YARP_COMPILE_yarpmotorgui) # Deprecated since YARP 3.2
-yarp_renamed_option(CREATE_YARPLASERSCANNERGUI YARP_COMPILE_yarplaserscannergui) # Deprecated since YARP 3.2
-yarp_renamed_option(CREATE_YARPBATTERYGUI YARP_COMPILE_yarpbatterygui) # Deprecated since YARP 3.2
-yarp_renamed_option(CREATE_YARPVIZ YARP_COMPILE_yarpviz) # Deprecated since YARP 3.2
-yarp_renamed_option(YARP_COMPILE_RTF_ADDONS YARP_COMPILE_RobotTestingFramework_ADDONS) # Deprecated since YARP 3.2
-
-
 ################################################################################
 # Disable some parts if they are not required
 
