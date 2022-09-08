@@ -200,6 +200,11 @@ bool MultipleAnalogSensorsRemapper::genericAttachAll(const MAS_SensorType sensor
         if (sensorLocationMap.find(name) == sensorLocationMap.end())
         {
             yCError(MULTIPLEANALOGSENSORSREMAPPER) << "Impossible to find sensor name" << name << ", exiting.";
+            yCError(MULTIPLEANALOGSENSORSREMAPPER) << "    Names of available sensors are:";
+            for(auto& availableDevice: sensorLocationMap)
+            {
+                yCError(MULTIPLEANALOGSENSORSREMAPPER) << "    * " << availableDevice.first;
+            }
             return false;
         }
 
