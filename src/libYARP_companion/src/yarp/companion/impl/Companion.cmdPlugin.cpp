@@ -174,7 +174,7 @@ int Companion::cmdPlugin(int argc, char *argv[])
         Bottle lst = selector.getSelectedPlugins();
         if (lst.size()==0) {
             yCInfo(COMPANION, "No plugins found.");
-            return 1;
+            return 0;
         }
         yCInfo(COMPANION, "Runtime plugins found:");
         bool ok = true;
