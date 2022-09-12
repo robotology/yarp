@@ -217,35 +217,6 @@ int Companion::cmdWrite(int argc, char *argv[])
     //get the name of the source port
     const char *src = argv[0];
 
-    //parsing of the period option
-    double period = 0;
-    //check a malformed command line in which the --period is specified, but with no value.
-    if (strcmp(argv[argc - 1], "--period") == 0)
-    {
-        yCError(COMPANION, "Invalid period value");
-        return 1;
-    }
-    //check if the period option is the present
-    if (strcmp(argv[argc -2 ],"--period")==0)
-    {
-        //get the value of the --period option
-        double pp=atof(argv[argc - 1]);
-        if (pp>=0)
-        {
-            period = pp;
-            yCInfo(COMPANION, "Message will be published with a period of %f s", period);
-        }
-        else
-        {
-            yCError(COMPANION, "Invalid period value");
-            return 1;
-        }
-
-        //remove the --period option and its following value from argc, argv
-        argc--;
-        argc--;
-    }
-
     //the following check prevents opening as local port a port which is already registered (and active) on the yarp nameserver
     bool e = NetworkBase::exists(src, true);
     if (e)
@@ -254,5 +225,38 @@ int Companion::cmdWrite(int argc, char *argv[])
         return 1;
     }
 
-    return write(src, argc-1, argv+1, period);
+    if(argc >= 2) {
+        //parsing of the period option
+        double period = 0;
+        //check a malformed command line in which the --period is specified, but with no value.
+        if (strcmp(argv[argc - 1], "--period") == 0)
+        {
+            yCError(COMPANION, "Invalid period value");
+            return 1;
+        }
+        //check if the period option is the present
+        if (strcmp(argv[argc -2 ],"--period")==0)
+        {
+            //get the value of the --period option
+            double pp=atof(argv[argc - 1]);
+            if (pp>=0)
+            {
+                period = pp;
+                yCInfo(COMPANION, "Message will be published with a period of %f s", period);
+            }
+            else
+            {
+                yCError(COMPANION, "Invalid period value");
+                return 1;
+            }
+
+            //remove the --period option and its following value from argc, argv
+            argc--;
+            argc--;
+        }
+
+        return write(src, argc-1, argv+1, period);
+    }
+
+    return write(src, argc-1, argv+1, 0);
 }
