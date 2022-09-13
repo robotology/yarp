@@ -11,6 +11,8 @@
 
 #include <yarp/os/impl/LogForwarder.h>
 
+#include <yarp/sig/Vector.h>
+
 #include <array>
 #include <deque>
 #include <forward_list>
@@ -1471,6 +1473,8 @@ TEST_CASE("os::LogStreamTest", "[yarp::os]")
     SECTION("Test containers, C arrays and tuples")
     {
         CNT_RESET
+
+        CNT yInfo() << "yarp::sig::Vector:" << yarp::sig::Vector {1.1, 2.2, 3.3};
 
         CNT yInfo() << "std::array:" << std::array<double, 3> {1.1, 2.2, 3.3};
 
