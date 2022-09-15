@@ -3,12 +3,15 @@
 
 # This test check if the yarp executable is working
 add_test(NAME misc::check_yarp_version COMMAND ${YARP_BINARY_DIR}/bin/yarp --version)
+set_property(TEST misc::check_yarp_version PROPERTY ENVIRONMENT "YARP_DATA_DIRS=${YARP_BINARY_DIR}/share/yarp")
 
 # This test check if all the plugins are working correctly (the test will fail if a single plugin cannot be opened)
 add_test(NAME misc::check_yarp_plugin COMMAND ${YARP_BINARY_DIR}/bin/yarp plugin --all)
+set_property(TEST misc::check_yarp_plugin PROPERTY ENVIRONMENT "YARP_DATA_DIRS=${YARP_BINARY_DIR}/share/yarp")
 
 # Similar to the previous test, but using yarpdev. Only device plugins are checked.
 add_test(NAME misc::check_yarpdev_list COMMAND ${YARP_BINARY_DIR}/bin/yarpdev --list)
+set_property(TEST misc::check_yarpdev_list PROPERTY ENVIRONMENT "YARP_DATA_DIRS=${YARP_BINARY_DIR}/share/yarp")
 
 if(NOT YARP_ENABLE_INTEGRATION_TESTS)
   return()
