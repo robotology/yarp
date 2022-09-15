@@ -8,6 +8,7 @@ yarp_prepare_plugin(odometry2D_nws_ros
   INCLUDE Odometry2D_nws_ros.h
   EXTRA_CONFIG
     WRAPPER=odometry2D_nws_ros
+  DEPENDS "TARGET YARP::YARP_math"
   DEFAULT ON
 )
 
