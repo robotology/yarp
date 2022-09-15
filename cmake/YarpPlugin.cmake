@@ -541,9 +541,14 @@ YARP_DEFINE_SHARED_SUBCLASS(\@YARPPLUG_NAME\@, \@YARPPLUG_TYPE\@, \@YARPPLUG_PAR
     set_property(DIRECTORY APPEND PROPERTY YARP_BUNDLE_CODE ${_fname})
   endif()
 
-  set_property(DIRECTORY APPEND PROPERTY YARP_BUNDLE_INI "${_plugin_name}.ini")
-  string(MAKE_C_IDENTIFIER "${_plugin_name}.ini" _ini_id)
-  set_property(DIRECTORY PROPERTY YARP_BUNDLE_INI_CONTENT_${_ini_id} ${_ini_file_content})
+  if(ENABLE_${_plugin_name})
+      set_property(DIRECTORY APPEND PROPERTY YARP_BUNDLE_INI "${_plugin_name}.ini")
+      string(MAKE_C_IDENTIFIER "${_plugin_name}.ini" _ini_id)
+      set_property(DIRECTORY PROPERTY YARP_BUNDLE_INI_CONTENT_${_ini_id} ${_ini_file_content})
+  else()
+      # This if will skip the .ini file generation if the plugin is disabled
+      # message ("Skipping plugin {_plugin_name}.ini because it is disabled")
+  endif()
 
   if(NOT _YPP_QUIET AND NOT YarpPlugin_QUIET)
     if(${_YPP_OPTION})
