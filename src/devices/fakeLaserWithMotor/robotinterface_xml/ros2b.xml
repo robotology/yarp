@@ -70,7 +70,7 @@
             </action>
             <action phase="shutdown" level="5" type="detach" />
         </device>
-        
+
         <device name="lidarmotor" type="fakeLaserWithMotor">
             <param name="test">            use_square_trap     </param>
         </device>

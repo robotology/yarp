@@ -1,3 +1,4 @@
 bindings/lua/argcargv.i
 src/devices/opencv/OpenCVGrabber.cpp
 src/devices/opencv/OpenCVGrabber.h
+src/devices/fakeLaserWithMotor/robotinterface_xml/
