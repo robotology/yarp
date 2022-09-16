@@ -15,6 +15,10 @@ class ControlBoardWrapperAxisInfo :
         public yarp::dev::IAxisInfo
 {
 public:
+    inline bool getAxes(int* ax) override
+    {
+        return ControlBoardWrapperCommon::getAxes(ax);
+    }
     bool getAxisName(int j, std::string& name) override;
     bool getJointType(int j, yarp::dev::JointTypeEnum& type) override;
 };

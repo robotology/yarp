@@ -51,6 +51,13 @@ bool ImplementAxisInfo::uninitialize()
     return true;
 }
 
+bool ImplementAxisInfo::getAxes(int* ax)
+{
+    bool ret;
+    (*ax) = castToMapper(helper)->axes();
+    return ret;
+}
+
 bool ImplementAxisInfo::getAxisName(int axis, std::string& name)
 {
     bool ret;

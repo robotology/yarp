@@ -44,6 +44,7 @@ public:
 
     virtual ~ImplementAxisInfo();
 
+    bool getAxes(int* ax) override;
     bool getAxisName(int axis, std::string& name) override;
     bool getJointType(int axis, yarp::dev::JointTypeEnum& type) override;
 };
