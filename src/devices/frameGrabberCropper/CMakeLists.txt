@@ -10,7 +10,7 @@ yarp_prepare_plugin(frameGrabberCropper
   DEFAULT ON
 )
 
-if(NOT SKIP_grabberDual)
+if(NOT SKIP_frameGrabberCropper)
   yarp_add_plugin(yarp_frameGrabberCropper)
 
   target_sources(yarp_frameGrabberCropper
