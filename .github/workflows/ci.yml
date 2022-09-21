@@ -16,7 +16,7 @@ jobs:
 
   select_environment:
     name: 'Prepare Environment'
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     outputs:
       timestamp: ${{ steps.select.outputs.timestamp }}
       repository_owner: ${{ steps.select.outputs.repository_owner }}
@@ -102,7 +102,7 @@ jobs:
   check-license:
     name: 'Check License'
     needs: select_environment
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
     - name: Clone repository
       uses: actions/checkout@v3
@@ -123,7 +123,7 @@ jobs:
   check-style:
     name: 'Check Style'
     needs: select_environment
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
     - name: Clone repository
       uses: actions/checkout@v3
@@ -165,7 +165,7 @@ jobs:
   run-cmake:
     name: 'Run CMake [CMake ${{ matrix.config.cmake_version }} (${{ matrix.config.cmake_generator }}), YCM ${{ matrix.config.ycm_version }}]'
     needs: [select_environment, check-license, check-style]
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     strategy:
       fail-fast: false
       matrix:
@@ -280,7 +280,7 @@ jobs:
         config:
         - {
             id: '01',
-            os: ubuntu-20.04,
+            os: ubuntu-22.04,
             build_type: "Release",
             cc: "gcc",
             cxx: "g++",
@@ -290,7 +290,7 @@ jobs:
           }
         - {
             id: '02',
-            os: ubuntu-20.04,
+            os: ubuntu-22.04,
             build_type: "Release",
             cc: "clang",
             cxx: "clang++",
@@ -301,7 +301,7 @@ jobs:
         - {
             id: '03',
             description: 'No ACE',
-            os: ubuntu-20.04,
+            os: ubuntu-22.04,
             build_type: "Release",
             cc: "gcc",
             cxx: "g++",
@@ -314,7 +314,7 @@ jobs:
         - {
             id: '04',
             description: 'No ACE',
-            os: ubuntu-20.04,
+            os: ubuntu-22.04,
             build_type: "Release",
             cc: "clang",
             cxx: "clang++",
@@ -327,7 +327,7 @@ jobs:
         - {
             id: '05',
             description: 'No YARP_math (bindings disabled)',
-            os: ubuntu-20.04,
+            os: ubuntu-22.04,
             build_type: "Release",
             cc: "gcc",
             cxx: "g++",
@@ -341,7 +341,7 @@ jobs:
         - {
             id: '06',
             description: 'No YARP_math (bindings disabled)',
-            os: ubuntu-20.04,
+            os: ubuntu-22.04,
             build_type: "Release",
             cc: "clang",
             cxx: "clang++",
@@ -355,7 +355,7 @@ jobs:
         - {
             id: '07',
             description: 'CLEAN_API (unit tests and bindings disabled)',
-            os: ubuntu-20.04,
+            os: ubuntu-22.04,
             build_type: "Release",
             cc: "gcc",
             cxx: "g++",
@@ -368,7 +368,7 @@ jobs:
         - {
             id: '08',
             description: 'CLEAN_API (unit tests and bindings disabled)',
-            os: ubuntu-20.04,
+            os: ubuntu-22.04,
             build_type: "Release",
             cc: "clang",
             cxx: "clang++",
@@ -381,7 +381,7 @@ jobs:
         - {
             id: '09',
             description: 'Static',
-            os: ubuntu-20.04,
+            os: ubuntu-22.04,
             build_type: "Release",
             cc: "gcc",
             cxx: "g++",
@@ -392,7 +392,7 @@ jobs:
         - {
             id: '10',
             description: 'Static',
-            os: ubuntu-20.04,
+            os: ubuntu-22.04,
             build_type: "Release",
             cc: "clang",
             cxx: "clang++",
@@ -403,7 +403,7 @@ jobs:
         - {
             id: '11',
             description: 'Static, no ACE (bindings disabled)',
-            os: ubuntu-20.04,
+            os: ubuntu-22.04,
             build_type: "Release",
             cc: "gcc",
             cxx: "g++",
@@ -417,7 +417,7 @@ jobs:
         - {
             id: '12',
             description: 'Static, no ACE (bindings disabled)',
-            os: ubuntu-20.04,
+            os: ubuntu-22.04,
             build_type: "Release",
             cc: "clang",
             cxx: "clang++",
@@ -431,7 +431,7 @@ jobs:
         - {
             id: '13',
             description: 'No deprecated',
-            os: ubuntu-20.04,
+            os: ubuntu-22.04,
             build_type: "Release",
             cc: "gcc",
             cxx: "g++",
@@ -442,7 +442,7 @@ jobs:
         - {
             id: '14',
             description: 'No deprecated',
-            os: ubuntu-20.04,
+            os: ubuntu-22.04,
             build_type: "Release",
             cc: "clang",
             cxx: "clang++",
@@ -453,7 +453,7 @@ jobs:
         - {
             id: '15',
             description: 'No executables (unit tests disabled)',
-            os: ubuntu-20.04,
+            os: ubuntu-22.04,
             build_type: "Release",
             cc: "gcc",
             cxx: "g++",
@@ -465,7 +465,7 @@ jobs:
         - {
             id: '16',
             description: 'No executables (unit tests disabled)',
-            os: ubuntu-20.04,
+            os: ubuntu-22.04,
             build_type: "Release",
             cc: "clang",
             cxx: "clang++",
@@ -477,7 +477,7 @@ jobs:
         - {
             id: '17',
             description: 'Build extern dependencies',
-            os: ubuntu-20.04,
+            os: ubuntu-22.04,
             build_type: "Release",
             cc: "gcc",
             cxx: "g++",
@@ -490,7 +490,7 @@ jobs:
         - {
             id: '18',
             description: 'Build extern dependencies',
-            os: ubuntu-20.04,
+            os: ubuntu-22.04,
             build_type: "Release",
             cc: "clang",
             cxx: "clang++",
@@ -502,7 +502,7 @@ jobs:
           }
         - {
             id: '19',
-            os: ubuntu-20.04,
+            os: ubuntu-22.04,
             build_type: "Release",
             cc: "gcc",
             cxx: "g++",
@@ -511,7 +511,7 @@ jobs:
           }
         - {
             id: '20',
-            os: ubuntu-20.04,
+            os: ubuntu-22.04,
             build_type: "Release",
             cc: "clang",
             cxx: "clang++",
@@ -521,7 +521,7 @@ jobs:
         - {
             id: '21',
             description: 'Valgrind (bindings, failing tests and examples as tests disabled)',
-            os: ubuntu-20.04,
+            os: ubuntu-22.04,
             build_type: "Debug",
             cc: "gcc",
             cxx: "g++",
@@ -550,7 +550,7 @@ jobs:
         - {
             id: '22',
             description: 'Valgrind, No ACE (bindings, failing tests and examples as tests disabled)',
-            os: ubuntu-20.04,
+            os: ubuntu-22.04,
             build_type: "Debug",
             cc: "gcc",
             cxx: "g++",
@@ -1358,7 +1358,7 @@ jobs:
     environment: code-analysis
     name: 'Codacy - clang-tidy'
     needs: [select_environment, run-cmake]
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
     - name: Clone repository
       uses: actions/checkout@v3
@@ -1545,7 +1545,7 @@ jobs:
     environment: code-analysis
     name: 'Codacy - coverage'
     needs: [select_environment, run-cmake]
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
     - name: Clone repository
       uses: actions/checkout@v3
@@ -1676,7 +1676,7 @@ jobs:
     environment: code-analysis
     name: 'SonarCloud'
     needs: [select_environment, run-cmake]
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
     - name: Clone repository
       uses: actions/checkout@v3
