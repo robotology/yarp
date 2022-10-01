@@ -1750,7 +1750,7 @@ typedef yarp::os::BufferedPort<ImageRgbFloat> BufferedPortImageRgbFloat;
 
     int storeContext() {
         int id;
-        
+
         if(self->storeContext(&id)) {
             return id;
         } else {
