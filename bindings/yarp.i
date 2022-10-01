@@ -1719,13 +1719,13 @@ typedef yarp::os::BufferedPort<ImageRgbFloat> BufferedPortImageRgbFloat;
     }
 
     double getNeckTrajTime() {
-              double result;
+        double result;
 
-              if(self->getNeckTrajTime(&result)) {
+        if(self->getNeckTrajTime(&result)) {
             return result;
         } else {
             return -1.0; //On error return -1.0
-          }
+        }
     }
 
     double getEyesTrajTime() {
@@ -1739,11 +1739,22 @@ typedef yarp::os::BufferedPort<ImageRgbFloat> BufferedPortImageRgbFloat;
     }
 
     bool checkMotionDone() {
-          bool flag;
+        bool flag;
+
         if(self->checkMotionDone(&flag)) {
             return flag;
         } else {
             return false;
+        }
+    }
+
+    int storeContext() {
+        int id;
+        
+        if(self->storeContext(&id)) {
+            return id;
+        } else {
+            return -1; //On error return -1
         }
     }
 }
