@@ -5,7 +5,7 @@ yarp_prepare_plugin(image_compression_ffmpeg
   TYPE FfmpegMonitorObject
   INCLUDE ffmpegPortmonitor.h
   CATEGORY portmonitor
-  DEPENDS "ENABLE_yarpcar_portmonitor;YARP_HAS_FFMPEG;FFMPEG_swscale_FOUND"
+  DEPENDS "ENABLE_yarpcar_portmonitor;YARP_HAS_FFMPEG;FFMPEG_avcodec_FOUND;FFMPEG_avutil_FOUND;FFMPEG_swscale_FOUND"
 )
 
 if(SKIP_image_compression_ffmpeg)
@@ -33,11 +33,13 @@ list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS
 target_include_directories(yarp_pm_image_compression_ffmpeg
   SYSTEM PRIVATE
     ${FFMPEG_avcodec_INCLUDE_DIRS}
+    ${FFMPEG_avutil_INCLUDE_DIRS}
     ${FFMPEG_swscale_INCLUDE_DIRS}
 )
 target_link_libraries(yarp_pm_image_compression_ffmpeg
   PRIVATE
     ${FFMPEG_avcodec_LIBRARIES}
+    ${FFMPEG_avutil_LIBRARIES}
     ${FFMPEG_swscale_LIBRARIES}
 )
 # list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS FFMPEG) # Not using targets
