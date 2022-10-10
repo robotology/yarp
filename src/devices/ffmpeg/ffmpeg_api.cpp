@@ -7,8 +7,8 @@
 #include "ffmpeg_api.h"
 
 
-int stable_img_convert (AVPicture *dst, int dst_pix_fmt,
-                        const AVPicture *src, int src_pix_fmt,
+int stable_img_convert (AVFrame *dst, int dst_pix_fmt,
+                        const AVFrame *src, int src_pix_fmt,
                         int src_width, int src_height) {
   static struct SwsContext *img_convert_ctx = nullptr;
   if (img_convert_ctx==nullptr) {
@@ -26,16 +26,16 @@ int stable_img_convert (AVPicture *dst, int dst_pix_fmt,
       /*
       printf("software scale: %ld %ld/%ld %d/%d %d\n",
              (long int)img_convert_ctx,
-             (long int)(((AVPicture*)src)->data),
-             (long int)(((AVPicture*)dst)->data),
-             ((AVPicture*)src)->linesize[0],
-             ((AVPicture*)dst)->linesize[0],
+             (long int)(src->data),
+             (long int)(dst->data),
+             src->linesize[0],
+             dst->linesize[0],
              src_height);
       */
 
-      sws_scale(img_convert_ctx, ((AVPicture*)src)->data,
-                ((AVPicture*)src)->linesize, 0, src_height,
-                ((AVPicture*)dst)->data, ((AVPicture*)dst)->linesize);
+      sws_scale(img_convert_ctx, src->data,
+                src->linesize, 0, src_height,
+                dst->data, dst->linesize);
       //printf("software scale done\n");
   } else {
     fprintf(stderr,"image conversion failed\n");

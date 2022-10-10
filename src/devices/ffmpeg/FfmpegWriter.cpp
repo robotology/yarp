@@ -391,14 +391,14 @@ static AVFrame *alloc_picture(int pix_fmt, int width, int height)
     if (!picture) {
         return nullptr;
     }
-    size = avpicture_get_size((AVPixelFormat)pix_fmt, width, height);
+    size = av_image_get_buffer_size((AVPixelFormat)pix_fmt, width, height, 1);
     picture_buf = (uint8_t*)av_malloc(size);
     if (!picture_buf) {
         av_free(picture);
         return nullptr;
     }
-    avpicture_fill((AVPicture *)picture, picture_buf,
-                   (AVPixelFormat)pix_fmt, width, height);
+    av_image_fill_arrays(picture->data, picture->linesize, picture_buf,
+                   (AVPixelFormat)pix_fmt, width, height,1);
     return picture;
 }
 
@@ -475,8 +475,8 @@ void FfmpegWriter::write_video_frame(AVFormatContext *oc, AVStream *st,
 
     if (c->pix_fmt != AV_PIX_FMT_RGB24) {
         fill_rgb_image(tmp_picture, frame_count, c->width, c->height, img);
-        stable_img_convert((AVPicture *)picture, c->pix_fmt,
-                           (AVPicture *)tmp_picture, AV_PIX_FMT_RGB24,
+        stable_img_convert(picture, c->pix_fmt,
+                           tmp_picture, AV_PIX_FMT_RGB24,
                            c->width, c->height);
     } else {
         fill_rgb_image(picture, frame_count, c->width, c->height, img);
