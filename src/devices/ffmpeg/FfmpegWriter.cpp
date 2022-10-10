@@ -612,12 +612,10 @@ bool FfmpegWriter::delayedOpen(yarp::os::Searchable & config) {
     }
 
     /* allocate the output media context */
-    oc = avformat_alloc_context();
-    if (!oc) {
+    int ret = avformat_alloc_output_context2(&oc, fmt, NULL, filename.c_str());
+    if (ret < 0) {
         yCFatal(FFMPEGWRITER, "Memory error");
     }
-    oc->oformat = fmt;
-    snprintf(oc->filename, sizeof(oc->filename), "%s", filename.c_str());
 
     /* add the audio and video streams using the default format codecs
        and initialize the codecs */
