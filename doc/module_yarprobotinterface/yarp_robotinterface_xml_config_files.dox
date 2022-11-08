@@ -17,10 +17,10 @@ Here is a minimal config file, let's call it "config.xml":
 <robot name="robotinterfaceExample" portprefix="/icub" build="0" xmlns:xi="http://www.w3.org/2001/XInclude">
     <devices>
         <device name="fake_motor_device" type="fakeMotionControl">
-        	<group name="GENERAL">
+            <group name="GENERAL">
                 <!-- Number of joints of the fake_motor_device -->
-		        <param name="Joints">            3         </param>
-	        </group>
+                <param name="Joints">            3         </param>
+            </group>
         </device>
         <device name="fake_motor_nws_yarp" type="controlBoard_nws_yarp">
             <!-- See https://www.yarp.it/latest/classControlBoard__nws__yarp.html for parameter documentation -->
@@ -86,5 +86,66 @@ in the `portprefix` attribute of the `robot` element.
 
 This element still needs to be documented.
 
+\section yarp_robotinterface_xml_config_files_advanced Inclusion of multiple XML files
 
+Here is an example of .xml config file which includes other xml files, using the `xi:include` tag:
+
+\code
+
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE robot PUBLIC "-//YARP//DTD yarprobotinterface 3.0//EN" "http://www.yarp.it/DTD/yarprobotinterfaceV3.0.dtd">
+
+<robot name="exampleV2" build="1" portprefix="cer" xmlns:xi="http://www.w3.org/2001/XInclude">
+    <devices>
+    <xi:include href="wrappers/odometry/odometry_nws_yarp.xml" disabled_by="disable_odometry" /> 
+    <xi:include href="wrappers/odometry/odometry_nws_ros.xml" enabled_by="enable_ros" disabled_by="disable_odometry" /> 
+    <xi:include href="wrappers/odometry/odometry_nws_ros2.xml" enabled_by="enable_ros2" disabled_by="disable_odometry" /> 
+    <xi:include href="hardware/odometry/odometry.xml" disabled_by="disable_odometry" />
+    <xi:include href="hardware/body/body_nws_yarp.xml" disabled_by="disable_body" />
+    <xi:include href="wrappers/body/body.xml" disabled_by="disable_body" />
+    </devices>
+</robot>
+
+\endcode
+
+Contents of the file "wrappers/odometry/odometry_nws_yarp.xml".
+
+\code
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE devices PUBLIC "-//YARP//DTD yarprobotinterface 3.0//EN" "http://www.yarp.it/DTD/yarprobotinterfaceV3.0.dtd">
+
+<device xmlns:xi="http://www.w3.org/2001/XInclude" name="cer_odometry_nws_yarp" type="odometry2D_nws_yarp">
+    <param name="odometry_port_name">  /cer/odometry </param>
+    <param name="odometer_port_name">  /cer/odometer </param>
+    <param name="velocity_port_name">  /cer/velocity </param>
+    
+    <action phase="startup" level="15" type="attach">
+            <param name="device">  cer_odometry </param>
+    </action>
+    <action phase="shutdown" level="5" type="detach" />
+</device>
+\endcode
+
+It must be noticed that the included file contains just a single `device` section, that will be incorporated inside the
+`devices` block in the parent file. In this way, it is possible to better organize the xml file and eventually add/remove/replace
+ individual devices.
+Additionally each device included through a xi:include can be enabled/disabled by the the use of `enabled_by` and `disabled_by` attributes.
+By default, if no attribute is added, than the file is automatically included.
+If a `enabled_by` attribute is found, then the include line is not enabled by default and it is enabled only if yarprobotinterface
+has been executed with the option `--enable_tags (xxx)` (xxx should match the contents of the `enabled_by` attribute)
+If a `disabled_by` attribute is found, then the include line (either enabled by default or by an `enable_by` attribute ) can
+be disabled if yarprobotinterface has been executed with the specific option `--disable_tags (yyy)` (yyy should match the contetes of the `disabled_by` attribute) 
+
+Examples:
+- `yarprobotinterface` starts yarprobotinterface including the following devices: odometry_nws_yarp.xml odometry.xml body.xml body_nws_yarp.xml
+- `yarprobotinterface --disable_tags (disable_odometry)` starts yarprobotinterface including the following devices: body.xml body_nws_yarp.xml
+- `yarprobotinterface --enable_tags (enable_ros) --disable_tags (disable_body)` starts yarprobotinterface including the following devices: odometry_nws_yarp.xml odometry.xml odometry_nws_ros.xml
+- `yarprobotinterface --enable_tags (enable_ros enable_ros2) --disable_tags (disable_body)` starts yarprobotinterface including the following devices: odometry_nws_yarp.xml odometry.xml odometry_nws_ros.xml odometry_nws_ros2.xml
+- `yarprobotinterface --enable_tags (enable_all)` starts yarprobotinterface including the following devices: odometry_nws_yarp.xml odometry.xml odometry_nws_ros.xml odometry_nws_ros2.xml body.xml body_nws_yarp.xml
+- `yarprobotinterface --enable_tags (enable_all) --disable_tags (disable_body)` starts yarprobotinterface including the following devices: odometry_nws_yarp.xml odometry.xml odometry_nws_ros.xml odometry_nws_ros2.xml
+
+The latter two examples show the use of the special `enable_all` tag, which can be used to enable all optional devices (i.e. marked by a `enabled_by` attribute)
+
+N.B. The `disable_tags` is always processed after the `enable_tags` and can be used to remove previously enabled devices.
+The enabled_by/disabled_by attributes are parsed by the yarprobotinterface pre-processor, hence they can be used only in combination with a xi:include tag.
 */

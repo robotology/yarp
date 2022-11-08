@@ -8,12 +8,12 @@
 
 \section yarprobotinterface_intro Description
 
-The yarprobotinterface is a command line tool that is useful to launch multiple YARP device at once.
+The yarprobotinterface is a command line tool that is useful to launch multiple YARP devices at once.
 
 Its name derives from the fact that the first and main use of the yarprobotinterface was used as the
 main program to provide a network "interface", via YARP Network Server Wrappers (NWS) devices, to a robot.
 
-However, the yarprobotinterface can be used to launch YARP devices of any kind. In a sense, is an extension of the
+However, the yarprobotinterface can be used to launch YARP devices of any kind. In a sense, it is an extension of the
 yarpdev command, that instead can be used only to launch one or two devices, while yarprobotinterface can launch an
 arbitrary number of YARP devices.
 
@@ -35,6 +35,12 @@ The details of the xml format of the files loaded by yarprobotinterface are docu
 `--dryrun`
 - If this option is specified, then xml file is only loaded without actually opening devices.
   This option is useful to validate if xml files are well formed.
+
+`--enable_tags (xxx yyy ... zzz)`
+- This options can be used to enable optional devices which have been marked with the in `enabled_by` attribute in the xml file. See \ref yarp_robotinterface_xml_config_files
+
+`--disable_tags (xxx yyy ... zzz)`
+- This options can be used to disable included devices which have been marked with the in `disabled_by` attribute in the xml file. See \ref yarp_robotinterface_xml_config_files
 
 \section yarprobotinterface_conf_file Configuration Files
 
