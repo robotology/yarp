@@ -89,9 +89,9 @@ bool YarpPluginSettings::open(SharedLibraryFactory& factory)
         // and a proper name for the DLL
         Bottle paths = selector->getSearchPath();
         for (size_t i = 0; i < paths.size(); i++) {
-            Searchable& options = paths.get(i);
-            std::string path = options.find("path").asString();
-            std::string ext = options.find("extension").asString();
+            Searchable* options = paths.get(i).asSearchable();
+            std::string path = options->find("path").asString();
+            std::string ext = options->find("extension").asString();
             std::string basename = (dll_name.find('.') != std::string::npos) ? name : dll_name;
             std::string fn = (fn_name.empty()) ? name : fn_name;
 

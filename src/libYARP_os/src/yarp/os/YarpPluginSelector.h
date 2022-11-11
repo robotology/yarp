@@ -84,11 +84,11 @@ public:
         const yarp::os::Bottle lst = selector.getSelectedPlugins();
         for (size_t i = 0; i < lst.size(); i++) {
             const yarp::os::Value& options = lst.get(i);
-            if (name == options.check("name", yarp::os::Value("untitled")).asString()) {
+            if (name == options.asSearchable()->check("name", yarp::os::Value("untitled")).asString()) {
                 if (!type.empty()) {
                     return true;
                 }
-                if (type == options.check("type", yarp::os::Value("untitled")).asString()) {
+                if (type == options.asSearchable()->check("type", yarp::os::Value("untitled")).asString()) {
                     return true;
                 }
             }

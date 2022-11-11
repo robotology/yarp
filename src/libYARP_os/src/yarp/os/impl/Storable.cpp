@@ -117,28 +117,6 @@ Storable* Storable::createByCode(std::int32_t id)
     return storable;
 }
 
-Value& Storable::find(const std::string& key) const
-{
-    YARP_UNUSED(key);
-    return BottleImpl::getNull();
-}
-
-Bottle& Storable::findGroup(const std::string& key) const
-{
-    YARP_UNUSED(key);
-    return Bottle::getNullBottle();
-}
-
-bool Storable::check(const std::string& key) const
-{
-    Bottle& val = findGroup(key);
-    if (!val.isNull()) {
-        return true;
-    }
-    Value& val2 = find(key);
-    return !val2.isNull();
-}
-
 bool Storable::operator==(const Value& alt) const
 {
     return toString() == alt.toString();

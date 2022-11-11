@@ -115,5 +115,5 @@ void yarp::os::NullConnectionReader::requestDrop()
 
 const yarp::os::Searchable& yarp::os::NullConnectionReader::getConnectionModifiers() const
 {
-    return blank;
+    return *blank.asSearchable();
 }

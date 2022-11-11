@@ -147,6 +147,14 @@ TEST_CASE("os::BottleTest", "[yarp::os]")
         CHECK(bot2.size() == (size_t) 1); // "self copy"
     }
 
+/*
+    //this does not work but it should!!!!!!!
+    SECTION("testing check")
+    {
+        Bottle bot("green");
+        CHECK(bot.check("green"));
+    }
+*/
     SECTION("testing find")
     {
         Bottle bot("(hello friend) (say 12 13) green 255 blue 19");
@@ -489,9 +497,9 @@ TEST_CASE("os::BottleTest", "[yarp::os]")
     SECTION("test infinite loop tickled by yarpmanager + string type change")
     {
         Bottle pos("Pos ((x 349.5) (y 122)) ((x 286) (y 122)) ((x 413) (y 122))");
-        CHECK(pos.get(1).find("x").asFloat64() == Approx(349.5));
-        CHECK(pos.get(2).find("x").asFloat64() == Approx(286.0));
-        CHECK(pos.get(3).find("x").asFloat64() == Approx(413.0));
+        CHECK(pos.get(1).asSearchable()->find("x").asFloat64() == Approx(349.5));
+        CHECK(pos.get(2).asSearchable()->find("x").asFloat64() == Approx(286.0));
+        CHECK(pos.get(3).asSearchable()->find("x").asFloat64() == Approx(413.0));
     }
 
     SECTION("test a string with several minus characters")

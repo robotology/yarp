@@ -237,7 +237,7 @@ bool ServerInertial::openAndAttachSubDevice(yarp::os::Property& prop)
         p.put("device",subdevice.toString());
         IMU_polydriver->open(p);
     } else {
-        IMU_polydriver->open(subdevice);
+        IMU_polydriver->open(*subdevice.asSearchable());
     }
 
     if (!IMU_polydriver->isValid())

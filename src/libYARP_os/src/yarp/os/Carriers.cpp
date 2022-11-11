@@ -186,7 +186,7 @@ bool Carriers::Private::scanForCarrier(const Bytes& header)
     selector.scan();
     Bottle lst = selector.getSelectedPlugins();
     for (size_t i = 0; i < lst.size(); i++) {
-        if (checkForCarrier(header, lst.get(i))) {
+        if (checkForCarrier(header, *lst.get(i).asSearchable())) {
             return true;
         }
     }
@@ -333,7 +333,7 @@ Bottle Carriers::listCarriers()
     Bottle plugins = instance.mPriv->getSelectedPlugins();
     for (size_t i = 0; i < plugins.size(); i++) {
         Value& options = plugins.get(i);
-        std::string name = options.check("name", Value("untitled")).asString();
+        std::string name = options.asSearchable()->check("name", Value("untitled")).asString();
         if (done.check(name)) {
             continue;
         }
@@ -341,7 +341,7 @@ Bottle Carriers::listCarriers()
         SharedLibraryFactory lib;
         YarpPluginSettings settings;
         settings.setSelector(*instance.mPriv);
-        settings.readFromSearchable(options, name);
+        settings.readFromSearchable(*options.asSearchable(), name);
         settings.open(lib);
         if (lib.getName().empty()) {
             continue;
