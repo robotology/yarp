@@ -22,6 +22,7 @@
 #include <string>
 #include <tinyxml.h>
 #include <vector>
+#include <set>
 
 #define SYNTAX_ERROR(line) yError() << "Syntax error while loading" << curr_filename << "at line" << line << "."
 #define SYNTAX_WARNING(line) yWarning() << "Invalid syntax while loading" << curr_filename << "at line" << line << "."
@@ -56,6 +57,7 @@ public:
     yarp::robotinterface::Action readActionTag(TiXmlElement* actionElem, yarp::robotinterface::XMLReaderResult& result);
     yarp::robotinterface::ActionList readActionsTag(TiXmlElement* actionsElem, yarp::robotinterface::XMLReaderResult& result);
 
+    bool CheckIfIncludeSectionIsEnabled(const std::string& href_enable_tags, const std::string& href_disable_tags);
     bool PerformInclusions(TiXmlNode* pParent, const std::string& parent_fileName, const std::string& current_path);
     void ReplaceAllStrings(std::string& str, const std::string& from, const std::string& to);
     XMLReaderFileV3* const parent;
@@ -69,6 +71,10 @@ public:
     std::string curr_filename;
     unsigned int minorVersion;
     unsigned int majorVersion;
+    std::set<std::string> m_enabled_options_from_command_line;
+    std::set<std::string> m_disabled_options_from_command_line;
+    std::set<std::string> m_enable_set_found_in_all_xml;
+    std::set<std::string> m_disable_set_found_in_all_xml;
 };
 
 
@@ -128,16 +134,61 @@ yarp::robotinterface::XMLReaderResult yarp::robotinterface::impl::XMLReaderFileV
     current_filename = fileName.substr(fileName.find_last_of("\\/") + 1);
     log_filename = current_filename.substr(0, current_filename.find(".xml"));
     log_filename += "_preprocessor_log.xml";
+
+    std::string enable_tags_string;
+    yarp::os::Bottle* be = config.find("enable_tags").asList();
+    if (be) { enable_tags_string = be->toString();}
+
+    std::string disable_tags_string;
+    yarp::os::Bottle* bd = config.find("disable_tags").asList();
+    if (bd) { disable_tags_string = bd->toString();}
+
+    {
+        char* all_string = strdup(enable_tags_string.c_str());
+        char* token = strtok(all_string, " ");
+        while (token) {
+            m_enabled_options_from_command_line.insert(token);
+            token = strtok(NULL, " ");
+        }
+    }
+    {
+        char* all_string = strdup(disable_tags_string.c_str());
+        char* token = strtok(all_string, " ");
+        while (token) {
+            m_disabled_options_from_command_line.insert(token);
+            token = strtok(NULL, " ");
+        }
+    }
+    yInfo() << "Yarprobotinterface was started using the following enable_tags:"<< enable_tags_string;
+    yInfo() << "Yarprobotinterface was started using the following disable_tags:" << disable_tags_string;
+
     double start_time = yarp::os::Time::now();
     PerformInclusions(doc->RootElement(), current_filename, current_path);
     double end_time = yarp::os::Time::now();
+
+    std::string all_enable_att_string = "List of all enable attributes found in the include tags: ";
+    for (auto it = m_enable_set_found_in_all_xml.begin(); it != m_enable_set_found_in_all_xml.end(); it++)
+    {
+        all_enable_att_string += (" " + *it);
+    }
+    yDebug() << all_enable_att_string;
+
+    std::string all_disable_att_string = "List of all disable attributes found in the include tags: ";
+    for (auto it = m_disable_set_found_in_all_xml.begin(); it != m_disable_set_found_in_all_xml.end(); it++)
+    {
+        all_disable_att_string += (" " + *it);
+    }
+    yDebug() << all_disable_att_string;
+
     std::string full_log_withpath = current_path + std::string("\\") + log_filename;
     std::replace(full_log_withpath.begin(), full_log_withpath.end(), '\\', '/');
     yDebug() << "Preprocessor complete in: " << end_time - start_time << "s";
-    if (verbose_output) {
+    if (verbose_output)
+    {
         yDebug() << "Preprocessor output stored in: " << full_log_withpath;
         doc->SaveFile(full_log_withpath);
     }
+
     yarp::robotinterface::XMLReaderResult result = readRobotTag(doc->RootElement());
     delete doc;
 
@@ -166,6 +217,50 @@ yarp::robotinterface::XMLReaderResult yarp::robotinterface::impl::XMLReaderFileV
     return result;
 }
 
+bool yarp::robotinterface::impl::XMLReaderFileV3::Private::CheckIfIncludeSectionIsEnabled(const std::string& hrefxml_enable_tags_s, const std::string& hrefxml_disable_tags_s)
+{
+    yarp::os::Bottle hrefxml_enable_tags_b;
+    hrefxml_enable_tags_b.fromString(hrefxml_enable_tags_s);
+    yarp::os::Bottle hrefxml_disable_tags_b;
+    hrefxml_disable_tags_b.fromString(hrefxml_disable_tags_s);
+    //yDebug() << "included enable tag size:" << b_included_enable_options.size()  << " contents:" << b_included_enable_options.toString();
+    //yDebug() << "included disable tag size:" << b_included_disable_options.size() << " contents:" << b_included_disable_options.toString();
+
+    //if no `enabled_by` attribute are found in the xi::include line, then the include is enabled by default.
+    bool enabled = true;
+    size_t hrefxml_enable_tags_b_size = hrefxml_enable_tags_b.size();
+    if (hrefxml_enable_tags_b_size != 0)
+    {
+        //.otherwise, if a `enabled_by` attribute is found, then the include line is not enabled by default and it
+        // is enabled only if yarprobotinterface has been executed with the specific option --enable_tags
+        enabled = false;
+        for (size_t i = 0; i < hrefxml_enable_tags_b_size; i++)
+        {
+            std::string s = hrefxml_enable_tags_b.get(i).asString();
+            m_enable_set_found_in_all_xml.insert(s);
+            if (m_enabled_options_from_command_line.find(s) != m_enabled_options_from_command_line.end() ||
+                m_enabled_options_from_command_line.find("enable_all") != m_enabled_options_from_command_line.end())
+            {
+                enabled = true;
+            }
+        }
+    }
+    // if a `disabled_by` attribute is found, then the include line (either enabled by default or by an `enable_by` tag ) can
+    // be disabled if yarprobotinterface has been executed with the specific option --disable_tags
+    size_t hrefxml_disable_tags_b_size = hrefxml_disable_tags_b.size();
+    for (size_t i = 0; i < hrefxml_disable_tags_b_size; i++)
+    {
+        std::string s = hrefxml_disable_tags_b.get(i).asString();
+        m_disable_set_found_in_all_xml.insert(s);
+        if (m_disabled_options_from_command_line.find(s) != m_disabled_options_from_command_line.end())
+        {
+            enabled = false;
+        }
+    }
+
+    return enabled;
+}
+
 bool yarp::robotinterface::impl::XMLReaderFileV3::Private::PerformInclusions(TiXmlNode* pParent, const std::string& parent_fileName, const std::string& current_path)
 {
 loop_start: //goto label
@@ -182,36 +277,59 @@ loop_start: //goto label
             return false;
         }
 
-        if (elemString == "xi:include") {
+        if (elemString == "xi:include")
+        {
             std::string href_filename;
-            std::string included_filename;
-            std::string included_path;
-            if (childElem->QueryStringAttribute("href", &href_filename) == TIXML_SUCCESS) {
-                included_path = std::string(current_path).append("\\").append(href_filename.substr(0, href_filename.find_last_of("\\/")));
-                included_filename = href_filename.substr(href_filename.find_last_of("\\/") + 1);
-                std::string full_path_file = std::string(included_path).append("\\").append(included_filename);
-                TiXmlDocument included_file;
+            if (childElem->QueryStringAttribute("href", &href_filename) == TIXML_SUCCESS)
+            {
+                std::string href_enable_tags, href_disable_tags;
+                childElem->QueryStringAttribute("enabled_by", &href_enable_tags);
+                childElem->QueryStringAttribute("disabled_by", &href_disable_tags);
+                if (CheckIfIncludeSectionIsEnabled(href_enable_tags, href_disable_tags))
+                {
+                    std::string included_path = std::string(current_path).append("\\").append(href_filename.substr(0, href_filename.find_last_of("\\/")));
+                    std::string included_filename = href_filename.substr(href_filename.find_last_of("\\/") + 1);
+                    std::string full_path_file = std::string(included_path).append("\\").append(included_filename);
+                    TiXmlDocument included_file;
 
-                std::replace(full_path_file.begin(), full_path_file.end(), '\\', '/');
-                if (included_file.LoadFile(full_path_file)) {
-                    PerformInclusions(included_file.RootElement(), included_filename, included_path);
-                    //included_file.RootElement()->SetAttribute("xml:base", href_filename); //not yet implemented
-                    included_file.RootElement()->RemoveAttribute("xmlns:xi");
-                    if (pParent->ReplaceChild(childElem, *included_file.FirstChildElement())) {
-                        //the replace operation invalidates the iterator, hence we need to restart the parsing of this level
-                        goto loop_start;
-                    } else {
+                    std::replace(full_path_file.begin(), full_path_file.end(), '\\', '/');
+                    if (included_file.LoadFile(full_path_file))
+                    {
+                        PerformInclusions(included_file.RootElement(), included_filename, included_path);
+                        //included_file.RootElement()->SetAttribute("xml:base", href_filename); //not yet implemented
+                        included_file.RootElement()->RemoveAttribute("xmlns:xi");
+                        if (pParent->ReplaceChild(childElem, *included_file.FirstChildElement()))
+                        {
+                            //the replace operation invalidates the iterator, hence we need to restart the parsing of this level
+                            goto loop_start;
+                        }
+                        else
+                        {
+                            //fatal error
+                            yFatal() << "Failed to include: " << included_filename << " in: " << parent_fileName;
+                            return false;
+                        }
+                    }
+                    else
+                    {
                         //fatal error
-                        yFatal() << "Failed to include: " << included_filename << " in: " << parent_fileName;
+                        yError() << included_file.ErrorDesc() << " file" << full_path_file << "included by " << parent_fileName << "at line" << childElem->Row();
+                        yFatal() << "In file:" << included_filename << " included by: " << parent_fileName << " at line: " << childElem->Row();
                         return false;
                     }
-                } else {
-                    //fatal error
-                    yError() << included_file.ErrorDesc() << " file" << full_path_file << "included by " << parent_fileName << "at line" << childElem->Row();
-                    yFatal() << "In file:" << included_filename << " included by: " << parent_fileName << " at line: " << childElem->Row();
-                    return false;
                 }
-            } else {
+                else
+                {
+                    yDebug() << "Skipping include section `" << href_filename << "` because is not enabled";
+                    if (pParent->RemoveChild(childElem))
+                    {
+                        //the remove operation invalidates the iterator, hence we need to restart the parsing of this level
+                        goto loop_start;
+                    }
+                }
+            }
+            else
+            {
                 //fatal error
                 yFatal() << "Syntax error in: " << parent_fileName << " while searching for href attribute";
                 return false;
