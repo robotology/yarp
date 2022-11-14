@@ -78,7 +78,6 @@ The tables shown hereunder report all the information needed to understand the f
   * ![#00ff00](https://via.placeholder.com/15/00ff00/000000?text=+) **RGBDSensorFromRosTopic**
 
 * RGBDSensorWrapper
-  * ![#cc6600](https://via.placeholder.com/15/cc6600/000000?text=+) *RGBDSensorWrapper*
   * ![#00ffff](https://via.placeholder.com/15/00ffff/000000?text=+) rgbdSensor_nws_ros
   * ![#00ffff](https://via.placeholder.com/15/00ffff/000000?text=+) rgbdSensor_nws_yarp
 
