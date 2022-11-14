@@ -74,15 +74,9 @@ The tables shown hereunder report all the information needed to understand the f
 * RGBDSensorClient
   * ![#00ff00](https://via.placeholder.com/15/00ff00/000000?text=+) **RGBDSensorClient**
 
-* RGBDSensorFromRosTopic
-  * ![#00ff00](https://via.placeholder.com/15/00ff00/000000?text=+) **RGBDSensorFromRosTopic**
-
 * RGBDSensorWrapper
   * ![#00ffff](https://via.placeholder.com/15/00ffff/000000?text=+) rgbdSensor_nws_ros
   * ![#00ffff](https://via.placeholder.com/15/00ffff/000000?text=+) rgbdSensor_nws_yarp
-
-* RGBDToPointCloudSensorWrapper
-  * ![#00ffff](https://via.placeholder.com/15/00ffff/000000?text=+) RGBDToPointCloudSensor_nws_ros
 
 * Rangefinder2DClient
   * ![#00ff00](https://via.placeholder.com/15/00ff00/000000?text=+) **Rangefinder2DClient**
