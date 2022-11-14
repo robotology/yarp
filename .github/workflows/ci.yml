@@ -57,7 +57,8 @@ jobs:
 
         # Get YARP Project Version
         if [[ "$GITHUB_EVENT_NAME" = "release" ]]; then
-          echo "yarp_version=$(awk '/ VERSION /{print $2}' CMakeLists.txt)" >> $GITHUB_OUTPUT
+          #echo "yarp_version=$(awk '/ VERSION /{print $2}' CMakeLists.txt)" >> $GITHUB_OUTPUT
+          echo "::set-output name=yarp_version::$(awk '/ VERSION /{print $2}' CMakeLists.txt)"
         fi
 
     - name: 'Debug output variables'
