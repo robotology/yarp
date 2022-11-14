@@ -12,8 +12,6 @@
 #include <yarp/os/Time.h>
 #include <yarp/os/Port.h>
 #include <yarp/os/Stamp.h>
-#include <yarp/os/Node.h>
-#include <yarp/os/Publisher.h>
 #include <yarp/os/BufferedPort.h>
 #include <yarp/os/PeriodicThread.h>
 #include <yarp/dev/PolyDriver.h>
