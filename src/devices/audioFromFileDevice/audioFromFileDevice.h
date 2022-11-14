@@ -5,7 +5,6 @@
 
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/os/PeriodicThread.h>
-#include <yarp/dev/IGenericSensor.h>
 #include <yarp/dev/AudioRecorderDeviceBase.h>
 #include <yarp/sig/Sound.h>
 #include <yarp/sig/SoundFile.h>
