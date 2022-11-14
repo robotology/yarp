@@ -83,7 +83,7 @@ public:
         Bottle lst = getSelectedPlugins();
         for (size_t i=0; i<lst.size(); i++) {
             Value& prop = lst.get(i);
-            std::string name = prop.check("name",Value("untitled")).asString();
+            std::string name = prop.asSearchable()->check("name",Value("untitled")).asString();
             if (done.check(name)) {
                 continue;
             }
@@ -91,7 +91,7 @@ public:
             SharedLibraryFactory lib;
             YarpPluginSettings settings;
             settings.setSelector(*this);
-            settings.readFromSearchable(prop,name);
+            settings.readFromSearchable(*prop.asSearchable(),name);
             settings.open(lib);
             std::string location = lib.getName();
             if (location.empty()) {
@@ -100,8 +100,8 @@ public:
               continue;
             }
 
-            std::string cxx = prop.check("cxx",Value("unknown")).asString();
-            std::string wrapper = prop.check("wrapper",Value("unknown")).asString();
+            std::string cxx = prop.asSearchable()->check("cxx",Value("unknown")).asString();
+            std::string wrapper = prop.asSearchable()->check("wrapper",Value("unknown")).asString();
             s += "Device \"";
             s += name;
             s += "\"";

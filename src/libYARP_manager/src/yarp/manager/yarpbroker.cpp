@@ -703,14 +703,14 @@ bool YarpBroker::getAllProcesses(const char* server,
         {
             Process proc;
             std::string sprc;
-            if (response.get(i).check("pid")) {
-                proc.pid = response.get(i).find("pid").asInt32();
+            if (response.get(i).asSearchable()->check("pid")) {
+                proc.pid = response.get(i).asSearchable()->find("pid").asInt32();
             }
-            if (response.get(i).check("cmd")) {
-                sprc = response.get(i).find("cmd").asString();
+            if (response.get(i).asSearchable()->check("cmd")) {
+                sprc = response.get(i).asSearchable()->find("cmd").asString();
             }
-            if (response.get(i).check("env") && response.get(i).find("env").asString().length()) {
-                sprc.append("; ").append(response.get(i).find("env").asString());
+            if (response.get(i).asSearchable()->check("env") && response.get(i).asSearchable()->find("env").asString().length()) {
+                sprc.append("; ").append(response.get(i).asSearchable()->find("env").asString());
             }
             proc.command = sprc;
             processes.push_back(proc);

@@ -29,18 +29,25 @@ bool YarpPluginFixture::scanPlugins(std::string name, std::string type)
     bool res=false;
     for (size_t i=0; i<lst.size(); i++)
     {
-        Value& options = lst.get(i);
-        if(!type.empty())
+        Searchable* options = lst.get(i).asSearchable();
+        if (options)
         {
-            if (name == options.check("name", Value("untitled")).asString() && type == options.check("type", Value("untitled")).asString()) {
-                res = true;
+            if(!type.empty())
+            {
+                if (name == options->check("name", Value("untitled")).asString() && type == options->check("type", Value("untitled")).asString()) {
+                    res = true;
+                }
+            }
+            else
+            {
+                if (name == options->check("name", Value("untitled")).asString()) {
+                    res = true;
+                }
             }
         }
         else
         {
-            if (name == options.check("name", Value("untitled")).asString()) {
-                res = true;
-            }
+            ROBOTTESTINGFRAMEWORK_ASSERT_ERROR("YarpPluginFixture::scanPlugins: internal error");
         }
     }
     return res;

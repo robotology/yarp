@@ -152,8 +152,8 @@ int Companion::cmdPlugin(int argc, char *argv[])
         for (size_t i=0; i<lst.size(); i++) {
             Value& options = lst.get(i);
             std::string name = options.asList()->get(0).toString();
-            std::string path = options.check("path", Value("unknown path")).asString();
-            std::string type = options.check("type", Value("unknown type")).asString();
+            std::string path = options.asSearchable()->check("path", Value("unknown path")).asString();
+            std::string type = options.asSearchable()->check("type", Value("unknown type")).asString();
             if (type == "shared") {
                 yCInfo(COMPANION, "  %15s:\t%s", name.c_str(), path.c_str());
             }
@@ -165,7 +165,7 @@ int Companion::cmdPlugin(int argc, char *argv[])
         Bottle lst = selector.getSelectedPlugins();
         for (size_t i=0; i<lst.size(); i++) {
             Value& options = lst.get(i);
-            std::string name = options.check("name", Value("untitled")).asString();
+            std::string name = options.asSearchable()->check("name", Value("untitled")).asString();
             yCInfo(COMPANION, "%s", name.c_str());
         }
         return 0;
@@ -180,11 +180,11 @@ int Companion::cmdPlugin(int argc, char *argv[])
         bool ok = true;
         for (size_t i=0; i<lst.size(); i++) {
             Value& options = lst.get(i);
-            std::string name = options.check("name", Value("untitled")).asString();
-            std::string type = options.check("type", Value("unknown type")).asString();
+            std::string name = options.asSearchable()->check("name", Value("untitled")).asString();
+            std::string type = options.asSearchable()->check("type", Value("unknown type")).asString();
             yCInfo(COMPANION);
             yCInfo(COMPANION, "%s %s", type.c_str(), name.c_str());
-            yCInfo(COMPANION, "  * ini file:       %s", options.find("inifile").toString().c_str());
+            yCInfo(COMPANION, "  * ini file:       %s", options.asSearchable()->find("inifile").toString().c_str());
             options.asList()->pop();
             yCInfo(COMPANION, "  * config:         %s", options.toString().c_str());
             YarpPluginSettings settings;
@@ -195,7 +195,7 @@ YARP_DISABLE_DEPRECATED_WARNING
 YARP_WARNING_POP
 #endif // YARP_NO_DEPRECATED
             settings.setSelector(selector);
-            settings.readFromSearchable(options, name);
+            settings.readFromSearchable(*options.asSearchable(), name);
             ok &= plugin_test(settings);
         }
         return ok ? 0 : 1;

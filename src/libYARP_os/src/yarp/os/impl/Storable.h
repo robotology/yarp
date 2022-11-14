@@ -226,12 +226,6 @@ public:
         }
         return asList();
     }
-    using yarp::os::Searchable::check;
-    bool check(const std::string& key) const override;
-
-    yarp::os::Value& find(const std::string& key) const override;
-    yarp::os::Bottle& findGroup(const std::string& key) const override;
-
 
     /**
      * Initialize from a string representation, assuming that any
@@ -1082,16 +1076,6 @@ public:
     }
 
     std::int32_t subCode() const override;
-
-    yarp::os::Value& find(const std::string& key) const override
-    {
-        return content.find(key);
-    }
-
-    yarp::os::Bottle& findGroup(const std::string& key) const override
-    {
-        return content.findGroup(key);
-    }
 };
 
 
@@ -1144,16 +1128,6 @@ public:
     yarp::os::Property* asDict() const override
     {
         return const_cast<yarp::os::Property*>(&content);
-    }
-
-    yarp::os::Value& find(const std::string& key) const override
-    {
-        return content.find(key);
-    }
-
-    yarp::os::Bottle& findGroup(const std::string& key) const override
-    {
-        return content.findGroup(key);
     }
 };
 

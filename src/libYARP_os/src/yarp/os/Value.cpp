@@ -17,14 +17,12 @@ using namespace yarp::os::impl;
 
 Value::Value() :
         Portable(),
-        Searchable(),
         proxy(nullptr)
 {
 }
 
 Value::Value(std::int32_t x, bool isVocab32) :
         Portable(),
-        Searchable(),
         proxy(nullptr)
 {
     if (!isVocab32) {
@@ -36,7 +34,6 @@ Value::Value(std::int32_t x, bool isVocab32) :
 
 Value::Value(yarp::conf::float64_t x) :
         Portable(),
-        Searchable(),
         proxy(nullptr)
 {
     setProxy(static_cast<Storable*>(makeFloat64(x)));
@@ -44,7 +41,6 @@ Value::Value(yarp::conf::float64_t x) :
 
 Value::Value(const std::string& str, bool isVocab32) :
         Portable(),
-        Searchable(),
         proxy(nullptr)
 {
     if (!isVocab32) {
@@ -56,7 +52,6 @@ Value::Value(const std::string& str, bool isVocab32) :
 
 Value::Value(void* data, int length) :
         Portable(),
-        Searchable(),
         proxy(nullptr)
 {
     setProxy(static_cast<Storable*>(makeBlob(data, length)));
@@ -64,7 +59,6 @@ Value::Value(void* data, int length) :
 
 Value::Value(const Value& alt) :
         Portable(),
-        Searchable(alt),
         proxy(nullptr)
 {
     setProxy(static_cast<Storable*>(alt.clone()));
@@ -251,11 +245,21 @@ Property* Value::asDict() const
 
 Searchable* Value::asSearchable() const
 {
-    ok();
+    /*
+ok();
     if (proxy->isDict()) {
         return proxy->asDict();
     }
     return proxy->asList();
+*/
+    ok();
+    if (proxy->isDict()) {
+        return proxy->asDict();
+    }
+    if (proxy->isList()) {
+        return proxy->asList();
+    }
+    return nullptr;
 }
 
 const char* Value::asBlob() const
@@ -316,24 +320,6 @@ bool Value::write(ConnectionWriter& connection) const
     connection.appendInt32(BOTTLE_TAG_LIST);
     connection.appendInt32(1);
     return proxy->write(connection);
-}
-
-bool Value::check(const std::string& key) const
-{
-    ok();
-    return proxy->check(key);
-}
-
-Value& Value::find(const std::string& key) const
-{
-    ok();
-    return proxy->find(key);
-}
-
-Bottle& Value::findGroup(const std::string& key) const
-{
-    ok();
-    return proxy->findGroup(key);
 }
 
 bool Value::operator==(const Value& alt) const

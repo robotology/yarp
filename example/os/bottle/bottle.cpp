@@ -58,7 +58,7 @@ int main(int argc, char* argv[])
     printf("pos group check: %s\n", b6.findGroup("pos").toString().c_str());
     // see documentation for Bottle::findGroup
     printf("nested check: %s\n", b6.find("nested").toString().c_str());
-    printf("nested height check: %d\n", b6.find("nested").find("height").asInt32());
+    printf("nested height check: %d\n", b6.find("nested").asSearchable()->find("height").asInt32());
 
 
     printf("\n");

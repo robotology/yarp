@@ -29,21 +29,23 @@ class Storable;
 
 namespace yarp::os {
 
+class stringConvertible
+{
+    public:
+    virtual std::string toString() const = 0;
+};
 /**
  * A single value (typically within a Bottle). Values can be integers, strings,
  * doubles (floating-point numbers), lists, vocabulary, or blobs
  * (unformatted binary data).  This set is carefully chosen to have
  * good text and binary representations both for network transmission
  * and human viewing/generation.  Lists are represented as a nested
- * Bottle object.  Value objects are Searchable - but you won't
- * find anything in them unless they are actually a list.
+ * Bottle object.
  *
  */
-class YARP_os_API Value : public Portable, public Searchable
+class YARP_os_API Value : public Portable, stringConvertible
 {
 public:
-    using Searchable::check;
-    using Searchable::findGroup;
 
     /**
      * Construct a list Value
@@ -179,6 +181,12 @@ public:
     virtual bool isBlob() const;
 
     /**
+     * Checks if value is null.
+     * @return true iff value is null.
+     */
+    virtual bool isNull() const;
+
+    /**
      * Get boolean value.
      * @return boolean value if value is indeed a boolean.
      * If it is another type, the appropriate cast value is returned.
@@ -306,15 +314,6 @@ public:
     // documented in Portable
     bool write(ConnectionWriter& connection) const override;
 
-    // documented in Searchable
-    bool check(const std::string& key) const override;
-
-    // documented in Searchable
-    Value& find(const std::string& key) const override;
-
-    // documented in Searchable
-    Bottle& findGroup(const std::string& key) const override;
-
     /**
      * Equality test.
      * @param alt the value to compare against
@@ -356,8 +355,6 @@ public:
      * @return the standard type code of the value.
      */
     virtual std::int32_t getCode() const;
-
-    bool isNull() const override;
 
     virtual bool isLeaf() const;
 

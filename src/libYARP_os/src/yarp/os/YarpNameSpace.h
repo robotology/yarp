@@ -123,6 +123,10 @@ public:
             ContactStyle style;
             ok = NetworkBase::writeToNameServer(cmd, reply, style);
         }
+////
+        std::string ss= reply.toString();
+         fprintf(stderr, ss.c_str());
+////
         bool fail = (reply.get(0).toString() == "fail") || !ok;
         if (fail) {
             if (!style.quiet) {
