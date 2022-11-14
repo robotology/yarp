@@ -113,9 +113,6 @@ The tables shown hereunder report all the information needed to understand the f
   * ![#00ffff](https://via.placeholder.com/15/00ffff/000000?text=+) frameGrabber_nws_yarp
   * ![#00ffff](https://via.placeholder.com/15/00ffff/000000?text=+) frameGrabber_nws_ros
 
-* ServerInertial
-  * ![#cc6600](https://via.placeholder.com/15/cc6600/000000?text=+) *inertial*
-
 * ServerSerial
   * ![#ffff00](https://via.placeholder.com/15/ffff00/000000?text=+) serial
 
