@@ -11,6 +11,8 @@
 
 #include <string>
 #include <mutex>
+#include <vector>
+#include <functional>
 
 /**
 * @ingroup dev_impl_media

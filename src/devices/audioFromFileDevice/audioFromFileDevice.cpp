@@ -7,7 +7,6 @@
 
 #include <yarp/os/Thread.h>
 #include <yarp/os/Time.h>
-#include <yarp/os/Semaphore.h>
 #include <yarp/os/Stamp.h>
 #include <yarp/os/LogComponent.h>
 #include <yarp/os/LogStream.h>
