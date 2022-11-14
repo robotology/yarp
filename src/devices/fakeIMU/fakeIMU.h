@@ -6,7 +6,6 @@
 #include <string>
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/os/PeriodicThread.h>
-#include <yarp/dev/IGenericSensor.h>
 #include <yarp/dev/MultipleAnalogSensorsInterfaces.h>
 #include <yarp/os/Stamp.h>
 #include <yarp/math/Math.h>
@@ -29,7 +28,6 @@
 */
 class fakeIMU :
         public yarp::dev::DeviceDriver,
-        public yarp::dev::IGenericSensor,
         public yarp::os::PeriodicThread,
         public yarp::dev::IThreeAxisGyroscopes,
         public yarp::dev::IThreeAxisLinearAccelerometers,
@@ -48,11 +46,6 @@ public:
     // Device Driver interface
     bool open(yarp::os::Searchable &config) override;
     bool close() override;
-
-    // IGenericSensor interface.
-    bool read(yarp::sig::Vector &out) override;
-    bool getChannels(int *nc) override;
-    bool calibrate(int ch, double v) override;
 
     /* IThreeAxisGyroscopes methods */
     size_t getNrOfThreeAxisGyroscopes() const override;

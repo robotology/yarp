@@ -75,59 +75,11 @@ bool fakeIMU::close()
     return true;
 }
 
-bool fakeIMU::read(Vector &out)
-{
-    if (out.size() != nchannels) {
-        out.resize(nchannels);
-    }
-
-    out.zero();
-
-    // Euler angle
-    for(unsigned int i=0; i<3; i++)
-    {
-        out[i] = dummy_value;
-    }
-
-    // accelerations
-    for(unsigned int i=0; i<3; i++)
-    {
-        out[3+i] = accels[i];
-    }
-
-    // gyro
-    for(unsigned int i=0; i<3; i++)
-    {
-        out[6+i] = dummy_value;
-    }
-
-    // magnetometer
-    for(unsigned int i=0; i<3; i++)
-    {
-        out[9+i] = dummy_value;
-    }
-
-    return true;
-}
-
-bool fakeIMU::getChannels(int *nc)
-{
-    *nc=nchannels;
-    return true;
-}
-
-bool fakeIMU::calibrate(int ch, double v)
-{
-    yCWarning(FAKEIMU, "Not implemented yet");
-    return false;
-}
-
 bool fakeIMU::threadInit()
 {
     lastStamp.update();
     return true;
 }
-
 
 void fakeIMU::run()
 {
