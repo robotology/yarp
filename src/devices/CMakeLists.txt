@@ -30,7 +30,7 @@ yarp_begin_plugin_library(yarpmod
   add_subdirectory(frameTransformStorageMsgs)
   add_subdirectory(frameTransformStorage)
   add_subdirectory(frameTransformUtils)
-  add_subdirectory(FrameGrabber_nws_yarp)
+  add_subdirectory(frameGrabber_nws_yarp)
   add_subdirectory(transformClient)
   add_subdirectory(transformServer)
   add_subdirectory(SerialServoBoard)
