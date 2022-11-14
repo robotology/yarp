@@ -4,6 +4,8 @@
  */
 
 #include "IMURosPublisher.h"
+#include "Yarp/math/Quaternion.h"
+#include "Yarp/math/Math.h"
 
 #ifndef M_PI
 #define M_PI (3.14159265358979323846)
@@ -61,9 +63,16 @@ void IMURosPublisher::run()
         imu_ros_data.linear_acceleration.x = vecacc[0];
         imu_ros_data.linear_acceleration.y = vecacc[1];
         imu_ros_data.linear_acceleration.z = vecacc[2];
-        imu_ros_data.orientation.x = vecrpy[0] * M_PI / 180.0;
-        imu_ros_data.orientation.y = vecrpy[1] * M_PI / 180.0;
-        imu_ros_data.orientation.z = vecrpy[2] * M_PI / 180.0;
+        vecrpy[0] = vecrpy[0] * M_PI / 180.0;
+        vecrpy[1] = vecrpy[1] * M_PI / 180.0;
+        vecrpy[2] = vecrpy[2] * M_PI / 180.0;
+        yarp::sig::Matrix matrix = yarp::math::rpy2dcm(vecrpy);
+        yarp::math::Quaternion q; q.fromRotationMatrix(matrix);
+        imu_ros_data.orientation.x = q.x();
+        imu_ros_data.orientation.y = q.y();
+        imu_ros_data.orientation.z = q.z();
+        imu_ros_data.orientation.w = q.w();
+
         //imu_ros_data.orientation_covariance = 0;
         m_publisher.write();
     }
