@@ -10,6 +10,7 @@
 #include <yarp/os/Network.h>
 #include <yarp/os/LogStream.h>
 #include <yarp/dev/PolyDriver.h>
+#include <yarp/dev/WrapperSingle.h>
 
 #include <catch.hpp>
 #include <harness.h>
@@ -38,9 +39,12 @@ TEST_CASE("dev::Navigation2DNwcTest", "[yarp::dev]")
     {
         PolyDriver ddnavserver;
         PolyDriver ddmapserver;
+        PolyDriver ddmapstorage;
         PolyDriver ddmapclient;
         PolyDriver ddlocserver;
         PolyDriver ddnavclient;
+        PolyDriver ddfakeLocalizer;
+        PolyDriver ddfakeNavigation;
         INavigation2D* inav = nullptr;
         IMap2D* imap = nullptr;
 
@@ -48,8 +52,12 @@ TEST_CASE("dev::Navigation2DNwcTest", "[yarp::dev]")
         {
             Property pmapserver_cfg;
             pmapserver_cfg.put("device", "map2D_nws_yarp");
-            pmapserver_cfg.put("subdevice", "map2DStorage");
             REQUIRE(ddmapserver.open(pmapserver_cfg));
+            Property pmapstorage_cfg;
+            pmapstorage_cfg.put("device", "map2DStorage");
+            REQUIRE(ddmapstorage.open(pmapstorage_cfg));
+            {yarp::dev::WrapperSingle* ww_nws; ddmapserver.view(ww_nws);
+            bool result_att = ww_nws->attach(&ddmapstorage);}
 
             Property pmapclient_cfg;
             pmapclient_cfg.put("device", "map2D_nwc_yarp");
@@ -60,13 +68,21 @@ TEST_CASE("dev::Navigation2DNwcTest", "[yarp::dev]")
 
             Property plocserver_cfg;
             plocserver_cfg.put("device", "localization2D_nws_yarp");
-            plocserver_cfg.put("subdevice", "fakeLocalizer");
             REQUIRE(ddlocserver.open(plocserver_cfg));
+            Property pfakeLocalizer_cfg;
+            pfakeLocalizer_cfg.put("device", "fakeLocalizer");
+            REQUIRE(ddfakeLocalizer.open(pfakeLocalizer_cfg));
+            {yarp::dev::WrapperSingle* ww_nws; ddlocserver.view(ww_nws);
+            bool result_att = ww_nws->attach(&ddfakeLocalizer); }
 
             Property pnavserver_cfg;
             pnavserver_cfg.put("device", "navigation2D_nws_yarp");
-            pnavserver_cfg.put("subdevice", "fakeNavigation");
             REQUIRE(ddnavserver.open(pnavserver_cfg));
+            Property pfakeNavigation;
+            pfakeNavigation.put("device", "fakeNavigation");
+            REQUIRE(ddfakeNavigation.open(pfakeNavigation));
+            {yarp::dev::WrapperSingle* ww_nws; ddnavserver.view(ww_nws);
+            bool result_att = ww_nws->attach(&ddfakeNavigation); }
 
             Property pnavclient_cfg;
             pnavclient_cfg.put("device", "navigation2D_nwc_yarp");
@@ -89,6 +105,9 @@ TEST_CASE("dev::Navigation2DNwcTest", "[yarp::dev]")
             CHECK(ddlocserver.close());
             CHECK(ddmapclient.close());
             CHECK(ddmapserver.close());
+            CHECK(ddmapstorage.close());
+            CHECK(ddfakeLocalizer.close());
+            CHECK(ddfakeNavigation.close());
         }
     }
 

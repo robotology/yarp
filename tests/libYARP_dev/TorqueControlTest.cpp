@@ -14,6 +14,7 @@
 
 #include <catch.hpp>
 #include <harness.h>
+#include <yarp/dev/WrapperSingle.h>
 
 using namespace yarp::os;
 using namespace yarp::dev;
@@ -29,22 +30,25 @@ TEST_CASE("dev::TorqueControl", "[yarp::dev]")
 
     SECTION("test the controlBoard_nws_yarp device")
     {
-        PolyDriver dd;
-        Property p;
-        p.put("device","controlBoard_nws_yarp");
-        p.put("subdevice","fakeMotionControl");
-        p.put("name","/motor");
-        auto& pg = p.addGroup("GENERAL");
-        pg.put("Joints", 1);
-        bool result;
-        result = dd.open(p);
-        REQUIRE(result); // controlboard_nws_yarp open reported successful
+        PolyDriver dd_nws;
+        Property p_nws;
+        p_nws.put("device","controlBoard_nws_yarp");
+        p_nws.put("name", "/motor");
+        bool result_nws = dd_nws.open(p_nws);
+        REQUIRE(result_nws);
 
-        // Check if IMultipleWrapper interface is correctly found
-        yarp::dev::IMultipleWrapper * i_mwrapper=nullptr;
-        result = dd.view(i_mwrapper);
-        REQUIRE(result); // IMultipleWrapper view reported successful
-        REQUIRE(i_mwrapper != nullptr); // IMultipleWrapper pointer not null
+        PolyDriver dd_dev;
+        Property p_dev;
+        p_dev.put("device", "fakeMotionControl");
+        auto& pg = p_dev.addGroup("GENERAL");
+        pg.put("Joints", 1);
+        bool result_dev = dd_dev.open(p_dev);
+        REQUIRE(result_dev);
+
+        yarp::dev::WrapperSingle* ww_nws;
+        dd_nws.view(ww_nws);
+        bool result_att = ww_nws->attach(&dd_dev);
+        REQUIRE(result_att); // controlboard_nws_yarp open reported successful
 
         PolyDriver dd2;
         Property p2;
@@ -53,7 +57,7 @@ TEST_CASE("dev::TorqueControl", "[yarp::dev]")
         p2.put("local","/motor/client");
         p2.put("carrier","tcp");
         p2.put("ignoreProtocolCheck","true");
-        result = dd2.open(p2);
+        bool result = dd2.open(p2);
         REQUIRE(result); // remote_controlboard open reported successful
 
         ITorqueControl *trq = nullptr;
@@ -83,7 +87,8 @@ TEST_CASE("dev::TorqueControl", "[yarp::dev]")
         CHECK(res.viscousNeg == 0.6); // interface seems functional
         CHECK(res.coulombPos == 0.7); // interface seems functional
         CHECK(res.coulombNeg == 0.8); // interface seems functional
-        CHECK(dd.close()); // close dd reported successful
+        CHECK(dd_nws.close()); // close dd_nws reported successful
+        CHECK(dd_dev.close()); // close dd_dev reported successful
         CHECK(dd2.close()); // close dd2 reported successful
     }
 }
