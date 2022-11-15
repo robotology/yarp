@@ -411,8 +411,6 @@ void VirtualAnalogWrapper::run()
                     mSubdevices[d].flushTorques();
 
                 }
-    //          Virtual Sensor status is not handled now because server DO NOT implement IVirtual AnalogSensor Interface.
-    //          status=IAnalogSensor::AS_TIMEOUT;
                 yCError(VIRTUALANALOGSERVER) << "Timeout!! No new value received for more than " << timeNow - lastRecv  << " secs.";
                 sendLastValueBeforeTimeout = true;
             }

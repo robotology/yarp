@@ -74,15 +74,9 @@ The tables shown hereunder report all the information needed to understand the f
 * RGBDSensorClient
   * ![#00ff00](https://via.placeholder.com/15/00ff00/000000?text=+) **RGBDSensorClient**
 
-* RGBDSensorFromRosTopic
-  * ![#00ff00](https://via.placeholder.com/15/00ff00/000000?text=+) **RGBDSensorFromRosTopic**
-
 * RGBDSensorWrapper
   * ![#00ffff](https://via.placeholder.com/15/00ffff/000000?text=+) rgbdSensor_nws_ros
   * ![#00ffff](https://via.placeholder.com/15/00ffff/000000?text=+) rgbdSensor_nws_yarp
-
-* RGBDToPointCloudSensorWrapper
-  * ![#00ffff](https://via.placeholder.com/15/00ffff/000000?text=+) RGBDToPointCloudSensor_nws_ros
 
 * Rangefinder2DClient
   * ![#00ff00](https://via.placeholder.com/15/00ff00/000000?text=+) **Rangefinder2DClient**
@@ -118,9 +112,6 @@ The tables shown hereunder report all the information needed to understand the f
   * ![#cc6600](https://via.placeholder.com/15/cc6600/000000?text=+) *grabberDual*
   * ![#00ffff](https://via.placeholder.com/15/00ffff/000000?text=+) frameGrabber_nws_yarp
   * ![#00ffff](https://via.placeholder.com/15/00ffff/000000?text=+) frameGrabber_nws_ros
-
-* ServerInertial
-  * ![#cc6600](https://via.placeholder.com/15/cc6600/000000?text=+) *inertial*
 
 * ServerSerial
   * ![#ffff00](https://via.placeholder.com/15/ffff00/000000?text=+) serial

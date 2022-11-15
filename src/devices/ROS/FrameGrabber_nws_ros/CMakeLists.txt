@@ -2,25 +2,28 @@
 # SPDX-License-Identifier: BSD-3-Clause
 
 
-yarp_prepare_plugin(inertial
+yarp_prepare_plugin(frameGrabber_nws_ros
   CATEGORY device
-  TYPE ServerInertial
-  INCLUDE ServerInertial.h
+  TYPE FrameGrabber_nws_ros
+  INCLUDE FrameGrabber_nws_ros.h
   EXTRA_CONFIG
-    WRAPPER=inertial
+    WRAPPER=frameGrabber_nws_ros
   DEFAULT ON
 )
 
-if(NOT SKIP_inertial)
-  yarp_add_plugin(yarp_inertial)
+if(NOT SKIP_frameGrabber_nws_ros)
+  yarp_add_plugin(yarp_frameGrabber_nws_ros)
 
-  target_sources(yarp_inertial
+  target_sources(yarp_frameGrabber_nws_ros
     PRIVATE
-      ServerInertial.cpp
-      ServerInertial.h
+          FrameGrabber_nws_ros.cpp
+          FrameGrabber_nws_ros.h
   )
 
-  target_link_libraries(yarp_inertial
+  target_sources(yarp_frameGrabber_nws_ros PRIVATE $<TARGET_OBJECTS:RGBDRosConversionUtils>)
+  target_include_directories(yarp_frameGrabber_nws_ros PRIVATE $<TARGET_PROPERTY:RGBDRosConversionUtils,INTERFACE_INCLUDE_DIRECTORIES>)
+
+  target_link_libraries(yarp_frameGrabber_nws_ros
     PRIVATE
       YARP::YARP_os
       YARP::YARP_sig
@@ -35,7 +38,7 @@ if(NOT SKIP_inertial)
   )
 
   yarp_install(
-    TARGETS yarp_inertial
+    TARGETS yarp_frameGrabber_nws_ros
     EXPORT YARP_${YARP_PLUGIN_MASTER}
     COMPONENT ${YARP_PLUGIN_MASTER}
     LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
@@ -45,5 +48,5 @@ if(NOT SKIP_inertial)
 
   set(YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS ${YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS} PARENT_SCOPE)
 
-  set_property(TARGET yarp_inertial PROPERTY FOLDER "Plugins/Device")
+  set_property(TARGET yarp_frameGrabber_nws_ros PROPERTY FOLDER "Plugins/Device/NWS")
 endif()

@@ -26,7 +26,6 @@
 #include <yarp/dev/IFrameGrabberControlsDC1394.h>
 #include <yarp/dev/IFrameWriterImage.h>
 #include <yarp/dev/GazeControl.h>
-#include <yarp/dev/IGenericSensor.h>
 #include <yarp/dev/GPUInterface.h>
 #include <yarp/dev/IAnalogSensor.h>
 #include <yarp/dev/IRGBDSensor.h>

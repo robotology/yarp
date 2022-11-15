@@ -135,11 +135,8 @@ endif()
 
 if(NOT YARP_NO_DEPRECATED)
   list(APPEND YARP_dev_HDRS
-    yarp/dev/DataSource.h                # DEPRECATED Since YARP 3.3.0
-    yarp/dev/GenericSensorInterfaces.h   # DEPRECATED Since YARP 3.3.0
-    yarp/dev/PreciselyTimed.h            # DEPRECATED Since YARP 3.3.0
-    yarp/dev/SerialInterfaces.h          # DEPRECATED Since YARP 3.3.0
-    yarp/dev/Wrapper.h                   # DEPRECATED Since YARP 3.3.0
+
+
     yarp/dev/FrameGrabberInterfaces.h    # DEPRECATED Since YARP 3.5.0
     yarp/dev/IFrameGrabber.h             # DEPRECATED Since YARP 3.5.0
     yarp/dev/IFrameGrabberRgb.h          # DEPRECATED Since YARP 3.5.0
