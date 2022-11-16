@@ -88,6 +88,7 @@ yarp_begin_plugin_library(yarpmod
   add_subdirectory(RGBDSensorClient)
   add_subdirectory(RGBDSensor_nws_yarp)
   add_subdirectory(ControlBoardWrapper)
+  add_subdirectory(ControlBoard_nws_yarp)
   add_subdirectory(ControlBoardRemapper)
   add_subdirectory(RobotDescriptionClient)
   add_subdirectory(RobotDescriptionServer)
