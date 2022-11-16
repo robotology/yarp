@@ -50,7 +50,6 @@ public:
     yarp::robotinterface::Param readParamTag(TiXmlElement* paramElem, yarp::robotinterface::XMLReaderResult& result);
     yarp::robotinterface::Param readGroupTag(TiXmlElement* groupElem, yarp::robotinterface::XMLReaderResult& result);
     yarp::robotinterface::ParamList readParamListTag(TiXmlElement* paramListElem, yarp::robotinterface::XMLReaderResult& result);
-    yarp::robotinterface::ParamList readSubDeviceTag(TiXmlElement* subDeviceElem, yarp::robotinterface::XMLReaderResult& result);
     yarp::robotinterface::ParamList readParamsTag(TiXmlElement* paramsElem, yarp::robotinterface::XMLReaderResult& result);
 
     yarp::robotinterface::ActionList readActions(TiXmlElement* actionsElem, yarp::robotinterface::XMLReaderResult& result);
@@ -484,8 +483,6 @@ yarp::robotinterface::DeviceList yarp::robotinterface::impl::XMLReaderFileV3::Pr
     yarp::robotinterface::ParamList params;
 
     for (TiXmlElement* childElem = devicesElem->FirstChildElement(); childElem != nullptr; childElem = childElem->NextSiblingElement()) {
-        // FIXME Check DTD >= 3.2
-        // "subdevice" is not allowed in the "devices" tag
         if (childElem->ValueStr() == "param" || childElem->ValueStr() == "group" || childElem->ValueStr() == "paramlist" || childElem->ValueStr() == "params") {
             for (const auto& childParam : readParams(childElem, result)) {
                 params.push_back(childParam);
@@ -523,14 +520,11 @@ yarp::robotinterface::ParamList yarp::robotinterface::impl::XMLReaderFileV3::Pri
     if (valueStr == "paramlist") {
         return readParamListTag(paramsElem, result);
     }
-    if (valueStr == "subdevice") {
-        return readSubDeviceTag(paramsElem, result);
-    }
     if (valueStr == "params") {
         return readParamsTag(paramsElem, result);
     }
 
-    SYNTAX_ERROR(paramsElem->Row()) << R"(Expected "param", "group", "paramlist", "subdevice", or "params". Found)" << valueStr;
+    SYNTAX_ERROR(paramsElem->Row()) << R"(Expected "param", "group", "paramlist", or "params". Found)" << valueStr;
     result.parsingIsSuccessful = false;
     return yarp::robotinterface::ParamList();
 }
@@ -706,48 +700,6 @@ yarp::robotinterface::ParamList yarp::robotinterface::impl::XMLReaderFileV3::Pri
         params.at(0).value() += (params.at(0).value().empty() ? "(" : " ") + param.name();
     }
     params.at(0).value() += ")";
-
-    // yDebug() << params;
-    return params;
-}
-
-yarp::robotinterface::ParamList yarp::robotinterface::impl::XMLReaderFileV3::Private::readSubDeviceTag(TiXmlElement* subDeviceElem,
-                                                                                                       yarp::robotinterface::XMLReaderResult& result)
-{
-    if (subDeviceElem->ValueStr() != "subdevice") {
-        SYNTAX_ERROR(subDeviceElem->Row()) << "Expected \"subdevice\". Found" << subDeviceElem->ValueStr();
-        result.parsingIsSuccessful = false;
-        return yarp::robotinterface::ParamList();
-    }
-
-    yarp::robotinterface::ParamList params;
-
-    //FIXME    yarp::robotinterface::Param featIdParam;
-    yarp::robotinterface::Param subDeviceParam;
-
-    //FIXME    featIdParam.name() = "FeatId";
-    subDeviceParam.name() = "subdevice";
-
-    //FIXME    if (subDeviceElem->QueryStringAttribute("name", &featIdParam.value()) != TIXML_SUCCESS) {
-    //        SYNTAX_ERROR(subDeviceElem->Row()) << "\"subdevice\" element should contain the \"name\" attribute";
-    //    }
-
-    if (subDeviceElem->QueryStringAttribute("type", &subDeviceParam.value()) != TIXML_SUCCESS) {
-        SYNTAX_ERROR(subDeviceElem->Row()) << R"("subdevice" element should contain the "type" attribute)";
-        result.parsingIsSuccessful = false;
-        return yarp::robotinterface::ParamList();
-    }
-
-    //FIXME    params.push_back(featIdParam);
-    params.push_back(subDeviceParam);
-
-    // yDebug() << "Found subdevice [" << params.at(0).value() << "]";
-
-    for (TiXmlElement* childElem = subDeviceElem->FirstChildElement(); childElem != nullptr; childElem = childElem->NextSiblingElement()) {
-        for (const auto& childParam : readParams(childElem, result)) {
-            params.push_back(yarp::robotinterface::Param(childParam.name(), childParam.value()));
-        }
-    }
 
     // yDebug() << params;
     return params;
