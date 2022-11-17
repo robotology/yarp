@@ -39,7 +39,6 @@
  * | GENERAL        |  name          | string  |  -                 | /localization2D_nws_yarp | No           | The name of the server, used as a prefix for the opened ports     | By default ports opened are /xxx/rpc and /xxx/streaming:o     |
  * | GENERAL        |  publish_odometry | bool |  -                 | true                     | No           | Periodically publish odometry data over the network               | -     |
  * | GENERAL        |  publish_location | bool |  -                 | true                     | No           | PEriodically publish location data over the network               | -     |
- * | subdevice      |  -             | string  |  -                 |  -                       | Yes          | The name of the of Localization device to be used                 | -     |
  */
 class Localization2D_nws_yarp :
         public yarp::dev::DeviceDriver,

@@ -154,28 +154,8 @@ bool Localization2D_nws_yarp::open(Searchable& config)
     m_2DLocationPortName = m_local_name + "/streaming:o";
     m_odometryPortName = m_local_name + "/odometry:o";
 
-    if (config.check("subdevice"))
-    {
-        Property       p;
-        p.fromString(config.toString(), false);
-        p.put("device", config.find("subdevice").asString());
+    yCInfo(LOCALIZATION2D_NWS_YARP) << "Waiting for device to attach";
 
-        if (!pLoc.open(p) || !pLoc.isValid())
-        {
-            yCError(LOCALIZATION2D_NWS_YARP) << "Failed to open subdevice.. check params";
-            return false;
-        }
-
-        if (!attach(&pLoc))
-        {
-            yCError(LOCALIZATION2D_NWS_YARP) << "Failed to attach subdevice.. check params";
-            return false;
-        }
-    }
-    else
-    {
-        yCInfo(LOCALIZATION2D_NWS_YARP) << "Waiting for device to attach";
-    }
     m_stats_time_last = yarp::os::Time::now();
 
     if (!initialize_YARP(config))
@@ -183,6 +163,8 @@ bool Localization2D_nws_yarp::open(Searchable& config)
         yCError(LOCALIZATION2D_NWS_YARP) << "Error initializing YARP ports";
         return false;
     }
+
+    yCInfo(LOCALIZATION2D_NWS_YARP) << "Waiting for device to attach";
 
     return true;
 }

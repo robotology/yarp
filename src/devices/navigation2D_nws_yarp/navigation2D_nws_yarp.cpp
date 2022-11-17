@@ -100,34 +100,13 @@ bool navigation2D_nws_yarp::open(Searchable& config)
     }
     m_rpcPortName = m_local_name + "/rpc";
 
-    if (config.check("subdevice"))
-    {
-        Property       p;
-        p.fromString(config.toString(), false);
-        p.put("device", config.find("subdevice").asString());
-
-        if (!pNav.open(p) || !pNav.isValid())
-        {
-            yCError(NAVIGATION2D_NWS_YARP) << "Failed to open subdevice.. check params";
-            return false;
-        }
-
-        if (!attach(&pNav))
-        {
-            yCError(NAVIGATION2D_NWS_YARP) << "Failed to attach subdevice.. check params";
-            return false;
-        }
-    }
-    else
-    {
-        yCInfo(NAVIGATION2D_NWS_YARP) << "Waiting for device to attach";
-    }
-
     if (!initialize_YARP(config))
     {
         yCError(NAVIGATION2D_NWS_YARP) << "Error initializing YARP ports";
         return false;
     }
+
+    yCInfo(NAVIGATION2D_NWS_YARP) << "Waiting for device to attach";
 
     return true;
 }

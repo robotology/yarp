@@ -34,7 +34,6 @@
   * |:--------------:|:--------------:|:-------:|:------------------:|:------------------------:|:-----------: |:-----------------------------------------------------------------:|:-----:|
   * | GENERAL        |  period        | double  | s                  | 0.01                     | No           | The period of the working thread                                  |       |
   * | GENERAL        |  name          | string  |  -                 | /navigation_nws_yarp     | No           | The name of the server, used as a prefix for the opened ports     | -     |
-  * | subdevice      |  -             | string  |  -                 |  -                       | Yes          | The name of the of Navigation device to be used                   | -     |
   */
 
 #define DEF_m_RPC 1

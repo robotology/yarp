@@ -88,25 +88,6 @@ bool Odometry2D_nws_yarp::open(yarp::os::Searchable &config)
     m_odometryStreamingPortName = m_local_name + "/odometry:o";
     m_velocityStreamingPortName = m_local_name + "/velocity:o";
 
-    if(config.check("subdevice"))
-    {
-        yarp::os::Property p;
-        p.fromString(config.toString(), false);
-        p.put("device", config.find("subdevice").asString());
-
-        if(!m_driver.open(p) || !m_driver.isValid())
-        {
-            yCError(ODOMETRY2D_NWS_YARP) << "failed to open subdevice.. check params";
-            return false;
-        }
-
-        if(!attach(&m_driver))
-        {
-            yCError(ODOMETRY2D_NWS_YARP) << "failed to open subdevice.. check params";
-            return false;
-        }
-    }
-
     //open rpc port
     if (!m_rpcPort.open(m_rpcPortName))
     {
@@ -134,6 +115,9 @@ bool Odometry2D_nws_yarp::open(yarp::os::Searchable &config)
     }
 
     PeriodicThread::setPeriod(m_period);
+
+    yCInfo(ODOMETRY2D_NWS_YARP) << "Waiting for device to attach";
+
     return true;
 }
 

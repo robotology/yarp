@@ -73,29 +73,7 @@ bool Map2D_nws_yarp::open(yarp::os::Searchable &config)
     }
     m_rpcPort.setReader(*this);
 
-    //subdevice handling
-    if (config.check("subdevice"))
-    {
-        Property       p;
-        p.fromString(config.toString(), false);
-        p.put("device", config.find("subdevice").asString());
-
-        if (!m_drv.open(p) || !m_drv.isValid())
-        {
-            yCError(MAP2D_NWS_YARP) << "Failed to open subdevice.. check params";
-            return false;
-        }
-
-        if (!attach(&m_drv))
-        {
-            yCError(MAP2D_NWS_YARP) << "Failed to open subdevice.. check params";
-            return false;
-        }
-    }
-    else
-    {
-        yCInfo(MAP2D_NWS_YARP) << "Waiting for device to attach";
-    }
+    yCInfo(MAP2D_NWS_YARP) << "Waiting for device to attach";
 
     return true;
 }
