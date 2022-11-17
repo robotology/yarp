@@ -14,7 +14,7 @@
 #include <catch.hpp>
 #include <harness.h>
 
-#include "IMap2DTest.h"
+//#include "IMap2DTest.h"
 
 using namespace yarp::dev;
 using namespace yarp::dev::Nav2D;
@@ -51,8 +51,8 @@ TEST_CASE("dev::Map2DnwcTest", "[yarp::dev]")
         }
 
         //execute tests
-        exec_iMap2D_test_1 (imap);
-        exec_iMap2D_test_2 (imap);
+  //      exec_iMap2D_test_1 (imap);
+  //      exec_iMap2D_test_2 (imap);
 
         //"Close all polydrivers and check"
         {

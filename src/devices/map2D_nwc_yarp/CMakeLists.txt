@@ -47,4 +47,6 @@ if(NOT SKIP_map2D_nwc_yarp)
   set(YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS ${YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS} PARENT_SCOPE)
 
   set_property(TARGET yarp_map2D_nwc_yarp PROPERTY FOLDER "Plugins/Device/NWC")
+
+  add_subdirectory(tests)
 endif()

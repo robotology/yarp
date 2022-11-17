@@ -11,9 +11,7 @@ target_sources(harness_dev
     TransformClientTest.cpp
     GroupDriverTest.cpp
     IFrameTransformTest.cpp
-    IMap2DTest.cpp
     MapGrid2DTest.cpp
-    Map2DnwcTest.cpp
     Navigation2DnwcTest.cpp
     INavigation2DTest.cpp
     MultipleAnalogSensorsInterfacesTest.cpp
@@ -41,9 +39,7 @@ else()
     TransformClientTest.cpp
     FrameTransformClientTest.cpp
     IFrameTransformTest.cpp
-    IMap2DTest.cpp
     Map2DClientTest.cpp
-    Map2DnwcTest.cpp
     INavigation2DTest.cpp
     Navigation2DnwcTest.cpp
     Navigation2DClientTest.cpp
