@@ -48,5 +48,8 @@ if(NOT SKIP_map2D_nwc_yarp)
 
   set_property(TARGET yarp_map2D_nwc_yarp PROPERTY FOLDER "Plugins/Device/NWC")
 
-  add_subdirectory(tests)
+  if(YARP_COMPILE_TESTS)
+    add_subdirectory(tests)
+  endif()
+
 endif()
