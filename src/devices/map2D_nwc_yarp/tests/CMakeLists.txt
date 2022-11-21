@@ -18,6 +18,8 @@ function(yarp_catch_discover_tests _target)
 endfunction()
 #########################################################################
 
+find_package(YARP::YARP_dev_tests)
+
 add_executable(harness_dev_Map2Dnwc)
 
 target_sources(harness_dev_Map2Dnwc
@@ -31,10 +33,14 @@ target_link_libraries(harness_dev_Map2Dnwc
     YARP::YARP_os
     YARP::YARP_sig
     YARP::YARP_dev
+    YARP::YARP_dev_tests
 )
 
 if(TARGET YARP::YARP_math)
-  target_link_libraries(harness_dev_Map2Dnwc PRIVATE YARP::YARP_math)
+  target_link_libraries(harness_dev_Map2Dnwc
+  PRIVATE
+    YARP::YARP_math
+  )
 else()
   set(_disabled_files
     Map2DnwcTest.cpp

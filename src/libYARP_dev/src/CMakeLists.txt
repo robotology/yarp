@@ -393,3 +393,36 @@ install(
 
 set(YARP_dev_PUBLIC_DEPS ${YARP_dev_PUBLIC_DEPS} PARENT_SCOPE)
 set(YARP_dev_PRIVATE_DEPS ${YARP_dev_PRIVATE_DEPS} PARENT_SCOPE)
+
+###################################################################
+
+add_library(YARP_dev_tests)
+add_library(YARP::YARP_dev_tests ALIAS YARP_dev_tests)
+
+target_sources(YARP_dev_tests
+  PRIVATE
+      yarp/dev/tests/IMap2DTest.cpp
+      yarp/dev/tests/IMap2DTest.h
+)
+
+target_include_directories(YARP_dev_tests
+  PRIVATE
+    ${CMAKE_SOURCE_DIR}/extern/catch2
+)
+
+target_link_libraries(YARP_dev_tests PRIVATE YARP_dev)
+
+target_compile_features(YARP_dev_tests PRIVATE cxx_std_17)
+
+set_property (
+TARGET YARP_dev_tests
+  PROPERTY FOLDER "Test"
+)
+
+set_property(
+  TARGET YARP_dev_tests
+  PROPERTY
+    PUBLIC_HEADER
+      ${YARP_dev_HDRS}
+      yarp/dev/tests/IMap2DTest.h
+)
