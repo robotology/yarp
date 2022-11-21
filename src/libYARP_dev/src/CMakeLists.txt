@@ -399,16 +399,28 @@ set(YARP_dev_PRIVATE_DEPS ${YARP_dev_PRIVATE_DEPS} PARENT_SCOPE)
 add_library(YARP_dev_tests)
 add_library(YARP::YARP_dev_tests ALIAS YARP_dev_tests)
 
+if(TARGET YARP::YARP_math)
 target_sources(YARP_dev_tests
   PRIVATE
       yarp/dev/tests/IMap2DTest.cpp
       yarp/dev/tests/IMap2DTest.h
+      yarp/dev/tests/IDummyTest.cpp
+      yarp/dev/tests/IDummyTest.h
 )
+else()
+target_sources(YARP_dev_tests
+  PRIVATE
+      yarp/dev/tests/IDummyTest.cpp
+      yarp/dev/tests/IDummyTest.h
+)
+endif()
 
 target_include_directories(YARP_dev_tests
   PRIVATE
     ${CMAKE_SOURCE_DIR}/extern/catch2
 )
+
+target_compile_definitions(YARP_dev_tests PUBLIC YARP_dev_EXPORTS=1)
 
 target_link_libraries(YARP_dev_tests PRIVATE YARP_dev)
 

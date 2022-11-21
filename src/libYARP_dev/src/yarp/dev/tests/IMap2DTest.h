@@ -17,7 +17,7 @@ using namespace yarp::os;
 
 namespace yarp::dev::tests
 {
-    inline void __declspec(dllimport) exec_iMap2D_test_1(IMap2D* imap)
+    inline void exec_iMap2D_test_1(IMap2D* imap)
     {
         {
             //////////"Checking INavigation2D methods
@@ -69,7 +69,7 @@ namespace yarp::dev::tests
         }
     }
 
-    inline void __declspec(dllimport) exec_iMap2D_test_2(IMap2D* imap)
+    inline void exec_iMap2D_test_2(IMap2D* imap)
     {
         //////////"Checking IMap2D methods which involve usage of classes Map2DArea or Map2DLocation"
         {
