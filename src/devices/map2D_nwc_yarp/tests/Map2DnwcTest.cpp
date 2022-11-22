@@ -10,11 +10,11 @@
 #include <yarp/os/Network.h>
 #include <yarp/os/LogStream.h>
 #include <yarp/dev/PolyDriver.h>
+#include <yarp/dev/WrapperSingle.h>
+#include <yarp/dev/tests/IMap2DTest.h>
 
 #include <catch.hpp>
 #include <harness.h>
-
-#include "IMap2DTest.h"
 
 using namespace yarp::dev;
 using namespace yarp::dev::Nav2D;
@@ -32,6 +32,7 @@ TEST_CASE("dev::Map2DnwcTest", "[yarp::dev]")
     SECTION("Checking map2D_nwc_yarp <-> map2D_nws_yarp communication and yarp::dev::Nav2D::IMap2D methods")
     {
         PolyDriver ddmapserver;
+        PolyDriver ddmapstorage;
         PolyDriver ddmapclient;
         IMap2D* imap = nullptr;
 
@@ -39,8 +40,15 @@ TEST_CASE("dev::Map2DnwcTest", "[yarp::dev]")
         {
             Property pmapserver_cfg;
             pmapserver_cfg.put("device", "map2D_nws_yarp");
-            pmapserver_cfg.put("subdevice", "map2DStorage");
             REQUIRE(ddmapserver.open(pmapserver_cfg));
+
+            Property pmapstorage_cfg;
+            pmapstorage_cfg.put("device", "map2DStorage");
+            REQUIRE(ddmapstorage.open(pmapstorage_cfg));
+
+            {yarp::dev::WrapperSingle* ww_nws; ddmapserver.view(ww_nws);
+            bool result_att = ww_nws->attach(&ddmapstorage);
+            REQUIRE(result_att); }
 
             Property pmapclient_cfg;
             pmapclient_cfg.put("device", "map2D_nwc_yarp");
@@ -51,13 +59,16 @@ TEST_CASE("dev::Map2DnwcTest", "[yarp::dev]")
         }
 
         //execute tests
-        exec_iMap2D_test_1 (imap);
-        exec_iMap2D_test_2 (imap);
+        yarp::dev::tests::exec_iMap2D_test_1 (imap);
+        yarp::dev::tests::exec_iMap2D_test_2 (imap);
 
         //"Close all polydrivers and check"
         {
             CHECK(ddmapclient.close());
+            yarp::os::Time::delay(0.1);
             CHECK(ddmapserver.close());
+            yarp::os::Time::delay(0.1);
+            CHECK(ddmapstorage.close());
         }
     }
 

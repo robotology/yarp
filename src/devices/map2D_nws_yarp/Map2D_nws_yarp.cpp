@@ -81,6 +81,10 @@ bool Map2D_nws_yarp::open(yarp::os::Searchable &config)
 bool Map2D_nws_yarp::close()
 {
     yCTrace(MAP2D_NWS_YARP, "Close");
+
+    m_rpcPort.interrupt();
+    m_rpcPort.close();
+
     return true;
 }
 
@@ -104,5 +108,6 @@ bool Map2D_nws_yarp::attach(PolyDriver* driver)
         return false;
     }
 
+    yCInfo(MAP2D_NWS_YARP, "Attach done");
     return true;
 }
