@@ -10,7 +10,7 @@
 #include <catch.hpp>
 #include <harness.h>
 
-#include "IFrameTransformTest.h"
+#include <yarp/dev/tests/IFrameTransformTest.h>
 
 using namespace yarp::os;
 using namespace yarp::dev;
@@ -51,7 +51,7 @@ TEST_CASE("dev::TransformClientTest", "[yarp::dev]")
         REQUIRE(itf != nullptr); // iTransform interface open reported successful
 
         //execute the test
-        exec_frameTransform_test_1(itf);
+        yarp::dev::tests::exec_frameTransform_test_1(itf);
 
         // Close devices
         CHECK(ddtransformclient.close()); // ddtransformclient successfully closed
@@ -86,7 +86,7 @@ TEST_CASE("dev::TransformClientTest", "[yarp::dev]")
         REQUIRE(itf != nullptr); // iTransform interface open reported successful
 
         //execute the test
-        exec_frameTransform_test_2(itf);
+        yarp::dev::tests::exec_frameTransform_test_2(itf);
 
         // Close devices
         CHECK(ddtransformclient.close()); // ddtransformclient successfully closed

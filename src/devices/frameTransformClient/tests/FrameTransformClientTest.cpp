@@ -10,7 +10,7 @@
 #include <yarp/os/Network.h>
 #include <iostream>
 
-#include "IFrameTransformTest.h"
+#include <yarp/dev/tests/IFrameTransformTest.h>
 
 #include <catch.hpp>
 #include <harness.h>
@@ -55,7 +55,7 @@ TEST_CASE("dev::FrameTransformClientTest", "[yarp::dev]")
         REQUIRE(pd.open(p));
         REQUIRE(pd.view(ift));
 
-        exec_frameTransform_test_1(ift);
+        yarp::dev::tests::exec_frameTransform_test_1(ift);
 
         REQUIRE(pd.close());
     }
@@ -71,7 +71,7 @@ TEST_CASE("dev::FrameTransformClientTest", "[yarp::dev]")
         REQUIRE(pd.open(p));
         REQUIRE(pd.view(ift));
 
-        exec_frameTransform_test_2(ift);
+        yarp::dev::tests::exec_frameTransform_test_2(ift);
 
         REQUIRE(pd.close());
     }
@@ -94,7 +94,7 @@ TEST_CASE("dev::FrameTransformClientTest", "[yarp::dev]")
         REQUIRE(client_pd.open(client_prop));
         REQUIRE(client_pd.view(ift));
 
-        exec_frameTransform_test_1(ift);
+        yarp::dev::tests::exec_frameTransform_test_1(ift);
 
         REQUIRE(client_pd.close());
         REQUIRE(server_pd.close());
@@ -118,7 +118,7 @@ TEST_CASE("dev::FrameTransformClientTest", "[yarp::dev]")
         REQUIRE(client_pd.open(client_prop));
         REQUIRE(client_pd.view(ift));
 
-        exec_frameTransform_test_2(ift);
+        yarp::dev::tests::exec_frameTransform_test_2(ift);
 
         REQUIRE(client_pd.close());
         REQUIRE(server_pd.close());
