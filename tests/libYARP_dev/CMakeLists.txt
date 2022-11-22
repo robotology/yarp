@@ -12,8 +12,6 @@ target_sources(harness_dev
     GroupDriverTest.cpp
     IFrameTransformTest.cpp
     MapGrid2DTest.cpp
-    Navigation2DnwcTest.cpp
-    INavigation2DTest.cpp
     MultipleAnalogSensorsInterfacesTest.cpp
     PolyDriverTest.cpp
     robotDescriptionTest.cpp
@@ -39,10 +37,6 @@ else()
     TransformClientTest.cpp
     FrameTransformClientTest.cpp
     IFrameTransformTest.cpp
-    Map2DClientTest.cpp
-    INavigation2DTest.cpp
-    Navigation2DnwcTest.cpp
-    Navigation2DClientTest.cpp
     MapGrid2DTest.cpp
   )
   set_source_files_properties(${_disabled_files} PROPERTIES HEADER_FILE_ONLY ON)
