@@ -13,7 +13,7 @@
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/AudioGrabberInterfaces.h>
 #include <yarp/dev/ControlBoardInterfaces.h>
-#include <yarp/dev/IMultipleWrapper.h>
+#include <yarp/dev/WrapperSingle.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/Network.h>
 #include <yarp/os/PeriodicThread.h>
@@ -45,12 +45,13 @@ class AudioRecorderDataThread;
 */
 class AudioRecorderWrapper :
         public yarp::dev::DeviceDriver,
-        public yarp::dev::IMultipleWrapper,
+        public yarp::dev::WrapperSingle,
         public yarp::os::PortReader
 {
 private:
     yarp::dev::PolyDriver          m_driver;
     yarp::dev::IAudioGrabberSound* m_mic = nullptr; //The microphone device
+    yarp::os::Property             m_config;
     double                         m_period;
     yarp::os::Port                 m_rpcPort;
     yarp::os::Port                 m_streamingPort;
@@ -84,11 +85,9 @@ public:
 
     bool open(yarp::os::Searchable& config) override;
     bool close() override;
-    bool attachAll(const yarp::dev::PolyDriverList &p) override;
-    bool detachAll() override;
 
-    void attach(yarp::dev::IAudioGrabberSound *igrab);
-    void detach();
+    bool attach(yarp::dev::PolyDriver* driver) override;
+    bool detach() override;
 
     bool read(yarp::os::ConnectionReader& connection) override;
     friend class AudioRecorderStatusThread;
