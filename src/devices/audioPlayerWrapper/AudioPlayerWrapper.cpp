@@ -42,19 +42,11 @@ AudioPlayerWrapper::~AudioPlayerWrapper()
   * Specify which sensor this thread has to read from.
   */
 
-bool AudioPlayerWrapper::attachAll(const PolyDriverList &device2attach)
+bool AudioPlayerWrapper::attach(PolyDriver* driver)
 {
-    if (device2attach.size() != 1)
+    if (driver->isValid())
     {
-        yCError(AUDIOPLAYERWRAPPER, "Cannot attach more than one device");
-        return false;
-    }
-
-    yarp::dev::PolyDriver * Idevice2attach = device2attach[0]->poly;
-
-    if (Idevice2attach->isValid())
-    {
-        Idevice2attach->view(m_irender);
+        driver->view(m_irender);
     }
 
     if (nullptr == m_irender)
@@ -62,13 +54,18 @@ bool AudioPlayerWrapper::attachAll(const PolyDriverList &device2attach)
         yCError(AUDIOPLAYERWRAPPER, "Subdevice passed to attach method is invalid");
         return false;
     }
-    attach(m_irender);
+
+    if (!m_irender->getPlaybackAudioBufferMaxSize(m_max_buffer_size))
+    {
+        yCError(AUDIOPLAYERWRAPPER, "getPlaybackAudioBufferMaxSize failed\n");
+        return false;
+    }
 
     PeriodicThread::setPeriod(m_period);
     return PeriodicThread::start();
 }
 
-bool AudioPlayerWrapper::detachAll()
+bool AudioPlayerWrapper::detach()
 {
     if (PeriodicThread::isRunning())
     {
@@ -76,20 +73,6 @@ bool AudioPlayerWrapper::detachAll()
     }
     m_irender = nullptr;
     return true;
-}
-
-void AudioPlayerWrapper::attach(yarp::dev::IAudioRender *irend)
-{
-    m_irender = irend;
-}
-
-void AudioPlayerWrapper::detach()
-{
-    if (PeriodicThread::isRunning())
-    {
-        PeriodicThread::stop();
-    }
-    m_irender = nullptr;
 }
 
 bool AudioPlayerWrapper::read(yarp::os::ConnectionReader& connection)
@@ -177,8 +160,7 @@ bool AudioPlayerWrapper::threadInit()
 
 bool AudioPlayerWrapper::open(yarp::os::Searchable &config)
 {
-    Property params;
-    params.fromString(config.toString());
+    m_config.fromString(config.toString());
 
     if (config.check("debug"))
     {
@@ -215,7 +197,6 @@ bool AudioPlayerWrapper::open(yarp::os::Searchable &config)
     if(config.check("subdevice"))
     {
         Property       p;
-        PolyDriverList driverlist;
         p.fromString(config.toString(), false);
         p.put("device", config.find("subdevice").asString());
 
@@ -224,33 +205,17 @@ bool AudioPlayerWrapper::open(yarp::os::Searchable &config)
             yCError(AUDIOPLAYERWRAPPER) << "Failed to open subdevice.. check params";
             return false;
         }
-
-        driverlist.push(&m_driver, "1");
-        if(!attachAll(driverlist))
+        if(!attach(&m_driver))
         {
             yCError(AUDIOPLAYERWRAPPER) << "Failed to open subdevice.. check params";
             return false;
         }
         m_isDeviceOwned = true;
-    }
-
-    if (m_irender == nullptr)
-    {
-        yCError(AUDIOPLAYERWRAPPER, "m_irender is null\n");
-        return false;
-    }
-
-    bool b=m_irender->getPlaybackAudioBufferMaxSize(m_max_buffer_size);
-    if (!b)
-    {
-        yCError(AUDIOPLAYERWRAPPER, "getPlaybackAudioBufferMaxSize failed\n");
-        return false;
-    }
-
-    if (config.check("start"))
-    {
-        m_irender->startPlayback();
-        m_irender->isPlaying(m_isPlaying);
+        if (m_irender == nullptr)
+        {
+            yCError(AUDIOPLAYERWRAPPER, "m_irender is null\n");
+            return false;
+        }
     }
 
     return true;
@@ -285,6 +250,18 @@ void AudioPlayerWrapper::threadRelease()
     m_rpcPort.close();
     m_statusPort.interrupt();
     m_statusPort.close();
+}
+
+void AudioPlayerWrapper::afterStart(bool success)
+{
+    if(success)
+    {
+        if (m_config.check("start"))
+        {
+            m_irender->startPlayback();
+            m_irender->isPlaying(m_isPlaying);
+        }
+    }
 }
 
 void AudioPlayerWrapper::run()
@@ -348,6 +325,9 @@ bool AudioPlayerWrapper::close()
         PeriodicThread::stop();
     }
 
-    detachAll();
+    if(m_config.check("subdevice"))
+    {
+        detach();
+    }
     return true;
 }
