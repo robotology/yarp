@@ -6,10 +6,6 @@ target_sources(harness_dev
   PRIVATE
     MapGrid2DTest.cpp
     PolyDriverTest.cpp
-    fakeFrameGrabberTest.cpp
-    frameGrabberCropperTest.cpp
-    frameGrabber_nws_yarpTest.cpp
-    grabberDualTest.cpp
 )
 
 target_link_libraries(harness_dev

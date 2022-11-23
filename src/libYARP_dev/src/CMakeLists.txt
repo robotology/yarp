@@ -400,6 +400,10 @@ add_library(YARP::YARP_dev_tests ALIAS YARP_dev_tests)
 if(TARGET YARP::YARP_math)
 target_sources(YARP_dev_tests
   PRIVATE
+      yarp/dev/tests/IFrameGrabberImageTest.cpp
+      yarp/dev/tests/IFrameGrabberImageTest.h
+      yarp/dev/tests/IRgbVisualParamsTest.cpp
+      yarp/dev/tests/IRgbVisualParamsTest.h
       yarp/dev/tests/IFrameTransformTest.cpp
       yarp/dev/tests/IFrameTransformTest.h
       yarp/dev/tests/IMap2DTest.cpp
