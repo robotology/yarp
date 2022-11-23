@@ -29,7 +29,7 @@
 #include <yarp/dev/AudioGrabberInterfaces.h>
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/DeviceDriver.h>
-#include <yarp/dev/IMultipleWrapper.h>
+#include <yarp/dev/WrapperSingle.h>
 #include <yarp/dev/api.h>
 
 /**
@@ -52,7 +52,7 @@
 class AudioPlayerWrapper :
         public yarp::os::PeriodicThread,
         public yarp::dev::DeviceDriver,
-        public yarp::dev::IMultipleWrapper,
+        public yarp::dev::WrapperSingle,
         public yarp::os::PortReader
 {
 
@@ -77,13 +77,11 @@ public:
     /**
      * Specify which sensor this thread has to read from.
      */
-    bool attachAll(const yarp::dev::PolyDriverList &p) override;
-    bool detachAll() override;
-
-    void attach(yarp::dev::IAudioRender *irend);
-    void detach();
+    bool attach(yarp::dev::PolyDriver *driver) override;
+    bool detach() override;
 
     bool threadInit() override;
+    void afterStart(bool success) override;
     void threadRelease() override;
     void run() override;
 
@@ -96,6 +94,7 @@ private:
     yarp::os::BufferedPort<yarp::sig::Sound> m_audioInPort;
     std::string  m_statusPortName;
     yarp::os::Port m_statusPort;
+    yarp::os::Property m_config;
 
     yarp::dev::IAudioRender *m_irender = nullptr;
     yarp::os::Stamp m_lastStateStamp;

@@ -39,37 +39,11 @@ AudioRecorderWrapper::~AudioRecorderWrapper()
 
 bool AudioRecorderWrapper::open(yarp::os::Searchable& config)
 {
+    m_config.fromString(config.toString());
+
     if (config.check("period"))
     {
         m_period = config.find("period").asFloat64();
-    }
-
-    if (config.check("subdevice"))
-    {
-        yarp::os::Property       p;
-        PolyDriverList driverlist;
-        p.fromString(config.toString(), false);
-        p.put("device", config.find("subdevice").asString());
-
-        if (!m_driver.open(p) || !m_driver.isValid())
-        {
-            yCError(AUDIORECORDERWRAPPER) << "Failed to open subdevice.. check params";
-            return false;
-        }
-
-        driverlist.push(&m_driver, "1");
-        if (!attachAll(driverlist))
-        {
-            yCError(AUDIORECORDERWRAPPER) << "Failed to open subdevice.. check params";
-            return false;
-        }
-        m_isDeviceOwned = true;
-    }
-
-    if (m_mic == nullptr)
-    {
-        yCError(AUDIORECORDERWRAPPER, "Failed to open IAudioGrabberSound interface");
-        return false;
     }
 
     // Get parameter samples_over_network
@@ -83,7 +57,6 @@ bool AudioRecorderWrapper::open(yarp::os::Searchable& config)
     }
     yCInfo(AUDIORECORDERWRAPPER) << "Wrapper configured to produce packets with the following size (in samples): " <<
                 m_min_number_of_samples_over_network << " < samples < " << m_max_number_of_samples_over_network;
-
 
     // Get parameter samples_over_network
     if (config.check("max_samples_timeout"))
@@ -116,18 +89,25 @@ bool AudioRecorderWrapper::open(yarp::os::Searchable& config)
     }
     m_rpcPort.setReader(*this);
 
-    bool b = m_mic->getRecordingAudioBufferMaxSize(m_max_buffer_size);
-    if (!b)
+    // Subdevice check and initialization
+    if (config.check("subdevice"))
     {
-        yCError(AUDIORECORDERWRAPPER, "getPlaybackAudioBufferMaxSize failed\n");
-        return false;
-    }
+        yarp::os::Property       p;
+        p.fromString(config.toString(), false);
+        p.put("device", config.find("subdevice").asString());
 
-    // Wait a little and then start if requested
-    if (config.check("start")) {
-        yarp::os::SystemClock::delaySystem(1);
-        m_mic->startRecording();
-        m_mic->isRecording(m_isRecording);
+        if (!m_driver.open(p) || !m_driver.isValid())
+        {
+            yCError(AUDIORECORDERWRAPPER) << "Failed to open subdevice.. check params";
+            return false;
+        }
+
+        if (!attach(&m_driver))
+        {
+            yCError(AUDIORECORDERWRAPPER) << "Failed to open subdevice.. check params";
+            return false;
+        }
+        m_isDeviceOwned = true;
     }
 
     return true;
@@ -232,19 +212,11 @@ bool AudioRecorderWrapper::read(yarp::os::ConnectionReader& connection)
     return true;
 }
 
-bool AudioRecorderWrapper::attachAll(const PolyDriverList &device2attach)
+bool AudioRecorderWrapper::attach(PolyDriver* driver)
 {
-    if (device2attach.size() != 1)
+    if (driver->isValid())
     {
-        yCError(AUDIORECORDERWRAPPER, "Cannot attach more than one device");
-        return false;
-    }
-
-    yarp::dev::PolyDriver * Idevice2attach = device2attach[0]->poly;
-
-    if (Idevice2attach->isValid())
-    {
-        Idevice2attach->view(m_mic);
+        driver->view(m_mic);
     }
 
     if (nullptr == m_mic)
@@ -252,17 +224,31 @@ bool AudioRecorderWrapper::attachAll(const PolyDriverList &device2attach)
         yCError(AUDIORECORDERWRAPPER, "Subdevice passed to attach method is invalid");
         return false;
     }
-    attach(m_mic);
+
+    if (!m_mic->getRecordingAudioBufferMaxSize(m_max_buffer_size))
+    {
+        yCError(AUDIORECORDERWRAPPER, "getPlaybackAudioBufferMaxSize failed\n");
+        return false;
+    }
 
     m_dataThread = new AudioRecorderDataThread(this);
     m_statusThread = new AudioRecorderStatusThread(this);
     m_dataThread->setPeriod(m_period);
     m_dataThread->start();
     m_statusThread->start();
+
+    // Wait a little and then start if requested
+    if (m_config.check("start")) {
+        yCDebug(AUDIORECORDERWRAPPER) << "Auto start has been evoked! Brace yourselves!";
+        yarp::os::SystemClock::delaySystem(1);
+        m_mic->startRecording();
+        m_mic->isRecording(m_isRecording);
+    }
+
     return true;
 }
 
-bool AudioRecorderWrapper::detachAll()
+bool AudioRecorderWrapper::detach()
 {
     if (m_dataThread->isRunning())
     {
@@ -274,24 +260,6 @@ bool AudioRecorderWrapper::detachAll()
     }
     m_mic = nullptr;
     return true;
-}
-
-void AudioRecorderWrapper::attach(yarp::dev::IAudioGrabberSound *igrab)
-{
-    m_mic = igrab;
-}
-
-void AudioRecorderWrapper::detach()
-{
-    if (m_dataThread->isRunning())
-    {
-        m_dataThread->stop();
-    }
-    if (m_statusThread->isRunning())
-    {
-        m_statusThread->stop();
-    }
-    m_mic = nullptr;
 }
 
 void AudioRecorderStatusThread::run()
