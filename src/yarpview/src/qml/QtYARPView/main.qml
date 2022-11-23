@@ -76,6 +76,9 @@ ApplicationWindow {
         onSetName:{
             statusBar.setName(name)
         }
+        onSetTitle:{
+            window.title=inputTitle
+        }
         onSaveSetClosed:{
             menu.saveSetChecked(check);
         }

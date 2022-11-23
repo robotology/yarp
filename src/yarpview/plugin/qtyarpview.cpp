@@ -277,6 +277,15 @@ void QtYARPView::setOptions(yarp::os::Searchable& options) {
         qsnprintf(_options.m_portName, 256, "%s", val->asString().c_str());
         qDebug("%s", val->asString().c_str());
     }
+    if (options.check("Title",val)||options.check("title",val)) {
+        qsnprintf(_options.m_title, 256, "%s", val->asString().c_str());
+        qDebug("%s", val->asString().c_str());
+    }
+    else{
+        if(options.check("compact")){
+            qsnprintf(_options.m_title, 256, "%s", _options.m_portName);
+        }
+    }
     if (options.check("NetName",val)||options.check("n",val)) {
         qsnprintf(_options.m_networkName, 256, "%s", val->asString().c_str());
     }
@@ -341,6 +350,11 @@ void QtYARPView::printHelp()
 {
     qDebug("yarpview usage:");
     qDebug("  --name: input port name (default: /yarpview/img:i)");
+    qDebug("  --title: A title for the yarpview window");
+    qDebug("           (default");
+    qDebug("             - compact flag enabled: input port name");
+    qDebug("             - compact flag disabled: \"YARP Qt Image Viewer\"");
+    qDebug("           )");
     qDebug("  --x: x position of the window in the screen");
     qDebug("  --y: y position of the window in the screen");
     qDebug("  --w: width of the window");
@@ -363,6 +377,7 @@ void QtYARPView::setOptionsToDefault()
     // Options defaults
     _options.m_refreshTime = 100;
     qsnprintf(_options.m_portName, 256, "%s","/yarpview/img:i");
+    qsnprintf(_options.m_title, 256, "%s","");
     qsnprintf(_options.m_networkName, 256, "%s", "default");
     qsnprintf(_options.m_outPortName, 256, "%s","/yarpview/o:point");
     qsnprintf(_options.m_outRightPortName, 256, "%s","/yarpview/r:o:point");
@@ -397,6 +412,7 @@ bool QtYARPView::openPorts()
     ptr_inputPort->setReadOnly();
     ret= ptr_inputPort->open(_options.m_portName);
     emit setName(ptr_inputPort->getName().c_str());
+    emit setTitle(_options.m_title);
 
     if (!ret){
         qDebug("Error: port failed to open, quitting.");
