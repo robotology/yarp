@@ -31,7 +31,6 @@ set(_inis
   group_basic.ini
   opencv_grabber_basic.ini
   portaudio_basic.ini
-  remote_grabber_basic.ini
   fakeFrameGrabber_basic.ini
   fakeMotionControl_basic.ini
   usbCamera.ini
