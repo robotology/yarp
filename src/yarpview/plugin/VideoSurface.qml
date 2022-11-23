@@ -31,6 +31,7 @@ Rectangle {
     signal synchRate(bool check);
     signal autosize(bool check);
     signal setName(string name);
+    signal setTitle(string inputTitle);
     signal saveSetClosed(bool check);
     signal saveSingleClosed(bool check);
     signal rightClickEnabled(bool enabled);
@@ -70,7 +71,13 @@ Rectangle {
         }
 
         onSetName:{
-            setName(name)
+            setName(name);
+        }
+
+        onSetTitle:{
+            if(inputTitle.length > 0) {
+                setTitle(inputTitle);
+            }
         }
 
         onWidthChanged:{

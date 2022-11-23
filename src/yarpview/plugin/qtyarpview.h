@@ -28,6 +28,7 @@ struct mOptions
 {
     unsigned int    m_refreshTime;
     char            m_portName[256];
+    char            m_title[256];
     char            m_networkName[256];
     int             m_windWidth;
     int             m_windHeight;
@@ -134,6 +135,7 @@ signals:
     void synchRate(bool check);
     void autosize(bool check);
     void setName(QString name);
+    void setTitle(QString inputTitle);
 private slots:
     void onSendFps(double portAvg, double portMin, double portMax, double dispAvg, double dispMin, double dispMax);
     void onWindowSizeChangeRequested();

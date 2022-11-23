@@ -60,8 +60,8 @@ ApplicationWindow {
                 menu.enableAutosize(check)
             }
         }
-        onSetName:{
-            title = name
+        onSetTitle:{
+            window.title=inputTitle
         }
     }
 }
