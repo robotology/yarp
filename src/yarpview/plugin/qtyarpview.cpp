@@ -350,8 +350,11 @@ void QtYARPView::printHelp()
 {
     qDebug("yarpview usage:");
     qDebug("  --name: input port name (default: /yarpview/img:i)");
-    qDebug("  --title: A title for the yarpview window (default: input port name");
-    qDebug("           if in compact mode, otherwise it will be \"YARP Qt Image Viewer\")");
+    qDebug("  --title: A title for the yarpview window");
+    qDebug("           (default");
+    qDebug("             - compact flag enabled: input port name");
+    qDebug("             - compact flag disabled: \"YARP Qt Image Viewer\"");
+    qDebug("           )");
     qDebug("  --x: x position of the window in the screen");
     qDebug("  --y: y position of the window in the screen");
     qDebug("  --w: width of the window");
