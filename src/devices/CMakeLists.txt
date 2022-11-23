@@ -79,7 +79,6 @@ yarp_begin_plugin_library(yarpmod
   add_subdirectory(fakeLocalizerDevice)
   add_subdirectory(fakeNavigationDevice)
   add_subdirectory(DeviceGroup)
-  add_subdirectory(DevicePipe)
   add_subdirectory(ServerSerial)
   add_subdirectory(RemoteFrameGrabber)
   add_subdirectory(RemoteControlBoard)
