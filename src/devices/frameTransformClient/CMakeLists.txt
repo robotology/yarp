@@ -48,6 +48,8 @@ if(NOT SKIP_frameTransformClient)
     robotinterface_xml/ftc_yarp_only_single_client.xml
     robotinterface_xml/ftc_local_only.xml
   )
+  set_property(TARGET frameTransformRC PROPERTY FOLDER "Plugins/Device/Resources")
+
   target_sources(yarp_frameTransformClient PRIVATE $<TARGET_OBJECTS:frameTransformRC>)
   target_include_directories(yarp_frameTransformClient PRIVATE $<TARGET_PROPERTY:frameTransformRC,INTERFACE_INCLUDE_DIRECTORIES>)
 
@@ -63,4 +65,9 @@ if(NOT SKIP_frameTransformClient)
   set(YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS ${YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS} PARENT_SCOPE)
 
   set_property(TARGET yarp_frameTransformClient PROPERTY FOLDER "Plugins/Device")
+
+  if(YARP_COMPILE_TESTS)
+    add_subdirectory(tests)
+  endif()
+
 endif()

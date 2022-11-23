@@ -5,12 +5,11 @@
 
 #include <yarp/dev/INavigation2D.h>
 #include <yarp/dev/IMap2D.h>
-#include <yarp/dev/Map2DLocation.h>
-#include <yarp/dev/Map2DArea.h>
 #include <yarp/os/Network.h>
 #include <yarp/os/LogStream.h>
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/WrapperSingle.h>
+#include <yarp/dev/tests/INavigation2DTest.h>
 
 #include <catch.hpp>
 #include <harness.h>
@@ -19,8 +18,6 @@ using namespace yarp::dev;
 using namespace yarp::dev::Nav2D;
 using namespace yarp::sig;
 using namespace yarp::os;
-
-#include "INavigation2DTest.h"
 
 TEST_CASE("dev::Navigation2DNwcTest", "[yarp::dev]")
 {
@@ -57,7 +54,7 @@ TEST_CASE("dev::Navigation2DNwcTest", "[yarp::dev]")
             pmapstorage_cfg.put("device", "map2DStorage");
             REQUIRE(ddmapstorage.open(pmapstorage_cfg));
             {yarp::dev::WrapperSingle* ww_nws; ddmapserver.view(ww_nws);
-            bool result_att = ww_nws->attach(&ddmapstorage);}
+            bool result_att = ww_nws->attach(&ddmapstorage); }
 
             Property pmapclient_cfg;
             pmapclient_cfg.put("device", "map2D_nwc_yarp");
@@ -95,8 +92,8 @@ TEST_CASE("dev::Navigation2DNwcTest", "[yarp::dev]")
         }
 
         // Do tests
-        exec_iNav2D_test_1(inav, imap);
-        exec_iNav2D_test_2(inav, imap);
+        yarp::dev::tests::exec_iNav2D_test_1(inav, imap);
+        yarp::dev::tests::exec_iNav2D_test_2(inav, imap);
 
         //"Close all polydrivers and check"
         {

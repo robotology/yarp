@@ -402,8 +402,12 @@ add_library(YARP::YARP_dev_tests ALIAS YARP_dev_tests)
 if(TARGET YARP::YARP_math)
 target_sources(YARP_dev_tests
   PRIVATE
+      yarp/dev/tests/IFrameTransformTest.cpp
+      yarp/dev/tests/IFrameTransformTest.h
       yarp/dev/tests/IMap2DTest.cpp
       yarp/dev/tests/IMap2DTest.h
+      yarp/dev/tests/INavigation2DTest.cpp
+      yarp/dev/tests/INavigation2DTest.h
       yarp/dev/tests/IDummyTest.cpp
       yarp/dev/tests/IDummyTest.h
 )

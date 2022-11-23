@@ -9,6 +9,7 @@ cmrc_add_resource_library(frameTransformServerRC
                           PREFIX config_xml
                           robotinterface_xml/fts_full_ros.xml
                           robotinterface_xml/fts_yarp_only.xml)
+set_property(TARGET frameTransformServerRC PROPERTY FOLDER "Plugins/Device/Resources")
 
 yarp_prepare_plugin(frameTransformServer
   CATEGORY device
@@ -58,4 +59,9 @@ if(NOT SKIP_frameTransformServer)
   set(YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS ${YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS} PARENT_SCOPE)
 
   set_property(TARGET yarp_frameTransformServer PROPERTY FOLDER "Plugins/Device")
+
+  if(YARP_COMPILE_TESTS)
+    add_subdirectory(tests)
+  endif()
+
 endif()
