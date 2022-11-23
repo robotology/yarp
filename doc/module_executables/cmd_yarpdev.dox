@@ -60,7 +60,6 @@ Device "XSensMTx", C++ class XSensMTx, wrapped by "inertial"
 Device "opencv_grabber", C++ class OpenCVGrabber, wrapped by "grabber"
 Device "ffmpeg_grabber", C++ class FfmpegGrabber, wrapped by "grabber"
 Device "fakeFrameGrabber", C++ class FakeFrameGrabber, wrapped by "grabber"
-Device "remote_grabber", C++ class RemoteFrameGrabber, wrapped by "grabber"
 Device "grabber", C++ class ServerFrameGrabber, is a network wrapper.
 Device "inertial", C++ class ServerInertial, is a network wrapper.
 Device "sound_grabber", C++ class ServerSoundGrabber, is a network wrapper.

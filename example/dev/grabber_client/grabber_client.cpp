@@ -37,7 +37,7 @@ int main(int argc, char* argv[])
     Network yarp;
 
     Property config;
-    config.put("device", "remote_grabber"); // device type
+    config.put("device", "frameGrabber_nwc_yarp"); // device type
     config.put("local", "/client");         // name of local port to use
     config.put("remote", "/fakey");         // name of remote port to connect to
 
