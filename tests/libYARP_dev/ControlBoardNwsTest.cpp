@@ -21,7 +21,6 @@ using namespace yarp::dev;
 
 TEST_CASE("dev::controlBoard_nws_yarp", "[yarp::dev]")
 {
-    YARP_REQUIRE_PLUGIN("group", "device");
     YARP_REQUIRE_PLUGIN("fakeMotionControl", "device");
     YARP_REQUIRE_PLUGIN("controlBoard_nws_yarp", "device");
     YARP_REQUIRE_PLUGIN("remote_controlboard", "device");

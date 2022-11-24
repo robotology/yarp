@@ -26,7 +26,6 @@ set(YARP_dev_HDRS
   yarp/dev/ControlBoardPid.h
   yarp/dev/ControlBoardVocabs.h
   yarp/dev/DeviceDriver.h
-  yarp/dev/DriverLinkCreator.h
   yarp/dev/Drivers.h
   yarp/dev/GPUInterface.h
   yarp/dev/GazeControl.h
@@ -159,7 +158,6 @@ set(YARP_dev_SRCS
   yarp/dev/ControlBoardInterfacesImpl.cpp
   yarp/dev/ControlBoardPid.cpp
   yarp/dev/DeviceDriver.cpp
-  yarp/dev/DriverLinkCreator.cpp
   yarp/dev/Drivers.cpp
   yarp/dev/GazeControl.cpp
   yarp/dev/IAnalogSensor.cpp

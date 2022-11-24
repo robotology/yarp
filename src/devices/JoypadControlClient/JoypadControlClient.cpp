@@ -7,7 +7,6 @@
 #include <yarp/os/LogComponent.h>
 #include <yarp/os/LogStream.h>
 #include <tuple>
-#include <yarp/dev/DriverLinkCreator.h>
 
 using namespace yarp::dev;
 using namespace yarp::sig;
