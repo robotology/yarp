@@ -410,12 +410,24 @@ target_sources(YARP_dev_tests
       yarp/dev/tests/IDummyTest.h
       yarp/dev/tests/IRangefinder2DTest.cpp
       yarp/dev/tests/IRangefinder2DTest.h
+      yarp/dev/tests/IPositionControlTest.cpp
+      yarp/dev/tests/IPositionControlTest.h
+      yarp/dev/tests/ITorqueControlTest.cpp
+      yarp/dev/tests/ITorqueControlTest.h
+      yarp/dev/tests/IAxisInfoTest.cpp
+      yarp/dev/tests/IAxisInfoTest.h
 )
 else()
 target_sources(YARP_dev_tests
   PRIVATE
       yarp/dev/tests/IDummyTest.cpp
       yarp/dev/tests/IDummyTest.h
+      yarp/dev/tests/IPositionControlTest.cpp
+      yarp/dev/tests/IPositionControlTest.h
+      yarp/dev/tests/ITorqueControlTest.cpp
+      yarp/dev/tests/ITorqueControlTest.h
+      yarp/dev/tests/IAxisInfoTest.cpp
+      yarp/dev/tests/IAxisInfoTest.h
 )
 endif()
 
