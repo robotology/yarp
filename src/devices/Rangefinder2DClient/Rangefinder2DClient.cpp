@@ -82,7 +82,7 @@ void Rangefinder2DInputPortProcessor::onRead(yarp::dev::LaserScan2D&b)
     Stamp newStamp;
     getEnvelope(newStamp);
 
-    //initialialization (first received data)
+    //initialization (first received data)
     if (lastStamp.isValid()==false)
     {
         lastStamp = newStamp;

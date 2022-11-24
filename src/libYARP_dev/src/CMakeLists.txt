@@ -410,6 +410,8 @@ target_sources(YARP_dev_tests
       yarp/dev/tests/INavigation2DTest.h
       yarp/dev/tests/IDummyTest.cpp
       yarp/dev/tests/IDummyTest.h
+      yarp/dev/tests/IRangefinder2DTest.cpp
+      yarp/dev/tests/IRangefinder2DTest.h
 )
 else()
 target_sources(YARP_dev_tests

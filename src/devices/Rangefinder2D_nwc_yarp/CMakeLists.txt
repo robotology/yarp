@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: 2006-2021 Istituto Italiano di Tecnologia (IIT)
 # SPDX-License-Identifier: BSD-3-Clause
 
-yarp_prepare_plugin(Rangefinder2D_nwc_yarp
+yarp_prepare_plugin(rangefinder2D_nwc_yarp
   CATEGORY device
   TYPE Rangefinder2D_nwc_yarp
   INCLUDE Rangefinder2D_nwc_yarp.h
@@ -9,16 +9,16 @@ yarp_prepare_plugin(Rangefinder2D_nwc_yarp
   DEFAULT ON
 )
 
-if(NOT SKIP_RRangefinder2D_nwc_yarp)
-  yarp_add_plugin(yarp_Rangefinder2D_nwc_yarp)
+if(NOT SKIP_rangefinder2D_nwc_yarp)
+  yarp_add_plugin(yarp_rangefinder2D_nwc_yarp)
 
-  target_sources(yarp_Rangefinder2D_nwc_yarp
+  target_sources(yarp_rangefinder2D_nwc_yarp
     PRIVATE
       Rangefinder2D_nwc_yarp.cpp
       Rangefinder2D_nwc_yarp.h
   )
 
-  target_link_libraries(yarp_Rangefinder2D_nwc_yarp
+  target_link_libraries(yarp_rangefinder2D_nwc_yarp
     PRIVATE
       YARP::YARP_os
       YARP::YARP_sig
@@ -33,7 +33,7 @@ if(NOT SKIP_RRangefinder2D_nwc_yarp)
   )
 
   yarp_install(
-    TARGETS yarp_Rangefinder2D_nwc_yarp
+    TARGETS yarp_rangefinder2D_nwc_yarp
     EXPORT YARP_${YARP_PLUGIN_MASTER}
     COMPONENT ${YARP_PLUGIN_MASTER}
     LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
@@ -43,5 +43,10 @@ if(NOT SKIP_RRangefinder2D_nwc_yarp)
 
   set(YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS ${YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS} PARENT_SCOPE)
 
-  set_property(TARGET yarp_Rangefinder2D_nwc_yarp PROPERTY FOLDER "Plugins/Device/NWC")
+  set_property(TARGET yarp_rangefinder2D_nwc_yarp PROPERTY FOLDER "Plugins/Device/NWC")
+
+  if(YARP_COMPILE_TESTS)
+    add_subdirectory(tests)
+  endif()
+
 endif()

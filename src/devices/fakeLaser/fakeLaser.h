@@ -106,6 +106,7 @@ public:
         m_min_angle = 0;       //degrees
         m_max_angle = 360;     //degrees
         m_resolution = 1.0;    //degrees
+        m_scan_rate = period;  //s
 
         //noise generator
         m_rd  = new std::random_device;
