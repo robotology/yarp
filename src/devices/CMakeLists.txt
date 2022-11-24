@@ -59,6 +59,7 @@ yarp_begin_plugin_library(yarpmod
   add_subdirectory(batteryWrapper)
   add_subdirectory(upowerBattery)
   add_subdirectory(Rangefinder2D_nws_yarp)
+  add_subdirectory(Rangefinder2D_nwc_yarp)
   add_subdirectory(mobileBaseVelocityControl_nwc_yarp)
   add_subdirectory(mobileBaseVelocityControl_nws_yarp)
   add_subdirectory(mobileBaseVelocityControlMsgs)

@@ -1,22 +1,24 @@
 # SPDX-FileCopyrightText: 2006-2021 Istituto Italiano di Tecnologia (IIT)
 # SPDX-License-Identifier: BSD-3-Clause
 
-yarp_prepare_plugin(fakeLaser
+yarp_prepare_plugin(rangefinder2D_nwc_yarp
   CATEGORY device
-  TYPE FakeLaser
-  INCLUDE fakeLaser.h
-  DEPENDS "TARGET YARP::YARP_math")
+  TYPE Rangefinder2D_nwc_yarp
+  INCLUDE Rangefinder2D_nwc_yarp.h
+  DEPENDS "TARGET YARP::YARP_math"
+  DEFAULT ON
+)
 
-if(NOT SKIP_fakeLaser)
-  yarp_add_plugin(yarp_fakeLaser)
+if(NOT SKIP_rangefinder2D_nwc_yarp)
+  yarp_add_plugin(yarp_rangefinder2D_nwc_yarp)
 
-  target_sources(yarp_fakeLaser
+  target_sources(yarp_rangefinder2D_nwc_yarp
     PRIVATE
-      fakeLaser.h
-      fakeLaser.cpp
+      Rangefinder2D_nwc_yarp.cpp
+      Rangefinder2D_nwc_yarp.h
   )
 
-  target_link_libraries(yarp_fakeLaser
+  target_link_libraries(yarp_rangefinder2D_nwc_yarp
     PRIVATE
       YARP::YARP_os
       YARP::YARP_sig
@@ -31,7 +33,7 @@ if(NOT SKIP_fakeLaser)
   )
 
   yarp_install(
-    TARGETS yarp_fakeLaser
+    TARGETS yarp_rangefinder2D_nwc_yarp
     EXPORT YARP_${YARP_PLUGIN_MASTER}
     COMPONENT ${YARP_PLUGIN_MASTER}
     LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
@@ -41,7 +43,7 @@ if(NOT SKIP_fakeLaser)
 
   set(YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS ${YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS} PARENT_SCOPE)
 
-  set_property(TARGET yarp_fakeLaser PROPERTY FOLDER "Plugins/Device/Fake")
+  set_property(TARGET yarp_rangefinder2D_nwc_yarp PROPERTY FOLDER "Plugins/Device/NWC")
 
   if(YARP_COMPILE_TESTS)
     add_subdirectory(tests)
