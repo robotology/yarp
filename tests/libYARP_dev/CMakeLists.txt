@@ -7,7 +7,6 @@ target_sources(harness_dev
     AnalogWrapperTest.cpp
     ControlBoardRemapperTest.cpp
     ControlBoardNwsTest.cpp
-    GroupDriverTest.cpp
     MapGrid2DTest.cpp
     MultipleAnalogSensorsInterfacesTest.cpp
     PolyDriverTest.cpp

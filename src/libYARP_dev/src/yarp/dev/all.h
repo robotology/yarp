@@ -19,7 +19,6 @@
 #include <yarp/dev/IControlLimits.h>
 #include <yarp/dev/ControlBoardPid.h>
 #include <yarp/dev/DeviceDriver.h>
-#include <yarp/dev/DriverLinkCreator.h>
 #include <yarp/dev/Drivers.h>
 #include <yarp/dev/IFrameGrabberImage.h>
 #include <yarp/dev/IFrameGrabberControls.h>
