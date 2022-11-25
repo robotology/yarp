@@ -4,7 +4,6 @@
 add_executable(harness_dev)
 target_sources(harness_dev
   PRIVATE
-    AnalogWrapperTest.cpp
     MapGrid2DTest.cpp
     MultipleAnalogSensorsInterfacesTest.cpp
     PolyDriverTest.cpp
