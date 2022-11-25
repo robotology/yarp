@@ -5,7 +5,6 @@ add_executable(harness_dev)
 target_sources(harness_dev
   PRIVATE
     MapGrid2DTest.cpp
-    MultipleAnalogSensorsInterfacesTest.cpp
     PolyDriverTest.cpp
     robotDescriptionTest.cpp
     fakeFrameGrabberTest.cpp
