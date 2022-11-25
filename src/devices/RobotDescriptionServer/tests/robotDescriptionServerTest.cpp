@@ -19,7 +19,7 @@
 using namespace yarp::os;
 using namespace yarp::dev;
 
-TEST_CASE("dev::robotDescriptionTest", "[yarp::dev]")
+TEST_CASE("dev::robotDescriptionServerTest", "[yarp::dev]")
 {
     YARP_REQUIRE_PLUGIN("robotDescriptionServer", "device");
     YARP_REQUIRE_PLUGIN("robotDescriptionClient", "device");
@@ -27,7 +27,7 @@ TEST_CASE("dev::robotDescriptionTest", "[yarp::dev]")
 
     Network::setLocalMode(true);
 
-    SECTION("Test the RobotDescription client/server")
+    SECTION("Test the RobotDescriptionServer device")
     {
         PolyDriver ddserver;
         Property pserver_cfg;

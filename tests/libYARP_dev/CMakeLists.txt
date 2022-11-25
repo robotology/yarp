@@ -4,18 +4,12 @@
 add_executable(harness_dev)
 target_sources(harness_dev
   PRIVATE
-    AnalogWrapperTest.cpp
-    ControlBoardRemapperTest.cpp
-    ControlBoardNwsTest.cpp
     MapGrid2DTest.cpp
-    MultipleAnalogSensorsInterfacesTest.cpp
     PolyDriverTest.cpp
-    robotDescriptionTest.cpp
     fakeFrameGrabberTest.cpp
     frameGrabberCropperTest.cpp
     frameGrabber_nws_yarpTest.cpp
     grabberDualTest.cpp
-    TorqueControlTest.cpp
 )
 
 target_link_libraries(harness_dev
