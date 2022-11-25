@@ -49,11 +49,11 @@
 *
 * \section Usage examples:
 * yarpdev --device fakeLaser --help
-* yarpdev --device Rangefinder2DWrapper   --subdevice fakeLaser --period 10   --name /ikart/laser:o --test no_obstacles
-* yarpdev --device Rangefinder2DWrapper   --subdevice fakeLaser --period 10   --name /ikart/laser:o --test use_pattern
-* yarpdev --device Rangefinder2DWrapper   --subdevice fakeLaser --period 10   --name /ikart/laser:o --test use_mapfile --map_file mymap.map
-* yarpdev --device Rangefinder2DWrapper   --subdevice fakeLaser --period 10   --name /ikart/laser:o --test use_mapfile --map_file mymap.map --localization_port /fakeLaser/location:i
-* yarpdev --device Rangefinder2DWrapper   --subdevice fakeLaser --period 10   --name /ikart/laser:o --test use_mapfile --map_file mymap.map --localization_client /fakeLaser/localizationClient
+* yarpdev --device rangefinder2D_nws_yarp --subdevice fakeLaser --period 0.01 --name /ikart/laser:o --test no_obstacles
+* yarpdev --device rangefinder2D_nws_yarp --subdevice fakeLaser --period 0.01 --name /ikart/laser:o --test use_pattern
+* yarpdev --device rangefinder2D_nws_yarp --subdevice fakeLaser --period 0.01 --name /ikart/laser:o --test use_mapfile --map_file mymap.map
+* yarpdev --device rangefinder2D_nws_yarp --subdevice fakeLaser --period 0.01 --name /ikart/laser:o --test use_mapfile --map_file mymap.map --localization_port /fakeLaser/location:i
+* yarpdev --device rangefinder2D_nws_yarp --subdevice fakeLaser --period 0.01 --name /ikart/laser:o --test use_mapfile --map_file mymap.map --localization_client /fakeLaser/localizationClient
 * yarpdev --device rangefinder2D_nws_yarp --subdevice fakeLaser --period 0.01 --name /ikart/laser:o --test use_mapfile --map_file mymap.map --localization_client /fakeLaser/localizationClient --localization_device localization2D_nwc_yarp
 */
 
@@ -66,7 +66,6 @@ protected:
     enum test_mode_t { NO_OBSTACLES = 0, USE_PATTERN =1, USE_MAPFILE =2, USE_CONSTANT_VALUE =3 };
     enum localization_mode_t { LOC_NOT_SET=0, LOC_FROM_PORT = 1, LOC_FROM_CLIENT = 2 };
 
-    yarp::dev::PolyDriver driver;
     test_mode_t m_test_mode;
     localization_mode_t m_loc_mode;
 

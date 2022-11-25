@@ -33,7 +33,7 @@ YARP_LOG_COMPONENT(LASER_FROM_POINTCLOUD, "yarp.devices.laserFromPointCloud")
 
 /*
 
-yarpdev --device Rangefinder2DWrapper --subdevice laserFromPointCloud \
+yarpdev --device rangefinder2D_nws_yarp --subdevice laserFromPointCloud \
         --ROS::useROS true --ROS::ROS_nodeName /cer-laserFront \
         --ROS::ROS_topicName /laserDepth --ROS::frame_id /mobile_base_lidar_F \
         --SENSOR \
@@ -50,7 +50,7 @@ yarpdev --device Rangefinder2DWrapper --subdevice laserFromPointCloud \
         --Z_CLIPPING_PLANES::camera_frame_id depth_center \
         --Z_CLIPPING_PLANES::ground_frame_id ground_link \
         --publish_ROS_pointcloud \
-        --period 10 \
+        --period 0.10 \
         --name /outlaser:o
 */
 

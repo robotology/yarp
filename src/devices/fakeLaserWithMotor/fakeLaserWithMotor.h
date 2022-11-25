@@ -52,12 +52,12 @@
 *
 * \section Usage examples:
 * yarpdev --device fakeLaser --help
-* yarpdev --device Rangefinder2DWrapper   --subdevice fakeLaser --period 10   --name /ikart/laser:o --test no_obstacles
-* yarpdev --device Rangefinder2DWrapper   --subdevice fakeLaser --period 10   --name /ikart/laser:o --test use_pattern
-* yarpdev --device Rangefinder2DWrapper   --subdevice fakeLaser --period 10   --name /ikart/laser:o --test use_mapfile --map_file mymap.map
-* yarpdev --device Rangefinder2DWrapper   --subdevice fakeLaser --period 10   --name /ikart/laser:o --test use_mapfile --map_file mymap.map
-* yarpdev --device Rangefinder2DWrapper   --subdevice fakeLaser --period 10   --name /ikart/laser:o --test use_mapfile --map_file mymap.map
-* yarpdev --device rangefinder2D_nws_yarp --subdevice fakeLaser --period 0.01 --name /ikart/laser:o --test use_mapfile --map_file mymap.map
+* yarpdev --device rangefinder2D_nws_yarp --subdevice fakeLaserWithMotor --period 0.01 --name /ikart/laser:o --test no_obstacles
+* yarpdev --device rangefinder2D_nws_yarp --subdevice fakeLaserWithMotor --period 0.01 --name /ikart/laser:o --test use_pattern
+* yarpdev --device rangefinder2D_nws_yarp --subdevice fakeLaserWithMotor --period 0.01 --name /ikart/laser:o --test use_mapfile --map_file mymap.map
+* yarpdev --device rangefinder2D_nws_yarp --subdevice fakeLaserWithMotor --period 0.01 --name /ikart/laser:o --test use_mapfile --map_file mymap.map
+* yarpdev --device rangefinder2D_nws_yarp --subdevice fakeLaserWithMotor --period 0.01 --name /ikart/laser:o --test use_mapfile --map_file mymap.map
+* yarpdev --device rangefinder2D_nws_yarp --subdevice fakeLaserWithMotor --period 0.01 --name /ikart/laser:o --test use_mapfile --map_file mymap.map
 */
 
 class FakeLaserWithMotor : public yarp::os::PeriodicThread,
@@ -81,7 +81,6 @@ class FakeLaserWithMotor : public yarp::os::PeriodicThread,
 protected:
     enum test_mode_t { NO_OBSTACLES = 0, USE_PATTERN =1, USE_MAPFILE =2, USE_CONSTANT_VALUE =3, USE_SQUARE_TRAP };
 
-    yarp::dev::PolyDriver driver;
     test_mode_t m_test_mode;
 
     double m_period;
@@ -120,6 +119,7 @@ public:
         m_min_angle = 0;       //degrees
         m_max_angle = 360;     //degrees
         m_resolution = 1.0;    //degrees
+        m_scan_rate = period;  //s
 
         //noise generator
         m_rd  = new std::random_device;

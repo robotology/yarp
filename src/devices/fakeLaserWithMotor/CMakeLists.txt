@@ -14,6 +14,7 @@ if(NOT SKIP_fakeLaserWithMotor)
     PRIVATE
       fakeLaserWithMotor.h
       fakeLaserWithMotor.cpp
+      fakeLaserWithMotor_laser.cpp
       fakeLaserWithMotor_motors.cpp
       fakeLaserWithMotor_utils.cpp
   )
