@@ -44,15 +44,15 @@ bool FakeLaser::open(yarp::os::Searchable& config)
     {
         yCInfo(FAKE_LASER,"Some examples:");
         yCInfo(FAKE_LASER,"yarpdev --device fakeLaser --help");
-        yCInfo(FAKE_LASER,"yarpdev --device Rangefinder2DWrapper   --subdevice fakeLaser --period 10   --name /fakeLaser:o --test no_obstacles");
-        yCInfo(FAKE_LASER,"yarpdev --device Rangefinder2DWrapper   --subdevice fakeLaser --period 10   --name /fakeLaser:o --test use_pattern");
-        yCInfo(FAKE_LASER,"yarpdev --device Rangefinder2DWrapper   --subdevice fakeLaser --period 10   --name /fakeLaser:o --test use_constant --const_distance 0.5");
-        yCInfo(FAKE_LASER,"yarpdev --device Rangefinder2DWrapper   --subdevice fakeLaser --period 10   --name /fakeLaser:o --test use_constant --const_distance 0.5 --SENSOR::resolution 0.5 --SKIP::min 0 50 --SKIP::max 10 60");
-        yCInfo(FAKE_LASER,"yarpdev --device Rangefinder2DWrapper   --subdevice fakeLaser --period 10   --name /fakeLaser:o --test use_mapfile --map_file mymap.map");
-        yCInfo(FAKE_LASER,"yarpdev --device Rangefinder2DWrapper   --subdevice fakeLaser --period 10   --name /fakeLaser:o --test use_mapfile --map_file mymap.map --localization_port /fakeLaser/location:i");
-        yCInfo(FAKE_LASER,"yarpdev --device Rangefinder2DWrapper   --subdevice fakeLaser --period 10   --name /fakeLaser:o --test use_mapfile --map_file mymap.map --localization_server /localizationServer");
-        yCInfo(FAKE_LASER,"yarpdev --device Rangefinder2DWrapper   --subdevice fakeLaser --period 10   --name /fakeLaser:o --test use_mapfile --map_file mymap.map --localization_client /fakeLaser/localizationClient --localization_server /localizationServer");
-        yCInfo(FAKE_LASER,"yarpdev --device Rangefinder2DWrapper   --subdevice fakeLaser --period 10   --name /fakeLaser:o --test use_mapfile --map_context context --map_file mymap.map");
+        yCInfo(FAKE_LASER,"yarpdev --device rangefinder2D_nws_yarp --subdevice fakeLaser --period 10   --name /fakeLaser:o --test no_obstacles");
+        yCInfo(FAKE_LASER,"yarpdev --device rangefinder2D_nws_yarp --subdevice fakeLaser --period 10   --name /fakeLaser:o --test use_pattern");
+        yCInfo(FAKE_LASER,"yarpdev --device rangefinder2D_nws_yarp --subdevice fakeLaser --period 10   --name /fakeLaser:o --test use_constant --const_distance 0.5");
+        yCInfo(FAKE_LASER,"yarpdev --device rangefinder2D_nws_yarp --subdevice fakeLaser --period 10   --name /fakeLaser:o --test use_constant --const_distance 0.5 --SENSOR::resolution 0.5 --SKIP::min 0 50 --SKIP::max 10 60");
+        yCInfo(FAKE_LASER,"yarpdev --device rangefinder2D_nws_yarp --subdevice fakeLaser --period 10   --name /fakeLaser:o --test use_mapfile --map_file mymap.map");
+        yCInfo(FAKE_LASER,"yarpdev --device rangefinder2D_nws_yarp --subdevice fakeLaser --period 10   --name /fakeLaser:o --test use_mapfile --map_file mymap.map --localization_port /fakeLaser/location:i");
+        yCInfo(FAKE_LASER,"yarpdev --device rangefinder2D_nws_yarp --subdevice fakeLaser --period 10   --name /fakeLaser:o --test use_mapfile --map_file mymap.map --localization_server /localizationServer");
+        yCInfo(FAKE_LASER,"yarpdev --device rangefinder2D_nws_yarp --subdevice fakeLaser --period 10   --name /fakeLaser:o --test use_mapfile --map_file mymap.map --localization_client /fakeLaser/localizationClient --localization_server /localizationServer");
+        yCInfo(FAKE_LASER,"yarpdev --device rangefinder2D_nws_yarp --subdevice fakeLaser --period 10   --name /fakeLaser:o --test use_mapfile --map_context context --map_file mymap.map");
         yCInfo(FAKE_LASER,"yarpdev --device rangefinder2D_nws_yarp --subdevice fakeLaser --period 0.01 --name /fakeLaser:o --test use_mapfile --map_file mymap.map --localization_client /fakeLaser/localizationClient --localization_server /localization2D_nws_yarp --localization_device localization2D_nwc_yarp");
         return false;
     }
@@ -195,8 +195,6 @@ bool FakeLaser::open(yarp::os::Searchable& config)
 bool FakeLaser::close()
 {
     PeriodicThread::stop();
-
-    driver.close();
 
     if (m_loc_port)
     {

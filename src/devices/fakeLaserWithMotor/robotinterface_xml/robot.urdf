@@ -1,0 +1,36 @@
+<robot name="test_robot">
+
+  <link name="base_root"/>
+  <link name="x_link"/>
+  <link name="y_link"/>
+  <link name="t_link"/>
+  <link name="lidar_link"/>
+
+  <joint name="joint_x" type="prismatic">
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <parent link="base_root"/>
+    <child link="x_link"/>
+    <limit effort="1000" velocity="1000.0" lower="-10" upper="10" />
+  </joint>
+
+  <joint name="joint_y" type="prismatic">
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <parent link="x_link"/>
+    <child link="y_link"/>
+    <limit effort="1000" velocity="1000.0" lower="-10" upper="10" />
+  </joint>
+
+  <joint name="joint_t" type="revolute">
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <axis xyz="0 0 1"/>
+    <parent link="y_link"/>
+    <child link="t_link"/>
+    <limit effort="1000" velocity="1000.0" lower="-10000" upper="10000" />
+  </joint>
+
+ <joint name="dummy" type="fixed">
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <parent link="t_link"/>
+    <child link="lidar_link"/>
+  </joint>
+</robot>

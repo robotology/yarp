@@ -17,6 +17,8 @@ namespace yarp::dev::tests
 {
     inline void exec_iRangefinder2D_test_1(IRangefinder2D* irf)
     {
+        REQUIRE(irf != nullptr);
+
         bool b;
 
         std::string info;

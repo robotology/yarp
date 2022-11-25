@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!--
+  SPDX-FileCopyrightText: 2006-2021 Istituto Italiano di Tecnologia (IIT)
+  SPDX-License-Identifier: BSD-3-Clause
+-->
+
+<!DOCTYPE robot PUBLIC "-//YARP//DTD yarprobotinterface 3.0//EN" "http://www.yarp.it/DTD/yarprobotinterfaceV3.0.dtd">
+
+<robot name="test" build="2" portprefix="test" xmlns:xi="http://www.w3.org/2001/XInclude">
+    <devices>
+        <device name="lidar_nws_yarp" type="rangefinder2D_nws_yarp">
+            <param name="portName">    /lidar   </param>
+            <param name="name">    /lidar2   </param>
+            <param name="period">    0.01   </param>
+            <action phase="startup" level="5" type="attach">
+                <paramlist name="networks">
+                    <elem name="subdevice"> lidarmotor </elem>
+                </paramlist>
+            </action>
+            <action phase="shutdown" level="5" type="detach" />
+        </device>
+
+        <device name="cb_nws_yarp" type="controlBoard_nws_yarp">
+            <param name="name">    /robot/motor  </param>
+            <param name="period">    0.01   </param>
+            <action phase="startup" level="5" type="attach">
+                <paramlist name="networks">
+                    <elem name="subdevice"> lidarmotor </elem>
+                </paramlist>
+            </action>
+            <action phase="shutdown" level="5" type="detach" />
+        </device>
+
+   <!--     <device name="lidar_nws_yarp" type="rangefinder2D_nws_ros2">
+            <param name="node_name">    ldnode </param>
+            <param name="topic_name">    /robot_lidar  </param>
+            <param name="frame_id">    lidar_link  </param>
+            <param name="period">    0.01   </param>
+            <action phase="startup" level="5" type="attach">
+                <paramlist name="networks">
+                    <elem name="subdevice"> lidarmotor </elem>
+                </paramlist>
+            </action>
+            <action phase="shutdown" level="5" type="detach" />
+        </device>
+
+        <device name="cb_nws_yarp" type="controlBoard_nws_ros2">
+            <param name="node_name">    rmnode  </param>
+            <param name="topic_name">    /joint_states  </param>
+            <param name="period">    0.01   </param>
+            <action phase="startup" level="5" type="attach">
+                <paramlist name="networks">
+                    <elem name="subdevice"> lidarmotor </elem>
+                </paramlist>
+            </action>
+            <action phase="shutdown" level="5" type="detach" />
+        </device>
+-->
+        <device name="cb_nws_yarp" type="rangefinder2D_controlBoard_nws_ros2">
+            <param name="node_name">    rmnode  </param>
+            <param name="topic_name_lidar">    /robot_lidar  </param>
+            <param name="topic_name_joint">    /joint_states  </param>
+            <param name="frame_id">    lidar_link  </param>
+            <param name="period">    0.01   </param>
+            <action phase="startup" level="5" type="attach">
+                <paramlist name="networks">
+                    <elem name="subdevice"> lidarmotor </elem>
+                </paramlist>
+            </action>
+            <action phase="shutdown" level="5" type="detach" />
+        </device>
+
+        <device name="lidarmotor" type="fakeLaserWithMotor">
+            <param name="test">            use_square_trap     </param>
+        </device>
+    </devices>
+</robot>
