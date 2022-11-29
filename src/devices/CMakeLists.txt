@@ -14,7 +14,7 @@ yarp_begin_plugin_library(yarpmod
   add_subdirectory(audioRecorderWrapper)
   add_subdirectory(audioFromFileDevice)
   add_subdirectory(audioToFileDevice)
-  add_subdirectory(depthCamera)
+  add_subdirectory(openNI2DepthCamera)
   add_subdirectory(fakeDepthCamera)
   add_subdirectory(fakebot)
   add_subdirectory(fakeMotionControl)
