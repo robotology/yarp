@@ -422,6 +422,8 @@ target_sources(YARP_dev_tests
       yarp/dev/tests/IAxisInfoTest.h
       yarp/dev/tests/IOrientationSensorsTest.cpp
       yarp/dev/tests/IOrientationSensorsTest.h
+      yarp/dev/tests/IRGBDSensorTest.cpp
+      yarp/dev/tests/IRGBDSensorTest.h
 )
 else()
 target_sources(YARP_dev_tests
@@ -434,6 +436,8 @@ target_sources(YARP_dev_tests
       yarp/dev/tests/ITorqueControlTest.h
       yarp/dev/tests/IAxisInfoTest.cpp
       yarp/dev/tests/IAxisInfoTest.h
+      yarp/dev/tests/IRGBDSensorTest.cpp
+      yarp/dev/tests/IRGBDSensorTest.h
 )
 endif()
 
