@@ -14,6 +14,7 @@
 #include <yarp/sig/Vector.h>
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/os/Time.h>
+#include <yarp/dev/WrapperSingle.h>
 
 #include <string>
 
@@ -28,87 +29,34 @@ using namespace yarp::sig;
 TEST_CASE("dev::frameGrabber_nws_yarpTest", "[yarp::dev]")
 {
     YARP_REQUIRE_PLUGIN("fakeFrameGrabber", "device");
-    YARP_REQUIRE_PLUGIN("frameGrabber_nwc_yarp", "device");
     YARP_REQUIRE_PLUGIN("frameGrabber_nws_yarp", "device");
 
     Network::setLocalMode(true);
 
-    SECTION("Test the grabber wrapper")
+    SECTION("Test the frameGrabber_nws_yarp device")
     {
-        PolyDriver dd;
-        PolyDriver dd2;
-        Property p;
-        Property p2;
-        p.put("device","frameGrabber_nwc_yarp");
-        p.put("remote","/grabber");
-        p.put("local","/grabber/client");
+        PolyDriver dd_fake;
+        PolyDriver dd_nws;
+        Property p_fake;
+        Property p_nws;
 
-        p2.put("device","frameGrabber_nws_yarp");
-        p2.put("subdevice","fakeFrameGrabber");
+        p_nws.put("device", "frameGrabber_nws_yarp");
 
-        REQUIRE(dd2.open(p2)); // server open reported successful
-        REQUIRE(dd.open(p)); // client open reported successful
+        p_fake.put("device", "fakeFrameGrabber");
 
-        IFrameGrabberImage *grabber = nullptr;
-        REQUIRE(dd.view(grabber)); // interface reported
+        REQUIRE(dd_fake.open(p_fake));
+        REQUIRE(dd_nws.open(p_nws));
+        yarp::os::SystemClock::delaySystem(0.5);
+
+        {yarp::dev::WrapperSingle* ww_nws; dd_nws.view(ww_nws);
+        REQUIRE(ww_nws);
+        bool result_att = ww_nws->attach(&dd_fake);
+        REQUIRE(result_att); }
 
         yarp::os::SystemClock::delaySystem(0.5);
 
-        ImageOf<PixelRgb> img;
-        grabber->getImage(img);
-        CHECK(img.width() > 0); // interface seems functional
-        CHECK(dd2.close()); // server close reported successful
-        CHECK(dd.close()); // client close reported successful
-    }
-
-    SECTION("Test the IRgbVisualParams interface")
-    {
-        // Try to open a FakeFrameGrabber and I check all the parameters
-        PolyDriver dd;
-        PolyDriver dd2;
-        Property p;
-        Property p2;
-        Property intrinsics;
-        Bottle* retM = nullptr;
-
-        p.put("device","frameGrabber_nwc_yarp");
-        p.put("remote","/grabber");
-        p.put("local","/grabber/client");
-        p.put("no_stream", 1);
-
-        p2.put("device","frameGrabber_nws_yarp");
-        p2.put("subdevice","fakeFrameGrabber");
-
-        REQUIRE(dd2.open(p2)); // server open reported successful
-        REQUIRE(dd.open(p)); // client open reported successful
-
-        IFrameGrabberImage* igrabber = nullptr;
-        IRgbVisualParams* irgbParams = nullptr;
-        REQUIRE(dd.view(igrabber)); // interface rgb params reported
-        REQUIRE(dd.view(irgbParams)); // interface rgb params reported
-
-        yarp::dev::tests::exec_IFrameGrabberImage_test_1(igrabber);
-        yarp::dev::tests::exec_IRgbVisualParams_test_1(irgbParams);
-
-        // Test the crop function - must work.
-        IFrameGrabberImage *grabber = nullptr;
-        REQUIRE(dd.view(grabber));
-        ImageOf<PixelRgb> img;
-        ImageOf<PixelRgb> crop;
-        grabber->getImage(img);
-
-        yarp::sig::VectorOf<std::pair< int, int>> vertices;
-        vertices.resize(2);
-        vertices[0] = std::pair <int, int> (0, 0);
-        vertices[1] = std::pair <int, int> (10, 10); // Configure a doable crop.
-
-        // check crop function
-        CHECK(grabber->getImageCrop(YARP_CROP_RECT, vertices, crop));
-        CHECK(crop.width() > 0);
-        CHECK(crop.height() > 0);
-
-        CHECK(dd2.close()); // server close reported successful
-        CHECK(dd.close()); // client close reported successful
+        CHECK(dd_nws.close());
+        CHECK(dd_fake.close());
     }
 
     Network::setLocalMode(false);

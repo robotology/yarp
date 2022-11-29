@@ -20,14 +20,14 @@ endfunction()
 
 find_package(YARP::YARP_dev_tests)
 
-add_executable(harness_dev_grabberDual)
+add_executable(harness_dev_frameGrabber_nwc_yarp)
 
-target_sources(harness_dev_grabberDual
+target_sources(harness_dev_frameGrabber_nwc_yarp
   PRIVATE
-    grabberDualTest.cpp
+    frameGrabber_nwc_yarpTest.cpp
 )
 
-target_link_libraries(harness_dev_grabberDual
+target_link_libraries(harness_dev_frameGrabber_nwc_yarp
   PRIVATE
     YARP_harness
     YARP::YARP_os
@@ -36,6 +36,6 @@ target_link_libraries(harness_dev_grabberDual
     YARP::YARP_dev_tests
 )
 
-set_property(TARGET harness_dev_grabberDual PROPERTY FOLDER "Test")
+set_property(TARGET harness_dev_frameGrabber_nwc_yarp PROPERTY FOLDER "Test")
 
-yarp_catch_discover_tests(harness_dev_grabberDual)
+yarp_catch_discover_tests(harness_dev_frameGrabber_nwc_yarp)
