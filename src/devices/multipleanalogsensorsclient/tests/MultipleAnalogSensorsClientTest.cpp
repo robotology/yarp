@@ -22,7 +22,7 @@ using namespace yarp::os;
 using namespace yarp::dev;
 
 
-TEST_CASE("dev::MultipleAnalogSensorsInterfacesTest", "[yarp::dev]")
+TEST_CASE("dev::MultipleAnalogSensorsClientTest", "[yarp::dev]")
 {
     YARP_REQUIRE_PLUGIN("fakeIMU", "device");
     YARP_REQUIRE_PLUGIN("multipleanalogsensorsserver", "device");
@@ -87,9 +87,19 @@ TEST_CASE("dev::MultipleAnalogSensorsInterfacesTest", "[yarp::dev]")
 
         // Close devices
         client.close();
+        INFO("multipleanalogsensorsclient closed");
+        yarp::os::Time::delay(0.1);
+
         iwrap->detachAll();
         wrapper.close();
+        INFO("multipleanalogsensorsserver closed");
+        yarp::os::Time::delay(0.1);
+
         imuSensor.close();
+        INFO("fakeIMU closed");
+        yarp::os::Time::delay(0.1);
+
+        INFO("Test complete");
     }
 
     Network::setLocalMode(false);

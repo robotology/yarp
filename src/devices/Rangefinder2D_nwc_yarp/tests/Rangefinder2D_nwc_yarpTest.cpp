@@ -52,6 +52,9 @@ TEST_CASE("dev::rangefinder2D_nwc_yarp", "[yarp::dev]")
         bool result_att = ww_nws->attach(&ddlas);
         REQUIRE(result_att); }
 
+        //wait some time
+        yarp::os::Time::delay(0.1);
+
         //create the client
         {
             Property pnwc_cfg;
@@ -68,9 +71,17 @@ TEST_CASE("dev::rangefinder2D_nwc_yarp", "[yarp::dev]")
         //Close all polydrivers and check
         CHECK(ddnwc.close());
         yarp::os::Time::delay(0.1);
+        INFO("rangefinder2D_nwc_yarp closed");
+
         CHECK(ddnws.close());
         yarp::os::Time::delay(0.1);
+        INFO("rangefinder2D_nws_yarp closed");
+
         CHECK(ddlas.close());
+        yarp::os::Time::delay(0.1);
+        INFO("fakeLaser closed");
+
+        INFO("Test complete");
     }
 
     Network::setLocalMode(false);

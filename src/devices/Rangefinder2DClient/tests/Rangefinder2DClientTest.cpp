@@ -68,9 +68,17 @@ TEST_CASE("dev::Rangefinder2DClientTest", "[yarp::dev]")
         //Close all polydrivers and check
         CHECK(ddnwc.close());
         yarp::os::Time::delay(0.1);
+        INFO("Rangefinder2DClient closed");
+
         CHECK(ddnws.close());
         yarp::os::Time::delay(0.1);
+        INFO("rangefinder2D_nws_yarp closed");
+
         CHECK(ddlas.close());
+        yarp::os::Time::delay(0.1);
+        INFO("fakeLaser closed");
+
+        INFO("Test complete");
     }
 
     Network::setLocalMode(false);
