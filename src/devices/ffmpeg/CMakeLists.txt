@@ -7,7 +7,7 @@ yarp_prepare_plugin(ffmpeg_grabber
   TYPE FfmpegGrabber
   INCLUDE FfmpegGrabber.h
   EXTRA_CONFIG
-    WRAPPER=grabberDual
+    WRAPPER=frameGrabber_nws_yarp
   DEPENDS "YARP_HAS_FFMPEG;FFMPEG_avcodec_FOUND;FFMPEG_avformat_FOUND;FFMPEG_avdevice_FOUND;FFMPEG_avutil_FOUND;FFMPEG_swscale_FOUND"
 )
 

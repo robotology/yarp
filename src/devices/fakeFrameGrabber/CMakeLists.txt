@@ -6,18 +6,9 @@ yarp_prepare_plugin(fakeFrameGrabber
   TYPE FakeFrameGrabber
   INCLUDE FakeFrameGrabber.h
   EXTRA_CONFIG
-    WRAPPER=grabberDual
+    WRAPPER=frameGrabber_nws_yarp
   DEFAULT ON
 )
-
-yarp_prepare_plugin(test_grabber
-  CATEGORY device
-  TYPE TestFrameGrabber
-  INCLUDE FakeFrameGrabber.h
-  EXTRA_CONFIG
-    WRAPPER=grabberDual
-  DEFAULT OFF
-  DEPENDS "NOT YARP_NO_DEPRECATED") # DEPRECATED Since YARP 3.5
 
 if(ENABLE_fakeFrameGrabber)
   yarp_add_plugin(yarp_fakeFrameGrabber)
@@ -52,4 +43,9 @@ if(ENABLE_fakeFrameGrabber)
   set(YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS ${YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS} PARENT_SCOPE)
 
   set_property(TARGET yarp_fakeFrameGrabber PROPERTY FOLDER "Plugins/Device/Fake")
+
+  if(YARP_COMPILE_TESTS)
+    add_subdirectory(tests)
+  endif()
+
 endif()

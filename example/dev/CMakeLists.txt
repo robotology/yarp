@@ -8,10 +8,7 @@
 foreach(example_name
   attachable
   audio_test
-  double_server
-  fake_grabber
   fake_motor
-  file_grabber
   grabber_client
   grabber_crop
   motorcontrol

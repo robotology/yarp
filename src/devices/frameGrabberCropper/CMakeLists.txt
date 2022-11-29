@@ -6,7 +6,7 @@ yarp_prepare_plugin(frameGrabberCropper
   TYPE FrameGrabberCropper
   INCLUDE frameGrabberCropper.h
   EXTRA_CONFIG
-    WRAPPER=grabberDual
+    WRAPPER=frameGrabber_nws_yarp
   DEFAULT ON
 )
 
@@ -43,4 +43,9 @@ if(NOT SKIP_frameGrabberCropper)
   set(YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS ${YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS} PARENT_SCOPE)
 
   set_property(TARGET yarp_frameGrabberCropper PROPERTY FOLDER "Plugins/Device")
+
+  if(YARP_COMPILE_TESTS)
+    add_subdirectory(tests)
+  endif()
+
 endif()

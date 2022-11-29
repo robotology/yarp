@@ -7,7 +7,7 @@ yarp_prepare_plugin(opencv_grabber
   TYPE OpenCVGrabber
   INCLUDE OpenCVGrabber.h
   EXTRA_CONFIG
-    WRAPPER=grabberDual
+    WRAPPER=frameGrabber_nws_yarp
   DEPENDS "YARP_HAS_OpenCV"
 )
 

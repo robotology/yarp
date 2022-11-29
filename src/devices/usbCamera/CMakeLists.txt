@@ -6,7 +6,7 @@ yarp_prepare_plugin(usbCamera
   TYPE USBCameraDriverRgb
   INCLUDE common/USBcamera.h
   EXTRA_CONFIG
-    WRAPPER=grabberDual
+    WRAPPER=frameGrabber_nws_yarp
   DEPENDS "UNIX;NOT APPLE;YARP_HAS_Libv4l2;YARP_HAS_Libv4lconvert;YARP_HAS_OpenCV"
 )
 
@@ -15,7 +15,7 @@ yarp_prepare_plugin(usbCameraRaw
   TYPE USBCameraDriverRaw
   INCLUDE common/USBcamera.h
   EXTRA_CONFIG
-    WRAPPER=grabberDual
+    WRAPPER=frameGrabber_nws_yarp
   DEPENDS "UNIX;NOT APPLE;YARP_HAS_Libv4l2;YARP_HAS_Libv4lconvert;YARP_HAS_OpenCV"
 )
 

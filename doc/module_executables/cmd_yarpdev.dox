@@ -106,7 +106,7 @@ $ yarpdev --device fakeFrameGrabber --period 0.5 --width 640 --height 480
 \endverbatim
 was automatically expanded to:
 \verbatim
-$ yarpdev --device grabberDual --subdevice fakeFrameGrabber --period 0.5 --width 640 --height 480
+$ yarpdev --device frameGrabber_nws_yarp --subdevice fakeFrameGrabber --period 0.5 --width 640 --height 480
 \endverbatim
 
 \section yarpdev_verbose yarpdev --verbose --device DEVICENAME  ...

@@ -49,6 +49,7 @@ TEST_CASE("dev::frameGrabberCropperTest", "[yarp::dev]")
         // Attach frameGrabberCropper left
         yarp::dev::IWrapper* wl = nullptr;
         REQUIRE(ddl.view(wl));
+        REQUIRE(wl);
         REQUIRE(wl->attach(&dd));
 
         // Check IFrameGrabberImage on frameGrabberCropper left
@@ -74,6 +75,7 @@ TEST_CASE("dev::frameGrabberCropperTest", "[yarp::dev]")
         // Attach frameGrabberCropper right
         yarp::dev::IWrapper* wr = nullptr;
         REQUIRE(ddr.view(wr));
+        REQUIRE(wr);
         REQUIRE(wr->attach(&dd));
 
         // Check IFrameGrabberImage on frameGrabberCropper right
