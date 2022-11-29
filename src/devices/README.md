@@ -47,9 +47,10 @@ The tables shown hereunder report all the information needed to understand the f
   * ![#ffff00](https://via.placeholder.com/15/ffff00/000000?text=+) controlboardremapper
   * ![#ffff00](https://via.placeholder.com/15/ffff00/000000?text=+) remotecontrolboardremapper
 
-* ControlBoardWrapper
-  * ![#cc6600](https://via.placeholder.com/15/cc6600/000000?text=+) *controlboardwrapper2*
+* controlBoard_nws_yarp
   * ![#00ffff](https://via.placeholder.com/15/00ffff/000000?text=+) controlBoard_nws_yarp
+
+* controlBoard_nws_ros
   * ![#00ffff](https://via.placeholder.com/15/00ffff/000000?text=+) controlBoard_nws_ros
 
 * DeviceGroup
@@ -74,8 +75,10 @@ The tables shown hereunder report all the information needed to understand the f
 * RGBDSensorClient
   * ![#00ff00](https://via.placeholder.com/15/00ff00/000000?text=+) **RGBDSensorClient**
 
-* RGBDSensorWrapper
+* rgbdSensor_nws_ros
   * ![#00ffff](https://via.placeholder.com/15/00ffff/000000?text=+) rgbdSensor_nws_ros
+
+* rgbdSensor_nws_yarp
   * ![#00ffff](https://via.placeholder.com/15/00ffff/000000?text=+) rgbdSensor_nws_yarp
 
 * Rangefinder2DClient
@@ -90,8 +93,14 @@ The tables shown hereunder report all the information needed to understand the f
 * RemoteControlBoard
   * ![#00ff00](https://via.placeholder.com/15/00ff00/000000?text=+) **remote_controlboard**
 
-* RemoteFrameGrabber
+* frameGrabber_nwc_yarp
   * ![#00ffff](https://via.placeholder.com/15/00ffff/000000?text=+) frameGrabber_nwc_yarp
+
+* frameGrabber_nws_yarp
+  * ![#00ffff](https://via.placeholder.com/15/00ffff/000000?text=+) frameGrabber_nws_yarp
+
+* frameGrabber_nws_ros
+  * ![#00ffff](https://via.placeholder.com/15/00ffff/000000?text=+) frameGrabber_nws_ros
 
 * RobotDescriptionClient
   * ![#00ff00](https://via.placeholder.com/15/00ff00/000000?text=+) **robotDescriptionClient**
@@ -107,11 +116,6 @@ The tables shown hereunder report all the information needed to understand the f
 
 * ServerFrameGrabber
   * ![#882200](https://via.placeholder.com/15/882200/000000?text=+) ~~grabber~~
-
-* ServerFrameGrabberDual
-  * ![#cc6600](https://via.placeholder.com/15/cc6600/000000?text=+) *grabberDual*
-  * ![#00ffff](https://via.placeholder.com/15/00ffff/000000?text=+) frameGrabber_nws_yarp
-  * ![#00ffff](https://via.placeholder.com/15/00ffff/000000?text=+) frameGrabber_nws_ros
 
 * ServerSerial
   * ![#ffff00](https://via.placeholder.com/15/ffff00/000000?text=+) serial
@@ -155,7 +159,6 @@ The tables shown hereunder report all the information needed to understand the f
 
 * fakeFrameGrabber
   * ![#ffff00](https://via.placeholder.com/15/ffff00/000000?text=+) fakeFrameGrabber
-  * ![#cc6600](https://via.placeholder.com/15/cc6600/000000?text=+) *test_grabber*
 
 * fakeIMU
   * ![#ffff00](https://via.placeholder.com/15/ffff00/000000?text=+) fakeIMU
@@ -238,15 +241,19 @@ The tables shown hereunder report all the information needed to understand the f
 * localization2DClient
   * ![#00ff00](https://via.placeholder.com/15/00ff00/000000?text=+) localization2D_nwc_yarp
 
-* localization2DServer
+* localization2D_nws_yarp
   * ![#00ffff](https://via.placeholder.com/15/00ffff/000000?text=+) localization2D_nws_yarp
+
+* localization2D_nws_ros
   * ![#00ffff](https://via.placeholder.com/15/00ffff/000000?text=+) localization2D_nws_ros
 
 * map2DClient
   * ![#00ff00](https://via.placeholder.com/15/00ff00/000000?text=+) map2D_nwc_yarp
 
-* map2DServer
+* map2D_nws_yarp
   * ![#00ffff](https://via.placeholder.com/15/00ffff/000000?text=+) map2D_nws_yarp
+
+* map2D_nws_ros
   * ![#00ffff](https://via.placeholder.com/15/00ffff/000000?text=+) map2D_nws_ros
 
 * map2DStorage

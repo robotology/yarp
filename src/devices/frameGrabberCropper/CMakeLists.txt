@@ -6,7 +6,7 @@ yarp_prepare_plugin(frameGrabberCropper
   TYPE FrameGrabberCropper
   INCLUDE frameGrabberCropper.h
   EXTRA_CONFIG
-    WRAPPER=grabberDual
+    WRAPPER=frameGrabber_nws_yarp
   DEFAULT ON
 )
 

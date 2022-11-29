@@ -22,7 +22,7 @@
         <param name="mode" extern-name="mode">grid</param>
     </device>
 
-    <device name="wrapper_left" type="grabberDual"> <!-- frameGrabber_nws_yarp -->
+    <device name="wrapper_left" type="frameGrabber_nws_yarp">
         <param name="name">/left</param>
         <param name="period">33</param>
         <action phase="startup" level="5" type="attach">
@@ -31,7 +31,7 @@
         <action phase="shutdown" level="5" type="detach" />
     </device>
 
-    <device name="wrapper_right" type="grabberDual">--> <!-- frameGrabber_nws_yarp -->
+    <device name="wrapper_right" type="frameGrabber_nws_yarp">
         <param name="name">/right</param>
         <param name="period">33</param>
         <action phase="startup" level="10" type="attach">
