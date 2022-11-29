@@ -35,6 +35,8 @@ YARP_LOG_COMPONENT(FAKEMOTIONCONTROL, "yarp.device.fakeMotionControl")
 
 void FakeMotionControl::run()
 {
+    std::lock_guard lock(_mutex);
+
     for (int i=0;i <_njoints ;i++)
     {
         if (_controlModes[i] == VOCAB_CM_VELOCITY)
@@ -1476,6 +1478,10 @@ bool FakeMotionControl::fromConfig(yarp::os::Searchable &config)
 
 bool FakeMotionControl::close()
 {
+    std::lock_guard lock(_mutex);
+
+    this->yarp::os::PeriodicThread::stop();
+
     yCTrace(FAKEMOTIONCONTROL) << " close()";
 
     ImplementControlMode::uninitialize();
