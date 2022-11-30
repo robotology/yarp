@@ -21,6 +21,16 @@ namespace yarp::dev::tests
 
         bool b;
 
+        yarp::dev::IRangefinder2D::Device_status status;
+        for (size_t counter = 0; counter<10; counter++)
+        {
+            b = irf->getDeviceStatus(status);
+            CHECK(b);
+            if (status == yarp::dev::IRangefinder2D::Device_status::DEVICE_OK_IN_USE) break;
+            yarp::os::Time::delay(0.5);
+        }
+        CHECK(status == yarp::dev::IRangefinder2D::Device_status::DEVICE_OK_IN_USE);
+
         std::string info;
         b = irf->getDeviceInfo(info);
         CHECK(b);
@@ -30,11 +40,6 @@ namespace yarp::dev::tests
         b = irf->getScanRate(scanrate);
         CHECK(b);
         CHECK(scanrate==0.02);
-
-        yarp::dev::IRangefinder2D::Device_status status;
-        b = irf->getDeviceStatus(status);
-        CHECK(b);
-        CHECK(status== yarp::dev::IRangefinder2D::Device_status::DEVICE_OK_IN_USE);
 
         double hstep;
         b = irf->getHorizontalResolution(hstep);
@@ -53,14 +58,23 @@ namespace yarp::dev::tests
         CHECK(b);
         CHECK(timestamp != 0);
         CHECK(las.size() == 360);
-        {double r,t;
-        las[0].get_polar(r, t);
-        CHECK(r == 0.5);
-        CHECK(t == 0);}
-        {double x,y;
-        las[0].get_cartesian(x, y);
-        CHECK(x == 0.5);
-        CHECK(y == 0);}
+
+        //check the measurement values.
+        //REQUIRE is needed to prevent segfault if nothing is received.
+        {
+            REQUIRE(las.size() > 0);
+            double r,t;
+            las[0].get_polar(r, t);
+            CHECK(r == 0.5);
+            CHECK(t == 0);
+        }
+        {
+            REQUIRE(las.size() > 0);
+            double x,y;
+            las[0].get_cartesian(x, y);
+            CHECK(x == 0.5);
+            CHECK(y == 0);
+        }
 
     }
 }

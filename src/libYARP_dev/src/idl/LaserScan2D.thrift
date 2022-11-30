@@ -29,7 +29,8 @@ struct LaserScan2D
     /** the scan data, measured in [m]. The angular increment of each ray is obtained by (angle_max-angle_min)/num_of_elements. Invalid data are represented as std::inf.  */
     5: YarpVector   scans;
 
-    6: i32          status;
+    /** the status of the device. See yarp::dev::IRangefinder2D::Device_status. The default value is DEVICE_TIMEOUT. */
+    6: i32          status=3;
 }
 (
     yarp.api.include = "yarp/dev/api.h"
