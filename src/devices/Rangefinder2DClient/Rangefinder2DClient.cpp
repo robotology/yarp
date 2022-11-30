@@ -277,6 +277,7 @@ bool Rangefinder2DClient::open(yarp::os::Searchable &config)
 
 bool Rangefinder2DClient::close()
 {
+    inputPort.disableCallback();
     rpcPort.close();
     inputPort.close();
     return true;
