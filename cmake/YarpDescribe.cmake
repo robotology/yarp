@@ -14,6 +14,7 @@ set(YARP_DEFAULT_FIND_COMPONENTS
   os
   sig
   dev
+  dev_tests
 )
 if(TARGET YARP::YARP_math)
   list(APPEND YARP_DEFAULT_FIND_COMPONENTS math)

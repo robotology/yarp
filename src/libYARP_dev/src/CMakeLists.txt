@@ -452,15 +452,32 @@ target_link_libraries(YARP_dev_tests PRIVATE YARP_dev)
 
 target_compile_features(YARP_dev_tests PRIVATE cxx_std_17)
 
-set_property (
-TARGET YARP_dev_tests
-  PROPERTY FOLDER "Test"
-)
-
 set_property(
   TARGET YARP_dev_tests
   PROPERTY
     PUBLIC_HEADER
       ${YARP_dev_HDRS}
       yarp/dev/tests/IMap2DTest.h
+)
+
+set_property(TARGET YARP_dev_tests PROPERTY VERSION ${YARP_VERSION_SHORT})
+set_property(TARGET YARP_dev_tests PROPERTY SOVERSION ${YARP_SOVERSION})
+set_property(TARGET YARP_dev_tests PROPERTY FOLDER "Test")
+
+ install(
+  TARGETS YARP_dev_tests
+  EXPORT YARP_dev_tests
+  RUNTIME
+    DESTINATION "${CMAKE_INSTALL_BINDIR}"
+    COMPONENT YARP_dev_tests
+  LIBRARY
+    DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+    COMPONENT YARP_dev_tests
+    NAMELINK_COMPONENT YARP_dev_tests-dev
+  ARCHIVE
+    DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+    COMPONENT YARP_dev_tests-dev
+  PUBLIC_HEADER
+    DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/yarp/dev/tests"
+    COMPONENT YARP_dev_tests-dev
 )

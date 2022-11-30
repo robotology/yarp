@@ -18,7 +18,7 @@ function(yarp_catch_discover_tests _target)
 endfunction()
 #########################################################################
 
-find_package(YARP::YARP_dev_tests)
+find_package(YARP COMPONENTS dev_tests REQUIRED)
 
 add_executable(harness_dev_controlBoard_nws_yarp)
 
