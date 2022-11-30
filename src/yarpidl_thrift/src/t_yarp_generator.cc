@@ -1763,7 +1763,6 @@ std::string t_yarp_generator::declare_field(t_field* tfield,
 
     result += prefix;
     result += tfield->get_name();
-
     if (init) {
         t_type* type = get_true_type(tfield->get_type());
 
@@ -1773,19 +1772,35 @@ std::string t_yarp_generator::declare_field(t_field* tfield,
             case t_base_type::TYPE_VOID:
                 break;
             case t_base_type::TYPE_STRING:
-                result += "{}";
+                if (tfield->get_value())
+                    result += "{\""+tfield->get_value()->get_string()+"\"}";
+                else
+                    result += "{}";
                 break;
             case t_base_type::TYPE_BOOL:
-                result += "{false}";
+                if (tfield->get_value())
+                {
+                    int b=tfield->get_value()->get_integer();
+                    if (b==1) {result += "{true}";}
+                    else {result += "{false}";}
+                }
+                else
+                    result += "{false}";
                 break;
             case t_base_type::TYPE_I8:
             case t_base_type::TYPE_I16:
             case t_base_type::TYPE_I32:
             case t_base_type::TYPE_I64:
-                result += "{0}";
+                if (tfield->get_value())
+                    result += "{"+ std::to_string(tfield->get_value()->get_integer())+"}";
+                else
+                    result += "{0}";
                 break;
             case t_base_type::TYPE_DOUBLE:
-                result += "{0.0}";
+                if (tfield->get_value())
+                    result += "{"+ std::to_string(tfield->get_value()->get_double())+"}";
+                else
+                    result += "{0.0}";
                 break;
             default:
                 throw "compiler error: no C++ initializer for base type " + t_base_type::t_base_name(tbase);
