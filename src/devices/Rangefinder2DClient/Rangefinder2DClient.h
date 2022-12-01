@@ -78,7 +78,7 @@ class Rangefinder2DClient:
         public yarp::dev::IRangefinder2D
 {
 protected:
-    Rangefinder2DInputPortProcessor inputPort;
+    Rangefinder2DInputPortProcessor* inputPort = nullptr;
     yarp::os::Port rpcPort;
     std::string local;
     std::string remote;

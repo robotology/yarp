@@ -177,12 +177,13 @@ bool Rangefinder2DClient::open(yarp::os::Searchable &config)
     std::string remote_rpc = remote;
     remote_rpc += "/rpc:i";
 
-    if (!inputPort.open(local))
+    inputPort = new Rangefinder2DInputPortProcessor;
+    if (!inputPort->open(local))
     {
         yCError(RANGEFINDER2DCLIENT, "open() error could not open port %s, check network\n",local.c_str());
         return false;
     }
-    inputPort.useCallback();
+    inputPort->useCallback();
 
     if (!rpcPort.open(local_rpc))
     {
@@ -277,16 +278,24 @@ bool Rangefinder2DClient::open(yarp::os::Searchable &config)
 
 bool Rangefinder2DClient::close()
 {
-    inputPort.disableCallback();
+    if (inputPort)
+    {
+        inputPort->disableCallback();
+        inputPort->close();
+        delete inputPort;
+        inputPort=nullptr;
+    }
+
     rpcPort.close();
-    inputPort.close();
     return true;
 }
 
 bool Rangefinder2DClient::getRawData(yarp::sig::Vector &data, double* timestamp)
 {
+    if (!inputPort) return false;
+
     yarp::dev::LaserScan2D scan;
-    inputPort.getLast(scan, lastTs);
+    inputPort->getLast(scan, lastTs);
 
     data = scan.scans;
 
@@ -299,8 +308,10 @@ bool Rangefinder2DClient::getRawData(yarp::sig::Vector &data, double* timestamp)
 
 bool Rangefinder2DClient::getLaserMeasurement(std::vector<LaserMeasurementData> &data, double* timestamp)
 {
+    if (!inputPort) return false;
+
     yarp::dev::LaserScan2D scan;
-    inputPort.getLast(scan, lastTs);
+    inputPort->getLast(scan, lastTs);
     size_t size = scan.scans.size();
     data.resize(size);
     if (scan_angle_max < scan_angle_min) { yCError(RANGEFINDER2DCLIENT) << "getLaserMeasurement failed"; return false; }
@@ -437,7 +448,8 @@ bool Rangefinder2DClient::setScanRate(double rate)
 
 bool Rangefinder2DClient::getDeviceStatus(Device_status &status)
 {
-    status = inputPort.getStatus();
+    if (!inputPort) return false;
+    status = inputPort->getStatus();
     return true;
 }
 
