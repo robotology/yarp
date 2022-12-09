@@ -109,6 +109,7 @@ if(YARP_COMPILE_yarpmotorgui)
       YARP::YARP_dev
       Qt5::Widgets
       Qt5::Gui
+      Threads::Threads
   )
 
   install(TARGETS yarpmotorgui COMPONENT utilities DESTINATION ${CMAKE_INSTALL_BINDIR})

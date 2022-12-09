@@ -21,8 +21,10 @@
 #include <QSettings>
 #include <QFileDialog>
 #include <QShortcut>
+#include <future>
 #include <map>
 #include <cstdlib>
+#include <functional>
 #include <yarp/os/LogStream.h>
 #include <yarp/os/ResourceFinder.h>
 
@@ -603,8 +605,6 @@ bool MainWindow::init(QStringList enabledParts,
     }
 
     int errorCount = 0;
-    QScrollArea *scroll = nullptr;
-    PartItem *part = nullptr;
     m_finder = finder;
     m_user_script1 = m_finder.find("script1").asString();
     m_user_script2 = m_finder.find("script2").asString();
@@ -679,23 +679,35 @@ bool MainWindow::init(QStringList enabledParts,
         m_modesTreeManager->addRobot(robot.first.c_str());
     }
 
+    std::vector<std::function<PartItem*()>> initLambdas;
+    std::vector<std::future<PartItem*>> partsFuture;
+
     for (auto& i_parts : parts)
     {
-        //JointItem *item = new JointItem();
-        //layout->addWidget(item);
-        scroll = new QScrollArea(m_tabPanel);
-        scroll->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
-        scroll->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
-        scroll->setWidgetResizable(true);
         std::string part_name = i_parts.first;
         std::string robot_name = i_parts.second.robot_name;
         std::string robot_name_without_slash = i_parts.second.robot_name_without_slash;
         std::string part_name_without_slash = i_parts.second.part_name_without_slash;
         int         part_id = i_parts.second.partindex;
-        part = new PartItem(robot_name_without_slash.c_str(), portPrefix, part_id, part_name_without_slash.c_str(), finder, debug_param_enabled, speedview_param_enabled, enable_calib_all, scroll);
+        PartItem* newPart = new PartItem(robot_name_without_slash.c_str(), portPrefix, part_id, part_name_without_slash.c_str(), debug_param_enabled, speedview_param_enabled, enable_calib_all);
+
+        initLambdas.push_back([newPart]() {
+            newPart->initializeYarpConnections();
+            return newPart;
+        });
+
+        //Run the yarp initialization of all the parts in parallell
+        partsFuture.emplace_back(std::async(std::launch::async, initLambdas.back()));
+    }
+
+    for (auto& partFuture : partsFuture)
+    {
+
+        PartItem *part = partFuture.get(); //Wait until the initialization of the corresponding part is over
 
         if(part && !part->getInterfaceError())
         {
+            part->initializeJointWidgets();
             connect(part,SIGNAL(sequenceActivated()),this,SLOT(onSequenceActivated()));
             connect(part,SIGNAL(sequenceStopped()),this,SLOT(onSequenceStopped()));
             connect(this,SIGNAL(sig_viewSpeedValues(bool)),part,SLOT(onViewSpeedValues(bool)));
@@ -713,29 +725,35 @@ bool MainWindow::init(QStringList enabledParts,
             connect(this, SIGNAL(sig_enableControlPWM(bool)), part, SLOT(onEnableControlPWM(bool)));
             connect(this, SIGNAL(sig_enableControlCurrent(bool)), part, SLOT(onEnableControlCurrent(bool)));
 
+            QString part_name = "/" + part->getPartName();
+            QString robot_name = "/" + part->getRobotName();
+            int part_id = part->getPartIndex();
+            QScrollArea * scroll = new QScrollArea(m_tabPanel);
+            scroll->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
+            scroll->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
+            scroll->setWidgetResizable(true);
+            part->setParent(scroll);
             scroll->setWidget(part);
-            int tabIndex = m_tabPanel->addTab(scroll, part_name.c_str());
+            int tabIndex = m_tabPanel->addTab(scroll, part_name);
             if (part_id == 0)
             {
-                QString auxName = part_name.c_str();
-                auxName.replace(0, 1, QString(part_name.c_str()).at(0).toUpper());
+                QString auxName = part_name;
+                auxName.replace(0, 1, QString(part_name).at(0).toUpper());
                 m_currentPartMenu->setTitle(QString("%1 Commands ").arg(auxName));
                 this->m_partName->setText(QString("%1 Commands ").arg(auxName));
             }
 
-            m_modesTreeManager->addRobotPart(robot_name, part_name, tabIndex, part);
+            m_modesTreeManager->addRobotPart(robot_name.toStdString(), part_name.toStdString(), tabIndex, part);
         }
         else
         {
             if(part)
             {
+                yError("Opening PolyDriver for part /%s failed...", part->getPartName().toLatin1().data());
+                QMessageBox::critical(nullptr, "Error opening a device", QString("Error while opening device for part /").append(part->getPartName()));
+
                 delete part;
                 part = nullptr;
-            }
-            if(scroll)
-            {
-                delete scroll;
-                scroll = nullptr;
             }
             errorCount++;
         }
