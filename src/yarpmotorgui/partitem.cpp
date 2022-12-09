@@ -22,7 +22,10 @@
 #include <cmath>
 #include <cstdio>
 
-PartItem::PartItem(QString robotName, int id, QString partName, ResourceFinder& _finder,
+PartItem::PartItem(QString robotName,
+                   QString portPrefix,
+                   int id, QString partName,
+                   ResourceFinder& _finder,
                    bool debug_param_enabled,
                    bool speedview_param_enabled,
                    bool enable_calib_all, QWidget *parent) :
@@ -67,37 +70,12 @@ PartItem::PartItem(QString robotName, int id, QString partName, ResourceFinder& 
     if (partName.at(0) == '/') {
         partName.remove(0, 1);
     }
-    m_robotPartPort = QString("/%1/%2").arg(robotName).arg(partName);
+    m_robotPartPort = QString("/%1/%2").arg(robotName, partName);
     m_partName = partName;
     m_robotName = robotName;
 
     //checking existence of the port
-    int ind = 0;
-    QString portLocalName = QString("/yarpmotorgui%1/%2").arg(ind).arg(m_robotPartPort);
-
-
-    QString nameToCheck = portLocalName;
-    nameToCheck += "/rpc:o";
-
-    //   NameClient &nic=NameClient::getNameClient();
-    yDebug("Checking the existence of: %s \n", nameToCheck.toLatin1().data());
-    //                    Address adr=nic.queryName(nameToCheck.c_str());
-
-    Contact adr=Network::queryName(nameToCheck.toLatin1().data());
-
-    //Contact c = yarp::os::Network::queryName(portLocalName.c_str());
-    yDebug("ADDRESS is: %s \n", adr.toString().c_str());
-
-    while(adr.isValid()){
-        ind++;
-
-        portLocalName = QString("/yarpmotorgui%1/%2").arg(ind).arg(m_robotPartPort);
-
-        nameToCheck = portLocalName;
-        nameToCheck += "/rpc:o";
-        // adr=nic.queryName(nameToCheck.c_str());
-        adr=Network::queryName(nameToCheck.toLatin1().data());
-    }
+    QString portLocalName = QString("%1%2").arg(portPrefix, m_robotPartPort);
 
     m_interfaceError = false;
 
@@ -124,7 +102,7 @@ PartItem::PartItem(QString robotName, int id, QString partName, ResourceFinder& 
         yDebug("Setting a valid finder \n");
     }
 
-    QString sequence_portname = QString("/yarpmotorgui/%1/sequence:o").arg(partName);
+    QString sequence_portname = QString("%1/sequence:o").arg(portLocalName);
     m_sequence_port.open(sequence_portname.toLatin1().data());
 
     initInterfaces();
@@ -227,9 +205,6 @@ PartItem::PartItem(QString robotName, int id, QString partName, ResourceFinder& 
             yarp::dev::JointTypeEnum jtype = yarp::dev::VOCAB_JOINTTYPE_REVOLUTE;
             m_iinfo->getJointType(k, jtype);
 
-            Pid myPid(0,0,0,0,0,0);
-            yarp::os::SystemClock::delaySystem(0.005);
-            m_iPid->getPid(VOCAB_PIDTYPE_POSITION, k, &myPid);
 
             auto* joint = new JointItem(k);
             joint->setJointName(jointname.c_str());

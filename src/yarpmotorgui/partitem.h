@@ -41,6 +41,7 @@ class PartItem : public QWidget
     Q_OBJECT
 public:
     explicit PartItem(QString robotName,
+                      QString portPrefix,
                       int partId,
                       QString partName,
                       ResourceFinder& _finder,

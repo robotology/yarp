@@ -623,6 +623,26 @@ bool MainWindow::init(QStringList enabledParts,
         int              partindex;
     };
 
+    //checking existence of the port
+    int ind = 0;
+    QString portPrefix = QString("/yarpmotorgui%1").arg(ind);
+
+    //   NameClient &nic=NameClient::getNameClient();
+    yDebug("Checking the existence of: %s \n", portPrefix.toLatin1().data());
+    Contact adr=Network::queryName(portPrefix.toLatin1().data());
+
+    while(adr.isValid()){
+        ind++;
+
+        portPrefix = QString("/yarpmotorgui%1").arg(ind);
+        yDebug("Checking the existence of: %s \n", portPrefix.toLatin1().data());
+        adr=Network::queryName(portPrefix.toLatin1().data());
+    }
+
+    m_testNamePort.open(portPrefix.toLatin1().data()); //This port is needed only to register a name in the nameserver,
+                                                       //so that other instances of yarpmotorgui will use a different port name
+    m_testNamePort.setWriteOnly();
+
     std::map<std::string, robot_type> robots;
     std::map<std::string, part_type> parts;
 
@@ -672,7 +692,7 @@ bool MainWindow::init(QStringList enabledParts,
         std::string robot_name_without_slash = i_parts.second.robot_name_without_slash;
         std::string part_name_without_slash = i_parts.second.part_name_without_slash;
         int         part_id = i_parts.second.partindex;
-        part = new PartItem(robot_name_without_slash.c_str(), part_id, part_name_without_slash.c_str(), finder, debug_param_enabled, speedview_param_enabled, enable_calib_all, scroll);
+        part = new PartItem(robot_name_without_slash.c_str(), portPrefix, part_id, part_name_without_slash.c_str(), finder, debug_param_enabled, speedview_param_enabled, enable_calib_all, scroll);
 
         if(part && !part->getInterfaceError())
         {
