@@ -266,19 +266,23 @@ void FrameGrabber_nws_yarp::run()
 
     if (cap == COLOR) {
         if (iFrameGrabberImage != nullptr) {
-            iFrameGrabberImage->getImage(*img);
-            flex_i.swap(*img);
+            if (iFrameGrabberImage->getImage(*img))
+                {flex_i.swap(*img);}
+            else
+                {yCError(FRAMEGRABBER_NWS_YARP) << "Image not captured (getImage failed). Check hardware configuration.";}
         } else {
-            yCError(FRAMEGRABBER_NWS_YARP) << "Image not captured.. check hardware configuration";
+            yCError(FRAMEGRABBER_NWS_YARP) << "Image not captured (invalid interface). Check hw/sw configuration.";
         }
     }
 
     if (cap == RAW) {
         if (iFrameGrabberImageRaw != nullptr) {
-            iFrameGrabberImageRaw->getImage(*img_Raw);
-            flex_i.swap(*img_Raw);
+            if (iFrameGrabberImageRaw->getImage(*img_Raw))
+                {flex_i.swap(*img_Raw);}
+            else
+                {yCError(FRAMEGRABBER_NWS_YARP) << "Image not captured (getImage failed). Check hardware configuration.";}
         } else {
-            yCError(FRAMEGRABBER_NWS_YARP) << "Image not captured.. check hardware configuration";
+            yCError(FRAMEGRABBER_NWS_YARP) << "Image not captured (invalid interface). Check hw/sw configuration.";
         }
     }
 
