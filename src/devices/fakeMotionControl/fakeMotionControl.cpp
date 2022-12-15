@@ -2505,7 +2505,7 @@ bool FakeMotionControl::resetMotorEncodersRaw()
 
 bool FakeMotionControl::getMotorEncoderRaw(int m, double *value)
 {
-    *value = 0.0;
+    *value = pos[m]*10;
     return true;
 }
 

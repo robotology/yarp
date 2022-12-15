@@ -596,6 +596,9 @@ void JointItem::setUnits(yarp::dev::JointTypeEnum t)
         ui->labelVelocityposUnits->setText(pos_metric_revolute);
         ui->labelFaultposUnits->setText(pos_metric_revolute);
 
+        //ui->labelIdleMotorPosUnits->setText(pos_metric_revolute);
+        //ui->labelFaultMotorPosUnits->setText(pos_metric_revolute);
+
         ui->labelIdletrqUnits->setText(trq_metric_revolute);
         ui->labelPositiontrqUnits->setText(trq_metric_revolute);
         ui->labelPositionDirtrqUnits->setText(trq_metric_revolute);
@@ -635,6 +638,9 @@ void JointItem::setUnits(yarp::dev::JointTypeEnum t)
         ui->labelVelocityposUnits->setText(pos_metric_prism);
         ui->labelFaultposUnits->setText(pos_metric_prism);
 
+        //ui->labelIdleMotorPosUnits->setText(pos_metric_prism);
+        //ui->labelFaultMotorPosUnits->setText(pos_metric_prism);
+
         ui->labelIdletrqUnits->setText(trq_metric_prism);
         ui->labelPositiontrqUnits->setText(trq_metric_prism);
         ui->labelPositionDirtrqUnits->setText(trq_metric_prism);
@@ -661,6 +667,7 @@ void JointItem::setMotorPositionVisible(bool visible)
     ui->editPWMMotorPos->setVisible(visible);
     ui->editCurrentMotorPos->setVisible(visible);
     ui->editVelocityMotorPos->setVisible(visible);
+    ui->editFaultMotorPos->setVisible(visible);
 
     ui->labelIdleMotorPos->setVisible(visible);
     ui->labelPositionMotorPos->setVisible(visible);
@@ -670,6 +677,7 @@ void JointItem::setMotorPositionVisible(bool visible)
     ui->labelPWMMotorPos->setVisible(visible);
     ui->labelCurrentMotorPos->setVisible(visible);
     ui->labelVelocityMotorPos->setVisible(visible);
+    ui->labelFaultMotorPos->setVisible(visible);
 
     ui->labelIdleMotorPosUnits->setVisible(visible);
     ui->labelPositionMotorPosUnits->setVisible(visible);
@@ -679,6 +687,7 @@ void JointItem::setMotorPositionVisible(bool visible)
     ui->labelPWMMotorPosUnits->setVisible(visible);
     ui->labelCurrentMotorPosUnits->setVisible(visible);
     ui->labelVelocityMotorPosUnits->setVisible(visible);
+    ui->labelFaultMotorPosUnits->setVisible(visible);
 
     if (!visible) {
         ui->editIdleMotorPos->setMinimumHeight(0);
@@ -689,6 +698,7 @@ void JointItem::setMotorPositionVisible(bool visible)
         ui->editPWMMotorPos->setMinimumHeight(0);
         ui->editCurrentMotorPos->setMinimumHeight(0);
         ui->editVelocityMotorPos->setMinimumHeight(0);
+        ui->editFaultMotorPos->setMinimumHeight(0);
 
         ui->labelPositionMotorPos->setMinimumHeight(0);
         ui->labelPositionMotorPosUnits->setMinimumHeight(0);
@@ -706,6 +716,8 @@ void JointItem::setMotorPositionVisible(bool visible)
         ui->labelVelocityMotorPosUnits->setMinimumHeight(0);
         ui->labelIdleMotorPos->setMinimumHeight(0);
         ui->labelIdleMotorPosUnits->setMinimumHeight(0);
+        ui->labelFaultMotorPos->setMinimumHeight(0);
+        ui->labelFaultMotorPosUnits->setMinimumHeight(0);
     }
     else {
         ui->editIdleMotorPos->setMinimumHeight(20);
@@ -716,6 +728,7 @@ void JointItem::setMotorPositionVisible(bool visible)
         ui->editPWMMotorPos->setMinimumHeight(20);
         ui->editCurrentMotorPos->setMinimumHeight(20);
         ui->editVelocityMotorPos->setMinimumHeight(20);
+        ui->editFaultMotorPos->setMinimumHeight(20);
 
         ui->labelPositionMotorPos->setMinimumHeight(20);
         ui->labelPositionMotorPosUnits->setMinimumHeight(20);
@@ -733,6 +746,8 @@ void JointItem::setMotorPositionVisible(bool visible)
         ui->labelVelocityMotorPosUnits->setMinimumHeight(20);
         ui->labelIdleMotorPos->setMinimumHeight(20);
         ui->labelIdleMotorPosUnits->setMinimumHeight(20);
+        ui->labelFaultMotorPos->setMinimumHeight(20);
+        ui->labelFaultMotorPosUnits->setMinimumHeight(20);
     }
 }
 
@@ -1775,6 +1790,10 @@ void JointItem::setMotorPosition(double val)
 
     double mot = val;
     QString sVal = QString("%1").arg(mot, 0, 'f', 1);
+
+    if (ui->stackedWidget->currentIndex() == HW_FAULT) {
+        ui->editFaultMotorPos->setText(sVal);
+    }
 
     if (ui->stackedWidget->currentIndex() == IDLE){
         ui->editIdleMotorPos->setText(sVal);
