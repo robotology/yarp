@@ -128,6 +128,9 @@ public:
     // Defined in Companion.cmdStats.cpp
     int cmdStats(int argc, char* argv[]);
 
+    // Defined in Companion.cmdSplit.cpp
+    int cmdSplit(int argc, char* argv[]);
+
     // Defined in Companion.cmdTerminate.cpp
     int cmdTerminate(int argc, char *argv[]);
 
