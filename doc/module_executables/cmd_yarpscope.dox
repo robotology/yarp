@@ -8,8 +8,10 @@
 
 \section yarpscope_intro Description
 This simple graphical user interface allows one to visualize on a plot the
-content of a YARP port. The input port is assumed to contain a vector of
-numbers.
+content of a YARP port. The input port is assumed to contain a single vector of
+numbers. If you want to plot complex data, i.e. a nested bottle, you might want to
+check the command `yarp split` to pre-process the data and subdivide the bottle into
+multiple vectors.
 
  - The main window can contain one or more plots.
  - Each plot can contain one or more graphs.
