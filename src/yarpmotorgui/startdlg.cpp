@@ -29,8 +29,8 @@ StartDlg::~StartDlg()
 
 void StartDlg::init(QStringList partsName)
 {
-    
     auto* layout = new FlowLayout(ui->groupBox);
+
     for(int i=0;i<partsName.count();i++)
     {
         auto* check = new QCheckBox(partsName.at(i),ui->groupBox);
@@ -39,14 +39,24 @@ void StartDlg::init(QStringList partsName)
         layout->addWidget(check);
         checkList.append(check);
     }
-    auto* button = new QPushButton("Select/Deselect all",ui->groupBox);
-    button->setMinimumSize(QSize(100, button->height()));
+
+    auto* button = new QPushButton("Deselect All",ui->groupBox);
+    connect(button,SIGNAL(clicked()),this,SLOT(onSelDesel()));
+    
+    button->setFixedSize(QSize(100, button->height()));
     layout->addWidget(button);
     adjustSize();
 
-    connect(button,SIGNAL(clicked()),this,SLOT(onSelDesel()));
-
     ui->groupBox->setLayout(layout);
+
+    auto bb = this->findChildren<QDialogButtonBox *>();
+    QPushButton* okBtn = bb[0]->button(QDialogButtonBox::Ok);
+    okBtn->setAutoDefault(true);
+    okBtn->setDefault(true);
+    QPushButton* cancelBtn = bb[0]->button(QDialogButtonBox::Cancel);
+    cancelBtn->setAutoDefault(false);
+    cancelBtn->setDefault(false);
+
 }
 
 
@@ -64,10 +74,13 @@ std::vector<bool> StartDlg::getEnabledParts()
 
 void StartDlg::onSelDesel()
 {
-    auto children = this->findChildren<QCheckBox *>();
-    
-    for (auto child : children) {
-        bool status = child->isChecked();
-        child->setChecked(!status);
+    auto checkboxes = this->findChildren<QCheckBox *>();
+    auto btn = this->findChildren<QPushButton *>();
+
+    for (auto child : checkboxes) {
+        child->setChecked(!child->isChecked());
     }
+
+    if(btn[0]->text() == "Deselect All") btn[0]->setText("Select All");
+    else btn[0]->setText("Deselect All");
 }
