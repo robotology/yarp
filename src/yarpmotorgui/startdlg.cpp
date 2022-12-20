@@ -42,7 +42,7 @@ void StartDlg::init(QStringList partsName)
 
     auto* button = new QPushButton("Deselect All",ui->groupBox);
     connect(button,SIGNAL(clicked()),this,SLOT(onSelDesel()));
-    
+
     button->setFixedSize(QSize(100, button->height()));
     layout->addWidget(button);
     adjustSize();
@@ -76,11 +76,18 @@ void StartDlg::onSelDesel()
 {
     auto checkboxes = this->findChildren<QCheckBox *>();
     auto btn = this->findChildren<QPushButton *>();
+    bool sel;
+
+    if(btn[0]->text() == "Deselect All"){
+        btn[0]->setText("Select All");
+        sel = false;
+    }
+    else{
+        btn[0]->setText("Deselect All");
+        sel = true;
+    } 
 
     for (auto child : checkboxes) {
-        child->setChecked(!child->isChecked());
+        child->setChecked(sel);
     }
-
-    if(btn[0]->text() == "Deselect All") btn[0]->setText("Select All");
-    else btn[0]->setText("Deselect All");
 }
