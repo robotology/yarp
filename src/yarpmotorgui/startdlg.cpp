@@ -9,11 +9,14 @@
 #include "flowlayout.h"
 
 
+
+
 StartDlg::StartDlg(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::StartDlg)
 {
     ui->setupUi(this);
+
 
     setWindowTitle("Qt Robot Motor GUI V2.0 - Select Parts");
 }
@@ -26,9 +29,8 @@ StartDlg::~StartDlg()
 
 void StartDlg::init(QStringList partsName)
 {
-
+    
     auto* layout = new FlowLayout(ui->groupBox);
-
     for(int i=0;i<partsName.count();i++)
     {
         auto* check = new QCheckBox(partsName.at(i),ui->groupBox);
@@ -37,7 +39,12 @@ void StartDlg::init(QStringList partsName)
         layout->addWidget(check);
         checkList.append(check);
     }
+    auto* button = new QPushButton("Select/Deselect all",ui->groupBox);
+    button->setMinimumSize(QSize(100, button->height()));
+    layout->addWidget(button);
     adjustSize();
+
+    connect(button,SIGNAL(clicked()),this,SLOT(onSelDesel()));
 
     ui->groupBox->setLayout(layout);
 }
@@ -53,4 +60,14 @@ std::vector<bool> StartDlg::getEnabledParts()
     }
 
     return enabled;
+}
+
+void StartDlg::onSelDesel()
+{
+    auto children = this->findChildren<QCheckBox *>();
+    
+    for (auto child : children) {
+        bool status = child->isChecked();
+        child->setChecked(!status);
+    }
 }

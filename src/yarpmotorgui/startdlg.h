@@ -9,6 +9,7 @@
 
 #include <QDialog>
 #include <QCheckBox>
+#include <QPushButton>
 
 namespace Ui {
 class StartDlg;
@@ -29,6 +30,10 @@ private:
     Ui::StartDlg *ui;
 
     QList <QCheckBox*> checkList;
+    QStringList partsname;
+
+    private slots:
+    void onSelDesel();
 };
 
 #endif // STARTDLG_H
