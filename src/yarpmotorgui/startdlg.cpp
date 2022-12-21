@@ -85,7 +85,7 @@ void StartDlg::onSelDesel()
     else{
         btn[0]->setText("Deselect All");
         sel = true;
-    } 
+    }
 
     for (auto child : checkboxes) {
         child->setChecked(sel);
