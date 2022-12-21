@@ -31,6 +31,7 @@ private:
     Ui::StartDlg *ui;
 
     QList <QCheckBox*> checkList;
+
     private slots:
     void onSelDesel();
 };
