@@ -336,7 +336,10 @@ bool FrameTransformClient::open(yarp::os::Searchable &config)
 
     yarp::robotinterface::XMLReader reader;
     yarp::robotinterface::XMLReaderResult result = reader.getRobotFromString(configuration_to_open, cfg);
-    yCAssert(FRAMETRANSFORMCLIENT, result.parsingIsSuccessful);
+    if (result.parsingIsSuccessful==false)
+    {
+        yCError(FRAMETRANSFORMCLIENT) << "Unable to parse configuration";
+    }
 
     m_robot = std::move(result.robot);
 
@@ -350,21 +353,33 @@ bool FrameTransformClient::open(yarp::os::Searchable &config)
 
     std::string setdeviceName = "ftc_storage";
     if (m_robot.hasParam("setDeviceName")) { setdeviceName = m_robot.findParam("setDeviceName");}
-    yCAssert(FRAMETRANSFORMCLIENT, m_robot.hasDevice(setdeviceName));
+    if (!m_robot.hasDevice(setdeviceName))
+    {
+        yCError(FRAMETRANSFORMCLIENT) << "Failed to find requested device " << setdeviceName;
+        return false;
+    }
+
     auto* polyset = m_robot.device(setdeviceName).driver();
-    yCAssert(FRAMETRANSFORMCLIENT, polyset);
-    polyset->view(m_ift_set);
-    yCAssert(FRAMETRANSFORMCLIENT, m_ift_set);
+    if (!polyset || !polyset->view(m_ift_set))
+    {
+        yCError(FRAMETRANSFORMCLIENT) << "Failed to open device driver / interface for " << setdeviceName;
+        return false;
+    }
 
     std::string getdeviceName = "ftc_storage";
     if (m_robot.hasParam("getDeviceName")) {getdeviceName = m_robot.findParam("getDeviceName");}
-    yCAssert(FRAMETRANSFORMCLIENT, m_robot.hasDevice(getdeviceName));
+    if (!m_robot.hasDevice(getdeviceName))
+    {
+        yCError(FRAMETRANSFORMCLIENT) << "Failed to find requested device " << getdeviceName;
+        return false;
+    }
+
     auto* polyget = m_robot.device(getdeviceName).driver();
-    yCAssert(FRAMETRANSFORMCLIENT, polyget);
-    polyget->view(m_ift_get);
-    yCAssert(FRAMETRANSFORMCLIENT, m_ift_get);
-    polyget->view(m_ift_util);
-    yCAssert(FRAMETRANSFORMCLIENT, m_ift_util);
+    if (!polyget || !polyget->view(m_ift_get) || !polyget->view(m_ift_util))
+    {
+        yCError(FRAMETRANSFORMCLIENT) << "Failed to open device driver / interface for " << getdeviceName;
+        return false;
+    }
 
     if (config.check("period"))
     {
