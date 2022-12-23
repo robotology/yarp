@@ -105,7 +105,11 @@ bool FrameTransformServer::open(yarp::os::Searchable &config)
 
     yarp::robotinterface::XMLReader reader;
     yarp::robotinterface::XMLReaderResult result = reader.getRobotFromString(configuration_to_open, cfg);
-    yCAssert(FRAMETRANSFORMSERVER, result.parsingIsSuccessful);
+    if (result.parsingIsSuccessful == false)
+    {
+        yCError(FRAMETRANSFORMSERVER) << "Unable to parse configuration";
+        return false;
+    }
 
     m_robot = std::move(result.robot);
 

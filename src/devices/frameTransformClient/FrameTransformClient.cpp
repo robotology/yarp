@@ -339,6 +339,7 @@ bool FrameTransformClient::open(yarp::os::Searchable &config)
     if (result.parsingIsSuccessful==false)
     {
         yCError(FRAMETRANSFORMCLIENT) << "Unable to parse configuration";
+        return false;
     }
 
     m_robot = std::move(result.robot);
