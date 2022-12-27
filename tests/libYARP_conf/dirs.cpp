@@ -10,7 +10,7 @@
 #include <tuple>
 #include <vector>
 
-#include <catch.hpp>
+#include <catch_amalgamated.hpp>
 #include <harness.h>
 
 // static std::map<std::string, std::string> env;

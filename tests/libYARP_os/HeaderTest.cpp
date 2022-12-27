@@ -13,7 +13,7 @@
 
 #include <yarp/os/impl/BufferedConnectionWriter.h>
 
-#include <catch.hpp>
+#include <catch_amalgamated.hpp>
 #include <harness.h>
 
 using namespace yarp::os;
@@ -72,14 +72,14 @@ static void checkEnvelope(const char *mode)
     Header inHeader;
     in.getEnvelope(inHeader);
     CHECK(inHeader.count() == 54);
-    CHECK(inHeader.timeStamp() == Approx(1.0));
+    CHECK(inHeader.timeStamp() == Catch::Approx(1.0));
     CHECK(inHeader.frameId() == "firstFrameId");
 
     // Read the second object
     in.read();
     in.getEnvelope(inHeader);
     CHECK(inHeader.count() == 55);
-    CHECK(inHeader.timeStamp() == Approx(4.0));
+    CHECK(inHeader.timeStamp() == Catch::Approx(4.0));
     CHECK(inHeader.frameId() == "secondFrameId");
 }
 
@@ -110,7 +110,7 @@ TEST_CASE("os::HeaderTest", "[yarp::os]")
 
             CHECK(bot.size() == 3);
             CHECK(bot.get(0).asInt32() == 55); // sequence number write
-            CHECK(bot.get(1).asFloat64() == Approx(1.0).epsilon(0.0001)); // time stamp write
+            CHECK(bot.get(1).asFloat64() == Catch::Approx(1.0).epsilon(0.0001)); // time stamp write
             CHECK(bot.get(2).asString() == "theFrameId"); // frame id write
 
 
@@ -118,7 +118,7 @@ TEST_CASE("os::HeaderTest", "[yarp::os]")
             headerRead.read(con.getReader());
 
             CHECK(headerRead.count() == 55); // sequence number read
-            CHECK(headerRead.timeStamp() == Approx(1.0).epsilon(0.0001)); // time stamp read
+            CHECK(headerRead.timeStamp() == Catch::Approx(1.0).epsilon(0.0001)); // time stamp read
             CHECK(headerRead.frameId() == "theFrameId"); // frame id read
 
             // Test extreme numbers as timestamp
@@ -132,7 +132,7 @@ TEST_CASE("os::HeaderTest", "[yarp::os]")
             // Check sequence number is updated automatically
             CHECK(headerRead.count() == 56); // sequence number read
             // Check the number is read back with error smaller than machine epsilon
-            CHECK(headerRead.timeStamp() == Approx(timeValue).epsilon(DBL_EPSILON)); // time stamp read
+            CHECK(headerRead.timeStamp() == Catch::Approx(timeValue).epsilon(DBL_EPSILON)); // time stamp read
             // Check the frameId should not be changed
             CHECK(headerRead.frameId() == "theFrameId"); // frame id read
 
@@ -146,7 +146,7 @@ TEST_CASE("os::HeaderTest", "[yarp::os]")
             // Check sequence number is updated automatically
             CHECK(headerRead.count() == 57); // sequence number read
             // Check the number is read back with error smaller than machine epsilon
-            CHECK(headerRead.timeStamp() == Approx(timeValue).epsilon(DBL_EPSILON)); // time stamp read
+            CHECK(headerRead.timeStamp() == Catch::Approx(timeValue).epsilon(DBL_EPSILON)); // time stamp read
             // Check the frameId should not be changed
             CHECK(headerRead.frameId() == "theFrameId"); // frame id read
 
@@ -160,7 +160,7 @@ TEST_CASE("os::HeaderTest", "[yarp::os]")
             // Check sequence number is not changed
             CHECK(headerRead.count() == 57); // sequence number read
             // Check the number is read back with error smaller than machine epsilon
-            CHECK(headerRead.timeStamp() == Approx(timeValue).epsilon(DBL_EPSILON)); // time stamp read
+            CHECK(headerRead.timeStamp() == Catch::Approx(timeValue).epsilon(DBL_EPSILON)); // time stamp read
             // Check the frameId should be changed to the new value
             CHECK(headerRead.frameId() == "theNewFrameId"); // frame id read
 
@@ -189,14 +189,14 @@ TEST_CASE("os::HeaderTest", "[yarp::os]")
 
             CHECK(bot.size() == 2);
             CHECK(bot.get(0).asInt32() == 55); // sequence number write
-            CHECK(bot.get(1).asFloat64() == Approx(1.0).epsilon(0.0001)); // time stamp write
+            CHECK(bot.get(1).asFloat64() == Catch::Approx(1.0).epsilon(0.0001)); // time stamp write
 
 
             headerToWrite.write(con.getCleanWriter());
             headerRead.read(con.getReader());
 
             CHECK(headerRead.count() == 55); // sequence number read
-            CHECK(headerRead.timeStamp() == Approx(1.0).epsilon(0.0001)); // time stamp read
+            CHECK(headerRead.timeStamp() == Catch::Approx(1.0).epsilon(0.0001)); // time stamp read
 
             // Test extreme numbers as timestamp
             yarp::conf::float64_t timeValue = extreme();
@@ -209,7 +209,7 @@ TEST_CASE("os::HeaderTest", "[yarp::os]")
             // Check sequence number is updated automatically
             CHECK(headerRead.count() == 56); // sequence number read
             // Check the number is read back with error smaller than machine epsilon
-            CHECK(headerRead.timeStamp() == Approx(timeValue).epsilon(DBL_EPSILON)); // time stamp read
+            CHECK(headerRead.timeStamp() == Catch::Approx(timeValue).epsilon(DBL_EPSILON)); // time stamp read
 
             // Test a realistic timestamp
             timeValue = realistic();
@@ -221,7 +221,7 @@ TEST_CASE("os::HeaderTest", "[yarp::os]")
             // Check sequence number is updated automatically
             CHECK(headerRead.count() == 57); // sequence number read
             // Check the number is read back with error smaller than machine epsilon
-            CHECK(headerRead.timeStamp() == Approx(timeValue).epsilon(DBL_EPSILON)); // time stamp read
+            CHECK(headerRead.timeStamp() == Catch::Approx(timeValue).epsilon(DBL_EPSILON)); // time stamp read
         }
     }
 
@@ -245,7 +245,7 @@ TEST_CASE("os::HeaderTest", "[yarp::os]")
             stampRead.read(con.getReader());
 
             CHECK(stampRead.getCount() == 55); // sequence number read
-            CHECK(stampRead.getTime() == Approx(realistic()).epsilon(0.0001)); // time stamp read
+            CHECK(stampRead.getTime() == Catch::Approx(realistic()).epsilon(0.0001)); // time stamp read
         }
     }
 
@@ -269,7 +269,7 @@ TEST_CASE("os::HeaderTest", "[yarp::os]")
             stampRead.read(con.getReader());
 
             CHECK(stampRead.getCount() == 55); // sequence number read
-            CHECK(stampRead.getTime() == Approx(realistic()).epsilon(0.0001)); // time stamp read
+            CHECK(stampRead.getTime() == Catch::Approx(realistic()).epsilon(0.0001)); // time stamp read
         }
     }
 
@@ -293,7 +293,7 @@ TEST_CASE("os::HeaderTest", "[yarp::os]")
             headerRead.read(con.getReader());
 
             CHECK(headerRead.count() == 55); // sequence number read
-            CHECK(headerRead.timeStamp() == Approx(realistic()).epsilon(0.0001)); // time stamp read
+            CHECK(headerRead.timeStamp() == Catch::Approx(realistic()).epsilon(0.0001)); // time stamp read
             CHECK(headerRead.frameId().empty()); // frame id read is empty
         }
     }
@@ -316,7 +316,7 @@ TEST_CASE("os::HeaderTest", "[yarp::os]")
         std::string str = buf.toString();
         Bottle bot(str.c_str());
         CHECK(bot.get(0).asInt32() == 42); // sequence ok
-        CHECK(bot.get(1).asFloat64() == Approx(3)); // time ok
+        CHECK(bot.get(1).asFloat64() == Catch::Approx(3)); // time ok
     }
 
     Network::setLocalMode(false);

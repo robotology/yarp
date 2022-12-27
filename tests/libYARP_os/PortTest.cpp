@@ -36,7 +36,7 @@
 #include <mutex>
 #include <condition_variable>
 
-#include <catch.hpp>
+#include <catch_amalgamated.hpp>
 #include <harness.h>
 
 using namespace yarp::os;

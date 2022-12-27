@@ -14,7 +14,7 @@
 
 #include <iostream>
 
-#include <catch.hpp>
+#include <catch_amalgamated.hpp>
 #include <harness.h>
 
 template <typename T>

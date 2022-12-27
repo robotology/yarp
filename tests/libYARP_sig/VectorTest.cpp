@@ -17,7 +17,7 @@
 #include <yarp/gsl/Gsl.h>
 #include <yarp/gsl/impl/gsl_structs.h>
 
-#include <catch.hpp>
+#include <catch_amalgamated.hpp>
 #include <harness.h>
 
 using namespace yarp::os::impl;

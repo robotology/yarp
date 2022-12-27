@@ -11,7 +11,7 @@
 #include <yarp/dev/tests/IRangefinder2DTest.h>
 #include <yarp/dev/tests/IPositionControlTest.h>
 
-#include <catch.hpp>
+#include <catch_amalgamated.hpp>
 #include <harness.h>
 
 using namespace yarp::dev;

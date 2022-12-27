@@ -12,7 +12,7 @@
 #include <yarp/os/StringOutputStream.h>
 #include <yarp/sig/Image.h>
 
-#include <catch.hpp>
+#include <catch_amalgamated.hpp>
 #include <harness.h>
 
 using namespace yarp::os;

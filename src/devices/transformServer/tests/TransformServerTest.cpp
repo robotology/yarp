@@ -7,7 +7,7 @@
 #include <yarp/os/Network.h>
 #include <yarp/os/Time.h>
 
-#include <catch.hpp>
+#include <catch_amalgamated.hpp>
 #include <harness.h>
 
 #include <yarp/dev/tests/IFrameTransformTest.h>

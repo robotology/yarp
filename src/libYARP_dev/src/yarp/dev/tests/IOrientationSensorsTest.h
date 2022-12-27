@@ -7,7 +7,7 @@
 #define IORIENTATIONSENSOTSTEST_H
 
 #include <yarp/dev/MultipleAnalogSensorsInterfaces.h>
-#include <catch.hpp>
+#include <catch_amalgamated.hpp>
 
 using namespace yarp::dev;
 using namespace yarp::os;
@@ -33,7 +33,7 @@ namespace yarp::dev::tests
         CHECK(result == resultClient); // getOrientationSensorMeasureAsRollPitchYaw return value is consistent between sensor and client
 
         for (int i = 0; i < 3; i++) {
-            CHECK(sensorMeasure[i] == Approx(clientMeasure[i])); // getOrientationSensorMeasureAsRollPitchYaw measure is consistent between sensor and client
+            CHECK(sensorMeasure[i] == Catch::Approx(clientMeasure[i])); // getOrientationSensorMeasureAsRollPitchYaw measure is consistent between sensor and client
         }
 
         CHECK(std::abs(timestamp - clientTimestamp) < 0.2); // getOrientationSensorMeasureAsRollPitchYaw measure is consistent between sensor and client (up to 200 ms)

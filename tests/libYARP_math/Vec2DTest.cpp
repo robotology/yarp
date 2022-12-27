@@ -23,7 +23,7 @@
 #include <cmath>
 #include <string>
 
-#include <catch.hpp>
+#include <catch_amalgamated.hpp>
 #include <harness.h>
 
 using namespace yarp::os;

@@ -19,7 +19,7 @@
 #include <cmath>
 #include <vector>
 
-#include <catch.hpp>
+#include <catch_amalgamated.hpp>
 #include <harness.h>
 
 using namespace yarp::os::impl;
@@ -459,7 +459,7 @@ TEST_CASE("sig::MatrixTest", "[yarp::sig]")
             double v = lst->get(i).asFloat64();
             if (fabs(v-i)>0.01) {
                 ok = false;
-                CHECK(v == Approx(i)); // "cell matches")
+                CHECK(v == Catch::Approx(i)); // "cell matches")
                 break;
             }
         }
@@ -487,7 +487,7 @@ TEST_CASE("sig::MatrixTest", "[yarp::sig]")
         msg2.read(reader);
         CHECK(msg.head.rows() == msg2.head.rows()); // matrix row match
         CHECK(msg.head.cols() == msg2.head.cols()); // matrix col match
-        CHECK(msg.body.asFloat64()== Approx(msg2.body.asFloat64())); // "value match"
+        CHECK(msg.body.asFloat64()== Catch::Approx(msg2.body.asFloat64())); // "value match"
 
         Bottle bot;
         bot.read(msg);
@@ -505,7 +505,7 @@ TEST_CASE("sig::MatrixTest", "[yarp::sig]")
             return;
         }
         CHECK(lst->size() == (rr*cc)); // data length matches
-        CHECK(bot2->get(0).asFloat64() == Approx(value)); // "value match"
+        CHECK(bot2->get(0).asFloat64() == Catch::Approx(value)); // "value match"
     }
 
     SECTION("check data() when matrix is empty...")

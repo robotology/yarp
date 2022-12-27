@@ -6,7 +6,7 @@
 
 #include <yarp/conf/environment.h>
 
-#include <catch.hpp>
+#include <catch_amalgamated.hpp>
 #include <harness.h>
 
 #include <array>

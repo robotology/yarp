@@ -11,7 +11,7 @@
 #include <yarp/os/Network.h>
 #include <yarp/os/PortReaderBuffer.h>
 
-#include <catch.hpp>
+#include <catch_amalgamated.hpp>
 #include <harness.h>
 
 using namespace yarp::os;

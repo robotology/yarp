@@ -12,7 +12,7 @@
 
 #include <yarp/os/LogStream.h>
 
-#include <catch.hpp>
+#include <catch_amalgamated.hpp>
 #include <harness.h>
 
 TEST_CASE("robotinterface::ParamTest", "[yarp::robotinterface]")

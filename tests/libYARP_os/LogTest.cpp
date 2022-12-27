@@ -14,7 +14,7 @@
 #include <array>
 #include <thread>
 
-#include <catch.hpp>
+#include <catch_amalgamated.hpp>
 #include <harness.h>
 
 namespace {

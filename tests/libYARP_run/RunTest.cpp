@@ -15,7 +15,7 @@
 #include <cstring>
 #include <cstdio>
 
-#include <catch.hpp>
+#include <catch_amalgamated.hpp>
 #include <harness.h>
 
 using namespace yarp::os::impl;

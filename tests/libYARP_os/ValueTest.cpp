@@ -8,7 +8,7 @@
 
 #include <iostream>
 
-#include <catch.hpp>
+#include <catch_amalgamated.hpp>
 #include <harness.h>
 
 using namespace yarp::os;
@@ -85,10 +85,10 @@ TEST_CASE("os::ValueTest", "[yarp::os]")
         Bottle b;
         b.read(v);
         CHECK(b.get(0).isFloat64()); // structure ok
-        CHECK(b.get(0).asFloat64() == Approx(4.2)); // value ok
+        CHECK(b.get(0).asFloat64() == Catch::Approx(4.2)); // value ok
         Value v2;
         b.write(v2);
-        CHECK(v2.asFloat64() == Approx(4.2)); // value reread ok
+        CHECK(v2.asFloat64() == Catch::Approx(4.2)); // value reread ok
     }
 
     SECTION("Check assignment operator (test 1)")

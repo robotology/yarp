@@ -12,7 +12,7 @@
 #include <yarp/os/Clock.h>
 #include <yarp/os/SystemClock.h>
 
-#include <catch.hpp>
+#include <catch_amalgamated.hpp>
 #include <harness.h>
 #include <cmath> // std::floor, std::ceil
 
