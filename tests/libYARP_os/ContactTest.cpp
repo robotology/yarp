@@ -6,7 +6,7 @@
 
 #include <yarp/os/Contact.h>
 
-#include <catch_amalgamated.hpp>
+#include <catch2/catch_amalgamated.hpp>
 #include <harness.h>
 
 using namespace yarp::os;

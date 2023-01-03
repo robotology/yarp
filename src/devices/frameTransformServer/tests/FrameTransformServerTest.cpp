@@ -12,7 +12,7 @@
 
 #include <yarp/dev/tests/IFrameTransformTest.h>
 
-#include <catch_amalgamated.hpp>
+#include <catch2/catch_amalgamated.hpp>
 #include <harness.h>
 
 TEST_CASE("dev::FrameTransformServerTest", "[yarp::dev]")

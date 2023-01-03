@@ -9,7 +9,7 @@
 #include <yarp/dev/IRGBDSensor.h>
 #include <yarp/dev/tests/IRGBDSensorTest.h>
 
-#include <catch_amalgamated.hpp>
+#include <catch2/catch_amalgamated.hpp>
 #include <harness.h>
 
 using namespace yarp::dev;

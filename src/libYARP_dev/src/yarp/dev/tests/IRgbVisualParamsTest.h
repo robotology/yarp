@@ -7,7 +7,7 @@
 #define IRGBVISUALPARAMSTEST_H
 
 #include <yarp/dev/IRgbVisualParams.h>
-#include <catch_amalgamated.hpp>
+#include <catch2/catch_amalgamated.hpp>
 
 using namespace yarp::dev;
 using namespace yarp::sig;

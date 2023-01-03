@@ -13,7 +13,7 @@
 #include <yarp/dev/tests/ITorqueControlTest.h>
 #include <yarp/dev/tests/IAxisInfoTest.h>
 
-#include <catch_amalgamated.hpp>
+#include <catch2/catch_amalgamated.hpp>
 #include <harness.h>
 
 using namespace yarp::dev;

@@ -12,7 +12,7 @@
 #endif // WITHOUT_NETWORK
 
 #include <iostream>
-#include <catch_amalgamated.hpp>
+#include <catch2/catch_amalgamated.hpp>
 
 void increment_tests_skipped();
 

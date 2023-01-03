@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#include <catch_amalgamated.hpp>
+#include <catch2/catch_amalgamated.hpp>
 
 #include <yarp/conf/environment.h>
 #include <yarp/conf/filesystem.h>

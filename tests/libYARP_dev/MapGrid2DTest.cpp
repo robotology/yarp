@@ -13,7 +13,7 @@
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/conf/filesystem.h>
 
-#include <catch_amalgamated.hpp>
+#include <catch2/catch_amalgamated.hpp>
 #include <harness.h>
 #include <YarpBuildLocation.h>
 

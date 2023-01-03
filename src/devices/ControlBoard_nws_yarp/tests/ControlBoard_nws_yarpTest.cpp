@@ -7,7 +7,7 @@
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/WrapperSingle.h>
 
-#include <catch_amalgamated.hpp>
+#include <catch2/catch_amalgamated.hpp>
 #include <harness.h>
 
 using namespace yarp::dev;

@@ -9,7 +9,7 @@
 #include <yarp/dev/WrapperSingle.h>
 #include <yarp/dev/tests/IRangefinder2DTest.h>
 
-#include <catch_amalgamated.hpp>
+#include <catch2/catch_amalgamated.hpp>
 #include <harness.h>
 
 using namespace yarp::dev;

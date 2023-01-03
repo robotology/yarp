@@ -6,7 +6,7 @@
 
 #include <yarp/conf/numeric.h>
 
-#include <catch_amalgamated.hpp>
+#include <catch2/catch_amalgamated.hpp>
 #include <harness.h>
 
 

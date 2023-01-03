@@ -99,16 +99,15 @@ target_sources(YARP_harness
   PRIVATE
     harness.cpp
     harness.h
-    ${CMAKE_SOURCE_DIR}/extern/catch2/catch_amalgamated.cpp
 )
 
-add_compile_definitions(CATCH_AMALGAMATED_CUSTOM_MAIN)
 target_link_libraries(YARP_harness
   PRIVATE
     YARP::YARP_conf
     YARP::YARP_os
     YARP::YARP_init
     YARP::YARP_serversql
+    YARP_catch2
 )
 
 target_include_directories(YARP_harness
@@ -130,11 +129,13 @@ target_sources(YARP_harness_no_network
   PRIVATE
     harness.cpp
     harness.h
-    ${CMAKE_SOURCE_DIR}/extern/catch2/catch_amalgamated.cpp
 )
 
-add_compile_definitions(CATCH_AMALGAMATED_CUSTOM_MAIN)
-target_link_libraries(YARP_harness_no_network PRIVATE YARP::YARP_conf)
+target_link_libraries(YARP_harness_no_network
+  PRIVATE
+    YARP::YARP_conf
+    YARP_catch2
+)
 
 target_include_directories(YARP_harness_no_network
   PUBLIC

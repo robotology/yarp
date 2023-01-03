@@ -26,7 +26,7 @@
 
 #define CATCH_CONFIG_MAIN
 #if defined(USE_SYSTEM_CATCH)
-#include <catch_amalgamated.hpp>
+#include <catch2/catch_amalgamated.hpp>
 #else
 #include "catch_amalgamated.hpp"
 #endif

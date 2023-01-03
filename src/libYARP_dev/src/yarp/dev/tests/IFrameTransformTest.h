@@ -25,7 +25,7 @@
 #include <chrono>
 #include <thread>
 
-#include <catch_amalgamated.hpp>
+#include <catch2/catch_amalgamated.hpp>
 
 #include "IFrameTransformTest.h"
 

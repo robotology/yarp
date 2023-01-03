@@ -7,7 +7,7 @@
 #define IAXISINFOTEST_H
 
 #include <yarp/dev/IAxisInfo.h>
-#include <catch_amalgamated.hpp>
+#include <catch2/catch_amalgamated.hpp>
 
 using namespace yarp::dev;
 using namespace yarp::os;

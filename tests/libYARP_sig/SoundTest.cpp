@@ -12,7 +12,7 @@
 #include <fstream>
 #include <iostream>
 
-#include <catch_amalgamated.hpp>
+#include <catch2/catch_amalgamated.hpp>
 #include <harness.h>
 #include <sstream>
 #include <vector>
