@@ -53,7 +53,7 @@ bool ImplementAxisInfo::uninitialize()
 
 bool ImplementAxisInfo::getAxes(int* ax)
 {
-    bool ret;
+    bool ret=true;
     (*ax) = castToMapper(helper)->axes();
     return ret;
 }
