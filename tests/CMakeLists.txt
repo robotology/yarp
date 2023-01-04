@@ -94,6 +94,7 @@ endfunction()
 # Main harness target
 
 add_library(YARP_harness STATIC)
+add_library(YARP::YARP_harness ALIAS YARP_harness)
 
 target_sources(YARP_harness
   PRIVATE
@@ -107,13 +108,13 @@ target_link_libraries(YARP_harness
     YARP::YARP_os
     YARP::YARP_init
     YARP::YARP_serversql
+  PUBLIC
     YARP::YARP_catch2
 )
 
 target_include_directories(YARP_harness
   PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}
-    ${CMAKE_SOURCE_DIR}/extern/catch2
 )
 
 set_property(TARGET YARP_harness PROPERTY FOLDER "Test")
@@ -122,6 +123,7 @@ set_property(TARGET YARP_harness PROPERTY FOLDER "Test")
 # Main harness target without network
 
 add_library(YARP_harness_no_network STATIC)
+add_library(YARP::YARP_harness_no_network ALIAS YARP_harness_no_network)
 
 target_compile_definitions(YARP_harness_no_network PUBLIC WITHOUT_NETWORK)
 
@@ -134,13 +136,13 @@ target_sources(YARP_harness_no_network
 target_link_libraries(YARP_harness_no_network
   PRIVATE
     YARP::YARP_conf
+  PUBLIC
     YARP::YARP_catch2
 )
 
 target_include_directories(YARP_harness_no_network
   PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}
-    ${CMAKE_SOURCE_DIR}/extern/catch2
 )
 
 set_property(TARGET YARP_harness_no_network PROPERTY FOLDER "Test")

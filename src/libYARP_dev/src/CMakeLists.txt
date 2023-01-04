@@ -444,11 +444,6 @@ if(TARGET YARP::YARP_math)
       )
 endif()
 
-target_include_directories(YARP_dev_tests
-  PRIVATE
-    ${CMAKE_SOURCE_DIR}/extern/catch2
-)
-
 target_sources(YARP_dev_tests
   PRIVATE
     ${YARP_dev_test_SRCS}
@@ -457,7 +452,10 @@ target_sources(YARP_dev_tests
 
 target_compile_definitions(YARP_dev_tests PUBLIC YARP_dev_EXPORTS=1)
 
-target_link_libraries(YARP_dev_tests PRIVATE YARP_dev)
+target_link_libraries (YARP_dev_tests
+  PRIVATE
+    YARP::YARP_dev
+    YARP::YARP_catch2)
 
 target_compile_features(YARP_dev_tests PRIVATE cxx_std_17)
 

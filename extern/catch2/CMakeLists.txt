@@ -16,7 +16,7 @@ set(catch2_HDRS
 
 target_sources(YARP_catch2 PRIVATE ${catch2_SRCS})
 
-target_include_directories(YARP_catch2 PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/catch2>)
+target_include_directories(YARP_catch2 PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>)
 
 #This definition means that the default main from catch2 is disabled. User has to provide its own main.
 target_compile_definitions(YARP_catch2 PUBLIC CATCH_AMALGAMATED_CUSTOM_MAIN)
