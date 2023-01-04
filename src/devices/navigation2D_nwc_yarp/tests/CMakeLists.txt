@@ -18,7 +18,7 @@ function(yarp_catch_discover_tests _target)
 endfunction()
 #########################################################################
 
-find_package(YARP::YARP_dev_tests)
+
 
 add_executable(harness_dev_Navigation2Dnwc)
 
