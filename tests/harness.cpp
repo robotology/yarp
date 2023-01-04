@@ -143,6 +143,10 @@ static void fini_NameStore()
 
 } // namespace
 
+void increment_tests_skipped()
+{
+    ++yarp_tests_skipped;
+}
 
 int main(int argc, char *argv[])
 {

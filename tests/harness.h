@@ -14,11 +14,11 @@
 #include <iostream>
 #include <catch.hpp>
 
-extern int yarp_tests_skipped;
+void increment_tests_skipped();
 
 #define YARP_SKIP_TEST(...) \
 { \
-    ++yarp_tests_skipped; \
+    increment_tests_skipped(); \
     FAIL(__VA_ARGS__); \
 }
 
