@@ -13,13 +13,7 @@
 #include <yarp/rosmsg/HeaderTest2.h>
 #include <yarp/os/all.h>
 
-#define CATCH_CONFIG_MAIN  // This tells Catch to provide a main() - only do this in one cpp file
-#if defined(USE_SYSTEM_CATCH)
-#include <catch.hpp>
-#else
-#include "catch.hpp"
-#endif
-
+#include <catch2/catch_amalgamated.hpp>
 
 using namespace yarp::os;
 using namespace yarp::os::impl;
@@ -118,4 +112,9 @@ TEST_CASE("RosMsg", "[yarp::idl::rosmsg]")
     }
 
     yarp.setLocalMode(false);
+}
+
+int main(int argc, char* argv[])
+{
+    return Catch::Session().run(argc, argv);
 }

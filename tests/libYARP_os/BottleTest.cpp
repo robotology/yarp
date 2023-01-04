@@ -14,7 +14,7 @@
 #include <yarp/os/impl/BufferedConnectionWriter.h>
 #include <yarp/os/impl/StreamConnectionReader.h>
 
-#include <catch.hpp>
+#include <catch2/catch_amalgamated.hpp>
 #include <harness.h>
 
 using namespace yarp::os::impl;
@@ -338,12 +338,12 @@ TEST_CASE("os::BottleTest", "[yarp::os]")
     {
         Bottle b;
         b.fromString("10.0e5");
-        CHECK(b.get(0).asFloat64() == Approx(10e5).epsilon(1)); // positive positive lower case
+        CHECK(b.get(0).asFloat64() == Catch::Approx(10e5).epsilon(1)); // positive positive lower case
         b.fromString("10.0e-2");
-        CHECK(b.get(0).asFloat64() == Approx(10e-2).epsilon(1e-2)); // positive negative lower case
+        CHECK(b.get(0).asFloat64() == Catch::Approx(10e-2).epsilon(1e-2)); // positive negative lower case
         b.fromString("1E-8");
         CHECK(b.get(0).isFloat64());
-        CHECK(b.get(0).asFloat64() == Approx(1e-8).epsilon(1e-9)); // positive negative upper case
+        CHECK(b.get(0).asFloat64() == Catch::Approx(1e-8).epsilon(1e-9)); // positive negative upper case
     }
 
     SECTION("test continuation")
@@ -420,10 +420,10 @@ TEST_CASE("os::BottleTest", "[yarp::os]")
         Value v(3.14);
         Bottle b;
         b.read(v);
-        CHECK(b.get(0).asFloat64() == Approx(3.14)); // copy to bottle succeeded
+        CHECK(b.get(0).asFloat64() == Catch::Approx(3.14)); // copy to bottle succeeded
         Bottle b2;
         b.write(b2);
-        CHECK(b2.get(0).asFloat64() == Approx(3.14)); // copy from bottle succeeded
+        CHECK(b2.get(0).asFloat64() == Catch::Approx(3.14)); // copy from bottle succeeded
     }
 
     SECTION("test string with null")
@@ -489,9 +489,9 @@ TEST_CASE("os::BottleTest", "[yarp::os]")
     SECTION("test infinite loop tickled by yarpmanager + string type change")
     {
         Bottle pos("Pos ((x 349.5) (y 122)) ((x 286) (y 122)) ((x 413) (y 122))");
-        CHECK(pos.get(1).find("x").asFloat64() == Approx(349.5));
-        CHECK(pos.get(2).find("x").asFloat64() == Approx(286.0));
-        CHECK(pos.get(3).find("x").asFloat64() == Approx(413.0));
+        CHECK(pos.get(1).find("x").asFloat64() == Catch::Approx(349.5));
+        CHECK(pos.get(2).find("x").asFloat64() == Catch::Approx(286.0));
+        CHECK(pos.get(3).find("x").asFloat64() == Catch::Approx(413.0));
     }
 
     SECTION("test a string with several minus characters")

@@ -7,7 +7,7 @@
 #define IRGBDSENSORTEST_H
 
 #include <yarp/dev/IRGBDSensor.h>
-#include <catch.hpp>
+#include <catch2/catch_amalgamated.hpp>
 
 using namespace yarp::dev;
 using namespace yarp::os;

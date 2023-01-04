@@ -8,7 +8,7 @@
 
 #include <yarp/dev/IMap2D.h>
 #include <yarp/dev/INavigation2D.h>
-#include <catch.hpp>
+#include <catch2/catch_amalgamated.hpp>
 
 using namespace yarp::dev;
 using namespace yarp::dev::Nav2D;

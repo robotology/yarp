@@ -12,7 +12,7 @@
 
 #include <yarp/os/impl/BufferedConnectionWriter.h>
 
-#include <catch.hpp>
+#include <catch2/catch_amalgamated.hpp>
 #include <harness.h>
 
 using namespace yarp::os;
@@ -48,12 +48,12 @@ static void checkEnvelope(const char *mode)
     in.read();
     Stamp inStamp;
     in.getEnvelope(inStamp);
-    CHECK(inStamp.getTime() == Approx(1)); // time stamp 1 read
+    CHECK(inStamp.getTime() == Catch::Approx(1)); // time stamp 1 read
 
     // Read the second object
     in.read();
     in.getEnvelope(inStamp);
-    CHECK(inStamp.getTime() == Approx(4)); // time stamp 2 read
+    CHECK(inStamp.getTime() == Catch::Approx(4)); // time stamp 2 read
 }
 
 
@@ -82,14 +82,14 @@ TEST_CASE("os::StampTest", "[yarp::os]")
             bot.read(con.getReader());
 
             CHECK(bot.get(0).asInt32() == 55); // sequence number write
-            CHECK(bot.get(1).asFloat64() == Approx(1).epsilon(0.0001)); // time stamp write
+            CHECK(bot.get(1).asFloat64() == Catch::Approx(1).epsilon(0.0001)); // time stamp write
 
 
             stampToWrite.write(con.getCleanWriter());
             stampRead.read(con.getReader());
 
             CHECK(stampRead.getCount() == 55); // sequence number read
-            CHECK(stampRead.getTime() == Approx(1).epsilon(0.0001)); // time stamp read
+            CHECK(stampRead.getTime() == Catch::Approx(1).epsilon(0.0001)); // time stamp read
 
             // Test extreme numbers as timestamp
             double exp = -DBL_DIG;
@@ -112,7 +112,7 @@ TEST_CASE("os::StampTest", "[yarp::os]")
             // Check sequence number is updated automatically
             CHECK(stampRead.getCount() == 56); // sequence number read
             // Check the number is read back with error smaller than machine epsilon
-            CHECK(stampRead.getTime() == Approx(timeValue).epsilon(DBL_EPSILON)); // time stamp read
+            CHECK(stampRead.getTime() == Catch::Approx(timeValue).epsilon(DBL_EPSILON)); // time stamp read
 
             // Create a realistic timestamp with tenth of millisecond as granularity,
             // like 1234567890.12345
@@ -125,7 +125,7 @@ TEST_CASE("os::StampTest", "[yarp::os]")
             // Check sequence number is updated automatically
             CHECK(stampRead.getCount() == 57); // sequence number read
             // Check the number is read back with error smaller than machine epsilon
-            CHECK(stampRead.getTime() == Approx(timeValue).epsilon(DBL_EPSILON)); // time stamp read
+            CHECK(stampRead.getTime() == Catch::Approx(timeValue).epsilon(DBL_EPSILON)); // time stamp read
         }
     }
 
@@ -147,7 +147,7 @@ TEST_CASE("os::StampTest", "[yarp::os]")
         std::string str = buf.toString();
         Bottle bot(str.c_str());
         CHECK(bot.get(0).asInt32() == 42); // sequence ok
-        CHECK(bot.get(1).asFloat64() == Approx(3)); // time ok
+        CHECK(bot.get(1).asFloat64() == Catch::Approx(3)); // time ok
     }
 
     Network::setLocalMode(false);

@@ -15,7 +15,7 @@
 #include <yarp/os/Time.h>
 #include <yarp/sig/Image.h>
 
-#include <catch.hpp>
+#include <catch2/catch_amalgamated.hpp>
 #include <harness.h>
 
 using namespace yarp::sig;

@@ -17,7 +17,7 @@
 #include <cstdlib>
 #include <cstdio>
 
-#include <catch.hpp>
+#include <catch2/catch_amalgamated.hpp>
 #include <harness.h>
 
 using namespace yarp::os;
@@ -506,7 +506,7 @@ TEST_CASE("os::ResourceFinderTest", "[yarp::os]")
         rf.setDefault("list", defList.toString());
         rf.configure(argc, (char **)argv);
         CHECK(rf.find("int").asInt32() == defInt); // default integer set correctly
-        CHECK(rf.find("double").asFloat64() == Approx(defDouble)); // default double set correctly
+        CHECK(rf.find("double").asFloat64() == Catch::Approx(defDouble)); // default double set correctly
         CHECK(rf.find("string").asString() == defString); // default string set correctly
         CHECK(rf.find("constchar").asString() == defString); // default string (passed as const char*) set correctly
         Bottle *foundList=rf.find("list").asList();

@@ -12,7 +12,7 @@
 #include <yarp/os/Port.h>
 #include <yarp/os/impl/NameClient.h>
 
-#include <catch.hpp>
+#include <catch2/catch_amalgamated.hpp>
 #include <harness.h>
 
 using namespace yarp::os;

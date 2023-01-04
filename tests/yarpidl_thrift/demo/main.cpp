@@ -24,13 +24,7 @@
 #endif
 #include <Settings.h>
 
-#define CATCH_CONFIG_MAIN
-#if defined(USE_SYSTEM_CATCH)
-#include <catch.hpp>
-#else
-#include "catch.hpp"
-#endif
-
+#include <catch2/catch_amalgamated.hpp>
 
 using namespace yarp::os;
 using namespace yarp::os::impl;
@@ -1118,4 +1112,9 @@ TEST_CASE("IdlThriftTest", "[yarp::idl::thrift]")
         INFO("calling a const method");
         CHECK(const_cast<const Demo&>(client).this_is_a_const_method());
     }
+}
+
+int main(int argc, char* argv[])
+{
+    return Catch::Session().run(argc, argv);
 }

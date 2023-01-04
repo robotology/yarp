@@ -7,7 +7,7 @@
 #include <yarp/os/Network.h>
 #include <yarp/sig/all.h>
 
-#include <catch.hpp>
+#include <catch2/catch_amalgamated.hpp>
 #include <harness.h>
 
 using namespace yarp::os;

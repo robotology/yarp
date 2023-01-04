@@ -9,7 +9,7 @@
 #include <yarp/dev/WrapperSingle.h>
 #include <yarp/dev/tests/IOrientationSensorsTest.h>
 
-#include <catch.hpp>
+#include <catch2/catch_amalgamated.hpp>
 #include <harness.h>
 
 using namespace yarp::dev;

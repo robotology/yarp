@@ -15,7 +15,7 @@
 #include <cmath>
 #include <string>
 
-#include <catch.hpp>
+#include <catch2/catch_amalgamated.hpp>
 #include <harness.h>
 
 using namespace yarp::os;
@@ -28,7 +28,7 @@ void checkEqual(const Vector &a, const Vector &b)
 {
     CHECK(a.size() == b.size());
     for(size_t i = 0; i<a.size(); i++){
-        CHECK(a[i] == Approx(b[i]).margin(1e-8));
+        CHECK(a[i] == Catch::Approx(b[i]).margin(1e-8));
     }
 }
 
@@ -50,7 +50,7 @@ void checkEqual(const Matrix &A, const Matrix &B)
     CHECK(A.rows() == B.rows());
     for(size_t r = 0; r<A.rows(); r++){
         for(size_t c = 0; c<A.cols(); c++){
-            CHECK(A(r, c) == Approx(B(r, c)).margin(1e-8));
+            CHECK(A(r, c) == Catch::Approx(B(r, c)).margin(1e-8));
         }
     }
 }
@@ -74,7 +74,7 @@ void checkEqual(const Vector &b, const Matrix &A)
 
 void checkEqual(const double &a, const double &b)
 {
-    CHECK(a == Approx(b).margin(1e-8));
+    CHECK(a == Catch::Approx(b).margin(1e-8));
 }
 
 #define CHECK_EQUAL(a, b) \
@@ -493,7 +493,7 @@ TEST_CASE("math::MathTest", "[yarp::math]")
         CHECK_EQUAL(an, bn/cn);
         // matrix / scalar
         CHECK_EQUAL(Amn/1, Amn);
-        CHECK((Amn/s)(0, 0) == Approx(Amn(0, 0)/s));
+        CHECK((Amn/s)(0, 0) == Catch::Approx(Amn(0, 0)/s));
         // matrix /= scalar
         Amn = Bmn;
         Amn /= s;

@@ -6,7 +6,7 @@
 
 #include <yarp/conf/string.h>
 
-#include <catch.hpp>
+#include <catch2/catch_amalgamated.hpp>
 #include <harness.h>
 
 namespace str = yarp::conf::string;

@@ -10,7 +10,7 @@
 #include <yarp/os/ManagedBytes.h>
 #include <yarp/os/Vocab.h>
 
-#include <catch.hpp>
+#include <catch2/catch_amalgamated.hpp>
 #include <harness.h>
 
 using namespace yarp::os::impl;
@@ -69,7 +69,7 @@ TEST_CASE("os::BottleImplTest", "[yarp::os::impl]")
             CHECK(b.get(0).asInt32() == 5);
 
             CHECK(b.isFloat64(1));
-            CHECK(b.get(1).asFloat64() == Approx(10.2));
+            CHECK(b.get(1).asFloat64() == Catch::Approx(10.2));
 
             CHECK(b.isString(2));
             CHECK(b.get(2).asString() == "hello");
@@ -78,7 +78,7 @@ TEST_CASE("os::BottleImplTest", "[yarp::os::impl]")
             CHECK(b.get(3).asInt32() == -15);
 
             CHECK(b.isFloat64(4));
-            CHECK(b.get(4).asFloat64() == Approx(-15.0));
+            CHECK(b.get(4).asFloat64() == Catch::Approx(-15.0));
         }
     }
 

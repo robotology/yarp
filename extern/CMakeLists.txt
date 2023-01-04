@@ -8,6 +8,9 @@ get_property(_USER_CMAKE_CXX_FLAGS CACHE CMAKE_CXX_FLAGS PROPERTY VALUE)
 set(CMAKE_C_FLAGS "-w ${_USER_CMAKE_C_FLAGS}")
 set(CMAKE_CXX_FLAGS "-w ${_USER_CMAKE_CXX_FLAGS}")
 
+# Catch2
+  add_subdirectory(catch2)
+  
 # TinyXML
 if(YARP_BUILD_TinyXML)
   add_subdirectory(tinyxml)

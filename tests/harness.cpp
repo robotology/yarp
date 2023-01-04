@@ -4,8 +4,7 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#define CATCH_CONFIG_RUNNER
-#include <catch.hpp>
+#include <catch2/catch_amalgamated.hpp>
 
 #include <yarp/conf/environment.h>
 #include <yarp/conf/filesystem.h>
@@ -152,9 +151,9 @@ int main(int argc, char *argv[])
 {
     Catch::Session session;
 
-    auto cli = session.cli() | Catch::clara::Opt(verbose)["--yarp-verbose"]("Enable verbose mode")
+    auto cli = session.cli() | Catch::Clara::Opt(verbose)["--yarp-verbose"]("Enable verbose mode")
 #if !defined(WITHOUT_NETWORK)
-                             | Catch::clara::Opt(no_bypass)["--yarp-no-bypass"]("Do not bypass yarpserver");
+                             | Catch::Clara::Opt(no_bypass)["--yarp-no-bypass"]("Do not bypass yarpserver");
 #else
                              ;
 #endif // WITHOUT_NETWORK
