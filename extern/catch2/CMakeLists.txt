@@ -4,6 +4,7 @@
 project(YARP_catch2)
 
 add_library(YARP_catch2 STATIC)
+add_library(YARP::YARP_catch2 ALIAS YARP_catch2)
 
 set(catch2_SRCS
   catch2/catch_amalgamated.cpp

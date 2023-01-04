@@ -107,7 +107,7 @@ target_link_libraries(YARP_harness
     YARP::YARP_os
     YARP::YARP_init
     YARP::YARP_serversql
-    YARP_catch2
+    YARP::YARP_catch2
 )
 
 target_include_directories(YARP_harness
@@ -134,7 +134,7 @@ target_sources(YARP_harness_no_network
 target_link_libraries(YARP_harness_no_network
   PRIVATE
     YARP::YARP_conf
-    YARP_catch2
+    YARP::YARP_catch2
 )
 
 target_include_directories(YARP_harness_no_network

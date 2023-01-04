@@ -13,7 +13,7 @@ set_property(GLOBAL PROPERTY AUTOGEN_TARGETS_FOLDER "Autogen Targets")
 set_property(GLOBAL PROPERTY AUTOGEN_SOURCE_GROUP "Generated Files")
 
 find_package(YCM 0.11.0 REQUIRED)
-find_package(YARP COMPONENTS os sig idl_tools REQUIRED)
+find_package(YARP COMPONENTS os sig idl_tools catch2 REQUIRED)
 
 include(Catch)
 # Test timeout.
@@ -36,6 +36,7 @@ function(yarp_catch_discover_tests _target)
     ${ARGN}
   )
 endfunction()
+
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../../extern/catch2)
 
 set(IDL_FILES
@@ -79,6 +80,7 @@ target_link_libraries(demo_yarp_idl_to_dir
     YARP::YARP_os
     YARP::YARP_init
     YARP::YARP_sig
+    YARP::YARP_catch2
 )
 
 yarp_catch_discover_tests(
@@ -105,6 +107,7 @@ target_link_libraries(demo_yarp_add_idl
     YARP::YARP_os
     YARP::YARP_init
     YARP::YARP_sig
+    YARP::YARP_catch2
 )
 
 yarp_catch_discover_tests(
