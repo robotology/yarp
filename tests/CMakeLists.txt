@@ -82,7 +82,7 @@ function(yarp_catch_discover_tests _target)
   set_property(TARGET ${_target} PROPERTY CROSSCOMPILING_EMULATOR "${YARP_TEST_LAUNCHER}")
   catch_discover_tests(
     ${_target}
-    EXTRA_ARGS "-s" "--use-colour" "yes"
+    EXTRA_ARGS "-s" "--colour-mode default"
     PROPERTIES
       TIMEOUT ${YARP_TEST_TIMEOUT}
       SKIP_RETURN_CODE 254
