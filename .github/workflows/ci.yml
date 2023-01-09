@@ -154,37 +154,37 @@ jobs:
         - {
             cmake_version: "3.16",
             cmake_generator: "Unix Makefiles",
-            ycm_version: "0.13.0",
+            ycm_version: "0.14.2",
           }
         - {
             cmake_version: "3.17",
             cmake_generator: "Unix Makefiles",
-            ycm_version: "0.13.0",
+            ycm_version: "0.14.2",
           }
         - {
             cmake_version: "3.18",
             cmake_generator: "Unix Makefiles",
-            ycm_version: "0.13.0",
+            ycm_version: "0.14.2",
           }
         - {
             cmake_version: "3.19",
             cmake_generator: "Unix Makefiles",
-            ycm_version: "0.13.0",
+            ycm_version: "0.14.2",
           }
         - {
             cmake_version: "3.20",
             cmake_generator: "Unix Makefiles",
-            ycm_version: "0.13.0",
+            ycm_version: "0.14.2",
           }
         - {
             cmake_version: "3.20",
             cmake_generator: "Ninja",
-            ycm_version: "0.13.0",
+            ycm_version: "0.14.2",
           }
         - {
             cmake_version: "3.21",
             cmake_generator: "Unix Makefiles",
-            ycm_version: "0.13.0",
+            ycm_version: "0.14.2",
           }
     steps:
     - name: Clone repository
@@ -637,8 +637,11 @@ jobs:
         command: |
           # Install Robotology dependencies from robotology ppa
           sudo apt-add-repository -y ppa:robotology/ppa
-          sudo apt-get install -qq -y ycm-cmake-modules \
-                                      librobottestingframework-dev
+          sudo apt-get install -qq -y librobottestingframework-dev
+
+          # Install ycm
+          wget -nv https://github.com/robotology/ycm/releases/download/v0.14.2/ycm-cmake-modules-0.14.2-all.deb
+          sudo dpkg -i ycm-cmake-modules-0.14.2-all.deb
 
           # Install build tools
           sudo apt-get install -qq -y cmake \
@@ -729,7 +732,7 @@ jobs:
           7z x -oC:\ vcpkg-robotology-yarp-only.zip &
           echo &
           echo # Download and install YCM &
-          wget -nv https://github.com/robotology/ycm/releases/download/v0.13.0/YCM-0.13.0-all.tar.gz -O ycm.tar.gz &
+          wget -nv https://github.com/robotology/ycm/releases/download/v0.14.2/YCM-0.14.2-all.tar.gz -O ycm.tar.gz &
           7z x ycm.tar.gz &
           7z x -ttar -oC:\robotology ycm.tar &
           echo &
@@ -786,7 +789,7 @@ jobs:
           file(APPEND "${_env_script}" "set(ENV{PATH} \"\$ENV{PATH};\$ENV{GITHUB_WORKSPACE}\")\n")
 
           # YCM is installed manually, set YCM_DIR to allow CMake to find it
-          file(APPEND "${_env_script}" "set(ENV{YCM_DIR} \"C:\\\\robotology\\\\YCM-0.13.0-all\")\n")
+          file(APPEND "${_env_script}" "set(ENV{YCM_DIR} \"C:\\\\robotology\\\\YCM-0.14.2-all\")\n")
 
           # Append vcpkg bin directory to the PATH
           if("${{ matrix.config.build_type }}" STREQUAL "Release")
