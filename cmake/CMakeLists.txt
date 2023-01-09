@@ -9,6 +9,7 @@ set(YARP_CMAKE_FILES
   YarpInstallationHelpers.cmake
   YarpPrintFeature.cmake
   YarpDeprecatedOption.cmake
+  YarpCatchUtils.cmake
 )
 install(
   FILES ${YARP_CMAKE_FILES}
