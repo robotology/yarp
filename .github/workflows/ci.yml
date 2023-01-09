@@ -366,8 +366,7 @@ jobs:
             cxx: "g++",
             cmake_generator: "Unix Makefiles",
             cmake_initial_cache_file: ".ci/initial-cache.gh.linux.cmake",
-            cmake_extra_options: "-DBUILD_SHARED_LIBS:BOOL=OFF
-                                  -DCMAKE_DISABLE_FIND_PACKAGE_SOXR=ON", # FIXME Enable when YCM 0.14 is available
+            cmake_extra_options: "-DBUILD_SHARED_LIBS:BOOL=OFF",
           }
         - {
             id: '10',
@@ -378,8 +377,7 @@ jobs:
             cxx: "clang++",
             cmake_generator: "Unix Makefiles",
             cmake_initial_cache_file: ".ci/initial-cache.gh.linux.cmake",
-            cmake_extra_options: "-DBUILD_SHARED_LIBS:BOOL=OFF
-                                  -DCMAKE_DISABLE_FIND_PACKAGE_SOXR=ON", # FIXME Enable when YCM 0.14 is available
+            cmake_extra_options: "-DBUILD_SHARED_LIBS:BOOL=OFF",
           }
         - {
             id: '11',
@@ -393,8 +391,7 @@ jobs:
             cmake_extra_options: "-DBUILD_SHARED_LIBS:BOOL=OFF
                                   -DCMAKE_DISABLE_FIND_PACKAGE_ACE:BOOL=ON
                                   -DSKIP_ACE:BOOL=ON
-                                  -DYARP_COMPILE_BINDINGS:BOOL=OFF
-                                  -DCMAKE_DISABLE_FIND_PACKAGE_SOXR=ON", # FIXME Enable when YCM 0.14 is available
+                                  -DYARP_COMPILE_BINDINGS:BOOL=OFF",
           }
         - {
             id: '12',
@@ -408,8 +405,7 @@ jobs:
             cmake_extra_options: "-DBUILD_SHARED_LIBS:BOOL=OFF
                                   -DCMAKE_DISABLE_FIND_PACKAGE_ACE:BOOL=ON
                                   -DSKIP_ACE:BOOL=ON
-                                  -DYARP_COMPILE_BINDINGS:BOOL=OFF
-                                  -DCMAKE_DISABLE_FIND_PACKAGE_SOXR=ON", # FIXME Enable when YCM 0.14 is available
+                                  -DYARP_COMPILE_BINDINGS:BOOL=OFF",
           }
         - {
             id: '13',
@@ -517,7 +513,6 @@ jobs:
                                   -DYARP_ENABLE_EXAMPLES_AS_TESTS:BOOL=OFF
                                   -DYARP_COMPILE_BINDINGS:BOOL=OFF
                                   -DCMAKE_DISABLE_FIND_PACKAGE_FFMPEG=ON
-                                  -DCMAKE_DISABLE_FIND_PACKAGE_SOXR=ON
                                   -DENABLE_yarpcar_h264:BOOL=OFF
                                   -DENABLE_yarpcar_mjpeg:BOOL=OFF
                                   -DENABLE_yarppm_image_compression_ffmpeg:BOOL=OFF
@@ -549,7 +544,6 @@ jobs:
                                   -DYARP_ENABLE_EXAMPLES_AS_TESTS:BOOL=OFF
                                   -DYARP_COMPILE_BINDINGS:BOOL=OFF
                                   -DCMAKE_DISABLE_FIND_PACKAGE_FFMPEG=ON
-                                  -DCMAKE_DISABLE_FIND_PACKAGE_SOXR=ON
                                   -DENABLE_yarpcar_h264:BOOL=OFF
                                   -DENABLE_yarpcar_mjpeg:BOOL=OFF
                                   -DENABLE_yarppm_image_compression_ffmpeg:BOOL=OFF
