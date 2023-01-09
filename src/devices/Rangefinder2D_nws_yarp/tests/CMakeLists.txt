@@ -21,18 +21,6 @@ target_link_libraries(harness_dev_rangefinder2D_nws_yarp
     YARP::YARP_dev_tests
 )
 
-if(TARGET YARP::YARP_math)
-  target_link_libraries(harness_dev_rangefinder2D_nws_yarp
-  PRIVATE
-    YARP::YARP_math
-  )
-else()
-  set(_disabled_files
-    Rangefinder2D_nws_yarpTest.cpp
-  )
-  set_source_files_properties(${_disabled_files} PROPERTIES HEADER_FILE_ONLY ON)
-endif()
-
 set_property(TARGET harness_dev_rangefinder2D_nws_yarp PROPERTY FOLDER "Test")
 
 yarp_catch_discover_tests(harness_dev_rangefinder2D_nws_yarp)
