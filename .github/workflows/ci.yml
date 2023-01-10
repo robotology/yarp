@@ -150,17 +150,17 @@ jobs:
       matrix:
         config:
         - {
-            cmake_version: "3.16.3-1ubuntu1.20.04.1",
+            cmake_version: "3.16.*",
             cmake_generator: "Unix Makefiles",
             ycm_version: "0.15.1",
           }
         - {
-            cmake_version: "3.17.3-0kitware1ubuntu20.04.1",
+            cmake_version: "3.17.*",
             cmake_generator: "Unix Makefiles",
             ycm_version: "0.15.1",
           }
         - {
-            cmake_version: "3.18.4-0kitware1ubuntu20.04.1",
+            cmake_version: "3.18.*",
             cmake_generator: "Unix Makefiles",
             ycm_version: "0.15.1",
           }
@@ -181,6 +181,26 @@ jobs:
           }
         - {
             cmake_version: "3.21.*",
+            cmake_generator: "Unix Makefiles",
+            ycm_version: "0.15.1",
+          }
+        - {
+            cmake_version: "3.22.*",
+            cmake_generator: "Unix Makefiles",
+            ycm_version: "0.15.1",
+          }
+        - {
+            cmake_version: "3.23.*",
+            cmake_generator: "Unix Makefiles",
+            ycm_version: "0.15.1",
+          }
+        - {
+            cmake_version: "3.24.*",
+            cmake_generator: "Unix Makefiles",
+            ycm_version: "0.15.1",
+          }
+        - {
+            cmake_version: "3.25.*",
             cmake_generator: "Unix Makefiles",
             ycm_version: "0.15.1",
           }
@@ -660,13 +680,18 @@ jobs:
           sudo apt-add-repository -y ppa:robotology/ppa
           sudo apt-get install -qq -y librobottestingframework-dev
 
+          # Install cmake
+          sudo apt-get install -qq -y cmake
+          which cmake
+          cmake --version
+          /usr/bin/cmake --version
+
           # Install ycm
           wget -nv https://github.com/robotology/ycm/releases/download/v0.15.1/ycm-cmake-modules-0.15.1-all.deb
           sudo dpkg -i ycm-cmake-modules-0.15.1-all.deb
 
           # Install build tools
-          sudo apt-get install -qq -y cmake \
-                                      ccache \
+          sudo apt-get install -qq -y ccache \
                                       ninja-build \
                                       valgrind
 
@@ -754,7 +779,7 @@ jobs:
           7z x -oC:\ vcpkg-robotology-yarp-only.zip &
           echo &
           echo # Download and install YCM &
-          wget -nv https://github.com/robotology/ycm/releases/download/v0.15.1/YCM-0.15.1-all.tar.gz -O ycm.tar.gz &
+          wget -nv https://github.com/robotology/ycm/releases/download/v0.15.1/ycm-cmake-modules-0.15.1-all.tar.gz -O ycm.tar.gz &
           7z x ycm.tar.gz &
           7z x -ttar -oC:\robotology ycm.tar &
           echo &
@@ -777,12 +802,26 @@ jobs:
             sudo xcode-select -s /Applications/Xcode_12.3.app/Contents/Developer
           fi
 
-          brew tap robotology/homebrew-formulae
+          # Temporary workaround for https://github.com/actions/setup-python/issues/577
+          rm -f /usr/local/bin/2to3
+          rm -f /usr/local/bin/idle3
+          rm -f /usr/local/bin/pydoc3
+          rm -f /usr/local/bin/python3
+          rm -f /usr/local/bin/python3-config
+          rm -f /usr/local/bin/2to3-3.11
+          rm -f /usr/local/bin/idle3.11
+          rm -f /usr/local/bin/pydoc3.11
+          rm -f /usr/local/bin/python3.11
+          rm -f /usr/local/bin/python3.11-config
+
+          wget -nv https://github.com/robotology/ycm/releases/download/v0.15.1/ycm-cmake-modules-0.15.1-all.tar.gz -O /Users/runner/work/yarp/ycm.tar.gz
+          7z x /Users/runner/work/yarp/ycm.tar.gz -o/Users/runner/work/yarp
+          7z x -ttar /Users/runner/work/yarp/ycm.tar -o/Users/runner/work/yarp
+          
           brew update
           brew install ccache
           brew install ace
           brew install sqlite tinyxml libedit libpng qt5 opencv eigen graphviz libsoxr
-          brew install robotology/formulae/ycm
 
     - name: Prepare Environment Script
       id: prepare_environment_script
@@ -791,6 +830,14 @@ jobs:
         cmake_minimum_required(VERSION 3.17)
         set(_env_script ${CMAKE_CURRENT_LIST_DIR}/environment_script.cmake)
         file(WRITE "${_env_script}" "")
+
+        # if YCM is installed manually, set YCM_DIR to allow CMake to find it
+        if("${{ runner.os }}" STREQUAL "Windows")
+          file(APPEND "${_env_script}" "set(ENV{YCM_DIR} \"C:\\\\robotology\\\\YCM-0.15.1-all\")\n")
+        elseif("${{ runner.os }}" STREQUAL "macOS")
+          file(APPEND "${_env_script}" "set(ENV{YCM_DIR} \"/Users/runner/work/yarp/YCM-0.15.1-all\")\n")
+        endif()
+
         if("${{ runner.os }}" STREQUAL "Windows" AND NOT "${{ matrix.config.environment_script }}" STREQUAL "")
           execute_process(
               COMMAND "${{ matrix.config.environment_script }}" && set
@@ -809,9 +856,6 @@ jobs:
 
           # Ninja and other tools are downloaded in $GITHUB_WORKSPACE
           file(APPEND "${_env_script}" "set(ENV{PATH} \"\$ENV{PATH};\$ENV{GITHUB_WORKSPACE}\")\n")
-
-          # YCM is installed manually, set YCM_DIR to allow CMake to find it
-          file(APPEND "${_env_script}" "set(ENV{YCM_DIR} \"C:\\\\robotology\\\\YCM-0.15.1-all\")\n")
 
           # Append vcpkg bin directory to the PATH
           if("${{ matrix.config.build_type }}" STREQUAL "Release")
@@ -1343,13 +1387,18 @@ jobs:
           sudo apt-add-repository -y ppa:robotology/ppa
           sudo apt-get install -qq -y librobottestingframework-dev
 
+          # Install cmake
+          sudo apt-get install -qq -y cmake
+          which cmake
+          cmake --version
+          /usr/bin/cmake --version
+
           # Install ycm
           wget -nv https://github.com/robotology/ycm/releases/download/v0.15.1/ycm-cmake-modules-0.15.1-all.deb
           sudo dpkg -i ycm-cmake-modules-0.15.1-all.deb
 
           # Install build tools
-          sudo apt-get install -qq -y cmake \
-                                      ccache \
+          sudo apt-get install -qq -y ccache \
                                       ninja-build \
                                       valgrind
 
@@ -1534,13 +1583,18 @@ jobs:
           sudo apt-add-repository -y ppa:robotology/ppa
           sudo apt-get install -qq -y librobottestingframework-dev
 
+          # Install cmake
+          sudo apt-get install -qq -y cmake
+          which cmake
+          cmake --version
+          /usr/bin/cmake --version
+
           # Install ycm
           wget -nv https://github.com/robotology/ycm/releases/download/v0.15.1/ycm-cmake-modules-0.15.1-all.deb
           sudo dpkg -i ycm-cmake-modules-0.15.1-all.deb
 
           # Install build tools
-          sudo apt-get install -qq -y cmake \
-                                      ccache \
+          sudo apt-get install -qq -y ccache \
                                       ninja-build \
                                       valgrind
 
@@ -1741,13 +1795,18 @@ jobs:
           sudo apt-add-repository -y ppa:robotology/ppa
           sudo apt-get install -qq -y librobottestingframework-dev
 
+          # Install cmake
+          sudo apt-get install -qq -y cmake
+          which cmake
+          cmake --version
+          /usr/bin/cmake --version
+
           # Install ycm
           wget -nv https://github.com/robotology/ycm/releases/download/v0.15.1/ycm-cmake-modules-0.15.1-all.deb
           sudo dpkg -i ycm-cmake-modules-0.15.1-all.deb
 
           # Install build tools
-          sudo apt-get install -qq -y cmake \
-                                      ccache \
+          sudo apt-get install -qq -y ccache \
                                       ninja-build \
                                       valgrind
 
