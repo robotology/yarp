@@ -145,8 +145,6 @@ jobs:
     name: 'Run CMake [CMake ${{ matrix.config.cmake_version }} (${{ matrix.config.cmake_generator }}), YCM ${{ matrix.config.ycm_version }}]'
     needs: [select_environment, check-license, check-style]
     runs-on: ubuntu-20.04
-    container:
-      image: ghcr.io/robotology/ycm:cmake-${{ matrix.config.cmake_version }}_ycm-${{ matrix.config.ycm_version }}
     strategy:
       fail-fast: false
       matrix:
@@ -187,19 +185,28 @@ jobs:
             ycm_version: "0.14.2",
           }
     steps:
-    - name: Clone repository
-      uses: actions/checkout@v2
-      with:
-        repository: ${{ needs.select_environment.outputs.repository }}
-        ref: ${{ needs.select_environment.outputs.ref }}
+    - name: install cmake
+      run: |
+        sudo apt-get install -y cmake
 
     - name: Print CMake version
       run: |
         cmake --version
 
+    - name: Clone Ycm repository
+      run: |
+        wget -nv https://github.com/robotology/ycm/releases/download/v0.14.2/ycm-cmake-modules-0.14.2-all.deb
+        sudo dpkg -i ycm-cmake-modules-0.14.2-all.deb
+
     - name: Print YCM version
       run: |
         grep YCM_VERSION /usr/share/cmake/YCM/YCMConfig.cmake
+
+    - name: Clone Yarp repository
+      uses: actions/checkout@v2
+      with:
+        repository: ${{ needs.select_environment.outputs.repository }}
+        ref: ${{ needs.select_environment.outputs.ref }}
 
     - name: Run CMake
       run: |
