@@ -29,7 +29,7 @@ list(APPEND CMAKE_MODULE_PATH ${YARP_MODULE_DIR})
 
 # Find YCM
 # This is required here, because YarpVersion uses GitInfo from YCM
-set(YCM_REQUIRED_VERSION 0.14.2) # Used also by YarpFindDependencies
+set(YCM_REQUIRED_VERSION 0.15.1) # Used also by YarpFindDependencies
 find_package(YCM ${YCM_REQUIRED_VERSION} REQUIRED)
 
 # Get the current YARP version.

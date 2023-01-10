@@ -152,37 +152,37 @@ jobs:
         - {
             cmake_version: "3.16.3-1ubuntu1.20.04.1",
             cmake_generator: "Unix Makefiles",
-            ycm_version: "0.14.2",
+            ycm_version: "0.15.1",
           }
         - {
             cmake_version: "3.17.3-0kitware1ubuntu20.04.1",
             cmake_generator: "Unix Makefiles",
-            ycm_version: "0.14.2",
+            ycm_version: "0.15.1",
           }
         - {
             cmake_version: "3.18.4-0kitware1ubuntu20.04.1",
             cmake_generator: "Unix Makefiles",
-            ycm_version: "0.14.2",
+            ycm_version: "0.15.1",
           }
         - {
             cmake_version: "3.19.*",
             cmake_generator: "Unix Makefiles",
-            ycm_version: "0.14.2",
+            ycm_version: "0.15.1",
           }
         - {
             cmake_version: "3.20.*",
             cmake_generator: "Unix Makefiles",
-            ycm_version: "0.14.2",
+            ycm_version: "0.15.1",
           }
         - {
             cmake_version: "3.20.*",
             cmake_generator: "Ninja",
-            ycm_version: "0.14.2",
+            ycm_version: "0.15.1",
           }
         - {
             cmake_version: "3.21.*",
             cmake_generator: "Unix Makefiles",
-            ycm_version: "0.14.2",
+            ycm_version: "0.15.1",
           }
     steps:
     - name: remove any previous installation of cmake
@@ -209,8 +209,8 @@ jobs:
 
     - name: Get YCM package
       run: |
-        wget -nv https://github.com/robotology/ycm/releases/download/v0.14.2/ycm-cmake-modules-0.14.2-all.deb
-        sudo dpkg -i ycm-cmake-modules-0.14.2-all.deb
+        wget -nv https://github.com/robotology/ycm/releases/download/v0.15.1/ycm-cmake-modules-0.15.1-all.deb
+        sudo dpkg -i ycm-cmake-modules-0.15.1-all.deb
 
     - name: Print YCM version
       run: |
@@ -661,8 +661,8 @@ jobs:
           sudo apt-get install -qq -y librobottestingframework-dev
 
           # Install ycm
-          wget -nv https://github.com/robotology/ycm/releases/download/v0.14.2/ycm-cmake-modules-0.14.2-all.deb
-          sudo dpkg -i ycm-cmake-modules-0.14.2-all.deb
+          wget -nv https://github.com/robotology/ycm/releases/download/v0.15.1/ycm-cmake-modules-0.15.1-all.deb
+          sudo dpkg -i ycm-cmake-modules-0.15.1-all.deb
 
           # Install build tools
           sudo apt-get install -qq -y cmake \
@@ -670,8 +670,9 @@ jobs:
                                       ninja-build \
                                       valgrind
 
-          sudo apt-get install -qq -y libace-dev \
-                                      libsqlite3-dev \
+          sudo apt-get install -y     libace-dev \
+
+          sudo apt-get install -qq -y libsqlite3-dev \
                                       libtinyxml-dev \
                                       libedit-dev \
                                       qtbase5-dev \
@@ -753,7 +754,7 @@ jobs:
           7z x -oC:\ vcpkg-robotology-yarp-only.zip &
           echo &
           echo # Download and install YCM &
-          wget -nv https://github.com/robotology/ycm/releases/download/v0.14.2/YCM-0.14.2-all.tar.gz -O ycm.tar.gz &
+          wget -nv https://github.com/robotology/ycm/releases/download/v0.15.1/YCM-0.15.1-all.tar.gz -O ycm.tar.gz &
           7z x ycm.tar.gz &
           7z x -ttar -oC:\robotology ycm.tar &
           echo &
@@ -810,7 +811,7 @@ jobs:
           file(APPEND "${_env_script}" "set(ENV{PATH} \"\$ENV{PATH};\$ENV{GITHUB_WORKSPACE}\")\n")
 
           # YCM is installed manually, set YCM_DIR to allow CMake to find it
-          file(APPEND "${_env_script}" "set(ENV{YCM_DIR} \"C:\\\\robotology\\\\YCM-0.14.2-all\")\n")
+          file(APPEND "${_env_script}" "set(ENV{YCM_DIR} \"C:\\\\robotology\\\\YCM-0.15.1-all\")\n")
 
           # Append vcpkg bin directory to the PATH
           if("${{ matrix.config.build_type }}" STREQUAL "Release")
@@ -1343,8 +1344,8 @@ jobs:
           sudo apt-get install -qq -y librobottestingframework-dev
 
           # Install ycm
-          wget -nv https://github.com/robotology/ycm/releases/download/v0.14.2/ycm-cmake-modules-0.14.2-all.deb
-          sudo dpkg -i ycm-cmake-modules-0.14.2-all.deb
+          wget -nv https://github.com/robotology/ycm/releases/download/v0.15.1/ycm-cmake-modules-0.15.1-all.deb
+          sudo dpkg -i ycm-cmake-modules-0.15.1-all.deb
 
           # Install build tools
           sudo apt-get install -qq -y cmake \
@@ -1534,8 +1535,8 @@ jobs:
           sudo apt-get install -qq -y librobottestingframework-dev
 
           # Install ycm
-          wget -nv https://github.com/robotology/ycm/releases/download/v0.14.2/ycm-cmake-modules-0.14.2-all.deb
-          sudo dpkg -i ycm-cmake-modules-0.14.2-all.deb
+          wget -nv https://github.com/robotology/ycm/releases/download/v0.15.1/ycm-cmake-modules-0.15.1-all.deb
+          sudo dpkg -i ycm-cmake-modules-0.15.1-all.deb
 
           # Install build tools
           sudo apt-get install -qq -y cmake \
@@ -1741,8 +1742,8 @@ jobs:
           sudo apt-get install -qq -y librobottestingframework-dev
 
           # Install ycm
-          wget -nv https://github.com/robotology/ycm/releases/download/v0.14.2/ycm-cmake-modules-0.14.2-all.deb
-          sudo dpkg -i ycm-cmake-modules-0.14.2-all.deb
+          wget -nv https://github.com/robotology/ycm/releases/download/v0.15.1/ycm-cmake-modules-0.15.1-all.deb
+          sudo dpkg -i ycm-cmake-modules-0.15.1-all.deb
 
           # Install build tools
           sudo apt-get install -qq -y cmake \
