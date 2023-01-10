@@ -145,61 +145,82 @@ jobs:
     name: 'Run CMake [CMake ${{ matrix.config.cmake_version }} (${{ matrix.config.cmake_generator }}), YCM ${{ matrix.config.ycm_version }}]'
     needs: [select_environment, check-license, check-style]
     runs-on: ubuntu-20.04
-    container:
-      image: ghcr.io/robotology/ycm:cmake-${{ matrix.config.cmake_version }}_ycm-${{ matrix.config.ycm_version }}
     strategy:
       fail-fast: false
       matrix:
         config:
         - {
-            cmake_version: "3.16",
+            cmake_version: "3.16.3-1ubuntu1.20.04.1",
             cmake_generator: "Unix Makefiles",
             ycm_version: "0.14.2",
           }
         - {
-            cmake_version: "3.17",
+            cmake_version: "3.17.3-0kitware1ubuntu20.04.1",
             cmake_generator: "Unix Makefiles",
             ycm_version: "0.14.2",
           }
         - {
-            cmake_version: "3.18",
+            cmake_version: "3.18.4-0kitware1ubuntu20.04.1",
             cmake_generator: "Unix Makefiles",
             ycm_version: "0.14.2",
           }
         - {
-            cmake_version: "3.19",
+            cmake_version: "3.19.*",
             cmake_generator: "Unix Makefiles",
             ycm_version: "0.14.2",
           }
         - {
-            cmake_version: "3.20",
+            cmake_version: "3.20.*",
             cmake_generator: "Unix Makefiles",
             ycm_version: "0.14.2",
           }
         - {
-            cmake_version: "3.20",
+            cmake_version: "3.20.*",
             cmake_generator: "Ninja",
             ycm_version: "0.14.2",
           }
         - {
-            cmake_version: "3.21",
+            cmake_version: "3.21.*",
             cmake_generator: "Unix Makefiles",
             ycm_version: "0.14.2",
           }
     steps:
-    - name: Clone repository
-      uses: actions/checkout@v2
-      with:
-        repository: ${{ needs.select_environment.outputs.repository }}
-        ref: ${{ needs.select_environment.outputs.ref }}
+    - name: remove any previous installation of cmake
+      run: | 
+        sudo rm /usr/local/bin/cmake
+        
+    - name: install cmake
+      run: |
+        wget -O - https://apt.kitware.com/keys/kitware-archive-latest.asc 2>/dev/null | gpg --dearmor - | sudo tee /usr/share/keyrings/kitware-archive-keyring.gpg >/dev/null
+        echo 'deb [signed-by=/usr/share/keyrings/kitware-archive-keyring.gpg] https://apt.kitware.com/ubuntu/ focal main' | sudo tee /etc/apt/sources.list.d/kitware.list >/dev/null
+        sudo apt-get update
+        sudo rm /usr/share/keyrings/kitware-archive-keyring.gpg
+        sudo apt-get -y install kitware-archive-keyring
+        sudo apt-cache policy cmake-data
+        sudo apt-cache policy cmake
+        sudo apt-get -y install cmake-data=${{matrix.config.cmake_version}}
+        sudo apt-get -y -f install cmake=${{matrix.config.cmake_version}}
 
     - name: Print CMake version
       run: |
+        which cmake
         cmake --version
+        /usr/bin/cmake --version
+
+    - name: Get YCM package
+      run: |
+        wget -nv https://github.com/robotology/ycm/releases/download/v0.14.2/ycm-cmake-modules-0.14.2-all.deb
+        sudo dpkg -i ycm-cmake-modules-0.14.2-all.deb
 
     - name: Print YCM version
       run: |
         grep YCM_VERSION /usr/share/cmake/YCM/YCMConfig.cmake
+
+    - name: Clone Yarp repository
+      uses: actions/checkout@v2
+      with:
+        repository: ${{ needs.select_environment.outputs.repository }}
+        ref: ${{ needs.select_environment.outputs.ref }}
 
     - name: Run CMake
       run: |
@@ -1319,8 +1340,11 @@ jobs:
         command: |
           # Install Robotology dependencies from robotology ppa
           sudo apt-add-repository -y ppa:robotology/ppa
-          sudo apt-get install -qq -y ycm-cmake-modules \
-                                      librobottestingframework-dev
+          sudo apt-get install -qq -y librobottestingframework-dev
+
+          # Install ycm
+          wget -nv https://github.com/robotology/ycm/releases/download/v0.14.2/ycm-cmake-modules-0.14.2-all.deb
+          sudo dpkg -i ycm-cmake-modules-0.14.2-all.deb
 
           # Install build tools
           sudo apt-get install -qq -y cmake \
@@ -1507,8 +1531,11 @@ jobs:
         command: |
           # Install Robotology dependencies from robotology ppa
           sudo apt-add-repository -y ppa:robotology/ppa
-          sudo apt-get install -qq -y ycm-cmake-modules \
-                                      librobottestingframework-dev
+          sudo apt-get install -qq -y librobottestingframework-dev
+
+          # Install ycm
+          wget -nv https://github.com/robotology/ycm/releases/download/v0.14.2/ycm-cmake-modules-0.14.2-all.deb
+          sudo dpkg -i ycm-cmake-modules-0.14.2-all.deb
 
           # Install build tools
           sudo apt-get install -qq -y cmake \
@@ -1711,8 +1738,11 @@ jobs:
         command: |
           # Install Robotology dependencies from robotology ppa
           sudo apt-add-repository -y ppa:robotology/ppa
-          sudo apt-get install -qq -y ycm-cmake-modules \
-                                      librobottestingframework-dev
+          sudo apt-get install -qq -y librobottestingframework-dev
+
+          # Install ycm
+          wget -nv https://github.com/robotology/ycm/releases/download/v0.14.2/ycm-cmake-modules-0.14.2-all.deb
+          sudo dpkg -i ycm-cmake-modules-0.14.2-all.deb
 
           # Install build tools
           sudo apt-get install -qq -y cmake \
