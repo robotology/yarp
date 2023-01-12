@@ -155,7 +155,7 @@ bool Navigation2D_nwc_yarp::open(yarp::os::Searchable &config)
         yCError(NAVIGATION2D_NWC_YARP, "Failed to open port %s", rpc_port_user_commandsName.c_str());
         return false;
     }
-    
+
     m_rpc_port_user_commands.setReader(*this);
     return true;
 }
