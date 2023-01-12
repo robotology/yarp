@@ -78,7 +78,8 @@ bool Navigation2D_nwc_yarp::open(yarp::os::Searchable &config)
             remote_rpc_2,
             remote_rpc_3,
             remote_streaming_name,
-            local_streaming_name;
+            local_streaming_name,
+            rpc_port_user_commandsName;
 
     local_rpc_1           = m_local_name           + "/navigation/rpc";
     local_rpc_2           = m_local_name           + "/locations/rpc";
@@ -88,6 +89,7 @@ bool Navigation2D_nwc_yarp::open(yarp::os::Searchable &config)
     remote_rpc_3          = m_localization_server_name + "/rpc";
     remote_streaming_name = m_localization_server_name + "/stream:o";
     local_streaming_name  = m_local_name           + "/stream:i";
+    rpc_port_user_commandsName = m_local_name      + "/user_commands/rpc";
 
     if (!m_rpc_port_to_navigation_server.open(local_rpc_1))
     {
@@ -148,6 +150,13 @@ bool Navigation2D_nwc_yarp::open(yarp::os::Searchable &config)
         return false;
     }
 
+    if (!m_rpc_port_user_commands.open(rpc_port_user_commandsName))
+    {
+        yCError(NAVIGATION2D_NWC_YARP, "Failed to open port %s", rpc_port_user_commandsName.c_str());
+        return false;
+    }
+    
+    m_rpc_port_user_commands.setReader(*this);
     return true;
 }
 
@@ -156,12 +165,54 @@ bool Navigation2D_nwc_yarp::close()
     m_rpc_port_to_navigation_server.close();
     m_rpc_port_to_Map2DServer.close();
     m_rpc_port_to_localization_server.close();
+    m_rpc_port_user_commands.close();
     return true;
 }
 
 bool Navigation2D_nwc_yarp::read(yarp::os::ConnectionReader& connection)
 {
-    yCError(NAVIGATION2D_NWC_YARP, "Should not enter here");
+    yarp::os::Bottle command;
+    yarp::os::Bottle reply;
+    bool ok = command.read(connection);
+    if (!ok) {
+        return false;
+    }
+    reply.clear();
+
+    if (command.get(0).asString() == "gotoLocation")
+    {
+        std::string loc= command.get(1).asString();
+        this->gotoTargetByLocationName(loc);
+        reply.addVocab32(VOCAB_OK);
+    }
+    else if (command.get(0).asString() == "listLocations")
+    {
+        std::vector<std::string> locations;
+        this->getLocationsList(locations);
+        reply.addVocab32("many");
+        for (auto it=locations.begin(); it!=locations.end(); it++)
+        {
+            std::string loc = *it;
+            reply.addString(loc);
+        }
+    }
+    else if (command.get(0).asString() == "help")
+    {
+        reply.addVocab32("many");
+        reply.addString("gotoLocation <locationName>");
+        reply.addString("listLocations");
+    }
+    else
+    {
+        yCError(NAVIGATION2D_NWC_YARP) << "Invalid command";
+        reply.addVocab32(VOCAB_ERR);
+    }
+
+    yarp::os::ConnectionWriter *returnToSender = connection.getWriter();
+    if (returnToSender != nullptr)
+    {
+        reply.write(*returnToSender);
+    }
     return true;
 }
 
