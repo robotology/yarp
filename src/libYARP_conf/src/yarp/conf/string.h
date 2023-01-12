@@ -54,7 +54,7 @@ inline ContainerT split(const typename ContainerT::value_type& s, typename Conta
 
     // Escape all characters in the string
     string_type sep_esc(separator.size()*2, char_type{'\\'});
-    for (size_t i = 0; i < s.size(); ++i) {
+    for (size_t i = 0; i < separator.size(); ++i) {
         sep_esc[i*2 + 1] = separator[i];
     }
 
