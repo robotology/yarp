@@ -33,31 +33,31 @@ jobs:
     - name: "Set output variables"
       id: select
       run: |
-        echo "::set-output name=timestamp::$(/bin/date -u +%Y%m%d-%H%M%S)"
+        echo "timestamp=$(/bin/date -u +%Y%m%d-%H%M%S)" >> $GITHUB_OUTPUT
 
-        echo "::set-output name=repository_owner::${{ github.repository_owner }}
-        echo "::set-output name=repository_name::$(cat $GITHUB_EVENT_PATH | jq -r .repository.name)
-        echo "::set-output name=repository::${{ github.repository }}"
+        echo "repository_owner=${{ github.repository_owner }}" >> $GITHUB_OUTPUT
+        echo "repository_name=$(cat $GITHUB_EVENT_PATH | jq -r .repository.name)" >> $GITHUB_OUTPUT
+        echo "repository=${{ github.repository }}" >> $GITHUB_OUTPUT
 
         if [[ "$GITHUB_EVENT_NAME" = "pull_request_target" ]]; then
-          echo "::set-output name=environment::code-analysis_unsafe"
-          echo "::set-output name=ref::refs/pull/$(cat $GITHUB_EVENT_PATH | jq -r .number)/merge"
+          echo "environment=code-analysis_unsafe" >> $GITHUB_OUTPUT
+          echo "ref=refs/pull/$(cat $GITHUB_EVENT_PATH | jq -r .number)/merge" >> $GITHUB_OUTPUT
         else
-          echo "::set-output name=environment::code-analysis"
-          echo "::set-output name=ref::${{ github.ref }}"
+          echo "environment=code-analysis" >> $GITHUB_OUTPUT
+          echo "ref=${{ github.ref }}" >> $GITHUB_OUTPUT
         fi
         if [[ "$GITHUB_EVENT_NAME" = "pull_request" || "$GITHUB_EVENT_NAME" == "pull_request_target" ]]; then
-          echo "::set-output name=sha::${{ github.event.pull_request.head.sha }}"
-          echo "::set-output name=head_ref::${GITHUB_HEAD_REF}"
-          echo "::set-output name=base_ref::${GITHUB_BASE_REF}"
-          echo "::set-output name=pr_number::$(cat $GITHUB_EVENT_PATH | jq -r .number)"
+          echo "sha=${{ github.event.pull_request.head.sha }}" >> $GITHUB_OUTPUT
+          echo "head_ref=${GITHUB_HEAD_REF}" >> $GITHUB_OUTPUT
+          echo "base_ref=${GITHUB_BASE_REF}" >> $GITHUB_OUTPUT
+          echo "pr_number=$(cat $GITHUB_EVENT_PATH | jq -r .number)" >> $GITHUB_OUTPUT
         else
-          echo "::set-output name=sha::${{ github.sha }}"
+          echo "sha=${{ github.sha }}" >> $GITHUB_OUTPUT
         fi
 
         # Get YARP Project Version
         if [[ "$GITHUB_EVENT_NAME" = "release" ]]; then
-          echo "::set-output name=yarp_version::$(awk '/ VERSION /{print $2}' CMakeLists.txt)"
+          echo "yarp_version=$(awk '/ VERSION /{print $2}' CMakeLists.txt)" >> $GITHUB_OUTPUT
         fi
 
     - name: 'Debug output variables'
@@ -1739,8 +1739,8 @@ jobs:
         curl -sSLo ${SONAR_HOME}/build-wrapper-linux-x86.zip https://sonarcloud.io/static/cpp/build-wrapper-linux-x86.zip
         unzip -o ${SONAR_HOME}/build-wrapper-linux-x86.zip -d ${SONAR_HOME}/
 
-        echo "::set-output name=sonar_path::${SONAR_HOME_PATH}"
-        echo "::set-output name=sonar_cache_path::${SONAR_CACHE_PATH}"
+        echo "sonar_path=${SONAR_HOME_PATH}" >> $GITHUB_OUTPUT
+        echo "sonar_cache_path=${SONAR_CACHE_PATH}" >> $GITHUB_OUTPUT
 
     # This step is copied from the build step, please keep them in sync until we
     # find a better way to do it automatically
@@ -1844,7 +1844,7 @@ jobs:
 
         cat $GITHUB_ENV
 
-        echo "::set-output name=ccache_path::${CCACHE_HOME_PATH}"
+        echo "ccache_path=${CCACHE_HOME_PATH}" >> $GITHUB_OUTPUT
 
     - name: Print info and reset stats before build
       run: |
