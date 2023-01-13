@@ -664,12 +664,8 @@ jobs:
 
     - name: Dependencies [Linux]
       if: runner.os == 'Linux'
-      uses: nick-invision/retry@v2.2.0
-      with:
-        timeout_minutes: 20
-        retry_wait_seconds: 300
-        max_attempts: 3
-        command: |
+      shell: bash
+      run: |
           # Install Robotology dependencies from robotology ppa
           sudo apt-add-repository -y ppa:robotology/ppa
           sudo apt-get install -qq -y librobottestingframework-dev
@@ -753,49 +749,32 @@ jobs:
 
     - name: Dependencies [Windows]
       if: runner.os == 'Windows'
-      uses: nick-invision/retry@v2.2.0
-      with:
-        timeout_minutes: 20
-        retry_wait_seconds: 300
-        max_attempts: 3
-        command: >-
-          echo # To avoid spending a huge time compiling vcpkg dependencies, we download a root that comes precompiled with all the ports that we need &
-          choco install --no-progress -y wget 7zip &
-          echo &
-          echo # Download and install SWIG &
-          wget -nv https://sourceforge.net/projects/swig/files/swigwin/swigwin-4.0.2/swigwin-4.0.2.zip -O swigwin.zip &
-          7z x swigwin.zip &
-          mv swigwin-4.0.2/swig.exe swig.exe &
-          echo &
-          echo # To avoid problems with non-relocatable packages, we unzip the archive exactly in the same C:/robotology/vcpkg &
-          that has been used to create the pre-compiled archive &
-          wget -nv https://github.com/robotology/robotology-superbuild-dependencies-vcpkg/releases/download/v0.6.0/vcpkg-robotology-yarp-only.zip &
-          7z x -oC:\ vcpkg-robotology-yarp-only.zip &
-          echo &
-          echo # Download and install YCM &
-          wget -nv https://github.com/robotology/ycm/releases/download/v0.15.1/ycm-cmake-modules-0.15.1-all.tar.gz -O ycm.tar.gz &
-          7z x ycm.tar.gz &
-          7z x -ttar -oC:\robotology ycm.tar &
-          echo &
-          echo # Download and install ccache &
-          wget -nv https://github.com/cristianadam/ccache/releases/download/v3.7.7/Windows.tar.xz -O ccache.tar.xz &
-          7z x ccache.tar.xz &
+      run: |
+          echo "To avoid spending a huge time compiling vcpkg dependencies, we download a root that comes precompiled with all the ports that we need"
+          choco install --no-progress -y wget 7zip
+          echo ""
+          echo " Download and install SWIG"
+          wget -nv https://sourceforge.net/projects/swig/files/swigwin/swigwin-4.0.2/swigwin-4.0.2.zip -O swigwin.zip
+          7z x swigwin.zip
+          mv swigwin-4.0.2/swig.exe swig.exe
+          echo ""
+          echo " To avoid problems with non-relocatable packages, we unzip the archive exactly in the same C:/robotology/vcpkg that has been used to create the pre-compiled archive"
+          wget -nv https://github.com/robotology/robotology-superbuild-dependencies-vcpkg/releases/download/v0.6.0/vcpkg-robotology-yarp-only.zip
+          7z x -oC:\ vcpkg-robotology-yarp-only.zip
+          echo ""
+          echo " Download and install YCM "
+          wget -nv https://github.com/robotology/ycm/releases/download/v0.15.1/ycm-cmake-modules-0.15.1-all.tar.gz -O ycm.tar.gz
+          7z x ycm.tar.gz
+          7z x -ttar -oC:\robotology ycm.tar
+          echo ""
+          echo " Download and install ccache "
+          wget -nv https://github.com/cristianadam/ccache/releases/download/v3.7.7/Windows.tar.xz -O ccache.tar.xz
+          7z x ccache.tar.xz
           7z x -ttar ccache.tar
 
     - name: Dependencies [macOS]
       if: runner.os == 'macOS'
-      uses: nick-invision/retry@v2.2.0
-      with:
-        timeout_minutes: 20
-        retry_wait_seconds: 300
-        max_attempts: 3
-        command: |
-          # Select Xcode version
-          #ls -n /Applications/ | grep Xcode*
-          if [[ "${{ matrix.config.os }}" == "macos-11.0" ]]; then
-            sudo xcode-select -s /Applications/Xcode_12.3.app/Contents/Developer
-          fi
-
+      run: |
           # Temporary workaround for https://github.com/actions/setup-python/issues/577
           rm -f /usr/local/bin/2to3
           rm -f /usr/local/bin/idle3
@@ -1371,12 +1350,8 @@ jobs:
     # find a better way to do it automatically
     - name: Dependencies [Linux]
       if: runner.os == 'Linux'
-      uses: nick-invision/retry@v2.2.0
-      with:
-        timeout_minutes: 20
-        retry_wait_seconds: 300
-        max_attempts: 3
-        command: |
+      shell: bash
+      run: |
           # Install Robotology dependencies from robotology ppa
           sudo apt-add-repository -y ppa:robotology/ppa
           sudo apt-get install -qq -y librobottestingframework-dev
@@ -1480,12 +1455,8 @@ jobs:
 
     - name: Download codacy-clang-tidy
       if: runner.os == 'Linux'
-      uses: nick-invision/retry@v2.2.0
-      with:
-        timeout_minutes: 20
-        retry_wait_seconds: 300
-        max_attempts: 3
-        command: |
+      shell: bash
+      run: |
           # Download extra packages required
           sudo apt-get install -qq -y clang-${CLANG_VERSION} \
                                       clang-tidy-${CLANG_VERSION}
@@ -1567,12 +1538,8 @@ jobs:
     # find a better way to do it automatically
     - name: Dependencies [Linux]
       if: runner.os == 'Linux'
-      uses: nick-invision/retry@v2.2.0
-      with:
-        timeout_minutes: 20
-        retry_wait_seconds: 300
-        max_attempts: 3
-        command: |
+      shell: bash
+      run: |
           # Install Robotology dependencies from robotology ppa
           sudo apt-add-repository -y ppa:robotology/ppa
           sudo apt-get install -qq -y librobottestingframework-dev
@@ -1779,12 +1746,8 @@ jobs:
     # find a better way to do it automatically
     - name: Dependencies [Linux]
       if: runner.os == 'Linux'
-      uses: nick-invision/retry@v2.2.0
-      with:
-        timeout_minutes: 20
-        retry_wait_seconds: 300
-        max_attempts: 3
-        command: |
+      shell: bash
+      run: |
           # Install Robotology dependencies from robotology ppa
           sudo apt-add-repository -y ppa:robotology/ppa
           sudo apt-get install -qq -y librobottestingframework-dev
