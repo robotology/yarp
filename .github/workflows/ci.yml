@@ -145,61 +145,102 @@ jobs:
     name: 'Run CMake [CMake ${{ matrix.config.cmake_version }} (${{ matrix.config.cmake_generator }}), YCM ${{ matrix.config.ycm_version }}]'
     needs: [select_environment, check-license, check-style]
     runs-on: ubuntu-20.04
-    container:
-      image: ghcr.io/robotology/ycm:cmake-${{ matrix.config.cmake_version }}_ycm-${{ matrix.config.ycm_version }}
     strategy:
       fail-fast: false
       matrix:
         config:
         - {
-            cmake_version: "3.16",
+            cmake_version: "3.16.*",
             cmake_generator: "Unix Makefiles",
-            ycm_version: "0.13.0",
+            ycm_version: "0.15.1",
           }
         - {
-            cmake_version: "3.17",
+            cmake_version: "3.17.*",
             cmake_generator: "Unix Makefiles",
-            ycm_version: "0.13.0",
+            ycm_version: "0.15.1",
           }
         - {
-            cmake_version: "3.18",
+            cmake_version: "3.18.*",
             cmake_generator: "Unix Makefiles",
-            ycm_version: "0.13.0",
+            ycm_version: "0.15.1",
           }
         - {
-            cmake_version: "3.19",
+            cmake_version: "3.19.*",
             cmake_generator: "Unix Makefiles",
-            ycm_version: "0.13.0",
+            ycm_version: "0.15.1",
           }
         - {
-            cmake_version: "3.20",
+            cmake_version: "3.20.*",
             cmake_generator: "Unix Makefiles",
-            ycm_version: "0.13.0",
+            ycm_version: "0.15.1",
           }
         - {
-            cmake_version: "3.20",
+            cmake_version: "3.20.*",
             cmake_generator: "Ninja",
-            ycm_version: "0.13.0",
+            ycm_version: "0.15.1",
           }
         - {
-            cmake_version: "3.21",
+            cmake_version: "3.21.*",
             cmake_generator: "Unix Makefiles",
-            ycm_version: "0.13.0",
+            ycm_version: "0.15.1",
+          }
+        - {
+            cmake_version: "3.22.*",
+            cmake_generator: "Unix Makefiles",
+            ycm_version: "0.15.1",
+          }
+        - {
+            cmake_version: "3.23.*",
+            cmake_generator: "Unix Makefiles",
+            ycm_version: "0.15.1",
+          }
+        - {
+            cmake_version: "3.24.*",
+            cmake_generator: "Unix Makefiles",
+            ycm_version: "0.15.1",
+          }
+        - {
+            cmake_version: "3.25.*",
+            cmake_generator: "Unix Makefiles",
+            ycm_version: "0.15.1",
           }
     steps:
-    - name: Clone repository
-      uses: actions/checkout@v2
-      with:
-        repository: ${{ needs.select_environment.outputs.repository }}
-        ref: ${{ needs.select_environment.outputs.ref }}
+    - name: remove any previous installation of cmake
+      run: | 
+        sudo rm /usr/local/bin/cmake
+        
+    - name: install cmake
+      run: |
+        wget -O - https://apt.kitware.com/keys/kitware-archive-latest.asc 2>/dev/null | gpg --dearmor - | sudo tee /usr/share/keyrings/kitware-archive-keyring.gpg >/dev/null
+        echo 'deb [signed-by=/usr/share/keyrings/kitware-archive-keyring.gpg] https://apt.kitware.com/ubuntu/ focal main' | sudo tee /etc/apt/sources.list.d/kitware.list >/dev/null
+        sudo apt-get update
+        sudo rm /usr/share/keyrings/kitware-archive-keyring.gpg
+        sudo apt-get -y install kitware-archive-keyring
+        sudo apt-cache policy cmake-data
+        sudo apt-cache policy cmake
+        sudo apt-get -y install cmake-data=${{matrix.config.cmake_version}}
+        sudo apt-get -y -f install cmake=${{matrix.config.cmake_version}}
 
     - name: Print CMake version
       run: |
+        which cmake
         cmake --version
+        /usr/bin/cmake --version
+
+    - name: Get YCM package
+      run: |
+        wget -nv https://github.com/robotology/ycm/releases/download/v0.15.1/ycm-cmake-modules-0.15.1-all.deb
+        sudo dpkg -i ycm-cmake-modules-0.15.1-all.deb
 
     - name: Print YCM version
       run: |
         grep YCM_VERSION /usr/share/cmake/YCM/YCMConfig.cmake
+
+    - name: Clone Yarp repository
+      uses: actions/checkout@v2
+      with:
+        repository: ${{ needs.select_environment.outputs.repository }}
+        ref: ${{ needs.select_environment.outputs.ref }}
 
     - name: Run CMake
       run: |
@@ -325,8 +366,7 @@ jobs:
             cxx: "g++",
             cmake_generator: "Unix Makefiles",
             cmake_initial_cache_file: ".ci/initial-cache.gh.linux.cmake",
-            cmake_extra_options: "-DBUILD_SHARED_LIBS:BOOL=OFF
-                                  -DCMAKE_DISABLE_FIND_PACKAGE_SOXR=ON", # FIXME Enable when YCM 0.14 is available
+            cmake_extra_options: "-DBUILD_SHARED_LIBS:BOOL=OFF",
           }
         - {
             id: '10',
@@ -337,8 +377,7 @@ jobs:
             cxx: "clang++",
             cmake_generator: "Unix Makefiles",
             cmake_initial_cache_file: ".ci/initial-cache.gh.linux.cmake",
-            cmake_extra_options: "-DBUILD_SHARED_LIBS:BOOL=OFF
-                                  -DCMAKE_DISABLE_FIND_PACKAGE_SOXR=ON", # FIXME Enable when YCM 0.14 is available
+            cmake_extra_options: "-DBUILD_SHARED_LIBS:BOOL=OFF",
           }
         - {
             id: '11',
@@ -352,8 +391,7 @@ jobs:
             cmake_extra_options: "-DBUILD_SHARED_LIBS:BOOL=OFF
                                   -DCMAKE_DISABLE_FIND_PACKAGE_ACE:BOOL=ON
                                   -DSKIP_ACE:BOOL=ON
-                                  -DYARP_COMPILE_BINDINGS:BOOL=OFF
-                                  -DCMAKE_DISABLE_FIND_PACKAGE_SOXR=ON", # FIXME Enable when YCM 0.14 is available
+                                  -DYARP_COMPILE_BINDINGS:BOOL=OFF",
           }
         - {
             id: '12',
@@ -367,8 +405,7 @@ jobs:
             cmake_extra_options: "-DBUILD_SHARED_LIBS:BOOL=OFF
                                   -DCMAKE_DISABLE_FIND_PACKAGE_ACE:BOOL=ON
                                   -DSKIP_ACE:BOOL=ON
-                                  -DYARP_COMPILE_BINDINGS:BOOL=OFF
-                                  -DCMAKE_DISABLE_FIND_PACKAGE_SOXR=ON", # FIXME Enable when YCM 0.14 is available
+                                  -DYARP_COMPILE_BINDINGS:BOOL=OFF",
           }
         - {
             id: '13',
@@ -476,7 +513,6 @@ jobs:
                                   -DYARP_ENABLE_EXAMPLES_AS_TESTS:BOOL=OFF
                                   -DYARP_COMPILE_BINDINGS:BOOL=OFF
                                   -DCMAKE_DISABLE_FIND_PACKAGE_FFMPEG=ON
-                                  -DCMAKE_DISABLE_FIND_PACKAGE_SOXR=ON
                                   -DENABLE_yarpcar_h264:BOOL=OFF
                                   -DENABLE_yarpcar_mjpeg:BOOL=OFF
                                   -DENABLE_yarppm_image_compression_ffmpeg:BOOL=OFF
@@ -508,7 +544,6 @@ jobs:
                                   -DYARP_ENABLE_EXAMPLES_AS_TESTS:BOOL=OFF
                                   -DYARP_COMPILE_BINDINGS:BOOL=OFF
                                   -DCMAKE_DISABLE_FIND_PACKAGE_FFMPEG=ON
-                                  -DCMAKE_DISABLE_FIND_PACKAGE_SOXR=ON
                                   -DENABLE_yarpcar_h264:BOOL=OFF
                                   -DENABLE_yarpcar_mjpeg:BOOL=OFF
                                   -DENABLE_yarppm_image_compression_ffmpeg:BOOL=OFF
@@ -637,17 +672,26 @@ jobs:
         command: |
           # Install Robotology dependencies from robotology ppa
           sudo apt-add-repository -y ppa:robotology/ppa
-          sudo apt-get install -qq -y ycm-cmake-modules \
-                                      librobottestingframework-dev
+          sudo apt-get install -qq -y librobottestingframework-dev
+
+          # Install cmake
+          sudo apt-get install -qq -y cmake
+          which cmake
+          cmake --version
+          /usr/bin/cmake --version
+
+          # Install ycm
+          wget -nv https://github.com/robotology/ycm/releases/download/v0.15.1/ycm-cmake-modules-0.15.1-all.deb
+          sudo dpkg -i ycm-cmake-modules-0.15.1-all.deb
 
           # Install build tools
-          sudo apt-get install -qq -y cmake \
-                                      ccache \
+          sudo apt-get install -qq -y ccache \
                                       ninja-build \
                                       valgrind
 
-          sudo apt-get install -qq -y libace-dev \
-                                      libsqlite3-dev \
+          sudo apt-get install -y     libace-dev \
+
+          sudo apt-get install -qq -y libsqlite3-dev \
                                       libtinyxml-dev \
                                       libedit-dev \
                                       qtbase5-dev \
@@ -729,7 +773,7 @@ jobs:
           7z x -oC:\ vcpkg-robotology-yarp-only.zip &
           echo &
           echo # Download and install YCM &
-          wget -nv https://github.com/robotology/ycm/releases/download/v0.13.0/YCM-0.13.0-all.tar.gz -O ycm.tar.gz &
+          wget -nv https://github.com/robotology/ycm/releases/download/v0.15.1/ycm-cmake-modules-0.15.1-all.tar.gz -O ycm.tar.gz &
           7z x ycm.tar.gz &
           7z x -ttar -oC:\robotology ycm.tar &
           echo &
@@ -752,12 +796,26 @@ jobs:
             sudo xcode-select -s /Applications/Xcode_12.3.app/Contents/Developer
           fi
 
-          brew tap robotology/homebrew-formulae
+          # Temporary workaround for https://github.com/actions/setup-python/issues/577
+          rm -f /usr/local/bin/2to3
+          rm -f /usr/local/bin/idle3
+          rm -f /usr/local/bin/pydoc3
+          rm -f /usr/local/bin/python3
+          rm -f /usr/local/bin/python3-config
+          rm -f /usr/local/bin/2to3-3.11
+          rm -f /usr/local/bin/idle3.11
+          rm -f /usr/local/bin/pydoc3.11
+          rm -f /usr/local/bin/python3.11
+          rm -f /usr/local/bin/python3.11-config
+
+          wget -nv https://github.com/robotology/ycm/releases/download/v0.15.1/ycm-cmake-modules-0.15.1-all.tar.gz -O /Users/runner/work/yarp/ycm.tar.gz
+          7z x /Users/runner/work/yarp/ycm.tar.gz -o/Users/runner/work/yarp
+          7z x -ttar /Users/runner/work/yarp/ycm.tar -o/Users/runner/work/yarp
+          
           brew update
           brew install ccache
           brew install ace
           brew install sqlite tinyxml libedit libpng qt5 opencv eigen graphviz libsoxr
-          brew install robotology/formulae/ycm
 
     - name: Prepare Environment Script
       id: prepare_environment_script
@@ -766,6 +824,14 @@ jobs:
         cmake_minimum_required(VERSION 3.17)
         set(_env_script ${CMAKE_CURRENT_LIST_DIR}/environment_script.cmake)
         file(WRITE "${_env_script}" "")
+
+        # if YCM is installed manually, set YCM_DIR to allow CMake to find it
+        if("${{ runner.os }}" STREQUAL "Windows")
+          file(APPEND "${_env_script}" "set(ENV{YCM_DIR} \"C:\\\\robotology\\\\YCM-0.15.1-all\")\n")
+        elseif("${{ runner.os }}" STREQUAL "macOS")
+          file(APPEND "${_env_script}" "set(ENV{YCM_DIR} \"/Users/runner/work/yarp/YCM-0.15.1-all\")\n")
+        endif()
+
         if("${{ runner.os }}" STREQUAL "Windows" AND NOT "${{ matrix.config.environment_script }}" STREQUAL "")
           execute_process(
               COMMAND "${{ matrix.config.environment_script }}" && set
@@ -784,9 +850,6 @@ jobs:
 
           # Ninja and other tools are downloaded in $GITHUB_WORKSPACE
           file(APPEND "${_env_script}" "set(ENV{PATH} \"\$ENV{PATH};\$ENV{GITHUB_WORKSPACE}\")\n")
-
-          # YCM is installed manually, set YCM_DIR to allow CMake to find it
-          file(APPEND "${_env_script}" "set(ENV{YCM_DIR} \"C:\\\\robotology\\\\YCM-0.13.0-all\")\n")
 
           # Append vcpkg bin directory to the PATH
           if("${{ matrix.config.build_type }}" STREQUAL "Release")
@@ -1316,12 +1379,20 @@ jobs:
         command: |
           # Install Robotology dependencies from robotology ppa
           sudo apt-add-repository -y ppa:robotology/ppa
-          sudo apt-get install -qq -y ycm-cmake-modules \
-                                      librobottestingframework-dev
+          sudo apt-get install -qq -y librobottestingframework-dev
+
+          # Install cmake
+          sudo apt-get install -qq -y cmake
+          which cmake
+          cmake --version
+          /usr/bin/cmake --version
+
+          # Install ycm
+          wget -nv https://github.com/robotology/ycm/releases/download/v0.15.1/ycm-cmake-modules-0.15.1-all.deb
+          sudo dpkg -i ycm-cmake-modules-0.15.1-all.deb
 
           # Install build tools
-          sudo apt-get install -qq -y cmake \
-                                      ccache \
+          sudo apt-get install -qq -y ccache \
                                       ninja-build \
                                       valgrind
 
@@ -1504,12 +1575,20 @@ jobs:
         command: |
           # Install Robotology dependencies from robotology ppa
           sudo apt-add-repository -y ppa:robotology/ppa
-          sudo apt-get install -qq -y ycm-cmake-modules \
-                                      librobottestingframework-dev
+          sudo apt-get install -qq -y librobottestingframework-dev
+
+          # Install cmake
+          sudo apt-get install -qq -y cmake
+          which cmake
+          cmake --version
+          /usr/bin/cmake --version
+
+          # Install ycm
+          wget -nv https://github.com/robotology/ycm/releases/download/v0.15.1/ycm-cmake-modules-0.15.1-all.deb
+          sudo dpkg -i ycm-cmake-modules-0.15.1-all.deb
 
           # Install build tools
-          sudo apt-get install -qq -y cmake \
-                                      ccache \
+          sudo apt-get install -qq -y ccache \
                                       ninja-build \
                                       valgrind
 
@@ -1708,12 +1787,20 @@ jobs:
         command: |
           # Install Robotology dependencies from robotology ppa
           sudo apt-add-repository -y ppa:robotology/ppa
-          sudo apt-get install -qq -y ycm-cmake-modules \
-                                      librobottestingframework-dev
+          sudo apt-get install -qq -y librobottestingframework-dev
+
+          # Install cmake
+          sudo apt-get install -qq -y cmake
+          which cmake
+          cmake --version
+          /usr/bin/cmake --version
+
+          # Install ycm
+          wget -nv https://github.com/robotology/ycm/releases/download/v0.15.1/ycm-cmake-modules-0.15.1-all.deb
+          sudo dpkg -i ycm-cmake-modules-0.15.1-all.deb
 
           # Install build tools
-          sudo apt-get install -qq -y cmake \
-                                      ccache \
+          sudo apt-get install -qq -y ccache \
                                       ninja-build \
                                       valgrind
 
