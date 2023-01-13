@@ -1669,7 +1669,7 @@ jobs:
 
         (cd build && lcov --directory . --zerocounters)
 
-        (cd build && make && make test)
+        (cd build && make && make CTEST_OUTPUT_ON_FAILURE=1 test)
 
         # Capture coverage info for Profile builds
         (cd build; lcov --directory . --capture --rc lcov_branch_coverage=1 --output-file coverage.info)
@@ -1943,7 +1943,7 @@ jobs:
         wget https://raw.githubusercontent.com/zanata/zanata-tests/master/scripts/CTest2JUnit.xsl -O CTest2JUnit.xsl
 
         # -T Test produces the xml output with the results
-        (cd build && ctest -T test)
+        (cd build && ctest -T test --rerun-failed --output-on-failure --verbose)
         xsltproc CTest2JUnit.xsl build/Testing/$(head -n 1 < build/Testing/TAG)/Test.xml > build/JUnitTestResults.xml
 
     - name: Print tests results file
