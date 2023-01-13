@@ -105,7 +105,7 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
     - name: Clone repository
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
       with:
         repository: ${{ needs.select_environment.outputs.repository }}
         ref: ${{ needs.select_environment.outputs.ref }}
@@ -126,7 +126,7 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
     - name: Clone repository
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
       with:
         repository: ${{ needs.select_environment.outputs.repository }}
         ref: ${{ needs.select_environment.outputs.ref }}
@@ -237,7 +237,7 @@ jobs:
         grep YCM_VERSION /usr/share/cmake/YCM/YCMConfig.cmake
 
     - name: Clone Yarp repository
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
       with:
         repository: ${{ needs.select_environment.outputs.repository }}
         ref: ${{ needs.select_environment.outputs.ref }}
@@ -647,7 +647,7 @@ jobs:
     steps:
 
     - name: Clone repository
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
       with:
         repository: ${{ needs.select_environment.outputs.repository }}
         ref: ${{ needs.select_environment.outputs.ref }}
@@ -1362,7 +1362,7 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
     - name: Clone repository
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
       with:
         repository: ${{ needs.select_environment.outputs.repository }}
         ref: ${{ needs.select_environment.outputs.ref }}
@@ -1558,7 +1558,7 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
     - name: Clone repository
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
       with:
         repository: ${{ needs.select_environment.outputs.repository }}
         ref: ${{ needs.select_environment.outputs.ref }}
@@ -1694,7 +1694,7 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
     - name: Clone repository
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
       with:
         repository: ${{ needs.select_environment.outputs.repository }}
         ref: ${{ needs.select_environment.outputs.ref }}
