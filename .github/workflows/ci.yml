@@ -653,7 +653,7 @@ jobs:
         ref: ${{ needs.select_environment.outputs.ref }}
 
     - name: Handle cache
-      uses: actions/cache@v2
+      uses: actions/cache@v3
       with:
         path: |
           .ccache
@@ -1318,7 +1318,7 @@ jobs:
         )
 
     - name: Upload artifact
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       with:
         name: installation-${{ matrix.config.id }}
         path: install.tar
@@ -1863,7 +1863,7 @@ jobs:
         gcovr --version
 
     - name: Handle cache
-      uses: actions/cache@v2
+      uses: actions/cache@v3
       with:
         path: |
           ${{ steps.init_ccache.outputs.ccache_path }}
