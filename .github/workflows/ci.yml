@@ -33,31 +33,31 @@ jobs:
     - name: "Set output variables"
       id: select
       run: |
-        echo "::set-output name=timestamp::$(/bin/date -u +%Y%m%d-%H%M%S)"
+        echo "timestamp=$(/bin/date -u +%Y%m%d-%H%M%S)" >> $GITHUB_OUTPUT
 
-        echo "::set-output name=repository_owner::${{ github.repository_owner }}
-        echo "::set-output name=repository_name::$(cat $GITHUB_EVENT_PATH | jq -r .repository.name)
-        echo "::set-output name=repository::${{ github.repository }}"
+        echo "repository_owner=${{ github.repository_owner }}" >> $GITHUB_OUTPUT
+        echo "repository_name=$(cat $GITHUB_EVENT_PATH | jq -r .repository.name)" >> $GITHUB_OUTPUT
+        echo "repository=${{ github.repository }}" >> $GITHUB_OUTPUT
 
         if [[ "$GITHUB_EVENT_NAME" = "pull_request_target" ]]; then
-          echo "::set-output name=environment::code-analysis_unsafe"
-          echo "::set-output name=ref::refs/pull/$(cat $GITHUB_EVENT_PATH | jq -r .number)/merge"
+          echo "environment=code-analysis_unsafe" >> $GITHUB_OUTPUT
+          echo "ref=refs/pull/$(cat $GITHUB_EVENT_PATH | jq -r .number)/merge" >> $GITHUB_OUTPUT
         else
-          echo "::set-output name=environment::code-analysis"
-          echo "::set-output name=ref::${{ github.ref }}"
+          echo "environment=code-analysis" >> $GITHUB_OUTPUT
+          echo "ref=${{ github.ref }}" >> $GITHUB_OUTPUT
         fi
         if [[ "$GITHUB_EVENT_NAME" = "pull_request" || "$GITHUB_EVENT_NAME" == "pull_request_target" ]]; then
-          echo "::set-output name=sha::${{ github.event.pull_request.head.sha }}"
-          echo "::set-output name=head_ref::${GITHUB_HEAD_REF}"
-          echo "::set-output name=base_ref::${GITHUB_BASE_REF}"
-          echo "::set-output name=pr_number::$(cat $GITHUB_EVENT_PATH | jq -r .number)"
+          echo "sha=${{ github.event.pull_request.head.sha }}" >> $GITHUB_OUTPUT
+          echo "head_ref=${GITHUB_HEAD_REF}" >> $GITHUB_OUTPUT
+          echo "base_ref=${GITHUB_BASE_REF}" >> $GITHUB_OUTPUT
+          echo "pr_number=$(cat $GITHUB_EVENT_PATH | jq -r .number)" >> $GITHUB_OUTPUT
         else
-          echo "::set-output name=sha::${{ github.sha }}"
+          echo "sha=${{ github.sha }}" >> $GITHUB_OUTPUT
         fi
 
         # Get YARP Project Version
         if [[ "$GITHUB_EVENT_NAME" = "release" ]]; then
-          echo "::set-output name=yarp_version::$(awk '/ VERSION /{print $2}' CMakeLists.txt)"
+          echo "yarp_version=$(awk '/ VERSION /{print $2}' CMakeLists.txt)" >> $GITHUB_OUTPUT
         fi
 
     - name: 'Debug output variables'
@@ -653,7 +653,7 @@ jobs:
         ref: ${{ needs.select_environment.outputs.ref }}
 
     - name: Handle cache
-      uses: actions/cache@v2
+      uses: actions/cache@v3
       with:
         path: |
           .ccache
@@ -664,12 +664,8 @@ jobs:
 
     - name: Dependencies [Linux]
       if: runner.os == 'Linux'
-      uses: nick-invision/retry@v2.2.0
-      with:
-        timeout_minutes: 20
-        retry_wait_seconds: 300
-        max_attempts: 3
-        command: |
+      shell: bash
+      run: |
           # Install Robotology dependencies from robotology ppa
           sudo apt-add-repository -y ppa:robotology/ppa
           sudo apt-get install -qq -y librobottestingframework-dev
@@ -753,49 +749,32 @@ jobs:
 
     - name: Dependencies [Windows]
       if: runner.os == 'Windows'
-      uses: nick-invision/retry@v2.2.0
-      with:
-        timeout_minutes: 20
-        retry_wait_seconds: 300
-        max_attempts: 3
-        command: >-
-          echo # To avoid spending a huge time compiling vcpkg dependencies, we download a root that comes precompiled with all the ports that we need &
-          choco install --no-progress -y wget 7zip &
-          echo &
-          echo # Download and install SWIG &
-          wget -nv https://sourceforge.net/projects/swig/files/swigwin/swigwin-4.0.2/swigwin-4.0.2.zip -O swigwin.zip &
-          7z x swigwin.zip &
-          mv swigwin-4.0.2/swig.exe swig.exe &
-          echo &
-          echo # To avoid problems with non-relocatable packages, we unzip the archive exactly in the same C:/robotology/vcpkg &
-          that has been used to create the pre-compiled archive &
-          wget -nv https://github.com/robotology/robotology-superbuild-dependencies-vcpkg/releases/download/v0.6.0/vcpkg-robotology-yarp-only.zip &
-          7z x -oC:\ vcpkg-robotology-yarp-only.zip &
-          echo &
-          echo # Download and install YCM &
-          wget -nv https://github.com/robotology/ycm/releases/download/v0.15.1/ycm-cmake-modules-0.15.1-all.tar.gz -O ycm.tar.gz &
-          7z x ycm.tar.gz &
-          7z x -ttar -oC:\robotology ycm.tar &
-          echo &
-          echo # Download and install ccache &
-          wget -nv https://github.com/cristianadam/ccache/releases/download/v3.7.7/Windows.tar.xz -O ccache.tar.xz &
-          7z x ccache.tar.xz &
+      run: |
+          echo "To avoid spending a huge time compiling vcpkg dependencies, we download a root that comes precompiled with all the ports that we need"
+          choco install --no-progress -y wget 7zip
+          echo ""
+          echo " Download and install SWIG"
+          wget -nv https://sourceforge.net/projects/swig/files/swigwin/swigwin-4.0.2/swigwin-4.0.2.zip -O swigwin.zip
+          7z x swigwin.zip
+          mv swigwin-4.0.2/swig.exe swig.exe
+          echo ""
+          echo " To avoid problems with non-relocatable packages, we unzip the archive exactly in the same C:/robotology/vcpkg that has been used to create the pre-compiled archive"
+          wget -nv https://github.com/robotology/robotology-superbuild-dependencies-vcpkg/releases/download/v0.6.0/vcpkg-robotology-yarp-only.zip
+          7z x -oC:\ vcpkg-robotology-yarp-only.zip
+          echo ""
+          echo " Download and install YCM "
+          wget -nv https://github.com/robotology/ycm/releases/download/v0.15.1/ycm-cmake-modules-0.15.1-all.tar.gz -O ycm.tar.gz
+          7z x ycm.tar.gz
+          7z x -ttar -oC:\robotology ycm.tar
+          echo ""
+          echo " Download and install ccache "
+          wget -nv https://github.com/cristianadam/ccache/releases/download/v3.7.7/Windows.tar.xz -O ccache.tar.xz
+          7z x ccache.tar.xz
           7z x -ttar ccache.tar
 
     - name: Dependencies [macOS]
       if: runner.os == 'macOS'
-      uses: nick-invision/retry@v2.2.0
-      with:
-        timeout_minutes: 20
-        retry_wait_seconds: 300
-        max_attempts: 3
-        command: |
-          # Select Xcode version
-          #ls -n /Applications/ | grep Xcode*
-          if [[ "${{ matrix.config.os }}" == "macos-11.0" ]]; then
-            sudo xcode-select -s /Applications/Xcode_12.3.app/Contents/Developer
-          fi
-
+      run: |
           # Temporary workaround for https://github.com/actions/setup-python/issues/577
           rm -f /usr/local/bin/2to3
           rm -f /usr/local/bin/idle3
@@ -1339,7 +1318,7 @@ jobs:
         )
 
     - name: Upload artifact
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       with:
         name: installation-${{ matrix.config.id }}
         path: install.tar
@@ -1371,12 +1350,8 @@ jobs:
     # find a better way to do it automatically
     - name: Dependencies [Linux]
       if: runner.os == 'Linux'
-      uses: nick-invision/retry@v2.2.0
-      with:
-        timeout_minutes: 20
-        retry_wait_seconds: 300
-        max_attempts: 3
-        command: |
+      shell: bash
+      run: |
           # Install Robotology dependencies from robotology ppa
           sudo apt-add-repository -y ppa:robotology/ppa
           sudo apt-get install -qq -y librobottestingframework-dev
@@ -1480,12 +1455,8 @@ jobs:
 
     - name: Download codacy-clang-tidy
       if: runner.os == 'Linux'
-      uses: nick-invision/retry@v2.2.0
-      with:
-        timeout_minutes: 20
-        retry_wait_seconds: 300
-        max_attempts: 3
-        command: |
+      shell: bash
+      run: |
           # Download extra packages required
           sudo apt-get install -qq -y clang-${CLANG_VERSION} \
                                       clang-tidy-${CLANG_VERSION}
@@ -1567,12 +1538,8 @@ jobs:
     # find a better way to do it automatically
     - name: Dependencies [Linux]
       if: runner.os == 'Linux'
-      uses: nick-invision/retry@v2.2.0
-      with:
-        timeout_minutes: 20
-        retry_wait_seconds: 300
-        max_attempts: 3
-        command: |
+      shell: bash
+      run: |
           # Install Robotology dependencies from robotology ppa
           sudo apt-add-repository -y ppa:robotology/ppa
           sudo apt-get install -qq -y librobottestingframework-dev
@@ -1772,19 +1739,15 @@ jobs:
         curl -sSLo ${SONAR_HOME}/build-wrapper-linux-x86.zip https://sonarcloud.io/static/cpp/build-wrapper-linux-x86.zip
         unzip -o ${SONAR_HOME}/build-wrapper-linux-x86.zip -d ${SONAR_HOME}/
 
-        echo "::set-output name=sonar_path::${SONAR_HOME_PATH}"
-        echo "::set-output name=sonar_cache_path::${SONAR_CACHE_PATH}"
+        echo "sonar_path=${SONAR_HOME_PATH}" >> $GITHUB_OUTPUT
+        echo "sonar_cache_path=${SONAR_CACHE_PATH}" >> $GITHUB_OUTPUT
 
     # This step is copied from the build step, please keep them in sync until we
     # find a better way to do it automatically
     - name: Dependencies [Linux]
       if: runner.os == 'Linux'
-      uses: nick-invision/retry@v2.2.0
-      with:
-        timeout_minutes: 20
-        retry_wait_seconds: 300
-        max_attempts: 3
-        command: |
+      shell: bash
+      run: |
           # Install Robotology dependencies from robotology ppa
           sudo apt-add-repository -y ppa:robotology/ppa
           sudo apt-get install -qq -y librobottestingframework-dev
@@ -1881,7 +1844,7 @@ jobs:
 
         cat $GITHUB_ENV
 
-        echo "::set-output name=ccache_path::${CCACHE_HOME_PATH}"
+        echo "ccache_path=${CCACHE_HOME_PATH}" >> $GITHUB_OUTPUT
 
     - name: Print info and reset stats before build
       run: |
@@ -1900,7 +1863,7 @@ jobs:
         gcovr --version
 
     - name: Handle cache
-      uses: actions/cache@v2
+      uses: actions/cache@v3
       with:
         path: |
           ${{ steps.init_ccache.outputs.ccache_path }}
