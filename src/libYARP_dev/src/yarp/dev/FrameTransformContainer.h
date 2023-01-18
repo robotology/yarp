@@ -1,6 +1,6 @@
 /*
  * SPDX-FileCopyrightText: 2006-2021 Istituto Italiano di Tecnologia (IIT)
- * SPDX-License-Identifier: LGPL-2.1-or-later
+ * SPDX-License-Identifier: BSD-3-Clause
  */
 
 #ifndef YARP_DEV_FRAMETRANSFORM_UTILS_H
@@ -11,10 +11,13 @@
 #include <yarp/dev/IFrameTransformStorage.h>
 #include <yarp/sig/Vector.h>
 #include <yarp/os/PeriodicThread.h>
+#include <yarp/dev/api.h>
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/IMultipleWrapper.h>
 #include <mutex>
 #include <map>
+
+namespace yarp::dev {
 
 /**
  *  @ingroup dev_impl_other
@@ -25,7 +28,7 @@
  *
  */
 
-class FrameTransformContainer :
+class YARP_dev_API FrameTransformContainer :
     public yarp::dev::IFrameTransformStorageSet,
     public yarp::dev::IFrameTransformStorageGet
 {
@@ -119,5 +122,7 @@ public:
     bool checkAndRemoveExpired();
     bool checkAndRemoveExpired() const;
 };
+
+} // namespace yarp::dev
 
 #endif // YARP_DEV_FRAMETRANSFORM_UTILS_H

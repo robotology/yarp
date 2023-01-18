@@ -28,7 +28,7 @@
 #include <yarp/robotinterface/Param.h>
 #include <yarp/robotinterface/XMLReader.h>
 
-#include <FrameTransformContainer.h>
+#include <yarp/dev/FrameTransformContainer.h>
 #include <mutex>
 
 #define DEFAULT_THREAD_PERIOD 20 //ms

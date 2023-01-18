@@ -29,7 +29,6 @@ yarp_begin_plugin_library(yarpmod
   add_subdirectory(frameTransformSet)
   add_subdirectory(frameTransformStorageMsgs)
   add_subdirectory(frameTransformStorage)
-  add_subdirectory(frameTransformUtils)
   add_subdirectory(frameGrabber_nwc_yarp)
   add_subdirectory(frameGrabber_nws_yarp)
   add_subdirectory(transformClient)

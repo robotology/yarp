@@ -129,6 +129,7 @@ if(TARGET YARP::YARP_math)
     yarp/dev/Map2DPath.h
     yarp/dev/NavTypes.h
     yarp/dev/MapGrid2DInfo.h
+    yarp/dev/FrameTransformContainer.h
   )
 endif()
 
@@ -229,6 +230,7 @@ if(TARGET YARP::YARP_math)
     yarp/dev/Map2DArea.cpp
     yarp/dev/Map2DPath.cpp
     yarp/dev/MapGrid2DInfo.cpp
+    yarp/dev/FrameTransformContainer.cpp
   )
 endif()
 

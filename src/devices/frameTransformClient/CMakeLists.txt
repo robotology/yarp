@@ -15,8 +15,6 @@ if(NOT SKIP_frameTransformClient)
   target_sources(yarp_frameTransformClient PRIVATE FrameTransformClient.cpp
           FrameTransformClient.h)
 
-  target_sources(yarp_frameTransformClient PRIVATE $<TARGET_OBJECTS:FrameTransformUtils>)
-  target_include_directories(yarp_frameTransformClient PRIVATE $<TARGET_PROPERTY:FrameTransformUtils,INTERFACE_INCLUDE_DIRECTORIES>)
 
   target_link_libraries(yarp_frameTransformClient
     PRIVATE

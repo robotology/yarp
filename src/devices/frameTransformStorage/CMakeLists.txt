@@ -18,9 +18,6 @@ if(NOT SKIP_frameTransformStorage)
       FrameTransformStorage.h
   )
 
-  target_sources(yarp_frameTransformStorage PRIVATE $<TARGET_OBJECTS:FrameTransformUtils>)
-  target_include_directories(yarp_frameTransformStorage PRIVATE $<TARGET_PROPERTY:FrameTransformUtils,INTERFACE_INCLUDE_DIRECTORIES>)
-
   target_link_libraries(yarp_frameTransformStorage
     PRIVATE
       YARP::YARP_os

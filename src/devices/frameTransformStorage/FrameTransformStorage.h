@@ -13,7 +13,7 @@
 #include <yarp/sig/Vector.h>
 
 #include <yarp/dev/IFrameTransformStorage.h>
-#include <FrameTransformContainer.h>
+#include <yarp/dev/FrameTransformContainer.h>
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/WrapperSingle.h>
 #include <mutex>
@@ -39,7 +39,7 @@ class FrameTransformStorage :
     public yarp::dev::WrapperSingle
 {
 protected:
-    FrameTransformContainer m_tf_container;
+    yarp::dev::FrameTransformContainer m_tf_container;
 
 public:
     FrameTransformStorage(double tperiod=0.010) : PeriodicThread (tperiod) {}
@@ -60,7 +60,7 @@ public:
     bool deleteTransform(std::string t1, std::string t2) override;
     bool size(size_t& size) const override;
     bool clearAll() override;
-    bool getInternalContainer(FrameTransformContainer*&  container) override;
+    bool getInternalContainer(yarp::dev::FrameTransformContainer*&  container) override;
     bool startStorageThread() override;
     bool stopStorageThread() override;
 
