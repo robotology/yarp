@@ -1,0 +1,7 @@
+./src/devices/mobileBaseVelocityControlMsgs
+./src/devices/IMap2DMsgs
+./src/devices/multipleAnalogSensorsMsgs
+./src/devices/IOdometry2DMsgs
+./src/devices/ILocalization2DMsgs
+./src/devices/frameTransformStorageMsgs
+./src/devices/INavigation2DMsgs
