@@ -22,9 +22,9 @@ endfunction()
 
 function(create_device_test test_name)
     if (DEFINED ${ARGV1})
-        set (extra_libs ${ARGV1})
+      set (extra_libs ${ARGV1})
     endif()
-    
+
     add_executable(harness_dev_${test_name})
     target_sources(harness_dev_${test_name}
       PRIVATE

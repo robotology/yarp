@@ -4,6 +4,7 @@
 
 include(YarpPlugin)
 include(YarpPrintFeature)
+include(YarpCatchUtils)
 
 yarp_begin_plugin_library(yarpmod
   OPTION YARP_COMPILE_DEVICE_PLUGINS
@@ -86,9 +87,9 @@ yarp_begin_plugin_library(yarpmod
   add_subdirectory(VirtualAnalogWrapper)
   add_subdirectory(RGBDSensorClient)
   add_subdirectory(RGBDSensor_nws_yarp)
-  add_subdirectory(ControlBoardWrapper)
-  add_subdirectory(ControlBoard_nws_yarp)
-  add_subdirectory(ControlBoardRemapper)
+  add_subdirectory(controlBoardWrapper)
+  add_subdirectory(controlBoard_nws_yarp)
+  add_subdirectory(controlBoardRemapper)
   add_subdirectory(RobotDescriptionClient)
   add_subdirectory(RobotDescriptionServer)
   add_subdirectory(JoypadControlNetUtils)
