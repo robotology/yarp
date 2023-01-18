@@ -141,6 +141,27 @@ jobs:
         tests/misc/check_style.pl
 
 
+  check-tests:
+    name: 'Check Devices Tests'
+    needs: select_environment
+    runs-on: ubuntu-20.04
+    steps:
+    - name: Clone repository
+      uses: actions/checkout@v3
+      with:
+        repository: ${{ needs.select_environment.outputs.repository }}
+        ref: ${{ needs.select_environment.outputs.ref }}
+
+    - name: Install Dependencies
+      run: |
+        sudo apt-get update -qq
+        sudo apt-get install -qq -y python3
+
+    - name: Check Devices Tests
+      run: |
+        python3 tests/misc/check_tests.py
+
+
   run-cmake:
     name: 'Run CMake [CMake ${{ matrix.config.cmake_version }} (${{ matrix.config.cmake_generator }}), YCM ${{ matrix.config.ycm_version }}]'
     needs: [select_environment, check-license, check-style]
