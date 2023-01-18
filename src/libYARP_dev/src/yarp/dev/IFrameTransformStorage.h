@@ -17,9 +17,8 @@ namespace yarp::dev {
 class IFrameTransformStorageSet;
 class IFrameTransformStorageGet;
 class IFrameTransformStorageUtils;
-}
-
 class FrameTransformContainer;
+}
 
 /**
  * @ingroup dev_iface_transform
@@ -90,7 +89,7 @@ public:
 
     virtual bool size (size_t& size) const =0;
 
-    virtual bool getInternalContainer(FrameTransformContainer*& container)  =0;
+    virtual bool getInternalContainer(yarp::dev::FrameTransformContainer*& container)  =0;
 
     virtual bool startStorageThread() = 0;
 
