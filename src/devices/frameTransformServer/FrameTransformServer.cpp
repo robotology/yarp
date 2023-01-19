@@ -8,6 +8,7 @@
 #include <yarp/os/Log.h>
 #include <yarp/os/LogComponent.h>
 #include <yarp/os/LogStream.h>
+#include <yarp/os/ResourceFinder.h>
 
 #include <yarp/math/Math.h>
 
@@ -73,9 +74,14 @@ bool FrameTransformServer::open(yarp::os::Searchable &config)
 
     std::string configuration_to_open;
     std::string innerFilePath="config_xml/fts_yarp_only.xml";
-    if(cfg.check("testxml_option"))
+    if(cfg.check("testxml_from"))
     {
-        innerFilePath = cfg.find("testxml_option").asString();
+        yarp::os::ResourceFinder findXml;
+        if(cfg.check("testxml_context"))
+        {
+            findXml.setDefaultContext(cfg.find("testxml_context").asString());
+        }
+        innerFilePath = findXml.findFileByName(cfg.find("testxml_from").asString());
         std::ifstream xmlFile(innerFilePath);
         std::stringstream stream_file;
         stream_file << xmlFile.rdbuf();
