@@ -90,17 +90,8 @@ set(YARP_IDL_BINARY_HINT "@PACKAGE_YARP_IDL_BINARY_HINT@")
 # CMake modules directories
 set_and_check(YARP_MODULE_DIR "@PACKAGE_YARP_MODULE_DIR@")
 
-# Save the variables, that it should not be modified by find_package(YARP), but
-# we need to modify it in order to find all the dependencies.
-set(_CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH})
-set(_YCM_FOUND ${YCM_FOUND})
-
-# Find YCM if YARP is static therefore we need YCM (or YARP private version) for
-# private dependencies.
-if(NOT YARP_IS_SHARED_LIBRARY)
-  include(CMakeFindDependencyMacro)
-  find_dependency(YCM @YCM_REQUIRED_VERSION@ REQUIRED)
-endif()
+include(CMakeFindDependencyMacro)
+find_dependency(YCM @YCM_REQUIRED_VERSION@ REQUIRED)
 
 
 if(YARP_FIND_COMPONENTS STREQUAL "")
@@ -153,11 +144,7 @@ foreach(_yarp_component ${YARP_FIND_COMPONENTS})
   endif()
 endforeach()
 
-# Restore the original value of the variables
-set(CMAKE_MODULE_PATH ${_CMAKE_MODULE_PATH})
-set(YCM_FOUND ${_YCM_FOUND})
-unset(_CMAKE_MODULE_PATH)
-unset(_YCM_FOUND)
+
 
 
 # Ensure that all requested modules are available
@@ -169,7 +156,7 @@ check_required_components(YARP)
 
 include(${YARP_MODULE_DIR}/YarpPlugin.cmake)
 include(${YARP_MODULE_DIR}/YarpInstallationHelpers.cmake)
-
+include(${YARP_MODULE_DIR}/YarpCatchUtils.cmake)
 
 ################################################################################
 # If FeatureSummary was included, add DESCRIPTION and URL
