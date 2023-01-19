@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later
  */
 
-#include "fakeLocalizerDev.h"
+#include "fakeLocalizer.h"
 
 #include <yarp/os/Network.h>
 #include <yarp/os/RFModule.h>

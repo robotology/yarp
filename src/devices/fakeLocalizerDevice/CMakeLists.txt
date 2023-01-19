@@ -8,7 +8,7 @@ endif()
 yarp_prepare_plugin(fakeLocalizer
   CATEGORY device
   TYPE fakeLocalizer
-  INCLUDE fakeLocalizerDev.h
+  INCLUDE fakeLocalizer.h
   DEPENDS "TARGET YARP::YARP_math"
 )
 
@@ -17,8 +17,8 @@ if(NOT SKIP_fakeLocalizer)
 
   target_sources(yarp_fakeLocalizer
     PRIVATE
-      fakeLocalizerDev.h
-      fakeLocalizerDev.cpp
+      fakeLocalizer.h
+      fakeLocalizer.cpp
   )
 
   target_link_libraries(yarp_fakeLocalizer
@@ -47,4 +47,9 @@ if(NOT SKIP_fakeLocalizer)
   set(YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS ${YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS} PARENT_SCOPE)
 
   set_property(TARGET yarp_fakeLocalizer PROPERTY FOLDER "Plugins/Device/Fake")
+
+  if(YARP_COMPILE_TESTS)
+    add_subdirectory(tests)
+  endif()
+
 endif()
