@@ -11,6 +11,7 @@
 #include "StreamingMessagesParser.h"
 
 #include <yarp/os/LogStream.h>
+#include <yarp/os/Time.h>
 #include <yarp/dev/impl/jointData.h>
 
 #include <numeric>
@@ -508,22 +509,34 @@ void ControlBoard_nws_yarp::run()
         data.interactionMode_isValid = false;
     }
 
+    double now = yarp::os::Time::now();
+    yarp::sig::Vector active_timestamps;
+
     // Check if the encoders timestamps are consistent.
     for (double tt : times)
     {
-        if (std::abs(times[0] - tt) > 1.0)
+        if (std::abs(now - tt) < 1.0)
         {
-            yCError(CONTROLBOARD, "Encoder Timestamps are not consistent! Data will not be published.");
-            yarp::sig::Vector _data(subdevice_joints);
-            return;
+            active_timestamps.push_back(tt);
         }
     }
 
-    // Update the port envelope time by averaging all timestamps
-    time.update(std::accumulate(times.begin(), times.end(), 0.0) / subdevice_joints);
-    yarp::os::Stamp averageTime = time;
+    if (active_timestamps.size() == 0)
+    {
+        yCErrorThrottle(CONTROLBOARD, 1.0, "Encoder Timestamps are not consistent! Data will not be published.");
+        return;
+    }
+    else if (active_timestamps.size() == 1)
+    {
+        time.update(active_timestamps[0]);
+    }
+    else
+    {
+        // Update the port envelope time by averaging all available timestamps
+        time.update(std::accumulate(active_timestamps.begin(), active_timestamps.end(), 0.0) / active_timestamps.size());
+    }
 
-    extendedOutputStatePort.setEnvelope(averageTime);
+    extendedOutputStatePort.setEnvelope(time);
     extendedOutputState_buffer.write();
 
     // handle state:o
@@ -531,6 +544,6 @@ void ControlBoard_nws_yarp::run()
     v.resize(subdevice_joints);
     std::copy(data.jointPosition.begin(), data.jointPosition.end(), v.begin());
 
-    outputPositionStatePort.setEnvelope(averageTime);
+    outputPositionStatePort.setEnvelope(time);
     outputPositionStatePort.write();
 }
