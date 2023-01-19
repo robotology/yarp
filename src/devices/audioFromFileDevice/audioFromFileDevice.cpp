@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: 2006-2021 Istituto Italiano di Tecnologia (IIT)
+ * SPDX-FileCopyrightText: 2023-2023 Istituto Italiano di Tecnologia (IIT)
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
@@ -34,7 +34,6 @@ audioFromFileDevice::audioFromFileDevice() :
 
 audioFromFileDevice::~audioFromFileDevice()
 {
-    delete m_inputBuffer;
 }
 
 bool audioFromFileDevice::setHWGain(double gain)
