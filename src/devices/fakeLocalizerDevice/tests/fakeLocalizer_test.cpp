@@ -3,11 +3,11 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#include <yarp/dev/MultipleAnalogSensorsInterfaces.h>
 #include <yarp/os/Network.h>
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/WrapperSingle.h>
-#include <yarp/dev/tests/IOrientationSensorsTest.h>
+#include <yarp/dev/ILocalization2D.h>
+#include <yarp/dev/tests/ILocalization2DTest.h>
 
 #include <catch2/catch_amalgamated.hpp>
 #include <harness.h>
@@ -15,31 +15,30 @@
 using namespace yarp::dev;
 using namespace yarp::os;
 
-TEST_CASE("dev::fakeImu", "[yarp::dev]")
+TEST_CASE("dev::fakeLocalizer", "[yarp::dev]")
 {
-    YARP_REQUIRE_PLUGIN("fakeImu", "device");
+    YARP_REQUIRE_PLUGIN("fakeLocalizer", "device");
 
     Network::setLocalMode(true);
 
-    SECTION("Checking map2D_nws_yarp device")
+    SECTION("Checking fakeLocalizer device")
     {
-        PolyDriver ddmc;
-        yarp::dev::IOrientationSensors* iimu=nullptr;
+        PolyDriver dd;
+        yarp::dev::Nav2D::ILocalization2D* iloc=nullptr;
 
-        ////////"Checking opening map2DServer and map2DClient polydrivers"
+        ////////"Checking opening polydrivers"
         {
             Property p_cfg;
-            p_cfg.put("device", "fakeMotionControl");
-            p_cfg.put("constantValue", 1);
-            REQUIRE(ddmc.open(p_cfg));
+            p_cfg.put("device", "fakeLocalizer");
+            REQUIRE(dd.open(p_cfg));
         }
 
-        ddmc.view(iimu);
-        yarp::dev::tests::exec_IOrientationSensors_test_1(iimu);
+        dd.view(iloc);
+        yarp::dev::tests::exec_iLocalization2D_test_1(iloc);
 
         //"Close all polydrivers and check"
         {
-            CHECK(ddmc.close());
+            CHECK(dd.close());
         }
     }
 

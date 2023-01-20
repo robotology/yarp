@@ -3,11 +3,10 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#include <yarp/dev/MultipleAnalogSensorsInterfaces.h>
+#include <yarp/dev/IAnalogSensor.h>
 #include <yarp/os/Network.h>
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/WrapperSingle.h>
-#include <yarp/dev/tests/IOrientationSensorsTest.h>
 
 #include <catch2/catch_amalgamated.hpp>
 #include <harness.h>
@@ -15,27 +14,27 @@
 using namespace yarp::dev;
 using namespace yarp::os;
 
-TEST_CASE("dev::fakeImu", "[yarp::dev]")
+TEST_CASE("dev::fakeAnalogSensor", "[yarp::dev]")
 {
-    YARP_REQUIRE_PLUGIN("fakeImu", "device");
+    YARP_REQUIRE_PLUGIN("fakeAnalogSensor", "device");
 
     Network::setLocalMode(true);
 
-    SECTION("Checking map2D_nws_yarp device")
+    SECTION("Checking fakeAnalogSensor device")
     {
         PolyDriver ddmc;
-        yarp::dev::IOrientationSensors* iimu=nullptr;
+        yarp::dev::IAnalogSensor* ianalog=nullptr;
 
-        ////////"Checking opening map2DServer and map2DClient polydrivers"
+        ////////"Checking opening polydriver"
         {
             Property p_cfg;
-            p_cfg.put("device", "fakeMotionControl");
-            p_cfg.put("constantValue", 1);
+            p_cfg.put("device", "fakeAnalogSensor");
+            p_cfg.put("period", "0.010");
             REQUIRE(ddmc.open(p_cfg));
         }
 
-        ddmc.view(iimu);
-        yarp::dev::tests::exec_IOrientationSensors_test_1(iimu);
+        ddmc.view(ianalog);
+        CHECK(ianalog->getChannels()==1);
 
         //"Close all polydrivers and check"
         {

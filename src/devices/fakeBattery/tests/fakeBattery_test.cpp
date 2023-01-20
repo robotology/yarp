@@ -3,11 +3,10 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#include <yarp/dev/MultipleAnalogSensorsInterfaces.h>
+#include <yarp/dev/tests/IBatteryTest.h>
 #include <yarp/os/Network.h>
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/WrapperSingle.h>
-#include <yarp/dev/tests/IOrientationSensorsTest.h>
 
 #include <catch2/catch_amalgamated.hpp>
 #include <harness.h>
@@ -15,31 +14,30 @@
 using namespace yarp::dev;
 using namespace yarp::os;
 
-TEST_CASE("dev::fakeImu", "[yarp::dev]")
+TEST_CASE("dev::fakeBattery", "[yarp::dev]")
 {
-    YARP_REQUIRE_PLUGIN("fakeImu", "device");
+    YARP_REQUIRE_PLUGIN("fakeBattery", "device");
 
     Network::setLocalMode(true);
 
-    SECTION("Checking map2D_nws_yarp device")
+    SECTION("Checking fakeBattery device")
     {
-        PolyDriver ddmc;
-        yarp::dev::IOrientationSensors* iimu=nullptr;
+        PolyDriver dd;
+        yarp::dev::IBattery* ibatt=nullptr;
 
-        ////////"Checking opening map2DServer and map2DClient polydrivers"
+        ////////"Checking opening device polydrivers"
         {
             Property p_cfg;
-            p_cfg.put("device", "fakeMotionControl");
-            p_cfg.put("constantValue", 1);
-            REQUIRE(ddmc.open(p_cfg));
+            p_cfg.put("device", "fakeBattery");
+            REQUIRE(dd.open(p_cfg));
         }
 
-        ddmc.view(iimu);
-        yarp::dev::tests::exec_IOrientationSensors_test_1(iimu);
+        dd.view(ibatt);
+        yarp::dev::tests::exec_iBattery_test_1(ibatt);
 
         //"Close all polydrivers and check"
         {
-            CHECK(ddmc.close());
+            CHECK(dd.close());
         }
     }
 
