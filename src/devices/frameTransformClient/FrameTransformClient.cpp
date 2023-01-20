@@ -352,34 +352,52 @@ bool FrameTransformClient::open(yarp::os::Searchable &config)
         return false;
     }
 
-    std::string setdeviceName = "ftc_storage";
-    if (m_robot.hasParam("setDeviceName")) { setdeviceName = m_robot.findParam("setDeviceName");}
-    if (!m_robot.hasDevice(setdeviceName))
+    std::string setdeviceName;
+    if (m_robot.hasParam("setDeviceName"))
     {
-        yCError(FRAMETRANSFORMCLIENT) << "Failed to find requested device " << setdeviceName;
-        return false;
+        setdeviceName = m_robot.findParam("setDeviceName");
+        if (!m_robot.hasDevice(setdeviceName))
+        {
+            yCError(FRAMETRANSFORMCLIENT) << "Set device specified (" << setdeviceName << ") was not found in the configuration. The configuration is wrongly written, please check again";
+            return false;
+        }
+        else
+        {
+            auto* polyset = m_robot.device(setdeviceName).driver();
+            if (!polyset || !polyset->view(m_ift_set))
+            {
+                yCError(FRAMETRANSFORMCLIENT) << "Failed to open device driver / interface for " << setdeviceName;
+                return false;
+            }
+        }
+    }
+    else
+    {
+        yCWarning(FRAMETRANSFORMCLIENT) << "Set device name was not provided in the specified configuration. Set operations will not be available";
     }
 
-    auto* polyset = m_robot.device(setdeviceName).driver();
-    if (!polyset || !polyset->view(m_ift_set))
+    std::string getdeviceName;
+    if (m_robot.hasParam("getDeviceName"))
     {
-        yCError(FRAMETRANSFORMCLIENT) << "Failed to open device driver / interface for " << setdeviceName;
-        return false;
+        getdeviceName = m_robot.findParam("getDeviceName");
+        if (!m_robot.hasDevice(getdeviceName))
+        {
+            yCError(FRAMETRANSFORMCLIENT) << "Get device specified (" << getdeviceName << ") was not found in the configuration. The configuration is wrongly written, please check again";
+            return false;
+        }
+        else
+        {
+            auto* polyget = m_robot.device(getdeviceName).driver();
+            if (!polyget || !polyget->view(m_ift_get) || !polyget->view(m_ift_util))
+            {
+                yCError(FRAMETRANSFORMCLIENT) << "Failed to open device driver / interface for " << getdeviceName;
+                return false;
+            }
+        }
     }
-
-    std::string getdeviceName = "ftc_storage";
-    if (m_robot.hasParam("getDeviceName")) {getdeviceName = m_robot.findParam("getDeviceName");}
-    if (!m_robot.hasDevice(getdeviceName))
+    else
     {
-        yCError(FRAMETRANSFORMCLIENT) << "Failed to find requested device " << getdeviceName;
-        return false;
-    }
-
-    auto* polyget = m_robot.device(getdeviceName).driver();
-    if (!polyget || !polyget->view(m_ift_get) || !polyget->view(m_ift_util))
-    {
-        yCError(FRAMETRANSFORMCLIENT) << "Failed to open device driver / interface for " << getdeviceName;
-        return false;
+        yCWarning(FRAMETRANSFORMCLIENT) << "Get device name was not provided in the specified configuration. Get operations will not be available";
     }
 
     if (config.check("period"))
@@ -412,6 +430,11 @@ bool FrameTransformClient::close()
 
 bool FrameTransformClient::allFramesAsString(std::string &all_frames)
 {
+    if(!m_ift_util)
+    {
+        yCError(FRAMETRANSFORMCLIENT, "%s: No IFrameTransformStorageUtils interface found. Your device is wrongly configured", __func__);
+        return false;
+    }
     FrameTransformContainer* p_cont = nullptr;
     bool br = m_ift_util->getInternalContainer(p_cont);
     if (!br || p_cont == nullptr) { yCError(FRAMETRANSFORMCLIENT) << "Failure"; return false; }
@@ -489,11 +512,21 @@ FrameTransformClient::ConnectionType FrameTransformClient::priv_getConnectionTyp
 
 bool FrameTransformClient::canTransform(const std::string &target_frame, const std::string &source_frame)
 {
+    if(!m_ift_util)
+    {
+        yCError(FRAMETRANSFORMCLIENT, "%s: No IFrameTransformStorageUtils interface found. Your device is wrongly configured", __func__);
+        return false;
+    }
     return priv_getConnectionType(target_frame, source_frame) != ConnectionType::DISCONNECTED;
 }
 
 bool FrameTransformClient::clear()
 {
+    if(!m_ift_set)
+    {
+        yCError(FRAMETRANSFORMCLIENT, "%s: No IFrameTransformStorageSet interface found. Your device is wrongly configured",__func__);
+        return false;
+    }
     if (m_ift_set)
     {
         return m_ift_set->clearAll();
@@ -504,6 +537,11 @@ bool FrameTransformClient::clear()
 
 bool FrameTransformClient::frameExists(const std::string &frame_id)
 {
+    if(!m_ift_util)
+    {
+        yCError(FRAMETRANSFORMCLIENT, "%s: No IFrameTransformStorageUtils interface found. Your device is wrongly configured", __func__);
+        return false;
+    }
     FrameTransformContainer* p_cont = nullptr;
     bool br = m_ift_util->getInternalContainer(p_cont);
     if (!br || p_cont == nullptr) { yCError(FRAMETRANSFORMCLIENT) << "Failure"; return false; }
@@ -524,6 +562,11 @@ bool FrameTransformClient::frameExists(const std::string &frame_id)
 
 bool FrameTransformClient::getAllFrameIds(std::vector<std::string> &ids)
 {
+    if(!m_ift_util)
+    {
+        yCError(FRAMETRANSFORMCLIENT, "%s: No IFrameTransformStorageUtils interface found. Your device is wrongly configured",__func__);
+        return false;
+    }
     FrameTransformContainer* p_cont = nullptr;
     bool br = m_ift_util->getInternalContainer(p_cont);
     if (!br || p_cont == nullptr) { yCError(FRAMETRANSFORMCLIENT) << "Failure"; return false; }
@@ -561,6 +604,11 @@ bool FrameTransformClient::getAllFrameIds(std::vector<std::string> &ids)
 
 bool FrameTransformClient::getParent(const std::string &frame_id, std::string &parent_frame_id)
 {
+    if(!m_ift_util)
+    {
+        yCError(FRAMETRANSFORMCLIENT, "%s: No IFrameTransformStorageUtils interface found. Your device is wrongly configured",__func__);
+        return false;
+    }
     FrameTransformContainer* p_cont = nullptr;
     bool br = m_ift_util->getInternalContainer(p_cont);
     if (!br || p_cont == nullptr) { yCError(FRAMETRANSFORMCLIENT) << "Failure"; return false; }
@@ -636,6 +684,11 @@ bool FrameTransformClient::priv_getChainedTransform(const std::string& target_fr
 
 bool FrameTransformClient::getTransform(const std::string& target_frame_id, const std::string& source_frame_id, yarp::sig::Matrix& transform)
 {
+    if(!m_ift_util)
+    {
+        yCError(FRAMETRANSFORMCLIENT, "%s: No IFrameTransformStorageUtils interface found. Your device is wrongly configured",__func__);
+        return false;
+    }
     ConnectionType ct;
     std::string ancestor;
     ct = priv_getConnectionType(target_frame_id, source_frame_id, &ancestor);
@@ -671,6 +724,11 @@ bool FrameTransformClient::getTransform(const std::string& target_frame_id, cons
 
 bool FrameTransformClient::setTransform(const std::string& target_frame_id, const std::string& source_frame_id, const yarp::sig::Matrix& transform)
 {
+    if(!m_ift_util)
+    {
+        yCError(FRAMETRANSFORMCLIENT, "%s: No IFrameTransformStorageUtils interface found. Your device is wrongly configured",__func__);
+        return false;
+    }
     if(target_frame_id == source_frame_id)
     {
         yCErrorThrottle(FRAMETRANSFORMCLIENT, LOG_THROTTLE_PERIOD) << "setTransform(): Invalid transform detected.\n" \
@@ -709,6 +767,11 @@ bool FrameTransformClient::setTransform(const std::string& target_frame_id, cons
 
 bool FrameTransformClient::setTransformStatic(const std::string &target_frame_id, const std::string &source_frame_id, const yarp::sig::Matrix &transform)
 {
+    if(!m_ift_util)
+    {
+        yCError(FRAMETRANSFORMCLIENT, "%s: No IFrameTransformStorageUtils interface found. Your device is wrongly configured",__func__);
+        return false;
+    }
     if(target_frame_id == source_frame_id)
     {
         yCErrorThrottle(FRAMETRANSFORMCLIENT, LOG_THROTTLE_PERIOD) << "setTransformStatic(): Invalid transform detected.\n" \
@@ -753,6 +816,11 @@ bool FrameTransformClient::deleteTransform(const std::string &target_frame_id, c
 
 bool FrameTransformClient::transformPoint(const std::string &target_frame_id, const std::string &source_frame_id, const yarp::sig::Vector &input_point, yarp::sig::Vector &transformed_point)
 {
+    if(!m_ift_util)
+    {
+        yCError(FRAMETRANSFORMCLIENT, "%s: No IFrameTransformStorageUtils interface found. Your device is wrongly configured",__func__);
+        return false;
+    }
     if (input_point.size() != 3)
     {
         yCErrorThrottle(FRAMETRANSFORMCLIENT, LOG_THROTTLE_PERIOD) << "Only 3 dimensional vector allowed.";
@@ -773,6 +841,11 @@ bool FrameTransformClient::transformPoint(const std::string &target_frame_id, co
 
 bool FrameTransformClient::transformPose(const std::string &target_frame_id, const std::string &source_frame_id, const yarp::sig::Vector &input_pose, yarp::sig::Vector &transformed_pose)
 {
+    if(!m_ift_util)
+    {
+        yCError(FRAMETRANSFORMCLIENT, "%s: No IFrameTransformStorageUtils interface found. Your device is wrongly configured",__func__);
+        return false;
+    }
     if (input_pose.size() != 6)
     {
         yCErrorThrottle(FRAMETRANSFORMCLIENT, LOG_THROTTLE_PERIOD) << "Only 6 dimensional vector (3 axes + roll pith and yaw) allowed.";
@@ -807,6 +880,11 @@ bool FrameTransformClient::transformPose(const std::string &target_frame_id, con
 
 bool FrameTransformClient::transformQuaternion(const std::string &target_frame_id, const std::string &source_frame_id, const yarp::math::Quaternion &input_quaternion, yarp::math::Quaternion &transformed_quaternion)
 {
+    if(!m_ift_util)
+    {
+        yCError(FRAMETRANSFORMCLIENT, "%s: No IFrameTransformStorageUtils interface found. Your device is wrongly configured",__func__);
+        return false;
+    }
     yarp::sig::Matrix m(4, 4);
     if (!getTransform(target_frame_id, source_frame_id, m))
     {
@@ -821,6 +899,11 @@ bool FrameTransformClient::transformQuaternion(const std::string &target_frame_i
 
 bool FrameTransformClient::waitForTransform(const std::string &target_frame_id, const std::string &source_frame_id, const double &timeout)
 {
+    if(!m_ift_util)
+    {
+        yCError(FRAMETRANSFORMCLIENT, "%s: No IFrameTransformStorageUtils interface found. Your device is wrongly configured",__func__);
+        return false;
+    }
     //loop until canTransform == true or timeout expires
     double start = yarp::os::SystemClock::nowSystem();
     while (!canTransform(target_frame_id, source_frame_id))
