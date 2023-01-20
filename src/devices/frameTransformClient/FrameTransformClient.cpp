@@ -352,36 +352,52 @@ bool FrameTransformClient::open(yarp::os::Searchable &config)
         return false;
     }
 
-    std::string setdeviceName = "ftc_storage";
-    if (m_robot.hasParam("setDeviceName")) { setdeviceName = m_robot.findParam("setDeviceName");}
-    if (!m_robot.hasDevice(setdeviceName))
+    std::string setdeviceName;
+    if (m_robot.hasParam("setDeviceName"))
+    {
+        setdeviceName = m_robot.findParam("setDeviceName");
+        if (!m_robot.hasDevice(setdeviceName))
+        {
+            yCError(FRAMETRANSFORMCLIENT) << "Set device specified (" << setdeviceName << ") was not found in the configuration. The configuration is worngly writte, please check again";
+            return false;
+        }
+        else
+        {
+            auto* polyset = m_robot.device(setdeviceName).driver();
+            if (!polyset || !polyset->view(m_ift_set))
+            {
+                yCError(FRAMETRANSFORMCLIENT) << "Failed to open device driver / interface for " << setdeviceName;
+                return false;
+            }
+        }
+    }
+    else
     {
         yCWarning(FRAMETRANSFORMCLIENT) << "Set device name was not provided in the specified configuration. Set operations will not be available";
     }
-    else
+
+    std::string getdeviceName;
+    if (m_robot.hasParam("getDeviceName"))
     {
-        auto* polyset = m_robot.device(setdeviceName).driver();
-        if (!polyset || !polyset->view(m_ift_set))
+        getdeviceName = m_robot.findParam("getDeviceName");
+        if (!m_robot.hasDevice(getdeviceName))
         {
-            yCError(FRAMETRANSFORMCLIENT) << "Failed to open device driver / interface for " << setdeviceName;
+            yCError(FRAMETRANSFORMCLIENT) << "Get device specified (" << getdeviceName << ") was not found in the configuration. The configuration is worngly writte, please check again";
             return false;
         }
+        else
+        {
+            auto* polyget = m_robot.device(getdeviceName).driver();
+            if (!polyget || !polyget->view(m_ift_get) || !polyget->view(m_ift_util))
+            {
+                yCError(FRAMETRANSFORMCLIENT) << "Failed to open device driver / interface for " << getdeviceName;
+                return false;
+            }
+        }
     }
-
-    std::string getdeviceName = "ftc_storage";
-    if (m_robot.hasParam("getDeviceName")) {getdeviceName = m_robot.findParam("getDeviceName");}
-    if (!m_robot.hasDevice(getdeviceName))
+    else
     {
         yCWarning(FRAMETRANSFORMCLIENT) << "Get device name was not provided in the specified configuration. Get operations will not be available";
-    }
-    else
-    {
-        auto* polyget = m_robot.device(getdeviceName).driver();
-        if (!polyget || !polyget->view(m_ift_get) || !polyget->view(m_ift_util))
-        {
-            yCError(FRAMETRANSFORMCLIENT) << "Failed to open device driver / interface for " << getdeviceName;
-            return false;
-        }
     }
 
     if (config.check("period"))
