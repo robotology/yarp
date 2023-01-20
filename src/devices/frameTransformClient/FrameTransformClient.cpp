@@ -358,7 +358,7 @@ bool FrameTransformClient::open(yarp::os::Searchable &config)
         setdeviceName = m_robot.findParam("setDeviceName");
         if (!m_robot.hasDevice(setdeviceName))
         {
-            yCError(FRAMETRANSFORMCLIENT) << "Set device specified (" << setdeviceName << ") was not found in the configuration. The configuration is worngly writte, please check again";
+            yCError(FRAMETRANSFORMCLIENT) << "Set device specified (" << setdeviceName << ") was not found in the configuration. The configuration is wrongly written, please check again";
             return false;
         }
         else
