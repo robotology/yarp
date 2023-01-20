@@ -356,7 +356,7 @@ bool FrameTransformClient::open(yarp::os::Searchable &config)
     if (m_robot.hasParam("setDeviceName")) { setdeviceName = m_robot.findParam("setDeviceName");}
     if (!m_robot.hasDevice(setdeviceName))
     {
-        yCWarning(FRAMETRANSFORMCLIENT) << "Failed to find requested device " << setdeviceName;
+        yCWarning(FRAMETRANSFORMCLIENT) << "Set device name was not provided in the specified configuration. Set operations will not be available";
     }
     else
     {
@@ -372,7 +372,7 @@ bool FrameTransformClient::open(yarp::os::Searchable &config)
     if (m_robot.hasParam("getDeviceName")) {getdeviceName = m_robot.findParam("getDeviceName");}
     if (!m_robot.hasDevice(getdeviceName))
     {
-        yCWarning(FRAMETRANSFORMCLIENT) << "Failed to find requested device " << getdeviceName;
+        yCWarning(FRAMETRANSFORMCLIENT) << "Get device name was not provided in the specified configuration. Get operations will not be available";
     }
     else
     {
