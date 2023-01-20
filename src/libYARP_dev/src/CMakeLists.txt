@@ -405,6 +405,7 @@ set(YARP_dev_test_HDRS
     yarp/dev/tests/ITorqueControlTest.h
     yarp/dev/tests/IAxisInfoTest.h
     yarp/dev/tests/IRGBDSensorTest.h
+    yarp/dev/tests/IBatteryTest.h
 )
 
 set(YARP_dev_test_SRCS
@@ -413,6 +414,7 @@ set(YARP_dev_test_SRCS
     yarp/dev/tests/ITorqueControlTest.cpp
     yarp/dev/tests/IAxisInfoTest.cpp
     yarp/dev/tests/IRGBDSensorTest.cpp
+    yarp/dev/tests/IBatteryTest.cpp
 )
 
 if(TARGET YARP::YARP_math)
@@ -428,7 +430,9 @@ if(TARGET YARP::YARP_math)
       yarp/dev/tests/ITorqueControlTest.h
       yarp/dev/tests/IAxisInfoTest.h
       yarp/dev/tests/IOrientationSensorsTest.h
+      yarp/dev/tests/IOdometry2DTest.h
       yarp/dev/tests/IRGBDSensorTest.h
+      yarp/dev/tests/ILocalization2DTest.h
       )
   list(APPEND YARP_dev_test_SRCS
       yarp/dev/tests/IFrameGrabberImageTest.cpp
@@ -441,8 +445,10 @@ if(TARGET YARP::YARP_math)
       yarp/dev/tests/ITorqueControlTest.cpp
       yarp/dev/tests/IAxisInfoTest.cpp
       yarp/dev/tests/IOrientationSensorsTest.cpp
+      yarp/dev/tests/IOdometry2DTest.cpp
       yarp/dev/tests/IRGBDSensorTest.cpp
       yarp/dev/tests/IMap2DTest.cpp
+      yarp/dev/tests/ILocalization2DTest.cpp
       )
 endif()
 
