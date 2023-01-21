@@ -160,7 +160,7 @@ int yarp::os::fork()
 {
 #    if defined(YARP_HAS_ACE)
     pid_t pid = ACE_OS::fork();
-#    elif defined(__unix__)
+#    elif defined(__unix__) || defined(__APPLE__)
     pid_t pid = ::fork();
 #    else
     YARP_COMPILER_ERROR(Cannot implement fork on this platform)

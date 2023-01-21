@@ -35,7 +35,7 @@
 #    ifdef main
 #        undef main
 #    endif
-#elif defined(__unix__)
+#elif defined(__unix__) || defined(__APPLE__)
 #    include <arpa/inet.h>
 #    include <cstring>
 #    include <sys/socket.h>
@@ -334,7 +334,7 @@ bool NameConfig::isLocalName(const std::string& name)
         }
         delete[] ips;
     }
-#elif defined(__unix__)
+#elif defined(__unix__) || defined(__APPLE__)
     /**
      * If this does not work properly, use a more sophisticated way
      * instead of just gethostname.
