@@ -44,7 +44,8 @@ const int MAX_PORTS = 5;
  * | Parameter name   | SubParameter         | Type    | Units          | Default Value        | Required     | Description                                                                                               |
  * |:----------------:|:--------------------:|:-------:|:--------------:|:--------------------:|:-----------: |:---------------------------------------------------------------------------------------------------------:|
  * | filexml_option   | -                    | string  | -              | fts_yarp_only.xml    | no           | The name of the xml file containing the needed server configuration                                       |
- * | testxml_option   | -                    | string  | -              | -                    | no           | NB: FOR TEST ONLY. The absolute path of the xml file containing the configuration to test                 |
+ * | testxml_from     | -                    | string  | -              | -                    | no           | NB: FOR TEST ONLY. The name of the xml file containing the configuration to test                          |
+ * | testxml_context  | -                    | string  | -              | -                    | no           | NB: FOR TEST ONLY. The context folder the test xml file has to be searched in                             |
  * | ft_server_prefix | -                    | string  | -              | ""                   | no           | A prefix to add to the names of all the ports opened by the NWSs instantiated by the frameTransformServer |
  *
  * Example of command line:
