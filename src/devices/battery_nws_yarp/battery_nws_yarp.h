@@ -28,7 +28,7 @@
 #include <yarp/dev/IBattery.h>
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/DeviceDriver.h>
-#include <yarp/dev/IMultipleWrapper.h>
+#include <yarp/dev/WrapperSingle.h>
 #include <yarp/dev/api.h>
 
 #define DEFAULT_THREAD_PERIOD 0.02 //s
@@ -36,9 +36,9 @@
  /**
  *  @ingroup dev_impl_wrapper
  *
- * \brief `batteryWrapper`: Device that expose a battery sensor (using the IBattery interface) on the YARP network.
+ * \brief `Battery_nws_yarp`: Device that expose a battery sensor (using the IBattery interface) on the YARP network.
  *
- * \section batteryWrapper_device_parameters Description of input parameters
+ * \section Battery_nws_yarp_device_parameters Description of input parameters
  *
  * It reads the data from a battery sensor and sends them on a port, acting as a streaming server for a batteryClient device.
  * It creates one rpc port and its related handler for every output port.
@@ -49,29 +49,16 @@
  * |:-----------------:|:--------------:|:-------:|:--------------:|:-------------:|:--------------------------: |:--------------------------------------------------------------------------------:|:-----:|
  * | name              |      -         | string  | -              |   -           | Yes                         | prefix of the ports opened by the device, e.g. /robotName/battery1               | MUST start with a '/' character. /data:o and /rpc:i is automatically appended by the wrapper at the end |
  * | period            |      -         | double  | s              |   1.0         | No                          | refresh period of the broadcasted values in seconds                              | optional, default 1.0s |
- * | subdevice         |      -         | string  | -              |   -           | No                          | name of the subdevice to instantiate                                             | when used, parameters for the subdevice must be provided as well |
  * | enable_shutdown   |      -         | bool    | -              |   false       | No                          | if enabled, batteryWrapper will start a system shutdown when charge is below 5%  | - |
  * | enable_log        |      -         | bool    | -              |   false       | No                          | if enabled, stores a log of battery usage on disk                                | data stored on file batteryLog.txt |
  * | quitPortName      |      -         | string  | -              |   -           | No                          | name of port used to terminate the execution of yarpRobotInterface               | used only if enable_shutdown=true |
  *
  * Some example of configuration files:
  *
- * Configuration file using .ini format, using subdevice keyword.
- *
- * \code{.unparsed}
- *  device  batteryWrapper
- *  subdevice fakeBattery
- *  name /myBatterySensor
- *
- * ** parameter for 'fakeBattery' subdevice follows here **
- * ...
- * \endcode
- *
- *
  * Configuration file using .xml format.
  *
  * \code{.xml}
- *  <device name="battery1" type="batteryWrapper">
+ *  <device name="battery1" type="Battery_nws_yarp">
  *      <param name="period">   20                  </param>
  *      <param name="name">   /myBatterySensor       </param>
  *
@@ -85,21 +72,18 @@
  *  </device>
  * \endcode
  * */
-class BatteryWrapper :
+class Battery_nws_yarp :
         public yarp::os::PeriodicThread,
         public yarp::dev::DeviceDriver,
-        public yarp::dev::IMultipleWrapper,
+        public yarp::dev::WrapperSingle,
         public yarp::os::PortReader
 {
 public:
-    BatteryWrapper();
-    ~BatteryWrapper();
+    Battery_nws_yarp();
+    ~Battery_nws_yarp();
 
     bool open(yarp::os::Searchable &params) override;
     bool close() override;
-
-    bool attachAll(const yarp::dev::PolyDriverList &p) override;
-    bool detachAll() override;
 
     bool threadInit() override;
     void threadRelease() override;
@@ -107,8 +91,6 @@ public:
 
 private:
 
-    //driver stuff
-    yarp::dev::PolyDriver m_driver;
     yarp::dev::IBattery *m_ibattery_p;             // the battery read from
 
     //ports stuff
@@ -127,7 +109,6 @@ private:
 
     yarp::os::Stamp m_lastStateStamp;             // the last reading time stamp
     double m_period;
-    bool m_ownDevices;
     std::string m_sensorId;
 
     //behavior controls
@@ -143,8 +124,8 @@ private:
 
 private:
     //private methods
-    void attach(yarp::dev::IBattery *s);
-    void detach();
+    bool attach(yarp::dev::PolyDriver* driver) override;
+    bool detach() override;
 
     //internal methods to handle particular statuses of the battery
     bool initialize_YARP(yarp::os::Searchable &config);

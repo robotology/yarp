@@ -1,25 +1,23 @@
 # SPDX-FileCopyrightText: 2006-2021 Istituto Italiano di Tecnologia (IIT)
 # SPDX-License-Identifier: BSD-3-Clause
 
-yarp_prepare_plugin(batteryWrapper
+yarp_prepare_plugin(battery_nwc_yarp
   CATEGORY device
-  TYPE BatteryWrapper
-  INCLUDE BatteryWrapper.h
-  EXTRA_CONFIG
-    WRAPPER=batteryWrapper
+  TYPE Battery_nwc_yarp
+  INCLUDE battery_nwc_yarp.h
   DEFAULT ON
 )
 
-if(NOT SKIP_batteryWrapper)
-  yarp_add_plugin(yarp_batteryWrapper)
+if(NOT SKIP_battery_nwc_yarp)
+  yarp_add_plugin(yarp_battery_nwc_yarp)
 
-  target_sources(yarp_batteryWrapper
+  target_sources(yarp_battery_nwc_yarp
     PRIVATE
-      BatteryWrapper.cpp
-      BatteryWrapper.h
+      battery_nwc_yarp.cpp
+      battery_nwc_yarp.h
   )
 
-  target_link_libraries(yarp_batteryWrapper
+  target_link_libraries(yarp_battery_nwc_yarp
     PRIVATE
       YARP::YARP_os
       YARP::YARP_sig
@@ -32,7 +30,7 @@ if(NOT SKIP_batteryWrapper)
   )
 
   yarp_install(
-    TARGETS yarp_batteryWrapper
+    TARGETS yarp_battery_nwc_yarp
     EXPORT YARP_${YARP_PLUGIN_MASTER}
     COMPONENT ${YARP_PLUGIN_MASTER}
     LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
@@ -42,5 +40,10 @@ if(NOT SKIP_batteryWrapper)
 
   set(YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS ${YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS} PARENT_SCOPE)
 
-  set_property(TARGET yarp_batteryWrapper PROPERTY FOLDER "Plugins/Device")
+  set_property(TARGET yarp_battery_nwc_yarp PROPERTY FOLDER "Plugins/Device/NWC")
+
+  if(YARP_COMPILE_TESTS)
+    add_subdirectory(tests)
+  endif()
+
 endif()

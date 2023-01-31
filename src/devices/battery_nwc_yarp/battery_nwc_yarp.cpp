@@ -3,20 +3,20 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later
  */
 
-#include "BatteryClient.h"
+#include "battery_nwc_yarp.h"
 
 #include <yarp/os/Log.h>
 #include <yarp/os/LogComponent.h>
 #include <yarp/os/LogStream.h>
 
-/*! \file BatteryClient.cpp */
+/*! \file Battery_nwc_yarp.cpp */
 
 using namespace yarp::dev;
 using namespace yarp::os;
 using namespace yarp::sig;
 
 namespace {
-YARP_LOG_COMPONENT(BATTERYCLIENT, "yarp.device.batteryClient")
+YARP_LOG_COMPONENT(BATTERYCLIENT, "yarp.device.Battery_nwc_yarp")
 } // namespace
 
 inline void BatteryInputPortProcessor::resetStat()
@@ -172,7 +172,7 @@ void BatteryInputPortProcessor::getEstFrequency(int &ite, double &av, double &mi
     mutex.unlock();
 }
 
-bool BatteryClient::open(yarp::os::Searchable &config)
+bool Battery_nwc_yarp::open(yarp::os::Searchable &config)
 {
     local.clear();
     remote.clear();
@@ -231,44 +231,44 @@ bool BatteryClient::open(yarp::os::Searchable &config)
     return true;
 }
 
-bool BatteryClient::close()
+bool Battery_nwc_yarp::close()
 {
     rpcPort.close();
     inputPort.close();
     return true;
 }
 
-bool BatteryClient::getBatteryVoltage(double &voltage)
+bool Battery_nwc_yarp::getBatteryVoltage(double &voltage)
 {
     voltage = inputPort.getVoltage();
     return true;
 }
 
-bool BatteryClient::getBatteryCurrent(double &current)
+bool Battery_nwc_yarp::getBatteryCurrent(double &current)
 {
     current = inputPort.getCurrent();
     return true;
 }
 
-bool BatteryClient::getBatteryCharge(double &charge)
+bool Battery_nwc_yarp::getBatteryCharge(double &charge)
 {
     charge = inputPort.getCharge();
     return true;
 }
 
-bool BatteryClient::getBatteryStatus(Battery_status &status)
+bool Battery_nwc_yarp::getBatteryStatus(Battery_status &status)
 {
     status = (Battery_status)inputPort.getStatus();
     return true;
 }
 
-bool BatteryClient::getBatteryTemperature(double &temperature)
+bool Battery_nwc_yarp::getBatteryTemperature(double &temperature)
 {
     temperature = inputPort.getTemperature();
     return true;
 }
 
-bool BatteryClient::getBatteryInfo(std::string &battery_info)
+bool Battery_nwc_yarp::getBatteryInfo(std::string &battery_info)
 {
     Bottle cmd, response;
     cmd.addVocab32(VOCAB_IBATTERY);
@@ -282,7 +282,7 @@ bool BatteryClient::getBatteryInfo(std::string &battery_info)
     return false;
 }
 
-Stamp BatteryClient::getLastInputStamp()
+Stamp Battery_nwc_yarp::getLastInputStamp()
 {
     return lastTs;
 }

@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later
  */
 
-#include "BatteryWrapper.h"
+#include "battery_nws_yarp.h"
 #include <sstream>
 #include <string>
 #include <yarp/dev/ControlBoardInterfaces.h>
@@ -17,54 +17,43 @@ using namespace yarp::dev;
 using namespace yarp::os;
 
 namespace {
-YARP_LOG_COMPONENT(BATTERYWRAPPER, "yarp.devices.BatteryWrapper")
+YARP_LOG_COMPONENT(BATTERYWRAPPER, "yarp.devices.Battery_nws_yarp")
 }
 
-BatteryWrapper::BatteryWrapper() : PeriodicThread(DEFAULT_THREAD_PERIOD)
+Battery_nws_yarp::Battery_nws_yarp() : PeriodicThread(DEFAULT_THREAD_PERIOD)
 {
     m_period = DEFAULT_THREAD_PERIOD;
     m_ibattery_p = nullptr;
-    m_ownDevices = false;
     memset(m_log_buffer, 0, 1024);
 }
 
-BatteryWrapper::~BatteryWrapper()
+Battery_nws_yarp::~Battery_nws_yarp()
 {
     threadRelease();
     m_ibattery_p = nullptr;
 }
 
-bool BatteryWrapper::attachAll(const PolyDriverList &battery2attach)
+bool Battery_nws_yarp::attach(PolyDriver* driver)
 {
-    if (m_ownDevices)
+    if (driver==nullptr)
     {
+        yCError(BATTERYWRAPPER, "Invalid pointer to device driver received");
         return false;
     }
 
-    if (battery2attach.size() != 1)
+    driver->view(m_ibattery_p);
+    if (nullptr == m_ibattery_p)
     {
-        yCError(BATTERYWRAPPER, "Cannot attach more than one device");
+        yCError(BATTERYWRAPPER, "Unable to view IBattery interface");
         return false;
     }
 
-    yarp::dev::PolyDriver * Idevice2attach = battery2attach[0]->poly;
-
-    if (Idevice2attach->isValid())
-    {
-        Idevice2attach->view(m_ibattery_p);
-    }
-
-    if(nullptr == m_ibattery_p)
-    {
-        yCError(BATTERYWRAPPER, "Subdevice passed to attach method is invalid");
-        return false;
-    }
-    attach(m_ibattery_p);
     PeriodicThread::setPeriod(m_period);
-    return PeriodicThread::start();
+    PeriodicThread::start();
+    return true;
 }
 
-bool BatteryWrapper::detachAll()
+bool Battery_nws_yarp::detach()
 {
     if (PeriodicThread::isRunning())
     {
@@ -74,17 +63,7 @@ bool BatteryWrapper::detachAll()
     return true;
 }
 
-void BatteryWrapper::attach(yarp::dev::IBattery *s)
-{
-    m_ibattery_p=s;
-}
-
-void BatteryWrapper::detach()
-{
-    m_ibattery_p = nullptr;
-}
-
-bool BatteryWrapper::read(yarp::os::ConnectionReader& connection)
+bool Battery_nws_yarp::read(yarp::os::ConnectionReader& connection)
 {
     yarp::os::Bottle in;
     yarp::os::Bottle out;
@@ -135,12 +114,12 @@ bool BatteryWrapper::read(yarp::os::ConnectionReader& connection)
     return true;
 }
 
-bool BatteryWrapper::threadInit()
+bool Battery_nws_yarp::threadInit()
 {
     return true;
 }
 
-bool BatteryWrapper::open(yarp::os::Searchable &config)
+bool Battery_nws_yarp::open(yarp::os::Searchable &config)
 {
     Property params;
     params.fromString(config.toString());
@@ -189,35 +168,10 @@ bool BatteryWrapper::open(yarp::os::Searchable &config)
         m_logFile = fopen("batteryLog.txt", "w");
     }
 
-    if (config.check("subdevice"))
-    {
-        PolyDriverList driverlist;
-        Property p;
-        p.fromString(config.toString());
-        p.unput("device");
-        p.unput("subdevice");
-        p.put("device", config.find("subdevice").asString());
-        p.setMonitor(config.getMonitor(), "subdevice"); // pass on any monitoring
-
-        if (!m_driver.open(p) || !m_driver.isValid())
-        {
-            yCError(BATTERYWRAPPER) << "Failed to open subdevice.. check params";
-            return false;
-        }
-
-        driverlist.push(&m_driver, "1");
-        if (!attachAll(driverlist))
-        {
-            yCError(BATTERYWRAPPER) << "Failed to open subdevice.. check params";
-            return false;
-        }
-        m_ownDevices = true;
-    }
-
     return true;
 }
 
-bool BatteryWrapper::initialize_YARP(yarp::os::Searchable &params)
+bool Battery_nws_yarp::initialize_YARP(yarp::os::Searchable &params)
 {
     if (!m_streamingPort.open(m_streamingPortName.c_str()))
     {
@@ -233,11 +187,11 @@ bool BatteryWrapper::initialize_YARP(yarp::os::Searchable &params)
     return true;
 }
 
-void BatteryWrapper::threadRelease()
+void Battery_nws_yarp::threadRelease()
 {
 }
 
-void BatteryWrapper::run()
+void Battery_nws_yarp::run()
 {
     if (m_ibattery_p!=nullptr)
     {
@@ -318,16 +272,13 @@ void BatteryWrapper::run()
     }
 }
 
-bool BatteryWrapper::close()
+bool Battery_nws_yarp::close()
 {
     yCTrace(BATTERYWRAPPER, "BatteryWrapper::Close");
     if (PeriodicThread::isRunning())
     {
         PeriodicThread::stop();
     }
-
-    //close the device
-    m_driver.close();
 
     m_streamingPort.interrupt();
     m_streamingPort.close();
@@ -345,7 +296,7 @@ bool BatteryWrapper::close()
     return true;
 }
 
-void BatteryWrapper::notify_message(std::string msg)
+void Battery_nws_yarp::notify_message(std::string msg)
 {
 #ifdef WIN32
     yCWarning(BATTERYWRAPPER, "%s", msg.c_str());
@@ -358,7 +309,7 @@ void BatteryWrapper::notify_message(std::string msg)
 #endif
 }
 
-void BatteryWrapper::emergency_shutdown(std::string msg)
+void Battery_nws_yarp::emergency_shutdown(std::string msg)
 {
 #ifdef WIN32
     std::string cmd;
@@ -385,7 +336,7 @@ void BatteryWrapper::emergency_shutdown(std::string msg)
 #endif
 }
 
-void BatteryWrapper::check_battery_status(double battery_charge)
+void Battery_nws_yarp::check_battery_status(double battery_charge)
 {
     static bool notify_15 = true;
     static bool notify_12 = true;
@@ -431,7 +382,7 @@ void BatteryWrapper::check_battery_status(double battery_charge)
     }
 }
 
-void BatteryWrapper::stop_robot(std::string quit_port)
+void Battery_nws_yarp::stop_robot(std::string quit_port)
 {
     //typical quit_port:
     // "/icub/quit"

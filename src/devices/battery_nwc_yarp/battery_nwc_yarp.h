@@ -65,7 +65,7 @@ public:
 /**
 * @ingroup dev_impl_network_clients
 *
-* \brief `batteryClient`: The client side of any IBattery capable device.
+* \brief `Battery_nwc_yarp`: The client side of any IBattery capable device.
 *
 * Still single thread! concurrent access is unsafe.
 *
@@ -76,7 +76,7 @@ public:
 * | remote         |      -         | string  | -              |   -           | Yes          | Full port name of the port opened on the server side, to which the batteryClient connects to.    |     |
 * | carrier        |     -          | string  | -              | tcp           | No           | The carier used for the connection with the server.               |       |
 */
-class BatteryClient :
+class Battery_nwc_yarp :
         public yarp::dev::DeviceDriver,
         public yarp::dev::IPreciselyTimed,
         public yarp::dev::IBattery
