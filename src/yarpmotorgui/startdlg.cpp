@@ -9,11 +9,14 @@
 #include "flowlayout.h"
 
 
+
+
 StartDlg::StartDlg(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::StartDlg)
 {
     ui->setupUi(this);
+
 
     setWindowTitle("Qt Robot Motor GUI V2.0 - Select Parts");
 }
@@ -26,7 +29,6 @@ StartDlg::~StartDlg()
 
 void StartDlg::init(QStringList partsName)
 {
-
     auto* layout = new FlowLayout(ui->groupBox);
 
     for(int i=0;i<partsName.count();i++)
@@ -37,9 +39,24 @@ void StartDlg::init(QStringList partsName)
         layout->addWidget(check);
         checkList.append(check);
     }
+
+    auto* button = new QPushButton("Deselect All",ui->groupBox);
+    connect(button,SIGNAL(clicked()),this,SLOT(onSelDesel()));
+
+    button->setFixedSize(QSize(100, button->height()));
+    layout->addWidget(button);
     adjustSize();
 
     ui->groupBox->setLayout(layout);
+
+    auto bb = this->findChildren<QDialogButtonBox *>();
+    QPushButton* okBtn = bb[0]->button(QDialogButtonBox::Ok);
+    okBtn->setAutoDefault(true);
+    okBtn->setDefault(true);
+    QPushButton* cancelBtn = bb[0]->button(QDialogButtonBox::Cancel);
+    cancelBtn->setAutoDefault(false);
+    cancelBtn->setDefault(false);
+
 }
 
 
@@ -53,4 +70,24 @@ std::vector<bool> StartDlg::getEnabledParts()
     }
 
     return enabled;
+}
+
+void StartDlg::onSelDesel()
+{
+    auto checkboxes = this->findChildren<QCheckBox *>();
+    auto btn = this->findChildren<QPushButton *>();
+    bool sel;
+
+    if(btn[0]->text() == "Deselect All"){
+        btn[0]->setText("Select All");
+        sel = false;
+    }
+    else{
+        btn[0]->setText("Deselect All");
+        sel = true;
+    }
+
+    for (auto child : checkboxes) {
+        child->setChecked(sel);
+    }
 }
