@@ -20,7 +20,7 @@
 #    ifdef main
 #        undef main
 #    endif
-#elif defined(__unix__) || defined(__APPLE__) 
+#elif defined(__unix__) || defined(__APPLE__)
 #    include <netinet/tcp.h>
 #endif
 
