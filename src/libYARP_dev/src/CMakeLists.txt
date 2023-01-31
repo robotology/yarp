@@ -429,6 +429,7 @@ if(TARGET YARP::YARP_math)
       yarp/dev/tests/IPositionControlTest.h
       yarp/dev/tests/ITorqueControlTest.h
       yarp/dev/tests/IAxisInfoTest.h
+      yarp/dev/tests/IPositionSensorsTest.h
       yarp/dev/tests/IOrientationSensorsTest.h
       yarp/dev/tests/IOdometry2DTest.h
       yarp/dev/tests/IRGBDSensorTest.h
@@ -444,6 +445,7 @@ if(TARGET YARP::YARP_math)
       yarp/dev/tests/IPositionControlTest.cpp
       yarp/dev/tests/ITorqueControlTest.cpp
       yarp/dev/tests/IAxisInfoTest.cpp
+      yarp/dev/tests/IPositionSensorsTest.cpp
       yarp/dev/tests/IOrientationSensorsTest.cpp
       yarp/dev/tests/IOdometry2DTest.cpp
       yarp/dev/tests/IRGBDSensorTest.cpp
