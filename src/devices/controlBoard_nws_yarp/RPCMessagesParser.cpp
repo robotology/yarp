@@ -1231,10 +1231,10 @@ void RPCMessagesParser::handlePWMMsg(const yarp::os::Bottle& cmd, yarp::os::Bott
 
 void RPCMessagesParser::handleRemoteVariablesMsg(const yarp::os::Bottle& cmd, yarp::os::Bottle& response, bool* rec, bool* ok)
 {
-    yCTrace(CONTROLBOARD, "Handling IRemoteCalibrator message");
+    yCTrace(CONTROLBOARD, "Handling IRemoteVariables message");
 
-    if (!rpc_IRemoteCalibrator) {
-        yCError(CONTROLBOARD, "I do not have a valid IRemoteCalibrator interface");
+    if (!rpc_IVar) {
+        yCError(CONTROLBOARD, "I do not have a valid IRemoteVariables interface");
         *ok = false;
         return;
     }
