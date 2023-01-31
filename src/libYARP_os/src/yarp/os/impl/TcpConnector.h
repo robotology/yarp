@@ -13,7 +13,7 @@
 #    ifdef main
 #        undef main
 #    endif
-#elif defined(__unix__)
+#elif defined(__unix__) || defined(__APPLE__)
 #    include <yarp/os/impl/posix/TcpConnector.h>
 #else
 YARP_COMPILER_ERROR(Cannot implement TcpConnector on this platform)
@@ -23,7 +23,7 @@ namespace yarp::os::impl {
 
 #ifdef YARP_HAS_ACE
 typedef ACE_SOCK_Connector TcpConnector;
-#elif defined(__unix__)
+#elif defined(__unix__) || defined(__APPLE__)
 typedef yarp::os::impl::posix::TcpConnector TcpConnector;
 #endif
 

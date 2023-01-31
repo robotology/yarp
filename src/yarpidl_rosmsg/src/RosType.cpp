@@ -618,7 +618,7 @@ bool RosTypeSearch::fetchFromRos(const std::string& target_file,
 # else
     using ACE_OS::execlp;
 # endif
-#elif defined(__unix__)
+#elif defined(__unix__) || defined(__APPLE__)
     using ::fork;
     using ::execlp;
 #endif
