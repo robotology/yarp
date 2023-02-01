@@ -16,6 +16,7 @@ yarp_begin_plugin_library(yarppm
   add_subdirectory(depthimage_to_rgb)
   add_subdirectory(depthimage_to_vector)
   add_subdirectory(image_compression_ffmpeg)
+  add_subdirectory(image_rotation)
   add_subdirectory(rpc_monitor)
   add_subdirectory(segmentationimage_to_rgb)
   add_subdirectory(sound_compression_mp3)
