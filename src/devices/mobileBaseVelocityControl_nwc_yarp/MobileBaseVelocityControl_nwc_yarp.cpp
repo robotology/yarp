@@ -41,15 +41,15 @@ bool MobileBaseVelocityControl_nwc_yarp::open(yarp::os::Searchable &config)
 
     if (m_server_name.empty())
     {
-        yCError(MOBVEL_NWC_YARP, "open() error you have to provide a valid 'navigation_server' param");
+        yCError(MOBVEL_NWC_YARP, "open() error you have to provide a valid 'server' param");
         return false;
     }
 
     std::string local_rpc_1;
     std::string remote_rpc_1;
 
-    local_rpc_1           = m_local_name  + "/navigation/rpc";
-    remote_rpc_1          = m_server_name + "/rpc";
+    local_rpc_1           = m_local_name  + "/navigation/rpc:o";
+    remote_rpc_1          = m_server_name + "/rpc:i";
 
     if (!m_rpc_port.open(local_rpc_1))
     {

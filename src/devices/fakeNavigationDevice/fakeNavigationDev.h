@@ -37,6 +37,15 @@ class fakeNavigation :
 private:
     yarp::dev::Nav2D::NavigationStatusEnum m_status = yarp::dev::Nav2D::NavigationStatusEnum::navigation_status_idle;
     yarp::dev::Nav2D::Map2DLocation m_absgoal_loc;
+    struct control_type
+    {
+        double linear_xvel = 0;
+        double linear_yvel = 0;
+        double angular_vel = 0;
+        double timeout = 0;
+        double reception_time = 0;
+    }
+    m_control_out;
 
 public:
     fakeNavigationThread  *navThread=nullptr;
