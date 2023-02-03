@@ -18,3 +18,7 @@
 ./src/devices/SDLJoypad
 ./src/devices/usbCamera
 ./src/devices/framegrabber_protocol
+./src/devices/opencv
+./src/devices/ffmpeg
+./src/devices/fakebot
+./src/devices/serialport

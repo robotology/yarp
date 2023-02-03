@@ -434,6 +434,7 @@ if(TARGET YARP::YARP_math)
       yarp/dev/tests/IOdometry2DTest.h
       yarp/dev/tests/IRGBDSensorTest.h
       yarp/dev/tests/ILocalization2DTest.h
+      yarp/dev/tests/IFrameTransformStorageTest.h
       )
   list(APPEND YARP_dev_test_SRCS
       yarp/dev/tests/IFrameGrabberImageTest.cpp
@@ -451,6 +452,7 @@ if(TARGET YARP::YARP_math)
       yarp/dev/tests/IRGBDSensorTest.cpp
       yarp/dev/tests/IMap2DTest.cpp
       yarp/dev/tests/ILocalization2DTest.cpp
+      yarp/dev/tests/IFrameTransformStorageTest.cpp
       )
 endif()
 
