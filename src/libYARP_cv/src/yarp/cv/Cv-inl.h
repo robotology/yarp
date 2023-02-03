@@ -81,6 +81,26 @@ template<typename T>
     return outMat;
 }
 
+inline ::cv::Mat yarp::cv::toCvMat(yarp::sig::FlexImage& yarpImage)
+{
+    int val=-1;
+    int type=0;
+    if      (yarpImage.getPixelCode() == VOCAB_PIXEL_RGB_INT) {type = CV_32SC1; val = CV_RGB2BGR;}
+    else if (yarpImage.getPixelCode() == VOCAB_PIXEL_RGB) { type = CV_8UC3; val = CV_RGB2BGR;}
+    else if (yarpImage.getPixelCode() == VOCAB_PIXEL_MONO_FLOAT) { type = CV_32FC1; val = -1;}
+    else
+    {
+        //not yet implemented.
+        assert(0);
+    }
+    ::cv::Mat outMat(yarpImage.height(), yarpImage.width(), type,
+        yarpImage.getRawImage(), yarpImage.getRowSize()); // RVO
+    if (val >= 0)
+    {
+        ::cv::cvtColor(outMat, outMat, val);
+    }
+    return outMat;
+}
 
 template<typename T>
 yarp::sig::ImageOf<T> yarp::cv::fromCvMat(::cv::Mat& cvImage)

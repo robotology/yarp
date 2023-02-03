@@ -16,6 +16,15 @@
 namespace yarp::cv {
 
 /**
+ * Convert a yarp::sig::FlexImage to a cv::Mat object
+ * @param[in] yarpImage yarp::sig::FlexImage input.
+ * Only VOCAB_PIXEL_RGB_INT, VOCAB_PIXEL_RGB, VOCAB_PIXEL_MONO_FLOAT
+ * are currently supported.
+ * @return the resulting cv::Mat.
+ */
+::cv::Mat toCvMat(yarp::sig::FlexImage& yarpImage);
+
+/**
  * Convert a yarp::sig::ImageOf to a cv::Mat object
  * @param[in] yarpImage yarp::sig::ImageOf input.
  * Since the argument is passed as right-reference, the integrity
