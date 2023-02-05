@@ -1,6 +1,10 @@
 # SPDX-FileCopyrightText: 2006-2021 Istituto Italiano di Tecnologia (IIT)
 # SPDX-License-Identifier: BSD-3-Clause
 
+if (YARP_COMPILE_ALL_FAKE_DEVICES)
+  set(ENABLE_yarpmod_fakeMotionControl ON CACHE BOOL "" FORCE)
+endif()
+
 yarp_prepare_plugin(fakeMotionControl
   CATEGORY device
   TYPE FakeMotionControl

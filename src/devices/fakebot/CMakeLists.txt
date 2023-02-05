@@ -2,6 +2,10 @@
 # SPDX-FileCopyrightText: 2006-2010 RobotCub Consortium
 # SPDX-License-Identifier: BSD-3-Clause
 
+if (YARP_COMPILE_ALL_FAKE_DEVICES)
+  set(ENABLE_yarpmod_fakebot ON CACHE BOOL "" FORCE)
+endif()
+
 yarp_prepare_plugin(fakebot
   CATEGORY device
   TYPE FakeBot
