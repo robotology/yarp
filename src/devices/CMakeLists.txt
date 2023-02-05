@@ -99,6 +99,11 @@ yarp_begin_plugin_library(yarpmod
 
   add_subdirectory(portaudio) # DEPRECATED Since YARP 3.2
 
+  OPTION(YARP_COMPILE_ALL_FAKE_DEVICES
+         "Build all devices marked as fake, for testing purposes. Overrides the option for the single fake device."
+         OFF)
+  mark_as_advanced(YARP_COMPILE_ALL_FAKE_DEVICES)
+
   # Test devices
   add_subdirectory(test_segfault)
   add_subdirectory(test_nop)
