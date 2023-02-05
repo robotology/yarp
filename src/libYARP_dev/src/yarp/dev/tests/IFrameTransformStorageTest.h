@@ -86,7 +86,20 @@ namespace yarp::dev::tests
                                                   IFrameTransformStorageGet* itfGet,
                                                   IFrameTransformStorageUtils* itfUtils)
     {
-        CHECK(itfSet->clearAll());
+        if (itfSet)
+        {
+            CHECK(itfSet->clearAll());
+        }
+        if (itfGet)
+        {
+            std::vector<yarp::math::FrameTransform> transforms;
+            CHECK(itfGet->getTransforms(transforms));
+        }
+        if (itfUtils)
+        {
+            size_t siz;
+            CHECK(itfUtils->size(siz));
+        }
     }
 
 }
