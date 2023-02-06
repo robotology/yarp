@@ -5,7 +5,7 @@ yarp_prepare_plugin(image_rotation
   TYPE ImageRotation
   INCLUDE imageRotation.h
   CATEGORY portmonitor
-  DEPENDS "ENABLE_yarpcar_portmonitor"
+  DEPENDS "ENABLE_yarpcar_portmonitor;YARP_HAS_OpenCV"
 )
 
 if(SKIP_image_rotation)
