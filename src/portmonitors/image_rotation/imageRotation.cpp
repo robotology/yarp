@@ -109,16 +109,16 @@ bool ImageRotation::getparam(yarp::os::Property& params)
 
 bool ImageRotation::accept(yarp::os::Things& thing)
 {
-    auto* img = thing.cast_as<yarp::sig::FlexImage>();
+    auto* img = thing.cast_as<yarp::sig::Image>();
     if(img == nullptr)
     {
-        yCError(IMAGEROTATION, "Expected type FlexImage but got wrong data type!");
+        yCError(IMAGEROTATION, "Expected type Image, but got wrong data type!");
         return false;
     }
     if (img->getPixelCode() != VOCAB_PIXEL_RGB &&
         img->getPixelCode() != VOCAB_PIXEL_MONO_FLOAT)
     {
-        yCError(IMAGEROTATION, "Expected type FlexImage but got wrong data type!");
+        yCError(IMAGEROTATION, "Received image with invalid/unsupported pixelCode!");
         return false;
     }
     return true;
@@ -126,16 +126,16 @@ bool ImageRotation::accept(yarp::os::Things& thing)
 
 yarp::os::Things& ImageRotation::update(yarp::os::Things& thing)
 {
-    yarp::sig::FlexImage* flximg = thing.cast_as<yarp::sig::FlexImage >();
-    if (flximg->getPixelCode() == VOCAB_PIXEL_RGB)
+    yarp::sig::Image* yarpimg = thing.cast_as<yarp::sig::Image >();
+    if (yarpimg->getPixelCode() == VOCAB_PIXEL_RGB)
     {
-        m_cvInImage = yarp::cv::toCvMat(*flximg);
+        m_cvInImage = yarp::cv::toCvMat(*yarpimg);
 
-        m_outImgRgb.resize(flximg->width(), flximg->height());
+        m_outImgRgb.resize(yarpimg->width(), yarpimg->height());
         m_outImgRgb.zero();
 
         //double angle = 90;
-        //cv::Point2f center((flximg->width() - 1) / 2.0, (flximg->height() - 1) / 2.0);
+        //cv::Point2f center((yarpimg->width() - 1) / 2.0, (yarpimg->height() - 1) / 2.0);
         //cv::Mat rotation_matix = getRotationMatrix2D(center, angle, 1.0);
         //cv::warpAffine(cvInImage, cvOutImage, rotation_matix, cvInImage.size());
 
@@ -144,15 +144,15 @@ yarp::os::Things& ImageRotation::update(yarp::os::Things& thing)
         m_outImgRgb = yarp::cv::fromCvMat<yarp::sig::PixelRgb>(m_cvOutImage);
         m_th.setPortWriter(&m_outImgRgb);
     }
-    else if (flximg->getPixelCode() == VOCAB_PIXEL_MONO_FLOAT)
+    else if (yarpimg->getPixelCode() == VOCAB_PIXEL_MONO_FLOAT)
     {
-        m_cvInImage = yarp::cv::toCvMat(*flximg);
+        m_cvInImage = yarp::cv::toCvMat(*yarpimg);
 
-        m_outImgFloat.resize(flximg->width(), flximg->height());
+        m_outImgFloat.resize(yarpimg->width(), yarpimg->height());
         m_outImgFloat.zero();
 
         //double angle = 90;
-        //cv::Point2f center((flximg->width() - 1) / 2.0, (flximg->height() - 1) / 2.0);
+        //cv::Point2f center((yarpimg->width() - 1) / 2.0, (yarpimg->height() - 1) / 2.0);
         //cv::Mat rotation_matix = getRotationMatrix2D(center, angle, 1.0);
         //cv::warpAffine(cvInImage, cvOutImage, rotation_matix, cvInImage.size());
 

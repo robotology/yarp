@@ -22,7 +22,7 @@ namespace yarp::cv {
  * are currently supported.
  * @return the resulting cv::Mat.
  */
-::cv::Mat toCvMat(yarp::sig::FlexImage& yarpImage);
+::cv::Mat toCvMat(yarp::sig::Image& yarpImage);
 
 /**
  * Convert a yarp::sig::ImageOf to a cv::Mat object
