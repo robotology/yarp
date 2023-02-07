@@ -81,7 +81,7 @@ template<typename T>
     return outMat;
 }
 
-inline ::cv::Mat yarp::cv::toCvMat(yarp::sig::FlexImage& yarpImage)
+inline ::cv::Mat yarp::cv::toCvMat(yarp::sig::Image& yarpImage)
 {
     int val=-1;
     int type=0;
