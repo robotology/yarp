@@ -857,13 +857,6 @@ jobs:
           else()
             file(APPEND "${_env_script}" "set(ENV{PATH} \"\$ENV{PATH};C:\\\\robotology\\\\vcpkg\\\\installed\\\\x64-windows\\\\debug\\\\bin\")\n")
           endif()
-
-          # Append output bin directory to the PATH
-          if("${{ matrix.config.cmake_generator }}" MATCHES "Visual Studio")
-            file(APPEND "${_env_script}" "set(ENV{PATH} \"\$ENV{PATH};\$ENV{GITHUB_WORKSPACE}\\\\build\\\\bin\\\\${{ matrix.config.build_type }}\")\n")
-          elseif("${{ matrix.config.cmake_generator }}" MATCHES "Ninja")
-            file(APPEND "${_env_script}" "set(ENV{PATH} \"\$ENV{PATH};\$ENV{GITHUB_WORKSPACE}\\\\build\\\\bin\")\n")
-          endif()
         endif()
 
         file(APPEND "${_env_script}" "set(ENV{CC} ${{ matrix.config.cc }})\n")
