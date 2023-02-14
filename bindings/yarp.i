@@ -44,6 +44,7 @@
 
 %import <yarp/os/api.h>
 
+
 // YARP_sig
 %{
 #include <yarp/sig/api.h>
@@ -366,6 +367,7 @@ void setExternal2(yarp::sig::Image *img, PyObject* mem, int w, int h) {
 %include <yarp/os/LogStream.h>
 %include <yarp/os/Wire.h>
 %include <yarp/os/WireLink.h>
+%include <yarp/os/Type.h>
 
 %define MAKE_COMMS(name)
 %feature("notabstract") yarp::os::BufferedPort<name>;
