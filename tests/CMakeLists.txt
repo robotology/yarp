@@ -26,13 +26,6 @@ endif()
 
 
 #########################################################################
-# Control where test libraries and executables are placed during the build
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_BINDIR}/tests")
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_LIBDIR}/tests")
-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_LIBDIR}/tests")
-
-
-#########################################################################
 # Prepare 'build_generator' and 'build_options' variables
 # for tests in subdirectories
 set(build_generator --build-generator "${CMAKE_GENERATOR}")
