@@ -2074,7 +2074,7 @@ bool ControlBoardRemapper::setTemperatureLimit (int m, const double val)
 
 bool ControlBoardRemapper::getGearboxRatio(int m, double* val)
 {
-    int off = (int)remappedControlBoards.lut[m].subControlBoardIndex;
+    int off = (int)remappedControlBoards.lut[m].axisIndexInSubControlBoard;
     size_t subIndex = remappedControlBoards.lut[m].subControlBoardIndex;
 
     RemappedSubControlBoard *p = remappedControlBoards.getSubControlBoard(subIndex);
@@ -2094,7 +2094,7 @@ bool ControlBoardRemapper::getGearboxRatio(int m, double* val)
 
 bool ControlBoardRemapper::setGearboxRatio(int m, const double val)
 {
-    int off = (int)remappedControlBoards.lut[m].subControlBoardIndex;
+    int off = (int)remappedControlBoards.lut[m].axisIndexInSubControlBoard;
     size_t subIndex = remappedControlBoards.lut[m].subControlBoardIndex;
 
     RemappedSubControlBoard *p = remappedControlBoards.getSubControlBoard(subIndex);
