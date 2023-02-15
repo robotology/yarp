@@ -3,11 +3,11 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#include <yarp/dev/MultipleAnalogSensorsInterfaces.h>
+#include <yarp/dev/ILocalization2D.h>
 #include <yarp/os/Network.h>
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/WrapperSingle.h>
-#include <yarp/dev/tests/IOrientationSensorsTest.h>
+#include <yarp/dev/tests/ILocalization2DTest.h>
 
 #include <catch2/catch_amalgamated.hpp>
 #include <harness.h>
@@ -15,31 +15,52 @@
 using namespace yarp::dev;
 using namespace yarp::os;
 
-TEST_CASE("dev::fakeImu", "[yarp::dev]")
+TEST_CASE("dev::localization2D_nwc", "[yarp::dev]")
 {
-    YARP_REQUIRE_PLUGIN("fakeImu", "device");
+    YARP_REQUIRE_PLUGIN("fakeLocalizer", "device");
+    YARP_REQUIRE_PLUGIN("localization2D_nws_yarp", "device");
+    YARP_REQUIRE_PLUGIN("localization2D_nwc_yarp", "device");
 
     Network::setLocalMode(true);
 
-    SECTION("Checking map2D_nws_yarp device")
+    SECTION("Checking localization2D_nwc device")
     {
-        PolyDriver ddmc;
-        yarp::dev::IOrientationSensors* iimu=nullptr;
+        yarp::dev::Nav2D::ILocalization2D* iloc=nullptr;
+        PolyDriver ddnws;
+        PolyDriver ddfake;
+        PolyDriver ddnwc;
 
         ////////"Checking opening map2DServer and map2DClient polydrivers"
         {
-            Property p_cfg;
-            p_cfg.put("device", "fakeMotionControl");
-            p_cfg.put("constantValue", 1);
-            REQUIRE(ddmc.open(p_cfg));
+            Property pnws_cfg;
+            pnws_cfg.put("device", "localization2D_nws_yarp");
+            REQUIRE(ddnws.open(pnws_cfg));
+
+            Property pdev_cfg;
+            pdev_cfg.put("device", "fakeLocalizer");
+            REQUIRE(ddfake.open(pdev_cfg));
+
+            {yarp::dev::WrapperSingle* ww_nws; ddnws.view(ww_nws);
+            bool result_att = ww_nws->attach(&ddfake);
+            REQUIRE(result_att); }
+
+            Property pnwc_cfg;
+            pnwc_cfg.put("device", "localization2D_nwc_yarp");
+            pnwc_cfg.put("local", "/localization2D_nwc_yarp");
+            pnwc_cfg.put("remote", "/localization2D_nws_yarp");
+            REQUIRE(ddnwc.open(pnwc_cfg));
+            REQUIRE(ddnwc.view(iloc));
         }
 
-        ddmc.view(iimu);
-        yarp::dev::tests::exec_IOrientationSensors_test_1(iimu);
+        yarp::dev::tests::exec_iLocalization2D_test_1(iloc);
 
         //"Close all polydrivers and check"
         {
-            CHECK(ddmc.close());
+            CHECK(ddnwc.close());
+            yarp::os::Time::delay(0.1);
+            CHECK(ddnws.close());
+            yarp::os::Time::delay(0.1);
+            CHECK(ddfake.close());
         }
     }
 

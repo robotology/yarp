@@ -75,6 +75,7 @@ private:
 
 public:
     Localization2D_nws_yarp();
+    ~Localization2D_nws_yarp() = default;
 
     bool open(yarp::os::Searchable& prop) override;
     bool close() override;
@@ -82,7 +83,9 @@ public:
     bool attach(yarp::dev::PolyDriver* driver) override;
     void run() override;
 
-    bool initialize_YARP(yarp::os::Searchable &config);
+    bool threadInit() override;
+    void threadRelease() override;
+
     bool read(yarp::os::ConnectionReader& connection) override;
 };
 
