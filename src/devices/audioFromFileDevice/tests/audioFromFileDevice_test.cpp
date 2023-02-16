@@ -29,7 +29,8 @@ TEST_CASE("dev::audioFromFileDevice", "[yarp::dev]")
         ////////"Checking opening audioFromFileDevice polydriver"
         {
             yarp::os::ResourceFinder res;
-            res.setDefaultContext("tests\\audioFromFileDevice");
+            res.setDefaultContext("tests/audioFromFileDevice");
+            res.setVerbose(true);
             std::string filepath = res.findFileByName("440.wav");
 #if 0
             std::string cpp_path = __FILE__;
