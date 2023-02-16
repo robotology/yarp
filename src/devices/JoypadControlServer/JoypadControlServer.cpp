@@ -222,7 +222,7 @@ bool JoypadCtrlParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& re
 
 JoypadControlServer::JoypadControlServer() : PeriodicThread(DEFAULT_THREAD_PERIOD),
                                              m_period(DEFAULT_THREAD_PERIOD),
-                                             m_device(nullptr),
+                                             m_IJoypad(nullptr),
                                              m_subDeviceOwned(nullptr),
                                              m_isSubdeviceOwned(false),
                                              m_separatePorts(false),
@@ -239,7 +239,7 @@ JoypadControlServer::~JoypadControlServer()
         delete m_subDeviceOwned;
     }
     m_subDeviceOwned = nullptr;
-    m_device         = nullptr;
+    m_IJoypad = nullptr;
 }
 
 bool JoypadControlServer::open(yarp::os::Searchable& params)
@@ -343,7 +343,7 @@ bool JoypadControlServer::openAndAttachSubDevice(Searchable& prop)
         return false;
     }
 
-    if(!m_parser.configure(m_device) )
+    if(!m_parser.configure(m_IJoypad) )
     {
         yCError(JOYPADCONTROLSERVER) << "Error configuring interfaces for parsers";
         return false;
@@ -357,14 +357,22 @@ bool JoypadControlServer::openAndAttachSubDevice(Searchable& prop)
 bool JoypadControlServer::attach(PolyDriver* poly)
 {
     if (poly) {
-        poly->view(m_device);
+        poly->view(m_IJoypad);
     }
 
-    if(m_device == nullptr)
+    if(m_IJoypad == nullptr)
     {
         yCError(JOYPADCONTROLSERVER) << "Attached device has no valid IJoypadController interface.";
         return false;
     }
+
+    PeriodicThread::setPeriod(m_period);
+    if (!PeriodicThread::start()) {
+        return false;
+    }
+
+    openPorts();
+
     return true;
 }
 
@@ -375,13 +383,22 @@ bool JoypadControlServer::attach(yarp::dev::IJoypadController *s)
         yCError(JOYPADCONTROLSERVER) << "Attached device has no valid IJoystickController interface.";
         return false;
     }
-    m_device = s;
+    m_IJoypad = s;
     return true;
 }
 
 bool JoypadControlServer::detach()
 {
-    m_device = nullptr;
+    if (yarp::os::PeriodicThread::isRunning()) {
+        yarp::os::PeriodicThread::stop();
+    }
+
+    //check if we already instantiated a subdevice previously
+    if (m_isSubdeviceOwned) {
+        return false;
+    }
+
+    m_IJoypad = nullptr;
     return true;
 }
 
@@ -398,7 +415,7 @@ void JoypadControlServer::threadRelease()
 
 bool JoypadControlServer::openPorts()
 {
-    if(!m_device)
+    if(!m_IJoypad)
     {
         return false;
     }
@@ -536,7 +553,7 @@ bool JoypadControlServer::openPorts()
 
         for(auto& getter : getters)
         {
-            if((m_device->*(getter.getter))(getter.port->count))
+            if((m_IJoypad->*(getter.getter))(getter.port->count))
             {
                 if(getter.port->count == 0)
                 {
@@ -569,41 +586,41 @@ void JoypadControlServer::profile()
     unsigned int count;
 
     message = "Axes: ";
-    m_device->getAxisCount(count);
+    m_IJoypad->getAxisCount(count);
     for(unsigned int i = 0; i < count; ++i)
     {
         double data;
-        m_device->getAxis(i, data);
+        m_IJoypad->getAxis(i, data);
         message += std::to_string(data) + " ";
     }
     yCInfo(JOYPADCONTROLSERVER) << message;
 
     message = "Hats: ";
-    m_device->getHatCount(count);
+    m_IJoypad->getHatCount(count);
     for(unsigned int i = 0; i < count; ++i)
     {
         unsigned char data;
-        m_device->getHat(i, data);
+        m_IJoypad->getHat(i, data);
         message += std::to_string(data) + " ";
     }
     yCInfo(JOYPADCONTROLSERVER) << message;
 
     message = "Buttons: ";
-    m_device->getButtonCount(count);
+    m_IJoypad->getButtonCount(count);
     for(unsigned int i = 0; i < count; ++i)
     {
         float data;
-        m_device->getButton(i, data);
+        m_IJoypad->getButton(i, data);
         message += std::to_string(data) + " ";
     }
     yCInfo(JOYPADCONTROLSERVER) << message;
 
     message = "Stick: ";
-    m_device->getStickCount(count);
+    m_IJoypad->getStickCount(count);
     for(unsigned int i = 0; i < count; ++i)
     {
         Vector data;
-        m_device->getStick(i, data, yarp::dev::IJoypadController::JypCtrlcoord_CARTESIAN);
+        m_IJoypad->getStick(i, data, yarp::dev::IJoypadController::JypCtrlcoord_CARTESIAN);
         message += "n_" + std::to_string(i) + ": ";
         for (size_t j = 0; j < data.size(); ++j)
         {
@@ -615,11 +632,11 @@ void JoypadControlServer::profile()
     yCInfo(JOYPADCONTROLSERVER) << message;
 
     message = "trackball: ";
-    m_device->getTrackballCount(count);
+    m_IJoypad->getTrackballCount(count);
     for(unsigned int i = 0; i < count; ++i)
     {
         Vector data;
-        m_device->getTrackball(i, data);
+        m_IJoypad->getTrackball(i, data);
         message += "n_" + std::to_string(i) + ": ";
         for (size_t j = 0; j < data.size(); ++j)
         {
@@ -629,11 +646,11 @@ void JoypadControlServer::profile()
     }
 
     message = "touch Surface: ";
-    m_device->getTouchSurfaceCount(count);
+    m_IJoypad->getTouchSurfaceCount(count);
     for(unsigned int i = 0; i < count; ++i)
     {
         Vector data;
-        m_device->getTouch(i, data);
+        m_IJoypad->getTouch(i, data);
         message += "n_" + std::to_string(i) + ": ";
         for (size_t j = 0; j < data.size(); ++j)
         {
@@ -657,7 +674,7 @@ void JoypadControlServer::run()
             for(size_t i = 0; i < m_portButtons.count; ++i)
             {
                 float v;
-                if(!m_device->getButton(i, v))
+                if(!m_IJoypad->getButton(i, v))
                 {
                     write = false;
                     break;
@@ -679,7 +696,7 @@ void JoypadControlServer::run()
             for(size_t i = 0; i < m_portHats.count; ++i)
             {
                 unsigned char v;
-                if(!m_device->getHat(i, v))
+                if(!m_IJoypad->getHat(i, v))
                 {
                     write = false;
                     break;
@@ -701,7 +718,7 @@ void JoypadControlServer::run()
             for(size_t i = 0; i < m_portAxis.count; ++i)
             {
                 double v;
-                if(!m_device->getAxis(i, v))
+                if(!m_IJoypad->getAxis(i, v))
                 {
                     yCError(JOYPADCONTROLSERVER) << "Cannot get axis with id" << i;
                     write = false;
@@ -724,7 +741,7 @@ void JoypadControlServer::run()
             for(size_t i = 0; i < m_portTrackball.count; ++i)
             {
                 Vector v;
-                if(!m_device->getTrackball(i, v))
+                if(!m_IJoypad->getTrackball(i, v))
                 {
                     yCError(JOYPADCONTROLSERVER) << "Cannot get axis with id" << i;
                     write = false;
@@ -747,7 +764,7 @@ void JoypadControlServer::run()
             {
                 Vector       v;
                 unsigned int dofCount;
-                if(!m_device->getStick(i, v, m_coordsMode) || !m_device->getStickDoF(i, dofCount) || v.size() != dofCount)
+                if(!m_IJoypad->getStick(i, v, m_coordsMode) || !m_IJoypad->getStickDoF(i, dofCount) || v.size() != dofCount)
                 {
                     write = false;
                     break;
@@ -768,7 +785,7 @@ void JoypadControlServer::run()
             for(unsigned int i = 0; i < m_portTouch.count; ++i)
             {
                 Vector v;
-                if(!m_device->getTouch(i, v))
+                if(!m_IJoypad->getTouch(i, v))
                 {
                     write = false;
                     break;
@@ -795,59 +812,6 @@ void JoypadControlServer::run()
     }
 }
 
-bool JoypadControlServer::attachAll(const PolyDriverList& p)
-{
-    if (p.size() != 1)
-    {
-        yCError(JOYPADCONTROLSERVER) << "Cannot attach more than one device";
-        return false;
-    }
-
-    yarp::dev::PolyDriver* Idevice2attach = p[0]->poly;
-    if(p[0]->key == "IJoypadController")
-    {
-        yCInfo(JOYPADCONTROLSERVER) << "Good name!";
-    }
-    else
-    {
-        yCInfo(JOYPADCONTROLSERVER) << "Bad name!";
-    }
-
-    if (!Idevice2attach->isValid())
-    {
-        yCError(JOYPADCONTROLSERVER) << "Device " << p[0]->key << " to attach to is not valid ... cannot proceed";
-        return false;
-    }
-
-    Idevice2attach->view(m_device);
-    if (!attach(m_device)) {
-        return false;
-    }
-
-    PeriodicThread::setPeriod(m_period);
-    if (!PeriodicThread::start()) {
-        return false;
-    }
-
-    openPorts();
-    return true;
-}
-
-bool JoypadControlServer::detachAll()
-{
-    if (yarp::os::PeriodicThread::isRunning()) {
-        yarp::os::PeriodicThread::stop();
-    }
-
-    //check if we already instantiated a subdevice previously
-    if (m_isSubdeviceOwned) {
-        return false;
-    }
-
-    m_device = nullptr;
-    return true;
-}
-
 bool JoypadControlServer::close()
 {
     detachAll();
@@ -860,7 +824,7 @@ bool JoypadControlServer::close()
         }
 
         m_subDeviceOwned   = nullptr;
-        m_device           = nullptr;
+        m_IJoypad          = nullptr;
         m_isSubdeviceOwned = false;
     }
 

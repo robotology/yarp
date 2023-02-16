@@ -45,5 +45,9 @@ if(NOT SKIP_JoypadControlClient)
 
   set(YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS ${YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS} PARENT_SCOPE)
 
+  if(YARP_COMPILE_TESTS)
+    add_subdirectory(tests)
+  endif()
+
   set_property(TARGET yarp_JoypadControlClient PROPERTY FOLDER "Plugins/Device")
 endif()

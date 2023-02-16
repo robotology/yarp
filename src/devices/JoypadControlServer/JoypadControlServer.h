@@ -9,8 +9,7 @@
 #include <yarp/os/PeriodicThread.h>
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/dev/IJoypadController.h>
-#include <yarp/dev/IWrapper.h>
-#include <yarp/dev/IMultipleWrapper.h>
+#include <yarp/dev/WrapperSingle.h>
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/PolyDriverList.h>
 #include <yarp/os/BufferedPort.h>
@@ -42,8 +41,7 @@ public:
  */
 class JoypadControlServer :
         public yarp::dev::DeviceDriver,
-        public yarp::dev::IWrapper,
-        public yarp::dev::IMultipleWrapper,
+        public yarp::dev::WrapperSingle,
         public yarp::os::PeriodicThread
 {
     typedef yarp::dev::IJoypadController::JoypadCtrl_coordinateMode coordsMode;
@@ -55,7 +53,7 @@ class JoypadControlServer :
 
     double                          m_period;
     JoypadCtrlParser                m_parser;
-    yarp::dev::IJoypadController*   m_device;
+    yarp::dev::IJoypadController*   m_IJoypad;
     yarp::os::Port                  m_rpcPort;
     yarp::dev::PolyDriver*          m_subDeviceOwned;
     bool                            m_isSubdeviceOwned;
@@ -88,8 +86,6 @@ public:
     bool open(yarp::os::Searchable& params) override;
     bool fromConfig(yarp::os::Searchable& params);
     bool close() override;
-    bool attachAll(const yarp::dev::PolyDriverList& p) override;
-    bool detachAll() override;
     bool attach(yarp::dev::PolyDriver* poly) override;
     bool attach(yarp::dev::IJoypadController* s);
     bool detach() override;

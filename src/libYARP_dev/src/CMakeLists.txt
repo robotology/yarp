@@ -406,6 +406,7 @@ set(YARP_dev_test_HDRS
     yarp/dev/tests/IAxisInfoTest.h
     yarp/dev/tests/IRGBDSensorTest.h
     yarp/dev/tests/IBatteryTest.h
+    yarp/dev/tests/IJoypadControllerTest.h
 )
 
 set(YARP_dev_test_SRCS
@@ -415,6 +416,7 @@ set(YARP_dev_test_SRCS
     yarp/dev/tests/IAxisInfoTest.cpp
     yarp/dev/tests/IRGBDSensorTest.cpp
     yarp/dev/tests/IBatteryTest.cpp
+    yarp/dev/tests/IJoypadControllerTest.cpp
 )
 
 if(TARGET YARP::YARP_math)
