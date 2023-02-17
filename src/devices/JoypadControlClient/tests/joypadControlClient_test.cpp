@@ -25,6 +25,10 @@ using namespace yarp::sig;
 
 TEST_CASE("dev::JoypadControlClientTest", "[yarp::dev]")
 {
+    #if defined(DISABLE_FAILING_TESTS)
+        YARP_SKIP_TEST("Skipping failing tests")
+    #endif
+
     YARP_REQUIRE_PLUGIN("fakeJoypad", "device");
     YARP_REQUIRE_PLUGIN("JoypadControlClient", "device");
     YARP_REQUIRE_PLUGIN("JoypadControlServer", "device");

@@ -40,6 +40,9 @@ bool LaserFromDepth::open(yarp::os::Searchable& config)
 
     m_min_distance = 0.1; //m
     m_max_distance = 2.5;  //m
+    m_min_angle = 0;
+    m_max_angle = 60;
+    m_resolution = 1;
 
     if (this->parseConfiguration(config) == false)
     {
