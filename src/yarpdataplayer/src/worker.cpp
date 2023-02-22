@@ -100,7 +100,7 @@ void QEngine::runNormally()
         //if we have alredy stopped we have nothing to do
         if(this_part.hasNotified)
             continue;
-            
+
         //if this port is not active, keep progressing though the frames without
         //sending, so if the part activates it is in synch
         bool isActive = ((MainWindow*)gui)->getPartActivation(this_part.name.c_str());

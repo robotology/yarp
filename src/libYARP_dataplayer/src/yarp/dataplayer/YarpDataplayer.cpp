@@ -651,7 +651,7 @@ void DataplayerWorker::run()
         }
         else if (strcmp(utilities->partDetails[part].type.c_str(), "Bottle") == 0)  {
             ret = sendGenericData<Bottle>(part, frame);
-            //the above line could be replaced with sendBottle(part, frame) if 
+            //the above line could be replaced with sendBottle(part, frame) if
             //specifically different behaviour is required for a bottle.
         }
         else if (strcmp(utilities->partDetails[part].type.c_str(), "sensor_msgs/LaserScan") == 0)  {
@@ -1063,7 +1063,7 @@ void DataplayerEngine::runNormally()
         //if we have alredy stopped we have nothing to do
         if(this_part.hasNotified)
             continue;
-        
+
         //if this port is not active, keep progressing though the frames without
         //sending, so if the part activates it is in synch
         bool isActive = this->isPartActive[i];
