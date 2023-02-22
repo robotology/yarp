@@ -94,43 +94,52 @@ void QEngine::stepFromCmd()
 void QEngine::runNormally()
 {
     for (int i=0; i < this->numPart; i++){
-        bool isActive = ((MainWindow*)gui)->getPartActivation(qutils->partDetails[i].name.c_str());
-        if ( qutils->partDetails[i].currFrame <= qutils->partDetails[i].maxFrame ){
-            if ( this->virtualTime >= qutils->partDetails[i].timestamp[ qutils->partDetails[i].currFrame ] ){
-                if ( this->initTime > 300 && this->virtualTime < qutils->partDetails[i].timestamp[qutils->partDetails[i].timestamp.length()-1]){
-                    emit qutils->updateGuiThread();
-                    this->initTime = 0;
-                }
-                if (!qutils->partDetails[i].hasNotified){
-                    qutils->partDetails[i].worker->sendData(qutils->partDetails[i].currFrame, isActive, this->virtualTime );
-                    qutils->partDetails[i].currFrame++;
-                }
-            }
-        } else {
+        //get a reference to the part we are interested in
+        yarp::yarpDataplayer::PartsData &this_part = qutils->partDetails[i];
+
+        //if we have alredy stopped we have nothing to do
+        if(this_part.hasNotified)
+            continue;
+            
+        //if this port is not active, keep progressing though the frames without
+        //sending, so if the part activates it is in synch
+        bool isActive = ((MainWindow*)gui)->getPartActivation(this_part.name.c_str());
+
+        //send all available frames up to the current virtualTime
+        while (this_part.currFrame <= this_part.maxFrame &&
+            this->virtualTime >= this_part.timestamp[this_part.currFrame]) {
+            this_part.worker->sendData(this_part.currFrame++, isActive, this->virtualTime);
+        }
+
+        //check if to update the Gui
+        if (this->initTime > 300 && this->virtualTime < this_part.timestamp[this_part.timestamp.length() - 1]) {
+            emit qutils->updateGuiThread();
+            this->initTime = 0;
+        }
+
+        //if we have sent all frames perform reset/stop
+        if(this_part.currFrame > this_part.maxFrame) {
             if (qutils->repeat) {
                 this->initThread();
-                qutils->partDetails[i].worker->init();
+                this_part.worker->init();
             } else {
-                if ( !qutils->partDetails[i].hasNotified ) {
-                    yInfo() << "partID: " <<  i << " has finished";
-                    qutils->partDetails[i].hasNotified = true;
-                }
+                yInfo() << "partID: " <<  i << " has finished";
+                this_part.hasNotified = true;
 
+                //perform a check to see if ALL parts have finished
                 int stopAll = 0;
                 for (int x=0; x < this->numPart; x++){
-                    if (qutils->partDetails[x].hasNotified){
-                        stopAll++;
-                    }
+                    stopAll += qutils->partDetails[x].hasNotified ? 1 : 0;
+                }
 
-                    if (stopAll == this->numPart){
-                        yInfo() << "All parts have Finished!";
-                        if (qutils->partDetails[i].currFrame > 1) {
-                            emit qutils->updateGuiThread();
-                        }
-                        qutils->stopAtEnd();
-                        qutils->resetButton();
-                        allPartsStatus = true;
+                if (stopAll == this->numPart){
+                    yInfo() << "All parts have Finished!";
+                    if (this_part.currFrame > 1) {
+                        emit qutils->updateGuiThread();
                     }
+                    qutils->stopAtEnd();
+                    qutils->resetButton();
+                    allPartsStatus = true;
                 }
             }
         }

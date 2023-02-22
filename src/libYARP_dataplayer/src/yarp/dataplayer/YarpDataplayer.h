@@ -265,7 +265,7 @@ protected:
     public:
         void SetDataplayerEngine(DataplayerEngine &dataplayerEngine)
         { this->dataplayerEngine = &dataplayerEngine; }
-        dataplayer_thread (double _period=0.002);
+        dataplayer_thread (double _period=0.0001);
 
         bool        threadInit() override;
         void        run() override;
