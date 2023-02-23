@@ -2,26 +2,26 @@
 # SPDX-License-Identifier: BSD-3-Clause
 
 if (YARP_COMPILE_ALL_FAKE_DEVICES)
-  set(ENABLE_yarpmod_fakeOdometry ON CACHE BOOL "" FORCE)
+  set(ENABLE_yarpmod_fakeOdometry2D ON CACHE BOOL "" FORCE)
 endif()
 
-yarp_prepare_plugin(fakeOdometry
+yarp_prepare_plugin(fakeOdometry2D
   CATEGORY device
-  TYPE FakeOdometry
-  INCLUDE FakeOdometry.h
+  TYPE FakeOdometry2D
+  INCLUDE fakeOdometry2D.h
   DEPENDS "TARGET YARP::YARP_math"
 )
 
-if(NOT SKIP_fakeOdometry)
-  yarp_add_plugin(yarp_fakeOdometry)
+if(NOT SKIP_fakeOdometry2D)
+  yarp_add_plugin(yarp_fakeOdometry2D)
 
-  target_sources(yarp_fakeOdometry
+  target_sources(yarp_fakeOdometry2D
     PRIVATE
-          FakeOdometry.h
-          FakeOdometry.cpp
+          fakeOdometry2D.h
+          fakeOdometry2D.cpp
     )
 
-  target_link_libraries(yarp_fakeOdometry
+  target_link_libraries(yarp_fakeOdometry2D
     PRIVATE
       YARP::YARP_os
       YARP::YARP_sig
@@ -36,7 +36,7 @@ if(NOT SKIP_fakeOdometry)
   )
 
   yarp_install(
-    TARGETS yarp_fakeOdometry
+    TARGETS yarp_fakeOdometry2D
     EXPORT YARP_${YARP_PLUGIN_MASTER}
     COMPONENT ${YARP_PLUGIN_MASTER}
     LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
@@ -46,7 +46,7 @@ if(NOT SKIP_fakeOdometry)
 
   set(YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS ${YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS} PARENT_SCOPE)
 
-  set_property(TARGET yarp_fakeOdometry PROPERTY FOLDER "Plugins/Device/Fake")
+  set_property(TARGET yarp_fakeOdometry2D PROPERTY FOLDER "Plugins/Device/Fake")
 
   if(YARP_COMPILE_TESTS)
     add_subdirectory(tests)

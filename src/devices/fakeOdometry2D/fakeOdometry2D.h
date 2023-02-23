@@ -3,8 +3,8 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#ifndef YARP_FAKEODOMETRY_H
-#define YARP_FAKEODOMETRY_H
+#ifndef YARP_FAKEODOMETRY2D_H
+#define YARP_FAKEODOMETRY2D_H
 
 #include <yarp/os/PeriodicThread.h>
 #include <yarp/sig/Vector.h>
@@ -17,7 +17,7 @@ constexpr double default_period = 0.02;
  * @ingroup dev_impl_fake dev_impl_navigation
  *
  * \section fakeOdometry_parameters Device description
- * \brief `FakeOdometry`: A device for generating a fake odometry.
+ * \brief `fakeOdometry2D`: A device for generating a fake odometry.
  * This device will generate the odometry and then the user can retrieve it by calling `getOdometry`.
  *
  *   Parameters required by this device are:
@@ -52,13 +52,13 @@ constexpr double default_period = 0.02;
  * \endcode
  */
 
-class FakeOdometry :
+class FakeOdometry2D :
         public yarp::os::PeriodicThread,
         public yarp::dev::DeviceDriver,
         public yarp::dev::Nav2D::IOdometry2D
 {
 public:
-    FakeOdometry();
+    FakeOdometry2D();
 
     // PeriodicThread
     virtual bool threadInit() override;
@@ -81,4 +81,4 @@ private:
     double m_timestamp=0;
 };
 
-#endif // YARP_FAKEODOMETRY_H
+#endif // YARP_FAKEODOMETRY2D_H

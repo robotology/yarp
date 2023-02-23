@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later
  */
 
-#include "FakeOdometry.h"
+#include "fakeOdometry2D.h"
 
 #include <yarp/os/LogComponent.h>
 #include <yarp/os/LogStream.h>
@@ -11,26 +11,26 @@
 
 
 namespace {
-    YARP_LOG_COMPONENT(FAKEODOMETRY, "yarp.device.FakeOdometry")
+    YARP_LOG_COMPONENT(FAKEODOMETRY2D, "yarp.device.FakeOdometry2D")
 }
 
 
-FakeOdometry::FakeOdometry():
+FakeOdometry2D::FakeOdometry2D():
 PeriodicThread(default_period)
 {
     m_period = default_period;
-    yCTrace(FAKEODOMETRY);
+    yCTrace(FAKEODOMETRY2D);
 }
 
 
-bool FakeOdometry::threadInit()
+bool FakeOdometry2D::threadInit()
 {
-    yCTrace(FAKEODOMETRY);
+    yCTrace(FAKEODOMETRY2D);
     return true;
 }
 
 
-void FakeOdometry::run()
+void FakeOdometry2D::run()
 {
     std::lock_guard lock(m_odometry_mutex);
     m_odometryData.base_vel_x = yarp::math::Rand::scalar(0,5);
@@ -46,26 +46,26 @@ void FakeOdometry::run()
 }
 
 
-void FakeOdometry::threadRelease()
+void FakeOdometry2D::threadRelease()
 {
 }
 
 
-bool FakeOdometry::open(yarp::os::Searchable& config)
+bool FakeOdometry2D::open(yarp::os::Searchable& config)
 {
     // check period
     if (!config.check("period", "refresh period of the broadcasted values in s")) {
-        yCInfo(FAKEODOMETRY) << "Using default 'period' parameter";
+        yCInfo(FAKEODOMETRY2D) << "Using default 'period' parameter";
     }  else {
         m_period = config.find("period").asFloat64();
     }
-    yCInfo(FAKEODOMETRY) << "thread period set to " << m_period << "s";
+    yCInfo(FAKEODOMETRY2D) << "thread period set to " << m_period << "s";
     PeriodicThread::setPeriod(m_period);
     return PeriodicThread::start();
 }
 
 
-bool FakeOdometry::close()
+bool FakeOdometry2D::close()
 {
     if (PeriodicThread::isRunning())
     {
@@ -75,7 +75,7 @@ bool FakeOdometry::close()
 }
 
 
-bool FakeOdometry::getOdometry(yarp::dev::OdometryData& odom, double* timestamp)
+bool FakeOdometry2D::getOdometry(yarp::dev::OdometryData& odom, double* timestamp)
 {
     std::lock_guard lock(m_odometry_mutex);
     odom.odom_x = m_odometryData.odom_x;
@@ -95,7 +95,7 @@ bool FakeOdometry::getOdometry(yarp::dev::OdometryData& odom, double* timestamp)
 }
 
 
-bool FakeOdometry::resetOdometry()
+bool FakeOdometry2D::resetOdometry()
 {
     std::lock_guard lock(m_odometry_mutex);
     m_odometryData.odom_x = 0;
