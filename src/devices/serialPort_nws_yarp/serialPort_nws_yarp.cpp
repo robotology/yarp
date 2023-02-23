@@ -124,10 +124,11 @@ bool SerialPort_nws_yarp::closeMain()
         Thread::stop();
     }
     //close the port connection here
+    command_buffer.disableCallback();
     toDevice.close();
     fromDevice.close();
     m_rpcPort.close();
-    if (callback_impl) {delete callback_impl; }
+    if (callback_impl) {delete callback_impl; callback_impl=nullptr;}
     return true;
 }
 

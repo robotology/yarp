@@ -39,6 +39,7 @@ protected:
 public:
     ImplementCallbackHelper2();
     ImplementCallbackHelper2(yarp::dev::ISerialDevice* x);
+    virtual ~ImplementCallbackHelper2() override {};
 
     using yarp::os::TypedReaderCallback<Bottle>::onRead;
     void onRead(Bottle& b) override;
@@ -102,7 +103,7 @@ public:
     SerialPort_nws_yarp(SerialPort_nws_yarp&&) = delete;
     SerialPort_nws_yarp& operator=(const SerialPort_nws_yarp&) = delete;
     SerialPort_nws_yarp& operator=(SerialPort_nws_yarp&&) = delete;
-    ~SerialPort_nws_yarp() override;
+    virtual ~SerialPort_nws_yarp() override;
 
     bool open(yarp::os::Searchable& config) override;
     bool close() override;

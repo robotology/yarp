@@ -25,3 +25,6 @@
 ./src/devices/serialport
 ./src/devices/JoypadControlNetUtils
 ./src/devices/SerialServoBoard
+./src/devices/VirtualAnalogWrapper
+./src/devices/AnalogSensorClient
+./src/devices/AnalogWrapper
