@@ -18,7 +18,7 @@ using namespace yarp::os;
 
 TEST_CASE("dev::laserFromDepth", "[yarp::dev]")
 {
-    #if defined(DISABLE_FAILING_TESTS)
+    #if defined(YARP_DISABLE_FAILING_TESTS)
         YARP_SKIP_TEST("Skipping failing tests")
     #endif
 

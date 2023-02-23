@@ -17,7 +17,7 @@ using namespace yarp::os;
 
 TEST_CASE("dev::fakeOdometry", "[yarp::dev]")
 {
-    YARP_REQUIRE_PLUGIN("fakeOdometry", "device");
+    YARP_REQUIRE_PLUGIN("fakeOdometry2D", "device");
 
     Network::setLocalMode(true);
 

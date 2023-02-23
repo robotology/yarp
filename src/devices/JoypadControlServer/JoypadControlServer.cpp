@@ -20,7 +20,15 @@ YARP_LOG_COMPONENT(JOYPADCONTROLSERVER, "yarp.device.JoypadControlServer")
 }
 
 
-JoypadCtrlParser::JoypadCtrlParser() : device(nullptr){}
+JoypadCtrlParser::JoypadCtrlParser() : m_device(nullptr)
+{
+    m_countGetters.insert(std::make_pair(VOCAB_BUTTON, &IJoypadController::getButtonCount));
+    m_countGetters.insert(std::make_pair(VOCAB_HAT, &IJoypadController::getHatCount));
+    m_countGetters.insert(std::make_pair(VOCAB_TRACKBALL, &IJoypadController::getTrackballCount));
+    m_countGetters.insert(std::make_pair(VOCAB_AXIS, &IJoypadController::getAxisCount));
+    m_countGetters.insert(std::make_pair(VOCAB_STICK, &IJoypadController::getStickCount));
+    m_countGetters.insert(std::make_pair(VOCAB_TOUCH, &IJoypadController::getTouchSurfaceCount));
+}
 
 inline void cat(Vector& a, const Vector& b)
 {
@@ -35,21 +43,14 @@ bool JoypadCtrlParser::configure(yarp::dev::IJoypadController* interface)
     bool ret;
     if(interface)
     {
-        device = interface;
+        m_device = interface;
         ret = true;
     }
     else
     {
-        device = nullptr;
+        m_device = nullptr;
         ret = false;
     }
-
-    countGetters.insert(std::make_pair(VOCAB_BUTTON,    &IJoypadController::getButtonCount));
-    countGetters.insert(std::make_pair(VOCAB_HAT,       &IJoypadController::getHatCount));
-    countGetters.insert(std::make_pair(VOCAB_TRACKBALL, &IJoypadController::getTrackballCount));
-    countGetters.insert(std::make_pair(VOCAB_AXIS,      &IJoypadController::getAxisCount));
-    countGetters.insert(std::make_pair(VOCAB_STICK,     &IJoypadController::getStickCount));
-    countGetters.insert(std::make_pair(VOCAB_TOUCH,     &IJoypadController::getTouchSurfaceCount));
 
     return ret;
 }
@@ -73,12 +74,12 @@ bool JoypadCtrlParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& re
 
         if(cmd.get(3).asVocab32() == VOCAB_COUNT)
         {
-            if(countGetters.find(toGet) != countGetters.end())
+            if(m_countGetters.find(toGet) != m_countGetters.end())
             {
                 unsigned int   count;
                 getcountmethod getter;
-                getter = countGetters[toGet];
-                if((device->*getter)(count))
+                getter = m_countGetters[toGet];
+                if((m_device->*getter)(count))
                 {
                     response.addVocab32(VOCAB_OK);
                     response.addInt32(count);
@@ -88,7 +89,7 @@ bool JoypadCtrlParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& re
             else if (toGet == VOCAB_STICKDOF && cmd.get(4).isInt32())
             {
                 unsigned int count;
-                if (device->getStickDoF(cmd.get(4).asInt32(), count))
+                if (m_device->getStickDoF(cmd.get(4).asInt32(), count))
                 {
                     response.addVocab32(VOCAB_OK);
                     response.addInt32(count);
@@ -112,7 +113,7 @@ bool JoypadCtrlParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& re
             case VOCAB_BUTTON:
             {
                 float value;
-                if(cmd.get(4).isInt32() && device->getButton(cmd.get(4).asInt32(), value))
+                if(cmd.get(4).isInt32() && m_device->getButton(cmd.get(4).asInt32(), value))
                 {
                     response.addVocab32(VOCAB_OK);
                     response.addFloat64(value);
@@ -123,7 +124,7 @@ bool JoypadCtrlParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& re
             case VOCAB_AXIS:
             {
                 double value;
-                if(cmd.get(4).isInt32() && device->getAxis(cmd.get(4).asInt32(), value))
+                if(cmd.get(4).isInt32() && m_device->getAxis(cmd.get(4).asInt32(), value))
                 {
                     response.addVocab32(VOCAB_OK);
                     response.addFloat64(value);
@@ -138,7 +139,7 @@ bool JoypadCtrlParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& re
                     yarp::sig::Vector frame;
 
                     auto mode = cmd.get(4).asVocab32() == VOCAB_CARTESIAN ? yarp::dev::IJoypadController::JypCtrlcoord_CARTESIAN : yarp::dev::IJoypadController::JypCtrlcoord_POLAR;
-                    if(cmd.get(5).isInt32() && device->getStick(cmd.get(5).asInt32(), frame, mode))
+                    if(cmd.get(5).isInt32() && m_device->getStick(cmd.get(5).asInt32(), frame, mode))
                     {
                         response.addVocab32(VOCAB_OK);
                         for(size_t i = 0; i < frame.size(); ++i)
@@ -156,7 +157,7 @@ bool JoypadCtrlParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& re
 
                 unsigned int dofCount;
 
-                if(cmd.get(5).isInt32() && device->getStickDoF(cmd.get(5).asInt32(), dofCount))
+                if(cmd.get(5).isInt32() && m_device->getStickDoF(cmd.get(5).asInt32(), dofCount))
                 {
                     response.addVocab32(VOCAB_OK);
                     response.addInt32(dofCount);
@@ -171,7 +172,7 @@ bool JoypadCtrlParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& re
                 unsigned int      id;
 
                 id = cmd.get(4).asInt32();
-                if(cmd.get(4).isInt32() && device->getTouch(id, pos))
+                if(cmd.get(4).isInt32() && m_device->getTouch(id, pos))
                 {
                     response.addVocab32(VOCAB_OK);
                     for(size_t i = 0; i < pos.size(); ++i)
@@ -188,7 +189,7 @@ bool JoypadCtrlParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& re
                 unsigned int      id;
 
                 id = cmd.get(4).asInt32();
-                if(cmd.get(4).isInt32() && device->getTrackball(id, axes))
+                if(cmd.get(4).isInt32() && m_device->getTrackball(id, axes))
                 {
                     response.addVocab32(VOCAB_OK);
                     for(size_t i = 0; i < axes.size(); ++i)
@@ -202,7 +203,7 @@ bool JoypadCtrlParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& re
             case VOCAB_HAT:
             {
                 unsigned char value;
-                if(cmd.get(4).isInt32() && device->getHat(cmd.get(4).asInt32(), value))
+                if(cmd.get(4).isInt32() && m_device->getHat(cmd.get(4).asInt32(), value))
                 {
                     response.addVocab32(VOCAB_OK);
                     response.addInt32(value);
@@ -316,6 +317,7 @@ bool JoypadControlServer::open(yarp::os::Searchable& params)
     {
         m_isSubdeviceOwned=false;
     }
+
     return true;
 }
 
@@ -372,6 +374,11 @@ bool JoypadControlServer::attach(PolyDriver* poly)
     }
 
     openPorts();
+    if (!m_parser.configure(m_IJoypad))
+    {
+        yCError(JOYPADCONTROLSERVER) << "Error configuring interfaces for parsers";
+        return false;
+    }
 
     return true;
 }

@@ -24,8 +24,8 @@ class JoypadCtrlParser :
 private:
     typedef bool (yarp::dev::IJoypadController::*getcountmethod)(unsigned int&);
 
-    std::map<int, getcountmethod> countGetters;
-    yarp::dev::IJoypadController* device;
+    std::map<int, getcountmethod> m_countGetters;
+    yarp::dev::IJoypadController* m_device;
 public:
     JoypadCtrlParser();
     ~JoypadCtrlParser() override = default;
