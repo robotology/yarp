@@ -61,7 +61,7 @@ TEST_CASE("dev::serialPort_nws_yarp", "[yarp::dev]")
             REQUIRE(result_att); }
         }
 
-        yarp::os::Time::delay(1000);
+        yarp::os::Time::delay(0.5);
 
         //"Close all polydrivers and check"
         {

@@ -12,7 +12,7 @@ yarp_prepare_plugin(fakeSerialPort
   EXTRA_CONFIG
     WRAPPER=serialPort_nws_yarp)
 
-if(ENABLE_fakeSerialport)
+if(ENABLE_fakeSerialPort)
   yarp_add_plugin(yarp_fakeSerialPort)
 
   target_sources(yarp_fakeSerialPort

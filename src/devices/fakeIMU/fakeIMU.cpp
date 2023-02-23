@@ -62,6 +62,10 @@ bool fakeIMU::open(yarp::os::Searchable &config)
     } else  {
         yCInfo(FAKEIMU) << "Using default period of " << DEFAULT_PERIOD << " s";
     }
+    if (config.check("sensorName")) {
+        m_sensorName = config.find("sensorName").asString();
+    }
+    yCInfo(FAKEIMU) << "sensorName: " << m_sensorName;
 
     constantValue = config.check("constantValue");
 

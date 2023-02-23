@@ -22,7 +22,7 @@ TEST_CASE("dev::serialPort_nwc_yarp", "[yarp::dev]")
 
     Network::setLocalMode(true);
 
-    SECTION("Checking localization2D_nwc device")
+    SECTION("Checking serialPort_nwc_yarp device")
     {
         yarp::dev::ISerialDevice* iser=nullptr;
         PolyDriver ddnws;
