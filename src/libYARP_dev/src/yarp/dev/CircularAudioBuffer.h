@@ -106,7 +106,11 @@ class CircularAudioBuffer
 
     ~CircularAudioBuffer()
     {
-        free(elems);
+        if (elems)
+        {
+            free(elems);
+            elems =nullptr;
+        }
     }
 
 };

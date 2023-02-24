@@ -15,13 +15,13 @@
 using namespace yarp::dev;
 using namespace yarp::os;
 
-TEST_CASE("dev::fakeOdometry", "[yarp::dev]")
+TEST_CASE("dev::fakeOdometry2D", "[yarp::dev]")
 {
     YARP_REQUIRE_PLUGIN("fakeOdometry2D", "device");
 
     Network::setLocalMode(true);
 
-    SECTION("Checking fakeOdometry device")
+    SECTION("Checking fakeOdometry2D device")
     {
         PolyDriver dd;
         yarp::dev::Nav2D::IOdometry2D* iodom=nullptr;
@@ -29,7 +29,7 @@ TEST_CASE("dev::fakeOdometry", "[yarp::dev]")
         ////////"Checking opening device polydrivers"
         {
             Property p_cfg;
-            p_cfg.put("device", "fakeOdometry");
+            p_cfg.put("device", "fakeOdometry2D");
             REQUIRE(dd.open(p_cfg));
         }
 

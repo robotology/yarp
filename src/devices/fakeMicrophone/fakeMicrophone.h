@@ -43,7 +43,7 @@ public:
     fakeMicrophone(fakeMicrophone&&) = delete;
     fakeMicrophone& operator=(const fakeMicrophone&) = delete;
     fakeMicrophone& operator=(fakeMicrophone&&) = delete;
-    ~fakeMicrophone() override;
+    virtual ~fakeMicrophone() override;
 
 public:
     bool setHWGain(double gain) override;

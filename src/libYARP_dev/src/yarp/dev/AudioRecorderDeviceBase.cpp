@@ -205,7 +205,11 @@ bool AudioRecorderDeviceBase::isRecording(bool& recording_enabled)
 
 AudioRecorderDeviceBase::~AudioRecorderDeviceBase()
 {
-    delete m_inputBuffer;
+    if (m_inputBuffer == nullptr)
+    {
+        delete m_inputBuffer;
+        m_inputBuffer = nullptr;
+    }
 }
 
 bool AudioRecorderDeviceBase::configureRecorderAudioDevice(yarp::os::Searchable& config, std::string device_name)
