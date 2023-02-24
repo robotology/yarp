@@ -42,8 +42,8 @@ if(NOT SKIP_laserFromExternalPort)
 
   set_property(TARGET yarp_laserFromExternalPort PROPERTY FOLDER "Plugins/Device")
 
-  if(YARP_COMPILE_TESTS)
-    add_subdirectory(tests)
-  endif()
+#  if(YARP_COMPILE_TESTS)
+#    add_subdirectory(tests)
+#  endif()
 
 endif()

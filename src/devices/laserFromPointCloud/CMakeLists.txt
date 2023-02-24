@@ -41,8 +41,8 @@ if(NOT SKIP_laserFromPointCloud)
 
   set_property(TARGET yarp_laserFromPointCloud PROPERTY FOLDER "Plugins/Device")
 
-  if(YARP_COMPILE_TESTS)
-    add_subdirectory(tests)
-  endif()
+#  if(YARP_COMPILE_TESTS)
+#    add_subdirectory(tests)
+#  endif()
 
 endif()

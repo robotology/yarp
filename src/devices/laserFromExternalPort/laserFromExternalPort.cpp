@@ -33,29 +33,6 @@ using namespace yarp::dev;
 
 YARP_LOG_COMPONENT(LASER_FROM_EXTERNAL_PORT, "yarp.devices.laserFromExternalPort")
 
-/*
-yarpdev --device rangefinder2D_nws_yarp --subdevice laserFromExternalPort \
---SENSOR::input_ports_name "(/port1 /port2)" \
---TRANSFORM_CLIENT::local /LaserFromExternalPort/tfClient \
---TRANSFORM_CLIENT::remote /transformServer \
---TRANSFORMS::src_frames "(/frame1 /frame2)" \
---TRANSFORMS::dst_frame /output_frame
---period 0.01 \
---name /outlaser:o
-
-yarpdev --device rangefinder2D_nws_yarp --subdevice laserFromExternalPort \
---SENSOR::min_angle 0
---SENSOR::max_angle 360
---SENSOR::resolution 0.5
---SENSOR::input_ports_name "(/port1 /port2)" \
---TRANSFORM_CLIENT::local /LaserFromExternalPort/tfClient \
---TRANSFORM_CLIENT::remote /transformServer \
---TRANSFORMS::src_frames "(/frame1 /frame2)" \
---TRANSFORMS::dst_frame /output_frame
---period 0.01 \
---name /outlaser:o
-*/
-
 double constrainAngle(double x)
 {
     x = fmod(x, 360);
