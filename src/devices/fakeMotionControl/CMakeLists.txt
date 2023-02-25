@@ -10,7 +10,7 @@ yarp_prepare_plugin(fakeMotionControl
   TYPE FakeMotionControl
   INCLUDE fakeMotionControl.h
   EXTRA_CONFIG
-    WRAPPER=controlboard_nws_yarp
+    WRAPPER=controlBoard_nws_yarp
   DEPENDS "TARGET YARP::YARP_math"
 )
 
