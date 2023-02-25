@@ -21,28 +21,32 @@ sliderOptions::sliderOptions( QWidget *parent) :
     val_pos_choice = settings.value("val_pos_choice", 0).toInt();
     val_trq_choice = settings.value("val_trq_choice", 0).toInt();
     val_vel_choice = settings.value("val_vel_choice", 0).toInt();
+    val_pos_digits = settings.value("num_of_pos_decimals", 3).toInt();
     val_pos_custom_step = settings.value("val_pos_custom_step", 1.0).toDouble();
     val_trq_custom_step = settings.value("val_trq_custom_step", 1.0).toDouble();
     val_vel_custom_step = settings.value("val_vel_custom_step", 1.0).toDouble();
     val_vel_limit       = settings.value("velocity_slider_limit", 100.0).toDouble();
 
+    pos_digits_validator = new QIntValidator(this);
     pos_step_validator = new QDoubleValidator(this);
     vel_step_validator = new QDoubleValidator(this);
     trq_step_validator = new QDoubleValidator(this);
     vel_lims_validator = new QDoubleValidator(this);
     vel_lims_validator->setRange(0 , 100);
 
-    ui->pos_step->setValidator(vel_step_validator);
+    ui->pos_decimal_digits->setValidator(pos_digits_validator);
+    ui->pos_step->setValidator(pos_step_validator);
     ui->vel_step->setValidator(vel_step_validator);
     ui->trq_step->setValidator(trq_step_validator);
     ui->vel_limiter->setValidator(vel_lims_validator);
 
+    ui->pos_decimal_digits->setText(QString("%1").arg(val_pos_digits));
     ui->pos_step->setText(QString("%1").arg(val_pos_custom_step));
     ui->trq_step->setText(QString("%1").arg(val_trq_custom_step));
     ui->vel_step->setText(QString("%1").arg(val_vel_custom_step));
     ui->vel_limiter->setText(QString("%1").arg(val_vel_limit));
 
-    connect(this, SIGNAL(sig_setPosSliderOptionSO(int, double)), parent, SLOT(onSetPosSliderOptionMW(int, double)));
+    connect(this, SIGNAL(sig_setPosSliderOptionSO(int, double, int)), parent, SLOT(onSetPosSliderOptionMW(int, double, int)));
     connect(this, SIGNAL(sig_setVelSliderOptionSO(int, double)), parent, SLOT(onSetVelSliderOptionMW(int, double)));
     connect(this, SIGNAL(sig_setTrqSliderOptionSO(int, double)), parent, SLOT(onSetTrqSliderOptionMW(int, double)));
 
@@ -123,6 +127,7 @@ sliderOptions::~sliderOptions()
     val_vel_custom_step = ui->vel_step->text().toDouble();
     val_trq_custom_step = ui->trq_step->text().toDouble();
     val_vel_limit = ui->vel_limiter->text().toDouble();
+    val_pos_digits = ui->pos_decimal_digits->text().toInt();
 
     QSettings settings("YARP", "yarpmotorgui");
     settings.setValue("val_pos_choice", val_pos_choice);
@@ -132,13 +137,15 @@ sliderOptions::~sliderOptions()
     settings.setValue("val_trq_custom_step", val_trq_custom_step);
     settings.setValue("val_vel_custom_step", val_vel_custom_step);
     settings.setValue("velocity_slider_limit", val_vel_limit);
-    emit sig_setPosSliderOptionSO(val_pos_choice, val_pos_custom_step);
+    settings.setValue("num_of_pos_decimals", val_pos_digits);
+    emit sig_setPosSliderOptionSO(val_pos_choice, val_pos_custom_step, val_pos_digits);
     emit sig_setVelSliderOptionSO(val_vel_choice, val_vel_custom_step);
     emit sig_setTrqSliderOptionSO(val_trq_choice, val_trq_custom_step);
-    disconnect(this, SIGNAL(sig_setPosSliderOptionSO(int, double)), nullptr, nullptr);
+    disconnect(this, SIGNAL(sig_setPosSliderOptionSO(int, double, int)), nullptr, nullptr);
     disconnect(this, SIGNAL(sig_setVelSliderOptionSO(int, double)), nullptr, nullptr);
     disconnect(this, SIGNAL(sig_setTrqSliderOptionSO(int, double)), nullptr, nullptr);
 
+    delete pos_digits_validator;
     delete pos_step_validator;
     delete vel_step_validator;
     delete trq_step_validator;

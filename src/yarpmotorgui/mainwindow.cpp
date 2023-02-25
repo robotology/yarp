@@ -513,9 +513,9 @@ void MainWindow::onViewPositionTargetValue(bool val)
     emit sig_viewPositionTargetValue(val);
 }
 
-void MainWindow::onSetPosSliderOptionMW(int choice, double val)
+void MainWindow::onSetPosSliderOptionMW(int choice, double val, int digits)
 {
-    emit sig_setPosSliderOptionMW(choice, val);
+    emit sig_setPosSliderOptionMW(choice, val, digits);
 }
 void MainWindow::onSetVelSliderOptionMW(int choice, double val)
 {
@@ -682,7 +682,7 @@ bool MainWindow::init(QStringList enabledParts,
             connect(this, SIGNAL(sig_viewCurrentValues(bool)), part, SLOT(onViewCurrentValues(bool)));
             connect(this, SIGNAL(sig_viewMotorPositions(bool)), part, SLOT(onViewMotorPositions(bool)));
             connect(this, SIGNAL(sig_viewDutyCycles(bool)), part, SLOT(onViewDutyCycles(bool)));
-            connect(this, SIGNAL(sig_setPosSliderOptionMW(int,double)), part, SLOT(onSetPosSliderOptionPI(int,double)));
+            connect(this, SIGNAL(sig_setPosSliderOptionMW(int,double,int)), part, SLOT(onSetPosSliderOptionPI(int,double,int)));
             connect(this, SIGNAL(sig_setVelSliderOptionMW(int,double)), part, SLOT(onSetVelSliderOptionPI(int,double)));
             connect(this, SIGNAL(sig_setTrqSliderOptionMW(int,double)), part, SLOT(onSetTrqSliderOptionPI(int,double)));
             connect(this, SIGNAL(sig_viewPositionTargetBox(bool)), part, SLOT(onViewPositionTargetBox(bool)));
