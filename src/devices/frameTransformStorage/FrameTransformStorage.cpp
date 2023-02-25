@@ -42,6 +42,7 @@ bool FrameTransformStorage::open(yarp::os::Searchable& config)
 
 bool FrameTransformStorage::close()
 {
+    detach();
     return true;
 }
 
