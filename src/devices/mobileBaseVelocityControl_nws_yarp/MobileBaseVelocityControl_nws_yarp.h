@@ -26,13 +26,13 @@
  * \section MobileBaseVelocityControl_nws_yarp
  *
  * \brief `MobileBaseVelocityControl_nws_yarp`: A device which allows a client to control the velocity of a mobile base from YARP.
- * The device opens two ports: a streaming port `/exampleName:i` for receiving streaming commands, and a rpc port `/exampleName:rpc` for rpc connection with
+ * The device opens two ports: a streaming port `/exampleName/data:i` for receiving streaming commands, and a rpc port `/exampleName/rpc:i` for rpc connection with
  * a `MobileBaseVelocityControl_nwc_yarp` client device.
  *
  *  Parameters required by this device are:
  * | Parameter name | SubParameter   | Type    | Units | Default Value | Required | Description                                                       | Notes |
  * |:--------------:|:--------------:|:-------:|:-----:|:-------------:|:-------: |:-----------------------------------------------------------------:|:-----:|
- * | local          |      -         | string  | -     |   -           | Yes      | Full name of the port opened by the device. For both ports (i.e. :rpc, :i) the corresponding suffix is automatically added |       |
+ * | local          |      -         | string  | -     |   -           | Yes      | Full name of the port opened by the device. For both ports (i.e. /rpc:i, /data:i) the corresponding suffix is automatically added |       |
  * | subdevice      |      -         | string  | -     |   -           | No       | name of the subdevice to instantiate                              | when used, parameters for the subdevice must be provided as well |
  *
  * Example usage:

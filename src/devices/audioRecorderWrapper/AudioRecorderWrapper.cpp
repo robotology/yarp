@@ -128,10 +128,8 @@ bool AudioRecorderWrapper::close()
         m_rpcPort.close();
         m_statusPort.interrupt();
         m_statusPort.close();
-
-        return true;
     }
-    return false;
+    return true;
 }
 
 bool AudioRecorderWrapper::read(yarp::os::ConnectionReader& connection)
@@ -239,7 +237,7 @@ bool AudioRecorderWrapper::attach(PolyDriver* driver)
 
     // Wait a little and then start if requested
     if (m_config.check("start")) {
-        yCDebug(AUDIORECORDERWRAPPER) << "Auto start has been evoked! Brace yourselves!";
+        yCDebug(AUDIORECORDERWRAPPER) << "Auto start requested";
         yarp::os::SystemClock::delaySystem(1);
         m_mic->startRecording();
         m_mic->isRecording(m_isRecording);

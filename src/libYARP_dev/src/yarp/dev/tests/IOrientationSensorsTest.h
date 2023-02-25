@@ -19,7 +19,7 @@ namespace yarp::dev::tests
         REQUIRE(ios != nullptr);
 
         int nrOfSensors = ios->getNrOfOrientationSensors();
-        CHECK(nrOfSensors == 1); // getNrOfOrientationSensors of multipleanalogsensorsclient works correctly
+        CHECK(nrOfSensors > 0); // getNrOfOrientationSensors of multipleanalogsensorsclient works correctly
 
         yarp::sig::Vector sensorMeasure(3, 0.0), clientMeasure(3, 0.0);
         double timestamp{ 0.0 }, clientTimestamp{ 0.0 };

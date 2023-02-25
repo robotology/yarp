@@ -53,7 +53,7 @@ bool MobileBaseVelocityControl_nws_yarp::open(yarp::os::Searchable &config)
     //rpc block
     {
         std::string local_rpc_1;
-        local_rpc_1           = m_local_name + ":rpc";
+        local_rpc_1           = m_local_name + "/rpc:i";
 
         if (!m_rpc_port_navigation_server.open(local_rpc_1))
         {
@@ -71,7 +71,7 @@ bool MobileBaseVelocityControl_nws_yarp::open(yarp::os::Searchable &config)
     //streaming input block
     {
         std::string local_stream_1;
-        local_stream_1 = m_local_name + ":i";
+        local_stream_1 = m_local_name + "/data:i";
 
         if (!m_StreamingInput.open(local_stream_1))
         {
@@ -177,7 +177,7 @@ return_getLastVelocityCommand MobileBaseVelocityControl_nws_yarp::getLastVelocit
 
     retrievedFromRPC.retvalue = b;
     retrievedFromRPC.x_vel = x_vel;
-    retrievedFromRPC.y_vel = x_vel;
+    retrievedFromRPC.y_vel = y_vel;
     retrievedFromRPC.theta_vel = t_vel;
     return retrievedFromRPC;
 }

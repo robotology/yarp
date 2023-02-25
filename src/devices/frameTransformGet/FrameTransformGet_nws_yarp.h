@@ -85,11 +85,9 @@ public:
     FrameTransformGet_nws_yarp(FrameTransformGet_nws_yarp&&) = delete;
     FrameTransformGet_nws_yarp& operator=(const FrameTransformGet_nws_yarp&) = delete;
     FrameTransformGet_nws_yarp& operator=(FrameTransformGet_nws_yarp&&) = delete;
-    ~FrameTransformGet_nws_yarp() = default;
+    ~FrameTransformGet_nws_yarp();
 
     // yarp::os::PeriodicThread
-    bool threadInit() override;
-    void threadRelease() override;
     void run() override;
 
     // yarp::dev::DeviceDriver
@@ -104,7 +102,6 @@ public:
     return_getAllTransforms getTransformsRPC() override;
 
 private:
-    // mutable std::vector<std::mutex> m_PolyDriver_mutex;
     // double m_period{const_default_thread_period};
     bool            m_streaming_port_enabled = true;
     int             m_verbose{4};
@@ -112,6 +109,7 @@ private:
     std::string     m_streaming_port_name;
     std::string     m_defaultConfigPrefix{"/frameTransformServer"};
     std::string     m_deviceName{"frameTransformGet_nws_yarp"};
+    std::mutex      m_mutex;
 
     // for requesting the transforms to FrameTransformStorageGetMultiplexer
     yarp::dev::IFrameTransformStorageGet* m_iFrameTransformStorageGet = nullptr;

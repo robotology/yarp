@@ -38,7 +38,7 @@ bool JoypadControlClient::getJoypadInfo()
     vocabs_ports.emplace_back(VOCAB_BUTTON,    &m_buttonsPort,   "/buttons");
     vocabs_ports.emplace_back(VOCAB_AXIS,      &m_axisPort,      "/axis");
     vocabs_ports.emplace_back(VOCAB_STICK,     &m_stickPort,     "/stick");
-    vocabs_ports.emplace_back(VOCAB_TRACKBALL, &m_trackballPort, "/trackballs");
+    vocabs_ports.emplace_back(VOCAB_TRACKBALL, &m_trackballPort, "/trackball");
     vocabs_ports.emplace_back(VOCAB_TOUCH,     &m_touchPort,     "/touch");
     vocabs_ports.emplace_back(VOCAB_HAT,       &m_hatsPort,      "/hat");
 
@@ -81,7 +81,7 @@ bool JoypadControlClient::getJoypadInfo()
             destination = m_local  + std::get<2>(vocab_port) + ":i";
             if(!yarp::os::NetworkBase::connect(source.c_str(), destination.c_str(), "udp"))
             {
-                yCError(JOYPADCONTROLCLIENT) << "Unable to connect" << portname << "port";
+                yCError(JOYPADCONTROLCLIENT) << "Unable to connect" << source << "with" << destination;
                 return false;
             }
 

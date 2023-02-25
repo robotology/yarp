@@ -28,7 +28,8 @@ typedef unsigned char byte;
 /**
  * @ingroup dev_impl_lidar
  *
- * \brief `laserFromDepth`: Documentation to be added
+ * \brief `laserFromDepth`: This devices connects to an RGBDSensor_nws_yarp to receive depth data.
+ * Data is then processed and exposed as a lidar device exposing a IRangefinder2D interface.
  */
 class LaserFromDepth : public PeriodicThread, public yarp::dev::Lidar2DDeviceBase, public DeviceDriver
 {

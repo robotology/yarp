@@ -28,8 +28,8 @@ bool fakeNavigation :: open(yarp::os::Searchable& config)
 
     yCDebug(FAKENAVIGATION) << "config configuration: \n" << config.toString().c_str();
 
-    std::string context_name = "robotGoto";
-    std::string file_name = "robotGoto_cer.ini";
+    std::string context_name;
+    std::string file_name;
 
     if (config.check("context")) {
         context_name = config.find("context").asString();
@@ -47,7 +47,7 @@ bool fakeNavigation :: open(yarp::os::Searchable& config)
     if (configFile != "") {
         p.fromConfigFile(configFile.c_str());
     }
-    yCDebug(FAKENAVIGATION) << "robotGotoDev configuration: \n" << p.toString().c_str();
+    yCDebug(FAKENAVIGATION) << "device configuration: \n" << p.toString().c_str();
 
 #else
     Property p;
@@ -103,13 +103,20 @@ bool fakeNavigation::gotoTargetByRelativeLocation(double x, double y)
 
 bool fakeNavigation::applyVelocityCommand(double x_vel, double y_vel, double theta_vel, double timeout)
 {
-    yCInfo(FAKENAVIGATION) << "applyVelocityCommand not yet implemented";
+    m_control_out.linear_xvel = x_vel;
+    m_control_out.linear_yvel = y_vel;
+    m_control_out.angular_vel = theta_vel;
+    m_control_out.timeout = timeout;
+    m_control_out.reception_time = yarp::os::Time::now();
     return true;
 }
 
 bool fakeNavigation::getLastVelocityCommand(double& x_vel, double& y_vel, double& theta_vel)
 {
-    yCInfo(FAKENAVIGATION) << "getLastVelocityCommand not yet implemented";
+    double current_time = yarp::os::Time::now();
+    x_vel = m_control_out.linear_xvel;
+    y_vel = m_control_out.linear_yvel;
+    theta_vel = m_control_out.angular_vel;
     return true;
 }
 

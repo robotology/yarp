@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: 2006-2021 Istituto Italiano di Tecnologia (IIT)
+ * SPDX-FileCopyrightText: 2023-2023 Istituto Italiano di Tecnologia (IIT)
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
@@ -23,7 +23,7 @@ class CircularAudioBuffer
     yarp::dev::AudioBufferSize maxsize;
     size_t start;
     size_t end;
-    SAMPLE *elems;
+    SAMPLE *elems=nullptr;
 
     public:
     bool isFull()
@@ -106,7 +106,11 @@ class CircularAudioBuffer
 
     ~CircularAudioBuffer()
     {
-        free(elems);
+        if (elems)
+        {
+            free(elems);
+            elems =nullptr;
+        }
     }
 
 };

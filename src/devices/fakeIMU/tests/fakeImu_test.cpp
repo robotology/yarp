@@ -17,20 +17,19 @@ using namespace yarp::os;
 
 TEST_CASE("dev::fakeImu", "[yarp::dev]")
 {
-    YARP_REQUIRE_PLUGIN("fakeImu", "device");
+    YARP_REQUIRE_PLUGIN("fakeIMU", "device");
 
     Network::setLocalMode(true);
 
-    SECTION("Checking map2D_nws_yarp device")
+    SECTION("Checking fakeImu device")
     {
         PolyDriver ddmc;
         yarp::dev::IOrientationSensors* iimu=nullptr;
 
-        ////////"Checking opening map2DServer and map2DClient polydrivers"
+        ////////"Checking opening fakeImu polydrivers"
         {
             Property p_cfg;
-            p_cfg.put("device", "fakeMotionControl");
-            p_cfg.put("constantValue", 1);
+            p_cfg.put("device", "fakeIMU");
             REQUIRE(ddmc.open(p_cfg));
         }
 

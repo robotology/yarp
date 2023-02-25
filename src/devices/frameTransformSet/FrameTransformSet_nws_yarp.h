@@ -62,6 +62,7 @@ class FrameTransformSet_nws_yarp :
 
 public:
     FrameTransformSet_nws_yarp()=default;
+    ~FrameTransformSet_nws_yarp();
 
     //DeviceDriver
     bool open(yarp::os::Searchable& config) override;

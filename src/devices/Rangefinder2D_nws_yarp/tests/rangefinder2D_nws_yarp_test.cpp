@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: 2006-2021 Istituto Italiano di Tecnologia (IIT)
+ * SPDX-FileCopyrightText: 2023-2023 Istituto Italiano di Tecnologia (IIT)
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
@@ -18,11 +18,12 @@ using namespace yarp::os;
 
 TEST_CASE("dev::Rangefinder2D_nws_yarpTest", "[yarp::dev]")
 {
+    YARP_REQUIRE_PLUGIN("fakeLaser", "device");
     YARP_REQUIRE_PLUGIN("rangefinder2D_nws_yarp", "device");
 
     Network::setLocalMode(true);
 
-    SECTION("Checking Rangefinder2D_nws_yarp device")
+    SECTION("Checking Rangefinder2D_nws_yarp device alone")
     {
         PolyDriver nws_driver;
         IRangefinder2D* irng = nullptr;
@@ -38,6 +39,37 @@ TEST_CASE("dev::Rangefinder2D_nws_yarpTest", "[yarp::dev]")
 
         //Close all polydrivers and check
         CHECK(nws_driver.close());
+    }
+
+    SECTION("Checking Rangefinder2D_nws_yarp device attached to fakeLidar")
+    {
+        PolyDriver ddnws;
+        PolyDriver ddfake;
+
+        ////////"Checking opening rangefinder2D_nws_yarp polydrivers"
+        {
+            Property pnws_cfg;
+            pnws_cfg.put("device", "rangefinder2D_nws_yarp");
+            pnws_cfg.put("period", "0.010");
+            pnws_cfg.put("name", "/laser");
+            REQUIRE(ddnws.open(pnws_cfg));
+
+            Property pdev_cfg;
+            pdev_cfg.put("device", "fakeLaser");
+            REQUIRE(ddfake.open(pdev_cfg));
+
+            {yarp::dev::WrapperSingle* ww_nws; ddnws.view(ww_nws);
+            bool result_att = ww_nws->attach(&ddfake);
+            REQUIRE(result_att); }
+        }
+
+        yarp::os::Time::delay(0.1);
+
+        //"Close all polydrivers and check"
+        {
+            CHECK(ddnws.close());
+            CHECK(ddfake.close());
+        }
     }
 
     Network::setLocalMode(false);

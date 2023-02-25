@@ -113,6 +113,8 @@ Lidar2DDeviceBase::Lidar2DDeviceBase() :
 
 bool Lidar2DDeviceBase::parseConfiguration(yarp::os::Searchable& config)
 {
+    std::string config_str = config.toString();
+
     //sensor options (should be mandatory? TBD)
     {
         bool br = config.check("SENSOR");

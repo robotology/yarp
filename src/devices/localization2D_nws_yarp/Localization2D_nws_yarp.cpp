@@ -77,6 +77,12 @@ bool Localization2D_nws_yarp::attach(PolyDriver* driver)
         yCWarning(LOCALIZATION2D_NWS_YARP) << "Localization data not yet available during server initialization";
     }
 
+    if (!m_rpcPort.open(m_rpcPortName.c_str()))
+    {
+        yCError(LOCALIZATION2D_NWS_YARP, "Failed to open port %s", m_rpcPortName.c_str());
+        return false;
+    }
+
     PeriodicThread::setPeriod(m_period);
     return PeriodicThread::start();
 }
@@ -87,6 +93,8 @@ bool Localization2D_nws_yarp::detach()
     {
         PeriodicThread::stop();
     }
+    m_rpcPort.interrupt();
+    m_rpcPort.close();
     iLoc = nullptr;
     return true;
 }
@@ -158,18 +166,14 @@ bool Localization2D_nws_yarp::open(Searchable& config)
 
     m_stats_time_last = yarp::os::Time::now();
 
-    if (!initialize_YARP(config))
-    {
-        yCError(LOCALIZATION2D_NWS_YARP) << "Error initializing YARP ports";
-        return false;
-    }
+    m_rpcPort.setReader(*this);
 
     yCInfo(LOCALIZATION2D_NWS_YARP) << "Waiting for device to attach";
 
     return true;
 }
 
-bool Localization2D_nws_yarp::initialize_YARP(yarp::os::Searchable &params)
+bool Localization2D_nws_yarp::threadInit()
 {
     if (!m_2DLocationPort.open(m_2DLocationPortName.c_str()))
     {
@@ -182,33 +186,23 @@ bool Localization2D_nws_yarp::initialize_YARP(yarp::os::Searchable &params)
         yCError(LOCALIZATION2D_NWS_YARP, "Failed to open port %s", m_odometryPortName.c_str());
         return false;
     }
-
-    if (!m_rpcPort.open(m_rpcPortName.c_str()))
-    {
-        yCError(LOCALIZATION2D_NWS_YARP, "Failed to open port %s", m_rpcPortName.c_str());
-        return false;
-    }
-    m_rpcPort.setReader(*this);
-
     return true;
+}
+
+void Localization2D_nws_yarp::threadRelease()
+{
+    yarp::os::Time::delay(1.0);
+//    m_2DLocationPort.interrupt();
+    m_2DLocationPort.close();
+//    m_odometryPort.interrupt();
+    m_odometryPort.close();
 }
 
 bool Localization2D_nws_yarp::close()
 {
     yCTrace(LOCALIZATION2D_NWS_YARP, "Close");
-    if (PeriodicThread::isRunning())
-    {
-        PeriodicThread::stop();
-    }
 
     detach();
-
-    m_2DLocationPort.interrupt();
-    m_2DLocationPort.close();
-    m_odometryPort.interrupt();
-    m_odometryPort.close();
-    m_rpcPort.interrupt();
-    m_rpcPort.close();
 
     yCDebug(LOCALIZATION2D_NWS_YARP) << "Execution terminated";
     return true;

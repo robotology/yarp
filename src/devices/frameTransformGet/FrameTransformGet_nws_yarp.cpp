@@ -78,6 +78,12 @@ bool FrameTransformGet_nws_yarp::open(yarp::os::Searchable &config)
             yCWarning(FRAMETRANSFORMGETNWSYARP) << "no output_streaming_port_prefix param found. The resulting port name will be: " << m_streaming_port_name;
         }
         yCInfo(FRAMETRANSFORMGETNWSYARP) << "Streaming transforms on Yarp port enabled";
+        if (!m_streaming_port.open(m_streaming_port_name))
+        {
+            yCError(FRAMETRANSFORMGETNWSYARP, "Could not open \"%s\" port", m_streaming_port_name.c_str());
+            return false;
+        }
+
         this->start();
     }
     else
@@ -88,25 +94,34 @@ bool FrameTransformGet_nws_yarp::open(yarp::os::Searchable &config)
     return true;
 }
 
+FrameTransformGet_nws_yarp::~FrameTransformGet_nws_yarp()
+{
+    close();
+}
 
 bool FrameTransformGet_nws_yarp::close()
 {
-    if (m_streaming_port_enabled)
+    // Stop the thread
+    if (this->isRunning())
     {
-        this->stop();
+        this->askToStop();
     }
 
-    yCTrace(FRAMETRANSFORMGETNWSYARP, "Close");
+    // Detaching
     detach();
+
     // Closing port
     m_thrift_rpcPort.interrupt();
     m_thrift_rpcPort.close();
+    m_streaming_port.interrupt();
+    m_streaming_port.close();
     return true;
 }
 
 
 bool FrameTransformGet_nws_yarp::detach()
 {
+    std::lock_guard<std::mutex> m_lock(m_mutex);
     m_iFrameTransformStorageGet = nullptr;
     return true;
 }
@@ -114,6 +129,7 @@ bool FrameTransformGet_nws_yarp::detach()
 
 bool FrameTransformGet_nws_yarp::attach( yarp::dev::PolyDriver* deviceToAttach)
 {
+    std::lock_guard<std::mutex> m_lock(m_mutex);
     deviceToAttach->view(m_iFrameTransformStorageGet);
 
     if ( m_iFrameTransformStorageGet==nullptr){
@@ -126,6 +142,7 @@ bool FrameTransformGet_nws_yarp::attach( yarp::dev::PolyDriver* deviceToAttach)
 
 return_getAllTransforms FrameTransformGet_nws_yarp::getTransformsRPC()
 {
+    std::lock_guard<std::mutex> m_lock(m_mutex);
     if (m_iFrameTransformStorageGet != nullptr) {
         std::vector<yarp::math::FrameTransform> localTransform;
         if (m_iFrameTransformStorageGet->getTransforms(localTransform)) {
@@ -137,24 +154,9 @@ return_getAllTransforms FrameTransformGet_nws_yarp::getTransformsRPC()
 
 }
 
-bool FrameTransformGet_nws_yarp::threadInit()
-{
-    if (!m_streaming_port.open(m_streaming_port_name))
-    {
-        yCError(FRAMETRANSFORMGETNWSYARP, "Could not open \"%s\" port", m_streaming_port_name.c_str());
-        return false;
-    }
-    return true;
-}
-
-void FrameTransformGet_nws_yarp::threadRelease()
-{
-    m_streaming_port.interrupt();
-    m_streaming_port.close();
-}
-
 void FrameTransformGet_nws_yarp::run()
 {
+    std::lock_guard<std::mutex> m_lock(m_mutex);
     if (m_iFrameTransformStorageGet != nullptr)
     {
         std::vector<yarp::math::FrameTransform> localTransform;

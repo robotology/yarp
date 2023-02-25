@@ -43,9 +43,6 @@ static void ReadMapfromString(Nav2D::MapGrid2D& m, std::string s)
 
 TEST_CASE("dev::MapGrid2DTest", "[yarp::dev]")
 {
-    YARP_REQUIRE_PLUGIN("map2DServer", "device");
-    YARP_REQUIRE_PLUGIN("map2DClient", "device");
-
     Network::setLocalMode(true);
 
     // Prepare folder for saving files
