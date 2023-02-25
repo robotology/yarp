@@ -41,9 +41,9 @@ class PartItem : public QWidget
     Q_OBJECT
 public:
     explicit PartItem(QString robotName,
+                      QString portPrefix,
                       int partId,
                       QString partName,
-                      ResourceFinder& _finder,
                       bool debug_param_enabled,
                       bool speedview_param_enabled,
                       bool enable_calib_all,
@@ -51,30 +51,27 @@ public:
 
 
     ~PartItem();
-    bool openPolyDrivers();
-    void initInterfaces();
-    bool openInterfaces();
+    void initializeYarpConnections();
+    void initializeJointWidgets();
     bool getInterfaceError();
     void openSequenceWindow();
     void closeSequenceWindow();
-    bool cycleAllSeq();
     bool checkAndRunAllSeq();
     bool checkAndRunTimeAllSeq();
     bool checkAndCycleAllSeq();
     bool checkAndCycleTimeAllSeq();
     void runPart();
     void idlePart();
-    bool homeJoint(int joint);
     bool homePart();
     bool homeToCustomPosition(const yarp::os::Bottle& positionElement);
     void calibratePart();
     bool checkAndGo();
     void stopSequence();
-    void setTreeWidgetModeNode(QTreeWidgetItem *node);
     void loadSequence();
     void saveSequence(QString global_filename);
-    QTreeWidgetItem *getTreeWidgetModeNode();
     QString getPartName();
+    QString getRobotName();
+    int getPartIndex();
     const QVector<JointItem::JointState>& getPartModes();
     void resizeWidget(int w);
     int getNumberOfJoints();
@@ -84,22 +81,43 @@ public:
 
 private:
     void fixedTimeMove(SequenceItem sequence);
+    bool openPolyDrivers();
+    void initInterfaces();
+    bool openInterfaces();
+    bool homeJoint(int joint);
 
 protected:
     void resizeEvent(QResizeEvent *event) override;
     void changeEvent(QEvent *event) override;
 
 private:
+
+    struct JointInfo
+    {
+        std::string name;
+        double minPosition{0};
+        double maxPosition{0};
+        double minVelocity{0};
+        double maxVelocity{0};
+        double minCurrent{0};
+        double maxCurrent{0};
+        yarp::dev::JointTypeEnum jointType{yarp::dev::VOCAB_JOINTTYPE_REVOLUTE};
+    };
+
     FlowLayout *m_layout;
     SequenceWindow *m_sequenceWindow;
     QString m_robotPartPort;
     QString m_robotName;
     QString m_partName;
+    QString m_portPrefix;
     int     m_partId;
     bool   m_mixedEnabled;
     bool   m_positionDirectEnabled;
     bool   m_pwmEnabled;
     bool   m_currentEnabled;
+    bool   m_debugParamEnabled;
+    bool   m_speedviewParamEnabled;
+    bool   m_enableCalibAll;
     PidDlg *m_currentPidDlg;
     Stamp  m_sequence_port_stamp;
     QTimer m_runTimer;
@@ -129,8 +147,8 @@ private:
     bool    m_part_currentVisible;
     yarp::dev::InteractionModeEnum* m_interactionModes;
     QVector<JointItem::JointState> m_modesList;
+    QVector<JointInfo> m_jointsInfo;
 
-    ResourceFinder* m_finder;
     PolyDriver*     m_partsdd;
     Property        m_partOptions;
     Port            m_sequence_port;

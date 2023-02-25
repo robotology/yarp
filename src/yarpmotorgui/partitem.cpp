@@ -22,17 +22,25 @@
 #include <cmath>
 #include <cstdio>
 
-PartItem::PartItem(QString robotName, int id, QString partName, ResourceFinder& _finder,
+PartItem::PartItem(QString robotName,
+                   QString portPrefix,
+                   int id,
+                   QString partName,
                    bool debug_param_enabled,
                    bool speedview_param_enabled,
-                   bool enable_calib_all, QWidget *parent) :
+                   bool enable_calib_all,
+                   QWidget *parent) :
     QWidget(parent),
     m_sequenceWindow(nullptr),
+    m_portPrefix(portPrefix),
     m_partId(id),
     m_mixedEnabled(false),
     m_positionDirectEnabled(false),
     m_pwmEnabled(false),
     m_currentEnabled(false),
+    m_debugParamEnabled(debug_param_enabled),
+    m_speedviewParamEnabled(speedview_param_enabled),
+    m_enableCalibAll(enable_calib_all),
     m_currentPidDlg(nullptr),
     m_controlModes(nullptr),
     m_refTrajectorySpeeds(nullptr),
@@ -51,7 +59,6 @@ PartItem::PartItem(QString robotName, int id, QString partName, ResourceFinder& 
     m_part_dutyVisible(false),
     m_part_currentVisible(false),
     m_interactionModes(nullptr),
-    m_finder(&_finder),
     m_iMot(nullptr),
     m_iinfo(nullptr),
     m_slow_k(0)
@@ -67,238 +74,9 @@ PartItem::PartItem(QString robotName, int id, QString partName, ResourceFinder& 
     if (partName.at(0) == '/') {
         partName.remove(0, 1);
     }
-    m_robotPartPort = QString("/%1/%2").arg(robotName).arg(partName);
+    m_robotPartPort = QString("/%1/%2").arg(robotName, partName);
     m_partName = partName;
     m_robotName = robotName;
-
-    //checking existence of the port
-    int ind = 0;
-    QString portLocalName = QString("/yarpmotorgui%1/%2").arg(ind).arg(m_robotPartPort);
-
-
-    QString nameToCheck = portLocalName;
-    nameToCheck += "/rpc:o";
-
-    //   NameClient &nic=NameClient::getNameClient();
-    yDebug("Checking the existence of: %s \n", nameToCheck.toLatin1().data());
-    //                    Address adr=nic.queryName(nameToCheck.c_str());
-
-    Contact adr=Network::queryName(nameToCheck.toLatin1().data());
-
-    //Contact c = yarp::os::Network::queryName(portLocalName.c_str());
-    yDebug("ADDRESS is: %s \n", adr.toString().c_str());
-
-    while(adr.isValid()){
-        ind++;
-
-        portLocalName = QString("/yarpmotorgui%1/%2").arg(ind).arg(m_robotPartPort);
-
-        nameToCheck = portLocalName;
-        nameToCheck += "/rpc:o";
-        // adr=nic.queryName(nameToCheck.c_str());
-        adr=Network::queryName(nameToCheck.toLatin1().data());
-    }
-
-    m_interfaceError = false;
-
-    // Initializing the polydriver options and instantiating the polydrivers
-    m_partOptions.put("local", portLocalName.toLatin1().data());
-    m_partOptions.put("device", "remote_controlboard");
-    m_partOptions.put("remote", m_robotPartPort.toLatin1().data());
-    m_partOptions.put("carrier", "udp");
-
-    m_partsdd = new PolyDriver();
-
-    // Opening the drivers
-    m_interfaceError = !openPolyDrivers();
-    if (m_interfaceError == true)
-    {
-        yError("Opening PolyDriver for part %s failed...", m_robotPartPort.toLatin1().data());
-        QMessageBox::critical(nullptr, "Error opening a device", QString("Error while opening device for part ").append(m_robotPartPort.toLatin1().data()));
-    }
-
-    /*********************************************************************/
-    /**************** PartMover Content **********************************/
-
-    if (!m_finder->isNull()){
-        yDebug("Setting a valid finder \n");
-    }
-
-    QString sequence_portname = QString("/yarpmotorgui/%1/sequence:o").arg(partName);
-    m_sequence_port.open(sequence_portname.toLatin1().data());
-
-    initInterfaces();
-    openInterfaces();
-
-    if (m_interfaceError == false)
-    {
-        int i = 0;
-        std::string jointname;
-        int number_of_joints;
-        m_iPos->getAxes(&number_of_joints);
-
-        m_controlModes = new int[number_of_joints]; //for (i = 0; i < number_of_joints; i++) m_controlModes = 0;
-        m_refTrajectorySpeeds = new double[number_of_joints];
-        for (i = 0; i < number_of_joints; i++) {
-            m_refTrajectorySpeeds[i] = std::nan("");
-        }
-        m_refTrajectoryPositions = new double[number_of_joints];
-        for (i = 0; i < number_of_joints; i++) {
-            m_refTrajectoryPositions[i] = std::nan("");
-        }
-        m_refTorques = new double[number_of_joints];
-        for (i = 0; i < number_of_joints; i++) {
-            m_refTorques[i] = std::nan("");
-        }
-        m_refVelocitySpeeds = new double[number_of_joints];
-        for (i = 0; i < number_of_joints; i++) {
-            m_refVelocitySpeeds[i] = std::nan("");
-        }
-        m_torques = new double[number_of_joints];
-        for (i = 0; i < number_of_joints; i++) {
-            m_torques[i] = std::nan("");
-        }
-        m_positions = new double[number_of_joints];
-        for (i = 0; i < number_of_joints; i++) {
-            m_positions[i] = std::nan("");
-        }
-        m_speeds = new double[number_of_joints];
-        for (i = 0; i < number_of_joints; i++) {
-            m_speeds[i] = std::nan("");
-        }
-        m_currents = new double[number_of_joints];
-        for (i = 0; i < number_of_joints; i++) {
-            m_currents[i] = std::nan("");
-        }
-        m_motorPositions = new double[number_of_joints];
-        for (i = 0; i < number_of_joints; i++) {
-            m_motorPositions[i] = std::nan("");
-        }
-        m_dutyCycles = new double[number_of_joints];
-        for (i = 0; i < number_of_joints; i++) {
-            m_dutyCycles[i] = std::nan("");
-        }
-        m_done = new bool[number_of_joints];
-        m_interactionModes = new yarp::dev::InteractionModeEnum[number_of_joints];
-
-        bool ret = false;
-        SystemClock::delaySystem(0.050);
-        do {
-            ret = m_iencs->getEncoders(m_positions);
-            if (!ret) {
-                yError("%s iencs->getEncoders() failed, retrying...\n", partName.toLatin1().data());
-                SystemClock::delaySystem(0.050);
-            }
-        } while (!ret);
-
-        yInfo("%s iencs->getEncoders() ok!\n", partName.toLatin1().data());
-
-        double min_pos = 0;
-        double max_pos = 100;
-        double min_vel = 0;
-        double max_vel = 100;
-        double min_cur = -2.0;
-        double max_cur = +2.0;
-        for (int k = 0; k<number_of_joints; k++)
-        {
-            bool bpl = m_iLim->getLimits(k, &min_pos, &max_pos);
-            bool bvl = m_iLim->getVelLimits(k, &min_vel, &max_vel);
-            bool bcr = m_iCur->getCurrentRange(k, &min_cur, &max_cur);
-            if (bpl == false)
-            {
-                yError() << "Error while getting position limits, part " << partName.toStdString() << " joint " << k;
-            }
-            if (bvl == false || (min_vel == 0 && max_vel == 0))
-            {
-                yError() << "Error while getting velocity limits, part " << partName.toStdString() << " joint " << k;
-            }
-            if (bcr == false || (min_cur == 0 && max_cur == 0))
-            {
-                yError() << "Error while getting current range, part " << partName.toStdString() << " joint " << k;
-            }
-
-            QSettings settings("YARP", "yarpmotorgui");
-            double max_slider_vel = settings.value("velocity_slider_limit", 100.0).toDouble();
-            if (max_vel > max_slider_vel) {
-                max_vel = max_slider_vel;
-            }
-
-            m_iinfo->getAxisName(k, jointname);
-            yarp::dev::JointTypeEnum jtype = yarp::dev::VOCAB_JOINTTYPE_REVOLUTE;
-            m_iinfo->getJointType(k, jtype);
-
-            Pid myPid(0,0,0,0,0,0);
-            yarp::os::SystemClock::delaySystem(0.005);
-            m_iPid->getPid(VOCAB_PIDTYPE_POSITION, k, &myPid);
-
-            auto* joint = new JointItem(k);
-            joint->setJointName(jointname.c_str());
-            joint->setPWMRange(-100.0, 100.0);
-            joint->setCurrentRange(min_cur, max_cur);
-            m_layout->addWidget(joint);
-            joint->setPositionRange(min_pos, max_pos);
-            joint->setVelocityRange(min_vel, max_vel);
-            joint->setTrajectoryVelocityRange(max_vel);
-            joint->setTorqueRange(5.0);
-            joint->setUnits(jtype);
-            joint->enableControlPositionDirect(m_positionDirectEnabled);
-            joint->enableControlMixed(m_mixedEnabled);
-            joint->enableControlPWM(m_pwmEnabled);
-            joint->enableControlCurrent(m_currentEnabled);
-
-            int val_pos_choice = settings.value("val_pos_choice", 0).toInt();
-            int val_trq_choice = settings.value("val_trq_choice", 0).toInt();
-            int val_vel_choice = settings.value("val_vel_choice", 0).toInt();
-            double val_pos_custom_step = settings.value("val_pos_custom_step", 1.0).toDouble();
-            double val_trq_custom_step = settings.value("val_trq_custom_step", 1.0).toDouble();
-            double val_vel_custom_step = settings.value("val_vel_custom_step", 1.0).toDouble();
-            onSetPosSliderOptionPI(val_pos_choice, val_pos_custom_step);
-            onSetVelSliderOptionPI(val_vel_choice, val_vel_custom_step);
-            onSetTrqSliderOptionPI(val_trq_choice, val_trq_custom_step);
-            onSetCurSliderOptionPI(val_trq_choice, val_trq_custom_step);
-
-            joint->setEnabledOptions(debug_param_enabled,
-                                     speedview_param_enabled,
-                                     enable_calib_all);
-
-            connect(joint, SIGNAL(changeMode(int,JointItem*)), this, SLOT(onJointChangeMode(int,JointItem*)));
-            connect(joint, SIGNAL(changeInteraction(int,JointItem*)), this, SLOT(onJointInteraction(int,JointItem*)));
-            connect(joint, SIGNAL(sliderTrajectoryPositionCommand(double, int)), this, SLOT(onSliderTrajectoryPositionCommand(double, int)));
-            connect(joint, SIGNAL(sliderTrajectoryVelocityCommand(double, int)), this, SLOT(onSliderTrajectoryVelocityCommand(double, int)));
-            connect(joint, SIGNAL(sliderMixedPositionCommand(double, int)), this, SLOT(onSliderMixedPositionCommand(double, int)));
-            connect(joint, SIGNAL(sliderMixedVelocityCommand(double, int)), this, SLOT(onSliderMixedVelocityCommand(double, int)));
-            connect(joint, SIGNAL(sliderTorqueCommand(double, int)), this, SLOT(onSliderTorqueCommand(double, int)));
-            connect(joint, SIGNAL(sliderDirectPositionCommand(double, int)), this, SLOT(onSliderDirectPositionCommand(double, int)));
-            connect(joint, SIGNAL(sliderPWMCommand(double, int)), this, SLOT(onSliderPWMCommand(double, int)));
-            connect(joint, SIGNAL(sliderCurrentCommand(double, int)), this, SLOT(onSliderCurrentCommand(double, int)));
-            connect(joint, SIGNAL(sliderVelocityCommand(double, int)), this, SLOT(onSliderVelocityCommand(double, int)));
-            connect(joint, SIGNAL(homeClicked(JointItem*)),this,SLOT(onHomeClicked(JointItem*)));
-            connect(joint, SIGNAL(idleClicked(JointItem*)),this,SLOT(onIdleClicked(JointItem*)));
-            connect(joint, SIGNAL(runClicked(JointItem*)),this,SLOT(onRunClicked(JointItem*)));
-            connect(joint, SIGNAL(pidClicked(JointItem*)),this,SLOT(onPidClicked(JointItem*)));
-            connect(joint, SIGNAL(calibClicked(JointItem*)),this,SLOT(onCalibClicked(JointItem*)));
-        }
-    }
-
-    /*********************************************************************/
-    /*********************************************************************/
-
-    m_cycleTimer.setSingleShot(true);
-    m_cycleTimer.setTimerType(Qt::PreciseTimer);
-    connect(&m_cycleTimer, SIGNAL(timeout()), this, SLOT(onCycleTimerTimeout()), Qt::QueuedConnection);
-
-    m_cycleTimeTimer.setSingleShot(true);
-    m_cycleTimeTimer.setTimerType(Qt::PreciseTimer);
-    connect(&m_cycleTimeTimer, SIGNAL(timeout()), this, SLOT(onCycleTimeTimerTimeout()), Qt::QueuedConnection);
-
-
-    m_runTimeTimer.setSingleShot(true);
-    m_runTimeTimer.setTimerType(Qt::PreciseTimer);
-    connect(&m_runTimeTimer, SIGNAL(timeout()), this, SLOT(onRunTimerTimeout()), Qt::QueuedConnection);
-
-    m_runTimer.setSingleShot(true);
-    m_runTimer.setTimerType(Qt::PreciseTimer);
-    connect(&m_runTimer, SIGNAL(timeout()), this, SLOT(onRunTimeout()), Qt::QueuedConnection);
 }
 
 PartItem::~PartItem()
@@ -355,6 +133,211 @@ PartItem::~PartItem()
     if (m_interactionModes) { delete [] m_interactionModes; m_interactionModes = nullptr; }
 }
 
+void PartItem::initializeYarpConnections()
+{
+    //checking existence of the port
+    QString portLocalName = QString("%1%2").arg(m_portPrefix, m_robotPartPort);
+
+    m_interfaceError = false;
+
+    // Initializing the polydriver options and instantiating the polydrivers
+    m_partOptions.put("local", portLocalName.toLatin1().data());
+    m_partOptions.put("device", "remote_controlboard");
+    m_partOptions.put("remote", m_robotPartPort.toLatin1().data());
+    m_partOptions.put("carrier", "udp");
+
+    m_partsdd = new PolyDriver();
+
+    // Opening the drivers
+    m_interfaceError = !openPolyDrivers();
+    if (m_interfaceError == true)
+    {
+        return;
+    }
+
+    /*********************************************************************/
+    /**************** PartMover Content **********************************/
+
+    QString sequence_portname = QString("%1/sequence:o").arg(portLocalName);
+    m_sequence_port.open(sequence_portname.toLatin1().data());
+
+    initInterfaces();
+    openInterfaces();
+
+    if (m_interfaceError == false)
+    {
+        int i = 0;
+        int number_of_joints;
+        m_iPos->getAxes(&number_of_joints);
+
+        m_controlModes = new int[number_of_joints]; //for (i = 0; i < number_of_joints; i++) m_controlModes = 0;
+        m_refTrajectorySpeeds = new double[number_of_joints];
+        for (i = 0; i < number_of_joints; i++) {
+            m_refTrajectorySpeeds[i] = std::nan("");
+        }
+        m_refTrajectoryPositions = new double[number_of_joints];
+        for (i = 0; i < number_of_joints; i++) {
+            m_refTrajectoryPositions[i] = std::nan("");
+        }
+        m_refTorques = new double[number_of_joints];
+        for (i = 0; i < number_of_joints; i++) {
+            m_refTorques[i] = std::nan("");
+        }
+        m_refVelocitySpeeds = new double[number_of_joints];
+        for (i = 0; i < number_of_joints; i++) {
+            m_refVelocitySpeeds[i] = std::nan("");
+        }
+        m_torques = new double[number_of_joints];
+        for (i = 0; i < number_of_joints; i++) {
+            m_torques[i] = std::nan("");
+        }
+        m_positions = new double[number_of_joints];
+        for (i = 0; i < number_of_joints; i++) {
+            m_positions[i] = std::nan("");
+        }
+        m_speeds = new double[number_of_joints];
+        for (i = 0; i < number_of_joints; i++) {
+            m_speeds[i] = std::nan("");
+        }
+        m_currents = new double[number_of_joints];
+        for (i = 0; i < number_of_joints; i++) {
+            m_currents[i] = std::nan("");
+        }
+        m_motorPositions = new double[number_of_joints];
+        for (i = 0; i < number_of_joints; i++) {
+            m_motorPositions[i] = std::nan("");
+        }
+        m_dutyCycles = new double[number_of_joints];
+        for (i = 0; i < number_of_joints; i++) {
+            m_dutyCycles[i] = std::nan("");
+        }
+        m_done = new bool[number_of_joints];
+        m_interactionModes = new yarp::dev::InteractionModeEnum[number_of_joints];
+
+        bool ret = false;
+        SystemClock::delaySystem(0.050);
+        do {
+            ret = m_iencs->getEncoders(m_positions);
+            if (!ret) {
+                yError("%s iencs->getEncoders() failed, retrying...\n", m_partName.toLatin1().data());
+                SystemClock::delaySystem(0.050);
+            }
+        } while (!ret);
+
+        yInfo("%s iencs->getEncoders() ok!\n", m_partName.toLatin1().data());
+
+        for (int k = 0; k < number_of_joints; ++k)
+        {
+            JointInfo addedJoint;
+            m_iinfo->getAxisName(k, addedJoint.name);
+            bool bpl = m_iLim->getLimits(k, &addedJoint.minPosition, &addedJoint.maxPosition);
+            bool bvl = m_iLim->getVelLimits(k, &addedJoint.minVelocity, &addedJoint.maxVelocity);
+            bool bcr = m_iCur->getCurrentRange(k, &addedJoint.minCurrent, &addedJoint.maxCurrent);
+            if (bpl == false)
+            {
+                yError() << "Error while getting position limits, part " << m_partName.toStdString() << " joint " << k;
+            }
+            if (bvl == false || (addedJoint.minVelocity == 0 && addedJoint.maxVelocity == 0))
+            {
+                yError() << "Error while getting velocity limits, part " << m_partName.toStdString() << " joint " << k;
+            }
+            if (bcr == false || (addedJoint.minCurrent == 0 && addedJoint.maxCurrent == 0))
+            {
+                yError() << "Error while getting current range, part " << m_partName.toStdString() << " joint " << k;
+            }
+
+            m_iinfo->getJointType(k, addedJoint.jointType);
+            m_jointsInfo.push_back(addedJoint);
+        }
+    }
+}
+
+void PartItem::initializeJointWidgets()
+{
+    if (m_interfaceError == false)
+    {
+        QSettings settings("YARP", "yarpmotorgui");
+        double max_slider_vel = settings.value("velocity_slider_limit", 100.0).toDouble();
+
+
+        for (int k = 0; k < m_jointsInfo.size(); k++)
+        {
+            JointInfo& jointInfo = m_jointsInfo[k];
+
+            if (jointInfo.maxVelocity > max_slider_vel) {
+                jointInfo.maxVelocity = max_slider_vel;
+            }
+
+            auto* joint = new JointItem(k);
+            joint->setJointName(jointInfo.name.c_str());
+            joint->setPWMRange(-100.0, 100.0);
+            joint->setCurrentRange(jointInfo.minCurrent, jointInfo.maxCurrent);
+            m_layout->addWidget(joint);
+            joint->setPositionRange(jointInfo.minPosition, jointInfo.maxPosition);
+            joint->setVelocityRange(jointInfo.minVelocity, jointInfo.maxVelocity);
+            joint->setTrajectoryVelocityRange(jointInfo.maxVelocity);
+            joint->setTorqueRange(5.0);
+            joint->setUnits(jointInfo.jointType);
+            joint->enableControlPositionDirect(m_positionDirectEnabled);
+            joint->enableControlMixed(m_mixedEnabled);
+            joint->enableControlPWM(m_pwmEnabled);
+            joint->enableControlCurrent(m_currentEnabled);
+
+            int val_pos_choice = settings.value("val_pos_choice", 0).toInt();
+            int val_trq_choice = settings.value("val_trq_choice", 0).toInt();
+            int val_vel_choice = settings.value("val_vel_choice", 0).toInt();
+            double val_pos_custom_step = settings.value("val_pos_custom_step", 1.0).toDouble();
+            double val_trq_custom_step = settings.value("val_trq_custom_step", 1.0).toDouble();
+            double val_vel_custom_step = settings.value("val_vel_custom_step", 1.0).toDouble();
+            onSetPosSliderOptionPI(val_pos_choice, val_pos_custom_step);
+            onSetVelSliderOptionPI(val_vel_choice, val_vel_custom_step);
+            onSetTrqSliderOptionPI(val_trq_choice, val_trq_custom_step);
+            onSetCurSliderOptionPI(val_trq_choice, val_trq_custom_step);
+
+            joint->setEnabledOptions(m_debugParamEnabled,
+                                     m_speedviewParamEnabled,
+                                     m_enableCalibAll);
+
+            connect(joint, SIGNAL(changeMode(int,JointItem*)), this, SLOT(onJointChangeMode(int,JointItem*)));
+            connect(joint, SIGNAL(changeInteraction(int,JointItem*)), this, SLOT(onJointInteraction(int,JointItem*)));
+            connect(joint, SIGNAL(sliderTrajectoryPositionCommand(double, int)), this, SLOT(onSliderTrajectoryPositionCommand(double, int)));
+            connect(joint, SIGNAL(sliderTrajectoryVelocityCommand(double, int)), this, SLOT(onSliderTrajectoryVelocityCommand(double, int)));
+            connect(joint, SIGNAL(sliderMixedPositionCommand(double, int)), this, SLOT(onSliderMixedPositionCommand(double, int)));
+            connect(joint, SIGNAL(sliderMixedVelocityCommand(double, int)), this, SLOT(onSliderMixedVelocityCommand(double, int)));
+            connect(joint, SIGNAL(sliderTorqueCommand(double, int)), this, SLOT(onSliderTorqueCommand(double, int)));
+            connect(joint, SIGNAL(sliderDirectPositionCommand(double, int)), this, SLOT(onSliderDirectPositionCommand(double, int)));
+            connect(joint, SIGNAL(sliderPWMCommand(double, int)), this, SLOT(onSliderPWMCommand(double, int)));
+            connect(joint, SIGNAL(sliderCurrentCommand(double, int)), this, SLOT(onSliderCurrentCommand(double, int)));
+            connect(joint, SIGNAL(sliderVelocityCommand(double, int)), this, SLOT(onSliderVelocityCommand(double, int)));
+            connect(joint, SIGNAL(homeClicked(JointItem*)),this,SLOT(onHomeClicked(JointItem*)));
+            connect(joint, SIGNAL(idleClicked(JointItem*)),this,SLOT(onIdleClicked(JointItem*)));
+            connect(joint, SIGNAL(runClicked(JointItem*)),this,SLOT(onRunClicked(JointItem*)));
+            connect(joint, SIGNAL(pidClicked(JointItem*)),this,SLOT(onPidClicked(JointItem*)));
+            connect(joint, SIGNAL(calibClicked(JointItem*)),this,SLOT(onCalibClicked(JointItem*)));
+        }
+    }
+
+    /*********************************************************************/
+    /*********************************************************************/
+
+    m_cycleTimer.setSingleShot(true);
+    m_cycleTimer.setTimerType(Qt::PreciseTimer);
+    connect(&m_cycleTimer, SIGNAL(timeout()), this, SLOT(onCycleTimerTimeout()), Qt::QueuedConnection);
+
+    m_cycleTimeTimer.setSingleShot(true);
+    m_cycleTimeTimer.setTimerType(Qt::PreciseTimer);
+    connect(&m_cycleTimeTimer, SIGNAL(timeout()), this, SLOT(onCycleTimeTimerTimeout()), Qt::QueuedConnection);
+
+
+    m_runTimeTimer.setSingleShot(true);
+    m_runTimeTimer.setTimerType(Qt::PreciseTimer);
+    connect(&m_runTimeTimer, SIGNAL(timeout()), this, SLOT(onRunTimerTimeout()), Qt::QueuedConnection);
+
+    m_runTimer.setSingleShot(true);
+    m_runTimer.setTimerType(Qt::PreciseTimer);
+    connect(&m_runTimer, SIGNAL(timeout()), this, SLOT(onRunTimeout()), Qt::QueuedConnection);
+}
+
 bool PartItem::openPolyDrivers()
 {
     m_partsdd->open(m_partOptions);
@@ -378,7 +361,7 @@ bool PartItem::openPolyDrivers()
 
 void PartItem::initInterfaces()
 {
-    yDebug("Initializing interfaces...");
+    yDebug("Initializing %s interfaces...", getPartName().toStdString().c_str());
     //default value for unopened interfaces
     m_iPos = nullptr;
     m_iVel = nullptr;
@@ -401,7 +384,7 @@ void PartItem::initInterfaces()
 
 bool PartItem::openInterfaces()
 {
-    yDebug("Opening interfaces...");
+    yDebug("Opening %s interfaces...", getPartName().toStdString().c_str());
     bool ok = false;
 
     if (m_partsdd->isValid()) {
@@ -512,6 +495,16 @@ bool PartItem::getInterfaceError()
 QString PartItem::getPartName()
 {
     return m_partName;
+}
+
+QString PartItem::getRobotName()
+{
+    return m_robotName;
+}
+
+int PartItem::getPartIndex()
+{
+    return m_partId;
 }
 
 void PartItem::onSliderPWMCommand(double pwmVal, int index)

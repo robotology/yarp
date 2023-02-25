@@ -8,6 +8,7 @@
 #define MAINWINDOW_H
 
 #include <yarp/os/ResourceFinder.h>
+#include <yarp/os/Port.h>
 
 #include <QMainWindow>
 #include <QResizeEvent>
@@ -60,6 +61,7 @@ private:
     ResourceFinder   m_finder;
     std::string      m_user_script1;
     std::string      m_user_script2;
+    Port             m_testNamePort;
 
     QAction *m_goAll;
     QAction *m_runAllSeq;
