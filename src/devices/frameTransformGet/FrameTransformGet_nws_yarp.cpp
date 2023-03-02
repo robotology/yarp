@@ -104,7 +104,7 @@ bool FrameTransformGet_nws_yarp::close()
     // Stop the thread
     if (this->isRunning())
     {
-        this->askToStop();
+        this->stop();
     }
 
     // Detaching

@@ -43,7 +43,7 @@ protected:
 
 public:
     FrameTransformStorage(double tperiod=0.010) : PeriodicThread (tperiod) {}
-    ~FrameTransformStorage() {}
+    ~FrameTransformStorage() { close(); }
 
     //DeviceDriver
     bool open(yarp::os::Searchable& config) override;
