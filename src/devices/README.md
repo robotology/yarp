@@ -43,89 +43,6 @@ The tables shown hereunder report all the information needed to understand the f
 * AnalogWrapper
   * ![#00ffff](https://via.placeholder.com/15/00ffff/000000?text=+) **analogServer**
 
-* ControlBoardRemapper
-  * ![#ffff00](https://via.placeholder.com/15/ffff00/000000?text=+) controlboardremapper
-  * ![#ffff00](https://via.placeholder.com/15/ffff00/000000?text=+) remotecontrolboardremapper
-
-* controlBoard_nws_yarp
-  * ![#00ffff](https://via.placeholder.com/15/00ffff/000000?text=+) controlBoard_nws_yarp
-
-* controlBoard_nws_ros
-  * ![#00ffff](https://via.placeholder.com/15/00ffff/000000?text=+) controlBoard_nws_ros
-
-* DeviceGroup
-  * ![#ffff00](https://via.placeholder.com/15/ffff00/000000?text=+) group
-
-* DevicePipe
-  * ![#ffff00](https://via.placeholder.com/15/ffff00/000000?text=+) pipe
-
-* DynamixelAX12Ftdi
-  * ![#ffff00](https://via.placeholder.com/15/ffff00/000000?text=+) dynamixelAX12Ftdi
-
-* JoypadControlClient
-  * ![#00ff00](https://via.placeholder.com/15/00ff00/000000?text=+) **JoypadControlClient**
-
-* ![#a9a9a9](https://via.placeholder.com/15/a9a9a9/000000?text=+) JoypadControlNetUtils
-
-* JoypadControlServer
-  * ![#00ffff](https://via.placeholder.com/15/00ffff/000000?text=+) **JoypadControlServer**
-
-* ![#a9a9a9](https://via.placeholder.com/15/a9a9a9/000000?text=+) RGBDRosConversionUtils
-
-* RGBDSensorClient
-  * ![#00ff00](https://via.placeholder.com/15/00ff00/000000?text=+) **RGBDSensorClient**
-
-* rgbdSensor_nws_ros
-  * ![#00ffff](https://via.placeholder.com/15/00ffff/000000?text=+) rgbdSensor_nws_ros
-
-* rgbdSensor_nws_yarp
-  * ![#00ffff](https://via.placeholder.com/15/00ffff/000000?text=+) rgbdSensor_nws_yarp
-
-* Rangefinder2DClient
-  * ![#00ff00](https://via.placeholder.com/15/00ff00/000000?text=+) **Rangefinder2DClient**
-
-* Rangefinder2D_nws_ros
-  * ![#00ffff](https://via.placeholder.com/15/00ffff/000000?text=+) rangefinder2D_nws_ros
-
-* Rangefinder2D_nws_yarp
-  * ![#00ffff](https://via.placeholder.com/15/00ffff/000000?text=+) rangefinder2D_nws_yarp
-
-* RemoteControlBoard
-  * ![#00ff00](https://via.placeholder.com/15/00ff00/000000?text=+) **remote_controlboard**
-
-* frameGrabber_nwc_yarp
-  * ![#00ffff](https://via.placeholder.com/15/00ffff/000000?text=+) frameGrabber_nwc_yarp
-
-* frameGrabber_nws_yarp
-  * ![#00ffff](https://via.placeholder.com/15/00ffff/000000?text=+) frameGrabber_nws_yarp
-
-* frameGrabber_nws_ros
-  * ![#00ffff](https://via.placeholder.com/15/00ffff/000000?text=+) frameGrabber_nws_ros
-
-* RobotDescriptionClient
-  * ![#00ff00](https://via.placeholder.com/15/00ff00/000000?text=+) **robotDescriptionClient**
-
-* RobotDescriptionServer
-  * ![#00ffff](https://via.placeholder.com/15/00ffff/000000?text=+) **robotDescriptionServer**
-
-* SDLJoypad
-  * ![#ffff00](https://via.placeholder.com/15/ffff00/000000?text=+) SDLJoypad
-
-* SerialServoBoard
-  * ![#ffff00](https://via.placeholder.com/15/ffff00/000000?text=+) SerialServoBoard
-
-* ServerFrameGrabber
-  * ![#882200](https://via.placeholder.com/15/882200/000000?text=+) ~~grabber~~
-
-* ServerSerial
-  * ![#ffff00](https://via.placeholder.com/15/ffff00/000000?text=+) serial
-
-* ServerSoundGrabber
-  * ![#882200](https://via.placeholder.com/15/882200/000000?text=+) ~~ServerSoundGrabber~~
-
-* VirtualAnalogWrapper
-  * ![#ffff00](https://via.placeholder.com/15/ffff00/000000?text=+) virtualAnalogServer
-
 * audioFromFileDevice
   * ![#ffff00](https://via.placeholder.com/15/ffff00/000000?text=+) audioFromFileDevice
 
@@ -133,59 +50,47 @@ The tables shown hereunder report all the information needed to understand the f
   * ![#00ffff](https://via.placeholder.com/15/00ffff/000000?text=+) **AudioPlayerWrapper**
 
 * audioRecorderWrapper
-  * ![#00ffff](https://via.placeholder.com/15/00ffff/000000?text=+) **AudioRecorderWrapper**
+  * ![#00ffff](https://via.placeholder.com/15/00ffff/000000?text=+)  **AudioRecorderWrapper**
 
 * audioToFileDevice
   * ![#ffff00](https://via.placeholder.com/15/ffff00/000000?text=+) audioToFileDevice
 
-* batteryClient
-  * ![#00ff00](https://via.placeholder.com/15/00ff00/000000?text=+) **batteryClient**
+ * battery_nwc
+   * ![#00ff00](https://via.placeholder.com/15/00ff00/000000?text=+) battery_nwc_yarp
 
-* batteryWrapper
-  * ![#00ffff](https://via.placeholder.com/15/00ffff/000000?text=+) **batteryWrapper**
+* battery_nws
+  * ![#00ffff](https://via.placeholder.com/15/00ffff/000000?text=+) battery_nws_yarp
+  * ![#00ffff](https://via.placeholder.com/15/00ffff/000000?text=+) battery_nws_ros2
 
-* depthCamera
-  * ![#ffff00](https://via.placeholder.com/15/ffff00/000000?text=+) DepthCamera
-    * *To do: Rename OpenNI*Something*
+* ControlBoardRemapper
+  * ![#ffff00](https://via.placeholder.com/15/ffff00/000000?text=+) controlboardremapper
+  * ![#ffff00](https://via.placeholder.com/15/ffff00/000000?text=+) remotecontrolboardremapper
 
-* fakeAnalogSensor
+* controlBoard_nws
+  * ![#00ffff](https://via.placeholder.com/15/00ffff/000000?text=+) controlBoard_nws_yarp
+  * ![#00ffff](https://via.placeholder.com/15/00ffff/000000?text=+) controlBoard_nws_ros
+  *  ![#00ffff](https://via.placeholder.com/15/00ffff/000000?text=+) controlBoard_nws_ros2
+
+* DynamixelAX12Ftdi
+  * ![#ffff00](https://via.placeholder.com/15/ffff00/000000?text=+) dynamixelAX12Ftdi
+
+* fake devices
   * ![#ffff00](https://via.placeholder.com/15/ffff00/000000?text=+) fakeAnalogSensor
-
-* fakeBattery
   * ![#ffff00](https://via.placeholder.com/15/ffff00/000000?text=+) fakeBattery
-
-* fakeDepthCamera
   * ![#ffff00](https://via.placeholder.com/15/ffff00/000000?text=+) fakeDepthCamera
-
-* fakeFrameGrabber
   * ![#ffff00](https://via.placeholder.com/15/ffff00/000000?text=+) fakeFrameGrabber
-
-* fakeIMU
   * ![#ffff00](https://via.placeholder.com/15/ffff00/000000?text=+) fakeIMU
-
-* fakeLaser
+  * ![#ffff00](https://via.placeholder.com/15/ffff00/000000?text=+) fakeJoypad
   * ![#ffff00](https://via.placeholder.com/15/ffff00/000000?text=+) fakeLaser
-
-* fakeLocalizerDevice
+  * ![#ffff00](https://via.placeholder.com/15/ffff00/000000?text=+) fakeLaserWithMotor
   * ![#ffff00](https://via.placeholder.com/15/ffff00/000000?text=+) fakeLocalizer
-
-* fakeMicrophone
   * ![#ffff00](https://via.placeholder.com/15/ffff00/000000?text=+) fakeMicrophone
-
-* fakeMotionControl
   * ![#ffff00](https://via.placeholder.com/15/ffff00/000000?text=+) fakeMotionControl
-
-* fakeMotor
-  * ![#cc6600](https://via.placeholder.com/15/cc6600/000000?text=+) *FakeMotor*
-  * ![#cc6600](https://via.placeholder.com/15/cc6600/000000?text=+) *test_motor*
-
-* fakeNavigationDevice
   * ![#ffff00](https://via.placeholder.com/15/ffff00/000000?text=+) fakeNavigation
-
-* fakeSpeaker
+  * ![#ffff00](https://via.placeholder.com/15/ffff00/000000?text=+) fakeOdometry2D
+  * ![#ffff00](https://via.placeholder.com/15/ffff00/000000?text=+) fakePositionSensor
+  * ![#ffff00](https://via.placeholder.com/15/ffff00/000000?text=+) fakeSerialPort
   * ![#ffff00](https://via.placeholder.com/15/ffff00/000000?text=+) fakeSpeaker
-
-* fakebot
   * ![#882200](https://via.placeholder.com/15/882200/000000?text=+) ~~fakebot~~
 
 * ffmpeg
@@ -194,6 +99,15 @@ The tables shown hereunder report all the information needed to understand the f
 
 * frameGrabberCropper
   * ![#ffff00](https://via.placeholder.com/15/ffff00/000000?text=+) frameGrabberCropper
+
+* ![#a9a9a9](https://via.placeholder.com/15/a9a9a9/000000?text=+) framegrabber_protocol
+
+* frameGrabber_nwc_yarp
+  * ![#00ffff](https://via.placeholder.com/15/00ffff/000000?text=+) frameGrabber_nwc_yarp
+
+* frameGrabber_nws
+  * ![#00ffff](https://via.placeholder.com/15/00ffff/000000?text=+)  frameGrabber_nws_yarp
+  * ![#00ffff](https://via.placeholder.com/15/00ffff/000000?text=+) frameGrabber_nws_ros
 
 * frameTransformClient
   * ![#ffff00](https://via.placeholder.com/15/ffff00/000000?text=+) frameTransformClient
@@ -215,13 +129,16 @@ The tables shown hereunder report all the information needed to understand the f
 
 * ![#a9a9a9](https://via.placeholder.com/15/a9a9a9/000000?text=+) frameTransformStorageMsgs
 
-* frameTransformUtils
-  * ![#ffff00](https://via.placeholder.com/15/ffff00/000000?text=+) frameTransformContainer
-
-* ![#a9a9a9](https://via.placeholder.com/15/a9a9a9/000000?text=+) framegrabber_protocol
-
 * imuBosch_BNO055
   * ![#ffff00](https://via.placeholder.com/15/ffff00/000000?text=+) imuBosch_BNO055
+
+* JoypadControlClient
+  * ![#00ff00](https://via.placeholder.com/15/00ff00/000000?text=+) **JoypadControlClient**
+
+* ![#a9a9a9](https://via.placeholder.com/15/a9a9a9/000000?text=+) JoypadControlNetUtils
+
+* JoypadControlServer
+  * ![#00ffff](https://via.placeholder.com/15/00ffff/000000?text=+) **JoypadControlServer**
 
 * laserFromDepth
   * ![#ffff00](https://via.placeholder.com/15/ffff00/000000?text=+) laserFromDepth
@@ -241,20 +158,18 @@ The tables shown hereunder report all the information needed to understand the f
 * localization2DClient
   * ![#00ff00](https://via.placeholder.com/15/00ff00/000000?text=+) localization2D_nwc_yarp
 
-* localization2D_nws_yarp
+* localization2D_nws
   * ![#00ffff](https://via.placeholder.com/15/00ffff/000000?text=+) localization2D_nws_yarp
-
-* localization2D_nws_ros
   * ![#00ffff](https://via.placeholder.com/15/00ffff/000000?text=+) localization2D_nws_ros
+  * ![#00ffff](https://via.placeholder.com/15/00ffff/000000?text=+) localization2D_nws_ros2
 
-* map2DClient
+* map2D_nwc_yarp
   * ![#00ff00](https://via.placeholder.com/15/00ff00/000000?text=+) map2D_nwc_yarp
 
 * map2D_nws_yarp
   * ![#00ffff](https://via.placeholder.com/15/00ffff/000000?text=+) map2D_nws_yarp
-
-* map2D_nws_ros
   * ![#00ffff](https://via.placeholder.com/15/00ffff/000000?text=+) map2D_nws_ros
+  * ![#00ffff](https://via.placeholder.com/15/00ffff/000000?text=+) map2D_nws_ros2
 
 * map2DStorage
   * ![#ffff00](https://via.placeholder.com/15/ffff00/000000?text=+) map2DStorage
@@ -277,14 +192,20 @@ The tables shown hereunder report all the information needed to understand the f
 * multipleanalogsensorsserver
   * ![#00ffff](https://via.placeholder.com/15/00ffff/000000?text=+) **multipleanalogsensorsserver**
 
-* navigation2DClient
+* navigation2D_nwc_yarp
   * ![#00ff00](https://via.placeholder.com/15/00ff00/000000?text=+) navigation2D_nwc_yarp
 
-* navigation2DServer
+* navigation2D_nws_yarp
   * ![#00ffff](https://via.placeholder.com/15/00ffff/000000?text=+) navigation2D_nws_yarp
+
+* odometry2D_nws_yarp
+  * ![#00ffff](https://via.placeholder.com/15/00ffff/000000?text=+) odometry2D_nws_yarp
 
 * opencv
   * ![#ffff00](https://via.placeholder.com/15/ffff00/000000?text=+) opencv_grabber
+
+*  openNI2DepthCamera
+   * ![#ffff00](https://via.placeholder.com/15/ffff00/000000?text=+) openNI2DepthCamera
 
 * portaudio
   * ![#882200](https://via.placeholder.com/15/882200/000000?text=+) ~~portaudio~~
@@ -295,14 +216,53 @@ The tables shown hereunder report all the information needed to understand the f
 * portaudioRecorder
   * ![#ffff00](https://via.placeholder.com/15/ffff00/000000?text=+) portaudioRecorder
 
+* Rangefinder2DClient
+  * ![#00ff00](https://via.placeholder.com/15/00ff00/000000?text=+) **Rangefinder2DClient**
+
+* Rangefinder2D_nws
+  * ![#00ffff](https://via.placeholder.com/15/00ffff/000000?text=+) rangefinder2D_nws_ros
+  * ![#00ffff](https://via.placeholder.com/15/00ffff/000000?text=+) rangefinder2D_nws_yarp
+  * ![#00ffff](https://via.placeholder.com/15/00ffff/000000?text=+) rangefinder2D_nws_ros2
+
+* RemoteControlBoard
+  * ![#00ff00](https://via.placeholder.com/15/00ff00/000000?text=+) **remote_controlboard**
+
+* ![#a9a9a9](https://via.placeholder.com/15/a9a9a9/000000?text=+) RGBDRosConversionUtils
+
+* rgbdSensor_nws
+  * ![#00ffff](https://via.placeholder.com/15/00ffff/000000?text=+) rgbdSensor_nws_ros
+  *   ![#00ffff](https://via.placeholder.com/15/00ffff/000000?text=+) rgbdSensor_nws_ros2
+  * ![#00ffff](https://via.placeholder.com/15/00ffff/000000?text=+) rgbdSensor_nws_yarp
+
+ * RGBDSensorClient
+   * ![#00ff00](https://via.placeholder.com/15/00ff00/000000?text=+) **RGBDSensorClient**
+
+* RobotDescriptionClient
+  * ![#00ff00](https://via.placeholder.com/15/00ff00/000000?text=+) **robotDescriptionClient**
+
+* RobotDescriptionServer
+  * ![#00ffff](https://via.placeholder.com/15/00ffff/000000?text=+) **robotDescriptionServer**
+
 * rpLidar
   * ![#ffff00](https://via.placeholder.com/15/ffff00/000000?text=+) rpLidar
 
 * rpLidar2
   * ![#ffff00](https://via.placeholder.com/15/ffff00/000000?text=+) rpLidar2
 
+* SDLJoypad
+  * ![#ffff00](https://via.placeholder.com/15/ffff00/000000?text=+) SDLJoypad
+
 * serialport
   * ![#ffff00](https://via.placeholder.com/15/ffff00/000000?text=+) serialport
+
+* serialPort_nwc_yarp
+  * ![#00ff00](https://via.placeholder.com/15/00ff00/000000?text=+) serialPort_nwc_yarp
+
+* serialPort_nws_yarp
+  * ![#00ffff](https://via.placeholder.com/15/00ffff/000000?text=+) serialPort_nws_yarp
+
+* SerialServoBoard
+  * ![#ffff00](https://via.placeholder.com/15/ffff00/000000?text=+) SerialServoBoard
 
 * test_nop
   * ![#ffff00](https://via.placeholder.com/15/ffff00/000000?text=+) test_nop
@@ -322,3 +282,6 @@ The tables shown hereunder report all the information needed to understand the f
 * usbCamera
   * ![#ffff00](https://via.placeholder.com/15/ffff00/000000?text=+) usbCamera
   * ![#ffff00](https://via.placeholder.com/15/ffff00/000000?text=+) usbCameraRaw
+
+* VirtualAnalogWrapper
+  * ![#ffff00](https://via.placeholder.com/15/ffff00/000000?text=+) virtualAnalogServer
