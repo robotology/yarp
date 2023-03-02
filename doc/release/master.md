@@ -1,0 +1,151 @@
+YARP 3.8.0 (2023-03-02)                                                {#v3_8_0}
+=======================
+
+[TOC]
+
+YARP 3.8.0 Release Notes
+========================
+
+A (partial) list of bug fixed and issues resolved in this release can be found
+[here](https://github.com/robotology/yarp/issues?q=label%3A%22Fixed+in%3A+YARP+v3.8.0%22).
+
+
+Deprecation and Behaviour Changes
+---------------------------------
+
+### `lib_yarp_os`
+* Removed old deprecated functions related to the usage of unsafe network data types
+  (e.g. asVocab() -> asVocab32(), asInt() -> asInt32(), asDouble -> asFloat64() etc.)
+
+
+### `Devices`
+* device `group` has been removed because of faulty/incomplete implementation and unused. Please use `yarprobotinterface` instead.
+* Class `DriverLinkCreator`, used only by device `group`, has been removed.
+* device `pipe` has been removed because of faulty/incomplete implementation and unused.
+* device `dualGrabber`, previously deprecated, has been removed.
+* device `remote_grabber`, previously deprecated, has been removed.
+
+
+New Features
+------------
+
+### Libraries
+
+#### `lib_yarp_companion`
+* Added companion command `yarp split`. The command splits an heterogeneous nested bottle received from a port into multiple ports.
+
+#### `lib_yarp_os`
+* `yarp::os::LogStream` now can chain instances of `yarp::sig::VectorOf<T>`.
+
+#### `lib_yarp_dev`
+* Added method `bool getAxes(int* ax)` to `yarp::dev::IAxisInfo` interface.
+
+#### `bindings`
+* yarp bindings: Added corresponding `getAxes()` method to `IAxisInfo` interface + python example.
+
+#### `libYARP_dev_tests`
+* A new library `yarp_dev_tests`: is now exported.
+  It contains common sources to test Yarp device through `lib_yarpdev` (also outside yarp repo)
+
+#### `libYARP_robotinterface`
+* Added support to `${portprefix}` variable in parameters (#2819).
+
+
+### Devices
+* Removed devices `rpLidar`, `rpLidar2`, `rpLidar3`, and the corresponding sdk in `extern/rplidar`.
+  The devices can be now found in https://github.com/robotology/yarp-device-rplidar
+
+#### `fakeLaserWithMotor`
+* added new device `fakeLaserWithMotor`
+
+#### `rangefinder2D_nwc_yarp`
+* added new device `rangefinder2D_nwc_yarp` (including IRangefinder2D tests)
+
+#### `frameTransformServer` + `frameTransformClient`
+
+* Now both `frameTransformClient` and `frameTransformServer` will search for "test" configurations not relying on an absolute path passed as a parameter but will take advantage of `yarp::os::ResourceFinder` using a `file name` and a `context` passed to them in this way:
+```
+> yarpdev --device frameTransformClient --testxml_from testconfig.xml --testxml_context test_folder
+```
+
+### `yarpidl_thrift`
+* Improved thrift generator in order to handle default values of the variables declared inside a .thrift file.
+
+
+### Extern
+
+#### `Catch`
+* Migration from `Catch V2.13.8` to `Catch V3.2.1`.
+
+#### `sqlite3`
+* Migration from `sqlite` to `sqlite3`. Fixed issue preventing `extern/sqlite3` (i.e. `YARP_priv_SQLite3`) to be correctly found as a dependency by other projects.
+
+
+### GUIs
+
+#### `yarpview`
+* Added the possibility to set a custom title for `yarpview` by passing `--title` + *custom title* to the executable
+* If the `title` argument is not passed `yarpview` window title will be assigned as it has been until now
+
+#### `yarpmotorgui`
+* Added visualization of motor position when a joint is in hardware fault.
+* Improved sliders labels alignment.
+* Added a new option to set the number of decimal digits of the slider.
+
+
+### YCM
+* migration from `YCM 0.13` to `YCM 0.15.1`
+
+
+### Other
+* added option `YARP_COMPILE_ALL_FAKE_DEVICES` to build all fake devices in one single shot
+
+
+### Portmonitors
+
+#### `image_rotation`
+* added new portmonitor `image_rotation`
+
+
+Bug Fixes
+---------
+
+### bindings
+* `IGazeControl.storeContext()`: now the method is correctly exposed to Python, returning the ID instead of trying to modify a pointer to it.
+### devices
+
+#### `ffmpeg_grabber`
+* Fixed linking problems on Windows.
+
+#### `AudioRecorderWrapper`
+* It now inherits from `yarp::dev::WrapperSingle` instead of `yarp::dev::IMultipleWrapper`
+
+#### `AudioPlayerWrapper`
+* It now inherits from `yarp::dev::WrapperSingle` instead of `yarp::dev::IMultipleWrapper`
+
+#### `frameTransformClient`
+* Now, if the selected configuration xml file does not include a certain interface, the device is still correctly initialized but that interface won't be available. If a method that involves the missing interface is called, an error will be returned.
+
+#### `controlBoard_nws_yarp`
+* Fixed handling of `IRemoteVariables` messages via RPC.
+* `RPCMessagesParser`:  several calls to various motor control interfaces have been protected so that
+  if an interface is not available in the hardware device (i.e. the view() fails),
+  the `controlboardwrapper/yarprobotinterface` does not segfaults.
+
+#### `multipleanalogsensorsremapper`
+* Add more verbosity when sensor name is not found.
+
+### Tools
+
+#### `yarprobotinterface`
+* `yarprobotinterface`: is now able to parse `enabled_by` and `disabled_by` xml attributes. See  yarprobotinterface Doxygen documentation.
+
+#### Yarp companion
+* Fixed yarp command `write` throwing segmentation fault when `argc` was less than 2.
+
+### Integration Tests
+* Tests: Added integration tests to check the correct execution of the following commands:
+`yarp --version`
+`yarpdev --list`
+`yarp plugin --all`
+* Tests: If no plugins are available, the command `yarp plugin --all` now returns 0 (OK) instead of 1 (ERROR).
