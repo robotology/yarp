@@ -100,8 +100,6 @@ class CircularAudioBuffer
                         "CircularAudioBuffer can be specialized only as <unsigned char>, <unsigned short int>, <unsigned int>");
 
         yAssert(bufferSize.m_depth == sizeof(SAMPLE));
-
-        maxsize.size += 1;
     }
 
     ~CircularAudioBuffer()
