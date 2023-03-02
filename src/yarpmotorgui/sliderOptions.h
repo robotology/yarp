@@ -28,6 +28,7 @@ public:
 
 private:
     Ui::sliderOptions *ui;
+    int    val_pos_digits;
     double val_pos_custom_step;
     double val_vel_custom_step;
     double val_trq_custom_step;
@@ -35,6 +36,7 @@ private:
     int val_pos_choice;
     int val_vel_choice;
     int val_trq_choice;
+    QIntValidator*    pos_digits_validator;
     QDoubleValidator* pos_step_validator;
     QDoubleValidator* vel_step_validator;
     QDoubleValidator* trq_step_validator;
@@ -42,7 +44,7 @@ private:
 
 
 signals:
-    void sig_setPosSliderOptionSO(int, double);
+    void sig_setPosSliderOptionSO(int, double, int);
     void sig_setVelSliderOptionSO(int, double);
     void sig_setTrqSliderOptionSO(int, double);
 };

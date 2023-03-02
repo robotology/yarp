@@ -1047,6 +1047,16 @@ void JointItem::enablePositionSliderDoubleValue(double value)
     ui->sliderDirectPosition->resetTarget();
 }
 
+void JointItem::setNumberOfPositionSliderDecimals(size_t num)
+{
+    ui->sliderMixedPosition->number_of_decimals=num;
+    ui->sliderTrajectoryPosition->number_of_decimals = num;
+    ui->sliderDirectPosition->number_of_decimals = num;
+    ui->sliderMixedPosition->number_of_decimals = num;
+    ui->sliderTrajectoryPosition->number_of_decimals = num;
+    ui->sliderDirectPosition->number_of_decimals = num;
+}
+
 void JointItem::disablePositionSliderDouble()
 {
     if (fabs(max_position - min_position) < 1.0)

@@ -1401,14 +1401,12 @@ bool FakeMotionControl::fromConfig(yarp::os::Searchable &config)
 */
 
     /////// LIMITS
-/*
     Bottle &limits=config.findGroup("LIMITS");
     if (limits.isNull())
     {
         yCWarning(FAKEMOTIONCONTROL) << "fromConfig() detected that Group LIMITS is not found in configuration file";
-        return false;
     }
-    // current limit
+/*    // current limit
     if (!extractGroup(limits, xtmp, "OverloadCurrents","a list of current limits", _njoints))
         return false;
     else
@@ -1425,19 +1423,19 @@ bool FakeMotionControl::fromConfig(yarp::os::Searchable &config)
         return false;
     else
         for(i=1; i<xtmp.size(); i++) _currentLimits[i-1].peakCurrent=xtmp.get(i).asFloat64();
-
+*/
     // max limit
     if (!extractGroup(limits, xtmp, "Max","a list of maximum angles (in degrees)", _njoints))
-        return false;
+        _limitsMax[i - 1] = 100;
     else
         for(i=1; i<xtmp.size(); i++) _limitsMax[i-1]=xtmp.get(i).asFloat64();
 
     // min limit
     if (!extractGroup(limits, xtmp, "Min","a list of minimum angles (in degrees)", _njoints))
-        return false;
+        _limitsMin[i - 1] = 0;
     else
         for(i=1; i<xtmp.size(); i++) _limitsMin[i-1]=xtmp.get(i).asFloat64();
-
+/*
     // Rotor max limit
     if (!extractGroup(limits, xtmp, "RotorMax","a list of maximum rotor angles (in degrees)", _njoints))
         return false;
@@ -2691,7 +2689,9 @@ bool FakeMotionControl::setLimitsRaw(int j, double min, double max)
 
 bool FakeMotionControl::getLimitsRaw(int j, double *min, double *max)
 {
-    return false;
+    *min = _limitsMin[j];
+    *max = _limitsMax[j];
+    return true;
 }
 
 bool FakeMotionControl::getGearboxRatioRaw(int j, double *gearbox)

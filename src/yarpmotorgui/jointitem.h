@@ -81,6 +81,8 @@ class JointItem : public QWidget
     void sequenceActivated();
     void sequenceStopped();
 
+    void setNumberOfPositionSliderDecimals(size_t num);
+
     void enablePositionSliderDoubleAuto();
     void enablePositionSliderDoubleValue(double value);
     void disablePositionSliderDouble();

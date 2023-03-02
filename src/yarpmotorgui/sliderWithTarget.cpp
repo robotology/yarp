@@ -105,14 +105,32 @@ void SliderWithTarget::paintEvent(QPaintEvent *e)
     {
         double value = this->value();
         double newX = ((double)w / (double)totValues) * ((double)value + abs(this->minimum()));
-        sliderCurrentLabel->setGeometry(newX, -10, 40, 20);
-        sliderCurrentLabel->setText(QString("%L1").arg((double)value / sliderStep, 0, 'f', 3));
+        QString label_text = QString("%L1").arg((double)value / sliderStep, 0, 'f', number_of_decimals);
+        int label_text_siz = label_text.size();
+        sliderCurrentLabel->setText(label_text);
+        sliderCurrentLabel->setAlignment(Qt::AlignLeft);
+        sliderCurrentLabel->setAlignment(Qt::AlignVCenter);
+        //these adjustment are required to have the label properly aligned and
+        //to avoid overflow
+        double newX2 = newX;
+        if (newX2<0) newX2 = 0;
+        if (newX2>w-30) newX2 = w-30;
+        sliderCurrentLabel->setGeometry(newX2, -10, 60, 20);
     }
     if (enableViewTargetValue)
     {
         double newX = ((double)w / (double)totValues) * ((double)target + abs(this->minimum()));
-        sliderTargetLabel->setGeometry(newX, +10, 80, 20);
-        sliderTargetLabel->setText(QString("Ref:%L1").arg((double)target, 0, 'f', 3));
+        QString label_text = QString("Ref:%L1").arg((double)target, 0, 'f', number_of_decimals);
+        int label_text_siz = label_text.size();
+        sliderTargetLabel->setText(label_text);
+        sliderCurrentLabel->setAlignment(Qt::AlignLeft);
+        sliderCurrentLabel->setAlignment(Qt::AlignVCenter);
+        //these adjustment are required to have the label properly aligned and
+        //to avoid overflow
+        double newX2 = newX;
+        if (newX2 < 0) newX2 = 0;
+        if (newX2 > w - 30) newX2 = w - 30;
+        sliderTargetLabel->setGeometry(newX2, +10, 60, 20);
     }
     else
     {

@@ -175,7 +175,7 @@ public slots:
     void onViewMotorPositions(bool);
     void onViewDutyCycles(bool);
     void onViewCurrentValues(bool);
-    void onSetPosSliderOptionPI(int mode, double step);
+    void onSetPosSliderOptionPI(int mode, double step, int numOfDec);
     void onSetVelSliderOptionPI(int mode, double step);
     void onSetTrqSliderOptionPI(int mode, double step);
     void onSetCurSliderOptionPI(int mode, double step);

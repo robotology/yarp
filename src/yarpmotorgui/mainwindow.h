@@ -125,7 +125,7 @@ private slots:
     void onEnableControlPWM(bool val);
     void onEnableControlCurrent(bool val);
     void onSliderOptionsClicked();
-    void onSetPosSliderOptionMW(int, double);
+    void onSetPosSliderOptionMW(int, double, int);
     void onSetVelSliderOptionMW(int, double);
     void onSetTrqSliderOptionMW(int, double);
     void onJointClicked(int partIndex, int jointIndex);
@@ -142,7 +142,7 @@ signals:
     void sig_viewCurrentValues(bool);
     void sig_viewMotorPositions(bool);
     void sig_viewDutyCycles(bool);
-    void sig_setPosSliderOptionMW(int, double);
+    void sig_setPosSliderOptionMW(int, double, int);
     void sig_setVelSliderOptionMW(int, double);
     void sig_setTrqSliderOptionMW(int, double);
     void sig_viewPositionTargetBox(bool);

@@ -249,10 +249,11 @@ PartItem::PartItem(QString robotName, int id, QString partName, ResourceFinder& 
             int val_pos_choice = settings.value("val_pos_choice", 0).toInt();
             int val_trq_choice = settings.value("val_trq_choice", 0).toInt();
             int val_vel_choice = settings.value("val_vel_choice", 0).toInt();
+            int num_of_pos_decimals = settings.value("num_of_pos_decimals", 3).toInt();
             double val_pos_custom_step = settings.value("val_pos_custom_step", 1.0).toDouble();
             double val_trq_custom_step = settings.value("val_trq_custom_step", 1.0).toDouble();
             double val_vel_custom_step = settings.value("val_vel_custom_step", 1.0).toDouble();
-            onSetPosSliderOptionPI(val_pos_choice, val_pos_custom_step);
+            onSetPosSliderOptionPI(val_pos_choice, val_pos_custom_step, num_of_pos_decimals);
             onSetVelSliderOptionPI(val_vel_choice, val_vel_custom_step);
             onSetTrqSliderOptionPI(val_trq_choice, val_trq_custom_step);
             onSetCurSliderOptionPI(val_trq_choice, val_trq_custom_step);
@@ -2007,7 +2008,7 @@ void PartItem::onViewPositionTargetValue(bool ena)
     }
 }
 
-void PartItem::onSetPosSliderOptionPI(int mode, double step)
+void PartItem::onSetPosSliderOptionPI(int mode, double step, int numOfDec)
 {
     for (int i = 0; i<m_layout->count(); i++)
     {
@@ -2028,6 +2029,7 @@ void PartItem::onSetPosSliderOptionPI(int mode, double step)
         {
             joint->disablePositionSliderDouble();
         }
+        joint->setNumberOfPositionSliderDecimals(numOfDec);
     }
 }
 void PartItem::onSetVelSliderOptionPI(int mode, double step)
