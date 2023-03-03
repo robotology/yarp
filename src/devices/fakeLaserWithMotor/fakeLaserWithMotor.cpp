@@ -203,6 +203,9 @@ bool FakeLaserWithMotor::open(yarp::os::Searchable& config)
 bool FakeLaserWithMotor::close()
 {
     PeriodicThread::stop();
+    dealloc();
+    m_rpcPort.interrupt();
+    m_rpcPort.close();
 
     return true;
 }

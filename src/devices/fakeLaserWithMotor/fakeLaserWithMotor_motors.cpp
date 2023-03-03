@@ -341,14 +341,14 @@ bool FakeLaserWithMotor::alloc(int nj)
 
 bool FakeLaserWithMotor::dealloc()
 {
+    checkAndDestroy(_axisName);
+    checkAndDestroy(_jointType);
     checkAndDestroy(_controlModes);
     checkAndDestroy(_encoders);
     checkAndDestroy(_posCtrl_references);
-    checkAndDestroy(_command_speeds);
     checkAndDestroy(_ref_speeds);
+    checkAndDestroy(_command_speeds);
     checkAndDestroy(_ref_accs);
-    checkAndDestroy(_axisName);
-    checkAndDestroy(_jointType);
     return true;
 }
 
