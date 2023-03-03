@@ -249,6 +249,8 @@ bool RGBDSensorClient::initialize_YARP(yarp::os::Searchable& /*config*/)
 
 bool RGBDSensorClient::close()
 {
+    colorFrame_StreamingPort.interrupt();
+    depthFrame_StreamingPort.interrupt();
     colorFrame_StreamingPort.close();
     depthFrame_StreamingPort.close();
     rpcPort.close();
