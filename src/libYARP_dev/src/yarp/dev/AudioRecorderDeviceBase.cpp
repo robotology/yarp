@@ -205,7 +205,7 @@ bool AudioRecorderDeviceBase::isRecording(bool& recording_enabled)
 
 AudioRecorderDeviceBase::~AudioRecorderDeviceBase()
 {
-    if (m_inputBuffer == nullptr)
+    if (m_inputBuffer != nullptr)
     {
         delete m_inputBuffer;
         m_inputBuffer = nullptr;

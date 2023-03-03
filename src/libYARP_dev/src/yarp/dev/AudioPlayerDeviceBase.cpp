@@ -53,7 +53,11 @@ bool AudioPlayerDeviceBase::getPlaybackAudioBufferMaxSize(yarp::dev::AudioBuffer
 
 AudioPlayerDeviceBase::~AudioPlayerDeviceBase()
 {
-    delete m_outputBuffer;
+    if (m_outputBuffer != nullptr)
+    {
+        delete m_outputBuffer;
+        m_outputBuffer = nullptr;
+    }
 }
 
 bool AudioPlayerDeviceBase::setSWGain(double gain)
