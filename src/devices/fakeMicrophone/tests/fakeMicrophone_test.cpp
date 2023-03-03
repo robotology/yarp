@@ -34,6 +34,9 @@ TEST_CASE("dev::fakeMicrophone", "[yarp::dev]")
 
         dd.view(igrb);
         CHECK(igrb->startRecording());
+
+        yarp::os::Time::delay(0.1);
+
         CHECK(igrb->stopRecording());
 
         //"Close all polydrivers and check"
