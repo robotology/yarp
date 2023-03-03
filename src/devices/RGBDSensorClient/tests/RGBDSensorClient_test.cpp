@@ -64,6 +64,11 @@ TEST_CASE("dev::RGBDSensorClientTest", "[yarp::dev]")
 
             pnwc_cfg.put("localRpcPort",    "/rgbd_nwc/rpc:o");
             pnwc_cfg.put("remoteRpcPort",   "/rgbd_nws/rpc:i");
+
+            //beware: default carrier is udp, but we do not want to use it for tests
+            //since it may fail on the cloud CI.
+            pnwc_cfg.put("ImageCarrier",   "tcp");
+            pnwc_cfg.put("DepthCarrier",   "tcp");
             REQUIRE(ddnwc.open(pnwc_cfg));
         }
         REQUIRE(ddnwc.view(irgbd));
