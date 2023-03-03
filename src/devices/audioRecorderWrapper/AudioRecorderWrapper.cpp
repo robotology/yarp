@@ -31,10 +31,7 @@ AudioRecorderWrapper::AudioRecorderWrapper() :
 
 AudioRecorderWrapper::~AudioRecorderWrapper()
 {
-    if (m_mic != nullptr)
-    {
-        close();
-    }
+    close();
 }
 
 bool AudioRecorderWrapper::open(yarp::os::Searchable& config)
@@ -115,19 +112,24 @@ bool AudioRecorderWrapper::open(yarp::os::Searchable& config)
 
 bool AudioRecorderWrapper::close()
 {
-    if (m_mic != nullptr)
-    {
-        m_dataThread->stop();
-        m_statusThread->stop();
-        m_mic->stopRecording();
-        m_mic = nullptr;
+    detach();
 
-        m_streamingPort.interrupt();
-        m_streamingPort.close();
-        m_rpcPort.interrupt();
-        m_rpcPort.close();
-        m_statusPort.interrupt();
-        m_statusPort.close();
+    m_streamingPort.interrupt();
+    m_streamingPort.close();
+    m_rpcPort.interrupt();
+    m_rpcPort.close();
+    m_statusPort.interrupt();
+    m_statusPort.close();
+
+    if (m_dataThread)
+    {
+        delete m_dataThread;
+        m_dataThread = nullptr;
+    }
+    if (m_statusThread)
+    {
+        delete m_statusThread;
+        m_statusThread = nullptr;
     }
     return true;
 }
@@ -248,15 +250,20 @@ bool AudioRecorderWrapper::attach(PolyDriver* driver)
 
 bool AudioRecorderWrapper::detach()
 {
-    if (m_dataThread->isRunning())
+    if (m_dataThread)
     {
         m_dataThread->stop();
     }
-    if (m_statusThread->isRunning())
+    if (m_statusThread)
     {
         m_statusThread->stop();
     }
-    m_mic = nullptr;
+
+    if (m_mic)
+    {
+        m_mic->stopRecording();
+        m_mic = nullptr;
+    }
     return true;
 }
 
