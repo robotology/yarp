@@ -11,7 +11,6 @@
 #include <yarp/cv/Cv.h>
 #include <catch2/catch_amalgamated.hpp>
 #include <harness.h>
-#include <YarpBuildLocation.h>
 
 using namespace yarp::cv;
 using namespace yarp::os;
