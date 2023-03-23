@@ -49,8 +49,11 @@ protected:
 
     std::string                                  m_local_name = "/navigation2D_nws_yarp";
     yarp::os::Port                               m_rpcPort;
+    yarp::os::Port                               m_statusPort;
     std::string                                  m_rpcPortName;
+    std::string                                  m_statusPortName;
     yarp::dev::Nav2D::NavigationStatusEnum       m_navigation_status;
+    std::string                                  m_prev_navigation_status;
 
     //drivers and interfaces
     yarp::dev::PolyDriver                            pNav;
@@ -79,6 +82,7 @@ public:
 
 private:
     std::string getStatusAsString(yarp::dev::Nav2D::NavigationStatusEnum status);
+    void updateStatusPort(std::string& status);
 };
 
 #endif
