@@ -146,7 +146,7 @@ void QEngine::runNormally()
 
     //10 Hz gui update
     static double gui_tic = 0.0;
-    if(this->virtualTime < gui_tic || this->virtualTime - gui_tic > 0.1) { 
+    if(this->virtualTime < gui_tic || this->virtualTime - gui_tic > 0.1) {
          emit qutils->updateGuiThread();
          gui_tic = this->virtualTime;
     }
