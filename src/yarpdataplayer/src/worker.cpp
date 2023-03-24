@@ -93,6 +93,8 @@ void QEngine::stepFromCmd()
 /**********************************************************/
 void QEngine::runNormally()
 {
+    if(allPartsStatus) return;
+
     for (int i=0; i < this->numPart; i++){
         //get a reference to the part we are interested in
         yarp::yarpDataplayer::PartsData &this_part = qutils->partDetails[i];
@@ -109,12 +111,6 @@ void QEngine::runNormally()
         while (this_part.currFrame <= this_part.maxFrame &&
             this->virtualTime >= this_part.timestamp[this_part.currFrame]) {
             this_part.worker->sendData(this_part.currFrame++, isActive, this->virtualTime);
-        }
-
-        //check if to update the Gui
-        if (this->initTime > 300 && this->virtualTime < this_part.timestamp[this_part.timestamp.length() - 1]) {
-            emit qutils->updateGuiThread();
-            this->initTime = 0;
         }
 
         //if we have sent all frames perform reset/stop
@@ -147,7 +143,14 @@ void QEngine::runNormally()
 
     this->virtualTime += this->diff_seconds() * qutils->speed;
     this->tick();
-    this->initTime++;
+
+    //10 Hz gui update
+    static double gui_tic = 0.0;
+    if(this->virtualTime < gui_tic || this->virtualTime - gui_tic > 0.1) { 
+         emit qutils->updateGuiThread();
+         gui_tic = this->virtualTime;
+    }
+
 }
 
 /**********************************************************/
