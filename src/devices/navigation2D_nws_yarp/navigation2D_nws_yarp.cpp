@@ -28,6 +28,7 @@ navigation2D_nws_yarp::navigation2D_nws_yarp() : PeriodicThread(DEFAULT_THREAD_P
 {
     m_navigation_status=yarp::dev::Nav2D::navigation_status_idle;
     m_stats_time_last = yarp::os::Time::now();
+    m_prev_navigation_status = getStatusAsString(m_navigation_status);
 }
 
 bool navigation2D_nws_yarp::attach(PolyDriver* driver)
@@ -63,6 +64,10 @@ bool navigation2D_nws_yarp::detach()
     {
         PeriodicThread::stop();
     }
+
+    m_statusPort.close();
+    m_rpcPort.close();
+
     return true;
 }
 
@@ -99,6 +104,7 @@ bool navigation2D_nws_yarp::open(Searchable& config)
         yCInfo(NAVIGATION2D_NWS_YARP) << "Using local name:" << m_local_name;
     }
     m_rpcPortName = m_local_name + "/rpc";
+    m_statusPortName = m_local_name + "/status:o";
 
     if (!initialize_YARP(config))
     {
@@ -118,6 +124,13 @@ bool navigation2D_nws_yarp::initialize_YARP(yarp::os::Searchable &params)
         yCError(NAVIGATION2D_NWS_YARP, "Failed to open port %s", m_rpcPortName.c_str());
         return false;
     }
+
+    if(!m_statusPort.open(m_statusPortName.c_str()))
+    {
+        yCError(NAVIGATION2D_NWS_YARP, "Failed to open port %s", m_statusPortName.c_str());
+        return false;
+    }
+
     m_rpcPort.setReader(*this);
     return true;
 }
@@ -153,7 +166,11 @@ void navigation2D_nws_yarp::run()
     bool ok = iNav_ctrl->getNavigationStatus(m_navigation_status);
 
     double m_stats_time_curr = yarp::os::Time::now();
-    if (m_stats_time_curr - m_stats_time_last > 5.0)
+
+    std::string a_navigation_status = getStatusAsString(m_navigation_status);
+
+    if(a_navigation_status != m_prev_navigation_status
+        || m_stats_time_curr - m_stats_time_last > 5.0)
     {
         if (!ok)
         {
@@ -161,7 +178,9 @@ void navigation2D_nws_yarp::run()
         }
         else
         {
-            yCInfo(NAVIGATION2D_NWS_YARP) << "Running, ALL ok. Navigation status:" << getStatusAsString(m_navigation_status);
+            yCInfo(NAVIGATION2D_NWS_YARP) << "Running, ALL ok. Navigation status:" << a_navigation_status;
+            updateStatusPort(a_navigation_status);
+            m_prev_navigation_status = a_navigation_status;
         }
         m_stats_time_last = yarp::os::Time::now();
     }
@@ -191,4 +210,11 @@ std::string navigation2D_nws_yarp::getStatusAsString(NavigationStatusEnum status
         return std::string("navigation_status_error");
     }
     return std::string("navigation_status_error");
+}
+
+void navigation2D_nws_yarp::updateStatusPort(std::string& status)
+{
+    Bottle output_state;
+    output_state.addString(status);
+    m_statusPort.write(output_state);
 }
