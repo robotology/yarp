@@ -10,3 +10,7 @@ yarp_install_basic_package_files(YARP_serversql
   DEPENDENCIES ${YARP_serversql_PUBLIC_DEPS}
   PRIVATE_DEPENDENCIES ${YARP_serversql_PRIVATE_DEPS}
 )
+
+if(YARP_COMPILE_TESTS)
+  add_subdirectory(tests)
+endif()
