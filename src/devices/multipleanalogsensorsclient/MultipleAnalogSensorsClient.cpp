@@ -64,7 +64,7 @@ bool MultipleAnalogSensorsClient::open(yarp::os::Searchable& config)
     std::string local = config.find("local").asString();
 
     // Optional timeout parameter
-    m_streamingPort.timeoutInSeconds = config.check("timeout", yarp::os::Value(0.01), "Timeout parameter").asFloat64();
+    m_streamingPort.timeoutInSeconds = config.check("timeout", yarp::os::Value(0.02), "Timeout parameter").asFloat64();
 
     m_localRPCPortName = local + "/rpc:i";
     m_localStreamingPortName = local + "/measures:i";
