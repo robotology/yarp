@@ -46,3 +46,7 @@ install(
 )
 
 set_property(TARGET yarpidl_rosmsg PROPERTY FOLDER "Command Line Tools")
+
+if(YARP_COMPILE_TESTS)
+  add_subdirectory(tests)
+endif()
