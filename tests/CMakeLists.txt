@@ -109,9 +109,6 @@ set_property(TARGET YARP_harness_no_network PROPERTY FOLDER "Test")
 
 add_subdirectory(misc)
 
-add_subdirectory(yarpidl_thrift)
-add_subdirectory(yarpidl_rosmsg)
-
 add_subdirectory(devices)
 
 add_subdirectory(integration)
