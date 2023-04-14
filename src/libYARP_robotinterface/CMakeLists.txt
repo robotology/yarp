@@ -14,3 +14,7 @@ yarp_install_basic_package_files(YARP_robotinterface
   DEPENDENCIES ${YARP_robotinterface_PUBLIC_DEPS}
   PRIVATE_DEPENDENCIES ${YARP_robotinterface_PRIVATE_DEPS}
 )
+
+if(YARP_COMPILE_TESTS)
+  add_subdirectory(tests)
+endif()

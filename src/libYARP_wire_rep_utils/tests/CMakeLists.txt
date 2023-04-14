@@ -5,6 +5,8 @@ if(NOT TARGET YARP::YARP_wire_rep_utils)
   return()
 endif()
 
+include(YarpCatchUtils)
+
 add_executable(harness_wire_rep_utils)
 
 target_sources(harness_wire_rep_utils

@@ -8,3 +8,8 @@ add_subdirectory(src)
 # These are used in the YARP_init folder
 set(YARP_os_PUBLIC_DEPS ${YARP_os_PUBLIC_DEPS} PARENT_SCOPE)
 set(YARP_os_PRIVATE_DEPS ${YARP_os_PRIVATE_DEPS} PARENT_SCOPE)
+
+if(YARP_COMPILE_TESTS)
+  add_subdirectory(tests)
+  add_subdirectory(tests/impl)
+endif()

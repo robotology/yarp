@@ -133,3 +133,7 @@ set_property(TARGET yarpidl_thrift PROPERTY FOLDER "Command Line Tools")
 
 yarp_deprecated_option(THRIFT_USE_EXTERNAL) # Since YARP 3.0.0
 yarp_deprecated_option(THRIFT_ROOT) # Since YARP 3.0.0
+
+if(YARP_COMPILE_TESTS)
+  add_subdirectory(tests)
+endif()

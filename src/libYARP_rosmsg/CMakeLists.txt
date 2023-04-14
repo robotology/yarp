@@ -22,3 +22,7 @@ yarp_install_basic_package_files(YARP_rosmsg
   DEPENDENCIES ${YARP_rosmsg_PUBLIC_DEPS}
   PRIVATE_DEPENDENCIES ${YARP_rosmsg_PRIVATE_DEPS}
 )
+
+if(YARP_COMPILE_TESTS)
+  add_subdirectory(tests)
+endif()

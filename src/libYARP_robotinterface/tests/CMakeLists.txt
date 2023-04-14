@@ -5,6 +5,8 @@ if(NOT TARGET YARP::YARP_robotinterface)
   return()
 endif()
 
+include(YarpCatchUtils)
+
 add_executable(harness_robotinterface)
 
 target_sources(harness_robotinterface

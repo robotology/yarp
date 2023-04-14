@@ -1,6 +1,8 @@
 # SPDX-FileCopyrightText: 2006-2021 Istituto Italiano di Tecnologia (IIT)
 # SPDX-License-Identifier: BSD-3-Clause
 
+include(YarpCatchUtils)
+
 add_executable(harness_os_impl)
 
 target_sources(harness_os_impl
