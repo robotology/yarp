@@ -162,9 +162,15 @@ endif()
 
 cmake_dependent_option(YARP_DISABLE_FAILING_TESTS OFF "Disable tests that fail randomly due to race conditions" YARP_COMPILE_TESTS OFF)
 mark_as_advanced(YARP_DISABLE_FAILING_TESTS)
+if(YARP_DISABLE_FAILING_TESTS)
+  add_definitions(-DDISABLE_FAILING_TESTS)
+endif()
 
 cmake_dependent_option(YARP_ENABLE_BROKEN_TESTS OFF "Enable broken tests" YARP_COMPILE_TESTS OFF)
 mark_as_advanced(YARP_ENABLE_BROKEN_TESTS)
+if(YARP_ENABLE_BROKEN_TESTS)
+  add_definitions(-DENABLE_BROKEN_TESTS)
+endif()
 
 cmake_dependent_option(YARP_ENABLE_INTEGRATION_TESTS OFF "Run integration tests" "YARP_COMPILE_TESTS;UNIX" OFF)
 mark_as_advanced(YARP_ENABLE_INTEGRATION_TESTS)
@@ -192,6 +198,9 @@ cmake_dependent_option(
   "YARP_COMPILE_TESTS" OFF
 )
 mark_as_advanced(YARP_VALGRIND_TESTS)
+if(YARP_VALGRIND_TESTS)
+  add_definitions(-DWITH_VALGRIND)
+endif()
 
 if(YARP_VALGRIND_TESTS)
   find_program(VALGRIND_EXECUTABLE NAMES valgrind)

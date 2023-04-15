@@ -13,6 +13,12 @@ target_link_libraries(harness_devices
     YARP::YARP_init
     YARP::YARP_dev
 )
+target_include_directories(harness_devices
+  PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}
+    ${CMAKE_CURRENT_BINARY_DIR}/..
+)
+
 set_property(TARGET harness_devices PROPERTY FOLDER "Test")
 
 set(_inis

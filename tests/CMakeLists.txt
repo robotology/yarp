@@ -8,24 +8,6 @@ if(NOT YARP_COMPILE_TESTS)
 endif()
 
 #########################################################################
-# Options
-
-include(CMakeDependentOption)
-
-if(YARP_ENABLE_BROKEN_TESTS)
-  add_definitions(-DENABLE_BROKEN_TESTS)
-endif()
-
-if(YARP_VALGRIND_TESTS)
-  add_definitions(-DWITH_VALGRIND)
-endif()
-
-if(YARP_DISABLE_FAILING_TESTS)
-  add_definitions(-DDISABLE_FAILING_TESTS)
-endif()
-
-
-#########################################################################
 # Prepare 'build_generator' and 'build_options' variables
 # for tests in subdirectories
 set(build_generator --build-generator "${CMAKE_GENERATOR}")
@@ -60,10 +42,8 @@ if(CMAKE_HOST_WIN32)
 endif()
 
 configure_file("${CMAKE_CURRENT_SOURCE_DIR}/YarpBuildLocation.h.in"
-                "${CMAKE_CURRENT_BINARY_DIR}/YarpBuildLocation.h"
+               "${CMAKE_CURRENT_BINARY_DIR}/YarpBuildLocation.h"
                 @ONLY)
-include_directories(${CMAKE_CURRENT_BINARY_DIR})
-
 
 #########################################################################
 # Main harness target
@@ -90,6 +70,7 @@ target_link_libraries(YARP_harness
 target_include_directories(YARP_harness
   PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}
+    ${CMAKE_CURRENT_BINARY_DIR}
 )
 
 set_property(TARGET YARP_harness PROPERTY FOLDER "Test")
@@ -118,6 +99,7 @@ target_link_libraries(YARP_harness_no_network
 target_include_directories(YARP_harness_no_network
   PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}
+    ${CMAKE_CURRENT_BINARY_DIR}
 )
 
 set_property(TARGET YARP_harness_no_network PROPERTY FOLDER "Test")
@@ -127,22 +109,9 @@ set_property(TARGET YARP_harness_no_network PROPERTY FOLDER "Test")
 
 add_subdirectory(misc)
 
-add_subdirectory(libYARP_conf)
-add_subdirectory(libYARP_os)
-add_subdirectory(libYARP_os/impl)
-add_subdirectory(libYARP_sig)
-add_subdirectory(libYARP_rosmsg)
-add_subdirectory(libYARP_dev)
-add_subdirectory(libYARP_serversql)
-add_subdirectory(libYARP_run)
-add_subdirectory(libYARP_math)
-add_subdirectory(libYARP_wire_rep_utils)
-add_subdirectory(libYARP_robotinterface)
-
 add_subdirectory(yarpidl_thrift)
 add_subdirectory(yarpidl_rosmsg)
 
-add_subdirectory(carriers)
 add_subdirectory(devices)
 
 add_subdirectory(integration)
