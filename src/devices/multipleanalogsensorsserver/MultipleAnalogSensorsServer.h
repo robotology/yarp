@@ -83,12 +83,29 @@ class MultipleAnalogSensorsServer :
                                             size_t (Interface::*getNrOfSensorsMethodPtr)() const,
                                             bool (Interface::*getNameMethodPtr)(size_t, std::string&) const);
 
+
+    // Helper methods to resize measure buffers
+    template<typename Interface>
+    bool resizeMeasureVectors(Interface* wrappedDeviceInterface,
+                              const std::vector< SensorMetadata >& metadataVector,
+                              std::vector< SensorMeasurement >& streamingDataVector,
+                              size_t (Interface::*getMeasureSizePtr)(size_t) const);
+    template<typename Interface>
+    bool resizeMeasureVectors(Interface* wrappedDeviceInterface,
+                              const std::vector< SensorMetadata >& metadataVector,
+                              std::vector< SensorMeasurement >& streamingDataVector,
+                              size_t measureSize);
+    bool resizeAllMeasureVectors(SensorStreamingData& streamingData);
+
+
+    // Helper method used to copy the sensor measure to the measure buffers
     template<typename Interface>
     bool genericStreamData(Interface* wrappedDeviceInterface,
                            const std::vector< SensorMetadata >& metadataVector,
                            std::vector< SensorMeasurement >& streamingDataVector,
                            yarp::dev::MAS_status (Interface::*getStatusMethodPtr)(size_t) const,
                            bool (Interface::*getMeasureMethodPtr)(size_t, yarp::sig::Vector&, double&) const);
+
 
 public:
     MultipleAnalogSensorsServer();
