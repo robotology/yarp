@@ -932,10 +932,6 @@ void MainWindow::resetButtonOnStop()
 void MainWindow::onMenuPlayBackStop()
 {
     if (subDirCnt > 0){
-        ui->playButton->setIcon(QIcon(":/play.svg"));
-        disconnect(ui->playButton,SIGNAL(clicked()),this,SLOT(onMenuPlayBackPause()));
-        disconnect(ui->playButton,SIGNAL(clicked()),this,SLOT(onMenuPlayBackPlay()));
-        connect(ui->playButton,SIGNAL(clicked()),this,SLOT(onMenuPlayBackPlay()));
 
         if (verbose){
             yInfo() << "asking the threads to stop...";
@@ -964,6 +960,11 @@ void MainWindow::onMenuPlayBackStop()
             setFrameRate(qutilities->partDetails[i].name.c_str(), 0);
         }
         setPlayProgress(0);
+        
+        ui->playButton->setIcon(QIcon(":/play.svg"));
+        disconnect(ui->playButton,SIGNAL(clicked()),this,SLOT(onMenuPlayBackPause()));
+        disconnect(ui->playButton,SIGNAL(clicked()),this,SLOT(onMenuPlayBackPlay()));
+        connect(ui->playButton,SIGNAL(clicked()),this,SLOT(onMenuPlayBackPlay()));
     }
 }
 

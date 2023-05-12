@@ -130,7 +130,7 @@ void QEngine::runNormally()
 
                 if (stopAll == this->numPart){
                     yInfo() << "All parts have Finished!";
-                    if (this_part.currFrame > 1) {
+                    if (this_part.currFrame > 1  && this->isRunning()) {
                         emit qutils->updateGuiThread();
                     }
                     qutils->stopAtEnd();
@@ -146,7 +146,7 @@ void QEngine::runNormally()
 
     //10 Hz gui update
     static double gui_tic = 0.0;
-    if(this->virtualTime < gui_tic || this->virtualTime - gui_tic > 0.1) {
+    if(this->virtualTime < gui_tic || this->virtualTime - gui_tic > 0.1 && this->isRunning()) {
          emit qutils->updateGuiThread();
          gui_tic = this->virtualTime;
     }
