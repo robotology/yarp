@@ -20,8 +20,6 @@
 #include <yarp/os/Stamp.h>
 #include <yarp/dev/IPreciselyTimed.h>
 
-#include <opencv2/highgui/highgui.hpp>
-
 /**
  * @ingroup dev_impl_media
  *
