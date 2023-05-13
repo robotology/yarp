@@ -20,6 +20,8 @@
 #include <yarp/os/Stamp.h>
 #include <yarp/dev/IPreciselyTimed.h>
 
+#include <opencv2/videoio.hpp>
+
 /**
  * @ingroup dev_impl_media
  *

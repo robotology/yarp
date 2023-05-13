@@ -26,8 +26,8 @@
 
 #include <cstring> // memcpy
 
-#include <opencv2/imgproc/imgproc.hpp>
-#include <opencv2/videoio/videoio.hpp>
+#include <opencv2/core/mat.hpp>
+#include <opencv2/imgproc.hpp>
 
 
 using yarp::dev::DeviceDriver;
