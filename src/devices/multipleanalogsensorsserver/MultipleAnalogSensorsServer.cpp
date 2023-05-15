@@ -501,7 +501,7 @@ bool MultipleAnalogSensorsServer::genericStreamData(Interface* wrappedDeviceInte
             {
                 yCError(MULTIPLEANALOGSENSORSSERVER,
                         "Failure in reading data from sensor %s, no data will be sent on the port.",
-                        m_sensorMetadata.ThreeAxisGyroscopes[i].name.c_str());
+                        metadataVector[i].name.c_str());
                 return false;
             }
         }
