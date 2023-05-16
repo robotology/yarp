@@ -580,7 +580,7 @@ public:
      * Get the last reading of the specified sensor.
      *
      * @param[in] sens_index The index of the specified sensor (should be between 0 and getNrOfSkinPatches()-1).
-     * @param[out] out The requested measure. The vector should be getNrOfSkinPatches(sens_index)-dimensional.
+     * @param[out] out The requested measure. The vector should be getSkinPatchSize(sens_index)-dimensional.
      *                 The measure is expressed in implementation-specific unit of measure.
      * @param[out] timestamp The timestamp of the requested measure, expressed in seconds.
      */

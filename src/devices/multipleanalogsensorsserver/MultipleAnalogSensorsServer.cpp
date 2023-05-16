@@ -18,6 +18,61 @@ namespace {
 YARP_LOG_COMPONENT(MULTIPLEANALOGSENSORSSERVER, "yarp.device.multipleanalogsensorsserver")
 }
 
+/**
+ * Internal identifier of the type of sensors.
+ */
+enum MAS_SensorTypeServer
+{
+    ThreeAxisGyroscopes=0,
+    ThreeAxisLinearAccelerometers=1,
+    ThreeAxisMagnetometers=2,
+    OrientationSensors=3,
+    TemperatureSensors=4,
+    SixAxisForceTorqueSensors=5,
+    ContactLoadCellArrays=6,
+    EncoderArrays=7,
+    SkinPatches=8,
+    PositionSensors=9
+};
+
+/**
+ * Get measure size for sensors with fixed size measure.
+ */
+inline size_t MAS_getMeasureSizeFromEnum(const MAS_SensorTypeServer type)
+{
+    switch(type)
+    {
+        case ThreeAxisGyroscopes:
+            return 3;
+            break;
+        case ThreeAxisLinearAccelerometers:
+            return 3;
+            break;
+        case ThreeAxisMagnetometers:
+            return 3;
+            break;
+        case OrientationSensors:
+            return 3;
+            break;
+        case PositionSensors:
+            return 3;
+            break;
+        case TemperatureSensors:
+            return 1;
+            break;
+        case SixAxisForceTorqueSensors:
+            return 6;
+            break;
+        default:
+            assert(false);
+            // "MAS_getMeasureSizeFromEnum passed unexepcted enum";
+            return 0;
+            break;
+    }
+}
+
+
+
 MultipleAnalogSensorsServer::MultipleAnalogSensorsServer() :
         PeriodicThread(0.02)
 {
@@ -245,6 +300,75 @@ bool MultipleAnalogSensorsServer::populateAllSensorsMetadata()
     return ok;
 }
 
+// Function to resize the measure vectors, variant where the size is given by a method
+template<typename Interface>
+bool MultipleAnalogSensorsServer::resizeMeasureVectors(Interface* wrappedDeviceInterface,
+                                                       const std::vector< SensorMetadata >& metadataVector,
+                                                       std::vector< SensorMeasurement >& streamingDataVector,
+                                                       size_t (Interface::*getMeasureSizePtr)(size_t) const)
+{
+    if (wrappedDeviceInterface)
+    {
+        size_t nrOfSensors = metadataVector.size();
+        streamingDataVector.resize(nrOfSensors);
+        for (size_t i=0; i < nrOfSensors; i++)
+        {
+            size_t measureSize = MAS_CALL_MEMBER_FN(wrappedDeviceInterface, getMeasureSizePtr)(i);
+            streamingDataVector[i].measurement.resize(measureSize, std::numeric_limits<double>::quiet_NaN());
+        }
+    }
+
+    return true;
+}
+
+// Function to resize the measure vectors, variant where the measure size is given by the type of the sensor
+template<typename Interface>
+bool MultipleAnalogSensorsServer::resizeMeasureVectors(Interface* wrappedDeviceInterface,
+                                                       const std::vector< SensorMetadata >& metadataVector,
+                                                       std::vector< SensorMeasurement >& streamingDataVector,
+                                                       size_t measureSize)
+{
+    if (wrappedDeviceInterface)
+    {
+        size_t nrOfSensors = metadataVector.size();
+        streamingDataVector.resize(nrOfSensors);
+        for (size_t i=0; i < nrOfSensors; i++)
+        {
+            streamingDataVector[i].measurement.resize(measureSize, std::numeric_limits<double>::quiet_NaN());
+        }
+    }
+
+    return true;
+}
+
+bool MultipleAnalogSensorsServer::resizeAllMeasureVectors(SensorStreamingData& streamingData)
+{
+    bool ok = true;
+    // The size of each sensor is given in the interface documentation
+    ok = ok && resizeMeasureVectors(m_iThreeAxisGyroscopes, m_sensorMetadata.ThreeAxisGyroscopes,
+                                    streamingData.ThreeAxisGyroscopes.measurements, MAS_getMeasureSizeFromEnum(ThreeAxisGyroscopes));
+    ok = ok && resizeMeasureVectors(m_iThreeAxisLinearAccelerometers, m_sensorMetadata.ThreeAxisLinearAccelerometers,
+                                    streamingData.ThreeAxisLinearAccelerometers.measurements, MAS_getMeasureSizeFromEnum(ThreeAxisLinearAccelerometers));
+    ok = ok && resizeMeasureVectors(m_iThreeAxisMagnetometers, m_sensorMetadata.ThreeAxisMagnetometers,
+                                    streamingData.ThreeAxisMagnetometers.measurements, MAS_getMeasureSizeFromEnum(ThreeAxisMagnetometers));
+    ok = ok && resizeMeasureVectors(m_iPositionSensors, m_sensorMetadata.PositionSensors,
+                                    streamingData.PositionSensors.measurements, MAS_getMeasureSizeFromEnum(PositionSensors));
+    ok = ok && resizeMeasureVectors(m_iOrientationSensors, m_sensorMetadata.OrientationSensors,
+                                    streamingData.OrientationSensors.measurements, MAS_getMeasureSizeFromEnum(OrientationSensors));
+    ok = ok && resizeMeasureVectors(m_iTemperatureSensors, m_sensorMetadata.TemperatureSensors,
+                                    streamingData.TemperatureSensors.measurements, MAS_getMeasureSizeFromEnum(TemperatureSensors));
+    ok = ok && resizeMeasureVectors(m_iSixAxisForceTorqueSensors, m_sensorMetadata.SixAxisForceTorqueSensors,
+                                    streamingData.SixAxisForceTorqueSensors.measurements, MAS_getMeasureSizeFromEnum(SixAxisForceTorqueSensors));
+    ok = ok && resizeMeasureVectors(m_iContactLoadCellArrays, m_sensorMetadata.ContactLoadCellArrays,
+                                    streamingData.ContactLoadCellArrays.measurements, &yarp::dev::IContactLoadCellArrays::getContactLoadCellArraySize);
+    ok = ok && resizeMeasureVectors(m_iEncoderArrays, m_sensorMetadata.EncoderArrays,
+                                    streamingData.EncoderArrays.measurements, &yarp::dev::IEncoderArrays::getEncoderArraySize);
+    ok = ok && resizeMeasureVectors(m_iSkinPatches, m_sensorMetadata.SkinPatches,
+                                    streamingData.SkinPatches.measurements, &yarp::dev::ISkinPatches::getSkinPatchSize);
+
+    return ok;
+}
+
 bool MultipleAnalogSensorsServer::attachAll(const yarp::dev::PolyDriverList& p)
 {
     // Attach the device
@@ -365,15 +489,15 @@ bool MultipleAnalogSensorsServer::genericStreamData(Interface* wrappedDeviceInte
     if (wrappedDeviceInterface)
     {
         size_t nrOfSensors = metadataVector.size();
-        streamingDataVector.resize(nrOfSensors);
         for (size_t i=0; i < nrOfSensors; i++)
         {
             yarp::sig::Vector& outputBuffer = streamingDataVector[i].measurement;
             double& outputTimestamp = streamingDataVector[i].timestamp;
-            // TODO(traversaro): resize the buffer to the correct size
-            MAS_CALL_MEMBER_FN(wrappedDeviceInterface, getMeasureMethodPtr)(i, outputBuffer, outputTimestamp);
             yarp::dev::MAS_status status = MAS_CALL_MEMBER_FN(wrappedDeviceInterface, getStatusMethodPtr)(i);
-            if (status != yarp::dev::MAS_OK)
+            if (status == yarp::dev::MAS_OK)
+            {
+                MAS_CALL_MEMBER_FN(wrappedDeviceInterface, getMeasureMethodPtr)(i, outputBuffer, outputTimestamp);
+            } else
             {
                 yCError(MULTIPLEANALOGSENSORSSERVER,
                         "Failure in reading data from sensor %s, no data will be sent on the port.",
@@ -391,8 +515,11 @@ void MultipleAnalogSensorsServer::run()
 {
     SensorStreamingData& streamingData = m_streamingPort.prepare();
 
+    // Resize the output streaming buffer vectors to be of the correct size
     bool ok = true;
+    ok = resizeAllMeasureVectors(streamingData);
 
+    // Populate buffers
     ok = ok && genericStreamData(m_iThreeAxisGyroscopes, m_sensorMetadata.ThreeAxisGyroscopes,
                                  streamingData.ThreeAxisGyroscopes.measurements,
                                  &yarp::dev::IThreeAxisGyroscopes::getThreeAxisGyroscopeStatus,
