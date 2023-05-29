@@ -61,6 +61,18 @@ TEST_CASE("dev::serialPort_nws_yarp", "[yarp::dev]")
             REQUIRE(result_att); }
         }
 
+        //tests
+        {
+            Port p;
+            CHECK(p.open("/test:o"));
+            CHECK(Network::connect("/test:o","/serialPort_nws/in"));
+            yarp::os::Time::delay(0.5);
+            Bottle b;
+            b.addString("fake_command");
+            CHECK(p.write(b));
+            yarp::os::Time::delay(0.5);
+            p.close();
+        }
         yarp::os::Time::delay(0.5);
 
         //"Close all polydrivers and check"

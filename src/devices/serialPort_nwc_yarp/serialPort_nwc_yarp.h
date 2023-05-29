@@ -36,10 +36,14 @@ class SerialPort_nwc_yarp :
 private:
     ISerialMsgs               m_rpc;
     yarp::os::Port            m_rpcPort;
+    yarp::os::Port            m_sendPort;
+    yarp::os::Port            m_receivePort;
 
     bool closeMain()
     {
         m_rpcPort.close();
+        m_sendPort.close();
+        m_receivePort.close();
         return true;
     }
 
@@ -53,7 +57,7 @@ public:
 
     // ISerialDevice methods
     bool send(const Bottle& msg) override;
-    bool send(char *msg, size_t size) override;
+    bool send(const char *msg, size_t size) override;
     bool receive(Bottle& msg) override;
     int receiveChar(char& c) override;
     int flush () override;

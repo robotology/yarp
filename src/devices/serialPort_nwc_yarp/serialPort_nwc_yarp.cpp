@@ -19,12 +19,16 @@ SerialPort_nwc_yarp::~SerialPort_nwc_yarp()
 
 bool SerialPort_nwc_yarp::send(const Bottle& msg)
 {
-    return false;
+    m_sendPort.write(msg);
+    return true;
 }
 
-bool SerialPort_nwc_yarp::send(char *msg, size_t size)
+bool SerialPort_nwc_yarp::send(const char *msg, size_t size)
 {
-    return false;
+    Bottle b;
+    b.addString(std::string(msg));
+    m_sendPort.write(b);
+    return true;
 }
 
 bool SerialPort_nwc_yarp::receive(Bottle& msg)
@@ -65,29 +69,47 @@ bool SerialPort_nwc_yarp::close()
 
 bool SerialPort_nwc_yarp::open(Searchable& prop)
 {
-    std::string local_rpc =
-        prop.check("local",Value("/serialPort_nwc_yarp"),
-                    "local rpc port name").asString();
-    std::string remote_rpc =
-        prop.check("remote", Value("/serialPort_nws_yarp/rpc"),
-                   "remote rpc port name").asString();
-
-    if (!m_rpcPort.open(local_rpc))
     {
-        yCError(SERIAL_NWC, "open() error could not open rpc port %s, check network", local_rpc.c_str());
-        return false;
+        std::string local_rpc =
+            prop.check("local",Value("/serialPort_nwc_yarp"),
+                        "local rpc port name").asString();
+        std::string remote_rpc =
+            prop.check("remote", Value("/serialPort_nws_yarp/rpc"),
+                       "remote rpc port name").asString();
+
+        if (!m_rpcPort.open(local_rpc))
+        {
+            yCError(SERIAL_NWC, "open() error could not open rpc port %s, check network", local_rpc.c_str());
+            return false;
+        }
+
+        if (!Network::connect(local_rpc, remote_rpc))
+        {
+            yCError(SERIAL_NWC, "open() error could not connect to %s", remote_rpc.c_str());
+            return false;
+        }
+
+        if (!m_rpc.yarp().attachAsClient(m_rpcPort))
+        {
+            yCError(SERIAL_NWC, "Error! Cannot attach the m_rpc_port port as a client");
+            return false;
+        }
     }
 
-    if (!Network::connect(local_rpc, remote_rpc))
     {
-        yCError(SERIAL_NWC, "open() error could not connect to %s", remote_rpc.c_str());
-        return false;
-    }
+        std::string local_send = "/serialPort_nwc_yarp/out";
+        std::string remote_send = "/serialPort_nws_yarp/in";
+        if (!m_sendPort.open(local_send))
+        {
+            yCError(SERIAL_NWC, "open() error could not open rpc port %s, check network", local_send.c_str());
+            return false;
+        }
 
-    if (!m_rpc.yarp().attachAsClient(m_rpcPort))
-    {
-        yCError(SERIAL_NWC, "Error! Cannot attach the m_rpc_port port as a client");
-        return false;
+        if (!Network::connect(local_send, remote_send))
+        {
+            yCError(SERIAL_NWC, "open() error could not connect to %s", remote_send.c_str());
+            return false;
+        }
     }
 
     return true;
