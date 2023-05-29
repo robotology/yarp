@@ -68,7 +68,7 @@ private:
     FakeSerialPort(const FakeSerialPort&);
     void operator=(const FakeSerialPort&);
 
-    bool verbose;
+    bool verbose = true;
     char line_terminator_char1;
     char line_terminator_char2;
 
@@ -81,7 +81,7 @@ public:
     bool close() override;
 
     bool send(const Bottle& msg) override;
-    bool send(char *msg, size_t size) override;
+    bool send(const char *msg, size_t size) override;
     bool receive(Bottle& msg) override;
     int  receiveChar(char& chr) override;
     int  receiveBytes(unsigned char* bytes, const int size) override;

@@ -51,7 +51,13 @@ TEST_CASE("dev::serialPort_nwc_yarp", "[yarp::dev]")
             REQUIRE(ddnwc.view(iser));
         }
 
-        CHECK (iser->setDTR(true));
+        //tests
+        {
+            CHECK (iser->setDTR(true));
+            yarp::os::Time::delay(0.1);
+            std::string s("fake_command");
+            CHECK (iser->send(s.c_str(),s.size()));
+        }
 
         //"Close all polydrivers and check"
         {
