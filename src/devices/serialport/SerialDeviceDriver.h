@@ -108,7 +108,7 @@ public:
      * @return true on success
      */
     bool send(const Bottle& msg) override;
-    bool send(char *msg, size_t size) override;
+    bool send(const char *msg, size_t size) override;
     //bool putMessage(Bottle& msg, bool waitreply, double replytimeout, Bottle& reply, char *replydelimiter, int replysize );
     /**
      * Gets the existing chars in the receive queue.

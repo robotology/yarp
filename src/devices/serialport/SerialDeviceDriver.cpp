@@ -159,7 +159,7 @@ bool SerialDeviceDriver::send(const Bottle& msg)
     return true;
 }
 
-bool SerialDeviceDriver::send(char *msg, size_t size)
+bool SerialDeviceDriver::send(const char *msg, size_t size)
 {
     if (size > 0)
     {

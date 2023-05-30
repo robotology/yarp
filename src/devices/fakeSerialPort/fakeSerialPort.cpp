@@ -20,7 +20,6 @@ YARP_LOG_COMPONENT(FAKESERIALPORT, "yarp.device.FakeSerialPort")
 
 FakeSerialPort::FakeSerialPort() {
     //system_resources = (SerialHandler*) new SerialHandler();
-    verbose=false;
     line_terminator_char1 = '\r';
     line_terminator_char2 = '\n';
 }
@@ -103,7 +102,8 @@ bool FakeSerialPort::send(const Bottle& msg)
     }
     else
     {
-        if (verbose) {
+        if (verbose)
+        {
             yCDebug(FAKESERIALPORT, "The input command bottle is empty. \n");
         }
         return false;
@@ -112,7 +112,7 @@ bool FakeSerialPort::send(const Bottle& msg)
     return true;
 }
 
-bool FakeSerialPort::send(char *msg, size_t size)
+bool FakeSerialPort::send(const char *msg, size_t size)
 {
     if (size > 0)
     {
@@ -138,6 +138,7 @@ bool FakeSerialPort::send(char *msg, size_t size)
         return false;
     }
 
+    yCInfo (FAKESERIALPORT, "sent command: %s \n",msg);
     return true;
 }
 
