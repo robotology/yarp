@@ -41,6 +41,7 @@ bool SerialPort_nws_yarp::open(Searchable& prop)
     }
     m_rpcPort.setReader(*this);
 
+    yCInfo(SERIAL_NWS, "Device waiting for attach...");
     return true;
 }
 
@@ -151,14 +152,23 @@ bool SerialPort_nws_yarp::read(yarp::os::ConnectionReader& connection)
 bool ISerialMsgsd::setDTR(bool enable)
 {
     std::lock_guard <std::mutex> lg(m_mutex);
-    m_iser->setDTR(enable);
-    return true;
+    if (m_iser)
+    {
+        return m_iser->setDTR(enable);
+    }
+    yCError(SERIAL_NWS, "ISerialDevice interface was not set");
+    return false;
 }
 
 int ISerialMsgsd::flush()
 {
     std::lock_guard <std::mutex> lg(m_mutex);
-    return m_iser->flush();
+    if (m_iser)
+    {
+        return m_iser->flush();
+    }
+    yCError(SERIAL_NWS, "ISerialDevice interface was not set");
+    return false;
 }
 
 //--------------------------------------------------
@@ -182,5 +192,9 @@ void ImplementCallbackHelper2::onRead(Bottle &b)
         {
             yCError(SERIAL_NWS, "Problems while trying to send data");
         }
+    }
+    else
+    {
+        yCError(SERIAL_NWS, "ISerialDevice interface was not set");
     }
 }
