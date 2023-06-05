@@ -131,12 +131,12 @@ The list of committers in the YARP repository (ordered by number of commit) is:
   Daniel Krieg
   Fabio Valla
   Simone Girardi
+  robotology-bot (Tag Repository Action)
   Prashanth Ramadoss
   Alexandros Paraschos
   Plinio Moreno
   Valentina Vasco
   Yeshasvi Tirupachuri
-  robotology-bot (Tag Repository Action)
   Giovanni Saponaro
   Giulia Vezzani
   Jonas Ruesch
@@ -168,6 +168,7 @@ The list of committers in the YARP repository (ordered by number of commit) is:
   Mohamed Babiker Mohamed Elobaid
   Naeem Assif Mirza
   Ze Ji
+  fbrand-new
   Austin Kothig
   Carlo Ciliberto
   Carlotta Sartore
@@ -191,11 +192,10 @@ The list of committers in the YARP repository (ordered by number of commit) is:
   Simone
   Vítor Galvão
   Zero King
-  fbrand-new
 
 The list of copyright holders for YARP is:
   Copyright (C) 1995, 2000, 2003, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2023
-    Istituto Italiano di Tecnologia (IIT) (2803 files)
+    Istituto Italiano di Tecnologia (IIT) (2805 files)
     RobotCub Consortium (766 files)
     Daniel Krieg <krieg@fias.uni-frankfurt.de> (16 files)
     Anne van Rossum <anne@almende.com> (11 files)
