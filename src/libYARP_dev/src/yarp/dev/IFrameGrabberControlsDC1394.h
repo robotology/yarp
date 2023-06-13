@@ -11,6 +11,11 @@
 
 namespace yarp::dev {
 
+/**
+ * @ingroup dev_iface_media
+ *
+ * Control interface for frame grabber devices that conform to the 1394-based Digital Camera Specifications.
+ */
 class YARP_dev_API IFrameGrabberControlsDC1394
 {
 public:

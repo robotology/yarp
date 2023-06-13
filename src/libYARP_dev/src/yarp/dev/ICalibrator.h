@@ -11,6 +11,12 @@
 
 namespace yarp::dev {
 
+/**
+ * @ingroup dev_iface_motor
+ *
+ * Interface for a calibrator device.
+ */
+
 class YARP_dev_API ICalibrator
 {
 public:
