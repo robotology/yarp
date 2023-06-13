@@ -70,6 +70,8 @@ public:
 };
 
 /**
+ * @ingroup dev_iface_motor_raw
+ *
  * Interface for control devices. Limits commands.
  */
 class YARP_dev_API yarp::dev::IControlLimitsRaw

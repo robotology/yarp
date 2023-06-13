@@ -16,7 +16,7 @@ class IPositionControl;
 }
 
 /**
- * @ingroup dev_iface_motor
+ * @ingroup dev_iface_motor_raw
  *
  * Interface for a generic control board device implementing position control in encoder
  * coordinates.

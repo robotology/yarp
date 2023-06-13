@@ -64,8 +64,10 @@ public:
 };
 
 /**
-* Interface for getting information about specific axes, if available.
-*/
+ * @ingroup dev_iface_motor_raw
+ *
+ * Interface for getting information about specific axes, if available.
+ */
 class YARP_dev_API yarp::dev::IAxisInfoRaw
 {
 public:

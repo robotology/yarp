@@ -18,7 +18,7 @@ class IRemoteVariables;
 }
 
 /**
- * @ingroup dev_iface_motor
+ * @ingroup dev_iface_motor_raw
  *
  * IRemoteVariablesRaw interface.
  */
