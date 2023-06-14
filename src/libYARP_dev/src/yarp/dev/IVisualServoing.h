@@ -19,7 +19,7 @@ class IVisualServoing;
 
 
 /**
- * @ingroup dev_iface_motor
+ * @ingroup dev_iface_other
  *
  * \brief Interface for visual servoing controllers.
  */
