@@ -6,6 +6,8 @@
 ./src/devices/frameTransformStorageMsgs
 ./src/devices/INavigation2DMsgs
 ./src/devices/ISerialMsgs
+./src/devices/ISpeechSynthesizerMsgs
+./src/devices/ISpeechTranscriptionMsgs
 ./src/devices/test_segfault
 ./src/devices/test_nop
 ./src/devices/DynamixelAX12Ftdi
