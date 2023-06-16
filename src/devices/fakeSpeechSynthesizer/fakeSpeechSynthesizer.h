@@ -16,7 +16,7 @@ using namespace yarp::os;
 /**
  * @ingroup dev_impl_other
  *
- * \brief `FakeSpeechTranscription`: A fake implementation of a speech transcriber plugin.
+ * \brief `FakeSpeechSynthesizer`: A fake implementation of a speech synthesizer plugin.
  */
 class FakeSpeechSynthesizer :
         public yarp::dev::DeviceDriver,

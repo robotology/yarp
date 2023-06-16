@@ -122,7 +122,7 @@ bool ISpeechSynthesizerMsgsd::set_language(const std::string& language)
     {
         return m_isptr->setLanguage(language);
     }
-    yCError(SPEECHSYNTH_NWS, "ISpeechTranscription interface was not set");
+    yCError(SPEECHSYNTH_NWS, "ISpeechSynthesizer interface was not set");
     return false;
 }
 
@@ -149,7 +149,7 @@ bool ISpeechSynthesizerMsgsd::set_voice(const std::string& voice)
     {
         return m_isptr->setVoice(voice);
     }
-    yCError(SPEECHSYNTH_NWS, "ISpeechTranscription interface was not set");
+    yCError(SPEECHSYNTH_NWS, "ISpeechSynthesizer interface was not set");
     return false;
 }
 
@@ -176,7 +176,7 @@ bool ISpeechSynthesizerMsgsd::set_pitch(double pitch)
     {
         return m_isptr->setPitch(pitch);
     }
-    yCError(SPEECHSYNTH_NWS, "ISpeechTranscription interface was not set");
+    yCError(SPEECHSYNTH_NWS, "ISpeechSynthesizer interface was not set");
     return false;
 }
 
@@ -203,7 +203,7 @@ bool ISpeechSynthesizerMsgsd::set_speed(double speed)
     {
         return m_isptr->setSpeed(speed);
     }
-    yCError(SPEECHSYNTH_NWS, "ISpeechTranscription interface was not set");
+    yCError(SPEECHSYNTH_NWS, "ISpeechSynthesizer interface was not set");
     return false;
 }
 

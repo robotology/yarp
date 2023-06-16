@@ -74,7 +74,7 @@ public:
 /**
  * @ingroup dev_impl_nws_yarp
  *
- * \brief `SpeechSynthesizer_nws_yarp`: A wrapper for a plugin able to perform speech transcription.
+ * \brief `SpeechSynthesizer_nws_yarp`: A wrapper for a plugin able to perform speech synthesis.
  *
  * The network interface is composed by two ports.
  * When a text bottle is received on the input port, the attached subdevice processes it and generates
