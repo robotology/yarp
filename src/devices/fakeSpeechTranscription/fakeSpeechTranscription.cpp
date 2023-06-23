@@ -38,7 +38,7 @@ bool FakeSpeechTranscription::close()
     return true;
 }
 
-bool FakeSpeechTranscription::setLanguage(const std::string language)
+bool FakeSpeechTranscription::setLanguage(const std::string& language)
 {
     m_language=language;
     yCInfo(FAKE_SPEECHTR) << "Language set to" << language;

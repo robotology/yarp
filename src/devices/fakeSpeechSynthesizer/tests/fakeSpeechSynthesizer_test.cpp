@@ -42,7 +42,7 @@ TEST_CASE("dev::fakeSpeechSynthesizer", "[yarp::dev]")
         CHECK(lang == "eng");
 
         yarp::sig::Sound snd;
-        CHECK(istr->synthetize("hello world",snd));
+        CHECK(istr->synthesize("hello world",snd));
         CHECK(snd.getChannels()==2);
         CHECK(snd.getSamples()==100);
 

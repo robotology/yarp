@@ -26,7 +26,7 @@ public:
      * \param language a string (code) representing the speech language (e.g. ita, eng...). Default value is "auto".
      * \return true on success
      */
-    virtual bool setLanguage(const std::string language="auto") = 0;
+    virtual bool setLanguage(const std::string& language="auto") = 0;
 
     /**
      * Gets the current language set for speech transcription.

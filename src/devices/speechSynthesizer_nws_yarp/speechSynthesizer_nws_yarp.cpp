@@ -231,7 +231,7 @@ return_synthesize ISpeechSynthesizerMsgsd::synthesize(const std::string& text)
     {
         yarp::sig::Sound snd;
         double score;
-        bool b = m_isptr->synthetize(text, snd);
+        bool b = m_isptr->synthesize(text, snd);
         ret.ret = b;
         ret.sound = snd;
 
@@ -264,7 +264,7 @@ void ImplementCallbackHelper2::onRead(yarp::os::Bottle &b)
     if (m_isptr)
     {
         yarp::sig::Sound snd;
-        bool ok = m_isptr->synthetize(b.get(0).asString(), snd);
+        bool ok = m_isptr->synthesize(b.get(0).asString(), snd);
         if (!ok)
         {
             yCError(SPEECHSYNTH_NWS, "Problems during speech synthesis");

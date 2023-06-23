@@ -38,7 +38,7 @@ bool FakeSpeechSynthesizer::close()
     return true;
 }
 
-bool FakeSpeechSynthesizer::setLanguage(const std::string language)
+bool FakeSpeechSynthesizer::setLanguage(const std::string& language)
 {
     m_language=language;
     yCInfo(FAKE_SPEECHSYN) << "Language set to" << language;
@@ -51,7 +51,7 @@ bool FakeSpeechSynthesizer::getLanguage(std::string& language)
     return true;
 }
 
-bool FakeSpeechSynthesizer::setVoice(const std::string voice)
+bool FakeSpeechSynthesizer::setVoice(const std::string& voice)
 {
     m_voice = voice;
     yCInfo(FAKE_SPEECHSYN) << "Voice set to" << voice;
@@ -90,7 +90,7 @@ bool FakeSpeechSynthesizer::getPitch(double& pitch)
     return true;
 }
 
-bool FakeSpeechSynthesizer::synthetize(const std::string& text, yarp::sig::Sound& sound)
+bool FakeSpeechSynthesizer::synthesize(const std::string& text, yarp::sig::Sound& sound)
 {
     if (text == "")
     {
