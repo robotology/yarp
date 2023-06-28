@@ -74,6 +74,8 @@ set(YARP_dev_HDRS
   yarp/dev/IRgbVisualParams.h
   yarp/dev/IRobotDescription.h
   yarp/dev/ISerialDevice.h
+  yarp/dev/ISpeechSynthesizer.h
+  yarp/dev/ISpeechTranscription.h
   yarp/dev/ITorqueControl.h
   yarp/dev/IVelocityControl.h
   yarp/dev/IVirtualAnalogSensor.h
@@ -183,6 +185,8 @@ set(YARP_dev_SRCS
   yarp/dev/IRgbVisualParams.cpp
   yarp/dev/IRobotDescription.cpp
   yarp/dev/ISerialDevice.cpp
+  yarp/dev/ISpeechSynthesizer.cpp
+  yarp/dev/ISpeechTranscription.cpp
   yarp/dev/IVisualServoing.cpp
   yarp/dev/IWrapper.cpp
   yarp/dev/ImplementAmplifierControl.cpp
