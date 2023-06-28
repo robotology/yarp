@@ -143,7 +143,7 @@ bool PcmWavHeader::parse_from_file(FILE *fp)
     {
         yCError(SOUNDFILE_WAV, "extra_size = %d\n", extra_size);
         pcmExtraData.allocate(extra_size);
-        ret = fread(&pcmExtraData, extra_size, 1, fp);
+        ret = fread(pcmExtraData.get(), extra_size, 1, fp);
         if (ret != 1) {
             yCError(SOUNDFILE_WAV, "failed to read .wav file");
             return false;
@@ -166,7 +166,7 @@ bool PcmWavHeader::parse_from_file(FILE *fp)
         }
         dummyData.clear();
         dummyData.allocate(dummyLength);
-        ret = fread(&dummyData, dummyLength, 1, fp);
+        ret = fread(dummyData.get(), dummyLength, 1, fp);
         if (ret != 1) {
             yCError(SOUNDFILE_WAV, "failed to read .wav file");
             return false;
