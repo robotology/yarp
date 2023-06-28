@@ -46,6 +46,11 @@ public:
     virtual int width() const = 0;
 };
 
+/**
+ * @ingroup dev_iface_media
+ *
+ * Read a YARP-format image (of a specific type) from a device.
+ */
 template <typename ImageType>
 class IFrameGrabberOf :
         public IFrameGrabberImageBase

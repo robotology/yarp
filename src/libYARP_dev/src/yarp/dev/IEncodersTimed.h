@@ -15,7 +15,7 @@ class IEncodersTimedRaw;
 }
 
 /**
- * \ingroup dev_iface_motor
+ * \ingroup dev_iface_motor_raw
  *
  * \brief Control board, extend encoder raw interface adding timestamps.
  */

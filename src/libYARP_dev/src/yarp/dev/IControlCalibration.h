@@ -36,6 +36,7 @@ struct YARP_dev_API yarp::dev::CalibrationParameters
 };
 
 /**
+ * @ingroup dev_iface_motor_raw
  *
  * Interface for control devices, calibration commands.
  */

@@ -165,6 +165,7 @@ public:
 };
 
 /**
+ * @ingroup dev_iface_motor_raw
  *
  * Interface for control devices, amplifier commands.
  */

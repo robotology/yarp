@@ -76,9 +76,10 @@ public:
 };
 
 /**
-*
-* Interface for controlling an axis, by sending directly a PWM reference signal to a motor.
-*/
+ * @ingroup dev_iface_motor_raw
+ *
+ * Interface for controlling an axis, by sending directly a PWM reference signal to a motor.
+ */
 class YARP_dev_API yarp::dev::IPWMControlRaw
 {
 public:

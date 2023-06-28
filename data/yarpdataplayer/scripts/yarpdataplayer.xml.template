@@ -51,11 +51,6 @@
         <protocol>udp</protocol>
     </connection>
     <connection>
-        <from>/icub/inertial</from>
-        <to>/iCubGui/inertial:i</to>
-        <protocol>udp</protocol>
-    </connection>
-    <connection>
         <from>/icub/left_arm/state:o</from>
         <to>/iCubGui/left_arm:i</to>
         <protocol>udp</protocol>
