@@ -16,7 +16,7 @@ class IVelocityControlRaw;
 }
 
 /**
- * @ingroup dev_iface_motor
+ * @ingroup dev_iface_motor_raw
  *
  * Interface for control boards implementig velocity control in encoder coordinates.
  */

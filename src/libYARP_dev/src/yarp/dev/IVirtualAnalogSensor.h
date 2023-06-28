@@ -67,7 +67,7 @@ public:
 };
 
 /**
-* @ingroup dev_iface_other
+* @ingroup dev_iface_other_raw
 *
 * A generic interface to a virtual sensors. A virtual sensor is any device that
 * can generate values used as a measure by robot

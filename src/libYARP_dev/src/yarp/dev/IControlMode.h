@@ -90,7 +90,7 @@ public:
 
 
 /**
- * @ingroup dev_iface_motor
+ * @ingroup dev_iface_motor_raw
  *
  * Interface for setting control mode in control board. See IControlMode for
  * more documentation.

@@ -31,6 +31,15 @@ Motor control and monitoring.
 
 */
 
+/**
+\ingroup dev_iface_motor
+
+\defgroup dev_iface_motor_raw Raw Motor Interfaces
+
+Motor control and monitoring (Raw version).
+
+*/
+
 
 /**
 \ingroup dev_iface
@@ -79,6 +88,15 @@ The interfaces in this group are to be implemented by devices who are meant to m
 \ingroup dev_iface
 
 \defgroup dev_iface_other Other Device Interfaces
+
+Sundry, miscellaneous.
+
+*/
+
+/**
+\ingroup dev_iface_other
+
+\defgroup dev_iface_other_raw Other Device Interfaces (Raw version)
 
 Sundry, miscellaneous.
 

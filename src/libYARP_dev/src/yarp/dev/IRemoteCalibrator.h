@@ -12,6 +12,8 @@
 namespace yarp::dev {
 
 /**
+ * @ingroup dev_iface_motor
+ *
  * IRemoteCalibrator interface is meant to remotize the access of the calibration device
  * in order to allow users to remotely call the calibration procedure for
  * a single joint or the whole device and let the calibrator do the job.

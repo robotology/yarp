@@ -13,6 +13,12 @@
 
 namespace yarp::dev {
 
+/**
+ * @ingroup dev_iface_media
+ *
+ * Interface for rendering a YARP-format sound and controlling its reproduction ona device
+ */
+
 class YARP_dev_API IAudioRender
 {
 public:

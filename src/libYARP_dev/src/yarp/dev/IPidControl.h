@@ -19,6 +19,8 @@ class IPidControl;
 
 
 /**
+ * @ingroup dev_iface_motor_raw
+ *
  * Interface for a generic control board device implementing a PID controller.
  */
 class YARP_dev_API yarp::dev::IPidControlRaw

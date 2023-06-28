@@ -18,7 +18,9 @@ class IVisualServoing;
 }
 
 
-/*!
+/**
+ * @ingroup dev_iface_other
+ *
  * \brief Interface for visual servoing controllers.
  */
 class YARP_dev_API yarp::dev::IVisualServoing

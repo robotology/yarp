@@ -15,7 +15,7 @@ class IMotorEncoders;
 }
 
 /**
- * @ingroup dev_iface_motor
+ * @ingroup dev_iface_motor_raw
  *
  * Control board, encoder interface.
  */

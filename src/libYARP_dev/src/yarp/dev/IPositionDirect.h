@@ -16,7 +16,7 @@ class IPositionDirectRaw;
 }
 
 /**
- * @ingroup dev_iface_motor
+ * @ingroup dev_iface_motor_raw
  *
  * Interface for a generic control board device implementing position control.
  * This interface is used to send high frequency streaming commands to the boards, the aim

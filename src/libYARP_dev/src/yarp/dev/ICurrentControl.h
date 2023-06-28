@@ -102,6 +102,7 @@ public:
 };
 
 /**
+ * @ingroup dev_iface_motor_raw
  *
  * Interface for control boards implementing current control.
  */

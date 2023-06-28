@@ -27,7 +27,7 @@ public:
 };
 
 /**
- * @ingroup dev_iface_motor
+ * @ingroup dev_iface_motor_raw
  *
  * Interface for getting info about the fault which may occur on a robot.
  */

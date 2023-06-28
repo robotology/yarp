@@ -19,6 +19,8 @@ class IHapticDevice;
 
 
 /**
+ * @ingroup dev_iface_other
+ *
  * A generic interface for an haptic device.
  */
 class YARP_dev_API yarp::dev::IHapticDevice

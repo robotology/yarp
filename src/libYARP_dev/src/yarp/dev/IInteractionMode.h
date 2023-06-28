@@ -108,7 +108,7 @@ public:
 
 
 /**
- * @ingroup dev_iface_motor
+ * @ingroup dev_iface_motor_raw
  *
  * Interface settings the way the robot interacts with the environment: basic interaction types are Stiff and Compliant.
  * This setting is intended to work in conjunction with other settings like position or velocity control.
