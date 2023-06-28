@@ -19,13 +19,6 @@
     </module>
     <module>
         <name>yarpdatadumper</name>
-        <parameters>--name /data/inertial</parameters>
-        <node>computer1</node>
-        <stdio></stdio>
-        <tag>yarpdatadumper</tag>
-    </module>
-    <module>
-        <name>yarpdatadumper</name>
         <parameters>--name /data/torso</parameters>
         <node>computer1</node>
         <stdio></stdio>
@@ -73,11 +66,6 @@
         <stdio></stdio>
         <tag>yarpdatadumper</tag>
     </module>
-    <connection>
-        <from>/icub/inertial</from>
-        <to>/data/inertial</to>
-        <protocol>udp</protocol>
-    </connection>
     <connection>
         <from>/icub/head/state:o</from>
         <to>/data/head</to>
