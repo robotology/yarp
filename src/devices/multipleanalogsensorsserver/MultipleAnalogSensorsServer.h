@@ -104,7 +104,8 @@ class MultipleAnalogSensorsServer :
                            const std::vector< SensorMetadata >& metadataVector,
                            std::vector< SensorMeasurement >& streamingDataVector,
                            yarp::dev::MAS_status (Interface::*getStatusMethodPtr)(size_t) const,
-                           bool (Interface::*getMeasureMethodPtr)(size_t, yarp::sig::Vector&, double&) const);
+                           bool (Interface::*getMeasureMethodPtr)(size_t, yarp::sig::Vector&, double&) const,
+                           const char* sensorType);
 
 
 public:
