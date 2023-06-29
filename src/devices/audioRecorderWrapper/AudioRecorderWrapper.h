@@ -36,9 +36,9 @@ class AudioRecorderDataThread;
  * | name           |      -         | string  | -              |   /audioRecorderWrapper  | No                          | full name of the port opened by the device                                 | MUST start with a '/' character, xxx/audio:o and xxx/rpc suffixes are appended   |
  * | period         |      -         | int     | ms             |   20                     | No                          | period of the internal thread, in ms                                       | default 20ms |
  * | debug          |      -         | bool    | -              |   -                      | No                          | developers use only                                                        | |
- * | min_samples_over_network  | -   | int     | samples        |   11250                  | No                          | sends the network packet ifs n samples are collected AND the timeout is expired | the algorithm is implemented in AudioRecorderDeviceBase |
- * | max_samples_over_network  | -   | int     | samples        |   11250                  | No                          | sends the network packet as soon as n samples have been collected          | the algorithm is implemented in AudioRecorderDeviceBase |
- * | max_samples_timeout  |  -       | float   | s              |   1.0                    | No                          | timeout for sample collection                                              | the algorithm is implemented in AudioRecorderDeviceBase |
+ * | min_samples_over_network  | -   | int     | samples        |   11250                  | No                          | sends the network packet ifs n samples are collected AND the timeout is expired | the algorithm is implemented in AudioRecorderDeviceBase::getSound() method |
+ * | max_samples_over_network  | -   | int     | samples        |   11250                  | No                          | sends the network packet as soon as n samples have been collected          | the algorithm is implemented in AudioRecorderDeviceBase::getSound() method |
+ * | max_samples_timeout  |  -       | float   | s              |   1.0                    | No                          | timeout for sample collection                                              | the algorithm is implemented in AudioRecorderDeviceBase::getSound() method |
  * | start          |      -         | bool    | -              |   false                  | No                          | automatically activates the recording when the device is started           | if false, the recording is enabled via rpc port |
  *
  * See \ref AudioDoc for additional documentation on YARP audio.
@@ -59,8 +59,6 @@ private:
     yarp::os::Stamp                m_stamp;
     size_t                         m_min_number_of_samples_over_network;
     size_t                         m_max_number_of_samples_over_network;
-    yarp::dev::AudioBufferSize     m_current_buffer_size;
-    yarp::dev::AudioBufferSize     m_max_buffer_size;
     double                         m_getSound_timeout;
     bool                           m_isDeviceOwned =false;
     bool                           m_isRecording=false;

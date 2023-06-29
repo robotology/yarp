@@ -225,12 +225,6 @@ bool AudioRecorderWrapper::attach(PolyDriver* driver)
         return false;
     }
 
-    if (!m_mic->getRecordingAudioBufferMaxSize(m_max_buffer_size))
-    {
-        yCError(AUDIORECORDERWRAPPER, "getPlaybackAudioBufferMaxSize failed\n");
-        return false;
-    }
-
     m_dataThread = new AudioRecorderDataThread(this);
     m_statusThread = new AudioRecorderStatusThread(this);
     m_dataThread->setPeriod(m_period);
@@ -269,24 +263,29 @@ bool AudioRecorderWrapper::detach()
 
 void AudioRecorderStatusThread::run()
 {
-    m_ARW->m_mic->getRecordingAudioBufferCurrentSize(m_ARW->m_current_buffer_size);
+    yarp::dev::AudioBufferSize device_buffer_current_size;
+    yarp::dev::AudioBufferSize device_buffer_max_size;
+    m_ARW->m_mic->getRecordingAudioBufferCurrentSize(device_buffer_current_size);
+    m_ARW->m_mic->getRecordingAudioBufferMaxSize(device_buffer_max_size);
+
     if (m_ARW->m_debug_enabled)
     {
         static double printer_wdt = yarp::os::Time::now();
         if (yarp::os::Time::now() - printer_wdt > 1.0)
         {
-            yCDebug(AUDIORECORDERWRAPPER) << m_ARW->m_current_buffer_size.getSamples() << "/" << m_ARW->m_max_buffer_size.getSamples() << "samples";
+            yCDebug(AUDIORECORDERWRAPPER) << device_buffer_current_size.getSamples() << "/" << device_buffer_max_size.getSamples() << "samples";
             printer_wdt = yarp::os::Time::now();
         }
     }
+
 
     m_ARW->m_mic->isRecording(m_ARW->m_isRecording);
 
     //status port
     yarp::dev::AudioRecorderStatus status;
     status.enabled = m_ARW->m_isRecording;
-    status.current_buffer_size = m_ARW->m_current_buffer_size.getSamples();
-    status.max_buffer_size = m_ARW->m_max_buffer_size.getSamples();
+    status.current_buffer_size = device_buffer_current_size.getSamples();
+    status.max_buffer_size = device_buffer_max_size.getSamples();
     m_ARW->m_statusPort.write(status);
 }
 
