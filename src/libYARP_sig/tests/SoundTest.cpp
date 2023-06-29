@@ -232,11 +232,11 @@ TEST_CASE("sig::SoundTest", "[yarp::sig]")
         CHECK(snd3 == snt3);
     }
 
-    SECTION("check set/get sample.")
+    SECTION("check sum (concatenation) of samples.")
     {
         Sound snd1, snd2, sndSum;
-        snd1.resize(5, 8);
-        snd2.resize(3, 8);
+        snd1.resize(5, 3);
+        snd2.resize(3, 3);
 
         for(size_t ch=0; ch<snd1.getChannels(); ch++)
         {
@@ -266,12 +266,16 @@ TEST_CASE("sig::SoundTest", "[yarp::sig]")
         {
             for(size_t s=0; s<s1Samples; s++)
             {
-                ok &= (sndSum.get(s, ch) == snd1.get(s, ch));
+                short sample1 = sndSum.get(s, ch);
+                short sample2 = snd1.get(s, ch);
+                ok &= ( sample1 == sample2);
             }
 
             for(size_t s=0; s<s2Samples; s++)
             {
-                ok &= (sndSum.get(s1Samples +s , ch) == snd2.get(s, ch));
+                short sample1 = sndSum.get(s1Samples + s, ch);
+                short sample2 = snd2.get(s, ch);
+                ok &= ( sample1 == sample2);
             }
         }
         CHECK(ok); // "operator '+=' test performed "

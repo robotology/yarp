@@ -58,23 +58,22 @@ Sound& Sound::operator += (const Sound& alt)
     Sound orig= *this;
     this->resize(this->m_samples+alt.m_samples,m_channels);
 
-    unsigned char* p1    = orig.getRawData();
-    unsigned char* p2    = alt.getRawData();
+    unsigned char* orig_start  = orig.getRawData();
+    unsigned char* alt_start   = alt.getRawData();
     unsigned char* pout  = this->getRawData();
+    size_t orig_singlechannel_size = orig.getBytesPerSample() * orig.m_samples;
+    size_t  alt_singlechannel_size =  alt.getBytesPerSample() * alt.m_samples;
 
     for (size_t ch=0; ch<m_channels; ch++)
     {
         size_t out1 = ch* this->getBytesPerSample() * this->m_samples;
         size_t out2 = ch* this->getBytesPerSample() * this->m_samples + this->getBytesPerSample() * orig.m_samples;
 
-        size_t ori1 = ch * orig.getBytesPerSample() * orig.m_samples;
-        size_t s1   = orig.getBytesPerSample() * orig.m_samples;
+        size_t orig_pointer = ch * orig.getBytesPerSample() * orig.m_samples;
+        size_t alt_pointer = ch * orig.getBytesPerSample() * alt.m_samples;
 
-        size_t alt1 = ch * orig.getBytesPerSample() * alt.m_samples;
-        unsigned int s2 = alt.getBytesPerSample() * alt.m_samples;
-
-        memcpy((void *) &pout[out1], (void *) (p1+ori1), s1);
-        memcpy((void *) &pout[out2], (void *) (p2+alt1), s2);
+        memcpy((void *) &pout[out1], (void *) (orig_start + orig_pointer), orig_singlechannel_size);
+        memcpy((void *) &pout[out2], (void *) (alt_start  + alt_pointer),  alt_singlechannel_size);
     }
 
     this->synchronize();
