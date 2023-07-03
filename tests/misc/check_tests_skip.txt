@@ -4,6 +4,7 @@
 ./src/devices/IOdometry2DMsgs
 ./src/devices/ILocalization2DMsgs
 ./src/devices/frameTransformStorageMsgs
+./src/devices/IAudioGrabberMsgs
 ./src/devices/INavigation2DMsgs
 ./src/devices/ISerialMsgs
 ./src/devices/ISpeechSynthesizerMsgs

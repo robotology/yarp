@@ -51,6 +51,3 @@ service IAudioGrabberMsgs
     return_getRecordingAudioBufferMaxSize getRecordingAudioBufferMaxSize();
     return_getRecordingAudioBufferCurrentSize getRecordingAudioBufferCurrentSize();
 }
-
-
-
