@@ -1,0 +1,10 @@
+return_isRecording.h
+return_isRecording.cpp
+return_getSound.h
+return_getSound.cpp
+return_getRecordingAudioBufferCurrentSize.h
+return_getRecordingAudioBufferCurrentSize.cpp
+return_getRecordingAudioBufferMaxSize.h
+return_getRecordingAudioBufferMaxSize.cpp
+IAudioGrabberMsgs.h
+IAudioGrabberMsgs.cpp
