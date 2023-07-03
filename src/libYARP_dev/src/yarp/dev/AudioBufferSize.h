@@ -18,6 +18,7 @@ template <typename SAMPLE>
 class CircularAudioBuffer;
 
 class YARP_dev_API AudioBufferSize :
+        public yarp::os::idl::WirePortable,
         private audioBufferSizeData
 {
     template <typename SAMPLE>
