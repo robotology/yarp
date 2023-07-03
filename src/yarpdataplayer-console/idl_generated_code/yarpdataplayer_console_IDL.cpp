@@ -1084,7 +1084,7 @@ public:
         bool readTag(yarp::os::idl::WireReader& reader);
         bool readArgs(yarp::os::idl::WireReader& reader);
 
-        std::int32_t steps{0};
+        std::int32_t steps{5};
     };
 
     class Reply :
@@ -1151,7 +1151,7 @@ public:
         bool readTag(yarp::os::idl::WireReader& reader);
         bool readArgs(yarp::os::idl::WireReader& reader);
 
-        std::int32_t steps{0};
+        std::int32_t steps{5};
     };
 
     class Reply :

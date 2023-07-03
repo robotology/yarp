@@ -44,7 +44,10 @@ public:
      * the scan data, measured in [m]. The angular increment of each ray is obtained by (angle_max-angle_min)/num_of_elements. Invalid data are represented as std::inf.
      */
     yarp::sig::Vector scans{};
-    std::int32_t status{0};
+    /**
+     * the status of the device. See yarp::dev::IRangefinder2D::Device_status. The default value is DEVICE_TIMEOUT.
+     */
+    std::int32_t status{3};
 
     // Default constructor
     LaserScan2D() = default;
