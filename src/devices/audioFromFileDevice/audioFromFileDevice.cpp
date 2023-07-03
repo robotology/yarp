@@ -68,6 +68,15 @@ bool audioFromFileDevice::open(yarp::os::Searchable &config)
         yCInfo(AUDIOFROMFILE) << "Using default period of " << c_DEFAULT_PERIOD << " s";
     }
 
+    if (config.check("use_params_from_file"))
+    {
+        m_use_params_from_file = config.find("use_params_from_file").asBool();
+        if (m_use_params_from_file)
+            yCInfo(AUDIOFROMFILE) << "Using param use_params_from_file = true";
+        else
+            yCInfo(AUDIOFROMFILE) << "NOT using use_params_from_file";
+    }
+
     //sets the number of samples processed atomically every thread iteration
     if (config.check("driver_frame_size"))
     {
@@ -94,11 +103,25 @@ bool audioFromFileDevice::open(yarp::os::Searchable &config)
         return false;
     }
     yCInfo(AUDIOFROMFILE) << "Loaded file has the following properties: samples:" << m_audioFile.getSamples() << " channels:"<< m_audioFile.getChannels() << " bytes per samples:" << m_audioFile.getBytesPerSample();
-    if (m_audioFile.getChannels() != this->m_audiorecorder_cfg.numChannels)
+
+    if (m_use_params_from_file)
     {
-        yCInfo(AUDIOFROMFILE) << "Number of channels mismatch!";
+        this->m_audiorecorder_cfg.numChannels = m_audioFile.getChannels();
+        this->m_audiorecorder_cfg.frequency = m_audioFile.getFrequency();
+        this->m_audiorecorder_cfg.bytesPerSample = m_audioFile.getBytesPerSample();
+        this->m_audiorecorder_cfg.numSamples = m_audioFile.getSamples();
+    }
+    else
+    {
+        if (m_audioFile.getChannels() != this->m_audiorecorder_cfg.numChannels)
+        {
+            yCInfo(AUDIOFROMFILE) << "Number of channels mismatch!";
+            return false;
+        }
+        yCError(AUDIOFROMFILE) << "Not Yet implemented! I should replace this fatal error with a configuration conversion here!";
         return false;
     }
+
 
     //sets the audio configuration equal to the audio file
     //constexpr size_t c_EXTRA_SPACE = 2;

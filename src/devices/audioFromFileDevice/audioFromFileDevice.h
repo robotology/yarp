@@ -22,12 +22,13 @@
 * This device driver derives from \ref AudioRecorderDeviceBase base class, please check its documentation for additional details.
 *
 * Parameters required by this device are:
-* | Parameter name    | SubParameter   | Type    | Units          | Default Value            | Required                    | Description                                                       | Notes |
-* |:-----------------:|:--------------:|:-------:|:--------------:|:------------------------:|:--------------------------: |:-----------------------------------------------------------------:|:-----:|
-* | AUDIO_BASE        |     ***        |         | -              |  -                       | No                          | For the documentation of AUDIO_BASE group, please refer to the documentation of the base class AudioRecorderDeviceBase |       |
-* | file_name         |      -         | string  | -              |  audio.wav               | No                          | The name of the file opened by the module                         | Only .wav files supported   |
-* | period            |      -         | double  | s              |  0.010                   | No                          | the period of thread which processes the file                     | On each iteration xxx samples are processed |
-* | driver_frame_size |      -         | int     | samples        |  512                     | No                          | the number of samples to process on each iteration of the thread  | - |
+* | Parameter name        | SubParameter   | Type    | Units          | Default Value            | Required                    | Description                                                       | Notes |
+* |:---------------------:|:--------------:|:-------:|:--------------:|:------------------------:|:--------------------------: |:-----------------------------------------------------------------:|:-----:|
+* | AUDIO_BASE            |     ***        |         | -              |  -                       | No                          | For the documentation of AUDIO_BASE group, please refer to the documentation of the base class AudioRecorderDeviceBase |       |
+* | use_params_from_file  |      -         | bool    | -              |  true                    | No                          | If set to true, recording params (e.g. channels, freq etc. are taken from file. Otherwise are AUDIO_BASE parameters are used and the file is converted to the specified format |       |
+* | file_name             |      -         | string  | -              |  audio.wav               | No                          | The name of the file opened by the module                         | Only .wav files supported   |
+* | period                |      -         | double  | s              |  0.010                   | No                          | the period of thread which processes the file                     | On each iteration xxx samples are processed |
+* | driver_frame_size     |      -         | int     | samples        |  512                     | No                          | the number of samples to process on each iteration of the thread  | - |
 *
 * See \ref AudioDoc for additional documentation on YARP audio.
 */
@@ -64,4 +65,5 @@ private:
     size_t m_samples_to_be_copied = 512;
     size_t m_fsize_in_samples = 0;
     std::vector<std::reference_wrapper<yarp::sig::Sound::audio_sample>> m_datap;
+    bool m_use_params_from_file = true;
 };
