@@ -28,7 +28,7 @@ class CircularAudioBuffer
     public:
     bool isFull()
     {
-        return (end + 1) % maxsize.size == start;
+        return (end + 1) % maxsize.getBufferElements() == start;
     }
 
     const SAMPLE* getRawData()
@@ -44,11 +44,11 @@ class CircularAudioBuffer
     void write(SAMPLE elem)
     {
         elems[end] = elem;
-        end = (end + 1) % maxsize.size;
+        end = (end + 1) % maxsize.getBufferElements();
         if (end == start)
         {
             printf ("ERROR: %s buffer overrun!\n", name.c_str());
-            start = (start + 1) % maxsize.size; // full, overwrite
+            start = (start + 1) % maxsize.getBufferElements(); // full, overwrite
         }
     }
 
@@ -60,9 +60,9 @@ class CircularAudioBuffer
         } else if (end == start) {
             i = 0;
         } else {
-            i = maxsize.size - start + end;
+            i = maxsize.getBufferElements() - start + end;
         }
-        return AudioBufferSize(i/maxsize.m_channels, maxsize.m_channels, sizeof(SAMPLE));
+        return AudioBufferSize(i/maxsize.getChannels(), maxsize.getChannels(), sizeof(SAMPLE));
     }
 
     SAMPLE read()
@@ -72,7 +72,7 @@ class CircularAudioBuffer
             printf ("ERROR: %s buffer underrun!\n", name.c_str());
         }
         SAMPLE elem = elems[start];
-        start = (start + 1) % maxsize.size;
+        start = (start + 1) % maxsize.getBufferElements();
         return elem;
     }
 
@@ -92,14 +92,14 @@ class CircularAudioBuffer
             maxsize{bufferSize},
             start{0},
             end{0},
-            elems{static_cast<SAMPLE*>(calloc(maxsize.size, sizeof(SAMPLE)))}
+            elems{static_cast<SAMPLE*>(calloc(maxsize.getBufferElements(), sizeof(SAMPLE)))}
     {
         static_assert (std::is_same<unsigned char, SAMPLE>::value ||
                        std::is_same<unsigned short int, SAMPLE>::value ||
                        std::is_same<unsigned int, SAMPLE>::value,
                         "CircularAudioBuffer can be specialized only as <unsigned char>, <unsigned short int>, <unsigned int>");
 
-        yAssert(bufferSize.m_depth == sizeof(SAMPLE));
+        yAssert(bufferSize.getDepth() == sizeof(SAMPLE));
     }
 
     ~CircularAudioBuffer()
