@@ -566,14 +566,14 @@ function(YARP_ADD_IDL var)
     endif()
 
     if (CMAKE_CROSSCOMPILING)
-      find_program(YARPIDL_${_family}_LOCATION
-        NAMES yarpidl_${_family}
+      find_program(YARPIDL_${family}_LOCATION
+        NAMES yarpidl_${family}
         HINTS ${YARP_IDL_BINARY_HINT} # This is a list of directories defined
                                       # in YarpOptions.cmake (for YARP) or in
                                       # YARPConfig.cmake for dependencies
         NO_DEFAULT_PATH
       )
-      set(YARPIDL_${family}_COMMAND YARPIDL_${_family}_LOCATION)
+      set(YARPIDL_${family}_COMMAND ${YARPIDL_${family}_LOCATION})
     else()
       set(YARPIDL_${family}_COMMAND YARP::yarpidl_${family})
     endif()
