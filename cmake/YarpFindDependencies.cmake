@@ -553,6 +553,10 @@ yarp_dependent_option(
   "YARP_COMPILE_EXECUTABLES;YARP_COMPILE_GUIS;YARP_HAS_Qt5" OFF
 )
 yarp_dependent_option(
+  YARP_COMPILE_yarpaudiocontrolgui "Do you want to compile yarpaudiocontrolgui?" ON
+  "YARP_COMPILE_EXECUTABLES;YARP_COMPILE_GUIS;YARP_HAS_Qt5" OFF
+)
+yarp_dependent_option(
   YARP_COMPILE_yarpmobilebasegui "Do you want to compile yarpmobilebasegui?" ON
   "YARP_COMPILE_EXECUTABLES;YARP_COMPILE_GUIS;YARP_HAS_Qt5" OFF
 )
