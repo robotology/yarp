@@ -90,6 +90,7 @@ yarp_begin_plugin_library(yarpmod
   add_subdirectory(serialPort_nws_yarp)
   add_subdirectory(serialPort_nwc_yarp)
   add_subdirectory(speechSynthesizer_nws_yarp)
+  add_subdirectory(speechSynthesizer_nwc_yarp)
   add_subdirectory(speechTranscription_nws_yarp)
   add_subdirectory(speechTranscription_nwc_yarp)
   add_subdirectory(RemoteControlBoard)
