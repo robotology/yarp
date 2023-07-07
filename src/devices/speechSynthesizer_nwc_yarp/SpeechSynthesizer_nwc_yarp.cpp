@@ -192,4 +192,3 @@ bool SpeechSynthesizer_nwc_yarp::synthesize(const std::string& text, yarp::sig::
 
     return true;
 }
-
