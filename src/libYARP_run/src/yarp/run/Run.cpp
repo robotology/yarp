@@ -2615,6 +2615,7 @@ int yarp::run::Run::executeCmdAndStdio(yarp::os::Bottle& msg, yarp::os::Bottle& 
 
         if (IS_NEW_PROCESS(pid_stdin)) // STDIN IMPLEMENTED HERE
         {
+            yarp::conf::environment::set_string("YARP_QUIET", "1");
             REDIRECT_TO(STDOUT_FILENO, pipe_stdin_to_cmd[WRITE_TO_PIPE]);
             REDIRECT_TO(STDERR_FILENO, pipe_stdin_to_cmd[WRITE_TO_PIPE]);
 
