@@ -202,6 +202,10 @@ bool FrameGrabber_nwc_yarp::open(yarp::os::Searchable& config)
         if (!streamReceiver.open(local, remote, carrier)) {
             return false;
         }
+        FrameGrabberOf_ForwarderWithStream<yarp::sig::ImageOf<yarp::sig::PixelRgb>>::setStreamReceiver(&streamReceiver);
+        FrameGrabberOf_ForwarderWithStream<yarp::sig::ImageOf<yarp::sig::PixelMono>, VOCAB_FRAMEGRABBER_IMAGERAW>::setStreamReceiver(&streamReceiver);
+        FrameGrabberOf_ForwarderWithStream<yarp::sig::ImageOf<yarp::sig::PixelFloat>>::setStreamReceiver(&streamReceiver);
+        FrameGrabberOf_ForwarderWithStream<yarp::sig::FlexImage>::setStreamReceiver(&streamReceiver);
     }
 
     std::string rpc_local = local + "/rpc_client";
@@ -219,11 +223,6 @@ bool FrameGrabber_nwc_yarp::open(yarp::os::Searchable& config)
     } else {
         yCInfo(FRAMEGRABBER_NWC_YARP) << "No remote specified. Waiting for connection";
     }
-
-    FrameGrabberOf_ForwarderWithStream<yarp::sig::ImageOf<yarp::sig::PixelRgb>>::setStreamReceiver(&streamReceiver);
-    FrameGrabberOf_ForwarderWithStream<yarp::sig::ImageOf<yarp::sig::PixelMono>, VOCAB_FRAMEGRABBER_IMAGERAW>::setStreamReceiver(&streamReceiver);
-    FrameGrabberOf_ForwarderWithStream<yarp::sig::ImageOf<yarp::sig::PixelFloat>>::setStreamReceiver(&streamReceiver);
-    FrameGrabberOf_ForwarderWithStream<yarp::sig::FlexImage>::setStreamReceiver(&streamReceiver);
 
     return true;
 }
