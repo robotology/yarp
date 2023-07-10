@@ -44,11 +44,6 @@ bool SpeechSynthesizer_nwc_yarp::open(yarp::os::Searchable& config)
     }
     m_thrift_server_name = config.find("remote").asString();
 
-    if(config.check("carrier"))
-    {
-        m_carrier_name = config.find("carrier").asString();
-    }
-
     std::string thriftClientPortName = m_local_name + "/thrift:c";
     std::string thriftServerPortName = m_thrift_server_name + "/rpc";
 
@@ -59,7 +54,7 @@ bool SpeechSynthesizer_nwc_yarp::open(yarp::os::Searchable& config)
         return false;
     }
 
-    if(!yarp::os::Network::connect(thriftClientPortName, thriftServerPortName, m_carrier_name))
+    if(!yarp::os::Network::connect(thriftClientPortName, thriftServerPortName))
     {
         yCError(SPEECHSYNTH_NWC) << "Network::connect() failed: could not connect" << thriftClientPortName << "with" << thriftServerPortName;
 
@@ -154,6 +149,8 @@ bool SpeechSynthesizer_nwc_yarp::getSpeed(double& speed)
         return false;
     }
 
+    speed = result.speed;
+
     return true;
 }
 
@@ -176,6 +173,8 @@ bool SpeechSynthesizer_nwc_yarp::getPitch(double& pitch)
         yCError(SPEECHSYNTH_NWC) << "Error while retrieving the voice pitch";
         return false;
     }
+
+    pitch = result.pitch;
 
     return true;
 }
