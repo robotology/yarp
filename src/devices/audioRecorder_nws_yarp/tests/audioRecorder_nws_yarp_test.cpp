@@ -22,19 +22,19 @@ using namespace yarp::dev;
 using namespace yarp::sig;
 
 
-TEST_CASE("dev::AudioRecorderWrapper", "[yarp::dev]")
+TEST_CASE("dev::AudioRecorder_nws_yarp", "[yarp::dev]")
 {
     YARP_REQUIRE_PLUGIN("fakeMicrophone", "device");
-    YARP_REQUIRE_PLUGIN("AudioRecorderWrapper", "device");
+    YARP_REQUIRE_PLUGIN("audioRecorder_nws_yarp", "device");
 
     Network::setLocalMode(true);
 
-    SECTION("Test the AudioRecorderWrapper device with a no device attached")
+    SECTION("Test the audioRecorder_nws_yarp device with a no device attached")
     {
         PolyDriver dd_nws;
         Property p_nws;
 
-        p_nws.put("device", "AudioRecorderWrapper");
+        p_nws.put("device", "audioRecorder_nws_yarp");
         REQUIRE(dd_nws.open(p_nws));
         yarp::os::SystemClock::delaySystem(0.5);
 
@@ -50,7 +50,7 @@ TEST_CASE("dev::AudioRecorderWrapper", "[yarp::dev]")
         Property p_fake;
         Property p_nws;
 
-        p_nws.put("device", "AudioRecorderWrapper");
+        p_nws.put("device", "audioRecorder_nws_yarp");
         p_nws.put("start","");
         p_fake.put("device", "fakeMicrophone");
         REQUIRE(dd_fake.open(p_fake));

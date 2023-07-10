@@ -11,7 +11,7 @@ using namespace yarp::dev;
 using namespace yarp::os;
 
 namespace {
-YARP_LOG_COMPONENT(AUDIORECORDER_NWS_YARP, "yarp.device.AudioRecorder_nws_yarp")
+YARP_LOG_COMPONENT(AUDIORECORDER_NWS_YARP, "yarp.device.audioRecorder_nws_yarp")
 constexpr double DEFAULT_THREAD_PERIOD = 0.02; // seconds
 constexpr size_t DEFAULT_MIN_NUMBER_OF_SAMPLES_OVER_NETWORK = 11250;
 constexpr size_t DEFAULT_MAX_NUMBER_OF_SAMPLES_OVER_NETWORK = 11250;
@@ -63,7 +63,7 @@ bool AudioRecorder_nws_yarp::open(yarp::os::Searchable& config)
     yCInfo(AUDIORECORDER_NWS_YARP) << "Wrapper configured with max_samples_timeout: " << m_getSound_timeout << "s";
 
     // Set the streaming port
-    std::string portname = "/audioRecorderWrapper";
+    std::string portname = "/audioRecorder_nws";
     if (config.check("name"))
     {
         portname= config.find("name").asString();
@@ -122,19 +122,6 @@ bool AudioRecorder_nws_yarp::read(yarp::os::ConnectionReader& connection)
     }
     yCDebug(AUDIORECORDER_NWS_YARP) << "read() Command failed";
     return false;
-
-/*
-    else if (command.get(0).asString() == "stop")
-    {
-        m_mic->stopRecording();
-        m_mic->isRecording(m_isRecording);
-        reply.addVocab32(VOCAB_OK);
-        if (m_send_sound_on_stop)
-        {
-            sendSoundAndClear();
-        }
-    }
-*/
 }
 
 bool AudioRecorder_nws_yarp::attach(PolyDriver* driver)
@@ -242,66 +229,86 @@ void AudioRecorderDataThread::run()
     }
 #endif
 
-    //acquire sound data from attached device
-    m_ARW->m_mutex.lock();
-    m_ARW->m_mic->getSound(m_ARW->m_snd, m_ARW->m_min_number_of_samples_over_network, m_ARW->m_max_number_of_samples_over_network, m_ARW->m_getSound_timeout);
-    if (m_ARW->m_snd.getSamples() < m_ARW->m_min_number_of_samples_over_network ||
-        m_ARW->m_snd.getSamples() < m_ARW->m_max_number_of_samples_over_network)
-    {
-        yCWarning(AUDIORECORDER_NWS_YARP) << "subdevice->getSound() is not producing sounds of the requested size ("
-            << m_ARW->m_min_number_of_samples_over_network << "<"
-            << m_ARW->m_snd.getSamples() << "<"
-            << m_ARW->m_max_number_of_samples_over_network << ") failed";
-    }
-#ifdef PRINT_DEBUG_MESSAGES
-    {
-        audio_buffer_size buf_max;
-        audio_buffer_size buf_cur;
-        mic->getRecordingAudioBufferMaxSize(buf_max);
-        mic->getRecordingAudioBufferCurrentSize(buf_cur);
-        yCDebug(AUDIORECORDERWRAPPER) << "AFTER Buffer status:" << buf_cur.getBytes() << "/" << buf_max.getBytes() << "bytes";
-    }
-#endif
-#ifdef PRINT_DEBUG_MESSAGES
-    yCDebug(AUDIORECORDERWRAPPER) << "Sound size:" << m_ARW->m_snd.getSamples() * m_ARW->m_snd.getChannels() * m_ARW->m_snd.getBytesPerSample() << " bytes";
-    yCDebug(AUDIORECORDERWRAPPER);
-#endif
-    m_ARW->m_mutex.unlock();
 
-    //send data
-    m_ARW->sendSoundAndClear();
+    bool isRecording;
+    m_ARW->m_mic->isRecording(isRecording);
+    if (isRecording)
+    {
+        //acquire sound data from attached device
+        yarp::sig::Sound current_sound;
+        m_ARW->m_mic->getSound(current_sound, m_ARW->m_min_number_of_samples_over_network, m_ARW->m_max_number_of_samples_over_network, m_ARW->m_getSound_timeout);
+        if (current_sound.getSamples() < m_ARW->m_min_number_of_samples_over_network ||
+            current_sound.getSamples() < m_ARW->m_max_number_of_samples_over_network)
+        {
+            yCWarning(AUDIORECORDER_NWS_YARP) << "subdevice->getSound() is not producing sounds of the requested size ("
+                << m_ARW->m_min_number_of_samples_over_network << "<"
+                << current_sound.getSamples() << "<"
+                << m_ARW->m_max_number_of_samples_over_network << ") failed";
+        }
+        #ifdef PRINT_DEBUG_MESSAGES
+        {
+            audio_buffer_size buf_max;
+            audio_buffer_size buf_cur;
+            mic->getRecordingAudioBufferMaxSize(buf_max);
+            mic->getRecordingAudioBufferCurrentSize(buf_cur);
+            yCDebug(AUDIORECORDERWRAPPER) << "AFTER Buffer status:" << buf_cur.getBytes() << "/" << buf_max.getBytes() << "bytes";
+        }
+        #endif
+        #ifdef PRINT_DEBUG_MESSAGES
+            yCDebug(AUDIORECORDERWRAPPER) << "Sound size:" << current_sound.getSamples() * current_sound.getChannels() * current_sound.getBytesPerSample() << " bytes";
+            yCDebug(AUDIORECORDERWRAPPER);
+        #endif
+        
+        //send data
+        if (m_ARW->m_send_sound_on_stop)
+        {
+            if (m_ARW->m_snd.getSamples() > 0) {m_ARW->m_snd += current_sound;}
+            else                               {m_ARW->m_snd = current_sound;}
+        }
+        else
+        {
+            m_ARW->m_snd = current_sound;
+            sendSoundAndClear(m_ARW->m_snd);
+        }
+    }
+    else
+    {
+        if (m_ARW->m_snd.getSamples()>0)
+        {
+            sendSoundAndClear(m_ARW->m_snd);
+        }
+    }
 }
 
-bool AudioRecorder_nws_yarp::sendSoundAndClear()
+bool AudioRecorderDataThread::sendSoundAndClear(yarp::sig::Sound& s)
 {
-    std::lock_guard<std::mutex> lockguard (m_mutex);
-
     //check before sending data
-    if (m_snd.getSamples() == 0)
+    if (s.getSamples() == 0)
     {
         yCError(AUDIORECORDER_NWS_YARP) << "Subdevice produced sound of 0 samples!";
         return false;
     }
-    if (m_snd.getChannels() == 0)
+    if (s.getChannels() == 0)
     {
         yCError(AUDIORECORDER_NWS_YARP) << "Subdevice produced sound of 0 channels!";
         return false;
     }
-    if (m_snd.getFrequency() == 0)
+    if (s.getFrequency() == 0)
     {
         yCError(AUDIORECORDER_NWS_YARP) << "Subdevice produced sound with 0 frequency!";
         return false;
     }
 
     //prepare the timestamp
-    m_stamp.update();
-    m_streamingPort.setEnvelope(m_stamp);
+    m_ARW->m_stamp.update();
+    m_ARW->m_streamingPort.setEnvelope(m_ARW->m_stamp);
 
     //send data
-    if (m_streamingPort.getOutputCount()>0)
+    if (m_ARW->m_streamingPort.getOutputCount()>0)
     {
-        m_streamingPort.write(m_snd);
-        m_snd.clear();
+        m_ARW->m_streamingPort.write(s);
     }
+
+    s = yarp::sig::Sound(); //erase all data;
     return true;
 }

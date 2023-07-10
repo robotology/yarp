@@ -66,7 +66,6 @@ private:
     AudioRecorderDataThread*       m_dataThread =nullptr;
     bool                           m_debug_enabled = false;
     yarp::sig::Sound               m_snd;
-    std::mutex                     m_mutex;
     bool                           m_send_sound_on_stop = true;
 
 private:
@@ -97,9 +96,6 @@ public:
     bool read(yarp::os::ConnectionReader& connection) override;
     friend class AudioRecorderStatusThread;
     friend class AudioRecorderDataThread;
-
-private:
-    bool sendSoundAndClear();
 };
 
 //----------------------------------------------------------------
@@ -128,6 +124,8 @@ public:
     bool threadInit() override { return true; }
     void threadRelease() override { return; }
     void run() override;
+
+    bool sendSoundAndClear(yarp::sig::Sound& s);
 };
 
 #endif // YARP_DEV_AUDIORECORDERWRAPPER_H
