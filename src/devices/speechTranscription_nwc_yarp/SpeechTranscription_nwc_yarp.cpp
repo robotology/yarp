@@ -44,11 +44,6 @@ bool SpeechTranscription_nwc_yarp::open(yarp::os::Searchable& config)
     }
     m_thrift_server_name = config.find("remote").asString();
 
-    if(config.check("carrier"))
-    {
-        m_carrier_name = config.find("carrier").asString();
-    }
-
     std::string thriftClientPortName = m_local_name + "/thrift:c";
     std::string thriftServerPortName = m_thrift_server_name + "/rpc";
 
@@ -59,7 +54,7 @@ bool SpeechTranscription_nwc_yarp::open(yarp::os::Searchable& config)
         return false;
     }
 
-    if(!yarp::os::Network::connect(thriftClientPortName, thriftServerPortName, m_carrier_name))
+    if(!yarp::os::Network::connect(thriftClientPortName, thriftServerPortName))
     {
         yCError(SPEECHTR_NWC) << "Network::connect() failed: could not connect" << thriftClientPortName << "with" << thriftServerPortName;
 
