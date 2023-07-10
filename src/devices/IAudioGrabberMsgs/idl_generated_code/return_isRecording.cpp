@@ -11,9 +11,11 @@
 #include <return_isRecording.h>
 
 // Constructor with field values
-return_isRecording::return_isRecording(const bool ret) :
+return_isRecording::return_isRecording(const bool ret,
+                                       const bool isRecording) :
         WirePortable(),
-        ret(ret)
+        ret(ret),
+        isRecording(isRecording)
 {
 }
 
@@ -21,6 +23,9 @@ return_isRecording::return_isRecording(const bool ret) :
 bool return_isRecording::read(yarp::os::idl::WireReader& reader)
 {
     if (!read_ret(reader)) {
+        return false;
+    }
+    if (!read_isRecording(reader)) {
         return false;
     }
     if (reader.isError()) {
@@ -33,7 +38,7 @@ bool return_isRecording::read(yarp::os::idl::WireReader& reader)
 bool return_isRecording::read(yarp::os::ConnectionReader& connection)
 {
     yarp::os::idl::WireReader reader(connection);
-    if (!reader.readListHeader(1)) {
+    if (!reader.readListHeader(2)) {
         return false;
     }
     if (!read(reader)) {
@@ -48,6 +53,9 @@ bool return_isRecording::write(const yarp::os::idl::WireWriter& writer) const
     if (!write_ret(writer)) {
         return false;
     }
+    if (!write_isRecording(writer)) {
+        return false;
+    }
     if (writer.isError()) {
         return false;
     }
@@ -58,7 +66,7 @@ bool return_isRecording::write(const yarp::os::idl::WireWriter& writer) const
 bool return_isRecording::write(yarp::os::ConnectionWriter& connection) const
 {
     yarp::os::idl::WireWriter writer(connection);
-    if (!writer.writeListHeader(1)) {
+    if (!writer.writeListHeader(2)) {
         return false;
     }
     if (!write(writer)) {
@@ -108,6 +116,42 @@ bool return_isRecording::nested_read_ret(yarp::os::idl::WireReader& reader)
 bool return_isRecording::nested_write_ret(const yarp::os::idl::WireWriter& writer) const
 {
     if (!writer.writeBool(ret)) {
+        return false;
+    }
+    return true;
+}
+
+// read isRecording field
+bool return_isRecording::read_isRecording(yarp::os::idl::WireReader& reader)
+{
+    if (!reader.readBool(isRecording)) {
+        isRecording = false;
+    }
+    return true;
+}
+
+// write isRecording field
+bool return_isRecording::write_isRecording(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.writeBool(isRecording)) {
+        return false;
+    }
+    return true;
+}
+
+// read (nested) isRecording field
+bool return_isRecording::nested_read_isRecording(yarp::os::idl::WireReader& reader)
+{
+    if (!reader.readBool(isRecording)) {
+        isRecording = false;
+    }
+    return true;
+}
+
+// write (nested) isRecording field
+bool return_isRecording::nested_write_isRecording(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.writeBool(isRecording)) {
         return false;
     }
     return true;

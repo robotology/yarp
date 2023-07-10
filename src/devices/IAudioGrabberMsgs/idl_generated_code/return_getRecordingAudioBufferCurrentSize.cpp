@@ -12,10 +12,10 @@
 
 // Constructor with field values
 return_getRecordingAudioBufferCurrentSize::return_getRecordingAudioBufferCurrentSize(const bool ret,
-                                                                                     const yarp::dev::AudioBufferSize& size) :
+                                                                                     const yarp::dev::AudioBufferSize& bufsize) :
         WirePortable(),
         ret(ret),
-        size(size)
+        bufsize(bufsize)
 {
 }
 
@@ -25,7 +25,7 @@ bool return_getRecordingAudioBufferCurrentSize::read(yarp::os::idl::WireReader& 
     if (!read_ret(reader)) {
         return false;
     }
-    if (!nested_read_size(reader)) {
+    if (!nested_read_bufsize(reader)) {
         return false;
     }
     if (reader.isError()) {
@@ -53,7 +53,7 @@ bool return_getRecordingAudioBufferCurrentSize::write(const yarp::os::idl::WireW
     if (!write_ret(writer)) {
         return false;
     }
-    if (!nested_write_size(writer)) {
+    if (!nested_write_bufsize(writer)) {
         return false;
     }
     if (writer.isError()) {
@@ -121,47 +121,47 @@ bool return_getRecordingAudioBufferCurrentSize::nested_write_ret(const yarp::os:
     return true;
 }
 
-// read size field
-bool return_getRecordingAudioBufferCurrentSize::read_size(yarp::os::idl::WireReader& reader)
+// read bufsize field
+bool return_getRecordingAudioBufferCurrentSize::read_bufsize(yarp::os::idl::WireReader& reader)
 {
     if (reader.noMore()) {
         reader.fail();
         return false;
     }
-    if (!reader.read(size)) {
+    if (!reader.read(bufsize)) {
         reader.fail();
         return false;
     }
     return true;
 }
 
-// write size field
-bool return_getRecordingAudioBufferCurrentSize::write_size(const yarp::os::idl::WireWriter& writer) const
+// write bufsize field
+bool return_getRecordingAudioBufferCurrentSize::write_bufsize(const yarp::os::idl::WireWriter& writer) const
 {
-    if (!writer.write(size)) {
+    if (!writer.write(bufsize)) {
         return false;
     }
     return true;
 }
 
-// read (nested) size field
-bool return_getRecordingAudioBufferCurrentSize::nested_read_size(yarp::os::idl::WireReader& reader)
+// read (nested) bufsize field
+bool return_getRecordingAudioBufferCurrentSize::nested_read_bufsize(yarp::os::idl::WireReader& reader)
 {
     if (reader.noMore()) {
         reader.fail();
         return false;
     }
-    if (!reader.readNested(size)) {
+    if (!reader.readNested(bufsize)) {
         reader.fail();
         return false;
     }
     return true;
 }
 
-// write (nested) size field
-bool return_getRecordingAudioBufferCurrentSize::nested_write_size(const yarp::os::idl::WireWriter& writer) const
+// write (nested) bufsize field
+bool return_getRecordingAudioBufferCurrentSize::nested_write_bufsize(const yarp::os::idl::WireWriter& writer) const
 {
-    if (!writer.writeNested(size)) {
+    if (!writer.writeNested(bufsize)) {
         return false;
     }
     return true;

@@ -281,7 +281,7 @@ bool   AudioRecorder_nwc_yarp::isRecording(bool& recording_enabled)
     auto ret = m_audiograb_RPC.isRecording_RPC();
     if (!ret.ret)
     {
-        yCError(AUDIORECORDER_NWC, "Unable to isRecording");
+        yCError(AUDIORECORDER_NWC, "Unable to: isRecording()");
         return false;
     }
     recording_enabled = ret.isRecording;
@@ -294,7 +294,7 @@ bool   AudioRecorder_nwc_yarp::getRecordingAudioBufferMaxSize(yarp::dev::AudioBu
     auto ret = m_audiograb_RPC.getRecordingAudioBufferMaxSize();
     if (!ret.ret)
     {
-        yCError(AUDIORECORDER_NWC, "Unable to getRecordingAudioBufferMaxSize");
+        yCError(AUDIORECORDER_NWC, "Unable to: getRecordingAudioBufferMaxSize()");
         return false;
     }
     size = ret.bufsize;
@@ -307,7 +307,7 @@ bool   AudioRecorder_nwc_yarp::getRecordingAudioBufferCurrentSize(yarp::dev::Aud
     auto ret = m_audiograb_RPC.getRecordingAudioBufferCurrentSize();
     if (!ret.ret)
     {
-        yCError(AUDIORECORDER_NWC, "Unable to getRecordingAudioBufferCurrentSize");
+        yCError(AUDIORECORDER_NWC, "Unable to: getRecordingAudioBufferCurrentSize()");
         return false;
     }
     size = ret.bufsize;
@@ -320,7 +320,7 @@ bool AudioRecorder_nwc_yarp::getSound(yarp::sig::Sound& sound, size_t min_number
     auto ret = m_audiograb_RPC.getSound(min_number_of_samples,max_number_of_samples, max_samples_timeout_s);
     if (!ret.ret)
     {
-        yCError(AUDIORECORDER_NWC, "Unable to getRecordingAudioBufferCurrentSize");
+        yCError(AUDIORECORDER_NWC, "Unable to: getRecordingAudioBufferCurrentSize()");
         return false;
     }
     sound = ret.sound;

@@ -1,3 +1,4 @@
+IAudioGrabberMsgs_common.h
 return_isRecording.h
 return_isRecording.cpp
 return_getSound.h

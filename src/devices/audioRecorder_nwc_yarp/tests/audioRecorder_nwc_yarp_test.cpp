@@ -1,11 +1,9 @@
 /*
- * SPDX-FileCopyrightText: 2006-2021 Istituto Italiano di Tecnologia (IIT)
+ * SPDX-FileCopyrightText: 2023-2023 Istituto Italiano di Tecnologia (IIT)
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#include <yarp/dev/IBattery.h>
-
-#include <yarp/dev/tests/IBatteryTest.h>
+#include <yarp/dev/IAudioGrabberSound.h>
 
 #include <yarp/os/Network.h>
 #include <yarp/sig/Image.h>
@@ -24,15 +22,15 @@ using namespace yarp::dev;
 using namespace yarp::sig;
 
 
-TEST_CASE("dev::battery_nwc_yarp", "[yarp::dev]")
+TEST_CASE("dev::audioRecorder_nwc_yarp", "[yarp::dev]")
 {
-    YARP_REQUIRE_PLUGIN("fakeBattery", "device");
-    YARP_REQUIRE_PLUGIN("battery_nwc_yarp", "device");
-    YARP_REQUIRE_PLUGIN("battery_nws_yarp", "device");
+    YARP_REQUIRE_PLUGIN("fakeMicrophone", "device");
+    YARP_REQUIRE_PLUGIN("audioRecorder_nws_yarp", "device");
+    YARP_REQUIRE_PLUGIN("audioRecorder_nwc_yarp", "device");
 
     Network::setLocalMode(true);
 
-    SECTION("Test the battery_nwc_yarp device with a battery_nws_yarp device")
+    SECTION("Test the audioRecorder_nwc_yarp device with a audioRecorder_nws_yarp device")
     {
         PolyDriver dd_fake;
         PolyDriver dd_nws;
@@ -41,9 +39,9 @@ TEST_CASE("dev::battery_nwc_yarp", "[yarp::dev]")
         Property p_nws;
         Property p_nwc;
 
-        p_nws.put("device","battery_nws_yarp");
-        p_nws.put("name", "/battery_nws");
-        p_fake.put("device","fakeBattery");
+        p_nws.put("device","audioRecorder_nws_yarp");
+        p_nws.put("name", "/audioRecorder_nws");
+        p_fake.put("device","fakeMicrophone");
         REQUIRE(dd_fake.open(p_fake));
         REQUIRE(dd_nws.open(p_nws));
         yarp::os::SystemClock::delaySystem(0.5);
@@ -53,18 +51,25 @@ TEST_CASE("dev::battery_nwc_yarp", "[yarp::dev]")
         bool result_att = ww_nws->attach(&dd_fake);
         REQUIRE(result_att); }
 
-        p_nwc.put("device", "battery_nwc_yarp");
-        p_nwc.put("remote", "/battery_nws");
-        p_nwc.put("local", "/battery_nwc");
-        p_nwc.put("no_stream", 1);
+        p_nwc.put("device", "audioRecorder_nwc_yarp");
+        p_nwc.put("remote", "/audioRecorder_nws");
+        p_nwc.put("local", "/audioRecorder_nwc");
         REQUIRE(dd_nwc.open(p_nwc));
 
-        IBattery* ibattery = nullptr;
-        REQUIRE(dd_nwc.view(ibattery));
+        IAudioGrabberSound* igrab = nullptr;
+        REQUIRE(dd_nwc.view(igrab));
 
         yarp::os::SystemClock::delaySystem(0.5);
 
-        yarp::dev::tests::exec_iBattery_test_1(ibattery);
+        CHECK (igrab->stopRecording());
+        bool isrec = false;
+        CHECK (igrab->isRecording(isrec)); CHECK(isrec == false);
+        CHECK (igrab->startRecording());
+        CHECK (igrab->isRecording(isrec)); CHECK(isrec == true);
+        CHECK (igrab->stopRecording());
+        CHECK (igrab->isRecording(isrec)); CHECK(isrec == false);
+        CHECK (igrab->setHWGain(0.5));
+        CHECK (igrab->setSWGain(0.5));
 
         yarp::os::SystemClock::delaySystem(0.5);
 

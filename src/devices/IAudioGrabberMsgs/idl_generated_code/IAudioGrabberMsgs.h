@@ -13,6 +13,7 @@
 
 #include <yarp/os/Wire.h>
 #include <yarp/os/idl/WireTypes.h>
+#include <IAudioGrabberMsgs_common.h>
 #include <return_getRecordingAudioBufferCurrentSize.h>
 #include <return_getRecordingAudioBufferMaxSize.h>
 #include <return_getSound.h>
@@ -37,7 +38,7 @@ public:
 
     virtual return_isRecording isRecording_RPC();
 
-    virtual return_getSound getSound(const std::int64_t min_number_of_samples, const std::int64_t max_number_of_samples, const double max_samples_timeout_s);
+    virtual return_getSound getSound(const size_t min_number_of_samples, const size_t max_number_of_samples, const double max_samples_timeout_s);
 
     virtual return_getRecordingAudioBufferMaxSize getRecordingAudioBufferMaxSize();
 

@@ -12,10 +12,10 @@
 
 // Constructor with field values
 return_getRecordingAudioBufferMaxSize::return_getRecordingAudioBufferMaxSize(const bool ret,
-                                                                             const yarp::dev::AudioBufferSize& size) :
+                                                                             const yarp::dev::AudioBufferSize& bufsize) :
         WirePortable(),
         ret(ret),
-        size(size)
+        bufsize(bufsize)
 {
 }
 
@@ -25,7 +25,7 @@ bool return_getRecordingAudioBufferMaxSize::read(yarp::os::idl::WireReader& read
     if (!read_ret(reader)) {
         return false;
     }
-    if (!nested_read_size(reader)) {
+    if (!nested_read_bufsize(reader)) {
         return false;
     }
     if (reader.isError()) {
@@ -53,7 +53,7 @@ bool return_getRecordingAudioBufferMaxSize::write(const yarp::os::idl::WireWrite
     if (!write_ret(writer)) {
         return false;
     }
-    if (!nested_write_size(writer)) {
+    if (!nested_write_bufsize(writer)) {
         return false;
     }
     if (writer.isError()) {
@@ -121,47 +121,47 @@ bool return_getRecordingAudioBufferMaxSize::nested_write_ret(const yarp::os::idl
     return true;
 }
 
-// read size field
-bool return_getRecordingAudioBufferMaxSize::read_size(yarp::os::idl::WireReader& reader)
+// read bufsize field
+bool return_getRecordingAudioBufferMaxSize::read_bufsize(yarp::os::idl::WireReader& reader)
 {
     if (reader.noMore()) {
         reader.fail();
         return false;
     }
-    if (!reader.read(size)) {
+    if (!reader.read(bufsize)) {
         reader.fail();
         return false;
     }
     return true;
 }
 
-// write size field
-bool return_getRecordingAudioBufferMaxSize::write_size(const yarp::os::idl::WireWriter& writer) const
+// write bufsize field
+bool return_getRecordingAudioBufferMaxSize::write_bufsize(const yarp::os::idl::WireWriter& writer) const
 {
-    if (!writer.write(size)) {
+    if (!writer.write(bufsize)) {
         return false;
     }
     return true;
 }
 
-// read (nested) size field
-bool return_getRecordingAudioBufferMaxSize::nested_read_size(yarp::os::idl::WireReader& reader)
+// read (nested) bufsize field
+bool return_getRecordingAudioBufferMaxSize::nested_read_bufsize(yarp::os::idl::WireReader& reader)
 {
     if (reader.noMore()) {
         reader.fail();
         return false;
     }
-    if (!reader.readNested(size)) {
+    if (!reader.readNested(bufsize)) {
         reader.fail();
         return false;
     }
     return true;
 }
 
-// write (nested) size field
-bool return_getRecordingAudioBufferMaxSize::nested_write_size(const yarp::os::idl::WireWriter& writer) const
+// write (nested) bufsize field
+bool return_getRecordingAudioBufferMaxSize::nested_write_bufsize(const yarp::os::idl::WireWriter& writer) const
 {
-    if (!writer.writeNested(size)) {
+    if (!writer.writeNested(bufsize)) {
         return false;
     }
     return true;

@@ -29,7 +29,7 @@ TEST_CASE("dev::AudioRecorder_nws_yarp", "[yarp::dev]")
 
     Network::setLocalMode(true);
 
-    SECTION("Test the audioRecorder_nws_yarp device with a no device attached")
+    SECTION("Test the audioRecorder_nws_yarp device with no devices attached")
     {
         PolyDriver dd_nws;
         Property p_nws;
@@ -43,7 +43,7 @@ TEST_CASE("dev::AudioRecorder_nws_yarp", "[yarp::dev]")
         CHECK(dd_nws.close());
     }
 
-    SECTION("Test the AudioRecorderWrapper device with a fakeMicrophone device")
+    SECTION("Test the audioRecorder_nws_yarp device with a fakeMicrophone device")
     {
         PolyDriver dd_fake;
         PolyDriver dd_nws;

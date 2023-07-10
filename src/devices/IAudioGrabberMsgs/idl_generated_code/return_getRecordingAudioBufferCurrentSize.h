@@ -13,6 +13,8 @@
 
 #include <yarp/os/Wire.h>
 #include <yarp/os/idl/WireTypes.h>
+
+#include <IAudioGrabberMsgs_common.h>
 #include <yarp/dev/AudioBufferSize.h>
 
 class return_getRecordingAudioBufferCurrentSize :
@@ -21,14 +23,14 @@ class return_getRecordingAudioBufferCurrentSize :
 public:
     // Fields
     bool ret{false};
-    yarp::dev::AudioBufferSize size{};
+    yarp::dev::AudioBufferSize bufsize{};
 
     // Default constructor
     return_getRecordingAudioBufferCurrentSize() = default;
 
     // Constructor with field values
     return_getRecordingAudioBufferCurrentSize(const bool ret,
-                                              const yarp::dev::AudioBufferSize& size);
+                                              const yarp::dev::AudioBufferSize& bufsize);
 
     // Read structure on a Wire
     bool read(yarp::os::idl::WireReader& reader) override;
@@ -55,11 +57,11 @@ private:
     bool nested_read_ret(yarp::os::idl::WireReader& reader);
     bool nested_write_ret(const yarp::os::idl::WireWriter& writer) const;
 
-    // read/write size field
-    bool read_size(yarp::os::idl::WireReader& reader);
-    bool write_size(const yarp::os::idl::WireWriter& writer) const;
-    bool nested_read_size(yarp::os::idl::WireReader& reader);
-    bool nested_write_size(const yarp::os::idl::WireWriter& writer) const;
+    // read/write bufsize field
+    bool read_bufsize(yarp::os::idl::WireReader& reader);
+    bool write_bufsize(const yarp::os::idl::WireWriter& writer) const;
+    bool nested_read_bufsize(yarp::os::idl::WireReader& reader);
+    bool nested_write_bufsize(const yarp::os::idl::WireWriter& writer) const;
 };
 
 #endif // YARP_THRIFT_GENERATOR_STRUCT_RETURN_GETRECORDINGAUDIOBUFFERCURRENTSIZE_H

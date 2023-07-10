@@ -367,7 +367,7 @@ public:
     static constexpr const char* s_tag{"isRecording_RPC"};
     static constexpr size_t s_tag_len{2};
     static constexpr size_t s_cmd_len{2};
-    static constexpr size_t s_reply_len{1};
+    static constexpr size_t s_reply_len{2};
     static constexpr const char* s_prototype{"return_isRecording IAudioGrabberMsgs::isRecording_RPC()"};
     static constexpr const char* s_help{""};
 };
@@ -378,7 +378,7 @@ class IAudioGrabberMsgs_getSound_helper :
 {
 public:
     IAudioGrabberMsgs_getSound_helper() = default;
-    IAudioGrabberMsgs_getSound_helper(const std::int64_t min_number_of_samples, const std::int64_t max_number_of_samples, const double max_samples_timeout_s);
+    IAudioGrabberMsgs_getSound_helper(const size_t min_number_of_samples, const size_t max_number_of_samples, const double max_samples_timeout_s);
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
 
@@ -387,7 +387,7 @@ public:
     {
     public:
         Command() = default;
-        Command(const std::int64_t min_number_of_samples, const std::int64_t max_number_of_samples, const double max_samples_timeout_s);
+        Command(const size_t min_number_of_samples, const size_t max_number_of_samples, const double max_samples_timeout_s);
 
         ~Command() override = default;
 
@@ -402,8 +402,8 @@ public:
         bool readTag(yarp::os::idl::WireReader& reader);
         bool readArgs(yarp::os::idl::WireReader& reader);
 
-        std::int64_t min_number_of_samples{0};
-        std::int64_t max_number_of_samples{0};
+        size_t min_number_of_samples{0};
+        size_t max_number_of_samples{0};
         double max_samples_timeout_s{0.0};
     };
 
@@ -423,7 +423,7 @@ public:
         return_getSound return_helper{};
     };
 
-    using funcptr_t = return_getSound (*)(const std::int64_t, const std::int64_t, const double);
+    using funcptr_t = return_getSound (*)(const size_t, const size_t, const double);
     void call(IAudioGrabberMsgs* ptr);
 
     Command cmd;
@@ -433,7 +433,7 @@ public:
     static constexpr size_t s_tag_len{1};
     static constexpr size_t s_cmd_len{4};
     static constexpr size_t s_reply_len{2};
-    static constexpr const char* s_prototype{"return_getSound IAudioGrabberMsgs::getSound(const std::int64_t min_number_of_samples, const std::int64_t max_number_of_samples, const double max_samples_timeout_s)"};
+    static constexpr const char* s_prototype{"return_getSound IAudioGrabberMsgs::getSound(const size_t min_number_of_samples, const size_t max_number_of_samples, const double max_samples_timeout_s)"};
     static constexpr const char* s_help{""};
 };
 
@@ -1394,7 +1394,7 @@ void IAudioGrabberMsgs_isRecording_RPC_helper::call(IAudioGrabberMsgs* ptr)
 }
 
 // getSound helper class implementation
-IAudioGrabberMsgs_getSound_helper::IAudioGrabberMsgs_getSound_helper(const std::int64_t min_number_of_samples, const std::int64_t max_number_of_samples, const double max_samples_timeout_s) :
+IAudioGrabberMsgs_getSound_helper::IAudioGrabberMsgs_getSound_helper(const size_t min_number_of_samples, const size_t max_number_of_samples, const double max_samples_timeout_s) :
         cmd{min_number_of_samples, max_number_of_samples, max_samples_timeout_s}
 {
 }
@@ -1409,7 +1409,7 @@ bool IAudioGrabberMsgs_getSound_helper::read(yarp::os::ConnectionReader& connect
     return reply.read(connection);
 }
 
-IAudioGrabberMsgs_getSound_helper::Command::Command(const std::int64_t min_number_of_samples, const std::int64_t max_number_of_samples, const double max_samples_timeout_s) :
+IAudioGrabberMsgs_getSound_helper::Command::Command(const size_t min_number_of_samples, const size_t max_number_of_samples, const double max_samples_timeout_s) :
         min_number_of_samples{min_number_of_samples},
         max_number_of_samples{max_number_of_samples},
         max_samples_timeout_s{max_samples_timeout_s}
@@ -1456,10 +1456,10 @@ bool IAudioGrabberMsgs_getSound_helper::Command::writeTag(const yarp::os::idl::W
 
 bool IAudioGrabberMsgs_getSound_helper::Command::writeArgs(const yarp::os::idl::WireWriter& writer) const
 {
-    if (!writer.writeI64(min_number_of_samples)) {
+    if (!writer.writeSizeT(min_number_of_samples)) {
         return false;
     }
-    if (!writer.writeI64(max_number_of_samples)) {
+    if (!writer.writeSizeT(max_number_of_samples)) {
         return false;
     }
     if (!writer.writeFloat64(max_samples_timeout_s)) {
@@ -1498,7 +1498,7 @@ bool IAudioGrabberMsgs_getSound_helper::Command::readArgs(yarp::os::idl::WireRea
         reader.fail();
         return false;
     }
-    if (!reader.readI64(min_number_of_samples)) {
+    if (!reader.readSizeT(min_number_of_samples)) {
         reader.fail();
         return false;
     }
@@ -1506,7 +1506,7 @@ bool IAudioGrabberMsgs_getSound_helper::Command::readArgs(yarp::os::idl::WireRea
         reader.fail();
         return false;
     }
-    if (!reader.readI64(max_number_of_samples)) {
+    if (!reader.readSizeT(max_number_of_samples)) {
         reader.fail();
         return false;
     }
@@ -1903,7 +1903,7 @@ return_isRecording IAudioGrabberMsgs::isRecording_RPC()
     return ok ? helper.reply.return_helper : return_isRecording{};
 }
 
-return_getSound IAudioGrabberMsgs::getSound(const std::int64_t min_number_of_samples, const std::int64_t max_number_of_samples, const double max_samples_timeout_s)
+return_getSound IAudioGrabberMsgs::getSound(const size_t min_number_of_samples, const size_t max_number_of_samples, const double max_samples_timeout_s)
 {
     if (!yarp().canWrite()) {
         yError("Missing server method '%s'?", IAudioGrabberMsgs_getSound_helper::s_prototype);

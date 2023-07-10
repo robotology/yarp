@@ -13,6 +13,8 @@
 
 #include <yarp/os/Wire.h>
 #include <yarp/os/idl/WireTypes.h>
+
+#include <IAudioGrabberMsgs_common.h>
 #include <yarp/sig/Sound.h>
 
 class return_getSound :

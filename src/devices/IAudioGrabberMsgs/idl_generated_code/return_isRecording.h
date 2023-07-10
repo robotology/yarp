@@ -14,18 +14,22 @@
 #include <yarp/os/Wire.h>
 #include <yarp/os/idl/WireTypes.h>
 
+#include <IAudioGrabberMsgs_common.h>
+
 class return_isRecording :
         public yarp::os::idl::WirePortable
 {
 public:
     // Fields
     bool ret{false};
+    bool isRecording{false};
 
     // Default constructor
     return_isRecording() = default;
 
     // Constructor with field values
-    return_isRecording(const bool ret);
+    return_isRecording(const bool ret,
+                       const bool isRecording);
 
     // Read structure on a Wire
     bool read(yarp::os::idl::WireReader& reader) override;
@@ -51,6 +55,12 @@ private:
     bool write_ret(const yarp::os::idl::WireWriter& writer) const;
     bool nested_read_ret(yarp::os::idl::WireReader& reader);
     bool nested_write_ret(const yarp::os::idl::WireWriter& writer) const;
+
+    // read/write isRecording field
+    bool read_isRecording(yarp::os::idl::WireReader& reader);
+    bool write_isRecording(const yarp::os::idl::WireWriter& writer) const;
+    bool nested_read_isRecording(yarp::os::idl::WireReader& reader);
+    bool nested_write_isRecording(const yarp::os::idl::WireWriter& writer) const;
 };
 
 #endif // YARP_THRIFT_GENERATOR_STRUCT_RETURN_ISRECORDING_H
