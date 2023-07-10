@@ -220,6 +220,11 @@ bool FrameGrabber_nwc_yarp::open(yarp::os::Searchable& config)
         yCInfo(FRAMEGRABBER_NWC_YARP) << "No remote specified. Waiting for connection";
     }
 
+    FrameGrabberOf_ForwarderWithStream<yarp::sig::ImageOf<yarp::sig::PixelRgb>>::setStreamReceiver(&streamReceiver);
+    FrameGrabberOf_ForwarderWithStream<yarp::sig::ImageOf<yarp::sig::PixelMono>, VOCAB_FRAMEGRABBER_IMAGERAW>::setStreamReceiver(&streamReceiver);
+    FrameGrabberOf_ForwarderWithStream<yarp::sig::ImageOf<yarp::sig::PixelFloat>>::setStreamReceiver(&streamReceiver);
+    FrameGrabberOf_ForwarderWithStream<yarp::sig::FlexImage>::setStreamReceiver(&streamReceiver);
+
     return true;
 }
 
