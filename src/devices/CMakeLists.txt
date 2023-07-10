@@ -13,6 +13,7 @@ yarp_begin_plugin_library(yarpmod
   add_subdirectory(framegrabber_protocol)
   add_subdirectory(audioPlayerWrapper)
   add_subdirectory(audioRecorderWrapper)
+  add_subdirectory(audioRecorder_nwc_yarp)
   add_subdirectory(audioRecorder_nws_yarp)
   add_subdirectory(audioFromFileDevice)
   add_subdirectory(audioToFileDevice)

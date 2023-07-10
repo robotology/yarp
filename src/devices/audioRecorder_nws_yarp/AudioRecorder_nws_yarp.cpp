@@ -258,7 +258,7 @@ void AudioRecorderDataThread::run()
             yCDebug(AUDIORECORDERWRAPPER) << "Sound size:" << current_sound.getSamples() * current_sound.getChannels() * current_sound.getBytesPerSample() << " bytes";
             yCDebug(AUDIORECORDERWRAPPER);
         #endif
-        
+
         //send data
         if (m_ARW->m_send_sound_on_stop)
         {

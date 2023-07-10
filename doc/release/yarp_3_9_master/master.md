@@ -14,4 +14,8 @@ No functional changes.
 # audioRecoder_nws_yarp
 
 Added new device `audioRecoder_nws_yarp` and thrift interface `IAudioGrabberMsgs`
-Deprecated old device `AudioRecorderWrapper`
+Deprecated old device `AudioRecorderWrapper`.
+
+# audioRecoder_nwc_yarp
+
+Added new device `audioRecoder_nwc_yarp`.
