@@ -1,10 +1,10 @@
 /*
- * SPDX-FileCopyrightText: 2006-2021 Istituto Italiano di Tecnologia (IIT)
+ * SPDX-FileCopyrightText: 2023-2023 Istituto Italiano di Tecnologia (IIT)
  * SPDX-License-Identifier: LGPL-2.1-or-later
  */
 
-#ifndef YARP_DEV_AUDIORECORDERWRAPPER_H
-#define YARP_DEV_AUDIORECORDERWRAPPER_H
+#ifndef YARP_DEV_AUDIORECORDER_NWS_YARP_H
+#define YARP_DEV_AUDIORECORDER_NWS_YARP_H
 
 #include <cstdio>
 
@@ -21,6 +21,8 @@
 #include <yarp/os/Stamp.h>
 #include <yarp/os/Log.h>
 
+#include <list>
+
 #include "AudioRecorderServerImpl.h"
 
 class AudioRecorderStatusThread;
@@ -29,8 +31,8 @@ class AudioRecorderDataThread;
 /**
  * @ingroup dev_impl_wrapper
  *
- * \brief `AudioRecorderWrapper`: A Wrapper which streams audio over the network, after grabbing it from a device
- * \section AudioRecorderWrapper_device_parameters Description of input parameters
+ * \brief `AudioRecorder_nws_yarp`: A Wrapper which streams audio over the network, after grabbing it from a device.
+ * \section AudioRecorder_nws_yarp_device_parameters Description of input parameters
  * Parameters required by this device are:
  * | Parameter name | SubParameter   | Type    | Units          | Default Value            | Required                    | Description                                                                | Notes |
  * |:--------------:|:--------------:|:-------:|:--------------:|:------------------------:|:--------------------------: |:--------------------------------------------------------------------------:|:-----:|
@@ -65,7 +67,7 @@ private:
     AudioRecorderStatusThread*     m_statusThread = nullptr;
     AudioRecorderDataThread*       m_dataThread =nullptr;
     bool                           m_debug_enabled = false;
-    yarp::sig::Sound               m_snd;
+    std::list <yarp::sig::Sound>   m_listofsnds;
     bool                           m_send_sound_on_stop = true;
 
 private:
@@ -125,7 +127,7 @@ public:
     void threadRelease() override { return; }
     void run() override;
 
-    bool sendSoundAndClear(yarp::sig::Sound& s);
+    bool sendSound(yarp::sig::Sound& s);
 };
 
-#endif // YARP_DEV_AUDIORECORDERWRAPPER_H
+#endif // YARP_DEV_AUDIORECORDER_NWS_YARP_H

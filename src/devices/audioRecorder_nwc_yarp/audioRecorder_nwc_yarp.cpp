@@ -17,56 +17,15 @@ namespace {
 YARP_LOG_COMPONENT(AUDIORECORDER_NWC, "yarp.device.audioRecorder_nwc_yarp")
 } // namespace
 
-/*
-inline void BatteryInputPortProcessor::resetStat()
+InputPortProcessor::InputPortProcessor()
 {
-    mutex.lock();
-    count=0;
-    deltaT=0;
-    deltaTMax=0;
-    deltaTMin=1e22;
-    now=Time::now();
-    prev=now;
-    mutex.unlock();
 }
 
-BatteryInputPortProcessor::BatteryInputPortProcessor()
+void InputPortProcessor::onRead(yarp::sig::Sound& b)
 {
-    state=IBattery::BATTERY_GENERAL_ERROR;
-    resetStat();
-}
-
-void BatteryInputPortProcessor::onRead(yarp::os::Bottle &b)
-{
-    now=Time::now();
     mutex.lock();
 
-    if (count>0)
-    {
-        double tmpDT=now-prev;
-        deltaT+=tmpDT;
-        if (tmpDT > deltaTMax) {
-            deltaTMax = tmpDT;
-        }
-        if (tmpDT < deltaTMin) {
-            deltaTMin = tmpDT;
-        }
-
-        //compare network time
-        if (tmpDT*1000<BATTERY_TIMEOUT)
-        {
-            state = b.get(5).asInt32();
-        }
-        else
-        {
-            state = IBattery::BATTERY_TIMEOUT;
-        }
-    }
-
-    prev=now;
-    count++;
-
-    lastBottle=b;
+    lastSound = b;
     Stamp newStamp;
     getEnvelope(newStamp);
 
@@ -76,108 +35,27 @@ void BatteryInputPortProcessor::onRead(yarp::os::Bottle &b)
         lastStamp = newStamp;
     }
 
-    //now compare timestamps
-    if ((1000*(newStamp.getTime()-lastStamp.getTime()))<BATTERY_TIMEOUT)
-    {
-        state = b.get(5).asInt32();
-    }
-    else
-    {
-        state = IBattery::BATTERY_TIMEOUT;
-    }
     lastStamp = newStamp;
 
     mutex.unlock();
 }
 
-inline int BatteryInputPortProcessor::getLast(yarp::os::Bottle &data, Stamp &stmp)
+inline bool InputPortProcessor::getLast(yarp::sig::Sound& data, Stamp &stmp)
 {
     mutex.lock();
-    int ret=state;
-    if (ret != IBattery::BATTERY_GENERAL_ERROR)
-    {
-        data=lastBottle;
-        stmp = lastStamp;
-    }
+      data = lastSound;
+      stmp = lastStamp;
     mutex.unlock();
-
-    return ret;
+    return true;
 }
-
-double BatteryInputPortProcessor::getVoltage()
-{
-    mutex.lock();
-    double voltage = lastBottle.get(0).asFloat64();
-    mutex.unlock();
-    return voltage;
-}
-
-double BatteryInputPortProcessor::getCurrent()
-{
-    mutex.lock();
-    double current = lastBottle.get(1).asFloat64();
-    mutex.unlock();
-    return current;
-}
-
-double BatteryInputPortProcessor::getCharge()
-{
-    mutex.lock();
-    double charge = lastBottle.get(2).asFloat64();
-    mutex.unlock();
-    return charge;
-}
-
-int    BatteryInputPortProcessor::getStatus()
-{
-    mutex.lock();
-    int status = lastBottle.get(4).asInt32();
-    mutex.unlock();
-    return status;
-}
-
-double BatteryInputPortProcessor::getTemperature()
-{
-    mutex.lock();
-    double temperature = lastBottle.get(3).asFloat64();
-    mutex.unlock();
-    return temperature;
-}
-
-inline int BatteryInputPortProcessor::getIterations()
-{
-    mutex.lock();
-    int ret=count;
-    mutex.unlock();
-    return ret;
-}
-
-// time is in ms
-void BatteryInputPortProcessor::getEstFrequency(int &ite, double &av, double &min, double &max)
-{
-    mutex.lock();
-    ite=count;
-    min=deltaTMin*1000;
-    max=deltaTMax*1000;
-    if (count<1)
-    {
-        av=0;
-    }
-    else
-    {
-        av=deltaT/count;
-    }
-    av=av*1000;
-    mutex.unlock();
-}
-*/
 
 bool AudioRecorder_nwc_yarp::open(yarp::os::Searchable &config)
 {
     yCDebug(AUDIORECORDER_NWC) << config.toString();
     std::string local_name = config.find("local").asString();
     std::string remote_name = config.find("remote").asString();
-    std::string carrier = config.check("carrier", yarp::os::Value("tcp"), "the carrier used for the connection with the server").asString();
+    std::string carrier = config.check("carrier", yarp::os::Value("tcp"), "the carrier used for the stream connection with the server").asString();
+    m_useStreaming = config.check("useStream");
 
     if (local_name =="")
     {
@@ -199,14 +77,15 @@ bool AudioRecorder_nwc_yarp::open(yarp::os::Searchable &config)
     std::string remote_rpc = remote_name;
     remote_rpc += "/rpc";
 
-    /*
-    if (!m_inputPort.open(local_stream))
+    if (m_useStreaming)
     {
-        yCError(BATTERYCLIENT, "open(): Could not open port %s, check network", local_stream.c_str());
-        return false;
+        if (!m_inputPort.open(local_stream))
+        {
+            yCError(AUDIORECORDER_NWC, "open(): Could not open port %s, check network", local_stream.c_str());
+            return false;
+        }
+       m_inputPort.useCallback();
     }
-    m_inputPort.useCallback();
-    */
 
     if (!m_rpcPort.open(local_rpc))
     {
@@ -215,12 +94,15 @@ bool AudioRecorder_nwc_yarp::open(yarp::os::Searchable &config)
     }
 
     bool ok;
-    /*ok=Network::connect(remote_stream.c_str(), local_stream.c_str(), carrier);
-    if (!ok)
+    if (m_useStreaming)
     {
-        yCError(BATTERYCLIENT, "open(): Could not connect %s -> %s", remote_stream.c_str(), local_stream.c_str());
-        return false;
-    }*/
+        ok=Network::connect(remote_stream.c_str(), local_stream.c_str(), carrier);
+        if (!ok)
+        {
+            yCError(AUDIORECORDER_NWC, "open(): Could not connect %s -> %s", remote_stream.c_str(), local_stream.c_str());
+            return false;
+        }
+    }
 
     ok=Network::connect(local_rpc, remote_rpc);
     if (!ok)
@@ -241,7 +123,10 @@ bool AudioRecorder_nwc_yarp::open(yarp::os::Searchable &config)
 bool AudioRecorder_nwc_yarp::close()
 {
     m_rpcPort.close();
-    /*m_inputPort.close();*/
+    if (m_useStreaming)
+    {
+        m_inputPort.close();
+    }
     return true;
 }
 
@@ -291,7 +176,7 @@ bool   AudioRecorder_nwc_yarp::isRecording(bool& recording_enabled)
 bool   AudioRecorder_nwc_yarp::getRecordingAudioBufferMaxSize(yarp::dev::AudioBufferSize& size)
 {
     std::lock_guard <std::mutex> lg(m_mutex);
-    auto ret = m_audiograb_RPC.getRecordingAudioBufferMaxSize();
+    auto ret = m_audiograb_RPC.getRecordingAudioBufferMaxSize_RPC();
     if (!ret.ret)
     {
         yCError(AUDIORECORDER_NWC, "Unable to: getRecordingAudioBufferMaxSize()");
@@ -304,7 +189,7 @@ bool   AudioRecorder_nwc_yarp::getRecordingAudioBufferMaxSize(yarp::dev::AudioBu
 bool   AudioRecorder_nwc_yarp::getRecordingAudioBufferCurrentSize(yarp::dev::AudioBufferSize& size)
 {
     std::lock_guard <std::mutex> lg(m_mutex);
-    auto ret = m_audiograb_RPC.getRecordingAudioBufferCurrentSize();
+    auto ret = m_audiograb_RPC.getRecordingAudioBufferCurrentSize_RPC();
     if (!ret.ret)
     {
         yCError(AUDIORECORDER_NWC, "Unable to: getRecordingAudioBufferCurrentSize()");
@@ -316,11 +201,16 @@ bool   AudioRecorder_nwc_yarp::getRecordingAudioBufferCurrentSize(yarp::dev::Aud
 
 bool AudioRecorder_nwc_yarp::getSound(yarp::sig::Sound& sound, size_t min_number_of_samples, size_t max_number_of_samples, double max_samples_timeout_s)
 {
+    if (m_useStreaming)
+    {
+        yCError(AUDIORECORDER_NWC, "Unable to: getSound() streaming version not yet implemented");
+        return false;
+    }
     std::lock_guard <std::mutex> lg(m_mutex);
-    auto ret = m_audiograb_RPC.getSound(min_number_of_samples,max_number_of_samples, max_samples_timeout_s);
+    auto ret = m_audiograb_RPC.getSound_RPC(min_number_of_samples,max_number_of_samples, max_samples_timeout_s);
     if (!ret.ret)
     {
-        yCError(AUDIORECORDER_NWC, "Unable to: getRecordingAudioBufferCurrentSize()");
+        yCError(AUDIORECORDER_NWC, "Unable to: getSound()");
         return false;
     }
     sound = ret.sound;

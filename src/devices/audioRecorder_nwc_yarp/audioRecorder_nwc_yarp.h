@@ -12,75 +12,53 @@
 #include <yarp/dev/IAudioGrabberSound.h>
 #include <yarp/sig/Vector.h>
 #include <yarp/os/Time.h>
+#include <yarp/os/Stamp.h>
 #include <yarp/dev/PolyDriver.h>
 
 #include "IAudioGrabberMsgs.h"
 #include <mutex>
 
-/*
-#define DEFAULT_THREAD_PERIOD 20 //ms
-const int BATTERY_TIMEOUT=100; //ms
-
-
-class BatteryInputPortProcessor : public yarp::os::BufferedPort<yarp::os::Bottle>
+class InputPortProcessor : public yarp::os::BufferedPort<yarp::sig::Sound>
 {
-    yarp::os::Bottle lastBottle;
+    yarp::sig::Sound lastSound;
+    yarp::os::Stamp  lastStamp;
     std::mutex mutex;
-    double deltaT;
-    double deltaTMax;
-    double deltaTMin;
-    double prev;
-    double now;
-
-    int state;
-    int count;
 
 public:
+    InputPortProcessor();
 
-    inline void resetStat();
+    using yarp::os::BufferedPort<yarp::sig::Sound>::onRead;
+    void onRead(yarp::sig::Sound&v) override;
 
-    BatteryInputPortProcessor();
-
-    using yarp::os::BufferedPort<yarp::os::Bottle>::onRead;
-    void onRead(yarp::os::Bottle &v) override;
-
-    inline int getLast(yarp::os::Bottle &data, yarp::os::Stamp &stmp);
-
-    inline int getIterations();
-
-    // time is in ms
-    void getEstFrequency(int &ite, double &av, double &min, double &max);
-
-    double getVoltage();
-    double getCurrent();
-    double getCharge();
-    double getTemperature();
-    int getStatus();
-
+    inline bool getLast(yarp::sig::Sound& data, yarp::os::Stamp &stmp);
 };
-*/
 
 /**
 * @ingroup dev_impl_network_clients
 *
 * \brief `audioRecoder_nwc_yarp`: The client side of any IAudioGrabberSound capable device.
+* \section AudioRecorder_nwc_yarp_device_parameters Description of input parameters
+* Please note that the getSound() method is currently implemented as a RPC call and streaming functions are not yet implemented.
 *
 *  Parameters required by this device are:
 * | Parameter name | SubParameter   | Type    | Units          | Default Value | Required     | Description                                                       | Notes |
 * |:--------------:|:--------------:|:-------:|:--------------:|:-------------:|:-----------: |:-----------------------------------------------------------------:|:-----:|
-* | local          |      -         | string  | -              |   -           | Yes          | Full port name opened by the batteryClient device.                |       |
-* | remote         |      -         | string  | -              |   -           | Yes          | Full port name of the port opened on the server side, to which the batteryClient connects to.    |     |
-* | carrier        |     -          | string  | -              | tcp           | No           | The carier used for the connection with the server.               |       |
+* | local          |      -         | string  | -              |   -           | Yes          | Full port name opened by the audioRecoder_nwc_yarp device.                |       |
+* | remote         |      -         | string  | -              |   -           | Yes          | Full port name of the port opened on the server side, to which the audioRecoder_nwc_yarp connects to.    |     |
+* | carrier        |     -          | string  | -              | tcp           | No           | The carrier used for the streaming connection with the server.    |       |
+*
+* See \ref AudioDoc for additional documentation on YARP audio.
 */
 class AudioRecorder_nwc_yarp :
         public yarp::dev::DeviceDriver,
         public yarp::dev::IAudioGrabberSound
 {
 protected:
-   // BatteryInputPortProcessor m_inputPort;
+    InputPortProcessor  m_inputPort;
     yarp::os::Port      m_rpcPort;
     IAudioGrabberMsgs   m_audiograb_RPC;
     std::mutex          m_mutex;
+    bool                m_useStreaming = false;
 
 public:
 

@@ -372,13 +372,13 @@ public:
     static constexpr const char* s_help{""};
 };
 
-// getSound helper class declaration
-class IAudioGrabberMsgs_getSound_helper :
+// getSound_RPC helper class declaration
+class IAudioGrabberMsgs_getSound_RPC_helper :
         public yarp::os::Portable
 {
 public:
-    IAudioGrabberMsgs_getSound_helper() = default;
-    IAudioGrabberMsgs_getSound_helper(const size_t min_number_of_samples, const size_t max_number_of_samples, const double max_samples_timeout_s);
+    IAudioGrabberMsgs_getSound_RPC_helper() = default;
+    IAudioGrabberMsgs_getSound_RPC_helper(const size_t min_number_of_samples, const size_t max_number_of_samples, const double max_samples_timeout_s);
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
 
@@ -429,20 +429,20 @@ public:
     Command cmd;
     Reply reply;
 
-    static constexpr const char* s_tag{"getSound"};
-    static constexpr size_t s_tag_len{1};
-    static constexpr size_t s_cmd_len{4};
+    static constexpr const char* s_tag{"getSound_RPC"};
+    static constexpr size_t s_tag_len{2};
+    static constexpr size_t s_cmd_len{5};
     static constexpr size_t s_reply_len{2};
-    static constexpr const char* s_prototype{"return_getSound IAudioGrabberMsgs::getSound(const size_t min_number_of_samples, const size_t max_number_of_samples, const double max_samples_timeout_s)"};
+    static constexpr const char* s_prototype{"return_getSound IAudioGrabberMsgs::getSound_RPC(const size_t min_number_of_samples, const size_t max_number_of_samples, const double max_samples_timeout_s)"};
     static constexpr const char* s_help{""};
 };
 
-// getRecordingAudioBufferMaxSize helper class declaration
-class IAudioGrabberMsgs_getRecordingAudioBufferMaxSize_helper :
+// getRecordingAudioBufferMaxSize_RPC helper class declaration
+class IAudioGrabberMsgs_getRecordingAudioBufferMaxSize_RPC_helper :
         public yarp::os::Portable
 {
 public:
-    IAudioGrabberMsgs_getRecordingAudioBufferMaxSize_helper() = default;
+    IAudioGrabberMsgs_getRecordingAudioBufferMaxSize_RPC_helper() = default;
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
 
@@ -487,20 +487,20 @@ public:
     Command cmd;
     Reply reply;
 
-    static constexpr const char* s_tag{"getRecordingAudioBufferMaxSize"};
-    static constexpr size_t s_tag_len{1};
-    static constexpr size_t s_cmd_len{1};
+    static constexpr const char* s_tag{"getRecordingAudioBufferMaxSize_RPC"};
+    static constexpr size_t s_tag_len{2};
+    static constexpr size_t s_cmd_len{2};
     static constexpr size_t s_reply_len{2};
-    static constexpr const char* s_prototype{"return_getRecordingAudioBufferMaxSize IAudioGrabberMsgs::getRecordingAudioBufferMaxSize()"};
+    static constexpr const char* s_prototype{"return_getRecordingAudioBufferMaxSize IAudioGrabberMsgs::getRecordingAudioBufferMaxSize_RPC()"};
     static constexpr const char* s_help{""};
 };
 
-// getRecordingAudioBufferCurrentSize helper class declaration
-class IAudioGrabberMsgs_getRecordingAudioBufferCurrentSize_helper :
+// getRecordingAudioBufferCurrentSize_RPC helper class declaration
+class IAudioGrabberMsgs_getRecordingAudioBufferCurrentSize_RPC_helper :
         public yarp::os::Portable
 {
 public:
-    IAudioGrabberMsgs_getRecordingAudioBufferCurrentSize_helper() = default;
+    IAudioGrabberMsgs_getRecordingAudioBufferCurrentSize_RPC_helper() = default;
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
 
@@ -545,11 +545,11 @@ public:
     Command cmd;
     Reply reply;
 
-    static constexpr const char* s_tag{"getRecordingAudioBufferCurrentSize"};
-    static constexpr size_t s_tag_len{1};
-    static constexpr size_t s_cmd_len{1};
+    static constexpr const char* s_tag{"getRecordingAudioBufferCurrentSize_RPC"};
+    static constexpr size_t s_tag_len{2};
+    static constexpr size_t s_cmd_len{2};
     static constexpr size_t s_reply_len{2};
-    static constexpr const char* s_prototype{"return_getRecordingAudioBufferCurrentSize IAudioGrabberMsgs::getRecordingAudioBufferCurrentSize()"};
+    static constexpr const char* s_prototype{"return_getRecordingAudioBufferCurrentSize IAudioGrabberMsgs::getRecordingAudioBufferCurrentSize_RPC()"};
     static constexpr const char* s_help{""};
 };
 
@@ -1393,30 +1393,30 @@ void IAudioGrabberMsgs_isRecording_RPC_helper::call(IAudioGrabberMsgs* ptr)
     reply.return_helper = ptr->isRecording_RPC();
 }
 
-// getSound helper class implementation
-IAudioGrabberMsgs_getSound_helper::IAudioGrabberMsgs_getSound_helper(const size_t min_number_of_samples, const size_t max_number_of_samples, const double max_samples_timeout_s) :
+// getSound_RPC helper class implementation
+IAudioGrabberMsgs_getSound_RPC_helper::IAudioGrabberMsgs_getSound_RPC_helper(const size_t min_number_of_samples, const size_t max_number_of_samples, const double max_samples_timeout_s) :
         cmd{min_number_of_samples, max_number_of_samples, max_samples_timeout_s}
 {
 }
 
-bool IAudioGrabberMsgs_getSound_helper::write(yarp::os::ConnectionWriter& connection) const
+bool IAudioGrabberMsgs_getSound_RPC_helper::write(yarp::os::ConnectionWriter& connection) const
 {
     return cmd.write(connection);
 }
 
-bool IAudioGrabberMsgs_getSound_helper::read(yarp::os::ConnectionReader& connection)
+bool IAudioGrabberMsgs_getSound_RPC_helper::read(yarp::os::ConnectionReader& connection)
 {
     return reply.read(connection);
 }
 
-IAudioGrabberMsgs_getSound_helper::Command::Command(const size_t min_number_of_samples, const size_t max_number_of_samples, const double max_samples_timeout_s) :
+IAudioGrabberMsgs_getSound_RPC_helper::Command::Command(const size_t min_number_of_samples, const size_t max_number_of_samples, const double max_samples_timeout_s) :
         min_number_of_samples{min_number_of_samples},
         max_number_of_samples{max_number_of_samples},
         max_samples_timeout_s{max_samples_timeout_s}
 {
 }
 
-bool IAudioGrabberMsgs_getSound_helper::Command::write(yarp::os::ConnectionWriter& connection) const
+bool IAudioGrabberMsgs_getSound_RPC_helper::Command::write(yarp::os::ConnectionWriter& connection) const
 {
     yarp::os::idl::WireWriter writer(connection);
     if (!writer.writeListHeader(s_cmd_len)) {
@@ -1425,7 +1425,7 @@ bool IAudioGrabberMsgs_getSound_helper::Command::write(yarp::os::ConnectionWrite
     return write(writer);
 }
 
-bool IAudioGrabberMsgs_getSound_helper::Command::read(yarp::os::ConnectionReader& connection)
+bool IAudioGrabberMsgs_getSound_RPC_helper::Command::read(yarp::os::ConnectionReader& connection)
 {
     yarp::os::idl::WireReader reader(connection);
     if (!reader.readListHeader()) {
@@ -1435,7 +1435,7 @@ bool IAudioGrabberMsgs_getSound_helper::Command::read(yarp::os::ConnectionReader
     return read(reader);
 }
 
-bool IAudioGrabberMsgs_getSound_helper::Command::write(const yarp::os::idl::WireWriter& writer) const
+bool IAudioGrabberMsgs_getSound_RPC_helper::Command::write(const yarp::os::idl::WireWriter& writer) const
 {
     if (!writeTag(writer)) {
         return false;
@@ -1446,7 +1446,7 @@ bool IAudioGrabberMsgs_getSound_helper::Command::write(const yarp::os::idl::Wire
     return true;
 }
 
-bool IAudioGrabberMsgs_getSound_helper::Command::writeTag(const yarp::os::idl::WireWriter& writer) const
+bool IAudioGrabberMsgs_getSound_RPC_helper::Command::writeTag(const yarp::os::idl::WireWriter& writer) const
 {
     if (!writer.writeTag(s_tag, 1, s_tag_len)) {
         return false;
@@ -1454,7 +1454,7 @@ bool IAudioGrabberMsgs_getSound_helper::Command::writeTag(const yarp::os::idl::W
     return true;
 }
 
-bool IAudioGrabberMsgs_getSound_helper::Command::writeArgs(const yarp::os::idl::WireWriter& writer) const
+bool IAudioGrabberMsgs_getSound_RPC_helper::Command::writeArgs(const yarp::os::idl::WireWriter& writer) const
 {
     if (!writer.writeSizeT(min_number_of_samples)) {
         return false;
@@ -1468,7 +1468,7 @@ bool IAudioGrabberMsgs_getSound_helper::Command::writeArgs(const yarp::os::idl::
     return true;
 }
 
-bool IAudioGrabberMsgs_getSound_helper::Command::read(yarp::os::idl::WireReader& reader)
+bool IAudioGrabberMsgs_getSound_RPC_helper::Command::read(yarp::os::idl::WireReader& reader)
 {
     if (!readTag(reader)) {
         return false;
@@ -1479,7 +1479,7 @@ bool IAudioGrabberMsgs_getSound_helper::Command::read(yarp::os::idl::WireReader&
     return true;
 }
 
-bool IAudioGrabberMsgs_getSound_helper::Command::readTag(yarp::os::idl::WireReader& reader)
+bool IAudioGrabberMsgs_getSound_RPC_helper::Command::readTag(yarp::os::idl::WireReader& reader)
 {
     std::string tag = reader.readTag(s_tag_len);
     if (reader.isError()) {
@@ -1492,7 +1492,7 @@ bool IAudioGrabberMsgs_getSound_helper::Command::readTag(yarp::os::idl::WireRead
     return true;
 }
 
-bool IAudioGrabberMsgs_getSound_helper::Command::readArgs(yarp::os::idl::WireReader& reader)
+bool IAudioGrabberMsgs_getSound_RPC_helper::Command::readArgs(yarp::os::idl::WireReader& reader)
 {
     if (reader.noMore()) {
         reader.fail();
@@ -1525,19 +1525,19 @@ bool IAudioGrabberMsgs_getSound_helper::Command::readArgs(yarp::os::idl::WireRea
     return true;
 }
 
-bool IAudioGrabberMsgs_getSound_helper::Reply::write(yarp::os::ConnectionWriter& connection) const
+bool IAudioGrabberMsgs_getSound_RPC_helper::Reply::write(yarp::os::ConnectionWriter& connection) const
 {
     yarp::os::idl::WireWriter writer(connection);
     return write(writer);
 }
 
-bool IAudioGrabberMsgs_getSound_helper::Reply::read(yarp::os::ConnectionReader& connection)
+bool IAudioGrabberMsgs_getSound_RPC_helper::Reply::read(yarp::os::ConnectionReader& connection)
 {
     yarp::os::idl::WireReader reader(connection);
     return read(reader);
 }
 
-bool IAudioGrabberMsgs_getSound_helper::Reply::write(const yarp::os::idl::WireWriter& writer) const
+bool IAudioGrabberMsgs_getSound_RPC_helper::Reply::write(const yarp::os::idl::WireWriter& writer) const
 {
     if (!writer.isNull()) {
         if (!writer.writeListHeader(s_reply_len)) {
@@ -1550,7 +1550,7 @@ bool IAudioGrabberMsgs_getSound_helper::Reply::write(const yarp::os::idl::WireWr
     return true;
 }
 
-bool IAudioGrabberMsgs_getSound_helper::Reply::read(yarp::os::idl::WireReader& reader)
+bool IAudioGrabberMsgs_getSound_RPC_helper::Reply::read(yarp::os::idl::WireReader& reader)
 {
     if (!reader.readListReturn()) {
         return false;
@@ -1566,23 +1566,23 @@ bool IAudioGrabberMsgs_getSound_helper::Reply::read(yarp::os::idl::WireReader& r
     return true;
 }
 
-void IAudioGrabberMsgs_getSound_helper::call(IAudioGrabberMsgs* ptr)
+void IAudioGrabberMsgs_getSound_RPC_helper::call(IAudioGrabberMsgs* ptr)
 {
-    reply.return_helper = ptr->getSound(cmd.min_number_of_samples, cmd.max_number_of_samples, cmd.max_samples_timeout_s);
+    reply.return_helper = ptr->getSound_RPC(cmd.min_number_of_samples, cmd.max_number_of_samples, cmd.max_samples_timeout_s);
 }
 
-// getRecordingAudioBufferMaxSize helper class implementation
-bool IAudioGrabberMsgs_getRecordingAudioBufferMaxSize_helper::write(yarp::os::ConnectionWriter& connection) const
+// getRecordingAudioBufferMaxSize_RPC helper class implementation
+bool IAudioGrabberMsgs_getRecordingAudioBufferMaxSize_RPC_helper::write(yarp::os::ConnectionWriter& connection) const
 {
     return cmd.write(connection);
 }
 
-bool IAudioGrabberMsgs_getRecordingAudioBufferMaxSize_helper::read(yarp::os::ConnectionReader& connection)
+bool IAudioGrabberMsgs_getRecordingAudioBufferMaxSize_RPC_helper::read(yarp::os::ConnectionReader& connection)
 {
     return reply.read(connection);
 }
 
-bool IAudioGrabberMsgs_getRecordingAudioBufferMaxSize_helper::Command::write(yarp::os::ConnectionWriter& connection) const
+bool IAudioGrabberMsgs_getRecordingAudioBufferMaxSize_RPC_helper::Command::write(yarp::os::ConnectionWriter& connection) const
 {
     yarp::os::idl::WireWriter writer(connection);
     if (!writer.writeListHeader(s_cmd_len)) {
@@ -1591,7 +1591,7 @@ bool IAudioGrabberMsgs_getRecordingAudioBufferMaxSize_helper::Command::write(yar
     return write(writer);
 }
 
-bool IAudioGrabberMsgs_getRecordingAudioBufferMaxSize_helper::Command::read(yarp::os::ConnectionReader& connection)
+bool IAudioGrabberMsgs_getRecordingAudioBufferMaxSize_RPC_helper::Command::read(yarp::os::ConnectionReader& connection)
 {
     yarp::os::idl::WireReader reader(connection);
     if (!reader.readListHeader()) {
@@ -1601,7 +1601,7 @@ bool IAudioGrabberMsgs_getRecordingAudioBufferMaxSize_helper::Command::read(yarp
     return read(reader);
 }
 
-bool IAudioGrabberMsgs_getRecordingAudioBufferMaxSize_helper::Command::write(const yarp::os::idl::WireWriter& writer) const
+bool IAudioGrabberMsgs_getRecordingAudioBufferMaxSize_RPC_helper::Command::write(const yarp::os::idl::WireWriter& writer) const
 {
     if (!writeTag(writer)) {
         return false;
@@ -1612,7 +1612,7 @@ bool IAudioGrabberMsgs_getRecordingAudioBufferMaxSize_helper::Command::write(con
     return true;
 }
 
-bool IAudioGrabberMsgs_getRecordingAudioBufferMaxSize_helper::Command::writeTag(const yarp::os::idl::WireWriter& writer) const
+bool IAudioGrabberMsgs_getRecordingAudioBufferMaxSize_RPC_helper::Command::writeTag(const yarp::os::idl::WireWriter& writer) const
 {
     if (!writer.writeTag(s_tag, 1, s_tag_len)) {
         return false;
@@ -1620,12 +1620,12 @@ bool IAudioGrabberMsgs_getRecordingAudioBufferMaxSize_helper::Command::writeTag(
     return true;
 }
 
-bool IAudioGrabberMsgs_getRecordingAudioBufferMaxSize_helper::Command::writeArgs(const yarp::os::idl::WireWriter& writer [[maybe_unused]]) const
+bool IAudioGrabberMsgs_getRecordingAudioBufferMaxSize_RPC_helper::Command::writeArgs(const yarp::os::idl::WireWriter& writer [[maybe_unused]]) const
 {
     return true;
 }
 
-bool IAudioGrabberMsgs_getRecordingAudioBufferMaxSize_helper::Command::read(yarp::os::idl::WireReader& reader)
+bool IAudioGrabberMsgs_getRecordingAudioBufferMaxSize_RPC_helper::Command::read(yarp::os::idl::WireReader& reader)
 {
     if (!readTag(reader)) {
         return false;
@@ -1636,7 +1636,7 @@ bool IAudioGrabberMsgs_getRecordingAudioBufferMaxSize_helper::Command::read(yarp
     return true;
 }
 
-bool IAudioGrabberMsgs_getRecordingAudioBufferMaxSize_helper::Command::readTag(yarp::os::idl::WireReader& reader)
+bool IAudioGrabberMsgs_getRecordingAudioBufferMaxSize_RPC_helper::Command::readTag(yarp::os::idl::WireReader& reader)
 {
     std::string tag = reader.readTag(s_tag_len);
     if (reader.isError()) {
@@ -1649,7 +1649,7 @@ bool IAudioGrabberMsgs_getRecordingAudioBufferMaxSize_helper::Command::readTag(y
     return true;
 }
 
-bool IAudioGrabberMsgs_getRecordingAudioBufferMaxSize_helper::Command::readArgs(yarp::os::idl::WireReader& reader)
+bool IAudioGrabberMsgs_getRecordingAudioBufferMaxSize_RPC_helper::Command::readArgs(yarp::os::idl::WireReader& reader)
 {
     if (!reader.noMore()) {
         reader.fail();
@@ -1658,19 +1658,19 @@ bool IAudioGrabberMsgs_getRecordingAudioBufferMaxSize_helper::Command::readArgs(
     return true;
 }
 
-bool IAudioGrabberMsgs_getRecordingAudioBufferMaxSize_helper::Reply::write(yarp::os::ConnectionWriter& connection) const
+bool IAudioGrabberMsgs_getRecordingAudioBufferMaxSize_RPC_helper::Reply::write(yarp::os::ConnectionWriter& connection) const
 {
     yarp::os::idl::WireWriter writer(connection);
     return write(writer);
 }
 
-bool IAudioGrabberMsgs_getRecordingAudioBufferMaxSize_helper::Reply::read(yarp::os::ConnectionReader& connection)
+bool IAudioGrabberMsgs_getRecordingAudioBufferMaxSize_RPC_helper::Reply::read(yarp::os::ConnectionReader& connection)
 {
     yarp::os::idl::WireReader reader(connection);
     return read(reader);
 }
 
-bool IAudioGrabberMsgs_getRecordingAudioBufferMaxSize_helper::Reply::write(const yarp::os::idl::WireWriter& writer) const
+bool IAudioGrabberMsgs_getRecordingAudioBufferMaxSize_RPC_helper::Reply::write(const yarp::os::idl::WireWriter& writer) const
 {
     if (!writer.isNull()) {
         if (!writer.writeListHeader(s_reply_len)) {
@@ -1683,7 +1683,7 @@ bool IAudioGrabberMsgs_getRecordingAudioBufferMaxSize_helper::Reply::write(const
     return true;
 }
 
-bool IAudioGrabberMsgs_getRecordingAudioBufferMaxSize_helper::Reply::read(yarp::os::idl::WireReader& reader)
+bool IAudioGrabberMsgs_getRecordingAudioBufferMaxSize_RPC_helper::Reply::read(yarp::os::idl::WireReader& reader)
 {
     if (!reader.readListReturn()) {
         return false;
@@ -1699,23 +1699,23 @@ bool IAudioGrabberMsgs_getRecordingAudioBufferMaxSize_helper::Reply::read(yarp::
     return true;
 }
 
-void IAudioGrabberMsgs_getRecordingAudioBufferMaxSize_helper::call(IAudioGrabberMsgs* ptr)
+void IAudioGrabberMsgs_getRecordingAudioBufferMaxSize_RPC_helper::call(IAudioGrabberMsgs* ptr)
 {
-    reply.return_helper = ptr->getRecordingAudioBufferMaxSize();
+    reply.return_helper = ptr->getRecordingAudioBufferMaxSize_RPC();
 }
 
-// getRecordingAudioBufferCurrentSize helper class implementation
-bool IAudioGrabberMsgs_getRecordingAudioBufferCurrentSize_helper::write(yarp::os::ConnectionWriter& connection) const
+// getRecordingAudioBufferCurrentSize_RPC helper class implementation
+bool IAudioGrabberMsgs_getRecordingAudioBufferCurrentSize_RPC_helper::write(yarp::os::ConnectionWriter& connection) const
 {
     return cmd.write(connection);
 }
 
-bool IAudioGrabberMsgs_getRecordingAudioBufferCurrentSize_helper::read(yarp::os::ConnectionReader& connection)
+bool IAudioGrabberMsgs_getRecordingAudioBufferCurrentSize_RPC_helper::read(yarp::os::ConnectionReader& connection)
 {
     return reply.read(connection);
 }
 
-bool IAudioGrabberMsgs_getRecordingAudioBufferCurrentSize_helper::Command::write(yarp::os::ConnectionWriter& connection) const
+bool IAudioGrabberMsgs_getRecordingAudioBufferCurrentSize_RPC_helper::Command::write(yarp::os::ConnectionWriter& connection) const
 {
     yarp::os::idl::WireWriter writer(connection);
     if (!writer.writeListHeader(s_cmd_len)) {
@@ -1724,7 +1724,7 @@ bool IAudioGrabberMsgs_getRecordingAudioBufferCurrentSize_helper::Command::write
     return write(writer);
 }
 
-bool IAudioGrabberMsgs_getRecordingAudioBufferCurrentSize_helper::Command::read(yarp::os::ConnectionReader& connection)
+bool IAudioGrabberMsgs_getRecordingAudioBufferCurrentSize_RPC_helper::Command::read(yarp::os::ConnectionReader& connection)
 {
     yarp::os::idl::WireReader reader(connection);
     if (!reader.readListHeader()) {
@@ -1734,7 +1734,7 @@ bool IAudioGrabberMsgs_getRecordingAudioBufferCurrentSize_helper::Command::read(
     return read(reader);
 }
 
-bool IAudioGrabberMsgs_getRecordingAudioBufferCurrentSize_helper::Command::write(const yarp::os::idl::WireWriter& writer) const
+bool IAudioGrabberMsgs_getRecordingAudioBufferCurrentSize_RPC_helper::Command::write(const yarp::os::idl::WireWriter& writer) const
 {
     if (!writeTag(writer)) {
         return false;
@@ -1745,7 +1745,7 @@ bool IAudioGrabberMsgs_getRecordingAudioBufferCurrentSize_helper::Command::write
     return true;
 }
 
-bool IAudioGrabberMsgs_getRecordingAudioBufferCurrentSize_helper::Command::writeTag(const yarp::os::idl::WireWriter& writer) const
+bool IAudioGrabberMsgs_getRecordingAudioBufferCurrentSize_RPC_helper::Command::writeTag(const yarp::os::idl::WireWriter& writer) const
 {
     if (!writer.writeTag(s_tag, 1, s_tag_len)) {
         return false;
@@ -1753,12 +1753,12 @@ bool IAudioGrabberMsgs_getRecordingAudioBufferCurrentSize_helper::Command::write
     return true;
 }
 
-bool IAudioGrabberMsgs_getRecordingAudioBufferCurrentSize_helper::Command::writeArgs(const yarp::os::idl::WireWriter& writer [[maybe_unused]]) const
+bool IAudioGrabberMsgs_getRecordingAudioBufferCurrentSize_RPC_helper::Command::writeArgs(const yarp::os::idl::WireWriter& writer [[maybe_unused]]) const
 {
     return true;
 }
 
-bool IAudioGrabberMsgs_getRecordingAudioBufferCurrentSize_helper::Command::read(yarp::os::idl::WireReader& reader)
+bool IAudioGrabberMsgs_getRecordingAudioBufferCurrentSize_RPC_helper::Command::read(yarp::os::idl::WireReader& reader)
 {
     if (!readTag(reader)) {
         return false;
@@ -1769,7 +1769,7 @@ bool IAudioGrabberMsgs_getRecordingAudioBufferCurrentSize_helper::Command::read(
     return true;
 }
 
-bool IAudioGrabberMsgs_getRecordingAudioBufferCurrentSize_helper::Command::readTag(yarp::os::idl::WireReader& reader)
+bool IAudioGrabberMsgs_getRecordingAudioBufferCurrentSize_RPC_helper::Command::readTag(yarp::os::idl::WireReader& reader)
 {
     std::string tag = reader.readTag(s_tag_len);
     if (reader.isError()) {
@@ -1782,7 +1782,7 @@ bool IAudioGrabberMsgs_getRecordingAudioBufferCurrentSize_helper::Command::readT
     return true;
 }
 
-bool IAudioGrabberMsgs_getRecordingAudioBufferCurrentSize_helper::Command::readArgs(yarp::os::idl::WireReader& reader)
+bool IAudioGrabberMsgs_getRecordingAudioBufferCurrentSize_RPC_helper::Command::readArgs(yarp::os::idl::WireReader& reader)
 {
     if (!reader.noMore()) {
         reader.fail();
@@ -1791,19 +1791,19 @@ bool IAudioGrabberMsgs_getRecordingAudioBufferCurrentSize_helper::Command::readA
     return true;
 }
 
-bool IAudioGrabberMsgs_getRecordingAudioBufferCurrentSize_helper::Reply::write(yarp::os::ConnectionWriter& connection) const
+bool IAudioGrabberMsgs_getRecordingAudioBufferCurrentSize_RPC_helper::Reply::write(yarp::os::ConnectionWriter& connection) const
 {
     yarp::os::idl::WireWriter writer(connection);
     return write(writer);
 }
 
-bool IAudioGrabberMsgs_getRecordingAudioBufferCurrentSize_helper::Reply::read(yarp::os::ConnectionReader& connection)
+bool IAudioGrabberMsgs_getRecordingAudioBufferCurrentSize_RPC_helper::Reply::read(yarp::os::ConnectionReader& connection)
 {
     yarp::os::idl::WireReader reader(connection);
     return read(reader);
 }
 
-bool IAudioGrabberMsgs_getRecordingAudioBufferCurrentSize_helper::Reply::write(const yarp::os::idl::WireWriter& writer) const
+bool IAudioGrabberMsgs_getRecordingAudioBufferCurrentSize_RPC_helper::Reply::write(const yarp::os::idl::WireWriter& writer) const
 {
     if (!writer.isNull()) {
         if (!writer.writeListHeader(s_reply_len)) {
@@ -1816,7 +1816,7 @@ bool IAudioGrabberMsgs_getRecordingAudioBufferCurrentSize_helper::Reply::write(c
     return true;
 }
 
-bool IAudioGrabberMsgs_getRecordingAudioBufferCurrentSize_helper::Reply::read(yarp::os::idl::WireReader& reader)
+bool IAudioGrabberMsgs_getRecordingAudioBufferCurrentSize_RPC_helper::Reply::read(yarp::os::idl::WireReader& reader)
 {
     if (!reader.readListReturn()) {
         return false;
@@ -1832,9 +1832,9 @@ bool IAudioGrabberMsgs_getRecordingAudioBufferCurrentSize_helper::Reply::read(ya
     return true;
 }
 
-void IAudioGrabberMsgs_getRecordingAudioBufferCurrentSize_helper::call(IAudioGrabberMsgs* ptr)
+void IAudioGrabberMsgs_getRecordingAudioBufferCurrentSize_RPC_helper::call(IAudioGrabberMsgs* ptr)
 {
-    reply.return_helper = ptr->getRecordingAudioBufferCurrentSize();
+    reply.return_helper = ptr->getRecordingAudioBufferCurrentSize_RPC();
 }
 
 // Constructor
@@ -1903,32 +1903,32 @@ return_isRecording IAudioGrabberMsgs::isRecording_RPC()
     return ok ? helper.reply.return_helper : return_isRecording{};
 }
 
-return_getSound IAudioGrabberMsgs::getSound(const size_t min_number_of_samples, const size_t max_number_of_samples, const double max_samples_timeout_s)
+return_getSound IAudioGrabberMsgs::getSound_RPC(const size_t min_number_of_samples, const size_t max_number_of_samples, const double max_samples_timeout_s)
 {
     if (!yarp().canWrite()) {
-        yError("Missing server method '%s'?", IAudioGrabberMsgs_getSound_helper::s_prototype);
+        yError("Missing server method '%s'?", IAudioGrabberMsgs_getSound_RPC_helper::s_prototype);
     }
-    IAudioGrabberMsgs_getSound_helper helper{min_number_of_samples, max_number_of_samples, max_samples_timeout_s};
+    IAudioGrabberMsgs_getSound_RPC_helper helper{min_number_of_samples, max_number_of_samples, max_samples_timeout_s};
     bool ok = yarp().write(helper, helper);
     return ok ? helper.reply.return_helper : return_getSound{};
 }
 
-return_getRecordingAudioBufferMaxSize IAudioGrabberMsgs::getRecordingAudioBufferMaxSize()
+return_getRecordingAudioBufferMaxSize IAudioGrabberMsgs::getRecordingAudioBufferMaxSize_RPC()
 {
     if (!yarp().canWrite()) {
-        yError("Missing server method '%s'?", IAudioGrabberMsgs_getRecordingAudioBufferMaxSize_helper::s_prototype);
+        yError("Missing server method '%s'?", IAudioGrabberMsgs_getRecordingAudioBufferMaxSize_RPC_helper::s_prototype);
     }
-    IAudioGrabberMsgs_getRecordingAudioBufferMaxSize_helper helper{};
+    IAudioGrabberMsgs_getRecordingAudioBufferMaxSize_RPC_helper helper{};
     bool ok = yarp().write(helper, helper);
     return ok ? helper.reply.return_helper : return_getRecordingAudioBufferMaxSize{};
 }
 
-return_getRecordingAudioBufferCurrentSize IAudioGrabberMsgs::getRecordingAudioBufferCurrentSize()
+return_getRecordingAudioBufferCurrentSize IAudioGrabberMsgs::getRecordingAudioBufferCurrentSize_RPC()
 {
     if (!yarp().canWrite()) {
-        yError("Missing server method '%s'?", IAudioGrabberMsgs_getRecordingAudioBufferCurrentSize_helper::s_prototype);
+        yError("Missing server method '%s'?", IAudioGrabberMsgs_getRecordingAudioBufferCurrentSize_RPC_helper::s_prototype);
     }
-    IAudioGrabberMsgs_getRecordingAudioBufferCurrentSize_helper helper{};
+    IAudioGrabberMsgs_getRecordingAudioBufferCurrentSize_RPC_helper helper{};
     bool ok = yarp().write(helper, helper);
     return ok ? helper.reply.return_helper : return_getRecordingAudioBufferCurrentSize{};
 }
@@ -1946,9 +1946,9 @@ std::vector<std::string> IAudioGrabberMsgs::help(const std::string& functionName
         helpString.emplace_back(IAudioGrabberMsgs_startRecording_RPC_helper::s_tag);
         helpString.emplace_back(IAudioGrabberMsgs_stopRecording_RPC_helper::s_tag);
         helpString.emplace_back(IAudioGrabberMsgs_isRecording_RPC_helper::s_tag);
-        helpString.emplace_back(IAudioGrabberMsgs_getSound_helper::s_tag);
-        helpString.emplace_back(IAudioGrabberMsgs_getRecordingAudioBufferMaxSize_helper::s_tag);
-        helpString.emplace_back(IAudioGrabberMsgs_getRecordingAudioBufferCurrentSize_helper::s_tag);
+        helpString.emplace_back(IAudioGrabberMsgs_getSound_RPC_helper::s_tag);
+        helpString.emplace_back(IAudioGrabberMsgs_getRecordingAudioBufferMaxSize_RPC_helper::s_tag);
+        helpString.emplace_back(IAudioGrabberMsgs_getRecordingAudioBufferCurrentSize_RPC_helper::s_tag);
         helpString.emplace_back("help");
     } else {
         if (functionName == IAudioGrabberMsgs_setHWGain_RPC_helper::s_tag) {
@@ -1969,14 +1969,14 @@ std::vector<std::string> IAudioGrabberMsgs::help(const std::string& functionName
         if (functionName == IAudioGrabberMsgs_isRecording_RPC_helper::s_tag) {
             helpString.emplace_back(IAudioGrabberMsgs_isRecording_RPC_helper::s_prototype);
         }
-        if (functionName == IAudioGrabberMsgs_getSound_helper::s_tag) {
-            helpString.emplace_back(IAudioGrabberMsgs_getSound_helper::s_prototype);
+        if (functionName == IAudioGrabberMsgs_getSound_RPC_helper::s_tag) {
+            helpString.emplace_back(IAudioGrabberMsgs_getSound_RPC_helper::s_prototype);
         }
-        if (functionName == IAudioGrabberMsgs_getRecordingAudioBufferMaxSize_helper::s_tag) {
-            helpString.emplace_back(IAudioGrabberMsgs_getRecordingAudioBufferMaxSize_helper::s_prototype);
+        if (functionName == IAudioGrabberMsgs_getRecordingAudioBufferMaxSize_RPC_helper::s_tag) {
+            helpString.emplace_back(IAudioGrabberMsgs_getRecordingAudioBufferMaxSize_RPC_helper::s_prototype);
         }
-        if (functionName == IAudioGrabberMsgs_getRecordingAudioBufferCurrentSize_helper::s_tag) {
-            helpString.emplace_back(IAudioGrabberMsgs_getRecordingAudioBufferCurrentSize_helper::s_prototype);
+        if (functionName == IAudioGrabberMsgs_getRecordingAudioBufferCurrentSize_RPC_helper::s_tag) {
+            helpString.emplace_back(IAudioGrabberMsgs_getRecordingAudioBufferCurrentSize_RPC_helper::s_prototype);
         }
         if (functionName == "help") {
             helpString.emplace_back("std::vector<std::string> help(const std::string& functionName = \"--all\")");
@@ -2100,8 +2100,8 @@ bool IAudioGrabberMsgs::read(yarp::os::ConnectionReader& connection)
             reader.accept();
             return true;
         }
-        if (tag == IAudioGrabberMsgs_getSound_helper::s_tag) {
-            IAudioGrabberMsgs_getSound_helper helper;
+        if (tag == IAudioGrabberMsgs_getSound_RPC_helper::s_tag) {
+            IAudioGrabberMsgs_getSound_RPC_helper helper;
             if (!helper.cmd.readArgs(reader)) {
                 return false;
             }
@@ -2115,8 +2115,8 @@ bool IAudioGrabberMsgs::read(yarp::os::ConnectionReader& connection)
             reader.accept();
             return true;
         }
-        if (tag == IAudioGrabberMsgs_getRecordingAudioBufferMaxSize_helper::s_tag) {
-            IAudioGrabberMsgs_getRecordingAudioBufferMaxSize_helper helper;
+        if (tag == IAudioGrabberMsgs_getRecordingAudioBufferMaxSize_RPC_helper::s_tag) {
+            IAudioGrabberMsgs_getRecordingAudioBufferMaxSize_RPC_helper helper;
             if (!helper.cmd.readArgs(reader)) {
                 return false;
             }
@@ -2130,8 +2130,8 @@ bool IAudioGrabberMsgs::read(yarp::os::ConnectionReader& connection)
             reader.accept();
             return true;
         }
-        if (tag == IAudioGrabberMsgs_getRecordingAudioBufferCurrentSize_helper::s_tag) {
-            IAudioGrabberMsgs_getRecordingAudioBufferCurrentSize_helper helper;
+        if (tag == IAudioGrabberMsgs_getRecordingAudioBufferCurrentSize_RPC_helper::s_tag) {
+            IAudioGrabberMsgs_getRecordingAudioBufferCurrentSize_RPC_helper helper;
             if (!helper.cmd.readArgs(reader)) {
                 return false;
             }

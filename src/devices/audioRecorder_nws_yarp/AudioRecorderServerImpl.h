@@ -25,9 +25,9 @@ class IAudioGrabberRPCd : public IAudioGrabberMsgs
     virtual bool startRecording_RPC() override;
     virtual bool stopRecording_RPC() override;
     virtual return_isRecording isRecording_RPC() override;
-    virtual return_getSound getSound(const size_t min_number_of_samples, const size_t max_number_of_samples, const double max_samples_timeout_s) override;
-    virtual return_getRecordingAudioBufferMaxSize getRecordingAudioBufferMaxSize() override;
-    virtual return_getRecordingAudioBufferCurrentSize getRecordingAudioBufferCurrentSize() override;
+    virtual return_getSound getSound_RPC(const size_t min_number_of_samples, const size_t max_number_of_samples, const double max_samples_timeout_s) override;
+    virtual return_getRecordingAudioBufferMaxSize getRecordingAudioBufferMaxSize_RPC() override;
+    virtual return_getRecordingAudioBufferCurrentSize getRecordingAudioBufferCurrentSize_RPC() override;
 
     std::mutex* getMutex() {return &m_mutex;}
 };

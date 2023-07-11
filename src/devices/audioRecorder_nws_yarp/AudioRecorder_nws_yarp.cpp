@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: 2006-2021 Istituto Italiano di Tecnologia (IIT)
+ * SPDX-FileCopyrightText: 2023-2023 Istituto Italiano di Tecnologia (IIT)
  * SPDX-License-Identifier: LGPL-2.1-or-later
  */
 
@@ -259,28 +259,47 @@ void AudioRecorderDataThread::run()
             yCDebug(AUDIORECORDERWRAPPER);
         #endif
 
-        //send data
-        if (m_ARW->m_send_sound_on_stop)
+        //when recording: accumulate data or send data
+        if (current_sound.getSamples() > 0)
         {
-            if (m_ARW->m_snd.getSamples() > 0) {m_ARW->m_snd += current_sound;}
-            else                               {m_ARW->m_snd = current_sound;}
-        }
-        else
-        {
-            m_ARW->m_snd = current_sound;
-            sendSoundAndClear(m_ARW->m_snd);
+            if (m_ARW->m_send_sound_on_stop)
+            {
+                m_ARW->m_listofsnds.push_back(current_sound);
+            }
+            else
+            {
+                sendSound(current_sound);
+            }
         }
     }
-    else
+    else //when the recording is stopped: send accumulated data all at one
     {
-        if (m_ARW->m_snd.getSamples()>0)
+        if (m_ARW->m_listofsnds.size()>0)
         {
-            sendSoundAndClear(m_ARW->m_snd);
+            //create the sound s with the appropriate size
+            yarp::sig::Sound s;
+            s.setFrequency(m_ARW->m_listofsnds.begin()->getFrequency());
+            size_t total_size = 0;
+            for (auto it= m_ARW->m_listofsnds.begin(); it!= m_ARW->m_listofsnds.end(); it++)
+            {
+                total_size += (*it).getSamples();
+            }
+            s.resize(total_size, m_ARW->m_listofsnds.begin()->getChannels());
+
+            //fill the sound s with the sound contained in the list
+            size_t offset = 0;
+            for (auto it = m_ARW->m_listofsnds.begin(); it != m_ARW->m_listofsnds.end(); it++)
+            {
+                s.overwrite(*it,offset);
+                offset+=it->getSamples();
+            }
+            sendSound(s);
+            m_ARW->m_listofsnds.clear();
         }
     }
 }
 
-bool AudioRecorderDataThread::sendSoundAndClear(yarp::sig::Sound& s)
+bool AudioRecorderDataThread::sendSound(yarp::sig::Sound& s)
 {
     //check before sending data
     if (s.getSamples() == 0)
@@ -309,6 +328,5 @@ bool AudioRecorderDataThread::sendSoundAndClear(yarp::sig::Sound& s)
         m_ARW->m_streamingPort.write(s);
     }
 
-    s = yarp::sig::Sound(); //erase all data;
     return true;
 }

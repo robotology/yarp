@@ -38,11 +38,11 @@ public:
 
     virtual return_isRecording isRecording_RPC();
 
-    virtual return_getSound getSound(const size_t min_number_of_samples, const size_t max_number_of_samples, const double max_samples_timeout_s);
+    virtual return_getSound getSound_RPC(const size_t min_number_of_samples, const size_t max_number_of_samples, const double max_samples_timeout_s);
 
-    virtual return_getRecordingAudioBufferMaxSize getRecordingAudioBufferMaxSize();
+    virtual return_getRecordingAudioBufferMaxSize getRecordingAudioBufferMaxSize_RPC();
 
-    virtual return_getRecordingAudioBufferCurrentSize getRecordingAudioBufferCurrentSize();
+    virtual return_getRecordingAudioBufferCurrentSize getRecordingAudioBufferCurrentSize_RPC();
 
     // help method
     virtual std::vector<std::string> help(const std::string& functionName = "--all");

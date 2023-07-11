@@ -115,7 +115,7 @@ return_isRecording IAudioGrabberRPCd::isRecording_RPC()
     return ret;
 }
 
-return_getSound IAudioGrabberRPCd::getSound(const size_t min_number_of_samples, const size_t max_number_of_samples, const double max_samples_timeout_s)
+return_getSound IAudioGrabberRPCd::getSound_RPC(const size_t min_number_of_samples, const size_t max_number_of_samples, const double max_samples_timeout_s)
 {
     std::lock_guard <std::mutex> lg(m_mutex);
 
@@ -138,7 +138,7 @@ return_getSound IAudioGrabberRPCd::getSound(const size_t min_number_of_samples, 
     return ret;
 }
 
-return_getRecordingAudioBufferMaxSize IAudioGrabberRPCd::getRecordingAudioBufferMaxSize()
+return_getRecordingAudioBufferMaxSize IAudioGrabberRPCd::getRecordingAudioBufferMaxSize_RPC()
 {
     std::lock_guard <std::mutex> lg(m_mutex);
 
@@ -161,7 +161,7 @@ return_getRecordingAudioBufferMaxSize IAudioGrabberRPCd::getRecordingAudioBuffer
     return ret;
 }
 
-return_getRecordingAudioBufferCurrentSize IAudioGrabberRPCd::getRecordingAudioBufferCurrentSize()
+return_getRecordingAudioBufferCurrentSize IAudioGrabberRPCd::getRecordingAudioBufferCurrentSize_RPC()
 {
     std::lock_guard <std::mutex> lg(m_mutex);
 

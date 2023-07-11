@@ -47,7 +47,7 @@ service IAudioGrabberMsgs
     bool startRecording_RPC ();
     bool stopRecording_RPC ();
     return_isRecording isRecording_RPC ();
-    return_getSound getSound(1: size_t min_number_of_samples, 2: size_t max_number_of_samples, 3: double max_samples_timeout_s);
-    return_getRecordingAudioBufferMaxSize getRecordingAudioBufferMaxSize();
-    return_getRecordingAudioBufferCurrentSize getRecordingAudioBufferCurrentSize();
+    return_getSound getSound_RPC (1: size_t min_number_of_samples, 2: size_t max_number_of_samples, 3: double max_samples_timeout_s);
+    return_getRecordingAudioBufferMaxSize getRecordingAudioBufferMaxSize_RPC ();
+    return_getRecordingAudioBufferCurrentSize getRecordingAudioBufferCurrentSize_RPC ();
 }
