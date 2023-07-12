@@ -58,6 +58,15 @@ public:
       */
     Sound& operator+=(const Sound& alt);
 
+    /**
+     * It overwrites the sound with another sound, starting from a specified offset.
+     * @param alt the sound that will overwrite a portion of the current sound.
+     * @param offset the starting sample for the overwrite operation. Default value = 0.
+     * @param len the size (in samples) for the overwrite operation. If not specified, the whole
+     * alt sound will be used.
+     */
+    void overwrite (const Sound& alt, size_t offset=0, size_t len=0);
+
      /**
       * Returns a subpart of the sound
       * @param first_sample the starting sample number

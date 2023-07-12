@@ -352,13 +352,8 @@ bool LaserScan2D::nested_write_scans(const yarp::os::idl::WireWriter& writer) co
 // read status field
 bool LaserScan2D::read_status(yarp::os::idl::WireReader& reader)
 {
-    if (reader.noMore()) {
-        reader.fail();
-        return false;
-    }
     if (!reader.readI32(status)) {
-        reader.fail();
-        return false;
+        status = 3;
     }
     return true;
 }
@@ -375,13 +370,8 @@ bool LaserScan2D::write_status(const yarp::os::idl::WireWriter& writer) const
 // read (nested) status field
 bool LaserScan2D::nested_read_status(yarp::os::idl::WireReader& reader)
 {
-    if (reader.noMore()) {
-        reader.fail();
-        return false;
-    }
     if (!reader.readI32(status)) {
-        reader.fail();
-        return false;
+        status = 3;
     }
     return true;
 }

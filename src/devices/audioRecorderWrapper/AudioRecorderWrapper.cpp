@@ -36,6 +36,10 @@ AudioRecorderWrapper::~AudioRecorderWrapper()
 
 bool AudioRecorderWrapper::open(yarp::os::Searchable& config)
 {
+    yCWarning(AUDIORECORDERWRAPPER) << "The 'AudioRecorderWrapper' device is deprecated in favour of 'audioRecorder_nws_yarp'.";
+    yCWarning(AUDIORECORDERWRAPPER) << "The old device is no longer supported, and it will be removed in next YARP releases.";
+    yCWarning(AUDIORECORDERWRAPPER) << "Please update your scripts.";
+
     m_config.fromString(config.toString());
 
     if (config.check("period"))

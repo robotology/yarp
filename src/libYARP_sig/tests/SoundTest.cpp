@@ -21,13 +21,13 @@ using namespace yarp::os::impl;
 using namespace yarp::sig;
 using namespace yarp::os;
 
-void generate_test_sound(Sound& snd, size_t samples, size_t size_channels)
+void generate_test_sound(Sound& snd, size_t samples, size_t size_channels, int base=0)
 {
     for (size_t ch = 0; ch<snd.getChannels(); ch++)
     {
         for (size_t s = 0; s<snd.getSamples(); s++)
         {
-            snd.set((Sound::audio_sample)(ch * 10 + s), s, ch);
+            snd.set((Sound::audio_sample)(ch * 100 + s + base), s, ch);
         }
     }
 }
@@ -129,7 +129,7 @@ TEST_CASE("sig::SoundTest", "[yarp::sig]")
         {
             for (size_t s = 0; s<snd2.getSamples(); s++)
             {
-                snd2.set((Sound::audio_sample)(ch * 10 + s + 3), s, ch);
+                snd2.set((Sound::audio_sample)(ch * 100 + s + 3), s, ch);
             }
         }
         bool ok = (subsnd1 == snd2);
@@ -150,7 +150,7 @@ TEST_CASE("sig::SoundTest", "[yarp::sig]")
             snd3.resize(10, 1);
             for (size_t s = 0; s < snd3.getSamples(); s++)
             {
-                snd3.set((Sound::audio_sample)(chan * 10 + s), s, 0);
+                snd3.set((Sound::audio_sample)(chan * 100 + s), s, 0);
             }
             ok = (sndext == snd3);
             CHECK(ok);
@@ -232,6 +232,39 @@ TEST_CASE("sig::SoundTest", "[yarp::sig]")
         CHECK(snd3 == snt3);
     }
 
+    SECTION("check overwrite method.")
+    {
+        Sound snd1, snd2, sndResult;
+        snd1.resize(9, 2);
+        snd2.resize(3, 2);
+        generate_test_sound(snd1, 9, 2, 0);
+        generate_test_sound(snd2, 3, 2, 50);
+        auto v1 = snd1.getNonInterleavedAudioRawData();
+        auto v2 = snd2.getNonInterleavedAudioRawData();
+
+        sndResult.resize(9, 2);
+        auto vec_i = sndResult.getNonInterleavedAudioRawData();
+        sndResult.overwrite(snd1);
+        vec_i = sndResult.getNonInterleavedAudioRawData();
+        sndResult.overwrite(snd2,3);
+        vec_i = sndResult.getNonInterleavedAudioRawData();
+        CHECK(sndResult.getSamples() == 9);
+        CHECK(sndResult.getChannels() == 2);
+
+        std::vector<int> test_vec_snd1 = {   0,   1,   2,   3,   4,   5,   6,   7,   8,
+                                           100, 101, 102, 103, 104, 105, 106, 107, 108};
+        std::vector<int> test_vec_snd2 = {  50,  51,  52,
+                                           150, 151, 152  };
+        std::vector<int> test_vec_i    = {   0,   1,   2,  50,  51,  52,   6,   7,   8,
+                                           100, 101, 102, 150, 151, 152, 106, 107, 108 };
+
+        for (size_t i = 0; i < test_vec_i.size(); i++)
+        {
+            bool ok = (vec_i.at(i).get() == test_vec_i.at(i));
+            CHECK(ok);
+        }
+    }
+
     SECTION("check sum (concatenation) of samples.")
     {
         Sound snd1, snd2, sndSum;
@@ -287,8 +320,8 @@ TEST_CASE("sig::SoundTest", "[yarp::sig]")
         snd1.resize(5, 2);
         generate_test_sound(snd1, 5, 2);
 
-        std::vector<int> test_vec_i = { 0, 10, 1, 11, 2, 12, 3, 13, 4, 14 };
-        std::vector<int> test_vec_ni = { 0, 1, 2, 3, 4, 10, 11, 12, 13, 14 };
+        std::vector<int> test_vec_i = { 0, 100, 1, 101, 2, 102, 3, 103, 4, 104 };
+        std::vector<int> test_vec_ni = { 0, 1, 2, 3, 4, 100, 101, 102, 103, 104 };
         auto vec_i = snd1.getInterleavedAudioRawData();
         auto vec_ni = snd1.getNonInterleavedAudioRawData();
 

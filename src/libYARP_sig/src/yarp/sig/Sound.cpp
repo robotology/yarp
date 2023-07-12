@@ -42,6 +42,40 @@ Sound::Sound(const Sound& alt) : yarp::os::Portable()
     synchronize();
 }
 
+void Sound::overwrite(const Sound& alt, size_t offset, size_t len)
+{
+
+    if (alt.m_channels != m_channels)
+    {
+        yCError(SOUND, "unable to concatenate sounds with different number of channels!");
+        return;
+    }
+    if (alt.m_frequency != m_frequency)
+    {
+        yCError(SOUND, "unable to concatenate sounds with different sample rate!");
+        return;
+    }
+
+    size_t current_size = (*this).getSamples();
+    size_t alt_size     = alt.getSamples();
+    if (len == 0) len = alt_size;
+    if ( offset + len > current_size)
+    {
+        len = current_size - offset;
+    }
+
+    for (size_t ch = 0; ch < m_channels; ch++)
+    {
+        size_t pdst = ch * this->getBytesPerSample() * this->m_samples + offset* this->getBytesPerSample();
+        unsigned char* dst = &this->getRawData()[pdst];
+        size_t psrc = ch * this->getBytesPerSample() * alt.m_samples;
+        unsigned char* src = &alt.getRawData()[psrc];
+        memcpy((void*) dst, (void*) src, len * this->m_bytesPerSample);
+    }
+
+    this->synchronize();
+}
+
 Sound& Sound::operator += (const Sound& alt)
 {
     if (alt.m_channels!= m_channels)
