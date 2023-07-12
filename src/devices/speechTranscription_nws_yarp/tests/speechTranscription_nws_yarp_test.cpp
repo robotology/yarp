@@ -74,7 +74,7 @@ TEST_CASE("dev::speechTranscription_nws_yarp", "[yarp::dev]")
             yarp::os::Time::delay(0.5);
 
             yarp::sig::Sound s;
-            s.resize(100, 2);
+            s.resize(300, 1);
             CHECK(po.write(s));
             yarp::os::Time::delay(0.5);
             yarp::os::Bottle b;

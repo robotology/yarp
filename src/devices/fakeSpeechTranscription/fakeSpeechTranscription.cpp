@@ -53,14 +53,14 @@ bool FakeSpeechTranscription::getLanguage(std::string& language)
 
 bool FakeSpeechTranscription::transcribe(const yarp::sig::Sound& sound, std::string& transcription, double& score)
 {
-    if (sound.getSamples() == 0 ||
-        sound.getChannels() == 0)
-    {
-        yCError(FAKE_SPEECHTR) << "Invalid Sound sample received";
-        transcription = "";
-        score = 0.0;
-        return false;
-    }
+    // if (sound.getSamples() == 0 ||
+    //     sound.getChannels() == 0)
+    // {
+    //     yCError(FAKE_SPEECHTR) << "Invalid Sound sample received";
+    //     transcription = "";
+    //     score = 0.0;
+    //     return false;
+    // }
 
     transcription = "hello world";
     score = 1.0;
