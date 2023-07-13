@@ -77,6 +77,15 @@ bool audioFromFileDevice::open(yarp::os::Searchable &config)
             yCInfo(AUDIOFROMFILE) << "NOT using use_params_from_file";
     }
 
+    if (config.check("reset_on_stop"))
+    {
+        m_reset_on_stop = config.find("reset_on_stop").asBool();
+        if (m_reset_on_stop)
+            yCInfo(AUDIOFROMFILE) << "reset_on_stop = true";
+        else
+            yCInfo(AUDIOFROMFILE) << "reset_on_stop = false";
+    }
+
     //sets the number of samples processed atomically every thread iteration
     if (config.check("driver_frame_size"))
     {
@@ -142,6 +151,15 @@ bool audioFromFileDevice::close()
     return true;
 }
 
+bool audioFromFileDevice::stopRecording()
+{
+    bool b = AudioRecorderDeviceBase::stopRecording();
+    if (b && m_reset_on_stop)
+    {
+        m_bpnt=0;
+    }
+    return b;
+}
 
 bool audioFromFileDevice::threadInit()
 {
