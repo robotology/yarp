@@ -48,7 +48,7 @@ void do_nws_nwc_test(bool use_stream)
     p_nwc.put("device", "frameGrabber_nwc_yarp");
     p_nwc.put("remote", "/grabber");
     p_nwc.put("local", "/grabber/client");
-    p_nwc.put("no_stream", !use_stream);
+    if (!use_stream) {p_nwc.put("no_stream",true);}
     REQUIRE(dd_nwc.open(p_nwc));
 
     IFrameGrabberImage* igrabber = nullptr;
@@ -57,18 +57,23 @@ void do_nws_nwc_test(bool use_stream)
     REQUIRE(dd_nwc.view(irgbParams));
 
     yarp::os::SystemClock::delaySystem(0.5);
-
     {
         ImageOf<PixelRgb> img;
+        CHECK(img.width() == 0);
+        CHECK(img.height() == 0);
         igrabber->getImage(img);
         CHECK(img.width() > 0);
+        CHECK(img.height() > 0);
     }
+    yarp::os::SystemClock::delaySystem(0.5);
     {
         ImageOf<PixelRgb> crop;
         yarp::sig::VectorOf<std::pair< int, int>> vertices;
         vertices.resize(2);
         vertices[0] = std::pair <int, int>(0, 0);
         vertices[1] = std::pair <int, int>(10, 10); // Configure a doable crop.
+        CHECK(crop.width() == 0);
+        CHECK(crop.height() == 0);
         CHECK(igrabber->getImageCrop(YARP_CROP_RECT, vertices, crop));
         CHECK(crop.width() > 0);
         CHECK(crop.height() > 0);
@@ -92,13 +97,14 @@ TEST_CASE("dev::frameGrabber_nwc_yarpTest", "[yarp::dev]")
 
     Network::setLocalMode(true);
 
-    SECTION("Test the frameGrabber_nwc_yarp device with a frameGrabber_nws_yarp device")
+    SECTION("Test the frameGrabber_nwc_yarp device with a frameGrabber_nws_yarp device (RPC mode)")
     {
-        //do the test using streaming data between nws and nwc
-        do_nws_nwc_test(true);
-
-        //do the test using RPC calls only
         do_nws_nwc_test(false);
+    }
+
+    SECTION("Test the frameGrabber_nwc_yarp device with a frameGrabber_nws_yarp device (streaming mode)")
+    {
+        do_nws_nwc_test(true);
     }
 
     Network::setLocalMode(false);

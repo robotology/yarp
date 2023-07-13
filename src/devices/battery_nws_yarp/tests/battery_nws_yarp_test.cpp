@@ -3,12 +3,6 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#include <yarp/dev/IFrameGrabberImage.h>
-#include <yarp/dev/IRgbVisualParams.h>
-
-#include <yarp/dev/tests/IFrameGrabberImageTest.h>
-#include <yarp/dev/tests/IRgbVisualParamsTest.h>
-
 #include <yarp/os/Network.h>
 #include <yarp/sig/Image.h>
 #include <yarp/sig/Vector.h>
