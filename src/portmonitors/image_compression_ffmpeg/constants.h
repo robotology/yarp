@@ -58,6 +58,24 @@ static const std::vector<std::string> FFMPEGPORTMONITOR_CL_CODECS {
 };
 
 /**
+ * @brief This string is the "key" value for the custom encoder parameter
+ *
+ */
+static const std::string FFMPEGPORTMONITOR_CL_CUSTOM_ENC_KEY = "custom_enc";
+
+/**
+ * @brief This string is the "key" value for the custom decoder parameter
+ *
+ */
+static const std::string FFMPEGPORTMONITOR_CL_CUSTOM_DEC_KEY = "custom_dec";
+
+/**
+ * @brief This string is the "key" value for the pixel format parameter
+ *
+ */
+static const std::string FFMPEGPORTMONITOR_CL_PIXEL_FORMAT_KEY = "pixel_format";
+
+/**
  * @brief This vector contains the codec ids corresponding to the codecs of the FFMPEGPORTMONITOR_CL_CODECS vector.
  *
  */
@@ -80,13 +98,9 @@ static std::map<int, int> FFMPEGPORTMONITOR_PIXELMAP = {
 };
 
 /**
- * @brief This structure maps Ffmpeg video codecs with their needed Ffmpeg pixel format code.
+ * @brief Default pixel format to be used within ffmpeg.
  *
  */
-static std::map<int, int> FFMPEGPORTMONITOR_CODECPIXELMAP = {
-    { AV_CODEC_ID_H264, AV_PIX_FMT_YUV420P },
-    { AV_CODEC_ID_H265, AV_PIX_FMT_YUV420P },
-    { AV_CODEC_ID_MPEG2VIDEO, AV_PIX_FMT_YUV420P }
-};
+static AVPixelFormat FFMPEGPORTMONITOR_DEFAULT_PIXEL_FORMAT = AV_PIX_FMT_YUV420P;
 
 #endif  // YARP_FFMPEG_CARRIER_FFMPEGPORTMONITOR_CL_PARAMS_H

@@ -96,7 +96,7 @@ class FfmpegMonitorObject : public yarp::os::MonitorObject
          * @param codecId       The codec for video compression / decompression.
          * @return int          0 on success, -1 otherwise.
          */
-        int getParamsFromCommandLine(std::string carrierString, AVCodecID &codecId);
+        bool getParamsFromCommandLine(std::string carrierString, AVCodec *&codecOut, AVPixelFormat &pixelFormatOut);
 
         /**
          * @brief This function iterates over the attribute paramsMap and sets all the specified parameters into the attribute codecContext.
@@ -131,22 +131,22 @@ class FfmpegMonitorObject : public yarp::os::MonitorObject
         bool senderSide;
 
         /**
-         * @brief The string containing codec name.
-         *
-         */
-        std::string codecName;
-
-        /**
          * @brief Ffmpeg structure containing all codec information needed for compression / decompression.
          *
          */
-        const AVCodec *codec;
+        AVCodec *codec;
 
         /**
          * @brief Ffmpeg structure containing all codec context information needed for compression / decompression.
          *
          */
         AVCodecContext *codecContext = NULL;
+
+        /**
+         * @brief Ffmpeg pixel format.
+         *
+         */
+        AVPixelFormat pixelFormat{AV_PIX_FMT_YUV420P};
 
         /**
          * @brief Boolean variable used to check if the current call to the "compression" (or "decompression") function is the first one or not.

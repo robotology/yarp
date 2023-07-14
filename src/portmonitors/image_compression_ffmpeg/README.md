@@ -54,13 +54,20 @@ All the parameters will be passed to the compression/decompression context of th
 ## Parameters
 
 The parameters that can be set on the command line can have different types.<br>
-The encoding formats implemented are:
--   H264
--   H265
--   MPEG2VIDEO
+The default codecs are:
+-   ``h264``
+-   ``h265``
+-   ``mpeg2video``
 
-If no codec is chosen via the connection string, MPEG2VIDEO codec is used as default. <br>
-Parameters can be used to manipulate image quality. For example, the right values for "qmin" and "qmax" parameters can lead you to the best quality (at the expense of the bandwidth).
+These codecs can be set via the ``codec`` parameter. If no codec is chosen via the connection string, ``mpeg2video`` codec is used as default. <br>
+In some cases, it might be useful to specify the encoder and the decoder separately. This is possible via the ``custom_enc`` and ``custom_dec`` parameters.
+When specifying a ``custom_enc``, it is also necessary to specify a ``custom_dec``, and viceversa. The availability of a given encoder/decoder depends on ``ffmpeg``.
+It is possible to check which encoder/decoder is available with the commands ``ffmpeg -encoders``/``ffmpeg -decoders``.<br>
+According to the chosen encoder/decoder, the default pixel format (AV_PIX_FMT_YUV420P) might not be available. In this case, an error is printed either on the receiver
+or the sender side, with an indication about the supported pixel formats, and a suggested one. It is possible to specify the desired pixel format with the
+parameter ``pixel_format``. <br>
+Parameters can be used to manipulate image quality. It is possible to check the available parameters of a given encoder/decoder with the command ``ffmpeg -h encoder=<name>``.
+For example, the right values for "qmin" and "qmax" parameters can lead you to the best quality (at the expense of the bandwidth).
 The best values for these two parameters for each codec are defined in [this page](https://slhck.info/video/2017/02/24/vbr-settings.html) and reported in the following table. <br>
 | Codec       | qmin        | qmax        |
 | ----------- | ----------- | ----------- |

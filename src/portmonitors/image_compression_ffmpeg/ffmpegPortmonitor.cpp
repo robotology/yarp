@@ -23,6 +23,7 @@
 #include <cmath>
 #include <algorithm>
 #include <iostream>
+#include <sstream>
 
 // Ffmpeg imports
 extern "C" {
@@ -68,24 +69,9 @@ bool FfmpegMonitorObject::create(const yarp::os::Property& options)
     // Check if this is sender or not
     senderSide = (options.find("sender_side").asBool());
 
-    // Set default codec
-    AVCodecID codecId = AV_CODEC_ID_MPEG2VIDEO;
-    codecName = "mpeg2video";
-
     // Parse command line parameters and set them into global variable "paramsMap"
     std::string str = options.find("carrier").asString();
-    if (getParamsFromCommandLine(str, codecId) == -1) {
-        return false;
-    }
-
-    // Find encoder/decoder
-    if (senderSide) {
-        codec = avcodec_find_encoder(codecId);
-    } else {
-        codec = avcodec_find_decoder(codecId);
-    }
-    if (!codec) {
-        yCError(FFMPEGMONITOR, "Can't find codec %s", codecName.c_str());
+    if (!getParamsFromCommandLine(str, codec, pixelFormat)) {
         return false;
     }
 
@@ -99,6 +85,61 @@ bool FfmpegMonitorObject::create(const yarp::os::Property& options)
     if (!codecContext) {
         yCError(FFMPEGMONITOR, "Could not allocate video codec context");
         return false;
+    }
+
+    if (!codec->pix_fmts)
+    {
+        yCWarning(FFMPEGMONITOR, "The specified codec (%s) has unknown available pixel format. There might be visualization issues.", codec->name);
+    }
+    else
+    {
+        std::stringstream pixelFormatList;
+        bool found = false;
+        size_t i = 0;
+        AVPixelFormat test = codec->pix_fmts[i];
+
+        if (test == AV_PIX_FMT_NONE)
+        {
+            yCError(FFMPEGMONITOR, "The specified codec (%s) has no available pixel format.", codec->name);
+            return false;
+        }
+
+        pixelFormatList << test;
+        while (test != AV_PIX_FMT_NONE)
+        {
+            if (test == pixelFormat)
+            {
+                found = true;
+                break;
+            }
+            ++i;
+            test = codec->pix_fmts[i];
+
+            if (test != AV_PIX_FMT_NONE)
+            {
+                pixelFormatList << ", " << test;
+            }
+        }
+
+        if (!found)
+        {
+            AVPixelFormat suggestedFormat = avcodec_default_get_format(codecContext, codec->pix_fmts);
+
+            if (pixelFormat == FFMPEGPORTMONITOR_DEFAULT_PIXEL_FORMAT)
+            {
+                yCError(FFMPEGMONITOR, "The specified codec (%s) is not compatible with the default pixel format AV_PIX_FMT_YUV420P (code %d). "
+                                       "Try specifying the suggested pixel format of the codec with the option \"pixel_format.%d\". "
+                                       "The available pixel formats are %s.",
+                                        codec->name, FFMPEGPORTMONITOR_DEFAULT_PIXEL_FORMAT, suggestedFormat, pixelFormatList.str().c_str());
+            }
+            else
+            {
+                yCError(FFMPEGMONITOR, "The specified codec (%s) is not compatible with the specified pixel format (code %d). "
+                                       "The available pixel formats are as follows %s (suggested = %d).",
+                                        codec->name, pixelFormat, pixelFormatList.str().c_str(), suggestedFormat);
+            }
+            return false;
+        }
     }
 
     firstTime = true;
@@ -338,8 +379,7 @@ int FfmpegMonitorObject::compress(Image* img, AVPacket *pkt) {
 
     // Allocate memory for end frame data
     success = av_image_alloc(endFrame->data, endFrame->linesize,
-                    w, h,
-                    (AVPixelFormat) FFMPEGPORTMONITOR_CODECPIXELMAP[codecContext->codec_id], 16);
+                    w, h, pixelFormat, 16);
 
     if (success < 0) {
         yCError(FFMPEGMONITOR, "Cannot allocate end frame buffer!");
@@ -351,7 +391,7 @@ int FfmpegMonitorObject::compress(Image* img, AVPacket *pkt) {
     // Set end frame parameters
     endFrame->height = h;
     endFrame->width = w;
-    endFrame->format = (AVPixelFormat) FFMPEGPORTMONITOR_CODECPIXELMAP[codecContext->codec_id];
+    endFrame->format = pixelFormat;
 
     // Convert the image from start format into end format
     static struct SwsContext *img_convert_ctx;
@@ -360,7 +400,7 @@ int FfmpegMonitorObject::compress(Image* img, AVPacket *pkt) {
     img_convert_ctx = sws_getContext(w, h,
                                         (AVPixelFormat) FFMPEGPORTMONITOR_PIXELMAP[img->getPixelCode()],
                                         w, h,
-                                        (AVPixelFormat) FFMPEGPORTMONITOR_CODECPIXELMAP[codecContext->codec_id],
+                                        pixelFormat,
                                         SWS_BICUBIC,
                                         NULL, NULL, NULL);
     if (img_convert_ctx == NULL) {
@@ -390,7 +430,7 @@ int FfmpegMonitorObject::compress(Image* img, AVPacket *pkt) {
         // Set codec context parameters
         codecContext->width = w;
         codecContext->height = h;
-        codecContext->pix_fmt = (AVPixelFormat) FFMPEGPORTMONITOR_CODECPIXELMAP[codecContext->codec_id];
+        codecContext->pix_fmt = pixelFormat;
 
         // Open codec
         ret = avcodec_open2(codecContext, codec, NULL);
@@ -454,7 +494,7 @@ int FfmpegMonitorObject::decompress(AVPacket* pkt, int w, int h, int pixelCode) 
         // Set codec context parameters
         codecContext->width = w;
         codecContext->height = h;
-        codecContext->pix_fmt = (AVPixelFormat) FFMPEGPORTMONITOR_CODECPIXELMAP[codecContext->codec_id];
+        codecContext->pix_fmt = pixelFormat;
 
         // Open codec
         int ret = avcodec_open2(codecContext, codec, NULL);
@@ -530,7 +570,7 @@ int FfmpegMonitorObject::decompress(AVPacket* pkt, int w, int h, int pixelCode) 
 
     // Allocate conversion context
     img_convert_ctx = sws_getContext(w, h,
-                                        (AVPixelFormat) FFMPEGPORTMONITOR_CODECPIXELMAP[codecContext->codec_id],
+                                        pixelFormat,
                                         w, h,
                                         (AVPixelFormat) FFMPEGPORTMONITOR_PIXELMAP[pixelCode],
                                         SWS_BICUBIC,
@@ -569,14 +609,18 @@ int FfmpegMonitorObject::decompress(AVPacket* pkt, int w, int h, int pixelCode) 
 
 }
 
-int FfmpegMonitorObject::getParamsFromCommandLine(std::string carrierString, AVCodecID &codecId) {
+bool FfmpegMonitorObject::getParamsFromCommandLine(std::string carrierString, AVCodec*& codecOut, AVPixelFormat& pixelFormatOut) {
 
     std::vector<std::string> parameters;
     // Split command line string using '+' delimiter
     split(carrierString, '+', parameters);
 
+    bool standardCodec = false;
+    bool customEnc     = false;
+    bool customDec     = false;
+
     // Iterate over result strings
-    for (std::string param: parameters) {
+    for (std::string& param: parameters) {
 
         // Skip YARP initial parameters
         if (find(FFMPEGPORTMONITOR_IGNORE_PARAMS.begin(), FFMPEGPORTMONITOR_IGNORE_PARAMS.end(), param) != FFMPEGPORTMONITOR_IGNORE_PARAMS.end()) {
@@ -586,8 +630,8 @@ int FfmpegMonitorObject::getParamsFromCommandLine(std::string carrierString, AVC
         // If there is no '.', the param is bad formatted, return error
         auto pointPosition = param.find('.');
         if (pointPosition == std::string::npos) {
-            yCError(FFMPEGMONITOR, "Error parsing parameters!");
-            return -1;
+            yCError(FFMPEGMONITOR, "Error while parsing parameter %s. Missing '.'!", param.c_str());
+            return false;
         }
 
         // Otherwise, separate key and value
@@ -596,14 +640,38 @@ int FfmpegMonitorObject::getParamsFromCommandLine(std::string carrierString, AVC
 
         // Parsing codec
         if (paramKey == FFMPEGPORTMONITOR_CL_CODEC_KEY) {
+
+            if (customEnc || customDec)
+            {
+                yCError(FFMPEGMONITOR, "Cannot set both %s and %s/%s together.",
+                        FFMPEGPORTMONITOR_CL_CODEC_KEY.c_str(),
+                        FFMPEGPORTMONITOR_CL_CUSTOM_ENC_KEY.c_str(),
+                        FFMPEGPORTMONITOR_CL_CUSTOM_DEC_KEY.c_str());
+                codecOut = nullptr;
+                return false;
+            }
+
             bool found = false;
             // Iterate over codecs command line possibilities
             for (size_t i = 0; i < FFMPEGPORTMONITOR_CL_CODECS.size(); i++) {
                 // If found
                 if (paramValue == FFMPEGPORTMONITOR_CL_CODECS[i]) {
                     // Set codec id basing on codec command line name
-                    codecId = (AVCodecID) FFMPEGPORTMONITOR_CODE_CODECS[i];
-                    codecName = paramValue;
+                    AVCodecID codecId = (AVCodecID) FFMPEGPORTMONITOR_CODE_CODECS[i];
+                    // Find encoder/decoder
+                    if (senderSide) {
+                        codecOut = avcodec_find_encoder(codecId);
+                    } else {
+                        codecOut = avcodec_find_decoder(codecId);
+                    }
+
+                    if (!codecOut) {
+                        yCError(FFMPEGMONITOR, "Can't find codec %s", paramValue.c_str());
+                        codecOut = nullptr;
+                        return false;
+                    }
+
+                    standardCodec = true;
                     found = true;
                     break;
                 }
@@ -612,17 +680,109 @@ int FfmpegMonitorObject::getParamsFromCommandLine(std::string carrierString, AVC
             // If not found, unrecognized codec, return error
             if (!found) {
                 yCError(FFMPEGMONITOR, "Unrecognized codec: %s", paramValue.c_str());
-                return -1;
-            } else {
-                continue;
+                return false;
             }
 
+            continue; //avoid to add this parameter to paramsMap
+        }
+        else if (paramKey == FFMPEGPORTMONITOR_CL_CUSTOM_ENC_KEY)
+        {
+            if (!senderSide)
+            {
+                customEnc = true;
+                continue; //The custom encoder need to be set on the sender side only. Later we check that the custom decoder has been set too.
+            }
+
+            if (standardCodec)
+            {
+                yCError(FFMPEGMONITOR, "Cannot set both %s and %s/%s together.",
+                        FFMPEGPORTMONITOR_CL_CODEC_KEY.c_str(),
+                        FFMPEGPORTMONITOR_CL_CUSTOM_ENC_KEY.c_str(),
+                        FFMPEGPORTMONITOR_CL_CUSTOM_DEC_KEY.c_str());
+                codecOut = nullptr;
+                return false;
+            }
+
+
+            codecOut = avcodec_find_encoder_by_name(paramValue.c_str());
+
+            if (!codecOut) {
+                yCError(FFMPEGMONITOR, "Can't find encoder %s", paramValue.c_str());
+                codecOut = nullptr;
+                return false;
+            }
+
+            customEnc = true;
+            continue;  //avoid to add this parameter to paramsMap
+        }
+        else if (paramKey == FFMPEGPORTMONITOR_CL_CUSTOM_DEC_KEY)
+        {
+            if (senderSide)
+            {
+                customDec = true;
+                continue; //The custom decoder need to be set on the receiver side only. Later we check that the custom encoder has been set too.
+            }
+
+            if (standardCodec)
+            {
+                yCError(FFMPEGMONITOR, "Cannot set both %s and %s/%s together.",
+                        FFMPEGPORTMONITOR_CL_CODEC_KEY.c_str(),
+                        FFMPEGPORTMONITOR_CL_CUSTOM_ENC_KEY.c_str(),
+                        FFMPEGPORTMONITOR_CL_CUSTOM_DEC_KEY.c_str());
+                codecOut = nullptr;
+                return false;
+            }
+
+            codecOut = avcodec_find_decoder_by_name(paramValue.c_str());
+
+            if (!codecOut) {
+                yCError(FFMPEGMONITOR, "Can't find decoder %s", paramValue.c_str());
+                codecOut = nullptr;
+                return false;
+            }
+
+            customDec = true;
+            continue;  //avoid to add this parameter to paramsMap
+        }
+        else if (paramKey == FFMPEGPORTMONITOR_CL_PIXEL_FORMAT_KEY)
+        {
+            pixelFormatOut = static_cast<AVPixelFormat>(std::atoi(paramValue.c_str()));
+            continue;  //avoid to add this parameter to paramsMap
         }
 
         // Save param into params map
         paramsMap.insert( std::pair<std::string, std::string>(paramKey, paramValue) );
     }
-    return 0;
+
+    if (!standardCodec && !customEnc && !customDec)
+    {
+        // Set default codec
+        AVCodecID codecId = AV_CODEC_ID_MPEG2VIDEO;
+        if (senderSide) {
+            codecOut = avcodec_find_encoder(codecId);
+        } else {
+            codecOut = avcodec_find_decoder(codecId);
+        }
+
+        if (!codecOut) {
+            yCError(FFMPEGMONITOR, "Can't find default codec (mpeg2video).");
+            return false;
+        }
+    }
+
+    if (customEnc && !customDec)
+    {
+        yCError(FFMPEGMONITOR, "A custom encoder has been specified, but not a custom decoder.");
+        return false;
+    }
+
+    if (!customEnc && customDec)
+    {
+        yCError(FFMPEGMONITOR, "A custom decoder has been specified, but not a custom encoder.");
+        return false;
+    }
+
+    return true;
 
 }
 
