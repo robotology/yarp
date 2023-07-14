@@ -25,7 +25,12 @@ bool IFrameGrabberOf<ImageType>::getImageCrop(cropType_id_t cropType,
             return false;
         }
         ImageType full;
-        getImage(full);
+        bool b = getImage(full);
+        if (!b || full.width() == 0 || full.height() == 0)
+        {
+            yCError(IFRAMEGRABBEROF, "GetImageCrop failed: No image received");
+            return false;
+        }
 
         if (!yarp::sig::utils::cropRect(full, vertices[0], vertices[1], image)) {
             yCError(IFRAMEGRABBEROF, "GetImageCrop failed: utils::cropRect error: (%d, %d) (%d, %d)",
