@@ -59,6 +59,7 @@ set(YARP_dev_HDRS
   yarp/dev/IInteractionMode.h
   yarp/dev/IJoypadController.h
   yarp/dev/IJointFault.h
+  yarp/dev/ILLM.h
   yarp/dev/IMotor.h
   yarp/dev/IMotorEncoders.h
   yarp/dev/IMultipleWrapper.h
@@ -411,6 +412,7 @@ set(YARP_dev_test_HDRS
     yarp/dev/tests/IRGBDSensorTest.h
     yarp/dev/tests/IBatteryTest.h
     yarp/dev/tests/IJoypadControllerTest.h
+    yarp/dev/tests/ILLMTest.h
 )
 
 set(YARP_dev_test_SRCS
@@ -421,6 +423,7 @@ set(YARP_dev_test_SRCS
     yarp/dev/tests/IRGBDSensorTest.cpp
     yarp/dev/tests/IBatteryTest.cpp
     yarp/dev/tests/IJoypadControllerTest.cpp
+    yarp/dev/tests/ILLMTest.cpp
 )
 
 if(TARGET YARP::YARP_math)

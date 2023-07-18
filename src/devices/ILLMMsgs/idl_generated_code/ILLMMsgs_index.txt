@@ -1,0 +1,10 @@
+yarp/dev/Message.h
+yarp/dev/Message.cpp
+yarp/dev/return_readPrompt.h
+yarp/dev/return_readPrompt.cpp
+yarp/dev/return_ask.h
+yarp/dev/return_ask.cpp
+yarp/dev/return_getConversation.h
+yarp/dev/return_getConversation.cpp
+yarp/dev/ILLMMsgs.h
+yarp/dev/ILLMMsgs.cpp

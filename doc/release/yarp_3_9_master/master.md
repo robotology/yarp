@@ -19,3 +19,11 @@ Deprecated old device `AudioRecorderWrapper`.
 # audioRecoder_nwc_yarp
 
 Added new device `audioRecoder_nwc_yarp`.
+
+# LLM_nws_yarp
+
+Added new device `LLM_nws_yarp`, thrift interface `ILLMMsgs`, fakeDevice `fakeLLMDevice`.
+
+# LLM_nwc_yarp
+
+Added new device `LLM_nwc_yarp`.
