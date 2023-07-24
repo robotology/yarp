@@ -11,7 +11,7 @@
 #include <yarp/os/LogStream.h>
 
 #include <yarp/proto/framegrabber/CameraVocabs.h>
-
+#include <yarp/sig/ImageUtils.h>
 
 namespace {
 YARP_LOG_COMPONENT(FRAMEGRABBER_NWC_YARP, "yarp.devices.frameGrabber_nwc_yarp")
@@ -160,9 +160,34 @@ bool FrameGrabberOf_ForwarderWithStream<ImageType, IfVocab, ImgVocab>::getImageC
         return yarp::proto::framegrabber::FrameGrabberOf_Forwarder<ImageType, IfVocab, ImgVocab>::getImageCrop(cropType, vertices, image);
     }
 
-    // yarp::dev::IFrameGrabberOf<ImageType>::getImageCrop() calls getImage()
-    // internally, and crops the returned image
-    return yarp::dev::IFrameGrabberOf<ImageType>::getImageCrop(cropType, vertices, image);
+    if (cropType == YARP_CROP_RECT) {
+        if (vertices.size() != 2) {
+            yCError(FRAMEGRABBER_NWC_YARP, "GetImageCrop failed: RECT mode requires 2 vertices");
+            return false;
+        }
+        ImageType full;
+        bool b = m_streamReceiver->lastImage(full);
+        if (!b || full.width() == 0 || full.height() == 0)
+        {
+            yCError(FRAMEGRABBER_NWC_YARP, "GetImageCrop failed: No image received");
+            return false;
+        }
+
+        if (!yarp::sig::utils::cropRect(full, vertices[0], vertices[1], image)) {
+            yCError(FRAMEGRABBER_NWC_YARP, "GetImageCrop failed: utils::cropRect error: (%d, %d) (%d, %d)",
+                vertices[0].first,
+                vertices[0].second,
+                vertices[1].first,
+                vertices[1].second);
+            return false;
+        }
+    }
+    else if (cropType == YARP_CROP_LIST) {
+        yCError(FRAMEGRABBER_NWC_YARP, "List type not yet implemented");
+        return false;
+    }
+
+    return true;
 }
 
 
@@ -195,7 +220,12 @@ bool FrameGrabber_nwc_yarp::open(yarp::os::Searchable& config)
 {
     std::string remote = config.check("remote", yarp::os::Value(""), "port name of real grabber").asString();
     std::string local = config.check("local", yarp::os::Value("..."), "port name to use locally").asString();
-    std::string carrier = config.check("stream", yarp::os::Value("tcp"), "carrier to use for streaming").asString();
+    if (config.check("stream"))
+    {
+        yCError(FRAMEGRABBER_NWC_YARP) << "'stream' parameter was deprecated. Please rename it to 'carrier'";
+        return false;
+    }
+    std::string carrier = config.check("carrier", yarp::os::Value("fast_tcp"), "carrier to use for streaming").asString();
     bool no_stream = config.check("no_stream");
 
     if (!no_stream) {
