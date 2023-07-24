@@ -290,7 +290,7 @@ foreach my $filename (@files) {
 
     # C++ style BSD-3-Clause
     if ("$txt" =~ /$str_bsd3_cpp/s) {
-        if ("$filename" =~ /\.(cpp|cpp.in|c|h|h.in|thrift|mm|qml|java|cs)$/) {
+        if ("$filename" =~ /\.(cpp|cpp.in|c|h|hpp|h.in|thrift|mm|qml|java|cs)$/) {
             print_if_verbose "[OK - BSD (.$1)] $filename\n";
             $ok++;
         } elsif ("$filename" =~ /\/compiler\..+\.in$/) {

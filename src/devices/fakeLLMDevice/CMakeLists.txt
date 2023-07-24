@@ -1,5 +1,5 @@
-# # SPDX-FileCopyrightText: 2023-2023 Istituto Italiano di Tecnologia (IIT)
-# # SPDX-License-Identifier: BSD-3-Clause
+# SPDX-FileCopyrightText: 2023-2023 Istituto Italiano di Tecnologia (IIT)
+# SPDX-License-Identifier: BSD-3-Clause
 
 if (YARP_COMPILE_ALL_FAKE_DEVICES)
     set(ENABLE_yarpmod_fakeLLMDevice ON CACHE BOOL "" FORCE)
@@ -8,7 +8,7 @@ endif()
 yarp_prepare_plugin(fakeLLMDevice
   CATEGORY device
   TYPE fakeLLMDevice
-  INCLUDE fakeLLMDevice.hpp
+  INCLUDE fakeLLMDevice.h
   DEFAULT ON
 )
 if(NOT SKIP_fakeLLMDevice)
@@ -18,7 +18,7 @@ if(NOT SKIP_fakeLLMDevice)
     target_sources(yarp_fakeLLMDevice
     PRIVATE
         fakeLLMDevice.cpp
-        fakeLLMDevice.hpp
+        fakeLLMDevice.h
     )
 
     target_link_libraries(yarp_fakeLLMDevice

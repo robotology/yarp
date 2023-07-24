@@ -22,4 +22,3 @@ target_link_libraries(ILLMMsgs
 target_include_directories(ILLMMsgs PUBLIC ${ILLMMSGS_THRIFT_BUILD_INTERFACE_INCLUDE_DIRS})
 
 set_property(TARGET ILLMMsgs PROPERTY FOLDER "Devices/Shared")
-

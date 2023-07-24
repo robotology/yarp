@@ -66,7 +66,7 @@ bool LLM_nws_yarp::read(yarp::os::ConnectionReader &connection)
     {
         return true;
     }
-    
+
     yCDebug(LLM_NWS_YARP) << "read() Command failed";
 
     return false;

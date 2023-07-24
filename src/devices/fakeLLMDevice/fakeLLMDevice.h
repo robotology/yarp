@@ -3,6 +3,9 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
+#ifndef FAKE_LLMDEVICE_H
+#define FAKE_LLMDEVICE_H
+
 #include <yarp/dev/ILLM.h>
 #include <vector>
 #include <yarp/dev/DeviceDriver.h>
@@ -22,3 +25,5 @@ public:
 private:
     std::vector<std::pair<Author, Content>> m_conversation;
 };
+
+#endif

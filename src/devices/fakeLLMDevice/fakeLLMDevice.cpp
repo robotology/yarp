@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#include "fakeLLMDevice.hpp"
+#include "fakeLLMDevice.h"
 
 bool fakeLLMDevice::setPrompt(const std::string &prompt)
 {

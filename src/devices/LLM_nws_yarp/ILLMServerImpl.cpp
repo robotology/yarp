@@ -64,7 +64,7 @@ yarp::dev::return_getConversation ILLMRPCd::getConversation()
         yCError(LLMSERVER, "Invalid interface");
         ret.ret = false;
     }
-    
+
     std::vector<std::pair<Author,Content>> conversation;
     ret.ret = m_iLlm->getConversation(conversation);
 

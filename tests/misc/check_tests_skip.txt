@@ -31,3 +31,4 @@
 ./src/devices/VirtualAnalogWrapper
 ./src/devices/AnalogSensorClient
 ./src/devices/AnalogWrapper
+./src/devices/ILLMMsgs
