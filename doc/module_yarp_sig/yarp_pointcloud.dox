@@ -165,7 +165,7 @@ yarp::sig::IntrinsicParams intrinsics(propIntrinsics);
 
 // Compute the PointCloud
 
-yarp::sig::PointCloud<yarp::sig::DataXYZRGBA> pc = yarp::sig::utils::depthRGBToPC<yarp::sig::DataXYZRGBA, yarp::sig::PixelRgb>(depth, color, intrinsics);
+yarp::sig::PointCloud<yarp::sig::DataXYZRGBA> pc = yarp::sig::utils::depthRgbToPC<yarp::sig::DataXYZRGBA, yarp::sig::PixelRgb>(depth, color, intrinsics);
 
 ~~~
 
