@@ -13,9 +13,7 @@
 
 #include <yarp/os/Wire.h>
 #include <yarp/os/idl/WireTypes.h>
-#include <yarp/dev/Message.h>
-
-namespace yarp::dev {
+#include <Message.h>
 
 class return_getConversation :
         public yarp::os::idl::WirePortable
@@ -63,7 +61,5 @@ private:
     bool nested_read_conversation(yarp::os::idl::WireReader& reader);
     bool nested_write_conversation(const yarp::os::idl::WireWriter& writer) const;
 };
-
-} // namespace yarp::dev
 
 #endif // YARP_THRIFT_GENERATOR_STRUCT_RETURN_GETCONVERSATION_H

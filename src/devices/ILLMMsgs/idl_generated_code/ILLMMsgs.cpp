@@ -8,13 +8,11 @@
 // This is an automatically generated file.
 // It could get re-generated if the ALLOW_IDL_GENERATION flag is on.
 
-#include <yarp/dev/ILLMMsgs.h>
+#include <ILLMMsgs.h>
 
 #include <yarp/os/idl/WireTypes.h>
 
 #include <algorithm>
-
-namespace yarp::dev {
 
 // setPrompt helper class declaration
 class ILLMMsgs_setPrompt_helper :
@@ -1257,5 +1255,3 @@ bool ILLMMsgs::read(yarp::os::ConnectionReader& connection)
     }
     return false;
 }
-
-} // namespace yarp::dev

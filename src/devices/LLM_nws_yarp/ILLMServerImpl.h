@@ -3,10 +3,10 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#include "ILLMMsgs.h"
+#include <ILLMMsgs.h>
 #include <yarp/dev/ILLM.h>
 
-class ILLMRPCd : public yarp::dev::ILLMMsgs
+class ILLMRPCd : public ILLMMsgs
 {
 private:
     yarp::dev::ILLM *m_iLlm = nullptr;
@@ -15,8 +15,8 @@ public:
     void setInterface(yarp::dev::ILLM *_iLlm) { m_iLlm = _iLlm; }
     // From IGPTMsgs
     bool setPrompt(const std::string &prompt) override;
-    yarp::dev::return_readPrompt readPrompt() override;
-    yarp::dev::return_ask ask(const std::string &question) override;
-    yarp::dev::return_getConversation getConversation() override;
+    return_readPrompt readPrompt() override;
+    return_ask ask(const std::string &question) override;
+    return_getConversation getConversation() override;
     bool deleteConversation() override;
 };

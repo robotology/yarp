@@ -24,10 +24,10 @@ bool ILLMRPCd::setPrompt(const std::string &prompt)
     return true;
 }
 
-yarp::dev::return_readPrompt ILLMRPCd::readPrompt()
+return_readPrompt ILLMRPCd::readPrompt()
 {
 
-    yarp::dev::return_readPrompt ret;
+    return_readPrompt ret;
 
     if (m_iLlm == nullptr)
     {
@@ -40,9 +40,9 @@ yarp::dev::return_readPrompt ILLMRPCd::readPrompt()
     return ret;
 }
 
-yarp::dev::return_ask ILLMRPCd::ask(const std::string &question)
+return_ask ILLMRPCd::ask(const std::string &question)
 {
-    yarp::dev::return_ask ret;
+    return_ask ret;
 
     if (m_iLlm == nullptr)
     {
@@ -55,9 +55,9 @@ yarp::dev::return_ask ILLMRPCd::ask(const std::string &question)
     return ret;
 }
 
-yarp::dev::return_getConversation ILLMRPCd::getConversation()
+return_getConversation ILLMRPCd::getConversation()
 {
-    yarp::dev::return_getConversation ret;
+    return_getConversation ret;
 
     if (m_iLlm == nullptr)
     {
@@ -70,7 +70,7 @@ yarp::dev::return_getConversation ILLMRPCd::getConversation()
 
     for (const auto &[author, message] : conversation)
     {
-        ret.conversation.push_back(yarp::dev::Message(author, message));
+        ret.conversation.push_back(Message(author, message));
     }
 
     return ret;

@@ -8,9 +8,7 @@
 // This is an automatically generated file.
 // It could get re-generated if the ALLOW_IDL_GENERATION flag is on.
 
-#include <yarp/dev/return_ask.h>
-
-namespace yarp::dev {
+#include <return_ask.h>
 
 // Constructor with field values
 return_ask::return_ask(const bool ret,
@@ -168,5 +166,3 @@ bool return_ask::nested_write_answer(const yarp::os::idl::WireWriter& writer) co
     }
     return true;
 }
-
-} // namespace yarp::dev
