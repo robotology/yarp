@@ -8,26 +8,28 @@
 // This is an automatically generated file.
 // It could get re-generated if the ALLOW_IDL_GENERATION flag is on.
 
-#ifndef YARP_THRIFT_GENERATOR_STRUCT_RETURN_ASK_H
-#define YARP_THRIFT_GENERATOR_STRUCT_RETURN_ASK_H
+#ifndef YARP_THRIFT_GENERATOR_STRUCT_RETURN_READPROMPT_H
+#define YARP_THRIFT_GENERATOR_STRUCT_RETURN_READPROMPT_H
 
 #include <yarp/os/Wire.h>
 #include <yarp/os/idl/WireTypes.h>
 
-class return_ask :
+namespace yarp::dev::llm {
+
+class return_readPrompt :
         public yarp::os::idl::WirePortable
 {
 public:
     // Fields
     bool ret{false};
-    std::string answer{};
+    std::string prompt{};
 
     // Default constructor
-    return_ask() = default;
+    return_readPrompt() = default;
 
     // Constructor with field values
-    return_ask(const bool ret,
-               const std::string& answer);
+    return_readPrompt(const bool ret,
+                      const std::string& prompt);
 
     // Read structure on a Wire
     bool read(yarp::os::idl::WireReader& reader) override;
@@ -45,7 +47,7 @@ public:
     std::string toString() const;
 
     // If you want to serialize this class without nesting, use this helper
-    typedef yarp::os::idl::Unwrapped<return_ask> unwrapped;
+    typedef yarp::os::idl::Unwrapped<return_readPrompt> unwrapped;
 
 private:
     // read/write ret field
@@ -54,11 +56,13 @@ private:
     bool nested_read_ret(yarp::os::idl::WireReader& reader);
     bool nested_write_ret(const yarp::os::idl::WireWriter& writer) const;
 
-    // read/write answer field
-    bool read_answer(yarp::os::idl::WireReader& reader);
-    bool write_answer(const yarp::os::idl::WireWriter& writer) const;
-    bool nested_read_answer(yarp::os::idl::WireReader& reader);
-    bool nested_write_answer(const yarp::os::idl::WireWriter& writer) const;
+    // read/write prompt field
+    bool read_prompt(yarp::os::idl::WireReader& reader);
+    bool write_prompt(const yarp::os::idl::WireWriter& writer) const;
+    bool nested_read_prompt(yarp::os::idl::WireReader& reader);
+    bool nested_write_prompt(const yarp::os::idl::WireWriter& writer) const;
 };
 
-#endif // YARP_THRIFT_GENERATOR_STRUCT_RETURN_ASK_H
+} // namespace yarp::dev::llm
+
+#endif // YARP_THRIFT_GENERATOR_STRUCT_RETURN_READPROMPT_H

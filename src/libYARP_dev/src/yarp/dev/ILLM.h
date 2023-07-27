@@ -19,9 +19,6 @@ namespace yarp::dev {
 class YARP_dev_API ILLM
 {
 public:
-    ILLM()
-    {
-    }
 
     virtual ~ILLM()
     {

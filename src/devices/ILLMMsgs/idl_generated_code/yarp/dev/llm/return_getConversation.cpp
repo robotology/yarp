@@ -8,7 +8,9 @@
 // This is an automatically generated file.
 // It could get re-generated if the ALLOW_IDL_GENERATION flag is on.
 
-#include <return_getConversation.h>
+#include <yarp/dev/llm/return_getConversation.h>
+
+namespace yarp::dev::llm {
 
 // Constructor with field values
 return_getConversation::return_getConversation(const bool ret,
@@ -218,3 +220,5 @@ bool return_getConversation::nested_write_conversation(const yarp::os::idl::Wire
     }
     return true;
 }
+
+} // namespace yarp::dev::llm

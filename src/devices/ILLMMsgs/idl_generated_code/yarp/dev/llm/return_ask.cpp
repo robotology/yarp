@@ -8,24 +8,26 @@
 // This is an automatically generated file.
 // It could get re-generated if the ALLOW_IDL_GENERATION flag is on.
 
-#include <return_readPrompt.h>
+#include <yarp/dev/llm/return_ask.h>
+
+namespace yarp::dev::llm {
 
 // Constructor with field values
-return_readPrompt::return_readPrompt(const bool ret,
-                                     const std::string& prompt) :
+return_ask::return_ask(const bool ret,
+                       const std::string& answer) :
         WirePortable(),
         ret(ret),
-        prompt(prompt)
+        answer(answer)
 {
 }
 
 // Read structure on a Wire
-bool return_readPrompt::read(yarp::os::idl::WireReader& reader)
+bool return_ask::read(yarp::os::idl::WireReader& reader)
 {
     if (!read_ret(reader)) {
         return false;
     }
-    if (!read_prompt(reader)) {
+    if (!read_answer(reader)) {
         return false;
     }
     if (reader.isError()) {
@@ -35,7 +37,7 @@ bool return_readPrompt::read(yarp::os::idl::WireReader& reader)
 }
 
 // Read structure on a Connection
-bool return_readPrompt::read(yarp::os::ConnectionReader& connection)
+bool return_ask::read(yarp::os::ConnectionReader& connection)
 {
     yarp::os::idl::WireReader reader(connection);
     if (!reader.readListHeader(2)) {
@@ -48,12 +50,12 @@ bool return_readPrompt::read(yarp::os::ConnectionReader& connection)
 }
 
 // Write structure on a Wire
-bool return_readPrompt::write(const yarp::os::idl::WireWriter& writer) const
+bool return_ask::write(const yarp::os::idl::WireWriter& writer) const
 {
     if (!write_ret(writer)) {
         return false;
     }
-    if (!write_prompt(writer)) {
+    if (!write_answer(writer)) {
         return false;
     }
     if (writer.isError()) {
@@ -63,7 +65,7 @@ bool return_readPrompt::write(const yarp::os::idl::WireWriter& writer) const
 }
 
 // Write structure on a Connection
-bool return_readPrompt::write(yarp::os::ConnectionWriter& connection) const
+bool return_ask::write(yarp::os::ConnectionWriter& connection) const
 {
     yarp::os::idl::WireWriter writer(connection);
     if (!writer.writeListHeader(2)) {
@@ -76,7 +78,7 @@ bool return_readPrompt::write(yarp::os::ConnectionWriter& connection) const
 }
 
 // Convert to a printable string
-std::string return_readPrompt::toString() const
+std::string return_ask::toString() const
 {
     yarp::os::Bottle b;
     if (!yarp::os::Portable::copyPortable(*this, b)) {
@@ -86,7 +88,7 @@ std::string return_readPrompt::toString() const
 }
 
 // read ret field
-bool return_readPrompt::read_ret(yarp::os::idl::WireReader& reader)
+bool return_ask::read_ret(yarp::os::idl::WireReader& reader)
 {
     if (!reader.readBool(ret)) {
         ret = false;
@@ -95,7 +97,7 @@ bool return_readPrompt::read_ret(yarp::os::idl::WireReader& reader)
 }
 
 // write ret field
-bool return_readPrompt::write_ret(const yarp::os::idl::WireWriter& writer) const
+bool return_ask::write_ret(const yarp::os::idl::WireWriter& writer) const
 {
     if (!writer.writeBool(ret)) {
         return false;
@@ -104,7 +106,7 @@ bool return_readPrompt::write_ret(const yarp::os::idl::WireWriter& writer) const
 }
 
 // read (nested) ret field
-bool return_readPrompt::nested_read_ret(yarp::os::idl::WireReader& reader)
+bool return_ask::nested_read_ret(yarp::os::idl::WireReader& reader)
 {
     if (!reader.readBool(ret)) {
         ret = false;
@@ -113,7 +115,7 @@ bool return_readPrompt::nested_read_ret(yarp::os::idl::WireReader& reader)
 }
 
 // write (nested) ret field
-bool return_readPrompt::nested_write_ret(const yarp::os::idl::WireWriter& writer) const
+bool return_ask::nested_write_ret(const yarp::os::idl::WireWriter& writer) const
 {
     if (!writer.writeBool(ret)) {
         return false;
@@ -121,48 +123,50 @@ bool return_readPrompt::nested_write_ret(const yarp::os::idl::WireWriter& writer
     return true;
 }
 
-// read prompt field
-bool return_readPrompt::read_prompt(yarp::os::idl::WireReader& reader)
+// read answer field
+bool return_ask::read_answer(yarp::os::idl::WireReader& reader)
 {
     if (reader.noMore()) {
         reader.fail();
         return false;
     }
-    if (!reader.readString(prompt)) {
+    if (!reader.readString(answer)) {
         reader.fail();
         return false;
     }
     return true;
 }
 
-// write prompt field
-bool return_readPrompt::write_prompt(const yarp::os::idl::WireWriter& writer) const
+// write answer field
+bool return_ask::write_answer(const yarp::os::idl::WireWriter& writer) const
 {
-    if (!writer.writeString(prompt)) {
+    if (!writer.writeString(answer)) {
         return false;
     }
     return true;
 }
 
-// read (nested) prompt field
-bool return_readPrompt::nested_read_prompt(yarp::os::idl::WireReader& reader)
+// read (nested) answer field
+bool return_ask::nested_read_answer(yarp::os::idl::WireReader& reader)
 {
     if (reader.noMore()) {
         reader.fail();
         return false;
     }
-    if (!reader.readString(prompt)) {
+    if (!reader.readString(answer)) {
         reader.fail();
         return false;
     }
     return true;
 }
 
-// write (nested) prompt field
-bool return_readPrompt::nested_write_prompt(const yarp::os::idl::WireWriter& writer) const
+// write (nested) answer field
+bool return_ask::nested_write_answer(const yarp::os::idl::WireWriter& writer) const
 {
-    if (!writer.writeString(prompt)) {
+    if (!writer.writeString(answer)) {
         return false;
     }
     return true;
 }
+
+} // namespace yarp::dev::llm

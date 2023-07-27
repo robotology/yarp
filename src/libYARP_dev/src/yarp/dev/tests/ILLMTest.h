@@ -3,11 +3,10 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#ifndef IODOMETRY2DTEST_H
-#define IODOMETRY2DTEST_H
+#ifndef ILLMTEST_H
+#define ILLMTEST_H
 
 #include <yarp/dev/ILLM.h>
-
 #include <catch2/catch_amalgamated.hpp>
 
 using namespace yarp::dev;

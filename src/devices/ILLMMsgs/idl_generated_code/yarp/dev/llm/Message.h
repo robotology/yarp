@@ -14,6 +14,8 @@
 #include <yarp/os/Wire.h>
 #include <yarp/os/idl/WireTypes.h>
 
+namespace yarp::dev::llm {
+
 class Message :
         public yarp::os::idl::WirePortable
 {
@@ -60,5 +62,7 @@ private:
     bool nested_read_content(yarp::os::idl::WireReader& reader);
     bool nested_write_content(const yarp::os::idl::WireWriter& writer) const;
 };
+
+} // namespace yarp::dev::llm
 
 #endif // YARP_THRIFT_GENERATOR_STRUCT_MESSAGE_H

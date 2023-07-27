@@ -8,6 +8,7 @@
 bool fakeLLMDevice::setPrompt(const std::string &prompt)
 {
     m_conversation.push_back(std::make_pair("system", prompt));
+    return true;
 }
 
 bool fakeLLMDevice::readPrompt(std::string &oPrompt)

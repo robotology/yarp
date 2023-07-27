@@ -8,7 +8,9 @@
 // This is an automatically generated file.
 // It could get re-generated if the ALLOW_IDL_GENERATION flag is on.
 
-#include <Message.h>
+#include <yarp/dev/llm/Message.h>
+
+namespace yarp::dev::llm {
 
 // Constructor with field values
 Message::Message(const std::string& sender,
@@ -176,3 +178,5 @@ bool Message::nested_write_content(const yarp::os::idl::WireWriter& writer) cons
     }
     return true;
 }
+
+} // namespace yarp::dev::llm

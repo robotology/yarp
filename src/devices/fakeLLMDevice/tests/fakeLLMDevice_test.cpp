@@ -30,8 +30,6 @@ TEST_CASE("dev::fakeLLMDeviceTest", "[yarp::dev]")
         {
             Property llm_cfg;
             llm_cfg.put("device", "fakeLLMDevice");
-            llm_cfg.put("test", "use_constant");
-            llm_cfg.put("const_distance", 0.5);
             REQUIRE(fakellmdev.open(llm_cfg));
             REQUIRE(fakellmdev.view(illm));
         }
