@@ -28,7 +28,6 @@ if(NOT SKIP_fakeLLMDevice)
     )
     list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS
         YARP_os
-        YARP_sig
         YARP_dev
     )
 

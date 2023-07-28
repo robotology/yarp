@@ -178,6 +178,7 @@ set(YARP_dev_SRCS
   yarp/dev/IFrameWriterImage.cpp
   yarp/dev/IGenericSensor.cpp
   yarp/dev/IJoypadController.cpp
+  yarp/dev/ILLM.cpp
   yarp/dev/IMultipleWrapper.cpp
   yarp/dev/IPreciselyTimed.cpp
   yarp/dev/IRGBDSensor.cpp

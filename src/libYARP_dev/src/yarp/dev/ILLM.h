@@ -15,14 +15,13 @@ typedef std::string Author;
 typedef std::string Content;
 
 namespace yarp::dev {
+class ILLM;
+} // namespace yarp
 
-class YARP_dev_API ILLM
+class YARP_dev_API yarp::dev::ILLM
 {
 public:
-
-    virtual ~ILLM()
-    {
-    }
+    virtual ~ILLM();
 
     virtual bool setPrompt(const std::string& prompt) = 0;
 
@@ -34,7 +33,5 @@ public:
 
     virtual bool deleteConversation() = 0;
 };
-
-}
 
 #endif
