@@ -27,15 +27,30 @@ bool LLM_nws_yarp::attach(yarp::dev::PolyDriver *driver)
 
     m_RPC.setInterface(m_iLlm);
 
-    yCDebug(LLM_NWS_YARP) << "Attachment succesful";
+    yCDebug(LLM_NWS_YARP) << "Attachment successful";
 
     return true;
 }
 
 bool LLM_nws_yarp::open(yarp::os::Searchable &prop)
 {
-    if (!m_RpcPort.open("/chat/rpc"))
+    std::string rpc_portname;
+
+    if (!prop.check("name"))
     {
+        yCError(LLM_NWS_YARP) << "Missing 'name' parameter. Using something like: /LLM_nws/rpc";
+        return false;
+    }
+    else
+    {
+        rpc_portname = prop.find("name").asString();
+        if (rpc_portname.c_str()[0] != '/') { yCError(LLM_NWS_YARP) << "Missing '/' in name parameter";  return false; }
+        yCInfo(LLM_NWS_YARP) << "Using local name:" << rpc_portname;
+    }
+
+    if (!m_RpcPort.open(rpc_portname))
+    {
+        yCError(LLM_NWS_YARP) << "Unable to open port:" << rpc_portname;
         return false;
     }
 

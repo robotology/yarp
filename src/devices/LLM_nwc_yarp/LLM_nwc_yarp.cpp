@@ -1,13 +1,12 @@
 /*
  * SPDX-FileCopyrightText: 2023-2023 Istituto Italiano di Tecnologia (IIT)
- * SPDX-License-Identifier: LGPL-2.1-or-later
+ * SPDX-License-Identifier: BSD-3-Clause
  */
 
 #include "LLM_nwc_yarp.h"
 #include <yarp/os/Log.h>
 #include <yarp/os/LogComponent.h>
 #include <yarp/os/LogStream.h>
-#include <yarp/dev/GenericVocabs.h>
 
 namespace
 {
@@ -16,8 +15,21 @@ namespace
 
 bool LLM_nwc_yarp::open(yarp::os::Searchable &config)
 {
-    std::string local_rpc = "/LLM/rpc";
-    std::string remote_rpc = "/chat/rpc";
+    std::string local_rpc = config.find("local").asString();
+    std::string remote_rpc = config.find("remote").asString();
+
+    if (local_rpc == "")
+    {
+        yCError(LLM_NWC_YARP, "open() error you have to provide a valid 'local' param");
+        return false;
+    }
+
+    if (remote_rpc == "")
+    {
+        yCError(LLM_NWC_YARP, "open() error you have to provide valid 'remote' param");
+        return false;
+    }
+
     if (!m_rpc_port_to_LLM_server.open(local_rpc))
     {
         yCError(LLM_NWC_YARP, "Cannot open rpc port, check network");

@@ -25,10 +25,11 @@ TEST_CASE("dev::llm_nws_yarp", "[yarp::dev]")
     {
         PolyDriver dd;
 
-        ////////"Checking opening localization2D_nws_yarp polydriver with no attached device"
+        ////////"Checking opening LLM_nws_yarp polydriver with no attached device"
         {
             Property p_cfg;
             p_cfg.put("device", "LLM_nws_yarp");
+            p_cfg.put("name", "/LLM_nws/rpc");
             REQUIRE(dd.open(p_cfg));
         }
 
@@ -45,10 +46,11 @@ TEST_CASE("dev::llm_nws_yarp", "[yarp::dev]")
         PolyDriver ddnws;
         PolyDriver ddfake;
 
-        ////////"Checking opening localization2D_nws_yarp polydrivers"
+        ////////"Checking opening LLM_nws_yarp polydrivers"
         {
             Property pnws_cfg;
             pnws_cfg.put("device", "LLM_nws_yarp");
+            pnws_cfg.put("name", "/LLM_nws/rpc");
             REQUIRE(ddnws.open(pnws_cfg));
 
             Property pdev_cfg;

@@ -11,7 +11,6 @@ yarp_prepare_plugin(fakeFrameGrabber
   INCLUDE FakeFrameGrabber.h
   EXTRA_CONFIG
     WRAPPER=frameGrabber_nws_yarp
-  DEFAULT ON
 )
 
 if(ENABLE_fakeFrameGrabber)

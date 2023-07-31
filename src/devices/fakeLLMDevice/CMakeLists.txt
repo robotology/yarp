@@ -9,7 +9,7 @@ yarp_prepare_plugin(fakeLLMDevice
   CATEGORY device
   TYPE fakeLLMDevice
   INCLUDE fakeLLMDevice.h
-  DEFAULT ON
+
 )
 if(NOT SKIP_fakeLLMDevice)
 

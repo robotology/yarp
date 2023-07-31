@@ -10,6 +10,12 @@
 #include <vector>
 #include <yarp/dev/DeviceDriver.h>
 
+/**
+* @ingroup dev_impl_fake dev_impl_other
+*
+* @brief `fakeLLMDevice` : a fake device which implements the ILLM interface for testing purposes.
+*
+*/
 class fakeLLMDevice : public yarp::dev::ILLM,
                       public yarp::dev::DeviceDriver
 {
