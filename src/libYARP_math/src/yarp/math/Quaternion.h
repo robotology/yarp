@@ -105,16 +105,6 @@ public:
     */
     void fromRotationMatrix(const yarp::sig::Matrix &R);
 
-#ifndef YARP_NO_DEPRECATED // Since YARP 3.0.0
-    /**
-     * Converts a quaternion to a rotation matrix.
-     *
-     * @deprecated since YARP 3.0.0. Use toRotationMatrix4x4 instead.
-     */
-    YARP_DEPRECATED_MSG("Use toRotationMatrix4x4 instead")
-    yarp::sig::Matrix toRotationMatrix() const { return toRotationMatrix4x4(); }
-#endif
-
     /**
     * Converts a quaternion to a rotation matrix.
     *

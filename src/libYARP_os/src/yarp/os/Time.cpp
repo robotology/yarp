@@ -128,13 +128,6 @@ double Time::now()
     return clk->now();
 }
 
-#ifndef YARP_NO_DEPRECATED // Since YARP 3.0.0
-void Time::turboBoost()
-{
-    return yarp::os::impl::Time::startTurboBoost();
-}
-#endif // YARP_NO_DEPRECATED
-
 void Time::yield()
 {
     return yarp::os::Thread::yield();

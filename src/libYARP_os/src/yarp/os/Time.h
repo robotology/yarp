@@ -126,20 +126,6 @@ YARP_os_API std::string clockTypeToString(yarpClockType type);
  */
 YARP_os_API bool isValid();
 
-#ifndef YARP_NO_DEPRECATED // Since YARP 3.0.0
-/**
- * For OS where it makes sense sets the scheduler to be called more often.
- * This sets the scheduler to be run to the maximum possible rate based
- * on the capability of the hardware.
- * Specifically, on Microsoft Windows, high resolution scheduling is
- * used.
- *
- * @deprecated Since YARP 3.0.0
- */
-YARP_DEPRECATED
-YARP_os_API void turboBoost();
-#endif
-
 } // namespace Time
 } // namespace yarp::os
 
