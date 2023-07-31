@@ -263,9 +263,8 @@ public:
 
 private:
     void init(size_t bytesPerSample);
-    void synchronize();
 
-    void *implementation;
+    void *implementation =nullptr;
     size_t m_samples;
     size_t m_channels;
     size_t m_bytesPerSample;

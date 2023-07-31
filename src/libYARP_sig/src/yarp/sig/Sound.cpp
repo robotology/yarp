@@ -5,7 +5,6 @@
  */
 
 #include <yarp/sig/Sound.h>
-#include <yarp/sig/Image.h>
 #include <yarp/os/Bottle.h>
 #include <yarp/os/PortablePair.h>
 #include <yarp/os/LogComponent.h>
@@ -14,8 +13,12 @@
 #include <yarp/os/Value.h>
 #include <functional>
 
+#include <yarp/os/ConnectionReader.h>
+#include <yarp/os/ConnectionWriter.h>
+
 #include <cstring>
 #include <cstdio>
+#include <vector>
 
 using namespace yarp::sig;
 using namespace yarp::os;
@@ -24,27 +27,63 @@ namespace {
 YARP_LOG_COMPONENT(SOUND, "yarp.sig.Sound")
 }
 
-#define HELPER(x) (*((FlexImage*)(x)))
+#ifndef NetUint8
+#define NetUint8 unsigned char
+#endif
+
+#ifndef NetUint16
+#define NetUint16 short unsigned int
+#endif
+
+YARP_BEGIN_PACK
+class SoundHeader
+{
+public:
+    yarp::os::NetInt32 outerListTag{ 0 };
+    yarp::os::NetInt32 outerListLen{ 0 };
+    yarp::os::NetInt32 samplesSizeTag{ 0 };
+    yarp::os::NetInt32 samplesSize{ 0 };
+    yarp::os::NetInt32 channelsSizeTag{ 0 };
+    yarp::os::NetInt32 channelsSize{ 0 };
+    yarp::os::NetInt32 bytesPerSampleTag{ 0 };
+    yarp::os::NetInt32 bytesPerSample{ 0 };
+    yarp::os::NetInt32 frequencyTag{ 0 };
+    yarp::os::NetInt32 frequency{ 0 };
+
+    SoundHeader() = default;
+};
+YARP_END_PACK
 
 Sound::Sound(size_t bytesPerSample)
 {
     init(bytesPerSample);
     m_frequency = 0;
+
 }
 
 Sound::Sound(const Sound& alt) : yarp::os::Portable()
 {
-    init(alt.getBytesPerSample());
-    FlexImage& img1 = HELPER(implementation);
-    FlexImage& img2 = HELPER(alt.implementation);
-    img1.copy(img2);
+    init(alt.m_bytesPerSample);
     m_frequency = alt.m_frequency;
-    synchronize();
+    m_channels = alt.m_channels;
+    m_samples = alt.m_samples;
+    if (m_bytesPerSample == 1)
+    {
+        *(std::vector<NetUint8>*)(implementation) = *(std::vector<NetUint8>*)(alt.implementation);
+    }
+    if (m_bytesPerSample == 2)
+    {
+        *(std::vector<NetUint16>*)(implementation) = *(std::vector<NetUint16>*)(alt.implementation);
+    }
+    else
+    {
+        yCError(SOUND, "sound only implemented for 8-16 bit samples");
+        yCAssert(SOUND,false); // that's all that's implemented right now
+    }
 }
 
 void Sound::overwrite(const Sound& alt, size_t offset, size_t len)
 {
-
     if (alt.m_channels != m_channels)
     {
         yCError(SOUND, "unable to concatenate sounds with different number of channels!");
@@ -72,8 +111,6 @@ void Sound::overwrite(const Sound& alt, size_t offset, size_t len)
         unsigned char* src = &alt.getRawData()[psrc];
         memcpy((void*) dst, (void*) src, len * this->m_bytesPerSample);
     }
-
-    this->synchronize();
 }
 
 Sound& Sound::operator += (const Sound& alt)
@@ -110,26 +147,30 @@ Sound& Sound::operator += (const Sound& alt)
         memcpy((void *) &pout[out2], (void *) (alt_start  + alt_pointer),  alt_singlechannel_size);
     }
 
-    this->synchronize();
     return *this;
 }
 
 const Sound& Sound::operator = (const Sound& alt)
 {
-    yCAssert(SOUND, getBytesPerSample()==alt.getBytesPerSample());
-    FlexImage& img1 = HELPER(implementation);
-    FlexImage& img2 = HELPER(alt.implementation);
-    img1.copy(img2);
+    init(alt.m_bytesPerSample);
     m_frequency = alt.m_frequency;
-    synchronize();
-    return *this;
-}
+    m_channels = alt.m_channels;
+    m_samples = alt.m_samples;
 
-void Sound::synchronize()
-{
-    FlexImage& img = HELPER(implementation);
-    m_samples = img.width();
-    m_channels = img.height();
+    if (m_bytesPerSample == 1)
+    {
+        *(std::vector<NetUint8>*)(implementation) = *(std::vector<NetUint8>*)(alt.implementation);
+        return *this;
+    }
+    else if (m_bytesPerSample == 2)
+    {
+        *(std::vector<NetUint16>*)(implementation) = *(std::vector<NetUint16>*)(alt.implementation);
+        return *this;
+    }
+
+    yCError(SOUND, "sound only implemented for 8-16 bit samples");
+    yCAssert(SOUND, false); // that's all that's implemented right now
+    return *this;
 }
 
 Sound Sound::subSound(size_t first_sample, size_t last_sample)
@@ -169,23 +210,34 @@ Sound Sound::subSound(size_t first_sample, size_t last_sample)
         }
         j++;
     }
-
-    s.synchronize();
-
     return s;
 }
 
 void Sound::init(size_t bytesPerSample)
 {
-    implementation = new FlexImage();
+    if (implementation != nullptr)
+    {
+        delete implementation;
+        implementation = nullptr;
+    }
+
+    if (bytesPerSample == 1)
+    {
+        implementation = new std::vector<NetUint8>;
+    }
+    else if (bytesPerSample==2)
+    {
+        implementation = new std::vector<NetUint16>;
+    }
+    else
+    {
+        yCError(SOUND, "sound only implemented for 8-16 bit samples");
+        yCAssert(SOUND, false); // that's all that's implemented right now
+    }
+
     yCAssert(SOUND, implementation!=nullptr);
-
-    yCAssert(SOUND, bytesPerSample==2); // that's all that's implemented right now
-    HELPER(implementation).setPixelCode(VOCAB_PIXEL_MONO16);
-    HELPER(implementation).setQuantum(2);
-
     m_samples = 0;
-    m_channels = 0;
+    m_channels = 1;
     this->m_bytesPerSample = bytesPerSample;
 }
 
@@ -193,29 +245,56 @@ Sound::~Sound()
 {
     if (implementation!=nullptr)
     {
-        delete &HELPER(implementation);
+        delete implementation;
         implementation = nullptr;
     }
 }
 
-void Sound::resize(size_t samples, size_t m_channels)
+void Sound::resize(size_t samples, size_t channels)
 {
-    FlexImage& img = HELPER(implementation);
-    img.resize(samples,m_channels);
-    synchronize();
+    if (implementation != nullptr)
+    {
+        delete implementation;
+        implementation = nullptr;
+    }
+    if (m_bytesPerSample == 1)
+    {
+        implementation = new std::vector<NetUint8>;
+        ((std::vector<NetUint8>*)(implementation))->resize(samples * channels);
+        m_channels = channels;
+        m_samples = samples;
+    }
+    else if (m_bytesPerSample == 2)
+    {
+        implementation = new std::vector<NetUint16>;
+        ((std::vector<NetUint16>*)(implementation))->resize(samples*channels);
+        m_channels=channels;
+        m_samples=samples;
+    }
+    else
+    {
+        yCError(SOUND, "sound only implemented for 8-16 bit samples");
+        yCAssert(SOUND, false); // that's all that's implemented right now
+    }
 }
 
 Sound::audio_sample Sound::get(size_t location, size_t channel) const
 {
-    FlexImage& img = HELPER(implementation);
-    unsigned char *addr = img.getPixelAddress(location,channel);
-    if (m_bytesPerSample ==2)
+    if (m_bytesPerSample == 1)
     {
+        auto* pp = ((std::vector<NetUint8>*)(implementation));
+        NetUint8* addr = pp->data() + location + channel * this->m_samples;
+        return *(reinterpret_cast<NetUint8*>(addr));
+    }
+    else if (m_bytesPerSample == 2)
+    {
+        auto* pp = ((std::vector<NetUint16>*)(implementation));
+        NetUint16* addr = pp->data() + location + channel * this->m_samples;
         return *(reinterpret_cast<NetUint16*>(addr));
     }
     else
     {
-        yCError(SOUND, "sound only implemented for 16 bit samples");
+        yCError(SOUND, "sound only implemented for 8-16 bit samples");
     }
     return 0;
 }
@@ -241,16 +320,23 @@ bool Sound::clearChannel(size_t chan)
 
 void Sound::set(audio_sample value, size_t location, size_t channel)
 {
-    FlexImage& img = HELPER(implementation);
-    unsigned char *addr = img.getPixelAddress(location,channel);
-    if (m_bytesPerSample ==2)
+    if (m_bytesPerSample == 1)
     {
+        auto* pp = ((std::vector<NetUint8>*)(implementation));
+        NetUint8* addr = pp->data() + location  +channel * this->m_samples;
+        *(reinterpret_cast<NetUint8*>(addr)) = value;
+        return;
+    }
+    else if (m_bytesPerSample == 2)
+    {
+        auto* pp = ((std::vector<NetUint16>*)(implementation));
+        NetUint16* addr = pp->data() + location + channel * this->m_samples;
         *(reinterpret_cast<NetUint16*>(addr)) = value;
         return;
     }
     else
     {
-        yCError(SOUND, "sound only implemented for 16 bit samples");
+        yCError(SOUND, "sound only implemented for 8-16 bit samples");
     }
 }
 
@@ -266,35 +352,76 @@ void Sound::setFrequency(int freq)
 
 bool Sound::read(ConnectionReader& connection)
 {
-    // lousy format - fix soon!
-    FlexImage& img = HELPER(implementation);
-    Bottle bot;
-    bool ok = PortablePair<FlexImage,Bottle>::readPair(connection,img,bot);
-    m_frequency = bot.get(0).asInt32();
-    synchronize();
-    return ok;
+    connection.convertTextMode();
+    SoundHeader header;
+    bool ok = connection.expectBlock((char*)&header, sizeof(header));
+    if (!ok) {
+        return false;
+    }
+
+    init(header.bytesPerSample);
+    m_frequency = header.frequency;
+    m_channels = header.channelsSize;
+    m_samples = header.samplesSize;
+
+    auto* pp = ((std::vector<NetUint16>*)(implementation));
+    pp->resize(m_channels * m_samples);
+    for (size_t l = 0; l < m_channels*m_samples; l++)
+    {
+        pp->at(l) = connection.expectInt16();
+    }
+    return true;
 }
 
 
-bool Sound::write(ConnectionWriter& connection) const
+bool Sound::write(yarp::os::ConnectionWriter& connection) const
 {
-    // lousy format - fix soon!
-    FlexImage& img = HELPER(implementation);
-    Bottle bot;
-    bot.addInt32(m_frequency);
-    return PortablePair<FlexImage,Bottle>::writePair(connection,img,bot);
+    SoundHeader header;
+    header.outerListTag = BOTTLE_TAG_LIST;
+    header.outerListLen = 4;
+    header.samplesSize = BOTTLE_TAG_INT32;
+    header.samplesSize = m_samples;
+    header.bytesPerSampleTag = BOTTLE_TAG_INT32;
+    header.bytesPerSample = m_bytesPerSample;
+    header.channelsSizeTag = BOTTLE_TAG_INT32;
+    header.channelsSize = m_channels;
+    header.frequencyTag = BOTTLE_TAG_INT32;
+    header.frequency = m_frequency;
+//    header.listTag = BOTTLE_TAG_LIST + BOTTLE_TAG_FLOAT64;
+//    header.listSize = BOTTLE_TAG_LIST + BOTTLE_TAG_FLOAT64;
+    connection.appendBlock((char*)&header, sizeof(header));
+
+    auto* pp = ((std::vector<NetUint16>*)(implementation));
+    for (size_t l = 0; l < pp->size(); l++) {
+        connection.appendInt16(pp->at(l));
+    }
+
+    connection.convertTextMode();
+    return true;
 }
 
 unsigned char *Sound::getRawData() const
 {
-    FlexImage& img = HELPER(implementation);
-    return img.getRawImage();
+    if (m_bytesPerSample == 1)
+    {
+        auto* pp = ((std::vector<NetUint8>*)(implementation));
+        NetUint8* addr = pp->data();
+        return addr;
+    }
+    else if (m_bytesPerSample == 2)
+    {
+        auto* pp = ((std::vector<NetUint16>*)(implementation));
+        NetUint16* addr = pp->data();
+        return (unsigned char*)(addr);
+    }
+
+    yCError(SOUND, "sound only implemented for 8-16 bit samples");
+    yCAssert(SOUND, false); // that's all that's implemented right now
 }
 
 size_t Sound::getRawDataSize() const
 {
-    FlexImage& img = HELPER(implementation);
-    return img.getRawImageSize();
+    return this->m_bytesPerSample*this->m_channels*this->m_samples;
 }
 
 void Sound::setSafe(audio_sample value, size_t sample, size_t channel)
@@ -375,13 +502,13 @@ bool Sound::replaceChannel(size_t id, Sound schannel)
 
 std::vector<std::reference_wrapper<Sound::audio_sample>> Sound::getChannel(size_t channel_id)
 {
-    FlexImage& img = HELPER(implementation);
+    auto* pp = ((std::vector<NetUint16>*)(implementation))->data() + channel_id*m_samples;
 
     std::vector<std::reference_wrapper<audio_sample>> vec;
     vec.reserve(this->m_samples);
     for (size_t t = 0; t < this->m_samples; t++)
     {
-        unsigned char *addr = img.getPixelAddress(t, channel_id);
+        unsigned char *addr = (unsigned char* )(pp);
         audio_sample*  addr2 = reinterpret_cast<audio_sample*>(addr);
         vec.push_back(std::ref(*addr2));
     }
@@ -390,7 +517,7 @@ std::vector<std::reference_wrapper<Sound::audio_sample>> Sound::getChannel(size_
 
 std::vector<std::reference_wrapper<Sound::audio_sample>> Sound::getInterleavedAudioRawData() const
 {
-    FlexImage& img = HELPER(implementation);
+    auto* pp = ((std::vector<NetUint16>*)(implementation))->data();
 
     std::vector<std::reference_wrapper<audio_sample>> vec;
     vec.reserve(this->m_samples*this->m_channels);
@@ -398,9 +525,8 @@ std::vector<std::reference_wrapper<Sound::audio_sample>> Sound::getInterleavedAu
     {
         for (size_t c = 0; c < this->m_channels; c++)
         {
-            unsigned char *addr  = img.getPixelAddress(t, c);
-            audio_sample*  addr2 = reinterpret_cast<audio_sample*>(addr);
-            vec.push_back(std::ref(*addr2));
+            audio_sample*  addr  = (audio_sample*)(pp) + t + c*m_samples;
+            vec.push_back(std::ref(*addr));
         }
     }
     return vec;
@@ -408,7 +534,7 @@ std::vector<std::reference_wrapper<Sound::audio_sample>> Sound::getInterleavedAu
 
 std::vector<std::reference_wrapper<Sound::audio_sample>> Sound::getNonInterleavedAudioRawData() const
 {
-    FlexImage& img = HELPER(implementation);
+    auto* pp = ((std::vector<NetUint16>*)(implementation))->data();
 
     std::vector<std::reference_wrapper<audio_sample>> vec;
     vec.reserve(this->m_samples*this->m_channels);
@@ -416,9 +542,8 @@ std::vector<std::reference_wrapper<Sound::audio_sample>> Sound::getNonInterleave
     {
         for (size_t t = 0; t < this->m_samples; t++)
         {
-            unsigned char *addr = img.getPixelAddress(t, c);
-            audio_sample*  addr2 = reinterpret_cast<audio_sample*>(addr);
-            vec.push_back(std::ref(*addr2));
+            audio_sample* addr = (audio_sample*)(pp)+ t + c * m_samples;
+            vec.push_back(std::ref(*addr));
         }
     }
     return vec;
