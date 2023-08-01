@@ -256,6 +256,8 @@ private:
      */
     size_t getRawDataSize() const;
 
+    void delete_implementation();
+
 public:
     bool read(yarp::os::ConnectionReader& connection) override;
 

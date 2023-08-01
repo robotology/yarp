@@ -215,12 +215,7 @@ Sound Sound::subSound(size_t first_sample, size_t last_sample)
 
 void Sound::init(size_t bytesPerSample)
 {
-    if (implementation != nullptr)
-    {
-        delete implementation;
-        implementation = nullptr;
-    }
-
+    delete_implementation();
     if (bytesPerSample == 1)
     {
         implementation = new std::vector<NetUint8>;
@@ -241,22 +236,38 @@ void Sound::init(size_t bytesPerSample)
     this->m_bytesPerSample = bytesPerSample;
 }
 
+void Sound::delete_implementation()
+{
+    if (implementation != nullptr)
+    {
+        if (m_bytesPerSample == 1)
+        {
+            std::vector<NetUint8>*p = (std::vector<NetUint8>*)(implementation);
+            delete p;
+            implementation = nullptr;
+        }
+        else if (m_bytesPerSample == 2)
+        {
+            std::vector<NetUint16>* p = (std::vector<NetUint16>*)(implementation);
+            delete p;
+            implementation = nullptr;
+        }
+        else
+        {
+            yCError(SOUND, "sound only implemented for 8-16 bit samples");
+            yCAssert(SOUND, false); // that's all that's implemented right now
+        }
+    }
+}
+
 Sound::~Sound()
 {
-    if (implementation!=nullptr)
-    {
-        delete implementation;
-        implementation = nullptr;
-    }
+    delete_implementation();
 }
 
 void Sound::resize(size_t samples, size_t channels)
 {
-    if (implementation != nullptr)
-    {
-        delete implementation;
-        implementation = nullptr;
-    }
+    delete_implementation();
     if (m_bytesPerSample == 1)
     {
         implementation = new std::vector<NetUint8>;
