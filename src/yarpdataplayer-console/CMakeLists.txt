@@ -25,7 +25,6 @@ if(YARP_COMPILE_yarpdataplayer)
       YARP::YARP_os
       YARP::YARP_init
       YARP::YARP_sig
-      YARP::YARP_rosmsg
       YARP::YARP_dataplayer
   )
 

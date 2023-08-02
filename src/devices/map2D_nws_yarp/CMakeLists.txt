@@ -31,7 +31,6 @@ if(NOT SKIP_map2D_nws_yarp)
       YARP::YARP_sig
       YARP::YARP_dev
       YARP::YARP_math
-      YARP::YARP_rosmsg
   )
 
   list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS
@@ -39,7 +38,6 @@ if(NOT SKIP_map2D_nws_yarp)
     YARP_sig
     YARP_dev
     YARP_math
-    YARP_rosmsg
   )
 
   yarp_install(
