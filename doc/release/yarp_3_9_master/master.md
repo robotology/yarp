@@ -31,3 +31,9 @@ Added new device `LLM_nwc_yarp`.
 # yarp::sig::Sound
 
 `yarp::sig::sound` refactored to avoid the internal use (private implementation) of yarp::sig::Image data type.
+
+# deprecation
+
+Removed deprecated devices: transformClient, transformServer, controlBoardWrapper
+Removed deprecated methods in yarp_os, yarp_dev etc.
+Removed ros stuff from AnalogWrapper/analog server device
