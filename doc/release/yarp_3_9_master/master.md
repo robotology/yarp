@@ -27,3 +27,7 @@ Added new device `LLM_nws_yarp`, thrift interface `ILLMMsgs`, fakeDevice `fakeLL
 # LLM_nwc_yarp
 
 Added new device `LLM_nwc_yarp`.
+
+# yarp::sig::Sound
+
+`yarp::sig::sound` refactored to avoid the internal use (private implementation) of yarp::sig::Image data type.
