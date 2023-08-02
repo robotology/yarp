@@ -333,16 +333,11 @@ target_link_libraries(YARP_dev
     YARP::YARP_conf
     YARP::YARP_os
     YARP::YARP_sig
-  PRIVATE
-    YARP::YARP_rosmsg
 )
 list(APPEND YARP_dev_PUBLIC_DEPS
   YARP_conf
   YARP_os
   YARP_sig
-)
-list(APPEND YARP_dev_PRIVATE_DEPS
-  YARP_rosmsg
 )
 
 if(TARGET YARP::YARP_math)
