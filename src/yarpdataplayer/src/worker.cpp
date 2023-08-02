@@ -18,14 +18,6 @@
 #include <opencv2/imgcodecs/imgcodecs.hpp>
 #endif
 
-//ROS messages
-#include <yarp/rosmsg/sensor_msgs/LaserScan.h>
-#include <yarp/rosmsg/nav_msgs/Odometry.h>
-#include <yarp/rosmsg/tf/tfMessage.h>
-#include <yarp/rosmsg/tf2_msgs/TFMessage.h>
-#include <yarp/rosmsg/geometry_msgs/Pose.h>
-#include <yarp/rosmsg/geometry_msgs/Pose2D.h>
-
 using namespace yarp::sig;
 using namespace yarp::sig::file;
 using namespace yarp::os;

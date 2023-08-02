@@ -109,7 +109,6 @@ if(YARP_COMPILE_yarpdataplayer)
       YARP::YARP_init
       YARP::YARP_sig
       YARP::YARP_dataplayer
-      YARP::YARP_rosmsg
       Qt5::Widgets
   )
 
