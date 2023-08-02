@@ -1,3 +1,0 @@
-std_msgs_Int32.h
-std_msgs/Int32.h
-yarp/rosmsg/std_msgs/Int32.h

@@ -1,3 +1,0 @@
-std_msgs_Byte.h
-std_msgs/Byte.h
-yarp/rosmsg/std_msgs/Byte.h
