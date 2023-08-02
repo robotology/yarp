@@ -49,7 +49,6 @@ target_link_libraries(YARP_dataplayer
   PRIVATE
     YARP::YARP_sig
     YARP::YARP_init
-    YARP::YARP_rosmsg
 )
 list(APPEND YARP_dataplayer_PUBLIC_DEPS
   YARP_os
@@ -57,7 +56,6 @@ list(APPEND YARP_dataplayer_PUBLIC_DEPS
 list(APPEND YARP_dataplayer_PRIVATE_DEPS
   YARP_sig
   YARP_init
-  YARP_rosmsg
 )
 
 
