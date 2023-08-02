@@ -1,3 +1,0 @@
-std_msgs_Char.h
-std_msgs/Char.h
-yarp/rosmsg/std_msgs/Char.h

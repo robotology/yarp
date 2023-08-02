@@ -1,3 +1,0 @@
-geometry_msgs_Point.h
-geometry_msgs/Point.h
-yarp/rosmsg/geometry_msgs/Point.h
