@@ -1064,13 +1064,6 @@ void NetworkBase::assertion(bool shouldBeTrue)
     yCAssert(NETWORK, shouldBeTrue);
 }
 
-#ifndef YARP_NO_DEPRECATED // Since YARP 3.0.0
-std::string NetworkBase::readString(bool* eof)
-{
-    return yarp::os::impl::Terminal::readString(eof);
-}
-#endif // YARP_NO_DEPRECATED
-
 bool NetworkBase::setConnectionQos(const std::string& src, const std::string& dest, const QosStyle& style, bool quiet)
 {
     return setConnectionQos(src, dest, style, style, quiet);
@@ -1413,40 +1406,6 @@ NameStore* NetworkBase::getQueryBypass()
 {
     return getNameSpace().getQueryBypass();
 }
-
-#ifndef YARP_NO_DEPRECATED // Since YARP 3.4.0
-
-std::string NetworkBase::getEnvironment(const char* key,
-                                        bool* found)
-{
-    return yarp::conf::environment::get_string(key, found);
-}
-
-void NetworkBase::setEnvironment(const std::string& key, const std::string& val)
-{
-    yarp::conf::environment::set_string(key, val);
-}
-
-void NetworkBase::unsetEnvironment(const std::string& key)
-{
-    yarp::conf::environment::unset(key);
-}
-
-#endif
-
-#ifndef YARP_NO_DEPRECATED // Since YARP 3.3.0
-
-std::string NetworkBase::getDirectorySeparator()
-{
-    return std::string{yarp::conf::filesystem::preferred_separator};
-}
-
-std::string NetworkBase::getPathSeparator()
-{
-    return std::string{yarp::conf::environment::path_separator};
-}
-
-#endif // YARP_NO_DEPRECATED
 
 namespace {
 std::mutex& getNetworkMutex()

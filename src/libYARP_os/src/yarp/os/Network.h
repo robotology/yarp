@@ -388,26 +388,6 @@ public:
      */
     static bool getLocalMode();
 
-#ifndef YARP_NO_DEPRECATED // Since YARP 3.0.0
-    /**
-     * Read a line of arbitrary length from standard input.
-     *
-     * @param eof If non-null, this is set to true if standard input has
-     * closed.  Note that some heuristics are used to guess if someone
-     * on windows has hit the equivalent of ctrl-D, the key to close
-     * a stream on unix.  These heuristics will lead to false detects
-     * in some cases if the user hits strange keys.
-     *
-     * @return A string from standard input, without newline or
-     * linefeed characters.
-     *
-     * @deprecated since YARP 3.0.0
-     */
-    YARP_DEPRECATED
-    static std::string readString(bool* eof = nullptr);
-#endif // YARP_NO_DEPRECATED
-
-
     /**
      *
      * Send a single command to a port and await a single response.
@@ -528,62 +508,6 @@ public:
     static void queryBypass(NameStore* store);
 
     static NameStore* getQueryBypass();
-
-#ifndef YARP_NO_DEPRECATED // Since YARP 3.4
-    /**
-     * Read a variable from the environment.
-     *
-     * @param key the variable to read
-     * @param found an optional variable to set to true iff variable is found
-     * @return the value of the environment variable, or "" if not found
-     *
-     * @deprecated Since YARP 3.4. Use yarp::conf::environment::get_string instead
-     */
-    YARP_DEPRECATED_MSG("Use yarp::conf::environment::get_string instead")
-    static std::string getEnvironment(const char* key,
-                                      bool* found = nullptr);
-
-    /**
-     * Set or change an environment variable.
-     *
-     * @param key the variable to set or change
-     * @param val the target value
-     *
-     * @deprecated Since YARP 3.4. Use yarp::conf::environment::set_string instead
-     */
-    YARP_DEPRECATED_MSG("Use yarp::conf::environment::set_string instead")
-    static void setEnvironment(const std::string& key,
-                               const std::string& val);
-
-    /**
-     * Remove an environment variable.
-     *
-     * @param key the variable to remove
-     *
-     * @deprecated Since YARP 3.4. Use yarp::conf::environment::unset instead
-     */
-    YARP_DEPRECATED_MSG("Use yarp::conf::environment::unset instead")
-    static void unsetEnvironment(const std::string& key);
-#endif // YARP_NO_DEPRECATED
-
-
-#ifndef YARP_NO_DEPRECATED // Since YARP 3.3.0
-    /**
-     *  Get an OS-appropriate directory separator (e.g. "/" on linux)
-     *
-     *  @deprecated since YARP 3.3.0. Use yarp::conf::filesystem::preferred_separator instead
-     */
-    YARP_DEPRECATED_MSG("Use yarp::conf::filesystem::preferred_separator instead")
-    static std::string getDirectorySeparator();
-
-    /**
-     * Get an OS-appropriate path separator (e.g. ":" on linux)
-     *
-     * @deprecated since YARP 3.3.0. Use yarp::conf::environment::path_separator instead
-     */
-    YARP_DEPRECATED_MSG("Use yarp::conf::environment::path_separator instead")
-    static std::string getPathSeparator();
-#endif // YARP_NO_DEPRECATED
 
     /**
      *

@@ -962,16 +962,6 @@ ResourceFinder& ResourceFinder::getResourceFinderSingleton()
     return instance;
 }
 
-std::string ResourceFinder::createIfAbsent(bool mayCreate,
-                                           const std::string& path)
-{
-    if (!mayCreate) {
-        return path;
-    }
-    yarp::os::mkdir_p(path.c_str(), 0);
-    return path;
-}
-
 bool ResourceFinder::readConfig(Property& config,
                                 const std::string& key,
                                 const ResourceFinderOptions& options)
@@ -985,39 +975,3 @@ bool ResourceFinder::readConfig(Property& config,
 
     return !paths.empty();
 }
-
-
-#ifndef YARP_NO_DEPRECATED // Since YARP 3.5
-
-std::string ResourceFinder::getDataHomeWithPossibleCreation(bool mayCreate)
-{
-    return createIfAbsent(mayCreate, yarp::conf::dirs::yarpdatahome());
-}
-
-
-std::string ResourceFinder::getConfigHomeWithPossibleCreation(bool mayCreate)
-{
-    return createIfAbsent(mayCreate, yarp::conf::dirs::yarpconfighome());
-}
-
-
-Bottle ResourceFinder::getDataDirs()
-{
-    Bottle result;
-    for (const auto& dir : yarp::conf::dirs::yarpdatadirs()) {
-        result.addString(dir);
-    }
-    return result;
-}
-
-
-Bottle ResourceFinder::getConfigDirs()
-{
-    Bottle result;
-    for (const auto& dir : yarp::conf::dirs::yarpconfigdirs()) {
-        result.addString(dir);
-    }
-    return result;
-}
-
-#endif // YARP_NO_DEPRECATED

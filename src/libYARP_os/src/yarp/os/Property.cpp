@@ -940,16 +940,6 @@ Property::Property() :
 {
 }
 
-#ifndef YARP_NO_DEPRECATED // Since YARP 3.3
-Property::Property(int hash_size) :
-        Searchable(),
-        Portable(),
-        mPriv(new Private(this))
-{
-    YARP_UNUSED(hash_size);
-}
-#endif
-
 Property::Property(const char* str) :
         Searchable(),
         Portable(),

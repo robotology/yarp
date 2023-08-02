@@ -122,11 +122,6 @@ public:
                                  const char* comp_name,
                                  const char* id);
 
-#ifndef YARP_NO_DEPRECATED // Since YARP 3.4
-    YARP_DEPRECATED_MSG("Use setPrintCallback instead")
-    static void setLogCallback(LogCallback);
-#endif // YARP_NO_DEPRECATED
-
     static void setMinimumPrintLevel(LogType level); //!< Set current minimum print level
     static LogType minimumPrintLevel();              //!< Get current minimum print level
     static LogType defaultMinimumPrintLevel();       //!< Get default minimum print level

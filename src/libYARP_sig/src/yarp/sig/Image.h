@@ -292,43 +292,6 @@ public:
     */
     size_t getRawImageSize() const;
 
-#ifndef YARP_NO_DEPRECATED // Since YARP 3.2.0
-    /**
-     * Returns IPL/OpenCV view of image, if possible.
-     * Not possible if the image is the wrong size, with no padding.
-     * This method is currently not well documented.
-     * @return pointer to an IplImage structure or nullptr
-     */
-    YARP_DEPRECATED_MSG("Use yarp::cv::toCvMat instead")
-    void *getIplImage();
-
-    /**
-     * Returns IPL/OpenCV view of image, if possible.
-     * Not possible if the image is the wrong size, with no padding.
-     * This method is currently not well documented.
-     * @return pointer to an IplImage structure or nullptr
-     */
-    YARP_DEPRECATED_MSG("Use yarp::cv::toCvMat instead")
-    const void *getIplImage() const;
-
-    /**
-     * Act as a wrapper around an IPL/OpenCV image.  The wrapped
-     * image needs to exist for the rest of the lifetime of
-     * this oboject.  Be careful if you use this method on objects
-     * read from or written to a BufferedPort, since the lifetime
-     * of such objects can be longer than you expect (see the
-     * documentation for yarp::os::BufferedPort::read,
-     * yarp::os::BufferedPort::prepare, and yarp::os::BufferedPort::write).
-     *
-     * @param iplImage pointer to an IplImage structure
-     */
-    YARP_DEPRECATED_MSG("Use yarp::cv::fromCvMat instead")
-    void wrapIplImage(void *iplImage);
-#endif // YARP_NO_DEPRECATED
-
-    //void wrapRawImage(void *buf, int imgWidth, int imgHeight);
-
-
     /**
      * Read image from a connection.
      * @return true iff image was read correctly

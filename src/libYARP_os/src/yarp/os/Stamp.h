@@ -86,28 +86,6 @@ public:
     bool write(ConnectionWriter& connection) const override;
 };
 
-
-#ifndef YARP_NO_DEPRECATED // Since YARP 3.0.0
-/**
- * A base class for objects with time stamps and/or sequence numbers.
- * @deprecated since YARP 3.0.0
- */
-class YARP_os_DEPRECATED_API Stamped
-{
-public:
-    /**
-     * Destructor
-     */
-    virtual ~Stamped();
-
-    /**
-     * @return the Stamp associated with this object (time stamp,
-     * sequence number).
-     */
-    virtual Stamp getStamp() const = 0;
-};
-#endif // YARP_NO_DEPRECATED
-
 } // namespace yarp::os
 
 #endif // YARP_OS_STAMP_H

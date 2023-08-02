@@ -40,21 +40,6 @@ public:
      */
     Property();
 
-#ifndef YARP_NO_DEPRECATED // Since YARP 3.3
-    /**
-     * Constructor.
-     *
-     * @param hash_size a scalar controlling efficiency of the
-     * hash map storing the data.  Set to 0 for default size.
-     * The bigger this number, the more memory used, but the
-     * more efficient the map.
-     *
-     * @deprecated Since YARP 3.3
-     */
-    YARP_DEPRECATED_MSG("Use default constructor instead")
-    Property(int hash_size);
-#endif
-
     /**
      * Initialize from a string, using fromString().
      */
