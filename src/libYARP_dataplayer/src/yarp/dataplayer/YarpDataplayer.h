@@ -30,13 +30,6 @@
 #include <yarp/os/Log.h>
 #include <yarp/os/LogStream.h>
 
-#include <yarp/rosmsg/sensor_msgs/LaserScan.h>
-#include <yarp/rosmsg/nav_msgs/Odometry.h>
-#include <yarp/rosmsg/tf/tfMessage.h>
-#include <yarp/rosmsg/tf2_msgs/TFMessage.h>
-#include <yarp/rosmsg/geometry_msgs/Pose.h>
-#include <yarp/rosmsg/geometry_msgs/Pose2D.h>
-
 #include <list>
 #include <mutex>
 #include <vector>

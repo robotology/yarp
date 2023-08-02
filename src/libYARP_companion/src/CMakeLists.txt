@@ -54,7 +54,6 @@ set(YARP_companion_IMPL_SRCS
   yarp/companion/impl/Companion.cmdTime.cpp
   yarp/companion/impl/Companion.cmdTrafficGen.cpp
   yarp/companion/impl/Companion.cmdTopic.cpp
-  yarp/companion/impl/Companion.cmdTopicTest.cpp
   yarp/companion/impl/Companion.cmdVersion.cpp
   yarp/companion/impl/Companion.cmdWait.cpp
   yarp/companion/impl/Companion.cmdWhere.cpp
@@ -90,8 +89,8 @@ target_include_directories(YARP_companion
     $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
 )
 
-target_link_libraries(YARP_companion PUBLIC YARP::YARP_os YARP::YARP_rosmsg)
-list(APPEND YARP_companion_PUBLIC_DEPS YARP_os YARP_rosmsg )
+target_link_libraries(YARP_companion PUBLIC YARP::YARP_os)
+list(APPEND YARP_companion_PUBLIC_DEPS YARP_os )
 
 target_compile_features(YARP_companion PUBLIC cxx_std_17)
 
