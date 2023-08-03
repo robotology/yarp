@@ -35,15 +35,6 @@
 #include <yarp/os/SystemClock.h>
 #include <yarp/dataplayer/YarpDataplayer.h>
 
-//ROS messages
-#include <yarp/rosmsg/sensor_msgs/LaserScan.h>
-#include <yarp/rosmsg/nav_msgs/Odometry.h>
-#include <yarp/rosmsg/tf/tfMessage.h>
-#include <yarp/rosmsg/tf2_msgs/TFMessage.h>
-#include <yarp/rosmsg/geometry_msgs/Pose.h>
-#include <yarp/rosmsg/geometry_msgs/Pose2D.h>
-
-
 using namespace yarp::yarpDataplayer;
 using namespace yarp::os;
 using namespace yarp::sig;
@@ -451,21 +442,6 @@ bool DataplayerUtilities::configurePorts(PartsData &part)
     {
         if (part.outputPort == nullptr) { part.outputPort = new BufferedPort<yarp::sig::Image>; }
     }
-    else if (strcmp(part.type.c_str(), "sensor_msgs/LaserScan") == 0 ) {
-        if (part.outputPort == nullptr) { part.outputPort = new BufferedPort<yarp::rosmsg::sensor_msgs::LaserScan>; }
-    }
-    else if (strcmp(part.type.c_str(), "nav_msgs/Odometry") == 0) {
-        if (part.outputPort == nullptr) { part.outputPort = new BufferedPort<yarp::rosmsg::nav_msgs::Odometry>; }
-    }
-    else if (strcmp(part.type.c_str(), "tf2_msgs/tf") == 0) {
-        if (part.outputPort == nullptr) { part.outputPort = new BufferedPort<yarp::rosmsg::tf2_msgs::TFMessage>; }
-    }
-    else if (strcmp(part.type.c_str(), "geometry_msgs/Pose") == 0) {
-        if (part.outputPort == nullptr) { part.outputPort = new BufferedPort<yarp::rosmsg::geometry_msgs::Pose>; }
-    }
-    else if (strcmp(part.type.c_str(), "geometry_msgs/Pose2D") == 0) {
-        if (part.outputPort == nullptr) { part.outputPort = new BufferedPort<yarp::rosmsg::geometry_msgs::Pose2D>; }
-    }
     else
     {
         if (verbose){
@@ -654,21 +630,6 @@ void DataplayerWorker::run()
             //the above line could be replaced with sendBottle(part, frame) if
             //specifically different behaviour is required for a bottle.
         }
-        else if (strcmp(utilities->partDetails[part].type.c_str(), "sensor_msgs/LaserScan") == 0)  {
-            ret = sendGenericData<yarp::rosmsg::sensor_msgs::LaserScan>(part, frame);
-        }
-        else if (strcmp(utilities->partDetails[part].type.c_str(), "nav_msgs/Odometry") == 0) {
-            ret = sendGenericData<yarp::rosmsg::nav_msgs::Odometry>(part, frame);
-        }
-        else if (strcmp(utilities->partDetails[part].type.c_str(), "tf2_msgs/tf") == 0) {
-            ret = sendGenericData<yarp::rosmsg::tf2_msgs::TFMessage>(part, frame);
-        }
-        else if (strcmp(utilities->partDetails[part].type.c_str(), "geometry_msgs/Pose") == 0) {
-            ret = sendGenericData<yarp::rosmsg::geometry_msgs::Pose>(part, frame);
-        }
-        else if (strcmp(utilities->partDetails[part].type.c_str(), "geometry_msgs/Pose2D") == 0) {
-            ret = sendGenericData<yarp::rosmsg::geometry_msgs::Pose2D>(part, frame);
-        }
         else  {
             if (utilities->verbose){
                 yInfo() << "Unknown data type: " << utilities->partDetails[part].type.c_str();
@@ -853,11 +814,6 @@ void DataplayerWorker::setManager(yarp::yarpDataplayer::DataplayerUtilities *uti
 
 /**********************************************************/
 template int DataplayerWorker::sendGenericData<yarp::os::Bottle>(int,int);
-template int DataplayerWorker::sendGenericData<yarp::rosmsg::sensor_msgs::LaserScan>(int, int);
-template int DataplayerWorker::sendGenericData<yarp::rosmsg::nav_msgs::Odometry>(int, int);
-template int DataplayerWorker::sendGenericData<yarp::rosmsg::tf2_msgs::TFMessage>(int, int);
-template int DataplayerWorker::sendGenericData<yarp::rosmsg::geometry_msgs::Pose>(int, int);
-template int DataplayerWorker::sendGenericData<yarp::rosmsg::geometry_msgs::Pose2D>(int, int);
 
 /**********************************************************/
 template <class T>
