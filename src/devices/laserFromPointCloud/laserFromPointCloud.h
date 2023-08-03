@@ -56,7 +56,6 @@ protected:
     yarp::sig::utils::PCL_ROI m_pc_roi;
 
     //frames and point cloud clipping planes
-    bool   m_publish_ros_pc;
     std::string m_ground_frame_id;
     std::string m_camera_frame_id;
     double m_floor_height;
