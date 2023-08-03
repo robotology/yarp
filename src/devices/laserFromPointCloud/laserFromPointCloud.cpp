@@ -13,10 +13,6 @@
 #include <yarp/os/ResourceFinder.h>
 #include <yarp/math/Math.h>
 
-#include <yarp/rosmsg/sensor_msgs/PointCloud2.h>
-#include <yarp/os/Node.h>
-#include <yarp/os/Publisher.h>
-
 #include <cmath>
 #include <cstring>
 #include <cstdlib>
@@ -34,8 +30,6 @@ YARP_LOG_COMPONENT(LASER_FROM_POINTCLOUD, "yarp.devices.laserFromPointCloud")
 /*
 
 yarpdev --device rangefinder2D_nws_yarp --subdevice laserFromPointCloud \
-        --ROS::useROS true --ROS::ROS_nodeName /cer-laserFront \
-        --ROS::ROS_topicName /laserDepth --ROS::frame_id /mobile_base_lidar_F \
         --SENSOR \
         --RGBD_SENSOR_CLIENT::localImagePort    /clientRgbPort:i     \
         --RGBD_SENSOR_CLIENT::localDepthPort    /clientDepthPort:i   \
@@ -49,97 +43,9 @@ yarpdev --device rangefinder2D_nws_yarp --subdevice laserFromPointCloud \
         --Z_CLIPPING_PLANES::ceiling_height     3.0  \
         --Z_CLIPPING_PLANES::camera_frame_id depth_center \
         --Z_CLIPPING_PLANES::ground_frame_id ground_link \
-        --publish_ROS_pointcloud \
         --period 0.10 \
         --name /outlaser:o
 */
-
-yarp::os::Publisher<yarp::rosmsg::sensor_msgs::PointCloud2>* pointCloud_outTopic = nullptr;
-yarp::os::Node                                             * rosNode=nullptr;
-
-void ros_init_pc()
-{
-    //  rosNode = new yarp::os::Node("laserFromPointCloud");
-
-    pointCloud_outTopic=new yarp::os::Publisher<yarp::rosmsg::sensor_msgs::PointCloud2>;
-    if (pointCloud_outTopic->topic("/ros_pc")==false)
-    {
-        yCError(LASER_FROM_POINTCLOUD) << "opening topic";
-    }
-    else
-    {
-        yCInfo(LASER_FROM_POINTCLOUD) << "topic successful";
-    }
-}
-
-void ros_compute_and_send_pc(const yarp::sig::PointCloud<yarp::sig::DataXYZ>& pc, std::string frame_id)
-{
-    //yCDebug(LASER_FROM_POINTCLOUD) << "sizeof:" << sizeof(yarp::sig::DataXYZ);
-
-    yarp::rosmsg::sensor_msgs::PointCloud2               rosPC_data;
-    static int counter=0;
-    rosPC_data.header.stamp.nsec=0;
-    rosPC_data.header.stamp.sec=0;
-    rosPC_data.header.seq=counter++;
-    rosPC_data.header.frame_id = frame_id;
-
-    rosPC_data.fields.resize(3);
-    rosPC_data.fields[0].name       = "x";
-    rosPC_data.fields[0].offset     = 0;    // offset in bytes from start of each point
-    rosPC_data.fields[0].datatype   = 7;    // 7 = FLOAT32
-    rosPC_data.fields[0].count      = 1;    // how many FLOAT32 used for 'x'
-
-    rosPC_data.fields[1].name       = "y";
-    rosPC_data.fields[1].offset     = 4;    // offset in bytes from start of each point
-    rosPC_data.fields[1].datatype   = 7;    // 7 = FLOAT32
-    rosPC_data.fields[1].count      = 1;    // how many FLOAT32 used for 'y'
-
-    rosPC_data.fields[2].name       = "z";
-    rosPC_data.fields[2].offset     = 8;    // offset in bytes from start of each point
-    rosPC_data.fields[2].datatype   = 7;    // 7 = FLOAT32
-    rosPC_data.fields[2].count      = 1;    // how many FLOAT32 used for 'z'
-
-#if defined(YARP_BIG_ENDIAN)
-    rosPC_data.is_bigendian = true;
-#elif defined(YARP_LITTLE_ENDIAN)
-    rosPC_data.is_bigendian = false;
-#else
-    #error "Cannot detect endianness"
-#endif
-
-#if 0
-    rosPC_data.height=1;
-    rosPC_data.width=pc.size();
-#else
-    rosPC_data.height=pc.height();
-    rosPC_data.width=pc.width();
-#endif
-
-    rosPC_data.point_step = 3*4; //x, y, z
-    rosPC_data.row_step   = rosPC_data.point_step*rosPC_data.width; //12 *number of points bytes
-    rosPC_data.is_dense = true;   // what this field actually means?? When is it false??
-    rosPC_data.data.resize(rosPC_data.row_step*rosPC_data.height);
-
-    const char* ypointer = pc.getRawData()+12;
-    unsigned char* rpointer = rosPC_data.data.data();
-
-    //yCDebug(LASER_FROM_POINTCLOUD)<< pc.size() << pc.size()*4*4 << pc.dataSizeBytes() << rosPC_data.data.size();
-    size_t elem =0;
-    size_t yelem=0;
-    for (; elem<pc.size()*3*4; elem++)
-    {
-        *rpointer=*ypointer;
-        rpointer++;
-        ypointer++; yelem++;
-        if (elem%12==0) { ypointer+=4; yelem+=4;}
-        // yCDebug(LASER_FROM_POINTCLOUD << "%d" <<ypointer;
-    }
-   //yCDebug(LASER_FROM_POINTCLOUD)<<elem <<yelem;
-
-    if (pointCloud_outTopic) {
-        pointCloud_outTopic->write(rosPC_data);
-    }
-}
 
 //-------------------------------------------------------------------------------------
 
@@ -157,7 +63,6 @@ bool LaserFromPointCloud::open(yarp::os::Searchable& config)
     m_floor_height = 0.1; //m
     m_pointcloud_max_distance = 10.0; //m
     m_ceiling_height = 2; //m
-    m_publish_ros_pc = false;
 
     m_sensorsNum = 360;
     m_resolution = 1;
@@ -175,11 +80,6 @@ bool LaserFromPointCloud::open(yarp::os::Searchable& config)
     m_ground_frame_id = "/ground_frame";
     m_camera_frame_id = "/depth_camera_frame";
 
-    if (config.check("publish_ROS_pointcloud"))
-    {
-        m_publish_ros_pc=true;
-        yCDebug(LASER_FROM_POINTCLOUD) << "User requested to publish ROS pointcloud (debug mode)";
-    }
 
     bool bpcr = config.check("POINTCLOUD_QUALITY");
     if (bpcr != false)
@@ -268,12 +168,6 @@ bool LaserFromPointCloud::open(yarp::os::Searchable& config)
 
     PeriodicThread::start();
     yCInfo(LASER_FROM_POINTCLOUD) << "Sensor ready";
-
-    //init ros
-    if (m_publish_ros_pc)
-    {
-       ros_init_pc();
-    }
 
     return true;
 }
@@ -383,8 +277,6 @@ bool LaserFromPointCloud::acquireDataFromHW()
     yarp::sig::PointCloud<yarp::sig::DataXYZ> pc = yarp::sig::utils::depthToPC(m_depth_image, m_intrinsics, m_pc_roi, m_pc_stepx, m_pc_stepy);
 
 
-    //if (m_publish_ros_pc) {ros_compute_and_send_pc(pc,m_camera_frame_id);}//<-------------------------
-
 #ifdef TEST_M
     //yCDebug(LASER_FROM_POINTCLOUD) << "pc size:" << pc.size();
 #endif
@@ -408,8 +300,6 @@ bool LaserFromPointCloud::acquireDataFromHW()
 
     //we rototranslate the full pointcloud
     rotate_pc(pc, m_transform_mtrx);
-
-    if (m_publish_ros_pc) { ros_compute_and_send_pc(pc, m_ground_frame_id); }//<-------------------------
 
     yarp::sig::Vector left(4);
     left[0] = (0 - m_intrinsics.principalPointX) / m_intrinsics.focalLengthX * 1000;
