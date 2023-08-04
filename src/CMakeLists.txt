@@ -23,7 +23,6 @@ add_subdirectory(libYARP_manager)
 add_subdirectory(libYARP_profiler)
 add_subdirectory(libYARP_logger)
 add_subdirectory(libYARP_dataplayer)
-add_subdirectory(libYARP_wire_rep_utils)
 add_subdirectory(libYARP_robottestingframework)
 
 # plugins
