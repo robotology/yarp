@@ -59,7 +59,6 @@
 /src/libYARP_run/**                              @drdanz
 /src/libYARP_serversql/**                        @drdanz
 /src/libYARP_sig/**                              @drdanz
-/src/libYARP_wire_rep_utils/**                   @drdanz
 /src/portmonitors/depthimage_compression_zfp/**  @Nicogene
 /src/portmonitors/depthimage_to_mono/**          @randaz81
 /src/portmonitors/depthimage_to_rgb/**           @randaz81
