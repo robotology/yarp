@@ -30,18 +30,18 @@ if(NOT SKIP_mjpeg)
       MjpegDecompression.cpp
       MjpegLogComponent.h
       MjpegLogComponent.cpp
+      WireImage4mjpeg.h
+      WireImage4mjpeg.cpp
   )
 
   target_link_libraries(yarp_mjpeg
     PRIVATE
       YARP::YARP_os
       YARP::YARP_sig
-      YARP::YARP_wire_rep_utils
   )
   list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS
     YARP_os
     YARP_sig
-    YARP_wire_rep_utils
   )
 
   if(YARP_MJPEG_AUTOCOMPRESS)

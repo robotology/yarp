@@ -46,13 +46,12 @@ extern "C" {
 #include <yarp/os/Bytes.h>
 #include <yarp/os/Route.h>
 
-#include <yarp/wire_rep_utils/WireImage.h>
+#include "WireImage4mjpeg.h"
 
 #include <map>
 
 using namespace yarp::os;
 using namespace yarp::sig;
-using namespace yarp::wire_rep_utils;
 
 static const std::map<int, J_COLOR_SPACE> yarpCode2Mjpeg { {VOCAB_PIXEL_MONO, JCS_GRAYSCALE},
                                                            {VOCAB_PIXEL_MONO16, JCS_GRAYSCALE},
@@ -159,7 +158,7 @@ void jpeg_net_dest(j_compress_ptr cinfo) {
 }
 
 bool MjpegCarrier::write(ConnectionState& proto, SizedWriter& writer) {
-    WireImage rep;
+    WireImage4mjpeg rep;
     FlexImage *img = rep.checkForImage(writer);
 
     if (img == nullptr) {
