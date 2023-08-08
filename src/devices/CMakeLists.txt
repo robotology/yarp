@@ -104,7 +104,6 @@ yarp_begin_plugin_library(yarpmod
   add_subdirectory(VirtualAnalogWrapper)
   add_subdirectory(RGBDSensorClient)
   add_subdirectory(RGBDSensor_nws_yarp)
-  add_subdirectory(controlBoardWrapper)
   add_subdirectory(controlBoard_nws_yarp)
   add_subdirectory(controlBoardRemapper)
   add_subdirectory(RobotDescriptionClient)
