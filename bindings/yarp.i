@@ -82,8 +82,9 @@
 %include <stdint.i>
 %include <std_vector.i>
 
-// Try to translate std::string to native equivalents
+// Try to translate std::string and std::pair to native equivalents
 %include "std_string.i"
+%include "std_pair.i"
 
 #if defined(SWIGCSHARP)
     // Get .NET pointers instead of swig generated types (useful when dealing with images)
@@ -427,6 +428,9 @@ MAKE_COMMS(Bottle)
 %include <yarp/dev/IRemoteVariables.h>
 %include <yarp/dev/IPidControl.h>
 %include <yarp/dev/IPositionDirect.h>
+%include <yarp/dev/ISpeechSynthesizer.h>
+%include <yarp/dev/ISpeechTranscription.h>
+%include <yarp/dev/ILLM.h>
 %include <yarp/dev/MultipleAnalogSensorsInterfaces.h>
 
 #ifndef YARP_NO_DEPRECATED // Since YARP 3.5.0
@@ -440,6 +444,8 @@ MAKE_COMMS(Bottle)
 %template(SVector) std::vector<std::string>;
 %template(IVector) std::vector<int>;
 %template(ShortVector) std::vector<short int>;
+%template() std::pair<std::string, std::string>;
+%template(SPairVector) std::vector<std::pair<std::string, std::string>>;
 
 #ifdef SWIGMATLAB
   // Extend IVector for handling conversion of vectors from and to Matlab
@@ -818,6 +824,9 @@ typedef yarp::os::BufferedPort<ImageRgbFloat> BufferedPortImageRgbFloat;
     CAST_POLYDRIVER_TO_INTERFACE(IPositionDirect)
     CAST_POLYDRIVER_TO_INTERFACE(IRemoteVariables)
     CAST_POLYDRIVER_TO_INTERFACE(IAxisInfo)
+    CAST_POLYDRIVER_TO_INTERFACE(ISpeechSynthesizer)
+    CAST_POLYDRIVER_TO_INTERFACE(ISpeechTranscription)
+    CAST_POLYDRIVER_TO_INTERFACE(ILLM)
 
 // These views are currently disabled in SWIG + java generator since they are
 // useless without the EXTENDED_ANALOG_SENSOR_INTERFACE part.
@@ -1540,6 +1549,44 @@ typedef yarp::os::BufferedPort<ImageRgbFloat> BufferedPortImageRgbFloat;
         bool result = self->isPidEnabled((yarp::dev::PidControlTypeEnum)pidtype, j, (bool*)(&data[0]));
         for (size_t i = 0; i < data.size(); i++) flag[i] = data[i] != 0;
         return result;
+    }
+}
+
+%extend yarp::dev::ISpeechSynthesizer {
+    bool getLanguage(std::vector<string>& language) {
+        return self->getLanguage(language[0]);
+    }
+
+    bool getVoice(std::vector<string>& voice) {
+        return self->getVoice(voice[0]);
+    }
+
+    bool getSpeed(std::vector<double>& speed) {
+        return self->getSpeed(speed[0]);
+    }
+
+    bool getPitch(std::vector<double>& pitch) {
+        return self->getPitch(pitch[0]);
+    }
+}
+
+%extend yarp::dev::ISpeechTranscription {
+    bool getLanguage(std::vector<string>& language) {
+        return self->getLanguage(language[0]);
+    }
+
+    bool transcribe(const yarp::sig::Sound& sound, std::vector<string>& transcription, std::vector<double>& score) {
+        return self->transcribe(sound, transcription[0], score[0]);
+    }
+}
+
+%extend yarp::dev::ILLM {
+    bool readPrompt(std::vector<string>& oPropmt) {
+        return self->readPrompt(oPropmt[0]);
+    }
+
+    bool ask(const std::string& question, std::vector<string>& answer) {
+        return self->ask(question, answer[0]);
     }
 }
 
