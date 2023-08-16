@@ -32,6 +32,10 @@ Added new device `LLM_nwc_yarp`.
 
 `yarp::sig::sound` refactored to avoid the internal use (private implementation) of yarp::sig::Image data type.
 
+# CI
+
+Fix `Sonar` workflow.
+
 # deprecation
 
 Removed deprecated devices: transformClient, transformServer, controlBoardWrapper

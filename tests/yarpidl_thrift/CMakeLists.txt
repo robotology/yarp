@@ -14,6 +14,7 @@ add_test(
                                                  -DYCM_DIR=${YCM_DIR}
                                                  -DYARP_DIR=${CMAKE_BINARY_DIR}
                                                  -DALLOW_IDL_GENERATION=TRUE
+                                                 -DCMAKE_EXE_LINKER_FLAGS_PROFILE='--coverage'
                                  --test-command ${CMAKE_CTEST_COMMAND} ${build_generator}
   WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}"
 )
