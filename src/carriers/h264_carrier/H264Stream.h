@@ -9,7 +9,6 @@
 #include <yarp/os/impl/DgramTwoWayStream.h>
 #include <yarp/sig/Image.h>
 #include <yarp/sig/ImageNetworkHeader.h>
-#include <yarp/wire_rep_utils/BlobNetworkHeader.h>
 #include "H264Decoder.h"
 #include <yarp/os/InputStream.h>
 
@@ -22,7 +21,6 @@ private:
     DgramTwoWayStream *delegate;
     yarp::sig::ImageOf<yarp::sig::PixelRgb> img;
     yarp::sig::ImageNetworkHeader imgHeader;
-    yarp::wire_rep_utils::BlobNetworkHeader blobHeader;
     int phase;
     char *cursor;
     size_t remaining;

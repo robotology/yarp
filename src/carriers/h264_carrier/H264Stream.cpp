@@ -27,7 +27,6 @@ using namespace yarp::sig;
 
 H264Stream::H264Stream(h264Decoder_cfgParamters &config) :
         delegate(nullptr),
-        blobHeader{0,0,0},
         phase(0),
         cursor(nullptr),
         remaining(0),
@@ -123,7 +122,7 @@ yarp::conf::ssize_t H264Stream::read(Bytes& b)
         {
             phase = 4;
             cursor = nullptr;
-            remaining = blobHeader.blobLen;
+            remaining = 0;
         } else
         {
             phase = 0;
