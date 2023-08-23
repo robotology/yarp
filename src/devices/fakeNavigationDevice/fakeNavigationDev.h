@@ -12,17 +12,6 @@
 #include <yarp/os/PeriodicThread.h>
 #include <math.h>
 
-
-class fakeNavigationThread :
-        public yarp::os::PeriodicThread
-{
-public:
-    fakeNavigationThread(double _period, yarp::os::Searchable& _cfg);
-    virtual bool threadInit() override;
-    virtual void threadRelease() override;
-    virtual void run() override;
-};
-
 /**
  * @ingroup dev_impl_fake dev_impl_navigation
  *
@@ -32,7 +21,8 @@ class fakeNavigation :
         public yarp::dev::DeviceDriver,
         public yarp::dev::Nav2D::INavigation2DTargetActions,
         public yarp::dev::Nav2D::INavigation2DControlActions,
-        public yarp::dev::Nav2D::INavigation2DVelocityActions
+        public yarp::dev::Nav2D::INavigation2DVelocityActions,
+        public yarp::os::PeriodicThread
 {
 private:
     yarp::dev::Nav2D::NavigationStatusEnum m_status = yarp::dev::Nav2D::NavigationStatusEnum::navigation_status_idle;
@@ -47,8 +37,9 @@ private:
     }
     m_control_out;
 
-public:
-    fakeNavigationThread  *navThread=nullptr;
+    int m_reached_duration_param = 100;
+    int m_navig_duration_param = 500;
+    int m_time_counter= m_navig_duration_param;
 
 public:
     virtual bool open(yarp::os::Searchable& config) override;
@@ -75,4 +66,8 @@ public:
     bool recomputeCurrentNavigationPath() override;
     bool applyVelocityCommand(double x_vel, double y_vel, double theta_vel, double timeout = 0.1) override;
     bool getLastVelocityCommand(double& x_vel, double& y_vel, double& theta_vel) override;
+
+    bool threadInit() override;
+    void threadRelease() override;
+    void run() override;
 };
