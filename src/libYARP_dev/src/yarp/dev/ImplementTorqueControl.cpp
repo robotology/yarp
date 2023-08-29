@@ -98,6 +98,7 @@ bool ImplementTorqueControl::setMotorTorqueParams(int j,  const yarp::dev::Motor
     castToMapper(helper)->viscousNeg_user2raw(params.viscousNeg, j, params_raw.viscousNeg, k);
     castToMapper(helper)->coulombPos_user2raw(params.coulombPos, j, params_raw.coulombPos, k);
     castToMapper(helper)->coulombNeg_user2raw(params.coulombNeg, j, params_raw.coulombNeg, k);
+    castToMapper(helper)->velocityThres_user2raw(params.velocityThres, j, params_raw.velocityThres, k);
 
     return iTorqueRaw->setMotorTorqueParamsRaw(k, params_raw);
 }
@@ -122,6 +123,7 @@ bool ImplementTorqueControl::getMotorTorqueParams(int j,  yarp::dev::MotorTorque
         castToMapper(helper)->viscousNeg_raw2user(params_raw.viscousNeg, k, (*params).viscousNeg, tmp_j);
         castToMapper(helper)->coulombPos_raw2user(params_raw.coulombPos, k, (*params).coulombPos, tmp_j);
         castToMapper(helper)->coulombNeg_raw2user(params_raw.coulombNeg, k, (*params).coulombNeg, tmp_j);
+        castToMapper(helper)->velocityThres_raw2user(params_raw.velocityThres, k, (*params).velocityThres, tmp_j);
     }
     return b;
 }

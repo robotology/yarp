@@ -268,6 +268,7 @@ bool FakeMotionControl::alloc(int nj)
     _viscousNeg=allocAndCheck<double>(nj);
     _coulombPos=allocAndCheck<double>(nj);
     _coulombNeg=allocAndCheck<double>(nj);
+    _velocityThres=allocAndCheck<double>(nj);
 
     // Reserve space for data stored locally. values are initialized to 0
     _posCtrl_references = allocAndCheck<double>(nj);
@@ -344,6 +345,7 @@ bool FakeMotionControl::dealloc()
     checkAndDestroy(_viscousNeg);
     checkAndDestroy(_coulombPos);
     checkAndDestroy(_coulombNeg);
+    checkAndDestroy(_velocityThres);
     checkAndDestroy(_posCtrl_references);
     checkAndDestroy(_posDir_references);
     checkAndDestroy(_command_speeds);
@@ -446,6 +448,7 @@ FakeMotionControl::FakeMotionControl() :
     _viscousNeg             (nullptr),
     _coulombPos             (nullptr),
     _coulombNeg             (nullptr),
+    _velocityThres          (nullptr),
     _filterType             (nullptr),
     _torqueSensorId         (nullptr),
     _torqueSensorChan       (nullptr),
@@ -744,7 +747,7 @@ bool FakeMotionControl::parsePositionPidsGroup(Bottle& pidsGroup, Pid myPid[])
     return true;
 }
 
-bool FakeMotionControl::parseTorquePidsGroup(Bottle& pidsGroup, Pid myPid[], double kbemf[], double ktau[], int filterType[], double viscousPos[], double viscousNeg[], double coulombPos[], double coulombNeg[])
+bool FakeMotionControl::parseTorquePidsGroup(Bottle& pidsGroup, Pid myPid[], double kbemf[], double ktau[], int filterType[], double viscousPos[], double viscousNeg[], double coulombPos[], double coulombNeg[], double velocityThres[])
 {
     int j=0;
     Bottle xtmp;
@@ -866,6 +869,14 @@ bool FakeMotionControl::parseTorquePidsGroup(Bottle& pidsGroup, Pid myPid[], dou
     for (j=0; j<_njoints; j++) {
         coulombNeg[j] = xtmp.get(j+1).asFloat64();
     }
+
+    if (!extractGroup(pidsGroup, xtmp, "velocityThres", "velocity threshold parameter", _njoints)) {
+        return false;
+    }
+    for (j=0; j<_njoints; j++) {
+        velocityThres[j] = xtmp.get(j+1).asFloat64();
+    }
+
 
     //conversion from metric to machine units (if applicable)
 //     for (j=0; j<_njoints; j++)
@@ -2909,6 +2920,7 @@ bool FakeMotionControl::getMotorTorqueParamsRaw(int j, MotorTorqueParameters *pa
     params->viscousNeg = _viscousNeg[j];
     params->coulombPos = _coulombPos[j];
     params->coulombNeg = _coulombNeg[j];
+    params->velocityThres = _velocityThres[j];
     yCDebug(FAKEMOTIONCONTROL) << "getMotorTorqueParamsRaw" << params->bemf
                                                             << params->bemf_scale
                                                             << params->ktau
@@ -2916,7 +2928,8 @@ bool FakeMotionControl::getMotorTorqueParamsRaw(int j, MotorTorqueParameters *pa
                                                             << params->viscousPos
                                                             << params->viscousNeg
                                                             << params->coulombPos
-                                                            << params->coulombNeg;
+                                                            << params->coulombNeg
+                                                            << params->velocityThres;
     return true;
 }
 
@@ -2930,6 +2943,7 @@ bool FakeMotionControl::setMotorTorqueParamsRaw(int j, const MotorTorqueParamete
     _viscousNeg[j] = params.viscousNeg;
     _coulombPos[j] = params.coulombPos;
     _coulombNeg[j] = params.coulombNeg;
+    _velocityThres[j] = params.velocityThres;
     yCDebug(FAKEMOTIONCONTROL) << "setMotorTorqueParamsRaw" << params.bemf
                                                             << params.bemf_scale
                                                             << params.ktau
@@ -2937,7 +2951,8 @@ bool FakeMotionControl::setMotorTorqueParamsRaw(int j, const MotorTorqueParamete
                                                             << params.viscousPos
                                                             << params.viscousNeg
                                                             << params.coulombPos
-                                                            << params.coulombNeg;
+                                                            << params.coulombNeg
+                                                            << params.velocityThres;
     return true;
 }
 

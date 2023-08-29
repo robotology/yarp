@@ -34,6 +34,7 @@ namespace yarp::dev::tests
         params.viscousNeg = 0.6;
         params.coulombPos = 0.7;
         params.coulombNeg = 0.8;
+        params.velocityThres = 0.9;
         b= itrq->setMotorTorqueParams(0, params);
         CHECK(b);
 
@@ -48,6 +49,7 @@ namespace yarp::dev::tests
         CHECK(res.viscousNeg == 0.6); // interface seems functional
         CHECK(res.coulombPos == 0.7); // interface seems functional
         CHECK(res.coulombNeg == 0.8); // interface seems functional
+        CHECK(res.velocityThres == 0.9); // interface seems functional
     }
 }
 
