@@ -54,7 +54,7 @@ class ControlBoardHelper;
 class YARP_dev_API yarp::dev::ControlBoardHelper
 {
 public:
-    ControlBoardHelper(int n, const int *aMap, const double *angToEncs = nullptr, const double *zs = nullptr, const double *newtons = nullptr, const double *amps = nullptr, const double *volts = nullptr, const double *dutycycles = nullptr, const double *kbemf = nullptr, const double *ktau = nullptr);
+    ControlBoardHelper(int n, const int *aMap, const double *angToEncs = nullptr, const double *zs = nullptr, const double *newtons = nullptr, const double *amps = nullptr, const double *volts = nullptr, const double *dutycycles = nullptr, const double *ktau = nullptr);
     ~ControlBoardHelper();
     ControlBoardHelper(const ControlBoardHelper& other);
     ControlBoardHelper& operator = (const ControlBoardHelper & other);
@@ -143,7 +143,6 @@ public:
     double PWM2dutycycle(double pwm_raw, int k_raw);
 
     // *******************************************//
-    double bemf_user2raw(double bemf_user, int j);
     double ktau_user2raw(double ktau_user, int j);
     double viscousPos_user2raw(double viscousPos_user, int j);
     double viscousNeg_user2raw(double viscousNeg_user, int j);
@@ -151,14 +150,12 @@ public:
     double coulombNeg_user2raw(double coulombNeg_user, int j);
     double velocityThres_user2raw(double velocityThres_user, int j);
 
-    void bemf_user2raw(double bemf_user, int j, double &bemf_raw, int &k);
     void ktau_user2raw(double ktau_user, int j, double &ktau_raw, int &k);
     void viscousPos_user2raw(double viscousPos_user, int j, double &viscousPos_raw, int &k);
     void viscousNeg_user2raw(double viscousNeg_user, int j, double &viscousNeg_raw, int &k);
     void coulombPos_user2raw(double coulombPos_user, int j, double &coulombPos_raw, int &k);
     void coulombNeg_user2raw(double coulombNeg_user, int j, double &coulombNeg_raw, int &k);
     void velocityThres_user2raw(double velocityThres_user, int j, double &velocityThres_raw, int &k);
-    void bemf_raw2user(double bemf_raw, int k_raw, double &bemf_user, int &j_user);
     void ktau_raw2user(double ktau_raw, int k_raw, double &ktau_user, int &j_user);
     void viscousPos_raw2user(double viscousPos_raw, int k_raw, double &viscousPos_user, int &j_user);
     void viscousNeg_raw2user(double viscousNeg_raw, int k_raw, double &viscousNeg_user, int &j_user);

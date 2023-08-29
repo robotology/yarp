@@ -49,15 +49,13 @@
 #define     TORQUE_STITCTIONUP  7
 #define     TORQUE_STICTIONDW   8
 #define     TORQUE_KFF          9
-#define     TORQUE_BEMFGAIN     10
-#define     TORQUE_BEMFSCALE    11
-#define     TORQUE_KTAUGAIN     12
-#define     TORQUE_KTAUSCALE    13
-#define     TORQUE_VISCOUSPOS   14
-#define     TORQUE_VISCOUSNEG   15
-#define     TORQUE_COULOMBPOS   16
-#define     TORQUE_COULOMBNEG   17
-#define     VELOCITY_THRESHOLD  18
+#define     TORQUE_KTAUGAIN     10
+#define     TORQUE_KTAUSCALE    11
+#define     TORQUE_VISCOUSPOS   12
+#define     TORQUE_VISCOUSNEG   13
+#define     TORQUE_COULOMBPOS   14
+#define     TORQUE_COULOMBNEG   15
+#define     VELOCITY_THRESHOLD  16
 
 #define     CURRENT_KP         0
 #define     CURRENT_KD         1
@@ -178,12 +176,6 @@ void PidDlg::initTorque(Pid myPid, MotorTorqueParameters TrqParam)
 
     ui->tableTorque->item(TORQUE_KD,0)->setText(QString("%1").arg((double)myPid.kd));
     ui->tableTorque->item(TORQUE_KD,1)->setText(QString("%1").arg((double)myPid.kd));
-
-    ui->tableTorque->item(TORQUE_BEMFGAIN,0)->setText(QString("%1").arg((double)TrqParam.bemf));
-    ui->tableTorque->item(TORQUE_BEMFGAIN,1)->setText(QString("%1").arg((double)TrqParam.bemf));
-
-    ui->tableTorque->item(TORQUE_BEMFSCALE,0)->setText(QString("%1").arg((int)TrqParam.bemf_scale));
-    ui->tableTorque->item(TORQUE_BEMFSCALE,1)->setText(QString("%1").arg((int)TrqParam.bemf_scale));
 
     ui->tableTorque->item(TORQUE_KTAUGAIN,0)->setText(QString("%1").arg((double)TrqParam.ktau));
     ui->tableTorque->item(TORQUE_KTAUGAIN,1)->setText(QString("%1").arg((double)TrqParam.ktau));
@@ -406,8 +398,6 @@ void PidDlg::onSend()
         newPid.kp = ui->tableTorque->item(TORQUE_KP,1)->text().toDouble();
         newPid.kff = ui->tableTorque->item(TORQUE_KFF,1)->text().toDouble();
         newPid.kd = ui->tableTorque->item(TORQUE_KD,1)->text().toDouble();
-        newMotorTorqueParams.bemf = ui->tableTorque->item(TORQUE_BEMFGAIN,1)->text().toDouble();
-        newMotorTorqueParams.bemf_scale = ui->tableTorque->item(TORQUE_BEMFSCALE,1)->text().toDouble();
         newMotorTorqueParams.ktau = ui->tableTorque->item(TORQUE_KTAUGAIN,1)->text().toDouble();
         newMotorTorqueParams.ktau_scale = ui->tableTorque->item(TORQUE_KTAUSCALE,1)->text().toDouble();
         newMotorTorqueParams.viscousPos = ui->tableTorque->item(TORQUE_VISCOUSPOS,1)->text().toDouble();

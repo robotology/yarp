@@ -38,7 +38,6 @@ public:
     double *ampereToSensors;
     double *voltToSensors;
     double *dutycycleToPWMs;
-    double *bemfToRaws;
     double *ktauToRaws;
     double *viscousPosToRaws;
     double *viscousNegToRaws;
@@ -63,7 +62,6 @@ public:
         ampereToSensors(nullptr),
         voltToSensors(nullptr),
         dutycycleToPWMs(nullptr),
-        bemfToRaws(nullptr),
         ktauToRaws(nullptr),
         viscousPosToRaws(nullptr),
         viscousNegToRaws(nullptr),
@@ -83,7 +81,6 @@ public:
         std::fill_n(ampereToSensors, size, 1.0);
         std::fill_n(voltToSensors, size, 1.0);
         std::fill_n(dutycycleToPWMs, size, 1.0);
-        std::fill_n(bemfToRaws, size, 1.0);
         std::fill_n(ktauToRaws, size, 1.0);
         std::fill_n(viscousPosToRaws, size, 1.0);
         std::fill_n(viscousNegToRaws, size, 1.0);
@@ -107,7 +104,6 @@ public:
         checkAndDestroy<double>(ampereToSensors);
         checkAndDestroy<double>(voltToSensors);
         checkAndDestroy<double>(dutycycleToPWMs);
-        checkAndDestroy<double>(bemfToRaws);
         checkAndDestroy<double>(ktauToRaws);
         checkAndDestroy<double>(viscousPosToRaws);
         checkAndDestroy<double>(viscousNegToRaws);
@@ -132,7 +128,6 @@ public:
         VelPid_units = new PidUnits[nj];
         TrqPid_units = new PidUnits[nj];
         CurPid_units = new PidUnits[nj];
-        bemfToRaws = new double[nj];
         ktauToRaws = new double[nj];
         viscousPosToRaws = new double[nj];
         viscousNegToRaws = new double[nj];
@@ -153,7 +148,6 @@ public:
         yAssert(VelPid_units != nullptr);
         yAssert(TrqPid_units != nullptr);
         yAssert(CurPid_units != nullptr);
-        yAssert(bemfToRaws != nullptr);
         yAssert(ktauToRaws != nullptr);
         yAssert(viscousPosToRaws != nullptr);
         yAssert(viscousNegToRaws != nullptr);
@@ -183,7 +177,6 @@ public:
         memcpy(this->VelPid_units, other.VelPid_units, sizeof(*other.VelPid_units)*nj);
         memcpy(this->TrqPid_units, other.TrqPid_units, sizeof(*other.TrqPid_units)*nj);
         memcpy(this->CurPid_units, other.CurPid_units, sizeof(*other.CurPid_units)*nj);
-        memcpy(this->bemfToRaws, other.bemfToRaws, sizeof(*other.bemfToRaws)*nj);
         memcpy(this->ktauToRaws, other.ktauToRaws, sizeof(*other.ktauToRaws)*nj);
         memcpy(this->viscousPosToRaws, other.viscousPosToRaws, sizeof(*other.viscousPosToRaws)*nj);
         memcpy(this->viscousNegToRaws, other.viscousNegToRaws, sizeof(*other.viscousNegToRaws)*nj);
@@ -193,7 +186,7 @@ public:
     }
 };
 
-ControlBoardHelper::ControlBoardHelper(int n, const int *aMap, const double *angToEncs, const double *zs, const double *newtons, const double *amps, const double *volts, const double *dutycycles, const double *kbemf, const double *ktau)
+ControlBoardHelper::ControlBoardHelper(int n, const int *aMap, const double *angToEncs, const double *zs, const double *newtons, const double *amps, const double *volts, const double *dutycycles, const double *ktau)
 {
     yAssert(n>=0);         // if number of joints is negative complain!
     yAssert(aMap!=nullptr);      // at least the axisMap is required
@@ -218,9 +211,6 @@ ControlBoardHelper::ControlBoardHelper(int n, const int *aMap, const double *ang
     }
     if (dutycycles != nullptr) {
         memcpy(mPriv->dutycycleToPWMs, dutycycles, sizeof(double) * n);
-    }
-    if (kbemf != nullptr) {
-        memcpy(mPriv->bemfToRaws, kbemf, sizeof(double) * n);
     }
     if (ktau != nullptr) {
         memcpy(mPriv->ktauToRaws, ktau, sizeof(double) * n);
@@ -777,11 +767,6 @@ double ControlBoardHelper::PWM2dutycycle(double pwm_raw, int k_raw)
 }
 
 // *******************************************//
-void ControlBoardHelper::bemf_user2raw(double bemf_user, int j, double &bemf_raw, int &k)
-{
-    bemf_raw = bemf_user * mPriv->bemfToRaws[j];
-    k = toHw(j);
-}
 
 void ControlBoardHelper::ktau_user2raw(double ktau_user, int j, double &ktau_raw, int &k)
 {
@@ -819,21 +804,10 @@ void ControlBoardHelper::velocityThres_user2raw(double velocityThres_user, int j
     k = toHw(j);
 }
 
-void ControlBoardHelper::bemf_raw2user(double bemf_raw, int k_raw, double &bemf_user, int &j_user)
-{
-    j_user = toUser(k_raw);
-    bemf_user = bemf_raw / mPriv->bemfToRaws[j_user];
-}
-
 void ControlBoardHelper::ktau_raw2user(double ktau_raw, int k_raw, double &ktau_user, int &j_user)
 {
     j_user = toUser(k_raw);
     ktau_user = ktau_raw / mPriv->ktauToRaws[j_user];
-}
-
-double  ControlBoardHelper::bemf_user2raw(double bemf_user, int j)
-{
-    return bemf_user * mPriv->bemfToRaws[j];
 }
 
 double  ControlBoardHelper::ktau_user2raw(double ktau_user, int j)

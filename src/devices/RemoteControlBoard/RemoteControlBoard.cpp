@@ -2207,8 +2207,6 @@ bool RemoteControlBoard::setMotorTorqueParams(int j, const MotorTorqueParameters
     cmd.addVocab32(VOCAB_MOTOR_PARAMS);
     cmd.addInt32(j);
     Bottle& b = cmd.addList();
-    b.addFloat64(params.bemf);
-    b.addFloat64(params.bemf_scale);
     b.addFloat64(params.ktau);
     b.addFloat64(params.ktau_scale);
     b.addFloat64(params.viscousPos);
@@ -2239,8 +2237,6 @@ bool RemoteControlBoard::getMotorTorqueParams(int j, MotorTorqueParameters *para
             yCError(REMOTECONTROLBOARD, "getMotorTorqueParams return value not understood, size != 8");
             return false;
         }
-        params->bemf        = l.get(0).asFloat64();
-        params->bemf_scale  = l.get(1).asFloat64();
         params->ktau        = l.get(2).asFloat64();
         params->ktau_scale  = l.get(3).asFloat64();
         params->viscousPos   = l.get(4).asFloat64();

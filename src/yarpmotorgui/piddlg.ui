@@ -898,16 +898,6 @@
          </row>
          <row>
           <property name="text">
-           <string>Torque Kbemf</string>
-          </property>
-         </row>
-         <row>
-          <property name="text">
-           <string>Torque Kbemf Scale</string>
-          </property>
-         </row>
-         <row>
-          <property name="text">
            <string>Torque Ktau</string>
           </property>
          </row>

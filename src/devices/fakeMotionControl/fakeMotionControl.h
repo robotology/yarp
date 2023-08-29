@@ -189,9 +189,7 @@ private:
     double *_maxMotorVelocity;                  /** max motor velocity */
     int *_velocityShifts;                       /** velocity shifts */
     int *_velocityTimeout;                      /** velocity shifts */
-    double *_kbemf;                             /** back-emf compensation parameter */
     double *_ktau;                              /** motor torque constant */
-    int *_kbemf_scale;                          /** back-emf compensation parameter */
     int *_ktau_scale;                           /** motor torque constant */
     double *_viscousPos;                        /** viscous pos friction  */
     double *_viscousNeg;                        /** viscous neg friction  */
@@ -509,7 +507,7 @@ private:
     void cleanup();
     bool dealloc();
     bool parsePositionPidsGroup(yarp::os::Bottle& pidsGroup, yarp::dev::Pid myPid[]);
-    bool parseTorquePidsGroup(yarp::os::Bottle& pidsGroup, yarp::dev::Pid myPid[], double kbemf[], double ktau[], int filterType[], double viscousPos[], double viscousNeg[], double coulombPos[], double coulombNeg[], double velocityThres[]);
+    bool parseTorquePidsGroup(yarp::os::Bottle& pidsGroup, yarp::dev::Pid myPid[], double ktau[], int filterType[], double viscousPos[], double viscousNeg[], double coulombPos[], double coulombNeg[], double velocityThres[]);
 
     bool parseImpedanceGroup_NewFormat(yarp::os::Bottle& pidsGroup, ImpedanceParameters vals[]);
 

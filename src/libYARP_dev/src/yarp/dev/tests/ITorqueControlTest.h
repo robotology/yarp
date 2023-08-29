@@ -26,8 +26,6 @@ namespace yarp::dev::tests
         CHECK(ax != 0);
 
         yarp::dev::MotorTorqueParameters params;
-        //params.bemf = 0.1;
-        //params.bemf_scale = 0.2;
         //params.ktau = 0.3;
         //params.ktau_scale = 0.4;
         params.viscousPos = 0.5;
@@ -41,8 +39,6 @@ namespace yarp::dev::tests
         yarp::dev::MotorTorqueParameters res;
         b= itrq->getMotorTorqueParams(0, &res);
         CHECK(b);
-        //CHECK(res.bemf == 0.1); // interface seems functional
-        //CHECK(res.bemf_scale == 0.2); // interface seems functional
         //CHECK(res.ktau == 0.3); // interface seems functional
         //CHECK(res.ktau_scale == 0.4); // interface seems functional
         CHECK(res.viscousPos == 0.5); // interface seems functional

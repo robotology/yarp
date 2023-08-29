@@ -482,8 +482,6 @@ void RPCMessagesParser::handleTorqueMsg(const yarp::os::Bottle& cmd,
                 break;
             }
 
-            params.bemf = b->get(0).asFloat64();
-            params.bemf_scale = b->get(1).asFloat64();
             params.ktau = b->get(2).asFloat64();
             params.ktau_scale = b->get(3).asFloat64();
             params.viscousPos = b->get(4).asFloat64();
@@ -557,8 +555,6 @@ void RPCMessagesParser::handleTorqueMsg(const yarp::os::Bottle& cmd,
             // convert it back to yarp message
             Bottle& b = response.addList();
 
-            b.addFloat64(params.bemf);
-            b.addFloat64(params.bemf_scale);
             b.addFloat64(params.ktau);
             b.addFloat64(params.ktau_scale);
             b.addFloat64(params.viscousPos);

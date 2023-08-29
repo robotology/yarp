@@ -18,8 +18,6 @@ class MotorTorqueParameters;
 class YARP_dev_API yarp::dev::MotorTorqueParameters
 {
     public:
-    double bemf;
-    double bemf_scale;
     double ktau;
     double ktau_scale;
     double viscousPos;
@@ -27,7 +25,7 @@ class YARP_dev_API yarp::dev::MotorTorqueParameters
     double coulombPos;
     double coulombNeg;
     double velocityThres;
-    MotorTorqueParameters() : bemf(0), bemf_scale(0), ktau(0), ktau_scale(0), viscousPos(0), viscousNeg(0), coulombPos(0), coulombNeg(0), velocityThres(0){};
+    MotorTorqueParameters() : ktau(0), ktau_scale(0), viscousPos(0), viscousNeg(0), coulombPos(0), coulombNeg(0), velocityThres(0){};
 };
 
 /**
@@ -85,14 +83,14 @@ public:
      */
     virtual bool setRefTorques(const int n_joint, const int *joints, const double *t) {return false;}  // this function has a default implementation to keep backward compatibility with existing devices
 
-    /** Get a subset of motor parameters (bemf, ktau etc) useful for torque control.
+    /** Get a subset of motor parameters (ktau etc) useful for torque control.
      * @param j joint number
      * @param params a struct containing the motor parameters to be retrieved
      * @return true/false on success/failure
      */
     virtual bool getMotorTorqueParams(int j,  yarp::dev::MotorTorqueParameters *params) {return false;}
 
-    /** Set a subset of motor parameters (bemf, ktau etc) useful for torque control.
+    /** Set a subset of motor parameters (ktau etc) useful for torque control.
      * @param j joint number
      * @param params a struct containing the motor parameters to be set
      * @return true/false on success/failure
@@ -235,7 +233,6 @@ constexpr yarp::conf::vocab32_t VOCAB_TORQUE            = yarp::os::createVocab3
 constexpr yarp::conf::vocab32_t VOCAB_TORQUE_MODE       = yarp::os::createVocab32('t', 'r', 'q', 'd');
 constexpr yarp::conf::vocab32_t VOCAB_TRQS              = yarp::os::createVocab32('t', 'r', 'q', 's');
 constexpr yarp::conf::vocab32_t VOCAB_TRQ               = yarp::os::createVocab32('t', 'r', 'q');
-constexpr yarp::conf::vocab32_t VOCAB_BEMF              = yarp::os::createVocab32('b', 'm', 'f');
 constexpr yarp::conf::vocab32_t VOCAB_MOTOR_PARAMS      = yarp::os::createVocab32('m', 't', 'p', 's');
 constexpr yarp::conf::vocab32_t VOCAB_RANGES            = yarp::os::createVocab32('r', 'n', 'g', 's');
 constexpr yarp::conf::vocab32_t VOCAB_RANGE             = yarp::os::createVocab32('r', 'n', 'g');

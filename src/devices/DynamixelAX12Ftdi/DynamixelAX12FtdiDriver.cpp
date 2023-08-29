@@ -730,16 +730,6 @@ bool DynamixelAX12FtdiDriver::setTorqueOffset(int j, double v) {
     return NOT_YET_IMPLEMENTED("setTorqueOffset");
 }
 
-bool DynamixelAX12FtdiDriver::getBemfParam(int j, double *bemf) {
-    yCError(DYNAMIXELAX12FTDIDRIVER, "Note: AX12 does not support torque control mode. This is only used to get torque feedback.");
-    return NOT_YET_IMPLEMENTED("getBemfParam");
-}
-
-bool DynamixelAX12FtdiDriver::setBemfParam(int j, double bemf) {
-    yCError(DYNAMIXELAX12FTDIDRIVER, "Note: AX12 does not support torque control mode. This is only used to get torque feedback.");
-    return NOT_YET_IMPLEMENTED("setBemfParam");
-}
-
 bool DynamixelAX12FtdiDriver::resetEncoder(int j) {
     return NOT_YET_IMPLEMENTED("resetEncoder");
 }

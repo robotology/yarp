@@ -25,13 +25,13 @@ ImplementTorqueControl::~ImplementTorqueControl()
     uninitialize();
 }
 
-bool ImplementTorqueControl::initialize(int size, const int *amap, const double *enc, const double *zos, const double *nw, const double* amps, const double* dutys, const double* bemfs, const double* ktaus)
+bool ImplementTorqueControl::initialize(int size, const int *amap, const double *enc, const double *zos, const double *nw, const double* amps, const double* dutys, const double* ktaus)
 {
     if (helper != nullptr) {
         return false;
     }
 
-    helper=(void *)(new ControlBoardHelper(size, amap, enc, zos, nw, amps, nullptr, dutys,bemfs,ktaus));
+    helper=(void *)(new ControlBoardHelper(size, amap, enc, zos, nw, amps, nullptr, dutys, ktaus));
     yAssert (helper != nullptr);
 
     intBuffManager = new yarp::dev::impl::FixedSizeBuffersManager<int> (size);
@@ -89,9 +89,7 @@ bool ImplementTorqueControl::setMotorTorqueParams(int j,  const yarp::dev::Motor
     int k;
 
     yarp::dev::MotorTorqueParameters params_raw;
-    castToMapper(helper)->bemf_user2raw(params.bemf, j, params_raw.bemf, k);
     castToMapper(helper)->ktau_user2raw(params.ktau, j, params_raw.ktau, k);
-    params_raw.bemf_scale = params.bemf_scale;
     params_raw.ktau_scale = params.ktau_scale;
 
     castToMapper(helper)->viscousPos_user2raw(params.viscousPos, j, params_raw.viscousPos, k);
@@ -115,9 +113,7 @@ bool ImplementTorqueControl::getMotorTorqueParams(int j,  yarp::dev::MotorTorque
     if (b)
     {
         *params = params_raw;
-        castToMapper(helper)->bemf_raw2user(params_raw.bemf, k, (*params).bemf, tmp_j);
         castToMapper(helper)->ktau_raw2user(params_raw.ktau, k, (*params).ktau, tmp_j);
-        (*params).bemf_scale = params_raw.bemf_scale;
         (*params).ktau_scale = params_raw.ktau_scale;
         castToMapper(helper)->viscousPos_raw2user(params_raw.viscousPos, k, (*params).viscousPos, tmp_j);
         castToMapper(helper)->viscousNeg_raw2user(params_raw.viscousNeg, k, (*params).viscousNeg, tmp_j);

@@ -258,9 +258,7 @@ bool FakeMotionControl::alloc(int nj)
 
     _velocityShifts=allocAndCheck<int>(nj);
     _velocityTimeout=allocAndCheck<int>(nj);
-    _kbemf=allocAndCheck<double>(nj);
     _ktau=allocAndCheck<double>(nj);
-    _kbemf_scale = allocAndCheck<int>(nj);
     _ktau_scale = allocAndCheck<int>(nj);
     _filterType=allocAndCheck<int>(nj);
     _last_position_move_time=allocAndCheck<double>(nj);
@@ -336,9 +334,7 @@ bool FakeMotionControl::dealloc()
     checkAndDestroy(checking_motiondone);
     checkAndDestroy(_velocityShifts);
     checkAndDestroy(_velocityTimeout);
-    checkAndDestroy(_kbemf);
     checkAndDestroy(_ktau);
-    checkAndDestroy(_kbemf_scale);
     checkAndDestroy(_ktau_scale);
     checkAndDestroy(_filterType);
     checkAndDestroy(_viscousPos);
@@ -440,9 +436,7 @@ FakeMotionControl::FakeMotionControl() :
     _maxMotorVelocity       (nullptr),
     _velocityShifts         (nullptr),
     _velocityTimeout        (nullptr),
-    _kbemf                  (nullptr),
     _ktau                   (nullptr),
-    _kbemf_scale            (nullptr),
     _ktau_scale             (nullptr),
     _viscousPos             (nullptr),
     _viscousNeg             (nullptr),
@@ -569,9 +563,7 @@ bool FakeMotionControl::open(yarp::os::Searchable &config)
     //  INIT ALL INTERFACES
     yarp::sig::Vector tmpZeros; tmpZeros.resize (_njoints, 0.0);
     yarp::sig::Vector tmpOnes;  tmpOnes.resize  (_njoints, 1.0);
-    yarp::sig::Vector bemfToRaw; bemfToRaw.resize(_njoints, 1.0);
     yarp::sig::Vector ktauToRaw; ktauToRaw.resize(_njoints, 1.0);
-    bemfToRaw = yarp::sig::Vector(_njoints, _newtonsToSensor) / yarp::sig::Vector(_njoints, _angleToEncoder);
     ktauToRaw = yarp::sig::Vector(_njoints, _dutycycleToPWM)  / yarp::sig::Vector(_njoints, _newtonsToSensor);
 
     ControlBoardHelper cb(_njoints, _axisMap, _angleToEncoder, nullptr, _newtonsToSensor, _ampsToSensor, _dutycycleToPWM);
@@ -588,7 +580,7 @@ bool FakeMotionControl::open(yarp::os::Searchable &config)
     ImplementVelocityControl::initialize(_njoints, _axisMap, _angleToEncoder, nullptr);
     ImplementControlLimits::initialize(_njoints, _axisMap, _angleToEncoder, nullptr);
     ImplementImpedanceControl::initialize(_njoints, _axisMap, _angleToEncoder, nullptr, _newtonsToSensor);
-    ImplementTorqueControl::initialize(_njoints, _axisMap, _angleToEncoder, nullptr, _newtonsToSensor, _ampsToSensor, _dutycycleToPWM, bemfToRaw.data(), ktauToRaw.data());
+    ImplementTorqueControl::initialize(_njoints, _axisMap, _angleToEncoder, nullptr, _newtonsToSensor, _ampsToSensor, _dutycycleToPWM, ktauToRaw.data());
     ImplementPositionDirect::initialize(_njoints, _axisMap, _angleToEncoder, nullptr);
     ImplementInteractionMode::initialize(_njoints, _axisMap, _angleToEncoder, nullptr);
     ImplementMotor::initialize(_njoints, _axisMap);
@@ -747,7 +739,7 @@ bool FakeMotionControl::parsePositionPidsGroup(Bottle& pidsGroup, Pid myPid[])
     return true;
 }
 
-bool FakeMotionControl::parseTorquePidsGroup(Bottle& pidsGroup, Pid myPid[], double kbemf[], double ktau[], int filterType[], double viscousPos[], double viscousNeg[], double coulombPos[], double coulombNeg[], double velocityThres[])
+bool FakeMotionControl::parseTorquePidsGroup(Bottle& pidsGroup, Pid myPid[], double ktau[], int filterType[], double viscousPos[], double viscousNeg[], double coulombPos[], double coulombNeg[], double velocityThres[])
 {
     int j=0;
     Bottle xtmp;
@@ -819,13 +811,6 @@ bool FakeMotionControl::parseTorquePidsGroup(Bottle& pidsGroup, Pid myPid[], dou
     }
     for (j=0; j<_njoints; j++) {
         myPid[j].kff = xtmp.get(j+1).asFloat64();
-    }
-
-    if (!extractGroup(pidsGroup, xtmp, "kbemf", "kbemf parameter", _njoints)) {
-        return false;
-    }
-    for (j=0; j<_njoints; j++) {
-        kbemf[j] = xtmp.get(j+1).asFloat64();
     }
 
     if (!extractGroup(pidsGroup, xtmp, "ktau", "ktau parameter", _njoints)) {
@@ -2912,8 +2897,6 @@ bool FakeMotionControl::getCurrentImpedanceLimitRaw(int j, double *min_stiff, do
 
 bool FakeMotionControl::getMotorTorqueParamsRaw(int j, MotorTorqueParameters *params)
 {
-    params->bemf = _kbemf[j];
-    params->bemf_scale = _kbemf_scale[j];
     params->ktau = _ktau[j];
     params->ktau_scale = _ktau_scale[j];
     params->viscousPos = _viscousPos[j];
@@ -2921,9 +2904,7 @@ bool FakeMotionControl::getMotorTorqueParamsRaw(int j, MotorTorqueParameters *pa
     params->coulombPos = _coulombPos[j];
     params->coulombNeg = _coulombNeg[j];
     params->velocityThres = _velocityThres[j];
-    yCDebug(FAKEMOTIONCONTROL) << "getMotorTorqueParamsRaw" << params->bemf
-                                                            << params->bemf_scale
-                                                            << params->ktau
+    yCDebug(FAKEMOTIONCONTROL) << "getMotorTorqueParamsRaw" << params->ktau
                                                             << params->ktau_scale
                                                             << params->viscousPos
                                                             << params->viscousNeg
@@ -2935,18 +2916,14 @@ bool FakeMotionControl::getMotorTorqueParamsRaw(int j, MotorTorqueParameters *pa
 
 bool FakeMotionControl::setMotorTorqueParamsRaw(int j, const MotorTorqueParameters params)
 {
-    _kbemf[j] = params.bemf;
     _ktau[j] = params.ktau;
-    _kbemf_scale[j] = params.bemf_scale;
     _ktau_scale[j] = params.ktau_scale;
     _viscousPos[j] = params.viscousPos;
     _viscousNeg[j] = params.viscousNeg;
     _coulombPos[j] = params.coulombPos;
     _coulombNeg[j] = params.coulombNeg;
     _velocityThres[j] = params.velocityThres;
-    yCDebug(FAKEMOTIONCONTROL) << "setMotorTorqueParamsRaw" << params.bemf
-                                                            << params.bemf_scale
-                                                            << params.ktau
+    yCDebug(FAKEMOTIONCONTROL) << "setMotorTorqueParamsRaw" << params.ktau
                                                             << params.ktau_scale
                                                             << params.viscousPos
                                                             << params.viscousNeg
