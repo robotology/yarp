@@ -3,16 +3,17 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#include "LLM_nws_yarp.h"
+#include <LLM_nws_yarp.h>
+
 #include <yarp/os/LogComponent.h>
 #include <yarp/os/LogStream.h>
 
 namespace
 {
-    YARP_LOG_COMPONENT(LLM_NWS_YARP, "yarp.device.LLM_nws_yarp")
+YARP_LOG_COMPONENT(LLM_NWS_YARP, "yarp.device.LLM_nws_yarp")
 }
 
-bool LLM_nws_yarp::attach(yarp::dev::PolyDriver *driver)
+bool LLM_nws_yarp::attach(yarp::dev::PolyDriver* driver)
 {
     if (driver->isValid())
     {
@@ -25,14 +26,14 @@ bool LLM_nws_yarp::attach(yarp::dev::PolyDriver *driver)
         return false;
     }
 
-    m_RPC.setInterface(m_iLlm);
+    m_RPC.setInterface(m_iLlm, m_streaming_port_name);
 
     yCDebug(LLM_NWS_YARP) << "Attachment successful";
 
     return true;
 }
 
-bool LLM_nws_yarp::open(yarp::os::Searchable &prop)
+bool LLM_nws_yarp::open(yarp::os::Searchable& prop)
 {
     std::string rpc_portname;
 
@@ -44,7 +45,11 @@ bool LLM_nws_yarp::open(yarp::os::Searchable &prop)
     else
     {
         rpc_portname = prop.find("name").asString();
-        if (rpc_portname.c_str()[0] != '/') { yCError(LLM_NWS_YARP) << "Missing '/' in name parameter";  return false; }
+        if (rpc_portname.c_str()[0] != '/')
+        {
+            yCError(LLM_NWS_YARP) << "Missing '/' in name parameter";
+            return false;
+        }
         yCInfo(LLM_NWS_YARP) << "Using local name:" << rpc_portname;
     }
 
@@ -54,6 +59,17 @@ bool LLM_nws_yarp::open(yarp::os::Searchable &prop)
         return false;
     }
 
+    if (prop.check("streaming_name"))
+    {
+        m_streaming_port_name = prop.find("streaming_name").asString();
+        if (m_streaming_port_name.c_str()[0] != '/')
+        {
+            yCError(LLM_NWS_YARP) << "Missing '/' in name parameter";
+            return false;
+        }
+    }
+
+    yCInfo(LLM_NWS_YARP) << "Using streaming port name " << m_streaming_port_name;
     m_RpcPort.setReader(*this);
 
     yCDebug(LLM_NWS_YARP) << "Waiting to be attached";
@@ -71,10 +87,11 @@ bool LLM_nws_yarp::close()
 {
     m_RpcPort.interrupt();
     m_RpcPort.close();
+    m_RPC.unsetInterface();
     return true;
 }
 
-bool LLM_nws_yarp::read(yarp::os::ConnectionReader &connection)
+bool LLM_nws_yarp::read(yarp::os::ConnectionReader& connection)
 {
     bool b = m_RPC.read(connection);
     if (b)

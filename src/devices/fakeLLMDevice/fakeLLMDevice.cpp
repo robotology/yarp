@@ -4,9 +4,17 @@
  */
 
 #include "fakeLLMDevice.h"
+#include <yarp/os/Log.h>
+#include <yarp/os/LogStream.h>
 
 bool fakeLLMDevice::setPrompt(const std::string &prompt)
 {
+    if(!m_conversation.empty())
+    {
+        yError() << "The conversation is already ongoing. You must first delete the whole conversation and start from scratch.";
+        return false;
+    }
+
     m_conversation.push_back(std::make_pair("system", prompt));
     return true;
 }
