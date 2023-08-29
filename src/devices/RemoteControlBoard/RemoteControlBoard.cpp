@@ -2215,6 +2215,7 @@ bool RemoteControlBoard::setMotorTorqueParams(int j, const MotorTorqueParameters
     b.addFloat64(params.viscousNeg);
     b.addFloat64(params.coulombPos);
     b.addFloat64(params.coulombNeg);
+    b.addFloat64(params.velocityThres);
     bool ok = rpc_p.write(cmd, response);
     return CHECK_FAIL(ok, response);
 }
@@ -2246,6 +2247,7 @@ bool RemoteControlBoard::getMotorTorqueParams(int j, MotorTorqueParameters *para
         params->viscousNeg = l.get(5).asFloat64();
         params->coulombPos   = l.get(6).asFloat64();
         params->coulombNeg = l.get(7).asFloat64();
+        params->velocityThres = l.get(8).asFloat64();
         return true;
     }
     return false;

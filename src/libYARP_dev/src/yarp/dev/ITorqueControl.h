@@ -26,7 +26,8 @@ class YARP_dev_API yarp::dev::MotorTorqueParameters
     double viscousNeg;
     double coulombPos;
     double coulombNeg;
-    MotorTorqueParameters() : bemf(0), bemf_scale(0), ktau(0), ktau_scale(0), viscousPos(0), viscousNeg(0), coulombPos(0), coulombNeg(0) {};
+    double velocityThres;
+    MotorTorqueParameters() : bemf(0), bemf_scale(0), ktau(0), ktau_scale(0), viscousPos(0), viscousNeg(0), coulombPos(0), coulombNeg(0), velocityThres(0){};
 };
 
 /**

@@ -490,6 +490,7 @@ void RPCMessagesParser::handleTorqueMsg(const yarp::os::Bottle& cmd,
             params.viscousNeg = b->get(5).asFloat64();
             params.coulombPos = b->get(6).asFloat64();
             params.coulombNeg = b->get(7).asFloat64();
+            params.velocityThres = b->get(8).asFloat64();
 
             *ok = rpc_ITorque->setMotorTorqueParams(joint, params);
         } break;
@@ -564,6 +565,7 @@ void RPCMessagesParser::handleTorqueMsg(const yarp::os::Bottle& cmd,
             b.addFloat64(params.viscousNeg);
             b.addFloat64(params.coulombPos);
             b.addFloat64(params.coulombNeg);
+            b.addFloat64(params.velocityThres);
         } break;
         case VOCAB_RANGE: {
             *ok = rpc_ITorque->getTorqueRange(cmd.get(3).asInt32(), &dtmp, &dtmp2);
