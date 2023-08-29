@@ -29,6 +29,9 @@ class LLM_nws_yarp : public yarp::dev::DeviceDriver,
                      public yarp::os::PortReader
 {
 
+private:
+    std::string m_streaming_port_name = "/llm/conv:o";
+
 protected:
     ILLMRPCd    m_RPC;
     yarp::os::RpcServer m_RpcPort;

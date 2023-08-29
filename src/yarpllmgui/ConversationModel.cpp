@@ -1,35 +1,91 @@
-#include "ConversationModel.h"
+/*
+ * SPDX-FileCopyrightText: 2023-2023 Istituto Italiano di Tecnologia (IIT)
+ * SPDX-License-Identifier: BSD-3-Clause
+ */
 
+#include <ConversationModel.h>
 #include <iostream>
-
-void ConversationModel::setLocalRpc(const std::string& localRpc)
-{
-    m_prop.put("local",localRpc);
-}
 
 void ConversationModel::setRemoteRpc(const std::string& remoteRpc)
 {
-    m_prop.put("remote",remoteRpc);
+    m_prop.put("remote", remoteRpc);
 }
 
-void ConversationModel::configure()
+bool ConversationModel::setRemoteStreamingPort(const std::string& remote_streaming_port_name)
+{
+
+    bool ret = false;
+
+    m_conversation_port.useCallback(m_callback);
+
+    if (!m_conversation_port.open(m_conversation_port_name)) {
+        yWarning() << "Cannot open local streaming port " + m_conversation_port_name;
+        return ret;
+    }
+    ret = yarp::os::Network::connect(remote_streaming_port_name, m_conversation_port_name);
+    QObject::connect(&m_callback, &ConversationCallback::conversationChanged, this, &ConversationModel::refreshConversation);
+
+    return ret;
+}
+
+bool ConversationModel::setInterface()
 {
     if (!m_poly.open(m_prop)) {
-        yWarning() << "Cannot open LLM_nwc_yarp, is it running?";
+        yWarning() << "Cannot open LLM_nwc_yarp";
+        return false;
     }
-    m_poly.view(m_iLlm);
+
+    if (!m_poly.view(m_iLlm)) {
+        yWarning() << "Cannot open interface from driver";
+        return false;
+    }
+
+    return true;
+}
+
+bool ConversationModel::configure(const std::string& remote_rpc, const std::string& streaming_port_name)
+{
+    bool ret = false;
+
+    if (!remote_rpc.empty()) {
+        setRemoteRpc(remote_rpc);
+        ret = setInterface();
+    }
+
+    if (!streaming_port_name.empty()) {
+        if (!m_conversation_port.isClosed()) {
+            m_conversation_port.close();
+        }
+        ret = setRemoteStreamingPort(streaming_port_name);
+    }
+
+    // We set at least the remote_rpc or streaming_port_name so we try to refresh.
+    // This is consistent with what the user expects when making a succesfull configuration.
+    if (ret) {
+        refreshConversation();
+    }
+
+    return ret;
+}
+
+void ConversationModel::configure(const QString& remote_rpc, const QString& streaming_port_name)
+{
+    configure(remote_rpc.toStdString(), streaming_port_name.toStdString());
 }
 
 QVariant ConversationModel::data(const QModelIndex& index, int role) const
 {
-    if (index.row() < 0 || index.row() >= m_conversation.count())
+    if (index.row() < 0 || index.row() >= m_conversation.count()) {
         return QVariant();
+    }
 
     const Message& message = m_conversation[index.row()];
-    if (role == TypeRole)
+    if (role == TypeRole) {
         return message.type();
-    else if (role == ContentRole)
+    }
+    else if (role == ContentRole) {
         return message.content();
+    }
 
     return QVariant();
 }
@@ -77,7 +133,11 @@ void ConversationModel::refreshConversation()
     }
 
     std::vector<std::pair<Author, Content>> conversation;
-    auto ok = m_iLlm->getConversation(conversation);
+
+    if (!m_iLlm->getConversation(conversation)) {
+        yError() << "Unable to get conversation";
+        return;
+    }
 
     for (const auto& [author, message] : conversation) {
         addMessage(Message(QString::fromStdString(author), QString::fromStdString(message)));
@@ -98,6 +158,8 @@ void ConversationModel::sendMessage(const QString& message)
 
     if (!m_iLlm) {
         yError() << m_no_device_message;
+        addMessage(Message(QString::fromStdString("User"), QString::fromStdString(m_no_device_message)));
+        addMessage(Message(QString::fromStdString("User"), QString::fromStdString("Please use the menu from the gui to add a valid connection to an existing LLM_nws")));
         return;
     }
 

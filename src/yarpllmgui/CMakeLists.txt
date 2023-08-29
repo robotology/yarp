@@ -10,10 +10,12 @@ if(YARP_COMPILE_yarpllmgui)
   set(yarpllmgui_SRCS
     main.cpp
     ConversationModel.cpp
+    ConversationCallback.cpp
   )
 
   set(yarpllmgui_HDRS
     ConversationModel.h
+    ConversationCallback.h
   )
 
   set(yarpllmgui_QRC_FILES
@@ -22,6 +24,7 @@ if(YARP_COMPILE_yarpllmgui)
 
   set(yarpllmgui_QML_FILES
     main.qml
+    ConfigurePopup.qml
   )
 
   qt5_add_resources(yarpllmgui_QRC_GEN_SRCS ${yarpllmgui_QRC_FILES})

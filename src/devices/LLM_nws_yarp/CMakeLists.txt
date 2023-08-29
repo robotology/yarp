@@ -22,7 +22,10 @@ if(NOT SKIP_LLM_nws_yarp)
   )
 
   target_sources(yarp_LLM_nws_yarp PRIVATE $<TARGET_OBJECTS:ILLMMsgs>)
-  target_include_directories(yarp_LLM_nws_yarp PRIVATE $<TARGET_PROPERTY:ILLMMsgs,INTERFACE_INCLUDE_DIRECTORIES>)
+  target_include_directories(yarp_LLM_nws_yarp
+    PRIVATE
+    $<TARGET_PROPERTY:ILLMMsgs,INTERFACE_INCLUDE_DIRECTORIES>
+    ${CMAKE_CURRENT_SOURCE_DIR})
 
   target_link_libraries(yarp_LLM_nws_yarp
     YARP::YARP_os
