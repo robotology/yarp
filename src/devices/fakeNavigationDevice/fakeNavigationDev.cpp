@@ -53,29 +53,27 @@ bool fakeNavigation :: open(yarp::os::Searchable& config)
     Property p;
     p.fromString(config.toString());
 #endif
-    navThread = new fakeNavigationThread(0.010, p);
 
-    if (!navThread->start())
+    if (rf.check("navigation_time"))
     {
-        delete navThread;
-        return false;
+        m_navig_duration_param = rf.find ("navigation_time").asInt32();
+    }
+    if (rf.check("reached_time"))
+    {
+        m_reached_duration_param = rf.find("reached_time").asInt32();
     }
 
+    this->start();
     return true;
 }
 
-fakeNavigation::fakeNavigation()
+fakeNavigation::fakeNavigation() : yarp::os::PeriodicThread(0.010)
 {
-    navThread =NULL;
 }
 
 //module cleanup
 bool fakeNavigation:: close()
 {
-    navThread->stop();
-    delete navThread;
-    navThread =NULL;
-
     return true;
 }
 
@@ -85,6 +83,7 @@ bool fakeNavigation::gotoTargetByAbsoluteLocation(Map2DLocation loc)
     {
         m_status = NavigationStatusEnum::navigation_status_moving;
         m_absgoal_loc = loc;
+        m_time_counter=m_navig_duration_param;
     }
     return true;
 }
@@ -190,21 +189,39 @@ bool fakeNavigation::getRelativeLocationOfCurrentTarget(double& x, double& y, do
     return true;
 }
 
-fakeNavigationThread::fakeNavigationThread(double _period, yarp::os::Searchable& _cfg) : PeriodicThread(_period)
-{
-}
-
-bool fakeNavigationThread::threadInit()
+bool fakeNavigation::threadInit()
 {
     return true;
 }
 
-void fakeNavigationThread::threadRelease()
+void fakeNavigation::threadRelease()
 {
 
 }
 
-void fakeNavigationThread::run()
+void fakeNavigation::run()
 {
-
+    if (m_status == NavigationStatusEnum::navigation_status_moving)
+    {
+        if (m_time_counter>0)
+        {
+            m_time_counter--;
+        }
+        else
+        {
+            m_status = NavigationStatusEnum::navigation_status_goal_reached;
+            m_time_counter = m_reached_duration_param;
+        }
+    }
+    if (m_status == NavigationStatusEnum::navigation_status_goal_reached)
+    {
+        if (m_time_counter > 0)
+        {
+            m_time_counter--;
+        }
+        else
+        {
+            m_status = NavigationStatusEnum::navigation_status_idle;
+        }
+    }
 }

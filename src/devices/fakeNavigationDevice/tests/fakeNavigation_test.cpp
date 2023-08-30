@@ -46,6 +46,7 @@ TEST_CASE("dev::FakeNavigationTest", "[yarp::dev]")
         // Do tests
         //yarp::dev::tests::exec_iNav2D_test_1(inav, imap);
         //yarp::dev::tests::exec_iNav2D_test_2(inav, imap);
+        yarp::dev::tests::exec_iNav2D_test_3(inav_target, inav_control);
 
         //"Close all polydrivers and check"
         {
