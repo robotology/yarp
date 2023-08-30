@@ -194,30 +194,6 @@ bool AudioPlayerWrapper::open(yarp::os::Searchable &config)
     yCInfo(AUDIOPLAYERWRAPPER) << "Using a 'playback_network_buffer_size' of" << m_buffer_delay << "s";
     yCInfo(AUDIOPLAYERWRAPPER) << "Increase this value to robustify the real-time audio stream (it will increase latency too)";
 
-    if(config.check("subdevice"))
-    {
-        Property       p;
-        p.fromString(config.toString(), false);
-        p.put("device", config.find("subdevice").asString());
-
-        if(!m_driver.open(p) || !m_driver.isValid())
-        {
-            yCError(AUDIOPLAYERWRAPPER) << "Failed to open subdevice.. check params";
-            return false;
-        }
-        if(!attach(&m_driver))
-        {
-            yCError(AUDIOPLAYERWRAPPER) << "Failed to open subdevice.. check params";
-            return false;
-        }
-        m_isDeviceOwned = true;
-        if (m_irender == nullptr)
-        {
-            yCError(AUDIOPLAYERWRAPPER, "m_irender is null\n");
-            return false;
-        }
-    }
-
     return true;
 }
 
@@ -325,9 +301,5 @@ bool AudioPlayerWrapper::close()
         PeriodicThread::stop();
     }
 
-    if(m_config.check("subdevice"))
-    {
-        detach();
-    }
     return true;
 }

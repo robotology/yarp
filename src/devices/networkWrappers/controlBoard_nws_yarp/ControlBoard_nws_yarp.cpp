@@ -111,16 +111,6 @@ bool ControlBoard_nws_yarp::open(Searchable& config)
         period = default_period;
     }
 
-    // Check if we need to create subdevice or if they are
-    // passed later on through attachAll()
-    if (prop.check("subdevice")) {
-        if (!openAndAttachSubDevice(prop)) {
-            yCError(CONTROLBOARD, "Error while opening subdevice");
-            return false;
-        }
-        subdevice_ready = true;
-    }
-
     rootName = prop.check("rootName", Value("/"), "starting '/' if needed.").asString();
     partName = prop.check("name", Value("controlboard"), "prefix for port names").asString();
     rootName += (partName);
@@ -173,37 +163,10 @@ bool ControlBoard_nws_yarp::open(Searchable& config)
     return true;
 }
 
-
-// For the simulator, if a subdevice parameter is given to the wrapper, it will
-// open it and attach to immediately.
-bool ControlBoard_nws_yarp::openAndAttachSubDevice(Property& prop)
-{
-    Property p;
-    auto* subDeviceOwned = new PolyDriver;
-    p.fromString(prop.toString());
-
-    std::string subdevice = prop.find("subdevice").asString();
-    p.unput("device");
-    p.put("device", subdevice); // subdevice was already checked before
-
-    // if errors occurred during open, quit here.
-    yCDebug(CONTROLBOARD, "opening subdevice");
-    subDeviceOwned->open(p);
-
-    if (!subDeviceOwned->isValid()) {
-        yCError(CONTROLBOARD, "opening subdevice... FAILED");
-        return false;
-    }
-
-    return setDevice(subDeviceOwned, true);
-}
-
-
 bool ControlBoard_nws_yarp::setDevice(yarp::dev::DeviceDriver* driver, bool owned)
 {
     // Save the pointer and subDeviceOwned
-    subdevice_ptr = driver;
-    subdevice_owned = owned;
+    yarp::dev::DeviceDriver* subdevice_ptr = driver;
 
     // yarp::dev::IJointFault* iJointFault{nullptr};
     subdevice_ptr->view(iJointFault);
@@ -220,7 +183,8 @@ bool ControlBoard_nws_yarp::setDevice(yarp::dev::DeviceDriver* driver, bool owne
     // yarp::dev::IPositionControl* iPositionControl{nullptr};
     subdevice_ptr->view(iPositionControl);
     if (!iPositionControl) {
-        yCWarning(CONTROLBOARD, "Part <%s>: IPositionControl interface was not found in subdevice.", partName.c_str());
+        yCError(CONTROLBOARD, "Part <%s>: IPositionControl interface was not found in subdevice. Quitting", partName.c_str());
+        return false;
     }
 
     // yarp::dev::IPositionDirect* iPositionDirect{nullptr};
@@ -232,13 +196,15 @@ bool ControlBoard_nws_yarp::setDevice(yarp::dev::DeviceDriver* driver, bool owne
     // yarp::dev::IVelocityControl* iVelocityControl{nullptr};
     subdevice_ptr->view(iVelocityControl);
     if (!iVelocityControl) {
-        yCWarning(CONTROLBOARD, "Part <%s>: IVelocityControl interface was not found in subdevice.", partName.c_str());
+        yCError(CONTROLBOARD, "Part <%s>: IVelocityControl interface was not found in subdevice. Quitting", partName.c_str());
+        return false;
     }
 
     // yarp::dev::IEncodersTimed* iEncodersTimed{nullptr};
     subdevice_ptr->view(iEncodersTimed);
     if (!iEncodersTimed) {
-        yCWarning(CONTROLBOARD, "Part <%s>: IEncodersTimed interface was not found in subdevice.", partName.c_str());
+        yCError(CONTROLBOARD, "Part <%s>: IEncodersTimed interface was not found in subdevice. Quitting", partName.c_str());
+        return false;
     }
 
     // yarp::dev::IMotor* iMotor{nullptr};
@@ -327,32 +293,11 @@ bool ControlBoard_nws_yarp::setDevice(yarp::dev::DeviceDriver* driver, bool owne
 
 
     // Get the number of controlled joints
-    int tmp_axes = 0;
-    if (iAxisInfo)
-    {
-        if (!iAxisInfo->getAxes(&tmp_axes)) {
-            yCError(CONTROLBOARD) << "Part <%s>: iAxisInfo->getAxes() failed for subdevice " << partName.c_str();
-            return false;}
+    int tmp_axes;
+    if (!iPositionControl->getAxes(&tmp_axes)) {
+        yCError(CONTROLBOARD) << "Part <%s>: Failed to get axes number for subdevice " << partName.c_str();
+        return false;
     }
-    else if (iEncodersTimed)
-    {
-        if (!iEncodersTimed->getAxes(&tmp_axes)) {
-            yCError(CONTROLBOARD) << "Part <%s>: iEncodersTimed->getAxes() failed for subdevice " << partName.c_str();
-            return false;}
-    }
-    else if (iPositionControl)
-    {
-        if (!iPositionControl->getAxes(&tmp_axes)) {
-            yCError(CONTROLBOARD) << "Part <%s>: iPositionControl->getAxes() failed for subdevice " << partName.c_str();
-            return false;}
-    }
-    else if(iVelocityControl)
-    {
-        if (!iVelocityControl->getAxes(&tmp_axes)) {
-            yCError(CONTROLBOARD) << "Part <%s>: iVelocityControl->getAxes() failed for subdevice " << partName.c_str();
-            return false;}
-    }
-
     if (tmp_axes <= 0) {
         yCError(CONTROLBOARD, "Part <%s>: attached device has an invalid number of joints (%d)", partName.c_str(), tmp_axes);
         return false;
@@ -376,13 +321,6 @@ void ControlBoard_nws_yarp::closeDevice()
     streaming_parser.reset();
     RPC_parser.reset();
 
-    // If the subdevice is owned, close and delete the device
-    if (subdevice_owned) {
-        subdevice_ptr->close();
-        delete subdevice_ptr;
-    }
-    subdevice_ptr = nullptr;
-    subdevice_owned = false;
     subdevice_joints = 0;
     subdevice_ready = false;
 
@@ -433,11 +371,6 @@ bool ControlBoard_nws_yarp::attach(yarp::dev::PolyDriver* poly)
 
 bool ControlBoard_nws_yarp::detach()
 {
-    //check if we already instantiated a subdevice previously
-    if (subdevice_owned) {
-        return false;
-    }
-
     // Ensure that the device is not running
     if (isRunning()) {
         stop();
@@ -453,7 +386,7 @@ void ControlBoard_nws_yarp::run()
     // check we are not overflowing with input messages
     constexpr int reads_for_warning = 20;
     if (inputStreamingPort.getPendingReads() >= reads_for_warning) {
-        yCIWarning(CONTROLBOARD, id()) << "Number of streaming input messages to be read is" << inputStreamingPort.getPendingReads() << "and can overflow";
+        yCWarning(CONTROLBOARD) << "Number of streaming input messages to be read is " << inputStreamingPort.getPendingReads() << " and can overflow";
     }
 
     // handle stateExt first
@@ -529,7 +462,8 @@ void ControlBoard_nws_yarp::run()
     {
         if (std::abs(times[0] - tt) > 1.0)
         {
-            yCIErrorThrottle(CONTROLBOARD, id(), 1.0) << "Encoder timestamps are not consistent! Data will not be published.";
+            yCError(CONTROLBOARD, "Encoder Timestamps are not consistent! Data will not be published.");
+            yarp::sig::Vector _data(subdevice_joints);
             return;
         }
     }

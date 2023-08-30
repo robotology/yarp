@@ -53,7 +53,6 @@ class AnalogPortEntry;
  * |:--------------:|:--------------:|:-------:|:--------------:|:-------------:|:--------------------------: |:-----------------------------------------------------------------:|:-----:|
  * | name           |      -         | string  | -              |   -           | Yes                         | full name of the port opened by the device, like /robotName/part/ | MUST start with a '/' character |
  * | period         |      -         | int     | ms             |   20          | No                          | refresh period of the broadcasted values in ms                    | optional, default 20ms |
- * | subdevice      |      -         | string  | -              |   -           | alternative to netwok group | name of the subdevice to instantiate                              | when used, parameters for the subdevice must be provided as well |
  * | ports          |      -         | group   | -              |   -           | alternative to subdevice    | this is expected to be a group parameter in xml format, a list in .ini file format. SubParameter are mandatory if this is used| - |
  * | -              | portName_1     | 4 * int | channel number |   -           |   if ports is used          | describe how to match subdevice_1 channels with the wrapper channels. First 2 numbers indicate first/last wrapper channel, last 2 numbers are subdevice first/last channel | The channels are intended to be consequent |
  * | -              |      ...       | 4 * int | channel number |   -           |   if ports is used          | same as above                                                     | The channels are intended to be consequent |
@@ -161,15 +160,6 @@ private:
     yarp::sig::Vector lastDataRead;             // the last vector of data read from the attached IAnalogSensor
     int _rate{DEFAULT_THREAD_PERIOD};
     std::string sensorId;
-
-    bool ownDevices{false};
-    // Open the wrapper only, the attach method needs to be called before using it
-    bool openDeferredAttach(yarp::os::Searchable &prop);
-
-    // For the simulator, if a subdevice parameter is given to the wrapper, it will
-    // open it and attach to it immediately.
-    yarp::dev::PolyDriver *subDeviceOwned{nullptr};
-    bool openAndAttachSubDevice(yarp::os::Searchable &prop);
 
     bool initialize_YARP(yarp::os::Searchable &config);
     void setHandlers();

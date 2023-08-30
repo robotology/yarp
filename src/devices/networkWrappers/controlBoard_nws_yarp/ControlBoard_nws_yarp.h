@@ -56,7 +56,6 @@
  * |:--------------:|:--------------:|:-------:|:--------------:|:-------------:|:--------------------------: |:-----------------------------------------------------------------:|:-----:|
  * | name           |      -         | string  | -              |   -           | Yes                         | full name of the port opened by the device, like /robotName/part/ | MUST start with a '/' character |
  * | period         |      -         | double  | s              |   0.02        | No                          | refresh period of the broadcasted values in s                     | optional, default 0.02s period|
- * | subdevice      |      -         | string  | -              |   -           | No                          | name of the subdevice to instantiate                              | when used, parameters for the subdevice must be provided as well |
  */
 
 class ControlBoard_nws_yarp :
@@ -87,8 +86,6 @@ private:
     yarp::sig::Vector times; // time for each joint
     yarp::os::Stamp time; // envelope to attach to the state port
 
-    yarp::dev::DeviceDriver* subdevice_ptr{nullptr};
-    bool subdevice_owned = false;
     size_t subdevice_joints {0};
     bool subdevice_ready = false;
 

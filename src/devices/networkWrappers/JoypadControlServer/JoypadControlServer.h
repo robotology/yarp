@@ -55,8 +55,6 @@ class JoypadControlServer :
     JoypadCtrlParser                m_parser;
     yarp::dev::IJoypadController*   m_IJoypad;
     yarp::os::Port                  m_rpcPort;
-    yarp::dev::PolyDriver*          m_subDeviceOwned;
-    bool                            m_isSubdeviceOwned;
     bool                            m_separatePorts;
     bool                            m_profile;
     std::string           m_rpcPortName;
@@ -87,7 +85,6 @@ public:
     bool fromConfig(yarp::os::Searchable& params);
     bool close() override;
     bool attach(yarp::dev::PolyDriver* poly) override;
-    bool attach(yarp::dev::IJoypadController* s);
     bool detach() override;
     bool threadInit() override;
     void threadRelease() override;

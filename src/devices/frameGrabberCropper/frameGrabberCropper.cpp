@@ -59,38 +59,12 @@ bool FrameGrabberCropper::open(yarp::os::Searchable& config)
         forwardRgbVisualParams = true;
     }
 
-    if (config.check("subdevice")) {
-        yarp::os::Property p;
-        subdevice = new yarp::dev::PolyDriver;
-        p.fromString(config.toString());
-        p.unput("device");
-        p.put("device", config.find("subdevice").asString()); // subdevice was already checked before
-
-        // if errors occurred during open, quit here.
-        if (!subdevice->open(p) || !(subdevice->isValid())) {
-            yCError(FRAMEGRABBERCROPPER, "Could not open subdevice");
-            return false;
-        }
-
-        if (!attach(subdevice)) {
-            yCError(FRAMEGRABBERCROPPER, "Could not attach subdevice");
-            subdevice->close();
-            return false;
-        }
-        subdeviceOwned = true;
-    }
-
     return true;
 }
 
 
 bool FrameGrabberCropper::close()
 {
-    if (subdeviceOwned) {
-        subdevice->close();
-        delete subdevice;
-        subdevice = nullptr;
-    }
     return true;
 }
 

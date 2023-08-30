@@ -51,14 +51,6 @@ bool FrameGrabber_nws_yarp::close()
     delete img_Raw;
     img_Raw = nullptr;
 
-    if (subdevice) {
-        subdevice->close();
-        delete subdevice;
-        subdevice = nullptr;
-    }
-
-    isSubdeviceOwned = false;
-
     return true;
 }
 
@@ -118,37 +110,7 @@ bool FrameGrabber_nws_yarp::open(yarp::os::Searchable& config)
     }
     pImg.setReader(*this);
 
-
-    // Check "subdevice" option and eventually open the device
-    isSubdeviceOwned = config.check("subdevice");
-    if (isSubdeviceOwned) {
-        yarp::os::Property p;
-        subdevice = new yarp::dev::PolyDriver;
-        p.fromString(config.toString());
-        if (cap == COLOR) {
-            p.put("pixelType", VOCAB_PIXEL_RGB);
-        } else {
-            p.put("pixelType", VOCAB_PIXEL_MONO);
-        }
-
-        p.unput("device");
-        p.put("device", config.find("subdevice").asString()); // subdevice was already checked before
-
-        // if errors occurred during open, quit here.
-        subdevice->open(p);
-
-        if (!(subdevice->isValid())) {
-            yCError(FRAMEGRABBER_NWS_YARP, "Unable to open subdevice");
-            return false;
-        }
-        if (!attach(subdevice)) {
-            yCError(FRAMEGRABBER_NWS_YARP, "Unable to attach subdevice");
-            return false;
-        }
-    } else {
-        yCInfo(FRAMEGRABBER_NWS_YARP) << "Running, waiting for attach...";
-    }
-
+    yCInfo(FRAMEGRABBER_NWS_YARP) << "Running, waiting for attach...";
     active = true;
 
     return true;

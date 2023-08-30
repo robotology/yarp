@@ -172,9 +172,7 @@ RgbdSensor_nws_yarp::RgbdSensor_nws_yarp() :
     sensor_p(nullptr),
     fgCtrl(nullptr),
     sensorStatus(IRGBDSensor::RGBD_SENSOR_NOT_READY),
-    verbose(4),
-    isSubdeviceOwned(false),
-    subDeviceOwned(nullptr)
+    verbose(4)
 {}
 
 RgbdSensor_nws_yarp::~RgbdSensor_nws_yarp()
@@ -210,23 +208,6 @@ bool RgbdSensor_nws_yarp::open(yarp::os::Searchable &config)
         return false;
     }
 
-    // check if we need to create subdevice or if they are
-    // passed later on through attachAll()
-    if(isSubdeviceOwned)
-    {
-        if(! openAndAttachSubDevice(config))
-        {
-            yCError(RGBDSENSORNWSYARP, "Error while opening subdevice");
-            return false;
-        }
-    }
-    else
-    {
-        if (!openDeferredAttach(config)) {
-            return false;
-        }
-    }
-
     return true;
 }
 
@@ -255,45 +236,6 @@ bool RgbdSensor_nws_yarp::fromConfig(yarp::os::Searchable &config)
     colorFrame_StreamingPort_Name = rootName + "/rgbImage:o";
     depthFrame_StreamingPort_Name = rootName + "/depthImage:o";
 
-    if(config.check("subdevice")) {
-        isSubdeviceOwned=true;
-    } else {
-        isSubdeviceOwned=false;
-    }
-
-    return true;
-}
-
-bool RgbdSensor_nws_yarp::openDeferredAttach(Searchable& prop)
-{
-    // I dunno what to do here now...
-    isSubdeviceOwned = false;
-    return true;
-}
-
-bool RgbdSensor_nws_yarp::openAndAttachSubDevice(Searchable& prop)
-{
-    Property p;
-    subDeviceOwned = new PolyDriver;
-    p.fromString(prop.toString());
-
-    p.unput("device");
-    p.put("device",prop.find("subdevice").asString());  // subdevice was already checked before
-
-    // if errors occurred during open, quit here.
-    yCDebug(RGBDSENSORNWSYARP, "Opening IRGBDSensor subdevice");
-    subDeviceOwned->open(p);
-
-    if (!subDeviceOwned->isValid())
-    {
-        yCError(RGBDSENSORNWSYARP, "Opening IRGBDSensor subdevice... FAILED");
-        return false;
-    }
-    isSubdeviceOwned = true;
-    if(!attach(subDeviceOwned)) {
-        return false;
-    }
-
     return true;
 }
 
@@ -302,21 +244,7 @@ bool RgbdSensor_nws_yarp::close()
     yCTrace(RGBDSENSORNWSYARP, "Close");
     detach();
 
-    // close subdevice if it was created inside the open (--subdevice option)
-    if(isSubdeviceOwned)
-    {
-        if(subDeviceOwned)
-        {
-            delete subDeviceOwned;
-            subDeviceOwned=nullptr;
-        }
-        sensor_p = nullptr;
-        fgCtrl = nullptr;
-        isSubdeviceOwned = false;
-    }
-
     // Closing port
-
     rpcPort.interrupt();
     colorFrame_StreamingPort.interrupt();
     depthFrame_StreamingPort.interrupt();
@@ -364,11 +292,6 @@ bool RgbdSensor_nws_yarp::detach()
 {
     if (yarp::os::PeriodicThread::isRunning()) {
         yarp::os::PeriodicThread::stop();
-    }
-
-    //check if we already instantiated a subdevice previously
-    if (isSubdeviceOwned) {
-        return false;
     }
 
     sensor_p = nullptr;
@@ -528,7 +451,7 @@ bool RgbdSensor_nws_yarp::writeData()
     else { oldDepthStamp = depthStamp; }
 
     // TBD: We should check here somehow if the timestamp was correctly updated and, if not, update it ourselves.
-    if (rgb_data_ok && colorFrame_StreamingPort.getOutputCount() > 0)
+    if (rgb_data_ok)
     {
         FlexImage& yColorImage = colorFrame_StreamingPort.prepare();
         yColorImage.setPixelCode(colorImage.getPixelCode());
@@ -537,7 +460,7 @@ bool RgbdSensor_nws_yarp::writeData()
         colorFrame_StreamingPort.setEnvelope(colorStamp);
         colorFrame_StreamingPort.write();
     }
-    if (depth_data_ok && depthFrame_StreamingPort.getOutputCount() > 0)
+    if (depth_data_ok)
     {
         ImageOf<PixelFloat>& yDepthImage = depthFrame_StreamingPort.prepare();
         yDepthImage.setQuantum(depthImage.getQuantum());

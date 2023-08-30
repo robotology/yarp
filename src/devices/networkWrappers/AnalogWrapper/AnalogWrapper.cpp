@@ -247,69 +247,12 @@ void AnalogWrapper::removeHandlers()
     handlers.clear();
 }
 
-bool AnalogWrapper::openAndAttachSubDevice(Searchable &prop)
-{
-    Property p;
-    subDeviceOwned = new PolyDriver;
-    p.fromString(prop.toString());
-
-//     p.setMonitor(prop.getMonitor(), "subdevice"); // pass on any monitoring
-    p.unput("device");
-    p.put("device", prop.find("subdevice").asString());  // subdevice was already checked before
-
-    // if errors occurred during open, quit here.
-    yCDebug(ANALOGWRAPPER, "opening AnalogWrapper subdevice...");
-    subDeviceOwned->open(p);
-
-    if (!subDeviceOwned->isValid())
-    {
-        yCError(ANALOGWRAPPER, "opening AnalogWrapper subdevice... FAILED\n");
-        return false;
-    }
-
-    subDeviceOwned->view(analogSensor_p);
-
-    if (analogSensor_p == nullptr)
-    {
-        yCError(ANALOGWRAPPER, "Opening IAnalogSensor interface of AnalogWrapper subdevice... FAILED\n");
-        return false;
-    }
-
-    int chNum = analogSensor_p->getChannels();
-
-    if (chNum <= 0)
-    {
-        yCError(ANALOGWRAPPER, "Calling analog sensor has invalid channels number %d.\n", chNum);
-        return false;
-    }
-
-    attach(analogSensor_p);
-    PeriodicThread::setPeriod(_rate / 1000.0);
-    return PeriodicThread::start();
-}
-
-
-bool AnalogWrapper::openDeferredAttach(yarp::os::Searchable &prop)
-{
-    // nothing to do here?
-    if ((subDeviceOwned != nullptr) || (ownDevices == true)) {
-        yCError(ANALOGWRAPPER) << "AnalogWrapper: something wrong with the initialization.";
-    }
-    return true;
-}
-
-
 /**
   * Specify which analog sensor this thread has to read from.
   */
 
 bool AnalogWrapper::attachAll(const PolyDriverList &analog2attach)
 {
-    //check if we already instantiated a subdevice previously
-    if (ownDevices) {
-        return false;
-    }
-
     if (analog2attach.size() != 1)
     {
         yCError(ANALOGWRAPPER, "AnalogWrapper: cannot attach more than one device");
@@ -335,11 +278,6 @@ bool AnalogWrapper::attachAll(const PolyDriverList &analog2attach)
 
 bool AnalogWrapper::detachAll()
 {
-    //check if we already instantiated a subdevice previously
-    if (ownDevices) {
-        return false;
-    }
-
     analogSensor_p = nullptr;
     for(unsigned int i=0; i<analogPorts.size(); i++)
     {
@@ -431,25 +369,6 @@ bool AnalogWrapper::open(yarp::os::Searchable &config)
     {
         yCError(ANALOGWRAPPER) << sensorId << "Error initializing YARP ports";
         return false;
-    }
-
-    // check if we need to create subdevice or if they are
-    // passed later on thorugh attachAll()
-    if(config.check("subdevice"))
-    {
-        ownDevices=true;
-        if(! openAndAttachSubDevice(config))
-        {
-            yCError(ANALOGWRAPPER, "AnalogWrapper: error while opening subdevice\n");
-            return false;
-        }
-    }
-    else
-    {
-        ownDevices=false;
-        if (!openDeferredAttach(config)) {
-            return false;
-        }
     }
 
     return true;
@@ -622,13 +541,6 @@ bool AnalogWrapper::close()
 
     detachAll();
     removeHandlers();
-
-    if(subDeviceOwned)
-    {
-        subDeviceOwned->close();
-        delete subDeviceOwned;
-        subDeviceOwned = nullptr;
-    }
 
     return true;
 }

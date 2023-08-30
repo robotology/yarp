@@ -152,36 +152,8 @@ bool MultipleAnalogSensorsServer::open(yarp::os::Searchable& config)
     m_RPCPortName = name + "/rpc:o";
     m_streamingPortName = name + "/measures:o";
 
-    if (config.check("subdevice"))
-    {
-        std::string subdeviceName = config.find("subdevice").asString();
 
-        yarp::os::Property driverConfig;
-        driverConfig.fromString(config.toString());
-        driverConfig.put("device", subdeviceName);
 
-        if (!m_subdevice.open(driverConfig))
-        {
-            yCError(MULTIPLEANALOGSENSORSSERVER, "Opening subdevice failed.");
-            return false;
-        }
-
-        yarp::dev::PolyDriverList driverList;
-        driverList.push(&m_subdevice, subdeviceName.c_str());
-
-        if (!attachAll(driverList))
-        {
-            yCError(MULTIPLEANALOGSENSORSSERVER, "Attaching subdevice failed.");
-            return false;
-        }
-
-        yCInfo(MULTIPLEANALOGSENSORSSERVER,
-               "Subdevice \"%s\" successfully configured and attached.",
-               subdeviceName.c_str());
-        m_isDeviceOwned = true;
-    }
-
-    yCDebug(MULTIPLEANALOGSENSORSSERVER, "Open complete");
     return true;
 }
 
@@ -189,13 +161,6 @@ bool MultipleAnalogSensorsServer::close()
 {
     bool ok = this->detachAll();
 
-    if (m_isDeviceOwned)
-    {
-        ok &= m_subdevice.close();
-        m_isDeviceOwned = false;
-    }
-
-    yCDebug(MULTIPLEANALOGSENSORSSERVER, "Close complete");
     return ok;
 }
 
@@ -449,7 +414,6 @@ bool MultipleAnalogSensorsServer::attachAll(const yarp::dev::PolyDriverList& p)
 
     if(!ok)
     {
-        yCError(MULTIPLEANALOGSENSORSSERVER, "Failure in populateAllSensorsMetadata()");
         close();
         return false;
     }
@@ -489,7 +453,6 @@ bool MultipleAnalogSensorsServer::attachAll(const yarp::dev::PolyDriverList& p)
         return false;
     }
 
-    yCDebug(MULTIPLEANALOGSENSORSSERVER, "Attach complete");
     return true;
 }
 
@@ -504,7 +467,6 @@ bool MultipleAnalogSensorsServer::detachAll()
     m_rpcPort.close();
     m_streamingPort.close();
 
-    yCDebug(MULTIPLEANALOGSENSORSSERVER, "Detach complete");
     return true;
 }
 

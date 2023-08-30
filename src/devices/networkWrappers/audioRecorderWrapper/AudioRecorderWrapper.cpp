@@ -90,27 +90,6 @@ bool AudioRecorderWrapper::open(yarp::os::Searchable& config)
     }
     m_rpcPort.setReader(*this);
 
-    // Subdevice check and initialization
-    if (config.check("subdevice"))
-    {
-        yarp::os::Property       p;
-        p.fromString(config.toString(), false);
-        p.put("device", config.find("subdevice").asString());
-
-        if (!m_driver.open(p) || !m_driver.isValid())
-        {
-            yCError(AUDIORECORDERWRAPPER) << "Failed to open subdevice.. check params";
-            return false;
-        }
-
-        if (!attach(&m_driver))
-        {
-            yCError(AUDIORECORDERWRAPPER) << "Failed to open subdevice.. check params";
-            return false;
-        }
-        m_isDeviceOwned = true;
-    }
-
     return true;
 }
 

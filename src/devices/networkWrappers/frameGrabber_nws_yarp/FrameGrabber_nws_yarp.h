@@ -45,7 +45,6 @@
  * | period         |      -                  | double  | s              |   0.03        | No       | refresh period (in s) of the broadcasted values through yarp ports               | default 0.03s |
  * | name           |      -                  | string  | -              |   /grabber    | No       | Prefix name of the ports opened by the FrameGrabber_nws_yarp                     | Required suffix like '/rpc' will be added by the device |
  * | capabilities   |      -                  | string  | -              |   COLOR       | No       | two capabilities supported, COLOR and RAW respectively for rgb and raw streaming | - |
- * | subdevice      |      -                  | string  | -              |   -           | No       | name of the subdevice to use as a data source                                    | when used, parameters for the subdevice must be provided as well; when not used, the device should be 'attached' |
 // FIXME DRDANZ no_drop?
  *
  * Some example of configuration files:
@@ -91,10 +90,6 @@ private:
     // Ports
     yarp::os::RpcServer rpcPort;
     yarp::os::BufferedPort<yarp::sig::FlexImage> pImg;
-
-    // Subdevice
-    yarp::dev::PolyDriver* subdevice {nullptr};
-    bool isSubdeviceOwned {false};
 
     // Interfaces handled
     yarp::dev::IRgbVisualParams* iRgbVisualParams {nullptr};

@@ -66,9 +66,6 @@ class FrameGrabberCropper :
         public yarp::dev::IRgbVisualParams,
         public yarp::dev::IPreciselyTimed
 {
-    yarp::dev::PolyDriver* subdevice{nullptr};
-    bool subdeviceOwned{false};
-
     yarp::dev::IFrameGrabberControls* iFrameGrabberControls{nullptr};
     yarp::dev::IFrameGrabberControlsDC1394* iFrameGrabberControlsDC1394{nullptr};
     yarp::dev::IRgbVisualParams* iRgbVisualParams{nullptr};

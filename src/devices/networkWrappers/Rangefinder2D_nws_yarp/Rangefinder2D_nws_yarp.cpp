@@ -33,8 +33,7 @@ YARP_LOG_COMPONENT(RANGEFINDER2D_NWS_YARP, "yarp.devices.Rangefinder2D_nws_yarp"
     maxAngle(0),
     minDistance(0),
     maxDistance(0),
-    resolution(0),
-    isDeviceOwned(false)
+    resolution(0)
 {}
 
 Rangefinder2D_nws_yarp::~Rangefinder2D_nws_yarp()
@@ -325,25 +324,6 @@ bool Rangefinder2D_nws_yarp::open(yarp::os::Searchable &config)
         return false;
     }
 
-    if(config.check("subdevice"))
-    {
-        Property       p;
-        p.fromString(config.toString(), false);
-        p.put("device", config.find("subdevice").asString());
-
-        if(!m_driver.open(p) || !m_driver.isValid())
-        {
-            yCError(RANGEFINDER2D_NWS_YARP) << "failed to open subdevice.. check params";
-            return false;
-        }
-
-        if(!attach(&m_driver))
-        {
-            yCError(RANGEFINDER2D_NWS_YARP) << "failed to open subdevice.. check params";
-            return false;
-        }
-        isDeviceOwned = true;
-    }
     return true;
 }
 

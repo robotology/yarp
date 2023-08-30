@@ -48,7 +48,6 @@
    * |:--------------:|:-----------------------:|:-------:|:--------------:|:-------------:|:-----------------------------: |:---------------------------------------------------------------------------------------------------:|:-----:|
    * | period         |      -                  | double  | s              |   0.02        | No                             | refresh period of the broadcasted values in s                                                      | default 0.02s |
    * | name           |      -                  | string  | -              |   -           | Yes                            | Prefix name of the ports opened by the wrapper, e.g. /robotName/Rangefinder2DSensor                 | Required suffix like '/rpc' will be added by the device      |
-   * | subdevice      |      -                  | string  | -              |   -           | alternative to 'attach' action | name of the subdevice to use as a data source                                                       | when used, parameters for the subdevice must be provided as well |
    * | frame_id       |      -                  | string  | -              |   -           | No                             | name of the attached frame                                                                          | Currently not used, reserved for future use                  |
    *
    * Example of configuration file using .ini format.
@@ -91,7 +90,6 @@ private:
     yarp::os::BufferedPort<yarp::dev::LaserScan2D> streamingPort;
 
     //interfaces
-    yarp::dev::PolyDriver m_driver;
     yarp::dev::IRangefinder2D *sens_p;
 
     //device data
@@ -100,7 +98,6 @@ private:
     double minAngle, maxAngle;
     double minDistance, maxDistance;
     double resolution;
-    bool   isDeviceOwned;
 
     //private methods
     bool initialize_YARP(yarp::os::Searchable &config);
