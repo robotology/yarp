@@ -41,7 +41,4 @@ yarp_install_basic_package_files(YARP_yarpcar
   PRIVATE_DEPENDENCIES ${YARP_yarpcar_PRIVATE_DEPS}
 )
 
-set_property(TARGET yarpcar PROPERTY FOLDER "Plugins/Carrier")
-
-include(YarpDeprecatedOption)
-yarp_renamed_option(CREATE_OPTIONAL_CARRIERS YARP_COMPILE_CARRIER_PLUGINS) # since YARP 3.0.0
+set_property(TARGET yarpcar PROPERTY FOLDER "Plugins")
