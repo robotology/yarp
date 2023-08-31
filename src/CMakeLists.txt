@@ -80,7 +80,6 @@ if(YARP_COMPILE_RobotTestingFramework_ADDONS)
 endif()
 
 # unmaintained stuff
-add_subdirectory(libyarpc)
 if(YARP_COMPILE_EXECUTABLES)
   add_subdirectory(yarpfs)
 endif()
