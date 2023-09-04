@@ -12,11 +12,14 @@
 #include <QQuickView>
 
 /**
- * Main file for yarpllmgui. The GUI should be invoked with the following parameters
- * @remote_rpc name of the rpc port to attach to.
- * @local_rpc name of the rpc port that the gui exposes.
- * Define it only if the name "/yarpllmgui/rpc" conflicts with an existing name
- * To define the parameters use the following utilities provided by the ResourceFinder.
+ * Main file for yarpllmgui. The GUI can be invoked with the following parameters
+ * @remote_rpc. Mandatory. Name of the rpc port to attach to.
+ * @streaming_port Optional. Name of the streaming port opened by the nws (by default /llm/conv:o).
+ * Allows to autorefresh the conversation in case it gets updated from outside the gui.
+ *
+ * These can also be specified within the gui after the opening. The gui will not work
+ * until a valid remote_rpc has been configured.
+ *
  */
 
 int main(int argc, char* argv[])
