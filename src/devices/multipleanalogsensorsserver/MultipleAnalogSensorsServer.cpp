@@ -182,6 +182,7 @@ bool MultipleAnalogSensorsServer::open(yarp::os::Searchable& config)
         m_isDeviceOwned = true;
     }
 
+    yCDebug(MULTIPLEANALOGSENSORSSERVER, "Open complete");
     return true;
 }
 
@@ -195,6 +196,7 @@ bool MultipleAnalogSensorsServer::close()
         m_isDeviceOwned = false;
     }
 
+    yCDebug(MULTIPLEANALOGSENSORSSERVER, "Close complete");
     return ok;
 }
 
@@ -448,6 +450,7 @@ bool MultipleAnalogSensorsServer::attachAll(const yarp::dev::PolyDriverList& p)
 
     if(!ok)
     {
+        yCError(MULTIPLEANALOGSENSORSSERVER, "Failure in populateAllSensorsMetadata()");
         close();
         return false;
     }
@@ -487,6 +490,7 @@ bool MultipleAnalogSensorsServer::attachAll(const yarp::dev::PolyDriverList& p)
         return false;
     }
 
+    yCDebug(MULTIPLEANALOGSENSORSSERVER, "Attach complete");
     return true;
 }
 
@@ -501,6 +505,7 @@ bool MultipleAnalogSensorsServer::detachAll()
     m_rpcPort.close();
     m_streamingPort.close();
 
+    yCDebug(MULTIPLEANALOGSENSORSSERVER, "Detach complete");
     return true;
 }
 
