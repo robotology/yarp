@@ -1389,7 +1389,9 @@ jobs:
           # Install build tools
           sudo apt-get install -qq -y ccache \
                                       ninja-build \
-                                      valgrind
+                                      valgrind \
+                                      openjdk-17-jdk \
+                                      openjdk-17-jre
 
           sudo apt-get install -qq -y libace-dev \
                                       libsqlite3-dev \
@@ -1576,7 +1578,9 @@ jobs:
           # Install build tools
           sudo apt-get install -qq -y ccache \
                                       ninja-build \
-                                      valgrind
+                                      valgrind \
+                                      openjdk-17-jdk \
+                                      openjdk-17-jre
 
           sudo apt-get install -qq -y libace-dev \
                                       libsqlite3-dev \
@@ -1783,7 +1787,9 @@ jobs:
           # Install build tools
           sudo apt-get install -qq -y ccache \
                                       ninja-build \
-                                      valgrind
+                                      valgrind \
+                                      openjdk-17-jdk \
+                                      openjdk-17-jre
 
           sudo apt-get install -qq -y libace-dev \
                                       libsqlite3-dev \
