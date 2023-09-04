@@ -936,6 +936,11 @@
            <string>Torque CoulombNeg</string>
           </property>
          </row>
+         <row>
+          <property name="text">
+           <string>Velocity Threshold</string>
+          </property>
+         </row>
          <column>
           <property name="text">
            <string>Current</string>

@@ -149,6 +149,7 @@ public:
     double viscousNeg_user2raw(double viscousNeg_user, int j);
     double coulombPos_user2raw(double coulombPos_user, int j);
     double coulombNeg_user2raw(double coulombNeg_user, int j);
+    double velocityThres_user2raw(double velocityThres_user, int j);
 
     void bemf_user2raw(double bemf_user, int j, double &bemf_raw, int &k);
     void ktau_user2raw(double ktau_user, int j, double &ktau_raw, int &k);
@@ -156,12 +157,14 @@ public:
     void viscousNeg_user2raw(double viscousNeg_user, int j, double &viscousNeg_raw, int &k);
     void coulombPos_user2raw(double coulombPos_user, int j, double &coulombPos_raw, int &k);
     void coulombNeg_user2raw(double coulombNeg_user, int j, double &coulombNeg_raw, int &k);
+    void velocityThres_user2raw(double velocityThres_user, int j, double &velocityThres_raw, int &k);
     void bemf_raw2user(double bemf_raw, int k_raw, double &bemf_user, int &j_user);
     void ktau_raw2user(double ktau_raw, int k_raw, double &ktau_user, int &j_user);
     void viscousPos_raw2user(double viscousPos_raw, int k_raw, double &viscousPos_user, int &j_user);
     void viscousNeg_raw2user(double viscousNeg_raw, int k_raw, double &viscousNeg_user, int &j_user);
     void coulombPos_raw2user(double coulombPos_raw, int k_raw, double &coulombPos_user, int &j_user);
     void coulombNeg_raw2user(double coulombNeg_raw, int k_raw, double &coulombNeg_user, int &j_user);
+    void velocityThres_raw2user(double threshold_raw, int k_raw, double &velocityThres_user, int &j_user);
 
     int axes();
 

@@ -44,6 +44,7 @@ public:
     double *viscousNegToRaws;
     double *coulombPosToRaws;
     double *coulombNegToRaws;
+    double *velocityThresToRaws;
 
     PidUnits* PosPid_units;
     PidUnits* VelPid_units;
@@ -68,6 +69,7 @@ public:
         viscousNegToRaws(nullptr),
         coulombPosToRaws(nullptr),
         coulombNegToRaws(nullptr),
+        velocityThresToRaws(nullptr),
         PosPid_units(nullptr),
         VelPid_units(nullptr),
         CurPid_units(nullptr),
@@ -87,6 +89,7 @@ public:
         std::fill_n(viscousNegToRaws, size, 1.0);
         std::fill_n(coulombPosToRaws, size, 1.0);
         std::fill_n(coulombNegToRaws, size, 1.0);
+        std::fill_n(velocityThresToRaws, size, 1.0);
     }
 
     ~PrivateUnitsHandler()
@@ -110,6 +113,7 @@ public:
         checkAndDestroy<double>(viscousNegToRaws);
         checkAndDestroy<double>(coulombPosToRaws);
         checkAndDestroy<double>(coulombNegToRaws);
+        checkAndDestroy<double>(velocityThresToRaws);
     }
 
     void alloc(int n)
@@ -134,6 +138,7 @@ public:
         viscousNegToRaws = new double[nj];
         coulombPosToRaws = new double[nj];
         coulombNegToRaws = new double[nj];
+        velocityThresToRaws = new double[nj];
 
         yAssert(position_zeros != nullptr);
         yAssert(helper_ones != nullptr);
@@ -154,6 +159,7 @@ public:
         yAssert(viscousNegToRaws != nullptr);
         yAssert(coulombPosToRaws != nullptr);
         yAssert(coulombNegToRaws != nullptr);
+        yAssert(velocityThresToRaws != nullptr);
 
         pid_units[VOCAB_PIDTYPE_POSITION] = PosPid_units;
         pid_units[VOCAB_PIDTYPE_VELOCITY] = VelPid_units;
@@ -183,6 +189,7 @@ public:
         memcpy(this->viscousNegToRaws, other.viscousNegToRaws, sizeof(*other.viscousNegToRaws)*nj);
         memcpy(this->coulombPosToRaws, other.coulombPosToRaws, sizeof(*other.coulombPosToRaws)*nj);
         memcpy(this->coulombNegToRaws, other.coulombNegToRaws, sizeof(*other.coulombNegToRaws)*nj);
+        memcpy(this->velocityThresToRaws, other.velocityThresToRaws, sizeof(*other.velocityThresToRaws)*nj);
     }
 };
 
@@ -806,6 +813,12 @@ void ControlBoardHelper::coulombNeg_user2raw(double coulombNeg_user, int j, doub
     k = toHw(j);
 }
 
+void ControlBoardHelper::velocityThres_user2raw(double velocityThres_user, int j, double &velocityThres_raw, int &k)
+{
+    velocityThres_raw = velocityThres_user * mPriv->velocityThresToRaws[j];
+    k = toHw(j);
+}
+
 void ControlBoardHelper::bemf_raw2user(double bemf_raw, int k_raw, double &bemf_user, int &j_user)
 {
     j_user = toUser(k_raw);
@@ -848,6 +861,11 @@ double ControlBoardHelper::coulombNeg_user2raw(double coulombNeg_user, int j)
     return coulombNeg_user * mPriv->coulombNegToRaws[j];
 }
 
+double ControlBoardHelper::velocityThres_user2raw(double velocityThres_user, int j)
+{
+    return velocityThres_user * mPriv->velocityThresToRaws[j];
+}
+
 void ControlBoardHelper::viscousPos_raw2user(double viscousPos_raw, int k_raw, double &viscousPos_user, int &j_user)
 {
     j_user = toUser(k_raw);
@@ -870,6 +888,12 @@ void ControlBoardHelper::coulombNeg_raw2user(double coulombNeg_raw, int k_raw, d
 {
     j_user = toUser(k_raw);
     coulombNeg_user = coulombNeg_raw / mPriv->coulombNegToRaws[j_user];
+}
+
+void ControlBoardHelper::velocityThres_raw2user(double velocityThres_raw, int k_raw, double &velocityThres_user, int &j_user)
+{
+    j_user = toUser(k_raw);
+    velocityThres_user = velocityThres_raw / mPriv->velocityThresToRaws[j_user];
 }
 
 
