@@ -414,10 +414,6 @@ checkandset_dependency(Libv4l2)
 find_package(Libv4lconvert QUIET)
 checkandset_dependency(Libv4lconvert)
 
-find_package(Fuse QUIET)
-checkandset_dependency(Fuse)
-
-
 ################################################################################
 # Options
 
@@ -659,7 +655,6 @@ print_dependency(FLEX)
 print_dependency(I2C)
 print_dependency(Libv4l2)
 print_dependency(Libv4lconvert)
-print_dependency(Fuse)
 print_dependency(ZLIB)
 print_dependency(SOXR)
 
