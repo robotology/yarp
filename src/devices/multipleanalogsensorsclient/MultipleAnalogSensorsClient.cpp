@@ -137,6 +137,7 @@ bool MultipleAnalogSensorsClient::open(yarp::os::Searchable& config)
 
     }
 
+    yCDebug(MULTIPLEANALOGSENSORSCLIENT,"Open complete");
     return true;
 }
 
@@ -154,6 +155,7 @@ bool MultipleAnalogSensorsClient::close()
     m_streamingPort.close();
     m_rpcPort.close();
 
+    yCDebug(MULTIPLEANALOGSENSORSCLIENT, "Close complete");
     return true;
 }
 

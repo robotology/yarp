@@ -41,6 +41,4 @@ yarp_install_basic_package_files(YARP_yarppm
   PRIVATE_DEPENDENCIES ${YARP_yarppm_PRIVATE_DEPS}
 )
 
-set_property(TARGET yarppm PROPERTY FOLDER "Plugins/PortMonitors")
-
-include(YarpDeprecatedOption)
+set_property(TARGET yarppm PROPERTY FOLDER "Plugins")

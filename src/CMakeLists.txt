@@ -71,6 +71,7 @@ if(YARP_COMPILE_EXECUTABLES)
     add_subdirectory(yarplaserscannergui)
     add_subdirectory(yarpviz)
     add_subdirectory(yarpaudiocontrolgui)
+    add_subdirectory(yarpllmgui)
 endif()
 
 # Robot Testing Framework addons

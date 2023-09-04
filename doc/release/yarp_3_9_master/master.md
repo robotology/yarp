@@ -36,6 +36,10 @@ Added new device `LLM_nwc_yarp`.
 
 Fix `Sonar` workflow.
 
+# llmgui
+
+Added a gui for `llmdevice`.
+
 # deprecation
 
 Removed deprecated devices: transformClient, transformServer, controlBoardWrapper

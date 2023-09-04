@@ -171,6 +171,4 @@ yarp_install_basic_package_files(YARP_yarpmod
   PRIVATE_DEPENDENCIES ${YARP_yarpmod_PRIVATE_DEPS}
 )
 
-set_property(TARGET yarpmod PROPERTY FOLDER "Plugins/Device")
-
-yarp_renamed_option(CREATE_DEVICE_LIBRARY_MODULES YARP_COMPILE_DEVICE_PLUGINS) # since YARP 3.0.0
+set_property(TARGET yarpmod PROPERTY FOLDER "Plugins")

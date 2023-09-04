@@ -57,6 +57,7 @@
 #define     TORQUE_VISCOUSNEG   15
 #define     TORQUE_COULOMBPOS   16
 #define     TORQUE_COULOMBNEG   17
+#define     VELOCITY_THRESHOLD  18
 
 #define     CURRENT_KP         0
 #define     CURRENT_KD         1
@@ -199,6 +200,9 @@ void PidDlg::initTorque(Pid myPid, MotorTorqueParameters TrqParam)
     ui->tableTorque->item(TORQUE_COULOMBPOS, 1)->setText(QString("%1").arg((double)TrqParam.coulombPos));
     ui->tableTorque->item(TORQUE_COULOMBNEG, 0)->setText(QString("%1").arg((double)TrqParam.coulombNeg));
     ui->tableTorque->item(TORQUE_COULOMBNEG, 1)->setText(QString("%1").arg((double)TrqParam.coulombNeg));
+
+    ui->tableTorque->item(VELOCITY_THRESHOLD, 0)->setText(QString("%1").arg((double)TrqParam.velocityThres));
+    ui->tableTorque->item(VELOCITY_THRESHOLD, 1)->setText(QString("%1").arg((double)TrqParam.velocityThres));
 
     ui->tableTorque->item(TORQUE_KI,0)->setText(QString("%1").arg((double)myPid.ki));
     ui->tableTorque->item(TORQUE_KI,1)->setText(QString("%1").arg((double)myPid.ki));
@@ -410,6 +414,7 @@ void PidDlg::onSend()
         newMotorTorqueParams.viscousNeg = ui->tableTorque->item(TORQUE_VISCOUSNEG,1)->text().toDouble();
         newMotorTorqueParams.coulombPos = ui->tableTorque->item(TORQUE_COULOMBPOS,1)->text().toDouble();
         newMotorTorqueParams.coulombNeg = ui->tableTorque->item(TORQUE_COULOMBNEG,1)->text().toDouble();
+        newMotorTorqueParams.velocityThres =  ui->tableTorque->item(VELOCITY_THRESHOLD,1)->text().toDouble();
         newPid.ki = ui->tableTorque->item(TORQUE_KI,1)->text().toDouble();
         newPid.scale = ui->tableTorque->item(TORQUE_SCALE,1)->text().toDouble();
         newPid.offset = ui->tableTorque->item(TORQUE_OFFSET,1)->text().toDouble();

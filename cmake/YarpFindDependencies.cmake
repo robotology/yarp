@@ -576,6 +576,10 @@ yarp_dependent_option(
   YARP_COMPILE_RobotTestingFramework_ADDONS "Compile Robot Testing Framework addons." ON
   "YARP_HAS_RobotTestingFramework" OFF
 )
+yarp_dependent_option(
+  YARP_COMPILE_yarpllmgui "Do you want to compile yarpllmgui" ON
+  "YARP_COMPILE_EXECUTABLES;YARP_COMPILE_GUIS;YARP_HAS_Qt5" OFF
+)
 
 ################################################################################
 # Disable some parts if they are not required
