@@ -10,6 +10,7 @@
 #include <yarp/os/Thread.h>
 
 #include <mutex>
+#include <string>
 
 namespace yarp::serversql::impl {
 
