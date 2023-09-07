@@ -78,8 +78,3 @@ endif()
 if(YARP_COMPILE_RobotTestingFramework_ADDONS)
   add_subdirectory(robottestingframework-plugins)
 endif()
-
-# unmaintained stuff
-if(YARP_COMPILE_EXECUTABLES)
-  add_subdirectory(yarpfs)
-endif()

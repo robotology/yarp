@@ -732,7 +732,6 @@ jobs:
                                       libopenni2-dev \
                                       libftdi-dev \
                                       libi2c-dev \
-                                      libfuse-dev \
                                       libjpeg-dev \
                                       libpcl-dev \
                                       libsoxr-dev
@@ -1417,7 +1416,6 @@ jobs:
                                       libopenni2-dev \
                                       libftdi-dev \
                                       libi2c-dev \
-                                      libfuse-dev \
                                       libjpeg-dev \
                                       libpcl-dev
 
@@ -1605,7 +1603,6 @@ jobs:
                                       libopenni2-dev \
                                       libftdi-dev \
                                       libi2c-dev \
-                                      libfuse-dev \
                                       libjpeg-dev \
                                       libpcl-dev
 
@@ -1813,7 +1810,6 @@ jobs:
                                       libopenni2-dev \
                                       libftdi-dev \
                                       libi2c-dev \
-                                      libfuse-dev \
                                       libjpeg-dev \
                                       libpcl-dev
 
