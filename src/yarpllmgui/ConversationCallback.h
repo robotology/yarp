@@ -9,6 +9,7 @@
 
 #include <yarp/os/Bottle.h>
 #include <yarp/os/TypedReaderCallback.h>
+
 #include <QObject>
 
 class ConversationCallback : public QObject, public yarp::os::TypedReaderCallback<yarp::os::Bottle>
@@ -22,6 +23,11 @@ public:
     {
     }
     void onRead(yarp::os::Bottle&) override;
+
+    void onRead(yarp::os::Bottle& datum, const yarp::os::TypedReader<yarp::os::Bottle>& reader) override
+    {
+        yarp::os::TypedReaderCallback<yarp::os::Bottle>::onRead(datum, reader);
+    }
 
 signals:
     void conversationChanged();
