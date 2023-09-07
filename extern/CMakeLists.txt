@@ -67,8 +67,5 @@ if(MSVC)
   set(dirent_INCLUDE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/dirent/dirent/include" PARENT_SCOPE)
 endif()
 
-# md5
-set(md5_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/md5" PARENT_SCOPE)
-
 # WebSocket
 set(WebSocket_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/websocket/WebSocket" PARENT_SCOPE)
