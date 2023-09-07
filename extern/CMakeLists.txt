@@ -37,14 +37,6 @@ if(YARP_BUILD_QCustomPlot)
   set(QCustomPlot_DEFINITIONS ${QCustomPlot_DEFINITIONS} PARENT_SCOPE)
 endif()
 
-# XmlRpc++
-if(YARP_BUILD_xmlrpcpp)
-  add_subdirectory(xmlrpcpp)
-  set(xmlrpcpp_INCLUDE_DIRS ${xmlrpcpp_INCLUDE_DIRS} PARENT_SCOPE)
-  set(xmlrpcpp_LIBRARIES ${xmlrpcpp_LIBRARIES} PARENT_SCOPE)
-  set(xmlrpcpp_DEFINITIONS ${xmlrpcpp_DEFINITIONS} PARENT_SCOPE)
-endif()
-
 # Qgv
 if(YARP_BUILD_QGVCore)
   add_subdirectory(qgv)
