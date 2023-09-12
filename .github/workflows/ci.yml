@@ -745,7 +745,6 @@ jobs:
                                       tk-dev \
                                       python3-dev \
                                       liboctave-dev \
-                                      default-jdk \
                                       ruby-dev \
                                       ruby \
                                       perl
@@ -1430,7 +1429,6 @@ jobs:
                                       tk-dev \
                                       python3-dev \
                                       liboctave-dev \
-                                      default-jdk \
                                       ruby-dev \
                                       ruby \
                                       perl
@@ -1619,7 +1617,6 @@ jobs:
                                       tk-dev \
                                       python3-dev \
                                       liboctave-dev \
-                                      default-jdk \
                                       ruby-dev \
                                       ruby \
                                       perl
@@ -1828,7 +1825,6 @@ jobs:
                                       tk-dev \
                                       python3-dev \
                                       liboctave-dev \
-                                      default-jdk \
                                       ruby-dev \
                                       ruby \
                                       perl
