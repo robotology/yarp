@@ -96,4 +96,3 @@ bool ChatBot_nws_yarp::read(yarp::os::ConnectionReader& connection)
         return false;
     }
 }
-
