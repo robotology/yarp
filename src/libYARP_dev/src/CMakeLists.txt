@@ -39,6 +39,7 @@ set(YARP_dev_HDRS
   yarp/dev/IAxisInfo.h
   yarp/dev/IBattery.h
   yarp/dev/ICalibrator.h
+  yarp/dev/IChatBot.h
   yarp/dev/IControlCalibration.h
   yarp/dev/IControlDebug.h
   yarp/dev/IControlLimits.h
@@ -170,6 +171,7 @@ set(YARP_dev_SRCS
   yarp/dev/IAudioVisualGrabber.cpp
   yarp/dev/IAudioVisualStream.cpp
   yarp/dev/IBattery.cpp
+  yarp/dev/IChatBot.cpp
   yarp/dev/IDepthVisualParams.cpp
   yarp/dev/IFrameGrabberControls.cpp
   yarp/dev/IFrameGrabberControlsDC1394.cpp
@@ -409,6 +411,7 @@ set(YARP_dev_test_HDRS
     yarp/dev/tests/IBatteryTest.h
     yarp/dev/tests/IJoypadControllerTest.h
     yarp/dev/tests/ILLMTest.h
+    yarp/dev/tests/IChatBotTest.h
 )
 
 set(YARP_dev_test_SRCS
@@ -420,6 +423,7 @@ set(YARP_dev_test_SRCS
     yarp/dev/tests/IBatteryTest.cpp
     yarp/dev/tests/IJoypadControllerTest.cpp
     yarp/dev/tests/ILLMTest.cpp
+    yarp/dev/tests/IChatBotTest.cpp
 )
 
 if(TARGET YARP::YARP_math)
