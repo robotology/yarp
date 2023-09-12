@@ -33,6 +33,8 @@ bool ChatBot_nwc_yarp::open(yarp::os::Searchable &config)
     if (!m_thriftClientPort.open(local_rpc))
     {
         yCError(CHATBOT_NWC_YARP) << "Cannot open rpc port, check network";
+
+        return false;
     }
 
     bool ok = false;
@@ -48,6 +50,7 @@ bool ChatBot_nwc_yarp::open(yarp::os::Searchable &config)
     if (!m_thriftClient.yarp().attachAsClient(m_thriftClientPort))
     {
         yCError(CHATBOT_NWC_YARP) << "Cannot attach the m_thriftClientPort port as client";
+        return false;
     }
 
     yCDebug(CHATBOT_NWC_YARP) << "Opening of nwc successful";

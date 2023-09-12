@@ -13,6 +13,19 @@ namespace {
 YARP_LOG_COMPONENT(ICHATBOTMSGSIMPL, "yarp.devices.chatBot_nws_yarp.ChatBotRPC_CallbackHelper")
 }
 
+bool IChatBotMsgsImpl::setInterfaces(yarp::dev::IChatBot* iChatBot)
+{
+    if(!iChatBot)
+    {
+        yCError(ICHATBOTMSGSIMPL) << "Invalid pointer to IChatBot device";
+        return false;
+    }
+
+    m_iChatBot = iChatBot;
+
+    return true;
+}
+
 return_interact IChatBotMsgsImpl::interactRPC(const std::string& messageIn)
 {
     std::lock_guard <std::mutex> lg(m_mutex);

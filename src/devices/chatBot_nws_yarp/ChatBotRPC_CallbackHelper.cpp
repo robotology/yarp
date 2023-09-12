@@ -13,15 +13,17 @@ namespace {
 YARP_LOG_COMPONENT(CHATBOTRPC_HELPER, "yarp.devices.chatBot_nws_yarp.ChatBotRPC_CallbackHelper")
 }
 
-ChatBotRPC_CallbackHelper::ChatBotRPC_CallbackHelper(yarp::dev::IChatBot* iChat, yarp::os::Port* p)
+bool ChatBotRPC_CallbackHelper::setCommunications(yarp::dev::IChatBot* iChat, yarp::os::Port* p)
 {
     if (iChat ==nullptr || p==nullptr)
     {
         yCError(CHATBOTRPC_HELPER) << "Could not get IChatBot interface/output port";
-        std::exit(1);
+        return false;
     }
     m_iChatBot = iChat;
     m_outPort = p;
+
+    return true;
 }
 
 void ChatBotRPC_CallbackHelper::onRead(yarp::os::Bottle &b)

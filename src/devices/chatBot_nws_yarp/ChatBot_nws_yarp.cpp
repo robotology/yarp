@@ -58,10 +58,14 @@ bool  ChatBot_nws_yarp::attach(yarp::dev::PolyDriver* deviceToAttach)
 
     yCInfo(CHATBOT_NWS_YARP, "Attach done");
 
-    m_cbkHelper = new ChatBotRPC_CallbackHelper(m_iChatBot,&m_outputPort);
+    m_cbkHelper = new ChatBotRPC_CallbackHelper();
+    m_cbkHelper->setCommunications(m_iChatBot,&m_outputPort);
     m_inputBuffer.useCallback(*m_cbkHelper);
-    m_msgsImpl.setInterfaces(m_iChatBot);
-    m_msgsImpl.setOutputPort(&m_outputPort);
+    if(!m_msgsImpl.setInterfaces(m_iChatBot))
+    {
+        yCError(CHATBOT_NWS_YARP) << "Error setting IChatBotMsgsImpl object interfaces";
+        return false;
+    }
 
     return true;
 }

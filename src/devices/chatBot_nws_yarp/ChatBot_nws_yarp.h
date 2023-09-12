@@ -33,9 +33,9 @@ protected:
     yarp::os::Port*      m_outPort{nullptr};
 
 public:
-    ChatBotRPC_CallbackHelper() = delete;
-    ChatBotRPC_CallbackHelper(yarp::dev::IChatBot* x, yarp::os::Port* output_port);
     virtual ~ChatBotRPC_CallbackHelper() override {};
+
+    bool setCommunications(yarp::dev::IChatBot* iser, yarp::os::Port* port);
 
     using yarp::os::TypedReaderCallback<yarp::os::Bottle>::onRead;
     void onRead(yarp::os::Bottle& b) override;
@@ -47,7 +47,6 @@ class IChatBotMsgsImpl : public IChatBotMsgs
 private:
     std::mutex           m_mutex;
     yarp::dev::IChatBot* m_iChatBot{nullptr};
-    yarp::os::Port*      m_output_port{nullptr};
 
 public:
     return_interact    interactRPC(const std::string& messageIn) override;
@@ -56,8 +55,7 @@ public:
     bool               resetBotRPC() override;
 
 public:
-    void setInterfaces(yarp::dev::IChatBot* iser) { m_iChatBot = iser;}
-    void setOutputPort(yarp::os::Port* port) { m_output_port = port; }
+    bool setInterfaces(yarp::dev::IChatBot* iChatBot);
     std::mutex* getMutex() { return &m_mutex; }
 };
 
