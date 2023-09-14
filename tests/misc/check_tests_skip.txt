@@ -32,3 +32,4 @@
 ./src/devices/AnalogSensorClient
 ./src/devices/AnalogWrapper
 ./src/devices/ILLMMsgs
+./src/devices/IChatBotMsgs
