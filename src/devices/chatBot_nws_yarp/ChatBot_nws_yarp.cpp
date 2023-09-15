@@ -30,8 +30,16 @@ bool ChatBot_nws_yarp::open(Searchable& prop)
                     "prefix for port names").asString();
 
     m_inputBuffer.attach(m_inputPort);
-    m_inputPort.open(rootName+"/text:i");
-    m_outputPort.open(rootName + "/text:o");
+    if(!m_inputPort.open(rootName+"/text:i"))
+    {
+        yCError(CHATBOT_NWS_YARP) << "Could not open port" << rootName+"/text:i";
+        return false;
+    }
+    if(!m_outputPort.open(rootName + "/text:o"))
+    {
+        yCError(CHATBOT_NWS_YARP) << "Could not open port" << rootName+"/text:o";
+        return false;
+    }
     if (!m_thriftServerPort.open(rootName+"/rpc"))
     {
         yCError(CHATBOT_NWS_YARP, "Failed to open rpc port");
@@ -59,7 +67,13 @@ bool  ChatBot_nws_yarp::attach(yarp::dev::PolyDriver* deviceToAttach)
     yCInfo(CHATBOT_NWS_YARP, "Attach done");
 
     m_cbkHelper = new ChatBotRPC_CallbackHelper();
-    m_cbkHelper->setCommunications(m_iChatBot,&m_outputPort);
+    if(!m_cbkHelper->setCommunications(m_iChatBot,&m_outputPort))
+    {
+        yCError(CHATBOT_NWS_YARP) << "Error setting ChatBot_CallbackHelper object interfaces";
+        delete m_cbkHelper;
+        m_cbkHelper=nullptr;
+        return false;
+    }
     m_inputBuffer.useCallback(*m_cbkHelper);
     if(!m_msgsImpl.setInterfaces(m_iChatBot))
     {
