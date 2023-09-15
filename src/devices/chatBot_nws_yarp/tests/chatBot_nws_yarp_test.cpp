@@ -58,7 +58,8 @@ TEST_CASE("dev::chatBot_nws_yarp", "[yarp::dev]")
             pdev_cfg.put("device", "fakeChatBotDevice");
             REQUIRE(ddfake.open(pdev_cfg));
 
-            {yarp::dev::WrapperSingle* ww_nws; ddnws.view(ww_nws);
+            {yarp::dev::WrapperSingle* ww_nws;
+            REQUIRE(ddnws.view(ww_nws));
             bool result_att = ww_nws->attach(&ddfake);
             REQUIRE(result_att); }
         }
