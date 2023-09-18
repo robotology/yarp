@@ -60,6 +60,7 @@ TEST_CASE("dev::chatBot_nws_yarp", "[yarp::dev]")
 
             {yarp::dev::WrapperSingle* ww_nws;
             REQUIRE(ddnws.view(ww_nws));
+            REQUIRE(ww_nws!=nullptr);
             bool result_att = ww_nws->attach(&ddfake);
             REQUIRE(result_att); }
         }
