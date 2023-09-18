@@ -1,0 +1,6 @@
+return_interact.h
+return_interact.cpp
+return_getLanguage.h
+return_getLanguage.cpp
+IChatBotMsgs.h
+IChatBotMsgs.cpp
