@@ -87,7 +87,7 @@ bool AudioRecorderDeviceBase::getSound(yarp::sig::Sound& sound, size_t min_numbe
     if (samples_to_be_copied > max_number_of_samples) {
         samples_to_be_copied = max_number_of_samples;
     }
-    if (sound.getChannels() != this->m_audiorecorder_cfg.numChannels && sound.getSamples() != samples_to_be_copied)
+    if (sound.getChannels() != this->m_audiorecorder_cfg.numChannels || sound.getSamples() != samples_to_be_copied)
     {
         sound.resize(samples_to_be_copied, this->m_audiorecorder_cfg.numChannels);
     }
