@@ -240,11 +240,6 @@ fakeLocalizer::fakeLocalizer()
 
 fakeLocalizer::~fakeLocalizer()
 {
-    if (locThread)
-    {
-        delete locThread;
-        locThread = NULL;
-    }
 }
 
 bool fakeLocalizer::startLocalizationService()
@@ -259,5 +254,11 @@ bool fakeLocalizer::stopLocalizationService()
 
 bool fakeLocalizer::close()
 {
+    if (locThread)
+    {
+        locThread->stop();
+        delete locThread;
+        locThread = NULL;
+    }
     return true;
 }
