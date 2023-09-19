@@ -50,6 +50,7 @@ bool RGBDSensorClient::open(yarp::os::Searchable& config)
 
     sensorId= "RGBDSensorClient for " + local_depthFrame_StreamingPort_name;
 
+    yCWarning(RGBDSENSORCLIENT) << "------1";
     if(!initialize_YARP(config) )
     {
         yCError(RGBDSENSORCLIENT) << sensorId << "\n\t* Error initializing YARP ports *";
@@ -150,9 +151,11 @@ bool RGBDSensorClient::initialize_YARP(yarp::os::Searchable& /*config*/)
 {
     bool ret;
 
+    yCWarning(RGBDSENSORCLIENT) << "------2";
     // Opening Streaming ports
     ret  = colorFrame_StreamingPort.open(local_colorFrame_StreamingPort_name);
     ret &= depthFrame_StreamingPort.open(local_depthFrame_StreamingPort_name);
+    yCWarning(RGBDSENSORCLIENT) << "------3";
 
     if(!ret)
     {
@@ -160,23 +163,24 @@ bool RGBDSensorClient::initialize_YARP(yarp::os::Searchable& /*config*/)
         colorFrame_StreamingPort.close();
         depthFrame_StreamingPort.close();
     }
+    yCWarning(RGBDSENSORCLIENT) << "------4";
 
     if(! yarp::os::Network::connect(remote_colorFrame_StreamingPort_name, colorFrame_StreamingPort.getName(), image_carrier_type) )
     {
         yCError(RGBDSENSORCLIENT) << colorFrame_StreamingPort.getName() << " cannot connect to remote port " << remote_colorFrame_StreamingPort_name << "with carrier " << image_carrier_type;
         return false;
     }
-
+    yCWarning(RGBDSENSORCLIENT) << "------5";
     if(! yarp::os::Network::connect(remote_depthFrame_StreamingPort_name, depthFrame_StreamingPort.getName(), depth_carrier_type) )
     {
         yCError(RGBDSENSORCLIENT) << depthFrame_StreamingPort.getName() << " cannot connect to remote port " << remote_depthFrame_StreamingPort_name << "with carrier " << depth_carrier_type;
         return false;
     }
-
+    yCWarning(RGBDSENSORCLIENT) << "------6";
 
     // Single RPC port
     ret = rpcPort.open(local_rpcPort_name);
-
+    yCWarning(RGBDSENSORCLIENT) << "------7";
     if(!ret)
     {
         yCError(RGBDSENSORCLIENT) << sensorId << " cannot open local RPC port " << local_rpcPort_name;
@@ -184,7 +188,7 @@ bool RGBDSensorClient::initialize_YARP(yarp::os::Searchable& /*config*/)
         depthFrame_StreamingPort.close();
         rpcPort.close();
     }
-
+    yCWarning(RGBDSENSORCLIENT) << "------8";
     if(! rpcPort.addOutput(remote_rpcPort_name) )
     {
         yCError(RGBDSENSORCLIENT) << sensorId << " cannot connect to port " << remote_rpcPort_name;
@@ -193,7 +197,7 @@ bool RGBDSensorClient::initialize_YARP(yarp::os::Searchable& /*config*/)
         rpcPort.close();
         return false;
     }
-
+    yCWarning(RGBDSENSORCLIENT) << "------9";
     // Check protocol version
     yarp::os::Bottle cmd;
     yarp::os::Bottle response;
