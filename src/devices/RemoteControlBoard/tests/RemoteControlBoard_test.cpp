@@ -37,7 +37,7 @@ TEST_CASE("dev::RemoteControlBoardTest", "[yarp::dev]")
         ITorqueControl* itrq = nullptr;
         IAxisInfo* iinfo = nullptr;
 
-        ////////"Checking opening map2DServer and map2DClient polydrivers"
+        ////////"Checking opening fakeMotionControl and controlBoard_nws_yarp polydrivers"
         {
             Property p_cfg;
             p_cfg.put("device", "fakeMotionControl");
@@ -52,12 +52,17 @@ TEST_CASE("dev::RemoteControlBoardTest", "[yarp::dev]")
             p_cfg.put("name", "/controlboardserver");
             REQUIRE(ddnws.open(p_cfg));
         }
+
+        //attach nws and fake
         {
             yarp::dev::WrapperSingle* ww_nws; ddnws.view(ww_nws);
             bool result_att = ww_nws->attach(&ddmc);
             REQUIRE(result_att);
         }
+
         yarp::os::Time::delay(0.1);
+
+        //open the nwc
         {
             Property p_cfg;
             p_cfg.put("device", "remote_controlboard");
@@ -66,6 +71,7 @@ TEST_CASE("dev::RemoteControlBoardTest", "[yarp::dev]")
             REQUIRE(ddnwc.open(p_cfg));
         }
 
+        //test
         ddnwc.view(ipos);
         ddnwc.view(itrq);
         ddnwc.view(iinfo);

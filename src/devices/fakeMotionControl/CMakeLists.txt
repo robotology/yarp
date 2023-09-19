@@ -11,7 +11,6 @@ yarp_prepare_plugin(fakeMotionControl
   INCLUDE fakeMotionControl.h
   EXTRA_CONFIG
     WRAPPER=controlBoard_nws_yarp
-  DEPENDS "TARGET YARP::YARP_math"
 )
 
 if(NOT SKIP_fakeMotionControl)
@@ -27,13 +26,11 @@ if(NOT SKIP_fakeMotionControl)
       YARP::YARP_os
       YARP::YARP_sig
       YARP::YARP_dev
-      YARP::YARP_math
   )
   list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS
     YARP_os
     YARP_sig
     YARP_dev
-    YARP_math
   )
 
   yarp_install(
