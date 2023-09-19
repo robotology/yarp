@@ -745,7 +745,6 @@ jobs:
                                       tk-dev \
                                       python3-dev \
                                       liboctave-dev \
-                                      default-jdk \
                                       ruby-dev \
                                       ruby \
                                       perl
@@ -1389,7 +1388,9 @@ jobs:
           # Install build tools
           sudo apt-get install -qq -y ccache \
                                       ninja-build \
-                                      valgrind
+                                      valgrind \
+                                      openjdk-17-jdk \
+                                      openjdk-17-jre
 
           sudo apt-get install -qq -y libace-dev \
                                       libsqlite3-dev \
@@ -1428,7 +1429,6 @@ jobs:
                                       tk-dev \
                                       python3-dev \
                                       liboctave-dev \
-                                      default-jdk \
                                       ruby-dev \
                                       ruby \
                                       perl
@@ -1576,7 +1576,9 @@ jobs:
           # Install build tools
           sudo apt-get install -qq -y ccache \
                                       ninja-build \
-                                      valgrind
+                                      valgrind \
+                                      openjdk-17-jdk \
+                                      openjdk-17-jre
 
           sudo apt-get install -qq -y libace-dev \
                                       libsqlite3-dev \
@@ -1615,7 +1617,6 @@ jobs:
                                       tk-dev \
                                       python3-dev \
                                       liboctave-dev \
-                                      default-jdk \
                                       ruby-dev \
                                       ruby \
                                       perl
@@ -1783,7 +1784,9 @@ jobs:
           # Install build tools
           sudo apt-get install -qq -y ccache \
                                       ninja-build \
-                                      valgrind
+                                      valgrind \
+                                      openjdk-17-jdk \
+                                      openjdk-17-jre
 
           sudo apt-get install -qq -y libace-dev \
                                       libsqlite3-dev \
@@ -1822,7 +1825,6 @@ jobs:
                                       tk-dev \
                                       python3-dev \
                                       liboctave-dev \
-                                      default-jdk \
                                       ruby-dev \
                                       ruby \
                                       perl
