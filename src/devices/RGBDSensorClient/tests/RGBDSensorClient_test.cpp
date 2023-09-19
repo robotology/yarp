@@ -50,7 +50,8 @@ TEST_CASE("dev::RGBDSensorClientTest", "[yarp::dev]")
         REQUIRE(result_att); }
 
         //wait some time
-        yarp::os::Time::delay(0.1);
+        yarp::os::SystemClock::delaySystem(1.0);
+        INFO("rgbdSensor_nws_yarp and fakeDepthCamera ready");
 
         //create the client
         {
