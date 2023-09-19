@@ -54,7 +54,9 @@ bool fakeMicrophone::open(yarp::os::Searchable &config)
         return false;
     }
 
-    bool b = configureRecorderAudioDevice(config.findGroup("AUDIO_BASE"), "fakeMicrophone");
+    std::string debug_cfg_string = config.toString();
+    yarp::os::Bottle& bb = config.findGroup("AUDIO_BASE");
+    bool b = configureRecorderAudioDevice(bb, "fakeMicrophone");
     if (!b) { return false; }
 
     //sets the thread period
