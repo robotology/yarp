@@ -58,6 +58,7 @@ set(YARP_dev_HDRS
   yarp/dev/IHapticDevice.h
   yarp/dev/IImpedanceControl.h
   yarp/dev/IInteractionMode.h
+  yarp/dev/IJointCoupling.h
   yarp/dev/IJoypadController.h
   yarp/dev/IJointFault.h
   yarp/dev/ILLM.h
