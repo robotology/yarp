@@ -26,20 +26,17 @@ public:
      */
     virtual ~IJointCoupling() {}
 
-    virtual bool decouplePos(yarp::sig::Vector& current_pos) = 0;
-    virtual bool decoupleVel(yarp::sig::Vector& current_vel) = 0;
-    virtual bool decoupleAcc(yarp::sig::Vector& current_acc) = 0;
-    virtual bool decoupleTrq(yarp::sig::Vector& current_trq) = 0;
-    virtual yarp::sig::Vector decoupleRefPos(yarp::sig::Vector& pos_ref) = 0;
-    virtual yarp::sig::Vector decoupleRefVel(yarp::sig::Vector& vel_ref, const yarp::sig::Vector& pos_feedback) = 0;
-    virtual yarp::sig::Vector decoupleRefTrq(yarp::sig::Vector& trq_ref) = 0;
-
-
+    virtual bool convertFromPhysicalJointPosToActuatedAxisPos(const yarp::sig::Vector& physJointPos, yarp::sig::Vector& actAxisPos) = 0;
+    virtual bool convertFromPhysicalJointVelToActuatedAxisVel(const yarp::sig::Vector& physJointPos, const yarp::sig::Vector& physJointVel, yarp::sig::Vector& actAxisVel) = 0;
+    virtual bool convertFromPhysicalJointPosToActuatedAxisAcc(const yarp::sig::Vector& physJointPos, const yarp::sig::Vector& physJointVel, const yarp::sig::Vector& physJointAcc, yarp::sig::Vector& actAxisAcc) = 0;
+    virtual bool convertFromPhysicalJointTrqToActuatedAxisTrq(const yarp::sig::Vector& physJointPos, const yarp::sig::Vector& physJointTrq, yarp::sig::Vector& actAxisTrq) = 0;
+    virtual bool convertFromActuatedAxisToPhysicalJointPos(const yarp::sig::Vector& actAxisPos, yarp::sig::Vector& physJointPos) = 0;
+    virtual bool convertFromActuatedAxisToPhysicalJointVel(const yarp::sig::Vector& actAxisPos, const yarp::sig::Vector& actAxisVel, yarp::sig::Vector& physJointVel) = 0;
+    virtual bool convertFromActuatedAxisToPhysicalJointAcc(const yarp::sig::Vector& actAxisPos, const yarp::sig::Vector& actAxisVel, const yarp::sig::Vector& actAxisAcc, yarp::sig::Vector& physJointAcc) = 0;
+    virtual bool convertFromActuatedAxisToPhysicalJointTrq(const yarp::sig::Vector& actAxisPos, const yarp::sig::Vector& actAxisTrq, yarp::sig::Vector& physJointTrq) = 0;
     virtual yarp::sig::VectorOf<int> getCoupledJoints()=0;
     virtual std::string getCoupledJointName(int joint)=0;
     virtual bool checkJointIsCoupled(int joint)=0;
-
-
     virtual void setCoupledJointLimit(int joint, const double& min, const double& max)=0;
     virtual void getCoupledJointLimit(int joint, double& min, double& max)=0;
 };
