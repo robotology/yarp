@@ -529,7 +529,7 @@ bool RgbdSensor_nws_yarp::writeData()
     else { oldDepthStamp = depthStamp; }
 
     // TBD: We should check here somehow if the timestamp was correctly updated and, if not, update it ourselves.
-    if (rgb_data_ok)
+    if (rgb_data_ok && colorFrame_StreamingPort.getOutputCount() > 0)
     {
         FlexImage& yColorImage = colorFrame_StreamingPort.prepare();
         yColorImage.setPixelCode(colorImage.getPixelCode());
@@ -538,7 +538,7 @@ bool RgbdSensor_nws_yarp::writeData()
         colorFrame_StreamingPort.setEnvelope(colorStamp);
         colorFrame_StreamingPort.write();
     }
-    if (depth_data_ok)
+    if (depth_data_ok && depthFrame_StreamingPort.getOutputCount() > 0)
     {
         ImageOf<PixelFloat>& yDepthImage = depthFrame_StreamingPort.prepare();
         yDepthImage.setQuantum(depthImage.getQuantum());
