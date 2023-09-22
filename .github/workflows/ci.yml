@@ -520,7 +520,7 @@ jobs:
           }
         - {
             id: '21',
-            description: 'Valgrind (bindings, failing tests and examples as tests disabled)',
+            description: 'Valgrind (bindings, failing tests, guis and examples as tests disabled)',
             os: ubuntu-20.04,
             build_type: "Debug",
             cc: "gcc",
@@ -534,6 +534,7 @@ jobs:
                                   -DYARP_ENABLE_EXAMPLES_AS_TESTS:BOOL=OFF
                                   -DYARP_COMPILE_BINDINGS:BOOL=OFF
                                   -DCMAKE_DISABLE_FIND_PACKAGE_FFMPEG=ON
+                                  -DYARP_COMPILE_GUIS:BOOL=OFF
                                   -DENABLE_yarpcar_h264:BOOL=OFF
                                   -DENABLE_yarpcar_mjpeg:BOOL=OFF
                                   -DENABLE_yarppm_image_compression_ffmpeg:BOOL=OFF
@@ -549,7 +550,7 @@ jobs:
           }
         - {
             id: '22',
-            description: 'Valgrind, No ACE (bindings, failing tests and examples as tests disabled)',
+            description: 'Valgrind, No ACE (bindings, failing tests, guis and examples as tests disabled)',
             os: ubuntu-20.04,
             build_type: "Debug",
             cc: "gcc",
@@ -565,6 +566,7 @@ jobs:
                                   -DYARP_ENABLE_EXAMPLES_AS_TESTS:BOOL=OFF
                                   -DYARP_COMPILE_BINDINGS:BOOL=OFF
                                   -DCMAKE_DISABLE_FIND_PACKAGE_FFMPEG=ON
+                                  -DYARP_COMPILE_GUIS:BOOL=OFF
                                   -DENABLE_yarpcar_h264:BOOL=OFF
                                   -DENABLE_yarpcar_mjpeg:BOOL=OFF
                                   -DENABLE_yarppm_image_compression_ffmpeg:BOOL=OFF
