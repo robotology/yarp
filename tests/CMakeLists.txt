@@ -115,3 +115,4 @@ add_subdirectory(yarpidl_rosmsg)
 add_subdirectory(devices)
 
 add_subdirectory(integration)
+add_subdirectory(harness_tests)
