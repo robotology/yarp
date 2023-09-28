@@ -121,7 +121,7 @@ yarpdev --device frameTransformClient --filexml_option ftc_full_ros.xml
  all the clients that connects to it later with the latest transforms.\n
  the code to launch this server is:
  \code{.unparsed}
- yarprobotinterface --config fts_yarp_only.xml
+ yarpdev --device frameTransformServer --filexml_option fts_yarp_only.xml
  \endcode
  \image  html frametransform/FTS_YARP_only.svg width=auto
 - The second one is the **YARP AND ROS** configuration.\n
@@ -129,7 +129,7 @@ yarpdev --device frameTransformClient --filexml_option ftc_full_ros.xml
  all the clients that connects to it later with the latest transforms.\n
  the code to launch this server is:
  \code{.unparsed}
- yarprobotinterface --config fts_full_ros.xml
+ yarpdev --device frameTransformServer --filexml_option fts_full_ros.xml
  \endcode
  \image  html frametransform/FTS_YARP_+_ROS.svg width=auto
 .
