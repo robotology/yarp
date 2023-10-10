@@ -62,6 +62,12 @@ bool AudioRecorder_nws_yarp::open(yarp::os::Searchable& config)
     }
     yCInfo(AUDIORECORDER_NWS_YARP) << "Wrapper configured with max_samples_timeout: " << m_getSound_timeout << "s";
 
+    // Set parameter send_sound_on_stop
+    if (config.check("send_sound_on_stop"))
+    {
+        m_send_sound_on_stop = config.find("send_sound_on_stop").asBool();
+    }
+
     // Set the streaming port
     std::string portname = "/audioRecorder_nws";
     if (config.check("name"))
@@ -238,7 +244,7 @@ void AudioRecorderDataThread::run()
         yarp::sig::Sound current_sound;
         m_ARW->m_mic->getSound(current_sound, m_ARW->m_min_number_of_samples_over_network, m_ARW->m_max_number_of_samples_over_network, m_ARW->m_getSound_timeout);
         if (current_sound.getSamples() < m_ARW->m_min_number_of_samples_over_network ||
-            current_sound.getSamples() < m_ARW->m_max_number_of_samples_over_network)
+            current_sound.getSamples() > m_ARW->m_max_number_of_samples_over_network)
         {
             yCWarning(AUDIORECORDER_NWS_YARP) << "subdevice->getSound() is not producing sounds of the requested size ("
                 << m_ARW->m_min_number_of_samples_over_network << "<"
