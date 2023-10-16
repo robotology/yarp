@@ -5,6 +5,7 @@
 
 #include <yarp/os/Network.h>
 #include <yarp/os/Carriers.h>
+#include <yarp/os/YarpPluginSettings.h>
 
 #include <catch2/catch_amalgamated.hpp>
 #include <harness.h>
@@ -14,7 +15,7 @@ TEST_CASE("os::CarriersTest", "[yarp::os]")
 {
     NetworkBase::setLocalMode(true);
 
-    SECTION("checking listCarriers() method")
+    SECTION("Checking listCarriers() method")
     {
         yarp::os::Bottle lst;
         lst = yarp::os::Carriers::listCarriers();
