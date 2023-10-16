@@ -27,8 +27,6 @@ TEST_CASE("dev::FakeNavigationTest", "[yarp::dev]")
     SECTION("Checking fakeNavigation device")
     {
         PolyDriver ddfakeNavigation;
-        IMap2D* imap = nullptr;
-        INavigation2D* inav = nullptr;
         INavigation2DTargetActions* inav_target = nullptr;
         INavigation2DControlActions* inav_control = nullptr;
         INavigation2DVelocityActions* inav_velocity = nullptr;
@@ -44,8 +42,6 @@ TEST_CASE("dev::FakeNavigationTest", "[yarp::dev]")
         }
 
         // Do tests
-        //yarp::dev::tests::exec_iNav2D_test_1(inav, imap);
-        //yarp::dev::tests::exec_iNav2D_test_2(inav, imap);
         yarp::dev::tests::exec_iNav2D_test_3(inav_target, inav_control);
 
         //"Close all polydrivers and check"
