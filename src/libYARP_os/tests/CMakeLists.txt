@@ -8,6 +8,7 @@ add_executable(harness_os)
 target_sources(harness_os PRIVATE
   BinPortableTest.cpp
   BottleTest.cpp
+  CarriersTest.cpp
   ContactTest.cpp
   ElectionTest.cpp
   EventTest.cpp
