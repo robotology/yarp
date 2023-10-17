@@ -11,7 +11,7 @@
 #include <harness.h>
 
 using namespace yarp::os;
-TEST_CASE("os::CarriersTest", "[yarp::os]")
+TEST_CASE("os::ListCarriersTest", "[yarp::os]")
 {
     NetworkBase::setLocalMode(true);
 

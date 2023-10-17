@@ -122,6 +122,8 @@ mark_as_advanced(BUILD_SHARED_LIBS)
 set(YARP_DLL OFF)
 if(BUILD_SHARED_LIBS)
   set(YARP_DLL ON)
+else()
+  add_definitions("-DYARP_IS_STATIC")
 endif()
 
 set (YARP_LINK_PLUGINS TRUE)
@@ -218,7 +220,7 @@ if(YARP_VALGRIND_TESTS)
 endif()
 
 unset(YARP_TEST_LAUNCHER)
-set(YARP_TEST_TIMEOUT_DEFAULT_VALGRIND 300)
+set(YARP_TEST_TIMEOUT_DEFAULT_VALGRIND 600)
 if(DEFINED VALGRIND_COMMAND)
   set(YARP_TEST_LAUNCHER ${VALGRIND_COMMAND})
   # The default timeout is not enough when running under valgrind
