@@ -43,6 +43,10 @@
 #endif
 
 #ifdef YARP_HAS_WIN_VT_SUPPORT
+// Workaround for https://github.com/robotology/yarp/issues/3031
+#ifndef NOMINMAX
+#define NOMINMAX
+#endif
 #include <windows.h>
 #endif
 
