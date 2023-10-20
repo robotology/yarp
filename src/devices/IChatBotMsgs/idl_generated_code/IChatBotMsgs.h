@@ -14,6 +14,7 @@
 #include <yarp/os/Wire.h>
 #include <yarp/os/idl/WireTypes.h>
 #include <return_getLanguage.h>
+#include <return_getStatus.h>
 #include <return_interact.h>
 
 class IChatBotMsgs :
@@ -28,6 +29,8 @@ public:
     virtual bool setLanguageRPC(const std::string& language);
 
     virtual return_getLanguage getLanguageRPC();
+
+    virtual return_getStatus getStatusRPC();
 
     virtual bool resetBotRPC();
 

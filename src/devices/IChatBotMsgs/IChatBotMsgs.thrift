@@ -13,9 +13,15 @@ struct return_getLanguage{
     2: string language;
 }
 
+struct return_getStatus{
+    1: bool result;
+    2: string status;
+}
+
 service IChatBotMsgs {
     return_interact interactRPC(1: string messageIn);
     bool setLanguageRPC(1: string language);
     return_getLanguage getLanguageRPC();
+    return_getStatus getStatusRPC();
     bool resetBotRPC();
 }

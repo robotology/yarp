@@ -198,6 +198,64 @@ public:
     static constexpr const char* s_help{""};
 };
 
+// getStatusRPC helper class declaration
+class IChatBotMsgs_getStatusRPC_helper :
+        public yarp::os::Portable
+{
+public:
+    IChatBotMsgs_getStatusRPC_helper() = default;
+    bool write(yarp::os::ConnectionWriter& connection) const override;
+    bool read(yarp::os::ConnectionReader& connection) override;
+
+    class Command :
+            public yarp::os::idl::WirePortable
+    {
+    public:
+        Command() = default;
+        ~Command() override = default;
+
+        bool write(yarp::os::ConnectionWriter& connection) const override;
+        bool read(yarp::os::ConnectionReader& connection) override;
+
+        bool write(const yarp::os::idl::WireWriter& writer) const override;
+        bool writeTag(const yarp::os::idl::WireWriter& writer) const;
+        bool writeArgs(const yarp::os::idl::WireWriter& writer) const;
+
+        bool read(yarp::os::idl::WireReader& reader) override;
+        bool readTag(yarp::os::idl::WireReader& reader);
+        bool readArgs(yarp::os::idl::WireReader& reader);
+    };
+
+    class Reply :
+            public yarp::os::idl::WirePortable
+    {
+    public:
+        Reply() = default;
+        ~Reply() override = default;
+
+        bool write(yarp::os::ConnectionWriter& connection) const override;
+        bool read(yarp::os::ConnectionReader& connection) override;
+
+        bool write(const yarp::os::idl::WireWriter& writer) const override;
+        bool read(yarp::os::idl::WireReader& reader) override;
+
+        return_getStatus return_helper{};
+    };
+
+    using funcptr_t = return_getStatus (*)();
+    void call(IChatBotMsgs* ptr);
+
+    Command cmd;
+    Reply reply;
+
+    static constexpr const char* s_tag{"getStatusRPC"};
+    static constexpr size_t s_tag_len{1};
+    static constexpr size_t s_cmd_len{1};
+    static constexpr size_t s_reply_len{2};
+    static constexpr const char* s_prototype{"return_getStatus IChatBotMsgs::getStatusRPC()"};
+    static constexpr const char* s_help{""};
+};
+
 // resetBotRPC helper class declaration
 class IChatBotMsgs_resetBotRPC_helper :
         public yarp::os::Portable
@@ -697,6 +755,139 @@ void IChatBotMsgs_getLanguageRPC_helper::call(IChatBotMsgs* ptr)
     reply.return_helper = ptr->getLanguageRPC();
 }
 
+// getStatusRPC helper class implementation
+bool IChatBotMsgs_getStatusRPC_helper::write(yarp::os::ConnectionWriter& connection) const
+{
+    return cmd.write(connection);
+}
+
+bool IChatBotMsgs_getStatusRPC_helper::read(yarp::os::ConnectionReader& connection)
+{
+    return reply.read(connection);
+}
+
+bool IChatBotMsgs_getStatusRPC_helper::Command::write(yarp::os::ConnectionWriter& connection) const
+{
+    yarp::os::idl::WireWriter writer(connection);
+    if (!writer.writeListHeader(s_cmd_len)) {
+        return false;
+    }
+    return write(writer);
+}
+
+bool IChatBotMsgs_getStatusRPC_helper::Command::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    if (!reader.readListHeader()) {
+        reader.fail();
+        return false;
+    }
+    return read(reader);
+}
+
+bool IChatBotMsgs_getStatusRPC_helper::Command::write(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writeTag(writer)) {
+        return false;
+    }
+    if (!writeArgs(writer)) {
+        return false;
+    }
+    return true;
+}
+
+bool IChatBotMsgs_getStatusRPC_helper::Command::writeTag(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.writeTag(s_tag, 1, s_tag_len)) {
+        return false;
+    }
+    return true;
+}
+
+bool IChatBotMsgs_getStatusRPC_helper::Command::writeArgs(const yarp::os::idl::WireWriter& writer [[maybe_unused]]) const
+{
+    return true;
+}
+
+bool IChatBotMsgs_getStatusRPC_helper::Command::read(yarp::os::idl::WireReader& reader)
+{
+    if (!readTag(reader)) {
+        return false;
+    }
+    if (!readArgs(reader)) {
+        return false;
+    }
+    return true;
+}
+
+bool IChatBotMsgs_getStatusRPC_helper::Command::readTag(yarp::os::idl::WireReader& reader)
+{
+    std::string tag = reader.readTag(s_tag_len);
+    if (reader.isError()) {
+        return false;
+    }
+    if (tag != s_tag) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool IChatBotMsgs_getStatusRPC_helper::Command::readArgs(yarp::os::idl::WireReader& reader)
+{
+    if (!reader.noMore()) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool IChatBotMsgs_getStatusRPC_helper::Reply::write(yarp::os::ConnectionWriter& connection) const
+{
+    yarp::os::idl::WireWriter writer(connection);
+    return write(writer);
+}
+
+bool IChatBotMsgs_getStatusRPC_helper::Reply::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    return read(reader);
+}
+
+bool IChatBotMsgs_getStatusRPC_helper::Reply::write(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.isNull()) {
+        if (!writer.writeListHeader(s_reply_len)) {
+            return false;
+        }
+        if (!writer.write(return_helper)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+bool IChatBotMsgs_getStatusRPC_helper::Reply::read(yarp::os::idl::WireReader& reader)
+{
+    if (!reader.readListReturn()) {
+        return false;
+    }
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
+    if (!reader.read(return_helper)) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+void IChatBotMsgs_getStatusRPC_helper::call(IChatBotMsgs* ptr)
+{
+    reply.return_helper = ptr->getStatusRPC();
+}
+
 // resetBotRPC helper class implementation
 bool IChatBotMsgs_resetBotRPC_helper::write(yarp::os::ConnectionWriter& connection) const
 {
@@ -866,6 +1057,16 @@ return_getLanguage IChatBotMsgs::getLanguageRPC()
     return ok ? helper.reply.return_helper : return_getLanguage{};
 }
 
+return_getStatus IChatBotMsgs::getStatusRPC()
+{
+    if (!yarp().canWrite()) {
+        yError("Missing server method '%s'?", IChatBotMsgs_getStatusRPC_helper::s_prototype);
+    }
+    IChatBotMsgs_getStatusRPC_helper helper{};
+    bool ok = yarp().write(helper, helper);
+    return ok ? helper.reply.return_helper : return_getStatus{};
+}
+
 bool IChatBotMsgs::resetBotRPC()
 {
     if (!yarp().canWrite()) {
@@ -886,6 +1087,7 @@ std::vector<std::string> IChatBotMsgs::help(const std::string& functionName)
         helpString.emplace_back(IChatBotMsgs_interactRPC_helper::s_tag);
         helpString.emplace_back(IChatBotMsgs_setLanguageRPC_helper::s_tag);
         helpString.emplace_back(IChatBotMsgs_getLanguageRPC_helper::s_tag);
+        helpString.emplace_back(IChatBotMsgs_getStatusRPC_helper::s_tag);
         helpString.emplace_back(IChatBotMsgs_resetBotRPC_helper::s_tag);
         helpString.emplace_back("help");
     } else {
@@ -897,6 +1099,9 @@ std::vector<std::string> IChatBotMsgs::help(const std::string& functionName)
         }
         if (functionName == IChatBotMsgs_getLanguageRPC_helper::s_tag) {
             helpString.emplace_back(IChatBotMsgs_getLanguageRPC_helper::s_prototype);
+        }
+        if (functionName == IChatBotMsgs_getStatusRPC_helper::s_tag) {
+            helpString.emplace_back(IChatBotMsgs_getStatusRPC_helper::s_prototype);
         }
         if (functionName == IChatBotMsgs_resetBotRPC_helper::s_tag) {
             helpString.emplace_back(IChatBotMsgs_resetBotRPC_helper::s_prototype);
@@ -965,6 +1170,21 @@ bool IChatBotMsgs::read(yarp::os::ConnectionReader& connection)
         }
         if (tag == IChatBotMsgs_getLanguageRPC_helper::s_tag) {
             IChatBotMsgs_getLanguageRPC_helper helper;
+            if (!helper.cmd.readArgs(reader)) {
+                return false;
+            }
+
+            helper.call(this);
+
+            yarp::os::idl::WireWriter writer(reader);
+            if (!helper.reply.write(writer)) {
+                return false;
+            }
+            reader.accept();
+            return true;
+        }
+        if (tag == IChatBotMsgs_getStatusRPC_helper::s_tag) {
+            IChatBotMsgs_getStatusRPC_helper helper;
             if (!helper.cmd.readArgs(reader)) {
                 return false;
             }
