@@ -74,6 +74,24 @@ return_getLanguage IChatBotMsgsImpl::getLanguageRPC()
     return response;
 }
 
+return_getStatus IChatBotMsgsImpl::getStatusRPC()
+{
+    std::lock_guard <std::mutex> lg(m_mutex);
+    return_getStatus response;
+    std::string status;
+    if(!m_iChatBot->getStatus(status))
+    {
+        yCError(ICHATBOTMSGSIMPL) << "Could not retrieve the chatbot status";
+        response.result = false;
+        return response;
+    }
+
+    response.result = true;
+    response.status = status;
+
+    return response;
+}
+
 bool IChatBotMsgsImpl::resetBotRPC()
 {
     std::lock_guard <std::mutex> lg(m_mutex);

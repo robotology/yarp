@@ -52,6 +52,7 @@ public:
     return_interact    interactRPC(const std::string& messageIn) override;
     bool               setLanguageRPC(const std::string& language) override;
     return_getLanguage getLanguageRPC() override;
+    return_getStatus   getStatusRPC() override;
     bool               resetBotRPC() override;
 
 public:
