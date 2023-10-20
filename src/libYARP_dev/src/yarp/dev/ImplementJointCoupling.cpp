@@ -10,18 +10,18 @@
 using namespace yarp::dev;
 
 
-void ImplementJointCoupling::initialise(yarp::sig::VectorOf<int> coupled_joints, std::vector<std::string> coupled_joint_names, std::vector<std::pair<double, double>> coupled_joint_limits) {
-    m_coupledJoints=coupled_joints;
-    m_coupledJointNames=coupled_joint_names;
+void ImplementJointCoupling::initialise(yarp::sig::VectorOf<size_t> physical_joints, std::vector<std::string> physical_joint_names, std::vector<std::pair<double, double>> physical_joint_limits) {
+    m_physicalJoints=physical_joints;
+    m_physicalJointNames=physical_joint_names;
 
-    // Configure a map between coupled joints and limits
-    for (std::size_t i = 0, j = 0; i < coupled_joints.size(); i++)
+    // Configure a map between physical joints and limits
+    for (std::size_t i = 0, j = 0; i < physical_joints.size(); i++)
     {
-        const int coupled_joint_index = coupled_joints(i);
-        const std::string coupled_joint_name = getCoupledJointName(coupled_joint_index);
-        if (coupled_joint_name != "invalid" && coupled_joint_name != "reserved")
+        const int physical_joint_index = physical_joints(i);
+        const std::string physical_joint_name = getPhysicalJointName(physical_joint_index);
+        if (physical_joint_name != "invalid" && physical_joint_name != "reserved")
         {
-            m_coupledJointLimits[coupled_joints[i]] = coupled_joint_limits[j];
+            m_physicalJointLimits[physical_joints[i]] = physical_joint_limits[j];
             j++;
         }
     }
@@ -30,20 +30,20 @@ void ImplementJointCoupling::initialise(yarp::sig::VectorOf<int> coupled_joints,
 }
 
 
-yarp::sig::VectorOf<int> ImplementJointCoupling::getCoupledJoints() {
-    return m_coupledJoints;
+yarp::sig::VectorOf<size_t> ImplementJointCoupling::getPhysicalJoints() {
+    return m_physicalJoints;
 }
 
-std::string ImplementJointCoupling::getCoupledJointName(int joint){
+std::string ImplementJointCoupling::getPhysicalJointName(size_t joint){
     int c_joint = -1;
-    for (size_t i = 0; i < m_coupledJoints.size(); ++i)
+    for (size_t i = 0; i < m_physicalJoints.size(); ++i)
     {
-        if (m_coupledJoints[i]==joint) c_joint = i;
+        if (m_physicalJoints[i]==joint) c_joint = i;
     }
 
-    if (c_joint >= 0 && static_cast<size_t>(c_joint) < m_coupledJoints.size())
+    if (c_joint >= 0 && static_cast<size_t>(c_joint) < m_physicalJoints.size())
     {
-        return m_coupledJointNames[c_joint];
+        return m_physicalJointNames[c_joint];
     }
     else
     {
@@ -51,28 +51,32 @@ std::string ImplementJointCoupling::getCoupledJointName(int joint){
     }
 }
 
-bool ImplementJointCoupling::checkJointIsCoupled(int joint){
-    for (size_t i = 0; i < m_coupledJoints.size(); ++i)
+bool ImplementJointCoupling::checkPhysicalJointIsCoupled(size_t joint){
+    for (size_t i = 0; i < m_physicalJoints.size(); ++i)
     {
-        if (m_coupledJoints[i]==joint) return true;
+        if (m_physicalJoints[i]==joint) return true;
     }
     return false;
 }
-void ImplementJointCoupling::setCoupledJointLimit(int joint, const double& min, const double& max){
-    const std::string coupled_joint_name = getCoupledJointName(joint);
+bool ImplementJointCoupling::setPhysicalJointLimits(size_t joint, const double& min, const double& max){
+    const std::string physical_joint_name = getPhysicalJointName(joint);
 
-    if (coupled_joint_name != "reserved" && coupled_joint_name != "invalid")
+    if (physical_joint_name != "reserved" && physical_joint_name != "invalid")
     {
-        m_coupledJointLimits.at(joint).first = min;
-        m_coupledJointLimits.at(joint).second = max;
+        m_physicalJointLimits.at(joint).first = min;
+        m_physicalJointLimits.at(joint).second = max;
+        return true;
     }
+    return false;
 }
-void ImplementJointCoupling::getCoupledJointLimit(int joint, double& min, double& max){
-    const std::string coupled_joint_name = getCoupledJointName(joint);
+bool ImplementJointCoupling::getPhysicalJointLimits(size_t joint, double& min, double& max){
+    const std::string physical_joint_name = getPhysicalJointName(joint);
 
-    if (coupled_joint_name != "reserved" && coupled_joint_name != "gyp_invalid")
+    if (physical_joint_name != "reserved" && physical_joint_name != "gyp_invalid")
     {
-        min = m_coupledJointLimits.at(joint).first;
-        max = m_coupledJointLimits.at(joint).second;
+        min = m_physicalJointLimits.at(joint).first;
+        max = m_physicalJointLimits.at(joint).second;
+        return true;
     }
+    return false;
 }

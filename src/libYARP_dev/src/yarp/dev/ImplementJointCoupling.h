@@ -29,17 +29,17 @@ public:
      */
     virtual ~ImplementJointCoupling() = default;
 
-    void initialise(yarp::sig::VectorOf<int> coupled_joints, std::vector<std::string> coupled_joint_names, std::vector<std::pair<double, double>> coupled_joint_limits);
+    void initialise(yarp::sig::VectorOf<size_t> physical_joints, std::vector<std::string> physical_joint_names, std::vector<std::pair<double, double>> physical_joint_limits);
 
-    yarp::sig::VectorOf<int> getCoupledJoints() override final;
-    std::string getCoupledJointName(int joint) override final;
-    bool checkJointIsCoupled(int joint) override final;
-    void setCoupledJointLimit(int joint, const double& min, const double& max) override final;
-    void getCoupledJointLimit(int joint, double& min, double& max) override final;
+    yarp::sig::VectorOf<size_t> getPhysicalJoints() override final;
+    std::string getPhysicalJointName(size_t joint) override final;
+    bool checkPhysicalJointIsCoupled(size_t joint) override final;
+    bool setPhysicalJointLimits(size_t joint, const double& min, const double& max) override final;
+    bool getPhysicalJointLimits(size_t joint, double& min, double& max) override final;
 protected:
-    yarp::sig::VectorOf<int> m_coupledJoints;
-    std::vector<std::string> m_coupledJointNames;
-    std::unordered_map<int, std::pair<double, double>> m_coupledJointLimits;
+    yarp::sig::VectorOf<size_t> m_physicalJoints;
+    std::vector<std::string> m_physicalJointNames;
+    std::unordered_map<size_t, std::pair<double, double>> m_physicalJointLimits;
     unsigned int m_controllerPeriod;
     unsigned int m_couplingSize;
 
