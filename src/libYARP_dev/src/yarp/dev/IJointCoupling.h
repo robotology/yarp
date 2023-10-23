@@ -103,7 +103,7 @@ public:
      * @param[out] actAxisAcc  Actuated Axes acceleration
      * @return, true/false on success/failure
      */
-    virtual bool convertFromPhysicalJointPosToActuatedAxisAcc(const yarp::sig::Vector& physJointPos, const yarp::sig::Vector& physJointVel, const yarp::sig::Vector& physJointAcc, yarp::sig::Vector& actAxisAcc) = 0;
+    virtual bool convertFromPhysicalJointAccToActuatedAxisAcc(const yarp::sig::Vector& physJointPos, const yarp::sig::Vector& physJointVel, const yarp::sig::Vector& physJointAcc, yarp::sig::Vector& actAxisAcc) = 0;
 
     /**
      * @brief Convert from Physical Joint to Actuated Axes torque
@@ -122,7 +122,7 @@ public:
      * @param[out] physJointPos Physical Joint position
      * @return true/false on success/failure
      */
-    virtual bool convertFromActuatedAxisToPhysicalJointPos(const yarp::sig::Vector& actAxisPos, yarp::sig::Vector& physJointPos) = 0;
+    virtual bool convertFromActuatedAxisPosToPhysicalJointPos(const yarp::sig::Vector& actAxisPos, yarp::sig::Vector& physJointPos) = 0;
 
     /**
      * @brief Convert from Actuated Axes to Physical Joint velocity
@@ -137,7 +137,7 @@ public:
      * @param[out] physJointVel Physical Joint velocity
      * @return true/false on success/failure
      */
-    virtual bool convertFromActuatedAxisToPhysicalJointVel(const yarp::sig::Vector& actAxisPos, const yarp::sig::Vector& actAxisVel, yarp::sig::Vector& physJointVel) = 0;
+    virtual bool convertFromActuatedAxisVelToPhysicalJointVel(const yarp::sig::Vector& actAxisPos, const yarp::sig::Vector& actAxisVel, yarp::sig::Vector& physJointVel) = 0;
 
     /**
      * @brief Convert from Actuated Axes to Physical Joint acceleration
@@ -154,7 +154,7 @@ public:
      * @param[out] physJointAcc Physical Joint acceleration
      * @return true/false on success/failure
      */
-    virtual bool convertFromActuatedAxisToPhysicalJointAcc(const yarp::sig::Vector& actAxisPos, const yarp::sig::Vector& actAxisVel, const yarp::sig::Vector& actAxisAcc, yarp::sig::Vector& physJointAcc) = 0;
+    virtual bool convertFromActuatedAxisAccToPhysicalJointAcc(const yarp::sig::Vector& actAxisPos, const yarp::sig::Vector& actAxisVel, const yarp::sig::Vector& actAxisAcc, yarp::sig::Vector& physJointAcc) = 0;
 
     /**
      * @brief Convert from Actuated Axes to Physical Joint acceleration
@@ -164,7 +164,7 @@ public:
      * @param[out] physJointTrq Physical Joint torque
      * @return true/false on success/failure
      */
-    virtual bool convertFromActuatedAxisToPhysicalJointTrq(const yarp::sig::Vector& actAxisPos, const yarp::sig::Vector& actAxisTrq, yarp::sig::Vector& physJointTrq) = 0;
+    virtual bool convertFromActuatedAxisTrqToPhysicalJointTrq(const yarp::sig::Vector& actAxisPos, const yarp::sig::Vector& actAxisTrq, yarp::sig::Vector& physJointTrq) = 0;
 
     /**
      * @brief Get the physical joints object
