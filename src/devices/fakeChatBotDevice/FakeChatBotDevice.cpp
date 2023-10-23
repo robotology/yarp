@@ -68,6 +68,12 @@ bool FakeChatBotDevice::getLanguage(std::string& language)
     return true;
 }
 
+bool FakeChatBotDevice::getStatus(std::string& status)
+{
+    status = m_status;
+    return true;
+}
+
 bool FakeChatBotDevice::resetBot()
 {
     m_status = "greetings";

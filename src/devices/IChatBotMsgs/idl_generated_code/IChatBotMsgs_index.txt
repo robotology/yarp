@@ -2,5 +2,7 @@ return_interact.h
 return_interact.cpp
 return_getLanguage.h
 return_getLanguage.cpp
+return_getStatus.h
+return_getStatus.cpp
 IChatBotMsgs.h
 IChatBotMsgs.cpp

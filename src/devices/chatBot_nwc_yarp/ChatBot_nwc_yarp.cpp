@@ -98,6 +98,18 @@ bool ChatBot_nwc_yarp::getLanguage(std::string& language)
     return true;
 }
 
+bool ChatBot_nwc_yarp::getStatus(std::string& status)
+{
+    return_getStatus output = m_thriftClient.getStatusRPC();
+    if(!output.result)
+    {
+        yCError(CHATBOT_NWC_YARP) << "Could not retrieve the current bot status";
+        return false;
+    }
+    status = output.status;
+    return true;
+}
+
 bool ChatBot_nwc_yarp::resetBot()
 {
     if(!m_thriftClient.resetBotRPC())

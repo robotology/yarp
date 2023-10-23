@@ -29,6 +29,10 @@ inline void exec_iChatBot_test_1(yarp::dev::IChatBot* ichatbot)
     b = ichatbot->resetBot();
     CHECK(b);
 
+    std::string status;
+    b = ichatbot->getStatus(status);
+    CHECK(b);
+
     std::string messageIn{"Hello!"};
     std::string messageOut;
     b = ichatbot->interact(messageIn,messageOut);

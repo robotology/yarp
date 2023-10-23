@@ -52,6 +52,13 @@ public:
     virtual bool getLanguage(std::string& language) = 0;
 
     /**
+     * Gets the current status of the bot
+     * \param status the current bot status
+     * \return true on success
+    */
+    virtual bool getStatus(std::string& status) = 0;
+
+    /**
      * Resets the chatbot
      * \return true on success
     */

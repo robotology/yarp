@@ -26,6 +26,7 @@ public:
     bool interact(const std::string& messageIn, std::string& messageOut) override;
     bool setLanguage(const std::string& language) override;
     bool getLanguage(std::string& language) override;
+    bool getStatus(std::string& status) override;
     bool resetBot() override;
 
 private:
