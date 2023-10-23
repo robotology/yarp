@@ -51,6 +51,7 @@ const int MAX_PORTS = 5;
  * | period           | -                    | float   | -              | 10ms                  | no           | The period for publishing individual tfs on port                                                           |
  * | ft_client_prefix | -                    | string  | -              | ""                    | no           | A prefix to add to the names of all the ports opened by the NWCs instantiated by the frameTransformClient  |
  * | ft_server_prefix | -                    | string  | -              | ""                    | no           | The prefix added to all the names of the ports opened by the NWSs instantiated by the frameTransformServer |
+ * | local_rpc        | -                    | string  | -              | "/ftClient/rpc"       | no           | Name of the utility RPC port opened by the client                                                          |
  *
  * Example of command line:
  * \code{.unparsed}
