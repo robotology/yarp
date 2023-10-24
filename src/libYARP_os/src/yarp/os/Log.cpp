@@ -748,7 +748,7 @@ void yarp::os::impl::LogPrivate::log(yarp::os::Log::LogType type,
                 buf_size = dyn_buf_size;
             }
 
-            auto p = std::min(log_line_size - 1, buf_size);
+            auto p = std::min<size_t>(log_line_size - 1, buf_size);
             if (log_line_size > 0 && p < buf_size && out[p] == '\n' && msg[strlen(msg) - 1] == '\n') {
                 yarp::os::Log(file, line, func, nullptr, log_internal_component).warning("Removing extra '\\n' (c-style)");
                 out[p] = 0;
