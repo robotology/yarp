@@ -16,7 +16,7 @@ class IJointCoupling;
 /**
  * @ingroup dev_iface_motor
  *
- * Interface for joint coupling. It contains the methods to convert from Physical Joint to Actuated Axes and viceversa.
+ * Interface for joint coupling. It contains the methods to convert from Physical Joints to Actuated Axes and viceversa.
  *
  * $$
  * \theta \in \mathbb{R}^{m} : \text{Actuated Axes positions}
@@ -28,15 +28,15 @@ class IJointCoupling;
  *
  * In general, we have $m \leq n$.
  *
- * There is unique value of Actuated Axes corresponding to a given Physical Joint position, while in general there may be multiple Physical Joint position corresponding to a given Actuated Axes.
+ * There is unique value of Actuated Axes corresponding to a given Physical Joints position, while in general there may be multiple Physical Joints position corresponding to a given Actuated Axes.
  *
- * So, the mapping from Physical Joint $q$ to Actuated Axes $\theta$ is defined as:
+ * So, the mapping from Physical Joints $q$ to Actuated Axes $\theta$ is defined as:
  *
  * $$
  * \theta = f(q)
  * $$
  *
- * while the mapping from Actuated Axes $\theta$  to Physical Joint $q$  is defined as:
+ * while the mapping from Actuated Axes $\theta$  to Physical Joints $q$  is defined as:
  *
  * $$
  * q = g(\theta)
@@ -65,82 +65,82 @@ public:
     virtual ~IJointCoupling() {}
 
     /**
-     * @brief Convert from Physical Joint to Actuated Axes position.
+     * @brief Convert from Physical Joints to Actuated Axes position.
      * This method implements $f(q)$.
      *
-     * @param[in] physJointPos Physical Joint position
-     * @param[out] actAxisPos Actuated Axes position
+     * @param[in] physJointsPos Physical Joints position
+     * @param[out] actAxesPos Actuated Axes position
      * @return, true/false on success/failure
      */
-    virtual bool convertFromPhysicalJointPosToActuatedAxisPos(const yarp::sig::Vector& physJointPos, yarp::sig::Vector& actAxisPos) = 0;
+    virtual bool convertFromPhysicalJointsToActuatedAxesPos(const yarp::sig::Vector& physJointsPos, yarp::sig::Vector& actAxesPos) = 0;
 
     /**
-     * @brief Convert from Physical Joint to Actuated Axes velocity.
+     * @brief Convert from Physical Joints to Actuated Axes velocity.
      * This method implements $f'$ that can be used to compute $\dot{\theta}(t)$, defined such that:
      *
      * $$
      * \dot{\theta}(t) = \frac{\partial}{\partial q} f(q(t)) \dot{q}(t) = f'( q(t), \dot{q}(t))
      * $$
      *
-     * @param[in] physJointPos Physical Joint position
-     * @param[in] physJointVel Physical Joint velocity
-     * @param[out] actAxisVel  Actuated Axes velocity
+     * @param[in] physJointsPos Physical Joints position
+     * @param[in] physJointsVel Physical Joints velocity
+     * @param[out] actAxesVel  Actuated Axes velocity
      * @return, true/false on success/failure
      */
-    virtual bool convertFromPhysicalJointVelToActuatedAxisVel(const yarp::sig::Vector& physJointPos, const yarp::sig::Vector& physJointVel, yarp::sig::Vector& actAxisVel) = 0;
+    virtual bool convertFromPhysicalJointsToActuatedAxesVel(const yarp::sig::Vector& physJointsPos, const yarp::sig::Vector& physJointsVel, yarp::sig::Vector& actAxesVel) = 0;
 
     /**
-     * @brief Convert from Physical Joint to Actuated Axes acceleration.
+     * @brief Convert from Physical Joints to Actuated Axes acceleration.
      * This method implements $f''$ that can be used to compute $\ddot{\theta}(t)$,  defined such that:
      *
      * $$
      * \ddot{\theta}(t) = \frac{\partial}{\partial q} f'(q(t), \dot{q}(t)) \dot{q}(t) + \frac{\partial}{\partial \dot{q}} f'(q(t), \dot{q}(t)) \ddot{q}(t) = f''( q(t), \dot{q}(t), \ddot{q}(t))
      * $$
      *
-     * @param[in] physJointPos Physical Joint position
-     * @param[in] physJointVel Physical Joint velocity
-     * @param[in] physJointAcc Physical Joint acceleration
-     * @param[out] actAxisAcc  Actuated Axes acceleration
+     * @param[in] physJointsPos Physical Joints position
+     * @param[in] physJointsVel Physical Joints velocity
+     * @param[in] physJointsAcc Physical Joints acceleration
+     * @param[out] actAxesAcc  Actuated Axes acceleration
      * @return, true/false on success/failure
      */
-    virtual bool convertFromPhysicalJointAccToActuatedAxisAcc(const yarp::sig::Vector& physJointPos, const yarp::sig::Vector& physJointVel, const yarp::sig::Vector& physJointAcc, yarp::sig::Vector& actAxisAcc) = 0;
+    virtual bool convertFromPhysicalJointsToActuatedAxesAcc(const yarp::sig::Vector& physJointsPos, const yarp::sig::Vector& physJointsVel, const yarp::sig::Vector& physJointsAcc, yarp::sig::Vector& actAxesAcc) = 0;
 
     /**
-     * @brief Convert from Physical Joint to Actuated Axes torque
+     * @brief Convert from Physical Joints to Actuated Axes torque
      *
-     * @param[in] physJointPos Physical Joint position
-     * @param[in] physJointTrq Physical Joint torque
-     * @param[out] actAxisTrq  Actuated Axes torque
+     * @param[in] physJointsPos Physical Joints position
+     * @param[in] physJointsTrq Physical Joints torque
+     * @param[out] actAxesTrq  Actuated Axes torque
      * @return true/false on success/failure
      */
-    virtual bool convertFromPhysicalJointTrqToActuatedAxisTrq(const yarp::sig::Vector& physJointPos, const yarp::sig::Vector& physJointTrq, yarp::sig::Vector& actAxisTrq) = 0;
+    virtual bool convertFromPhysicalJointsToActuatedAxesTrq(const yarp::sig::Vector& physJointsPos, const yarp::sig::Vector& physJointsTrq, yarp::sig::Vector& actAxesTrq) = 0;
 
     /**
-     * @brief Convert from Actuated Axes to Physical Joint position
+     * @brief Convert from Actuated Axes to Physical Joints position
      * This method implements $g(\theta)$.
-     * @param[in] actAxisPos Actuated Axes position
-     * @param[out] physJointPos Physical Joint position
+     * @param[in] actAxesPos Actuated Axes position
+     * @param[out] physJointsPos Physical Joints position
      * @return true/false on success/failure
      */
-    virtual bool convertFromActuatedAxisPosToPhysicalJointPos(const yarp::sig::Vector& actAxisPos, yarp::sig::Vector& physJointPos) = 0;
+    virtual bool convertFromActuatedAxesToPhysicalJointsPos(const yarp::sig::Vector& actAxesPos, yarp::sig::Vector& physJointsPos) = 0;
 
     /**
-     * @brief Convert from Actuated Axes to Physical Joint velocity
+     * @brief Convert from Actuated Axes to Physical Joints velocity
      * This method implements $g'$ that can be used to compute $\dot{q}(t)$, defined such that:
      *
      * $$
      * \dot{q}(t) = \frac{\partial}{\partial \theta} g(\theta(t)) \dot{\theta}(t) = g'( \theta(t), \dot{\theta}(t))
      * $$
      *
-     * @param[in] actAxisPos Actuated Axes position
-     * @param[in] actAxisVel Actuated Axes velocity
-     * @param[out] physJointVel Physical Joint velocity
+     * @param[in] actAxesPos Actuated Axes position
+     * @param[in] actAxesVel Actuated Axes velocity
+     * @param[out] physJointsVel Physical Joints velocity
      * @return true/false on success/failure
      */
-    virtual bool convertFromActuatedAxisVelToPhysicalJointVel(const yarp::sig::Vector& actAxisPos, const yarp::sig::Vector& actAxisVel, yarp::sig::Vector& physJointVel) = 0;
+    virtual bool convertFromActuatedAxesToPhysicalJointsVel(const yarp::sig::Vector& actAxesPos, const yarp::sig::Vector& actAxesVel, yarp::sig::Vector& physJointsVel) = 0;
 
     /**
-     * @brief Convert from Actuated Axes to Physical Joint acceleration
+     * @brief Convert from Actuated Axes to Physical Joints acceleration
      *
      * This method implements $f''$ that can be used to compute $\ddot{\theta}(t)$,  defined such that:
      *
@@ -148,66 +148,75 @@ public:
      * \ddot{q}(t) = \frac{\partial}{\partial \theta} g'(\theta(t), \dot{\theta}(t)) \dot{\theta}(t) + \frac{\partial}{\partial \dot{\theta}} g'(\theta(t), \dot{\theta}(t)) \ddot{\theta}(t) = g''( \theta(t), \dot{\theta}(t), \ddot{\theta}(t))
      * $$
      *
-     * @param[in] actAxisPos Actuated Axes position
-     * @param[in] actAxisVel Actuated Axes velocity
-     * @param[in] actAxisAcc Actuated Axes acceleration
-     * @param[out] physJointAcc Physical Joint acceleration
+     * @param[in] actAxesPos Actuated Axes position
+     * @param[in] actAxesVel Actuated Axes velocity
+     * @param[in] actAxesAcc Actuated Axes acceleration
+     * @param[out] physJointsAcc Physical Joints acceleration
      * @return true/false on success/failure
      */
-    virtual bool convertFromActuatedAxisAccToPhysicalJointAcc(const yarp::sig::Vector& actAxisPos, const yarp::sig::Vector& actAxisVel, const yarp::sig::Vector& actAxisAcc, yarp::sig::Vector& physJointAcc) = 0;
+    virtual bool convertFromActuatedAxesToPhysicalJointsAcc(const yarp::sig::Vector& actAxesPos, const yarp::sig::Vector& actAxesVel, const yarp::sig::Vector& actAxesAcc, yarp::sig::Vector& physJointsAcc) = 0;
 
     /**
-     * @brief Convert from Actuated Axes to Physical Joint acceleration
+     * @brief Convert from Actuated Axes to Physical Joints acceleration
      *
-     * @param[in] actAxisPos Actuated Axes position
-     * @param[in] actAxisTrq Actuated Axes torque
-     * @param[out] physJointTrq Physical Joint torque
+     * @param[in] actAxesPos Actuated Axes position
+     * @param[in] actAxesTrq Actuated Axes torque
+     * @param[out] physJointsTrq Physical Joints torque
      * @return true/false on success/failure
      */
-    virtual bool convertFromActuatedAxisTrqToPhysicalJointTrq(const yarp::sig::Vector& actAxisPos, const yarp::sig::Vector& actAxisTrq, yarp::sig::Vector& physJointTrq) = 0;
+    virtual bool convertFromActuatedAxesToPhysicalJointsTrq(const yarp::sig::Vector& actAxesPos, const yarp::sig::Vector& actAxesTrq, yarp::sig::Vector& physJointsTrq) = 0;
+
+    // In some case, for a given coupling several "physical joints" ad "actuated axis"
+    // may be related in a obvious way, i.e. the position and torque of given physical
+    // joint could be equal to the position and torque of given actuated axis.
+    // In that case "physical joints" ad "actuated axis" are typically identified by the
+    // same name. The getCoupled***() methods return the indices of the "actuated axis"
+    // and "physical joints" that are coupled in a non-obvious way
 
     /**
-     * @brief Get the physical joints object
+     * @brief Return the vector of "physical joints indices" (i.e. numbers from 0 to n-1)
+     * that are related to actuated axis in a non-obvious way
      *
-     * @return yarp::sig::VectorOf<int>
+     * @return the vector of "physical joints indices"
      */
-    virtual yarp::sig::VectorOf<size_t> getPhysicalJoints()=0;
+    virtual yarp::sig::VectorOf<size_t> getCoupledPhysicalJoints()=0;
+
+    /**
+     * @brief Return the vector of "actuator axis indices" (i.e. numbers from 0 to m-1)
+     * that are related to physical joints in a non-obvious way
+     *
+     * @return teh vector of "actuator axis indices"
+     */
+    virtual yarp::sig::VectorOf<size_t> getCoupledActuatedAxes()=0;
+
+    /**
+     * @brief Get the name of an actuated axis
+     *
+     * @param[in] actuatedAxisIndex  the number from 0 to m-1 that identifies
+     * the location of a "actuated axis" in a actuated axis vector.
+     * @return the actuated axis name
+     */
+    virtual std::string getActuatedAxisName(size_t actuatedAxisIndex)=0;
 
     /**
      * @brief Get the name of a physical joint
      *
-     * @param joint index of the joint
-     * @return name of the joint
+     * @param[in] physicalJointIndex the number from 0 to n-1 that identifies
+     * the location of a "physical joint" in a physical joint vector
+     * @return the physical joint name
      */
-    virtual std::string getPhysicalJointName(size_t joint)=0;
-
-    /**
-     * @brief Check if a physical joint is coupled
-     *
-     * @param joint index of the joint
-     * @return true/false on coupled/not coupled
-     */
-    virtual bool checkPhysicalJointIsCoupled(size_t joint)=0;
-
-    /**
-     * @brief Set limts for a physical joint
-     *
-     * @param[in] joint index of the joint
-     * @param[in] min minimum value
-     * @param[in] max maximum value
-     * @return true/false on success/failure
-     */
-    virtual bool setPhysicalJointLimits(size_t joint, const double& min, const double& max)=0;
+    virtual std::string getPhysicalJointName(size_t physicalJointIndex)=0;
 
     /**
      * @brief Get the Physical Joint Limit object
      *
-     * @param[in] joint index of the joint
+     * @param[in] physicalJointIndex the number from 0 to n-1 that identifies
+     * the location of a "physical joint" in a physical joint vector
      * @param[out] min minimum value
      * @param[out] max maximum value
      * @return true/false on success/failure
      */
-    virtual bool getPhysicalJointLimits(size_t joint, double& min, double& max)=0;
+    virtual bool getPhysicalJointLimits(size_t physicalJointIndex, double& min, double& max)=0;
 };
 
 #endif // YARP_DEV_IJOINTCOUPLING_H

@@ -5,15 +5,22 @@
 
 
 #include "ImplementJointCoupling.h"
+#include <algorithm>
 
 
 using namespace yarp::dev;
 
 
-void ImplementJointCoupling::initialise(yarp::sig::VectorOf<size_t> physical_joints, std::vector<std::string> physical_joint_names, std::vector<std::pair<double, double>> physical_joint_limits) {
-    m_physicalJoints=physical_joints;
-    m_physicalJointNames=physical_joint_names;
-
+void ImplementJointCoupling::initialise(yarp::sig::VectorOf<size_t> physical_joints,
+                                        yarp::sig::VectorOf<size_t> actuated_axes,
+                                        std::vector<std::string> physical_joint_names,
+                                        std::vector<std::string> actuated_axes_names,
+                                        std::vector<std::pair<double, double>> physical_joint_limits)
+{
+    m_physicalJoints     = physical_joints;
+    m_actuatedAxes       = actuated_axes;
+    m_physicalJointNames = physical_joint_names;
+    m_actuatedAxesNames  = actuated_axes_names;
     // Configure a map between physical joints and limits
     for (std::size_t i = 0, j = 0; i < physical_joints.size(); i++)
     {
@@ -30,15 +37,20 @@ void ImplementJointCoupling::initialise(yarp::sig::VectorOf<size_t> physical_joi
 }
 
 
-yarp::sig::VectorOf<size_t> ImplementJointCoupling::getPhysicalJoints() {
+yarp::sig::VectorOf<size_t> ImplementJointCoupling::getCoupledPhysicalJoints() {
     return m_physicalJoints;
 }
 
-std::string ImplementJointCoupling::getPhysicalJointName(size_t joint){
+yarp::sig::VectorOf<size_t> ImplementJointCoupling::getCoupledActuatedAxes() {
+    return m_actuatedAxes;
+}
+
+std::string ImplementJointCoupling::getPhysicalJointName(size_t physicalJointIndex){
     int c_joint = -1;
+    // TODO refactor also here
     for (size_t i = 0; i < m_physicalJoints.size(); ++i)
     {
-        if (m_physicalJoints[i]==joint) c_joint = i;
+        if (m_physicalJoints[i]==physicalJointIndex) c_joint = i;
     }
 
     if (c_joint >= 0 && static_cast<size_t>(c_joint) < m_physicalJoints.size())
@@ -51,31 +63,22 @@ std::string ImplementJointCoupling::getPhysicalJointName(size_t joint){
     }
 }
 
-bool ImplementJointCoupling::checkPhysicalJointIsCoupled(size_t joint){
-    for (size_t i = 0; i < m_physicalJoints.size(); ++i)
-    {
-        if (m_physicalJoints[i]==joint) return true;
-    }
-    return false;
+std::string ImplementJointCoupling::getActuatedAxisName(size_t actuatedAxisIndex){
+    // TODO is it right?
+    return m_actuatedAxesNames[actuatedAxisIndex];
 }
-bool ImplementJointCoupling::setPhysicalJointLimits(size_t joint, const double& min, const double& max){
-    const std::string physical_joint_name = getPhysicalJointName(joint);
 
-    if (physical_joint_name != "reserved" && physical_joint_name != "invalid")
-    {
-        m_physicalJointLimits.at(joint).first = min;
-        m_physicalJointLimits.at(joint).second = max;
-        return true;
-    }
-    return false;
+bool ImplementJointCoupling::checkPhysicalJointIsCoupled(size_t physicalJointIndex){
+    return std::find(m_physicalJoints.begin(), m_physicalJoints.end(), physicalJointIndex) != m_physicalJoints.end();
 }
-bool ImplementJointCoupling::getPhysicalJointLimits(size_t joint, double& min, double& max){
-    const std::string physical_joint_name = getPhysicalJointName(joint);
+
+bool ImplementJointCoupling::getPhysicalJointLimits(size_t physicalJointIndex, double& min, double& max){
+    const std::string physical_joint_name = getPhysicalJointName(physicalJointIndex);
 
     if (physical_joint_name != "reserved" && physical_joint_name != "gyp_invalid")
     {
-        min = m_physicalJointLimits.at(joint).first;
-        max = m_physicalJointLimits.at(joint).second;
+        min = m_physicalJointLimits.at(physicalJointIndex).first;
+        max = m_physicalJointLimits.at(physicalJointIndex).second;
         return true;
     }
     return false;
