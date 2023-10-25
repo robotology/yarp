@@ -404,6 +404,7 @@ add_library(YARP::YARP_dev_tests ALIAS YARP_dev_tests)
 
 set(YARP_dev_test_HDRS
     yarp/dev/tests/IDummyTest.h
+    yarp/dev/tests/IEncodersTimedTest.h
     yarp/dev/tests/IPositionControlTest.h
     yarp/dev/tests/ITorqueControlTest.h
     yarp/dev/tests/IAxisInfoTest.h
@@ -416,6 +417,7 @@ set(YARP_dev_test_HDRS
 
 set(YARP_dev_test_SRCS
     yarp/dev/tests/IDummyTest.cpp
+    yarp/dev/tests/IEncodersTimedTest.cpp
     yarp/dev/tests/IPositionControlTest.cpp
     yarp/dev/tests/ITorqueControlTest.cpp
     yarp/dev/tests/IAxisInfoTest.cpp

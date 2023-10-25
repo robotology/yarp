@@ -222,8 +222,7 @@ bool ControlBoard_nws_yarp::setDevice(yarp::dev::DeviceDriver* driver, bool owne
     // yarp::dev::IPositionControl* iPositionControl{nullptr};
     subdevice_ptr->view(iPositionControl);
     if (!iPositionControl) {
-        yCError(CONTROLBOARD, "Part <%s>: IPositionControl interface was not found in subdevice. Quitting", partName.c_str());
-        return false;
+        yCWarning(CONTROLBOARD, "Part <%s>: IPositionControl interface was not found in subdevice.", partName.c_str());
     }
 
     // yarp::dev::IPositionDirect* iPositionDirect{nullptr};
@@ -235,15 +234,13 @@ bool ControlBoard_nws_yarp::setDevice(yarp::dev::DeviceDriver* driver, bool owne
     // yarp::dev::IVelocityControl* iVelocityControl{nullptr};
     subdevice_ptr->view(iVelocityControl);
     if (!iVelocityControl) {
-        yCError(CONTROLBOARD, "Part <%s>: IVelocityControl interface was not found in subdevice. Quitting", partName.c_str());
-        return false;
+        yCWarning(CONTROLBOARD, "Part <%s>: IVelocityControl interface was not found in subdevice.", partName.c_str());
     }
 
     // yarp::dev::IEncodersTimed* iEncodersTimed{nullptr};
     subdevice_ptr->view(iEncodersTimed);
     if (!iEncodersTimed) {
-        yCError(CONTROLBOARD, "Part <%s>: IEncodersTimed interface was not found in subdevice. Quitting", partName.c_str());
-        return false;
+        yCWarning(CONTROLBOARD, "Part <%s>: IEncodersTimed interface was not found in subdevice.", partName.c_str());
     }
 
     // yarp::dev::IMotor* iMotor{nullptr};
@@ -332,11 +329,32 @@ bool ControlBoard_nws_yarp::setDevice(yarp::dev::DeviceDriver* driver, bool owne
 
 
     // Get the number of controlled joints
-    int tmp_axes;
-    if (!iPositionControl->getAxes(&tmp_axes)) {
-        yCError(CONTROLBOARD) << "Part <%s>: Failed to get axes number for subdevice " << partName.c_str();
-        return false;
+    int tmp_axes = 0;
+    if (iAxisInfo)
+    {
+        if (!iAxisInfo->getAxes(&tmp_axes)) {
+            yCError(CONTROLBOARD) << "Part <%s>: iAxisInfo->getAxes() failed for subdevice " << partName.c_str();
+            return false;}
     }
+    else if (iEncodersTimed)
+    {
+        if (!iEncodersTimed->getAxes(&tmp_axes)) {
+            yCError(CONTROLBOARD) << "Part <%s>: iEncodersTimed->getAxes() failed for subdevice " << partName.c_str();
+            return false;}
+    }
+    else if (iPositionControl)
+    {
+        if (!iPositionControl->getAxes(&tmp_axes)) {
+            yCError(CONTROLBOARD) << "Part <%s>: iPositionControl->getAxes() failed for subdevice " << partName.c_str();
+            return false;}
+    }
+    else if(iVelocityControl)
+    {
+        if (!iVelocityControl->getAxes(&tmp_axes)) {
+            yCError(CONTROLBOARD) << "Part <%s>: iVelocityControl->getAxes() failed for subdevice " << partName.c_str();
+            return false;}
+    }
+
     if (tmp_axes <= 0) {
         yCError(CONTROLBOARD, "Part <%s>: attached device has an invalid number of joints (%d)", partName.c_str(), tmp_axes);
         return false;

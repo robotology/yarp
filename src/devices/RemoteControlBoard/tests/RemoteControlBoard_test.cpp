@@ -12,6 +12,7 @@
 #include <yarp/dev/tests/IPositionControlTest.h>
 #include <yarp/dev/tests/ITorqueControlTest.h>
 #include <yarp/dev/tests/IAxisInfoTest.h>
+#include <yarp/dev/tests/IEncodersTimedTest.h>
 
 #include <catch2/catch_amalgamated.hpp>
 #include <harness.h>
@@ -36,6 +37,7 @@ TEST_CASE("dev::RemoteControlBoardTest", "[yarp::dev]")
         IPositionControl* ipos = nullptr;
         ITorqueControl* itrq = nullptr;
         IAxisInfo* iinfo = nullptr;
+        IEncodersTimed* ienc = nullptr;
 
         ////////"Checking opening fakeMotionControl and controlBoard_nws_yarp polydrivers"
         {
@@ -71,13 +73,17 @@ TEST_CASE("dev::RemoteControlBoardTest", "[yarp::dev]")
             REQUIRE(ddnwc.open(p_cfg));
         }
 
+        yarp::os::Time::delay(0.1);
+
         //test
         ddnwc.view(ipos);
         ddnwc.view(itrq);
         ddnwc.view(iinfo);
+        ddnwc.view(ienc);
         yarp::dev::tests::exec_iPositionControl_test_1(ipos);
         yarp::dev::tests::exec_iTorqueControl_test_1(itrq);
         yarp::dev::tests::exec_iAxisInfo_test_1(iinfo);
+        yarp::dev::tests::exec_iEncodersTimed_test_1(ienc);
 
         //"Close all polydrivers and check"
         {
