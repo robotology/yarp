@@ -89,7 +89,8 @@ public:
         if (!--stream->ref) {
             if (!stream->pred || stream->pred()) {
                 std::string s = stream->oss.str();
-                if (!s.empty()) {
+                if (!s.empty())
+                {
                     // remove the last character if it an empty space (i.e.
                     // always unless the user defined an operator<< that
                     // does not add an empty space.
@@ -100,7 +101,7 @@ public:
                             "' ' was expected. Some `operator<<` does not add an extra space at the end");
                     }
                     // remove the last character if it is a \n
-                    if (s.back() == '\n') {
+                    if (!s.empty() && s.back() == '\n') {
                         yarp::os::Log(stream->file, stream->line, stream->func, nullptr, yarp::os::Log::logInternalComponent()).warning(
                             "Removing extra \\n (stream-style)");
                         s.pop_back();
