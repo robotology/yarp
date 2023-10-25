@@ -55,6 +55,7 @@ TEST_CASE("dev::frameGrabberCropperTest", "[yarp::dev]")
         // Check IFrameGrabberImage on frameGrabberCropper left
         IFrameGrabberImage *ifgil = nullptr;
         REQUIRE(ddl.view(ifgil));
+        REQUIRE(ifgil);
 
         ImageOf<PixelRgb> imgl;
         ifgil->getImage(imgl);
@@ -81,6 +82,7 @@ TEST_CASE("dev::frameGrabberCropperTest", "[yarp::dev]")
         // Check IFrameGrabberImage on frameGrabberCropper right
         IFrameGrabberImage *ifgir = nullptr;
         REQUIRE(ddr.view(ifgir));
+        REQUIRE(ifgir);
 
         ImageOf<PixelRgb> imgr;
         ifgir->getImage(imgr);

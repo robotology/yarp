@@ -46,8 +46,9 @@ TEST_CASE("dev::MultipleAnalogSensorsClientTest", "[yarp::dev]")
 
         REQUIRE(imuSensor.open(p)); // sensor open reported successful
 
-        yarp::dev::IOrientationSensors* orientSens;
+        yarp::dev::IOrientationSensors* orientSens=nullptr;
         REQUIRE(imuSensor.view(orientSens)); // IOrientationSensors of fakeIMU correctly opened
+        REQUIRE(orientSens);
         int nrOfSensors = orientSens->getNrOfOrientationSensors();
         CHECK(nrOfSensors == 1); // getNrOfOrientationSensors of fakeIMU works correctly
 
@@ -60,6 +61,7 @@ TEST_CASE("dev::MultipleAnalogSensorsClientTest", "[yarp::dev]")
 
         yarp::dev::IMultipleWrapper *iwrap = nullptr;
         REQUIRE(wrapper.view(iwrap)); // IMultipleWrapper interface correctly opened for the multipleanalogsensorsserver
+        REQUIRE(iwrap);
 
         PolyDriverList pdList;
         pdList.push(&imuSensor, "pdlist_key");
@@ -80,8 +82,9 @@ TEST_CASE("dev::MultipleAnalogSensorsClientTest", "[yarp::dev]")
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
 
         // Compare the readings of actual device and client device
-        yarp::dev::IOrientationSensors* clientOrientSens;
+        yarp::dev::IOrientationSensors* clientOrientSens=nullptr;
         REQUIRE(client.view(clientOrientSens)); // IOrientationSensors of multipleanalogsensorsclient correctly opened
+        REQUIRE(clientOrientSens);
 
         yarp::dev::tests::exec_IOrientationSensors_test_1(clientOrientSens);
 

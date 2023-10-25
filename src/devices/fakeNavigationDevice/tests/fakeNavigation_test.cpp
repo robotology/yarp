@@ -37,8 +37,11 @@ TEST_CASE("dev::FakeNavigationTest", "[yarp::dev]")
             pfakeNavigation.put("device", "fakeNavigation");
             REQUIRE(ddfakeNavigation.open(pfakeNavigation));
             REQUIRE(ddfakeNavigation.view(inav_target));
+            REQUIRE(inav_target);
             REQUIRE(ddfakeNavigation.view(inav_control));
+            REQUIRE(inav_control);
             REQUIRE(ddfakeNavigation.view(inav_velocity));
+            REQUIRE(inav_velocity);
         }
 
         // Do tests

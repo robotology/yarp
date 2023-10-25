@@ -56,7 +56,8 @@ TEST_CASE("dev::odometry2d_nws_yarpTest", "[yarp::dev]")
             pdev_cfg.put("device", "fakeOdometry2D");
             REQUIRE(ddfake.open(pdev_cfg));
 
-            {yarp::dev::WrapperSingle* ww_nws; ddnws.view(ww_nws);
+            {yarp::dev::WrapperSingle* ww_nws=nullptr; ddnws.view(ww_nws);
+            REQUIRE(ww_nws);
             bool result_att = ww_nws->attach(&ddfake);
             REQUIRE(result_att); }
         }

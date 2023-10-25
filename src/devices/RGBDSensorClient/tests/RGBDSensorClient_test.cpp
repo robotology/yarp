@@ -47,7 +47,8 @@ TEST_CASE("dev::RGBDSensorClientTest", "[yarp::dev]")
         }
 
         //attach the nws to the fakeDepthCamera device
-        {yarp::dev::WrapperSingle* ww_nws; ddnws.view(ww_nws);
+        {yarp::dev::WrapperSingle* ww_nws = nullptr; ddnws.view(ww_nws);
+        REQUIRE(ww_nws);
         bool result_att = ww_nws->attach(&dddepth);
         REQUIRE(result_att); }
 

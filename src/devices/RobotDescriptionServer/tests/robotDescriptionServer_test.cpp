@@ -44,6 +44,7 @@ TEST_CASE("dev::robotDescriptionServerTest", "[yarp::dev]")
         REQUIRE(ddclient.open(pclient_cfg)); // robotDescriptionClient open reported successful
 
         REQUIRE(ddclient.view(idesc)); // IRobotDescription interface open reported successful
+        REQUIRE(idesc);
 
         DeviceDescription dev1; dev1.device_name = "/icubTest/left_arm"; dev1.device_type = "controlBoard_nws_yarp";
         DeviceDescription dev2; dev2.device_name = "/icubTest/left_leg"; dev2.device_type = "controlBoard_nws_yarp";

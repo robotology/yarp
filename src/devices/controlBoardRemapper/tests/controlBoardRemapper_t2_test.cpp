@@ -50,15 +50,19 @@ TEST_CASE("dev::ControlBoardRemapperTest2", "[yarp::dev]")
             REQUIRE(ddremapper.open(p_cfg));
         }
         {
-            yarp::dev::IMultipleWrapper* ww_nws; ddremapper.view(ww_nws);
+            yarp::dev::IMultipleWrapper* ww_nws=nullptr; ddremapper.view(ww_nws);
+            REQUIRE(ww_nws);
             yarp::dev::PolyDriverList pdlist; pdlist.push(&ddmc,"fakeboard1");
             bool result_att = ww_nws->attachAll(pdlist);
             REQUIRE(result_att);
         }
 
         ddremapper.view(ipos);
+        REQUIRE(ipos);
         ddremapper.view(itrq);
+        REQUIRE(itrq);
         ddremapper.view(iinfo);
+        REQUIRE(iinfo);
         yarp::dev::tests::exec_iPositionControl_test_1(ipos);
         yarp::dev::tests::exec_iTorqueControl_test_1(itrq);
         yarp::dev::tests::exec_iAxisInfo_test_1(iinfo);

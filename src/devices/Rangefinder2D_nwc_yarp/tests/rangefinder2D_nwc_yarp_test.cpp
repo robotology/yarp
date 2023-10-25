@@ -48,7 +48,8 @@ TEST_CASE("dev::rangefinder2D_nwc_yarp", "[yarp::dev]")
         }
 
         //attach the nws to the fakelaser device
-        {yarp::dev::WrapperSingle* ww_nws; ddnws.view(ww_nws);
+        {yarp::dev::WrapperSingle* ww_nws = nullptr; ddnws.view(ww_nws);
+        REQUIRE(ww_nws);
         bool result_att = ww_nws->attach(&ddlas);
         REQUIRE(result_att); }
 
