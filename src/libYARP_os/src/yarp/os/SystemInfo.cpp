@@ -772,7 +772,7 @@ SystemInfo::LoadInfo SystemInfo::getLoadInfo()
     FILE* procload = fopen("/proc/loadavg", "r");
     if (procload != nullptr) {
         char buff[128];
-        int ret = fscanf(procload, "%lf %lf %lf %s", &(load.cpuLoad1), &(load.cpuLoad5), &(load.cpuLoad15), buff);
+        int ret = fscanf(procload, "%lf %lf %lf %127s", &(load.cpuLoad1), &(load.cpuLoad5), &(load.cpuLoad15), buff);
         if (ret > 0) {
             char* tail = strchr(buff, '/');
             if ((tail != nullptr) && (tail != buff)) {
