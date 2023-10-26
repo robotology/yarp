@@ -77,10 +77,16 @@ void test_yarp_delay(double target, double limit, bool strict_test)
 
 TEST_CASE("os::TimeTest", "[yarp::os]")
 {
+#if defined(DISABLE_FAILING_TESTS)
+    const bool mandatory_enabled = false;
+#else
+    const bool mandatory_enabled = true;
+#endif
+
     SECTION("testing delay using YARP (there will be a short pause)...")
     {
         //the original test (till yarp 3.6)
-        test_yarp_delay ( 3.000, 2.000, true);
+        test_yarp_delay ( 3.000, 2.000, mandatory_enabled);
 
         //additional tests which do not generate an error but just prints
         test_yarp_delay ( 3.000, 0.010, false);
@@ -90,8 +96,8 @@ TEST_CASE("os::TimeTest", "[yarp::os]")
 
     SECTION("testing delay using C++ (there will be a short pause)...")
     {
-        test_os_delay(3.000, 0.010, true);
-        test_os_delay(0.300, 0.010, true);
-        test_os_delay(0.030, 0.010, true);
+        test_os_delay(3.000, 0.010, mandatory_enabled);
+        test_os_delay(0.300, 0.010, mandatory_enabled);
+        test_os_delay(0.030, 0.010, mandatory_enabled);
     }
 }

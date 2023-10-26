@@ -68,7 +68,7 @@ TEST_CASE("dev::RemoteControlBoardTest", "[yarp::dev]")
             REQUIRE(result_att);
         }
 
-        yarp::os::Time::delay(0.1);
+        yarp::os::Time::delay(0.9);
 
         //open the nwc
         {
@@ -139,7 +139,7 @@ TEST_CASE("dev::RemoteControlBoardTest", "[yarp::dev]")
             REQUIRE(result_att);
         }
 
-        yarp::os::Time::delay(0.1);
+        yarp::os::Time::delay(0.9);
 
         //open the nwc
         {

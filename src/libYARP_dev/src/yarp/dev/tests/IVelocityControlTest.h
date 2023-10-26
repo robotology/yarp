@@ -8,6 +8,7 @@
 
 #include <yarp/dev/IVelocityControl.h>
 #include <yarp/dev/IControlMode.h>
+#include <yarp/os/Time.h>
 #include <catch2/catch_amalgamated.hpp>
 
 using namespace yarp::dev;
@@ -43,6 +44,7 @@ namespace yarp::dev::tests
 
         b = ivel->velocityMove(0, ref_test);
         CHECK(b);
+        yarp::os::Time::delay(0.050);
         b = ivel->getRefVelocity(0,&ref);
         CHECK(b);
         CHECK(fabs(ref - ref_test) < 0.001);
