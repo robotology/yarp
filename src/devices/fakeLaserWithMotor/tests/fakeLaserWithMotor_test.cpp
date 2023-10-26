@@ -29,6 +29,7 @@ TEST_CASE("dev::FakeLaserWithMotorTest", "[yarp::dev]")
         PolyDriver fakelaserdev;
         IRangefinder2D* irng = nullptr;
         IPositionControl* ipos = nullptr;
+        IControlMode* icmd = nullptr;
 
         ////////"Checking opening polydriver"
         {
@@ -39,11 +40,12 @@ TEST_CASE("dev::FakeLaserWithMotorTest", "[yarp::dev]")
             REQUIRE(fakelaserdev.open(las_cfg));
             REQUIRE(fakelaserdev.view(irng));
             REQUIRE(fakelaserdev.view(ipos));
+            REQUIRE(fakelaserdev.view(icmd));
         }
 
         //execute tests
         yarp::dev::tests::exec_iRangefinder2D_test_1(irng);
-        yarp::dev::tests::exec_iPositionControl_test_1(ipos);
+        yarp::dev::tests::exec_iPositionControl_test_1(ipos, icmd);
 
         //"Close all polydrivers and check"
         CHECK(fakelaserdev.close());

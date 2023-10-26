@@ -3,4 +3,4 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#include "ITorqueControlTest.h"
+#include "IVelocityControlTest.h"

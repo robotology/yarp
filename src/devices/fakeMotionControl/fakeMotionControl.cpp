@@ -48,7 +48,7 @@ void FakeMotionControl::run()
             }
 
             //velocity watchdog
-            if (yarp::os::Time::now()-last_velocity_command[i]>=VELOCITY_WATCHDOG)
+            if (velocity_watchdog_enabled && yarp::os::Time::now()-last_velocity_command[i]>=VELOCITY_WATCHDOG)
             {
                 this->_command_speeds[i]=0.0;
             }
@@ -64,7 +64,7 @@ void FakeMotionControl::run()
             }
 
             //pwm watchdog
-            if (yarp::os::Time::now()-last_pwm_command[i]>=OPENLOOP_WATCHDOG)
+            if (openloop_watchdog_enabled && yarp::os::Time::now()-last_pwm_command[i]>=OPENLOOP_WATCHDOG)
             {
                 this->refpwm[i]=0.0;
             }
@@ -2139,7 +2139,8 @@ bool FakeMotionControl::getRefAccelerationsRaw(double *accs)
 
 bool FakeMotionControl::stopRaw(int j)
 {
-    return false;
+    velocityMoveRaw(j,0);
+    return true;
 }
 
 bool FakeMotionControl::stopRaw()

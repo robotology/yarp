@@ -413,6 +413,7 @@ set(YARP_dev_test_HDRS
     yarp/dev/tests/IJoypadControllerTest.h
     yarp/dev/tests/ILLMTest.h
     yarp/dev/tests/IChatBotTest.h
+    yarp/dev/tests/IVelocityControlTest.h
 )
 
 set(YARP_dev_test_SRCS
@@ -426,6 +427,7 @@ set(YARP_dev_test_SRCS
     yarp/dev/tests/IJoypadControllerTest.cpp
     yarp/dev/tests/ILLMTest.cpp
     yarp/dev/tests/IChatBotTest.cpp
+    yarp/dev/tests/IVelocityControlTest.cpp
 )
 
 if(TARGET YARP::YARP_math)

@@ -57,6 +57,7 @@ protected:
     yarp::dev::ITorqueControl* stream_ITorque {nullptr};
     yarp::dev::IPWMControl* stream_IPWM {nullptr};
     yarp::dev::ICurrentControl* stream_ICurrent {nullptr};
+    yarp::dev::IAxisInfo* stream_IAxis{ nullptr };
     int stream_nJoints {0};
 
 public:
