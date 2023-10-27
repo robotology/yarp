@@ -26,6 +26,7 @@ yarp_begin_plugin_library(yarpmod
   add_subdirectory(fakeAnalogSensor)
   add_subdirectory(fakeBattery)
   add_subdirectory(fakeIMU)
+  add_subdirectory(fakeJointCoupling)
   add_subdirectory(fakeJoypad)
   add_subdirectory(fakeLLMDevice)
   add_subdirectory(fakeOdometry2D)
