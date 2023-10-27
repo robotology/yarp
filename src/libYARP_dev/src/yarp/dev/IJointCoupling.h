@@ -176,36 +176,39 @@ public:
     /**
      * @brief Return the vector of "physical joints indices" (i.e. numbers from 0 to n-1)
      * that are related to actuated axis in a non-obvious way
-     *
-     * @return the vector of "physical joints indices"
+     * @param[out] coupPhysJointsIndexes the vector of "physical joints indices"
+     * @return true/false on success/failure
      */
-    virtual yarp::sig::VectorOf<size_t> getCoupledPhysicalJoints()=0;
+    virtual bool getCoupledPhysicalJoints(yarp::sig::VectorOf<size_t>& coupPhysJointsIndexes)=0;
 
     /**
      * @brief Return the vector of "actuator axis indices" (i.e. numbers from 0 to m-1)
      * that are related to physical joints in a non-obvious way
      *
-     * @return teh vector of "actuator axis indices"
+     * @param[out] coupActAxesIndexes the vector of "actuator axis indices"
+     * @return true/false on success/failure
      */
-    virtual yarp::sig::VectorOf<size_t> getCoupledActuatedAxes()=0;
+    virtual bool getCoupledActuatedAxes(yarp::sig::VectorOf<size_t>& coupActAxesIndexes)=0;
 
     /**
      * @brief Get the name of an actuated axis
      *
      * @param[in] actuatedAxisIndex  the number from 0 to m-1 that identifies
      * the location of a "actuated axis" in a actuated axis vector.
-     * @return the actuated axis name
+     * @param[out] actuatedAxisName the actuated axis name
+     * @return true/false on success/failure
      */
-    virtual std::string getActuatedAxisName(size_t actuatedAxisIndex)=0;
+    virtual bool getActuatedAxisName(size_t actuatedAxisIndex, std::string& actuatedAxisName)=0;
 
     /**
      * @brief Get the name of a physical joint
      *
      * @param[in] physicalJointIndex the number from 0 to n-1 that identifies
      * the location of a "physical joint" in a physical joint vector
-     * @return the physical joint name
+     * @param[out] physicalJointName the physical joint name
+     * @return true/false on success/failure
      */
-    virtual std::string getPhysicalJointName(size_t physicalJointIndex)=0;
+    virtual bool getPhysicalJointName(size_t physicalJointIndex, std::string& physicalJointName)=0;
 
     /**
      * @brief Get the Physical Joint Limit object
