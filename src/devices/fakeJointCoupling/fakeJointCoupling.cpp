@@ -100,4 +100,3 @@ bool FakeJointCoupling::convertFromActuatedAxesToPhysicalJointsTrq(const yarp::s
     yCWarning(FAKEJOINTCOUPLING) << "convertFromActuatedAxesToPhysicalJointsTrq: not implemented yet";
     return false;
 }
-
