@@ -28,6 +28,12 @@ YARP_LOG_COMPONENT(FAKEJOINTCOUPLING, "yarp.device.fakeJointCoupling")
 }
 
 bool FakeJointCoupling::open(yarp::os::Searchable &par) {
+    yarp::sig::VectorOf<size_t> coupled_physical_joints {3,4};
+    yarp::sig::VectorOf<size_t> coupled_actuated_axes {2};
+    std::vector<std::string> physical_joint_names{"phys_joint_0", "phys_joint_1", "phys_joint_2", "phys_joint_3", "phys_joint_4"};
+    std::vector<std::string> actuated_axes_names{"act_axes_0", "act_axes_1", "act_axes_2"};
+    std::vector<std::pair<double, double>> physical_joint_limits{{-30.0, 30.0}, {-10.0, 10.0}, {-32.0, 33.0}, {0.0, 120.0}, {-20.0, 180.0}};
+    initialise(coupled_physical_joints, coupled_actuated_axes, physical_joint_names, actuated_axes_names, physical_joint_limits);
     return true;
 }
 bool FakeJointCoupling::close() {

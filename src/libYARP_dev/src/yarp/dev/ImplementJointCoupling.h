@@ -29,11 +29,11 @@ public:
      */
     virtual ~ImplementJointCoupling() = default;
 
-    void initialise(yarp::sig::VectorOf<size_t> physical_joints,
-                    yarp::sig::VectorOf<size_t> actuated_axes,
+    void initialise(yarp::sig::VectorOf<size_t> coupled_physical_joints,
+                    yarp::sig::VectorOf<size_t> coupled_actuated_axes,
                     std::vector<std::string> physical_joint_names,
                     std::vector<std::string> actuated_axes_names,
-                    std::vector<std::pair<double, double>> physical_joint_limits);
+                    std::vector<std::pair<double, double>> coupled_physical_joint_limits);
 
     bool getCoupledPhysicalJoints(yarp::sig::VectorOf<size_t>& coupPhysJointsIndexes) override final;
     bool getCoupledActuatedAxes(yarp::sig::VectorOf<size_t>& coupActAxesIndexes) override final;
@@ -44,8 +44,8 @@ public:
 protected:
     bool checkPhysicalJointIsCoupled(size_t physicalJointIndex);
 
-    yarp::sig::VectorOf<size_t> m_physicalJoints;
-    yarp::sig::VectorOf<size_t> m_actuatedAxes;
+    yarp::sig::VectorOf<size_t> m_coupledPhysicalJoints;
+    yarp::sig::VectorOf<size_t> m_coupledActuatedAxes;
     std::vector<std::string> m_physicalJointNames;
     std::vector<std::string> m_actuatedAxesNames;
     std::unordered_map<size_t, std::pair<double, double>> m_physicalJointLimits;
