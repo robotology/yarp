@@ -174,6 +174,22 @@ public:
     // and "physical joints" that are coupled in a non-obvious way
 
     /**
+     * @brief Get the number of physical joints
+     *
+     * @param[out] nrOfPhysicalJoints The number of physical joints
+     * @return true/false on success/failure
+     */
+    virtual bool getNrOfPhysicalJoints(size_t* nrOfPhysicalJoints) = 0;
+
+    /**
+     * @brief Get the number of actuated axes
+     *
+     * @param nrOfActuatedAxes The number of actuated axes
+     * @return true/false on success/failure
+     */
+    virtual bool getNrOfActuatedAxes(size_t* nrOfActuatedAxes) = 0;
+
+    /**
      * @brief Return the vector of "physical joints indices" (i.e. numbers from 0 to n-1)
      * that are related to actuated axis in a non-obvious way
      * @param[out] coupPhysJointsIndexes the vector of "physical joints indices"

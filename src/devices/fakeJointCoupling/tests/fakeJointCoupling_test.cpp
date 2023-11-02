@@ -31,21 +31,28 @@ TEST_CASE("dev::fakeJointCoupling", "[yarp::dev]")
 
         REQUIRE(ddjc.view(ijc));
 
-        //"Close all polydrivers and check"
-        {
-            CHECK(ddjc.close());
-        }
+
 
         yarp::sig::VectorOf<size_t> coupled_physical_joints;
+        coupled_physical_joints.clear();
         CHECK(ijc->getCoupledPhysicalJoints(coupled_physical_joints));
         CHECK(coupled_physical_joints.size() == 2);
         CHECK(coupled_physical_joints[0] == 3);
         CHECK(coupled_physical_joints[1] == 4);
 
         yarp::sig::VectorOf<size_t> coupled_actuated_axes;
+        coupled_actuated_axes.clear();
         CHECK(ijc->getCoupledActuatedAxes(coupled_actuated_axes));
         CHECK(coupled_actuated_axes.size() == 1);
         CHECK(coupled_actuated_axes[0] == 2);
+
+        size_t nr_of_physical_joints{0};
+        CHECK(ijc->getNrOfPhysicalJoints(&nr_of_physical_joints));
+        CHECK(nr_of_physical_joints == 5);
+
+        size_t nr_of_actuated_axes{0};
+        CHECK(ijc->getNrOfActuatedAxes(&nr_of_actuated_axes));
+        CHECK(nr_of_actuated_axes == 3);
 
         std::string physical_joint_name;
         CHECK(ijc->getPhysicalJointName(0, physical_joint_name));
@@ -60,6 +67,11 @@ TEST_CASE("dev::fakeJointCoupling", "[yarp::dev]")
         CHECK(actuated_axis_name == "act_axes_0");
         CHECK(ijc->getActuatedAxisName(1, actuated_axis_name));
         CHECK(actuated_axis_name == "act_axes_1");
+
+        //"Close all polydrivers and check"
+        {
+            CHECK(ddjc.close());
+        }
 
 
 

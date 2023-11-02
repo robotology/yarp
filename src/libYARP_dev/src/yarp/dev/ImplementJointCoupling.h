@@ -34,12 +34,12 @@ public:
                     std::vector<std::string> physical_joint_names,
                     std::vector<std::string> actuated_axes_names,
                     std::vector<std::pair<double, double>> coupled_physical_joint_limits);
-
+    bool getNrOfPhysicalJoints(size_t* nrOfPhysicalJoints) override final;
+    bool getNrOfActuatedAxes(size_t* nrOfActuatedAxes) override final;
     bool getCoupledPhysicalJoints(yarp::sig::VectorOf<size_t>& coupPhysJointsIndexes) override final;
     bool getCoupledActuatedAxes(yarp::sig::VectorOf<size_t>& coupActAxesIndexes) override final;
     bool getPhysicalJointName(size_t physicalJointIndex, std::string& physicalJointName) override final;
     bool getActuatedAxisName(size_t actuatedAxisIndex, std::string& actuatedAxisName) override final;
-
     bool getPhysicalJointLimits(size_t physicalJointIndex, double& min, double& max) override final;
 protected:
     bool checkPhysicalJointIsCoupled(size_t physicalJointIndex);

@@ -37,6 +37,17 @@ void ImplementJointCoupling::initialise(yarp::sig::VectorOf<size_t> coupled_phys
 
 }
 
+bool ImplementJointCoupling::getNrOfPhysicalJoints(size_t* nrOfPhysicalJoints) {
+    //TODO is it right?
+    *nrOfPhysicalJoints = m_physicalJointLimits.size();
+    return true;
+}
+bool ImplementJointCoupling::getNrOfActuatedAxes(size_t* nrOfActuatedAxes){
+    // TODO is it right?
+    *nrOfActuatedAxes = m_actuatedAxesNames.size();
+    return true;
+}
+
 bool ImplementJointCoupling::getCoupledPhysicalJoints(yarp::sig::VectorOf<size_t>& coupPhysJointsIndexes) {
     coupPhysJointsIndexes = m_coupledPhysicalJoints;
     return true;
