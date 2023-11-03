@@ -19,7 +19,7 @@
 /**
  * @ingroup dev_impl_fake dev_impl_motor
  *
- * \brief `fakeMotionControl`: Documentation to be added
+ * \brief `fakeJointCoupling`: Documentation to be added
  *
  * The aim of this device is to mimic the expected behavior of a
  * joint coupling device to help testing the high level software.

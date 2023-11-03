@@ -179,7 +179,7 @@ public:
      * @param[out] nrOfPhysicalJoints The number of physical joints
      * @return true/false on success/failure
      */
-    virtual bool getNrOfPhysicalJoints(size_t* nrOfPhysicalJoints) = 0;
+    virtual bool getNrOfPhysicalJoints(size_t& nrOfPhysicalJoints) = 0;
 
     /**
      * @brief Get the number of actuated axes
@@ -187,7 +187,7 @@ public:
      * @param nrOfActuatedAxes The number of actuated axes
      * @return true/false on success/failure
      */
-    virtual bool getNrOfActuatedAxes(size_t* nrOfActuatedAxes) = 0;
+    virtual bool getNrOfActuatedAxes(size_t& nrOfActuatedAxes) = 0;
 
     /**
      * @brief Return the vector of "physical joints indices" (i.e. numbers from 0 to n-1)
