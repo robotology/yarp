@@ -15,7 +15,7 @@
             <param extern-name="ft_server_prefix" name="nws_thrift_port_prefix">""</param>
             <action phase="startup" level="5" type="attach">
                 <paramlist name="networks">
-                    <elem name="subdevicestorage"> ftc_storage </elem>
+                    <elem name="subdevicestorage"> fts_storage </elem>
                 </paramlist>
             </action>
             <action phase="shutdown" level="5" type="detach" />
@@ -25,13 +25,13 @@
             <param extern-name="ft_server_prefix" name="output_streaming_port_prefix">""</param>
             <action phase="startup" level="5" type="attach">
                 <paramlist name="networks">
-                    <elem name="subdevicestorage"> ftc_storage </elem>
+                    <elem name="subdevicestorage"> fts_storage </elem>
                 </paramlist>
             </action>
             <action phase="shutdown" level="5" type="detach" />
         </device>
         <!-- **************** STORAGE **************** -->
-        <device name="ftc_storage" type="frameTransformStorage">
+        <device name="fts_storage" type="frameTransformStorage">
             <param extern-name="fts_storage_timeout" name="FrameTransform_container_timeout"> 0.2 </param>
         </device>
     </devices>
