@@ -13,6 +13,7 @@
         <param extern-name="FrameTransform_verbose_debug" name="FrameTransform_verbose_debug">0</param>
         <!-- **************** STORAGE **************** -->
         <device name="ftc_storage" type="frameTransformStorage">
+            <param extern-name="ftc_storage_timeout" name="FrameTransform_container_timeout"> 0.2 </param>
         </device>
         <!-- **************** YARP NWS **************** -->
         <device name="ftSet_nws_yarp" type="frameTransformSet_nws_yarp">

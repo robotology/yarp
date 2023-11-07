@@ -26,6 +26,7 @@
         </device>
         <!-- **************** STORAGE **************** -->
         <device name="ftc_storage" type="frameTransformStorage">
+            <param extern-name="ftc_storage_timeout" name="FrameTransform_container_timeout"> 0.2 </param>
             <action phase="startup" level="5" type="attach">
                 <paramlist name="networks">
                     <elem name="subdevicegetyarp"> ftGet_nwc_yarp </elem>

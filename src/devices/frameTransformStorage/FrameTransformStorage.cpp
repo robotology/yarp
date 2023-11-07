@@ -35,6 +35,11 @@ bool FrameTransformStorage::open(yarp::os::Searchable& config)
         m_tf_container.m_name = this->id() + ".container";
     }
 
+    if (config.check("FrameTransform_container_timeout"))
+    {
+        m_tf_container.m_timeout = config.find("FrameTransform_container_timeout").asFloat64();
+    }
+
     yCTrace(FRAMETRANSFORSTORAGE);
     bool b = this->start();
     return b;
