@@ -536,11 +536,6 @@ void RPCMessagesParser::handleTorqueMsg(const yarp::os::Bottle& cmd,
         response.add(cmd.get(1));
 
         switch (cmd.get(2).asVocab32()) {
-        case VOCAB_AXES: {
-            int tmp;
-            *ok = rpc_ITorque->getAxes(&tmp);
-            response.addInt32(tmp);
-        } break;
 
         case VOCAB_TRQ: {
             *ok = rpc_ITorque->getTorque(cmd.get(3).asInt32(), &dtmp);
@@ -567,6 +562,7 @@ void RPCMessagesParser::handleTorqueMsg(const yarp::os::Bottle& cmd,
             b.addFloat64(params.coulombNeg);
             b.addFloat64(params.velocityThres);
         } break;
+
         case VOCAB_RANGE: {
             *ok = rpc_ITorque->getTorqueRange(cmd.get(3).asInt32(), &dtmp, &dtmp2);
             response.addFloat64(dtmp);
@@ -2102,10 +2098,12 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
                 } break;
 
                 case VOCAB_AXES: {
-                    if (!rpc_IPosCtrl) { ok = false; break; }
-                    int tmp;
-                    ok = rpc_IPosCtrl->getAxes(&tmp);
-                    response.addInt32(tmp);
+                    int tmp = 0;
+                    if (rpc_IPosCtrl) { ok = rpc_IPosCtrl->getAxes(&tmp); if (ok) { response.addInt32(tmp); break;} }
+                    if (rpc_IVelCtrl) { ok = rpc_IVelCtrl->getAxes(&tmp); if (ok) { response.addInt32(tmp); break;} }
+                    if (rpc_ITorque)  { ok =  rpc_ITorque->getAxes(&tmp); if (ok) { response.addInt32(tmp); break;} }
+                    if (rpc_AxisInfo) { ok = rpc_AxisInfo->getAxes(&tmp); if (ok) { response.addInt32(tmp); break;} }
+                    ok = false;
                 } break;
 
                 case VOCAB_MOTION_DONE: {
@@ -2469,11 +2467,13 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
 bool RPCMessagesParser::initialize()
 {
     bool ok = false;
-    if (rpc_IPosCtrl) {
-        int tmp_axes;
-        ok = rpc_IPosCtrl->getAxes(&tmp_axes);
-        controlledJoints = static_cast<size_t>(tmp_axes);
-    }
+    int tmp_axes = 0;
+    if      (rpc_IPosCtrl) { rpc_IPosCtrl->getAxes(&tmp_axes); ok = true; }
+    else if (rpc_IVelCtrl) { rpc_IVelCtrl->getAxes(&tmp_axes); ok = true; }
+    else if (rpc_ITorque)  { rpc_ITorque->getAxes(&tmp_axes); ok = true; }
+    else if (rpc_AxisInfo) { rpc_AxisInfo->getAxes(&tmp_axes); ok = true; }
+    if (ok) { controlledJoints = static_cast<size_t>(tmp_axes); }
+    else { yCError(CONTROLBOARD, "Unable to get number of joints"); return false; }
 
     DeviceResponder::makeUsage();
     addUsage("[get] [axes]", "get the number of axes");

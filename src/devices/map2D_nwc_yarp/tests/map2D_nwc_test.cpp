@@ -46,7 +46,8 @@ TEST_CASE("dev::Map2DnwcTest", "[yarp::dev]")
             pmapstorage_cfg.put("device", "map2DStorage");
             REQUIRE(ddmapstorage.open(pmapstorage_cfg));
 
-            {yarp::dev::WrapperSingle* ww_nws; ddmapserver.view(ww_nws);
+            {yarp::dev::WrapperSingle* ww_nws=nullptr; ddmapserver.view(ww_nws);
+            REQUIRE(ww_nws);
             bool result_att = ww_nws->attach(&ddmapstorage);
             REQUIRE(result_att); }
 

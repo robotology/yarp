@@ -60,8 +60,9 @@ TEST_CASE("dev::MultipleAnalogSensorsServerTest", "[yarp::dev]")
 
         REQUIRE(imuSensor.open(p)); // sensor open reported successful
 
-        yarp::dev::IOrientationSensors* orientSens;
+        yarp::dev::IOrientationSensors* orientSens=nullptr;
         REQUIRE(imuSensor.view(orientSens)); // IOrientationSensors of fakeIMU correctly opened
+        REQUIRE(orientSens);
         int nrOfSensors = orientSens->getNrOfOrientationSensors();
         CHECK(nrOfSensors == 1); // getNrOfOrientationSensors of fakeIMU works correctly
 
@@ -74,6 +75,7 @@ TEST_CASE("dev::MultipleAnalogSensorsServerTest", "[yarp::dev]")
 
         yarp::dev::IMultipleWrapper *iwrap = nullptr;
         REQUIRE(wrapper.view(iwrap)); // IMultipleWrapper interface correctly opened for the multipleanalogsensorsserver
+        REQUIRE(iwrap);
 
         PolyDriverList pdList;
         pdList.push(&imuSensor, "pdlist_key");

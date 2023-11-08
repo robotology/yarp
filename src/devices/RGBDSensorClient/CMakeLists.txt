@@ -5,8 +5,6 @@ yarp_prepare_plugin(RGBDSensorClient
   CATEGORY device
   TYPE RGBDSensorClient
   INCLUDE RGBDSensorClient.h
-  EXTRA_CONFIG
-    WRAPPER=RGBDSensorClient
   DEFAULT ON
 )
 

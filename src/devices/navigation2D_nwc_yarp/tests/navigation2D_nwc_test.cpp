@@ -53,7 +53,8 @@ TEST_CASE("dev::Navigation2DNwcTest", "[yarp::dev]")
             Property pmapstorage_cfg;
             pmapstorage_cfg.put("device", "map2DStorage");
             REQUIRE(ddmapstorage.open(pmapstorage_cfg));
-            {yarp::dev::WrapperSingle* ww_nws; ddmapserver.view(ww_nws);
+            {yarp::dev::WrapperSingle* ww_nws=nullptr; ddmapserver.view(ww_nws);
+            REQUIRE(ww_nws);
             bool result_att = ww_nws->attach(&ddmapstorage); }
 
             Property pmapclient_cfg;
@@ -69,7 +70,8 @@ TEST_CASE("dev::Navigation2DNwcTest", "[yarp::dev]")
             Property pfakeLocalizer_cfg;
             pfakeLocalizer_cfg.put("device", "fakeLocalizer");
             REQUIRE(ddfakeLocalizer.open(pfakeLocalizer_cfg));
-            {yarp::dev::WrapperSingle* ww_nws; ddlocserver.view(ww_nws);
+            {yarp::dev::WrapperSingle* ww_nws=nullptr; ddlocserver.view(ww_nws);
+            REQUIRE(ww_nws);
             bool result_att = ww_nws->attach(&ddfakeLocalizer); }
 
             Property pnavserver_cfg;
@@ -78,7 +80,8 @@ TEST_CASE("dev::Navigation2DNwcTest", "[yarp::dev]")
             Property pfakeNavigation;
             pfakeNavigation.put("device", "fakeNavigation");
             REQUIRE(ddfakeNavigation.open(pfakeNavigation));
-            {yarp::dev::WrapperSingle* ww_nws; ddnavserver.view(ww_nws);
+            {yarp::dev::WrapperSingle* ww_nws=nullptr; ddnavserver.view(ww_nws);
+            REQUIRE(ww_nws);
             bool result_att = ww_nws->attach(&ddfakeNavigation); }
 
             Property pnavclient_cfg;

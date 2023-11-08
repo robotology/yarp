@@ -215,6 +215,7 @@ bool Rangefinder2D_nwc_yarp::open(yarp::os::Searchable &config)
 
 bool Rangefinder2D_nwc_yarp::close()
 {
+    m_inputPort.disableCallback();
     m_rpcPort.close();
     m_inputPort.close();
     return true;

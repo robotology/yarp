@@ -37,6 +37,7 @@ yarp::dev::llm::return_readPrompt ILLMRPCd::readPrompt()
     if (m_iLlm == nullptr) {
         yCError(LLMSERVER, "Invalid interface");
         ret.ret = false;
+        return ret;
     }
 
     ret.ret = m_iLlm->readPrompt(ret.prompt);
@@ -51,6 +52,7 @@ yarp::dev::llm::return_ask ILLMRPCd::ask(const std::string& question)
     if (m_iLlm == nullptr) {
         yCError(LLMSERVER, "Invalid interface");
         ret.ret = false;
+        return ret;
     }
 
     ret.ret = m_iLlm->ask(question, ret.answer);
@@ -89,6 +91,7 @@ yarp::dev::llm::return_getConversation ILLMRPCd::getConversation()
     if (m_iLlm == nullptr) {
         yCError(LLMSERVER, "Invalid interface");
         ret.ret = false;
+        return ret;
     }
 
     std::vector<std::pair<Author, Content>> conversation;
@@ -106,6 +109,7 @@ bool ILLMRPCd::deleteConversation()
     bool ret = false;
     if (m_iLlm == nullptr) {
         yCError(LLMSERVER, "Invalid interface");
+        return false;
     }
 
     ret = m_iLlm->deleteConversation();

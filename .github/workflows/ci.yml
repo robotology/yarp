@@ -520,63 +520,39 @@ jobs:
           }
         - {
             id: '21',
-            description: 'Valgrind (bindings, failing tests and examples as tests disabled)',
+            description: 'Valgrind (bindings, failing tests, guis and examples as tests disabled)',
             os: ubuntu-20.04,
             build_type: "Debug",
             cc: "gcc",
             cxx: "g++",
             cmake_generator: "Unix Makefiles",
             cmake_initial_cache_file: ".ci/initial-cache.gh.linux.cmake",
-            # These devices link to glib/gobject causing some memory leak on
-            # valgrind, therefore they are not enabled on valgrind builds
             cmake_extra_options: "-DYARP_VALGRIND_TESTS:BOOL=ON
                                   -DYARP_DISABLE_FAILING_TESTS:BOOL=ON
+                                  -DYARP_DISABLE_FAILING_VALGRIND_TESTS:BOOL=ON
                                   -DYARP_ENABLE_EXAMPLES_AS_TESTS:BOOL=OFF
                                   -DYARP_COMPILE_BINDINGS:BOOL=OFF
                                   -DCMAKE_DISABLE_FIND_PACKAGE_FFMPEG=ON
-                                  -DENABLE_yarpcar_h264:BOOL=OFF
-                                  -DENABLE_yarpcar_mjpeg:BOOL=OFF
-                                  -DENABLE_yarppm_image_compression_ffmpeg:BOOL=OFF
-                                  -DENABLE_yarpmod_usbCamera:BOOL=OFF
-                                  -DENABLE_yarpmod_usbCameraRaw:BOOL=OFF
-                                  -DENABLE_yarpmod_ffmpeg_grabber:BOOL=OFF
-                                  -DENABLE_yarpmod_ffmpeg_writer:BOOL=OFF
-                                  -DENABLE_yarpmod_portaudio:BOOL=OFF
-                                  -DENABLE_yarpmod_portaudioPlayer:BOOL=OFF
-                                  -DENABLE_yarpmod_portaudioRecorder:BOOL=OFF
-                                  -DENABLE_yarpmod_fakeMicrophone:BOOL=OFF
-                                  -DENABLE_yarpmod_opencv_grabber:BOOL=OFF",
+                                  -DYARP_COMPILE_GUIS:BOOL=OFF",
           }
         - {
             id: '22',
-            description: 'Valgrind, No ACE (bindings, failing tests and examples as tests disabled)',
+            description: 'Valgrind, No ACE (bindings, failing tests, guis and examples as tests disabled)',
             os: ubuntu-20.04,
             build_type: "Debug",
             cc: "gcc",
             cxx: "g++",
             cmake_generator: "Unix Makefiles",
             cmake_initial_cache_file: ".ci/initial-cache.gh.linux.cmake",
-            # These devices link to glib/gobject causing some memory leak on
-            # valgrind, therefore they are not enabled on valgrind builds
             cmake_extra_options: "-DCMAKE_DISABLE_FIND_PACKAGE_ACE:BOOL=ON
                                   -DSKIP_ACE:BOOL=ON
                                   -DYARP_VALGRIND_TESTS:BOOL=ON
                                   -DYARP_DISABLE_FAILING_TESTS:BOOL=ON
+                                  -DYARP_DISABLE_FAILING_VALGRIND_TESTS:BOOL=ON
                                   -DYARP_ENABLE_EXAMPLES_AS_TESTS:BOOL=OFF
                                   -DYARP_COMPILE_BINDINGS:BOOL=OFF
                                   -DCMAKE_DISABLE_FIND_PACKAGE_FFMPEG=ON
-                                  -DENABLE_yarpcar_h264:BOOL=OFF
-                                  -DENABLE_yarpcar_mjpeg:BOOL=OFF
-                                  -DENABLE_yarppm_image_compression_ffmpeg:BOOL=OFF
-                                  -DENABLE_yarpmod_usbCamera:BOOL=OFF
-                                  -DENABLE_yarpmod_usbCameraRaw:BOOL=OFF
-                                  -DENABLE_yarpmod_ffmpeg_grabber:BOOL=OFF
-                                  -DENABLE_yarpmod_ffmpeg_writer:BOOL=OFF
-                                  -DENABLE_yarpmod_portaudio:BOOL=OFF
-                                  -DENABLE_yarpmod_portaudioPlayer:BOOL=OFF
-                                  -DENABLE_yarpmod_portaudioRecorder:BOOL=OFF
-                                  -DENABLE_yarpmod_fakeMicrophone:BOOL=OFF
-                                  -DENABLE_yarpmod_opencv_grabber:BOOL=OFF",
+                                  -DYARP_COMPILE_GUIS:BOOL=OFF",
           }
         - {
             id: '23',

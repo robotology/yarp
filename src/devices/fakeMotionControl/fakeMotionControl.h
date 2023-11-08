@@ -222,6 +222,8 @@ private:
     positionControlUnitsType _positionControlUnits;
 
     // internal stuff
+    bool    velocity_watchdog_enabled = false; //false for testing purposes. On the real robot is true.
+    bool    openloop_watchdog_enabled = false; //false for testing purposes. On the real robot is true.
     int     *_controlModes = nullptr;
     int     *_hwfault_code = nullptr;
     std::string  *_hwfault_message = nullptr;
@@ -378,7 +380,7 @@ public:
     bool getMotorEncoderAccelerationRaw(int m, double *spds) override;
     bool getMotorEncoderAccelerationsRaw(double *accs) override;
     bool getMotorEncodersTimedRaw(double *encs, double *stamps) override;
-    bool getMotorEncoderTimedRaw(int m, double *encs, double *stamp) override;\
+    bool getMotorEncoderTimedRaw(int m, double *encs, double *stamp) override;
     bool getMotorEncoderCountsPerRevolutionRaw(int m, double *v) override;
     bool setMotorEncoderCountsPerRevolutionRaw(int m, const double cpr) override;
     ///////////////////////// END MotorEncoder Interface

@@ -37,5 +37,104 @@ TEST_CASE("dev::controlBoard_nws_yarp", "[yarp::dev]")
         }
     }
 
+    SECTION("Test the controlBoard_nws_yarp device with fakeMotionControl device attached")
+    {
+        PolyDriver dd_fake;
+        PolyDriver dd_nws;
+        Property p_fake;
+        Property p_nws;
+
+        //open
+        p_nws.put("device", "controlBoard_nws_yarp");
+        p_nws.put("name", "/controlboard");
+        p_fake.put("device", "fakeMotionControl");
+        REQUIRE(dd_fake.open(p_fake));
+        REQUIRE(dd_nws.open(p_nws));
+
+        yarp::os::SystemClock::delaySystem(0.5);
+
+        //attach
+        {
+            yarp::dev::WrapperSingle* ww_nws; dd_nws.view(ww_nws);
+            REQUIRE(ww_nws);
+            bool result_att = ww_nws->attach(&dd_fake);
+            REQUIRE(result_att);
+        }
+
+        yarp::os::SystemClock::delaySystem(1.0);
+
+        //Close all polydrivers and check
+        {
+            CHECK(dd_nws.close());
+            CHECK(dd_fake.close());
+        }
+    }
+
+    SECTION("Test the controlBoard_nws_yarp device with a non-attachable device")
+    {
+        PolyDriver dd_fake2;
+        PolyDriver dd_nws;
+        Property p_fake2;
+        Property p_nws;
+
+        //open
+        p_nws.put("device", "controlBoard_nws_yarp");
+        p_nws.put("name", "/controlboard");
+        p_fake2.put("device", "fakeSpeaker");
+        REQUIRE(dd_fake2.open(p_fake2));
+        REQUIRE(dd_nws.open(p_nws));
+
+        yarp::os::SystemClock::delaySystem(0.5);
+
+        //attach
+        {
+            yarp::dev::WrapperSingle* ww_nws; dd_nws.view(ww_nws);
+            REQUIRE(ww_nws);
+            bool result_att = ww_nws->attach(&dd_fake2);
+            REQUIRE(!result_att);
+        }
+
+        yarp::os::SystemClock::delaySystem(1.0);
+
+        //Close all polydrivers and check
+        {
+            CHECK(dd_nws.close());
+            CHECK(dd_fake2.close());
+        }
+    }
+
+    SECTION("Test the controlBoard_nws_yarp device with a device attached which does not implement motion control interfaces")
+    {
+        PolyDriver dd_fake;
+        PolyDriver dd_nws;
+        Property p_fake;
+        Property p_nws;
+
+        //open
+        p_nws.put("device", "controlBoard_nws_yarp");
+        p_nws.put("name", "/controlboard");
+        p_fake.put("device", "fakeMotionControlMicro");
+        REQUIRE(dd_fake.open(p_fake));
+        REQUIRE(dd_nws.open(p_nws));
+
+        yarp::os::SystemClock::delaySystem(0.5);
+
+        //attach
+        {
+            yarp::dev::WrapperSingle* ww_nws; dd_nws.view(ww_nws);
+            REQUIRE(ww_nws);
+            bool result_att = ww_nws->attach(&dd_fake);
+            REQUIRE(result_att);
+        }
+
+        yarp::os::SystemClock::delaySystem(1.0);
+
+        //Close all polydrivers and check
+        {
+            CHECK(dd_nws.close());
+            CHECK(dd_fake.close());
+        }
+    }
+
     Network::setLocalMode(false);
 }

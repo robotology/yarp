@@ -101,10 +101,12 @@ public:
 
 bool RemoteControlBoard::isLive()
 {
-    if (!njIsKnown) {
+    if (!njIsKnown)
+    {
         int axes = 0;
         bool ok = get1V1I(VOCAB_AXES, axes);
-        if (axes >= 0 && ok) {
+        if (axes >= 0 && ok)
+        {
             nj = axes;
             njIsKnown = true;
         }

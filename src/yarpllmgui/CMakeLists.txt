@@ -74,4 +74,6 @@ if(YARP_COMPILE_yarpllmgui)
 
   install(TARGETS yarpllmgui DESTINATION ${CMAKE_INSTALL_BINDIR})
 
+  set_property(TARGET yarpllmgui PROPERTY FOLDER "Graphical User Interfaces")
+
 endif()

@@ -61,6 +61,7 @@ TEST_CASE("os::LogTest", "[yarp::os]")
 
         // Warning: By default, trace lines not using the component are
         //          not printed
+        CNT yTrace("");
         CNT yTrace("This is a trace");
         CNT yTrace("This is %s (%d)", "a trace", i);
         CNT yTrace("The end of line is removed from this trace\n");
@@ -101,6 +102,7 @@ TEST_CASE("os::LogTest", "[yarp::os]")
 
         const double start = yarp::os::SystemClock::nowSystem();
 
+        CNT yDebug("");
         CNT yDebug("This is a debug");
         CNT yDebug("This is %s (%d)", "a debug", i);
         CNT yDebug("The end of line is removed from this debug\n");
@@ -141,6 +143,7 @@ TEST_CASE("os::LogTest", "[yarp::os]")
 
         const double start = yarp::os::SystemClock::nowSystem();
 
+        CNT yInfo("");
         CNT yInfo("This is info");
         CNT yInfo("This is %s (%d)", "info", i);
         CNT yInfo("The end of line is removed from this info\n");
@@ -181,6 +184,7 @@ TEST_CASE("os::LogTest", "[yarp::os]")
 
         const double start = yarp::os::SystemClock::nowSystem();
 
+        CNT yWarning("");
         CNT yWarning("This is a warning");
         CNT yWarning("This is %s (%d)", "a warning", i);
         CNT yWarning("The end of line is removed from this warning\n");
@@ -221,6 +225,7 @@ TEST_CASE("os::LogTest", "[yarp::os]")
 
         const double start = yarp::os::SystemClock::nowSystem();
 
+        CNT yError("");
         CNT yError("This is an error");
         CNT yError("This is %s (%d)", "an error", i);
         CNT yError("The end of line is removed from this error\n");

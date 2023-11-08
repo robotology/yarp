@@ -54,7 +54,9 @@ void do_nws_nwc_test(bool use_stream)
     IFrameGrabberImage* igrabber = nullptr;
     IRgbVisualParams* irgbParams = nullptr;
     REQUIRE(dd_nwc.view(igrabber));
+    REQUIRE(igrabber);
     REQUIRE(dd_nwc.view(irgbParams));
+    REQUIRE(irgbParams);
 
     yarp::os::SystemClock::delaySystem(0.5);
     {

@@ -35,6 +35,8 @@ TEST_CASE("dev::RGBDSensorClientTest", "[yarp::dev]")
         {
             Property pdepth_cfg;
             pdepth_cfg.put("device", "fakeDepthCamera");
+            pdepth_cfg.put("width", 32);  //smaller frame to improve valgrind speed
+            pdepth_cfg.put("height", 24); //smaller frame to improve valgrind speed
             REQUIRE(dddepth.open(pdepth_cfg));
         }
         {
@@ -45,12 +47,14 @@ TEST_CASE("dev::RGBDSensorClientTest", "[yarp::dev]")
         }
 
         //attach the nws to the fakeDepthCamera device
-        {yarp::dev::WrapperSingle* ww_nws; ddnws.view(ww_nws);
+        {yarp::dev::WrapperSingle* ww_nws = nullptr; ddnws.view(ww_nws);
+        REQUIRE(ww_nws);
         bool result_att = ww_nws->attach(&dddepth);
         REQUIRE(result_att); }
 
         //wait some time
-        yarp::os::Time::delay(0.1);
+        yarp::os::SystemClock::delaySystem(1.0);
+        INFO("rgbdSensor_nws_yarp and fakeDepthCamera ready");
 
         //create the client
         {

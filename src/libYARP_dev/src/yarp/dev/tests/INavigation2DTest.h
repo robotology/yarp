@@ -210,9 +210,20 @@ namespace yarp::dev::tests
         }
         while(1);
 
-        yarp::os::Time::delay(2);
-        b = inav_ctl->getNavigationStatus(status); CHECK(b);
-        CHECK(status == yarp::dev::Nav2D::NavigationStatusEnum::navigation_status_idle);
+        count = 0;
+        do
+        {
+            b = inav_ctl->getNavigationStatus(status); CHECK(b);
+            if (status == yarp::dev::Nav2D::NavigationStatusEnum::navigation_status_idle)
+            {
+                break;
+            }
+            yarp::os::Time::delay(0.1);
+            count++;
+            if (count > 200) { CHECK(0); break; }
+        } while (1);
+
+        //test complete
     }
 }
 

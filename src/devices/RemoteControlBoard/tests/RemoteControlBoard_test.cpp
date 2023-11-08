@@ -4,7 +4,9 @@
  */
 
 #include <yarp/dev/IPositionControl.h>
+#include <yarp/dev/IVelocityControl.h>
 #include <yarp/dev/ITorqueControl.h>
+#include <yarp/dev/IControlMode.h>
 #include <yarp/dev/IAxisInfo.h>
 #include <yarp/os/Network.h>
 #include <yarp/dev/PolyDriver.h>
@@ -12,6 +14,8 @@
 #include <yarp/dev/tests/IPositionControlTest.h>
 #include <yarp/dev/tests/ITorqueControlTest.h>
 #include <yarp/dev/tests/IAxisInfoTest.h>
+#include <yarp/dev/tests/IEncodersTimedTest.h>
+#include <yarp/dev/tests/IVelocityControlTest.h>
 
 #include <catch2/catch_amalgamated.hpp>
 #include <harness.h>
@@ -27,17 +31,20 @@ TEST_CASE("dev::RemoteControlBoardTest", "[yarp::dev]")
 
     Network::setLocalMode(true);
 
-    SECTION("Checking remote_controlboard device")
+    SECTION("Checking remote_controlboard device (using fakeMotionControl)")
     {
         PolyDriver ddmc;
         PolyDriver ddnws;
         PolyDriver ddnwc;
 
         IPositionControl* ipos = nullptr;
+        IVelocityControl* ivel = nullptr;
         ITorqueControl* itrq = nullptr;
         IAxisInfo* iinfo = nullptr;
+        IEncodersTimed* ienc = nullptr;
+        IControlMode* icmd = nullptr;
 
-        ////////"Checking opening map2DServer and map2DClient polydrivers"
+        ////////"Checking opening fakeMotionControl and controlBoard_nws_yarp polydrivers"
         {
             Property p_cfg;
             p_cfg.put("device", "fakeMotionControl");
@@ -52,12 +59,18 @@ TEST_CASE("dev::RemoteControlBoardTest", "[yarp::dev]")
             p_cfg.put("name", "/controlboardserver");
             REQUIRE(ddnws.open(p_cfg));
         }
+
+        //attach nws and fake
         {
-            yarp::dev::WrapperSingle* ww_nws; ddnws.view(ww_nws);
+            yarp::dev::WrapperSingle* ww_nws=nullptr; ddnws.view(ww_nws);
+            REQUIRE(ww_nws);
             bool result_att = ww_nws->attach(&ddmc);
             REQUIRE(result_att);
         }
-        yarp::os::Time::delay(0.1);
+
+        yarp::os::Time::delay(0.9);
+
+        //open the nwc
         {
             Property p_cfg;
             p_cfg.put("device", "remote_controlboard");
@@ -66,12 +79,91 @@ TEST_CASE("dev::RemoteControlBoardTest", "[yarp::dev]")
             REQUIRE(ddnwc.open(p_cfg));
         }
 
-        ddnwc.view(ipos);
-        ddnwc.view(itrq);
-        ddnwc.view(iinfo);
-        yarp::dev::tests::exec_iPositionControl_test_1(ipos);
-        yarp::dev::tests::exec_iTorqueControl_test_1(itrq);
+        yarp::os::Time::delay(0.1);
+
+        //test
+        ddnwc.view(ipos);  REQUIRE(ipos);
+        ddnwc.view(ivel);  REQUIRE(ivel);
+        ddnwc.view(itrq);  REQUIRE(itrq);
+        ddnwc.view(iinfo); REQUIRE(iinfo);
+        ddnwc.view(ienc);  REQUIRE(ienc);
+        ddnwc.view(icmd);  REQUIRE(icmd);
+        yarp::dev::tests::exec_iPositionControl_test_1(ipos,icmd);
+        yarp::dev::tests::exec_iVelocityControl_test_1(ivel,icmd);
+        yarp::dev::tests::exec_iTorqueControl_test_1(itrq,icmd);
         yarp::dev::tests::exec_iAxisInfo_test_1(iinfo);
+        yarp::dev::tests::exec_iEncodersTimed_test_1(ienc);
+
+        //"Close all polydrivers and check"
+        {
+            CHECK(ddnwc.close());
+            CHECK(ddnws.close());
+            CHECK(ddmc.close());
+        }
+    }
+
+    SECTION("Checking remote_controlboard device (using fakeMotionControlMicro)")
+    {
+        PolyDriver ddmc;
+        PolyDriver ddnws;
+        PolyDriver ddnwc;
+
+        IPositionControl* ipos = nullptr;
+        IVelocityControl* ivel = nullptr;
+        ITorqueControl* itrq = nullptr;
+        IAxisInfo* iinfo = nullptr;
+        IEncodersTimed* ienc = nullptr;
+        IControlMode* icmd = nullptr;
+
+        ////////"Checking opening fakeMotionControl and controlBoard_nws_yarp polydrivers"
+        {
+            Property p_cfg;
+            p_cfg.put("device", "fakeMotionControlMicro");
+            Property& grp = p_cfg.addGroup("GENERAL");
+            grp.put("Joints", 2);
+            REQUIRE(ddmc.open(p_cfg));
+        }
+        yarp::os::Time::delay(0.1);
+        {
+            Property p_cfg;
+            p_cfg.put("device", "controlBoard_nws_yarp");
+            p_cfg.put("name", "/controlboardserver");
+            REQUIRE(ddnws.open(p_cfg));
+        }
+
+        //attach nws and fake
+        {
+            yarp::dev::WrapperSingle* ww_nws=nullptr; ddnws.view(ww_nws);
+            REQUIRE(ww_nws);
+            bool result_att = ww_nws->attach(&ddmc);
+            REQUIRE(result_att);
+        }
+
+        yarp::os::Time::delay(0.9);
+
+        //open the nwc
+        {
+            Property p_cfg;
+            p_cfg.put("device", "remote_controlboard");
+            p_cfg.put("local", "/local_controlboard");
+            p_cfg.put("remote", "/controlboardserver");
+            REQUIRE(ddnwc.open(p_cfg));
+        }
+
+        yarp::os::Time::delay(0.1);
+
+        //test
+        ddnwc.view(ipos);  REQUIRE(ipos);
+        ddnwc.view(ivel);  REQUIRE(ivel);
+        ddnwc.view(itrq);  REQUIRE(itrq);
+        ddnwc.view(iinfo); REQUIRE(iinfo);
+        ddnwc.view(ienc);  REQUIRE(ienc);
+        ddnwc.view(icmd);  REQUIRE(icmd);
+        yarp::dev::tests::exec_iPositionControl_test_unimplemented_interface(ipos, icmd);
+        yarp::dev::tests::exec_iVelocityControl_test_unimplemented_interface(ivel, icmd);
+        yarp::dev::tests::exec_iTorqueControl_test_unimplemented_interface(itrq, icmd);
+        yarp::dev::tests::exec_iAxisInfo_test_1(iinfo);
+        yarp::dev::tests::exec_iEncodersTimed_test_1(ienc);
 
         //"Close all polydrivers and check"
         {

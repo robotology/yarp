@@ -89,6 +89,7 @@ TEST_CASE("os::LogStreamTest", "[yarp::os]")
     v[1] = 2;
     v[2] = 3;
     v[3] = 4;
+    const std::string s_empty;
 
     SECTION("Test yTrace")
     {
@@ -108,6 +109,7 @@ TEST_CASE("os::LogStreamTest", "[yarp::os]")
         CNT yCTrace(LOG_COMPONENT_NULL, "This trace with a component is neither not printed nor forwarded");
 
         CNT yTrace();
+        CNT yTrace() << s_empty;
         CNT yTrace() << "This is" << "another" << "trace" << i;
         CNT yTrace() << v;
         CNT yTrace() << "The end of line is removed from this trace\n";
@@ -191,6 +193,7 @@ TEST_CASE("os::LogStreamTest", "[yarp::os]")
         CNT yCDebug(LOG_COMPONENT_NULL, "This debug with a component is neither not printed nor forwarded");
 
         CNT yDebug();
+        CNT yDebug() << s_empty;
         CNT yDebug() << "This is" << "another" << "debug" << i;
         CNT yDebug() << v;
         CNT yDebug() << "The end of line is removed from this debug\n";
@@ -274,6 +277,7 @@ TEST_CASE("os::LogStreamTest", "[yarp::os]")
         CNT yCInfo(LOG_COMPONENT_NULL, "This info with a component is neither not printed nor forwarded");
 
         CNT yInfo();
+        CNT yInfo() << s_empty;
         CNT yInfo() << "This is" << "more" << "info" << i;
         CNT yInfo() << v;
         CNT yInfo() << "The end of line is removed from this info\n";
@@ -357,6 +361,7 @@ TEST_CASE("os::LogStreamTest", "[yarp::os]")
         CNT yCWarning(LOG_COMPONENT_NULL, "This warning with a component is neither not printed nor forwarded");
 
         CNT yWarning();
+        CNT yWarning() << s_empty;
         CNT yWarning() << "This is" << "another" << "warning" << i;
         CNT yWarning() << v;
         CNT yWarning() << "The end of line is removed from this warning\n";
@@ -440,6 +445,7 @@ TEST_CASE("os::LogStreamTest", "[yarp::os]")
         CNT yCError(LOG_COMPONENT_NULL, "This error with a component is neither not printed nor forwarded");
 
         CNT yError();
+        CNT yError() << s_empty;
         CNT yError() << "This is" << "another" << "error" << i;
         CNT yError() << v;
         CNT yError() << "The end of line is removed from this error\n";

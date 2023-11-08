@@ -5,11 +5,13 @@
 
 #include <yarp/dev/IAxisInfo.h>
 #include <yarp/dev/IPositionControl.h>
+#include <yarp/dev/IVelocityControl.h>
 #include <yarp/dev/ITorqueControl.h>
 #include <yarp/os/Network.h>
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/WrapperMultiple.h>
 #include <yarp/dev/tests/IPositionControlTest.h>
+#include <yarp/dev/tests/IVelocityControlTest.h>
 #include <yarp/dev/tests/ITorqueControlTest.h>
 #include <yarp/dev/tests/IAxisInfoTest.h>
 
@@ -31,8 +33,10 @@ TEST_CASE("dev::ControlBoardRemapperTest2", "[yarp::dev]")
         PolyDriver ddmc;
         PolyDriver ddremapper;
         IPositionControl* ipos = nullptr;
+        IVelocityControl* ivel = nullptr;
         ITorqueControl* itrq = nullptr;
         IAxisInfo* iinfo = nullptr;
+        IControlMode* icmd = nullptr;
 
         ////////"Checking opening map2DServer and map2DClient polydrivers"
         {
@@ -50,17 +54,26 @@ TEST_CASE("dev::ControlBoardRemapperTest2", "[yarp::dev]")
             REQUIRE(ddremapper.open(p_cfg));
         }
         {
-            yarp::dev::IMultipleWrapper* ww_nws; ddremapper.view(ww_nws);
+            yarp::dev::IMultipleWrapper* ww_nws=nullptr; ddremapper.view(ww_nws);
+            REQUIRE(ww_nws);
             yarp::dev::PolyDriverList pdlist; pdlist.push(&ddmc,"fakeboard1");
             bool result_att = ww_nws->attachAll(pdlist);
             REQUIRE(result_att);
         }
 
         ddremapper.view(ipos);
+        REQUIRE(ipos);
+        ddremapper.view(ivel);
+        REQUIRE(ivel);
         ddremapper.view(itrq);
+        REQUIRE(itrq);
         ddremapper.view(iinfo);
-        yarp::dev::tests::exec_iPositionControl_test_1(ipos);
-        yarp::dev::tests::exec_iTorqueControl_test_1(itrq);
+        REQUIRE(iinfo);
+        ddremapper.view(icmd);
+        REQUIRE(icmd);
+        yarp::dev::tests::exec_iPositionControl_test_1(ipos, icmd);
+        yarp::dev::tests::exec_iVelocityControl_test_1(ivel, icmd);
+        yarp::dev::tests::exec_iTorqueControl_test_1(itrq, icmd);
         yarp::dev::tests::exec_iAxisInfo_test_1(iinfo);
 
         //"Close all polydrivers and check"

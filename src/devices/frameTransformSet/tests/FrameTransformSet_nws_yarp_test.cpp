@@ -52,7 +52,8 @@ TEST_CASE("dev::frameTransformSet_nws_yarp", "[yarp::dev]")
 
         yarp::os::Time::delay(0.5);
 
-        {yarp::dev::WrapperSingle* ww_nws; pd_nws.view(ww_nws);
+        {yarp::dev::WrapperSingle* ww_nws=nullptr; pd_nws.view(ww_nws);
+        REQUIRE(ww_nws);
         bool result_att = ww_nws->attach(&pd_dev);
         REQUIRE(result_att); }
 

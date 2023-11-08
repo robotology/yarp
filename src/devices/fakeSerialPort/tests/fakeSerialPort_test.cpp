@@ -33,6 +33,7 @@ TEST_CASE("dev::fakeSerialPort", "[yarp::dev]")
             pdev_cfg.put("device", "fakeSerialPort");
             REQUIRE(ddfake.open(pdev_cfg));
             REQUIRE(ddfake.view(iser));
+            REQUIRE(iser);
         }
 
         iser->flush();

@@ -13,7 +13,6 @@
 #include <yarp/os/LogStream.h>
 #include <yarp/os/NetType.h>
 #include <yarp/dev/Drivers.h>
-#include <yarp/math/Math.h>
 
 #include <sstream>
 #include <cstring>
@@ -21,7 +20,6 @@
 using namespace yarp::dev;
 using namespace yarp::os;
 using namespace yarp::os::impl;
-using namespace yarp::math;
 
 // macros
 #define NEW_JSTATUS_STRUCT 1
@@ -50,7 +48,7 @@ void FakeMotionControl::run()
             }
 
             //velocity watchdog
-            if (yarp::os::Time::now()-last_velocity_command[i]>=VELOCITY_WATCHDOG)
+            if (velocity_watchdog_enabled && yarp::os::Time::now()-last_velocity_command[i]>=VELOCITY_WATCHDOG)
             {
                 this->_command_speeds[i]=0.0;
             }
@@ -66,7 +64,7 @@ void FakeMotionControl::run()
             }
 
             //pwm watchdog
-            if (yarp::os::Time::now()-last_pwm_command[i]>=OPENLOOP_WATCHDOG)
+            if (openloop_watchdog_enabled && yarp::os::Time::now()-last_pwm_command[i]>=OPENLOOP_WATCHDOG)
             {
                 this->refpwm[i]=0.0;
             }
@@ -571,9 +569,8 @@ bool FakeMotionControl::open(yarp::os::Searchable &config)
     yarp::sig::Vector tmpOnes;  tmpOnes.resize  (_njoints, 1.0);
     yarp::sig::Vector bemfToRaw; bemfToRaw.resize(_njoints, 1.0);
     yarp::sig::Vector ktauToRaw; ktauToRaw.resize(_njoints, 1.0);
-    bemfToRaw = yarp::sig::Vector(_njoints, _newtonsToSensor) / yarp::sig::Vector(_njoints, _angleToEncoder);
-    ktauToRaw = yarp::sig::Vector(_njoints, _dutycycleToPWM)  / yarp::sig::Vector(_njoints, _newtonsToSensor);
-
+    for (size_t i = 0; i < _njoints; i++) { bemfToRaw [i] = _newtonsToSensor[i] / _angleToEncoder[i];}
+    for (size_t i = 0; i < _njoints; i++) { ktauToRaw[i]  = _dutycycleToPWM[i]  / _newtonsToSensor[i]; }
     ControlBoardHelper cb(_njoints, _axisMap, _angleToEncoder, nullptr, _newtonsToSensor, _ampsToSensor, _dutycycleToPWM);
     ControlBoardHelper cb_copy_test(cb);
     ImplementControlCalibration::initialize(_njoints, _axisMap, _angleToEncoder, nullptr);
@@ -2142,7 +2139,8 @@ bool FakeMotionControl::getRefAccelerationsRaw(double *accs)
 
 bool FakeMotionControl::stopRaw(int j)
 {
-    return false;
+    velocityMoveRaw(j,0);
+    return true;
 }
 
 bool FakeMotionControl::stopRaw()

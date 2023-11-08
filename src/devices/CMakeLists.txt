@@ -22,6 +22,7 @@ yarp_begin_plugin_library(yarpmod
   add_subdirectory(fakebot)
   add_subdirectory(fakeChatBotDevice)
   add_subdirectory(fakeMotionControl)
+  add_subdirectory(fakeMotionControlMicro)
   add_subdirectory(fakeAnalogSensor)
   add_subdirectory(fakeBattery)
   add_subdirectory(fakeIMU)

@@ -125,18 +125,22 @@ bool Localization2D_nws_yarp::open(Searchable& config)
     if (!general_group.check("publish_odometry"))
     {
         m_enable_publish_odometry = general_group.find("publish_odometry").asBool();
-        yCInfo(LOCALIZATION2D_NWS_YARP) << "publish_odometry=" << m_enable_publish_odometry;
     }
     if (!general_group.check("publish_location"))
     {
         m_enable_publish_location = general_group.find("publish_location").asBool();
-        yCInfo(LOCALIZATION2D_NWS_YARP) << "publish_location=" << m_enable_publish_location;
     }
+    yCInfo(LOCALIZATION2D_NWS_YARP) << "publish_odometry=" << m_enable_publish_odometry;
+    yCInfo(LOCALIZATION2D_NWS_YARP) << "publish_location=" << m_enable_publish_location;
 
     if (!general_group.check("retrieve_position_periodically"))
     {
         yCInfo(LOCALIZATION2D_NWS_YARP) << "Missing 'retrieve_position_periodically' parameter. Using default value: true. Period:" << m_period ;
         m_RPC.m_getdata_using_periodic_thread = true;
+        if (!m_enable_publish_odometry) {yCWarning(LOCALIZATION2D_NWS_YARP) << "retrieve_position_periodically is true, but data is not published because \
+        publish_odometry is false. This configuration is strange";}
+        if (!m_enable_publish_location) {yCWarning(LOCALIZATION2D_NWS_YARP) << "retrieve_position_periodically is true, but data is not published because \
+        publish_location is false. This configuration is strange";}
     }
     else
     {

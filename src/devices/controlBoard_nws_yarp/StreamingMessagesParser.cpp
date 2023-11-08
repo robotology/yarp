@@ -26,6 +26,7 @@ void StreamingMessagesParser::init(yarp::dev::DeviceDriver* x)
     x->view(stream_ITorque);
     x->view(stream_IPWM);
     x->view(stream_ICurrent);
+    x->view(stream_IAxis);
 }
 
 void StreamingMessagesParser::reset()
@@ -37,16 +38,19 @@ void StreamingMessagesParser::reset()
     stream_ITorque = nullptr;
     stream_IPWM = nullptr;
     stream_ICurrent = nullptr;
+    stream_IAxis = nullptr;
 }
 
 bool StreamingMessagesParser::initialize()
 {
     stream_nJoints = 0;
-    if (stream_IPosCtrl) {
-        stream_IPosCtrl->getAxes(&stream_nJoints);
-    }
+    if (stream_IPosCtrl) { stream_IPosCtrl->getAxes(&stream_nJoints); return true; }
+    if (stream_IVel)     { stream_IVel->getAxes(&stream_nJoints); return true; }
+    if (stream_ITorque)  { stream_ITorque->getAxes(&stream_nJoints); return true; }
+    if (stream_IAxis)    { stream_IAxis->getAxes(&stream_nJoints); return true; }
 
-    return true;
+    yCError(CONTROLBOARD, "Unable to get number of joints");
+    return false;
 }
 
 // streaming port callback
@@ -166,7 +170,12 @@ void StreamingMessagesParser::onRead(CommandMessage& v)
     }
 
     case VOCAB_VELOCITY_MOVE: {
-        stream_IVel->velocityMove(b.get(1).asInt32(), cmdVector[0]);
+        if (stream_IVel) {
+           bool ok = stream_IVel->velocityMove(b.get(1).asInt32(), cmdVector[0]);
+           if (!ok) {
+               yCError(CONTROLBOARD, "Errors while trying to start a velocity move");
+           }
+        }
     } break;
 
     case VOCAB_VELOCITY_MOVES: {
