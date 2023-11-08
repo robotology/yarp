@@ -12,4 +12,4 @@ Copyright: Catch2 Authors
 
 License: BSL-1.0
 
-Version: 3.2.1 https://github.com/catchorg/Catch2/releases/tag/v3.2.1
+Version: 3.4.0 https://github.com/catchorg/Catch2/releases/tag/v3.4.0
