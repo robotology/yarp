@@ -67,7 +67,7 @@ WebSocketFrameType WebSocket::parseHandshake(unsigned char* input_frame, int inp
 string WebSocket::trim(string str) 
 {
 	//printf("TRIM\n");
-	char* whitespace = " \t\r\n";
+	char whitespace[] = " \t\r\n";
 	string::size_type pos = str.find_last_not_of(whitespace);
 	if(pos != string::npos) {
 		str.erase(pos + 1);
