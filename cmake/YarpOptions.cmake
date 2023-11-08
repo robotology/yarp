@@ -168,6 +168,12 @@ if(YARP_DISABLE_FAILING_TESTS)
   add_definitions(-DDISABLE_FAILING_TESTS)
 endif()
 
+cmake_dependent_option(YARP_DISABLE_FAILING_VALGRIND_TESTS OFF "Disable tests on which valgrind detects issues" YARP_COMPILE_TESTS OFF)
+mark_as_advanced(YARP_DISABLE_FAILING_VALGRIND_TESTS)
+if(YARP_DISABLE_FAILING_VALGRIND_TESTS)
+  add_definitions(-DDISABLE_FAILING_VALGRIND_TESTS)
+endif()
+
 cmake_dependent_option(YARP_ENABLE_BROKEN_TESTS OFF "Enable broken tests" YARP_COMPILE_TESTS OFF)
 mark_as_advanced(YARP_ENABLE_BROKEN_TESTS)
 if(YARP_ENABLE_BROKEN_TESTS)
