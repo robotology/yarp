@@ -25,7 +25,7 @@ TEST_CASE("serversql::ServerTest", "[yarp::serversql]")
 {
 
 #if defined(DISABLE_FAILING_VALGRIND_TESTS)
-    YARP_SKIP_TEST("Skipping failing tests under valgrind"")
+    YARP_SKIP_TEST("Skipping failing tests under valgrind")
 #endif
 
     Network::setLocalMode(true);
