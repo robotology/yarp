@@ -21,7 +21,7 @@ include(GNUInstallDirs)
 # These variables are used by try_compile, so they must be set here
 
 set(CMAKE_CXX_EXTENSIONS OFF)
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 
