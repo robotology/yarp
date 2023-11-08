@@ -1,0 +1,25 @@
+From 3c9c6b4789c5f41d92dd51ee42a56e87df1c7786 Mon Sep 17 00:00:00 2001
+From: Marco Randazzo <marco.randazzo@iit.it>
+Date: Wed, 8 Nov 2023 23:57:17 +0100
+Subject: [PATCH] fixed non-ISO C++ char array assignment
+
+---
+ extern/websocket/WebSocket/WebSocket/WebSocket.cpp | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/extern/websocket/WebSocket/WebSocket/WebSocket.cpp b/extern/websocket/WebSocket/WebSocket/WebSocket.cpp
+index dcb6244cd..cf962754d 100644
+--- a/extern/websocket/WebSocket/WebSocket/WebSocket.cpp
++++ b/extern/websocket/WebSocket/WebSocket/WebSocket.cpp
+@@ -67,7 +67,7 @@ WebSocketFrameType WebSocket::parseHandshake(unsigned char* input_frame, int inp
+ string WebSocket::trim(string str) 
+ {
+ 	//printf("TRIM\n");
+-	char* whitespace = " \t\r\n";
++	char whitespace[] = " \t\r\n";
+ 	string::size_type pos = str.find_last_not_of(whitespace);
+ 	if(pos != string::npos) {
+ 		str.erase(pos + 1);
+-- 
+2.37.1.windows.1
+
