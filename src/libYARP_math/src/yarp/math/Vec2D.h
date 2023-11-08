@@ -27,9 +27,9 @@ public:
     T x;
     T y;
 
-    Vec2D<T>();
-    Vec2D<T>(const T& x_value, const T& y_value);
-    Vec2D<T>(const yarp::sig::Vector& v);
+    Vec2D();
+    Vec2D(const T& x_value, const T& y_value);
+    Vec2D(const yarp::sig::Vector& v);
     explicit operator yarp::sig::Vector() const
     {
         yarp::sig::Vector v(2);
