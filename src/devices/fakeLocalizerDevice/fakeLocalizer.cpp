@@ -39,12 +39,16 @@ YARP_LOG_COMPONENT(FAKELOCALIZER, "yarp.device.fakeLocalizer")
 
 bool   fakeLocalizer::getLocalizationStatus(yarp::dev::Nav2D::LocalizationStatusEnum& status)
 {
+    if (!locThread) { yCError(FAKELOCALIZER) << "Invalid status"; return false; }
+
     status = yarp::dev::Nav2D::LocalizationStatusEnum::localization_status_localized_ok;
     return true;
 }
 
 bool   fakeLocalizer::getEstimatedPoses(std::vector<Map2DLocation>& poses)
 {
+    if (!locThread) { yCError(FAKELOCALIZER) << "Invalid status"; return false; }
+
     poses.clear();
     Map2DLocation loc;
     locThread->getCurrentLoc(loc);
@@ -73,35 +77,93 @@ bool   fakeLocalizer::getEstimatedPoses(std::vector<Map2DLocation>& poses)
 
 bool   fakeLocalizer::getCurrentPosition(Map2DLocation& loc)
 {
+    if (!locThread) { yCError(FAKELOCALIZER) << "Invalid status"; return false; }
+
     locThread->getCurrentLoc(loc);
     return true;
 }
 
 bool   fakeLocalizer::setInitialPose(const Map2DLocation& loc)
 {
+    if (!locThread) { yCError(FAKELOCALIZER) << "Invalid status"; return false; }
+
     locThread->initializeLocalization(loc);
     return true;
 }
 
 bool   fakeLocalizer::getCurrentPosition(Map2DLocation& loc, yarp::sig::Matrix& cov)
 {
+    if (!locThread) { yCError(FAKELOCALIZER) << "Invalid status"; return false; }
+
     locThread->getCurrentLoc(loc,cov);
     return true;
 }
 
 bool   fakeLocalizer::setInitialPose(const Map2DLocation& loc, const yarp::sig::Matrix& cov)
 {
+    if (!locThread) { yCError(FAKELOCALIZER) << "Invalid status"; return false; }
+
     locThread->initializeLocalization(loc);
     return true;
 }
 
 bool   fakeLocalizer::getEstimatedOdometry(yarp::dev::OdometryData& odom)
 {
+    if (!locThread) { yCError(FAKELOCALIZER) << "Invalid status" ; return false; }
+
     Map2DLocation loc;
     locThread->getCurrentLoc(loc);
     odom.odom_x = loc.x;
     odom.odom_y = loc.y;
     odom.odom_theta = loc.theta;
+    return true;
+}
+
+bool fakeLocalizer::open(yarp::os::Searchable& config)
+{
+    yarp::os::Property p;
+    locThread = new fakeLocalizerThread(0.010, p);
+
+    if (!locThread->start())
+    {
+        delete locThread;
+        locThread = NULL;
+        return false;
+    }
+
+    return true;
+}
+
+fakeLocalizer::fakeLocalizer()
+{
+}
+
+fakeLocalizer::~fakeLocalizer()
+{
+}
+
+bool fakeLocalizer::startLocalizationService()
+{
+    if (!locThread) { yCError(FAKELOCALIZER) << "Invalid status"; return false; }
+
+    return true;
+}
+
+bool fakeLocalizer::stopLocalizationService()
+{
+    if (!locThread) { yCError(FAKELOCALIZER) << "Invalid status"; return false; }
+
+    return true;
+}
+
+bool fakeLocalizer::close()
+{
+    if (locThread)
+    {
+        locThread->stop();
+        delete locThread;
+        locThread = NULL;
+    }
     return true;
 }
 
@@ -215,50 +277,4 @@ bool fakeLocalizerThread::threadInit()
 void fakeLocalizerThread::threadRelease()
 {
 
-}
-
-
-bool fakeLocalizer::open(yarp::os::Searchable& config)
-{
-    yarp::os::Property p;
-    locThread = new fakeLocalizerThread(0.010, p);
-
-    if (!locThread->start())
-    {
-        delete locThread;
-        locThread = NULL;
-        return false;
-    }
-
-    return true;
-}
-
-fakeLocalizer::fakeLocalizer()
-{
-    locThread = NULL;
-}
-
-fakeLocalizer::~fakeLocalizer()
-{
-}
-
-bool fakeLocalizer::startLocalizationService()
-{
-    return true;
-}
-
-bool fakeLocalizer::stopLocalizationService()
-{
-    return true;
-}
-
-bool fakeLocalizer::close()
-{
-    if (locThread)
-    {
-        locThread->stop();
-        delete locThread;
-        locThread = NULL;
-    }
-    return true;
 }

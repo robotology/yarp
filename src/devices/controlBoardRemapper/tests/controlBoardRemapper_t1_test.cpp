@@ -104,10 +104,10 @@ static void checkRemapper(yarp::dev::PolyDriver & ddRemapper, int rand, size_t n
     // it is possible that this return false if it is called before the first message
     // has been received from the controlboard_nws_yarp
     bool getControlModesOk = false;
-    for(int wait=0; wait < 10 && !getControlModesOk; wait++)
+    for(int wait=0; wait < 20 && !getControlModesOk; wait++)
     {
         getControlModesOk = ctrlmode->getControlModes(readedControlMode.data());
-        yarp::os::Time::delay(0.001);
+        yarp::os::Time::delay(0.005);
     }
     CHECK(getControlModesOk); // getControlModes correctly called
 

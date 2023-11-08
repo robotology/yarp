@@ -56,7 +56,7 @@ class fakeLocalizer :
         public yarp::dev::Nav2D::ILocalization2D
 {
 public:
-    fakeLocalizerThread         *locThread;
+    fakeLocalizerThread         *locThread = nullptr;
     virtual bool open(yarp::os::Searchable& config) override;
 
     fakeLocalizer();
