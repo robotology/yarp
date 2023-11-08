@@ -39,6 +39,7 @@ YARP_LOG_COMPONENT(FAKELOCALIZER, "yarp.device.fakeLocalizer")
 
 bool   fakeLocalizer::getLocalizationStatus(yarp::dev::Nav2D::LocalizationStatusEnum& status)
 {
+    std::lock_guard<std::mutex> lock(m_mutex);
     if (!locThread) { yCError(FAKELOCALIZER) << "Invalid status"; return false; }
 
     status = yarp::dev::Nav2D::LocalizationStatusEnum::localization_status_localized_ok;
@@ -47,6 +48,7 @@ bool   fakeLocalizer::getLocalizationStatus(yarp::dev::Nav2D::LocalizationStatus
 
 bool   fakeLocalizer::getEstimatedPoses(std::vector<Map2DLocation>& poses)
 {
+    std::lock_guard<std::mutex> lock(m_mutex);
     if (!locThread) { yCError(FAKELOCALIZER) << "Invalid status"; return false; }
 
     poses.clear();
@@ -77,6 +79,7 @@ bool   fakeLocalizer::getEstimatedPoses(std::vector<Map2DLocation>& poses)
 
 bool   fakeLocalizer::getCurrentPosition(Map2DLocation& loc)
 {
+    std::lock_guard<std::mutex> lock(m_mutex);
     if (!locThread) { yCError(FAKELOCALIZER) << "Invalid status"; return false; }
 
     locThread->getCurrentLoc(loc);
@@ -85,6 +88,7 @@ bool   fakeLocalizer::getCurrentPosition(Map2DLocation& loc)
 
 bool   fakeLocalizer::setInitialPose(const Map2DLocation& loc)
 {
+    std::lock_guard<std::mutex> lock(m_mutex);
     if (!locThread) { yCError(FAKELOCALIZER) << "Invalid status"; return false; }
 
     locThread->initializeLocalization(loc);
@@ -93,6 +97,7 @@ bool   fakeLocalizer::setInitialPose(const Map2DLocation& loc)
 
 bool   fakeLocalizer::getCurrentPosition(Map2DLocation& loc, yarp::sig::Matrix& cov)
 {
+    std::lock_guard<std::mutex> lock(m_mutex);
     if (!locThread) { yCError(FAKELOCALIZER) << "Invalid status"; return false; }
 
     locThread->getCurrentLoc(loc,cov);
@@ -101,6 +106,7 @@ bool   fakeLocalizer::getCurrentPosition(Map2DLocation& loc, yarp::sig::Matrix& 
 
 bool   fakeLocalizer::setInitialPose(const Map2DLocation& loc, const yarp::sig::Matrix& cov)
 {
+    std::lock_guard<std::mutex> lock(m_mutex);
     if (!locThread) { yCError(FAKELOCALIZER) << "Invalid status"; return false; }
 
     locThread->initializeLocalization(loc);
@@ -109,6 +115,7 @@ bool   fakeLocalizer::setInitialPose(const Map2DLocation& loc, const yarp::sig::
 
 bool   fakeLocalizer::getEstimatedOdometry(yarp::dev::OdometryData& odom)
 {
+    std::lock_guard<std::mutex> lock(m_mutex);
     if (!locThread) { yCError(FAKELOCALIZER) << "Invalid status" ; return false; }
 
     Map2DLocation loc;
@@ -144,6 +151,7 @@ fakeLocalizer::~fakeLocalizer()
 
 bool fakeLocalizer::startLocalizationService()
 {
+    std::lock_guard<std::mutex> lock(m_mutex);
     if (!locThread) { yCError(FAKELOCALIZER) << "Invalid status"; return false; }
 
     return true;
@@ -151,6 +159,7 @@ bool fakeLocalizer::startLocalizationService()
 
 bool fakeLocalizer::stopLocalizationService()
 {
+    std::lock_guard<std::mutex> lock(m_mutex);
     if (!locThread) { yCError(FAKELOCALIZER) << "Invalid status"; return false; }
 
     return true;
@@ -158,6 +167,7 @@ bool fakeLocalizer::stopLocalizationService()
 
 bool fakeLocalizer::close()
 {
+    std::lock_guard<std::mutex> lock(m_mutex);
     if (locThread)
     {
         locThread->stop();
@@ -190,7 +200,7 @@ void fakeLocalizerThread::run()
         m_last_statistics_printed = yarp::os::Time::now();
     }
 
-    std::lock_guard<std::mutex> lock(m_mutex);
+    std::lock_guard<std::mutex> lock(m_mutex_thread);
     yarp::sig::Vector loc(3);
     loc[0] = 0.0;
     loc[1] = 0.0;
@@ -226,7 +236,7 @@ void fakeLocalizerThread::run()
 bool fakeLocalizerThread::initializeLocalization(const Map2DLocation& loc)
 {
     yCInfo(FAKELOCALIZER) << "Localization init request: (" << loc.map_id << ")";
-    std::lock_guard<std::mutex> lock(m_mutex);
+    std::lock_guard<std::mutex> lock(m_mutex_thread);
     m_initial_loc.map_id = loc.map_id;
     m_initial_loc.x = loc.x;
     m_initial_loc.y = loc.y;
@@ -249,14 +259,14 @@ bool fakeLocalizerThread::initializeLocalization(const Map2DLocation& loc)
 
 bool fakeLocalizerThread::getCurrentLoc(Map2DLocation& loc)
 {
-    std::lock_guard<std::mutex> lock(m_mutex);
+    std::lock_guard<std::mutex> lock(m_mutex_thread);
     loc = m_current_loc;
     return true;
 }
 
 bool fakeLocalizerThread::getCurrentLoc(Map2DLocation& loc, yarp::sig::Matrix& cov)
 {
-    std::lock_guard<std::mutex> lock(m_mutex);
+    std::lock_guard<std::mutex> lock(m_mutex_thread);
     loc = m_current_loc;
     cov.resize(3,3);
     cov.eye();

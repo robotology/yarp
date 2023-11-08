@@ -30,7 +30,7 @@ protected:
     yarp::dev::Nav2D::Map2DLocation    m_initial_odom;
     yarp::dev::Nav2D::Map2DLocation    m_current_loc;
     yarp::dev::Nav2D::Map2DLocation    m_current_odom;
-    std::mutex                         m_mutex;
+    std::mutex                         m_mutex_thread;
     yarp::os::Searchable&              m_cfg;
     std::string                        m_local_name;
 
@@ -57,6 +57,8 @@ class fakeLocalizer :
 {
 public:
     fakeLocalizerThread         *locThread = nullptr;
+    std::mutex                  m_mutex;
+
     virtual bool open(yarp::os::Searchable& config) override;
 
     fakeLocalizer();
