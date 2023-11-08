@@ -441,7 +441,7 @@ inline void printable_output(std::ostream* ost,
     YARP_UNUSED(externaltime);
 
 #if !defined (_MSC_VER)
-    static constexpr const char* level_char = u8"\u25CF";
+    static constexpr const char level_char[] = "\u25cf";
 #else
     static constexpr const char* level_char = "*";
 #endif
