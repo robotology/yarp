@@ -32,6 +32,10 @@ Added new device `LLM_nwc_yarp`.
 
 `yarp::sig::sound` refactored to avoid the internal use (private implementation) of yarp::sig::Image data type.
 
+# extern catch
+
+Catch library updated to version 3.4.0
+
 # CI
 
 Fix `Sonar` workflow.
