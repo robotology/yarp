@@ -905,7 +905,7 @@ jobs:
         endfunction()
         ")
 
-        message("environment_script=${_env_script}")
+        file(APPEND "$ENV{GITHUB_OUTPUT}" "environment_script=${_env_script}\n")
 
     - name: Print Environment Script
       shell: cmake -P {0}
