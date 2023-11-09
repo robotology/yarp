@@ -1675,7 +1675,7 @@ jobs:
         SONAR_TESTS: 'tests'
         SONAR_CFAMILY_GCOV_REPORTSPATH: 'build/coverage.info'
         SONAR_CFAMILY_CACHE_ENABLED: true
-        SONAR_SCANNER_VERSION: '4.6.0.2311'
+        SONAR_SCANNER_VERSION: '5.0.1.3006'
         SONAR_THREADS: 2
       run: |
         # Internal variables
@@ -1848,6 +1848,7 @@ jobs:
         which ccache
         ccache --version
         ccache -p
+
 
         ls -la --color=always /usr/lib/ccache
 
