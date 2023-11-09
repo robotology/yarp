@@ -185,7 +185,7 @@ inline IntegerType from_string(const std::string& src, IntegerType defaultValue 
         return defaultValue;
     }
 
-    if (ret < std::numeric_limits<IntegerType>::min() || ret > std::numeric_limits<IntegerType>::max()) {
+    if (ret < (std::numeric_limits<IntegerType>::min)() || ret > (std::numeric_limits<IntegerType>::max)()) {
         // Out of bound
         return defaultValue;
     }
@@ -225,12 +225,12 @@ inline IntegerType from_string(const std::string& src, IntegerType defaultValue 
         return defaultValue;
     }
 
-    if (ret > std::numeric_limits<IntegerType>::max()) {
+    if (ret > (std::numeric_limits<IntegerType>::max)()) {
         // Out of bound
         return defaultValue;
     }
 
-    if (ret > std::numeric_limits<long long>::max() && std::strtoll(startptr, &endptr, base) < 0) {
+    if (ret > (std::numeric_limits<long long>::max)() && std::strtoll(startptr, &endptr, base) < 0) {
         // This is a negative number silently converted to unsigned
         return defaultValue;
     }
