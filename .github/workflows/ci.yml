@@ -162,1492 +162,1492 @@ jobs:
         python3 tests/misc/check_tests.py
 
 
-  run-cmake:
-    name: 'Run CMake [CMake ${{ matrix.config.cmake_version }} (${{ matrix.config.cmake_generator }}), YCM ${{ matrix.config.ycm_version }}]'
-    needs: [select_environment, check-license, check-style]
-    runs-on: ubuntu-20.04
-    strategy:
-      fail-fast: false
-      matrix:
-        config:
-        - {
-            cmake_version: "3.16.*",
-            cmake_generator: "Unix Makefiles",
-            ycm_version: "0.15.1",
-          }
-        - {
-            cmake_version: "3.17.*",
-            cmake_generator: "Unix Makefiles",
-            ycm_version: "0.15.1",
-          }
-        - {
-            cmake_version: "3.18.*",
-            cmake_generator: "Unix Makefiles",
-            ycm_version: "0.15.1",
-          }
-        - {
-            cmake_version: "3.19.*",
-            cmake_generator: "Unix Makefiles",
-            ycm_version: "0.15.1",
-          }
-        - {
-            cmake_version: "3.20.*",
-            cmake_generator: "Unix Makefiles",
-            ycm_version: "0.15.1",
-          }
-        - {
-            cmake_version: "3.20.*",
-            cmake_generator: "Ninja",
-            ycm_version: "0.15.1",
-          }
-        - {
-            cmake_version: "3.21.*",
-            cmake_generator: "Unix Makefiles",
-            ycm_version: "0.15.1",
-          }
-        - {
-            cmake_version: "3.22.*",
-            cmake_generator: "Unix Makefiles",
-            ycm_version: "0.15.1",
-          }
-        - {
-            cmake_version: "3.23.*",
-            cmake_generator: "Unix Makefiles",
-            ycm_version: "0.15.1",
-          }
-        - {
-            cmake_version: "3.24.*",
-            cmake_generator: "Unix Makefiles",
-            ycm_version: "0.15.1",
-          }
-        - {
-            cmake_version: "3.25.*",
-            cmake_generator: "Unix Makefiles",
-            ycm_version: "0.15.1",
-          }
-    steps:
-    - name: remove any previous installation of cmake
-      run: | 
-        sudo rm /usr/local/bin/cmake
-        
-    - name: install cmake
-      run: |
-        wget -O - https://apt.kitware.com/keys/kitware-archive-latest.asc 2>/dev/null | gpg --dearmor - | sudo tee /usr/share/keyrings/kitware-archive-keyring.gpg >/dev/null
-        echo 'deb [signed-by=/usr/share/keyrings/kitware-archive-keyring.gpg] https://apt.kitware.com/ubuntu/ focal main' | sudo tee /etc/apt/sources.list.d/kitware.list >/dev/null
-        sudo apt-get update
-        sudo rm /usr/share/keyrings/kitware-archive-keyring.gpg
-        sudo apt-get -y install kitware-archive-keyring
-        sudo apt-cache policy cmake-data
-        sudo apt-cache policy cmake
-        sudo apt-get -y install cmake-data=${{matrix.config.cmake_version}}
-        sudo apt-get -y -f install cmake=${{matrix.config.cmake_version}}
-
-    - name: Print CMake version
-      run: |
-        which cmake
-        cmake --version
-        /usr/bin/cmake --version
-
-    - name: Get YCM package
-      run: |
-        wget -nv https://github.com/robotology/ycm/releases/download/v0.15.1/ycm-cmake-modules-0.15.1-all.deb
-        sudo dpkg -i ycm-cmake-modules-0.15.1-all.deb
-
-    - name: Print YCM version
-      run: |
-        grep YCM_VERSION /usr/share/cmake/YCM/YCMConfig.cmake
-
-    - name: Clone Yarp repository
-      uses: actions/checkout@v3
-      with:
-        repository: ${{ needs.select_environment.outputs.repository }}
-        ref: ${{ needs.select_environment.outputs.ref }}
-
-    - name: Run CMake
-      run: |
-        mkdir build
-        cd build
-        cmake .. -DSKIP_ACE=ON
-
-
-  build:
-    name: '[${{ matrix.config.id }}][${{ matrix.config.os }}|${{ matrix.config.cc }}|${{ matrix.config.cmake_generator }} (${{ matrix.config.cmake_toolset }} ${{ matrix.config.cmake_platform }})|${{ matrix.config.build_type }}] ${{ matrix.config.description }}'
-    needs: [select_environment, run-cmake]
-    runs-on: ${{ matrix.config.os }}
-    strategy:
-      fail-fast: false
-      matrix:
-        config:
-        - {
-            id: '01',
-            os: ubuntu-20.04,
-            build_type: "Release",
-            cc: "gcc",
-            cxx: "g++",
-            cmake_generator: "Unix Makefiles",
-            cmake_initial_cache_file: ".ci/initial-cache.gh.linux.cmake",
-            test_external_bindings: true,
-          }
-        - {
-            id: '02',
-            os: ubuntu-20.04,
-            build_type: "Release",
-            cc: "clang",
-            cxx: "clang++",
-            cmake_generator: "Unix Makefiles",
-            cmake_initial_cache_file: ".ci/initial-cache.gh.linux.cmake",
-            test_external_bindings: true,
-          }
-        - {
-            id: '03',
-            description: 'No ACE',
-            os: ubuntu-20.04,
-            build_type: "Release",
-            cc: "gcc",
-            cxx: "g++",
-            cmake_generator: "Unix Makefiles",
-            cmake_initial_cache_file: ".ci/initial-cache.gh.linux.cmake",
-            cmake_extra_options: "-DCMAKE_DISABLE_FIND_PACKAGE_ACE=ON
-                                  -DSKIP_ACE:BOOL=ON",
-            test_external_bindings: true,
-          }
-        - {
-            id: '04',
-            description: 'No ACE',
-            os: ubuntu-20.04,
-            build_type: "Release",
-            cc: "clang",
-            cxx: "clang++",
-            cmake_generator: "Unix Makefiles",
-            cmake_initial_cache_file: ".ci/initial-cache.gh.linux.cmake",
-            cmake_extra_options: "-DCMAKE_DISABLE_FIND_PACKAGE_ACE:BOOL=ON
-                                  -DSKIP_ACE:BOOL=ON",
-            test_external_bindings: true,
-          }
-        - {
-            id: '05',
-            description: 'No YARP_math (bindings disabled)',
-            os: ubuntu-20.04,
-            build_type: "Release",
-            cc: "gcc",
-            cxx: "g++",
-            cmake_generator: "Unix Makefiles",
-            cmake_initial_cache_file: ".ci/initial-cache.gh.linux.cmake",
-            cmake_extra_options: "-DCMAKE_DISABLE_FIND_PACKAGE_Eigen:BOOL=ON
-                                  -DCMAKE_DISABLE_FIND_PACKAGE_GSL:BOOL=ON
-                                  -DYARP_COMPILE_libYARP_math:BOOL=OFF
-                                  -DYARP_COMPILE_BINDINGS:BOOL=OFF",
-          }
-        - {
-            id: '06',
-            description: 'No YARP_math (bindings disabled)',
-            os: ubuntu-20.04,
-            build_type: "Release",
-            cc: "clang",
-            cxx: "clang++",
-            cmake_generator: "Unix Makefiles",
-            cmake_initial_cache_file: ".ci/initial-cache.gh.linux.cmake",
-            cmake_extra_options: "-DCMAKE_DISABLE_FIND_PACKAGE_Eigen:BOOL=ON
-                                  -DCMAKE_DISABLE_FIND_PACKAGE_GSL:BOOL=ON
-                                  -DYARP_COMPILE_libYARP_math:BOOL=OFF
-                                  -DYARP_COMPILE_BINDINGS:BOOL=OFF",
-          }
-        - {
-            id: '07',
-            description: 'CLEAN_API (unit tests and bindings disabled)',
-            os: ubuntu-20.04,
-            build_type: "Release",
-            cc: "gcc",
-            cxx: "g++",
-            cmake_generator: "Unix Makefiles",
-            cmake_initial_cache_file: ".ci/initial-cache.gh.linux.cmake",
-            cmake_extra_options: "-DYARP_CLEAN_API:BOOL=ON
-                                  -DYARP_COMPILE_TESTS:BOOL=OFF
-                                  -DYARP_COMPILE_BINDINGS:BOOL=OFF",
-          }
-        - {
-            id: '08',
-            description: 'CLEAN_API (unit tests and bindings disabled)',
-            os: ubuntu-20.04,
-            build_type: "Release",
-            cc: "clang",
-            cxx: "clang++",
-            cmake_generator: "Unix Makefiles",
-            cmake_initial_cache_file: ".ci/initial-cache.gh.linux.cmake",
-            cmake_extra_options: "-DYARP_CLEAN_API:BOOL=ON
-                                  -DYARP_COMPILE_TESTS:BOOL=OFF
-                                  -DYARP_COMPILE_BINDINGS:BOOL=OFF",
-          }
-        - {
-            id: '09',
-            description: 'Static',
-            os: ubuntu-20.04,
-            build_type: "Release",
-            cc: "gcc",
-            cxx: "g++",
-            cmake_generator: "Unix Makefiles",
-            cmake_initial_cache_file: ".ci/initial-cache.gh.linux.cmake",
-            cmake_extra_options: "-DBUILD_SHARED_LIBS:BOOL=OFF",
-          }
-        - {
-            id: '10',
-            description: 'Static',
-            os: ubuntu-20.04,
-            build_type: "Release",
-            cc: "clang",
-            cxx: "clang++",
-            cmake_generator: "Unix Makefiles",
-            cmake_initial_cache_file: ".ci/initial-cache.gh.linux.cmake",
-            cmake_extra_options: "-DBUILD_SHARED_LIBS:BOOL=OFF",
-          }
-        - {
-            id: '11',
-            description: 'Static, no ACE (bindings disabled)',
-            os: ubuntu-20.04,
-            build_type: "Release",
-            cc: "gcc",
-            cxx: "g++",
-            cmake_generator: "Unix Makefiles",
-            cmake_initial_cache_file: ".ci/initial-cache.gh.linux.cmake",
-            cmake_extra_options: "-DBUILD_SHARED_LIBS:BOOL=OFF
-                                  -DCMAKE_DISABLE_FIND_PACKAGE_ACE:BOOL=ON
-                                  -DSKIP_ACE:BOOL=ON
-                                  -DYARP_COMPILE_BINDINGS:BOOL=OFF",
-          }
-        - {
-            id: '12',
-            description: 'Static, no ACE (bindings disabled)',
-            os: ubuntu-20.04,
-            build_type: "Release",
-            cc: "clang",
-            cxx: "clang++",
-            cmake_generator: "Unix Makefiles",
-            cmake_initial_cache_file: ".ci/initial-cache.gh.linux.cmake",
-            cmake_extra_options: "-DBUILD_SHARED_LIBS:BOOL=OFF
-                                  -DCMAKE_DISABLE_FIND_PACKAGE_ACE:BOOL=ON
-                                  -DSKIP_ACE:BOOL=ON
-                                  -DYARP_COMPILE_BINDINGS:BOOL=OFF",
-          }
-        - {
-            id: '13',
-            description: 'No deprecated',
-            os: ubuntu-20.04,
-            build_type: "Release",
-            cc: "gcc",
-            cxx: "g++",
-            cmake_generator: "Unix Makefiles",
-            cmake_initial_cache_file: ".ci/initial-cache.gh.linux.cmake",
-            cmake_extra_options: "-DYARP_NO_DEPRECATED:BOOL=ON",
-          }
-        - {
-            id: '14',
-            description: 'No deprecated',
-            os: ubuntu-20.04,
-            build_type: "Release",
-            cc: "clang",
-            cxx: "clang++",
-            cmake_generator: "Unix Makefiles",
-            cmake_initial_cache_file: ".ci/initial-cache.gh.linux.cmake",
-            cmake_extra_options: "-DYARP_NO_DEPRECATED:BOOL=ON",
-          }
-        - {
-            id: '15',
-            description: 'No executables (unit tests disabled)',
-            os: ubuntu-20.04,
-            build_type: "Release",
-            cc: "gcc",
-            cxx: "g++",
-            cmake_generator: "Unix Makefiles",
-            cmake_initial_cache_file: ".ci/initial-cache.gh.linux.cmake",
-            cmake_extra_options: "-DYARP_COMPILE_EXECUTABLES:BOOL=OFF
-                                  -DYARP_COMPILE_TESTS:BOOL=OFF",
-          }
-        - {
-            id: '16',
-            description: 'No executables (unit tests disabled)',
-            os: ubuntu-20.04,
-            build_type: "Release",
-            cc: "clang",
-            cxx: "clang++",
-            cmake_generator: "Unix Makefiles",
-            cmake_initial_cache_file: ".ci/initial-cache.gh.linux.cmake",
-            cmake_extra_options: "-DYARP_COMPILE_EXECUTABLES:BOOL=OFF
-                                  -DYARP_COMPILE_TESTS:BOOL=OFF",
-          }
-        - {
-            id: '17',
-            description: 'Build extern dependencies',
-            os: ubuntu-20.04,
-            build_type: "Release",
-            cc: "gcc",
-            cxx: "g++",
-            cmake_generator: "Unix Makefiles",
-            cmake_initial_cache_file: ".ci/initial-cache.gh.linux.cmake",
-            cmake_extra_options: "-DCMAKE_DISABLE_FIND_PACKAGE_SQLite:BOOL=ON
-                                  -DCMAKE_DISABLE_FIND_PACKAGE_TinyXML:BOOL=ON
-                                  -DCMAKE_DISABLE_FIND_PACKAGE_QCustomPlot:BOOL=ON",
-          }
-        - {
-            id: '18',
-            description: 'Build extern dependencies',
-            os: ubuntu-20.04,
-            build_type: "Release",
-            cc: "clang",
-            cxx: "clang++",
-            cmake_generator: "Unix Makefiles",
-            cmake_initial_cache_file: ".ci/initial-cache.gh.linux.cmake",
-            cmake_extra_options: "-DCMAKE_DISABLE_FIND_PACKAGE_SQLite:BOOL=ON
-                                  -DCMAKE_DISABLE_FIND_PACKAGE_TinyXML:BOOL=ON
-                                  -DCMAKE_DISABLE_FIND_PACKAGE_QCustomPlot:BOOL=ON",
-          }
-        - {
-            id: '19',
-            os: ubuntu-20.04,
-            build_type: "Release",
-            cc: "gcc",
-            cxx: "g++",
-            cmake_generator: "Ninja",
-            cmake_initial_cache_file: ".ci/initial-cache.gh.linux.cmake",
-          }
-        - {
-            id: '20',
-            os: ubuntu-20.04,
-            build_type: "Release",
-            cc: "clang",
-            cxx: "clang++",
-            cmake_generator: "Ninja",
-            cmake_initial_cache_file: ".ci/initial-cache.gh.linux.cmake",
-          }
-        - {
-            id: '21',
-            description: 'Valgrind (bindings, failing tests, guis and examples as tests disabled)',
-            os: ubuntu-20.04,
-            build_type: "Debug",
-            cc: "gcc",
-            cxx: "g++",
-            cmake_generator: "Unix Makefiles",
-            cmake_initial_cache_file: ".ci/initial-cache.gh.linux.cmake",
-            cmake_extra_options: "-DYARP_VALGRIND_TESTS:BOOL=ON
-                                  -DYARP_DISABLE_FAILING_TESTS:BOOL=ON
-                                  -DYARP_DISABLE_FAILING_VALGRIND_TESTS:BOOL=ON
-                                  -DYARP_ENABLE_EXAMPLES_AS_TESTS:BOOL=OFF
-                                  -DYARP_COMPILE_BINDINGS:BOOL=OFF
-                                  -DCMAKE_DISABLE_FIND_PACKAGE_FFMPEG=ON
-                                  -DYARP_COMPILE_GUIS:BOOL=OFF",
-          }
-        - {
-            id: '22',
-            description: 'Valgrind, No ACE (bindings, failing tests, guis and examples as tests disabled)',
-            os: ubuntu-20.04,
-            build_type: "Debug",
-            cc: "gcc",
-            cxx: "g++",
-            cmake_generator: "Unix Makefiles",
-            cmake_initial_cache_file: ".ci/initial-cache.gh.linux.cmake",
-            cmake_extra_options: "-DCMAKE_DISABLE_FIND_PACKAGE_ACE:BOOL=ON
-                                  -DSKIP_ACE:BOOL=ON
-                                  -DYARP_VALGRIND_TESTS:BOOL=ON
-                                  -DYARP_DISABLE_FAILING_TESTS:BOOL=ON
-                                  -DYARP_DISABLE_FAILING_VALGRIND_TESTS:BOOL=ON
-                                  -DYARP_ENABLE_EXAMPLES_AS_TESTS:BOOL=OFF
-                                  -DYARP_COMPILE_BINDINGS:BOOL=OFF
-                                  -DCMAKE_DISABLE_FIND_PACKAGE_FFMPEG=ON
-                                  -DYARP_COMPILE_GUIS:BOOL=OFF",
-          }
-        - {
-            id: '23',
-            os: windows-2019,
-            build_type: "Release",
-            cc: "cl",
-            cxx: "cl",
-            cmake_generator: "Visual Studio 16 2019",
-            cmake_toolset: "v142",
-            cmake_platform: "x64",
-            cmake_toolchain_file: "C:/robotology/vcpkg/scripts/buildsystems/vcpkg.cmake",
-            cmake_initial_cache_file: ".ci/initial-cache.gh.windows.cmake",
-            environment_script: "C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/VC/Auxiliary/Build/vcvars64.bat",
-          }
-        - {
-            id: '24',
-            os: windows-2019,
-            build_type: "Release",
-            cc: "cl",
-            cxx: "cl",
-            cmake_generator: "Visual Studio 16 2019",
-            cmake_toolset: "v141",
-            cmake_platform: "x64",
-            cmake_toolchain_file: "C:/robotology/vcpkg/scripts/buildsystems/vcpkg.cmake",
-            cmake_initial_cache_file: ".ci/initial-cache.gh.windows.cmake",
-            environment_script: "C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/VC/Auxiliary/Build/vcvars64.bat",
-          }
-        - {
-            id: '25',
-            os: windows-2019,
-            build_type: "Release",
-            cc: "cl",
-            cxx: "cl",
-            cmake_generator: "Ninja",
-            cmake_toolset: "v142",
-            cmake_toolchain_file: "C:/robotology/vcpkg/scripts/buildsystems/vcpkg.cmake",
-            cmake_initial_cache_file: ".ci/initial-cache.gh.windows.cmake",
-            environment_script: "C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/VC/Auxiliary/Build/vcvars64.bat",
-          }
-        - {
-            id: '26',
-            os: windows-2019,
-            build_type: "Release",
-            cc: "cl",
-            cxx: "cl",
-            cmake_generator: "Ninja",
-            cmake_toolset: "v141",
-            cmake_toolchain_file: "C:/robotology/vcpkg/scripts/buildsystems/vcpkg.cmake",
-            cmake_initial_cache_file: ".ci/initial-cache.gh.windows.cmake",
-            environment_script: "C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/VC/Auxiliary/Build/vcvars64.bat",
-          }
-        - {
-            id: '27',
-            os: macos-latest,
-            build_type: "Release",
-            cc: "clang",
-            cxx: "clang++",
-            cmake_generator: "Unix Makefiles",
-            cmake_initial_cache_file: ".ci/initial-cache.gh.macos.cmake",
-          }
-        - {
-            id: '28',
-            os: macos-latest,
-            build_type: "Release",
-            cc: "clang",
-            cxx: "clang++",
-            cmake_generator: "Xcode",
-            cmake_initial_cache_file: ".ci/initial-cache.gh.macos.cmake",
-          }
-        - {
-            id: '29',
-            os: macos-11.0,
-            build_type: "Release",
-            cc: "clang",
-            cxx: "clang++",
-            cmake_generator: "Unix Makefiles",
-            cmake_initial_cache_file: ".ci/initial-cache.gh.macos.cmake",
-          }
-        - {
-            id: '30',
-            os: macos-11.0,
-            build_type: "Release",
-            cc: "clang",
-            cxx: "clang++",
-            cmake_generator: "Xcode",
-            cmake_initial_cache_file: ".ci/initial-cache.gh.macos.cmake",
-          }
-
-    steps:
-
-    - name: Clone repository
-      uses: actions/checkout@v3
-      with:
-        repository: ${{ needs.select_environment.outputs.repository }}
-        ref: ${{ needs.select_environment.outputs.ref }}
-
-    - name: Handle cache
-      uses: actions/cache@v3
-      with:
-        path: |
-          .ccache
-        key: build-${{ matrix.config.id }}-ccache-${{ github.ref }}-${{ needs.select_environment.outputs.timestamp }}
-        restore-keys: |
-          build-${{ matrix.config.id }}-${{ github.base_ref }}-ccache-
-          build-${{ matrix.config.id }}-${{ github.ref }}-ccache-
-
-    - name: Dependencies [Linux]
-      if: runner.os == 'Linux'
-      shell: bash
-      run: |
-          # Install Robotology dependencies from robotology ppa
-          sudo apt-add-repository -y ppa:robotology/ppa
-          sudo apt-get install -qq -y librobottestingframework-dev
-
-          # Install cmake
-          sudo apt-get install -qq -y cmake
-          which cmake
-          cmake --version
-          /usr/bin/cmake --version
-
-          # Install ycm
-          wget -nv https://github.com/robotology/ycm/releases/download/v0.15.1/ycm-cmake-modules-0.15.1-all.deb
-          sudo dpkg -i ycm-cmake-modules-0.15.1-all.deb
-
-          # Install build tools
-          sudo apt-get install -qq -y ccache \
-                                      ninja-build \
-                                      valgrind
-
-          sudo apt-get install -y     libace-dev \
-
-          sudo apt-get install -qq -y libsqlite3-dev \
-                                      libtinyxml-dev \
-                                      libedit-dev \
-                                      qtbase5-dev \
-                                      qtdeclarative5-dev \
-                                      qtmultimedia5-dev \
-                                      libqt5opengl5-dev \
-                                      libqcustomplot-dev \
-                                      libopencv-dev \
-                                      libeigen3-dev \
-                                      libgraphviz-dev \
-                                      libgstreamer1.0-dev \
-                                      libgstreamer-plugins-base1.0-dev \
-                                      libpng-dev \
-                                      libv4l-dev \
-                                      libavcodec-dev \
-                                      libavdevice-dev \
-                                      libavformat-dev \
-                                      libavutil-dev \
-                                      portaudio19-dev \
-                                      libsdl1.2-dev \
-                                      libopenni2-dev \
-                                      libftdi-dev \
-                                      libi2c-dev \
-                                      libjpeg-dev \
-                                      libpcl-dev \
-                                      libsoxr-dev
-
-          # Install SWIG and bindings dependencies
-          sudo apt-get install -qq -y swig \
-                                      mono-mcs \
-                                      liblua5.3-dev \
-                                      lua5.3 \
-                                      tcl-dev \
-                                      tk-dev \
-                                      python3-dev \
-                                      liboctave-dev \
-                                      ruby-dev \
-                                      ruby \
-                                      perl
-
-          # Other tools useful in github actions
-          sudo apt-get install -qq -y jq \
-                                      wget \
-                                      curl \
-                                      lcov \
-                                      gcovr \
-                                      wget \
-                                      curl \
-                                      clang-11 \
-                                      clang-tidy-11 \
-                                      xsltproc \
-                                      libxml2-utils \
-                                      source-highlight
-
-          # Remove old packages from apt cache
-          sudo apt-get autoclean -qq
-
-    - name: Dependencies [Windows]
-      if: runner.os == 'Windows'
-      run: |
-          echo "To avoid spending a huge time compiling vcpkg dependencies, we download a root that comes precompiled with all the ports that we need"
-          choco install --no-progress -y wget 7zip
-          echo ""
-          echo " Download and install SWIG"
-          wget -nv https://sourceforge.net/projects/swig/files/swigwin/swigwin-4.0.2/swigwin-4.0.2.zip -O swigwin.zip
-          7z x swigwin.zip
-          mv swigwin-4.0.2/swig.exe swig.exe
-          echo ""
-          echo " To avoid problems with non-relocatable packages, we unzip the archive exactly in the same C:/robotology/vcpkg that has been used to create the pre-compiled archive"
-          wget -nv https://github.com/robotology/robotology-superbuild-dependencies-vcpkg/releases/download/v0.6.0/vcpkg-robotology-yarp-only.zip
-          7z x -oC:\ vcpkg-robotology-yarp-only.zip
-          echo ""
-          echo " Download and install YCM "
-          wget -nv https://github.com/robotology/ycm/releases/download/v0.15.1/ycm-cmake-modules-0.15.1-all.tar.gz -O ycm.tar.gz
-          7z x ycm.tar.gz
-          7z x -ttar -oC:\robotology ycm.tar
-          echo ""
-          echo " Download and install ccache "
-          wget -nv https://github.com/cristianadam/ccache/releases/download/v3.7.7/Windows.tar.xz -O ccache.tar.xz
-          7z x ccache.tar.xz
-          7z x -ttar ccache.tar
-
-    - name: Dependencies [macOS]
-      if: runner.os == 'macOS'
-      run: |
-          # Temporary workaround for https://github.com/actions/setup-python/issues/577
-          rm -f /usr/local/bin/2to3
-          rm -f /usr/local/bin/idle3
-          rm -f /usr/local/bin/pydoc3
-          rm -f /usr/local/bin/python3
-          rm -f /usr/local/bin/python3-config
-          rm -f /usr/local/bin/2to3-3.11
-          rm -f /usr/local/bin/idle3.11
-          rm -f /usr/local/bin/pydoc3.11
-          rm -f /usr/local/bin/python3.11
-          rm -f /usr/local/bin/python3.11-config
-
-          wget -nv https://github.com/robotology/ycm/releases/download/v0.15.1/ycm-cmake-modules-0.15.1-all.tar.gz -O /Users/runner/work/yarp/ycm.tar.gz
-          7z x /Users/runner/work/yarp/ycm.tar.gz -o/Users/runner/work/yarp
-          7z x -ttar /Users/runner/work/yarp/ycm.tar -o/Users/runner/work/yarp
-          
-          brew update
-          brew install ccache
-          brew install ace
-          brew install sqlite tinyxml libedit libpng qt5 opencv eigen graphviz libsoxr
-
-    - name: Prepare Environment Script
-      id: prepare_environment_script
-      shell: cmake -P {0}
-      run: |
-        cmake_minimum_required(VERSION 3.17)
-        set(_env_script ${CMAKE_CURRENT_LIST_DIR}/environment_script.cmake)
-        file(WRITE "${_env_script}" "")
-
-        # if YCM is installed manually, set YCM_DIR to allow CMake to find it
-        if("${{ runner.os }}" STREQUAL "Windows")
-          file(APPEND "${_env_script}" "set(ENV{YCM_DIR} \"C:\\\\robotology\\\\YCM-0.15.1-all\")\n")
-        elseif("${{ runner.os }}" STREQUAL "macOS")
-          file(APPEND "${_env_script}" "set(ENV{YCM_DIR} \"/Users/runner/work/yarp/YCM-0.15.1-all\")\n")
-        endif()
-
-        if("${{ runner.os }}" STREQUAL "Windows" AND NOT "${{ matrix.config.environment_script }}" STREQUAL "")
-          execute_process(
-              COMMAND "${{ matrix.config.environment_script }}" && set
-              OUTPUT_FILE environment_script_output.txt
-          )
-          file(STRINGS environment_script_output.txt output_lines)
-
-          foreach(line IN LISTS output_lines)
-            if(line MATCHES "^([a-zA-Z0-9_-]+)=(.*)$")
-              set(_key "${CMAKE_MATCH_1}")
-              set(_value "${CMAKE_MATCH_2}")
-              string(REPLACE "\\" "\\\\" _value "${_value}")
-              file(APPEND "${_env_script}" "set(ENV{${_key}} \"${_value}\")\n")
-            endif()
-          endforeach()
-
-          # Ninja and other tools are downloaded in $GITHUB_WORKSPACE
-          file(APPEND "${_env_script}" "set(ENV{PATH} \"\$ENV{PATH};\$ENV{GITHUB_WORKSPACE}\")\n")
-
-          # Append vcpkg bin directory to the PATH
-          if("${{ matrix.config.build_type }}" STREQUAL "Release")
-            file(APPEND "${_env_script}" "set(ENV{PATH} \"\$ENV{PATH};C:\\\\robotology\\\\vcpkg\\\\installed\\\\x64-windows\\\\bin\")\n")
-          else()
-            file(APPEND "${_env_script}" "set(ENV{PATH} \"\$ENV{PATH};C:\\\\robotology\\\\vcpkg\\\\installed\\\\x64-windows\\\\debug\\\\bin\")\n")
-          endif()
-
-          # Append output bin directory to the PATH
-          if("${{ matrix.config.cmake_generator }}" MATCHES "Visual Studio")
-            file(APPEND "${_env_script}" "set(ENV{PATH} \"\$ENV{PATH};\$ENV{GITHUB_WORKSPACE}\\\\build\\\\bin\\\\${{ matrix.config.build_type }}\")\n")
-          elseif("${{ matrix.config.cmake_generator }}" MATCHES "Ninja")
-            file(APPEND "${_env_script}" "set(ENV{PATH} \"\$ENV{PATH};\$ENV{GITHUB_WORKSPACE}\\\\build\\\\bin\")\n")
-          endif()
-        endif()
-
-        file(APPEND "${_env_script}" "set(ENV{CC} ${{ matrix.config.cc }})\n")
-        file(APPEND "${_env_script}" "set(ENV{CXX} ${{ matrix.config.cxx }})\n")
-
-        if("${{ matrix.config.cc }}" MATCHES "gcc")
-          file(APPEND "${_env_script}" "set(ENV{CFLAGS} -fdiagnostics-color=always)\n")
-          file(APPEND "${_env_script}" "set(ENV{CXXFLAGS} -fdiagnostics-color=always)\n")
-        elseif("${{ matrix.config.cc }}" MATCHES "clang")
-          file(APPEND "${_env_script}" "set(ENV{CFLAGS} -fcolor-diagnostics)\n")
-          file(APPEND "${_env_script}" "set(ENV{CXXFLAGS} -fcolor-diagnostics)\n")
-        endif()
-
-        file(APPEND "${_env_script}" "file(TO_CMAKE_PATH \"\$ENV{GITHUB_WORKSPACE}\" ccache_basedir)\n")
-        file(APPEND "${_env_script}" "set(ENV{CCACHE_BASEDIR} \"\${ccache_basedir}\")\n")
-        file(APPEND "${_env_script}" "set(ENV{CCACHE_DIR} \"\${ccache_basedir}/.ccache\")\n")
-        file(APPEND "${_env_script}" "set(ENV{CCACHE_COMPRESS} \"true\")\n")
-        file(APPEND "${_env_script}" "set(ENV{CCACHE_COMPRESSLEVEL} \"6\")\n")
-        if("${{ matrix.config.cxx }}" STREQUAL "cl")
-          file(APPEND "${_env_script}" "set(ENV{CCACHE_MAXSIZE} \"600M\")\n")
-        else()
-          file(APPEND "${_env_script}" "set(ENV{CCACHE_MAXSIZE} \"400M\")\n")
-        endif()
-        # Force ccache to build the original cpp file instead of the pre-processed file
-        file(APPEND "${_env_script}" "set(ENV{CCACHE_CPP2} \"yes\")\n")
-
-        # Prepend ccache lib dir on Linux and macOS
-        if("${{ runner.os }}" STREQUAL "Linux")
-          file(APPEND "${_env_script}" "set(ENV{PATH} \"/usr/lib/ccache:\$ENV{PATH}\")\n")
-        elseif("${{ runner.os }}" STREQUAL "macOS")
-          file(APPEND "${_env_script}" "set(ENV{PATH} \"/usr/local/opt/ccache/libexec:\$ENV{PATH}\")\n")
-        endif()
-
-        # CMake/CTest variables
-        file(APPEND "${_env_script}" "set(ENV{CTEST_OUTPUT_ON_FAILURE} \"1\")\n")
-        file(APPEND "${_env_script}" "set(ENV{CLICOLOR_FORCE} \"1\")\n")
-
-        # YARP variables
-        file(APPEND "${_env_script}" "set(ENV{YARP_PORT_RANGE} \"20000\")\n")
-
-        # Add execute_process_x() macro
-        file(APPEND "${_env_script}" "
-        function(execute_process_x)
-          set(_options)
-          set(_oneValueArgs RESULT_VARIABLE WORKING_DIRECTORY)
-          set(_multiValueArgs COMMAND)
-          cmake_parse_arguments(_x \"\${_options}\" \"\${_oneValueArgs}\" \"\${_multiValueArgs}\" \${ARGN})
-
-          string(REPLACE \";\" \" \" _cmd \"\${_x_COMMAND}\")
-          string(REPLACE \"\\\\\" \"\\\\\\\\\" _cmd \"\${_cmd}\")
-          message(STATUS \"\\n\$ \${_cmd}\")
-
-          if(DEFINED _x_WORKING_DIRECTORY)
-            set(_wd WORKING_DIRECTORY \"\${_x_WORKING_DIRECTORY}\")
-          endif()
-          execute_process(COMMAND \${_x_COMMAND}
-                          \${_wd}
-                          RESULT_VARIABLE _result)
-          if(NOT _result EQUAL 0)
-            message(WARNING \"The command \\\"\${_cmd}\\\" failed with result \\\"\${_result}\\\"\")
-          endif()
-          if(DEFINED _x_RESULT_VARIABLE)
-            set(\${_x_RESULT_VARIABLE} \${_result} PARENT_SCOPE)
-          endif()
-        endfunction()
-        ")
-
-        message("::set-output name=environment_script::${_env_script}")
-
-    - name: Print Environment Script
-      shell: cmake -P {0}
-      run: |
-        cmake_minimum_required(VERSION 3.17)
-        file(READ "${{ steps.prepare_environment_script.outputs.environment_script }}" _out)
-        message("${_out}")
-
-    - name: Print system information
-      shell: cmake -P {0}
-      run: |
-        cmake_minimum_required(VERSION 3.17)
-        include(${{ steps.prepare_environment_script.outputs.environment_script }})
-
-        set(_which_cmd which)
-        set(_env_cmd env)
-        if("${{ runner.os }}" STREQUAL "Windows")
-          set(_which_cmd where)
-          set(_env_cmd env)
-        endif()
-
-        if(UNIX)
-          execute_process_x(COMMAND uname -a)
-        endif()
-
-        if("${{ runner.os }}" STREQUAL "Linux")
-          execute_process_x(COMMAND lsb_release -a)
-          execute_process_x(COMMAND cat /etc/apt/sources.list)
-          execute_process_x(COMMAND ls -la --color=always /etc/apt/sources.list.d)
-          file(GLOB _list_files "/etc/apt/sources.list.d/*.list")
-          foreach(_list_file IN LISTS _list_files)
-            execute_process_x(COMMAND cat ${_list_file})
-          endforeach()
-        elseif("${{ runner.os }}" STREQUAL "macOS")
-          execute_process_x(COMMAND system_profiler SPSoftwareDataType)
-        elseif("${{ runner.os }}" STREQUAL "Windows")
-          execute_process_x(COMMAND Systeminfo)
-        endif()
-
-        execute_process_x(COMMAND ${_which_cmd} cmake)
-        execute_process_x(COMMAND cmake --version)
-
-        if("${{ matrix.config.cmake_generator }}" MATCHES "Visual Studio")
-          execute_process_x(COMMAND ${_which_cmd} msbuild)
-          execute_process_x(COMMAND msbuild /version)
-        elseif("${{ matrix.config.cmake_generator }}" MATCHES "Ninja")
-          execute_process_x(COMMAND ${_which_cmd} ninja)
-          execute_process_x(COMMAND ninja --version)
-        elseif("${{ matrix.config.cmake_generator }}" MATCHES "Unix Makefiles")
-          execute_process_x(COMMAND ${_which_cmd} make)
-          execute_process_x(COMMAND make --version)
-        elseif("${{ matrix.config.cmake_generator }}" MATCHES "Xcode")
-          execute_process_x(COMMAND ${_which_cmd} xcodebuild)
-          execute_process_x(COMMAND xcodebuild -version)
-        endif()
-
-        execute_process_x(COMMAND ${_which_cmd} $ENV{CC})
-        execute_process_x(COMMAND ${_which_cmd} $ENV{CXX})
-        if("$ENV{CC}" STREQUAL "cl")
-          execute_process_x(COMMAND $ENV{CC})
-          execute_process_x(COMMAND $ENV{CXX})
-        else()
-          execute_process_x(COMMAND $ENV{CC} --version)
-          execute_process_x(COMMAND $ENV{CXX} --version)
-        endif()
-
-        execute_process_x(COMMAND ${_which_cmd} ccache)
-        execute_process_x(COMMAND ccache --version)
-        execute_process_x(COMMAND ccache -p)
-        if("${{ runner.os }}" STREQUAL "Linux")
-          execute_process_x(COMMAND ls -la --color=always /usr/lib/ccache)
-          execute_process_x(COMMAND ls -la --color=always $ENV{HOME}/lib/ccache)
-        endif()
-
-        execute_process_x(COMMAND ${_which_cmd} swig)
-        execute_process_x(COMMAND swig -version)
-
-        execute_process_x(COMMAND ${_which_cmd} javac)
-        execute_process_x(COMMAND javac -version)
-
-        if("${{ runner.os }}" STREQUAL "Linux")
-          execute_process_x(COMMAND netstat -tulpn)
-        endif()
-
-        execute_process_x(COMMAND ${_env_cmd})
-
-    - name: Configure
-      shell: cmake -P {0}
-      run: |
-        cmake_minimum_required(VERSION 3.17)
-        include(${{ steps.prepare_environment_script.outputs.environment_script }})
-
-        set(_generator)
-        if(NOT "${{ matrix.config.cmake_generator }}" STREQUAL "")
-          set(_generator -G "${{ matrix.config.cmake_generator }}")
-        endif()
-
-        set(_toolset)
-        if(NOT "${{ matrix.config.cmake_toolset }}" STREQUAL "")
-          list(APPEND toolset -T ${{ matrix.config.cmake_toolset }})
-        endif()
-
-        set(_platform)
-        if(NOT "${{ matrix.config.cmake_platform }}" STREQUAL "")
-          list(APPEND _platform -A ${{ matrix.config.cmake_platform }})
-        endif()
-
-        set(_initial_cache_file)
-        if(NOT "${{ matrix.config.cmake_initial_cache_file }}" STREQUAL "")
-          set(_initial_cache_file -C "${{ matrix.config.cmake_initial_cache_file }}")
-        endif()
-
-        set(_toolchain_file)
-        if(NOT "${{ matrix.config.cmake_toolchain_file }}" STREQUAL "")
-          set(_toolchain_file -D CMAKE_TOOLCHAIN_FILE=${{ matrix.config.cmake_toolchain_file }})
-        endif()
-
-        set(_build_type)
-        if(NOT "${{ matrix.config.build_type }}" STREQUAL "")
-          set(_build_type -D CMAKE_BUILD_TYPE=${{ matrix.config.build_type }})
-        endif()
-
-        file(TO_CMAKE_PATH "$ENV{GITHUB_WORKSPACE}/install" _install_prefix)
-        set(_install_prefix -D CMAKE_INSTALL_PREFIX=${_install_prefix})
-
-        set(_cmake_compiler_lauchers )
-        if("${{ runner.os }}" STREQUAL "Windows")
-          find_program(_ccache_cmd ccache PATHS ENV GITHUB_WORKSPACE)
-          set(_cmake_compiler_lauchers -D CMAKE_C_COMPILER_LAUNCHER=${_ccache_cmd}
-                                       -D CMAKE_CXX_COMPILER_LAUNCHER=${_ccache_cmd})
-        endif()
-
-        set(_cmake_extra_options)
-        if(NOT "${{ matrix.config.cmake_extra_options }}" STREQUAL "")
-          set(_cmake_extra_options ${{ matrix.config.cmake_extra_options }})
-        endif()
-
-        execute_process_x(
-          COMMAND ${CMAKE_COMMAND}
-            -S .
-            -B build
-            ${_generator}
-            ${_toolset}
-            ${_platform}
-            ${_initial_cache_file}
-            ${_toolchain_file}
-            ${_build_type}
-            ${_install_prefix}
-            ${_cmake_compiler_lauchers}
-            ${_cmake_extra_options}
-          RESULT_VARIABLE _result
-        )
-        if(NOT _result EQUAL 0)
-          message(FATAL_ERROR "Configure step failed")
-        endif()
-
-    - name: Build
-      shell: cmake -P {0}
-      run: |
-        cmake_minimum_required(VERSION 3.17)
-        include(${{ steps.prepare_environment_script.outputs.environment_script }})
-
-        execute_process_x(
-          COMMAND ${CMAKE_COMMAND}
-            --build build
-            --config ${{ matrix.config.build_type }}
-          RESULT_VARIABLE _result
-        )
-        if(NOT _result EQUAL 0)
-          message(FATAL_ERROR "Build step failed")
-        endif()
-
-        # Print ccache stats
-        execute_process_x(COMMAND ccache -s)
-
-        # Reset ccache stats before uploading
-        execute_process_x(COMMAND ccache -z)
-
-    - name: Run tests
-      shell: cmake -P {0}
-      run: |
-        cmake_minimum_required(VERSION 3.17)
-        include(${{ steps.prepare_environment_script.outputs.environment_script }})
-
-        execute_process_x(
-          COMMAND ${CMAKE_CTEST_COMMAND}
-            --build-config ${{ matrix.config.build_type }}
-            # We have random race conditions.
-            # Allow up to 3 run of the same test
-            --repeat until-pass:3
-            --output-on-failure
-          WORKING_DIRECTORY build
-          RESULT_VARIABLE result
-        )
-        if(NOT result EQUAL 0)
-          message(FATAL_ERROR "Test step failed")
-        endif()
-
-    - name: Status Check
-      shell: cmake -P {0}
-      run: |
-        cmake_minimum_required(VERSION 3.17)
-        include(${{ steps.prepare_environment_script.outputs.environment_script }})
-
-        execute_process_x(
-          COMMAND git status --porcelain=v1
-          WORKING_DIRECTORY .
-          RESULT_VARIABLE result
-          OUTPUT_VARIABLE output
-        )
-        if(NOT result EQUAL 0)
-          message(FATAL_ERROR "Test step failed")
-        endif()
-
-        string(REGEX REPLACE "\n" ";" output "${output}")
-
-        foreach(f IN LISTS output)
-          string(REGEX REPLACE ".+ " "" f "${f}")
-          message("::error file=${f},line=1,col=1::File modified.")
-        endforeach()
-        list(LENGTH output output_size)
-
-        if(NOT output_size EQUAL 0)
-          message(FATAL_ERROR "During build and tests, ${output_size} files were modified")
-        endif()
-
-    - name: Test installation
-      shell: cmake -P {0}
-      run: |
-        cmake_minimum_required(VERSION 3.17)
-        include(${{ steps.prepare_environment_script.outputs.environment_script }})
-
-        execute_process_x(
-          COMMAND ${CMAKE_COMMAND}
-            --install build
-            --config ${{ matrix.config.build_type }}
-            --strip
-          RESULT_VARIABLE _result
-        )
-        if(NOT _result EQUAL 0)
-          message(FATAL_ERROR "Installation step failed")
-        endif()
-
-    - name: Test bindings from build tree
-      if: matrix.config.test_external_bindings
-      shell: cmake -P {0}
-      run: |
-        cmake_minimum_required(VERSION 3.17)
-        include(${{ steps.prepare_environment_script.outputs.environment_script }})
-
-        ### FIXME Can we avoid this duplication?
-
-        set(_generator)
-        if(NOT "${{ matrix.config.cmake_generator }}" STREQUAL "")
-          set(_generator -G "${{ matrix.config.cmake_generator }}")
-        endif()
-
-        set(_toolset)
-        if(NOT "${{ matrix.config.cmake_toolset }}" STREQUAL "")
-          list(APPEND toolset -T ${{ matrix.config.cmake_toolset }})
-        endif()
-
-        set(_platform)
-        if(NOT "${{ matrix.config.cmake_platform }}" STREQUAL "")
-          list(APPEND _platform -A ${{ matrix.config.cmake_platform }})
-        endif()
-
-        set(_initial_cache_file -C "$ENV{GITHUB_WORKSPACE}/.ci/bindings-cache.cmake")
-
-        file(TO_CMAKE_PATH "$ENV{GITHUB_WORKSPACE}/install" _install_prefix)
-        set(_install_prefix -D CMAKE_INSTALL_PREFIX=${_install_prefix})
-
-        set(_toolchain_file)
-        if(NOT "${{ matrix.config.cmake_toolchain_file }}" STREQUAL "")
-          set(_toolchain_file -D CMAKE_TOOLCHAIN_FILE=${{ matrix.config.cmake_toolchain_file }})
-        endif()
-
-        set(_build_type)
-        if(NOT "${{ matrix.config.build_type }}" STREQUAL "")
-          set(_build_type -D CMAKE_BUILD_TYPE=${{ matrix.config.build_type }})
-        endif()
-
-        set(_cmake_compiler_lauchers )
-        if("${{ runner.os }}" STREQUAL "Windows")
-          find_program(_ccache_cmd ccache PATHS ENV GITHUB_WORKSPACE)
-          set(_cmake_compiler_lauchers -D CMAKE_C_COMPILER_LAUNCHER=${_ccache_cmd}
-                                       -D CMAKE_CXX_COMPILER_LAUNCHER=${_ccache_cmd})
-        endif()
-
-        execute_process_x(
-          COMMAND ${CMAKE_COMMAND}
-            -S bindings
-            -B build-bindings-build-tree
-            ${_generator}
-            ${_toolset}
-            ${_platform}
-            ${_initial_cache_file}
-            ${_toolchain_file}
-            ${_build_type}
-            ${_install_prefix}
-            ${_cmake_compiler_lauchers}
-            ${_cmake_extra_options}
-            -DYARP_DIR=$ENV{GITHUB_WORKSPACE}/build
-          RESULT_VARIABLE _result
-        )
-        if(NOT _result EQUAL 0)
-          message(FATAL_ERROR "Configure bindings from build tree step failed")
-        endif()
-
-        execute_process_x(
-          COMMAND ${CMAKE_COMMAND}
-            --build build-bindings-build-tree
-            --config ${{ matrix.config.build_type }}
-          RESULT_VARIABLE _result
-        )
-        if(NOT _result EQUAL 0)
-          message(FATAL_ERROR "Build bindings from build tree step failed")
-        endif()
-
-    - name: Test bindings from install tree
-      if: matrix.config.test_external_bindings
-      shell: cmake -P {0}
-      run: |
-        cmake_minimum_required(VERSION 3.17)
-        include(${{ steps.prepare_environment_script.outputs.environment_script }})
-
-        ### FIXME Can we avoid this duplication?
-
-        set(_generator)
-        if(NOT "${{ matrix.config.cmake_generator }}" STREQUAL "")
-          set(_generator -G "${{ matrix.config.cmake_generator }}")
-        endif()
-
-        set(_toolset)
-        if(NOT "${{ matrix.config.cmake_toolset }}" STREQUAL "")
-          list(APPEND toolset -T ${{ matrix.config.cmake_toolset }})
-        endif()
-
-        set(_platform)
-        if(NOT "${{ matrix.config.cmake_platform }}" STREQUAL "")
-          list(APPEND _platform -A ${{ matrix.config.cmake_platform }})
-        endif()
-
-        set(_initial_cache_file -C "$ENV{GITHUB_WORKSPACE}/.ci/bindings-cache.cmake")
-
-        file(TO_CMAKE_PATH "$ENV{GITHUB_WORKSPACE}/install" _install_prefix)
-        set(_install_prefix -D CMAKE_INSTALL_PREFIX=${_install_prefix})
-
-        set(_toolchain_file)
-        if(NOT "${{ matrix.config.cmake_toolchain_file }}" STREQUAL "")
-          set(_toolchain_file -D CMAKE_TOOLCHAIN_FILE=${{ matrix.config.cmake_toolchain_file }})
-        endif()
-
-        set(_build_type)
-        if(NOT "${{ matrix.config.build_type }}" STREQUAL "")
-          set(_build_type -D CMAKE_BUILD_TYPE=${{ matrix.config.build_type }})
-        endif()
-
-        set(_cmake_compiler_lauchers )
-        if("${{ runner.os }}" STREQUAL "Windows")
-          find_program(_ccache_cmd ccache PATHS ENV GITHUB_WORKSPACE)
-          set(_cmake_compiler_lauchers -D CMAKE_C_COMPILER_LAUNCHER=${_ccache_cmd}
-                                       -D CMAKE_CXX_COMPILER_LAUNCHER=${_ccache_cmd})
-        endif()
-
-        execute_process_x(
-          COMMAND ${CMAKE_COMMAND}
-            -S bindings
-            -B build-bindings-install-tree
-            ${_generator}
-            ${_toolset}
-            ${_platform}
-            ${_initial_cache_file}
-            ${_toolchain_file}
-            ${_build_type}
-            ${_install_prefix}
-            ${_cmake_compiler_lauchers}
-            ${_cmake_extra_options}
-            -DYARP_DIR=$ENV{GITHUB_WORKSPACE}/install/lib/cmake/YARP
-          RESULT_VARIABLE _result
-        )
-        if(NOT _result EQUAL 0)
-          message(FATAL_ERROR "Configure bindings from install tree step failed")
-        endif()
-
-        execute_process_x(
-          COMMAND ${CMAKE_COMMAND}
-            --build build-bindings-install-tree
-            --config ${{ matrix.config.build_type }}
-          RESULT_VARIABLE _result
-        )
-        if(NOT _result EQUAL 0)
-          message(FATAL_ERROR "Build bindings from build tree step failed")
-        endif()
-
-    - name: Compress installation files
-      shell: cmake -P {0}
-      run: |
-        cmake_minimum_required(VERSION 3.17)
-        include(${{ steps.prepare_environment_script.outputs.environment_script }})
-
-        execute_process_x(
-          COMMAND ${CMAKE_COMMAND} -E tar cvf $ENV{GITHUB_WORKSPACE}/install.tar --format=gnutar --files-from=$ENV{GITHUB_WORKSPACE}/build/install_manifest.txt
-          WORKING_DIRECTORY "$ENV{GITHUB_WORKSPACE}/install"
-        )
-
-    - name: Upload artifact
-      uses: actions/upload-artifact@v3
-      with:
-        name: installation-${{ matrix.config.id }}
-        path: install.tar
-        retention-days: 2
-
-    - name: Cleanup
-      shell: cmake -P {0}
-      run: |
-        cmake_minimum_required(VERSION 3.17)
-        include(${{ steps.prepare_environment_script.outputs.environment_script }})
-
-        # Reset ccache stats before uploading
-        execute_process_x(COMMAND ccache -z)
-
-
-  codacy-clang-tidy:
-    environment: code-analysis
-    name: 'Codacy - clang-tidy'
-    needs: [select_environment, run-cmake]
-    runs-on: ubuntu-20.04
-    steps:
-    - name: Clone repository
-      uses: actions/checkout@v3
-      with:
-        repository: ${{ needs.select_environment.outputs.repository }}
-        ref: ${{ needs.select_environment.outputs.ref }}
-
-    # This step is copied from the build step, please keep them in sync until we
-    # find a better way to do it automatically
-    - name: Dependencies [Linux]
-      if: runner.os == 'Linux'
-      shell: bash
-      run: |
-          # Install Robotology dependencies from robotology ppa
-          sudo apt-add-repository -y ppa:robotology/ppa
-          sudo apt-get install -qq -y librobottestingframework-dev
-
-          # Install cmake
-          sudo apt-get install -qq -y cmake
-          which cmake
-          cmake --version
-          /usr/bin/cmake --version
-
-          # Install ycm
-          wget -nv https://github.com/robotology/ycm/releases/download/v0.15.1/ycm-cmake-modules-0.15.1-all.deb
-          sudo dpkg -i ycm-cmake-modules-0.15.1-all.deb
-
-          # Install build tools
-          sudo apt-get install -qq -y ccache \
-                                      ninja-build \
-                                      valgrind \
-                                      openjdk-17-jdk \
-                                      openjdk-17-jre
-
-          sudo apt-get install -qq -y libace-dev \
-                                      libsqlite3-dev \
-                                      libtinyxml-dev \
-                                      libedit-dev \
-                                      qtbase5-dev \
-                                      qtdeclarative5-dev \
-                                      qtmultimedia5-dev \
-                                      libqt5opengl5-dev \
-                                      libqcustomplot-dev \
-                                      libopencv-dev \
-                                      libeigen3-dev \
-                                      libgraphviz-dev \
-                                      libgstreamer1.0-dev \
-                                      libgstreamer-plugins-base1.0-dev \
-                                      libpng-dev \
-                                      libv4l-dev \
-                                      libavcodec-dev \
-                                      libavdevice-dev \
-                                      libavformat-dev \
-                                      libavutil-dev \
-                                      portaudio19-dev \
-                                      libsdl1.2-dev \
-                                      libopenni2-dev \
-                                      libftdi-dev \
-                                      libi2c-dev \
-                                      libjpeg-dev \
-                                      libpcl-dev
-
-          # Install SWIG and bindings dependencies
-          sudo apt-get install -qq -y swig \
-                                      mono-mcs \
-                                      liblua5.3-dev \
-                                      lua5.3 \
-                                      tcl-dev \
-                                      tk-dev \
-                                      python3-dev \
-                                      liboctave-dev \
-                                      ruby-dev \
-                                      ruby \
-                                      perl
-
-          # Other tools useful in github actions
-          sudo apt-get install -qq -y jq \
-                                      wget \
-                                      curl \
-                                      lcov \
-                                      gcovr \
-                                      wget \
-                                      curl \
-                                      clang-11 \
-                                      clang-tidy-11 \
-                                      xsltproc \
-                                      libxml2-utils \
-                                      source-highlight
-
-          # Remove old packages from apt cache
-          sudo apt-get autoclean -qq
-
-    - name: Prepare environment
-      env:
-        CODACY_TOKEN: ${{ secrets.CODACY_TOKEN }}
-        CLANG_VERSION: 10
-        CODACY_CLANG_TIDY_VERSION: 1.2.1
-      run: |
-        echo "CLANG_VERSION=${CLANG_VERSION}" >> $GITHUB_ENV
-        echo "CC=/usr/bin/clang-${CLANG_VERSION}" >> $GITHUB_ENV
-        echo "CXX=/usr/bin/clang++-${CLANG_VERSION}" >> $GITHUB_ENV
-        echo "CFLAGS=-fcolor-diagnostics" >> $GITHUB_ENV
-        echo "CXXFLAGS=-fcolor-diagnostics" >> $GITHUB_ENV
-        echo "CLANG_TIDY=/usr/bin/clang-tidy-${CLANG_VERSION}" >> $GITHUB_ENV
-        echo "RUN_CLANG_TIDY=/usr/bin/run-clang-tidy-${CLANG_VERSION}" >> $GITHUB_ENV
-        echo "COLORCLI=1" >> $GITHUB_ENV
-        echo "CLICOLOR=1" >> $GITHUB_ENV
-        echo "CLICOLOR_FORCE=1" >> $GITHUB_ENV
-        echo "YARP_COLORED_OUTPUT=1" >> $GITHUB_ENV
-        echo "PROJECT_TOKEN=${CODACY_TOKEN}" >> $GITHUB_ENV
-        echo "COMMIT=${{ needs.select_environment.outputs.sha }}" >> $GITHUB_ENV
-        echo "CODACY_URL=https://api.codacy.com" >> $GITHUB_ENV
-        echo "CODACY_CLANG_TIDY_VERSION=${CODACY_CLANG_TIDY_VERSION}" >> $GITHUB_ENV
-
-    - name: Download codacy-clang-tidy
-      if: runner.os == 'Linux'
-      shell: bash
-      run: |
-          # Download extra packages required
-          sudo apt-get install -qq -y clang-${CLANG_VERSION} \
-                                      clang-tidy-${CLANG_VERSION}
-
-          # Download codacy-clang-tidy
-          sudo wget https://github.com/codacy/codacy-clang-tidy/releases/download/${CODACY_CLANG_TIDY_VERSION}/codacy-clang-tidy-${CODACY_CLANG_TIDY_VERSION} -O /usr/local/bin/codacy-clang-tidy-${CODACY_CLANG_TIDY_VERSION}
-          sudo chmod -v +x /usr/local/bin/codacy-clang-tidy-${CODACY_CLANG_TIDY_VERSION}
-
-    - name: Run CMake
-      run: |
-        /usr/bin/cmake -S. -Bbuild \
-          -C .ci/initial-cache.gh.linux.cmake \
-          -DCMAKE_EXPORT_COMPILE_COMMANDS:BOOL=ON \
-          -DYARP_NO_DEPRECATED:BOOL=ON \
-          -DYARP_COMPILE_BINDINGS:BOOL=OFF
-
-    - name: Link compile_commands.json in the source directory
-      run: |
-        ln -s build/compile_commands.json .
-
-    - name: Run make (required for files generated at build time)
-      run: |
-        (cd build && make)
-
-    - name: List clang-tidy checks
-      run: |
-        # Fix .clang-tidy for clang 10 (see https://reviews.llvm.org/D75621)
-        sed -i 's/;h;hh;hpp;hxx/,h,hh,hpp,hxx/g' .clang-tidy
-
-        # Print the .clang-tidy file
-        cat .clang-tidy
-        echo
-
-        # List checks
-        ${CLANG_TIDY} -list-checks
-
-    - name: Run clang-tidy
-      run: |
-        ${RUN_CLANG_TIDY} | sed "s|${PWD}/||g" | tee /tmp/out1
-
-    - name: Convert the clang-tidy output to a format that the Codacy API accepts
-      run: |
-        cat /tmp/out1 | \
-        /usr/local/bin/codacy-clang-tidy-${CODACY_CLANG_TIDY_VERSION} | tee /tmp/out2
-
-    - name: Send the results to Codacy
-      run: |
-        set -x
-        cat /tmp/out2 | \
-        curl --silent --show-error --fail \
-            -XPOST -L -H "project-token: ${PROJECT_TOKEN}" \
-            -H "Content-type: application/json" -d @- \
-            "${CODACY_URL}/2.0/commit/${COMMIT}/issuesRemoteResults"
-        echo
-
-    - name: Signal that Codacy can use the sent results and start a new analysis
-      run: |
-        set -x
-        curl --silent --show-error --fail \
-          -XPOST -L -H "project-token: ${PROJECT_TOKEN}" \
-          -H "Content-type: application/json" \
-          "${CODACY_URL}/2.0/commit/${COMMIT}/resultsFinal"
-        echo
-
-
-  codacy-coverage:
-    environment: code-analysis
-    name: 'Codacy - coverage'
-    needs: [select_environment, run-cmake]
-    runs-on: ubuntu-20.04
-    steps:
-    - name: Clone repository
-      uses: actions/checkout@v3
-      with:
-        repository: ${{ needs.select_environment.outputs.repository }}
-        ref: ${{ needs.select_environment.outputs.ref }}
-
-    # This step is copied from the build step, please keep them in sync until we
-    # find a better way to do it automatically
-    - name: Dependencies [Linux]
-      if: runner.os == 'Linux'
-      shell: bash
-      run: |
-          # Install Robotology dependencies from robotology ppa
-          sudo apt-add-repository -y ppa:robotology/ppa
-          sudo apt-get install -qq -y librobottestingframework-dev
-
-          # Install cmake
-          sudo apt-get install -qq -y cmake
-          which cmake
-          cmake --version
-          /usr/bin/cmake --version
-
-          # Install ycm
-          wget -nv https://github.com/robotology/ycm/releases/download/v0.15.1/ycm-cmake-modules-0.15.1-all.deb
-          sudo dpkg -i ycm-cmake-modules-0.15.1-all.deb
-
-          # Install build tools
-          sudo apt-get install -qq -y ccache \
-                                      ninja-build \
-                                      valgrind \
-                                      openjdk-17-jdk \
-                                      openjdk-17-jre
-
-          sudo apt-get install -qq -y libace-dev \
-                                      libsqlite3-dev \
-                                      libtinyxml-dev \
-                                      libedit-dev \
-                                      qtbase5-dev \
-                                      qtdeclarative5-dev \
-                                      qtmultimedia5-dev \
-                                      libqt5opengl5-dev \
-                                      libqcustomplot-dev \
-                                      libopencv-dev \
-                                      libeigen3-dev \
-                                      libgraphviz-dev \
-                                      libgstreamer1.0-dev \
-                                      libgstreamer-plugins-base1.0-dev \
-                                      libpng-dev \
-                                      libv4l-dev \
-                                      libavcodec-dev \
-                                      libavdevice-dev \
-                                      libavformat-dev \
-                                      libavutil-dev \
-                                      portaudio19-dev \
-                                      libsdl1.2-dev \
-                                      libopenni2-dev \
-                                      libftdi-dev \
-                                      libi2c-dev \
-                                      libjpeg-dev \
-                                      libpcl-dev
-
-          # Install SWIG and bindings dependencies
-          sudo apt-get install -qq -y swig \
-                                      mono-mcs \
-                                      liblua5.3-dev \
-                                      lua5.3 \
-                                      tcl-dev \
-                                      tk-dev \
-                                      python3-dev \
-                                      liboctave-dev \
-                                      ruby-dev \
-                                      ruby \
-                                      perl
-
-          # Other tools useful in github actions
-          sudo apt-get install -qq -y jq \
-                                      wget \
-                                      curl \
-                                      lcov \
-                                      gcovr \
-                                      wget \
-                                      curl \
-                                      clang-11 \
-                                      clang-tidy-11 \
-                                      xsltproc \
-                                      libxml2-utils \
-                                      source-highlight
-
-          # Remove old packages from apt cache
-          sudo apt-get autoclean -qq
-
-    - name: Build
-      run: |
-        export CLICOLOR_FORCE=1
-        export YARP_COLORED_OUTPUT=1
-
-        /usr/bin/cmake -S. -Bbuild \
-          -C .ci/initial-cache.gh.linux.cmake \
-          -DCMAKE_C_FLAGS=-fdiagnostics-color=always \
-          -DCMAKE_CXX_FLAGS=-fdiagnostics-color=always \
-          -DCMAKE_BUILD_TYPE=Profile \
-          "-DCMAKE_C_FLAGS_PROFILE=-pg -g3 -ggdb -fno-inline -ftest-coverage -fprofile-arcs -DNDEBUG" \
-          "-DCMAKE_CXX_FLAGS_PROFILE=-pg -g3 -ggdb -fno-inline -ftest-coverage -fprofile-arcs -DNDEBUG" \
-          -DCMAKE_EXPORT_COMPILE_COMMANDS:BOOL=ON \
-          -DYARP_NO_DEPRECATED:BOOL=ON
-
-        (cd build && lcov --directory . --zerocounters)
-
-        (cd build && make && make CTEST_OUTPUT_ON_FAILURE=1 test)
-
-        # Capture coverage info for Profile builds
-        (cd build; lcov --directory . --capture --rc lcov_branch_coverage=1 --output-file coverage.info)
-
-        # Filter out system and test code
-        (cd build; lcov --remove coverage.info '/usr/*' 'tests/*' 'example/*' 'extern/*' 'build/*'--rc lcov_branch_coverage=1 --output-file coverage.info)
-
-        # Debug before upload
-        (cd build; lcov --list coverage.info)
-
-    - name: Run codacy-coverage-reporter
-      uses: codacy/codacy-coverage-reporter-action@master
-      with:
-        project-token: ${{ secrets.CODACY_TOKEN }}
-        coverage-reports: build/coverage.info
-
+  # run-cmake:
+  #   name: 'Run CMake [CMake ${{ matrix.config.cmake_version }} (${{ matrix.config.cmake_generator }}), YCM ${{ matrix.config.ycm_version }}]'
+  #   needs: [select_environment, check-license, check-style]
+  #   runs-on: ubuntu-20.04
+  #   strategy:
+  #     fail-fast: false
+  #     matrix:
+  #       config:
+  #       - {
+  #           cmake_version: "3.16.*",
+  #           cmake_generator: "Unix Makefiles",
+  #           ycm_version: "0.15.1",
+  #         }
+  #       - {
+  #           cmake_version: "3.17.*",
+  #           cmake_generator: "Unix Makefiles",
+  #           ycm_version: "0.15.1",
+  #         }
+  #       - {
+  #           cmake_version: "3.18.*",
+  #           cmake_generator: "Unix Makefiles",
+  #           ycm_version: "0.15.1",
+  #         }
+  #       - {
+  #           cmake_version: "3.19.*",
+  #           cmake_generator: "Unix Makefiles",
+  #           ycm_version: "0.15.1",
+  #         }
+  #       - {
+  #           cmake_version: "3.20.*",
+  #           cmake_generator: "Unix Makefiles",
+  #           ycm_version: "0.15.1",
+  #         }
+  #       - {
+  #           cmake_version: "3.20.*",
+  #           cmake_generator: "Ninja",
+  #           ycm_version: "0.15.1",
+  #         }
+  #       - {
+  #           cmake_version: "3.21.*",
+  #           cmake_generator: "Unix Makefiles",
+  #           ycm_version: "0.15.1",
+  #         }
+  #       - {
+  #           cmake_version: "3.22.*",
+  #           cmake_generator: "Unix Makefiles",
+  #           ycm_version: "0.15.1",
+  #         }
+  #       - {
+  #           cmake_version: "3.23.*",
+  #           cmake_generator: "Unix Makefiles",
+  #           ycm_version: "0.15.1",
+  #         }
+  #       - {
+  #           cmake_version: "3.24.*",
+  #           cmake_generator: "Unix Makefiles",
+  #           ycm_version: "0.15.1",
+  #         }
+  #       - {
+  #           cmake_version: "3.25.*",
+  #           cmake_generator: "Unix Makefiles",
+  #           ycm_version: "0.15.1",
+  #         }
+  #   steps:
+  #   - name: remove any previous installation of cmake
+  #     run: | 
+  #       sudo rm /usr/local/bin/cmake
+  #       
+  #   - name: install cmake
+  #     run: |
+  #       wget -O - https://apt.kitware.com/keys/kitware-archive-latest.asc 2>/dev/null | gpg --dearmor - | sudo tee /usr/share/keyrings/kitware-archive-keyring.gpg >/dev/null
+  #       echo 'deb [signed-by=/usr/share/keyrings/kitware-archive-keyring.gpg] https://apt.kitware.com/ubuntu/ focal main' | sudo tee /etc/apt/sources.list.d/kitware.list >/dev/null
+  #       sudo apt-get update
+  #       sudo rm /usr/share/keyrings/kitware-archive-keyring.gpg
+  #       sudo apt-get -y install kitware-archive-keyring
+  #       sudo apt-cache policy cmake-data
+  #       sudo apt-cache policy cmake
+  #       sudo apt-get -y install cmake-data=${{matrix.config.cmake_version}}
+  #       sudo apt-get -y -f install cmake=${{matrix.config.cmake_version}}
+  #
+  #   - name: Print CMake version
+  #     run: |
+  #       which cmake
+  #       cmake --version
+  #       /usr/bin/cmake --version
+  #
+  #   - name: Get YCM package
+  #     run: |
+  #       wget -nv https://github.com/robotology/ycm/releases/download/v0.15.1/ycm-cmake-modules-0.15.1-all.deb
+  #       sudo dpkg -i ycm-cmake-modules-0.15.1-all.deb
+  #
+  #   - name: Print YCM version
+  #     run: |
+  #       grep YCM_VERSION /usr/share/cmake/YCM/YCMConfig.cmake
+  #
+  #   - name: Clone Yarp repository
+  #     uses: actions/checkout@v3
+  #     with:
+  #       repository: ${{ needs.select_environment.outputs.repository }}
+  #       ref: ${{ needs.select_environment.outputs.ref }}
+  #
+  #   - name: Run CMake
+  #     run: |
+  #       mkdir build
+  #       cd build
+  #       cmake .. -DSKIP_ACE=ON
+  #
+  #
+  # build:
+  #   name: '[${{ matrix.config.id }}][${{ matrix.config.os }}|${{ matrix.config.cc }}|${{ matrix.config.cmake_generator }} (${{ matrix.config.cmake_toolset }} ${{ matrix.config.cmake_platform }})|${{ matrix.config.build_type }}] ${{ matrix.config.description }}'
+  #   needs: [select_environment, run-cmake]
+  #   runs-on: ${{ matrix.config.os }}
+  #   strategy:
+  #     fail-fast: false
+  #     matrix:
+  #       config:
+  #       - {
+  #           id: '01',
+  #           os: ubuntu-20.04,
+  #           build_type: "Release",
+  #           cc: "gcc",
+  #           cxx: "g++",
+  #           cmake_generator: "Unix Makefiles",
+  #           cmake_initial_cache_file: ".ci/initial-cache.gh.linux.cmake",
+  #           test_external_bindings: true,
+  #         }
+  #       - {
+  #           id: '02',
+  #           os: ubuntu-20.04,
+  #           build_type: "Release",
+  #           cc: "clang",
+  #           cxx: "clang++",
+  #           cmake_generator: "Unix Makefiles",
+  #           cmake_initial_cache_file: ".ci/initial-cache.gh.linux.cmake",
+  #           test_external_bindings: true,
+  #         }
+  #       - {
+  #           id: '03',
+  #           description: 'No ACE',
+  #           os: ubuntu-20.04,
+  #           build_type: "Release",
+  #           cc: "gcc",
+  #           cxx: "g++",
+  #           cmake_generator: "Unix Makefiles",
+  #           cmake_initial_cache_file: ".ci/initial-cache.gh.linux.cmake",
+  #           cmake_extra_options: "-DCMAKE_DISABLE_FIND_PACKAGE_ACE=ON
+  #                                 -DSKIP_ACE:BOOL=ON",
+  #           test_external_bindings: true,
+  #         }
+  #       - {
+  #           id: '04',
+  #           description: 'No ACE',
+  #           os: ubuntu-20.04,
+  #           build_type: "Release",
+  #           cc: "clang",
+  #           cxx: "clang++",
+  #           cmake_generator: "Unix Makefiles",
+  #           cmake_initial_cache_file: ".ci/initial-cache.gh.linux.cmake",
+  #           cmake_extra_options: "-DCMAKE_DISABLE_FIND_PACKAGE_ACE:BOOL=ON
+  #                                 -DSKIP_ACE:BOOL=ON",
+  #           test_external_bindings: true,
+  #         }
+  #       - {
+  #           id: '05',
+  #           description: 'No YARP_math (bindings disabled)',
+  #           os: ubuntu-20.04,
+  #           build_type: "Release",
+  #           cc: "gcc",
+  #           cxx: "g++",
+  #           cmake_generator: "Unix Makefiles",
+  #           cmake_initial_cache_file: ".ci/initial-cache.gh.linux.cmake",
+  #           cmake_extra_options: "-DCMAKE_DISABLE_FIND_PACKAGE_Eigen:BOOL=ON
+  #                                 -DCMAKE_DISABLE_FIND_PACKAGE_GSL:BOOL=ON
+  #                                 -DYARP_COMPILE_libYARP_math:BOOL=OFF
+  #                                 -DYARP_COMPILE_BINDINGS:BOOL=OFF",
+  #         }
+  #       - {
+  #           id: '06',
+  #           description: 'No YARP_math (bindings disabled)',
+  #           os: ubuntu-20.04,
+  #           build_type: "Release",
+  #           cc: "clang",
+  #           cxx: "clang++",
+  #           cmake_generator: "Unix Makefiles",
+  #           cmake_initial_cache_file: ".ci/initial-cache.gh.linux.cmake",
+  #           cmake_extra_options: "-DCMAKE_DISABLE_FIND_PACKAGE_Eigen:BOOL=ON
+  #                                 -DCMAKE_DISABLE_FIND_PACKAGE_GSL:BOOL=ON
+  #                                 -DYARP_COMPILE_libYARP_math:BOOL=OFF
+  #                                 -DYARP_COMPILE_BINDINGS:BOOL=OFF",
+  #         }
+  #       - {
+  #           id: '07',
+  #           description: 'CLEAN_API (unit tests and bindings disabled)',
+  #           os: ubuntu-20.04,
+  #           build_type: "Release",
+  #           cc: "gcc",
+  #           cxx: "g++",
+  #           cmake_generator: "Unix Makefiles",
+  #           cmake_initial_cache_file: ".ci/initial-cache.gh.linux.cmake",
+  #           cmake_extra_options: "-DYARP_CLEAN_API:BOOL=ON
+  #                                 -DYARP_COMPILE_TESTS:BOOL=OFF
+  #                                 -DYARP_COMPILE_BINDINGS:BOOL=OFF",
+  #         }
+  #       - {
+  #           id: '08',
+  #           description: 'CLEAN_API (unit tests and bindings disabled)',
+  #           os: ubuntu-20.04,
+  #           build_type: "Release",
+  #           cc: "clang",
+  #           cxx: "clang++",
+  #           cmake_generator: "Unix Makefiles",
+  #           cmake_initial_cache_file: ".ci/initial-cache.gh.linux.cmake",
+  #           cmake_extra_options: "-DYARP_CLEAN_API:BOOL=ON
+  #                                 -DYARP_COMPILE_TESTS:BOOL=OFF
+  #                                 -DYARP_COMPILE_BINDINGS:BOOL=OFF",
+  #         }
+  #       - {
+  #           id: '09',
+  #           description: 'Static',
+  #           os: ubuntu-20.04,
+  #           build_type: "Release",
+  #           cc: "gcc",
+  #           cxx: "g++",
+  #           cmake_generator: "Unix Makefiles",
+  #           cmake_initial_cache_file: ".ci/initial-cache.gh.linux.cmake",
+  #           cmake_extra_options: "-DBUILD_SHARED_LIBS:BOOL=OFF",
+  #         }
+  #       - {
+  #           id: '10',
+  #           description: 'Static',
+  #           os: ubuntu-20.04,
+  #           build_type: "Release",
+  #           cc: "clang",
+  #           cxx: "clang++",
+  #           cmake_generator: "Unix Makefiles",
+  #           cmake_initial_cache_file: ".ci/initial-cache.gh.linux.cmake",
+  #           cmake_extra_options: "-DBUILD_SHARED_LIBS:BOOL=OFF",
+  #         }
+  #       - {
+  #           id: '11',
+  #           description: 'Static, no ACE (bindings disabled)',
+  #           os: ubuntu-20.04,
+  #           build_type: "Release",
+  #           cc: "gcc",
+  #           cxx: "g++",
+  #           cmake_generator: "Unix Makefiles",
+  #           cmake_initial_cache_file: ".ci/initial-cache.gh.linux.cmake",
+  #           cmake_extra_options: "-DBUILD_SHARED_LIBS:BOOL=OFF
+  #                                 -DCMAKE_DISABLE_FIND_PACKAGE_ACE:BOOL=ON
+  #                                 -DSKIP_ACE:BOOL=ON
+  #                                 -DYARP_COMPILE_BINDINGS:BOOL=OFF",
+  #         }
+  #       - {
+  #           id: '12',
+  #           description: 'Static, no ACE (bindings disabled)',
+  #           os: ubuntu-20.04,
+  #           build_type: "Release",
+  #           cc: "clang",
+  #           cxx: "clang++",
+  #           cmake_generator: "Unix Makefiles",
+  #           cmake_initial_cache_file: ".ci/initial-cache.gh.linux.cmake",
+  #           cmake_extra_options: "-DBUILD_SHARED_LIBS:BOOL=OFF
+  #                                 -DCMAKE_DISABLE_FIND_PACKAGE_ACE:BOOL=ON
+  #                                 -DSKIP_ACE:BOOL=ON
+  #                                 -DYARP_COMPILE_BINDINGS:BOOL=OFF",
+  #         }
+  #       - {
+  #           id: '13',
+  #           description: 'No deprecated',
+  #           os: ubuntu-20.04,
+  #           build_type: "Release",
+  #           cc: "gcc",
+  #           cxx: "g++",
+  #           cmake_generator: "Unix Makefiles",
+  #           cmake_initial_cache_file: ".ci/initial-cache.gh.linux.cmake",
+  #           cmake_extra_options: "-DYARP_NO_DEPRECATED:BOOL=ON",
+  #         }
+  #       - {
+  #           id: '14',
+  #           description: 'No deprecated',
+  #           os: ubuntu-20.04,
+  #           build_type: "Release",
+  #           cc: "clang",
+  #           cxx: "clang++",
+  #           cmake_generator: "Unix Makefiles",
+  #           cmake_initial_cache_file: ".ci/initial-cache.gh.linux.cmake",
+  #           cmake_extra_options: "-DYARP_NO_DEPRECATED:BOOL=ON",
+  #         }
+  #       - {
+  #           id: '15',
+  #           description: 'No executables (unit tests disabled)',
+  #           os: ubuntu-20.04,
+  #           build_type: "Release",
+  #           cc: "gcc",
+  #           cxx: "g++",
+  #           cmake_generator: "Unix Makefiles",
+  #           cmake_initial_cache_file: ".ci/initial-cache.gh.linux.cmake",
+  #           cmake_extra_options: "-DYARP_COMPILE_EXECUTABLES:BOOL=OFF
+  #                                 -DYARP_COMPILE_TESTS:BOOL=OFF",
+  #         }
+  #       - {
+  #           id: '16',
+  #           description: 'No executables (unit tests disabled)',
+  #           os: ubuntu-20.04,
+  #           build_type: "Release",
+  #           cc: "clang",
+  #           cxx: "clang++",
+  #           cmake_generator: "Unix Makefiles",
+  #           cmake_initial_cache_file: ".ci/initial-cache.gh.linux.cmake",
+  #           cmake_extra_options: "-DYARP_COMPILE_EXECUTABLES:BOOL=OFF
+  #                                 -DYARP_COMPILE_TESTS:BOOL=OFF",
+  #         }
+  #       - {
+  #           id: '17',
+  #           description: 'Build extern dependencies',
+  #           os: ubuntu-20.04,
+  #           build_type: "Release",
+  #           cc: "gcc",
+  #           cxx: "g++",
+  #           cmake_generator: "Unix Makefiles",
+  #           cmake_initial_cache_file: ".ci/initial-cache.gh.linux.cmake",
+  #           cmake_extra_options: "-DCMAKE_DISABLE_FIND_PACKAGE_SQLite:BOOL=ON
+  #                                 -DCMAKE_DISABLE_FIND_PACKAGE_TinyXML:BOOL=ON
+  #                                 -DCMAKE_DISABLE_FIND_PACKAGE_QCustomPlot:BOOL=ON",
+  #         }
+  #       - {
+  #           id: '18',
+  #           description: 'Build extern dependencies',
+  #           os: ubuntu-20.04,
+  #           build_type: "Release",
+  #           cc: "clang",
+  #           cxx: "clang++",
+  #           cmake_generator: "Unix Makefiles",
+  #           cmake_initial_cache_file: ".ci/initial-cache.gh.linux.cmake",
+  #           cmake_extra_options: "-DCMAKE_DISABLE_FIND_PACKAGE_SQLite:BOOL=ON
+  #                                 -DCMAKE_DISABLE_FIND_PACKAGE_TinyXML:BOOL=ON
+  #                                 -DCMAKE_DISABLE_FIND_PACKAGE_QCustomPlot:BOOL=ON",
+  #         }
+  #       - {
+  #           id: '19',
+  #           os: ubuntu-20.04,
+  #           build_type: "Release",
+  #           cc: "gcc",
+  #           cxx: "g++",
+  #           cmake_generator: "Ninja",
+  #           cmake_initial_cache_file: ".ci/initial-cache.gh.linux.cmake",
+  #         }
+  #       - {
+  #           id: '20',
+  #           os: ubuntu-20.04,
+  #           build_type: "Release",
+  #           cc: "clang",
+  #           cxx: "clang++",
+  #           cmake_generator: "Ninja",
+  #           cmake_initial_cache_file: ".ci/initial-cache.gh.linux.cmake",
+  #         }
+  #       - {
+  #           id: '21',
+  #           description: 'Valgrind (bindings, failing tests, guis and examples as tests disabled)',
+  #           os: ubuntu-20.04,
+  #           build_type: "Debug",
+  #           cc: "gcc",
+  #           cxx: "g++",
+  #           cmake_generator: "Unix Makefiles",
+  #           cmake_initial_cache_file: ".ci/initial-cache.gh.linux.cmake",
+  #           cmake_extra_options: "-DYARP_VALGRIND_TESTS:BOOL=ON
+  #                                 -DYARP_DISABLE_FAILING_TESTS:BOOL=ON
+  #                                 -DYARP_DISABLE_FAILING_VALGRIND_TESTS:BOOL=ON
+  #                                 -DYARP_ENABLE_EXAMPLES_AS_TESTS:BOOL=OFF
+  #                                 -DYARP_COMPILE_BINDINGS:BOOL=OFF
+  #                                 -DCMAKE_DISABLE_FIND_PACKAGE_FFMPEG=ON
+  #                                 -DYARP_COMPILE_GUIS:BOOL=OFF",
+  #         }
+  #       - {
+  #           id: '22',
+  #           description: 'Valgrind, No ACE (bindings, failing tests, guis and examples as tests disabled)',
+  #           os: ubuntu-20.04,
+  #           build_type: "Debug",
+  #           cc: "gcc",
+  #           cxx: "g++",
+  #           cmake_generator: "Unix Makefiles",
+  #           cmake_initial_cache_file: ".ci/initial-cache.gh.linux.cmake",
+  #           cmake_extra_options: "-DCMAKE_DISABLE_FIND_PACKAGE_ACE:BOOL=ON
+  #                                 -DSKIP_ACE:BOOL=ON
+  #                                 -DYARP_VALGRIND_TESTS:BOOL=ON
+  #                                 -DYARP_DISABLE_FAILING_TESTS:BOOL=ON
+  #                                 -DYARP_DISABLE_FAILING_VALGRIND_TESTS:BOOL=ON
+  #                                 -DYARP_ENABLE_EXAMPLES_AS_TESTS:BOOL=OFF
+  #                                 -DYARP_COMPILE_BINDINGS:BOOL=OFF
+  #                                 -DCMAKE_DISABLE_FIND_PACKAGE_FFMPEG=ON
+  #                                 -DYARP_COMPILE_GUIS:BOOL=OFF",
+  #         }
+  #       - {
+  #           id: '23',
+  #           os: windows-2019,
+  #           build_type: "Release",
+  #           cc: "cl",
+  #           cxx: "cl",
+  #           cmake_generator: "Visual Studio 16 2019",
+  #           cmake_toolset: "v142",
+  #           cmake_platform: "x64",
+  #           cmake_toolchain_file: "C:/robotology/vcpkg/scripts/buildsystems/vcpkg.cmake",
+  #           cmake_initial_cache_file: ".ci/initial-cache.gh.windows.cmake",
+  #           environment_script: "C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/VC/Auxiliary/Build/vcvars64.bat",
+  #         }
+  #       - {
+  #           id: '24',
+  #           os: windows-2019,
+  #           build_type: "Release",
+  #           cc: "cl",
+  #           cxx: "cl",
+  #           cmake_generator: "Visual Studio 16 2019",
+  #           cmake_toolset: "v141",
+  #           cmake_platform: "x64",
+  #           cmake_toolchain_file: "C:/robotology/vcpkg/scripts/buildsystems/vcpkg.cmake",
+  #           cmake_initial_cache_file: ".ci/initial-cache.gh.windows.cmake",
+  #           environment_script: "C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/VC/Auxiliary/Build/vcvars64.bat",
+  #         }
+  #       - {
+  #           id: '25',
+  #           os: windows-2019,
+  #           build_type: "Release",
+  #           cc: "cl",
+  #           cxx: "cl",
+  #           cmake_generator: "Ninja",
+  #           cmake_toolset: "v142",
+  #           cmake_toolchain_file: "C:/robotology/vcpkg/scripts/buildsystems/vcpkg.cmake",
+  #           cmake_initial_cache_file: ".ci/initial-cache.gh.windows.cmake",
+  #           environment_script: "C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/VC/Auxiliary/Build/vcvars64.bat",
+  #         }
+  #       - {
+  #           id: '26',
+  #           os: windows-2019,
+  #           build_type: "Release",
+  #           cc: "cl",
+  #           cxx: "cl",
+  #           cmake_generator: "Ninja",
+  #           cmake_toolset: "v141",
+  #           cmake_toolchain_file: "C:/robotology/vcpkg/scripts/buildsystems/vcpkg.cmake",
+  #           cmake_initial_cache_file: ".ci/initial-cache.gh.windows.cmake",
+  #           environment_script: "C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/VC/Auxiliary/Build/vcvars64.bat",
+  #         }
+  #       - {
+  #           id: '27',
+  #           os: macos-latest,
+  #           build_type: "Release",
+  #           cc: "clang",
+  #           cxx: "clang++",
+  #           cmake_generator: "Unix Makefiles",
+  #           cmake_initial_cache_file: ".ci/initial-cache.gh.macos.cmake",
+  #         }
+  #       - {
+  #           id: '28',
+  #           os: macos-latest,
+  #           build_type: "Release",
+  #           cc: "clang",
+  #           cxx: "clang++",
+  #           cmake_generator: "Xcode",
+  #           cmake_initial_cache_file: ".ci/initial-cache.gh.macos.cmake",
+  #         }
+  #       - {
+  #           id: '29',
+  #           os: macos-11.0,
+  #           build_type: "Release",
+  #           cc: "clang",
+  #           cxx: "clang++",
+  #           cmake_generator: "Unix Makefiles",
+  #           cmake_initial_cache_file: ".ci/initial-cache.gh.macos.cmake",
+  #         }
+  #       - {
+  #           id: '30',
+  #           os: macos-11.0,
+  #           build_type: "Release",
+  #           cc: "clang",
+  #           cxx: "clang++",
+  #           cmake_generator: "Xcode",
+  #           cmake_initial_cache_file: ".ci/initial-cache.gh.macos.cmake",
+  #         }
+  #
+  #   steps:
+  #
+  #   - name: Clone repository
+  #     uses: actions/checkout@v3
+  #     with:
+  #       repository: ${{ needs.select_environment.outputs.repository }}
+  #       ref: ${{ needs.select_environment.outputs.ref }}
+  #
+  #   - name: Handle cache
+  #     uses: actions/cache@v3
+  #     with:
+  #       path: |
+  #         .ccache
+  #       key: build-${{ matrix.config.id }}-ccache-${{ github.ref }}-${{ needs.select_environment.outputs.timestamp }}
+  #       restore-keys: |
+  #         build-${{ matrix.config.id }}-${{ github.base_ref }}-ccache-
+  #         build-${{ matrix.config.id }}-${{ github.ref }}-ccache-
+  #
+  #   - name: Dependencies [Linux]
+  #     if: runner.os == 'Linux'
+  #     shell: bash
+  #     run: |
+  #         # Install Robotology dependencies from robotology ppa
+  #         sudo apt-add-repository -y ppa:robotology/ppa
+  #         sudo apt-get install -qq -y librobottestingframework-dev
+  #
+  #         # Install cmake
+  #         sudo apt-get install -qq -y cmake
+  #         which cmake
+  #         cmake --version
+  #         /usr/bin/cmake --version
+  #
+  #         # Install ycm
+  #         wget -nv https://github.com/robotology/ycm/releases/download/v0.15.1/ycm-cmake-modules-0.15.1-all.deb
+  #         sudo dpkg -i ycm-cmake-modules-0.15.1-all.deb
+  #
+  #         # Install build tools
+  #         sudo apt-get install -qq -y ccache \
+  #                                     ninja-build \
+  #                                     valgrind
+  #
+  #         sudo apt-get install -y     libace-dev \
+  #
+  #         sudo apt-get install -qq -y libsqlite3-dev \
+  #                                     libtinyxml-dev \
+  #                                     libedit-dev \
+  #                                     qtbase5-dev \
+  #                                     qtdeclarative5-dev \
+  #                                     qtmultimedia5-dev \
+  #                                     libqt5opengl5-dev \
+  #                                     libqcustomplot-dev \
+  #                                     libopencv-dev \
+  #                                     libeigen3-dev \
+  #                                     libgraphviz-dev \
+  #                                     libgstreamer1.0-dev \
+  #                                     libgstreamer-plugins-base1.0-dev \
+  #                                     libpng-dev \
+  #                                     libv4l-dev \
+  #                                     libavcodec-dev \
+  #                                     libavdevice-dev \
+  #                                     libavformat-dev \
+  #                                     libavutil-dev \
+  #                                     portaudio19-dev \
+  #                                     libsdl1.2-dev \
+  #                                     libopenni2-dev \
+  #                                     libftdi-dev \
+  #                                     libi2c-dev \
+  #                                     libjpeg-dev \
+  #                                     libpcl-dev \
+  #                                     libsoxr-dev
+  #
+  #         # Install SWIG and bindings dependencies
+  #         sudo apt-get install -qq -y swig \
+  #                                     mono-mcs \
+  #                                     liblua5.3-dev \
+  #                                     lua5.3 \
+  #                                     tcl-dev \
+  #                                     tk-dev \
+  #                                     python3-dev \
+  #                                     liboctave-dev \
+  #                                     ruby-dev \
+  #                                     ruby \
+  #                                     perl
+  #
+  #         # Other tools useful in github actions
+  #         sudo apt-get install -qq -y jq \
+  #                                     wget \
+  #                                     curl \
+  #                                     lcov \
+  #                                     gcovr \
+  #                                     wget \
+  #                                     curl \
+  #                                     clang-11 \
+  #                                     clang-tidy-11 \
+  #                                     xsltproc \
+  #                                     libxml2-utils \
+  #                                     source-highlight
+  #
+  #         # Remove old packages from apt cache
+  #         sudo apt-get autoclean -qq
+  #
+  #   - name: Dependencies [Windows]
+  #     if: runner.os == 'Windows'
+  #     run: |
+  #         echo "To avoid spending a huge time compiling vcpkg dependencies, we download a root that comes precompiled with all the ports that we need"
+  #         choco install --no-progress -y wget 7zip
+  #         echo ""
+  #         echo " Download and install SWIG"
+  #         wget -nv https://sourceforge.net/projects/swig/files/swigwin/swigwin-4.0.2/swigwin-4.0.2.zip -O swigwin.zip
+  #         7z x swigwin.zip
+  #         mv swigwin-4.0.2/swig.exe swig.exe
+  #         echo ""
+  #         echo " To avoid problems with non-relocatable packages, we unzip the archive exactly in the same C:/robotology/vcpkg that has been used to create the pre-compiled archive"
+  #         wget -nv https://github.com/robotology/robotology-superbuild-dependencies-vcpkg/releases/download/v0.6.0/vcpkg-robotology-yarp-only.zip
+  #         7z x -oC:\ vcpkg-robotology-yarp-only.zip
+  #         echo ""
+  #         echo " Download and install YCM "
+  #         wget -nv https://github.com/robotology/ycm/releases/download/v0.15.1/ycm-cmake-modules-0.15.1-all.tar.gz -O ycm.tar.gz
+  #         7z x ycm.tar.gz
+  #         7z x -ttar -oC:\robotology ycm.tar
+  #         echo ""
+  #         echo " Download and install ccache "
+  #         wget -nv https://github.com/cristianadam/ccache/releases/download/v3.7.7/Windows.tar.xz -O ccache.tar.xz
+  #         7z x ccache.tar.xz
+  #         7z x -ttar ccache.tar
+  #
+  #   - name: Dependencies [macOS]
+  #     if: runner.os == 'macOS'
+  #     run: |
+  #         # Temporary workaround for https://github.com/actions/setup-python/issues/577
+  #         rm -f /usr/local/bin/2to3
+  #         rm -f /usr/local/bin/idle3
+  #         rm -f /usr/local/bin/pydoc3
+  #         rm -f /usr/local/bin/python3
+  #         rm -f /usr/local/bin/python3-config
+  #         rm -f /usr/local/bin/2to3-3.11
+  #         rm -f /usr/local/bin/idle3.11
+  #         rm -f /usr/local/bin/pydoc3.11
+  #         rm -f /usr/local/bin/python3.11
+  #         rm -f /usr/local/bin/python3.11-config
+  #
+  #         wget -nv https://github.com/robotology/ycm/releases/download/v0.15.1/ycm-cmake-modules-0.15.1-all.tar.gz -O /Users/runner/work/yarp/ycm.tar.gz
+  #         7z x /Users/runner/work/yarp/ycm.tar.gz -o/Users/runner/work/yarp
+  #         7z x -ttar /Users/runner/work/yarp/ycm.tar -o/Users/runner/work/yarp
+  #         
+  #         brew update
+  #         brew install ccache
+  #         brew install ace
+  #         brew install sqlite tinyxml libedit libpng qt5 opencv eigen graphviz libsoxr
+  #
+  #   - name: Prepare Environment Script
+  #     id: prepare_environment_script
+  #     shell: cmake -P {0}
+  #     run: |
+  #       cmake_minimum_required(VERSION 3.17)
+  #       set(_env_script ${CMAKE_CURRENT_LIST_DIR}/environment_script.cmake)
+  #       file(WRITE "${_env_script}" "")
+  #
+  #       # if YCM is installed manually, set YCM_DIR to allow CMake to find it
+  #       if("${{ runner.os }}" STREQUAL "Windows")
+  #         file(APPEND "${_env_script}" "set(ENV{YCM_DIR} \"C:\\\\robotology\\\\YCM-0.15.1-all\")\n")
+  #       elseif("${{ runner.os }}" STREQUAL "macOS")
+  #         file(APPEND "${_env_script}" "set(ENV{YCM_DIR} \"/Users/runner/work/yarp/YCM-0.15.1-all\")\n")
+  #       endif()
+  #
+  #       if("${{ runner.os }}" STREQUAL "Windows" AND NOT "${{ matrix.config.environment_script }}" STREQUAL "")
+  #         execute_process(
+  #             COMMAND "${{ matrix.config.environment_script }}" && set
+  #             OUTPUT_FILE environment_script_output.txt
+  #         )
+  #         file(STRINGS environment_script_output.txt output_lines)
+  #
+  #         foreach(line IN LISTS output_lines)
+  #           if(line MATCHES "^([a-zA-Z0-9_-]+)=(.*)$")
+  #             set(_key "${CMAKE_MATCH_1}")
+  #             set(_value "${CMAKE_MATCH_2}")
+  #             string(REPLACE "\\" "\\\\" _value "${_value}")
+  #             file(APPEND "${_env_script}" "set(ENV{${_key}} \"${_value}\")\n")
+  #           endif()
+  #         endforeach()
+  #
+  #         # Ninja and other tools are downloaded in $GITHUB_WORKSPACE
+  #         file(APPEND "${_env_script}" "set(ENV{PATH} \"\$ENV{PATH};\$ENV{GITHUB_WORKSPACE}\")\n")
+  #
+  #         # Append vcpkg bin directory to the PATH
+  #         if("${{ matrix.config.build_type }}" STREQUAL "Release")
+  #           file(APPEND "${_env_script}" "set(ENV{PATH} \"\$ENV{PATH};C:\\\\robotology\\\\vcpkg\\\\installed\\\\x64-windows\\\\bin\")\n")
+  #         else()
+  #           file(APPEND "${_env_script}" "set(ENV{PATH} \"\$ENV{PATH};C:\\\\robotology\\\\vcpkg\\\\installed\\\\x64-windows\\\\debug\\\\bin\")\n")
+  #         endif()
+  #
+  #         # Append output bin directory to the PATH
+  #         if("${{ matrix.config.cmake_generator }}" MATCHES "Visual Studio")
+  #           file(APPEND "${_env_script}" "set(ENV{PATH} \"\$ENV{PATH};\$ENV{GITHUB_WORKSPACE}\\\\build\\\\bin\\\\${{ matrix.config.build_type }}\")\n")
+  #         elseif("${{ matrix.config.cmake_generator }}" MATCHES "Ninja")
+  #           file(APPEND "${_env_script}" "set(ENV{PATH} \"\$ENV{PATH};\$ENV{GITHUB_WORKSPACE}\\\\build\\\\bin\")\n")
+  #         endif()
+  #       endif()
+  #
+  #       file(APPEND "${_env_script}" "set(ENV{CC} ${{ matrix.config.cc }})\n")
+  #       file(APPEND "${_env_script}" "set(ENV{CXX} ${{ matrix.config.cxx }})\n")
+  #
+  #       if("${{ matrix.config.cc }}" MATCHES "gcc")
+  #         file(APPEND "${_env_script}" "set(ENV{CFLAGS} -fdiagnostics-color=always)\n")
+  #         file(APPEND "${_env_script}" "set(ENV{CXXFLAGS} -fdiagnostics-color=always)\n")
+  #       elseif("${{ matrix.config.cc }}" MATCHES "clang")
+  #         file(APPEND "${_env_script}" "set(ENV{CFLAGS} -fcolor-diagnostics)\n")
+  #         file(APPEND "${_env_script}" "set(ENV{CXXFLAGS} -fcolor-diagnostics)\n")
+  #       endif()
+  #
+  #       file(APPEND "${_env_script}" "file(TO_CMAKE_PATH \"\$ENV{GITHUB_WORKSPACE}\" ccache_basedir)\n")
+  #       file(APPEND "${_env_script}" "set(ENV{CCACHE_BASEDIR} \"\${ccache_basedir}\")\n")
+  #       file(APPEND "${_env_script}" "set(ENV{CCACHE_DIR} \"\${ccache_basedir}/.ccache\")\n")
+  #       file(APPEND "${_env_script}" "set(ENV{CCACHE_COMPRESS} \"true\")\n")
+  #       file(APPEND "${_env_script}" "set(ENV{CCACHE_COMPRESSLEVEL} \"6\")\n")
+  #       if("${{ matrix.config.cxx }}" STREQUAL "cl")
+  #         file(APPEND "${_env_script}" "set(ENV{CCACHE_MAXSIZE} \"600M\")\n")
+  #       else()
+  #         file(APPEND "${_env_script}" "set(ENV{CCACHE_MAXSIZE} \"400M\")\n")
+  #       endif()
+  #       # Force ccache to build the original cpp file instead of the pre-processed file
+  #       file(APPEND "${_env_script}" "set(ENV{CCACHE_CPP2} \"yes\")\n")
+  #
+  #       # Prepend ccache lib dir on Linux and macOS
+  #       if("${{ runner.os }}" STREQUAL "Linux")
+  #         file(APPEND "${_env_script}" "set(ENV{PATH} \"/usr/lib/ccache:\$ENV{PATH}\")\n")
+  #       elseif("${{ runner.os }}" STREQUAL "macOS")
+  #         file(APPEND "${_env_script}" "set(ENV{PATH} \"/usr/local/opt/ccache/libexec:\$ENV{PATH}\")\n")
+  #       endif()
+  #
+  #       # CMake/CTest variables
+  #       file(APPEND "${_env_script}" "set(ENV{CTEST_OUTPUT_ON_FAILURE} \"1\")\n")
+  #       file(APPEND "${_env_script}" "set(ENV{CLICOLOR_FORCE} \"1\")\n")
+  #
+  #       # YARP variables
+  #       file(APPEND "${_env_script}" "set(ENV{YARP_PORT_RANGE} \"20000\")\n")
+  #
+  #       # Add execute_process_x() macro
+  #       file(APPEND "${_env_script}" "
+  #       function(execute_process_x)
+  #         set(_options)
+  #         set(_oneValueArgs RESULT_VARIABLE WORKING_DIRECTORY)
+  #         set(_multiValueArgs COMMAND)
+  #         cmake_parse_arguments(_x \"\${_options}\" \"\${_oneValueArgs}\" \"\${_multiValueArgs}\" \${ARGN})
+  #
+  #         string(REPLACE \";\" \" \" _cmd \"\${_x_COMMAND}\")
+  #         string(REPLACE \"\\\\\" \"\\\\\\\\\" _cmd \"\${_cmd}\")
+  #         message(STATUS \"\\n\$ \${_cmd}\")
+  #
+  #         if(DEFINED _x_WORKING_DIRECTORY)
+  #           set(_wd WORKING_DIRECTORY \"\${_x_WORKING_DIRECTORY}\")
+  #         endif()
+  #         execute_process(COMMAND \${_x_COMMAND}
+  #                         \${_wd}
+  #                         RESULT_VARIABLE _result)
+  #         if(NOT _result EQUAL 0)
+  #           message(WARNING \"The command \\\"\${_cmd}\\\" failed with result \\\"\${_result}\\\"\")
+  #         endif()
+  #         if(DEFINED _x_RESULT_VARIABLE)
+  #           set(\${_x_RESULT_VARIABLE} \${_result} PARENT_SCOPE)
+  #         endif()
+  #       endfunction()
+  #       ")
+  #
+  #       message("::set-output name=environment_script::${_env_script}")
+  #
+  #   - name: Print Environment Script
+  #     shell: cmake -P {0}
+  #     run: |
+  #       cmake_minimum_required(VERSION 3.17)
+  #       file(READ "${{ steps.prepare_environment_script.outputs.environment_script }}" _out)
+  #       message("${_out}")
+  #
+  #   - name: Print system information
+  #     shell: cmake -P {0}
+  #     run: |
+  #       cmake_minimum_required(VERSION 3.17)
+  #       include(${{ steps.prepare_environment_script.outputs.environment_script }})
+  #
+  #       set(_which_cmd which)
+  #       set(_env_cmd env)
+  #       if("${{ runner.os }}" STREQUAL "Windows")
+  #         set(_which_cmd where)
+  #         set(_env_cmd env)
+  #       endif()
+  #
+  #       if(UNIX)
+  #         execute_process_x(COMMAND uname -a)
+  #       endif()
+  #
+  #       if("${{ runner.os }}" STREQUAL "Linux")
+  #         execute_process_x(COMMAND lsb_release -a)
+  #         execute_process_x(COMMAND cat /etc/apt/sources.list)
+  #         execute_process_x(COMMAND ls -la --color=always /etc/apt/sources.list.d)
+  #         file(GLOB _list_files "/etc/apt/sources.list.d/*.list")
+  #         foreach(_list_file IN LISTS _list_files)
+  #           execute_process_x(COMMAND cat ${_list_file})
+  #         endforeach()
+  #       elseif("${{ runner.os }}" STREQUAL "macOS")
+  #         execute_process_x(COMMAND system_profiler SPSoftwareDataType)
+  #       elseif("${{ runner.os }}" STREQUAL "Windows")
+  #         execute_process_x(COMMAND Systeminfo)
+  #       endif()
+  #
+  #       execute_process_x(COMMAND ${_which_cmd} cmake)
+  #       execute_process_x(COMMAND cmake --version)
+  #
+  #       if("${{ matrix.config.cmake_generator }}" MATCHES "Visual Studio")
+  #         execute_process_x(COMMAND ${_which_cmd} msbuild)
+  #         execute_process_x(COMMAND msbuild /version)
+  #       elseif("${{ matrix.config.cmake_generator }}" MATCHES "Ninja")
+  #         execute_process_x(COMMAND ${_which_cmd} ninja)
+  #         execute_process_x(COMMAND ninja --version)
+  #       elseif("${{ matrix.config.cmake_generator }}" MATCHES "Unix Makefiles")
+  #         execute_process_x(COMMAND ${_which_cmd} make)
+  #         execute_process_x(COMMAND make --version)
+  #       elseif("${{ matrix.config.cmake_generator }}" MATCHES "Xcode")
+  #         execute_process_x(COMMAND ${_which_cmd} xcodebuild)
+  #         execute_process_x(COMMAND xcodebuild -version)
+  #       endif()
+  #
+  #       execute_process_x(COMMAND ${_which_cmd} $ENV{CC})
+  #       execute_process_x(COMMAND ${_which_cmd} $ENV{CXX})
+  #       if("$ENV{CC}" STREQUAL "cl")
+  #         execute_process_x(COMMAND $ENV{CC})
+  #         execute_process_x(COMMAND $ENV{CXX})
+  #       else()
+  #         execute_process_x(COMMAND $ENV{CC} --version)
+  #         execute_process_x(COMMAND $ENV{CXX} --version)
+  #       endif()
+  #
+  #       execute_process_x(COMMAND ${_which_cmd} ccache)
+  #       execute_process_x(COMMAND ccache --version)
+  #       execute_process_x(COMMAND ccache -p)
+  #       if("${{ runner.os }}" STREQUAL "Linux")
+  #         execute_process_x(COMMAND ls -la --color=always /usr/lib/ccache)
+  #         execute_process_x(COMMAND ls -la --color=always $ENV{HOME}/lib/ccache)
+  #       endif()
+  #
+  #       execute_process_x(COMMAND ${_which_cmd} swig)
+  #       execute_process_x(COMMAND swig -version)
+  #
+  #       execute_process_x(COMMAND ${_which_cmd} javac)
+  #       execute_process_x(COMMAND javac -version)
+  #
+  #       if("${{ runner.os }}" STREQUAL "Linux")
+  #         execute_process_x(COMMAND netstat -tulpn)
+  #       endif()
+  #
+  #       execute_process_x(COMMAND ${_env_cmd})
+  #
+  #   - name: Configure
+  #     shell: cmake -P {0}
+  #     run: |
+  #       cmake_minimum_required(VERSION 3.17)
+  #       include(${{ steps.prepare_environment_script.outputs.environment_script }})
+  #
+  #       set(_generator)
+  #       if(NOT "${{ matrix.config.cmake_generator }}" STREQUAL "")
+  #         set(_generator -G "${{ matrix.config.cmake_generator }}")
+  #       endif()
+  #
+  #       set(_toolset)
+  #       if(NOT "${{ matrix.config.cmake_toolset }}" STREQUAL "")
+  #         list(APPEND toolset -T ${{ matrix.config.cmake_toolset }})
+  #       endif()
+  #
+  #       set(_platform)
+  #       if(NOT "${{ matrix.config.cmake_platform }}" STREQUAL "")
+  #         list(APPEND _platform -A ${{ matrix.config.cmake_platform }})
+  #       endif()
+  #
+  #       set(_initial_cache_file)
+  #       if(NOT "${{ matrix.config.cmake_initial_cache_file }}" STREQUAL "")
+  #         set(_initial_cache_file -C "${{ matrix.config.cmake_initial_cache_file }}")
+  #       endif()
+  #
+  #       set(_toolchain_file)
+  #       if(NOT "${{ matrix.config.cmake_toolchain_file }}" STREQUAL "")
+  #         set(_toolchain_file -D CMAKE_TOOLCHAIN_FILE=${{ matrix.config.cmake_toolchain_file }})
+  #       endif()
+  #
+  #       set(_build_type)
+  #       if(NOT "${{ matrix.config.build_type }}" STREQUAL "")
+  #         set(_build_type -D CMAKE_BUILD_TYPE=${{ matrix.config.build_type }})
+  #       endif()
+  #
+  #       file(TO_CMAKE_PATH "$ENV{GITHUB_WORKSPACE}/install" _install_prefix)
+  #       set(_install_prefix -D CMAKE_INSTALL_PREFIX=${_install_prefix})
+  #
+  #       set(_cmake_compiler_lauchers )
+  #       if("${{ runner.os }}" STREQUAL "Windows")
+  #         find_program(_ccache_cmd ccache PATHS ENV GITHUB_WORKSPACE)
+  #         set(_cmake_compiler_lauchers -D CMAKE_C_COMPILER_LAUNCHER=${_ccache_cmd}
+  #                                      -D CMAKE_CXX_COMPILER_LAUNCHER=${_ccache_cmd})
+  #       endif()
+  #
+  #       set(_cmake_extra_options)
+  #       if(NOT "${{ matrix.config.cmake_extra_options }}" STREQUAL "")
+  #         set(_cmake_extra_options ${{ matrix.config.cmake_extra_options }})
+  #       endif()
+  #
+  #       execute_process_x(
+  #         COMMAND ${CMAKE_COMMAND}
+  #           -S .
+  #           -B build
+  #           ${_generator}
+  #           ${_toolset}
+  #           ${_platform}
+  #           ${_initial_cache_file}
+  #           ${_toolchain_file}
+  #           ${_build_type}
+  #           ${_install_prefix}
+  #           ${_cmake_compiler_lauchers}
+  #           ${_cmake_extra_options}
+  #         RESULT_VARIABLE _result
+  #       )
+  #       if(NOT _result EQUAL 0)
+  #         message(FATAL_ERROR "Configure step failed")
+  #       endif()
+  #
+  #   - name: Build
+  #     shell: cmake -P {0}
+  #     run: |
+  #       cmake_minimum_required(VERSION 3.17)
+  #       include(${{ steps.prepare_environment_script.outputs.environment_script }})
+  #
+  #       execute_process_x(
+  #         COMMAND ${CMAKE_COMMAND}
+  #           --build build
+  #           --config ${{ matrix.config.build_type }}
+  #         RESULT_VARIABLE _result
+  #       )
+  #       if(NOT _result EQUAL 0)
+  #         message(FATAL_ERROR "Build step failed")
+  #       endif()
+  #
+  #       # Print ccache stats
+  #       execute_process_x(COMMAND ccache -s)
+  #
+  #       # Reset ccache stats before uploading
+  #       execute_process_x(COMMAND ccache -z)
+  #
+  #   - name: Run tests
+  #     shell: cmake -P {0}
+  #     run: |
+  #       cmake_minimum_required(VERSION 3.17)
+  #       include(${{ steps.prepare_environment_script.outputs.environment_script }})
+  #
+  #       execute_process_x(
+  #         COMMAND ${CMAKE_CTEST_COMMAND}
+  #           --build-config ${{ matrix.config.build_type }}
+  #           # We have random race conditions.
+  #           # Allow up to 3 run of the same test
+  #           --repeat until-pass:3
+  #           --output-on-failure
+  #         WORKING_DIRECTORY build
+  #         RESULT_VARIABLE result
+  #       )
+  #       if(NOT result EQUAL 0)
+  #         message(FATAL_ERROR "Test step failed")
+  #       endif()
+  #
+  #   - name: Status Check
+  #     shell: cmake -P {0}
+  #     run: |
+  #       cmake_minimum_required(VERSION 3.17)
+  #       include(${{ steps.prepare_environment_script.outputs.environment_script }})
+  #
+  #       execute_process_x(
+  #         COMMAND git status --porcelain=v1
+  #         WORKING_DIRECTORY .
+  #         RESULT_VARIABLE result
+  #         OUTPUT_VARIABLE output
+  #       )
+  #       if(NOT result EQUAL 0)
+  #         message(FATAL_ERROR "Test step failed")
+  #       endif()
+  #
+  #       string(REGEX REPLACE "\n" ";" output "${output}")
+  #
+  #       foreach(f IN LISTS output)
+  #         string(REGEX REPLACE ".+ " "" f "${f}")
+  #         message("::error file=${f},line=1,col=1::File modified.")
+  #       endforeach()
+  #       list(LENGTH output output_size)
+  #
+  #       if(NOT output_size EQUAL 0)
+  #         message(FATAL_ERROR "During build and tests, ${output_size} files were modified")
+  #       endif()
+  #
+  #   - name: Test installation
+  #     shell: cmake -P {0}
+  #     run: |
+  #       cmake_minimum_required(VERSION 3.17)
+  #       include(${{ steps.prepare_environment_script.outputs.environment_script }})
+  #
+  #       execute_process_x(
+  #         COMMAND ${CMAKE_COMMAND}
+  #           --install build
+  #           --config ${{ matrix.config.build_type }}
+  #           --strip
+  #         RESULT_VARIABLE _result
+  #       )
+  #       if(NOT _result EQUAL 0)
+  #         message(FATAL_ERROR "Installation step failed")
+  #       endif()
+  #
+  #   - name: Test bindings from build tree
+  #     if: matrix.config.test_external_bindings
+  #     shell: cmake -P {0}
+  #     run: |
+  #       cmake_minimum_required(VERSION 3.17)
+  #       include(${{ steps.prepare_environment_script.outputs.environment_script }})
+  #
+  #       ### FIXME Can we avoid this duplication?
+  #
+  #       set(_generator)
+  #       if(NOT "${{ matrix.config.cmake_generator }}" STREQUAL "")
+  #         set(_generator -G "${{ matrix.config.cmake_generator }}")
+  #       endif()
+  #
+  #       set(_toolset)
+  #       if(NOT "${{ matrix.config.cmake_toolset }}" STREQUAL "")
+  #         list(APPEND toolset -T ${{ matrix.config.cmake_toolset }})
+  #       endif()
+  #
+  #       set(_platform)
+  #       if(NOT "${{ matrix.config.cmake_platform }}" STREQUAL "")
+  #         list(APPEND _platform -A ${{ matrix.config.cmake_platform }})
+  #       endif()
+  #
+  #       set(_initial_cache_file -C "$ENV{GITHUB_WORKSPACE}/.ci/bindings-cache.cmake")
+  #
+  #       file(TO_CMAKE_PATH "$ENV{GITHUB_WORKSPACE}/install" _install_prefix)
+  #       set(_install_prefix -D CMAKE_INSTALL_PREFIX=${_install_prefix})
+  #
+  #       set(_toolchain_file)
+  #       if(NOT "${{ matrix.config.cmake_toolchain_file }}" STREQUAL "")
+  #         set(_toolchain_file -D CMAKE_TOOLCHAIN_FILE=${{ matrix.config.cmake_toolchain_file }})
+  #       endif()
+  #
+  #       set(_build_type)
+  #       if(NOT "${{ matrix.config.build_type }}" STREQUAL "")
+  #         set(_build_type -D CMAKE_BUILD_TYPE=${{ matrix.config.build_type }})
+  #       endif()
+  #
+  #       set(_cmake_compiler_lauchers )
+  #       if("${{ runner.os }}" STREQUAL "Windows")
+  #         find_program(_ccache_cmd ccache PATHS ENV GITHUB_WORKSPACE)
+  #         set(_cmake_compiler_lauchers -D CMAKE_C_COMPILER_LAUNCHER=${_ccache_cmd}
+  #                                      -D CMAKE_CXX_COMPILER_LAUNCHER=${_ccache_cmd})
+  #       endif()
+  #
+  #       execute_process_x(
+  #         COMMAND ${CMAKE_COMMAND}
+  #           -S bindings
+  #           -B build-bindings-build-tree
+  #           ${_generator}
+  #           ${_toolset}
+  #           ${_platform}
+  #           ${_initial_cache_file}
+  #           ${_toolchain_file}
+  #           ${_build_type}
+  #           ${_install_prefix}
+  #           ${_cmake_compiler_lauchers}
+  #           ${_cmake_extra_options}
+  #           -DYARP_DIR=$ENV{GITHUB_WORKSPACE}/build
+  #         RESULT_VARIABLE _result
+  #       )
+  #       if(NOT _result EQUAL 0)
+  #         message(FATAL_ERROR "Configure bindings from build tree step failed")
+  #       endif()
+  #
+  #       execute_process_x(
+  #         COMMAND ${CMAKE_COMMAND}
+  #           --build build-bindings-build-tree
+  #           --config ${{ matrix.config.build_type }}
+  #         RESULT_VARIABLE _result
+  #       )
+  #       if(NOT _result EQUAL 0)
+  #         message(FATAL_ERROR "Build bindings from build tree step failed")
+  #       endif()
+  #
+  #   - name: Test bindings from install tree
+  #     if: matrix.config.test_external_bindings
+  #     shell: cmake -P {0}
+  #     run: |
+  #       cmake_minimum_required(VERSION 3.17)
+  #       include(${{ steps.prepare_environment_script.outputs.environment_script }})
+  #
+  #       ### FIXME Can we avoid this duplication?
+  #
+  #       set(_generator)
+  #       if(NOT "${{ matrix.config.cmake_generator }}" STREQUAL "")
+  #         set(_generator -G "${{ matrix.config.cmake_generator }}")
+  #       endif()
+  #
+  #       set(_toolset)
+  #       if(NOT "${{ matrix.config.cmake_toolset }}" STREQUAL "")
+  #         list(APPEND toolset -T ${{ matrix.config.cmake_toolset }})
+  #       endif()
+  #
+  #       set(_platform)
+  #       if(NOT "${{ matrix.config.cmake_platform }}" STREQUAL "")
+  #         list(APPEND _platform -A ${{ matrix.config.cmake_platform }})
+  #       endif()
+  #
+  #       set(_initial_cache_file -C "$ENV{GITHUB_WORKSPACE}/.ci/bindings-cache.cmake")
+  #
+  #       file(TO_CMAKE_PATH "$ENV{GITHUB_WORKSPACE}/install" _install_prefix)
+  #       set(_install_prefix -D CMAKE_INSTALL_PREFIX=${_install_prefix})
+  #
+  #       set(_toolchain_file)
+  #       if(NOT "${{ matrix.config.cmake_toolchain_file }}" STREQUAL "")
+  #         set(_toolchain_file -D CMAKE_TOOLCHAIN_FILE=${{ matrix.config.cmake_toolchain_file }})
+  #       endif()
+  #
+  #       set(_build_type)
+  #       if(NOT "${{ matrix.config.build_type }}" STREQUAL "")
+  #         set(_build_type -D CMAKE_BUILD_TYPE=${{ matrix.config.build_type }})
+  #       endif()
+  #
+  #       set(_cmake_compiler_lauchers )
+  #       if("${{ runner.os }}" STREQUAL "Windows")
+  #         find_program(_ccache_cmd ccache PATHS ENV GITHUB_WORKSPACE)
+  #         set(_cmake_compiler_lauchers -D CMAKE_C_COMPILER_LAUNCHER=${_ccache_cmd}
+  #                                      -D CMAKE_CXX_COMPILER_LAUNCHER=${_ccache_cmd})
+  #       endif()
+  #
+  #       execute_process_x(
+  #         COMMAND ${CMAKE_COMMAND}
+  #           -S bindings
+  #           -B build-bindings-install-tree
+  #           ${_generator}
+  #           ${_toolset}
+  #           ${_platform}
+  #           ${_initial_cache_file}
+  #           ${_toolchain_file}
+  #           ${_build_type}
+  #           ${_install_prefix}
+  #           ${_cmake_compiler_lauchers}
+  #           ${_cmake_extra_options}
+  #           -DYARP_DIR=$ENV{GITHUB_WORKSPACE}/install/lib/cmake/YARP
+  #         RESULT_VARIABLE _result
+  #       )
+  #       if(NOT _result EQUAL 0)
+  #         message(FATAL_ERROR "Configure bindings from install tree step failed")
+  #       endif()
+  #
+  #       execute_process_x(
+  #         COMMAND ${CMAKE_COMMAND}
+  #           --build build-bindings-install-tree
+  #           --config ${{ matrix.config.build_type }}
+  #         RESULT_VARIABLE _result
+  #       )
+  #       if(NOT _result EQUAL 0)
+  #         message(FATAL_ERROR "Build bindings from build tree step failed")
+  #       endif()
+  #
+  #   - name: Compress installation files
+  #     shell: cmake -P {0}
+  #     run: |
+  #       cmake_minimum_required(VERSION 3.17)
+  #       include(${{ steps.prepare_environment_script.outputs.environment_script }})
+  #
+  #       execute_process_x(
+  #         COMMAND ${CMAKE_COMMAND} -E tar cvf $ENV{GITHUB_WORKSPACE}/install.tar --format=gnutar --files-from=$ENV{GITHUB_WORKSPACE}/build/install_manifest.txt
+  #         WORKING_DIRECTORY "$ENV{GITHUB_WORKSPACE}/install"
+  #       )
+  #
+  #   - name: Upload artifact
+  #     uses: actions/upload-artifact@v3
+  #     with:
+  #       name: installation-${{ matrix.config.id }}
+  #       path: install.tar
+  #       retention-days: 2
+  #
+  #   - name: Cleanup
+  #     shell: cmake -P {0}
+  #     run: |
+  #       cmake_minimum_required(VERSION 3.17)
+  #       include(${{ steps.prepare_environment_script.outputs.environment_script }})
+  #
+  #       # Reset ccache stats before uploading
+  #       execute_process_x(COMMAND ccache -z)
+  #
+  #
+  # codacy-clang-tidy:
+  #   environment: code-analysis
+  #   name: 'Codacy - clang-tidy'
+  #   needs: [select_environment, run-cmake]
+  #   runs-on: ubuntu-20.04
+  #   steps:
+  #   - name: Clone repository
+  #     uses: actions/checkout@v3
+  #     with:
+  #       repository: ${{ needs.select_environment.outputs.repository }}
+  #       ref: ${{ needs.select_environment.outputs.ref }}
+  #
+  #   # This step is copied from the build step, please keep them in sync until we
+  #   # find a better way to do it automatically
+  #   - name: Dependencies [Linux]
+  #     if: runner.os == 'Linux'
+  #     shell: bash
+  #     run: |
+  #         # Install Robotology dependencies from robotology ppa
+  #         sudo apt-add-repository -y ppa:robotology/ppa
+  #         sudo apt-get install -qq -y librobottestingframework-dev
+  #
+  #         # Install cmake
+  #         sudo apt-get install -qq -y cmake
+  #         which cmake
+  #         cmake --version
+  #         /usr/bin/cmake --version
+  #
+  #         # Install ycm
+  #         wget -nv https://github.com/robotology/ycm/releases/download/v0.15.1/ycm-cmake-modules-0.15.1-all.deb
+  #         sudo dpkg -i ycm-cmake-modules-0.15.1-all.deb
+  #
+  #         # Install build tools
+  #         sudo apt-get install -qq -y ccache \
+  #                                     ninja-build \
+  #                                     valgrind \
+  #                                     openjdk-17-jdk \
+  #                                     openjdk-17-jre
+  #
+  #         sudo apt-get install -qq -y libace-dev \
+  #                                     libsqlite3-dev \
+  #                                     libtinyxml-dev \
+  #                                     libedit-dev \
+  #                                     qtbase5-dev \
+  #                                     qtdeclarative5-dev \
+  #                                     qtmultimedia5-dev \
+  #                                     libqt5opengl5-dev \
+  #                                     libqcustomplot-dev \
+  #                                     libopencv-dev \
+  #                                     libeigen3-dev \
+  #                                     libgraphviz-dev \
+  #                                     libgstreamer1.0-dev \
+  #                                     libgstreamer-plugins-base1.0-dev \
+  #                                     libpng-dev \
+  #                                     libv4l-dev \
+  #                                     libavcodec-dev \
+  #                                     libavdevice-dev \
+  #                                     libavformat-dev \
+  #                                     libavutil-dev \
+  #                                     portaudio19-dev \
+  #                                     libsdl1.2-dev \
+  #                                     libopenni2-dev \
+  #                                     libftdi-dev \
+  #                                     libi2c-dev \
+  #                                     libjpeg-dev \
+  #                                     libpcl-dev
+  #
+  #         # Install SWIG and bindings dependencies
+  #         sudo apt-get install -qq -y swig \
+  #                                     mono-mcs \
+  #                                     liblua5.3-dev \
+  #                                     lua5.3 \
+  #                                     tcl-dev \
+  #                                     tk-dev \
+  #                                     python3-dev \
+  #                                     liboctave-dev \
+  #                                     ruby-dev \
+  #                                     ruby \
+  #                                     perl
+  #
+  #         # Other tools useful in github actions
+  #         sudo apt-get install -qq -y jq \
+  #                                     wget \
+  #                                     curl \
+  #                                     lcov \
+  #                                     gcovr \
+  #                                     wget \
+  #                                     curl \
+  #                                     clang-11 \
+  #                                     clang-tidy-11 \
+  #                                     xsltproc \
+  #                                     libxml2-utils \
+  #                                     source-highlight
+  #
+  #         # Remove old packages from apt cache
+  #         sudo apt-get autoclean -qq
+  #
+  #   - name: Prepare environment
+  #     env:
+  #       CODACY_TOKEN: ${{ secrets.CODACY_TOKEN }}
+  #       CLANG_VERSION: 10
+  #       CODACY_CLANG_TIDY_VERSION: 1.2.1
+  #     run: |
+  #       echo "CLANG_VERSION=${CLANG_VERSION}" >> $GITHUB_ENV
+  #       echo "CC=/usr/bin/clang-${CLANG_VERSION}" >> $GITHUB_ENV
+  #       echo "CXX=/usr/bin/clang++-${CLANG_VERSION}" >> $GITHUB_ENV
+  #       echo "CFLAGS=-fcolor-diagnostics" >> $GITHUB_ENV
+  #       echo "CXXFLAGS=-fcolor-diagnostics" >> $GITHUB_ENV
+  #       echo "CLANG_TIDY=/usr/bin/clang-tidy-${CLANG_VERSION}" >> $GITHUB_ENV
+  #       echo "RUN_CLANG_TIDY=/usr/bin/run-clang-tidy-${CLANG_VERSION}" >> $GITHUB_ENV
+  #       echo "COLORCLI=1" >> $GITHUB_ENV
+  #       echo "CLICOLOR=1" >> $GITHUB_ENV
+  #       echo "CLICOLOR_FORCE=1" >> $GITHUB_ENV
+  #       echo "YARP_COLORED_OUTPUT=1" >> $GITHUB_ENV
+  #       echo "PROJECT_TOKEN=${CODACY_TOKEN}" >> $GITHUB_ENV
+  #       echo "COMMIT=${{ needs.select_environment.outputs.sha }}" >> $GITHUB_ENV
+  #       echo "CODACY_URL=https://api.codacy.com" >> $GITHUB_ENV
+  #       echo "CODACY_CLANG_TIDY_VERSION=${CODACY_CLANG_TIDY_VERSION}" >> $GITHUB_ENV
+  #
+  #   - name: Download codacy-clang-tidy
+  #     if: runner.os == 'Linux'
+  #     shell: bash
+  #     run: |
+  #         # Download extra packages required
+  #         sudo apt-get install -qq -y clang-${CLANG_VERSION} \
+  #                                     clang-tidy-${CLANG_VERSION}
+  #
+  #         # Download codacy-clang-tidy
+  #         sudo wget https://github.com/codacy/codacy-clang-tidy/releases/download/${CODACY_CLANG_TIDY_VERSION}/codacy-clang-tidy-${CODACY_CLANG_TIDY_VERSION} -O /usr/local/bin/codacy-clang-tidy-${CODACY_CLANG_TIDY_VERSION}
+  #         sudo chmod -v +x /usr/local/bin/codacy-clang-tidy-${CODACY_CLANG_TIDY_VERSION}
+  #
+  #   - name: Run CMake
+  #     run: |
+  #       /usr/bin/cmake -S. -Bbuild \
+  #         -C .ci/initial-cache.gh.linux.cmake \
+  #         -DCMAKE_EXPORT_COMPILE_COMMANDS:BOOL=ON \
+  #         -DYARP_NO_DEPRECATED:BOOL=ON \
+  #         -DYARP_COMPILE_BINDINGS:BOOL=OFF
+  #
+  #   - name: Link compile_commands.json in the source directory
+  #     run: |
+  #       ln -s build/compile_commands.json .
+  #
+  #   - name: Run make (required for files generated at build time)
+  #     run: |
+  #       (cd build && make)
+  #
+  #   - name: List clang-tidy checks
+  #     run: |
+  #       # Fix .clang-tidy for clang 10 (see https://reviews.llvm.org/D75621)
+  #       sed -i 's/;h;hh;hpp;hxx/,h,hh,hpp,hxx/g' .clang-tidy
+  #
+  #       # Print the .clang-tidy file
+  #       cat .clang-tidy
+  #       echo
+  #
+  #       # List checks
+  #       ${CLANG_TIDY} -list-checks
+  #
+  #   - name: Run clang-tidy
+  #     run: |
+  #       ${RUN_CLANG_TIDY} | sed "s|${PWD}/||g" | tee /tmp/out1
+  #
+  #   - name: Convert the clang-tidy output to a format that the Codacy API accepts
+  #     run: |
+  #       cat /tmp/out1 | \
+  #       /usr/local/bin/codacy-clang-tidy-${CODACY_CLANG_TIDY_VERSION} | tee /tmp/out2
+  #
+  #   - name: Send the results to Codacy
+  #     run: |
+  #       set -x
+  #       cat /tmp/out2 | \
+  #       curl --silent --show-error --fail \
+  #           -XPOST -L -H "project-token: ${PROJECT_TOKEN}" \
+  #           -H "Content-type: application/json" -d @- \
+  #           "${CODACY_URL}/2.0/commit/${COMMIT}/issuesRemoteResults"
+  #       echo
+  #
+  #   - name: Signal that Codacy can use the sent results and start a new analysis
+  #     run: |
+  #       set -x
+  #       curl --silent --show-error --fail \
+  #         -XPOST -L -H "project-token: ${PROJECT_TOKEN}" \
+  #         -H "Content-type: application/json" \
+  #         "${CODACY_URL}/2.0/commit/${COMMIT}/resultsFinal"
+  #       echo
+  #
+  #
+  # codacy-coverage:
+  #   environment: code-analysis
+  #   name: 'Codacy - coverage'
+  #   needs: [select_environment, run-cmake]
+  #   runs-on: ubuntu-20.04
+  #   steps:
+  #   - name: Clone repository
+  #     uses: actions/checkout@v3
+  #     with:
+  #       repository: ${{ needs.select_environment.outputs.repository }}
+  #       ref: ${{ needs.select_environment.outputs.ref }}
+  #
+  #   # This step is copied from the build step, please keep them in sync until we
+  #   # find a better way to do it automatically
+  #   - name: Dependencies [Linux]
+  #     if: runner.os == 'Linux'
+  #     shell: bash
+  #     run: |
+  #         # Install Robotology dependencies from robotology ppa
+  #         sudo apt-add-repository -y ppa:robotology/ppa
+  #         sudo apt-get install -qq -y librobottestingframework-dev
+  #
+  #         # Install cmake
+  #         sudo apt-get install -qq -y cmake
+  #         which cmake
+  #         cmake --version
+  #         /usr/bin/cmake --version
+  #
+  #         # Install ycm
+  #         wget -nv https://github.com/robotology/ycm/releases/download/v0.15.1/ycm-cmake-modules-0.15.1-all.deb
+  #         sudo dpkg -i ycm-cmake-modules-0.15.1-all.deb
+  #
+  #         # Install build tools
+  #         sudo apt-get install -qq -y ccache \
+  #                                     ninja-build \
+  #                                     valgrind \
+  #                                     openjdk-17-jdk \
+  #                                     openjdk-17-jre
+  #
+  #         sudo apt-get install -qq -y libace-dev \
+  #                                     libsqlite3-dev \
+  #                                     libtinyxml-dev \
+  #                                     libedit-dev \
+  #                                     qtbase5-dev \
+  #                                     qtdeclarative5-dev \
+  #                                     qtmultimedia5-dev \
+  #                                     libqt5opengl5-dev \
+  #                                     libqcustomplot-dev \
+  #                                     libopencv-dev \
+  #                                     libeigen3-dev \
+  #                                     libgraphviz-dev \
+  #                                     libgstreamer1.0-dev \
+  #                                     libgstreamer-plugins-base1.0-dev \
+  #                                     libpng-dev \
+  #                                     libv4l-dev \
+  #                                     libavcodec-dev \
+  #                                     libavdevice-dev \
+  #                                     libavformat-dev \
+  #                                     libavutil-dev \
+  #                                     portaudio19-dev \
+  #                                     libsdl1.2-dev \
+  #                                     libopenni2-dev \
+  #                                     libftdi-dev \
+  #                                     libi2c-dev \
+  #                                     libjpeg-dev \
+  #                                     libpcl-dev
+  #
+  #         # Install SWIG and bindings dependencies
+  #         sudo apt-get install -qq -y swig \
+  #                                     mono-mcs \
+  #                                     liblua5.3-dev \
+  #                                     lua5.3 \
+  #                                     tcl-dev \
+  #                                     tk-dev \
+  #                                     python3-dev \
+  #                                     liboctave-dev \
+  #                                     ruby-dev \
+  #                                     ruby \
+  #                                     perl
+  #
+  #         # Other tools useful in github actions
+  #         sudo apt-get install -qq -y jq \
+  #                                     wget \
+  #                                     curl \
+  #                                     lcov \
+  #                                     gcovr \
+  #                                     wget \
+  #                                     curl \
+  #                                     clang-11 \
+  #                                     clang-tidy-11 \
+  #                                     xsltproc \
+  #                                     libxml2-utils \
+  #                                     source-highlight
+  #
+  #         # Remove old packages from apt cache
+  #         sudo apt-get autoclean -qq
+  #
+  #   - name: Build
+  #     run: |
+  #       export CLICOLOR_FORCE=1
+  #       export YARP_COLORED_OUTPUT=1
+  #
+  #       /usr/bin/cmake -S. -Bbuild \
+  #         -C .ci/initial-cache.gh.linux.cmake \
+  #         -DCMAKE_C_FLAGS=-fdiagnostics-color=always \
+  #         -DCMAKE_CXX_FLAGS=-fdiagnostics-color=always \
+  #         -DCMAKE_BUILD_TYPE=Profile \
+  #         "-DCMAKE_C_FLAGS_PROFILE=-pg -g3 -ggdb -fno-inline -ftest-coverage -fprofile-arcs -DNDEBUG" \
+  #         "-DCMAKE_CXX_FLAGS_PROFILE=-pg -g3 -ggdb -fno-inline -ftest-coverage -fprofile-arcs -DNDEBUG" \
+  #         -DCMAKE_EXPORT_COMPILE_COMMANDS:BOOL=ON \
+  #         -DYARP_NO_DEPRECATED:BOOL=ON
+  #
+  #       (cd build && lcov --directory . --zerocounters)
+  #
+  #       (cd build && make && make CTEST_OUTPUT_ON_FAILURE=1 test)
+  #
+  #       # Capture coverage info for Profile builds
+  #       (cd build; lcov --directory . --capture --rc lcov_branch_coverage=1 --output-file coverage.info)
+  #
+  #       # Filter out system and test code
+  #       (cd build; lcov --remove coverage.info '/usr/*' 'tests/*' 'example/*' 'extern/*' 'build/*'--rc lcov_branch_coverage=1 --output-file coverage.info)
+  #
+  #       # Debug before upload
+  #       (cd build; lcov --list coverage.info)
+  #
+  #   - name: Run codacy-coverage-reporter
+  #     uses: codacy/codacy-coverage-reporter-action@master
+  #     with:
+  #       project-token: ${{ secrets.CODACY_TOKEN }}
+  #       coverage-reports: build/coverage.info
+  #
 
   sonarcloud:
     environment: code-analysis
@@ -1849,6 +1849,9 @@ jobs:
         ccache --version
         ccache -p
 
+        which javac
+        javac --version
+
         ls -la --color=always /usr/lib/ccache
 
         # Reset ccache stats before starting
@@ -1857,126 +1860,126 @@ jobs:
         gcov --version
         gcovr --version
 
-    - name: Handle cache
-      uses: actions/cache@v3
-      with:
-        path: |
-          ${{ steps.init_ccache.outputs.ccache_path }}
-          ${{ steps.get_sonar.outputs.sonar_cache_path }}
-        key: sonar-cache-${{ needs.select_environment.outputs.timestamp }}
-        restore-keys: |
-          sonar-cache-
-
-    - name: Run CMake
-      run: |
-        export CLICOLOR_FORCE=1
-        export YARP_COLORED_OUTPUT=1
-
-        /usr/bin/cmake -S. -Bbuild \
-          -C .ci/initial-cache.gh.linux.cmake \
-          -DCMAKE_C_FLAGS=-fdiagnostics-color=always \
-          -DCMAKE_CXX_FLAGS=-fdiagnostics-color=always \
-          -DCMAKE_BUILD_TYPE=Profile \
-          "-DCMAKE_C_FLAGS_PROFILE=-pg -g3 -ggdb -fno-inline -ftest-coverage -fprofile-arcs -DNDEBUG" \
-          "-DCMAKE_CXX_FLAGS_PROFILE=-pg -g3 -ggdb -fno-inline -ftest-coverage -fprofile-arcs -DNDEBUG" \
-          -DCMAKE_EXE_LINKER_FLAGS_PROFILE=-lgcov \
-          -DCMAKE_MODULE_LINKER_FLAGS_PROFILE=-lgcov \
-          -DCMAKE_SHARED_LINKER_FLAGS_PROFILE=-lgcov \
-          -DCMAKE_STATIC_LINKER_FLAGS_PROFILE= \
-          -DCMAKE_EXPORT_COMPILE_COMMANDS:BOOL=ON \
-          -DYARP_NO_DEPRECATED:BOOL=ON \
-          -DYARP_COMPILE_BINDINGS:BOOL=OFF
-
-    - name: Link compile_commands.json in the source directory
-      run: |
-        ln -s build/compile_commands.json .
-
-    - name: Build inside the build-wrapper
-      run: |
-        build-wrapper-linux-x86-64 --out-dir build_wrapper_output_directory cmake --build build --config Profile
-
-    - name: Run tests
-      run: |
-        # Download CTest2JUnit.xsl
-        wget https://raw.githubusercontent.com/zanata/zanata-tests/master/scripts/CTest2JUnit.xsl -O CTest2JUnit.xsl
-
-        # -T Test produces the xml output with the results
-        (cd build && ctest -T test --rerun-failed --output-on-failure --verbose)
-        xsltproc CTest2JUnit.xsl build/Testing/$(head -n 1 < build/Testing/TAG)/Test.xml > build/JUnitTestResults.xml
-
-    - name: Print tests results file
-      run: |
-        xmllint --format build/JUnitTestResults.xml | source-highlight -s xml --out-format=esc -o STDOUT
-
-    - name: Print ccache stats after build
-      run: |
-        set -x
-
-        # Print ccache stats
-        ccache -s
-
-    - name: Capture coverage info
-      run: |
-        (cd build && gcovr --sonarqube --branches --output coverage.xml --root .. .)
-
-    - name: Print coverage info file
-      run: |
-        xmllint --format build/coverage.xml | source-highlight -s xml --out-format=esc -o STDOUT
-
-    - name: Run sonar scanner
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-      run: |
-
-        # Run sonar scanner (here, arguments are passed through the command line but most of them can be written in the sonar-project.properties file)
-        [[ -v SONAR_TOKEN ]] && SONAR_TOKEN_CMD_ARG="-Dsonar.login=${SONAR_TOKEN}"
-        [[ -v SONAR_ORGANIZATION ]] && SONAR_ORGANIZATION_CMD_ARG="-Dsonar.organization=${SONAR_ORGANIZATION}"
-        [[ -v SONAR_PROJECT_NAME ]] && SONAR_PROJECT_NAME_CMD_ARG="-Dsonar.projectName=${SONAR_PROJECT_NAME}"
-        [[ -v SONAR_PROJECT_DESCRIPTION ]] && SONAR_PROJECT_DESCRIPTION_CMD_ARG="-Dsonar.projectDescription=${SONAR_PROJECT_DESCRIPTION}"
-        [[ -v SONAR_PROJECT_VERSION ]] && SONAR_PROJECT_VERSION_CMD_ARG="-Dsonar.projectVersion=${SONAR_PROJECT_VERSION}"
-
-        if [[ "$GITHUB_EVENT_NAME" = "pull_request" || "$GITHUB_EVENT_NAME" == "pull_request_target" ]]; then
-          SONAR_PR_CMD_ARGS="\
-            -Dsonar.pullrequest.provider=github \
-            -Dsonar.pullrequest.github.repository=${SONAR_ORGANIZATION}/${SONAR_PROJECT_NAME} \
-            -Dsonar.pullrequest.branch=${{ needs.select_environment.outputs.head_ref }} \
-            -Dsonar.pullrequest.key=${{ needs.select_environment.outputs.pr_number }} \
-            -Dsonar.pullrequest.base=${{ needs.select_environment.outputs.base_ref }} \
-            -Dsonar.pullrequest.github.endpoint=https://api.github.com"
-        fi
-
-        # Paths to test files
-        [[ -v SONAR_TESTS ]] && SONAR_TESTS_CMD_ARG="-Dsonar.tests=${SONAR_TESTS}"
-
-        # Path to cache
-        [[ -v SONAR_CFAMILY_CACHE_PATH ]] && SONAR_CFAMILY_CACHE_PATH_CMD_ARG="-Dsonar.cfamily.cache.path=${SONAR_CFAMILY_CACHE_PATH}"
-
-        set -x
-
-        sonar-scanner \
-            -Dsonar.host.url="${SONAR_HOST_URL}" \
-            -Dsonar.projectKey=${SONAR_PROJECT_KEY} \
-            -Dsonar.language=c++ \
-            -Dsonar.sources=${SONAR_SOURCES} \
-            -Dsonar.links.homepage=${SONAR_LINKS_HOMEPAGE} \
-            -Dsonar.links.ci=${SONAR_LINKS_CI} \
-            -Dsonar.links.issue=${SONAR_LINKS_ISSUE} \
-            -Dsonar.links.scm=${SONAR_LINKS_SCM} \
-            -Dsonar.cfamily.build-wrapper-output=build_wrapper_output_directory \
-            -Dsonar.sourceEncoding=${SONAR_SOURCEENCODING} \
-            -Dsonar.cfamily.threads=${SONAR_THREADS} \
-            -Dsonar.cfamily.cache.enabled=${SONAR_CFAMILY_CACHE_ENABLED} \
-            -Dsonar.coverageReportPaths=build/coverage.xml \
-            -Dsonar.junit.reportPaths=build/JUnitTestResults.xml \
-            -Dsonar.exclusions="src/yarp*/**/* src/carriers/**/* src/devices/**/* src/idls/**/* src/libyarp*/**/* src/robottestingframework-plugins/**/* tests/**/*" \
-            -Dsonar.coverage.exclusions="src/yarp*/**/* src/carriers/**/* src/devices/**/* src/idls/**/* src/libyarp*/**/* src/robottestingframework-plugins/**/*" \
-            -Dsonar.branch.longLivedBranches.regex="^(master|yarp-.+)$" \
-            ${SONAR_TESTS_CMD_ARG} \
-            ${SONAR_PROJECT_NAME_CMD_ARG} \
-            ${SONAR_PROJECT_DESCRIPTION_CMD_ARG} \
-            ${SONAR_PROJECT_VERSION_CMD_ARG} \
-            ${SONAR_PR_CMD_ARGS} \
-            ${SONAR_TOKEN_CMD_ARG} \
-            ${SONAR_ORGANIZATION_CMD_ARG} \
-            ${SONAR_CFAMILY_CACHE_PATH_CMD_ARG}
+    # - name: Handle cache
+    #   uses: actions/cache@v3
+    #   with:
+    #     path: |
+    #       ${{ steps.init_ccache.outputs.ccache_path }}
+    #       ${{ steps.get_sonar.outputs.sonar_cache_path }}
+    #     key: sonar-cache-${{ needs.select_environment.outputs.timestamp }}
+    #     restore-keys: |
+    #       sonar-cache-
+    #
+    # - name: Run CMake
+    #   run: |
+    #     export CLICOLOR_FORCE=1
+    #     export YARP_COLORED_OUTPUT=1
+    #
+    #     /usr/bin/cmake -S. -Bbuild \
+    #       -C .ci/initial-cache.gh.linux.cmake \
+    #       -DCMAKE_C_FLAGS=-fdiagnostics-color=always \
+    #       -DCMAKE_CXX_FLAGS=-fdiagnostics-color=always \
+    #       -DCMAKE_BUILD_TYPE=Profile \
+    #       "-DCMAKE_C_FLAGS_PROFILE=-pg -g3 -ggdb -fno-inline -ftest-coverage -fprofile-arcs -DNDEBUG" \
+    #       "-DCMAKE_CXX_FLAGS_PROFILE=-pg -g3 -ggdb -fno-inline -ftest-coverage -fprofile-arcs -DNDEBUG" \
+    #       -DCMAKE_EXE_LINKER_FLAGS_PROFILE=-lgcov \
+    #       -DCMAKE_MODULE_LINKER_FLAGS_PROFILE=-lgcov \
+    #       -DCMAKE_SHARED_LINKER_FLAGS_PROFILE=-lgcov \
+    #       -DCMAKE_STATIC_LINKER_FLAGS_PROFILE= \
+    #       -DCMAKE_EXPORT_COMPILE_COMMANDS:BOOL=ON \
+    #       -DYARP_NO_DEPRECATED:BOOL=ON \
+    #       -DYARP_COMPILE_BINDINGS:BOOL=OFF
+    #
+    # - name: Link compile_commands.json in the source directory
+    #   run: |
+    #     ln -s build/compile_commands.json .
+    #
+    # - name: Build inside the build-wrapper
+    #   run: |
+    #     build-wrapper-linux-x86-64 --out-dir build_wrapper_output_directory cmake --build build --config Profile
+    #
+    # - name: Run tests
+    #   run: |
+    #     # Download CTest2JUnit.xsl
+    #     wget https://raw.githubusercontent.com/zanata/zanata-tests/master/scripts/CTest2JUnit.xsl -O CTest2JUnit.xsl
+    #
+    #     # -T Test produces the xml output with the results
+    #     (cd build && ctest -T test --rerun-failed --output-on-failure --verbose)
+    #     xsltproc CTest2JUnit.xsl build/Testing/$(head -n 1 < build/Testing/TAG)/Test.xml > build/JUnitTestResults.xml
+    #
+    # - name: Print tests results file
+    #   run: |
+    #     xmllint --format build/JUnitTestResults.xml | source-highlight -s xml --out-format=esc -o STDOUT
+    #
+    # - name: Print ccache stats after build
+    #   run: |
+    #     set -x
+    #
+    #     # Print ccache stats
+    #     ccache -s
+    #
+    # - name: Capture coverage info
+    #   run: |
+    #     (cd build && gcovr --sonarqube --branches --output coverage.xml --root .. .)
+    #
+    # - name: Print coverage info file
+    #   run: |
+    #     xmllint --format build/coverage.xml | source-highlight -s xml --out-format=esc -o STDOUT
+    #
+    # - name: Run sonar scanner
+    #   env:
+    #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    #     SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+    #   run: |
+    #
+    #     # Run sonar scanner (here, arguments are passed through the command line but most of them can be written in the sonar-project.properties file)
+    #     [[ -v SONAR_TOKEN ]] && SONAR_TOKEN_CMD_ARG="-Dsonar.login=${SONAR_TOKEN}"
+    #     [[ -v SONAR_ORGANIZATION ]] && SONAR_ORGANIZATION_CMD_ARG="-Dsonar.organization=${SONAR_ORGANIZATION}"
+    #     [[ -v SONAR_PROJECT_NAME ]] && SONAR_PROJECT_NAME_CMD_ARG="-Dsonar.projectName=${SONAR_PROJECT_NAME}"
+    #     [[ -v SONAR_PROJECT_DESCRIPTION ]] && SONAR_PROJECT_DESCRIPTION_CMD_ARG="-Dsonar.projectDescription=${SONAR_PROJECT_DESCRIPTION}"
+    #     [[ -v SONAR_PROJECT_VERSION ]] && SONAR_PROJECT_VERSION_CMD_ARG="-Dsonar.projectVersion=${SONAR_PROJECT_VERSION}"
+    #
+    #     if [[ "$GITHUB_EVENT_NAME" = "pull_request" || "$GITHUB_EVENT_NAME" == "pull_request_target" ]]; then
+    #       SONAR_PR_CMD_ARGS="\
+    #         -Dsonar.pullrequest.provider=github \
+    #         -Dsonar.pullrequest.github.repository=${SONAR_ORGANIZATION}/${SONAR_PROJECT_NAME} \
+    #         -Dsonar.pullrequest.branch=${{ needs.select_environment.outputs.head_ref }} \
+    #         -Dsonar.pullrequest.key=${{ needs.select_environment.outputs.pr_number }} \
+    #         -Dsonar.pullrequest.base=${{ needs.select_environment.outputs.base_ref }} \
+    #         -Dsonar.pullrequest.github.endpoint=https://api.github.com"
+    #     fi
+    #
+    #     # Paths to test files
+    #     [[ -v SONAR_TESTS ]] && SONAR_TESTS_CMD_ARG="-Dsonar.tests=${SONAR_TESTS}"
+    #
+    #     # Path to cache
+    #     [[ -v SONAR_CFAMILY_CACHE_PATH ]] && SONAR_CFAMILY_CACHE_PATH_CMD_ARG="-Dsonar.cfamily.cache.path=${SONAR_CFAMILY_CACHE_PATH}"
+    #
+    #     set -x
+    #
+    #     sonar-scanner \
+    #         -Dsonar.host.url="${SONAR_HOST_URL}" \
+    #         -Dsonar.projectKey=${SONAR_PROJECT_KEY} \
+    #         -Dsonar.language=c++ \
+    #         -Dsonar.sources=${SONAR_SOURCES} \
+    #         -Dsonar.links.homepage=${SONAR_LINKS_HOMEPAGE} \
+    #         -Dsonar.links.ci=${SONAR_LINKS_CI} \
+    #         -Dsonar.links.issue=${SONAR_LINKS_ISSUE} \
+    #         -Dsonar.links.scm=${SONAR_LINKS_SCM} \
+    #         -Dsonar.cfamily.build-wrapper-output=build_wrapper_output_directory \
+    #         -Dsonar.sourceEncoding=${SONAR_SOURCEENCODING} \
+    #         -Dsonar.cfamily.threads=${SONAR_THREADS} \
+    #         -Dsonar.cfamily.cache.enabled=${SONAR_CFAMILY_CACHE_ENABLED} \
+    #         -Dsonar.coverageReportPaths=build/coverage.xml \
+    #         -Dsonar.junit.reportPaths=build/JUnitTestResults.xml \
+    #         -Dsonar.exclusions="src/yarp*/**/* src/carriers/**/* src/devices/**/* src/idls/**/* src/libyarp*/**/* src/robottestingframework-plugins/**/* tests/**/*" \
+    #         -Dsonar.coverage.exclusions="src/yarp*/**/* src/carriers/**/* src/devices/**/* src/idls/**/* src/libyarp*/**/* src/robottestingframework-plugins/**/*" \
+    #         -Dsonar.branch.longLivedBranches.regex="^(master|yarp-.+)$" \
+    #         ${SONAR_TESTS_CMD_ARG} \
+    #         ${SONAR_PROJECT_NAME_CMD_ARG} \
+    #         ${SONAR_PROJECT_DESCRIPTION_CMD_ARG} \
+    #         ${SONAR_PROJECT_VERSION_CMD_ARG} \
+    #         ${SONAR_PR_CMD_ARGS} \
+    #         ${SONAR_TOKEN_CMD_ARG} \
+    #         ${SONAR_ORGANIZATION_CMD_ARG} \
+    #         ${SONAR_CFAMILY_CACHE_PATH_CMD_ARG}
