@@ -905,7 +905,7 @@ jobs:
         endfunction()
         ")
 
-        message("::set-output name=environment_script::${_env_script}")
+        message("environment_script=${_env_script}")
 
     - name: Print Environment Script
       shell: cmake -P {0}
