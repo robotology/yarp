@@ -606,25 +606,33 @@ jobs:
           }
         - {
             id: '27',
-            os: macos-latest,
+            os: windows-2022,
             build_type: "Release",
-            cc: "clang",
-            cxx: "clang++",
-            cmake_generator: "Unix Makefiles",
-            cmake_initial_cache_file: ".ci/initial-cache.gh.macos.cmake",
+            cc: "cl",
+            cxx: "cl",
+            cmake_generator: "Visual Studio 17 2022",
+            cmake_toolset: "v143",
+            cmake_platform: "x64",
+            cmake_toolchain_file: "C:/robotology/vcpkg/scripts/buildsystems/vcpkg.cmake",
+            cmake_initial_cache_file: ".ci/initial-cache.gh.windows.cmake",
+            environment_script: "C:/Program Files (x86)/Microsoft Visual Studio/2022/Enterprise/VC/Auxiliary/Build/vcvars64.bat",
           }
         - {
             id: '28',
-            os: macos-latest,
+            os: windows-2022,
             build_type: "Release",
-            cc: "clang",
-            cxx: "clang++",
-            cmake_generator: "Xcode",
-            cmake_initial_cache_file: ".ci/initial-cache.gh.macos.cmake",
+            cc: "cl",
+            cxx: "cl",
+            cmake_generator: "Visual Studio 17 2022",
+            cmake_toolset: "v142",
+            cmake_platform: "x64",
+            cmake_toolchain_file: "C:/robotology/vcpkg/scripts/buildsystems/vcpkg.cmake",
+            cmake_initial_cache_file: ".ci/initial-cache.gh.windows.cmake",
+            environment_script: "C:/Program Files (x86)/Microsoft Visual Studio/2022/Enterprise/VC/Auxiliary/Build/vcvars64.bat",
           }
         - {
             id: '29',
-            os: macos-11.0,
+            os: macos-13,
             build_type: "Release",
             cc: "clang",
             cxx: "clang++",
@@ -633,7 +641,43 @@ jobs:
           }
         - {
             id: '30',
-            os: macos-11.0,
+            os: macos-13,
+            build_type: "Release",
+            cc: "clang",
+            cxx: "clang++",
+            cmake_generator: "Xcode",
+            cmake_initial_cache_file: ".ci/initial-cache.gh.macos.cmake",
+          }
+        - {
+            id: '31',
+            os: macos-12,
+            build_type: "Release",
+            cc: "clang",
+            cxx: "clang++",
+            cmake_generator: "Unix Makefiles",
+            cmake_initial_cache_file: ".ci/initial-cache.gh.macos.cmake",
+          }
+        - {
+            id: '32',
+            os: macos-12,
+            build_type: "Release",
+            cc: "clang",
+            cxx: "clang++",
+            cmake_generator: "Xcode",
+            cmake_initial_cache_file: ".ci/initial-cache.gh.macos.cmake",
+          }
+        - {
+            id: '33',
+            os: macos-11,
+            build_type: "Release",
+            cc: "clang",
+            cxx: "clang++",
+            cmake_generator: "Unix Makefiles",
+            cmake_initial_cache_file: ".ci/initial-cache.gh.macos.cmake",
+          }
+        - {
+            id: '34',
+            os: macos-11,
             build_type: "Release",
             cc: "clang",
             cxx: "clang++",
