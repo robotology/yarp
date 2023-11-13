@@ -225,6 +225,16 @@ jobs:
             cmake_generator: "Unix Makefiles",
             ycm_version: "0.15.3",
           }
+        - {
+            cmake_version: "3.26.*",
+            cmake_generator: "Unix Makefiles",
+            ycm_version: "0.15.3",
+          }
+        - {
+            cmake_version: "3.27.*",
+            cmake_generator: "Unix Makefiles",
+            ycm_version: "0.15.3",
+          }
     steps:
     - name: remove any previous installation of cmake
       run: | 
@@ -660,24 +670,6 @@ jobs:
         - {
             id: '32',
             os: macos-12,
-            build_type: "Release",
-            cc: "clang",
-            cxx: "clang++",
-            cmake_generator: "Xcode",
-            cmake_initial_cache_file: ".ci/initial-cache.gh.macos.cmake",
-          }
-        - {
-            id: '33',
-            os: macos-11,
-            build_type: "Release",
-            cc: "clang",
-            cxx: "clang++",
-            cmake_generator: "Unix Makefiles",
-            cmake_initial_cache_file: ".ci/initial-cache.gh.macos.cmake",
-          }
-        - {
-            id: '34',
-            os: macos-11,
             build_type: "Release",
             cc: "clang",
             cxx: "clang++",
