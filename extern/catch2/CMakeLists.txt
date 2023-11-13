@@ -3,6 +3,11 @@
 
 project(YARP_catch2)
 
+if(MSVC)
+  #This is required because of https://github.com/catchorg/Catch2/issues/2174
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /Zc:hiddenFriend")
+endif(MSVC)
+
 add_library(YARP_catch2 STATIC)
 add_library(YARP::YARP_catch2 ALIAS YARP_catch2)
 
