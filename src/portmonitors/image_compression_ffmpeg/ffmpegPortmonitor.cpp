@@ -609,7 +609,7 @@ int FfmpegMonitorObject::decompress(AVPacket* pkt, int w, int h, int pixelCode) 
 
 }
 
-bool FfmpegMonitorObject::getParamsFromCommandLine(std::string carrierString, AVCodec*& codecOut, AVPixelFormat& pixelFormatOut) {
+bool FfmpegMonitorObject::getParamsFromCommandLine(std::string carrierString, const AVCodec*& codecOut, AVPixelFormat& pixelFormatOut) {
 
     std::vector<std::string> parameters;
     // Split command line string using '+' delimiter
