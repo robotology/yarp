@@ -191,11 +191,14 @@ private:
         return !flag.test_and_set();                           \
     }
 
+//The mutex definition was initially placed inside the lambda function below.
+//It was moved outside because it seems that the destruction of the
+//static mutex leads to a segfault on Windows platform when executing CI (LogTest.cpp).
+static  std::mutex mutex_throttle_callback;
 #define YARP_THROTTLE_CALLBACK(period)                   \
     [](){                                                \
         static double last = -period;                    \
-        static std::mutex mutex;                         \
-        std::lock_guard<std::mutex> lock(mutex);         \
+        std::lock_guard<std::mutex> lock(mutex_throttle_callback);\
         double now = yarp::os::SystemClock::nowSystem(); \
         if (now >= last + period) {                      \
             last = now;                                  \
