@@ -171,11 +171,6 @@ jobs:
       matrix:
         config:
         - {
-            cmake_version: "3.16.*",
-            cmake_generator: "Unix Makefiles",
-            ycm_version: "0.15.3",
-          }
-        - {
             cmake_version: "3.17.*",
             cmake_generator: "Unix Makefiles",
             ycm_version: "0.15.3",
@@ -699,9 +694,12 @@ jobs:
       if: runner.os == 'Linux'
       shell: bash
       run: |
+          sudo apt-get update
+
           # Install Robotology dependencies from robotology ppa
           sudo apt-add-repository -y ppa:robotology/ppa
           sudo apt-get install -qq -y librobottestingframework-dev
+          sudo apt-get update
 
           # Install cmake
           sudo apt-get install -qq -y cmake
@@ -718,7 +716,7 @@ jobs:
                                       ninja-build \
                                       valgrind
 
-          sudo apt-get install -y     libace-dev \
+          sudo apt-get install -y     libace-dev
 
           sudo apt-get install -qq -y libsqlite3-dev \
                                       libtinyxml-dev \
