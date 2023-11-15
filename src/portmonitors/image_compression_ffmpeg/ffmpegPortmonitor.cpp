@@ -24,6 +24,7 @@
 #include <algorithm>
 #include <iostream>
 #include <sstream>
+#include <mutex>
 
 // Ffmpeg imports
 extern "C" {
@@ -63,6 +64,12 @@ void split(const std::string &s, char delim, std::vector<std::string> &elements)
         elements.push_back(item);
     }
 }
+
+// As per version 5.1.2 of ffmpeg, there seem to be race conditions between sws_scale and
+// sws_freeContext even when called from different instances on different threads.
+// We use a static mutex to prevent segmentation faults when connecting two port monitors
+// to the same sender.
+static std::mutex instances_mutex;
 
 bool FfmpegMonitorObject::create(const yarp::os::Property& options)
 {
@@ -393,90 +400,94 @@ int FfmpegMonitorObject::compress(Image* img, AVPacket *pkt) {
     endFrame->width = w;
     endFrame->format = pixelFormat;
 
-    // Convert the image from start format into end format
-    static struct SwsContext *img_convert_ctx;
+    {
+        // Convert the image from start format into end format
+        std::lock_guard<std::mutex> lock(instances_mutex);
+        static struct SwsContext *img_convert_ctx;
 
-    // Allocate context for conversion
-    img_convert_ctx = sws_getContext(w, h,
-                                        (AVPixelFormat) FFMPEGPORTMONITOR_PIXELMAP[img->getPixelCode()],
-                                        w, h,
-                                        pixelFormat,
-                                        SWS_BICUBIC,
-                                        NULL, NULL, NULL);
-    if (img_convert_ctx == NULL) {
-        yCError(FFMPEGMONITOR, "Cannot initialize pixel format conversion context!");
-        av_freep(&endFrame->data[0]);
-        av_frame_free(&startFrame);
-        av_frame_free(&endFrame);
-        return -1;
-    }
+        // Allocate context for conversion
+        img_convert_ctx = sws_getContext(w, h,
+                                         (AVPixelFormat) FFMPEGPORTMONITOR_PIXELMAP[img->getPixelCode()],
+                w, h,
+                pixelFormat,
+                SWS_BICUBIC,
+                NULL, NULL, NULL);
+        if (img_convert_ctx == NULL) {
+            yCError(FFMPEGMONITOR, "Cannot initialize pixel format conversion context!");
+            av_freep(&endFrame->data[0]);
+            av_frame_free(&startFrame);
+            av_frame_free(&endFrame);
+            return -1;
+        }
 
-    // Perform conversion
-    int ret = sws_scale(img_convert_ctx, startFrame->data, startFrame->linesize, 0,
-                        h, endFrame->data, endFrame->linesize);
+        // Perform conversion
+        int ret = sws_scale(img_convert_ctx, startFrame->data, startFrame->linesize, 0,
+                            h, endFrame->data, endFrame->linesize);
 
-    if (ret < 0) {
-        yCError(FFMPEGMONITOR, "Could not convert pixel format!");
-        sws_freeContext(img_convert_ctx);
-        av_freep(&endFrame->data[0]);
-        av_frame_free(&startFrame);
-        av_frame_free(&endFrame);
-        return -1;
-    }
-
-    if (firstTime) {
-        // If this is the first compression
-
-        // Set codec context parameters
-        codecContext->width = w;
-        codecContext->height = h;
-        codecContext->pix_fmt = pixelFormat;
-
-        // Open codec
-        ret = avcodec_open2(codecContext, codec, NULL);
         if (ret < 0) {
-            yCError(FFMPEGMONITOR, "Could not open codec");
+            yCError(FFMPEGMONITOR, "Could not convert pixel format!");
             sws_freeContext(img_convert_ctx);
             av_freep(&endFrame->data[0]);
             av_frame_free(&startFrame);
             av_frame_free(&endFrame);
             return -1;
         }
-        firstTime = false;
-    }
 
-    // Set presentation timestamp
-    endFrame->pts = codecContext->frame_number;
+        if (firstTime) {
+            // If this is the first compression
 
-    // Send image frame to codec
-    ret = avcodec_send_frame(codecContext, endFrame);
-    if (ret < 0) {
-        yCError(FFMPEGMONITOR, "Error sending a frame for encoding");
+            // Set codec context parameters
+            codecContext->width = w;
+            codecContext->height = h;
+            codecContext->pix_fmt = pixelFormat;
+
+            // Open codec
+            ret = avcodec_open2(codecContext, codec, NULL);
+            if (ret < 0) {
+                yCError(FFMPEGMONITOR, "Could not open codec");
+                sws_freeContext(img_convert_ctx);
+                av_freep(&endFrame->data[0]);
+                av_frame_free(&startFrame);
+                av_frame_free(&endFrame);
+                return -1;
+            }
+            firstTime = false;
+        }
+
+        // Set presentation timestamp
+        endFrame->pts = codecContext->frame_number;
+
+        // Send image frame to codec
+        ret = avcodec_send_frame(codecContext, endFrame);
+        if (ret < 0) {
+            yCError(FFMPEGMONITOR, "Error sending a frame for encoding");
+            sws_freeContext(img_convert_ctx);
+            av_freep(&endFrame->data[0]);
+            av_frame_free(&startFrame);
+            av_frame_free(&endFrame);
+            return -1;
+        }
+
+        // Receive compressed data into packet
+        ret = avcodec_receive_packet(codecContext, pkt);
         sws_freeContext(img_convert_ctx);
         av_freep(&endFrame->data[0]);
         av_frame_free(&startFrame);
         av_frame_free(&endFrame);
-        return -1;
-    }
 
-    // Receive compressed data into packet
-    ret = avcodec_receive_packet(codecContext, pkt);
-    sws_freeContext(img_convert_ctx);
-    av_freep(&endFrame->data[0]);
-    av_frame_free(&startFrame);
-    av_frame_free(&endFrame);
 
-    if (ret == AVERROR(EAGAIN)) {
-        // Not enough data
-        yCError(FFMPEGMONITOR, "Error EAGAIN");
-        return -1;
-    } else if (ret == AVERROR_EOF) {
-        // End of file reached
-        yCError(FFMPEGMONITOR, "Error EOF");
-        return -1;
-    } else if (ret < 0) {
-        yCError(FFMPEGMONITOR, "Error during encoding");
-        return -1;
+        if (ret == AVERROR(EAGAIN)) {
+            // Not enough data
+            yCError(FFMPEGMONITOR, "Error EAGAIN");
+            return -1;
+        } else if (ret == AVERROR_EOF) {
+            // End of file reached
+            yCError(FFMPEGMONITOR, "Error EOF");
+            return -1;
+        } else if (ret < 0) {
+            yCError(FFMPEGMONITOR, "Error during encoding");
+            return -1;
+        }
     }
 
     return 0;
