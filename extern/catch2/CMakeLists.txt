@@ -6,6 +6,16 @@ project(YARP_catch2)
 add_library(YARP_catch2 STATIC)
 add_library(YARP::YARP_catch2 ALIAS YARP_catch2)
 
+if(MSVC)
+    #This is required because of https://github.com/catchorg/Catch2/issues/2174
+    if(CMAKE_GENERATOR MATCHES "Visual Studio")
+      target_compile_options(YARP_catch2 PRIVATE "/Zc:hiddenFriend-")
+    endif()
+    if(CMAKE_GENERATOR MATCHES "Ninja")
+      target_compile_options(YARP_catch2 PRIVATE "/Zc:hiddenFriend-")
+    endif()
+endif(MSVC)
+
 set(YARP_catch2_SRCS
   catch2/catch_amalgamated.cpp
 )

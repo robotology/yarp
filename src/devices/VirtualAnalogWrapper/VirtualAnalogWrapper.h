@@ -43,7 +43,55 @@
 // TODO add IVirtualAnalogSensor interface to have Channels number and status??
 
 
-class AnalogSubDevice;
+class AnalogSubDevice
+{
+public:
+    AnalogSubDevice();
+    ~AnalogSubDevice();
+
+    bool attach(yarp::dev::PolyDriver* driver, const std::string& key);
+    void detach();
+
+    bool configure(int map0, int map1, const std::string& key);
+
+    bool isAttached() { return mIsAttached; }
+
+    void setTorque(int joint, double torque)
+    {
+        if (joint < mMap0 || mMap1 < joint) {
+            return;
+        }
+
+        mTorques[joint - mMap0] = torque;
+    }
+
+    void resetTorque()
+    {
+        mTorques.zero();
+    }
+
+    void flushTorques()
+    {
+        if (mpSensor) {
+            mpSensor->updateVirtualAnalogSensorMeasure(mTorques);
+        }
+    }
+
+    const std::string& getKey() { return mKey; }
+
+protected:
+    std::string mKey;
+
+    int mMap0, mMap1;
+
+    yarp::sig::Vector mTorques;
+
+    bool mIsConfigured;
+    bool mIsAttached;
+    double lastRecvMsg{ 0.0 };
+    yarp::dev::PolyDriver* mpDevice;
+    yarp::dev::IVirtualAnalogSensor* mpSensor;
+};
 
 /**
  *  @ingroup dev_impl_wrapper
@@ -68,7 +116,7 @@ public:
     VirtualAnalogWrapper& operator=(const VirtualAnalogWrapper&) = delete;
     VirtualAnalogWrapper& operator=(VirtualAnalogWrapper&&) = delete;
 
-    ~VirtualAnalogWrapper() override
+    ~VirtualAnalogWrapper()
     {
         close();
     }
@@ -105,57 +153,5 @@ protected:
     std::vector<AnalogSubDevice> mSubdevices;
     yarp::os::BufferedPort<yarp::os::Bottle> mPortInputTorques;
 };
-
-
-class AnalogSubDevice
-{
-public:
-    AnalogSubDevice();
-   ~AnalogSubDevice();
-
-    bool attach(yarp::dev::PolyDriver *driver, const std::string &key);
-    void detach();
-
-    bool configure(int map0, int map1, const std::string &key);
-
-    bool isAttached(){ return mIsAttached; }
-
-    void setTorque(int joint,double torque)
-    {
-        if (joint < mMap0 || mMap1 < joint) {
-            return;
-        }
-
-        mTorques[joint-mMap0]=torque;
-    }
-
-    void resetTorque()
-    {
-        mTorques.zero();
-    }
-
-    void flushTorques()
-    {
-        if (mpSensor) {
-            mpSensor->updateVirtualAnalogSensorMeasure(mTorques);
-        }
-    }
-
-    const std::string& getKey(){ return mKey; }
-
-protected:
-    std::string mKey;
-
-    int mMap0,mMap1;
-
-    yarp::sig::Vector mTorques;
-
-    bool mIsConfigured;
-    bool mIsAttached;
-    double lastRecvMsg{0.0};
-    yarp::dev::PolyDriver            *mpDevice;
-    yarp::dev::IVirtualAnalogSensor  *mpSensor;
-};
-
 
 #endif // YARP_DEV_VIRTUALANALOGWRAPPER_VIRTUALANALOGWRAPPER_H
