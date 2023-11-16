@@ -105,7 +105,7 @@ void FakeMotionControl::run()
 
 static inline bool NOT_YET_IMPLEMENTED(const char *txt)
 {
-    yCError(FAKEMOTIONCONTROL) << txt << "is not yet implemented for FakeMotionControl";
+    yCDebug(FAKEMOTIONCONTROL) << txt << "is not yet implemented for FakeMotionControl";
     return true;
 }
 
@@ -1928,9 +1928,7 @@ bool FakeMotionControl::calibrateAxisWithParamsRaw(int j, unsigned int type, dou
 
 bool FakeMotionControl::calibrationDoneRaw(int axis)
 {
-    bool result = false;
-
-    return result;
+    return NOT_YET_IMPLEMENTED("calibrationDoneRaw");
 }
 
 ////////////////////////////////////////
@@ -2316,11 +2314,6 @@ bool FakeMotionControl::getControlModesRaw(const int n_joint, const int *joints,
     return ret;
 }
 
-
-
-// marco.accame: con alberto cardellino abbiamo parlato della correttezza di effettuare la verifica di quanto imposto (in setControlModeRaw() ed affini)
-// andando a rileggere il valore nella scheda eth fino a che esso non sia quello atteso. si deve fare oppure no?
-// con il control mode il can ora lo fa ma e' giusto? era cosi' anche in passato?
 bool FakeMotionControl::setControlModeRaw(const int j, const int _mode)
 {
     if (verbose >= VERY_VERBOSE) {
@@ -2705,68 +2698,72 @@ bool FakeMotionControl::getLimitsRaw(int j, double *min, double *max)
 
 bool FakeMotionControl::getGearboxRatioRaw(int j, double *gearbox)
 {
-    return true;
+    return NOT_YET_IMPLEMENTED("getGearboxRatioRaw");
+}
+
+bool FakeMotionControl::setGearboxRatioRaw(int m, const double val)
+{
+    return NOT_YET_IMPLEMENTED("setGearboxRatioRaw");
 }
 
 bool FakeMotionControl::getTorqueControlFilterType(int j, int& type)
 {
-    return true;
+    return NOT_YET_IMPLEMENTED("getTorqueControlFilterType");
 }
 
 bool FakeMotionControl::getRotorEncoderResolutionRaw(int j, double &rotres)
 {
-    return true;
+    return NOT_YET_IMPLEMENTED("getRotorEncoderResolutionRaw");
 }
 
 bool FakeMotionControl::getJointEncoderResolutionRaw(int j, double &jntres)
 {
-    return true;
+    return NOT_YET_IMPLEMENTED("getJointEncoderResolutionRaw");
 }
 
 bool FakeMotionControl::getJointEncoderTypeRaw(int j, int &type)
 {
-    return true;
+    return NOT_YET_IMPLEMENTED("getJointEncoderTypeRaw");
 }
 
 bool FakeMotionControl::getRotorEncoderTypeRaw(int j, int &type)
 {
-    return true;
+    return NOT_YET_IMPLEMENTED("getRotorEncoderTypeRaw");
 }
 
 bool FakeMotionControl::getKinematicMJRaw(int j, double &rotres)
 {
-    yCError(FAKEMOTIONCONTROL, "getKinematicMJRaw not yet  implemented");
-    return false;
+    return NOT_YET_IMPLEMENTED("getKinematicMJRaw");
 }
 
 bool FakeMotionControl::getHasTempSensorsRaw(int j, int& ret)
 {
-    return true;
+    return NOT_YET_IMPLEMENTED("getHasTempSensorsRaw");
 }
 
 bool FakeMotionControl::getHasHallSensorRaw(int j, int& ret)
 {
-    return true;
+    return NOT_YET_IMPLEMENTED("getHasHallSensorRaw");
 }
 
 bool FakeMotionControl::getHasRotorEncoderRaw(int j, int& ret)
 {
-    return true;
+    return NOT_YET_IMPLEMENTED("getHasRotorEncoderRaw");
 }
 
 bool FakeMotionControl::getHasRotorEncoderIndexRaw(int j, int& ret)
 {
-    return true;
+    return NOT_YET_IMPLEMENTED("getHasRotorEncoderIndexRaw");
 }
 
 bool FakeMotionControl::getMotorPolesRaw(int j, int& poles)
 {
-    return true;
+    return NOT_YET_IMPLEMENTED("getMotorPolesRaw");
 }
 
 bool FakeMotionControl::getRotorIndexOffsetRaw(int j, double& rotorOffset)
 {
-    return true;
+    return NOT_YET_IMPLEMENTED("getRotorIndexOffsetRaw");
 }
 
 bool FakeMotionControl::getAxisNameRaw(int axis, std::string& name)
@@ -2863,7 +2860,7 @@ bool FakeMotionControl::setRefTorqueRaw(int j, double t)
 
 bool FakeMotionControl::setRefTorquesRaw(const int n_joint, const int *joints, const double *t)
 {
-    return false;
+    return NOT_YET_IMPLEMENTED("setRefTorquesRaw");
 }
 
 bool FakeMotionControl::getRefTorquesRaw(double *t)
@@ -2885,27 +2882,27 @@ bool FakeMotionControl::getRefTorqueRaw(int j, double *t)
 
 bool FakeMotionControl::getImpedanceRaw(int j, double *stiffness, double *damping)
 {
-    return false;
+    return NOT_YET_IMPLEMENTED("getImpedanceRaw");
 }
 
 bool FakeMotionControl::setImpedanceRaw(int j, double stiffness, double damping)
 {
-    return false;
+    return NOT_YET_IMPLEMENTED("setImpedanceRaw");
 }
 
 bool FakeMotionControl::setImpedanceOffsetRaw(int j, double offset)
 {
-    return false;
+    return NOT_YET_IMPLEMENTED("setImpedanceOffsetRaw");
 }
 
 bool FakeMotionControl::getImpedanceOffsetRaw(int j, double *offset)
 {
-    return false;
+    return NOT_YET_IMPLEMENTED("getImpedanceOffsetRaw");
 }
 
 bool FakeMotionControl::getCurrentImpedanceLimitRaw(int j, double *min_stiff, double *max_stiff, double *min_damp, double *max_damp)
 {
-    return false;
+    return NOT_YET_IMPLEMENTED("getCurrentImpedanceLimitRaw");
 }
 
 bool FakeMotionControl::getMotorTorqueParamsRaw(int j, MotorTorqueParameters *params)
@@ -3168,7 +3165,7 @@ bool FakeMotionControl::getNumberOfMotorsRaw(int* num)
 
 bool FakeMotionControl::getTemperatureRaw(int m, double* val)
 {
-    return false;
+    return NOT_YET_IMPLEMENTED("getTemperatureRaw");
 }
 
 bool FakeMotionControl::getTemperaturesRaw(double *vals)
@@ -3183,12 +3180,12 @@ bool FakeMotionControl::getTemperaturesRaw(double *vals)
 
 bool FakeMotionControl::getTemperatureLimitRaw(int m, double *temp)
 {
-    return false;
+    return NOT_YET_IMPLEMENTED("getTemperatureLimitRaw");
 }
 
 bool FakeMotionControl::setTemperatureLimitRaw(int m, const double temp)
 {
-    return false;
+    return NOT_YET_IMPLEMENTED("setTemperatureLimitRaw");
 }
 
 //PWM interface
@@ -3311,11 +3308,6 @@ bool FakeMotionControl::getRefCurrentRaw(int j, double *t)
     *t = _ref_currents[j];
     return true;
 }
-
-// bool FakeMotionControl::checkRemoteControlModeStatus(int joint, int target_mode)
-// {
-//     return false;
-// }
 
 yarp::dev::VAS_status  FakeMotionControl::getVirtualAnalogSensorStatusRaw(int ch)
 {

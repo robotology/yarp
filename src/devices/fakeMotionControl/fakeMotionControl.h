@@ -391,7 +391,6 @@ public:
     ///////////////////////// END IAxisInfo Interface
 
     //Internal use, not exposed by YARP (yet)
-    bool getGearboxRatioRaw(int m, double *gearbox) override;
     virtual bool getRotorEncoderResolutionRaw(int m, double &rotres);
     virtual bool getJointEncoderResolutionRaw(int m, double &jntres);
     virtual bool getJointEncoderTypeRaw(int j, int &type);
@@ -480,6 +479,8 @@ public:
     bool getTemperaturesRaw(double *vals) override;
     bool getTemperatureLimitRaw(int m, double *temp) override;
     bool setTemperatureLimitRaw(int m, const double temp) override;
+    bool getGearboxRatioRaw(int m, double* gearbox) override;
+    bool setGearboxRatioRaw(int m, const double val) override;
 
     // PWM interface
     bool setRefDutyCycleRaw(int j, double v) override;
