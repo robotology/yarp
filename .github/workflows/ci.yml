@@ -2007,7 +2007,14 @@ jobs:
             -Dsonar.coverageReportPaths=build/coverage.xml \
             -Dsonar.junit.reportPaths=build/JUnitTestResults.xml \
             -Dsonar.exclusions="src/yarp*/**/* src/carriers/**/* src/devices/**/* src/idls/**/* src/libyarp*/**/* src/robottestingframework-plugins/**/* tests/**/*" \
-            -Dsonar.coverage.exclusions="src/yarp*/**/* src/carriers/**/* src/devices/**/* src/idls/**/* src/libyarp*/**/* src/robottestingframework-plugins/**/*" \
+            -Dsonar.coverage.exclusions="\
+                 src/devices/*/tests/*,\
+                 src/carriers/*/tests/*,\
+                 src/portmonitors/*/tests/*,\
+                 tests/**/*,\
+                 src/yarp*/**/*,\
+                 robottestingframework-plugins/**/*\
+                 " \
             -Dsonar.branch.longLivedBranches.regex="^(master|yarp-.+)$" \
             ${SONAR_TESTS_CMD_ARG} \
             ${SONAR_PROJECT_NAME_CMD_ARG} \
