@@ -696,6 +696,9 @@ jobs:
       run: |
           sudo apt-get update
 
+          sudo apt-get install        libunwind-dev
+
+
           # Install Robotology dependencies from robotology ppa
           sudo apt-add-repository -y ppa:robotology/ppa
           sudo apt-get install -qq -y librobottestingframework-dev
@@ -718,7 +721,7 @@ jobs:
 
           sudo apt-get install -y     libace-dev
 
-          sudo apt-get install -qq -y libsqlite3-dev \
+          sudo apt-get install -y     libsqlite3-dev \
                                       libtinyxml-dev \
                                       libedit-dev \
                                       qtbase5-dev \
@@ -729,8 +732,6 @@ jobs:
                                       libopencv-dev \
                                       libeigen3-dev \
                                       libgraphviz-dev \
-                                      libgstreamer1.0-dev \
-                                      libgstreamer-plugins-base1.0-dev \
                                       libpng-dev \
                                       libv4l-dev \
                                       libavcodec-dev \
@@ -745,6 +746,9 @@ jobs:
                                       libjpeg-dev \
                                       libpcl-dev \
                                       libsoxr-dev
+
+          sudo apt-get install -y     libgstreamer1.0-dev \
+                                      libgstreamer-plugins-base1.0-dev
 
           # Install SWIG and bindings dependencies
           sudo apt-get install -qq -y swig \
@@ -1381,6 +1385,8 @@ jobs:
       if: runner.os == 'Linux'
       shell: bash
       run: |
+          sudo apt-get install        libunwind-dev
+
           # Install Robotology dependencies from robotology ppa
           sudo apt-add-repository -y ppa:robotology/ppa
           sudo apt-get install -qq -y librobottestingframework-dev
@@ -1414,8 +1420,6 @@ jobs:
                                       libopencv-dev \
                                       libeigen3-dev \
                                       libgraphviz-dev \
-                                      libgstreamer1.0-dev \
-                                      libgstreamer-plugins-base1.0-dev \
                                       libpng-dev \
                                       libv4l-dev \
                                       libavcodec-dev \
@@ -1429,6 +1433,9 @@ jobs:
                                       libi2c-dev \
                                       libjpeg-dev \
                                       libpcl-dev
+
+          sudo apt-get install -y     libgstreamer1.0-dev \
+                                      libgstreamer-plugins-base1.0-dev
 
           # Install SWIG and bindings dependencies
           sudo apt-get install -qq -y swig \
