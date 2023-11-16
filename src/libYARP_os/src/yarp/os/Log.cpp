@@ -928,7 +928,7 @@ yarp::os::Log::Log(const char* file,
                    const char* func,
                    const Predicate pred,
                    const LogComponent& comp) :
-        mPriv(new yarp::os::impl::LogPrivate(file, line, func, "", 0.0, pred, comp))
+        mPriv(std::make_unique<yarp::os::impl::LogPrivate>(file, line, func, "", 0.0, pred, comp))
 {
 }
 
@@ -939,7 +939,7 @@ yarp::os::Log::Log(const char* file,
                    std::string_view id,
                    const Predicate pred,
                    const LogComponent& comp) :
-        mPriv(new yarp::os::impl::LogPrivate(file, line, func, id.data(), 0.0, pred, comp))
+        mPriv(std::make_unique<yarp::os::impl::LogPrivate>(file, line, func, id.data(), 0.0, pred, comp))
 {
 }
 
@@ -950,7 +950,7 @@ yarp::os::Log::Log(const char* file,
                    const double externaltime,
                    const Predicate pred,
                    const LogComponent& comp) :
-        mPriv(new yarp::os::impl::LogPrivate(file, line, func, "", externaltime, pred, comp))
+        mPriv(std::make_unique<yarp::os::impl::LogPrivate>(file, line, func, "", externaltime, pred, comp))
 {
 }
 
@@ -963,18 +963,17 @@ yarp::os::Log::Log(const char* file,
                    const double externaltime,
                    const Predicate pred,
                    const LogComponent& comp) :
-        mPriv(new yarp::os::impl::LogPrivate(file, line, func, id.data(), externaltime, pred, comp))
+        mPriv(std::make_unique<yarp::os::impl::LogPrivate>(file, line, func, id.data(), externaltime, pred, comp))
 {
 }
 
 yarp::os::Log::Log() :
-        mPriv(new yarp::os::impl::LogPrivate(nullptr, 0, nullptr, nullptr, 0.0, nullptr, nullptr))
+        mPriv(std::make_unique<yarp::os::impl::LogPrivate>(nullptr, 0, nullptr, nullptr, 0.0, nullptr, nullptr))
 {
 }
 
 yarp::os::Log::~Log()
 {
-    delete mPriv;
 }
 
 void yarp::os::Log::do_log(yarp::os::Log::LogType type,

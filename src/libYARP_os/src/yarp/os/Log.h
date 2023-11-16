@@ -11,6 +11,7 @@
 #include <cstdint>
 #include <iosfwd>
 #include <mutex>
+#include <memory>
 #include <string_view>
 
 #if defined(__GNUC__)
@@ -158,7 +159,7 @@ public:
     static NoLog nolog() { return NoLog(); }
 
 private:
-    yarp::os::impl::LogPrivate* const mPriv;
+    std::unique_ptr<yarp::os::impl::LogPrivate> const mPriv;
 
     friend class yarp::os::LogStream;
 
