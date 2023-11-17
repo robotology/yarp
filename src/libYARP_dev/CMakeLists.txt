@@ -11,11 +11,6 @@ yarp_install_basic_package_files(YARP_dev
   PRIVATE_DEPENDENCIES ${YARP_dev_PRIVATE_DEPS}
 )
 
-yarp_install_basic_package_files(YARP_dev_tests
-  DEPENDENCIES ${YARP_dev_tests_PUBLIC_DEPS}
-  PRIVATE_DEPENDENCIES ${YARP_dev_tests_PRIVATE_DEPS}
-)
-
 if(YARP_COMPILE_TESTS)
   add_subdirectory(tests)
 endif()

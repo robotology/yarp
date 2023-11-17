@@ -9,8 +9,10 @@ set(CMAKE_C_FLAGS "-w ${_USER_CMAKE_C_FLAGS}")
 set(CMAKE_CXX_FLAGS "-w ${_USER_CMAKE_CXX_FLAGS}")
 
 # Catch2
+if(YARP_COMPILE_TESTS)
   add_subdirectory(catch2)
-  
+endif()
+
 # TinyXML
 if(YARP_BUILD_TinyXML)
   add_subdirectory(tinyxml)
