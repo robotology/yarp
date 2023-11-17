@@ -68,7 +68,7 @@ void split(const std::string &s, char delim, std::vector<std::string> &elements)
 // As per version 5.1.2 of ffmpeg, there seem to be race conditions between sws_scale and
 // sws_freeContext even when called from different instances on different threads.
 // We use a static mutex to prevent segmentation faults when connecting two port monitors
-// to the same sender.
+// to the same sender or receiver.
 static std::mutex instances_mutex;
 
 bool FfmpegMonitorObject::create(const yarp::os::Property& options)
@@ -324,7 +324,6 @@ yarp::os::Things& FfmpegMonitorObject::update(yarp::os::Things& thing)
             // Call to decompress function
             if (success && decompress(packet, width, height, pixelCode) != 0) {
                 yCError(FFMPEGMONITOR, "Error in decompression");
-                success = false;
             }
 
             // Free memory allocated for side data and packet
@@ -401,8 +400,9 @@ int FfmpegMonitorObject::compress(Image* img, AVPacket *pkt) {
     endFrame->format = pixelFormat;
 
     {
-        // Convert the image from start format into end format
         std::lock_guard<std::mutex> lock(instances_mutex);
+
+        // Convert the image from start format into end format
         static struct SwsContext *img_convert_ctx;
 
         // Allocate context for conversion
@@ -576,45 +576,49 @@ int FfmpegMonitorObject::decompress(AVPacket* pkt, int w, int h, int pixelCode) 
     endFrame->width = w;
     endFrame->format = (AVPixelFormat) FFMPEGPORTMONITOR_PIXELMAP[pixelCode];
 
-    // Convert the image into RGB format
-    static struct SwsContext *img_convert_ctx;
+    {
+        std::lock_guard<std::mutex> lock(instances_mutex);
 
-    // Allocate conversion context
-    img_convert_ctx = sws_getContext(w, h,
-                                        pixelFormat,
-                                        w, h,
-                                        (AVPixelFormat) FFMPEGPORTMONITOR_PIXELMAP[pixelCode],
-                                        SWS_BICUBIC,
-                                        NULL, NULL, NULL);
-    if (img_convert_ctx == NULL) {
-        yCError(FFMPEGMONITOR, "Cannot initialize the pixel format conversion context!");
-        av_freep(&endFrame->data[0]);
-        av_frame_free(&endFrame);
-        av_frame_free(&startFrame);
-        return -1;
-    }
+        // Convert the image into RGB format
+        static struct SwsContext *img_convert_ctx;
 
-    // Perform conversion
-    ret = sws_scale(img_convert_ctx, startFrame->data, startFrame->linesize, 0,
+        // Allocate conversion context
+        img_convert_ctx = sws_getContext(w, h,
+                                         pixelFormat,
+                                         w, h,
+                                         (AVPixelFormat) FFMPEGPORTMONITOR_PIXELMAP[pixelCode],
+                                         SWS_BICUBIC,
+                                         NULL, NULL, NULL);
+        if (img_convert_ctx == NULL) {
+            yCError(FFMPEGMONITOR, "Cannot initialize the pixel format conversion context!");
+            av_freep(&endFrame->data[0]);
+            av_frame_free(&endFrame);
+            av_frame_free(&startFrame);
+            return -1;
+        }
+
+        // Perform conversion
+        ret = sws_scale(img_convert_ctx, startFrame->data, startFrame->linesize, 0,
                         h, endFrame->data, endFrame->linesize);
 
-    if (ret < 0) {
-        yCError(FFMPEGMONITOR, "Could not convert pixel format!");
+        if (ret < 0) {
+            yCError(FFMPEGMONITOR, "Could not convert pixel format!");
+            av_freep(&endFrame->data[0]);
+            av_frame_free(&endFrame);
+            av_frame_free(&startFrame);
+            sws_freeContext(img_convert_ctx);
+            return -1;
+        }
+
+        // Copy decompressed data from end frame to imageOut
+        memcpy(imageOut.getRawImage(), endFrame->data[0], success);
+
+        // Free allocated memory
         av_freep(&endFrame->data[0]);
         av_frame_free(&endFrame);
         av_frame_free(&startFrame);
         sws_freeContext(img_convert_ctx);
-        return -1;
     }
-
-    // Copy decompressed data from end frame to imageOut
-    memcpy(imageOut.getRawImage(), endFrame->data[0], success);
-
-    // Free allocated memory
-    av_freep(&endFrame->data[0]);
-    av_frame_free(&endFrame);
-    av_frame_free(&startFrame);
-    sws_freeContext(img_convert_ctx);
 
     return 0;
 
