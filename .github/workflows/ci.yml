@@ -694,10 +694,9 @@ jobs:
       if: runner.os == 'Linux'
       shell: bash
       run: |
+          # Install dep for gstreamer. It must be the first one.
           sudo apt-get update
-
-          sudo apt-get install        libunwind-dev
-
+          sudo apt-get install -y      libunwind-dev
 
           # Install Robotology dependencies from robotology ppa
           sudo apt-add-repository -y ppa:robotology/ppa
@@ -1385,7 +1384,9 @@ jobs:
       if: runner.os == 'Linux'
       shell: bash
       run: |
-          sudo apt-get install        libunwind-dev
+          # Install dep for gstreamer. It must be the first one.
+          sudo apt-get update
+          sudo apt-get install -y      libunwind-dev
 
           # Install Robotology dependencies from robotology ppa
           sudo apt-add-repository -y ppa:robotology/ppa
@@ -1576,6 +1577,10 @@ jobs:
       if: runner.os == 'Linux'
       shell: bash
       run: |
+          # Install dep for gstreamer. It must be the first one.
+          sudo apt-get update
+          sudo apt-get install -y      libunwind-dev
+
           # Install Robotology dependencies from robotology ppa
           sudo apt-add-repository -y ppa:robotology/ppa
           sudo apt-get install -qq -y librobottestingframework-dev
@@ -1784,6 +1789,10 @@ jobs:
       if: runner.os == 'Linux'
       shell: bash
       run: |
+          # Install dep for gstreamer. It must be the first one.
+          sudo apt-get update
+          sudo apt-get install -y      libunwind-dev
+
           # Install Robotology dependencies from robotology ppa
           sudo apt-add-repository -y ppa:robotology/ppa
           sudo apt-get install -qq -y librobottestingframework-dev
