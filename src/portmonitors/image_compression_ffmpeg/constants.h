@@ -76,6 +76,12 @@ static const std::string FFMPEGPORTMONITOR_CL_CUSTOM_DEC_KEY = "custom_dec";
 static const std::string FFMPEGPORTMONITOR_CL_PIXEL_FORMAT_KEY = "pixel_format";
 
 /**
+ * @brief This string is the "key" value for the frame rate parameter
+ *
+ */
+static const std::string FFMPEGPORTMONITOR_CL_FRAME_RATE_KEY = "frame_rate";
+
+/**
  * @brief This vector contains the codec ids corresponding to the codecs of the FFMPEGPORTMONITOR_CL_CODECS vector.
  *
  */

@@ -96,7 +96,7 @@ class FfmpegMonitorObject : public yarp::os::MonitorObject
          * @param codecId       The codec for video compression / decompression.
          * @return int          0 on success, -1 otherwise.
          */
-        bool getParamsFromCommandLine(std::string carrierString, const AVCodec *&codecOut, AVPixelFormat &pixelFormatOut);
+        bool getParamsFromCommandLine(std::string carrierString, const AVCodec *&codecOut, AVPixelFormat &pixelFormatOut, int &frameRate);
 
         /**
          * @brief This function iterates over the attribute paramsMap and sets all the specified parameters into the attribute codecContext.

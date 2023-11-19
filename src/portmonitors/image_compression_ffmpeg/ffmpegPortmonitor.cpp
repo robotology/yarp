@@ -78,7 +78,8 @@ bool FfmpegMonitorObject::create(const yarp::os::Property& options)
 
     // Parse command line parameters and set them into global variable "paramsMap"
     std::string str = options.find("carrier").asString();
-    if (!getParamsFromCommandLine(str, codec, pixelFormat)) {
+    int frameRate = 15;
+    if (!getParamsFromCommandLine(str, codec, pixelFormat, frameRate)) {
         return false;
     }
 
@@ -153,7 +154,7 @@ bool FfmpegMonitorObject::create(const yarp::os::Property& options)
 
     // Set time base parameter
     codecContext->time_base.num = 1;
-    codecContext->time_base.den = 15;
+    codecContext->time_base.den = frameRate;
     // Set command line params
     if (setCommandLineParams() == -1) {
         return false;
@@ -526,7 +527,7 @@ int FfmpegMonitorObject::decompress(AVPacket* pkt, int w, int h, int pixelCode) 
     // Send compressed packet to codec
     int ret = avcodec_send_packet(codecContext, pkt);
     if (ret < 0) {
-        yCError(FFMPEGMONITOR, "Error sending a frame for encoding");
+        yCError(FFMPEGMONITOR, "Error sending a frame for decoding");
         av_frame_free(&startFrame);
         return -1;
     }
@@ -546,7 +547,7 @@ int FfmpegMonitorObject::decompress(AVPacket* pkt, int w, int h, int pixelCode) 
         return -1;
     }
     else if (ret < 0) {
-        yCError(FFMPEGMONITOR, "Error during encoding");
+        yCError(FFMPEGMONITOR, "Error during decoding");
         av_frame_free(&startFrame);
         return -1;
     }
@@ -624,7 +625,7 @@ int FfmpegMonitorObject::decompress(AVPacket* pkt, int w, int h, int pixelCode) 
 
 }
 
-bool FfmpegMonitorObject::getParamsFromCommandLine(std::string carrierString, const AVCodec*& codecOut, AVPixelFormat& pixelFormatOut) {
+bool FfmpegMonitorObject::getParamsFromCommandLine(std::string carrierString, const AVCodec*& codecOut, AVPixelFormat& pixelFormatOut, int& frameRate) {
 
     std::vector<std::string> parameters;
     // Split command line string using '+' delimiter
@@ -762,6 +763,11 @@ bool FfmpegMonitorObject::getParamsFromCommandLine(std::string carrierString, co
         else if (paramKey == FFMPEGPORTMONITOR_CL_PIXEL_FORMAT_KEY)
         {
             pixelFormatOut = static_cast<AVPixelFormat>(std::atoi(paramValue.c_str()));
+            continue;  //avoid to add this parameter to paramsMap
+        }
+        else if (paramKey == FFMPEGPORTMONITOR_CL_FRAME_RATE_KEY)
+        {
+            frameRate = std::atoi(paramValue.c_str());
             continue;  //avoid to add this parameter to paramsMap
         }
 
