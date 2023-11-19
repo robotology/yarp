@@ -111,7 +111,6 @@ set_property(
   TARGET YARP_dev_tests
   PROPERTY
     PUBLIC_HEADER
-      ${YARP_dev_HDRS}
       ${YARP_dev_test_HDRS}
 )
 
