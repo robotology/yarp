@@ -639,8 +639,8 @@ jobs:
             id: '29',
             os: macos-13,
             build_type: "Release",
-            cc: "clang-17",
-            cxx: "clang++-17",
+            cc: "clang",
+            cxx: "clang++",
             cmake_generator: "Unix Makefiles",
             cmake_initial_cache_file: ".ci/initial-cache.gh.macos.cmake",
           }
@@ -648,8 +648,8 @@ jobs:
             id: '30',
             os: macos-13,
             build_type: "Release",
-            cc: "clang-17",
-            cxx: "clang++-17",
+            cc: "clang",
+            cxx: "clang++",
             cmake_generator: "Xcode",
             cmake_initial_cache_file: ".ci/initial-cache.gh.macos.cmake",
           }
@@ -657,8 +657,8 @@ jobs:
             id: '31',
             os: macos-12,
             build_type: "Release",
-            cc: "clang-17",
-            cxx: "clang++-17",
+            cc: "clang",
+            cxx: "clang++",
             cmake_generator: "Unix Makefiles",
             cmake_initial_cache_file: ".ci/initial-cache.gh.macos.cmake",
           }
@@ -666,8 +666,8 @@ jobs:
             id: '32',
             os: macos-12,
             build_type: "Release",
-            cc: "clang-17",
-            cxx: "clang++-17",
+            cc: "clang",
+            cxx: "clang++",
             cmake_generator: "Xcode",
             cmake_initial_cache_file: ".ci/initial-cache.gh.macos.cmake",
           }
