@@ -17,6 +17,7 @@
 #include "constants.h"
 // YARP imports
 #include <yarp/os/LogComponent.h>
+#include <yarp/os/Time.h>
 #include <yarp/sig/all.h>
 // Standard imports
 #include <cstring>
@@ -25,6 +26,7 @@
 #include <iostream>
 #include <sstream>
 #include <mutex>
+#include <iomanip>
 
 // Ffmpeg imports
 extern "C" {
@@ -75,6 +77,12 @@ bool FfmpegMonitorObject::create(const yarp::os::Property& options)
 {
     // Check if this is sender or not
     senderSide = (options.find("sender_side").asBool());
+    printStatistics = false;
+    previousFrameTime = yarp::os::Time::now();
+    bandwidthRunningAverage = 0.0;
+    lagRunningAverage = 0.0;
+    statisticsCounter = -1;
+    previousStatisticPrintTime = previousFrameTime;
 
     // Parse command line parameters and set them into global variable "paramsMap"
     std::string str = options.find("carrier").asString();
@@ -97,7 +105,7 @@ bool FfmpegMonitorObject::create(const yarp::os::Property& options)
 
     if (!codec->pix_fmts)
     {
-        yCWarning(FFMPEGMONITOR, "The specified codec (%s) has unknown available pixel format. There might be visualization issues.", codec->name);
+        yCWarning(FFMPEGMONITOR, "The specified codec (%s) has unknown available pixel formats. There might be visualization issues.", codec->name);
     }
     else
     {
@@ -214,8 +222,44 @@ bool FfmpegMonitorObject::accept(yarp::os::Things& thing)
     return true;
 }
 
+void FfmpegMonitorObject::updateStatistics(yarp::os::Bottle& inputBottle, double currentLag)
+{
+    double now = yarp::os::Time::now();
+    const double printInterval = 5.0;
+
+    if (statisticsCounter < 0)
+    {
+        previousFrameTime = now;
+        previousStatisticPrintTime = now;
+        statisticsCounter = 0;
+    }
+    else
+    {
+        size_t outputData{0};
+        inputBottle.toBinary(&outputData);
+        double dt = now - previousFrameTime;
+        double bandwidth = outputData * 8 / dt /1000;
+        int previousCounter = statisticsCounter;
+        statisticsCounter++;
+        bandwidthRunningAverage = (bandwidthRunningAverage * previousCounter + bandwidth) / statisticsCounter;
+        lagRunningAverage = (lagRunningAverage * previousCounter + currentLag) / statisticsCounter;
+
+    }
+    if (now - previousStatisticPrintTime > printInterval)
+    {
+        previousStatisticPrintTime = now;
+        statisticsCounter = 0;
+        std::stringstream bandwidthString, lagString;
+        bandwidthString << std::fixed << std::setprecision(2) << bandwidthRunningAverage;
+        lagString << std::fixed << std::setprecision(3) << lagRunningAverage * 1000;
+        yCInfo(FFMPEGMONITOR, "Statistics: current bandwidth %s kb/s, codec computational time %s ms",
+               bandwidthString.str().c_str(), lagString.str().c_str());
+    }
+}
+
 yarp::os::Things& FfmpegMonitorObject::update(yarp::os::Things& thing)
 {
+    double startTime = yarp::os::Time::now();
     if (senderSide) {
         bool success = true;
         yCTrace(FFMPEGMONITOR, "update - sender");
@@ -265,6 +309,12 @@ yarp::os::Things& FfmpegMonitorObject::update(yarp::os::Things& thing)
                 data.add(sd);
             }
         }
+
+        if (printStatistics)
+        {
+            updateStatistics(data, yarp::os::Time::now() - startTime);
+        }
+
         th.setPortWriter(&data);
         // Free the memory allocated for the packet
         av_packet_unref(packet);
@@ -327,11 +377,17 @@ yarp::os::Things& FfmpegMonitorObject::update(yarp::os::Things& thing)
                 yCError(FFMPEGMONITOR, "Error in decompression");
             }
 
+            if (printStatistics)
+            {
+                updateStatistics(*compressedBottle, yarp::os::Time::now() - startTime);
+            }
+
             // Free memory allocated for side data and packet
             av_freep(&packet->side_data);
             av_freep(&packet);
 
         }
+
         th.setPortWriter(&imageOut);
 
     }
@@ -768,6 +824,11 @@ bool FfmpegMonitorObject::getParamsFromCommandLine(std::string carrierString, co
         else if (paramKey == FFMPEGPORTMONITOR_CL_FRAME_RATE_KEY)
         {
             frameRate = std::atoi(paramValue.c_str());
+            continue;  //avoid to add this parameter to paramsMap
+        }
+        else if (paramKey == FFMPEGPORTMONITOR_CL_PRINT_STATISTICS_KEY)
+        {
+            printStatistics = std::atoi(paramValue.c_str());
             continue;  //avoid to add this parameter to paramsMap
         }
 

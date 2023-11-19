@@ -105,6 +105,11 @@ class FfmpegMonitorObject : public yarp::os::MonitorObject
          */
         int setCommandLineParams();
 
+        /**
+         * @brief Print some network statistics
+         */
+        void updateStatistics(yarp::os::Bottle &inputBottle, double currentLag);
+
     public:
         /**
          * @brief The object returned by the "update" function; it can be a yarp::os::Bottle (sender side) or a yarp::sig::Image (receiver side).
@@ -153,6 +158,37 @@ class FfmpegMonitorObject : public yarp::os::MonitorObject
          *
          */
         bool firstTime;
+
+        /**
+         * @brief Boolean variable used to check whether the bandwidth statistics should be printed
+         *
+         */
+        bool printStatistics;
+
+        /**
+         * @brief Seconds since epoch of the previous frame;
+         */
+        double previousFrameTime;
+
+        /**
+         * @brief Variable storing the current bandwidth average for statistics
+         */
+        double bandwidthRunningAverage;
+
+        /**
+         * @brief Variable storing the current lag for statistics
+         */
+        double lagRunningAverage;
+
+        /**
+         * @brief Utility counter for printing statistics
+         */
+        int statisticsCounter;
+
+        /**
+         * @brief Utility variable to store the time in which the last time the statistics have been printed.
+         */
+        double previousStatisticPrintTime;
 
         /**
          * @brief Structure that maps every parameter inserted from command line into its value (both as strings).
