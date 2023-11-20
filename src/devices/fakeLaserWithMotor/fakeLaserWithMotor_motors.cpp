@@ -121,7 +121,7 @@ bool FakeLaserWithMotor::relativeMoveRaw(int j, double delta)
         yCError(FAKE_LASER_MOTORS) << "relativeMoveRaw: skipping command because joint " << j << " is not in VOCAB_CM_POSITION mode";
     }
     _posCtrl_references[j] += delta;
-    return false;
+    return true;
 }
 
 bool FakeLaserWithMotor::relativeMoveRaw(const double* deltas)
@@ -138,7 +138,7 @@ bool FakeLaserWithMotor::relativeMoveRaw(const double* deltas)
 bool FakeLaserWithMotor::checkMotionDoneRaw(int j, bool* flag)
 {
     *flag = false;
-    return false;
+    return true;
 }
 
 bool FakeLaserWithMotor::checkMotionDoneRaw(bool* flag)
@@ -244,7 +244,7 @@ bool FakeLaserWithMotor::getRefAccelerationsRaw(double* accs)
 
 bool FakeLaserWithMotor::stopRaw(int j)
 {
-    return false;
+    return true;
 }
 
 bool FakeLaserWithMotor::stopRaw()

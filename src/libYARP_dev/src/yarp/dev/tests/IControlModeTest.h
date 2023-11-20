@@ -14,13 +14,15 @@
 using namespace yarp::dev;
 using namespace yarp::os;
 
+#define COMMAND_DELAY 1.0
+
 void test_single_joint(IControlMode* icmd, IAxisInfo* iinfo, int mode)
 {
     REQUIRE(icmd != nullptr);
     bool b = false;
     b = icmd->setControlMode(0, mode);
     CHECK(b);
-    yarp::os::SystemClock::delaySystem(0.1);
+    yarp::os::SystemClock::delaySystem(COMMAND_DELAY);
     int ret=0;
     b = icmd->getControlMode(0, &ret);
     CHECK(b);
@@ -42,7 +44,7 @@ void test_all_joints(IControlMode* icmd, IAxisInfo* iinfo, int mode)
     modes[1]=mode;
     b = icmd->setControlModes(modes);
     CHECK(b);
-    yarp::os::SystemClock::delaySystem(0.1);
+    yarp::os::SystemClock::delaySystem(COMMAND_DELAY);
     int rets[2] = {0,-0};
     b = icmd->getControlModes(rets);
     CHECK(b);
@@ -68,7 +70,7 @@ void test_multi_joint(IControlMode* icmd, IAxisInfo* iinfo, int mode)
     joints[1] = 1;
     b = icmd->setControlModes(2,joints,modes);
     CHECK(b);
-    yarp::os::SystemClock::delaySystem(0.1);
+    yarp::os::SystemClock::delaySystem(COMMAND_DELAY);
     int rets[2] = { 0,-0 };
     b = icmd->getControlModes(2,joints,rets);
     CHECK(b);
