@@ -25,7 +25,7 @@ namespace yarp::dev::tests
         int ax;
         b = itrq->getAxes(&ax);
         CHECK(b);
-        REQUIRE(ax > 0);
+        REQUIRE(ax == 2);
 
         for (size_t i = 0; i < ax; i++)
         {

@@ -26,7 +26,7 @@ namespace yarp::dev::tests
 
         b = ivel->getAxes(&ax);
         CHECK(b);
-        REQUIRE(ax > 0);
+        REQUIRE(ax == 2);
 
         for (size_t i = 0; i< ax; i++)
         {
