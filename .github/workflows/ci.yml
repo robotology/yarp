@@ -1508,11 +1508,11 @@ jobs:
       if: runner.os == 'Linux'
       shell: bash
       run: |
-          #Install clang 17
+          #Install clang 17. `all` option is required for clang-tidy
           sudo apt-get purge -y llvm* clang*
           wget -nv https://apt.llvm.org/llvm.sh
           sudo chmod +x llvm.sh
-          sudo ./llvm.sh 17
+          sudo ./llvm.sh 17 all
 
           # Download codacy-clang-tidy
           sudo wget https://github.com/codacy/codacy-clang-tidy/releases/download/${CODACY_CLANG_TIDY_VERSION}/codacy-clang-tidy-linux-${CODACY_CLANG_TIDY_VERSION} -O /usr/local/bin/codacy-clang-tidy-${CODACY_CLANG_TIDY_VERSION}
