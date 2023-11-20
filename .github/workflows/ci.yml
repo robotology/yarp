@@ -538,7 +538,13 @@ jobs:
                                   -DYARP_ENABLE_EXAMPLES_AS_TESTS:BOOL=OFF
                                   -DYARP_COMPILE_BINDINGS:BOOL=OFF
                                   -DCMAKE_DISABLE_FIND_PACKAGE_FFMPEG=ON
-                                  -DYARP_COMPILE_GUIS:BOOL=OFF",
+                                  -DYARP_COMPILE_GUIS:BOOL=OFF
+                                  -DENABLE_yarpmod_usbCamera:BOOL=OFF
+                                  -DENABLE_yarpmod_usbCameraRaw:BOOL=OFF
+                                  -DENABLE_yarpmod_portaudio:BOOL=OFF
+                                  -DENABLE_yarpmod_portaudioPlayer:BOOL=OFF
+                                  -DENABLE_yarpmod_portaudioRecorder:BOOL=OFF
+                                  -DENABLE_yarpmod_opencv_grabber:BOOL=OFF",
           }
         - {
             id: '22',
@@ -557,7 +563,13 @@ jobs:
                                   -DYARP_ENABLE_EXAMPLES_AS_TESTS:BOOL=OFF
                                   -DYARP_COMPILE_BINDINGS:BOOL=OFF
                                   -DCMAKE_DISABLE_FIND_PACKAGE_FFMPEG=ON
-                                  -DYARP_COMPILE_GUIS:BOOL=OFF",
+                                  -DYARP_COMPILE_GUIS:BOOL=OFF
+                                  -DENABLE_yarpmod_usbCamera:BOOL=OFF
+                                  -DENABLE_yarpmod_usbCameraRaw:BOOL=OFF
+                                  -DENABLE_yarpmod_portaudio:BOOL=OFF
+                                  -DENABLE_yarpmod_portaudioPlayer:BOOL=OFF
+                                  -DENABLE_yarpmod_portaudioRecorder:BOOL=OFF
+                                  -DENABLE_yarpmod_opencv_grabber:BOOL=OFF",
           }
         - {
             id: '23',
