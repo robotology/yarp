@@ -7,15 +7,31 @@
 #include <yarp/dev/IVelocityControl.h>
 #include <yarp/dev/ITorqueControl.h>
 #include <yarp/dev/IControlMode.h>
+#include <yarp/dev/IEncodersTimed.h>
 #include <yarp/dev/IAxisInfo.h>
+#include <yarp/dev/IInteractionMode.h>
+#include <yarp/dev/IMotorEncoders.h>
+#include <yarp/dev/IMotor.h>
+#include <yarp/dev/IPidControl.h>
+#include <yarp/dev/IPWMControl.h>
+#include <yarp/dev/ICurrentControl.h>
+#include <yarp/dev/IRemoteCalibrator.h>
 #include <yarp/os/Network.h>
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/WrapperSingle.h>
 #include <yarp/dev/tests/IPositionControlTest.h>
 #include <yarp/dev/tests/ITorqueControlTest.h>
-#include <yarp/dev/tests/IAxisInfoTest.h>
 #include <yarp/dev/tests/IEncodersTimedTest.h>
 #include <yarp/dev/tests/IVelocityControlTest.h>
+#include <yarp/dev/tests/IAxisInfoTest.h>
+#include <yarp/dev/tests/IControlModeTest.h>
+#include <yarp/dev/tests/IInteractionModeTest.h>
+#include <yarp/dev/tests/ICurrentControlTest.h>
+#include <yarp/dev/tests/IPWMControlTest.h>
+#include <yarp/dev/tests/IPidControlTest.h>
+#include <yarp/dev/tests/IMotorTest.h>
+#include <yarp/dev/tests/IMotorEncodersTest.h>
+#include <yarp/dev/tests/IRemoteCalibratorTest.h>
 
 #include <catch2/catch_amalgamated.hpp>
 #include <harness.h>
@@ -43,6 +59,13 @@ TEST_CASE("dev::RemoteControlBoardTest", "[yarp::dev]")
         IAxisInfo* iinfo = nullptr;
         IEncodersTimed* ienc = nullptr;
         IControlMode* icmd = nullptr;
+        IInteractionMode* iint = nullptr;
+        IMotor* imot = nullptr;
+        IMotorEncoders* imotenc = nullptr;
+        IPidControl* ipid = nullptr;
+        IPWMControl* ipwm = nullptr;
+        ICurrentControl* icurr = nullptr;
+        //IRemoteCalibrator* iremotecalib = nullptr;
 
         ////////"Checking opening fakeMotionControl and controlBoard_nws_yarp polydrivers"
         {
@@ -82,17 +105,33 @@ TEST_CASE("dev::RemoteControlBoardTest", "[yarp::dev]")
         yarp::os::Time::delay(0.1);
 
         //test
-        ddnwc.view(ipos);  REQUIRE(ipos);
-        ddnwc.view(ivel);  REQUIRE(ivel);
-        ddnwc.view(itrq);  REQUIRE(itrq);
-        ddnwc.view(iinfo); REQUIRE(iinfo);
-        ddnwc.view(ienc);  REQUIRE(ienc);
-        ddnwc.view(icmd);  REQUIRE(icmd);
+        ddnwc.view(ipos);    REQUIRE(ipos);
+        ddnwc.view(ivel);    REQUIRE(ivel);
+        ddnwc.view(itrq);    REQUIRE(itrq);
+        ddnwc.view(iinfo);   REQUIRE(iinfo);
+        ddnwc.view(ienc);    REQUIRE(ienc);
+        ddnwc.view(icmd);    REQUIRE(icmd);
+        ddnwc.view(iint);    REQUIRE(iint);
+        ddnwc.view(imot);    REQUIRE(imot);
+        ddnwc.view(imotenc); REQUIRE(imotenc);
+        ddnwc.view(ipid);    REQUIRE(ipid);
+        ddnwc.view(ipwm);    REQUIRE(ipwm);
+        ddnwc.view(icurr);   REQUIRE(icurr);
+        //ddnwc.view(icalib);  REQUIRE(iremotecalib);
+
         yarp::dev::tests::exec_iPositionControl_test_1(ipos,icmd);
         yarp::dev::tests::exec_iVelocityControl_test_1(ivel,icmd);
         yarp::dev::tests::exec_iTorqueControl_test_1(itrq,icmd);
         yarp::dev::tests::exec_iAxisInfo_test_1(iinfo);
         yarp::dev::tests::exec_iEncodersTimed_test_1(ienc);
+        yarp::dev::tests::exec_iControlMode_test_1(icmd, iinfo);
+        yarp::dev::tests::exec_iInteractionMode_test_1(iint);
+        yarp::dev::tests::exec_iMotor_test_1(imot);
+        yarp::dev::tests::exec_iMotorEncoders_test_1(imotenc);
+        yarp::dev::tests::exec_iPidControl_test_1(ipid);
+        yarp::dev::tests::exec_iPwmControl_test_1(ipwm,icmd);
+        yarp::dev::tests::exec_iCurrentControl_test_1(icurr,icmd);
+        //yarp::dev::tests::exec_iRemoteCalibrator_test_1(icalib);
 
         //"Close all polydrivers and check"
         {

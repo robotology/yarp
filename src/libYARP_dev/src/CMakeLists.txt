@@ -417,6 +417,14 @@ set(YARP_dev_test_HDRS
     yarp/dev/tests/ILLMTest.h
     yarp/dev/tests/IChatBotTest.h
     yarp/dev/tests/IVelocityControlTest.h
+    yarp/dev/tests/IControlModeTest.h
+    yarp/dev/tests/IInteractionModeTest.h
+    yarp/dev/tests/ICurrentControlTest.h
+    yarp/dev/tests/IPWMControlTest.h
+    yarp/dev/tests/IPidControlTest.h
+    yarp/dev/tests/IMotorTest.h
+    yarp/dev/tests/IMotorEncodersTest.h
+    yarp/dev/tests/IRemoteCalibratorTest.h
 )
 
 set(YARP_dev_test_SRCS
@@ -431,6 +439,14 @@ set(YARP_dev_test_SRCS
     yarp/dev/tests/ILLMTest.cpp
     yarp/dev/tests/IChatBotTest.cpp
     yarp/dev/tests/IVelocityControlTest.cpp
+    yarp/dev/tests/IControlModeTest.cpp
+    yarp/dev/tests/IInteractionModeTest.cpp
+    yarp/dev/tests/ICurrentControlTest.cpp
+    yarp/dev/tests/IPWMControlTest.cpp
+    yarp/dev/tests/IPidControlTest.cpp
+    yarp/dev/tests/IMotorTest.cpp
+    yarp/dev/tests/IMotorEncodersTest.cpp
+    yarp/dev/tests/IRemoteCalibratorTest.cpp
 )
 
 if(TARGET YARP::YARP_math)
