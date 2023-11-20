@@ -6,6 +6,9 @@
 #ifndef ITORQUECONTROLTEST_H
 #define ITORQUECONTROLTEST_H
 
+#include <vector>
+#include <numeric>
+
 #include <yarp/dev/ITorqueControl.h>
 #include <yarp/dev/IControlMode.h>
 #include <catch2/catch_amalgamated.hpp>
@@ -25,7 +28,7 @@ namespace yarp::dev::tests
         int ax;
         b = itrq->getAxes(&ax);
         CHECK(b);
-        REQUIRE(ax == 2);
+        REQUIRE(ax > 0);
 
         for (size_t i = 0; i < ax; i++)
         {
@@ -80,10 +83,10 @@ namespace yarp::dev::tests
             //CHECK(b); //this will fail
         }
 
-        double* vals = new double [ax];
-        double* refvals = new double[ax];
-        double* vals1 = new double[ax];
-        double* vals2 = new double[ax];
+        auto vals = std::vector<double>(ax);
+        auto refvals = std::vector<double>(ax);
+        auto vals1 = std::vector<double>(ax);
+        auto vals2 = std::vector<double>(ax);
 
         b = itrq->setMotorTorqueParams(0, param);
         CHECK(!b);
@@ -94,7 +97,7 @@ namespace yarp::dev::tests
         b = itrq->getRefTorque(0, &val);
         CHECK(!b);
 
-        b = itrq->getRefTorques(refvals);
+        b = itrq->getRefTorques(refvals.data());
         CHECK(!b);
 
         b = itrq->getTorque(0,&val);
@@ -103,22 +106,18 @@ namespace yarp::dev::tests
         b = itrq->getTorqueRange(0, &val1, &val2);
         CHECK(!b);
 
-        b = itrq->getTorqueRanges(vals1, vals2);
+        b = itrq->getTorqueRanges(vals1.data(), vals2.data());
         CHECK(!b);
 
-        b = itrq->getTorques(vals); //streaming
+        b = itrq->getTorques(vals.data()); //streaming
    //     CHECK(!b); //this is streaming, it will return true if data is arrived in time
 
         b = itrq->setRefTorque(0,val); //streaming
    //     CHECK(!b); //this is streaming, it will return true always
 
-        b = itrq->setRefTorques(refvals); //streaming
+        b = itrq->setRefTorques(refvals.data()); //streaming
    //     CHECK(!b); //this is streaming, it will return true always
 
-        delete[] vals;
-        delete[] refvals;
-        delete[] vals1;
-        delete[] vals2;
     }
 }
 

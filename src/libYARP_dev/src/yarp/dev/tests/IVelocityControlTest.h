@@ -6,6 +6,9 @@
 #ifndef IVELOCITYCONTROLTEST_H
 #define IVELOCITYCONTROLTEST_H
 
+#include <memory>
+#include <numeric>
+
 #include <yarp/dev/IVelocityControl.h>
 #include <yarp/dev/IControlMode.h>
 #include <yarp/os/Time.h>
@@ -26,7 +29,7 @@ namespace yarp::dev::tests
 
         b = ivel->getAxes(&ax);
         CHECK(b);
-        REQUIRE(ax == 2);
+        REQUIRE(ax > 0);
 
         for (size_t i = 0; i< ax; i++)
         {
@@ -60,12 +63,12 @@ namespace yarp::dev::tests
 
         bool b;
         int ax;
-        double ref = 0;
-        double refs [1] = {0.0};
-
         b = ivel->getAxes(&ax);
         CHECK(b);
         REQUIRE(ax > 0);
+
+        double ref = 0;
+        auto refs = std::vector<double>(ax);
 
         for (size_t i = 0; i < ax; i++)
         {
@@ -77,9 +80,9 @@ namespace yarp::dev::tests
         CHECK(!b);
         b = ivel->getRefAcceleration(0, &ref);
         CHECK(!b);
-        b = ivel->setRefAccelerations( refs);
+        b = ivel->setRefAccelerations( refs.data());
         CHECK(!b);
-        b = ivel->getRefAccelerations( refs);
+        b = ivel->getRefAccelerations( refs.data());
         CHECK(!b);
 
         b = ivel->velocityMove(0, ref);
@@ -87,7 +90,7 @@ namespace yarp::dev::tests
 
         b = ivel->getRefVelocity(0, &ref);
         CHECK(!b);
-        b = ivel->getRefVelocities(refs);
+        b = ivel->getRefVelocities(refs.data());
         CHECK(!b);
 
         b = ivel->stop();

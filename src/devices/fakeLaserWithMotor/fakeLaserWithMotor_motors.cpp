@@ -148,7 +148,7 @@ bool FakeLaserWithMotor::checkMotionDoneRaw(bool* flag)
 
     for (int j = 0, index = 0; j < m_njoints; j++, index++)
     {
-        ret &= checkMotionDoneRaw(&val);
+        ret &= checkMotionDoneRaw(j, &val);
         tot_res &= val;
     }
     *flag = tot_res;
