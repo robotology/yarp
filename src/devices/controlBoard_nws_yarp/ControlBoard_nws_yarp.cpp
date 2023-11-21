@@ -455,7 +455,7 @@ void ControlBoard_nws_yarp::run()
     // check we are not overflowing with input messages
     constexpr int reads_for_warning = 20;
     if (inputStreamingPort.getPendingReads() >= reads_for_warning) {
-        yCWarning(CONTROLBOARD) << "Number of streaming input messages to be read is " << inputStreamingPort.getPendingReads() << " and can overflow";
+        yCIWarning(CONTROLBOARD, id()) << "Number of streaming input messages to be read is" << inputStreamingPort.getPendingReads() << "and can overflow";
     }
 
     // handle stateExt first
@@ -531,8 +531,7 @@ void ControlBoard_nws_yarp::run()
     {
         if (std::abs(times[0] - tt) > 1.0)
         {
-            yCError(CONTROLBOARD, "Encoder Timestamps are not consistent! Data will not be published.");
-            yarp::sig::Vector _data(subdevice_joints);
+            yCIErrorThrottle(CONTROLBOARD, id(), 1.0) << "Encoder timestamps are not consistent! Data will not be published.";
             return;
         }
     }
