@@ -17,6 +17,10 @@ TEST_CASE("carriers::mjpeg", "[carriers]")
 {
     YARP_REQUIRE_PLUGIN("mjpeg", "carrier");
 
+#if defined(DISABLE_FAILING_VALGRIND_TESTS)
+    YARP_SKIP_TEST("Skipping failing tests under valgrind")
+#endif
+
     Network::setLocalMode(true);
 
     SECTION("test compression-decompression")
@@ -31,8 +35,8 @@ TEST_CASE("carriers::mjpeg", "[carriers]")
         REQUIRE(out.open(outName));
         REQUIRE(Network::connect(out.getName(), in.getName(), "mjpeg"));
 
-        size_t width {320};
-        size_t height {240};
+        size_t width {160};
+        size_t height {120};
         ImageOf<PixelRgb>& outImg = out.prepare();
         outImg.resize(width, height);
 

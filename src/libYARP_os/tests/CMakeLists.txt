@@ -9,7 +9,8 @@ target_sources(harness_os PRIVATE
   BinPortableTest.cpp
   BottleTest.cpp
   ListCarriersTest.cpp
-  ListPluginsTest.cpp
+  ListPluginsAndOpenTest.cpp
+  ListPluginsOnlyTest.cpp
   ContactTest.cpp
   ElectionTest.cpp
   EventTest.cpp

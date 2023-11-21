@@ -16,7 +16,7 @@ jobs:
 
   select_environment:
     name: 'Prepare Environment'
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     outputs:
       timestamp: ${{ steps.select.outputs.timestamp }}
       repository_owner: ${{ steps.select.outputs.repository_owner }}
@@ -102,7 +102,7 @@ jobs:
   check-license:
     name: 'Check License'
     needs: select_environment
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
     - name: Clone repository
       uses: actions/checkout@v3
@@ -123,7 +123,7 @@ jobs:
   check-style:
     name: 'Check Style'
     needs: select_environment
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
     - name: Clone repository
       uses: actions/checkout@v3
@@ -165,16 +165,11 @@ jobs:
   run-cmake:
     name: 'Run CMake [CMake ${{ matrix.config.cmake_version }} (${{ matrix.config.cmake_generator }}), YCM ${{ matrix.config.ycm_version }}]'
     needs: [select_environment, check-license, check-style]
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     strategy:
       fail-fast: false
       matrix:
         config:
-        - {
-            cmake_version: "3.16.*",
-            cmake_generator: "Unix Makefiles",
-            ycm_version: "0.15.3",
-          }
         - {
             cmake_version: "3.17.*",
             cmake_generator: "Unix Makefiles",
@@ -290,7 +285,7 @@ jobs:
         config:
         - {
             id: '01',
-            os: ubuntu-20.04,
+            os: ubuntu-22.04,
             build_type: "Release",
             cc: "gcc",
             cxx: "g++",
@@ -300,10 +295,10 @@ jobs:
           }
         - {
             id: '02',
-            os: ubuntu-20.04,
+            os: ubuntu-22.04,
             build_type: "Release",
-            cc: "clang",
-            cxx: "clang++",
+            cc: "clang-17",
+            cxx: "clang++-17",
             cmake_generator: "Unix Makefiles",
             cmake_initial_cache_file: ".ci/initial-cache.gh.linux.cmake",
             test_external_bindings: true,
@@ -311,7 +306,7 @@ jobs:
         - {
             id: '03',
             description: 'No ACE',
-            os: ubuntu-20.04,
+            os: ubuntu-22.04,
             build_type: "Release",
             cc: "gcc",
             cxx: "g++",
@@ -324,10 +319,10 @@ jobs:
         - {
             id: '04',
             description: 'No ACE',
-            os: ubuntu-20.04,
+            os: ubuntu-22.04,
             build_type: "Release",
-            cc: "clang",
-            cxx: "clang++",
+            cc: "clang-17",
+            cxx: "clang++-17",
             cmake_generator: "Unix Makefiles",
             cmake_initial_cache_file: ".ci/initial-cache.gh.linux.cmake",
             cmake_extra_options: "-DCMAKE_DISABLE_FIND_PACKAGE_ACE:BOOL=ON
@@ -337,7 +332,7 @@ jobs:
         - {
             id: '05',
             description: 'No YARP_math (bindings disabled)',
-            os: ubuntu-20.04,
+            os: ubuntu-22.04,
             build_type: "Release",
             cc: "gcc",
             cxx: "g++",
@@ -351,10 +346,10 @@ jobs:
         - {
             id: '06',
             description: 'No YARP_math (bindings disabled)',
-            os: ubuntu-20.04,
+            os: ubuntu-22.04,
             build_type: "Release",
-            cc: "clang",
-            cxx: "clang++",
+            cc: "clang-17",
+            cxx: "clang++-17",
             cmake_generator: "Unix Makefiles",
             cmake_initial_cache_file: ".ci/initial-cache.gh.linux.cmake",
             cmake_extra_options: "-DCMAKE_DISABLE_FIND_PACKAGE_Eigen:BOOL=ON
@@ -365,7 +360,7 @@ jobs:
         - {
             id: '07',
             description: 'CLEAN_API (unit tests and bindings disabled)',
-            os: ubuntu-20.04,
+            os: ubuntu-22.04,
             build_type: "Release",
             cc: "gcc",
             cxx: "g++",
@@ -378,10 +373,10 @@ jobs:
         - {
             id: '08',
             description: 'CLEAN_API (unit tests and bindings disabled)',
-            os: ubuntu-20.04,
+            os: ubuntu-22.04,
             build_type: "Release",
-            cc: "clang",
-            cxx: "clang++",
+            cc: "clang-17",
+            cxx: "clang++-17",
             cmake_generator: "Unix Makefiles",
             cmake_initial_cache_file: ".ci/initial-cache.gh.linux.cmake",
             cmake_extra_options: "-DYARP_CLEAN_API:BOOL=ON
@@ -391,7 +386,7 @@ jobs:
         - {
             id: '09',
             description: 'Static',
-            os: ubuntu-20.04,
+            os: ubuntu-22.04,
             build_type: "Release",
             cc: "gcc",
             cxx: "g++",
@@ -402,10 +397,10 @@ jobs:
         - {
             id: '10',
             description: 'Static',
-            os: ubuntu-20.04,
+            os: ubuntu-22.04,
             build_type: "Release",
-            cc: "clang",
-            cxx: "clang++",
+            cc: "clang-17",
+            cxx: "clang++-17",
             cmake_generator: "Unix Makefiles",
             cmake_initial_cache_file: ".ci/initial-cache.gh.linux.cmake",
             cmake_extra_options: "-DBUILD_SHARED_LIBS:BOOL=OFF",
@@ -413,7 +408,7 @@ jobs:
         - {
             id: '11',
             description: 'Static, no ACE (bindings disabled)',
-            os: ubuntu-20.04,
+            os: ubuntu-22.04,
             build_type: "Release",
             cc: "gcc",
             cxx: "g++",
@@ -427,10 +422,10 @@ jobs:
         - {
             id: '12',
             description: 'Static, no ACE (bindings disabled)',
-            os: ubuntu-20.04,
+            os: ubuntu-22.04,
             build_type: "Release",
-            cc: "clang",
-            cxx: "clang++",
+            cc: "clang-17",
+            cxx: "clang++-17",
             cmake_generator: "Unix Makefiles",
             cmake_initial_cache_file: ".ci/initial-cache.gh.linux.cmake",
             cmake_extra_options: "-DBUILD_SHARED_LIBS:BOOL=OFF
@@ -441,7 +436,7 @@ jobs:
         - {
             id: '13',
             description: 'No deprecated',
-            os: ubuntu-20.04,
+            os: ubuntu-22.04,
             build_type: "Release",
             cc: "gcc",
             cxx: "g++",
@@ -452,10 +447,10 @@ jobs:
         - {
             id: '14',
             description: 'No deprecated',
-            os: ubuntu-20.04,
+            os: ubuntu-22.04,
             build_type: "Release",
-            cc: "clang",
-            cxx: "clang++",
+            cc: "clang-17",
+            cxx: "clang++-17",
             cmake_generator: "Unix Makefiles",
             cmake_initial_cache_file: ".ci/initial-cache.gh.linux.cmake",
             cmake_extra_options: "-DYARP_NO_DEPRECATED:BOOL=ON",
@@ -463,7 +458,7 @@ jobs:
         - {
             id: '15',
             description: 'No executables (unit tests disabled)',
-            os: ubuntu-20.04,
+            os: ubuntu-22.04,
             build_type: "Release",
             cc: "gcc",
             cxx: "g++",
@@ -475,10 +470,10 @@ jobs:
         - {
             id: '16',
             description: 'No executables (unit tests disabled)',
-            os: ubuntu-20.04,
+            os: ubuntu-22.04,
             build_type: "Release",
-            cc: "clang",
-            cxx: "clang++",
+            cc: "clang-17",
+            cxx: "clang++-17",
             cmake_generator: "Unix Makefiles",
             cmake_initial_cache_file: ".ci/initial-cache.gh.linux.cmake",
             cmake_extra_options: "-DYARP_COMPILE_EXECUTABLES:BOOL=OFF
@@ -487,7 +482,7 @@ jobs:
         - {
             id: '17',
             description: 'Build extern dependencies',
-            os: ubuntu-20.04,
+            os: ubuntu-22.04,
             build_type: "Release",
             cc: "gcc",
             cxx: "g++",
@@ -500,10 +495,10 @@ jobs:
         - {
             id: '18',
             description: 'Build extern dependencies',
-            os: ubuntu-20.04,
+            os: ubuntu-22.04,
             build_type: "Release",
-            cc: "clang",
-            cxx: "clang++",
+            cc: "clang-17",
+            cxx: "clang++-17",
             cmake_generator: "Unix Makefiles",
             cmake_initial_cache_file: ".ci/initial-cache.gh.linux.cmake",
             cmake_extra_options: "-DCMAKE_DISABLE_FIND_PACKAGE_SQLite:BOOL=ON
@@ -512,7 +507,7 @@ jobs:
           }
         - {
             id: '19',
-            os: ubuntu-20.04,
+            os: ubuntu-22.04,
             build_type: "Release",
             cc: "gcc",
             cxx: "g++",
@@ -521,17 +516,17 @@ jobs:
           }
         - {
             id: '20',
-            os: ubuntu-20.04,
+            os: ubuntu-22.04,
             build_type: "Release",
-            cc: "clang",
-            cxx: "clang++",
+            cc: "clang-17",
+            cxx: "clang++-17",
             cmake_generator: "Ninja",
             cmake_initial_cache_file: ".ci/initial-cache.gh.linux.cmake",
           }
         - {
             id: '21',
             description: 'Valgrind (bindings, failing tests, guis and examples as tests disabled)',
-            os: ubuntu-20.04,
+            os: ubuntu-22.04,
             build_type: "Debug",
             cc: "gcc",
             cxx: "g++",
@@ -543,12 +538,18 @@ jobs:
                                   -DYARP_ENABLE_EXAMPLES_AS_TESTS:BOOL=OFF
                                   -DYARP_COMPILE_BINDINGS:BOOL=OFF
                                   -DCMAKE_DISABLE_FIND_PACKAGE_FFMPEG=ON
-                                  -DYARP_COMPILE_GUIS:BOOL=OFF",
+                                  -DYARP_COMPILE_GUIS:BOOL=OFF
+                                  -DENABLE_yarpmod_usbCamera:BOOL=OFF
+                                  -DENABLE_yarpmod_usbCameraRaw:BOOL=OFF
+                                  -DENABLE_yarpmod_portaudio:BOOL=OFF
+                                  -DENABLE_yarpmod_portaudioPlayer:BOOL=OFF
+                                  -DENABLE_yarpmod_portaudioRecorder:BOOL=OFF
+                                  -DENABLE_yarpmod_opencv_grabber:BOOL=OFF",
           }
         - {
             id: '22',
             description: 'Valgrind, No ACE (bindings, failing tests, guis and examples as tests disabled)',
-            os: ubuntu-20.04,
+            os: ubuntu-22.04,
             build_type: "Debug",
             cc: "gcc",
             cxx: "g++",
@@ -562,7 +563,13 @@ jobs:
                                   -DYARP_ENABLE_EXAMPLES_AS_TESTS:BOOL=OFF
                                   -DYARP_COMPILE_BINDINGS:BOOL=OFF
                                   -DCMAKE_DISABLE_FIND_PACKAGE_FFMPEG=ON
-                                  -DYARP_COMPILE_GUIS:BOOL=OFF",
+                                  -DYARP_COMPILE_GUIS:BOOL=OFF
+                                  -DENABLE_yarpmod_usbCamera:BOOL=OFF
+                                  -DENABLE_yarpmod_usbCameraRaw:BOOL=OFF
+                                  -DENABLE_yarpmod_portaudio:BOOL=OFF
+                                  -DENABLE_yarpmod_portaudioPlayer:BOOL=OFF
+                                  -DENABLE_yarpmod_portaudioRecorder:BOOL=OFF
+                                  -DENABLE_yarpmod_opencv_grabber:BOOL=OFF",
           }
         - {
             id: '23',
@@ -699,9 +706,20 @@ jobs:
       if: runner.os == 'Linux'
       shell: bash
       run: |
+          # Install dep for gstreamer. It must be the first one.
+          sudo apt-get update
+          sudo apt-get install -y      libunwind-dev
+
+          #Install clang 17
+          sudo apt-get purge -y llvm* clang*
+          wget -nv https://apt.llvm.org/llvm.sh
+          sudo chmod +x llvm.sh
+          sudo ./llvm.sh 17
+
           # Install Robotology dependencies from robotology ppa
           sudo apt-add-repository -y ppa:robotology/ppa
           sudo apt-get install -qq -y librobottestingframework-dev
+          sudo apt-get update
 
           # Install cmake
           sudo apt-get install -qq -y cmake
@@ -718,9 +736,9 @@ jobs:
                                       ninja-build \
                                       valgrind
 
-          sudo apt-get install -y     libace-dev \
+          sudo apt-get install -y     libace-dev
 
-          sudo apt-get install -qq -y libsqlite3-dev \
+          sudo apt-get install -y     libsqlite3-dev \
                                       libtinyxml-dev \
                                       libedit-dev \
                                       qtbase5-dev \
@@ -731,8 +749,6 @@ jobs:
                                       libopencv-dev \
                                       libeigen3-dev \
                                       libgraphviz-dev \
-                                      libgstreamer1.0-dev \
-                                      libgstreamer-plugins-base1.0-dev \
                                       libpng-dev \
                                       libv4l-dev \
                                       libavcodec-dev \
@@ -747,6 +763,9 @@ jobs:
                                       libjpeg-dev \
                                       libpcl-dev \
                                       libsoxr-dev
+
+          sudo apt-get install -y     libgstreamer1.0-dev \
+                                      libgstreamer-plugins-base1.0-dev
 
           # Install SWIG and bindings dependencies
           sudo apt-get install -qq -y swig \
@@ -769,8 +788,6 @@ jobs:
                                       gcovr \
                                       wget \
                                       curl \
-                                      clang-11 \
-                                      clang-tidy-11 \
                                       xsltproc \
                                       libxml2-utils \
                                       source-highlight
@@ -882,7 +899,7 @@ jobs:
         if("${{ matrix.config.cc }}" MATCHES "gcc")
           file(APPEND "${_env_script}" "set(ENV{CFLAGS} -fdiagnostics-color=always)\n")
           file(APPEND "${_env_script}" "set(ENV{CXXFLAGS} -fdiagnostics-color=always)\n")
-        elseif("${{ matrix.config.cc }}" MATCHES "clang")
+        elseif("${{ matrix.config.cc }}" MATCHES "^clang.*")
           file(APPEND "${_env_script}" "set(ENV{CFLAGS} -fcolor-diagnostics)\n")
           file(APPEND "${_env_script}" "set(ENV{CXXFLAGS} -fcolor-diagnostics)\n")
         endif()
@@ -1369,7 +1386,7 @@ jobs:
     environment: code-analysis
     name: 'Codacy - clang-tidy'
     needs: [select_environment, run-cmake]
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
     - name: Clone repository
       uses: actions/checkout@v3
@@ -1383,6 +1400,10 @@ jobs:
       if: runner.os == 'Linux'
       shell: bash
       run: |
+          # Install dep for gstreamer. It must be the first one.
+          sudo apt-get update
+          sudo apt-get install -y      libunwind-dev
+
           # Install Robotology dependencies from robotology ppa
           sudo apt-add-repository -y ppa:robotology/ppa
           sudo apt-get install -qq -y librobottestingframework-dev
@@ -1416,8 +1437,6 @@ jobs:
                                       libopencv-dev \
                                       libeigen3-dev \
                                       libgraphviz-dev \
-                                      libgstreamer1.0-dev \
-                                      libgstreamer-plugins-base1.0-dev \
                                       libpng-dev \
                                       libv4l-dev \
                                       libavcodec-dev \
@@ -1431,6 +1450,9 @@ jobs:
                                       libi2c-dev \
                                       libjpeg-dev \
                                       libpcl-dev
+
+          sudo apt-get install -y     libgstreamer1.0-dev \
+                                      libgstreamer-plugins-base1.0-dev
 
           # Install SWIG and bindings dependencies
           sudo apt-get install -qq -y swig \
@@ -1453,8 +1475,6 @@ jobs:
                                       gcovr \
                                       wget \
                                       curl \
-                                      clang-11 \
-                                      clang-tidy-11 \
                                       xsltproc \
                                       libxml2-utils \
                                       source-highlight
@@ -1465,8 +1485,8 @@ jobs:
     - name: Prepare environment
       env:
         CODACY_TOKEN: ${{ secrets.CODACY_TOKEN }}
-        CLANG_VERSION: 10
-        CODACY_CLANG_TIDY_VERSION: 1.2.1
+        CLANG_VERSION: 17
+        CODACY_CLANG_TIDY_VERSION: 1.3.8
       run: |
         echo "CLANG_VERSION=${CLANG_VERSION}" >> $GITHUB_ENV
         echo "CC=/usr/bin/clang-${CLANG_VERSION}" >> $GITHUB_ENV
@@ -1488,12 +1508,14 @@ jobs:
       if: runner.os == 'Linux'
       shell: bash
       run: |
-          # Download extra packages required
-          sudo apt-get install -qq -y clang-${CLANG_VERSION} \
-                                      clang-tidy-${CLANG_VERSION}
+          #Install clang 17. `all` option is required for clang-tidy
+          sudo apt-get purge -y llvm* clang*
+          wget -nv https://apt.llvm.org/llvm.sh
+          sudo chmod +x llvm.sh
+          sudo ./llvm.sh 17 all
 
           # Download codacy-clang-tidy
-          sudo wget https://github.com/codacy/codacy-clang-tidy/releases/download/${CODACY_CLANG_TIDY_VERSION}/codacy-clang-tidy-${CODACY_CLANG_TIDY_VERSION} -O /usr/local/bin/codacy-clang-tidy-${CODACY_CLANG_TIDY_VERSION}
+          sudo wget https://github.com/codacy/codacy-clang-tidy/releases/download/${CODACY_CLANG_TIDY_VERSION}/codacy-clang-tidy-linux-${CODACY_CLANG_TIDY_VERSION} -O /usr/local/bin/codacy-clang-tidy-${CODACY_CLANG_TIDY_VERSION}
           sudo chmod -v +x /usr/local/bin/codacy-clang-tidy-${CODACY_CLANG_TIDY_VERSION}
 
     - name: Run CMake
@@ -1557,7 +1579,7 @@ jobs:
     environment: code-analysis
     name: 'Codacy - coverage'
     needs: [select_environment, run-cmake]
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
     - name: Clone repository
       uses: actions/checkout@v3
@@ -1571,6 +1593,10 @@ jobs:
       if: runner.os == 'Linux'
       shell: bash
       run: |
+          # Install dep for gstreamer. It must be the first one.
+          sudo apt-get update
+          sudo apt-get install -y      libunwind-dev
+
           # Install Robotology dependencies from robotology ppa
           sudo apt-add-repository -y ppa:robotology/ppa
           sudo apt-get install -qq -y librobottestingframework-dev
@@ -1641,8 +1667,6 @@ jobs:
                                       gcovr \
                                       wget \
                                       curl \
-                                      clang-11 \
-                                      clang-tidy-11 \
                                       xsltproc \
                                       libxml2-utils \
                                       source-highlight
@@ -1689,7 +1713,7 @@ jobs:
     environment: code-analysis
     name: 'SonarCloud'
     needs: [select_environment, run-cmake]
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
     - name: Clone repository
       uses: actions/checkout@v3
@@ -1779,6 +1803,10 @@ jobs:
       if: runner.os == 'Linux'
       shell: bash
       run: |
+          # Install dep for gstreamer. It must be the first one.
+          sudo apt-get update
+          sudo apt-get install -y      libunwind-dev
+
           # Install Robotology dependencies from robotology ppa
           sudo apt-add-repository -y ppa:robotology/ppa
           sudo apt-get install -qq -y librobottestingframework-dev
@@ -1849,8 +1877,6 @@ jobs:
                                       gcovr \
                                       wget \
                                       curl \
-                                      clang-11 \
-                                      clang-tidy-11 \
                                       xsltproc \
                                       libxml2-utils \
                                       source-highlight

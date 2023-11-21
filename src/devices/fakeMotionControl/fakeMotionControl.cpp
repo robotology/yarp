@@ -2002,7 +2002,7 @@ bool FakeMotionControl::relativeMoveRaw(int j, double delta)
         yCError(FAKEMOTIONCONTROL) << "relativeMoveRaw: skipping command because joint " << j << " is not in VOCAB_CM_POSITION mode";
     }
     _posCtrl_references[j] += delta;
-    return false;
+    return true;
 }
 
 bool FakeMotionControl::relativeMoveRaw(const double *deltas)
@@ -2027,7 +2027,7 @@ bool FakeMotionControl::checkMotionDoneRaw(int j, bool *flag)
     }
 
     *flag = false;
-    return false;
+    return true;
 }
 
 bool FakeMotionControl::checkMotionDoneRaw(bool *flag)
@@ -2041,7 +2041,7 @@ bool FakeMotionControl::checkMotionDoneRaw(bool *flag)
 
     for(int j=0, index=0; j< _njoints; j++, index++)
     {
-        ret &= checkMotionDoneRaw(&val);
+        ret &= checkMotionDoneRaw(j, &val);
         tot_res &= val;
     }
     *flag = tot_res;
