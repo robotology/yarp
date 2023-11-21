@@ -62,32 +62,34 @@ bool SpeechTranscription_nwc_yarp::closeMain()
     return true;
 }
 
-bool SpeechTranscription_nwc_yarp::setLanguage(const std::string& language)
+yarp::dev::yarp_ret_value SpeechTranscription_nwc_yarp::setLanguage(const std::string& language)
 {
-    if(!m_thriftClient.set_language(language))
+    return_set_language result = m_thriftClient.set_language(language);
+    if(!result.ret)
     {
         yCError(SPEECHTR_NWC) << "Error while setting language to" << language;
-        return false;
     }
-
-    return true;
+    else
+    {
+    }
+    return result.ret;
 }
 
-bool SpeechTranscription_nwc_yarp::getLanguage(std::string& language)
+yarp::dev::yarp_ret_value SpeechTranscription_nwc_yarp::getLanguage(std::string& language)
 {
     return_get_language result = m_thriftClient.get_language();
     if(!result.ret)
     {
         yCError(SPEECHTR_NWC) << "Error while retrieving language";
-        return false;
     }
-
-    language = result.language;
-
-    return true;
+    else
+    {
+        language = result.language;
+    }
+    return result.ret;
 }
 
-bool SpeechTranscription_nwc_yarp::transcribe(const yarp::sig::Sound& sound, std::string& transcription, double& score)
+yarp::dev::yarp_ret_value SpeechTranscription_nwc_yarp::transcribe(const yarp::sig::Sound& sound, std::string& transcription, double& score)
 {
     YARP_UNUSED(sound);
     YARP_UNUSED(transcription);
@@ -98,11 +100,11 @@ bool SpeechTranscription_nwc_yarp::transcribe(const yarp::sig::Sound& sound, std
     if(!result.ret)
     {
         yCError(SPEECHTR_NWC) << "Error while transcribing the audio signal";
-        return false;
     }
-
-    transcription = result.transcription;
-    score = result.score;
-
-    return true;
+    else
+    {
+        transcription = result.transcription;
+        score = result.score;
+    }
+    return result.ret;
 }

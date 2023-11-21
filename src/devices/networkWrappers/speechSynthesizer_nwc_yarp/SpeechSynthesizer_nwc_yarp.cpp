@@ -13,6 +13,8 @@ namespace {
 YARP_LOG_COMPONENT(SPEECHSYNTH_NWC, "yarp.devices.speechSynthesizer_nwc_yarp")
 }
 
+using namespace yarp::dev;
+
 SpeechSynthesizer_nwc_yarp::~SpeechSynthesizer_nwc_yarp()
 {
     closeMain();
@@ -62,115 +64,119 @@ bool SpeechSynthesizer_nwc_yarp::closeMain()
     return true;
 }
 
-bool SpeechSynthesizer_nwc_yarp::setLanguage(const std::string& language)
+yarp_ret_value SpeechSynthesizer_nwc_yarp::setLanguage(const std::string& language)
 {
-    if(!m_thriftClient.set_language(language))
+    auto result = m_thriftClient.set_language(language);
+    if(!result.ret)
     {
         yCError(SPEECHSYNTH_NWC) << "Error while setting language to" << language;
-        return false;
+        return result.ret;
     }
 
-    return true;
+    return result.ret;
 }
 
-bool SpeechSynthesizer_nwc_yarp::getLanguage(std::string& language)
+yarp_ret_value SpeechSynthesizer_nwc_yarp::getLanguage(std::string& language)
 {
-    return_get_language result = m_thriftClient.get_language();
+    auto result = m_thriftClient.get_language();
     if(!result.ret)
     {
         yCError(SPEECHSYNTH_NWC) << "Error while retrieving language";
-        return false;
+        return result.ret;
     }
 
     language = result.language;
 
-    return true;
+    return result.ret;
 }
 
-bool SpeechSynthesizer_nwc_yarp::setVoice(const std::string& voice_name)
+yarp_ret_value SpeechSynthesizer_nwc_yarp::setVoice(const std::string& voice_name)
 {
-    if(!m_thriftClient.set_voice(voice_name))
+    auto result = m_thriftClient.set_voice(voice_name);
+    if(!result.ret)
     {
         yCError(SPEECHSYNTH_NWC) << "Error while setting voice to" << voice_name;
-        return false;
+        return result.ret;
     }
 
-    return true;
+    return result.ret;
 }
 
-bool SpeechSynthesizer_nwc_yarp::getVoice(std::string& voice_name)
+yarp_ret_value SpeechSynthesizer_nwc_yarp::getVoice(std::string& voice_name)
 {
-    return_get_voice result = m_thriftClient.get_voice();
+    auto result = m_thriftClient.get_voice();
     if(!result.ret)
     {
         yCError(SPEECHSYNTH_NWC) << "Error while retrieving the voice name";
-        return false;
+        return result.ret;
     }
 
     voice_name = result.voice;
 
-    return true;
+    return result.ret;
 }
 
-bool SpeechSynthesizer_nwc_yarp::setSpeed(const double speed)
+yarp_ret_value SpeechSynthesizer_nwc_yarp::setSpeed(const double speed)
 {
-    if(!m_thriftClient.set_speed(speed))
+    auto result = m_thriftClient.set_speed(speed);
+    if(!result.ret)
     {
         yCError(SPEECHSYNTH_NWC) << "Error while setting voice speed to" << speed;
-        return false;
+        return result.ret;
     }
 
-    return true;
+    return result.ret;
 }
 
-bool SpeechSynthesizer_nwc_yarp::getSpeed(double& speed)
+yarp_ret_value SpeechSynthesizer_nwc_yarp::getSpeed(double& speed)
 {
-    return_get_speed result = m_thriftClient.get_speed();
+    auto result = m_thriftClient.get_speed();
     if(!result.ret)
     {
         yCError(SPEECHSYNTH_NWC) << "Error while retrieving the voice speed";
-        return false;
+        return result.ret;
     }
 
     speed = result.speed;
 
-    return true;
+    return result.ret;
 }
 
-bool SpeechSynthesizer_nwc_yarp::setPitch(const double pitch)
+yarp_ret_value SpeechSynthesizer_nwc_yarp::setPitch(const double pitch)
 {
-    if(!m_thriftClient.set_pitch(pitch))
+    auto result = m_thriftClient.set_pitch(pitch);
+    if(!result.ret)
     {
         yCError(SPEECHSYNTH_NWC) << "Error while setting voice pitch to" << pitch;
-        return false;
+        return result.ret;
     }
 
-    return true;
+    return result.ret;
 }
 
-bool SpeechSynthesizer_nwc_yarp::getPitch(double& pitch)
+yarp_ret_value SpeechSynthesizer_nwc_yarp::getPitch(double& pitch)
 {
-    return_get_pitch result = m_thriftClient.get_pitch();
+    auto result = m_thriftClient.get_pitch();
     if(!result.ret)
     {
         yCError(SPEECHSYNTH_NWC) << "Error while retrieving the voice pitch";
-        return false;
+        return result.ret;
     }
 
     pitch = result.pitch;
 
-    return true;
+    return result.ret;
 }
 
-bool SpeechSynthesizer_nwc_yarp::synthesize(const std::string& text, yarp::sig::Sound& sound)
+yarp_ret_value SpeechSynthesizer_nwc_yarp::synthesize(const std::string& text, yarp::sig::Sound& sound)
 {
-    return_synthesize result = m_thriftClient.synthesize(text);
+    auto result = m_thriftClient.synthesize(text);
     if(!result.ret)
     {
         yCError(SPEECHSYNTH_NWC) << "Error while performing voice synthesis";
-        return false;
+        return result.ret;
     }
     sound = result.sound;
 
-    return true;
+    return result.ret;
 }

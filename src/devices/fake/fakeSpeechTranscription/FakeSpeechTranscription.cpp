@@ -40,20 +40,20 @@ bool FakeSpeechTranscription::close()
     return true;
 }
 
-bool FakeSpeechTranscription::setLanguage(const std::string& language)
+yarp::dev::yarp_ret_value FakeSpeechTranscription::setLanguage(const std::string& language)
 {
     m_language=language;
     yCInfo(FAKE_SPEECHTR) << "Language set to" << language;
-    return true;
+    return yarp_ret_value_ok;
 }
 
-bool FakeSpeechTranscription::getLanguage(std::string& language)
+yarp::dev::yarp_ret_value FakeSpeechTranscription::getLanguage(std::string& language)
 {
     language = m_language;
-    return true;
+    return yarp_ret_value_ok;
 }
 
-bool FakeSpeechTranscription::transcribe(const yarp::sig::Sound& sound, std::string& transcription, double& score)
+yarp::dev::yarp_ret_value FakeSpeechTranscription::transcribe(const yarp::sig::Sound& sound, std::string& transcription, double& score)
 {
     if (sound.getSamples() == 0 ||
         sound.getChannels() == 0)
@@ -61,10 +61,10 @@ bool FakeSpeechTranscription::transcribe(const yarp::sig::Sound& sound, std::str
         yCError(FAKE_SPEECHTR) << "Invalid Sound sample received";
         transcription = "";
         score = 0.0;
-        return false;
+        return yarp_ret_value::return_code::return_value_error_method_failed;
     }
 
     transcription = "hello world";
     score = 1.0;
-    return true;
+    return yarp_ret_value_ok;
 }

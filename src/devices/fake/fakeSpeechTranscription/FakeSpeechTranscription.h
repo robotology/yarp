@@ -41,9 +41,9 @@ public:
     bool open(yarp::os::Searchable& config) override;
     bool close() override;
 
-    virtual bool setLanguage(const std::string& language) override;
-    virtual bool getLanguage(std::string& language) override;
-    virtual bool transcribe(const yarp::sig::Sound& sound, std::string& transcription, double& score) override;
+    virtual yarp::dev::yarp_ret_value setLanguage(const std::string& language) override;
+    virtual yarp::dev::yarp_ret_value getLanguage(std::string& language) override;
+    virtual yarp::dev::yarp_ret_value transcribe(const yarp::sig::Sound& sound, std::string& transcription, double& score) override;
 };
 
 #endif

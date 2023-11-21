@@ -9,40 +9,62 @@ struct yarp_sig_Sound {
   yarp.includefile = "yarp/sig/Sound.h"
 )
 
+struct yReturnValue {
+} (
+  yarp.name = "yarp::dev::yarp_ret_value"
+  yarp.includefile = "yarp/dev/ReturnValue.h"
+)
+
+struct return_set_language {
+  1: yReturnValue ret;
+}
+
+struct return_set_voice {
+  1: yReturnValue ret;
+}
+
+struct return_set_speed {
+  1: yReturnValue ret;
+}
+
+struct return_set_pitch {
+  1: yReturnValue ret;
+}
+
 struct return_get_language {
-  1: bool ret = false;
+  1: yReturnValue ret;
   2: string language;
 }
 
 struct return_get_voice {
-  1: bool ret = false;
+  1: yReturnValue ret;
   2: string voice;
 }
 
 struct return_get_speed {
-  1: bool ret = false;
+  1: yReturnValue ret;
   2: double speed;
 }
 
 struct return_get_pitch {
-  1: bool ret = false;
+  1: yReturnValue ret;
   2: double pitch;
 }
 
 struct return_synthesize {
-  1: bool ret = false;
+  1: yReturnValue ret;
   2: yarp_sig_Sound sound;
 }
 
 service ISpeechSynthesizerMsgs
 {
-    bool                set_language (1:string language);
+    return_set_language set_language (1:string language);
     return_get_language get_language ();
-    bool                set_voice    (1:string language);
+    return_set_voice    set_voice    (1:string language);
     return_get_voice    get_voice    ();
-    bool                set_speed    (1:double speed);
+    return_set_speed    set_speed    (1:double speed);
     return_get_speed    get_speed    ();
-    bool                set_pitch    (1:double pitch);
+    return_set_pitch    set_pitch    (1:double pitch);
     return_get_pitch    get_pitch    ();
     return_synthesize   synthesize   (1:string text);
 }

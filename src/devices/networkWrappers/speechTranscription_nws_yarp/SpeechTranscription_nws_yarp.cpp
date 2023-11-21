@@ -113,15 +113,17 @@ bool SpeechTranscription_nws_yarp::read(yarp::os::ConnectionReader& connection)
 
 //--------------------------------------------------
 // RPC methods
-bool ISpeechTranscriptionMsgsd::set_language(const std::string& language)
+return_set_language ISpeechTranscriptionMsgsd::set_language(const std::string& language)
 {
     std::lock_guard <std::mutex> lg(m_mutex);
+    return_set_language ret;
     if (m_isptr)
     {
         return m_isptr->setLanguage(language);
     }
     yCError(SPEECHTR_NWS, "ISpeechTranscription interface was not set");
-    return false;
+    ret.ret = yarp_ret_value::return_code::return_value_error_generic;
+    return ret;
 }
 
 return_get_language ISpeechTranscriptionMsgsd::get_language()
@@ -131,12 +133,13 @@ return_get_language ISpeechTranscriptionMsgsd::get_language()
     if (m_isptr)
     {
         std::string language;
-        bool b =  m_isptr->getLanguage(language);
+        yarp_ret_value b =  m_isptr->getLanguage(language);
         ret.ret = b;
         ret.language = language;
         return ret;
     }
     yCError(SPEECHTR_NWS, "ISpeechTranscription interface was not set");
+    ret.ret = yarp_ret_value::return_code::return_value_error_generic;
     return ret;
 }
 
@@ -148,7 +151,7 @@ return_transcribe ISpeechTranscriptionMsgsd::transcribe(const yarp::sig::Sound& 
     {
         std::string transcription;
         double score;
-        bool b = m_isptr->transcribe(sound, transcription, score);
+        yarp_ret_value b = m_isptr->transcribe(sound, transcription, score);
         ret.ret = b;
         ret.transcription = transcription;
         ret.score = score;
@@ -164,6 +167,7 @@ return_transcribe ISpeechTranscriptionMsgsd::transcribe(const yarp::sig::Sound& 
         return ret;
     }
     yCError(SPEECHTR_NWS, "ISpeechTranscription interface was not set");
+    ret.ret = yarp_ret_value::return_code::return_value_error_generic;
     return ret;
 }
 

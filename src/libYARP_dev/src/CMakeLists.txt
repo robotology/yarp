@@ -114,6 +114,7 @@ set(YARP_dev_HDRS
   yarp/dev/PolyDriverDescriptor.h
   yarp/dev/PolyDriverList.h
   yarp/dev/RGBDSensorParamParser.h
+  yarp/dev/ReturnValue.h
   yarp/dev/ServiceInterfaces.h
   yarp/dev/WrapperMultiple.h
   yarp/dev/WrapperSingle.h
@@ -222,6 +223,7 @@ set(YARP_dev_SRCS
   yarp/dev/PolyDriver.cpp
   yarp/dev/PolyDriverDescriptor.cpp
   yarp/dev/PolyDriverList.cpp
+  yarp/dev/ReturnValue.cpp
   yarp/dev/RGBDSensorParamParser.cpp
   yarp/dev/WrapperMultiple.cpp
   yarp/dev/WrapperSingle.cpp
