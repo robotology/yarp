@@ -1,31 +1,6 @@
 Contributing to YARP                                             {#contributing}
 ====================
 
-
-<!-- START doctoc generated TOC please keep comment here to allow auto update -->
-<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
-**Table of Contents**
-
-- [Code Style](#code-style)
-  - [C++](#c)
-    - [Header guards](#header-guards)
-  - [CMake](#cmake)
-  - [Git](#git)
-- [Workflow](#workflow)
-  - [Stable branches: `yarp-3.x`](#stable-branches-yarp-3x)
-      - [Work in progress PR](#work-in-progress-pr)
-  - [Development branch: `master`](#development-branch-master)
-  - [Example](#example)
-  - [Terminology](#terminology)
-- [Policies](#policies)
-  - [Deprecated Features](#deprecated-features)
-  - [`impl` Classes](#impl-classes)
-  - [Supported Systems](#supported-systems)
-
-<!-- END doctoc generated TOC please keep comment here to allow auto update -->
-
-
-
 Code Style
 ----------
 
@@ -98,7 +73,7 @@ Example:
 Workflow
 --------
 
-### Stable branches: `yarp-3.x`
+### Stable branches: yarp-3.x
 
 The `yarp-3.x` branch is stable and **should not receive new features**.
 Only **bug fixes** are accepted.
@@ -146,7 +121,7 @@ Once you're happy about your work, just remove the `[WIP]` tag as well as the la
 and drop a message within the PR to notify the community that reviews are welcome
 and merging is now possible.
 
-### Development branch: `master`
+### Development branch: master
 
 
 We use the branch `master` to collect the ongoing work, which is given in terms
@@ -218,19 +193,19 @@ major release, in order to simplify as much as possible the migration.
 During this period, it is also allowed to do breaking changes that cannot be
 deprecated using the `YARP_DEPRECATED` methods.
 
-### `impl` Classes
+### Impl Classes
 
 Classes in the "impl" namespace are not considered public. Their API is subject
 to changes, without deprecation, even in a minor release.
 
-
 ### Supported Systems
 
-* **Linux**: See [YARP Supported Distributions](http://wiki.icub.org/wiki/YARP_Supported_Distributions)
+* **Linux**: 
+  * Ubuntu 22.04 - clang 17
+  * Ubuntu 22.04 - gcc 11.4.0
 * **Windows**:
-  * Visual Studio 15 2017 32/64 bit
-  * Visual Studio 16 2019 32/64 bit
+  * Windows  10.0.17763 - VS 16.11.2.50704
+  * Windows  10.0.20348 - VS 17.8.34309.116
 * **macOS**:
-  * 10.13 High Sierra
-  * 10.14 Mojave
-  * 10.15 Catalina
+  * macOS  12.6.9 - clang 14.0.3
+  * macOS  13.6 - clang 14.0.3

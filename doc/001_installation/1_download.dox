@@ -15,39 +15,7 @@ Latest release can be downloaded from here:
 
 \section download_binary Binary releases
 
-\subsection download_windows Windows
-
-\remark Important: to develop code using precompiled binaries packages have to
-        match the compiler you use, make sure you download and install the
-        correct version (i.e. MSVC 12 for Visual Studio 2013, etc..).
-        If in doubt about the version number of your copy of Visual Studio, find
-        the internal version number shown for it in this
-        [version history table](http://en.wikipedia.org/wiki/Microsoft_Visual_Studio#History).
-
-__Installers__:
-
-|       |             MSVC 2015/2017        |
-|-------|:---------------------------------:|
-| Win32 | [yarp_3.1.0_v14_x86_1.exe]        |
-| x64   | [yarp_3.1.0_v14_x86_amd64_1.exe]  |
-
-[yarp_3.1.0_v14_x86_1.exe]: https://github.com/robotology/yarp/releases/download/v3.1.0/yarp_3.1.0_v14_x86_1.exe
-[yarp_3.1.0_v14_x86_amd64_1.exe]: https://github.com/robotology/yarp/releases/download/v3.1.0/yarp_3.1.0_v14_x86_amd64_1.exe
-
-
-\subsection download_linux Linux (Debian/Ubuntu)
-
-The easiest way to install YARP from binaries is through aptitude as explained in \ref install_on_linux.
-
-Individual .deb packages can also be downloaded from [GitHub](https://github.com/robotology/yarp/releases)
-
-
-\subsection download_macOS macOS
-
-The easiest way to install YARP from binaries is through brew as explained in \ref install_yarp_mac.
-
-Brew bottles can also be downloaded from [GitHub](https://github.com/robotology/yarp/releases)
-
+Currently not available.
 
 \section download_previous_releases Previous releases
 

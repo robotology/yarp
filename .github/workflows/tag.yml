@@ -236,8 +236,8 @@ jobs:
         echo "Update the file 'doc/001_installation/1_download.dox'"
         # WARNING This is based on the line in the file, it could stop working
         # if the content of the file changes.
-        # Move line 8 to line 57
-        sed -i -e '8{h;d};57{p;g}' doc/001_installation/1_download.dox
+        # Move line 8 to line 25
+        sed -i -e '8{h;d};25{p;g}' doc/001_installation/1_download.dox
         # Add the new release at line 8
         sed -i "8i\\ + \\\\ref v${YARP_VERSION_C}" doc/001_installation/1_download.dox
 

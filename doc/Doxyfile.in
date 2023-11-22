@@ -956,15 +956,8 @@ RECURSIVE              = YES
 
 EXCLUDE                = @CMAKE_SOURCE_DIR@/.github/git-workflow \
                          @CMAKE_SOURCE_DIR@/src/devices/README.md \
-                         @CMAKE_SOURCE_DIR@/src/portmonitors/depthimage_compression_zlib/README.md \
-                         @CMAKE_SOURCE_DIR@/src/portmonitors/image_compression_ffmpeg/README.md \
-                         @CMAKE_SOURCE_DIR@/src/portmonitors/depthimage_compression_zfp/README.md \
-                         @CMAKE_SOURCE_DIR@/src/portmonitors/bottle_compression_zlib/README.md \
-                         @CMAKE_SOURCE_DIR@/src/portmonitors/depthimage_to_vector/README.md \
-                         @CMAKE_SOURCE_DIR@/src/portmonitors/sensorMeasurements_to_vector/README.md \
-                         @CMAKE_SOURCE_DIR@/src/portmonitors/sound_marker/README.md \
-                         @CMAKE_SOURCE_DIR@/src/portmonitors/soundfilter_resample/README.md
-                         @CMAKE_SOURCE_DIR@/doc/release/yarp_*
+                         @CMAKE_SOURCE_DIR@/src/portmonitors/README.md \
+                         @CMAKE_SOURCE_DIR@/src/carriers/README.md
 
 # The EXCLUDE_SYMLINKS tag can be used to select whether or not files or
 # directories that are symbolic links (a Unix file system feature) are excluded
@@ -980,7 +973,13 @@ EXCLUDE_SYMLINKS       = NO
 # Note that the wildcards are matched against the file with absolute path, so to
 # exclude all test directories for example use the pattern */test/*
 
-EXCLUDE_PATTERNS       =
+EXCLUDE_PATTERNS       =  */doc/release/yarp_* \
+                          */opt-modules/*/README.md \
+                          */opt-modules/*/CHANGELOG.md \
+                          */opt-modules/*/*.md \
+                          */src/devices/*/README.md \
+                          */src/portmonitors/*/README.md \
+                          */src/carriers/*/README.md
 
 # The EXCLUDE_SYMBOLS tag can be used to specify one or more symbol names
 # (namespaces, classes, functions, etc.) that should be excluded from the
