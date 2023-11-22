@@ -21,11 +21,11 @@ namespace yarp::dev::tests
         int axis=0;
         bool b = false;
         double val=0;
-        double res=0;
-        double vals[2] = {0,0};
 
         b = imot->getNumberOfMotors(&axis);
         CHECK(b);
+        REQUIRE(axis > 0);
+        auto vals = std::vector<double>(axis);
 
         b = imot->getGearboxRatio(0, &val);
         CHECK(b);
@@ -48,7 +48,7 @@ namespace yarp::dev::tests
         b = imot->getTemperatureLimit(0, &val);
         CHECK(b);
 
-        b = imot->getTemperatures(vals);
+        b = imot->getTemperatures(vals.data());
         CHECK(b);
     }
 }

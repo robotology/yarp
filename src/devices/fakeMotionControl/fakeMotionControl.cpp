@@ -3165,7 +3165,8 @@ bool FakeMotionControl::getNumberOfMotorsRaw(int* num)
 
 bool FakeMotionControl::getTemperatureRaw(int m, double* val)
 {
-    return NOT_YET_IMPLEMENTED("getTemperatureRaw");
+    *val = 37.5+double(m);
+    return true;
 }
 
 bool FakeMotionControl::getTemperaturesRaw(double *vals)
