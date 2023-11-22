@@ -25,6 +25,16 @@ Documentation
 [![YARP documentation](https://img.shields.io/badge/Documentation-yarp.it-19c2d8.svg)](http://www.yarp.it/)
 
 
+Officially supported systems:
+------------
+The following systems are officially supported and tested by github CI.
+* Ubuntu 22.04 - clang 17
+* Ubuntu 22.04 - gcc 11.4.0
+* Windows  10.0.17763 - VS 16.11.2.50704
+* Windows  10.0.20348 - VS 17.8.34309.116
+* macOS  12.6.9 - clang 14.0.3
+* macOS  13.6 - clang 14.0.3
+
 Installation
 ------------
 
@@ -34,19 +44,11 @@ See full instructions at http://www.yarp.it/install.html
 
 ```bash
 sudo apt-get install cmake libace-dev
+wget -nv https://github.com/robotology/ycm/releases/download/v0.15.3/ycm-cmake-modules-0.15.3-all.deb
+sudo dpkg -i ycm-cmake-modules-0.15.3-all.deb
 git clone https://github.com/robotology/yarp
 cd yarp && mkdir build && cd build && cmake .. && make
 sudo make install  # Optional
-```
-
-* On Windows:
-
-  Binaries at https://github.com/robotology/yarp/releases
-
-* On macOS:
-
-```bash
-brew install robotology/formulae/yarp
 ```
 
 Regular YARP builds use the [ACE](https://github.com/DOCGroup/ACE_TAO) library.
