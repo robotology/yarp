@@ -1709,6 +1709,24 @@ jobs:
         coverage-reports: build/coverage.info
 
 
+  docker:
+    name: 'SonarCloud'
+    needs: [select_environment, run-cmake]
+    runs-on: ubuntu-22.04
+    steps:
+    - name: Clone repository
+      uses: actions/checkout@v3
+      with:
+        repository: ${{ needs.select_environment.outputs.repository }}
+        ref: ${{ needs.select_environment.outputs.ref }}
+        fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
+
+    - name: Build Docker Image
+      id: build_docker_image
+      run: |
+        cd docker
+        docker build -t yarp:ubuntu22.04 .
+
   sonarcloud:
     environment: code-analysis
     name: 'SonarCloud'

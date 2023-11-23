@@ -1,0 +1,27 @@
+/**
+\page yarp_docker Docker image for Yarp
+
+You can find the official Yarp docker image here:
+
+ + https://github.com/robotology/yarp/docker
+
+You can build it using the command:
+
+\verbatim
+cd yarp/docker
+docker build -t yarp:ubuntu22.04 .
+\endverbatim
+
+You can run the docker image using the command:
+
+\verbatim
+sudo docker run --rm -it --privileged --network host --pid host -e DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix -v /etc/hosts:/etc/hosts -e QT_X11_NO_MITSHM=1 yarp:ubuntu22.04
+\endverbatim
+
+To use the graphics inside the docker images, remember to disable X permission with the following command:
+
+\verbatim
+sudo xhost +
+\endverbatim
+
+*/
