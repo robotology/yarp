@@ -74,7 +74,7 @@ bool UpowerBattery::getBatteryCharge(double& charge)
 
 bool UpowerBattery::getBatteryStatus(Battery_status& status)
 {
-    status = yarp::dev::IBattery::BATTERY_OK_STANBY;
+    status = yarp::dev::IBattery::BATTERY_OK_STANDBY;
     auto st = m_interface->property("State").toUInt();
     auto wl = m_interface->property("WarningLevel").toUInt();
 
@@ -106,7 +106,7 @@ bool UpowerBattery::getBatteryStatus(Battery_status& status)
         status = yarp::dev::IBattery::BATTERY_CRITICAL_WARNING;
         break;
     case 4 /* Fully charged */:
-        status = yarp::dev::IBattery::BATTERY_OK_STANBY;
+        status = yarp::dev::IBattery::BATTERY_OK_STANDBY;
         break;
     case 0 /* Unknown */: [[fallthrough]];
     default:

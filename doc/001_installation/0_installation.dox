@@ -1,6 +1,8 @@
 /**
 \page yarp_installation Installation and setup
 
+You can install Yarp on you device following the guide below:
+
 \subpage download
 
 \subpage dependencies
@@ -12,5 +14,10 @@
 \subpage check_your_installation
 
 \subpage yarp_cluster
+
+
+You can also try Yarp without installing it, using the official Docker image:
+
+\subpage yarp_docker
 
 */

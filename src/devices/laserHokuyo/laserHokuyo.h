@@ -87,7 +87,7 @@ public:
         error_codes(0),
         internal_status(0),
         info(""),
-        device_status(Device_status::DEVICE_OK_STANBY),
+        device_status(Device_status::DEVICE_OK_STANDBY),
         laser_mode(Laser_mode_type::FAKE_MODE)
     {}
 

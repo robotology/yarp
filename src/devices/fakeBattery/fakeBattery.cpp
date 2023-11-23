@@ -248,7 +248,7 @@ void FakeBattery::updateStatus()
             battery_status = yarp::dev::IBattery::Battery_status::BATTERY_CRITICAL_WARNING;
         }
     } else if (battery_current > -0.1) {
-        battery_status = yarp::dev::IBattery::Battery_status::BATTERY_OK_STANBY;
+        battery_status = yarp::dev::IBattery::Battery_status::BATTERY_OK_STANDBY;
     } else {
         battery_status = yarp::dev::IBattery::Battery_status::BATTERY_OK_IN_CHARGE;
     }

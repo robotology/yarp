@@ -39,6 +39,10 @@ Fixes
 New Features
 ------------
 
+### Docker
+
+Added new experimental docker image for Ubuntu22.04 http://github.com/robotology/yarp/docker
+
 ### GUIs
 
 #### yarpaudiocontrolgui
