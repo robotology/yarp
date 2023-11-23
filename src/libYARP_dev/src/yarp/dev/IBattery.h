@@ -29,7 +29,7 @@ class YARP_dev_API yarp::dev::IBattery
 public:
     enum Battery_status
     {
-        BATTERY_OK_STANBY        = 0,
+        BATTERY_OK_STANDBY       = 0,
         BATTERY_OK_IN_CHARGE     = 1,
         BATTERY_OK_IN_USE        = 2,
         BATTERY_GENERAL_ERROR    = 3,

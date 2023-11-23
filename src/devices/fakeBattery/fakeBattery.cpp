@@ -201,8 +201,8 @@ std::string FakeBattery::getBatteryStatusString()
 {
     std::lock_guard<std::mutex> lock(m_mutex);
     switch (battery_status) {
-    case BATTERY_OK_STANBY:
-        return "0: BATTERY_OK_STANBY";
+    case BATTERY_OK_STANDBY:
+        return "0: BATTERY_OK_STANDBY";
     case BATTERY_OK_IN_CHARGE:
         return "1: BATTERY_OK_IN_CHARGE";
     case BATTERY_OK_IN_USE:

@@ -45,7 +45,7 @@ public:
     enum RGBDSensor_status
     {
         RGBD_SENSOR_NOT_READY        = 0,
-        RGBD_SENSOR_OK_STANBY        = 1,
+        RGBD_SENSOR_OK_STANDBY       = 1,
         RGBD_SENSOR_OK_IN_USE        = 2,
         RGB_SENSOR_ERROR             = 3,
         DEPTH_SENSOR_ERROR           = 4,

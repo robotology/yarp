@@ -34,7 +34,7 @@ class YARP_dev_API yarp::dev::IRangefinder2D
 public:
     enum Device_status
     {
-        DEVICE_OK_STANBY        = 0,
+        DEVICE_OK_STANDBY       = 0,
         DEVICE_OK_IN_USE        = 1,
         DEVICE_GENERAL_ERROR    = 2,
         DEVICE_TIMEOUT          = 3

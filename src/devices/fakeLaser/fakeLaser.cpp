@@ -34,7 +34,7 @@ using namespace yarp::dev::Nav2D;
 bool FakeLaser::open(yarp::os::Searchable& config)
 {
     m_info = "Fake Laser device for test/debugging";
-    m_device_status = DEVICE_OK_STANBY;
+    m_device_status = DEVICE_OK_STANDBY;
 
 #ifdef LASER_DEBUG
     yCDebug(FAKE_LASER) << "%s\n", config.toString().c_str());
