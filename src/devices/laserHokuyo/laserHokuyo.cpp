@@ -30,7 +30,7 @@ bool laserHokuyo::open(yarp::os::Searchable& config)
 {
     internal_status = HOKUYO_STATUS_NOT_READY;
     info = "Hokuyo Laser";
-    device_status = DEVICE_OK_STANBY;
+    device_status = DEVICE_OK_STANDBY;
 
     yCTrace(LASERHOKUYO, "%s", config.toString().c_str());
 

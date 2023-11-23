@@ -32,7 +32,7 @@ bool LaserFromDepth::open(yarp::os::Searchable& config)
 {
     Property subConfig;
     m_info = "LaserFromDepth device";
-    m_device_status = DEVICE_OK_STANBY;
+    m_device_status = DEVICE_OK_STANDBY;
 
 #ifdef LASER_DEBUG
     yCDebug(LASER_FROM_DEPTH) << "%s\n", config.toString().c_str();

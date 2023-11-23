@@ -1,0 +1,19 @@
+name: Docker build
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - master
+
+jobs:
+
+  docker:
+    name: 'Docker Image'
+    runs-on: ubuntu-22.04
+    steps:
+    - name: Build Docker Image
+      id: build_docker_image
+      run: |
+        cd docker
+        docker build -t yarp:ubuntu22.04 .
