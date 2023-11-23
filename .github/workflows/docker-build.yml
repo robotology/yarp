@@ -12,6 +12,11 @@ jobs:
     name: 'Docker Image'
     runs-on: ubuntu-22.04
     steps:
+    - name: Clone repository
+      uses: actions/checkout@v3
+      with:
+        repository: ${{ needs.select_environment.outputs.repository }}
+        ref: ${{ needs.select_environment.outputs.ref }}
     - name: Build Docker Image
       id: build_docker_image
       run: |

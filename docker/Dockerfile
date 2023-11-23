@@ -42,8 +42,7 @@ RUN apt-get update && apt-get install -y apt-utils \
                           gdb \
                           bash-completion \
                           btop \
-                          mlocate 
-                   && rm -rf /var/lib/apt/lists/*
+                          mlocate
 
 RUN pip3 install numpy bpytop
 
