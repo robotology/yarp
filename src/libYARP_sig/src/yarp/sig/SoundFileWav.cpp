@@ -107,16 +107,31 @@ bool PcmWavHeader::parse_from_file(FILE *fp)
         yCError(SOUNDFILE_WAV, "failed to read .wav file");
         return false;
     }
+    if (pcm.pcmChannels <= 0)
+    {
+        yCError(SOUNDFILE_WAV, "pcmChannels <=0, invalid wav file\n");
+        return false;
+    }
 
     ret = fread(&pcm.pcmSamplesPerSecond, sizeof(pcm.pcmSamplesPerSecond), 1, fp);
     if (ret != 1) {
         yCError(SOUNDFILE_WAV, "failed to read .wav file");
         return false;
     }
+    if (pcm.pcmSamplesPerSecond <= 0)
+    {
+        yCError(SOUNDFILE_WAV, "pcmSamplesPerSecond <=0, invalid wav file\n");
+        return false;
+    }
 
     ret = fread(&pcm.pcmBytesPerSecond, sizeof(pcm.pcmBytesPerSecond), 1, fp);
     if (ret != 1) {
         yCError(SOUNDFILE_WAV, "failed to read .wav file");
+        return false;
+    }
+    if (pcm.pcmBytesPerSecond <= 0)
+    {
+        yCError(SOUNDFILE_WAV, "pcmBytesPerSecond <=0, invalid wav file\n");
         return false;
     }
 
