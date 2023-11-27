@@ -8,6 +8,6 @@ IDLs offers a convenient way to define structures and services and separate inte
 \section idls_list List of IDLs (Interface Description Languages) used in YARP
 
 \li \subpage idl_thrift
-\li \subpage idl_rosmsg
+\li \subpage idl_rosmsg <deprecated>
 
 */

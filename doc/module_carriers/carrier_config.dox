@@ -36,8 +36,6 @@ carriers.
 Optional carriers:
 \li \ref carrier_config_mpi
 \li \ref carrier_config_mjpeg
-\li \ref carrier_config_xmlrpc
-\li \ref carrier_config_tcpros
 \li \ref carrier_config_bayer
 
 
@@ -240,57 +238,6 @@ yarp::os::ManagedBytes or yarp::os::Bottle.  See
 yarp::mjpeg::MjpegDecompression for helper functions.
 The motivation for disabling automatic decompression is to reduce
 load for clients that need to read images only occasionally.
-
-\section carrier_config_xmlrpc xmlrpc carrier
-
-This carrier transmits and receives messages in XMLRPC format.
-
-\verbatim
-yarp connect /src /dest local
-\endverbatim
-
-Messages are automatically converted to and from Bottle-compatible
-format.  Here is the mapping used:
- \li XMLRPC int = Bottle int
- \li XMLRPC string = Bottle string
- \li XMLRPC double = Bottle double
- \li XMLRPC array = Bottle list
- \li XMLRPC struct = Bottle list
-
-Both arrays and structures in XMLRPC are mapped to Bottle lists.
-Structures are mapped to a list with the tag "dict" prepended,
-followed by sublists with key-value mappings:
-\verbatim
-  (dict (key1 val1) (key2 val2))
-\endverbatim
-
-The yarp::os::Bottle find/findGroup/check methods will work fine on
-such lists, or you could populate a Property object if you want fast
-look-up.
-
-If you want to convert a Bottle list that may start with the
-string "dict" or "list", prepend the keyword "list".
-\verbatim
-  (list ...)
-\endverbatim
-That keyword will be silently consumed, and will guarantee
-that an XMLRPC array is produced.
-
-XMLRPC messages that start with a string may be treated as an
-administrative message (and not passed on to the client reading
-from a port) if the initial string is one of the following:
- \li publisherUpdate
- \li requestTopic
- \li getPid
- \li getBusInfo
-
-This is for ROS compatibility (see \ref yarp_with_ros).
-
-
-\section carrier_config_tcpros tcpros carrier
-
-This carrier is for interoperations with ROS.
-See \ref yarp_with_ros and http://www.ros.org/wiki/ROS/TCPROS
 
 
 \section carrier_config_bayer bayer carrier

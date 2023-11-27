@@ -21,7 +21,6 @@
   --socket NNNNN           Set port number of server.
   --web dir                Serve web resources from given directory.
   --no-web-cache           Reload pages from file for each request.
-  --ros                    Delegate pub/sub to ROS name server.
 \endverbatim
 
 This starts a name server running on the current machine, optionally
