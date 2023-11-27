@@ -93,7 +93,9 @@ public:
         rdr.len = strlen(cp);
         rdr.cur = 0;
 
+#ifndef GRAPHVIZ_VERSION_GE_9
         disc.mem = &AgMemDisc;
+#endif
         disc.id = &AgIdDisc;
         disc.io = &memIoDisc;
         g = agread (&rdr, &disc);
