@@ -1,3 +1,0 @@
-std_msgs_UInt8.h
-std_msgs/UInt8.h
-yarp/rosmsg/std_msgs/UInt8.h

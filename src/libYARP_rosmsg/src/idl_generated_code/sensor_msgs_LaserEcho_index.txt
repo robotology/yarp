@@ -1,3 +1,0 @@
-sensor_msgs_LaserEcho.h
-sensor_msgs/LaserEcho.h
-yarp/rosmsg/sensor_msgs/LaserEcho.h

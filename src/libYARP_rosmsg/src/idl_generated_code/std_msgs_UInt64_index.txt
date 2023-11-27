@@ -1,3 +1,0 @@
-std_msgs_UInt64.h
-std_msgs/UInt64.h
-yarp/rosmsg/std_msgs/UInt64.h

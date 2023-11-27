@@ -114,16 +114,6 @@ the player will successfully load all required data.
 The parts name will be taken from each subdirectory of the `/experiment1`
 forder.
 
-\section yarpdataplayer_ros Topic/ros compatibility
-
-Yarpdataplayer allows also to reproduce topics which can be subscribed by ROS nodes.
-For example, you can record a topic (e.g. /mytopic+@/mynode) as a standard yarp port using the Bottle format provided by yarpdatadumper. The Bottle format is needed because
-yarpdatadumper is currently not able to automatically detect the type of the incoming messages. 
-After the recording, you have to manually edit the info.log file created by yarpdatadumper and replace the type Bottle with the type of the ROS message you want to publish.
-For example, if you want to publish a sensor_msgs/LaserScan ROs Message, replace Bottle with sensor_msgs/LaserScan.
-That's all. When Yarpdataplayer plays the recorded data, it will open the /mytopic+@/mynode port and will publish LaserScan data. The corresponding topic will be visible also by ROS. 
-
-
 \note Currently, if the directory selected is (in this example) head,
 torso etc, the player will not load the files as it will not be able to
 find subdirs.

@@ -17,22 +17,6 @@ if(NOT YARP_ENABLE_INTEGRATION_TESTS)
   return()
 endif()
 
-find_program(ROS_ROSCORE_EXECUTABLE NAMES roscore)
-mark_as_advanced(ROS_ROSCORE_EXECUTABLE)
-if(ROS_ROSCORE_EXECUTABLE)
-  # Pull in all ROS tests, and add each as an individual ctest test
-  set(test_family "integration::ros")
-  set(test_driver ${CMAKE_CURRENT_SOURCE_DIR}/ros/index.sh)
-  execute_process(COMMAND ${test_driver} OUTPUT_VARIABLE test_list OUTPUT_STRIP_TRAILING_WHITESPACE WORKING_DIRECTORY ${YARP_BINARY_DIR})
-  separate_arguments(test_list)
-  foreach(test ${test_list})
-    set(test_name "${test_family}::${test}")
-    add_test(${test_name} ${test_driver} ${test})
-    set_property(TEST ${test_name} PROPERTY ENVIRONMENT "YARP_DIR=${CMAKE_BINARY_DIR}")
-    set_property(TEST ${test_name} PROPERTY WORKING_DIRECTORY ${YARP_BINARY_DIR})
-  endforeach()
-endif()
-
 # Generate a matrix of SWIG tests
 foreach(lang PYTHON JAVA LUA RUBY CSHARP TCL PERL)
   foreach(swig

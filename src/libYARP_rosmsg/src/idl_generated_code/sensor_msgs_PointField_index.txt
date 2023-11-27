@@ -1,3 +1,0 @@
-sensor_msgs_PointField.h
-sensor_msgs/PointField.h
-yarp/rosmsg/sensor_msgs/PointField.h

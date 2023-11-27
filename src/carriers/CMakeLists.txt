@@ -13,8 +13,6 @@ yarp_begin_plugin_library(yarpcar
   add_subdirectory(shmem_carrier)
   add_subdirectory(human_carrier)
   add_subdirectory(mpi_carrier)
-  add_subdirectory(xmlrpc_carrier)
-  add_subdirectory(tcpros_carrier)
   add_subdirectory(mjpeg_carrier)
   add_subdirectory(bayer_carrier)
   add_subdirectory(priority_carrier)

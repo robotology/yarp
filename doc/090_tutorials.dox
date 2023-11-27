@@ -31,10 +31,6 @@ Here are a collection of tutorials on various topics in YARP.
 - \ref yarp_resource_finder_tutorials
 - \ref yarp_rfmodule_tutorial
 
-\section tutorial_rostypes ROS types in YARP:
-- \ref rostypes_tutorial_portable
-- \ref rostypes_tutorial_continued
-
 \section tutorial_thrift Using the Thrift IDL to define data types and interfaces:
 - \ref thrift_tutorial_portable
 - \ref thrift_tutorial_simple

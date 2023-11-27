@@ -8,4 +8,3 @@ src/devices/DynamixelAX12Ftdi/ax12.cfg
 src/yarpdataplayer/src/RC/yarpdataplayer_resource.rc
 src/yarpmotorgui/sequencewindow.ui
 src/yarpmotorgui/jointitem.ui
-src/libYARP_rosmsg/tests/ROSPropertiesTest.cpp

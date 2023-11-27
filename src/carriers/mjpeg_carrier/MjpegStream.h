@@ -15,9 +15,24 @@
 #include <yarp/sig/Image.h>
 #include <yarp/sig/ImageNetworkHeader.h>
 
-#include <yarp/wire_rep_utils/BlobNetworkHeader.h>
-
 #include "MjpegDecompression.h"
+
+YARP_BEGIN_PACK
+class BlobNetworkHeader {
+public:
+    yarp::os::NetInt32 listTag;
+    yarp::os::NetInt32 listLen;
+    yarp::os::NetInt32 blobLen;
+
+    void init(int len) {
+        // state that the following data is a list containing 1 blob
+        listTag = BOTTLE_TAG_LIST + BOTTLE_TAG_BLOB;
+        listLen = 1;
+        blobLen = len;
+    }
+
+};
+YARP_END_PACK
 
 class MjpegStream :
         public yarp::os::TwoWayStream,
@@ -30,7 +45,7 @@ private:
     yarp::os::StringOutputStream sos;
     yarp::sig::FlexImage img;
     yarp::sig::ImageNetworkHeader imgHeader;
-    yarp::wire_rep_utils::BlobNetworkHeader blobHeader;
+    BlobNetworkHeader blobHeader;
     yarp::os::ManagedBytes cimg;
     MjpegDecompression decompression;
     int phase;
@@ -41,7 +56,7 @@ private:
 public:
     MjpegStream(TwoWayStream *delegate, bool autocompress) :
             delegate(delegate),
-            blobHeader(yarp::wire_rep_utils::BlobNetworkHeader{0,0,0}),
+            blobHeader(BlobNetworkHeader{0,0,0}),
             phase(0),
             cursor(NULL),
             remaining(0),

@@ -1,3 +1,0 @@
-std_msgs_Bool.h
-std_msgs/Bool.h
-yarp/rosmsg/std_msgs/Bool.h
