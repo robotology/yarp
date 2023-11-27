@@ -10,4 +10,4 @@ find_package(OpenCV REQUIRED)
 
 add_executable(opencv_test)
 target_sources(opencv_test PRIVATE main.cpp)
-target_link_libraries(opencv_test PRIVATE ${YARP_LIBRARIES} ${OpenCV_LIBRARIES})
+target_link_libraries(opencv_test PRIVATE ${YARP_LIBRARIES} ${OpenCV_LIBS})

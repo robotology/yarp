@@ -25,4 +25,4 @@ find_package(OpenCV REQUIRED)
 # add OpenCV include directories
 target_include_directories(foo PRIVATE ${OPENCV_INCLUDE_DIR})
 # link OpenCV libraries
-target_link_libraries(foo PRIVATE ${OPENCV_LIBRARIES}
+target_link_libraries(foo PRIVATE ${OpenCV_LIBS}
