@@ -23,3 +23,9 @@ target_link_libraries(harness_robotinterface
 set_property(TARGET harness_robotinterface PROPERTY FOLDER "Test")
 
 yarp_catch_discover_tests(harness_robotinterface)
+
+yarp_install(
+  FILES
+    ./RobotinterfaceFile.xml
+  DESTINATION ${YARP_CONTEXTS_INSTALL_DIR}/tests/libYARP_robotinterface
+)
