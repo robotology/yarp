@@ -63,7 +63,7 @@ if(YARP_COMPILE_yarplaserscannergui)
   )
 
   target_include_directories(yarplaserscannergui PRIVATE ${OpenCV_INCLUDE_DIRS})
-  target_link_libraries(yarplaserscannergui PRIVATE ${OpenCV_LIBRARIES})
+  target_link_libraries(yarplaserscannergui PRIVATE ${OpenCV_LIBS})
 
   install(TARGETS yarplaserscannergui COMPONENT utilities DESTINATION ${CMAKE_INSTALL_BINDIR})
 

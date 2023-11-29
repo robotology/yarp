@@ -33,7 +33,7 @@ if(NOT SKIP_opencv_grabber)
   )
 
   target_include_directories(yarp_opencv SYSTEM PRIVATE ${OpenCV_INCLUDE_DIRS})
-  target_link_libraries(yarp_opencv PRIVATE ${OpenCV_LIBRARIES})
+  target_link_libraries(yarp_opencv PRIVATE ${OpenCV_LIBS})
 #   list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS OpenCV) (not using targets)
 
   yarp_install(

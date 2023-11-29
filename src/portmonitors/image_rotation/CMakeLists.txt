@@ -31,7 +31,7 @@ list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS
 )
 
  target_include_directories(yarp_pm_image_rotation SYSTEM PRIVATE ${OpenCV_INCLUDE_DIRS})
- target_link_libraries(yarp_pm_image_rotation PRIVATE ${OpenCV_LIBRARIES})
+ target_link_libraries(yarp_pm_image_rotation PRIVATE ${OpenCV_LIBS})
 
 yarp_install(
   TARGETS yarp_pm_image_rotation

@@ -53,7 +53,7 @@ if(ENABLE_usbCamera OR ENABLE_usbCameraRaw)
 #   list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS Libv4lconvert) (not using targets)
 
   target_include_directories(yarp_usbCamera SYSTEM PRIVATE ${OpenCV_INCLUDE_DIRS})
-  target_link_libraries(yarp_usbCamera PRIVATE ${OpenCV_LIBRARIES})
+  target_link_libraries(yarp_usbCamera PRIVATE ${OpenCV_LIBS})
 #   list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS OpenCV) (not using targets)
 
   yarp_install(
