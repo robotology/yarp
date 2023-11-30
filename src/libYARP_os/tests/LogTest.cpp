@@ -1155,4 +1155,9 @@ TEST_CASE("os::LogTest", "[yarp::os]")
 
         CNT yInfo("This is text contains special characters that could cause issues like 1-\", 2-(, 3-), 4-[, 5-], 6-{, 7-}, 8-\t, 9-%%");
     }
+
+    SECTION("Extra Methods to improve coverage")
+    {
+        yarp::os::Log l;
+    }
 }
