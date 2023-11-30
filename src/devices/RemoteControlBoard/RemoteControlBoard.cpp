@@ -1567,12 +1567,12 @@ bool RemoteControlBoard::getNumberOfMotors(int *num)
     return get1V1I(VOCAB_MOTORS_NUMBER, *num);
 }
 
-bool RemoteControlBoard::getTemperature      (int m, double* val)
+yarp_ret_value RemoteControlBoard::getTemperature      (int m, double* val)
 {
     return get1V1I1D(VOCAB_TEMPERATURE, m, val);
 }
 
-bool RemoteControlBoard::getTemperatures     (double *vals)
+yarp_ret_value RemoteControlBoard::getTemperatures     (double *vals)
 {
     return get1VDA(VOCAB_TEMPERATURES, vals);
 }

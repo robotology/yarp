@@ -67,10 +67,10 @@ bool ImplementMotor::getNumberOfMotors(int *num)
     return true;
 }
 
-bool ImplementMotor::getTemperature(int m, double* value)
+yarp::dev::yarp_ret_value ImplementMotor::getTemperature(int m, double* value)
 {
     JOINTIDCHECK
-    bool ret;
+    yarp::dev::yarp_ret_value ret;
     int k=castToMapper(helper)->toHw(m);
 
     ret=imotor->getTemperatureRaw(k, value);
@@ -122,11 +122,11 @@ bool ImplementMotor::setGearboxRatio(int m, const double value)
     return ret;
 }
 
-bool ImplementMotor::getTemperatures(double *v)
+yarp::dev::yarp_ret_value ImplementMotor::getTemperatures(double *v)
 {
     yarp::dev::impl::Buffer<double> buffValues = doubleBuffManager->getBuffer();
 
-    bool ret = imotor->getTemperaturesRaw(buffValues.getData());
+    yarp::dev::yarp_ret_value ret = imotor->getTemperaturesRaw(buffValues.getData());
     for (size_t i=0; i< buffValues.getSize(); i++)
     {
         int k = castToMapper(helper)->toHw(i);

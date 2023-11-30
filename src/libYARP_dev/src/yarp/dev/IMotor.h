@@ -9,6 +9,7 @@
 #include <yarp/os/Vocab.h>
 #include <yarp/os/Log.h>
 #include <yarp/dev/api.h>
+#include <yarp/dev/ReturnValue.h>
 
 namespace yarp::dev {
 class IMotorRaw;
@@ -41,17 +42,17 @@ public:
      * @param val retrieved motor temperature
      * @return true/false
      */
-    virtual bool getTemperatureRaw(int m, double* val)=0;
+    virtual yarp::dev::yarp_ret_value getTemperatureRaw(int m, double* val)=0;
 
     /**
      * Get temperature of all the motors.
      * @param vals pointer to an array containing all motor temperatures
      * @return true/false
      */
-    virtual bool getTemperaturesRaw(double *vals)=0;
+    virtual yarp::dev::yarp_ret_value getTemperaturesRaw(double *vals)=0;
 
     /**
-     * Retreives the current temperature limit for a specific motor.
+     * Retrieves the current temperature limit for a specific motor.
      * The specific behavior of the motor when the temperature limit is exceeded depends on the implementation (power off recommended)
      * @param m motor number
      * @param temp the current temperature limit.
@@ -111,17 +112,17 @@ public:
      * @param val retrieved motor temperature
      * @return true/false
      */
-    virtual bool getTemperature(int m, double *val)=0;
+    virtual yarp::dev::yarp_ret_value getTemperature(int m, double *val)=0;
 
     /**
      * Get temperature of all the motors.
      * @param vals pointer to an array containing all motor temperatures
      * @return true/false
      */
-    virtual bool getTemperatures(double *vals)=0;
+    virtual yarp::dev::yarp_ret_value getTemperatures(double *vals)=0;
 
     /**
-     * Retreives the current temperature limit for a specific motor.
+     * Retrieves the current temperature limit for a specific motor.
      * The specific behavior of the motor when the temperature limit is exceeded depends on the implementation (power off recommended)
      * @param m motor number
      * @param temp the current temperature limit.

@@ -451,9 +451,9 @@ public:
     /* IMotor */
     bool getNumberOfMotors(int *num) override;
 
-    bool getTemperature(int m, double *val) override;
+    yarp::dev::yarp_ret_value getTemperature(int m, double *val) override;
 
-    bool getTemperatures(double *vals) override;
+    yarp::dev::yarp_ret_value getTemperatures(double *vals) override;
 
     bool getTemperatureLimit(int m, double *val) override;
 

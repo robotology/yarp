@@ -475,8 +475,8 @@ public:
 
     // IMotor interface
     bool getNumberOfMotorsRaw(int * num) override;
-    bool getTemperatureRaw(int m, double* val) override;
-    bool getTemperaturesRaw(double *vals) override;
+    yarp::dev::yarp_ret_value getTemperatureRaw(int m, double* val) override;
+    yarp::dev::yarp_ret_value getTemperaturesRaw(double *vals) override;
     bool getTemperatureLimitRaw(int m, double *temp) override;
     bool setTemperatureLimitRaw(int m, const double temp) override;
     bool getGearboxRatioRaw(int m, double* gearbox) override;

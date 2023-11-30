@@ -3163,15 +3163,15 @@ bool FakeMotionControl::getNumberOfMotorsRaw(int* num)
     return true;
 }
 
-bool FakeMotionControl::getTemperatureRaw(int m, double* val)
+yarp_ret_value FakeMotionControl::getTemperatureRaw(int m, double* val)
 {
     *val = 37.5+double(m);
-    return true;
+    return yarp_ret_value(true);
 }
 
-bool FakeMotionControl::getTemperaturesRaw(double *vals)
+yarp_ret_value FakeMotionControl::getTemperaturesRaw(double *vals)
 {
-    bool ret = true;
+    yarp_ret_value ret = true;
     for(int j=0; j< _njoints; j++)
     {
         ret &= getTemperatureRaw(j, &vals[j]);
