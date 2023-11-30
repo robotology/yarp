@@ -24,6 +24,7 @@ set(YARP_dev_test_HDRS
     IMotorTest.h
     IMotorEncodersTest.h
     IRemoteCalibratorTest.h
+    IJointFaultTest.h
 )
 
 set(YARP_dev_test_SRCS
@@ -46,6 +47,7 @@ set(YARP_dev_test_SRCS
     IMotorTest.cpp
     IMotorEncodersTest.cpp
     IRemoteCalibratorTest.cpp
+    IJointFaultTest.cpp
 )
 
 if(TARGET YARP::YARP_math)

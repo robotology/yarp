@@ -32,6 +32,7 @@
 #include <yarp/dev/tests/IMotorTest.h>
 #include <yarp/dev/tests/IMotorEncodersTest.h>
 #include <yarp/dev/tests/IRemoteCalibratorTest.h>
+#include <yarp/dev/tests/IJointFaultTest.h>
 
 #include <catch2/catch_amalgamated.hpp>
 #include <harness.h>
@@ -65,6 +66,7 @@ TEST_CASE("dev::RemoteControlBoardTest", "[yarp::dev]")
         IPidControl* ipid = nullptr;
         IPWMControl* ipwm = nullptr;
         ICurrentControl* icurr = nullptr;
+        IJointFault* ifault = nullptr;
         //IRemoteCalibrator* iremotecalib = nullptr;
 
         ////////"Checking opening fakeMotionControl and controlBoard_nws_yarp polydrivers"
@@ -117,6 +119,7 @@ TEST_CASE("dev::RemoteControlBoardTest", "[yarp::dev]")
         ddnwc.view(ipid);    REQUIRE(ipid);
         ddnwc.view(ipwm);    REQUIRE(ipwm);
         ddnwc.view(icurr);   REQUIRE(icurr);
+        ddnwc.view(ifault);  REQUIRE(ifault);
         //ddnwc.view(icalib);  REQUIRE(iremotecalib);
 
         yarp::dev::tests::exec_iPositionControl_test_1(ipos,icmd);
@@ -132,6 +135,7 @@ TEST_CASE("dev::RemoteControlBoardTest", "[yarp::dev]")
         yarp::dev::tests::exec_iPwmControl_test_1(ipwm,icmd);
         yarp::dev::tests::exec_iCurrentControl_test_1(icurr,icmd);
         //yarp::dev::tests::exec_iRemoteCalibrator_test_1(icalib);
+        yarp::dev::tests::exec_iJointFault_test_1(ifault);
 
         //"Close all polydrivers and check"
         {
