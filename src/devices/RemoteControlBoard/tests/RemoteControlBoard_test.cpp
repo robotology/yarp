@@ -125,7 +125,7 @@ TEST_CASE("dev::RemoteControlBoardTest", "[yarp::dev]")
         yarp::dev::tests::exec_iAxisInfo_test_1(iinfo);
         yarp::dev::tests::exec_iEncodersTimed_test_1(ienc);
         yarp::dev::tests::exec_iControlMode_test_1(icmd, iinfo);
-        yarp::dev::tests::exec_iInteractionMode_test_1(iint);
+        yarp::dev::tests::exec_iInteractionMode_test_1(iint, iinfo);
         yarp::dev::tests::exec_iMotor_test_1(imot);
         yarp::dev::tests::exec_iMotorEncoders_test_1(imotenc);
         yarp::dev::tests::exec_iPidControl_test_1(ipid);
