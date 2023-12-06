@@ -54,7 +54,7 @@ TEST_CASE("dev::fakeMotionControl", "[yarp::dev]")
         IPositionControl* ipos=nullptr;
         IVelocityControl* ivel = nullptr;
         ITorqueControl* itrq=nullptr;
-        IAxisInfo* iaxis = nullptr;
+        IAxisInfo* iinfo = nullptr;
         IEncodersTimed* ienc = nullptr;
         IControlMode* icmd = nullptr;
         IInteractionMode* iint = nullptr;
@@ -78,7 +78,7 @@ TEST_CASE("dev::fakeMotionControl", "[yarp::dev]")
         ddmc.view(ipos);    REQUIRE(ipos);
         ddmc.view(ivel);    REQUIRE(ivel);
         ddmc.view(itrq);    REQUIRE(itrq);
-        ddmc.view(iaxis);   REQUIRE(iaxis);
+        ddmc.view(iinfo);   REQUIRE(iinfo);
         ddmc.view(ienc);    REQUIRE(ienc);
         ddmc.view(icmd);    REQUIRE(icmd);
         ddmc.view(iint);    REQUIRE(iint);
@@ -93,13 +93,14 @@ TEST_CASE("dev::fakeMotionControl", "[yarp::dev]")
         yarp::dev::tests::exec_iPositionControl_test_1(ipos, icmd);
         yarp::dev::tests::exec_iVelocityControl_test_1(ivel, icmd);
         yarp::dev::tests::exec_iTorqueControl_test_1(itrq, icmd);
-        yarp::dev::tests::exec_iAxisInfo_test_1(iaxis);
+        yarp::dev::tests::exec_iAxisInfo_test_1(iinfo);
         yarp::dev::tests::exec_iEncodersTimed_test_1(ienc);
-        yarp::dev::tests::exec_iControlMode_test_1(icmd, iaxis);
-        yarp::dev::tests::exec_iInteractionMode_test_1(iint, iaxis);
+        yarp::dev::tests::exec_iControlMode_test_1(icmd, iinfo);
+        yarp::dev::tests::exec_iInteractionMode_test_1(iint, iinfo);
         yarp::dev::tests::exec_iMotor_test_1(imot);
         yarp::dev::tests::exec_iMotorEncoders_test_1(imotenc);
-        yarp::dev::tests::exec_iPidControl_test_1(ipid);
+        yarp::dev::tests::exec_iPidControl_test_1(ipid, iinfo);
+        yarp::dev::tests::exec_iPidControl_test_2(ipid);
         yarp::dev::tests::exec_iPwmControl_test_1(ipwm, icmd);
         yarp::dev::tests::exec_iCurrentControl_test_1(icurr, icmd);
         //yarp::dev::tests::exec_iRemoteCalibrator_test_1(iremotecalib);

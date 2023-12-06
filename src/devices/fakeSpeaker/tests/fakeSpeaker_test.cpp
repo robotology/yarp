@@ -36,6 +36,8 @@ TEST_CASE("dev::fakeSpeaker", "[yarp::dev]")
         CHECK(iplay->startPlayback());
         CHECK(iplay->stopPlayback());
 
+        CHECK(iplay->resetPlaybackAudioBuffer());
+
         //"Close all polydrivers and check"
         {
             CHECK(dd.close());

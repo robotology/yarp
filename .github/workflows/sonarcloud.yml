@@ -416,6 +416,7 @@ jobs:
             -Dsonar.junit.reportPaths=build/JUnitTestResults.xml \
             -Dsonar.exclusions="src/yarp*/**/* src/carriers/**/* src/devices/**/* src/idls/**/* src/libyarp*/**/* src/robottestingframework-plugins/**/* tests/**/*" \
             -Dsonar.coverage.exclusions="\
+                 src/libYARP_dev/src/yarp/dev/tests/*,\
                  src/devices/*/tests/*,\
                  src/carriers/*/tests/*,\
                  src/portmonitors/*/tests/*,\

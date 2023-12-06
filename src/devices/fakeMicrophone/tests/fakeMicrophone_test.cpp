@@ -39,6 +39,8 @@ TEST_CASE("dev::fakeMicrophone", "[yarp::dev]")
 
         CHECK(igrb->stopRecording());
 
+        CHECK(igrb->resetRecordingAudioBuffer());
+
         //"Close all polydrivers and check"
         {
             CHECK(dd.close());
