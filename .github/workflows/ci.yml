@@ -1980,7 +1980,8 @@ jobs:
 
     - name: Capture coverage info
       run: |
-        (cd build && gcovr --sonarqube --branches --output coverage.xml --root .. .)
+        cd build
+        gcovr --exclude="../extern/*" --sonarqube --branches --output coverage.xml --root .. .)
 
     - name: Print coverage info file
       run: |
