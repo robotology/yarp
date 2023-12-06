@@ -7,6 +7,7 @@
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/MultipleAnalogSensorsInterfaces.h>
 #include <yarp/dev/tests/IPositionSensorsTest.h>
+#include <yarp/dev/tests/IOrientationSensorsTest.h>
 
 #include <catch2/catch_amalgamated.hpp>
 #include <harness.h>
@@ -24,6 +25,7 @@ TEST_CASE("dev::fakePositionSensor", "[yarp::dev]")
     {
         PolyDriver dd;
         yarp::dev::IPositionSensors* ipos = nullptr;
+        yarp::dev::IOrientationSensors* iors = nullptr;
 
         ////////"Checking opening device polydrivers"
         {
@@ -33,7 +35,13 @@ TEST_CASE("dev::fakePositionSensor", "[yarp::dev]")
         }
 
         dd.view(ipos);
+        REQUIRE(ipos!=nullptr);
+
+        dd.view(iors);
+        REQUIRE(iors != nullptr);
+
         yarp::dev::tests::exec_IPositionSensors_test_1(ipos);
+        yarp::dev::tests::exec_IOrientationSensors_test_1(iors);
 
         //"Close all polydrivers and check"
         {

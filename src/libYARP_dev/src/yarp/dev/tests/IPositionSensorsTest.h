@@ -37,6 +37,15 @@ namespace yarp::dev::tests
         }
 
         CHECK(std::abs(timestamp - clientTimestamp) < 0.2); // getOrientationSensorMeasureAsRollPitchYaw measure is consistent between sensor and client (up to 200 ms)
+
+        std::string name;
+        result = ios->getPositionSensorName(0,name);
+        CHECK(result);
+        CHECK(!name.empty());
+
+        result = ios->getPositionSensorFrameName(0,name);
+        CHECK(result);
+        CHECK(!name.empty());
     }
 }
 
