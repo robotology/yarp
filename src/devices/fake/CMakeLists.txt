@@ -1,0 +1,31 @@
+# SPDX-FileCopyrightText: 2023-2023 Istituto Italiano di Tecnologia (IIT)
+# SPDX-License-Identifier: BSD-3-Clause
+
+add_subdirectory(fakeDepthCamera)
+add_subdirectory(fakebot)
+add_subdirectory(fakeChatBotDevice)
+add_subdirectory(fakeMotionControl)
+add_subdirectory(fakeMotionControlMicro)
+add_subdirectory(fakeAnalogSensor)
+add_subdirectory(fakeBattery)
+add_subdirectory(fakeIMU)
+add_subdirectory(fakeJointCoupling)
+add_subdirectory(fakeJoypad)
+add_subdirectory(fakeLLMDevice)
+add_subdirectory(fakeOdometry2D)
+add_subdirectory(fakePositionSensor)
+add_subdirectory(fakeSerialPort)
+add_subdirectory(fakeSpeechSynthesizer)
+add_subdirectory(fakeSpeechTranscription)
+add_subdirectory(fakeLaser)
+add_subdirectory(fakeLaserWithMotor)
+add_subdirectory(fakeMicrophone)
+add_subdirectory(fakeSpeaker)
+add_subdirectory(fakeFrameGrabber)
+add_subdirectory(fakeLocalizerDevice)
+add_subdirectory(fakeNavigationDevice)
+
+OPTION(YARP_COMPILE_ALL_FAKE_DEVICES
+       "Build all devices marked as fake, for testing purposes. Overrides the option for the single fake device."
+       OFF)
+mark_as_advanced(YARP_COMPILE_ALL_FAKE_DEVICES)
