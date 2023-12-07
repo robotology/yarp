@@ -17,8 +17,7 @@ namespace {
 YARP_LOG_COMPONENT(POLYDRIVER, "yarp.dev.PolyDriver")
 }
 
-class PolyDriver::Private :
-        public SearchMonitor
+class PolyDriver::Private
 {
 private:
     Property comment;
@@ -30,41 +29,6 @@ private:
 
 public:
     Property info;
-
-    void report(const SearchReport& report, const char *context) override
-    {
-        std::string ctx = context;
-        std::string key = report.key;
-        std::string prefix;
-
-        prefix = ctx;
-        prefix += ".";
-
-        key = prefix + key;
-        if (key.substr(0,1)==".") {
-            key = key.substr(1,key.length());
-        }
-
-        if (!present.check(key)) {
-            present.put(key,"present");
-            order.addString(key.c_str());
-        }
-
-        if (report.isFound) {
-            actual.put(key,report.value);
-            return;
-        }
-
-        if (report.isComment==true) {
-            comment.put(key,report.value);
-            return;
-        }
-
-        if (report.isDefault==true) {
-            fallback.put(key,report.value);
-            return;
-        }
-    }
 
     Bottle getOptions()
     {
@@ -155,17 +119,10 @@ bool PolyDriver::open(yarp::os::Searchable& config)
         mPriv = new PolyDriver::Private;
     }
     yCAssert(POLYDRIVER, mPriv != nullptr);
-    bool removeMonitorAfterwards = false;
-    if (config.getMonitor()==nullptr) {
-        config.setMonitor(mPriv);
-        removeMonitorAfterwards = true;
-    }
 
     coreOpen(config);
     mPriv->info.fromString(config.toString());
-    if (removeMonitorAfterwards) {
-        config.setMonitor(nullptr);
-    }
+
     return isValid();
 }
 
@@ -282,8 +239,6 @@ bool PolyDriver::coreOpen(yarp::os::Searchable& prop)
                 if (wrapCreator!=creator) {
                     p.put("subdevice", str);
                     p.put("device", wrapper);
-                    p.setMonitor(prop.getMonitor(),
-                                 wrapper.c_str()); // pass on any monitoring
                     driver = wrapCreator->create();
                     creator = wrapCreator;
                 } else {

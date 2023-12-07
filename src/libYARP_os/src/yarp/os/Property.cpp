@@ -175,12 +175,6 @@ public:
     bool check(const std::string& key) const
     {
         PropertyItem* p = getPropNoCreate(key);
-        if (owner->getMonitor() != nullptr) {
-            SearchReport report;
-            report.key = key;
-            report.isFound = (p != nullptr);
-            owner->reportToMonitor(report);
-        }
         return p != nullptr;
     }
 
@@ -189,19 +183,7 @@ public:
         PropertyItem* p = getPropNoCreate(key);
         if (p != nullptr) {
             p->flush();
-            if (owner->getMonitor() != nullptr) {
-                SearchReport report;
-                report.key = key;
-                report.isFound = true;
-                report.value = p->bot.get(1).toString();
-                owner->reportToMonitor(report);
-            }
             return p->bot.get(1);
-        }
-        if (owner->getMonitor() != nullptr) {
-            SearchReport report;
-            report.key = key;
-            owner->reportToMonitor(report);
         }
         return Value::getNullValue();
     }
@@ -1132,24 +1114,6 @@ bool Property::write(ConnectionWriter& writer) const
 Bottle& Property::findGroup(const std::string& key) const
 {
     Bottle* result = mPriv->getBottle(key);
-    if (getMonitor() != nullptr) {
-        SearchReport report;
-        report.key = key;
-        report.isGroup = true;
-        if (result != nullptr) {
-            report.isFound = true;
-            report.value = result->toString();
-        }
-        reportToMonitor(report);
-        if (result != nullptr) {
-            std::string context = getMonitorContext();
-            context += ".";
-            context += key;
-            result->setMonitor(getMonitor(),
-                               context.c_str()); // pass on any monitoring
-        }
-    }
-
     if (result != nullptr) {
         return *result;
     }

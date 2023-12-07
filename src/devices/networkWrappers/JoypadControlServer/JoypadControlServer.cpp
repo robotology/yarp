@@ -328,7 +328,6 @@ bool JoypadControlServer::openAndAttachSubDevice(Searchable& prop)
     m_subDeviceOwned = new PolyDriver;
 
     p.fromString(prop.toString());
-    p.setMonitor(prop.getMonitor(), "subdevice"); // pass on any monitoring
     p.unput("device");
     p.put("device",prop.find("subdevice").asString());  // subdevice was already checked before
 

@@ -287,39 +287,12 @@ bool Bottle::check(const std::string& key) const
 Value& Bottle::find(const std::string& key) const
 {
     Value& val = implementation->findBit(key);
-
-    if (getMonitor() != nullptr) {
-        SearchReport report;
-        report.key = key;
-        report.isFound = !val.isNull();
-        report.value = val.toString();
-        reportToMonitor(report);
-    }
-
     return val;
 }
 
 Bottle& Bottle::findGroup(const std::string& key) const
 {
     Value& bb = implementation->findGroupBit(key);
-
-    if (getMonitor() != nullptr) {
-        SearchReport report;
-        report.key = key;
-        report.isGroup = true;
-        if (bb.isList()) {
-            report.isFound = true;
-            report.value = bb.toString();
-        }
-        reportToMonitor(report);
-        if (bb.isList()) {
-            std::string context = getMonitorContext();
-            context += ".";
-            context += key;
-            bb.asList()->setMonitor(getMonitor(),
-                                    context.c_str()); // pass on any monitoring
-        }
-    }
 
     if (bb.isList()) {
         return *(bb.asList());
