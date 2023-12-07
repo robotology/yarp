@@ -85,7 +85,6 @@ struct ImpedanceParameters
  */
 class FakeMotionControl :
         public yarp::dev::DeviceDriver,
-//        public yarp::dev::DeviceResponder,
         public yarp::os::PeriodicThread,
         public yarp::dev::IPidControlRaw,
         public yarp::dev::IControlCalibrationRaw,

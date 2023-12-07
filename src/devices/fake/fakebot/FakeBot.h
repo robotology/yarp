@@ -29,7 +29,6 @@ class FakeBot :
         public yarp::dev::IFrameGrabberImage,
         public yarp::dev::IControlCalibration,
         public yarp::dev::IControlLimits,
-        public yarp::dev::DeviceResponder,
         public yarp::os::Thread
 {
 private:
