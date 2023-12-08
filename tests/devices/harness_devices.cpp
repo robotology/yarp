@@ -48,14 +48,14 @@ static void toDox(PolyDriver& dd, FILE *os)
 {
     fprintf(os, "<table>\n");
     fprintf(os, "<tr><td>PROPERTY</td><td>DESCRIPTION</td><td>DEFAULT</td></tr>\n");
-    Bottle order = dd.getOptions();
+    Bottle order;
     for (size_t i=0; i<order.size(); i++) {
         std::string name = order.get(i).toString().c_str();
         if (name=="wrapped"||name.substr(0,10)=="subdevice.") {
             continue;
         }
-        std::string desc = dd.getComment(name.c_str());
-        std::string def = dd.getDefaultValue(name.c_str()).toString();
+        std::string desc;
+        std::string def;
         std::string out = "";
         out += "<tr><td>";
         out += name.c_str();

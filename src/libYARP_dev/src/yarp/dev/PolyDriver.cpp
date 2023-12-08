@@ -178,40 +178,6 @@ bool PolyDriver::link(PolyDriver& alt)
     return true;
 }
 
-Bottle PolyDriver::getOptions()
-{
-    if (mPriv==nullptr) {
-        return Bottle::getNullBottle();
-    }
-    return mPriv->getOptions();
-}
-
-std::string PolyDriver::getComment(const char *option)
-{
-    if (mPriv==nullptr) {
-        return {};
-    }
-    return mPriv->getComment(option);
-}
-
-Value PolyDriver::getDefaultValue(const char *option)
-{
-    if (mPriv==nullptr) {
-        return Value::getNullValue();
-    }
-    return mPriv->getDefaultValue(option);
-}
-
-Value PolyDriver::getValue(const char *option)
-{
-    if (mPriv==nullptr) {
-        return Value::getNullValue();
-    }
-    return mPriv->getValue(option);
-}
-
-
-
 bool PolyDriver::coreOpen(yarp::os::Searchable& prop)
 {
     setId(prop.check("id", prop.check("device", Value("")), "Id assigned to this device").toString());
