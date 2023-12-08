@@ -111,7 +111,5 @@ add_subdirectory(misc)
 
 add_subdirectory(yarpidl_thrift)
 
-add_subdirectory(devices)
-
 add_subdirectory(integration)
 add_subdirectory(harness_tests)
