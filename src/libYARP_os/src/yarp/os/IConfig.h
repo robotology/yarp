@@ -33,23 +33,13 @@ public:
      * Which parameters are effective for your object can vary.
      * @return true/false upon success/failure
      */
-    virtual bool open(Searchable& config);
+    virtual bool open(Searchable& config) = 0;
 
     /**
      * Shut the object down.  You should override this.
      * @return true/false on success/failure.
      */
-    virtual bool close();
-
-    /**
-     * Change online parameters.
-     * The parameters that can be changed online (in other words,
-     * without closing and reopening) will vary between objects.
-     *
-     * @param config A list of parameters for the object.
-     * @return true/false on success/failure.
-     */
-    virtual bool configure(Searchable& config);
+    virtual bool close() = 0;
 };
 
 } // namespace yarp::os

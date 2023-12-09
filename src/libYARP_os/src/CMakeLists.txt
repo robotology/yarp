@@ -162,7 +162,6 @@ set(YARP_os_SRCS
   yarp/os/DummyConnector.cpp
   yarp/os/Event.cpp
   yarp/os/Header.cpp
-  yarp/os/IConfig.cpp
   yarp/os/InputStream.cpp
   yarp/os/Log.cpp
   yarp/os/LogComponent.cpp
