@@ -26,7 +26,7 @@ class DeviceResponder;
  *
  * Interface implemented by all device drivers.
  */
-class YARP_dev_API yarp::dev::DeviceDriver : public yarp::os::IConfig
+class YARP_dev_API yarp::dev::DeviceDriver : public yarp::os::IOpenClose
 {
 public:
     DeviceDriver();

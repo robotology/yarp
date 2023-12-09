@@ -392,7 +392,7 @@ MAKE_COMMS(Bottle)
 %include <yarp/sig/Sound.h>
 %include <yarp/sig/Matrix.h>
 %include <yarp/sig/Vector.h>
-%include <yarp/os/IConfig.h>
+%include <yarp/os/IOpenClose.h>
 %include <yarp/dev/DeviceDriver.h>
 %include <yarp/dev/PolyDriver.h>
 %include <yarp/dev/Drivers.h>
