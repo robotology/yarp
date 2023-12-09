@@ -34,7 +34,7 @@ public:
     DeviceDriver& operator=(const DeviceDriver& other) = delete;
     DeviceDriver& operator=(DeviceDriver&& other) noexcept = delete;
 
-    ~DeviceDriver();
+    virtual ~DeviceDriver();
 
     /**
      * Open the DeviceDriver.
