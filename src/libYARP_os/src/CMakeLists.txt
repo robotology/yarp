@@ -38,7 +38,6 @@ set(YARP_os_HDRS
   yarp/os/Event.h
   yarp/os/Face.h
   yarp/os/Header.h
-  yarp/os/IOpenClose.h
   yarp/os/InputProtocol.h
   yarp/os/InputStream.h
   yarp/os/LocalReader.h

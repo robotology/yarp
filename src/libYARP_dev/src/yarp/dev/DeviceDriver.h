@@ -11,7 +11,6 @@
 #include <yarp/os/ConnectionWriter.h>
 #include <yarp/os/BufferedPort.h>
 #include <yarp/os/Property.h>
-#include <yarp/os/IConfig.h>
 
 #include <yarp/dev/api.h>
 
@@ -26,7 +25,7 @@ class DeviceResponder;
  *
  * Interface implemented by all device drivers.
  */
-class YARP_dev_API yarp::dev::DeviceDriver : public yarp::os::IOpenClose
+class YARP_dev_API yarp::dev::DeviceDriver
 {
 public:
     DeviceDriver();
@@ -35,7 +34,7 @@ public:
     DeviceDriver& operator=(const DeviceDriver& other) = delete;
     DeviceDriver& operator=(DeviceDriver&& other) noexcept = delete;
 
-    ~DeviceDriver() override;
+    ~DeviceDriver();
 
     /**
      * Open the DeviceDriver.
@@ -50,13 +49,13 @@ public:
      * yarp developers to add documentation for your device).
      * @return true/false upon success/failure
      */
-    bool open(yarp::os::Searchable& config) override { YARP_UNUSED(config); return true; }
+    virtual bool open(yarp::os::Searchable& config) { YARP_UNUSED(config); return true; }
 
     /**
      * Close the DeviceDriver.
      * @return true/false on success/failure.
      */
-    bool close() override { return true; }
+    virtual bool close() { return true; }
 
 
     /**

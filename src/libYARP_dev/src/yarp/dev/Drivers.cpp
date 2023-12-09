@@ -189,7 +189,7 @@ public:
         init();
     }
 
-    ~StubDriver() override = default;
+    ~StubDriver() = default;
 
     void init() {
         if (plugin.open(settings)) {
