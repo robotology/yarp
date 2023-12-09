@@ -20,36 +20,9 @@ YARP_LOG_COMPONENT(POLYDRIVER, "yarp.dev.PolyDriver")
 class PolyDriver::Private
 {
 private:
-    Property comment;
-    Property fallback;
-    Property present;
-    Property actual;
-    Bottle order;
     int count = 1;
-
 public:
     Property info;
-
-    Bottle getOptions()
-    {
-        return order;
-    }
-
-    std::string getComment(const char *option)
-    {
-        std::string desc = comment.find(option).toString();
-        return desc;
-    }
-
-    Value getDefaultValue(const char *option)
-    {
-        return fallback.find(option);
-    }
-
-    Value getValue(const char *option)
-    {
-        return actual.find(option);
-    }
 
     void addRef()
     {
