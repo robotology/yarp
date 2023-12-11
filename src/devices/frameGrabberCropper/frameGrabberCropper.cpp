@@ -63,7 +63,6 @@ bool FrameGrabberCropper::open(yarp::os::Searchable& config)
         yarp::os::Property p;
         subdevice = new yarp::dev::PolyDriver;
         p.fromString(config.toString());
-        p.setMonitor(config.getMonitor(), "subdevice"); // pass on any monitoring
         p.unput("device");
         p.put("device", config.find("subdevice").asString()); // subdevice was already checked before
 

@@ -66,7 +66,7 @@ class yarp::dev::RobotInterfaceTestMockDriver :
         public yarp::dev::DeviceDriver
 {
 public:
-    ~RobotInterfaceTestMockDriver() override;
+    ~RobotInterfaceTestMockDriver();
 
     //DEVICE DRIVER
     bool open(yarp::os::Searchable& config) override;

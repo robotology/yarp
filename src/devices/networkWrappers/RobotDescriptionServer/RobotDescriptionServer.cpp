@@ -51,12 +51,12 @@ bool RobotDescriptionServer::attachAll(const PolyDriverList &p)
     std::lock_guard<std::mutex> guard(m_external_mutex);
     for (int i = 0; i < p.size(); i++)
     {
-        yCTrace(ROBOTDESCRIPTIONSERVER) << p[i]->poly->getOptions().toString();
-        yCTrace(ROBOTDESCRIPTIONSERVER) << p[i]->poly->getValue("device").toString();
-        yCTrace(ROBOTDESCRIPTIONSERVER) << p[i]->poly->getValue("name").toString();
         DeviceDescription dev;
-        dev.device_name = p[i]->poly->getValue("name").toString();
-        dev.device_type = p[i]->poly->getValue("device").toString();
+
+        //BROKEN HERE. TO BE REIMPLEMENTED
+        //dev.device_name = p[i]->poly->getValue("name").toString();
+        //dev.device_type = p[i]->poly->getValue("device").toString();
+
         if (this->add_device(dev) == false)
         {
             yCError(ROBOTDESCRIPTIONSERVER) << "attachAll(): Something strange happened here";

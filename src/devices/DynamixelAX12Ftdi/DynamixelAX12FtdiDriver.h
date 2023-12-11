@@ -189,7 +189,7 @@ public:
         @param config Config file containing string pairs for parameters
         @return true on success
      */
-    bool configure(yarp::os::Searchable& config) override;
+    bool configure(yarp::os::Searchable& config);
 
     /** Send instruction to device
         Send an instruction to a device of given ID. The instruction has to be a byte arry containing

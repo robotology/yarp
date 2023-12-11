@@ -114,7 +114,6 @@ bool ControlBoard_nws_yarp::open(Searchable& config)
     // Check if we need to create subdevice or if they are
     // passed later on through attachAll()
     if (prop.check("subdevice")) {
-        prop.setMonitor(config.getMonitor());
         if (!openAndAttachSubDevice(prop)) {
             yCError(CONTROLBOARD, "Error while opening subdevice");
             return false;
@@ -184,7 +183,6 @@ bool ControlBoard_nws_yarp::openAndAttachSubDevice(Property& prop)
     p.fromString(prop.toString());
 
     std::string subdevice = prop.find("subdevice").asString();
-    p.setMonitor(prop.getMonitor(), subdevice.c_str()); // pass on any monitoring
     p.unput("device");
     p.put("device", subdevice); // subdevice was already checked before
 

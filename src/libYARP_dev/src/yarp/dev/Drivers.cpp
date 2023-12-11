@@ -189,7 +189,7 @@ public:
         init();
     }
 
-    ~StubDriver() override = default;
+    virtual ~StubDriver() = default;
 
     void init() {
         if (plugin.open(settings)) {
@@ -328,44 +328,6 @@ DriverCreator* Drivers::Private::load(const char *name) {
 static void toDox(PolyDriver& dd) {
     yCIDebug(DRIVERS, dd.id(), "===============================================================");
     yCIDebug(DRIVERS, dd.id(), "== Options checked by device:");
-    yCIDebug(DRIVERS, dd.id(), "==");
-    Bottle order = dd.getOptions();
-    for (size_t i=0; i<order.size(); i++) {
-        std::string name = order.get(i).toString();
-        if (name=="wrapped"||(name.find(".wrapped")!=std::string::npos)) {
-            continue;
-        }
-        std::string desc = dd.getComment(name.c_str());
-        Value def = dd.getDefaultValue(name.c_str());
-        Value actual = dd.getValue(name.c_str());
-        std::string out;
-        out += name;
-        if (!actual.isNull()) {
-            if (!actual.toString().empty()) {
-                out += "=";
-                if (actual.toString().length()<40) {
-                    out += actual.toString();
-                } else {
-                    out += "(value too long)";
-                }
-            }
-        }
-        if (!def.isNull()) {
-            if (!def.toString().empty()) {
-                out += " [";
-                if (def.toString().length()<40) {
-                    out += def.toString();
-                } else {
-                    out += "(value too long)";
-                }
-                out += "]";
-            }
-        }
-        yCIDebug(DRIVERS, dd.id(), "%s", out.c_str());
-        if (!desc.empty()) {
-            yCIDebug(DRIVERS, dd.id(), "    %s", desc.c_str());
-        }
-    }
     yCIDebug(DRIVERS, dd.id(), "==");
     yCIDebug(DRIVERS, dd.id(), "===============================================================");
 }
@@ -514,31 +476,22 @@ int Drivers::yarpdev(int argc, char *argv[]) {
     }
 
     Terminee *terminee = nullptr;
-    if (dd.isValid()) {
+    if (dd.isValid())
+    {
         Value *v;
         std::string name;
-        if (options.check("name", v)) {
+        if (options.check("name", v))
+        {
             name = v->toString();
-        } else if (options.check("device", v)) {
-            if (v->isString()) {
-                auto device_name = v->toString();
-                name = dd.getDefaultValue((device_name + ".name").c_str()).toString();
-                if (name.empty()) {
-                    auto options = dd.getOptions();
-                    for (size_t i = 0; i < options.size(); ++i) {
-                        auto opt = options.get(i).toString();
-                        if (opt.length() > 5 && opt.compare(opt.length() - 5, 5, ".name") == 0) { // C++20 opt.ends_with(".name")
-                            yCIWarning(DRIVERS, id, "%s", opt.c_str());
-                            name = dd.getDefaultValue(opt.c_str()).toString();
-                            break;
-                        }
-                    }
-                }
-                if (name.empty()) {
-                    name = v->toString();
-                }
-            }
-        } else {
+        }
+        if (name.empty() && options.check("device", v))
+        {
+            //get the name of the device from the polydriver
+            //TO BE IMPLEMENTED. FOR REFERENCE ONLY:
+            //name = dd.getDefaultValue((device_name + ".name").c_str()).toString();
+        }
+        if (name.empty())
+        {
             name = "/yarpdev";
         }
         std::string s = name + "/quit";

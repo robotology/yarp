@@ -131,7 +131,6 @@ bool FrameGrabber_nws_yarp::open(yarp::os::Searchable& config)
             p.put("pixelType", VOCAB_PIXEL_MONO);
         }
 
-        p.setMonitor(config.getMonitor(), "subdevice"); // pass on any monitoring
         p.unput("device");
         p.put("device", config.find("subdevice").asString()); // subdevice was already checked before
 

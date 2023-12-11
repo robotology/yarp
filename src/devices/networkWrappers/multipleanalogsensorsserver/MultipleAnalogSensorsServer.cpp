@@ -158,7 +158,6 @@ bool MultipleAnalogSensorsServer::open(yarp::os::Searchable& config)
 
         yarp::os::Property driverConfig;
         driverConfig.fromString(config.toString());
-        driverConfig.setMonitor(config.getMonitor(), subdeviceName.c_str()); // pass on any monitoring
         driverConfig.put("device", subdeviceName);
 
         if (!m_subdevice.open(driverConfig))
