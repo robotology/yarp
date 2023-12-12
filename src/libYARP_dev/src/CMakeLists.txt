@@ -46,6 +46,7 @@ set(YARP_dev_HDRS
   yarp/dev/IControlMode.h
   yarp/dev/ICurrentControl.h
   yarp/dev/IDepthVisualParams.h
+  yarp/dev/IDeviceDriverParams.h
   yarp/dev/IEncoders.h
   yarp/dev/IEncodersTimed.h
   yarp/dev/IFrameGrabberControls.h
@@ -175,6 +176,7 @@ set(YARP_dev_SRCS
   yarp/dev/IBattery.cpp
   yarp/dev/IChatBot.cpp
   yarp/dev/IDepthVisualParams.cpp
+  yarp/dev/IDeviceDriverParams.cpp
   yarp/dev/IFrameGrabberControls.cpp
   yarp/dev/IFrameGrabberControlsDC1394.cpp
   yarp/dev/IFrameGrabberImage.cpp

@@ -17,6 +17,8 @@ if(NOT SKIP_audioToFileDevice)
     PRIVATE
       audioToFileDevice.cpp
       audioToFileDevice.h
+      audioToFileDeviceParams.cpp
+      audioToFileDeviceParams.h
   )
 
   target_link_libraries(yarp_audioToFileDevice

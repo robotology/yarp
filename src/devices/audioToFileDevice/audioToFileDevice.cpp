@@ -23,8 +23,7 @@ namespace {
 YARP_LOG_COMPONENT(AUDIOTOFILE, "yarp.device.audioToFileDevice")
 }
 
-audioToFileDevice::audioToFileDevice() :
-        m_audio_filename("audio_out.wav")
+audioToFileDevice::audioToFileDevice()
 {
 }
 
@@ -35,43 +34,18 @@ audioToFileDevice::~audioToFileDevice()
 
 bool audioToFileDevice::open(yarp::os::Searchable &config)
 {
-    if (config.check("help"))
-    {
-        yCInfo(AUDIOTOFILE, "Some examples:");
-        yCInfo(AUDIOTOFILE, "yarpdev --device audioToFileDevice --help");
-        yCInfo(AUDIOTOFILE, "yarpdev --device AudioPlayerWrapper --subdevice audioToFileDevice --start");
-        yCInfo(AUDIOTOFILE, "yarpdev --device AudioPlayerWrapper --subdevice audioToFileDevice --start --file_name audio_out.wav --save_mode overwrite_file");
-        yCInfo(AUDIOTOFILE, "save_mode can be overwrite_file, append_file, rename_file, break_file");
-        yCInfo(AUDIOTOFILE, "use --add_marker option to add a marker at the beginning and at the ending of each received waveform");
-        return false;
-    }
+    bool b = false;
+    b = parseParams(config);
+    if (!b) {return false;}
 
-    bool b = configurePlayerAudioDevice(config.findGroup("AUDIO_BASE"), "audioToFileDevice");
+    b = configurePlayerAudioDevice(config.findGroup("AUDIO_BASE"), "audioToFileDevice");
     if (!b) { return false; }
 
-    if (config.check("file_name"))
-    {
-        m_audio_filename=config.find("file_name").asString();
-        yCInfo(AUDIOTOFILE) << "Audio will be saved on exit to file:" << m_audio_filename;
-    }
-    else
-    {
-        yCInfo(AUDIOTOFILE) << "No `file_name` option specified. Audio will be saved on exit to default file:" << m_audio_filename;
-    }
-
-    if      (config.check("add_marker")) {m_add_marker=true; yCInfo(AUDIOTOFILE) << "Audio marker option enabled";}
-
-    if      (config.find("save_mode").toString() == "overwrite_file") { m_save_mode = save_mode_t::save_overwrite_file;}
-    else if (config.find("save_mode").toString() == "append_data")    { m_save_mode = save_mode_t::save_append_data; }
-    else if (config.find("save_mode").toString() == "rename_file")    { m_save_mode = save_mode_t::save_rename_file; }
-    else if (config.find("save_mode").toString() == "break_file")     { m_save_mode = save_mode_t::save_break_file; }
-    else if (config.check("save_mode")) { yError() << "Unsupported value for save_mode parameter"; return false; }
-
-    if      (m_save_mode == save_mode_t::save_overwrite_file) { yCInfo(AUDIOTOFILE) << "overwrite_file mode selected. File will be saved both on exit and on stop"; }
-    else if (m_save_mode == save_mode_t::save_append_data)    { yCInfo(AUDIOTOFILE) << "append_data mode selected. File will be saved on exit only"; }
-    else if (m_save_mode == save_mode_t::save_rename_file)    { yCInfo(AUDIOTOFILE) << "rename_file mode selected. File will be saved both on exit and on stop"; }
-    else if (m_save_mode == save_mode_t::save_break_file)     { yCInfo(AUDIOTOFILE) << "break_file mode selected."; }
-    else                                                      { return false; }
+    if      (m_save_mode_s == "overwrite_file") { m_save_mode = save_mode_t::save_overwrite_file; yCInfo(AUDIOTOFILE) << "overwrite_file mode selected. File will be saved both on exit and on stop";}
+    else if (m_save_mode_s == "append_data")    { m_save_mode = save_mode_t::save_append_data; yCInfo(AUDIOTOFILE) << "append_data mode selected. File will be saved on exit only";}
+    else if (m_save_mode_s == "rename_file")    { m_save_mode = save_mode_t::save_rename_file; yCInfo(AUDIOTOFILE) << "rename_file mode selected. File will be saved both on exit and on stop";}
+    else if (m_save_mode_s == "break_file")     { m_save_mode = save_mode_t::save_break_file;  yCInfo(AUDIOTOFILE) << "break_file mode selected.";}
+    else                                        { yError() << "Unsupported value for save_mode parameter"; return false; }
 
     return true;
 }
