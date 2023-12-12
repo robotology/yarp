@@ -8,6 +8,7 @@
 #include <yarp/sig/Sound.h>
 #include <yarp/sig/SoundFile.h>
 #include <yarp/dev/AudioPlayerDeviceBase.h>
+#include "audioToFileDeviceParams.h"
 
 #include <string>
 #include <mutex>
@@ -17,37 +18,20 @@
 * @ingroup dev_impl_media
 *
 * \brief `audioToFileDevice` : This device driver, wrapped by default by AudioPlayerWrapper,
-* is used to save to a file an audio stream.
+* is used to save to an audio stream to a file on disk.
 *
-* Three different operating modes are available, defined by the optional string parameter `save_mode`:
-* if save_mode == "append_data", the file is written only when the module terminates.
-* Every start/stop operation just pauses the module. On resume, the new data is concatenated at the end of the file.
+* See audioToFileDeviceParams for the documentation of the accepted parameters.
 *
-* if save_mode == "overwrite_file", the output file is written every time the stop() method is called or when the module terminates.
-* If the file already exists, it will be overwritten with the new data.
-*
-* if save_mode = "rename_file", the output file is written to a NEW file every time the stop() method is called or when the module terminates.
-* The file name is modified, using an incremental counter appended at the end of the file name.
-*
-* if save_mode = "break_file", the output file is written to a NEW file every time a yarp::sig::sound is received or when the module terminates.
-* The file name is modified, using an incremental counter appended at the end of the file name.
-*
-* This device driver derives from AudioPlayerDeviceBase base class. Please check its documentation for additional details.
-*
-* Parameters required by this device are:
-* | Parameter name | SubParameter   | Type    | Units          | Default Value            | Required                    | Description                                                       | Notes |
-* |:--------------:|:--------------:|:-------:|:--------------:|:------------------------:|:--------------------------: |:-----------------------------------------------------------------:|:-----:|
-* | AUDIO_BASE     |     ***        |         | -              |  -                       | No                          | For the documentation of AUDIO_BASE group, please refer to the documentation of the base class AudioPlayerDeviceBase |       |
-* | file_name      |      -         | string  | -              |  audio_out.wav           | No                          | The name of the file written by the module                        | Only .wav and .mp3 files are supported   |
-* | save_mode      |      -         | string  | -              |  overwrite_file          | No                          | Affects the behavior of the module and defines the save mode, as described in the documentation.   |       |
-* | add_marker     |      -         | bool    | -              |  -                       | No                          | If set, it will add a marker at the beginning and at the ending of each received waveform.   |       |
+* This device driver derives from yarp::dev::AudioPlayerDeviceBase base class.
+* Please check its documentation for additional configuration parameters.
 *
 * See \ref AudioDoc for additional documentation on YARP audio.
 */
 
 class audioToFileDevice :
         public yarp::dev::DeviceDriver,
-        public yarp::dev::AudioPlayerDeviceBase
+        public yarp::dev::AudioPlayerDeviceBase,
+        public audioToFileDevice_params
 {
 public:
     audioToFileDevice();
@@ -72,10 +56,8 @@ public:
 
 private:
     yarp::sig::Sound m_audioFile;
-    std::string      m_audio_filename = "audio_out.wav";
     std::deque<yarp::sig::Sound> m_sounds;
-    size_t m_filename_counter = 0;
-    bool             m_add_marker=false;
+    size_t           m_filename_counter = 0;
 
     enum save_mode_t
     {
