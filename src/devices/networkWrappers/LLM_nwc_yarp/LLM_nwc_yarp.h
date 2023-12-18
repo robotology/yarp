@@ -7,6 +7,7 @@
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/dev/llm/ILLMMsgs.h>
 #include <yarp/dev/ILLM.h>
+#include <yarp/dev/LLM_Message.h>
 
  /**
  * @ingroup dev_impl_network_clients
@@ -38,7 +39,7 @@ public:
     //From ILLM
     bool setPrompt(const std::string& prompt) override;
     bool readPrompt(std::string& oPrompt) override;
-    bool ask(const std::string& question, std::string& oAnswer) override;
-    bool getConversation(std::vector<std::pair<Author,Content>>& oConversation) override;
+    bool ask(const std::string& question, yarp::dev::LLM_Message& oAnswer) override;
+    bool getConversation(std::vector<yarp::dev::LLM_Message>& oConversation) override;
     bool deleteConversation() override;
 };

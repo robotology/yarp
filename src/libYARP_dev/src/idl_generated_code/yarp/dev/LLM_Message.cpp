@@ -8,23 +8,23 @@
 // This is an automatically generated file.
 // It could get re-generated if the ALLOW_IDL_GENERATION flag is on.
 
-#include <yarp/dev/llm/Message.h>
+#include <yarp/dev/LLM_Message.h>
 
-namespace yarp::dev::llm {
+namespace yarp::dev {
 
 // Constructor with field values
-Message::Message(const std::string& sender,
-                 const std::string& content) :
+LLM_Message::LLM_Message(const std::string& type,
+                         const std::string& content) :
         WirePortable(),
-        sender(sender),
+        type(type),
         content(content)
 {
 }
 
 // Read structure on a Wire
-bool Message::read(yarp::os::idl::WireReader& reader)
+bool LLM_Message::read(yarp::os::idl::WireReader& reader)
 {
-    if (!read_sender(reader)) {
+    if (!read_type(reader)) {
         return false;
     }
     if (!read_content(reader)) {
@@ -37,7 +37,7 @@ bool Message::read(yarp::os::idl::WireReader& reader)
 }
 
 // Read structure on a Connection
-bool Message::read(yarp::os::ConnectionReader& connection)
+bool LLM_Message::read(yarp::os::ConnectionReader& connection)
 {
     yarp::os::idl::WireReader reader(connection);
     if (!reader.readListHeader(2)) {
@@ -50,9 +50,9 @@ bool Message::read(yarp::os::ConnectionReader& connection)
 }
 
 // Write structure on a Wire
-bool Message::write(const yarp::os::idl::WireWriter& writer) const
+bool LLM_Message::write(const yarp::os::idl::WireWriter& writer) const
 {
-    if (!write_sender(writer)) {
+    if (!write_type(writer)) {
         return false;
     }
     if (!write_content(writer)) {
@@ -65,7 +65,7 @@ bool Message::write(const yarp::os::idl::WireWriter& writer) const
 }
 
 // Write structure on a Connection
-bool Message::write(yarp::os::ConnectionWriter& connection) const
+bool LLM_Message::write(yarp::os::ConnectionWriter& connection) const
 {
     yarp::os::idl::WireWriter writer(connection);
     if (!writer.writeListHeader(2)) {
@@ -78,7 +78,7 @@ bool Message::write(yarp::os::ConnectionWriter& connection) const
 }
 
 // Convert to a printable string
-std::string Message::toString() const
+std::string LLM_Message::toString() const
 {
     yarp::os::Bottle b;
     if (!yarp::os::Portable::copyPortable(*this, b)) {
@@ -87,54 +87,54 @@ std::string Message::toString() const
     return b.toString();
 }
 
-// read sender field
-bool Message::read_sender(yarp::os::idl::WireReader& reader)
+// read type field
+bool LLM_Message::read_type(yarp::os::idl::WireReader& reader)
 {
     if (reader.noMore()) {
         reader.fail();
         return false;
     }
-    if (!reader.readString(sender)) {
+    if (!reader.readString(type)) {
         reader.fail();
         return false;
     }
     return true;
 }
 
-// write sender field
-bool Message::write_sender(const yarp::os::idl::WireWriter& writer) const
+// write type field
+bool LLM_Message::write_type(const yarp::os::idl::WireWriter& writer) const
 {
-    if (!writer.writeString(sender)) {
+    if (!writer.writeString(type)) {
         return false;
     }
     return true;
 }
 
-// read (nested) sender field
-bool Message::nested_read_sender(yarp::os::idl::WireReader& reader)
+// read (nested) type field
+bool LLM_Message::nested_read_type(yarp::os::idl::WireReader& reader)
 {
     if (reader.noMore()) {
         reader.fail();
         return false;
     }
-    if (!reader.readString(sender)) {
+    if (!reader.readString(type)) {
         reader.fail();
         return false;
     }
     return true;
 }
 
-// write (nested) sender field
-bool Message::nested_write_sender(const yarp::os::idl::WireWriter& writer) const
+// write (nested) type field
+bool LLM_Message::nested_write_type(const yarp::os::idl::WireWriter& writer) const
 {
-    if (!writer.writeString(sender)) {
+    if (!writer.writeString(type)) {
         return false;
     }
     return true;
 }
 
 // read content field
-bool Message::read_content(yarp::os::idl::WireReader& reader)
+bool LLM_Message::read_content(yarp::os::idl::WireReader& reader)
 {
     if (reader.noMore()) {
         reader.fail();
@@ -148,7 +148,7 @@ bool Message::read_content(yarp::os::idl::WireReader& reader)
 }
 
 // write content field
-bool Message::write_content(const yarp::os::idl::WireWriter& writer) const
+bool LLM_Message::write_content(const yarp::os::idl::WireWriter& writer) const
 {
     if (!writer.writeString(content)) {
         return false;
@@ -157,7 +157,7 @@ bool Message::write_content(const yarp::os::idl::WireWriter& writer) const
 }
 
 // read (nested) content field
-bool Message::nested_read_content(yarp::os::idl::WireReader& reader)
+bool LLM_Message::nested_read_content(yarp::os::idl::WireReader& reader)
 {
     if (reader.noMore()) {
         reader.fail();
@@ -171,7 +171,7 @@ bool Message::nested_read_content(yarp::os::idl::WireReader& reader)
 }
 
 // write (nested) content field
-bool Message::nested_write_content(const yarp::os::idl::WireWriter& writer) const
+bool LLM_Message::nested_write_content(const yarp::os::idl::WireWriter& writer) const
 {
     if (!writer.writeString(content)) {
         return false;
@@ -179,4 +179,4 @@ bool Message::nested_write_content(const yarp::os::idl::WireWriter& writer) cons
     return true;
 }
 
-} // namespace yarp::dev::llm
+} // namespace yarp::dev

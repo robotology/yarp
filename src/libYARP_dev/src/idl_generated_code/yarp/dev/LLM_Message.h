@@ -8,28 +8,36 @@
 // This is an automatically generated file.
 // It could get re-generated if the ALLOW_IDL_GENERATION flag is on.
 
-#ifndef YARP_THRIFT_GENERATOR_STRUCT_MESSAGE_H
-#define YARP_THRIFT_GENERATOR_STRUCT_MESSAGE_H
+#ifndef YARP_THRIFT_GENERATOR_STRUCT_LLM_MESSAGE_H
+#define YARP_THRIFT_GENERATOR_STRUCT_LLM_MESSAGE_H
+
+#include <yarp/dev/api.h>
 
 #include <yarp/os/Wire.h>
 #include <yarp/os/idl/WireTypes.h>
 
-namespace yarp::dev::llm {
+namespace yarp::dev {
 
-class Message :
+class YARP_dev_API LLM_Message :
         public yarp::os::idl::WirePortable
 {
 public:
     // Fields
-    std::string sender{};
+    /**
+     * type of message (can be prompt, assistant, function, ...)
+     */
+    std::string type{};
+    /**
+     * content of the message
+     */
     std::string content{};
 
     // Default constructor
-    Message() = default;
+    LLM_Message() = default;
 
     // Constructor with field values
-    Message(const std::string& sender,
-            const std::string& content);
+    LLM_Message(const std::string& type,
+                const std::string& content);
 
     // Read structure on a Wire
     bool read(yarp::os::idl::WireReader& reader) override;
@@ -47,14 +55,14 @@ public:
     std::string toString() const;
 
     // If you want to serialize this class without nesting, use this helper
-    typedef yarp::os::idl::Unwrapped<Message> unwrapped;
+    typedef yarp::os::idl::Unwrapped<LLM_Message> unwrapped;
 
 private:
-    // read/write sender field
-    bool read_sender(yarp::os::idl::WireReader& reader);
-    bool write_sender(const yarp::os::idl::WireWriter& writer) const;
-    bool nested_read_sender(yarp::os::idl::WireReader& reader);
-    bool nested_write_sender(const yarp::os::idl::WireWriter& writer) const;
+    // read/write type field
+    bool read_type(yarp::os::idl::WireReader& reader);
+    bool write_type(const yarp::os::idl::WireWriter& writer) const;
+    bool nested_read_type(yarp::os::idl::WireReader& reader);
+    bool nested_write_type(const yarp::os::idl::WireWriter& writer) const;
 
     // read/write content field
     bool read_content(yarp::os::idl::WireReader& reader);
@@ -63,6 +71,6 @@ private:
     bool nested_write_content(const yarp::os::idl::WireWriter& writer) const;
 };
 
-} // namespace yarp::dev::llm
+} // namespace yarp::dev
 
-#endif // YARP_THRIFT_GENERATOR_STRUCT_MESSAGE_H
+#endif // YARP_THRIFT_GENERATOR_STRUCT_LLM_MESSAGE_H

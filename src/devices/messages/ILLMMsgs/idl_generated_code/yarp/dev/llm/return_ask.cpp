@@ -14,7 +14,7 @@ namespace yarp::dev::llm {
 
 // Constructor with field values
 return_ask::return_ask(const bool ret,
-                       const std::string& answer) :
+                       const yarp::dev::LLM_Message& answer) :
         WirePortable(),
         ret(ret),
         answer(answer)
@@ -27,7 +27,7 @@ bool return_ask::read(yarp::os::idl::WireReader& reader)
     if (!read_ret(reader)) {
         return false;
     }
-    if (!read_answer(reader)) {
+    if (!nested_read_answer(reader)) {
         return false;
     }
     if (reader.isError()) {
@@ -55,7 +55,7 @@ bool return_ask::write(const yarp::os::idl::WireWriter& writer) const
     if (!write_ret(writer)) {
         return false;
     }
-    if (!write_answer(writer)) {
+    if (!nested_write_answer(writer)) {
         return false;
     }
     if (writer.isError()) {
@@ -130,7 +130,7 @@ bool return_ask::read_answer(yarp::os::idl::WireReader& reader)
         reader.fail();
         return false;
     }
-    if (!reader.readString(answer)) {
+    if (!reader.read(answer)) {
         reader.fail();
         return false;
     }
@@ -140,7 +140,7 @@ bool return_ask::read_answer(yarp::os::idl::WireReader& reader)
 // write answer field
 bool return_ask::write_answer(const yarp::os::idl::WireWriter& writer) const
 {
-    if (!writer.writeString(answer)) {
+    if (!writer.write(answer)) {
         return false;
     }
     return true;
@@ -153,7 +153,7 @@ bool return_ask::nested_read_answer(yarp::os::idl::WireReader& reader)
         reader.fail();
         return false;
     }
-    if (!reader.readString(answer)) {
+    if (!reader.readNested(answer)) {
         reader.fail();
         return false;
     }
@@ -163,7 +163,7 @@ bool return_ask::nested_read_answer(yarp::os::idl::WireReader& reader)
 // write (nested) answer field
 bool return_ask::nested_write_answer(const yarp::os::idl::WireWriter& writer) const
 {
-    if (!writer.writeString(answer)) {
+    if (!writer.writeNested(answer)) {
         return false;
     }
     return true;

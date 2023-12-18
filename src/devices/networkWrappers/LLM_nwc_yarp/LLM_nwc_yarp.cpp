@@ -73,7 +73,7 @@ bool LLM_nwc_yarp::readPrompt(std::string &oPrompt)
     return ret.ret;
 }
 
-bool LLM_nwc_yarp::ask(const std::string &question, std::string &oAnswer)
+bool LLM_nwc_yarp::ask(const std::string &question, yarp::dev::LLM_Message &oAnswer)
 {
     auto ret = m_LLM_RPC.ask(question);
 
@@ -81,12 +81,12 @@ bool LLM_nwc_yarp::ask(const std::string &question, std::string &oAnswer)
     return ret.ret;
 }
 
-bool LLM_nwc_yarp::getConversation(std::vector<std::pair<Author, Content>> &oConversation)
+bool LLM_nwc_yarp::getConversation(std::vector<yarp::dev::LLM_Message> &oConversation)
 {
     auto ret = m_LLM_RPC.getConversation();
-    for (const auto &[author, message] : ret.conversation)
+    for (const auto &message : ret.conversation)
     {
-        oConversation.push_back(std::make_pair(author, message));
+        oConversation.push_back(message);
     }
 
     return true;

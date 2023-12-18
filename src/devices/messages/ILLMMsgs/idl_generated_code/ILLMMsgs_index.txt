@@ -1,5 +1,3 @@
-yarp/dev/llm/Message.h
-yarp/dev/llm/Message.cpp
 yarp/dev/llm/return_readPrompt.h
 yarp/dev/llm/return_readPrompt.cpp
 yarp/dev/llm/return_ask.h

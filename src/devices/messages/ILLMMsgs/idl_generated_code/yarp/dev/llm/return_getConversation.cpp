@@ -14,7 +14,7 @@ namespace yarp::dev::llm {
 
 // Constructor with field values
 return_getConversation::return_getConversation(const bool ret,
-                                               const std::vector<Message>& conversation) :
+                                               const std::vector<yarp::dev::LLM_Message>& conversation) :
         WirePortable(),
         ret(ret),
         conversation(conversation)

@@ -15,17 +15,17 @@ bool fakeLLMDevice::setPrompt(const std::string &prompt)
         return false;
     }
 
-    m_conversation.push_back(std::make_pair("system", prompt));
+    m_conversation.push_back(yarp::dev::LLM_Message{"system", prompt,""});
     return true;
 }
 
 bool fakeLLMDevice::readPrompt(std::string &oPrompt)
 {
-    for (const auto &[author, content] : m_conversation)
+    for (const auto &message : m_conversation)
     {
-        if (author == "system")
+        if (message.type == "system")
         {
-            oPrompt = content;
+            oPrompt = message.content;
             return true;
         }
     }
@@ -33,17 +33,28 @@ bool fakeLLMDevice::readPrompt(std::string &oPrompt)
     return false;
 }
 
-bool fakeLLMDevice::ask(const std::string &question, std::string &oAnswer)
+bool fakeLLMDevice::ask(const std::string &question, yarp::dev::LLM_Message &oAnswer)
 {
     // In the fake device we ignore the question
-    std::string answer = "Fatti non foste per viver come bruti ma per seguir virtute e canoscenza";
-    m_conversation.push_back(std::make_pair("user", question));
-    m_conversation.push_back(std::make_pair("assistant", answer));
+    yarp::dev::LLM_Message answer;
+    if(question == "function")
+    {
+        std::string function_name = "FakeFunction";
+        std::string function_args = "{'arg1':'yes','arg2':'no'}";
+        answer = yarp::dev::LLM_Message{"function",function_name,function_args};
+    }
+    else
+    {
+        std::string answer_content = "Fatti non foste per viver come bruti ma per seguir virtute e canoscenza";
+        answer = yarp::dev::LLM_Message{"assistant", answer_content,""};
+    }
+    m_conversation.push_back(yarp::dev::LLM_Message{"user", question,""});
+    m_conversation.push_back(answer);
     oAnswer = answer;
     return true;
 }
 
-bool fakeLLMDevice::getConversation(std::vector<std::pair<Author, Content>>& oConversation)
+bool fakeLLMDevice::getConversation(std::vector<yarp::dev::LLM_Message>& oConversation)
 {
     oConversation = m_conversation;
     return true;

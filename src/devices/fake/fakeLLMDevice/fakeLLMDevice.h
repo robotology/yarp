@@ -24,12 +24,12 @@ public:
     fakeLLMDevice() : m_conversation{} {}
     bool setPrompt(const std::string &prompt) override;
     bool readPrompt(std::string &oPromp) override;
-    bool ask(const std::string &question, std::string &oAnswer) override;
-    bool getConversation(std::vector<std::pair<Author, Content>> &oConversation) override;
+    bool ask(const std::string &question, yarp::dev::LLM_Message &oAnswer) override;
+    bool getConversation(std::vector<yarp::dev::LLM_Message> &oConversation) override;
     bool deleteConversation() noexcept override;
 
 private:
-    std::vector<std::pair<Author, Content>> m_conversation;
+    std::vector<yarp::dev::LLM_Message> m_conversation;
 };
 
 #endif
