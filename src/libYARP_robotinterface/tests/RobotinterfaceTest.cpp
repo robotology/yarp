@@ -86,7 +86,15 @@ bool yarp::dev::RobotInterfaceTestMockDriver::open(yarp::os::Searchable& config)
     globalState.mockDriverWasOpened = true;
     globalState.mockDriverParamStringValue = config.check("theparam", yarp::os::Value("theparam_unset"), "The string param").asString();
     globalState.mockDriverParamListValue = *config.check("thelistparam", emptyList.get(0), "The list param").asList();
-    globalState.mockDriverParamBlobValue = config.find("theblobparam").asBlob(); // don't use the `check` signature as it creates a temporary
+
+    // don't use the `check` signature as it creates a temporary
+    if (const auto* ptr = config.find("theblobparam").asBlob(); ptr != nullptr)
+    {
+        // the caller test suite outlives `config`, thus we passed a pointer to the data instead of the data itself,
+        // and we need to dereference it here
+        globalState.mockDriverParamBlobValue = *reinterpret_cast<char* const*>(ptr);
+    }
+
     return true;
 }
 
@@ -415,7 +423,7 @@ TEST_CASE("robotinterface::XMLReaderTest", "[yarp::robotinterface]")
                                  "  </devices>\n"
                                 "</robot>\n";
 
-        int blobValue = 42;
+        auto* blobValue = &XMLString;
 
         yarp::robotinterface::XMLReader reader;
         yarp::os::Property config;
@@ -440,7 +448,7 @@ TEST_CASE("robotinterface::XMLReaderTest", "[yarp::robotinterface]")
         // Check that the device was opened and attach called
         CHECK(globalState.mockDriverWasOpened);
         CHECK(!globalState.mockDriverWasClosed);
-        CHECK(*reinterpret_cast<const int *>(globalState.mockDriverParamBlobValue) == blobValue);
+        CHECK(globalState.mockDriverParamBlobValue == blobValue);
 
         // Stop the robot
         ok = result.robot.enterPhase(yarp::robotinterface::ActionPhaseInterrupt1);
@@ -451,7 +459,7 @@ TEST_CASE("robotinterface::XMLReaderTest", "[yarp::robotinterface]")
         // Check that the device was closed and detach called
         CHECK(globalState.mockDriverWasOpened);
         CHECK(globalState.mockDriverWasClosed);
-        CHECK(*reinterpret_cast<const int *>(globalState.mockDriverParamBlobValue) == blobValue);
+        CHECK(globalState.mockDriverParamBlobValue == blobValue);
     }
 
     SECTION("Check valid robot file with portprefix passed via xml")
