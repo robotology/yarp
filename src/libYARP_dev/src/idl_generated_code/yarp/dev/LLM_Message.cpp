@@ -14,10 +14,14 @@ namespace yarp::dev {
 
 // Constructor with field values
 LLM_Message::LLM_Message(const std::string& type,
-                         const std::string& content) :
+                         const std::string& content,
+                         const std::vector<std::string>& parameters,
+                         const std::vector<std::string>& arguments) :
         WirePortable(),
         type(type),
-        content(content)
+        content(content),
+        parameters(parameters),
+        arguments(arguments)
 {
 }
 
@@ -30,6 +34,12 @@ bool LLM_Message::read(yarp::os::idl::WireReader& reader)
     if (!read_content(reader)) {
         return false;
     }
+    if (!read_parameters(reader)) {
+        return false;
+    }
+    if (!read_arguments(reader)) {
+        return false;
+    }
     if (reader.isError()) {
         return false;
     }
@@ -40,7 +50,7 @@ bool LLM_Message::read(yarp::os::idl::WireReader& reader)
 bool LLM_Message::read(yarp::os::ConnectionReader& connection)
 {
     yarp::os::idl::WireReader reader(connection);
-    if (!reader.readListHeader(2)) {
+    if (!reader.readListHeader(4)) {
         return false;
     }
     if (!read(reader)) {
@@ -58,6 +68,12 @@ bool LLM_Message::write(const yarp::os::idl::WireWriter& writer) const
     if (!write_content(writer)) {
         return false;
     }
+    if (!write_parameters(writer)) {
+        return false;
+    }
+    if (!write_arguments(writer)) {
+        return false;
+    }
     if (writer.isError()) {
         return false;
     }
@@ -68,7 +84,7 @@ bool LLM_Message::write(const yarp::os::idl::WireWriter& writer) const
 bool LLM_Message::write(yarp::os::ConnectionWriter& connection) const
 {
     yarp::os::idl::WireWriter writer(connection);
-    if (!writer.writeListHeader(2)) {
+    if (!writer.writeListHeader(4)) {
         return false;
     }
     if (!write(writer)) {
@@ -174,6 +190,186 @@ bool LLM_Message::nested_read_content(yarp::os::idl::WireReader& reader)
 bool LLM_Message::nested_write_content(const yarp::os::idl::WireWriter& writer) const
 {
     if (!writer.writeString(content)) {
+        return false;
+    }
+    return true;
+}
+
+// read parameters field
+bool LLM_Message::read_parameters(yarp::os::idl::WireReader& reader)
+{
+    size_t _csize;
+    yarp::os::idl::WireState _etype;
+    reader.readListBegin(_etype, _csize);
+    // WireReader removes BOTTLE_TAG_LIST from the tag
+    constexpr int expected_tag = ((BOTTLE_TAG_STRING) & (~BOTTLE_TAG_LIST));
+    if constexpr (expected_tag != 0) {
+        if (_csize != 0 && _etype.code != expected_tag) {
+            return false;
+        }
+    }
+    parameters.resize(_csize);
+    for (size_t _i = 0; _i < _csize; ++_i) {
+        if (reader.noMore()) {
+            reader.fail();
+            return false;
+        }
+        if (!reader.readString(parameters[_i])) {
+            reader.fail();
+            return false;
+        }
+    }
+    reader.readListEnd();
+    return true;
+}
+
+// write parameters field
+bool LLM_Message::write_parameters(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.writeListBegin(BOTTLE_TAG_STRING, parameters.size())) {
+        return false;
+    }
+    for (const auto& _item : parameters) {
+        if (!writer.writeString(_item, true)) {
+            return false;
+        }
+    }
+    if (!writer.writeListEnd()) {
+        return false;
+    }
+    return true;
+}
+
+// read (nested) parameters field
+bool LLM_Message::nested_read_parameters(yarp::os::idl::WireReader& reader)
+{
+    size_t _csize;
+    yarp::os::idl::WireState _etype;
+    reader.readListBegin(_etype, _csize);
+    // WireReader removes BOTTLE_TAG_LIST from the tag
+    constexpr int expected_tag = ((BOTTLE_TAG_STRING) & (~BOTTLE_TAG_LIST));
+    if constexpr (expected_tag != 0) {
+        if (_csize != 0 && _etype.code != expected_tag) {
+            return false;
+        }
+    }
+    parameters.resize(_csize);
+    for (size_t _i = 0; _i < _csize; ++_i) {
+        if (reader.noMore()) {
+            reader.fail();
+            return false;
+        }
+        if (!reader.readString(parameters[_i])) {
+            reader.fail();
+            return false;
+        }
+    }
+    reader.readListEnd();
+    return true;
+}
+
+// write (nested) parameters field
+bool LLM_Message::nested_write_parameters(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.writeListBegin(BOTTLE_TAG_STRING, parameters.size())) {
+        return false;
+    }
+    for (const auto& _item : parameters) {
+        if (!writer.writeString(_item, true)) {
+            return false;
+        }
+    }
+    if (!writer.writeListEnd()) {
+        return false;
+    }
+    return true;
+}
+
+// read arguments field
+bool LLM_Message::read_arguments(yarp::os::idl::WireReader& reader)
+{
+    size_t _csize;
+    yarp::os::idl::WireState _etype;
+    reader.readListBegin(_etype, _csize);
+    // WireReader removes BOTTLE_TAG_LIST from the tag
+    constexpr int expected_tag = ((BOTTLE_TAG_STRING) & (~BOTTLE_TAG_LIST));
+    if constexpr (expected_tag != 0) {
+        if (_csize != 0 && _etype.code != expected_tag) {
+            return false;
+        }
+    }
+    arguments.resize(_csize);
+    for (size_t _i = 0; _i < _csize; ++_i) {
+        if (reader.noMore()) {
+            reader.fail();
+            return false;
+        }
+        if (!reader.readString(arguments[_i])) {
+            reader.fail();
+            return false;
+        }
+    }
+    reader.readListEnd();
+    return true;
+}
+
+// write arguments field
+bool LLM_Message::write_arguments(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.writeListBegin(BOTTLE_TAG_STRING, arguments.size())) {
+        return false;
+    }
+    for (const auto& _item : arguments) {
+        if (!writer.writeString(_item, true)) {
+            return false;
+        }
+    }
+    if (!writer.writeListEnd()) {
+        return false;
+    }
+    return true;
+}
+
+// read (nested) arguments field
+bool LLM_Message::nested_read_arguments(yarp::os::idl::WireReader& reader)
+{
+    size_t _csize;
+    yarp::os::idl::WireState _etype;
+    reader.readListBegin(_etype, _csize);
+    // WireReader removes BOTTLE_TAG_LIST from the tag
+    constexpr int expected_tag = ((BOTTLE_TAG_STRING) & (~BOTTLE_TAG_LIST));
+    if constexpr (expected_tag != 0) {
+        if (_csize != 0 && _etype.code != expected_tag) {
+            return false;
+        }
+    }
+    arguments.resize(_csize);
+    for (size_t _i = 0; _i < _csize; ++_i) {
+        if (reader.noMore()) {
+            reader.fail();
+            return false;
+        }
+        if (!reader.readString(arguments[_i])) {
+            reader.fail();
+            return false;
+        }
+    }
+    reader.readListEnd();
+    return true;
+}
+
+// write (nested) arguments field
+bool LLM_Message::nested_write_arguments(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.writeListBegin(BOTTLE_TAG_STRING, arguments.size())) {
+        return false;
+    }
+    for (const auto& _item : arguments) {
+        if (!writer.writeString(_item, true)) {
+            return false;
+        }
+    }
+    if (!writer.writeListEnd()) {
         return false;
     }
     return true;

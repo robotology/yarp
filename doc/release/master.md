@@ -34,6 +34,8 @@ New Features
 
 * Added new command line tool `yarpDeviceParamParserGenerator`. See official yarp documentation (cmd_yarpDeviceParamParserGenerator.dox)
 
+* Added LLM_Message data type to propagate LLM answers
+
 ### Devices
 
 #### deviceBundler

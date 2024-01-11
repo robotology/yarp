@@ -15,7 +15,7 @@ bool fakeLLMDevice::setPrompt(const std::string &prompt)
         return false;
     }
 
-    m_conversation.push_back(yarp::dev::LLM_Message{"system", prompt,""});
+    m_conversation.push_back(yarp::dev::LLM_Message("system", prompt,{},{}));
     return true;
 }
 
@@ -40,15 +40,16 @@ bool fakeLLMDevice::ask(const std::string &question, yarp::dev::LLM_Message &oAn
     if(question == "function")
     {
         std::string function_name = "FakeFunction";
-        std::string function_args = "{'arg1':'yes','arg2':'no'}";
-        answer = yarp::dev::LLM_Message{"function",function_name,function_args};
+        std::vector<std::string> function_params = {"arg1","arg2"};
+        std::vector<std::string> function_args = {"yes","no"};
+        answer = yarp::dev::LLM_Message("function",function_name,function_params,function_args);
     }
     else
     {
         std::string answer_content = "Fatti non foste per viver come bruti ma per seguir virtute e canoscenza";
-        answer = yarp::dev::LLM_Message{"assistant", answer_content,""};
+        answer = yarp::dev::LLM_Message("assistant", answer_content,{},{});
     }
-    m_conversation.push_back(yarp::dev::LLM_Message{"user", question,""});
+    m_conversation.push_back(yarp::dev::LLM_Message("user", question,{},{}));
     m_conversation.push_back(answer);
     oAnswer = answer;
     return true;

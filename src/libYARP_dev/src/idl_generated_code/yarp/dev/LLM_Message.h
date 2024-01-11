@@ -31,13 +31,23 @@ public:
      * content of the message
      */
     std::string content{};
+    /**
+     * possible parameters
+     */
+    std::vector<std::string> parameters{};
+    /**
+     * possible arguments of the parameters
+     */
+    std::vector<std::string> arguments{};
 
     // Default constructor
     LLM_Message() = default;
 
     // Constructor with field values
     LLM_Message(const std::string& type,
-                const std::string& content);
+                const std::string& content,
+                const std::vector<std::string>& parameters,
+                const std::vector<std::string>& arguments);
 
     // Read structure on a Wire
     bool read(yarp::os::idl::WireReader& reader) override;
@@ -69,6 +79,18 @@ private:
     bool write_content(const yarp::os::idl::WireWriter& writer) const;
     bool nested_read_content(yarp::os::idl::WireReader& reader);
     bool nested_write_content(const yarp::os::idl::WireWriter& writer) const;
+
+    // read/write parameters field
+    bool read_parameters(yarp::os::idl::WireReader& reader);
+    bool write_parameters(const yarp::os::idl::WireWriter& writer) const;
+    bool nested_read_parameters(yarp::os::idl::WireReader& reader);
+    bool nested_write_parameters(const yarp::os::idl::WireWriter& writer) const;
+
+    // read/write arguments field
+    bool read_arguments(yarp::os::idl::WireReader& reader);
+    bool write_arguments(const yarp::os::idl::WireWriter& writer) const;
+    bool nested_read_arguments(yarp::os::idl::WireReader& reader);
+    bool nested_write_arguments(const yarp::os::idl::WireWriter& writer) const;
 };
 
 } // namespace yarp::dev

@@ -78,7 +78,17 @@ void ILLMRPCd::m_stream_conversation()
         auto& message_bot = list.addList();
         message_bot.addString(message.type);
         message_bot.addString(message.content);
-        message_bot.addString(message.arguments);
+        auto& params_bot = message_bot.addList();
+        for(const auto& params: message.parameters)
+        {
+            params_bot.addString(params);
+        }
+
+        auto& args_bot = message_bot.addList();
+        for(const auto& args: message.arguments)
+        {
+            args_bot.addString(args);
+        }
     }
 
     m_streaming_port.write();
