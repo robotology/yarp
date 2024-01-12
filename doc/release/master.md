@@ -25,5 +25,7 @@ Deprecations and removals
 Fixes
 -----
 
+* Configuration files installed by the `yarp_configure_plugins_installation` CMake macro are now relocatable (https://github.com/robotology/yarp/issues/2445, ).
+
 New Features
 ------------
