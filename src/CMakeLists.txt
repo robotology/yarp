@@ -56,6 +56,8 @@ if(YARP_COMPILE_EXECUTABLES)
     add_subdirectory(yarpdataplayer-console)
     add_subdirectory(yarpdatadumper)
 
+    add_subdirectory(yarpDeviceParamParserGenerator)
+
     # Qt5 GUIs
     add_subdirectory(yarpview)
     add_subdirectory(yarpscope)
