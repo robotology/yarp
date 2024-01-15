@@ -13,9 +13,18 @@ yarp_prepare_plugin(testDeviceWGP
   DEFAULT ON
 )
 
-generateDeviceParamsParser(TestDeviceWGP)
+#This is a test so we always want to generate the parser, regardless the value of ALLOW_DEVICE_PARAM_PARSER_GENERATION.
+#With add_custom_target and add_dependencies we create a dependency so that first yarpDeviceParamParserGenerator is executed
+#then the device is compiled, using the generated files.
+add_custom_target(generate_parser COMMAND yarpDeviceParamParserGenerator
+                                          --class_name TestDeviceWGP
+                                          --input_filename_md test2.txt
+                                          --generate all
+                                          WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
 
 yarp_add_plugin(yarp_testDeviceWGP)
+
+add_dependencies(yarp_testDeviceWGP generate_parser)
 
 target_sources(yarp_testDeviceWGP
     PRIVATE
@@ -52,4 +61,6 @@ source_group("OtherFiles" FILES
 
 set(YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS ${YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS} PARENT_SCOPE)
 
-set_property(TARGET yarp_testDeviceWGP PROPERTY FOLDER "Plugins/Device")
+set_property(TARGET yarp_testDeviceWGP PROPERTY FOLDER "Test")
+
+create_device_test(TestDeviceWGP)

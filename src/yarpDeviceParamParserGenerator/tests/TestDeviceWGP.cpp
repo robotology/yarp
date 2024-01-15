@@ -21,7 +21,8 @@ TestDeviceWGP::~TestDeviceWGP()
 
 bool TestDeviceWGP::open(yarp::os::Searchable &config)
 {
-    return true;
+    bool ret = parseParams(config);
+    return ret;
 }
 
 bool TestDeviceWGP::close()
