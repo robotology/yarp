@@ -12,4 +12,4 @@ def get_language(lang):
 
 def set_language(lang):
     print("setting: " + lang)
-    return True
+    return lang

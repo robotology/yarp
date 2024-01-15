@@ -10,6 +10,7 @@
 #include <yarp/dev/ISpeechTranscription.h>
 #include <yarp/os/Bottle.h>
 #include <stdio.h>
+#include <list>
 
 using namespace yarp::os;
 
@@ -25,6 +26,9 @@ class FakeSpeechTranscription :
 private:
     bool m_verbose = true;
     std::string m_language="auto";
+
+    const char * m_moduleName = "Module";
+    const char * m_path = "/home/ecub_docker/yarp/src/devices/fake/fakeSpeechTranscription";
 
 public:
     FakeSpeechTranscription();
