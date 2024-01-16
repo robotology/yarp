@@ -12,6 +12,8 @@
 #include <stdio.h>
 #include <list>
 
+#include "Python.h"
+
 using namespace yarp::os;
 
 /**
@@ -29,6 +31,12 @@ private:
 
     const char * m_moduleName = "Module";
     const char * m_path = "/home/ecub_docker/yarp/src/devices/fake/fakeSpeechTranscription";
+
+    PyObject* functionWrapper(std::string moduleName, std::string functionName, PyObject* &pArgs, PyObject* &pValue);
+    std::string stringWrapper(PyObject* &pValue);
+    long intWrapper(PyObject* &pValue);
+    double doubleWrapper(PyObject* &pValue);
+    bool boolWrapper(PyObject* &pValue);
 
 public:
     FakeSpeechTranscription();

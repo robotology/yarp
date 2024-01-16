@@ -12,8 +12,6 @@
 #include <cstdio>
 #include <cstdlib>
 
-#include "Python.h"
-
 using namespace yarp::os;
 using namespace yarp::dev;
 
@@ -37,7 +35,6 @@ bool FakeSpeechTranscription::open(yarp::os::Searchable& config)
 
     PyObject *pName,    //Interpreted name of the module
              *pModule,  //Imported py Module loaded in this object
-             *pDict,    //Interpreted name of the module
              *pFunc,    //Interpreted name of the module
              *pValue;   //Interpreted name of the module
 
@@ -109,7 +106,6 @@ bool FakeSpeechTranscription::close()
 
     PyObject *pName,    //Interpreted name of the module
              *pModule,  //Imported py Module loaded in this object
-             *pDict,    //Interpreted name of the module
              *pFunc,    //Interpreted name of the module
              *pValue;   //Interpreted name of the module
 
@@ -182,7 +178,6 @@ bool FakeSpeechTranscription::setLanguage(const std::string& language)
 
     PyObject *pName,    //Interpreted name of the module
              *pModule,  //Imported py Module loaded in this object
-             *pDict,    //Interpreted name of the module
              *pFunc,    //Interpreted name of the module
              *pValue,   //Interpreted name of the module
              *pArgs;    //Interpreted argument list
@@ -286,4 +281,147 @@ bool FakeSpeechTranscription::transcribe(const yarp::sig::Sound& sound, std::str
     transcription = "hello world";
     score = 1.0;
     return true;
+}
+
+PyObject* FakeSpeechTranscription::functionWrapper(std::string moduleName, std::string functionName, PyObject* &pArgs, PyObject* &pValue)
+{
+    bool internallyInitialized = false;
+    if (!Py_IsInitialized())
+    {
+        internallyInitialized = true;
+        Py_Initialize();
+    }
+
+    PyObject *pName,    //Interpreted name of the module
+             *pModule,  //Imported py Module loaded in this object
+             *pFunc;    //Interpreted name of the module
+             //*pValue;   //Interpreted name of the module
+             //*pArgs;    //Interpreted argument list
+    
+    // Build the name object (of the module)
+    PyObject* sysPath = PySys_GetObject((char*)"path");
+    PyList_Append(sysPath, (PyUnicode_FromString(m_path)));
+    pName = PyUnicode_DecodeFSDefault(m_moduleName);    //The string "Module" should be the name of the python file: i.e. Module.py
+
+    // Load the module object
+    pModule = PyImport_Import(pName);
+    // Destroy the pName object: not needed anymore
+    Py_DECREF(pName);
+    Py_DECREF(sysPath);
+
+    if (pModule != NULL) // Check if the Module has been found and loaded
+    {
+        // Get the function inside the module
+        pFunc = PyObject_GetAttrString(pModule, functionName.c_str());
+
+        if (pFunc && PyCallable_Check(pFunc))   // Check if the function has been found and is callable
+        {
+            // Call the function
+            pValue = PyObject_CallObject(pFunc, pArgs);
+            // Check the return value
+            if (pValue != NULL) 
+            {   
+                yCInfo(FAKE_SPEECHTR) << "Returning object " << " \n";
+
+                // Clear memory
+                Py_DECREF(pArgs);
+                Py_XDECREF(pFunc);
+                Py_DECREF(pModule);
+
+                return pValue;
+            }
+            else 
+            {   // Call Failed
+                Py_DECREF(pArgs);
+                Py_XDECREF(pFunc);
+                Py_DECREF(pModule);
+                PyErr_Print();
+                fprintf(stderr,"Call failed\n");
+                // If the function is initializing the interpreter, finalize it
+                if (internallyInitialized)
+                {
+                    Py_Finalize();
+                }
+                return nullptr;
+            }
+        }
+        else 
+        {   // Function not found in the py module
+            if (PyErr_Occurred())
+                PyErr_Print();
+            fprintf(stderr, "Cannot find function \"%s\"\n", functionName);
+            Py_DECREF(pArgs);
+            Py_XDECREF(pFunc);
+            Py_DECREF(pModule);
+            if (internallyInitialized)
+            {
+                Py_Finalize();
+            }
+            return nullptr;
+        }
+    }
+    else 
+    {   // Module not found or loaded
+        PyErr_Print();
+        fprintf(stderr, "Failed to load \"%s\"\n", m_moduleName);
+        Py_DECREF(pModule);
+        // If the function is initializing the interpreter, finalize it
+        if (internallyInitialized)
+        {
+            Py_Finalize();
+        }
+        return nullptr;
+    }
+}
+
+std::string FakeSpeechTranscription::stringWrapper(PyObject* &pValue)
+{
+    if (pValue!=NULL)
+    {
+        return std::string(PyUnicode_AsUTF8(pValue));
+    }
+    else
+    {
+        yCError(FAKE_SPEECHTR) << "Null pValue passed to FakeSpeechTranscription::stringWrapper \n"; 
+        return NULL;
+    }
+}
+
+long FakeSpeechTranscription::intWrapper(PyObject* &pValue)
+{
+    if (pValue!=NULL)
+    {
+        return PyLong_AsLong(pValue);
+    }
+    else
+    {
+        yCError(FAKE_SPEECHTR) << "Null pValue passed to FakeSpeechTranscription::intWrapper \n"; 
+        return NULL;
+    }
+}
+
+double FakeSpeechTranscription::doubleWrapper(PyObject* &pValue)
+{
+    if (pValue!=NULL)
+    {
+        return PyFloat_AsDouble(pValue);
+    }
+    else
+    {
+        yCError(FAKE_SPEECHTR) << "Null pValue passed to FakeSpeechTranscription::doubleWrapper \n"; 
+        return NULL;
+    }
+}
+
+bool FakeSpeechTranscription::boolWrapper(PyObject* &pValue)
+{
+    if (pValue!=NULL)
+    {
+        return ((bool)PyLong_AsLong(pValue));
+    }
+    else
+    {
+        yCError(FAKE_SPEECHTR) << "Null pValue passed to FakeSpeechTranscription::boolWrapper \n"; 
+        return NULL;
+    }
 }
