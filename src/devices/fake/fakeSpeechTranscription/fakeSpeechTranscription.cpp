@@ -26,6 +26,7 @@ FakeSpeechTranscription::FakeSpeechTranscription()
 FakeSpeechTranscription::~FakeSpeechTranscription()
 {
     close();
+    //Py_FinalizeEx();
 }
 
 bool FakeSpeechTranscription::open(yarp::os::Searchable& config)
@@ -39,7 +40,11 @@ bool FakeSpeechTranscription::open(yarp::os::Searchable& config)
              *pValue;   //Interpreted name of the module
 
     // Initialize the Python Interpreter
-    Py_Initialize();
+    if (!Py_IsInitialized())
+    {
+        yInfo()<<"debug 1";
+        Py_Initialize();
+    }
 
     // Build the name object (of the module)
     PyObject* sysPath = PySys_GetObject((char*)"path");
@@ -110,7 +115,11 @@ bool FakeSpeechTranscription::close()
              *pValue;   //Interpreted name of the module
 
     // Initialize the Python Interpreter
-    Py_Initialize();
+    if (!Py_IsInitialized())
+    {
+        yInfo()<<"debug close";
+        Py_Initialize();
+    }
 
     // Build the name object (of the module)
     PyObject* sysPath = PySys_GetObject((char*)"path");
@@ -183,7 +192,11 @@ bool FakeSpeechTranscription::setLanguage(const std::string& language)
              *pArgs;    //Interpreted argument list
 
     // Initialize the Python Interpreter
-    Py_Initialize();
+    if (!Py_IsInitialized())
+    {
+        yInfo()<<"debug set";
+        Py_Initialize();
+    }
 
     // Build the name object (of the module)
     PyObject* sysPath = PySys_GetObject((char*)"path");
@@ -263,9 +276,43 @@ bool FakeSpeechTranscription::setLanguage(const std::string& language)
 
 bool FakeSpeechTranscription::getLanguage(std::string& language)
 {
-    language = m_language;
+    if (!Py_IsInitialized())
+    {
+        Py_Initialize();
+    }
+
+    //language = m_language;
+    PyObject* pArgs = PyTuple_New(1);
+    PyObject* pString = PyUnicode_FromString(language.c_str());
+    PyTuple_SetItem(pArgs, 0, pString);
+    PyObject* pRet;
+    if(! functionWrapper(m_moduleName, "get_language", pArgs, pRet))
+    {
+        yCError(FAKE_SPEECHTR) << "[getLanguage] Returned False at functionWrapper \n";
+        Py_DECREF(pArgs);
+        Py_DECREF(pString);
+        return false;
+    }
+    yInfo() << "functionWrapper OK \n";
+    std::string ret = stringWrapper(pRet);
+
+    if (ret=="")
+    {
+        yCError(FAKE_SPEECHTR) << "[getLanguage] Unable to convert value in stringWrapper \n";
+    }
+    language = ret;
+    yInfo() << "stringWrapper OK \n";
+    Py_DECREF(pArgs);
+    yInfo() << "1 OK \n";
+    Py_DECREF(pString);
+    yInfo() << "2 OK \n";
+    Py_DECREF(pRet);
+    yInfo() << "3 OK \n";
+    //Py_Finalize();
+    yInfo() << "4 OK \n";
     return true;
 }
+
 
 bool FakeSpeechTranscription::transcribe(const yarp::sig::Sound& sound, std::string& transcription, double& score)
 {
@@ -283,20 +330,18 @@ bool FakeSpeechTranscription::transcribe(const yarp::sig::Sound& sound, std::str
     return true;
 }
 
-PyObject* FakeSpeechTranscription::functionWrapper(std::string moduleName, std::string functionName, PyObject* &pArgs, PyObject* &pValue)
+bool FakeSpeechTranscription::functionWrapper(std::string moduleName, std::string functionName, PyObject* &pArgs, PyObject* &pValue)
 {
-    bool internallyInitialized = false;
-    if (!Py_IsInitialized())
-    {
-        internallyInitialized = true;
-        Py_Initialize();
-    }
+    //bool internallyInitialized = false;
+    //if (!Py_IsInitialized())
+    //{
+    //    internallyInitialized = true;
+    //    Py_Initialize();
+    //}
 
     PyObject *pName,    //Interpreted name of the module
              *pModule,  //Imported py Module loaded in this object
              *pFunc;    //Interpreted name of the module
-             //*pValue;   //Interpreted name of the module
-             //*pArgs;    //Interpreted argument list
     
     // Build the name object (of the module)
     PyObject* sysPath = PySys_GetObject((char*)"path");
@@ -324,25 +369,23 @@ PyObject* FakeSpeechTranscription::functionWrapper(std::string moduleName, std::
                 yCInfo(FAKE_SPEECHTR) << "Returning object " << " \n";
 
                 // Clear memory
-                Py_DECREF(pArgs);
                 Py_XDECREF(pFunc);
                 Py_DECREF(pModule);
 
-                return pValue;
+                return true;
             }
             else 
             {   // Call Failed
-                Py_DECREF(pArgs);
                 Py_XDECREF(pFunc);
                 Py_DECREF(pModule);
                 PyErr_Print();
                 fprintf(stderr,"Call failed\n");
                 // If the function is initializing the interpreter, finalize it
-                if (internallyInitialized)
-                {
-                    Py_Finalize();
-                }
-                return nullptr;
+                //if (internallyInitialized)
+                //{
+                //    Py_Finalize();
+                //}
+                return false;
             }
         }
         else 
@@ -350,14 +393,13 @@ PyObject* FakeSpeechTranscription::functionWrapper(std::string moduleName, std::
             if (PyErr_Occurred())
                 PyErr_Print();
             fprintf(stderr, "Cannot find function \"%s\"\n", functionName);
-            Py_DECREF(pArgs);
             Py_XDECREF(pFunc);
             Py_DECREF(pModule);
-            if (internallyInitialized)
-            {
-                Py_Finalize();
-            }
-            return nullptr;
+            //if (internallyInitialized)
+            //{
+            //    Py_Finalize();
+            //}
+            return false;
         }
     }
     else 
@@ -365,12 +407,13 @@ PyObject* FakeSpeechTranscription::functionWrapper(std::string moduleName, std::
         PyErr_Print();
         fprintf(stderr, "Failed to load \"%s\"\n", m_moduleName);
         Py_DECREF(pModule);
+
         // If the function is initializing the interpreter, finalize it
-        if (internallyInitialized)
-        {
-            Py_Finalize();
-        }
-        return nullptr;
+        //if (internallyInitialized)
+        //{
+        //    Py_Finalize();
+        //}
+        return false;
     }
 }
 
