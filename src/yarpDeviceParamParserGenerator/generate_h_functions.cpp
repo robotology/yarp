@@ -17,7 +17,15 @@ std::string ParamsFilesGenerator::generateDoxygenForHeaderClass()
 
     std::ostringstream s;
 s <<  "/**\n\
-* This class is the parameters parser for class " << m_classname << ".\n\
+* This class is the parameters parser for class " << m_classname << ".\n";
+
+if (!m_extra_comments.empty())
+{
+    s << "*";
+    s << doxygenize_string(m_extra_comments) <<"\n";
+}
+
+s << "\
 *\n\
 * These are the used parameters:\n\
 ";

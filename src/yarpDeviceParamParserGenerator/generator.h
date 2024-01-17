@@ -40,6 +40,7 @@ public:
     std::string m_output_yarpdev_filename;
     std::string m_output_yarprobotinterface_filename;
     std::string m_output_readme_md_filename;
+    std::string m_extra_comments;
 
     void printParams();
     std::string generateCpp();
@@ -58,6 +59,7 @@ public:
 
     bool parseIniParams(std::string inputfilename);
     bool parseMdParams(std::string inputfilename);
+    bool parseExtraComments(std::string inputfilename);
 
     void generate_param(std::string origin, std::ostringstream& s, const Parameter& param);
     void generate_section (std::ostringstream& s, std::deque<std::string> vec, size_t count, size_t siz);

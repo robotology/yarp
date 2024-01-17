@@ -51,9 +51,9 @@ bool ParamsFilesGenerator::nested_sections_found()
 void print_help()
 {
     std::cout << "Welcome to YarpDeviceParamParserGenerator tool. Syntax:\n";
-    std::cout << "1) YarpDeviceParamParserGenerator --class_name \"className\" --input_filename_md \"filename.md\" [--generate_md] [--generate_ini] [--generate_yarpdev] [--generate_yarprobotinterface] [--generate_all] [--output_dir \"output_path\"]\n";
+    std::cout << "1) YarpDeviceParamParserGenerator --class_name \"className\" --input_filename_md \"filename.md\" [--input_extra_comments \"comments.md\"] [--generate_md] [--generate_ini] [--generate_yarpdev] [--generate_yarprobotinterface] [--generate_all] [--output_dir \"output_path\"]\n";
     std::cout << "or:\n";
-    std::cout << "2) YarpDeviceParamParserGenerator --class_name \"className\" --input_filename_ini \"filename.ini\" [--generate_md] [--generate_ini] [--generate_yarpdev] [--generate_yarprobotinterface] [--generate_all] [--output_dir \"output_path\"]\n";
+    std::cout << "2) YarpDeviceParamParserGenerator --class_name \"className\" --input_filename_ini \"filename.ini\" [--input_extra_comments \"comments.md\"] [--generate_md] [--generate_ini] [--generate_yarpdev] [--generate_yarprobotinterface] [--generate_all] [--output_dir \"output_path\"]\n";
 }
 
 int main(int argc, char *argv[])
@@ -66,6 +66,7 @@ int main(int argc, char *argv[])
     bool generate_code = true;
     std::string input_filename_type;
     std::string input_filename;
+    std::string input_extra_comments;
     std::string output_dir=".";
     std::string class_name;
 
@@ -112,6 +113,10 @@ int main(int argc, char *argv[])
         else if (arg == "--input_filename_ini" && i+1 < argc && argv[i+1][0] != '-') {
             input_filename_type = "ini";
             input_filename = argv[i+1];
+            i++;
+        }
+        else if (arg == "--input_extra_comments" && i + 1 < argc && argv[i + 1][0] != '-') {
+            input_extra_comments = argv[i + 1];
             i++;
         }
         else if (arg == "--output_dir" && i+1 < argc && argv[i+1][0] != '-') {
@@ -162,6 +167,10 @@ int main(int argc, char *argv[])
         std::cerr << "Invalid input file name";
         return RETURN_CODE_ERROR;
     }
+
+    //read the extra comments (if available)
+    if (!input_extra_comments.empty())
+    {pgen.parseExtraComments(input_extra_comments);}
 
     //prepare the output path
     while (!output_dir.empty() && (output_dir.back() == '\\' || output_dir.back() == '/')) {

@@ -9,7 +9,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Mon Jan 15 18:58:09 2024
+// Generated on: Tue Jan 16 12:22:18 2024
 
 
 #include "TestDeviceWGPParams.h"

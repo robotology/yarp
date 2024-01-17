@@ -28,7 +28,7 @@ bool ParamsFilesGenerator::parseMdParams(const std::string inputfilename)
     bool b = inputfile.is_open();
     if (!b)
     {
-        std::cout << "Unable to open file: " << inputfilename << std::endl;
+        std::cerr << "Unable to open file: " << inputfilename << std::endl;
         return false;
     }
 

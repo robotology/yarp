@@ -9,7 +9,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Mon Jan 15 18:58:09 2024
+// Generated on: Tue Jan 16 12:22:18 2024
 
 
 #include <yarp/os/Searchable.h>
@@ -18,6 +18,16 @@
 
 /**
 * This class is the parameters parser for class TestDeviceWGP.
+*TestDeviceWGP is a fake device developed for testing the various functionalities of YarpDeviceParamParserGenerator tool.
+*This block has been written with the purpose of testing the --input_extra_comments option.
+*This last line has no specific meaning.
+*Here there are some extra symbols used in the markdown format, such as the 'code' syntax.
+*The **bold text** , the *italic text*, the list:
+*1. First element
+*2. Second element
+*- unordered element 1
+*- unordered element 2
+*
 *
 * These are the used parameters:
 * | Group name | Parameter name | Type   | Units | Default Value  | Required | Description                                                                                      | Notes                                 |

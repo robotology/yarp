@@ -8,6 +8,7 @@
 #include <string>
 #include <regex>
 #include <iostream>
+#include <fstream>
 
 // Example:
 
@@ -15,80 +16,95 @@
 //((group: myGroupName)(name: myParamName)(type: string)(required: true)(units: myUnits)(defaultValue: myDefaultValue)(description: myDescription)(notes: myNotes))
 //((group: myGroupName)(name: myParamName)(type: string)(required: true)(units: myUnits)(defaultValue: myDefaultValue)(description: myDescription)(notes: myNotes))
 
-bool ParamsFilesGenerator::parseIniParams(const std::string inputfile)
+bool ParamsFilesGenerator::parseIniParams(const std::string inputfilename)
 {
+    std::string line;
+
+    std::ifstream inputfile(inputfilename);
+
+    bool b = inputfile.is_open();
+    if (!b)
+    {
+        std::cerr << "Unable to open file: " << inputfilename << std::endl;
+        return false;
+    }
+
     std::regex pattern(R"(\((\w+): ([^)]+)\))"); // Matches "(attribute: value)"
     std::smatch matches;
     Parameter param;
 
-    auto textBegin = std::sregex_iterator(inputfile.begin(), inputfile.end(), pattern);
-    auto textEnd = std::sregex_iterator();
-
-    // Iterate over each line
-    for (std::sregex_iterator i = textBegin; i != textEnd; ++i)
+    while (std::getline(inputfile, line))
     {
-        std::smatch match = *i;
-        std::string attribute = match[1];
-        std::string value = match[2];
-        std::string group_string;
-        std::string param_string;
+        auto textBegin = std::sregex_iterator(line.begin(), line.end(), pattern);
+        auto textEnd = std::sregex_iterator();
 
-        if (attribute == "group")
+        // Iterate over each line
+        for (std::sregex_iterator i = textBegin; i != textEnd; ++i)
         {
-            group_string = trimSpaces(value);
-        }
-        else if (attribute == "name")
-        {
-            param_string = trimSpaces(value);
-        }
-        else if (attribute == "type")
-        {
-            param.type = trimSpaces(value);
-        }
-        else if (attribute == "required")
-        {
-            if (value == "Yes" || value == "yes" || value == "True" || value == "true" || value == "1")
-                param.required = true;
-        }
-        else if (attribute == "units")
-        {
-            param.units = trimSpaces(value);
-        }
-        else if (attribute == "defaultValue")
-        {
-            param.defaultValue = trimSpaces(value);
-        }
-        else if (attribute == "description")
-        {
-            param.description = trimSpaces(value);
-        }
-        else if (attribute == "notes")
-        {
-            param.notes = trimSpaces(value);
-        }
-        else
-        {
-            std::cout << "Syntax error in attribute:" << attribute << std::endl;
-            return false;
-        }
+            std::smatch match = *i;
+            std::string attribute = match[1];
+            std::string value = match[2];
+            std::string group_string;
+            std::string param_string;
 
-        //create the name of the param
-        {
-            std::string fully_scoped_param_name;
-            if (!group_string.empty())
+            if (attribute == "group")
             {
-                fully_scoped_param_name = group_string + std::string("::") + param_string;
+                group_string = trimSpaces(value);
+            }
+            else if (attribute == "name")
+            {
+                param_string = trimSpaces(value);
+            }
+            else if (attribute == "type")
+            {
+                param.type = trimSpaces(value);
+            }
+            else if (attribute == "required")
+            {
+                if (value == "Yes" || value == "yes" || value == "True" || value == "true" || value == "1")
+                    param.required = true;
+            }
+            else if (attribute == "units")
+            {
+                param.units = trimSpaces(value);
+            }
+            else if (attribute == "defaultValue")
+            {
+                param.defaultValue = trimSpaces(value);
+            }
+            else if (attribute == "description")
+            {
+                param.description = trimSpaces(value);
+            }
+            else if (attribute == "notes")
+            {
+                param.notes = trimSpaces(value);
             }
             else
             {
-                fully_scoped_param_name = param_string;
+                std::cout << "Syntax error in attribute:" << attribute << std::endl;
+                return false;
             }
-            param.setFullyScopedParamName(fully_scoped_param_name);
-        }
 
-        m_params.push_back(param);
-        m_sectionGroup.insert(param);
+            //create the name of the param
+            {
+                std::string fully_scoped_param_name;
+                if (!group_string.empty())
+                {
+                    fully_scoped_param_name = group_string + std::string("::") + param_string;
+                }
+                else
+                {
+                    fully_scoped_param_name = param_string;
+                }
+                param.setFullyScopedParamName(fully_scoped_param_name);
+            }
+
+            m_params.push_back(param);
+            m_sectionGroup.insert(param);
+        }
     }
 
+    inputfile.close();
     return true;
 }

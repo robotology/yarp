@@ -19,6 +19,7 @@ yarp_prepare_plugin(testDeviceWGP
 add_custom_target(generate_parser COMMAND yarpDeviceParamParserGenerator
                                           --class_name TestDeviceWGP
                                           --input_filename_md test2.txt
+                                          --input_extra_comments extraComments.md
                                           --generate all
                                           WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
 

@@ -14,6 +14,7 @@ target_sources(yarpDeviceParamParserGenerator
     generate_yarpdev.cpp
     parse_ini.cpp
     parse_md.cpp
+    parse_extraComments.cpp
     paramGroupTree.h
     paramGroupTree.cpp
     parameter.h
