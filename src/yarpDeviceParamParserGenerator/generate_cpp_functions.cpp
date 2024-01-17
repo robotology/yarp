@@ -18,7 +18,7 @@ std::string ParamsFilesGenerator::generateFunction_getListOfParams()
     std::ostringstream s;
     ADD_DEBUG_COMMENT(s)
 s << "\n\
-std::vector<std::string> " << m_classname << "_params::getListOfParams() const\n\
+std::vector<std::string> " << m_classname << "_paramsParser::getListOfParams() const\n\
 {\n";
 
 s << S_TAB1 << "std::vector<std::string> params;\n";
@@ -43,7 +43,7 @@ std::string ParamsFilesGenerator::generateFunction_getDocumentationOfDeviceParam
     std::ostringstream s;
     ADD_DEBUG_COMMENT(s)
 s << "\n\
-std::string      " << m_classname << "_params::getDocumentationOfDeviceParams() const\n\
+std::string      " << m_classname << "_paramsParser::getDocumentationOfDeviceParams() const\n\
 {\n";
 s << S_TAB1 << "std::string doc;\n";
 
@@ -167,31 +167,70 @@ std::string ParamsFilesGenerator::generateFunction_parseParams()
     std::ostringstream s;
     ADD_DEBUG_COMMENT(s)
 s << "\n\
-bool      "<< m_classname << "_params::parseParams(const yarp::os::Searchable & config)\n\
+bool      "<< m_classname << "_paramsParser::parseParams(const yarp::os::Searchable & config)\n\
 {\n";
 
     ADD_DEBUG_COMMENT(s)
-for (const auto& param : m_params)
-{
-    if   (param.getListOfGroups().empty())
+    s << S_TAB1 << "std::string config_string = config.toString();\n";
+    s << S_TAB1 << "yarp::os::Property prop_check(config_string.c_str());\n";
+
+    ADD_DEBUG_COMMENT(s)
+    auto copy_of_m_params = m_params;
+    for (const auto& param : copy_of_m_params)
     {
-        s << S_TAB1 << "//Parser of parameter " <<  param.getParamOnly() <<"\n";
-        s << S_TAB1 << "{\n";
-        generate_param("config", s, param);
-        s << S_TAB1 << "}\n";
-        s << "\n";
+        if   (param.getListOfGroups().empty())
+        {
+            s << S_TAB1 << "//Parser of parameter " <<  param.getParamOnly() <<"\n";
+            s << S_TAB1 << "{\n";
+            generate_param("config", s, param);
+            s << S_TAB2 << "prop_check.unput(\"" << param.getParamOnly() << "\");\n";
+            s << S_TAB1 << "}\n";
+            s << "\n";
+        }
+        else
+        {
+            s << S_TAB1 << "//Parser of parameter " << param.getFullParamName() << "\n";
+            s << S_TAB1 << "{\n";
+            auto pg = param.getListOfGroups();
+            generate_section (s,pg,0,pg.size());
+            generate_param("sectionp", s, param);
+            s << S_TAB2 << "prop_check.unput(\"" << param.getFullParamName() << "\");\n";
+            s << S_TAB1 << "}\n";
+            s << "\n";
+        }
     }
-    else
-    {
-        s << S_TAB1 << "//Parser of parameter " << param.getFullParamName() << "\n";
-        s << S_TAB1 << "{\n";
-        auto pg = param.getListOfGroups();
-        generate_section (s,pg,0,pg.size());
-        generate_param("sectionp", s, param);
-        s << S_TAB1 << "}\n";
-        s << "\n";
-    }
-}
+
+    ADD_DEBUG_COMMENT(s)
+
+    //commented because this code is not ready yet
+    s << S_TAB1 << "/*\n";
+
+    s << S_TAB1 << "//This code check if the user set some parameter which are not check by the parser\n";
+    s << S_TAB1 << "//If the parser is set in strict mode, this will generate an error\n";
+    s << S_TAB1 << "if (prop_check.size() > 0)\n";
+    s << S_TAB1 << "{\n";
+    s << S_TAB1 << "    bool extra_params_found = false;\n";
+    s << S_TAB1 << "    for (auto it=prop_check.begin(); it!=prop_check.end(); it++)\n";
+    s << S_TAB1 << "    {\n";
+    s << S_TAB1 << "        if (m_parser_is_strict)\n";
+    s << S_TAB1 << "        {\n";
+    s << S_TAB1 << "            yCError(" << m_component << ") << \"User asking for parameter: \"<<it->name <<\" which is unknown to this parser!\";\n";
+    s << S_TAB1 << "            extra_params_found = true;\n";
+    s << S_TAB1 << "        }\n";
+    s << S_TAB1 << "        else\n";
+    s << S_TAB1 << "        {\n";
+    s << S_TAB1 << "            yCWarning(" << m_component << ") << \"User asking for parameter: \"<< it->name <<\" which is unknown to this parser!\";\n";
+    s << S_TAB1 << "        }\n";
+    s << S_TAB1 << "    }\n";
+    s << "\n";
+    s << S_TAB1 << "   if (m_parser_is_strict && extra_params_found)\n";
+    s << S_TAB1 << "   {\n";
+    s << S_TAB1 << "       return false;\n";
+    s << S_TAB1 << "   }\n";
+    s << S_TAB1 << "}\n";
+
+    //commented because this code is not ready yet
+    s << S_TAB1 << "*/\n";
 
 s <<\
 S_TAB1 << "return true;\n\

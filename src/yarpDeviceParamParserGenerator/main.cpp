@@ -51,9 +51,9 @@ bool ParamsFilesGenerator::nested_sections_found()
 void print_help()
 {
     std::cout << "Welcome to YarpDeviceParamParserGenerator tool. Syntax:\n";
-    std::cout << "1) YarpDeviceParamParserGenerator --class_name \"className\" --input_filename_md \"filename.md\" [--input_extra_comments \"comments.md\"] [--generate_md] [--generate_ini] [--generate_yarpdev] [--generate_yarprobotinterface] [--generate_all] [--output_dir \"output_path\"]\n";
+    std::cout << "1) YarpDeviceParamParserGenerator --class_name \"className\" --input_filename_md \"filename.md\" [--input_extra_comments \"comments.md\"] [--generate_md] [--generate_ini] [--generate_yarpdev] [--generate_yarprobotinterface] [--generate_all] [--output_dir \"output_path\"] [--debug_mode]\n";
     std::cout << "or:\n";
-    std::cout << "2) YarpDeviceParamParserGenerator --class_name \"className\" --input_filename_ini \"filename.ini\" [--input_extra_comments \"comments.md\"] [--generate_md] [--generate_ini] [--generate_yarpdev] [--generate_yarprobotinterface] [--generate_all] [--output_dir \"output_path\"]\n";
+    std::cout << "2) YarpDeviceParamParserGenerator --class_name \"className\" --input_filename_ini \"filename.ini\" [--input_extra_comments \"comments.md\"] [--generate_md] [--generate_ini] [--generate_yarpdev] [--generate_yarprobotinterface] [--generate_all] [--output_dir \"output_path\"] [--debug_mode]\n";
 }
 
 int main(int argc, char *argv[])
@@ -64,11 +64,22 @@ int main(int argc, char *argv[])
     bool generate_yarprobotinterface_file = false;
     bool generate_yarpdev_file = false;
     bool generate_code = true;
+    bool debug_mode = false;
+
     std::string input_filename_type;
     std::string input_filename;
     std::string input_extra_comments;
     std::string output_dir=".";
     std::string class_name;
+
+#if 1 //debug only!
+   std::cout << "Invocation command " << argc << ":";
+   for (size_t i = 0; i < argc; ++i)
+   {
+        std::cout << argv[i] << " ";
+   }
+   std::cout << "<EOL>"<<std::endl;
+#endif
 
    if (argc == 1)
    {
@@ -127,6 +138,9 @@ int main(int argc, char *argv[])
             class_name = argv[i + 1];
             i++;
         }
+        else if (arg == "--debug_mode") {
+            debug_mode = true;
+        }
     }
 
     if (input_filename_type.empty())
@@ -178,7 +192,7 @@ int main(int argc, char *argv[])
     output_dir += '/';
     pgen.m_classname = class_name;
     pgen.m_component = pgen.m_classname + "ParamsCOMPONENT";
-    std::string output_filename = class_name + "Params";
+    std::string output_filename = class_name + "_ParamsParser";
     pgen.m_output_header_filename = output_dir + output_filename + ".h";
     pgen.m_output_cpp_filename = output_dir + output_filename + ".cpp";
     pgen.m_output_ini_filename = output_dir + output_filename + ".bot";
@@ -283,7 +297,7 @@ s << version_banner;
 s << current_time();
 s << "\
 \n\
-#include \"" << m_classname << "Params.h\"\n\
+#include \"" << m_classname << "_ParamsParser.h\"\n\
 #include <yarp/os/LogStream.h>\n\
 #include <yarp/os/Value.h>\n\
 \n\

@@ -16,20 +16,20 @@ std::string ParamsFilesGenerator::generateYarpdevString()
     s << "yarpdev --device " << this->m_classname;
     for (auto param : m_params)
     {
-        s << " --" << param.getFullParamName() << " ";
+        s << " --" << param.getFullParamName();
         if (!param.defaultValue.empty())
         {
-            s << param.defaultValue << " ";
+            s << " " << param.defaultValue;
         }
         else
         {
             if (param.required)
             {
-                s << "<mandatory_value>";
+                s << " <mandatory_value>";
             }
             else
             {
-                s << "<optional_value>";
+                s << " <optional_value>";
             }
         }
     }

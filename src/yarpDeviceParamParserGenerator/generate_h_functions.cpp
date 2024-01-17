@@ -59,14 +59,15 @@ std::string ParamsFilesGenerator::generateHeader()
     s << generateDoxygenForHeaderClass();
 
     s << "\
-class " << m_classname << "_params : public yarp::dev::IDeviceDriverParams\n\
+class " << m_classname << "_paramsParser : public yarp::dev::IDeviceDriverParams\n\
 {\n\
 public:\n\
-    ~" << m_classname << "_params() override = default;\n\
+    ~" << m_classname << "_paramsParser() override = default;\n\
 \n\
 public:\n";
 
     s << S_TAB1 << "const std::string m_device_type = {\"" << m_classname << "\"};\n";
+    s << S_TAB1 << "bool m_parser_is_strict = false;";
 
     for (const auto& param : m_params)
     {

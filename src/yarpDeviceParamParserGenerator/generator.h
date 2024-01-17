@@ -30,6 +30,7 @@ public:
 
     std::deque<Parameter> m_params;
     SectionHandler        m_sectionGroup;
+    bool        m_parser_is_strict = false;
 
     std::string m_classname;
     std::string m_component;

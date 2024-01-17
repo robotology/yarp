@@ -12,7 +12,7 @@
 // Example:
 
 // | Parameter name | SubParameter | Type      | Units    | Default Value  | Required  | Description   | Notes   |
-// | :----------- : | : -------- : | : --- - : | : ---- : | : -------- - : | : --------| : --------- : | : ----: |
+// | :----------- : | :--------- : | :-------: | :------: | :------------: | :-------: | :-----------: | :-----: |
 // | myGroupName    | myParamName  | string    |  myUnits | myDefaultValue | true      | myDescription | myNotes |
 // | myGroupName    | myParamName  | string    |  myUnits | myDefaultValue | true      | myDescription | myNotes |
 // | myGroupName    | myParamName  | string    |  myUnits | myDefaultValue | true      | myDescription | myNotes |
@@ -55,14 +55,14 @@ std::string ParamsFilesGenerator::generateMdParams()
     s << " |\n";
 
     s << std::setfill('-');
-    s << " |:" << std::setw(fill_siz[0]) << std::left << " ";
-    s << ":|:" << std::setw(fill_siz[1]) << std::left << " ";
-    s << ":|:" << std::setw(fill_siz[2]) << std::left << " ";
-    s << ":|:" << std::setw(fill_siz[3]) << std::left << " ";
-    s << ":|:" << std::setw(fill_siz[4]) << std::left << " ";
-    s << ":|:" << std::setw(fill_siz[5]) << std::left << " ";
-    s << ":|:" << std::setw(fill_siz[6]) << std::left << " ";
-    s << ":|:" << std::setw(fill_siz[7]) << std::left << " ";
+    s << " |:" << std::setw(fill_siz[0]) << std::left << "-";
+    s << ":|:" << std::setw(fill_siz[1]) << std::left << "-";
+    s << ":|:" << std::setw(fill_siz[2]) << std::left << "-";
+    s << ":|:" << std::setw(fill_siz[3]) << std::left << "-";
+    s << ":|:" << std::setw(fill_siz[4]) << std::left << "-";
+    s << ":|:" << std::setw(fill_siz[5]) << std::left << "-";
+    s << ":|:" << std::setw(fill_siz[6]) << std::left << "-";
+    s << ":|:" << std::setw(fill_siz[7]) << std::left << "-";
     s << ":|\n";
 
     s << std::setfill(' ');
