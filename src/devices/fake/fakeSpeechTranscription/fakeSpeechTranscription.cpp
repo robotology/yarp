@@ -29,8 +29,6 @@ FakeSpeechTranscription::~FakeSpeechTranscription()
     Py_FinalizeEx();
     // Hardcoding finalizer???
     yInfo()<<"Finalizing destroying";
-    //PyRun_SimpleString("import sys\n"
-    //                    "sys.exit()");
 }
 
 bool FakeSpeechTranscription::open(yarp::os::Searchable& config)
@@ -78,7 +76,6 @@ bool FakeSpeechTranscription::open(yarp::os::Searchable& config)
             }
             else 
             {   // Call Failed
-                Py_DECREF(pFunc);
                 Py_DECREF(pModule);
                 PyErr_Print();
                 fprintf(stderr,"Call failed\n");
@@ -90,12 +87,10 @@ bool FakeSpeechTranscription::open(yarp::os::Searchable& config)
             if (PyErr_Occurred())
                 PyErr_Print();
             fprintf(stderr, "Cannot find function \"%s\"\n", func_name);
-            Py_XDECREF(pFunc);
             Py_DECREF(pModule);
             return false;
         }
         // Clear memory
-        Py_XDECREF(pFunc);
         Py_DECREF(pModule);
     }
     else 
@@ -159,7 +154,6 @@ bool FakeSpeechTranscription::close()
             }
             else 
             {   // Call Failed
-                Py_DECREF(pFunc);
                 Py_DECREF(pModule);
                 PyErr_Print();
                 fprintf(stderr,"Call failed\n");
@@ -171,12 +165,10 @@ bool FakeSpeechTranscription::close()
             if (PyErr_Occurred())
                 PyErr_Print();
             fprintf(stderr, "Cannot find function \"%s\"\n", func_name);
-            Py_XDECREF(pFunc);
             Py_DECREF(pModule);
             return false;
         }
         // Clear memory
-        Py_XDECREF(pFunc);
         Py_XDECREF(pModule);
     }
     else 
@@ -258,7 +250,6 @@ bool FakeSpeechTranscription::setLanguage(const std::string& language)
             }
             else 
             {   // Call Failed
-                Py_DECREF(pFunc);
                 Py_DECREF(pModule);
                 PyErr_Print();
                 fprintf(stderr,"Call failed\n");
@@ -270,13 +261,11 @@ bool FakeSpeechTranscription::setLanguage(const std::string& language)
             if (PyErr_Occurred())
                 PyErr_Print();
             fprintf(stderr, "Cannot find function \"%s\"\n", func_name);
-            Py_XDECREF(pFunc);
             Py_DECREF(pModule);
             return false;
         }
         // Clear memory
         Py_XDECREF(pArgs);
-        Py_XDECREF(pFunc);
         Py_XDECREF(pModule);
     }
     else 
@@ -322,7 +311,7 @@ bool FakeSpeechTranscription::getLanguage(std::string& language)
     yInfo() << "1 OK \n";
     Py_XDECREF(pString);
     yInfo() << "2 OK \n";
-    Py_XDECREF(pRet);
+    //Py_XDECREF(pRet);
     return true;
 }
 
@@ -381,14 +370,12 @@ bool FakeSpeechTranscription::functionWrapper(std::string moduleName, std::strin
                 yCInfo(FAKE_SPEECHTR) << "Returning object " << " \n";
 
                 // Clear memory
-                Py_XDECREF(pFunc);
                 Py_DECREF(pModule);
 
                 return true;
             }
             else 
             {   // Call Failed
-                Py_XDECREF(pFunc);
                 Py_DECREF(pModule);
                 PyErr_Print();
                 fprintf(stderr,"Call failed\n");
@@ -401,7 +388,7 @@ bool FakeSpeechTranscription::functionWrapper(std::string moduleName, std::strin
             if (PyErr_Occurred())
                 PyErr_Print();
             fprintf(stderr, "Cannot find function \"%s\"\n", functionName);
-            Py_XDECREF(pFunc);
+            //Py_XDECREF(pFunc);
             Py_DECREF(pModule);
 
             return false;
@@ -415,10 +402,6 @@ bool FakeSpeechTranscription::functionWrapper(std::string moduleName, std::strin
 
         return false;
     }
-    
-    Py_XDECREF(pFunc);
-    Py_XDECREF(pModule);
-
 }
 
 bool FakeSpeechTranscription::classWrapper(std::string moduleName, std::string className, std::string functionName, PyObject* &pClassArgs, PyObject* &pClassMethodArgs, PyObject* &pValue)
@@ -465,9 +448,6 @@ bool FakeSpeechTranscription::classWrapper(std::string moduleName, std::string c
                 if (pValue==NULL)
                 {
                     Py_XDECREF(pModule);
-                    //Py_XDECREF(pFunc);
-                    //Py_XDECREF(pClass);
-                    //Py_XDECREF(pDict);
                     Py_XDECREF(pInstance);
                     return false;
                 }
@@ -478,18 +458,12 @@ bool FakeSpeechTranscription::classWrapper(std::string moduleName, std::string c
                     PyErr_Print();
                 yCError(FAKE_SPEECHTR) << "[classWrapper] Returned False at classWrapper \n";
                 Py_XDECREF(pModule);
-                //Py_XDECREF(pFunc);
-                //Py_XDECREF(pClass);
-                //Py_XDECREF(pDict);
                 Py_XDECREF(pInstance);
                 return false;
             }
         }
     }
     Py_XDECREF(pModule);
-    //Py_XDECREF(pFunc);
-    //Py_XDECREF(pClass);
-    //Py_XDECREF(pDict);
     Py_XDECREF(pInstance);
     return true;
 }
