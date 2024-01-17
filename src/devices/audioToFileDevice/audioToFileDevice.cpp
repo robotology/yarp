@@ -41,6 +41,8 @@ bool audioToFileDevice::open(yarp::os::Searchable &config)
     b = configurePlayerAudioDevice(config.findGroup("AUDIO_BASE"), "audioToFileDevice");
     if (!b) { return false; }
 
+    yCInfo(AUDIOTOFILE) << "Audio will be saved to file: " << m_audio_filename;
+
     if      (m_save_mode_s == "overwrite_file") { m_save_mode = save_mode_t::save_overwrite_file; yCInfo(AUDIOTOFILE) << "overwrite_file mode selected. File will be saved both on exit and on stop";}
     else if (m_save_mode_s == "append_data")    { m_save_mode = save_mode_t::save_append_data; yCInfo(AUDIOTOFILE) << "append_data mode selected. File will be saved on exit only";}
     else if (m_save_mode_s == "rename_file")    { m_save_mode = save_mode_t::save_rename_file; yCInfo(AUDIOTOFILE) << "rename_file mode selected. File will be saved both on exit and on stop";}
