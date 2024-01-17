@@ -19,6 +19,7 @@
 #include <yarp/os/YarpPlugin.h>
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/ServiceInterfaces.h>
+#include <yarp/dev/IDeviceDriverParams.h>
 
 #include <vector>
 #include <sstream>
@@ -325,10 +326,18 @@ DriverCreator* Drivers::Private::load(const char *name) {
 
 
 // helper method for "yarpdev" body
-static void toDox(PolyDriver& dd) {
+static void printDocumentation(PolyDriver& dd) {
+    IDeviceDriverParams* iparams = nullptr;
+    dd.view(iparams);
+    if (!iparams)
+    {
+        return;
+    }
+    std::string name_s = iparams->getDeviceType();
+    std::string doc_s = iparams->getDocumentationOfDeviceParams();
     yCIDebug(DRIVERS, dd.id(), "===============================================================");
-    yCIDebug(DRIVERS, dd.id(), "== Options checked by device:");
-    yCIDebug(DRIVERS, dd.id(), "==");
+    yCIDebug(DRIVERS, dd.id(), "== Options checked by device class %s:", name_s.c_str());
+    yCIDebug(DRIVERS, dd.id(), "== %s", doc_s.c_str());
     yCIDebug(DRIVERS, dd.id(), "===============================================================");
 }
 
@@ -458,7 +467,7 @@ int Drivers::yarpdev(int argc, char *argv[]) {
     yarp::os::NetworkBase::yarpClockInit(yarp::os::YARP_CLOCK_DEFAULT);
 
     PolyDriver dd(options);
-    toDox(dd);
+    printDocumentation(dd);
     std::string id = dd.id();
     if (!dd.isValid()) {
         yCIError(DRIVERS, id, "yarpdev: ***ERROR*** device not available.");
