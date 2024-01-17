@@ -33,6 +33,7 @@ private:
     const char * m_path = "/home/ecub_docker/yarp/src/devices/fake/fakeSpeechTranscription";
 
     bool functionWrapper(std::string moduleName, std::string functionName, PyObject* &pArgs, PyObject* &pValue);
+    bool classWrapper(std::string moduleName, std::string className, std::string functionName, PyObject* &pClassArgs, PyObject* &pClassMethodArgs, PyObject* &pValue);
     std::string stringWrapper(PyObject* &pValue);
     long intWrapper(PyObject* &pValue);
     double doubleWrapper(PyObject* &pValue);
