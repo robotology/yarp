@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 def open():
     print("Opening python module")
     return True
@@ -14,17 +16,17 @@ def set_language(lang):
     print("setting: " + lang)
     return lang
 
-class Pet:
-    def __init__(self, race, age, mood):
-        self.race = race
+class Dummy:
+    def __init__(self, lang, age, mood):
+        self.lang = lang
         self.age = age
         self.mood = mood
-        print ('Created a ' , self.race, ' Pet with ', self.age, ' years')
+        print ('Created a dummy with lang ' , self.lang, ' Age: ', self.age, ' Mood ', self.mood)
 
-    def set_race(self, new_race):
-        self.race = new_race
-        print ('Setting a new race: ', self.race)
-        return self.race
+    def set_languag(self, new_lang):
+        self.lang = new_lang
+        print ('Setting Language: ', self.lang)
+        return self.lang
     
     def set_age(self, new_age):
         self.age = new_age
