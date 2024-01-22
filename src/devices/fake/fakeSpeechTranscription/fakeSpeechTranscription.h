@@ -31,9 +31,13 @@ private:
 
     const char * m_moduleName = "Module";
     const char * m_path = "/home/ecub_docker/yarp/src/devices/fake/fakeSpeechTranscription";
+    std::string m_className = "SpeecTranscriptor";
+    PyObject * m_classInstance;
 
     bool functionWrapper(std::string moduleName, std::string functionName, PyObject* &pArgs, PyObject* &pValue);
-    bool classWrapper(std::string moduleName, std::string className, std::string methodName, PyObject* &pClassArgs, PyObject* &pClassMethodArgs, PyObject* &pValue);
+    bool classWrapper(PyObject* &pClassInstance, std::string methodName, PyObject* &pClassMethodArgs, PyObject* &pValue);
+    bool classInstanceCreator(std::string moduleName, std::string className, PyObject* &pClassArgs, PyObject* &pReturn);
+    
     bool test(std::string dummy);
     /* Wrappers for converting a returned pValue to common data types*/
     std::string stringWrapper(PyObject* &pValue);
