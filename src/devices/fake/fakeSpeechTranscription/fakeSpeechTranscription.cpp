@@ -132,17 +132,12 @@ bool FakeSpeechTranscription::open(yarp::os::Searchable& config)
     yInfo() << "SetLanguage " << lang;
     setLanguage(lang);
 
-    std::string out = "polish";
-    yInfo() << "getLanguage with " << out;
-    getLanguage(out);
-    yInfo() << out;
 
-    yInfo() << "Testing with class wrapper ";
-    if (! test("testing please"))
-    {
-        yCError(FAKE_SPEECHTR) << "test Failed";  
-    }
-    
+    std::string out;
+
+    getLanguage(out);
+    yInfo() << "Got Language: " << out;
+
     return true;
 }
 
@@ -576,37 +571,6 @@ bool FakeSpeechTranscription::classInstanceCreator(std::string moduleName, std::
     }
 }
 
-
-
-bool FakeSpeechTranscription::test(std::string dummy) 
-{
-    /*if (!Py_IsInitialized())
-    {
-        yInfo()<<"Calling test Py_Initialize";
-        Py_Initialize();
-    }
-
-    PyObject* pClassArgs = Py_BuildValue("(sis)", "french", 11, "happy" );
-    PyObject* pString = PyUnicode_FromString(dummy.c_str());
-    PyObject* pRet;
-
-    if(! classWrapper(m_moduleName, "Dummy" , "set_languag", pClassArgs, pString, pRet))
-    {
-        yCError(FAKE_SPEECHTR) << "[test] Returned False at classWrapper \n";
-        Py_XDECREF(pString);
-        Py_XDECREF(pClassArgs);
-        return false;
-    }
-    std::string ret = stringWrapper(pRet);
-
-    yInfo() << "Returning from test routine: " << ret;
-
-    Py_XDECREF(pString);
-    Py_XDECREF(pClassArgs);
-    */
-
-    return true;
-}
 
 std::string FakeSpeechTranscription::stringWrapper(PyObject* &pValue)
 {
