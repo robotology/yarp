@@ -24,6 +24,7 @@ add_subdirectory(fakeSpeaker)
 add_subdirectory(fakeFrameGrabber)
 add_subdirectory(fakeLocalizerDevice)
 add_subdirectory(fakeNavigationDevice)
+add_subdirectory(fakePythonSpeechTranscription)
 
 OPTION(YARP_COMPILE_ALL_FAKE_DEVICES
        "Build all devices marked as fake, for testing purposes. Overrides the option for the single fake device."
