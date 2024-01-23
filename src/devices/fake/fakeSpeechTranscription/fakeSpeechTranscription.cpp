@@ -26,103 +26,72 @@ FakeSpeechTranscription::FakeSpeechTranscription()
 
 FakeSpeechTranscription::~FakeSpeechTranscription()
 {
-    close();
     // Clear references for each PyObject
     if (m_classInstance!=NULL)
     {
-        for (size_t i = 0; i < m_classInstance->ob_refcnt; ++i)
+        for (long int i = 0; i < m_classInstance->ob_refcnt; ++i)
         {
-            Py_DECREF(m_classInstance);
+            Py_XDECREF(m_classInstance);
         }
     }
     
     Py_FinalizeEx();
-    yInfo()<<"Finalizing and destroying";
 }
 
 bool FakeSpeechTranscription::open(yarp::os::Searchable& config)
 {
-    const char * func_name = "open";
+    std::string func_name = "open";
+
+    m_moduleName = config.find("moduleName").asString();
+    m_path = config.find("modulePath").asString();
+    m_className = config.find("className").asString();
+
     //Simple Function Calling without passing any parameters
 
-    PyObject *pName,    //Interpreted name of the module
-             *pModule,  //Imported py Module loaded in this object
-             *pFunc,    //Interpreted name of the function
-             *pValue;   //Value returned by the function
+    PyObject *pArgs = NULL,    //Interpreted name of the Arguments
+             *pValue;   //Interpreted return value from function call
 
     // Initialize the Python Interpreter
     if (!Py_IsInitialized())
     {
-        yInfo()<<"Calling Open Py_Initialize";
+        yInfo() << "Calling Py_Initialize from open()";
         Py_Initialize();
     }
 
-    // Build the name object (of the module)
-    PyObject* sysPath = PySys_GetObject((char*)"path");
-    PyList_Append(sysPath, (PyUnicode_FromString(m_path)));
-    pName = PyUnicode_DecodeFSDefault(m_moduleName);    //The string "Module" should be the name of the python file: i.e. Module.py
-
-    // Load the module object
-    pModule = PyImport_Import(pName);
-    // Destroy the pName object: not needed anymore
-    Py_DECREF(pName);
-    Py_XDECREF(sysPath);
-
-    if (pModule != NULL) // Check if the Module has been found and loaded
+    if(!functionWrapper(m_moduleName, func_name, pArgs, pValue))
     {
-        // Get the function inside the module
-        pFunc = PyObject_GetAttrString(pModule, func_name);
-
-        if (pFunc && PyCallable_Check(pFunc))   // Check if the function has been found and is callable
-        {
-            // Call the function
-            pValue = PyObject_CallObject(pFunc, NULL);
-            // Check the return value
-            if (pValue != NULL) 
-            {
-                printf("Result of call: %ld\n", PyLong_AsLong(pValue)); // 0 or 1
-                Py_DECREF(pValue);
-            }
-            else 
-            {   // Call Failed
-                Py_DECREF(pModule);
-                PyErr_Print();
-                fprintf(stderr,"Call failed\n");
-                return false;
-            }
-        }
-        else 
-        {   // Function not found in the py module
-            if (PyErr_Occurred())
-                PyErr_Print();
-            fprintf(stderr, "Cannot find function \"%s\"\n", func_name);
-            Py_DECREF(pModule);
-            return false;
-        }
-        // Clear memory
-        Py_DECREF(pModule);
-    }
-    else 
-    {   // Module not found or loaded
-        PyErr_Print();
-        fprintf(stderr, "Failed to load \"%s\"\n", m_moduleName);
+        yCError(FAKE_SPEECHTR) << "[open] Unable to call the " << func_name << " function from python \n";
         return false;
     }
+
+    if (pValue == NULL)
+    {
+        yCError(FAKE_SPEECHTR) << "[open] Returned null pointer from function call \n";
+        Py_DECREF(pValue);
+        return false;
+    }
+
+    bool ret;   //result from the function call on python side
+    if (!boolWrapper(pValue, ret))
+    {
+        yCError(FAKE_SPEECHTR) << "[open] Unable to convert returned PyObject to bool \n";
+        return false;
+    }
+    Py_DECREF(pValue);
+    
+    //return ret;
 
     /*------------------CLASS CREATION*------------------*/
 
     PyObject* pClassArgs = Py_BuildValue("(si)", "french", 1);
-    // PyObject* pString = PyUnicode_FromString(m_className.c_str());
 
     if (! classInstanceCreator(m_moduleName, m_className, pClassArgs, m_classInstance))
     {
         yCError(FAKE_SPEECHTR) << "[test] Failed to instanciate py class \n";
-        //Py_XDECREF(pString);
         Py_XDECREF(pClassArgs);
         return false;
     }
     // Clear not needed PyObjects
-    //Py_XDECREF(pString);
     Py_XDECREF(pClassArgs);
 
 
@@ -138,117 +107,51 @@ bool FakeSpeechTranscription::open(yarp::os::Searchable& config)
     getLanguage(out);
     yInfo() << "Got Language: " << out;
 
-    return true;
+    return ret;
 }
 
 bool FakeSpeechTranscription::close()
 {
-    const char * func_name = "close";
+    std::string func_name = "close";
+
     //Simple Function Calling without passing any parameters
 
-    PyObject *pName,    //Interpreted name of the module
-             *pModule,  //Imported py Module loaded in this object
-             *pFunc,    //Interpreted name of the module
-             *pValue;   //Interpreted name of the module
+    PyObject *pArgs = NULL,    //Interpreted name of the Arguments
+             *pValue;   //Interpreted return value from function call
 
     // Initialize the Python Interpreter
     if (!Py_IsInitialized())
     {
-        yInfo()<<"Calling Close Py_Initialize";
+        yInfo() << "Calling Close Py_Initialize";
         Py_Initialize();
     }
 
-    // Build the name object (of the module)
-    PyObject* sysPath = PySys_GetObject((char*)"path");
-    PyList_Append(sysPath, (PyUnicode_FromString(m_path)));
-    pName = PyUnicode_DecodeFSDefault(m_moduleName);    //The string "Module" should be the name of the python file: i.e. Module.py
-
-    // Load the module object
-    pModule = PyImport_Import(pName);
-    // Destroy the pName object: not needed anymore
-    Py_DECREF(pName);
-    Py_XDECREF(sysPath);
-
-    if (pModule != NULL) // Check if the Module has been found and loaded
+    if(!functionWrapper(m_moduleName, func_name, pArgs, pValue))
     {
-        // Get the function inside the module
-        pFunc = PyObject_GetAttrString(pModule, func_name);
-
-        if (pFunc && PyCallable_Check(pFunc))   // Check if the function has been found and is callable
-        {
-            // Call the function
-            pValue = PyObject_CallObject(pFunc, NULL);
-            // Check the return value
-            if (pValue != NULL) 
-            {
-                printf("Result of call: %ld\n", PyLong_AsLong(pValue)); // 0 or 1
-                Py_DECREF(pValue);
-            }
-            else 
-            {   // Call Failed
-                Py_DECREF(pModule);
-                PyErr_Print();
-                fprintf(stderr,"Call failed\n");
-                return false;
-            }
-        }
-        else 
-        {   // Function not found in the py module
-            if (PyErr_Occurred())
-                PyErr_Print();
-            fprintf(stderr, "Cannot find function \"%s\"\n", func_name);
-            Py_DECREF(pModule);
-            return false;
-        }
-        // Clear memory
-        Py_XDECREF(pModule);
-    }
-    else 
-    {   // Module not found or loaded
-        PyErr_Print();
-        fprintf(stderr, "Failed to load \"%s\"\n", m_moduleName);
+        yCError(FAKE_SPEECHTR) << "[close] Unable to call the close() function from python \n";
         return false;
     }
-    return true;
+
+    if (pValue == NULL)
+    {
+        yCError(FAKE_SPEECHTR) << "[close] Returned null pointer from function call \n";
+        Py_DECREF(pValue);
+        return false;
+    }
+
+    bool ret;   //result from the function call on python side
+    if (!boolWrapper(pValue, ret))
+    {
+        yCError(FAKE_SPEECHTR) << "[close] Unable to convert returned PyObject to bool \n";
+        return false;
+    }
+    Py_DECREF(pValue);
+    
+    return ret;
 }
 
 bool FakeSpeechTranscription::setLanguage(const std::string& language)
 {
-    /*
-    m_language=language;
-    yCInfo(FAKE_SPEECHTR) << "Setting Language with functionWrapper" << language;
-
-   if (!Py_IsInitialized())
-    {
-        yInfo()<<"Calling setLanguage Py_Initialize";
-        Py_Initialize();
-    }
-
-    //language = m_language;
-    PyObject* pArgs = PyTuple_New(1);
-    PyObject* pString = PyUnicode_FromString(language.c_str());
-    PyTuple_SetItem(pArgs, 0, pString);
-    PyObject* pRet;
-    if(! functionWrapper(m_moduleName, "set_language", pArgs, pRet))
-    {
-        yCError(FAKE_SPEECHTR) << "[setLanguage] Returned False at functionWrapper \n";
-        Py_XDECREF(pArgs);
-        Py_XDECREF(pString);
-        return false;
-    }
-    std::string ret = stringWrapper(pRet);
-
-    if (ret=="")
-    {
-        yCError(FAKE_SPEECHTR) << "[setLanguage] Unable to convert value in stringWrapper \n";
-    }
-    yInfo() << "Returning converted string:" << ret << "\n";
-    Py_XDECREF(pArgs);
-    Py_XDECREF(pString);
-    
-    return true;
-    */
-
    if (!Py_IsInitialized())
     {
         yInfo()<<"Calling test Py_Initialize";
@@ -264,7 +167,13 @@ bool FakeSpeechTranscription::setLanguage(const std::string& language)
         yCError(FAKE_SPEECHTR) << "[setLanguage] Returned False at classWrapper \n";
         return false;
     }
-    bool result = boolWrapper(pRetVal);
+    bool result;
+
+    if (!boolWrapper(pRetVal, result))
+    {
+        yCError(FAKE_SPEECHTR) << "[setLanguage] Unable to convert returned PyObject to bool \n";
+        return false;
+    }
 
     yInfo() << "Returning from setLanguage: " << result;
 
@@ -273,91 +182,11 @@ bool FakeSpeechTranscription::setLanguage(const std::string& language)
 
 bool FakeSpeechTranscription::getLanguage(std::string& language)
 {
-    /*if (!Py_IsInitialized())
-    {
-        yInfo()<<"Calling getLanguage Py_Initialize";
-        Py_Initialize();
-    }
-    std::string className = "SpeecTranscriptor";
-    std::string functionName = "set_language";
-
-    PyObject *pName,    // Interpreted name of the module
-             *pModule,  // Imported py Module loaded in this object
-             *pClass,   // Interpreted name of the class
-             *pInstance;// Instance of the Class on the interpreter
-    
-    // Build the name object (of the module)
-    PyObject* sysPath = PySys_GetObject((char*)"path");
-    PyList_Append(sysPath, (PyUnicode_FromString(m_path)));
-    pName = PyUnicode_DecodeFSDefault(m_moduleName);    //The string "Module" should be the name of the python file: i.e. Module.py
-
-    // Load the module object
-    pModule = PyImport_Import(pName);
-    // Destroy the pName object: not needed anymore
-    Py_DECREF(pName);
-    Py_XDECREF(sysPath);
-
-    if (pModule != NULL)
-    {
-        // Build the name of a callable class -> borrowed reference
-        pClass = PyObject_GetAttrString(pModule, className.c_str());
-        if (pClass && PyCallable_Check(pClass))
-        {
-            PyObject* pClassArgs = Py_BuildValue("(si)", "french", 1 );
-
-            pInstance = PyObject_CallObject(pClass, pClassArgs);
-
-            Py_DECREF(pClassArgs);
-
-            if (pInstance!= NULL)
-            {
-
-
-                PyObject* pValue = PyObject_CallMethod(pInstance, functionName.c_str(), "(s)", language.c_str());
-
-                if (pValue==NULL)
-                {
-                    yCError(FAKE_SPEECHTR) << "Returned NULL Value from Class call \n";
-                    Py_XDECREF(pModule);
-                    Py_XDECREF(pInstance);
-                    return false;
-                }
-                char* tmp;
-                PyArg_Parse(pValue, "s", &tmp); 
-                yInfo() << "Converted Value: " << std::string(tmp) << " From wrapper: " << stringWrapper(pValue);
-                language = std::string(tmp);
-                Py_XDECREF(pValue);
-            }
-            else
-            {
-                if (PyErr_Occurred())
-                    PyErr_Print();
-                yCError(FAKE_SPEECHTR) << "[classWrapper] Returned False at classWrapper \n";
-                Py_XDECREF(pModule);
-                Py_XDECREF(pInstance);
-                
-                return false;
-            }
-        }
-        else
-        {
-            if (PyErr_Occurred())
-                PyErr_Print();
-            yCError(FAKE_SPEECHTR) << "[classWrapper] Unable to create class instance \n";
-            Py_XDECREF(pModule);
-            return false;
-        }
-    }
-    Py_XDECREF(pModule);
-    Py_XDECREF(pInstance);
-    return true;    */
-
     if (!Py_IsInitialized())
     {
         yInfo()<<"Calling test Py_Initialize";
         Py_Initialize();
     }
-
 
     PyObject* pRetVal; // Return Value from the class method
     std::string methodName = "get_language";
@@ -369,15 +198,19 @@ bool FakeSpeechTranscription::getLanguage(std::string& language)
         return false;
     }
     
-    std::string ret = stringWrapper(pRetVal);
-
+    std::string ret;
+    if (!stringWrapper(pRetVal, ret))
+    {
+        yCError(FAKE_SPEECHTR) << "[getLanguage] Unable to covert PyObject to string, Null value \n";
+        return false;
+    }
+    
     yInfo() << "Returning from getLanguage: " << ret;
     language = ret;
     Py_XDECREF(pRetVal);
 
     return true;
 }
-
 
 bool FakeSpeechTranscription::transcribe(const yarp::sig::Sound& sound, std::string& transcription, double& score)
 {
@@ -409,8 +242,8 @@ bool FakeSpeechTranscription::functionWrapper(std::string moduleName, std::strin
     
     // Build the name object (of the module)
     PyObject* sysPath = PySys_GetObject((char*)"path");
-    PyList_Append(sysPath, (PyUnicode_FromString(m_path)));
-    pName = PyUnicode_DecodeFSDefault(m_moduleName);    //The string "Module" should be the name of the python file: i.e. Module.py
+    PyList_Append(sysPath, (PyUnicode_FromString(m_path.c_str())));
+    pName = PyUnicode_DecodeFSDefault(m_moduleName.c_str());    //The string "Module" should be the name of the python file: i.e. Module.py
 
     // Load the module object
     pModule = PyImport_Import(pName);
@@ -450,7 +283,7 @@ bool FakeSpeechTranscription::functionWrapper(std::string moduleName, std::strin
                 PyErr_Print();
             fprintf(stderr, "Cannot find function \"%s\"\n", functionName);
             //Py_XDECREF(pFunc);
-            Py_DECREF(pModule);
+            Py_XDECREF(pModule);
 
             return false;
         }
@@ -459,8 +292,6 @@ bool FakeSpeechTranscription::functionWrapper(std::string moduleName, std::strin
     {   // Module not found or loaded
         PyErr_Print();
         fprintf(stderr, "Failed to load \"%s\"\n", m_moduleName);
-        Py_DECREF(pModule);
-
         return false;
     }
 }
@@ -504,7 +335,6 @@ bool FakeSpeechTranscription::classWrapper(PyObject* &pClassInstance, std::strin
     return true;
 }
 
-
 bool FakeSpeechTranscription::classInstanceCreator(std::string moduleName, std::string className, PyObject* &pClassArgs, PyObject* &pReturn)
 {
     if (!Py_IsInitialized())
@@ -519,8 +349,8 @@ bool FakeSpeechTranscription::classInstanceCreator(std::string moduleName, std::
     
     // Build the name object (of the module)
     PyObject* sysPath = PySys_GetObject((char*)"path");
-    PyList_Append(sysPath, (PyUnicode_FromString(m_path)));
-    pName = PyUnicode_DecodeFSDefault(m_moduleName);    //The string "Module" should be the name of the python file: i.e. Module.py
+    PyList_Append(sysPath, (PyUnicode_FromString(m_path.c_str())));
+    pName = PyUnicode_DecodeFSDefault(m_moduleName.c_str());    //The string "Module" should be the name of the python file: i.e. Module.py
 
     // Load the module object
     pModule = PyImport_Import(pName);
@@ -571,55 +401,58 @@ bool FakeSpeechTranscription::classInstanceCreator(std::string moduleName, std::
     }
 }
 
-
-std::string FakeSpeechTranscription::stringWrapper(PyObject* &pValue)
+bool FakeSpeechTranscription::stringWrapper(PyObject* &pValue, std::string &ret)
 {
     if (pValue!=NULL)
     {
-        return std::string(PyUnicode_AsUTF8(pValue));
+        ret = std::string(PyUnicode_AsUTF8(pValue));
+        return true;
     }
     else
     {
         yCError(FAKE_SPEECHTR) << "Null pValue passed to FakeSpeechTranscription::stringWrapper \n"; 
-        return NULL;
+        return false;
     }
 }
 
-long FakeSpeechTranscription::intWrapper(PyObject* &pValue)
+bool FakeSpeechTranscription::intWrapper(PyObject* &pValue, long &ret)
 {
     if (pValue!=NULL)
     {
-        return PyLong_AsLong(pValue);
+        ret = PyLong_AsLong(pValue);
+        return true;
     }
     else
     {
         yCError(FAKE_SPEECHTR) << "Null pValue passed to FakeSpeechTranscription::intWrapper \n"; 
-        return NULL;
+        return false;
     }
 }
 
-double FakeSpeechTranscription::doubleWrapper(PyObject* &pValue)
+bool FakeSpeechTranscription::doubleWrapper(PyObject* &pValue, double &ret)
 {
     if (pValue!=NULL)
     {
-        return PyFloat_AsDouble(pValue);
+        ret = PyFloat_AsDouble(pValue);
+        return true;
     }
     else
     {
         yCError(FAKE_SPEECHTR) << "Null pValue passed to FakeSpeechTranscription::doubleWrapper \n"; 
-        return NULL;
+        return false;
     }
 }
 
-bool FakeSpeechTranscription::boolWrapper(PyObject* &pValue)
+bool FakeSpeechTranscription::boolWrapper(PyObject* &pValue, bool &ret)
 {
     if (pValue!=NULL)
     {
-        return ((bool)PyLong_AsLong(pValue));
+        ret = (bool)PyLong_AsLong(pValue);
+        return true;
     }
     else
     {
         yCError(FAKE_SPEECHTR) << "Null pValue passed to FakeSpeechTranscription::boolWrapper \n"; 
-        return NULL;
+        return false;
     }
 }

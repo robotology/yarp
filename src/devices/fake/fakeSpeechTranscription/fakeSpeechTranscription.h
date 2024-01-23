@@ -29,14 +29,14 @@ private:
     bool m_verbose = true;
     std::string m_language="auto";
 
-    const char * m_moduleName = "Module";   // Name of the python file containing the functions/classes
-    const char * m_path = "/home/ecub_docker/yarp/src/devices/fake/fakeSpeechTranscription";    // Path where the file is located
-    std::string m_className = "SpeecTranscriptor";  // Name of the class contained in @m_moduleName at @m_path
+    std::string m_moduleName = "a";   // Name of the python file containing the functions/classes
+    std::string m_path = "b";    // Path where the file is located
+    std::string m_className = "c";  // Name of the class contained in @m_moduleName at @m_path
 
     PyObject * m_classInstance;     // Python object of the created class
 
     /**
-     * @brief Calls a function present in a .py file and returns its values as python objects.
+     * @brief Calls a function present in a .py file and returns its values as python object.
      * @param moduleName The name of the .py file
      * @param functionName The name of the function contained in the .py file
      * @param pArgs PyObject Arguments needed for creating the class (pass NULL if no argument is needed)
@@ -68,30 +68,34 @@ private:
     /**
      * @brief Converts a python object to string, returns NULL otherwise
      * @param pValue PyObject to be converted
-     * @return The converted string
+     * @param ret The converted string
+     * @return True in case of success, false otherwise.
      */
-    std::string stringWrapper(PyObject* &pValue);
+    bool stringWrapper(PyObject* &pValue, std::string &ret);
 
     /**
      * @brief Converts a python object to long, returns NULL otherwise
      * @param pValue PyObject to be converted
-     * @return The converted long
+     * @param ret The converted long
+     * @return True in case of success, false otherwise.
      */
-    long intWrapper(PyObject* &pValue);
+    bool intWrapper(PyObject* &pValue, long &ret);
 
     /**
      * @brief Converts a python object to double, returns NULL otherwise
      * @param pValue PyObject to be converted
-     * @return The converted double
+     * @param ret The converted double
+     * @return True in case of success, false otherwise.
      */
-    double doubleWrapper(PyObject* &pValue);
+    bool doubleWrapper(PyObject* &pValue, double &ret);
 
     /**
      * @brief Converts a python object to bool, returns NULL otherwise
      * @param pValue PyObject to be converted
-     * @return The converted bool
+     * @param ret The converted boolean
+     * @return True in case of success, false otherwise.
      */
-    bool boolWrapper(PyObject* &pValue);
+    bool boolWrapper(PyObject* &pValue, bool &ret);
 
 public:
     FakeSpeechTranscription();
