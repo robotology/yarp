@@ -59,7 +59,7 @@ void print_help()
 int main(int argc, char *argv[])
 {
     bool generate_ini_input_file = false;
-    bool generate_md_input_file = true;//TOBE REMOVED!!!!         
+    bool generate_md_input_file = false;
     bool generate_readme_md_file = false;
     bool generate_yarprobotinterface_file = false;
     bool generate_yarpdev_file = false;

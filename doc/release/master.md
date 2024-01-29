@@ -27,3 +27,5 @@ Fixes
 
 New Features
 ------------
+
+* Added new command line tool `yarpDeviceParamParserGenerator`. See official yarp documentation (cmd_yarpDeviceParamParserGenerator.dox)

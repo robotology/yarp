@@ -187,7 +187,7 @@ bool      "<< m_classname << "_ParamsParser::parseParams(const yarp::os::Searcha
     s << S_TAB1 << "//Check for --help option\n";
     s << S_TAB1 << "if (config.check(\"help\"))\n";
     s << S_TAB1 << "{\n";
-    s << S_TAB1 << "    yCInfo(" << m_component << ") << getDocumentationOfDeviceParams(); \n";
+    s << S_TAB1 << "    yCInfo(" << m_component << ") << getDocumentationOfDeviceParams();\n";
     s << S_TAB1 << "}\n";
     s << "\n";
 

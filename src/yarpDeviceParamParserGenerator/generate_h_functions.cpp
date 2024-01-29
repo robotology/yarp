@@ -6,6 +6,7 @@
 #include "generator.h"
 #include <sstream>
 #include <cctype>
+#include <algorithm>
 
 std::string ParamsFilesGenerator::generateDoxygenForHeaderClass()
 {

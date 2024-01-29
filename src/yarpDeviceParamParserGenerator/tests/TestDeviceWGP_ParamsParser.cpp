@@ -37,7 +37,7 @@ bool      TestDeviceWGP_ParamsParser::parseParams(const yarp::os::Searchable & c
     //Check for --help option
     if (config.check("help"))
     {
-        yCInfo(TestDeviceWGPParamsCOMPONENT) << getDocumentationOfDeviceParams(); 
+        yCInfo(TestDeviceWGPParamsCOMPONENT) << getDocumentationOfDeviceParams();
     }
 
     std::string config_string = config.toString();

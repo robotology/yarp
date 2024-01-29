@@ -39,7 +39,7 @@
 * The file name is modified, using an incremental counter appended at the end of the file name.
 
 * See \ref AudioDoc for additional documentation on YARP audio.
-* 
+*
 */
 
 class AudioToFileDevice :

@@ -35,7 +35,7 @@ bool      AudioToFileDevice_ParamsParser::parseParams(const yarp::os::Searchable
     //Check for --help option
     if (config.check("help"))
     {
-        yCInfo(AudioToFileDeviceParamsCOMPONENT) << getDocumentationOfDeviceParams(); 
+        yCInfo(AudioToFileDeviceParamsCOMPONENT) << getDocumentationOfDeviceParams();
     }
 
     std::string config_string = config.toString();
