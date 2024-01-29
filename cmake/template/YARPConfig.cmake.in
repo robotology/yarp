@@ -157,6 +157,7 @@ check_required_components(YARP)
 include(${YARP_MODULE_DIR}/YarpPlugin.cmake)
 include(${YARP_MODULE_DIR}/YarpInstallationHelpers.cmake)
 include(${YARP_MODULE_DIR}/YarpCatchUtils.cmake)
+include(${YARP_MODULE_DIR}/YarpDeprecatedOption.cmake)
 
 ################################################################################
 # If FeatureSummary was included, add DESCRIPTION and URL

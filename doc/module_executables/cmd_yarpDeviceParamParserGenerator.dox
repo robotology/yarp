@@ -1,0 +1,175 @@
+/**
+\defgroup yarpDeviceParamParserGenerator yarpDeviceParamParserGenerator: YARP code generator/compiler for parameters parsers
+
+\ingroup yarp_tools
+
+\tableofcontents
+
+\section yarpDeviceParamParserGenerator_intro Description
+yarpDeviceParamParserGenerator is an executable which generates code (.cpp .h files) which simplifies the development of yarp devices.
+More specifically, it generates the devices parameters parsers, the corresponding doxygen documentation, the helper functions and the
+usage examples.
+
+\section yarpDeviceParamParserGenerator_command_line Command Line
+yarpDeviceParamParserGenerator can be executed from the command line. The syntax is the following:
+\code{.unparsed}
+yarpDeviceParamParserGenerator --class_name "className" --input_filename_md "filename.md" --input_extra_comments "comments.md" [--generate_md] [--generate_ini] [--generate_yarpdev] [--generate_yarprobotinterface] [--generate_all] [--output_dir "output_path"] [--debug_mode]
+\endcode
+or
+\code{.unparsed}
+yarpDeviceParamParserGenerator --class_name "className" --input_filename_ini "filename.ini --input_extra_comments "comments.md" [--generate_md] [--generate_ini] [--generate_yarpdev] [--generate_yarprobotinterface] [--generate_all] [--output_dir "output_path"] [--debug_mode]
+\endcode
+Please note that the two parameters input_filename_ini and input_filename_md are mutually exclusive, since the generator will accept as input only a .ini or a .md file.
+Also remember that invoking yarpDeviceParamParserGenerator by command line is fine for small, temporary projects or for testing purposes, but it is
+much more convenient to automatize the process by invoking it from the CMakeLists.txt of the project, as indicated in the next sections.
+
+\section yarpDeviceParamParserGenerator_input_files Input files
+Two types of input files are currently supported, .ini and .md. The content of the two files must match the following intuitive specifications:
+
+\subsection yarpDeviceParamParserGenerator_input_files_ini_file ini file
+\code{.unparsed}
+((group: myGroupName)(name: myParamName1)(type: string)(required: true)(units: myUnits)(defaultValue: myDefaultValue)(description: myDescription)(notes: myNotes))
+((group: myGroupName)(name: myParamName2)(type: string)(required: true)(units: myUnits)(defaultValue: myDefaultValue)(description: myDescription)(notes: myNotes))
+((name: myParamName3)(type: string)(required: true)(units: myUnits)(defaultValue: myDefaultValue)(description: myDescription)(notes: myNotes)(optionalVariableName: myVar))
+((group: myGroupName)(name: myParamName4)(type: string)(required: true)(units: myUnits)(defaultValue: myDefaultValue)(description: myDescription)(notes: - ))
+\endcode
+Notes:
+- the group field is optional and it can be omitted.
+- the field optionalVariableName is optional. If present, a c++ variable with the specified name will be generated to store that specific parameter.
+Otherwise, by the default, the variable name will be: m_myGroupName_myParamName.
+- the field defaultValue is mandatory if the parameter is marked as optional (required=false). Instead, if the field is marked as mandatory (required=true),
+the field defaultValue will be used for documentation purposes only (the user will have to provide a valid value for the required parameter for instantiating the device,
+but the default value can be used as a template/hint)
+- the fields units and notes can be left blank (or filled with a -).
+
+\subsection yarpDeviceParamParserGenerator_input_files_md_file md file
+\code{.unparsed}
+|     Group      |  Parameter   | Type      | Units    | Default Value  | Required  | Description   | Notes   |
+|:--------------:|:------------:|:---------:|:--------:|:--------------:|:---------:|:-------------:|:-------:|
+|                | myParamName1 | string    |  myUnits | myDefaultValue | true      | myDescription | myNotes |
+| myGroupName    | myParamName2 | string    |  myUnits | myDefaultValue | true      | myDescription |         |
+| myGroupName    | myParamName3 | string    |  myUnits | myDefaultValue | true      | myDescription | myNotes |
+\endcode
+
+Notes:
+- the group input is optional and it is indifferent to leave it blank or to fill it with a -.
+- all the text before the first line in which the delimiter |:-----:| is found will be ignored.
+- the field defaultValue is mandatory if the parameter is marked as optional (see the comment above for the .ini file)
+- the fields units and notes can be left blank (or filled with a -).
+
+\section yarpDeviceParamParserGenerator_output_files Output files
+
+yarpDeviceParamParserGenerator will generate the following files:
+
+\subsection yarpDeviceParamParserGenerator_output_files_code (.cpp and .h files)
+The generated .cpp and .h files contains the code (including Doxygen documentation) for parsing the parameters.
+In order to use it, the user has to include the .h file and publicly derive its class from the generated one,
+as shown in this snippet example for the class ChatBot_nwc_yarp:
+
+\code{.cmake}
+class ChatBot_nwc_yarp : public yarp::dev::DeviceDriver,
+                         public yarp::dev::IChatBot,
+                         public ChatBot_nwc_yarp_ParamsParser //<--
+\endcode
+
+Then the parsing of the parameters can be done in the open() method as shown below:
+
+\code{.cmake}
+bool ChatBot_nwc_yarp::open(yarp::os::Searchable &config)
+{
+    if (!parseParams(config)) { return false; } //<--
+    //...
+    return true;
+}
+\endcode
+
+In this way the device will not be opened if the parameters parser fails, which can occur if one of the following conditions happens:
+- One mandatory parameter was not provided.
+- The user provided a parameter which is not requested by the parser (only if the parser is set in "strict_mode")
+
+The parameters that have been successfully parsed store their value in ad hoc-generated variables whose names correspond
+to the name of the parameter, as discussed in the yarpDeviceParamParserGenerator_extra_notes section.
+
+\subsection yarpDeviceParamParserGenerator_output_files_other (Other files)
+If the parameters [--generate_yarpdev] or [--generate_yarprobotinterface] options are requested, yarpDeviceParamParserGenerator will
+also generate a .ini file and .xml file which demonstrate how to open the device using yarpdev and yarprobotinterface respectively.
+Please note that these files are just templates, because they may need additional customization to be successfully executed, 
+depending on the meaning of specific parameters (e.g. when a real hardware is involved).
+
+\section yarpDeviceParamParserGenerator_cmake CMake Usage
+yarpDeviceParamParserGenerator usage can be integrated in the CMakeLists.txt of a device.
+The usage is very simple: user has to add the generateDeviceParamsParser() command, whose input parameter must match the name of the class
+of the device, in this case ChatBot_nws_yarp. yarpDeviceParamParserGenerator will generate the two files ChatBot_nws_yarp_ParamsParser.cpp,
+ChatBot_nws_yarp_ParamsParser.h which must be added to target_sources.
+
+\code{.cmake}
+include(YarpDeviceParamsParserGenerator)
+
+yarp_prepare_plugin(chatBot_nws_yarp
+  CATEGORY device
+  TYPE ChatBot_nws_yarp
+  INCLUDE ChatBot_nws_yarp.h
+  DEFAULT ON
+)
+
+if(NOT SKIP_chatBot_nws_yarp)
+  yarp_add_plugin(yarp_chatBot_nws_yarp)
+  generateDeviceParamsParser(ChatBot_nws_yarp)
+
+  target_sources(yarp_chatBot_nws_yarp
+    PRIVATE
+      ChatBot_nws_yarp.cpp
+      ChatBot_nws_yarp.h
+      ChatBot_nws_yarp_ParamsParser.cpp
+      ChatBot_nws_yarp_ParamsParser.h
+  )
+
+  target_link_libraries(yarp_chatBot_nws_yarp
+    PRIVATE
+      YARP::YARP_os
+      YARP::YARP_sig
+      YARP::YARP_dev
+  )
+  
+  list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS
+    YARP_os
+    YARP_sig
+    YARP_dev
+  )
+
+  yarp_install(
+    TARGETS yarp_chatBot_nws_yarp
+    EXPORT YARP_${YARP_PLUGIN_MASTER}
+    COMPONENT ${YARP_PLUGIN_MASTER}
+    LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
+    ARCHIVE DESTINATION ${YARP_STATIC_PLUGINS_INSTALL_DIR}
+    YARP_INI DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR}
+  )
+
+  set(YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS ${YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS} PARENT_SCOPE)
+endif()
+\endcode
+
+please note that the CMake `generateDeviceParamsParser()` function, which is included by YarpDeviceParamsParserGenerator.cmake, has no effect
+ if the CMake option ALLOW_DEVICE_PARAM_PARSER_GENERATION is set to off (which is the default value). If it is set to on, instead, the output files will be regenerated,
+even if they are already existing. Every local edit will be thus overwritten. Additional details about how the generateDeviceParamsParser() function works
+internally (e.g. which parameters are employed foe the call of the executable yarpDeviceParamsParserGenerator) are explained directly inside the
+file YarpDeviceParamsParserGenerator.cmake
+
+\section yarpDeviceParamParserGenerator_extra_notes Extra Notes
+- nested groups can be specified using the :: operator. For example: myGroup::mySubGroup1::mySubGroup2::myVariable
+- only the following values are supported for the Type field in the input files:
+\code{.unparsed}
+| Parameter type | c++ type       | yarp::os::Value call |
+|:--------------:|:--------------:|:--------------------:|
+| "bool"         | bool           | .asBool()            |
+| "string"       | std::string    | .asString()          |
+| "int"          | int            | .asInt64()           |
+| "size_t"       | size_t         | .asInt64()           |
+| "float"        | float          | .asFloat32()         |
+| "double"       | double         | .asFloat64()         |
+\endcode
+- The generated .cpp file also include a function ::getDocumentationOfDeviceParams() which will output a documentation string which
+will be displayed on user request (for example invoking the --help option)
+
+*/

@@ -977,6 +977,9 @@ EXCLUDE_PATTERNS       =  */doc/release/yarp_* \
                           */opt-modules/*/CHANGELOG.md \
                           */opt-modules/*/*.md \
                           */src/devices/*/README.md \
+                          */src/devices/*/*_params.* \
+                          */src/devices/*/*_ParamsParser.md \
+                          */src/devices/*/*extraComm* \
                           */src/portmonitors/*/README.md \
                           */src/carriers/*/README.md
 
