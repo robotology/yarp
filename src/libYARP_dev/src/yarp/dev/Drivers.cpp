@@ -324,27 +324,10 @@ DriverCreator* Drivers::Private::load(const char *name) {
     return creator;
 }
 
-
-// helper method for "yarpdev" body
-static void printDocumentation(PolyDriver& dd) {
-    IDeviceDriverParams* iparams = nullptr;
-    dd.view(iparams);
-    if (!iparams)
-    {
-        return;
-    }
-    std::string name_s = iparams->getDeviceType();
-    std::string doc_s = iparams->getDocumentationOfDeviceParams();
-    yCIDebug(DRIVERS, dd.id(), "===============================================================");
-    yCIDebug(DRIVERS, dd.id(), "== Options checked by device class %s:", name_s.c_str());
-    yCIDebug(DRIVERS, dd.id(), "== %s", doc_s.c_str());
-    yCIDebug(DRIVERS, dd.id(), "===============================================================");
-}
-
-
 static std::string terminatorKey;
 static bool terminated = false;
-static void handler (int) {
+static void handler (int)
+{
     Time::useSystemClock();
     static double handleTime = -100;
     static int ct = 0;
@@ -392,18 +375,17 @@ int Drivers::yarpdev(int argc, char *argv[]) {
     // check if we're being asked to read the options from file
     Value *val;
     if (options.check("file",val)) {
-        // FIXME use argv[0]
         yCError(DRIVERS, "*** yarpdev --file is deprecated, please use --from");
-        yCError(DRIVERS, "*** yarpdev --file will be removed in a future version of YARP");
+        return 0;
+    }
 
-        std::string fname = val->toString();
-        options.unput("file");
-        yCDebug(DRIVERS, "yarpdev: working with config file %s", fname.c_str());
-        options.fromConfigFile(fname,false);
-
-        // interpret command line options as a set of flags again
-        // (just in case we need to override something)
-        options.fromCommand(argc,argv,true,false);
+    // print the  full list of devices, if requested
+    if (options.check("list")) {
+        yCInfo(DRIVERS, "Here are devices listed for your system:");
+        for (const auto& s : yarp::conf::string::split(Drivers::factory().toString(), '\n')) {
+            yCInfo(DRIVERS, "%s", s.c_str());
+        }
+        return 0;
     }
 
     // check if we want to use nested options (less ambiguous)
@@ -413,29 +395,20 @@ int Drivers::yarpdev(int argc, char *argv[]) {
         options.fromString(lispy);
     }
 
-    if (!options.check("device")) {
-        // no device mentioned - maybe user needs help
-        if (options.check("list")) {
-            yCInfo(DRIVERS, "Here are devices listed for your system:");
-            for (const auto& s : yarp::conf::string::split(Drivers::factory().toString(), '\n')) {
-                yCInfo(DRIVERS, "%s", s.c_str());
-            }
-        } else {
-            yCInfo(DRIVERS, "Welcome to yarpdev, a program to create YARP devices");
-            yCInfo(DRIVERS, "To see the devices available, try:");
-            yCInfo(DRIVERS, "   yarpdev --list");
-            yCInfo(DRIVERS, "To create a device whose name you know, call yarpdev like this:");
-            yCInfo(DRIVERS, "   yarpdev --device DEVICENAME --OPTION VALUE ...");
-            yCInfo(DRIVERS, "   For example:");
-            yCInfo(DRIVERS, "   yarpdev --device fakeFrameGrabber --width 32 --height 16 --name /grabber");
-            yCInfo(DRIVERS, "You can always move options to a configuration file:");
-            yCInfo(DRIVERS, "   yarpdev [--device DEVICENAME] --from CONFIG_FILENAME");
-            if (options.check ("from")) {
-                yCError(DRIVERS, "Unable to find --device option in file %s. Closing.", options.find("from").asString().c_str());
-            } else {
-                yCWarning(DRIVERS, "--device option not specified. Closing.");
-            }
-        }
+    // no device mentioned, neither in the option, nor in configuration file - maybe user needs help
+    if (!options.check("device") && !options.check("from"))
+    {
+        yCInfo(DRIVERS, "Welcome to yarpdev, a program to create YARP devices");
+        yCInfo(DRIVERS, "To see the devices available, try:");
+        yCInfo(DRIVERS, "   yarpdev --list");
+        yCInfo(DRIVERS, "To create a device whose name you know, call yarpdev like this:");
+        yCInfo(DRIVERS, "   yarpdev --device DEVICENAME --OPTION VALUE ...");
+        yCInfo(DRIVERS, "   For example:");
+        yCInfo(DRIVERS, "   yarpdev --device fakeFrameGrabber --width 32 --height 16 --name /grabber");
+        yCInfo(DRIVERS, "If the device supports it, you can check its configuration parameters using the --help option");
+        yCInfo(DRIVERS, "You can always move options to a configuration file:");
+        yCInfo(DRIVERS, "   yarpdev [--device DEVICENAME] --from CONFIG_FILENAME");
+        yCError(DRIVERS,"Device name not specified");
         return 0;
     }
 
@@ -466,9 +439,11 @@ int Drivers::yarpdev(int argc, char *argv[]) {
     //
     yarp::os::NetworkBase::yarpClockInit(yarp::os::YARP_CLOCK_DEFAULT);
 
+    // Finally open the device driver
     PolyDriver dd(options);
-    printDocumentation(dd);
     std::string id = dd.id();
+
+    //if the device.open() failed...
     if (!dd.isValid()) {
         yCIError(DRIVERS, id, "yarpdev: ***ERROR*** device not available.");
         if (argc==1)
