@@ -9,11 +9,10 @@
 #include <algorithm>
 #include <deque>
 
-std::string ParamsFilesGenerator::generateYarpdevString()
+std::string ParamsFilesGenerator::generateYarpdevStringAllParams()
 {
     std::ostringstream s;
-    s << "The device can be launched by yarpdev using the following syntax:\n";
-    s << "yarpdev --device " << this->m_classname;
+    s << " yarpdev --device " << this->m_classname;
     for (auto param : m_params)
     {
         s << " --" << param.getFullParamName();
@@ -33,7 +32,44 @@ std::string ParamsFilesGenerator::generateYarpdevString()
             }
         }
     }
+    return s.str();
+}
+
+std::string ParamsFilesGenerator::generateYarpdevStringMandatoryParamsOnly()
+{
+    std::ostringstream s;
+    s << " yarpdev --device " << this->m_classname;
+    for (auto param : m_params)
+    {
+        if (param.required)
+        {
+            s << " --" << param.getFullParamName();
+            if (!param.defaultValue.empty())
+            {
+                s << " " << param.defaultValue;
+            }
+            else
+            {
+                s << " <mandatory_value>";
+            }
+        }
+    }
+    return s.str();
+}
+
+std::string ParamsFilesGenerator::generateYarpdevDoxyString()
+{
+    std::ostringstream s;
+    s << " The device can be launched by yarpdev using one of the following examples:\n";
+    s << " \\code{.unparsed}\n";
+    s << generateYarpdevStringAllParams();
     s << "\n";
+    s << " \\endcode\n";
+    s << "\n";
+    s << " \\code{.unparsed}\n";
+    s << generateYarpdevStringMandatoryParamsOnly();
+    s << "\n";
+    s << " \\endcode\n";
     return s.str();
 }
 

@@ -60,6 +60,9 @@ std::string Parameter::getFullParamName() const
 
 std::string Parameter::getFullGroupOnlyVariable() const
 {
+    if (!optional_variable_name.empty())
+        return optional_variable_name;
+
     if (this->paramGroups.size() == 0)
         return std::string();
 
@@ -72,6 +75,11 @@ std::string Parameter::getFullGroupOnlyVariable() const
 
 std::string Parameter::getFullParamVariable() const
 {
+    //If the user has requested a special name for that variable, then use it
+    if (!this->optional_variable_name.empty())
+        return this->optional_variable_name;
+
+    //Otherwise generate it from the parameter name
     if (this->paramGroups.size() == 0)
         return this->paramOnlyName;
 

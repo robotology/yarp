@@ -10,6 +10,7 @@
 
 //((group: myGroupName)(name: myParamName)(type: string)(required: true)(units: myUnits)(defaultValue: myDefaultValue)(description: myDescription)(notes: myNotes))
 //((group: myGroupName)(name: myParamName)(type: string)(required: true)(units: myUnits)(defaultValue: myDefaultValue)(description: myDescription)(notes: myNotes))
+//((group: myGroupName)(name: myParamName)(type: string)(required: true)(units: myUnits)(defaultValue: myDefaultValue)(description: myDescription)(notes: myNotes)(optionalVariableName: myVar))
 //((group: myGroupName)(name: myParamName)(type: string)(required: true)(units: myUnits)(defaultValue: myDefaultValue)(description: myDescription)(notes: myNotes))
 
 std::string ParamsFilesGenerator::generateIniParams()
@@ -41,6 +42,11 @@ std::string ParamsFilesGenerator::generateIniParams()
         s << "(required: "     << param.required << " )";
         s << "(description: "  << description << " )";
         s << "(notes: "        << notes << " )";
+        if (!param.optional_variable_name.empty())
+        {
+            s << "(optionalVariableName: " << param.optional_variable_name << " )";
+        }
+        s << "(notes: " << notes << " )";
         s << ")\n";
     }
     return s.str();

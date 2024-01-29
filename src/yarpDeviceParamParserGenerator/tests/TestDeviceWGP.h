@@ -4,7 +4,7 @@
  */
 
 #include <yarp/dev/DeviceDriver.h>
-#include "TestDeviceWGPParams.h"
+#include "TestDeviceWGP_ParamsParser.h"
 
 #include <string>
 
@@ -13,12 +13,12 @@
 *
 * \brief `TestDeviceWGP` : A test device driver, for Continuous Integration purposes.
 *
-* Parameters required by this device are shown in class: \ref TestDeviceWGP_params
+* Parameters required by this device are shown in class: TestDeviceWGP_ParamsParser
 */
 
 class TestDeviceWGP :
         public yarp::dev::DeviceDriver,
-        public TestDeviceWGP_params
+        public TestDeviceWGP_ParamsParser
 {
 public:
     TestDeviceWGP();

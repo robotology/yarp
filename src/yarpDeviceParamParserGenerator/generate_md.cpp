@@ -11,8 +11,8 @@
 
 // Example:
 
-// | Parameter name | SubParameter | Type      | Units    | Default Value  | Required  | Description   | Notes   |
-// | :----------- : | :--------- : | :-------: | :------: | :------------: | :-------: | :-----------: | :-----: |
+// |     Group      |  Parameter   | Type      | Units    | Default Value  | Required  | Description   | Notes   |
+// |:--------------:|:------------:|:---------:|:--------:|:--------------:|:---------:|:-------------:|:-------:|
 // | myGroupName    | myParamName  | string    |  myUnits | myDefaultValue | true      | myDescription | myNotes |
 // | myGroupName    | myParamName  | string    |  myUnits | myDefaultValue | true      | myDescription | myNotes |
 // | myGroupName    | myParamName  | string    |  myUnits | myDefaultValue | true      | myDescription | myNotes |

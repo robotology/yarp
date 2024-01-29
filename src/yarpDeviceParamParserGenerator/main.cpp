@@ -51,15 +51,15 @@ bool ParamsFilesGenerator::nested_sections_found()
 void print_help()
 {
     std::cout << "Welcome to YarpDeviceParamParserGenerator tool. Syntax:\n";
-    std::cout << "1) YarpDeviceParamParserGenerator --class_name \"className\" --input_filename_md \"filename.md\" [--input_extra_comments \"comments.md\"] [--generate_md] [--generate_ini] [--generate_yarpdev] [--generate_yarprobotinterface] [--generate_all] [--output_dir \"output_path\"] [--debug_mode]\n";
+    std::cout << "1) yarpDeviceParamParserGenerator --class_name \"className\" --input_filename_md \"filename.md\" [--input_extra_comments \"comments.md\"] [--generate_md] [--generate_ini] [--generate_yarpdev] [--generate_yarprobotinterface] [--generate_all] [--output_dir \"output_path\"] [--debug_mode]\n";
     std::cout << "or:\n";
-    std::cout << "2) YarpDeviceParamParserGenerator --class_name \"className\" --input_filename_ini \"filename.ini\" [--input_extra_comments \"comments.md\"] [--generate_md] [--generate_ini] [--generate_yarpdev] [--generate_yarprobotinterface] [--generate_all] [--output_dir \"output_path\"] [--debug_mode]\n";
+    std::cout << "2) yarpDeviceParamParserGenerator --class_name \"className\" --input_filename_ini \"filename.ini\" [--input_extra_comments \"comments.md\"] [--generate_md] [--generate_ini] [--generate_yarpdev] [--generate_yarprobotinterface] [--generate_all] [--output_dir \"output_path\"] [--debug_mode]\n";
 }
 
 int main(int argc, char *argv[])
 {
     bool generate_ini_input_file = false;
-    bool generate_md_input_file = false;
+    bool generate_md_input_file = true;//TOBE REMOVED!!!!         
     bool generate_readme_md_file = false;
     bool generate_yarprobotinterface_file = false;
     bool generate_yarpdev_file = false;
@@ -72,7 +72,7 @@ int main(int argc, char *argv[])
     std::string output_dir=".";
     std::string class_name;
 
-#if 1 //debug only!
+#if 0 //debug only!
    std::cout << "Invocation command " << argc << ":";
    for (size_t i = 0; i < argc; ++i)
    {
@@ -202,7 +202,10 @@ int main(int argc, char *argv[])
     pgen.m_output_yarprobotinterface_filename = output_dir + output_filename + ".xml";
 
     //print params
-    pgen.printParams();
+    if (debug_mode)
+    {
+        pgen.printParams();
+    }
 
     if (generate_ini_input_file)
     {
@@ -310,7 +313,6 @@ namespace {\n\
     s << generateFunction_parseParams();
     s << generateFunction_getDeviceType();
     s << generateFunction_getDocumentationOfDeviceParams();
-    s << "\n";
 
     return s.str();
 }

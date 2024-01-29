@@ -8,6 +8,7 @@
 
 #include <string>
 
+//adds the symbol "*" at the beginning of each line, as requested by doxygen format
 inline std::string doxygenize_string (std::string s)
 {
     for (size_t i = 0; i < s.length(); ++i) {
@@ -19,6 +20,7 @@ inline std::string doxygenize_string (std::string s)
     return s;
 }
 
+//generate a string containing the current date and time
 inline std::string current_time()
 {
     auto now = std::chrono::system_clock::now();
@@ -27,6 +29,7 @@ inline std::string current_time()
     return std::string ("// Generated on: ") + currentTimeString + std::string("\n");
 }
 
+//return true if the string does not contain any valid character
 inline bool containsOnlySymbols(const std::string& str) {
     for (char ch : str) {
         if (std::isalnum(static_cast<unsigned char>(ch))) {
@@ -36,6 +39,7 @@ inline bool containsOnlySymbols(const std::string& str) {
     return true; // If all characters are symbols, return true
 }
 
+//remove all spaces from a string
 inline std::string trimSpaces(const std::string& str) {
     size_t firstNonSpace = str.find_first_not_of(" \t");
     size_t lastNonSpace = str.find_last_not_of(" \t");

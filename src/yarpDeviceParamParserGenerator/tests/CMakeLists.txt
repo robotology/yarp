@@ -4,7 +4,7 @@
 include(YarpPlugin)
 include(YarpPrintFeature)
 include(YarpCatchUtils)
-include(YarpDeviceParamsGenerator)
+include(YarpDeviceParamsParserGenerator)
 
 yarp_prepare_plugin(testDeviceWGP
   CATEGORY device
@@ -31,8 +31,8 @@ target_sources(yarp_testDeviceWGP
     PRIVATE
       TestDeviceWGP.cpp
       TestDeviceWGP.h
-      TestDeviceWGPParams.cpp
-      TestDeviceWGPParams.h
+      TestDeviceWGP_ParamsParser.cpp
+      TestDeviceWGP_ParamsParser.h
 )
 
 target_link_libraries(yarp_testDeviceWGP
@@ -63,5 +63,6 @@ source_group("OtherFiles" FILES
 set(YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS ${YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS} PARENT_SCOPE)
 
 set_property(TARGET yarp_testDeviceWGP PROPERTY FOLDER "Test")
+set_property(TARGET generate_parser PROPERTY FOLDER "Test")
 
 create_device_test(TestDeviceWGP)

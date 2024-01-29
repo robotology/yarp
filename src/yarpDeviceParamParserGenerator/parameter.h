@@ -30,6 +30,7 @@ class Parameter
     bool required = false;
     std::string description;
     std::string notes;
+    std::string optional_variable_name;
 
     public:
     void setFullyScopedParamName(std::string fullyScopedParamName);
@@ -45,14 +46,15 @@ class Parameter
     //myParam2
     std::string getParamOnly() const;
 
-    ///mySection1_myParam1
-    std::string getFullGroupOnlyVariable() const;
-
     //mySection1_myParam1_myParam2
     std::string getFullParamVariable() const;
 
     //mySection1, myParam1
     std::deque<std::string> getListOfGroups() const;
+
+    private:
+    ///mySection1_myParam1
+    std::string getFullGroupOnlyVariable() const;
 };
 
 #endif

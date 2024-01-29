@@ -10,11 +10,12 @@
 #include <string>
 #include <iostream>
 #include <fstream>
+#include <regex>
 
 // Example:
 
-// | Parameter name | SubParameter | Type      | Units    | Default Value  | Required  | Description   | Notes   |
-// | :----------- : | : -------- : | : --- - : | : ---- : | : -------- - : | : --------| : --------- : | : ----: |
+// |     Group      |  Parameter   | Type      | Units    | Default Value  | Required  | Description   | Notes   |
+// |:--------------:|:------------:|:---------:|:--------:|:--------------:|:---------:|:-------------:|:-------:|
 // | myGroupName    | myParamName  | string    |  myUnits | myDefaultValue | true      | myDescription | myNotes |
 // | myGroupName    | myParamName  | string    |  myUnits | myDefaultValue | true      | myDescription | myNotes |
 // | myGroupName    | myParamName  | string    |  myUnits | myDefaultValue | true      | myDescription | myNotes |
@@ -32,9 +33,37 @@ bool ParamsFilesGenerator::parseMdParams(const std::string inputfilename)
         return false;
     }
 
+    //The following regex matches the presence of a block similar to |:--------------:|
+    std::regex pattern(R"(\|\s*:\-*:\s*\|)");
+
+    //search for the line containing the pattern, then close the file.
+    //the pattern can be present or not.
+    //the idea is to skip all the lines before the pattern.
+    int    linepattern = -1;
+    size_t i=0;
+    while (std::getline(inputfile, line))
+    {
+        if (std::regex_search(line, pattern)) { linepattern  = i; break;}
+        i++;
+    }
+    inputfile.close();
+
+    //reopen the file
+    inputfile.open(inputfilename);
+    b = inputfile.is_open();
+    if (!b)
+    {
+        std::cerr << "Unable to open file: " << inputfilename << std::endl;
+        return false;
+    }
+
     // Read the file line by line
     while (std::getline(inputfile, line))
     {
+        //skip the first lines (before the pattern has been found)
+        if (linepattern>=0) {linepattern--; continue;}
+
+        //after the pattern, data is valid and ready to be processed
         std::stringstream ss(line);
         std::string item;
         Parameter param;

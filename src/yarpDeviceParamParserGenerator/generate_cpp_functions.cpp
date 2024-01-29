@@ -8,6 +8,7 @@
 
 #include <iostream>
 #include <fstream>
+
 #include <yarp/os/Log.h>
 #include <yarp/os/LogStream.h>
 
@@ -18,7 +19,7 @@ std::string ParamsFilesGenerator::generateFunction_getListOfParams()
     std::ostringstream s;
     ADD_DEBUG_COMMENT(s)
 s << "\n\
-std::vector<std::string> " << m_classname << "_paramsParser::getListOfParams() const\n\
+std::vector<std::string> " << m_classname << "_ParamsParser::getListOfParams() const\n\
 {\n";
 
 s << S_TAB1 << "std::vector<std::string> params;\n";
@@ -42,22 +43,32 @@ std::string ParamsFilesGenerator::generateFunction_getDocumentationOfDeviceParam
 {
     std::ostringstream s;
     ADD_DEBUG_COMMENT(s)
-s << "\n\
-std::string      " << m_classname << "_paramsParser::getDocumentationOfDeviceParams() const\n\
-{\n";
-s << S_TAB1 << "std::string doc;\n";
 
+    s << "\n";
+    s << "std::string      " << m_classname << "_ParamsParser::getDocumentationOfDeviceParams() const\n";
+    s << "{\n";
+    s << S_TAB1 << "std::string doc;\n";
 
-for (const auto& param : m_params)
-{
-     s << S_TAB1 << "doc = doc + std::string(\"'" << param.getFullParamName() << "': ";
-     s << param.description;
-     s << "\\n\");\n";
-}
+    s << S_TAB1 << "doc = doc + std::string(\"\\n=============================================\\n\");\n";
+    s << S_TAB1 << "doc = doc + std::string(\"This is the help for device: " << m_classname << "\\n\");\n";
+    s << S_TAB1 << "doc = doc + std::string(\"\\n\");\n";
+    s << S_TAB1 << "doc = doc + std::string(\"This is the list of the parameters accepted by the device:\\n\");\n";
 
-s << S_TAB1 << "return doc;\n";
-s <<\
-"}";
+    for (const auto& param : m_params)
+    {
+         s << S_TAB1 << "doc = doc + std::string(\"'" << param.getFullParamName() << "': ";
+         s << param.description;
+         s << "\\n\");\n";
+    }
+
+    s << S_TAB1 << "doc = doc + std::string(\"\\n\");\n";
+    s << S_TAB1 << "doc = doc + std::string(\"Here are some examples of invocation command with yarpdev, with all params:\\n\");\n";
+    s << S_TAB1 << "doc = doc + \"" << generateYarpdevStringAllParams() << "\\n\";\n";
+    s << S_TAB1 << "doc = doc + std::string(\"Using only mandatory params:\\n\");\n";
+    s << S_TAB1 << "doc = doc + \"" << generateYarpdevStringMandatoryParamsOnly() << "\\n\";\n";
+    s << S_TAB1 << "doc = doc + std::string(\"=============================================\\n\\n\");";
+    s << S_TAB1 << "return doc;\n";
+    s << "}\n";
     return s.str();
 }
 
@@ -111,11 +122,14 @@ void ParamsFilesGenerator::generate_param(std::string origin, std::ostringstream
     s << \
         S_TAB3 << "m_" << param.getFullParamVariable() << " = "<<origin<<".find(\"" << param.getParamOnly() << "\")";
 
-    if (param.type == "string") { s << ".asString();\n"; }
-    else if (param.type == "bool") { s << ".asBool();\n"; }
+    if (param.type == "string")      { s << ".asString();\n"; }
+    else if (param.type == "bool")   { s << ".asBool();\n"; }
     else if (param.type == "double") { s << ".asFloat64();\n"; }
+    else if (param.type == "int")    { s << ".asInt64();\n"; }
+    else if (param.type == "size_t") { s << ".asInt64();\n"; }
+    else if (param.type == "float")  { s << ".asFloat32();\n"; }
     else {
-        yFatal("ERROR"); //error
+        yFatal("ERROR: Unknown data type for param %s: %s",param.getFullParamName().c_str(), param.type.c_str()); //error
     }
 
     ADD_DEBUG_COMMENT(s)
@@ -167,8 +181,15 @@ std::string ParamsFilesGenerator::generateFunction_parseParams()
     std::ostringstream s;
     ADD_DEBUG_COMMENT(s)
 s << "\n\
-bool      "<< m_classname << "_paramsParser::parseParams(const yarp::os::Searchable & config)\n\
+bool      "<< m_classname << "_ParamsParser::parseParams(const yarp::os::Searchable & config)\n\
 {\n";
+
+    s << S_TAB1 << "//Check for --help option\n";
+    s << S_TAB1 << "if (config.check(\"help\"))\n";
+    s << S_TAB1 << "{\n";
+    s << S_TAB1 << "    yCInfo(" << m_component << ") << getDocumentationOfDeviceParams(); \n";
+    s << S_TAB1 << "}\n";
+    s << "\n";
 
     ADD_DEBUG_COMMENT(s)
     s << S_TAB1 << "std::string config_string = config.toString();\n";

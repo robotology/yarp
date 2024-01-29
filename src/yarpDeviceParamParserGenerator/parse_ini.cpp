@@ -12,9 +12,9 @@
 
 // Example:
 
-//((group: myGroupName)(name: myParamName)(type: string)(required: true)(units: myUnits)(defaultValue: myDefaultValue)(description: myDescription)(notes: myNotes))
-//((group: myGroupName)(name: myParamName)(type: string)(required: true)(units: myUnits)(defaultValue: myDefaultValue)(description: myDescription)(notes: myNotes))
-//((group: myGroupName)(name: myParamName)(type: string)(required: true)(units: myUnits)(defaultValue: myDefaultValue)(description: myDescription)(notes: myNotes))
+//((group: myGroupName)(name: myParamName)(type: string)(required: true)(units: myUnits)(defaultValue: myDefaultValue)(description: myDescription)(notes: myNotes)(optionalVariableName: myVar))
+//((group: myGroupName)(name: myParamName)(type: string)(required: true)(units: myUnits)(defaultValue: myDefaultValue)(description: myDescription)(notes: myNotes)(optionalVariableName: myVar))
+//((group: myGroupName)(name: myParamName)(type: string)(required: true)(units: myUnits)(defaultValue: myDefaultValue)(description: myDescription)(notes: myNotes)(optionalVariableName: myVar))
 
 bool ParamsFilesGenerator::parseIniParams(const std::string inputfilename)
 {
@@ -79,6 +79,10 @@ bool ParamsFilesGenerator::parseIniParams(const std::string inputfilename)
             else if (attribute == "notes")
             {
                 param.notes = trimSpaces(value);
+            }
+            else if (attribute == "optionalVariableName")
+            {
+                param.optional_variable_name = trimSpaces(value);
             }
             else
             {
