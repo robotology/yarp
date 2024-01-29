@@ -10,6 +10,7 @@ set(YARP_CMAKE_FILES
   YarpPrintFeature.cmake
   YarpDeprecatedOption.cmake
   YarpCatchUtils.cmake
+  YarpDeviceParamsParserGenerator.cmake
 )
 install(
   FILES ${YARP_CMAKE_FILES}

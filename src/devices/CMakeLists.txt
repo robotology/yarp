@@ -5,7 +5,7 @@
 include(YarpPlugin)
 include(YarpPrintFeature)
 include(YarpCatchUtils)
-include(YarpDeviceParamsGenerator)
+include(YarpDeviceParamsParserGenerator)
 
 yarp_begin_plugin_library(yarpmod
   OPTION YARP_COMPILE_DEVICE_PLUGINS
