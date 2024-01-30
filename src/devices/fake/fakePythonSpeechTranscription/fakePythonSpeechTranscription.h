@@ -56,7 +56,7 @@ private:
     bool classWrapper(PyObject* &pClassInstance, std::string methodName, PyObject* &pClassMethodArgs, PyObject* &pValue);
 
     /**
-     * @brief Initialize python class described in the python file as an interpreted object. 
+     * @brief Initialize python class described in the python file as an interpreted object.
      * @param moduleName The name of the .py file
      * @param className The name of the class contained in the .py file
      * @param pClassArgs PyObject Arguments needed for creating the class (pass NULL if no argument is needed)
