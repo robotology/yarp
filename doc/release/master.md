@@ -13,6 +13,7 @@ Major Behaviour Changes
 ---------------------------------
 
 * ROS1 support removed from github repo https://github.com/robotology/yarp and moved to legacy repo https://github.com/robotology/yarp-ros
+* Removed support for CMake 3.16/3.17. CMake minimum version is now 3.19
 
 Deprecations and removals
 ---------------------------------
