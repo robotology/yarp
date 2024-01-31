@@ -171,16 +171,6 @@ jobs:
       matrix:
         config:
         - {
-            cmake_version: "3.17.*",
-            cmake_generator: "Unix Makefiles",
-            ycm_version: "0.15.3",
-          }
-        - {
-            cmake_version: "3.18.*",
-            cmake_generator: "Unix Makefiles",
-            ycm_version: "0.15.3",
-          }
-        - {
             cmake_version: "3.19.*",
             cmake_generator: "Unix Makefiles",
             ycm_version: "0.15.3",
@@ -848,7 +838,7 @@ jobs:
       id: prepare_environment_script
       shell: cmake -P {0}
       run: |
-        cmake_minimum_required(VERSION 3.17)
+        cmake_minimum_required(VERSION 3.19)
         set(_env_script ${CMAKE_CURRENT_LIST_DIR}/environment_script.cmake)
         file(WRITE "${_env_script}" "")
 
@@ -963,14 +953,14 @@ jobs:
     - name: Print Environment Script
       shell: cmake -P {0}
       run: |
-        cmake_minimum_required(VERSION 3.17)
+        cmake_minimum_required(VERSION 3.19)
         file(READ "${{ steps.prepare_environment_script.outputs.environment_script }}" _out)
         message("${_out}")
 
     - name: Print system information
       shell: cmake -P {0}
       run: |
-        cmake_minimum_required(VERSION 3.17)
+        cmake_minimum_required(VERSION 3.19)
         include(${{ steps.prepare_environment_script.outputs.environment_script }})
 
         set(_which_cmd which)
@@ -1048,7 +1038,7 @@ jobs:
     - name: Configure
       shell: cmake -P {0}
       run: |
-        cmake_minimum_required(VERSION 3.17)
+        cmake_minimum_required(VERSION 3.19)
         include(${{ steps.prepare_environment_script.outputs.environment_script }})
 
         set(_generator)
@@ -1118,7 +1108,7 @@ jobs:
     - name: Build
       shell: cmake -P {0}
       run: |
-        cmake_minimum_required(VERSION 3.17)
+        cmake_minimum_required(VERSION 3.19)
         include(${{ steps.prepare_environment_script.outputs.environment_script }})
 
         execute_process_x(
@@ -1140,7 +1130,7 @@ jobs:
     - name: Run tests
       shell: cmake -P {0}
       run: |
-        cmake_minimum_required(VERSION 3.17)
+        cmake_minimum_required(VERSION 3.19)
         include(${{ steps.prepare_environment_script.outputs.environment_script }})
 
         execute_process_x(
@@ -1160,7 +1150,7 @@ jobs:
     - name: Status Check
       shell: cmake -P {0}
       run: |
-        cmake_minimum_required(VERSION 3.17)
+        cmake_minimum_required(VERSION 3.19)
         include(${{ steps.prepare_environment_script.outputs.environment_script }})
 
         execute_process_x(
@@ -1188,7 +1178,7 @@ jobs:
     - name: Test installation
       shell: cmake -P {0}
       run: |
-        cmake_minimum_required(VERSION 3.17)
+        cmake_minimum_required(VERSION 3.19)
         include(${{ steps.prepare_environment_script.outputs.environment_script }})
 
         execute_process_x(
@@ -1206,7 +1196,7 @@ jobs:
       if: matrix.config.test_external_bindings
       shell: cmake -P {0}
       run: |
-        cmake_minimum_required(VERSION 3.17)
+        cmake_minimum_required(VERSION 3.19)
         include(${{ steps.prepare_environment_script.outputs.environment_script }})
 
         ### FIXME Can we avoid this duplication?
@@ -1282,7 +1272,7 @@ jobs:
       if: matrix.config.test_external_bindings
       shell: cmake -P {0}
       run: |
-        cmake_minimum_required(VERSION 3.17)
+        cmake_minimum_required(VERSION 3.19)
         include(${{ steps.prepare_environment_script.outputs.environment_script }})
 
         ### FIXME Can we avoid this duplication?
@@ -1357,7 +1347,7 @@ jobs:
     - name: Compress installation files
       shell: cmake -P {0}
       run: |
-        cmake_minimum_required(VERSION 3.17)
+        cmake_minimum_required(VERSION 3.19)
         include(${{ steps.prepare_environment_script.outputs.environment_script }})
 
         execute_process_x(
@@ -1375,7 +1365,7 @@ jobs:
     - name: Cleanup
       shell: cmake -P {0}
       run: |
-        cmake_minimum_required(VERSION 3.17)
+        cmake_minimum_required(VERSION 3.19)
         include(${{ steps.prepare_environment_script.outputs.environment_script }})
 
         # Reset ccache stats before uploading

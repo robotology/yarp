@@ -2,7 +2,7 @@
 # SPDX-FileCopyrightText: 2006-2010 RobotCub Consortium
 # SPDX-License-Identifier: BSD-3-Clause
 
-cmake_minimum_required(VERSION 3.16)
+cmake_minimum_required(VERSION 3.19)
 
 # create the program "foo"
 add_executable(foo)

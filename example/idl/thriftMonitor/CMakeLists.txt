@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: BSD-3-Clause
 
 # //! [CMakeLists.txt Protocol Library]
-cmake_minimum_required(VERSION 3.16)
+cmake_minimum_required(VERSION 3.19)
 project(thriftEditor_example)
 
 # Needed to link the static library from the plugin, on 64 bit
