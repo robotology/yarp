@@ -1,9 +1,6 @@
 # SPDX-FileCopyrightText: 2023-2023 Istituto Italiano di Tecnologia (IIT)
 # SPDX-License-Identifier: BSD-3-Clause
 
-find_package(Python REQUIRED Development)
-
-
 if (YARP_COMPILE_ALL_FAKE_DEVICES)
   set(ENABLE_yarpmod_fakePythonSpeechTranscription ON CACHE BOOL "" FORCE)
 endif()
@@ -15,6 +12,7 @@ yarp_prepare_plugin(fakePythonSpeechTranscription
 )
 
 if(ENABLE_fakePythonSpeechTranscription)
+  find_package(Python REQUIRED Development)
   yarp_add_plugin(yarp_fakePythonSpeechTranscription)
 
   target_sources(yarp_fakePythonSpeechTranscription
