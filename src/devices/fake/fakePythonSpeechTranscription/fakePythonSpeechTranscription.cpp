@@ -272,7 +272,7 @@ bool FakePythonSpeechTranscription::functionWrapper(std::string moduleName, std:
             {   // Call Failed
                 Py_DECREF(pModule);
                 PyErr_Print();
-                fprintf(stderr,"Call failed\n");
+                yCError(FAKE_SPEECHTR) << "Call failed";
 
                 return false;
             }
@@ -281,7 +281,7 @@ bool FakePythonSpeechTranscription::functionWrapper(std::string moduleName, std:
         {   // Function not found in the py module
             if (PyErr_Occurred())
                 PyErr_Print();
-            fprintf(stderr, "Cannot find function \"%s\"\n", functionName);
+            yCError(FAKE_SPEECHTR) << "Cannot find function: " << functionName;
             //Py_XDECREF(pFunc);
             Py_XDECREF(pModule);
 
@@ -291,7 +291,7 @@ bool FakePythonSpeechTranscription::functionWrapper(std::string moduleName, std:
     else
     {   // Module not found or loaded
         PyErr_Print();
-        fprintf(stderr, "Failed to load \"%s\"\n", m_moduleName);
+        yCError(FAKE_SPEECHTR) << "Failed to load: " << m_moduleName;
         return false;
     }
 }
