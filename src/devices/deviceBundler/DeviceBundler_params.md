@@ -1,0 +1,5 @@
+ | Group name | Parameter name  | Type   | Units | Default Value  | Required | Description                                                           | Notes                                                 |
+ |:----------:|:---------------:|:------:|:-----:|:--------------:|:--------:|:---------------------------------------------------------------------:|:-----------------------------------------------------:|
+ |            | wrapper_device  | string | -     | device_name1   | Yes      | Name of the wrapper device                                            | This device must derive from yarp::dev::IWrapper      |
+ |            | attached_device | string | -     | device_name2   | Yes      | Name of the subdevice that will be attached to the wrapper device     |                                                       |
+ |            | doNotAttach     | bool   | -     | false          | No       | If set to true, the two devices are opened, but not attached          | It should not be used, except for debugging purposes  |
