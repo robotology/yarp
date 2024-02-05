@@ -412,8 +412,10 @@ int Drivers::yarpdev(int argc, char *argv[]) {
         return 0;
     }
 
-    // ask for a wrapped, remotable device rather than raw device
-    options.put("wrapped","1");
+    //yarpdev enables the wrapping mechanism, which is not enabled by default if,
+    //for example a device is opened from the code, using PolyDriver.open()
+    //When enabled, it asks for a wrapped, remotable device rather than raw device
+    options.put("wrapping_enabled","1");
 
     //YarpDevMonitor monitor;
     if (options.check("verbose")) {

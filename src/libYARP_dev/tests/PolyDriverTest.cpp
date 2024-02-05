@@ -111,7 +111,7 @@ TEST_CASE("dev::PolyDriverTest", "[yarp::dev]")
         Property p;
         p.put("device","devicedrivertest");
         p.put("verbose",1);
-        p.put("wrapped",1);
+        p.put("wrapping_enabled",1);
         for (int i=0; i<5; i++) {
             PolyDriver *dd = new PolyDriver(p);
             delete dd;

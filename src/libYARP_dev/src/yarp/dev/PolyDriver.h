@@ -108,13 +108,13 @@ public:
     DeviceDriver *getImplementation() override;
 
 private:
-    DeviceDriver *dd;
+    DeviceDriver *m_dd;
 
     bool coreOpen(yarp::os::Searchable& config);
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
     class Private;
-    Private* mPriv;
+    Private* m_Priv;
 #endif
 };
 
