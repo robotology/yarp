@@ -37,7 +37,7 @@ bool DeviceBundler::open(yarp::os::Searchable& config)
     ret = m_pdev_wrapper.open(config_wrap);
     if (!ret || !m_pdev_wrapper.isValid())
     {
-        yCError(DEVICEBUNDLER, "Unable to open device:%s", m_wrapper_device);
+        yCError(DEVICEBUNDLER, "Unable to open device:%s", m_wrapper_device.c_str());
         return false;
     }
 
@@ -49,7 +49,7 @@ bool DeviceBundler::open(yarp::os::Searchable& config)
     ret = m_pdev_subdevice.open(config_sub);
     if (!ret || !m_pdev_subdevice.isValid())
     {
-        yCError(DEVICEBUNDLER, "Unable to open subdevice:%s", m_attached_device);
+        yCError(DEVICEBUNDLER, "Unable to open subdevice:%s", m_attached_device.c_str());
         return false;
     }
 
@@ -63,18 +63,18 @@ bool DeviceBundler::open(yarp::os::Searchable& config)
     ret = m_pdev_wrapper.view(m_iWrapper);
     if (!ret)
     {
-        yCError(DEVICEBUNDLER, "Unable to open iWrapper interface. Maybe %s is not a wrapper device?", m_wrapper_device);
+        yCError(DEVICEBUNDLER, "Unable to open iWrapper interface. Maybe %s is not a wrapper device?", m_wrapper_device.c_str());
         return false;
     }
 
     ret = m_iWrapper->attach(&m_pdev_subdevice);
     if (!ret)
     {
-        yCError(DEVICEBUNDLER, "Unable to attach the two devices: %s and %s", m_wrapper_device, m_attached_device);
+        yCError(DEVICEBUNDLER, "Unable to attach the two devices: %s and %s", m_wrapper_device.c_str(), m_attached_device.c_str());
         return false;
     }
 
-    yCDebug(DEVICEBUNDLER, "Attach operation between %s and %s completed.", m_wrapper_device, m_attached_device);
+    yCDebug(DEVICEBUNDLER, "Attach operation between %s and %s completed.", m_wrapper_device.c_str(), m_attached_device.c_str());
     return true;
 }
 

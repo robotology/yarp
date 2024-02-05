@@ -7,7 +7,7 @@
 #define YARP_DEVICEBUNDLER_H
 
 #include <yarp/dev/DeviceDriver.h>
-#include <yarp/dev/Polydriver.h>
+#include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/IWrapper.h>
 #include "DeviceBundler_ParamsParser.h"
 

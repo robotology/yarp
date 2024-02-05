@@ -35,7 +35,7 @@ bool      DeviceBundler_ParamsParser::parseParams(const yarp::os::Searchable & c
     //Check for --help option
     if (config.check("help"))
     {
-        yCInfo(DeviceBundlerParamsCOMPONENT) << getDocumentationOfDeviceParams(); 
+        yCInfo(DeviceBundlerParamsCOMPONENT) << getDocumentationOfDeviceParams();
     }
 
     std::string config_string = config.toString();
