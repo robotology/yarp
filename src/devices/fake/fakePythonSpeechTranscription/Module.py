@@ -11,11 +11,11 @@ def close():
     print("Calling close() function")
     return True
 
-class SpeecTranscriptor:
+class SpeechTranscriptor:
     def __init__(self, lang, verbose):
         self.lang = lang
         self.verbose = verbose
-        print ('Created a SpeecTranscriptor with language: ' , self.lang, ' verbose: ', self.verbose)
+        print ('Created a SpeechTranscriptor with language: ' , self.lang, ' verbose: ', self.verbose)
 
     def set_language(self, new_lang):
         self.lang = new_lang

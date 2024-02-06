@@ -42,9 +42,9 @@ bool FakePythonSpeechTranscription::open(yarp::os::Searchable& config)
 {
     std::string func_name = "open";
 
-    m_moduleName = config.find("moduleName").asString();
+    m_moduleName = config.check("moduleName", yarp::os::Value("Module")).asString();
     m_path = config.find("modulePath").asString();
-    m_className = config.find("className").asString();
+    m_className = config.check("className", yarp::os::Value("SpeechTranscriptor")).asString();
 
     //Simple Function Calling without passing any parameters
 
@@ -79,33 +79,18 @@ bool FakePythonSpeechTranscription::open(yarp::os::Searchable& config)
     }
     Py_DECREF(pValue);
 
-    //return ret;
-
     /*------------------CLASS CREATION*------------------*/
-
-    /*PyObject* pClassArgs = Py_BuildValue("(si)", "french", 1);
+    // This line instantiate the class in Module.py with two parameters: lang=auto and verbose=1
+    PyObject* pClassArgs = Py_BuildValue("(si)", m_language.c_str(), 1);
 
     if (! classInstanceCreator(m_moduleName, m_className, pClassArgs, m_classInstance))
     {
-        yCError(FAKE_SPEECHTR) << "[test] Failed to instanciate py class \n";
+        yCError(FAKE_SPEECHTR) << "Failed to instantiate py class \n";
         Py_XDECREF(pClassArgs);
         return false;
     }
     // Clear not needed PyObjects
     Py_XDECREF(pClassArgs);
-
-
-    yInfo() << "-----------------------------TEST--------------------------- " ;
-    //test seq
-    std::string lang = "ita";
-    yInfo() << "SetLanguage " << lang;
-    setLanguage(lang);
-
-    std::string out;
-
-    getLanguage(out);
-    yInfo() << "Got Language: " << out;
-    */
 
     return ret;
 }
@@ -244,7 +229,7 @@ bool FakePythonSpeechTranscription::functionWrapper(std::string moduleName, std:
     PyObject* sysPath = PySys_GetObject((char*)"path");
     PyList_Append(sysPath, (PyUnicode_FromString(m_path.c_str())));
     pName = PyUnicode_DecodeFSDefault(m_moduleName.c_str());    //The string "Module" should be the name of the python file: i.e. Module.py
-
+    yInfo() << "Path of the Module: " << PyUnicode_AsUTF8(pName);
     // Load the module object
     pModule = PyImport_Import(pName);
     // Destroy the pName object: not needed anymore

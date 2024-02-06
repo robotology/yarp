@@ -41,6 +41,9 @@ if(ENABLE_fakePythonSpeechTranscription)
     YARP_INI DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR}
   )
 
+  yarp_install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/Module.py 
+                DESTINATION ${YARP_CONTEXTS_INSTALL_DIR}/tests/fakePythonSpeechTranscription)
+
   set(YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS ${YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS} PARENT_SCOPE)
 
   set_property(TARGET yarp_fakePythonSpeechTranscription PROPERTY FOLDER "Plugins/Device/Fake")

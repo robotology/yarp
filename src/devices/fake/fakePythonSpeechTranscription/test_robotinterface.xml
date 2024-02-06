@@ -11,7 +11,7 @@
        <device xmlns:xi="http://www.w3.org/2001/XInclude"  name="test" type="fakePythonSpeechTranscription">
             <param name="modulePath" >/home/ecub_docker/yarp/src/devices/fake/fakePythonSpeechTranscription</param>
             <param name="moduleName" >Module</param>
-            <param name="className" >SpeecTranscriptor</param>
+            <param name="className" >SpeechTranscriptor</param>
        </device>
    </devices>
 </robot>

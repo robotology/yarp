@@ -7,6 +7,7 @@
 #include <yarp/os/Network.h>
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/WrapperSingle.h>
+#include <yarp/os/ResourceFinder.h>
 
 #include <catch2/catch_amalgamated.hpp>
 #include <harness.h>
@@ -27,15 +28,22 @@ TEST_CASE("dev::fakePythonSpeechTranscription", "[yarp::dev]")
 
         //open the device
         {
+            yarp::os::ResourceFinder res;
+            res.setDefaultContext("tests/fakePythonSpeechTranscription");
+            std::string filepath = res.findFileByName("Module.py");
+            std::string parentPath = filepath.substr(0, filepath.find_last_of("\\/"));
 
             Property pdev_cfg;
             pdev_cfg.put("device", "fakePythonSpeechTranscription");
+            pdev_cfg.put("moduleName", "Module");
+            pdev_cfg.put("modulePath", parentPath);
+            pdev_cfg.put("className", "SpeechTranscriptor");
             REQUIRE(ddfake.open(pdev_cfg));
             REQUIRE(ddfake.view(istr));
         }
 
         std::string lang = "eng";
-        CHECK(istr->getLanguage(lang));
+        CHECK(istr->getLanguage(lang));     // the default value initialized by the class is auto
         CHECK(lang=="auto");
 
         CHECK(istr->setLanguage("eng"));
