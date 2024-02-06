@@ -20,15 +20,9 @@
 /**
  * @ingroup dev_impl_fake dev_impl_motor
  *
- * \brief `fakeMotionControlMicro`: Documentation to be added
+ * \brief `fakeMotionControlMicro`: This device implements a minimal subset of mandatory interfaces
+ * to run with controlBoard_nws_yarp. It is thus a smaller, limited version than fakeMotionControl.
  *
- * The aim of this device is to mimic the expected behavior of a
- * real motion control device to help testing the high level software.
- *
- * This device is implementing last version of interfaces and it is compatible
- * with controlBoard_nws_yarp device.
- *
- * WIP - it is very basic now, not all interfaces are implemented yet.
  */
 class FakeMotionControlMicro :
         public yarp::os::PeriodicThread,
