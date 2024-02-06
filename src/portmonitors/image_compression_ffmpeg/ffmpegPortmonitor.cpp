@@ -202,10 +202,14 @@ bool FfmpegMonitorObject::accept(yarp::os::Things& thing)
         yCTrace(FFMPEGMONITOR, "accept - sender");
         // Try to cast the Thing into an Image
         Image* img = thing.cast_as< Image >();
-        // If cast fails, return error
+        // If cast fails, try to cast the Thing into a Bottle
         if(img == nullptr) {
-            yCError(FFMPEGMONITOR, "Expected type Image in sender side, but got wrong data type!");
-            return false;
+            Bottle* bt = thing.cast_as<Bottle>();
+            // If cast fails, return error
+            if (bt == nullptr) {
+                yCError(FFMPEGMONITOR, "Expected type Image or Bottle in sender side, but got wrong data type!");
+                return false;
+            }
         }
     }
     else {
@@ -265,6 +269,17 @@ yarp::os::Things& FfmpegMonitorObject::update(yarp::os::Things& thing)
         yCTrace(FFMPEGMONITOR, "update - sender");
         // Cast Thing into an Image
         Image* img = thing.cast_as< Image >();
+
+        if (img == nullptr) {
+			Bottle* bot = thing.cast_as<Bottle>();
+            if (!yarp::os::Portable::copyPortable(*bot, imageBottleBuffer))
+            {
+                yCError(FFMPEGMONITOR, "The input type is a Bottle, but it cannot be copied to an Image");
+			    success = false;
+            }
+            img = &imageBottleBuffer;
+		}
+
         // Allocate memory for packet
         AVPacket *packet = av_packet_alloc();
         if (packet == NULL) {

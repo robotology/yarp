@@ -130,6 +130,12 @@ class FfmpegMonitorObject : public yarp::os::MonitorObject
         yarp::sig::FlexImage imageOut;
 
         /**
+         * @brief The final decompressed image that will be sent to the original destination.
+         *
+         */
+        yarp::sig::Image imageBottleBuffer;
+
+        /**
          * @brief Boolean variable that tells if the current execution is in sender side or not.
          *
          */
