@@ -160,6 +160,14 @@ bool FakePythonSpeechTranscription::setLanguage(const std::string& language)
         return false;
     }
 
+    if (pInput!=NULL)
+    {
+        for (long int i = 0; i < pInput->ob_refcnt; ++i)
+        {
+            Py_XDECREF(pInput);
+        }
+    }
+    Py_XDECREF(pRetVal);
     yInfo() << "Returning from setLanguage: " << result;
 
     return true;
@@ -317,6 +325,7 @@ bool FakePythonSpeechTranscription::classWrapper(PyObject* &pClassInstance, std:
         yCError(FAKE_SPEECHTR) << "[classWrapper] Returned NULL Value from Class call \n";
         return false;
     }
+    Py_DECREF(pMethod);
     return true;
 }
 
@@ -366,7 +375,7 @@ bool FakePythonSpeechTranscription::classInstanceCreator(std::string moduleName,
         {
             if (PyErr_Occurred())
                 PyErr_Print();
-            yCError(FAKE_SPEECHTR) << "[classWrapper] Unable to instantiate Class with given class aguments \n";
+            yCError(FAKE_SPEECHTR) << "[classWrapper] Unable to instantiate Class with given class arguments \n";
 
             if (pReturn->ob_refcnt>0)
             {
