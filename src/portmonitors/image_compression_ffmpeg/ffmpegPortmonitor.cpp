@@ -347,9 +347,17 @@ yarp::os::Things& FfmpegMonitorObject::update(yarp::os::Things& thing)
         int pixelCode = compressedBottle->get(3).asInt32();
         int pixelSize = compressedBottle->get(4).asInt32();
         // Set information into final image
-        imageOut.setPixelCode(pixelCode);
-        imageOut.setPixelSize(pixelSize);
-        imageOut.resize(width, height);
+
+        if (pixelCode != VOCAB_PIXEL_INVALID)
+        {
+            imageOut.setPixelCode(pixelCode);
+            imageOut.setPixelSize(pixelSize);
+            imageOut.resize(width, height);
+        }
+        else
+        {
+			yCError(FFMPEGMONITOR, "Invalid input pixel code");
+		}
 
         // Check if compression was successful
         if (compressedBottle->get(0).asInt32() == 1) {
