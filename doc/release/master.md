@@ -22,6 +22,7 @@ Deprecations and removals
 * Removed library `libYARP_wire_rep_utils`.
 * Removed `extern/md5`
 * Removed `extern/ros` messages and examples.
+* The syntax yarpdev --device xxx --subdevice yyy has been deprecated. See discussion: https://github.com/robotology/yarp/discussions/3078
 
 Fixes
 -----
@@ -32,3 +33,10 @@ New Features
 ------------
 
 * Added new command line tool `yarpDeviceParamParserGenerator`. See official yarp documentation (cmd_yarpDeviceParamParserGenerator.dox)
+
+### Devices
+
+#### deviceBundler
+
+* Added new device `deviceBundler` which can be useful to open two devices and attach them while using a single yarpdev command line.
+  See https://github.com/robotology/yarp/discussions/3078

@@ -412,8 +412,23 @@ int Drivers::yarpdev(int argc, char *argv[]) {
         return 0;
     }
 
-    // ask for a wrapped, remotable device rather than raw device
-    options.put("wrapped","1");
+    //The following syntax is deprecated: generate an error!
+    if (options.check("device") && options.check("subdevice"))
+    {
+        std::string dev_name = options.find("device").asString();
+        std::string subdev_name = options.find("subdevice").asString();
+        yCError(DRIVERS, "The syntax:");
+        yCError(DRIVERS, "yarpdev --device %s --subdevice %s", dev_name.c_str(), subdev_name.c_str());
+        yCError(DRIVERS, "has been deprecated.");
+        yCError(DRIVERS, "Use the following command line instead:");
+        yCError(DRIVERS, "yarpdev --device deviceBundler --wrapper_device %s --attached_device %s", dev_name.c_str(), subdev_name.c_str());
+        return 0;
+    }
+
+    //yarpdev enables the wrapping mechanism, which is not enabled by default if,
+    //for example a device is opened from the code, using PolyDriver.open()
+    //When enabled, it asks for a wrapped, remotable device rather than raw device
+    options.put("wrapping_enabled","1");
 
     //YarpDevMonitor monitor;
     if (options.check("verbose")) {
