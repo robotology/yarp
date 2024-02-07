@@ -75,6 +75,7 @@ bool FakePythonSpeechTranscription::open(yarp::os::Searchable& config)
     if (!boolWrapper(pValue, ret))
     {
         yCError(FAKE_SPEECHTR) << "[open] Unable to convert returned PyObject to bool \n";
+        Py_DECREF(pValue);
         return false;
     }
     Py_DECREF(pValue);
@@ -139,14 +140,16 @@ bool FakePythonSpeechTranscription::setLanguage(const std::string& language)
 {
    if (!Py_IsInitialized())
     {
-        yInfo()<<"Calling test Py_Initialize";
+        yInfo()<<"Calling setLanguage Py_Initialize";
         Py_Initialize();
     }
 
+    yCInfo(FAKE_SPEECHTR) << "[setLanguage] setting up local vars";
     PyObject* pRetVal; // Return Value from the class method
     std::string methodName = "set_language";
     PyObject* pInput = PyUnicode_FromString(language.c_str());    // string to pass to the method
 
+    yCInfo(FAKE_SPEECHTR) << "[setLanguage] calling class wrapper";
     if(! classWrapper(m_classInstance, methodName, pInput, pRetVal))
     {
         yCError(FAKE_SPEECHTR) << "[setLanguage] Returned False at classWrapper \n";
@@ -154,6 +157,7 @@ bool FakePythonSpeechTranscription::setLanguage(const std::string& language)
     }
     bool result;
 
+    yCInfo(FAKE_SPEECHTR) << "[setLanguage] converting result to bool";
     if (!boolWrapper(pRetVal, result))
     {
         yCError(FAKE_SPEECHTR) << "[setLanguage] Unable to convert returned PyObject to bool \n";
@@ -177,7 +181,7 @@ bool FakePythonSpeechTranscription::getLanguage(std::string& language)
 {
     if (!Py_IsInitialized())
     {
-        yInfo()<<"Calling test Py_Initialize";
+        yInfo()<<"Calling getLanguage Py_Initialize";
         Py_Initialize();
     }
 
@@ -298,31 +302,37 @@ bool FakePythonSpeechTranscription::classWrapper(PyObject* &pClassInstance, std:
     }
     PyObject *pMethod;  // Converted name of the class method to PyObject
 
+    yCInfo(FAKE_SPEECHTR) << "[classWrapper] converting method from str";
     pMethod = PyUnicode_FromString(methodName.c_str());
 
     if (pMethod == NULL)
     {
+        yCError(FAKE_SPEECHTR) << "[classWrapper] Unable to convert methodName to python";
         if (PyErr_Occurred())
             PyErr_Print();
-        yCError(FAKE_SPEECHTR) << "[classWrapper] Unable to convert methodName to python\n";
+        Py_DECREF(pMethod);
         return false;
     }
 
+    yCInfo(FAKE_SPEECHTR) << "[classWrapper] class instance check";
     if (pClassInstance==NULL)
     {
+        yCError(FAKE_SPEECHTR) << "[classWrapper] Class instance NULL";
         if (PyErr_Occurred())
             PyErr_Print();
-        yCError(FAKE_SPEECHTR) << "[classWrapper] Class instance NULL \n";
+        Py_DECREF(pMethod);
         return false;
     }
 
+    yCInfo(FAKE_SPEECHTR) << "[classWrapper] calling method class";
     pValue = PyObject_CallMethodObjArgs(pClassInstance, pMethod, pClassMethodArgs, NULL);
 
     if (pValue==NULL)
     {
+        yCError(FAKE_SPEECHTR) << "[classWrapper] Returned NULL Value from Class call";
         if (PyErr_Occurred())
             PyErr_Print();
-        yCError(FAKE_SPEECHTR) << "[classWrapper] Returned NULL Value from Class call \n";
+        Py_DECREF(pMethod);
         return false;
     }
     Py_DECREF(pMethod);

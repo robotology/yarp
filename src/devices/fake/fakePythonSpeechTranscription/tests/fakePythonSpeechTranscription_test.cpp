@@ -46,7 +46,8 @@ TEST_CASE("dev::fakePythonSpeechTranscription", "[yarp::dev]")
         CHECK(istr->getLanguage(lang));     // the default value initialized by the class is auto
         CHECK(lang=="auto");
 
-        CHECK(istr->setLanguage("eng"));
+        std::string new_lang = "eng";
+        CHECK(istr->setLanguage(new_lang));
         CHECK(istr->getLanguage(lang));
         CHECK(lang == "eng");
 
