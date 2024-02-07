@@ -148,9 +148,11 @@ bool FakePythonSpeechTranscription::setLanguage(const std::string& language)
     PyObject* pRetVal; // Return Value from the class method
     std::string methodName = "set_language";
     yCInfo(FAKE_SPEECHTR) << "[setLanguage] converting input: " << language.c_str();
-    const char * tmp = language.c_str();
+    //const char * tmp = language.c_str();
+    const char * tmp = "eng";
     yCInfo(FAKE_SPEECHTR) << "[setLanguage] passing input: " << tmp;
-    PyObject* pInput = PyUnicode_FromString(tmp);    // string to pass to the method
+    PyObject* pInput;
+    pInput = PyUnicode_FromString(tmp);    // string to pass to the method
 
     yCInfo(FAKE_SPEECHTR) << "[setLanguage] calling class wrapper";
     if(! classWrapper(m_classInstance, methodName, pInput, pRetVal))
