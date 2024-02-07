@@ -414,6 +414,7 @@ bool MultipleAnalogSensorsServer::attachAll(const yarp::dev::PolyDriverList& p)
 
     if(!ok)
     {
+        yCError(MULTIPLEANALOGSENSORSSERVER, "Failure in populateAllSensorsMetadata()");
         close();
         return false;
     }
@@ -453,6 +454,7 @@ bool MultipleAnalogSensorsServer::attachAll(const yarp::dev::PolyDriverList& p)
         return false;
     }
 
+    yCDebug(MULTIPLEANALOGSENSORSSERVER, "Attach complete");
     return true;
 }
 
@@ -467,6 +469,7 @@ bool MultipleAnalogSensorsServer::detachAll()
     m_rpcPort.close();
     m_streamingPort.close();
 
+    yCDebug(MULTIPLEANALOGSENSORSSERVER, "Detach complete");
     return true;
 }
 
