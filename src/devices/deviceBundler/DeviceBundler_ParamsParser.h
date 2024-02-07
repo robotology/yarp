@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Mon Feb  5 19:57:52 2024
+// Generated on: Wed Feb  7 16:51:11 2024
 
 
 #ifndef DEVICEBUNDLER_PARAMSPARSER_H
@@ -17,6 +17,7 @@
 #include <yarp/os/Searchable.h>
 #include <yarp/dev/IDeviceDriverParams.h>
 #include <string>
+#include <cmath>
 
 /**
 * This class is the parameters parser for class DeviceBundler.

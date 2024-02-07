@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Mon Jan 29 11:01:56 2024
+// Generated on: Wed Feb  7 16:51:11 2024
 
 
 #ifndef AUDIOTOFILEDEVICE_PARAMSPARSER_H
@@ -17,6 +17,7 @@
 #include <yarp/os/Searchable.h>
 #include <yarp/dev/IDeviceDriverParams.h>
 #include <string>
+#include <cmath>
 
 /**
 * This class is the parameters parser for class AudioToFileDevice.
@@ -26,11 +27,11 @@
 * |:----------:|:--------------:|:------:|:-----:|:--------------:|:--------:|:------------------------------------------------------------------------------------------------:|:--------------------------------------:|
 * | -          | file_name      | string | -     | audio_out.wav  | 0        | The name of the file written by the module                                                       | Only .wav and .mp3 files are supported |
 * | -          | save_mode      | string | -     | overwrite_file | 0        | Affects the behavior of the module and defines the save mode, as described in the documentation. | -                                      |
-* | -          | add_marker     | bool   | -     | -              | 0        | If set, it will add a marker at the beginning and at the ending of each received waveform.       | -                                      |
+* | -          | add_marker     | bool   | -     | false          | 0        | If set, it will add a marker at the beginning and at the ending of each received waveform.       | -                                      |
 *
 * The device can be launched by yarpdev using one of the following examples:
 * \code{.unparsed}
-* yarpdev --device AudioToFileDevice --file_name audio_out.wav --save_mode overwrite_file --add_marker <optional_value>
+* yarpdev --device AudioToFileDevice --file_name audio_out.wav --save_mode overwrite_file --add_marker false
 * \endcode
 *
 * \code{.unparsed}
@@ -55,7 +56,7 @@ public:
     const parser_version_type m_parser_version;
     std::string m_file_name = {"audio_out.wav"};
     std::string m_save_mode = {"overwrite_file"};
-    bool m_add_marker;
+    bool m_add_marker = {false};
 
     bool          parseParams(const yarp::os::Searchable & config) override;
     std::string   getDeviceType() const override { return m_device_type; }
