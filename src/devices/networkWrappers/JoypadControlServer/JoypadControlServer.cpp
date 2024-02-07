@@ -224,8 +224,6 @@ bool JoypadCtrlParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& re
 JoypadControlServer::JoypadControlServer() : PeriodicThread(DEFAULT_THREAD_PERIOD),
                                              m_period(DEFAULT_THREAD_PERIOD),
                                              m_IJoypad(nullptr),
-                                             m_subDeviceOwned(nullptr),
-                                             m_isSubdeviceOwned(false),
                                              m_separatePorts(false),
                                              m_profile(false),
                                              m_coordsMode(yarp::dev::IJoypadController::JoypadCtrl_coordinateMode::JypCtrlcoord_POLAR)
@@ -235,11 +233,6 @@ JoypadControlServer::JoypadControlServer() : PeriodicThread(DEFAULT_THREAD_PERIO
 
 JoypadControlServer::~JoypadControlServer()
 {
-    if(m_subDeviceOwned)
-    {
-        delete m_subDeviceOwned;
-    }
-    m_subDeviceOwned = nullptr;
     m_IJoypad = nullptr;
 }
 
@@ -301,58 +294,8 @@ bool JoypadControlServer::open(yarp::os::Searchable& params)
     m_portTrackball.name = rootName + "/trackball:o";
     m_portHats.name      = rootName + "/hat:o";
 
-
-    // check if we need to create subdevice or if they are
-    // passed later on thorugh attachAll()
-    if(params.check("subdevice"))
-    {
-        m_isSubdeviceOwned=true;
-        if(!openAndAttachSubDevice(params))
-        {
-            yCError(JOYPADCONTROLSERVER) << "Error while opening subdevice";
-            return false;
-        }
-    }
-    else
-    {
-        m_isSubdeviceOwned=false;
-    }
-
+    yCInfo(JOYPADCONTROLSERVER) << "Running, waiting for attach...";
     return true;
-}
-
-bool JoypadControlServer::openAndAttachSubDevice(Searchable& prop)
-{
-    Property p;
-
-    m_subDeviceOwned = new PolyDriver;
-
-    p.fromString(prop.toString());
-    p.unput("device");
-    p.put("device",prop.find("subdevice").asString());  // subdevice was already checked before
-
-    // if errors occurred during open, quit here.
-    m_subDeviceOwned->open(p);
-
-    if (!m_subDeviceOwned->isValid())
-    {
-        yCError(JOYPADCONTROLSERVER) << "Opening subdevice... FAILED";
-        return false;
-    }
-    m_isSubdeviceOwned = true;
-    if (!attach(m_subDeviceOwned)) {
-        return false;
-    }
-
-    if(!m_parser.configure(m_IJoypad) )
-    {
-        yCError(JOYPADCONTROLSERVER) << "Error configuring interfaces for parsers";
-        return false;
-    }
-
-    openPorts();
-    PeriodicThread::setPeriod(m_period);
-    return PeriodicThread::start();
 }
 
 bool JoypadControlServer::attach(PolyDriver* poly)
@@ -382,26 +325,10 @@ bool JoypadControlServer::attach(PolyDriver* poly)
     return true;
 }
 
-bool JoypadControlServer::attach(yarp::dev::IJoypadController *s)
-{
-    if(s == nullptr)
-    {
-        yCError(JOYPADCONTROLSERVER) << "Attached device has no valid IJoystickController interface.";
-        return false;
-    }
-    m_IJoypad = s;
-    return true;
-}
-
 bool JoypadControlServer::detach()
 {
     if (yarp::os::PeriodicThread::isRunning()) {
         yarp::os::PeriodicThread::stop();
-    }
-
-    //check if we already instantiated a subdevice previously
-    if (m_isSubdeviceOwned) {
-        return false;
     }
 
     m_IJoypad = nullptr;
@@ -821,18 +748,6 @@ void JoypadControlServer::run()
 bool JoypadControlServer::close()
 {
     detachAll();
-
-    // close subdevice if it was created inside the open (--subdevice option)
-    if(m_isSubdeviceOwned)
-    {
-        if (m_subDeviceOwned) {
-            m_subDeviceOwned->close();
-        }
-
-        m_subDeviceOwned   = nullptr;
-        m_IJoypad          = nullptr;
-        m_isSubdeviceOwned = false;
-    }
 
     // Closing port
     std::vector<JoypadControl::LoopablePort*> portv;

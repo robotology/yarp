@@ -73,15 +73,13 @@ struct ImpedanceParameters
 /**
  * @ingroup dev_impl_fake dev_impl_motor
  *
- * \brief `fakeMotionControl`: Documentation to be added
- *
- * The aim of this device is to mimic the expected behavior of a
+ * \brief `fakeMotionControl`: The aim of this device is to mimic the expected behavior of a
  * real motion control device to help testing the high level software.
  *
  * This device is implementing last version of interfaces and it is compatible
  * with controlBoard_nws_yarp device.
  *
- * WIP - it is very basic now, not all interfaces are implemented yet.
+ * WIP - Some interfaces could be not implemented.
  */
 class FakeMotionControl :
         public yarp::dev::DeviceDriver,

@@ -15,7 +15,7 @@
             <param name="period">    0.01   </param>
             <action phase="startup" level="5" type="attach">
                 <paramlist name="networks">
-                    <elem name="subdevice"> lidarmotor </elem>
+                    <elem name="subdev"> lidarmotor </elem>
                 </paramlist>
             </action>
             <action phase="shutdown" level="5" type="detach" />
@@ -26,7 +26,7 @@
             <param name="period">    0.01   </param>
             <action phase="startup" level="5" type="attach">
                 <paramlist name="networks">
-                    <elem name="subdevice"> lidarmotor </elem>
+                    <elem name="subdev"> lidarmotor </elem>
                 </paramlist>
             </action>
             <action phase="shutdown" level="5" type="detach" />

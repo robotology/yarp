@@ -33,7 +33,6 @@
  * | Parameter name | SubParameter   | Type    | Units | Default Value | Required | Description                                                       | Notes |
  * |:--------------:|:--------------:|:-------:|:-----:|:-------------:|:-------: |:-----------------------------------------------------------------:|:-----:|
  * | local          |      -         | string  | -     |   -           | Yes      | Full name of the port opened by the device. For both ports (i.e. /rpc:i, /data:i) the corresponding suffix is automatically added |       |
- * | subdevice      |      -         | string  | -     |   -           | No       | name of the subdevice to instantiate                              | when used, parameters for the subdevice must be provided as well |
  *
  * Example usage:
  * yarpdev --device mobileBaseVelocityControl_nws_yarp --subdevice velocityInputHandler --local /input1
@@ -61,7 +60,6 @@ protected:
     VelocityInputPortProcessor    m_StreamingInput;
     std::string                   m_local_name;
 
-    yarp::dev::PolyDriver                           m_subdev;
     yarp::dev::Nav2D::INavigation2DVelocityActions* m_iNavVel = nullptr;
 
 public:

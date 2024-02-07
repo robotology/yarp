@@ -308,7 +308,7 @@ bool ControlBoardRemapper::attachAllUsingAxesNames(const PolyDriverList& polylis
         if( !iencs ||
             !iaxinfos )
         {
-            yCError(CONTROLBOARDREMAPPER) << "subdevice" << deviceKey << "does not implemented the required IAxisInfo or IEncoders interfaces";
+            yCError(CONTROLBOARDREMAPPER) << "sub-device" << deviceKey << "does not implemented the required IAxisInfo or IEncoders interfaces";
             return false;
         }
 
@@ -317,7 +317,7 @@ bool ControlBoardRemapper::attachAllUsingAxesNames(const PolyDriverList& polylis
 
         if( !ok )
         {
-            yCError(CONTROLBOARDREMAPPER) << "subdevice" << deviceKey << "does not implemented the required getAxes method";
+            yCError(CONTROLBOARDREMAPPER) << "sub-device" << deviceKey << "does not implemented the required getAxes method";
             return false;
         }
 
@@ -330,7 +330,7 @@ bool ControlBoardRemapper::attachAllUsingAxesNames(const PolyDriverList& polylis
 
             if( !ok )
             {
-                yCError(CONTROLBOARDREMAPPER) << "subdevice" << deviceKey << "does not implemented the required getAxisName method";
+                yCError(CONTROLBOARDREMAPPER) << "sub-device" << deviceKey << "does not implemented the required getAxisName method";
                 return false;
             }
 

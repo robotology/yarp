@@ -79,7 +79,6 @@ public:
  * |:--------------:|:-----------------------:|:-------:|:--------------:|:-------------:|:-----------------------------: |:---------------------------------------------------------------------------------------------------:|:-----:|
  * | period         |      -                  | double  | s              |   0.02        | No                             | refresh period of the broadcasted values in s                                                       | default 0.02s |
  * | name           |      -                  | string  | -              |   -           | Yes                            | Prefix name of the ports opened by the RGBD wrapper, e.g. /robotName/RGBD                           | Required suffix like '/rpc' will be added by the device      |
- * | subdevice      |      -                  | string  | -              |   -           | alternative to 'attach' action | name of the subdevice to use as a data source                                                       | when used, parameters for the subdevice must be provided as well |
  *
  * Some example of configuration files:
  *
@@ -147,16 +146,6 @@ private:
     yarp::dev::IRGBDSensor::RGBDSensor_status sensorStatus;
     int                            verbose;
     bool                           initialize_YARP(yarp::os::Searchable& config);
-
-    // Open the wrapper only, the attach method needs to be called before using it
-    // Typical usage: yarprobotinterface
-    bool                           openDeferredAttach(yarp::os::Searchable& prop);
-
-    // If a subdevice parameter is given, the wrapper will open it and attach to immediately.
-    // Typical usage: simulator or command line
-    bool                           isSubdeviceOwned;
-    yarp::dev::PolyDriver*         subDeviceOwned;
-    bool                           openAndAttachSubDevice(yarp::os::Searchable& prop);
 
     // Synch
     yarp::os::Stamp                colorStamp;

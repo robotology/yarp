@@ -86,8 +86,6 @@ public:
     void run() override;
 
 private:
-    yarp::dev::PolyDriver m_driver;
-
     std::string m_rpcPortName;
     yarp::os::Port  m_rpcPort;
     std::string  m_audioInPortName;
@@ -103,7 +101,6 @@ private:
     std::queue<scheduled_sound_type> m_sound_buffer;
     double m_period;
     double m_buffer_delay;
-    bool   m_isDeviceOwned = false;
     bool   m_debug_enabled = false;
     bool   m_isPlaying = false;
 

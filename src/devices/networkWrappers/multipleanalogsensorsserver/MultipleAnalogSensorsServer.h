@@ -52,10 +52,6 @@ class MultipleAnalogSensorsServer :
     // Generic vector buffer
     yarp::sig::Vector m_buffer;
 
-    // Wrapped subdevices, if any
-    yarp::dev::PolyDriver m_subdevice;
-    bool m_isDeviceOwned{false};
-
     // Interface of the wrapped device
     yarp::dev::IThreeAxisGyroscopes* m_iThreeAxisGyroscopes{nullptr};
     yarp::dev::IThreeAxisLinearAccelerometers* m_iThreeAxisLinearAccelerometers{nullptr};

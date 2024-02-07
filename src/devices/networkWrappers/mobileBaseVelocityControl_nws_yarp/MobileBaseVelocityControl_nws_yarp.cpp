@@ -82,30 +82,7 @@ bool MobileBaseVelocityControl_nws_yarp::open(yarp::os::Searchable &config)
         m_StreamingInput.useCallback();
     }
 
-    //attach subdevice if required
-    if (config.check("subdevice"))
-    {
-        Property       p;
-        p.fromString(config.toString(), false);
-        p.put("device", config.find("subdevice").asString());
-
-        if (!m_subdev.open(p) || !m_subdev.isValid())
-        {
-            yCError(MOBVEL_NWS_YARP) << "Failed to open subdevice.. check params";
-            return false;
-        }
-
-        if (!attach(&m_subdev))
-        {
-            yCError(MOBVEL_NWS_YARP) << "Failed to attach subdevice.. check params";
-            return false;
-        }
-    }
-    else
-    {
-        yCInfo(MOBVEL_NWS_YARP) << "Waiting for device to attach";
-    }
-
+    yCInfo(MOBVEL_NWS_YARP) << "Waiting for device to attach";
     return true;
 }
 
@@ -113,7 +90,6 @@ bool MobileBaseVelocityControl_nws_yarp::close()
 {
     m_rpc_port_navigation_server.close();
     m_StreamingInput.close();
-    if (m_subdev.isValid()) { m_subdev.close(); }
     return true;
 }
 
@@ -137,6 +113,7 @@ bool MobileBaseVelocityControl_nws_yarp::attach(PolyDriver* driver)
     }
     m_StreamingInput.m_iVel = m_iNavVel;
 
+    yCInfo(MOBVEL_NWS_YARP) << "Attach complete";
     return true;
 }
 

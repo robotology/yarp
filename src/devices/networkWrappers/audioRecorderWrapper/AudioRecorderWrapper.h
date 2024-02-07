@@ -49,7 +49,6 @@ class AudioRecorderWrapper :
         public yarp::os::PortReader
 {
 private:
-    yarp::dev::PolyDriver          m_driver;
     yarp::dev::IAudioGrabberSound* m_mic = nullptr; //The microphone device
     yarp::os::Property             m_config;
     double                         m_period;
@@ -60,7 +59,6 @@ private:
     size_t                         m_min_number_of_samples_over_network;
     size_t                         m_max_number_of_samples_over_network;
     double                         m_getSound_timeout;
-    bool                           m_isDeviceOwned =false;
     bool                           m_isRecording=false;
     AudioRecorderStatusThread*     m_statusThread = nullptr;
     AudioRecorderDataThread*       m_dataThread =nullptr;
