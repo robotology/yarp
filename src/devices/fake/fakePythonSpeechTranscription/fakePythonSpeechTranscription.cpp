@@ -57,7 +57,12 @@ bool FakePythonSpeechTranscription::open(yarp::os::Searchable& config)
         yInfo() << "Calling Py_Initialize from open()";
         Py_Initialize();
     }
-
+    std::string test_string = "odio";
+    yCInfo(FAKE_SPEECHTR) << "[open] testing PyUnicode_FromString with: " << test_string;
+    PyObject* pTest;
+    pTest = PyUnicode_FromString(test_string.c_str());    // string to pass to the method
+    yCInfo(FAKE_SPEECHTR) << "[open] passed PyUnicode_FromString ";
+    Py_DECREF(pTest);
     if(!functionWrapper(m_moduleName, func_name, pArgs, pValue))
     {
         yCError(FAKE_SPEECHTR) << "[open] Unable to call the " << func_name << " function from python \n";
