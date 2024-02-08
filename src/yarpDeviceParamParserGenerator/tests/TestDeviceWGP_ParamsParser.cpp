@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Mon Jan 29 11:03:16 2024
+// Generated on: Wed Feb  7 16:19:38 2024
 
 
 #include "TestDeviceWGP_ParamsParser.h"
@@ -24,10 +24,16 @@ std::vector<std::string> TestDeviceWGP_ParamsParser::getListOfParams() const
 {
     std::vector<std::string> params;
     params.push_back("file_name");
-    params.push_back("save_mode");
+    params.push_back("mode");
     params.push_back("add_marker");
-    params.push_back("gggg::aaaaa");
+    params.push_back("group1::param_a");
+    params.push_back("group2::param_a");
     params.push_back("period");
+    params.push_back("initial_ref");
+    params.push_back("group3::subgroup1::param_1");
+    params.push_back("group3::subgroup1::param_2");
+    params.push_back("group3::param_3");
+    params.push_back("group3::subgroup2::param_4");
     return params;
 }
 
@@ -58,18 +64,18 @@ bool      TestDeviceWGP_ParamsParser::parseParams(const yarp::os::Searchable & c
         prop_check.unput("file_name");
     }
 
-    //Parser of parameter save_mode
+    //Parser of parameter mode
     {
-        if (config.check("save_mode"))
+        if (config.check("mode"))
         {
-            m_save_mode = config.find("save_mode").asString();
-            yCInfo(TestDeviceWGPParamsCOMPONENT) << "Parameter 'save_mode' using value:" << m_save_mode;
+            m_mode = config.find("mode").asString();
+            yCInfo(TestDeviceWGPParamsCOMPONENT) << "Parameter 'mode' using value:" << m_mode;
         }
         else
         {
-            yCInfo(TestDeviceWGPParamsCOMPONENT) << "Parameter 'save_mode' using DEFAULT value:" << m_save_mode;
+            yCInfo(TestDeviceWGPParamsCOMPONENT) << "Parameter 'mode' using DEFAULT value:" << m_mode;
         }
-        prop_check.unput("save_mode");
+        prop_check.unput("mode");
     }
 
     //Parser of parameter add_marker
@@ -86,20 +92,36 @@ bool      TestDeviceWGP_ParamsParser::parseParams(const yarp::os::Searchable & c
         prop_check.unput("add_marker");
     }
 
-    //Parser of parameter gggg::aaaaa
+    //Parser of parameter group1::param_a
     {
         yarp::os::Bottle sectionp;
-        sectionp = config.findGroup("gggg");
-        if (sectionp.check("aaaaa"))
+        sectionp = config.findGroup("group1");
+        if (sectionp.check("param_a"))
         {
-            m_gggg_aaaaa = sectionp.find("aaaaa").asBool();
-            yCInfo(TestDeviceWGPParamsCOMPONENT) << "Parameter 'gggg::aaaaa' using value:" << m_gggg_aaaaa;
+            m_group1_param_a = sectionp.find("param_a").asBool();
+            yCInfo(TestDeviceWGPParamsCOMPONENT) << "Parameter 'group1::param_a' using value:" << m_group1_param_a;
         }
         else
         {
-            yCInfo(TestDeviceWGPParamsCOMPONENT) << "Parameter 'gggg::aaaaa' using DEFAULT value:" << m_gggg_aaaaa;
+            yCInfo(TestDeviceWGPParamsCOMPONENT) << "Parameter 'group1::param_a' using DEFAULT value:" << m_group1_param_a;
         }
-        prop_check.unput("gggg::aaaaa");
+        prop_check.unput("group1::param_a");
+    }
+
+    //Parser of parameter group2::param_a
+    {
+        yarp::os::Bottle sectionp;
+        sectionp = config.findGroup("group2");
+        if (sectionp.check("param_a"))
+        {
+            m_group2_param_a = sectionp.find("param_a").asBool();
+            yCInfo(TestDeviceWGPParamsCOMPONENT) << "Parameter 'group2::param_a' using value:" << m_group2_param_a;
+        }
+        else
+        {
+            yCInfo(TestDeviceWGPParamsCOMPONENT) << "Parameter 'group2::param_a' using DEFAULT value:" << m_group2_param_a;
+        }
+        prop_check.unput("group2::param_a");
     }
 
     //Parser of parameter period
@@ -112,11 +134,97 @@ bool      TestDeviceWGP_ParamsParser::parseParams(const yarp::os::Searchable & c
         else
         {
             yCError(TestDeviceWGPParamsCOMPONENT) << "Mandatory parameter 'period' not found!";
-            yCError(TestDeviceWGPParamsCOMPONENT) << "Description of the parameter: If set, it will add a marker at the beginning and at the ending of each received waveform.";
+            yCError(TestDeviceWGPParamsCOMPONENT) << "Description of the parameter: Algorithm control loop period";
             yCError(TestDeviceWGPParamsCOMPONENT) << "Remember: Units for this parameter are: 's'";
             return false;
         }
         prop_check.unput("period");
+    }
+
+    //Parser of parameter initial_ref
+    {
+        if (config.check("initial_ref"))
+        {
+            m_initial_ref = config.find("initial_ref").asFloat64();
+            yCInfo(TestDeviceWGPParamsCOMPONENT) << "Parameter 'initial_ref' using value:" << m_initial_ref;
+        }
+        else
+        {
+            yCInfo(TestDeviceWGPParamsCOMPONENT) << "Parameter 'initial_ref' using DEFAULT value:" << m_initial_ref;
+        }
+        prop_check.unput("initial_ref");
+    }
+
+    //Parser of parameter group3::subgroup1::param_1
+    {
+        yarp::os::Bottle sectionp0;
+        sectionp0 = config.findGroup("group3");
+        yarp::os::Bottle sectionp;
+        sectionp = sectionp0.findGroup("subgroup1");
+        if (sectionp.check("param_1"))
+        {
+            m_group3_subgroup1_param_1 = sectionp.find("param_1").asBool();
+            yCInfo(TestDeviceWGPParamsCOMPONENT) << "Parameter 'group3::subgroup1::param_1' using value:" << m_group3_subgroup1_param_1;
+        }
+        else
+        {
+            yCError(TestDeviceWGPParamsCOMPONENT) << "Mandatory parameter 'group3::subgroup1::param_1' not found!";
+            yCError(TestDeviceWGPParamsCOMPONENT) << "Description of the parameter: This is a parameter for testing purposes";
+            return false;
+        }
+        prop_check.unput("group3::subgroup1::param_1");
+    }
+
+    //Parser of parameter group3::subgroup1::param_2
+    {
+        yarp::os::Bottle sectionp0;
+        sectionp0 = config.findGroup("group3");
+        yarp::os::Bottle sectionp;
+        sectionp = sectionp0.findGroup("subgroup1");
+        if (sectionp.check("param_2"))
+        {
+            m_group3_subgroup1_param_2 = sectionp.find("param_2").asBool();
+            yCInfo(TestDeviceWGPParamsCOMPONENT) << "Parameter 'group3::subgroup1::param_2' using value:" << m_group3_subgroup1_param_2;
+        }
+        else
+        {
+            yCInfo(TestDeviceWGPParamsCOMPONENT) << "Parameter 'group3::subgroup1::param_2' using DEFAULT value:" << m_group3_subgroup1_param_2;
+        }
+        prop_check.unput("group3::subgroup1::param_2");
+    }
+
+    //Parser of parameter group3::param_3
+    {
+        yarp::os::Bottle sectionp;
+        sectionp = config.findGroup("group3");
+        if (sectionp.check("param_3"))
+        {
+            m_group3_param_3 = sectionp.find("param_3").asBool();
+            yCInfo(TestDeviceWGPParamsCOMPONENT) << "Parameter 'group3::param_3' using value:" << m_group3_param_3;
+        }
+        else
+        {
+            yCInfo(TestDeviceWGPParamsCOMPONENT) << "Parameter 'group3::param_3' using DEFAULT value:" << m_group3_param_3;
+        }
+        prop_check.unput("group3::param_3");
+    }
+
+    //Parser of parameter group3::subgroup2::param_4
+    {
+        yarp::os::Bottle sectionp0;
+        sectionp0 = config.findGroup("group3");
+        yarp::os::Bottle sectionp;
+        sectionp = sectionp0.findGroup("subgroup2");
+        if (sectionp.check("param_4"))
+        {
+            m_group3_subgroup2_param_4 = sectionp.find("param_4").asBool();
+            yCInfo(TestDeviceWGPParamsCOMPONENT) << "Parameter 'group3::subgroup2::param_4' using value:" << m_group3_subgroup2_param_4;
+        }
+        else
+        {
+            yCInfo(TestDeviceWGPParamsCOMPONENT) << "Parameter 'group3::subgroup2::param_4' using DEFAULT value:" << m_group3_subgroup2_param_4;
+        }
+        prop_check.unput("group3::subgroup2::param_4");
     }
 
     /*
@@ -156,14 +264,20 @@ std::string      TestDeviceWGP_ParamsParser::getDocumentationOfDeviceParams() co
     doc = doc + std::string("\n");
     doc = doc + std::string("This is the list of the parameters accepted by the device:\n");
     doc = doc + std::string("'file_name': The name of the file written by the module\n");
-    doc = doc + std::string("'save_mode': Affects the behavior of the module and defines the save mode, as described in the documentation.\n");
-    doc = doc + std::string("'add_marker': If set, it will add a marker at the beginning and at the ending of each received waveform.\n");
-    doc = doc + std::string("'gggg::aaaaa': If set, it will add a marker at the beginning and at the ending of each received waveform.\n");
-    doc = doc + std::string("'period': If set, it will add a marker at the beginning and at the ending of each received waveform.\n");
+    doc = doc + std::string("'mode': This fake parameter chooses the fake algorithm to be used\n");
+    doc = doc + std::string("'add_marker': Some description of param.\n");
+    doc = doc + std::string("'group1::param_a': Some description of param.\n");
+    doc = doc + std::string("'group2::param_a': Some description of param.\n");
+    doc = doc + std::string("'period': Algorithm control loop period\n");
+    doc = doc + std::string("'initial_ref': An initial value for the algorithm\n");
+    doc = doc + std::string("'group3::subgroup1::param_1': This is a parameter for testing purposes\n");
+    doc = doc + std::string("'group3::subgroup1::param_2': This is a parameter for testing purposes\n");
+    doc = doc + std::string("'group3::param_3': This is a parameter for testing purposes\n");
+    doc = doc + std::string("'group3::subgroup2::param_4': This is a parameter for testing purposes\n");
     doc = doc + std::string("\n");
     doc = doc + std::string("Here are some examples of invocation command with yarpdev, with all params:\n");
-    doc = doc + " yarpdev --device TestDeviceWGP --file_name audio_out.wav --save_mode overwrite_file --add_marker <optional_value> --gggg::aaaaa <optional_value> --period <mandatory_value>\n";
+    doc = doc + " yarpdev --device TestDeviceWGP --file_name audio_out.wav --mode mode1 --add_marker false --group1::param_a false --group2::param_a false --period <mandatory_value> --initial_ref 3 --group3::subgroup1::param_1 false --group3::subgroup1::param_2 true --group3::param_3 false --group3::subgroup2::param_4 true\n";
     doc = doc + std::string("Using only mandatory params:\n");
-    doc = doc + " yarpdev --device TestDeviceWGP --file_name audio_out.wav --period <mandatory_value>\n";
-    doc = doc + std::string("=============================================\n");    return doc;
+    doc = doc + " yarpdev --device TestDeviceWGP --file_name audio_out.wav --period <mandatory_value> --group3::subgroup1::param_1 false\n";
+    doc = doc + std::string("=============================================\n\n");    return doc;
 }

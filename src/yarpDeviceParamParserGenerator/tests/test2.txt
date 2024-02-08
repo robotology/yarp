@@ -1,7 +1,13 @@
 | Group name | Parameter name       | Type   | Units   | Default Value | Required | Description                                                                                           | Notes       |
 |:----------:|:--------------------:|:------:|:-------:|:-------------:|:--------:|:-----------------------------------------------------------------------------------------------------:|:-----------:|
 | -      | file_name           | string    | -         | audio_out.wav  | Yes      | The name of the file written by the module | Only.wav and .mp3 files are supported |
-| -      |  save_mode          | string    | -         | overwrite_file | No       | Affects the behavior of the module and defines the save mode, as described in the documentation.   |       |
-| -      | add_marker          | bool      | -         | -              | No       | If set, it will add a marker at the beginning and at the ending of each received waveform.   |       |
-| gggg   | aaaaa               | bool      | -         | -              | No       | If set, it will add a marker at the beginning and at the ending of each received waveform.   |       |
-| -      | period              | double    |  s        | -              | Yes      | If set, it will add a marker at the beginning and at the ending of each received waveform.   |
+| -      | mode                | string    | -         | mode1          | No       | This fake parameter chooses the fake algorithm to be used   |       |
+| -      | add_marker          | bool      | -         | false          | No       | Some description of param.   |       |
+| group1 | param_a             | bool      | -         | false          | No       | Some description of param.   |       |
+| group2 | param_a             | bool      | -         | false          | No       | Some description of param.   |       |
+| -      | period              | double    | s         | -              | Yes      | Algorithm control loop period  |       |
+| -      | initial_ref         | double    | m         | 3              | No       | An initial value for the algorithm   |       |
+| group3::subgroup1    | param_1    | bool      | -         | false          | Yes      | This is a parameter for testing purposes  |       |
+| group3::subgroup1    | param_2    | bool      | -         | true           | No       | This is a parameter for testing purposes  |       |
+| group3               | param_3    | bool      | -         | false          | No       | This is a parameter for testing purposes  |       |
+| group3::subgroup2    | param_4    | bool      | -         | true           | No       | This is a parameter for testing purposes  |       |

@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Mon Jan 29 11:03:16 2024
+// Generated on: Wed Feb  7 16:19:38 2024
 
 
 #ifndef TESTDEVICEWGP_PARAMSPARSER_H
@@ -17,6 +17,7 @@
 #include <yarp/os/Searchable.h>
 #include <yarp/dev/IDeviceDriverParams.h>
 #include <string>
+#include <cmath>
 
 /**
 * This class is the parameters parser for class TestDeviceWGP.
@@ -32,21 +33,27 @@
 *
 *
 * These are the used parameters:
-* | Group name | Parameter name | Type   | Units | Default Value  | Required | Description                                                                                      | Notes                                 |
-* |:----------:|:--------------:|:------:|:-----:|:--------------:|:--------:|:------------------------------------------------------------------------------------------------:|:-------------------------------------:|
-* | -          | file_name      | string | -     | audio_out.wav  | 1        | The name of the file written by the module                                                       | Only.wav and .mp3 files are supported |
-* | -          | save_mode      | string | -     | overwrite_file | 0        | Affects the behavior of the module and defines the save mode, as described in the documentation. | -                                     |
-* | -          | add_marker     | bool   | -     | -              | 0        | If set, it will add a marker at the beginning and at the ending of each received waveform.       | -                                     |
-* | gggg       | aaaaa          | bool   | -     | -              | 0        | If set, it will add a marker at the beginning and at the ending of each received waveform.       | -                                     |
-* | -          | period         | double | s     | -              | 1        | If set, it will add a marker at the beginning and at the ending of each received waveform.       | -                                     |
+* | Group name        | Parameter name | Type   | Units | Default Value | Required | Description                                               | Notes                                 |
+* |:-----------------:|:--------------:|:------:|:-----:|:-------------:|:--------:|:---------------------------------------------------------:|:-------------------------------------:|
+* | -                 | file_name      | string | -     | audio_out.wav | 1        | The name of the file written by the module                | Only.wav and .mp3 files are supported |
+* | -                 | mode           | string | -     | mode1         | 0        | This fake parameter chooses the fake algorithm to be used | -                                     |
+* | -                 | add_marker     | bool   | -     | false         | 0        | Some description of param.                                | -                                     |
+* | group1            | param_a        | bool   | -     | false         | 0        | Some description of param.                                | -                                     |
+* | group2            | param_a        | bool   | -     | false         | 0        | Some description of param.                                | -                                     |
+* | -                 | period         | double | s     | -             | 1        | Algorithm control loop period                             | -                                     |
+* | -                 | initial_ref    | double | m     | 3             | 0        | An initial value for the algorithm                        | -                                     |
+* | group3::subgroup1 | param_1        | bool   | -     | false         | 1        | This is a parameter for testing purposes                  | -                                     |
+* | group3::subgroup1 | param_2        | bool   | -     | true          | 0        | This is a parameter for testing purposes                  | -                                     |
+* | group3            | param_3        | bool   | -     | false         | 0        | This is a parameter for testing purposes                  | -                                     |
+* | group3::subgroup2 | param_4        | bool   | -     | true          | 0        | This is a parameter for testing purposes                  | -                                     |
 *
 * The device can be launched by yarpdev using one of the following examples:
 * \code{.unparsed}
-* yarpdev --device TestDeviceWGP --file_name audio_out.wav --save_mode overwrite_file --add_marker <optional_value> --gggg::aaaaa <optional_value> --period <mandatory_value>
+* yarpdev --device TestDeviceWGP --file_name audio_out.wav --mode mode1 --add_marker false --group1::param_a false --group2::param_a false --period <mandatory_value> --initial_ref 3 --group3::subgroup1::param_1 false --group3::subgroup1::param_2 true --group3::param_3 false --group3::subgroup2::param_4 true
 * \endcode
 *
 * \code{.unparsed}
-* yarpdev --device TestDeviceWGP --file_name audio_out.wav --period <mandatory_value>
+* yarpdev --device TestDeviceWGP --file_name audio_out.wav --period <mandatory_value> --group3::subgroup1::param_1 false
 * \endcode
 *
 */
@@ -66,10 +73,16 @@ public:
     };
     const parser_version_type m_parser_version;
     std::string m_file_name = {"audio_out.wav"};
-    std::string m_save_mode = {"overwrite_file"};
-    bool m_add_marker;
-    bool m_gggg_aaaaa;
-    double m_period;
+    std::string m_mode = {"mode1"};
+    bool m_add_marker = {false};
+    bool m_group1_param_a = {false};
+    bool m_group2_param_a = {false};
+    double m_period = {std::nan("1")}; //This default value is autogenerated. It is highly recommended to provide a suggested value also for mandatory parameters.
+    double m_initial_ref = {3};
+    bool m_group3_subgroup1_param_1 = {false};
+    bool m_group3_subgroup1_param_2 = {true};
+    bool m_group3_param_3 = {false};
+    bool m_group3_subgroup2_param_4 = {true};
 
     bool          parseParams(const yarp::os::Searchable & config) override;
     std::string   getDeviceType() const override { return m_device_type; }

@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Mon Feb  5 19:57:52 2024
+// Generated on: Wed Feb  7 16:51:11 2024
 
 
 #include "DeviceBundler_ParamsParser.h"
@@ -130,5 +130,5 @@ std::string      DeviceBundler_ParamsParser::getDocumentationOfDeviceParams() co
     doc = doc + " yarpdev --device DeviceBundler --wrapper_device device_name1 --attached_device device_name2 --doNotAttach false\n";
     doc = doc + std::string("Using only mandatory params:\n");
     doc = doc + " yarpdev --device DeviceBundler --wrapper_device device_name1 --attached_device device_name2\n";
-    doc = doc + std::string("=============================================\n");    return doc;
+    doc = doc + std::string("=============================================\n\n");    return doc;
 }

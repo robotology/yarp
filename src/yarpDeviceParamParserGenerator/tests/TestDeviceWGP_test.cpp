@@ -29,6 +29,11 @@ TEST_CASE("dev::TestDeviceWGP", "[yarp::dev]")
             p_cfg.put("device",    "testDeviceWGP");
             p_cfg.put("file_name", "mandatory_name");
             p_cfg.put("period",     1.0);
+
+            Property& pp_cfg = p_cfg.addGroup("group3");
+            Property& ppp_cfg = pp_cfg.addGroup("subgroup1");
+            ppp_cfg.put("param_1", "test_string");
+
             REQUIRE(dd.open(p_cfg));
         }
 
