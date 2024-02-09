@@ -69,6 +69,7 @@ std::string ParamsFilesGenerator::generateHeader()
 class " << m_classname << "_ParamsParser : public yarp::dev::IDeviceDriverParams\n\
 {\n\
 public:\n\
+    " << m_classname << "_ParamsParser() = default;\n\
     ~" << m_classname << "_ParamsParser() override = default;\n\
 \n\
 public:\n";

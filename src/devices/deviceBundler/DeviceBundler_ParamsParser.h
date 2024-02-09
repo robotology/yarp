@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Wed Feb  7 16:51:11 2024
+// Generated on: Fri Feb  9 16:59:13 2024
 
 
 #ifndef DEVICEBUNDLER_PARAMSPARSER_H
@@ -43,6 +43,7 @@
 class DeviceBundler_ParamsParser : public yarp::dev::IDeviceDriverParams
 {
 public:
+    DeviceBundler_ParamsParser() = default;
     ~DeviceBundler_ParamsParser() override = default;
 
 public:
