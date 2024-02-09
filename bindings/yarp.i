@@ -1584,8 +1584,8 @@ typedef yarp::os::BufferedPort<ImageRgbFloat> BufferedPortImageRgbFloat;
         return self->readPrompt(oPropmt[0]);
     }
 
-    bool ask(const std::string& question, std::vector<string>& answer) {
-        return self->ask(question, answer[0]);
+    bool ask(const std::string& question, yarp::dev::LLM_Message& answer) {
+        return self->ask(question, answer);
     }
 }
 
