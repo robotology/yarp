@@ -15,11 +15,14 @@ yarp_prepare_plugin(fakeFrameGrabber
 
 if(ENABLE_fakeFrameGrabber)
   yarp_add_plugin(yarp_fakeFrameGrabber)
+  generateDeviceParamsParser(FakeFrameGrabber)
 
   target_sources(yarp_fakeFrameGrabber
     PRIVATE
       FakeFrameGrabber.cpp
       FakeFrameGrabber.h
+      FakeFrameGrabber_ParamsParser.cpp
+      FakeFrameGrabber_ParamsParser.h
   )
 
   target_link_libraries(yarp_fakeFrameGrabber

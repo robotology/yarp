@@ -8,16 +8,20 @@ endif()
 yarp_prepare_plugin(fakeJointCoupling
   CATEGORY device
   TYPE FakeJointCoupling
-  INCLUDE fakeJointCoupling.h
+  INCLUDE FakeJointCoupling.h
 )
 
 if(NOT SKIP_fakeJointCoupling)
   yarp_add_plugin(yarp_fakeJointCoupling)
+  generateDeviceParamsParser(FakeJointCoupling)
 
   target_sources(yarp_fakeJointCoupling
     PRIVATE
-      fakeJointCoupling.cpp
-      fakeJointCoupling.h)
+      FakeJointCoupling.cpp
+      FakeJointCoupling.h
+      FakeJointCoupling_ParamsParser.cpp
+      FakeJointCoupling_ParamsParser.h
+  )
 
   target_link_libraries(yarp_fakeJointCoupling
     PRIVATE

@@ -16,11 +16,14 @@ yarp_prepare_plugin(fakebot
 
 if(NOT SKIP_fakebot)
   yarp_add_plugin(yarp_fakebot)
+  generateDeviceParamsParser(FakeBot)
 
   target_sources(yarp_fakebot
     PRIVATE
       FakeBot.cpp
       FakeBot.h
+      FakeBot_ParamsParser.cpp
+      FakeBot_ParamsParser.h
   )
 
   target_link_libraries(yarp_fakebot

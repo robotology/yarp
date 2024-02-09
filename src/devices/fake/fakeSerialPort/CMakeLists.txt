@@ -8,17 +8,20 @@ endif()
 yarp_prepare_plugin(fakeSerialPort
   CATEGORY device
   TYPE FakeSerialPort
-  INCLUDE fakeSerialPort.h
+  INCLUDE FakeSerialPort.h
   EXTRA_CONFIG
     WRAPPER=serialPort_nws_yarp)
 
 if(ENABLE_fakeSerialPort)
   yarp_add_plugin(yarp_fakeSerialPort)
+  generateDeviceParamsParser(FakeSerialPort)
 
   target_sources(yarp_fakeSerialPort
     PRIVATE
-      fakeSerialPort.cpp
-      fakeSerialPort.h
+      FakeSerialPort.cpp
+      FakeSerialPort.h
+      FakeSerialPort_ParamsParser.cpp
+      FakeSerialPort_ParamsParser.h
   )
 
   target_link_libraries(yarp_fakeSerialPort

@@ -13,11 +13,14 @@ yarp_prepare_plugin(fakeLaser
 
 if(NOT SKIP_fakeLaser)
   yarp_add_plugin(yarp_fakeLaser)
+  generateDeviceParamsParser(FakeLaser)
 
   target_sources(yarp_fakeLaser
     PRIVATE
-      fakeLaser.h
-      fakeLaser.cpp
+      FakeLaser.h
+      FakeLaser.cpp
+      FakeLaser_ParamsParser.h
+      FakeLaser_ParamsParser.cpp
   )
 
   target_link_libraries(yarp_fakeLaser

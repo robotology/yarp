@@ -8,16 +8,19 @@ endif()
 yarp_prepare_plugin(fakeSpeechSynthesizer
   CATEGORY device
   TYPE FakeSpeechSynthesizer
-  INCLUDE fakeSpeechSynthesizer.h
+  INCLUDE FakeSpeechSynthesizer.h
 )
 
 if(ENABLE_fakeSpeechSynthesizer)
   yarp_add_plugin(yarp_fakeSpeechSynthesizer)
+  generateDeviceParamsParser(FakeSpeechSynthesizer)
 
   target_sources(yarp_fakeSpeechSynthesizer
     PRIVATE
-      fakeSpeechSynthesizer.cpp
-      fakeSpeechSynthesizer.h
+      FakeSpeechSynthesizer.cpp
+      FakeSpeechSynthesizer.h
+      FakeSpeechSynthesizer_ParamsParser.cpp
+      FakeSpeechSynthesizer_ParamsParser.h
   )
 
   target_link_libraries(yarp_fakeSpeechSynthesizer

@@ -7,19 +7,22 @@ endif()
 
 yarp_prepare_plugin(fakeSpeaker
   CATEGORY device
-  TYPE fakeSpeaker
-  INCLUDE fakeSpeaker.h
+  TYPE FakeSpeaker
+  INCLUDE FakeSpeaker.h
   EXTRA_CONFIG
     WRAPPER=AudioPlayerWrapper
 )
 
 if(NOT SKIP_fakeSpeaker)
   yarp_add_plugin(yarp_fakeSpeaker)
+  generateDeviceParamsParser(FakeSpeaker)
 
   target_sources(yarp_fakeSpeaker
     PRIVATE
-      fakeSpeaker.cpp
-      fakeSpeaker.h
+      FakeSpeaker.cpp
+      FakeSpeaker.h
+      FakeSpeaker_ParamsParser.cpp
+      FakeSpeaker_ParamsParser.h
   )
 
   target_link_libraries(yarp_fakeSpeaker

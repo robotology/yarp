@@ -8,18 +8,22 @@ endif()
 yarp_prepare_plugin(fakeMotionControlMicro
   CATEGORY device
   TYPE FakeMotionControlMicro
-  INCLUDE fakeMotionControlMicro.h
+  INCLUDE FakeMotionControlMicro.h
   EXTRA_CONFIG
     WRAPPER=controlBoard_nws_yarp
 )
 
 if(NOT SKIP_fakeMotionControlMicro)
   yarp_add_plugin(yarp_fakeMotionControlMicro)
+  generateDeviceParamsParser(FakeMotionControlMicro)
 
   target_sources(yarp_fakeMotionControlMicro
     PRIVATE
-      fakeMotionControlMicro.cpp
-      fakeMotionControlMicro.h)
+      FakeMotionControlMicro.cpp
+      FakeMotionControlMicro.h
+      FakeMotionControlMicro_ParamsParser.cpp
+      FakeMotionControlMicro_ParamsParser.h
+)
 
   target_link_libraries(yarp_fakeMotionControlMicro
     PRIVATE

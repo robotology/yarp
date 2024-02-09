@@ -14,11 +14,14 @@ yarp_prepare_plugin(fakeChatBotDevice
 if(NOT SKIP_fakeChatBotDevice)
 
     yarp_add_plugin(yarp_fakeChatBotDevice)
+    generateDeviceParamsParser(FakeChatBotDevice)
 
     target_sources(yarp_fakeChatBotDevice
     PRIVATE
         FakeChatBotDevice.cpp
         FakeChatBotDevice.h
+        FakeChatBotDevice_ParamsParser.cpp
+        FakeChatBotDevice_ParamsParser.h
     )
 
     target_link_libraries(yarp_fakeChatBotDevice

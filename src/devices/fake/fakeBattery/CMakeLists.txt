@@ -8,21 +8,24 @@ endif()
 yarp_prepare_plugin(fakeBattery
   CATEGORY device
   TYPE FakeBattery
-  INCLUDE fakeBattery.h
+  INCLUDE FakeBattery.h
   EXTRA_CONFIG
     WRAPPER=batteryWrapper
 )
 
 if(NOT SKIP_fakeBattery)
   yarp_add_plugin(yarp_fakeBattery)
+  generateDeviceParamsParser(FakeBattery)
 
   include(YarpChooseIDL)
   yarp_choose_idl(IDL FakeBatteryService.thrift)
 
   target_sources(yarp_fakeBattery
     PRIVATE
-      fakeBattery.cpp
-      fakeBattery.h
+      FakeBattery.cpp
+      FakeBattery.h
+      FakeBattery_ParamsParser.cpp
+      FakeBattery_ParamsParser.h
       ${IDL_GEN_FILES}
   )
 

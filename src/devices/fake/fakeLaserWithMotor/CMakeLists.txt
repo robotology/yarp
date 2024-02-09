@@ -8,19 +8,22 @@ endif()
 yarp_prepare_plugin(fakeLaserWithMotor
   CATEGORY device
   TYPE FakeLaserWithMotor
-  INCLUDE fakeLaserWithMotor.h
+  INCLUDE FakeLaserWithMotor.h
   DEPENDS "TARGET YARP::YARP_math")
 
 if(NOT SKIP_fakeLaserWithMotor)
   yarp_add_plugin(yarp_fakeLaserWithMotor)
+  generateDeviceParamsParser(FakeLaserWithMotor)
 
   target_sources(yarp_fakeLaserWithMotor
     PRIVATE
-      fakeLaserWithMotor.h
-      fakeLaserWithMotor.cpp
-      fakeLaserWithMotor_laser.cpp
-      fakeLaserWithMotor_motors.cpp
-      fakeLaserWithMotor_utils.cpp
+      FakeLaserWithMotor.h
+      FakeLaserWithMotor.cpp
+      FakeLaserWithMotor_laser.cpp
+      FakeLaserWithMotor_motors.cpp
+      FakeLaserWithMotor_utils.cpp
+      FakeLaserWithMotor_ParamsParser.cpp
+      FakeLaserWithMotor_ParamsParser.h
   )
 
   target_link_libraries(yarp_fakeLaserWithMotor
