@@ -81,7 +81,7 @@ public:\n";
     s << S_TAB1 << "     int major = "<< std::to_string(MACRO_PARSER_VERSION_MAJOR) << ";\n";
     s << S_TAB1 << "     int minor = "<< std::to_string(MACRO_PARSER_VERSION_MINOR) << ";\n";
     s << S_TAB1 << "};\n";
-    s << S_TAB1 << "const parser_version_type m_parser_version;\n";
+    s << S_TAB1 << "const parser_version_type m_parser_version = {};\n";
 
     for (const auto& param : m_params)
     {
