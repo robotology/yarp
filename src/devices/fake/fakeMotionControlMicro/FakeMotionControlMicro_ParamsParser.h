@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Fri Feb  9 20:17:50 2024
+// Generated on: Sun Feb 11 10:36:32 2024
 
 
 #ifndef FAKEMOTIONCONTROLMICRO_PARAMSPARSER_H
@@ -52,7 +52,7 @@ public:
          int major = 1;
          int minor = 0;
     };
-    const parser_version_type m_parser_version;
+    const parser_version_type m_parser_version = {};
     double m_period = {1.0};
 
     bool          parseParams(const yarp::os::Searchable & config) override;

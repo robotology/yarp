@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Fri Feb  9 20:17:50 2024
+// Generated on: Sun Feb 11 10:36:31 2024
 
 
 #ifndef FAKEDEPTHCAMERADRIVER_PARAMSPARSER_H
@@ -20,7 +20,7 @@
 #include <cmath>
 
 /**
-* This class is the parameters parser for class fakeDepthCameraDriver.
+* This class is the parameters parser for class FakeDepthCameraDriver.
 *
 * These are the used parameters:
 * | Group name | Parameter name | Type   | Units | Default Value | Required | Description   | Notes                  |
@@ -29,30 +29,30 @@
 *
 * The device can be launched by yarpdev using one of the following examples:
 * \code{.unparsed}
-* yarpdev --device fakeDepthCameraDriver --period 1.0
+* yarpdev --device FakeDepthCameraDriver --period 1.0
 * \endcode
 *
 * \code{.unparsed}
-* yarpdev --device fakeDepthCameraDriver
+* yarpdev --device FakeDepthCameraDriver
 * \endcode
 *
 */
 
-class fakeDepthCameraDriver_ParamsParser : public yarp::dev::IDeviceDriverParams
+class FakeDepthCameraDriver_ParamsParser : public yarp::dev::IDeviceDriverParams
 {
 public:
-    fakeDepthCameraDriver_ParamsParser() = default;
-    ~fakeDepthCameraDriver_ParamsParser() override = default;
+    FakeDepthCameraDriver_ParamsParser() = default;
+    ~FakeDepthCameraDriver_ParamsParser() override = default;
 
 public:
-    const std::string m_device_type = {"fakeDepthCameraDriver"};
+    const std::string m_device_type = {"FakeDepthCameraDriver"};
     bool m_parser_is_strict = false;
     struct parser_version_type
     {
          int major = 1;
          int minor = 0;
     };
-    const parser_version_type m_parser_version;
+    const parser_version_type m_parser_version = {};
     double m_period = {1.0};
 
     bool          parseParams(const yarp::os::Searchable & config) override;

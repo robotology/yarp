@@ -20,7 +20,7 @@
 #include <yarp/dev/ImplementJointFault.h>
 
 #include <mutex>
-
+#include "FakeMotionControl_ParamsParser.h"
 
 struct ImpedanceLimits
 {
@@ -82,6 +82,7 @@ struct ImpedanceParameters
  * WIP - Some interfaces could be not implemented.
  */
 class FakeMotionControl :
+        public FakeMotionControl_ParamsParser,
         public yarp::dev::DeviceDriver,
         public yarp::os::PeriodicThread,
         public yarp::dev::IPidControlRaw,

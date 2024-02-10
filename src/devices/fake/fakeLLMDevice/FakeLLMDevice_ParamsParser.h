@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Fri Feb  9 20:17:51 2024
+// Generated on: Sun Feb 11 10:36:33 2024
 
 
 #ifndef FAKELLMDEVICE_PARAMSPARSER_H
@@ -20,7 +20,7 @@
 #include <cmath>
 
 /**
-* This class is the parameters parser for class fakeLLMDevice.
+* This class is the parameters parser for class FakeLLMDevice.
 *
 * These are the used parameters:
 * | Group name | Parameter name | Type   | Units | Default Value | Required | Description   | Notes                  |
@@ -29,30 +29,30 @@
 *
 * The device can be launched by yarpdev using one of the following examples:
 * \code{.unparsed}
-* yarpdev --device fakeLLMDevice --period 1.0
+* yarpdev --device FakeLLMDevice --period 1.0
 * \endcode
 *
 * \code{.unparsed}
-* yarpdev --device fakeLLMDevice
+* yarpdev --device FakeLLMDevice
 * \endcode
 *
 */
 
-class fakeLLMDevice_ParamsParser : public yarp::dev::IDeviceDriverParams
+class FakeLLMDevice_ParamsParser : public yarp::dev::IDeviceDriverParams
 {
 public:
-    fakeLLMDevice_ParamsParser() = default;
-    ~fakeLLMDevice_ParamsParser() override = default;
+    FakeLLMDevice_ParamsParser() = default;
+    ~FakeLLMDevice_ParamsParser() override = default;
 
 public:
-    const std::string m_device_type = {"fakeLLMDevice"};
+    const std::string m_device_type = {"FakeLLMDevice"};
     bool m_parser_is_strict = false;
     struct parser_version_type
     {
          int major = 1;
          int minor = 0;
     };
-    const parser_version_type m_parser_version;
+    const parser_version_type m_parser_version = {};
     double m_period = {1.0};
 
     bool          parseParams(const yarp::os::Searchable & config) override;

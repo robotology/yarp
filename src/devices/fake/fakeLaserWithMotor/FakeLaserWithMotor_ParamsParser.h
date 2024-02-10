@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Fri Feb  9 20:17:52 2024
+// Generated on: Sun Feb 11 10:36:34 2024
 
 
 #ifndef FAKELASERWITHMOTOR_PARAMSPARSER_H
@@ -60,7 +60,7 @@ public:
          int major = 1;
          int minor = 0;
     };
-    const parser_version_type m_parser_version;
+    const parser_version_type m_parser_version = {};
     std::string m_test = {"use_pattern"};
     std::string m_localization_port = {"/fakeLaser/location:i"};
     std::string m_localization_server = {"/localizationServer"};

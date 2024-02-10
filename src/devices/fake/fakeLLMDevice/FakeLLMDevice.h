@@ -9,6 +9,7 @@
 #include <yarp/dev/ILLM.h>
 #include <vector>
 #include <yarp/dev/DeviceDriver.h>
+#include "FakeLLMDevice_ParamsParser.h"
 
 /**
 * @ingroup dev_impl_fake dev_impl_other
@@ -17,7 +18,8 @@
 *
 */
 class FakeLLMDevice : public yarp::dev::ILLM,
-                      public yarp::dev::DeviceDriver
+                      public yarp::dev::DeviceDriver,
+                      public FakeLLMDevice_ParamsParser
 {
 
 public:

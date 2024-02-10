@@ -12,6 +12,8 @@
 
 #include <stdio.h>
 
+#include "FakeSerialPort_ParamsParser.h"
+
 using namespace yarp::os;
 
 class SerialDeviceDriverSettings
@@ -62,7 +64,8 @@ public:
  */
 class FakeSerialPort :
         public yarp::dev::DeviceDriver,
-        public yarp::dev::ISerialDevice
+        public yarp::dev::ISerialDevice,
+        public FakeSerialPort_ParamsParser
 {
 private:
     FakeSerialPort(const FakeSerialPort&);

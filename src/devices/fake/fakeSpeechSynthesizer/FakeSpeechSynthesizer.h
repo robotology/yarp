@@ -11,6 +11,8 @@
 #include <yarp/os/Bottle.h>
 #include <stdio.h>
 
+#include "FakeSpeechSynthesizer_ParamsParser.h"
+
 using namespace yarp::os;
 
 /**
@@ -20,7 +22,8 @@ using namespace yarp::os;
  */
 class FakeSpeechSynthesizer :
         public yarp::dev::DeviceDriver,
-        public yarp::dev::ISpeechSynthesizer
+        public yarp::dev::ISpeechSynthesizer,
+        public FakeSpeechSynthesizer_ParamsParser
 {
 private:
     bool m_verbose = true;

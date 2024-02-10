@@ -12,6 +12,8 @@
 #include <string>
 #include <mutex>
 
+#include "FakeMicrophone_ParamsParser.h"
+
 /**
 * @ingroup dev_impl_fake dev_impl_media
 *
@@ -35,7 +37,8 @@
 class FakeMicrophone :
         public yarp::dev::DeviceDriver,
         public yarp::dev::AudioRecorderDeviceBase,
-        public yarp::os::PeriodicThread
+        public yarp::os::PeriodicThread,
+        public FakeMicrophone_ParamsParser
 {
 public:
     FakeMicrophone();

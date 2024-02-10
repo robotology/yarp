@@ -14,7 +14,7 @@
 #include <yarp/dev/ImplementJointCoupling.h>
 
 #include <mutex>
-
+#include "FakeJointCoupling_ParamsParser.h"
 
 /**
  * @ingroup dev_impl_fake dev_impl_motor
@@ -28,7 +28,8 @@
  */
 class FakeJointCoupling :
         public yarp::dev::DeviceDriver,
-        public yarp::dev::ImplementJointCoupling
+        public yarp::dev::ImplementJointCoupling,
+        public FakeJointCoupling_ParamsParser
 {
 private:
 

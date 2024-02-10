@@ -11,6 +11,8 @@
 #include <yarp/os/Bottle.h>
 #include <stdio.h>
 
+#include "FakeSpeechTranscription_ParamsParser.h"
+
 using namespace yarp::os;
 
 /**
@@ -20,7 +22,8 @@ using namespace yarp::os;
  */
 class FakeSpeechTranscription :
         public yarp::dev::DeviceDriver,
-        public yarp::dev::ISpeechTranscription
+        public yarp::dev::ISpeechTranscription,
+        public FakeSpeechTranscription_ParamsParser
 {
 private:
     bool m_verbose = true;

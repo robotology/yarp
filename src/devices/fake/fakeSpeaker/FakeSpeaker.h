@@ -12,6 +12,8 @@
 #include <yarp/sig/SoundFile.h>
 #include <yarp/dev/AudioPlayerDeviceBase.h>
 
+#include "FakeSpeaker_ParamsParser.h"
+
 /**
 * @ingroup dev_impl_fake dev_impl_media
 *
@@ -31,7 +33,8 @@
 class FakeSpeaker :
         public yarp::dev::DeviceDriver,
         public yarp::dev::AudioPlayerDeviceBase,
-        public yarp::os::PeriodicThread
+        public yarp::os::PeriodicThread,
+        public FakeSpeaker_ParamsParser
 {
 public:
     FakeSpeaker();

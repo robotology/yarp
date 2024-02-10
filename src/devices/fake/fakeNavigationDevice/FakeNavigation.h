@@ -12,6 +12,8 @@
 #include <yarp/os/PeriodicThread.h>
 #include <math.h>
 
+#include "FakeNavigation_ParamsParser.h"
+
 /**
  * @ingroup dev_impl_fake dev_impl_navigation
  *
@@ -22,7 +24,8 @@ class FakeNavigation :
         public yarp::dev::Nav2D::INavigation2DTargetActions,
         public yarp::dev::Nav2D::INavigation2DControlActions,
         public yarp::dev::Nav2D::INavigation2DVelocityActions,
-        public yarp::os::PeriodicThread
+        public yarp::os::PeriodicThread,
+        public FakeNavigation_ParamsParser
 {
 private:
     yarp::dev::Nav2D::NavigationStatusEnum m_status = yarp::dev::Nav2D::NavigationStatusEnum::navigation_status_idle;

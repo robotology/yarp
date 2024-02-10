@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Fri Feb  9 20:17:52 2024
+// Generated on: Sun Feb 11 10:36:34 2024
 
 
 #include "FakeLaser_ParamsParser.h"
@@ -55,9 +55,7 @@ bool      FakeLaser_ParamsParser::parseParams(const yarp::os::Searchable & confi
         }
         else
         {
-            yCError(FakeLaserParamsCOMPONENT) << "Mandatory parameter 'test' not found!";
-            yCError(FakeLaserParamsCOMPONENT) << "Description of the parameter: Choose the modality";
-            return false;
+            yCInfo(FakeLaserParamsCOMPONENT) << "Parameter 'test' using DEFAULT value:" << m_test;
         }
         prop_check.unput("test");
     }
@@ -223,6 +221,6 @@ std::string      FakeLaser_ParamsParser::getDocumentationOfDeviceParams() const
     doc = doc + std::string("Here are some examples of invocation command with yarpdev, with all params:\n");
     doc = doc + " yarpdev --device FakeLaser --test use_pattern --localization_port /fakeLaser/location:i --localization_server /localizationServer --localization_client /fakeLaser/localizationClient --localization_device localization2DClient --map_file <optional_value> --map_context <optional_value> --clip_max 3.5 --clip_min 0.1\n";
     doc = doc + std::string("Using only mandatory params:\n");
-    doc = doc + " yarpdev --device FakeLaser --test use_pattern\n";
+    doc = doc + " yarpdev --device FakeLaser\n";
     doc = doc + std::string("=============================================\n\n");    return doc;
 }

@@ -10,6 +10,7 @@
 #include <vector>
 #include <yarp/dev/DeviceDriver.h>
 #include <map>
+#include "FakeChatBotDevice_ParamsParser.h"
 
 /**
 * @ingroup dev_impl_fake dev_impl_other
@@ -18,7 +19,8 @@
 *
 */
 class FakeChatBotDevice : public yarp::dev::IChatBot,
-                          public yarp::dev::DeviceDriver
+                          public yarp::dev::DeviceDriver,
+                          public FakeChatBotDevice_ParamsParser
 {
 
 public:

@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Fri Feb  9 20:17:52 2024
+// Generated on: Sun Feb 11 10:36:34 2024
 
 
 #ifndef FAKELASER_PARAMSPARSER_H
@@ -25,7 +25,7 @@
 * These are the used parameters:
 * | Group name | Parameter name      | Type   | Units | Default Value                 | Required | Description                                                                     | Notes                                                                  |
 * |:----------:|:-------------------:|:------:|:-----:|:-----------------------------:|:--------:|:-------------------------------------------------------------------------------:|:----------------------------------------------------------------------:|
-* | -          | test                | string | -     | use_pattern                   | 1        | Choose the modality                                                             | It can be one of the following: no_obstacles, use_pattern, use_mapfile |
+* | -          | test                | string | -     | use_pattern                   | 0        | Choose the modality                                                             | It can be one of the following: no_obstacles, use_pattern, use_mapfile |
 * | -          | localization_port   | string | -     | /fakeLaser/location:i         | 0        | Full name of the port to which device connects to receive the localization data | -                                                                      |
 * | -          | localization_server | string | -     | /localizationServer           | 0        | Full name of the port to which device connects to receive the localization data | -                                                                      |
 * | -          | localization_client | string | -     | /fakeLaser/localizationClient | 0        | Full name of the local transformClient opened by the device                     | It cannot be used togheter if localization_port parameter is set       |
@@ -41,7 +41,7 @@
 * \endcode
 *
 * \code{.unparsed}
-* yarpdev --device FakeLaser --test use_pattern
+* yarpdev --device FakeLaser
 * \endcode
 *
 */
@@ -60,7 +60,7 @@ public:
          int major = 1;
          int minor = 0;
     };
-    const parser_version_type m_parser_version;
+    const parser_version_type m_parser_version = {};
     std::string m_test = {"use_pattern"};
     std::string m_localization_port = {"/fakeLaser/location:i"};
     std::string m_localization_server = {"/localizationServer"};

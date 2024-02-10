@@ -11,6 +11,8 @@
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/dev/IOdometry2D.h>
 
+#include "FakeOdometry2D_ParamsParser.h"
+
 constexpr double default_period = 0.02;
 
 /**
@@ -55,7 +57,8 @@ constexpr double default_period = 0.02;
 class FakeOdometry2D :
         public yarp::os::PeriodicThread,
         public yarp::dev::DeviceDriver,
-        public yarp::dev::Nav2D::IOdometry2D
+        public yarp::dev::Nav2D::IOdometry2D,
+        public FakeOdometry2D_ParamsParser
 {
 public:
     FakeOdometry2D();

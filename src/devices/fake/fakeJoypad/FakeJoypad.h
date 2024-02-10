@@ -9,11 +9,13 @@
 #include <yarp/dev/IJoypadController.h>
 #include <yarp/dev/DeviceDriver.h>
 #include <vector>
+#include "FakeJoypad_ParamsParser.h"
 
 class FakeJoypad :
         public yarp::dev::IJoypadEventDriven,
         //public yarp::dev::IJoypadController,
-        public yarp::dev::DeviceDriver
+        public yarp::dev::DeviceDriver,
+        public FakeJoypad_ParamsParser
 {
     unsigned int               m_buttonCount {4};
     unsigned int               m_axisCount {4};

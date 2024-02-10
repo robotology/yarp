@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Fri Feb  9 20:17:51 2024
+// Generated on: Sun Feb 11 10:36:33 2024
 
 
 #include "FakeLLMDevice_ParamsParser.h"
@@ -16,11 +16,11 @@
 #include <yarp/os/Value.h>
 
 namespace {
-    YARP_LOG_COMPONENT(fakeLLMDeviceParamsCOMPONENT, "yarp.device.fakeLLMDevice")
+    YARP_LOG_COMPONENT(FakeLLMDeviceParamsCOMPONENT, "yarp.device.FakeLLMDevice")
 }
 
 
-std::vector<std::string> fakeLLMDevice_ParamsParser::getListOfParams() const
+std::vector<std::string> FakeLLMDevice_ParamsParser::getListOfParams() const
 {
     std::vector<std::string> params;
     params.push_back("period");
@@ -28,12 +28,12 @@ std::vector<std::string> fakeLLMDevice_ParamsParser::getListOfParams() const
 }
 
 
-bool      fakeLLMDevice_ParamsParser::parseParams(const yarp::os::Searchable & config)
+bool      FakeLLMDevice_ParamsParser::parseParams(const yarp::os::Searchable & config)
 {
     //Check for --help option
     if (config.check("help"))
     {
-        yCInfo(fakeLLMDeviceParamsCOMPONENT) << getDocumentationOfDeviceParams();
+        yCInfo(FakeLLMDeviceParamsCOMPONENT) << getDocumentationOfDeviceParams();
     }
 
     std::string config_string = config.toString();
@@ -43,11 +43,11 @@ bool      fakeLLMDevice_ParamsParser::parseParams(const yarp::os::Searchable & c
         if (config.check("period"))
         {
             m_period = config.find("period").asFloat64();
-            yCInfo(fakeLLMDeviceParamsCOMPONENT) << "Parameter 'period' using value:" << m_period;
+            yCInfo(FakeLLMDeviceParamsCOMPONENT) << "Parameter 'period' using value:" << m_period;
         }
         else
         {
-            yCInfo(fakeLLMDeviceParamsCOMPONENT) << "Parameter 'period' using DEFAULT value:" << m_period;
+            yCInfo(FakeLLMDeviceParamsCOMPONENT) << "Parameter 'period' using DEFAULT value:" << m_period;
         }
         prop_check.unput("period");
     }
@@ -62,12 +62,12 @@ bool      fakeLLMDevice_ParamsParser::parseParams(const yarp::os::Searchable & c
         {
             if (m_parser_is_strict)
             {
-                yCError(fakeLLMDeviceParamsCOMPONENT) << "User asking for parameter: "<<it->name <<" which is unknown to this parser!";
+                yCError(FakeLLMDeviceParamsCOMPONENT) << "User asking for parameter: "<<it->name <<" which is unknown to this parser!";
                 extra_params_found = true;
             }
             else
             {
-                yCWarning(fakeLLMDeviceParamsCOMPONENT) << "User asking for parameter: "<< it->name <<" which is unknown to this parser!";
+                yCWarning(FakeLLMDeviceParamsCOMPONENT) << "User asking for parameter: "<< it->name <<" which is unknown to this parser!";
             }
         }
 
@@ -81,18 +81,18 @@ bool      fakeLLMDevice_ParamsParser::parseParams(const yarp::os::Searchable & c
 }
 
 
-std::string      fakeLLMDevice_ParamsParser::getDocumentationOfDeviceParams() const
+std::string      FakeLLMDevice_ParamsParser::getDocumentationOfDeviceParams() const
 {
     std::string doc;
     doc = doc + std::string("\n=============================================\n");
-    doc = doc + std::string("This is the help for device: fakeLLMDevice\n");
+    doc = doc + std::string("This is the help for device: FakeLLMDevice\n");
     doc = doc + std::string("\n");
     doc = doc + std::string("This is the list of the parameters accepted by the device:\n");
     doc = doc + std::string("'period': thread period\n");
     doc = doc + std::string("\n");
     doc = doc + std::string("Here are some examples of invocation command with yarpdev, with all params:\n");
-    doc = doc + " yarpdev --device fakeLLMDevice --period 1.0\n";
+    doc = doc + " yarpdev --device FakeLLMDevice --period 1.0\n";
     doc = doc + std::string("Using only mandatory params:\n");
-    doc = doc + " yarpdev --device fakeLLMDevice\n";
+    doc = doc + " yarpdev --device FakeLLMDevice\n";
     doc = doc + std::string("=============================================\n\n");    return doc;
 }

@@ -16,6 +16,7 @@
 #include <yarp/dev/ImplementJointFault.h>
 
 #include <mutex>
+#include "FakeMotionControlMicro_ParamsParser.h"
 
 /**
  * @ingroup dev_impl_fake dev_impl_motor
@@ -34,7 +35,8 @@ class FakeMotionControlMicro :
         public yarp::dev::ImplementJointFault,
         public yarp::dev::ImplementAxisInfo,
         public yarp::dev::ImplementEncodersTimed,
-        public yarp::dev::ImplementMotorEncoders
+        public yarp::dev::ImplementMotorEncoders,
+        public FakeMotionControlMicro_ParamsParser
 {
 private:
     enum VerboseLevel

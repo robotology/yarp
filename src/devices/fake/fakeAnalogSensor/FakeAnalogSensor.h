@@ -12,6 +12,7 @@
 #include <yarp/dev/IAnalogSensor.h>
 
 #include <mutex>
+#include "FakeAnalogSensor_ParamsParser.h"
 
 /**
 *
@@ -28,7 +29,8 @@
 class FakeAnalogSensor :
         public yarp::dev::DeviceDriver,
         public yarp::os::PeriodicThread,
-        public yarp::dev::IAnalogSensor
+        public yarp::dev::IAnalogSensor,
+        public FakeAnalogSensor_ParamsParser
 {
 private:
 

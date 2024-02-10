@@ -13,6 +13,8 @@
 
 #include <mutex>
 
+#include "FakePositionSensor_ParamsParser.h"
+
 /**
 *
 * @ingroup dev_impl_fake dev_impl_media dev_impl_analog_sensors
@@ -29,7 +31,8 @@ class FakePositionSensor :
         public yarp::dev::DeviceDriver,
         public yarp::os::PeriodicThread,
         public yarp::dev::IPositionSensors,
-        public yarp::dev::IOrientationSensors
+        public yarp::dev::IOrientationSensors,
+        public FakePositionSensor_ParamsParser
 {
 private:
 

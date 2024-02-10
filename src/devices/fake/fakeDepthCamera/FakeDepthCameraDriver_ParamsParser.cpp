@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Fri Feb  9 20:17:50 2024
+// Generated on: Sun Feb 11 10:36:31 2024
 
 
 #include "FakeDepthCameraDriver_ParamsParser.h"
@@ -16,11 +16,11 @@
 #include <yarp/os/Value.h>
 
 namespace {
-    YARP_LOG_COMPONENT(fakeDepthCameraDriverParamsCOMPONENT, "yarp.device.fakeDepthCameraDriver")
+    YARP_LOG_COMPONENT(FakeDepthCameraDriverParamsCOMPONENT, "yarp.device.FakeDepthCameraDriver")
 }
 
 
-std::vector<std::string> fakeDepthCameraDriver_ParamsParser::getListOfParams() const
+std::vector<std::string> FakeDepthCameraDriver_ParamsParser::getListOfParams() const
 {
     std::vector<std::string> params;
     params.push_back("period");
@@ -28,12 +28,12 @@ std::vector<std::string> fakeDepthCameraDriver_ParamsParser::getListOfParams() c
 }
 
 
-bool      fakeDepthCameraDriver_ParamsParser::parseParams(const yarp::os::Searchable & config)
+bool      FakeDepthCameraDriver_ParamsParser::parseParams(const yarp::os::Searchable & config)
 {
     //Check for --help option
     if (config.check("help"))
     {
-        yCInfo(fakeDepthCameraDriverParamsCOMPONENT) << getDocumentationOfDeviceParams();
+        yCInfo(FakeDepthCameraDriverParamsCOMPONENT) << getDocumentationOfDeviceParams();
     }
 
     std::string config_string = config.toString();
@@ -43,11 +43,11 @@ bool      fakeDepthCameraDriver_ParamsParser::parseParams(const yarp::os::Search
         if (config.check("period"))
         {
             m_period = config.find("period").asFloat64();
-            yCInfo(fakeDepthCameraDriverParamsCOMPONENT) << "Parameter 'period' using value:" << m_period;
+            yCInfo(FakeDepthCameraDriverParamsCOMPONENT) << "Parameter 'period' using value:" << m_period;
         }
         else
         {
-            yCInfo(fakeDepthCameraDriverParamsCOMPONENT) << "Parameter 'period' using DEFAULT value:" << m_period;
+            yCInfo(FakeDepthCameraDriverParamsCOMPONENT) << "Parameter 'period' using DEFAULT value:" << m_period;
         }
         prop_check.unput("period");
     }
@@ -62,12 +62,12 @@ bool      fakeDepthCameraDriver_ParamsParser::parseParams(const yarp::os::Search
         {
             if (m_parser_is_strict)
             {
-                yCError(fakeDepthCameraDriverParamsCOMPONENT) << "User asking for parameter: "<<it->name <<" which is unknown to this parser!";
+                yCError(FakeDepthCameraDriverParamsCOMPONENT) << "User asking for parameter: "<<it->name <<" which is unknown to this parser!";
                 extra_params_found = true;
             }
             else
             {
-                yCWarning(fakeDepthCameraDriverParamsCOMPONENT) << "User asking for parameter: "<< it->name <<" which is unknown to this parser!";
+                yCWarning(FakeDepthCameraDriverParamsCOMPONENT) << "User asking for parameter: "<< it->name <<" which is unknown to this parser!";
             }
         }
 
@@ -81,18 +81,18 @@ bool      fakeDepthCameraDriver_ParamsParser::parseParams(const yarp::os::Search
 }
 
 
-std::string      fakeDepthCameraDriver_ParamsParser::getDocumentationOfDeviceParams() const
+std::string      FakeDepthCameraDriver_ParamsParser::getDocumentationOfDeviceParams() const
 {
     std::string doc;
     doc = doc + std::string("\n=============================================\n");
-    doc = doc + std::string("This is the help for device: fakeDepthCameraDriver\n");
+    doc = doc + std::string("This is the help for device: FakeDepthCameraDriver\n");
     doc = doc + std::string("\n");
     doc = doc + std::string("This is the list of the parameters accepted by the device:\n");
     doc = doc + std::string("'period': thread period\n");
     doc = doc + std::string("\n");
     doc = doc + std::string("Here are some examples of invocation command with yarpdev, with all params:\n");
-    doc = doc + " yarpdev --device fakeDepthCameraDriver --period 1.0\n";
+    doc = doc + " yarpdev --device FakeDepthCameraDriver --period 1.0\n";
     doc = doc + std::string("Using only mandatory params:\n");
-    doc = doc + " yarpdev --device fakeDepthCameraDriver\n";
+    doc = doc + " yarpdev --device FakeDepthCameraDriver\n";
     doc = doc + std::string("=============================================\n\n");    return doc;
 }

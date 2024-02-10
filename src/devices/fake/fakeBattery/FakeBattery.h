@@ -15,6 +15,7 @@
 #include <mutex>
 
 #include "FakeBatteryService.h"
+#include "FakeBattery_ParamsParser.h"
 
  /**
   * @ingroup dev_impl_fake
@@ -25,7 +26,8 @@ class FakeBattery :
         public yarp::os::PeriodicThread,
         public yarp::dev::IBattery,
         public yarp::dev::DeviceDriver,
-        public FakeBatteryService
+        public FakeBatteryService,
+        public FakeBattery_ParamsParser
 {
 protected:
     std::mutex m_mutex;

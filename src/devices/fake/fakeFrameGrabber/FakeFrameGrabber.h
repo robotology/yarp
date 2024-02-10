@@ -25,6 +25,7 @@
 #include <cstdio>
 #include <random>
 #include <condition_variable>
+#include "FakeFrameGrabber_ParamsParser.h"
 
 /**
  * @ingroup dev_impl_media dev_impl_fake
@@ -47,7 +48,8 @@ class FakeFrameGrabber :
         public yarp::dev::IAudioVisualStream,
         public yarp::dev::IRgbVisualParams,
         public yarp::os::Thread,
-        public yarp::os::PortReader
+        public yarp::os::PortReader,
+        public FakeFrameGrabber_ParamsParser
 {
 public:
     FakeFrameGrabber() = default;

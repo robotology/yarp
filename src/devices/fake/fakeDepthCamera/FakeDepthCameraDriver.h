@@ -14,6 +14,7 @@
 #include <yarp/dev/IRGBDSensor.h>
 #include <yarp/dev/IFrameGrabberImage.h>
 #include <yarp/dev/PolyDriver.h>
+#include "FakeDepthCameraDriver_ParamsParser.h"
 
  /**
   * @ingroup dev_impl_fake
@@ -22,7 +23,8 @@
   */
 class fakeDepthCameraDriver :
         public yarp::dev::DeviceDriver,
-        public yarp::dev::IRGBDSensor
+        public yarp::dev::IRGBDSensor,
+        public FakeDepthCameraDriver_ParamsParser
 {
 private:
     typedef yarp::sig::ImageOf<yarp::sig::PixelFloat> depthImage;

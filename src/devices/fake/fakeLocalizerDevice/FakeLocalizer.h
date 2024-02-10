@@ -17,10 +17,13 @@
 #include <math.h>
 #include <mutex>
 
+#include "FakeLocalizer_ParamsParser.h"
+
 using namespace yarp::os;
 
 class fakeLocalizerThread :
-        public yarp::os::PeriodicThread
+        public yarp::os::PeriodicThread,
+        public FakeLocalizer_ParamsParser
 {
 protected:
     //general

@@ -9,6 +9,7 @@
 #include <yarp/dev/MultipleAnalogSensorsInterfaces.h>
 #include <yarp/os/Stamp.h>
 #include <yarp/math/Math.h>
+#include "FakeIMU_ParamsParser.h"
 
 /**
 * @ingroup dev_impl_fake
@@ -32,7 +33,8 @@ class FakeIMU :
         public yarp::dev::IThreeAxisGyroscopes,
         public yarp::dev::IThreeAxisLinearAccelerometers,
         public yarp::dev::IThreeAxisMagnetometers,
-        public yarp::dev::IOrientationSensors
+        public yarp::dev::IOrientationSensors,
+        public FakeIMU_ParamsParser
 {
 public:
     FakeIMU();

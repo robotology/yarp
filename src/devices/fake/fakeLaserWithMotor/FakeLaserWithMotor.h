@@ -28,6 +28,8 @@
 #include <random>
 #include <string>
 
+#include "FakeLaserWithMotor_ParamsParser.h"
+
 /**
 * @ingroup dev_impl_fake dev_impl_lidar
 *
@@ -76,7 +78,8 @@ class FakeLaserWithMotor : public yarp::os::PeriodicThread,
                   public yarp::dev::ImplementControlMode,
                   public yarp::dev::ImplementInteractionMode,
                   public yarp::dev::ImplementEncodersTimed,
-                  public yarp::dev::ImplementAxisInfo
+                  public yarp::dev::ImplementAxisInfo,
+                  public FakeLaserWithMotor_ParamsParser
 {
 protected:
     enum test_mode_t { NO_OBSTACLES = 0, USE_PATTERN =1, USE_MAPFILE =2, USE_CONSTANT_VALUE =3, USE_SQUARE_TRAP };
