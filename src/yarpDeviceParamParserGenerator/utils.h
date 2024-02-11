@@ -39,7 +39,7 @@ inline bool containsOnlySymbols(const std::string& str) {
     return true; // If all characters are symbols, return true
 }
 
-//remove all spaces from a string
+//remove all traling/leading spaces from a string
 inline std::string trimSpaces(const std::string& str) {
     size_t firstNonSpace = str.find_first_not_of(" \t");
     size_t lastNonSpace = str.find_last_not_of(" \t");
@@ -50,6 +50,19 @@ inline std::string trimSpaces(const std::string& str) {
     else {
         return ""; // If string contains only spaces or is empty, return an empty string
     }
+}
+
+//add the escape character in front of each special character of a string
+inline std::string escapeQuotes(const std::string& str)
+{
+    std::string result;
+    for (char c : str) {
+        if (c == '"') {
+            result.push_back('\\');
+        }
+        result.push_back(c);
+    }
+    return result;
 }
 
 #endif

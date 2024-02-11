@@ -74,11 +74,11 @@ bool ParamsFilesGenerator::parseIniParams(const std::string inputfilename)
             }
             else if (attribute == "description")
             {
-                param.description = trimSpaces(value);
+                param.description = trimSpaces(escapeQuotes(value));
             }
             else if (attribute == "notes")
             {
-                param.notes = trimSpaces(value);
+                param.notes = trimSpaces(escapeQuotes(value));
             }
             else if (attribute == "optionalVariableName")
             {

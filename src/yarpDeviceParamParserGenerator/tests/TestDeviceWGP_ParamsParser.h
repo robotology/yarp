@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Wed Feb  7 16:19:38 2024
+// Generated on: Sun Feb 11 01:28:40 2024
 
 
 #ifndef TESTDEVICEWGP_PARAMSPARSER_H
@@ -42,7 +42,7 @@
 * | group2            | param_a        | bool   | -     | false         | 0        | Some description of param.                                | -                                     |
 * | -                 | period         | double | s     | -             | 1        | Algorithm control loop period                             | -                                     |
 * | -                 | initial_ref    | double | m     | 3             | 0        | An initial value for the algorithm                        | -                                     |
-* | group3::subgroup1 | param_1        | bool   | -     | false         | 1        | This is a parameter for testing purposes                  | -                                     |
+* | group3::subgroup1 | param_1        | bool   | -     | false         | 1        | This is a parameter for \"testing\" purposes              | -                                     |
 * | group3::subgroup1 | param_2        | bool   | -     | true          | 0        | This is a parameter for testing purposes                  | -                                     |
 * | group3            | param_3        | bool   | -     | false         | 0        | This is a parameter for testing purposes                  | -                                     |
 * | group3::subgroup2 | param_4        | bool   | -     | true          | 0        | This is a parameter for testing purposes                  | -                                     |
@@ -61,6 +61,7 @@
 class TestDeviceWGP_ParamsParser : public yarp::dev::IDeviceDriverParams
 {
 public:
+    TestDeviceWGP_ParamsParser() = default;
     ~TestDeviceWGP_ParamsParser() override = default;
 
 public:
@@ -71,7 +72,7 @@ public:
          int major = 1;
          int minor = 0;
     };
-    const parser_version_type m_parser_version;
+    const parser_version_type m_parser_version = {};
     std::string m_file_name = {"audio_out.wav"};
     std::string m_mode = {"mode1"};
     bool m_add_marker = {false};

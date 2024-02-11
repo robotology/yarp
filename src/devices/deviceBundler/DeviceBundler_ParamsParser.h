@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Fri Feb  9 16:59:13 2024
+// Generated on: Sun Feb 11 01:26:28 2024
 
 
 #ifndef DEVICEBUNDLER_PARAMSPARSER_H
@@ -54,7 +54,7 @@ public:
          int major = 1;
          int minor = 0;
     };
-    const parser_version_type m_parser_version;
+    const parser_version_type m_parser_version = {};
     std::string m_wrapper_device = {"device_name1"};
     std::string m_attached_device = {"device_name2"};
     bool m_doNotAttach = {false};

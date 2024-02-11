@@ -103,11 +103,11 @@ bool ParamsFilesGenerator::parseMdParams(const std::string inputfilename)
             param.required = true;
 
         std::getline(ss, item, '|');
-        param.description = trimSpaces(item);
+        param.description = trimSpaces(escapeQuotes(item));
         if (containsOnlySymbols(param.description)) param.description = "";
 
         std::getline(ss, item, '|');
-        param.notes = trimSpaces(item);
+        param.notes = trimSpaces(escapeQuotes(item));
         if (containsOnlySymbols(param.notes)) param.notes = "";
 
         std::getline(ss, item, '\n');
