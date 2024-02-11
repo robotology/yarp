@@ -27,7 +27,10 @@ namespace {
 YARP_LOG_COMPONENT(FAKEJOINTCOUPLING, "yarp.device.fakeJointCoupling")
 }
 
-bool FakeJointCoupling::open(yarp::os::Searchable &par) {
+bool FakeJointCoupling::open(yarp::os::Searchable &config)
+{
+    if (!this->parseParams(config)) {return false;}
+
     yarp::sig::VectorOf<size_t> coupled_physical_joints {2,3};
     yarp::sig::VectorOf<size_t> coupled_actuated_axes {2};
     std::vector<std::string> physical_joint_names{"phys_joint_0", "phys_joint_1", "phys_joint_2", "phys_joint_3"};

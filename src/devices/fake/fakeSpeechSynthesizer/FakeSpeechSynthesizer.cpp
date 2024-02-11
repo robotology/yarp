@@ -30,6 +30,8 @@ FakeSpeechSynthesizer::~FakeSpeechSynthesizer()
 
 bool FakeSpeechSynthesizer::open(yarp::os::Searchable& config)
 {
+    if (!this->parseParams(config)) {return false;}
+
     return true;
 }
 

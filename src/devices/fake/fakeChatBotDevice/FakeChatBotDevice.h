@@ -31,6 +31,9 @@ public:
     bool getStatus(std::string& status) override;
     bool resetBot() override;
 
+    bool open(yarp::os::Searchable& config) override;
+    bool close() override;
+
 private:
     std::string m_currBot;
     std::string m_lang;

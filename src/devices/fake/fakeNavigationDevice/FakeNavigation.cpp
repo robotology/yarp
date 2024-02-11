@@ -24,6 +24,8 @@ YARP_LOG_COMPONENT(FAKENAVIGATION, "yarp.device.fakeNavigation")
 
 bool FakeNavigation:: open(yarp::os::Searchable& config)
 {
+    if (!this->parseParams(config)) {return false;}
+
 #if 1
 
     yCDebug(FAKENAVIGATION) << "config configuration: \n" << config.toString().c_str();

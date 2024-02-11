@@ -55,6 +55,8 @@ FakeIMU::~FakeIMU()
 
 bool FakeIMU::open(yarp::os::Searchable &config)
 {
+    if (!this->parseParams(config)) {return false;}
+
     double period;
     if( config.check("period")) {
         period = config.find("period").asInt32() / 1000.0;

@@ -30,6 +30,9 @@ public:
     bool getConversation(std::vector<yarp::dev::LLM_Message> &oConversation) override;
     bool deleteConversation() noexcept override;
 
+    bool open(yarp::os::Searchable& config) override;
+    bool close() override;
+
 private:
     std::vector<yarp::dev::LLM_Message> m_conversation;
 };

@@ -53,6 +53,8 @@ void FakeOdometry2D::threadRelease()
 
 bool FakeOdometry2D::open(yarp::os::Searchable& config)
 {
+    if (!this->parseParams(config)) {return false;}
+
     // check period
     if (!config.check("period", "refresh period of the broadcasted values in s")) {
         yCInfo(FAKEODOMETRY2D) << "Using default 'period' parameter";

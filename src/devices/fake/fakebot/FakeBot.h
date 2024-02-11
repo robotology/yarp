@@ -12,6 +12,7 @@
 #include <yarp/sig/Image.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/LogComponent.h>
+#include "FakeBot_ParamsParser.h"
 
 YARP_DECLARE_LOG_COMPONENT(FAKEBOT)
 
@@ -29,7 +30,8 @@ class FakeBot :
         public yarp::dev::IFrameGrabberImage,
         public yarp::dev::IControlCalibration,
         public yarp::dev::IControlLimits,
-        public yarp::os::Thread
+        public yarp::os::Thread,
+        public FakeBot_ParamsParser
 {
 private:
     int njoints;

@@ -37,6 +37,8 @@ FakeSpeaker::~FakeSpeaker()
 
 bool FakeSpeaker::open(yarp::os::Searchable &config)
 {
+    if (!this->parseParams(config)) {return false;}
+
     if (config.check("help"))
     {
         yCInfo(FAKESPEAKER, "Some examples:");

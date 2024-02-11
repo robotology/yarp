@@ -34,6 +34,8 @@ FakeBattery::FakeBattery() :
 
 bool FakeBattery::open(yarp::os::Searchable& config)
 {
+    if (!this->parseParams(config)) {return false;}
+
     double period = config.check("thread_period", Value(default_period), "Thread period (smaller implies faster charge/discharge)").asFloat64();
     setPeriod(period);
 

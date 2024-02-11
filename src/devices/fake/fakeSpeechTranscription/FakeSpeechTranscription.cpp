@@ -30,6 +30,8 @@ FakeSpeechTranscription::~FakeSpeechTranscription()
 
 bool FakeSpeechTranscription::open(yarp::os::Searchable& config)
 {
+    if (!this->parseParams(config)) {return false;}
+
     return true;
 }
 

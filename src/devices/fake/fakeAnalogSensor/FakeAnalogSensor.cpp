@@ -32,6 +32,8 @@ FakeAnalogSensor::~FakeAnalogSensor()
 
 bool FakeAnalogSensor::open(yarp::os::Searchable& config)
 {
+    if (!this->parseParams(config)) {return false;}
+
     yCTrace(FAKEANALOGSENSOR);
     bool correct=true;
 

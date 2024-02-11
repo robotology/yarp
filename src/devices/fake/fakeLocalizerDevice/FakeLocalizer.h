@@ -22,8 +22,7 @@
 using namespace yarp::os;
 
 class fakeLocalizerThread :
-        public yarp::os::PeriodicThread,
-        public FakeLocalizer_ParamsParser
+        public yarp::os::PeriodicThread
 {
 protected:
     //general
@@ -56,7 +55,8 @@ public:
  */
 class FakeLocalizer :
         public yarp::dev::DeviceDriver,
-        public yarp::dev::Nav2D::ILocalization2D
+        public yarp::dev::Nav2D::ILocalization2D,
+        public FakeLocalizer_ParamsParser
 {
 public:
     fakeLocalizerThread         *locThread = nullptr;

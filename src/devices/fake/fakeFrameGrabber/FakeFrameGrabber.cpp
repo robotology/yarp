@@ -219,7 +219,10 @@ bool FakeFrameGrabber::close() {
     return true;
 }
 
-bool FakeFrameGrabber::open(yarp::os::Searchable& config) {
+bool FakeFrameGrabber::open(yarp::os::Searchable& config)
+{
+    if (!this->parseParams(config)) {return false;}
+
     m_rpcPortName = config.check("fakeFrameGrabber_rpc_port", yarp::os::Value("/fakeFrameGrabber/rpc"), "rpc port for the fakeFrameGrabber").asString();
     w = config.check("width",yarp::os::Value(320),
                      "desired width of test image").asInt32();

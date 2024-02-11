@@ -29,6 +29,8 @@ FakePositionSensor::~FakePositionSensor()
 
 bool FakePositionSensor::open(yarp::os::Searchable& config)
 {
+    if (!this->parseParams(config)) {return false;}
+
     yCTrace(FAKE_POSITION_SENSOR);
     bool correct=true;
 

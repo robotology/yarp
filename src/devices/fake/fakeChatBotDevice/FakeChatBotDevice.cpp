@@ -79,3 +79,14 @@ bool FakeChatBotDevice::resetBot()
     m_status = "greetings";
     return true;
 }
+
+bool FakeChatBotDevice::open(yarp::os::Searchable& config)
+{
+    if (!this->parseParams(config)) {return false;}
+    return true;
+}
+
+bool FakeChatBotDevice::close()
+{
+    return true;
+}

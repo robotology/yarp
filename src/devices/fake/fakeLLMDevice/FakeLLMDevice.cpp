@@ -66,3 +66,14 @@ bool FakeLLMDevice::deleteConversation() noexcept
     m_conversation.clear();
     return true;
 }
+
+bool FakeLLMDevice::open(yarp::os::Searchable& config)
+{
+    if (!this->parseParams(config)) {return false;}
+    return true;
+}
+
+bool FakeLLMDevice::close()
+{
+    return true;
+}

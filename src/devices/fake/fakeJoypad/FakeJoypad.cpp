@@ -23,8 +23,10 @@ FakeJoypad::FakeJoypad() = default;
 
 FakeJoypad::~FakeJoypad() = default;
 
-bool FakeJoypad::open(yarp::os::Searchable& rf)
+bool FakeJoypad::open(yarp::os::Searchable& config)
 {
+    if (!this->parseParams(config)) {return false;}
+
     return true;
 }
 

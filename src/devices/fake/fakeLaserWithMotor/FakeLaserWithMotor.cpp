@@ -31,6 +31,8 @@ using namespace yarp::dev::Nav2D;
 
 bool FakeLaserWithMotor::open(yarp::os::Searchable& config)
 {
+    if (!this->parseParams(config)) {return false;}
+
     m_info = "Fake Laser device for test/debugging";
     m_device_status = DEVICE_OK_STANDBY;
 

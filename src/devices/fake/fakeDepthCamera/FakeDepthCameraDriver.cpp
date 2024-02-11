@@ -38,6 +38,8 @@ fakeDepthCameraDriver::~fakeDepthCameraDriver() = default;
 
 bool fakeDepthCameraDriver::open(Searchable& config)
 {
+    if (!this->parseParams(config)) {return false;}
+
     Property cfg;
     cfg.fromString(config.toString());
     cfg.unput("device");

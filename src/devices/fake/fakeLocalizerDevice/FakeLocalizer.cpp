@@ -128,6 +128,8 @@ bool   FakeLocalizer::getEstimatedOdometry(yarp::dev::OdometryData& odom)
 
 bool FakeLocalizer::open(yarp::os::Searchable& config)
 {
+    if (!this->parseParams(config)) {return false;}
+
     yarp::os::Property p;
     locThread = new fakeLocalizerThread(0.010, p);
 

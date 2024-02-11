@@ -31,6 +31,8 @@ FakeSerialPort::~FakeSerialPort()
 
 bool FakeSerialPort::open(yarp::os::Searchable& config)
 {
+    if (!this->parseParams(config)) {return false;}
+
 #if 0
     SerialDeviceDriverSettings config2;
     strcpy(config2.CommChannel, config.check("comport",Value("COM3"),"name of the serial channel").asString().c_str());

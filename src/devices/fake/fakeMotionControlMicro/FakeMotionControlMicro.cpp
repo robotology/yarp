@@ -194,6 +194,8 @@ void FakeMotionControlMicro::threadRelease()
 
 bool FakeMotionControlMicro::open(yarp::os::Searchable &config)
 {
+    if (!this->parseParams(config)) {return false;}
+
     std::string str;
 
 //     if (!config.findGroup("GENERAL").find("MotioncontrolVersion").isInt32())

@@ -86,7 +86,10 @@ void scramble(unsigned char& ch, float f) {
 }
 
 
-bool FakeBot::open(yarp::os::Searchable& config) {
+bool FakeBot::open(yarp::os::Searchable& config)
+{
+    if (!this->parseParams(config)) {return false;}
+
     std::string backFile = config.check("background",Value("textures/back.ppm"),
                                         "background image to use").asString();
     if (backFile!="") {
