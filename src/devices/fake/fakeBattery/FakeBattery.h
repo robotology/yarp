@@ -18,10 +18,12 @@
 #include "FakeBattery_ParamsParser.h"
 
  /**
-  * @ingroup dev_impl_fake
-  *
-  * \brief `fakeBattery`: Documentation to be added
-  */
+ * @ingroup dev_impl_fake
+ *
+ * \brief `fakeBattery`: Documentation to be added
+ *
+ * Parameters required by this device are shown in class: FakeBattery_ParamsParser
+ */
 class FakeBattery :
         public yarp::os::PeriodicThread,
         public yarp::dev::IBattery,

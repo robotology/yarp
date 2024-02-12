@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Sun Feb 11 10:36:35 2024
+// Generated on: Mon Feb 12 13:43:58 2024
 
 
 #ifndef FAKENAVIGATION_PARAMSPARSER_H
@@ -23,13 +23,14 @@
 * This class is the parameters parser for class FakeNavigation.
 *
 * These are the used parameters:
-* | Group name | Parameter name | Type   | Units | Default Value | Required | Description   | Notes                  |
-* |:----------:|:--------------:|:------:|:-----:|:-------------:|:--------:|:-------------:|:----------------------:|
-* | -          | period         | double | s     | 1.0           | 0        | thread period | optional, default 1.0s |
+* | Group name | Parameter name  | Type | Units | Default Value | Required | Description     | Notes |
+* |:----------:|:---------------:|:----:|:-----:|:-------------:|:--------:|:---------------:|:-----:|
+* | -          | navigation_time | int  | -     | 500           | 0        | navigation_time | -     |
+* | -          | reached_time    | int  | -     | 100           | 0        | reached_time    | -     |
 *
 * The device can be launched by yarpdev using one of the following examples:
 * \code{.unparsed}
-* yarpdev --device FakeNavigation --period 1.0
+* yarpdev --device FakeNavigation --navigation_time 500 --reached_time 100
 * \endcode
 *
 * \code{.unparsed}
@@ -53,7 +54,8 @@ public:
          int minor = 0;
     };
     const parser_version_type m_parser_version = {};
-    double m_period = {1.0};
+    int m_navigation_time = {500};
+    int m_reached_time = {100};
 
     bool          parseParams(const yarp::os::Searchable & config) override;
     std::string   getDeviceType() const override { return m_device_type; }

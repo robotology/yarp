@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Sun Feb 11 10:36:35 2024
+// Generated on: Mon Feb 12 13:43:58 2024
 
 
 #ifndef FAKELOCALIZER_PARAMSPARSER_H
@@ -25,11 +25,11 @@
 * These are the used parameters:
 * | Group name | Parameter name | Type   | Units | Default Value | Required | Description   | Notes                  |
 * |:----------:|:--------------:|:------:|:-----:|:-------------:|:--------:|:-------------:|:----------------------:|
-* | -          | period         | double | s     | 1.0           | 0        | thread period | optional, default 1.0s |
+* | -          | period         | double | s     | 0.010         | 0        | thread period | optional, default 1.0s |
 *
 * The device can be launched by yarpdev using one of the following examples:
 * \code{.unparsed}
-* yarpdev --device FakeLocalizer --period 1.0
+* yarpdev --device FakeLocalizer --period 0.010
 * \endcode
 *
 * \code{.unparsed}
@@ -53,7 +53,7 @@ public:
          int minor = 0;
     };
     const parser_version_type m_parser_version = {};
-    double m_period = {1.0};
+    double m_period = {0.010};
 
     bool          parseParams(const yarp::os::Searchable & config) override;
     std::string   getDeviceType() const override { return m_device_type; }

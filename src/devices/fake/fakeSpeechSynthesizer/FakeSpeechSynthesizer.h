@@ -16,9 +16,11 @@
 using namespace yarp::os;
 
 /**
- * @ingroup dev_impl_other
+ * @ingroup dev_impl_fake dev_impl_other
  *
  * \brief `FakeSpeechSynthesizer`: A fake implementation of a speech synthesizer plugin.
+ *
+ * Parameters required by this device are shown in class: FakeSpeechSynthesizer_ParamsParser
  */
 class FakeSpeechSynthesizer :
         public yarp::dev::DeviceDriver,

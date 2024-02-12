@@ -24,6 +24,8 @@
  * \brief `fakeMotionControlMicro`: This device implements a minimal subset of mandatory interfaces
  * to run with controlBoard_nws_yarp. It is thus a smaller, limited version than fakeMotionControl.
  *
+ * Parameters required by this device are shown in class: FakeMotionControlMicro_ParamsParser
+ *
  */
 class FakeMotionControlMicro :
         public yarp::os::PeriodicThread,

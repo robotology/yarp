@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Sun Feb 11 10:36:33 2024
+// Generated on: Mon Feb 12 13:43:57 2024
 
 
 #include "FakeSpeechSynthesizer_ParamsParser.h"
@@ -23,7 +23,7 @@ namespace {
 std::vector<std::string> FakeSpeechSynthesizer_ParamsParser::getListOfParams() const
 {
     std::vector<std::string> params;
-    params.push_back("period");
+    params.push_back("language");
     return params;
 }
 
@@ -38,18 +38,18 @@ bool      FakeSpeechSynthesizer_ParamsParser::parseParams(const yarp::os::Search
 
     std::string config_string = config.toString();
     yarp::os::Property prop_check(config_string.c_str());
-    //Parser of parameter period
+    //Parser of parameter language
     {
-        if (config.check("period"))
+        if (config.check("language"))
         {
-            m_period = config.find("period").asFloat64();
-            yCInfo(FakeSpeechSynthesizerParamsCOMPONENT) << "Parameter 'period' using value:" << m_period;
+            m_language = config.find("language").asString();
+            yCInfo(FakeSpeechSynthesizerParamsCOMPONENT) << "Parameter 'language' using value:" << m_language;
         }
         else
         {
-            yCInfo(FakeSpeechSynthesizerParamsCOMPONENT) << "Parameter 'period' using DEFAULT value:" << m_period;
+            yCInfo(FakeSpeechSynthesizerParamsCOMPONENT) << "Parameter 'language' using DEFAULT value:" << m_language;
         }
-        prop_check.unput("period");
+        prop_check.unput("language");
     }
 
     /*
@@ -88,10 +88,10 @@ std::string      FakeSpeechSynthesizer_ParamsParser::getDocumentationOfDevicePar
     doc = doc + std::string("This is the help for device: FakeSpeechSynthesizer\n");
     doc = doc + std::string("\n");
     doc = doc + std::string("This is the list of the parameters accepted by the device:\n");
-    doc = doc + std::string("'period': thread period\n");
+    doc = doc + std::string("'language': language code\n");
     doc = doc + std::string("\n");
     doc = doc + std::string("Here are some examples of invocation command with yarpdev, with all params:\n");
-    doc = doc + " yarpdev --device FakeSpeechSynthesizer --period 1.0\n";
+    doc = doc + " yarpdev --device FakeSpeechSynthesizer --language auto\n";
     doc = doc + std::string("Using only mandatory params:\n");
     doc = doc + " yarpdev --device FakeSpeechSynthesizer\n";
     doc = doc + std::string("=============================================\n\n");    return doc;

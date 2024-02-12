@@ -35,22 +35,7 @@
 *
 * @brief `fakeLaserWithMotor` : fake sensor device driver for testing purposes and reference for IRangefinder2D devices.
 *
-* | YARP device name |
-* |:-----------------:|
-* | `fakeLaserWithMotor` |
-*
-* \section fakeLaser_device_parameters Description of input parameters
-*
-* Parameters accepted in the config argument of the open method:
-* | Parameter name      | Type   | Units | Default Value | Required | Description | Notes |
-* |:-------------------:|:------:|:-----:|:-------------:|:--------:|:-----------:|:-----:|
-* | test                | string |   -   |       -       | Yes      | Choose the modality   | It can be one of the following: no_obstacles, use_pattern, use_mapfile |
-* | map_file            | string |   -   |       -       | No       | Full path to a .map file   | Mandatory if --test use_mapfile option has been set |
-* | clip_max            | double |   m   | 3.5           | No       | Maximum detectable distance for an obstacle | - |
-* | clip_min            | double |   m   | 0.1           | No       | Minimum detectable distance for an obstacle | - |
-* | max_angle           | double |  deg  | 360           | No       | Angular range of the sensor  | - |
-* | min_angle           | double |  deg  |   0           | No       | Angular range of the sensor  | - |
-* | resolution          | double |  deg  | 1.0           | No       | Device resolution          | - |
+* Parameters required by this device are shown in class: FakeLaserWithMotor_ParamsParser
 *
 * \section Usage examples:
 * yarpdev --device fakeLaser --help

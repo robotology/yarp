@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Sun Feb 11 10:36:34 2024
+// Generated on: Mon Feb 12 13:43:57 2024
 
 
 #include "FakeMicrophone_ParamsParser.h"
@@ -24,6 +24,10 @@ std::vector<std::string> FakeMicrophone_ParamsParser::getListOfParams() const
 {
     std::vector<std::string> params;
     params.push_back("period");
+    params.push_back("waveform");
+    params.push_back("signal_frequency");
+    params.push_back("signal_amplitude");
+    params.push_back("driver_frame_size");
     return params;
 }
 
@@ -50,6 +54,62 @@ bool      FakeMicrophone_ParamsParser::parseParams(const yarp::os::Searchable & 
             yCInfo(FakeMicrophoneParamsCOMPONENT) << "Parameter 'period' using DEFAULT value:" << m_period;
         }
         prop_check.unput("period");
+    }
+
+    //Parser of parameter waveform
+    {
+        if (config.check("waveform"))
+        {
+            m_waveform = config.find("waveform").asString();
+            yCInfo(FakeMicrophoneParamsCOMPONENT) << "Parameter 'waveform' using value:" << m_waveform;
+        }
+        else
+        {
+            yCInfo(FakeMicrophoneParamsCOMPONENT) << "Parameter 'waveform' using DEFAULT value:" << m_waveform;
+        }
+        prop_check.unput("waveform");
+    }
+
+    //Parser of parameter signal_frequency
+    {
+        if (config.check("signal_frequency"))
+        {
+            m_signal_frequency = config.find("signal_frequency").asInt64();
+            yCInfo(FakeMicrophoneParamsCOMPONENT) << "Parameter 'signal_frequency' using value:" << m_signal_frequency;
+        }
+        else
+        {
+            yCInfo(FakeMicrophoneParamsCOMPONENT) << "Parameter 'signal_frequency' using DEFAULT value:" << m_signal_frequency;
+        }
+        prop_check.unput("signal_frequency");
+    }
+
+    //Parser of parameter signal_amplitude
+    {
+        if (config.check("signal_amplitude"))
+        {
+            m_signal_amplitude = config.find("signal_amplitude").asInt64();
+            yCInfo(FakeMicrophoneParamsCOMPONENT) << "Parameter 'signal_amplitude' using value:" << m_signal_amplitude;
+        }
+        else
+        {
+            yCInfo(FakeMicrophoneParamsCOMPONENT) << "Parameter 'signal_amplitude' using DEFAULT value:" << m_signal_amplitude;
+        }
+        prop_check.unput("signal_amplitude");
+    }
+
+    //Parser of parameter driver_frame_size
+    {
+        if (config.check("driver_frame_size"))
+        {
+            m_driver_frame_size = config.find("driver_frame_size").asInt64();
+            yCInfo(FakeMicrophoneParamsCOMPONENT) << "Parameter 'driver_frame_size' using value:" << m_driver_frame_size;
+        }
+        else
+        {
+            yCInfo(FakeMicrophoneParamsCOMPONENT) << "Parameter 'driver_frame_size' using DEFAULT value:" << m_driver_frame_size;
+        }
+        prop_check.unput("driver_frame_size");
     }
 
     /*
@@ -88,10 +148,14 @@ std::string      FakeMicrophone_ParamsParser::getDocumentationOfDeviceParams() c
     doc = doc + std::string("This is the help for device: FakeMicrophone\n");
     doc = doc + std::string("\n");
     doc = doc + std::string("This is the list of the parameters accepted by the device:\n");
-    doc = doc + std::string("'period': thread period\n");
+    doc = doc + std::string("'period': the period of processing thread\n");
+    doc = doc + std::string("'waveform': Defines the shape of the waveform. Can be one of the following: sine,sawtooth,square,constant\n");
+    doc = doc + std::string("'signal_frequency': Frequency of the generated signal\n");
+    doc = doc + std::string("'signal_amplitude': Amplitude of the generated signal\n");
+    doc = doc + std::string("'driver_frame_size': the number of samples to process on each iteration of the thread\n");
     doc = doc + std::string("\n");
     doc = doc + std::string("Here are some examples of invocation command with yarpdev, with all params:\n");
-    doc = doc + " yarpdev --device FakeMicrophone --period 1.0\n";
+    doc = doc + " yarpdev --device FakeMicrophone --period 0.010 --waveform sine --signal_frequency 440 --signal_amplitude 32000 --driver_frame_size 512\n";
     doc = doc + std::string("Using only mandatory params:\n");
     doc = doc + " yarpdev --device FakeMicrophone\n";
     doc = doc + std::string("=============================================\n\n");    return doc;

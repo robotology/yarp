@@ -61,6 +61,10 @@ public:
  * @ingroup dev_impl_other
  *
  * \brief `fakeSerialPort`: A fake basic Serial Communications Link (RS232, USB).
+ *
+ * Parameters required by this device are shown in class: FakeSerialPort_ParamsParser
+ * Beware: all parameters parsed by fakeSerialPort are actually ignored because it is a fake device
+ * which does not connect to any real hardware.
  */
 class FakeSerialPort :
         public yarp::dev::DeviceDriver,

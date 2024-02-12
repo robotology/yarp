@@ -21,11 +21,8 @@
 *
 * This device driver derives from AudioPlayerDeviceBase base class. Please check its documentation for additional details.
 *
-* Parameters used by this device are:
-* | Parameter name   | SubParameter   | Type    | Units          | Default Value            | Required                    | Description                                                       | Notes |
-* |:----------------:|:--------------:|:-------:|:--------------:|:------------------------:|:--------------------------: |:-----------------------------------------------------------------:|:-----:|
-* | AUDIO_BASE       |     ***        |         | -              |  -                       | No                          | For the documentation of AUDIO_BASE group, please refer to the documentation of the base class AudioPlayerDeviceBase |       |
-* | period           |      -         | double  | s              |  0.010                   | No                          | the period of processing thread                                   | A value of 10ms is recommended. Do to not modify it |
+* Parameters required by this device are shown in class: FakeMicrophone_ParamsParser
+* This device also inherits some parameters from AudioPlayerDeviceBase
 *
 * See \ref AudioDoc for additional documentation on YARP audio.
 */

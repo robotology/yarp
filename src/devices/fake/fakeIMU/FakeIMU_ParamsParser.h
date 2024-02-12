@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Sun Feb 11 10:36:32 2024
+// Generated on: Mon Feb 12 13:43:56 2024
 
 
 #ifndef FAKEIMU_PARAMSPARSER_H
@@ -23,13 +23,15 @@
 * This class is the parameters parser for class FakeIMU.
 *
 * These are the used parameters:
-* | Group name | Parameter name | Type   | Units | Default Value | Required | Description   | Notes                  |
-* |:----------:|:--------------:|:------:|:-----:|:-------------:|:--------:|:-------------:|:----------------------:|
-* | -          | period         | double | s     | 1.0           | 0        | thread period | optional, default 1.0s |
+* | Group name | Parameter name | Type   | Units       | Default Value | Required | Description                                                                                                     | Notes |
+* |:----------:|:--------------:|:------:|:-----------:|:-------------:|:--------:|:---------------------------------------------------------------------------------------------------------------:|:-----:|
+* | -          | period         | int    | millisecond | 10            | 0        | Period over which the measurement is updated.                                                                   | -     |
+* | -          | constantValue  | bool   | -           | false         | 0        | If the parameter is present, the fake sensor values never changes (useful for testing server/client coherence). | -     |
+* | -          | sensorName     | string | -           | sensorName    | 0        | Name of the sensor                                                                                              | -     |
 *
 * The device can be launched by yarpdev using one of the following examples:
 * \code{.unparsed}
-* yarpdev --device FakeIMU --period 1.0
+* yarpdev --device FakeIMU --period 10 --constantValue false --sensorName sensorName
 * \endcode
 *
 * \code{.unparsed}
@@ -53,7 +55,9 @@ public:
          int minor = 0;
     };
     const parser_version_type m_parser_version = {};
-    double m_period = {1.0};
+    int m_period = {10};
+    bool m_constantValue = {false};
+    std::string m_sensorName = {"sensorName"};
 
     bool          parseParams(const yarp::os::Searchable & config) override;
     std::string   getDeviceType() const override { return m_device_type; }

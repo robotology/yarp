@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Sun Feb 11 10:36:31 2024
+// Generated on: Mon Feb 12 13:43:55 2024
 
 
 #include "FakeBot_ParamsParser.h"
@@ -23,7 +23,12 @@ namespace {
 std::vector<std::string> FakeBot_ParamsParser::getListOfParams() const
 {
     std::vector<std::string> params;
-    params.push_back("period");
+    params.push_back("background");
+    params.push_back("target");
+    params.push_back("noise");
+    params.push_back("sx");
+    params.push_back("sy");
+    params.push_back("lifetime");
     return params;
 }
 
@@ -38,18 +43,88 @@ bool      FakeBot_ParamsParser::parseParams(const yarp::os::Searchable & config)
 
     std::string config_string = config.toString();
     yarp::os::Property prop_check(config_string.c_str());
-    //Parser of parameter period
+    //Parser of parameter background
     {
-        if (config.check("period"))
+        if (config.check("background"))
         {
-            m_period = config.find("period").asFloat64();
-            yCInfo(FakeBotParamsCOMPONENT) << "Parameter 'period' using value:" << m_period;
+            m_background = config.find("background").asString();
+            yCInfo(FakeBotParamsCOMPONENT) << "Parameter 'background' using value:" << m_background;
         }
         else
         {
-            yCInfo(FakeBotParamsCOMPONENT) << "Parameter 'period' using DEFAULT value:" << m_period;
+            yCInfo(FakeBotParamsCOMPONENT) << "Parameter 'background' using DEFAULT value:" << m_background;
         }
-        prop_check.unput("period");
+        prop_check.unput("background");
+    }
+
+    //Parser of parameter target
+    {
+        if (config.check("target"))
+        {
+            m_target = config.find("target").asString();
+            yCInfo(FakeBotParamsCOMPONENT) << "Parameter 'target' using value:" << m_target;
+        }
+        else
+        {
+            yCInfo(FakeBotParamsCOMPONENT) << "Parameter 'target' using DEFAULT value:" << m_target;
+        }
+        prop_check.unput("target");
+    }
+
+    //Parser of parameter noise
+    {
+        if (config.check("noise"))
+        {
+            m_noise = config.find("noise").asFloat64();
+            yCInfo(FakeBotParamsCOMPONENT) << "Parameter 'noise' using value:" << m_noise;
+        }
+        else
+        {
+            yCInfo(FakeBotParamsCOMPONENT) << "Parameter 'noise' using DEFAULT value:" << m_noise;
+        }
+        prop_check.unput("noise");
+    }
+
+    //Parser of parameter sx
+    {
+        if (config.check("sx"))
+        {
+            m_sx = config.find("sx").asFloat64();
+            yCInfo(FakeBotParamsCOMPONENT) << "Parameter 'sx' using value:" << m_sx;
+        }
+        else
+        {
+            yCInfo(FakeBotParamsCOMPONENT) << "Parameter 'sx' using DEFAULT value:" << m_sx;
+        }
+        prop_check.unput("sx");
+    }
+
+    //Parser of parameter sy
+    {
+        if (config.check("sy"))
+        {
+            m_sy = config.find("sy").asFloat64();
+            yCInfo(FakeBotParamsCOMPONENT) << "Parameter 'sy' using value:" << m_sy;
+        }
+        else
+        {
+            yCInfo(FakeBotParamsCOMPONENT) << "Parameter 'sy' using DEFAULT value:" << m_sy;
+        }
+        prop_check.unput("sy");
+    }
+
+    //Parser of parameter lifetime
+    {
+        if (config.check("lifetime"))
+        {
+            m_lifetime = config.find("lifetime").asFloat64();
+            yCInfo(FakeBotParamsCOMPONENT) << "Parameter 'lifetime' using value:" << m_lifetime;
+        }
+        else
+        {
+            yCInfo(FakeBotParamsCOMPONENT) << "Parameter 'lifetime' using DEFAULT value:" << m_lifetime;
+        }
+        prop_check.unput("lifetime");
     }
 
     /*
@@ -88,10 +163,15 @@ std::string      FakeBot_ParamsParser::getDocumentationOfDeviceParams() const
     doc = doc + std::string("This is the help for device: FakeBot\n");
     doc = doc + std::string("\n");
     doc = doc + std::string("This is the list of the parameters accepted by the device:\n");
-    doc = doc + std::string("'period': thread period\n");
+    doc = doc + std::string("'background': background image to use\n");
+    doc = doc + std::string("'target': target image to use\n");
+    doc = doc + std::string("'noise': pixel noise level\n");
+    doc = doc + std::string("'sx': scaling for x coordinate\n");
+    doc = doc + std::string("'sy': scaling for y coordinate\n");
+    doc = doc + std::string("'lifetime': device should exist for this length of time\n");
     doc = doc + std::string("\n");
     doc = doc + std::string("Here are some examples of invocation command with yarpdev, with all params:\n");
-    doc = doc + " yarpdev --device FakeBot --period 1.0\n";
+    doc = doc + " yarpdev --device FakeBot --background textures/back.ppm --target textures/fore.ppm --noise 0.05 --sx 1.0 --sy 1.0 --lifetime -1.0\n";
     doc = doc + std::string("Using only mandatory params:\n");
     doc = doc + " yarpdev --device FakeBot\n";
     doc = doc + std::string("=============================================\n\n");    return doc;

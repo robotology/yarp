@@ -34,6 +34,8 @@
  *
  * Implements the IFrameGrabberImage and IFrameGrabberControls
  * interfaces.
+ *
+ * Parameters required by this device are shown in class: FakeFrameGrabber_ParamsParser
  */
 class FakeFrameGrabber :
 #ifndef YARP_NO_DEPRECATED // Since YARP 3.5`

@@ -18,6 +18,8 @@
  * @ingroup dev_impl_fake dev_impl_navigation
  *
  * \brief `fakeNavigation`: Documentation to be added
+ *
+ * Parameters required by this device are shown in class: FakeNavigation_ParamsParser
  */
 class FakeNavigation :
         public yarp::dev::DeviceDriver,

@@ -52,6 +52,9 @@ public:
  * @ingroup dev_impl_fake dev_impl_navigation
  *
  * \brief `fakeLocalizer` Documentation to be added
+ *
+ * Parameters required by this device are shown in class: FakeLocalizer_ParamsParser
+ *
  */
 class FakeLocalizer :
         public yarp::dev::DeviceDriver,

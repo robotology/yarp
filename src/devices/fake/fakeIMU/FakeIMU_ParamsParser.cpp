@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Sun Feb 11 10:36:32 2024
+// Generated on: Mon Feb 12 13:43:56 2024
 
 
 #include "FakeIMU_ParamsParser.h"
@@ -24,6 +24,8 @@ std::vector<std::string> FakeIMU_ParamsParser::getListOfParams() const
 {
     std::vector<std::string> params;
     params.push_back("period");
+    params.push_back("constantValue");
+    params.push_back("sensorName");
     return params;
 }
 
@@ -42,7 +44,7 @@ bool      FakeIMU_ParamsParser::parseParams(const yarp::os::Searchable & config)
     {
         if (config.check("period"))
         {
-            m_period = config.find("period").asFloat64();
+            m_period = config.find("period").asInt64();
             yCInfo(FakeIMUParamsCOMPONENT) << "Parameter 'period' using value:" << m_period;
         }
         else
@@ -50,6 +52,34 @@ bool      FakeIMU_ParamsParser::parseParams(const yarp::os::Searchable & config)
             yCInfo(FakeIMUParamsCOMPONENT) << "Parameter 'period' using DEFAULT value:" << m_period;
         }
         prop_check.unput("period");
+    }
+
+    //Parser of parameter constantValue
+    {
+        if (config.check("constantValue"))
+        {
+            m_constantValue = config.find("constantValue").asBool();
+            yCInfo(FakeIMUParamsCOMPONENT) << "Parameter 'constantValue' using value:" << m_constantValue;
+        }
+        else
+        {
+            yCInfo(FakeIMUParamsCOMPONENT) << "Parameter 'constantValue' using DEFAULT value:" << m_constantValue;
+        }
+        prop_check.unput("constantValue");
+    }
+
+    //Parser of parameter sensorName
+    {
+        if (config.check("sensorName"))
+        {
+            m_sensorName = config.find("sensorName").asString();
+            yCInfo(FakeIMUParamsCOMPONENT) << "Parameter 'sensorName' using value:" << m_sensorName;
+        }
+        else
+        {
+            yCInfo(FakeIMUParamsCOMPONENT) << "Parameter 'sensorName' using DEFAULT value:" << m_sensorName;
+        }
+        prop_check.unput("sensorName");
     }
 
     /*
@@ -88,10 +118,12 @@ std::string      FakeIMU_ParamsParser::getDocumentationOfDeviceParams() const
     doc = doc + std::string("This is the help for device: FakeIMU\n");
     doc = doc + std::string("\n");
     doc = doc + std::string("This is the list of the parameters accepted by the device:\n");
-    doc = doc + std::string("'period': thread period\n");
+    doc = doc + std::string("'period': Period over which the measurement is updated.\n");
+    doc = doc + std::string("'constantValue': If the parameter is present, the fake sensor values never changes (useful for testing server/client coherence).\n");
+    doc = doc + std::string("'sensorName': Name of the sensor\n");
     doc = doc + std::string("\n");
     doc = doc + std::string("Here are some examples of invocation command with yarpdev, with all params:\n");
-    doc = doc + " yarpdev --device FakeIMU --period 1.0\n";
+    doc = doc + " yarpdev --device FakeIMU --period 10 --constantValue false --sensorName sensorName\n";
     doc = doc + std::string("Using only mandatory params:\n");
     doc = doc + " yarpdev --device FakeIMU\n";
     doc = doc + std::string("=============================================\n\n");    return doc;

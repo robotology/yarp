@@ -21,10 +21,7 @@
 *
 * \brief `fakePositionSensor`: Fake position sensor device for testing purpose and reference for new similar devices
 *
-* Parameters accepted in the config argument of the open method:
-* | Parameter name | Type   | Units   | Default Value | Required | Description | Notes |
-* |:--------------:|:------:|:-------:|:-------------:|:--------:|:-----------:|:-----:|
-* | sensor_period  | double | seconds |   0.01        | No       | Period over which the measurement is updated.  |       |
+* Parameters required by this device are shown in class: FakePositionSensor_ParamsParser
 */
 
 class FakePositionSensor :

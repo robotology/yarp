@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Sun Feb 11 10:36:34 2024
+// Generated on: Mon Feb 12 13:43:57 2024
 
 
 #ifndef FAKEMICROPHONE_PARAMSPARSER_H
@@ -23,13 +23,17 @@
 * This class is the parameters parser for class FakeMicrophone.
 *
 * These are the used parameters:
-* | Group name | Parameter name | Type   | Units | Default Value | Required | Description   | Notes                  |
-* |:----------:|:--------------:|:------:|:-----:|:-------------:|:--------:|:-------------:|:----------------------:|
-* | -          | period         | double | s     | 1.0           | 0        | thread period | optional, default 1.0s |
+* | Group name | Parameter name    | Type   | Units   | Default Value | Required | Description                                                                                   | Notes                                               |
+* |:----------:|:-----------------:|:------:|:-------:|:-------------:|:--------:|:---------------------------------------------------------------------------------------------:|:---------------------------------------------------:|
+* | -          | period            | double | s       | 0.010         | 0        | the period of processing thread                                                               | A value of 10ms is recommended. Do to not modify it |
+* | -          | waveform          | string | -       | sine          | 0        | Defines the shape of the waveform. Can be one of the following: sine,sawtooth,square,constant | -                                                   |
+* | -          | signal_frequency  | int    | Hz      | 440           | 0        | Frequency of the generated signal                                                             | -                                                   |
+* | -          | signal_amplitude  | int    | -       | 32000         | 0        | Amplitude of the generated signal                                                             | -                                                   |
+* | -          | driver_frame_size | int    | samples | 512           | 0        | the number of samples to process on each iteration of the thread                              | -                                                   |
 *
 * The device can be launched by yarpdev using one of the following examples:
 * \code{.unparsed}
-* yarpdev --device FakeMicrophone --period 1.0
+* yarpdev --device FakeMicrophone --period 0.010 --waveform sine --signal_frequency 440 --signal_amplitude 32000 --driver_frame_size 512
 * \endcode
 *
 * \code{.unparsed}
@@ -53,7 +57,11 @@ public:
          int minor = 0;
     };
     const parser_version_type m_parser_version = {};
-    double m_period = {1.0};
+    double m_period = {0.010};
+    std::string m_waveform = {"sine"};
+    int m_signal_frequency = {440};
+    int m_signal_amplitude = {32000};
+    int m_driver_frame_size = {512};
 
     bool          parseParams(const yarp::os::Searchable & config) override;
     std::string   getDeviceType() const override { return m_device_type; }

@@ -20,10 +20,7 @@
 *
 * \brief `fakeAnalogSensor`: Fake analog sensor device for testing purpose and reference for new analog devices
 *
-* Parameters accepted in the config argument of the open method:
-* | Parameter name | Type   | Units | Default Value | Required | Description | Notes |
-* |:--------------:|:------:|:-----:|:-------------:|:--------:|:-----------:|:-----:|
-* |
+* Parameters required by this device are shown in class: FakeAnalogSensor_ParamsParser
 */
 
 class FakeAnalogSensor :

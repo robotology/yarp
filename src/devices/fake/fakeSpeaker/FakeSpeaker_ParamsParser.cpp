@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Sun Feb 11 10:36:34 2024
+// Generated on: Mon Feb 12 13:43:57 2024
 
 
 #include "FakeSpeaker_ParamsParser.h"
@@ -88,10 +88,10 @@ std::string      FakeSpeaker_ParamsParser::getDocumentationOfDeviceParams() cons
     doc = doc + std::string("This is the help for device: FakeSpeaker\n");
     doc = doc + std::string("\n");
     doc = doc + std::string("This is the list of the parameters accepted by the device:\n");
-    doc = doc + std::string("'period': thread period\n");
+    doc = doc + std::string("'period': the period of processing thread\n");
     doc = doc + std::string("\n");
     doc = doc + std::string("Here are some examples of invocation command with yarpdev, with all params:\n");
-    doc = doc + " yarpdev --device FakeSpeaker --period 1.0\n";
+    doc = doc + " yarpdev --device FakeSpeaker --period 0.010\n";
     doc = doc + std::string("Using only mandatory params:\n");
     doc = doc + " yarpdev --device FakeSpeaker\n";
     doc = doc + std::string("=============================================\n\n");    return doc;

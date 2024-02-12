@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Sun Feb 11 10:36:33 2024
+// Generated on: Mon Feb 12 13:43:56 2024
 
 
 #include "FakeLLMDevice_ParamsParser.h"
@@ -23,7 +23,7 @@ namespace {
 std::vector<std::string> FakeLLMDevice_ParamsParser::getListOfParams() const
 {
     std::vector<std::string> params;
-    params.push_back("period");
+    params.push_back("initial_prompt");
     return params;
 }
 
@@ -38,18 +38,18 @@ bool      FakeLLMDevice_ParamsParser::parseParams(const yarp::os::Searchable & c
 
     std::string config_string = config.toString();
     yarp::os::Property prop_check(config_string.c_str());
-    //Parser of parameter period
+    //Parser of parameter initial_prompt
     {
-        if (config.check("period"))
+        if (config.check("initial_prompt"))
         {
-            m_period = config.find("period").asFloat64();
-            yCInfo(FakeLLMDeviceParamsCOMPONENT) << "Parameter 'period' using value:" << m_period;
+            m_initial_prompt = config.find("initial_prompt").asString();
+            yCInfo(FakeLLMDeviceParamsCOMPONENT) << "Parameter 'initial_prompt' using value:" << m_initial_prompt;
         }
         else
         {
-            yCInfo(FakeLLMDeviceParamsCOMPONENT) << "Parameter 'period' using DEFAULT value:" << m_period;
+            yCInfo(FakeLLMDeviceParamsCOMPONENT) << "Parameter 'initial_prompt' using DEFAULT value:" << m_initial_prompt;
         }
-        prop_check.unput("period");
+        prop_check.unput("initial_prompt");
     }
 
     /*
@@ -88,10 +88,10 @@ std::string      FakeLLMDevice_ParamsParser::getDocumentationOfDeviceParams() co
     doc = doc + std::string("This is the help for device: FakeLLMDevice\n");
     doc = doc + std::string("\n");
     doc = doc + std::string("This is the list of the parameters accepted by the device:\n");
-    doc = doc + std::string("'period': thread period\n");
+    doc = doc + std::string("'initial_prompt': intial prompt\n");
     doc = doc + std::string("\n");
     doc = doc + std::string("Here are some examples of invocation command with yarpdev, with all params:\n");
-    doc = doc + " yarpdev --device FakeLLMDevice --period 1.0\n";
+    doc = doc + " yarpdev --device FakeLLMDevice --initial_prompt <optional_value>\n";
     doc = doc + std::string("Using only mandatory params:\n");
     doc = doc + " yarpdev --device FakeLLMDevice\n";
     doc = doc + std::string("=============================================\n\n");    return doc;

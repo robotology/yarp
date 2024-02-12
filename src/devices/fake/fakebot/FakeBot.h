@@ -20,6 +20,8 @@ YARP_DECLARE_LOG_COMPONENT(FAKEBOT)
  * @ingroup dev_impl_fake dev_impl_deprecated
  *
  * \brief `fakebot` *deprecated*: Documentation to be added
+ *
+ * Parameters required by this device are shown in class: FakeBot_ParamsParser
  */
 class FakeBot :
         public yarp::dev::DeprecatedDeviceDriver,

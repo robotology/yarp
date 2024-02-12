@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Sun Feb 11 10:36:34 2024
+// Generated on: Mon Feb 12 13:43:57 2024
 
 
 #ifndef FAKESPEAKER_PARAMSPARSER_H
@@ -23,13 +23,13 @@
 * This class is the parameters parser for class FakeSpeaker.
 *
 * These are the used parameters:
-* | Group name | Parameter name | Type   | Units | Default Value | Required | Description   | Notes                  |
-* |:----------:|:--------------:|:------:|:-----:|:-------------:|:--------:|:-------------:|:----------------------:|
-* | -          | period         | double | s     | 1.0           | 0        | thread period | optional, default 1.0s |
+* | Group name | Parameter name | Type   | Units | Default Value | Required | Description                     | Notes                                               |
+* |:----------:|:--------------:|:------:|:-----:|:-------------:|:--------:|:-------------------------------:|:---------------------------------------------------:|
+* | -          | period         | double | s     | 0.010         | 0        | the period of processing thread | A value of 10ms is recommended. Do to not modify it |
 *
 * The device can be launched by yarpdev using one of the following examples:
 * \code{.unparsed}
-* yarpdev --device FakeSpeaker --period 1.0
+* yarpdev --device FakeSpeaker --period 0.010
 * \endcode
 *
 * \code{.unparsed}
@@ -53,7 +53,7 @@ public:
          int minor = 0;
     };
     const parser_version_type m_parser_version = {};
-    double m_period = {1.0};
+    double m_period = {0.010};
 
     bool          parseParams(const yarp::os::Searchable & config) override;
     std::string   getDeviceType() const override { return m_device_type; }

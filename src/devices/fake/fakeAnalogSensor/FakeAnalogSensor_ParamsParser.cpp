@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Sun Feb 11 10:36:32 2024
+// Generated on: Mon Feb 12 13:43:56 2024
 
 
 #include "FakeAnalogSensor_ParamsParser.h"

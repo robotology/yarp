@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Sun Feb 11 10:36:33 2024
+// Generated on: Mon Feb 12 13:43:57 2024
 
 
 #ifndef FAKESERIALPORT_PARAMSPARSER_H
@@ -23,17 +23,36 @@
 * This class is the parameters parser for class FakeSerialPort.
 *
 * These are the used parameters:
-* | Group name | Parameter name | Type   | Units | Default Value | Required | Description   | Notes                  |
-* |:----------:|:--------------:|:------:|:-----:|:-------------:|:--------:|:-------------:|:----------------------:|
-* | -          | period         | double | s     | 1.0           | 0        | thread period | optional, default 1.0s |
+* | Group name | Parameter name        | Type   | Units | Default Value | Required | Description                                                                                  | Notes                                                                                                                                                                                                                                                                   |
+* |:----------:|:---------------------:|:------:|:-----:|:-------------:|:--------:|:--------------------------------------------------------------------------------------------:|:-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------:|
+* | -          | comport               | string | -     | COM3          | 1        | name of the serial channel                                                                   | optional, default 1.0s                                                                                                                                                                                                                                                  |
+* | -          | verbose               | int    | -     | 1             | 0        | Specifies if the device is in verbose mode (0/1)                                             | optional, default 1.0s                                                                                                                                                                                                                                                  |
+* | -          | baudrate              | int    | -     | 9600          | 1        | Specifies the baudrate at which the communication port operates                              | optional, default 1.0s                                                                                                                                                                                                                                                  |
+* | -          | xonlim                | int    | -     | 0             | 0        | Specifies the minimum number of bytes in input buffer before XON char is sent                | Negative value indicates that default value should be used (Win32)                                                                                                                                                                                                      |
+* | -          | xofflim               | int    | -     | 0             | 0        | Specifies the maximum number of bytes in input buffer before XOFF char is sent               | Negative value indicates that default value should be used (Win32)                                                                                                                                                                                                      |
+* | -          | readmincharacters     | int    | ms    | 1             | 0        | Specifies the minimum number of characters for non-canonical read (POSIX)                    | BEWARE: the exit condition for recv() function is readmincharacters && readtimeoutmsec.                                                                                                                                                                                 |
+* | -          | readtimeoutmsec       | int    | ms    | 100           | 0        | Specifies the time to wait before returning from read. Negative value means infinite timeout | BEWARE: the exit condition for recv() function is readmincharacters && readtimeoutmsec.                                                                                                                                                                                 |
+* | -          | paritymode            | string | -     | EVEN          | 0        | Specifies the parity mode (EVEN, ODD, NONE                                                   | POSIX supports even and odd parity. Additionally Win32 supports mark and space parity modes                                                                                                                                                                             |
+* | -          | ctsenb                | int    | -     | 0             | 0        | Enable & set CTS mode                                                                        | RTS & CTS are enabled/disabled together on some systems                                                                                                                                                                                                                 |
+* | -          | rtsenb                | int    | -     | 0             | 0        | Enable & set RTS mode                                                                        | RTS & CTS are enabled/disabled together on some systems. 0 = Disable RTS. 1 = Enable RTS. 2 = Enable RTS flow-control handshaking (Win32). 3 = Specifies that RTS line will be high if bytes are available for transmission. After transmission RTS will be low (Win32) |
+* | -          | xinenb                | int    | -     | 0             | 0        | Enable/disable software flow control on input                                                | -                                                                                                                                                                                                                                                                       |
+* | -          | xoutenb               | int    | -     | 0             | 0        | Enable/disable software flow control on output.                                              | -                                                                                                                                                                                                                                                                       |
+* | -          | modem                 | int    | -     | 0             | 0        | Specifies if device is a modem (POSIX). If not set modem status lines are ignored.           | -                                                                                                                                                                                                                                                                       |
+* | -          | rcvenb                | int    | -     | 0             | 0        | Enable/disable receiver (POSIX).                                                             | -                                                                                                                                                                                                                                                                       |
+* | -          | dsrenb                | int    | -     | 0             | 0        | Controls whether DSR is disabled or enabled (Win32).                                         | -                                                                                                                                                                                                                                                                       |
+* | -          | dtrdisable            | int    | -     | 0             | 0        | Controls whether DTR is disabled or enabled                                                  | -                                                                                                                                                                                                                                                                       |
+* | -          | databits              | int    | s     | 7             | 0        | Data bits. Valid values 5, 6, 7 and 8 data bits. Additionally Win32 supports 4 data bits.    | -                                                                                                                                                                                                                                                                       |
+* | -          | stopbits              | int    | s     | 1             | 0        | Stop bits. Valid values are 1 and 2.                                                         | -                                                                                                                                                                                                                                                                       |
+* | -          | line_terminator_char1 | string | -     | \r            | 0        | line terminator character for receiveLine()                                                  | -                                                                                                                                                                                                                                                                       |
+* | -          | line_terminator_char2 | string | -     | \n            | 0        | line terminator character for receiveLine()                                                  | -                                                                                                                                                                                                                                                                       |
 *
 * The device can be launched by yarpdev using one of the following examples:
 * \code{.unparsed}
-* yarpdev --device FakeSerialPort --period 1.0
+* yarpdev --device FakeSerialPort --comport COM3 --verbose 1 --baudrate 9600 --xonlim 0 --xofflim 0 --readmincharacters 1 --readtimeoutmsec 100 --paritymode EVEN --ctsenb 0 --rtsenb 0 --xinenb 0 --xoutenb 0 --modem 0 --rcvenb 0 --dsrenb 0 --dtrdisable 0 --databits 7 --stopbits 1 --line_terminator_char1 \r --line_terminator_char2 \n
 * \endcode
 *
 * \code{.unparsed}
-* yarpdev --device FakeSerialPort
+* yarpdev --device FakeSerialPort --comport COM3 --baudrate 9600
 * \endcode
 *
 */
@@ -53,7 +72,26 @@ public:
          int minor = 0;
     };
     const parser_version_type m_parser_version = {};
-    double m_period = {1.0};
+    std::string m_comport = {"COM3"};
+    int m_verbose = {1};
+    int m_baudrate = {9600};
+    int m_xonlim = {0};
+    int m_xofflim = {0};
+    int m_readmincharacters = {1};
+    int m_readtimeoutmsec = {100};
+    std::string m_paritymode = {"EVEN"};
+    int m_ctsenb = {0};
+    int m_rtsenb = {0};
+    int m_xinenb = {0};
+    int m_xoutenb = {0};
+    int m_modem = {0};
+    int m_rcvenb = {0};
+    int m_dsrenb = {0};
+    int m_dtrdisable = {0};
+    int m_databits = {7};
+    int m_stopbits = {1};
+    std::string m_line_terminator_char1 = {"\r"};
+    std::string m_line_terminator_char2 = {"\n"};
 
     bool          parseParams(const yarp::os::Searchable & config) override;
     std::string   getDeviceType() const override { return m_device_type; }

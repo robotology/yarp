@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Sun Feb 11 10:36:31 2024
+// Generated on: Mon Feb 12 13:43:55 2024
 
 
 #ifndef FAKEDEPTHCAMERADRIVER_PARAMSPARSER_H
@@ -23,13 +23,23 @@
 * This class is the parameters parser for class FakeDepthCameraDriver.
 *
 * These are the used parameters:
-* | Group name | Parameter name | Type   | Units | Default Value | Required | Description   | Notes                  |
-* |:----------:|:--------------:|:------:|:-----:|:-------------:|:--------:|:-------------:|:----------------------:|
-* | -          | period         | double | s     | 1.0           | 0        | thread period | optional, default 1.0s |
+* | Group name | Parameter name | Type   | Units | Default Value | Required | Description | Notes                                    |
+* |:----------:|:--------------:|:------:|:-----:|:-------------:|:--------:|:-----------:|:----------------------------------------:|
+* | -          | rgb_h          | double | -     | 480.0         | 0        | rgb_h       | -                                        |
+* | -          | rgb_w          | double | -     | 640.0         | 0        | rgb_w       | -                                        |
+* | -          | dep_h          | double | -     | 480.0         | 0        | dep_h       | probably it should be identical to rgb_h |
+* | -          | dep_w          | double | -     | 640.0         | 0        | dep_w       | probably it should be identical to rgb_w |
+* | -          | accuracy       | double | -     | 0.001         | 0        | accuracy    | -                                        |
+* | -          | rgb_Vfov       | double | -     | 50.0          | 0        | rgb_Vfov    | -                                        |
+* | -          | rgb_Hfov       | double | -     | 36.0          | 0        | rgb_Hfov    | -                                        |
+* | -          | dep_Vfov       | double | -     | 50.0          | 0        | dep_Vfov    | -                                        |
+* | -          | dep_Hfov       | double | -     | 36.0          | 0        | dep_Hfov    | -                                        |
+* | -          | dep_near       | double | -     | 0.2           | 0        | dep_near    | -                                        |
+* | -          | dep_far        | double | -     | 6.0           | 0        | dep_far     | -                                        |
 *
 * The device can be launched by yarpdev using one of the following examples:
 * \code{.unparsed}
-* yarpdev --device FakeDepthCameraDriver --period 1.0
+* yarpdev --device FakeDepthCameraDriver --rgb_h 480.0 --rgb_w 640.0 --dep_h 480.0 --dep_w 640.0 --accuracy 0.001 --rgb_Vfov 50.0 --rgb_Hfov 36.0 --dep_Vfov 50.0 --dep_Hfov 36.0 --dep_near 0.2 --dep_far 6.0
 * \endcode
 *
 * \code{.unparsed}
@@ -53,7 +63,17 @@ public:
          int minor = 0;
     };
     const parser_version_type m_parser_version = {};
-    double m_period = {1.0};
+    double m_rgb_h = {480.0};
+    double m_rgb_w = {640.0};
+    double m_dep_h = {480.0};
+    double m_dep_w = {640.0};
+    double m_accuracy = {0.001};
+    double m_rgb_Vfov = {50.0};
+    double m_rgb_Hfov = {36.0};
+    double m_dep_Vfov = {50.0};
+    double m_dep_Hfov = {36.0};
+    double m_dep_near = {0.2};
+    double m_dep_far = {6.0};
 
     bool          parseParams(const yarp::os::Searchable & config) override;
     std::string   getDeviceType() const override { return m_device_type; }

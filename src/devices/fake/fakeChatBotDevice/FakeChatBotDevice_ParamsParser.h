@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Sun Feb 11 10:36:31 2024
+// Generated on: Mon Feb 12 13:43:55 2024
 
 
 #ifndef FAKECHATBOTDEVICE_PARAMSPARSER_H
@@ -23,13 +23,13 @@
 * This class is the parameters parser for class FakeChatBotDevice.
 *
 * These are the used parameters:
-* | Group name | Parameter name | Type   | Units | Default Value | Required | Description   | Notes                  |
-* |:----------:|:--------------:|:------:|:-----:|:-------------:|:--------:|:-------------:|:----------------------:|
-* | -          | period         | double | s     | 1.0           | 0        | thread period | optional, default 1.0s |
+* | Group name | Parameter name | Type   | Units | Default Value | Required | Description   | Notes |
+* |:----------:|:--------------:|:------:|:-----:|:-------------:|:--------:|:-------------:|:-----:|
+* | -          | language       | string | -     | eng           | 0        | language code | -     |
 *
 * The device can be launched by yarpdev using one of the following examples:
 * \code{.unparsed}
-* yarpdev --device FakeChatBotDevice --period 1.0
+* yarpdev --device FakeChatBotDevice --language eng
 * \endcode
 *
 * \code{.unparsed}
@@ -53,7 +53,7 @@ public:
          int minor = 0;
     };
     const parser_version_type m_parser_version = {};
-    double m_period = {1.0};
+    std::string m_language = {"eng"};
 
     bool          parseParams(const yarp::os::Searchable & config) override;
     std::string   getDeviceType() const override { return m_device_type; }

@@ -79,6 +79,8 @@ struct ImpedanceParameters
  * This device is implementing last version of interfaces and it is compatible
  * with controlBoard_nws_yarp device.
  *
+ * Parameters required by this device are shown in class: FakeMotionControl_ParamsParser
+ *
  * WIP - Some interfaces could be not implemented.
  */
 class FakeMotionControl :

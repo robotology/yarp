@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Sun Feb 11 10:36:35 2024
+// Generated on: Mon Feb 12 13:43:58 2024
 
 
 #include "FakeNavigation_ParamsParser.h"
@@ -23,7 +23,8 @@ namespace {
 std::vector<std::string> FakeNavigation_ParamsParser::getListOfParams() const
 {
     std::vector<std::string> params;
-    params.push_back("period");
+    params.push_back("navigation_time");
+    params.push_back("reached_time");
     return params;
 }
 
@@ -38,18 +39,32 @@ bool      FakeNavigation_ParamsParser::parseParams(const yarp::os::Searchable & 
 
     std::string config_string = config.toString();
     yarp::os::Property prop_check(config_string.c_str());
-    //Parser of parameter period
+    //Parser of parameter navigation_time
     {
-        if (config.check("period"))
+        if (config.check("navigation_time"))
         {
-            m_period = config.find("period").asFloat64();
-            yCInfo(FakeNavigationParamsCOMPONENT) << "Parameter 'period' using value:" << m_period;
+            m_navigation_time = config.find("navigation_time").asInt64();
+            yCInfo(FakeNavigationParamsCOMPONENT) << "Parameter 'navigation_time' using value:" << m_navigation_time;
         }
         else
         {
-            yCInfo(FakeNavigationParamsCOMPONENT) << "Parameter 'period' using DEFAULT value:" << m_period;
+            yCInfo(FakeNavigationParamsCOMPONENT) << "Parameter 'navigation_time' using DEFAULT value:" << m_navigation_time;
         }
-        prop_check.unput("period");
+        prop_check.unput("navigation_time");
+    }
+
+    //Parser of parameter reached_time
+    {
+        if (config.check("reached_time"))
+        {
+            m_reached_time = config.find("reached_time").asInt64();
+            yCInfo(FakeNavigationParamsCOMPONENT) << "Parameter 'reached_time' using value:" << m_reached_time;
+        }
+        else
+        {
+            yCInfo(FakeNavigationParamsCOMPONENT) << "Parameter 'reached_time' using DEFAULT value:" << m_reached_time;
+        }
+        prop_check.unput("reached_time");
     }
 
     /*
@@ -88,10 +103,11 @@ std::string      FakeNavigation_ParamsParser::getDocumentationOfDeviceParams() c
     doc = doc + std::string("This is the help for device: FakeNavigation\n");
     doc = doc + std::string("\n");
     doc = doc + std::string("This is the list of the parameters accepted by the device:\n");
-    doc = doc + std::string("'period': thread period\n");
+    doc = doc + std::string("'navigation_time': navigation_time\n");
+    doc = doc + std::string("'reached_time': reached_time\n");
     doc = doc + std::string("\n");
     doc = doc + std::string("Here are some examples of invocation command with yarpdev, with all params:\n");
-    doc = doc + " yarpdev --device FakeNavigation --period 1.0\n";
+    doc = doc + " yarpdev --device FakeNavigation --navigation_time 500 --reached_time 100\n";
     doc = doc + std::string("Using only mandatory params:\n");
     doc = doc + " yarpdev --device FakeNavigation\n";
     doc = doc + std::string("=============================================\n\n");    return doc;

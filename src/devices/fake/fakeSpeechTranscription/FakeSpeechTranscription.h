@@ -16,9 +16,11 @@
 using namespace yarp::os;
 
 /**
- * @ingroup dev_impl_other
+ * @ingroup dev_impl_fake dev_impl_other
  *
  * \brief `FakeSpeechTranscription`: A fake implementation of a speech transcriber plugin.
+ *
+ * Parameters required by this device are shown in class: FakeSpeechTranscription_ParamsParser
  */
 class FakeSpeechTranscription :
         public yarp::dev::DeviceDriver,

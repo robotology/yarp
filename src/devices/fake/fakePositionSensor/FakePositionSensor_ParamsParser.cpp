@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Sun Feb 11 10:36:33 2024
+// Generated on: Mon Feb 12 13:43:57 2024
 
 
 #include "FakePositionSensor_ParamsParser.h"
@@ -91,7 +91,7 @@ std::string      FakePositionSensor_ParamsParser::getDocumentationOfDeviceParams
     doc = doc + std::string("'period': thread period\n");
     doc = doc + std::string("\n");
     doc = doc + std::string("Here are some examples of invocation command with yarpdev, with all params:\n");
-    doc = doc + " yarpdev --device FakePositionSensor --period 1.0\n";
+    doc = doc + " yarpdev --device FakePositionSensor --period 0.01\n";
     doc = doc + std::string("Using only mandatory params:\n");
     doc = doc + " yarpdev --device FakePositionSensor\n";
     doc = doc + std::string("=============================================\n\n");    return doc;

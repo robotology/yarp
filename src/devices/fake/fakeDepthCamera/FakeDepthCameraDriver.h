@@ -16,11 +16,14 @@
 #include <yarp/dev/PolyDriver.h>
 #include "FakeDepthCameraDriver_ParamsParser.h"
 
- /**
-  * @ingroup dev_impl_fake
-  *
-  * \brief `fakeDepthCamera`: Documentation to be added
-  */
+/**
+ * @ingroup dev_impl_fake
+ *
+ * \brief `fakeDepthCamera`: Documentation to be added
+ *
+ * Parameters required by this device are shown in class: FakeDepthCameraDriver_ParamsParser
+ */
+
 class fakeDepthCameraDriver :
         public yarp::dev::DeviceDriver,
         public yarp::dev::IRGBDSensor,

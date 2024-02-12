@@ -25,6 +25,8 @@
  * joint coupling device to help testing the high level software.
  *
  * WIP - it is very basic now, not all interfaces are implemented yet.
+ *
+ * Parameters required by this device are shown in class: FakeJointCoupling_ParamsParser
  */
 class FakeJointCoupling :
         public yarp::dev::DeviceDriver,

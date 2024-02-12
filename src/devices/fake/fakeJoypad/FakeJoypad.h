@@ -11,6 +11,13 @@
 #include <vector>
 #include "FakeJoypad_ParamsParser.h"
 
+ /**
+ * @ingroup dev_impl_fake
+ * \brief `FakeJoypad` : fake device implementing the device interface
+ *
+ * Parameters required by this device are shown in class: FakeJoypad_ParamsParser
+ *
+ */
 class FakeJoypad :
         public yarp::dev::IJoypadEventDriven,
         //public yarp::dev::IJoypadController,

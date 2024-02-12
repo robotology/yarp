@@ -1,1 +1,3 @@
-  * |      |  period           | double  | s              |   1.0         | No                          | thread period                              | optional, default 1.0s |
+* |   |  period            | int     | millisecond    |   10          | No          | Period over which the measurement is updated.  |       |
+* |   |  constantValue     | bool    | -              |   false       | No          | If the parameter is present, the fake sensor values never changes (useful for testing server/client coherence).  |       |
+* |   |  sensorName        | string  | -              |   sensorName  | No          | Name of the sensor | |

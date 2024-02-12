@@ -22,36 +22,8 @@ constexpr double default_period = 0.02;
  * \brief `fakeOdometry2D`: A device for generating a fake odometry.
  * This device will generate the odometry and then the user can retrieve it by calling `getOdometry`.
  *
- *   Parameters required by this device are:
- * | Parameter name | SubParameter            | Type    | Units          | Default Value | Required                       | Description                                                                                         | Notes |
- * |:--------------:|:-----------------------:|:-------:|:--------------:|:-------------:|:-----------------------------: |:---------------------------------------------------------------------------------------------------:|:-----:|
- * | period         |      -                  | double  | s              |   0.02        | No                             | refresh period of the broadcasted values in s                                                      | default 0.02s |
+ * Parameters required by this device are shown in class: FakeOdometry2D_ParamsParser
  *
- * Example of configuration file using .ini format.
- *
- * \code{.unparsed}
- * device FakeOdometry
- * period 0.02
- * \endcode
- *
- * example of xml file
- *
- * \code{.unparsed}
- * <?xml version="1.0" encoding="UTF-8" ?>
- * <!DOCTYPE robot PUBLIC "-//YARP//DTD yarprobotinterface 3.0//EN" "http://www.yarp.it/DTD/yarprobotinterfaceV3.0.dtd">
- * <robot name="fakeOdometry" build="2" portprefix="test" xmlns:xi="http://www.w3.org/2001/XInclude">
- *   <devices>
- *     <device xmlns:xi="http://www.w3.org/2001/XInclude" name="fakeOdometry_device" type="fakeOdometry">
- *     </device>
- *   </devices>
- * </robot>
- * \endcode
- *
- * example of command via terminal.
- *
- * \code{.unparsed}
- * yarpdev --device fakeOdometry
- * \endcode
  */
 
 class FakeOdometry2D :

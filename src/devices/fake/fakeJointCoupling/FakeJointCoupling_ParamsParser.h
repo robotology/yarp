@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Sun Feb 11 10:36:32 2024
+// Generated on: Mon Feb 12 13:43:56 2024
 
 
 #ifndef FAKEJOINTCOUPLING_PARAMSPARSER_H
@@ -23,13 +23,13 @@
 * This class is the parameters parser for class FakeJointCoupling.
 *
 * These are the used parameters:
-* | Group name | Parameter name | Type   | Units | Default Value | Required | Description   | Notes                  |
-* |:----------:|:--------------:|:------:|:-----:|:-------------:|:--------:|:-------------:|:----------------------:|
-* | -          | period         | double | s     | 1.0           | 0        | thread period | optional, default 1.0s |
+* | Group name | Parameter name | Type   | Units | Default Value          | Required | Description        | Notes |
+* |:----------:|:--------------:|:------:|:-----:|:----------------------:|:--------:|:------------------:|:-----:|
+* | -          | rpc_port_name  | string | -     | /fakeJointCoupling/rpc | 0        | Full rpc port name | -     |
 *
 * The device can be launched by yarpdev using one of the following examples:
 * \code{.unparsed}
-* yarpdev --device FakeJointCoupling --period 1.0
+* yarpdev --device FakeJointCoupling --rpc_port_name /fakeJointCoupling/rpc
 * \endcode
 *
 * \code{.unparsed}
@@ -53,7 +53,7 @@ public:
          int minor = 0;
     };
     const parser_version_type m_parser_version = {};
-    double m_period = {1.0};
+    std::string m_rpc_port_name = {"/fakeJointCoupling/rpc"};
 
     bool          parseParams(const yarp::os::Searchable & config) override;
     std::string   getDeviceType() const override { return m_device_type; }

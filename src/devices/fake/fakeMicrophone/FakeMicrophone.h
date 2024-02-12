@@ -21,15 +21,8 @@
 * It can generate various signals, i.e. sine, sawtooth, square wave, constant.
 * This device driver derives from AudioRecorderDeviceBase base class. Please check its documentation for additional details.
 *
-* Parameters used by this device are:
-* | Parameter name    | SubParameter   | Type    | Units          | Default Value            | Required                    | Description                                                       | Notes |
-* |:-----------------:|:--------------:|:-------:|:--------------:|:------------------------:|:--------------------------: |:-----------------------------------------------------------------:|:-----:|
-* | AUDIO_BASE        |     ***        |         | -              |  -                       | No                          | For the documentation of AUDIO_BASE group, please refer to the documentation of the base class AudioRecorderDeviceBase |       |
-* | period            |      -         | double  | s              |  0.010                   | No                          | the period of processing thread                                   | A value of 10ms is recommended. Do to not modify it |
-* | waveform          |      -         | string  | -              | sine                     | No                          | Defines the shape of the waveform. Can be one of the following: sine,sawtooth,square,constant | - |
-* | signal_frequency  |      -         | int     | Hz             | 440                      | No                          | Frequency of the generated signal | - |
-* | signal_amplitude  |      -         | int     |                | 32000                    | No                          | Amplitude of the generated signal | - |
-* | driver_frame_size |      -         | int     | samples        |  512                     | No                          | the number of samples to process on each iteration of the thread  | - |
+* Parameters required by this device are shown in class: FakeMicrophone_ParamsParser
+* This device also inherits some parameters from AudioRecorderDeviceBase
 *
 * See \ref AudioDoc for additional documentation on YARP audio.
 */

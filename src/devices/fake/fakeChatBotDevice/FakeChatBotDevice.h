@@ -17,6 +17,8 @@
 *
 * @brief `fakeChatBotDevice` : a fake device which implements the IChatBot interface for testing purposes.
 *
+* Parameters required by this device are shown in class: FakeChatBotDevice_ParamsParser
+*
 */
 class FakeChatBotDevice : public yarp::dev::IChatBot,
                           public yarp::dev::DeviceDriver,

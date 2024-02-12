@@ -15,16 +15,7 @@
 * @ingroup dev_impl_fake
 * \brief `fakeIMU` : fake device implementing the device interface typically implemented by an Inertial Measurement Unit
 *
-* | YARP device name |
-* |:-----------------:|
-* | `fakeIMU` |
-*
-*
-* The parameters accepted by this device are:
-* | Parameter name | SubParameter   | Type    | Units          | Default Value | Required                    | Description                                                       | Notes |
-* |:--------------:|:--------------:|:-------:|:--------------:|:-------------:|:--------------------------: |:-----------------------------------------------------------------:|:-----:|
-* | period         |       -        | int     | millisecond    |   10          | No          | Period over which the measurement is updated.  |       |
-* | constantValue  |       -        |  -      | -              |   -           | No          | If the parameter is present, the fake sensor values never changes (useful for testing server/client coherence).  |       |
+* Parameters required by this device are shown in class: FakeIMU_ParamsParser
 *
 */
 class FakeIMU :

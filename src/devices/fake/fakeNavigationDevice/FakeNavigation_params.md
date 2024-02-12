@@ -1,1 +1,2 @@
-  * |      |  period           | double  | s              |   1.0         | No                          | thread period                              | optional, default 1.0s |
+  * |      |  navigation_time        | int  | -              |   500         | No         | navigation_time               |  |
+  * |      |  reached_time           | int  | -              |   100         | No         | reached_time                  |  |

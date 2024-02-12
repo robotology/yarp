@@ -16,6 +16,8 @@
 *
 * @brief `fakeLLMDevice` : a fake device which implements the ILLM interface for testing purposes.
 *
+* Parameters required by this device are shown in class: FakeLLMDevice_ParamsParser
+*
 */
 class FakeLLMDevice : public yarp::dev::ILLM,
                       public yarp::dev::DeviceDriver,

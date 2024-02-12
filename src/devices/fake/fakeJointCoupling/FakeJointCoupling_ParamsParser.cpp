@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Sun Feb 11 10:36:32 2024
+// Generated on: Mon Feb 12 13:43:56 2024
 
 
 #include "FakeJointCoupling_ParamsParser.h"
@@ -23,7 +23,7 @@ namespace {
 std::vector<std::string> FakeJointCoupling_ParamsParser::getListOfParams() const
 {
     std::vector<std::string> params;
-    params.push_back("period");
+    params.push_back("rpc_port_name");
     return params;
 }
 
@@ -38,18 +38,18 @@ bool      FakeJointCoupling_ParamsParser::parseParams(const yarp::os::Searchable
 
     std::string config_string = config.toString();
     yarp::os::Property prop_check(config_string.c_str());
-    //Parser of parameter period
+    //Parser of parameter rpc_port_name
     {
-        if (config.check("period"))
+        if (config.check("rpc_port_name"))
         {
-            m_period = config.find("period").asFloat64();
-            yCInfo(FakeJointCouplingParamsCOMPONENT) << "Parameter 'period' using value:" << m_period;
+            m_rpc_port_name = config.find("rpc_port_name").asString();
+            yCInfo(FakeJointCouplingParamsCOMPONENT) << "Parameter 'rpc_port_name' using value:" << m_rpc_port_name;
         }
         else
         {
-            yCInfo(FakeJointCouplingParamsCOMPONENT) << "Parameter 'period' using DEFAULT value:" << m_period;
+            yCInfo(FakeJointCouplingParamsCOMPONENT) << "Parameter 'rpc_port_name' using DEFAULT value:" << m_rpc_port_name;
         }
-        prop_check.unput("period");
+        prop_check.unput("rpc_port_name");
     }
 
     /*
@@ -88,10 +88,10 @@ std::string      FakeJointCoupling_ParamsParser::getDocumentationOfDeviceParams(
     doc = doc + std::string("This is the help for device: FakeJointCoupling\n");
     doc = doc + std::string("\n");
     doc = doc + std::string("This is the list of the parameters accepted by the device:\n");
-    doc = doc + std::string("'period': thread period\n");
+    doc = doc + std::string("'rpc_port_name': Full rpc port name\n");
     doc = doc + std::string("\n");
     doc = doc + std::string("Here are some examples of invocation command with yarpdev, with all params:\n");
-    doc = doc + " yarpdev --device FakeJointCoupling --period 1.0\n";
+    doc = doc + " yarpdev --device FakeJointCoupling --rpc_port_name /fakeJointCoupling/rpc\n";
     doc = doc + std::string("Using only mandatory params:\n");
     doc = doc + " yarpdev --device FakeJointCoupling\n";
     doc = doc + std::string("=============================================\n\n");    return doc;

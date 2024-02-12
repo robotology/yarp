@@ -29,11 +29,7 @@
 *
 * @brief `fakeLaser` : fake sensor device driver for testing purposes and reference for IRangefinder2D devices.
 *
-* | YARP device name |
-* |:-----------------:|
-* | `fakeLaser` |
-*
-* \section fakeLaser_device_parameters Description of input parameters
+* Parameters required by this device are shown in class: FakeLaser_ParamsParser
 *
 * \section Usage examples:
 * yarpdev --device fakeLaser --help
