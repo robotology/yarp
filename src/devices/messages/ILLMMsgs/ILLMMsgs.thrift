@@ -5,10 +5,11 @@
 
 namespace yarp yarp.dev.llm
 
-struct Message {
-    string sender;
-    string content;
-}
+struct LLM_Message {
+} (
+  yarp.name = "yarp::dev::LLM_Message"
+  yarp.includefile="yarp/dev/ILLM.h"
+)
 
 struct return_readPrompt{
     1: bool ret = false;
@@ -17,12 +18,12 @@ struct return_readPrompt{
 
 struct return_ask{
     1: bool ret = false;
-    2: string answer;
+    2: LLM_Message answer;
 }
 
 struct return_getConversation{
     1: bool ret = false;
-    2: list<Message> conversation;
+    2: list<LLM_Message> conversation;
 }
 
 service ILLMMsgs {

@@ -13,6 +13,7 @@
 #include <yarp/os/Property.h>
 
 #include <yarp/dev/ILLM.h>
+#include <yarp/dev/LLM_Message.h>
 #include <yarp/dev/PolyDriver.h>
 
 #include <ConversationCallback.h>

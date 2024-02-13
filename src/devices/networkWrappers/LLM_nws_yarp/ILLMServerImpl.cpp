@@ -55,7 +55,7 @@ yarp::dev::llm::return_ask ILLMRPCd::ask(const std::string& question)
         return ret;
     }
 
-    ret.ret = m_iLlm->ask(question, ret.answer);
+    ret.ret = m_iLlm->ask(question,ret.answer);
 
     if (ret.ret) {
         m_stream_conversation();
@@ -66,7 +66,7 @@ yarp::dev::llm::return_ask ILLMRPCd::ask(const std::string& question)
 
 void ILLMRPCd::m_stream_conversation()
 {
-    std::vector<std::pair<Author, Content>> conversation;
+    std::vector<yarp::dev::LLM_Message> conversation;
     if (!m_iLlm->getConversation(conversation)) {
         yCError(LLMSERVER, "Unable to retrieve the conversation");
         return;
@@ -74,10 +74,21 @@ void ILLMRPCd::m_stream_conversation()
 
     auto& bot = m_streaming_port.prepare();
     auto& list = bot.addList();
-    for (const auto& [author, message] : conversation) {
+    for (const auto& message : conversation) {
         auto& message_bot = list.addList();
-        message_bot.addString(author);
-        message_bot.addString(message);
+        message_bot.addString(message.type);
+        message_bot.addString(message.content);
+        auto& params_bot = message_bot.addList();
+        for(const auto& params: message.parameters)
+        {
+            params_bot.addString(params);
+        }
+
+        auto& args_bot = message_bot.addList();
+        for(const auto& args: message.arguments)
+        {
+            args_bot.addString(args);
+        }
     }
 
     m_streaming_port.write();
@@ -94,12 +105,9 @@ yarp::dev::llm::return_getConversation ILLMRPCd::getConversation()
         return ret;
     }
 
-    std::vector<std::pair<Author, Content>> conversation;
+    std::vector<yarp::dev::LLM_Message> conversation;
     ret.ret = m_iLlm->getConversation(conversation);
-
-    for (const auto& [author, message] : conversation) {
-        ret.conversation.push_back(yarp::dev::llm::Message(author, message));
-    }
+    ret.conversation = conversation;
 
     return ret;
 }

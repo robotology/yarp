@@ -13,7 +13,7 @@
 
 #include <yarp/os/Wire.h>
 #include <yarp/os/idl/WireTypes.h>
-#include <yarp/dev/llm/Message.h>
+#include <yarp/dev/ILLM.h>
 
 namespace yarp::dev::llm {
 
@@ -23,14 +23,14 @@ class return_getConversation :
 public:
     // Fields
     bool ret{false};
-    std::vector<Message> conversation{};
+    std::vector<yarp::dev::LLM_Message> conversation{};
 
     // Default constructor
     return_getConversation() = default;
 
     // Constructor with field values
     return_getConversation(const bool ret,
-                           const std::vector<Message>& conversation);
+                           const std::vector<yarp::dev::LLM_Message>& conversation);
 
     // Read structure on a Wire
     bool read(yarp::os::idl::WireReader& reader) override;
