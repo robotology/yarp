@@ -271,14 +271,14 @@ yarp::os::Things& FfmpegMonitorObject::update(yarp::os::Things& thing)
         Image* img = thing.cast_as< Image >();
 
         if (img == nullptr) {
-			Bottle* bot = thing.cast_as<Bottle>();
+            Bottle* bot = thing.cast_as<Bottle>();
             if (!yarp::os::Portable::copyPortable(*bot, imageBottleBuffer))
             {
                 yCError(FFMPEGMONITOR, "The input type is a Bottle, but it cannot be copied to an Image");
-			    success = false;
+                success = false;
             }
             img = &imageBottleBuffer;
-		}
+        }
 
         // Allocate memory for packet
         AVPacket *packet = av_packet_alloc();
@@ -356,8 +356,8 @@ yarp::os::Things& FfmpegMonitorObject::update(yarp::os::Things& thing)
         }
         else
         {
-			yCError(FFMPEGMONITOR, "Invalid input pixel code");
-		}
+            yCError(FFMPEGMONITOR, "Invalid input pixel code");
+        }
 
         // Check if compression was successful
         if (compressedBottle->get(0).asInt32() == 1) {
