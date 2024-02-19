@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Mon Feb 12 13:43:56 2024
+// Generated on: Mon Feb 19 16:27:59 2024
 
 
 #include "FakeIMU_ParamsParser.h"
@@ -20,12 +20,18 @@ namespace {
 }
 
 
+FakeIMU_ParamsParser::FakeIMU_ParamsParser()
+{
+}
+
+
 std::vector<std::string> FakeIMU_ParamsParser::getListOfParams() const
 {
     std::vector<std::string> params;
     params.push_back("period");
     params.push_back("constantValue");
     params.push_back("sensorName");
+    params.push_back("frameName");
     return params;
 }
 
@@ -82,6 +88,20 @@ bool      FakeIMU_ParamsParser::parseParams(const yarp::os::Searchable & config)
         prop_check.unput("sensorName");
     }
 
+    //Parser of parameter frameName
+    {
+        if (config.check("frameName"))
+        {
+            m_frameName = config.find("frameName").asString();
+            yCInfo(FakeIMUParamsCOMPONENT) << "Parameter 'frameName' using value:" << m_frameName;
+        }
+        else
+        {
+            yCInfo(FakeIMUParamsCOMPONENT) << "Parameter 'frameName' using DEFAULT value:" << m_frameName;
+        }
+        prop_check.unput("frameName");
+    }
+
     /*
     //This code check if the user set some parameter which are not check by the parser
     //If the parser is set in strict mode, this will generate an error
@@ -121,10 +141,11 @@ std::string      FakeIMU_ParamsParser::getDocumentationOfDeviceParams() const
     doc = doc + std::string("'period': Period over which the measurement is updated.\n");
     doc = doc + std::string("'constantValue': If the parameter is present, the fake sensor values never changes (useful for testing server/client coherence).\n");
     doc = doc + std::string("'sensorName': Name of the sensor\n");
+    doc = doc + std::string("'frameName': Name of the frame\n");
     doc = doc + std::string("\n");
     doc = doc + std::string("Here are some examples of invocation command with yarpdev, with all params:\n");
-    doc = doc + " yarpdev --device FakeIMU --period 10 --constantValue false --sensorName sensorName\n";
+    doc = doc + " yarpdev --device fakeIMU --period 10 --constantValue false --sensorName sensorName --frameName frameName\n";
     doc = doc + std::string("Using only mandatory params:\n");
-    doc = doc + " yarpdev --device FakeIMU\n";
+    doc = doc + " yarpdev --device fakeIMU\n";
     doc = doc + std::string("=============================================\n\n");    return doc;
 }

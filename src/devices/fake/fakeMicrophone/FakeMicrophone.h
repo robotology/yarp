@@ -56,9 +56,6 @@ private:
 private:
     std::vector<size_t> m_counter;
     std::vector<size_t> m_max_count;
-    size_t m_wave_amplitude = 32000;
-    double m_sig_freq=440; //Hz
-    size_t m_samples_to_be_copied = 512;
 
     enum waveform_t
     {
@@ -66,5 +63,5 @@ private:
         sawtooth = 1,
         square = 2,
         constant = 3
-    } m_waveform = sine;
+    } m_waveform_enum = sine;
 };

@@ -9,12 +9,11 @@ yarp_prepare_plugin(fakeLLMDevice
   CATEGORY device
   TYPE FakeLLMDevice
   INCLUDE FakeLLMDevice.h
-
+  GENERATE_PARSER
 )
-if(NOT SKIP_fakeLLMDevice)
 
+if(NOT SKIP_fakeLLMDevice)
     yarp_add_plugin(yarp_fakeLLMDevice)
-    generateDeviceParamsParser(FakeLLMDevice)
 
     target_sources(yarp_fakeLLMDevice
     PRIVATE

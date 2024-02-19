@@ -34,7 +34,6 @@ private:
     std::mutex         mutex;
 
     std::string   name;    // device name
-    unsigned int            channelsNum;
     short                   status;
     double                  timeStamp;
     yarp::sig::Vector       data;

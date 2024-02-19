@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Mon Feb 12 13:43:55 2024
+// Generated on: Mon Feb 19 16:27:58 2024
 
 
 #include "FakeChatBotDevice_ParamsParser.h"
@@ -17,6 +17,11 @@
 
 namespace {
     YARP_LOG_COMPONENT(FakeChatBotDeviceParamsCOMPONENT, "yarp.device.FakeChatBotDevice")
+}
+
+
+FakeChatBotDevice_ParamsParser::FakeChatBotDevice_ParamsParser()
+{
 }
 
 
@@ -91,8 +96,8 @@ std::string      FakeChatBotDevice_ParamsParser::getDocumentationOfDeviceParams(
     doc = doc + std::string("'language': language code\n");
     doc = doc + std::string("\n");
     doc = doc + std::string("Here are some examples of invocation command with yarpdev, with all params:\n");
-    doc = doc + " yarpdev --device FakeChatBotDevice --language eng\n";
+    doc = doc + " yarpdev --device fakeChatBotDevice --language eng\n";
     doc = doc + std::string("Using only mandatory params:\n");
-    doc = doc + " yarpdev --device FakeChatBotDevice\n";
+    doc = doc + " yarpdev --device fakeChatBotDevice\n";
     doc = doc + std::string("=============================================\n\n");    return doc;
 }

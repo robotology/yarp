@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Mon Feb 12 13:43:56 2024
+// Generated on: Mon Feb 19 16:27:59 2024
 
 
 #ifndef FAKEJOINTCOUPLING_PARAMSPARSER_H
@@ -29,11 +29,11 @@
 *
 * The device can be launched by yarpdev using one of the following examples:
 * \code{.unparsed}
-* yarpdev --device FakeJointCoupling --rpc_port_name /fakeJointCoupling/rpc
+* yarpdev --device fakeJointCoupling --rpc_port_name /fakeJointCoupling/rpc
 * \endcode
 *
 * \code{.unparsed}
-* yarpdev --device FakeJointCoupling
+* yarpdev --device fakeJointCoupling
 * \endcode
 *
 */
@@ -41,11 +41,12 @@
 class FakeJointCoupling_ParamsParser : public yarp::dev::IDeviceDriverParams
 {
 public:
-    FakeJointCoupling_ParamsParser() = default;
+    FakeJointCoupling_ParamsParser();
     ~FakeJointCoupling_ParamsParser() override = default;
 
 public:
-    const std::string m_device_type = {"FakeJointCoupling"};
+    const std::string m_device_classname = {"FakeJointCoupling"};
+    const std::string m_device_name = {"fakeJointCoupling"};
     bool m_parser_is_strict = false;
     struct parser_version_type
     {
@@ -53,10 +54,14 @@ public:
          int minor = 0;
     };
     const parser_version_type m_parser_version = {};
+
+    const std::string m_rpc_port_name_defaultValue = {"/fakeJointCoupling/rpc"};
+
     std::string m_rpc_port_name = {"/fakeJointCoupling/rpc"};
 
     bool          parseParams(const yarp::os::Searchable & config) override;
-    std::string   getDeviceType() const override { return m_device_type; }
+    std::string   getDeviceClassName() const override { return m_device_classname; }
+    std::string   getDeviceName() const override { return m_device_name; }
     std::string   getDocumentationOfDeviceParams() const override;
     std::vector<std::string> getListOfParams() const override;
 };

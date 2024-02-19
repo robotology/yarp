@@ -36,31 +36,22 @@ bool FakeBattery::open(yarp::os::Searchable& config)
 {
     if (!this->parseParams(config)) {return false;}
 
-    double period = config.check("thread_period", Value(default_period), "Thread period (smaller implies faster charge/discharge)").asFloat64();
-    setPeriod(period);
+    setPeriod(m_period);
 
-    double charge = config.check("charge", Value(default_charge), "Initial charge (%)").asFloat64();
-    double voltage = config.check("voltage", Value(default_voltage), "Initial voltage (V)").asFloat64();
-    double current = config.check("current", Value(default_current), "Initial current (A)").asFloat64();
-    double temperature = config.check("temperature", Value(default_temperature), "Initial temperature (°C)").asFloat64();
-    std::string info = config.check("info", Value(default_info), "Initial battery information").asString();
-    {
-        std::lock_guard<std::mutex> lock(m_mutex);
-        battery_charge = charge;
-        battery_voltage = voltage;
-        battery_current = current;
-        battery_temperature = temperature;
-        battery_info = std::move(info);
-        updateStatus();
-    }
+    std::lock_guard<std::mutex> lock(m_mutex);
+    battery_charge = m_charge;
+    battery_voltage = m_voltage;
+    battery_current = m_current;
+    battery_temperature = m_temperature;
+    battery_info = std::move(m_info);
+    updateStatus();
 
-    std::string name = config.find("name").asString();
-    this->yarp().attachAsServer(ctrl_port);
-    if (!ctrl_port.open(name + "/control/rpc:i")) {
+    if (!ctrl_port.open(m_rpc_port_name)) {
         yCError(FAKEBATTERY, "Could not open rpc port");
         close();
         return false;
     }
+    this->yarp().attachAsServer(ctrl_port);
 
     PeriodicThread::start();
 

@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Mon Feb 12 13:43:56 2024
+// Generated on: Mon Feb 19 16:27:58 2024
 
 
 #ifndef FAKEBATTERY_PARAMSPARSER_H
@@ -35,11 +35,11 @@
 *
 * The device can be launched by yarpdev using one of the following examples:
 * \code{.unparsed}
-* yarpdev --device FakeBattery --period 0.02 --charge 50.0 --voltage 30.0 --current 3.0 --temperature 20.0 --info Fake battery system v2.0 --rpc_port_name /fakeBattery/rpc
+* yarpdev --device fakeBattery --period 0.02 --charge 50.0 --voltage 30.0 --current 3.0 --temperature 20.0 --info Fake battery system v2.0 --rpc_port_name /fakeBattery/rpc
 * \endcode
 *
 * \code{.unparsed}
-* yarpdev --device FakeBattery
+* yarpdev --device fakeBattery
 * \endcode
 *
 */
@@ -47,11 +47,12 @@
 class FakeBattery_ParamsParser : public yarp::dev::IDeviceDriverParams
 {
 public:
-    FakeBattery_ParamsParser() = default;
+    FakeBattery_ParamsParser();
     ~FakeBattery_ParamsParser() override = default;
 
 public:
-    const std::string m_device_type = {"FakeBattery"};
+    const std::string m_device_classname = {"FakeBattery"};
+    const std::string m_device_name = {"fakeBattery"};
     bool m_parser_is_strict = false;
     struct parser_version_type
     {
@@ -59,6 +60,15 @@ public:
          int minor = 0;
     };
     const parser_version_type m_parser_version = {};
+
+    const std::string m_period_defaultValue = {"0.02"};
+    const std::string m_charge_defaultValue = {"50.0"};
+    const std::string m_voltage_defaultValue = {"30.0"};
+    const std::string m_current_defaultValue = {"3.0"};
+    const std::string m_temperature_defaultValue = {"20.0"};
+    const std::string m_info_defaultValue = {"Fake battery system v2.0"};
+    const std::string m_rpc_port_name_defaultValue = {"/fakeBattery/rpc"};
+
     double m_period = {0.02};
     double m_charge = {50.0};
     double m_voltage = {30.0};
@@ -68,7 +78,8 @@ public:
     std::string m_rpc_port_name = {"/fakeBattery/rpc"};
 
     bool          parseParams(const yarp::os::Searchable & config) override;
-    std::string   getDeviceType() const override { return m_device_type; }
+    std::string   getDeviceClassName() const override { return m_device_classname; }
+    std::string   getDeviceName() const override { return m_device_name; }
     std::string   getDocumentationOfDeviceParams() const override;
     std::vector<std::string> getListOfParams() const override;
 };

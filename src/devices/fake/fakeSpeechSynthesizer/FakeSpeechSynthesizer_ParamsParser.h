@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Mon Feb 12 13:43:57 2024
+// Generated on: Mon Feb 19 16:27:59 2024
 
 
 #ifndef FAKESPEECHSYNTHESIZER_PARAMSPARSER_H
@@ -26,14 +26,17 @@
 * | Group name | Parameter name | Type   | Units | Default Value | Required | Description   | Notes |
 * |:----------:|:--------------:|:------:|:-----:|:-------------:|:--------:|:-------------:|:-----:|
 * | -          | language       | string | -     | auto          | 0        | language code | -     |
+* | -          | voice          | string | -     | auto          | 0        | voice code    | -     |
+* | -          | speed          | double | -     | 0.0           | 0        | speed         | -     |
+* | -          | pitch          | double | -     | 0.0           | 0        | pitch         | -     |
 *
 * The device can be launched by yarpdev using one of the following examples:
 * \code{.unparsed}
-* yarpdev --device FakeSpeechSynthesizer --language auto
+* yarpdev --device fakeSpeechSynthesizer --language auto --voice auto --speed 0.0 --pitch 0.0
 * \endcode
 *
 * \code{.unparsed}
-* yarpdev --device FakeSpeechSynthesizer
+* yarpdev --device fakeSpeechSynthesizer
 * \endcode
 *
 */
@@ -41,11 +44,12 @@
 class FakeSpeechSynthesizer_ParamsParser : public yarp::dev::IDeviceDriverParams
 {
 public:
-    FakeSpeechSynthesizer_ParamsParser() = default;
+    FakeSpeechSynthesizer_ParamsParser();
     ~FakeSpeechSynthesizer_ParamsParser() override = default;
 
 public:
-    const std::string m_device_type = {"FakeSpeechSynthesizer"};
+    const std::string m_device_classname = {"FakeSpeechSynthesizer"};
+    const std::string m_device_name = {"fakeSpeechSynthesizer"};
     bool m_parser_is_strict = false;
     struct parser_version_type
     {
@@ -53,10 +57,20 @@ public:
          int minor = 0;
     };
     const parser_version_type m_parser_version = {};
+
+    const std::string m_language_defaultValue = {"auto"};
+    const std::string m_voice_defaultValue = {"auto"};
+    const std::string m_speed_defaultValue = {"0.0"};
+    const std::string m_pitch_defaultValue = {"0.0"};
+
     std::string m_language = {"auto"};
+    std::string m_voice = {"auto"};
+    double m_speed = {0.0};
+    double m_pitch = {0.0};
 
     bool          parseParams(const yarp::os::Searchable & config) override;
-    std::string   getDeviceType() const override { return m_device_type; }
+    std::string   getDeviceClassName() const override { return m_device_classname; }
+    std::string   getDeviceName() const override { return m_device_name; }
     std::string   getDocumentationOfDeviceParams() const override;
     std::vector<std::string> getListOfParams() const override;
 };

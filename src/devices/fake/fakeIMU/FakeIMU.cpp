@@ -24,8 +24,6 @@ YARP_LOG_COMPONENT(FAKEIMU, "yarp.device.fakeIMU")
 constexpr double DEFAULT_PERIOD = 0.01; // seconds
 constexpr int DEFAULT_NCHANNELS = 12;
 constexpr double DEFAULT_DUMMY_VALUE = 0.0;
-constexpr const char* DEFAULT_SENSOR_NAME = "sensorName";
-constexpr const char* DEFAULT_FRAME_NAME = "frameName";
 
 constexpr double EARTH_GRAVITY = -9.81;
 }
@@ -41,9 +39,7 @@ FakeIMU::FakeIMU() :
         dcm(4, 4),
         accels({0.0, 0.0, 0.0, 0.0}),
         nchannels(DEFAULT_NCHANNELS),
-        dummy_value(DEFAULT_DUMMY_VALUE),
-        m_sensorName(DEFAULT_SENSOR_NAME),
-        m_frameName(DEFAULT_FRAME_NAME)
+        dummy_value(DEFAULT_DUMMY_VALUE)
 {
     dcm.zero();
 }
@@ -57,19 +53,8 @@ bool FakeIMU::open(yarp::os::Searchable &config)
 {
     if (!this->parseParams(config)) {return false;}
 
-    double period;
-    if( config.check("period")) {
-        period = config.find("period").asInt32() / 1000.0;
-        setPeriod(period);
-    } else  {
-        yCInfo(FAKEIMU) << "Using default period of " << DEFAULT_PERIOD << " s";
-    }
-    if (config.check("sensorName")) {
-        m_sensorName = config.find("sensorName").asString();
-    }
-    yCInfo(FAKEIMU) << "sensorName: " << m_sensorName;
-
-    constantValue = config.check("constantValue");
+    double dperiod = m_period / 1000.0;
+    setPeriod(dperiod);
 
     start();
     return true;
@@ -101,7 +86,7 @@ void FakeIMU::run()
     lastStamp.update();
 
     dummy_value = count;
-    if (!constantValue) {
+    if (!m_constantValue) {
         count++;
     }
 

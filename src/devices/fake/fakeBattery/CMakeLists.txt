@@ -9,13 +9,13 @@ yarp_prepare_plugin(fakeBattery
   CATEGORY device
   TYPE FakeBattery
   INCLUDE FakeBattery.h
+  GENERATE_PARSER
   EXTRA_CONFIG
     WRAPPER=batteryWrapper
 )
 
 if(NOT SKIP_fakeBattery)
   yarp_add_plugin(yarp_fakeBattery)
-  generateDeviceParamsParser(FakeBattery)
 
   include(YarpChooseIDL)
   yarp_choose_idl(IDL FakeBatteryService.thrift)

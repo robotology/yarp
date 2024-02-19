@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Mon Feb 12 13:43:57 2024
+// Generated on: Mon Feb 19 16:27:59 2024
 
 
 #ifndef FAKESERIALPORT_PARAMSPARSER_H
@@ -43,16 +43,16 @@
 * | -          | dtrdisable            | int    | -     | 0             | 0        | Controls whether DTR is disabled or enabled                                                  | -                                                                                                                                                                                                                                                                       |
 * | -          | databits              | int    | s     | 7             | 0        | Data bits. Valid values 5, 6, 7 and 8 data bits. Additionally Win32 supports 4 data bits.    | -                                                                                                                                                                                                                                                                       |
 * | -          | stopbits              | int    | s     | 1             | 0        | Stop bits. Valid values are 1 and 2.                                                         | -                                                                                                                                                                                                                                                                       |
-* | -          | line_terminator_char1 | string | -     | \r            | 0        | line terminator character for receiveLine()                                                  | -                                                                                                                                                                                                                                                                       |
-* | -          | line_terminator_char2 | string | -     | \n            | 0        | line terminator character for receiveLine()                                                  | -                                                                                                                                                                                                                                                                       |
+* | -          | line_terminator_char1 | char   | -     | '\r'          | 0        | line terminator character for receiveLine()                                                  | -                                                                                                                                                                                                                                                                       |
+* | -          | line_terminator_char2 | char   | -     | '\n'          | 0        | line terminator character for receiveLine()                                                  | -                                                                                                                                                                                                                                                                       |
 *
 * The device can be launched by yarpdev using one of the following examples:
 * \code{.unparsed}
-* yarpdev --device FakeSerialPort --comport COM3 --verbose 1 --baudrate 9600 --xonlim 0 --xofflim 0 --readmincharacters 1 --readtimeoutmsec 100 --paritymode EVEN --ctsenb 0 --rtsenb 0 --xinenb 0 --xoutenb 0 --modem 0 --rcvenb 0 --dsrenb 0 --dtrdisable 0 --databits 7 --stopbits 1 --line_terminator_char1 \r --line_terminator_char2 \n
+* yarpdev --device fakeSerialPort --comport COM3 --verbose 1 --baudrate 9600 --xonlim 0 --xofflim 0 --readmincharacters 1 --readtimeoutmsec 100 --paritymode EVEN --ctsenb 0 --rtsenb 0 --xinenb 0 --xoutenb 0 --modem 0 --rcvenb 0 --dsrenb 0 --dtrdisable 0 --databits 7 --stopbits 1 --line_terminator_char1 '\r' --line_terminator_char2 '\n'
 * \endcode
 *
 * \code{.unparsed}
-* yarpdev --device FakeSerialPort --comport COM3 --baudrate 9600
+* yarpdev --device fakeSerialPort --comport COM3 --baudrate 9600
 * \endcode
 *
 */
@@ -60,11 +60,12 @@
 class FakeSerialPort_ParamsParser : public yarp::dev::IDeviceDriverParams
 {
 public:
-    FakeSerialPort_ParamsParser() = default;
+    FakeSerialPort_ParamsParser();
     ~FakeSerialPort_ParamsParser() override = default;
 
 public:
-    const std::string m_device_type = {"FakeSerialPort"};
+    const std::string m_device_classname = {"FakeSerialPort"};
+    const std::string m_device_name = {"fakeSerialPort"};
     bool m_parser_is_strict = false;
     struct parser_version_type
     {
@@ -72,6 +73,28 @@ public:
          int minor = 0;
     };
     const parser_version_type m_parser_version = {};
+
+    const std::string m_comport_defaultValue = {"COM3"};
+    const std::string m_verbose_defaultValue = {"1"};
+    const std::string m_baudrate_defaultValue = {"9600"};
+    const std::string m_xonlim_defaultValue = {"0"};
+    const std::string m_xofflim_defaultValue = {"0"};
+    const std::string m_readmincharacters_defaultValue = {"1"};
+    const std::string m_readtimeoutmsec_defaultValue = {"100"};
+    const std::string m_paritymode_defaultValue = {"EVEN"};
+    const std::string m_ctsenb_defaultValue = {"0"};
+    const std::string m_rtsenb_defaultValue = {"0"};
+    const std::string m_xinenb_defaultValue = {"0"};
+    const std::string m_xoutenb_defaultValue = {"0"};
+    const std::string m_modem_defaultValue = {"0"};
+    const std::string m_rcvenb_defaultValue = {"0"};
+    const std::string m_dsrenb_defaultValue = {"0"};
+    const std::string m_dtrdisable_defaultValue = {"0"};
+    const std::string m_databits_defaultValue = {"7"};
+    const std::string m_stopbits_defaultValue = {"1"};
+    const std::string m_line_terminator_char1_defaultValue = {"'\r'"};
+    const std::string m_line_terminator_char2_defaultValue = {"'\n'"};
+
     std::string m_comport = {"COM3"};
     int m_verbose = {1};
     int m_baudrate = {9600};
@@ -90,11 +113,12 @@ public:
     int m_dtrdisable = {0};
     int m_databits = {7};
     int m_stopbits = {1};
-    std::string m_line_terminator_char1 = {"\r"};
-    std::string m_line_terminator_char2 = {"\n"};
+    char m_line_terminator_char1 = {'\r'};
+    char m_line_terminator_char2 = {'\n'};
 
     bool          parseParams(const yarp::os::Searchable & config) override;
-    std::string   getDeviceType() const override { return m_device_type; }
+    std::string   getDeviceClassName() const override { return m_device_classname; }
+    std::string   getDeviceName() const override { return m_device_name; }
     std::string   getDocumentationOfDeviceParams() const override;
     std::vector<std::string> getListOfParams() const override;
 };

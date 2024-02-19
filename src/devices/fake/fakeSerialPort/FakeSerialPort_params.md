@@ -16,5 +16,5 @@
   * |      |  dtrdisable        | int  | -        |   0         | No      | Controls whether DTR is disabled or enabled                  |  |
   * |      |  databits              | int     | s        |   7          | No      | Data bits. Valid values 5, 6, 7 and 8 data bits. Additionally Win32 supports 4 data bits.      |  |
   * |      |  stopbits              | int     | s        |   1          | No      | Stop bits. Valid values are 1 and 2.                    |  |
-  * |      |  line_terminator_char1 | string  | -        |   \r         | No      | line terminator character for receiveLine()             |  |
-  * |      |  line_terminator_char2 | string  | -        |   \n         | No      | line terminator character for receiveLine()             |  |
+  * |      |  line_terminator_char1 | char   | -        |   '\r'        | No      | line terminator character for receiveLine()             |  |
+  * |      |  line_terminator_char2 | char   | -        |   '\n'        | No      | line terminator character for receiveLine()             |  |

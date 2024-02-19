@@ -9,13 +9,13 @@ yarp_prepare_plugin(fakeMicrophone
   CATEGORY device
   TYPE FakeMicrophone
   INCLUDE FakeMicrophone.h
+  GENERATE_PARSER
   EXTRA_CONFIG
     WRAPPER=AudioRecorderWrapper
 )
 
 if(NOT SKIP_fakeMicrophone)
   yarp_add_plugin(yarp_fakeMicrophone)
-  generateDeviceParamsParser(FakeMicrophone)
 
   target_sources(yarp_fakeMicrophone
     PRIVATE

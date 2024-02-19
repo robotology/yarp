@@ -57,15 +57,7 @@ bool FakeLaserWithMotor::open(yarp::os::Searchable& config)
         return false;
     }
 
-    bool br = config.check("GENERAL");
-    if (br != false)
-    {
-        yarp::os::Searchable& general_config = config.findGroup("GENERAL");
-        m_period = general_config.check("period", Value(0.02), "Period of the sampling thread in s").asFloat64();
-        this->setPeriod(m_period);
-    }
-
-    std::string string_test_mode = config.check("test", Value(std::string("use_pattern")), "string to select test mode").asString();
+    std::string string_test_mode = m_test;
     if      (string_test_mode == "no_obstacles") { m_test_mode = NO_OBSTACLES; }
     else if (string_test_mode == "use_pattern") { m_test_mode = USE_PATTERN; }
     else if (string_test_mode == "use_mapfile") { m_test_mode = USE_MAPFILE; }
@@ -80,15 +72,7 @@ bool FakeLaserWithMotor::open(yarp::os::Searchable& config)
         return false;
     }
 
-    //the different fake laser modalities
-    else if (m_test_mode == USE_CONSTANT_VALUE)
-    {
-        if (config.check("const_distance"))
-        {
-            m_const_value = config.check("const_distance", Value(1.0), "default constant distance").asFloat64();
-        }
-    }
-    else if (m_test_mode == USE_SQUARE_TRAP)
+    if (m_test_mode == USE_SQUARE_TRAP)
     {
         m_robot_loc_x = 0;
         m_robot_loc_y = 0;
@@ -113,11 +97,11 @@ bool FakeLaserWithMotor::open(yarp::os::Searchable& config)
     else if (m_test_mode == USE_MAPFILE)
     {
         std::string map_file;
-        if (config.check("map_context") && config.check("map_file"))
+        if (!m_MAP_MODE_map_context.empty() && !m_MAP_MODE_map_file.empty())
         {
             yarp::os::ResourceFinder rf;
-            std::string tmp_filename = config.find("map_file").asString();
-            std::string tmp_contextname = config.find("map_context").asString();
+            std::string tmp_filename = m_MAP_MODE_map_file;
+            std::string tmp_contextname = m_MAP_MODE_map_context;
             rf.setDefaultContext(tmp_contextname);
             rf.setDefaultConfigFile(tmp_filename);
             bool b = rf.configure(0, nullptr);
@@ -134,9 +118,9 @@ bool FakeLaserWithMotor::open(yarp::os::Searchable& config)
                 yCWarning(FAKE_LASER, "Unable to find file: %s from context: %s\n", tmp_filename.c_str(), tmp_contextname.c_str());
             }
         }
-        else if (config.check("map_file"))
+        else if (!m_MAP_MODE_map_file.empty())
         {
-            map_file = config.check("map_file", Value(std::string("map.yaml")), "map filename").asString();
+            map_file = m_MAP_MODE_map_file;
         }
         else
         {
@@ -228,7 +212,7 @@ void FakeLaserWithMotor::run()
     {
         if (_controlModes[i] == VOCAB_CM_VELOCITY)
         {
-            _encoders[i] = _encoders[i] + _command_speeds[i] * m_period;
+            _encoders[i] = _encoders[i] + _command_speeds[i] * m_GENERAL_period;
         }
         else if (_controlModes[i] == VOCAB_CM_POSITION)
         {

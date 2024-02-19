@@ -9,6 +9,7 @@ yarp_prepare_plugin(fakeIMU
   CATEGORY device
   TYPE FakeIMU
   INCLUDE FakeIMU.h
+  GENERATE_PARSER
   EXTRA_CONFIG
     WRAPPER=inertial
   DEPENDS "TARGET YARP::YARP_math"
@@ -16,7 +17,6 @@ yarp_prepare_plugin(fakeIMU
 
 if(NOT SKIP_fakeIMU)
   yarp_add_plugin(yarp_fakeIMU)
-  generateDeviceParamsParser(FakeIMU)
 
   target_sources(yarp_fakeIMU
     PRIVATE

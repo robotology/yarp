@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Mon Feb 12 13:43:58 2024
+// Generated on: Mon Feb 19 16:28:00 2024
 
 
 #ifndef FAKELOCALIZER_PARAMSPARSER_H
@@ -29,11 +29,11 @@
 *
 * The device can be launched by yarpdev using one of the following examples:
 * \code{.unparsed}
-* yarpdev --device FakeLocalizer --period 0.010
+* yarpdev --device fakeLocalizer --period 0.010
 * \endcode
 *
 * \code{.unparsed}
-* yarpdev --device FakeLocalizer
+* yarpdev --device fakeLocalizer
 * \endcode
 *
 */
@@ -41,11 +41,12 @@
 class FakeLocalizer_ParamsParser : public yarp::dev::IDeviceDriverParams
 {
 public:
-    FakeLocalizer_ParamsParser() = default;
+    FakeLocalizer_ParamsParser();
     ~FakeLocalizer_ParamsParser() override = default;
 
 public:
-    const std::string m_device_type = {"FakeLocalizer"};
+    const std::string m_device_classname = {"FakeLocalizer"};
+    const std::string m_device_name = {"fakeLocalizer"};
     bool m_parser_is_strict = false;
     struct parser_version_type
     {
@@ -53,10 +54,14 @@ public:
          int minor = 0;
     };
     const parser_version_type m_parser_version = {};
+
+    const std::string m_period_defaultValue = {"0.010"};
+
     double m_period = {0.010};
 
     bool          parseParams(const yarp::os::Searchable & config) override;
-    std::string   getDeviceType() const override { return m_device_type; }
+    std::string   getDeviceClassName() const override { return m_device_classname; }
+    std::string   getDeviceName() const override { return m_device_name; }
     std::string   getDocumentationOfDeviceParams() const override;
     std::vector<std::string> getListOfParams() const override;
 };

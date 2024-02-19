@@ -29,10 +29,6 @@ class FakeSpeechSynthesizer :
 {
 private:
     bool m_verbose = true;
-    std::string m_language = "auto";
-    std::string m_voice = "auto";
-    double m_pitch = 0;
-    double m_speed = 0;
 
 public:
     FakeSpeechSynthesizer();

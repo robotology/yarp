@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Mon Feb 12 13:43:55 2024
+// Generated on: Mon Feb 19 16:27:58 2024
 
 
 #include "FakeDepthCameraDriver_ParamsParser.h"
@@ -17,6 +17,11 @@
 
 namespace {
     YARP_LOG_COMPONENT(FakeDepthCameraDriverParamsCOMPONENT, "yarp.device.FakeDepthCameraDriver")
+}
+
+
+FakeDepthCameraDriver_ParamsParser::FakeDepthCameraDriver_ParamsParser()
+{
 }
 
 
@@ -251,8 +256,8 @@ std::string      FakeDepthCameraDriver_ParamsParser::getDocumentationOfDevicePar
     doc = doc + std::string("'dep_far': dep_far\n");
     doc = doc + std::string("\n");
     doc = doc + std::string("Here are some examples of invocation command with yarpdev, with all params:\n");
-    doc = doc + " yarpdev --device FakeDepthCameraDriver --rgb_h 480.0 --rgb_w 640.0 --dep_h 480.0 --dep_w 640.0 --accuracy 0.001 --rgb_Vfov 50.0 --rgb_Hfov 36.0 --dep_Vfov 50.0 --dep_Hfov 36.0 --dep_near 0.2 --dep_far 6.0\n";
+    doc = doc + " yarpdev --device fakeDepthCamera --rgb_h 480.0 --rgb_w 640.0 --dep_h 480.0 --dep_w 640.0 --accuracy 0.001 --rgb_Vfov 50.0 --rgb_Hfov 36.0 --dep_Vfov 50.0 --dep_Hfov 36.0 --dep_near 0.2 --dep_far 6.0\n";
     doc = doc + std::string("Using only mandatory params:\n");
-    doc = doc + " yarpdev --device FakeDepthCameraDriver\n";
+    doc = doc + " yarpdev --device fakeDepthCamera\n";
     doc = doc + std::string("=============================================\n\n");    return doc;
 }

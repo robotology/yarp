@@ -9,13 +9,13 @@ yarp_prepare_plugin(fakeAnalogSensor
   CATEGORY device
   TYPE FakeAnalogSensor
   INCLUDE FakeAnalogSensor.h
+  GENERATE_PARSER
   EXTRA_CONFIG
     WRAPPER=analogServer
 )
 
 if(ENABLE_fakeAnalogSensor)
   yarp_add_plugin(yarp_fakeAnalogSensor)
-  generateDeviceParamsParser(FakeAnalogSensor)
 
   target_sources(yarp_fakeAnalogSensor
     PRIVATE

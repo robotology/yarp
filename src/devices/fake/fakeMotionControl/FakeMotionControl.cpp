@@ -131,6 +131,7 @@ std::string toString(const T& value)
 
 //generic function that check is key1 is present in input bottle and that the result has size elements
 // return true/false
+/*
 bool FakeMotionControl::extractGroup(Bottle &input, Bottle &out, const std::string &key1, const std::string &txt, int size)
 {
     size++;
@@ -151,6 +152,7 @@ bool FakeMotionControl::extractGroup(Bottle &input, Bottle &out, const std::stri
     out=tmp;
     return true;
 }
+*/
 
 void FakeMotionControl::resizeBuffers()
 {
@@ -513,41 +515,10 @@ bool FakeMotionControl::open(yarp::os::Searchable &config)
 
     std::string str;
 
-//     if (!config.findGroup("GENERAL").find("MotioncontrolVersion").isInt32())
-//     {
-//         yCError(FAKEMOTIONCONTROL) << "Missing MotioncontrolVersion parameter. yarprobotinterface cannot start. Please contact icub-support@iit.it";
-//         return false;
-//     }
-//     else
-//     {
-//         int mcv = config.findGroup("GENERAL").find("MotioncontrolVersion").asInt32();
-//         if (mcv != 2)
-//         {
-//             yCError(FAKEMOTIONCONTROL) << "Wrong MotioncontrolVersion parameter. yarprobotinterface cannot start. Please contact icub-support@iit.it";
-//             return false;
-//         }
-//     }
-
-//     if(!config.findGroup("GENERAL").find("verbose").isBool())
-//     {
-//         yCError(FAKEMOTIONCONTROL) << "open() detects that general->verbose bool param is different from accepted values (true / false). Assuming false";
-//         str=" ";
-//     }
-//     else
-//     {
-//         if(config.findGroup("GENERAL").find("verbose").asBool())
-//             str=config.toString().c_str();
-//         else
-//             str=" ";
-//     }
-    str=config.toString();
-    yCTrace(FAKEMOTIONCONTROL) << str;
-
     //
     //  Read Configuration params from file
     //
-    _njoints = config.findGroup("GENERAL").check("Joints",Value(1),   "Number of degrees of freedom").asInt32();
-    yCInfo(FAKEMOTIONCONTROL, "Using %d joint%s", _njoints, ((_njoints != 1) ? "s" : ""));
+    _njoints = m_GENERAL_joints;
 
     if(!alloc(_njoints))
     {
@@ -616,870 +587,140 @@ bool FakeMotionControl::open(yarp::os::Searchable &config)
     return true;
 }
 
-bool FakeMotionControl::parseImpedanceGroup_NewFormat(Bottle& pidsGroup, ImpedanceParameters vals[])
-{
-    int j=0;
-    Bottle xtmp;
-
-    if (!extractGroup(pidsGroup, xtmp, "stiffness", "stiffness parameter", _njoints)) {
-        return false;
-    }
-    for (j=0; j<_njoints; j++) {
-        vals[j].stiffness = xtmp.get(j+1).asFloat64();
-    }
-
-    if (!extractGroup(pidsGroup, xtmp, "damping", "damping parameter", _njoints)) {
-        return false;
-    }
-    for (j=0; j<_njoints; j++) {
-        vals[j].damping = xtmp.get(j+1).asFloat64();
-    }
-
-    return true;
-}
-
-bool FakeMotionControl::parsePositionPidsGroup(Bottle& pidsGroup, Pid myPid[])
-{
-    int j=0;
-    Bottle xtmp;
-
-    if (!extractGroup(pidsGroup, xtmp, "kp", "Pid kp parameter", _njoints)) {
-        return false;
-    }
-    for (j=0; j<_njoints; j++) {
-        myPid[j].kp = xtmp.get(j+1).asFloat64();
-    }
-
-    if (!extractGroup(pidsGroup, xtmp, "kd", "Pid kd parameter", _njoints)) {
-        return false;
-    }
-    for (j=0; j<_njoints; j++) {
-        myPid[j].kd = xtmp.get(j+1).asFloat64();
-    }
-
-    if (!extractGroup(pidsGroup, xtmp, "ki", "Pid kp parameter", _njoints)) {
-        return false;
-    }
-    for (j=0; j<_njoints; j++) {
-        myPid[j].ki = xtmp.get(j+1).asFloat64();
-    }
-
-    if (!extractGroup(pidsGroup, xtmp, "maxInt", "Pid maxInt parameter", _njoints)) {
-        return false;
-    }
-    for (j=0; j<_njoints; j++) {
-        myPid[j].max_int = xtmp.get(j+1).asFloat64();
-    }
-
-    if (!extractGroup(pidsGroup, xtmp, "maxPwm", "Pid maxPwm parameter", _njoints)) {
-        return false;
-    }
-    for (j=0; j<_njoints; j++) {
-        myPid[j].max_output = xtmp.get(j+1).asFloat64();
-    }
-
-    if (!extractGroup(pidsGroup, xtmp, "shift", "Pid shift parameter", _njoints)) {
-        return false;
-    }
-    for (j=0; j<_njoints; j++) {
-        myPid[j].scale = xtmp.get(j+1).asFloat64();
-    }
-
-    if (!extractGroup(pidsGroup, xtmp, "ko", "Pid ko parameter", _njoints)) {
-        return false;
-    }
-    for (j=0; j<_njoints; j++) {
-        myPid[j].offset = xtmp.get(j+1).asFloat64();
-    }
-
-    if (!extractGroup(pidsGroup, xtmp, "stictionUp", "Pid stictionUp", _njoints)) {
-        return false;
-    }
-    for (j=0; j<_njoints; j++) {
-        myPid[j].stiction_up_val = xtmp.get(j+1).asFloat64();
-    }
-
-    if (!extractGroup(pidsGroup, xtmp, "stictionDwn", "Pid stictionDwn", _njoints)) {
-        return false;
-    }
-    for (j=0; j<_njoints; j++) {
-        myPid[j].stiction_down_val = xtmp.get(j+1).asFloat64();
-    }
-
-    if (!extractGroup(pidsGroup, xtmp, "kff", "Pid kff parameter", _njoints)) {
-        return false;
-    }
-    for (j=0; j<_njoints; j++) {
-        myPid[j].kff = xtmp.get(j+1).asFloat64();
-    }
-
-    //conversion from metric to machine units (if applicable)
-    if (_positionControlUnits==P_METRIC_UNITS)
-    {
-        for (j=0; j<_njoints; j++)
-        {
-            myPid[j].kp = myPid[j].kp / _angleToEncoder[j];  //[PWM/deg]
-            myPid[j].ki = myPid[j].ki / _angleToEncoder[j];  //[PWM/deg]
-            myPid[j].kd = myPid[j].kd / _angleToEncoder[j];  //[PWM/deg]
-        }
-    }
-    else
-    {
-        //do nothing
-    }
-
-    //optional PWM limit
-    if(_pwmIsLimited)
-    {   // check for value in the file
-        if (!extractGroup(pidsGroup, xtmp, "limPwm", "Limited PWD", _njoints))
-        {
-            yCError(FAKEMOTIONCONTROL) << "The PID parameter limPwm was requested but was not correctly set in the configuration file, please fill it.";
-            return false;
-        }
-
-        yCInfo(FAKEMOTIONCONTROL) << "Using LIMITED PWM!!";
-        for (j = 0; j < _njoints; j++) {
-            myPid[j].max_output = xtmp.get(j + 1).asFloat64();
-        }
-    }
-
-    return true;
-}
-
-bool FakeMotionControl::parseTorquePidsGroup(Bottle& pidsGroup, Pid myPid[], double kbemf[], double ktau[], int filterType[], double viscousPos[], double viscousNeg[], double coulombPos[], double coulombNeg[], double velocityThres[])
-{
-    int j=0;
-    Bottle xtmp;
-    if (!extractGroup(pidsGroup, xtmp, "kp", "Pid kp parameter", _njoints)) {
-        return false;
-    }
-    for (j=0; j<_njoints; j++) {
-        myPid[j].kp = xtmp.get(j+1).asFloat64();
-    }
-
-    if (!extractGroup(pidsGroup, xtmp, "kd", "Pid kd parameter", _njoints)) {
-        return false;
-    }
-    for (j=0; j<_njoints; j++) {
-        myPid[j].kd = xtmp.get(j+1).asFloat64();
-    }
-
-    if (!extractGroup(pidsGroup, xtmp, "ki", "Pid kp parameter", _njoints)) {
-        return false;
-    }
-    for (j=0; j<_njoints; j++) {
-        myPid[j].ki = xtmp.get(j+1).asFloat64();
-    }
-
-    if (!extractGroup(pidsGroup, xtmp, "maxInt", "Pid maxInt parameter", _njoints)) {
-        return false;
-    }
-    for (j=0; j<_njoints; j++) {
-        myPid[j].max_int = xtmp.get(j+1).asFloat64();
-    }
-
-    if (!extractGroup(pidsGroup, xtmp, "maxPwm", "Pid maxPwm parameter", _njoints)) {
-        return false;
-    }
-    for (j=0; j<_njoints; j++) {
-        myPid[j].max_output = xtmp.get(j+1).asFloat64();
-    }
-
-    if (!extractGroup(pidsGroup, xtmp, "shift", "Pid shift parameter", _njoints)) {
-        return false;
-    }
-    for (j=0; j<_njoints; j++) {
-        myPid[j].scale = xtmp.get(j+1).asFloat64();
-    }
-
-    if (!extractGroup(pidsGroup, xtmp, "ko", "Pid ko parameter", _njoints)) {
-        return false;
-    }
-    for (j=0; j<_njoints; j++) {
-        myPid[j].offset = xtmp.get(j+1).asFloat64();
-    }
-
-    if (!extractGroup(pidsGroup, xtmp, "stictionUp", "Pid stictionUp", _njoints)) {
-        return false;
-    }
-    for (j=0; j<_njoints; j++) {
-        myPid[j].stiction_up_val = xtmp.get(j+1).asFloat64();
-    }
-
-    if (!extractGroup(pidsGroup, xtmp, "stictionDwn", "Pid stictionDwn", _njoints)) {
-        return false;
-    }
-    for (j=0; j<_njoints; j++) {
-        myPid[j].stiction_down_val = xtmp.get(j+1).asFloat64();
-    }
-
-    if (!extractGroup(pidsGroup, xtmp, "kff",   "Pid kff parameter", _njoints)) {
-        return false;
-    }
-    for (j=0; j<_njoints; j++) {
-        myPid[j].kff = xtmp.get(j+1).asFloat64();
-    }
-
-    if (!extractGroup(pidsGroup, xtmp, "kbemf", "kbemf parameter", _njoints)) {
-        return false;
-    }
-    for (j=0; j<_njoints; j++) {
-        kbemf[j] = xtmp.get(j+1).asFloat64();
-    }
-
-    if (!extractGroup(pidsGroup, xtmp, "ktau", "ktau parameter", _njoints)) {
-        return false;
-    }
-    for (j=0; j<_njoints; j++) {
-        ktau[j] = xtmp.get(j+1).asFloat64();
-    }
-
-    if (!extractGroup(pidsGroup, xtmp, "filterType", "filterType param", _njoints)) {
-        return false;
-    }
-    for (j=0; j<_njoints; j++) {
-        filterType[j] = xtmp.get(j+1).asInt32();
-    }
-
-    if (!extractGroup(pidsGroup, xtmp, "viscousPos", "viscous pos parameter", _njoints)) {
-        return false;
-    }
-    for (j=0; j<_njoints; j++) {
-        viscousPos[j] = xtmp.get(j+1).asFloat64();
-    }
-
-    if (!extractGroup(pidsGroup, xtmp, "viscousNeg", "viscous neg parameter", _njoints)) {
-        return false;
-    }
-    for (j=0; j<_njoints; j++) {
-        viscousNeg[j] = xtmp.get(j+1).asFloat64();
-    }
-
-    if (!extractGroup(pidsGroup, xtmp, "coulombPos", "coulomb pos parameter", _njoints)) {
-        return false;
-    }
-    for (j=0; j<_njoints; j++) {
-        coulombPos[j] = xtmp.get(j+1).asFloat64();
-    }
-
-    if (!extractGroup(pidsGroup, xtmp, "coulombNeg", "coulomb neg parameter", _njoints)) {
-        return false;
-    }
-    for (j=0; j<_njoints; j++) {
-        coulombNeg[j] = xtmp.get(j+1).asFloat64();
-    }
-
-    if (!extractGroup(pidsGroup, xtmp, "velocityThres", "velocity threshold parameter", _njoints)) {
-        return false;
-    }
-    for (j=0; j<_njoints; j++) {
-        velocityThres[j] = xtmp.get(j+1).asFloat64();
-    }
-
-
-    //conversion from metric to machine units (if applicable)
-//     for (j=0; j<_njoints; j++)
-//     {
-//         myPid[j].kp = myPid[j].kp / _torqueControlHelper->getNewtonsToSensor(j);  //[PWM/Nm]
-//         myPid[j].ki = myPid[j].ki / _torqueControlHelper->getNewtonsToSensor(j);  //[PWM/Nm]
-//         myPid[j].kd = myPid[j].kd / _torqueControlHelper->getNewtonsToSensor(j);  //[PWM/Nm]
-//         myPid[j].stiction_up_val   = myPid[j].stiction_up_val   * _torqueControlHelper->getNewtonsToSensor(j); //[Nm]
-//         myPid[j].stiction_down_val = myPid[j].stiction_down_val * _torqueControlHelper->getNewtonsToSensor(j); //[Nm]
-//     }
-
-    //optional PWM limit
-    if(_pwmIsLimited)
-    {   // check for value in the file
-        if (!extractGroup(pidsGroup, xtmp, "limPwm", "Limited PWM", _njoints))
-        {
-            yCError(FAKEMOTIONCONTROL) << "The PID parameter limPwm was requested but was not correctly set in the configuration file, please fill it.";
-            return false;
-        }
-
-        yCInfo(FAKEMOTIONCONTROL) << "Using LIMITED PWM!!";
-        for (j = 0; j < _njoints; j++) {
-            myPid[j].max_output = xtmp.get(j + 1).asFloat64();
-        }
-    }
-
-    return true;
-}
-
 bool FakeMotionControl::fromConfig(yarp::os::Searchable &config)
 {
-    Bottle xtmp;
-    int i;
-    Bottle general = config.findGroup("GENERAL");
+    size_t i;
 
-    // read AxisMap values from file
-    if(general.check("AxisMap"))
+    // AxisMap
+    if (!m_GENERAL_AxisMap.empty())
     {
-        if(extractGroup(general, xtmp, "AxisMap", "a list of reordered indices for the axes", _njoints))
-        {
-            for (i = 1; (size_t)i < xtmp.size(); i++) {
-                _axisMap[i - 1] = xtmp.get(i).asInt32();
-            }
-        } else {
-            return false;
+        for (i = 0; i < m_GENERAL_AxisMap.size(); i++) {
+            _axisMap[i] = m_GENERAL_AxisMap[i];
         }
     }
     else
     {
-        yCInfo(FAKEMOTIONCONTROL) << "Using default AxisMap";
         for (i = 0; i < _njoints; i++) {
             _axisMap[i] = i;
         }
     }
 
-    if(general.check("AxisName"))
+    // AxisName
+    if (!m_GENERAL_AxisName.empty())
     {
-        if (extractGroup(general, xtmp, "AxisName", "a list of strings representing the axes names", _njoints))
-        {
-            //beware: axis name has to be remapped here because they are not set using the toHw() helper function
-            for (i = 1; (size_t) i < xtmp.size(); i++)
-            {
-                _axisName[_axisMap[i - 1]] = xtmp.get(i).asString();
-            }
-        } else {
-            return false;
+        for (i = 0; i < m_GENERAL_AxisName.size(); i++) {
+            _axisName[_axisMap[i]] = m_GENERAL_AxisName[i];
         }
     }
     else
     {
-        yCInfo(FAKEMOTIONCONTROL) << "Using default AxisName";
-        for (i = 0; i < _njoints; i++)
-        {
+        for (i = 0; i < _njoints; i++) {
             _axisName[_axisMap[i]] = "joint" + toString(i);
         }
     }
-    if(general.check("AxisType"))
+
+    // Axis Type
+    if (!m_GENERAL_AxisType.empty())
     {
-        if (extractGroup(general, xtmp, "AxisType", "a list of strings representing the axes type (revolute/prismatic)", _njoints))
+        //beware: axis type has to be remapped here because they are not set using the toHw() helper function
+        for (i = 0; i < m_GENERAL_AxisType.size(); i++)
         {
-            //beware: axis type has to be remapped here because they are not set using the toHw() helper function
-            for (i = 1; (size_t) i < xtmp.size(); i++)
-            {
-                std::string typeString = xtmp.get(i).asString();
-                if (typeString == "revolute") {
-                    _jointType[_axisMap[i - 1]] = VOCAB_JOINTTYPE_REVOLUTE;
-                } else if (typeString == "prismatic") {
-                    _jointType[_axisMap[i - 1]] = VOCAB_JOINTTYPE_PRISMATIC;
-                } else {
-                    yCError(FAKEMOTIONCONTROL, "Unknown AxisType value %s!", typeString.c_str());
-                    _jointType[_axisMap[i - 1]] = VOCAB_JOINTTYPE_UNKNOWN;
-                    return false;
-                }
+            std::string typeString = m_GENERAL_AxisType[i];
+            if (typeString == "revolute") {
+                _jointType[_axisMap[i]] = VOCAB_JOINTTYPE_REVOLUTE;
             }
-        } else {
-            return false;
+            else if (typeString == "prismatic") {
+                _jointType[_axisMap[i]] = VOCAB_JOINTTYPE_PRISMATIC;
+            }
+            else {
+                yCError(FAKEMOTIONCONTROL, "Unknown AxisType value %s!", typeString.c_str());
+                _jointType[_axisMap[i]] = VOCAB_JOINTTYPE_UNKNOWN;
+                return false;
+            }
         }
     }
     else
     {
         yCInfo(FAKEMOTIONCONTROL) << "Using default AxisType (revolute)";
-        for (i = 0; i < _njoints; i++)
-        {
+        for (i = 0; i < _njoints; i++)  {
             _jointType[_axisMap[i]] = VOCAB_JOINTTYPE_REVOLUTE;
         }
     }
 
     // current conversions factor
-    if (general.check("ampsToSensor"))
+    if (!m_GENERAL_ampsToSensor.empty())
     {
-        if (extractGroup(general, xtmp, "ampsToSensor", "a list of scales for the ampsToSensor conversion factors", _njoints))
-        {
-            for (i = 1; (size_t) i < xtmp.size(); i++)
-            {
-                if (xtmp.get(i).isFloat64())
-                {
-                    _ampsToSensor[i - 1] = xtmp.get(i).asFloat64();
-                }
-            }
-        } else {
-            return false;
+        for (i = 0; i < m_GENERAL_ampsToSensor.size(); i++) {
+            _ampsToSensor[i] = m_GENERAL_ampsToSensor[i];
         }
     }
     else
     {
-        yCInfo(FAKEMOTIONCONTROL) << "Using default ampsToSensor";
-        for (i = 0; i < _njoints; i++)
-        {
-            _ampsToSensor[i] = 1.0;
+        yCInfo(FAKEMOTIONCONTROL) << "Using default ampsToSensor=1";
+        for (i = 0; i < _njoints; i++) {
+            _ampsToSensor[i] = 1;
         }
     }
 
+
     // pwm conversions factor
-    if (general.check("fullscalePWM"))
+    if (!m_GENERAL_fullscalePWM.empty())
     {
-        if (extractGroup(general, xtmp, "fullscalePWM", "a list of scales for the fullscalePWM conversion factors", _njoints))
-        {
-            for (i = 1; (size_t) i < xtmp.size(); i++)
-            {
-                if (xtmp.get(i).isFloat64() || xtmp.get(i).isInt32())
-                {
-                    _dutycycleToPWM[i - 1] = xtmp.get(i).asFloat64() / 100.0;
-                }
-            }
-        } else {
-            return false;
+        for (i = 0; i < m_GENERAL_fullscalePWM.size(); i++) {
+            _dutycycleToPWM[i] = m_GENERAL_fullscalePWM[i]/100;
         }
     }
     else
     {
-        yCInfo(FAKEMOTIONCONTROL) << "Using default dutycycleToPWM=1.0";
+        yCInfo(FAKEMOTIONCONTROL) << "Using default fullscalePWM=1";
         for (i = 0; i < _njoints; i++) {
-            _dutycycleToPWM[i] = 1.0;
+            _dutycycleToPWM[i] = 1;
         }
     }
 
 //     double tmp_A2E;
     // Encoder scales
-    if(general.check("Encoder"))
+    if(!m_GENERAL_Encoder.empty())
     {
-        if (extractGroup(general, xtmp, "Encoder", "a list of scales for the encoders", _njoints))
-        {
-            for (i = 1; (size_t) i < xtmp.size(); i++)
-            {
-                _angleToEncoder[i-1] = xtmp.get(i).asFloat64();
-            }
-        } else {
-            return false;
-        }
+        for (i = 0; i < m_GENERAL_Encoder.size(); i++) {
+            _angleToEncoder[i] = m_GENERAL_Encoder[i]; }
     }
     else
     {
-        yCInfo(FAKEMOTIONCONTROL) << "Using default Encoder";
+        yCInfo(FAKEMOTIONCONTROL) << "Using default Encoder=1";
         for (i = 0; i < _njoints; i++) {
-            _angleToEncoder[i] = 1;
-        }
+            _angleToEncoder[i] = 1; }
     }
-
-    // Joint encoder resolution
-    /*if (!extractGroup(general, xtmp, "JointEncoderRes", "the resolution of the joint encoder", _njoints))
-    {
-        return false;
-    }
-    else
-    {
-        int test = xtmp.size();
-        for (i = 1; i < xtmp.size(); i++)
-            _jointEncoderRes[i - 1] = xtmp.get(i).asInt32();
-    }
-
-    // Joint encoder type
-    if (!extractGroup(general, xtmp, "JointEncoderType", "JointEncoderType", _njoints))
-    {
-        return false;
-    }
-    else
-    {
-        int test = xtmp.size();
-        for (i = 1; i < xtmp.size(); i++)
-        {
-            uint8_t val;
-            std::string s = xtmp.get(i).asString();
-            bool b = EncoderType_iCub2eo(&s, &val);
-            if (b == false)
-            {
-                yCError(FAKEMOTIONCONTROL, "Invalid JointEncoderType: %s!", s.c_str()); return false;
-            }
-//             _jointEncoderType[i - 1] = val;
-        }
-    }
-*/
-
-    // Motor capabilities
-/*    if (!extractGroup(general, xtmp, "HasHallSensor", "HasHallSensor 0/1 ", _njoints))
-    {
-        return false;
-    }
-    else
-    {
-        int test = xtmp.size();
-        for (i = 1; i < xtmp.size(); i++)
-            _hasHallSensor[i - 1] = xtmp.get(i).asInt32();
-    }
-    if (!extractGroup(general, xtmp, "HasTempSensor", "HasTempSensor 0/1 ", _njoints))
-    {
-        return false;
-    }
-    else
-    {
-        int test = xtmp.size();
-        for (i = 1; i < xtmp.size(); i++)
-            _hasTempSensor[i - 1] = xtmp.get(i).asInt32();
-    }
-    if (!extractGroup(general, xtmp, "HasRotorEncoder", "HasRotorEncoder 0/1 ", _njoints))
-    {
-        return false;
-    }
-    else
-    {
-        int test = xtmp.size();
-        for (i = 1; i < xtmp.size(); i++)
-            _hasRotorEncoder[i - 1] = xtmp.get(i).asInt32();
-    }
-    if (!extractGroup(general, xtmp, "HasRotorEncoderIndex", "HasRotorEncoderIndex 0/1 ", _njoints))
-    {
-        return false;
-    }
-    else
-    {
-        int test = xtmp.size();
-        for (i = 1; i < xtmp.size(); i++)
-            _hasRotorEncoderIndex[i - 1] = xtmp.get(i).asInt32();
-    }
-
-    // Rotor encoder res
-    if (!extractGroup(general, xtmp, "RotorEncoderRes", "a list of scales for the rotor encoders", _njoints))
-    {
-        return false;
-    }
-    else
-    {
-        int test = xtmp.size();
-        for (i = 1; i < xtmp.size(); i++)
-            _rotorEncoderRes[i - 1] = xtmp.get(i).asInt32();
-    }
-
-    // joint encoder res
-    if (!extractGroup(general, xtmp, "JointEncoderRes", "a list of scales for the joint encoders", _njoints))
-    {
-        return false;
-    }
-    else
-    {
-        int test = xtmp.size();
-        for (i = 1; i < xtmp.size(); i++)
-            _jointEncoderRes[i - 1] = xtmp.get(i).asInt32();
-    }
-*/
-    // Number of motor poles
-    /*if (!extractGroup(general, xtmp, "MotorPoles", "MotorPoles", _njoints))
-    {
-        return false;
-    }
-    else
-    {
-        int test = xtmp.size();
-        for (i = 1; i < xtmp.size(); i++)
-            _motorPoles[i - 1] = xtmp.get(i).asInt32();
-    }
-
-    // Rotor encoder index
-    if (!extractGroup(general, xtmp, "RotorIndexOffset", "RotorIndexOffset", _njoints))
-    {
-        return false;
-    }
-    else
-    {
-        int test = xtmp.size();
-        for (i = 1; i < xtmp.size(); i++)
-            _rotorIndexOffset[i - 1] = xtmp.get(i).asInt32();
-    }
-*/
-
-    // Rotor encoder type
-/*
-    if (!extractGroup(general, xtmp, "RotorEncoderType", "RotorEncoderType", _njoints))
-    {
-        return false;
-    }
-    else
-    {
-        int test = xtmp.size();
-        for (i = 1; i < xtmp.size(); i++)
-        {
-            uint8_t val;
-            std::string s = xtmp.get(i).asString();
-            bool b = EncoderType_iCub2eo(&s, &val);
-            if (b == false)
-            {
-                yCError(FAKEMOTIONCONTROL, "Invalid RotorEncoderType: %s", s.c_str()); return false;
-            }
-            _rotorEncoderType[i - 1] = val;
-        }
-    }
-*/
-/*
-    // Gearbox
-    if (!extractGroup(general, xtmp, "Gearbox", "The gearbox reduction ratio", _njoints))
-    {
-        return false;
-    }
-    else
-    {
-        int test = xtmp.size();
-        for (i = 1; i < xtmp.size(); i++)
-        {
-            _gearbox[i-1] = xtmp.get(i).asFloat64();
-            if (_gearbox[i-1]==0) {yCError(FAKEMOTIONCONTROL) << "Using a gearbox value = 0 may cause problems! Check your configuration files"; return false;}
-        }
-    }
-
-    // Torque sensors stuff
-    if (!extractGroup(general, xtmp, "TorqueId","a list of associated joint torque sensor ids", _njoints))
-    {
-        yCWarning(FAKEMOTIONCONTROL, "Using default value = 0 (disabled)");
-        for(i=1; i<_njoints+1; i++)
-            _torqueSensorId[i-1] = 0;
-    }
-    else
-    {
-        for (i = 1; i < xtmp.size(); i++) _torqueSensorId[i-1] = xtmp.get(i).asInt32();
-    }
-
-
-    if (!extractGroup(general, xtmp, "TorqueChan","a list of associated joint torque sensor channels", _njoints))
-    {
-        yCWarning(FAKEMOTIONCONTROL) <<  "fromConfig() detected that TorqueChan is not present: using default value = 0 (disabled)";
-        for(i=1; i<_njoints+1; i++)
-            _torqueSensorChan[i-1] = 0;
-    }
-    else
-    {
-        for (i = 1; i < xtmp.size(); i++) _torqueSensorChan[i-1] = xtmp.get(i).asInt32();
-    }
-
-
-    if (!extractGroup(general, xtmp, "TorqueMax","full scale value for a joint torque sensor", _njoints))
-    {
-        return false;
-    }
-    else
-    {
-        for (i = 1; i < xtmp.size(); i++)
-        {
-            _maxTorque[i-1] = xtmp.get(i).asInt32();
-            _newtonsToSensor[i-1] = 1000.0f; // conversion from Nm into milliNm
-        }
-    }
-*/
-
-    ////// POSITION PIDS
-/*
-    {
-        Bottle posPidsGroup;
-        posPidsGroup=config.findGroup("POSITION_CONTROL", "Position Pid parameters new format");
-        if (posPidsGroup.isNull()==false)
-        {
-           Value &controlUnits=posPidsGroup.find("controlUnits");
-           if  (controlUnits.isNull() == false && controlUnits.isString() == true)
-           {
-                if      (controlUnits.toString()==std::string("metric_units"))
-                {
-                    yCDebug(FAKEMOTIONCONTROL, "POSITION_CONTROL: using metric_units");  _positionControlUnits=P_METRIC_UNITS;
-                }
-                else if (controlUnits.toString()==std::string("machine_units"))
-                {
-                    yCDebug(FAKEMOTIONCONTROL, "POSITION_CONTROL: using machine_units"); _positionControlUnits=P_MACHINE_UNITS;
-                }
-                else
-                {
-                    yCError(FAKEMOTIONCONTROL) << "fromConfig(): POSITION_CONTROL section: invalid controlUnits value";
-                         return false;
-                }
-           }
-           else
-           {
-                yCError(FAKEMOTIONCONTROL) << "fromConfig(): POSITION_CONTROL section: missing controlUnits parameter. Assuming machine_units. Please fix your configuration file.";
-                _positionControlUnits=P_MACHINE_UNITS;
-           }
-
-//            Value &controlLaw=posPidsGroup.find("controlLaw");
-//            if (controlLaw.isNull() == false && controlLaw.isString() == true)
-//            {
-//                std::string s_controlaw = controlLaw.toString();
-//                if (s_controlaw==std::string("joint_pid_v1"))
-//                {
-//                    if (!parsePositionPidsGroup (posPidsGroup, _pids))
-//                    {
-//                        yCError(FAKEMOTIONCONTROL) << "fromConfig(): POSITION_CONTROL section: error detected in parameters syntax";
-//                        return false;
-//                    }
-//                    else
-//                    {
-//                         yCDebug(FAKEMOTIONCONTROL, "POSITION_CONTROL: using control law joint_pid_v1");
-//                    }
-//                }
-//                else if (s_controlaw==std::string("not_implemented"))
-//                {
-//                    yCDebug(FAKEMOTIONCONTROL) << "found 'not_impelemented' in position control_law. This will terminate yarprobotinterface execution.";
-//                    return false;
-//                }
-//                else if (s_controlaw==std::string("disabled"))
-//                {
-//                    yCDebug(FAKEMOTIONCONTROL) << "found 'disabled' in position control_law. This will terminate yarprobotinterface execution.";
-//                    return false;
-//                }
-//                else
-//                {
-//                    yCError(FAKEMOTIONCONTROL) << "Unable to use control law " << s_controlaw << " por position control. Quitting.";
-//                    return false;
-//                }
-//            }
-        }
-        else
-        {
-            yCError(FAKEMOTIONCONTROL) <<"fromConfig(): Error: no POS_PIDS group found in config file, returning";
-            return false;
-        }
-    }
-*/
-
-
-    ////// TORQUE PIDS
-/*
-    {
-        Bottle trqPidsGroup;
-        trqPidsGroup=config.findGroup("TORQUE_CONTROL", "Torque control parameters new format");
-        if (trqPidsGroup.isNull()==false)
-        {
-           Value &controlUnits=trqPidsGroup.find("controlUnits");
-           if  (controlUnits.isNull() == false && controlUnits.isString() == true)
-           {
-                if      (controlUnits.toString()==std::string("metric_units"))  {yCDebug(FAKEMOTIONCONTROL, "TORQUE_CONTROL: using metric_units"); _torqueControlUnits=T_METRIC_UNITS;}
-                else if (controlUnits.toString()==std::string("machine_units")) {yCDebug(FAKEMOTIONCONTROL, "TORQUE_CONTROL: using metric_units"); _torqueControlUnits=T_MACHINE_UNITS;}
-                else    {yCError(FAKEMOTIONCONTROL) << "fromConfig(): TORQUE_CONTROL section: invalid controlUnits value";
-                         return false;}
-           }
-           else
-           {
-                yCError(FAKEMOTIONCONTROL) << "fromConfig(): TORQUE_CONTROL section: missing controlUnits parameter. Assuming machine_units. Please fix your configuration file.";
-                _torqueControlUnits=T_MACHINE_UNITS;
-           }
-
-            if(_torqueControlUnits==T_MACHINE_UNITS)
-            {
-                yarp::sig::Vector tmpOnes; tmpOnes.resize(_njoints,1.0);
-            }
-            else if (_torqueControlUnits==T_METRIC_UNITS)
-            {
-            }
-            else
-            {
-                yCError(FAKEMOTIONCONTROL) << "fromConfig(): TORQUE_CONTROL section: invalid controlUnits value (_torqueControlUnits=" << _torqueControlUnits << ")";
-                return false;
-            }
-        }
-        else
-        {
-            yCError(FAKEMOTIONCONTROL) <<"fromConfig(): Error: no TORQUE_CONTROL group found in config file";
-            _torqueControlEnabled = false;
-            return false; //torque control group is mandatory
-        }
-    }
-*/
-
-    ////// IMPEDANCE LIMITS DEFAULT VALUES (UNDER TESTING)
-/*
-    for(j=0; j<_njoints; j++)
-    {
-        // got from canBusMotionControl, ask to Randazzo Marco
-        _impedance_limits[j].min_damp=  0.001;
-        _impedance_limits[j].max_damp=  9.888;
-        _impedance_limits[j].min_stiff= 0.002;
-        _impedance_limits[j].max_stiff= 9.889;
-        _impedance_limits[j].param_a=   0.011;
-        _impedance_limits[j].param_b=   0.012;
-        _impedance_limits[j].param_c=   0.013;
-    }
-*/
-
-    /////// JOINTS_COUPLING
-/*
-    if (_njoints<=4)
-    {
-        Bottle &coupling=config.findGroup("JOINTS_COUPLING");
-        if (coupling.isNull())
-        {
-            yCWarning(FAKEMOTIONCONTROL) << "fromConfig() detected that Group JOINTS_COUPLING is not found in configuration file";
-            //return false;
-        }
-        // current limit
-        if (!extractGroup(coupling, xtmp, "kinematic_mj","the kinematic matrix 4x4 which transforms from joint space to motor space", 16))
-        {
-            for(i=1; i<xtmp.size(); i++) _kinematic_mj[i-1]=0.0;
-        }
-        else
-            for(i=1; i<xtmp.size(); i++) _kinematic_mj[i-1]=xtmp.get(i).asFloat64();
-    }
-    else
-    {
-        //we are skipping JOINTS_COUPLING for EMS boards which control MC4 boards (for now)
-    }
-*/
 
     /////// LIMITS
-    Bottle &limits=config.findGroup("LIMITS");
-    if (limits.isNull())
+    if (!m_LIMITS_Max.empty())
     {
-        yCWarning(FAKEMOTIONCONTROL) << "fromConfig() detected that Group LIMITS is not found in configuration file";
-    }
-/*    // current limit
-    if (!extractGroup(limits, xtmp, "OverloadCurrents","a list of current limits", _njoints))
-        return false;
-    else
-        for(i=1; i<xtmp.size(); i++) _currentLimits[i-1].overloadCurrent=xtmp.get(i).asFloat64();
-
-    // nominal current
-    if (!extractGroup(limits, xtmp, "MotorNominalCurrents","a list of nominal current limits", _njoints))
-        return false;
-    else
-        for(i=1; i<xtmp.size(); i++) _currentLimits[i-1].nominalCurrent =xtmp.get(i).asFloat64();
-
-    // nominal current
-    if (!extractGroup(limits, xtmp, "MotorPeakCurrents","a list of peak current limits", _njoints))
-        return false;
-    else
-        for(i=1; i<xtmp.size(); i++) _currentLimits[i-1].peakCurrent=xtmp.get(i).asFloat64();
-*/
-    // max limit
-    if (!extractGroup(limits, xtmp, "Max","a list of maximum angles (in degrees)", _njoints))
-        _limitsMax[i - 1] = 100;
-    else
-        for(i=1; i<xtmp.size(); i++) _limitsMax[i-1]=xtmp.get(i).asFloat64();
-
-    // min limit
-    if (!extractGroup(limits, xtmp, "Min","a list of minimum angles (in degrees)", _njoints))
-        _limitsMin[i - 1] = 0;
-    else
-        for(i=1; i<xtmp.size(); i++) _limitsMin[i-1]=xtmp.get(i).asFloat64();
-/*
-    // Rotor max limit
-    if (!extractGroup(limits, xtmp, "RotorMax","a list of maximum rotor angles (in degrees)", _njoints))
-        return false;
-    else
-        for(i=1; i<xtmp.size(); i++) _rotorlimits_max[i-1]=xtmp.get(i).asFloat64();
-
-    // joint Velocity command max limit
-    if (!extractGroup(limits, xtmp, "JntVelocityMax", "a list of maximum velocities for the joints (in degrees/s)", _njoints))
-        return false;
-    else
-        for (i = 1; i<xtmp.size(); i++) _maxJntCmdVelocity[i - 1] = xtmp.get(i).asFloat64();
-
-    // Rotor min limit
-    if (!extractGroup(limits, xtmp, "RotorMin","a list of minimum roto angles (in degrees)", _njoints))
-        return false;
-    else
-        for(i=1; i<xtmp.size(); i++) _rotorlimits_min[i-1]=xtmp.get(i).asFloat64();
-
-    // Motor pwm limit
-    if (!extractGroup(limits, xtmp, "MotorPwmLimit","a list of motor PWM limits", _njoints))
-        return false;
-    else
-    {
-        for(i=1; i<xtmp.size(); i++)
-        {
-            _motorPwmLimits[i-1]=xtmp.get(i).asFloat64();
-            if(_motorPwmLimits[i-1]<0)
-            {
-                yCError(FAKEMOTIONCONTROL) << "MotorPwmLimit should be a positive value";
-                return false;
-            }
+        for (i = 0; i < m_LIMITS_Max.size(); i++) {
+            _limitsMax[i] = m_LIMITS_Max[i];
         }
     }
-*/
+    else
+    {
+        yCInfo(FAKEMOTIONCONTROL) << "Using default m_LIMITS_Max=100";
+        for (i = 0; i < _njoints; i++) {
+            _limitsMax[i] = 100;
+        }
+    }
+
+    if (!m_LIMITS_Min.empty())
+    {
+        for (i = 0; i < m_LIMITS_Min.size(); i++) {
+            _limitsMin[i] = m_LIMITS_Min[i];
+        }
+    }
+    else
+    {
+        yCInfo(FAKEMOTIONCONTROL) << "Using default m_LIMITS_Min=0";
+        for (i = 0; i < _njoints; i++) {
+            _limitsMin[i] = 0;
+        }
+    }
+
     return true;
 }
 
@@ -3345,5 +2586,301 @@ bool FakeMotionControl::getLastJointFaultRaw(int j, int& fault, std::string& mes
     _mutex.unlock();
     return true;
 }
+
+
+/*
+bool FakeMotionControl::parseImpedanceGroup_NewFormat(Bottle& pidsGroup, ImpedanceParameters vals[])
+{
+    int j=0;
+    Bottle xtmp;
+
+    if (!extractGroup(pidsGroup, xtmp, "stiffness", "stiffness parameter", _njoints)) {
+        return false;
+    }
+    for (j=0; j<_njoints; j++) {
+        vals[j].stiffness = xtmp.get(j+1).asFloat64();
+    }
+
+    if (!extractGroup(pidsGroup, xtmp, "damping", "damping parameter", _njoints)) {
+        return false;
+    }
+    for (j=0; j<_njoints; j++) {
+        vals[j].damping = xtmp.get(j+1).asFloat64();
+    }
+
+    return true;
+}
+*/
+
+/*
+bool FakeMotionControl::parsePositionPidsGroup(Bottle& pidsGroup, Pid myPid[])
+{
+    int j=0;
+    Bottle xtmp;
+
+    if (!extractGroup(pidsGroup, xtmp, "kp", "Pid kp parameter", _njoints)) {
+        return false;
+    }
+    for (j=0; j<_njoints; j++) {
+        myPid[j].kp = xtmp.get(j+1).asFloat64();
+    }
+
+    if (!extractGroup(pidsGroup, xtmp, "kd", "Pid kd parameter", _njoints)) {
+        return false;
+    }
+    for (j=0; j<_njoints; j++) {
+        myPid[j].kd = xtmp.get(j+1).asFloat64();
+    }
+
+    if (!extractGroup(pidsGroup, xtmp, "ki", "Pid kp parameter", _njoints)) {
+        return false;
+    }
+    for (j=0; j<_njoints; j++) {
+        myPid[j].ki = xtmp.get(j+1).asFloat64();
+    }
+
+    if (!extractGroup(pidsGroup, xtmp, "maxInt", "Pid maxInt parameter", _njoints)) {
+        return false;
+    }
+    for (j=0; j<_njoints; j++) {
+        myPid[j].max_int = xtmp.get(j+1).asFloat64();
+    }
+
+    if (!extractGroup(pidsGroup, xtmp, "maxPwm", "Pid maxPwm parameter", _njoints)) {
+        return false;
+    }
+    for (j=0; j<_njoints; j++) {
+        myPid[j].max_output = xtmp.get(j+1).asFloat64();
+    }
+
+    if (!extractGroup(pidsGroup, xtmp, "shift", "Pid shift parameter", _njoints)) {
+        return false;
+    }
+    for (j=0; j<_njoints; j++) {
+        myPid[j].scale = xtmp.get(j+1).asFloat64();
+    }
+
+    if (!extractGroup(pidsGroup, xtmp, "ko", "Pid ko parameter", _njoints)) {
+        return false;
+    }
+    for (j=0; j<_njoints; j++) {
+        myPid[j].offset = xtmp.get(j+1).asFloat64();
+    }
+
+    if (!extractGroup(pidsGroup, xtmp, "stictionUp", "Pid stictionUp", _njoints)) {
+        return false;
+    }
+    for (j=0; j<_njoints; j++) {
+        myPid[j].stiction_up_val = xtmp.get(j+1).asFloat64();
+    }
+
+    if (!extractGroup(pidsGroup, xtmp, "stictionDwn", "Pid stictionDwn", _njoints)) {
+        return false;
+    }
+    for (j=0; j<_njoints; j++) {
+        myPid[j].stiction_down_val = xtmp.get(j+1).asFloat64();
+    }
+
+    if (!extractGroup(pidsGroup, xtmp, "kff", "Pid kff parameter", _njoints)) {
+        return false;
+    }
+    for (j=0; j<_njoints; j++) {
+        myPid[j].kff = xtmp.get(j+1).asFloat64();
+    }
+
+    //conversion from metric to machine units (if applicable)
+    if (_positionControlUnits==P_METRIC_UNITS)
+    {
+        for (j=0; j<_njoints; j++)
+        {
+            myPid[j].kp = myPid[j].kp / _angleToEncoder[j];  //[PWM/deg]
+            myPid[j].ki = myPid[j].ki / _angleToEncoder[j];  //[PWM/deg]
+            myPid[j].kd = myPid[j].kd / _angleToEncoder[j];  //[PWM/deg]
+        }
+    }
+    else
+    {
+        //do nothing
+    }
+
+    //optional PWM limit
+    if(_pwmIsLimited)
+    {   // check for value in the file
+        if (!extractGroup(pidsGroup, xtmp, "limPwm", "Limited PWD", _njoints))
+        {
+            yCError(FAKEMOTIONCONTROL) << "The PID parameter limPwm was requested but was not correctly set in the configuration file, please fill it.";
+            return false;
+        }
+
+        yCInfo(FAKEMOTIONCONTROL) << "Using LIMITED PWM!!";
+        for (j = 0; j < _njoints; j++) {
+            myPid[j].max_output = xtmp.get(j + 1).asFloat64();
+        }
+    }
+
+    return true;
+}
+*/
+
+/*
+bool FakeMotionControl::parseTorquePidsGroup(Bottle& pidsGroup, Pid myPid[], double kbemf[], double ktau[], int filterType[], double viscousPos[], double viscousNeg[], double coulombPos[], double coulombNeg[], double velocityThres[])
+{
+    int j=0;
+    Bottle xtmp;
+    if (!extractGroup(pidsGroup, xtmp, "kp", "Pid kp parameter", _njoints)) {
+        return false;
+    }
+    for (j=0; j<_njoints; j++) {
+        myPid[j].kp = xtmp.get(j+1).asFloat64();
+    }
+
+    if (!extractGroup(pidsGroup, xtmp, "kd", "Pid kd parameter", _njoints)) {
+        return false;
+    }
+    for (j=0; j<_njoints; j++) {
+        myPid[j].kd = xtmp.get(j+1).asFloat64();
+    }
+
+    if (!extractGroup(pidsGroup, xtmp, "ki", "Pid kp parameter", _njoints)) {
+        return false;
+    }
+    for (j=0; j<_njoints; j++) {
+        myPid[j].ki = xtmp.get(j+1).asFloat64();
+    }
+
+    if (!extractGroup(pidsGroup, xtmp, "maxInt", "Pid maxInt parameter", _njoints)) {
+        return false;
+    }
+    for (j=0; j<_njoints; j++) {
+        myPid[j].max_int = xtmp.get(j+1).asFloat64();
+    }
+
+    if (!extractGroup(pidsGroup, xtmp, "maxPwm", "Pid maxPwm parameter", _njoints)) {
+        return false;
+    }
+    for (j=0; j<_njoints; j++) {
+        myPid[j].max_output = xtmp.get(j+1).asFloat64();
+    }
+
+    if (!extractGroup(pidsGroup, xtmp, "shift", "Pid shift parameter", _njoints)) {
+        return false;
+    }
+    for (j=0; j<_njoints; j++) {
+        myPid[j].scale = xtmp.get(j+1).asFloat64();
+    }
+
+    if (!extractGroup(pidsGroup, xtmp, "ko", "Pid ko parameter", _njoints)) {
+        return false;
+    }
+    for (j=0; j<_njoints; j++) {
+        myPid[j].offset = xtmp.get(j+1).asFloat64();
+    }
+
+    if (!extractGroup(pidsGroup, xtmp, "stictionUp", "Pid stictionUp", _njoints)) {
+        return false;
+    }
+    for (j=0; j<_njoints; j++) {
+        myPid[j].stiction_up_val = xtmp.get(j+1).asFloat64();
+    }
+
+    if (!extractGroup(pidsGroup, xtmp, "stictionDwn", "Pid stictionDwn", _njoints)) {
+        return false;
+    }
+    for (j=0; j<_njoints; j++) {
+        myPid[j].stiction_down_val = xtmp.get(j+1).asFloat64();
+    }
+
+    if (!extractGroup(pidsGroup, xtmp, "kff",   "Pid kff parameter", _njoints)) {
+        return false;
+    }
+    for (j=0; j<_njoints; j++) {
+        myPid[j].kff = xtmp.get(j+1).asFloat64();
+    }
+
+    if (!extractGroup(pidsGroup, xtmp, "kbemf", "kbemf parameter", _njoints)) {
+        return false;
+    }
+    for (j=0; j<_njoints; j++) {
+        kbemf[j] = xtmp.get(j+1).asFloat64();
+    }
+
+    if (!extractGroup(pidsGroup, xtmp, "ktau", "ktau parameter", _njoints)) {
+        return false;
+    }
+    for (j=0; j<_njoints; j++) {
+        ktau[j] = xtmp.get(j+1).asFloat64();
+    }
+
+    if (!extractGroup(pidsGroup, xtmp, "filterType", "filterType param", _njoints)) {
+        return false;
+    }
+    for (j=0; j<_njoints; j++) {
+        filterType[j] = xtmp.get(j+1).asInt32();
+    }
+
+    if (!extractGroup(pidsGroup, xtmp, "viscousPos", "viscous pos parameter", _njoints)) {
+        return false;
+    }
+    for (j=0; j<_njoints; j++) {
+        viscousPos[j] = xtmp.get(j+1).asFloat64();
+    }
+
+    if (!extractGroup(pidsGroup, xtmp, "viscousNeg", "viscous neg parameter", _njoints)) {
+        return false;
+    }
+    for (j=0; j<_njoints; j++) {
+        viscousNeg[j] = xtmp.get(j+1).asFloat64();
+    }
+
+    if (!extractGroup(pidsGroup, xtmp, "coulombPos", "coulomb pos parameter", _njoints)) {
+        return false;
+    }
+    for (j=0; j<_njoints; j++) {
+        coulombPos[j] = xtmp.get(j+1).asFloat64();
+    }
+
+    if (!extractGroup(pidsGroup, xtmp, "coulombNeg", "coulomb neg parameter", _njoints)) {
+        return false;
+    }
+    for (j=0; j<_njoints; j++) {
+        coulombNeg[j] = xtmp.get(j+1).asFloat64();
+    }
+
+    if (!extractGroup(pidsGroup, xtmp, "velocityThres", "velocity threshold parameter", _njoints)) {
+        return false;
+    }
+    for (j=0; j<_njoints; j++) {
+        velocityThres[j] = xtmp.get(j+1).asFloat64();
+    }
+
+
+    //conversion from metric to machine units (if applicable)
+//     for (j=0; j<_njoints; j++)
+//     {
+//         myPid[j].kp = myPid[j].kp / _torqueControlHelper->getNewtonsToSensor(j);  //[PWM/Nm]
+//         myPid[j].ki = myPid[j].ki / _torqueControlHelper->getNewtonsToSensor(j);  //[PWM/Nm]
+//         myPid[j].kd = myPid[j].kd / _torqueControlHelper->getNewtonsToSensor(j);  //[PWM/Nm]
+//         myPid[j].stiction_up_val   = myPid[j].stiction_up_val   * _torqueControlHelper->getNewtonsToSensor(j); //[Nm]
+//         myPid[j].stiction_down_val = myPid[j].stiction_down_val * _torqueControlHelper->getNewtonsToSensor(j); //[Nm]
+//     }
+
+    //optional PWM limit
+    if(_pwmIsLimited)
+    {   // check for value in the file
+        if (!extractGroup(pidsGroup, xtmp, "limPwm", "Limited PWM", _njoints))
+        {
+            yCError(FAKEMOTIONCONTROL) << "The PID parameter limPwm was requested but was not correctly set in the configuration file, please fill it.";
+            return false;
+        }
+
+        yCInfo(FAKEMOTIONCONTROL) << "Using LIMITED PWM!!";
+        for (j = 0; j < _njoints; j++) {
+            myPid[j].max_output = xtmp.get(j + 1).asFloat64();
+        }
+    }
+
+    return true;
+}
+*/
 
 // eof

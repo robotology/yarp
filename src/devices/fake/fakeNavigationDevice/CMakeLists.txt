@@ -10,11 +10,11 @@ yarp_prepare_plugin(fakeNavigation
   TYPE FakeNavigation
   INCLUDE FakeNavigation.h
   DEPENDS "TARGET YARP::YARP_math"
+  GENERATE_PARSER
 )
 
 if(NOT SKIP_fakeNavigation)
   yarp_add_plugin(yarp_fakeNavigation)
-  generateDeviceParamsParser(FakeNavigation)
 
   target_sources(yarp_fakeNavigation
     PRIVATE

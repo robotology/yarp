@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Mon Feb 12 13:43:56 2024
+// Generated on: Mon Feb 19 16:27:58 2024
 
 
 #include "FakeMotionControlMicro_ParamsParser.h"
@@ -17,6 +17,11 @@
 
 namespace {
     YARP_LOG_COMPONENT(FakeMotionControlMicroParamsCOMPONENT, "yarp.device.FakeMotionControlMicro")
+}
+
+
+FakeMotionControlMicro_ParamsParser::FakeMotionControlMicro_ParamsParser()
+{
 }
 
 
@@ -64,7 +69,21 @@ bool      FakeMotionControlMicro_ParamsParser::parseParams(const yarp::os::Searc
         sectionp = config.findGroup("GENERAL");
         if (sectionp.check("AxisMap"))
         {
-            m_GENERAL_AxisMap = sectionp.find("AxisMap").asString();
+            {
+                m_GENERAL_AxisMap.clear();
+                yarp::os::Bottle* tempBot = sectionp.find("AxisMap").asList();
+                if (tempBot)
+                {
+                    for (size_t i=0; i<tempBot->size(); i++)
+                    {
+                        m_GENERAL_AxisMap.push_back(tempBot->get(i).asInt64());
+                    }
+                }
+                else
+                {
+                     yError() <<"parameter 'GENERAL_AxisMap' is not a properly formatted bottle";
+                }
+            }
             yCInfo(FakeMotionControlMicroParamsCOMPONENT) << "Parameter 'GENERAL::AxisMap' using value:" << m_GENERAL_AxisMap;
         }
         else
@@ -80,7 +99,21 @@ bool      FakeMotionControlMicro_ParamsParser::parseParams(const yarp::os::Searc
         sectionp = config.findGroup("GENERAL");
         if (sectionp.check("AxisName"))
         {
-            m_GENERAL_AxisName = sectionp.find("AxisName").asString();
+            {
+                m_GENERAL_AxisName.clear();
+                yarp::os::Bottle* tempBot = sectionp.find("AxisName").asList();
+                if (tempBot)
+                {
+                    for (size_t i=0; i<tempBot->size(); i++)
+                    {
+                        m_GENERAL_AxisName.push_back(tempBot->get(i).asString());
+                    }
+                }
+                else
+                {
+                     yError() <<"parameter 'GENERAL_AxisName' is not a properly formatted bottle";
+                }
+            }
             yCInfo(FakeMotionControlMicroParamsCOMPONENT) << "Parameter 'GENERAL::AxisName' using value:" << m_GENERAL_AxisName;
         }
         else
@@ -96,7 +129,21 @@ bool      FakeMotionControlMicro_ParamsParser::parseParams(const yarp::os::Searc
         sectionp = config.findGroup("GENERAL");
         if (sectionp.check("AxisType"))
         {
-            m_GENERAL_AxisType = sectionp.find("AxisType").asString();
+            {
+                m_GENERAL_AxisType.clear();
+                yarp::os::Bottle* tempBot = sectionp.find("AxisType").asList();
+                if (tempBot)
+                {
+                    for (size_t i=0; i<tempBot->size(); i++)
+                    {
+                        m_GENERAL_AxisType.push_back(tempBot->get(i).asString());
+                    }
+                }
+                else
+                {
+                     yError() <<"parameter 'GENERAL_AxisType' is not a properly formatted bottle";
+                }
+            }
             yCInfo(FakeMotionControlMicroParamsCOMPONENT) << "Parameter 'GENERAL::AxisType' using value:" << m_GENERAL_AxisType;
         }
         else
@@ -112,7 +159,21 @@ bool      FakeMotionControlMicro_ParamsParser::parseParams(const yarp::os::Searc
         sectionp = config.findGroup("GENERAL");
         if (sectionp.check("Encoder"))
         {
-            m_GENERAL_Encoder = sectionp.find("Encoder").asString();
+            {
+                m_GENERAL_Encoder.clear();
+                yarp::os::Bottle* tempBot = sectionp.find("Encoder").asList();
+                if (tempBot)
+                {
+                    for (size_t i=0; i<tempBot->size(); i++)
+                    {
+                        m_GENERAL_Encoder.push_back(tempBot->get(i).asInt64());
+                    }
+                }
+                else
+                {
+                     yError() <<"parameter 'GENERAL_Encoder' is not a properly formatted bottle";
+                }
+            }
             yCInfo(FakeMotionControlMicroParamsCOMPONENT) << "Parameter 'GENERAL::Encoder' using value:" << m_GENERAL_Encoder;
         }
         else
@@ -165,8 +226,8 @@ std::string      FakeMotionControlMicro_ParamsParser::getDocumentationOfDevicePa
     doc = doc + std::string("'GENERAL::Encoder': a list of scales for the encoders\n");
     doc = doc + std::string("\n");
     doc = doc + std::string("Here are some examples of invocation command with yarpdev, with all params:\n");
-    doc = doc + " yarpdev --device FakeMotionControlMicro --GENERAL::joints 1 --GENERAL::AxisMap <optional_value> --GENERAL::AxisName <optional_value> --GENERAL::AxisType <optional_value> --GENERAL::Encoder <optional_value>\n";
+    doc = doc + " yarpdev --device fakeMotionControlMicro --GENERAL::joints 1 --GENERAL::AxisMap <optional_value> --GENERAL::AxisName <optional_value> --GENERAL::AxisType <optional_value> --GENERAL::Encoder <optional_value>\n";
     doc = doc + std::string("Using only mandatory params:\n");
-    doc = doc + " yarpdev --device FakeMotionControlMicro\n";
+    doc = doc + " yarpdev --device fakeMotionControlMicro\n";
     doc = doc + std::string("=============================================\n\n");    return doc;
 }

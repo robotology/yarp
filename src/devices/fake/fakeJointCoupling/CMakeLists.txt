@@ -9,11 +9,11 @@ yarp_prepare_plugin(fakeJointCoupling
   CATEGORY device
   TYPE FakeJointCoupling
   INCLUDE FakeJointCoupling.h
+  GENERATE_PARSER
 )
 
 if(NOT SKIP_fakeJointCoupling)
   yarp_add_plugin(yarp_fakeJointCoupling)
-  generateDeviceParamsParser(FakeJointCoupling)
 
   target_sources(yarp_fakeJointCoupling
     PRIVATE

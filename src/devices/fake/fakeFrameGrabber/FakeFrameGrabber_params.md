@@ -20,10 +20,10 @@
   * |      |  freq            | double  | -             |   0            | No    | rate of test images in Hz                                     |  |
   * |      |  period          | double  | -             |   0            | No    | period of test images in seconds                              |  |
   * |      |  mode            | string  | -             |   [line]       | No    | bouncy [ball], scrolly [line], grid [grid], grid multisize [size], random [rand], none [none], time test[time]       |  |
-  * |      |  src             | string  | -             |  test.ppm      | No    | background image to use, if any       |  |
+  * |      |  src             | string  | -             |  -             | No    | background image to use, if any       | e.g. test.ppm |
   * |      |  add_timestamp   | bool    | -             |  false       | No    | should write the timestamp in the first bytes of the image       |  |
   * |      |  add_noise       | bool    | -             |  false       | No    | should add noise to the image (uses snr parameter)           |  |
   * |      |  bayer           | bool    | -             |  false       | No    | should emit bayer test image       |  |
   * |      |  mono            | bool    | -             |  false       | No    | should emit a monochrome image     |  |
   * |      |  snr             | double  | -             |  0.5         | No    | Signal noise ratio ([0.0-1.0]       |  |
-  * |      |  rectificationMatrix     | string    | -   |  1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0  | No    | Matrix that describes the lens' distortion    |  |
+  * |      |  rectificationMatrix     | vector<double>  | -   |  1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0 | No    | Matrix that describes the lens' distortion    |  |

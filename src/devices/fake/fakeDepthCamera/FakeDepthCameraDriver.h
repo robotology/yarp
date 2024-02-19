@@ -22,9 +22,11 @@
  * \brief `fakeDepthCamera`: Documentation to be added
  *
  * Parameters required by this device are shown in class: FakeDepthCameraDriver_ParamsParser
+ *
+ * The device internally opens a fakeFrameGrabber, so check also FakeFrameGrabber_ParamsParser
  */
 
-class fakeDepthCameraDriver :
+class FakeDepthCameraDriver :
         public yarp::dev::DeviceDriver,
         public yarp::dev::IRGBDSensor,
         public FakeDepthCameraDriver_ParamsParser
@@ -36,8 +38,8 @@ private:
     typedef yarp::sig::FlexImage                      FlexImage;
 
 public:
-    fakeDepthCameraDriver();
-    ~fakeDepthCameraDriver() override;
+    FakeDepthCameraDriver();
+    ~FakeDepthCameraDriver() override;
 
     // DeviceDriver
     bool open(yarp::os::Searchable& config) override;
@@ -78,18 +80,6 @@ public:
     std::string getLastErrorMsg(Stamp* timeStamp = nullptr) override;
 
 private:
-    double rgb_h{480};
-    double rgb_w{640};
-    double dep_h{480};
-    double dep_w{640};
-    double accuracy{0.001};
-    double rgb_Vfov{36};
-    double rgb_Hfov{50};
-    double dep_Vfov{36};
-    double dep_Hfov{50};
-    double dep_near{0.4};
-    double dep_far{6};
-
     yarp::sig::ImageOf<yarp::sig::PixelRgb> imageof;
     yarp::dev::PolyDriver                   testgrabber;
     yarp::dev::IFrameGrabberImage*                     image;

@@ -84,7 +84,4 @@ private:
     unsigned int nchannels;
     double dummy_value;
     yarp::os::Stamp lastStamp;
-    std::string m_sensorName;
-    std::string m_frameName;
-    bool constantValue;
 };

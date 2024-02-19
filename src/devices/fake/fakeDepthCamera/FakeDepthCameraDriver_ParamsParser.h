@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Mon Feb 12 13:43:55 2024
+// Generated on: Mon Feb 19 16:27:58 2024
 
 
 #ifndef FAKEDEPTHCAMERADRIVER_PARAMSPARSER_H
@@ -39,11 +39,11 @@
 *
 * The device can be launched by yarpdev using one of the following examples:
 * \code{.unparsed}
-* yarpdev --device FakeDepthCameraDriver --rgb_h 480.0 --rgb_w 640.0 --dep_h 480.0 --dep_w 640.0 --accuracy 0.001 --rgb_Vfov 50.0 --rgb_Hfov 36.0 --dep_Vfov 50.0 --dep_Hfov 36.0 --dep_near 0.2 --dep_far 6.0
+* yarpdev --device fakeDepthCamera --rgb_h 480.0 --rgb_w 640.0 --dep_h 480.0 --dep_w 640.0 --accuracy 0.001 --rgb_Vfov 50.0 --rgb_Hfov 36.0 --dep_Vfov 50.0 --dep_Hfov 36.0 --dep_near 0.2 --dep_far 6.0
 * \endcode
 *
 * \code{.unparsed}
-* yarpdev --device FakeDepthCameraDriver
+* yarpdev --device fakeDepthCamera
 * \endcode
 *
 */
@@ -51,11 +51,12 @@
 class FakeDepthCameraDriver_ParamsParser : public yarp::dev::IDeviceDriverParams
 {
 public:
-    FakeDepthCameraDriver_ParamsParser() = default;
+    FakeDepthCameraDriver_ParamsParser();
     ~FakeDepthCameraDriver_ParamsParser() override = default;
 
 public:
-    const std::string m_device_type = {"FakeDepthCameraDriver"};
+    const std::string m_device_classname = {"FakeDepthCameraDriver"};
+    const std::string m_device_name = {"fakeDepthCamera"};
     bool m_parser_is_strict = false;
     struct parser_version_type
     {
@@ -63,6 +64,19 @@ public:
          int minor = 0;
     };
     const parser_version_type m_parser_version = {};
+
+    const std::string m_rgb_h_defaultValue = {"480.0"};
+    const std::string m_rgb_w_defaultValue = {"640.0"};
+    const std::string m_dep_h_defaultValue = {"480.0"};
+    const std::string m_dep_w_defaultValue = {"640.0"};
+    const std::string m_accuracy_defaultValue = {"0.001"};
+    const std::string m_rgb_Vfov_defaultValue = {"50.0"};
+    const std::string m_rgb_Hfov_defaultValue = {"36.0"};
+    const std::string m_dep_Vfov_defaultValue = {"50.0"};
+    const std::string m_dep_Hfov_defaultValue = {"36.0"};
+    const std::string m_dep_near_defaultValue = {"0.2"};
+    const std::string m_dep_far_defaultValue = {"6.0"};
+
     double m_rgb_h = {480.0};
     double m_rgb_w = {640.0};
     double m_dep_h = {480.0};
@@ -76,7 +90,8 @@ public:
     double m_dep_far = {6.0};
 
     bool          parseParams(const yarp::os::Searchable & config) override;
-    std::string   getDeviceType() const override { return m_device_type; }
+    std::string   getDeviceClassName() const override { return m_device_classname; }
+    std::string   getDeviceName() const override { return m_device_name; }
     std::string   getDocumentationOfDeviceParams() const override;
     std::vector<std::string> getListOfParams() const override;
 };

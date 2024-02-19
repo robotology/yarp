@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Mon Feb 12 13:43:58 2024
+// Generated on: Mon Feb 19 16:28:00 2024
 
 
 #include "FakeNavigation_ParamsParser.h"
@@ -17,6 +17,11 @@
 
 namespace {
     YARP_LOG_COMPONENT(FakeNavigationParamsCOMPONENT, "yarp.device.FakeNavigation")
+}
+
+
+FakeNavigation_ParamsParser::FakeNavigation_ParamsParser()
+{
 }
 
 
@@ -107,8 +112,8 @@ std::string      FakeNavigation_ParamsParser::getDocumentationOfDeviceParams() c
     doc = doc + std::string("'reached_time': reached_time\n");
     doc = doc + std::string("\n");
     doc = doc + std::string("Here are some examples of invocation command with yarpdev, with all params:\n");
-    doc = doc + " yarpdev --device FakeNavigation --navigation_time 500 --reached_time 100\n";
+    doc = doc + " yarpdev --device fakeNavigation --navigation_time 500 --reached_time 100\n";
     doc = doc + std::string("Using only mandatory params:\n");
-    doc = doc + " yarpdev --device FakeNavigation\n";
+    doc = doc + " yarpdev --device fakeNavigation\n";
     doc = doc + std::string("=============================================\n\n");    return doc;
 }

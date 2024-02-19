@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Mon Feb 12 13:43:57 2024
+// Generated on: Mon Feb 19 16:27:59 2024
 
 
 #include "FakeSpeechTranscription_ParamsParser.h"
@@ -17,6 +17,11 @@
 
 namespace {
     YARP_LOG_COMPONENT(FakeSpeechTranscriptionParamsCOMPONENT, "yarp.device.FakeSpeechTranscription")
+}
+
+
+FakeSpeechTranscription_ParamsParser::FakeSpeechTranscription_ParamsParser()
+{
 }
 
 
@@ -91,8 +96,8 @@ std::string      FakeSpeechTranscription_ParamsParser::getDocumentationOfDeviceP
     doc = doc + std::string("'language': language code\n");
     doc = doc + std::string("\n");
     doc = doc + std::string("Here are some examples of invocation command with yarpdev, with all params:\n");
-    doc = doc + " yarpdev --device FakeSpeechTranscription --language auto\n";
+    doc = doc + " yarpdev --device fakeSpeechTranscription --language auto\n";
     doc = doc + std::string("Using only mandatory params:\n");
-    doc = doc + " yarpdev --device FakeSpeechTranscription\n";
+    doc = doc + " yarpdev --device fakeSpeechTranscription\n";
     doc = doc + std::string("=============================================\n\n");    return doc;
 }

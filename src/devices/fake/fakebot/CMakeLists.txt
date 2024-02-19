@@ -11,12 +11,12 @@ yarp_prepare_plugin(fakebot
   TYPE FakeBot
   INCLUDE FakeBot.h
   DEFAULT OFF
+  GENERATE_PARSER
   DEPENDS "NOT YARP_NO_DEPRECATED" # DEPRECATED Since YARP 3.5
 )
 
 if(NOT SKIP_fakebot)
   yarp_add_plugin(yarp_fakebot)
-  generateDeviceParamsParser(FakeBot)
 
   target_sources(yarp_fakebot
     PRIVATE

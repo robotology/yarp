@@ -9,11 +9,11 @@ yarp_prepare_plugin(fakeSpeechSynthesizer
   CATEGORY device
   TYPE FakeSpeechSynthesizer
   INCLUDE FakeSpeechSynthesizer.h
+  GENERATE_PARSER
 )
 
 if(ENABLE_fakeSpeechSynthesizer)
   yarp_add_plugin(yarp_fakeSpeechSynthesizer)
-  generateDeviceParamsParser(FakeSpeechSynthesizer)
 
   target_sources(yarp_fakeSpeechSynthesizer
     PRIVATE

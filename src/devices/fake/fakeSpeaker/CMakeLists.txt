@@ -9,13 +9,13 @@ yarp_prepare_plugin(fakeSpeaker
   CATEGORY device
   TYPE FakeSpeaker
   INCLUDE FakeSpeaker.h
+  GENERATE_PARSER
   EXTRA_CONFIG
     WRAPPER=AudioPlayerWrapper
 )
 
 if(NOT SKIP_fakeSpeaker)
   yarp_add_plugin(yarp_fakeSpeaker)
-  generateDeviceParamsParser(FakeSpeaker)
 
   target_sources(yarp_fakeSpeaker
     PRIVATE

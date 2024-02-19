@@ -9,13 +9,13 @@ yarp_prepare_plugin(fakeMotionControl
   CATEGORY device
   TYPE FakeMotionControl
   INCLUDE FakeMotionControl.h
+  GENERATE_PARSER
   EXTRA_CONFIG
     WRAPPER=controlBoard_nws_yarp
 )
 
 if(NOT SKIP_fakeMotionControl)
   yarp_add_plugin(yarp_fakeMotionControl)
-  generateDeviceParamsParser(FakeMotionControl)
 
   target_sources(yarp_fakeMotionControl
     PRIVATE

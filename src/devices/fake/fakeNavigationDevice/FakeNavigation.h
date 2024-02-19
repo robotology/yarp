@@ -42,9 +42,7 @@ private:
     }
     m_control_out;
 
-    int m_reached_duration_param = 100;
-    int m_navig_duration_param = 500;
-    int m_time_counter= m_navig_duration_param;
+    int m_time_counter= 0;
 
 public:
     virtual bool open(yarp::os::Searchable& config) override;

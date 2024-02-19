@@ -38,7 +38,6 @@ public:
 
 private:
     std::string m_currBot;
-    std::string m_lang;
     std::string m_fallback;
     std::string m_noInput;
     std::string m_status;

@@ -198,41 +198,10 @@ bool FakeMotionControlMicro::open(yarp::os::Searchable &config)
 
     std::string str;
 
-//     if (!config.findGroup("GENERAL").find("MotioncontrolVersion").isInt32())
-//     {
-//         yCError(FAKEMOTIONCONTROL) << "Missing MotioncontrolVersion parameter. yarprobotinterface cannot start. Please contact icub-support@iit.it";
-//         return false;
-//     }
-//     else
-//     {
-//         int mcv = config.findGroup("GENERAL").find("MotioncontrolVersion").asInt32();
-//         if (mcv != 2)
-//         {
-//             yCError(FAKEMOTIONCONTROL) << "Wrong MotioncontrolVersion parameter. yarprobotinterface cannot start. Please contact icub-support@iit.it";
-//             return false;
-//         }
-//     }
-
-//     if(!config.findGroup("GENERAL").find("verbose").isBool())
-//     {
-//         yCError(FAKEMOTIONCONTROL) << "open() detects that general->verbose bool param is different from accepted values (true / false). Assuming false";
-//         str=" ";
-//     }
-//     else
-//     {
-//         if(config.findGroup("GENERAL").find("verbose").asBool())
-//             str=config.toString().c_str();
-//         else
-//             str=" ";
-//     }
-    str=config.toString();
-    yCTrace(FAKEMOTIONCONTROLMICRO) << str;
-
     //
     //  Read Configuration params from file
     //
-    _njoints = config.findGroup("GENERAL").check("Joints",Value(1),   "Number of degrees of freedom").asInt32();
-    yCInfo(FAKEMOTIONCONTROLMICRO, "Using %d joint%s", _njoints, ((_njoints != 1) ? "s" : ""));
+    _njoints = m_GENERAL_joints;
 
     if(!alloc(_njoints))
     {
@@ -277,204 +246,82 @@ bool FakeMotionControlMicro::open(yarp::os::Searchable &config)
 
 bool FakeMotionControlMicro::fromConfig(yarp::os::Searchable &config)
 {
-    Bottle xtmp;
-    int i;
-    Bottle general = config.findGroup("GENERAL");
+    size_t i;
 
-    // read AxisMap values from file
-    if(general.check("AxisMap"))
+    // AxisMap
+    if (!m_GENERAL_AxisMap.empty())
     {
-        if(extractGroup(general, xtmp, "AxisMap", "a list of reordered indices for the axes", _njoints))
-        {
-            for (i = 1; (size_t)i < xtmp.size(); i++) {
-                _axisMap[i - 1] = xtmp.get(i).asInt32();
-            }
-        } else {
-            return false;
+        for (i = 0; i < m_GENERAL_AxisMap.size(); i++) {
+            _axisMap[i] = m_GENERAL_AxisMap[i];
         }
     }
     else
     {
-        yCInfo(FAKEMOTIONCONTROLMICRO) << "Using default AxisMap";
         for (i = 0; i < _njoints; i++) {
             _axisMap[i] = i;
         }
     }
 
-    if(general.check("AxisName"))
+    // AxisName
+    if (!m_GENERAL_AxisName.empty())
     {
-        if (extractGroup(general, xtmp, "AxisName", "a list of strings representing the axes names", _njoints))
-        {
-            //beware: axis name has to be remapped here because they are not set using the toHw() helper function
-            for (i = 1; (size_t) i < xtmp.size(); i++)
-            {
-                _axisName[_axisMap[i - 1]] = xtmp.get(i).asString();
-            }
-        } else {
-            return false;
+        for (i = 0; i < m_GENERAL_AxisName.size(); i++) {
+            _axisName[_axisMap[i]] = m_GENERAL_AxisName[i];
         }
     }
     else
     {
-        yCInfo(FAKEMOTIONCONTROLMICRO) << "Using default AxisName";
-        for (i = 0; i < _njoints; i++)
-        {
+        for (i = 0; i < _njoints; i++) {
             _axisName[_axisMap[i]] = "joint" + toString(i);
         }
     }
-    if(general.check("AxisType"))
+
+    // Axis Type
+    if (!m_GENERAL_AxisType.empty())
     {
-        if (extractGroup(general, xtmp, "AxisType", "a list of strings representing the axes type (revolute/prismatic)", _njoints))
+        //beware: axis type has to be remapped here because they are not set using the toHw() helper function
+        for (i = 0; i < m_GENERAL_AxisType.size(); i++)
         {
-            //beware: axis type has to be remapped here because they are not set using the toHw() helper function
-            for (i = 1; (size_t) i < xtmp.size(); i++)
-            {
-                std::string typeString = xtmp.get(i).asString();
-                if (typeString == "revolute") {
-                    _jointType[_axisMap[i - 1]] = VOCAB_JOINTTYPE_REVOLUTE;
-                } else if (typeString == "prismatic") {
-                    _jointType[_axisMap[i - 1]] = VOCAB_JOINTTYPE_PRISMATIC;
-                } else {
-                    yCError(FAKEMOTIONCONTROLMICRO, "Unknown AxisType value %s!", typeString.c_str());
-                    _jointType[_axisMap[i - 1]] = VOCAB_JOINTTYPE_UNKNOWN;
-                    return false;
-                }
+            std::string typeString = m_GENERAL_AxisType[i];
+            if (typeString == "revolute") {
+                _jointType[_axisMap[i]] = VOCAB_JOINTTYPE_REVOLUTE;
             }
-        } else {
-            return false;
+            else if (typeString == "prismatic") {
+                _jointType[_axisMap[i]] = VOCAB_JOINTTYPE_PRISMATIC;
+            }
+            else {
+                yCError(FAKEMOTIONCONTROLMICRO, "Unknown AxisType value %s!", typeString.c_str());
+                _jointType[_axisMap[i]] = VOCAB_JOINTTYPE_UNKNOWN;
+                return false;
+            }
         }
     }
     else
     {
         yCInfo(FAKEMOTIONCONTROLMICRO) << "Using default AxisType (revolute)";
-        for (i = 0; i < _njoints; i++)
-        {
+        for (i = 0; i < _njoints; i++)  {
             _jointType[_axisMap[i]] = VOCAB_JOINTTYPE_REVOLUTE;
         }
     }
 
+
+
+
+
+
 //     double tmp_A2E;
     // Encoder scales
-    if(general.check("Encoder"))
+    if(!m_GENERAL_Encoder.empty())
     {
-        if (extractGroup(general, xtmp, "Encoder", "a list of scales for the encoders", _njoints))
-        {
-            for (i = 1; (size_t) i < xtmp.size(); i++)
-            {
-                _angleToEncoder[i-1] = xtmp.get(i).asFloat64();
-            }
-        } else {
-            return false;
-        }
+        for (i = 0; i < m_GENERAL_Encoder.size(); i++) {
+            _angleToEncoder[i] = m_GENERAL_Encoder[i]; }
     }
     else
     {
-        yCInfo(FAKEMOTIONCONTROLMICRO) << "Using default Encoder";
+        yCInfo(FAKEMOTIONCONTROLMICRO) << "Using default Encoder=1";
         for (i = 0; i < _njoints; i++) {
-            _angleToEncoder[i] = 1;
-        }
+            _angleToEncoder[i] = 1; }
     }
-
-    // Joint encoder resolution
-    /*if (!extractGroup(general, xtmp, "JointEncoderRes", "the resolution of the joint encoder", _njoints))
-    {
-        return false;
-    }
-    else
-    {
-        int test = xtmp.size();
-        for (i = 1; i < xtmp.size(); i++)
-            _jointEncoderRes[i - 1] = xtmp.get(i).asInt32();
-    }
-
-    // Joint encoder type
-    if (!extractGroup(general, xtmp, "JointEncoderType", "JointEncoderType", _njoints))
-    {
-        return false;
-    }
-    else
-    {
-        int test = xtmp.size();
-        for (i = 1; i < xtmp.size(); i++)
-        {
-            uint8_t val;
-            std::string s = xtmp.get(i).asString();
-            bool b = EncoderType_iCub2eo(&s, &val);
-            if (b == false)
-            {
-                yCError(FAKEMOTIONCONTROL, "Invalid JointEncoderType: %s!", s.c_str()); return false;
-            }
-//             _jointEncoderType[i - 1] = val;
-        }
-    }
-*/
-
-    // Motor capabilities
-/*    if (!extractGroup(general, xtmp, "HasHallSensor", "HasHallSensor 0/1 ", _njoints))
-    {
-        return false;
-    }
-    else
-    {
-        int test = xtmp.size();
-        for (i = 1; i < xtmp.size(); i++)
-            _hasHallSensor[i - 1] = xtmp.get(i).asInt32();
-    }
-    if (!extractGroup(general, xtmp, "HasTempSensor", "HasTempSensor 0/1 ", _njoints))
-    {
-        return false;
-    }
-    else
-    {
-        int test = xtmp.size();
-        for (i = 1; i < xtmp.size(); i++)
-            _hasTempSensor[i - 1] = xtmp.get(i).asInt32();
-    }
-    if (!extractGroup(general, xtmp, "HasRotorEncoder", "HasRotorEncoder 0/1 ", _njoints))
-    {
-        return false;
-    }
-    else
-    {
-        int test = xtmp.size();
-        for (i = 1; i < xtmp.size(); i++)
-            _hasRotorEncoder[i - 1] = xtmp.get(i).asInt32();
-    }
-    if (!extractGroup(general, xtmp, "HasRotorEncoderIndex", "HasRotorEncoderIndex 0/1 ", _njoints))
-    {
-        return false;
-    }
-    else
-    {
-        int test = xtmp.size();
-        for (i = 1; i < xtmp.size(); i++)
-            _hasRotorEncoderIndex[i - 1] = xtmp.get(i).asInt32();
-    }
-
-    // Rotor encoder res
-    if (!extractGroup(general, xtmp, "RotorEncoderRes", "a list of scales for the rotor encoders", _njoints))
-    {
-        return false;
-    }
-    else
-    {
-        int test = xtmp.size();
-        for (i = 1; i < xtmp.size(); i++)
-            _rotorEncoderRes[i - 1] = xtmp.get(i).asInt32();
-    }
-
-    // joint encoder res
-    if (!extractGroup(general, xtmp, "JointEncoderRes", "a list of scales for the joint encoders", _njoints))
-    {
-        return false;
-    }
-    else
-    {
-        int test = xtmp.size();
-        for (i = 1; i < xtmp.size(); i++)
-            _jointEncoderRes[i - 1] = xtmp.get(i).asInt32();
-    }
-*/
 
     return true;
 }

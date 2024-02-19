@@ -8,12 +8,12 @@ yarp_prepare_plugin(fakeJoypad
   CATEGORY device
   TYPE FakeJoypad
   INCLUDE FakeJoypad.h
+  GENERATE_PARSER
   EXTRA_CONFIG
     WRAPPER=JoypadControlServer)
 
 if(ENABLE_fakeJoypad)
   yarp_add_plugin(yarp_fakeJoypad)
-  generateDeviceParamsParser(FakeJoypad)
 
   target_sources(yarp_fakeJoypad
     PRIVATE

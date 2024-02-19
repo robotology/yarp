@@ -33,11 +33,10 @@ protected:
     yarp::dev::Nav2D::Map2DLocation    m_current_loc;
     yarp::dev::Nav2D::Map2DLocation    m_current_odom;
     std::mutex                         m_mutex_thread;
-    yarp::os::Searchable&              m_cfg;
     std::string                        m_local_name;
 
 public:
-    fakeLocalizerThread(double _period, yarp::os::Searchable& _cfg);
+    fakeLocalizerThread(double _period);
     virtual bool threadInit() override;
     virtual void threadRelease() override;
     virtual void run() override;

@@ -29,7 +29,6 @@ class FakeSpeechTranscription :
 {
 private:
     bool m_verbose = true;
-    std::string m_language="auto";
 
 public:
     FakeSpeechTranscription();

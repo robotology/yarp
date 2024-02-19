@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Mon Feb 12 13:43:57 2024
+// Generated on: Mon Feb 19 16:27:59 2024
 
 
 #include "FakeSerialPort_ParamsParser.h"
@@ -17,6 +17,11 @@
 
 namespace {
     YARP_LOG_COMPONENT(FakeSerialPortParamsCOMPONENT, "yarp.device.FakeSerialPort")
+}
+
+
+FakeSerialPort_ParamsParser::FakeSerialPort_ParamsParser()
+{
 }
 
 
@@ -317,7 +322,7 @@ bool      FakeSerialPort_ParamsParser::parseParams(const yarp::os::Searchable & 
     {
         if (config.check("line_terminator_char1"))
         {
-            m_line_terminator_char1 = config.find("line_terminator_char1").asString();
+            m_line_terminator_char1 = config.find("line_terminator_char1").asInt8();
             yCInfo(FakeSerialPortParamsCOMPONENT) << "Parameter 'line_terminator_char1' using value:" << m_line_terminator_char1;
         }
         else
@@ -331,7 +336,7 @@ bool      FakeSerialPort_ParamsParser::parseParams(const yarp::os::Searchable & 
     {
         if (config.check("line_terminator_char2"))
         {
-            m_line_terminator_char2 = config.find("line_terminator_char2").asString();
+            m_line_terminator_char2 = config.find("line_terminator_char2").asInt8();
             yCInfo(FakeSerialPortParamsCOMPONENT) << "Parameter 'line_terminator_char2' using value:" << m_line_terminator_char2;
         }
         else
@@ -399,8 +404,8 @@ std::string      FakeSerialPort_ParamsParser::getDocumentationOfDeviceParams() c
     doc = doc + std::string("'line_terminator_char2': line terminator character for receiveLine()\n");
     doc = doc + std::string("\n");
     doc = doc + std::string("Here are some examples of invocation command with yarpdev, with all params:\n");
-    doc = doc + " yarpdev --device FakeSerialPort --comport COM3 --verbose 1 --baudrate 9600 --xonlim 0 --xofflim 0 --readmincharacters 1 --readtimeoutmsec 100 --paritymode EVEN --ctsenb 0 --rtsenb 0 --xinenb 0 --xoutenb 0 --modem 0 --rcvenb 0 --dsrenb 0 --dtrdisable 0 --databits 7 --stopbits 1 --line_terminator_char1 \r --line_terminator_char2 \n\n";
+    doc = doc + " yarpdev --device fakeSerialPort --comport COM3 --verbose 1 --baudrate 9600 --xonlim 0 --xofflim 0 --readmincharacters 1 --readtimeoutmsec 100 --paritymode EVEN --ctsenb 0 --rtsenb 0 --xinenb 0 --xoutenb 0 --modem 0 --rcvenb 0 --dsrenb 0 --dtrdisable 0 --databits 7 --stopbits 1 --line_terminator_char1 '\r' --line_terminator_char2 '\n'\n";
     doc = doc + std::string("Using only mandatory params:\n");
-    doc = doc + " yarpdev --device FakeSerialPort --comport COM3 --baudrate 9600\n";
+    doc = doc + " yarpdev --device fakeSerialPort --comport COM3 --baudrate 9600\n";
     doc = doc + std::string("=============================================\n\n");    return doc;
 }

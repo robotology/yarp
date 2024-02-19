@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Mon Feb 12 13:43:57 2024
+// Generated on: Mon Feb 19 16:28:00 2024
 
 
 #include "FakeFrameGrabber_ParamsParser.h"
@@ -17,6 +17,29 @@
 
 namespace {
     YARP_LOG_COMPONENT(FakeFrameGrabberParamsCOMPONENT, "yarp.device.FakeFrameGrabber")
+}
+
+
+FakeFrameGrabber_ParamsParser::FakeFrameGrabber_ParamsParser()
+{
+    //Default value of parameterrectificationMatrix
+    {
+        m_rectificationMatrix.clear();
+        yarp::os::Bottle tempBot;
+        tempBot.fromString(m_rectificationMatrix_defaultValue);
+        if (tempBot.size()!=0)
+        {
+            for (size_t i=0; i<tempBot.size(); i++)
+            {
+                m_rectificationMatrix.push_back(tempBot.get(i).asFloat64());
+            }
+        }
+        else
+        {
+             yError() <<"parameter 'rectificationMatrix' is not a properly formatted bottle";
+        }
+    }
+
 }
 
 
@@ -462,7 +485,21 @@ bool      FakeFrameGrabber_ParamsParser::parseParams(const yarp::os::Searchable 
     {
         if (config.check("rectificationMatrix"))
         {
-            m_rectificationMatrix = config.find("rectificationMatrix").asString();
+            {
+                m_rectificationMatrix.clear();
+                yarp::os::Bottle* tempBot = config.find("rectificationMatrix").asList();
+                if (tempBot)
+                {
+                    for (size_t i=0; i<tempBot->size(); i++)
+                    {
+                        m_rectificationMatrix.push_back(tempBot->get(i).asFloat64());
+                    }
+                }
+                else
+                {
+                     yError() <<"parameter 'rectificationMatrix' is not a properly formatted bottle";
+                }
+            }
             yCInfo(FakeFrameGrabberParamsCOMPONENT) << "Parameter 'rectificationMatrix' using value:" << m_rectificationMatrix;
         }
         else
@@ -539,8 +576,8 @@ std::string      FakeFrameGrabber_ParamsParser::getDocumentationOfDeviceParams()
     doc = doc + std::string("'rectificationMatrix': Matrix that describes the lens' distortion\n");
     doc = doc + std::string("\n");
     doc = doc + std::string("Here are some examples of invocation command with yarpdev, with all params:\n");
-    doc = doc + " yarpdev --device FakeFrameGrabber --width 320 --height 240 --horizontalFov 1.0 --verticalFov 2.0 --fakeFrameGrabber_rpc_port /fakeFrameGrabber/rpc --mirror false --syncro false --topIsLow true --physFocalLength 3.0 --focalLengthX 4.0 --focalLengthY 5.0 --principalPointX 6.0 --principalPointY 7.0 --distortionModel FishEye --k1 8.0 --k2 9.0 --k3 10.0 --t1 11.0 --t2 12.0 --freq 0 --period 0 --mode [line] --src test.ppm --add_timestamp false --add_noise false --bayer false --mono false --snr 0.5 --rectificationMatrix 1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0\n";
+    doc = doc + " yarpdev --device fakeFrameGrabber --width 320 --height 240 --horizontalFov 1.0 --verticalFov 2.0 --fakeFrameGrabber_rpc_port /fakeFrameGrabber/rpc --mirror false --syncro false --topIsLow true --physFocalLength 3.0 --focalLengthX 4.0 --focalLengthY 5.0 --principalPointX 6.0 --principalPointY 7.0 --distortionModel FishEye --k1 8.0 --k2 9.0 --k3 10.0 --t1 11.0 --t2 12.0 --freq 0 --period 0 --mode [line] --src <optional_value> --add_timestamp false --add_noise false --bayer false --mono false --snr 0.5 --rectificationMatrix \" 1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0 \"\n";
     doc = doc + std::string("Using only mandatory params:\n");
-    doc = doc + " yarpdev --device FakeFrameGrabber\n";
+    doc = doc + " yarpdev --device fakeFrameGrabber\n";
     doc = doc + std::string("=============================================\n\n");    return doc;
 }

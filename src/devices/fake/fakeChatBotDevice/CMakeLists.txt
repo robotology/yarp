@@ -9,12 +9,12 @@ yarp_prepare_plugin(fakeChatBotDevice
   CATEGORY device
   TYPE FakeChatBotDevice
   INCLUDE FakeChatBotDevice.h
-
+  GENERATE_PARSER
 )
+
 if(NOT SKIP_fakeChatBotDevice)
 
     yarp_add_plugin(yarp_fakeChatBotDevice)
-    generateDeviceParamsParser(FakeChatBotDevice)
 
     target_sources(yarp_fakeChatBotDevice
     PRIVATE

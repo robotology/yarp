@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Mon Feb 12 13:43:56 2024
+// Generated on: Mon Feb 19 16:27:58 2024
 
 
 #ifndef FAKEANALOGSENSOR_PARAMSPARSER_H
@@ -23,17 +23,18 @@
 * This class is the parameters parser for class FakeAnalogSensor.
 *
 * These are the used parameters:
-* | Group name | Parameter name | Type   | Units | Default Value | Required | Description   | Notes                  |
-* |:----------:|:--------------:|:------:|:-----:|:-------------:|:--------:|:-------------:|:----------------------:|
-* | -          | period         | double | s     | 1.0           | 0        | thread period | optional, default 1.0s |
+* | Group name | Parameter name | Type   | Units | Default Value | Required | Description        | Notes |
+* |:----------:|:--------------:|:------:|:-----:|:-------------:|:--------:|:------------------:|:-----:|
+* | -          | period         | double | s     | 1.0           | 0        | thread period      | -     |
+* | -          | channelsNum    | int    | -     | 1             | 0        | Number of channels | -     |
 *
 * The device can be launched by yarpdev using one of the following examples:
 * \code{.unparsed}
-* yarpdev --device FakeAnalogSensor --period 1.0
+* yarpdev --device fakeAnalogSensor --period 1.0 --channelsNum 1
 * \endcode
 *
 * \code{.unparsed}
-* yarpdev --device FakeAnalogSensor
+* yarpdev --device fakeAnalogSensor
 * \endcode
 *
 */
@@ -41,11 +42,12 @@
 class FakeAnalogSensor_ParamsParser : public yarp::dev::IDeviceDriverParams
 {
 public:
-    FakeAnalogSensor_ParamsParser() = default;
+    FakeAnalogSensor_ParamsParser();
     ~FakeAnalogSensor_ParamsParser() override = default;
 
 public:
-    const std::string m_device_type = {"FakeAnalogSensor"};
+    const std::string m_device_classname = {"FakeAnalogSensor"};
+    const std::string m_device_name = {"fakeAnalogSensor"};
     bool m_parser_is_strict = false;
     struct parser_version_type
     {
@@ -53,10 +55,16 @@ public:
          int minor = 0;
     };
     const parser_version_type m_parser_version = {};
+
+    const std::string m_period_defaultValue = {"1.0"};
+    const std::string m_channelsNum_defaultValue = {"1"};
+
     double m_period = {1.0};
+    int m_channelsNum = {1};
 
     bool          parseParams(const yarp::os::Searchable & config) override;
-    std::string   getDeviceType() const override { return m_device_type; }
+    std::string   getDeviceClassName() const override { return m_device_classname; }
+    std::string   getDeviceName() const override { return m_device_name; }
     std::string   getDocumentationOfDeviceParams() const override;
     std::vector<std::string> getListOfParams() const override;
 };

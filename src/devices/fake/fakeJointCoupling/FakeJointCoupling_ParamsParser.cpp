@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Mon Feb 12 13:43:56 2024
+// Generated on: Mon Feb 19 16:27:59 2024
 
 
 #include "FakeJointCoupling_ParamsParser.h"
@@ -17,6 +17,11 @@
 
 namespace {
     YARP_LOG_COMPONENT(FakeJointCouplingParamsCOMPONENT, "yarp.device.FakeJointCoupling")
+}
+
+
+FakeJointCoupling_ParamsParser::FakeJointCoupling_ParamsParser()
+{
 }
 
 
@@ -91,8 +96,8 @@ std::string      FakeJointCoupling_ParamsParser::getDocumentationOfDeviceParams(
     doc = doc + std::string("'rpc_port_name': Full rpc port name\n");
     doc = doc + std::string("\n");
     doc = doc + std::string("Here are some examples of invocation command with yarpdev, with all params:\n");
-    doc = doc + " yarpdev --device FakeJointCoupling --rpc_port_name /fakeJointCoupling/rpc\n";
+    doc = doc + " yarpdev --device fakeJointCoupling --rpc_port_name /fakeJointCoupling/rpc\n";
     doc = doc + std::string("Using only mandatory params:\n");
-    doc = doc + " yarpdev --device FakeJointCoupling\n";
+    doc = doc + " yarpdev --device fakeJointCoupling\n";
     doc = doc + std::string("=============================================\n\n");    return doc;
 }

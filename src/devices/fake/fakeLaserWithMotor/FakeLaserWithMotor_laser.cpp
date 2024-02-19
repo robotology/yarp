@@ -58,7 +58,7 @@ bool FakeLaserWithMotor::setHorizontalResolution(double step)
 bool FakeLaserWithMotor::setScanRate(double rate)
 {
     m_mutex.lock();
-    m_period = (1.0 / rate);
+    m_GENERAL_period = (1.0 / rate);
     m_mutex.unlock();
     return false;
 }

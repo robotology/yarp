@@ -39,28 +39,11 @@ bool FakeSpeaker::open(yarp::os::Searchable &config)
 {
     if (!this->parseParams(config)) {return false;}
 
-    if (config.check("help"))
-    {
-        yCInfo(FAKESPEAKER, "Some examples:");
-        yCInfo(FAKESPEAKER, "yarpdev --device fakeSpeaker --help");
-        yCInfo(FAKESPEAKER, "yarpdev --device AudioPlayerWrapper --subdevice fakeSpeaker --start");
-        return false;
-    }
-
     bool b = configurePlayerAudioDevice(config.findGroup("AUDIO_BASE"), "fakeSpeaker");
     if (!b) { return false; }
 
     //sets the thread period
-    if( config.check("period"))
-    {
-        double period = config.find("period").asFloat64();
-        setPeriod(period);
-        yCInfo(FAKESPEAKER) << "Using chosen period of " << period << " s";
-    }
-    else
-    {
-        yCInfo(FAKESPEAKER) << "Using default period of " << c_DEFAULT_PERIOD << " s";
-    }
+    setPeriod(m_period);
 
     //start the capture thread
     start();

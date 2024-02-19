@@ -71,7 +71,6 @@ protected:
 
     test_mode_t m_test_mode;
 
-    double m_period;
     yarp::dev::Nav2D::MapGrid2D   m_originally_loaded_map;
     yarp::dev::Nav2D::MapGrid2D   m_map;
 
@@ -92,7 +91,6 @@ protected:
 
 public:
     FakeLaserWithMotor(double period = 0.02) : PeriodicThread(period),
-        m_period(period),
         m_test_mode(test_mode_t::NO_OBSTACLES),
         ImplementPositionControl(this),
         ImplementVelocityControl(this),

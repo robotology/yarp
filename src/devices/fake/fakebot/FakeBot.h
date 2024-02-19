@@ -42,22 +42,15 @@ private:
     double m_tx, m_ty;
     double m_tdx, m_tdy;
     int m_w, m_h;
-    double xScale, yScale;
-    double noiseLevel;
     yarp::sig::Vector pos, dpos, vel, speed, acc, loc, amp;
     yarp::sig::ImageOf<yarp::sig::PixelRgb> back, fore;
-    double lifetime;
 
     void init();
 public:
     FakeBot() :
         njoints(2),
         m_w(128),
-        m_h(128),
-        xScale(1),
-        yScale(1),
-        noiseLevel(0),
-        lifetime(-1)
+        m_h(128)
     {
         pos.resize(njoints);
         dpos.resize(njoints);

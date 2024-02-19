@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Mon Feb 12 13:43:56 2024
+// Generated on: Mon Feb 19 16:27:59 2024
 
 
 #include "FakeOdometry2D_ParamsParser.h"
@@ -17,6 +17,11 @@
 
 namespace {
     YARP_LOG_COMPONENT(FakeOdometry2DParamsCOMPONENT, "yarp.device.FakeOdometry2D")
+}
+
+
+FakeOdometry2D_ParamsParser::FakeOdometry2D_ParamsParser()
+{
 }
 
 
@@ -91,8 +96,8 @@ std::string      FakeOdometry2D_ParamsParser::getDocumentationOfDeviceParams() c
     doc = doc + std::string("'period': thread period\n");
     doc = doc + std::string("\n");
     doc = doc + std::string("Here are some examples of invocation command with yarpdev, with all params:\n");
-    doc = doc + " yarpdev --device FakeOdometry2D --period 0.02\n";
+    doc = doc + " yarpdev --device fakeOdometry2D --period 0.02\n";
     doc = doc + std::string("Using only mandatory params:\n");
-    doc = doc + " yarpdev --device FakeOdometry2D\n";
+    doc = doc + " yarpdev --device fakeOdometry2D\n";
     doc = doc + std::string("=============================================\n\n");    return doc;
 }

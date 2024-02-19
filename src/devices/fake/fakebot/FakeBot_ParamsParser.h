@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Mon Feb 12 13:43:55 2024
+// Generated on: Mon Feb 19 16:27:58 2024
 
 
 #ifndef FAKEBOT_PARAMSPARSER_H
@@ -34,11 +34,11 @@
 *
 * The device can be launched by yarpdev using one of the following examples:
 * \code{.unparsed}
-* yarpdev --device FakeBot --background textures/back.ppm --target textures/fore.ppm --noise 0.05 --sx 1.0 --sy 1.0 --lifetime -1.0
+* yarpdev --device fakebot --background textures/back.ppm --target textures/fore.ppm --noise 0.05 --sx 1.0 --sy 1.0 --lifetime -1.0
 * \endcode
 *
 * \code{.unparsed}
-* yarpdev --device FakeBot
+* yarpdev --device fakebot
 * \endcode
 *
 */
@@ -46,11 +46,12 @@
 class FakeBot_ParamsParser : public yarp::dev::IDeviceDriverParams
 {
 public:
-    FakeBot_ParamsParser() = default;
+    FakeBot_ParamsParser();
     ~FakeBot_ParamsParser() override = default;
 
 public:
-    const std::string m_device_type = {"FakeBot"};
+    const std::string m_device_classname = {"FakeBot"};
+    const std::string m_device_name = {"fakebot"};
     bool m_parser_is_strict = false;
     struct parser_version_type
     {
@@ -58,6 +59,14 @@ public:
          int minor = 0;
     };
     const parser_version_type m_parser_version = {};
+
+    const std::string m_background_defaultValue = {"textures/back.ppm"};
+    const std::string m_target_defaultValue = {"textures/fore.ppm"};
+    const std::string m_noise_defaultValue = {"0.05"};
+    const std::string m_sx_defaultValue = {"1.0"};
+    const std::string m_sy_defaultValue = {"1.0"};
+    const std::string m_lifetime_defaultValue = {"-1.0"};
+
     std::string m_background = {"textures/back.ppm"};
     std::string m_target = {"textures/fore.ppm"};
     double m_noise = {0.05};
@@ -66,7 +75,8 @@ public:
     double m_lifetime = {-1.0};
 
     bool          parseParams(const yarp::os::Searchable & config) override;
-    std::string   getDeviceType() const override { return m_device_type; }
+    std::string   getDeviceClassName() const override { return m_device_classname; }
+    std::string   getDeviceName() const override { return m_device_name; }
     std::string   getDocumentationOfDeviceParams() const override;
     std::vector<std::string> getListOfParams() const override;
 };

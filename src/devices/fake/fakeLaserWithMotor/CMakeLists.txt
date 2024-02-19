@@ -9,11 +9,11 @@ yarp_prepare_plugin(fakeLaserWithMotor
   CATEGORY device
   TYPE FakeLaserWithMotor
   INCLUDE FakeLaserWithMotor.h
+  GENERATE_PARSER
   DEPENDS "TARGET YARP::YARP_math")
 
 if(NOT SKIP_fakeLaserWithMotor)
   yarp_add_plugin(yarp_fakeLaserWithMotor)
-  generateDeviceParamsParser(FakeLaserWithMotor)
 
   target_sources(yarp_fakeLaserWithMotor
     PRIVATE

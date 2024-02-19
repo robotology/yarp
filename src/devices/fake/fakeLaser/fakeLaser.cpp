@@ -29,11 +29,9 @@ using namespace yarp::os;
 using namespace yarp::dev;
 using namespace yarp::dev::Nav2D;
 
-// see FakeLaser.h for device documentation
-
 bool FakeLaser::open(yarp::os::Searchable& config)
 {
-    if (!FakeLaser_ParamsParser::parseParams(config)) { return false; }
+    if (!this->parseParams(config)) {return false;}
 
     m_info = "Fake Laser device for test/debugging";
     m_device_status = DEVICE_OK_STANDBY;
@@ -46,25 +44,17 @@ bool FakeLaser::open(yarp::os::Searchable& config)
     {
         yCInfo(FAKE_LASER,"Some examples:");
         yCInfo(FAKE_LASER,"yarpdev --device fakeLaser --help");
-        yCInfo(FAKE_LASER,"yarpdev --device rangefinder2D_nws_yarp --subdevice fakeLaser --period 10   --name /fakeLaser:o --test no_obstacles");
-        yCInfo(FAKE_LASER,"yarpdev --device rangefinder2D_nws_yarp --subdevice fakeLaser --period 10   --name /fakeLaser:o --test use_pattern");
-        yCInfo(FAKE_LASER,"yarpdev --device rangefinder2D_nws_yarp --subdevice fakeLaser --period 10   --name /fakeLaser:o --test use_constant --const_distance 0.5");
-        yCInfo(FAKE_LASER,"yarpdev --device rangefinder2D_nws_yarp --subdevice fakeLaser --period 10   --name /fakeLaser:o --test use_constant --const_distance 0.5 --SENSOR::resolution 0.5 --SKIP::min 0 50 --SKIP::max 10 60");
-        yCInfo(FAKE_LASER,"yarpdev --device rangefinder2D_nws_yarp --subdevice fakeLaser --period 10   --name /fakeLaser:o --test use_mapfile --map_file mymap.map");
-        yCInfo(FAKE_LASER,"yarpdev --device rangefinder2D_nws_yarp --subdevice fakeLaser --period 10   --name /fakeLaser:o --test use_mapfile --map_file mymap.map --localization_port /fakeLaser/location:i");
-        yCInfo(FAKE_LASER,"yarpdev --device rangefinder2D_nws_yarp --subdevice fakeLaser --period 10   --name /fakeLaser:o --test use_mapfile --map_file mymap.map --localization_server /localizationServer");
-        yCInfo(FAKE_LASER,"yarpdev --device rangefinder2D_nws_yarp --subdevice fakeLaser --period 10   --name /fakeLaser:o --test use_mapfile --map_file mymap.map --localization_client /fakeLaser/localizationClient --localization_server /localizationServer");
-        yCInfo(FAKE_LASER,"yarpdev --device rangefinder2D_nws_yarp --subdevice fakeLaser --period 10   --name /fakeLaser:o --test use_mapfile --map_context context --map_file mymap.map");
+        yCInfo(FAKE_LASER,"yarpdev --device rangefinder2D_nws_yarp --subdevice fakeLaser --period 0.01 --name /fakeLaser:o --test no_obstacles");
+        yCInfo(FAKE_LASER,"yarpdev --device rangefinder2D_nws_yarp --subdevice fakeLaser --period 0.01 --name /fakeLaser:o --test use_pattern");
+        yCInfo(FAKE_LASER,"yarpdev --device rangefinder2D_nws_yarp --subdevice fakeLaser --period 0.01 --name /fakeLaser:o --test use_constant --const_distance 0.5");
+        yCInfo(FAKE_LASER,"yarpdev --device rangefinder2D_nws_yarp --subdevice fakeLaser --period 0.01 --name /fakeLaser:o --test use_constant --const_distance 0.5 --SENSOR::resolution 0.5 --SKIP::min 0 50 --SKIP::max 10 60");
+        yCInfo(FAKE_LASER,"yarpdev --device rangefinder2D_nws_yarp --subdevice fakeLaser --period 0.01 --name /fakeLaser:o --test use_mapfile --map_file mymap.map");
+        yCInfo(FAKE_LASER,"yarpdev --device rangefinder2D_nws_yarp --subdevice fakeLaser --period 0.01 --name /fakeLaser:o --test use_mapfile --map_file mymap.map --localization_port /fakeLaser/location:i");
+        yCInfo(FAKE_LASER,"yarpdev --device rangefinder2D_nws_yarp --subdevice fakeLaser --period 0.01 --name /fakeLaser:o --test use_mapfile --map_file mymap.map --localization_server /localizationServer");
+        yCInfo(FAKE_LASER,"yarpdev --device rangefinder2D_nws_yarp --subdevice fakeLaser --period 0.01 --name /fakeLaser:o --test use_mapfile --map_file mymap.map --localization_client /fakeLaser/localizationClient --localization_server /localizationServer");
+        yCInfo(FAKE_LASER,"yarpdev --device rangefinder2D_nws_yarp --subdevice fakeLaser --period 0.01 --name /fakeLaser:o --test use_mapfile --map_context context --map_file mymap.map");
         yCInfo(FAKE_LASER,"yarpdev --device rangefinder2D_nws_yarp --subdevice fakeLaser --period 0.01 --name /fakeLaser:o --test use_mapfile --map_file mymap.map --localization_client /fakeLaser/localizationClient --localization_server /localization2D_nws_yarp --localization_device localization2D_nwc_yarp");
         return false;
-    }
-
-    bool br = config.check("GENERAL");
-    if (br != false)
-    {
-        yarp::os::Searchable& general_config = config.findGroup("GENERAL");
-        m_period = general_config.check("period", Value(0.02), "Period of the sampling thread in s").asFloat64();
-        this->setPeriod(m_period);
     }
 
     std::string string_test_mode = m_test;
@@ -72,6 +62,7 @@ bool FakeLaser::open(yarp::os::Searchable& config)
     else if (string_test_mode == "use_pattern") { m_test_mode = USE_PATTERN; }
     else if (string_test_mode == "use_mapfile") { m_test_mode = USE_MAPFILE; }
     else if (string_test_mode == "use_constant") { m_test_mode = USE_CONSTANT_VALUE; }
+    else if (string_test_mode == "use_square_trap") { m_test_mode = USE_SQUARE_TRAP; }
     else    { yCError(FAKE_LASER) << "invalid/unknown value for param 'test'"; return false; }
 
     //parse all the parameters related to the linear/angular range of the sensor
@@ -81,22 +72,36 @@ bool FakeLaser::open(yarp::os::Searchable& config)
         return false;
     }
 
-    //the different fake laser modalities
-    else if (m_test_mode == USE_CONSTANT_VALUE)
+    if (m_test_mode == USE_SQUARE_TRAP)
     {
-        if (config.check("const_distance"))
+        m_robot_loc_x = 0;
+        m_robot_loc_y = 0;
+        m_robot_loc_t = 0;
+        m_map.m_map_name = "test_map_10x10m";
+        m_map.m_resolution = 0.01; //m/pixel
+        m_map.m_origin.setOrigin(-5,-5,0); //m
+        m_map.setSize_in_meters(10,10);
+        for (size_t y = 0; y < m_map.m_height; y++)
         {
-            m_const_value = config.check("const_distance", Value(1.0), "default constant distance").asFloat64();
+            for (size_t x = 0; x < m_map.m_width; x++)
+            {
+                m_map.setOccupancyData(yarp::dev::Nav2D::XYCell(x, y),0);
+                m_map.setMapFlag(yarp::dev::Nav2D::XYCell(x, y), MapGrid2D::map_flags::MAP_CELL_FREE);
+            }
         }
+        m_originally_loaded_map = m_map;
+        trap_the_robot(3); //3m
+        MapGrid2D::map_flags vv;
+        m_map.saveToFile("mio1");
     }
     else if (m_test_mode == USE_MAPFILE)
     {
         std::string map_file;
-        if (!m_map_context.empty() && !m_map_file.empty())
+        if (!m_MAP_MODE_map_context.empty() && !m_MAP_MODE_map_file.empty())
         {
             yarp::os::ResourceFinder rf;
-            std::string tmp_filename = m_map_file;
-            std::string tmp_contextname = m_map_context;
+            std::string tmp_filename = m_MAP_MODE_map_file;
+            std::string tmp_contextname = m_MAP_MODE_map_context;
             rf.setDefaultContext(tmp_contextname);
             rf.setDefaultConfigFile(tmp_filename);
             bool b = rf.configure(0, nullptr);
@@ -113,9 +118,9 @@ bool FakeLaser::open(yarp::os::Searchable& config)
                 yCWarning(FAKE_LASER, "Unable to find file: %s from context: %s\n", tmp_filename.c_str(), tmp_contextname.c_str());
             }
         }
-        else if (!m_map_file.empty())
+        else if (!m_MAP_MODE_map_file.empty())
         {
-            map_file = m_map_file;
+            map_file = m_MAP_MODE_map_file;
         }
         else
         {
@@ -235,7 +240,7 @@ bool FakeLaser::setHorizontalResolution(double step)
 bool FakeLaser::setScanRate(double rate)
 {
     m_mutex.lock();
-    m_period = (1.0 / rate);
+    m_GENERAL_period = (1.0 / rate);
     m_mutex.unlock();
     return false;
 }

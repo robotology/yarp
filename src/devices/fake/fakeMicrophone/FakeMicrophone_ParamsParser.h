@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Mon Feb 12 13:43:57 2024
+// Generated on: Mon Feb 19 16:27:59 2024
 
 
 #ifndef FAKEMICROPHONE_PARAMSPARSER_H
@@ -33,11 +33,11 @@
 *
 * The device can be launched by yarpdev using one of the following examples:
 * \code{.unparsed}
-* yarpdev --device FakeMicrophone --period 0.010 --waveform sine --signal_frequency 440 --signal_amplitude 32000 --driver_frame_size 512
+* yarpdev --device fakeMicrophone --period 0.010 --waveform sine --signal_frequency 440 --signal_amplitude 32000 --driver_frame_size 512
 * \endcode
 *
 * \code{.unparsed}
-* yarpdev --device FakeMicrophone
+* yarpdev --device fakeMicrophone
 * \endcode
 *
 */
@@ -45,11 +45,12 @@
 class FakeMicrophone_ParamsParser : public yarp::dev::IDeviceDriverParams
 {
 public:
-    FakeMicrophone_ParamsParser() = default;
+    FakeMicrophone_ParamsParser();
     ~FakeMicrophone_ParamsParser() override = default;
 
 public:
-    const std::string m_device_type = {"FakeMicrophone"};
+    const std::string m_device_classname = {"FakeMicrophone"};
+    const std::string m_device_name = {"fakeMicrophone"};
     bool m_parser_is_strict = false;
     struct parser_version_type
     {
@@ -57,6 +58,13 @@ public:
          int minor = 0;
     };
     const parser_version_type m_parser_version = {};
+
+    const std::string m_period_defaultValue = {"0.010"};
+    const std::string m_waveform_defaultValue = {"sine"};
+    const std::string m_signal_frequency_defaultValue = {"440"};
+    const std::string m_signal_amplitude_defaultValue = {"32000"};
+    const std::string m_driver_frame_size_defaultValue = {"512"};
+
     double m_period = {0.010};
     std::string m_waveform = {"sine"};
     int m_signal_frequency = {440};
@@ -64,7 +72,8 @@ public:
     int m_driver_frame_size = {512};
 
     bool          parseParams(const yarp::os::Searchable & config) override;
-    std::string   getDeviceType() const override { return m_device_type; }
+    std::string   getDeviceClassName() const override { return m_device_classname; }
+    std::string   getDeviceName() const override { return m_device_name; }
     std::string   getDocumentationOfDeviceParams() const override;
     std::vector<std::string> getListOfParams() const override;
 };

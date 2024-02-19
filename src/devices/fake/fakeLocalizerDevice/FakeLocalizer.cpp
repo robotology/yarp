@@ -131,7 +131,7 @@ bool FakeLocalizer::open(yarp::os::Searchable& config)
     if (!this->parseParams(config)) {return false;}
 
     yarp::os::Property p;
-    locThread = new fakeLocalizerThread(0.010, p);
+    locThread = new fakeLocalizerThread(m_period);
 
     if (!locThread->start())
     {
@@ -181,7 +181,7 @@ bool FakeLocalizer::close()
 
 //////////////////////////
 
-fakeLocalizerThread::fakeLocalizerThread(double _period, yarp::os::Searchable& _cfg) : PeriodicThread(_period), m_cfg(_cfg)
+fakeLocalizerThread::fakeLocalizerThread(double _period) : PeriodicThread(_period)
 {
     m_last_locdata_received = -1;
     m_last_statistics_printed = -1;

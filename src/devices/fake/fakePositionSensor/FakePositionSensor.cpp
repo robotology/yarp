@@ -31,23 +31,7 @@ bool FakePositionSensor::open(yarp::os::Searchable& config)
 {
     if (!this->parseParams(config)) {return false;}
 
-    yCTrace(FAKE_POSITION_SENSOR);
-    bool correct=true;
-
-    //debug
-    fprintf(stderr, "%s\n", config.toString().c_str());
-
-    if (!correct)
-    {
-        yCError(FAKE_POSITION_SENSOR) << "Insufficient parameters to FakePositionSensor\n";
-        return false;
-    }
-
-    if (config.check("sensor_period"))
-    {
-        double period=config.find("sensor_period").asFloat32();
-        setPeriod(period);
-    }
+    setPeriod(m_period);
 
     //create the data vector:
     this->m_channelsNum = 1;

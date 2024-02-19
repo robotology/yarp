@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Mon Feb 12 13:43:55 2024
+// Generated on: Mon Feb 19 16:27:58 2024
 
 
 #include "FakeBot_ParamsParser.h"
@@ -17,6 +17,11 @@
 
 namespace {
     YARP_LOG_COMPONENT(FakeBotParamsCOMPONENT, "yarp.device.FakeBot")
+}
+
+
+FakeBot_ParamsParser::FakeBot_ParamsParser()
+{
 }
 
 
@@ -171,8 +176,8 @@ std::string      FakeBot_ParamsParser::getDocumentationOfDeviceParams() const
     doc = doc + std::string("'lifetime': device should exist for this length of time\n");
     doc = doc + std::string("\n");
     doc = doc + std::string("Here are some examples of invocation command with yarpdev, with all params:\n");
-    doc = doc + " yarpdev --device FakeBot --background textures/back.ppm --target textures/fore.ppm --noise 0.05 --sx 1.0 --sy 1.0 --lifetime -1.0\n";
+    doc = doc + " yarpdev --device fakebot --background textures/back.ppm --target textures/fore.ppm --noise 0.05 --sx 1.0 --sy 1.0 --lifetime -1.0\n";
     doc = doc + std::string("Using only mandatory params:\n");
-    doc = doc + " yarpdev --device FakeBot\n";
+    doc = doc + " yarpdev --device fakebot\n";
     doc = doc + std::string("=============================================\n\n");    return doc;
 }

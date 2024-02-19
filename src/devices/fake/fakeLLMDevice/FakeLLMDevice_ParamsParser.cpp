@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Mon Feb 12 13:43:56 2024
+// Generated on: Mon Feb 19 16:27:59 2024
 
 
 #include "FakeLLMDevice_ParamsParser.h"
@@ -17,6 +17,11 @@
 
 namespace {
     YARP_LOG_COMPONENT(FakeLLMDeviceParamsCOMPONENT, "yarp.device.FakeLLMDevice")
+}
+
+
+FakeLLMDevice_ParamsParser::FakeLLMDevice_ParamsParser()
+{
 }
 
 
@@ -91,8 +96,8 @@ std::string      FakeLLMDevice_ParamsParser::getDocumentationOfDeviceParams() co
     doc = doc + std::string("'initial_prompt': intial prompt\n");
     doc = doc + std::string("\n");
     doc = doc + std::string("Here are some examples of invocation command with yarpdev, with all params:\n");
-    doc = doc + " yarpdev --device FakeLLMDevice --initial_prompt <optional_value>\n";
+    doc = doc + " yarpdev --device fakeLLMDevice --initial_prompt <optional_value>\n";
     doc = doc + std::string("Using only mandatory params:\n");
-    doc = doc + " yarpdev --device FakeLLMDevice\n";
+    doc = doc + " yarpdev --device fakeLLMDevice\n";
     doc = doc + std::string("=============================================\n\n");    return doc;
 }

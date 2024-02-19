@@ -90,27 +90,15 @@ bool FakeBot::open(yarp::os::Searchable& config)
 {
     if (!this->parseParams(config)) {return false;}
 
-    std::string backFile = config.check("background",Value("textures/back.ppm"),
-                                        "background image to use").asString();
-    if (backFile!="") {
-        yarp::sig::file::read(back,backFile);
+    if (m_background !="") {
+        yarp::sig::file::read(back, m_background);
     }
-    std::string foreFile = config.check("target",Value("textures/fore.ppm"),
-                                        "target image to use").asString();
-    if (foreFile!="") {
-        yarp::sig::file::read(fore,foreFile);
+
+    if (m_target !="") {
+        yarp::sig::file::read(fore, m_target);
     }
-    noiseLevel = config.check("noise",Value(0.05),
-                              "pixel noise level").asFloat64();
 
-    xScale = config.check("sx",Value(1.0),
-                          "scaling for x coordinate").asFloat64();
-    yScale = config.check("sy",Value(1.0),
-                          "scaling for y coordinate").asFloat64();
-
-    lifetime = config.check("lifetime",Value(-1.0),
-                            "device should exist for this length of time (in seconds)").asFloat64();
-    if (lifetime>=0) {
+    if (m_lifetime>=0) {
         start();
     }
     return true;
@@ -152,8 +140,8 @@ bool FakeBot::getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image) {
     loc[0] = m_dx;
     loc[1] = m_dy;
 
-    double m_dx_scaled = m_dx*xScale;
-    double m_dy_scaled = m_dy*yScale;
+    double m_dx_scaled = m_dx* m_sx;
+    double m_dy_scaled = m_dy* m_sy;
     IMGFOR(image,x,y) {
         int x0 = int(x+m_x+m_dx_scaled*0.5+0.5);
         int y0 = int(y+m_y+m_dy_scaled*0.5+0.5);
@@ -168,7 +156,7 @@ bool FakeBot::getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image) {
     }
     IMGFOR(image,x2,y2) {
         PixelRgb& pix = image(x2,y2);
-        auto f = (float)(noiseLevel);
+        auto f = (float)(m_noise);
         scramble(pix.r,f);
         scramble(pix.g,f);
         scramble(pix.b,f);
@@ -178,8 +166,8 @@ bool FakeBot::getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image) {
 }
 
 void FakeBot::run() {
-    if (lifetime>=0) {
-        Time::delay(lifetime);
+    if (m_lifetime>=0) {
+        Time::delay(m_lifetime);
         std::exit(0);
     }
 }

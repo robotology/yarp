@@ -10,11 +10,11 @@ yarp_prepare_plugin(fakeOdometry2D
   TYPE FakeOdometry2D
   INCLUDE FakeOdometry2D.h
   DEPENDS "TARGET YARP::YARP_math"
+  GENERATE_PARSER
 )
 
 if(NOT SKIP_fakeOdometry2D)
   yarp_add_plugin(yarp_fakeOdometry2D)
-  generateDeviceParamsParser(FakeOdometry2D)
 
   target_sources(yarp_fakeOdometry2D
     PRIVATE

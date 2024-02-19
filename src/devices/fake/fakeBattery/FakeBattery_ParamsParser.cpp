@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Mon Feb 12 13:43:56 2024
+// Generated on: Mon Feb 19 16:27:58 2024
 
 
 #include "FakeBattery_ParamsParser.h"
@@ -17,6 +17,11 @@
 
 namespace {
     YARP_LOG_COMPONENT(FakeBatteryParamsCOMPONENT, "yarp.device.FakeBattery")
+}
+
+
+FakeBattery_ParamsParser::FakeBattery_ParamsParser()
+{
 }
 
 
@@ -187,8 +192,8 @@ std::string      FakeBattery_ParamsParser::getDocumentationOfDeviceParams() cons
     doc = doc + std::string("'rpc_port_name': Full rpc port name\n");
     doc = doc + std::string("\n");
     doc = doc + std::string("Here are some examples of invocation command with yarpdev, with all params:\n");
-    doc = doc + " yarpdev --device FakeBattery --period 0.02 --charge 50.0 --voltage 30.0 --current 3.0 --temperature 20.0 --info Fake battery system v2.0 --rpc_port_name /fakeBattery/rpc\n";
+    doc = doc + " yarpdev --device fakeBattery --period 0.02 --charge 50.0 --voltage 30.0 --current 3.0 --temperature 20.0 --info Fake battery system v2.0 --rpc_port_name /fakeBattery/rpc\n";
     doc = doc + std::string("Using only mandatory params:\n");
-    doc = doc + " yarpdev --device FakeBattery\n";
+    doc = doc + " yarpdev --device fakeBattery\n";
     doc = doc + std::string("=============================================\n\n");    return doc;
 }

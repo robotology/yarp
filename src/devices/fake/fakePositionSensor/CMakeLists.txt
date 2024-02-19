@@ -9,13 +9,13 @@ yarp_prepare_plugin(fakePositionSensor
   CATEGORY device
   TYPE FakePositionSensor
   INCLUDE FakePositionSensor.h
+  GENERATE_PARSER
   EXTRA_CONFIG
     WRAPPER=multipleanalogsensorsserver
 )
 
 if(ENABLE_fakePositionSensor)
   yarp_add_plugin(yarp_fakePositionSensor)
-  generateDeviceParamsParser(FakePositionSensor)
 
   target_sources(yarp_fakePositionSensor
     PRIVATE

@@ -10,11 +10,11 @@ yarp_prepare_plugin(fakeLocalizer
   TYPE FakeLocalizer
   INCLUDE FakeLocalizer.h
   DEPENDS "TARGET YARP::YARP_math"
+  GENERATE_PARSER
 )
 
 if(NOT SKIP_fakeLocalizer)
   yarp_add_plugin(yarp_fakeLocalizer)
-  generateDeviceParamsParser(FakeLocalizer)
 
   target_sources(yarp_fakeLocalizer
     PRIVATE

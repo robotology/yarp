@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Mon Feb 12 13:43:56 2024
+// Generated on: Mon Feb 19 16:27:59 2024
 
 
 #ifndef FAKEIMU_PARAMSPARSER_H
@@ -28,14 +28,15 @@
 * | -          | period         | int    | millisecond | 10            | 0        | Period over which the measurement is updated.                                                                   | -     |
 * | -          | constantValue  | bool   | -           | false         | 0        | If the parameter is present, the fake sensor values never changes (useful for testing server/client coherence). | -     |
 * | -          | sensorName     | string | -           | sensorName    | 0        | Name of the sensor                                                                                              | -     |
+* | -          | frameName      | string | -           | frameName     | 0        | Name of the frame                                                                                               | -     |
 *
 * The device can be launched by yarpdev using one of the following examples:
 * \code{.unparsed}
-* yarpdev --device FakeIMU --period 10 --constantValue false --sensorName sensorName
+* yarpdev --device fakeIMU --period 10 --constantValue false --sensorName sensorName --frameName frameName
 * \endcode
 *
 * \code{.unparsed}
-* yarpdev --device FakeIMU
+* yarpdev --device fakeIMU
 * \endcode
 *
 */
@@ -43,11 +44,12 @@
 class FakeIMU_ParamsParser : public yarp::dev::IDeviceDriverParams
 {
 public:
-    FakeIMU_ParamsParser() = default;
+    FakeIMU_ParamsParser();
     ~FakeIMU_ParamsParser() override = default;
 
 public:
-    const std::string m_device_type = {"FakeIMU"};
+    const std::string m_device_classname = {"FakeIMU"};
+    const std::string m_device_name = {"fakeIMU"};
     bool m_parser_is_strict = false;
     struct parser_version_type
     {
@@ -55,12 +57,20 @@ public:
          int minor = 0;
     };
     const parser_version_type m_parser_version = {};
+
+    const std::string m_period_defaultValue = {"10"};
+    const std::string m_constantValue_defaultValue = {"false"};
+    const std::string m_sensorName_defaultValue = {"sensorName"};
+    const std::string m_frameName_defaultValue = {"frameName"};
+
     int m_period = {10};
     bool m_constantValue = {false};
     std::string m_sensorName = {"sensorName"};
+    std::string m_frameName = {"frameName"};
 
     bool          parseParams(const yarp::os::Searchable & config) override;
-    std::string   getDeviceType() const override { return m_device_type; }
+    std::string   getDeviceClassName() const override { return m_device_classname; }
+    std::string   getDeviceName() const override { return m_device_name; }
     std::string   getDocumentationOfDeviceParams() const override;
     std::vector<std::string> getListOfParams() const override;
 };

@@ -48,13 +48,12 @@ class FakeLaser : public yarp::os::PeriodicThread,
                   public FakeLaser_ParamsParser
 {
 protected:
-    enum test_mode_t { NO_OBSTACLES = 0, USE_PATTERN =1, USE_MAPFILE =2, USE_CONSTANT_VALUE =3 };
+    enum test_mode_t { NO_OBSTACLES = 0, USE_PATTERN =1, USE_MAPFILE =2, USE_CONSTANT_VALUE =3, USE_SQUARE_TRAP=4   };
     enum localization_mode_t { LOC_NOT_SET=0, LOC_FROM_PORT = 1, LOC_FROM_CLIENT = 2 };
 
     test_mode_t m_test_mode;
     localization_mode_t m_loc_mode;
 
-    double m_period;
     yarp::dev::Nav2D::MapGrid2D   m_originally_loaded_map;
     yarp::dev::Nav2D::MapGrid2D   m_map;
     yarp::os::BufferedPort<yarp::os::Bottle>* m_loc_port;

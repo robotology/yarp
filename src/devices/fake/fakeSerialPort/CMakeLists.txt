@@ -9,12 +9,12 @@ yarp_prepare_plugin(fakeSerialPort
   CATEGORY device
   TYPE FakeSerialPort
   INCLUDE FakeSerialPort.h
+  GENERATE_PARSER
   EXTRA_CONFIG
     WRAPPER=serialPort_nws_yarp)
 
 if(ENABLE_fakeSerialPort)
   yarp_add_plugin(yarp_fakeSerialPort)
-  generateDeviceParamsParser(FakeSerialPort)
 
   target_sources(yarp_fakeSerialPort
     PRIVATE

@@ -26,44 +26,7 @@ bool FakeNavigation:: open(yarp::os::Searchable& config)
 {
     if (!this->parseParams(config)) {return false;}
 
-#if 1
-
-    yCDebug(FAKENAVIGATION) << "config configuration: \n" << config.toString().c_str();
-
-    std::string context_name;
-    std::string file_name;
-
-    if (config.check("context")) {
-        context_name = config.find("context").asString();
-    }
-    if (config.check("from")) {
-        file_name = config.find("from").asString();
-    }
-
-    yarp::os::ResourceFinder rf;
-    rf.setDefaultContext(context_name.c_str());
-    rf.setDefaultConfigFile(file_name.c_str());
-
-    yarp::os::Property p;
-    std::string configFile = rf.findFile("from");
-    if (configFile != "") {
-        p.fromConfigFile(configFile.c_str());
-    }
-    yCDebug(FAKENAVIGATION) << "device configuration: \n" << p.toString().c_str();
-
-#else
-    Property p;
-    p.fromString(config.toString());
-#endif
-
-    if (rf.check("navigation_time"))
-    {
-        m_navig_duration_param = rf.find ("navigation_time").asInt32();
-    }
-    if (rf.check("reached_time"))
-    {
-        m_reached_duration_param = rf.find("reached_time").asInt32();
-    }
+    m_time_counter = m_navigation_time;
 
     this->start();
     return true;
@@ -85,7 +48,7 @@ bool FakeNavigation::gotoTargetByAbsoluteLocation(Map2DLocation loc)
     {
         m_status = NavigationStatusEnum::navigation_status_moving;
         m_absgoal_loc = loc;
-        m_time_counter=m_navig_duration_param;
+        m_time_counter= this->m_navigation_time;
     }
     return true;
 }
@@ -212,7 +175,7 @@ void FakeNavigation::run()
         else
         {
             m_status = NavigationStatusEnum::navigation_status_goal_reached;
-            m_time_counter = m_reached_duration_param;
+            m_time_counter = m_reached_time;
         }
     }
     if (m_status == NavigationStatusEnum::navigation_status_goal_reached)

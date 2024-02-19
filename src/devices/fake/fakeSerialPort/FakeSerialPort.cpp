@@ -19,9 +19,6 @@ YARP_LOG_COMPONENT(FAKESERIALPORT, "yarp.device.FakeSerialPort")
 }
 
 FakeSerialPort::FakeSerialPort() {
-    //system_resources = (SerialHandler*) new SerialHandler();
-    line_terminator_char1 = '\r';
-    line_terminator_char2 = '\n';
 }
 
 FakeSerialPort::~FakeSerialPort()
@@ -33,40 +30,6 @@ bool FakeSerialPort::open(yarp::os::Searchable& config)
 {
     if (!this->parseParams(config)) {return false;}
 
-#if 0
-    SerialDeviceDriverSettings config2;
-    strcpy(config2.CommChannel, config.check("comport",Value("COM3"),"name of the serial channel").asString().c_str());
-    this->verbose = (config.check("verbose",Value(1),"Specifies if the device is in verbose mode (0/1).").asInt32())>0;
-    config2.SerialParams.baudrate = config.check("baudrate",Value(9600),"Specifies the baudrate at which the communication port operates.").asInt32();
-    config2.SerialParams.xonlim = config.check("xonlim",Value(0),"Specifies the minimum number of bytes in input buffer before XON char is sent. Negative value indicates that default value should be used (Win32)").asInt32();
-    config2.SerialParams.xofflim = config.check("xofflim",Value(0),"Specifies the maximum number of bytes in input buffer before XOFF char is sent. Negative value indicates that default value should be used (Win32). ").asInt32();
-    //RANDAZ: as far as I undesrood, the exit condition for recv() function is NOT readmincharacters || readtimeoutmsec. It is readmincharacters && readtimeoutmsec.
-    //On Linux. if readmincharacters params is set !=0, recv() may still block even if readtimeoutmsec is expired.
-    //On Win32, for unknown reason, readmincharacters seems to be ignored, so recv () returns after readtimeoutmsec. Maybe readmincharacters is used if readtimeoutmsec is set to -1?
-    config2.SerialParams.readmincharacters = config.check("readmincharacters",Value(1),"Specifies the minimum number of characters for non-canonical read (POSIX).").asInt32();
-    config2.SerialParams.readtimeoutmsec = config.check("readtimeoutmsec",Value(100),"Specifies the time to wait before returning from read. Negative value means infinite timeout.").asInt32();
-    // config2.SerialParams.parityenb = config.check("parityenb",Value(0),"Enable/disable parity checking.").asInt32();
-    std::string temp = config.check("paritymode",Value("EVEN"),"Specifies the parity mode (EVEN, ODD, NONE). POSIX supports even and odd parity. Additionally Win32 supports mark and space parity modes.").asString();
-    config2.SerialParams.paritymode = temp.c_str();
-    config2.SerialParams.ctsenb = config.check("ctsenb",Value(0),"Enable & set CTS mode. Note that RTS & CTS are enabled/disabled together on some systems (RTS/CTS is enabled if either <code>ctsenb</code> or <code>rtsenb</code> is set).").asInt32();
-    config2.SerialParams.rtsenb = config.check("rtsenb",Value(0),"Enable & set RTS mode. Note that RTS & CTS are enabled/disabled together on some systems (RTS/CTS is enabled if either <code>ctsenb</code> or <code>rtsenb</code> is set).\n- 0 = Disable RTS.\n- 1 = Enable RTS.\n- 2 = Enable RTS flow-control handshaking (Win32).\n- 3 = Specifies that RTS line will be high if bytes are available for transmission.\nAfter transmission RTS will be low (Win32).").asInt32();
-    config2.SerialParams.xinenb = config.check("xinenb",Value(0),"Enable/disable software flow control on input.").asInt32();
-    config2.SerialParams.xoutenb = config.check("xoutenb",Value(0),"Enable/disable software flow control on output.").asInt32();
-    config2.SerialParams.modem = config.check("modem",Value(0),"Specifies if device is a modem (POSIX). If not set modem status lines are ignored. ").asInt32();
-    config2.SerialParams.rcvenb = config.check("rcvenb",Value(0),"Enable/disable receiver (POSIX).").asInt32();
-    config2.SerialParams.dsrenb = config.check("dsrenb",Value(0),"Controls whether DSR is disabled or enabled (Win32).").asInt32();
-    config2.SerialParams.dtrdisable = config.check("dtrdisable",Value(0),"Controls whether DTR is disabled or enabled.").asInt32();
-    config2.SerialParams.databits = config.check("databits",Value(7),"Data bits. Valid values 5, 6, 7 and 8 data bits. Additionally Win32 supports 4 data bits.").asInt32();
-    config2.SerialParams.stopbits = config.check("stopbits",Value(1),"Stop bits. Valid values are 1 and 2.").asInt32();
-
-    if (config.check("line_terminator_char1", "line terminator character for receiveLine(), default '\r'")) {
-        line_terminator_char1 = config.find("line_terminator_char1").asInt32();
-    }
-
-    if (config.check("line_terminator_char2", "line terminator character for receiveLine(), default '\n'")) {
-        line_terminator_char2 = config.find("line_terminator_char2").asInt32();
-    }
-#endif
     return true;
 }
 
@@ -193,7 +156,7 @@ int FakeSerialPort::receiveLine(char* buffer, const int MaxLineLength)
             //buffer[i] = '\0';
             //return i;
         }
-        if ((recv_ch == line_terminator_char1) || (recv_ch == line_terminator_char2))
+        if ((recv_ch == m_line_terminator_char1) || (recv_ch == m_line_terminator_char2))
         {
             buffer[i] = recv_ch;
             i++;

@@ -17,7 +17,6 @@ YARP_LOG_COMPONENT(FAKEANALOGSENSOR, "yarp.device.fakeAnalogSensor")
 
 FakeAnalogSensor::FakeAnalogSensor(double period) : PeriodicThread(period),
         mutex(),
-        channelsNum(0),
         status(IAnalogSensor::AS_OK)
 {
     yCTrace(FAKEANALOGSENSOR);
@@ -35,36 +34,12 @@ bool FakeAnalogSensor::open(yarp::os::Searchable& config)
     if (!this->parseParams(config)) {return false;}
 
     yCTrace(FAKEANALOGSENSOR);
-    bool correct=true;
 
-    //debug
-    fprintf(stderr, "%s\n", config.toString().c_str());
-
-    // Check parameters first
-//     if(!config.check("channels"))
-//     {
-//         correct = false;
-//         yCError(FAKEANALOGSENSOR) << "Parameter 'channels' missing";
-//     }
-
-    if(!config.check("period"))
-    {
-        correct = false;
-        yCError(FAKEANALOGSENSOR) << "Parameter 'period' missing";
-    }
-
-    if (!correct)
-    {
-        yCError(FAKEANALOGSENSOR) << "Insufficient parameters to FakeAnalogSensor\n";
-        return false;
-    }
-
-    double period=config.find("period").asInt32() / 1000.0;
+    double period= m_period / 1000.0;
     setPeriod(period);
 
     //create the data vector:
-    this->channelsNum = 1;
-    data.resize(channelsNum);
+    data.resize(m_channelsNum);
     data.zero();
 
     return PeriodicThread::start();
@@ -98,7 +73,7 @@ int FakeAnalogSensor::getState(int ch)
 int FakeAnalogSensor::getChannels()
 {
     yCTrace(FAKEANALOGSENSOR);
-    return channelsNum;
+    return m_channelsNum;
 }
 
 int FakeAnalogSensor::calibrateSensor()

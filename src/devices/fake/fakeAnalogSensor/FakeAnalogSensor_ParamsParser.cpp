@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Mon Feb 12 13:43:56 2024
+// Generated on: Mon Feb 19 16:27:58 2024
 
 
 #include "FakeAnalogSensor_ParamsParser.h"
@@ -20,10 +20,16 @@ namespace {
 }
 
 
+FakeAnalogSensor_ParamsParser::FakeAnalogSensor_ParamsParser()
+{
+}
+
+
 std::vector<std::string> FakeAnalogSensor_ParamsParser::getListOfParams() const
 {
     std::vector<std::string> params;
     params.push_back("period");
+    params.push_back("channelsNum");
     return params;
 }
 
@@ -50,6 +56,20 @@ bool      FakeAnalogSensor_ParamsParser::parseParams(const yarp::os::Searchable 
             yCInfo(FakeAnalogSensorParamsCOMPONENT) << "Parameter 'period' using DEFAULT value:" << m_period;
         }
         prop_check.unput("period");
+    }
+
+    //Parser of parameter channelsNum
+    {
+        if (config.check("channelsNum"))
+        {
+            m_channelsNum = config.find("channelsNum").asInt64();
+            yCInfo(FakeAnalogSensorParamsCOMPONENT) << "Parameter 'channelsNum' using value:" << m_channelsNum;
+        }
+        else
+        {
+            yCInfo(FakeAnalogSensorParamsCOMPONENT) << "Parameter 'channelsNum' using DEFAULT value:" << m_channelsNum;
+        }
+        prop_check.unput("channelsNum");
     }
 
     /*
@@ -89,10 +109,11 @@ std::string      FakeAnalogSensor_ParamsParser::getDocumentationOfDeviceParams()
     doc = doc + std::string("\n");
     doc = doc + std::string("This is the list of the parameters accepted by the device:\n");
     doc = doc + std::string("'period': thread period\n");
+    doc = doc + std::string("'channelsNum': Number of channels\n");
     doc = doc + std::string("\n");
     doc = doc + std::string("Here are some examples of invocation command with yarpdev, with all params:\n");
-    doc = doc + " yarpdev --device FakeAnalogSensor --period 1.0\n";
+    doc = doc + " yarpdev --device fakeAnalogSensor --period 1.0 --channelsNum 1\n";
     doc = doc + std::string("Using only mandatory params:\n");
-    doc = doc + " yarpdev --device FakeAnalogSensor\n";
+    doc = doc + " yarpdev --device fakeAnalogSensor\n";
     doc = doc + std::string("=============================================\n\n");    return doc;
 }

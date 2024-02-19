@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Mon Feb 12 13:43:57 2024
+// Generated on: Mon Feb 19 16:27:59 2024
 
 
 #include "FakeMicrophone_ParamsParser.h"
@@ -17,6 +17,11 @@
 
 namespace {
     YARP_LOG_COMPONENT(FakeMicrophoneParamsCOMPONENT, "yarp.device.FakeMicrophone")
+}
+
+
+FakeMicrophone_ParamsParser::FakeMicrophone_ParamsParser()
+{
 }
 
 
@@ -155,8 +160,8 @@ std::string      FakeMicrophone_ParamsParser::getDocumentationOfDeviceParams() c
     doc = doc + std::string("'driver_frame_size': the number of samples to process on each iteration of the thread\n");
     doc = doc + std::string("\n");
     doc = doc + std::string("Here are some examples of invocation command with yarpdev, with all params:\n");
-    doc = doc + " yarpdev --device FakeMicrophone --period 0.010 --waveform sine --signal_frequency 440 --signal_amplitude 32000 --driver_frame_size 512\n";
+    doc = doc + " yarpdev --device fakeMicrophone --period 0.010 --waveform sine --signal_frequency 440 --signal_amplitude 32000 --driver_frame_size 512\n";
     doc = doc + std::string("Using only mandatory params:\n");
-    doc = doc + " yarpdev --device FakeMicrophone\n";
+    doc = doc + " yarpdev --device fakeMicrophone\n";
     doc = doc + std::string("=============================================\n\n");    return doc;
 }

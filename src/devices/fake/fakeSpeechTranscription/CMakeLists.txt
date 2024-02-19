@@ -9,11 +9,11 @@ yarp_prepare_plugin(fakeSpeechTranscription
   CATEGORY device
   TYPE FakeSpeechTranscription
   INCLUDE FakeSpeechTranscription.h
+  GENERATE_PARSER
 )
 
 if(ENABLE_fakeSpeechTranscription)
   yarp_add_plugin(yarp_fakeSpeechTranscription)
-  generateDeviceParamsParser(FakeSpeechTranscription)
 
   target_sources(yarp_fakeSpeechTranscription
     PRIVATE

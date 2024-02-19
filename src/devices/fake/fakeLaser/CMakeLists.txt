@@ -9,11 +9,11 @@ yarp_prepare_plugin(fakeLaser
   CATEGORY device
   TYPE FakeLaser
   INCLUDE fakeLaser.h
+  GENERATE_PARSER
   DEPENDS "TARGET YARP::YARP_math")
 
 if(NOT SKIP_fakeLaser)
   yarp_add_plugin(yarp_fakeLaser)
-  generateDeviceParamsParser(FakeLaser)
 
   target_sources(yarp_fakeLaser
     PRIVATE
