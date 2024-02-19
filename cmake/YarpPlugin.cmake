@@ -59,7 +59,7 @@ include(CMakeParseArguments)
 include(CMakeDependentOption)
 include(${CMAKE_CURRENT_LIST_DIR}/YarpInstallationHelpers.cmake)
 include(${CMAKE_CURRENT_LIST_DIR}/YarpPrintFeature.cmake)
-include(YarpDeviceParamsParserGenerator)
+include(${CMAKE_CURRENT_LIST_DIR}/YarpDeviceParamsParserGenerator.cmake)
 
 ################################################################################
 #.rst:

@@ -305,7 +305,7 @@ bool FakeFrameGrabber::open(yarp::os::Searchable& config)
                "Test grabber period %g / freq %g , mode %s",
                m_period,
                (1.0/m_period),
-               m_mode);
+               m_mode.c_str());
 
     bx = m_width/2;
     by = m_height/2;
