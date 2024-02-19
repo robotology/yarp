@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Fri Feb  9 16:59:13 2024
+// Generated on: Mon Feb 19 16:28:03 2024
 
 
 #include "AudioToFileDevice_ParamsParser.h"
@@ -17,6 +17,11 @@
 
 namespace {
     YARP_LOG_COMPONENT(AudioToFileDeviceParamsCOMPONENT, "yarp.device.AudioToFileDevice")
+}
+
+
+AudioToFileDevice_ParamsParser::AudioToFileDevice_ParamsParser()
+{
 }
 
 
@@ -123,8 +128,8 @@ std::string      AudioToFileDevice_ParamsParser::getDocumentationOfDeviceParams(
     doc = doc + std::string("'add_marker': If set, it will add a marker at the beginning and at the ending of each received waveform.\n");
     doc = doc + std::string("\n");
     doc = doc + std::string("Here are some examples of invocation command with yarpdev, with all params:\n");
-    doc = doc + " yarpdev --device AudioToFileDevice --file_name audio_out.wav --save_mode overwrite_file --add_marker false\n";
+    doc = doc + " yarpdev --device audioToFileDevice --file_name audio_out.wav --save_mode overwrite_file --add_marker false\n";
     doc = doc + std::string("Using only mandatory params:\n");
-    doc = doc + " yarpdev --device AudioToFileDevice\n";
+    doc = doc + " yarpdev --device audioToFileDevice\n";
     doc = doc + std::string("=============================================\n\n");    return doc;
 }
