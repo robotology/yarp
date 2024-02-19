@@ -85,7 +85,6 @@ protected:
     std::random_device* m_rd;
     std::mt19937* m_gen;
     std::uniform_real_distribution<>* m_dis;
-    double m_const_value=1;
 
     yarp::os::Port  m_rpcPort;
 

@@ -344,7 +344,7 @@ bool FakeLaser::acquireDataFromHW()
     {
         for (size_t i = 0; i < m_sensorsNum; i++)
         {
-            m_laser_data.push_back(m_const_value);
+            m_laser_data.push_back(m_CONSTANT_MODE_const_distance);
         }
     }
     else if (m_test_mode == USE_MAPFILE)
