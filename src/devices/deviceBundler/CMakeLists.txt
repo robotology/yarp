@@ -6,12 +6,11 @@ yarp_prepare_plugin(deviceBundler
   TYPE DeviceBundler
   INCLUDE DeviceBundler.h
   DEFAULT ON
+  GENERATE_PARSER
 )
 
 if(NOT SKIP_deviceBundler)
   yarp_add_plugin(yarp_deviceBundler)
-
-  generateDeviceParamsParser(DeviceBundler)
 
   target_sources(yarp_deviceBundler
     PRIVATE
