@@ -2,8 +2,8 @@
 # SPDX-License-Identifier: BSD-3-Clause
 
 # Here is an example of how the YarpDeviceParamParserGenerator should be invoked:
-# YarpDeviceParamParserGenerator --class_name className --input_filename_md  filename.md    [--input_extra_comments comments.md] [--generate_md] [--generate_ini] [--generate_yarpdev] [--generate_yarprobotinterface] [--generate_all] [--output_dir output_path]
-# YarpDeviceParamParserGenerator --class_name className --input_filename_ini filename.ini   [--input_extra_comments comments.md] [--generate_md] [--generate_ini] [--generate_yarpdev] [--generate_yarprobotinterface] [--generate_all] [--output_dir output_path]
+# YarpDeviceParamParserGenerator --class_name className --module_name deviceName --input_filename_md  filename.md    [--input_extra_comments comments.md] [--generate_md] [--generate_ini] [--generate_yarpdev] [--generate_yarprobotinterface] [--generate_all] [--output_dir output_path]
+# YarpDeviceParamParserGenerator --class_name className --module_name deviceName --input_filename_ini filename.ini   [--input_extra_comments comments.md] [--generate_md] [--generate_ini] [--generate_yarpdev] [--generate_yarprobotinterface] [--generate_all] [--output_dir output_path]
 
 function(generateDeviceParamsParser_commandline COMMANDLINE)
     option(ALLOW_DEVICE_PARAM_PARSER_GENERATION "Allow YARP to (re)build device param parsers" OFF)
@@ -37,33 +37,33 @@ function(generateDeviceParamsParser_commandline COMMANDLINE)
 endfunction()
 
 
-function(generateDeviceParamsParser_fromMdFile CLASSNAME FILEMD EXTRACOMMENTS)
+function(generateDeviceParamsParser_fromMdFile CLASSNAME DEVICENAME FILEMD EXTRACOMMENTS)
     if (EXTRACOMMENTS)
-        set (COMMAND "--class_name ${CLASSNAME} --input_filename_md ${FILEMD} --input_extra_comments ${EXTRACOMMENTS}")
+        set (COMMAND "--class_name ${CLASSNAME} --module_name ${DEVICENAME} --input_filename_md ${FILEMD} --input_extra_comments ${EXTRACOMMENTS}")
     else()
-        set (COMMAND "--class_name ${CLASSNAME} --input_filename_md ${FILEMD}")
+        set (COMMAND "--class_name ${CLASSNAME} --module_name ${DEVICENAME} --input_filename_md ${FILEMD}")
     endif()
     generateDeviceParamsParser_commandline (${COMMAND})
 endfunction()
 
-function(generateDeviceParamsParser_fromIniFile CLASSNAME FILEINI EXTRACOMMENTS)
+function(generateDeviceParamsParser_fromIniFile CLASSNAME DEVICENAME FILEINI EXTRACOMMENTS)
     if (EXTRACOMMENTS)
-        set (COMMAND "--class_name ${CLASSNAME} --input_filename_ini ${FILEINI} --input_extra_comments ${EXTRACOMMENTS}")
+        set (COMMAND "--class_name ${CLASSNAME} --module_name ${DEVICENAME} --input_filename_ini ${FILEINI} --input_extra_comments ${EXTRACOMMENTS}")
     else()
-        set (COMMAND "--class_name ${CLASSNAME} --input_filename_ini ${FILEINI}")
+        set (COMMAND "--class_name ${CLASSNAME} --module_name ${DEVICENAME} --input_filename_ini ${FILEINI}")
     endif()
     generateDeviceParamsParser_commandline (${COMMAND})
 endfunction()
 
-function(generateDeviceParamsParser CLASSNAME)
+function(generateDeviceParamsParser CLASSNAME DEVICENAME)
     set (INPUTFILENAME_INI "${CMAKE_CURRENT_SOURCE_DIR}/${CLASSNAME}_params.ini")
     set (INPUTFILENAME_MD "${CMAKE_CURRENT_SOURCE_DIR}/${CLASSNAME}_params.md")
     set (INPUTFILENAME_EXTRA "${CMAKE_CURRENT_SOURCE_DIR}/${CLASSNAME}_params_extracomments.md")
 
     if (EXISTS ${INPUTFILENAME_INI})
-        set (COMMAND "--class_name ${CLASSNAME} --input_filename_ini ${INPUTFILENAME_INI}")
+        set (COMMAND "--class_name ${CLASSNAME} --module_name ${DEVICENAME} --input_filename_ini ${INPUTFILENAME_INI}")
     elseif (EXISTS ${INPUTFILENAME_MD})
-        set (COMMAND "--class_name ${CLASSNAME} --input_filename_md  ${INPUTFILENAME_MD}")
+        set (COMMAND "--class_name ${CLASSNAME} --module_name ${DEVICENAME} --input_filename_md  ${INPUTFILENAME_MD}")
     else()
         message(FATAL_ERROR "Cannot find input file ${INPUTFILENAME_INI} or ${INPUTFILENAME_MD}")
     endif()

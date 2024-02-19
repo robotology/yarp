@@ -1,11 +1,41 @@
-| -      | file_name           | string    | -         | audio_out.wav  | Yes      | The name of the file written by the module | Only.wav and .mp3 files are supported |
-| -      | mode                | string    | -         | mode1          | No       | This fake parameter chooses the fake algorithm to be used   |       |
-| -      | add_marker          | bool      | -         | false          | No       | Some description of param.   |       |
-| group1 | param_a             | bool      | -         | false          | No       | Some description of param.   |       |
-| group2 | param_a             | bool      | -         | false          | No       | Some description of param.   |       |
-| -      | period              | double    | s         | -              | Yes      | Algorithm control loop period  |       |
-| -      | initial_ref         | double    | m         | 3              | No       | An initial value for the algorithm   |       |
-| group3::subgroup1    | param_1    | bool      | -         | false          | Yes      | This is a parameter for testing purposes  |       |
-| group3::subgroup1    | param_2    | bool      | -         | true           | No       | This is a parameter for testing purposes  |       |
-| group3               | param_3    | bool      | -         | false          | No       | This is a parameter for testing purposes  |       |
-| group3::subgroup2    | param_4    | bool      | -         | true           | No       | This is a parameter for testing purposes  |       |
+| -                    | param_1              | string         | -       | -                    | Yes      | Test param 01 | Note        |
+| -                    | param_2              | double         | -       | -                    | Yes      | Test param 02 | Note        |
+| -                    | param_3              | bool           | -       | -                    | Yes      | Test param 03 | Note        |
+| -                    | param_4              | int            | -       | -                    | Yes      | Test param 04 | Note        |
+| -                    | param_5              | char           | -       | -                    | Yes      | Test param 05 | Note        |
+| -                    | param_6              | size_t         | -       | -                    | Yes      | Test param 06 | Note        |
+| -                    | param_7              | float          | -       | -                    | Yes      | Test param 07 | Note        |
+| group1               | param_1              | string         | -       | -                    | Yes      | Test param 08 | Note        |
+| group1               | param_2              | double         | -       | -                    | Yes      | Test param 09 | Note        |
+| group1               | param_3              | bool           | -       | -                    | Yes      | Test param 10 | Note        |
+| group1               | param_4              | int            | -       | -                    | Yes      | Test param 11 | Note        |
+|   group2             | param_1              | string         | -       | def1                 | Yes      | Test param 12 | Note        |
+|   group2             | param_2              | double         | -       | 1.0                  | Yes      | Test param 13 | Note        |
+|   group2             | param_3              | bool           | -       | true                 | Yes      | Test param 14 | Note        |
+|   group2             | param_4              | int            | -       | 1000                 | Yes      | Test param 15 | Note        |
+| group3               | param_1              | string         | -       | def1                 | No       | Test param 16 | Note        |
+| group3               | param_2              | double         | -       | 1.0                  | No       | Test param 17 | Note        |
+| group3               | param_3              | bool           | -       | true                 | No       | Test param 18 | Note        |
+| group3               | param_4              | int            | -       | 1000                 | No       | Test param 19 | Note        |
+|   group4::subgroup1  | param_1              | int            | s       | 0                    | No       | Test param 20 | Note        |
+|   group4::subgroup1  | param_2              | int            | s       | 1                    | No       | Test param 21 | Note        |
+|   group4::subgroup1  | param_3              | int            | s       | 2                    | No       | Test param 22 | Note        |
+|   group4::subgroup1  | param_4              | int            | s       | 3                    | No       | Test param 23 | Note        |
+|    group4::subgroup2 | param_1              | int            | ms      | 10                   | No       | Test param 24 | Note        |
+|    group4::subgroup2 | param_2              | int            | ms      | 11                   | No       | Test param 25 | Note        |
+|    group4::subgroup2 | param_3              | int            | ms      | 12                   | No       | Test param 26 | Note        |
+|    group4::subgroup2 | param_4              | int            | ms      | 13                   | No       | Test param 27 | Note        |
+| group5::subgroup1    | param_1              | int            | N       | 20                   | Yes      | Test param 28 | Note        |
+| group5::subgroup1    | param_2              | int            | N       | 21                   | Yes      | Test param 29 | Note        |
+| group5::subgroup1    | param_3              | int            | N       | 22                   | Yes      | Test param 30 | Note        |
+| group5::subgroup1    | param_4              | int            | N       | 23                   | Yes      | Test param 31 | Note        |
+|  group5::subgroup2   | param_1              | int            | mN      | 30                   | Yes      | Test param 32 | Note        |
+|  group5::subgroup2   | param_2              | int            | mN      | 31                   | Yes      | Test param 33 | Note        |
+|  group5::subgroup2   | param_3              | int            | mN      | 32                   | Yes      | Test param 34 | Note        |
+|  group5::subgroup2   | param_4              | int            | mN      | 33                   | Yes      | Test param 35 | Note        |
+| -                    | param_vec1           | vector<int>    | m       |                      | No       | Test param 36 | Note        |
+| -                    | param_vec2           | vector<double> | m       |                      | No       | Test param 37 | Note        |
+| -                    | param_vec3           | vector<string> | m       |                      | No       | Test param 38 | Note        |
+| -                    | param_vec4           | vector<int>    | m       | 1 2 3                | No       | Test param 39 | Note        |
+| -                    | param_vec5           | vector<double> | m       | 1.0 2.0 3.0          | No       | Test param 40 | Note        |
+| -                    | param_vec6           | vector<string> | m       | "sa1" "sa2" "sa3"    | No       | Test param 41 | Note        |

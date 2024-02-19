@@ -18,6 +18,7 @@ yarp_prepare_plugin(testDeviceWGP
 #then the device is compiled, using the generated files.
 add_custom_target(generate_parser COMMAND yarpDeviceParamParserGenerator
                                           --class_name TestDeviceWGP
+                                          --module_name testDeviceWGP
                                           --input_filename_md test2.txt
                                           --input_extra_comments extraComments.md
                                           --generate all

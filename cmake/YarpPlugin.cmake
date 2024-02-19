@@ -59,7 +59,7 @@ include(CMakeParseArguments)
 include(CMakeDependentOption)
 include(${CMAKE_CURRENT_LIST_DIR}/YarpInstallationHelpers.cmake)
 include(${CMAKE_CURRENT_LIST_DIR}/YarpPrintFeature.cmake)
-
+include(YarpDeviceParamsParserGenerator)
 
 ################################################################################
 #.rst:
@@ -169,6 +169,7 @@ endmacro()
 #                       [DOC "<plugin documentation>"]
 #                       [ADVANCED]
 #                       [INTERNAL]
+#                       [GENERATE_PARSER]
 #                       [DEPENDS <condition>]
 #                       [TEMPLATE <file_name|path_to_a_file>]
 #                       [TEMPLATE_DIR <dir>]
@@ -218,6 +219,8 @@ endmacro()
 # The ``DOC`` argument can be used to set a description for this option.
 # If the``ADVANCED`` option is enabled, this option is marked as advanced in
 # CMake.
+# If the ``GENERATE_PARSER`` option is enabled, a parameter parser will be generated
+# for the plugin. See documentation of: generateDeviceParamsParser()
 # If the ``INTERNAL`` option is enabled, this option is marked as internal in
 # CMake, and therefore not displayed in CMake gui. This also implies
 # `DEFAULT=ON` unless explicitly specified.
@@ -250,6 +253,7 @@ macro(YARP_PREPARE_PLUGIN _plugin_name)
     ADVANCED
     INTERNAL
     QUIET
+    GENERATE_PARSER
   )
   set(_oneValueArgs
     TYPE
@@ -567,6 +571,12 @@ YARP_DEFINE_SHARED_SUBCLASS(\@YARPPLUG_NAME\@, \@YARPPLUG_TYPE\@, \@YARPPLUG_PAR
     add_feature_info(${_plugin_fullname} ${_YPP_OPTION} "${_feature_doc}.")
   endif()
 
+  if (NOT SKIP_${_plugin_name})
+    if(_YPP_GENERATE_PARSER)
+        message ("Invoking generateDeviceParamsParser (${_YPP_TYPE} ${_plugin_name})")
+        generateDeviceParamsParser(${_YPP_TYPE} ${_plugin_name})
+    endif()
+  endif()
 endmacro()
 
 

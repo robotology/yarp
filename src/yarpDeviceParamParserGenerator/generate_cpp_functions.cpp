@@ -14,6 +14,48 @@
 
 #include "generator.h"
 
+std::string ParamsFilesGenerator::generateConstructor()
+{
+    std::ostringstream s;
+    ADD_DEBUG_COMMENT(s)
+    s << "\n";
+    s << m_classname << "_ParamsParser::" << m_classname << "_ParamsParser()\n";\
+    s << "{\n";
+    for (const auto& param : m_params)
+    {
+        if ( !param.defaultValue.empty() &&
+              (param.type == "vector<int>" ||
+               param.type == "vector<string>" ||
+               param.type == "vector<double>"))
+        {
+            std::string typ="";
+            if      (param.type == "vector<int>")    { typ = ".asInt64()"; }
+            else if (param.type == "vector<string>") { typ = ".asString()"; }
+            else if (param.type == "vector<double>") { typ = ".asFloat64()"; }
+            s << S_TAB1 << "//Default value of parameter" << param.getFullParamVariable() <<"\n";
+            s << S_TAB1 << "{\n";
+            s << S_TAB1 << "    m_" << param.getFullParamVariable() << ".clear();\n";
+            s << S_TAB1 << "    yarp::os::Bottle tempBot;\n";
+            s << S_TAB1 << "    tempBot.fromString(m_" << param.getFullParamVariable() << "_defaultValue" << ");\n";
+            s << S_TAB1 << "    if (tempBot.size()!=0)\n";
+            s << S_TAB1 << "    {\n";
+            s << S_TAB1 << "        for (size_t i=0; i<tempBot.size(); i++)\n";
+            s << S_TAB1 << "        {\n";
+            s << S_TAB1 << "            m_" << param.getFullParamVariable() << ".push_back(tempBot.get(i)" << typ << ");\n";
+            s << S_TAB1 << "        }\n";
+            s << S_TAB1 << "    }\n";
+            s << S_TAB1 << "    else\n";
+            s << S_TAB1 << "    {\n";
+            s << S_TAB1 << "         yError() <<" << "\"parameter '" << param.getFullParamVariable() << "' is not a properly formatted bottle\";\n";
+            s << S_TAB1 << "    }\n";
+            s << S_TAB1 << "}\n\n";
+        }
+    }
+    s << "}\n";
+    s << "\n";
+    return s.str();
+};
+
 std::string ParamsFilesGenerator::generateFunction_getListOfParams()
 {
     std::ostringstream s;
@@ -113,21 +155,68 @@ void ParamsFilesGenerator::generate_section(std::ostringstream& s, std::deque<st
     generate_section(s,vec, count+1, siz);
 }
 
+inline void KK (std::string origin, std::ostringstream& s, const Parameter& param, std::string as)
+{
+    ADD_DEBUG_COMMENT(s)
+    s << S_TAB3 << "m_" << param.getFullParamVariable() << " = "<<origin<<".find(\"" << param.getParamOnly() << "\")" << as <<";\n";
+}
+
+inline void AA (std::string origin, std::ostringstream& s, const Parameter& param, std::string typ)
+{
+    ADD_DEBUG_COMMENT(s)
+    s << S_TAB3 << "{\n";
+    s << S_TAB3 << "    m_" << param.getFullParamVariable() << ".clear();\n";
+    s << S_TAB3 << "    yarp::os::Bottle* tempBot = " << origin << ".find(\"" << param.getParamOnly() << "\").asList();\n";
+    s << S_TAB3 << "    if (tempBot)\n";
+    s << S_TAB3 << "    {\n";
+    s << S_TAB3 << "        for (size_t i=0; i<tempBot->size(); i++)\n";
+    s << S_TAB3 << "        {\n";
+    s << S_TAB3 << "            m_" << param.getFullParamVariable() << ".push_back(tempBot->get(i)" << typ << ");\n";
+    s << S_TAB3 << "        }\n";
+    s << S_TAB3 << "    }\n";
+    s << S_TAB3 << "    else\n";
+    s << S_TAB3 << "    {\n";
+    s << S_TAB3 << "         yError() <<" << "\"parameter '" << param.getFullParamVariable() <<"' is not a properly formatted bottle\";\n";
+    s << S_TAB3 << "    }\n";
+    s << S_TAB3 << "}\n";
+}
+
+inline void BB (std::string origin, std::ostringstream& s, const Parameter& param, std::string typ)
+{
+    ADD_DEBUG_COMMENT(s)
+    s << S_TAB3 << "{\n";
+    s << S_TAB3 << "    m_" << param.getFullParamVariable() << ".clear();\n";
+    s << S_TAB3 << "    std::string tempString = "<<origin<<".find(\"" << param.getParamOnly() << "\").asString();\n";
+    s << S_TAB3 << "    std::istringstream iss(tempString);\n";
+    s << S_TAB3 << "    " << typ << " val;\n";
+    s << S_TAB3 << "    while (iss >> val)\n";
+    s << S_TAB3 << "    {\n";
+    s << S_TAB3 << "        m_" << param.getFullParamVariable() << ".push_back(val"<<typ<<"); \n";
+    s << S_TAB3 << "    }\n";
+    s << S_TAB3 << "}\n";
+}
+
 void ParamsFilesGenerator::generate_param(std::string origin, std::ostringstream& s, const Parameter& param)
 {
+    ADD_DEBUG_COMMENT(s)
     s << \
         S_TAB2 << "if ("<<origin<<".check(\"" << param.getParamOnly() << "\"))\n" << \
         S_TAB2 << "{\n";
 
-    s << \
-        S_TAB3 << "m_" << param.getFullParamVariable() << " = "<<origin<<".find(\"" << param.getParamOnly() << "\")";
 
-    if (param.type == "string")      { s << ".asString();\n"; }
-    else if (param.type == "bool")   { s << ".asBool();\n"; }
-    else if (param.type == "double") { s << ".asFloat64();\n"; }
-    else if (param.type == "int")    { s << ".asInt64();\n"; }
-    else if (param.type == "size_t") { s << ".asInt64();\n"; }
-    else if (param.type == "float")  { s << ".asFloat32();\n"; }
+    if (param.type == "string")              { KK(origin, s, param, ".asString()"); }
+    else if (param.type == "bool")           { KK(origin, s, param, ".asBool()"); }
+    else if (param.type == "double")         { KK(origin, s, param, ".asFloat64()"); }
+    else if (param.type == "int")            { KK(origin, s, param, ".asInt64()"); }
+    else if (param.type == "size_t")         { KK(origin, s, param, ".asInt64()"); }
+    else if (param.type == "float")          { KK(origin, s, param, ".asFloat32()"); }
+    else if (param.type == "char")           { KK(origin, s, param, ".asInt8()"); }
+    else if (param.type == "vector<int>")    { AA(origin, s, param, ".asInt64()"); }
+    else if (param.type == "vector<string>") { AA(origin, s, param, ".asString()"); }
+    else if (param.type == "vector<double>") { AA(origin, s, param, ".asFloat64()"); }
+//    else if (param.type == "vector<int>")    { BB(origin, s, param, "int"); }
+//    else if (param.type == "vector<string>") { BB(origin, s, param, "std::string"); }
+//    else if (param.type == "vector<double>") { BB(origin, s, param, "double"); }
     else {
         yFatal("ERROR: Unknown data type for param %s: %s",param.getFullParamName().c_str(), param.type.c_str()); //error
     }

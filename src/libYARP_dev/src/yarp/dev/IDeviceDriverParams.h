@@ -35,9 +35,15 @@ public:
 
     /**
      * Get the name of the DeviceDriver class.
-     * @return A string containing the name of the DeviceDriver.
+     * @return A string containing the name of the class.
      */
-    virtual std::string   getDeviceType() const = 0;
+    virtual std::string   getDeviceClassName() const = 0;
+
+    /**
+     * Get the name of the device (i.e. the plugin name).
+     * @return A string containing the name of the device.
+     */
+    virtual std::string   getDeviceName() const = 0;
 
     /**
      * Get the documentation of the DeviceDriver's parameters.
