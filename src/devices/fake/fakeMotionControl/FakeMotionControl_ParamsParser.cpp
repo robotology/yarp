@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Mon Feb 19 16:27:58 2024
+// Generated on: Tue Feb 20 00:04:30 2024
 
 
 #include "FakeMotionControl_ParamsParser.h"
@@ -28,7 +28,7 @@ FakeMotionControl_ParamsParser::FakeMotionControl_ParamsParser()
 std::vector<std::string> FakeMotionControl_ParamsParser::getListOfParams() const
 {
     std::vector<std::string> params;
-    params.push_back("GENERAL::joints");
+    params.push_back("GENERAL::Joints");
     params.push_back("GENERAL::AxisMap");
     params.push_back("GENERAL::AxisName");
     params.push_back("GENERAL::AxisType");
@@ -51,20 +51,20 @@ bool      FakeMotionControl_ParamsParser::parseParams(const yarp::os::Searchable
 
     std::string config_string = config.toString();
     yarp::os::Property prop_check(config_string.c_str());
-    //Parser of parameter GENERAL::joints
+    //Parser of parameter GENERAL::Joints
     {
         yarp::os::Bottle sectionp;
         sectionp = config.findGroup("GENERAL");
-        if (sectionp.check("joints"))
+        if (sectionp.check("Joints"))
         {
-            m_GENERAL_joints = sectionp.find("joints").asInt64();
-            yCInfo(FakeMotionControlParamsCOMPONENT) << "Parameter 'GENERAL::joints' using value:" << m_GENERAL_joints;
+            m_GENERAL_Joints = sectionp.find("Joints").asInt64();
+            yCInfo(FakeMotionControlParamsCOMPONENT) << "Parameter 'GENERAL::Joints' using value:" << m_GENERAL_Joints;
         }
         else
         {
-            yCInfo(FakeMotionControlParamsCOMPONENT) << "Parameter 'GENERAL::joints' using DEFAULT value:" << m_GENERAL_joints;
+            yCInfo(FakeMotionControlParamsCOMPONENT) << "Parameter 'GENERAL::Joints' using DEFAULT value:" << m_GENERAL_Joints;
         }
-        prop_check.unput("GENERAL::joints");
+        prop_check.unput("GENERAL::Joints");
     }
 
     //Parser of parameter GENERAL::AxisMap
@@ -343,7 +343,7 @@ std::string      FakeMotionControl_ParamsParser::getDocumentationOfDeviceParams(
     doc = doc + std::string("This is the help for device: FakeMotionControl\n");
     doc = doc + std::string("\n");
     doc = doc + std::string("This is the list of the parameters accepted by the device:\n");
-    doc = doc + std::string("'GENERAL::joints': Number of degrees of freedom\n");
+    doc = doc + std::string("'GENERAL::Joints': Number of degrees of freedom\n");
     doc = doc + std::string("'GENERAL::AxisMap': a list of reordered indices for the axes\n");
     doc = doc + std::string("'GENERAL::AxisName': a list of strings representing the axes names\n");
     doc = doc + std::string("'GENERAL::AxisType': a list of strings representing the axes type (revolute/prismatic)\n");
@@ -354,7 +354,7 @@ std::string      FakeMotionControl_ParamsParser::getDocumentationOfDeviceParams(
     doc = doc + std::string("'LIMITS::Min': min encoder position\n");
     doc = doc + std::string("\n");
     doc = doc + std::string("Here are some examples of invocation command with yarpdev, with all params:\n");
-    doc = doc + " yarpdev --device fakeMotionControl --GENERAL::joints 1 --GENERAL::AxisMap <optional_value> --GENERAL::AxisName <optional_value> --GENERAL::AxisType <optional_value> --GENERAL::ampsToSensor <optional_value> --GENERAL::fullscalePWM <optional_value> --GENERAL::Encoder <optional_value> --LIMITS::Max <optional_value> --LIMITS::Min <optional_value>\n";
+    doc = doc + " yarpdev --device fakeMotionControl --GENERAL::Joints 1 --GENERAL::AxisMap <optional_value> --GENERAL::AxisName <optional_value> --GENERAL::AxisType <optional_value> --GENERAL::ampsToSensor <optional_value> --GENERAL::fullscalePWM <optional_value> --GENERAL::Encoder <optional_value> --LIMITS::Max <optional_value> --LIMITS::Min <optional_value>\n";
     doc = doc + std::string("Using only mandatory params:\n");
     doc = doc + " yarpdev --device fakeMotionControl\n";
     doc = doc + std::string("=============================================\n\n");    return doc;

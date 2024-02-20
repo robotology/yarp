@@ -518,7 +518,7 @@ bool FakeMotionControl::open(yarp::os::Searchable &config)
     //
     //  Read Configuration params from file
     //
-    _njoints = m_GENERAL_joints;
+    _njoints = m_GENERAL_Joints;
 
     if(!alloc(_njoints))
     {

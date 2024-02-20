@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Mon Feb 19 16:27:58 2024
+// Generated on: Tue Feb 20 00:04:30 2024
 
 
 #ifndef FAKEMOTIONCONTROLMICRO_PARAMSPARSER_H
@@ -25,7 +25,7 @@
 * These are the used parameters:
 * | Group name | Parameter name | Type           | Units | Default Value | Required | Description                                                       | Notes |
 * |:----------:|:--------------:|:--------------:|:-----:|:-------------:|:--------:|:-----------------------------------------------------------------:|:-----:|
-* | GENERAL    | joints         | int            | -     | 1             | 0        | Number of degrees of freedom                                      | -     |
+* | GENERAL    | Joints         | int            | -     | 1             | 0        | Number of degrees of freedom                                      | -     |
 * | GENERAL    | AxisMap        | vector<int>    | -     | -             | 0        | a list of reordered indices for the axes                          | -     |
 * | GENERAL    | AxisName       | vector<string> | -     | -             | 0        | a list of strings representing the axes names                     | -     |
 * | GENERAL    | AxisType       | vector<string> | -     | -             | 0        | a list of strings representing the axes type (revolute/prismatic) | -     |
@@ -33,7 +33,7 @@
 *
 * The device can be launched by yarpdev using one of the following examples:
 * \code{.unparsed}
-* yarpdev --device fakeMotionControlMicro --GENERAL::joints 1 --GENERAL::AxisMap <optional_value> --GENERAL::AxisName <optional_value> --GENERAL::AxisType <optional_value> --GENERAL::Encoder <optional_value>
+* yarpdev --device fakeMotionControlMicro --GENERAL::Joints 1 --GENERAL::AxisMap <optional_value> --GENERAL::AxisName <optional_value> --GENERAL::AxisType <optional_value> --GENERAL::Encoder <optional_value>
 * \endcode
 *
 * \code{.unparsed}
@@ -59,13 +59,13 @@ public:
     };
     const parser_version_type m_parser_version = {};
 
-    const std::string m_GENERAL_joints_defaultValue = {"1"};
+    const std::string m_GENERAL_Joints_defaultValue = {"1"};
     const std::string m_GENERAL_AxisMap_defaultValue = {""};
     const std::string m_GENERAL_AxisName_defaultValue = {""};
     const std::string m_GENERAL_AxisType_defaultValue = {""};
     const std::string m_GENERAL_Encoder_defaultValue = {""};
 
-    int m_GENERAL_joints = {1};
+    int m_GENERAL_Joints = {1};
     std::vector<int> m_GENERAL_AxisMap = {}; //The default value of this list is an empty list. It is highly recommended to provide a suggested value also for optional string parameters.
     std::vector<std::string> m_GENERAL_AxisName = {}; //The default value of this list is an empty list. It is highly recommended to provide a suggested value also for optional string parameters.
     std::vector<std::string> m_GENERAL_AxisType = {}; //The default value of this list is an empty list. It is highly recommended to provide a suggested value also for optional string parameters.
