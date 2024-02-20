@@ -30,8 +30,12 @@ bool DeviceBundler::open(yarp::os::Searchable& config)
     bool ret = true;
 
     //open wrapper device
+    yCInfo(DEVICEBUNDLER, "Opening device: %s", m_wrapper_device.c_str());
     yarp::os::Property config_wrap (config.toString().c_str());
     config_wrap.unput("device");
+    config_wrap.unput("wrapper_device");
+    config_wrap.unput("attached_device");
+    config_wrap.unput("wrapping_enabled");
     config_wrap.put("device", m_wrapper_device);
     std::string sw = config_wrap.toString();
     ret = m_pdev_wrapper.open(config_wrap);
@@ -42,8 +46,12 @@ bool DeviceBundler::open(yarp::os::Searchable& config)
     }
 
     //open secondary device
+    yCInfo(DEVICEBUNDLER, "Opening device: %s", m_attached_device.c_str());
     yarp::os::Property config_sub(config.toString().c_str());
     config_sub.unput("device");
+    config_sub.unput("wrapper_device");
+    config_sub.unput("attached_device");
+    config_sub.unput("wrapping_enabled");
     config_sub.put("device", m_attached_device);
     std::string ss = config_sub.toString();
     ret = m_pdev_subdevice.open(config_sub);
@@ -60,6 +68,7 @@ bool DeviceBundler::open(yarp::os::Searchable& config)
     }
 
     //Attach operations below
+    yCInfo(DEVICEBUNDLER, "Attaching devices %s and %s.", m_wrapper_device.c_str(), m_attached_device.c_str());
     ret = m_pdev_wrapper.view(m_iWrapper);
     if (!ret)
     {
@@ -74,7 +83,7 @@ bool DeviceBundler::open(yarp::os::Searchable& config)
         return false;
     }
 
-    yCDebug(DEVICEBUNDLER, "Attach operation between %s and %s completed.", m_wrapper_device.c_str(), m_attached_device.c_str());
+    yCInfo(DEVICEBUNDLER, "Attach operation between %s and %s completed.", m_wrapper_device.c_str(), m_attached_device.c_str());
     return true;
 }
 
