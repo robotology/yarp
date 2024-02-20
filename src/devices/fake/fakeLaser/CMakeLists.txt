@@ -8,7 +8,7 @@ endif()
 yarp_prepare_plugin(fakeLaser
   CATEGORY device
   TYPE FakeLaser
-  INCLUDE fakeLaser.h
+  INCLUDE FakeLaser.h
   GENERATE_PARSER
   DEPENDS "TARGET YARP::YARP_math")
 
