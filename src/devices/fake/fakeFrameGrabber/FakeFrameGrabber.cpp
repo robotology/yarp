@@ -229,7 +229,7 @@ bool FakeFrameGrabber::open(yarp::os::Searchable& config)
     retM=Value::makeList(ss.str().c_str());
     if (retM)
     {
-        m_intrinsic.put("rectificationMatrix", retM);
+        m_intrinsic.put("rectificationMatrix", *retM);
         delete retM;
     }
     else
