@@ -222,20 +222,11 @@ bool FakeFrameGrabber::open(yarp::os::Searchable& config)
     m_intrinsic.put("principalPointX",m_principalPointX);
     m_intrinsic.put("principalPointY",m_principalPointY);
 
-    std::stringstream ss;
-    for (double num : m_rectificationMatrix) { ss << num << " "; }
-
-    Value* retM =nullptr;
-    retM=Value::makeList(ss.str().c_str());
-    if (retM)
-    {
-        m_intrinsic.put("rectificationMatrix", *retM);
-        delete retM;
-    }
-    else
-    {
-        yCError(FAKEFRAMEGRABBER, "Invalid rectificationMatrix param");
-    }
+    Value val;
+    val.makeList();
+    auto* bb = val.asList();
+    for (double num : m_rectificationMatrix) { bb->addFloat64(num); }
+    m_intrinsic.put("rectificationMatrix",val);
 
     m_intrinsic.put("distortionModel", m_distortionModel);
     m_intrinsic.put("k1",m_k1);
