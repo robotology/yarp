@@ -35,13 +35,14 @@ std::string ParamsFilesGenerator::generateConstructor()
             s << S_TAB1 << "//Default value of parameter" << param.getFullParamVariable() <<"\n";
             s << S_TAB1 << "{\n";
             s << S_TAB1 << "    m_" << param.getFullParamVariable() << ".clear();\n";
-            s << S_TAB1 << "    yarp::os::Bottle tempBot;\n";
-            s << S_TAB1 << "    tempBot.fromString(m_" << param.getFullParamVariable() << "_defaultValue" << ");\n";
-            s << S_TAB1 << "    if (tempBot.size()!=0)\n";
+            s << S_TAB1 << "    yarp::os::Value tempVal;\n";
+            s << S_TAB1 << "    tempVal.fromString(m_" << param.getFullParamVariable() << "_defaultValue.c_str()" << ");\n";
+            s << S_TAB1 << "    yarp::os::Bottle* tempBot = tempVal.asList();\n";
+            s << S_TAB1 << "    if (tempBot && tempBot->size()!=0)\n";
             s << S_TAB1 << "    {\n";
-            s << S_TAB1 << "        for (size_t i=0; i<tempBot.size(); i++)\n";
+            s << S_TAB1 << "        for (size_t i=0; i<tempBot->size(); i++)\n";
             s << S_TAB1 << "        {\n";
-            s << S_TAB1 << "            m_" << param.getFullParamVariable() << ".push_back(tempBot.get(i)" << typ << ");\n";
+            s << S_TAB1 << "            m_" << param.getFullParamVariable() << ".push_back(tempBot->get(i)" << typ << ");\n";
             s << S_TAB1 << "        }\n";
             s << S_TAB1 << "    }\n";
             s << S_TAB1 << "    else\n";
@@ -155,13 +156,13 @@ void ParamsFilesGenerator::generate_section(std::ostringstream& s, std::deque<st
     generate_section(s,vec, count+1, siz);
 }
 
-inline void KK (std::string origin, std::ostringstream& s, const Parameter& param, std::string as)
+inline void KK (std::string origin, std::ostringstream& s, const Parameter& param, std::string as, std::string component)
 {
     ADD_DEBUG_COMMENT(s)
     s << S_TAB3 << "m_" << param.getFullParamVariable() << " = "<<origin<<".find(\"" << param.getParamOnly() << "\")" << as <<";\n";
 }
 
-inline void AA (std::string origin, std::ostringstream& s, const Parameter& param, std::string typ)
+inline void AA (std::string origin, std::ostringstream& s, const Parameter& param, std::string typ, std::string component)
 {
     ADD_DEBUG_COMMENT(s)
     s << S_TAB3 << "{\n";
@@ -169,6 +170,7 @@ inline void AA (std::string origin, std::ostringstream& s, const Parameter& para
     s << S_TAB3 << "    yarp::os::Bottle* tempBot = " << origin << ".find(\"" << param.getParamOnly() << "\").asList();\n";
     s << S_TAB3 << "    if (tempBot)\n";
     s << S_TAB3 << "    {\n";
+    s << S_TAB3 << "        std::string tempBots = tempBot->toString();\n";
     s << S_TAB3 << "        for (size_t i=0; i<tempBot->size(); i++)\n";
     s << S_TAB3 << "        {\n";
     s << S_TAB3 << "            m_" << param.getFullParamVariable() << ".push_back(tempBot->get(i)" << typ << ");\n";
@@ -176,12 +178,12 @@ inline void AA (std::string origin, std::ostringstream& s, const Parameter& para
     s << S_TAB3 << "    }\n";
     s << S_TAB3 << "    else\n";
     s << S_TAB3 << "    {\n";
-    s << S_TAB3 << "         yError() <<" << "\"parameter '" << param.getFullParamVariable() <<"' is not a properly formatted bottle\";\n";
+    s << S_TAB3 << "         yCError(" << component << ") <<" << "\"parameter '" << param.getFullParamVariable() <<"' is not a properly formatted bottle\";\n";
     s << S_TAB3 << "    }\n";
     s << S_TAB3 << "}\n";
 }
 
-inline void BB (std::string origin, std::ostringstream& s, const Parameter& param, std::string typ)
+inline void BB (std::string origin, std::ostringstream& s, const Parameter& param, std::string typ, std::string component)
 {
     ADD_DEBUG_COMMENT(s)
     s << S_TAB3 << "{\n";
@@ -196,6 +198,29 @@ inline void BB (std::string origin, std::ostringstream& s, const Parameter& para
     s << S_TAB3 << "}\n";
 }
 
+inline void CC(std::string origin, std::ostringstream& s, const Parameter& param, std::string typ, std::string component)
+{
+    ADD_DEBUG_COMMENT(s)
+        s << S_TAB3 << "{\n";
+    s << S_TAB3 << "    m_" << param.getFullParamVariable() << ".clear();\n";
+    s << S_TAB3 << "    yarp::os::Bottle tempBot = " << origin << ".findGroup(\"" << param.getParamOnly() << "\");\n";
+    s << S_TAB3 << "    if (tempBot.size()>0)\n";
+    s << S_TAB3 << "    {\n";
+    s << S_TAB3 << "        int sizes = tempBot.size();\n";
+    s << S_TAB3 << "        std::string tempBots = tempBot.toString();\n";
+    s << S_TAB3 << "        tempBot = tempBot.tail();\n";
+    s << S_TAB3 << "        for (size_t i=0; i<tempBot.size(); i++)\n";
+    s << S_TAB3 << "        {\n";
+    s << S_TAB3 << "            m_" << param.getFullParamVariable() << ".push_back(tempBot.get(i)" << typ << ");\n";
+    s << S_TAB3 << "        }\n";
+    s << S_TAB3 << "    }\n";
+    s << S_TAB3 << "    else\n";
+    s << S_TAB3 << "    {\n";
+    s << S_TAB3 << "         yCError("<< component << ") << " << "\"parameter '" << param.getFullParamVariable() << "' is not a properly formatted bottle\";\n";
+    s << S_TAB3 << "    }\n";
+    s << S_TAB3 << "}\n";
+}
+
 void ParamsFilesGenerator::generate_param(std::string origin, std::ostringstream& s, const Parameter& param)
 {
     ADD_DEBUG_COMMENT(s)
@@ -204,16 +229,16 @@ void ParamsFilesGenerator::generate_param(std::string origin, std::ostringstream
         S_TAB2 << "{\n";
 
 
-    if (param.type == "string")              { KK(origin, s, param, ".asString()"); }
-    else if (param.type == "bool")           { KK(origin, s, param, ".asBool()"); }
-    else if (param.type == "double")         { KK(origin, s, param, ".asFloat64()"); }
-    else if (param.type == "int")            { KK(origin, s, param, ".asInt64()"); }
-    else if (param.type == "size_t")         { KK(origin, s, param, ".asInt64()"); }
-    else if (param.type == "float")          { KK(origin, s, param, ".asFloat32()"); }
-    else if (param.type == "char")           { KK(origin, s, param, ".asInt8()"); }
-    else if (param.type == "vector<int>")    { AA(origin, s, param, ".asInt64()"); }
-    else if (param.type == "vector<string>") { AA(origin, s, param, ".asString()"); }
-    else if (param.type == "vector<double>") { AA(origin, s, param, ".asFloat64()"); }
+    if (param.type == "string")              { KK(origin, s, param, ".asString()", m_component); }
+    else if (param.type == "bool")           { KK(origin, s, param, ".asBool()", m_component); }
+    else if (param.type == "double")         { KK(origin, s, param, ".asFloat64()", m_component); }
+    else if (param.type == "int")            { KK(origin, s, param, ".asInt64()", m_component); }
+    else if (param.type == "size_t")         { KK(origin, s, param, ".asInt64()", m_component); }
+    else if (param.type == "float")          { KK(origin, s, param, ".asFloat32()", m_component); }
+    else if (param.type == "char")           { KK(origin, s, param, ".asInt8()", m_component); }
+    else if (param.type == "vector<int>")    { AA(origin, s, param, ".asInt64()", m_component); }
+    else if (param.type == "vector<string>") { AA(origin, s, param, ".asString()", m_component); }
+    else if (param.type == "vector<double>") { AA(origin, s, param, ".asFloat64()", m_component); }
 //    else if (param.type == "vector<int>")    { BB(origin, s, param, "int"); }
 //    else if (param.type == "vector<string>") { BB(origin, s, param, "std::string"); }
 //    else if (param.type == "vector<double>") { BB(origin, s, param, "double"); }

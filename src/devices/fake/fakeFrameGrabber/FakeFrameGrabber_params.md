@@ -26,4 +26,4 @@
   * |      |  bayer           | bool    | -             |  false       | No    | should emit bayer test image       |  |
   * |      |  mono            | bool    | -             |  false       | No    | should emit a monochrome image     |  |
   * |      |  snr             | double  | -             |  0.5         | No    | Signal noise ratio ([0.0-1.0]       |  |
-  * |      |  rectificationMatrix     | vector<double>  | -   |  1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0 | No    | Matrix that describes the lens' distortion    |  |
+  * |      |  rectificationMatrix     | vector<double>  | -   |  (1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0) | No    | Matrix that describes the lens' distortion    |  |

@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Tue Feb 20 00:04:30 2024
+// Generated on: Tue Feb 27 00:56:29 2024
 
 
 #include "FakeMotionControl_ParamsParser.h"
@@ -78,6 +78,7 @@ bool      FakeMotionControl_ParamsParser::parseParams(const yarp::os::Searchable
                 yarp::os::Bottle* tempBot = sectionp.find("AxisMap").asList();
                 if (tempBot)
                 {
+                    std::string tempBots = tempBot->toString();
                     for (size_t i=0; i<tempBot->size(); i++)
                     {
                         m_GENERAL_AxisMap.push_back(tempBot->get(i).asInt64());
@@ -85,7 +86,7 @@ bool      FakeMotionControl_ParamsParser::parseParams(const yarp::os::Searchable
                 }
                 else
                 {
-                     yError() <<"parameter 'GENERAL_AxisMap' is not a properly formatted bottle";
+                     yCError(FakeMotionControlParamsCOMPONENT) <<"parameter 'GENERAL_AxisMap' is not a properly formatted bottle";
                 }
             }
             yCInfo(FakeMotionControlParamsCOMPONENT) << "Parameter 'GENERAL::AxisMap' using value:" << m_GENERAL_AxisMap;
@@ -108,6 +109,7 @@ bool      FakeMotionControl_ParamsParser::parseParams(const yarp::os::Searchable
                 yarp::os::Bottle* tempBot = sectionp.find("AxisName").asList();
                 if (tempBot)
                 {
+                    std::string tempBots = tempBot->toString();
                     for (size_t i=0; i<tempBot->size(); i++)
                     {
                         m_GENERAL_AxisName.push_back(tempBot->get(i).asString());
@@ -115,7 +117,7 @@ bool      FakeMotionControl_ParamsParser::parseParams(const yarp::os::Searchable
                 }
                 else
                 {
-                     yError() <<"parameter 'GENERAL_AxisName' is not a properly formatted bottle";
+                     yCError(FakeMotionControlParamsCOMPONENT) <<"parameter 'GENERAL_AxisName' is not a properly formatted bottle";
                 }
             }
             yCInfo(FakeMotionControlParamsCOMPONENT) << "Parameter 'GENERAL::AxisName' using value:" << m_GENERAL_AxisName;
@@ -138,6 +140,7 @@ bool      FakeMotionControl_ParamsParser::parseParams(const yarp::os::Searchable
                 yarp::os::Bottle* tempBot = sectionp.find("AxisType").asList();
                 if (tempBot)
                 {
+                    std::string tempBots = tempBot->toString();
                     for (size_t i=0; i<tempBot->size(); i++)
                     {
                         m_GENERAL_AxisType.push_back(tempBot->get(i).asString());
@@ -145,7 +148,7 @@ bool      FakeMotionControl_ParamsParser::parseParams(const yarp::os::Searchable
                 }
                 else
                 {
-                     yError() <<"parameter 'GENERAL_AxisType' is not a properly formatted bottle";
+                     yCError(FakeMotionControlParamsCOMPONENT) <<"parameter 'GENERAL_AxisType' is not a properly formatted bottle";
                 }
             }
             yCInfo(FakeMotionControlParamsCOMPONENT) << "Parameter 'GENERAL::AxisType' using value:" << m_GENERAL_AxisType;
@@ -168,6 +171,7 @@ bool      FakeMotionControl_ParamsParser::parseParams(const yarp::os::Searchable
                 yarp::os::Bottle* tempBot = sectionp.find("ampsToSensor").asList();
                 if (tempBot)
                 {
+                    std::string tempBots = tempBot->toString();
                     for (size_t i=0; i<tempBot->size(); i++)
                     {
                         m_GENERAL_ampsToSensor.push_back(tempBot->get(i).asFloat64());
@@ -175,7 +179,7 @@ bool      FakeMotionControl_ParamsParser::parseParams(const yarp::os::Searchable
                 }
                 else
                 {
-                     yError() <<"parameter 'GENERAL_ampsToSensor' is not a properly formatted bottle";
+                     yCError(FakeMotionControlParamsCOMPONENT) <<"parameter 'GENERAL_ampsToSensor' is not a properly formatted bottle";
                 }
             }
             yCInfo(FakeMotionControlParamsCOMPONENT) << "Parameter 'GENERAL::ampsToSensor' using value:" << m_GENERAL_ampsToSensor;
@@ -198,6 +202,7 @@ bool      FakeMotionControl_ParamsParser::parseParams(const yarp::os::Searchable
                 yarp::os::Bottle* tempBot = sectionp.find("fullscalePWM").asList();
                 if (tempBot)
                 {
+                    std::string tempBots = tempBot->toString();
                     for (size_t i=0; i<tempBot->size(); i++)
                     {
                         m_GENERAL_fullscalePWM.push_back(tempBot->get(i).asFloat64());
@@ -205,7 +210,7 @@ bool      FakeMotionControl_ParamsParser::parseParams(const yarp::os::Searchable
                 }
                 else
                 {
-                     yError() <<"parameter 'GENERAL_fullscalePWM' is not a properly formatted bottle";
+                     yCError(FakeMotionControlParamsCOMPONENT) <<"parameter 'GENERAL_fullscalePWM' is not a properly formatted bottle";
                 }
             }
             yCInfo(FakeMotionControlParamsCOMPONENT) << "Parameter 'GENERAL::fullscalePWM' using value:" << m_GENERAL_fullscalePWM;
@@ -228,6 +233,7 @@ bool      FakeMotionControl_ParamsParser::parseParams(const yarp::os::Searchable
                 yarp::os::Bottle* tempBot = sectionp.find("Encoder").asList();
                 if (tempBot)
                 {
+                    std::string tempBots = tempBot->toString();
                     for (size_t i=0; i<tempBot->size(); i++)
                     {
                         m_GENERAL_Encoder.push_back(tempBot->get(i).asInt64());
@@ -235,7 +241,7 @@ bool      FakeMotionControl_ParamsParser::parseParams(const yarp::os::Searchable
                 }
                 else
                 {
-                     yError() <<"parameter 'GENERAL_Encoder' is not a properly formatted bottle";
+                     yCError(FakeMotionControlParamsCOMPONENT) <<"parameter 'GENERAL_Encoder' is not a properly formatted bottle";
                 }
             }
             yCInfo(FakeMotionControlParamsCOMPONENT) << "Parameter 'GENERAL::Encoder' using value:" << m_GENERAL_Encoder;
@@ -258,6 +264,7 @@ bool      FakeMotionControl_ParamsParser::parseParams(const yarp::os::Searchable
                 yarp::os::Bottle* tempBot = sectionp.find("Max").asList();
                 if (tempBot)
                 {
+                    std::string tempBots = tempBot->toString();
                     for (size_t i=0; i<tempBot->size(); i++)
                     {
                         m_LIMITS_Max.push_back(tempBot->get(i).asFloat64());
@@ -265,7 +272,7 @@ bool      FakeMotionControl_ParamsParser::parseParams(const yarp::os::Searchable
                 }
                 else
                 {
-                     yError() <<"parameter 'LIMITS_Max' is not a properly formatted bottle";
+                     yCError(FakeMotionControlParamsCOMPONENT) <<"parameter 'LIMITS_Max' is not a properly formatted bottle";
                 }
             }
             yCInfo(FakeMotionControlParamsCOMPONENT) << "Parameter 'LIMITS::Max' using value:" << m_LIMITS_Max;
@@ -288,6 +295,7 @@ bool      FakeMotionControl_ParamsParser::parseParams(const yarp::os::Searchable
                 yarp::os::Bottle* tempBot = sectionp.find("Min").asList();
                 if (tempBot)
                 {
+                    std::string tempBots = tempBot->toString();
                     for (size_t i=0; i<tempBot->size(); i++)
                     {
                         m_LIMITS_Min.push_back(tempBot->get(i).asFloat64());
@@ -295,7 +303,7 @@ bool      FakeMotionControl_ParamsParser::parseParams(const yarp::os::Searchable
                 }
                 else
                 {
-                     yError() <<"parameter 'LIMITS_Min' is not a properly formatted bottle";
+                     yCError(FakeMotionControlParamsCOMPONENT) <<"parameter 'LIMITS_Min' is not a properly formatted bottle";
                 }
             }
             yCInfo(FakeMotionControlParamsCOMPONENT) << "Parameter 'LIMITS::Min' using value:" << m_LIMITS_Min;

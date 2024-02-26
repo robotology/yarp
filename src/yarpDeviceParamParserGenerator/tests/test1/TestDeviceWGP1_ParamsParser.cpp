@@ -8,30 +8,31 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Mon Feb 19 16:37:31 2024
+// Generated on: Mon Feb 26 23:01:26 2024
 
 
-#include "TestDeviceWGP_ParamsParser.h"
+#include "TestDeviceWGP1_ParamsParser.h"
 #include <yarp/os/LogStream.h>
 #include <yarp/os/Value.h>
 
 namespace {
-    YARP_LOG_COMPONENT(TestDeviceWGPParamsCOMPONENT, "yarp.device.TestDeviceWGP")
+    YARP_LOG_COMPONENT(TestDeviceWGP1ParamsCOMPONENT, "yarp.device.TestDeviceWGP1")
 }
 
 
-TestDeviceWGP_ParamsParser::TestDeviceWGP_ParamsParser()
+TestDeviceWGP1_ParamsParser::TestDeviceWGP1_ParamsParser()
 {
     //Default value of parameterparam_vec4
     {
         m_param_vec4.clear();
-        yarp::os::Bottle tempBot;
-        tempBot.fromString(m_param_vec4_defaultValue);
-        if (tempBot.size()!=0)
+        yarp::os::Value tempVal;
+        tempVal.fromString(m_param_vec4_defaultValue.c_str());
+        yarp::os::Bottle* tempBot = tempVal.asList();
+        if (tempBot && tempBot->size()!=0)
         {
-            for (size_t i=0; i<tempBot.size(); i++)
+            for (size_t i=0; i<tempBot->size(); i++)
             {
-                m_param_vec4.push_back(tempBot.get(i).asInt64());
+                m_param_vec4.push_back(tempBot->get(i).asInt64());
             }
         }
         else
@@ -43,13 +44,14 @@ TestDeviceWGP_ParamsParser::TestDeviceWGP_ParamsParser()
     //Default value of parameterparam_vec5
     {
         m_param_vec5.clear();
-        yarp::os::Bottle tempBot;
-        tempBot.fromString(m_param_vec5_defaultValue);
-        if (tempBot.size()!=0)
+        yarp::os::Value tempVal;
+        tempVal.fromString(m_param_vec5_defaultValue.c_str());
+        yarp::os::Bottle* tempBot = tempVal.asList();
+        if (tempBot && tempBot->size()!=0)
         {
-            for (size_t i=0; i<tempBot.size(); i++)
+            for (size_t i=0; i<tempBot->size(); i++)
             {
-                m_param_vec5.push_back(tempBot.get(i).asFloat64());
+                m_param_vec5.push_back(tempBot->get(i).asFloat64());
             }
         }
         else
@@ -61,13 +63,14 @@ TestDeviceWGP_ParamsParser::TestDeviceWGP_ParamsParser()
     //Default value of parameterparam_vec6
     {
         m_param_vec6.clear();
-        yarp::os::Bottle tempBot;
-        tempBot.fromString(m_param_vec6_defaultValue);
-        if (tempBot.size()!=0)
+        yarp::os::Value tempVal;
+        tempVal.fromString(m_param_vec6_defaultValue.c_str());
+        yarp::os::Bottle* tempBot = tempVal.asList();
+        if (tempBot && tempBot->size()!=0)
         {
-            for (size_t i=0; i<tempBot.size(); i++)
+            for (size_t i=0; i<tempBot->size(); i++)
             {
-                m_param_vec6.push_back(tempBot.get(i).asString());
+                m_param_vec6.push_back(tempBot->get(i).asString());
             }
         }
         else
@@ -79,7 +82,7 @@ TestDeviceWGP_ParamsParser::TestDeviceWGP_ParamsParser()
 }
 
 
-std::vector<std::string> TestDeviceWGP_ParamsParser::getListOfParams() const
+std::vector<std::string> TestDeviceWGP1_ParamsParser::getListOfParams() const
 {
     std::vector<std::string> params;
     params.push_back("param_1");
@@ -123,16 +126,19 @@ std::vector<std::string> TestDeviceWGP_ParamsParser::getListOfParams() const
     params.push_back("param_vec4");
     params.push_back("param_vec5");
     params.push_back("param_vec6");
+    params.push_back("param_vec7");
+    params.push_back("param_vec8");
+    params.push_back("param_vec9");
     return params;
 }
 
 
-bool      TestDeviceWGP_ParamsParser::parseParams(const yarp::os::Searchable & config)
+bool      TestDeviceWGP1_ParamsParser::parseParams(const yarp::os::Searchable & config)
 {
     //Check for --help option
     if (config.check("help"))
     {
-        yCInfo(TestDeviceWGPParamsCOMPONENT) << getDocumentationOfDeviceParams();
+        yCInfo(TestDeviceWGP1ParamsCOMPONENT) << getDocumentationOfDeviceParams();
     }
 
     std::string config_string = config.toString();
@@ -142,12 +148,12 @@ bool      TestDeviceWGP_ParamsParser::parseParams(const yarp::os::Searchable & c
         if (config.check("param_1"))
         {
             m_param_1 = config.find("param_1").asString();
-            yCInfo(TestDeviceWGPParamsCOMPONENT) << "Parameter 'param_1' using value:" << m_param_1;
+            yCInfo(TestDeviceWGP1ParamsCOMPONENT) << "Parameter 'param_1' using value:" << m_param_1;
         }
         else
         {
-            yCError(TestDeviceWGPParamsCOMPONENT) << "Mandatory parameter 'param_1' not found!";
-            yCError(TestDeviceWGPParamsCOMPONENT) << "Description of the parameter: Test param 01";
+            yCError(TestDeviceWGP1ParamsCOMPONENT) << "Mandatory parameter 'param_1' not found!";
+            yCError(TestDeviceWGP1ParamsCOMPONENT) << "Description of the parameter: Test param 01";
             return false;
         }
         prop_check.unput("param_1");
@@ -158,12 +164,12 @@ bool      TestDeviceWGP_ParamsParser::parseParams(const yarp::os::Searchable & c
         if (config.check("param_2"))
         {
             m_param_2 = config.find("param_2").asFloat64();
-            yCInfo(TestDeviceWGPParamsCOMPONENT) << "Parameter 'param_2' using value:" << m_param_2;
+            yCInfo(TestDeviceWGP1ParamsCOMPONENT) << "Parameter 'param_2' using value:" << m_param_2;
         }
         else
         {
-            yCError(TestDeviceWGPParamsCOMPONENT) << "Mandatory parameter 'param_2' not found!";
-            yCError(TestDeviceWGPParamsCOMPONENT) << "Description of the parameter: Test param 02";
+            yCError(TestDeviceWGP1ParamsCOMPONENT) << "Mandatory parameter 'param_2' not found!";
+            yCError(TestDeviceWGP1ParamsCOMPONENT) << "Description of the parameter: Test param 02";
             return false;
         }
         prop_check.unput("param_2");
@@ -174,12 +180,12 @@ bool      TestDeviceWGP_ParamsParser::parseParams(const yarp::os::Searchable & c
         if (config.check("param_3"))
         {
             m_param_3 = config.find("param_3").asBool();
-            yCInfo(TestDeviceWGPParamsCOMPONENT) << "Parameter 'param_3' using value:" << m_param_3;
+            yCInfo(TestDeviceWGP1ParamsCOMPONENT) << "Parameter 'param_3' using value:" << m_param_3;
         }
         else
         {
-            yCError(TestDeviceWGPParamsCOMPONENT) << "Mandatory parameter 'param_3' not found!";
-            yCError(TestDeviceWGPParamsCOMPONENT) << "Description of the parameter: Test param 03";
+            yCError(TestDeviceWGP1ParamsCOMPONENT) << "Mandatory parameter 'param_3' not found!";
+            yCError(TestDeviceWGP1ParamsCOMPONENT) << "Description of the parameter: Test param 03";
             return false;
         }
         prop_check.unput("param_3");
@@ -190,12 +196,12 @@ bool      TestDeviceWGP_ParamsParser::parseParams(const yarp::os::Searchable & c
         if (config.check("param_4"))
         {
             m_param_4 = config.find("param_4").asInt64();
-            yCInfo(TestDeviceWGPParamsCOMPONENT) << "Parameter 'param_4' using value:" << m_param_4;
+            yCInfo(TestDeviceWGP1ParamsCOMPONENT) << "Parameter 'param_4' using value:" << m_param_4;
         }
         else
         {
-            yCError(TestDeviceWGPParamsCOMPONENT) << "Mandatory parameter 'param_4' not found!";
-            yCError(TestDeviceWGPParamsCOMPONENT) << "Description of the parameter: Test param 04";
+            yCError(TestDeviceWGP1ParamsCOMPONENT) << "Mandatory parameter 'param_4' not found!";
+            yCError(TestDeviceWGP1ParamsCOMPONENT) << "Description of the parameter: Test param 04";
             return false;
         }
         prop_check.unput("param_4");
@@ -206,12 +212,12 @@ bool      TestDeviceWGP_ParamsParser::parseParams(const yarp::os::Searchable & c
         if (config.check("param_5"))
         {
             m_param_5 = config.find("param_5").asInt8();
-            yCInfo(TestDeviceWGPParamsCOMPONENT) << "Parameter 'param_5' using value:" << m_param_5;
+            yCInfo(TestDeviceWGP1ParamsCOMPONENT) << "Parameter 'param_5' using value:" << m_param_5;
         }
         else
         {
-            yCError(TestDeviceWGPParamsCOMPONENT) << "Mandatory parameter 'param_5' not found!";
-            yCError(TestDeviceWGPParamsCOMPONENT) << "Description of the parameter: Test param 05";
+            yCError(TestDeviceWGP1ParamsCOMPONENT) << "Mandatory parameter 'param_5' not found!";
+            yCError(TestDeviceWGP1ParamsCOMPONENT) << "Description of the parameter: Test param 05";
             return false;
         }
         prop_check.unput("param_5");
@@ -222,12 +228,12 @@ bool      TestDeviceWGP_ParamsParser::parseParams(const yarp::os::Searchable & c
         if (config.check("param_6"))
         {
             m_param_6 = config.find("param_6").asInt64();
-            yCInfo(TestDeviceWGPParamsCOMPONENT) << "Parameter 'param_6' using value:" << m_param_6;
+            yCInfo(TestDeviceWGP1ParamsCOMPONENT) << "Parameter 'param_6' using value:" << m_param_6;
         }
         else
         {
-            yCError(TestDeviceWGPParamsCOMPONENT) << "Mandatory parameter 'param_6' not found!";
-            yCError(TestDeviceWGPParamsCOMPONENT) << "Description of the parameter: Test param 06";
+            yCError(TestDeviceWGP1ParamsCOMPONENT) << "Mandatory parameter 'param_6' not found!";
+            yCError(TestDeviceWGP1ParamsCOMPONENT) << "Description of the parameter: Test param 06";
             return false;
         }
         prop_check.unput("param_6");
@@ -238,12 +244,12 @@ bool      TestDeviceWGP_ParamsParser::parseParams(const yarp::os::Searchable & c
         if (config.check("param_7"))
         {
             m_param_7 = config.find("param_7").asFloat32();
-            yCInfo(TestDeviceWGPParamsCOMPONENT) << "Parameter 'param_7' using value:" << m_param_7;
+            yCInfo(TestDeviceWGP1ParamsCOMPONENT) << "Parameter 'param_7' using value:" << m_param_7;
         }
         else
         {
-            yCError(TestDeviceWGPParamsCOMPONENT) << "Mandatory parameter 'param_7' not found!";
-            yCError(TestDeviceWGPParamsCOMPONENT) << "Description of the parameter: Test param 07";
+            yCError(TestDeviceWGP1ParamsCOMPONENT) << "Mandatory parameter 'param_7' not found!";
+            yCError(TestDeviceWGP1ParamsCOMPONENT) << "Description of the parameter: Test param 07";
             return false;
         }
         prop_check.unput("param_7");
@@ -256,12 +262,12 @@ bool      TestDeviceWGP_ParamsParser::parseParams(const yarp::os::Searchable & c
         if (sectionp.check("param_1"))
         {
             m_group1_param_1 = sectionp.find("param_1").asString();
-            yCInfo(TestDeviceWGPParamsCOMPONENT) << "Parameter 'group1::param_1' using value:" << m_group1_param_1;
+            yCInfo(TestDeviceWGP1ParamsCOMPONENT) << "Parameter 'group1::param_1' using value:" << m_group1_param_1;
         }
         else
         {
-            yCError(TestDeviceWGPParamsCOMPONENT) << "Mandatory parameter 'group1::param_1' not found!";
-            yCError(TestDeviceWGPParamsCOMPONENT) << "Description of the parameter: Test param 08";
+            yCError(TestDeviceWGP1ParamsCOMPONENT) << "Mandatory parameter 'group1::param_1' not found!";
+            yCError(TestDeviceWGP1ParamsCOMPONENT) << "Description of the parameter: Test param 08";
             return false;
         }
         prop_check.unput("group1::param_1");
@@ -274,12 +280,12 @@ bool      TestDeviceWGP_ParamsParser::parseParams(const yarp::os::Searchable & c
         if (sectionp.check("param_2"))
         {
             m_group1_param_2 = sectionp.find("param_2").asFloat64();
-            yCInfo(TestDeviceWGPParamsCOMPONENT) << "Parameter 'group1::param_2' using value:" << m_group1_param_2;
+            yCInfo(TestDeviceWGP1ParamsCOMPONENT) << "Parameter 'group1::param_2' using value:" << m_group1_param_2;
         }
         else
         {
-            yCError(TestDeviceWGPParamsCOMPONENT) << "Mandatory parameter 'group1::param_2' not found!";
-            yCError(TestDeviceWGPParamsCOMPONENT) << "Description of the parameter: Test param 09";
+            yCError(TestDeviceWGP1ParamsCOMPONENT) << "Mandatory parameter 'group1::param_2' not found!";
+            yCError(TestDeviceWGP1ParamsCOMPONENT) << "Description of the parameter: Test param 09";
             return false;
         }
         prop_check.unput("group1::param_2");
@@ -292,12 +298,12 @@ bool      TestDeviceWGP_ParamsParser::parseParams(const yarp::os::Searchable & c
         if (sectionp.check("param_3"))
         {
             m_group1_param_3 = sectionp.find("param_3").asBool();
-            yCInfo(TestDeviceWGPParamsCOMPONENT) << "Parameter 'group1::param_3' using value:" << m_group1_param_3;
+            yCInfo(TestDeviceWGP1ParamsCOMPONENT) << "Parameter 'group1::param_3' using value:" << m_group1_param_3;
         }
         else
         {
-            yCError(TestDeviceWGPParamsCOMPONENT) << "Mandatory parameter 'group1::param_3' not found!";
-            yCError(TestDeviceWGPParamsCOMPONENT) << "Description of the parameter: Test param 10";
+            yCError(TestDeviceWGP1ParamsCOMPONENT) << "Mandatory parameter 'group1::param_3' not found!";
+            yCError(TestDeviceWGP1ParamsCOMPONENT) << "Description of the parameter: Test param 10";
             return false;
         }
         prop_check.unput("group1::param_3");
@@ -310,12 +316,12 @@ bool      TestDeviceWGP_ParamsParser::parseParams(const yarp::os::Searchable & c
         if (sectionp.check("param_4"))
         {
             m_group1_param_4 = sectionp.find("param_4").asInt64();
-            yCInfo(TestDeviceWGPParamsCOMPONENT) << "Parameter 'group1::param_4' using value:" << m_group1_param_4;
+            yCInfo(TestDeviceWGP1ParamsCOMPONENT) << "Parameter 'group1::param_4' using value:" << m_group1_param_4;
         }
         else
         {
-            yCError(TestDeviceWGPParamsCOMPONENT) << "Mandatory parameter 'group1::param_4' not found!";
-            yCError(TestDeviceWGPParamsCOMPONENT) << "Description of the parameter: Test param 11";
+            yCError(TestDeviceWGP1ParamsCOMPONENT) << "Mandatory parameter 'group1::param_4' not found!";
+            yCError(TestDeviceWGP1ParamsCOMPONENT) << "Description of the parameter: Test param 11";
             return false;
         }
         prop_check.unput("group1::param_4");
@@ -328,12 +334,12 @@ bool      TestDeviceWGP_ParamsParser::parseParams(const yarp::os::Searchable & c
         if (sectionp.check("param_1"))
         {
             m_group2_param_1 = sectionp.find("param_1").asString();
-            yCInfo(TestDeviceWGPParamsCOMPONENT) << "Parameter 'group2::param_1' using value:" << m_group2_param_1;
+            yCInfo(TestDeviceWGP1ParamsCOMPONENT) << "Parameter 'group2::param_1' using value:" << m_group2_param_1;
         }
         else
         {
-            yCError(TestDeviceWGPParamsCOMPONENT) << "Mandatory parameter 'group2::param_1' not found!";
-            yCError(TestDeviceWGPParamsCOMPONENT) << "Description of the parameter: Test param 12";
+            yCError(TestDeviceWGP1ParamsCOMPONENT) << "Mandatory parameter 'group2::param_1' not found!";
+            yCError(TestDeviceWGP1ParamsCOMPONENT) << "Description of the parameter: Test param 12";
             return false;
         }
         prop_check.unput("group2::param_1");
@@ -346,12 +352,12 @@ bool      TestDeviceWGP_ParamsParser::parseParams(const yarp::os::Searchable & c
         if (sectionp.check("param_2"))
         {
             m_group2_param_2 = sectionp.find("param_2").asFloat64();
-            yCInfo(TestDeviceWGPParamsCOMPONENT) << "Parameter 'group2::param_2' using value:" << m_group2_param_2;
+            yCInfo(TestDeviceWGP1ParamsCOMPONENT) << "Parameter 'group2::param_2' using value:" << m_group2_param_2;
         }
         else
         {
-            yCError(TestDeviceWGPParamsCOMPONENT) << "Mandatory parameter 'group2::param_2' not found!";
-            yCError(TestDeviceWGPParamsCOMPONENT) << "Description of the parameter: Test param 13";
+            yCError(TestDeviceWGP1ParamsCOMPONENT) << "Mandatory parameter 'group2::param_2' not found!";
+            yCError(TestDeviceWGP1ParamsCOMPONENT) << "Description of the parameter: Test param 13";
             return false;
         }
         prop_check.unput("group2::param_2");
@@ -364,12 +370,12 @@ bool      TestDeviceWGP_ParamsParser::parseParams(const yarp::os::Searchable & c
         if (sectionp.check("param_3"))
         {
             m_group2_param_3 = sectionp.find("param_3").asBool();
-            yCInfo(TestDeviceWGPParamsCOMPONENT) << "Parameter 'group2::param_3' using value:" << m_group2_param_3;
+            yCInfo(TestDeviceWGP1ParamsCOMPONENT) << "Parameter 'group2::param_3' using value:" << m_group2_param_3;
         }
         else
         {
-            yCError(TestDeviceWGPParamsCOMPONENT) << "Mandatory parameter 'group2::param_3' not found!";
-            yCError(TestDeviceWGPParamsCOMPONENT) << "Description of the parameter: Test param 14";
+            yCError(TestDeviceWGP1ParamsCOMPONENT) << "Mandatory parameter 'group2::param_3' not found!";
+            yCError(TestDeviceWGP1ParamsCOMPONENT) << "Description of the parameter: Test param 14";
             return false;
         }
         prop_check.unput("group2::param_3");
@@ -382,12 +388,12 @@ bool      TestDeviceWGP_ParamsParser::parseParams(const yarp::os::Searchable & c
         if (sectionp.check("param_4"))
         {
             m_group2_param_4 = sectionp.find("param_4").asInt64();
-            yCInfo(TestDeviceWGPParamsCOMPONENT) << "Parameter 'group2::param_4' using value:" << m_group2_param_4;
+            yCInfo(TestDeviceWGP1ParamsCOMPONENT) << "Parameter 'group2::param_4' using value:" << m_group2_param_4;
         }
         else
         {
-            yCError(TestDeviceWGPParamsCOMPONENT) << "Mandatory parameter 'group2::param_4' not found!";
-            yCError(TestDeviceWGPParamsCOMPONENT) << "Description of the parameter: Test param 15";
+            yCError(TestDeviceWGP1ParamsCOMPONENT) << "Mandatory parameter 'group2::param_4' not found!";
+            yCError(TestDeviceWGP1ParamsCOMPONENT) << "Description of the parameter: Test param 15";
             return false;
         }
         prop_check.unput("group2::param_4");
@@ -400,11 +406,11 @@ bool      TestDeviceWGP_ParamsParser::parseParams(const yarp::os::Searchable & c
         if (sectionp.check("param_1"))
         {
             m_group3_param_1 = sectionp.find("param_1").asString();
-            yCInfo(TestDeviceWGPParamsCOMPONENT) << "Parameter 'group3::param_1' using value:" << m_group3_param_1;
+            yCInfo(TestDeviceWGP1ParamsCOMPONENT) << "Parameter 'group3::param_1' using value:" << m_group3_param_1;
         }
         else
         {
-            yCInfo(TestDeviceWGPParamsCOMPONENT) << "Parameter 'group3::param_1' using DEFAULT value:" << m_group3_param_1;
+            yCInfo(TestDeviceWGP1ParamsCOMPONENT) << "Parameter 'group3::param_1' using DEFAULT value:" << m_group3_param_1;
         }
         prop_check.unput("group3::param_1");
     }
@@ -416,11 +422,11 @@ bool      TestDeviceWGP_ParamsParser::parseParams(const yarp::os::Searchable & c
         if (sectionp.check("param_2"))
         {
             m_group3_param_2 = sectionp.find("param_2").asFloat64();
-            yCInfo(TestDeviceWGPParamsCOMPONENT) << "Parameter 'group3::param_2' using value:" << m_group3_param_2;
+            yCInfo(TestDeviceWGP1ParamsCOMPONENT) << "Parameter 'group3::param_2' using value:" << m_group3_param_2;
         }
         else
         {
-            yCInfo(TestDeviceWGPParamsCOMPONENT) << "Parameter 'group3::param_2' using DEFAULT value:" << m_group3_param_2;
+            yCInfo(TestDeviceWGP1ParamsCOMPONENT) << "Parameter 'group3::param_2' using DEFAULT value:" << m_group3_param_2;
         }
         prop_check.unput("group3::param_2");
     }
@@ -432,11 +438,11 @@ bool      TestDeviceWGP_ParamsParser::parseParams(const yarp::os::Searchable & c
         if (sectionp.check("param_3"))
         {
             m_group3_param_3 = sectionp.find("param_3").asBool();
-            yCInfo(TestDeviceWGPParamsCOMPONENT) << "Parameter 'group3::param_3' using value:" << m_group3_param_3;
+            yCInfo(TestDeviceWGP1ParamsCOMPONENT) << "Parameter 'group3::param_3' using value:" << m_group3_param_3;
         }
         else
         {
-            yCInfo(TestDeviceWGPParamsCOMPONENT) << "Parameter 'group3::param_3' using DEFAULT value:" << m_group3_param_3;
+            yCInfo(TestDeviceWGP1ParamsCOMPONENT) << "Parameter 'group3::param_3' using DEFAULT value:" << m_group3_param_3;
         }
         prop_check.unput("group3::param_3");
     }
@@ -448,11 +454,11 @@ bool      TestDeviceWGP_ParamsParser::parseParams(const yarp::os::Searchable & c
         if (sectionp.check("param_4"))
         {
             m_group3_param_4 = sectionp.find("param_4").asInt64();
-            yCInfo(TestDeviceWGPParamsCOMPONENT) << "Parameter 'group3::param_4' using value:" << m_group3_param_4;
+            yCInfo(TestDeviceWGP1ParamsCOMPONENT) << "Parameter 'group3::param_4' using value:" << m_group3_param_4;
         }
         else
         {
-            yCInfo(TestDeviceWGPParamsCOMPONENT) << "Parameter 'group3::param_4' using DEFAULT value:" << m_group3_param_4;
+            yCInfo(TestDeviceWGP1ParamsCOMPONENT) << "Parameter 'group3::param_4' using DEFAULT value:" << m_group3_param_4;
         }
         prop_check.unput("group3::param_4");
     }
@@ -466,11 +472,11 @@ bool      TestDeviceWGP_ParamsParser::parseParams(const yarp::os::Searchable & c
         if (sectionp.check("param_1"))
         {
             m_group4_subgroup1_param_1 = sectionp.find("param_1").asInt64();
-            yCInfo(TestDeviceWGPParamsCOMPONENT) << "Parameter 'group4::subgroup1::param_1' using value:" << m_group4_subgroup1_param_1;
+            yCInfo(TestDeviceWGP1ParamsCOMPONENT) << "Parameter 'group4::subgroup1::param_1' using value:" << m_group4_subgroup1_param_1;
         }
         else
         {
-            yCInfo(TestDeviceWGPParamsCOMPONENT) << "Parameter 'group4::subgroup1::param_1' using DEFAULT value:" << m_group4_subgroup1_param_1;
+            yCInfo(TestDeviceWGP1ParamsCOMPONENT) << "Parameter 'group4::subgroup1::param_1' using DEFAULT value:" << m_group4_subgroup1_param_1;
         }
         prop_check.unput("group4::subgroup1::param_1");
     }
@@ -484,11 +490,11 @@ bool      TestDeviceWGP_ParamsParser::parseParams(const yarp::os::Searchable & c
         if (sectionp.check("param_2"))
         {
             m_group4_subgroup1_param_2 = sectionp.find("param_2").asInt64();
-            yCInfo(TestDeviceWGPParamsCOMPONENT) << "Parameter 'group4::subgroup1::param_2' using value:" << m_group4_subgroup1_param_2;
+            yCInfo(TestDeviceWGP1ParamsCOMPONENT) << "Parameter 'group4::subgroup1::param_2' using value:" << m_group4_subgroup1_param_2;
         }
         else
         {
-            yCInfo(TestDeviceWGPParamsCOMPONENT) << "Parameter 'group4::subgroup1::param_2' using DEFAULT value:" << m_group4_subgroup1_param_2;
+            yCInfo(TestDeviceWGP1ParamsCOMPONENT) << "Parameter 'group4::subgroup1::param_2' using DEFAULT value:" << m_group4_subgroup1_param_2;
         }
         prop_check.unput("group4::subgroup1::param_2");
     }
@@ -502,11 +508,11 @@ bool      TestDeviceWGP_ParamsParser::parseParams(const yarp::os::Searchable & c
         if (sectionp.check("param_3"))
         {
             m_group4_subgroup1_param_3 = sectionp.find("param_3").asInt64();
-            yCInfo(TestDeviceWGPParamsCOMPONENT) << "Parameter 'group4::subgroup1::param_3' using value:" << m_group4_subgroup1_param_3;
+            yCInfo(TestDeviceWGP1ParamsCOMPONENT) << "Parameter 'group4::subgroup1::param_3' using value:" << m_group4_subgroup1_param_3;
         }
         else
         {
-            yCInfo(TestDeviceWGPParamsCOMPONENT) << "Parameter 'group4::subgroup1::param_3' using DEFAULT value:" << m_group4_subgroup1_param_3;
+            yCInfo(TestDeviceWGP1ParamsCOMPONENT) << "Parameter 'group4::subgroup1::param_3' using DEFAULT value:" << m_group4_subgroup1_param_3;
         }
         prop_check.unput("group4::subgroup1::param_3");
     }
@@ -520,11 +526,11 @@ bool      TestDeviceWGP_ParamsParser::parseParams(const yarp::os::Searchable & c
         if (sectionp.check("param_4"))
         {
             m_group4_subgroup1_param_4 = sectionp.find("param_4").asInt64();
-            yCInfo(TestDeviceWGPParamsCOMPONENT) << "Parameter 'group4::subgroup1::param_4' using value:" << m_group4_subgroup1_param_4;
+            yCInfo(TestDeviceWGP1ParamsCOMPONENT) << "Parameter 'group4::subgroup1::param_4' using value:" << m_group4_subgroup1_param_4;
         }
         else
         {
-            yCInfo(TestDeviceWGPParamsCOMPONENT) << "Parameter 'group4::subgroup1::param_4' using DEFAULT value:" << m_group4_subgroup1_param_4;
+            yCInfo(TestDeviceWGP1ParamsCOMPONENT) << "Parameter 'group4::subgroup1::param_4' using DEFAULT value:" << m_group4_subgroup1_param_4;
         }
         prop_check.unput("group4::subgroup1::param_4");
     }
@@ -538,11 +544,11 @@ bool      TestDeviceWGP_ParamsParser::parseParams(const yarp::os::Searchable & c
         if (sectionp.check("param_1"))
         {
             m_group4_subgroup2_param_1 = sectionp.find("param_1").asInt64();
-            yCInfo(TestDeviceWGPParamsCOMPONENT) << "Parameter 'group4::subgroup2::param_1' using value:" << m_group4_subgroup2_param_1;
+            yCInfo(TestDeviceWGP1ParamsCOMPONENT) << "Parameter 'group4::subgroup2::param_1' using value:" << m_group4_subgroup2_param_1;
         }
         else
         {
-            yCInfo(TestDeviceWGPParamsCOMPONENT) << "Parameter 'group4::subgroup2::param_1' using DEFAULT value:" << m_group4_subgroup2_param_1;
+            yCInfo(TestDeviceWGP1ParamsCOMPONENT) << "Parameter 'group4::subgroup2::param_1' using DEFAULT value:" << m_group4_subgroup2_param_1;
         }
         prop_check.unput("group4::subgroup2::param_1");
     }
@@ -556,11 +562,11 @@ bool      TestDeviceWGP_ParamsParser::parseParams(const yarp::os::Searchable & c
         if (sectionp.check("param_2"))
         {
             m_group4_subgroup2_param_2 = sectionp.find("param_2").asInt64();
-            yCInfo(TestDeviceWGPParamsCOMPONENT) << "Parameter 'group4::subgroup2::param_2' using value:" << m_group4_subgroup2_param_2;
+            yCInfo(TestDeviceWGP1ParamsCOMPONENT) << "Parameter 'group4::subgroup2::param_2' using value:" << m_group4_subgroup2_param_2;
         }
         else
         {
-            yCInfo(TestDeviceWGPParamsCOMPONENT) << "Parameter 'group4::subgroup2::param_2' using DEFAULT value:" << m_group4_subgroup2_param_2;
+            yCInfo(TestDeviceWGP1ParamsCOMPONENT) << "Parameter 'group4::subgroup2::param_2' using DEFAULT value:" << m_group4_subgroup2_param_2;
         }
         prop_check.unput("group4::subgroup2::param_2");
     }
@@ -574,11 +580,11 @@ bool      TestDeviceWGP_ParamsParser::parseParams(const yarp::os::Searchable & c
         if (sectionp.check("param_3"))
         {
             m_group4_subgroup2_param_3 = sectionp.find("param_3").asInt64();
-            yCInfo(TestDeviceWGPParamsCOMPONENT) << "Parameter 'group4::subgroup2::param_3' using value:" << m_group4_subgroup2_param_3;
+            yCInfo(TestDeviceWGP1ParamsCOMPONENT) << "Parameter 'group4::subgroup2::param_3' using value:" << m_group4_subgroup2_param_3;
         }
         else
         {
-            yCInfo(TestDeviceWGPParamsCOMPONENT) << "Parameter 'group4::subgroup2::param_3' using DEFAULT value:" << m_group4_subgroup2_param_3;
+            yCInfo(TestDeviceWGP1ParamsCOMPONENT) << "Parameter 'group4::subgroup2::param_3' using DEFAULT value:" << m_group4_subgroup2_param_3;
         }
         prop_check.unput("group4::subgroup2::param_3");
     }
@@ -592,11 +598,11 @@ bool      TestDeviceWGP_ParamsParser::parseParams(const yarp::os::Searchable & c
         if (sectionp.check("param_4"))
         {
             m_group4_subgroup2_param_4 = sectionp.find("param_4").asInt64();
-            yCInfo(TestDeviceWGPParamsCOMPONENT) << "Parameter 'group4::subgroup2::param_4' using value:" << m_group4_subgroup2_param_4;
+            yCInfo(TestDeviceWGP1ParamsCOMPONENT) << "Parameter 'group4::subgroup2::param_4' using value:" << m_group4_subgroup2_param_4;
         }
         else
         {
-            yCInfo(TestDeviceWGPParamsCOMPONENT) << "Parameter 'group4::subgroup2::param_4' using DEFAULT value:" << m_group4_subgroup2_param_4;
+            yCInfo(TestDeviceWGP1ParamsCOMPONENT) << "Parameter 'group4::subgroup2::param_4' using DEFAULT value:" << m_group4_subgroup2_param_4;
         }
         prop_check.unput("group4::subgroup2::param_4");
     }
@@ -610,13 +616,13 @@ bool      TestDeviceWGP_ParamsParser::parseParams(const yarp::os::Searchable & c
         if (sectionp.check("param_1"))
         {
             m_group5_subgroup1_param_1 = sectionp.find("param_1").asInt64();
-            yCInfo(TestDeviceWGPParamsCOMPONENT) << "Parameter 'group5::subgroup1::param_1' using value:" << m_group5_subgroup1_param_1;
+            yCInfo(TestDeviceWGP1ParamsCOMPONENT) << "Parameter 'group5::subgroup1::param_1' using value:" << m_group5_subgroup1_param_1;
         }
         else
         {
-            yCError(TestDeviceWGPParamsCOMPONENT) << "Mandatory parameter 'group5::subgroup1::param_1' not found!";
-            yCError(TestDeviceWGPParamsCOMPONENT) << "Description of the parameter: Test param 28";
-            yCError(TestDeviceWGPParamsCOMPONENT) << "Remember: Units for this parameter are: 'N'";
+            yCError(TestDeviceWGP1ParamsCOMPONENT) << "Mandatory parameter 'group5::subgroup1::param_1' not found!";
+            yCError(TestDeviceWGP1ParamsCOMPONENT) << "Description of the parameter: Test param 28";
+            yCError(TestDeviceWGP1ParamsCOMPONENT) << "Remember: Units for this parameter are: 'N'";
             return false;
         }
         prop_check.unput("group5::subgroup1::param_1");
@@ -631,13 +637,13 @@ bool      TestDeviceWGP_ParamsParser::parseParams(const yarp::os::Searchable & c
         if (sectionp.check("param_2"))
         {
             m_group5_subgroup1_param_2 = sectionp.find("param_2").asInt64();
-            yCInfo(TestDeviceWGPParamsCOMPONENT) << "Parameter 'group5::subgroup1::param_2' using value:" << m_group5_subgroup1_param_2;
+            yCInfo(TestDeviceWGP1ParamsCOMPONENT) << "Parameter 'group5::subgroup1::param_2' using value:" << m_group5_subgroup1_param_2;
         }
         else
         {
-            yCError(TestDeviceWGPParamsCOMPONENT) << "Mandatory parameter 'group5::subgroup1::param_2' not found!";
-            yCError(TestDeviceWGPParamsCOMPONENT) << "Description of the parameter: Test param 29";
-            yCError(TestDeviceWGPParamsCOMPONENT) << "Remember: Units for this parameter are: 'N'";
+            yCError(TestDeviceWGP1ParamsCOMPONENT) << "Mandatory parameter 'group5::subgroup1::param_2' not found!";
+            yCError(TestDeviceWGP1ParamsCOMPONENT) << "Description of the parameter: Test param 29";
+            yCError(TestDeviceWGP1ParamsCOMPONENT) << "Remember: Units for this parameter are: 'N'";
             return false;
         }
         prop_check.unput("group5::subgroup1::param_2");
@@ -652,13 +658,13 @@ bool      TestDeviceWGP_ParamsParser::parseParams(const yarp::os::Searchable & c
         if (sectionp.check("param_3"))
         {
             m_group5_subgroup1_param_3 = sectionp.find("param_3").asInt64();
-            yCInfo(TestDeviceWGPParamsCOMPONENT) << "Parameter 'group5::subgroup1::param_3' using value:" << m_group5_subgroup1_param_3;
+            yCInfo(TestDeviceWGP1ParamsCOMPONENT) << "Parameter 'group5::subgroup1::param_3' using value:" << m_group5_subgroup1_param_3;
         }
         else
         {
-            yCError(TestDeviceWGPParamsCOMPONENT) << "Mandatory parameter 'group5::subgroup1::param_3' not found!";
-            yCError(TestDeviceWGPParamsCOMPONENT) << "Description of the parameter: Test param 30";
-            yCError(TestDeviceWGPParamsCOMPONENT) << "Remember: Units for this parameter are: 'N'";
+            yCError(TestDeviceWGP1ParamsCOMPONENT) << "Mandatory parameter 'group5::subgroup1::param_3' not found!";
+            yCError(TestDeviceWGP1ParamsCOMPONENT) << "Description of the parameter: Test param 30";
+            yCError(TestDeviceWGP1ParamsCOMPONENT) << "Remember: Units for this parameter are: 'N'";
             return false;
         }
         prop_check.unput("group5::subgroup1::param_3");
@@ -673,13 +679,13 @@ bool      TestDeviceWGP_ParamsParser::parseParams(const yarp::os::Searchable & c
         if (sectionp.check("param_4"))
         {
             m_group5_subgroup1_param_4 = sectionp.find("param_4").asInt64();
-            yCInfo(TestDeviceWGPParamsCOMPONENT) << "Parameter 'group5::subgroup1::param_4' using value:" << m_group5_subgroup1_param_4;
+            yCInfo(TestDeviceWGP1ParamsCOMPONENT) << "Parameter 'group5::subgroup1::param_4' using value:" << m_group5_subgroup1_param_4;
         }
         else
         {
-            yCError(TestDeviceWGPParamsCOMPONENT) << "Mandatory parameter 'group5::subgroup1::param_4' not found!";
-            yCError(TestDeviceWGPParamsCOMPONENT) << "Description of the parameter: Test param 31";
-            yCError(TestDeviceWGPParamsCOMPONENT) << "Remember: Units for this parameter are: 'N'";
+            yCError(TestDeviceWGP1ParamsCOMPONENT) << "Mandatory parameter 'group5::subgroup1::param_4' not found!";
+            yCError(TestDeviceWGP1ParamsCOMPONENT) << "Description of the parameter: Test param 31";
+            yCError(TestDeviceWGP1ParamsCOMPONENT) << "Remember: Units for this parameter are: 'N'";
             return false;
         }
         prop_check.unput("group5::subgroup1::param_4");
@@ -694,13 +700,13 @@ bool      TestDeviceWGP_ParamsParser::parseParams(const yarp::os::Searchable & c
         if (sectionp.check("param_1"))
         {
             m_group5_subgroup2_param_1 = sectionp.find("param_1").asInt64();
-            yCInfo(TestDeviceWGPParamsCOMPONENT) << "Parameter 'group5::subgroup2::param_1' using value:" << m_group5_subgroup2_param_1;
+            yCInfo(TestDeviceWGP1ParamsCOMPONENT) << "Parameter 'group5::subgroup2::param_1' using value:" << m_group5_subgroup2_param_1;
         }
         else
         {
-            yCError(TestDeviceWGPParamsCOMPONENT) << "Mandatory parameter 'group5::subgroup2::param_1' not found!";
-            yCError(TestDeviceWGPParamsCOMPONENT) << "Description of the parameter: Test param 32";
-            yCError(TestDeviceWGPParamsCOMPONENT) << "Remember: Units for this parameter are: 'mN'";
+            yCError(TestDeviceWGP1ParamsCOMPONENT) << "Mandatory parameter 'group5::subgroup2::param_1' not found!";
+            yCError(TestDeviceWGP1ParamsCOMPONENT) << "Description of the parameter: Test param 32";
+            yCError(TestDeviceWGP1ParamsCOMPONENT) << "Remember: Units for this parameter are: 'mN'";
             return false;
         }
         prop_check.unput("group5::subgroup2::param_1");
@@ -715,13 +721,13 @@ bool      TestDeviceWGP_ParamsParser::parseParams(const yarp::os::Searchable & c
         if (sectionp.check("param_2"))
         {
             m_group5_subgroup2_param_2 = sectionp.find("param_2").asInt64();
-            yCInfo(TestDeviceWGPParamsCOMPONENT) << "Parameter 'group5::subgroup2::param_2' using value:" << m_group5_subgroup2_param_2;
+            yCInfo(TestDeviceWGP1ParamsCOMPONENT) << "Parameter 'group5::subgroup2::param_2' using value:" << m_group5_subgroup2_param_2;
         }
         else
         {
-            yCError(TestDeviceWGPParamsCOMPONENT) << "Mandatory parameter 'group5::subgroup2::param_2' not found!";
-            yCError(TestDeviceWGPParamsCOMPONENT) << "Description of the parameter: Test param 33";
-            yCError(TestDeviceWGPParamsCOMPONENT) << "Remember: Units for this parameter are: 'mN'";
+            yCError(TestDeviceWGP1ParamsCOMPONENT) << "Mandatory parameter 'group5::subgroup2::param_2' not found!";
+            yCError(TestDeviceWGP1ParamsCOMPONENT) << "Description of the parameter: Test param 33";
+            yCError(TestDeviceWGP1ParamsCOMPONENT) << "Remember: Units for this parameter are: 'mN'";
             return false;
         }
         prop_check.unput("group5::subgroup2::param_2");
@@ -736,13 +742,13 @@ bool      TestDeviceWGP_ParamsParser::parseParams(const yarp::os::Searchable & c
         if (sectionp.check("param_3"))
         {
             m_group5_subgroup2_param_3 = sectionp.find("param_3").asInt64();
-            yCInfo(TestDeviceWGPParamsCOMPONENT) << "Parameter 'group5::subgroup2::param_3' using value:" << m_group5_subgroup2_param_3;
+            yCInfo(TestDeviceWGP1ParamsCOMPONENT) << "Parameter 'group5::subgroup2::param_3' using value:" << m_group5_subgroup2_param_3;
         }
         else
         {
-            yCError(TestDeviceWGPParamsCOMPONENT) << "Mandatory parameter 'group5::subgroup2::param_3' not found!";
-            yCError(TestDeviceWGPParamsCOMPONENT) << "Description of the parameter: Test param 34";
-            yCError(TestDeviceWGPParamsCOMPONENT) << "Remember: Units for this parameter are: 'mN'";
+            yCError(TestDeviceWGP1ParamsCOMPONENT) << "Mandatory parameter 'group5::subgroup2::param_3' not found!";
+            yCError(TestDeviceWGP1ParamsCOMPONENT) << "Description of the parameter: Test param 34";
+            yCError(TestDeviceWGP1ParamsCOMPONENT) << "Remember: Units for this parameter are: 'mN'";
             return false;
         }
         prop_check.unput("group5::subgroup2::param_3");
@@ -757,13 +763,13 @@ bool      TestDeviceWGP_ParamsParser::parseParams(const yarp::os::Searchable & c
         if (sectionp.check("param_4"))
         {
             m_group5_subgroup2_param_4 = sectionp.find("param_4").asInt64();
-            yCInfo(TestDeviceWGPParamsCOMPONENT) << "Parameter 'group5::subgroup2::param_4' using value:" << m_group5_subgroup2_param_4;
+            yCInfo(TestDeviceWGP1ParamsCOMPONENT) << "Parameter 'group5::subgroup2::param_4' using value:" << m_group5_subgroup2_param_4;
         }
         else
         {
-            yCError(TestDeviceWGPParamsCOMPONENT) << "Mandatory parameter 'group5::subgroup2::param_4' not found!";
-            yCError(TestDeviceWGPParamsCOMPONENT) << "Description of the parameter: Test param 35";
-            yCError(TestDeviceWGPParamsCOMPONENT) << "Remember: Units for this parameter are: 'mN'";
+            yCError(TestDeviceWGP1ParamsCOMPONENT) << "Mandatory parameter 'group5::subgroup2::param_4' not found!";
+            yCError(TestDeviceWGP1ParamsCOMPONENT) << "Description of the parameter: Test param 35";
+            yCError(TestDeviceWGP1ParamsCOMPONENT) << "Remember: Units for this parameter are: 'mN'";
             return false;
         }
         prop_check.unput("group5::subgroup2::param_4");
@@ -778,6 +784,7 @@ bool      TestDeviceWGP_ParamsParser::parseParams(const yarp::os::Searchable & c
                 yarp::os::Bottle* tempBot = config.find("param_vec1").asList();
                 if (tempBot)
                 {
+                    std::string tempBots = tempBot->toString();
                     for (size_t i=0; i<tempBot->size(); i++)
                     {
                         m_param_vec1.push_back(tempBot->get(i).asInt64());
@@ -785,14 +792,14 @@ bool      TestDeviceWGP_ParamsParser::parseParams(const yarp::os::Searchable & c
                 }
                 else
                 {
-                     yError() <<"parameter 'param_vec1' is not a properly formatted bottle";
+                     yCError(TestDeviceWGP1ParamsCOMPONENT) <<"parameter 'param_vec1' is not a properly formatted bottle";
                 }
             }
-            yCInfo(TestDeviceWGPParamsCOMPONENT) << "Parameter 'param_vec1' using value:" << m_param_vec1;
+            yCInfo(TestDeviceWGP1ParamsCOMPONENT) << "Parameter 'param_vec1' using value:" << m_param_vec1;
         }
         else
         {
-            yCInfo(TestDeviceWGPParamsCOMPONENT) << "Parameter 'param_vec1' using DEFAULT value:" << m_param_vec1;
+            yCInfo(TestDeviceWGP1ParamsCOMPONENT) << "Parameter 'param_vec1' using DEFAULT value:" << m_param_vec1;
         }
         prop_check.unput("param_vec1");
     }
@@ -806,6 +813,7 @@ bool      TestDeviceWGP_ParamsParser::parseParams(const yarp::os::Searchable & c
                 yarp::os::Bottle* tempBot = config.find("param_vec2").asList();
                 if (tempBot)
                 {
+                    std::string tempBots = tempBot->toString();
                     for (size_t i=0; i<tempBot->size(); i++)
                     {
                         m_param_vec2.push_back(tempBot->get(i).asFloat64());
@@ -813,14 +821,14 @@ bool      TestDeviceWGP_ParamsParser::parseParams(const yarp::os::Searchable & c
                 }
                 else
                 {
-                     yError() <<"parameter 'param_vec2' is not a properly formatted bottle";
+                     yCError(TestDeviceWGP1ParamsCOMPONENT) <<"parameter 'param_vec2' is not a properly formatted bottle";
                 }
             }
-            yCInfo(TestDeviceWGPParamsCOMPONENT) << "Parameter 'param_vec2' using value:" << m_param_vec2;
+            yCInfo(TestDeviceWGP1ParamsCOMPONENT) << "Parameter 'param_vec2' using value:" << m_param_vec2;
         }
         else
         {
-            yCInfo(TestDeviceWGPParamsCOMPONENT) << "Parameter 'param_vec2' using DEFAULT value:" << m_param_vec2;
+            yCInfo(TestDeviceWGP1ParamsCOMPONENT) << "Parameter 'param_vec2' using DEFAULT value:" << m_param_vec2;
         }
         prop_check.unput("param_vec2");
     }
@@ -834,6 +842,7 @@ bool      TestDeviceWGP_ParamsParser::parseParams(const yarp::os::Searchable & c
                 yarp::os::Bottle* tempBot = config.find("param_vec3").asList();
                 if (tempBot)
                 {
+                    std::string tempBots = tempBot->toString();
                     for (size_t i=0; i<tempBot->size(); i++)
                     {
                         m_param_vec3.push_back(tempBot->get(i).asString());
@@ -841,14 +850,14 @@ bool      TestDeviceWGP_ParamsParser::parseParams(const yarp::os::Searchable & c
                 }
                 else
                 {
-                     yError() <<"parameter 'param_vec3' is not a properly formatted bottle";
+                     yCError(TestDeviceWGP1ParamsCOMPONENT) <<"parameter 'param_vec3' is not a properly formatted bottle";
                 }
             }
-            yCInfo(TestDeviceWGPParamsCOMPONENT) << "Parameter 'param_vec3' using value:" << m_param_vec3;
+            yCInfo(TestDeviceWGP1ParamsCOMPONENT) << "Parameter 'param_vec3' using value:" << m_param_vec3;
         }
         else
         {
-            yCInfo(TestDeviceWGPParamsCOMPONENT) << "Parameter 'param_vec3' using DEFAULT value:" << m_param_vec3;
+            yCInfo(TestDeviceWGP1ParamsCOMPONENT) << "Parameter 'param_vec3' using DEFAULT value:" << m_param_vec3;
         }
         prop_check.unput("param_vec3");
     }
@@ -862,6 +871,7 @@ bool      TestDeviceWGP_ParamsParser::parseParams(const yarp::os::Searchable & c
                 yarp::os::Bottle* tempBot = config.find("param_vec4").asList();
                 if (tempBot)
                 {
+                    std::string tempBots = tempBot->toString();
                     for (size_t i=0; i<tempBot->size(); i++)
                     {
                         m_param_vec4.push_back(tempBot->get(i).asInt64());
@@ -869,14 +879,14 @@ bool      TestDeviceWGP_ParamsParser::parseParams(const yarp::os::Searchable & c
                 }
                 else
                 {
-                     yError() <<"parameter 'param_vec4' is not a properly formatted bottle";
+                     yCError(TestDeviceWGP1ParamsCOMPONENT) <<"parameter 'param_vec4' is not a properly formatted bottle";
                 }
             }
-            yCInfo(TestDeviceWGPParamsCOMPONENT) << "Parameter 'param_vec4' using value:" << m_param_vec4;
+            yCInfo(TestDeviceWGP1ParamsCOMPONENT) << "Parameter 'param_vec4' using value:" << m_param_vec4;
         }
         else
         {
-            yCInfo(TestDeviceWGPParamsCOMPONENT) << "Parameter 'param_vec4' using DEFAULT value:" << m_param_vec4;
+            yCInfo(TestDeviceWGP1ParamsCOMPONENT) << "Parameter 'param_vec4' using DEFAULT value:" << m_param_vec4;
         }
         prop_check.unput("param_vec4");
     }
@@ -890,6 +900,7 @@ bool      TestDeviceWGP_ParamsParser::parseParams(const yarp::os::Searchable & c
                 yarp::os::Bottle* tempBot = config.find("param_vec5").asList();
                 if (tempBot)
                 {
+                    std::string tempBots = tempBot->toString();
                     for (size_t i=0; i<tempBot->size(); i++)
                     {
                         m_param_vec5.push_back(tempBot->get(i).asFloat64());
@@ -897,14 +908,14 @@ bool      TestDeviceWGP_ParamsParser::parseParams(const yarp::os::Searchable & c
                 }
                 else
                 {
-                     yError() <<"parameter 'param_vec5' is not a properly formatted bottle";
+                     yCError(TestDeviceWGP1ParamsCOMPONENT) <<"parameter 'param_vec5' is not a properly formatted bottle";
                 }
             }
-            yCInfo(TestDeviceWGPParamsCOMPONENT) << "Parameter 'param_vec5' using value:" << m_param_vec5;
+            yCInfo(TestDeviceWGP1ParamsCOMPONENT) << "Parameter 'param_vec5' using value:" << m_param_vec5;
         }
         else
         {
-            yCInfo(TestDeviceWGPParamsCOMPONENT) << "Parameter 'param_vec5' using DEFAULT value:" << m_param_vec5;
+            yCInfo(TestDeviceWGP1ParamsCOMPONENT) << "Parameter 'param_vec5' using DEFAULT value:" << m_param_vec5;
         }
         prop_check.unput("param_vec5");
     }
@@ -918,6 +929,7 @@ bool      TestDeviceWGP_ParamsParser::parseParams(const yarp::os::Searchable & c
                 yarp::os::Bottle* tempBot = config.find("param_vec6").asList();
                 if (tempBot)
                 {
+                    std::string tempBots = tempBot->toString();
                     for (size_t i=0; i<tempBot->size(); i++)
                     {
                         m_param_vec6.push_back(tempBot->get(i).asString());
@@ -925,16 +937,112 @@ bool      TestDeviceWGP_ParamsParser::parseParams(const yarp::os::Searchable & c
                 }
                 else
                 {
-                     yError() <<"parameter 'param_vec6' is not a properly formatted bottle";
+                     yCError(TestDeviceWGP1ParamsCOMPONENT) <<"parameter 'param_vec6' is not a properly formatted bottle";
                 }
             }
-            yCInfo(TestDeviceWGPParamsCOMPONENT) << "Parameter 'param_vec6' using value:" << m_param_vec6;
+            yCInfo(TestDeviceWGP1ParamsCOMPONENT) << "Parameter 'param_vec6' using value:" << m_param_vec6;
         }
         else
         {
-            yCInfo(TestDeviceWGPParamsCOMPONENT) << "Parameter 'param_vec6' using DEFAULT value:" << m_param_vec6;
+            yCInfo(TestDeviceWGP1ParamsCOMPONENT) << "Parameter 'param_vec6' using DEFAULT value:" << m_param_vec6;
         }
         prop_check.unput("param_vec6");
+    }
+
+    //Parser of parameter param_vec7
+    {
+        if (config.check("param_vec7"))
+        {
+            {
+                m_param_vec7.clear();
+                yarp::os::Bottle* tempBot = config.find("param_vec7").asList();
+                if (tempBot)
+                {
+                    std::string tempBots = tempBot->toString();
+                    for (size_t i=0; i<tempBot->size(); i++)
+                    {
+                        m_param_vec7.push_back(tempBot->get(i).asInt64());
+                    }
+                }
+                else
+                {
+                     yCError(TestDeviceWGP1ParamsCOMPONENT) <<"parameter 'param_vec7' is not a properly formatted bottle";
+                }
+            }
+            yCInfo(TestDeviceWGP1ParamsCOMPONENT) << "Parameter 'param_vec7' using value:" << m_param_vec7;
+        }
+        else
+        {
+            yCError(TestDeviceWGP1ParamsCOMPONENT) << "Mandatory parameter 'param_vec7' not found!";
+            yCError(TestDeviceWGP1ParamsCOMPONENT) << "Description of the parameter: Test param 42";
+            yCError(TestDeviceWGP1ParamsCOMPONENT) << "Remember: Units for this parameter are: 'm'";
+            return false;
+        }
+        prop_check.unput("param_vec7");
+    }
+
+    //Parser of parameter param_vec8
+    {
+        if (config.check("param_vec8"))
+        {
+            {
+                m_param_vec8.clear();
+                yarp::os::Bottle* tempBot = config.find("param_vec8").asList();
+                if (tempBot)
+                {
+                    std::string tempBots = tempBot->toString();
+                    for (size_t i=0; i<tempBot->size(); i++)
+                    {
+                        m_param_vec8.push_back(tempBot->get(i).asFloat64());
+                    }
+                }
+                else
+                {
+                     yCError(TestDeviceWGP1ParamsCOMPONENT) <<"parameter 'param_vec8' is not a properly formatted bottle";
+                }
+            }
+            yCInfo(TestDeviceWGP1ParamsCOMPONENT) << "Parameter 'param_vec8' using value:" << m_param_vec8;
+        }
+        else
+        {
+            yCError(TestDeviceWGP1ParamsCOMPONENT) << "Mandatory parameter 'param_vec8' not found!";
+            yCError(TestDeviceWGP1ParamsCOMPONENT) << "Description of the parameter: Test param 43";
+            yCError(TestDeviceWGP1ParamsCOMPONENT) << "Remember: Units for this parameter are: 'm'";
+            return false;
+        }
+        prop_check.unput("param_vec8");
+    }
+
+    //Parser of parameter param_vec9
+    {
+        if (config.check("param_vec9"))
+        {
+            {
+                m_param_vec9.clear();
+                yarp::os::Bottle* tempBot = config.find("param_vec9").asList();
+                if (tempBot)
+                {
+                    std::string tempBots = tempBot->toString();
+                    for (size_t i=0; i<tempBot->size(); i++)
+                    {
+                        m_param_vec9.push_back(tempBot->get(i).asString());
+                    }
+                }
+                else
+                {
+                     yCError(TestDeviceWGP1ParamsCOMPONENT) <<"parameter 'param_vec9' is not a properly formatted bottle";
+                }
+            }
+            yCInfo(TestDeviceWGP1ParamsCOMPONENT) << "Parameter 'param_vec9' using value:" << m_param_vec9;
+        }
+        else
+        {
+            yCError(TestDeviceWGP1ParamsCOMPONENT) << "Mandatory parameter 'param_vec9' not found!";
+            yCError(TestDeviceWGP1ParamsCOMPONENT) << "Description of the parameter: Test param 44";
+            yCError(TestDeviceWGP1ParamsCOMPONENT) << "Remember: Units for this parameter are: 'm'";
+            return false;
+        }
+        prop_check.unput("param_vec9");
     }
 
     /*
@@ -947,12 +1055,12 @@ bool      TestDeviceWGP_ParamsParser::parseParams(const yarp::os::Searchable & c
         {
             if (m_parser_is_strict)
             {
-                yCError(TestDeviceWGPParamsCOMPONENT) << "User asking for parameter: "<<it->name <<" which is unknown to this parser!";
+                yCError(TestDeviceWGP1ParamsCOMPONENT) << "User asking for parameter: "<<it->name <<" which is unknown to this parser!";
                 extra_params_found = true;
             }
             else
             {
-                yCWarning(TestDeviceWGPParamsCOMPONENT) << "User asking for parameter: "<< it->name <<" which is unknown to this parser!";
+                yCWarning(TestDeviceWGP1ParamsCOMPONENT) << "User asking for parameter: "<< it->name <<" which is unknown to this parser!";
             }
         }
 
@@ -966,11 +1074,11 @@ bool      TestDeviceWGP_ParamsParser::parseParams(const yarp::os::Searchable & c
 }
 
 
-std::string      TestDeviceWGP_ParamsParser::getDocumentationOfDeviceParams() const
+std::string      TestDeviceWGP1_ParamsParser::getDocumentationOfDeviceParams() const
 {
     std::string doc;
     doc = doc + std::string("\n=============================================\n");
-    doc = doc + std::string("This is the help for device: TestDeviceWGP\n");
+    doc = doc + std::string("This is the help for device: TestDeviceWGP1\n");
     doc = doc + std::string("\n");
     doc = doc + std::string("This is the list of the parameters accepted by the device:\n");
     doc = doc + std::string("'param_1': Test param 01\n");
@@ -1014,10 +1122,13 @@ std::string      TestDeviceWGP_ParamsParser::getDocumentationOfDeviceParams() co
     doc = doc + std::string("'param_vec4': Test param 39\n");
     doc = doc + std::string("'param_vec5': Test param 40\n");
     doc = doc + std::string("'param_vec6': Test param 41\n");
+    doc = doc + std::string("'param_vec7': Test param 42\n");
+    doc = doc + std::string("'param_vec8': Test param 43\n");
+    doc = doc + std::string("'param_vec9': Test param 44\n");
     doc = doc + std::string("\n");
     doc = doc + std::string("Here are some examples of invocation command with yarpdev, with all params:\n");
-    doc = doc + " yarpdev --device testDeviceWGP --param_1 <mandatory_value> --param_2 <mandatory_value> --param_3 <mandatory_value> --param_4 <mandatory_value> --param_5 <mandatory_value> --param_6 <mandatory_value> --param_7 <mandatory_value> --group1::param_1 <mandatory_value> --group1::param_2 <mandatory_value> --group1::param_3 <mandatory_value> --group1::param_4 <mandatory_value> --group2::param_1 def1 --group2::param_2 1.0 --group2::param_3 true --group2::param_4 1000 --group3::param_1 def1 --group3::param_2 1.0 --group3::param_3 true --group3::param_4 1000 --group4::subgroup1::param_1 0 --group4::subgroup1::param_2 1 --group4::subgroup1::param_3 2 --group4::subgroup1::param_4 3 --group4::subgroup2::param_1 10 --group4::subgroup2::param_2 11 --group4::subgroup2::param_3 12 --group4::subgroup2::param_4 13 --group5::subgroup1::param_1 20 --group5::subgroup1::param_2 21 --group5::subgroup1::param_3 22 --group5::subgroup1::param_4 23 --group5::subgroup2::param_1 30 --group5::subgroup2::param_2 31 --group5::subgroup2::param_3 32 --group5::subgroup2::param_4 33 --param_vec1 <optional_value> --param_vec2 <optional_value> --param_vec3 <optional_value> --param_vec4 \" 1 2 3 \" --param_vec5 \" 1.0 2.0 3.0 \" --param_vec6 \" \"sa1\" \"sa2\" \"sa3\" \"\n";
+    doc = doc + " yarpdev --device testDeviceWGP1 --param_1 <mandatory_value> --param_2 <mandatory_value> --param_3 <mandatory_value> --param_4 <mandatory_value> --param_5 <mandatory_value> --param_6 <mandatory_value> --param_7 <mandatory_value> --group1::param_1 <mandatory_value> --group1::param_2 <mandatory_value> --group1::param_3 <mandatory_value> --group1::param_4 <mandatory_value> --group2::param_1 def1 --group2::param_2 1.0 --group2::param_3 true --group2::param_4 1000 --group3::param_1 def1 --group3::param_2 1.0 --group3::param_3 true --group3::param_4 1000 --group4::subgroup1::param_1 0 --group4::subgroup1::param_2 1 --group4::subgroup1::param_3 2 --group4::subgroup1::param_4 3 --group4::subgroup2::param_1 10 --group4::subgroup2::param_2 11 --group4::subgroup2::param_3 12 --group4::subgroup2::param_4 13 --group5::subgroup1::param_1 20 --group5::subgroup1::param_2 21 --group5::subgroup1::param_3 22 --group5::subgroup1::param_4 23 --group5::subgroup2::param_1 30 --group5::subgroup2::param_2 31 --group5::subgroup2::param_3 32 --group5::subgroup2::param_4 33 --param_vec1 <optional_value> --param_vec2 <optional_value> --param_vec3 <optional_value> --param_vec4 \" (1 2 3) \" --param_vec5 \" (1.0 2.0 3.0) \" --param_vec6 \" (\"sa1\" \"sa2\" \"sa3\") \" --param_vec7 <mandatory_value> --param_vec8 <mandatory_value> --param_vec9 <mandatory_value>\n";
     doc = doc + std::string("Using only mandatory params:\n");
-    doc = doc + " yarpdev --device testDeviceWGP --param_1 <mandatory_value> --param_2 <mandatory_value> --param_3 <mandatory_value> --param_4 <mandatory_value> --param_5 <mandatory_value> --param_6 <mandatory_value> --param_7 <mandatory_value> --group1::param_1 <mandatory_value> --group1::param_2 <mandatory_value> --group1::param_3 <mandatory_value> --group1::param_4 <mandatory_value> --group2::param_1 def1 --group2::param_2 1.0 --group2::param_3 true --group2::param_4 1000 --group5::subgroup1::param_1 20 --group5::subgroup1::param_2 21 --group5::subgroup1::param_3 22 --group5::subgroup1::param_4 23 --group5::subgroup2::param_1 30 --group5::subgroup2::param_2 31 --group5::subgroup2::param_3 32 --group5::subgroup2::param_4 33\n";
+    doc = doc + " yarpdev --device testDeviceWGP1 --param_1 <mandatory_value> --param_2 <mandatory_value> --param_3 <mandatory_value> --param_4 <mandatory_value> --param_5 <mandatory_value> --param_6 <mandatory_value> --param_7 <mandatory_value> --group1::param_1 <mandatory_value> --group1::param_2 <mandatory_value> --group1::param_3 <mandatory_value> --group1::param_4 <mandatory_value> --group2::param_1 def1 --group2::param_2 1.0 --group2::param_3 true --group2::param_4 1000 --group5::subgroup1::param_1 20 --group5::subgroup1::param_2 21 --group5::subgroup1::param_3 22 --group5::subgroup1::param_4 23 --group5::subgroup2::param_1 30 --group5::subgroup2::param_2 31 --group5::subgroup2::param_3 32 --group5::subgroup2::param_4 33 --param_vec7 <mandatory_value> --param_vec8 <mandatory_value> --param_vec9 <mandatory_value>\n";
     doc = doc + std::string("=============================================\n\n");    return doc;
 }

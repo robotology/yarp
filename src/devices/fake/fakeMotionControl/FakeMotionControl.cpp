@@ -604,6 +604,7 @@ bool FakeMotionControl::fromConfig(yarp::os::Searchable &config)
             _axisMap[i] = i;
         }
     }
+    for (i = 0; i < _njoints; i++) {yDebug() << "_axisMap: " << _axisMap[i] << " "; }
 
     // AxisName
     if (!m_GENERAL_AxisName.empty())
@@ -618,6 +619,7 @@ bool FakeMotionControl::fromConfig(yarp::os::Searchable &config)
             _axisName[_axisMap[i]] = "joint" + toString(i);
         }
     }
+    for (i = 0; i < _njoints; i++) { yDebug() << "_axisName: " << _axisName[_axisMap[i]] << " "; }
 
     // Axis Type
     if (!m_GENERAL_AxisType.empty())

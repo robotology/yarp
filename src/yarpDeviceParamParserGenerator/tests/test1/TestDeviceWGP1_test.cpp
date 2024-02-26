@@ -14,35 +14,35 @@
 using namespace yarp::dev;
 using namespace yarp::os;
 
-TEST_CASE("dev::TestDeviceWGP", "[yarp::dev]")
+TEST_CASE("dev::TestDeviceWGP1", "[yarp::dev]")
 {
-    YARP_REQUIRE_PLUGIN("testDeviceWGP", "device");
+    YARP_REQUIRE_PLUGIN("testDeviceWGP1", "device");
 
     Network::setLocalMode(true);
 
-    SECTION("Checking TestDeviceWGP help")
+    SECTION("Checking TestDeviceWGP1 help")
     {
         PolyDriver dd;
         Property p_cfg;
-        p_cfg.put("device", "testDeviceWGP");
+        p_cfg.put("device", "testDeviceWGP1");
         p_cfg.put("help","");
         REQUIRE(dd.open(p_cfg)==false);
     }
 
-    SECTION("Checking TestDeviceWGP device")
+    SECTION("Checking TestDeviceWGP1 device")
     {
         PolyDriver dd;
 
         ////////"Checking opening polydriver with no attached device"
         {
             Property p_cfg;
-            p_cfg.put("device",    "testDeviceWGP");
+            p_cfg.put("device",    "testDeviceWGP1");
 
             p_cfg.put("param_1", "string");
             p_cfg.put("param_2", 1.00000);
             p_cfg.put("param_3", true);
             p_cfg.put("param_4", 1);
-            p_cfg.put("param_5", "a");
+            p_cfg.put("param_5", 'a');
             p_cfg.put("param_6", 10);
             p_cfg.put("param_7", 1.0);
 
@@ -70,6 +70,15 @@ TEST_CASE("dev::TestDeviceWGP", "[yarp::dev]")
             ppp_cfg2.put("param_3", 320);
             ppp_cfg2.put("param_4", 330);
 
+            yarp::os::Value v7; v7.fromString("(1 2 3)");
+            p_cfg.put("param_vec7", v7);
+
+            p_cfg.put("param_vec8", yarp::os::Bottle("(1.0 2.0 3.0)").get(0));
+
+            yarp::os::Bottle b9; b9.fromString("(sa1 sa2 sa3)");
+            int i=b9.size();
+            p_cfg.put("param_vec9", b9.get(0));
+
             REQUIRE(dd.open(p_cfg));
 
             yarp::dev::IDeviceDriverParams* idevparams = nullptr;
@@ -77,9 +86,9 @@ TEST_CASE("dev::TestDeviceWGP", "[yarp::dev]")
             REQUIRE (idevparams!=nullptr);
 
             std::string ss1 = idevparams->getDeviceClassName();
-            CHECK (ss1 == "TestDeviceWGP");
+            CHECK (ss1 == "TestDeviceWGP1");
             std::string ss2 = idevparams->getDeviceName();
-            CHECK (ss2 == "testDeviceWGP");
+            CHECK (ss2 == "testDeviceWGP1");
 
             std::vector<std::string> vv = idevparams->getListOfParams();
             CHECK(vv.empty() == false);

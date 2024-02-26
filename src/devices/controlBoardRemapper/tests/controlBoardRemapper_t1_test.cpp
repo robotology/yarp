@@ -22,40 +22,31 @@ const char *fmcA_file_content   = "device fakeMotionControl\n"
                                   "[GENERAL]\n"
                                   "Joints 2\n"
                                   "\n"
-                                  "AxisName \"axisA1\" \"axisA2\" \n";
+                                  "AxisName (\"axisA1\" \"axisA2\") \n";
 
 const char *fmcB_file_content   = "device fakeMotionControl\n"
                                   "[GENERAL]\n"
                                   "Joints 3\n"
                                   "\n"
-                                  "AxisName \"axisB1\" \"axisB2\" \"axisB3\"\n";
+                                  "AxisName (\"axisB1\" \"axisB2\" \"axisB3\") \n";
 
 const char *fmcC_file_content   =  "device fakeMotionControl\n"
                                   "[GENERAL]\n"
                                   "Joints 4\n"
                                   "\n"
-                                  "AxisName \"axisC1\" \"axisC2\" \"axisC3\" \"axisC4\"  \n";
+                                  "AxisName (\"axisC1\" \"axisC2\" \"axisC3\" \"axisC4\")  \n";
 
 const char *wrapperA_file_content   = "device controlBoard_nws_yarp\n"
                                       "name /testRemapperRobot/a\n"
-                                      "period 0.01\n"
-                                      "networks (net_a)\n"
-                                      "joints 2\n"
-                                      "net_a 0 1 0 1\n";
+                                      "period 0.01\n";
 
 const char *wrapperB_file_content   = "device controlBoard_nws_yarp\n"
                                       "name /testRemapperRobot/b\n"
-                                      "period 0.01\n"
-                                      "networks (net_b)\n"
-                                      "joints 3\n"
-                                      "net_b 0 2 0 2\n";
+                                      "period 0.01\n";
 
 const char *wrapperC_file_content   = "device controlBoard_nws_yarp\n"
                                       "name /testRemapperRobot/c\n"
-                                      "period 0.01\n"
-                                      "networks (net_c)\n"
-                                      "joints 4\n"
-                                      "net_c 0 3 0 3\n";
+                                      "period 0.01\n";
 
 
 static void checkRemapper(yarp::dev::PolyDriver & ddRemapper, int rand, size_t nrOfRemappedAxes)
@@ -220,7 +211,7 @@ TEST_CASE("dev::ControlBoardRemapperTest", "[yarp::dev]")
             PolyDriverList pdList;
             pdList.push(fmcbs[i],wrapperNetworks[i].c_str());
 
-            CHECK(iwrap->attachAll(pdList)); // controlBoard_nws_yarp attached successfully to the device
+            REQUIRE(iwrap->attachAll(pdList)); // controlBoard_nws_yarp attached successfully to the device
         }
 
         // Create a list containing all the fake controlboards
@@ -252,7 +243,7 @@ TEST_CASE("dev::ControlBoardRemapperTest", "[yarp::dev]")
         REQUIRE(ddRemapperWN.view(imultwrapWN)); // interface for multiple wrapper with wrong names correctly opened
         REQUIRE(imultwrapWN);
 
-        CHECK_FALSE(imultwrapWN->attachAll(fmcList)); // attachAll for controlboardremapper with wrong names successful
+        REQUIRE_FALSE(imultwrapWN->attachAll(fmcList)); // attachAll for controlboardremapper with wrong names successful
 
         // Make sure that a controlboard in which attachAll is not successfull
         // closes correctly
@@ -278,7 +269,7 @@ TEST_CASE("dev::ControlBoardRemapperTest", "[yarp::dev]")
         REQUIRE(ddRemapper.view(imultwrap)); // interface for multiple wrapper correctly opened
         REQUIRE(imultwrap);
 
-        CHECK(imultwrap->attachAll(fmcList)); // attachAll for controlboardremapper successful
+        REQUIRE(imultwrap->attachAll(fmcList)); // attachAll for controlboardremapper successful
 
 
         // Test the controlboardremapper
