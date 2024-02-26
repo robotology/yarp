@@ -13,6 +13,7 @@ yarp_prepare_plugin(controlBoardCouplingHandler
 
 if(NOT SKIP_controlBoardCouplingHandler)
   yarp_add_plugin(yarp_controlBoardCouplingHandler)
+  generateDeviceParamsParser(ControlBoardCouplingHandler)
 
   target_sources(yarp_controlBoardCouplingHandler
     PRIVATE
