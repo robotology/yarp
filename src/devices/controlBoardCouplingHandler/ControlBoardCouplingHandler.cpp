@@ -26,6 +26,29 @@ bool ControlBoardCouplingHandler::close()
 
 bool ControlBoardCouplingHandler::open(Searchable& config)
 {
+    bool ret {false};
+
+    if(!parseParams(config))
+    {
+        yCError(CONTROLBOARDCOUPLINGHANDLER) << "Error in parsing parameters";
+        return false;
+    }
+
+    Property joint_coupling_config;
+    joint_coupling_config.fromString(config.toString());
+    joint_coupling_config.put("device", m_COUPLING_device);
+    if(!jointCouplingHandler.open(config)) {
+        yCError(CONTROLBOARDCOUPLINGHANDLER) << "Error in opening jointCouplingHandler device";
+        return false;
+    }
+
+    if(!jointCouplingHandler.view(iJntCoupling)) {
+        yCError(CONTROLBOARDCOUPLINGHANDLER) << "Error viewing the IJointCoupling interface";
+        return false;
+    }
+
+    this->setNrOfControlledAxes(m_axesNames.size());
+
     Property prop;
     prop.fromString(config.toString());
 
@@ -35,199 +58,18 @@ bool ControlBoardCouplingHandler::open(Searchable& config)
         yCInfo(CONTROLBOARDCOUPLINGHANDLER, "running with verbose output");
     }
 
-    if(!parseOptions(prop))
-    {
-        return false;
-    }
-
     return true;
-}
-
-bool ControlBoardCouplingHandler::parseOptions(Property& prop)
-{
-    bool ok = true;
-
-    usingAxesNamesForAttachAll  = prop.check("axesNames", "list of networks merged by this wrapper");
-    usingNetworksForAttachAll = prop.check("networks", "list of networks merged by this wrapper");
-
-
-    if( usingAxesNamesForAttachAll &&
-        usingNetworksForAttachAll )
-    {
-        yCError(CONTROLBOARDCOUPLINGHANDLER) << "Both axesNames and networks option present, this is not supported.";
-        return false;
-    }
-
-    if( !usingAxesNamesForAttachAll &&
-        !usingNetworksForAttachAll )
-    {
-        yCError(CONTROLBOARDCOUPLINGHANDLER) << "axesNames option not found";
-        return false;
-    }
-
-    if( usingAxesNamesForAttachAll )
-    {
-        ok = parseAxesNames(prop);
-    }
-
-    if( usingNetworksForAttachAll )
-    {
-        ok = parseNetworks(prop);
-    }
-
-    return ok;
-}
-
-bool ControlBoardCouplingHandler::parseAxesNames(const Property& prop)
-{
-    Bottle *propAxesNames=prop.find("axesNames").asList();
-    if(propAxesNames==nullptr)
-    {
-       yCError(CONTROLBOARDCOUPLINGHANDLER) << "Parsing parameters: \"axesNames\" should be followed by a list";
-       return false;
-    }
-
-    axesNames.resize(propAxesNames->size());
-    for(size_t ax=0; ax < propAxesNames->size(); ax++)
-    {
-        axesNames[ax] = propAxesNames->get(ax).asString();
-    }
-
-    this->setNrOfControlledAxes(axesNames.size());
-
-    return true;
-}
-
-bool ControlBoardCouplingHandler::parseNetworks(const Property& prop)
-{
-    Bottle *nets=prop.find("networks").asList();
-    if(nets==nullptr)
-    {
-       yCError(CONTROLBOARDCOUPLINGHANDLER) << "Parsing parameters: \"networks\" should be followed by a list";
-       return false;
-    }
-
-    if (!prop.check("joints", "number of joints of the part"))
-    {
-        yCError(CONTROLBOARDCOUPLINGHANDLER) << "joints options not found when reading networks option";
-        return false;
-    }
-
-    this->setNrOfControlledAxes((size_t)prop.find("joints").asInt32());
-
-    int nsubdevices=nets->size();
-
-    // configure the devices
-    for(size_t k=0;k<nets->size();k++)
-    {
-        Bottle parameters;
-        int wBase;
-        int wTop;
-        int base;
-        int top;
-
-        parameters=prop.findGroup(nets->get(k).asString());
-
-        if(parameters.size()==2)
-        {
-            Bottle *bot=parameters.get(1).asList();
-            Bottle tmpBot;
-            if(bot==nullptr)
-            {
-                // probably data are not passed in the correct way, try to read them as a string.
-                std::string bString(parameters.get(1).asString());
-                tmpBot.fromString(bString);
-
-                if(tmpBot.size() != 4)
-                {
-                    yCError(CONTROLBOARDCOUPLINGHANDLER)
-                        << "Check network parameters in part description"
-                        << "--> I was expecting" << nets->get(k).asString() << "followed by a list of four integers in parenthesis"
-                        << "Got:" << parameters.toString();
-                    return false;
-                }
-                else
-                {
-                    bot = &tmpBot;
-                }
-            }
-
-            // If I came here, bot is correct
-            wBase=bot->get(0).asInt32();
-            wTop=bot->get(1).asInt32();
-            base=bot->get(2).asInt32();
-            top=bot->get(3).asInt32();
-        }
-        else if (parameters.size()==5)
-        {
-            // yCError(CONTROLBOARDCOUPLINGHANDLER) << "Parameter networks use deprecated syntax";
-            wBase=parameters.get(1).asInt32();
-            wTop=parameters.get(2).asInt32();
-            base=parameters.get(3).asInt32();
-            top=parameters.get(4).asInt32();
-        }
-        else
-        {
-            yCError(CONTROLBOARDCOUPLINGHANDLER)
-                << "Check network parameters in part description"
-                << "--> I was expecting" << nets->get(k).asString() << "followed by a list of four integers in parenthesis"
-                << "Got:" << parameters.toString();
-            return false;
-        }
-
-    }
-
-    return true;
-}
-
-void ControlBoardCouplingHandler::setNrOfControlledAxes(const size_t nrOfControlledAxes)
-{
-    controlledJoints = nrOfControlledAxes;
-}
-
-
-bool ControlBoardCouplingHandler::updateAxesName()
-{
-    bool ret = true;
-    axesNames.resize(controlledJoints);
-
-    for(int l=0; l < controlledJoints; l++)
-    {
-        std::string axNameYARP;
-        bool ok = this->getAxisName(l,axNameYARP);
-        if( ok )
-        {
-            axesNames[l] = axNameYARP;
-        }
-
-        ret = ret && ok;
-    }
-
-    return ret;
 }
 
 bool ControlBoardCouplingHandler::attachAll(const PolyDriverList &polylist)
 {
     // For both cases, now configure everything that need
     // all the attribute to be correctly configured
-    bool ok = false;
+    bool ok = attachAllUsingAxesNames(polylist);
 
-    if( usingAxesNamesForAttachAll )
+    if (!ok)
     {
-        ok = attachAllUsingAxesNames(polylist);
-    }
-
-    if( usingNetworksForAttachAll )
-    {
-        ok = attachAllUsingNetworks(polylist);
-    }
-
-    //check if all devices are attached to the driver
-    bool ready=true;
-
-    if (!ready)
-    {
-        yCError(CONTROLBOARDCOUPLINGHANDLER, "AttachAll failed, some subdevice was not found or its attach failed");
+        yCError(CONTROLBOARDCOUPLINGHANDLER, "attachAll failed  some subdevice was not found or its attach failed");
         return false;
     }
 
@@ -325,14 +167,14 @@ bool ControlBoardCouplingHandler::attachAllUsingAxesNames(const PolyDriverList& 
 
     // Once we build the axis map, we build the mapping between the remapped axes and
     // the couple subControlBoard, axis in subControlBoard
-    for(const auto& axesName : axesNames)
+    for(const auto& axesName : m_axesNames)
     {
         auto it = axesLocationMap.find(axesName);
         if( it == axesLocationMap.end() )
         {
             yCError(CONTROLBOARDCOUPLINGHANDLER)
                 << "axis " << axesName
-                << "specified in axesNames was not found in the axes of the controlboards passed to attachAll, attachAll failed.";
+                << "specified in m_axesNames was not found in the axes of the controlboards passed to attachAll, attachAll failed.";
             return false;
         }
 
@@ -348,42 +190,8 @@ bool ControlBoardCouplingHandler::attachAllUsingAxesNames(const PolyDriverList& 
         }
     }
 
-    assert(controlledJoints == (int) axesNames.size());
-
-    // We have now the number of controlboards to attach to
-    size_t nrOfSubControlBoards = subControlBoardsKeys.size();
-
     return true;
 }
-
-
-bool ControlBoardCouplingHandler::attachAllUsingNetworks(const PolyDriverList &polylist)
-{
-    for(int p=0;p<polylist.size();p++)
-    {
-        // look if we have to attach to a calibrator
-        std::string subDeviceKey = polylist[p]->key;
-        if(subDeviceKey == "Calibrator" || subDeviceKey == "calibrator")
-        {
-            // Set the IRemoteCalibrator interface, the wrapper must point to the calibrator rdevice
-            yarp::dev::IRemoteCalibrator *calibrator;
-            polylist[p]->poly->view(calibrator);
-
-            //IRemoteCalibrator::setCalibratorDevice(calibrator);
-            continue;
-        }
-    }
-
-    bool ok = updateAxesName();
-
-    if( !ok )
-    {
-        yCWarning(CONTROLBOARDCOUPLINGHANDLER) << "unable to update axesNames";
-    }
-
-    return true;
-}
-
 
 bool ControlBoardCouplingHandler::detachAll()
 {
@@ -398,80 +206,77 @@ void ControlBoardCouplingHandler::configureBuffers()
 /// ControlBoard methods
 //////////////////////////////////////////////////////////////////////////////
 
-bool ControlBoardCouplingHandler::getAxes(int *ax)
-{
-    *ax=controlledJoints;
-    return true;
-}
 
 /* IEncoders */
 bool ControlBoardCouplingHandler::resetEncoder(int j)
 {
-
     return false;
 }
 
 bool ControlBoardCouplingHandler::resetEncoders()
 {
-    bool ret=true;
-    return ret;
+    return false;
 }
 
 bool ControlBoardCouplingHandler::setEncoder(int j, double val)
 {
-
     return false;
 }
 
 bool ControlBoardCouplingHandler::setEncoders(const double *vals)
 {
-    bool ret=true;
-    return ret;
+    return false;
 }
 
 bool ControlBoardCouplingHandler::getEncoder(int j, double *v)
 {
+    // TODO use iJointCoupling
     return false;
 }
 
 bool ControlBoardCouplingHandler::getEncoders(double *encs)
 {
+    // TODO use iJointCoupling
     bool ret=true;
     return ret;
 }
 
 bool ControlBoardCouplingHandler::getEncodersTimed(double *encs, double *t)
 {
+    // TODO use iJointCoupling
     bool ret=true;
     return ret;
 }
 
 bool ControlBoardCouplingHandler::getEncoderTimed(int j, double *v, double *t)
 {
+    // TODO use iJointCoupling
     return false;
 }
 
 bool ControlBoardCouplingHandler::getEncoderSpeed(int j, double *sp)
 {
+    // TODO use iJointCoupling
     return false;
 }
 
 bool ControlBoardCouplingHandler::getEncoderSpeeds(double *spds)
 {
+    // TODO use iJointCoupling
     bool ret=true;
     return ret;
 }
 
 bool ControlBoardCouplingHandler::getEncoderAcceleration(int j, double *acc)
 {
-
+    // TODO use iJointCoupling
     return false;
 }
 
 bool ControlBoardCouplingHandler::getEncoderAccelerations(double *accs)
 {
     bool ret=true;
-
+    // TODO use iJointCoupling
     return ret;
 }
 
@@ -559,15 +364,22 @@ bool ControlBoardCouplingHandler::getEncoderAccelerations(double *accs)
 
 /* IAxisInfo */
 
+bool ControlBoardCouplingHandler::getAxes(int *ax)
+{
+    // TODO use iJointCoupling
+    bool ok{false};
+    return ok;
+}
+
 bool ControlBoardCouplingHandler::getAxisName(int j, std::string& name)
 {
-
-    return false;
+    auto ok = iJntCoupling->getPhysicalJointName(j, name);
+    return ok;
 }
 
 bool ControlBoardCouplingHandler::getJointType(int j, yarp::dev::JointTypeEnum& type)
 {
-
+    // TODO use iJointCoupling
     return false;
 }
 

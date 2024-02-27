@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Tue Feb 27 14:27:36 2024
+// Generated on: Tue Feb 27 15:40:18 2024
 
 
 #include "ControlBoardCouplingHandler_ParamsParser.h"
@@ -28,11 +28,13 @@ ControlBoardCouplingHandler_ParamsParser::ControlBoardCouplingHandler_ParamsPars
 std::vector<std::string> ControlBoardCouplingHandler_ParamsParser::getListOfParams() const
 {
     std::vector<std::string> params;
+    params.push_back("axesNames");
     params.push_back("jointNames");
     params.push_back("LIMITS::");
     params.push_back("LIMITS::jntPosMin");
     params.push_back("LIMITS::jntPosMax");
     params.push_back("COUPLING::");
+    params.push_back("COUPLING::device");
     params.push_back("COUPLING::actuatedAxesNames");
     params.push_back("COUPLING::actuatedAxesPosMin");
     params.push_back("COUPLING::actuatedAxesPosMax");
@@ -51,6 +53,37 @@ bool      ControlBoardCouplingHandler_ParamsParser::parseParams(const yarp::os::
 
     std::string config_string = config.toString();
     yarp::os::Property prop_check(config_string.c_str());
+    //Parser of parameter axesNames
+    {
+        if (config.check("axesNames"))
+        {
+            {
+                m_axesNames.clear();
+                yarp::os::Bottle* tempBot = config.find("axesNames").asList();
+                if (tempBot)
+                {
+                    std::string tempBots = tempBot->toString();
+                    for (size_t i=0; i<tempBot->size(); i++)
+                    {
+                        m_axesNames.push_back(tempBot->get(i).asString());
+                    }
+                }
+                else
+                {
+                     yCError(ControlBoardCouplingHandlerParamsCOMPONENT) <<"parameter 'axesNames' is not a properly formatted bottle";
+                }
+            }
+            yCInfo(ControlBoardCouplingHandlerParamsCOMPONENT) << "Parameter 'axesNames' using value:" << m_axesNames;
+        }
+        else
+        {
+            yCError(ControlBoardCouplingHandlerParamsCOMPONENT) << "Mandatory parameter 'axesNames' not found!";
+            yCError(ControlBoardCouplingHandlerParamsCOMPONENT) << "Description of the parameter: Names of the actuated axes";
+            return false;
+        }
+        prop_check.unput("axesNames");
+    }
+
     //Parser of parameter jointNames
     {
         if (config.check("jointNames"))
@@ -182,6 +215,24 @@ bool      ControlBoardCouplingHandler_ParamsParser::parseParams(const yarp::os::
             return false;
         }
         prop_check.unput("COUPLING::");
+    }
+
+    //Parser of parameter COUPLING::device
+    {
+        yarp::os::Bottle sectionp;
+        sectionp = config.findGroup("COUPLING");
+        if (sectionp.check("device"))
+        {
+            m_COUPLING_device = sectionp.find("device").asString();
+            yCInfo(ControlBoardCouplingHandlerParamsCOMPONENT) << "Parameter 'COUPLING::device' using value:" << m_COUPLING_device;
+        }
+        else
+        {
+            yCError(ControlBoardCouplingHandlerParamsCOMPONENT) << "Mandatory parameter 'COUPLING::device' not found!";
+            yCError(ControlBoardCouplingHandlerParamsCOMPONENT) << "Description of the parameter: Name of the device that handles the coupling";
+            return false;
+        }
+        prop_check.unput("COUPLING::device");
     }
 
     //Parser of parameter COUPLING::actuatedAxesNames
@@ -337,19 +388,21 @@ std::string      ControlBoardCouplingHandler_ParamsParser::getDocumentationOfDev
     doc = doc + std::string("This is the help for device: ControlBoardCouplingHandler\n");
     doc = doc + std::string("\n");
     doc = doc + std::string("This is the list of the parameters accepted by the device:\n");
+    doc = doc + std::string("'axesNames': Names of the actuated axes\n");
     doc = doc + std::string("'jointNames': Names of the physical joints\n");
     doc = doc + std::string("'LIMITS::': string containing the physical joint limits\n");
     doc = doc + std::string("'LIMITS::jntPosMin': Phyisical joints' position minimum\n");
     doc = doc + std::string("'LIMITS::jntPosMax': Phyisical joints' position maximum\n");
     doc = doc + std::string("'COUPLING::': The string containing the coupling description\n");
+    doc = doc + std::string("'COUPLING::device': Name of the device that handles the coupling\n");
     doc = doc + std::string("'COUPLING::actuatedAxesNames': Names of the actuated axes\n");
     doc = doc + std::string("'COUPLING::actuatedAxesPosMin': Actuated axes' position minimum\n");
     doc = doc + std::string("'COUPLING::actuatedAxesPosMax': Actuated axes' position maximum\n");
     doc = doc + std::string("'COUPLING_PARAMS::': The string containing the coupling params\n");
     doc = doc + std::string("\n");
     doc = doc + std::string("Here are some examples of invocation command with yarpdev, with all params:\n");
-    doc = doc + " yarpdev --device controlBoardCouplingHandler --jointNames <mandatory_value> --LIMITS:: <mandatory_value> --LIMITS::jntPosMin <mandatory_value> --LIMITS::jntPosMax <mandatory_value> --COUPLING:: <mandatory_value> --COUPLING::actuatedAxesNames <mandatory_value> --COUPLING::actuatedAxesPosMin <mandatory_value> --COUPLING::actuatedAxesPosMax <mandatory_value> --COUPLING_PARAMS:: <mandatory_value>\n";
+    doc = doc + " yarpdev --device controlBoardCouplingHandler --axesNames <mandatory_value> --jointNames <mandatory_value> --LIMITS:: <mandatory_value> --LIMITS::jntPosMin <mandatory_value> --LIMITS::jntPosMax <mandatory_value> --COUPLING:: <mandatory_value> --COUPLING::device <mandatory_value> --COUPLING::actuatedAxesNames <mandatory_value> --COUPLING::actuatedAxesPosMin <mandatory_value> --COUPLING::actuatedAxesPosMax <mandatory_value> --COUPLING_PARAMS:: <mandatory_value>\n";
     doc = doc + std::string("Using only mandatory params:\n");
-    doc = doc + " yarpdev --device controlBoardCouplingHandler --jointNames <mandatory_value> --LIMITS:: <mandatory_value> --LIMITS::jntPosMin <mandatory_value> --LIMITS::jntPosMax <mandatory_value> --COUPLING:: <mandatory_value> --COUPLING::actuatedAxesNames <mandatory_value> --COUPLING::actuatedAxesPosMin <mandatory_value> --COUPLING::actuatedAxesPosMax <mandatory_value> --COUPLING_PARAMS:: <mandatory_value>\n";
+    doc = doc + " yarpdev --device controlBoardCouplingHandler --axesNames <mandatory_value> --jointNames <mandatory_value> --LIMITS:: <mandatory_value> --LIMITS::jntPosMin <mandatory_value> --LIMITS::jntPosMax <mandatory_value> --COUPLING:: <mandatory_value> --COUPLING::device <mandatory_value> --COUPLING::actuatedAxesNames <mandatory_value> --COUPLING::actuatedAxesPosMin <mandatory_value> --COUPLING::actuatedAxesPosMax <mandatory_value> --COUPLING_PARAMS:: <mandatory_value>\n";
     doc = doc + std::string("=============================================\n\n");    return doc;
 }
