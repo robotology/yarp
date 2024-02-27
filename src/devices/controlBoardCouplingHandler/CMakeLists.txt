@@ -5,6 +5,7 @@ yarp_prepare_plugin(controlBoardCouplingHandler
   CATEGORY device
   TYPE ControlBoardCouplingHandler
   INCLUDE ControlBoardCouplingHandler.h
+  GENERATE_PARSER
   EXTRA_CONFIG
     WRAPPER=controlboard_nws_yarp
   DEFAULT ON
@@ -13,14 +14,15 @@ yarp_prepare_plugin(controlBoardCouplingHandler
 
 if(NOT SKIP_controlBoardCouplingHandler)
   yarp_add_plugin(yarp_controlBoardCouplingHandler)
-  generateDeviceParamsParser(ControlBoardCouplingHandler)
 
   target_sources(yarp_controlBoardCouplingHandler
     PRIVATE
       ControlBoardCouplingHandler.cpp
       ControlBoardCouplingHandler.h
       ControlBoardCouplingHandlerLogComponent.cpp
-      ControlBoardCouplingHandlerLogComponent.h)
+      ControlBoardCouplingHandlerLogComponent.h
+      ControlBoardCouplingHandler_ParamsParser.cpp
+      ControlBoardCouplingHandler_ParamsParser.h)
 
   target_link_libraries(yarp_controlBoardCouplingHandler
     PRIVATE
