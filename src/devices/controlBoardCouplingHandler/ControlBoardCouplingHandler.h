@@ -40,21 +40,18 @@ private:
     yarp::dev::IAxisInfo             *info;
     yarp::dev::IJointCoupling        *iJntCoupling;
 
-    std::vector<std::string> axesNames;
+    yarp::sig::Vector physJointsPos;
+    yarp::sig::Vector physJointsVel;
+    yarp::sig::Vector physJointsAcc;
+    yarp::sig::Vector actAxesPos;
+    yarp::sig::Vector actAxesVel;
+    yarp::sig::Vector actAxesAcc;
 
     /** Verbosity of the class */
     bool _verb{false};
 
     // to open ports and print more detailed debug messages
     std::string partName;
-
-    /**
-     * Set the number of controlled axes, resizing appropriately
-     * all the necessary buffers.
-     */
-    void setNrOfControlledAxes(const size_t nrOfControlledAxes);
-
-    // TODO I am keeping it just for compiling, but it should be removed
 
     /**
      * Configure buffers used by the device

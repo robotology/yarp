@@ -47,7 +47,7 @@ bool ControlBoardCouplingHandler::open(Searchable& config)
         return false;
     }
 
-    this->setNrOfControlledAxes(m_axesNames.size());
+    configureBuffers();
 
     Property prop;
     prop.fromString(config.toString());
@@ -85,6 +85,28 @@ struct axisLocation
     int indexInSubDevice;
 };
 
+void ControlBoardCouplingHandler::configureBuffers() {
+    if (!iJntCoupling) {
+        yCError(CONTROLBOARDCOUPLINGHANDLER) << "IJointCoupling interface not available";
+        return;
+    }
+    size_t nrOfPhysicalJoints;
+    size_t nrOfActuatedAxes;
+    auto ok = iJntCoupling->getNrOfPhysicalJoints(nrOfPhysicalJoints);
+    ok = ok && iJntCoupling->getNrOfActuatedAxes(nrOfActuatedAxes);
+    if(!ok)
+    {
+        yCError(CONTROLBOARDCOUPLINGHANDLER) << "Error in getting the number of physical joints or actuated axes";
+        return;
+    }
+    physJointsPos.resize(nrOfPhysicalJoints);
+    physJointsVel.resize(nrOfPhysicalJoints);
+    physJointsAcc.resize(nrOfPhysicalJoints);
+    actAxesPos.resize(nrOfActuatedAxes);
+    actAxesVel.resize(nrOfActuatedAxes);
+    actAxesAcc.resize(nrOfActuatedAxes);
+    return;
+}
 
 bool ControlBoardCouplingHandler::attachAllUsingAxesNames(const PolyDriverList& polylist)
 {
@@ -198,9 +220,6 @@ bool ControlBoardCouplingHandler::detachAll()
     return true;
 }
 
-void ControlBoardCouplingHandler::configureBuffers()
-{
-}
 
 //////////////////////////////////////////////////////////////////////////////
 /// ControlBoard methods
