@@ -11,6 +11,7 @@ yarp_prepare_plugin(fakebot
   TYPE FakeBot
   INCLUDE FakeBot.h
   DEFAULT OFF
+  GENERATE_PARSER
   DEPENDS "NOT YARP_NO_DEPRECATED" # DEPRECATED Since YARP 3.5
 )
 
@@ -21,6 +22,8 @@ if(NOT SKIP_fakebot)
     PRIVATE
       FakeBot.cpp
       FakeBot.h
+      FakeBot_ParamsParser.cpp
+      FakeBot_ParamsParser.h
   )
 
   target_link_libraries(yarp_fakebot

@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Sun Feb 11 01:26:28 2024
+// Generated on: Mon Feb 19 16:28:03 2024
 
 
 #ifndef AUDIOTOFILEDEVICE_PARAMSPARSER_H
@@ -31,11 +31,11 @@
 *
 * The device can be launched by yarpdev using one of the following examples:
 * \code{.unparsed}
-* yarpdev --device AudioToFileDevice --file_name audio_out.wav --save_mode overwrite_file --add_marker false
+* yarpdev --device audioToFileDevice --file_name audio_out.wav --save_mode overwrite_file --add_marker false
 * \endcode
 *
 * \code{.unparsed}
-* yarpdev --device AudioToFileDevice
+* yarpdev --device audioToFileDevice
 * \endcode
 *
 */
@@ -43,11 +43,12 @@
 class AudioToFileDevice_ParamsParser : public yarp::dev::IDeviceDriverParams
 {
 public:
-    AudioToFileDevice_ParamsParser() = default;
+    AudioToFileDevice_ParamsParser();
     ~AudioToFileDevice_ParamsParser() override = default;
 
 public:
-    const std::string m_device_type = {"AudioToFileDevice"};
+    const std::string m_device_classname = {"AudioToFileDevice"};
+    const std::string m_device_name = {"audioToFileDevice"};
     bool m_parser_is_strict = false;
     struct parser_version_type
     {
@@ -55,12 +56,18 @@ public:
          int minor = 0;
     };
     const parser_version_type m_parser_version = {};
+
+    const std::string m_file_name_defaultValue = {"audio_out.wav"};
+    const std::string m_save_mode_defaultValue = {"overwrite_file"};
+    const std::string m_add_marker_defaultValue = {"false"};
+
     std::string m_file_name = {"audio_out.wav"};
     std::string m_save_mode = {"overwrite_file"};
     bool m_add_marker = {false};
 
     bool          parseParams(const yarp::os::Searchable & config) override;
-    std::string   getDeviceType() const override { return m_device_type; }
+    std::string   getDeviceClassName() const override { return m_device_classname; }
+    std::string   getDeviceName() const override { return m_device_name; }
     std::string   getDocumentationOfDeviceParams() const override;
     std::vector<std::string> getListOfParams() const override;
 };

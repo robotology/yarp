@@ -7,7 +7,8 @@ endif()
 yarp_prepare_plugin(fakeJoypad
   CATEGORY device
   TYPE FakeJoypad
-  INCLUDE fakeJoypad.h
+  INCLUDE FakeJoypad.h
+  GENERATE_PARSER
   EXTRA_CONFIG
     WRAPPER=JoypadControlServer)
 
@@ -16,8 +17,10 @@ if(ENABLE_fakeJoypad)
 
   target_sources(yarp_fakeJoypad
     PRIVATE
-      fakeJoypad.cpp
-      fakeJoypad.h
+      FakeJoypad.cpp
+      FakeJoypad.h
+      FakeJoypad_ParamsParser.cpp
+      FakeJoypad_ParamsParser.h
   )
 
   target_link_libraries(yarp_fakeJoypad

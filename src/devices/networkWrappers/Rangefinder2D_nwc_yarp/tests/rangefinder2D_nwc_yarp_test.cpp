@@ -35,14 +35,15 @@ TEST_CASE("dev::rangefinder2D_nwc_yarp", "[yarp::dev]")
         {
             Property plas_cfg;
             plas_cfg.put("device", "fakeLaser");
-            plas_cfg.put("test","use_constant");
-            plas_cfg.put("const_distance", 0.5);
+            plas_cfg.put("test", "use_constant");
+            Property& cm_cfg = plas_cfg.addGroup("CONSTANT_MODE");
+            cm_cfg.put("const_distance", 0.5);
             REQUIRE(ddlas.open(plas_cfg));
         }
         {
             Property pnws_cfg;
             pnws_cfg.put("device", "rangefinder2D_nws_yarp");
-            pnws_cfg.put("period", "0.010");
+            pnws_cfg.put("period", 0.010);
             pnws_cfg.put("name", "/laser");
             REQUIRE(ddnws.open(pnws_cfg));
         }

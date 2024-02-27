@@ -12,6 +12,7 @@
 #include <yarp/sig/Image.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/LogComponent.h>
+#include "FakeBot_ParamsParser.h"
 
 YARP_DECLARE_LOG_COMPONENT(FAKEBOT)
 
@@ -19,6 +20,8 @@ YARP_DECLARE_LOG_COMPONENT(FAKEBOT)
  * @ingroup dev_impl_fake dev_impl_deprecated
  *
  * \brief `fakebot` *deprecated*: Documentation to be added
+ *
+ * Parameters required by this device are shown in class: FakeBot_ParamsParser
  */
 class FakeBot :
         public yarp::dev::DeprecatedDeviceDriver,
@@ -29,7 +32,8 @@ class FakeBot :
         public yarp::dev::IFrameGrabberImage,
         public yarp::dev::IControlCalibration,
         public yarp::dev::IControlLimits,
-        public yarp::os::Thread
+        public yarp::os::Thread,
+        public FakeBot_ParamsParser
 {
 private:
     int njoints;
@@ -38,22 +42,15 @@ private:
     double m_tx, m_ty;
     double m_tdx, m_tdy;
     int m_w, m_h;
-    double xScale, yScale;
-    double noiseLevel;
     yarp::sig::Vector pos, dpos, vel, speed, acc, loc, amp;
     yarp::sig::ImageOf<yarp::sig::PixelRgb> back, fore;
-    double lifetime;
 
     void init();
 public:
     FakeBot() :
         njoints(2),
         m_w(128),
-        m_h(128),
-        xScale(1),
-        yScale(1),
-        noiseLevel(0),
-        lifetime(-1)
+        m_h(128)
     {
         pos.resize(njoints);
         dpos.resize(njoints);

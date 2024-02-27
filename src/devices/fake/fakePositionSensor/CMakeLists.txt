@@ -8,7 +8,8 @@ endif()
 yarp_prepare_plugin(fakePositionSensor
   CATEGORY device
   TYPE FakePositionSensor
-  INCLUDE fakePositionSensor.h
+  INCLUDE FakePositionSensor.h
+  GENERATE_PARSER
   EXTRA_CONFIG
     WRAPPER=multipleanalogsensorsserver
 )
@@ -18,8 +19,10 @@ if(ENABLE_fakePositionSensor)
 
   target_sources(yarp_fakePositionSensor
     PRIVATE
-      fakePositionSensor.cpp
-      fakePositionSensor.h
+      FakePositionSensor.cpp
+      FakePositionSensor.h
+      FakePositionSensor_ParamsParser.cpp
+      FakePositionSensor_ParamsParser.h
   )
 
   target_link_libraries(yarp_fakePositionSensor

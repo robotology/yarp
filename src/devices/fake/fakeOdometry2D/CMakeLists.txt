@@ -8,8 +8,9 @@ endif()
 yarp_prepare_plugin(fakeOdometry2D
   CATEGORY device
   TYPE FakeOdometry2D
-  INCLUDE fakeOdometry2D.h
+  INCLUDE FakeOdometry2D.h
   DEPENDS "TARGET YARP::YARP_math"
+  GENERATE_PARSER
 )
 
 if(NOT SKIP_fakeOdometry2D)
@@ -17,8 +18,10 @@ if(NOT SKIP_fakeOdometry2D)
 
   target_sources(yarp_fakeOdometry2D
     PRIVATE
-          fakeOdometry2D.h
-          fakeOdometry2D.cpp
+          FakeOdometry2D.h
+          FakeOdometry2D.cpp
+          FakeOdometry2D_ParamsParser.h
+          FakeOdometry2D_ParamsParser.cpp
     )
 
   target_link_libraries(yarp_fakeOdometry2D

@@ -7,9 +7,10 @@ endif()
 
 yarp_prepare_plugin(fakeLocalizer
   CATEGORY device
-  TYPE fakeLocalizer
-  INCLUDE fakeLocalizer.h
+  TYPE FakeLocalizer
+  INCLUDE FakeLocalizer.h
   DEPENDS "TARGET YARP::YARP_math"
+  GENERATE_PARSER
 )
 
 if(NOT SKIP_fakeLocalizer)
@@ -17,8 +18,10 @@ if(NOT SKIP_fakeLocalizer)
 
   target_sources(yarp_fakeLocalizer
     PRIVATE
-      fakeLocalizer.h
-      fakeLocalizer.cpp
+      FakeLocalizer.h
+      FakeLocalizer.cpp
+      FakeLocalizer_ParamsParser.h
+      FakeLocalizer_ParamsParser.cpp
   )
 
   target_link_libraries(yarp_fakeLocalizer

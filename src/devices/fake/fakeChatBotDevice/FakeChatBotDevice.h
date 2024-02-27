@@ -10,15 +10,19 @@
 #include <vector>
 #include <yarp/dev/DeviceDriver.h>
 #include <map>
+#include "FakeChatBotDevice_ParamsParser.h"
 
 /**
 * @ingroup dev_impl_fake dev_impl_other
 *
 * @brief `fakeChatBotDevice` : a fake device which implements the IChatBot interface for testing purposes.
 *
+* Parameters required by this device are shown in class: FakeChatBotDevice_ParamsParser
+*
 */
 class FakeChatBotDevice : public yarp::dev::IChatBot,
-                          public yarp::dev::DeviceDriver
+                          public yarp::dev::DeviceDriver,
+                          public FakeChatBotDevice_ParamsParser
 {
 
 public:
@@ -29,9 +33,11 @@ public:
     bool getStatus(std::string& status) override;
     bool resetBot() override;
 
+    bool open(yarp::os::Searchable& config) override;
+    bool close() override;
+
 private:
     std::string m_currBot;
-    std::string m_lang;
     std::string m_fallback;
     std::string m_noInput;
     std::string m_status;

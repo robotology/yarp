@@ -8,7 +8,8 @@ endif()
 yarp_prepare_plugin(fakeSpeechTranscription
   CATEGORY device
   TYPE FakeSpeechTranscription
-  INCLUDE fakeSpeechTranscription.h
+  INCLUDE FakeSpeechTranscription.h
+  GENERATE_PARSER
 )
 
 if(ENABLE_fakeSpeechTranscription)
@@ -16,8 +17,10 @@ if(ENABLE_fakeSpeechTranscription)
 
   target_sources(yarp_fakeSpeechTranscription
     PRIVATE
-      fakeSpeechTranscription.cpp
-      fakeSpeechTranscription.h
+      FakeSpeechTranscription.cpp
+      FakeSpeechTranscription.h
+      FakeSpeechTranscription_ParamsParser.cpp
+      FakeSpeechTranscription_ParamsParser.h
   )
 
   target_link_libraries(yarp_fakeSpeechTranscription

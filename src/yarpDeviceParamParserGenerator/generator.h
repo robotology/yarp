@@ -36,6 +36,7 @@ public:
     bool        m_parser_is_strict = false;
 
     std::string m_classname;
+    std::string m_modulename;
     std::string m_component;
     std::string m_output_header_filename;
     std::string m_output_cpp_filename;
@@ -48,6 +49,7 @@ public:
 
     void printParams();
     std::string generateCpp();
+    std::string generateConstructor();
     std::string generateFunction_getListOfParams();
     std::string generateFunction_parseParams();
     std::string generateFunction_getDeviceType() { return ""; };

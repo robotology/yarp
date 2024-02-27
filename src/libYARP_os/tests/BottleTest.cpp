@@ -112,6 +112,16 @@ TEST_CASE("os::BottleTest", "[yarp::os]")
         CHECK(bot10.toString() == "(1 2 3) (4 5 6)"); // "construction test 2"
         CHECK(bot10.get(1).isList()); // "construction test 3"
         CHECK(bot10.get(1).asList()->toString() == "4 5 6"); // "construction test 4"
+
+        Bottle bot3, bot4;
+        bot3.fromString("aa bb cc");
+        bot4.fromString("\"aa\" \"bb\" \"cc\"");
+        CHECK(bot3.size() == 3);
+        CHECK(bot4.size() == 3);
+        std::string bot3s = bot3.toString();
+        std::string bot4s = bot4.toString();
+        CHECK(bot3s == "aa bb cc");
+        CHECK(bot4s == "aa bb cc");
     }
 
     SECTION("testing Value interface")

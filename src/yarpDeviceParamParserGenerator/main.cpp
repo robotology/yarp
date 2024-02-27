@@ -51,9 +51,9 @@ bool ParamsFilesGenerator::nested_sections_found()
 void print_help()
 {
     std::cout << "Welcome to YarpDeviceParamParserGenerator tool. Syntax:\n";
-    std::cout << "1) yarpDeviceParamParserGenerator --class_name \"className\" --input_filename_md \"filename.md\" [--input_extra_comments \"comments.md\"] [--generate_md] [--generate_ini] [--generate_yarpdev] [--generate_yarprobotinterface] [--generate_all] [--output_dir \"output_path\"] [--debug_mode]\n";
+    std::cout << "1) yarpDeviceParamParserGenerator --class_name \"className\" --module_name \"moduleName\" --input_filename_md \"filename.md\" [--input_extra_comments \"comments.md\"] [--generate_md] [--generate_ini] [--generate_yarpdev] [--generate_yarprobotinterface] [--generate_all] [--output_dir \"output_path\"] [--debug_mode]\n";
     std::cout << "or:\n";
-    std::cout << "2) yarpDeviceParamParserGenerator --class_name \"className\" --input_filename_ini \"filename.ini\" [--input_extra_comments \"comments.md\"] [--generate_md] [--generate_ini] [--generate_yarpdev] [--generate_yarprobotinterface] [--generate_all] [--output_dir \"output_path\"] [--debug_mode]\n";
+    std::cout << "2) yarpDeviceParamParserGenerator --class_name \"className\" --module_name \"moduleName\" --input_filename_ini \"filename.ini\" [--input_extra_comments \"comments.md\"] [--generate_md] [--generate_ini] [--generate_yarpdev] [--generate_yarprobotinterface] [--generate_all] [--output_dir \"output_path\"] [--debug_mode]\n";
 }
 
 int main(int argc, char *argv[])
@@ -71,6 +71,7 @@ int main(int argc, char *argv[])
     std::string input_extra_comments;
     std::string output_dir=".";
     std::string class_name;
+    std::string module_name;
 
 #if 0 //debug only!
    std::cout << "Invocation command " << argc << ":";
@@ -138,6 +139,10 @@ int main(int argc, char *argv[])
             class_name = argv[i + 1];
             i++;
         }
+        else if (arg == "--module_name" && i + 1 < argc && argv[i + 1][0] != '-') {
+            module_name = argv[i + 1];
+            i++;
+        }
         else if (arg == "--debug_mode") {
             debug_mode = true;
         }
@@ -156,6 +161,11 @@ int main(int argc, char *argv[])
     if (class_name.empty())
     {
         std::cerr << "Invalid class name. Check parameter --class_name\n";
+        return RETURN_CODE_ERROR;
+    }
+    if (module_name.empty())
+    {
+        std::cerr << "Invalid module name. Check parameter --module_name\n";
         return RETURN_CODE_ERROR;
     }
 
@@ -191,6 +201,7 @@ int main(int argc, char *argv[])
         output_dir.pop_back();}
     output_dir += '/';
     pgen.m_classname = class_name;
+    pgen.m_modulename = module_name;
     pgen.m_component = pgen.m_classname + "ParamsCOMPONENT";
     std::string output_filename = class_name + "_ParamsParser";
     pgen.m_output_header_filename = output_dir + output_filename + ".h";
@@ -309,6 +320,7 @@ namespace {\n\
 }\n\
 \n";
 
+    s << generateConstructor();
     s << generateFunction_getListOfParams();
     s << generateFunction_parseParams();
     s << generateFunction_getDeviceType();

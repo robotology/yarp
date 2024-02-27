@@ -50,12 +50,15 @@ TEST_CASE("dev::Rangefinder2D_nws_yarpTest", "[yarp::dev]")
         {
             Property pnws_cfg;
             pnws_cfg.put("device", "rangefinder2D_nws_yarp");
-            pnws_cfg.put("period", "0.010");
+            pnws_cfg.put("period", 0.010);
             pnws_cfg.put("name", "/laser");
             REQUIRE(ddnws.open(pnws_cfg));
 
             Property pdev_cfg;
             pdev_cfg.put("device", "fakeLaser");
+            pdev_cfg.put("test", "use_constant");
+            Property& cm_cfg = pdev_cfg.addGroup("CONSTANT_MODE");
+            cm_cfg.put("const_distance", 0.5);
             REQUIRE(ddfake.open(pdev_cfg));
 
             {yarp::dev::WrapperSingle* ww_nws=nullptr; ddnws.view(ww_nws);

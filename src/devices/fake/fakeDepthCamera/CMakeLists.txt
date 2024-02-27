@@ -7,8 +7,9 @@ endif()
 
 yarp_prepare_plugin(fakeDepthCamera
   CATEGORY device
-  TYPE fakeDepthCameraDriver
-  INCLUDE fakeDepthCameraDriver.h
+  TYPE FakeDepthCameraDriver
+  INCLUDE FakeDepthCameraDriver.h
+  GENERATE_PARSER
   EXTRA_CONFIG
     WRAPPER=RGBDSensorWrapper
 )
@@ -18,8 +19,10 @@ if(ENABLE_fakeDepthCamera)
 
   target_sources(yarp_fakeDepthCamera
     PRIVATE
-      fakeDepthCameraDriver.cpp
-      fakeDepthCameraDriver.h
+      FakeDepthCameraDriver.cpp
+      FakeDepthCameraDriver.h
+      FakeDepthCameraDriver_ParamsParser.cpp
+      FakeDepthCameraDriver_ParamsParser.h
   )
 
   target_link_libraries(yarp_fakeDepthCamera

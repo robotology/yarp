@@ -7,8 +7,9 @@ endif()
 
 yarp_prepare_plugin(fakeMicrophone
   CATEGORY device
-  TYPE fakeMicrophone
-  INCLUDE fakeMicrophone.h
+  TYPE FakeMicrophone
+  INCLUDE FakeMicrophone.h
+  GENERATE_PARSER
   EXTRA_CONFIG
     WRAPPER=AudioRecorderWrapper
 )
@@ -18,8 +19,10 @@ if(NOT SKIP_fakeMicrophone)
 
   target_sources(yarp_fakeMicrophone
     PRIVATE
-      fakeMicrophone.cpp
-      fakeMicrophone.h
+      FakeMicrophone.cpp
+      FakeMicrophone.h
+      FakeMicrophone_ParamsParser.cpp
+      FakeMicrophone_ParamsParser.h
   )
 
   target_link_libraries(yarp_fakeMicrophone

@@ -10,7 +10,6 @@
 YARP_LOG_COMPONENT(FAKECHATBOTDEVICE, "yarp.devices.FakeChatBotDevice")
 
 FakeChatBotDevice::FakeChatBotDevice() :
-    m_lang{"eng"},
     m_fallback{"Sorry, I did not get that. Can you repeat?"},
     m_noInput{"I heard nothing. Can you please speak up?"},
     m_status{"greetings"},
@@ -56,14 +55,14 @@ bool FakeChatBotDevice::setLanguage(const std::string& language)
         yCError(FAKECHATBOTDEVICE) << "Unsopported language. Only English is supported for the moment being";
         return false;
     }
-    m_lang = language;
+    m_language = language;
 
     return true;
 }
 
 bool FakeChatBotDevice::getLanguage(std::string& language)
 {
-    language = m_lang;
+    language = m_language;
 
     return true;
 }
@@ -77,5 +76,16 @@ bool FakeChatBotDevice::getStatus(std::string& status)
 bool FakeChatBotDevice::resetBot()
 {
     m_status = "greetings";
+    return true;
+}
+
+bool FakeChatBotDevice::open(yarp::os::Searchable& config)
+{
+    if (!this->parseParams(config)) {return false;}
+    return true;
+}
+
+bool FakeChatBotDevice::close()
+{
     return true;
 }

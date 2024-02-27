@@ -31,6 +31,8 @@ TEST_CASE("dev::fakeSerialPort", "[yarp::dev]")
 
             Property pdev_cfg;
             pdev_cfg.put("device", "fakeSerialPort");
+            pdev_cfg.put("comport", "fakePort");
+            pdev_cfg.put("baudrate", 9600);
             REQUIRE(ddfake.open(pdev_cfg));
             REQUIRE(ddfake.view(iser));
             REQUIRE(iser);

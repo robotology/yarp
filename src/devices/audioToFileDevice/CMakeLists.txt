@@ -5,6 +5,7 @@ yarp_prepare_plugin(audioToFileDevice
   CATEGORY device
   TYPE AudioToFileDevice
   INCLUDE AudioToFileDevice.h
+  GENERATE_PARSER
   EXTRA_CONFIG
     WRAPPER=AudioPlayerWrapper
   DEFAULT ON
@@ -12,7 +13,6 @@ yarp_prepare_plugin(audioToFileDevice
 
 if(NOT SKIP_audioToFileDevice)
   yarp_add_plugin(yarp_audioToFileDevice)
-  generateDeviceParamsParser(AudioToFileDevice)
 
   target_sources(yarp_audioToFileDevice
     PRIVATE

@@ -25,6 +25,7 @@
 #include <cstdio>
 #include <random>
 #include <condition_variable>
+#include "FakeFrameGrabber_ParamsParser.h"
 
 /**
  * @ingroup dev_impl_media dev_impl_fake
@@ -33,6 +34,8 @@
  *
  * Implements the IFrameGrabberImage and IFrameGrabberControls
  * interfaces.
+ *
+ * Parameters required by this device are shown in class: FakeFrameGrabber_ParamsParser
  */
 class FakeFrameGrabber :
 #ifndef YARP_NO_DEPRECATED // Since YARP 3.5`
@@ -47,7 +50,8 @@ class FakeFrameGrabber :
         public yarp::dev::IAudioVisualStream,
         public yarp::dev::IRgbVisualParams,
         public yarp::os::Thread,
-        public yarp::os::PortReader
+        public yarp::os::PortReader,
+        public FakeFrameGrabber_ParamsParser
 {
 public:
     FakeFrameGrabber() = default;
@@ -60,19 +64,6 @@ public:
     bool close() override;
 
     /**
-     * Configure with a set of options. These are:
-     * <TABLE>
-     * <TR><TD> width </TD><TD> Width of image (default 128). </TD></TR>
-     * <TR><TD> height </TD><TD> Height of image (default 128). </TD></TR>
-     * <TR><TD> freq </TD><TD> Frequency in Hz to generate images (default 20Hz). </TD></TR>
-     * <TR><TD> period </TD><TD> Inverse of freq - only set one of these. </TD></TR>
-     * <TR><TD> mode </TD><TD> Can be [line] (default), [ball], [grid], [rand], [nois], [none]. </TD></TR>
-     * <TR><TD> src </TD><TD> Image file to read from (default: none). </TD></TR>
-     * <TR><TD> bayer </TD><TD> Emit a bayer image. </TD></TR>
-     * <TR><TD> mono </TD><TD> Emit a monochrome image. </TD></TR>
-     * <TR><TD> snr </TD><TD> Signal noise ratio ([nois] mode only) (default 0.5). </TD></TR>
-     * </TABLE>
-     *
      * @param config The options to use
      * @return true iff the object could be configured.
      */
@@ -165,32 +156,16 @@ private:
     static constexpr size_t default_freq = 30;
     static constexpr double default_snr = 0.5;
 
-    std::string        m_rpcPortName="/fakeFrameGrabber/rpc";
     yarp::os::Port     m_rpcPort;
 
     size_t ct{0};
     size_t bx{0};
     size_t by{0};
-    size_t w{default_w};
-    size_t h{default_h};
     unsigned long rnd{0};
-    double freq{default_freq};
-    double period{1/freq};
     double first{0};
-    double horizontalFov{0.0};
-    double verticalFov{0.0};
     double prev{0};
     bool have_bg{false};
-    int mode{0};
-    bool add_timestamp{false};
-    bool add_noise{false};
-    double snr{default_snr};
-    bool use_bayer{false};
-    bool use_mono{false};
-    bool mirror{false};
-    bool syncro{false};
-    bool topIsLow{true};
-    yarp::os::Property intrinsic;
+    yarp::os::Property m_intrinsic;
     yarp::sig::VectorOf<yarp::dev::CameraConfig> configurations;
 
     std::random_device rnddev;

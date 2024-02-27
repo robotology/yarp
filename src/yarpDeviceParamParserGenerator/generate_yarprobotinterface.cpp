@@ -40,7 +40,7 @@ std::string ParamsFilesGenerator::generateYarprobotinterface()
 <!DOCTYPE robot PUBLIC \"-//YARP//DTD yarprobotinterface 3.0//EN\" \"http://www.yarp.it/DTD/yarprobotinterfaceV3.0.dtd\">\n\
 <robot name = \"robot1\" build = \"1\" xmlns:xi = \"http://www.w3.org/2001/XInclude\">\n\
 <devices>\n\
-    <device xmlns:xi = \"http://www.w3.org/2001/XInclude\" name = \"device_example\" type = \"" << m_classname << "\">\n\
+    <device xmlns:xi = \"http://www.w3.org/2001/XInclude\" name = \"device_example\" type = \"" << m_modulename << "\">\n\
 ";
 
     m_sectionGroup.iterator_start();

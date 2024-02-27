@@ -7,18 +7,20 @@ endif()
 
 yarp_prepare_plugin(fakeLLMDevice
   CATEGORY device
-  TYPE fakeLLMDevice
-  INCLUDE fakeLLMDevice.h
-
+  TYPE FakeLLMDevice
+  INCLUDE FakeLLMDevice.h
+  GENERATE_PARSER
 )
-if(NOT SKIP_fakeLLMDevice)
 
+if(NOT SKIP_fakeLLMDevice)
     yarp_add_plugin(yarp_fakeLLMDevice)
 
     target_sources(yarp_fakeLLMDevice
     PRIVATE
-        fakeLLMDevice.cpp
-        fakeLLMDevice.h
+        FakeLLMDevice.cpp
+        FakeLLMDevice.h
+        FakeLLMDevice_ParamsParser.cpp
+        FakeLLMDevice_ParamsParser.h
     )
 
     target_link_libraries(yarp_fakeLLMDevice

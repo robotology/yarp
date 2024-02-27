@@ -63,7 +63,9 @@ namespace yarp::dev::tests
         double data[9] = { 1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0 };
         Vector v(9, data);
         Vector v2;
-        Portable::copyPortable(*retM, v2);
+        std::string retM_string = retM->toString();
+        bool cpret = Portable::copyPortable(*retM, v2);
+        REQUIRE ((cpret && v2.size()==9)); //Otherwise the following loop will segfault
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {
                 CHECK(retM->get(i * 3 + j).asFloat64() == v(i * 3 + j));

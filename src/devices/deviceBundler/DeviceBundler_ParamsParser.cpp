@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Fri Feb  9 16:59:13 2024
+// Generated on: Mon Feb 19 16:28:03 2024
 
 
 #include "DeviceBundler_ParamsParser.h"
@@ -17,6 +17,11 @@
 
 namespace {
     YARP_LOG_COMPONENT(DeviceBundlerParamsCOMPONENT, "yarp.device.DeviceBundler")
+}
+
+
+DeviceBundler_ParamsParser::DeviceBundler_ParamsParser()
+{
 }
 
 
@@ -127,8 +132,8 @@ std::string      DeviceBundler_ParamsParser::getDocumentationOfDeviceParams() co
     doc = doc + std::string("'doNotAttach': If set to true, the two devices are opened, but not attached\n");
     doc = doc + std::string("\n");
     doc = doc + std::string("Here are some examples of invocation command with yarpdev, with all params:\n");
-    doc = doc + " yarpdev --device DeviceBundler --wrapper_device device_name1 --attached_device device_name2 --doNotAttach false\n";
+    doc = doc + " yarpdev --device deviceBundler --wrapper_device device_name1 --attached_device device_name2 --doNotAttach false\n";
     doc = doc + std::string("Using only mandatory params:\n");
-    doc = doc + " yarpdev --device DeviceBundler --wrapper_device device_name1 --attached_device device_name2\n";
+    doc = doc + " yarpdev --device deviceBundler --wrapper_device device_name1 --attached_device device_name2\n";
     doc = doc + std::string("=============================================\n\n");    return doc;
 }

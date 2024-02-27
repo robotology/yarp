@@ -9,6 +9,7 @@ yarp_prepare_plugin(fakeFrameGrabber
   CATEGORY device
   TYPE FakeFrameGrabber
   INCLUDE FakeFrameGrabber.h
+  GENERATE_PARSER
   EXTRA_CONFIG
     WRAPPER=frameGrabber_nws_yarp
 )
@@ -20,6 +21,8 @@ if(ENABLE_fakeFrameGrabber)
     PRIVATE
       FakeFrameGrabber.cpp
       FakeFrameGrabber.h
+      FakeFrameGrabber_ParamsParser.cpp
+      FakeFrameGrabber_ParamsParser.h
   )
 
   target_link_libraries(yarp_fakeFrameGrabber

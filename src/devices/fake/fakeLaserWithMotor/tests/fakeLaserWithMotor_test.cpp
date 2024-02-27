@@ -36,7 +36,8 @@ TEST_CASE("dev::FakeLaserWithMotorTest", "[yarp::dev]")
             Property las_cfg;
             las_cfg.put("device", "fakeLaserWithMotor");
             las_cfg.put("test", "use_constant");
-            las_cfg.put("const_distance", 0.5);
+            Property& cm_cfg = las_cfg.addGroup("CONSTANT_MODE");
+            cm_cfg.put("const_distance", 0.5);
             REQUIRE(fakelaserdev.open(las_cfg));
             REQUIRE(fakelaserdev.view(irng));
             REQUIRE(fakelaserdev.view(ipos));

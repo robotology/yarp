@@ -8,7 +8,8 @@ endif()
 yarp_prepare_plugin(fakeMotionControl
   CATEGORY device
   TYPE FakeMotionControl
-  INCLUDE fakeMotionControl.h
+  INCLUDE FakeMotionControl.h
+  GENERATE_PARSER
   EXTRA_CONFIG
     WRAPPER=controlBoard_nws_yarp
 )
@@ -18,8 +19,11 @@ if(NOT SKIP_fakeMotionControl)
 
   target_sources(yarp_fakeMotionControl
     PRIVATE
-      fakeMotionControl.cpp
-      fakeMotionControl.h)
+      FakeMotionControl.cpp
+      FakeMotionControl.h
+      FakeMotionControl_ParamsParser.cpp
+      FakeMotionControl_ParamsParser.h
+)
 
   target_link_libraries(yarp_fakeMotionControl
     PRIVATE

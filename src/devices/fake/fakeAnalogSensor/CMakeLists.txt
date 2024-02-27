@@ -8,7 +8,8 @@ endif()
 yarp_prepare_plugin(fakeAnalogSensor
   CATEGORY device
   TYPE FakeAnalogSensor
-  INCLUDE fakeAnalogSensor.h
+  INCLUDE FakeAnalogSensor.h
+  GENERATE_PARSER
   EXTRA_CONFIG
     WRAPPER=analogServer
 )
@@ -18,8 +19,10 @@ if(ENABLE_fakeAnalogSensor)
 
   target_sources(yarp_fakeAnalogSensor
     PRIVATE
-      fakeAnalogSensor.cpp
-      fakeAnalogSensor.h
+      FakeAnalogSensor.cpp
+      FakeAnalogSensor.h
+      FakeAnalogSensor_ParamsParser.cpp
+      FakeAnalogSensor_ParamsParser.h
   )
 
   target_link_libraries(yarp_fakeAnalogSensor

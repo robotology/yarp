@@ -7,9 +7,10 @@ endif()
 
 yarp_prepare_plugin(fakeNavigation
   CATEGORY device
-  TYPE fakeNavigation
-  INCLUDE fakeNavigationDev.h
+  TYPE FakeNavigation
+  INCLUDE FakeNavigation.h
   DEPENDS "TARGET YARP::YARP_math"
+  GENERATE_PARSER
 )
 
 if(NOT SKIP_fakeNavigation)
@@ -17,8 +18,10 @@ if(NOT SKIP_fakeNavigation)
 
   target_sources(yarp_fakeNavigation
     PRIVATE
-      fakeNavigationDev.h
-      fakeNavigationDev.cpp
+      FakeNavigation.h
+      FakeNavigation.cpp
+      FakeNavigation_ParamsParser.h
+      FakeNavigation_ParamsParser.cpp
     )
 
   target_link_libraries(yarp_fakeNavigation

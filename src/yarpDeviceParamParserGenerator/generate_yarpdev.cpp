@@ -12,13 +12,15 @@
 std::string ParamsFilesGenerator::generateYarpdevStringAllParams()
 {
     std::ostringstream s;
-    s << " yarpdev --device " << this->m_classname;
+    s << " yarpdev --device " << this->m_modulename;
     for (auto param : m_params)
     {
         s << " --" << param.getFullParamName();
         if (!param.defaultValue.empty())
         {
+            if (param.type == "vector<int>" || param.type == "vector<double>" || param.type == "vector<string>") { s << " \"";}
             s << " " << param.defaultValue;
+            if (param.type == "vector<int>" || param.type == "vector<double>" || param.type == "vector<string>") { s << " \"";}
         }
         else
         {
@@ -32,13 +34,13 @@ std::string ParamsFilesGenerator::generateYarpdevStringAllParams()
             }
         }
     }
-    return s.str();
+    return escapeQuotes(s.str());
 }
 
 std::string ParamsFilesGenerator::generateYarpdevStringMandatoryParamsOnly()
 {
     std::ostringstream s;
-    s << " yarpdev --device " << this->m_classname;
+    s << " yarpdev --device " << this->m_modulename;
     for (auto param : m_params)
     {
         if (param.required)
@@ -46,7 +48,9 @@ std::string ParamsFilesGenerator::generateYarpdevStringMandatoryParamsOnly()
             s << " --" << param.getFullParamName();
             if (!param.defaultValue.empty())
             {
+                if (param.type == "vector<int>" || param.type == "vector<double>" || param.type == "vector<string>") { s << " \""; }
                 s << " " << param.defaultValue;
+                if (param.type == "vector<int>" || param.type == "vector<double>" || param.type == "vector<string>") { s << " \""; }
             }
             else
             {
@@ -54,7 +58,7 @@ std::string ParamsFilesGenerator::generateYarpdevStringMandatoryParamsOnly()
             }
         }
     }
-    return s.str();
+    return escapeQuotes(s.str());
 }
 
 std::string ParamsFilesGenerator::generateYarpdevDoxyString()

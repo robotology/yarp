@@ -8,7 +8,8 @@ endif()
 yarp_prepare_plugin(fakeLaser
   CATEGORY device
   TYPE FakeLaser
-  INCLUDE fakeLaser.h
+  INCLUDE FakeLaser.h
+  GENERATE_PARSER
   DEPENDS "TARGET YARP::YARP_math")
 
 if(NOT SKIP_fakeLaser)
@@ -16,8 +17,10 @@ if(NOT SKIP_fakeLaser)
 
   target_sources(yarp_fakeLaser
     PRIVATE
-      fakeLaser.h
-      fakeLaser.cpp
+      FakeLaser.h
+      FakeLaser.cpp
+      FakeLaser_ParamsParser.h
+      FakeLaser_ParamsParser.cpp
   )
 
   target_link_libraries(yarp_fakeLaser

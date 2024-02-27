@@ -7,8 +7,9 @@ endif()
 
 yarp_prepare_plugin(fakeIMU
   CATEGORY device
-  TYPE fakeIMU
-  INCLUDE fakeIMU.h
+  TYPE FakeIMU
+  INCLUDE FakeIMU.h
+  GENERATE_PARSER
   EXTRA_CONFIG
     WRAPPER=inertial
   DEPENDS "TARGET YARP::YARP_math"
@@ -19,8 +20,10 @@ if(NOT SKIP_fakeIMU)
 
   target_sources(yarp_fakeIMU
     PRIVATE
-      fakeIMU.cpp
-      fakeIMU.h
+      FakeIMU.cpp
+      FakeIMU.h
+      FakeIMU_ParamsParser.cpp
+      FakeIMU_ParamsParser.h
     )
 
   target_link_libraries(yarp_fakeIMU
