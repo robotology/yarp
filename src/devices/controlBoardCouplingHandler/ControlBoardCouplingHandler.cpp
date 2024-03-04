@@ -26,7 +26,6 @@ bool ControlBoardCouplingHandler::close()
 
 bool ControlBoardCouplingHandler::open(Searchable& config)
 {
-    bool ret {false};
 
     if(!parseParams(config))
     {
@@ -61,11 +60,20 @@ bool ControlBoardCouplingHandler::open(Searchable& config)
     return true;
 }
 
-bool ControlBoardCouplingHandler::attachAll(const PolyDriverList &polylist)
+bool ControlBoardCouplingHandler::attach(yarp::dev::PolyDriver* poly)
 {
     // For both cases, now configure everything that need
     // all the attribute to be correctly configured
-    bool ok = attachAllUsingAxesNames(polylist);
+    bool ok {false};
+
+    if (!poly->isValid()) {
+        yCError(CONTROLBOARDCOUPLINGHANDLER) << "Device " << poly << " to attach to is not valid ... cannot proceed";
+        return false;
+    }
+
+    ok = poly->view(iJntEnc);
+    ok = ok && poly->view(iAxInfo);
+    ok = ok && poly->view(iTimed);
 
     if (!ok)
     {
@@ -108,115 +116,12 @@ void ControlBoardCouplingHandler::configureBuffers() {
     return;
 }
 
-bool ControlBoardCouplingHandler::attachAllUsingAxesNames(const PolyDriverList& polylist)
+bool ControlBoardCouplingHandler::detach()
 {
-    std::map<std::string, axisLocation> axesLocationMap;
-
-    for(int p=0;p<polylist.size();p++)
-    {
-        // If there is a device with a specific device key, use it
-        // as a calibrator, otherwise rely on the subcontrolboards
-        // as usual
-        std::string deviceKey=polylist[p]->key;
-        if(deviceKey == "Calibrator" || deviceKey == "calibrator")
-        {
-            // Set the IRemoteCalibrator interface, the wrapper must point to the calibrator rdevice
-            yarp::dev::IRemoteCalibrator *calibrator;
-            polylist[p]->poly->view(calibrator);
-
-            //IRemoteCalibrator::setCalibratorDevice(calibrator);
-            continue;
-        }
-
-        // find if one of the desired axis is in this device
-        yarp::dev::IAxisInfo *iaxinfos = nullptr;
-        yarp::dev::IEncoders *iencs = nullptr;
-        polylist[p]->poly->view(iaxinfos);
-        polylist[p]->poly->view(iencs);
-
-        if( !iencs ||
-            !iaxinfos )
-        {
-            yCError(CONTROLBOARDCOUPLINGHANDLER) << "sub-device" << deviceKey << "does not implemented the required IAxisInfo or IEncoders interfaces";
-            return false;
-        }
-
-        int nrOfSubdeviceAxes;
-        bool ok = iencs->getAxes(&nrOfSubdeviceAxes);
-
-        if( !ok )
-        {
-            yCError(CONTROLBOARDCOUPLINGHANDLER) << "sub-device" << deviceKey << "does not implemented the required getAxes method";
-            return false;
-        }
-
-        for(int axInSubDevice =0; axInSubDevice < nrOfSubdeviceAxes; axInSubDevice++)
-        {
-            std::string axNameYARP;
-            ok = iaxinfos->getAxisName(axInSubDevice,axNameYARP);
-
-            std::string axName = axNameYARP;
-
-            if( !ok )
-            {
-                yCError(CONTROLBOARDCOUPLINGHANDLER) << "sub-device" << deviceKey << "does not implemented the required getAxisName method";
-                return false;
-            }
-
-            auto it = axesLocationMap.find(axName);
-            if( it != axesLocationMap.end() )
-            {
-                yCError(CONTROLBOARDCOUPLINGHANDLER)
-                    << "multiple axes have the same name" << axName
-                    << "on on device " << polylist[p]->key << "with index" << axInSubDevice
-                    <<"and another on device" << it->second.subDeviceKey << "with index" << it->second.indexInSubDevice;
-                return false;
-            }
-
-            axisLocation newLocation;
-            newLocation.subDeviceKey = polylist[p]->key;
-            newLocation.indexInSubDevice = axInSubDevice;
-            newLocation.indexOfSubDeviceInPolyDriverList = p;
-            axesLocationMap[axName] = newLocation;
-        }
-    }
-
-    // We store the key of all the devices that we actually use in the remapped control device
-    std::vector<std::string> subControlBoardsKeys;
-    std::map<std::string, size_t> subControlBoardKey2IndexInPolyDriverList;
-    std::map<std::string, size_t> subControlBoardKey2IndexInRemappedControlBoards;
-
-
-    // Once we build the axis map, we build the mapping between the remapped axes and
-    // the couple subControlBoard, axis in subControlBoard
-    for(const auto& axesName : m_axesNames)
-    {
-        auto it = axesLocationMap.find(axesName);
-        if( it == axesLocationMap.end() )
-        {
-            yCError(CONTROLBOARDCOUPLINGHANDLER)
-                << "axis " << axesName
-                << "specified in m_axesNames was not found in the axes of the controlboards passed to attachAll, attachAll failed.";
-            return false;
-        }
-
-        axisLocation loc = it->second;
-        std::string key = loc.subDeviceKey;
-
-        if(std::find(subControlBoardsKeys.begin(), subControlBoardsKeys.end(), key) == subControlBoardsKeys.end())
-        {
-            /* subControlBoardsKeys does not contain key */
-            subControlBoardKey2IndexInRemappedControlBoards[key] = subControlBoardsKeys.size();
-            subControlBoardsKeys.push_back(key);
-            subControlBoardKey2IndexInPolyDriverList[key] = loc.indexOfSubDeviceInPolyDriverList;
-        }
-    }
-
-    return true;
-}
-
-bool ControlBoardCouplingHandler::detachAll()
-{
+    iJntEnc      = nullptr;
+    iTimed       = nullptr;
+    iAxInfo      = nullptr;
+    iJntCoupling = nullptr;
     return true;
 }
 
@@ -249,54 +154,121 @@ bool ControlBoardCouplingHandler::setEncoders(const double *vals)
 
 bool ControlBoardCouplingHandler::getEncoder(int j, double *v)
 {
-    // TODO use iJointCoupling
-    return false;
+    bool ok = false;
+    if (iJntEnc && iJntCoupling) {
+        ok = ok && iJntEnc->getEncoders(actAxesPos.data());
+        ok = ok && iJntCoupling->convertFromActuatedAxesToPhysicalJointsPos(actAxesPos, physJointsPos);
+        if (ok) {
+            *v = physJointsPos[j];
+            return ok;
+        }
+    }
+    return ok;
 }
 
 bool ControlBoardCouplingHandler::getEncoders(double *encs)
 {
-    // TODO use iJointCoupling
-    bool ret=true;
-    return ret;
+    bool ok = false;
+    if (iJntEnc && iJntCoupling) {
+        ok = ok && iJntEnc->getEncoders(actAxesPos.data());
+        ok = ok && iJntCoupling->convertFromActuatedAxesToPhysicalJointsPos(actAxesPos, physJointsPos);
+        if (ok) {
+            encs = physJointsPos.data();
+            return ok;
+        }
+    }
+    return ok;
 }
 
 bool ControlBoardCouplingHandler::getEncodersTimed(double *encs, double *t)
 {
-    // TODO use iJointCoupling
-    bool ret=true;
-    return ret;
+    bool ok = false;
+    if (iJntEnc && iJntCoupling) {
+        // TODO t has to be probably resized
+        ok = ok && iJntEnc->getEncodersTimed(actAxesPos.data(), t);
+        ok = ok && iJntCoupling->convertFromActuatedAxesToPhysicalJointsPos(actAxesPos, physJointsPos);
+        if (ok) {
+            encs = physJointsPos.data();
+            return ok;
+        }
+    }
+    return ok;
 }
 
 bool ControlBoardCouplingHandler::getEncoderTimed(int j, double *v, double *t)
 {
-    // TODO use iJointCoupling
-    return false;
+    bool ok = false;
+    if (iJntEnc && iJntCoupling) {
+        ok = ok && iJntEnc->getEncodersTimed(actAxesPos.data(), t);
+        ok = ok && iJntCoupling->convertFromActuatedAxesToPhysicalJointsPos(actAxesPos, physJointsPos);
+        if (ok) {
+            *v = physJointsPos[j];
+            return ok;
+        }
+    }
+    return ok;
 }
 
 bool ControlBoardCouplingHandler::getEncoderSpeed(int j, double *sp)
 {
-    // TODO use iJointCoupling
-    return false;
+    bool ok = false;
+    if (iJntEnc && iJntCoupling) {
+        ok = ok && iJntEnc->getEncoders(actAxesPos.data());
+        ok = ok && iJntEnc->getEncoderSpeeds(actAxesVel.data());
+        ok = ok && iJntCoupling->convertFromActuatedAxesToPhysicalJointsVel(actAxesPos, actAxesVel, physJointsVel);
+        if (ok) {
+            *sp = physJointsVel[j];
+            return ok;
+        }
+    }
+    return ok;
 }
 
 bool ControlBoardCouplingHandler::getEncoderSpeeds(double *spds)
 {
-    // TODO use iJointCoupling
-    bool ret=true;
-    return ret;
+    bool ok = false;
+    if (iJntEnc && iJntCoupling) {
+        ok = ok && iJntEnc->getEncoders(actAxesPos.data());
+        ok = ok && iJntEnc->getEncoderSpeeds(actAxesVel.data());
+        ok = ok && iJntCoupling->convertFromActuatedAxesToPhysicalJointsVel(actAxesPos, actAxesVel, physJointsVel);
+        if (ok) {
+            spds = physJointsVel.data();
+            return ok;
+        }
+    }
+    return ok;
 }
 
 bool ControlBoardCouplingHandler::getEncoderAcceleration(int j, double *acc)
 {
-    // TODO use iJointCoupling
-    return false;
+    bool ok = false;
+    if (iJntEnc && iJntCoupling) {
+        ok = ok && iJntEnc->getEncoders(actAxesPos.data());
+        ok = ok && iJntEnc->getEncoderSpeeds(actAxesVel.data());
+        ok = ok && iJntEnc->getEncoderAccelerations(actAxesAcc.data());
+        ok = ok && iJntCoupling->convertFromActuatedAxesToPhysicalJointsAcc(actAxesPos, actAxesVel, actAxesAcc, physJointsAcc);
+        if (ok) {
+            *acc = physJointsAcc[j];
+            return ok;
+        }
+    }
+    return ok;
 }
 
 bool ControlBoardCouplingHandler::getEncoderAccelerations(double *accs)
 {
-    bool ret=true;
-    // TODO use iJointCoupling
-    return ret;
+    bool ok = false;
+    if (iJntEnc && iJntCoupling) {
+        ok = ok && iJntEnc->getEncoders(actAxesPos.data());
+        ok = ok && iJntEnc->getEncoderSpeeds(actAxesVel.data());
+        ok = ok && iJntEnc->getEncoderAccelerations(actAxesAcc.data());
+        ok = ok && iJntCoupling->convertFromActuatedAxesToPhysicalJointsAcc(actAxesPos, actAxesVel, actAxesAcc, physJointsAcc);
+        if (ok) {
+            accs = physJointsAcc.data();
+            return ok;
+        }
+    }
+    return ok;
 }
 
 // /* IControlLimits */
@@ -385,28 +357,47 @@ bool ControlBoardCouplingHandler::getEncoderAccelerations(double *accs)
 
 bool ControlBoardCouplingHandler::getAxes(int *ax)
 {
-    // TODO use iJointCoupling
     bool ok{false};
+    if (iJntCoupling) {
+        size_t nrOfPhysicalJoints {0};
+        ok = iJntCoupling->getNrOfPhysicalJoints(nrOfPhysicalJoints);
+        if (ok) {
+            *ax = nrOfPhysicalJoints;
+            return ok;
+        }
+    }
     return ok;
 }
 
 bool ControlBoardCouplingHandler::getAxisName(int j, std::string& name)
 {
-    auto ok = iJntCoupling->getPhysicalJointName(j, name);
+    bool ok{false};
+    if (iJntCoupling) {
+        ok = iJntCoupling->getPhysicalJointName(j, name);
+        return ok;
+    }
     return ok;
 }
 
 bool ControlBoardCouplingHandler::getJointType(int j, yarp::dev::JointTypeEnum& type)
 {
-    // TODO use iJointCoupling
-    return false;
+    bool ok{false};
+    // TODO I am not sure how to handle this function
+    type = VOCAB_JOINTTYPE_REVOLUTE;
+    return ok;
 }
 
 yarp::os::Stamp ControlBoardCouplingHandler::getLastInputStamp()
 {
-    double averageTimestamp = 0.0;
-    int collectedTimestamps = 0;
-    yarp::os::Stamp ret;
-
-    return ret;
+    if(iTimed)
+    {
+        yarp::os::Stamp stamp;
+        stamp = iTimed->getLastInputStamp();
+        return stamp;
+    }
+    else
+    {
+        yCError(CONTROLBOARDCOUPLINGHANDLER) << "IpreciselyTimed interface not available";
+        return yarp::os::Stamp();
+    }
 }

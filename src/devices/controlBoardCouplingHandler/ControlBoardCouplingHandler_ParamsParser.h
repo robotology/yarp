@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Tue Feb 27 15:40:18 2024
+// Generated on: Mon Mar  4 15:49:39 2024
 
 
 #ifndef CONTROLBOARDCOUPLINGHANDLER_PARAMSPARSER_H
@@ -25,25 +25,24 @@
 * These are the used parameters:
 * | Group name      | Parameter name     | Type           | Units | Default Value | Required | Description                                    | Notes |
 * |:---------------:|:------------------:|:--------------:|:-----:|:-------------:|:--------:|:----------------------------------------------:|:-----:|
-* | -               | axesNames          | vector<string> | -     | -             | 1        | Names of the actuated axes                     | -     |
 * | -               | jointNames         | vector<string> | -     | -             | 1        | Names of the physical joints                   | -     |
-* | LIMITS          | -                  | string         | -     | -             | 1        | string containing the physical joint limits    | -     |
+* | LIMITS          | -                  | string         | -     | -             | 1        | The group containing the physical joint limits | -     |
 * | LIMITS          | jntPosMin          | vector<double> | -     | -             | 1        | Phyisical joints' position minimum             | -     |
 * | LIMITS          | jntPosMax          | vector<double> | -     | -             | 1        | Phyisical joints' position maximum             | -     |
-* | COUPLING        | -                  | string         | -     | -             | 1        | The string containing the coupling description | -     |
+* | COUPLING        | -                  | string         | -     | -             | 1        | The group containing the coupling description  | -     |
 * | COUPLING        | device             | string         | -     | -             | 1        | Name of the device that handles the coupling   | -     |
 * | COUPLING        | actuatedAxesNames  | vector<string> | -     | -             | 1        | Names of the actuated axes                     | -     |
 * | COUPLING        | actuatedAxesPosMin | vector<string> | -     | -             | 1        | Actuated axes' position minimum                | -     |
 * | COUPLING        | actuatedAxesPosMax | vector<string> | -     | -             | 1        | Actuated axes' position maximum                | -     |
-* | COUPLING_PARAMS | -                  | string         | -     | -             | 1        | The string containing the coupling params      | -     |
+* | COUPLING_PARAMS | -                  | string         | -     | -             | 1        | The group containing the coupling params       | -     |
 *
 * The device can be launched by yarpdev using one of the following examples:
 * \code{.unparsed}
-* yarpdev --device controlBoardCouplingHandler --axesNames <mandatory_value> --jointNames <mandatory_value> --LIMITS:: <mandatory_value> --LIMITS::jntPosMin <mandatory_value> --LIMITS::jntPosMax <mandatory_value> --COUPLING:: <mandatory_value> --COUPLING::device <mandatory_value> --COUPLING::actuatedAxesNames <mandatory_value> --COUPLING::actuatedAxesPosMin <mandatory_value> --COUPLING::actuatedAxesPosMax <mandatory_value> --COUPLING_PARAMS:: <mandatory_value>
+* yarpdev --device controlBoardCouplingHandler --jointNames <mandatory_value> --LIMITS:: <mandatory_value> --LIMITS::jntPosMin <mandatory_value> --LIMITS::jntPosMax <mandatory_value> --COUPLING:: <mandatory_value> --COUPLING::device <mandatory_value> --COUPLING::actuatedAxesNames <mandatory_value> --COUPLING::actuatedAxesPosMin <mandatory_value> --COUPLING::actuatedAxesPosMax <mandatory_value> --COUPLING_PARAMS:: <mandatory_value>
 * \endcode
 *
 * \code{.unparsed}
-* yarpdev --device controlBoardCouplingHandler --axesNames <mandatory_value> --jointNames <mandatory_value> --LIMITS:: <mandatory_value> --LIMITS::jntPosMin <mandatory_value> --LIMITS::jntPosMax <mandatory_value> --COUPLING:: <mandatory_value> --COUPLING::device <mandatory_value> --COUPLING::actuatedAxesNames <mandatory_value> --COUPLING::actuatedAxesPosMin <mandatory_value> --COUPLING::actuatedAxesPosMax <mandatory_value> --COUPLING_PARAMS:: <mandatory_value>
+* yarpdev --device controlBoardCouplingHandler --jointNames <mandatory_value> --LIMITS:: <mandatory_value> --LIMITS::jntPosMin <mandatory_value> --LIMITS::jntPosMax <mandatory_value> --COUPLING:: <mandatory_value> --COUPLING::device <mandatory_value> --COUPLING::actuatedAxesNames <mandatory_value> --COUPLING::actuatedAxesPosMin <mandatory_value> --COUPLING::actuatedAxesPosMax <mandatory_value> --COUPLING_PARAMS:: <mandatory_value>
 * \endcode
 *
 */
@@ -65,7 +64,6 @@ public:
     };
     const parser_version_type m_parser_version = {};
 
-    const std::string m_axesNames_defaultValue = {""};
     const std::string m_jointNames_defaultValue = {""};
     const std::string m_LIMITS__defaultValue = {""};
     const std::string m_LIMITS_jntPosMin_defaultValue = {""};
@@ -77,7 +75,6 @@ public:
     const std::string m_COUPLING_actuatedAxesPosMax_defaultValue = {""};
     const std::string m_COUPLING_PARAMS__defaultValue = {""};
 
-    std::vector<std::string> m_axesNames = {}; //This default value is autogenerated. It is highly recommended to provide a suggested value also for mandatory parameters.
     std::vector<std::string> m_jointNames = {}; //This default value is autogenerated. It is highly recommended to provide a suggested value also for mandatory parameters.
     std::string m_LIMITS_ = {}; //This default value is autogenerated. It is highly recommended to provide a suggested value also for mandatory parameters.
     std::vector<double> m_LIMITS_jntPosMin = {}; //This default value is autogenerated. It is highly recommended to provide a suggested value also for mandatory parameters.

@@ -14,7 +14,7 @@
 #include <yarp/dev/ControlBoardInterfacesImpl.h>
 #include <yarp/dev/IPreciselyTimed.h>
 #include <yarp/os/Semaphore.h>
-#include <yarp/dev/IMultipleWrapper.h>
+#include <yarp/dev/WrapperSingle.h>
 #include "ControlBoardCouplingHandler_ParamsParser.h"
 
 #include <string>
@@ -27,18 +27,18 @@
 class ControlBoardCouplingHandler :
         public yarp::dev::DeviceDriver,
         public yarp::dev::IEncodersTimed,
-        public yarp::dev::IMultipleWrapper,
+        public yarp::dev::WrapperSingle,
         public yarp::dev::IAxisInfo,
         // public yarp::dev::IControlLimits,
         public yarp::dev::IPreciselyTimed,
         public ControlBoardCouplingHandler_ParamsParser {
 private:
     yarp::dev::PolyDriver            jointCouplingHandler;
-    yarp::dev::IEncodersTimed        *iJntEnc;
+    yarp::dev::IEncodersTimed        *iJntEnc{nullptr};
     //yarp::dev::IControlLimits        *lim;
-    yarp::dev::IPreciselyTimed       *iTimed;
-    yarp::dev::IAxisInfo             *info;
-    yarp::dev::IJointCoupling        *iJntCoupling;
+    yarp::dev::IPreciselyTimed       *iTimed{nullptr};
+    yarp::dev::IAxisInfo             *iAxInfo{nullptr};
+    yarp::dev::IJointCoupling        *iJntCoupling{nullptr};
 
     yarp::sig::Vector physJointsPos;
     yarp::sig::Vector physJointsVel;
@@ -92,9 +92,9 @@ public:
     */
     bool open(yarp::os::Searchable &prop) override;
 
-    bool detachAll() override;
+    bool detach() override;
 
-    bool attachAll(const yarp::dev::PolyDriverList &l) override;
+    bool attach(yarp::dev::PolyDriver* poly) override;
 
     /* IEncoders */
     bool resetEncoder(int j) override;
