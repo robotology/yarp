@@ -1,0 +1,1 @@
+ * |            |   name         | string  | -              |   /speechTranscription_nws   | No          | full name of the port opened by the device                            | MUST start with a '/' character, xxx/audio:i, xxx/rpc, xxx/texts:o ports are opened  |

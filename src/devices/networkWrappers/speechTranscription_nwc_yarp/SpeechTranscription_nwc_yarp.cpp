@@ -25,27 +25,10 @@ bool SpeechTranscription_nwc_yarp::close()
 
 bool SpeechTranscription_nwc_yarp::open(yarp::os::Searchable& config)
 {
-    m_local_name.clear();
-    m_thrift_server_name.clear();
+    if (!parseParams(config)) { return false; }
 
-    if(!config.check("local"))
-    {
-        yCError(SPEECHTR_NWC) << "No local name specified";
-
-        return false;
-    }
-    m_local_name = config.find("local").asString();
-
-    if(!config.check("remote"))
-    {
-        yCError(SPEECHTR_NWC) << "No remote name specified";
-
-        return false;
-    }
-    m_thrift_server_name = config.find("remote").asString();
-
-    std::string thriftClientPortName = m_local_name + "/thrift:c";
-    std::string thriftServerPortName = m_thrift_server_name + "/rpc";
+    std::string thriftClientPortName = m_local + "/thrift:c";
+    std::string thriftServerPortName = m_remote + "/rpc";
 
     if(!m_thriftClientPort.open(thriftClientPortName))
     {

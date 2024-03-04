@@ -24,21 +24,11 @@ YARP_LOG_COMPONENT(ROBOTDESCRIPTIONSERVER, "yarp.device.robotDescriptionServer")
 
 bool RobotDescriptionServer::open(yarp::os::Searchable &config)
 {
-    m_local_name.clear();
-    m_local_name = config.find("local").asString();
+    if (!this->parseParams(config)) { return false; }
 
-    if (m_local_name == "")
+    if (!m_rpc_port.open(m_local))
     {
-        yCError(ROBOTDESCRIPTIONSERVER, "open(): Invalid local name");
-        return false;
-    }
-
-    std::string local_rpc = m_local_name;
-    local_rpc += "/rpc";
-
-    if (!m_rpc_port.open(local_rpc))
-    {
-        yCError(ROBOTDESCRIPTIONSERVER, "open(): Could not open rpc port %s, check network", local_rpc.c_str());
+        yCError(ROBOTDESCRIPTIONSERVER, "open(): Could not open rpc port %s, check network", m_local.c_str());
         return false;
     }
 

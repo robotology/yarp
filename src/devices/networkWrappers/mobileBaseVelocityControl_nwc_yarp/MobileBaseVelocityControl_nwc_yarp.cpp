@@ -26,30 +26,10 @@ YARP_LOG_COMPONENT(MOBVEL_NWC_YARP, "yarp.device.MobileBaseVelocityControl_nwc_y
 
 bool MobileBaseVelocityControl_nwc_yarp::open(yarp::os::Searchable &config)
 {
-    m_local_name.clear();
-    m_server_name.clear();
+    if (!parseParams(config)) { return false; }
 
-    m_local_name = config.find("local").asString();
-    m_server_name = config.find("server").asString();
-    m_carrier = config.check("carrier", yarp::os::Value("tcp"), "the carrier used for the connection with the server").asString();
-
-    if (m_local_name.empty())
-    {
-        yCError(MOBVEL_NWC_YARP, "open() error you have to provide a valid 'local' param");
-        return false;
-    }
-
-    if (m_server_name.empty())
-    {
-        yCError(MOBVEL_NWC_YARP, "open() error you have to provide a valid 'server' param");
-        return false;
-    }
-
-    std::string local_rpc_1;
-    std::string remote_rpc_1;
-
-    local_rpc_1           = m_local_name  + "/navigation/rpc:o";
-    remote_rpc_1          = m_server_name + "/rpc:i";
+    std::string local_rpc_1           = m_local  + "/navigation/rpc:o";
+    std::string remote_rpc_1          = m_server + "/rpc:i";
 
     if (!m_rpc_port.open(local_rpc_1))
     {

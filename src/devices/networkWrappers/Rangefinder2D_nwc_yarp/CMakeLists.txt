@@ -7,6 +7,7 @@ yarp_prepare_plugin(rangefinder2D_nwc_yarp
   INCLUDE Rangefinder2D_nwc_yarp.h
   DEPENDS "TARGET YARP::YARP_math"
   DEFAULT ON
+  GENERATE_PARSER
 )
 
 if(NOT SKIP_rangefinder2D_nwc_yarp)
@@ -16,6 +17,8 @@ if(NOT SKIP_rangefinder2D_nwc_yarp)
     PRIVATE
       Rangefinder2D_nwc_yarp.cpp
       Rangefinder2D_nwc_yarp.h
+      Rangefinder2D_nwc_yarp_ParamsParser.cpp
+      Rangefinder2D_nwc_yarp_ParamsParser.h
   )
 
   target_link_libraries(yarp_rangefinder2D_nwc_yarp

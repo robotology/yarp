@@ -21,8 +21,10 @@ using namespace yarp::dev;
 using namespace yarp::sig;
 using yarp::dev::impl::jointData;
 
+const double DEFAULT_PERIOD = 0.02;
+
 ControlBoard_nws_yarp::ControlBoard_nws_yarp() :
-        yarp::os::PeriodicThread(default_period)
+        yarp::os::PeriodicThread(DEFAULT_PERIOD)
 {
 }
 
@@ -55,68 +57,11 @@ bool ControlBoard_nws_yarp::close()
     return true;
 }
 
-bool ControlBoard_nws_yarp::checkPortName(Searchable& params)
-{
-    // find name as port name (similar both in new and old policy)
-    if (!params.check("name")) {
-        yCError(CONTROLBOARD) <<
-            "*************************************************************************************\n"
-            "* controlBoard_nws_yarp missing mandatory parameter 'name' for port name, usage is: *\n"
-            "*     name:    full port prefix name with leading '/',  e.g.  /robotName/part/      *\n"
-            "*************************************************************************************";
-        return false;
-    }
-
-    partName = params.find("name").asString();
-    if (partName[0] != '/') {
-        yCWarning(CONTROLBOARD) <<
-            "*************************************************************************************\n"
-            "* controlBoard_nws_yarp 'name' parameter for port name does not follow convention,  *\n"
-            "* it MUST start with a leading '/' since it is used as the full prefix port name    *\n"
-            "*     name:    full port prefix name with leading '/',  e.g.  /robotName/part/      *\n"
-            "* A temporary automatic fix will be done for you, but please fix your config file   *\n"
-            "*************************************************************************************";
-        rootName = "/" + partName;
-    } else {
-        rootName = partName;
-    }
-
-    return true;
-}
-
-
 bool ControlBoard_nws_yarp::open(Searchable& config)
 {
-    Property prop;
-    prop.fromString(config.toString());
+    if (!parseParams(config)) { return false; }
 
-    if (!checkPortName(config)) {
-        yCError(CONTROLBOARD) << "'portName' was not correctly set, check you r configuration file";
-        return false;
-    }
-
-    // Check parameter, so if both are present we use the correct one
-    if (prop.check("period")) {
-        if (!prop.find("period").isFloat64()) {
-            yCError(CONTROLBOARD) << "'period' parameter is not a double value";
-            return false;
-        }
-        period = prop.find("period").asFloat64();
-        if (period <= 0) {
-            yCError(CONTROLBOARD) << "'period' parameter is not valid, read value is" << period;
-            return false;
-        }
-    } else {
-        yCDebug(CONTROLBOARD) << "'period' parameter missing, using default thread period = 0.02s";
-        period = default_period;
-    }
-
-    rootName = prop.check("rootName", Value("/"), "starting '/' if needed.").asString();
-    partName = prop.check("name", Value("controlboard"), "prefix for port names").asString();
-    rootName += (partName);
-    if (rootName.find("//") != std::string::npos) {
-        rootName.replace(rootName.find("//"), 2, "/");
-    }
+    std::string rootName = m_name;
 
     // Open ports, then attach the readers or callbacks
     if (!inputRPCPort.open((rootName + "/rpc:i"))) {
@@ -153,7 +98,7 @@ bool ControlBoard_nws_yarp::open(Searchable& config)
     // In case attach is not deferred and the controlboard already owns a valid device
     // we can start the thread. Otherwise this will happen when attachAll is called
     if (subdevice_ready) {
-        setPeriod(period);
+        setPeriod(m_period);
         if (!start()) {
             yCError(CONTROLBOARD) << "Error starting thread";
             return false;
@@ -381,7 +326,7 @@ bool ControlBoard_nws_yarp::attach(yarp::dev::PolyDriver* poly)
         return false;
     }
 
-    setPeriod(period);
+    setPeriod(m_period);
     if (!start()) {
         yCError(CONTROLBOARD) << "Error starting thread";
         return false;

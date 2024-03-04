@@ -5,6 +5,7 @@ yarp_prepare_plugin(chatBot_nws_yarp
   CATEGORY device
   TYPE ChatBot_nws_yarp
   INCLUDE ChatBot_nws_yarp.h
+  GENERATE_PARSER
   DEFAULT ON
 )
 
@@ -17,6 +18,8 @@ if(NOT SKIP_chatBot_nws_yarp)
       IChatBotMsgsImpl.cpp
       ChatBot_nws_yarp.cpp
       ChatBot_nws_yarp.h
+      ChatBot_nws_yarp_ParamsParser.cpp
+      ChatBot_nws_yarp_ParamsParser.h
   )
 
   target_link_libraries(yarp_chatBot_nws_yarp

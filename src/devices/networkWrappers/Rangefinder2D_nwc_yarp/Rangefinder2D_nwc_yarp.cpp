@@ -154,33 +154,14 @@ void Rangefinder2DInputPortProcessor::getEstFrequency(int &ite, double &av, doub
 
 bool Rangefinder2D_nwc_yarp::open(yarp::os::Searchable &config)
 {
-    m_local_portname.clear();
-    m_remote_portname.clear();
+    if (!parseParams(config)) { return false; }
 
-    m_local_portname = config.find("local").asString();
-    m_remote_portname = config.find("remote").asString();
+    std::string local_rpc_portname = m_local+ "/rpc:o";
+    std::string remote_rpc_portname = m_remote + "/rpc:i";
 
-    m_carrier = config.check("carrier", yarp::os::Value("tcp"), "the carrier used for the connection with the server").asString();
-
-    if (m_local_portname =="")
+    if (!m_inputPort.open(m_local))
     {
-        yCError(RANGEFINDER2DCLIENT, "open() error you have to provide valid local name");
-        return false;
-    }
-    if (m_remote_portname =="")
-    {
-        yCError(RANGEFINDER2DCLIENT, "open() error you have to provide valid remote name");
-        return false;
-    }
-
-    std::string local_rpc_portname = m_local_portname;
-    local_rpc_portname += "/rpc:o";
-    std::string remote_rpc_portname = m_remote_portname;
-    remote_rpc_portname += "/rpc:i";
-
-    if (!m_inputPort.open(m_local_portname))
-    {
-        yCError(RANGEFINDER2DCLIENT, "open() error could not open port %s, check network\n", m_local_portname.c_str());
+        yCError(RANGEFINDER2DCLIENT, "open() error could not open port %s, check network\n", m_local.c_str());
         return false;
     }
     m_inputPort.useCallback();
@@ -191,10 +172,10 @@ bool Rangefinder2D_nwc_yarp::open(yarp::os::Searchable &config)
         return false;
     }
 
-    bool ok=Network::connect(m_remote_portname.c_str(), m_local_portname.c_str(), m_carrier);
+    bool ok=Network::connect(m_remote.c_str(), m_local.c_str(), m_carrier);
     if (!ok)
     {
-        yCError(RANGEFINDER2DCLIENT, "open() error could not connect to %s\n", m_remote_portname.c_str());
+        yCError(RANGEFINDER2DCLIENT, "open() error could not connect to %s\n", m_remote.c_str());
         return false;
     }
 

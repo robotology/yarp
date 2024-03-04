@@ -14,6 +14,7 @@
 
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/IRGBDSensor.h>
+#include "RGBDSensorClient_ParamsParser.h"
 
 #include <yarp/proto/framegrabber/FrameGrabberControls_Forwarder.h>
 #include <yarp/proto/framegrabber/RgbVisualParams_Forwarder.h>
@@ -36,52 +37,17 @@ class RGBDSensor_StreamingMsgParser;
  * for depth image following Framegrabber and IDepthSensor interfaces specification respectively.
  * See they documentation for more details about each interface.
  *
- * This device is paired with its server called RGBDSensorWrapper to receive the data streams and perform remote operations.
+ * This device is paired with its server called RGBDSensor_nws_yarp to receive the data streams and perform remote operations.
  *
- *   Parameters required by this device are:
- * | Parameter name  | SubParameter   | Type    | Units          | Default Value | Required      | Description                                                                           | Notes |
- * |:---------------:|:--------------:|:-------:|:--------------:|:-------------:|:------------: |:-------------------------------------------------------------------------------------:|:-----:|
- * | localImagePort  |      -         | string  | -              |   -           |               | Full name of the local port to open, e.g. /myApp/RGBD/rgb_camera:i                    |       |
- * | localDepthPort  |      -         | string  | -              |   -           |               | Full name of the local port to open, e.g. /myApp/RGBD/depth_camera:i                  |       |
- * | localRpcPort    |      -         | string  | -              |   -           |               | Full name of the local RPC port to open, e.g. /myApp/RGBD/rpc                         |       |
- * | remoteImagePort |      -         | string  | -              |   -           |               | Full name of the port to read color images from, e.g. /robotName/RGBD/image_camera:o  |       |
- * | remoteDepthPort |      -         | string  | -              |   -           |               | Full name of the port to read depth images from, e.g. /robotName/RGBD/depth_camera:o  |       |
- * | remoteRpcPort   |      -         | string  | -              |   -           |               | Full name of the remote RPC port, e.g. /robotName/RGBD/rpc                            |       |
- * | ImageCarrier    |      -         | string  | -              | udp           | No            | Carrier name for the Image stream used in the client-server connection                |       |
- * | DepthCarrier    |      -         | string  | -              | udp           | No            | Carrier name for the Depth strean used in the client-server connection                |       |
- *
- * Configuration file using .ini format, using subdevice keyword.
- *
- * \code{.unparsed}
- * device RGBDSensorClient
- * localImagePort     /clientRgbPort:i
- * localDepthPort     /clientDepthPort:i
- * localRpcPort       /clientRpcPort
- * remoteImagePort    /RGBD/rgbCamera:o
- * remoteDepthPort    /RGBD/depthCamera:o
- * remoteRpcPort      /RGBD/rpc
- * \endcode
- *
- * XML format, using 'networks' keyword. This file is meant to be used in junction with yarprobotinterface executable,
- * therefore has an addictional section at the end.
- *
- * \code{.xml}
- *  <!-- Following parameters are meaningful ONLY for yarprobotinterface -->
- *
- * <param name="localImagePort">    /clientRgbPort:i        </param>
- * <param name="localDepthPort">    /clientDepthPort:i      </param>
- * <param name="localRpcPort">      /clientRpcPort          </param>
- * <param name="remoteImagePort">   /RGBD/rgbCamera:o       </param>
- * <param name="localDepthPort">    /RGBD/depthCamera:o     </param>
- * <param name="remoteRpcPort">     /RGBD/rpc               </param>
- * \endcode
+ * Parameters required by this device are shown in class: RGBDSensorClient_ParamsParser
  *
  */
 
 class RGBDSensorClient :
         public yarp::dev::DeviceDriver,
         public yarp::proto::framegrabber::FrameGrabberControls_Forwarder,
-        public yarp::dev::IRGBDSensor
+        public yarp::dev::IRGBDSensor,
+        public RGBDSensorClient_ParamsParser
 {
 protected:
     yarp::os::Port rpcPort;
@@ -89,53 +55,20 @@ private:
     yarp::proto::framegrabber::RgbVisualParams_Forwarder* RgbMsgSender{nullptr};
     yarp::proto::framegrabber::DepthVisualParams_Forwarder* DepthMsgSender{nullptr};
 protected:
-    std::string local_colorFrame_StreamingPort_name;
-    std::string local_depthFrame_StreamingPort_name;
-    std::string remote_colorFrame_StreamingPort_name;
-    std::string remote_depthFrame_StreamingPort_name;
-    std::string image_carrier_type;
-    std::string depth_carrier_type;
 
     RgbImageBufferedPort   colorFrame_StreamingPort;
     FloatImageBufferedPort depthFrame_StreamingPort;
 
-    // Use a single RPC port for now
-    std::string local_rpcPort_name;
-    std::string remote_rpcPort_name;
-
-    /*
-     * In case the client has to connect to 2 different wrappers/server because the rgb
-     * and depth comes from two different sources.
-     *
-     * It should be possible to attach this guy to more than one port, try to see what
-     * will happen when receiving 2 calls at the same time (receive one calls while serving
-     * another one, it will result in concurrent thread most probably) and buffering issues.
-     *
-
-        std::string local_colorFrame_rpcPort_Name;
-        std::string local_depthFrame_rpcPort_Name;
-        std::string remote_colorFrame_rpcPort_Name;
-        std::string remote_depthFrame_rpcPort_Name;
-
-        yarp::os::Port colorFrame_rpcPort;
-        yarp::os::Port depthFrame_rpcPort;
-    */
-
     // Image data specs
-    std::string sensorId;
     yarp::dev::IRGBDSensor *sensor_p{nullptr};
     IRGBDSensor::RGBDSensor_status sensorStatus{IRGBDSensor::RGBD_SENSOR_NOT_READY};
     int verbose{2};
 
-    bool initialize_YARP(yarp::os::Searchable &config);
-
     yarp::os::Stamp colorStamp;
     yarp::os::Stamp depthStamp;
 
-
     // This is gonna be superseded by the synchronized when it'll be ready
     RGBDSensor_StreamingMsgParser *streamingReader{nullptr};
-    bool fromConfig(yarp::os::Searchable &config);
 
 public:
     RGBDSensorClient();

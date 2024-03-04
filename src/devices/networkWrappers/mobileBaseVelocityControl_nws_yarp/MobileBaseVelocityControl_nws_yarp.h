@@ -20,23 +20,7 @@
 #include <mutex>
 #include <string>
 
-/**
- *  @ingroup dev_impl_network_clients dev_impl_navigation
- *
- * \section MobileBaseVelocityControl_nws_yarp
- *
- * \brief `MobileBaseVelocityControl_nws_yarp`: A device which allows a client to control the velocity of a mobile base from YARP.
- * The device opens two ports: a streaming port `/exampleName/data:i` for receiving streaming commands, and a rpc port `/exampleName/rpc:i` for rpc connection with
- * a `MobileBaseVelocityControl_nwc_yarp` client device.
- *
- *  Parameters required by this device are:
- * | Parameter name | SubParameter   | Type    | Units | Default Value | Required | Description                                                       | Notes |
- * |:--------------:|:--------------:|:-------:|:-----:|:-------------:|:-------: |:-----------------------------------------------------------------:|:-----:|
- * | local          |      -         | string  | -     |   -           | Yes      | Full name of the port opened by the device. For both ports (i.e. /rpc:i, /data:i) the corresponding suffix is automatically added |       |
- *
- * Example usage:
- * yarpdev --device mobileBaseVelocityControl_nws_yarp --subdevice velocityInputHandler --local /input1
-*/
+#include "MobileBaseVelocityControl_nws_yarp_ParamsParser.h"
 
 class VelocityInputPortProcessor : public yarp::os::BufferedPort<yarp::dev::MobileBaseVelocity>
 {
@@ -49,16 +33,30 @@ public:
     void onRead(yarp::dev::MobileBaseVelocity& v) override;
 };
 
+/**
+ *  @ingroup dev_impl_network_clients dev_impl_navigation
+ *
+ * \section MobileBaseVelocityControl_nws_yarp
+ *
+ * \brief `MobileBaseVelocityControl_nws_yarp`: A device which allows a client to control the velocity of a mobile base from YARP.
+ * The device opens two ports: a streaming port `/exampleName/data:i` for receiving streaming commands, and a rpc port `/exampleName/rpc:i` for rpc connection with
+ * a `MobileBaseVelocityControl_nwc_yarp` client device.
+ *
+ * Check velocityInputHandler or fakeNavigation as an example of device which can be attached to MobileBaseVelocityControl_nws_yarp
+ *
+ * Parameters required by this device are shown in class: MobileBaseVelocityControl_nws_yarp_ParamsParser
+ *
+*/
 class MobileBaseVelocityControl_nws_yarp:
         public yarp::dev::DeviceDriver,
         public yarp::dev::WrapperSingle,
-        public MobileBaseVelocityControlRPC
+        public MobileBaseVelocityControlRPC,
+        public MobileBaseVelocityControl_nws_yarp_ParamsParser
 {
 protected:
     std::mutex                    m_mutex;
     yarp::os::Port                m_rpc_port_navigation_server;
     VelocityInputPortProcessor    m_StreamingInput;
-    std::string                   m_local_name;
 
     yarp::dev::Nav2D::INavigation2DVelocityActions* m_iNavVel = nullptr;
 

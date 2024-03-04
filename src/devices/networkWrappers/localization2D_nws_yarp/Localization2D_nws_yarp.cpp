@@ -41,8 +41,7 @@ namespace
 
 //------------------------------------------------------------------------------------------------------------------------------
 
-Localization2D_nws_yarp::Localization2D_nws_yarp() : PeriodicThread(DEFAULT_THREAD_PERIOD),
-                                                     m_period(DEFAULT_THREAD_PERIOD)
+Localization2D_nws_yarp::Localization2D_nws_yarp() : PeriodicThread(DEFAULT_THREAD_PERIOD)
 {
     m_stats_time_last = yarp::os::Time::now();
 }
@@ -83,7 +82,7 @@ bool Localization2D_nws_yarp::attach(PolyDriver* driver)
         return false;
     }
 
-    PeriodicThread::setPeriod(m_period);
+    PeriodicThread::setPeriod(m_GENERAL_period);
     return PeriodicThread::start();
 }
 
@@ -101,67 +100,35 @@ bool Localization2D_nws_yarp::detach()
 
 bool Localization2D_nws_yarp::open(Searchable& config)
 {
-    Property params;
-    params.fromString(config.toString().c_str());
-    yCDebug(LOCALIZATION2D_NWS_YARP) << "Configuration: \n" << config.toString().c_str();
+    if (!parseParams(config)) { return false; }
 
-    if (config.check("GENERAL") == false)
+    //check some parameters consistency
+    if (!m_GENERAL_retrieve_position_periodically)
     {
-        yCWarning(LOCALIZATION2D_NWS_YARP) << "Missing GENERAL group, assuming default options";
-    }
+        m_RPC.m_getdata_using_periodic_thread = false;
 
-    Bottle& general_group = config.findGroup("GENERAL");
-    if (!general_group.check("period"))
-    {
-        yCInfo(LOCALIZATION2D_NWS_YARP) << "Missing 'period' parameter. Using default value: " << DEFAULT_THREAD_PERIOD;
-        m_period = DEFAULT_THREAD_PERIOD;
+        if (!m_GENERAL_publish_odometry)
+           {yCWarning(LOCALIZATION2D_NWS_YARP) << "retrieve_position_periodically is true, but data is not published because publish_odometry is false. This configuration is strange";}
+        if (!m_GENERAL_publish_location)
+           {yCWarning(LOCALIZATION2D_NWS_YARP) << "retrieve_position_periodically is true, but data is not published because publish_location is false. This configuration is strange";}
     }
     else
     {
-        m_period = general_group.find("period").asFloat64();
-        yCInfo(LOCALIZATION2D_NWS_YARP) << "Period requested: " << m_period;
-    }
-
-    if (!general_group.check("publish_odometry"))
-    {
-        m_enable_publish_odometry = general_group.find("publish_odometry").asBool();
-    }
-    if (!general_group.check("publish_location"))
-    {
-        m_enable_publish_location = general_group.find("publish_location").asBool();
-    }
-    yCInfo(LOCALIZATION2D_NWS_YARP) << "publish_odometry=" << m_enable_publish_odometry;
-    yCInfo(LOCALIZATION2D_NWS_YARP) << "publish_location=" << m_enable_publish_location;
-
-    if (!general_group.check("retrieve_position_periodically"))
-    {
-        yCInfo(LOCALIZATION2D_NWS_YARP) << "Missing 'retrieve_position_periodically' parameter. Using default value: true. Period:" << m_period ;
         m_RPC.m_getdata_using_periodic_thread = true;
-        if (!m_enable_publish_odometry) {yCWarning(LOCALIZATION2D_NWS_YARP) << "retrieve_position_periodically is true, but data is not published because \
-        publish_odometry is false. This configuration is strange";}
-        if (!m_enable_publish_location) {yCWarning(LOCALIZATION2D_NWS_YARP) << "retrieve_position_periodically is true, but data is not published because \
-        publish_location is false. This configuration is strange";}
+    }
+
+    //Some debug prints
+    if (m_RPC.m_getdata_using_periodic_thread)
+    {
+        yCInfo(LOCALIZATION2D_NWS_YARP) << "retrieve_position_periodically requested, Period:" << m_GENERAL_period;
     }
     else
     {
-        m_RPC.m_getdata_using_periodic_thread = general_group.find("retrieve_position_periodically").asBool();
-        if (m_RPC.m_getdata_using_periodic_thread)
-            { yCInfo(LOCALIZATION2D_NWS_YARP) << "retrieve_position_periodically requested, Period:" << m_period; }
-        else
-            { yCInfo(LOCALIZATION2D_NWS_YARP) << "retrieve_position_periodically NOT requested. Localization data obtained asynchronously."; }
+        yCInfo(LOCALIZATION2D_NWS_YARP) << "retrieve_position_periodically NOT requested. Localization data obtained asynchronously.";
     }
 
-    if (!general_group.check("name"))
-    {
-        yCInfo(LOCALIZATION2D_NWS_YARP) << "Missing 'name' parameter. Using default value:" << m_local_name;
-    }
-    else
-    {
-        m_local_name = general_group.find("name").asString();
-        if (m_local_name.c_str()[0] != '/') { yCError(LOCALIZATION2D_NWS_YARP) << "Missing '/' in name parameter" ;  return false; }
-        yCInfo(LOCALIZATION2D_NWS_YARP) << "Using local name:" << m_local_name;
-    }
 
+    m_local_name = m_GENERAL_name;
     m_rpcPortName = m_local_name + "/rpc";
     m_2DLocationPortName = m_local_name + "/streaming:o";
     m_odometryPortName = m_local_name + "/odometry:o";
@@ -275,10 +242,10 @@ void Localization2D_nws_yarp::run()
     }
     m_RPC.getMutex()->unlock();
 
-    if (m_enable_publish_odometry) {
+    if (m_GENERAL_publish_odometry) {
         publish_odometry_on_yarp_port();
     }
-    if (m_enable_publish_location) {
+    if (m_GENERAL_publish_location) {
         publish_2DLocation_on_yarp_port();
     }
 }

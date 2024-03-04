@@ -17,6 +17,7 @@
 
 #include <mutex>
 #include <string>
+#include "MobileBaseVelocityControl_nwc_yarp_ParamsParser.h"
 
 /**
  *  @ingroup dev_impl_nwc_yarp dev_impl_navigation
@@ -25,24 +26,18 @@
  *
  * \brief `MobileBaseVelocityControl_nwc_yarp`: A device which connects to MobileBaseVelocityControl_nws_yarp to control the velocity of a mobile base.
  *
- *  Parameters required by this device are:
- * | Parameter name | SubParameter   | Type    | Units          | Default Value | Required     | Description                                                       | Notes |
- * |:--------------:|:--------------:|:-------:|:--------------:|:-------------:|:-----------: |:-----------------------------------------------------------------:|:-----:|
- * | local          |      -         | string  | -              |   -           | Yes          | Full port name opened by the device.                             |       |
- * | server         |     -          | string  | -              |   -           | Yes          | Full port name of the port remotely opened by the server, to which this client connects to.           |  |
- * | carrier        |     -          | string  | -   | tcp           | No           | The carier used for the connection with the server.          |  |
+ * Parameters required by this device are shown in class: MobileBaseVelocityControl_nwc_yarp_ParamsParser
+ *
  */
 
 class MobileBaseVelocityControl_nwc_yarp:
         public yarp::dev::DeviceDriver,
-        public yarp::dev::Nav2D::INavigation2DVelocityActions
+        public yarp::dev::Nav2D::INavigation2DVelocityActions,
+        public MobileBaseVelocityControl_nwc_yarp_ParamsParser
 {
 protected:
     std::mutex                    m_mutex;
     yarp::os::Port                m_rpc_port;
-    std::string                   m_local_name;
-    std::string                   m_server_name;
-    std::string                   m_carrier;
     MobileBaseVelocityControlRPC  m_RPC;
 
 public:

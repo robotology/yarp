@@ -1,0 +1,2 @@
+ * |     |    period          | double  | s              |   0.02        | No                             | refresh period of the broadcasted values in s                                                       | default 0.02s |
+ * |     |    name            | string  | -              |   -           | Yes                            | Prefix name of the ports opened by the RGBD wrapper, e.g. /robotName/RGBD                           | Required suffix like '/rpc' will be added by the device      |

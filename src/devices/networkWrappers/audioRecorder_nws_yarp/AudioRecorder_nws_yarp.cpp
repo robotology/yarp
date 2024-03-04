@@ -12,19 +12,10 @@ using namespace yarp::os;
 
 namespace {
 YARP_LOG_COMPONENT(AUDIORECORDER_NWS_YARP, "yarp.device.audioRecorder_nws_yarp")
-constexpr double DEFAULT_THREAD_PERIOD = 0.02; // seconds
-constexpr size_t DEFAULT_MIN_NUMBER_OF_SAMPLES_OVER_NETWORK = 11250;
-constexpr size_t DEFAULT_MAX_NUMBER_OF_SAMPLES_OVER_NETWORK = 11250;
-constexpr double DEFAULT_GETSOUND_TIMEOUT = 1.0;
-
 }
 
 
-AudioRecorder_nws_yarp::AudioRecorder_nws_yarp() :
-        m_period(DEFAULT_THREAD_PERIOD),
-        m_min_number_of_samples_over_network(DEFAULT_MIN_NUMBER_OF_SAMPLES_OVER_NETWORK),
-        m_max_number_of_samples_over_network(DEFAULT_MAX_NUMBER_OF_SAMPLES_OVER_NETWORK),
-        m_getSound_timeout(DEFAULT_GETSOUND_TIMEOUT)
+AudioRecorder_nws_yarp::AudioRecorder_nws_yarp()
 {
     m_stamp.update();
 }
@@ -36,44 +27,15 @@ AudioRecorder_nws_yarp::~AudioRecorder_nws_yarp()
 
 bool AudioRecorder_nws_yarp::open(yarp::os::Searchable& config)
 {
-    m_config.fromString(config.toString());
+    if (!this->parseParams(config)) { return false; }
 
-    if (config.check("period"))
-    {
-        m_period = config.find("period").asFloat64();
-    }
-
-    // Get parameter samples_over_network
-    if (config.check("min_samples_over_network"))
-    {
-        m_min_number_of_samples_over_network = config.find("min_samples_over_network").asInt64();
-    }
-    if (config.check("max_samples_over_network"))
-    {
-        m_max_number_of_samples_over_network = config.find("max_samples_over_network").asInt64();
-    }
-    yCInfo(AUDIORECORDER_NWS_YARP) << "Wrapper configured to produce packets with the following size (in samples): " <<
-                m_min_number_of_samples_over_network << " < samples < " << m_max_number_of_samples_over_network;
-
-    // Get parameter samples_over_network
-    if (config.check("max_samples_timeout"))
-    {
-        m_getSound_timeout = config.find("max_samples_timeout").asFloat64();
-    }
-    yCInfo(AUDIORECORDER_NWS_YARP) << "Wrapper configured with max_samples_timeout: " << m_getSound_timeout << "s";
-
-    // Set parameter send_sound_on_stop
-    if (config.check("send_sound_on_stop"))
-    {
-        m_send_sound_on_stop = config.find("send_sound_on_stop").asBool();
-    }
+    //just info
+    yCDebug(AUDIORECORDER_NWS_YARP) << "Wrapper configured to produce packets with the following size (in samples): " <<
+                m_min_samples_over_network << " < samples < " << m_max_samples_over_network;
+    yCDebug(AUDIORECORDER_NWS_YARP) << "Wrapper configured with max_samples_timeout: " << m_getSound_timeout << "s";
 
     // Set the streaming port
-    std::string portname = "/audioRecorder_nws";
-    if (config.check("name"))
-    {
-        portname= config.find("name").asString();
-    }
+    std::string portname = m_name;
     if (m_streamingPort.open(portname + "/audio:o") == false)
     {
         yCError(AUDIORECORDER_NWS_YARP) << "Unable to open port" << portname + "/audio:o";
@@ -152,7 +114,7 @@ bool AudioRecorder_nws_yarp::attach(PolyDriver* driver)
     m_statusThread->start();
 
     // Wait a little and then start if requested
-    if (m_config.check("start")) {
+    if (m_start) {
         yCDebug(AUDIORECORDER_NWS_YARP) << "Auto start requested";
         yarp::os::SystemClock::delaySystem(1);
         m_mic->startRecording();
@@ -242,14 +204,14 @@ void AudioRecorderDataThread::run()
     {
         //acquire sound data from attached device
         yarp::sig::Sound current_sound;
-        m_ARW->m_mic->getSound(current_sound, m_ARW->m_min_number_of_samples_over_network, m_ARW->m_max_number_of_samples_over_network, m_ARW->m_getSound_timeout);
-        if (current_sound.getSamples() < m_ARW->m_min_number_of_samples_over_network ||
-            current_sound.getSamples() > m_ARW->m_max_number_of_samples_over_network)
+        m_ARW->m_mic->getSound(current_sound, m_ARW->m_min_samples_over_network, m_ARW->m_max_samples_over_network, m_ARW->m_getSound_timeout);
+        if (current_sound.getSamples() < m_ARW->m_min_samples_over_network ||
+            current_sound.getSamples() > m_ARW->m_max_samples_over_network)
         {
             yCWarning(AUDIORECORDER_NWS_YARP) << "subdevice->getSound() is not producing sounds of the requested size ("
-                << m_ARW->m_min_number_of_samples_over_network << "<"
+                << m_ARW->m_min_samples_over_network << "<"
                 << current_sound.getSamples() << "<"
-                << m_ARW->m_max_number_of_samples_over_network << ") failed";
+                << m_ARW->m_max_samples_over_network << ") failed";
         }
         #ifdef PRINT_DEBUG_MESSAGES
         {

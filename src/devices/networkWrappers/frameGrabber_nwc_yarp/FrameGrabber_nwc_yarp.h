@@ -18,7 +18,7 @@
 #include <yarp/proto/framegrabber/RgbVisualParams_Forwarder.h>
 
 #include <mutex>
-
+#include "FrameGrabber_nwc_yarp_ParamsParser.h"
 
 class StreamReceiver
 {
@@ -80,13 +80,8 @@ private:
  * \section frameGrabber_nwc_yarp
  *
  * \brief `frameGrabber_nwc_yarp`: The client of a frameGrabber_nws_yarp.
- *  Parameters required by this device are:
- * | Parameter name | SubParameter   | Type    | Units          | Default Value | Required     | Description                                                       | Notes |
- * |:--------------:|:--------------:|:-------:|:--------------:|:-------------:|:-----------: |:-----------------------------------------------------------------:|:-----:|
- * | local          |      -         | string  | -              |   -           | Yes          | Prefix of the ports opened locally by the nwc for streaming and rpc operations    |       |
- * | remote         |      -         | string  | -              |   -           | Yes          | Name of the remote rpc port opened by the nws                     |       |
- * | carrier        |      -         | string  | -              |   fast_tcp    | No           | Protocol used for connection with the nws streaming port          |       |
- * | no_stream      |      -         | bool    | -              |   false       | No           | Full port name of the port remotely opened by the Navigation server, to which the Navigation2D_nwc_yarp connects to.           |  |
+ *
+ * Parameters required by this device are shown in class: FrameGrabber_nwc_yarp_ParamsParser
  */
 class FrameGrabber_nwc_yarp :
         public yarp::dev::DeviceDriver,
@@ -97,7 +92,8 @@ class FrameGrabber_nwc_yarp :
         public yarp::proto::framegrabber::FrameGrabberControls_Forwarder,
         public yarp::proto::framegrabber::FrameGrabberControlsDC1394_Forwarder,
         public yarp::proto::framegrabber::RgbVisualParams_Forwarder,
-        public yarp::dev::IPreciselyTimed
+        public yarp::dev::IPreciselyTimed,
+        public FrameGrabber_nwc_yarp_ParamsParser
 {
 public:
     FrameGrabber_nwc_yarp();

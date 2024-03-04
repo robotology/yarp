@@ -9,6 +9,7 @@ yarp_prepare_plugin(localization2D_nws_yarp
   EXTRA_CONFIG
     WRAPPER=localization2D_nws_yarp
   DEFAULT ON
+  GENERATE_PARSER
 )
 
 if(NOT SKIP_localization2D_nws_yarp)
@@ -20,6 +21,8 @@ if(NOT SKIP_localization2D_nws_yarp)
       Localization2D_nws_yarp.cpp
       ILocalization2DServerImpl.cpp
       ILocalization2DServerImpl.h
+      Localization2D_nws_yarp_ParamsParser.h
+      Localization2D_nws_yarp_ParamsParser.cpp
   )
 
   target_sources(yarp_localization2D_nws_yarp PRIVATE $<TARGET_OBJECTS:ILocalization2DMsgs>)

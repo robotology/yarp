@@ -23,24 +23,22 @@ bool ChatBot_nws_yarp::close()
     return closeMain();
 }
 
-bool ChatBot_nws_yarp::open(Searchable& prop)
+bool ChatBot_nws_yarp::open(Searchable& config)
 {
-    std::string rootName =
-        prop.check("name",Value("/chatBot_nws"),
-                    "prefix for port names").asString();
+    if (!parseParams(config)) { return false; }
 
     m_inputBuffer.attach(m_inputPort);
-    if(!m_inputPort.open(rootName+"/text:i"))
+    if(!m_inputPort.open(m_name+"/text:i"))
     {
-        yCError(CHATBOT_NWS_YARP) << "Could not open port" << rootName+"/text:i";
+        yCError(CHATBOT_NWS_YARP) << "Could not open port" << m_name +"/text:i";
         return false;
     }
-    if(!m_outputPort.open(rootName + "/text:o"))
+    if(!m_outputPort.open(m_name + "/text:o"))
     {
-        yCError(CHATBOT_NWS_YARP) << "Could not open port" << rootName+"/text:o";
+        yCError(CHATBOT_NWS_YARP) << "Could not open port" << m_name +"/text:o";
         return false;
     }
-    if (!m_thriftServerPort.open(rootName+"/rpc"))
+    if (!m_thriftServerPort.open(m_name +"/rpc"))
     {
         yCError(CHATBOT_NWS_YARP, "Failed to open rpc port");
         return false;

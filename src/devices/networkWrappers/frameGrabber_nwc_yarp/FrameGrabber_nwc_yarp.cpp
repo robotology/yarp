@@ -218,18 +218,10 @@ FrameGrabber_nwc_yarp::FrameGrabber_nwc_yarp() :
 
 bool FrameGrabber_nwc_yarp::open(yarp::os::Searchable& config)
 {
-    std::string remote = config.check("remote", yarp::os::Value(""), "port name of real grabber").asString();
-    std::string local = config.check("local", yarp::os::Value("..."), "port name to use locally").asString();
-    if (config.check("stream"))
-    {
-        yCError(FRAMEGRABBER_NWC_YARP) << "'stream' parameter was deprecated. Please rename it to 'carrier'";
-        return false;
-    }
-    std::string carrier = config.check("carrier", yarp::os::Value("fast_tcp"), "carrier to use for streaming").asString();
-    bool no_stream = config.check("no_stream");
+    if (!this->parseParams(config)) { return false; }
 
-    if (!no_stream) {
-        if (!streamReceiver.open(local, remote, carrier)) {
+    if (!m_no_stream) {
+        if (!streamReceiver.open(m_local, m_remote, m_carrier)) {
             return false;
         }
         FrameGrabberOf_ForwarderWithStream<yarp::sig::ImageOf<yarp::sig::PixelRgb>>::setStreamReceiver(&streamReceiver);
@@ -238,13 +230,13 @@ bool FrameGrabber_nwc_yarp::open(yarp::os::Searchable& config)
         FrameGrabberOf_ForwarderWithStream<yarp::sig::FlexImage>::setStreamReceiver(&streamReceiver);
     }
 
-    std::string rpc_local = local + "/rpc_client";
-    std::string rpc_remote = remote + "/rpc";
+    std::string rpc_local = m_local + "/rpc_client";
+    std::string rpc_remote = m_remote + "/rpc";
     if (!rpcPort.open(rpc_local)) {
         yCError(FRAMEGRABBER_NWC_YARP) << "Failed to open " << rpc_local << "port.";
     }
 
-    if (!remote.empty()) {
+    if (!m_remote.empty()) {
         yCInfo(FRAMEGRABBER_NWC_YARP) << "Connecting" << rpcPort.getName() << "to" << rpc_remote;
         if (!yarp::os::NetworkBase::connect(rpcPort.getName(), rpc_remote)) {
             yCError(FRAMEGRABBER_NWC_YARP) << "Failed to connect" << rpcPort.getName() << "to" << rpc_remote;

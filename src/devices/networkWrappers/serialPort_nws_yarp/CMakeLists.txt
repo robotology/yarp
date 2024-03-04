@@ -4,10 +4,11 @@
 yarp_prepare_plugin(serialPort_nws_yarp
   CATEGORY device
   TYPE SerialPort_nws_yarp
-  INCLUDE serialPort_nws_yarp.h
+  INCLUDE SerialPort_nws_yarp.h
   EXTRA_CONFIG
     WRAPPER=serialPort_nws_yarp
   DEFAULT ON
+  GENERATE_PARSER
 )
 
 if(NOT SKIP_serialPort_nws_yarp)
@@ -15,8 +16,10 @@ if(NOT SKIP_serialPort_nws_yarp)
 
   target_sources(yarp_serialPort_nws_yarp
     PRIVATE
-      serialPort_nws_yarp.cpp
-      serialPort_nws_yarp.h
+      SerialPort_nws_yarp.cpp
+      SerialPort_nws_yarp.h
+      SerialPort_nws_yarp_ParamsParser.cpp
+      SerialPort_nws_yarp_ParamsParser.h
   )
 
   target_link_libraries(yarp_serialPort_nws_yarp

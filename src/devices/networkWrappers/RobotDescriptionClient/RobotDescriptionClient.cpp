@@ -25,42 +25,21 @@ YARP_LOG_COMPONENT(ROBOTDESCRIPTIONCLIENT, "yarp.device.robotDescriptionClient")
 
 bool RobotDescriptionClient::open(yarp::os::Searchable &config)
 {
-    m_local_name.clear();
-    m_remote_name.clear();
+    if (!this->parseParams(config)) { return false; }
 
-    m_local_name           = config.find("local").asString();
-    m_remote_name          = config.find("remote").asString();
-
-    if (m_local_name == "")
+    if (!m_rpc_port.open(m_local))
     {
-        yCError(ROBOTDESCRIPTIONCLIENT, "open(): Invalid local name");
-        return false;
-    }
-
-    if (m_remote_name == "")
-    {
-        yCError(ROBOTDESCRIPTIONCLIENT, "open(): Invalid remote name");
-        return false;
-    }
-
-    std::string local_rpc,  remote_rpc;
-
-    local_rpc  = m_local_name + "/rpc";
-    remote_rpc = m_remote_name + "/rpc";
-
-    if (!m_rpc_port.open(local_rpc))
-    {
-        yCError(ROBOTDESCRIPTIONCLIENT, "open(): Could not open rpc port %s, check network", local_rpc.c_str());
+        yCError(ROBOTDESCRIPTIONCLIENT, "open(): Could not open rpc port %s, check network", m_local.c_str());
         return false;
     }
 
 
     bool ok = true;
 
-    ok = Network::connect(local_rpc, remote_rpc);
+    ok = Network::connect(m_local, m_remote);
     if (!ok)
     {
-        yCError(ROBOTDESCRIPTIONCLIENT, "open(): Could not connect to %s", remote_rpc.c_str());
+        yCError(ROBOTDESCRIPTIONCLIENT, "open(): Could not connect to %s", m_remote.c_str());
         return false;
     }
 

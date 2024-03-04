@@ -1,0 +1,1 @@
+ * |           |    local        | string  | -     | /MobileBaseVelocityControl_nws    | Yes      | Name of the port opened by the device. For both ports (i.e. /rpc:i, /data:i) the corresponding suffix is automatically added |       |

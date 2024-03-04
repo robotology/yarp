@@ -4,7 +4,8 @@
 yarp_prepare_plugin(audioRecorder_nwc_yarp
   CATEGORY device
   TYPE AudioRecorder_nwc_yarp
-  INCLUDE audioRecorder_nwc_yarp.h
+  INCLUDE AudioRecorder_nwc_yarp.h
+  GENERATE_PARSER
   DEFAULT ON
 )
 
@@ -13,8 +14,10 @@ if(NOT SKIP_audioRecorder_nwc_yarp)
 
   target_sources(yarp_audioRecorder_nwc_yarp
     PRIVATE
-      audioRecorder_nwc_yarp.cpp
-      audioRecorder_nwc_yarp.h
+      AudioRecorder_nwc_yarp.cpp
+      AudioRecorder_nwc_yarp.h
+      AudioRecorder_nwc_yarp_ParamsParser.cpp
+      AudioRecorder_nwc_yarp_ParamsParser.h
   )
 
   target_link_libraries(yarp_audioRecorder_nwc_yarp

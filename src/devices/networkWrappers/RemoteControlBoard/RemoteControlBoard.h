@@ -34,6 +34,7 @@
 #include <yarp/dev/ControlBoardHelpers.h>
 
 #include "stateExtendedReader.h"
+#include "RemoteControlBoard_ParamsParser.h"
 
 struct ProtocolVersion
 {
@@ -54,14 +55,7 @@ class DiagnosticThread;
 * to use a device exposing controlboard method even from a different process (or even computer)
 * from the one that opened the controlboard device.
 *
-*  Parameters required by this device are:
-* | Parameter name | SubParameter   | Type    | Units | Default Value | Required     | Description                                    | Notes |
-* |:--------------:|:--------------:|:-------:|:-----:|:-------------:|:-----------: |:----------------------------------------------:|:-----:|
-* | remote         |       -        | string  | -     |   -           | Yes          | Prefix of the port to which to connect.        |       |
-* | local          |       -        | string  | -     |   -           | Yes          | Port prefix of the port opened by this device. |       |
-* | writeStrict    |       -        | string  | -     | See note      | No           |                                                |       |
-* | carrier        |       -        | string  | -     | udp           | No           | Specify the carrier used for reading state and sending references. This option does not change the carrier used by rpc, that is hardcoded to tcp. |       |
-*
+* Parameters required by this device are shown in class: RemoteControlBoard_ParamsParser
 */
 class RemoteControlBoard :
         public yarp::dev::IPidControl,
@@ -85,7 +79,8 @@ class RemoteControlBoard :
         public yarp::dev::IRemoteVariables,
         public yarp::dev::IPWMControl,
         public yarp::dev::ICurrentControl,
-        public yarp::dev::IJointFault
+        public yarp::dev::IJointFault,
+        public RemoteControlBoard_ParamsParser
 {
 protected:
     yarp::os::Port rpc_p;
@@ -106,8 +101,6 @@ protected:
 //    yarp::os::Port extendedIntputStatePort;         // Port /stateExt:i reading the state of the joints
     yarp::dev::impl::jointData last_wholePart;         // tmp to store last received data for whole part
 
-    std::string remote;
-    std::string local;
     mutable Stamp lastStamp;  //this is shared among all calls that read encoders
     size_t nj{0};
     bool njIsKnown{false};

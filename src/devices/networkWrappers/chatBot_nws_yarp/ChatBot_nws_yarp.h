@@ -20,6 +20,7 @@
 #include <yarp/os/RpcServer.h>
 #include <yarp/dev/WrapperSingle.h>
 #include "IChatBotMsgs.h"
+#include "ChatBot_nws_yarp_ParamsParser.h"
 
 using namespace yarp::os;
 using namespace yarp::dev;
@@ -68,19 +69,18 @@ public:
  *
  * The network interface is composed by two ports.
  * When a text bottle is received on the input port, the attached subdevice sends it to the chatbot
- * and sends the bot resonse on the output port
+ * and sends the bot response on the output port
  * The same functionality is available also via rpc port, which also provides additional functionalities,
  * such as setting the language, resetting the bot and performing backup and restore operations.
  *
- * Parameters required by this device are:
- * | Parameter name | SubParameter   | Type    | Units          | Default Value                | Required    | Description                                                           | Notes                                                                               |
- * |:--------------:|:--------------:|:-------:|:--------------:|:----------------------------:|:----------: |:---------------------------------------------------------------------:|:-----------------------------------------------------------------------------------:|
- * | name           |      -         | string  | -              |   /chatBot_nws               | No          | full name of the port opened by the device                            | MUST start with a '/' character, xxx/text:i, xxx/rpc, xxx/audio:o ports are opened  |
+ * Parameters required by this device are shown in class: ChatBot_nws_yarp_ParamsParser
+ *
  */
 class ChatBot_nws_yarp :
         public yarp::dev::DeviceDriver,
         public yarp::dev::WrapperSingle,
-        public yarp::os::PortReader
+        public yarp::os::PortReader,
+        public ChatBot_nws_yarp_ParamsParser
 {
 private:
     yarp::dev::IChatBot* m_iChatBot{ nullptr };

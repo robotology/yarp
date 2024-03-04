@@ -15,7 +15,7 @@
 using namespace yarp::dev;
 using namespace yarp::os;
 
-TEST_CASE("dev::LLM_nwc", "[yarp::dev]")
+TEST_CASE("dev::LLM_nwc_yarp", "[yarp::dev]")
 {
     YARP_REQUIRE_PLUGIN("fakeLLMDevice", "device");
     YARP_REQUIRE_PLUGIN("LLM_nws_yarp", "device");
@@ -34,7 +34,7 @@ TEST_CASE("dev::LLM_nwc", "[yarp::dev]")
         {
             Property pnws_cfg;
             pnws_cfg.put("device", "LLM_nws_yarp");
-            pnws_cfg.put("name", "/LLM_nws/rpc");
+            pnws_cfg.put("name", "/LLM_nws");
             REQUIRE(ddnws.open(pnws_cfg));
 
             Property pdev_cfg;
@@ -49,7 +49,7 @@ TEST_CASE("dev::LLM_nwc", "[yarp::dev]")
             Property pnwc_cfg;
             pnwc_cfg.put("device", "LLM_nwc_yarp");
             pnwc_cfg.put("local", "/LLM_nwc/rpc");
-            pnwc_cfg.put("remote", "/LLM_nws/rpc");
+            pnwc_cfg.put("remote", "/LLM_nws/rpc:i");
             REQUIRE(ddnwc.open(pnwc_cfg));
             REQUIRE(ddnwc.view(illm));
         }

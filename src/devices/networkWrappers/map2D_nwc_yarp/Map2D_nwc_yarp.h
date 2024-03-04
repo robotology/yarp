@@ -19,6 +19,8 @@
 #include <yarp/dev/PolyDriver.h>
 #include "IMap2DMsgs.h"
 
+#include "Map2D_nwc_yarp_ParamsParser.h"
+
 /**
  * @ingroup dev_impl_nwc_yarp dev_impl_navigation
  *
@@ -26,23 +28,17 @@
  *
  * \brief `Map2D_nwc_yarp`: A device which allows a client application to store/retrieve user maps device in a map server.
  *
- *  Parameters required by this device are:
- * | Parameter name | SubParameter   | Type    | Units          | Default Value | Required     | Description                                                       | Notes |
- * |:--------------:|:--------------:|:-------:|:--------------:|:-------------:|:-----------: |:-----------------------------------------------------------------:|:-----:|
- * | local          |      -         | string  | -   |   -           | Yes          | Full port name opened by the Map2D_nwc_yarp device.                             |       |
- * | remote         |     -          | string  | -   |   -           | Yes          | Full port name of the port remotely opened by the Map2D_nws_yarp, to which the Map2D_nwc_yarp connects to.           |  |
- * | carrier        |     -          | string  | -   | tcp           | No           | The carier used for the connection with the server.          |  |
+ * Parameters required by this device are shown in class: Map2D_nwc_yarp_ParamsParser
+ *
  */
 
 class Map2D_nwc_yarp :
         public yarp::dev::DeviceDriver,
-        public yarp::dev::Nav2D::IMap2D
+        public yarp::dev::Nav2D::IMap2D,
+        public Map2D_nwc_yarp_ParamsParser
 {
 protected:
     yarp::os::Port      m_rpcPort_to_Map2D_nws;
-    std::string         m_local_name;
-    std::string         m_map_server;
-    std::string         m_carrier;
     IMap2DMsgs          m_map_RPC;
     std::mutex          m_mutex;
 

@@ -10,20 +10,19 @@
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/dev/IChatBot.h>
 #include "IChatBotMsgs.h"
+#include "ChatBot_nwc_yarp_ParamsParser.h"
 
  /**
  * @ingroup dev_impl_network_clients
  *
  * \brief `chatBot_nwc_yarp`: The client side of any IChatBot capable device.
  *
- *  Parameters required by this device are:
- * | Parameter name | SubParameter   | Type    | Units          | Default Value | Required     | Description                                                       | Notes |
- * |:--------------:|:--------------:|:-------:|:--------------:|:-------------:|:-----------: |:-----------------------------------------------------------------:|:-----:|
- * | local          |      -         | string  | -              |   -           | Yes          | Full port name opened by the nwc device.                |       |
- * | remote         |      -         | string  | -              |   -           | Yes          | Full port name of the port opened on the server side, to which the nwc connects to.    |     |
+ * Parameters required by this device are shown in class: ChatBot_nwc_yarp_ParamsParser
+ *
  */
 class ChatBot_nwc_yarp : public yarp::dev::DeviceDriver,
-                     public yarp::dev::IChatBot
+                         public yarp::dev::IChatBot,
+                         public ChatBot_nwc_yarp_ParamsParser
 {
 protected:
     // thrift interface

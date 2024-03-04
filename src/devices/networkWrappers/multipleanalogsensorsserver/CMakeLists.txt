@@ -8,6 +8,7 @@ yarp_prepare_plugin(multipleanalogsensorsserver
   EXTRA_CONFIG
     WRAPPER=multipleanalogsensorsserver
   DEFAULT ON
+  GENERATE_PARSER
 )
 
 if(ENABLE_multipleanalogsensorsserver)
@@ -17,6 +18,8 @@ if(ENABLE_multipleanalogsensorsserver)
     PRIVATE
       MultipleAnalogSensorsServer.cpp
       MultipleAnalogSensorsServer.h
+      MultipleAnalogSensorsServer_ParamsParser.h
+      MultipleAnalogSensorsServer_ParamsParser.cpp
   )
 
   target_sources(yarp_multipleanalogsensorsserver PRIVATE $<TARGET_OBJECTS:multipleAnalogSensorsSerializations>)

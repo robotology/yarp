@@ -18,6 +18,7 @@
 #include "SensorStreamingData.h"
 #include "MultipleAnalogSensorsMetadata.h"
 
+#include "MultipleAnalogSensorsServer_ParamsParser.h"
 
 /**
  * @ingroup dev_impl_wrapper
@@ -27,21 +28,14 @@
  * The data on the /${name}/measures:o is streamed every ${period} milliseconds, and an envelope to each data is added with a timestamp obtained by calling the
  * yarp::os::Time::now() method when the message is written on the port.
  *
- * | YARP device name |
- * |:-----------------:|
- * | `multipleanalogsensorsserver` |
- *
- * The parameters accepted by this device are:
- * | Parameter name | SubParameter   | Type    | Units          | Default Value | Required                    | Description                                                       | Notes |
- * |:--------------:|:--------------:|:-------:|:--------------:|:-------------:|:--------------------------: |:-----------------------------------------------------------------:|:-----:|
- * | name           |      -         | string  | -              |   -           | Yes                         | Prefix of the port opened by this device                          | MUST start with a '/' character |
- * | period         |      -         | int     | ms             |   -           | Yes                          | Refresh period of the broadcasted values in ms                    |  |
+ * Parameters required by this device are shown in class: MultipleAnalogSensorsServer_ParamsParser
  */
 class MultipleAnalogSensorsServer :
         public yarp::os::PeriodicThread,
         public yarp::dev::DeviceDriver,
         public yarp::dev::IMultipleWrapper,
-        public MultipleAnalogSensorsMetadata
+        public MultipleAnalogSensorsMetadata,
+        public MultipleAnalogSensorsServer_ParamsParser
 {
     double m_periodInS{0.01};
     yarp::os::Stamp m_stamp;

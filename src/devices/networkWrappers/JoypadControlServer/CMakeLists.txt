@@ -8,6 +8,7 @@ yarp_prepare_plugin(JoypadControlServer
   EXTRA_CONFIG
     WRAPPER=JoypadControlServer
   DEFAULT ON
+  GENERATE_PARSER
 )
 
 if(NOT SKIP_JoypadControlServer)
@@ -17,6 +18,8 @@ if(NOT SKIP_JoypadControlServer)
     PRIVATE
       JoypadControlServer.cpp
       JoypadControlServer.h
+      JoypadControlServer_ParamsParser.cpp
+      JoypadControlServer_ParamsParser.h
   )
 
   target_sources(yarp_JoypadControlServer PRIVATE $<TARGET_OBJECTS:joypadcontrolnetutils>)

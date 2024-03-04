@@ -26,28 +26,12 @@ YARP_LOG_COMPONENT(MAP2D_NWC_YARP, "yarp.device.map2D_nwc_yarp")
 
 bool Map2D_nwc_yarp::open(yarp::os::Searchable &config)
 {
-    m_local_name.clear();
-    m_map_server.clear();
+    if (!parseParams(config)) { return false; }
 
-    m_local_name       = config.find("local").asString();
-    m_map_server       = config.find("remote").asString();
-    m_carrier          = config.check("carrier", yarp::os::Value("tcp"), "the carrier used for the connection with the server").asString();
-
-    if (m_local_name.empty())
-    {
-        yCError(MAP2D_NWC_YARP, "open() error you have to provide valid local name");
-        return false;
-    }
-    if (m_map_server.empty())
-    {
-        yCError(MAP2D_NWC_YARP, "open() error you have to provide valid remote name");
-        return false;
-    }
-
-    std::string local_rpc1 = m_local_name;
+    std::string local_rpc1 = m_local;
     local_rpc1 += "/mapClient_rpc";
 
-    std::string remote_rpc1 = m_map_server;
+    std::string remote_rpc1 = m_remote;
     remote_rpc1 += "/rpc";
 
     if (!m_rpcPort_to_Map2D_nws.open(local_rpc1))

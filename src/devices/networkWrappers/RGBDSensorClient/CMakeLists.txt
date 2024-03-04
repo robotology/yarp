@@ -6,6 +6,7 @@ yarp_prepare_plugin(RGBDSensorClient
   TYPE RGBDSensorClient
   INCLUDE RGBDSensorClient.h
   DEFAULT ON
+  GENERATE_PARSER
 )
 
 if(NOT SKIP_RGBDSensorClient)
@@ -17,6 +18,8 @@ if(NOT SKIP_RGBDSensorClient)
       RGBDSensorClient.h
       RGBDSensorClient_StreamingMsgParser.cpp
       RGBDSensorClient_StreamingMsgParser.h
+      RGBDSensorClient_ParamsParser.cpp
+      RGBDSensorClient_ParamsParser.h
   )
 
   target_sources(yarp_RGBDSensorClient PRIVATE $<TARGET_OBJECTS:framegrabber_protocol>)

@@ -1,0 +1,4 @@
+ * | |  local                  | string  | -              |   -           | Yes          | Full port name opened by the Navigation2D_nwc_yarp device.                             |       |
+ * | |  navigation_server      | string  | -              |   -           | Yes          | Full port name of the port remotely opened by the Navigation server, to which the Navigation2D_nwc_yarp connects to.           |  |
+ * | |  map_locations_server   | string  | -              |   -           | Yes          | Full port name of the port remotely opened by the Map2DServer, to which the Navigation2D_nwc_yarp connects to.           |  |
+ * | |  localization_server    | string  | -              |   -           | Yes          | Full port name of the port remotely opened by the Localization server, to which the Navigation2D_nwc_yarp connects to.           |  |

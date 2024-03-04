@@ -39,88 +39,63 @@ void SensorStreamingDataInputPort::updateTimeoutStatus() const
 
 bool MultipleAnalogSensorsClient::open(yarp::os::Searchable& config)
 {
-    m_carrier = config.check("carrier", yarp::os::Value("tcp"), "the carrier used for the connection with the server").asString();
+    if (!parseParams(config)) { return false; }
 
-    m_externalConnection = config.check("externalConnection",yarp::os::Value(false)).asBool();
-    if (!config.check("remote"))
-    {
-        yCError(MULTIPLEANALOGSENSORSCLIENT, "Missing name parameter, exiting.");
-        return false;
-    }
+    m_streamingPort.timeoutInSeconds = m_timeout;
 
-    if (!config.check("local"))
-    {
-        yCError(MULTIPLEANALOGSENSORSCLIENT, "Missing local parameter, exiting.");
-        return false;
-    }
-
-    if (config.check("timeout") && !(config.find("timeout").isFloat64()))
-    {
-        yCError(MULTIPLEANALOGSENSORSCLIENT, "'timeout' parameter is present but is not double, exiting.");
-        return false;
-    }
-
-    std::string remote = config.find("remote").asString();
-    std::string local = config.find("local").asString();
-
-    // Optional timeout parameter
-    m_streamingPort.timeoutInSeconds = config.check("timeout", yarp::os::Value(0.02), "Timeout parameter").asFloat64();
-
-    m_localRPCPortName = local + "/rpc:i";
-    m_localStreamingPortName = local + "/measures:i";
-    m_remoteRPCPortName = remote + "/rpc:o";
-    m_remoteStreamingPortName = remote + "/measures:o";
+    std::string localRPCPortName = m_local + "/rpc:i";
+    std::string localStreamingPortName = m_local + "/measures:i";
+    std::string remoteRPCPortName = m_remote + "/rpc:o";
+    std::string remoteStreamingPortName = m_remote + "/measures:o";
 
     // TODO(traversaro) : as soon as the method for checking port names validity
     //                    are available in YARP ( https://github.com/robotology/yarp/pull/1508 ) add some checks
 
     // Open ports
-    bool ok = m_rpcPort.open(m_localRPCPortName);
+    bool ok = m_rpcPort.open(localRPCPortName);
     if (!ok)
     {
         yCError(MULTIPLEANALOGSENSORSCLIENT,
                 "Failure to open the port %s.",
-                m_localRPCPortName.c_str());
+                localRPCPortName.c_str());
         close();
         return false;
     }
 
-    ok = m_streamingPort.open(m_localStreamingPortName);
+    ok = m_streamingPort.open(localStreamingPortName);
     m_streamingPort.useCallback();
     if (!ok)
     {
         yCError(MULTIPLEANALOGSENSORSCLIENT,
                 "Failure to open the port %s.",
-                m_localStreamingPortName.c_str());
+                localStreamingPortName.c_str());
         close();
         return false;
     }
 
     // Connect ports
     if (!m_externalConnection) {
-        ok = yarp::os::Network::connect(m_localRPCPortName, m_remoteRPCPortName, m_carrier);
+        ok = yarp::os::Network::connect(localRPCPortName, remoteRPCPortName, m_carrier);
         if (!ok) {
             yCError(MULTIPLEANALOGSENSORSCLIENT,
                     "Failure connecting port %s to %s.",
-                    m_localRPCPortName.c_str(),
-                    m_remoteRPCPortName.c_str());
+                    localRPCPortName.c_str(),
+                    remoteRPCPortName.c_str());
             yCError(MULTIPLEANALOGSENSORSCLIENT, "Check that the specified MultipleAnalogSensorsServer is up.");
             close();
             return false;
         }
-        m_RPCConnectionActive = true;
 
-        ok = yarp::os::Network::connect(m_remoteStreamingPortName, m_localStreamingPortName, m_carrier);
+        ok = yarp::os::Network::connect(remoteStreamingPortName, localStreamingPortName, m_carrier);
         if (!ok) {
             yCError(MULTIPLEANALOGSENSORSCLIENT,
                     "Failure connecting port %s to %s.",
-                    m_remoteStreamingPortName.c_str(),
-                    m_localStreamingPortName.c_str());
+                    remoteStreamingPortName.c_str(),
+                    localStreamingPortName.c_str());
             yCError(MULTIPLEANALOGSENSORSCLIENT, "Check that the specified MultipleAnalogSensorsServer is up.");
             close();
             return false;
         }
-        m_StreamingConnectionActive = true;
 
         // Once the connection is active, we just the metadata only once
         ok = m_RPCInterface.yarp().attachAsClient(m_rpcPort);
@@ -143,15 +118,6 @@ bool MultipleAnalogSensorsClient::open(yarp::os::Searchable& config)
 
 bool MultipleAnalogSensorsClient::close()
 {
-    if (m_StreamingConnectionActive)
-    {
-        yarp::os::Network::disconnect(m_remoteStreamingPortName, m_localStreamingPortName);
-    }
-    if (m_RPCConnectionActive)
-    {
-        yarp::os::Network::disconnect(m_localRPCPortName, m_remoteRPCPortName);
-    }
-
     m_streamingPort.close();
     m_rpcPort.close();
 

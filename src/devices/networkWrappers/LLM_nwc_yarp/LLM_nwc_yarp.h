@@ -8,20 +8,18 @@
 #include <yarp/dev/llm/ILLMMsgs.h>
 #include <yarp/dev/ILLM.h>
 #include <yarp/dev/LLM_Message.h>
+#include "LLM_nwc_yarp_ParamsParser.h"
 
  /**
- * @ingroup dev_impl_network_clients
+ * @ingroup dev_impl_nwc_yarp
  *
  * \brief `LLM_nwc_yarp`: The client side of any ILLM capable device.
  *
- *  Parameters required by this device are:
- * | Parameter name | SubParameter   | Type    | Units          | Default Value | Required     | Description                                                       | Notes |
- * |:--------------:|:--------------:|:-------:|:--------------:|:-------------:|:-----------: |:-----------------------------------------------------------------:|:-----:|
- * | local          |      -         | string  | -              |   -           | Yes          | Full port name opened by the nwc device.                |       |
- * | remote         |      -         | string  | -              |   -           | Yes          | Full port name of the port opened on the server side, to which the nwc connects to.    |     |
+ * Parameters required by this device are shown in class: LLM_nwc_yarp_ParamsParser
  */
 class LLM_nwc_yarp : public yarp::dev::DeviceDriver,
-                     public yarp::dev::ILLM
+                     public yarp::dev::ILLM,
+                     public LLM_nwc_yarp_ParamsParser
 {
 protected:
     // thrift interface

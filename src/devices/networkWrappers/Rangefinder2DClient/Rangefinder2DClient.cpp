@@ -153,6 +153,8 @@ void Rangefinder2DInputPortProcessor::getEstFrequency(int &ite, double &av, doub
 
 bool Rangefinder2DClient::open(yarp::os::Searchable &config)
 {
+    yCError(RANGEFINDER2DCLIENT) << "This device is deprecated. Please use Rangefinder2D_nwc_yarp instead.";
+
     local.clear();
     remote.clear();
 

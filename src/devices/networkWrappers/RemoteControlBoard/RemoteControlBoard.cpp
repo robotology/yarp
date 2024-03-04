@@ -180,86 +180,61 @@ bool RemoteControlBoard::checkProtocolVersion(bool ignore)
 
 bool RemoteControlBoard::open(Searchable& config)
 {
-    remote = config.find("remote").asString();
-    local = config.find("local").asString();
+    if (!parseParams(config)) { return false; }
 
-    if (config.check("timeout"))
-    {
-        extendedIntputStatePort.setTimeout(config.find("timeout").asFloat64());
-    }
-    // check the Qos perefernces if available (local and remote)
+    extendedIntputStatePort.setTimeout(m_timeout);
+
+    //handle local Qos
     yarp::os::QosStyle localQos;
-    if (config.check("local_qos")) {
-        Bottle& qos = config.findGroup("local_qos");
-        if (qos.check("thread_priority")) {
-            localQos.setThreadPriority(qos.find("thread_priority").asInt32());
-        }
-        if (qos.check("thread_policy")) {
-            localQos.setThreadPolicy(qos.find("thread_policy").asInt32());
-        }
-        if (qos.check("packet_priority")) {
-            localQos.setPacketPriority(qos.find("packet_priority").asString());
-        }
-    }
-
-    yarp::os::QosStyle remoteQos;
-    if (config.check("remote_qos")) {
-        Bottle& qos = config.findGroup("remote_qos");
-        if (qos.check("thread_priority")) {
-            remoteQos.setThreadPriority(qos.find("thread_priority").asInt32());
-        }
-        if (qos.check("thread_policy")) {
-            remoteQos.setThreadPolicy(qos.find("thread_policy").asInt32());
-        }
-        if (qos.check("packet_priority")) {
-            remoteQos.setPacketPriority(qos.find("packet_priority").asString());
-        }
-    }
-
-    bool writeStrict_isFound = config.check("writeStrict");
-    if(writeStrict_isFound)
+    if (m_local_qos_enable)
     {
-        Value &gotStrictVal = config.find("writeStrict");
-        if(gotStrictVal.asString() == "on")
-        {
-            writeStrict_singleJoint = true;
-            writeStrict_moreJoints  = true;
-            yCInfo(REMOTECONTROLBOARD, "RemoteControlBoard is ENABLING the writeStrict option for all commands");
-        }
-        else if(gotStrictVal.asString() == "off")
-        {
-            writeStrict_singleJoint = false;
-            writeStrict_moreJoints  = false;
-            yCInfo(REMOTECONTROLBOARD, "RemoteControlBoard is DISABLING the writeStrict opition for all commands");
-        } else {
-            yCError(REMOTECONTROLBOARD, "Found writeStrict opition with wrong value. Accepted options are 'on' or 'off'");
-        }
+        localQos.setThreadPriority(m_local_qos_thread_priority);
+        localQos.setThreadPolicy(m_local_qos_thread_policy);
+        localQos.setPacketPriority(m_local_qos_packet_priority);
     }
 
-    if (local=="") {
-        yCError(REMOTECONTROLBOARD, "Problem connecting to remote controlboard, 'local' port prefix not given");
+    //handle remote Qos
+    yarp::os::QosStyle remoteQos;
+    if (m_remote_qos_enable)
+    {
+        remoteQos.setThreadPriority(m_remote_qos_thread_priority);
+        remoteQos.setThreadPolicy(m_remote_qos_thread_policy);
+        remoteQos.setPacketPriority(m_remote_qos_packet_priority);
+    }
+
+    //handle param writeStrict
+    if (m_writeStrict == "on")
+    {
+        writeStrict_singleJoint = true;
+        writeStrict_moreJoints  = true;
+        yCInfo(REMOTECONTROLBOARD, "RemoteControlBoard is ENABLING the writeStrict option for all commands");
+    }
+    else if(m_writeStrict == "off")
+    {
+        writeStrict_singleJoint = false;
+        writeStrict_moreJoints  = false;
+        yCInfo(REMOTECONTROLBOARD, "RemoteControlBoard is DISABLING the writeStrict option for all commands");
+    }
+    else if (m_writeStrict.empty())
+    {
+        //leave the default values
+    }
+    else
+    {
+        yCError(REMOTECONTROLBOARD, "Found writeStrict option with wrong value. Accepted options are 'on' or 'off'");
         return false;
     }
 
-    if (remote=="") {
-        yCError(REMOTECONTROLBOARD, "Problem connecting to remote controlboard, 'remote' port name not given");
-        return false;
-    }
-
-    std::string carrier =
-        config.check("carrier",
-        Value("udp"),
-        "default carrier for streaming robot state").asString();
-
+    //open ports
     bool portProblem = false;
-    if (local != "") {
-        std::string s1 = local;
+    if (m_local != "") {
+        std::string s1 = m_local;
         s1 += "/rpc:o";
         if (!rpc_p.open(s1)) { portProblem = true; }
-        s1 = local;
+        s1 = m_local;
         s1 += "/command:o";
         if (!command_p.open(s1)) { portProblem = true; }
-        s1 = local;
+        s1 = m_local;
         s1 += "/stateExt:i";
         if (!extendedIntputStatePort.open(s1)) { portProblem = true; }
         if (!portProblem)
@@ -269,11 +244,11 @@ bool RemoteControlBoard::open(Searchable& config)
     }
 
     bool connectionProblem = false;
-    if (remote != "" && !portProblem)
+    if (m_remote != "" && !portProblem)
     {
-        std::string s1 = remote;
+        std::string s1 = m_remote;
         s1 += "/rpc:i";
-        std::string s2 = local;
+        std::string s2 = m_local;
         s2 += "/rpc:o";
         bool ok = false;
         // RPC port needs to be tcp, therefore no carrier option is added here
@@ -285,32 +260,32 @@ bool RemoteControlBoard::open(Searchable& config)
             connectionProblem = true;
         }
 
-        s1 = remote;
+        s1 = m_remote;
         s1 += "/command:i";
-        s2 = local;
+        s2 = m_local;
         s2 += "/command:o";
         //ok = Network::connect(s2.c_str(), s1.c_str(), carrier);
         // ok=Network::connect(command_p.getName(), s1.c_str(), carrier); //doesn't take into consideration possible YARP_PORT_PREFIX on local ports
-        ok = command_p.addOutput(s1, carrier);
+        ok = command_p.addOutput(s1, m_carrier);
         if (!ok) {
             yCError(REMOTECONTROLBOARD, "Problem connecting to %s, is the remote device available?", s1.c_str());
             connectionProblem = true;
         }
         // set the QoS preferences for the 'command' port
-        if (config.check("local_qos") || config.check("remote_qos")) {
+        if (m_local_qos_enable || m_remote_qos_enable) {
             NetworkBase::setConnectionQos(command_p.getName(), s1, localQos, remoteQos, false);
         }
 
-        s1 = remote;
+        s1 = m_remote;
         s1 += "/stateExt:o";
-        s2 = local;
+        s2 = m_local;
         s2 += "/stateExt:i";
         // not checking return value for now since it is wip (different machines can have different compilation flags
-        ok = Network::connect(s1, extendedIntputStatePort.getName(), carrier);
+        ok = Network::connect(s1, extendedIntputStatePort.getName(), m_carrier);
         if (ok)
         {
             // set the QoS preferences for the 'state' port
-            if (config.check("local_qos") || config.check("remote_qos")) {
+            if (m_local_qos_enable || m_remote_qos_enable) {
                 NetworkBase::setConnectionQos(s1, extendedIntputStatePort.getName(), remoteQos, localQos, false);
             }
         }
@@ -332,7 +307,7 @@ bool RemoteControlBoard::open(Searchable& config)
     state_buffer.setStrict(false);
     command_buffer.attach(command_p);
 
-    if (!checkProtocolVersion(config.check("ignoreProtocolCheck")))
+    if (!checkProtocolVersion(m_ignoreProtocolCheck))
     {
         yCError(REMOTECONTROLBOARD) << "checkProtocolVersion failed";
         command_buffer.detach();
@@ -343,7 +318,7 @@ bool RemoteControlBoard::open(Searchable& config)
     }
 
     if (!isLive()) {
-        if (remote!="") {
+        if (m_remote!="") {
             yCError(REMOTECONTROLBOARD, "Problems with obtaining the number of controlled axes");
             command_buffer.detach();
             rpc_p.close();
@@ -353,13 +328,11 @@ bool RemoteControlBoard::open(Searchable& config)
         }
     }
 
-    if (config.check("diagnostic"))
+    if (m_diagnostic)
     {
         diagnosticThread = new DiagnosticThread(DIAGNOSTIC_THREAD_PERIOD);
         diagnosticThread->setOwner(&extendedIntputStatePort);
         diagnosticThread->start();
-    } else {
-        diagnosticThread = nullptr;
     }
 
     // allocate memory for helper struct

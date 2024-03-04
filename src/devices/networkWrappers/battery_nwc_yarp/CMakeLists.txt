@@ -4,7 +4,8 @@
 yarp_prepare_plugin(battery_nwc_yarp
   CATEGORY device
   TYPE Battery_nwc_yarp
-  INCLUDE battery_nwc_yarp.h
+  INCLUDE Battery_nwc_yarp.h
+  GENERATE_PARSER
   DEFAULT ON
 )
 
@@ -13,8 +14,10 @@ if(NOT SKIP_battery_nwc_yarp)
 
   target_sources(yarp_battery_nwc_yarp
     PRIVATE
-      battery_nwc_yarp.cpp
-      battery_nwc_yarp.h
+      Battery_nwc_yarp.cpp
+      Battery_nwc_yarp.h
+      Battery_nwc_yarp_ParamsParser.cpp
+      Battery_nwc_yarp_ParamsParser.h
   )
 
   target_link_libraries(yarp_battery_nwc_yarp

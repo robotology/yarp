@@ -32,19 +32,15 @@
 #include <yarp/dev/WrapperSingle.h>
 #include <yarp/dev/api.h>
 
+#include "AudioPlayerWrapper_ParamsParser.h"
+
 /**
  * @ingroup dev_impl_wrapper
  *
  * \brief `AudioPlayerWrapper`: A Wrapper which receives audio streams from a network port and sends it to device for playback
  * \section AudioPlayerWrapper_device_parameters Description of input parameters
- * Parameters required by this device are:
- * | Parameter name | SubParameter   | Type    | Units          | Default Value           | Required                    | Description                                                                | Notes |
- * |:--------------:|:--------------:|:-------:|:--------------:|:-----------------------:|:--------------------------: |:--------------------------------------------------------------------------:|:-----:|
- * | name           |      -         | string  | -              |   /audioPlayerWrapper   | No                          | full name of the port opened by the device                                 | MUST start with a '/' character, xxx/audio:i, xxx/rpc:i, xxx/status:o, ports are opened  |
- * | period         |      -         | int     | ms             |   20                    | No                          | period of the internal thread, in ms                                       | default 20ms |
- * | debug          |      -         | bool    | -              |   -                     | No                          | developers use only                                                        | |
- * | playback_network_buffer_size  | - | float | s              |   5.0                   | No                          | size of the audio buffer in seconds, increasing this value to robustify the real-time audio stream (it will increase latency too) | Audio playback will start when the buffer is full |
- * | start          |      -         | bool    | -              |   false                 | No                          | automatically activates the playback when the device is started            | if false, the playback is enabled via rpc port |
+ *
+ * Parameters required by this device are shown in class: AudioPlayerWrapper_ParamsParser
  *
  * See \ref AudioDoc for additional documentation on YARP audio.
 */
@@ -53,7 +49,8 @@ class AudioPlayerWrapper :
         public yarp::os::PeriodicThread,
         public yarp::dev::DeviceDriver,
         public yarp::dev::WrapperSingle,
-        public yarp::os::PortReader
+        public yarp::os::PortReader,
+        public AudioPlayerWrapper_ParamsParser
 {
 
     struct scheduled_sound_type
@@ -86,25 +83,18 @@ public:
     void run() override;
 
 private:
-    std::string m_rpcPortName;
     yarp::os::Port  m_rpcPort;
-    std::string  m_audioInPortName;
     yarp::os::BufferedPort<yarp::sig::Sound> m_audioInPort;
-    std::string  m_statusPortName;
     yarp::os::Port m_statusPort;
-    yarp::os::Property m_config;
 
     yarp::dev::IAudioRender *m_irender = nullptr;
     yarp::os::Stamp m_lastStateStamp;
     yarp::dev::AudioBufferSize m_current_buffer_size;
     yarp::dev::AudioBufferSize m_max_buffer_size;
     std::queue<scheduled_sound_type> m_sound_buffer;
-    double m_period;
-    double m_buffer_delay;
-    bool   m_debug_enabled = false;
+
     bool   m_isPlaying = false;
 
-    bool initialize_YARP(yarp::os::Searchable &config);
     bool read(yarp::os::ConnectionReader& connection) override;
 
 };

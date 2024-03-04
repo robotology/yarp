@@ -35,6 +35,7 @@
 #include <yarp/dev/api.h>
 
 #include "Map2DServerImpl.h"
+#include "Map2D_nws_yarp_ParamsParser.h"
 
 /**
  *  @ingroup dev_impl_nws_yarp dev_impl_navigation
@@ -43,17 +44,15 @@
  *
  * \brief `map2D_nws_yarp`: A device capable of read/save collections of maps from disk, and make them accessible to any Map2DClient device.
  *
- *  Parameters required by this device are:
- * | Parameter name | SubParameter   | Type    | Units          | Default Value    | Required     | Description                                                       | Notes |
- * |:--------------:|:--------------:|:-------:|:--------------:|:----------------:|:-----------: |:-----------------------------------------------------------------:|:-----:|
- * | name           |      -         | string  | -              | /map2D_nws_yarp/rpc   | No           | Full name of the rpc port opened by the map2D_nws_yarp device.       |       |
-
+ * Parameters required by this device are shown in class: Map2D_nws_yarp_ParamsParser
+ *
  */
 
 class Map2D_nws_yarp :
         public yarp::dev::DeviceDriver,
         public yarp::os::PortReader,
-        public yarp::dev::WrapperSingle
+        public yarp::dev::WrapperSingle,
+        public Map2D_nws_yarp_ParamsParser
 {
 public:
     Map2D_nws_yarp();
@@ -73,7 +72,6 @@ private:
 
 private:
     std::mutex                   m_mutex;
-    std::string                  m_rpcPortName;
     yarp::os::RpcServer          m_rpcPort;
 
     bool read(yarp::os::ConnectionReader& connection) override;

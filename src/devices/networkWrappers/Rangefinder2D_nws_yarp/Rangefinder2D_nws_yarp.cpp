@@ -28,7 +28,6 @@ YARP_LOG_COMPONENT(RANGEFINDER2D_NWS_YARP, "yarp.devices.Rangefinder2D_nws_yarp"
 
     Rangefinder2D_nws_yarp::Rangefinder2D_nws_yarp() : PeriodicThread(DEFAULT_THREAD_PERIOD),
     sens_p(nullptr),
-    _period(DEFAULT_THREAD_PERIOD),
     minAngle(0),
     maxAngle(0),
     minDistance(0),
@@ -77,7 +76,7 @@ bool Rangefinder2D_nws_yarp::attach(yarp::dev::PolyDriver* driver)
         return false;
     }
 
-    PeriodicThread::setPeriod(_period);
+    PeriodicThread::setPeriod(m_period);
     return PeriodicThread::start();
 }
 
@@ -290,55 +289,19 @@ bool Rangefinder2D_nws_yarp::threadInit()
 
 bool Rangefinder2D_nws_yarp::open(yarp::os::Searchable &config)
 {
-    Property params;
-    params.fromString(config.toString());
+    if (!parseParams(config)) { return false; }
 
-    if (!config.check("period"))
+    if (!streamingPort.open(m_name))
     {
-        yCError(RANGEFINDER2D_NWS_YARP) << "missing 'period' parameter. Check you configuration file\n";
-        return false;
-    } else {
-        _period = config.find("period").asFloat64();
-    }
-
-    if (!config.check("name"))
-    {
-        yCError(RANGEFINDER2D_NWS_YARP) << "Rangefinder2D_nws_yarp: missing 'name' parameter. Check you configuration file; it must be like:";
-        yCError(RANGEFINDER2D_NWS_YARP) << "   name:         full name of the port, like /robotName/deviceId/sensorType:o";
+        yCError(RANGEFINDER2D_NWS_YARP, "failed to open port %s", m_name.c_str());
         return false;
     }
-    else
+    std::string rpc_portname = m_name + "/rpc:i";
+    if (!rpcPort.open(rpc_portname))
     {
-        streamingPortName  = config.find("name").asString();
-        rpcPortName = streamingPortName + "/rpc:i";
-    }
-
-    if (config.check("frame_id"))
-    {
-        frame_id = config.find("frame_id").asString();
-    }
-
-    if(!initialize_YARP(config) )
-    {
-        yCError(RANGEFINDER2D_NWS_YARP) << streamingPortName << "Error initializing YARP ports";
+        yCError(RANGEFINDER2D_NWS_YARP, "failed to open port %s", rpc_portname.c_str());
         return false;
     }
-
-    return true;
-}
-
-bool Rangefinder2D_nws_yarp::initialize_YARP(yarp::os::Searchable &params)
-{
-    if (!streamingPort.open(streamingPortName))
-        {
-            yCError(RANGEFINDER2D_NWS_YARP, "failed to open port %s", streamingPortName.c_str());
-            return false;
-        }
-    if (!rpcPort.open(rpcPortName))
-        {
-            yCError(RANGEFINDER2D_NWS_YARP, "failed to open port %s", rpcPortName.c_str());
-            return false;
-        }
     rpcPort.setReader(*this);
     return true;
 }
@@ -390,7 +353,7 @@ void Rangefinder2D_nws_yarp::run()
         }
         else
         {
-            yCError(RANGEFINDER2D_NWS_YARP, "%s: Sensor returned error", streamingPortName.c_str());
+            yCError(RANGEFINDER2D_NWS_YARP, "%s: Sensor returned error", m_name.c_str());
         }
     }
 }

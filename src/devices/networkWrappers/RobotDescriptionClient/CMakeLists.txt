@@ -5,6 +5,7 @@ yarp_prepare_plugin(robotDescriptionClient
   CATEGORY device
   TYPE RobotDescriptionClient
   INCLUDE RobotDescriptionClient.h
+  GENERATE_PARSER
   DEFAULT ON
 )
 
@@ -15,6 +16,8 @@ if(NOT SKIP_robotDescriptionClient)
     PRIVATE
       RobotDescriptionClient.cpp
       RobotDescriptionClient.h
+      RobotDescriptionClient_ParamsParser.cpp
+      RobotDescriptionClient_ParamsParser.h
   )
 
   target_link_libraries(yarp_robotDescriptionClient

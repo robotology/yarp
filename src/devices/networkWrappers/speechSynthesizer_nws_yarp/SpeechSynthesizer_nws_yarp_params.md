@@ -1,0 +1,1 @@
+ * |            |    name        | string  | -              |   /speechSynthesizer_nws     | No          | full name of the port opened by the device                            | MUST start with a '/' character, xxx/text:i, xxx/rpc, xxx/audio:o ports are opened  |

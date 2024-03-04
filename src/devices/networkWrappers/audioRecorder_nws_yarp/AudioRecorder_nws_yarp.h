@@ -24,51 +24,39 @@
 #include <list>
 
 #include "AudioRecorderServerImpl.h"
+#include "AudioRecorder_nws_yarp_ParamsParser.h"
 
 class AudioRecorderStatusThread;
 class AudioRecorderDataThread;
 
 /**
- * @ingroup dev_impl_wrapper
+ * @ingroup dev_impl_nws_yarp
  *
  * \brief `AudioRecorder_nws_yarp`: A Wrapper which streams audio over the network, after grabbing it from a device.
  * \section AudioRecorder_nws_yarp_device_parameters Description of input parameters
- * Parameters required by this device are:
- * | Parameter name | SubParameter   | Type    | Units          | Default Value            | Required                    | Description                                                                | Notes |
- * |:--------------:|:--------------:|:-------:|:--------------:|:------------------------:|:--------------------------: |:--------------------------------------------------------------------------:|:-----:|
- * | name           |      -         | string  | -              |   /audioRecorderWrapper  | No                          | full name of the port opened by the device                                 | MUST start with a '/' character, xxx/audio:o and xxx/rpc suffixes are appended   |
- * | period         |      -         | int     | ms             |   20                     | No                          | period of the internal thread, in ms                                       | default 20ms |
- * | debug          |      -         | bool    | -              |   -                      | No                          | developers use only                                                        | |
- * | min_samples_over_network  | -   | int     | samples        |   11250                  | No                          | sends the network packet ifs n samples are collected AND the timeout is expired | the algorithm is implemented in AudioRecorderDeviceBase::getSound() method |
- * | max_samples_over_network  | -   | int     | samples        |   11250                  | No                          | sends the network packet as soon as n samples have been collected          | the algorithm is implemented in AudioRecorderDeviceBase::getSound() method |
- * | max_samples_timeout  |  -       | float   | s              |   1.0                    | No                          | timeout for sample collection                                              | the algorithm is implemented in AudioRecorderDeviceBase::getSound() method |
- * | start          |      -         | bool    | -              |   false                  | No                          | automatically activates the recording when the device is started           | if false, the recording is enabled via rpc port |
- * | send_sound_on_stop  |  -        | bool    | -              |   true                   | No                          | send the sound when the stop rpc is called, even if it does not met network size parameters | it will not send empty sounds |
+ *
+ * Parameters required by this device are shown in class: AudioRecorder_nws_yarp_ParamsParser
  *
  * See \ref AudioDoc for additional documentation on YARP audio.
 */
 class AudioRecorder_nws_yarp :
         public yarp::dev::DeviceDriver,
         public yarp::dev::WrapperSingle,
-        public yarp::os::PortReader
+        public yarp::os::PortReader,
+        public AudioRecorder_nws_yarp_ParamsParser
 {
 private:
     yarp::dev::PolyDriver          m_driver;
     yarp::dev::IAudioGrabberSound* m_mic = nullptr; //The microphone device
     yarp::os::Property             m_config;
-    double                         m_period;
     yarp::os::Port                 m_rpcPort;
     yarp::os::Port                 m_streamingPort;
     yarp::os::Port                 m_statusPort;
     yarp::os::Stamp                m_stamp;
-    size_t                         m_min_number_of_samples_over_network;
-    size_t                         m_max_number_of_samples_over_network;
-    double                         m_getSound_timeout;
     AudioRecorderStatusThread*     m_statusThread = nullptr;
     AudioRecorderDataThread*       m_dataThread =nullptr;
-    bool                           m_debug_enabled = false;
+    const bool                     m_debug_enabled = false;
     std::list <yarp::sig::Sound>   m_listofsnds;
-    bool                           m_send_sound_on_stop = true;
 
 private:
     double                         m_debug_last_time=0;

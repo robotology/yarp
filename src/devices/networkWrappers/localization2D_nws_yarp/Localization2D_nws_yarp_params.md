@@ -1,0 +1,5 @@
+ * | GENERAL        |  period        | double  | s                  | 0.01                     | No           | The period of the working thread                                  |       |
+ * | GENERAL        |  retrieve_position_periodically  | bool  | -  | true                     | No           | If true, the subdevice is asked periodically to retrieve the current location. Otherwise the current location is obtained asynchronously when a getCurrentPosition() command is issued.     | -     |
+ * | GENERAL        |  name          | string  |  -                 | /localization2D_nws_yarp | No           | The name of the server, used as a prefix for the opened ports     | By default ports opened are /xxx/rpc and /xxx/streaming:o     |
+ * | GENERAL        |  publish_odometry | bool |  -                 | true                     | No           | Periodically publish odometry data over the network               | -     |
+ * | GENERAL        |  publish_location | bool |  -                 | true                     | No           | PEriodically publish location data over the network               | -     |

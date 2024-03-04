@@ -8,6 +8,7 @@ yarp_prepare_plugin(LLM_nws_yarp
   EXTRA_CONFIG
     WRAPPER=LLM_nws_yarp
   DEFAULT ON
+  GENERATE_PARSER
 )
 
 if(NOT SKIP_LLM_nws_yarp)
@@ -19,6 +20,8 @@ if(NOT SKIP_LLM_nws_yarp)
       LLM_nws_yarp.cpp
       ILLMServerImpl.cpp
       ILLMServerImpl.h
+      LLM_nws_yarp_ParamsParser.h
+      LLM_nws_yarp_ParamsParser.cpp
   )
 
   target_sources(yarp_LLM_nws_yarp PRIVATE $<TARGET_OBJECTS:ILLMMsgs>)
