@@ -21,7 +21,7 @@ using namespace yarp::sig;
 
 bool ControlBoardCouplingHandler::close()
 {
-    return detachAll();
+    return detach();
 }
 
 bool ControlBoardCouplingHandler::open(Searchable& config)
@@ -35,8 +35,10 @@ bool ControlBoardCouplingHandler::open(Searchable& config)
 
     Property joint_coupling_config;
     joint_coupling_config.fromString(config.toString());
-    joint_coupling_config.put("device", m_COUPLING_device);
-    if(!jointCouplingHandler.open(config)) {
+    joint_coupling_config.unput("device"); // remove the device parameter from the config otherwise we have recursion
+    joint_coupling_config.put("device", m_coupling_device);
+    yCDebug(CONTROLBOARDCOUPLINGHANDLER) << "Opening jointCouplingHandler device with config: " << joint_coupling_config.toString();
+    if(!jointCouplingHandler.open(joint_coupling_config)) {
         yCError(CONTROLBOARDCOUPLINGHANDLER) << "Error in opening jointCouplingHandler device";
         return false;
     }
@@ -47,15 +49,6 @@ bool ControlBoardCouplingHandler::open(Searchable& config)
     }
 
     configureBuffers();
-
-    Property prop;
-    prop.fromString(config.toString());
-
-    _verb = (prop.check("verbose","if present, give detailed output"));
-    if (_verb)
-    {
-        yCInfo(CONTROLBOARDCOUPLINGHANDLER, "running with verbose output");
-    }
 
     return true;
 }
@@ -73,7 +66,6 @@ bool ControlBoardCouplingHandler::attach(yarp::dev::PolyDriver* poly)
 
     ok = poly->view(iJntEnc);
     ok = ok && poly->view(iAxInfo);
-    ok = ok && poly->view(iTimed);
 
     if (!ok)
     {
@@ -83,15 +75,6 @@ bool ControlBoardCouplingHandler::attach(yarp::dev::PolyDriver* poly)
 
     return ok;
 }
-
-// First we store a map between each axes name
-// in the passed PolyDriverList and the device in which they belong and their index
-struct axisLocation
-{
-    std::string subDeviceKey;
-    size_t indexOfSubDeviceInPolyDriverList;
-    int indexInSubDevice;
-};
 
 void ControlBoardCouplingHandler::configureBuffers() {
     if (!iJntCoupling) {
@@ -119,9 +102,9 @@ void ControlBoardCouplingHandler::configureBuffers() {
 bool ControlBoardCouplingHandler::detach()
 {
     iJntEnc      = nullptr;
-    iTimed       = nullptr;
     iAxInfo      = nullptr;
     iJntCoupling = nullptr;
+    jointCouplingHandler.close();
     return true;
 }
 
@@ -385,19 +368,4 @@ bool ControlBoardCouplingHandler::getJointType(int j, yarp::dev::JointTypeEnum& 
     // TODO I am not sure how to handle this function
     type = VOCAB_JOINTTYPE_REVOLUTE;
     return ok;
-}
-
-yarp::os::Stamp ControlBoardCouplingHandler::getLastInputStamp()
-{
-    if(iTimed)
-    {
-        yarp::os::Stamp stamp;
-        stamp = iTimed->getLastInputStamp();
-        return stamp;
-    }
-    else
-    {
-        yCError(CONTROLBOARDCOUPLINGHANDLER) << "IpreciselyTimed interface not available";
-        return yarp::os::Stamp();
-    }
 }

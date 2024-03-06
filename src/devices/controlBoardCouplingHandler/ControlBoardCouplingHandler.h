@@ -30,13 +30,11 @@ class ControlBoardCouplingHandler :
         public yarp::dev::WrapperSingle,
         public yarp::dev::IAxisInfo,
         // public yarp::dev::IControlLimits,
-        public yarp::dev::IPreciselyTimed,
         public ControlBoardCouplingHandler_ParamsParser {
 private:
     yarp::dev::PolyDriver            jointCouplingHandler;
     yarp::dev::IEncodersTimed        *iJntEnc{nullptr};
     //yarp::dev::IControlLimits        *lim;
-    yarp::dev::IPreciselyTimed       *iTimed{nullptr};
     yarp::dev::IAxisInfo             *iAxInfo{nullptr};
     yarp::dev::IJointCoupling        *iJntCoupling{nullptr};
 
@@ -57,11 +55,6 @@ private:
      * Configure buffers used by the device
      */
     void configureBuffers();
-
-    /**
-     * attachAll if the axesNames option is used for configuration.
-     */
-    bool attachAllUsingAxesNames(const yarp::dev::PolyDriverList &l);
 
 
 public:
@@ -136,9 +129,6 @@ public:
     // bool setVelLimits(int j, double min, double max) override;
 
     // bool getVelLimits(int j, double *min, double *max) override;
-
-
-    yarp::os::Stamp getLastInputStamp() override;
 };
 
 #endif // YARP_DEV_CONTROLBOARDREMAPPER_CONTROLBOARDREMAPPER_H
