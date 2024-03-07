@@ -29,7 +29,6 @@ class ControlBoardCouplingHandler :
         public yarp::dev::IEncodersTimed,
         public yarp::dev::WrapperSingle,
         public yarp::dev::IAxisInfo,
-        // public yarp::dev::IControlLimits,
         public ControlBoardCouplingHandler_ParamsParser {
 private:
     yarp::dev::PolyDriver            jointCouplingHandler;
@@ -121,14 +120,6 @@ public:
 
     bool getJointType(int j, yarp::dev::JointTypeEnum &type) override;
 
-    // /* IControlLimits */
-    // bool setLimits(int j, double min, double max) override;
-
-    // bool getLimits(int j, double *min, double *max) override;
-
-    // bool setVelLimits(int j, double min, double max) override;
-
-    // bool getVelLimits(int j, double *min, double *max) override;
 };
 
 #endif // YARP_DEV_CONTROLBOARDREMAPPER_CONTROLBOARDREMAPPER_H
