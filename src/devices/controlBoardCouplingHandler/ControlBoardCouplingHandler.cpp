@@ -37,7 +37,6 @@ bool ControlBoardCouplingHandler::open(Searchable& config)
     joint_coupling_config.fromString(config.toString());
     joint_coupling_config.unput("device"); // remove the device parameter from the config otherwise we have recursion
     joint_coupling_config.put("device", m_coupling_device);
-    yCDebug(CONTROLBOARDCOUPLINGHANDLER) << "Opening jointCouplingHandler device with config: " << joint_coupling_config.toString();
     if(!jointCouplingHandler.open(joint_coupling_config)) {
         yCError(CONTROLBOARDCOUPLINGHANDLER) << "Error in opening jointCouplingHandler device";
         return false;
@@ -93,9 +92,11 @@ void ControlBoardCouplingHandler::configureBuffers() {
     physJointsPos.resize(nrOfPhysicalJoints);
     physJointsVel.resize(nrOfPhysicalJoints);
     physJointsAcc.resize(nrOfPhysicalJoints);
+    physJointsTime.resize(nrOfPhysicalJoints);
     actAxesPos.resize(nrOfActuatedAxes);
     actAxesVel.resize(nrOfActuatedAxes);
     actAxesAcc.resize(nrOfActuatedAxes);
+    actAxesTime.resize(nrOfActuatedAxes);
     return;
 }
 
@@ -139,7 +140,7 @@ bool ControlBoardCouplingHandler::getEncoder(int j, double *v)
 {
     bool ok = false;
     if (iJntEnc && iJntCoupling) {
-        ok = ok && iJntEnc->getEncoders(actAxesPos.data());
+        ok = iJntEnc->getEncoders(actAxesPos.data());
         ok = ok && iJntCoupling->convertFromActuatedAxesToPhysicalJointsPos(actAxesPos, physJointsPos);
         if (ok) {
             *v = physJointsPos[j];
@@ -153,10 +154,10 @@ bool ControlBoardCouplingHandler::getEncoders(double *encs)
 {
     bool ok = false;
     if (iJntEnc && iJntCoupling) {
-        ok = ok && iJntEnc->getEncoders(actAxesPos.data());
+        ok = iJntEnc->getEncoders(actAxesPos.data());
         ok = ok && iJntCoupling->convertFromActuatedAxesToPhysicalJointsPos(actAxesPos, physJointsPos);
         if (ok) {
-            encs = physJointsPos.data();
+            std::copy(physJointsPos.begin(), physJointsPos.end(), encs);
             return ok;
         }
     }
@@ -168,10 +169,15 @@ bool ControlBoardCouplingHandler::getEncodersTimed(double *encs, double *t)
     bool ok = false;
     if (iJntEnc && iJntCoupling) {
         // TODO t has to be probably resized
-        ok = ok && iJntEnc->getEncodersTimed(actAxesPos.data(), t);
+        ok = iJntEnc->getEncodersTimed(actAxesPos.data(), actAxesTime.data());
         ok = ok && iJntCoupling->convertFromActuatedAxesToPhysicalJointsPos(actAxesPos, physJointsPos);
         if (ok) {
-            encs = physJointsPos.data();
+            std::copy(physJointsPos.begin(), physJointsPos.end(), encs);
+            for(size_t i = 0; i < physJointsTime.size(); i++)
+            {
+                //TODO check if this is the correct way to take the time
+                t[i] = actAxesTime[0];
+            }
             return ok;
         }
     }
@@ -182,10 +188,12 @@ bool ControlBoardCouplingHandler::getEncoderTimed(int j, double *v, double *t)
 {
     bool ok = false;
     if (iJntEnc && iJntCoupling) {
-        ok = ok && iJntEnc->getEncodersTimed(actAxesPos.data(), t);
+        ok = iJntEnc->getEncodersTimed(actAxesPos.data(), actAxesTime.data());
         ok = ok && iJntCoupling->convertFromActuatedAxesToPhysicalJointsPos(actAxesPos, physJointsPos);
         if (ok) {
             *v = physJointsPos[j];
+            //TODO check if this is the correct way to take the time
+            *t = actAxesTime[0];
             return ok;
         }
     }
@@ -196,7 +204,7 @@ bool ControlBoardCouplingHandler::getEncoderSpeed(int j, double *sp)
 {
     bool ok = false;
     if (iJntEnc && iJntCoupling) {
-        ok = ok && iJntEnc->getEncoders(actAxesPos.data());
+        ok = iJntEnc->getEncoders(actAxesPos.data());
         ok = ok && iJntEnc->getEncoderSpeeds(actAxesVel.data());
         ok = ok && iJntCoupling->convertFromActuatedAxesToPhysicalJointsVel(actAxesPos, actAxesVel, physJointsVel);
         if (ok) {
@@ -211,11 +219,11 @@ bool ControlBoardCouplingHandler::getEncoderSpeeds(double *spds)
 {
     bool ok = false;
     if (iJntEnc && iJntCoupling) {
-        ok = ok && iJntEnc->getEncoders(actAxesPos.data());
+        ok = iJntEnc->getEncoders(actAxesPos.data());
         ok = ok && iJntEnc->getEncoderSpeeds(actAxesVel.data());
         ok = ok && iJntCoupling->convertFromActuatedAxesToPhysicalJointsVel(actAxesPos, actAxesVel, physJointsVel);
         if (ok) {
-            spds = physJointsVel.data();
+            std::copy(physJointsVel.begin(), physJointsVel.end(), spds);
             return ok;
         }
     }
@@ -226,7 +234,7 @@ bool ControlBoardCouplingHandler::getEncoderAcceleration(int j, double *acc)
 {
     bool ok = false;
     if (iJntEnc && iJntCoupling) {
-        ok = ok && iJntEnc->getEncoders(actAxesPos.data());
+        ok = iJntEnc->getEncoders(actAxesPos.data());
         ok = ok && iJntEnc->getEncoderSpeeds(actAxesVel.data());
         ok = ok && iJntEnc->getEncoderAccelerations(actAxesAcc.data());
         ok = ok && iJntCoupling->convertFromActuatedAxesToPhysicalJointsAcc(actAxesPos, actAxesVel, actAxesAcc, physJointsAcc);
@@ -242,12 +250,12 @@ bool ControlBoardCouplingHandler::getEncoderAccelerations(double *accs)
 {
     bool ok = false;
     if (iJntEnc && iJntCoupling) {
-        ok = ok && iJntEnc->getEncoders(actAxesPos.data());
+        ok = iJntEnc->getEncoders(actAxesPos.data());
         ok = ok && iJntEnc->getEncoderSpeeds(actAxesVel.data());
         ok = ok && iJntEnc->getEncoderAccelerations(actAxesAcc.data());
         ok = ok && iJntCoupling->convertFromActuatedAxesToPhysicalJointsAcc(actAxesPos, actAxesVel, actAxesAcc, physJointsAcc);
         if (ok) {
-            accs = physJointsAcc.data();
+            std::copy(physJointsAcc.begin(), physJointsAcc.end(), accs);
             return ok;
         }
     }
@@ -285,5 +293,5 @@ bool ControlBoardCouplingHandler::getJointType(int j, yarp::dev::JointTypeEnum& 
     bool ok{false};
     // TODO I am not sure how to handle this function
     type = VOCAB_JOINTTYPE_REVOLUTE;
-    return ok;
+    return true;
 }

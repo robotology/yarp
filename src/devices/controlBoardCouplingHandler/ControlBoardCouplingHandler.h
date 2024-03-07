@@ -40,9 +40,11 @@ private:
     yarp::sig::Vector physJointsPos;
     yarp::sig::Vector physJointsVel;
     yarp::sig::Vector physJointsAcc;
+    yarp::sig::Vector physJointsTime;
     yarp::sig::Vector actAxesPos;
     yarp::sig::Vector actAxesVel;
     yarp::sig::Vector actAxesAcc;
+    yarp::sig::Vector actAxesTime;
 
     /** Verbosity of the class */
     bool _verb{false};
