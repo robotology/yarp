@@ -222,9 +222,8 @@ bool FakeFrameGrabber::open(yarp::os::Searchable& config)
     m_intrinsic.put("principalPointX",m_principalPointX);
     m_intrinsic.put("principalPointY",m_principalPointY);
 
-    Value val;
-    val.makeList();
-    auto* bb = val.asList();
+    Value* val = Value::makeList();
+    auto* bb = val->asList();
     for (double num : m_rectificationMatrix) { bb->addFloat64(num); }
     m_intrinsic.put("rectificationMatrix",val);
 
