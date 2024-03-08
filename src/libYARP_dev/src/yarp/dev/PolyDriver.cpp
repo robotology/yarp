@@ -156,71 +156,73 @@ bool PolyDriver::coreOpen(yarp::os::Searchable& prop)
     setId(prop.check("id", prop.check("device", Value("")), "Id assigned to this device").toString());
     yarp::os::Searchable *config = &prop;
     Property p;
-    std::string str = prop.toString();
+    std::string device_name = prop.toString();
     Value *part;
     if (prop.check("device",part)) {
-        str = part->toString();
+        device_name = part->toString();
     }
 
     DeviceDriver *driver = nullptr;
 
-    DriverCreator *creator = Drivers::factory().find(str.c_str());
-    if (creator!=nullptr)
+    DriverCreator *deviceCreator = Drivers::factory().find(device_name.c_str());
+    if (deviceCreator !=nullptr)
     {
         Value *val;
         //if the device has a wrapper..
-        if (config->check("wrapping_enabled",val) && (!creator->getWrapper().empty()))
+        if (config->check("wrapping_enabled",val) && (!deviceCreator->getWrapper().empty()))
         {
-            std::string wrapper = creator->getWrapper();
-            DriverCreator *wrapCreator = Drivers::factory().find(wrapper.c_str());
+            std::string wrapper_name = deviceCreator->getWrapper();
+            DriverCreator *wrapperCreator = Drivers::factory().find(wrapper_name.c_str());
             // and this wrapper exists..
-            if (wrapCreator!=nullptr)
+            if (wrapperCreator !=nullptr)
             {
                 p.fromString(config->toString());
                 p.unput("wrapping_enabled");
                 config = &p;
                 //and this wrapper is not the device itself..
-                if (wrapCreator!=creator)
+                if (wrapperCreator != deviceCreator)
                 {
                     //..than open the wrapper instead of the device.
                     //this operation is done using the deviceBundler plugin, and passing to it
                     //the name of devices that it has to open and attach.
-                    p.put("attached_device", str);
-                    p.put("wrapper_device", wrapper);
+                    p.put("attached_device", device_name);
+                    p.put("wrapper_device", wrapper_name);
                     p.put("device", "deviceBundler");
-                    driver = wrapCreator->create();
-                    creator = wrapCreator;
+                    DriverCreator* bundlerCreator = Drivers::factory().find("deviceBundler");
+                    driver = bundlerCreator->create();
+                    deviceCreator = bundlerCreator;
                 }
                 else
                 {
                     //otherwise the device itself is already the wrapper
-                    driver = creator->create();
+                    driver = deviceCreator->create();
                 }
             }
         }
         //..the device does not have a wrapper
         else
         {
-            driver = creator->create();
+            driver = deviceCreator->create();
         }
     }
     else
     {
         // FIXME do not use yarpdev here
-        yCIError(POLYDRIVER, id(), "Could not find device <%s>", str.c_str());
+        yCIError(POLYDRIVER, id(), "Could not find device <%s>", device_name.c_str());
         return false;
     }
 
     if (driver!=nullptr)
     {
-        PolyDriver *manager = creator->owner();
+        PolyDriver *manager = deviceCreator->owner();
         if (manager!=nullptr)
         {
             link(*manager);
             return true;
         }
 
-        yCIDebug(POLYDRIVER, id(), "Parameters are %s", config->toString().c_str());
+        std::string param_string = config->toString();
+        yCIDebug(POLYDRIVER, id(), "Parameters are %s", param_string.c_str());
         driver->setId(id());
         //try to open the device:
         bool ok = driver->open(*config);
@@ -241,19 +243,19 @@ bool PolyDriver::coreOpen(yarp::os::Searchable& prop)
             {
                 //but the user requested it explicitly, than just print a warning
                 if(config->check("allow-deprecated-devices")) {
-                    yCIWarning(POLYDRIVER, id(), R"(Device "%s" is deprecated. Opening since the "allow-deprecated-devices" option was passed in the configuration.)", str.c_str());
+                    yCIWarning(POLYDRIVER, id(), R"(Device "%s" is deprecated. Opening since the "allow-deprecated-devices" option was passed in the configuration.)", device_name.c_str());
                 //if it is not requested explicitly, then close it with an error
                 } else {
-                    yCIError(POLYDRIVER, id(), R"(Device "%s" is deprecated. Pass the "allow-deprecated-devices" option in the configuration if you want to open it anyway.)", str.c_str());
+                    yCIError(POLYDRIVER, id(), R"(Device "%s" is deprecated. Pass the "allow-deprecated-devices" option in the configuration if you want to open it anyway.)", device_name.c_str());
                     driver->close();
                     delete driver;
                     return false;
                 }
             }
             //print some info
-            std::string name = creator->getName();
-            std::string wrapper = creator->getWrapper();
-            std::string code = creator->getCode();
+            std::string name = deviceCreator->getName();
+            std::string wrapper = deviceCreator->getWrapper();
+            std::string code = deviceCreator->getCode();
             yCIInfo(POLYDRIVER, id(), "Created %s <%s>. See C++ class %s for documentation.",
                   ((name==wrapper)?"wrapper":"device"),
                   name.c_str(),
