@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Tue Feb 27 00:56:32 2024
+// Generated on: Thu Mar  7 17:59:42 2024
 
 
 #ifndef FAKELASER_PARAMSPARSER_H
@@ -37,7 +37,7 @@
 * | GENERAL       | period              | double | s     | 0.02                          | 0        | Thread period                                                                   | -                                                                                                     |
 * | CONSTANT_MODE | const_distance      | double | m     | 1                             | 0        | Default const distance for mode use_constant                                    | -                                                                                                     |
 *
-* The device can be launched by yarpdev using one of the following examples:
+* The device can be launched by yarpdev using one of the following examples (with and without all optional parameters):
 * \code{.unparsed}
 * yarpdev --device fakeLaser --test use_pattern --localization_port /fakeLaser/location:i --localization_server /localizationServer --localization_client /fakeLaser/localizationClient --localization_device localization2DClient --MAP_MODE::map_file <optional_value> --MAP_MODE::map_context <optional_value> --clip_max 3.5 --clip_min 0.1 --GENERAL::period 0.02 --CONSTANT_MODE::const_distance 1
 * \endcode

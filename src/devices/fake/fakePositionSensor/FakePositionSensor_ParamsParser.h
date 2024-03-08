@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Tue Feb 27 00:56:31 2024
+// Generated on: Thu Mar  7 17:59:42 2024
 
 
 #ifndef FAKEPOSITIONSENSOR_PARAMSPARSER_H
@@ -27,7 +27,7 @@
 * |:----------:|:--------------:|:------:|:-----:|:-------------:|:--------:|:-------------:|:----------------------:|
 * | -          | period         | double | s     | 0.01          | 0        | thread period | optional, default 1.0s |
 *
-* The device can be launched by yarpdev using one of the following examples:
+* The device can be launched by yarpdev using one of the following examples (with and without all optional parameters):
 * \code{.unparsed}
 * yarpdev --device fakePositionSensor --period 0.01
 * \endcode

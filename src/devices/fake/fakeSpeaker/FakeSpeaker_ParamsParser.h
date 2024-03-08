@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Tue Feb 27 00:56:32 2024
+// Generated on: Thu Mar  7 17:59:43 2024
 
 
 #ifndef FAKESPEAKER_PARAMSPARSER_H
@@ -27,7 +27,7 @@
 * |:----------:|:--------------:|:------:|:-----:|:-------------:|:--------:|:-------------------------------:|:---------------------------------------------------:|
 * | -          | period         | double | s     | 0.010         | 0        | the period of processing thread | A value of 10ms is recommended. Do to not modify it |
 *
-* The device can be launched by yarpdev using one of the following examples:
+* The device can be launched by yarpdev using one of the following examples (with and without all optional parameters):
 * \code{.unparsed}
 * yarpdev --device fakeSpeaker --period 0.010
 * \endcode

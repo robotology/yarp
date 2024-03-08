@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Tue Feb 27 00:56:33 2024
+// Generated on: Thu Mar  7 17:59:43 2024
 
 
 #ifndef FAKENAVIGATION_PARAMSPARSER_H
@@ -28,7 +28,7 @@
 * | -          | navigation_time | int  | -     | 500           | 0        | navigation_time | -     |
 * | -          | reached_time    | int  | -     | 100           | 0        | reached_time    | -     |
 *
-* The device can be launched by yarpdev using one of the following examples:
+* The device can be launched by yarpdev using one of the following examples (with and without all optional parameters):
 * \code{.unparsed}
 * yarpdev --device fakeNavigation --navigation_time 500 --reached_time 100
 * \endcode

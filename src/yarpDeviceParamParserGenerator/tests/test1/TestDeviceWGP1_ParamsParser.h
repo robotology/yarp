@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Mon Feb 26 23:01:26 2024
+// Generated on: Thu Mar  7 16:55:07 2024
 
 
 #ifndef TESTDEVICEWGP1_PARAMSPARSER_H
@@ -80,7 +80,7 @@
 * | -                 | param_vec8     | vector<double> | m     | -                   | 1        | Test param 43 | Note  |
 * | -                 | param_vec9     | vector<string> | m     | -                   | 1        | Test param 44 | Note  |
 *
-* The device can be launched by yarpdev using one of the following examples:
+* The device can be launched by yarpdev using one of the following examples (with and without all optional parameters):
 * \code{.unparsed}
 * yarpdev --device testDeviceWGP1 --param_1 <mandatory_value> --param_2 <mandatory_value> --param_3 <mandatory_value> --param_4 <mandatory_value> --param_5 <mandatory_value> --param_6 <mandatory_value> --param_7 <mandatory_value> --group1::param_1 <mandatory_value> --group1::param_2 <mandatory_value> --group1::param_3 <mandatory_value> --group1::param_4 <mandatory_value> --group2::param_1 def1 --group2::param_2 1.0 --group2::param_3 true --group2::param_4 1000 --group3::param_1 def1 --group3::param_2 1.0 --group3::param_3 true --group3::param_4 1000 --group4::subgroup1::param_1 0 --group4::subgroup1::param_2 1 --group4::subgroup1::param_3 2 --group4::subgroup1::param_4 3 --group4::subgroup2::param_1 10 --group4::subgroup2::param_2 11 --group4::subgroup2::param_3 12 --group4::subgroup2::param_4 13 --group5::subgroup1::param_1 20 --group5::subgroup1::param_2 21 --group5::subgroup1::param_3 22 --group5::subgroup1::param_4 23 --group5::subgroup2::param_1 30 --group5::subgroup2::param_2 31 --group5::subgroup2::param_3 32 --group5::subgroup2::param_4 33 --param_vec1 <optional_value> --param_vec2 <optional_value> --param_vec3 <optional_value> --param_vec4 \" (1 2 3) \" --param_vec5 \" (1.0 2.0 3.0) \" --param_vec6 \" (\"sa1\" \"sa2\" \"sa3\") \" --param_vec7 <mandatory_value> --param_vec8 <mandatory_value> --param_vec9 <mandatory_value>
 * \endcode

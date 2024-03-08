@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Tue Feb 27 00:56:29 2024
+// Generated on: Thu Mar  7 17:59:40 2024
 
 
 #include "FakeChatBotDevice_ParamsParser.h"

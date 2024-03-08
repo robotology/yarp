@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Tue Feb 27 00:56:29 2024
+// Generated on: Thu Mar  7 17:59:40 2024
 
 
 #ifndef FAKEMOTIONCONTROL_PARAMSPARSER_H
@@ -35,7 +35,7 @@
 * | LIMITS     | Max            | vector<double> | deg   | -             | 0        | max encoder position                                              | -     |
 * | LIMITS     | Min            | vector<double> | deg   | -             | 0        | min encoder position                                              | -     |
 *
-* The device can be launched by yarpdev using one of the following examples:
+* The device can be launched by yarpdev using one of the following examples (with and without all optional parameters):
 * \code{.unparsed}
 * yarpdev --device fakeMotionControl --GENERAL::Joints 1 --GENERAL::AxisMap <optional_value> --GENERAL::AxisName <optional_value> --GENERAL::AxisType <optional_value> --GENERAL::ampsToSensor <optional_value> --GENERAL::fullscalePWM <optional_value> --GENERAL::Encoder <optional_value> --LIMITS::Max <optional_value> --LIMITS::Min <optional_value>
 * \endcode

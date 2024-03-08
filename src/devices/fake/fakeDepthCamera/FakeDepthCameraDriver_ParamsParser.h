@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Tue Feb 27 00:56:29 2024
+// Generated on: Thu Mar  7 17:59:40 2024
 
 
 #ifndef FAKEDEPTHCAMERADRIVER_PARAMSPARSER_H
@@ -37,7 +37,7 @@
 * | -          | dep_near       | double | -     | 0.2           | 0        | dep_near    | -                                        |
 * | -          | dep_far        | double | -     | 6.0           | 0        | dep_far     | -                                        |
 *
-* The device can be launched by yarpdev using one of the following examples:
+* The device can be launched by yarpdev using one of the following examples (with and without all optional parameters):
 * \code{.unparsed}
 * yarpdev --device fakeDepthCamera --rgb_h 480.0 --rgb_w 640.0 --dep_h 480.0 --dep_w 640.0 --accuracy 0.001 --rgb_Vfov 50.0 --rgb_Hfov 36.0 --dep_Vfov 50.0 --dep_Hfov 36.0 --dep_near 0.2 --dep_far 6.0
 * \endcode

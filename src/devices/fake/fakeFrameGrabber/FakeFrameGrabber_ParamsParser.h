@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Tue Feb 27 00:56:32 2024
+// Generated on: Thu Mar  7 17:59:43 2024
 
 
 #ifndef FAKEFRAMEGRABBER_PARAMSPARSER_H
@@ -55,7 +55,7 @@
 * | -          | snr                       | double         | -     | 0.5                                   | 0        | Signal noise ratio ([0.0-1.0]                                                                                  | -             |
 * | -          | rectificationMatrix       | vector<double> | -     | (1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0) | 0        | Matrix that describes the lens' distortion                                                                     | -             |
 *
-* The device can be launched by yarpdev using one of the following examples:
+* The device can be launched by yarpdev using one of the following examples (with and without all optional parameters):
 * \code{.unparsed}
 * yarpdev --device fakeFrameGrabber --width 320 --height 240 --horizontalFov 1.0 --verticalFov 2.0 --fakeFrameGrabber_rpc_port /fakeFrameGrabber/rpc --mirror false --syncro false --topIsLow true --physFocalLength 3.0 --focalLengthX 4.0 --focalLengthY 5.0 --principalPointX 6.0 --principalPointY 7.0 --distortionModel FishEye --k1 8.0 --k2 9.0 --k3 10.0 --t1 11.0 --t2 12.0 --freq 0 --period 0 --mode [line] --src <optional_value> --add_timestamp false --add_noise false --bayer false --mono false --snr 0.5 --rectificationMatrix \" (1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0) \"
 * \endcode

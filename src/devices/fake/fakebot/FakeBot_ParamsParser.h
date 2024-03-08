@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Tue Feb 27 00:56:29 2024
+// Generated on: Thu Mar  7 17:59:40 2024
 
 
 #ifndef FAKEBOT_PARAMSPARSER_H
@@ -32,7 +32,7 @@
 * | -          | sy             | double | -     | 1.0               | 0        | scaling for y coordinate                    | -     |
 * | -          | lifetime       | double | s     | -1.0              | 0        | device should exist for this length of time | -     |
 *
-* The device can be launched by yarpdev using one of the following examples:
+* The device can be launched by yarpdev using one of the following examples (with and without all optional parameters):
 * \code{.unparsed}
 * yarpdev --device fakebot --background textures/back.ppm --target textures/fore.ppm --noise 0.05 --sx 1.0 --sy 1.0 --lifetime -1.0
 * \endcode

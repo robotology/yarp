@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Tue Feb 27 00:56:30 2024
+// Generated on: Thu Mar  7 17:59:41 2024
 
 
 #ifndef FAKEBATTERY_PARAMSPARSER_H
@@ -33,7 +33,7 @@
 * | -          | info           | string | -     | Fake battery system v2.0 | 0        | Initial battery information | -     |
 * | -          | rpc_port_name  | string | -     | /fakeBattery/rpc         | 0        | Full rpc port name          | -     |
 *
-* The device can be launched by yarpdev using one of the following examples:
+* The device can be launched by yarpdev using one of the following examples (with and without all optional parameters):
 * \code{.unparsed}
 * yarpdev --device fakeBattery --period 0.02 --charge 50.0 --voltage 30.0 --current 3.0 --temperature 20.0 --info Fake battery system v2.0 --rpc_port_name /fakeBattery/rpc
 * \endcode

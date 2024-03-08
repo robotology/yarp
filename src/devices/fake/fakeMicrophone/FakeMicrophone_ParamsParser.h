@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Tue Feb 27 00:56:32 2024
+// Generated on: Thu Mar  7 17:59:42 2024
 
 
 #ifndef FAKEMICROPHONE_PARAMSPARSER_H
@@ -31,7 +31,7 @@
 * | -          | signal_amplitude  | int    | -       | 32000         | 0        | Amplitude of the generated signal                                                             | -                                                   |
 * | -          | driver_frame_size | int    | samples | 512           | 0        | the number of samples to process on each iteration of the thread                              | -                                                   |
 *
-* The device can be launched by yarpdev using one of the following examples:
+* The device can be launched by yarpdev using one of the following examples (with and without all optional parameters):
 * \code{.unparsed}
 * yarpdev --device fakeMicrophone --period 0.010 --waveform sine --signal_frequency 440 --signal_amplitude 32000 --driver_frame_size 512
 * \endcode

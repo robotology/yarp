@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Tue Feb 27 00:56:30 2024
+// Generated on: Thu Mar  7 17:59:41 2024
 
 
 #ifndef FAKEJOINTCOUPLING_PARAMSPARSER_H
@@ -27,7 +27,7 @@
 * |:----------:|:--------------:|:------:|:-----:|:----------------------:|:--------:|:------------------:|:-----:|
 * | -          | rpc_port_name  | string | -     | /fakeJointCoupling/rpc | 0        | Full rpc port name | -     |
 *
-* The device can be launched by yarpdev using one of the following examples:
+* The device can be launched by yarpdev using one of the following examples (with and without all optional parameters):
 * \code{.unparsed}
 * yarpdev --device fakeJointCoupling --rpc_port_name /fakeJointCoupling/rpc
 * \endcode

@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Tue Feb 27 00:56:30 2024
+// Generated on: Thu Mar  7 17:59:40 2024
 
 
 #ifndef FAKEMOTIONCONTROLMICRO_PARAMSPARSER_H
@@ -31,7 +31,7 @@
 * | GENERAL    | AxisType       | vector<string> | -     | -             | 0        | a list of strings representing the axes type (revolute/prismatic) | -     |
 * | GENERAL    | Encoder        | vector<int>    | -     | -             | 0        | a list of scales for the encoders                                 | -     |
 *
-* The device can be launched by yarpdev using one of the following examples:
+* The device can be launched by yarpdev using one of the following examples (with and without all optional parameters):
 * \code{.unparsed}
 * yarpdev --device fakeMotionControlMicro --GENERAL::Joints 1 --GENERAL::AxisMap <optional_value> --GENERAL::AxisName <optional_value> --GENERAL::AxisType <optional_value> --GENERAL::Encoder <optional_value>
 * \endcode

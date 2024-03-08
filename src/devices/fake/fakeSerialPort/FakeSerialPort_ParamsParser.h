@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Tue Feb 27 00:56:31 2024
+// Generated on: Thu Mar  7 17:59:42 2024
 
 
 #ifndef FAKESERIALPORT_PARAMSPARSER_H
@@ -46,7 +46,7 @@
 * | -          | line_terminator_char1 | char   | -     | '\r'          | 0        | line terminator character for receiveLine()                                                  | -                                                                                                                                                                                                                                                                       |
 * | -          | line_terminator_char2 | char   | -     | '\n'          | 0        | line terminator character for receiveLine()                                                  | -                                                                                                                                                                                                                                                                       |
 *
-* The device can be launched by yarpdev using one of the following examples:
+* The device can be launched by yarpdev using one of the following examples (with and without all optional parameters):
 * \code{.unparsed}
 * yarpdev --device fakeSerialPort --comport COM3 --verbose 1 --baudrate 9600 --xonlim 0 --xofflim 0 --readmincharacters 1 --readtimeoutmsec 100 --paritymode EVEN --ctsenb 0 --rtsenb 0 --xinenb 0 --xoutenb 0 --modem 0 --rcvenb 0 --dsrenb 0 --dtrdisable 0 --databits 7 --stopbits 1 --line_terminator_char1 '\r' --line_terminator_char2 '\n'
 * \endcode

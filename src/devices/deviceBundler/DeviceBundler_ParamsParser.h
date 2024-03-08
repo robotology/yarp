@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Mon Feb 19 16:28:03 2024
+// Generated on: Thu Mar  7 17:59:50 2024
 
 
 #ifndef DEVICEBUNDLER_PARAMSPARSER_H
@@ -29,7 +29,7 @@
 * | -          | attached_device | string | -     | device_name2  | 1        | Name of the subdevice that will be attached to the wrapper device | -                                                    |
 * | -          | doNotAttach     | bool   | -     | false         | 0        | If set to true, the two devices are opened, but not attached      | It should not be used, except for debugging purposes |
 *
-* The device can be launched by yarpdev using one of the following examples:
+* The device can be launched by yarpdev using one of the following examples (with and without all optional parameters):
 * \code{.unparsed}
 * yarpdev --device deviceBundler --wrapper_device device_name1 --attached_device device_name2 --doNotAttach false
 * \endcode

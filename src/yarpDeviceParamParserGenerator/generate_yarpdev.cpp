@@ -64,7 +64,7 @@ std::string ParamsFilesGenerator::generateYarpdevStringMandatoryParamsOnly()
 std::string ParamsFilesGenerator::generateYarpdevDoxyString()
 {
     std::ostringstream s;
-    s << " The device can be launched by yarpdev using one of the following examples:\n";
+    s << " The device can be launched by yarpdev using one of the following examples (with and without all optional parameters):\n";
     s << " \\code{.unparsed}\n";
     s << generateYarpdevStringAllParams();
     s << "\n";

@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Tue Feb 27 00:56:31 2024
+// Generated on: Thu Mar  7 17:59:41 2024
 
 
 #ifndef FAKELLMDEVICE_PARAMSPARSER_H
@@ -27,7 +27,7 @@
 * |:----------:|:--------------:|:------:|:-----:|:-------------:|:--------:|:-------------:|:-----:|
 * | -          | initial_prompt | string | -     | -             | 0        | intial prompt | -     |
 *
-* The device can be launched by yarpdev using one of the following examples:
+* The device can be launched by yarpdev using one of the following examples (with and without all optional parameters):
 * \code{.unparsed}
 * yarpdev --device fakeLLMDevice --initial_prompt <optional_value>
 * \endcode
