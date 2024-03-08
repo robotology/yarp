@@ -22,6 +22,7 @@
 #include <math.h>
 
 #include "ILocalization2DServerImpl.h"
+#include "Localization2D_nws_yarp_ParamsParser.h"
 
  /**
  * @ingroup dev_impl_nws_yarp dev_impl_navigation
@@ -30,21 +31,14 @@
  *
  * \brief `localization2D_nws_yarp`: A localization server which can be wrap multiple algorithms and devices to provide robot localization in a 2D World.
  *
- *
- *  Parameters required by this device are:
- * | Parameter name | SubParameter   | Type    | Units              | Default Value            | Required     | Description                                                       | Notes |
- * |:--------------:|:--------------:|:-------:|:------------------:|:------------------------:|:-----------: |:-----------------------------------------------------------------:|:-----:|
- * | GENERAL        |  period        | double  | s                  | 0.01                     | No           | The period of the working thread                                  |       |
- * | GENERAL        |  retrieve_position_periodically  | bool  | -  | true                     | No           | If true, the subdevice is asked periodically to retrieve the current location. Otherwise the current location is obtained asynchronously when a getCurrentPosition() command is issued.     | -     |
- * | GENERAL        |  name          | string  |  -                 | /localization2D_nws_yarp | No           | The name of the server, used as a prefix for the opened ports     | By default ports opened are /xxx/rpc and /xxx/streaming:o     |
- * | GENERAL        |  publish_odometry | bool |  -                 | true                     | No           | Periodically publish odometry data over the network               | -     |
- * | GENERAL        |  publish_location | bool |  -                 | true                     | No           | PEriodically publish location data over the network               | -     |
+ * Parameters required by this device are shown in class: Localization2D_nws_yarp_ParamsParser
  */
 class Localization2D_nws_yarp :
         public yarp::dev::DeviceDriver,
         public yarp::os::PeriodicThread,
         public yarp::dev::WrapperSingle,
-        public yarp::os::PortReader
+        public yarp::os::PortReader,
+        public Localization2D_nws_yarp_ParamsParser
 {
 protected:
 
@@ -59,15 +53,12 @@ protected:
     std::string                               m_2DLocationPortName;
     yarp::os::BufferedPort<yarp::dev::OdometryData>  m_odometryPort;
     std::string                               m_odometryPortName;
-    bool                                      m_enable_publish_odometry=true;
-    bool                                      m_enable_publish_location=true;
 
     //drivers and interfaces
     yarp::dev::PolyDriver                   pLoc;
     yarp::dev::Nav2D::ILocalization2D*      iLoc = nullptr;
 
     double                                  m_stats_time_last;
-    double                                  m_period;
 
 private:
     void publish_2DLocation_on_yarp_port();

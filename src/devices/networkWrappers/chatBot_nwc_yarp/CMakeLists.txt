@@ -5,6 +5,7 @@ yarp_prepare_plugin(chatBot_nwc_yarp
   CATEGORY device
   TYPE ChatBot_nwc_yarp
   INCLUDE ChatBot_nwc_yarp.h
+  GENERATE_PARSER
   DEFAULT ON
 )
 
@@ -15,6 +16,8 @@ if(NOT SKIP_chatBot_nwc_yarp)
   PRIVATE
   ChatBot_nwc_yarp.cpp
   ChatBot_nwc_yarp.h
+  ChatBot_nwc_yarp_ParamsParser.h
+  ChatBot_nwc_yarp_ParamsParser.cpp
   )
 
   target_sources(chatBot_nwc_yarp PRIVATE $<TARGET_OBJECTS:IChatBotMsgs>)

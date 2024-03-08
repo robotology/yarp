@@ -112,25 +112,9 @@ MultipleAnalogSensorsServer::~MultipleAnalogSensorsServer() = default;
 
 bool MultipleAnalogSensorsServer::open(yarp::os::Searchable& config)
 {
-    if (!config.check("name"))
-    {
-        yCError(MULTIPLEANALOGSENSORSSERVER, "Missing name parameter, exiting.");
-        return false;
-    }
+    if (!parseParams(config)) { return false; }
 
-    if (!config.check("period"))
-    {
-        yCError(MULTIPLEANALOGSENSORSSERVER, "Missing period parameter, exiting.");
-        return false;
-    }
-
-    if (!config.find("period").isInt32())
-    {
-        yCError(MULTIPLEANALOGSENSORSSERVER, "Period parameter is present but it is not an integer, exiting.");
-        return false;
-    }
-
-    m_periodInS = config.find("period").asInt32() / 1000.0;
+    m_periodInS = m_period / 1000.0;
 
     if (m_periodInS <= 0)
     {
@@ -140,8 +124,6 @@ bool MultipleAnalogSensorsServer::open(yarp::os::Searchable& config)
         return false;
     }
 
-    std::string name = config.find("name").asString();
-
     // Reserve a fair amount of elements
     // It would be great if yarp::sig::Vector had a reserve method
     m_buffer.resize(100);
@@ -149,10 +131,8 @@ bool MultipleAnalogSensorsServer::open(yarp::os::Searchable& config)
 
     // TODO(traversaro) Add port name validation when ready,
     // see https://github.com/robotology/yarp/pull/1508
-    m_RPCPortName = name + "/rpc:o";
-    m_streamingPortName = name + "/measures:o";
-
-
+    m_RPCPortName = m_name + "/rpc:o";
+    m_streamingPortName = m_name + "/measures:o";
 
     return true;
 }

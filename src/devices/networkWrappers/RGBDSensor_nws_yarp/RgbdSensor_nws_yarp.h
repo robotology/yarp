@@ -31,6 +31,8 @@
 #include <yarp/proto/framegrabber/RgbVisualParams_Responder.h>
 #include <yarp/proto/framegrabber/DepthVisualParams_Responder.h>
 
+#include "RgbdSensor_nws_yarp_ParamsParser.h"
+
 namespace RGBDImpl {
 
 #define DEFAULT_THREAD_PERIOD   0.03 // s
@@ -74,28 +76,14 @@ public:
  *
  * This device is paired with its client called RgbdSensor_nws_yarp to receive the data streams and perform remote operations.
  *
- *   Parameters required by this device are:
- * | Parameter name | SubParameter            | Type    | Units          | Default Value | Required                       | Description                                                                                         | Notes |
- * |:--------------:|:-----------------------:|:-------:|:--------------:|:-------------:|:-----------------------------: |:---------------------------------------------------------------------------------------------------:|:-----:|
- * | period         |      -                  | double  | s              |   0.02        | No                             | refresh period of the broadcasted values in s                                                       | default 0.02s |
- * | name           |      -                  | string  | -              |   -           | Yes                            | Prefix name of the ports opened by the RGBD wrapper, e.g. /robotName/RGBD                           | Required suffix like '/rpc' will be added by the device      |
- *
- * Some example of configuration files:
- *
- * Example of configuration file using .ini format.
- *
- * \code{.unparsed}
- * device RGBDSensorWrapper
- * subdevice <RGBDsensor>
- * period 0.03
- * name /<robotName>/RGBDSensor
- * \endcode
+ * Parameters required by this device are shown in class: RgbdSensor_nws_yarp_ParamsParser
  */
 
 class RgbdSensor_nws_yarp :
         public yarp::dev::DeviceDriver,
         public yarp::dev::WrapperSingle,
-        public yarp::os::PeriodicThread
+        public yarp::os::PeriodicThread,
+        public RgbdSensor_nws_yarp_ParamsParser
 {
 private:
     typedef yarp::sig::ImageOf<yarp::sig::PixelFloat>    DepthImage;
@@ -139,18 +127,14 @@ private:
 
     // Image data specs
     // int hDim, vDim;
-    double                         period;
-    std::string                    sensorId;
     yarp::dev::IRGBDSensor*        sensor_p;
     yarp::dev::IFrameGrabberControls* fgCtrl;
     yarp::dev::IRGBDSensor::RGBDSensor_status sensorStatus;
     int                            verbose;
-    bool                           initialize_YARP(yarp::os::Searchable& config);
 
     // Synch
     yarp::os::Stamp                colorStamp;
     yarp::os::Stamp                depthStamp;
-    yarp::os::Property             m_conf;
 
     bool writeData();
     bool setCamInfo(const std::string&                     frame_id,
@@ -166,7 +150,6 @@ public:
     ~RgbdSensor_nws_yarp() override;
 
     bool        open(yarp::os::Searchable &params) override;
-    bool        fromConfig(yarp::os::Searchable &params);
     bool        close() override;
 
     /**

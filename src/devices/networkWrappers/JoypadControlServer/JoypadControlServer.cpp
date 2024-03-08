@@ -221,78 +221,31 @@ bool JoypadCtrlParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& re
 }
 
 
-JoypadControlServer::JoypadControlServer() : PeriodicThread(DEFAULT_THREAD_PERIOD),
-                                             m_period(DEFAULT_THREAD_PERIOD),
-                                             m_IJoypad(nullptr),
-                                             m_separatePorts(false),
-                                             m_profile(false),
-                                             m_coordsMode(yarp::dev::IJoypadController::JoypadCtrl_coordinateMode::JypCtrlcoord_POLAR)
+JoypadControlServer::JoypadControlServer() : PeriodicThread(DEFAULT_THREAD_PERIOD)
 {
-
 }
 
 JoypadControlServer::~JoypadControlServer()
 {
-    m_IJoypad = nullptr;
 }
 
-bool JoypadControlServer::open(yarp::os::Searchable& params)
+bool JoypadControlServer::open(yarp::os::Searchable& config)
 {
-    if(params.check("help"))
-    {
-        yCInfo(JOYPADCONTROLSERVER)
-            << "parameters:\n\n"
-            << "period             - refresh period of the broadcasted values in ms.. default" << DEFAULT_THREAD_PERIOD * 1000 << "\n"
-            << "use_separate_ports - set it to 1 to use separate ports (buttons, axes, trackballs, hats) and 0 to stream all in one single port\n"
-            << "name               - Prefix name of the ports opened by the JoypadControlServer, e.g. /robotName/joypad\n"
-            << "subdevice          - name of the subdevice to open\n"
-            << "profile            - print the joypad data for debugging purpose";
-        return false;
-    }
-    std::string rootName;
-    if (!params.check("period", "refresh period of the broadcasted values in ms"))
-    {
-        yCInfo(JOYPADCONTROLSERVER) << "Using default 'period' parameter of" << DEFAULT_THREAD_PERIOD << "s";
-    }
-    else
-    {
-        m_period = params.find("period").asInt32() / 1000.0;
-    }
+    if (!parseParams(config)) { return false; }
 
-    m_profile = params.check("profile");
-
-    if(params.check("use_separate_ports"))
+    if(m_use_separate_ports == false)
     {
-        m_separatePorts = params.find("use_separate_ports").asBool();
-        if(!m_separatePorts)
-        {
-            yCError(JOYPADCONTROLSERVER) << "Single port mode not supported at the moment";
-            return false;
-        }
-    }
-    else
-    {
-        yCError(JOYPADCONTROLSERVER) << "Missing use_separate_ports in configuration";
-        return false;
-    }
-    m_coordsMode = yarp::dev::IJoypadController::JypCtrlcoord_CARTESIAN;
-    rootName = params.check("name",Value("/"), "starting '/' if needed.").asString();
-
-    if (!params.check("name", "Prefix name of the ports opened by the JoypadControlServer."))
-    {
-        yCError(JOYPADCONTROLSERVER) << "Missing 'name' parameter. Check you configuration file; it must be like:";
-        yCError(JOYPADCONTROLSERVER) << "   name:         Prefix name of the ports opened by the JoypadControlServer, e.g. /robotName/joypad";
+        yCError(JOYPADCONTROLSERVER) << "Single port mode not supported at the moment";
         return false;
     }
 
-    rootName             = params.find("name").asString();
-    m_rpcPortName        = rootName + "/rpc:i";
-    m_portButtons.name   = rootName + "/buttons:o";
-    m_portAxis.name      = rootName + "/axis:o";
-    m_portStick.name     = rootName + "/stick:o";
-    m_portTouch.name     = rootName + "/touch:o";
-    m_portTrackball.name = rootName + "/trackball:o";
-    m_portHats.name      = rootName + "/hat:o";
+    m_rpcPortName        = m_name + "/rpc:i";
+    m_portButtons.name   = m_name + "/buttons:o";
+    m_portAxis.name      = m_name + "/axis:o";
+    m_portStick.name     = m_name + "/stick:o";
+    m_portTouch.name     = m_name + "/touch:o";
+    m_portTrackball.name = m_name + "/trackball:o";
+    m_portHats.name      = m_name + "/hat:o";
 
     yCInfo(JOYPADCONTROLSERVER) << "Running, waiting for attach...";
     return true;
@@ -462,7 +415,7 @@ bool JoypadControlServer::openPorts()
 //        return false;
 //    }
 //    return true;
-    if(m_separatePorts)
+    if(m_use_separate_ports)
     {
         using countGet = bool (IJoypadController::*)(unsigned int&);
 
@@ -596,7 +549,7 @@ void JoypadControlServer::profile()
 
 void JoypadControlServer::run()
 {
-    if(m_separatePorts)
+    if(m_use_separate_ports)
     {
         if (m_portButtons.valid)
         {

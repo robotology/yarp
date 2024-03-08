@@ -18,27 +18,24 @@
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/IRobotDescription.h>
 
+#include "RobotDescriptionClient_ParamsParser.h"
+
 /**
 * @ingroup dev_impl_network_clients
 *
 * \brief `robotDescriptionClient`: This client device is used to connect to a robotDescriptionServer and ask info about the currently opened devices.
 *
-* Parameters required by this device are:
-* | Parameter name | SubParameter   | Type    | Units          | Default Value | Required                    | Description                                                                 | Notes |
-* |:--------------:|:--------------:|:-------:|:--------------:|:-------------:|:--------------------------: |:---------------------------------------------------------------------------:|:-----:|
-* | local          |      -         | string  | -              |   -           | Yes                         | prefix of the port opened by the device, like /my_module/descriptionClient  | MUST start with a '/' character. /rpc is automatically appended. |
-* | remote         |      -         | string  | -              |   -           | Yes                         | prefix of the port opened by the robotDescriptionServer, like /descriptionServer.  | MUST start with a '/' character. /rpc is automatically appended. |
+* Parameters required by this device are shown in class: RobotDescriptionClient_ParamsParser
 */
 
 class RobotDescriptionClient :
         public yarp::dev::DeviceDriver,
-        public yarp::dev::IRobotDescription
+        public yarp::dev::IRobotDescription,
+        public RobotDescriptionClient_ParamsParser
 {
 protected:
     std::mutex          m_mutex;
     yarp::os::Port      m_rpc_port;
-    std::string         m_local_name;
-    std::string         m_remote_name;
 
 public:
     /* DeviceDriver methods */

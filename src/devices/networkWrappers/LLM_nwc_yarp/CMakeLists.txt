@@ -6,6 +6,7 @@ yarp_prepare_plugin(LLM_nwc_yarp
   TYPE LLM_nwc_yarp
   INCLUDE LLM_nwc_yarp.h
   DEFAULT ON
+  GENERATE_PARSER
 )
 
 if(NOT SKIP_LLM_nwc_yarp)
@@ -15,6 +16,8 @@ if(NOT SKIP_LLM_nwc_yarp)
   PRIVATE
   LLM_nwc_yarp.cpp
   LLM_nwc_yarp.h
+  LLM_nwc_yarp_ParamsParser.cpp
+  LLM_nwc_yarp_ParamsParser.h
   )
 
   target_sources(LLM_nwc_yarp PRIVATE $<TARGET_OBJECTS:ILLMMsgs>)

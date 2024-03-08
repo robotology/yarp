@@ -19,6 +19,7 @@
 
 #include <mutex>
 #include <string>
+#include "Navigation2D_nwc_yarp_ParamsParser.h"
 
 #define DEFAULT_THREAD_PERIOD 20 //ms
 
@@ -30,19 +31,14 @@
  *
  * \brief `navigation2D_nwc_yarp`: A device which allows a client application to perform navigation tasks, such as commanding the robot to reach a specific location in a map.
  *
- *  Parameters required by this device are:
- * | Parameter name | SubParameter   | Type    | Units          | Default Value | Required     | Description                                                       | Notes |
- * |:--------------:|:--------------:|:-------:|:--------------:|:-------------:|:-----------: |:-----------------------------------------------------------------:|:-----:|
- * | local          |      -         | string  | -              |   -           | Yes          | Full port name opened by the Navigation2D_nwc_yarp device.                             |       |
- * | navigation_server    |     -    | string  | -              |   -           | Yes          | Full port name of the port remotely opened by the Navigation server, to which the Navigation2D_nwc_yarp connects to.           |  |
- * | map_locations_server |     -    | string  | -              |   -           | Yes          | Full port name of the port remotely opened by the Map2DServer, to which the Navigation2D_nwc_yarp connects to.           |  |
- * | localization_server  |     -    | string  | -              |   -           | Yes          | Full port name of the port remotely opened by the Localization server, to which the Navigation2D_nwc_yarp connects to.           |  |
+ * Parameters required by this device are shown in class: Navigation2D_nwc_yarp_ParamsParser
  */
 
 class Navigation2D_nwc_yarp:
         public yarp::dev::DeviceDriver,
         public yarp::dev::Nav2D::INavigation2D,
-        public yarp::os::PortReader
+        public yarp::os::PortReader,
+        public Navigation2D_nwc_yarp_ParamsParser
 {
 protected:
     //thrift stuff
@@ -56,11 +52,6 @@ protected:
     yarp::os::Port                m_rpc_port_to_Map2DServer;
     yarp::os::Port                m_rpc_port_to_localization_server;
     yarp::os::Port                m_rpc_port_user_commands;
-    std::string                   m_local_name;
-    std::string                   m_navigation_server_name;
-    std::string                   m_map_locations_server_name;
-    std::string                   m_localization_server_name;
-    int                           m_period;
 
 public:
 

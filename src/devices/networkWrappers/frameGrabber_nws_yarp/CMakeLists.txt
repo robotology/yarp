@@ -8,6 +8,7 @@ yarp_prepare_plugin(frameGrabber_nws_yarp
   EXTRA_CONFIG
     WRAPPER=frameGrabber_nws_yarp
   DEFAULT ON
+  GENERATE_PARSER
 )
 
 if(NOT SKIP_frameGrabber_nws_yarp)
@@ -15,8 +16,10 @@ if(NOT SKIP_frameGrabber_nws_yarp)
 
   target_sources(yarp_frameGrabber_nws_yarp
     PRIVATE
-          FrameGrabber_nws_yarp.cpp
-          FrameGrabber_nws_yarp.h
+      FrameGrabber_nws_yarp.cpp
+      FrameGrabber_nws_yarp.h
+      FrameGrabber_nws_yarp_ParamsParser.cpp
+      FrameGrabber_nws_yarp_ParamsParser.h
   )
 
   target_sources(yarp_frameGrabber_nws_yarp PRIVATE $<TARGET_OBJECTS:framegrabber_protocol>)

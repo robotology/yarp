@@ -18,6 +18,8 @@ YARP_LOG_COMPONENT(FRAMEGRABBER_NWS_YARP, "yarp.device.frameGrabber_nws_yarp")
 } // namespace
 
 
+static constexpr double DEFAULT_THREAD_PERIOD = 0.033; // seconds
+
 FrameGrabber_nws_yarp::FrameGrabber_nws_yarp() :
         PeriodicThread(DEFAULT_THREAD_PERIOD)
 {
@@ -32,11 +34,6 @@ FrameGrabber_nws_yarp::~FrameGrabber_nws_yarp()
 
 bool FrameGrabber_nws_yarp::close()
 {
-    if (!active) {
-        return false;
-    }
-    active = false;
-
     detach();
 
     pImg.interrupt();
@@ -57,42 +54,17 @@ bool FrameGrabber_nws_yarp::close()
 
 bool FrameGrabber_nws_yarp::open(yarp::os::Searchable& config)
 {
-    if (active) {
-        yCError(FRAMEGRABBER_NWS_YARP, "Device is already opened");
-        return false;
-    }
+    if (!this->parseParams(config)) { return false; }
 
-
-    // Check "period" option
-    if (config.check("period", "refresh period(in s) of the broadcasted values through yarp ports") && config.find("period").isFloat64()) {
-        period = config.find("period").asFloat64();
-    } else {
-        yCInfo(FRAMEGRABBER_NWS_YARP)
-            << "Period parameter not found, using default of"
-            << DEFAULT_THREAD_PERIOD
-            << "seconds";
-    }
-    PeriodicThread::setPeriod(period);
-
+    PeriodicThread::setPeriod(m_period);
 
     // Check "capabilities" option
-    if (config.check("capabilities", "two capabilities supported, COLOR and RAW respectively for rgb and raw streaming")) {
-        if (config.find("capabilities").asString() == "COLOR") {
-            cap = COLOR;
-        } else if (config.find("capabilities").asString() == "RAW") {
-            cap = RAW;
-        }
-    } else {
-        yCWarning(FRAMEGRABBER_NWS_YARP) << "'capabilities' parameter not found or misspelled, the option available are COLOR(default) and RAW, using default";
-    }
-
-
-    // Check "no_drop" option
-    noDrop = config.check("no_drop", "if present, use strict policy for sending data"); // FIXME DRDANZ
-
+    if      (m_capabilities == "COLOR")    { m_cap = COLOR; }
+    else if (m_capabilities == "RAW")      { m_cap = RAW; }
+    else    { yCError(FRAMEGRABBER_NWS_YARP) << "'capabilities' parameter unsupported value"; return false;}
 
     // Check "name" option and open ports
-    std::string pImg_Name = config.check("name", yarp::os::Value("/grabber"), "name of port to send data on").asString();
+    std::string pImg_Name = m_name;
     std::string rpcPort_Name = pImg_Name + "/rpc";
 
     if (!rpcPort.open(rpcPort_Name)) {
@@ -103,7 +75,7 @@ bool FrameGrabber_nws_yarp::open(yarp::os::Searchable& config)
 
     pImg.promiseType(yarp::os::Type::byName("yarp/image"));
     pImg.setWriteOnly();
-    pImg.setStrict(noDrop);
+    pImg.setStrict(m_no_drop);
     if (!pImg.open(pImg_Name)) {
         yCError(FRAMEGRABBER_NWS_YARP) << "Unable to open image streaming Port" << pImg_Name.c_str();
         return false;
@@ -111,7 +83,6 @@ bool FrameGrabber_nws_yarp::open(yarp::os::Searchable& config)
     pImg.setReader(*this);
 
     yCInfo(FRAMEGRABBER_NWS_YARP) << "Running, waiting for attach...";
-    active = true;
 
     return true;
 }
@@ -130,7 +101,7 @@ bool FrameGrabber_nws_yarp::attach(yarp::dev::PolyDriver* poly)
     poly->view(iFrameGrabberControlsDC1394);
     poly->view(iPreciselyTimed);
 
-    switch (cap) {
+    switch (m_cap) {
     case COLOR: {
         if (iFrameGrabberImage == nullptr) {
             yCError(FRAMEGRABBER_NWS_YARP) << "Capability \"COLOR\" required not supported";
@@ -206,7 +177,7 @@ bool FrameGrabber_nws_yarp::detach()
 
 bool FrameGrabber_nws_yarp::threadInit()
 {
-    if (cap == COLOR) {
+    if (m_cap == COLOR) {
         img = new yarp::sig::ImageOf<yarp::sig::PixelRgb>;
     } else {
         img_Raw = new yarp::sig::ImageOf<yarp::sig::PixelMono>;
@@ -225,7 +196,7 @@ void FrameGrabber_nws_yarp::run()
 
     yarp::sig::FlexImage& flex_i = pImg.prepare();
 
-    if (cap == COLOR) {
+    if (m_cap == COLOR) {
         if (iFrameGrabberImage != nullptr) {
             if (iFrameGrabberImage->getImage(*img))
                 {flex_i.swap(*img);}
@@ -236,7 +207,7 @@ void FrameGrabber_nws_yarp::run()
         }
     }
 
-    if (cap == RAW) {
+    if (m_cap == RAW) {
         if (iFrameGrabberImageRaw != nullptr) {
             if (iFrameGrabberImageRaw->getImage(*img_Raw))
                 {flex_i.swap(*img_Raw);}
@@ -248,11 +219,11 @@ void FrameGrabber_nws_yarp::run()
     }
 
     if (iPreciselyTimed) {
-        stamp = iPreciselyTimed->getLastInputStamp();
+        m_stamp = iPreciselyTimed->getLastInputStamp();
     } else {
-        stamp.update(yarp::os::Time::now());
+        m_stamp.update(yarp::os::Time::now());
     }
-    pImg.setEnvelope(stamp);
+    pImg.setEnvelope(m_stamp);
 
     pImg.write();
 }

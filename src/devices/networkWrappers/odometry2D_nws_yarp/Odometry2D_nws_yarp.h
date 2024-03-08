@@ -15,6 +15,8 @@
 #include <yarp/dev/WrapperSingle.h>
 #include <yarp/os/RpcServer.h>
 
+#include "Odometry2D_nws_yarp_ParamsParser.h"
+
 #define DEFAULT_THREAD_PERIOD 0.02 //s
 
 /**
@@ -27,56 +29,15 @@
  *   - a port for velocity.
  * The attached device must implement a `yarp::dev::Nav2D::IOdometry2D` interface.
  *
- * Parameters required by this device are:
- * | Parameter name      | SubParameter            | Type    | Units          | Default Value         | Required                       | Description                                           | Notes |
- * |:-------------------:|:-----------------------:|:-------:|:--------------:|:---------------------:|:-----------------------------: |:-----------------------------------------------------:|:-----:|
- * | period              |      -                  | double  | s              | 0.02                  | No                             | refresh period of the broadcasted values in s         | default 0.02s |
- * | name                |      -                  | string  | -              | /odometry2D_nws_yarp  | No                             | The name of the server, used as a prefix for the opened ports   |      |
- *
- * Example of configuration file using .ini format.
- *
- * \code{.unparsed}
- * device odometry2D_nws_yarp
- * period 0.02
- * name /odometry2D_nws_yarp
- *
- * subdevice fakeOdometry
- * \endcode
- *
- * example of xml file with a fake odometer
- *
- * \code{.unparsed}
- * <?xml version="1.0" encoding="UTF-8" ?>
- * <!DOCTYPE robot PUBLIC "-//YARP//DTD yarprobotinterface 3.0//EN" "http://www.yarp.it/DTD/yarprobotinterfaceV3.0.dtd">
- * <robot name="fakeOdometry" build="2" portprefix="test" xmlns:xi="http://www.w3.org/2001/XInclude">
- *   <devices>
- *     <device xmlns:xi="http://www.w3.org/2001/XInclude" name="fakeOdometry_device" type="fakeOdometry">
- *     </device>
- *     <device xmlns:xi="http://www.w3.org/2001/XInclude" name="odometry_nws_yarp" type="odometry2D_nws_yarp">
- *       <param name="name"> /odometry2D_nws_yarp </param>
- *       <action phase="startup" level="5" type="attach">
- *           <paramlist name="networks">
- *               <elem name="subdevice_odometry"> fakeOdometry_device </elem>
- *           </paramlist>
- *       </action>
- *       <action phase="shutdown" level="5" type="detach" />
- *     </device>
- *   </devices>
- * </robot>
- * \endcode
- *
- * example of command via terminal.
- *
- * \code{.unparsed}
- * yarpdev --device odometry2D_nws_yarp --period 0.01 --subdevice fakeOdometry
- * \endcode
+ * Parameters required by this device are shown in class: Odometry2D_nws_yarp_ParamsParser
  */
 
 class Odometry2D_nws_yarp :
         public yarp::os::PeriodicThread,
         public yarp::dev::DeviceDriver,
         public yarp::dev::WrapperSingle,
-        public yarp::os::PortReader
+        public yarp::os::PortReader,
+        public Odometry2D_nws_yarp_ParamsParser
 {
 public:
     Odometry2D_nws_yarp();
@@ -109,7 +70,6 @@ private:
     yarp::os::RpcServer                      m_rpcPort;
 
     //yarp streaming data
-    std::string m_local_name = "/odometry2D_nws_yarp";
     std::string m_odometerStreamingPortName;
     std::string m_odometryStreamingPortName;
     std::string m_velocityStreamingPortName;
@@ -117,9 +77,6 @@ private:
     std::string m_deviceName;
     size_t m_stampCount{0};
     yarp::dev::OdometryData m_oldOdometryData{0,0,0,0,0,0,0,0,0};
-
-    // thread
-    double m_period{DEFAULT_THREAD_PERIOD};
 
     // timestamp
     yarp::os::Stamp m_lastStateStamp;

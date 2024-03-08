@@ -9,6 +9,7 @@ yarp_prepare_plugin(
   EXTRA_CONFIG
     WRAPPER=controlBoard_nws_yarp
   DEFAULT ON
+  GENERATE_PARSER
 )
 
 if(NOT SKIP_controlBoard_nws_yarp)
@@ -23,6 +24,8 @@ if(NOT SKIP_controlBoard_nws_yarp)
     PRIVATE
       ControlBoard_nws_yarp.cpp
       ControlBoard_nws_yarp.h
+      ControlBoard_nws_yarp_ParamsParser.cpp
+      ControlBoard_nws_yarp_ParamsParser.h
       RPCMessagesParser.cpp
       RPCMessagesParser.h
       StreamingMessagesParser.cpp

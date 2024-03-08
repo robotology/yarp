@@ -4,8 +4,9 @@
 yarp_prepare_plugin(speechTranscription_nws_yarp
   CATEGORY device
   TYPE SpeechTranscription_nws_yarp
-  INCLUDE speechTranscription_nws_yarp.h
+  INCLUDE SpeechTranscription_nws_yarp.h
   DEFAULT ON
+  GENERATE_PARSER
 )
 
 if(NOT SKIP_speechTranscription_nws_yarp)
@@ -13,8 +14,10 @@ if(NOT SKIP_speechTranscription_nws_yarp)
 
   target_sources(yarp_speechTranscription_nws_yarp
     PRIVATE
-      speechTranscription_nws_yarp.cpp
-      speechTranscription_nws_yarp.h
+      SpeechTranscription_nws_yarp.cpp
+      SpeechTranscription_nws_yarp.h
+      SpeechTranscription_nws_yarp_ParamsParser.h
+      SpeechTranscription_nws_yarp_ParamsParser.cpp
   )
 
   target_link_libraries(yarp_speechTranscription_nws_yarp

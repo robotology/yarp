@@ -94,35 +94,14 @@ bool JoypadControlClient::getJoypadInfo()
 
 bool JoypadControlClient::open(yarp::os::Searchable& config)
 {
-    if(config.check("help"))
-    {
-        yCInfo(JOYPADCONTROLCLIENT) << "Parameter:\n\n" <<
-                   "local  - prefix of the local port\n" <<
-                   "remote - prefix of the port provided to and opened by JoypadControlServer\n";
-    }
-    if(!config.check("local"))
-    {
-        yCError(JOYPADCONTROLCLIENT) << "Unable to 'local' parameter. check configuration file";
-        return false;
-    }
-
-    m_local = config.find("local").asString();
+    if (!parseParams(config)) { return false; }
 
     if(!m_rpcPort.open(m_local + "/rpc:o"))
     {
         yCError(JOYPADCONTROLCLIENT) << "Unable to open rpc port.";
         return false;
     }
-
     yCInfo(JOYPADCONTROLCLIENT) << "rpc port opened. starting the handshake";
-
-    if(!config.check("remote"))
-    {
-        yCError(JOYPADCONTROLCLIENT) << "Unable to find the 'remote' parameter. check configuration file";
-        return false;
-    }
-
-    m_remote = config.find("remote").asString();
 
     if(!yarp::os::NetworkBase::connect(m_local + "/rpc:o", m_remote + "/rpc:i"))
     {

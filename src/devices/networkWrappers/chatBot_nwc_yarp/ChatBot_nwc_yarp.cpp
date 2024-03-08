@@ -15,22 +15,9 @@ namespace
 
 bool ChatBot_nwc_yarp::open(yarp::os::Searchable &config)
 {
-    std::string local_rpc = config.find("local").asString();
-    std::string remote_rpc = config.find("remote").asString();
+    if (!parseParams(config)) { return false; }
 
-    if (local_rpc == "")
-    {
-        yCError(CHATBOT_NWC_YARP) << "open() error you have to provide a valid 'local' param";
-        return false;
-    }
-
-    if (remote_rpc == "")
-    {
-        yCError(CHATBOT_NWC_YARP) << "open() error you have to provide valid 'remote' param";
-        return false;
-    }
-
-    if (!m_thriftClientPort.open(local_rpc))
+    if (!m_thriftClientPort.open(m_local))
     {
         yCError(CHATBOT_NWC_YARP) << "Cannot open rpc port, check network";
 
@@ -39,11 +26,11 @@ bool ChatBot_nwc_yarp::open(yarp::os::Searchable &config)
 
     bool ok = false;
 
-    ok = yarp::os::Network::connect(local_rpc, remote_rpc);
+    ok = yarp::os::Network::connect(m_local, m_remote);
 
     if (!ok)
     {
-        yCError(CHATBOT_NWC_YARP) << "open() error could not connect to" << remote_rpc;
+        yCError(CHATBOT_NWC_YARP) << "open() error could not connect to" << m_remote;
         return false;
     }
 

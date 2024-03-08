@@ -42,7 +42,7 @@
 
 #include "StreamingMessagesParser.h"
 #include "RPCMessagesParser.h"
-
+#include "ControlBoard_nws_yarp_ParamsParser.h"
 
 /**
  * @ingroup dev_impl_nws_yarp
@@ -50,6 +50,8 @@
  * \brief `controlBoard_nws_yarp`: A controlBoard network wrapper server for YARP.
  *
  * \section controlBoard_nws_yarp_device_parameters Description of input parameters
+ *
+ * Parameters required by this device are shown in class: ControlBoard_nws_yarp_ParamsParser
  *
  *  Parameters required by this device are:
  * | Parameter name | SubParameter   | Type    | Units          | Default Value | Required                    | Description                                                       | Notes |
@@ -61,13 +63,10 @@
 class ControlBoard_nws_yarp :
         public yarp::dev::DeviceDriver,
         public yarp::os::PeriodicThread,
-        public yarp::dev::WrapperSingle
+        public yarp::dev::WrapperSingle,
+        public ControlBoard_nws_yarp_ParamsParser
 {
 private:
-    std::string rootName;
-
-    bool checkPortName(yarp::os::Searchable &params);
-
     yarp::os::BufferedPort<yarp::sig::Vector> outputPositionStatePort; // Port /state:o streaming out the encoder positions
     yarp::os::BufferedPort<CommandMessage> inputStreamingPort;         // Input streaming port for high frequency commands
     yarp::os::Port inputRPCPort;                                       // Input RPC port for set/get remote calls
@@ -78,9 +77,6 @@ private:
 
     RPCMessagesParser RPC_parser;             // Message parser associated to the inputRPCPort port
     StreamingMessagesParser streaming_parser; // Message parser associated to the inputStreamingPort port
-
-    static constexpr double default_period = 0.02; // s
-    double period {default_period};
 
     std::string partName; // to open ports and print more detailed debug messages
     yarp::sig::Vector times; // time for each joint

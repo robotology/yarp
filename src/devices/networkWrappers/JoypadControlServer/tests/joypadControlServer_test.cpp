@@ -33,7 +33,6 @@ TEST_CASE("dev::joypadControlServerTest", "[yarp::dev]")
         Property p_nws;
 
         p_nws.put("device", "JoypadControlServer");
-        p_nws.put("use_separate_ports", true);
         p_nws.put("name", "/joyServer");
 
         REQUIRE(dd_nws.open(p_nws));

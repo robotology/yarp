@@ -6,6 +6,7 @@ yarp_prepare_plugin(speechTranscription_nwc_yarp
   TYPE SpeechTranscription_nwc_yarp
   INCLUDE SpeechTranscription_nwc_yarp.h
   DEFAULT ON
+  GENERATE_PARSER
 )
 
 if(NOT SKIP_speechTranscription_nwc_yarp)
@@ -15,6 +16,8 @@ if(NOT SKIP_speechTranscription_nwc_yarp)
     PRIVATE
       SpeechTranscription_nwc_yarp.cpp
       SpeechTranscription_nwc_yarp.h
+      SpeechTranscription_nwc_yarp_ParamsParser.h
+      SpeechTranscription_nwc_yarp_ParamsParser.cpp
   )
 
   target_link_libraries(yarp_speechTranscription_nwc_yarp

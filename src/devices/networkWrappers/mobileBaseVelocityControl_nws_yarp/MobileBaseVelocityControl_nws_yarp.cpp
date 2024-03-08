@@ -41,19 +41,12 @@ void VelocityInputPortProcessor::onRead(yarp::dev::MobileBaseVelocity& v)
 
 bool MobileBaseVelocityControl_nws_yarp::open(yarp::os::Searchable &config)
 {
-    //param configuration
-    m_local_name = config.find("local").asString();
-
-    if (m_local_name.empty())
-    {
-        yCError(MOBVEL_NWS_YARP, "open() error you have to provide a valid 'local' param");
-        return false;
-    }
+    if (!parseParams(config)) { return false; }
 
     //rpc block
     {
         std::string local_rpc_1;
-        local_rpc_1           = m_local_name + "/rpc:i";
+        local_rpc_1           = m_local + "/rpc:i";
 
         if (!m_rpc_port_navigation_server.open(local_rpc_1))
         {
@@ -71,7 +64,7 @@ bool MobileBaseVelocityControl_nws_yarp::open(yarp::os::Searchable &config)
     //streaming input block
     {
         std::string local_stream_1;
-        local_stream_1 = m_local_name + "/data:i";
+        local_stream_1 = m_local + "/data:i";
 
         if (!m_StreamingInput.open(local_stream_1))
         {

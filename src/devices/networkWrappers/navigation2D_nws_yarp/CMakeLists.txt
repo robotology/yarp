@@ -3,10 +3,11 @@
 
 yarp_prepare_plugin(navigation2D_nws_yarp
   CATEGORY device
-  TYPE navigation2D_nws_yarp
-  INCLUDE navigation2D_nws_yarp.h
+  TYPE Navigation2D_nws_yarp
+  INCLUDE Navigation2D_nws_yarp.h
   DEPENDS "TARGET YARP::YARP_math"
   DEFAULT ON
+  GENERATE_PARSER
 )
 
 if(NOT SKIP_navigation2D_nws_yarp)
@@ -14,10 +15,12 @@ if(NOT SKIP_navigation2D_nws_yarp)
 
   target_sources(yarp_navigation2D_nws_yarp
     PRIVATE
-      navigation2D_nws_yarp.h
-      navigation2D_nws_yarp.cpp
+      Navigation2D_nws_yarp.h
+      Navigation2D_nws_yarp.cpp
       INavigation2DServerImpl.h
       INavigation2DServerImpl.cpp
+      Navigation2D_nws_yarp_ParamsParser.cpp
+      Navigation2D_nws_yarp_ParamsParser.h
   )
 
   target_sources(yarp_navigation2D_nws_yarp PRIVATE $<TARGET_OBJECTS:INavigation2DMsgs>)

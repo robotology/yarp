@@ -6,6 +6,7 @@ yarp_prepare_plugin(multipleanalogsensorsclient
   TYPE MultipleAnalogSensorsClient
   INCLUDE MultipleAnalogSensorsClient.h
   DEFAULT ON
+  GENERATE_PARSER
 )
 
 if(ENABLE_multipleanalogsensorsclient)
@@ -15,6 +16,8 @@ if(ENABLE_multipleanalogsensorsclient)
     PRIVATE
       MultipleAnalogSensorsClient.cpp
       MultipleAnalogSensorsClient.h
+      MultipleAnalogSensorsClient_ParamsParser.cpp
+      MultipleAnalogSensorsClient_ParamsParser.h
   )
 
   target_sources(yarp_multipleanalogsensorsclient PRIVATE $<TARGET_OBJECTS:multipleAnalogSensorsSerializations>)

@@ -25,23 +25,7 @@ YARP_LOG_COMPONENT(LOCALIZATION2D_NWC_YARP, "yarp.device.Localization2D_nwc_yarp
 
 bool Localization2D_nwc_yarp::open(yarp::os::Searchable &config)
 {
-    m_local_name.clear();
-    m_remote_name.clear();
-
-    m_local_name = config.find("local").asString();
-    m_remote_name = config.find("remote").asString();
-
-    if (m_local_name == "")
-    {
-        yCError(LOCALIZATION2D_NWC_YARP, "open() error you have to provide a valid 'local' param");
-        return false;
-    }
-
-    if (m_remote_name == "")
-    {
-        yCError(LOCALIZATION2D_NWC_YARP, "open() error you have to provide valid 'remote' param");
-        return false;
-    }
+    if (!parseParams(config)) { return false; }
 
     std::string
             local_rpc,
@@ -49,10 +33,10 @@ bool Localization2D_nwc_yarp::open(yarp::os::Searchable &config)
             remote_streaming_name,
             local_streaming_name;
 
-    local_rpc             = m_local_name  + "/localization/rpc";
-    remote_rpc            = m_remote_name + "/rpc";
-    remote_streaming_name = m_remote_name + "/stream:o";
-    local_streaming_name  = m_local_name  + "/stream:i";
+    local_rpc             = m_local  + "/localization/rpc";
+    remote_rpc            = m_remote + "/rpc";
+    remote_streaming_name = m_remote + "/stream:o";
+    local_streaming_name  = m_local  + "/stream:i";
 
     if (!m_rpc_port_localization_server.open(local_rpc))
     {

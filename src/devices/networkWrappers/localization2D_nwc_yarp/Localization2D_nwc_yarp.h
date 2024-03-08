@@ -22,6 +22,8 @@
 #include <yarp/dev/ILocalization2D.h>
 #include "ILocalization2DMsgs.h"
 
+#include "Localization2D_nwc_yarp_ParamsParser.h"
+
 /**
  *  @ingroup dev_impl_nwc_yarp dev_impl_navigation
  *
@@ -29,21 +31,16 @@
  *
  * \brief `Localization2D_nwc_yarp` A device which allows a user application retrieve the current position of the robot in the world.
  *
- *  Parameters required by this device are:
- * | Parameter name | SubParameter   | Type    | Units          | Default Value | Required     | Description                                                       | Notes |
- * |:--------------:|:--------------:|:-------:|:--------------:|:-------------:|:-----------: |:-----------------------------------------------------------------:|:-----:|
- * | local          |      -         | string  | -   |   -           | Yes          | Full port name opened by the Localization2D_nwc_yarp device.                             |       |
- * | remote         |      -         | string  | -   |   -           | Yes          | Full port name of the port opened on the server side, to which the Localization2D_nwc_yarp connects to.   |     |
+ *  Parameters required by this device are shown in class: Localization2D_nwc_yarp_ParamsParser
  */
 class Localization2D_nwc_yarp :
         public yarp::dev::DeviceDriver,
-        public yarp::dev::Nav2D::ILocalization2D
+        public yarp::dev::Nav2D::ILocalization2D,
+        public Localization2D_nwc_yarp_ParamsParser
 {
 protected:
     std::mutex                    m_mutex;
     yarp::os::Port                m_rpc_port_localization_server;
-    std::string                   m_local_name;
-    std::string                   m_remote_name;
     ILocalization2DMsgs           m_RPC;
 
 public:

@@ -7,6 +7,7 @@ yarp_prepare_plugin(localization2D_nwc_yarp
   INCLUDE Localization2D_nwc_yarp.h
   DEPENDS "TARGET YARP::YARP_math"
   DEFAULT ON
+  GENERATE_PARSER
 )
 
 if(NOT SKIP_localization2D_nwc_yarp)
@@ -16,6 +17,8 @@ if(NOT SKIP_localization2D_nwc_yarp)
     PRIVATE
       Localization2D_nwc_yarp.cpp
       Localization2D_nwc_yarp.h
+      Localization2D_nwc_yarp_ParamsParser.cpp
+      Localization2D_nwc_yarp_ParamsParser.h
   )
 
   target_sources(yarp_localization2D_nwc_yarp PRIVATE $<TARGET_OBJECTS:ILocalization2DMsgs>)

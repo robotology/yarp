@@ -11,6 +11,7 @@
 #include <yarp/dev/ILLM.h>
 
 #include "ILLMServerImpl.h"
+#include "LLM_nws_yarp_ParamsParser.h"
 
 /**
 * @ingroup dev_impl_nws_yarp
@@ -19,19 +20,14 @@
 *
 * \brief `LLM_nws_yarp`: A server which can be wrap multiple algorithms and devices to provide LLM services.
 *
-*  Parameters required by this device are:
-* | Parameter name | SubParameter   | Type    | Units  | Default Value            | Required     | Description                                                       | Notes |
-* |:--------------:|:--------------:|:-------:|:------:|:------------------------:|:-----------: |:-----------------------------------------------------------------:|:-----:|
-* | name           |      -         | string  | -      | -                        | Yes          | Full name of the rpc port opened by device, e.g. /LLM_nws/rpc     |       |
+* Parameters required by this device are shown in class: LLM_nws_yarp_ParamsParser
+*
 */
 class LLM_nws_yarp : public yarp::dev::DeviceDriver,
                      public yarp::dev::WrapperSingle,
-                     public yarp::os::PortReader
+                     public yarp::os::PortReader,
+                     public LLM_nws_yarp_ParamsParser
 {
-
-private:
-    std::string m_streaming_port_name = "/llm/conv:o";
-
 protected:
     ILLMRPCd    m_RPC;
     yarp::os::RpcServer m_RpcPort;

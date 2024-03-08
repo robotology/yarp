@@ -8,16 +8,19 @@ yarp_prepare_plugin(frameGrabber_nwc_yarp
   EXTRA_CONFIG
     WRAPPER=frameGrabber_nws_yarp
   DEFAULT ON
+  GENERATE_PARSER
 )
 
 if(NOT SKIP_frameGrabber_nwc_yarp)
   yarp_add_plugin(yarp_frameGrabber_nwc_yarp)
 
   target_sources(yarp_frameGrabber_nwc_yarp
-    PRIVATE
-      FrameGrabber_nwc_yarp.cpp
-      FrameGrabber_nwc_yarp.h
-    )
+  PRIVATE
+  FrameGrabber_nwc_yarp.cpp
+  FrameGrabber_nwc_yarp.h
+  FrameGrabber_nwc_yarp_ParamsParser.h
+  FrameGrabber_nwc_yarp_ParamsParser.cpp
+  )
 
   target_sources(yarp_frameGrabber_nwc_yarp PRIVATE $<TARGET_OBJECTS:framegrabber_protocol>)
   target_include_directories(yarp_frameGrabber_nwc_yarp PRIVATE $<TARGET_PROPERTY:framegrabber_protocol,INTERFACE_INCLUDE_DIRECTORIES>)

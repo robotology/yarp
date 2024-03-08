@@ -21,7 +21,7 @@
 #include <yarp/os/RpcServer.h>
 #include <yarp/dev/WrapperSingle.h>
 #include "ISpeechSynthesizerMsgs.h"
-
+#include "SpeechSynthesizer_nwc_yarp_ParamsParser.h"
 
 /**
  *  @ingroup dev_impl_nwc_yarp
@@ -30,16 +30,14 @@
  *
  * \brief `speechSynthesizer_nwc_yarp`: A network wrapper client that connects to a speechSynthesizer_nws_yarp to perform speech synthesis.
  *
- *  Parameters required by this device are:
- * | Parameter name | SubParameter | Type    | Units          | Default Value | Required     | Description                                                                                           | Notes |
- * |:--------------:|:------------:|:-------:|:--------------:|:-------------:|:-----------: |:-----------------------------------------------------------------------------------------------------:|:-----:|
- * | local          | -            | string  | -              | -             | Yes          | Full port name opened by the device.                                                                  |       |
- * | remote         | -            | string  | -              | -             | Yes          | Full port name of the port remotely opened by the server, to which this client connects to.           |       |
+ * Parameters required by this device are shown in class: SpeechSynthesizer_nwc_yarp_ParamsParser
+ *
  */
 
 class SpeechSynthesizer_nwc_yarp :
     public yarp::dev::DeviceDriver,
-    public yarp::dev::ISpeechSynthesizer
+    public yarp::dev::ISpeechSynthesizer,
+    public SpeechSynthesizer_nwc_yarp_ParamsParser
 {
     // Methods
 private:
@@ -74,8 +72,6 @@ private:
 
 protected:
     yarp::os::Port                m_thriftClientPort;
-    std::string                   m_local_name;
-    std::string                   m_thrift_server_name;
 };
 
 

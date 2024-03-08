@@ -8,6 +8,7 @@ yarp_prepare_plugin(remote_controlboard
   EXTRA_CONFIG
     WRAPPER=controlboard_nws_yarp
   DEFAULT ON
+  GENERATE_PARSER
 )
 
 if(NOT SKIP_remote_controlboard)
@@ -17,6 +18,8 @@ if(NOT SKIP_remote_controlboard)
     PRIVATE
       RemoteControlBoard.cpp
       RemoteControlBoard.h
+      RemoteControlBoard_ParamsParser.cpp
+      RemoteControlBoard_ParamsParser.h
       RemoteControlBoardLogComponent.cpp
       RemoteControlBoardLogComponent.h
       stateExtendedReader.cpp

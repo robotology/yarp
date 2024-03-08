@@ -18,30 +18,29 @@
 #include <yarp/dev/IMultipleWrapper.h>
 #include <yarp/dev/IRobotDescription.h>
 
+#include "RobotDescriptionServer_ParamsParser.h"
+
 /**
 * @ingroup dev_impl_wrapper
 *
 * \brief `robotDescriptionServer`: This device is a storage which contains a list of the currently opened device drivers.
 *
 * yarprobotinterfaces adds/removes devices to the storage using attachAll()/detachAll() methods.
-* A robotDescriptionClient devices can bused by the user to retrieve information about the currently opened devices.
+* A robotDescriptionClient devices can used by the user to retrieve information about the currently opened devices.
 *
-* Parameters required by this device are:
-* | Parameter name | SubParameter   | Type    | Units          | Default Value | Required                    | Description                                                       | Notes |
-* |:--------------:|:--------------:|:-------:|:--------------:|:-------------:|:--------------------------: |:-----------------------------------------------------------------:|:-----:|
-* | local          |      -         | string  | -              |   -           | Yes                         | prefix of the port opened by the device, like /descriptionServer  | MUST start with a '/' character. /rpc is automatically appended. |
+* Parameters required by this device are shown in class: RobotDescriptionServer_ParamsParser
 */
 
 class RobotDescriptionServer :
         public yarp::dev::DeviceDriver,
         public yarp::os::PortReader,
-        public yarp::dev::IMultipleWrapper
+        public yarp::dev::IMultipleWrapper,
+        public RobotDescriptionServer_ParamsParser
 {
 protected:
     std::mutex                                m_external_mutex;
     std::mutex                                m_internal_mutex;
     yarp::os::Port                            m_rpc_port;
-    std::string                               m_local_name;
     std::vector<yarp::dev::DeviceDescription> m_robot_devices;
 
 public:

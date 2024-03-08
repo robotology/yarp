@@ -20,6 +20,8 @@
 
 #include <mutex>
 
+#include "Rangefinder2D_nwc_yarp_ParamsParser.h"
+
 class Rangefinder2DInputPortProcessor :
         public yarp::os::BufferedPort<yarp::dev::LaserScan2D>
 {
@@ -60,25 +62,17 @@ public:
 *
 * \brief `Rangefinder2D_nwc_yarp`: The client side of any ILaserRangefinder2D capable device.
 *
-* Still single thread! concurrent access is unsafe.
+* Parameters required by this device are shown in class: Rangefinder2D_nwc_yarp_ParamsParser
 *
-*  Parameters required by this device are:
-* | Parameter name | SubParameter   | Type    | Units          | Default Value | Required     | Description                                                       | Notes |
-* |:--------------:|:--------------:|:-------:|:--------------:|:-------------:|:-----------: |:-----------------------------------------------------------------:|:-----:|
-* | local          |      -         | string  | -              |   -           | Yes          | Full port name opened by the Rangefinder2D_nwc_yarp device.          |       |
-* | remote         |      -         | string  | -              |   -           | Yes          | Full port name of the port opened on the server side, to which the Rangefinder2D_nwc_yarp connects to.    |     |
-* | carrier        |     -          | string  | -              | tcp           | No           | The carrier used for the connection with the server.               |       |
 */
 class Rangefinder2D_nwc_yarp:
         public yarp::dev::DeviceDriver,
-        public yarp::dev::IRangefinder2D
+        public yarp::dev::IRangefinder2D,
+        public Rangefinder2D_nwc_yarp_ParamsParser
 {
 protected:
     Rangefinder2DInputPortProcessor m_inputPort;
     yarp::os::Port m_rpcPort;
-    std::string m_local_portname;
-    std::string m_remote_portname;
-    std::string m_carrier;
     yarp::os::Stamp m_lastTs;
     std::string m_deviceId;
 

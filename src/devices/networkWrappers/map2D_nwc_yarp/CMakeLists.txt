@@ -7,6 +7,7 @@ yarp_prepare_plugin(map2D_nwc_yarp
   INCLUDE Map2D_nwc_yarp.h
   DEPENDS "TARGET YARP::YARP_math"
   DEFAULT ON
+  GENERATE_PARSER
 )
 
 if(NOT SKIP_map2D_nwc_yarp)
@@ -16,6 +17,8 @@ if(NOT SKIP_map2D_nwc_yarp)
     PRIVATE
       Map2D_nwc_yarp.cpp
       Map2D_nwc_yarp.h
+      Map2D_nwc_yarp_ParamsParser.cpp
+      Map2D_nwc_yarp_ParamsParser.h
   )
 
   target_sources(yarp_map2D_nwc_yarp PRIVATE $<TARGET_OBJECTS:IMap2DMsgs>)

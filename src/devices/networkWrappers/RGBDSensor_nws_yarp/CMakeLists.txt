@@ -9,6 +9,7 @@ yarp_prepare_plugin(rgbdSensor_nws_yarp
   EXTRA_CONFIG
     WRAPPER=rgbdSensor_nws_yarp
   DEFAULT ON
+  GENERATE_PARSER
 )
 
 if(NOT SKIP_rgbdSensor_nws_yarp)
@@ -18,6 +19,8 @@ if(NOT SKIP_rgbdSensor_nws_yarp)
     PRIVATE
       RgbdSensor_nws_yarp.cpp
       RgbdSensor_nws_yarp.h
+      RgbdSensor_nws_yarp_ParamsParser.cpp
+      RgbdSensor_nws_yarp_ParamsParser.h
   )
 
   target_sources(yarp_rgbdSensor_nws_yarp PRIVATE $<TARGET_OBJECTS:framegrabber_protocol>)

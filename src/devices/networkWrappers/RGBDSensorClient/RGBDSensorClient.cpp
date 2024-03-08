@@ -38,156 +38,48 @@ RGBDSensorClient::~RGBDSensorClient()
 
 bool RGBDSensorClient::open(yarp::os::Searchable& config)
 {
-    if(verbose >= 5) {
-        yCTrace(RGBDSENSORCLIENT) << "\n Paramerters are: \n" << config.toString();
-    }
+    if (!parseParams(config)) { return false; }
 
-    if(!fromConfig(config))
-    {
-        yCError(RGBDSENSORCLIENT) << "Failed to open, check previous log for error messages.";
-        return false;
-    }
-
-    sensorId= "RGBDSensorClient for " + local_depthFrame_StreamingPort_name;
-
-    if(!initialize_YARP(config) )
-    {
-        yCError(RGBDSENSORCLIENT) << sensorId << "\n\t* Error initializing YARP ports *";
-        return false;
-    }
-
-    return true;
-}
-
-
-bool RGBDSensorClient::fromConfig(yarp::os::Searchable &config)
-{
-    // Parse LOCAL port names
-    // TBD: check if user types '...' as port name, how to create RPC port names
-    if (!config.check("localImagePort", "full name of the port for streaming color image"))
-    {
-        yCError(RGBDSENSORCLIENT) << "Missing 'localImagePort' parameter. Check you configuration file; it must be like:";
-        yCError(RGBDSENSORCLIENT) << "   localImagePort:         Full name of the local port to open, e.g. /myApp/image_camera";
-        return false;
-    }
-
-    local_colorFrame_StreamingPort_name  = config.find("localImagePort").asString();
-
-    if (!config.check("localDepthPort", "full name of the port for streaming depth image"))
-    {
-        yCError(RGBDSENSORCLIENT) << "Missing 'localDepthPort' parameter. Check you configuration file; it must be like:";
-        yCError(RGBDSENSORCLIENT) << "   localDepthPort:         Full name of the local port to open, e.g. /myApp/depth_camera";
-        return false;
-    }
-
-    local_depthFrame_StreamingPort_name  = config.find("localDepthPort").asString();
-
-    // Parse REMOTE port names
-    if (!config.check("remoteImagePort", "full name of the port for streaming color image"))
-    {
-        yCError(RGBDSENSORCLIENT) << "Missing 'remoteImagePort' parameter. Check you configuration file; it must be like:";
-        yCError(RGBDSENSORCLIENT) << "   remoteImagePort:         Full name of the port to read color images from, e.g. /robotName/image_camera";
-        return false;
-    }
-
-    remote_colorFrame_StreamingPort_name  = config.find("remoteImagePort").asString();
-
-    if (!config.check("remoteDepthPort", "full name of the port for streaming depth image"))
-    {
-        yCError(RGBDSENSORCLIENT) << "Missing 'remoteDepthPort' parameter. Check you configuration file; it must be like:";
-        yCError(RGBDSENSORCLIENT) << "   remoteDepthPort:         Full name of the port to read depth images from, e.g. /robotName/depth_camera ";
-        return false;
-    }
-
-    remote_depthFrame_StreamingPort_name  = config.find("remoteDepthPort").asString();
-
-    // Single RPC port
-    if (!config.check("localRpcPort", "full name of the port for streaming depth image"))
-    {
-        yCError(RGBDSENSORCLIENT) << "Missing 'localRpcPort' parameter. Check you configuration file; it must be like:";
-        yCError(RGBDSENSORCLIENT) << "   localRpcPort:            Full name of the local RPC port to open, e.g. /myApp/RGBD/rpc";
-        return false;
-    }
-
-    local_rpcPort_name  = config.find("localRpcPort").asString();
-
-    if (!config.check("remoteRpcPort", "full name of the port for streaming depth image"))
-    {
-        yCError(RGBDSENSORCLIENT) << "Missing 'remoteRpcPort' parameter. Check you configuration file; it must be like:";
-        yCError(RGBDSENSORCLIENT) << "   remoteRpcPort:         Full name of the remote RPC port, e.g. /robotName/RGBD/rpc";
-        return false;
-    }
-
-    remote_rpcPort_name  = config.find("remoteRpcPort").asString();
-
-    image_carrier_type = "udp";
-    depth_carrier_type = "udp";
-
-    if (config.check("ImageCarrier", "carrier for the image stream"))
-    {
-        image_carrier_type = config.find("ImageCarrier").asString();
-    }
-
-    if (config.check("DepthCarrier", "carrier for the depth stream"))
-    {
-        depth_carrier_type = config.find("DepthCarrier").asString();
-    }
-
-    /*
-        * When using multiple RPC ports
-        *
-            local_colorFrame_rpcPort_Name =  local_colorFrame_StreamingPort_Name + "/rpc:i";
-        remote_colorFrame_rpcPort_Name = remote_colorFrame_StreamingPort_Name + "/rpc:i";
-            local_depthFrame_rpcPort_Name =  local_depthFrame_StreamingPort_Name + "/rpc:i";
-        remote_depthFrame_rpcPort_Name = remote_depthFrame_StreamingPort_Name + "/rpc:i";
-
-    */
-
-    return true;
-}
-
-bool RGBDSensorClient::initialize_YARP(yarp::os::Searchable& /*config*/)
-{
-    bool ret;
+    bool ret = false;
 
     // Opening Streaming ports
-    ret  = colorFrame_StreamingPort.open(local_colorFrame_StreamingPort_name);
-    ret &= depthFrame_StreamingPort.open(local_depthFrame_StreamingPort_name);
+    ret = colorFrame_StreamingPort.open(m_localImagePort);
+    ret &= depthFrame_StreamingPort.open(m_localDepthPort);
 
-    if(!ret)
+    if (!ret)
     {
-        yCError(RGBDSENSORCLIENT) << sensorId << " cannot open local streaming ports.";
+        yCError(RGBDSENSORCLIENT) << " cannot open local streaming ports: " << m_localImagePort << " or " << m_localDepthPort;
         colorFrame_StreamingPort.close();
         depthFrame_StreamingPort.close();
     }
 
-    if(! yarp::os::Network::connect(remote_colorFrame_StreamingPort_name, colorFrame_StreamingPort.getName(), image_carrier_type) )
+    if (!yarp::os::Network::connect(m_remoteImagePort, colorFrame_StreamingPort.getName(), m_ImageCarrier))
     {
-        yCError(RGBDSENSORCLIENT) << colorFrame_StreamingPort.getName() << " cannot connect to remote port " << remote_colorFrame_StreamingPort_name << "with carrier " << image_carrier_type;
+        yCError(RGBDSENSORCLIENT) << colorFrame_StreamingPort.getName() << " cannot connect to remote port " << m_remoteImagePort << "with carrier " << m_ImageCarrier;
         return false;
     }
 
-    if(! yarp::os::Network::connect(remote_depthFrame_StreamingPort_name, depthFrame_StreamingPort.getName(), depth_carrier_type) )
+    if (!yarp::os::Network::connect(m_remoteDepthPort, depthFrame_StreamingPort.getName(), m_DepthCarrier))
     {
-        yCError(RGBDSENSORCLIENT) << depthFrame_StreamingPort.getName() << " cannot connect to remote port " << remote_depthFrame_StreamingPort_name << "with carrier " << depth_carrier_type;
+        yCError(RGBDSENSORCLIENT) << depthFrame_StreamingPort.getName() << " cannot connect to remote port " << m_remoteDepthPort << "with carrier " << m_DepthCarrier;
         return false;
     }
 
 
     // Single RPC port
-    ret = rpcPort.open(local_rpcPort_name);
+    ret = rpcPort.open(m_localRpcPort);
 
-    if(!ret)
+    if (!ret)
     {
-        yCError(RGBDSENSORCLIENT) << sensorId << " cannot open local RPC port " << local_rpcPort_name;
+        yCError(RGBDSENSORCLIENT) << " cannot open local RPC port " << m_localRpcPort;
         colorFrame_StreamingPort.close();
         depthFrame_StreamingPort.close();
         rpcPort.close();
     }
 
-    if(! rpcPort.addOutput(remote_rpcPort_name) )
+    if (!rpcPort.addOutput(m_remoteRpcPort))
     {
-        yCError(RGBDSENSORCLIENT) << sensorId << " cannot connect to port " << remote_rpcPort_name;
+        yCError(RGBDSENSORCLIENT) << " cannot connect to port " << m_remoteRpcPort;
         colorFrame_StreamingPort.close();
         depthFrame_StreamingPort.close();
         rpcPort.close();
@@ -204,7 +96,7 @@ bool RGBDSensorClient::initialize_YARP(yarp::os::Searchable& /*config*/)
     int major = response.get(3).asInt32();
     int minor = response.get(4).asInt32();
 
-    if(major != RGBD_INTERFACE_PROTOCOL_VERSION_MAJOR)
+    if (major != RGBD_INTERFACE_PROTOCOL_VERSION_MAJOR)
     {
         yCError(RGBDSENSORCLIENT) << "Major protocol number does not match, please verify client and server are updated. \
                     Expected: " << RGBD_INTERFACE_PROTOCOL_VERSION_MAJOR << " received: " << major;
@@ -212,35 +104,11 @@ bool RGBDSensorClient::initialize_YARP(yarp::os::Searchable& /*config*/)
     }
 
 
-    if(minor != RGBD_INTERFACE_PROTOCOL_VERSION_MINOR)
+    if (minor != RGBD_INTERFACE_PROTOCOL_VERSION_MINOR)
     {
         yCWarning(RGBDSENSORCLIENT) << "Minor protocol number does not match, please verify client and server are updated.\
                       Expected: " << RGBD_INTERFACE_PROTOCOL_VERSION_MINOR << " received: " << minor;
     }
-
-   /*
-    * Multiple RPC ports
-    *
-    ret &= colorFrame_rpcPort.open(local_colorFrame_rpcPort_Name.c_str() );
-    ret &= depthFrame_rpcPort.open(local_depthFrame_rpcPort_Name.c_str() );
-
-    if(!ret)
-        yCError(RGBDSENSORCLIENT) << "sensorId cannot open ports";
-
-    // doing connections: How to correctly handle YARP_PORT_PREFIX for remote port names??
-    if(! colorFrame_rpcPort.addOutput(remote_colorFrame_rpcPort_Name.c_str()) )  // This will handle local port names only
-    {
-        yCError(RGBDSENSORCLIENT) << sensorId << " cannot add output " << remote_colorFrame_rpcPort_Name;
-        return false;
-    }
-
-    if(! depthFrame_rpcPort.addOutput(remote_depthFrame_rpcPort_Name.c_str()) )  // This will handle local port names only
-    {
-        yCError(RGBDSENSORCLIENT) << sensorId << " cannot add output " << remote_depthFrame_rpcPort_Name;
-        return false;
-    }
-    */
-
 
     streamingReader->attach(&colorFrame_StreamingPort, &depthFrame_StreamingPort);
 

@@ -26,49 +26,12 @@ YARP_LOG_COMPONENT(NAVIGATION2D_NWC_YARP, "yarp.device.navigation2D_nwc_yarp")
 
 bool Navigation2D_nwc_yarp::open(yarp::os::Searchable &config)
 {
-    m_local_name.clear();
-    m_navigation_server_name.clear();
-    m_map_locations_server_name.clear();
-    m_localization_server_name.clear();
+    if (!parseParams(config)) { return false; }
 
-    m_local_name = config.find("local").asString();
-    m_navigation_server_name = config.find("navigation_server").asString();
-    m_map_locations_server_name = config.find("map_locations_server").asString();
-    m_localization_server_name = config.find("localization_server").asString();
-
-    if (m_local_name == "")
-    {
-        yCError(NAVIGATION2D_NWC_YARP, "open() error you have to provide a valid 'local' param");
-        return false;
-    }
-
-    if (m_navigation_server_name == "")
-    {
-        yCError(NAVIGATION2D_NWC_YARP, "open() error you have to provide a valid 'navigation_server' param");
-        return false;
-    }
-
-    if (m_map_locations_server_name == "")
-    {
-        yCError(NAVIGATION2D_NWC_YARP, "open() error you have to provide valid 'map_locations_server' param");
-        return false;
-    }
-
-    if (m_localization_server_name == "")
-    {
-        yCError(NAVIGATION2D_NWC_YARP, "open() error you have to provide valid 'localization_server' param");
-        return false;
-    }
-
-    if (config.check("period"))
-    {
-        m_period = config.find("period").asInt32();
-    }
-    else
-    {
-        m_period = 10;
-        yCWarning(NAVIGATION2D_NWC_YARP, "Using default period of %d ms" , m_period);
-    }
+    std::string local_name = m_local;
+    std::string navigation_server_name = m_navigation_server;
+    std::string map_locations_server_name = m_map_locations_server;
+    std::string localization_server_name = m_localization_server;
 
     std::string
             local_rpc_1,
@@ -81,15 +44,15 @@ bool Navigation2D_nwc_yarp::open(yarp::os::Searchable &config)
             local_streaming_name,
             rpc_port_user_commandsName;
 
-    local_rpc_1           = m_local_name           + "/navigation/rpc";
-    local_rpc_2           = m_local_name           + "/locations/rpc";
-    local_rpc_3           = m_local_name           + "/localization/rpc";
-    remote_rpc_1          = m_navigation_server_name + "/rpc";
-    remote_rpc_2          = m_map_locations_server_name + "/rpc";
-    remote_rpc_3          = m_localization_server_name + "/rpc";
-    remote_streaming_name = m_localization_server_name + "/stream:o";
-    local_streaming_name  = m_local_name           + "/stream:i";
-    rpc_port_user_commandsName = m_local_name      + "/user_commands/rpc";
+    local_rpc_1           = local_name           + "/navigation/rpc";
+    local_rpc_2           = local_name           + "/locations/rpc";
+    local_rpc_3           = local_name           + "/localization/rpc";
+    remote_rpc_1          = navigation_server_name + "/rpc";
+    remote_rpc_2          = map_locations_server_name + "/rpc";
+    remote_rpc_3          = localization_server_name + "/rpc";
+    remote_streaming_name = localization_server_name + "/stream:o";
+    local_streaming_name  = local_name           + "/stream:i";
+    rpc_port_user_commandsName = local_name      + "/user_commands/rpc";
 
     if (!m_rpc_port_to_navigation_server.open(local_rpc_1))
     {

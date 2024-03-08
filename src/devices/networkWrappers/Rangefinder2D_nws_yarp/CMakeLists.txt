@@ -8,6 +8,7 @@ yarp_prepare_plugin(rangefinder2D_nws_yarp
   EXTRA_CONFIG
     WRAPPER=rangefinder2D_nws_yarp
   DEFAULT ON
+  GENERATE_PARSER
 )
 
 if(NOT SKIP_rangefinder2D_nws_yarp)
@@ -17,6 +18,8 @@ if(NOT SKIP_rangefinder2D_nws_yarp)
     PRIVATE
       Rangefinder2D_nws_yarp.cpp
       Rangefinder2D_nws_yarp.h
+      Rangefinder2D_nws_yarp_ParamsParser.cpp
+      Rangefinder2D_nws_yarp_ParamsParser.h
   )
 
   target_link_libraries(yarp_rangefinder2D_nws_yarp

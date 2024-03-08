@@ -23,13 +23,10 @@ using namespace yarp::os;
 namespace {
 YARP_LOG_COMPONENT(AUDIOPLAYERWRAPPER, "yarp.device.AudioPlayerWrapper")
 constexpr double DEFAULT_THREAD_PERIOD = 0.02; // seconds
-constexpr double DEFAULT_BUFFER_DELAY = 5.0; // seconds
 }
 
 AudioPlayerWrapper::AudioPlayerWrapper() :
-        PeriodicThread(DEFAULT_THREAD_PERIOD),
-        m_period(DEFAULT_THREAD_PERIOD),
-        m_buffer_delay(DEFAULT_BUFFER_DELAY)
+        PeriodicThread(DEFAULT_THREAD_PERIOD)
 {
 }
 
@@ -160,61 +157,32 @@ bool AudioPlayerWrapper::threadInit()
 
 bool AudioPlayerWrapper::open(yarp::os::Searchable &config)
 {
-    m_config.fromString(config.toString());
+    if (!parseParams(config)) { return false; }
 
-    if (config.check("debug"))
-    {
-        m_debug_enabled = true;
-    }
+    std::string audioInPortName = m_name + "/audio:i";
+    std::string rpcPortName = m_name + "/rpc:i";
+    std::string statusPortName = m_name + "/status:o";
 
-    if (config.check("period"))
+    if (!m_audioInPort.open(audioInPortName))
     {
-        m_period = config.find("period").asFloat64();
-    }
-
-    std::string name = "/audioPlayerWrapper";
-    if (config.check("name"))
-    {
-        name = config.find("name").asString();
-    }
-    m_audioInPortName = name + "/audio:i";
-    m_rpcPortName = name + "/rpc:i";
-    m_statusPortName = name + "/status:o";
-
-    if(!initialize_YARP(config) )
-    {
-        yCError(AUDIOPLAYERWRAPPER) << "Error initializing YARP ports";
+        yCError(AUDIOPLAYERWRAPPER, "Failed to open port %s", audioInPortName.c_str());
         return false;
     }
-
-    if (config.check("playback_network_buffer_size"))
+    if (!m_statusPort.open(statusPortName))
     {
-        m_buffer_delay = config.find("playback_network_buffer_size").asFloat64();
-    }
-    yCInfo(AUDIOPLAYERWRAPPER) << "Using a 'playback_network_buffer_size' of" << m_buffer_delay << "s";
-    yCInfo(AUDIOPLAYERWRAPPER) << "Increase this value to robustify the real-time audio stream (it will increase latency too)";
-
-    return true;
-}
-
-bool AudioPlayerWrapper::initialize_YARP(yarp::os::Searchable &params)
-{
-    if (!m_audioInPort.open(m_audioInPortName))
-    {
-        yCError(AUDIOPLAYERWRAPPER, "Failed to open port %s", m_audioInPortName.c_str());
+        yCError(AUDIOPLAYERWRAPPER, "Failed to open port %s", statusPortName.c_str());
         return false;
     }
-    if (!m_statusPort.open(m_statusPortName))
+    if (!m_rpcPort.open(rpcPortName))
     {
-        yCError(AUDIOPLAYERWRAPPER, "Failed to open port %s", m_statusPortName.c_str());
-        return false;
-    }
-    if (!m_rpcPort.open(m_rpcPortName))
-    {
-        yCError(AUDIOPLAYERWRAPPER, "Failed to open port %s", m_rpcPortName.c_str());
+        yCError(AUDIOPLAYERWRAPPER, "Failed to open port %s", rpcPortName.c_str());
         return false;
     }
     m_rpcPort.setReader(*this);
+
+    yCInfo(AUDIOPLAYERWRAPPER) << "Using a 'playback_network_buffer_size' of" << m_playback_network_buffer_size << "s";
+    yCInfo(AUDIOPLAYERWRAPPER) << "Increase this value to robustify the real-time audio stream (it will increase latency too)";
+
     return true;
 }
 
@@ -232,7 +200,7 @@ void AudioPlayerWrapper::afterStart(bool success)
 {
     if(success)
     {
-        if (m_config.check("start"))
+        if (m_start)
         {
             m_irender->startPlayback();
             m_irender->isPlaying(m_isPlaying);
@@ -247,7 +215,7 @@ void AudioPlayerWrapper::run()
     Sound* s = m_audioInPort.read(false);
     if (s != nullptr)
     {
-        if (m_debug_enabled)
+        if (m_debug)
         {
             yCDebug(AUDIOPLAYERWRAPPER) << "Received sound of:" << s->getSamples() << " samples";
         }
@@ -255,7 +223,7 @@ void AudioPlayerWrapper::run()
         scheduled_sound_type ss;
 #if 1
         //This is simple, but we don't know how big the sound is...
-        ss.scheduled_time = current_time + m_buffer_delay;
+        ss.scheduled_time = current_time + m_playback_network_buffer_size;
 #elif 0
         //This is ok, but it doesn't work if the sounds have different durations...
         ss.scheduled_time = current_time + 5.0 * s.getDuration();
@@ -273,7 +241,7 @@ void AudioPlayerWrapper::run()
     }
 
     m_irender->getPlaybackAudioBufferCurrentSize(m_current_buffer_size);
-    if (m_debug_enabled)
+    if (m_debug)
     {
         static double printer_wdt = yarp::os::Time::now();
         if (yarp::os::Time::now() - printer_wdt > 1.0)

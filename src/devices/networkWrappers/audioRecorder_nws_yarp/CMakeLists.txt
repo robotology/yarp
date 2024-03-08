@@ -5,6 +5,7 @@ yarp_prepare_plugin(audioRecorder_nws_yarp
   CATEGORY device
   TYPE AudioRecorder_nws_yarp
   INCLUDE AudioRecorder_nws_yarp.h
+  GENERATE_PARSER
   DEFAULT ON
 )
 
@@ -17,6 +18,8 @@ if(NOT SKIP_AudioRecorderWrapper)
       AudioRecorder_nws_yarp.h
       AudioRecorderServerImpl.cpp
       AudioRecorderServerImpl.h
+      AudioRecorder_nws_yarp_ParamsParser.cpp
+      AudioRecorder_nws_yarp_ParamsParser.h
   )
 
   target_sources(yarp_audioRecorder_nws_yarp PRIVATE $<TARGET_OBJECTS:IAudioGrabberMsgs>)

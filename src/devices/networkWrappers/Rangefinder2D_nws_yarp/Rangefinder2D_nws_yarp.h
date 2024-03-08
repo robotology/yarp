@@ -31,39 +31,26 @@
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/dev/WrapperSingle.h>
 #include <yarp/dev/api.h>
+#include "Rangefinder2D_nws_yarp_ParamsParser.h"
 
 #define DEFAULT_THREAD_PERIOD 0.02 //s
 
   /**
    *  @ingroup dev_impl_nws_yarp dev_impl_lidar
    *
-   * \section rangefinder2D_nws_yarp_device_parameters Description of input parameters
    * \brief `rangefinder2D_nws_yarp`: A Network grabber for 2D Rangefinder devices.
    * This device will stream data on the specified YARP ports.
    *
-   * This device is paired with its YARP client called Rangefinder2DClient to receive the data streams and perform RPC operations.
+   * This device is paired with its YARP client called rangefinder2D_nwc_yarp to receive the data streams and perform RPC operations.
    *
-   *   Parameters required by this device are:
-   * | Parameter name | SubParameter            | Type    | Units          | Default Value | Required                       | Description                                                                                         | Notes |
-   * |:--------------:|:-----------------------:|:-------:|:--------------:|:-------------:|:-----------------------------: |:---------------------------------------------------------------------------------------------------:|:-----:|
-   * | period         |      -                  | double  | s              |   0.02        | No                             | refresh period of the broadcasted values in s                                                      | default 0.02s |
-   * | name           |      -                  | string  | -              |   -           | Yes                            | Prefix name of the ports opened by the wrapper, e.g. /robotName/Rangefinder2DSensor                 | Required suffix like '/rpc' will be added by the device      |
-   * | frame_id       |      -                  | string  | -              |   -           | No                             | name of the attached frame                                                                          | Currently not used, reserved for future use                  |
-   *
-   * Example of configuration file using .ini format.
-   *
-   * \code{.unparsed}
-   * device rangefinder2D_nws_yarp
-   * subdevice <Rangefinder2DSensor>
-   * period 20
-   * name /<robotName>/Rangefinder2DSensor
-   * \endcode
+   * Parameters required by this device are shown in class: Rangefinder2D_nws_yarp_ParamsParser
    */
 class Rangefinder2D_nws_yarp :
         public yarp::os::PeriodicThread,
         public yarp::dev::DeviceDriver,
         public yarp::dev::WrapperSingle,
-        public yarp::os::PortReader
+        public yarp::os::PortReader,
+        public Rangefinder2D_nws_yarp_ParamsParser
 {
 public:
     Rangefinder2D_nws_yarp();
@@ -82,10 +69,6 @@ public:
     bool read(yarp::os::ConnectionReader& connection) override;
 
 private:
-    //yarp streaming data
-    std::string streamingPortName;
-    std::string rpcPortName;
-    std::string frame_id;
     yarp::os::Port rpcPort;
     yarp::os::BufferedPort<yarp::dev::LaserScan2D> streamingPort;
 
@@ -94,13 +77,9 @@ private:
 
     //device data
     yarp::os::Stamp lastStateStamp;
-    double _period;
     double minAngle, maxAngle;
     double minDistance, maxDistance;
     double resolution;
-
-    //private methods
-    bool initialize_YARP(yarp::os::Searchable &config);
 };
 
 #endif //YARP_DEV_RANGEFINDER2D_NWS_YARP_H

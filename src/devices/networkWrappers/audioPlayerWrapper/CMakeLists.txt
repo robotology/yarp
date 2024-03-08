@@ -8,6 +8,7 @@ yarp_prepare_plugin(AudioPlayerWrapper
   EXTRA_CONFIG
     WRAPPER=AudioPlayerWrapper
   DEFAULT ON
+  GENERATE_PARSER
 )
 
 if(NOT SKIP_AudioPlayerWrapper)
@@ -17,6 +18,8 @@ if(NOT SKIP_AudioPlayerWrapper)
     PRIVATE
       AudioPlayerWrapper.cpp
       AudioPlayerWrapper.h
+      AudioPlayerWrapper_ParamsParser.cpp
+      AudioPlayerWrapper_ParamsParser.h
   )
 
   target_link_libraries(yarp_AudioPlayerWrapper

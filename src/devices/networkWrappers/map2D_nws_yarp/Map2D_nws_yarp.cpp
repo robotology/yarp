@@ -53,22 +53,12 @@ bool Map2D_nws_yarp::read(yarp::os::ConnectionReader& connection)
 
 bool Map2D_nws_yarp::open(yarp::os::Searchable &config)
 {
-    Property params;
-    params.fromString(config.toString());
-
-    if (!config.check("name"))
-    {
-        m_rpcPortName = "/map2D_nws_yarp/rpc";
-    }
-    else
-    {
-        m_rpcPortName = config.find("name").asString();
-    }
+    if (!parseParams(config)) { return false; }
 
     //open rpc port
-    if (!m_rpcPort.open(m_rpcPortName))
+    if (!m_rpcPort.open(m_name))
     {
-        yCError(MAP2D_NWS_YARP, "Failed to open port %s", m_rpcPortName.c_str());
+        yCError(MAP2D_NWS_YARP, "Failed to open port %s", m_name.c_str());
         return false;
     }
     m_rpcPort.setReader(*this);

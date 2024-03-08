@@ -7,6 +7,7 @@ yarp_prepare_plugin(navigation2D_nwc_yarp
   INCLUDE Navigation2D_nwc_yarp.h
   DEPENDS "TARGET YARP::YARP_math"
   DEFAULT ON
+  GENERATE_PARSER
 )
 
 if(NOT SKIP_navigation2D_nwc_yarp)
@@ -21,6 +22,8 @@ if(NOT SKIP_navigation2D_nwc_yarp)
       Navigation2D_nwc_yarp_iNav2DTarget.cpp
       Navigation2D_nwc_yarp.cpp
       Navigation2D_nwc_yarp.h
+      Navigation2D_nwc_yarp_ParamsParser.cpp
+      Navigation2D_nwc_yarp_ParamsParser.h
   )
 
   target_link_libraries(yarp_navigation2D_nwc_yarp

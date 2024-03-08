@@ -1,0 +1,2 @@
+ * | -           | name           | string  | -           |   /chatBot_nws               | No          | prefix for all ports opened by the device                            | MUST start with a '/' character, xxx/text:i, xxx/text:o, xxx/rpc ports are opened  |
+ * | -           | streaming_name | string  | -           |                              | No          |                                                                      | |

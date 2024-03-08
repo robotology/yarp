@@ -15,33 +15,20 @@ namespace
 
 bool LLM_nwc_yarp::open(yarp::os::Searchable &config)
 {
-    std::string local_rpc = config.find("local").asString();
-    std::string remote_rpc = config.find("remote").asString();
+    if (!parseParams(config)) { return false; }
 
-    if (local_rpc == "")
-    {
-        yCError(LLM_NWC_YARP, "open() error you have to provide a valid 'local' param");
-        return false;
-    }
-
-    if (remote_rpc == "")
-    {
-        yCError(LLM_NWC_YARP, "open() error you have to provide valid 'remote' param");
-        return false;
-    }
-
-    if (!m_rpc_port_to_LLM_server.open(local_rpc))
+    if (!m_rpc_port_to_LLM_server.open(m_local))
     {
         yCError(LLM_NWC_YARP, "Cannot open rpc port, check network");
     }
 
     bool ok = false;
 
-    ok = yarp::os::Network::connect(local_rpc, remote_rpc);
+    ok = yarp::os::Network::connect(m_local, m_remote);
 
     if (!ok)
     {
-        yCError(LLM_NWC_YARP, "open() error could not connect to %s", remote_rpc.c_str());
+        yCError(LLM_NWC_YARP, "open() error could not connect to %s", m_remote.c_str());
         return false;
     }
 

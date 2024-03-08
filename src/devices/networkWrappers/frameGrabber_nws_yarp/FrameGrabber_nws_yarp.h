@@ -25,6 +25,7 @@
 #include <yarp/proto/framegrabber/FrameGrabberOf_Responder.h>
 #include <yarp/proto/framegrabber/RgbVisualParams_Responder.h>
 
+#include "FrameGrabber_nws_yarp_ParamsParser.h"
 
 /**
  * @ingroup dev_impl_nws_yarp
@@ -39,52 +40,15 @@
  *
  * \section frameGrabber_nws_yarp_device_parameters Description of input parameters
  *
- * Parameters required by this device are:
- * | Parameter name | SubParameter            | Type    | Units          | Default Value | Required | Description                                                                      | Notes |
- * |:--------------:|:-----------------------:|:-------:|:--------------:|:-------------:|:--------:|:--------------------------------------------------------------------------------:|:-----:|
- * | period         |      -                  | double  | s              |   0.03        | No       | refresh period (in s) of the broadcasted values through yarp ports               | default 0.03s |
- * | name           |      -                  | string  | -              |   /grabber    | No       | Prefix name of the ports opened by the FrameGrabber_nws_yarp                     | Required suffix like '/rpc' will be added by the device |
- * | capabilities   |      -                  | string  | -              |   COLOR       | No       | two capabilities supported, COLOR and RAW respectively for rgb and raw streaming | - |
-// FIXME DRDANZ no_drop?
- *
- * Some example of configuration files:
- *
- * Example of configuration file using .ini format.
- *
- * \code{.unparsed}
- * device frameGrabber_nws_yarp
- * capabilities COLOR        # not necessary to specify 'COLOR', this is the default value if capabilities is omitted
- * period 30
- * subdevice fakeFrameGrabber
- * \endcode
- *
- * Example of configuration file using .xml format.
- *
- * \code{.xml}
- *
- * <device name="grabber" type="fakeFrameGrabber">
- *   <param name="mode"> grid </param>
- *   <param name="timestamp"> 1 </param>
- *   <param name="freq"> 30 </param>
- * </device>
- *
- * <device name="wrapper" type="frameGrabber_nws_yarp">
- *  <param name="period"> 30 </param>
- *  <param name="name"> /grabber </param>
- *  <param name="capabilities"> COLOR </param>
- *
- *  <action phase="startup" level="10" type="attach">
- *    <param name="device"> grabber </param>
- *  </action>
- *  <action phase="shutdown" level="5" type="detach" />
- * </device>
- * \endcode
+ * Parameters required by this device are shown in class: FrameGrabber_nws_yarp_ParamsParser
  */
+
 class FrameGrabber_nws_yarp :
         public yarp::dev::DeviceDriver,
         public yarp::dev::WrapperSingle,
         public yarp::os::PeriodicThread,
-        public yarp::dev::DeviceResponder
+        public yarp::dev::DeviceResponder,
+        public FrameGrabber_nws_yarp_ParamsParser
 {
 private:
     // Ports
@@ -111,20 +75,14 @@ private:
     yarp::sig::ImageOf<yarp::sig::PixelMono>* img_Raw {nullptr};
 
     // Internal state
-    bool active {false};
-    yarp::os::Stamp stamp;
-
-    // Options
-    static constexpr double DEFAULT_THREAD_PERIOD = 0.03; // seconds
-    double period {DEFAULT_THREAD_PERIOD};
-    bool noDrop {true}; // FIXME DRDANZ
+    yarp::os::Stamp m_stamp;
 
     enum Capabilities
     {
         COLOR,
         RAW,
     };
-    Capabilities cap {COLOR};
+    Capabilities m_cap {COLOR};
 
 public:
     FrameGrabber_nws_yarp();

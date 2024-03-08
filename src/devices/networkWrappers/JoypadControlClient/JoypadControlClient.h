@@ -8,6 +8,7 @@
 #include <yarp/os/PeriodicThread.h>
 #include <vector>
 #include <JoypadControlNetUtils.h>
+#include "JoypadControlClient_ParamsParser.h"
 
 #define DEFAULT_THREAD_PERIOD 10
 
@@ -31,15 +32,12 @@ public:
 *
 * \section JoypadControlClient Description of input parameters
 *
-* Parameters accepted in the config argument of the open method:
-* |   Parameter name  | Type   | Units | Default Value | Required  | Description                                  | Notes |
-* |:-----------------:|:------:|:-----:|:-------------:|:---------:|:--------------------------------------------:|:-----:|
-* | local             | string |       |               | yes       | name for the local port to open              |       |
-* | remote            | string |       |               | yes       | name of the remote server port to connect to |       |
-**/
+* Parameters required by this device are shown in class: JoypadControlClient_ParamsParser
+*/
 class JoypadControlClient :
         public yarp::dev::IJoypadEventDriven,
-        public yarp::dev::DeviceDriver
+        public yarp::dev::DeviceDriver,
+        public JoypadControlClient_ParamsParser
 {
 private:
     //---------------utils
@@ -58,8 +56,6 @@ private:
     JOYPORT<Vector>       m_stickPort;
     std::vector<size_t>   m_stickDof;
     bool                  m_rpc_only;
-    std::string m_local;
-    std::string m_remote;
 
     JoypadControlWatchdog          watchdog;
     std::vector<JoypadControl::LoopablePort*> m_ports;

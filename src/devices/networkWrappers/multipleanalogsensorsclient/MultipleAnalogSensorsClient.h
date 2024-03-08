@@ -15,6 +15,8 @@
 #include <yarp/os/Network.h>
 #include <yarp/dev/DeviceDriver.h>
 
+#include "MultipleAnalogSensorsClient_ParamsParser.h"
+
 #include <mutex>
 
 
@@ -38,18 +40,7 @@ public:
 *
 * \brief `multipleanalogsensorsclient`: The client side of a device exposing MultipleAnalogSensors interfaces.
 *
-* | YARP device name |
-* |:-----------------:|
-* | `multipleanalogsensorsclient` |
-*
-* The parameters accepted by this device are:
-* | Parameter name     | SubParameter   | Type    | Units          | Default Value | Required     | Description                                                                            | Notes |
-* |:------------------:|:--------------:|:-------:|:--------------:|:-------------:|:------------:|:--------------------------------------------------------------------------------------:|:-----:|
-* | remote             |       -        | string  | -              |   -           | Yes          | Prefix of the ports to which to connect, opened by MultipleAnalogSensorsServer device. |       |
-* | local              |       -        | string  | -              |   -           | Yes          | Port prefix of the ports opened by this device.                                        |       |
-* | timeout            |       -        | double  | seconds        | 0.02          | No           | Timeout after which the device reports an error if no measurement was received.        |       |
-* | externalConnection |       -        | bool    | -              | false         | No           | If set to true, the connection to the rpc port of the MAS server is skipped and it is possible to connect to the data source externally after being opened | Use case: e.g yarpdataplayer source. Note that with this configuration some information like sensor name, frame name and sensor number will be not available.|
-* | carrier            |     -          | string  | -              | tcp           | No           | The carier used for the connection with the server.          |  |
+* Parameters required by this device are shown in class: MultipleAnalogSensorsClient_ParamsParser
 *
 */
 class MultipleAnalogSensorsClient :
@@ -63,18 +54,11 @@ class MultipleAnalogSensorsClient :
         public yarp::dev::ISixAxisForceTorqueSensors,
         public yarp::dev::IContactLoadCellArrays,
         public yarp::dev::IEncoderArrays,
-        public yarp::dev::ISkinPatches
+        public yarp::dev::ISkinPatches,
+        public MultipleAnalogSensorsClient_ParamsParser
 {
     SensorStreamingDataInputPort m_streamingPort;
     yarp::os::Port m_rpcPort;
-    std::string m_localRPCPortName;
-    std::string m_localStreamingPortName;
-    std::string m_remoteRPCPortName;
-    std::string m_remoteStreamingPortName;
-    std::string m_carrier;
-    bool m_RPCConnectionActive{false};
-    bool m_StreamingConnectionActive{false};
-    bool m_externalConnection{false};
 
     MultipleAnalogSensorsMetadata m_RPCInterface;
     SensorRPCData m_sensorsMetadata;

@@ -4,8 +4,9 @@
 yarp_prepare_plugin(speechSynthesizer_nws_yarp
   CATEGORY device
   TYPE SpeechSynthesizer_nws_yarp
-  INCLUDE speechSynthesizer_nws_yarp.h
+  INCLUDE SpeechSynthesizer_nws_yarp.h
   DEFAULT ON
+  GENERATE_PARSER
 )
 
 if(NOT SKIP_speechSynthesizer_nws_yarp)
@@ -13,8 +14,10 @@ if(NOT SKIP_speechSynthesizer_nws_yarp)
 
   target_sources(yarp_speechSynthesizer_nws_yarp
     PRIVATE
-      speechSynthesizer_nws_yarp.cpp
-      speechSynthesizer_nws_yarp.h
+      SpeechSynthesizer_nws_yarp.cpp
+      SpeechSynthesizer_nws_yarp.h
+      SpeechSynthesizer_nws_yarp_ParamsParser.cpp
+      SpeechSynthesizer_nws_yarp_ParamsParser.h
   )
 
   target_link_libraries(yarp_speechSynthesizer_nws_yarp

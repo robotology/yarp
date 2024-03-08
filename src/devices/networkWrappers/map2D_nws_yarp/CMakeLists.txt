@@ -10,6 +10,7 @@ yarp_prepare_plugin(map2D_nws_yarp
   EXTRA_CONFIG
     WRAPPER=map2D_nws_yarp
   DEFAULT ON
+  GENERATE_PARSER
 )
 
 if(NOT SKIP_map2D_nws_yarp)
@@ -21,6 +22,8 @@ if(NOT SKIP_map2D_nws_yarp)
       Map2D_nws_yarp.h
       Map2DServerImpl.cpp
       Map2DServerImpl.h
+      Map2D_nws_yarp_ParamsParser.cpp
+      Map2D_nws_yarp_ParamsParser.h
   )
 
   target_sources(yarp_map2D_nws_yarp PRIVATE $<TARGET_OBJECTS:IMap2DMsgs>)

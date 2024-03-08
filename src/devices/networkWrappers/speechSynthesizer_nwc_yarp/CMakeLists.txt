@@ -6,6 +6,7 @@ yarp_prepare_plugin(speechSynthesizer_nwc_yarp
   TYPE SpeechSynthesizer_nwc_yarp
   INCLUDE SpeechSynthesizer_nwc_yarp.h
   DEFAULT ON
+  GENERATE_PARSER
 )
 
 if(NOT SKIP_speechSynthesizer_nwc_yarp)
@@ -15,6 +16,8 @@ if(NOT SKIP_speechSynthesizer_nwc_yarp)
     PRIVATE
       SpeechSynthesizer_nwc_yarp.cpp
       SpeechSynthesizer_nwc_yarp.h
+      SpeechSynthesizer_nwc_yarp_ParamsParser.h
+      SpeechSynthesizer_nwc_yarp_ParamsParser.cpp
   )
 
   target_link_libraries(yarp_speechSynthesizer_nwc_yarp

@@ -16,7 +16,7 @@
 #include <yarp/os/Bottle.h>
 #include <map>
 #include <JoypadControlNetUtils.h>
-
+#include "JoypadControlServer_ParamsParser.h"
 
 class JoypadCtrlParser :
         public yarp::dev::DeviceResponder
@@ -37,12 +37,17 @@ public:
 /**
  * @ingroup dev_impl_wrapper
  *
- * `JoypadControlServer`: Documentation to be added
+ * `JoypadControlServer`: joypad input network wrapper on server side
+ *
+ * \section JoypadControlServer Description of input parameters
+ *
+ * Parameters required by this device are shown in class: JoypadControlServer_ParamsParser
  */
 class JoypadControlServer :
         public yarp::dev::DeviceDriver,
         public yarp::dev::WrapperSingle,
-        public yarp::os::PeriodicThread
+        public yarp::os::PeriodicThread,
+        public JoypadControlServer_ParamsParser
 {
     typedef yarp::dev::IJoypadController::JoypadCtrl_coordinateMode coordsMode;
     typedef yarp::sig::Vector                  Vector;
@@ -51,14 +56,10 @@ class JoypadControlServer :
     template<typename T>
     using JoyPort = JoypadControl::JoyPort<T>;
 
-    double                          m_period;
     JoypadCtrlParser                m_parser;
-    yarp::dev::IJoypadController*   m_IJoypad;
+    yarp::dev::IJoypadController*   m_IJoypad = nullptr;
     yarp::os::Port                  m_rpcPort;
-    bool                            m_separatePorts;
-    bool                            m_profile;
     std::string           m_rpcPortName;
-    std::string           m_name;
     JoyPort<Vector>                 m_portAxis;
     JoyPort<Vector>                 m_portStick;
     JoyPort<Vector>                 m_portTouch;
@@ -66,7 +67,7 @@ class JoypadControlServer :
     JoyPort<VecOfChar>              m_portHats;
     JoyPort<Vector>                 m_portTrackball;
     yarp::os::BufferedPort<JoyData> m_godPort; //TODO: single port purpose
-    coordsMode                      m_coordsMode;
+    coordsMode                      m_coordsMode = yarp::dev::IJoypadController::JypCtrlcoord_CARTESIAN;
 
 
     bool openAndAttachSubDevice(yarp::os::Searchable& prop);
@@ -82,7 +83,6 @@ public:
     ~JoypadControlServer() override;
 
     bool open(yarp::os::Searchable& params) override;
-    bool fromConfig(yarp::os::Searchable& params);
     bool close() override;
     bool attach(yarp::dev::PolyDriver* poly) override;
     bool detach() override;

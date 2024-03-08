@@ -63,30 +63,12 @@ bool Odometry2D_nws_yarp::threadInit()
 
 bool Odometry2D_nws_yarp::open(yarp::os::Searchable &config)
 {
-    yarp::os::Property params;
-    params.fromString(config.toString());
+    if (!this->parseParams(config)) { return false; }
 
-    if (!config.check("period"))
-    {
-        yCWarning(ODOMETRY2D_NWS_YARP) << "missing 'period' parameter, using default value of" << DEFAULT_THREAD_PERIOD;
-    } else {
-        m_period = config.find("period").asFloat64();
-    }
-
-    if (!config.check("name"))
-    {
-        yCInfo(ODOMETRY2D_NWS_YARP) << "Missing 'name' parameter. Using default value: " << m_local_name;
-    }
-    else
-    {
-        m_local_name = config.find("name").asString();
-        if (m_local_name.c_str()[0] != '/') { yCError(ODOMETRY2D_NWS_YARP) << "Missing '/' in name parameter";  return false; }
-        yCInfo(ODOMETRY2D_NWS_YARP) << "Using local name:" << m_local_name;
-    }
-    m_rpcPortName = m_local_name + "/rpc";
-    m_odometerStreamingPortName = m_local_name + "/odometer:o";
-    m_odometryStreamingPortName = m_local_name + "/odometry:o";
-    m_velocityStreamingPortName = m_local_name + "/velocity:o";
+    m_rpcPortName = m_name + "/rpc";
+    m_odometerStreamingPortName = m_name + "/odometer:o";
+    m_odometryStreamingPortName = m_name + "/odometry:o";
+    m_velocityStreamingPortName = m_name + "/velocity:o";
 
     //open rpc port
     if (!m_rpcPort.open(m_rpcPortName))

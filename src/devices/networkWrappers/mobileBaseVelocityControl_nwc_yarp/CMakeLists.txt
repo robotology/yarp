@@ -7,6 +7,7 @@ yarp_prepare_plugin(mobileBaseVelocityControl_nwc_yarp
   INCLUDE MobileBaseVelocityControl_nwc_yarp.h
   DEPENDS "TARGET YARP::YARP_math"
   DEFAULT ON
+  GENERATE_PARSER
 )
 
 if(NOT SKIP_mobileBaseVelocityControl_nwc_yarp)
@@ -16,6 +17,8 @@ if(NOT SKIP_mobileBaseVelocityControl_nwc_yarp)
     PRIVATE
       MobileBaseVelocityControl_nwc_yarp.cpp
       MobileBaseVelocityControl_nwc_yarp.h
+      MobileBaseVelocityControl_nwc_yarp_ParamsParser.cpp
+      MobileBaseVelocityControl_nwc_yarp_ParamsParser.h
   )
 
   target_sources(yarp_mobileBaseVelocityControl_nwc_yarp PRIVATE $<TARGET_OBJECTS:MobileBaseVelocityControlMsgs>)

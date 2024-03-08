@@ -10,6 +10,7 @@ yarp_prepare_plugin(odometry2D_nws_yarp
     WRAPPER=odometry2D_nws_yarp
   DEPENDS "TARGET YARP::YARP_math"
   DEFAULT ON
+  GENERATE_PARSER
 )
 
 if(NOT SKIP_odometry2D_nws_yarp)
@@ -21,6 +22,8 @@ if(NOT SKIP_odometry2D_nws_yarp)
       Odometry2D_nws_yarp.h
       Odometry2DServerImpl.cpp
       Odometry2DServerImpl.h
+      Odometry2D_nws_yarp_ParamsParser.cpp
+      Odometry2D_nws_yarp_ParamsParser.h
   )
 
   target_sources(yarp_odometry2D_nws_yarp PRIVATE $<TARGET_OBJECTS:IOdometry2DMsgs>)
