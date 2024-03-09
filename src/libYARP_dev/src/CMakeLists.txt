@@ -119,6 +119,7 @@ set(YARP_dev_HDRS
   yarp/dev/ServiceInterfaces.h
   yarp/dev/WrapperMultiple.h
   yarp/dev/WrapperSingle.h
+  yarp/dev/testInterfaces/IFakeDeviceInterfaceTest.h
 )
 
 if(TARGET YARP::YARP_math)
@@ -228,6 +229,7 @@ set(YARP_dev_SRCS
   yarp/dev/RGBDSensorParamParser.cpp
   yarp/dev/WrapperMultiple.cpp
   yarp/dev/WrapperSingle.cpp
+  yarp/dev/testInterfaces/IFakeDeviceInterfaceTest.cpp
 )
 
 if(TARGET YARP::YARP_math)
