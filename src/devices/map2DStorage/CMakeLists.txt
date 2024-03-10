@@ -5,6 +5,7 @@ yarp_prepare_plugin(map2DStorage
   CATEGORY device
   TYPE Map2DStorage
   INCLUDE map2DStorage.h
+  GENERATE_PARSER
   EXTRA_CONFIG
     WRAPPER=map2D_nws_yarp
   DEPENDS "TARGET YARP::YARP_math"
@@ -16,8 +17,10 @@ if(NOT SKIP_map2DStorage)
 
   target_sources(yarp_map2DStorage
     PRIVATE
-      map2DStorage.cpp
-      map2DStorage.h
+      Map2DStorage.cpp
+      Map2DStorage.h
+      Map2DStorage_ParamsParser.cpp
+      Map2DStorage_ParamsParser.h
   )
 
   target_link_libraries(yarp_map2DStorage
