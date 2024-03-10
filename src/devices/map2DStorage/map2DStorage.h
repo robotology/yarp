@@ -33,6 +33,8 @@
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/dev/api.h>
 
+#include "Map2DStorage_ParamsParser.h"
+
 #define DEFAULT_THREAD_PERIOD 20 //ms
 
 /**
@@ -42,17 +44,14 @@
  *
  * \brief `Map2DStorage`: A device capable of read/save collections of maps from disk, and make them accessible to any Map2DClient device.
  *
- *  Parameters required by this device are:
- * | Parameter name | SubParameter   | Type    | Units          | Default Value    | Required     | Description                                                       | Notes |
- * |:--------------:|:--------------:|:-------:|:--------------:|:----------------:|:-----------: |:-----------------------------------------------------------------:|:-----:|
- * | name           |      -         | string  | -              | /mapServer/rpc   | No           | Full name of the rpc port opened by the Map2DServer device.       |       |
- * | mapCollection  |      -         | string  | -              |   -              | No           | The name of .ini file containing a map collection.                |       |
+ * Parameters required by this device are shown in class: Map2DStorage_ParamsParser
  */
 
 class Map2DStorage :
         public yarp::dev::DeviceDriver,
         public yarp::os::PortReader,
-        public yarp::dev::Nav2D::IMap2D
+        public yarp::dev::Nav2D::IMap2D,
+        public Map2DStorage_ParamsParser
 {
 private:
     std::map<std::string, yarp::dev::Nav2D::MapGrid2D>     m_maps_storage;
@@ -112,7 +111,6 @@ private:
 private:
     yarp::os::ResourceFinder     m_rf_mapCollection;
     std::mutex                   m_mutex;
-    std::string                  m_rpcPortName;
     yarp::os::RpcServer          m_rpcPort;
 
     bool read(yarp::os::ConnectionReader& connection) override;
