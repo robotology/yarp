@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Mon Feb 19 16:28:03 2024
+// Generated on: Fri Mar  8 16:13:05 2024
 
 
 #include "AudioToFileDevice_ParamsParser.h"

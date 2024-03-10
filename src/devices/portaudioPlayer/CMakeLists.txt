@@ -8,6 +8,7 @@ yarp_prepare_plugin(portaudioPlayer
   EXTRA_CONFIG
     WRAPPER=AudioPlayerWrapper
   DEPENDS "YARP_HAS_PortAudio"
+  GENERATE_PARSER
 )
 
 if(NOT SKIP_portaudioPlayer)
@@ -17,6 +18,8 @@ if(NOT SKIP_portaudioPlayer)
     PRIVATE
       PortAudioPlayerDeviceDriver.cpp
       PortAudioPlayerDeviceDriver.h
+      PortAudioPlayerDeviceDriver_ParamsParser.cpp
+      PortAudioPlayerDeviceDriver_ParamsParser.h
   )
 
   target_link_libraries(yarp_portaudioPlayer
