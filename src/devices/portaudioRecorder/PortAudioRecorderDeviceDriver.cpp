@@ -133,22 +133,11 @@ PortAudioRecorderDeviceDriver::~PortAudioRecorderDeviceDriver()
 
 bool PortAudioRecorderDeviceDriver::open(yarp::os::Searchable& config)
 {
-    if (config.check("help"))
-    {
-        yCInfo(PORTAUDIORECORDER, "Some examples:");
-        yCInfo(PORTAUDIORECORDER, "yarpdev --device portaudioRecorder --help");
-        yCInfo(PORTAUDIORECORDER, "yarpdev --device AudioRecorderWrapper --subdevice portaudioRecorder --start");
-        return false;
-    }
-
-    bool b = configureRecorderAudioDevice(config.findGroup("AUDIO_BASE"),"portaudioRecorder");
+    bool b = parseParams(config);
     if (!b) { return false; }
 
-    m_device_id = config.check("dev_id", Value(-1), "which portaudio index to use (-1=automatic)").asInt32();
-    m_driver_frame_size = config.check("driver_frame_size", Value(0), "").asInt32();
-    if (m_driver_frame_size == 0) {
-        m_driver_frame_size = DEFAULT_FRAMES_PER_BUFFER;
-    }
+    b = configureRecorderAudioDevice(config.findGroup("AUDIO_BASE"),"portaudioRecorder");
+    if (!b) { return false; }
 
     m_err = Pa_Initialize();
     if(m_err != paNoError )
@@ -157,7 +146,7 @@ bool PortAudioRecorderDeviceDriver::open(yarp::os::Searchable& config)
         return false;
     }
 
-    m_inputParameters.device = (m_device_id ==-1)?Pa_GetDefaultInputDevice(): m_device_id;
+    m_inputParameters.device = (m_id ==-1)?Pa_GetDefaultInputDevice(): m_id;
     yCInfo(PORTAUDIORECORDER, "Device number %d", m_inputParameters.device);
     m_inputParameters.channelCount = static_cast<int>(m_audiorecorder_cfg.numChannels);
     m_inputParameters.sampleFormat = PA_SAMPLE_TYPE;
