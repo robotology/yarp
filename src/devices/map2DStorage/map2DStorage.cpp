@@ -138,22 +138,17 @@ bool Map2DStorage::loadMapsCollection(std::string mapsfile)
 
 bool Map2DStorage::open(yarp::os::Searchable &config)
 {
-    Property params;
-    params.fromString(config.toString());
+    if (!parseParams(config)) { return false; }
 
-    std::string collection_file_name="maps_collection.ini";
-    std::string locations_file_name="locations.ini";
-    if (config.check("mapCollectionFile"))
+    if (m_mapCollectionContext.empty())
     {
-        collection_file_name= config.find("mapCollectionFile").asString();
+        yCInfo(MAP2DSTORAGE) << "Parameter mapCollectionContext not given. No maps/locations will be loaded.";
     }
-
-    if (config.check("mapCollectionContext"))
+    else
     {
-        std::string collection_context_name= config.find("mapCollectionContext").asString();
-        m_rf_mapCollection.setDefaultContext(collection_context_name.c_str());
-        std::string collection_file_with_path = m_rf_mapCollection.findFile(collection_file_name);
-        std::string locations_file_with_path = m_rf_mapCollection.findFile(locations_file_name);
+        m_rf_mapCollection.setDefaultContext(m_mapCollectionContext.c_str());
+        std::string collection_file_with_path = m_rf_mapCollection.findFile(m_mapCollectionFile);
+        std::string locations_file_with_path = m_rf_mapCollection.findFile(m_mapLocationsFile);
 
         if (collection_file_with_path=="")
         {
@@ -168,7 +163,7 @@ bool Map2DStorage::open(yarp::os::Searchable &config)
 
         if (collection_file_with_path=="")
         {
-            yCError(MAP2DSTORAGE) << "Unable to find file" << collection_file_name << "within the specified context:" << collection_context_name;
+            yCError(MAP2DSTORAGE) << "Unable to find file" << m_mapCollectionFile << "within the specified context:" << m_mapCollectionContext;
             return false;
         }
         if (loadMapsCollection(collection_file_with_path))
@@ -219,19 +214,10 @@ bool Map2DStorage::open(yarp::os::Searchable &config)
         }
     }
 
-    if (!config.check("name"))
-    {
-        m_rpcPortName = "/map2DStorage/rpc";
-    }
-    else
-    {
-        m_rpcPortName = config.find("name").asString();
-    }
-
     //open rpc port
-    if (!m_rpcPort.open(m_rpcPortName))
+    if (!m_rpcPort.open(m_name))
     {
-        yCError(MAP2DSTORAGE, "Failed to open port %s", m_rpcPortName.c_str());
+        yCError(MAP2DSTORAGE, "Failed to open port %s", m_name.c_str());
         return false;
     }
     m_rpcPort.setReader(*this);
@@ -1018,7 +1004,7 @@ bool Map2DStorage::clearMapTemporaryFlags(std::string map_name)
 
 bool Map2DStorage::read(yarp::os::ConnectionReader& connection)
 {
-    yCWarning(MAP2DSTORAGE) << "not yet implemented";
+    yCWarning(MAP2DSTORAGE) << "Map2DStorage::read() not yet implemented";
 
     std::lock_guard<std::mutex> lock(m_mutex);
     yarp::os::Bottle in;
