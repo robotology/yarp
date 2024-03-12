@@ -41,8 +41,9 @@ extern "C" {
 #  define av_dict_set_int(x, k, v, f) { char buf[256]; sprintf(buf,"%d",v); av_dict_set(x, k ,buf, 0); }
 #endif
 
-int stable_img_convert (AVPicture *dst, int dst_pix_fmt,
-                        const AVPicture *src, int src_pix_fmt,
+
+int stable_img_convert (AVFrame *dst, int dst_pix_fmt,
+                        const AVFrame *src, int src_pix_fmt,
                         int src_width, int src_height);
 
 
