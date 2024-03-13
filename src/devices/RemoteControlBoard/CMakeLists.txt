@@ -6,7 +6,7 @@ yarp_prepare_plugin(remote_controlboard
   TYPE RemoteControlBoard
   INCLUDE RemoteControlBoard.h
   EXTRA_CONFIG
-    WRAPPER=controlboard_nws_yarp
+    WRAPPER=controlBoard_nws_yarp
   DEFAULT ON
 )
 
