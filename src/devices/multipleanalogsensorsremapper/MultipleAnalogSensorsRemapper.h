@@ -34,7 +34,7 @@ enum MAS_SensorType
 /**
 * @ingroup dev_impl_remappers
 *
-* \brief `multipleanalogsensorsremapper` : device that takes a list of sensor from multiple analog sensors device and expose them as a single device exposing MultipleAnalogSensors interface.
+* \brief `multipleanalogsensorsremapper` : device that takes a list of sensors from multiple analog sensors device and exposes them as a single device exposing MultipleAnalogSensors interface.
 *
 * | YARP device name |
 * |:-----------------:|
@@ -43,9 +43,9 @@ enum MAS_SensorType
 *  Parameters required by this device are:
 * | Parameter name | SubParameter   | Type    | Units          | Default Value | Required                    | Description                                                       | Notes |
 * |:--------------:|:--------------:|:-------:|:--------------:|:-------------:|:--------------------------: |:-----------------------------------------------------------------:|:-----:|
-* | {sensorTag}Names |      -       | vector of strings  | -      |   -           | Yes     | Ordered list of name  that must belong of the remapped device. The list also defines the index that the sensor will  |  |
+* | {sensorTag}Names |      -       | vector of strings  | -      |   -           | Yes     | Ordered list of names  that must belong to the remapped device. The list also defines the index that the sensor will  |  |
 *
-* The sensorTag is a tag identifing the spefici sensor interface, see \ref dev_iface_multiple_analog for a list of possible sensors.
+* The sensorTag is a tag identifying the specific sensor interface, see \ref dev_iface_multiple_analog for a list of possible sensors.
 * The tag of each sensor interface is provided in the doxygen documentation of the specific interface.
 *
 * Configuration file using .ini format.
