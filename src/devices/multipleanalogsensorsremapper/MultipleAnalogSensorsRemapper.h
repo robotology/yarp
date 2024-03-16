@@ -32,55 +32,55 @@ enum MAS_SensorType
 };
 
 /**
-* @ingroup dev_impl_remappers
-*
-* \brief `multipleanalogsensorsremapper` : device that takes a list of sensor from multiple analog sensors device and expose them as a single device exposing MultipleAnalogSensors interface.
-*
-* | YARP device name |
-* |:-----------------:|
-* | `multipleanalogsensorsremapper` |
-*
-*  Parameters required by this device are:
-* | Parameter name | SubParameter   | Type    | Units          | Default Value | Required                    | Description                                                       | Notes |
-* |:--------------:|:--------------:|:-------:|:--------------:|:-------------:|:--------------------------: |:-----------------------------------------------------------------:|:-----:|
-* | {sensorTag}Names |      -       | vector of strings  | -      |   -           | Yes     | Ordered list of name  that must belong of the remapped device. The list also defines the index that the sensor will  |  |
-*
-* The sensorTag is a tag identifing the spefici sensor interface, see \ref dev_iface_multiple_analog for a list of possible sensors.
-* The tag of each sensor interface is provided in the doxygen documentation of the specific interface.
-*
-* Configuration file using .ini format.
-*
-* \code{.unparsed}
-*  device multipleanalogsensorsremapper
-*  ThreeAxisGyroscopesNames (head torso)
-*  SixAxisForceTorqueSensorsNames (left_foot right_foot left_leg right_leg)
-* \endcode
-*
-* Configuration of the device from C++ code.
-* \code{.cpp}
-*   Property options;
-*   options.put("device","multipleanalogsensorsremapper");
-*   Bottle gyrosNames;
-*   Bottle & gyrosList = gyrosNames.addList();
-*   gyrosList.addString("head");
-*   gyrosList.addString("torso");
-*   options.put("ThreeAxisGyroscopesNames", gyrosNames.get(0));
-*   Bottle ftNames;
-*   Bottle & ftList = ftNames.addList();
-*   ftList.addString("left_foot");
-*   ftList.addString("right_foot");
-*   ftList.addString("left_leg");
-*   ftList.addString("right_leg");
-*   options.put("SixAxisForceTorqueSensorsNames", ftNames.get(0));
-*
-*   // Actually open the device
-*   PolyDriver multipleAnalogRemappedDevice(options);
-*
-*   // Use it as  you would use any controlboard device
-*   // ...
-* \endcode
-*
-*/
+ * @ingroup dev_impl_remappers
+ *
+ * \brief `multipleanalogsensorsremapper` : device that takes a list of sensors from multiple analog sensors device and exposes them as a single device exposing MultipleAnalogSensors interface.
+ *
+ * | YARP device name |
+ * |:-----------------:|
+ * | `multipleanalogsensorsremapper` |
+ *
+ *  Parameters required by this device are:
+ * | Parameter name | SubParameter   | Type    | Units          | Default Value | Required                    | Description                                                       | Notes |
+ * |:--------------:|:--------------:|:-------:|:--------------:|:-------------:|:--------------------------: |:-----------------------------------------------------------------:|:-----:|
+ * | {sensorTag}Names |      -       | vector of strings  | -      |   -           | Yes     | Ordered list of name that must belong of the remapped device. The list also defines which index will be associated to a given sensor in the remapped devices. For example, if the list (sensorNameA,sensorNameB,sensorNameC) is given, these sensors will have respectively index 0, 1 and 2 in the remapped device.  |  |
+ *
+ * The sensorTag is a tag identifying the specific sensor interface, see \ref dev_iface_multiple_analog for a list of possible sensors.
+ * The tag of each sensor interface is provided in the doxygen documentation of the specific interface.
+ *
+ * Configuration file using .ini format.
+ *
+ * \code{.unparsed}
+ *  device multipleanalogsensorsremapper
+ *  ThreeAxisGyroscopesNames (head torso)
+ *  SixAxisForceTorqueSensorsNames (left_foot right_foot left_leg right_leg)
+ * \endcode
+ *
+ * Configuration of the device from C++ code.
+ * \code{.cpp}
+ *   Property options;
+ *   options.put("device","multipleanalogsensorsremapper");
+ *   Bottle gyrosNames;
+ *   Bottle & gyrosList = gyrosNames.addList();
+ *   gyrosList.addString("head");
+ *   gyrosList.addString("torso");
+ *   options.put("ThreeAxisGyroscopesNames", gyrosNames.get(0));
+ *   Bottle ftNames;
+ *   Bottle & ftList = ftNames.addList();
+ *   ftList.addString("left_foot");
+ *   ftList.addString("right_foot");
+ *   ftList.addString("left_leg");
+ *   ftList.addString("right_leg");
+ *   options.put("SixAxisForceTorqueSensorsNames", ftNames.get(0));
+ *
+ *   // Actually open the device
+ *   PolyDriver multipleAnalogRemappedDevice(options);
+ *
+ *   // Use it as  you would use any controlboard device
+ *   // ...
+ * \endcode
+ *
+ */
 class MultipleAnalogSensorsRemapper :
         public yarp::dev::DeviceDriver,
         public yarp::dev::IMultipleWrapper,
