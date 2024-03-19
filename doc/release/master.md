@@ -39,6 +39,10 @@ New Features
 
 ### Devices
 
+#### controlboardremapper
+
+* Aligned to `controlBoard_nws_yarp` in terms of required interfaces. See https://github.com/robotology/yarp/pull/3095.
+
 #### deviceBundler
 
 * Added new device `deviceBundler` which can be useful to open two devices and attach them while using a single yarpdev command line.
