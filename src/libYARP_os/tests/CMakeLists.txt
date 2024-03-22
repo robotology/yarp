@@ -19,6 +19,7 @@ target_sources(harness_os PRIVATE
   LogTest.cpp
   MessageStackTest.cpp
   NetTypeTest.cpp
+  NetworkClockTest.cpp
   NetworkTest.cpp
   NodeTest.cpp
   PeriodicThreadTest.cpp
