@@ -10,6 +10,7 @@ yarp_prepare_plugin(test_segfault
   TYPE SegFault
   INCLUDE SegFault.h
   ADVANCED
+  GENERATE_PARSER
 )
 
 if(NOT SKIP_test_segfault)
@@ -19,6 +20,8 @@ if(NOT SKIP_test_segfault)
     PRIVATE
       SegFault.cpp
       SegFault.h
+      SegFault_ParamsParser.cpp
+      SegFault_ParamsParser.h
   )
 
   target_link_libraries(yarp_test_segfault
