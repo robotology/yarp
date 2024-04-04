@@ -10,6 +10,7 @@ yarp_prepare_plugin(test_nop
   TYPE Nop
   INCLUDE Nop.h
   ADVANCED
+  GENERATE_PARSER
 )
 
 if(NOT SKIP_test_nop)
@@ -19,6 +20,8 @@ if(NOT SKIP_test_nop)
     PRIVATE
       Nop.cpp
       Nop.h
+      Nop_ParamsParser.cpp
+      Nop_ParamsParser.h
   )
 
   target_link_libraries(yarp_test_nop

@@ -18,7 +18,7 @@
 ./src/devices/SDLJoypad
 ./src/devices/usbCamera
 ./src/devices/framegrabber_protocol
-./src/devices/opencv
+./src/devices/opencvGrabber
 ./src/devices/ffmpeg
 ./src/devices/serialport
 ./src/devices/JoypadControlNetUtils
