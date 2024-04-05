@@ -24,42 +24,31 @@ extern "C" {
 #include <yarp/dev/DeviceDriver.h>
 
 #include "ffmpeg_api.h"
+#include "FfmpegGrabber_ParamsParser.h"
 
 /**
  * @ingroup dev_impl_media
  *
  * \brief `ffmpeg_grabber`: An image frame grabber device using ffmpeg to
  * capture images from AVI files.
+ *
+ * Parameters required by this device are shown in class: FfmpegGrabber_ParamsParser
  */
 class FfmpegGrabber :
         public yarp::dev::IFrameGrabberImage,
         public yarp::dev::IAudioGrabberSound,
         public yarp::dev::IAudioVisualGrabber,
         public yarp::dev::IAudioVisualStream,
-        public yarp::dev::DeviceDriver
+        public yarp::dev::DeviceDriver,
+        public FfmpegGrabber_ParamsParser
 {
 public:
 
     FfmpegGrabber() :
-        system_resource(nullptr),
-        formatParamsVideo(nullptr),
-        formatParamsAudio(nullptr),
-        pFormatCtx(nullptr),
-        pFormatCtx2(nullptr),
-        pAudioFormatCtx(nullptr),
         active(false),
         startTime(0),
-        _hasAudio(false),
-        _hasVideo(false),
         needRateControl(false),
-        shouldLoop(true),
-        pace(1),
-        imageSync(false),
-        m_w(0),
-        m_h(0),
-        m_channels(0),
-        m_rate(0),
-        m_capture(nullptr)
+        imageSync(false)
     {
         memset(&packet,0,sizeof(packet));
     }
@@ -121,35 +110,34 @@ public:
     }
 
 protected:
-    void *system_resource;
+    void *system_resource = nullptr;
 
-    AVDictionary* formatParamsVideo;
-    AVDictionary* formatParamsAudio;
-    AVFormatContext *pFormatCtx;
-    AVFormatContext *pFormatCtx2;
-    AVFormatContext *pAudioFormatCtx;
+    AVDictionary* formatParamsVideo = nullptr;
+    AVDictionary* formatParamsAudio = nullptr;
+    AVFormatContext *pFormatCtx = nullptr;
+    AVFormatContext *pFormatCtx2 = nullptr;
+    AVFormatContext *pAudioFormatCtx = nullptr;
     AVPacket packet;
     bool active;
     double startTime;
-    bool _hasAudio, _hasVideo;
+    bool _hasAudio = false;
+    bool _hasVideo = false;
     bool needRateControl;
-    bool shouldLoop;
-    double pace;
     bool imageSync;
 
     /** Uri of the images a grabber produces. */
     std::string m_uri;
 
     /** Width of the images a grabber produces. */
-    int m_w;
+    int m_w = 0;
     /** Height of the images a grabber produces. */
-    int m_h;
+    int m_h = 0;
 
-    int m_channels;
-    int m_rate;
+    int m_channels = 0;
+    int m_rate = 0;
 
     /** Opaque ffmpeg structure for image capture. */
-    void * m_capture;
+    void * m_capture = nullptr;
 
     bool openFirewire(yarp::os::Searchable & config,
                       AVFormatContext **ppFormatCtx);
