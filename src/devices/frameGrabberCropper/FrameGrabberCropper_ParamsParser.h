@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Fri Apr  5 13:17:07 2024
+// Generated on: Fri Apr  5 16:06:46 2024
 
 
 #ifndef FRAMEGRABBERCROPPER_PARAMSPARSER_H
@@ -25,10 +25,10 @@
 * These are the used parameters:
 * | Group name | Parameter name         | Type | Units | Default Value | Required | Description                                                   | Notes |
 * |:----------:|:----------------------:|:----:|:-----:|:-------------:|:--------:|:-------------------------------------------------------------:|:-----:|
-* | -          | x1                     | int  | -     | 0             | 0        | x1                                                            | -     |
-* | -          | y1                     | int  | -     | 0             | 0        | y1                                                            | -     |
-* | -          | x2                     | int  | -     | 100           | 0        | x2                                                            | -     |
-* | -          | y2                     | int  | -     | 100           | 0        | y2                                                            | -     |
+* | -          | x1                     | int  | -     | 0             | 1        | x1                                                            | -     |
+* | -          | y1                     | int  | -     | 0             | 1        | y1                                                            | -     |
+* | -          | x2                     | int  | -     | 100           | 1        | x2                                                            | -     |
+* | -          | y2                     | int  | -     | 100           | 1        | y2                                                            | -     |
 * | -          | forwardRgbVisualParams | bool | -     | false         | 0        | Forward the the IRgbVisualParams calls to the attached device | -     |
 *
 * The device can be launched by yarpdev using one of the following examples (with and without all optional parameters):
@@ -37,7 +37,7 @@
 * \endcode
 *
 * \code{.unparsed}
-* yarpdev --device frameGrabberCropper
+* yarpdev --device frameGrabberCropper --x1 0 --y1 0 --x2 100 --y2 100
 * \endcode
 *
 */
