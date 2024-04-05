@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Fri Apr  5 13:17:07 2024
+// Generated on: Fri Apr  5 16:06:46 2024
 
 
 #include "FrameGrabberCropper_ParamsParser.h"
@@ -56,7 +56,9 @@ bool      FrameGrabberCropper_ParamsParser::parseParams(const yarp::os::Searchab
         }
         else
         {
-            yCInfo(FrameGrabberCropperParamsCOMPONENT) << "Parameter 'x1' using DEFAULT value:" << m_x1;
+            yCError(FrameGrabberCropperParamsCOMPONENT) << "Mandatory parameter 'x1' not found!";
+            yCError(FrameGrabberCropperParamsCOMPONENT) << "Description of the parameter: x1";
+            return false;
         }
         prop_check.unput("x1");
     }
@@ -70,7 +72,9 @@ bool      FrameGrabberCropper_ParamsParser::parseParams(const yarp::os::Searchab
         }
         else
         {
-            yCInfo(FrameGrabberCropperParamsCOMPONENT) << "Parameter 'y1' using DEFAULT value:" << m_y1;
+            yCError(FrameGrabberCropperParamsCOMPONENT) << "Mandatory parameter 'y1' not found!";
+            yCError(FrameGrabberCropperParamsCOMPONENT) << "Description of the parameter: y1";
+            return false;
         }
         prop_check.unput("y1");
     }
@@ -84,7 +88,9 @@ bool      FrameGrabberCropper_ParamsParser::parseParams(const yarp::os::Searchab
         }
         else
         {
-            yCInfo(FrameGrabberCropperParamsCOMPONENT) << "Parameter 'x2' using DEFAULT value:" << m_x2;
+            yCError(FrameGrabberCropperParamsCOMPONENT) << "Mandatory parameter 'x2' not found!";
+            yCError(FrameGrabberCropperParamsCOMPONENT) << "Description of the parameter: x2";
+            return false;
         }
         prop_check.unput("x2");
     }
@@ -98,7 +104,9 @@ bool      FrameGrabberCropper_ParamsParser::parseParams(const yarp::os::Searchab
         }
         else
         {
-            yCInfo(FrameGrabberCropperParamsCOMPONENT) << "Parameter 'y2' using DEFAULT value:" << m_y2;
+            yCError(FrameGrabberCropperParamsCOMPONENT) << "Mandatory parameter 'y2' not found!";
+            yCError(FrameGrabberCropperParamsCOMPONENT) << "Description of the parameter: y2";
+            return false;
         }
         prop_check.unput("y2");
     }
@@ -162,6 +170,6 @@ std::string      FrameGrabberCropper_ParamsParser::getDocumentationOfDeviceParam
     doc = doc + std::string("Here are some examples of invocation command with yarpdev, with all params:\n");
     doc = doc + " yarpdev --device frameGrabberCropper --x1 0 --y1 0 --x2 100 --y2 100 --forwardRgbVisualParams false\n";
     doc = doc + std::string("Using only mandatory params:\n");
-    doc = doc + " yarpdev --device frameGrabberCropper\n";
+    doc = doc + " yarpdev --device frameGrabberCropper --x1 0 --y1 0 --x2 100 --y2 100\n";
     doc = doc + std::string("=============================================\n\n");    return doc;
 }
