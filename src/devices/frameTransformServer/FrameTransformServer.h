@@ -29,6 +29,7 @@
 #include <yarp/robotinterface/XMLReader.h>
 
 #include <mutex>
+#include "FrameTransformServer_ParamsParser.h"
 
 #define DEFAULT_THREAD_PERIOD 20 //ms
 const int MAX_PORTS = 5;
@@ -40,36 +41,19 @@ const int MAX_PORTS = 5;
  *
  * \brief A server to manage FrameTransforms for a robot (see \ref FrameTransform)
  *
- *   Parameters required by this device are:
- * | Parameter name   | SubParameter         | Type    | Units          | Default Value        | Required     | Description                                                                                               |
- * |:----------------:|:--------------------:|:-------:|:--------------:|:--------------------:|:-----------: |:---------------------------------------------------------------------------------------------------------:|
- * | filexml_option   | -                    | string  | -              | fts_yarp_only.xml    | no           | The name of the xml file containing the needed server configuration                                       |
- * | testxml_from     | -                    | string  | -              | -                    | no           | NB: FOR TEST ONLY. The name of the xml file containing the configuration to test                          |
- * | testxml_context  | -                    | string  | -              | -                    | no           | NB: FOR TEST ONLY. The context folder the test xml file has to be searched in                             |
- * | ft_server_prefix | -                    | string  | -              | ""                   | no           | A prefix to add to the names of all the ports opened by the NWSs instantiated by the frameTransformServer |
- *
- * Example of command line:
- * \code{.unparsed}
- * yarpdev --device frameTransformServer --filexml_option fts_yarp_only.xml
- * \endcode
- *
- * Example of configuration files using .ini format.
- * \code{.unparsed}
- * device frameTransformServer
- * filexml_option fts_yarp_only.xml
- * \endcode
+ * Parameters required by this device are shown in class: FrameTransformServer_ParamsParser
  */
 
 class FrameTransformServer :
         public yarp::dev::DeviceDriver,
         public yarp::os::PortReader,
-        public yarp::os::PeriodicThread
+        public yarp::os::PeriodicThread,
+        public FrameTransformServer_ParamsParser
 {
 protected:
 
     yarp::os::Port      m_rpc_InterfaceToUser;
     std::string         m_local_name;
-    double              m_period;
     std::mutex          m_rpc_mutex;
 
     //new stuff
