@@ -298,20 +298,22 @@ bool FrameTransformClient::open(yarp::os::Searchable &config)
 {
     yCWarning(FRAMETRANSFORMCLIENT) << "The 'FrameTransformClient' device is experimental and could be modified without any warning";
 
+    if (!this->parseParams(config)) { return false; }
+
     std::string cfg_string = config.toString();
     yarp::os::Property cfg;
     cfg.fromString(cfg_string);
 
     std::string configuration_to_open;
     std::string innerFilePath="config_xml/ftc_local_only.xml";
-    if(cfg.check("testxml_from"))
+    if(!m_testxml_from.empty())
     {
         yarp::os::ResourceFinder findXml;
-        if(cfg.check("testxml_context"))
+        if(!m_testxml_context.empty())
         {
-            findXml.setDefaultContext(cfg.find("testxml_context").asString());
+            findXml.setDefaultContext(m_testxml_context);
         }
-        innerFilePath = findXml.findFileByName(cfg.find("testxml_from").asString());
+        innerFilePath = findXml.findFileByName(m_testxml_from);
         std::ifstream xmlFile(innerFilePath);
         std::stringstream stream_file;
         stream_file << xmlFile.rdbuf();
@@ -320,7 +322,7 @@ bool FrameTransformClient::open(yarp::os::Searchable &config)
     else
     {
         auto fs = cmrc::frameTransformRC::get_filesystem();
-        if(cfg.check("filexml_option")) { innerFilePath="config_xml/"+cfg.find("filexml_option").toString();}
+        if(!m_filexml_option.empty()) { innerFilePath="config_xml/"+ m_filexml_option;}
         cfg.unput("filexml_option");
         auto xmlFile = fs.open(innerFilePath);
         for(const auto& lemma : xmlFile)
@@ -329,14 +331,11 @@ bool FrameTransformClient::open(yarp::os::Searchable &config)
         }
     }
 
-    std::string m_local_rpcUser = "/ftClient/rpc";
-
-    if (cfg.check("local_rpc")) { m_local_rpcUser=cfg.find("local_rpc").toString();}
     cfg.unput("local_rpc");
 
-    if (config.check("FrameTransform_verbose_debug"))
+    if (m_FrameTransform_verbose_debug)
     {
-       yarp::os::Value vval = config.find("FrameTransform_verbose_debug");
+       yarp::os::Value vval (true);
        cfg.put("FrameTransform_verbose_debug", vval);
     }
 
@@ -406,13 +405,7 @@ bool FrameTransformClient::open(yarp::os::Searchable &config)
         yCWarning(FRAMETRANSFORMCLIENT) << "Get device name was not provided in the specified configuration. Get operations will not be available";
     }
 
-    if (config.check("period"))
-    {
-        m_period = config.find("period").asFloat64();
-        this->setPeriod(m_period);
-    }
-
-    if (!m_rpc_InterfaceToUser.open(m_local_rpcUser))
+    if (!m_rpc_InterfaceToUser.open(m_local_rpc))
     {
         yCError(FRAMETRANSFORMCLIENT,"Failed to open rpc port");
     }
@@ -924,8 +917,7 @@ bool FrameTransformClient::waitForTransform(const std::string &target_frame_id, 
     return true;
 }
 
-FrameTransformClient::FrameTransformClient() : PeriodicThread(0.01),
-    m_period(0.01)
+FrameTransformClient::FrameTransformClient() : PeriodicThread(0.01)
 {
 }
 

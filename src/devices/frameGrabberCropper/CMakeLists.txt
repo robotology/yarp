@@ -18,8 +18,8 @@ if(NOT SKIP_frameGrabberCropper)
     PRIVATE
       FrameGrabberCropper.cpp
       FrameGrabberCropper.h
-      FrameGrabberCropper_paramsParser.cpp
-      FrameGrabberCropper_paramsParser.h
+      FrameGrabberCropper_ParamsParser.cpp
+      FrameGrabberCropper_ParamsParser.h
   )
 
   target_link_libraries(yarp_frameGrabberCropper
