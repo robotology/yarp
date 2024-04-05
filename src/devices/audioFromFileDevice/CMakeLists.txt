@@ -18,8 +18,8 @@ if(NOT SKIP_audioFromFileDevice)
     PRIVATE
       AudioFromFileDevice.cpp
       AudioFromFileDevice.h
-      AudioFromFileDevice_paramsParser.cpp
-      AudioFromFileDevice_paramsParser.h
+      AudioFromFileDevice_ParamsParser.cpp
+      AudioFromFileDevice_ParamsParser.h
   )
 
   target_link_libraries(yarp_audioFromFileDevice
