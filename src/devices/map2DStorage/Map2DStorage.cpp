@@ -5,7 +5,7 @@
 
 #include <sstream>
 #include <limits>
-#include "map2DStorage.h"
+#include "Map2DStorage.h"
 #include <yarp/dev/IMap2D.h>
 #include <yarp/dev/INavigation2D.h>
 #include <yarp/dev/GenericVocabs.h>
