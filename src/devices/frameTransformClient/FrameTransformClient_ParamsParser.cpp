@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Fri Apr  5 16:06:45 2024
+// Generated on: Sat Apr  6 12:05:03 2024
 
 
 #include "FrameTransformClient_ParamsParser.h"
@@ -172,7 +172,7 @@ std::string      FrameTransformClient_ParamsParser::getDocumentationOfDevicePara
     doc = doc + std::string("'testxml_context': xml configuration file context\n");
     doc = doc + std::string("'filexml_option': The name of the xml file containing the needed client configuration. if used, the name will be appended to config_xml/\n");
     doc = doc + std::string("'local_rpc': Full name of the client rpc port\n");
-    doc = doc + std::string("'FrameTransform_verbose_debug': The device id, if multiple sound cards are present\n");
+    doc = doc + std::string("'FrameTransform_verbose_debug': Enable debug prints\n");
     doc = doc + std::string("'period': thread period\n");
     doc = doc + std::string("\n");
     doc = doc + std::string("Here are some examples of invocation command with yarpdev, with all params:\n");

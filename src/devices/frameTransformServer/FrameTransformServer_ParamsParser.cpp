@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Fri Apr  5 16:24:53 2024
+// Generated on: Sat Apr  6 12:05:03 2024
 
 
 #include "FrameTransformServer_ParamsParser.h"
@@ -170,13 +170,13 @@ std::string      FrameTransformServer_ParamsParser::getDocumentationOfDevicePara
     doc = doc + std::string("This is the list of the parameters accepted by the device:\n");
     doc = doc + std::string("'testxml_from': xml configuration file name\n");
     doc = doc + std::string("'testxml_context': xml configuration file context\n");
-    doc = doc + std::string("'filexml_option': The name of the xml file containing the needed client configuration. if used, the name will be appended to config_xml/\n");
-    doc = doc + std::string("'local_rpc': Full name of the client rpc port\n");
-    doc = doc + std::string("'FrameTransform_verbose_debug': The device id, if multiple sound cards are present\n");
+    doc = doc + std::string("'filexml_option': The name of the xml file containing the needed configuration. if used, the name will be appended to config_xml/\n");
+    doc = doc + std::string("'local_rpc': Full name of the rpc port\n");
+    doc = doc + std::string("'FrameTransform_verbose_debug': Enable debug prints\n");
     doc = doc + std::string("'period': thread period\n");
     doc = doc + std::string("\n");
     doc = doc + std::string("Here are some examples of invocation command with yarpdev, with all params:\n");
-    doc = doc + " yarpdev --device frameTransformServer --testxml_from <optional_value> --testxml_context <optional_value> --filexml_option ftc_local_only.xml --local_rpc /ftClient/rpc --FrameTransform_verbose_debug false --period 0.10\n";
+    doc = doc + " yarpdev --device frameTransformServer --testxml_from <optional_value> --testxml_context <optional_value> --filexml_option fts_yarp_only.xml --local_rpc /ftServer/rpc --FrameTransform_verbose_debug false --period 0.10\n";
     doc = doc + std::string("Using only mandatory params:\n");
     doc = doc + " yarpdev --device frameTransformServer\n";
     doc = doc + std::string("=============================================\n\n");    return doc;
