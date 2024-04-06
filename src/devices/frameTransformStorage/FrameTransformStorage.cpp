@@ -26,18 +26,19 @@ bool FrameTransformStorage::getInternalContainer(FrameTransformContainer*& conta
 
 bool FrameTransformStorage::open(yarp::os::Searchable& config)
 {
+    if (!this->parseParams(config)) { return false; }
+
     std::string sstr = config.toString();
 
-    if (config.check("FrameTransform_verbose_debug") &&
-        config.find("FrameTransform_verbose_debug").asInt32() == 1)
+    if (m_FrameTransform_verbose_debug)
     {
         m_tf_container.m_verbose_debug=true;
         m_tf_container.m_name = this->id() + ".container";
     }
 
-    if (config.check("FrameTransform_container_timeout"))
+    //if (m_FrameTransform_container_timeout>0) //should I check?
     {
-        m_tf_container.m_timeout = config.find("FrameTransform_container_timeout").asFloat64();
+        m_tf_container.m_timeout = m_FrameTransform_container_timeout;
     }
 
     yCTrace(FRAMETRANSFORSTORAGE);
