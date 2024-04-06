@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Fri Apr  5 16:06:45 2024
+// Generated on: Sat Apr  6 12:05:03 2024
 
 
 #ifndef FRAMETRANSFORMCLIENT_PARAMSPARSER_H
@@ -29,7 +29,7 @@
 * | -          | testxml_context              | string | -     | -                  | 0        | xml configuration file context                                                                                         | NB: FOR TEST ONLY.                                                  |
 * | -          | filexml_option               | string | -     | ftc_local_only.xml | 0        | The name of the xml file containing the needed client configuration. if used, the name will be appended to config_xml/ | it is mutually exclusive with testxml_from, testxml_context options |
 * | -          | local_rpc                    | string | -     | /ftClient/rpc      | 0        | Full name of the client rpc port                                                                                       | -                                                                   |
-* | -          | FrameTransform_verbose_debug | bool   | -     | false              | 0        | The device id, if multiple sound cards are present                                                                     | if not specified, the default system device will be used            |
+* | -          | FrameTransform_verbose_debug | bool   | -     | false              | 0        | Enable debug prints                                                                                                    | -                                                                   |
 * | -          | period                       | double | s     | 0.10               | 0        | thread period                                                                                                          | -                                                                   |
 *
 * The device can be launched by yarpdev using one of the following examples (with and without all optional parameters):
