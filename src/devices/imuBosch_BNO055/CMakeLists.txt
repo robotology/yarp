@@ -8,6 +8,7 @@ yarp_prepare_plugin(imuBosch_BNO055
   EXTRA_CONFIG
     WRAPPER=inertial
   DEPENDS "NOT WIN32;TARGET YARP::YARP_math;YARP_HAS_I2C"
+  GENERATE_PARSER
 )
 
 if(ENABLE_imuBosch_BNO055)
@@ -17,6 +18,8 @@ if(ENABLE_imuBosch_BNO055)
     PRIVATE
       imuBosch_BNO055.cpp
       imuBosch_BNO055.h
+      BoschIMU_ParamsParser.cpp
+      BoschIMU_ParamsParser.h
   )
 
   target_link_libraries(yarp_imuBosch_BNO055

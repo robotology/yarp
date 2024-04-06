@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Fri Apr  5 16:24:53 2024
+// Generated on: Sat Apr  6 12:05:03 2024
 
 
 #ifndef FRAMETRANSFORMSERVER_PARAMSPARSER_H
@@ -23,18 +23,18 @@
 * This class is the parameters parser for class FrameTransformServer.
 *
 * These are the used parameters:
-* | Group name | Parameter name               | Type   | Units | Default Value      | Required | Description                                                                                                            | Notes                                                               |
-* |:----------:|:----------------------------:|:------:|:-----:|:------------------:|:--------:|:----------------------------------------------------------------------------------------------------------------------:|:-------------------------------------------------------------------:|
-* | -          | testxml_from                 | string | -     | -                  | 0        | xml configuration file name                                                                                            | NB: FOR TEST ONLY.                                                  |
-* | -          | testxml_context              | string | -     | -                  | 0        | xml configuration file context                                                                                         | NB: FOR TEST ONLY.                                                  |
-* | -          | filexml_option               | string | -     | ftc_local_only.xml | 0        | The name of the xml file containing the needed client configuration. if used, the name will be appended to config_xml/ | it is mutually exclusive with testxml_from, testxml_context options |
-* | -          | local_rpc                    | string | -     | /ftClient/rpc      | 0        | Full name of the client rpc port                                                                                       | -                                                                   |
-* | -          | FrameTransform_verbose_debug | bool   | -     | false              | 0        | The device id, if multiple sound cards are present                                                                     | if not specified, the default system device will be used            |
-* | -          | period                       | double | s     | 0.10               | 0        | thread period                                                                                                          | -                                                                   |
+* | Group name | Parameter name               | Type   | Units | Default Value     | Required | Description                                                                                                     | Notes                                                               |
+* |:----------:|:----------------------------:|:------:|:-----:|:-----------------:|:--------:|:---------------------------------------------------------------------------------------------------------------:|:-------------------------------------------------------------------:|
+* | -          | testxml_from                 | string | -     | -                 | 0        | xml configuration file name                                                                                     | NB: FOR TEST ONLY.                                                  |
+* | -          | testxml_context              | string | -     | -                 | 0        | xml configuration file context                                                                                  | NB: FOR TEST ONLY.                                                  |
+* | -          | filexml_option               | string | -     | fts_yarp_only.xml | 0        | The name of the xml file containing the needed configuration. if used, the name will be appended to config_xml/ | it is mutually exclusive with testxml_from, testxml_context options |
+* | -          | local_rpc                    | string | -     | /ftServer/rpc     | 0        | Full name of the rpc port                                                                                       | -                                                                   |
+* | -          | FrameTransform_verbose_debug | bool   | -     | false             | 0        | Enable debug prints                                                                                             | -                                                                   |
+* | -          | period                       | double | s     | 0.10              | 0        | thread period                                                                                                   | -                                                                   |
 *
 * The device can be launched by yarpdev using one of the following examples (with and without all optional parameters):
 * \code{.unparsed}
-* yarpdev --device frameTransformServer --testxml_from <optional_value> --testxml_context <optional_value> --filexml_option ftc_local_only.xml --local_rpc /ftClient/rpc --FrameTransform_verbose_debug false --period 0.10
+* yarpdev --device frameTransformServer --testxml_from <optional_value> --testxml_context <optional_value> --filexml_option fts_yarp_only.xml --local_rpc /ftServer/rpc --FrameTransform_verbose_debug false --period 0.10
 * \endcode
 *
 * \code{.unparsed}
@@ -62,15 +62,15 @@ public:
 
     const std::string m_testxml_from_defaultValue = {""};
     const std::string m_testxml_context_defaultValue = {""};
-    const std::string m_filexml_option_defaultValue = {"ftc_local_only.xml"};
-    const std::string m_local_rpc_defaultValue = {"/ftClient/rpc"};
+    const std::string m_filexml_option_defaultValue = {"fts_yarp_only.xml"};
+    const std::string m_local_rpc_defaultValue = {"/ftServer/rpc"};
     const std::string m_FrameTransform_verbose_debug_defaultValue = {"false"};
     const std::string m_period_defaultValue = {"0.10"};
 
     std::string m_testxml_from = {}; //This default value of this string is an empty string. It is highly recommended to provide a suggested value also for optional string parameters.
     std::string m_testxml_context = {}; //This default value of this string is an empty string. It is highly recommended to provide a suggested value also for optional string parameters.
-    std::string m_filexml_option = {"ftc_local_only.xml"};
-    std::string m_local_rpc = {"/ftClient/rpc"};
+    std::string m_filexml_option = {"fts_yarp_only.xml"};
+    std::string m_local_rpc = {"/ftServer/rpc"};
     bool m_FrameTransform_verbose_debug = {false};
     double m_period = {0.10};
 
