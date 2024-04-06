@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Sat Apr  6 12:05:03 2024
+// Generated on: Sat Apr  6 12:45:14 2024
 
 
 #ifndef FFMPEGGRABBER_PARAMSPARSER_H
@@ -29,7 +29,7 @@
 * | -          | loop           | bool   | -     | true          | 0        | media should loop (default)                                  | -     |
 * | -          | sync           | string | -     | image         | 0        | sync on image or audio (if have to choose)?                  | -     |
 * | -          | nodelay        | bool   | -     | false         | 0        | media will play in simulated realtime unless this is present | -     |
-* | -          | pace           | bool   | -     | 1.0           | 0        | simulated realtime multiplier factor (must be <1 right now)  | -     |
+* | -          | pace           | double | -     | 1.0           | 0        | simulated realtime multiplier factor (must be <1 right now)  | -     |
 * | -          | v4l            | bool   | -     | false         | 0        | if present, read from video4linux                            | -     |
 * | -          | v4l1           | bool   | -     | false         | 0        | if present, read from video4linux                            | -     |
 * | -          | v4l2           | bool   | -     | false         | 0        | if present, read from video4linux                            | -     |
@@ -99,7 +99,7 @@ public:
     bool m_loop = {true};
     std::string m_sync = {"image"};
     bool m_nodelay = {false};
-    bool m_pace = {1.0};
+    double m_pace = {1.0};
     bool m_v4l = {false};
     bool m_v4l1 = {false};
     bool m_v4l2 = {false};

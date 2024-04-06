@@ -6,6 +6,7 @@ yarp_prepare_plugin(frameTransformStorage
   TYPE FrameTransformStorage
   INCLUDE FrameTransformStorage.h
   DEPENDS "TARGET YARP::YARP_math"
+  GENERATE_PARSER
   DEFAULT ON
 )
 
@@ -16,6 +17,8 @@ if(NOT SKIP_frameTransformStorage)
     PRIVATE
       FrameTransformStorage.cpp
       FrameTransformStorage.h
+      FrameTransformStorage_ParamsParser.cpp
+      FrameTransformStorage_ParamsParser.h
   )
 
   target_link_libraries(yarp_frameTransformStorage

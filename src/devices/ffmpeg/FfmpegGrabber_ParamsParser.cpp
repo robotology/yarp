@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Sat Apr  6 12:05:03 2024
+// Generated on: Sat Apr  6 12:45:14 2024
 
 
 #include "FfmpegGrabber_ParamsParser.h"
@@ -122,7 +122,7 @@ bool      FfmpegGrabber_ParamsParser::parseParams(const yarp::os::Searchable & c
     {
         if (config.check("pace"))
         {
-            m_pace = config.find("pace").asBool();
+            m_pace = config.find("pace").asFloat64();
             yCInfo(FfmpegGrabberParamsCOMPONENT) << "Parameter 'pace' using value:" << m_pace;
         }
         else

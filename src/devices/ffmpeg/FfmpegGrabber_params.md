@@ -2,7 +2,7 @@
   * |      |  loop               | bool    | -    | true                | No    | media should loop (default)                       |  |
   * |      |  sync               | string  | -    | image               | No    | sync on image or audio (if have to choose)?        |  |
   * |      |  nodelay            | bool    | -    | false               | No    | media will play in simulated realtime unless this is present        |  |
-  * |      |  pace               | bool    | -    | 1.0                 | No    | simulated realtime multiplier factor (must be <1 right now)        |  |
+  * |      |  pace               | double  | -    | 1.0                 | No    | simulated realtime multiplier factor (must be <1 right now)        |  |
   * |      |  v4l                | bool    | -    | false               | No    | if present, read from video4linux        |  |
   * |      |  v4l1               | bool    | -    | false               | No    | if present, read from video4linux        |  |
   * |      |  v4l2               | bool    | -    | false               | No    | if present, read from video4linux        |  |
