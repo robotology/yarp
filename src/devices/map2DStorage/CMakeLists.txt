@@ -4,7 +4,7 @@
 yarp_prepare_plugin(map2DStorage
   CATEGORY device
   TYPE Map2DStorage
-  INCLUDE map2DStorage.h
+  INCLUDE Map2DStorage.h
   GENERATE_PARSER
   EXTRA_CONFIG
     WRAPPER=map2D_nws_yarp
