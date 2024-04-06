@@ -75,7 +75,7 @@ bool BoschIMU::open(yarp::os::Searchable& config)
 
     if (!this->parseParams(config)) { return false; }
 
-    if(m_comport.empty() && m_i2c.empty()))
+    if(m_comport.empty() && m_i2c.empty())
     {
         yCError(IMUBOSCH_BNO055) << "Params 'comport' and 'i2c' not found. At least one of the two must be specified";
         return false;
@@ -728,7 +728,7 @@ bool BoschIMU::genericGetSensorName(size_t sens_index, std::string& name) const
         return false;
     }
 
-    name = m_sensorName;
+    name = m_sensor_name;
     return true;
 }
 
@@ -740,7 +740,7 @@ bool BoschIMU::genericGetFrameName(size_t sens_index, std::string& frameName) co
         return false;
     }
 
-    frameName = m_frameName;
+    frameName = m_frame_name;
     return true;
 
 }
