@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Thu Mar  7 17:59:50 2024
+// Generated on: Mon Apr  8 10:24:20 2024
 
 
 #include "JoypadControlServer_ParamsParser.h"
@@ -32,6 +32,7 @@ std::vector<std::string> JoypadControlServer_ParamsParser::getListOfParams() con
     params.push_back("name");
     params.push_back("use_separate_ports");
     params.push_back("profile");
+    params.push_back("use_single_thread");
     return params;
 }
 
@@ -104,6 +105,20 @@ bool      JoypadControlServer_ParamsParser::parseParams(const yarp::os::Searchab
         prop_check.unput("profile");
     }
 
+    //Parser of parameter use_single_thread
+    {
+        if (config.check("use_single_thread"))
+        {
+            m_use_single_thread = config.find("use_single_thread").asBool();
+            yCInfo(JoypadControlServerParamsCOMPONENT) << "Parameter 'use_single_thread' using value:" << m_use_single_thread;
+        }
+        else
+        {
+            yCInfo(JoypadControlServerParamsCOMPONENT) << "Parameter 'use_single_thread' using DEFAULT value:" << m_use_single_thread;
+        }
+        prop_check.unput("use_single_thread");
+    }
+
     /*
     //This code check if the user set some parameter which are not check by the parser
     //If the parser is set in strict mode, this will generate an error
@@ -144,9 +159,10 @@ std::string      JoypadControlServer_ParamsParser::getDocumentationOfDeviceParam
     doc = doc + std::string("'name': Prefix name of the ports opened by the JoypadControlServer\n");
     doc = doc + std::string("'use_separate_ports': set it to 1 to use separate ports (buttons, axes, trackballs, hats) and 0 to stream all in one single port\n");
     doc = doc + std::string("'profile': print the joypad data for debugging purpose\n");
+    doc = doc + std::string("'use_single_thread': If true, the device is updated when calling updateService rather than using a separate thread.\n");
     doc = doc + std::string("\n");
     doc = doc + std::string("Here are some examples of invocation command with yarpdev, with all params:\n");
-    doc = doc + " yarpdev --device JoypadControlServer --period 0.01 --name /robotName/joypad --use_separate_ports true --profile false\n";
+    doc = doc + " yarpdev --device JoypadControlServer --period 0.01 --name /robotName/joypad --use_separate_ports true --profile false --use_single_thread false\n";
     doc = doc + std::string("Using only mandatory params:\n");
     doc = doc + " yarpdev --device JoypadControlServer --name /robotName/joypad\n";
     doc = doc + std::string("=============================================\n\n");    return doc;

@@ -239,6 +239,8 @@ bool JoypadControlServer::open(yarp::os::Searchable& config)
         return false;
     }
 
+    m_lastRunTime = yarp::os::Time::now();
+
     m_rpcPortName        = m_name + "/rpc:i";
     m_portButtons.name   = m_name + "/buttons:o";
     m_portAxis.name      = m_name + "/axis:o";
@@ -262,10 +264,11 @@ bool JoypadControlServer::attach(PolyDriver* poly)
         yCError(JOYPADCONTROLSERVER) << "Attached device has no valid IJoypadController interface.";
         return false;
     }
-
-    PeriodicThread::setPeriod(m_period);
-    if (!PeriodicThread::start()) {
-        return false;
+    if (!m_use_single_thread) {
+        PeriodicThread::setPeriod(m_period);
+        if (!PeriodicThread::start()) {
+            return false;
+        }
     }
 
     openPorts();
@@ -549,6 +552,10 @@ void JoypadControlServer::profile()
 
 void JoypadControlServer::run()
 {
+    if (m_use_single_thread && yarp::os::Time::now() - m_lastRunTime < m_period) {
+        return;
+    }
+
     if(m_use_separate_ports)
     {
         if (m_portButtons.valid)
@@ -696,6 +703,23 @@ void JoypadControlServer::run()
     {
         profile();
     }
+}
+
+bool JoypadControlServer::startService()
+{
+    return !m_use_single_thread;
+}
+
+bool JoypadControlServer::updateService()
+{
+    if (m_use_single_thread)
+        run();
+    return true;
+}
+
+bool JoypadControlServer::stopService()
+{
+    return close();
 }
 
 bool JoypadControlServer::close()
