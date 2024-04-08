@@ -9,6 +9,7 @@
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/IWrapper.h>
+#include <yarp/dev/ServiceInterfaces.h>
 #include "DeviceBundler_ParamsParser.h"
 
 /**
@@ -25,6 +26,7 @@
 */
 
 class DeviceBundler :  public yarp::dev::DeviceDriver,
+                       public yarp::dev::IService,
                        public DeviceBundler_ParamsParser
 {
 public:
@@ -39,10 +41,16 @@ public:
     bool open(yarp::os::Searchable& config) override;
     bool close() override;
 
+    //  yarp::dev::IService methods
+    virtual bool startService() override;
+    virtual bool updateService() override;
+    virtual bool stopService() override;
+
 private:
     yarp::dev::PolyDriver m_pdev_wrapper;
     yarp::dev::PolyDriver m_pdev_subdevice;
     yarp::dev::IWrapper*  m_iWrapper=nullptr;
+    yarp::dev::IService* m_iService=nullptr;
 };
 
 #endif // YARP_DEVICEBUNDLER_H

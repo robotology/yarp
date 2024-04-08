@@ -76,6 +76,12 @@ bool DeviceBundler::open(yarp::os::Searchable& config)
         return false;
     }
 
+    ret = m_pdev_wrapper.view(m_iService);
+    if (ret)
+    {
+        yCInfo(DEVICEBUNDLER, "The device implements the IService iterface");
+    }
+
     ret = m_iWrapper->attach(&m_pdev_subdevice);
     if (!ret)
     {
@@ -93,6 +99,7 @@ bool DeviceBundler::close()
     {
         m_iWrapper->detach();
         m_iWrapper = nullptr;
+        m_iService = nullptr;
     }
 
     if (m_pdev_wrapper.isValid())
@@ -106,4 +113,31 @@ bool DeviceBundler::close()
     }
 
     return true;
+}
+
+bool DeviceBundler::startService()
+{
+    if (m_iService)
+    {
+        return m_iService->startService();
+    }
+    return true; //If not implemented, emulate running in background
+}
+
+bool DeviceBundler::updateService()
+{
+    if (m_iService)
+    {
+        return m_iService->updateService();
+    }
+    return false;
+}
+
+bool DeviceBundler::stopService()
+{
+    if (m_iService)
+    {
+        return m_iService->stopService();
+    }
+    return false;
 }
