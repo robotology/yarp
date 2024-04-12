@@ -37,6 +37,11 @@ New Features
 
 * Added LLM_Message data type to propagate LLM answers
 
+#### Docker
+* Added two parameters to yarp `Dockerfile`:
+  * `base_img` to allow starting from different parent images
+  * `yarp_branch` to set the yarp version the users might need in their image
+
 ### Devices
 
 #### controlboardremapper
