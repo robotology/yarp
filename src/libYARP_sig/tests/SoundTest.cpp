@@ -71,6 +71,24 @@ TEST_CASE("sig::SoundTest", "[yarp::sig]")
         CHECK(99 == snd2.get(50)); // copy works
     }
 
+    SECTION("Test copyPortable Sound")
+    {
+        Sound snd1;
+        snd1.resize(10, 3);
+        generate_test_sound(snd1, 10, 3);
+        yarp::os::Bottle output_bot;
+        bool b1 = Property::copyPortable(snd1, output_bot);
+        CHECK(b1);
+
+        yarp::os::Bottle input_bot = output_bot;
+        Sound snd2;
+        bool b2 = Property::copyPortable(input_bot, snd2);
+        CHECK(b2);
+
+        bool b3 = (snd1 == snd2);
+        CHECK(b3);
+    }
+
     SECTION("check operator ==")
     {
         bool ok = true;

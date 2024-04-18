@@ -49,6 +49,8 @@ public:
     yarp::os::NetInt32 bytesPerSample{ 0 };
     yarp::os::NetInt32 frequencyTag{ 0 };
     yarp::os::NetInt32 frequency{ 0 };
+    yarp::os::NetInt32 listTag{ 0 };
+    yarp::os::NetInt32 listLen{ 0 };
 
     SoundHeader() = default;
 };
@@ -374,10 +376,16 @@ bool Sound::read(ConnectionReader& connection)
     m_frequency = header.frequency;
     m_channels = header.channelsSize;
     m_samples = header.samplesSize;
+    size_t data_size = header.listLen;
+
+    if (data_size != m_channels * m_samples)
+    {
+        return false;
+    }
 
     auto* pp = ((std::vector<NetUint16>*)(implementation));
-    pp->resize(m_channels * m_samples);
-    for (size_t l = 0; l < m_channels*m_samples; l++)
+    pp->resize(data_size);
+    for (size_t l = 0; l < data_size; l++)
     {
         pp->at(l) = connection.expectInt16();
     }
@@ -389,8 +397,8 @@ bool Sound::write(yarp::os::ConnectionWriter& connection) const
 {
     SoundHeader header;
     header.outerListTag = BOTTLE_TAG_LIST;
-    header.outerListLen = 4;
-    header.samplesSize = BOTTLE_TAG_INT32;
+    header.outerListLen = 5;
+    header.samplesSizeTag = BOTTLE_TAG_INT32;
     header.samplesSize = m_samples;
     header.bytesPerSampleTag = BOTTLE_TAG_INT32;
     header.bytesPerSample = m_bytesPerSample;
@@ -398,11 +406,13 @@ bool Sound::write(yarp::os::ConnectionWriter& connection) const
     header.channelsSize = m_channels;
     header.frequencyTag = BOTTLE_TAG_INT32;
     header.frequency = m_frequency;
-//    header.listTag = BOTTLE_TAG_LIST + BOTTLE_TAG_FLOAT64;
-//    header.listSize = BOTTLE_TAG_LIST + BOTTLE_TAG_FLOAT64;
-    connection.appendBlock((char*)&header, sizeof(header));
 
     auto* pp = ((std::vector<NetUint16>*)(implementation));
+    size_t siz = pp->size();
+    header.listTag = BOTTLE_TAG_LIST + BOTTLE_TAG_INT16;
+    header.listLen = siz; //this must be equal to m_samples*m_channels
+    //BOTTLE_TAG_LIST is special and must be followed by its size.
+    connection.appendBlock((char*)&header, sizeof(header));
     for (size_t l = 0; l < pp->size(); l++) {
         connection.appendInt16(pp->at(l));
     }
