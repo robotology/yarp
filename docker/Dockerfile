@@ -1,4 +1,5 @@
-FROM ubuntu:22.04
+ARG base_img=ubuntu:22.04
+FROM ${base_img}
 LABEL maintainer="Marco Randazzo"
 
 # Non-interactive installation mode
@@ -116,9 +117,10 @@ RUN cd ycm && mkdir build && cd build && \
 ENV YCM_DIR=/home/user1/robotology/ycm/build
 
 # Build YARP
+ARG yarp_branch=master
 USER $robotology_install_user
 WORKDIR $robotology_install_folder
-RUN git clone https://github.com/robotology/yarp.git -b master
+RUN git clone https://github.com/robotology/yarp.git -b ${yarp_branch}
 RUN cd yarp && mkdir build && cd build && \
     cmake .. \
     -DCMAKE_BUILD_TYPE=Release \
