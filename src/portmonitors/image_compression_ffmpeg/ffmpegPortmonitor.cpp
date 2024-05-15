@@ -177,7 +177,10 @@ void FfmpegMonitorObject::destroy(void)
 
     // Check if codec context is freeable, if yes free it.
     if (codecContext != NULL) {
+#if LIBAVCODEC_VERSION_MAJOR < 61
+        // See https://github.com/FFmpeg/FFmpeg/blob/n7.0/libavcodec/avcodec.h#L2381-L2384
         avcodec_close(codecContext);
+#endif
         avcodec_free_context(&codecContext);
         codecContext = NULL;
     }
@@ -535,7 +538,12 @@ int FfmpegMonitorObject::compress(Image* img, AVPacket *pkt) {
         }
 
         // Set presentation timestamp
+#if LIBAVCODEC_VERSION_MAJOR >= 61
+        // See https://github.com/FFmpeg/FFmpeg/commit/6b6f7db81932f94876ff4bcfd2da0582b8ab897e
+        endFrame->pts = codecContext->frame_num;
+#else
         endFrame->pts = codecContext->frame_number;
+#endif
 
         // Send image frame to codec
         ret = avcodec_send_frame(codecContext, endFrame);
