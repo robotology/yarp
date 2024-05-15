@@ -11,6 +11,8 @@ systems.
 - \subpage install_yarp_linux
 - \subpage install_yarp_windows
 - \subpage install_yarp_mac
+- \subpage install_yarp_conda
+
 
 After your are done installing YARP you can proceed with the following link:
 \subpage check_your_installation.

@@ -31,13 +31,7 @@ Ubuntu 18.04, see
 [robotology/QA#364](https://github.com/robotology/QA/issues/364))
 
 
-Install [YCM](https://github.com/robotology/ycm/) from sources or install it
-from binaries by configuring the icub.eu repository (Follow the instructions at
-\ref install_linux_from_binaries), and install it with
-
-~~~{.sh}
-sudo apt-get install ycm-cmake-modules
-~~~
+Install [YCM](https://github.com/robotology/ycm/) from sources.
 
 Depending on what parts of YARP you want to enable, you will also have to
 install some other packages
@@ -49,7 +43,6 @@ what is installed and why, proceed to the following sections.
 
 ~~~{.sh}
 sudo apt-get install build-essential git cmake cmake-curses-gui \
-  ycm-cmake-modules \
   libeigen3-dev \
   libace-dev \
   libedit-dev \
