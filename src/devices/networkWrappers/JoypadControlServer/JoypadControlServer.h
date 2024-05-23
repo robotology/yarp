@@ -9,6 +9,7 @@
 #include <yarp/os/PeriodicThread.h>
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/dev/IJoypadController.h>
+#include <yarp/dev/ServiceInterfaces.h>
 #include <yarp/dev/WrapperSingle.h>
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/PolyDriverList.h>
@@ -47,6 +48,7 @@ class JoypadControlServer :
         public yarp::dev::DeviceDriver,
         public yarp::dev::WrapperSingle,
         public yarp::os::PeriodicThread,
+        public yarp::dev::IService,
         public JoypadControlServer_ParamsParser
 {
     typedef yarp::dev::IJoypadController::JoypadCtrl_coordinateMode coordsMode;
@@ -68,6 +70,7 @@ class JoypadControlServer :
     JoyPort<Vector>                 m_portTrackball;
     yarp::os::BufferedPort<JoyData> m_godPort; //TODO: single port purpose
     coordsMode                      m_coordsMode = yarp::dev::IJoypadController::JypCtrlcoord_CARTESIAN;
+    double m_lastRunTime = 0.0;
 
 
     bool openAndAttachSubDevice(yarp::os::Searchable& prop);
@@ -89,6 +92,9 @@ public:
     bool threadInit() override;
     void threadRelease() override;
     void run() override;
+    bool startService() override;
+    bool updateService() override;
+    bool stopService() override;
 };
 
 #endif

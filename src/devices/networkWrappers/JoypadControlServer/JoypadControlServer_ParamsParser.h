@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Thu Mar  7 17:59:50 2024
+// Generated on: Mon Apr  8 10:24:20 2024
 
 
 #ifndef JOYPADCONTROLSERVER_PARAMSPARSER_H
@@ -29,10 +29,11 @@
 * | -          | name               | string | -     | /robotName/joypad | 1        | Prefix name of the ports opened by the JoypadControlServer                                                 | -     |
 * | -          | use_separate_ports | bool   | -     | true              | 0        | set it to 1 to use separate ports (buttons, axes, trackballs, hats) and 0 to stream all in one single port | -     |
 * | -          | profile            | bool   | -     | false             | 0        | print the joypad data for debugging purpose                                                                | -     |
+* | -          | use_single_thread  | bool   | -     | false             | 0        | If true, the device is updated when calling updateService rather than using a separate thread.             | -     |
 *
 * The device can be launched by yarpdev using one of the following examples (with and without all optional parameters):
 * \code{.unparsed}
-* yarpdev --device JoypadControlServer --period 0.01 --name /robotName/joypad --use_separate_ports true --profile false
+* yarpdev --device JoypadControlServer --period 0.01 --name /robotName/joypad --use_separate_ports true --profile false --use_single_thread false
 * \endcode
 *
 * \code{.unparsed}
@@ -62,11 +63,13 @@ public:
     const std::string m_name_defaultValue = {"/robotName/joypad"};
     const std::string m_use_separate_ports_defaultValue = {"true"};
     const std::string m_profile_defaultValue = {"false"};
+    const std::string m_use_single_thread_defaultValue = {"false"};
 
     double m_period = {0.01};
     std::string m_name = {"/robotName/joypad"};
     bool m_use_separate_ports = {true};
     bool m_profile = {false};
+    bool m_use_single_thread = {false};
 
     bool          parseParams(const yarp::os::Searchable & config) override;
     std::string   getDeviceClassName() const override { return m_device_classname; }
