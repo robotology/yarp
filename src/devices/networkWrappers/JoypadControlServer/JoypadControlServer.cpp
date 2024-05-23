@@ -703,6 +703,8 @@ void JoypadControlServer::run()
     {
         profile();
     }
+
+    m_lastRunTime = yarp::os::Time::now();
 }
 
 bool JoypadControlServer::startService()
