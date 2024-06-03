@@ -97,7 +97,7 @@ int main(int argc, char *argv[])
     bool b;
     do
     {
-        sprintf(pname, "/batteryMonitor%d:i", trial);
+        sprintf(pname, "/batteryMonitor%d", trial);
         b = yarp::os::Network::exists(pname);
         trial++;
     } while (b == true);
@@ -110,7 +110,7 @@ int main(int argc, char *argv[])
     yInfo() << "Using local port:" << localPort;
 
     yarp::os::Property options;
-    options.put("device", "batteryClient");
+    options.put("device", "battery_nwc_yarp");
     options.put("local", localPort);
     options.put("remote", remotePort);
 
