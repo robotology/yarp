@@ -30,6 +30,7 @@ Fixes
 * Configuration files installed by the `yarp_configure_plugins_installation` CMake macro are now relocatable (https://github.com/robotology/yarp/issues/2445, ).
 * Improved `ffmpeg` port monitor to allow using different couples of coders/decodes
 * Fixed compilation of portmonitor carrier when a custom non-system swig is used
+* Fixed compatibility with ffmpeg 7 (https://github.com/robotology/yarp/pull/3109).
 
 New Features
 ------------
