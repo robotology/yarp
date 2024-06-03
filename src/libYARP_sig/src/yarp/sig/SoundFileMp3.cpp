@@ -86,12 +86,17 @@ bool decode(AVCodecContext* dec_ctx, AVPacket* pkt, AVFrame* frame, Sound& sound
         }
 
         yarp::sig::Sound frame_sound;
-        frame_sound.resize(frame->nb_samples, dec_ctx->channels);
-        if (sound_data.getChannels()==0) { sound_data.resize(0, dec_ctx->channels);}
+#if LIBAVCODEC_VERSION_MAJOR >= 61
+        int num_channels = dec_ctx->ch_layout.nb_channels;
+#else
+        int num_channels = dec_ctx->channels;
+#endif
+        frame_sound.resize(frame->nb_samples, num_channels);
+        if (sound_data.getChannels()==0) { sound_data.resize(0, num_channels);}
 
         for (i = 0; i < frame->nb_samples; i++) //1152
         {
-            for (ch = 0; ch < dec_ctx->channels; ch++) //2
+            for (ch = 0; ch < num_channels; ch++) //2
             {
                 short int val = *((short int*)frame->data[ch] + i);
                 frame_sound.set(val,i,ch);
@@ -168,6 +173,42 @@ bool encode(AVCodecContext* ctx, AVFrame* frame, AVPacket* pkt, std::fstream& os
      return true;
 }
 
+#if LIBAVCODEC_VERSION_MAJOR >= 61
+// Taken from https://github.com/FFmpeg/FFmpeg/blob/f5ef91e02080316f50d606f5b0b03333bb627ed7/doc/examples/encode_audio.c#L72C1-L92C2
+/* select layout with the highest channel count */
+static int select_channel_layout(const AVCodec *codec, AVChannelLayout *dst)
+{
+    const AVChannelLayout *p, *best_ch_layout=nullptr;
+    int best_nb_channels   = 0;
+
+    if (!codec->ch_layouts)
+    {
+        AVChannelLayout layout_stereo = AV_CHANNEL_LAYOUT_STEREO;
+        return av_channel_layout_copy(dst, &layout_stereo);
+    }
+
+    p = codec->ch_layouts;
+    while (p->nb_channels)
+    {
+        int nb_channels = p->nb_channels;
+
+        if (nb_channels > best_nb_channels)
+        {
+            best_ch_layout   = p;
+            best_nb_channels = nb_channels;
+        }
+        p++;
+    }
+
+    if (!best_ch_layout)
+    {
+        return -1;
+    }
+
+    return av_channel_layout_copy(dst, best_ch_layout);
+}
+#else
+// Taken from https://github.com/FFmpeg/FFmpeg/blob/50e9e11316064ecdee889b18a0b6681a248edcf4/doc/examples/encode_audio.c#L72C1-L93C2
 /* select layout with the highest channel count */
 int select_channel_layout(const AVCodec * codec)
 {
@@ -193,7 +234,8 @@ int select_channel_layout(const AVCodec * codec)
     }
     return best_ch_layout;
 }
-#endif
+#endif /* LIBAVCODEC_VERSION_MAJOR >= 61 */
+#endif /* defined (YARP_HAS_FFMPEG) */
 
 //#######################################################################################################
 bool yarp::sig::file::write_mp3_file(const Sound& sound_data, const char* filename, size_t bitrate)
@@ -245,8 +287,18 @@ bool yarp::sig::file::write_mp3_file(const Sound& sound_data, const char* filena
 
     // select other audio parameters supported by the encoder
     c->sample_rate = select_sample_rate(codec);
+#if LIBAVCODEC_VERSION_MAJOR >= 61
+    // from https://github.com/FFmpeg/FFmpeg/commit/f5ef91e02080316f50d606f5b0b03333bb627ed7#diff-85abeaf18e8c74a972fa1f5ab3c2fdfa7ddc818f9048196c6bd5f63a837b076aL167
+    ret = select_channel_layout(codec, &c->ch_layout);
+    if (ret < 0)
+    {
+        yCError(SOUNDFILE_MP3, "Could not select_channel_layout");
+        return false;
+    }
+#else
     c->channel_layout = select_channel_layout(codec);
     c->channels = av_get_channel_layout_nb_channels(c->channel_layout);
+#endif
 
     // open it
     if (avcodec_open2(c, codec, NULL) < 0)
@@ -282,7 +334,19 @@ bool yarp::sig::file::write_mp3_file(const Sound& sound_data, const char* filena
 
     frame->nb_samples = c->frame_size;
     frame->format = c->sample_fmt;
+
+#if LIBAVCODEC_VERSION_MAJOR >= 61
+    // See https://github.com/FFmpeg/FFmpeg/commit/f5ef91e02080316f50d606f5b0b03333bb627ed7#diff-85abeaf18e8c74a972fa1f5ab3c2fdfa7ddc818f9048196c6bd5f63a837b076aL198
+    ret = av_channel_layout_copy(&frame->ch_layout, &c->ch_layout);
+    if (ret < 0)
+    {
+        yCError(SOUNDFILE_MP3, "Could not copy channel layout");
+        fos.close();
+        return false;
+    }
+#else
     frame->channel_layout = c->channel_layout;
+#endif
 
     // allocate the data buffers
     ret = av_frame_get_buffer(frame, 0);
@@ -305,11 +369,19 @@ bool yarp::sig::file::write_mp3_file(const Sound& sound_data, const char* filena
             exit(1);
         }
 
+#if LIBAVCODEC_VERSION_MAJOR >= 61
+        // See https://github.com/FFmpeg/FFmpeg/commit/f5ef91e02080316f50d606f5b0b03333bb627ed7#diff-85abeaf18e8c74a972fa1f5ab3c2fdfa7ddc818f9048196c6bd5f63a837b076aL221
+        int ch_layout_nb_channels = c->ch_layout.nb_channels;
+#else
+        int ch_layout_nb_channels = c->channels;
+#endif
+
+
         samples = (uint16_t*)frame->data[0];
         for (int j = 0; j < c->frame_size; j++)
         {
-            for (int k = 0; k < c->channels; k++) {
-                samples[j * c->channels + k] = sound_data.get(j + i * c->frame_size, k);
+            for (int k = 0; k < ch_layout_nb_channels; k++) {
+                samples[j * ch_layout_nb_channels + k] = sound_data.get(j + i * c->frame_size, k);
             }
         }
         if (encode(c, frame, pkt, fos) == false)
