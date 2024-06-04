@@ -47,7 +47,7 @@ public:
                             const char* carrier) = 0;
     virtual int  running() = 0; // 0 if is not running and 1 if is running; otherwise -1.
     virtual bool exists(const char* port) = 0;
-    virtual const char* requestRpc(const char* szport, const char* request, double timeout=0.0) = 0;
+    virtual std::string requestRpc(const char* szport, const char* request, double timeout=0.0) = 0;
     virtual bool connected(const char* from, const char* to,
                            const char* carrier) = 0;
     virtual const char* error() = 0;
