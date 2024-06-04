@@ -100,7 +100,7 @@ bool NameServerContainer::open(Searchable& options)
 
     bool reset = false;
     if (options.check("ip")||options.check("socket")) {
-        yCError(NAMESERVERCONTAINER, "Database needs to be reset, IP or port number set.");
+        yCInfo(NAMESERVERCONTAINER, "Database needs to be reset, IP or port number set.");
         reset = true;
     }
 
