@@ -445,21 +445,21 @@ bool LocalBroker::exists(const char* port)
 }
 
 
-const char* LocalBroker::requestRpc(const char* szport, const char* request, double timeout)
+std::string LocalBroker::requestRpc(const char* szport, const char* request, double timeout)
 {
     if ((szport == nullptr) || (request == nullptr)) {
-        return nullptr;
+        return {};
     }
 
     if (!exists(szport)) {
-        return nullptr;
+        return {};
     }
 
     // opening the port
     yarp::os::Port port;
     port.setTimeout((float)((timeout>0.0) ? timeout : CONNECTION_TIMEOUT));
     if (!port.open("...")) {
-        return nullptr;
+        return {};
     }
 
     ContactStyle style;
@@ -476,7 +476,7 @@ const char* LocalBroker::requestRpc(const char* szport, const char* request, dou
 
     if(!ret) {
         port.close();
-        return nullptr;
+        return {};
     }
 
     Bottle msg, response;
@@ -485,7 +485,7 @@ const char* LocalBroker::requestRpc(const char* szport, const char* request, dou
     NetworkBase::disconnect(port.getName(), szport);
     if(!response.size() || !ret) {
         port.close();
-        return nullptr;
+        return {};
     }
 
     port.close();

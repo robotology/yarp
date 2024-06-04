@@ -127,10 +127,10 @@ bool Ready::checkResources(bool silent)
         }
         // check the rpc request/reply if required
         if(strlen((*itr).getRequest()) != 0) {
-            const char* reply = executable->getBroker()->requestRpc((*itr).getPort(),
+            std::string reply = executable->getBroker()->requestRpc((*itr).getPort(),
                                                                     (*itr).getRequest(),
                                                                     (*itr).getTimeout());
-            if(reply == nullptr) {
+            if(reply.empty()) {
                 allOK = false;
                 OSTRINGSTREAM msg;
                 msg<<"cannot request resource "<<(*itr).getPort()<<" for "<<(*itr).getRequest();
@@ -142,7 +142,7 @@ bool Ready::checkResources(bool silent)
                 }
             }
 
-            if(!compareString(reply, (*itr).getReply())) {
+            if (!compareString(reply.c_str(), (*itr).getReply())) {
                 allOK = false;
                 OSTRINGSTREAM msg;
                 msg<<"waiting for the expected reply from resource "<<(*itr).getPort();

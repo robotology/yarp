@@ -49,7 +49,7 @@ public:
      bool rmconnect(const char* from, const char* to);
      int running() override;
      bool exists(const char* port) override;
-     const char* requestRpc(const char* szport, const char* request, double timeout) override;
+     std::string requestRpc(const char* szport, const char* request, double timeout) override;
      bool connected(const char* from, const char* to, const char* carrier) override;
      const char* error() override;
      bool initialized() override { return bInitialized;}
