@@ -529,21 +529,21 @@ bool YarpBroker::exists(const char* szport)
     return NetworkBase::exists(szport, style);
 }
 
-const char* YarpBroker::requestRpc(const char* szport, const char* request, double timeout)
+std::string YarpBroker::requestRpc(const char* szport, const char* request, double timeout)
 {
     if ((szport == nullptr) || (request == nullptr)) {
-        return nullptr;
+        return {};
     }
 
     if (!exists(szport)) {
-        return nullptr;
+        return {};
     }
 
     // opening the port
     yarp::os::Port port;
     port.setTimeout((float)((timeout>0.0) ? timeout : CONNECTION_TIMEOUT));
     if (!port.open("...")) {
-        return nullptr;
+        return {};
     }
 
     ContactStyle style;
@@ -560,7 +560,7 @@ const char* YarpBroker::requestRpc(const char* szport, const char* request, doub
 
     if(!ret) {
         port.close();
-        return nullptr;
+        return {};
     }
 
     Bottle msg, response;
@@ -569,7 +569,7 @@ const char* YarpBroker::requestRpc(const char* szport, const char* request, doub
     NetworkBase::disconnect(port.getName(), szport);
     if(!response.size() || !ret) {
         port.close();
-        return nullptr;
+        return {};
     }
 
     port.close();
