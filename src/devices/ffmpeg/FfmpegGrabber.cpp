@@ -119,7 +119,6 @@ public:
     {
         // Get a pointer to the codec context for the video stream
         pCodecCtx=pFormatCtx->streams[index]->codec;
-
         // Find the decoder for the video stream
         pCodec = avcodec_find_decoder(pFormatCtx->streams[index]->codecpar->codec_id);
         if(pCodec==nullptr) {
@@ -150,13 +149,13 @@ public:
         }
 
         // Determine required buffer size and allocate buffer
-        int numBytes=avpicture_get_size(AV_PIX_FMT_RGB24, pCodecCtx->width,
-                                        pCodecCtx->height);
+        int numBytes=av_image_get_buffer_size(AV_PIX_FMT_RGB24, pCodecCtx->width,
+                                              pCodecCtx->height, 1);
         buffer=new uint8_t[numBytes];
 
         // Assign appropriate parts of buffer to image planes in pFrameRGB
-        avpicture_fill((AVPicture *)pFrameRGB, buffer, AV_PIX_FMT_RGB24,
-                       pCodecCtx->width, pCodecCtx->height);
+        av_image_fill_arrays(pFrameRGB->data, pFrameRGB->linesize, buffer,
+                             AV_PIX_FMT_RGB24, pCodecCtx->width, pCodecCtx->height, 1);
         return true;
     }
 
@@ -270,11 +269,11 @@ public:
                                                  nullptr, nullptr, nullptr);
             }
             if (img_convert_ctx!=nullptr) {
-                sws_scale(img_convert_ctx, ((AVPicture*)pFrame)->data,
-                          ((AVPicture*)pFrame)->linesize, 0,
+                sws_scale(img_convert_ctx, pFrame->data,
+                          pFrame->linesize, 0,
                           pCodecCtx->height,
-                          ((AVPicture*)pFrameRGB)->data,
-                          ((AVPicture*)pFrameRGB)->linesize);
+                          pFrameRGB->data,
+                          pFrameRGB->linesize);
             } else {
                 yCFatal(FFMPEGGRABBER, "Software scaling not working");
             }
