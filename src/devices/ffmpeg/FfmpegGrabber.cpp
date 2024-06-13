@@ -332,89 +332,69 @@ bool FfmpegGrabber::openV4L(yarp::os::Searchable & config,
         *(audio?(&formatParamsAudio):(&formatParamsVideo));
 
     AVInputFormat *iformat;
-    Value v;
+    std::string vs;
 
     if (!audio) {
         //formatParams.prealloced_context = 1;
-        v = config.check("v4ldevice",
-                         Value("/dev/video0"),
-                         "device name");
+        vs = m_v4ldevice;
     } else {
-        v = config.check("audio",
-                         Value("/dev/dsp"),
-                         "optional audio device name");
+        vs = m_audio;
     }
-    yCInfo(FFMPEGGRABBER, "Device %s",v.asString().c_str());
+    yCInfo(FFMPEGGRABBER, "Device %s",vs.c_str());
 
-    m_uri = v.asString();
+    m_uri = vs;
 
     if (audio) {
         av_dict_set_int(&formatParams,
                         "sample_rate",
-                        config.check("audio_rate",
-                                     Value(44100),
-                                     "audio sample rate").asInt32(),
+                        m_audio_rate,
                         0);
         av_dict_set_int(&formatParams,
                         "channels",
-                        config.check("channels",
-                                     Value(1),
-                                     "number of channels").asInt32(),
+                        m_channels,
                         0);
     } else {
         if (config.check("time_base_num") && config.check("time_base_den")) {
             char buf[256];
             sprintf(buf, "%d/%d",
-                    config.check("time_base_num",
-                                 Value(1),
-                                 "numerator of basic time unit").asInt32(),
-                    config.check("time_base_den",
-                                 Value(29),
-                                 "denominator of basic time unit").asInt32());
+                    m_time_base_num,
+                    m_time_base_den);
             av_dict_set(&formatParams, "framerate", buf, 0);
         }
 
         if (config.check("channel")) {
             av_dict_set_int(&formatParams,
                             "channel",
-                            config.check("channel",
-                                         Value(0),
-                                         "channel identifier").asInt32(),
+                            m_channel,
                             0);
         }
         if (config.check("standard")) {
             av_dict_set(&formatParams,
                         "standard",
-                        config.check("standard",
-                                     Value("-"),
-                                     "pal versus ntsc").asString().c_str(),
+                        m_standard.c_str(),
                         0);
         }
         av_dict_set_int(&formatParams,
                         "width",
-                        config.check("width",
-                                     Value(640),
-                                     "width of image").asInt32(),
+                        m_width,
                         0);
         av_dict_set_int(&formatParams,
                         "height",
-                        config.check("height",
-                                     Value(480),
-                                     "height of image").asInt32(),
+                        m_height,
                         0);
     }
 
-    std::string videoDevice = (config.check("v4l1") ? "video4linux" : "video4linux2");
+    std::string videoDevice = (m_v4l1 ? "video4linux" : "video4linux2");
     iformat = av_find_input_format(audio ? "audio_device" : videoDevice.c_str());
 
     int result = avformat_open_input(audio ? ppFormatCtx2 : ppFormatCtx,
-                                     v.asString().c_str(),
+                                     vs.c_str(),
                                      iformat,
                                      &formatParams);
 
     bool ok = (result==0);
     if (!ok) {
-        yCError(FFMPEGGRABBER, "%s: ffmpeg error %d", v.asString().c_str(), result);
+        yCError(FFMPEGGRABBER, "%s: ffmpeg error %d", vs.c_str(), result);
     }
 
     if (ok) {
@@ -435,15 +415,12 @@ bool FfmpegGrabber::openFirewire(yarp::os::Searchable & config,
                                  AVFormatContext **ppFormatCtx)
 {
     AVInputFormat *iformat;
-    std::string devname = config.check("devname",
-                                       Value("/dev/dv1394"),
-                                       "firewire device name").asString();
     iformat = av_find_input_format("dv1394");
-    yCInfo(FFMPEGGRABBER, "Checking for digital video in %s", devname.c_str());
+    yCInfo(FFMPEGGRABBER, "Checking for digital video in %s", m_devname.c_str());
 
-    m_uri = devname;
+    m_uri = m_devname;
 
-    return avformat_open_input(ppFormatCtx, strdup(devname.c_str()), iformat, nullptr) == 0;
+    return avformat_open_input(ppFormatCtx, strdup(m_devname.c_str()), iformat, nullptr) == 0;
 }
 
 
@@ -457,55 +434,37 @@ bool FfmpegGrabber::openFile(AVFormatContext **ppFormatCtx,
 
 bool FfmpegGrabber::open(yarp::os::Searchable & config)
 {
-    std::string fname =
-        config.check("source",
-                     Value("default.avi"),
-                     "media file to read from").asString();
-
-    if (config.check("loop","media should loop (default)")) {
-        shouldLoop = true;
-    }
-
-    if (config.check("noloop","media should not loop")) {
-        shouldLoop = false;
-    }
+    if (!this->parseParams(config)) { return false; }
 
     imageSync = false;
-    std::string sync =
-        config.check("sync",
-                     Value("image"),
-                     "sync on image or audio (if have to choose)?").asString();
-    imageSync = (sync=="image");
+    imageSync = (m_sync=="image");
 
     needRateControl = true; // default for recorded media
 
-    if (config.check("nodelay","media will play in simulated realtime unless this is present")) {
+    if (m_nodelay) {
         needRateControl = false;
     }
-
-    pace = config.check("pace",Value(1.0),
-                        "simulated realtime multiplier factor (must be <1 right now)").asFloat64();
 
     // Register all formats and codecs
     av_register_all();
     avdevice_register_all();
 
     // Open video file
-    if (config.check("v4l","if present, read from video4linux") || config.check("v4l1","if present, read from video4linux") || config.check("v4l2","if present, read from video4linux2")) {
+    if (m_v4l|| m_v4l1 || m_v4l2) {
         needRateControl = false; // reading from live media
         if (!openV4L(config,&pFormatCtx,&pFormatCtx2)) {
             yCError(FFMPEGGRABBER, "Could not open Video4Linux input");
             return false;
         }
-    } else if (config.check("ieee1394","if present, read from firewire")) {
+    } else if (m_ieee1394) {
         needRateControl = false; // reading from live media
         if (!openFirewire(config,&pFormatCtx)) {
             yCError(FFMPEGGRABBER, "Could not open ieee1394 input");
             return false;
         }
     } else {
-        if (!openFile(&pFormatCtx,fname.c_str())) {
-            yCError(FFMPEGGRABBER, "Could not open media file %s", fname.c_str());
+        if (!openFile(&pFormatCtx,m_source.c_str())) {
+            yCError(FFMPEGGRABBER, "Could not open media file %s", m_source.c_str());
             return false; // Couldn't open file
         }
     }
@@ -707,7 +666,7 @@ bool FfmpegGrabber::getAudioVisual(yarp::sig::ImageOf<yarp::sig::PixelRgb>& imag
                     image.resize(0,0);
                 }
                 if (needRateControl) {
-                    double now = (SystemClock::nowSystem()-startTime)*pace;
+                    double now = (SystemClock::nowSystem()-startTime)*m_pace;
                     double delay = time_target-now;
                     if (delay>0) {
                         SystemClock::delaySystem(delay);
@@ -724,7 +683,7 @@ bool FfmpegGrabber::getAudioVisual(yarp::sig::ImageOf<yarp::sig::PixelRgb>& imag
         tryAgain = !triedAgain;
 
         if (tryAgain) {
-            if (!shouldLoop) {
+            if (!m_loop) {
                 return false;
             }
             av_seek_frame(pFormatCtx,-1,0,AVSEEK_FLAG_BACKWARD);

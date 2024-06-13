@@ -24,9 +24,7 @@ SegFault::~SegFault()
 
 bool SegFault::open(yarp::os::Searchable& config)
 {
-    if (config.check("delay")) {
-        delay = config.find("delay").asFloat64();
-    }
+    if (!this->parseParams(config)) { return false; }
 
     yCInfo(SEGFAULT) << "Starting thread";
     start();
@@ -42,8 +40,8 @@ bool SegFault::close()
 
 void SegFault::run()
 {
-    yCInfo(SEGFAULT) << "Waiting for" << delay << "seconds before crashing";
-    yarp::os::Time::delay(delay);
+    yCInfo(SEGFAULT) << "Waiting for" << m_delay << "seconds before crashing";
+    yarp::os::Time::delay(m_delay);
     yCWarning(SEGFAULT) << "Crashing";
     *(int*) 0 = 0;
 }
