@@ -42,13 +42,13 @@ QString QGVSubGraph::name() const
 
 QGVNode *QGVSubGraph::addNode(const QString &label)
 {
-    Agnode_t *node = agnode(_sgraph->graph(), NULL, TRUE);
+    Agnode_t *node = agnode(_sgraph->graph(), NULL, true);
     if(node == NULL)
     {
         qWarning()<<"Invalid sub node :"<<label;
         return 0;
     }
-    agsubnode(_sgraph->graph(), node, TRUE);
+    agsubnode(_sgraph->graph(), node, true);
 
     QGVNode *item = new QGVNode(new QGVNodePrivate(node, _sgraph->graph()), _scene);
     item->setLabel(label);
@@ -62,9 +62,9 @@ QGVSubGraph *QGVSubGraph::addSubGraph(const QString &name, bool cluster)
 {
     Agraph_t* sgraph;
     if(cluster)
-        sgraph = agsubg(_sgraph->graph(), ("cluster_" + name).toLocal8Bit().data(), TRUE);
+        sgraph = agsubg(_sgraph->graph(), ("cluster_" + name).toLocal8Bit().data(), true);
     else
-        sgraph = agsubg(_sgraph->graph(), name.toLocal8Bit().data(), TRUE);
+        sgraph = agsubg(_sgraph->graph(), name.toLocal8Bit().data(), true);
 
     if(sgraph == NULL)
     {
