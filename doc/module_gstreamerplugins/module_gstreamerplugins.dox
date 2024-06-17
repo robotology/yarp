@@ -1,0 +1,124 @@
+/**
+\defgroup  gstreamerplugins_module Gstreamer plugins
+
+\tableofcontents
+
+
+\section gstreamer_intro What are gstreamer plugins?
+
+GStreamer plugins are components that extend the functionality of the GStreamer multimedia framework. 
+GStreamer (https://gstreamer.freedesktop.orgl) is an open-source pipeline-based multimedia framework that allows the creation of various types of media-handling components, such as audio and video playback, recording, streaming, and editing.
+GStreamer itself is designed to be highly modular. The core framework provides the basic functionalities and defines the API, while plugins are used to implement the actual media processing capabilities. These plugins include:
+- Source Plugins: Read data from various sources (e.g., files, cameras, network streams).
+- Sink Plugins: Write data to various destinations (e.g., display, file, network).
+- Filter/Effect Plugins: Process data (e.g., decode, encode, apply effects, convert formats).
+- Parser and Demuxer Plugins: Interpret and split container formats into individual streams.
+- Muxer Plugins: Combine multiple media streams into a single container format.
+
+Plugins can be combined into pipelines, which are sequences of plugins where the output of one plugin is fed into the input of the next.
+An example of pipeline which converts a test input video in grayscale and then displays it on the screen is shown below:
+\verbatim
+gst-launch-1.0 videotestsrc ! videoconvert ! videobalance saturation=0.0 ! autovideosink
+\endverbatim
+
+Similary to `yarprobotinterface`, `gst-launch-1.0` is a stand-alone executable which loads and manages the plugins, which have the form of dynamic libraries.
+Capabilites of a specific plugin can be displayed by the `gst-inspect-1.0` command. In order to properly execute, the capabilities of plugins belonging to a pipeline must match, so that the output (source pad) of a plugin can be fed into the input (sink pad) of the next plugin.
+\verbatim
+gst-inspect-1.0 videobalance
+\endverbatim
+
+\section yarp_plugins Yarp plugins for gstreamer
+Yarp and gstreamer can be interoperate through two Yarp plugins, `yarpVideoSource` which allows to connect a yarp video stream to gstreamer and `yarpVideoSink` which allows to connect a gstreamer video to yarp.
+
+\section yarpVideoSource yarpVideoSource plugin
+This plugin opens a yarp input port which can accept a yarp stream and propagate it to a Gstreamer pipeline. The yarpVideoSource plugin must be the final step of a gstreamer pipeline.
+The plugin accepts the following options:
+- `localPortName` the name of the yarp port opened by the plugin.
+- `remotePortName` If specified, the plugin automatically creates a yarp connection from the `remotePortName` to the `localPortName`, using the protocol specified by `connectionProtocol`.
+- `connectionProtocol` the yarp carrier to be used to perform the automatic connection mentioned above.
+- `portType` if set to `rgb`, the plugins selects a  `yarp::sig::ImageOf<yarp::sig::RGB>` input. If set to `bin`, the plugin accepts a custom binary data, specifically designed to communicate only with 
+a yarpVideoSink plugin. This is required if you are transmitting/receiving encoded images (see examples below)
+
+The yarpVideoSource plugin is currently able to handle the following gstreamer streams: x-raw(rgb), h264, h265. Check the plugins caps (with `gst-inspect-1.0`) for further details.
+
+\section yarpVideoSink yarpVideoSink plugin
+This plugin opens a yarp output port. It receives a stream from the gstreamer pipeline and broadcast it to the yarp network. The yarpVideoSink plugin must be the final step of a gstreamer pipeline.
+The plugin accepts the following options:
+- `localPortName` the name of the yarp port opened by the plugin.
+- `remotePortName` If specified, the plugin automatically creates a yarp connection from the `localPortName` to `remotePortName`, using the protocol specified by `connectionProtocol`.
+- `connectionProtocol` the yarp carrier to be used to perform the automatic connection mentioned above.
+- `portType` if set to `rgb`, the plugins selects a  `yarp::sig::ImageOf<yarp::sig::RGB>` input. If set to `bin`, the plugin accepts a custom binary data, specifically designed to communicate only with 
+a yarpVideoSink plugin. This is required if you are transmitting/receiving encoded images (see examples below)
+
+The yarpVideoSource plugin is currently able to handle the following gstreamer streams: x-raw(rgb), h264, h265. Check the plugins caps (with `gst-inspect-1.0`) for further details.
+
+\section yarp_gstreamer_examples Some examples:
+
+Example 1: Feeding a yarp image into gstreamer:
+\verbatim
+yarpdev --device fakeFrameGrabber --width 640 --height 480 --period 0.33
+gst-launch-1.0 yarpVideoSource --localPortName="/gstreamer:i" ! videoconvert ! videobalance saturation=0.0 ! autovideosink
+yarp connect /grabber /gstreamer:i
+\endverbatim
+
+Example 2: Stream a gstreamer video to yarp:
+\verbatim
+gst-launch-1.0 videotestsrc ! videoconvert ! yarpVideoSink --localPortName="/grabber:o"
+yarpview --name /view
+yarp connect /gstreamer:o /view
+\endverbatim
+
+Example 3: Load a video file and display it
+\verbatim
+gst-launch-1.0 filesrc location=your_video_file.mp4 ! decodebin ! autovideosink
+\endverbatim
+
+Example 4: Encode a video and send it to a yarp port
+\verbatim
+gst-launch-1.0 videotestsrc ! videoconvert ! h_264 ! yarpVideoSink --localPortName="/grabber:o" portType="bin"
+\endverbatim
+
+Example 5: Receive an encoded video and display it
+\verbatim
+gst-launch-1.0  yarpVideoSource --localPortName="/gstreamer:i" --portType="bin" ! h_264dev ! videoconvert ! autovideosink
+\endverbatim
+
+Example 5: Receive an yarp video, encode it, transmit it, received it, decode it, send to a yarp port
+\verbatim
+gst-launch-1.0  yarpVideoSource --localPortName="/gstreamer:i" | h_264 ! yarpVideoSink --localPortName="/grabber:o" portType="bin"
+gst-launch-1.0  yarpVideoSource --localPortName="/gstreamer:i" --portType="bin" ! h_264dev ! videoconvert ! arpVideoSink --localPortName="/grabber:o"
+\endverbatim
+
+
+\section yarp_plugins_gstreamer_install need What do I need to use yarp plugins for gstreamer?
+Gstreamer plugins for yarp can be optionally compiled (default is off) if the yarp gstreamer dependencies are satisfied.
+On Ubuntu:
+\verbatim
+sudo apt-get install \
+libgstreamer1.0-dev \
+libgstreamer-plugins-base1.0-dev \
+gstreamer1.0-plugins-base \
+gstreamer1.0-plugins-good \
+gstreamer1.0-plugins-bad \
+gstreamer1.0-libav \
+gstreamer1.0-tools
+\endverbatim
+
+On windows:
+You can download the official gstreamer binary packages from: 
+https://gstreamer.freedesktop.org/data/pkg/windows/
+
+NB: After compiling the plugins, in order to have gstreamer executables (`gst-launch-1.0`, `gst-inspect-1.0`) find the yarp gstreamer plugins, you need to add the path where the plugins have been built to the environment variable `GST_PLUGIN_PATH`, i.e.
+On Linux:
+\verbatim
+export GST_PLUGIN_PATH=$GST_PLUGIN_PATH:/usr/local/src/yarp/build/bin
+\endverbatim
+On windows:
+\verbatim
+set GST_PLUGIN_PATH=%GST_PLUGIN_PATH%;C:\yarp\build\bin\Release
+\endverbatim
+*/
+
+\section yarp_plugins_gstreamer_notes Extra notes:
+Yarp also has a specific carrier to receive video streams from gstreamer. This is a completely different (but less flexible) strategy which does not requires the receiver side to use the gst-launch-1.0 executable.
+See documentation:\ref carrier_gstreamer_howto

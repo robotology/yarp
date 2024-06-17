@@ -56,8 +56,6 @@ if(YARP_COMPILE_EXECUTABLES)
     add_subdirectory(yarpdataplayer-console)
     add_subdirectory(yarpdatadumper)
 
-    add_subdirectory(yarpDeviceParamParserGenerator)
-
     # Qt5 GUIs
     add_subdirectory(yarpview)
     add_subdirectory(yarpscope)
@@ -67,10 +65,17 @@ if(YARP_COMPILE_EXECUTABLES)
     add_subdirectory(yarpmotorgui)
     add_subdirectory(yarpbatterygui)
     add_subdirectory(yarpmobilebasegui)
-    add_subdirectory(yarplaserscannergui)
     add_subdirectory(yarpviz)
     add_subdirectory(yarpaudiocontrolgui)
     add_subdirectory(yarpllmgui)
+
+    # Other GUIs
+    add_subdirectory(yarplaserscannergui)
+	add_subdirectory(yarpopencvdisplay)
+	
+    #other
+    add_subdirectory(yarpgstreamerplugins)
+    add_subdirectory(yarpDeviceParamParserGenerator)
 endif()
 
 # Robot Testing Framework addons
