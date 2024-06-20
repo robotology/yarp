@@ -573,7 +573,11 @@ yarp::robotinterface::Param yarp::robotinterface::impl::XMLReaderFileV3::Private
         // FIXME Check DTD >= 3.1
         if (config.find(extern_name).isList())
         {
-            param.value() = "(" + config.find(extern_name).asList()->toString() + ")";
+            param.value() = "(" + config.find(extern_name).toString() + ")";
+        }
+        else if (config.find(extern_name).isBlob())
+        {
+            param.value() = "{" + config.find(extern_name).toString() + "}";
         }
         else
         {
