@@ -63,6 +63,12 @@ public:
     * @return true/false
     */
     virtual bool deleteConversation() = 0;
+
+    /** 
+    *  Refresh the conversation
+    * @return true/false
+    */
+    virtual bool refreshConversation() = 0;
 };
 
 #endif

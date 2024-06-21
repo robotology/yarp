@@ -67,6 +67,27 @@ bool FakeLLMDevice::deleteConversation() noexcept
     return true;
 }
 
+bool FakeLLMDevice::refreshConversation() noexcept
+{
+    std::string current_prompt;
+
+    if(!this->readPrompt(current_prompt))
+    {
+        yError() << "No prompt found in the conversation. Cannot refresh.";
+        return false;
+    }
+
+    this->deleteConversation();
+
+    if(!this->setPrompt(current_prompt))
+    {
+        yError() << "Failed to refresh the conversation.";
+        return false;
+    }
+    
+    return true;
+}
+
 bool FakeLLMDevice::open(yarp::os::Searchable& config)
 {
     if (!this->parseParams(config)) {return false;}

@@ -35,4 +35,5 @@ public:
     yarp::dev::llm::return_ask ask(const std::string& question) override;
     yarp::dev::llm::return_getConversation getConversation() override;
     bool deleteConversation() override;
+    bool refreshConversation() override;
 };

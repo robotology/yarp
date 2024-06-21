@@ -47,6 +47,15 @@ inline void exec_iLLM_test_1(yarp::dev::ILLM* illm)
     std::vector<yarp::dev::LLM_Message> conversation;
     b = illm->getConversation(conversation);
     CHECK(b);
+
+    b = illm->refreshConversation();
+    CHECK(b);
+
+    b = illm->readPrompt(prompt);
+    CHECK(b);
+
+    b = illm->deleteConversation();
+    CHECK(b);
 }
 }
 
