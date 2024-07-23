@@ -64,7 +64,7 @@ public:
     */
     virtual bool deleteConversation() = 0;
 
-    /** 
+    /**
     *  Refresh the conversation
     * @return true/false
     */

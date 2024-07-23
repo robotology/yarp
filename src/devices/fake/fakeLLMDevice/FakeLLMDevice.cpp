@@ -84,7 +84,7 @@ bool FakeLLMDevice::refreshConversation() noexcept
         yError() << "Failed to refresh the conversation.";
         return false;
     }
-    
+
     return true;
 }
 
