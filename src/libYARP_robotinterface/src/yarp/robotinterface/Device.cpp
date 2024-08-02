@@ -429,7 +429,8 @@ bool yarp::robotinterface::Device::attach(const yarp::dev::PolyDriverList& drive
     if (drivers.size() == 1) {
         yarp::dev::IWrapper* wrapper;
         if (!driver()->view(wrapper)) {
-            yCInfo(YRI_DEVICE) << name() << "is not an IWrapper. Trying IMultipleWrapper";
+            // If the device is not a IWrapper, let's continue as we will try to call attachAll via IMultipleWrapper
+            yCDebug(YRI_DEVICE) << name() << "is not an IWrapper. Trying IMultipleWrapper";
         } else if (wrapper->attach(drivers[0]->poly)) {
             return true;
         } else if (!multiplewrapper) {
@@ -441,7 +442,7 @@ bool yarp::robotinterface::Device::attach(const yarp::dev::PolyDriverList& drive
     }
 
     if (!multiplewrapper) {
-        yCError(YRI_DEVICE) << name() << "is not a multiplewrapper, therefore it cannot have" << ActionTypeToString(ActionTypeAttach) << "actions";
+        yCError(YRI_DEVICE) << name() << "is not derived from IWrapper or IMultipleWrapper, therefore it cannot have" << ActionTypeToString(ActionTypeAttach) << "actions";
         return false;
     }
 
