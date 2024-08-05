@@ -17,6 +17,7 @@
 #include <yarp/math/Quaternion.h>
 #include <mutex>
 
+#include "BoschIMU_ParamsParser.h"
 
 /* Serial protocol description
  *
@@ -119,18 +120,8 @@ constexpr int MAX_MSG_LENGTH = 128;
 * application. It also made available some function to check and control the
 * state of the remote sensor.
 *
-* \section imuBosch_BNO055_device_parameters Description of input parameters
+* Parameters required by this device are shown in class: BoschIMU_ParamsParser
 *
-*
-* Parameters accepted in the config argument of the open method:
-* | Parameter name | Type   | Units | Default Value | Required  | Description   | Notes |
-* |:--------------:|:------:|:-----:|:-------------:|:--------: |:-------------:|:-----:|
-* | comport        | string |       |               | Yes if i2c not specified | full name of device file  | ex '/dev/ttyUSB0', it is mutually exclusive with 'i2c' parameter|
-* | baudrate       | int    | Hz    |               | Yes if i2c not specified | baudrate setting of COM port | ex 115200, used only with serial configuration |
-* | i2c            | string |       |               | Yes if comport not specified | full name of device file  | ex '/dev/i2c-5', it is mutually exclusive with 'comport' parameter, necessary for i2c configuration|
-* | period         | int    | ms    |       10      | No       | period of the thread | |
-* | sensor_name    | string |       | sensor_imu_bosch_bno055 | No | full name of the device | |
-* | frame_name     | string |       | set same as `sensor_name` | No | full name of the sensor frame in which the measurements are expressed | |
 **/
 
 class BoschIMU:
@@ -140,12 +131,12 @@ class BoschIMU:
         public yarp::dev::IThreeAxisGyroscopes,
         public yarp::dev::IThreeAxisLinearAccelerometers,
         public yarp::dev::IThreeAxisMagnetometers,
-        public yarp::dev::IOrientationSensors
+        public yarp::dev::IOrientationSensors,
+        public BoschIMU_ParamsParser
 {
 protected:
     bool                        verbose;              ///< Flag to get verbose output
     short                       status;               ///< device status - UNUSED
-    int                         nChannels;            ///< number of channels in the output port. Default 12. If 16, also includes quaternion data
     yarp::sig::Vector           data;                 ///< sensor data buffer
     yarp::sig::Vector           data_tmp;             ///< sensor data temporary buffer
     yarp::math::Quaternion      quaternion;           ///< orientation in quaternion representation
@@ -154,7 +145,7 @@ protected:
     double                      m_timeStamp;          ///< device timestamp
     double                      timeLastReport;       ///< timestamp of last reported data
     mutable std::mutex             mutex;        ///< mutex to avoid resource clash
-    bool                        i2c_flag;             ///< flag to check if device connected through i2c commununication
+    bool                        m_i2c_flag=false;     ///< flag to check if device connected through i2c commununication
 
     bool                        checkError;           ///< flag to check read error of sensor data
 
@@ -410,8 +401,6 @@ private:
     bool genericGetSensorName(size_t sens_index, std::string &name) const;
     bool genericGetFrameName(size_t sens_index, std::string &frameName) const;
 
-    std::string m_sensorName;     ///< name of the device
-    std::string m_frameName;      ///< name of the frame in which the measurements will be expressed
 };
 
 

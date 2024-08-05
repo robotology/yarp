@@ -16,6 +16,7 @@
 #include <yarp/dev/IMultipleWrapper.h>
 
 #include <limits>
+#include "FrameGrabberCropper_ParamsParser.h"
 
 template <typename ImageType>
 class FrameGrabberCropperOf :
@@ -54,7 +55,14 @@ public:
     }
 };
 
-
+/**
+ * @ingroup dev_impl_media
+ *
+ * \brief `FrameGrabberCropper`: An image frame grabber device which can also crop the frame.
+ * In must be attached to another grabber.
+ *
+ * Parameters required by this device are shown in class: FrameGrabberCropper_ParamsParser
+ */
 class FrameGrabberCropper :
         public yarp::dev::DeviceDriver,
         public yarp::dev::IWrapper,
@@ -64,14 +72,13 @@ class FrameGrabberCropper :
         public yarp::dev::IFrameGrabberControls,
         public yarp::dev::IFrameGrabberControlsDC1394,
         public yarp::dev::IRgbVisualParams,
-        public yarp::dev::IPreciselyTimed
+        public yarp::dev::IPreciselyTimed,
+        public FrameGrabberCropper_ParamsParser
 {
     yarp::dev::IFrameGrabberControls* iFrameGrabberControls{nullptr};
     yarp::dev::IFrameGrabberControlsDC1394* iFrameGrabberControlsDC1394{nullptr};
     yarp::dev::IRgbVisualParams* iRgbVisualParams{nullptr};
     yarp::dev::IPreciselyTimed* iPreciselyTimed{nullptr};
-
-    bool forwardRgbVisualParams{false};
 
 public:
     FrameGrabberCropper() = default;
@@ -438,7 +445,7 @@ public:
 
     bool setRgbResolution(int width, int height) override
     {
-        if (!iRgbVisualParams || !forwardRgbVisualParams) {
+        if (!iRgbVisualParams || !m_forwardRgbVisualParams) {
             return false;
         }
         return iRgbVisualParams->setRgbResolution(width, height);
@@ -446,7 +453,7 @@ public:
 
     bool getRgbFOV(double& horizontalFov, double& verticalFov) override
     {
-        if (!iRgbVisualParams || !forwardRgbVisualParams) {
+        if (!iRgbVisualParams || !m_forwardRgbVisualParams) {
             horizontalFov = std::numeric_limits<double>::quiet_NaN();
             verticalFov = std::numeric_limits<double>::quiet_NaN();
             return false;
@@ -456,7 +463,7 @@ public:
 
     bool setRgbFOV(double horizontalFov, double verticalFov) override
     {
-        if (!iRgbVisualParams || !forwardRgbVisualParams) {
+        if (!iRgbVisualParams || !m_forwardRgbVisualParams) {
             return false;
         }
         return iRgbVisualParams->setRgbFOV(horizontalFov, verticalFov);
@@ -464,7 +471,7 @@ public:
 
     bool getRgbIntrinsicParam(yarp::os::Property& intrinsic) override
     {
-        if (!iRgbVisualParams || !forwardRgbVisualParams) {
+        if (!iRgbVisualParams || !m_forwardRgbVisualParams) {
             intrinsic.clear();
             return false;
         }
@@ -473,7 +480,7 @@ public:
 
     bool getRgbMirroring(bool& mirror) override
     {
-        if (!iRgbVisualParams || !forwardRgbVisualParams) {
+        if (!iRgbVisualParams || !m_forwardRgbVisualParams) {
             mirror = false;
             return false;
         }
@@ -483,7 +490,7 @@ public:
 
     bool setRgbMirroring(bool mirror) override
     {
-        if (!iRgbVisualParams || !forwardRgbVisualParams) {
+        if (!iRgbVisualParams || !m_forwardRgbVisualParams) {
             return false;
         }
         return iRgbVisualParams->setRgbMirroring(mirror);

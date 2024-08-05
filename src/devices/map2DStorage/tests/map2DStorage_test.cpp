@@ -27,7 +27,7 @@ TEST_CASE("dev::Map2DStorageTest", "[yarp::dev]")
 
     Network::setLocalMode(true);
 
-    SECTION("Checking map2DStorage device")
+    SECTION("Checking map2DStorage device without loading files")
     {
         PolyDriver ddmapstorage;
         IMap2D* imap = nullptr;
@@ -49,6 +49,46 @@ TEST_CASE("dev::Map2DStorageTest", "[yarp::dev]")
             CHECK(ddmapstorage.close());
         }
     }
+
+    SECTION("Checking map2DStorage device loading files (1/2)")
+    {
+        PolyDriver ddmapstorage;
+        IMap2D* imap = nullptr;
+
+        ////////"Checking opening polydriver"
+        {
+            Property pmapstorage_cfg;
+            pmapstorage_cfg.put("device", "map2DStorage");
+            pmapstorage_cfg.put("mapCollectionContext", "erraticContext");
+            REQUIRE(!ddmapstorage.open(pmapstorage_cfg));
+        }
+    }
+
+    /*
+    SECTION("Checking map2DStorage device loading files (2/2)")
+    {
+        PolyDriver ddmapstorage;
+        IMap2D* imap = nullptr;
+
+        ////////"Checking opening polydriver"
+        {
+            Property pmapstorage_cfg;
+            pmapstorage_cfg.put("device", "map2DStorage");
+            pmapstorage_cfg.put("mapCollectionContext", "exampleContext");
+            REQUIRE(ddmapstorage.open(pmapstorage_cfg));
+            REQUIRE(ddmapstorage.view(imap));
+        }
+
+        //execute tests
+        yarp::dev::tests::exec_iMap2D_test_1(imap);
+        yarp::dev::tests::exec_iMap2D_test_2(imap);
+
+        //"Close all polydrivers and check"
+        {
+            CHECK(ddmapstorage.close());
+        }
+    }
+    */
 
     Network::setLocalMode(false);
 }

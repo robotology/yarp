@@ -47,10 +47,8 @@ constexpr uint8_t i2cAddrA = 0x28;
 BoschIMU::BoschIMU() : PeriodicThread(0.02),
     verbose(false),
     status(0),
-    nChannels(12),
     m_timeStamp(0.0),
     timeLastReport(0.0),
-    i2c_flag(false),
     checkError(false),
     fd(0),
     responseOffset(0),
@@ -75,35 +73,31 @@ bool BoschIMU::open(yarp::os::Searchable& config)
     //debug
     yCTrace(IMUBOSCH_BNO055, "Parameters are:\n\t%s", config.toString().c_str());
 
-    if(!config.check("comport") && !config.check("i2c"))
+    if (!this->parseParams(config)) { return false; }
+
+    if(m_comport.empty() && m_i2c.empty())
     {
-        yCError(IMUBOSCH_BNO055) << "Params 'comport' and 'i2c' not found";
+        yCError(IMUBOSCH_BNO055) << "Params 'comport' and 'i2c' not found. At least one of the two must be specified";
         return false;
     }
 
-    if (config.check("comport") && config.check("i2c"))
+    if (!m_comport.empty() && !m_i2c.empty())
     {
         yCError(IMUBOSCH_BNO055) << "Params 'comport' and 'i2c' both specified";
         return false;
     }
 
-    i2c_flag = config.check("i2c");
+    m_i2c_flag = !m_i2c.empty();
 
-    readFunc = i2c_flag ? &BoschIMU::sendReadCommandI2c : &BoschIMU::sendReadCommandSer;
+    readFunc = m_i2c_flag ? &BoschIMU::sendReadCommandI2c : &BoschIMU::sendReadCommandSer;
 
     // In case of reading through serial the first two bytes of the response are the ack, so
     // they need to be discarded when publishing the data.
-    responseOffset = i2c_flag ? 0 : 2;
+    responseOffset = m_i2c_flag ? 0 : 2;
 
-    if (i2c_flag)
+    if (m_i2c_flag)
     {
-        if (!config.find("i2c").isString())
-        {
-            yCError(IMUBOSCH_BNO055) << "i2c param malformed, it should be a string, aborting.";
-            return false;
-        }
-
-        std::string i2cDevFile = config.find("i2c").asString();
+        std::string i2cDevFile = m_i2c;
         fd = ::open(i2cDevFile.c_str(), O_RDWR);
 
         if (fd < 0)
@@ -121,9 +115,9 @@ bool BoschIMU::open(yarp::os::Searchable& config)
     }
     else
     {
-        fd = ::open(config.find("comport").toString().c_str(), O_RDWR | O_NOCTTY );
+        fd = ::open(m_comport.c_str(), O_RDWR | O_NOCTTY );
         if (fd < 0) {
-            yCError(IMUBOSCH_BNO055, "Can't open %s, %s", config.find("comport").toString().c_str(), strerror(errno));
+            yCError(IMUBOSCH_BNO055, "Can't open %s, %s", m_comport.c_str(), strerror(errno));
             return false;
         }
         //Get the current options for the port...
@@ -170,30 +164,8 @@ bool BoschIMU::open(yarp::os::Searchable& config)
 
     }
 
-    nChannels = config.check("channels", Value(12)).asInt32();
-
-    double period = config.check("period",Value(10),"Thread period in ms").asInt32() / 1000.0;
-    setPeriod(period);
-
-    if (config.check("sensor_name") && config.find("sensor_name").isString())
-    {
-        m_sensorName = config.find("sensor_name").asString();
-    }
-    else
-    {
-        m_sensorName = "sensor_imu_bosch_bno055";
-        yCWarning(IMUBOSCH_BNO055) << "Parameter \"sensor_name\" not set. Using default value  \"" << m_sensorName << "\" for this parameter.";
-    }
-
-    if (config.check("frame_name") && config.find("frame_name").isString())
-    {
-        m_frameName = config.find("frame_name").asString();
-    }
-    else
-    {
-        m_frameName = m_sensorName;
-        yCWarning(IMUBOSCH_BNO055) << "Parameter \"frame_name\" not set. Using the same value as \"sensor_name\" for this parameter.";
-    }
+    double period_d = m_period / 1000.0;
+    setPeriod(period_d);
 
     return PeriodicThread::start();
 }
@@ -445,7 +417,7 @@ bool BoschIMU::sendReadCommandI2c(unsigned char register_add, int len, unsigned 
 
 bool BoschIMU::threadInit()
 {
-    if (i2c_flag)
+    if (m_i2c_flag)
     {
         int trials = 0;
         // Make sure we have the right device
@@ -706,11 +678,11 @@ void BoschIMU::run()
 bool BoschIMU::read(yarp::sig::Vector &out)
 {
     std::lock_guard<std::mutex> guard(mutex);
-    out.resize(nChannels);
+    out.resize(m_channels);
     out.zero();
 
     out = data;
-    if(nChannels == 16)
+    if(m_channels == 16)
     {
         out[12] = quaternion.w();
         out[13] = quaternion.x();
@@ -723,7 +695,7 @@ bool BoschIMU::read(yarp::sig::Vector &out)
 
 bool BoschIMU::getChannels(int *nc)
 {
-    *nc = nChannels;
+    *nc = m_channels;
     return true;
 }
 
@@ -756,7 +728,7 @@ bool BoschIMU::genericGetSensorName(size_t sens_index, std::string& name) const
         return false;
     }
 
-    name = m_sensorName;
+    name = m_sensor_name;
     return true;
 }
 
@@ -768,7 +740,7 @@ bool BoschIMU::genericGetFrameName(size_t sens_index, std::string& frameName) co
         return false;
     }
 
-    frameName = m_frameName;
+    frameName = m_frame_name;
     return true;
 
 }
