@@ -73,6 +73,7 @@ void ILLMRPCd::m_stream_conversation()
     }
 
     auto& bot = m_streaming_port.prepare();
+    bot.clear();
     auto& list = bot.addList();
     for (const auto& message : conversation) {
         auto& message_bot = list.addList();
@@ -121,6 +122,23 @@ bool ILLMRPCd::deleteConversation()
     }
 
     ret = m_iLlm->deleteConversation();
+
+    if (ret) {
+        m_stream_conversation();
+    }
+
+    return ret;
+}
+
+bool ILLMRPCd::refreshConversation()
+{
+    bool ret = false;
+    if (m_iLlm == nullptr) {
+        yCError(LLMSERVER, "Invalid interface");
+        return false;
+    }
+
+    ret = m_iLlm->refreshConversation();
 
     if (ret) {
         m_stream_conversation();

@@ -31,7 +31,6 @@ TEST_CASE("sig::VectorOfTest", "[yarp::sig]")
     SECTION("Check send and receive integers")
     {
         INFO("check VectorO<int> send receive");
-
         {
             Port portIn;
             Port portOut;
@@ -73,6 +72,42 @@ TEST_CASE("sig::VectorOfTest", "[yarp::sig]")
             }
 
             CHECK(success); // VectorOf<int> was sent and received correctly
+            portOut.interrupt();
+            portOut.close();
+            portIn.interrupt();
+            portIn.close();
+        }
+
+        INFO("check VectorOf<int> send empty vector");
+        {
+            Port portIn;
+            Port portOut;
+
+            portOut.open("/harness_sig/vtest/empty_vector/o");
+            portIn.open("/harness_sig/vtest/empty_vector/i");
+
+            Network::connect("/harness_sig/vtest/empty_vector/o", "/harness_sig/vtest/empty_vector/i");
+
+            portOut.enableBackgroundWrite(true);
+
+
+            VectorOf<int> vector;
+            vector.resize(0);
+
+            bool success = true;
+            portOut.write(vector);
+
+            VectorOf<int> tmp;
+            portIn.read(tmp);
+
+            //compare vector and tmp
+            if (tmp.size() != vector.size())
+            {
+                success = false;
+            }
+
+            CHECK(success); // empty VectorOf<int> was sent and received correctly
+
             portOut.interrupt();
             portOut.close();
             portIn.interrupt();

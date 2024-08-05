@@ -33,13 +33,13 @@ Fixes
 * Fixed compilation of portmonitor carrier when a custom non-system swig is used
 * Fixed compatibility with ffmpeg 7 (https://github.com/robotology/yarp/pull/3109).
 * Fixed compilation with graphviz 10 (https://github.com/robotology/yarp/pull/3115).
+* Fix sending empty yarp::sig::Vector when building in Debug (https://github.com/robotology/yarp/pull/3123).
 
 New Features
 ------------
 
 * Added new command line tool `yarpDeviceParamParserGenerator`. See official yarp documentation (cmd_yarpDeviceParamParserGenerator.dox)
 
-* Added LLM_Message data type to propagate LLM answers
 
 #### Docker
 * Added two parameters to yarp `Dockerfile`:
@@ -56,3 +56,9 @@ New Features
 
 * Added new device `deviceBundler` which can be useful to open two devices and attach them while using a single yarpdev command line.
   See https://github.com/robotology/yarp/discussions/3078
+
+#### llmDevice
+
+* Added LLM_Message data type to propagate LLM answers
+
+* Added refreshConversation feature in the interface to allow users to restart the conversation mantaining the same prompt.

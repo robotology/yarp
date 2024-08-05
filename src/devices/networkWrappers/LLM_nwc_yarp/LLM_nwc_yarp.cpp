@@ -83,3 +83,8 @@ bool LLM_nwc_yarp::deleteConversation()
 {
     return m_LLM_RPC.deleteConversation();
 }
+
+bool LLM_nwc_yarp::refreshConversation()
+{
+    return m_LLM_RPC.refreshConversation();
+}
