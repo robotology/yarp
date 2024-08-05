@@ -84,11 +84,15 @@ bool VectorBase::write(yarp::os::ConnectionWriter& connection) const {
     header.listLen = (int)getListSize();
 
     connection.appendBlock((char*)&header, sizeof(header));
-    const char *ptr = getMemoryBlock();
-    int elemSize=getElementSize();
-    yCAssert(VECTOR, ptr != nullptr);
 
-    connection.appendExternalBlock(ptr, elemSize*header.listLen);
+    if (header.listLen > 0)
+    {
+        const char *ptr = getMemoryBlock();
+        int elemSize=getElementSize();
+        yCAssert(VECTOR, ptr != nullptr);
+
+        connection.appendExternalBlock(ptr, elemSize*header.listLen);
+    }
 
     // if someone is foolish enough to connect in text mode,
     // let them see something readable.
