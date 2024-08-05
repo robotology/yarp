@@ -66,7 +66,7 @@ void QGVScene::setEdgeAttribute(const QString &name, const QString &value)
 
 QGVNode *QGVScene::addNode(const QString &label)
 {
-    Agnode_t *node = agnode(_graph->graph(), NULL, TRUE);
+    Agnode_t *node = agnode(_graph->graph(), NULL, true);
     if(node == NULL)
     {
         qWarning()<<"Invalid node :"<<label;
@@ -81,7 +81,7 @@ QGVNode *QGVScene::addNode(const QString &label)
 
 QGVEdge *QGVScene::addEdge(QGVNode *source, QGVNode *target, const QString &label)
 {
-    Agedge_t* edge = agedge(_graph->graph(), source->_node->node(), target->_node->node(), NULL, TRUE);
+    Agedge_t* edge = agedge(_graph->graph(), source->_node->node(), target->_node->node(), NULL, true);
     if(edge == NULL)
     {
         qWarning()<<"Invalid egde :"<<label;
@@ -99,9 +99,9 @@ QGVSubGraph *QGVScene::addSubGraph(const QString &name, bool cluster)
 {
     Agraph_t* sgraph;
     if(cluster)
-        sgraph = agsubg(_graph->graph(), ("cluster_" + name).toLocal8Bit().data(), TRUE);
+        sgraph = agsubg(_graph->graph(), ("cluster_" + name).toLocal8Bit().data(), true);
     else
-        sgraph = agsubg(_graph->graph(), name.toLocal8Bit().data(), TRUE);
+        sgraph = agsubg(_graph->graph(), name.toLocal8Bit().data(), true);
 
     if(sgraph == NULL)
     {

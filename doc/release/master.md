@@ -32,6 +32,7 @@ Fixes
 * `yarpbatterygui` now compatible with battery_nwc_yarp.
 * Fixed compilation of portmonitor carrier when a custom non-system swig is used
 * Fixed compatibility with ffmpeg 7 (https://github.com/robotology/yarp/pull/3109).
+* Fixed compilation with graphviz 10 (https://github.com/robotology/yarp/pull/3115).
 * Fix sending empty yarp::sig::Vector when building in Debug (https://github.com/robotology/yarp/pull/3123).
 
 New Features
