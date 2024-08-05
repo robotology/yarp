@@ -38,7 +38,6 @@ New Features
 
 * Added new command line tool `yarpDeviceParamParserGenerator`. See official yarp documentation (cmd_yarpDeviceParamParserGenerator.dox)
 
-* Added LLM_Message data type to propagate LLM answers
 
 #### Docker
 * Added two parameters to yarp `Dockerfile`:
@@ -55,3 +54,9 @@ New Features
 
 * Added new device `deviceBundler` which can be useful to open two devices and attach them while using a single yarpdev command line.
   See https://github.com/robotology/yarp/discussions/3078
+
+#### llmDevice
+
+* Added LLM_Message data type to propagate LLM answers
+
+* Added refreshConversation feature in the interface to allow users to restart the conversation mantaining the same prompt.

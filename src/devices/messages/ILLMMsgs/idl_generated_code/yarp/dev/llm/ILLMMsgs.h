@@ -36,6 +36,8 @@ public:
 
     virtual bool deleteConversation();
 
+    virtual bool refreshConversation();
+
     // help method
     virtual std::vector<std::string> help(const std::string& functionName = "--all");
 

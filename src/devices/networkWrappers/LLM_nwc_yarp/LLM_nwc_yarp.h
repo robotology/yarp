@@ -40,4 +40,5 @@ public:
     bool ask(const std::string& question, yarp::dev::LLM_Message& oAnswer) override;
     bool getConversation(std::vector<yarp::dev::LLM_Message>& oConversation) override;
     bool deleteConversation() override;
+    bool refreshConversation() override;
 };

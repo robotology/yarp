@@ -32,4 +32,5 @@ service ILLMMsgs {
     return_ask ask(1: string question);
     return_getConversation getConversation();
     bool deleteConversation();
+    bool refreshConversation();
 }

@@ -31,6 +31,7 @@ public:
     bool ask(const std::string &question, yarp::dev::LLM_Message &oAnswer) override;
     bool getConversation(std::vector<yarp::dev::LLM_Message> &oConversation) override;
     bool deleteConversation() noexcept override;
+    bool refreshConversation() noexcept override;
 
     bool open(yarp::os::Searchable& config) override;
     bool close() override;
