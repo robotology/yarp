@@ -1,3 +1,8 @@
+/*
+ * SPDX-FileCopyrightText: 2024-2024 Istituto Italiano di Tecnologia (IIT)
+ * SPDX-License-Identifier: BSD-3-Clause
+ */
+
 #ifndef GST_YARP_VIDEO_PASSTHROUGH_H
 #define GST_YARP_VIDEO_PASSTHROUGH_H
 

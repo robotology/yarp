@@ -1,3 +1,8 @@
+/*
+ * SPDX-FileCopyrightText: 2024-2024 Istituto Italiano di Tecnologia (IIT)
+ * SPDX-License-Identifier: BSD-3-Clause
+ */
+
 #include "yarp/os/Time.h"
 #include "yarp/os/Network.h"
 #include "yarp/os/Log.h"
@@ -244,7 +249,7 @@ static gboolean gst_yarp_video_passthrough_stop(GstBaseTransform* elem)
 
     /* Register the plugin */
 static gboolean yarp_video_passthrough_init(GstPlugin* plugin)
-{                                        
+{
     return gst_element_register(plugin, "yarpvideopassthrough", GST_RANK_NONE, gst_yarp_video_passthrough_get_type());
 }
 

@@ -71,8 +71,8 @@ if(YARP_COMPILE_EXECUTABLES)
 
     # Other GUIs
     add_subdirectory(yarplaserscannergui)
-	add_subdirectory(yarpopencvdisplay)
-	
+    add_subdirectory(yarpopencvdisplay)
+
     #other
     add_subdirectory(yarpgstreamerplugins)
     add_subdirectory(yarpDeviceParamParserGenerator)

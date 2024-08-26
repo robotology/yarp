@@ -1,3 +1,8 @@
+/*
+ * SPDX-FileCopyrightText: 2024-2024 Istituto Italiano di Tecnologia (IIT)
+ * SPDX-License-Identifier: BSD-3-Clause
+ */
+
 #include "yarp/os/Time.h"
 #include "yarp/os/Network.h"
 #include "yarp/os/Log.h"
@@ -255,7 +260,7 @@ static gboolean gst_yarp_video_source_start(GstBaseSrc* src)
         b = yarp::os::Network::connect(yarp_handler->remote_port_name, yarp_handler->input_port_name, yarp_handler->connection_protocol);
         if (!b)
         {
-            yCError(YVS_COMP) << "Could not perform connection between: " << yarp_handler->remote_port_name 
+            yCError(YVS_COMP) << "Could not perform connection between: " << yarp_handler->remote_port_name
                      << " and " << yarp_handler->input_port_name << " via " << yarp_handler->connection_protocol;
             return FALSE;
         }
@@ -372,27 +377,3 @@ GST_PLUGIN_DEFINE(
     "LGPL",
     "GStreamer",
     "http://gstreamer.net/")
-
-
-    // TO test it:
-// export GST_PLUGIN_PATH=$GST_PLUGIN_PATH:C:\Software\iCubSoftware\yarp\build\bin\Release
-// set GST_PLUGIN_PATH=%GST_PLUGIN_PATH%;C:\Software\iCubSoftware\yarp\build\bin\Release
-// gst-inspect-1.0 yarpvideosource
-//  gst-launch-1.0 yarpvideosource localPortname="/aaa" portType = "rgb" ! videoconvert ! autovideosink
-// gst-launch-1.0 yarpvideosource localPortname="/aaa"  ! videoconvert ! autovideosink
-//gst-launch-1.0  yarpvideosource ! "video/x-raw, format=(string)I420, width=(int)640, height=(int)480" ! autovideosink
-//gst-launch-1.0  yarpvideosource ! "video/x-raw, format=(string)I420, width=(int)640, height=(int)480" ! autovideosink
-// gst-launch-1.0  yarpvideosource  ! glimagesink
-//gst-launch-1.0 yarpvideosource localPortname="/aaa" !videoconvert !x264enc !h264parse !avdec_h264 !videoconvert !autovideosink
-
-//grabber_yarp          ->             -> fast_tcp -> *porta_rgb_2_gs_image* -> sink
-//telecamera -> h264enc -> blob2porta  -> fast_tcp -> porta_blob_2_gs_image -> 264dec -> sink
-
-    /*
-    C:\Software\gstreamer\1.0\msvc_x86_64\lib\gstreamer-1.0.lib 
-    C:\Software\gstreamer\1.0\msvc_x86_64\lib\gstapp-1.0.lib 
-    C:\Software\gstreamer\1.0\msvc_x86_64\lib\gstbase-1.0.lib
-    C:\Software\gstreamer\1.0\msvc_x86_64\lib\gstbase-1.0.lib
-    C:\Software\gstreamer\1.0\msvc_x86_64\lib\gstvideo-1.0.lib
-    */
-    

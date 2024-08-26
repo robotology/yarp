@@ -22,8 +22,8 @@ if(NOT SKIP_gstreamer)
       GstreamerCarrier.cpp
       GstreamerStream.h
       GstreamerStream.cpp
-	  GstreamerDecoder.h
-	  GstreamerDecoder.cpp
+      GstreamerDecoder.h
+      GstreamerDecoder.cpp
   )
 
   target_link_libraries(yarp_gstreamer
