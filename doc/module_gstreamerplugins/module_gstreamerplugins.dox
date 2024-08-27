@@ -28,42 +28,49 @@ gst-inspect-1.0 videobalance
 \endverbatim
 
 \section yarp_plugins Yarp plugins for gstreamer
-Yarp and gstreamer can be interoperate through two Yarp plugins, `yarpVideoSource` which allows to connect a yarp video stream to gstreamer and `yarpVideoSink` which allows to connect a gstreamer video to yarp.
+Yarp and gstreamer can be interoperate through two Yarp plugins, `yarpvideosource` which allows to connect a yarp video stream to gstreamer and `yarpvideosink` which allows to connect a gstreamer video to yarp.
 
-\section yarpVideoSource yarpVideoSource plugin
-This plugin opens a yarp input port which can accept a yarp stream and propagate it to a Gstreamer pipeline. The yarpVideoSource plugin must be the final step of a gstreamer pipeline.
+\section yarpVideoSource yarpvideosource plugin
+This plugin opens a yarp input port which can accept a yarp stream and propagate it to a Gstreamer pipeline. The yarpvideosource plugin must be the final step of a gstreamer pipeline.
 The plugin accepts the following options:
-- `localPortName` the name of the yarp port opened by the plugin.
-- `remotePortName` If specified, the plugin automatically creates a yarp connection from the `remotePortName` to the `localPortName`, using the protocol specified by `connectionProtocol`.
+- `localPortname` the name of the yarp port opened by the plugin.
+- `remotePortname` If specified, the plugin automatically creates a yarp connection from the `remotePortname` to the `localPortname`, using the protocol specified by `connectionProtocol`.
 - `connectionProtocol` the yarp carrier to be used to perform the automatic connection mentioned above.
 - `portType` if set to `rgb`, the plugins selects a  `yarp::sig::ImageOf<yarp::sig::RGB>` input. If set to `bin`, the plugin accepts a custom binary data, specifically designed to communicate only with 
-a yarpVideoSink plugin. This is required if you are transmitting/receiving encoded images (see examples below)
+a yarpvideosink plugin. This is required if you are transmitting/receiving encoded images (see examples below)
 
-The yarpVideoSource plugin is currently able to handle the following gstreamer streams: x-raw(rgb), h264, h265. Check the plugins caps (with `gst-inspect-1.0`) for further details.
+The yarpvideosource plugin is currently able to handle the following gstreamer streams: x-raw(rgb), h264, h265. Check the plugins caps (with `gst-inspect-1.0`) for further details.
 
-\section yarpVideoSink yarpVideoSink plugin
-This plugin opens a yarp output port. It receives a stream from the gstreamer pipeline and broadcast it to the yarp network. The yarpVideoSink plugin must be the final step of a gstreamer pipeline.
+\section yarpVideoSink yarpvideosink plugin
+This plugin opens a yarp output port. It receives a stream from the gstreamer pipeline and broadcast it to the yarp network. The yarpvideosink plugin must be the final step of a gstreamer pipeline.
 The plugin accepts the following options:
-- `localPortName` the name of the yarp port opened by the plugin.
-- `remotePortName` If specified, the plugin automatically creates a yarp connection from the `localPortName` to `remotePortName`, using the protocol specified by `connectionProtocol`.
+- `localPortname` the name of the yarp port opened by the plugin.
+- `remotePortname` If specified, the plugin automatically creates a yarp connection from the `localPortname` to `remotePortname`, using the protocol specified by `connectionProtocol`.
 - `connectionProtocol` the yarp carrier to be used to perform the automatic connection mentioned above.
 - `portType` if set to `rgb`, the plugins selects a  `yarp::sig::ImageOf<yarp::sig::RGB>` input. If set to `bin`, the plugin accepts a custom binary data, specifically designed to communicate only with 
-a yarpVideoSink plugin. This is required if you are transmitting/receiving encoded images (see examples below)
+a yarpvideosink plugin. This is required if you are transmitting/receiving encoded images (see examples below)
 
-The yarpVideoSource plugin is currently able to handle the following gstreamer streams: x-raw(rgb), h264, h265. Check the plugins caps (with `gst-inspect-1.0`) for further details.
+The yarpvideosource plugin is currently able to handle the following gstreamer streams: x-raw(rgb), h264, h265. Check the plugins caps (with `gst-inspect-1.0`) for further details.
+
+\section yarpVideoPassthrough yarpvideopassthrough plugin
+This plugin can be used for debug purposes. It simply receives data and pass it to the next element of the pipeline.
+It can used as a template to perform modifications to the frame buffer (e.g. filtering) or to print the timestamp and monitor the pipeline latency.
+The plugin accepts the following options:
+- `yarpname` the name of the element, if more than a single yarpvideopassthrough plugin is used in the pipeline.
+- `yarpverbose` an integer > 0 will activate timestamp stats. 0 (default) disable the debug print.  
 
 \section yarp_gstreamer_examples Some examples:
 
-Example 1: Feeding a yarp image into gstreamer:
+Example 1: Feeding a yarp image into gstreamer
 \verbatim
 yarpdev --device fakeFrameGrabber --width 640 --height 480 --period 0.33
-gst-launch-1.0 yarpVideoSource --localPortName="/gstreamer:i" ! videoconvert ! videobalance saturation=0.0 ! autovideosink
+gst-launch-1.0 yarpvideosource localPortname="/gstreamer:i" ! videoconvert ! videobalance saturation=0.0 ! autovideosink
 yarp connect /grabber /gstreamer:i
 \endverbatim
 
-Example 2: Stream a gstreamer video to yarp:
+Example 2: Stream a gstreamer video to yarp
 \verbatim
-gst-launch-1.0 videotestsrc ! videoconvert ! yarpVideoSink --localPortName="/grabber:o"
+gst-launch-1.0 videotestsrc ! videoconvert ! yarpvideosink localPortname="/grabber:o"
 yarpview --name /view
 yarp connect /gstreamer:o /view
 \endverbatim
@@ -75,22 +82,26 @@ gst-launch-1.0 filesrc location=your_video_file.mp4 ! decodebin ! autovideosink
 
 Example 4: Encode a video and send it to a yarp port
 \verbatim
-gst-launch-1.0 videotestsrc ! videoconvert ! h_264 ! yarpVideoSink --localPortName="/grabber:o" portType="bin"
+gst-launch-1.0 videotestsrc ! videoconvert ! openh264enc ! yarpvideosink localPortname="/grabber:o" portType="bin"
 \endverbatim
 
 Example 5: Receive an encoded video and display it
 \verbatim
-gst-launch-1.0  yarpVideoSource --localPortName="/gstreamer:i" --portType="bin" ! h_264dev ! videoconvert ! autovideosink
+gst-launch-1.0  yarpvideosource localPortname="/gstreamer:i" portType="bin" ! avdec_h264 ! videoconvert ! autovideosink
 \endverbatim
 
-Example 5: Receive an yarp video, encode it, transmit it, received it, decode it, send to a yarp port
+Example 6: Receive an yarp video, encode it, transmit it, received it, decode it, send to a yarp port
 \verbatim
-gst-launch-1.0  yarpVideoSource --localPortName="/gstreamer:i" | h_264 ! yarpVideoSink --localPortName="/grabber:o" portType="bin"
-gst-launch-1.0  yarpVideoSource --localPortName="/gstreamer:i" --portType="bin" ! h_264dev ! videoconvert ! arpVideoSink --localPortName="/grabber:o"
+gst-launch-1.0  yarpvideosource localPortname="/gstreamer:i" | openh264enc ! yarpvideosink localPortname="/grabber:o" portType="bin"
+gst-launch-1.0  yarpvideosource localPortname="/gstreamer:i" portType="bin" ! avdec_h264 ! videoconvert ! yarpvideosink localPortname="/grabber:o"
 \endverbatim
 
+Example 7: Usage of a passthrough plugin to print the time required to encode/decode a video frame
+\verbatim
+gst-launch-1.0 videotestsrc !  yarpvideopassthrough yarpverbose=2 yarpname="before encoding" ! openh264enc ! avdec_h264 ! yarpvideopassthrough yarpverbose=2 yarpname="after decoding" ! autovideosink
+\endverbatim
 
-\section yarp_plugins_gstreamer_install need What do I need to use yarp plugins for gstreamer?
+\section yarp_plugins_gstreamer_install How to use yarp plugins for gstreamer
 Gstreamer plugins for yarp can be optionally compiled (default is off) if the yarp gstreamer dependencies are satisfied.
 On Ubuntu:
 \verbatim

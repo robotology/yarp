@@ -32,7 +32,7 @@ GST_DEBUG_CATEGORY_STATIC(yarp_video_passthrough_debug);
 // Define the structures for the class and instance
 typedef struct _GstYarpVideoPassthrough
 {
-    GstVideoFilter parent;
+    GstBaseTransform parent;
     yarp::os::Network* yarpnet = nullptr;
     std::string s_name;
     int verbosity_level = 0;
@@ -42,20 +42,13 @@ typedef struct _GstYarpVideoPassthrough
 
 typedef struct _GstYarpVideoPassthroughClass
 {
-    GstVideoFilterClass parent_class;
+    GstBaseTransformClass parent_class;
 } GstYarpVideoPassthroughClass;
 
-G_DEFINE_TYPE(GstYarpVideoPassthrough, gst_yarp_video_passthrough, GST_TYPE_VIDEO_FILTER)
+G_DEFINE_TYPE(GstYarpVideoPassthrough, gst_yarp_video_passthrough, GST_TYPE_BASE_TRANSFORM)
 #define GST_MY_PLUGIN(obj) (G_TYPE_CHECK_INSTANCE_CAST((obj), gst_yarp_video_passthrough_get_type(), GstYarpVideoPassthrough))
 
-// G_DEFINE_TYPE(GstYarpVideoPassthrough, gst_yarp_video_passthrough, GST_TYPE_VIDEO_SINK)
-
-// #define GST_TYPE_GRAY_FILTER (gst_gray_filter_get_type())
-
-// G_DECLARE_FINAL_TYPE(GstYarpVideoPassthrough, gst_yarp_video_passthrough, GST, GRAY_FILTER, GstBaseTransform)
-
 /* Pads */
-
 #define MY_SOURCE_CAPS           \
     "video/x-raw, "              \
     "format=(string){RGB,I420,NV12,YUY2};"      \
@@ -77,10 +70,12 @@ static GstStaticPadTemplate gst_yarp_video_passthrough_src_template = GST_STATIC
                                                                                               GST_STATIC_CAPS(MY_SOURCE_CAPS));
 
 /* Function prototypes */
-static GstFlowReturn gst_yarp_video_passthrough_transform_frame(GstVideoFilter* filter, GstVideoFrame* inframe, GstVideoFrame* outframe);
+static GstFlowReturn gst_yarp_video_passthrough_transform_frame(GstBaseTransform* base, GstBuffer* inbuf, GstBuffer* outbuf);
 static void gst_yarp_video_passthrough_set_property(GObject* object, guint prop_id, const GValue* value, GParamSpec* pspec);
 static void gst_yarp_video_passthrough_get_property(GObject* object, guint prop_id, GValue* value, GParamSpec* pspec);
-//static gboolean gst_yarp_video_passthrough_start(GstBaseTransform* elem);
+static GstFlowReturn my_passthrough_prepare_output_buffer(GstBaseTransform* trans, GstBuffer* inbuf, GstBuffer** outbuf);
+
+    //static gboolean gst_yarp_video_passthrough_start(GstBaseTransform* elem);
 //static gboolean gst_yarp_video_passthrough_stop(GstBaseTransform* elem);
 
     /* Initialize the class */
@@ -88,8 +83,9 @@ static void gst_yarp_video_passthrough_class_init(GstYarpVideoPassthroughClass* 
 {
     GObjectClass* gobject_class = (GObjectClass*)klass;
     GstElementClass* gstelement_class = GST_ELEMENT_CLASS(klass);
-    GstVideoFilterClass* video_filter_class = GST_VIDEO_FILTER_CLASS(klass);
-    video_filter_class->transform_frame = GST_DEBUG_FUNCPTR(gst_yarp_video_passthrough_transform_frame);
+    GstBaseTransformClass* video_filter_class = GST_BASE_TRANSFORM_CLASS(klass);
+    video_filter_class->transform = GST_DEBUG_FUNCPTR(gst_yarp_video_passthrough_transform_frame);
+    video_filter_class->prepare_output_buffer = GST_DEBUG_FUNCPTR(my_passthrough_prepare_output_buffer);
  //   GstBaseTransformClass* gstbase_class = GST_BASE_TRANSFORM_CLASS(klass);
 
     gst_element_class_add_pad_template(GST_ELEMENT_CLASS(klass),
@@ -125,7 +121,7 @@ static void gst_yarp_video_passthrough_set_property(GObject* object, guint prop_
 
     switch (prop_id) {
     case PROP_YARPNAME:
-        self->s_name = (g_value_get_string(value));
+        self->s_name = std::string(g_value_dup_string(value));
         yCInfo(YVP_COMP, "set name: %s", self->s_name.c_str());
         break;
     case PROP_YARPVERBOSELEVEL:
@@ -157,28 +153,39 @@ static void gst_yarp_video_passthrough_get_property(GObject* object, guint prop_
 }
 
 /* Frame methods */
-static GstFlowReturn gst_yarp_video_passthrough_transform_frame(GstVideoFilter* filter, GstVideoFrame* inframe, GstVideoFrame* outframe)
+static GstFlowReturn my_passthrough_prepare_output_buffer(GstBaseTransform* trans, GstBuffer* inbuf, GstBuffer** outbuf)
 {
-    if (inframe == nullptr || inframe->buffer ==nullptr)
-    {
-        printf ("----------------\n");
-        return GST_FLOW_ERROR;
-    }
-    if (outframe == nullptr || outframe->buffer == nullptr)
-    {
-        printf ("44444444444444444\n");
+    // Create a new output buffer with the same size as the input buffer
+    *outbuf = gst_buffer_new_allocate(NULL, gst_buffer_get_size(inbuf), NULL);
+
+    // Check for allocation failure
+    if (*outbuf == NULL) {
+        GST_ERROR_OBJECT(trans, "Failed to allocate output buffer.");
         return GST_FLOW_ERROR;
     }
 
-    _GstYarpVideoPassthrough* self = GST_MY_PLUGIN(filter);
+    return GST_FLOW_OK;
+}
 
+static GstFlowReturn gst_yarp_video_passthrough_transform_frame(GstBaseTransform* base, GstBuffer* inbuf, GstBuffer* outbuf)
+{
+    _GstYarpVideoPassthrough* self = GST_MY_PLUGIN(base);
+
+    //get memory
+    GstMapInfo in_map;
+    GstMapInfo out_map;
+    gst_buffer_map(inbuf, &in_map, GST_MAP_READ);
+    gst_buffer_map(outbuf, &out_map, GST_MAP_WRITE);
+
+    //copy data
     double time1 = yarp::os::Time::now();
-    gst_video_frame_copy(outframe, inframe);
+    memcpy(out_map.data, in_map.data, in_map.size);
     double time2 = yarp::os::Time::now();
 
     double diff = time1 - self->prev_time;
     self->prev_time = time1;
 
+    //print stats
     switch (self->verbosity_level)
     {
         case 0:
@@ -207,23 +214,8 @@ static GstFlowReturn gst_yarp_video_passthrough_transform_frame(GstVideoFilter* 
         break;
     }
 
-
-
-
-
-
-    /*
-    GstMapInfo info;
-    gst_buffer_map(buf, &info, GST_MAP_WRITE);
-
-    guint8* data = info.data;
-    for (guint i = 0; i < info.size; i += 3) {
-        guint8 gray = (data[i] + data[i + 1] + data[i + 2]) / 3;
-        data[i] = data[i + 1] = data[i + 2] = gray;
-    }
-
-    gst_buffer_unmap(buf, &info);
-    */
+    gst_buffer_unmap(inbuf, &in_map);
+    gst_buffer_unmap(outbuf, &out_map);
 
     self->frame_counter++;
 
