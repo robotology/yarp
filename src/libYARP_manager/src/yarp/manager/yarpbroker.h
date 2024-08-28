@@ -43,27 +43,25 @@ public:
      bool start() override;
      bool stop() override;
      bool kill() override;
-     bool connect(const char* from, const char* to,
-                        const char* carrier, bool persist=false) override;
-     bool disconnect(const char* from, const char* to, const char* carrier) override;
-     bool rmconnect(const char* from, const char* to);
+     bool connect(const std::string& from, const std::string& to, const std::string& carrier, bool persist = false) override;
+     bool disconnect(const std::string& from, const std::string& to, const std::string& carrier) override;
+     bool rmconnect(const std::string& from, const std::string& to);
      int running() override;
-     bool exists(const char* port) override;
-     std::string requestRpc(const char* szport, const char* request, double timeout) override;
-     bool connected(const char* from, const char* to, const char* carrier) override;
-     const char* error() override;
+     bool exists(const std::string& port) override;
+     std::string requestRpc(const std::string& szport, const std::string& request, double timeout) override;
+     bool connected(const std::string& from, const std::string& to, const std::string& carrier) override;
+     std::string error() override;
      bool initialized() override { return bInitialized;}
      bool attachStdout() override;
      void detachStdout() override;
 
-     bool getSystemInfo(const char* server,
+     bool getSystemInfo(const std::string& server,
                         yarp::os::SystemInfoSerializer& info);
-     bool getAllProcesses(const char* server,
+     bool getAllProcesses(const std::string& server,
                         ProcessContainer &processes);
      bool getAllPorts(std::vector<std::string> &stingList);
 
-     bool setQos(const char* from, const char* to,
-                 const char* qosFrom, const char* qosTo);
+     bool setQos(const std::string& from, const std::string& to, const std::string& qosFrom, const std::string& qosTo);
 
 public: // for rate thread
     void run() override;
@@ -97,7 +95,7 @@ private:
     int requestServer(yarp::os::Property& config);
     int SendMsg(yarp::os::Bottle& msg, std::string target,
                 yarp::os::Bottle& resp, float fTimeout=5.0);
-    bool getQosFromString(const char* qos, yarp::os::QosStyle& style);
+    bool getQosFromString(const std::string& qos, yarp::os::QosStyle& style);
 
 };
 
