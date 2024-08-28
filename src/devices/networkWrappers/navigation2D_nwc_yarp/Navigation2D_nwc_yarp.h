@@ -13,6 +13,7 @@
 #include <yarp/os/Time.h>
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/INavigation2D.h>
+#include <yarp/dev/Map2DPath.h>
 #include "IMap2DMsgs.h"
 #include "ILocalization2DMsgs.h"
 #include "INavigation2DMsgs.h"
@@ -84,6 +85,7 @@ public:
     bool   gotoTargetByLocationName(std::string location_name) override;
     bool   gotoTargetByRelativeLocation(double x, double y, double theta) override;
     bool   gotoTargetByRelativeLocation(double x, double y) override;
+    bool   followPath(const yarp::dev::Nav2D::Map2DPath& locs) override;
     bool   getAbsoluteLocationOfCurrentTarget(yarp::dev::Nav2D::Map2DLocation& loc) override;
     bool   getNameOfCurrentTarget(std::string& location_name) override;
     bool   getRelativeLocationOfCurrentTarget(double& x, double& y, double& theta) override;

@@ -5,6 +5,7 @@
 
 #include <yarp/os/LogComponent.h>
 #include <yarp/os/LogStream.h>
+#include "yarp/dev/Map2DPath.h"
 #include "INavigation2DServerImpl.h"
 
 /*! \file INavigation2DServerImpl.cpp */
@@ -226,6 +227,20 @@ bool INavigation2DRPCd::goto_target_by_absolute_location_and_set_name_RPC(const 
     }
 
     m_current_goal_name.set_current_goal_name(name);
+    return true;
+}
+
+bool INavigation2DRPCd::follow_path_RPC(const yarp::dev::Nav2D::Map2DPath& path)
+{
+    std::lock_guard <std::mutex> lg(m_mutex);
+    {if (m_iNav_target == nullptr) { yCError(NAVIGATION2DSERVER, "Invalid interface"); return false; }}
+
+    if (!m_iNav_target->followPath(path))
+    {
+        yCError(NAVIGATION2DSERVER, "Unable to follow path");
+        return false;
+    }
+    m_current_goal_name.clear();
     return true;
 }
 

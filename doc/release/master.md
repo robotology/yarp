@@ -70,6 +70,11 @@ New Features
 * Added LLM_Message data type to propagate LLM answers
 * Added refreshConversation feature in the interface to allow users to restart the conversation mantaining the same prompt.
 
+#### Navigation2D
+
+* Added followPath functionality
+* Added paths as possible arguments in gotoLocation in Navigation2D_nwc
+
 ### GUIs
 
 #### yarpopencvdisplay

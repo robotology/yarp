@@ -556,6 +556,69 @@ public:
     static constexpr const char* s_help{""};
 };
 
+// follow_path_RPC helper class declaration
+class INavigation2DMsgs_follow_path_RPC_helper :
+        public yarp::os::Portable
+{
+public:
+    INavigation2DMsgs_follow_path_RPC_helper() = default;
+    explicit INavigation2DMsgs_follow_path_RPC_helper(const yarp::dev::Nav2D::Map2DPath& path);
+    bool write(yarp::os::ConnectionWriter& connection) const override;
+    bool read(yarp::os::ConnectionReader& connection) override;
+
+    class Command :
+            public yarp::os::idl::WirePortable
+    {
+    public:
+        Command() = default;
+        explicit Command(const yarp::dev::Nav2D::Map2DPath& path);
+
+        ~Command() override = default;
+
+        bool write(yarp::os::ConnectionWriter& connection) const override;
+        bool read(yarp::os::ConnectionReader& connection) override;
+
+        bool write(const yarp::os::idl::WireWriter& writer) const override;
+        bool writeTag(const yarp::os::idl::WireWriter& writer) const;
+        bool writeArgs(const yarp::os::idl::WireWriter& writer) const;
+
+        bool read(yarp::os::idl::WireReader& reader) override;
+        bool readTag(yarp::os::idl::WireReader& reader);
+        bool readArgs(yarp::os::idl::WireReader& reader);
+
+        yarp::dev::Nav2D::Map2DPath path{};
+    };
+
+    class Reply :
+            public yarp::os::idl::WirePortable
+    {
+    public:
+        Reply() = default;
+        ~Reply() override = default;
+
+        bool write(yarp::os::ConnectionWriter& connection) const override;
+        bool read(yarp::os::ConnectionReader& connection) override;
+
+        bool write(const yarp::os::idl::WireWriter& writer) const override;
+        bool read(yarp::os::idl::WireReader& reader) override;
+
+        bool return_helper{false};
+    };
+
+    using funcptr_t = bool (*)(const yarp::dev::Nav2D::Map2DPath&);
+    void call(INavigation2DMsgs* ptr);
+
+    Command cmd;
+    Reply reply;
+
+    static constexpr const char* s_tag{"follow_path_RPC"};
+    static constexpr size_t s_tag_len{3};
+    static constexpr size_t s_cmd_len{4};
+    static constexpr size_t s_reply_len{1};
+    static constexpr const char* s_prototype{"bool INavigation2DMsgs::follow_path_RPC(const yarp::dev::Nav2D::Map2DPath& path)"};
+    static constexpr const char* s_help{""};
+};
+
 // goto_target_by_relative_location1_RPC helper class declaration
 class INavigation2DMsgs_goto_target_by_relative_location1_RPC_helper :
         public yarp::os::Portable
@@ -2332,6 +2395,160 @@ void INavigation2DMsgs_goto_target_by_absolute_location_RPC_helper::call(INaviga
     reply.return_helper = ptr->goto_target_by_absolute_location_RPC(cmd.loc);
 }
 
+// follow_path_RPC helper class implementation
+INavigation2DMsgs_follow_path_RPC_helper::INavigation2DMsgs_follow_path_RPC_helper(const yarp::dev::Nav2D::Map2DPath& path) :
+        cmd{path}
+{
+}
+
+bool INavigation2DMsgs_follow_path_RPC_helper::write(yarp::os::ConnectionWriter& connection) const
+{
+    return cmd.write(connection);
+}
+
+bool INavigation2DMsgs_follow_path_RPC_helper::read(yarp::os::ConnectionReader& connection)
+{
+    return reply.read(connection);
+}
+
+INavigation2DMsgs_follow_path_RPC_helper::Command::Command(const yarp::dev::Nav2D::Map2DPath& path) :
+        path{path}
+{
+}
+
+bool INavigation2DMsgs_follow_path_RPC_helper::Command::write(yarp::os::ConnectionWriter& connection) const
+{
+    yarp::os::idl::WireWriter writer(connection);
+    if (!writer.writeListHeader(s_cmd_len)) {
+        return false;
+    }
+    return write(writer);
+}
+
+bool INavigation2DMsgs_follow_path_RPC_helper::Command::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    if (!reader.readListHeader()) {
+        reader.fail();
+        return false;
+    }
+    return read(reader);
+}
+
+bool INavigation2DMsgs_follow_path_RPC_helper::Command::write(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writeTag(writer)) {
+        return false;
+    }
+    if (!writeArgs(writer)) {
+        return false;
+    }
+    return true;
+}
+
+bool INavigation2DMsgs_follow_path_RPC_helper::Command::writeTag(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.writeTag(s_tag, 1, s_tag_len)) {
+        return false;
+    }
+    return true;
+}
+
+bool INavigation2DMsgs_follow_path_RPC_helper::Command::writeArgs(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.writeNested(path)) {
+        return false;
+    }
+    return true;
+}
+
+bool INavigation2DMsgs_follow_path_RPC_helper::Command::read(yarp::os::idl::WireReader& reader)
+{
+    if (!readTag(reader)) {
+        return false;
+    }
+    if (!readArgs(reader)) {
+        return false;
+    }
+    return true;
+}
+
+bool INavigation2DMsgs_follow_path_RPC_helper::Command::readTag(yarp::os::idl::WireReader& reader)
+{
+    std::string tag = reader.readTag(s_tag_len);
+    if (reader.isError()) {
+        return false;
+    }
+    if (tag != s_tag) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool INavigation2DMsgs_follow_path_RPC_helper::Command::readArgs(yarp::os::idl::WireReader& reader)
+{
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
+    if (!reader.readNested(path)) {
+        reader.fail();
+        return false;
+    }
+    if (!reader.noMore()) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool INavigation2DMsgs_follow_path_RPC_helper::Reply::write(yarp::os::ConnectionWriter& connection) const
+{
+    yarp::os::idl::WireWriter writer(connection);
+    return write(writer);
+}
+
+bool INavigation2DMsgs_follow_path_RPC_helper::Reply::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    return read(reader);
+}
+
+bool INavigation2DMsgs_follow_path_RPC_helper::Reply::write(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.isNull()) {
+        if (!writer.writeListHeader(s_reply_len)) {
+            return false;
+        }
+        if (!writer.writeBool(return_helper)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+bool INavigation2DMsgs_follow_path_RPC_helper::Reply::read(yarp::os::idl::WireReader& reader)
+{
+    if (!reader.readListReturn()) {
+        return false;
+    }
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
+    if (!reader.readBool(return_helper)) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+void INavigation2DMsgs_follow_path_RPC_helper::call(INavigation2DMsgs* ptr)
+{
+    reply.return_helper = ptr->follow_path_RPC(cmd.path);
+}
+
 // goto_target_by_relative_location1_RPC helper class implementation
 INavigation2DMsgs_goto_target_by_relative_location1_RPC_helper::INavigation2DMsgs_goto_target_by_relative_location1_RPC_helper(const double x, const double y) :
         cmd{x, y}
@@ -3660,6 +3877,16 @@ bool INavigation2DMsgs::goto_target_by_absolute_location_RPC(const yarp::dev::Na
     return ok ? helper.reply.return_helper : bool{};
 }
 
+bool INavigation2DMsgs::follow_path_RPC(const yarp::dev::Nav2D::Map2DPath& path)
+{
+    if (!yarp().canWrite()) {
+        yError("Missing server method '%s'?", INavigation2DMsgs_follow_path_RPC_helper::s_prototype);
+    }
+    INavigation2DMsgs_follow_path_RPC_helper helper{path};
+    bool ok = yarp().write(helper, helper);
+    return ok ? helper.reply.return_helper : bool{};
+}
+
 bool INavigation2DMsgs::goto_target_by_relative_location1_RPC(const double x, const double y)
 {
     if (!yarp().canWrite()) {
@@ -3756,6 +3983,7 @@ std::vector<std::string> INavigation2DMsgs::help(const std::string& functionName
         helpString.emplace_back(INavigation2DMsgs_get_all_navigation_waypoints_RPC_helper::s_tag);
         helpString.emplace_back(INavigation2DMsgs_get_current_navigation_map_RPC_helper::s_tag);
         helpString.emplace_back(INavigation2DMsgs_goto_target_by_absolute_location_RPC_helper::s_tag);
+        helpString.emplace_back(INavigation2DMsgs_follow_path_RPC_helper::s_tag);
         helpString.emplace_back(INavigation2DMsgs_goto_target_by_relative_location1_RPC_helper::s_tag);
         helpString.emplace_back(INavigation2DMsgs_goto_target_by_relative_location2_RPC_helper::s_tag);
         helpString.emplace_back(INavigation2DMsgs_get_absolute_location_of_current_target_RPC_helper::s_tag);
@@ -3792,6 +4020,9 @@ std::vector<std::string> INavigation2DMsgs::help(const std::string& functionName
         }
         if (functionName == INavigation2DMsgs_goto_target_by_absolute_location_RPC_helper::s_tag) {
             helpString.emplace_back(INavigation2DMsgs_goto_target_by_absolute_location_RPC_helper::s_prototype);
+        }
+        if (functionName == INavigation2DMsgs_follow_path_RPC_helper::s_tag) {
+            helpString.emplace_back(INavigation2DMsgs_follow_path_RPC_helper::s_prototype);
         }
         if (functionName == INavigation2DMsgs_goto_target_by_relative_location1_RPC_helper::s_tag) {
             helpString.emplace_back(INavigation2DMsgs_goto_target_by_relative_location1_RPC_helper::s_prototype);
@@ -3971,6 +4202,21 @@ bool INavigation2DMsgs::read(yarp::os::ConnectionReader& connection)
         }
         if (tag == INavigation2DMsgs_goto_target_by_absolute_location_RPC_helper::s_tag) {
             INavigation2DMsgs_goto_target_by_absolute_location_RPC_helper helper;
+            if (!helper.cmd.readArgs(reader)) {
+                return false;
+            }
+
+            helper.call(this);
+
+            yarp::os::idl::WireWriter writer(reader);
+            if (!helper.reply.write(writer)) {
+                return false;
+            }
+            reader.accept();
+            return true;
+        }
+        if (tag == INavigation2DMsgs_follow_path_RPC_helper::s_tag) {
+            INavigation2DMsgs_follow_path_RPC_helper helper;
             if (!helper.cmd.readArgs(reader)) {
                 return false;
             }

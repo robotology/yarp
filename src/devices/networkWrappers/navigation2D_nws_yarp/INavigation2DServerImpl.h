@@ -7,6 +7,7 @@
 #define YARP_DEV_NAVIGATION2DSERVERIMPL_H
 
 #include "INavigation2DMsgs.h"
+#include "yarp/dev/Map2DPath.h"
 #include <yarp/dev/INavigation2D.h>
 #include <yarp/os/Stamp.h>
 
@@ -52,6 +53,7 @@ class INavigation2DRPCd : public INavigation2DMsgs
     bool                               goto_target_by_absolute_location_RPC(const yarp::dev::Nav2D::Map2DLocation& loc) override;
     bool                               goto_target_by_relative_location1_RPC(double x, double y) override;
     bool                               goto_target_by_relative_location2_RPC(double x, double y, double theta) override;
+    bool                               follow_path_RPC(const yarp::dev::Nav2D::Map2DPath& path) override;
     return_get_abs_loc_of_curr_target  get_absolute_location_of_current_target_RPC() override;
     return_get_rel_loc_of_curr_target  get_relative_location_of_current_target_RPC() override;
     bool                               goto_target_by_absolute_location_and_set_name_RPC(const yarp::dev::Nav2D::Map2DLocation& loc, const std::string& name) override;

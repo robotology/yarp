@@ -11,6 +11,7 @@
 #include <yarp/os/LogStream.h>
 #include <yarp/dev/ControlBoardInterfaces.h>
 #include "FakeNavigation.h"
+#include "yarp/dev/Map2DPath.h"
 #include <math.h>
 #include <cmath>
 
@@ -62,6 +63,12 @@ bool FakeNavigation::gotoTargetByRelativeLocation(double x, double y, double the
 bool FakeNavigation::gotoTargetByRelativeLocation(double x, double y)
 {
     yCInfo(FAKENAVIGATION) << "gotoTargetByRelativeLocation not yet implemented";
+    return true;
+}
+
+bool followPath(const yarp::dev::Nav2D::Map2DPath& locs)
+{
+    yCInfo(FAKENAVIGATION) << "followPath not yet implemented";
     return true;
 }
 

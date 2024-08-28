@@ -8,6 +8,7 @@
 #include <yarp/os/Log.h>
 #include <yarp/os/LogComponent.h>
 #include <yarp/os/LogStream.h>
+#include "yarp/dev/Map2DPath.h"
 #include <mutex>
 #include <cmath>
 
@@ -257,6 +258,7 @@ bool Navigation2D_nwc_yarp::gotoTargetByLocationName(std::string location_name)
 {
     Map2DLocation loc;
     Map2DArea area;
+    Map2DPath path;
 
     //first of all, ask to the location server if location_name exists as a location_name...
     bool found = this->getLocation(location_name, loc);
@@ -271,7 +273,18 @@ bool Navigation2D_nwc_yarp::gotoTargetByLocationName(std::string location_name)
         }
     }
 
-    //...if it is neither a location, nor an area then quit...
+    //...if it is neither a location, nor an area then check if it is a path...
+    if (found == false)
+    {
+        if(this->getPath(location_name, path))
+        {
+            // We still need to handle path navigation differently
+            std::lock_guard <std::mutex> lg(m_mutex);
+            return m_nav_RPC.follow_path_RPC(path);
+        }
+    }
+
+    //...if it is neither a location, nor an area, nor a path then quit...
     if (found == false)
     {
         yCError(NAVIGATION2D_NWC_YARP) << "Location not found, stopping navigation";

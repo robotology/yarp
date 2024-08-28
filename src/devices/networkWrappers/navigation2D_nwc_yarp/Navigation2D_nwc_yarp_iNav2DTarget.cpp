@@ -69,3 +69,9 @@ bool Navigation2D_nwc_yarp::getRelativeLocationOfCurrentTarget(double& x, double
     theta = ret.theta;
     return true;
 }
+
+bool Navigation2D_nwc_yarp::followPath(const yarp::dev::Nav2D::Map2DPath& locs)
+{
+    std::lock_guard <std::mutex> lg(m_mutex);
+    return m_nav_RPC.follow_path_RPC(locs);
+}
