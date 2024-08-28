@@ -558,7 +558,11 @@ yarp_dependent_option(
 )
 yarp_dependent_option(
   YARP_COMPILE_yarplaserscannergui  "Do you want to compile yarplaserscannergui?" ON
-  "YARP_COMPILE_EXECUTABLES;YARP_COMPILE_GUIS;YARP_HAS_Qt5;YARP_HAS_OpenCV" OFF
+  "YARP_COMPILE_EXECUTABLES;YARP_COMPILE_GUIS;YARP_HAS_OpenCV" OFF
+)
+yarp_dependent_option(
+  YARP_COMPILE_yarpopencvdisplay  "Do you want to compile yarpopencvdisplay?" ON
+  "YARP_COMPILE_EXECUTABLES;YARP_COMPILE_GUIS;YARP_HAS_OpenCV" OFF
 )
 yarp_dependent_option(
   YARP_COMPILE_yarpviz "Do you want to compile yarpviz?" ON
@@ -684,6 +688,7 @@ yarp_print_feature(YARP_COMPILE_yarpdataplayer 2 "Compile yarpdataplayer${YARP_C
 yarp_print_feature("YARP_COMPILE_yarpdataplayer AND YARP_HAS_OpenCV" 3 "yarpdataplayer video support")
 yarp_print_feature(YARP_COMPILE_yarpmotorgui 2 "Compile yarpmotorgui${YARP_COMPILE_yarpmotorgui_disable_reason}")
 yarp_print_feature(YARP_COMPILE_yarplaserscannergui 2 "Compile yarplaserscannergui${YARP_COMPILE_yarplaserscannergui_disable_reason}")
+yarp_print_feature(YARP_COMPILE_yarpopencvdisplay 2 "Compile yarpopencvdisplay${YARP_COMPILE_yarpopencvdisplay_disable_reason}")
 yarp_print_feature(YARP_COMPILE_yarpbatterygui 2 "Compile yarpbatterygui${YARP_COMPILE_yarpbatterygui_disable_reason}")
 yarp_print_feature(YARP_COMPILE_yarpviz 2 "Compile yarpviz${YARP_COMPILE_yarpviz_disable_reason}")
 

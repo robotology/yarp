@@ -49,7 +49,7 @@ Here are a collection of tutorials on various topics in YARP.
 - \ref yarp_pointcloud
 - \ref yarp_code_examples
 - \ref using_cmake
-- \ref carrier_h264_howto
+- \ref carrier_gstreamer_howto
 
 \section tutorial_protocols Communication protocol details:
 - \ref yarp_protocol
