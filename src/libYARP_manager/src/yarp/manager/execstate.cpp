@@ -127,10 +127,10 @@ bool Ready::checkResources(bool silent)
         }
         // check the rpc request/reply if required
         if(strlen((*itr).getRequest()) != 0) {
-            const char* reply = executable->getBroker()->requestRpc((*itr).getPort(),
+            std::string reply = executable->getBroker()->requestRpc((*itr).getPort(),
                                                                     (*itr).getRequest(),
                                                                     (*itr).getTimeout());
-            if(reply == nullptr) {
+            if(reply.empty()) {
                 allOK = false;
                 OSTRINGSTREAM msg;
                 msg<<"cannot request resource "<<(*itr).getPort()<<" for "<<(*itr).getRequest();
@@ -142,7 +142,7 @@ bool Ready::checkResources(bool silent)
                 }
             }
 
-            if(!compareString(reply, (*itr).getReply())) {
+            if (!compareString(reply.c_str(), (*itr).getReply())) {
                 allOK = false;
                 OSTRINGSTREAM msg;
                 msg<<"waiting for the expected reply from resource "<<(*itr).getPort();
@@ -229,7 +229,7 @@ void Ready::startModule()
     {
         OSTRINGSTREAM msg;
         msg<<"cannot run "<<executable->getCommand()<<" on "<<executable->getHost();
-        if (executable->getBroker()->error()) {
+        if (!executable->getBroker()->error().empty()) {
             msg << " : " << executable->getBroker()->error();
         }
         logger->addError(msg);
@@ -305,7 +305,7 @@ void Connecting::connectAllPorts()
             {
                 OSTRINGSTREAM msg;
                 msg<<"cannot connect "<<(*itr).from() <<" to "<<(*itr).to();
-                if (executable->getBroker()->error()) {
+                if (!executable->getBroker()->error().empty()) {
                     msg << " : " << executable->getBroker()->error();
                 }
                 logger->addError(msg);
@@ -418,7 +418,7 @@ void Dying::stopModule()
     {
         OSTRINGSTREAM msg;
         msg<<"cannot stop "<<executable->getCommand()<<" on "<<executable->getHost();
-        if (executable->getBroker()->error()) {
+        if (!executable->getBroker()->error().empty()) {
             msg << " : " << executable->getBroker()->error();
         }
         logger->addError(msg);
@@ -439,7 +439,7 @@ void Dying::killModule()
     {
         OSTRINGSTREAM msg;
         msg<<"cannot kill "<<executable->getCommand()<<" on "<<executable->getHost();
-        if (executable->getBroker()->error()) {
+        if (!executable->getBroker()->error().empty()) {
             msg << " : " << executable->getBroker()->error();
         }
         logger->addError(msg);
@@ -467,7 +467,7 @@ void Dying::disconnectAllPorts()
             {
                 OSTRINGSTREAM msg;
                 msg<<"cannot disconnect "<<(*itr).from() <<" to "<<(*itr).to();
-                if (executable->getBroker()->error()) {
+                if (!executable->getBroker()->error().empty()) {
                     msg << " : " << executable->getBroker()->error();
                 }
                 logger->addError(msg);

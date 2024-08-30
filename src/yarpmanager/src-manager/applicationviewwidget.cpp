@@ -1774,10 +1774,10 @@ void ApplicationViewWidget::onYARPView()
             yarp::manager::LocalBroker launcher;
             if (launcher.init("yarpview", nullptr, nullptr, nullptr, nullptr, env.toLatin1().data()))
             {
-                if (!launcher.start() && strlen(launcher.error()))
+                if (!launcher.start() && !launcher.error().empty())
                 {
                     QString msg;
-                    msg = QString("Error while launching yarpview. %1").arg(launcher.error());
+                    msg = QString("Error while launching yarpview. %1").arg(launcher.error().c_str());
                     logger->addError(msg.toLatin1().data());
                     reportErrors();
                 }
@@ -1792,7 +1792,7 @@ void ApplicationViewWidget::onYARPView()
                     }
                     if (!launcher.connect(from.toLatin1().data(), to.toLatin1().data(), "udp")) {
                         QString msg;
-                        msg = QString("Cannot inspect '%1' : %2").arg(from).arg(launcher.error());
+                        msg = QString("Cannot inspect '%1' : %2").arg(from).arg(launcher.error().c_str());
                         logger->addError(msg.toLatin1().data());
                         launcher.stop();
                         reportErrors();
@@ -1835,10 +1835,10 @@ void ApplicationViewWidget::onYARPHear()
             launcher.setWindowMode(yarp::manager::LocalBroker::WINDOW_VISIBLE);
             if (launcher.init(cmd.toLatin1().data(), param.toLatin1().data(), nullptr, nullptr, nullptr, nullptr))
             {
-                if (!launcher.start() && strlen(launcher.error()))
+                if (!launcher.start() && !launcher.error().empty())
                 {
                     QString  msg;
-                    msg = QString("Error while launching yarpread. %1").arg(launcher.error());
+                    msg = QString("Error while launching yarpread. %1").arg(launcher.error().c_str());
                     logger->addError(msg.toLatin1().data());
                     reportErrors();
                 }
@@ -1853,13 +1853,13 @@ void ApplicationViewWidget::onYARPHear()
                     }
                     if (!launcher.exists(to.toLatin1().data())) {
                         QString msg;
-                        msg = QString("Cannot inspect '%1' : %2. Did you build yarp with 'portaudio' module?").arg(from).arg(launcher.error());
+                        msg = QString("Cannot inspect '%1' : %2. Did you build yarp with 'portaudio' module?").arg(from).arg(launcher.error().c_str());
                         logger->addError(msg.toLatin1().data());
                         launcher.stop();
                         reportErrors();
                     }else if (!launcher.connect(from.toLatin1().data(), to.toLatin1().data(), "udp")) {
                         QString msg;
-                        msg = QString("Cannot inspect '%1' : %2").arg(from).arg(launcher.error());
+                        msg = QString("Cannot inspect '%1' : %2").arg(from).arg(launcher.error().c_str());
                         logger->addError(msg.toLatin1().data());
                         launcher.stop();
                         reportErrors();
@@ -1904,10 +1904,10 @@ void ApplicationViewWidget::onYARPRead()
             launcher.setWindowMode(yarp::manager::LocalBroker::WINDOW_VISIBLE);
             if (launcher.init(cmd.toLatin1().data(), param.toLatin1().data(), nullptr, nullptr, nullptr, nullptr))
             {
-                if (!launcher.start() && strlen(launcher.error()))
+                if (!launcher.start() && !launcher.error().empty())
                 {
                     QString msg;
-                    msg = QString("Error while launching yarpread. %1").arg(launcher.error());
+                    msg = QString("Error while launching yarpread. %1").arg(launcher.error().c_str());
                     logger->addError(msg.toLatin1().data());
                     reportErrors();
                 }
@@ -1922,7 +1922,7 @@ void ApplicationViewWidget::onYARPRead()
                     }
                     if (!launcher.connect(from.toLatin1().data(), to.toLatin1().data(), "udp")) {
                         QString msg;
-                        msg = QString("Cannot inspect '%1' : %2").arg(from).arg(launcher.error());
+                        msg = QString("Cannot inspect '%1' : %2").arg(from).arg(launcher.error().c_str());
                         logger->addError(msg.toLatin1().data());
                         launcher.stop();
                         reportErrors();
@@ -1969,9 +1969,9 @@ void ApplicationViewWidget::onYARPScope()
 
             yarp::manager::LocalBroker launcher;
             if (launcher.init("yarpscope", param.toLatin1().data(), nullptr, nullptr, nullptr, env.toLatin1().data())) {
-                if (!launcher.start() && strlen(launcher.error())) {
+                if (!launcher.start() && !launcher.error().empty()) {
                     QString msg;
-                    msg = QString("Error while launching yarpscope. %1").arg(launcher.error());
+                    msg = QString("Error while launching yarpscope. %1").arg(launcher.error().c_str());
                     logger->addError(msg.toLatin1().data());
                     reportErrors();
                 }
@@ -1985,7 +1985,7 @@ void ApplicationViewWidget::onYARPScope()
                     }
                     if (!launcher.connect(from.toLatin1().data(), to.toLatin1().data(), "udp")) {
                         QString msg;
-                        msg = QString("Cannot inspect '%1' : %2").arg(from).arg(launcher.error());
+                        msg = QString("Cannot inspect '%1' : %2").arg(from).arg(launcher.error().c_str());
                         logger->addError(msg.toLatin1().data());
                         launcher.stop();
                         reportErrors();

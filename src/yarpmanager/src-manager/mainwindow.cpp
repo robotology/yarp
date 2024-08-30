@@ -1042,8 +1042,8 @@ void MainWindow::onNewResource()
 
     yarp::manager::LocalBroker launcher;
     if(launcher.init(ext_editor.c_str(), fileName.toLatin1().data(), nullptr, nullptr, nullptr, nullptr)){
-        if(!launcher.start() && strlen(launcher.error())){
-            QString msg = QString("Error while launching %1. %2").arg(ext_editor.c_str()).arg(launcher.error());
+        if(!launcher.start() && !launcher.error().empty()){
+            QString msg = QString("Error while launching %1. %2").arg(ext_editor.c_str()).arg(launcher.error().c_str());
             logger->addError(msg.toLatin1().data());
             reportErrors();
         }
@@ -1069,8 +1069,8 @@ void MainWindow::onNewModule()
 
     yarp::manager::LocalBroker launcher;
     if(launcher.init(ext_editor.c_str(), fileName.toLatin1().data(), nullptr, nullptr, nullptr, nullptr)){
-        if(!launcher.start() && strlen(launcher.error())){
-            QString msg = QString("Error while launching %1. %2").arg(ext_editor.c_str()).arg(launcher.error());
+        if(!launcher.start() && !launcher.error().empty()){
+            QString msg = QString("Error while launching %1. %2").arg(ext_editor.c_str()).arg(launcher.error().c_str());
             logger->addError(msg.toLatin1().data());
             reportErrors();
         }
