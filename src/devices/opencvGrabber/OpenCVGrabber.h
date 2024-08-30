@@ -19,6 +19,7 @@
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/os/Stamp.h>
 #include <yarp/dev/IPreciselyTimed.h>
+#include "OpenCVGrabber_ParamsParser.h"
 
 #include <opencv2/videoio.hpp>
 
@@ -31,7 +32,8 @@
 class OpenCVGrabber :
         public yarp::dev::IFrameGrabberImage,
         public yarp::dev::DeviceDriver,
-        public yarp::dev::IPreciselyTimed
+        public yarp::dev::IPreciselyTimed,
+        public OpenCVGrabber_ParamsParser
 {
 public:
 
@@ -41,16 +43,10 @@ public:
      * open().
      */
     OpenCVGrabber() :
-        m_w(0),
-        m_h(0),
-        m_loop(false),
         m_saidSize(false),
         m_saidResize(false),
         fromFile(false),
-        m_cap(),
-        m_transpose(false),
-        m_flip_x(false),
-        m_flip_y(false)
+        m_cap()
     {}
 
     /** Destroy an OpenCV image grabber. */
@@ -67,11 +63,11 @@ public:
 
     /** Get the height of images a grabber produces.
      * @return The image height. */
-    inline int height() const override { return m_h; }
+    inline int height() const override { return m_height; }
 
     /** Get the width of images a grabber produces.
      * @return The image width. */
-    inline int width() const override { return m_w; }
+    inline int width() const override { return m_width; }
 
     /**
     * Implements the IPreciselyTimed interface.
@@ -81,27 +77,14 @@ public:
 
 protected:
 
-    /** Width of the images a grabber produces. */
-    int m_w;
-    /** Height of the images a grabber produces. */
-    int m_h;
-
-    /** Whether to loop or not. */
-    bool m_loop;
-
-    bool m_saidSize;
-    bool m_saidResize;
+    bool m_saidSize = false;
+    bool m_saidResize = false;
 
     /** Whether reading from file or camera. */
-    bool fromFile;
+    bool fromFile = false;
 
     /** OpenCV image capture object. */
     cv::VideoCapture m_cap;
-
-    /* optional image modifiers */
-    bool m_transpose;
-    bool m_flip_x;
-    bool m_flip_y;
 
     /** Saved copy of the device configuration. */
     yarp::os::Property m_config;

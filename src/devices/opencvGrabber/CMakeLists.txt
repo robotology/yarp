@@ -6,6 +6,7 @@ yarp_prepare_plugin(opencv_grabber
   CATEGORY device
   TYPE OpenCVGrabber
   INCLUDE OpenCVGrabber.h
+  GENERATE_PARSER
   EXTRA_CONFIG
     WRAPPER=frameGrabber_nws_yarp
   DEPENDS "YARP_HAS_OpenCV"
@@ -18,6 +19,8 @@ if(NOT SKIP_opencv_grabber)
     PRIVATE
       OpenCVGrabber.cpp
       OpenCVGrabber.h
+      OpenCVGrabber_ParamsParser.cpp
+      OpenCVGrabber_ParamsParser.h
   )
 
   target_link_libraries(yarp_opencv
@@ -52,6 +55,11 @@ if(NOT SKIP_opencv_grabber)
   set(YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS ${YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS} PARENT_SCOPE)
 
   set_property(TARGET yarp_opencv PROPERTY FOLDER "Plugins/Device")
+
+  if(YARP_COMPILE_TESTS)
+    add_subdirectory(tests)
+  endif()
+
 endif()
 
 include(YarpRemoveFile)
