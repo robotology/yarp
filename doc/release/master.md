@@ -70,6 +70,12 @@ New Features
 * Added LLM_Message data type to propagate LLM answers
 * Added refreshConversation feature in the interface to allow users to restart the conversation mantaining the same prompt.
 
+### GUIs
+
+#### yarpopencvdisplay
+
+* added new executable yarpopencvdisplay. Similarly to yarpview, it's a basic window to display video streams. It also allows to save to .avi files.
+
 ### Libraries
 
 #### `lib_yarp_companion`
