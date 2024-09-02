@@ -74,12 +74,14 @@ New Features
 
 #### yarpopencvdisplay
 
-* added new executable yarpopencvdisplay. Similarly to yarpview, it's a basic window to display video streams. It also allows to save to .avi files.
+* added new executable `yarpopencvdisplay`. Similarly to yarpview, it's a basic window to display video streams. It also allows to save to .avi files.
 
 ### Libraries
 
-#### `lib_yarp_companion`
+#### `lib_yarp_dev`
+
+* `Drivers.cpp` If the user requests for a not existing plugin, the system now prints a message suggesting devices with similar names
 
 #### `lib_yarp_sig`
 
-* Improvements to serialization class yarp::sig::Sound (breaking change)
+* Improvements to serialization class `yarp::sig::Sound` (breaking change)

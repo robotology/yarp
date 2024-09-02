@@ -351,6 +351,34 @@ static void handler (int)
     }
 }
 
+int levenshteinDistance(const std::string& s1, const std::string& s2)
+{
+    int len1 = s1.size();
+    int len2 = s2.size();
+    std::vector<std::vector<int>> dp(len1 + 1, std::vector<int>(len2 + 1));
+
+    for (int i = 0; i <= len1; ++i)
+        dp[i][0] = i;
+    for (int j = 0; j <= len2; ++j)
+        dp[0][j] = j;
+
+    for (int i = 1; i <= len1; ++i) {
+        for (int j = 1; j <= len2; ++j) {
+            if (s1[i - 1] == s2[j - 1])
+                dp[i][j] = dp[i - 1][j - 1];
+            else
+                dp[i][j] = 1 + std::min({dp[i - 1][j], dp[i][j - 1], dp[i - 1][j - 1]});
+        }
+    }
+    return dp[len1][len2];
+}
+
+std::string toLowerCase(const std::string& str)
+{
+    std::string lowerStr = str;
+    std::transform(lowerStr.begin(), lowerStr.end(), lowerStr.begin(), ::tolower);
+    return lowerStr;
+}
 
 int Drivers::yarpdev(int argc, char *argv[]) {
 
@@ -459,18 +487,35 @@ int Drivers::yarpdev(int argc, char *argv[]) {
     std::string id = dd.id();
 
     //if the device.open() failed...
-    if (!dd.isValid()) {
+    if (!dd.isValid())
+    {
         yCIError(DRIVERS, id, "yarpdev: ***ERROR*** device not available.");
-        if (argc==1)
+        yCIInfo(DRIVERS, id, "+ Suggestions:");
+        //The following code print suggestions, i.e. devices with similar names
+        YarpPluginSelector yps;
+        yps.scan();
+        yarp::os::Bottle b = yps.getSelectedPlugins();
+        std::string dev_name = options.find("device").asString();
+        for (size_t i = 0; i < b.size(); i++)
         {
-            yCIInfo(DRIVERS, id, "Here are the known devices:");
-            yCIInfo(DRIVERS, id, "%s", Drivers::factory().toString().c_str());
+            Value& plugv = b.get(i);
+            std::string similar_name = plugv.check("name", Value("untitled")).asString();
+            int distance = levenshteinDistance(similar_name, dev_name);
+            if (distance < 5)
+            {
+                yCIInfo(DRIVERS, id, "%s", similar_name.c_str());
+            }
+            else
+            {
+                std::string lowerStr = toLowerCase(similar_name);
+                std::string lowerSub = toLowerCase(dev_name);
+                if (lowerStr.find(lowerSub) != std::string::npos)
+                {
+                    yCIInfo(DRIVERS, id, "%s", similar_name.c_str());
+                }
+            }
         }
-        else
-        {
-            yCIInfo(DRIVERS, id, "Suggestions:");
-            yCIInfo(DRIVERS, id, "+ Do \"yarpdev --list\" to see list of supported devices.");
-        }
+        yCIInfo(DRIVERS, id, "+ Do \"yarpdev --list\" to see list of supported devices.");
         return 1;
     }
 
