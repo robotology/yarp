@@ -13,9 +13,9 @@ yarp_prepare_plugin(opencv_grabber
 )
 
 if(NOT SKIP_opencv_grabber)
-  yarp_add_plugin(yarp_opencv)
+  yarp_add_plugin(yarp_opencvGrabber)
 
-  target_sources(yarp_opencv
+  target_sources(yarp_opencvGrabber
     PRIVATE
       OpenCVGrabber.cpp
       OpenCVGrabber.h
@@ -23,7 +23,7 @@ if(NOT SKIP_opencv_grabber)
       OpenCVGrabber_ParamsParser.h
   )
 
-  target_link_libraries(yarp_opencv
+  target_link_libraries(yarp_opencvGrabber
     PRIVATE
       YARP::YARP_os
       YARP::YARP_sig
@@ -35,12 +35,12 @@ if(NOT SKIP_opencv_grabber)
     YARP_dev
   )
 
-  target_include_directories(yarp_opencv SYSTEM PRIVATE ${OpenCV_INCLUDE_DIRS})
-  target_link_libraries(yarp_opencv PRIVATE ${OpenCV_LIBS})
+  target_include_directories(yarp_opencvGrabber SYSTEM PRIVATE ${OpenCV_INCLUDE_DIRS})
+  target_link_libraries(yarp_opencvGrabber PRIVATE ${OpenCV_LIBS})
 #   list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS OpenCV) (not using targets)
 
   yarp_install(
-    TARGETS yarp_opencv
+    TARGETS yarp_opencvGrabber
     EXPORT YARP_${YARP_PLUGIN_MASTER}
     COMPONENT ${YARP_PLUGIN_MASTER}
     LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
@@ -54,13 +54,10 @@ if(NOT SKIP_opencv_grabber)
 
   set(YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS ${YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS} PARENT_SCOPE)
 
-  set_property(TARGET yarp_opencv PROPERTY FOLDER "Plugins/Device")
+  set_property(TARGET yarp_opencvGrabber PROPERTY FOLDER "Plugins/Device")
 
   if(YARP_COMPILE_TESTS)
     add_subdirectory(tests)
   endif()
 
 endif()
-
-include(YarpRemoveFile)
-yarp_remove_file("${YARP_PLUGIN_MANIFESTS_INSTALL_DIR}/opencv.ini") # YARP_DEPRECATED since YARP 3.2

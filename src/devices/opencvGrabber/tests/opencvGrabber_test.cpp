@@ -28,7 +28,7 @@ TEST_CASE("dev::opencvGrabberTest", "[yarp::dev]")
         yarp::os::ResourceFinder res;
         res.setDefaultContext("tests/opencvGrabber");
         std::string filepath = res.findFileByName("test.avi");
-        
+
         ////////"Checking opening polydriver"
         {
             Property cfg;

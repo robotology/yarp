@@ -8,12 +8,6 @@
 #ifndef YARP_OPENCV_GRABBER_DEVICE_OPENCVGRABBER_H
 #define YARP_OPENCV_GRABBER_DEVICE_OPENCVGRABBER_H
 
-/*
- * A YARP frame grabber device driver using OpenCV to implement
- * image capture from cameras and AVI files.
- */
-
-
 #include <yarp/os/Property.h>
 #include <yarp/dev/IFrameGrabberImage.h>
 #include <yarp/dev/DeviceDriver.h>
@@ -28,6 +22,8 @@
  *
  * @brief `opencv_grabber`: An image frame grabber device using OpenCV to
  * capture images from cameras and AVI files.
+ *
+ * Parameters required by this device are shown in class: OpenCVGrabber_ParamsParser
  */
 class OpenCVGrabber :
         public yarp::dev::IFrameGrabberImage,
@@ -37,36 +33,20 @@ class OpenCVGrabber :
 {
 public:
 
-    /**
-     * Create an OpenCV image grabber. This initializes members to
-     * reasonable default values, the real initialization is done in
-     * open().
-     */
     OpenCVGrabber() :
         m_saidSize(false),
         m_saidResize(false),
         fromFile(false),
         m_cap()
     {}
-
-    /** Destroy an OpenCV image grabber. */
     virtual ~OpenCVGrabber() { ; }
 
 
-
     bool open(yarp::os::Searchable & config) override;
-
     bool close() override;
-
     bool getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb> & image) override;
 
-
-    /** Get the height of images a grabber produces.
-     * @return The image height. */
     inline int height() const override { return m_height; }
-
-    /** Get the width of images a grabber produces.
-     * @return The image width. */
     inline int width() const override { return m_width; }
 
     /**
