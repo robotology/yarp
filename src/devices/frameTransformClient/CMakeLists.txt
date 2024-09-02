@@ -7,13 +7,18 @@ yarp_prepare_plugin(frameTransformClient
   INCLUDE FrameTransformClient.h
   DEPENDS "TARGET YARP::YARP_math"
   DEFAULT ON
+  GENERATE_PARSER
 )
 
 if(NOT SKIP_frameTransformClient)
   yarp_add_plugin(yarp_frameTransformClient)
 
-  target_sources(yarp_frameTransformClient PRIVATE FrameTransformClient.cpp
-          FrameTransformClient.h)
+  target_sources(yarp_frameTransformClient PRIVATE
+      FrameTransformClient.cpp
+      FrameTransformClient.h
+      FrameTransformClient_ParamsParser.cpp
+      FrameTransformClient_ParamsParser.h
+  )
 
 
   target_link_libraries(yarp_frameTransformClient

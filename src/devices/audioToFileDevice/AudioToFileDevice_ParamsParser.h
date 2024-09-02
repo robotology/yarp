@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Mon Feb 19 16:28:03 2024
+// Generated on: Fri Mar  8 16:13:05 2024
 
 
 #ifndef AUDIOTOFILEDEVICE_PARAMSPARSER_H
@@ -29,7 +29,7 @@
 * | -          | save_mode      | string | -     | overwrite_file | 0        | Affects the behavior of the module and defines the save mode, as described in the documentation. | -                                      |
 * | -          | add_marker     | bool   | -     | false          | 0        | If set, it will add a marker at the beginning and at the ending of each received waveform.       | -                                      |
 *
-* The device can be launched by yarpdev using one of the following examples:
+* The device can be launched by yarpdev using one of the following examples (with and without all optional parameters):
 * \code{.unparsed}
 * yarpdev --device audioToFileDevice --file_name audio_out.wav --save_mode overwrite_file --add_marker false
 * \endcode

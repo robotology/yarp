@@ -46,7 +46,15 @@ New Features
   * `base_img` to allow starting from different parent images
   * `yarp_branch` to set the yarp version the users might need in their image
 
+### Carriers
+
+* Removed h264 Carrier
+* Added gstreamer carrier with extended functionalities.
+* Added new gstreamers plugins: yarpvideosource, yarpvidepassthrough, yarpvideosink
+
 ### Devices
+
+* Most yarp devices now use yarpDeviceParamParserGenerator to generate parameters documentation.
 
 #### controlboardremapper
 
@@ -60,5 +68,12 @@ New Features
 #### llmDevice
 
 * Added LLM_Message data type to propagate LLM answers
-
 * Added refreshConversation feature in the interface to allow users to restart the conversation mantaining the same prompt.
+
+### Libraries
+
+#### `lib_yarp_companion`
+
+#### `lib_yarp_sig`
+
+* Improvements to serialization class yarp::sig::Sound (breaking change)

@@ -25,10 +25,9 @@ Nop::~Nop()
 
 bool Nop::open(yarp::os::Searchable& config)
 {
-    if (config.check("period")) {
-        period = config.find("period").asFloat64();
-    }
-    setPeriod(period);
+    if (!this->parseParams(config)) { return false; }
+
+    setPeriod(m_period);
 
     yCInfo(NOP) << "Starting thread";
     start();

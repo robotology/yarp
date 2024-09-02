@@ -8,15 +8,19 @@
 
 #include <yarp/os/PeriodicThread.h>
 #include <yarp/dev/DeviceDriver.h>
+#include "Nop_ParamsParser.h"
 
 /**
 * @ingroup dev_impl_fake
 *
 * \brief `test_nop`: A test device that does absolutely nothing.
+*
+* * Parameters required by this device are shown in class: FakeIMU_ParamsParser
 */
 class Nop :
         public yarp::dev::DeviceDriver,
-        public yarp::os::PeriodicThread
+        public yarp::os::PeriodicThread,
+        public Nop_ParamsParser
 {
 public:
     Nop();
@@ -32,8 +36,6 @@ public:
 
     void run() override;
 
-private:
-    yarp::conf::float64_t period{1.0};
 };
 
 #endif // YARP_NOP_NOP_H

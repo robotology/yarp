@@ -559,6 +559,8 @@ bool FfmpegWriter::open(yarp::os::Searchable & config) {
             LIBAVCODEC_VERSION_MINOR,
             LIBAVCODEC_VERSION_MICRO);
 
+    if (!this->parseParams(config)) { return false; }
+
     ready = false;
     savedConfig.fromString(config.toString());
 
@@ -570,28 +572,8 @@ bool FfmpegWriter::open(yarp::os::Searchable & config) {
 bool FfmpegWriter::delayedOpen(yarp::os::Searchable & config) {
     yCTrace(FFMPEGWRITER, "DELAYED OPEN %s", config.toString().c_str());
 
-    int w = config.check("width",Value(0),
-                         "width of image (must be even)").asInt32();
-    int h = config.check("height",Value(0),
-                         "height of image (must be even)").asInt32();
-    int framerate = config.check("framerate",Value(30),
-                                 "baseline images per second").asInt32();
-
-    int sample_rate = 0;
-    int channels = 0;
-    bool audio = config.check("audio","should audio be included");
-    if (audio) {
-        sample_rate = config.check("sample_rate",Value(44100),
-                                   "audio samples per second").asInt32();
-        channels = config.check("channels",Value(1),
-                                "audio samples per second").asInt32();
-    }
-
-    filename = config.check("out",Value("movie.avi"),
-                            "name of movie to write").asString();
-
     delayed = false;
-    if (w<=0||h<=0) {
+    if (m_width<=0||m_height<=0) {
         delayed = true;
         return true;
     }
@@ -624,17 +606,17 @@ bool FfmpegWriter::delayedOpen(yarp::os::Searchable & config) {
     video_st = nullptr;
     audio_st = nullptr;
     if (fmt->video_codec != AV_CODEC_ID_NONE) {
-        video_st = add_video_stream(oc, fmt->video_codec, w, h, framerate);
+        video_st = add_video_stream(oc, fmt->video_codec, m_width, m_height, m_framerate);
     }
 
-    if (audio) {
-        yCInfo(FFMPEGWRITER, "Adding audio %dx%d", sample_rate, channels);
+    if (m_audio) {
+        yCInfo(FFMPEGWRITER, "Adding audio %dx%d", m_sample_rate, m_channels);
         if (fmt->audio_codec != AV_CODEC_ID_NONE) {
             audio_st = add_audio_stream(oc, fmt->audio_codec);
             if (audio_st!=nullptr) {
                 AVCodecContext *c = audio_st->codec;
-                c->sample_rate = sample_rate;
-                c->channels = channels;
+                c->sample_rate = m_sample_rate;
+                c->channels = m_channels;
             } else {
                 yCError(FFMPEGWRITER, "Failed to add audio");
             }

@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#include "frameGrabberCropper.h"
+#include "FrameGrabberCropper.h"
 
 #include <yarp/os/Log.h>
 #include <yarp/os/LogStream.h>
@@ -20,44 +20,10 @@ FrameGrabberCropper::~FrameGrabberCropper()
 
 bool FrameGrabberCropper::open(yarp::os::Searchable& config)
 {
-    int x1;
-    if (config.check("x1", "x1") && config.find("x1").isInt32()) {
-        x1 = config.find("x1").asInt32();
-    } else {
-        yCError(FRAMEGRABBERCROPPER) << "x1 parameter not found";
-        return false;
-    }
+    if (!this->parseParams(config)) { return false; }
 
-    int y1;
-    if (config.check("y1", "y1") && config.find("y1").isInt32()) {
-        y1 = config.find("y1").asInt32();
-    } else {
-        yCError(FRAMEGRABBERCROPPER) << "y1 parameter not found";
-        return false;
-    }
-
-    int x2;
-    if (config.check("x2", "x2") && config.find("x2").isInt32()) {
-        x2 = config.find("x2").asInt32();
-    } else {
-        yCError(FRAMEGRABBERCROPPER) << "x2 parameter not found";
-        return false;
-    }
-
-    int y2;
-    if (config.check("y2", "y2") && config.find("y2").isInt32()) {
-        y2 = config.find("y2").asInt32();
-    } else {
-        yCError(FRAMEGRABBERCROPPER) << "y2 parameter not found";
-        return false;
-    }
-
-    FrameGrabberCropperOf<yarp::sig::ImageOf<yarp::sig::PixelRgb>>::vertices = {{x1, y1}, {x2, y2}};
-    FrameGrabberCropperOf<yarp::sig::ImageOf<yarp::sig::PixelMono>>::vertices = {{x1, y1}, {x2, y2}};
-
-    if (config.check("forwardRgbVisualParams", "Forward the the IRgbVisualParams calls to the attached device")) {
-        forwardRgbVisualParams = true;
-    }
+    FrameGrabberCropperOf<yarp::sig::ImageOf<yarp::sig::PixelRgb>>::vertices = {{m_x1, m_y1}, {m_x2, m_y2}};
+    FrameGrabberCropperOf<yarp::sig::ImageOf<yarp::sig::PixelMono>>::vertices = {{m_x1, m_y1}, {m_x2, m_y2}};
 
     return true;
 }

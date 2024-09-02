@@ -53,36 +53,25 @@ YARP_LOG_COMPONENT(OPENCVGRABBER, "yarp.device.opencv_grabber")
 }
 
 
-bool OpenCVGrabber::open(Searchable & config) {
-    m_saidSize = false;
-    m_saidResize = false;
-    m_transpose = false;
-    m_flip_x = false;
-    m_flip_y = false;
+bool OpenCVGrabber::open(Searchable & config)
+{
+    if (!parseParams(config)) {
+        return false;
+    }
 
     // Are we capturing from a file or a camera ?
-    std::string file = config.check("movie", Value(""),
-                                    "if present, read from specified file rather than camera").asString();
-    fromFile = (file!="");
-    if (fromFile) {
-
+    fromFile = (m_movie != "");
+    if (fromFile)
+    {
         // Try to open a capture object for the file
-        m_cap.open(file.c_str());
+        m_cap.open(m_movie.c_str());
         if (!m_cap.isOpened()) {
-            yCError(OPENCVGRABBER, "Unable to open file '%s' for capture!", file.c_str());
+            yCError(OPENCVGRABBER, "Unable to open file '%s' for capture!", m_movie.c_str());
             return false;
         }
-
-        // Should we loop?
-        m_loop = config.check("loop","if present, loop movie");
-
-    } else {
-
-        m_loop = false;
-        int camera_idx =
-            config.check("camera",
-                         Value(cv::VideoCaptureAPIs::CAP_ANY),
-                         "if present, read from camera identified by this index").asInt32();
+    } else
+    {
+        int camera_idx = m_camera;
         // Try to open a capture object for the first camera
         m_cap.open(camera_idx);
         if (!m_cap.isOpened()) {
@@ -94,42 +83,25 @@ bool OpenCVGrabber::open(Searchable & config) {
             yCInfo(OPENCVGRABBER, "Capturing from camera: %d",camera_idx);
         }
 
-        if ( config.check("framerate","if present, specifies desired camera device framerate") ) {
-            double m_fps = config.check("framerate", Value(-1)).asFloat64();
-            m_cap.set(cv::VideoCaptureProperties::CAP_PROP_FPS, m_fps);
+        if ( m_framerate != -1 ) {
+            m_cap.set(cv::VideoCaptureProperties::CAP_PROP_FPS, m_framerate);
         }
-    }
-
-    if (config.check("flip_x", "if present, flip the image along the x-axis")) {
-        m_flip_x = true;
-    }
-
-    if (config.check("flip_y", "if present, flip the image along the y-axis")) {
-        m_flip_y = true;
-    }
-
-    if (config.check("transpose", "if present, rotate the image along of 90 degrees")) {
-        m_transpose = true;
     }
 
     // Extract the desired image size from the configuration if
     // present, otherwise query the capture device
-    if (config.check("width","if present, specifies desired image width")) {
-        m_w = config.check("width", Value(0)).asInt32();
-        if (!fromFile && m_w>0) {
-            m_cap.set(cv::VideoCaptureProperties::CAP_PROP_FRAME_WIDTH, m_w);
-        }
-    } else {
-        m_w = m_cap.get(cv::VideoCaptureProperties::CAP_PROP_FRAME_WIDTH);
+    if (!fromFile && m_width > 0) {
+        m_cap.set(cv::VideoCaptureProperties::CAP_PROP_FRAME_WIDTH, m_width);
+    }
+    else {
+        m_width = m_cap.get(cv::VideoCaptureProperties::CAP_PROP_FRAME_WIDTH);
     }
 
-    if (config.check("height","if present, specifies desired image height")) {
-        m_h = config.check("height", Value(0)).asInt32();
-        if (!fromFile && m_h>0) {
-            m_cap.set(cv::VideoCaptureProperties::CAP_PROP_FRAME_HEIGHT, m_h);
-        }
-    } else {
-        m_h = m_cap.get(cv::VideoCaptureProperties::CAP_PROP_FRAME_HEIGHT);
+    if (!fromFile && m_height> 0) {
+        m_cap.set(cv::VideoCaptureProperties::CAP_PROP_FRAME_HEIGHT, m_height);
+    }
+    else {
+        m_height = m_cap.get(cv::VideoCaptureProperties::CAP_PROP_FRAME_HEIGHT);
     }
 
     // Ignore capture properties - they are unreliable
@@ -179,8 +151,8 @@ bool OpenCVGrabber::getImage(ImageOf<PixelRgb> & image) {
     }
 
     // Callers may have not initialized the image dimensions (may happen if this device is not wrapped)
-    if (static_cast<int>(image.width()) != m_w || static_cast<int>(image.height()) != m_h) {
-        image.resize(m_w, m_h);
+    if (static_cast<int>(image.width()) != m_width || static_cast<int>(image.height()) != m_height) {
+        image.resize(m_width, m_height);
     }
 
     // Grab and retrieve a frame,
@@ -230,22 +202,22 @@ bool OpenCVGrabber::getImage(ImageOf<PixelRgb> & image) {
     // create the timestamp
     m_laststamp.update();
 
-    if (m_w == 0) {
-        m_w = frame.cols;
+    if (m_width == 0) {
+        m_width = frame.cols;
     }
 
-    if (m_h == 0) {
-        m_h = frame.rows;
+    if (m_height == 0) {
+        m_height = frame.rows;
     }
 
-    if (fromFile && (frame.cols != (!m_transpose ? m_w : m_h) || frame.rows != (!m_transpose ? m_h : m_w))) {
+    if (fromFile && (frame.cols != (!m_transpose ? m_width : m_height) || frame.rows != (!m_transpose ? m_height : m_width))) {
         if (!m_saidResize) {
-            yCDebug(OPENCVGRABBER, "Software scaling from %dx%d to %dx%d", frame.cols, frame.rows, m_w, m_h);
+            yCDebug(OPENCVGRABBER, "Software scaling from %dx%d to %dx%d", frame.cols, frame.rows, m_width, m_height);
             m_saidResize = true;
         }
 
         cv::Mat resized;
-        cv::resize(frame, resized, {m_w, m_h});
+        cv::resize(frame, resized, {m_width, m_height});
         image.resize(resized.cols, resized.rows); // erases previous content
         frame = cv::Mat(image.height(), image.width(), CV_8UC3, image.getRawImage(), image.getRowSize());
         resized.copyTo(frame);
