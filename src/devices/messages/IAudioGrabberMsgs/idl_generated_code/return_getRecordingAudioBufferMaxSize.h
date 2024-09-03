@@ -15,7 +15,7 @@
 #include <yarp/os/idl/WireTypes.h>
 
 #include <IAudioGrabberMsgs_common.h>
-#include <yarp/dev/AudioBufferSize.h>
+#include <yarp/sig/AudioBufferSize.h>
 
 class return_getRecordingAudioBufferMaxSize :
         public yarp::os::idl::WirePortable
@@ -23,14 +23,14 @@ class return_getRecordingAudioBufferMaxSize :
 public:
     // Fields
     bool ret{false};
-    yarp::dev::AudioBufferSize bufsize{};
+    yarp::sig::AudioBufferSize bufsize{};
 
     // Default constructor
     return_getRecordingAudioBufferMaxSize() = default;
 
     // Constructor with field values
     return_getRecordingAudioBufferMaxSize(const bool ret,
-                                          const yarp::dev::AudioBufferSize& bufsize);
+                                          const yarp::sig::AudioBufferSize& bufsize);
 
     // Read structure on a Wire
     bool read(yarp::os::idl::WireReader& reader) override;
