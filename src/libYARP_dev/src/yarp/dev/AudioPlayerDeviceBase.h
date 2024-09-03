@@ -64,8 +64,8 @@ public:
     virtual bool startPlayback() override;
     virtual bool stopPlayback() override;
     virtual bool isPlaying(bool& playback_enabled) override;
-    virtual bool getPlaybackAudioBufferMaxSize(yarp::dev::AudioBufferSize& size) override;
-    virtual bool getPlaybackAudioBufferCurrentSize(yarp::dev::AudioBufferSize& size) override;
+    virtual bool getPlaybackAudioBufferMaxSize(yarp::sig::AudioBufferSize& size) override;
+    virtual bool getPlaybackAudioBufferCurrentSize(yarp::sig::AudioBufferSize& size) override;
     virtual bool resetPlaybackAudioBuffer() override;
     virtual bool setSWGain(double gain) override;
 

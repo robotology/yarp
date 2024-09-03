@@ -52,7 +52,7 @@ namespace yarp::dev::tests
         CHECK(min == 0.1);
         CHECK(max == 8.0);
 
-        std::vector<yarp::dev::LaserMeasurementData> las;
+        std::vector<yarp::sig::LaserMeasurementData> las;
         double timestamp;
         b = irf->getLaserMeasurement(las, &timestamp);
         CHECK(b);

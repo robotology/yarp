@@ -3,11 +3,11 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#include <yarp/dev/AudioBufferSize.h>
+#include <yarp/sig/AudioBufferSize.h>
 
-yarp::dev::AudioBufferSize::AudioBufferSize() = default;
+yarp::sig::AudioBufferSize::AudioBufferSize() = default;
 
-yarp::dev::AudioBufferSize::AudioBufferSize(size_t samples, size_t channels, size_t depth_in_bytes)
+yarp::sig::AudioBufferSize::AudioBufferSize(size_t samples, size_t channels, size_t depth_in_bytes)
 {
     this->m_data.m_samples=samples;
     this->m_data.m_channels = channels;

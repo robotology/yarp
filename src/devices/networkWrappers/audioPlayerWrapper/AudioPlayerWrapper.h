@@ -89,8 +89,8 @@ private:
 
     yarp::dev::IAudioRender *m_irender = nullptr;
     yarp::os::Stamp m_lastStateStamp;
-    yarp::dev::AudioBufferSize m_current_buffer_size;
-    yarp::dev::AudioBufferSize m_max_buffer_size;
+    yarp::sig::AudioBufferSize m_current_buffer_size;
+    yarp::sig::AudioBufferSize m_max_buffer_size;
     std::queue<scheduled_sound_type> m_sound_buffer;
 
     bool   m_isPlaying = false;

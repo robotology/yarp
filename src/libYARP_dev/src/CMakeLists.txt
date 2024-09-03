@@ -8,7 +8,6 @@ add_library(YARP::YARP_dev ALIAS YARP_dev)
 set(YARP_dev_HDRS
   yarp/dev/all.h
   yarp/dev/api.h
-  yarp/dev/AudioBufferSize.h
   yarp/dev/AudioGrabberInterfaces.h
   yarp/dev/AudioGrabberVocabs.h
   yarp/dev/AudioPlayerDeviceBase.h
@@ -108,7 +107,6 @@ set(YARP_dev_HDRS
   yarp/dev/ImplementTorqueControl.h
   yarp/dev/ImplementVelocityControl.h
   yarp/dev/ImplementVirtualAnalogSensor.h
-  yarp/dev/LaserMeasurementData.h
   yarp/dev/Lidar2DDeviceBase.h
   yarp/dev/MultipleAnalogSensorsInterfaces.h
   yarp/dev/PidEnums.h
@@ -158,7 +156,6 @@ set(YARP_dev_IMPL_HDRS
 )
 
 set(YARP_dev_SRCS
-  yarp/dev/AudioBufferSize.cpp
   yarp/dev/AudioPlayerDeviceBase.cpp
   yarp/dev/AudioRecorderDeviceBase.cpp
   yarp/dev/CanBusInterface.cpp
@@ -220,7 +217,6 @@ set(YARP_dev_SRCS
   yarp/dev/ImplementTorqueControl.cpp
   yarp/dev/ImplementVelocityControl.cpp
   yarp/dev/ImplementVirtualAnalogSensor.cpp
-  yarp/dev/LaserMeasurementData.cpp
   yarp/dev/Lidar2DDeviceBase.cpp
   yarp/dev/MultipleAnalogSensorsInterfaces.cpp
   yarp/dev/PolyDriver.cpp
@@ -262,13 +258,11 @@ include(YarpChooseIDL)
 
 set(YARP_dev_IDL
   idl/stateExt.thrift
-  idl/audioBufferSizeData.thrift
+
   idl/OdometryData.thrift
   idl/OdometryData6D.thrift
-  idl/LaserScan2D.thrift
   idl/MobileBaseVelocity.thrift
-  idl/AudioPlayerStatus.thrift
-  idl/AudioRecorderStatus.thrift
+
   idl/LLM_Message.thrift
 )
 

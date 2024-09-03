@@ -203,7 +203,7 @@ void drawNav(const yarp::os::Bottle *display, IplImage *img, double scale)
     cvCircle(img,cvPoint(img->width/2,img->height/2),(int)(max_obs_dist*scale-1),color_black);
 }
 
-void drawLaser(const Vector *comp, std::vector<yarp::dev::LaserMeasurementData> *las, std::vector<yarp::dev::LaserMeasurementData> *lmap, IplImage *img, double angle_tot, int scans, double sens_position_x, double sens_position_y, double sens_position_t, double scale, bool absolute, bool verbose, int aspect)
+void drawLaser(const Vector *comp, std::vector<yarp::sig::LaserMeasurementData> *las, std::vector<yarp::sig::LaserMeasurementData> *lmap, IplImage *img, double angle_tot, int scans, double sens_position_x, double sens_position_y, double sens_position_t, double scale, bool absolute, bool verbose, int aspect)
 {
     cvZero(img);
     cvRectangle(img, cvPoint(0, 0), cvPoint(img->width, img->height), cvScalar(255, 0, 0), -1);
@@ -429,7 +429,7 @@ int main(int argc, char *argv[])
     double angle_tot = (angle_max - angle_min);
     iLas->getHorizontalResolution(angle_step);
     int scans = (int)(angle_tot / angle_step);
-    std::vector<yarp::dev::LaserMeasurementData> laser_data;
+    std::vector<yarp::sig::LaserMeasurementData> laser_data;
 
     BufferedPort<yarp::os::Bottle> laserMapInPort;
     laserMapInPort.open(laser_map_port_name);

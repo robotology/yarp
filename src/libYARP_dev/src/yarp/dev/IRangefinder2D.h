@@ -9,7 +9,7 @@
 #include <yarp/os/Vocab.h>
 #include <yarp/dev/api.h>
 #include <yarp/sig/Vector.h>
-#include <yarp/dev/LaserMeasurementData.h>
+#include <yarp/sig/LaserMeasurementData.h>
 #include <vector>
 #include <string>
 
@@ -48,7 +48,7 @@ public:
     * @param timestamp the timestamp of the retrieved data.
     * @return true/false
     */
-    virtual bool getLaserMeasurement(std::vector<LaserMeasurementData> &data, double* timestamp = nullptr) = 0;
+    virtual bool getLaserMeasurement(std::vector<yarp::sig::LaserMeasurementData> &data, double* timestamp = nullptr) = 0;
 
     /**
     * Get the device measurements

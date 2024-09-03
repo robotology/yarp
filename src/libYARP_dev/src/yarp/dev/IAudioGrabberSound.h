@@ -8,7 +8,7 @@
 #define YARP_DEV_IAUDIOGRABBERSOUND_H
 
 #include <yarp/dev/api.h>
-#include <yarp/dev/AudioBufferSize.h>
+#include <yarp/sig/AudioBufferSize.h>
 #include <yarp/sig/Sound.h>
 
 namespace yarp::dev {
@@ -61,9 +61,9 @@ public:
      */
     virtual bool isRecording(bool& recording_enabled) = 0;
 
-    virtual bool getRecordingAudioBufferMaxSize(yarp::dev::AudioBufferSize& size) = 0;
+    virtual bool getRecordingAudioBufferMaxSize(yarp::sig::AudioBufferSize& size) = 0;
 
-    virtual bool getRecordingAudioBufferCurrentSize(yarp::dev::AudioBufferSize& size) = 0;
+    virtual bool getRecordingAudioBufferCurrentSize(yarp::sig::AudioBufferSize& size) = 0;
 
     virtual bool resetRecordingAudioBuffer() = 0;
 

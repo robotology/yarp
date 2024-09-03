@@ -21,6 +21,7 @@
 #define DEG2RAD M_PI/180.0
 #endif
 
+using namespace yarp::sig;
 
 namespace {
 YARP_LOG_COMPONENT(LASERHOKUYO, "yarp.devices.laserHokuyo")

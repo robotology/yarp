@@ -25,7 +25,7 @@
 
 #include <yarp/sig/Vector.h>
 
-#include <yarp/dev/LaserScan2D.h>
+#include <yarp/sig/LaserScan2D.h>
 #include <yarp/dev/IRangefinder2D.h>
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/DeviceDriver.h>
@@ -70,7 +70,7 @@ public:
 
 private:
     yarp::os::Port rpcPort;
-    yarp::os::BufferedPort<yarp::dev::LaserScan2D> streamingPort;
+    yarp::os::BufferedPort<yarp::sig::LaserScan2D> streamingPort;
 
     //interfaces
     yarp::dev::IRangefinder2D *sens_p;

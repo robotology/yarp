@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-namespace yarp yarp.dev
+namespace yarp yarp.sig
 
 struct audioBufferSizeData
 {
@@ -12,6 +12,6 @@ struct audioBufferSizeData
     3: i32 m_depth;
     4: i32 size;
 } (
-    yarp.api.include = "yarp/dev/api.h"
-    yarp.api.keyword = "YARP_dev_API"
+    yarp.api.include = "yarp/sig/api.h"
+    yarp.api.keyword = "YARP_sig_API"
 )
