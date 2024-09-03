@@ -11,20 +11,20 @@
 #ifndef YARP_THRIFT_GENERATOR_STRUCT_AUDIOPLAYERSTATUS_H
 #define YARP_THRIFT_GENERATOR_STRUCT_AUDIOPLAYERSTATUS_H
 
-#include <yarp/dev/api.h>
+#include <yarp/sig/api.h>
 
 #include <yarp/os/Wire.h>
 #include <yarp/os/idl/WireTypes.h>
 
-#include <yarp/dev/AudioPlayerStatus_common.h>
+#include <yarp/sig/AudioPlayerStatus_common.h>
 
-namespace yarp::dev {
+namespace yarp::sig {
 
 /**
  * \brief `AudioPlayerStatus`: A class used to describe the status of an audio player device.
  * See \ref AudioDoc for additional documentation on YARP audio.
  */
-class YARP_dev_API AudioPlayerStatus :
+class YARP_sig_API AudioPlayerStatus :
         public yarp::os::idl::WirePortable
 {
 public:
@@ -88,6 +88,6 @@ private:
     bool nested_write_max_buffer_size(const yarp::os::idl::WireWriter& writer) const;
 };
 
-} // namespace yarp::dev
+} // namespace yarp::sig
 
 #endif // YARP_THRIFT_GENERATOR_STRUCT_AUDIOPLAYERSTATUS_H

@@ -8,9 +8,9 @@
 // This is an automatically generated file.
 // It could get re-generated if the ALLOW_IDL_GENERATION flag is on.
 
-#include <yarp/dev/AudioPlayerStatus.h>
+#include <yarp/sig/AudioPlayerStatus.h>
 
-namespace yarp::dev {
+namespace yarp::sig {
 
 // Constructor with field values
 AudioPlayerStatus::AudioPlayerStatus(const bool enabled,
@@ -233,4 +233,4 @@ bool AudioPlayerStatus::nested_write_max_buffer_size(const yarp::os::idl::WireWr
     return true;
 }
 
-} // namespace yarp::dev
+} // namespace yarp::sig

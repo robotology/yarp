@@ -8,9 +8,9 @@
 // This is an automatically generated file.
 // It could get re-generated if the ALLOW_IDL_GENERATION flag is on.
 
-#include <yarp/dev/audioBufferSizeData.h>
+#include <yarp/sig/audioBufferSizeData.h>
 
-namespace yarp::dev {
+namespace yarp::sig {
 
 // Constructor with field values
 audioBufferSizeData::audioBufferSizeData(const std::int32_t m_samples,
@@ -287,4 +287,4 @@ bool audioBufferSizeData::nested_write_size(const yarp::os::idl::WireWriter& wri
     return true;
 }
 
-} // namespace yarp::dev
+} // namespace yarp::sig

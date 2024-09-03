@@ -1,0 +1,3 @@
+yarp/sig/AudioRecorderStatus_common.h
+yarp/sig/AudioRecorderStatus.h
+yarp/sig/AudioRecorderStatus.cpp
