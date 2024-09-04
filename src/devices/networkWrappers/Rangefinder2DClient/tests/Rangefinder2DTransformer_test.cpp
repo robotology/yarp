@@ -16,19 +16,17 @@ using namespace yarp::dev;
 using namespace yarp::sig;
 using namespace yarp::os;
 
-TEST_CASE("dev::Rangefinder2DClientTest", "[yarp::dev]")
+TEST_CASE("dev::Rangefinder2DTransformerTest", "[yarp::dev]")
 {
     YARP_REQUIRE_PLUGIN("fakeLaser", "device");
-    YARP_REQUIRE_PLUGIN("rangefinder2D_nws_yarp", "device");
-    YARP_REQUIRE_PLUGIN("Rangefinder2DClient", "device");
+    YARP_REQUIRE_PLUGIN("rangefinder2DTransformer", "device");
 
     Network::setLocalMode(true);
 
-    SECTION("Checking Rangefinder2DClient device")
+    SECTION("Checking rangefinder2DTransformer device")
     {
         PolyDriver ddlas;
-        PolyDriver ddnws;
-        PolyDriver ddnwc;
+        PolyDriver ddtrf;
         IRangefinder2D* irng = nullptr;
 
         ////////"Checking opening polydriver"
@@ -41,40 +39,28 @@ TEST_CASE("dev::Rangefinder2DClientTest", "[yarp::dev]")
             REQUIRE(ddlas.open(plas_cfg));
         }
         {
-            Property pnws_cfg;
-            pnws_cfg.put("device", "rangefinder2D_nws_yarp");
-            pnws_cfg.put("period", 0.010);
-            pnws_cfg.put("name", "/laser");
-            REQUIRE(ddnws.open(pnws_cfg));
+            Property ptrf_cfg;
+            ptrf_cfg.put("device", "rangefinder2DTransformer");
+            ptrf_cfg.put("period", 0.010);
+            ptrf_cfg.put("name", "/laser");
+            REQUIRE(ddtrf.open(ptrf_cfg));
         }
 
         //attach the nws to the fakelaser device
-        {yarp::dev::WrapperSingle* ww_nws = nullptr; ddnws.view(ww_nws);
-        REQUIRE(ww_nws);
-        bool result_att = ww_nws->attach(&ddlas);
+        {yarp::dev::WrapperSingle* ww_trf = nullptr; ddtrf.view(ww_trf);
+        REQUIRE(ww_trf);
+        bool result_att = ww_trf->attach(&ddlas);
         REQUIRE(result_att); }
 
-        //create the client
-        {
-            Property pnwc_cfg;
-            pnwc_cfg.put("device", "Rangefinder2DClient");
-            pnwc_cfg.put("local", "/local_laser");
-            pnwc_cfg.put("remote", "/laser");
-            REQUIRE(ddnwc.open(pnwc_cfg));
-        }
-        REQUIRE(ddnwc.view(irng));
+        REQUIRE(ddtrf.view(irng));
 
         //execute tests
         yarp::dev::tests::exec_iRangefinder2D_test_1 (irng);
 
         //Close all polydrivers and check
-        CHECK(ddnwc.close());
+        CHECK(ddtrf.close());
         yarp::os::Time::delay(0.1);
-        INFO("Rangefinder2DClient closed");
-
-        CHECK(ddnws.close());
-        yarp::os::Time::delay(0.1);
-        INFO("rangefinder2D_nws_yarp closed");
+        INFO("rangefinder2DTransformer closed");
 
         CHECK(ddlas.close());
         yarp::os::Time::delay(0.1);

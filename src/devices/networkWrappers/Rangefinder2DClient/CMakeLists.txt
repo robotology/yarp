@@ -1,24 +1,27 @@
 # SPDX-FileCopyrightText: 2006-2021 Istituto Italiano di Tecnologia (IIT)
 # SPDX-License-Identifier: BSD-3-Clause
 
-yarp_prepare_plugin(Rangefinder2DClient
+yarp_prepare_plugin(rangefinder2DTransformer
   CATEGORY device
-  TYPE Rangefinder2DClient
-  INCLUDE Rangefinder2DClient.h
+  TYPE Rangefinder2DTransformer
+  INCLUDE Rangefinder2DTransformer.h
   DEPENDS "TARGET YARP::YARP_math"
+  GENERATE_PARSER
   DEFAULT ON
 )
 
-if(NOT SKIP_Rangefinder2DClient)
-  yarp_add_plugin(yarp_Rangefinder2DClient)
+if(NOT SKIP_rangefinder2DTransformer)
+  yarp_add_plugin(yarp_rangefinder2DTransformer)
 
-  target_sources(yarp_Rangefinder2DClient
+  target_sources(yarp_rangefinder2DTransformer
     PRIVATE
-      Rangefinder2DClient.cpp
-      Rangefinder2DClient.h
+      Rangefinder2DTransformer.cpp
+      Rangefinder2DTransformer.h
+      Rangefinder2DTransformer_ParamsParser.cpp
+      Rangefinder2DTransformer_ParamsParser.h
   )
 
-  target_link_libraries(yarp_Rangefinder2DClient
+  target_link_libraries(yarp_rangefinder2DTransformer
     PRIVATE
       YARP::YARP_os
       YARP::YARP_sig
@@ -33,7 +36,7 @@ if(NOT SKIP_Rangefinder2DClient)
   )
 
   yarp_install(
-    TARGETS yarp_Rangefinder2DClient
+    TARGETS yarp_rangefinder2DTransformer
     EXPORT YARP_${YARP_PLUGIN_MASTER}
     COMPONENT ${YARP_PLUGIN_MASTER}
     LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
@@ -43,7 +46,7 @@ if(NOT SKIP_Rangefinder2DClient)
 
   set(YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS ${YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS} PARENT_SCOPE)
 
-  set_property(TARGET yarp_Rangefinder2DClient PROPERTY FOLDER "Plugins/Device")
+  set_property(TARGET yarp_rangefinder2DTransformer PROPERTY FOLDER "Plugins/Device")
 
   if(YARP_COMPILE_TESTS)
     add_subdirectory(tests)
