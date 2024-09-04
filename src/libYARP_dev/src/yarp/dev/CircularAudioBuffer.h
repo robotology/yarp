@@ -7,7 +7,7 @@
 #define YARP_DEV_CIRCULARAUDIOBUFFER_H
 
 #include <yarp/os/Log.h>
-#include <yarp/dev/AudioBufferSize.h>
+#include <yarp/sig/AudioBufferSize.h>
 #include <cstdio>
 #include <string>
 
@@ -20,7 +20,7 @@ template <typename SAMPLE>
 class CircularAudioBuffer
 {
     std::string name;
-    yarp::dev::AudioBufferSize maxsize;
+    yarp::sig::AudioBufferSize maxsize;
     size_t start;
     size_t end;
     SAMPLE *elems=nullptr;
@@ -52,7 +52,7 @@ class CircularAudioBuffer
         }
     }
 
-    AudioBufferSize size()
+    yarp::sig::AudioBufferSize size()
     {
         size_t i;
         if (end > start) {
@@ -62,7 +62,7 @@ class CircularAudioBuffer
         } else {
             i = maxsize.getBufferElements() - start + end;
         }
-        return AudioBufferSize(i/maxsize.getChannels(), maxsize.getChannels(), sizeof(SAMPLE));
+        return yarp::sig::AudioBufferSize(i/maxsize.getChannels(), maxsize.getChannels(), sizeof(SAMPLE));
     }
 
     SAMPLE read()
@@ -76,7 +76,7 @@ class CircularAudioBuffer
         return elem;
     }
 
-    yarp::dev::AudioBufferSize getMaxSize()
+    yarp::sig::AudioBufferSize getMaxSize()
     {
         return maxsize;
     }
@@ -87,7 +87,7 @@ class CircularAudioBuffer
         end   = 0;
     }
 
-    CircularAudioBuffer(std::string buffer_name, yarp::dev::AudioBufferSize bufferSize) :
+    CircularAudioBuffer(std::string buffer_name, yarp::sig::AudioBufferSize bufferSize) :
             name{buffer_name},
             maxsize{bufferSize},
             start{0},

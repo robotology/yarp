@@ -1,0 +1,2 @@
+yarp/sig/LaserScan2D.h
+yarp/sig/LaserScan2D.cpp

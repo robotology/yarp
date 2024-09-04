@@ -339,7 +339,7 @@ void Rangefinder2D_nws_yarp::run()
             int ranges_size = ranges.size();
             YARP_UNUSED(ranges_size);
 
-            yarp::dev::LaserScan2D& b = streamingPort.prepare();
+            yarp::sig::LaserScan2D& b = streamingPort.prepare();
             //b.clear();
             b.scans=ranges;
             b.angle_min= minAngle;

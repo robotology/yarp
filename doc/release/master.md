@@ -81,7 +81,10 @@ New Features
 #### `lib_yarp_dev`
 
 * `Drivers.cpp` If the user requests for a not existing plugin, the system now prints a message suggesting devices with similar names
+* The following data types have been migrated from `yarp_dev` to `yarp_sig` library: `AudioPlayerStatus, AudioRecorderStatus, AudioBufferSize, AudioBufferSizeData, LaserMeasurementData, LaserScan2D`.
 
 #### `lib_yarp_sig`
 
 * Improvements to serialization class `yarp::sig::Sound` (breaking change)
+* yarp_sig can now use IDL thrift to generate custom data types.
+* The following data types have been migrated from `yarp_dev` to `yarp_sig` library: `AudioPlayerStatus, AudioRecorderStatus, AudioBufferSize, AudioBufferSizeData, LaserMeasurementData, LaserScan2D`.

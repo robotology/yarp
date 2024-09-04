@@ -8,23 +8,23 @@
 // This is an automatically generated file.
 // It could get re-generated if the ALLOW_IDL_GENERATION flag is on.
 
-#ifndef YARP_THRIFT_GENERATOR_STRUCT_AUDIOPLAYERSTATUS_H
-#define YARP_THRIFT_GENERATOR_STRUCT_AUDIOPLAYERSTATUS_H
+#ifndef YARP_THRIFT_GENERATOR_STRUCT_AUDIORECORDERSTATUS_H
+#define YARP_THRIFT_GENERATOR_STRUCT_AUDIORECORDERSTATUS_H
 
-#include <yarp/dev/api.h>
+#include <yarp/sig/api.h>
 
 #include <yarp/os/Wire.h>
 #include <yarp/os/idl/WireTypes.h>
 
-#include <yarp/dev/AudioPlayerStatus_common.h>
+#include <yarp/sig/AudioRecorderStatus_common.h>
 
-namespace yarp::dev {
+namespace yarp::sig {
 
 /**
- * \brief `AudioPlayerStatus`: A class used to describe the status of an audio player device.
+ * \brief `AudioRecorderStatus`: A class used to describe the status of an audio recorder device.
  * See \ref AudioDoc for additional documentation on YARP audio.
  */
-class YARP_dev_API AudioPlayerStatus :
+class YARP_sig_API AudioRecorderStatus :
         public yarp::os::idl::WirePortable
 {
 public:
@@ -43,12 +43,12 @@ public:
     size_t max_buffer_size{0};
 
     // Default constructor
-    AudioPlayerStatus() = default;
+    AudioRecorderStatus() = default;
 
     // Constructor with field values
-    AudioPlayerStatus(const bool enabled,
-                      const size_t current_buffer_size,
-                      const size_t max_buffer_size);
+    AudioRecorderStatus(const bool enabled,
+                        const size_t current_buffer_size,
+                        const size_t max_buffer_size);
 
     // Read structure on a Wire
     bool read(yarp::os::idl::WireReader& reader) override;
@@ -66,7 +66,7 @@ public:
     std::string toString() const;
 
     // If you want to serialize this class without nesting, use this helper
-    typedef yarp::os::idl::Unwrapped<AudioPlayerStatus> unwrapped;
+    typedef yarp::os::idl::Unwrapped<AudioRecorderStatus> unwrapped;
 
 private:
     // read/write enabled field
@@ -88,6 +88,6 @@ private:
     bool nested_write_max_buffer_size(const yarp::os::idl::WireWriter& writer) const;
 };
 
-} // namespace yarp::dev
+} // namespace yarp::sig
 
-#endif // YARP_THRIFT_GENERATOR_STRUCT_AUDIOPLAYERSTATUS_H
+#endif // YARP_THRIFT_GENERATOR_STRUCT_AUDIORECORDERSTATUS_H

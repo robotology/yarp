@@ -3,15 +3,15 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-namespace yarp yarp.dev
+namespace yarp yarp.sig
 
 typedef i32 ( yarp.type = "size_t" ) size_t
 
 /**
-* \brief `AudioPlayerStatus`: A class used to describe the status of an audio player device.
+* \brief `AudioRecorderStatus`: A class used to describe the status of an audio recorder device.
 * See \ref AudioDoc for additional documentation on YARP audio.
 */
-struct AudioPlayerStatus
+struct AudioRecorderStatus
 {
     /** true if the playback is currently enabled */
     1: bool         enabled;
@@ -23,6 +23,6 @@ struct AudioPlayerStatus
     3: size_t       max_buffer_size;
 }
 (
-    yarp.api.include = "yarp/dev/api.h"
-    yarp.api.keyword = "YARP_dev_API"
+    yarp.api.include = "yarp/sig/api.h"
+    yarp.api.keyword = "YARP_sig_API"
 )

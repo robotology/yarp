@@ -10,10 +10,10 @@ struct return_isRecording {
   2: bool isRecording = false;
 }
 
-struct yarp_dev_AudioBufferSize {
+struct yarp_sig_AudioBufferSize {
 } (
-  yarp.name = "yarp::dev::AudioBufferSize"
-  yarp.includefile = "yarp/dev/AudioBufferSize.h"
+  yarp.name = "yarp::sig::AudioBufferSize"
+  yarp.includefile = "yarp/sig/AudioBufferSize.h"
 )
 
 struct yarp_sig_Sound {
@@ -29,12 +29,12 @@ struct return_getSound {
 
 struct return_getRecordingAudioBufferCurrentSize {
   1: bool ret = false;
-  2: yarp_dev_AudioBufferSize bufsize;
+  2: yarp_sig_AudioBufferSize bufsize;
 }
 
 struct return_getRecordingAudioBufferMaxSize {
   1: bool ret = false;
-  2: yarp_dev_AudioBufferSize bufsize;
+  2: yarp_sig_AudioBufferSize bufsize;
 }
 
 typedef i32 ( yarp.type = "size_t" ) size_t

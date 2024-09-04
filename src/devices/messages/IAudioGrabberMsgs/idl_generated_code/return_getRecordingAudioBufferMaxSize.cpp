@@ -12,7 +12,7 @@
 
 // Constructor with field values
 return_getRecordingAudioBufferMaxSize::return_getRecordingAudioBufferMaxSize(const bool ret,
-                                                                             const yarp::dev::AudioBufferSize& bufsize) :
+                                                                             const yarp::sig::AudioBufferSize& bufsize) :
         WirePortable(),
         ret(ret),
         bufsize(bufsize)

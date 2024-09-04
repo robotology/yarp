@@ -14,6 +14,7 @@
 
 using namespace yarp::os;
 using namespace yarp::dev;
+using namespace yarp::sig;
 
 constexpr double c_sleep_time=0.005;
 
@@ -27,7 +28,7 @@ YARP_LOG_COMPONENT(AUDIOPLAYER_BASE, "yarp.devices.AudioPlayerDeviceBase")
 #define DEFAULT_NUM_CHANNELS    (2)
 #define DEFAULT_SAMPLE_SIZE     (2)
 
-bool AudioPlayerDeviceBase::getPlaybackAudioBufferCurrentSize(yarp::dev::AudioBufferSize& size)
+bool AudioPlayerDeviceBase::getPlaybackAudioBufferCurrentSize(yarp::sig::AudioBufferSize& size)
 {
     if (m_outputBuffer == nullptr)
     {
@@ -39,7 +40,7 @@ bool AudioPlayerDeviceBase::getPlaybackAudioBufferCurrentSize(yarp::dev::AudioBu
     return true;
 }
 
-bool AudioPlayerDeviceBase::getPlaybackAudioBufferMaxSize(yarp::dev::AudioBufferSize& size)
+bool AudioPlayerDeviceBase::getPlaybackAudioBufferMaxSize(yarp::sig::AudioBufferSize& size)
 {
     if (m_outputBuffer == nullptr)
     {

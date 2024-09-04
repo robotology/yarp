@@ -3,21 +3,21 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#ifndef YARP_DEV_AUDIOBUFFERSIZE_H
-#define YARP_DEV_AUDIOBUFFERSIZE_H
+#ifndef YARP_SIG_AUDIOBUFFERSIZE_H
+#define YARP_SIG_AUDIOBUFFERSIZE_H
 
 #include <yarp/os/Portable.h>
 #include <yarp/os/PortReader.h>
 #include <yarp/os/PortWriter.h>
-#include <yarp/dev/api.h>
-#include <yarp/dev/audioBufferSizeData.h>
+#include <yarp/sig/api.h>
+#include <yarp/sig/audioBufferSizeData.h>
 
-namespace yarp::dev {
+namespace yarp::sig {
 
 template <typename SAMPLE>
 class CircularAudioBuffer;
 
-class YARP_dev_API AudioBufferSize :
+class YARP_sig_API AudioBufferSize :
     public yarp::os::idl::WirePortable
 {
 private:
@@ -39,6 +39,6 @@ public:
     AudioBufferSize(size_t samples, size_t channels, size_t depth_in_bytes);
 };
 
-} // namespace yarp::dev
+} // namespace yarp::sig
 
-#endif // YARP_DEV_AUDIOBUFFERSIZE_H
+#endif // YARP_SIG_AUDIOBUFFERSIZE_H

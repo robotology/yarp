@@ -5,7 +5,7 @@
 
 #include "AudioRecorderWrapper.h"
 #include <yarp/os/LogStream.h>
-#include <yarp/dev/AudioRecorderStatus.h>
+#include <yarp/sig/AudioRecorderStatus.h>
 
 using namespace yarp::dev;
 using namespace yarp::os;
@@ -246,8 +246,8 @@ bool AudioRecorderWrapper::detach()
 
 void AudioRecorderStatusThread::run()
 {
-    yarp::dev::AudioBufferSize device_buffer_current_size;
-    yarp::dev::AudioBufferSize device_buffer_max_size;
+    yarp::sig::AudioBufferSize device_buffer_current_size;
+    yarp::sig::AudioBufferSize device_buffer_max_size;
     m_ARW->m_mic->getRecordingAudioBufferCurrentSize(device_buffer_current_size);
     m_ARW->m_mic->getRecordingAudioBufferMaxSize(device_buffer_max_size);
 
@@ -265,7 +265,7 @@ void AudioRecorderStatusThread::run()
     m_ARW->m_mic->isRecording(m_ARW->m_isRecording);
 
     //status port
-    yarp::dev::AudioRecorderStatus status;
+    yarp::sig::AudioRecorderStatus status;
     status.enabled = m_ARW->m_isRecording;
     status.current_buffer_size = device_buffer_current_size.getSamples();
     status.max_buffer_size = device_buffer_max_size.getSamples();

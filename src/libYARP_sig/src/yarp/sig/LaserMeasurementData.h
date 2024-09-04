@@ -3,23 +3,23 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#ifndef YARP_DEV_LASERMEASURMENTDATA_H
-#define YARP_DEV_LASERMEASURMENTDATA_H
+#ifndef YARP_SIG_LASERMEASURMENTDATA_H
+#define YARP_SIG_LASERMEASURMENTDATA_H
 
-#include <yarp/dev/api.h>
+#include <yarp/sig/api.h>
 
 /*!
  * \file LaserMeasurementData.h
  */
 
-namespace yarp::dev {
+namespace yarp::sig {
 class LaserMeasurementData;
 }
 
 /*!
  * \LaserMeasurementData
  */
-class YARP_dev_API yarp::dev::LaserMeasurementData
+class YARP_sig_API yarp::sig::LaserMeasurementData
 {
     double stored_x;
     double stored_y;
@@ -33,4 +33,4 @@ public:
     void get_polar(double& rho, double& theta);
 };
 
-#endif // YARP_DEV_LASERMEASURMENTDATA_H
+#endif // YARP_SIG_LASERMEASURMENTDATA_H

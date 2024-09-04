@@ -9,7 +9,7 @@
 
 #include <yarp/sig/Sound.h>
 #include <yarp/dev/api.h>
-#include <yarp/dev/AudioBufferSize.h>
+#include <yarp/sig/AudioBufferSize.h>
 
 namespace yarp::dev {
 
@@ -56,9 +56,9 @@ public:
      */
     virtual bool isPlaying(bool& playback_enabled) = 0;
 
-    virtual bool getPlaybackAudioBufferMaxSize(yarp::dev::AudioBufferSize& size) = 0;
+    virtual bool getPlaybackAudioBufferMaxSize(yarp::sig::AudioBufferSize& size) = 0;
 
-    virtual bool getPlaybackAudioBufferCurrentSize(yarp::dev::AudioBufferSize& size) = 0;
+    virtual bool getPlaybackAudioBufferCurrentSize(yarp::sig::AudioBufferSize& size) = 0;
 
     virtual bool resetPlaybackAudioBuffer() = 0;
 

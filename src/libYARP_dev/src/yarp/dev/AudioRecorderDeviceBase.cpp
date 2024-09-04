@@ -11,6 +11,7 @@
 
 using namespace yarp::os;
 using namespace yarp::dev;
+using namespace yarp::sig;
 
 constexpr double c_sleep_time=0.005;
 
@@ -122,7 +123,7 @@ bool AudioRecorderDeviceBase::getSound(yarp::sig::Sound& sound, size_t min_numbe
     return true;
 }
 
-bool AudioRecorderDeviceBase::getRecordingAudioBufferMaxSize(yarp::dev::AudioBufferSize& size)
+bool AudioRecorderDeviceBase::getRecordingAudioBufferMaxSize(yarp::sig::AudioBufferSize& size)
 {
     if (m_inputBuffer == nullptr)
     {
@@ -135,7 +136,7 @@ bool AudioRecorderDeviceBase::getRecordingAudioBufferMaxSize(yarp::dev::AudioBuf
 }
 
 
-bool AudioRecorderDeviceBase::getRecordingAudioBufferCurrentSize(yarp::dev::AudioBufferSize& size)
+bool AudioRecorderDeviceBase::getRecordingAudioBufferCurrentSize(yarp::sig::AudioBufferSize& size)
 {
     if (m_inputBuffer == nullptr)
     {

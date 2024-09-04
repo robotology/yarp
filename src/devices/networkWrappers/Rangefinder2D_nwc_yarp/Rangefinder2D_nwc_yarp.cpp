@@ -49,7 +49,7 @@ Rangefinder2DInputPortProcessor::Rangefinder2DInputPortProcessor()
     resetStat();
 }
 
-void Rangefinder2DInputPortProcessor::onRead(yarp::dev::LaserScan2D&b)
+void Rangefinder2DInputPortProcessor::onRead(yarp::sig::LaserScan2D& b)
 {
     now=SystemClock::nowSystem();
     mutex.lock();
@@ -103,7 +103,7 @@ void Rangefinder2DInputPortProcessor::onRead(yarp::dev::LaserScan2D&b)
     mutex.unlock();
 }
 
-inline int Rangefinder2DInputPortProcessor::getLast(yarp::dev::LaserScan2D&data, Stamp &stmp)
+inline int Rangefinder2DInputPortProcessor::getLast(yarp::sig::LaserScan2D& data, Stamp& stmp)
 {
     mutex.lock();
     int ret=state;
@@ -204,7 +204,7 @@ bool Rangefinder2D_nwc_yarp::close()
 
 bool Rangefinder2D_nwc_yarp::getRawData(yarp::sig::Vector &data, double* timestamp)
 {
-    yarp::dev::LaserScan2D scan;
+    yarp::sig::LaserScan2D scan;
     m_inputPort.getLast(scan, m_lastTs);
 
     data = scan.scans;
@@ -218,7 +218,7 @@ bool Rangefinder2D_nwc_yarp::getRawData(yarp::sig::Vector &data, double* timesta
 
 bool Rangefinder2D_nwc_yarp::getLaserMeasurement(std::vector<LaserMeasurementData> &data, double* timestamp)
 {
-    yarp::dev::LaserScan2D scan;
+    yarp::sig::LaserScan2D scan;
     m_inputPort.getLast(scan, m_lastTs);
     size_t size = scan.scans.size();
     data.resize(size);

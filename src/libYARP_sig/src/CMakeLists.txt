@@ -9,12 +9,14 @@ add_library(YARP::YARP_sig ALIAS YARP_sig)
 set(YARP_sig_HDRS
   yarp/sig/all.h
   yarp/sig/api.h
+  yarp/sig/AudioBufferSize.h
   yarp/sig/Image.h
   yarp/sig/ImageDraw.h
   yarp/sig/ImageFile.h
   yarp/sig/ImageNetworkHeader.h
   yarp/sig/ImageUtils.h
   yarp/sig/IntrinsicParams.h
+  yarp/sig/LaserMeasurementData.h
   yarp/sig/Matrix.h
   yarp/sig/PointCloud.h
   yarp/sig/PointCloudBase.h
@@ -37,11 +39,13 @@ if(NOT YARP_NO_DEPRECATED) # Since YARP 3.0.0
 endif()
 
 set(YARP_sig_SRCS
+  yarp/sig/AudioBufferSize.cpp
   yarp/sig/Image.cpp
   yarp/sig/Image.copyPixels.cpp
   yarp/sig/ImageFile.cpp
   yarp/sig/ImageUtils.cpp
   yarp/sig/IntrinsicParams.cpp
+  yarp/sig/LaserMeasurementData.cpp
   yarp/sig/Matrix.cpp
   yarp/sig/PointCloudBase.cpp
   yarp/sig/PointCloudUtils.cpp
@@ -62,6 +66,31 @@ set(YARP_sig_IMPL_SRCS
   yarp/sig/impl/DeBayer.cpp
   yarp/sig/impl/IplImage.cpp
 )
+# Handle the YARP thrift messages
+include(YarpChooseIDL)
+
+set(YARP_sig_IDL
+  idl/audioBufferSizeData.thrift
+  idl/audioBufferSizeData.thrift
+  idl/AudioPlayerStatus.thrift
+  idl/AudioRecorderStatus.thrift
+  idl/LaserScan2D.thrift
+
+)
+
+yarp_choose_idl(YARP_sig_idl ${YARP_sig_IDL})
+
+unset(YARP_sig_idl_HDRS)
+unset(YARP_sig_idl_IMPL_HDRS)
+foreach(_f IN LISTS YARP_sig_idl_GEN_FILES)
+  if("${_f}" MATCHES "\\.h$")
+    if ("${_f}" MATCHES "yarp/sig" AND NOT "${_f}" MATCHES "yarp/sig/impl")
+      list(APPEND YARP_sig_idl_HDRS "${_f}")
+    else()
+      list(APPEND YARP_sig_idl_IMPL_HDRS ${_f})
+    endif()
+  endif()
+endforeach()
 
 source_group(
   TREE "${CMAKE_CURRENT_SOURCE_DIR}"
@@ -77,6 +106,11 @@ source_group(
     ${YARP_sig_HDRS}
     ${YARP_sig_IMPL_HDRS}
 )
+source_group(
+  TREE "${YARP_sig_idl_BUILD_INTERFACE_INCLUDE_DIRS}"
+  PREFIX "Generated Files"
+  FILES ${YARP_sig_idl_GEN_FILES}
+)
 
 target_sources(YARP_sig
   PRIVATE
@@ -84,11 +118,13 @@ target_sources(YARP_sig
     ${YARP_sig_HDRS}
     ${YARP_sig_IMPL_SRCS}
     ${YARP_sig_IMPL_HDRS}
+    ${YARP_sig_idl_GEN_FILES}
 )
 
 target_include_directories(YARP_sig
   PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+    $<BUILD_INTERFACE:${YARP_sig_idl_BUILD_INTERFACE_INCLUDE_DIRS}>
     $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
 )
 target_compile_features(YARP_sig PUBLIC cxx_std_17)

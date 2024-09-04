@@ -158,7 +158,7 @@ bool   AudioRecorder_nwc_yarp::isRecording(bool& recording_enabled)
     return true;
 }
 
-bool   AudioRecorder_nwc_yarp::getRecordingAudioBufferMaxSize(yarp::dev::AudioBufferSize& size)
+bool   AudioRecorder_nwc_yarp::getRecordingAudioBufferMaxSize(yarp::sig::AudioBufferSize& size)
 {
     std::lock_guard <std::mutex> lg(m_mutex);
     auto ret = m_audiograb_RPC.getRecordingAudioBufferMaxSize_RPC();
@@ -171,7 +171,7 @@ bool   AudioRecorder_nwc_yarp::getRecordingAudioBufferMaxSize(yarp::dev::AudioBu
     return true;
 }
 
-bool   AudioRecorder_nwc_yarp::getRecordingAudioBufferCurrentSize(yarp::dev::AudioBufferSize& size)
+bool   AudioRecorder_nwc_yarp::getRecordingAudioBufferCurrentSize(yarp::sig::AudioBufferSize& size)
 {
     std::lock_guard <std::mutex> lg(m_mutex);
     auto ret = m_audiograb_RPC.getRecordingAudioBufferCurrentSize_RPC();

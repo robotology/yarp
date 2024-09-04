@@ -3,10 +3,10 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#include <yarp/dev/LaserMeasurementData.h>
+#include <yarp/sig/LaserMeasurementData.h>
 #include <cmath>
 
-using namespace yarp::dev;
+using namespace yarp::sig;
 
 LaserMeasurementData::LaserMeasurementData()
 {

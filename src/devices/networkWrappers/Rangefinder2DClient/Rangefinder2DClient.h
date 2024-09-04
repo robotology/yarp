@@ -13,7 +13,7 @@
 #include <yarp/dev/IRangefinder2D.h>
 #include <yarp/dev/ControlBoardInterfaces.h>
 #include <yarp/dev/ControlBoardHelpers.h>
-#include <yarp/dev/LaserScan2D.h>
+#include <yarp/sig/LaserScan2D.h>
 #include <yarp/sig/Vector.h>
 #include <yarp/os/Time.h>
 #include <yarp/dev/PolyDriver.h>
@@ -25,9 +25,9 @@
 const int LASER_TIMEOUT=100; //ms
 
 class Rangefinder2DInputPortProcessor :
-        public yarp::os::BufferedPort<yarp::dev::LaserScan2D>
+        public yarp::os::BufferedPort<yarp::sig::LaserScan2D>
 {
-    yarp::dev::LaserScan2D lastScan;
+    yarp::sig::LaserScan2D lastScan;
     std::mutex mutex;
     yarp::os::Stamp lastStamp;
     double deltaT;
@@ -45,10 +45,10 @@ public:
 
     Rangefinder2DInputPortProcessor();
 
-    using yarp::os::BufferedPort<yarp::dev::LaserScan2D>::onRead;
-    void onRead(yarp::dev::LaserScan2D&v) override;
+    using yarp::os::BufferedPort<yarp::sig::LaserScan2D>::onRead;
+    void onRead(yarp::sig::LaserScan2D& v) override;
 
-    inline int getLast(yarp::dev::LaserScan2D &data, yarp::os::Stamp &stmp);
+    inline int getLast(yarp::sig::LaserScan2D& data, yarp::os::Stamp& stmp);
 
     inline int getIterations();
 
@@ -105,7 +105,7 @@ public:
     * @param data a vector containing the measurement data, expressed in cartesian/polar format
     * @return true/false..
     */
-    bool getLaserMeasurement(std::vector<yarp::dev::LaserMeasurementData> &data, double* timestamp = nullptr) override;
+    bool getLaserMeasurement(std::vector<yarp::sig::LaserMeasurementData> &data, double* timestamp = nullptr) override;
 
     /**
     * Get the device measurements

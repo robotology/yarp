@@ -22,6 +22,7 @@ extern "C" {
 #include <yarp/dev/AudioVisualInterfaces.h>
 #include <yarp/dev/IFrameGrabberImage.h>
 #include <yarp/dev/DeviceDriver.h>
+#include <yarp/sig/AudioBufferSize.h>
 
 #include "ffmpeg_api.h"
 #include "FfmpegGrabber_ParamsParser.h"
@@ -89,11 +90,11 @@ public:
         return false;
     }
 
-    bool getRecordingAudioBufferMaxSize(yarp::dev::AudioBufferSize&) override {
+    bool getRecordingAudioBufferMaxSize(yarp::sig::AudioBufferSize&) override {
         return false;
     }
 
-    bool getRecordingAudioBufferCurrentSize(yarp::dev::AudioBufferSize&) override {
+    bool getRecordingAudioBufferCurrentSize(yarp::sig::AudioBufferSize&) override {
         return false;
     }
 

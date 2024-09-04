@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-namespace yarp yarp.dev
+namespace yarp yarp.sig
 
 struct YarpVector {
   1: list<double> content;
@@ -33,6 +33,6 @@ struct LaserScan2D
     6: i32          status=3;
 }
 (
-    yarp.api.include = "yarp/dev/api.h"
-    yarp.api.keyword = "YARP_dev_API"
+    yarp.api.include = "yarp/sig/api.h"
+    yarp.api.keyword = "YARP_sig_API"
 )
