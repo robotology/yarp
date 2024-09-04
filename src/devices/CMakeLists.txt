@@ -39,6 +39,7 @@ yarp_begin_plugin_library(yarpmod
   add_subdirectory(SDLJoypad)
   add_subdirectory(upowerBattery)
   add_subdirectory(multipleanalogsensorsremapper)
+  add_subdirectory(Rangefinder2DTransformer)
   add_subdirectory(map2DStorage)
   add_subdirectory(usbCamera)
   add_subdirectory(controlBoardCouplingHandler)
