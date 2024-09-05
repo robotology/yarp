@@ -10,6 +10,7 @@
 #include <yarp/dev/INavigation2D.h>
 #include <yarp/dev/ControlBoardInterfaces.h>
 #include <yarp/os/PeriodicThread.h>
+#include <yarp/dev/Map2DPath.h>
 #include <math.h>
 
 #include "FakeNavigation_ParamsParser.h"
@@ -57,6 +58,7 @@ public:
     bool gotoTargetByAbsoluteLocation(yarp::dev::Nav2D::Map2DLocation loc) override;
     bool gotoTargetByRelativeLocation(double x, double y, double theta) override;
     bool gotoTargetByRelativeLocation(double x, double y) override;
+    bool followPath(const yarp::dev::Nav2D::Map2DPath& path) override;
     bool getAbsoluteLocationOfCurrentTarget(yarp::dev::Nav2D::Map2DLocation& target) override;
     bool getRelativeLocationOfCurrentTarget(double& x, double& y, double& theta) override;
     bool getNavigationStatus(yarp::dev::Nav2D::NavigationStatusEnum& status) override;

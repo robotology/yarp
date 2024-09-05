@@ -106,6 +106,13 @@ public:
     virtual bool gotoTargetByAbsoluteLocation(yarp::dev::Nav2D::Map2DLocation loc) = 0;
 
     /**
+     * Ask the robot to navigate through a set of locations defined in the world reference frame
+     * @param path the locations to be reached
+     * @return true/false
+    */
+    virtual bool followPath(const yarp::dev::Nav2D::Map2DPath& path) = 0;
+
+    /**
      * Gets the last navigation target in the world reference frame
      * @param loc the location of the robot
      * @return true/false

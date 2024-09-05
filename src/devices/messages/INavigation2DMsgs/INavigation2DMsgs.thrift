@@ -108,6 +108,7 @@ service INavigation2DMsgs
   return_get_current_nav_map         get_current_navigation_map_RPC    (1:yarp_dev_Nav2D_NavigationMapTypeEnum map_type);
 
   bool                               goto_target_by_absolute_location_RPC         (1:yarp_dev_Nav2D_Map2DLocation loc);
+  bool                               follow_path_RPC  (1:yarp_dev_Nav2D_Map2DPath path);
   bool                               goto_target_by_relative_location1_RPC        (1:double x, 2:double y);
   bool                               goto_target_by_relative_location2_RPC        (1:double x, 2:double y, 3: double theta);
   return_get_abs_loc_of_curr_target  get_absolute_location_of_current_target_RPC  ();

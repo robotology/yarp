@@ -23,6 +23,7 @@
 #include <return_get_rel_loc_of_curr_target.h>
 #include <yarp/dev/INavigation2D.h>
 #include <yarp/dev/Map2DLocation.h>
+#include <yarp/dev/Map2DPath.h>
 
 class INavigation2DMsgs :
         public yarp::os::Wire
@@ -48,6 +49,8 @@ public:
     virtual return_get_current_nav_map get_current_navigation_map_RPC(const yarp::dev::Nav2D::NavigationMapTypeEnum map_type);
 
     virtual bool goto_target_by_absolute_location_RPC(const yarp::dev::Nav2D::Map2DLocation& loc);
+
+    virtual bool follow_path_RPC(const yarp::dev::Nav2D::Map2DPath& path);
 
     virtual bool goto_target_by_relative_location1_RPC(const double x, const double y);
 
