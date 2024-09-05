@@ -71,7 +71,7 @@ public:
 
 private:
     // thrift
-    IRangeFinder2DRPCd m_RPC;
+    IRangefinder2DRPCd m_RPC;
 
     yarp::os::Port rpcPort;
     yarp::os::BufferedPort<yarp::sig::LaserScan2D> streamingPort;
