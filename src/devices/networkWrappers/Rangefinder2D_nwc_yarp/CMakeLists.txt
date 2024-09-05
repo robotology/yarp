@@ -21,6 +21,9 @@ if(NOT SKIP_rangefinder2D_nwc_yarp)
       Rangefinder2D_nwc_yarp_ParamsParser.h
   )
 
+  target_sources(yarp_rangefinder2D_nwc_yarp PRIVATE $<TARGET_OBJECTS:IRangefinder2DMsgs>)
+  target_include_directories(yarp_rangefinder2D_nwc_yarp PRIVATE $<TARGET_PROPERTY:IRangefinder2DMsgs,INTERFACE_INCLUDE_DIRECTORIES>)
+
   target_link_libraries(yarp_rangefinder2D_nwc_yarp
     PRIVATE
       YARP::YARP_os

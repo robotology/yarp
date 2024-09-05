@@ -27,18 +27,14 @@
 const int LASER_TIMEOUT=100; //ms
 
 /**
-* @ingroup dev_impl_network_clients dev_impl_network_lidar
+* @ingroup dev_impl_wrapper dev_impl_network_lidar
 *
-* \brief `Rangefinder2DClient`: The client side of any ILaserRangefinder2D capable device.
+* \brief `Rangefinder2DTransformer`: A device which acts a virtual laser, it attaches to another lidar,
+* which provides a stream a measurements, and reclocates them in the space. The new origin can be specified
+* both manually, as a 2D point in space, or though a tranform.
 *
-* Still single thread! concurrent access is unsafe.
-*
-*  Parameters required by this device are:
-* | Parameter name | SubParameter   | Type    | Units          | Default Value | Required     | Description                                                       | Notes |
-* |:--------------:|:--------------:|:-------:|:--------------:|:-------------:|:-----------: |:-----------------------------------------------------------------:|:-----:|
-* | local          |      -         | string  | -              |   -           | Yes          | Full port name opened by the Rangefinder2DClient device.          |       |
-* | remote         |      -         | string  | -              |   -           | Yes          | Full port name of the port opened on the server side, to which the Rangefinder2DClient connects to.    |     |
-* | carrier        |     -          | string  | -              | tcp           | No           | The carier used for the connection with the server.               |       |
+* Parameters required by this device are shown in class: Rangefinder2DTransformer_ParamsParser
+* 
 */
 class Rangefinder2DTransformer:
         public yarp::dev::DeviceDriver,
@@ -51,13 +47,8 @@ protected:
     yarp::dev::IRangefinder2D* sens_p=nullptr;
 
     //data
-    double m_scan_angle_min;
-    double m_scan_angle_max;
-    double m_device_position_x=0;
-    double m_device_position_y=0;
-    double m_device_position_theta=0;
-    std::string m_laser_frame_name;
-    std::string m_robot_frame_name;
+    double m_scan_angle_min = std::nan("1");
+    double m_scan_angle_max = std::nan("1");
 
 public:
 

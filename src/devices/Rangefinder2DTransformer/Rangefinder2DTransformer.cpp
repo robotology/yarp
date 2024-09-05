@@ -35,66 +35,49 @@ bool Rangefinder2DTransformer::open(yarp::os::Searchable& config)
         return false;
     }
 
-    //get the position of the device, if it is available
-    auto* drv = new yarp::dev::PolyDriver;
-    Property   TransformClientOptions;
-    TransformClientOptions.put("device", "transformClient");
-    TransformClientOptions.put("local", "/rangefinder2DTransformClient");
-    TransformClientOptions.put("remote", "/transformServer");
-    TransformClientOptions.put("period", "10");
-
-    bool b_canOpenTransformClient = false;
-    if (config.check("laser_frame_name") &&
-        config.check("robot_frame_name"))
+    if (!m_laser_frame_name.empty() && !m_robot_frame_name.empty())
     {
-        m_laser_frame_name = config.find("laser_frame_name").toString();
-        m_robot_frame_name = config.find("robot_frame_name").toString();
-        b_canOpenTransformClient = drv->open(TransformClientOptions);
-    }
-
-    if (b_canOpenTransformClient)
-    {
-        yarp::dev::IFrameTransform* iTrf = nullptr;
-        drv->view(iTrf);
-        if (!iTrf)
+        // get the position of the device, if it is available
+        auto* drv = new yarp::dev::PolyDriver;
+        Property TransformClientOptions;
+        TransformClientOptions.put("device", "frameTransformClient");
+        TransformClientOptions.put("local", "/rangefinder2DTransformClient");
+        TransformClientOptions.put("remote", "/transformServer");
+        TransformClientOptions.put("period", 0.010);
+        bool b_canOpenTransformClient = drv->open(TransformClientOptions);
+        if (b_canOpenTransformClient)
         {
-            yCError(RANGEFINDER2DTRANSFORMER) << "A Problem occurred while trying to view the IFrameTransform interface";
+            yarp::dev::IFrameTransform* iTrf = nullptr;
+            drv->view(iTrf);
+            if (!iTrf)
+            {
+                yCError(RANGEFINDER2DTRANSFORMER) << "A Problem occurred while trying to view the IFrameTransform interface";
+                drv->close();
+                delete drv;
+                return false;
+            }
+
+            yarp::sig::Matrix mat;
+            iTrf->getTransform(m_laser_frame_name, m_robot_frame_name, mat);
+            yarp::sig::Vector v = yarp::math::dcm2rpy(mat);
+            m_device_position_x = mat[0][3];
+            m_device_position_y = mat[1][3];
+            m_device_position_theta = v[2];
+            if (fabs(v[0]) < 1e-6 && fabs(v[1]) < 1e-6)
+            {
+                yCError(RANGEFINDER2DTRANSFORMER) << "Laser device is not planar";
+                return false;
+            }
+            yCInfo(RANGEFINDER2DTRANSFORMER) << "Position information obtained from frametransform server (x,y,t):" << m_device_position_x << " " << m_device_position_y << " " << m_device_position_theta;
             drv->close();
             delete drv;
-            return false;
         }
-
-        yarp::sig::Matrix mat;
-        iTrf->getTransform(m_laser_frame_name, m_robot_frame_name, mat);
-        yarp::sig::Vector v = yarp::math::dcm2rpy(mat);
-        m_device_position_x = mat[0][3];
-        m_device_position_y = mat[1][3];
-        m_device_position_theta = v[2];
-        if (fabs(v[0]) < 1e-6 && fabs(v[1]) < 1e-6)
-        {
-            yCError(RANGEFINDER2DTRANSFORMER) << "Laser device is not planar";
-        }
-        yCInfo(RANGEFINDER2DTRANSFORMER) << "Position information obtained fromtransform server";
-        drv->close();
     }
     else
     {
-        if (config.check("device_position_x") &&
-            config.check("device_position_y") &&
-            config.check("device_position_theta"))
-        {
-            yCInfo(RANGEFINDER2DTRANSFORMER) << "Position information obtained from configuration parameters";
-            m_device_position_x = config.find("device_position_x").asFloat64();
-            m_device_position_y = config.find("device_position_y").asFloat64();
-            m_device_position_theta = config.find("device_position_theta").asFloat64();
-        }
-        else
-        {
-            yCDebug(RANGEFINDER2DTRANSFORMER) << "No position information provided for this device";
-        }
+        yCInfo(RANGEFINDER2DTRANSFORMER) << "Position information obtained from configuration parameters (x,y,t):" << m_device_position_x << " " << m_device_position_y << " " << m_device_position_theta;
     }
 
-    delete drv;
     return true;
 }
 
@@ -129,15 +112,6 @@ bool Rangefinder2DTransformer::getLaserMeasurement(std::vector<LaserMeasurementD
     if (!ret)
     {
         return false;
-    }
-    if (isnan(m_scan_angle_min) ||
-        isnan(m_scan_angle_max))
-    {
-        if (!sens_p->getScanLimits(m_scan_angle_min, m_scan_angle_max))
-        {
-            yCError(RANGEFINDER2DTRANSFORMER) << "getScanLimits failed";
-            return false;
-        }
     }
 
     size_t size = scans.size();
@@ -222,6 +196,11 @@ bool Rangefinder2DTransformer::attach(yarp::dev::PolyDriver* driver)
     if (driver->isValid())
     {
         driver->view(sens_p);
+        if (!sens_p->getScanLimits(m_scan_angle_min, m_scan_angle_max))
+        {
+            yCError(RANGEFINDER2DTRANSFORMER) << "getScanLimits failed";
+            return false;
+        }
     }
 
     if (nullptr == sens_p)

@@ -186,10 +186,18 @@ bool Rangefinder2D_nwc_yarp::open(yarp::os::Searchable &config)
        return false;
     }
 
+    if (!m_RPC.yarp().attachAsClient(m_rpcPort))
+    {
+       yCError(RANGEFINDER2DCLIENT, "Error! Cannot attach the port as a client");
+       return false;
+    }
+
     //getScanLimits is used here to update the cached values of scan_angle_min, scan_angle_max
-    double tmp_min;
-    double tmp_max;
-    this->getScanLimits(tmp_min, tmp_max);
+    if(!this->getScanLimits(m_scan_angle_min, m_scan_angle_max))
+    {
+       yCError(RANGEFINDER2DCLIENT) << "getScanLimits failed";
+       return false;
+    }
 
     return true;
 }
@@ -204,6 +212,7 @@ bool Rangefinder2D_nwc_yarp::close()
 
 bool Rangefinder2D_nwc_yarp::getRawData(yarp::sig::Vector &data, double* timestamp)
 {
+    std::lock_guard<std::mutex> lg(m_mutex);
     yarp::sig::LaserScan2D scan;
     m_inputPort.getLast(scan, m_lastTs);
 
@@ -218,8 +227,10 @@ bool Rangefinder2D_nwc_yarp::getRawData(yarp::sig::Vector &data, double* timesta
 
 bool Rangefinder2D_nwc_yarp::getLaserMeasurement(std::vector<LaserMeasurementData> &data, double* timestamp)
 {
+    std::lock_guard<std::mutex> lg(m_mutex);
     yarp::sig::LaserScan2D scan;
     m_inputPort.getLast(scan, m_lastTs);
+
     size_t size = scan.scans.size();
     data.resize(size);
     if (m_scan_angle_max < m_scan_angle_min) { yCError(RANGEFINDER2DCLIENT) << "getLaserMeasurement failed"; return false; }
@@ -239,134 +250,113 @@ bool Rangefinder2D_nwc_yarp::getLaserMeasurement(std::vector<LaserMeasurementDat
 
 bool Rangefinder2D_nwc_yarp::getDistanceRange(double& min, double& max)
 {
-    Bottle cmd, response;
-    cmd.addVocab32(VOCAB_GET);
-    cmd.addVocab32(VOCAB_ILASER2D);
-    cmd.addVocab32(VOCAB_LASER_DISTANCE_RANGE);
-    bool ok = m_rpcPort.write(cmd, response);
-    if (CHECK_FAIL(ok, response) != false)
-    {
-        min = response.get(2).asFloat64();
-        max = response.get(3).asFloat64();
-        return true;
+    std::lock_guard<std::mutex> lg(m_mutex);
+    auto ret = m_RPC.getDistanceRange_RPC();
+    if (!ret.retval) {
+        yCError(RANGEFINDER2DCLIENT, "Unable to getDistanceRange");
+        return false;
     }
-    return false;
+    min = ret.min;
+    max = ret.max;
+    return true;
 }
 
 bool Rangefinder2D_nwc_yarp::setDistanceRange(double min, double max)
 {
-    Bottle cmd, response;
-    cmd.addVocab32(VOCAB_SET);
-    cmd.addVocab32(VOCAB_ILASER2D);
-    cmd.addVocab32(VOCAB_LASER_DISTANCE_RANGE);
-    cmd.addFloat64(min);
-    cmd.addFloat64(max);
-    bool ok = m_rpcPort.write(cmd, response);
-    if (ok)
-    {
-        m_scan_angle_min = min;
-        m_scan_angle_max = max;
+    std::lock_guard<std::mutex> lg(m_mutex);
+    auto ret = m_RPC.setDistanceRange_RPC(min, max);
+    if (!ret) {
+        yCError(RANGEFINDER2DCLIENT, "Unable to setDistanceRange");
+        return false;
     }
-    return (CHECK_FAIL(ok, response));
+    return true;
 }
 
 bool Rangefinder2D_nwc_yarp::getScanLimits(double& min, double& max)
 {
-    Bottle cmd, response;
-    cmd.addVocab32(VOCAB_GET);
-    cmd.addVocab32(VOCAB_ILASER2D);
-    cmd.addVocab32(VOCAB_LASER_ANGULAR_RANGE);
-    bool ok = m_rpcPort.write(cmd, response);
-    if (CHECK_FAIL(ok, response) != false)
-    {
-        min = m_scan_angle_min = response.get(2).asFloat64();
-        max = m_scan_angle_max = response.get(3).asFloat64();
-        return true;
+    std::lock_guard<std::mutex> lg(m_mutex);
+    auto ret = m_RPC.getScanLimits_RPC();
+    if (!ret.retval) {
+        yCError(RANGEFINDER2DCLIENT, "Unable to getScanLimits");
+        return false;
     }
-    return false;
+    min = ret.min;
+    max = ret.max;
+    return true;
 }
 
 bool Rangefinder2D_nwc_yarp::setScanLimits(double min, double max)
 {
-    Bottle cmd, response;
-    cmd.addVocab32(VOCAB_SET);
-    cmd.addVocab32(VOCAB_ILASER2D);
-    cmd.addVocab32(VOCAB_LASER_ANGULAR_RANGE);
-    cmd.addFloat64(min);
-    cmd.addFloat64(max);
-    bool ok = m_rpcPort.write(cmd, response);
-    return (CHECK_FAIL(ok, response));
+    std::lock_guard<std::mutex> lg(m_mutex);
+    auto ret = m_RPC.setScanLimits_RPC(min,max);
+    if (!ret) {
+        yCError(RANGEFINDER2DCLIENT, "Unable to setScanLimits");
+        return false;
+    }
+    return true;
 }
 
 bool Rangefinder2D_nwc_yarp::getHorizontalResolution(double& step)
 {
-    Bottle cmd, response;
-    cmd.addVocab32(VOCAB_GET);
-    cmd.addVocab32(VOCAB_ILASER2D);
-    cmd.addVocab32(VOCAB_LASER_ANGULAR_STEP);
-    bool ok = m_rpcPort.write(cmd, response);
-    if (CHECK_FAIL(ok, response) != false)
-    {
-        step = response.get(2).asFloat64();
-        return true;
+    std::lock_guard<std::mutex> lg(m_mutex);
+    auto ret = m_RPC.getHorizontalResolution_RPC();
+    if (!ret.retval) {
+        yCError(RANGEFINDER2DCLIENT, "Unable to getHorizontalResolution");
+        return false;
     }
-    return false;
+    step = ret.step;
+    return true;
 }
 
 bool Rangefinder2D_nwc_yarp::setHorizontalResolution(double step)
 {
-    Bottle cmd, response;
-    cmd.addVocab32(VOCAB_SET);
-    cmd.addVocab32(VOCAB_ILASER2D);
-    cmd.addVocab32(VOCAB_LASER_ANGULAR_STEP);
-    cmd.addFloat64(step);
-    bool ok = m_rpcPort.write(cmd, response);
-    return (CHECK_FAIL(ok, response));
+    std::lock_guard<std::mutex> lg(m_mutex);
+    auto ret = m_RPC.setScanRate_RPC(step);
+    if (!ret) {
+        yCError(RANGEFINDER2DCLIENT, "Unable to setHorizontalResolution");
+        return false;
+    }
+    return true;
 }
 
 bool Rangefinder2D_nwc_yarp::getScanRate(double& rate)
 {
-    Bottle cmd, response;
-    cmd.addVocab32(VOCAB_GET);
-    cmd.addVocab32(VOCAB_ILASER2D);
-    cmd.addVocab32(VOCAB_LASER_SCAN_RATE);
-    bool ok = m_rpcPort.write(cmd, response);
-    if (CHECK_FAIL(ok, response) != false)
-    {
-        rate = response.get(2).asFloat64();
-        return true;
+    std::lock_guard<std::mutex> lg(m_mutex);
+    auto ret = m_RPC.getScanRate_RPC();
+    if (!ret.retval) {
+        yCError(RANGEFINDER2DCLIENT, "Unable to getScanRate");
+        return false;
     }
-    return false;
+    rate = ret.rate;
+    return true;
 }
 
 bool Rangefinder2D_nwc_yarp::setScanRate(double rate)
 {
-    Bottle cmd, response;
-    cmd.addVocab32(VOCAB_SET);
-    cmd.addVocab32(VOCAB_ILASER2D);
-    cmd.addVocab32(VOCAB_LASER_SCAN_RATE);
-    cmd.addFloat64(rate);
-    bool ok = m_rpcPort.write(cmd, response);
-    return (CHECK_FAIL(ok, response));
+    std::lock_guard<std::mutex> lg(m_mutex);
+    auto ret = m_RPC.setScanRate_RPC(rate);
+    if (!ret) {
+        yCError(RANGEFINDER2DCLIENT, "Unable to setScanRate");
+        return false;
+    }
+    return true;
 }
 
 bool Rangefinder2D_nwc_yarp::getDeviceStatus(Device_status &status)
 {
+    std::lock_guard <std::mutex> lg(m_mutex);
     status = m_inputPort.getStatus();
     return true;
 }
 
 bool Rangefinder2D_nwc_yarp::getDeviceInfo(std::string &device_info)
 {
-    Bottle cmd, response;
-    cmd.addVocab32(VOCAB_GET);
-    cmd.addVocab32(VOCAB_ILASER2D);
-    cmd.addVocab32(VOCAB_DEVICE_INFO);
-    bool ok = m_rpcPort.write(cmd, response);
-    if (CHECK_FAIL(ok, response)!=false)
-    {
-        device_info = response.get(2).asString();
-        return true;
+    std::lock_guard<std::mutex> lg(m_mutex);
+    auto ret = m_RPC.getDeviceInfo_RPC();
+    if (!ret.retval) {
+        yCError(RANGEFINDER2DCLIENT, "Unable to getDeviceInfo");
+        return false;
     }
-    return false;
+    device_info = ret.device_info;
+    return true;
 }

@@ -41,8 +41,6 @@ TEST_CASE("dev::Rangefinder2DTransformerTest", "[yarp::dev]")
         {
             Property ptrf_cfg;
             ptrf_cfg.put("device", "rangefinder2DTransformer");
-            ptrf_cfg.put("period", 0.010);
-            ptrf_cfg.put("name", "/laser");
             REQUIRE(ddtrf.open(ptrf_cfg));
         }
 

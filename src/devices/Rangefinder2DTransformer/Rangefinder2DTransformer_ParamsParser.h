@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Wed Sep  4 17:12:37 2024
+// Generated on: Thu Sep  5 14:59:20 2024
 
 
 #ifndef RANGEFINDER2DTRANSFORMER_PARAMSPARSER_H
@@ -23,21 +23,17 @@
 * This class is the parameters parser for class Rangefinder2DTransformer.
 *
 * These are the used parameters:
-* | Group name | Parameter name | Type   | Units | Default Value | Required | Description                                                               | Notes |
-* |:----------:|:--------------:|:------:|:-----:|:-------------:|:--------:|:-------------------------------------------------------------------------:|:-----:|
-* | -          | movie          | string | -     | -             | 0        | if present, read an .avi file instead of opening a camera                 | -     |
-* | -          | loop           | bool   | -     | false         | 0        | if true, and movie parameter is set, enable the loop playback of the file | -     |
-* | -          | camera         | int    | -     | 0             | 0        | Id of the camera hardware device                                          | -     |
-* | -          | framerate      | double | -     | -1            | 0        | Framerate. Default value obtained by the hardware                         | -     |
-* | -          | width          | int    | -     | 0             | 0        | Width of the frame. Default value obtained by the hardware                | -     |
-* | -          | height         | int    | -     | 0             | 0        | Height of the frame. Default value obtained by the hardware               | -     |
-* | -          | flip_x         | bool   | -     | false         | 0        | Flip along the x axis                                                     | -     |
-* | -          | flip_y         | bool   | -     | false         | 0        | flip along the y axis                                                     | -     |
-* | -          | transpose      | bool   | -     | false         | 0        | Rotate the image by 90 degrees                                            | -     |
+* | Group name | Parameter name        | Type   | Units | Default Value | Required | Description                                                              | Notes                                             |
+* |:----------:|:---------------------:|:------:|:-----:|:-------------:|:--------:|:------------------------------------------------------------------------:|:-------------------------------------------------:|
+* | -          | device_position_x     | double | m     | 0             | 0        | X coordinate of the virtual lidar                                        | -                                                 |
+* | -          | device_position_y     | double | m     | 0             | 0        | Y coordinate of the virtual lidar                                        | -                                                 |
+* | -          | device_position_theta | double | deg   | 0             | 0        | Theta coordinate of the virtual lidar                                    | -                                                 |
+* | -          | laser_frame_name      | string | -     | -             | 0        | If present, open a frameTranformClient to get the robot->laser transform | If present, disables device_position_* parameters |
+* | -          | robot_frame_name      | string | -     | -             | 0        | If present, open a frameTranformClient to get the robot->laser transform | If present, disables device_position_* parameters |
 *
 * The device can be launched by yarpdev using one of the following examples (with and without all optional parameters):
 * \code{.unparsed}
-* yarpdev --device rangefinder2DTransformer --movie <optional_value> --loop false --camera 0 --framerate -1 --width 0 --height 0 --flip_x false --flip_y false --transpose false
+* yarpdev --device rangefinder2DTransformer --device_position_x 0 --device_position_y 0 --device_position_theta 0 --laser_frame_name <optional_value> --robot_frame_name <optional_value>
 * \endcode
 *
 * \code{.unparsed}
@@ -63,25 +59,17 @@ public:
     };
     const parser_version_type m_parser_version = {};
 
-    const std::string m_movie_defaultValue = {""};
-    const std::string m_loop_defaultValue = {"false"};
-    const std::string m_camera_defaultValue = {"0"};
-    const std::string m_framerate_defaultValue = {"-1"};
-    const std::string m_width_defaultValue = {"0"};
-    const std::string m_height_defaultValue = {"0"};
-    const std::string m_flip_x_defaultValue = {"false"};
-    const std::string m_flip_y_defaultValue = {"false"};
-    const std::string m_transpose_defaultValue = {"false"};
+    const std::string m_device_position_x_defaultValue = {"0"};
+    const std::string m_device_position_y_defaultValue = {"0"};
+    const std::string m_device_position_theta_defaultValue = {"0"};
+    const std::string m_laser_frame_name_defaultValue = {""};
+    const std::string m_robot_frame_name_defaultValue = {""};
 
-    std::string m_movie = {}; //This default value of this string is an empty string. It is highly recommended to provide a suggested value also for optional string parameters.
-    bool m_loop = {false};
-    int m_camera = {0};
-    double m_framerate = {-1};
-    int m_width = {0};
-    int m_height = {0};
-    bool m_flip_x = {false};
-    bool m_flip_y = {false};
-    bool m_transpose = {false};
+    double m_device_position_x = {0};
+    double m_device_position_y = {0};
+    double m_device_position_theta = {0};
+    std::string m_laser_frame_name = {}; //This default value of this string is an empty string. It is highly recommended to provide a suggested value also for optional string parameters.
+    std::string m_robot_frame_name = {}; //This default value of this string is an empty string. It is highly recommended to provide a suggested value also for optional string parameters.
 
     bool          parseParams(const yarp::os::Searchable & config) override;
     std::string   getDeviceClassName() const override { return m_device_classname; }

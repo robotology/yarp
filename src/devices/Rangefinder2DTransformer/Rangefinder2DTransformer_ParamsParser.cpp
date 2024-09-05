@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Wed Sep  4 17:12:37 2024
+// Generated on: Thu Sep  5 14:59:20 2024
 
 
 #include "Rangefinder2DTransformer_ParamsParser.h"
@@ -28,15 +28,11 @@ Rangefinder2DTransformer_ParamsParser::Rangefinder2DTransformer_ParamsParser()
 std::vector<std::string> Rangefinder2DTransformer_ParamsParser::getListOfParams() const
 {
     std::vector<std::string> params;
-    params.push_back("movie");
-    params.push_back("loop");
-    params.push_back("camera");
-    params.push_back("framerate");
-    params.push_back("width");
-    params.push_back("height");
-    params.push_back("flip_x");
-    params.push_back("flip_y");
-    params.push_back("transpose");
+    params.push_back("device_position_x");
+    params.push_back("device_position_y");
+    params.push_back("device_position_theta");
+    params.push_back("laser_frame_name");
+    params.push_back("robot_frame_name");
     return params;
 }
 
@@ -51,130 +47,74 @@ bool      Rangefinder2DTransformer_ParamsParser::parseParams(const yarp::os::Sea
 
     std::string config_string = config.toString();
     yarp::os::Property prop_check(config_string.c_str());
-    //Parser of parameter movie
+    //Parser of parameter device_position_x
     {
-        if (config.check("movie"))
+        if (config.check("device_position_x"))
         {
-            m_movie = config.find("movie").asString();
-            yCInfo(Rangefinder2DTransformerParamsCOMPONENT) << "Parameter 'movie' using value:" << m_movie;
+            m_device_position_x = config.find("device_position_x").asFloat64();
+            yCInfo(Rangefinder2DTransformerParamsCOMPONENT) << "Parameter 'device_position_x' using value:" << m_device_position_x;
         }
         else
         {
-            yCInfo(Rangefinder2DTransformerParamsCOMPONENT) << "Parameter 'movie' using DEFAULT value:" << m_movie;
+            yCInfo(Rangefinder2DTransformerParamsCOMPONENT) << "Parameter 'device_position_x' using DEFAULT value:" << m_device_position_x;
         }
-        prop_check.unput("movie");
+        prop_check.unput("device_position_x");
     }
 
-    //Parser of parameter loop
+    //Parser of parameter device_position_y
     {
-        if (config.check("loop"))
+        if (config.check("device_position_y"))
         {
-            m_loop = config.find("loop").asBool();
-            yCInfo(Rangefinder2DTransformerParamsCOMPONENT) << "Parameter 'loop' using value:" << m_loop;
+            m_device_position_y = config.find("device_position_y").asFloat64();
+            yCInfo(Rangefinder2DTransformerParamsCOMPONENT) << "Parameter 'device_position_y' using value:" << m_device_position_y;
         }
         else
         {
-            yCInfo(Rangefinder2DTransformerParamsCOMPONENT) << "Parameter 'loop' using DEFAULT value:" << m_loop;
+            yCInfo(Rangefinder2DTransformerParamsCOMPONENT) << "Parameter 'device_position_y' using DEFAULT value:" << m_device_position_y;
         }
-        prop_check.unput("loop");
+        prop_check.unput("device_position_y");
     }
 
-    //Parser of parameter camera
+    //Parser of parameter device_position_theta
     {
-        if (config.check("camera"))
+        if (config.check("device_position_theta"))
         {
-            m_camera = config.find("camera").asInt64();
-            yCInfo(Rangefinder2DTransformerParamsCOMPONENT) << "Parameter 'camera' using value:" << m_camera;
+            m_device_position_theta = config.find("device_position_theta").asFloat64();
+            yCInfo(Rangefinder2DTransformerParamsCOMPONENT) << "Parameter 'device_position_theta' using value:" << m_device_position_theta;
         }
         else
         {
-            yCInfo(Rangefinder2DTransformerParamsCOMPONENT) << "Parameter 'camera' using DEFAULT value:" << m_camera;
+            yCInfo(Rangefinder2DTransformerParamsCOMPONENT) << "Parameter 'device_position_theta' using DEFAULT value:" << m_device_position_theta;
         }
-        prop_check.unput("camera");
+        prop_check.unput("device_position_theta");
     }
 
-    //Parser of parameter framerate
+    //Parser of parameter laser_frame_name
     {
-        if (config.check("framerate"))
+        if (config.check("laser_frame_name"))
         {
-            m_framerate = config.find("framerate").asFloat64();
-            yCInfo(Rangefinder2DTransformerParamsCOMPONENT) << "Parameter 'framerate' using value:" << m_framerate;
+            m_laser_frame_name = config.find("laser_frame_name").asString();
+            yCInfo(Rangefinder2DTransformerParamsCOMPONENT) << "Parameter 'laser_frame_name' using value:" << m_laser_frame_name;
         }
         else
         {
-            yCInfo(Rangefinder2DTransformerParamsCOMPONENT) << "Parameter 'framerate' using DEFAULT value:" << m_framerate;
+            yCInfo(Rangefinder2DTransformerParamsCOMPONENT) << "Parameter 'laser_frame_name' using DEFAULT value:" << m_laser_frame_name;
         }
-        prop_check.unput("framerate");
+        prop_check.unput("laser_frame_name");
     }
 
-    //Parser of parameter width
+    //Parser of parameter robot_frame_name
     {
-        if (config.check("width"))
+        if (config.check("robot_frame_name"))
         {
-            m_width = config.find("width").asInt64();
-            yCInfo(Rangefinder2DTransformerParamsCOMPONENT) << "Parameter 'width' using value:" << m_width;
+            m_robot_frame_name = config.find("robot_frame_name").asString();
+            yCInfo(Rangefinder2DTransformerParamsCOMPONENT) << "Parameter 'robot_frame_name' using value:" << m_robot_frame_name;
         }
         else
         {
-            yCInfo(Rangefinder2DTransformerParamsCOMPONENT) << "Parameter 'width' using DEFAULT value:" << m_width;
+            yCInfo(Rangefinder2DTransformerParamsCOMPONENT) << "Parameter 'robot_frame_name' using DEFAULT value:" << m_robot_frame_name;
         }
-        prop_check.unput("width");
-    }
-
-    //Parser of parameter height
-    {
-        if (config.check("height"))
-        {
-            m_height = config.find("height").asInt64();
-            yCInfo(Rangefinder2DTransformerParamsCOMPONENT) << "Parameter 'height' using value:" << m_height;
-        }
-        else
-        {
-            yCInfo(Rangefinder2DTransformerParamsCOMPONENT) << "Parameter 'height' using DEFAULT value:" << m_height;
-        }
-        prop_check.unput("height");
-    }
-
-    //Parser of parameter flip_x
-    {
-        if (config.check("flip_x"))
-        {
-            m_flip_x = config.find("flip_x").asBool();
-            yCInfo(Rangefinder2DTransformerParamsCOMPONENT) << "Parameter 'flip_x' using value:" << m_flip_x;
-        }
-        else
-        {
-            yCInfo(Rangefinder2DTransformerParamsCOMPONENT) << "Parameter 'flip_x' using DEFAULT value:" << m_flip_x;
-        }
-        prop_check.unput("flip_x");
-    }
-
-    //Parser of parameter flip_y
-    {
-        if (config.check("flip_y"))
-        {
-            m_flip_y = config.find("flip_y").asBool();
-            yCInfo(Rangefinder2DTransformerParamsCOMPONENT) << "Parameter 'flip_y' using value:" << m_flip_y;
-        }
-        else
-        {
-            yCInfo(Rangefinder2DTransformerParamsCOMPONENT) << "Parameter 'flip_y' using DEFAULT value:" << m_flip_y;
-        }
-        prop_check.unput("flip_y");
-    }
-
-    //Parser of parameter transpose
-    {
-        if (config.check("transpose"))
-        {
-            m_transpose = config.find("transpose").asBool();
-            yCInfo(Rangefinder2DTransformerParamsCOMPONENT) << "Parameter 'transpose' using value:" << m_transpose;
-        }
-        else
-        {
-            yCInfo(Rangefinder2DTransformerParamsCOMPONENT) << "Parameter 'transpose' using DEFAULT value:" << m_transpose;
-        }
-        prop_check.unput("transpose");
+        prop_check.unput("robot_frame_name");
     }
 
     /*
@@ -213,18 +153,14 @@ std::string      Rangefinder2DTransformer_ParamsParser::getDocumentationOfDevice
     doc = doc + std::string("This is the help for device: Rangefinder2DTransformer\n");
     doc = doc + std::string("\n");
     doc = doc + std::string("This is the list of the parameters accepted by the device:\n");
-    doc = doc + std::string("'movie': if present, read an .avi file instead of opening a camera\n");
-    doc = doc + std::string("'loop': if true, and movie parameter is set, enable the loop playback of the file\n");
-    doc = doc + std::string("'camera': Id of the camera hardware device\n");
-    doc = doc + std::string("'framerate': Framerate. Default value obtained by the hardware\n");
-    doc = doc + std::string("'width': Width of the frame. Default value obtained by the hardware\n");
-    doc = doc + std::string("'height': Height of the frame. Default value obtained by the hardware\n");
-    doc = doc + std::string("'flip_x': Flip along the x axis\n");
-    doc = doc + std::string("'flip_y': flip along the y axis\n");
-    doc = doc + std::string("'transpose': Rotate the image by 90 degrees\n");
+    doc = doc + std::string("'device_position_x': X coordinate of the virtual lidar\n");
+    doc = doc + std::string("'device_position_y': Y coordinate of the virtual lidar\n");
+    doc = doc + std::string("'device_position_theta': Theta coordinate of the virtual lidar\n");
+    doc = doc + std::string("'laser_frame_name': If present, open a frameTranformClient to get the robot->laser transform\n");
+    doc = doc + std::string("'robot_frame_name': If present, open a frameTranformClient to get the robot->laser transform\n");
     doc = doc + std::string("\n");
     doc = doc + std::string("Here are some examples of invocation command with yarpdev, with all params:\n");
-    doc = doc + " yarpdev --device rangefinder2DTransformer --movie <optional_value> --loop false --camera 0 --framerate -1 --width 0 --height 0 --flip_x false --flip_y false --transpose false\n";
+    doc = doc + " yarpdev --device rangefinder2DTransformer --device_position_x 0 --device_position_y 0 --device_position_theta 0 --laser_frame_name <optional_value> --robot_frame_name <optional_value>\n";
     doc = doc + std::string("Using only mandatory params:\n");
     doc = doc + " yarpdev --device rangefinder2DTransformer\n";
     doc = doc + std::string("=============================================\n\n");    return doc;
