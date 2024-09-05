@@ -66,7 +66,7 @@ bool FakeNavigation::gotoTargetByRelativeLocation(double x, double y)
     return true;
 }
 
-bool followPath(const yarp::dev::Nav2D::Map2DPath& locs)
+bool FakeNavigation::followPath(const yarp::dev::Nav2D::Map2DPath& path)
 {
     yCInfo(FAKENAVIGATION) << "followPath not yet implemented";
     return true;
