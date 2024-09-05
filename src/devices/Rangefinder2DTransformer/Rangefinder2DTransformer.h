@@ -34,7 +34,7 @@ const int LASER_TIMEOUT=100; //ms
 * both manually, as a 2D point in space, or though a tranform.
 *
 * Parameters required by this device are shown in class: Rangefinder2DTransformer_ParamsParser
-* 
+*
 */
 class Rangefinder2DTransformer:
         public yarp::dev::DeviceDriver,
