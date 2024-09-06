@@ -208,7 +208,6 @@
 %ignore yarp::sig::Image::operator()(int,int) const;
 %ignore yarp::sig::Image::pixel(int,int) const;
 %ignore yarp::sig::Image::getRow(int) const;
-%ignore yarp::sig::Image::getIplImage() const;
 %ignore yarp::sig::Image::getReadType() const;
 %ignore yarp::sig::VectorOf<double>::getType() const;
 %ignore yarp::sig::VectorOf<double>::VectorOf(std::initializer_list<double>);
