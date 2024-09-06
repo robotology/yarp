@@ -49,6 +49,7 @@ bool Rangefinder2D_nws_yarp::attach(yarp::dev::PolyDriver* driver)
     if (driver->isValid())
     {
         driver->view(sens_p);
+        m_RPC.setInterface(sens_p);
     }
 
     if (nullptr == sens_p)
@@ -97,189 +98,13 @@ bool Rangefinder2D_nws_yarp::detach()
 
 bool Rangefinder2D_nws_yarp::read(yarp::os::ConnectionReader& connection)
 {
-    yarp::os::Bottle in;
-    yarp::os::Bottle out;
-    bool ok = in.read(connection);
-    if (!ok) {
+    bool b = m_RPC.read(connection);
+    if (b) {
+        return true;
+    } else {
+        yCDebug(RANGEFINDER2D_NWS_YARP) << "read() Command failed";
         return false;
     }
-
-    // parse in, prepare out
-    int action = in.get(0).asVocab32();
-    int inter  = in.get(1).asVocab32();
-    bool ret = false;
-
-    if (inter == VOCAB_ILASER2D)
-    {
-        if (action == VOCAB_GET)
-        {
-            int cmd = in.get(2).asVocab32();
-            if (cmd == VOCAB_DEVICE_INFO)
-            {
-                if (sens_p)
-                {
-                    std::string info;
-                    if (sens_p->getDeviceInfo(info))
-                    {
-                        out.addVocab32(VOCAB_IS);
-                        out.addVocab32(cmd);
-                        out.addString(info);
-                        ret = true;
-                    }
-                    else
-                    {
-                        ret = false;
-                    }
-                }
-            }
-            else if (cmd == VOCAB_LASER_DISTANCE_RANGE)
-            {
-                if (sens_p)
-                {
-                    double max = 0;
-                    double min = 0;
-                    if (sens_p->getDistanceRange(min, max))
-                    {
-                        out.addVocab32(VOCAB_IS);
-                        out.addVocab32(cmd);
-                        out.addFloat64(min);
-                        out.addFloat64(max);
-                        ret = true;
-                    }
-                    else
-                    {
-                        ret = false;
-                    }
-                }
-            }
-            else if (cmd == VOCAB_LASER_ANGULAR_RANGE)
-            {
-                if (sens_p)
-                {
-                    double max = 0;
-                    double min = 0;
-                    if (sens_p->getScanLimits(min, max))
-                    {
-                        out.addVocab32(VOCAB_IS);
-                        out.addVocab32(cmd);
-                        out.addFloat64(min);
-                        out.addFloat64(max);
-                        ret = true;
-                    }
-                    else
-                    {
-                        ret = false;
-                    }
-                }
-            }
-            else if (cmd == VOCAB_LASER_ANGULAR_STEP)
-            {
-                if (sens_p)
-                {
-                    double step = 0;
-                    if (sens_p->getHorizontalResolution(step))
-                    {
-                        out.addVocab32(VOCAB_IS);
-                        out.addVocab32(cmd);
-                        out.addFloat64(step);
-                        ret = true;
-                    }
-                    else
-                    {
-                        ret = false;
-                    }
-                }
-            }
-            else if (cmd == VOCAB_LASER_SCAN_RATE)
-            {
-                if (sens_p)
-                {
-                    double rate = 0;
-                    if (sens_p->getScanRate(rate))
-                    {
-                        out.addVocab32(VOCAB_IS);
-                        out.addVocab32(cmd);
-                        out.addFloat64(rate);
-                        ret = true;
-                    }
-                    else
-                    {
-                        ret = false;
-                    }
-                }
-            }
-            else
-            {
-                yCError(RANGEFINDER2D_NWS_YARP, "Invalid command received in Rangefinder2D_nws_yarp");
-            }
-        }
-        else if (action == VOCAB_SET)
-        {
-            int cmd = in.get(2).asVocab32();
-            if (cmd == VOCAB_LASER_DISTANCE_RANGE)
-            {
-                if (sens_p)
-                {
-                    double min = in.get(3).asInt32();
-                    double max = in.get(4).asInt32();
-                    sens_p->setDistanceRange(min, max);
-                    ret = true;
-                }
-            }
-            else if (cmd == VOCAB_LASER_ANGULAR_RANGE)
-            {
-                if (sens_p)
-                {
-                    double min = in.get(3).asInt32();
-                    double max = in.get(4).asInt32();
-                    sens_p->setScanLimits(min, max);
-                    ret = true;
-                }
-            }
-            else if (cmd == VOCAB_LASER_SCAN_RATE)
-            {
-                if (sens_p)
-                {
-                    double rate = in.get(3).asInt32();
-                    sens_p->setScanRate(rate);
-                    ret = true;
-                }
-            }
-            else if (cmd == VOCAB_LASER_ANGULAR_STEP)
-            {
-                if (sens_p)
-                {
-                    double step = in.get(3).asFloat64();
-                    sens_p->setHorizontalResolution(step);
-                    ret = true;
-                }
-            }
-            else
-            {
-                yCError(RANGEFINDER2D_NWS_YARP, "Invalid command received in Rangefinder2D_nws_yarp");
-            }
-        }
-        else
-        {
-            yCError(RANGEFINDER2D_NWS_YARP, "Invalid action received in Rangefinder2D_nws_yarp");
-        }
-    }
-    else
-    {
-        yCError(RANGEFINDER2D_NWS_YARP, "Invalid interface vocab received in Rangefinder2D_nws_yarp");
-    }
-
-    if (!ret)
-    {
-        out.clear();
-        out.addVocab32(VOCAB_FAILED);
-    }
-
-    yarp::os::ConnectionWriter *returnToSender = connection.getWriter();
-    if (returnToSender != nullptr) {
-        out.write(*returnToSender);
-    }
-    return true;
 }
 
 bool Rangefinder2D_nws_yarp::threadInit()

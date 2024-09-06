@@ -32,6 +32,7 @@
 #include <yarp/dev/WrapperSingle.h>
 #include <yarp/dev/api.h>
 #include "Rangefinder2D_nws_yarp_ParamsParser.h"
+#include "Rangefinder2DServerImpl.h"
 
 #define DEFAULT_THREAD_PERIOD 0.02 //s
 
@@ -69,11 +70,14 @@ public:
     bool read(yarp::os::ConnectionReader& connection) override;
 
 private:
+    // thrift
+    IRangefinder2DRPCd m_RPC;
+
     yarp::os::Port rpcPort;
     yarp::os::BufferedPort<yarp::sig::LaserScan2D> streamingPort;
 
     //interfaces
-    yarp::dev::IRangefinder2D *sens_p;
+    yarp::dev::IRangefinder2D *sens_p=nullptr;
 
     //device data
     yarp::os::Stamp lastStateStamp;

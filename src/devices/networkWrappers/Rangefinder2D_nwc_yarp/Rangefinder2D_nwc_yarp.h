@@ -20,6 +20,7 @@
 
 #include <mutex>
 
+#include "IRangefinder2DMsgs.h"
 #include "Rangefinder2D_nwc_yarp_ParamsParser.h"
 
 class Rangefinder2DInputPortProcessor :
@@ -72,12 +73,15 @@ class Rangefinder2D_nwc_yarp:
 {
 protected:
     Rangefinder2DInputPortProcessor m_inputPort;
+    IRangefinder2DMsgs m_RPC;
+    std::mutex         m_mutex;
+
     yarp::os::Port m_rpcPort;
     yarp::os::Stamp m_lastTs;
     std::string m_deviceId;
 
-    double m_scan_angle_min;
-    double m_scan_angle_max;
+    double m_scan_angle_min = std::nan("1");
+    double m_scan_angle_max = std::nan("1");
     std::string m_laser_frame_name;
     std::string m_robot_frame_name;
 

@@ -75,6 +75,15 @@ New Features
 * Added followPath functionality
 * Added paths as possible arguments in gotoLocation in Navigation2D_nwc
 
+#### Rangefinder2DTransformer
+
+* Removed deprecated device Rangerfinder2DClient
+* Added device Rangerfinder2DTransformer, with similar functionalities to Rangerfinder2DClient.
+
+#### Rangefinder2D_nwc_yarp, Rangefinder2D_nws_yarp
+
+* Network protocol now uses IDL thrift
+
 ### GUIs
 
 #### yarpopencvdisplay
