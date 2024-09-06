@@ -32,12 +32,6 @@ set(YARP_sig_HDRS
   yarp/sig/Vector.h
 )
 
-if(NOT YARP_NO_DEPRECATED) # Since YARP 3.0.0
-  list(APPEND YARP_sig_HDRS
-    yarp/sig/IplImage.h
-  )
-endif()
-
 set(YARP_sig_SRCS
   yarp/sig/AudioBufferSize.cpp
   yarp/sig/Image.cpp
