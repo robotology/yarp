@@ -95,10 +95,6 @@ typedef struct _IplImage {
                           OpenCV ignores it and uses widthStep instead */
     int  width;         /**< image width in pixels */
     int  height;        /**< image height in pixels */
-    struct _IplROI *roi;/**< image ROI. if NULL, the whole image is selected */
-    struct _IplImage *maskROI; /**< must be NULL */
-    void  *imageId;     /**< must be NULL */
-    struct _IplTileInfo *tileInfo; /**< must be null */
     int  imageSize;     /**< image data size in bytes
                           (==image->height*image->widthStep
                           in case of interleaved data)*/
@@ -106,22 +102,10 @@ typedef struct _IplImage {
     int  widthStep;   /**< size of aligned image row in bytes */
     int  BorderMode[4]; /**< ignored by OpenCV */
     int  BorderConst[4]; /**< ignored by OpenCV */
-    char *imageDataOrigin; /**< pointer to very origin of image data
-                             (not necessarily aligned) -
-                             needed for correct deallocation */
 }
 IplImage;
 
 typedef struct _IplTileInfo IplTileInfo;
-
-typedef struct _IplROI {
-    int  coi; /**< 0 - no COI (all channels are selected), 1 - 0th channel is selected ...*/
-    int  xOffset;
-    int  yOffset;
-    int  width;
-    int  height;
-}
-IplROI;
 
 #define IPL_IMAGE_HEADER 1
 #define IPL_IMAGE_DATA   2
@@ -138,9 +122,9 @@ IplROI;
  */
 #define IPLAPIIMPL(type,name,arg) extern type name arg
 
-IPLAPIIMPL(void, iplAllocateImage,(IplImage* image, int doFill, int fillValue));
+IPLAPIIMPL(void, iplAllocateImage,(IplImage* image));
 
-IPLAPIIMPL(void, iplAllocateImageFP,(IplImage* image, int doFill, float fillValue));
+IPLAPIIMPL(void, iplAllocateImageFP,(IplImage* image));
 
 
 IPLAPIIMPL(void, iplDeallocateImage,(IplImage* image));
@@ -149,8 +133,7 @@ IPLAPIIMPL(IplImage*, iplCreateImageHeader,
            (int   nChannels,  int     alphaChannel, int     depth,
             char* colorModel, char*   channelSeq,   int     dataOrder,
             int   origin,     int     align,
-            int   width,      int   height, IplROI* roi, IplImage* maskROI,
-            void* imageId,    IplTileInfo* tileInfo));
+            int   width,      int   height));
 
 IPLAPIIMPL(void, iplDeallocateHeader,(IplImage* image));
 
