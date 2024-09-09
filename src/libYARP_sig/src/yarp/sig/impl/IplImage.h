@@ -100,8 +100,6 @@ typedef struct _IplImage {
                           in case of interleaved data)*/
     char *imageData;  /**< pointer to aligned image data */
     int  widthStep;   /**< size of aligned image row in bytes */
-    int  BorderMode[4]; /**< ignored by OpenCV */
-    int  BorderConst[4]; /**< ignored by OpenCV */
 }
 IplImage;
 
@@ -110,11 +108,6 @@ typedef struct _IplTileInfo IplTileInfo;
 #define IPL_IMAGE_HEADER 1
 #define IPL_IMAGE_DATA   2
 #define IPL_IMAGE_ROI    4
-
-#ifndef IPL_DEPTH_64F
-#define IPL_DEPTH_64F  64 /* for storing double-precision
-                             floating point data in IplImage's */
-#endif
 
 
 /**
@@ -135,8 +128,6 @@ IPLAPIIMPL(IplImage*, iplCreateImageHeader,
 IPLAPIIMPL(void, iplDeallocateHeader,(IplImage* image));
 
 IPLAPIIMPL(void, iplDeallocate,(IplImage* image, int flag));
-
-IPLAPIIMPL(void,iplSetBorderMode,(IplImage *src,int mode,int border,int constVal));
 
 #define IPL_BORDER_CONSTANT 0
 
@@ -161,12 +152,6 @@ IPLAPIIMPL(void,iplSetBorderMode,(IplImage *src,int mode,int border,int constVal
                        IPL_IMAGE_TILE|IPL_IMAGE_ROI|IPL_IMAGE_MASK)
 #define IPL_IMAGE_ALL_WITHOUT_MASK (IPL_IMAGE_HEADER|IPL_IMAGE_DATA|\
                        IPL_IMAGE_TILE|IPL_IMAGE_ROI)
-
-#define IPL_INTER_NN          0
-#define IPL_INTER_LINEAR      1
-#define IPL_INTER_CUBIC       2
-#define IPL_INTER_SUPER       3
-#define IPL_SMOOTH_EDGE      16
 
 #define YARP_IMAGE_ALIGN     8
 

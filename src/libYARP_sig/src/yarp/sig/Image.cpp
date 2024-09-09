@@ -145,13 +145,11 @@ void ImageStorage::resize(size_t x, size_t y, int pixel_type,
 }
 
 // allocates an empty image.
-void ImageStorage::_alloc () {
-
+void ImageStorage::_alloc ()
+{
     _free(); // was iplDeallocateImage(pImage); but that won't work with refs
 
     iplAllocateImage (pImage);
-
-    iplSetBorderMode (pImage, IPL_BORDER_CONSTANT, IPL_SIDE_ALL, 0);
 }
 
 // installs an external buffer as the image data

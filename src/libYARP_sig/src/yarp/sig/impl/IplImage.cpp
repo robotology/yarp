@@ -144,9 +144,6 @@ IPLAPIIMPL(IplImage*, iplCreateImageHeader,
     r->imageSize = r->widthStep * height;
     r->imageData = nullptr;
 
-    memset (r->BorderMode, 0, 4 * sizeof(int));
-    memset (r->BorderConst, 0, 4 * sizeof(int));
-
     return r;
 }
 
@@ -179,17 +176,6 @@ IPLAPIIMPL(void, iplDeallocate,(IplImage* image, int flag))
             iplDeallocateImage (image);
             break;
         }
-}
-
-IPLAPIIMPL(void,iplSetBorderMode,(IplImage *src,int mode,int border,int constVal))
-{
-    for (int i = 0; i < 4; i++) {
-        if ((border >> i) & 0x1)
-            {
-                src->BorderMode[i] = mode;
-                src->BorderConst[i] = constVal;
-        }
-    }
 }
 
 // not used outside this file.
