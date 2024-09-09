@@ -93,9 +93,7 @@ protected:
     void _alloc_extern (const void *buf);
     void _alloc_data ();
     void _free ();
-    void _free_data ();
 
-    void _make_independent();
     bool _set_ipl_header(size_t x, size_t y, int pixel_type, size_t quantum,
                          bool topIsLow);
     void _free_ipl_header();
@@ -239,16 +237,10 @@ void ImageStorage::_free ()
     }
 }
 
-void ImageStorage::_free_data ()
-{
-    yAssert(Data==nullptr); // Now always free Data at same time
-}
-
 
 void ImageStorage::_free_complete()
 {
     _free();
-    _free_data();
     _free_ipl_header();
 }
 
@@ -266,19 +258,12 @@ void ImageStorage::_free_ipl_header()
 void ImageStorage::_alloc_complete(size_t x, size_t y, int pixel_type, size_t quantum,
                                    bool topIsLow)
 {
-    _make_independent();
     _free_complete();
     _set_ipl_header(x, y, pixel_type, quantum, topIsLow);
     _alloc ();
     _alloc_data ();
 }
 
-
-
-void ImageStorage::_make_independent()
-{
-    // actually I think this isn't really needed -paulfitz
-}
 
 struct pixelTypeIplParams
 {
@@ -361,7 +346,6 @@ void ImageStorage::_alloc_complete_extern(const void *buf, size_t x, size_t y, i
     this->quantum = quantum;
     this->topIsLow = topIsLow;
 
-    _make_independent();
     _free_complete();
     _set_ipl_header(x, y, pixel_type, quantum, topIsLow);
     Data = nullptr;

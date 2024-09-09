@@ -10,17 +10,6 @@
 #include <yarp/os/Log.h>
 #include <yarp/sig/impl/IplImage.h>
 
-// this was from iplUtil.cpp
-bool compareHeader(IplImage* A, IplImage* B)
-{
-    if (A->nChannels == B->nChannels && !strcmp(A->colorModel, B->colorModel) && !strcmp(A->channelSeq, B->channelSeq) && A->width == B->width
-        && A->height == B->height) {
-        return true;
-    } else {
-        return false;
-    }
-}
-
 ///
 /// this might turn out to be useful.
 inline int PAD_BYTES (int len, int pad)
