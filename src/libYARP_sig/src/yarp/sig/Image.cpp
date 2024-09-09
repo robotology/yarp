@@ -20,7 +20,6 @@
 
 #include <yarp/sig/ImageNetworkHeader.h>
 #include <yarp/sig/impl/IplImage.h>
-#include <yarp/sig/impl/DeBayer.h>
 
 #include <cstdio>
 #include <cstring>
@@ -599,60 +598,7 @@ bool Image::read(yarp::os::ConnectionReader& connection) {
         return readFromConnection(*this, header, connection);
     }
 
-    // image is bayer 8 bits, current image is MONO, copy as is (keep raw format)
-    if (getPixelCode() == VOCAB_PIXEL_MONO && isBayer8(header.id))
-    {
-        return readFromConnection(*this, header, connection);
-    }
-    // image is bayer 16 bits, current image is MONO16, copy as is (keep raw format)
-    if (getPixelCode() == VOCAB_PIXEL_MONO16 && isBayer16(header.id))
-    {
-        return readFromConnection(*this, header, connection);
-    }
-
-    ////////////////////
-    // Received and current images are binary incompatible do our best to convert
-    //
-
-    // handle here all bayer encoding 8 bits
-    if (isBayer8(header.id))
-    {
-        FlexImage flex;
-        flex.setPixelCode(VOCAB_PIXEL_MONO);
-        flex.setQuantum(header.quantum);
-        flex.setTopIsLowIndex(header.topIsLow == 0);
-
-        bool ok = readFromConnection(flex, header, connection);
-        if (!ok) {
-            return false;
-        }
-
-        if (getPixelCode() == VOCAB_PIXEL_BGR && header.id==VOCAB_PIXEL_ENCODING_BAYER_GRBG8) {
-            return deBayer_GRBG8_TO_BGR(flex, *this, 3);
-        }
-        if (getPixelCode() == VOCAB_PIXEL_BGRA && header.id == VOCAB_PIXEL_ENCODING_BAYER_GRBG8) {
-            return deBayer_GRBG8_TO_BGR(flex, *this, 4);
-        }
-        if (getPixelCode() == VOCAB_PIXEL_RGB && header.id==VOCAB_PIXEL_ENCODING_BAYER_GRBG8) {
-            return deBayer_GRBG8_TO_RGB(flex, *this, 3);
-        }
-        if (getPixelCode() == VOCAB_PIXEL_RGBA && header.id == VOCAB_PIXEL_ENCODING_BAYER_GRBG8) {
-            return deBayer_GRBG8_TO_RGB(flex, *this, 4);
-        }
-
-        YARP_FIXME_NOTIMPLEMENTED("Conversion from bayer encoding not yet implemented\n");
-        return false;
-    }
-
-    // handle here all bayer encodings 16 bits
-    if (isBayer16(header.id))
-    {
-        // as bayer16 seems unlikely we defer implementation for later
-        YARP_FIXME_NOTIMPLEMENTED("Conversion from bayer encoding 16 bits not yet implemented\n");
-        return false;
-    }
-
-    // Received image has valid YARP pixels and can be converted using Image primitives
+    // received and current images are binary incompatible, so
     // prepare a FlexImage, set it to be compatible with the received image
     // read new image into FlexImage then copy from it.
     FlexImage flex;
