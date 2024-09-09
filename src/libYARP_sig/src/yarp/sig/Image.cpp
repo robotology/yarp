@@ -32,12 +32,6 @@ using namespace yarp::os;
 
 #define DBGPF1 if (0)
 
-//inline int PAD_BYTES (int len, int pad)
-//{
-//    const int rem = len % pad;
-//    return (rem != 0) ? (pad - rem) : rem;
-//}
-
 /**
 * This helper function groups code to avoid duplication. It is not a member function of Image because
 * there are problems with ImageNetworkHeader, anyhow the function is state-less and uses only parameters.
@@ -96,7 +90,6 @@ protected:
 
     bool _set_ipl_header(size_t x, size_t y, int pixel_type, size_t quantum,
                          bool topIsLow);
-    void _free_ipl_header();
     void _alloc_complete(size_t x, size_t y, int pixel_type, size_t quantum,
                          bool topIsLow);
     void _free_complete();
@@ -160,9 +153,9 @@ void ImageStorage::_alloc () {
     if ((type_id == VOCAB_PIXEL_MONO_FLOAT) ||
         (type_id == VOCAB_PIXEL_RGB_FLOAT)  ||
         (type_id == VOCAB_PIXEL_HSV_FLOAT)) {
-        iplAllocateImageFP(pImage, 0, 0);
+        iplAllocateImageFP(pImage);
     } else {
-        iplAllocateImage (pImage, 0, 0);
+        iplAllocateImage (pImage);
     }
 
     iplSetBorderMode (pImage, IPL_BORDER_CONSTANT, IPL_SIDE_ALL, 0);
@@ -241,19 +234,13 @@ void ImageStorage::_free ()
 void ImageStorage::_free_complete()
 {
     _free();
-    _free_ipl_header();
-}
 
-
-void ImageStorage::_free_ipl_header()
-{
-    if (pImage!=nullptr)
+    if (pImage != nullptr)
     {
-        iplDeallocate (pImage, IPL_IMAGE_HEADER);
+        iplDeallocate(pImage, IPL_IMAGE_HEADER);
     }
     pImage = nullptr;
 }
-
 
 void ImageStorage::_alloc_complete(size_t x, size_t y, int pixel_type, size_t quantum,
                                    bool topIsLow)
@@ -330,7 +317,7 @@ bool ImageStorage::_set_ipl_header(size_t x, size_t y, int pixel_type, size_t qu
     }
     int origin = topIsLow ? IPL_ORIGIN_TL : IPL_ORIGIN_BL;
 
-    pImage = iplCreateImageHeader(param.nChannels, 0, param.depth, const_cast<char*>(param.colorModel), const_cast<char*>(param.channelSeq), IPL_DATA_ORDER_PIXEL, origin, quantum, x, y, nullptr, nullptr, nullptr, nullptr);
+    pImage = iplCreateImageHeader(param.nChannels, 0, param.depth, const_cast<char*>(param.colorModel), const_cast<char*>(param.channelSeq), IPL_DATA_ORDER_PIXEL, origin, quantum, x, y);
 
     type_id = pixel_type;
     this->quantum = quantum;

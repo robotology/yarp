@@ -44,7 +44,7 @@ void FreeAligned (T* ptr)
 
 
 // TODO: manage IPL ROI and tiling.
-IPLAPIIMPL(void, iplAllocateImage,(IplImage* image, int doFill, int fillValue))
+IPLAPIIMPL(void, iplAllocateImage,(IplImage* image))
 {
     // Not implemented depth != 8
     //int depth = (image->depth & IPL_DEPTH_MASK)/8;
@@ -54,31 +54,9 @@ IPLAPIIMPL(void, iplAllocateImage,(IplImage* image, int doFill, int fillValue))
 
     image->imageData = AllocAligned<char> (image->imageSize); // new char[image->imageSize];
     yAssert(image->imageData != nullptr);
-
-    if (image->origin == IPL_ORIGIN_TL) {
-        image->imageDataOrigin = image->imageData + image->imageSize - image->widthStep;
-    } else {
-        image->imageDataOrigin = image->imageData;
-    }
-
-    if (doFill)
-        {
-            // this of course is only valid for depth == 8.
-            switch (image->depth)
-                {
-                case IPL_DEPTH_8U:
-                case IPL_DEPTH_8S:
-                    memset (image->imageData, fillValue, image->imageSize);
-                    break;
-
-                default:
-                    yAssert(1 == 0);
-                    break;
-                }
-        }
 }
 
-IPLAPIIMPL(void, iplAllocateImageFP,(IplImage* image, int doFill, float fillValue))
+IPLAPIIMPL(void, iplAllocateImageFP,(IplImage* image))
 {
     yAssert(image->depth == IPL_DEPTH_32F);
     yAssert(image->dataOrder == IPL_DATA_ORDER_PIXEL);
@@ -87,33 +65,6 @@ IPLAPIIMPL(void, iplAllocateImageFP,(IplImage* image, int doFill, float fillValu
 
     image->imageData = AllocAligned<char> (image->imageSize);
     yAssert(image->imageData != nullptr);
-
-    if (image->origin == IPL_ORIGIN_TL) {
-        image->imageDataOrigin = image->imageData + image->imageSize - image->widthStep;
-    } else {
-        image->imageDataOrigin = image->imageData;
-    }
-
-    if (doFill)
-        {
-            if (fillValue == 0)
-                {
-                    // assume IEEE float
-                    memset (image->imageData, 0, image->imageSize);
-                }
-            else
-                {
-                    yAssert(PAD_BYTES (image->widthStep, YARP_IMAGE_ALIGN) == 0);
-
-                    // time consuming
-                    auto* tmp = reinterpret_cast<float*>(image->imageData);
-                    const int limit = image->imageSize / sizeof(float);
-                    for (int i = 0; i < limit; i++)
-                        {
-                            *tmp++ = float(fillValue);
-                        }
-                }
-        }
 }
 
 IPLAPIIMPL(void, iplDeallocateImage,(IplImage* image))
@@ -122,9 +73,6 @@ IPLAPIIMPL(void, iplDeallocateImage,(IplImage* image))
         FreeAligned<char>(image->imageData); ///delete[] image->imageData;
     }
     image->imageData = nullptr;
-
-    // Not allocated.
-    image->roi = nullptr;
 }
 
 
@@ -171,8 +119,7 @@ IPLAPIIMPL(IplImage*, iplCreateImageHeader,
            (int   nChannels,  int     alphaChannel, int     depth,
             char* colorModel, char*   channelSeq,   int     dataOrder,
             int   origin,     int     align,
-            int   width,      int   height, IplROI* roi, IplImage* maskROI,
-            void* imageId,    IplTileInfo* tileInfo))
+            int   width,      int   height))
 {
     switch (depth)
         {
@@ -215,22 +162,16 @@ IPLAPIIMPL(IplImage*, iplCreateImageHeader,
     r->align = align;
     r->width = width;
     r->height = height;
-    r->roi = nullptr;
-    r->maskROI = nullptr;
-    r->imageId = nullptr;
 
-    r->tileInfo = nullptr;
     const int linew = width * (depth & IPL_DEPTH_MASK) / 8 * nChannels;
     r->widthStep = linew + PAD_BYTES(linew, align);
 
     r->imageSize = r->widthStep * height;
     r->imageData = nullptr;
-    r->tileInfo = nullptr;
 
     memset (r->BorderMode, 0, 4 * sizeof(int));
     memset (r->BorderConst, 0, 4 * sizeof(int));
 
-    r->imageDataOrigin = nullptr;
     return r;
 }
 
