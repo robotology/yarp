@@ -24,7 +24,6 @@ T* AllocAligned (int size)
     T *ptr = new T[size + YARP_IMAGE_ALIGN];
     const int rem = (((size_t)ptr) % YARP_IMAGE_ALIGN);
     const char addbytes = YARP_IMAGE_ALIGN - rem;
-    ///((rem != 0) ? (YARP_IMAGE_ALIGN - rem) : 0);
 
     char *p = ((char *)ptr) + addbytes;
     *(p - 1) = addbytes;
@@ -42,29 +41,9 @@ void FreeAligned (T* ptr)
     delete[] reinterpret_cast<T*>(((char *)ptr) - addbytes);
 }
 
-
-// TODO: manage IPL ROI and tiling.
 IPLAPIIMPL(void, iplAllocateImage,(IplImage* image))
 {
-    // Not implemented depth != 8
-    //int depth = (image->depth & IPL_DEPTH_MASK)/8;
-    yAssert(image->dataOrder == IPL_DATA_ORDER_PIXEL);
-    ///yAssert(image->widthStep == image->width * (image->depth & IPL_DEPTH_MASK) / 8 * image->nChannels);
-    yAssert(image->imageSize == image->widthStep * image->height);
-
-    image->imageData = AllocAligned<char> (image->imageSize); // new char[image->imageSize];
-    yAssert(image->imageData != nullptr);
-}
-
-IPLAPIIMPL(void, iplAllocateImageFP,(IplImage* image))
-{
-    yAssert(image->depth == IPL_DEPTH_32F);
-    yAssert(image->dataOrder == IPL_DATA_ORDER_PIXEL);
-    // yAssert(image->widthStep == image->width * (image->depth & IPL_DEPTH_MASK) / 8 * image->nChannels);
-    yAssert(image->imageSize == image->widthStep * image->height);
-
     image->imageData = AllocAligned<char> (image->imageSize);
-    yAssert(image->imageData != nullptr);
 }
 
 IPLAPIIMPL(void, iplDeallocateImage,(IplImage* image))
@@ -152,12 +131,8 @@ IPLAPIIMPL(IplImage*, iplCreateImageHeader,
 
     yAssert(dataOrder == IPL_DATA_ORDER_PIXEL);
 
-    r->dataOrder = dataOrder; // IPL_DATA_ORDER_PIXEL, IPL_DATA_ORDER_PLANE
+    r->dataOrder = dataOrder;
     r->origin = origin;
-
-    //yAssert(align == IPL_ALIGN_QWORD); /// don't want to be bothered w/ alignment beside the
-    /// the 8 bytes stuff.
-    //yAssert(align == YARP_IMAGE_ALIGN);
 
     r->align = align;
     r->width = width;
@@ -185,7 +160,6 @@ IPLAPIIMPL(void, iplDeallocateHeader,(IplImage* image))
     if (image->imageData != nullptr)
         {
             FreeAligned<char> (image->imageData);
-            ///delete[] image->imageData;
         }
 
     delete image;
@@ -203,12 +177,6 @@ IPLAPIIMPL(void, iplDeallocate,(IplImage* image, int flag))
 
         case IPL_IMAGE_DATA:
             iplDeallocateImage (image);
-            break;
-
-        case IPL_IMAGE_ROI:
-        case IPL_IMAGE_TILE:
-        case IPL_IMAGE_MASK:
-            // NOT IMPLEMENTED.
             break;
         }
 }

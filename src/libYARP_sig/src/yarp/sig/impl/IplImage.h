@@ -124,9 +124,6 @@ typedef struct _IplTileInfo IplTileInfo;
 
 IPLAPIIMPL(void, iplAllocateImage,(IplImage* image));
 
-IPLAPIIMPL(void, iplAllocateImageFP,(IplImage* image));
-
-
 IPLAPIIMPL(void, iplDeallocateImage,(IplImage* image));
 
 IPLAPIIMPL(IplImage*, iplCreateImageHeader,

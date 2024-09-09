@@ -147,16 +147,9 @@ void ImageStorage::resize(size_t x, size_t y, int pixel_type,
 // allocates an empty image.
 void ImageStorage::_alloc () {
 
-
     _free(); // was iplDeallocateImage(pImage); but that won't work with refs
 
-    if ((type_id == VOCAB_PIXEL_MONO_FLOAT) ||
-        (type_id == VOCAB_PIXEL_RGB_FLOAT)  ||
-        (type_id == VOCAB_PIXEL_HSV_FLOAT)) {
-        iplAllocateImageFP(pImage);
-    } else {
-        iplAllocateImage (pImage);
-    }
+    iplAllocateImage (pImage);
 
     iplSetBorderMode (pImage, IPL_BORDER_CONSTANT, IPL_SIDE_ALL, 0);
 }
