@@ -44,7 +44,7 @@ typedef unsigned char uchar;
 
 
 /****************************************************************************************\
- *                                  Image type (IplImage)                                 *
+ *                                  Image type (MiniIplImage)                                 *
 \****************************************************************************************/
 
 /*
@@ -79,16 +79,9 @@ typedef unsigned char uchar;
 #define IPL_ALIGN_QWORD   IPL_ALIGN_8BYTES
 
 typedef struct _IplImage {
-    int  nSize;         /**< sizeof(IplImage) */
-    int  ID;            /**< version (=0)*/
     int  nChannels;     /**< Most of OpenCV functions support 1,2,3 or 4 channels */
-    int  alphaChannel;  /**< ignored by OpenCV */
     int  depth;         /**< pixel depth in bits: IPL_DEPTH_8U, IPL_DEPTH_8S, IPL_DEPTH_16S,
                           IPL_DEPTH_32S, IPL_DEPTH_32F and IPL_DEPTH_64F are supported */
-    char colorModel[4]; /**< ignored by OpenCV */
-    char channelSeq[4]; /**< ignored by OpenCV */
-    int  dataOrder;     /**< 0 - interleaved color channels, 1 - separate color channels.
-                          cvCreateImage can only create interleaved images */
     int  origin;        /**< 0 - top-left origin,
                           1 - bottom-left origin (Windows bitmaps style) */
     int  align;         /**< Alignment of image rows (4 or 8).
@@ -101,7 +94,7 @@ typedef struct _IplImage {
     char *imageData;  /**< pointer to aligned image data */
     int  widthStep;   /**< size of aligned image row in bytes */
 }
-IplImage;
+MiniIplImage;
 
 typedef struct _IplTileInfo IplTileInfo;
 
@@ -115,19 +108,16 @@ typedef struct _IplTileInfo IplTileInfo;
  */
 #define IPLAPIIMPL(type,name,arg) extern type name arg
 
-IPLAPIIMPL(void, iplAllocateImage,(IplImage* image));
+IPLAPIIMPL(void, iplAllocateImage, (MiniIplImage * image));
 
-IPLAPIIMPL(void, iplDeallocateImage,(IplImage* image));
+IPLAPIIMPL(void, iplDeallocateImage, (MiniIplImage * image));
 
-IPLAPIIMPL(IplImage*, iplCreateImageHeader,
-           (int   nChannels,  int     alphaChannel, int     depth,
-            char* colorModel, char*   channelSeq,   int     dataOrder,
+IPLAPIIMPL(MiniIplImage*, iplCreateImageHeader,
+           (int   nChannels,  int     depth,
             int   origin,     int     align,
             int   width,      int   height));
 
-IPLAPIIMPL(void, iplDeallocateHeader,(IplImage* image));
-
-IPLAPIIMPL(void, iplDeallocate,(IplImage* image, int flag));
+IPLAPIIMPL(void, iplDeallocateHeader, (MiniIplImage * image));
 
 #define IPL_BORDER_CONSTANT 0
 

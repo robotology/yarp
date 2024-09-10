@@ -64,7 +64,7 @@ inline bool readFromConnection(Image &dest, ImageNetworkHeader &header, Connecti
 
 class ImageStorage {
 public:
-    IplImage* pImage;
+    MiniIplImage* pImage;
     char **Data;  // this is not IPL. it's char to maintain IPL compatibility
     int extern_type_id;
     size_t extern_type_quantum;
@@ -119,11 +119,8 @@ public:
         _free_complete();
     }
 
-    void resize(size_t x, size_t y, int pixel_type,
-                size_t quantum, bool topIsLow);
-
-    void _alloc_complete_extern(const void *buf, size_t x, size_t y, int pixel_type,
-                                size_t quantum, bool topIsLow);
+    void resize(size_t x, size_t y, int pixel_type, size_t quantum, bool topIsLow);
+    void _alloc_complete_extern(const void *buf, size_t x, size_t y, int pixel_type, size_t quantum, bool topIsLow);
 };
 
 
@@ -164,11 +161,7 @@ void ImageStorage::_alloc_extern (const void *buf)
         }
     }
 
-    //iplAllocateImage (pImage, 0, 0);
     pImage->imageData = const_cast<char*>(reinterpret_cast<const char*>(buf));
-    // probably need to do more for real IPL
-
-    //iplSetBorderMode (pImage, IPL_BORDER_CONSTANT, IPL_SIDE_ALL, 0);
 }
 
 // allocates the Data pointer.
@@ -228,7 +221,7 @@ void ImageStorage::_free_complete()
 
     if (pImage != nullptr)
     {
-        iplDeallocate(pImage, IPL_IMAGE_HEADER);
+        iplDeallocateHeader(pImage);
     }
     pImage = nullptr;
 }
@@ -247,40 +240,35 @@ struct pixelTypeIplParams
 {
     int   nChannels;
     int   depth;
-    const char* colorModel;
-    const char* channelSeq;
 };
 
-const pixelTypeIplParams iplPixelTypeMono{1, IPL_DEPTH_8U,  "GRAY", "GRAY"};
-const pixelTypeIplParams iplPixelTypeMono16{1, IPL_DEPTH_16U,  "GRAY", "GRAY"};
-
 const std::map<int, pixelTypeIplParams> pixelCode2iplParams = {
-    {VOCAB_PIXEL_MONO,                  iplPixelTypeMono},
-    {VOCAB_PIXEL_ENCODING_BAYER_GRBG8,  iplPixelTypeMono},
-    {VOCAB_PIXEL_ENCODING_BAYER_BGGR8,  iplPixelTypeMono},
-    {VOCAB_PIXEL_ENCODING_BAYER_GBRG8,  iplPixelTypeMono},
-    {VOCAB_PIXEL_ENCODING_BAYER_RGGB8,  iplPixelTypeMono},
-    {VOCAB_PIXEL_YUV_420,               iplPixelTypeMono}, // {1, 12,  "GRAY", "GRAY"}},
-    {VOCAB_PIXEL_YUV_444,               iplPixelTypeMono}, // {1, 24,  "GRAY", "GRAY"}},
-    {VOCAB_PIXEL_YUV_422,               iplPixelTypeMono16},
-    {VOCAB_PIXEL_YUV_411,               iplPixelTypeMono}, // {1, 12,  "GRAY", "GRAY"}},
-    {VOCAB_PIXEL_MONO16,                iplPixelTypeMono16},
-    {VOCAB_PIXEL_ENCODING_BAYER_GRBG16, iplPixelTypeMono16},
-    {VOCAB_PIXEL_ENCODING_BAYER_BGGR16, iplPixelTypeMono16},
-    {VOCAB_PIXEL_ENCODING_BAYER_GBRG16, iplPixelTypeMono16},
-    {VOCAB_PIXEL_ENCODING_BAYER_RGGB16, iplPixelTypeMono16},
-    {VOCAB_PIXEL_RGB,                   {3, IPL_DEPTH_8U,  "RGB",  "RGB" }},
-    {VOCAB_PIXEL_RGBA,                  {4, IPL_DEPTH_8U,  "RGBA", "RGBA"}},
-    {VOCAB_PIXEL_BGRA,                  {4, IPL_DEPTH_8U,  "BGRA", "BGRA"}},
-    {VOCAB_PIXEL_INT,                   {1, IPL_DEPTH_32S, "GRAY", "GRAY"}},
-    {VOCAB_PIXEL_HSV,                   {3, IPL_DEPTH_8U,  "HSV",  "HSV" }},
-    {VOCAB_PIXEL_BGR,                   {3, IPL_DEPTH_8U,  "RGB",  "BGR" }},
-    {VOCAB_PIXEL_MONO_SIGNED,           {1, IPL_DEPTH_8S,  "GRAY", "GRAY"}},
-    {VOCAB_PIXEL_RGB_INT,               {3, IPL_DEPTH_32S, "RGB",  "RGB" }},
-    {VOCAB_PIXEL_MONO_FLOAT,            {1, IPL_DEPTH_32F, "GRAY", "GRAY"}},
-    {VOCAB_PIXEL_RGB_FLOAT,             {3, IPL_DEPTH_32F, "RGB",  "RGB" }},
-    {-2,                                iplPixelTypeMono16},
-    {-4,                                {1, IPL_DEPTH_32S, "GRAY", "GRAY"}}
+    {VOCAB_PIXEL_MONO,                  {1, IPL_DEPTH_8U}},
+    {VOCAB_PIXEL_ENCODING_BAYER_GRBG8,  {1, IPL_DEPTH_8U}},
+    {VOCAB_PIXEL_ENCODING_BAYER_BGGR8,  {1, IPL_DEPTH_8U}},
+    {VOCAB_PIXEL_ENCODING_BAYER_GBRG8,  {1, IPL_DEPTH_8U}},
+    {VOCAB_PIXEL_ENCODING_BAYER_RGGB8,  {1, IPL_DEPTH_8U}},
+    {VOCAB_PIXEL_YUV_420,               {1, IPL_DEPTH_8U}},
+    {VOCAB_PIXEL_YUV_444,               {1, IPL_DEPTH_8U}},
+    {VOCAB_PIXEL_YUV_422,               {1, IPL_DEPTH_16U}},
+    {VOCAB_PIXEL_YUV_411,               {1, IPL_DEPTH_8U}},
+    {VOCAB_PIXEL_MONO16,                {1, IPL_DEPTH_16U}},
+    {VOCAB_PIXEL_ENCODING_BAYER_GRBG16, {1, IPL_DEPTH_16U}},
+    {VOCAB_PIXEL_ENCODING_BAYER_BGGR16, {1, IPL_DEPTH_16U}},
+    {VOCAB_PIXEL_ENCODING_BAYER_GBRG16, {1, IPL_DEPTH_16U}},
+    {VOCAB_PIXEL_ENCODING_BAYER_RGGB16, {1, IPL_DEPTH_16U}},
+    {VOCAB_PIXEL_RGB,                   {3, IPL_DEPTH_8U,}},
+    {VOCAB_PIXEL_RGBA,                  {4, IPL_DEPTH_8U,}},
+    {VOCAB_PIXEL_BGRA,                  {4, IPL_DEPTH_8U,}},
+    {VOCAB_PIXEL_INT,                   {1, IPL_DEPTH_32S}},
+    {VOCAB_PIXEL_HSV,                   {3, IPL_DEPTH_8U,}},
+    {VOCAB_PIXEL_BGR,                   {3, IPL_DEPTH_8U,}},
+    {VOCAB_PIXEL_MONO_SIGNED,           {1, IPL_DEPTH_8S,}},
+    {VOCAB_PIXEL_RGB_INT,               {3, IPL_DEPTH_32S}},
+    {VOCAB_PIXEL_MONO_FLOAT,            {1, IPL_DEPTH_32F}},
+    {VOCAB_PIXEL_RGB_FLOAT,             {3, IPL_DEPTH_32F}},
+    {-2,                                {1, IPL_DEPTH_16U}},
+    {-4,                                {1, IPL_DEPTH_32S}}
 };
 
 bool ImageStorage::_set_ipl_header(size_t x, size_t y, int pixel_type, size_t quantum,
@@ -308,7 +296,7 @@ bool ImageStorage::_set_ipl_header(size_t x, size_t y, int pixel_type, size_t qu
     }
     int origin = topIsLow ? IPL_ORIGIN_TL : IPL_ORIGIN_BL;
 
-    pImage = iplCreateImageHeader(param.nChannels, 0, param.depth, const_cast<char*>(param.colorModel), const_cast<char*>(param.channelSeq), IPL_DATA_ORDER_PIXEL, origin, quantum, x, y);
+    pImage = iplCreateImageHeader(param.nChannels, param.depth, origin, quantum, x, y);
 
     type_id = pixel_type;
     this->quantum = quantum;
