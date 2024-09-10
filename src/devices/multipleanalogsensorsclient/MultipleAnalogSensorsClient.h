@@ -58,6 +58,7 @@ class MultipleAnalogSensorsClient :
         public yarp::dev::IThreeAxisLinearAccelerometers,
         public yarp::dev::IThreeAxisMagnetometers,
         public yarp::dev::IPositionSensors,
+        public yarp::dev::IVelocitySensors,
         public yarp::dev::IOrientationSensors,
         public yarp::dev::ITemperatureSensors,
         public yarp::dev::ISixAxisForceTorqueSensors,
@@ -125,6 +126,13 @@ public:
     bool getPositionSensorName(size_t sens_index, std::string& name) const override;
     bool getPositionSensorFrameName(size_t sens_index, std::string& frameName) const override;
     bool getPositionSensorMeasure(size_t sens_index, yarp::sig::Vector& xyz, double& timestamp) const override;
+
+    /* IVelocitySensors methods */
+    size_t getNrOfVelocitySensors() const override;
+    yarp::dev::MAS_status getVelocitySensorStatus(size_t sens_index) const override;
+    bool getVelocitySensorName(size_t sens_index, std::string& name) const override;
+    bool getVelocitySensorFrameName(size_t sens_index, std::string& frameName) const override;
+    bool getVelocitySensorMeasure(size_t sens_index, yarp::sig::Vector& xyz, double& timestamp) const override;
 
     /* IOrientationSensors methods */
     size_t getNrOfOrientationSensors() const override;

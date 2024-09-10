@@ -35,6 +35,7 @@ SensorRPCData::SensorRPCData(const std::vector<SensorMetadata>& ThreeAxisGyrosco
 {
 }
 
+
 // Read structure on a Wire
 bool SensorRPCData::read(yarp::os::idl::WireReader& reader)
 {

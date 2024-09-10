@@ -30,6 +30,7 @@ public:
     std::vector<SensorMetadata> EncoderArrays{};
     std::vector<SensorMetadata> SkinPatches{};
     std::vector<SensorMetadata> PositionSensors{};
+    std::vector<SensorMetadata> VelocitySensors{};
 
     // Default constructor
     SensorRPCData() = default;
@@ -124,6 +125,12 @@ private:
     bool write_PositionSensors(const yarp::os::idl::WireWriter& writer) const;
     bool nested_read_PositionSensors(yarp::os::idl::WireReader& reader);
     bool nested_write_PositionSensors(const yarp::os::idl::WireWriter& writer) const;
+
+    // read/write VelocitySensors field
+    bool read_VelocitySensors(yarp::os::idl::WireReader& reader);
+    bool write_VelocitySensors(const yarp::os::idl::WireWriter& writer) const;
+    bool nested_read_VelocitySensors(yarp::os::idl::WireReader& reader);
+    bool nested_write_VelocitySensors(const yarp::os::idl::WireWriter& writer) const;
 };
 
 #endif // YARP_THRIFT_GENERATOR_STRUCT_SENSORRPCDATA_H

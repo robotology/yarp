@@ -307,6 +307,10 @@ bool MultipleAnalogSensorsServer::populateAllSensorsMetadata()
                                        &yarp::dev::IPositionSensors::getNrOfPositionSensors,
                                        &yarp::dev::IPositionSensors::getPositionSensorName,
                                        &yarp::dev::IPositionSensors::getPositionSensorFrameName);
+    ok = ok && populateSensorsMetadata(m_iVelocitySensors, m_sensorMetadata.VelocitySensors, "VelocitySensors",
+                                       &yarp::dev::IVelocitySensors::getNrOfVelocitySensors,
+                                       &yarp::dev::IVelocitySensors::getVelocitySensorName,
+                                       &yarp::dev::IVelocitySensors::getVelocitySensorFrameName);
     ok = ok && populateSensorsMetadata(m_iOrientationSensors, m_sensorMetadata.OrientationSensors, "OrientationSensors",
                                        &yarp::dev::IOrientationSensors::getNrOfOrientationSensors,
                                        &yarp::dev::IOrientationSensors::getOrientationSensorName,

@@ -17,6 +17,7 @@ class IThreeAxisGyroscopes;
 class IThreeAxisLinearAccelerometers;
 class IThreeAxisMagnetometers;
 class IPositionSensors;
+class IVelocitySensors;
 class IOrientationSensors;
 class ITemperatureSensors;
 class ISixAxisForceTorqueSensors;
@@ -245,6 +246,50 @@ public:
     virtual bool getPositionSensorMeasure(size_t sens_index, yarp::sig::Vector& xyz, double& timestamp) const = 0;
 
     virtual ~IPositionSensors()
+    {
+    }
+};
+
+class YARP_dev_API yarp::dev::IVelocitySensors
+{
+public:
+    /**
+     * Get the number of velocity sensors exposed by this device.
+     */
+    virtual size_t getNrOfVelocitySensors() const = 0;
+
+    /**
+     * Get the status of the specified sensor.
+     */
+    virtual yarp::dev::MAS_status getVelocitySensorStatus(size_t sens_index) const = 0;
+
+    /**
+     * Get the name of the specified sensor.
+     * @return false if an error occurred, true otherwise.
+     */
+    virtual bool getVelocitySensorName(size_t sens_index, std::string& name) const = 0;
+
+    /**
+     * Get the name of the frame of the specified sensor.
+     *
+     * @note This is an implementation specific method, that may return the name of the sensor
+     *       frame in a scenegraph
+     *
+     * @return false if an error occurred, true otherwise.
+     */
+    virtual bool getVelocitySensorFrameName(size_t sens_index, std::string& frameName) const = 0;
+
+    /**
+     * Get the last reading of the velocity sensor as x y z.
+     *
+     * @param[in] sens_index The index of the specified sensor (should be between 0 and getNrOfVelocitySensors()-1).
+     * @param[out] out The requested measure. The vector should be 3-dimensional. The measure is expressed in meters.
+     * @param[out] timestamp The timestamp of the requested measure, expressed in seconds.
+     * @return false if an error occurred, true otherwise.
+     */
+    virtual bool getVelocitySensorMeasure(size_t sens_index, yarp::sig::Vector& xyz, double& timestamp) const = 0;
+
+    virtual ~IVelocitySensors()
     {
     }
 };

@@ -58,6 +58,9 @@ inline std::string MAS_getTagFromEnum(const MAS_SensorType type)
         case PositionSensors:
             return "PositionSensors";
             break;
+        case VelocitySensors:
+            return "VelocitySensors";
+            break;
         default:
             assert(false);
             return "MAS_getTagFromEnum_notExpectedEnum";
@@ -228,6 +231,8 @@ bool MultipleAnalogSensorsRemapper::attachAll(const PolyDriverList &polylist)
                                 &IThreeAxisMagnetometers::getThreeAxisMagnetometerName, &IThreeAxisMagnetometers::getNrOfThreeAxisMagnetometers);
     ok = ok && genericAttachAll(PositionSensors, m_iPositionSensors, polylist,
                                 &IPositionSensors::getPositionSensorName, &IPositionSensors::getNrOfPositionSensors);
+    ok = ok && genericAttachAll(VelocitySensors, m_iVelocitySensors, polylist,
+                                &IVelocitySensors::getVelocitySensorName, &IVelocitySensors::getNrOfVelocitySensors);
     ok = ok && genericAttachAll(OrientationSensors, m_iOrientationSensors, polylist,
                                 &IOrientationSensors::getOrientationSensorName, &IOrientationSensors::getNrOfOrientationSensors);
     ok = ok && genericAttachAll(TemperatureSensors, m_iTemperatureSensors, polylist,
@@ -250,6 +255,7 @@ bool MultipleAnalogSensorsRemapper::detachAll()
     m_iThreeAxisLinearAccelerometers.resize(0);
     m_iThreeAxisMagnetometers.resize(0);
     m_iPositionSensors.resize(0);
+    m_iVelocitySensors.resize(0);
     m_iOrientationSensors.resize(0);
     m_iTemperatureSensors.resize(0);
     m_iSixAxisForceTorqueSensors.resize(0);
@@ -491,6 +497,31 @@ bool MultipleAnalogSensorsRemapper::getPositionSensorFrameName(size_t sens_index
 bool MultipleAnalogSensorsRemapper::getPositionSensorMeasure(size_t sens_index, yarp::sig::Vector& out, double& timestamp) const
 {
     return genericGetMeasure(PositionSensors, sens_index, out, timestamp, m_iPositionSensors, &IPositionSensors::getPositionSensorMeasure);
+}
+
+size_t MultipleAnalogSensorsRemapper::getNrOfVelocitySensors() const
+{
+    return m_indicesMap[VelocitySensors].size();
+}
+
+MAS_status MultipleAnalogSensorsRemapper::getVelocitySensorStatus(size_t sens_index) const
+{
+    return genericGetStatus(VelocitySensors, sens_index, m_iVelocitySensors, &IVelocitySensors::getVelocitySensorStatus);
+}
+
+bool MultipleAnalogSensorsRemapper::getVelocitySensorName(size_t sens_index, std::string& name) const
+{
+    return genericGetName(VelocitySensors, sens_index, name, m_iVelocitySensors, &IVelocitySensors::getVelocitySensorName);
+}
+
+bool MultipleAnalogSensorsRemapper::getVelocitySensorFrameName(size_t sens_index, std::string& frameName) const
+{
+    return genericGetFrameName(VelocitySensors, sens_index, frameName, m_iVelocitySensors, &IVelocitySensors::getVelocitySensorFrameName);
+}
+
+bool MultipleAnalogSensorsRemapper::getVelocitySensorMeasure(size_t sens_index, yarp::sig::Vector& out, double& timestamp) const
+{
+    return genericGetMeasure(VelocitySensors, sens_index, out, timestamp, m_iVelocitySensors, &IVelocitySensors::getVelocitySensorMeasure);
 }
 
 size_t MultipleAnalogSensorsRemapper::getNrOfOrientationSensors() const

@@ -31,6 +31,7 @@ struct SensorStreamingData
   8: SensorMeasurements EncoderArrays;
   9: SensorMeasurements SkinPatches;
   10: SensorMeasurements PositionSensors;
+  11: SensorMeasurements VelocitySensors;
 }
 
 struct SensorMetadata {
@@ -51,6 +52,7 @@ struct SensorRPCData
   8: list<SensorMetadata> EncoderArrays;
   9: list<SensorMetadata> SkinPatches;
   10: list<SensorMetadata> PositionSensors;
+  11: list<SensorMetadata> VelocitySensors;
 }
 
 service MultipleAnalogSensorsMetadata
