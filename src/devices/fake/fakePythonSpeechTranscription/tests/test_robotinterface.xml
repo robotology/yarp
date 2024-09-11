@@ -1,0 +1,17 @@
+<!--
+  SPDX-FileCopyrightText: 2024-2024 Istituto Italiano di Tecnologia (IIT)
+  SPDX-License-Identifier: BSD-3-Clause
+-->
+
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE robot PUBLIC "-//YARP//DTD yarprobotinterface 3.0//EN" "http://www.yarp.it/DTD/yarprobotinterfaceV3.0.dtd">
+
+<robot name="test" xmlns:xi="http://www.w3.org/2001/XInclude">
+   <devices>
+       <device xmlns:xi="http://www.w3.org/2001/XInclude"  name="test" type="fakePythonSpeechTranscription">
+            <param name="modulePath" >/home/ecub_docker/yarp/src/devices/fake/fakePythonSpeechTranscription</param>
+            <param name="moduleName" >Module</param>
+            <param name="className" >SpeechTranscriptor</param>
+       </device>
+   </devices>
+</robot>
