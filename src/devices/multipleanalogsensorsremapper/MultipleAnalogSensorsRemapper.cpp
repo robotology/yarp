@@ -18,8 +18,8 @@ namespace {
 YARP_LOG_COMPONENT(MULTIPLEANALOGSENSORSREMAPPER, "yarp.device.multipleanalogsensorsremapper")
 }
 
-const size_t MAS_NrOfSensorTypes{10};
-static_assert(MAS_SensorType::PositionSensors+1 == MAS_NrOfSensorTypes, "Consistency error between MAS_NrOfSensorTypes and MAS_SensorType");
+const size_t MAS_NrOfSensorTypes{11};
+static_assert(MAS_SensorType::VelocitySensors+1 == MAS_NrOfSensorTypes, "Consistency error between MAS_NrOfSensorTypes and MAS_SensorType");
 
 /**
  * Internal identifier of the type of sensors.

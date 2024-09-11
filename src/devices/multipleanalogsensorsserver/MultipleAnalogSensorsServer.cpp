@@ -32,7 +32,8 @@ enum MAS_SensorTypeServer
     ContactLoadCellArrays=6,
     EncoderArrays=7,
     SkinPatches=8,
-    PositionSensors=9
+    PositionSensors=9,
+    VelocitySensors=10
 };
 
 /**
@@ -55,6 +56,9 @@ inline size_t MAS_getMeasureSizeFromEnum(const MAS_SensorTypeServer type)
             return 3;
             break;
         case PositionSensors:
+            return 3;
+            break;
+        case VelocitySensors:
             return 3;
             break;
         case TemperatureSensors:
@@ -389,6 +393,8 @@ bool MultipleAnalogSensorsServer::resizeAllMeasureVectors(SensorStreamingData& s
                                     streamingData.ThreeAxisMagnetometers.measurements, MAS_getMeasureSizeFromEnum(ThreeAxisMagnetometers));
     ok = ok && resizeMeasureVectors(m_iPositionSensors, m_sensorMetadata.PositionSensors,
                                     streamingData.PositionSensors.measurements, MAS_getMeasureSizeFromEnum(PositionSensors));
+    ok = ok && resizeMeasureVectors(m_iVelocitySensors, m_sensorMetadata.VelocitySensors,
+                                    streamingData.VelocitySensors.measurements, MAS_getMeasureSizeFromEnum(VelocitySensors));
     ok = ok && resizeMeasureVectors(m_iOrientationSensors, m_sensorMetadata.OrientationSensors,
                                     streamingData.OrientationSensors.measurements, MAS_getMeasureSizeFromEnum(OrientationSensors));
     ok = ok && resizeMeasureVectors(m_iTemperatureSensors, m_sensorMetadata.TemperatureSensors,
@@ -441,6 +447,7 @@ bool MultipleAnalogSensorsServer::attachAll(const yarp::dev::PolyDriverList& p)
     poly->view(m_iThreeAxisLinearAccelerometers);
     poly->view(m_iThreeAxisMagnetometers);
     poly->view(m_iPositionSensors);
+    poly->view(m_iVelocitySensors);
     poly->view(m_iOrientationSensors);
     poly->view(m_iTemperatureSensors);
     poly->view(m_iSixAxisForceTorqueSensors);
@@ -583,6 +590,12 @@ void MultipleAnalogSensorsServer::run()
                                  &yarp::dev::IPositionSensors::getPositionSensorStatus,
                                  &yarp::dev::IPositionSensors::getPositionSensorMeasure,
                                  "PositionSensor");
+
+    ok = ok && genericStreamData(m_iVelocitySensors, m_sensorMetadata.VelocitySensors,
+                                 streamingData.VelocitySensors.measurements,
+                                 &yarp::dev::IVelocitySensors::getVelocitySensorStatus,
+                                 &yarp::dev::IVelocitySensors::getVelocitySensorMeasure,
+                                 "VelocitySensor");
 
     ok = ok && genericStreamData(m_iOrientationSensors, m_sensorMetadata.OrientationSensors,
                                  streamingData.OrientationSensors.measurements,
