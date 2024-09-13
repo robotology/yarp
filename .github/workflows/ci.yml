@@ -562,7 +562,295 @@ jobs:
                                   -DENABLE_yarpmod_opencv_grabber:BOOL=OFF",
           }
         - {
-            id: '23',
+            id: '101',
+            os: ubuntu-24.04,
+            build_type: "Release",
+            cc: "gcc",
+            cxx: "g++",
+            cmake_generator: "Unix Makefiles",
+            cmake_initial_cache_file: ".ci/initial-cache.gh.linux.cmake",
+            test_external_bindings: true,
+          }
+        - {
+            id: '102',
+            os: ubuntu-24.04,
+            build_type: "Release",
+            cc: "clang-17",
+            cxx: "clang++-17",
+            cmake_generator: "Unix Makefiles",
+            cmake_initial_cache_file: ".ci/initial-cache.gh.linux.cmake",
+            test_external_bindings: true,
+          }
+        - {
+            id: '103',
+            description: 'No ACE',
+            os: ubuntu-24.04,
+            build_type: "Release",
+            cc: "gcc",
+            cxx: "g++",
+            cmake_generator: "Unix Makefiles",
+            cmake_initial_cache_file: ".ci/initial-cache.gh.linux.cmake",
+            cmake_extra_options: "-DCMAKE_DISABLE_FIND_PACKAGE_ACE=ON
+                                  -DSKIP_ACE:BOOL=ON",
+            test_external_bindings: true,
+          }
+        - {
+            id: '104',
+            description: 'No ACE',
+            os: ubuntu-24.04,
+            build_type: "Release",
+            cc: "clang-17",
+            cxx: "clang++-17",
+            cmake_generator: "Unix Makefiles",
+            cmake_initial_cache_file: ".ci/initial-cache.gh.linux.cmake",
+            cmake_extra_options: "-DCMAKE_DISABLE_FIND_PACKAGE_ACE:BOOL=ON
+                                  -DSKIP_ACE:BOOL=ON",
+            test_external_bindings: true,
+          }
+        - {
+            id: '105',
+            description: 'No YARP_math (bindings disabled)',
+            os: ubuntu-24.04,
+            build_type: "Release",
+            cc: "gcc",
+            cxx: "g++",
+            cmake_generator: "Unix Makefiles",
+            cmake_initial_cache_file: ".ci/initial-cache.gh.linux.cmake",
+            cmake_extra_options: "-DCMAKE_DISABLE_FIND_PACKAGE_Eigen:BOOL=ON
+                                  -DCMAKE_DISABLE_FIND_PACKAGE_GSL:BOOL=ON
+                                  -DYARP_COMPILE_libYARP_math:BOOL=OFF
+                                  -DYARP_COMPILE_BINDINGS:BOOL=OFF",
+          }
+        - {
+            id: '106',
+            description: 'No YARP_math (bindings disabled)',
+            os: ubuntu-24.04,
+            build_type: "Release",
+            cc: "clang-17",
+            cxx: "clang++-17",
+            cmake_generator: "Unix Makefiles",
+            cmake_initial_cache_file: ".ci/initial-cache.gh.linux.cmake",
+            cmake_extra_options: "-DCMAKE_DISABLE_FIND_PACKAGE_Eigen:BOOL=ON
+                                  -DCMAKE_DISABLE_FIND_PACKAGE_GSL:BOOL=ON
+                                  -DYARP_COMPILE_libYARP_math:BOOL=OFF
+                                  -DYARP_COMPILE_BINDINGS:BOOL=OFF",
+          }
+        - {
+            id: '107',
+            description: 'CLEAN_API (unit tests and bindings disabled)',
+            os: ubuntu-24.04,
+            build_type: "Release",
+            cc: "gcc",
+            cxx: "g++",
+            cmake_generator: "Unix Makefiles",
+            cmake_initial_cache_file: ".ci/initial-cache.gh.linux.cmake",
+            cmake_extra_options: "-DYARP_CLEAN_API:BOOL=ON
+                                  -DYARP_COMPILE_TESTS:BOOL=OFF
+                                  -DYARP_COMPILE_BINDINGS:BOOL=OFF",
+          }
+        - {
+            id: '108',
+            description: 'CLEAN_API (unit tests and bindings disabled)',
+            os: ubuntu-24.04,
+            build_type: "Release",
+            cc: "clang-17",
+            cxx: "clang++-17",
+            cmake_generator: "Unix Makefiles",
+            cmake_initial_cache_file: ".ci/initial-cache.gh.linux.cmake",
+            cmake_extra_options: "-DYARP_CLEAN_API:BOOL=ON
+                                  -DYARP_COMPILE_TESTS:BOOL=OFF
+                                  -DYARP_COMPILE_BINDINGS:BOOL=OFF",
+          }
+        - {
+            id: '109',
+            description: 'Static',
+            os: ubuntu-24.04,
+            build_type: "Release",
+            cc: "gcc",
+            cxx: "g++",
+            cmake_generator: "Unix Makefiles",
+            cmake_initial_cache_file: ".ci/initial-cache.gh.linux.cmake",
+            cmake_extra_options: "-DBUILD_SHARED_LIBS:BOOL=OFF",
+          }
+        - {
+            id: '110',
+            description: 'Static',
+            os: ubuntu-24.04,
+            build_type: "Release",
+            cc: "clang-17",
+            cxx: "clang++-17",
+            cmake_generator: "Unix Makefiles",
+            cmake_initial_cache_file: ".ci/initial-cache.gh.linux.cmake",
+            cmake_extra_options: "-DBUILD_SHARED_LIBS:BOOL=OFF",
+          }
+        - {
+            id: '111',
+            description: 'Static, no ACE (bindings disabled)',
+            os: ubuntu-24.04,
+            build_type: "Release",
+            cc: "gcc",
+            cxx: "g++",
+            cmake_generator: "Unix Makefiles",
+            cmake_initial_cache_file: ".ci/initial-cache.gh.linux.cmake",
+            cmake_extra_options: "-DBUILD_SHARED_LIBS:BOOL=OFF
+                                  -DCMAKE_DISABLE_FIND_PACKAGE_ACE:BOOL=ON
+                                  -DSKIP_ACE:BOOL=ON
+                                  -DYARP_COMPILE_BINDINGS:BOOL=OFF",
+          }
+        - {
+            id: '112',
+            description: 'Static, no ACE (bindings disabled)',
+            os: ubuntu-24.04,
+            build_type: "Release",
+            cc: "clang-17",
+            cxx: "clang++-17",
+            cmake_generator: "Unix Makefiles",
+            cmake_initial_cache_file: ".ci/initial-cache.gh.linux.cmake",
+            cmake_extra_options: "-DBUILD_SHARED_LIBS:BOOL=OFF
+                                  -DCMAKE_DISABLE_FIND_PACKAGE_ACE:BOOL=ON
+                                  -DSKIP_ACE:BOOL=ON
+                                  -DYARP_COMPILE_BINDINGS:BOOL=OFF",
+          }
+        - {
+            id: '113',
+            description: 'No deprecated',
+            os: ubuntu-24.04,
+            build_type: "Release",
+            cc: "gcc",
+            cxx: "g++",
+            cmake_generator: "Unix Makefiles",
+            cmake_initial_cache_file: ".ci/initial-cache.gh.linux.cmake",
+            cmake_extra_options: "-DYARP_NO_DEPRECATED:BOOL=ON",
+          }
+        - {
+            id: '114',
+            description: 'No deprecated',
+            os: ubuntu-24.04,
+            build_type: "Release",
+            cc: "clang-17",
+            cxx: "clang++-17",
+            cmake_generator: "Unix Makefiles",
+            cmake_initial_cache_file: ".ci/initial-cache.gh.linux.cmake",
+            cmake_extra_options: "-DYARP_NO_DEPRECATED:BOOL=ON",
+          }
+        - {
+            id: '115',
+            description: 'No executables (unit tests disabled)',
+            os: ubuntu-24.04,
+            build_type: "Release",
+            cc: "gcc",
+            cxx: "g++",
+            cmake_generator: "Unix Makefiles",
+            cmake_initial_cache_file: ".ci/initial-cache.gh.linux.cmake",
+            cmake_extra_options: "-DYARP_COMPILE_EXECUTABLES:BOOL=OFF
+                                  -DYARP_COMPILE_TESTS:BOOL=OFF",
+          }
+        - {
+            id: '116',
+            description: 'No executables (unit tests disabled)',
+            os: ubuntu-24.04,
+            build_type: "Release",
+            cc: "clang-17",
+            cxx: "clang++-17",
+            cmake_generator: "Unix Makefiles",
+            cmake_initial_cache_file: ".ci/initial-cache.gh.linux.cmake",
+            cmake_extra_options: "-DYARP_COMPILE_EXECUTABLES:BOOL=OFF
+                                  -DYARP_COMPILE_TESTS:BOOL=OFF",
+          }
+        - {
+            id: '117',
+            description: 'Build extern dependencies',
+            os: ubuntu-24.04,
+            build_type: "Release",
+            cc: "gcc",
+            cxx: "g++",
+            cmake_generator: "Unix Makefiles",
+            cmake_initial_cache_file: ".ci/initial-cache.gh.linux.cmake",
+            cmake_extra_options: "-DCMAKE_DISABLE_FIND_PACKAGE_SQLite:BOOL=ON
+                                  -DCMAKE_DISABLE_FIND_PACKAGE_TinyXML:BOOL=ON
+                                  -DCMAKE_DISABLE_FIND_PACKAGE_QCustomPlot:BOOL=ON",
+          }
+        - {
+            id: '118',
+            description: 'Build extern dependencies',
+            os: ubuntu-24.04,
+            build_type: "Release",
+            cc: "clang-17",
+            cxx: "clang++-17",
+            cmake_generator: "Unix Makefiles",
+            cmake_initial_cache_file: ".ci/initial-cache.gh.linux.cmake",
+            cmake_extra_options: "-DCMAKE_DISABLE_FIND_PACKAGE_SQLite:BOOL=ON
+                                  -DCMAKE_DISABLE_FIND_PACKAGE_TinyXML:BOOL=ON
+                                  -DCMAKE_DISABLE_FIND_PACKAGE_QCustomPlot:BOOL=ON",
+          }
+        - {
+            id: '119',
+            os: ubuntu-24.04,
+            build_type: "Release",
+            cc: "gcc",
+            cxx: "g++",
+            cmake_generator: "Ninja",
+            cmake_initial_cache_file: ".ci/initial-cache.gh.linux.cmake",
+          }
+        - {
+            id: '120',
+            os: ubuntu-24.04,
+            build_type: "Release",
+            cc: "clang-17",
+            cxx: "clang++-17",
+            cmake_generator: "Ninja",
+            cmake_initial_cache_file: ".ci/initial-cache.gh.linux.cmake",
+          }
+        - {
+            id: '121',
+            description: 'Valgrind (bindings, failing tests, guis and examples as tests disabled)',
+            os: ubuntu-24.04,
+            build_type: "Debug",
+            cc: "gcc",
+            cxx: "g++",
+            cmake_generator: "Unix Makefiles",
+            cmake_initial_cache_file: ".ci/initial-cache.gh.linux.cmake",
+            cmake_extra_options: "-DYARP_VALGRIND_TESTS:BOOL=ON
+                                  -DYARP_DISABLE_FAILING_TESTS:BOOL=ON
+                                  -DYARP_DISABLE_FAILING_VALGRIND_TESTS:BOOL=ON
+                                  -DYARP_ENABLE_EXAMPLES_AS_TESTS:BOOL=OFF
+                                  -DYARP_COMPILE_BINDINGS:BOOL=OFF
+                                  -DCMAKE_DISABLE_FIND_PACKAGE_FFMPEG=ON
+                                  -DYARP_COMPILE_GUIS:BOOL=OFF
+                                  -DENABLE_yarpmod_usbCamera:BOOL=OFF
+                                  -DENABLE_yarpmod_usbCameraRaw:BOOL=OFF
+                                  -DENABLE_yarpmod_portaudio:BOOL=OFF
+                                  -DENABLE_yarpmod_portaudioPlayer:BOOL=OFF
+                                  -DENABLE_yarpmod_portaudioRecorder:BOOL=OFF
+                                  -DENABLE_yarpmod_opencv_grabber:BOOL=OFF",
+          }
+        - {
+            id: '122',
+            description: 'Valgrind, No ACE (bindings, failing tests, guis and examples as tests disabled)',
+            os: ubuntu-24.04,
+            build_type: "Debug",
+            cc: "gcc",
+            cxx: "g++",
+            cmake_generator: "Unix Makefiles",
+            cmake_initial_cache_file: ".ci/initial-cache.gh.linux.cmake",
+            cmake_extra_options: "-DCMAKE_DISABLE_FIND_PACKAGE_ACE:BOOL=ON
+                                  -DSKIP_ACE:BOOL=ON
+                                  -DYARP_VALGRIND_TESTS:BOOL=ON
+                                  -DYARP_DISABLE_FAILING_TESTS:BOOL=ON
+                                  -DYARP_DISABLE_FAILING_VALGRIND_TESTS:BOOL=ON
+                                  -DYARP_ENABLE_EXAMPLES_AS_TESTS:BOOL=OFF
+                                  -DYARP_COMPILE_BINDINGS:BOOL=OFF
+                                  -DCMAKE_DISABLE_FIND_PACKAGE_FFMPEG=ON
+                                  -DYARP_COMPILE_GUIS:BOOL=OFF
+                                  -DENABLE_yarpmod_usbCamera:BOOL=OFF
+                                  -DENABLE_yarpmod_usbCameraRaw:BOOL=OFF
+                                  -DENABLE_yarpmod_portaudio:BOOL=OFF
+                                  -DENABLE_yarpmod_portaudioPlayer:BOOL=OFF
+                                  -DENABLE_yarpmod_portaudioRecorder:BOOL=OFF
+                                  -DENABLE_yarpmod_opencv_grabber:BOOL=OFF",
+          }
+        - {
+            id: '201',
             os: windows-2019,
             build_type: "Release",
             cc: "cl",
@@ -575,7 +863,7 @@ jobs:
             environment_script: "C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/VC/Auxiliary/Build/vcvars64.bat",
           }
         - {
-            id: '24',
+            id: '202',
             os: windows-2019,
             build_type: "Release",
             cc: "cl",
@@ -588,7 +876,7 @@ jobs:
             environment_script: "C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/VC/Auxiliary/Build/vcvars64.bat",
           }
         - {
-            id: '25',
+            id: '203',
             os: windows-2019,
             build_type: "Release",
             cc: "cl",
@@ -600,7 +888,7 @@ jobs:
             environment_script: "C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/VC/Auxiliary/Build/vcvars64.bat",
           }
         - {
-            id: '26',
+            id: '204',
             os: windows-2019,
             build_type: "Release",
             cc: "cl",
@@ -612,7 +900,7 @@ jobs:
             environment_script: "C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/VC/Auxiliary/Build/vcvars64.bat",
           }
         - {
-            id: '27',
+            id: '205',
             os: windows-2022,
             build_type: "Release",
             cc: "cl",
@@ -625,7 +913,7 @@ jobs:
             environment_script: "C:/Program Files (x86)/Microsoft Visual Studio/2022/Enterprise/VC/Auxiliary/Build/vcvars64.bat",
           }
         - {
-            id: '28',
+            id: '206',
             os: windows-2022,
             build_type: "Release",
             cc: "cl",
@@ -638,7 +926,7 @@ jobs:
             environment_script: "C:/Program Files (x86)/Microsoft Visual Studio/2022/Enterprise/VC/Auxiliary/Build/vcvars64.bat",
           }
         - {
-            id: '29',
+            id: '301',
             os: macos-13,
             build_type: "Release",
             cc: "clang",
@@ -647,7 +935,7 @@ jobs:
             cmake_initial_cache_file: ".ci/initial-cache.gh.macos.cmake",
           }
         - {
-            id: '30',
+            id: '302',
             os: macos-13,
             build_type: "Release",
             cc: "clang",
@@ -656,7 +944,7 @@ jobs:
             cmake_initial_cache_file: ".ci/initial-cache.gh.macos.cmake",
           }
         - {
-            id: '31',
+            id: '303',
             os: macos-12,
             build_type: "Release",
             cc: "clang",
@@ -665,7 +953,7 @@ jobs:
             cmake_initial_cache_file: ".ci/initial-cache.gh.macos.cmake",
           }
         - {
-            id: '32',
+            id: '304',
             os: macos-12,
             build_type: "Release",
             cc: "clang",
