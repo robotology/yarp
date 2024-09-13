@@ -220,6 +220,11 @@ jobs:
             cmake_generator: "Unix Makefiles",
             ycm_version: "0.15.3",
           }
+        - {
+            cmake_version: "3.28.*",
+            cmake_generator: "Unix Makefiles",
+            ycm_version: "0.15.3",
+          }
     steps:
     - name: remove any previous installation of cmake
       run: | 
