@@ -288,10 +288,13 @@ foreach(_f IN LISTS YARP_dev_idl_GEN_FILES)
   endif()
 endforeach()
 
+#message ("YARP_dev_idl_HDRS: ${YARP_dev_idl_HDRS}")
+#message ("YARP_dev_idl_GEN_FILES: ${YARP_dev_idl_GEN_FILES}")
 source_group(
   TREE "${CMAKE_CURRENT_SOURCE_DIR}"
   PREFIX "Source Files"
-  FILES ${YARP_dev_SRCS}
+  FILES
+    ${YARP_dev_SRCS}
 )
 source_group(
   TREE "${CMAKE_CURRENT_SOURCE_DIR}"
@@ -312,7 +315,6 @@ source_group(
     ${YARP_dev_devices_SRCS}
     ${YARP_dev_devices_HDRS}
 )
-
 
 target_sources(YARP_dev
   PRIVATE
@@ -356,24 +358,12 @@ if(YARP_HAS_ZLIB)
   list(APPEND YARP_dev_PRIVATE_DEPS ZLIB)
 endif()
 
-set_property(
-  TARGET YARP_dev
-  PROPERTY
-    PUBLIC_HEADER
-      ${YARP_dev_HDRS}
-      ${YARP_dev_idl_HDRS}
-)
-set_property(
-  TARGET YARP_dev
-  PROPERTY
-    PRIVATE_HEADER
-      ${YARP_dev_IMPL_HDRS}
-      ${YARP_dev_idl_IMPL_HDRS}
-)
+#prepare installation
+set_property(TARGET YARP_dev PROPERTY PUBLIC_HEADER ${YARP_dev_HDRS} ${YARP_dev_idl_HDRS})
+set_property(TARGET YARP_dev PROPERTY PRIVATE_HEADER ${YARP_dev_IMPL_HDRS} ${YARP_dev_idl_IMPL_HDRS})
 set_property(TARGET YARP_dev PROPERTY VERSION ${YARP_VERSION_SHORT})
 set_property(TARGET YARP_dev PROPERTY SOVERSION ${YARP_SOVERSION})
 set_property(TARGET YARP_dev PROPERTY FOLDER "Libraries")
-
 
 install(
   TARGETS YARP_dev

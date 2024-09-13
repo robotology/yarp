@@ -32,12 +32,6 @@ set(YARP_sig_HDRS
   yarp/sig/Vector.h
 )
 
-if(NOT YARP_NO_DEPRECATED) # Since YARP 3.0.0
-  list(APPEND YARP_sig_HDRS
-    yarp/sig/IplImage.h
-  )
-endif()
-
 set(YARP_sig_SRCS
   yarp/sig/AudioBufferSize.cpp
   yarp/sig/Image.cpp
@@ -91,6 +85,9 @@ foreach(_f IN LISTS YARP_sig_idl_GEN_FILES)
     endif()
   endif()
 endforeach()
+
+#message ("YARP_sig_idl_HDRS: ${YARP_sig_idl_HDRS}")
+#message ("YARP_sig_idl_GEN_FILES: ${YARP_sig_idl_GEN_FILES}")
 
 source_group(
   TREE "${CMAKE_CURRENT_SOURCE_DIR}"
@@ -190,12 +187,12 @@ if (YARP_HAS_FFMPEG)
   # list(APPEND YARP_sig_PRIVATE_DEPS FFMPEG) # Not using targets
 endif()
 
-set_property(TARGET YARP_sig PROPERTY PUBLIC_HEADER ${YARP_sig_HDRS})
+#prepare installation
+set_property(TARGET YARP_sig PROPERTY PUBLIC_HEADER ${YARP_sig_HDRS} ${YARP_sig_idl_HDRS})
 set_property(TARGET YARP_sig PROPERTY PRIVATE_HEADER ${YARP_sig_IMPL_HDRS})
 set_property(TARGET YARP_sig PROPERTY VERSION ${YARP_VERSION_SHORT})
 set_property(TARGET YARP_sig PROPERTY SOVERSION ${YARP_SOVERSION})
 set_property(TARGET YARP_sig PROPERTY FOLDER "Libraries")
-
 
 install(
   TARGETS YARP_sig
