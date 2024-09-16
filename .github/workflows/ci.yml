@@ -1058,7 +1058,7 @@ jobs:
                                       tcl-dev \
                                       tk-dev \
                                       python3-dev \
-                                      liboctave-dev \
+                                      octave-dev \
                                       ruby-dev \
                                       ruby \
                                       perl
