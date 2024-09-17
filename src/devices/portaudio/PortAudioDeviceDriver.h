@@ -114,12 +114,12 @@ public:
     bool immediateSound(const yarp::sig::Sound& sound);
     bool appendSound(const yarp::sig::Sound& sound);
 
-    bool getPlaybackAudioBufferMaxSize(yarp::dev::AudioBufferSize& size) override;
-    bool getPlaybackAudioBufferCurrentSize(yarp::dev::AudioBufferSize& size) override;
+    bool getPlaybackAudioBufferMaxSize(yarp::sig::AudioBufferSize& size) override;
+    bool getPlaybackAudioBufferCurrentSize(yarp::sig::AudioBufferSize& size) override;
     bool resetPlaybackAudioBuffer() override;
 
-    bool getRecordingAudioBufferMaxSize(yarp::dev::AudioBufferSize& size) override;
-    bool getRecordingAudioBufferCurrentSize(yarp::dev::AudioBufferSize& size) override;
+    bool getRecordingAudioBufferMaxSize(yarp::sig::AudioBufferSize& size) override;
+    bool getRecordingAudioBufferCurrentSize(yarp::sig::AudioBufferSize& size) override;
     bool resetRecordingAudioBuffer() override;
 
     bool setHWGain(double gain) override;
