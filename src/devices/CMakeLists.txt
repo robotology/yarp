@@ -25,7 +25,6 @@ yarp_begin_plugin_library(yarpmod
   add_subdirectory(frameTransformSet)
   add_subdirectory(frameTransformStorage)
   add_subdirectory(SerialServoBoard)
-  add_subdirectory(ffmpeg)
   add_subdirectory(opencvGrabber)
   add_subdirectory(serialport)
   add_subdirectory(portaudioPlayer)

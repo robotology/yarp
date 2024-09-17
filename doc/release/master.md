@@ -84,6 +84,14 @@ New Features
 
 * Network protocol now uses IDL thrift
 
+#### ffmpeg_grabber
+
+* Deprecated device
+
+#### ffmpeg_writer
+
+* Deprecated device
+
 #### FakePythonSpeechTranscription
 
 * Added new device `FakePythonSpeechTranscription`. The device is also an example which demonstrates the encapsulation of python code inside a c++ device implementing a Yarp interface. 
