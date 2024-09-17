@@ -1050,9 +1050,8 @@ jobs:
           sudo apt-get install -y     libgstreamer1.0-dev \
                                       libgstreamer-plugins-base1.0-dev
 
-          # Install SWIG and bindings dependencies
-          sudo apt-get install -qq -y swig \
-                                      mono-mcs \
+          # Install bindings dependencies
+          sudo apt-get install -qq -y mono-mcs \
                                       liblua5.3-dev \
                                       lua5.3 \
                                       tcl-dev \
@@ -1063,14 +1062,30 @@ jobs:
                                       ruby \
                                       perl
 
+          # Install SWIG
+          # On Ubuntu 24.04 this corresponds to swig 4.2.0 which is affected by a bug: https://github.com/robotology/yarp/issues/3083
+          # sudo apt-get install -qq -y swig 
+          #
+          # we thus install manually swig 4.2.1
+          sudo apt-get purge -y swig
+          wget -nv https://github.com/robotology/robotology-vcpkg-ports/releases/download/storage/swig_4_2_1_ubuntu_24_04.zip
+          unzip -q swig_4_2_1_ubuntu_24_04.zip
+          sudo mv swig_4_2_1_ubuntu_24_04_install/bin/* /usr/bin
+          sudo mv swig_4_2_1_ubuntu_24_04_install/share/swig /usr/share
+          echo "BUGFIX_SWIG_CMAKE_EXTRA_OPTIONS=-DSWIG_EXECUTABLE=/usr/bin/swig -DSWIG_DIR=/usr/share/swig/4.2.1" >> $GITHUB_ENV
+
+          echo "***123a***"
+          cat $GITHUB_ENV
+          echo "***123aa***"
+          echo $BUGFIX_SWIG_CMAKE_EXTRA_OPTIONS
+          echo "***123aaa***"
+
           # Other tools useful in github actions
           sudo apt-get install -qq -y jq \
                                       wget \
                                       curl \
                                       lcov \
                                       gcovr \
-                                      wget \
-                                      curl \
                                       xsltproc \
                                       libxml2-utils \
                                       source-highlight
@@ -1085,9 +1100,9 @@ jobs:
           choco install --no-progress -y wget 7zip
           echo ""
           echo " Download and install SWIG"
-          wget -nv https://sourceforge.net/projects/swig/files/swigwin/swigwin-4.0.2/swigwin-4.0.2.zip -O swigwin.zip
+          wget -nv https://sourceforge.net/projects/swig/files/swigwin/swigwin-4.2.1/swigwin-4.2.1.zip -O swigwin.zip
           7z x swigwin.zip
-          mv swigwin-4.0.2/swig.exe swig.exe
+          mv swigwin-4.2.1/swig.exe swig.exe
           echo ""
           echo " To avoid problems with non-relocatable packages, we unzip the archive exactly in the same C:/robotology/vcpkg that has been used to create the pre-compiled archive"
           wget -nv https://github.com/robotology/robotology-superbuild-dependencies-vcpkg/releases/download/v0.10.1/vcpkg-robotology-yarp-only.zip
@@ -1384,6 +1399,17 @@ jobs:
           set(_cmake_extra_options ${{ matrix.config.cmake_extra_options }})
         endif()
 
+        #SWIG bugfix
+        message ("***123b***")
+        message ("${GITHUB_ENV}")
+        message ("***123bb***")
+        getenv  ("BUGFIX_SWIG_CMAKE_EXTRA_OPTIONS" BUGFIX_SWIG_CMAKE_EXTRA_OPTIONS)
+        message ("${BUGFIX_SWIG_CMAKE_EXTRA_OPTIONS}")
+        message ("***123bbb***")
+        set (_cmake_extra_options ${_cmake_extra_options} ${BUGFIX_SWIG_CMAKE_EXTRA_OPTIONS})
+        message ("${_cmake_extra_options}")
+        message ("***123bbbb***")
+        
         execute_process_x(
           COMMAND ${CMAKE_COMMAND}
             -S .
@@ -1742,9 +1768,8 @@ jobs:
           sudo apt-get install -y     libgstreamer1.0-dev \
                                       libgstreamer-plugins-base1.0-dev
 
-          # Install SWIG and bindings dependencies
-          sudo apt-get install -qq -y swig \
-                                      mono-mcs \
+          # Install bindings dependencies
+          sudo apt-get install -qq -y mono-mcs \
                                       liblua5.3-dev \
                                       lua5.3 \
                                       tcl-dev \
@@ -1754,6 +1779,17 @@ jobs:
                                       ruby-dev \
                                       ruby \
                                       perl
+
+          # Install SWIG
+          # On Ubuntu 24.04 this corresponds to swig 4.2.0 which is affected by a bug: https://github.com/robotology/yarp/issues/3083
+          # sudo apt-get install -qq -y swig 
+          #
+          # we thus install manually swig 4.2.1
+          sudo apt-get purge -y swig
+          wget -nv https://github.com/robotology/robotology-vcpkg-ports/releases/download/storage/swig_4_2_1_ubuntu_24_04.zip
+          unzip -q swig_4_2_1_ubuntu_24_04.zip
+          sudo mv swig_4_2_1_ubuntu_24_04_install/bin/* /usr/bin
+          sudo mv swig_4_2_1_ubuntu_24_04_install/share/swig /usr/share
 
           # Other tools useful in github actions
           sudo apt-get install -qq -y jq \
@@ -1934,9 +1970,8 @@ jobs:
                                       libjpeg-dev \
                                       libpcl-dev
 
-          # Install SWIG and bindings dependencies
-          sudo apt-get install -qq -y swig \
-                                      mono-mcs \
+          # Install bindings dependencies
+          sudo apt-get install -qq -y mono-mcs \
                                       liblua5.3-dev \
                                       lua5.3 \
                                       tcl-dev \
@@ -1947,14 +1982,23 @@ jobs:
                                       ruby \
                                       perl
 
+          # Install SWIG
+          # On Ubuntu 24.04 this corresponds to swig 4.2.0 which is affected by a bug: https://github.com/robotology/yarp/issues/3083
+          # sudo apt-get install -qq -y swig 
+          #
+          # we thus install manually swig 4.2.1
+          sudo apt-get purge -y swig
+          wget -nv https://github.com/robotology/robotology-vcpkg-ports/releases/download/storage/swig_4_2_1_ubuntu_24_04.zip
+          unzip -q swig_4_2_1_ubuntu_24_04.zip
+          sudo mv swig_4_2_1_ubuntu_24_04_install/bin/* /usr/bin
+          sudo mv swig_4_2_1_ubuntu_24_04_install/share/swig /usr/share
+
           # Other tools useful in github actions
           sudo apt-get install -qq -y jq \
                                       wget \
                                       curl \
                                       lcov \
                                       gcovr \
-                                      wget \
-                                      curl \
                                       xsltproc \
                                       libxml2-utils \
                                       source-highlight
@@ -2144,9 +2188,8 @@ jobs:
                                       libjpeg-dev \
                                       libpcl-dev
 
-          # Install SWIG and bindings dependencies
-          sudo apt-get install -qq -y swig \
-                                      mono-mcs \
+          # Install bindings dependencies
+          sudo apt-get install -qq -y mono-mcs \
                                       liblua5.3-dev \
                                       lua5.3 \
                                       tcl-dev \
@@ -2156,6 +2199,17 @@ jobs:
                                       ruby-dev \
                                       ruby \
                                       perl
+
+          # Install SWIG
+          # On Ubuntu 24.04 this corresponds to swig 4.2.0 which is affected by a bug: https://github.com/robotology/yarp/issues/3083
+          # sudo apt-get install -qq -y swig 
+          #
+          # we thus install manually swig 4.2.1
+          sudo apt-get purge -y swig
+          wget -nv https://github.com/robotology/robotology-vcpkg-ports/releases/download/storage/swig_4_2_1_ubuntu_24_04.zip
+          unzip -q swig_4_2_1_ubuntu_24_04.zip
+          sudo mv swig_4_2_1_ubuntu_24_04_install/bin/* /usr/bin
+          sudo mv swig_4_2_1_ubuntu_24_04_install/share/swig /usr/share
 
           # Other tools useful in github actions
           sudo apt-get install -qq -y jq \
