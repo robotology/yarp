@@ -204,7 +204,7 @@ bool PortAudioPlayerDeviceDriver::interruptDeviceAndClose()
 
 bool PortAudioPlayerDeviceDriver::configureDeviceAndStart()
 {
-    AudioBufferSize playback_buffer_size(m_audioplayer_cfg.numSamples, m_audioplayer_cfg.numChannels, m_audioplayer_cfg.bytesPerSample);
+    yarp::sig::AudioBufferSize playback_buffer_size(m_audioplayer_cfg.numSamples, m_audioplayer_cfg.numChannels, m_audioplayer_cfg.bytesPerSample);
     if (m_outputBuffer == nullptr) {
         m_outputBuffer = new CircularAudioBuffer_16t("portatudio_play", playback_buffer_size);
     }
