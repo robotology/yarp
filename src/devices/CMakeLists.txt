@@ -46,8 +46,6 @@ yarp_begin_plugin_library(yarpmod
   add_subdirectory(JoypadControlNetUtils)
   add_subdirectory(frameGrabberCropper)
 
-  add_subdirectory(portaudio) # DEPRECATED Since YARP 3.2
-
   # Test devices
   add_subdirectory(test_segfault)
   add_subdirectory(test_nop)

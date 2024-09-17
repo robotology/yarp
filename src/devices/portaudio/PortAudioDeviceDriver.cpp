@@ -18,6 +18,7 @@
 
 using namespace yarp::os;
 using namespace yarp::dev;
+using namespace yarp::sig;
 
 #define SLEEP_TIME 0.005f
 
@@ -618,13 +619,13 @@ bool PortAudioDeviceDriver::appendSound(const yarp::sig::Sound& sound)
     return true;
 }
 
-bool PortAudioDeviceDriver::getPlaybackAudioBufferCurrentSize(yarp::dev::AudioBufferSize& size)
+bool PortAudioDeviceDriver::getPlaybackAudioBufferCurrentSize(yarp::sig::AudioBufferSize& size)
 {
     size = this->dataBuffers.playData->size();
     return true;
 }
 
-bool PortAudioDeviceDriver::getPlaybackAudioBufferMaxSize(yarp::dev::AudioBufferSize& size)
+bool PortAudioDeviceDriver::getPlaybackAudioBufferMaxSize(yarp::sig::AudioBufferSize& size)
 {
     size = this->dataBuffers.playData->getMaxSize();
     return true;
@@ -636,13 +637,13 @@ bool PortAudioDeviceDriver::resetPlaybackAudioBuffer()
     return true;
 }
 
-bool PortAudioDeviceDriver::getRecordingAudioBufferCurrentSize(yarp::dev::AudioBufferSize& size)
+bool PortAudioDeviceDriver::getRecordingAudioBufferCurrentSize(yarp::sig::AudioBufferSize& size)
 {
     size = this->dataBuffers.recData->size();
     return true;
 }
 
-bool PortAudioDeviceDriver::getRecordingAudioBufferMaxSize(yarp::dev::AudioBufferSize& size)
+bool PortAudioDeviceDriver::getRecordingAudioBufferMaxSize(yarp::sig::AudioBufferSize& size)
 {
     size = this->dataBuffers.recData->getMaxSize();
     return true;

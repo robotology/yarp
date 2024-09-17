@@ -92,6 +92,10 @@ New Features
 
 * Deprecated device
 
+#### portaudio
+
+* Portaudio device, previously marked as deprecated, has been definitely removed from devices' CMakeLists.txt
+
 #### FakePythonSpeechTranscription
 
 * Added new device `FakePythonSpeechTranscription`. The device is also an example which demonstrates the encapsulation of python code inside a c++ device implementing a Yarp interface. 
