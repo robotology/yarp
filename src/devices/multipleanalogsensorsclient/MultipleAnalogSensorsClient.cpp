@@ -378,6 +378,33 @@ bool MultipleAnalogSensorsClient::getThreeAxisLinearAccelerometerMeasure(size_t 
                              m_streamingPort.receivedData.ThreeAxisLinearAccelerometers, sens_index, out, timestamp);
 }
 
+size_t MultipleAnalogSensorsClient::getNrOfThreeAxisAngularAccelerometers() const
+{
+    return genericGetNrOfSensors(m_sensorsMetadata.ThreeAxisAngularAccelerometers,
+                                 m_streamingPort.receivedData.ThreeAxisAngularAccelerometers);
+}
+
+yarp::dev::MAS_status MultipleAnalogSensorsClient::getThreeAxisAngularAccelerometerStatus(size_t sens_index) const
+{
+    return genericGetStatus();
+}
+
+bool MultipleAnalogSensorsClient::getThreeAxisAngularAccelerometerName(size_t sens_index, std::string &name) const
+{
+    return genericGetName(m_sensorsMetadata.ThreeAxisAngularAccelerometers, "ThreeAxisAngularAccelerometers", sens_index, name);
+}
+
+bool MultipleAnalogSensorsClient::getThreeAxisAngularAccelerometerFrameName(size_t sens_index, std::string &frameName) const
+{
+    return genericGetFrameName(m_sensorsMetadata.ThreeAxisAngularAccelerometers, "ThreeAxisAngularAccelerometers", sens_index, frameName);
+}
+
+bool MultipleAnalogSensorsClient::getThreeAxisAngularAccelerometerMeasure(size_t sens_index, yarp::sig::Vector& out, double& timestamp) const
+{
+    return genericGetMeasure(m_sensorsMetadata.ThreeAxisAngularAccelerometers, "ThreeAxisAngularAccelerometers",
+                             m_streamingPort.receivedData.ThreeAxisAngularAccelerometers, sens_index, out, timestamp);
+}
+
 size_t MultipleAnalogSensorsClient::getNrOfThreeAxisMagnetometers() const
 {
     return genericGetNrOfSensors(m_sensorsMetadata.ThreeAxisMagnetometers,

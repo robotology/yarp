@@ -23,15 +23,16 @@ struct SensorStreamingData
 {
   1: SensorMeasurements ThreeAxisGyroscopes;
   2: SensorMeasurements ThreeAxisLinearAccelerometers;
-  3: SensorMeasurements ThreeAxisMagnetometers;
-  4: SensorMeasurements OrientationSensors;
-  5: SensorMeasurements TemperatureSensors;
-  6: SensorMeasurements SixAxisForceTorqueSensors;
-  7: SensorMeasurements ContactLoadCellArrays;
-  8: SensorMeasurements EncoderArrays;
-  9: SensorMeasurements SkinPatches;
-  10: SensorMeasurements PositionSensors;
-  11: SensorMeasurements VelocitySensors;
+  3: SensorMeasurements ThreeAxisAngularAccelerometers;
+  4: SensorMeasurements ThreeAxisMagnetometers;
+  5: SensorMeasurements OrientationSensors;
+  6: SensorMeasurements TemperatureSensors;
+  7: SensorMeasurements SixAxisForceTorqueSensors;
+  8: SensorMeasurements ContactLoadCellArrays;
+  9: SensorMeasurements EncoderArrays;
+  10: SensorMeasurements SkinPatches;
+  11: SensorMeasurements PositionSensors;
+  12: SensorMeasurements VelocitySensors;
 }
 
 struct SensorMetadata {
@@ -44,15 +45,16 @@ struct SensorRPCData
 {
   1: list<SensorMetadata> ThreeAxisGyroscopes;
   2: list<SensorMetadata> ThreeAxisLinearAccelerometers;
-  3: list<SensorMetadata> ThreeAxisMagnetometers;
-  4: list<SensorMetadata> OrientationSensors;
-  5: list<SensorMetadata> TemperatureSensors;
-  6: list<SensorMetadata> SixAxisForceTorqueSensors;
-  7: list<SensorMetadata> ContactLoadCellArrays;
-  8: list<SensorMetadata> EncoderArrays;
-  9: list<SensorMetadata> SkinPatches;
-  10: list<SensorMetadata> PositionSensors;
-  11: list<SensorMetadata> VelocitySensors;
+  3: list<SensorMetadata> ThreeAxisAngularAccelerometers;
+  4: list<SensorMetadata> ThreeAxisMagnetometers;
+  5: list<SensorMetadata> OrientationSensors;
+  6: list<SensorMetadata> TemperatureSensors;
+  7: list<SensorMetadata> SixAxisForceTorqueSensors;
+  8: list<SensorMetadata> ContactLoadCellArrays;
+  9: list<SensorMetadata> EncoderArrays;
+  10: list<SensorMetadata> SkinPatches;
+  11: list<SensorMetadata> PositionSensors;
+  12: list<SensorMetadata> VelocitySensors;
 }
 
 service MultipleAnalogSensorsMetadata

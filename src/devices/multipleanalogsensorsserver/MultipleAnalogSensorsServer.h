@@ -59,6 +59,7 @@ class MultipleAnalogSensorsServer :
     // Interface of the wrapped device
     yarp::dev::IThreeAxisGyroscopes* m_iThreeAxisGyroscopes{nullptr};
     yarp::dev::IThreeAxisLinearAccelerometers* m_iThreeAxisLinearAccelerometers{nullptr};
+    yarp::dev::IThreeAxisAngularAccelerometers* m_iThreeAxisAngularAccelerometers{nullptr};
     yarp::dev::IThreeAxisMagnetometers* m_iThreeAxisMagnetometers{nullptr};
     yarp::dev::IPositionSensors* m_iPositionSensors{nullptr};
     yarp::dev::IVelocitySensors* m_iVelocitySensors{nullptr};

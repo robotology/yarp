@@ -18,7 +18,7 @@ namespace {
 YARP_LOG_COMPONENT(MULTIPLEANALOGSENSORSREMAPPER, "yarp.device.multipleanalogsensorsremapper")
 }
 
-const size_t MAS_NrOfSensorTypes{11};
+const size_t MAS_NrOfSensorTypes{12};
 static_assert(MAS_SensorType::VelocitySensors+1 == MAS_NrOfSensorTypes, "Consistency error between MAS_NrOfSensorTypes and MAS_SensorType");
 
 /**
@@ -33,6 +33,9 @@ inline std::string MAS_getTagFromEnum(const MAS_SensorType type)
             break;
         case ThreeAxisLinearAccelerometers:
             return "ThreeAxisLinearAccelerometers";
+            break;
+        case ThreeAxisAngularAccelerometers:
+            return "ThreeAxisAngularAccelerometers";
             break;
         case ThreeAxisMagnetometers:
             return "ThreeAxisMagnetometers";
@@ -227,6 +230,8 @@ bool MultipleAnalogSensorsRemapper::attachAll(const PolyDriverList &polylist)
                                 &IThreeAxisGyroscopes::getThreeAxisGyroscopeName, &IThreeAxisGyroscopes::getNrOfThreeAxisGyroscopes);
     ok = ok && genericAttachAll(ThreeAxisLinearAccelerometers, m_iThreeAxisLinearAccelerometers, polylist,
                                 &IThreeAxisLinearAccelerometers::getThreeAxisLinearAccelerometerName, &IThreeAxisLinearAccelerometers::getNrOfThreeAxisLinearAccelerometers);
+    ok = ok && genericAttachAll(ThreeAxisAngularAccelerometers, m_iThreeAxisAngularAccelerometers, polylist,
+                                &IThreeAxisAngularAccelerometers::getThreeAxisAngularAccelerometerName, &IThreeAxisAngularAccelerometers::getNrOfThreeAxisAngularAccelerometers);
     ok = ok && genericAttachAll(ThreeAxisMagnetometers, m_iThreeAxisMagnetometers, polylist,
                                 &IThreeAxisMagnetometers::getThreeAxisMagnetometerName, &IThreeAxisMagnetometers::getNrOfThreeAxisMagnetometers);
     ok = ok && genericAttachAll(PositionSensors, m_iPositionSensors, polylist,
@@ -253,6 +258,7 @@ bool MultipleAnalogSensorsRemapper::detachAll()
 {
     m_iThreeAxisGyroscopes.resize(0);
     m_iThreeAxisLinearAccelerometers.resize(0);
+    m_iThreeAxisAngularAccelerometers.resize(0);
     m_iThreeAxisMagnetometers.resize(0);
     m_iPositionSensors.resize(0);
     m_iVelocitySensors.resize(0);
@@ -447,6 +453,31 @@ bool MultipleAnalogSensorsRemapper::getThreeAxisLinearAccelerometerFrameName(siz
 bool MultipleAnalogSensorsRemapper::getThreeAxisLinearAccelerometerMeasure(size_t sens_index, yarp::sig::Vector& out, double& timestamp) const
 {
      return genericGetMeasure(ThreeAxisLinearAccelerometers, sens_index, out, timestamp, m_iThreeAxisLinearAccelerometers, &IThreeAxisLinearAccelerometers::getThreeAxisLinearAccelerometerMeasure);
+}
+
+size_t MultipleAnalogSensorsRemapper::getNrOfThreeAxisAngularAccelerometers() const
+{
+    return m_indicesMap[ThreeAxisAngularAccelerometers].size();
+}
+
+MAS_status MultipleAnalogSensorsRemapper::getThreeAxisAngularAccelerometerStatus(size_t sens_index) const
+{
+    return genericGetStatus(ThreeAxisAngularAccelerometers, sens_index, m_iThreeAxisAngularAccelerometers, &IThreeAxisAngularAccelerometers::getThreeAxisAngularAccelerometerStatus);
+}
+
+bool MultipleAnalogSensorsRemapper::getThreeAxisAngularAccelerometerName(size_t sens_index, std::string& name) const
+{
+     return genericGetName(ThreeAxisAngularAccelerometers, sens_index, name, m_iThreeAxisAngularAccelerometers, &IThreeAxisAngularAccelerometers::getThreeAxisAngularAccelerometerName);
+}
+
+bool MultipleAnalogSensorsRemapper::getThreeAxisAngularAccelerometerFrameName(size_t sens_index, std::string& frameName) const
+{
+     return genericGetFrameName(ThreeAxisAngularAccelerometers, sens_index, frameName, m_iThreeAxisAngularAccelerometers, &IThreeAxisAngularAccelerometers::getThreeAxisAngularAccelerometerFrameName);
+}
+
+bool MultipleAnalogSensorsRemapper::getThreeAxisAngularAccelerometerMeasure(size_t sens_index, yarp::sig::Vector& out, double& timestamp) const
+{
+     return genericGetMeasure(ThreeAxisAngularAccelerometers, sens_index, out, timestamp, m_iThreeAxisAngularAccelerometers, &IThreeAxisAngularAccelerometers::getThreeAxisAngularAccelerometerMeasure);
 }
 
 size_t MultipleAnalogSensorsRemapper::getNrOfThreeAxisMagnetometers() const

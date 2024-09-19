@@ -15,6 +15,7 @@
 namespace yarp::dev {
 class IThreeAxisGyroscopes;
 class IThreeAxisLinearAccelerometers;
+class IThreeAxisAngularAccelerometers;
 class IThreeAxisMagnetometers;
 class IPositionSensors;
 class IVelocitySensors;
@@ -144,6 +145,44 @@ public:
     virtual bool getThreeAxisLinearAccelerometerMeasure(size_t sens_index, yarp::sig::Vector& out, double& timestamp) const = 0;
 
     virtual ~IThreeAxisLinearAccelerometers(){}
+};
+
+class YARP_dev_API yarp::dev::IThreeAxisAngularAccelerometers
+{
+public:
+    /**
+     * \brief Get the number of three axis linear accelerometers exposed by this device.
+     */
+    virtual size_t getNrOfThreeAxisAngularAccelerometers() const = 0;
+
+    /**
+     * Get the status of the specified sensor.
+     */
+    virtual yarp::dev::MAS_status getThreeAxisAngularAccelerometerStatus(size_t sens_index) const = 0;
+
+    /**
+     * Get the name of the specified sensor.
+     * @return false if an error occurred, true otherwise.
+     */
+    virtual bool getThreeAxisAngularAccelerometerName(size_t sens_index, std::string &name) const = 0;
+
+    /**
+     * Get the name of the frame of the specified sensor.
+     * @return false if an error occurred, true otherwise.
+     */
+    virtual bool getThreeAxisAngularAccelerometerFrameName(size_t sens_index, std::string &frameName) const = 0;
+
+    /**
+     * Get the last reading of the specified sensor.
+     *
+     * @param[in] sens_index The index of the specified sensor (should be between 0 and getNrOfThreeAxisAngularAccelerometers()-1).
+     * @param[out] out The requested measure. The vector should be 3-dimensional. The measure is expressed in meters^2/seconds.
+     * @param[out] timestamp The timestamp of the requested measure, expressed in seconds.
+     * @return false if an error occurred, true otherwise.
+     */
+    virtual bool getThreeAxisAngularAccelerometerMeasure(size_t sens_index, yarp::sig::Vector& out, double& timestamp) const = 0;
+
+    virtual ~IThreeAxisAngularAccelerometers(){}
 };
 
 /**
