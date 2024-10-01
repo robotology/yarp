@@ -189,7 +189,7 @@ endif()
 
 #prepare installation
 set_property(TARGET YARP_sig PROPERTY PUBLIC_HEADER ${YARP_sig_HDRS} ${YARP_sig_idl_HDRS})
-set_property(TARGET YARP_sig PROPERTY PRIVATE_HEADER ${YARP_sig_IMPL_HDRS})
+set_property(TARGET YARP_sig PROPERTY PRIVATE_HEADER ${YARP_sig_IMPL_HDRS} ${YARP_sig_idl_IMPL_HDRS})
 set_property(TARGET YARP_sig PROPERTY VERSION ${YARP_VERSION_SHORT})
 set_property(TARGET YARP_sig PROPERTY SOVERSION ${YARP_SOVERSION})
 set_property(TARGET YARP_sig PROPERTY FOLDER "Libraries")
