@@ -121,6 +121,8 @@ target_sources(yarpidl_thrift
     ${yarpidl_thrift_YARP_SRCS}
 )
 
+yarp_enable_windows_longpath_support(yarpidl_thrift)
+
 install(
   TARGETS yarpidl_thrift
   EXPORT YARP_idl_tools

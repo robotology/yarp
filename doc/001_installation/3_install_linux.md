@@ -12,45 +12,6 @@ the same, but you will need to figure out how to install the dependencies on
 your system.
 
 
-Install from binaries                             {#install_linux_from_binaries}
----------------------
-
-Add www.icub.eu to your APT sources as below (replace `ubuntu` with `debian` according to your system):
-
-~~~{.sh}
-sudo sh -c 'echo "deb http://www.icub.eu/ubuntu `lsb_release -cs` contrib/science" > /etc/apt/sources.list.d/icub.list'
-~~~
-
-Import the repository public key:
-
-~~~{.sh}
-sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 57A5ACB6110576A6
-~~~
-
-Update the list of packages:
-
-~~~{.sh}
-sudo apt update
-~~~
-
-If you stumble upon an error related to an unsupported `i386` architecture, just add the option `[arch=amd64]` in the file `/etc/apt/sources.list.d/icub.list`
-at the corresponding line, as below (e.g., for a `ubuntu/jammy` distribution):
-
-~~~
-deb [arch=amd64] http://www.icub.eu/ubuntu jammy contrib/science
-~~~
-
-Install YARP:
-
-~~~{.sh}
-sudo apt install yarp
-~~~
-
-You are now ready to check you installation, see \ref check_your_installation.
-
-
-
-
 
 Install from sources                               {#install_linux_from_sources}
 --------------------
@@ -70,13 +31,7 @@ Ubuntu 18.04, see
 [robotology/QA#364](https://github.com/robotology/QA/issues/364))
 
 
-Install [YCM](https://github.com/robotology/ycm/) from sources or install it
-from binaries by configuring the icub.eu repository (Follow the instructions at
-\ref install_linux_from_binaries), and install it with
-
-~~~{.sh}
-sudo apt-get install ycm-cmake-modules
-~~~
+Install [YCM](https://github.com/robotology/ycm/) from sources.
 
 Depending on what parts of YARP you want to enable, you will also have to
 install some other packages
@@ -88,7 +43,6 @@ what is installed and why, proceed to the following sections.
 
 ~~~{.sh}
 sudo apt-get install build-essential git cmake cmake-curses-gui \
-  ycm-cmake-modules \
   libeigen3-dev \
   libace-dev \
   libedit-dev \

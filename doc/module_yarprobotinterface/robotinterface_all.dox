@@ -12,7 +12,7 @@ std::string pathToXmlConfigurationFile = ...;
 yarp::robotinterface::XMLReader reader;
 yarp::robotinterface::XMLReaderResult result = reader.getRobotFromFile(pathToXmlConfigurationFile);
 
-if (!result.isParsingSuccessful) {
+if (!result.parsingIsSuccessful) {
     // Handle error
     // ...
 }

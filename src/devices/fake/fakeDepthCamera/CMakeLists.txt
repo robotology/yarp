@@ -11,7 +11,7 @@ yarp_prepare_plugin(fakeDepthCamera
   INCLUDE FakeDepthCameraDriver.h
   GENERATE_PARSER
   EXTRA_CONFIG
-    WRAPPER=RGBDSensorWrapper
+    WRAPPER=rgbdSensor_nws_yarp
 )
 
 if(ENABLE_fakeDepthCamera)

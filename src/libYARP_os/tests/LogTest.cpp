@@ -1154,6 +1154,9 @@ TEST_CASE("os::LogTest", "[yarp::os]")
         CNT yInfo("This is text contains an end of line at the end of the sentence\n");
 
         CNT yInfo("This is text contains special characters that could cause issues like 1-\", 2-(, 3-), 4-[, 5-], 6-{, 7-}, 8-\t, 9-%%");
+
+        volatile bool quiet = false;
+        CNT yCInfo(quiet ? LOG_COMPONENT_NULL : LOG_COMPONENT, "This is a log message that depends on a conditionally defined component");
     }
 
     SECTION("Extra Methods to improve coverage")

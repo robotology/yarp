@@ -469,3 +469,28 @@ macro(YARP_INSTALL _what)
   endif()
 
 endmacro()
+
+
+# yarp_enable_windows_longpath_support(<target>)
+#
+# This function enables longpath support on Windows on a given target by adding the appropriate
+# manifest as documented in https://learn.microsoft.com/en-us/windows/win32/fileio/maximum-file-path-limitation .
+#
+# On non-Windows platforms, this functions does not do anything
+function(YARP_ENABLE_WINDOWS_LONGPATH_SUPPORT _target)
+  if(MSVC)
+    set(yewls_manifest_filename "${_target}_longpath.manifest")
+    set(yewls_manifest_output "${CMAKE_CURRENT_BINARY_DIR}/${yewls_manifest_filename}")
+
+    set(yewls_manifest_contents [=[<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<assembly xmlns="urn:schemas-microsoft-com:asm.v1" manifestVersion="1.0">
+<application  xmlns="urn:schemas-microsoft-com:asm.v3">
+<windowsSettings xmlns:ws2="http://schemas.microsoft.com/SMI/2016/WindowsSettings">
+    <ws2:longPathAware>true</ws2:longPathAware>
+</windowsSettings>
+</application>
+</assembly>]=])
+    file(GENERATE OUTPUT "${yewls_manifest_output}" CONTENT "${yewls_manifest_contents}")
+    target_sources(${_target} PRIVATE "${yewls_manifest_output}")
+  endif()
+endfunction()
