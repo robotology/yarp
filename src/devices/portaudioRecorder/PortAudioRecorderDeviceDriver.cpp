@@ -146,14 +146,19 @@ bool PortAudioRecorderDeviceDriver::open(yarp::os::Searchable& config)
         return false;
     }
 
-    m_inputParameters.device = (m_id ==-1)?Pa_GetDefaultInputDevice(): m_id;
-    yCInfo(PORTAUDIORECORDER, "Device number %d", m_inputParameters.device);
+    m_inputParameters.device = (m_audio_device_id == -1) ? Pa_GetDefaultInputDevice() : m_audio_device_id;
     m_inputParameters.channelCount = static_cast<int>(m_audiorecorder_cfg.numChannels);
     m_inputParameters.sampleFormat = PA_SAMPLE_TYPE;
-    if ((Pa_GetDeviceInfo(m_inputParameters.device ))!=nullptr) {
-        m_inputParameters.suggestedLatency = Pa_GetDeviceInfo(m_inputParameters.device )->defaultLowInputLatency;
-    }
     m_inputParameters.hostApiSpecificStreamInfo = nullptr;
+
+    const PaDeviceInfo* devinfo = Pa_GetDeviceInfo(m_inputParameters.device);
+    std::string devname = "unknown";
+    if (devinfo != nullptr)
+    {
+        m_inputParameters.suggestedLatency = devinfo->defaultLowInputLatency;
+        devname = devinfo->name;
+    }
+    yCInfo(PORTAUDIORECORDER, "Selected device: number: %d, name: %s", m_inputParameters.device, devname.c_str());
 
     m_err = Pa_OpenStream(
               &m_stream,
