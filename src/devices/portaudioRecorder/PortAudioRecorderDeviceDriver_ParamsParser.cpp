@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Sun Mar 10 12:19:37 2024
+// Generated on: Tue Oct 15 17:35:46 2024
 
 
 #include "PortAudioRecorderDeviceDriver_ParamsParser.h"
@@ -28,7 +28,7 @@ PortAudioRecorderDeviceDriver_ParamsParser::PortAudioRecorderDeviceDriver_Params
 std::vector<std::string> PortAudioRecorderDeviceDriver_ParamsParser::getListOfParams() const
 {
     std::vector<std::string> params;
-    params.push_back("id");
+    params.push_back("audio_device_id");
     params.push_back("driver_frame_size");
     return params;
 }
@@ -44,18 +44,18 @@ bool      PortAudioRecorderDeviceDriver_ParamsParser::parseParams(const yarp::os
 
     std::string config_string = config.toString();
     yarp::os::Property prop_check(config_string.c_str());
-    //Parser of parameter id
+    //Parser of parameter audio_device_id
     {
-        if (config.check("id"))
+        if (config.check("audio_device_id"))
         {
-            m_id = config.find("id").asInt64();
-            yCInfo(PortAudioRecorderDeviceDriverParamsCOMPONENT) << "Parameter 'id' using value:" << m_id;
+            m_audio_device_id = config.find("audio_device_id").asInt64();
+            yCInfo(PortAudioRecorderDeviceDriverParamsCOMPONENT) << "Parameter 'audio_device_id' using value:" << m_audio_device_id;
         }
         else
         {
-            yCInfo(PortAudioRecorderDeviceDriverParamsCOMPONENT) << "Parameter 'id' using DEFAULT value:" << m_id;
+            yCInfo(PortAudioRecorderDeviceDriverParamsCOMPONENT) << "Parameter 'audio_device_id' using DEFAULT value:" << m_audio_device_id;
         }
-        prop_check.unput("id");
+        prop_check.unput("audio_device_id");
     }
 
     //Parser of parameter driver_frame_size
@@ -108,11 +108,11 @@ std::string      PortAudioRecorderDeviceDriver_ParamsParser::getDocumentationOfD
     doc = doc + std::string("This is the help for device: PortAudioRecorderDeviceDriver\n");
     doc = doc + std::string("\n");
     doc = doc + std::string("This is the list of the parameters accepted by the device:\n");
-    doc = doc + std::string("'id': The device id, if multiple sound cards are present\n");
+    doc = doc + std::string("'audio_device_id': The device id, if multiple sound cards are present\n");
     doc = doc + std::string("'driver_frame_size': the number of samples to process on each iteration of the main thread\n");
     doc = doc + std::string("\n");
     doc = doc + std::string("Here are some examples of invocation command with yarpdev, with all params:\n");
-    doc = doc + " yarpdev --device portaudioRecorder --id -1 --driver_frame_size 512\n";
+    doc = doc + " yarpdev --device portaudioRecorder --audio_device_id -1 --driver_frame_size 512\n";
     doc = doc + std::string("Using only mandatory params:\n");
     doc = doc + " yarpdev --device portaudioRecorder\n";
     doc = doc + std::string("=============================================\n\n");    return doc;

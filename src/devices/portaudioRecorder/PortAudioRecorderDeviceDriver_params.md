@@ -1,2 +1,2 @@
-* |  | id                | int        | -              |  -1                      | No                          | The device id, if multiple sound cards are present                | if not specified, the default system device will be used |
+* |  | audio_device_id   | int        | -              |  -1                      | No                          | The device id, if multiple sound cards are present                | if not specified, the default system device will be used |
 * |  | driver_frame_size | size_t     | samples        |  512                     | No                          | the number of samples to process on each iteration of the main thread  | - |

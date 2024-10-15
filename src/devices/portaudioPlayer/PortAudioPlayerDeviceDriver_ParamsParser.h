@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Sun Mar 10 12:19:37 2024
+// Generated on: Tue Oct 15 17:35:46 2024
 
 
 #ifndef PORTAUDIOPLAYERDEVICEDRIVER_PARAMSPARSER_H
@@ -25,12 +25,12 @@
 * These are the used parameters:
 * | Group name | Parameter name    | Type   | Units   | Default Value | Required | Description                                                           | Notes                                                    |
 * |:----------:|:-----------------:|:------:|:-------:|:-------------:|:--------:|:---------------------------------------------------------------------:|:--------------------------------------------------------:|
-* | -          | id                | int    | -       | -1            | 0        | The device id, if multiple sound cards are present                    | if not specified, the default system device will be used |
+* | -          | audio_device_id   | int    | -       | -1            | 0        | The device id, if multiple sound cards are present                    | if not specified, the default system device will be used |
 * | -          | driver_frame_size | size_t | samples | 512           | 0        | the number of samples to process on each iteration of the main thread | -                                                        |
 *
 * The device can be launched by yarpdev using one of the following examples (with and without all optional parameters):
 * \code{.unparsed}
-* yarpdev --device portaudioPlayer --id -1 --driver_frame_size 512
+* yarpdev --device portaudioPlayer --audio_device_id -1 --driver_frame_size 512
 * \endcode
 *
 * \code{.unparsed}
@@ -56,10 +56,10 @@ public:
     };
     const parser_version_type m_parser_version = {};
 
-    const std::string m_id_defaultValue = {"-1"};
+    const std::string m_audio_device_id_defaultValue = {"-1"};
     const std::string m_driver_frame_size_defaultValue = {"512"};
 
-    int m_id = {-1};
+    int m_audio_device_id = {-1};
     size_t m_driver_frame_size = {512};
 
     bool          parseParams(const yarp::os::Searchable & config) override;
@@ -67,6 +67,8 @@ public:
     std::string   getDeviceName() const override { return m_device_name; }
     std::string   getDocumentationOfDeviceParams() const override;
     std::vector<std::string> getListOfParams() const override;
+
+    std::string   getDocumentationOfPortAudioPlayerDeviceDriver() const;
 };
 
 #endif

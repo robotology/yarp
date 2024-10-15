@@ -216,11 +216,19 @@ bool PortAudioPlayerDeviceDriver::configureDeviceAndStart()
         return false;
     }
 
-    m_outputParameters.device = (m_id == -1) ? Pa_GetDefaultOutputDevice() : m_id;
+    m_outputParameters.device = (m_audio_device_id == -1) ? Pa_GetDefaultOutputDevice() : m_audio_device_id;
     m_outputParameters.channelCount = static_cast<int>(m_audioplayer_cfg.numChannels);
     m_outputParameters.sampleFormat = PA_SAMPLE_TYPE;
-    m_outputParameters.suggestedLatency = Pa_GetDeviceInfo(m_outputParameters.device)->defaultLowOutputLatency;
     m_outputParameters.hostApiSpecificStreamInfo = nullptr;
+
+    const PaDeviceInfo* devinfo = Pa_GetDeviceInfo(m_outputParameters.device);
+    std::string devname = "unknown";
+    if (devinfo != nullptr)
+    {
+        m_outputParameters.suggestedLatency = devinfo->defaultLowOutputLatency;
+        devname = devinfo->name;
+    }
+    yCInfo(PORTAUDIOPLAYER, "Selected device: number: %d, name: %s", m_outputParameters.device, devname.c_str());
 
     m_err = Pa_OpenStream(
         &m_stream,
