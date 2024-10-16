@@ -7,7 +7,6 @@
 #include <yarp/os/Log.h>
 #include <yarp/os/Vocab.h>
 #include <yarp/sig/Image.h>
-#include <yarp/sig/impl/IplImage.h>
 
 #include <cstring>
 #include <cstdio>
