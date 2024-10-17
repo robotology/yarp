@@ -457,18 +457,6 @@ void Image::setQuantum(size_t imgQuantum) {
     }
 }
 
-
-void Image::setTopIsLowIndex(bool flag) {
-    topIsLow = flag;
-
-    if (implementation) {
-        auto* impl = static_cast<ImageStorage*>(implementation);
-        if (impl->pImage) {
-            impl->pImage->origin = topIsLow ? IPL_ORIGIN_TL : IPL_ORIGIN_BL;
-        }
-    }
-}
-
 void Image::synchronize() {
     auto* impl = static_cast<ImageStorage*>(implementation);
     yAssert(impl!=nullptr);
@@ -540,8 +528,6 @@ bool Image::read(yarp::os::ConnectionReader& connection) {
         }
     }
 
-    setTopIsLowIndex(header.topIsLow == 0);
-
     // handle easy case, received and current image are compatible, no conversion needed
     if (getPixelCode() == header.id && q == static_cast<size_t>(header.quantum) && imgPixelSize == static_cast<size_t>(header.depth))
     {
@@ -554,7 +540,6 @@ bool Image::read(yarp::os::ConnectionReader& connection) {
     FlexImage flex;
     flex.setPixelCode(header.id);
     flex.setQuantum(header.quantum);
-    flex.setTopIsLowIndex(header.topIsLow == 0);
     ok = readFromConnection(flex, header, connection);
     if (ok) {
         copy(flex);
@@ -625,15 +610,11 @@ bool Image::copy(const Image& alt)
             setQuantum(alt.getQuantum());
         }
         resize(alt.width(),alt.height());
-        setTopIsLowIndex(alt.topIsLowIndex());
 
         int q1 = alt.getQuantum();
         int q2 = getQuantum();
         if (q1==0) { q1 = YARP_IMAGE_ALIGN; }
         if (q2==0) { q2 = YARP_IMAGE_ALIGN; }
-
-        bool o1 = alt.topIsLowIndex();
-        bool o2 = topIsLowIndex();
 
         yAssert(width()==alt.width());
         yAssert(height()==alt.height());
@@ -647,7 +628,7 @@ bool Image::copy(const Image& alt)
         copyPixels(alt.getRawImage(),alt.getPixelCode(),
                    getRawImage(),getPixelCode(),
                    width(),height(),
-                   getRawImageSize(),q1,q2,o1,o2);
+                   getRawImageSize(),q1,q2,false,false);
     }
     return true;
 }
@@ -700,7 +681,6 @@ bool Image::copy(const Image& alt, size_t w, size_t h) {
     if (getPixelCode()==0) {
         setPixelCode(alt.getPixelCode());
         setQuantum(alt.getQuantum());
-        setTopIsLowIndex(alt.topIsLowIndex());
     }
     if (&alt==this) {
         FlexImage img;
@@ -712,7 +692,6 @@ bool Image::copy(const Image& alt, size_t w, size_t h) {
         FlexImage img;
         img.setPixelCode(getPixelCode());
         img.setQuantum(getQuantum());
-        img.setTopIsLowIndex(topIsLowIndex());
         img.copy(alt);
         return copy(img,w,h);
     }

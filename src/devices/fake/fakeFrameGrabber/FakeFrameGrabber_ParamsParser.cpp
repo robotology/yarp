@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Thu Mar  7 17:59:43 2024
+// Generated on: Mon Sep 16 16:44:50 2024
 
 
 #include "FakeFrameGrabber_ParamsParser.h"
@@ -186,20 +186,6 @@ bool      FakeFrameGrabber_ParamsParser::parseParams(const yarp::os::Searchable 
             yCInfo(FakeFrameGrabberParamsCOMPONENT) << "Parameter 'syncro' using DEFAULT value:" << m_syncro;
         }
         prop_check.unput("syncro");
-    }
-
-    //Parser of parameter topIsLow
-    {
-        if (config.check("topIsLow"))
-        {
-            m_topIsLow = config.find("topIsLow").asBool();
-            yCInfo(FakeFrameGrabberParamsCOMPONENT) << "Parameter 'topIsLow' using value:" << m_topIsLow;
-        }
-        else
-        {
-            yCInfo(FakeFrameGrabberParamsCOMPONENT) << "Parameter 'topIsLow' using DEFAULT value:" << m_topIsLow;
-        }
-        prop_check.unput("topIsLow");
     }
 
     //Parser of parameter physFocalLength
