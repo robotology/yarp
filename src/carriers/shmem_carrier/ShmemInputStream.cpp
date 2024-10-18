@@ -43,6 +43,8 @@ bool ShmemInputStreamImpl::isOk() const
 
 bool ShmemInputStreamImpl::open(int port, ACE_SOCK_Stream* pSock, int size)
 {
+    std::lock_guard<std::recursive_mutex> l_guard(m_generalMutex);
+
     m_pSock = pSock;
 
     m_pAccessMutex = m_pWaitDataMutex = nullptr;
@@ -102,6 +104,8 @@ bool ShmemInputStreamImpl::open(int port, ACE_SOCK_Stream* pSock, int size)
 
 bool ShmemInputStreamImpl::Resize()
 {
+    std::lock_guard<std::recursive_mutex> l_guard(m_generalMutex);
+
     ++m_ResizeNum;
 
     ACE_Shared_Memory* pNewMap;
@@ -155,6 +159,8 @@ bool ShmemInputStreamImpl::Resize()
 
 int ShmemInputStreamImpl::read(char* data, int len)
 {
+    std::lock_guard<std::recursive_mutex> l_guard(m_generalMutex);
+
     m_pAccessMutex->acquire();
 
     if (m_pHeader->close) {
@@ -193,6 +199,8 @@ int ShmemInputStreamImpl::read(char* data, int len)
 
 yarp::conf::ssize_t ShmemInputStreamImpl::read(yarp::os::Bytes& b)
 {
+    std::lock_guard<std::recursive_mutex> l_guard(m_generalMutex);
+
     m_ReadSerializerMutex.lock();
 
     if (!m_bOpen) {
@@ -230,6 +238,8 @@ yarp::conf::ssize_t ShmemInputStreamImpl::read(yarp::os::Bytes& b)
 
 void ShmemInputStreamImpl::close()
 {
+    std::lock_guard<std::recursive_mutex> l_guard(m_generalMutex);
+
     if (!m_bOpen) {
         return;
     }
