@@ -2003,3 +2003,12 @@ public:
         return result;
     }
 }
+
+//////////////////////////////////////////////////////////////////////////
+// Just in Python add some code to automatically call
+// add_dll_directory as necessary
+// See https://github.com/robotology/robotology-superbuild/issues/1268
+// for more details
+#ifdef SWIGPYTHON
+%include <swig_python_windows_preable.i>
+#endif
