@@ -51,6 +51,7 @@ New Features
 * Removed h264 Carrier
 * Added gstreamer carrier with extended functionalities.
 * Added new gstreamers plugins: yarpvideosource, yarpvidepassthrough, yarpvideosink
+* Fixed segfault on disconnection with shmem carrier.
 
 ### Devices
 
@@ -98,7 +99,11 @@ New Features
 
 #### FakePythonSpeechTranscription
 
-* Added new device `FakePythonSpeechTranscription`. The device is also an example which demonstrates the encapsulation of python code inside a c++ device implementing a Yarp interface. 
+* Added new device `FakePythonSpeechTranscription`. The device is also an example which demonstrates the encapsulation of python code inside a c++ device implementing a Yarp interface.
+
+#### multipleanalogsensorsclient
+
+* Always establish the `rpc` connection with the `tcp` carrier, instead of using the `carrier` option as done in YARP <= 3.9 .
 
 ### GUIs
 
