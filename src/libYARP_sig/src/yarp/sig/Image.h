@@ -307,25 +307,6 @@ public:
     void setQuantum(size_t imgQuantum);
 
     /**
-     * @return true if image has origin at top left (default); in other
-     * words when the y index is low, we are near the top of the image.
-     */
-    bool topIsLowIndex() const {
-        return topIsLow;
-    }
-
-    /**
-     * control whether image has origin at top left (default) or bottom
-     * left.
-     *
-     * @param flag true if image has origin at top left (default),
-     * false if image has origin at bottom left.
-     *
-     */
-    void setTopIsLowIndex(bool flag);
-
-
-    /**
      * Get an array of pointers to the rows of the image.
      * @return an array of pointers to the rows of the image.
      */

@@ -5,7 +5,6 @@
   * |      |  fakeFrameGrabber_rpc_port   | string  | -  | /fakeFrameGrabber/rpc    | No    | rpc port for the fakeFrameGrabber                       |  |
   * |      |  mirror            | bool  | -              |   false      | No    | mirror height of test image                      |  |
   * |      |  syncro            | bool  | -              |   false      | No    | synchronize producer and consumer, so that all images are used once and only once              |  |
-  * |      |  topIsLow          | bool  | -              |   true       | No    | explicitly set the topIsLow field in the images              |  |
   * |      |  physFocalLength  | double  | -             |   3.0         | No    | Physical focal length                              |  |
   * |      |  focalLengthX     | double  | -             |   4.0         | No    | Horizontal component of the focal length           |  |
   * |      |  focalLengthY     | double  | -             |   5.0         | No    | Vertical component of the focal length             |  |

@@ -130,7 +130,6 @@ bool FakeFrameGrabber::read(yarp::os::ConnectionReader& connection)
         reply.addString("set_mode <mode>");
         reply.addString("set_image <file_name>/off");
         reply.addString("available modes: ball, line, grid, size, rand, none, time");
-        reply.addString("set_topIsLow on/off");
         reply.addString("set_noise on/off");
         reply.addString("set_snr <snr>");
         reply.addString("");
@@ -161,18 +160,6 @@ bool FakeFrameGrabber::read(yarp::os::ConnectionReader& connection)
                 have_bg = false;
                 reply.addString("err");
             }
-        }
-    }
-    else if (command.get(0).asString() == "set_topIsLow")
-    {
-        if (command.get(1).asString() == "off") {
-            m_topIsLow = false;
-            reply.addString("ack");
-        } else if (command.get(1).asString() == "on") {
-            m_topIsLow = true;
-            reply.addString("ack");
-        } else {
-            reply.addString("err");
         }
     }
     else if (command.get(0).asString() == "set_noise")
@@ -830,8 +817,6 @@ void FakeFrameGrabber::createTestImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& 
         image.pixel(6, 0).g = ttxt[19] - '0';
         image.pixel(6, 0).b = ttxt[20] - '0';
     }
-
-    image.setTopIsLowIndex(m_topIsLow);
 }
 
 

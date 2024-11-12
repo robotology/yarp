@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Thu Mar  7 17:59:43 2024
+// Generated on: Mon Sep 16 16:44:50 2024
 
 
 #ifndef FAKEFRAMEGRABBER_PARAMSPARSER_H
@@ -120,7 +120,6 @@ public:
     std::string m_fakeFrameGrabber_rpc_port = {"/fakeFrameGrabber/rpc"};
     bool m_mirror = {false};
     bool m_syncro = {false};
-    bool m_topIsLow = {true};
     double m_physFocalLength = {3.0};
     double m_focalLengthX = {4.0};
     double m_focalLengthY = {5.0};
