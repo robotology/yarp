@@ -118,3 +118,9 @@ New Features
 * Improvements to serialization class `yarp::sig::Sound` (breaking change)
 * yarp_sig can now use IDL thrift to generate custom data types.
 * The following data types have been migrated from `yarp_dev` to `yarp_sig` library: `AudioPlayerStatus, AudioRecorderStatus, AudioBufferSize, AudioBufferSizeData, LaserMeasurementData, LaserScan2D`.
+
+### Bindings
+
+#### Python
+
+* Fix loading of Python bindings on Windows when installed in arbitrary directory.
