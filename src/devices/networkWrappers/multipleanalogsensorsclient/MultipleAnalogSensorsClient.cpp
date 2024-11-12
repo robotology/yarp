@@ -75,7 +75,8 @@ bool MultipleAnalogSensorsClient::open(yarp::os::Searchable& config)
 
     // Connect ports
     if (!m_externalConnection) {
-        ok = yarp::os::Network::connect(localRPCPortName, remoteRPCPortName, m_carrier);
+        // RPC port needs to be tcp, therefore no carrier option is added here
+        ok = yarp::os::Network::connect(localRPCPortName, remoteRPCPortName);
         if (!ok) {
             yCError(MULTIPLEANALOGSENSORSCLIENT,
                     "Failure connecting port %s to %s.",
