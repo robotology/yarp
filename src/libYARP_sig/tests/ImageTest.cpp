@@ -873,5 +873,34 @@ TEST_CASE("sig::ImageTest", "[yarp::sig]")
         CHECK(ok);
     }
 
+    SECTION("test Image::operator ==()")
+    {
+        ImageOf<PixelRgb> Img1;
+        ImageOf<PixelRgb> Img2;
+        ImageOf<PixelRgb> Img3;
+        Img1.resize(32, 16);
+        Img2.resize(32, 16);
+        Img3.resize(32, 16);
+
+        for (size_t iy = 0; iy < Img1.height(); iy++)
+            for (size_t ix = 0; ix < Img1.width(); ix++)
+            {
+                Img1.pixel(ix, iy).r = 10;
+                Img1.pixel(ix, iy).g = 11;
+                Img1.pixel(ix, iy).b = 12;
+
+                Img2.pixel(ix, iy).r = 10;
+                Img2.pixel(ix, iy).g = 11;
+                Img2.pixel(ix, iy).b = 12;
+
+                Img3.pixel(ix, iy).r = 20;
+                Img3.pixel(ix, iy).g = 21;
+                Img3.pixel(ix, iy).b = 22;
+            }
+
+        CHECK  (Img1 == Img2);
+        CHECK(!(Img1 == Img3));
+    }
+
     NetworkBase::setLocalMode(false);
 }

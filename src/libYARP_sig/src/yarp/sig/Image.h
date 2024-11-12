@@ -116,6 +116,14 @@ public:
     Image& operator=(Image &&other) noexcept;
 
     /**
+     * Comparison operator.
+     * N.B. Comparing two images can be computationally intensive.
+     * This method is mainly used for CI purposes.
+     * @return true if the two images are identical
+     */
+    bool operator==(const Image& alt) const;
+
+    /**
      * Destructor.
      */
     ~Image() override;

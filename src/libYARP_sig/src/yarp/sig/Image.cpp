@@ -590,6 +590,27 @@ Image& Image::operator=(Image&& other) noexcept
     return *this;
 }
 
+bool Image::operator==(const Image& alt) const
+{
+    //test general properties
+    if (width() != alt.width()) return false;
+    if (height() != alt.height()) return false;
+    if (imgPixelCode != alt.imgPixelCode) return false;
+    size_t raw1size = getRawImageSize();
+    size_t raw2size = alt.getRawImageSize();
+    if (raw1size != raw2size)
+    {
+        return false;
+    }
+    //test byte per byte
+    unsigned char* raw1 = getRawImage();
+    unsigned char* raw2 = alt.getRawImage();
+    for (size_t i = 0; i < raw1size; i++, raw1++, raw2++)
+    {
+        if (*raw1 != *raw2) { return false; }
+    }
+    return true;
+}
 
 Image& Image::operator=(const Image& alt)
 {
