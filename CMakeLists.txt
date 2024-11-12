@@ -17,7 +17,7 @@ endif()
 # Main project
 project(
   YARP
-  VERSION 3.9.1
+  VERSION 3.10.0
   LANGUAGES C CXX
 )
 set(PROJECT_DESCRIPTION "YARP: A thin middleware for humanoid robots and more")
