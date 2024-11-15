@@ -2005,10 +2005,11 @@ public:
 }
 
 //////////////////////////////////////////////////////////////////////////
-// Just in Python add some code to automatically call
+// Just in Python (and in yarp bindings itself, not in downstream bindings
+// that include yarp.i) add some code to automatically call
 // add_dll_directory as necessary
 // See https://github.com/robotology/robotology-superbuild/issues/1268
 // for more details
-#ifdef SWIGPYTHON
+#if defined(SWIGPYTHON) && defined(SWIG_GENERATING_YARP_BINDINGS)
 %include <swig_python_windows_preable.i>
 #endif
