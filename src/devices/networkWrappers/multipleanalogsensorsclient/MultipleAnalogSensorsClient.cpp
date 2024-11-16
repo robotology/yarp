@@ -452,30 +452,30 @@ bool MultipleAnalogSensorsClient::getPositionSensorMeasure(size_t sens_index, ya
     return genericGetMeasure(m_sensorsMetadata.PositionSensors, "PositionSensors", m_streamingPort.receivedData.PositionSensors, sens_index, out, timestamp);
 }
 
-size_t MultipleAnalogSensorsClient::getNrOfVelocitySensors() const
+size_t MultipleAnalogSensorsClient::getNrOfLinearVelocitySensors() const
 {
-    return genericGetNrOfSensors(m_sensorsMetadata.VelocitySensors,
-                                 m_streamingPort.receivedData.VelocitySensors);
+    return genericGetNrOfSensors(m_sensorsMetadata.LinearVelocitySensors,
+                                 m_streamingPort.receivedData.LinearVelocitySensors);
 }
 
-yarp::dev::MAS_status MultipleAnalogSensorsClient::getVelocitySensorStatus(size_t sens_index) const
+yarp::dev::MAS_status MultipleAnalogSensorsClient::getLinearVelocitySensorStatus(size_t sens_index) const
 {
     return genericGetStatus();
 }
 
-bool MultipleAnalogSensorsClient::getVelocitySensorName(size_t sens_index, std::string& name) const
+bool MultipleAnalogSensorsClient::getLinearVelocitySensorName(size_t sens_index, std::string& name) const
 {
-    return genericGetName(m_sensorsMetadata.VelocitySensors, "VelocitySensors", sens_index, name);
+    return genericGetName(m_sensorsMetadata.LinearVelocitySensors, "LinearVelocitySensors", sens_index, name);
 }
 
-bool MultipleAnalogSensorsClient::getVelocitySensorFrameName(size_t sens_index, std::string& frameName) const
+bool MultipleAnalogSensorsClient::getLinearVelocitySensorFrameName(size_t sens_index, std::string& frameName) const
 {
-    return genericGetFrameName(m_sensorsMetadata.VelocitySensors, "VelocitySensors", sens_index, frameName);
+    return genericGetFrameName(m_sensorsMetadata.LinearVelocitySensors, "LinearVelocitySensors", sens_index, frameName);
 }
 
-bool MultipleAnalogSensorsClient::getVelocitySensorMeasure(size_t sens_index, yarp::sig::Vector& out, double& timestamp) const
+bool MultipleAnalogSensorsClient::getLinearVelocitySensorMeasure(size_t sens_index, yarp::sig::Vector& out, double& timestamp) const
 {
-    return genericGetMeasure(m_sensorsMetadata.VelocitySensors, "VelocitySensors", m_streamingPort.receivedData.VelocitySensors, sens_index, out, timestamp);
+    return genericGetMeasure(m_sensorsMetadata.LinearVelocitySensors, "LinearVelocitySensors", m_streamingPort.receivedData.LinearVelocitySensors, sens_index, out, timestamp);
 }
 
 size_t MultipleAnalogSensorsClient::getNrOfTemperatureSensors() const

@@ -30,7 +30,7 @@ enum MAS_SensorType
     EncoderArrays=8,
     SkinPatches=9,
     PositionSensors=10,
-    VelocitySensors=11
+    LinearVelocitySensors=11
 };
 
 /**
@@ -97,7 +97,7 @@ class MultipleAnalogSensorsRemapper :
         public yarp::dev::IEncoderArrays,
         public yarp::dev::ISkinPatches,
         public yarp::dev::IPositionSensors,
-        public yarp::dev::IVelocitySensors
+        public yarp::dev::ILinearVelocitySensors
 {
 private:
     bool m_verbose{false};
@@ -131,7 +131,7 @@ private:
     std::vector<yarp::dev::IEncoderArrays*> m_iEncoderArrays;
     std::vector<yarp::dev::ISkinPatches*> m_iSkinPatches;
     std::vector<yarp::dev::IPositionSensors*> m_iPositionSensors;
-    std::vector<yarp::dev::IVelocitySensors*> m_iVelocitySensors;
+    std::vector<yarp::dev::ILinearVelocitySensors*> m_iLinearVelocitySensors;
 
 
     // Templated methods to streamline of the function implementation for all the different sensors
@@ -259,12 +259,12 @@ public:
     bool getPositionSensorFrameName(size_t sens_index, std::string& frameName) const override;
     bool getPositionSensorMeasure(size_t sens_index, yarp::sig::Vector& xyz, double& timestamp) const override;
 
-    /* IVelocitySensors methods */
-    size_t getNrOfVelocitySensors() const override;
-    yarp::dev::MAS_status getVelocitySensorStatus(size_t sens_index) const override;
-    bool getVelocitySensorName(size_t sens_index, std::string& name) const override;
-    bool getVelocitySensorFrameName(size_t sens_index, std::string& frameName) const override;
-    bool getVelocitySensorMeasure(size_t sens_index, yarp::sig::Vector& xyz, double& timestamp) const override;
+    /* ILinearVelocitySensors methods */
+    size_t getNrOfLinearVelocitySensors() const override;
+    yarp::dev::MAS_status getLinearVelocitySensorStatus(size_t sens_index) const override;
+    bool getLinearVelocitySensorName(size_t sens_index, std::string& name) const override;
+    bool getLinearVelocitySensorFrameName(size_t sens_index, std::string& frameName) const override;
+    bool getLinearVelocitySensorMeasure(size_t sens_index, yarp::sig::Vector& xyz, double& timestamp) const override;
 };
 
 

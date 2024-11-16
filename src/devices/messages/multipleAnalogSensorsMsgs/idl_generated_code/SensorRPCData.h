@@ -30,7 +30,7 @@ public:
     std::vector<SensorMetadata> EncoderArrays{};
     std::vector<SensorMetadata> SkinPatches{};
     std::vector<SensorMetadata> PositionSensors{};
-    std::vector<SensorMetadata> VelocitySensors{};
+    std::vector<SensorMetadata> LinearVelocitySensors{};
 
     // Default constructor
     SensorRPCData() = default;

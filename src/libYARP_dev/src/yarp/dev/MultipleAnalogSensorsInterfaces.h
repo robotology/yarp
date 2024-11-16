@@ -18,7 +18,7 @@ class IThreeAxisLinearAccelerometers;
 class IThreeAxisAngularAccelerometers;
 class IThreeAxisMagnetometers;
 class IPositionSensors;
-class IVelocitySensors;
+class ILinearVelocitySensors;
 class IOrientationSensors;
 class ITemperatureSensors;
 class ISixAxisForceTorqueSensors;
@@ -289,24 +289,24 @@ public:
     }
 };
 
-class YARP_dev_API yarp::dev::IVelocitySensors
+class YARP_dev_API yarp::dev::ILinearVelocitySensors
 {
 public:
     /**
-     * Get the number of velocity sensors exposed by this device.
+     * Get the number of linear velocity sensors exposed by this device.
      */
-    virtual size_t getNrOfVelocitySensors() const = 0;
+    virtual size_t getNrOfLinearVelocitySensors() const = 0;
 
     /**
      * Get the status of the specified sensor.
      */
-    virtual yarp::dev::MAS_status getVelocitySensorStatus(size_t sens_index) const = 0;
+    virtual yarp::dev::MAS_status getLinearVelocitySensorStatus(size_t sens_index) const = 0;
 
     /**
      * Get the name of the specified sensor.
      * @return false if an error occurred, true otherwise.
      */
-    virtual bool getVelocitySensorName(size_t sens_index, std::string& name) const = 0;
+    virtual bool getLinearVelocitySensorName(size_t sens_index, std::string& name) const = 0;
 
     /**
      * Get the name of the frame of the specified sensor.
@@ -316,19 +316,19 @@ public:
      *
      * @return false if an error occurred, true otherwise.
      */
-    virtual bool getVelocitySensorFrameName(size_t sens_index, std::string& frameName) const = 0;
+    virtual bool getLinearVelocitySensorFrameName(size_t sens_index, std::string& frameName) const = 0;
 
     /**
-     * Get the last reading of the velocity sensor as x y z.
+     * Get the last reading of the linear velocity sensor as x y z.
      *
-     * @param[in] sens_index The index of the specified sensor (should be between 0 and getNrOfVelocitySensors()-1).
+     * @param[in] sens_index The index of the specified sensor (should be between 0 and getNrOfLinearVelocitySensors()-1).
      * @param[out] out The requested measure. The vector should be 3-dimensional. The measure is expressed in meters.
      * @param[out] timestamp The timestamp of the requested measure, expressed in seconds.
      * @return false if an error occurred, true otherwise.
      */
-    virtual bool getVelocitySensorMeasure(size_t sens_index, yarp::sig::Vector& xyz, double& timestamp) const = 0;
+    virtual bool getLinearVelocitySensorMeasure(size_t sens_index, yarp::sig::Vector& xyz, double& timestamp) const = 0;
 
-    virtual ~IVelocitySensors()
+    virtual ~ILinearVelocitySensors()
     {
     }
 };
