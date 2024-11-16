@@ -1,0 +1,5 @@
+ | Group name | Parameter name | Type   | Units | Default Value  | Required | Description                                                                                      | Notes                                  |
+ |:----------:|:--------------:|:------:|:-----:|:--------------:|:--------:|:------------------------------------------------------------------------------------------------:|:--------------------------------------:|
+ |            | file_name      | string | -     | audio_out.wav  | No       | The name of the file written by the module                                                       | Only .wav and .mp3 files are supported |
+ |            | save_mode      | string | -     | overwrite_file | No       | Affects the behavior of the module and defines the save mode, as described in the documentation. |                                        |
+ |            | add_marker     | bool   | -     | false          | No       | If set, it will add a marker at the beginning and at the ending of each received waveform.       |                                        |

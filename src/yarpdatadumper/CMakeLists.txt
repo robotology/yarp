@@ -22,7 +22,7 @@ if(YARP_COMPILE_yarpdatadumper)
 
   if(YARP_HAS_OpenCV)
     target_compile_definitions(yarpdatadumper PRIVATE ADD_VIDEO)
-    target_link_libraries(yarpdatadumper PRIVATE ${OpenCV_LIBRARIES})
+    target_link_libraries(yarpdatadumper PRIVATE ${OpenCV_LIBS})
     target_link_libraries(yarpdatadumper PRIVATE YARP::YARP_cv)
   endif()
 

@@ -53,7 +53,7 @@ public:
         depth = image.getPixelSize();
         imgSize = image.getRawImageSize();
         quantum = static_cast<yarp::os::NetInt16>(image.getQuantum());
-        topIsLow = image.topIsLowIndex() ? 0 : 1;
+        topIsLow = 1;
         width = image.width();
         height = image.height();
         paramBlobLen = image.getRawImageSize();

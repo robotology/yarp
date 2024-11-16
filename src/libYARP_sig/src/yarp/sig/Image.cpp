@@ -20,7 +20,6 @@
 
 #include <yarp/sig/ImageNetworkHeader.h>
 #include <yarp/sig/impl/IplImage.h>
-#include <yarp/sig/impl/DeBayer.h>
 
 #include <cstdio>
 #include <cstring>
@@ -32,12 +31,6 @@ using namespace yarp::sig;
 using namespace yarp::os;
 
 #define DBGPF1 if (0)
-
-//inline int PAD_BYTES (int len, int pad)
-//{
-//    const int rem = len % pad;
-//    return (rem != 0) ? (pad - rem) : rem;
-//}
 
 /**
 * This helper function groups code to avoid duplication. It is not a member function of Image because
@@ -71,7 +64,7 @@ inline bool readFromConnection(Image &dest, ImageNetworkHeader &header, Connecti
 
 class ImageStorage {
 public:
-    IplImage* pImage;
+    MiniIplImage* pImage;
     char **Data;  // this is not IPL. it's char to maintain IPL compatibility
     int extern_type_id;
     size_t extern_type_quantum;
@@ -94,12 +87,9 @@ protected:
     void _alloc_extern (const void *buf);
     void _alloc_data ();
     void _free ();
-    void _free_data ();
 
-    void _make_independent();
     bool _set_ipl_header(size_t x, size_t y, int pixel_type, size_t quantum,
                          bool topIsLow);
-    void _free_ipl_header();
     void _alloc_complete(size_t x, size_t y, int pixel_type, size_t quantum,
                          bool topIsLow);
     void _free_complete();
@@ -129,11 +119,8 @@ public:
         _free_complete();
     }
 
-    void resize(size_t x, size_t y, int pixel_type,
-                size_t quantum, bool topIsLow);
-
-    void _alloc_complete_extern(const void *buf, size_t x, size_t y, int pixel_type,
-                                size_t quantum, bool topIsLow);
+    void resize(size_t x, size_t y, int pixel_type, size_t quantum, bool topIsLow);
+    void _alloc_complete_extern(const void *buf, size_t x, size_t y, int pixel_type, size_t quantum, bool topIsLow);
 };
 
 
@@ -155,20 +142,11 @@ void ImageStorage::resize(size_t x, size_t y, int pixel_type,
 }
 
 // allocates an empty image.
-void ImageStorage::_alloc () {
-
-
+void ImageStorage::_alloc ()
+{
     _free(); // was iplDeallocateImage(pImage); but that won't work with refs
 
-    if ((type_id == VOCAB_PIXEL_MONO_FLOAT) ||
-        (type_id == VOCAB_PIXEL_RGB_FLOAT)  ||
-        (type_id == VOCAB_PIXEL_HSV_FLOAT)) {
-        iplAllocateImageFP(pImage, 0, 0);
-    } else {
-        iplAllocateImage (pImage, 0, 0);
-    }
-
-    iplSetBorderMode (pImage, IPL_BORDER_CONSTANT, IPL_SIDE_ALL, 0);
+    iplAllocateImage (pImage);
 }
 
 // installs an external buffer as the image data
@@ -183,11 +161,7 @@ void ImageStorage::_alloc_extern (const void *buf)
         }
     }
 
-    //iplAllocateImage (pImage, 0, 0);
     pImage->imageData = const_cast<char*>(reinterpret_cast<const char*>(buf));
-    // probably need to do more for real IPL
-
-    //iplSetBorderMode (pImage, IPL_BORDER_CONSTANT, IPL_SIDE_ALL, 0);
 }
 
 // allocates the Data pointer.
@@ -240,34 +214,21 @@ void ImageStorage::_free ()
     }
 }
 
-void ImageStorage::_free_data ()
-{
-    yAssert(Data==nullptr); // Now always free Data at same time
-}
-
 
 void ImageStorage::_free_complete()
 {
     _free();
-    _free_data();
-    _free_ipl_header();
-}
 
-
-void ImageStorage::_free_ipl_header()
-{
-    if (pImage!=nullptr)
+    if (pImage != nullptr)
     {
-        iplDeallocate (pImage, IPL_IMAGE_HEADER);
+        iplDeallocateHeader(pImage);
     }
     pImage = nullptr;
 }
 
-
 void ImageStorage::_alloc_complete(size_t x, size_t y, int pixel_type, size_t quantum,
                                    bool topIsLow)
 {
-    _make_independent();
     _free_complete();
     _set_ipl_header(x, y, pixel_type, quantum, topIsLow);
     _alloc ();
@@ -275,50 +236,39 @@ void ImageStorage::_alloc_complete(size_t x, size_t y, int pixel_type, size_t qu
 }
 
 
-
-void ImageStorage::_make_independent()
-{
-    // actually I think this isn't really needed -paulfitz
-}
-
 struct pixelTypeIplParams
 {
     int   nChannels;
     int   depth;
-    const char* colorModel;
-    const char* channelSeq;
 };
 
-const pixelTypeIplParams iplPixelTypeMono{1, IPL_DEPTH_8U,  "GRAY", "GRAY"};
-const pixelTypeIplParams iplPixelTypeMono16{1, IPL_DEPTH_16U,  "GRAY", "GRAY"};
-
 const std::map<int, pixelTypeIplParams> pixelCode2iplParams = {
-    {VOCAB_PIXEL_MONO,                  iplPixelTypeMono},
-    {VOCAB_PIXEL_ENCODING_BAYER_GRBG8,  iplPixelTypeMono},
-    {VOCAB_PIXEL_ENCODING_BAYER_BGGR8,  iplPixelTypeMono},
-    {VOCAB_PIXEL_ENCODING_BAYER_GBRG8,  iplPixelTypeMono},
-    {VOCAB_PIXEL_ENCODING_BAYER_RGGB8,  iplPixelTypeMono},
-    {VOCAB_PIXEL_YUV_420,               iplPixelTypeMono}, // {1, 12,  "GRAY", "GRAY"}},
-    {VOCAB_PIXEL_YUV_444,               iplPixelTypeMono}, // {1, 24,  "GRAY", "GRAY"}},
-    {VOCAB_PIXEL_YUV_422,               iplPixelTypeMono16},
-    {VOCAB_PIXEL_YUV_411,               iplPixelTypeMono}, // {1, 12,  "GRAY", "GRAY"}},
-    {VOCAB_PIXEL_MONO16,                iplPixelTypeMono16},
-    {VOCAB_PIXEL_ENCODING_BAYER_GRBG16, iplPixelTypeMono16},
-    {VOCAB_PIXEL_ENCODING_BAYER_BGGR16, iplPixelTypeMono16},
-    {VOCAB_PIXEL_ENCODING_BAYER_GBRG16, iplPixelTypeMono16},
-    {VOCAB_PIXEL_ENCODING_BAYER_RGGB16, iplPixelTypeMono16},
-    {VOCAB_PIXEL_RGB,                   {3, IPL_DEPTH_8U,  "RGB",  "RGB" }},
-    {VOCAB_PIXEL_RGBA,                  {4, IPL_DEPTH_8U,  "RGBA", "RGBA"}},
-    {VOCAB_PIXEL_BGRA,                  {4, IPL_DEPTH_8U,  "BGRA", "BGRA"}},
-    {VOCAB_PIXEL_INT,                   {1, IPL_DEPTH_32S, "GRAY", "GRAY"}},
-    {VOCAB_PIXEL_HSV,                   {3, IPL_DEPTH_8U,  "HSV",  "HSV" }},
-    {VOCAB_PIXEL_BGR,                   {3, IPL_DEPTH_8U,  "RGB",  "BGR" }},
-    {VOCAB_PIXEL_MONO_SIGNED,           {1, IPL_DEPTH_8S,  "GRAY", "GRAY"}},
-    {VOCAB_PIXEL_RGB_INT,               {3, IPL_DEPTH_32S, "RGB",  "RGB" }},
-    {VOCAB_PIXEL_MONO_FLOAT,            {1, IPL_DEPTH_32F, "GRAY", "GRAY"}},
-    {VOCAB_PIXEL_RGB_FLOAT,             {3, IPL_DEPTH_32F, "RGB",  "RGB" }},
-    {-2,                                iplPixelTypeMono16},
-    {-4,                                {1, IPL_DEPTH_32S, "GRAY", "GRAY"}}
+    {VOCAB_PIXEL_MONO,                  {1, IPL_DEPTH_8U}},
+    {VOCAB_PIXEL_ENCODING_BAYER_GRBG8,  {1, IPL_DEPTH_8U}},
+    {VOCAB_PIXEL_ENCODING_BAYER_BGGR8,  {1, IPL_DEPTH_8U}},
+    {VOCAB_PIXEL_ENCODING_BAYER_GBRG8,  {1, IPL_DEPTH_8U}},
+    {VOCAB_PIXEL_ENCODING_BAYER_RGGB8,  {1, IPL_DEPTH_8U}},
+    {VOCAB_PIXEL_YUV_420,               {1, IPL_DEPTH_8U}},
+    {VOCAB_PIXEL_YUV_444,               {1, IPL_DEPTH_8U}},
+    {VOCAB_PIXEL_YUV_422,               {1, IPL_DEPTH_16U}},
+    {VOCAB_PIXEL_YUV_411,               {1, IPL_DEPTH_8U}},
+    {VOCAB_PIXEL_MONO16,                {1, IPL_DEPTH_16U}},
+    {VOCAB_PIXEL_ENCODING_BAYER_GRBG16, {1, IPL_DEPTH_16U}},
+    {VOCAB_PIXEL_ENCODING_BAYER_BGGR16, {1, IPL_DEPTH_16U}},
+    {VOCAB_PIXEL_ENCODING_BAYER_GBRG16, {1, IPL_DEPTH_16U}},
+    {VOCAB_PIXEL_ENCODING_BAYER_RGGB16, {1, IPL_DEPTH_16U}},
+    {VOCAB_PIXEL_RGB,                   {3, IPL_DEPTH_8U,}},
+    {VOCAB_PIXEL_RGBA,                  {4, IPL_DEPTH_8U,}},
+    {VOCAB_PIXEL_BGRA,                  {4, IPL_DEPTH_8U,}},
+    {VOCAB_PIXEL_INT,                   {1, IPL_DEPTH_32S}},
+    {VOCAB_PIXEL_HSV,                   {3, IPL_DEPTH_8U,}},
+    {VOCAB_PIXEL_BGR,                   {3, IPL_DEPTH_8U,}},
+    {VOCAB_PIXEL_MONO_SIGNED,           {1, IPL_DEPTH_8S,}},
+    {VOCAB_PIXEL_RGB_INT,               {3, IPL_DEPTH_32S}},
+    {VOCAB_PIXEL_MONO_FLOAT,            {1, IPL_DEPTH_32F}},
+    {VOCAB_PIXEL_RGB_FLOAT,             {3, IPL_DEPTH_32F}},
+    {-2,                                {1, IPL_DEPTH_16U}},
+    {-4,                                {1, IPL_DEPTH_32S}}
 };
 
 bool ImageStorage::_set_ipl_header(size_t x, size_t y, int pixel_type, size_t quantum,
@@ -346,7 +296,7 @@ bool ImageStorage::_set_ipl_header(size_t x, size_t y, int pixel_type, size_t qu
     }
     int origin = topIsLow ? IPL_ORIGIN_TL : IPL_ORIGIN_BL;
 
-    pImage = iplCreateImageHeader(param.nChannels, 0, param.depth, const_cast<char*>(param.colorModel), const_cast<char*>(param.channelSeq), IPL_DATA_ORDER_PIXEL, origin, quantum, x, y, nullptr, nullptr, nullptr, nullptr);
+    pImage = iplCreateImageHeader(param.nChannels, param.depth, origin, quantum, x, y);
 
     type_id = pixel_type;
     this->quantum = quantum;
@@ -362,7 +312,6 @@ void ImageStorage::_alloc_complete_extern(const void *buf, size_t x, size_t y, i
     this->quantum = quantum;
     this->topIsLow = topIsLow;
 
-    _make_independent();
     _free_complete();
     _set_ipl_header(x, y, pixel_type, quantum, topIsLow);
     Data = nullptr;
@@ -508,18 +457,6 @@ void Image::setQuantum(size_t imgQuantum) {
     }
 }
 
-
-void Image::setTopIsLowIndex(bool flag) {
-    topIsLow = flag;
-
-    if (implementation) {
-        auto* impl = static_cast<ImageStorage*>(implementation);
-        if (impl->pImage) {
-            impl->pImage->origin = topIsLow ? IPL_ORIGIN_TL : IPL_ORIGIN_BL;
-        }
-    }
-}
-
 void Image::synchronize() {
     auto* impl = static_cast<ImageStorage*>(implementation);
     yAssert(impl!=nullptr);
@@ -591,74 +528,18 @@ bool Image::read(yarp::os::ConnectionReader& connection) {
         }
     }
 
-    setTopIsLowIndex(header.topIsLow == 0);
-
     // handle easy case, received and current image are compatible, no conversion needed
     if (getPixelCode() == header.id && q == static_cast<size_t>(header.quantum) && imgPixelSize == static_cast<size_t>(header.depth))
     {
         return readFromConnection(*this, header, connection);
     }
 
-    // image is bayer 8 bits, current image is MONO, copy as is (keep raw format)
-    if (getPixelCode() == VOCAB_PIXEL_MONO && isBayer8(header.id))
-    {
-        return readFromConnection(*this, header, connection);
-    }
-    // image is bayer 16 bits, current image is MONO16, copy as is (keep raw format)
-    if (getPixelCode() == VOCAB_PIXEL_MONO16 && isBayer16(header.id))
-    {
-        return readFromConnection(*this, header, connection);
-    }
-
-    ////////////////////
-    // Received and current images are binary incompatible do our best to convert
-    //
-
-    // handle here all bayer encoding 8 bits
-    if (isBayer8(header.id))
-    {
-        FlexImage flex;
-        flex.setPixelCode(VOCAB_PIXEL_MONO);
-        flex.setQuantum(header.quantum);
-        flex.setTopIsLowIndex(header.topIsLow == 0);
-
-        bool ok = readFromConnection(flex, header, connection);
-        if (!ok) {
-            return false;
-        }
-
-        if (getPixelCode() == VOCAB_PIXEL_BGR && header.id==VOCAB_PIXEL_ENCODING_BAYER_GRBG8) {
-            return deBayer_GRBG8_TO_BGR(flex, *this, 3);
-        }
-        if (getPixelCode() == VOCAB_PIXEL_BGRA && header.id == VOCAB_PIXEL_ENCODING_BAYER_GRBG8) {
-            return deBayer_GRBG8_TO_BGR(flex, *this, 4);
-        }
-        if (getPixelCode() == VOCAB_PIXEL_RGB && header.id==VOCAB_PIXEL_ENCODING_BAYER_GRBG8) {
-            return deBayer_GRBG8_TO_RGB(flex, *this, 3);
-        }
-        if (getPixelCode() == VOCAB_PIXEL_RGBA && header.id == VOCAB_PIXEL_ENCODING_BAYER_GRBG8) {
-            return deBayer_GRBG8_TO_RGB(flex, *this, 4);
-        }
-
-        YARP_FIXME_NOTIMPLEMENTED("Conversion from bayer encoding not yet implemented\n");
-        return false;
-    }
-
-    // handle here all bayer encodings 16 bits
-    if (isBayer16(header.id))
-    {
-        // as bayer16 seems unlikely we defer implementation for later
-        YARP_FIXME_NOTIMPLEMENTED("Conversion from bayer encoding 16 bits not yet implemented\n");
-        return false;
-    }
-
-    // Received image has valid YARP pixels and can be converted using Image primitives
+    // received and current images are binary incompatible, so
     // prepare a FlexImage, set it to be compatible with the received image
     // read new image into FlexImage then copy from it.
     FlexImage flex;
     flex.setPixelCode(header.id);
     flex.setQuantum(header.quantum);
-    flex.setTopIsLowIndex(header.topIsLow == 0);
     ok = readFromConnection(flex, header, connection);
     if (ok) {
         copy(flex);
@@ -709,6 +590,27 @@ Image& Image::operator=(Image&& other) noexcept
     return *this;
 }
 
+bool Image::operator==(const Image& alt) const
+{
+    //test general properties
+    if (width() != alt.width()) return false;
+    if (height() != alt.height()) return false;
+    if (imgPixelCode != alt.imgPixelCode) return false;
+    size_t raw1size = getRawImageSize();
+    size_t raw2size = alt.getRawImageSize();
+    if (raw1size != raw2size)
+    {
+        return false;
+    }
+    //test byte per byte
+    unsigned char* raw1 = getRawImage();
+    unsigned char* raw2 = alt.getRawImage();
+    for (size_t i = 0; i < raw1size; i++, raw1++, raw2++)
+    {
+        if (*raw1 != *raw2) { return false; }
+    }
+    return true;
+}
 
 Image& Image::operator=(const Image& alt)
 {
@@ -729,15 +631,11 @@ bool Image::copy(const Image& alt)
             setQuantum(alt.getQuantum());
         }
         resize(alt.width(),alt.height());
-        setTopIsLowIndex(alt.topIsLowIndex());
 
         int q1 = alt.getQuantum();
         int q2 = getQuantum();
         if (q1==0) { q1 = YARP_IMAGE_ALIGN; }
         if (q2==0) { q2 = YARP_IMAGE_ALIGN; }
-
-        bool o1 = alt.topIsLowIndex();
-        bool o2 = topIsLowIndex();
 
         yAssert(width()==alt.width());
         yAssert(height()==alt.height());
@@ -751,7 +649,7 @@ bool Image::copy(const Image& alt)
         copyPixels(alt.getRawImage(),alt.getPixelCode(),
                    getRawImage(),getPixelCode(),
                    width(),height(),
-                   getRawImageSize(),q1,q2,o1,o2);
+                   getRawImageSize(),q1,q2,false,false);
     }
     return true;
 }
@@ -804,7 +702,6 @@ bool Image::copy(const Image& alt, size_t w, size_t h) {
     if (getPixelCode()==0) {
         setPixelCode(alt.getPixelCode());
         setQuantum(alt.getQuantum());
-        setTopIsLowIndex(alt.topIsLowIndex());
     }
     if (&alt==this) {
         FlexImage img;
@@ -816,7 +713,6 @@ bool Image::copy(const Image& alt, size_t w, size_t h) {
         FlexImage img;
         img.setPixelCode(getPixelCode());
         img.setQuantum(getQuantum());
-        img.setTopIsLowIndex(topIsLowIndex());
         img.copy(alt);
         return copy(img,w,h);
     }

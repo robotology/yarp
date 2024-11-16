@@ -308,7 +308,7 @@ bool ControlBoardRemapper::attachAllUsingAxesNames(const PolyDriverList& polylis
         if( !iencs ||
             !iaxinfos )
         {
-            yCError(CONTROLBOARDREMAPPER) << "subdevice" << deviceKey << "does not implemented the required IAxisInfo or IEncoders interfaces";
+            yCError(CONTROLBOARDREMAPPER) << "sub-device" << deviceKey << "does not implemented the required IAxisInfo or IEncoders interfaces";
             return false;
         }
 
@@ -317,7 +317,7 @@ bool ControlBoardRemapper::attachAllUsingAxesNames(const PolyDriverList& polylis
 
         if( !ok )
         {
-            yCError(CONTROLBOARDREMAPPER) << "subdevice" << deviceKey << "does not implemented the required getAxes method";
+            yCError(CONTROLBOARDREMAPPER) << "sub-device" << deviceKey << "does not implemented the required getAxes method";
             return false;
         }
 
@@ -330,7 +330,7 @@ bool ControlBoardRemapper::attachAllUsingAxesNames(const PolyDriverList& polylis
 
             if( !ok )
             {
-                yCError(CONTROLBOARDREMAPPER) << "subdevice" << deviceKey << "does not implemented the required getAxisName method";
+                yCError(CONTROLBOARDREMAPPER) << "sub-device" << deviceKey << "does not implemented the required getAxisName method";
                 return false;
             }
 
@@ -1014,9 +1014,15 @@ bool ControlBoardRemapper::positionMove(const double *refs)
     {
         RemappedSubControlBoard *p=remappedControlBoards.getSubControlBoard(ctrlBrd);
 
-        bool ok = p->pos->positionMove(allJointsBuffers.m_nJointsInSubControlBoard[ctrlBrd],
+        bool ok = true;
+        if (p->pos) {
+            ok = p->pos->positionMove(allJointsBuffers.m_nJointsInSubControlBoard[ctrlBrd],
                                         allJointsBuffers.m_jointsInSubControlBoard[ctrlBrd].data(),
                                         allJointsBuffers.m_bufferForSubControlBoard[ctrlBrd].data());
+        }
+        else {
+            ok = false;
+        }
         ret = ret && ok;
     }
 
@@ -1034,9 +1040,15 @@ bool ControlBoardRemapper::positionMove(const int n_joints, const int *joints, c
     {
         RemappedSubControlBoard *p=remappedControlBoards.getSubControlBoard(ctrlBrd);
 
-        bool ok = p->pos->positionMove(selectedJointsBuffers.m_nJointsInSubControlBoard[ctrlBrd],
+        bool ok = true;
+        if (p->pos) {
+            ok = p->pos->positionMove(selectedJointsBuffers.m_nJointsInSubControlBoard[ctrlBrd],
                                         selectedJointsBuffers.m_jointsInSubControlBoard[ctrlBrd].data(),
                                         selectedJointsBuffers.m_bufferForSubControlBoard[ctrlBrd].data());
+        }
+        else {
+            ok = false;
+        }
         ret = ret && ok;
     }
 
@@ -1158,10 +1170,15 @@ bool ControlBoardRemapper::relativeMove(const double *deltas)
     for(size_t ctrlBrd=0; ctrlBrd < remappedControlBoards.getNrOfSubControlBoards(); ctrlBrd++)
     {
         RemappedSubControlBoard *p=remappedControlBoards.getSubControlBoard(ctrlBrd);
-
-        bool ok = p->pos->relativeMove(allJointsBuffers.m_nJointsInSubControlBoard[ctrlBrd],
+        bool ok = true;
+        if (p->pos) {
+            ok = p->pos->relativeMove(allJointsBuffers.m_nJointsInSubControlBoard[ctrlBrd],
                                         allJointsBuffers.m_jointsInSubControlBoard[ctrlBrd].data(),
                                         allJointsBuffers.m_bufferForSubControlBoard[ctrlBrd].data());
+        }
+        else {
+            ok = false;
+        }
         ret = ret && ok;
     }
 
@@ -1178,10 +1195,15 @@ bool ControlBoardRemapper::relativeMove(const int n_joints, const int *joints, c
     for(size_t ctrlBrd=0; ctrlBrd < remappedControlBoards.getNrOfSubControlBoards(); ctrlBrd++)
     {
         RemappedSubControlBoard *p=remappedControlBoards.getSubControlBoard(ctrlBrd);
-
-        bool ok = p->pos->relativeMove(selectedJointsBuffers.m_nJointsInSubControlBoard[ctrlBrd],
+        bool ok = true;
+        if (p->pos) {
+            ok = p->pos->relativeMove(selectedJointsBuffers.m_nJointsInSubControlBoard[ctrlBrd],
                                         selectedJointsBuffers.m_jointsInSubControlBoard[ctrlBrd].data(),
                                         selectedJointsBuffers.m_bufferForSubControlBoard[ctrlBrd].data());
+        }
+        else {
+            ok = false;
+        }
         ret = ret && ok;
     }
 
@@ -1306,9 +1328,15 @@ bool ControlBoardRemapper::setRefSpeeds(const double *spds)
     {
         RemappedSubControlBoard *p=remappedControlBoards.getSubControlBoard(ctrlBrd);
 
-        bool ok = p->pos->setRefSpeeds(allJointsBuffers.m_nJointsInSubControlBoard[ctrlBrd],
+        bool ok = true;
+        if (p->pos) {
+            ok = p->pos->setRefSpeeds(allJointsBuffers.m_nJointsInSubControlBoard[ctrlBrd],
                                         allJointsBuffers.m_jointsInSubControlBoard[ctrlBrd].data(),
                                         allJointsBuffers.m_bufferForSubControlBoard[ctrlBrd].data());
+        }
+        else {
+            ok = false;
+        }
         ret = ret && ok;
     }
 
@@ -1326,9 +1354,15 @@ bool ControlBoardRemapper::setRefSpeeds(const int n_joints, const int *joints, c
     {
         RemappedSubControlBoard *p=remappedControlBoards.getSubControlBoard(ctrlBrd);
 
-        bool ok = p->pos->setRefSpeeds(selectedJointsBuffers.m_nJointsInSubControlBoard[ctrlBrd],
+        bool ok = true;
+        if (p->pos) {
+            ok = p->pos->setRefSpeeds(selectedJointsBuffers.m_nJointsInSubControlBoard[ctrlBrd],
                                         selectedJointsBuffers.m_jointsInSubControlBoard[ctrlBrd].data(),
                                         selectedJointsBuffers.m_bufferForSubControlBoard[ctrlBrd].data());
+        }
+        else {
+            ok = false;
+        }
         ret = ret && ok;
     }
 
@@ -1366,9 +1400,15 @@ bool ControlBoardRemapper::setRefAccelerations(const double *accs)
     {
         RemappedSubControlBoard *p=remappedControlBoards.getSubControlBoard(ctrlBrd);
 
-        bool ok = p->pos->setRefAccelerations(allJointsBuffers.m_nJointsInSubControlBoard[ctrlBrd],
-                                               allJointsBuffers.m_jointsInSubControlBoard[ctrlBrd].data(),
-                                               allJointsBuffers.m_bufferForSubControlBoard[ctrlBrd].data());
+        bool ok = true;
+        if (p->pos) {
+            ok = p->pos->setRefAccelerations(allJointsBuffers.m_nJointsInSubControlBoard[ctrlBrd],
+                                                allJointsBuffers.m_jointsInSubControlBoard[ctrlBrd].data(),
+                                                allJointsBuffers.m_bufferForSubControlBoard[ctrlBrd].data());
+        }
+        else {
+            ok = false;
+        }
         ret = ret && ok;
     }
 
@@ -1386,9 +1426,15 @@ bool ControlBoardRemapper::setRefAccelerations(const int n_joints, const int *jo
     {
         RemappedSubControlBoard *p=remappedControlBoards.getSubControlBoard(ctrlBrd);
 
-        bool ok = p->pos->setRefAccelerations(selectedJointsBuffers.m_nJointsInSubControlBoard[ctrlBrd],
+        bool ok = true;
+        if (p->pos) {
+            ok = p->pos->setRefAccelerations(selectedJointsBuffers.m_nJointsInSubControlBoard[ctrlBrd],
                                                selectedJointsBuffers.m_jointsInSubControlBoard[ctrlBrd].data(),
                                                selectedJointsBuffers.m_bufferForSubControlBoard[ctrlBrd].data());
+        }
+        else {
+            ok = false;
+        }
         ret = ret && ok;
     }
 
@@ -1425,7 +1471,6 @@ bool ControlBoardRemapper::getRefSpeeds(double *spds)
         RemappedSubControlBoard *p=remappedControlBoards.getSubControlBoard(ctrlBrd);
 
         bool ok = true;
-
         if( p->pos )
         {
             ok = p->pos->getRefSpeeds(allJointsBuffers.m_nJointsInSubControlBoard[ctrlBrd],
@@ -1542,7 +1587,6 @@ bool ControlBoardRemapper::getRefAccelerations(const int n_joints, const int *jo
         RemappedSubControlBoard *p=remappedControlBoards.getSubControlBoard(ctrlBrd);
 
         bool ok = true;
-
         if( p->pos )
         {
             ok = p->pos->getRefAccelerations(selectedJointsBuffers.m_nJointsInSubControlBoard[ctrlBrd],
@@ -1614,9 +1658,15 @@ bool ControlBoardRemapper::stop(const int n_joints, const int *joints)
     for(size_t ctrlBrd=0; ctrlBrd < remappedControlBoards.getNrOfSubControlBoards(); ctrlBrd++)
     {
         RemappedSubControlBoard *p=remappedControlBoards.getSubControlBoard(ctrlBrd);
-
-        bool ok = p->pos->stop(selectedJointsBuffers.m_nJointsInSubControlBoard[ctrlBrd],
+        bool ok = true;
+        if (p->pos) {
+            ok = p->pos->stop(selectedJointsBuffers.m_nJointsInSubControlBoard[ctrlBrd],
                                 selectedJointsBuffers.m_jointsInSubControlBoard[ctrlBrd].data());
+        }
+        else
+        {
+            ok = false;
+        }
         ret = ret && ok;
     }
 
@@ -1677,9 +1727,15 @@ bool ControlBoardRemapper::velocityMove(const double *v)
     {
         RemappedSubControlBoard *p=remappedControlBoards.getSubControlBoard(ctrlBrd);
 
-        bool ok = p->vel->velocityMove(allJointsBuffers.m_nJointsInSubControlBoard[ctrlBrd],
-                                        allJointsBuffers.m_jointsInSubControlBoard[ctrlBrd].data(),
-                                        allJointsBuffers.m_bufferForSubControlBoard[ctrlBrd].data());
+        bool ok = true;
+        if (p->vel) {
+            ok = p->vel->velocityMove(allJointsBuffers.m_nJointsInSubControlBoard[ctrlBrd],
+                                            allJointsBuffers.m_jointsInSubControlBoard[ctrlBrd].data(),
+                                            allJointsBuffers.m_bufferForSubControlBoard[ctrlBrd].data());
+        }
+        else {
+            ok = false;
+        }
         ret = ret && ok;
     }
 
@@ -3575,7 +3631,16 @@ bool ControlBoardRemapper::getControlMode(int j, int *mode)
         return false;
     }
 
-    return p->iMode->getControlMode(off, mode);
+    bool ok = true;
+
+    if (p->iMode) {
+        ok = p->iMode->getControlMode(off, mode);
+    }
+    else {
+        ok = false;
+    }
+
+    return ok;
 
 }
 
@@ -3657,7 +3722,14 @@ bool ControlBoardRemapper::setControlMode(const int j, const int mode)
         return false;
     }
 
-    ret = p->iMode->setControlMode(off, mode);
+    if (p->iMode)
+    {
+        ret = p->iMode->setControlMode(off, mode);
+    }
+    else
+    {
+        ret = false;
+    }
 
     return ret;
 }
@@ -3673,9 +3745,15 @@ bool ControlBoardRemapper::setControlModes(const int n_joints, const int *joints
     {
         RemappedSubControlBoard *p=remappedControlBoards.getSubControlBoard(ctrlBrd);
 
-        bool ok = p->iMode->setControlModes(selectedJointsBuffers.m_nJointsInSubControlBoard[ctrlBrd],
+        bool ok = true;
+        if (p->iMode) {
+            ok = p->iMode->setControlModes(selectedJointsBuffers.m_nJointsInSubControlBoard[ctrlBrd],
                                              selectedJointsBuffers.m_jointsInSubControlBoard[ctrlBrd].data(),
                                              selectedJointsBuffers.m_bufferForSubControlBoardControlModes[ctrlBrd].data());
+        }
+        else {
+            ok = false;
+        }
         ret = ret && ok;
     }
 
@@ -3693,9 +3771,15 @@ bool ControlBoardRemapper::setControlModes(int *modes)
     {
         RemappedSubControlBoard *p=remappedControlBoards.getSubControlBoard(ctrlBrd);
 
-        bool ok = p->iMode->setControlModes(allJointsBuffers.m_nJointsInSubControlBoard[ctrlBrd],
+        bool ok = true;
+        if (p->iMode) {
+            ok = p->iMode->setControlModes(allJointsBuffers.m_nJointsInSubControlBoard[ctrlBrd],
                                              allJointsBuffers.m_jointsInSubControlBoard[ctrlBrd].data(),
                                              allJointsBuffers.m_bufferForSubControlBoardControlModes[ctrlBrd].data());
+        }
+        else {
+            ok = false;
+        }
         ret = ret && ok;
     }
 
@@ -3733,9 +3817,15 @@ bool ControlBoardRemapper::setPositions(const int n_joints, const int *joints, c
     {
         RemappedSubControlBoard *p=remappedControlBoards.getSubControlBoard(ctrlBrd);
 
-        bool ok = p->posDir->setPositions(selectedJointsBuffers.m_nJointsInSubControlBoard[ctrlBrd],
+        bool ok = true;
+        if (p->posDir) {
+            ok = p->posDir->setPositions(selectedJointsBuffers.m_nJointsInSubControlBoard[ctrlBrd],
                                           selectedJointsBuffers.m_jointsInSubControlBoard[ctrlBrd].data(),
                                           selectedJointsBuffers.m_bufferForSubControlBoard[ctrlBrd].data());
+        }
+        else {
+            ok = false;
+        }
         ret = ret && ok;
     }
 
@@ -3753,9 +3843,15 @@ bool ControlBoardRemapper::setPositions(const double *refs)
     {
         RemappedSubControlBoard *p=remappedControlBoards.getSubControlBoard(ctrlBrd);
 
-        bool ok = p->posDir->setPositions(allJointsBuffers.m_nJointsInSubControlBoard[ctrlBrd],
+        bool ok = true;
+        if (p->posDir) {
+            ok = p->posDir->setPositions(allJointsBuffers.m_nJointsInSubControlBoard[ctrlBrd],
                                           allJointsBuffers.m_jointsInSubControlBoard[ctrlBrd].data(),
                                           allJointsBuffers.m_bufferForSubControlBoard[ctrlBrd].data());
+        }
+        else {
+            ok = false;
+        }
         ret = ret && ok;
     }
 
@@ -3899,9 +3995,16 @@ bool ControlBoardRemapper::velocityMove(const int n_joints, const int *joints, c
     {
         RemappedSubControlBoard *p=remappedControlBoards.getSubControlBoard(ctrlBrd);
 
-        bool ok = p->vel->velocityMove(selectedJointsBuffers.m_nJointsInSubControlBoard[ctrlBrd],
+        bool ok = true;
+        if (p->vel) {
+            ok = p->vel->velocityMove(selectedJointsBuffers.m_nJointsInSubControlBoard[ctrlBrd],
                                         selectedJointsBuffers.m_jointsInSubControlBoard[ctrlBrd].data(),
                                         selectedJointsBuffers.m_bufferForSubControlBoard[ctrlBrd].data());
+        }
+        else
+        {
+            ok = false;
+        }
         ret = ret && ok;
     }
 

@@ -16,7 +16,7 @@ jobs:
     - name: Nightly Merge
       uses: robotology/gh-action-nightly-merge@v1.3.3
       with:
-        stable_branch: 'master'
+        stable_branch: 'yarp-3.10'
         development_branch: 'master'
         allow_ff: false
         user_name: 'robotology-bot'

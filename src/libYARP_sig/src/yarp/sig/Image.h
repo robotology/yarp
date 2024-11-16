@@ -116,6 +116,14 @@ public:
     Image& operator=(Image &&other) noexcept;
 
     /**
+     * Comparison operator.
+     * N.B. Comparing two images can be computationally intensive.
+     * This method is mainly used for CI purposes.
+     * @return true if the two images are identical
+     */
+    bool operator==(const Image& alt) const;
+
+    /**
      * Destructor.
      */
     ~Image() override;
@@ -305,25 +313,6 @@ public:
     bool write(yarp::os::ConnectionWriter& connection) const override;
 
     void setQuantum(size_t imgQuantum);
-
-    /**
-     * @return true if image has origin at top left (default); in other
-     * words when the y index is low, we are near the top of the image.
-     */
-    bool topIsLowIndex() const {
-        return topIsLow;
-    }
-
-    /**
-     * control whether image has origin at top left (default) or bottom
-     * left.
-     *
-     * @param flag true if image has origin at top left (default),
-     * false if image has origin at bottom left.
-     *
-     */
-    void setTopIsLowIndex(bool flag);
-
 
     /**
      * Get an array of pointers to the rows of the image.

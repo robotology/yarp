@@ -1,0 +1,1 @@
+| -              |  name            | string  | -      |    /LLM_nws      | Yes          | Prefix of the ports (rpc and streaming) opened by device    | Two ports will be opened: xxx/rpc:i and xxx/conv:o  |

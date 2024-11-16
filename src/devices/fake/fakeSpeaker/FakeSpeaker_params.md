@@ -1,0 +1,1 @@
+* |        |  period      | double  | s              |  0.010                   | No                          | the period of processing thread                                   | A value of 10ms is recommended. Do to not modify it |

@@ -1158,4 +1158,9 @@ TEST_CASE("os::LogTest", "[yarp::os]")
         volatile bool quiet = false;
         CNT yCInfo(quiet ? LOG_COMPONENT_NULL : LOG_COMPONENT, "This is a log message that depends on a conditionally defined component");
     }
+
+    SECTION("Extra Methods to improve coverage")
+    {
+        yarp::os::Log l;
+    }
 }

@@ -85,15 +85,6 @@ UDP Carrier configuration
 | `YARP_DGRAM_SND_BUFFER_SIZE`  | This variable controls the size in bytes of the UDP socket sending buffer. | |
 
 
-ROS configuration
-=================
-
-| Environmental variable        | Description | Related documentation page |
-|:-----------------------------:|:-----------:|:--------------------------:|
-| `ROS_MASTER_URI`              | If a ROS1 roscore is present in the network, this variable should contain its URI. If a ROS1 installation is present on the machine, this variable is typically set by ROS configuration scripts. | http://wiki.ros.org/ROS/EnvironmentVariables |
-| `YARP_USE_ROS`                | If this variable is set to something different from an empty string, the `yarpserver` will always be launched with `ROS` support. For example ``YARP_USE_ROS=1 yarpserver` is equivalent to `yarpserver --ros`.    | \ref yarp_with_ros_nameservers |
-
-
 Misc configuration
 ==================
 

@@ -8,7 +8,7 @@
 
 #include <string>
 #include <portaudio.h>
-#include <yarp/dev/AudioBufferSize.h>
+#include <yarp/sig/AudioBufferSize.h>
 #include <yarp/dev/CircularAudioBuffer.h>
 #include <cstdio>
 

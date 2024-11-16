@@ -355,17 +355,16 @@ int LocalBroker::running()
 /**
  *  connection broker
  */
-bool LocalBroker::connect(const char* from, const char* to,
-            const char* carrier, bool persist)
+bool LocalBroker::connect(const std::string& from, const std::string& to, const std::string& carrier, bool persist)
 {
 
-    if(!from)
+    if(from.empty())
     {
         strError = "no source port is introduced.";
         return false;
     }
 
-    if(!to)
+    if (to.empty())
     {
         strError = "no destination port is introduced.";
         return false;
@@ -395,16 +394,16 @@ bool LocalBroker::connect(const char* from, const char* to,
     return true;
 }
 
-bool LocalBroker::disconnect(const char* from, const char* to, const char *carrier)
+bool LocalBroker::disconnect(const std::string& from, const std::string& to, const std::string& carrier)
 {
 
-    if(!from)
+    if (from.empty())
     {
         strError = "no source port is introduced.";
         return false;
     }
 
-    if(!to)
+    if (to.empty())
     {
         strError = "no destination port is introduced.";
         return false;
@@ -439,27 +438,27 @@ bool LocalBroker::disconnect(const char* from, const char* to, const char *carri
 
 }
 
-bool LocalBroker::exists(const char* port)
+bool LocalBroker::exists(const std::string& port)
 {
     return NetworkBase::exists(port);
 }
 
 
-const char* LocalBroker::requestRpc(const char* szport, const char* request, double timeout)
+std::string LocalBroker::requestRpc(const std::string& szport, const std::string& request, double timeout)
 {
-    if ((szport == nullptr) || (request == nullptr)) {
-        return nullptr;
+    if (szport.empty() || request.empty()) {
+        return {};
     }
 
     if (!exists(szport)) {
-        return nullptr;
+        return {};
     }
 
     // opening the port
     yarp::os::Port port;
     port.setTimeout((float)((timeout>0.0) ? timeout : CONNECTION_TIMEOUT));
     if (!port.open("...")) {
-        return nullptr;
+        return {};
     }
 
     ContactStyle style;
@@ -476,7 +475,7 @@ const char* LocalBroker::requestRpc(const char* szport, const char* request, dou
 
     if(!ret) {
         port.close();
-        return nullptr;
+        return {};
     }
 
     Bottle msg, response;
@@ -485,14 +484,14 @@ const char* LocalBroker::requestRpc(const char* szport, const char* request, dou
     NetworkBase::disconnect(port.getName(), szport);
     if(!response.size() || !ret) {
         port.close();
-        return nullptr;
+        return {};
     }
 
     port.close();
     return response.toString().c_str();
 }
 
-bool LocalBroker::connected(const char* from, const char* to, const char* carrier)
+bool LocalBroker::connected(const std::string& from, const std::string& to, const std::string& carrier)
 {
     if (!exists(from) || !exists(to)) {
         return false;
@@ -501,9 +500,9 @@ bool LocalBroker::connected(const char* from, const char* to, const char* carrie
 }
 
 
-const char* LocalBroker::error()
+std::string LocalBroker::error()
 {
-    return strError.c_str();
+    return strError;
 }
 
 bool LocalBroker::attachStdout()

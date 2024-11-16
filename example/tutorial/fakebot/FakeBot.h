@@ -23,8 +23,7 @@ class yarp::dev::FakeBot : public DeviceDriver,
             public IVelocityControl,
             public IAmplifierControl,
             public IEncoders,
-            public IFrameGrabberImage,
-            public DeviceResponder
+            public IFrameGrabberImage
 {
 private:
     int njoints;

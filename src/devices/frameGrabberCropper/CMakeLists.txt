@@ -4,10 +4,11 @@
 yarp_prepare_plugin(frameGrabberCropper
   CATEGORY device
   TYPE FrameGrabberCropper
-  INCLUDE frameGrabberCropper.h
+  INCLUDE FrameGrabberCropper.h
   EXTRA_CONFIG
     WRAPPER=frameGrabber_nws_yarp
   DEFAULT ON
+  GENERATE_PARSER
 )
 
 if(NOT SKIP_frameGrabberCropper)
@@ -15,8 +16,10 @@ if(NOT SKIP_frameGrabberCropper)
 
   target_sources(yarp_frameGrabberCropper
     PRIVATE
-      frameGrabberCropper.cpp
-      frameGrabberCropper.h
+      FrameGrabberCropper.cpp
+      FrameGrabberCropper.h
+      FrameGrabberCropper_ParamsParser.cpp
+      FrameGrabberCropper_ParamsParser.h
   )
 
   target_link_libraries(yarp_frameGrabberCropper

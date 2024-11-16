@@ -1,0 +1,8 @@
+| Group name           | Parameter name       | Type           | Units   | Default Value        | Required | Description   | Notes       |
+|:--------------------:|:--------------------:|:--------------:|:-------:|:--------------------:|:--------:|:-------------:|:-----------:|
+| -                    | param_vec4           | vector<int>    | m       | (1 2 3)              | No       | Test param 39 | Note        |
+| -                    | param_vec5           | vector<double> | m       | (1.0 2.0 3.0)        | No       | Test param 40 | Note        |
+| -                    | param_vec6           | vector<string> | m       | ("sa1" "sa2" "sa3")  | No       | Test param 41 | Note        |
+| -                    | param_vec7           | vector<int>    | m       |                      | Yes      | Test param 42 | Note        |
+| -                    | param_vec8           | vector<double> | m       |                      | Yes      | Test param 43 | Note        |
+| -                    | param_vec9           | vector<string> | m       |                      | Yes      | Test param 44 | Note        |

@@ -8,6 +8,7 @@ yarp_prepare_plugin(portaudioRecorder
   EXTRA_CONFIG
     WRAPPER=AudioRecorderWrapper
   DEPENDS "YARP_HAS_PortAudio"
+  GENERATE_PARSER
 )
 
 if(NOT SKIP_portaudioRecorder)
@@ -17,6 +18,8 @@ if(NOT SKIP_portaudioRecorder)
     PRIVATE
       PortAudioRecorderDeviceDriver.cpp
       PortAudioRecorderDeviceDriver.h
+      PortAudioRecorderDeviceDriver_ParamsParser.cpp
+      PortAudioRecorderDeviceDriver_ParamsParser.h
   )
 
   target_link_libraries(yarp_portaudioRecorder

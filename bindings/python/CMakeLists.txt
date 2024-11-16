@@ -99,6 +99,32 @@ if(YARP_PYTHON_PIP_METADATA_INSTALL)
     DESTINATION ${CMAKE_INSTALL_PYTHON3DIR}/yarp-${YARP_VERSION_SHORT}.dist-info)
 endif()
 
+# We generate some preable for the yarp.py library so that the dll are correctly loaded on Windows
+set(swig_python_windows_preable_file ${CMAKE_CURRENT_BINARY_DIR}/swig_python_windows_preable.i)
+file(WRITE ${swig_python_windows_preable_file} "")
+# If we are on Windows and BUILD_SHARED_LIBS is ON, handle the fact that
+# the Python interpreter does not look into PATH to find dll (see https://docs.python.org/3.8/library/os.html#os.add_dll_directory)
+if(WIN32 AND BUILD_SHARED_LIBS)
+  if(IS_ABSOLUTE ${CMAKE_INSTALL_PYTHON3DIR})
+      set(PYTHON_FULL_INSTDIR "${CMAKE_INSTALL_PYTHON3DIR}")
+  else()
+      set(PYTHON_FULL_INSTDIR "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_PYTHON3DIR}")
+  endif()
+  file(RELATIVE_PATH RELATIVE_PATH_BETWEEN_INIT_PY_AND_DLL_DIRECTORY ${PYTHON_FULL_INSTDIR} ${CMAKE_INSTALL_FULL_BINDIR})
+  file(APPEND ${swig_python_windows_preable_file} "%pythonbegin %{\n")
+  file(APPEND ${swig_python_windows_preable_file} "import os\n")
+  file(APPEND ${swig_python_windows_preable_file} "library_dll_path = os.path.join(os.path.dirname(__file__),'${RELATIVE_PATH_BETWEEN_INIT_PY_AND_DLL_DIRECTORY}')\n")
+  file(APPEND ${swig_python_windows_preable_file} "# Avoid to call add_dll_directory if not necessary,\n")
+  file(APPEND ${swig_python_windows_preable_file} "# for example if the library to find are already found in the proper location in a conda environment\n")
+  file(APPEND ${swig_python_windows_preable_file} "if(library_dll_path != os.path.join(os.environ.get('CONDA_PREFIX', ''),'Library','bin') and library_dll_path != os.path.join(os.environ.get('CONDA_PREFIX', ''),'bin')):\n")
+  file(APPEND ${swig_python_windows_preable_file} "    if(os.path.exists(library_dll_path)):\n")
+  file(APPEND ${swig_python_windows_preable_file} "        os.add_dll_directory(library_dll_path)\n")
+  file(APPEND ${swig_python_windows_preable_file} "%}\n")
+endif()
+# Make sure that the created file can be found by swig while parsing the main .i file
+set_property(TARGET ${SWIG_MODULE_yarp_python_REAL_NAME} APPEND PROPERTY SWIG_INCLUDE_DIRECTORIES ${CMAKE_CURRENT_BINARY_DIR})
+
+
 if(YARP_COMPILE_TESTS)
   add_subdirectory(tests)
 endif()

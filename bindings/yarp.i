@@ -208,7 +208,6 @@
 %ignore yarp::sig::Image::operator()(int,int) const;
 %ignore yarp::sig::Image::pixel(int,int) const;
 %ignore yarp::sig::Image::getRow(int) const;
-%ignore yarp::sig::Image::getIplImage() const;
 %ignore yarp::sig::Image::getReadType() const;
 %ignore yarp::sig::VectorOf<double>::getType() const;
 %ignore yarp::sig::VectorOf<double>::VectorOf(std::initializer_list<double>);
@@ -392,7 +391,6 @@ MAKE_COMMS(Bottle)
 %include <yarp/sig/Sound.h>
 %include <yarp/sig/Matrix.h>
 %include <yarp/sig/Vector.h>
-%include <yarp/os/IConfig.h>
 %include <yarp/dev/DeviceDriver.h>
 %include <yarp/dev/PolyDriver.h>
 %include <yarp/dev/Drivers.h>
@@ -1585,8 +1583,8 @@ typedef yarp::os::BufferedPort<ImageRgbFloat> BufferedPortImageRgbFloat;
         return self->readPrompt(oPropmt[0]);
     }
 
-    bool ask(const std::string& question, std::vector<string>& answer) {
-        return self->ask(question, answer[0]);
+    bool ask(const std::string& question, yarp::dev::LLM_Message& answer) {
+        return self->ask(question, answer);
     }
 }
 
@@ -2005,3 +2003,13 @@ public:
         return result;
     }
 }
+
+//////////////////////////////////////////////////////////////////////////
+// Just in Python (and in yarp bindings itself, not in downstream bindings
+// that include yarp.i) add some code to automatically call
+// add_dll_directory as necessary
+// See https://github.com/robotology/robotology-superbuild/issues/1268
+// for more details
+#if defined(SWIGPYTHON) && defined(SWIG_GENERATING_YARP_BINDINGS)
+%include <swig_python_windows_preable.i>
+#endif

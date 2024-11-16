@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: BSD-3-Clause
 
 if(NOT DEFINED CMAKE_MINIMUM_REQUIRED_VERSION)
-  cmake_minimum_required(VERSION 3.16)
+  cmake_minimum_required(VERSION 3.19)
 
   # UseSWIG generates now standard target names.
   if(${CMAKE_VERSION} VERSION_GREATER_EQUAL 3.13)
@@ -154,6 +154,16 @@ mark_as_advanced(SWIG_EXTRA_FLAGS)
 
 if(YARP_COMPILE_BINDINGS)
   unset(SWIG_COMMON_FLAGS)
+
+  #############################################################################
+  ## Pass a macro to permit to code in yarp.i to distinguish between when is
+  ## swig is processing yarp.i because it is generated yarp bindings, or if
+  ## it is processing yarp.i as it was included in some downstream bindings
+  ## (such as icub-main bindings)
+  ## If you mantain a project downstream of YARP that is including yarp.i,
+  ## make sure that you DO NOT define this macro
+  list(APPEND SWIG_COMMON_FLAGS "-DSWIG_GENERATING_YARP_BINDINGS")
+
 
   #############################################################################
   ## Do not build deprecated functions when disabled

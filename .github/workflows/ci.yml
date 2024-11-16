@@ -171,16 +171,6 @@ jobs:
       matrix:
         config:
         - {
-            cmake_version: "3.17.*",
-            cmake_generator: "Unix Makefiles",
-            ycm_version: "0.15.3",
-          }
-        - {
-            cmake_version: "3.18.*",
-            cmake_generator: "Unix Makefiles",
-            ycm_version: "0.15.3",
-          }
-        - {
             cmake_version: "3.19.*",
             cmake_generator: "Unix Makefiles",
             ycm_version: "0.15.3",
@@ -825,15 +815,20 @@ jobs:
       run: |
           # Temporary workaround for https://github.com/actions/setup-python/issues/577
           rm -f /usr/local/bin/2to3
-          rm -f /usr/local/bin/idle3
-          rm -f /usr/local/bin/pydoc3
-          rm -f /usr/local/bin/python3
-          rm -f /usr/local/bin/python3-config
           rm -f /usr/local/bin/2to3-3.11
+          rm -f /usr/local/bin/2to3-3.12
+          rm -f /usr/local/bin/idle3
           rm -f /usr/local/bin/idle3.11
+          rm -f /usr/local/bin/idle3.12
+          rm -f /usr/local/bin/pydoc3
           rm -f /usr/local/bin/pydoc3.11
+          rm -f /usr/local/bin/pydoc3.12
+          rm -f /usr/local/bin/python3
           rm -f /usr/local/bin/python3.11
+          rm -f /usr/local/bin/python3.12
+          rm -f /usr/local/bin/python3-config
           rm -f /usr/local/bin/python3.11-config
+          rm -f /usr/local/bin/python3.12-config
 
           wget -nv https://github.com/robotology/ycm/releases/download/v0.15.3/ycm-cmake-modules-0.15.3-all.tar.gz -O /Users/runner/work/yarp/ycm.tar.gz
           7z x /Users/runner/work/yarp/ycm.tar.gz -o/Users/runner/work/yarp
@@ -848,7 +843,7 @@ jobs:
       id: prepare_environment_script
       shell: cmake -P {0}
       run: |
-        cmake_minimum_required(VERSION 3.17)
+        cmake_minimum_required(VERSION 3.19)
         set(_env_script ${CMAKE_CURRENT_LIST_DIR}/environment_script.cmake)
         file(WRITE "${_env_script}" "")
 
@@ -963,14 +958,14 @@ jobs:
     - name: Print Environment Script
       shell: cmake -P {0}
       run: |
-        cmake_minimum_required(VERSION 3.17)
+        cmake_minimum_required(VERSION 3.19)
         file(READ "${{ steps.prepare_environment_script.outputs.environment_script }}" _out)
         message("${_out}")
 
     - name: Print system information
       shell: cmake -P {0}
       run: |
-        cmake_minimum_required(VERSION 3.17)
+        cmake_minimum_required(VERSION 3.19)
         include(${{ steps.prepare_environment_script.outputs.environment_script }})
 
         set(_which_cmd which)
@@ -1048,7 +1043,7 @@ jobs:
     - name: Configure
       shell: cmake -P {0}
       run: |
-        cmake_minimum_required(VERSION 3.17)
+        cmake_minimum_required(VERSION 3.19)
         include(${{ steps.prepare_environment_script.outputs.environment_script }})
 
         set(_generator)
@@ -1118,7 +1113,7 @@ jobs:
     - name: Build
       shell: cmake -P {0}
       run: |
-        cmake_minimum_required(VERSION 3.17)
+        cmake_minimum_required(VERSION 3.19)
         include(${{ steps.prepare_environment_script.outputs.environment_script }})
 
         execute_process_x(
@@ -1140,7 +1135,7 @@ jobs:
     - name: Run tests
       shell: cmake -P {0}
       run: |
-        cmake_minimum_required(VERSION 3.17)
+        cmake_minimum_required(VERSION 3.19)
         include(${{ steps.prepare_environment_script.outputs.environment_script }})
 
         execute_process_x(
@@ -1160,7 +1155,7 @@ jobs:
     - name: Status Check
       shell: cmake -P {0}
       run: |
-        cmake_minimum_required(VERSION 3.17)
+        cmake_minimum_required(VERSION 3.19)
         include(${{ steps.prepare_environment_script.outputs.environment_script }})
 
         execute_process_x(
@@ -1188,7 +1183,7 @@ jobs:
     - name: Test installation
       shell: cmake -P {0}
       run: |
-        cmake_minimum_required(VERSION 3.17)
+        cmake_minimum_required(VERSION 3.19)
         include(${{ steps.prepare_environment_script.outputs.environment_script }})
 
         execute_process_x(
@@ -1206,7 +1201,7 @@ jobs:
       if: matrix.config.test_external_bindings
       shell: cmake -P {0}
       run: |
-        cmake_minimum_required(VERSION 3.17)
+        cmake_minimum_required(VERSION 3.19)
         include(${{ steps.prepare_environment_script.outputs.environment_script }})
 
         ### FIXME Can we avoid this duplication?
@@ -1282,7 +1277,7 @@ jobs:
       if: matrix.config.test_external_bindings
       shell: cmake -P {0}
       run: |
-        cmake_minimum_required(VERSION 3.17)
+        cmake_minimum_required(VERSION 3.19)
         include(${{ steps.prepare_environment_script.outputs.environment_script }})
 
         ### FIXME Can we avoid this duplication?
@@ -1357,7 +1352,7 @@ jobs:
     - name: Compress installation files
       shell: cmake -P {0}
       run: |
-        cmake_minimum_required(VERSION 3.17)
+        cmake_minimum_required(VERSION 3.19)
         include(${{ steps.prepare_environment_script.outputs.environment_script }})
 
         execute_process_x(
@@ -1375,7 +1370,7 @@ jobs:
     - name: Cleanup
       shell: cmake -P {0}
       run: |
-        cmake_minimum_required(VERSION 3.17)
+        cmake_minimum_required(VERSION 3.19)
         include(${{ steps.prepare_environment_script.outputs.environment_script }})
 
         # Reset ccache stats before uploading
@@ -1980,7 +1975,8 @@ jobs:
 
     - name: Capture coverage info
       run: |
-        (cd build && gcovr --sonarqube --branches --output coverage.xml --root .. .)
+        (cd build && \
+        gcovr --exclude="../extern/*" --sonarqube --branches --output coverage.xml --root .. .)
 
     - name: Print coverage info file
       run: |
@@ -2034,6 +2030,7 @@ jobs:
             -Dsonar.junit.reportPaths=build/JUnitTestResults.xml \
             -Dsonar.exclusions="src/yarp*/**/* src/carriers/**/* src/devices/**/* src/idls/**/* src/libyarp*/**/* src/robottestingframework-plugins/**/* tests/**/*" \
             -Dsonar.coverage.exclusions="\
+                 src/libYARP_dev/src/yarp/dev/tests/*,\
                  src/devices/*/tests/*,\
                  src/carriers/*/tests/*,\
                  src/portmonitors/*/tests/*,\

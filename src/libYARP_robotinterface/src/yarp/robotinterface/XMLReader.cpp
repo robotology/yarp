@@ -82,7 +82,7 @@ yarp::robotinterface::XMLReaderResult yarp::robotinterface::XMLReader::getRobotF
     std::string path = filename.substr(0, filename.rfind(yarp::conf::filesystem::preferred_separator));
 
     yDebug() << "Reading file" << filename.c_str();
-    auto* doc = new TiXmlDocument(filename.c_str());
+    auto doc = std::make_unique< TiXmlDocument>(TiXmlDocument(filename.c_str()));
     if (!doc->LoadFile()) {
         SYNTAX_ERROR(doc->ErrorRow()) << doc->ErrorDesc();
         return yarp::robotinterface::XMLReaderResult::ParsingFailed();

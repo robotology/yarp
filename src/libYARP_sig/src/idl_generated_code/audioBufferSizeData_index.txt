@@ -1,0 +1,2 @@
+yarp/sig/audioBufferSizeData.h
+yarp/sig/audioBufferSizeData.cpp

@@ -19,31 +19,6 @@ class Bottle;
 
 namespace yarp::os {
 
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
-
-class YARP_os_API SearchReport
-{
-public:
-    YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string) key;
-    YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string) value;
-    bool isFound;
-    bool isGroup;
-    bool isComment;
-    bool isDefault;
-
-    explicit SearchReport();
-};
-
-class YARP_os_API SearchMonitor
-{
-public:
-    virtual ~SearchMonitor();
-    virtual void report(const SearchReport& report, const char* context) = 0;
-};
-
-#endif /* DOXYGEN_SHOULD_SKIP_THIS */
-
-
 /**
  * A base class for nested structures that can be searched.
  * A Searchable object promises that you can look inside it
@@ -54,10 +29,6 @@ public:
  */
 class YARP_os_API Searchable
 {
-private:
-    SearchMonitor* monitor;
-    YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string) monitorContext;
-
 public:
     /**
      * Default constructor.
@@ -200,13 +171,6 @@ public:
      * object.
      */
     virtual std::string toString() const = 0;
-
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
-    virtual void setMonitor(SearchMonitor* monitor, const char* context = "");
-    virtual SearchMonitor* getMonitor() const;
-    virtual std::string getMonitorContext() const;
-    virtual void reportToMonitor(const SearchReport& report) const;
-#endif /* DOXYGEN_SHOULD_SKIP_THIS */
 };
 
 } // namespace yarp::os

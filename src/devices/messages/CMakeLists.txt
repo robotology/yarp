@@ -1,0 +1,18 @@
+# SPDX-FileCopyrightText: 2023-2023 Istituto Italiano di Tecnologia (IIT)
+# SPDX-License-Identifier: BSD-3-Clause
+
+add_subdirectory(framegrabber_protocol)
+add_subdirectory(frameTransformStorageMsgs)
+add_subdirectory(IChatBotMsgs)
+add_subdirectory(ILLMMsgs)
+add_subdirectory(IAudioGrabberMsgs)
+add_subdirectory(IMap2DMsgs)
+add_subdirectory(INavigation2DMsgs)
+add_subdirectory(ILocalization2DMsgs)
+add_subdirectory(IOdometry2DMsgs)
+add_subdirectory(IRangefinder2DMsgs)
+add_subdirectory(ISerialMsgs)
+add_subdirectory(ISpeechSynthesizerMsgs)
+add_subdirectory(ISpeechTranscriptionMsgs)
+add_subdirectory(mobileBaseVelocityControlMsgs)
+add_subdirectory(multipleAnalogSensorsMsgs)

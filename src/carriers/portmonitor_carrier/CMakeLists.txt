@@ -36,7 +36,7 @@ if (NOT SKIP_portmonitor)
       add_custom_command(
         OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/lua/src_gen/swigluarun.h"
         COMMAND "${CMAKE_COMMAND}" -E make_directory "${CMAKE_CURRENT_BINARY_DIR}/lua/src_gen/"
-        COMMAND "${SWIG_EXECUTABLE}" -c++ -lua -external-runtime "${CMAKE_CURRENT_BINARY_DIR}/lua/src_gen/swigluarun.h"
+        COMMAND "${CMAKE_COMMAND}" -E env "SWIG_LIB=${SWIG_DIR}" "${SWIG_EXECUTABLE}" -c++ -lua -external-runtime "${CMAKE_CURRENT_BINARY_DIR}/lua/src_gen/swigluarun.h"
         COMMENT "Generating swig-lua runtime"
       )
       target_include_directories(yarp_portmonitor PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/lua/src_gen")

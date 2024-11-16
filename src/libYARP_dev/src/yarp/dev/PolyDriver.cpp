@@ -17,75 +17,12 @@ namespace {
 YARP_LOG_COMPONENT(POLYDRIVER, "yarp.dev.PolyDriver")
 }
 
-class PolyDriver::Private :
-        public SearchMonitor
+class PolyDriver::Private
 {
 private:
-    Property comment;
-    Property fallback;
-    Property present;
-    Property actual;
-    Bottle order;
     int count = 1;
-
 public:
     Property info;
-
-    void report(const SearchReport& report, const char *context) override
-    {
-        std::string ctx = context;
-        std::string key = report.key;
-        std::string prefix;
-
-        prefix = ctx;
-        prefix += ".";
-
-        key = prefix + key;
-        if (key.substr(0,1)==".") {
-            key = key.substr(1,key.length());
-        }
-
-        if (!present.check(key)) {
-            present.put(key,"present");
-            order.addString(key.c_str());
-        }
-
-        if (report.isFound) {
-            actual.put(key,report.value);
-            return;
-        }
-
-        if (report.isComment==true) {
-            comment.put(key,report.value);
-            return;
-        }
-
-        if (report.isDefault==true) {
-            fallback.put(key,report.value);
-            return;
-        }
-    }
-
-    Bottle getOptions()
-    {
-        return order;
-    }
-
-    std::string getComment(const char *option)
-    {
-        std::string desc = comment.find(option).toString();
-        return desc;
-    }
-
-    Value getDefaultValue(const char *option)
-    {
-        return fallback.find(option);
-    }
-
-    Value getValue(const char *option)
-    {
-        return actual.find(option);
-    }
 
     void addRef()
     {
@@ -107,23 +44,23 @@ public:
 
 PolyDriver::PolyDriver() :
     DeviceDriver(),
-    dd(nullptr),
-    mPriv(nullptr)
+    m_dd(nullptr),
+    m_Priv(nullptr)
 {
 }
 
 PolyDriver::PolyDriver(const std::string& txt) :
     DeviceDriver(),
-    dd(nullptr),
-    mPriv(nullptr)
+    m_dd(nullptr),
+    m_Priv(nullptr)
 {
     open(txt);
 }
 
 PolyDriver::PolyDriver(yarp::os::Searchable& config) :
     DeviceDriver(),
-    dd(nullptr),
-    mPriv(nullptr)
+    m_dd(nullptr),
+    m_Priv(nullptr)
 {
     open(config);
 }
@@ -131,8 +68,8 @@ PolyDriver::PolyDriver(yarp::os::Searchable& config) :
 PolyDriver::~PolyDriver()
 {
     close();
-    yCAssert(POLYDRIVER, dd == nullptr);
-    yCAssert(POLYDRIVER, mPriv == nullptr);
+    yCAssert(POLYDRIVER, m_dd == nullptr);
+    yCAssert(POLYDRIVER, m_Priv == nullptr);
 }
 
 
@@ -151,21 +88,14 @@ bool PolyDriver::open(yarp::os::Searchable& config)
         // already open - should close first
         return false;
     }
-    if (mPriv==nullptr) {
-        mPriv = new PolyDriver::Private;
+    if (m_Priv==nullptr) {
+        m_Priv = new PolyDriver::Private;
     }
-    yCAssert(POLYDRIVER, mPriv != nullptr);
-    bool removeMonitorAfterwards = false;
-    if (config.getMonitor()==nullptr) {
-        config.setMonitor(mPriv);
-        removeMonitorAfterwards = true;
-    }
+    yCAssert(POLYDRIVER, m_Priv != nullptr);
 
     coreOpen(config);
-    mPriv->info.fromString(config.toString());
-    if (removeMonitorAfterwards) {
-        config.setMonitor(nullptr);
-    }
+    m_Priv->info.fromString(config.toString());
+
     return isValid();
 }
 
@@ -173,29 +103,29 @@ bool PolyDriver::open(yarp::os::Searchable& config)
 bool PolyDriver::close()
 {
     bool result = false;
-    if (mPriv!=nullptr) {
-        int ct = mPriv->removeRef();
+    if (m_Priv !=nullptr) {
+        int ct = m_Priv->removeRef();
         if (ct==0) {
-            yCAssert(POLYDRIVER, mPriv != nullptr);
-            delete mPriv;
-            mPriv = nullptr;
-            if (dd!=nullptr) {
-                result = dd->close();
-                delete dd;
-                dd = nullptr;
+            yCAssert(POLYDRIVER, m_Priv != nullptr);
+            delete m_Priv;
+            m_Priv = nullptr;
+            if (m_dd !=nullptr) {
+                result = m_dd->close();
+                delete m_dd;
+                m_dd = nullptr;
             } else {
                 result = true;
             }
         }
-        dd = nullptr;
-        mPriv = nullptr;
+        m_dd = nullptr;
+        m_Priv = nullptr;
     }
     return result;
 }
 
 bool PolyDriver::isValid() const
 {
-    return dd != nullptr;
+    return m_dd != nullptr;
 }
 
 bool PolyDriver::link(PolyDriver& alt)
@@ -206,136 +136,132 @@ bool PolyDriver::link(PolyDriver& alt)
     if (isValid()) {
         return false;
     }
-    dd = alt.dd;
-    if (mPriv!=nullptr) {
-        int ct = mPriv->removeRef();
+    m_dd = alt.m_dd;
+    if (m_Priv !=nullptr) {
+        int ct = m_Priv->removeRef();
         if (ct==0) {
-            yCAssert(POLYDRIVER, mPriv != nullptr);
-            delete mPriv;
+            yCAssert(POLYDRIVER, m_Priv != nullptr);
+            delete m_Priv;
         }
     }
-    mPriv = alt.mPriv;
-    yCAssert(POLYDRIVER, dd != nullptr);
-    yCAssert(POLYDRIVER, mPriv != nullptr);
-    mPriv->addRef();
+    m_Priv = alt.m_Priv;
+    yCAssert(POLYDRIVER, m_dd != nullptr);
+    yCAssert(POLYDRIVER, m_Priv != nullptr);
+    m_Priv->addRef();
     return true;
 }
-
-Bottle PolyDriver::getOptions()
-{
-    if (mPriv==nullptr) {
-        return Bottle::getNullBottle();
-    }
-    return mPriv->getOptions();
-}
-
-std::string PolyDriver::getComment(const char *option)
-{
-    if (mPriv==nullptr) {
-        return {};
-    }
-    return mPriv->getComment(option);
-}
-
-Value PolyDriver::getDefaultValue(const char *option)
-{
-    if (mPriv==nullptr) {
-        return Value::getNullValue();
-    }
-    return mPriv->getDefaultValue(option);
-}
-
-Value PolyDriver::getValue(const char *option)
-{
-    if (mPriv==nullptr) {
-        return Value::getNullValue();
-    }
-    return mPriv->getValue(option);
-}
-
-
 
 bool PolyDriver::coreOpen(yarp::os::Searchable& prop)
 {
     setId(prop.check("id", prop.check("device", Value("")), "Id assigned to this device").toString());
     yarp::os::Searchable *config = &prop;
     Property p;
-    std::string str = prop.toString();
+    std::string device_name = prop.toString();
     Value *part;
     if (prop.check("device",part)) {
-        str = part->toString();
+        device_name = part->toString();
     }
 
     DeviceDriver *driver = nullptr;
 
-    DriverCreator *creator = Drivers::factory().find(str.c_str());
-    if (creator!=nullptr) {
+    DriverCreator *deviceCreator = Drivers::factory().find(device_name.c_str());
+    if (deviceCreator !=nullptr)
+    {
         Value *val;
-        if (config->check("wrapped",val) && (!creator->getWrapper().empty())) {
-            std::string wrapper = creator->getWrapper();
-            DriverCreator *wrapCreator =
-                Drivers::factory().find(wrapper.c_str());
-            if (wrapCreator!=nullptr) {
+        //if the device has a wrapper..
+        if (config->check("wrapping_enabled",val) && (!deviceCreator->getWrapper().empty()))
+        {
+            std::string wrapper_name = deviceCreator->getWrapper();
+            DriverCreator *wrapperCreator = Drivers::factory().find(wrapper_name.c_str());
+            // and this wrapper exists..
+            if (wrapperCreator !=nullptr)
+            {
                 p.fromString(config->toString());
-                p.unput("wrapped");
+                p.unput("wrapping_enabled");
                 config = &p;
-                if (wrapCreator!=creator) {
-                    p.put("subdevice", str);
-                    p.put("device", wrapper);
-                    p.setMonitor(prop.getMonitor(),
-                                 wrapper.c_str()); // pass on any monitoring
-                    driver = wrapCreator->create();
-                    creator = wrapCreator;
-                } else {
-                    // already wrapped
-                    driver = creator->create();
+                //and this wrapper is not the device itself..
+                if (wrapperCreator != deviceCreator)
+                {
+                    //..than open the wrapper instead of the device.
+                    //this operation is done using the deviceBundler plugin, and passing to it
+                    //the name of devices that it has to open and attach.
+                    p.put("attached_device", device_name);
+                    p.put("wrapper_device", wrapper_name);
+                    p.put("device", "deviceBundler");
+                    DriverCreator* bundlerCreator = Drivers::factory().find("deviceBundler");
+                    driver = bundlerCreator->create();
+                    deviceCreator = bundlerCreator;
+                }
+                else
+                {
+                    //otherwise the device itself is already the wrapper
+                    driver = deviceCreator->create();
                 }
             }
-        } else {
-            driver = creator->create();
         }
-    } else {
+        //..the device does not have a wrapper
+        else
+        {
+            driver = deviceCreator->create();
+        }
+    }
+    else
+    {
         // FIXME do not use yarpdev here
-        yCIError(POLYDRIVER, id(), "Could not find device <%s>", str.c_str());
+        yCIError(POLYDRIVER, id(), "Could not find device <%s>", device_name.c_str());
         return false;
     }
 
-    if (driver!=nullptr) {
-        PolyDriver *manager = creator->owner();
-        if (manager!=nullptr) {
+    if (driver!=nullptr)
+    {
+        PolyDriver *manager = deviceCreator->owner();
+        if (manager!=nullptr)
+        {
             link(*manager);
             return true;
         }
 
-        yCIDebug(POLYDRIVER, id(), "Parameters are %s", config->toString().c_str());
+        std::string param_string = config->toString();
+        yCIDebug(POLYDRIVER, id(), "Parameters are %s", param_string.c_str());
         driver->setId(id());
+        //try to open the device:
         bool ok = driver->open(*config);
-        if (!ok) {
+        //if the device did not open successfully
+        if (!ok)
+        {
             yCIError(POLYDRIVER, id(), "Driver <%s> was found but could not open", config->find("device").toString().c_str());
             delete driver;
             driver = nullptr;
-        } else {
+        }
+        //if the device opened successfully
+        else
+        {
+            //if the device is deprecated...
             yarp::dev::DeprecatedDeviceDriver *ddd = nullptr;
             driver->view(ddd);
-            if(ddd) {
+            if(ddd)
+            {
+                //but the user requested it explicitly, than just print a warning
                 if(config->check("allow-deprecated-devices")) {
-                    yCIWarning(POLYDRIVER, id(), R"(Device "%s" is deprecated. Opening since the "allow-deprecated-devices" option was passed in the configuration.)", str.c_str());
+                    yCIWarning(POLYDRIVER, id(), R"(Device "%s" is deprecated. Opening since the "allow-deprecated-devices" option was passed in the configuration.)", device_name.c_str());
+                //if it is not requested explicitly, then close it with an error
                 } else {
-                    yCIError(POLYDRIVER, id(), R"(Device "%s" is deprecated. Pass the "allow-deprecated-devices" option in the configuration if you want to open it anyway.)", str.c_str());
+                    yCIError(POLYDRIVER, id(), R"(Device "%s" is deprecated. Pass the "allow-deprecated-devices" option in the configuration if you want to open it anyway.)", device_name.c_str());
                     driver->close();
                     delete driver;
                     return false;
                 }
             }
-            std::string name = creator->getName();
-            std::string wrapper = creator->getWrapper();
-            std::string code = creator->getCode();
+            //print some info
+            std::string name = deviceCreator->getName();
+            std::string wrapper = deviceCreator->getWrapper();
+            std::string code = deviceCreator->getCode();
             yCIInfo(POLYDRIVER, id(), "Created %s <%s>. See C++ class %s for documentation.",
                   ((name==wrapper)?"wrapper":"device"),
                   name.c_str(),
                   code.c_str());
         }
-        dd = driver;
+        m_dd = driver;
         return true;
     }
 
@@ -346,22 +272,22 @@ bool PolyDriver::coreOpen(yarp::os::Searchable& prop)
 DeviceDriver *PolyDriver::take()
 {
     // this is not very careful
-    DeviceDriver *result = dd;
-    dd = nullptr;
+    DeviceDriver *result = m_dd;
+    m_dd = nullptr;
     return result;
 }
 
 bool PolyDriver::give(DeviceDriver *dd, bool own)
 {
     close();
-    this->dd = dd;
+    this->m_dd = dd;
     if (dd!=nullptr) {
-        if (mPriv==nullptr) {
-            mPriv = new PolyDriver::Private;
+        if (m_Priv ==nullptr) {
+            m_Priv = new PolyDriver::Private;
         }
-        yCAssert(POLYDRIVER, mPriv != nullptr);
+        yCAssert(POLYDRIVER, m_Priv != nullptr);
         if (!own) {
-            mPriv->addRef();
+            m_Priv->addRef();
         }
     }
     return true;
@@ -370,7 +296,7 @@ bool PolyDriver::give(DeviceDriver *dd, bool own)
 DeviceDriver* PolyDriver::getImplementation()
 {
     if(isValid()) {
-        return dd->getImplementation();
+        return m_dd->getImplementation();
     } else {
         return nullptr;
     }

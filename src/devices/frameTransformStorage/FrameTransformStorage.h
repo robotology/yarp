@@ -20,6 +20,8 @@
 #include <map>
 #include <mutex>
 
+#include "FrameTransformStorage_ParamsParser.h"
+
 /**
  *  @ingroup dev_impl_other
  *
@@ -27,6 +29,8 @@
  *  through the \ref yarp::dev::IFrameTransformStorageSet interface and periodically querying a set of attached
  *  devices that expose the \ref yarp::dev::IFrameTransformStorageGet interface.
  *  It also exposes the \ref yarp::dev::IFrameTransformStorageGet interface to allow stored transformations retrieval
+ *
+ * Parameters required by this device are shown in class: FrameTransformStorage_ParamsParser
  *
  */
 
@@ -36,7 +40,8 @@ class FrameTransformStorage :
     public yarp::dev::IFrameTransformStorageGet,
     public yarp::dev::IFrameTransformStorageUtils,
     public yarp::os::PeriodicThread,
-    public yarp::dev::WrapperSingle
+    public yarp::dev::WrapperSingle,
+    public FrameTransformStorage_ParamsParser
 {
 protected:
     yarp::dev::FrameTransformContainer m_tf_container;

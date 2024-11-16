@@ -8,6 +8,7 @@
 #define FfmpegWriter_INC
 
 #include "avpreamble.h"
+#include "FfmpegWriter_ParamsParser.h"
 
 extern "C" {
 #include <libavcodec/avcodec.h>
@@ -26,12 +27,15 @@ extern "C" {
  * @ingroup dev_impl_media
  *
  * \brief `ffmpeg_writer`: Uses ffmpeg to write images/sounds to movie files (AVI, MOV, ...).
+ *
+ * Parameters required by this device are shown in class: FfmpegWriter_ParamsParser
  */
 class FfmpegWriter :
         public yarp::dev::IFrameWriterImage,
         public yarp::dev::IFrameWriterAudioVisual,
         public yarp::dev::DeviceDriver,
-        public yarp::dev::IAudioVisualStream
+        public yarp::dev::IAudioVisualStream,
+        public FfmpegWriter_ParamsParser
 {
 public:
 

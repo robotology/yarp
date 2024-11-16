@@ -86,7 +86,7 @@ periodically check it.
 \section yarp_command_line_tools Command line tools
 A comprenshive list of all yarp command tools is provided here: \ref yarp_tools
 
-Here is a list of the main modules:
+Here is a list of the main executables:
 \li \ref yarp
 \li \ref yarpserver
 \li \ref yarpdev
@@ -95,14 +95,13 @@ Here is a list of the main modules:
 \li \ref yarp-config
 \li \ref yarpdatadumper
 \li \ref yarphear
-\li \ref yarpidl_rosmsg
 \li \ref yarpidl_thrift
-\li \ref yarpros
+\li \ref yarpDeviceParamParserGenerator
 
 \section yarp_guis GUIs
 A comprenshive list of all yarp command GUIs is provided here: \ref yarp_guis
 
-Here is a list of the main modules:
+Here is a list of the main executables:
 \li \ref yarplogger
 \li \ref yarpview
 \li \ref yarpscope

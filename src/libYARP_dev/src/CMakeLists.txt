@@ -8,7 +8,6 @@ add_library(YARP::YARP_dev ALIAS YARP_dev)
 set(YARP_dev_HDRS
   yarp/dev/all.h
   yarp/dev/api.h
-  yarp/dev/AudioBufferSize.h
   yarp/dev/AudioGrabberInterfaces.h
   yarp/dev/AudioGrabberVocabs.h
   yarp/dev/AudioPlayerDeviceBase.h
@@ -46,6 +45,7 @@ set(YARP_dev_HDRS
   yarp/dev/IControlMode.h
   yarp/dev/ICurrentControl.h
   yarp/dev/IDepthVisualParams.h
+  yarp/dev/IDeviceDriverParams.h
   yarp/dev/IEncoders.h
   yarp/dev/IEncodersTimed.h
   yarp/dev/IFrameGrabberControls.h
@@ -107,7 +107,6 @@ set(YARP_dev_HDRS
   yarp/dev/ImplementTorqueControl.h
   yarp/dev/ImplementVelocityControl.h
   yarp/dev/ImplementVirtualAnalogSensor.h
-  yarp/dev/LaserMeasurementData.h
   yarp/dev/Lidar2DDeviceBase.h
   yarp/dev/MultipleAnalogSensorsInterfaces.h
   yarp/dev/PidEnums.h
@@ -118,6 +117,7 @@ set(YARP_dev_HDRS
   yarp/dev/ServiceInterfaces.h
   yarp/dev/WrapperMultiple.h
   yarp/dev/WrapperSingle.h
+  yarp/dev/testInterfaces/IFakeDeviceInterfaceTest.h
 )
 
 if(TARGET YARP::YARP_math)
@@ -156,7 +156,6 @@ set(YARP_dev_IMPL_HDRS
 )
 
 set(YARP_dev_SRCS
-  yarp/dev/AudioBufferSize.cpp
   yarp/dev/AudioPlayerDeviceBase.cpp
   yarp/dev/AudioRecorderDeviceBase.cpp
   yarp/dev/CanBusInterface.cpp
@@ -175,6 +174,7 @@ set(YARP_dev_SRCS
   yarp/dev/IBattery.cpp
   yarp/dev/IChatBot.cpp
   yarp/dev/IDepthVisualParams.cpp
+  yarp/dev/IDeviceDriverParams.cpp
   yarp/dev/IFrameGrabberControls.cpp
   yarp/dev/IFrameGrabberControlsDC1394.cpp
   yarp/dev/IFrameGrabberImage.cpp
@@ -217,7 +217,6 @@ set(YARP_dev_SRCS
   yarp/dev/ImplementTorqueControl.cpp
   yarp/dev/ImplementVelocityControl.cpp
   yarp/dev/ImplementVirtualAnalogSensor.cpp
-  yarp/dev/LaserMeasurementData.cpp
   yarp/dev/Lidar2DDeviceBase.cpp
   yarp/dev/MultipleAnalogSensorsInterfaces.cpp
   yarp/dev/PolyDriver.cpp
@@ -226,6 +225,7 @@ set(YARP_dev_SRCS
   yarp/dev/RGBDSensorParamParser.cpp
   yarp/dev/WrapperMultiple.cpp
   yarp/dev/WrapperSingle.cpp
+  yarp/dev/testInterfaces/IFakeDeviceInterfaceTest.cpp
 )
 
 if(TARGET YARP::YARP_math)
@@ -258,13 +258,12 @@ include(YarpChooseIDL)
 
 set(YARP_dev_IDL
   idl/stateExt.thrift
-  idl/audioBufferSizeData.thrift
+
   idl/OdometryData.thrift
   idl/OdometryData6D.thrift
-  idl/LaserScan2D.thrift
   idl/MobileBaseVelocity.thrift
-  idl/AudioPlayerStatus.thrift
-  idl/AudioRecorderStatus.thrift
+
+  idl/LLM_Message.thrift
 )
 
 if(TARGET YARP::YARP_math)
@@ -289,10 +288,13 @@ foreach(_f IN LISTS YARP_dev_idl_GEN_FILES)
   endif()
 endforeach()
 
+#message ("YARP_dev_idl_HDRS: ${YARP_dev_idl_HDRS}")
+#message ("YARP_dev_idl_GEN_FILES: ${YARP_dev_idl_GEN_FILES}")
 source_group(
   TREE "${CMAKE_CURRENT_SOURCE_DIR}"
   PREFIX "Source Files"
-  FILES ${YARP_dev_SRCS}
+  FILES
+    ${YARP_dev_SRCS}
 )
 source_group(
   TREE "${CMAKE_CURRENT_SOURCE_DIR}"
@@ -313,7 +315,6 @@ source_group(
     ${YARP_dev_devices_SRCS}
     ${YARP_dev_devices_HDRS}
 )
-
 
 target_sources(YARP_dev
   PRIVATE
@@ -357,24 +358,12 @@ if(YARP_HAS_ZLIB)
   list(APPEND YARP_dev_PRIVATE_DEPS ZLIB)
 endif()
 
-set_property(
-  TARGET YARP_dev
-  PROPERTY
-    PUBLIC_HEADER
-      ${YARP_dev_HDRS}
-      ${YARP_dev_idl_HDRS}
-)
-set_property(
-  TARGET YARP_dev
-  PROPERTY
-    PRIVATE_HEADER
-      ${YARP_dev_IMPL_HDRS}
-      ${YARP_dev_idl_IMPL_HDRS}
-)
+#prepare installation
+set_property(TARGET YARP_dev PROPERTY PUBLIC_HEADER ${YARP_dev_HDRS} ${YARP_dev_idl_HDRS})
+set_property(TARGET YARP_dev PROPERTY PRIVATE_HEADER ${YARP_dev_IMPL_HDRS} ${YARP_dev_idl_IMPL_HDRS})
 set_property(TARGET YARP_dev PROPERTY VERSION ${YARP_VERSION_SHORT})
 set_property(TARGET YARP_dev PROPERTY SOVERSION ${YARP_SOVERSION})
 set_property(TARGET YARP_dev PROPERTY FOLDER "Libraries")
-
 
 install(
   TARGETS YARP_dev

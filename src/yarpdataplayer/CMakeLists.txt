@@ -117,7 +117,7 @@ if(YARP_COMPILE_yarpdataplayer)
     target_include_directories(yarpdataplayer PRIVATE ${OpenCV_INCLUDE_DIRS})
     target_link_libraries(yarpdataplayer
       PRIVATE
-        ${OpenCV_LIBRARIES}
+        ${OpenCV_LIBS}
         YARP::YARP_cv
     )
   endif()

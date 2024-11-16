@@ -97,9 +97,9 @@ bool ScriptLocalBroker::init(const char* szcmd, const char* szparam,
      }
 
 
-bool ScriptYarprunBroker::whichFile(const char* server, const char* filename, std::string& filenameWithPath)
+bool ScriptYarprunBroker::whichFile(const std::string& server, const std::string& filename, std::string& filenameWithPath)
 {
-    if (!strlen(server)) {
+    if (server.empty()) {
         return false;
     }
 

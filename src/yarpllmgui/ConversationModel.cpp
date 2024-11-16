@@ -132,15 +132,15 @@ void ConversationModel::refreshConversation()
         return;
     }
 
-    std::vector<std::pair<Author, Content>> conversation;
+    std::vector<yarp::dev::LLM_Message> conversation;
 
     if (!m_iLlm->getConversation(conversation)) {
         yError() << "Unable to get conversation";
         return;
     }
 
-    for (const auto& [author, message] : conversation) {
-        addMessage(Message(QString::fromStdString(author), QString::fromStdString(message)));
+    for (const auto& message : conversation) {
+        addMessage(Message(QString::fromStdString(message.type), QString::fromStdString(message.content)));
     }
 }
 
@@ -154,7 +154,7 @@ void ConversationModel::addMessage(const Message& message)
 void ConversationModel::sendMessage(const QString& message)
 {
 
-    std::string answer;
+    yarp::dev::LLM_Message answer;
 
     if (!m_iLlm) {
         yError() << m_no_device_message;

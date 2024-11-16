@@ -41,16 +41,13 @@ public:
     virtual bool start() = 0;
     virtual bool stop() = 0;
     virtual bool kill() = 0;
-    virtual bool connect(const char* from, const char* to,
-                        const char* carrier, bool persist=false) = 0;
-    virtual bool disconnect(const char* from, const char* to,
-                            const char* carrier) = 0;
+    virtual bool connect(const std::string& from, const std::string& to, const std::string& carrier, bool persist = false) = 0;
+    virtual bool disconnect(const std::string& from, const std::string& to, const std::string& carrier) = 0;
     virtual int  running() = 0; // 0 if is not running and 1 if is running; otherwise -1.
-    virtual bool exists(const char* port) = 0;
-    virtual const char* requestRpc(const char* szport, const char* request, double timeout=0.0) = 0;
-    virtual bool connected(const char* from, const char* to,
-                           const char* carrier) = 0;
-    virtual const char* error() = 0;
+    virtual bool exists(const std::string& port) = 0;
+    virtual std::string requestRpc(const std::string& szport, const std::string& request, double timeout = 0.0) = 0;
+    virtual bool connected(const std::string& from, const std::string& to, const std::string& carrier) = 0;
+    virtual std::string error() = 0;
     virtual bool initialized() = 0;
     virtual bool attachStdout() = 0;
     virtual void detachStdout() = 0;
@@ -62,7 +59,7 @@ public:
     bool hasWatchDog() { return bWithWatchDog; }
     void setDisplay(const char* szDisplay) { if(szDisplay) { strDisplay = szDisplay; } }
 
-    const char* getDisplay() const {return strDisplay.c_str(); }
+    std::string getDisplay() const {return strDisplay; }
 protected:
     unsigned int UNIQUEID;
     BrokerEventSink* eventSink;

@@ -65,7 +65,7 @@ bool Executable::initialize()
     {
         OSTRINGSTREAM msg;
         msg<<"cannot initialize broker. : ";
-        if (broker->error()) {
+        if (!broker->error().empty()) {
             msg << broker->error();
         }
         logger->addError(msg);

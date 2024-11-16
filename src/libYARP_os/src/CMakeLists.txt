@@ -38,7 +38,6 @@ set(YARP_os_HDRS
   yarp/os/Event.h
   yarp/os/Face.h
   yarp/os/Header.h
-  yarp/os/IConfig.h
   yarp/os/InputProtocol.h
   yarp/os/InputStream.h
   yarp/os/LocalReader.h
@@ -162,7 +161,6 @@ set(YARP_os_SRCS
   yarp/os/DummyConnector.cpp
   yarp/os/Event.cpp
   yarp/os/Header.cpp
-  yarp/os/IConfig.cpp
   yarp/os/InputStream.cpp
   yarp/os/Log.cpp
   yarp/os/LogComponent.cpp

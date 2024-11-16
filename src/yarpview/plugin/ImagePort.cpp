@@ -57,9 +57,12 @@ void InputCallback::onRead(yarp::sig::ImageOf<yarp::sig::PixelRgba> &img)
         j+=4;
     }*/
 
-    if (img.topIsLowIndex()) {
+    if (1)
+    {
         memcpy(tmpBuf, rawImg, imgSize);
-    } else {
+    }
+    else
+    {   //flip the image along the y axis
         for(int x = 0; x < s.height(); x++) {
             memcpy(tmpBuf + x * img.getRowSize(),
                    rawImg + (s.height() - x - 1) * img.getRowSize(),

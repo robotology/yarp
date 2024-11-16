@@ -9,7 +9,6 @@ add_subdirectory(libYARP_sig)
 add_subdirectory(libYARP_eigen)
 add_subdirectory(libYARP_gsl)
 add_subdirectory(libYARP_math)
-add_subdirectory(libYARP_rosmsg)
 add_subdirectory(libYARP_dev)
 add_subdirectory(libYARP_pcl)
 add_subdirectory(libYARP_cv)
@@ -24,7 +23,6 @@ add_subdirectory(libYARP_manager)
 add_subdirectory(libYARP_profiler)
 add_subdirectory(libYARP_logger)
 add_subdirectory(libYARP_dataplayer)
-add_subdirectory(libYARP_wire_rep_utils)
 add_subdirectory(libYARP_robottestingframework)
 
 # plugins
@@ -36,7 +34,6 @@ add_subdirectory(libYARP_init)
 if(YARP_COMPILE_EXECUTABLES)
     # idl compilers (thrift and ros)
     add_subdirectory(yarpidl_thrift)
-    add_subdirectory(yarpidl_rosmsg)
     if(NOT CREATE_SHARED_LIBS)
         include(YarpInstallBasicPackageFiles)
         yarp_install_basic_package_files(
@@ -68,10 +65,17 @@ if(YARP_COMPILE_EXECUTABLES)
     add_subdirectory(yarpmotorgui)
     add_subdirectory(yarpbatterygui)
     add_subdirectory(yarpmobilebasegui)
-    add_subdirectory(yarplaserscannergui)
     add_subdirectory(yarpviz)
     add_subdirectory(yarpaudiocontrolgui)
     add_subdirectory(yarpllmgui)
+
+    # Other GUIs
+    add_subdirectory(yarplaserscannergui)
+    add_subdirectory(yarpopencvdisplay)
+
+    #other
+    add_subdirectory(yarpgstreamerplugins)
+    add_subdirectory(yarpDeviceParamParserGenerator)
 endif()
 
 # Robot Testing Framework addons

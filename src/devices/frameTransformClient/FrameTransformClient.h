@@ -29,6 +29,7 @@
 #include <yarp/robotinterface/XMLReader.h>
 
 #include <yarp/dev/FrameTransformContainer.h>
+#include "FrameTransformClient_ParamsParser.h"
 #include <mutex>
 
 #define DEFAULT_THREAD_PERIOD 20 //ms
@@ -42,34 +43,16 @@ const int MAX_PORTS = 5;
  * \brief `frameTransformClient`: A client to manage FrameTransforms for a robot
  * (For more information, go to \ref FrameTransform)
  *
- *   Parameters required by this device are:
- * | Parameter name   | SubParameter         | Type    | Units          | Default Value         | Required     | Description                                                                                                |
- * |:----------------:|:--------------------:|:-------:|:--------------:|:---------------------:|:-----------: |:----------------------------------------------------------------------------------------------------------:|
- * | filexml_option   | -                    | string  | -              | ftc_local_only.xml    | no           | The name of the xml file containing the needed client configuration                                        |
- * | testxml_from     | -                    | string  | -              | -                     | no           | NB: FOR TEST ONLY. The name of the xml file containing the configuration to test                           |
- * | testxml_context  | -                    | string  | -              | -                     | no           | NB: FOR TEST ONLY. The context folder the test xml file has to be searched in                              |
- * | period           | -                    | float   | -              | 10ms                  | no           | The period for publishing individual tfs on port                                                           |
- * | ft_client_prefix | -                    | string  | -              | ""                    | no           | A prefix to add to the names of all the ports opened by the NWCs instantiated by the frameTransformClient  |
- * | ft_server_prefix | -                    | string  | -              | ""                    | no           | The prefix added to all the names of the ports opened by the NWSs instantiated by the frameTransformServer |
- * | local_rpc        | -                    | string  | -              | "/ftClient/rpc"       | no           | Name of the utility RPC port opened by the client                                                          |
+ * Parameters required by this device are shown in class: FrameTransformClient_ParamsParser
  *
- * Example of command line:
- * \code{.unparsed}
- * yarpdev --device frameTransformClient --filexml_option ftc_local_only.xml
- * \endcode
- *
- * Example of configuration file using .ini format.
- * \code{.unparsed}
- * device frameTransformClient
- * filexml_option ftc_local_only.xml
- * \endcode
  */
 
 class FrameTransformClient :
         public yarp::dev::DeviceDriver,
         public yarp::dev::IFrameTransform,
         public yarp::os::PortReader,
-        public yarp::os::PeriodicThread
+        public yarp::os::PeriodicThread,
+        public FrameTransformClient_ParamsParser
 {
 private:
     enum class ConnectionType {DISCONNECTED = 0, DIRECT, INVERSE, UNDIRECT, IDENTITY};
@@ -83,7 +66,6 @@ protected:
 
     yarp::os::Port      m_rpc_InterfaceToUser;
     std::string         m_local_name;
-    double              m_period;
     std::mutex          m_rpc_mutex;
 
     //ports to broadcast stuff...

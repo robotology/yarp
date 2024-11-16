@@ -96,7 +96,7 @@ class FfmpegMonitorObject : public yarp::os::MonitorObject
          * @param codecId       The codec for video compression / decompression.
          * @return int          0 on success, -1 otherwise.
          */
-        int getParamsFromCommandLine(std::string carrierString, AVCodecID &codecId);
+        bool getParamsFromCommandLine(std::string carrierString, const AVCodec *&codecOut, AVPixelFormat &pixelFormatOut, int &frameRate);
 
         /**
          * @brief This function iterates over the attribute paramsMap and sets all the specified parameters into the attribute codecContext.
@@ -104,6 +104,11 @@ class FfmpegMonitorObject : public yarp::os::MonitorObject
          * @return int  0 on success, -1 otherwise.
          */
         int setCommandLineParams();
+
+        /**
+         * @brief Print some network statistics
+         */
+        void updateStatistics(yarp::os::Bottle &inputBottle, double currentLag);
 
     public:
         /**
@@ -125,16 +130,16 @@ class FfmpegMonitorObject : public yarp::os::MonitorObject
         yarp::sig::FlexImage imageOut;
 
         /**
+         * @brief The final decompressed image that will be sent to the original destination.
+         *
+         */
+        yarp::sig::Image imageBottleBuffer;
+
+        /**
          * @brief Boolean variable that tells if the current execution is in sender side or not.
          *
          */
         bool senderSide;
-
-        /**
-         * @brief The string containing codec name.
-         *
-         */
-        std::string codecName;
 
         /**
          * @brief Ffmpeg structure containing all codec information needed for compression / decompression.
@@ -149,10 +154,47 @@ class FfmpegMonitorObject : public yarp::os::MonitorObject
         AVCodecContext *codecContext = NULL;
 
         /**
+         * @brief Ffmpeg pixel format.
+         *
+         */
+        AVPixelFormat pixelFormat{AV_PIX_FMT_YUV420P};
+
+        /**
          * @brief Boolean variable used to check if the current call to the "compression" (or "decompression") function is the first one or not.
          *
          */
         bool firstTime;
+
+        /**
+         * @brief Boolean variable used to check whether the bandwidth statistics should be printed
+         *
+         */
+        bool printStatistics;
+
+        /**
+         * @brief Seconds since epoch of the previous frame;
+         */
+        double previousFrameTime;
+
+        /**
+         * @brief Variable storing the current bandwidth average for statistics
+         */
+        double bandwidthRunningAverage;
+
+        /**
+         * @brief Variable storing the current lag for statistics
+         */
+        double lagRunningAverage;
+
+        /**
+         * @brief Utility counter for printing statistics
+         */
+        int statisticsCounter;
+
+        /**
+         * @brief Utility variable to store the time in which the last time the statistics have been printed.
+         */
+        double previousStatisticPrintTime;
 
         /**
          * @brief Structure that maps every parameter inserted from command line into its value (both as strings).

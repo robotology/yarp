@@ -11,6 +11,7 @@
 #include <yarp/dev/IMultipleWrapper.h>
 
 #include <yarp/os/LogStream.h>
+#include <yarp/os/ResourceFinder.h>
 
 #include <catch2/catch_amalgamated.hpp>
 #include <harness.h>
@@ -65,7 +66,7 @@ class yarp::dev::RobotInterfaceTestMockDriver :
         public yarp::dev::DeviceDriver
 {
 public:
-    ~RobotInterfaceTestMockDriver() override;
+    ~RobotInterfaceTestMockDriver();
 
     //DEVICE DRIVER
     bool open(yarp::os::Searchable& config) override;
@@ -146,6 +147,21 @@ TEST_CASE("robotinterface::XMLReaderTest", "[yarp::robotinterface]")
 
         // Check parsing fails on empty string
         CHECK(!result.parsingIsSuccessful);
+    }
+
+    SECTION("Check reading from file yarprobotinterface.xml")
+    {
+        // Find file from disk
+        yarp::os::ResourceFinder res;
+        res.setDefaultContext("tests/libYARP_robotinterface");
+        std::string filepath = res.findFileByName("RobotinterfaceFile.xml");
+        // Load empty XML configuration file
+        std::string XMLString = "";
+        yarp::robotinterface::XMLReader reader;
+        yarp::robotinterface::XMLReaderResult result = reader.getRobotFromFile(filepath);
+
+        // Check parsing fails on empty string
+        CHECK(result.parsingIsSuccessful);
     }
 
     SECTION("Check valid robot file with no devices")

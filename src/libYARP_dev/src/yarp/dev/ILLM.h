@@ -7,12 +7,10 @@
 #define YARP_DEV_ILLM_H
 
 #include <yarp/dev/api.h>
+#include <yarp/dev/LLM_Message.h>
 
 #include <string>
 #include <vector>
-
-typedef std::string Author;
-typedef std::string Content;
 
 namespace yarp::dev {
 class ILLM;
@@ -51,20 +49,26 @@ public:
     * @param answer the returned answer
     * @return true/false
     */
-    virtual bool ask(const std::string& question, std::string& answer) = 0;
+    virtual bool ask(const std::string& question, yarp::dev::LLM_Message& answer) = 0;
 
     /**
     * Retrieves the whole conversation
     * @param conversation the conversation
     * @return true/false
     */
-    virtual bool getConversation(std::vector<std::pair<Author, Content>>& conversation) = 0;
+    virtual bool getConversation(std::vector<yarp::dev::LLM_Message>& conversation) = 0;
 
     /**
     * Delete the conversation and clear the system context from any internally stored context.
     * @return true/false
     */
     virtual bool deleteConversation() = 0;
+
+    /**
+    *  Refresh the conversation
+    * @return true/false
+    */
+    virtual bool refreshConversation() = 0;
 };
 
 #endif

@@ -141,7 +141,7 @@ GPL-2.0 or later, GPL-3.0 or later, or Apache-2.0 License:
      [libdc1394](http://damien.douxchamps.net/ieee1394/libdc1394/) or, if the
      library is not available, links statically a few files taken from
      [libdc1394](http://libdc1394.git.sourceforge.net/git/gitweb.cgi?p=libdc1394/libdc1394;a=blob_plain;f=libdc1394/dc1394/bayer.c;hb=HEAD).
-   + The \`h264\` carrier uses glib (LGPLv2.1 or later) and gstreamer (LGPLv2.1 or
+   + The \`gstreamer\` carrier uses glib (LGPLv2.1 or later) and gstreamer (LGPLv2.1 or
      later).
    + The \`mpi\` carrier uses MPI (license dependent on the implementation).
    + The \`dynamixelAX12Ftdi\` device uses

@@ -152,7 +152,7 @@ int Companion::write(const char *name, int ntargets, char *targets[], double per
                 }
             }
 
-            if (period>0)
+            if (writer_thread)
             {
                 writer_thread->write(bot);
             }
@@ -189,7 +189,7 @@ int Companion::write(const char *name, int ntargets, char *targets[], double per
         port.write(bot);
     }
 
-    if (period > 0)
+    if (writer_thread)
     {
         writer_thread->stop();
         delete writer_thread;

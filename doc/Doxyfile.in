@@ -189,7 +189,6 @@ STRIP_FROM_INC_PATH    = @CMAKE_SOURCE_DIR@/src/libYARP_conf/src/ \
                          @CMAKE_SOURCE_DIR@/src/libYARP_run/src/ \
                          @CMAKE_SOURCE_DIR@/src/libYARP_manager/src/ \
                          @CMAKE_SOURCE_DIR@/src/libYARP_logger/src/ \
-                         @CMAKE_SOURCE_DIR@/src/libYARP_wire_rep_utils/src/ \
                          @CMAKE_SOURCE_DIR@/src/libYARP_robotinterface/src/ \
                          @CMAKE_SOURCE_DIR@/src/libYARP_robottestingframework/src/ \
                          @CMAKE_BINARY_DIR@/src/libYARP_companion/src/ \
@@ -978,6 +977,9 @@ EXCLUDE_PATTERNS       =  */doc/release/yarp_* \
                           */opt-modules/*/CHANGELOG.md \
                           */opt-modules/*/*.md \
                           */src/devices/*/README.md \
+                          */src/devices/*/*_params.* \
+                          */src/devices/*/*_ParamsParser.md \
+                          */src/devices/*/*extraComm* \
                           */src/portmonitors/*/README.md \
                           */src/carriers/*/README.md
 

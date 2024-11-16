@@ -174,26 +174,22 @@ bool RemappedSubControlBoard::attach(yarp::dev::PolyDriver *d, const std::string
     // checking minimum set of interfaces required
     if( !(pos) )
     {
-        yCError(CONTROLBOARDREMAPPER, "IPositionControl interface was not found in subdevice. Quitting");
-        return false;
+        yCWarning(CONTROLBOARDREMAPPER, "IPositionControl interface was not found in subdevice");
     }
 
     if( ! (vel) )
     {
-        yCError(CONTROLBOARDREMAPPER, "IVelocityControl interface was not found in subdevice. Quitting");
-        return false;
+        yCWarning(CONTROLBOARDREMAPPER, "IVelocityControl interface was not found in subdevice");
     }
 
     if(!iJntEnc)
     {
-        yCError(CONTROLBOARDREMAPPER, "IEncoderTimed interface was not found in subdevice, exiting.");
-        return false;
+        yCWarning(CONTROLBOARDREMAPPER, "IEncoderTimed interface was not found in subdevice");
     }
 
     if(!iMode)
     {
-        yCError(CONTROLBOARDREMAPPER, "IControlMode interface was not found in subdevice, exiting.");
-        return false;
+        yCWarning(CONTROLBOARDREMAPPER, "IControlMode interface was not found in subdevice");
     }
 
     int deviceJoints=0;
@@ -209,6 +205,24 @@ bool RemappedSubControlBoard::attach(yarp::dev::PolyDriver *d, const std::string
             yCError(CONTROLBOARDREMAPPER, "attached device has an invalid number of joints (%d)", deviceJoints);
             return false;
         }
+    }
+    else if(info!=nullptr)
+    {
+        if (!info->getAxes(&deviceJoints))
+        {
+            yCError(CONTROLBOARDREMAPPER) << "failed to get axes number for subdevice" << k.c_str();
+            return false;
+        }
+        if(deviceJoints <= 0)
+        {
+            yCError(CONTROLBOARDREMAPPER, "attached device has an invalid number of joints (%d)", deviceJoints);
+            return false;
+        }
+    }
+    else
+    {
+        yCError(CONTROLBOARDREMAPPER, "attached device has no IPositionControl nor IAxisInfo interface");
+        return false;
     }
 
     attachedF=true;

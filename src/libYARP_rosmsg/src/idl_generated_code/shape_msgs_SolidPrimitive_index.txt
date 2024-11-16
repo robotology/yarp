@@ -1,3 +1,0 @@
-shape_msgs_SolidPrimitive.h
-shape_msgs/SolidPrimitive.h
-yarp/rosmsg/shape_msgs/SolidPrimitive.h

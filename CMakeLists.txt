@@ -2,7 +2,7 @@
 # SPDX-FileCopyrightText: 2006-2010 RobotCub Consortium
 # SPDX-License-Identifier: BSD-3-Clause
 
-cmake_minimum_required(VERSION 3.16)
+cmake_minimum_required(VERSION 3.19)
 
 # UseSWIG generates now standard target names.
 if(${CMAKE_VERSION} VERSION_GREATER_EQUAL 3.13)
@@ -17,7 +17,7 @@ endif()
 # Main project
 project(
   YARP
-  VERSION 3.9.0
+  VERSION 3.10.0
   LANGUAGES C CXX
 )
 set(PROJECT_DESCRIPTION "YARP: A thin middleware for humanoid robots and more")

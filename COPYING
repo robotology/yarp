@@ -61,7 +61,7 @@ GPL-2.0 or later, GPL-3.0 or later, or Apache-2.0 License:
      [libdc1394](http://damien.douxchamps.net/ieee1394/libdc1394/) or, if the
      library is not available, links statically a few files taken from
      [libdc1394](http://libdc1394.git.sourceforge.net/git/gitweb.cgi?p=libdc1394/libdc1394;a=blob_plain;f=libdc1394/dc1394/bayer.c;hb=HEAD).
-   + The `h264` carrier uses glib (LGPLv2.1 or later) and gstreamer (LGPLv2.1 or
+   + The `gstreamer` carrier uses glib (LGPLv2.1 or later) and gstreamer (LGPLv2.1 or
      later).
    + The `mpi` carrier uses MPI (license dependent on the implementation).
    + The `dynamixelAX12Ftdi` device uses
@@ -117,21 +117,21 @@ The list of committers in the YARP repository (ordered by number of commit) is:
   Claudio Fantacci
   Konstantinos Theofilis
   Alexandre Bernardino
+  Stefano Dafarra
   Tobias Fischer
   Duarte Aragao
-  Stefano Dafarra
   Francesco Nori
   Diego Ferigo
+  fbrand-new
   Juan G. Victores
   Nuno Guedelha
   Andrea Del Prete
   Arjan Gijsberts
   Carlos Beltran-Gonzalez
   Claudio Castellini
-  fbrand-new
   Daniel Krieg
-  Simone Girardi
   robotology-bot (Tag Repository Action)
+  Simone Girardi
   Fabio Valla
   Arren Glover
   Prashanth Ramadoss
@@ -171,7 +171,10 @@ The list of committers in the YARP repository (ordered by number of commit) is:
   Naeem Assif Mirza
   Simone
   Ze Ji
+  Alessandro Croci
+  Alessandro Croci
   Austin Kothig
+  Bartek Łukawski
   Carlo Ciliberto
   Carlotta Sartore
   Claudia Latella
@@ -181,6 +184,7 @@ The list of committers in the YARP repository (ordered by number of commit) is:
   Emilio Benenati
   Enrico Mingo
   Francesca Stramandinoli
+  Giovanni Fregonese
   Giovanni Saponaro
   Giuseppe L'Erario
   Jason Chevrie
@@ -195,11 +199,12 @@ The list of committers in the YARP repository (ordered by number of commit) is:
   Serena Ivaldi
   Vítor Galvão
   Zero King
+  elisabeth-ms
 
 The list of copyright holders for YARP is:
-  Copyright (C) 1995, 2000, 2003, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023
-    Istituto Italiano di Tecnologia (IIT) (2900 files)
-    RobotCub Consortium (738 files)
+  Copyright (C) 1995, 2000, 2003, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024
+    Istituto Italiano di Tecnologia (IIT) (2678 files)
+    RobotCub Consortium (728 files)
     Daniel Krieg <krieg@fias.uni-frankfurt.de> (16 files)
     Anne van Rossum <anne@almende.com> (11 files)
     Arjan Gijsberts (10 files)

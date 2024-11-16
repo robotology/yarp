@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: BSD-3-Clause
 
 if(NOT DEFINED CMAKE_MINIMUM_REQUIRED_VERSION)
-  cmake_minimum_required(VERSION 3.16)
+  cmake_minimum_required(VERSION 3.19)
   project(attachable)
   find_package(YARP REQUIRED COMPONENTS os sig dev)
 endif()

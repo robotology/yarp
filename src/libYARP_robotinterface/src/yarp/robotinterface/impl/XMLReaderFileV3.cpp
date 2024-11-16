@@ -144,19 +144,23 @@ yarp::robotinterface::XMLReaderResult yarp::robotinterface::impl::XMLReaderFileV
 
     {
         char* all_string = strdup(enable_tags_string.c_str());
+        if (all_string==nullptr) { yError() << "Internal error"; return yarp::robotinterface::XMLReaderResult::ParsingFailed(); }
         char* token = strtok(all_string, " ");
         while (token) {
             m_enabled_options_from_command_line.insert(token);
             token = strtok(NULL, " ");
         }
+        free (all_string);
     }
     {
         char* all_string = strdup(disable_tags_string.c_str());
+        if (all_string == nullptr) { yError() << "Internal error"; return yarp::robotinterface::XMLReaderResult::ParsingFailed(); }
         char* token = strtok(all_string, " ");
         while (token) {
             m_disabled_options_from_command_line.insert(token);
             token = strtok(NULL, " ");
         }
+        free(all_string);
     }
     yInfo() << "Yarprobotinterface was started using the following enable_tags:"<< enable_tags_string;
     yInfo() << "Yarprobotinterface was started using the following disable_tags:" << disable_tags_string;

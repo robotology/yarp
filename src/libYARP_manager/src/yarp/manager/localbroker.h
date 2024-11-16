@@ -50,16 +50,13 @@ public:
     bool start() override;
     bool stop() override;
     bool kill() override;
-    bool connect(const char* from, const char* to,
-                 const char* carrier, bool persist=false) override;
-    bool disconnect(const char* from, const char* to,
-                    const char *carrier) override;
+    bool connect(const std::string& from, const std::string& to, const std::string& carrier, bool persist = false) override;
+    bool disconnect(const std::string& from, const std::string& to, const std::string& carrier) override;
     int running() override;
-    bool exists(const char* port) override;
-    const char* requestRpc(const char* szport, const char* request, double timeout) override;
-    bool connected(const char* from, const char* to,
-                   const char* carrier) override;
-    const char* error() override;
+    bool exists(const std::string& port) override;
+    std::string requestRpc(const std::string& szport, const std::string& request, double timeout) override;
+    bool connected(const std::string& from, const std::string& to, const std::string& carrier) override;
+    std::string error() override;
     bool initialized() override { return bInitialized;}
     bool attachStdout() override;
     void detachStdout() override;

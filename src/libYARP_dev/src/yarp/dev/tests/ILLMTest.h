@@ -7,6 +7,8 @@
 #define ILLMTEST_H
 
 #include <yarp/dev/ILLM.h>
+#include <yarp/dev/LLM_Message.h>
+
 #include <catch2/catch_amalgamated.hpp>
 
 using namespace yarp::dev;
@@ -25,12 +27,34 @@ inline void exec_iLLM_test_1(yarp::dev::ILLM* illm)
     b = illm->readPrompt(prompt);
     CHECK(b);
 
-    std::string answer;
+    yarp::dev::LLM_Message answer;
     b = illm->ask("A question", answer);
     CHECK(b);
+    CHECK(answer.type == "assistant");
+    CHECK(answer.content != "");
+    CHECK(answer.parameters.empty()); // No parameters in a non-function call
+    CHECK(answer.arguments.empty());  // No arguments in a non-function call
 
-    std::vector<std::pair<std::string, std::string>> conversation;
+    // The fake device returns a function_call if the question is "function"
+    b = illm->ask("function", answer);
+    CHECK(b);
+    CHECK(answer.type == "function");
+    CHECK(answer.content != "");
+    CHECK(!answer.parameters.empty());
+    CHECK(!answer.arguments.empty());
+
+
+    std::vector<yarp::dev::LLM_Message> conversation;
     b = illm->getConversation(conversation);
+    CHECK(b);
+
+    b = illm->refreshConversation();
+    CHECK(b);
+
+    b = illm->readPrompt(prompt);
+    CHECK(b);
+
+    b = illm->deleteConversation();
     CHECK(b);
 }
 }

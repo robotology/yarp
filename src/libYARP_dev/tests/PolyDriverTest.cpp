@@ -106,25 +106,12 @@ TEST_CASE("dev::PolyDriverTest", "[yarp::dev]")
         CHECK(result); // close reported successful
     }
 
-    SECTION("test monitoring")
-    {
-        Property p;
-        p.put("device","devicedrivertest");
-        p.put("verbose",1);
-        p.put("wrapped",1);
-        PolyDriver dd(p);
-        Bottle opts = dd.getOptions();
-        CHECK(opts.size() > 0); // some options reported
-        //printf("Opts: %s\n", opts.toString().c_str());
-        dd.close();
-    }
-
     SECTION("test Property bug")
     {
         Property p;
         p.put("device","devicedrivertest");
         p.put("verbose",1);
-        p.put("wrapped",1);
+        p.put("wrapping_enabled",1);
         for (int i=0; i<5; i++) {
             PolyDriver *dd = new PolyDriver(p);
             delete dd;

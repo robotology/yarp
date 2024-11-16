@@ -185,7 +185,7 @@ public:
     }
 
     /**
-     * Check if a connection exists between two ports.
+     * Check if a connection with tcp carrier exists between two ports
      * @param src the name of an output port
      * @param dest the name of an input port
      * @param quiet suppress messages displayed upon success/failure
@@ -196,7 +196,7 @@ public:
                             bool quiet);
 
     /**
-     * Check if a connection exists between two ports.
+     * Check if a connection with tcp carrier exists between two ports.
      * @param src the name of an output port
      * @param dest the name of an input port
      * @param style options for network communication
@@ -207,10 +207,12 @@ public:
                             const ContactStyle& style);
 
     /**
-     * Check if a connection exists between two ports.
+     * Check if a connection with specified carrier exists between two ports.
      * @param src the name of an output port
      * @param dest the name of an input port
-     * @param carrier the name of the protocol to use (tcp/udp/mcast)
+     * @param carrier the name of the protocol to use (tcp/udp/mcast).
+     *                if a connection exists but using a different carrier,
+     *                the method will return false
      * @param quiet suppress messages displayed upon success/failure
      * @return true if there is a connection
      */

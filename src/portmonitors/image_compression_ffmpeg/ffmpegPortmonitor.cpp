@@ -17,12 +17,16 @@
 #include "constants.h"
 // YARP imports
 #include <yarp/os/LogComponent.h>
+#include <yarp/os/Time.h>
 #include <yarp/sig/all.h>
 // Standard imports
 #include <cstring>
 #include <cmath>
 #include <algorithm>
 #include <iostream>
+#include <sstream>
+#include <mutex>
+#include <iomanip>
 
 // Ffmpeg imports
 extern "C" {
@@ -63,29 +67,27 @@ void split(const std::string &s, char delim, std::vector<std::string> &elements)
     }
 }
 
+// As per version 5.1.2 of ffmpeg, there seem to be race conditions between sws_scale and
+// sws_freeContext even when called from different instances on different threads.
+// We use a static mutex to prevent segmentation faults when connecting two port monitors
+// to the same sender or receiver.
+static std::mutex instances_mutex;
+
 bool FfmpegMonitorObject::create(const yarp::os::Property& options)
 {
     // Check if this is sender or not
     senderSide = (options.find("sender_side").asBool());
-
-    // Set default codec
-    AVCodecID codecId = AV_CODEC_ID_MPEG2VIDEO;
-    codecName = "mpeg2video";
+    printStatistics = false;
+    previousFrameTime = yarp::os::Time::now();
+    bandwidthRunningAverage = 0.0;
+    lagRunningAverage = 0.0;
+    statisticsCounter = -1;
+    previousStatisticPrintTime = previousFrameTime;
 
     // Parse command line parameters and set them into global variable "paramsMap"
     std::string str = options.find("carrier").asString();
-    if (getParamsFromCommandLine(str, codecId) == -1) {
-        return false;
-    }
-
-    // Find encoder/decoder
-    if (senderSide) {
-        codec = avcodec_find_encoder(codecId);
-    } else {
-        codec = avcodec_find_decoder(codecId);
-    }
-    if (!codec) {
-        yCError(FFMPEGMONITOR, "Can't find codec %s", codecName.c_str());
+    int frameRate = 15;
+    if (!getParamsFromCommandLine(str, codec, pixelFormat, frameRate)) {
         return false;
     }
 
@@ -101,11 +103,66 @@ bool FfmpegMonitorObject::create(const yarp::os::Property& options)
         return false;
     }
 
+    if (!codec->pix_fmts)
+    {
+        yCWarning(FFMPEGMONITOR, "The specified codec (%s) has unknown available pixel formats. There might be visualization issues.", codec->name);
+    }
+    else
+    {
+        std::stringstream pixelFormatList;
+        bool found = false;
+        size_t i = 0;
+        AVPixelFormat test = codec->pix_fmts[i];
+
+        if (test == AV_PIX_FMT_NONE)
+        {
+            yCError(FFMPEGMONITOR, "The specified codec (%s) has no available pixel format.", codec->name);
+            return false;
+        }
+
+        pixelFormatList << test;
+        while (test != AV_PIX_FMT_NONE)
+        {
+            if (test == pixelFormat)
+            {
+                found = true;
+                break;
+            }
+            ++i;
+            test = codec->pix_fmts[i];
+
+            if (test != AV_PIX_FMT_NONE)
+            {
+                pixelFormatList << ", " << test;
+            }
+        }
+
+        if (!found)
+        {
+            AVPixelFormat suggestedFormat = avcodec_default_get_format(codecContext, codec->pix_fmts);
+
+            if (pixelFormat == FFMPEGPORTMONITOR_DEFAULT_PIXEL_FORMAT)
+            {
+                yCError(FFMPEGMONITOR, "The specified codec (%s) is not compatible with the default pixel format AV_PIX_FMT_YUV420P (code %d). "
+                                       "Try specifying the suggested pixel format of the codec with the option \"pixel_format.%d\". "
+                                       "The available pixel formats are %s.",
+                                        codec->name, FFMPEGPORTMONITOR_DEFAULT_PIXEL_FORMAT, suggestedFormat, pixelFormatList.str().c_str());
+            }
+            else
+            {
+                yCError(FFMPEGMONITOR, "The specified codec (%s) is not compatible with the specified pixel format (code %d). "
+                                       "The available pixel formats are as follows %s (suggested = %d).",
+                                        codec->name, pixelFormat, pixelFormatList.str().c_str(), suggestedFormat);
+            }
+            return false;
+        }
+    }
+
     firstTime = true;
 
     // Set time base parameter
     codecContext->time_base.num = 1;
-    codecContext->time_base.den = 15;
+    codecContext->time_base.den = frameRate;
     // Set command line params
     if (setCommandLineParams() == -1) {
         return false;
@@ -120,7 +177,10 @@ void FfmpegMonitorObject::destroy(void)
 
     // Check if codec context is freeable, if yes free it.
     if (codecContext != NULL) {
+#if LIBAVCODEC_VERSION_MAJOR < 61
+        // See https://github.com/FFmpeg/FFmpeg/blob/n7.0/libavcodec/avcodec.h#L2381-L2384
         avcodec_close(codecContext);
+#endif
         avcodec_free_context(&codecContext);
         codecContext = NULL;
     }
@@ -145,10 +205,14 @@ bool FfmpegMonitorObject::accept(yarp::os::Things& thing)
         yCTrace(FFMPEGMONITOR, "accept - sender");
         // Try to cast the Thing into an Image
         Image* img = thing.cast_as< Image >();
-        // If cast fails, return error
+        // If cast fails, try to cast the Thing into a Bottle
         if(img == nullptr) {
-            yCError(FFMPEGMONITOR, "Expected type Image in sender side, but got wrong data type!");
-            return false;
+            Bottle* bt = thing.cast_as<Bottle>();
+            // If cast fails, return error
+            if (bt == nullptr) {
+                yCError(FFMPEGMONITOR, "Expected type Image or Bottle in sender side, but got wrong data type!");
+                return false;
+            }
         }
     }
     else {
@@ -165,13 +229,60 @@ bool FfmpegMonitorObject::accept(yarp::os::Things& thing)
     return true;
 }
 
+void FfmpegMonitorObject::updateStatistics(yarp::os::Bottle& inputBottle, double currentLag)
+{
+    double now = yarp::os::Time::now();
+    const double printInterval = 5.0;
+
+    if (statisticsCounter < 0)
+    {
+        previousFrameTime = now;
+        previousStatisticPrintTime = now;
+        statisticsCounter = 0;
+    }
+    else
+    {
+        size_t outputData{0};
+        inputBottle.toBinary(&outputData);
+        double dt = now - previousFrameTime;
+        double bandwidth = outputData * 8 / dt /1000;
+        int previousCounter = statisticsCounter;
+        statisticsCounter++;
+        bandwidthRunningAverage = (bandwidthRunningAverage * previousCounter + bandwidth) / statisticsCounter;
+        lagRunningAverage = (lagRunningAverage * previousCounter + currentLag) / statisticsCounter;
+
+    }
+    if (now - previousStatisticPrintTime > printInterval)
+    {
+        previousStatisticPrintTime = now;
+        statisticsCounter = 0;
+        std::stringstream bandwidthString, lagString;
+        bandwidthString << std::fixed << std::setprecision(2) << bandwidthRunningAverage;
+        lagString << std::fixed << std::setprecision(3) << lagRunningAverage * 1000;
+        yCInfo(FFMPEGMONITOR, "Statistics: current bandwidth %s kb/s, codec computational time %s ms",
+               bandwidthString.str().c_str(), lagString.str().c_str());
+    }
+}
+
 yarp::os::Things& FfmpegMonitorObject::update(yarp::os::Things& thing)
 {
+    double startTime = yarp::os::Time::now();
     if (senderSide) {
         bool success = true;
         yCTrace(FFMPEGMONITOR, "update - sender");
         // Cast Thing into an Image
         Image* img = thing.cast_as< Image >();
+
+        if (img == nullptr) {
+            Bottle* bot = thing.cast_as<Bottle>();
+            if (!yarp::os::Portable::copyPortable(*bot, imageBottleBuffer))
+            {
+                yCError(FFMPEGMONITOR, "The input type is a Bottle, but it cannot be copied to an Image");
+                success = false;
+            }
+            img = &imageBottleBuffer;
+        }
+
         // Allocate memory for packet
         AVPacket *packet = av_packet_alloc();
         if (packet == NULL) {
@@ -216,6 +327,12 @@ yarp::os::Things& FfmpegMonitorObject::update(yarp::os::Things& thing)
                 data.add(sd);
             }
         }
+
+        if (printStatistics)
+        {
+            updateStatistics(data, yarp::os::Time::now() - startTime);
+        }
+
         th.setPortWriter(&data);
         // Free the memory allocated for the packet
         av_packet_unref(packet);
@@ -233,9 +350,17 @@ yarp::os::Things& FfmpegMonitorObject::update(yarp::os::Things& thing)
         int pixelCode = compressedBottle->get(3).asInt32();
         int pixelSize = compressedBottle->get(4).asInt32();
         // Set information into final image
-        imageOut.setPixelCode(pixelCode);
-        imageOut.setPixelSize(pixelSize);
-        imageOut.resize(width, height);
+
+        if (pixelCode != VOCAB_PIXEL_INVALID)
+        {
+            imageOut.setPixelCode(pixelCode);
+            imageOut.setPixelSize(pixelSize);
+            imageOut.resize(width, height);
+        }
+        else
+        {
+            yCError(FFMPEGMONITOR, "Invalid input pixel code");
+        }
 
         // Check if compression was successful
         if (compressedBottle->get(0).asInt32() == 1) {
@@ -276,7 +401,11 @@ yarp::os::Things& FfmpegMonitorObject::update(yarp::os::Things& thing)
             // Call to decompress function
             if (success && decompress(packet, width, height, pixelCode) != 0) {
                 yCError(FFMPEGMONITOR, "Error in decompression");
-                success = false;
+            }
+
+            if (printStatistics)
+            {
+                updateStatistics(*compressedBottle, yarp::os::Time::now() - startTime);
             }
 
             // Free memory allocated for side data and packet
@@ -284,6 +413,7 @@ yarp::os::Things& FfmpegMonitorObject::update(yarp::os::Things& thing)
             av_freep(&packet);
 
         }
+
         th.setPortWriter(&imageOut);
 
     }
@@ -338,8 +468,7 @@ int FfmpegMonitorObject::compress(Image* img, AVPacket *pkt) {
 
     // Allocate memory for end frame data
     success = av_image_alloc(endFrame->data, endFrame->linesize,
-                    w, h,
-                    (AVPixelFormat) FFMPEGPORTMONITOR_CODECPIXELMAP[codecContext->codec_id], 16);
+                    w, h, pixelFormat, 16);
 
     if (success < 0) {
         yCError(FFMPEGMONITOR, "Cannot allocate end frame buffer!");
@@ -351,92 +480,102 @@ int FfmpegMonitorObject::compress(Image* img, AVPacket *pkt) {
     // Set end frame parameters
     endFrame->height = h;
     endFrame->width = w;
-    endFrame->format = (AVPixelFormat) FFMPEGPORTMONITOR_CODECPIXELMAP[codecContext->codec_id];
+    endFrame->format = pixelFormat;
 
-    // Convert the image from start format into end format
-    static struct SwsContext *img_convert_ctx;
+    {
+        std::lock_guard<std::mutex> lock(instances_mutex);
 
-    // Allocate context for conversion
-    img_convert_ctx = sws_getContext(w, h,
-                                        (AVPixelFormat) FFMPEGPORTMONITOR_PIXELMAP[img->getPixelCode()],
-                                        w, h,
-                                        (AVPixelFormat) FFMPEGPORTMONITOR_CODECPIXELMAP[codecContext->codec_id],
-                                        SWS_BICUBIC,
-                                        NULL, NULL, NULL);
-    if (img_convert_ctx == NULL) {
-        yCError(FFMPEGMONITOR, "Cannot initialize pixel format conversion context!");
-        av_freep(&endFrame->data[0]);
-        av_frame_free(&startFrame);
-        av_frame_free(&endFrame);
-        return -1;
-    }
+        // Convert the image from start format into end format
+        static struct SwsContext *img_convert_ctx;
 
-    // Perform conversion
-    int ret = sws_scale(img_convert_ctx, startFrame->data, startFrame->linesize, 0,
-                        h, endFrame->data, endFrame->linesize);
+        // Allocate context for conversion
+        img_convert_ctx = sws_getContext(w, h,
+                                         (AVPixelFormat) FFMPEGPORTMONITOR_PIXELMAP[img->getPixelCode()],
+                w, h,
+                pixelFormat,
+                SWS_BICUBIC,
+                NULL, NULL, NULL);
+        if (img_convert_ctx == NULL) {
+            yCError(FFMPEGMONITOR, "Cannot initialize pixel format conversion context!");
+            av_freep(&endFrame->data[0]);
+            av_frame_free(&startFrame);
+            av_frame_free(&endFrame);
+            return -1;
+        }
 
-    if (ret < 0) {
-        yCError(FFMPEGMONITOR, "Could not convert pixel format!");
-        sws_freeContext(img_convert_ctx);
-        av_freep(&endFrame->data[0]);
-        av_frame_free(&startFrame);
-        av_frame_free(&endFrame);
-        return -1;
-    }
+        // Perform conversion
+        int ret = sws_scale(img_convert_ctx, startFrame->data, startFrame->linesize, 0,
+                            h, endFrame->data, endFrame->linesize);
 
-    if (firstTime) {
-        // If this is the first compression
-
-        // Set codec context parameters
-        codecContext->width = w;
-        codecContext->height = h;
-        codecContext->pix_fmt = (AVPixelFormat) FFMPEGPORTMONITOR_CODECPIXELMAP[codecContext->codec_id];
-
-        // Open codec
-        ret = avcodec_open2(codecContext, codec, NULL);
         if (ret < 0) {
-            yCError(FFMPEGMONITOR, "Could not open codec");
+            yCError(FFMPEGMONITOR, "Could not convert pixel format!");
             sws_freeContext(img_convert_ctx);
             av_freep(&endFrame->data[0]);
             av_frame_free(&startFrame);
             av_frame_free(&endFrame);
             return -1;
         }
-        firstTime = false;
-    }
 
-    // Set presentation timestamp
-    endFrame->pts = codecContext->frame_number;
+        if (firstTime) {
+            // If this is the first compression
 
-    // Send image frame to codec
-    ret = avcodec_send_frame(codecContext, endFrame);
-    if (ret < 0) {
-        yCError(FFMPEGMONITOR, "Error sending a frame for encoding");
+            // Set codec context parameters
+            codecContext->width = w;
+            codecContext->height = h;
+            codecContext->pix_fmt = pixelFormat;
+
+            // Open codec
+            ret = avcodec_open2(codecContext, codec, NULL);
+            if (ret < 0) {
+                yCError(FFMPEGMONITOR, "Could not open codec");
+                sws_freeContext(img_convert_ctx);
+                av_freep(&endFrame->data[0]);
+                av_frame_free(&startFrame);
+                av_frame_free(&endFrame);
+                return -1;
+            }
+            firstTime = false;
+        }
+
+        // Set presentation timestamp
+#if LIBAVCODEC_VERSION_MAJOR >= 61
+        // See https://github.com/FFmpeg/FFmpeg/commit/6b6f7db81932f94876ff4bcfd2da0582b8ab897e
+        endFrame->pts = codecContext->frame_num;
+#else
+        endFrame->pts = codecContext->frame_number;
+#endif
+
+        // Send image frame to codec
+        ret = avcodec_send_frame(codecContext, endFrame);
+        if (ret < 0) {
+            yCError(FFMPEGMONITOR, "Error sending a frame for encoding");
+            sws_freeContext(img_convert_ctx);
+            av_freep(&endFrame->data[0]);
+            av_frame_free(&startFrame);
+            av_frame_free(&endFrame);
+            return -1;
+        }
+
+        // Receive compressed data into packet
+        ret = avcodec_receive_packet(codecContext, pkt);
         sws_freeContext(img_convert_ctx);
         av_freep(&endFrame->data[0]);
         av_frame_free(&startFrame);
         av_frame_free(&endFrame);
-        return -1;
-    }
 
-    // Receive compressed data into packet
-    ret = avcodec_receive_packet(codecContext, pkt);
-    sws_freeContext(img_convert_ctx);
-    av_freep(&endFrame->data[0]);
-    av_frame_free(&startFrame);
-    av_frame_free(&endFrame);
 
-    if (ret == AVERROR(EAGAIN)) {
-        // Not enough data
-        yCError(FFMPEGMONITOR, "Error EAGAIN");
-        return -1;
-    } else if (ret == AVERROR_EOF) {
-        // End of file reached
-        yCError(FFMPEGMONITOR, "Error EOF");
-        return -1;
-    } else if (ret < 0) {
-        yCError(FFMPEGMONITOR, "Error during encoding");
-        return -1;
+        if (ret == AVERROR(EAGAIN)) {
+            // Not enough data
+            yCError(FFMPEGMONITOR, "Error EAGAIN");
+            return -1;
+        } else if (ret == AVERROR_EOF) {
+            // End of file reached
+            yCError(FFMPEGMONITOR, "Error EOF");
+            return -1;
+        } else if (ret < 0) {
+            yCError(FFMPEGMONITOR, "Error during encoding");
+            return -1;
+        }
     }
 
     return 0;
@@ -454,7 +593,7 @@ int FfmpegMonitorObject::decompress(AVPacket* pkt, int w, int h, int pixelCode) 
         // Set codec context parameters
         codecContext->width = w;
         codecContext->height = h;
-        codecContext->pix_fmt = (AVPixelFormat) FFMPEGPORTMONITOR_CODECPIXELMAP[codecContext->codec_id];
+        codecContext->pix_fmt = pixelFormat;
 
         // Open codec
         int ret = avcodec_open2(codecContext, codec, NULL);
@@ -475,7 +614,7 @@ int FfmpegMonitorObject::decompress(AVPacket* pkt, int w, int h, int pixelCode) 
     // Send compressed packet to codec
     int ret = avcodec_send_packet(codecContext, pkt);
     if (ret < 0) {
-        yCError(FFMPEGMONITOR, "Error sending a frame for encoding");
+        yCError(FFMPEGMONITOR, "Error sending a frame for decoding");
         av_frame_free(&startFrame);
         return -1;
     }
@@ -495,7 +634,7 @@ int FfmpegMonitorObject::decompress(AVPacket* pkt, int w, int h, int pixelCode) 
         return -1;
     }
     else if (ret < 0) {
-        yCError(FFMPEGMONITOR, "Error during encoding");
+        yCError(FFMPEGMONITOR, "Error during decoding");
         av_frame_free(&startFrame);
         return -1;
     }
@@ -525,58 +664,66 @@ int FfmpegMonitorObject::decompress(AVPacket* pkt, int w, int h, int pixelCode) 
     endFrame->width = w;
     endFrame->format = (AVPixelFormat) FFMPEGPORTMONITOR_PIXELMAP[pixelCode];
 
-    // Convert the image into RGB format
-    static struct SwsContext *img_convert_ctx;
+    {
+        std::lock_guard<std::mutex> lock(instances_mutex);
 
-    // Allocate conversion context
-    img_convert_ctx = sws_getContext(w, h,
-                                        (AVPixelFormat) FFMPEGPORTMONITOR_CODECPIXELMAP[codecContext->codec_id],
-                                        w, h,
-                                        (AVPixelFormat) FFMPEGPORTMONITOR_PIXELMAP[pixelCode],
-                                        SWS_BICUBIC,
-                                        NULL, NULL, NULL);
-    if (img_convert_ctx == NULL) {
-        yCError(FFMPEGMONITOR, "Cannot initialize the pixel format conversion context!");
-        av_freep(&endFrame->data[0]);
-        av_frame_free(&endFrame);
-        av_frame_free(&startFrame);
-        return -1;
-    }
+        // Convert the image into RGB format
+        static struct SwsContext *img_convert_ctx;
 
-    // Perform conversion
-    ret = sws_scale(img_convert_ctx, startFrame->data, startFrame->linesize, 0,
+        // Allocate conversion context
+        img_convert_ctx = sws_getContext(w, h,
+                                         pixelFormat,
+                                         w, h,
+                                         (AVPixelFormat) FFMPEGPORTMONITOR_PIXELMAP[pixelCode],
+                                         SWS_BICUBIC,
+                                         NULL, NULL, NULL);
+        if (img_convert_ctx == NULL) {
+            yCError(FFMPEGMONITOR, "Cannot initialize the pixel format conversion context!");
+            av_freep(&endFrame->data[0]);
+            av_frame_free(&endFrame);
+            av_frame_free(&startFrame);
+            return -1;
+        }
+
+        // Perform conversion
+        ret = sws_scale(img_convert_ctx, startFrame->data, startFrame->linesize, 0,
                         h, endFrame->data, endFrame->linesize);
 
-    if (ret < 0) {
-        yCError(FFMPEGMONITOR, "Could not convert pixel format!");
+        if (ret < 0) {
+            yCError(FFMPEGMONITOR, "Could not convert pixel format!");
+            av_freep(&endFrame->data[0]);
+            av_frame_free(&endFrame);
+            av_frame_free(&startFrame);
+            sws_freeContext(img_convert_ctx);
+            return -1;
+        }
+
+        // Copy decompressed data from end frame to imageOut
+        memcpy(imageOut.getRawImage(), endFrame->data[0], success);
+
+        // Free allocated memory
         av_freep(&endFrame->data[0]);
         av_frame_free(&endFrame);
         av_frame_free(&startFrame);
         sws_freeContext(img_convert_ctx);
-        return -1;
     }
-
-    // Copy decompressed data from end frame to imageOut
-    memcpy(imageOut.getRawImage(), endFrame->data[0], success);
-
-    // Free allocated memory
-    av_freep(&endFrame->data[0]);
-    av_frame_free(&endFrame);
-    av_frame_free(&startFrame);
-    sws_freeContext(img_convert_ctx);
 
     return 0;
 
 }
 
-int FfmpegMonitorObject::getParamsFromCommandLine(std::string carrierString, AVCodecID &codecId) {
+bool FfmpegMonitorObject::getParamsFromCommandLine(std::string carrierString, const AVCodec*& codecOut, AVPixelFormat& pixelFormatOut, int& frameRate) {
 
     std::vector<std::string> parameters;
     // Split command line string using '+' delimiter
     split(carrierString, '+', parameters);
 
+    bool standardCodec = false;
+    bool customEnc     = false;
+    bool customDec     = false;
+
     // Iterate over result strings
-    for (std::string param: parameters) {
+    for (std::string& param: parameters) {
 
         // Skip YARP initial parameters
         if (find(FFMPEGPORTMONITOR_IGNORE_PARAMS.begin(), FFMPEGPORTMONITOR_IGNORE_PARAMS.end(), param) != FFMPEGPORTMONITOR_IGNORE_PARAMS.end()) {
@@ -586,8 +733,8 @@ int FfmpegMonitorObject::getParamsFromCommandLine(std::string carrierString, AVC
         // If there is no '.', the param is bad formatted, return error
         auto pointPosition = param.find('.');
         if (pointPosition == std::string::npos) {
-            yCError(FFMPEGMONITOR, "Error parsing parameters!");
-            return -1;
+            yCError(FFMPEGMONITOR, "Error while parsing parameter %s. Missing '.'!", param.c_str());
+            return false;
         }
 
         // Otherwise, separate key and value
@@ -596,14 +743,38 @@ int FfmpegMonitorObject::getParamsFromCommandLine(std::string carrierString, AVC
 
         // Parsing codec
         if (paramKey == FFMPEGPORTMONITOR_CL_CODEC_KEY) {
+
+            if (customEnc || customDec)
+            {
+                yCError(FFMPEGMONITOR, "Cannot set both %s and %s/%s together.",
+                        FFMPEGPORTMONITOR_CL_CODEC_KEY.c_str(),
+                        FFMPEGPORTMONITOR_CL_CUSTOM_ENC_KEY.c_str(),
+                        FFMPEGPORTMONITOR_CL_CUSTOM_DEC_KEY.c_str());
+                codecOut = nullptr;
+                return false;
+            }
+
             bool found = false;
             // Iterate over codecs command line possibilities
             for (size_t i = 0; i < FFMPEGPORTMONITOR_CL_CODECS.size(); i++) {
                 // If found
                 if (paramValue == FFMPEGPORTMONITOR_CL_CODECS[i]) {
                     // Set codec id basing on codec command line name
-                    codecId = (AVCodecID) FFMPEGPORTMONITOR_CODE_CODECS[i];
-                    codecName = paramValue;
+                    AVCodecID codecId = (AVCodecID) FFMPEGPORTMONITOR_CODE_CODECS[i];
+                    // Find encoder/decoder
+                    if (senderSide) {
+                        codecOut = avcodec_find_encoder(codecId);
+                    } else {
+                        codecOut = avcodec_find_decoder(codecId);
+                    }
+
+                    if (!codecOut) {
+                        yCError(FFMPEGMONITOR, "Can't find codec %s", paramValue.c_str());
+                        codecOut = nullptr;
+                        return false;
+                    }
+
+                    standardCodec = true;
                     found = true;
                     break;
                 }
@@ -612,17 +783,119 @@ int FfmpegMonitorObject::getParamsFromCommandLine(std::string carrierString, AVC
             // If not found, unrecognized codec, return error
             if (!found) {
                 yCError(FFMPEGMONITOR, "Unrecognized codec: %s", paramValue.c_str());
-                return -1;
-            } else {
-                continue;
+                return false;
             }
 
+            continue; //avoid to add this parameter to paramsMap
+        }
+        else if (paramKey == FFMPEGPORTMONITOR_CL_CUSTOM_ENC_KEY)
+        {
+            if (!senderSide)
+            {
+                customEnc = true;
+                continue; //The custom encoder need to be set on the sender side only. Later we check that the custom decoder has been set too.
+            }
+
+            if (standardCodec)
+            {
+                yCError(FFMPEGMONITOR, "Cannot set both %s and %s/%s together.",
+                        FFMPEGPORTMONITOR_CL_CODEC_KEY.c_str(),
+                        FFMPEGPORTMONITOR_CL_CUSTOM_ENC_KEY.c_str(),
+                        FFMPEGPORTMONITOR_CL_CUSTOM_DEC_KEY.c_str());
+                codecOut = nullptr;
+                return false;
+            }
+
+
+            codecOut = avcodec_find_encoder_by_name(paramValue.c_str());
+
+            if (!codecOut) {
+                yCError(FFMPEGMONITOR, "Can't find encoder %s", paramValue.c_str());
+                codecOut = nullptr;
+                return false;
+            }
+
+            customEnc = true;
+            continue;  //avoid to add this parameter to paramsMap
+        }
+        else if (paramKey == FFMPEGPORTMONITOR_CL_CUSTOM_DEC_KEY)
+        {
+            if (senderSide)
+            {
+                customDec = true;
+                continue; //The custom decoder need to be set on the receiver side only. Later we check that the custom encoder has been set too.
+            }
+
+            if (standardCodec)
+            {
+                yCError(FFMPEGMONITOR, "Cannot set both %s and %s/%s together.",
+                        FFMPEGPORTMONITOR_CL_CODEC_KEY.c_str(),
+                        FFMPEGPORTMONITOR_CL_CUSTOM_ENC_KEY.c_str(),
+                        FFMPEGPORTMONITOR_CL_CUSTOM_DEC_KEY.c_str());
+                codecOut = nullptr;
+                return false;
+            }
+
+            codecOut = avcodec_find_decoder_by_name(paramValue.c_str());
+
+            if (!codecOut) {
+                yCError(FFMPEGMONITOR, "Can't find decoder %s", paramValue.c_str());
+                codecOut = nullptr;
+                return false;
+            }
+
+            customDec = true;
+            continue;  //avoid to add this parameter to paramsMap
+        }
+        else if (paramKey == FFMPEGPORTMONITOR_CL_PIXEL_FORMAT_KEY)
+        {
+            pixelFormatOut = static_cast<AVPixelFormat>(std::atoi(paramValue.c_str()));
+            continue;  //avoid to add this parameter to paramsMap
+        }
+        else if (paramKey == FFMPEGPORTMONITOR_CL_FRAME_RATE_KEY)
+        {
+            frameRate = std::atoi(paramValue.c_str());
+            continue;  //avoid to add this parameter to paramsMap
+        }
+        else if (paramKey == FFMPEGPORTMONITOR_CL_PRINT_STATISTICS_KEY)
+        {
+            printStatistics = std::atoi(paramValue.c_str());
+            continue;  //avoid to add this parameter to paramsMap
         }
 
         // Save param into params map
         paramsMap.insert( std::pair<std::string, std::string>(paramKey, paramValue) );
     }
-    return 0;
+
+    if (!standardCodec && !customEnc && !customDec)
+    {
+        // Set default codec
+        AVCodecID codecId = AV_CODEC_ID_MPEG2VIDEO;
+        if (senderSide) {
+            codecOut = avcodec_find_encoder(codecId);
+        } else {
+            codecOut = avcodec_find_decoder(codecId);
+        }
+
+        if (!codecOut) {
+            yCError(FFMPEGMONITOR, "Can't find default codec (mpeg2video).");
+            return false;
+        }
+    }
+
+    if (customEnc && !customDec)
+    {
+        yCError(FFMPEGMONITOR, "A custom encoder has been specified, but not a custom decoder.");
+        return false;
+    }
+
+    if (!customEnc && customDec)
+    {
+        yCError(FFMPEGMONITOR, "A custom decoder has been specified, but not a custom encoder.");
+        return false;
+    }
+
+    return true;
 
 }
 

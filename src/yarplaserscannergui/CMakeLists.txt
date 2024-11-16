@@ -3,20 +3,10 @@
 
 if(YARP_COMPILE_yarplaserscannergui)
 
-  include(YarpUseQt5)
   include(YarpMacOSUtilities)
-
-  add_executable(yarplaserscannergui WIN32)
-
- # set(yarplaserscannergui_SRCS main.cpp gui.cpp )
- # set(yarplaserscannergui_HDRS gui.h )
- # set(yarplaserscannergui_QRC_FILES res.qrc)
- # set(yarplaserscannergui_UI_FILES gui.ui)
+  add_executable(yarplaserscannergui)
 
   set(yarplaserscannergui_SRCS main.cpp)
-
- # qt5_add_resources(yarplaserscannergui_QRC_GEN_SRCS ${yarplaserscannergui_QRC_FILES})
-  qt5_wrap_ui(yarplaserscannergui_UI_GEN_SRCS ${yarplaserscannerguii_UI_FILES})
 
   source_group(
     TREE "${CMAKE_CURRENT_SOURCE_DIR}"
@@ -28,28 +18,11 @@ if(YARP_COMPILE_yarplaserscannergui)
     PREFIX "Header Files"
     FILES ${yarplaserscannergui_HDRS}
   )
-  source_group(
-    "Resources Files"
-    FILES ${yarplaserscannergui_QRC_FILES}
-  )
-  source_group(
-    "UI Files"
-    FILES ${yarplaserscannergui_UI_FILES}
-  )
-  source_group(
-    "Generated Files"
-    FILES ${yarpLaserScannergui_QRC_GEN_SRCS}
-    ${yarplaserscannergui_UI_GEN_SRCS}
-  )
 
   target_sources(yarplaserscannergui
     PRIVATE
       ${yarplaserscannergui_SRCS}
       ${yarplaserscannergui_HDRS}
-      ${yarplaserscannergui_QRC_FILES}
-      ${yarplaserscannergui_QRC_GEN_SRCS}
-      ${yarplaserscannergui_UI_FILES}
-      ${yarplaserscannergui_UI_GEN_SRCS}
   )
 
   target_link_libraries(yarplaserscannergui
@@ -58,12 +31,10 @@ if(YARP_COMPILE_yarplaserscannergui)
       YARP::YARP_init
       YARP::YARP_sig
       YARP::YARP_dev
-      Qt5::Widgets
-      Qt5::Gui
   )
 
   target_include_directories(yarplaserscannergui PRIVATE ${OpenCV_INCLUDE_DIRS})
-  target_link_libraries(yarplaserscannergui PRIVATE ${OpenCV_LIBRARIES})
+  target_link_libraries(yarplaserscannergui PRIVATE ${OpenCV_LIBS})
 
   install(TARGETS yarplaserscannergui COMPONENT utilities DESTINATION ${CMAKE_INSTALL_BINDIR})
 

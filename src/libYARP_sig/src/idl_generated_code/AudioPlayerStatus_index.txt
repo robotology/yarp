@@ -1,0 +1,3 @@
+yarp/sig/AudioPlayerStatus_common.h
+yarp/sig/AudioPlayerStatus.h
+yarp/sig/AudioPlayerStatus.cpp

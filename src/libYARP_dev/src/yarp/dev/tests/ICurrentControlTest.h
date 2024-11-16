@@ -10,6 +10,10 @@
 #include <yarp/dev/IControlMode.h>
 #include <catch2/catch_amalgamated.hpp>
 
+#include <memory>
+#include <numeric>
+#include <vector>
+
 using namespace yarp::dev;
 using namespace yarp::os;
 
@@ -42,6 +46,22 @@ namespace yarp::dev::tests
         CHECK(b);
 
         b = icurr->getCurrentRange(0, &min, &max);
+        CHECK(b);
+
+        auto mins = std::vector< double >(axis);
+        auto maxs = std::vector< double >(axis);
+        auto currs = std::vector< double >(axis);
+
+        b = icurr->getCurrentRanges(mins.data(), maxs.data());
+        CHECK(b);
+
+        b = icurr->getCurrents(currs.data());
+        CHECK(b);
+
+        b = icurr->getRefCurrents(currs.data());
+        CHECK(b);
+
+        b = icurr->setRefCurrents(currs.data());
         CHECK(b);
     }
 }

@@ -63,6 +63,9 @@ protected:
 
     std::mutex m_ReadSerializerMutex;
 
+    // Mutex for the whole class, to avoid concurrent close and read
+    std::recursive_mutex m_generalMutex;
+
     ACE_Shared_Memory* m_pMap;
     char* m_pData;
     ShmemHeader_t* m_pHeader;
