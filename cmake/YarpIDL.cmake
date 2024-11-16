@@ -193,7 +193,7 @@ endfunction()
 function(YARP_IDL_TO_DIR)
 
   # Flag to control whether IDL generation is allowed.
-  option(ALLOW_IDL_GENERATION "Allow YARP to (re)build IDL files as needed" ON)
+  option(ALLOW_IDL_GENERATION "Allow YARP to (re)build IDL files as needed" OFF)
 
   set(_options
     VERBOSE
