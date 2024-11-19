@@ -20,7 +20,9 @@ SensorRPCData::SensorRPCData(const std::vector<SensorMetadata>& ThreeAxisGyrosco
                              const std::vector<SensorMetadata>& ContactLoadCellArrays,
                              const std::vector<SensorMetadata>& EncoderArrays,
                              const std::vector<SensorMetadata>& SkinPatches,
-                             const std::vector<SensorMetadata>& PositionSensors) :
+                             const std::vector<SensorMetadata>& PositionSensors,
+                             const std::vector<SensorMetadata>& LinearVelocitySensors,
+                             const std::vector<SensorMetadata>& ThreeAxisAngularAccelerometers) :
         WirePortable(),
         ThreeAxisGyroscopes(ThreeAxisGyroscopes),
         ThreeAxisLinearAccelerometers(ThreeAxisLinearAccelerometers),
@@ -31,10 +33,11 @@ SensorRPCData::SensorRPCData(const std::vector<SensorMetadata>& ThreeAxisGyrosco
         ContactLoadCellArrays(ContactLoadCellArrays),
         EncoderArrays(EncoderArrays),
         SkinPatches(SkinPatches),
-        PositionSensors(PositionSensors)
+        PositionSensors(PositionSensors),
+        LinearVelocitySensors(LinearVelocitySensors),
+        ThreeAxisAngularAccelerometers(ThreeAxisAngularAccelerometers)
 {
 }
-
 
 // Read structure on a Wire
 bool SensorRPCData::read(yarp::os::idl::WireReader& reader)
@@ -69,6 +72,12 @@ bool SensorRPCData::read(yarp::os::idl::WireReader& reader)
     if (!read_PositionSensors(reader)) {
         return false;
     }
+    if (!read_LinearVelocitySensors(reader)) {
+        return false;
+    }
+    if (!read_ThreeAxisAngularAccelerometers(reader)) {
+        return false;
+    }
     if (reader.isError()) {
         return false;
     }
@@ -79,7 +88,7 @@ bool SensorRPCData::read(yarp::os::idl::WireReader& reader)
 bool SensorRPCData::read(yarp::os::ConnectionReader& connection)
 {
     yarp::os::idl::WireReader reader(connection);
-    if (!reader.readListHeader(10)) {
+    if (!reader.readListHeader(12)) {
         return false;
     }
     if (!read(reader)) {
@@ -121,6 +130,12 @@ bool SensorRPCData::write(const yarp::os::idl::WireWriter& writer) const
     if (!write_PositionSensors(writer)) {
         return false;
     }
+    if (!write_LinearVelocitySensors(writer)) {
+        return false;
+    }
+    if (!write_ThreeAxisAngularAccelerometers(writer)) {
+        return false;
+    }
     if (writer.isError()) {
         return false;
     }
@@ -131,7 +146,7 @@ bool SensorRPCData::write(const yarp::os::idl::WireWriter& writer) const
 bool SensorRPCData::write(yarp::os::ConnectionWriter& connection) const
 {
     yarp::os::idl::WireWriter writer(connection);
-    if (!writer.writeListHeader(10)) {
+    if (!writer.writeListHeader(12)) {
         return false;
     }
     if (!write(writer)) {
@@ -1120,6 +1135,202 @@ bool SensorRPCData::nested_write_PositionSensors(const yarp::os::idl::WireWriter
         return false;
     }
     for (const auto& _item : PositionSensors) {
+        if (!writer.writeNested(_item)) {
+            return false;
+        }
+    }
+    if (!writer.writeListEnd()) {
+        return false;
+    }
+    return true;
+}
+
+// read LinearVelocitySensors field
+bool SensorRPCData::read_LinearVelocitySensors(yarp::os::idl::WireReader& reader)
+{
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
+    size_t _csize;
+    yarp::os::idl::WireState _etype;
+    reader.readListBegin(_etype, _csize);
+    // WireReader removes BOTTLE_TAG_LIST from the tag
+    constexpr int expected_tag = ((BOTTLE_TAG_LIST) & (~BOTTLE_TAG_LIST));
+    if constexpr (expected_tag != 0) {
+        if (_csize != 0 && _etype.code != expected_tag) {
+            return false;
+        }
+    }
+    LinearVelocitySensors.resize(_csize);
+    for (size_t _i = 0; _i < _csize; ++_i) {
+        if (reader.noMore()) {
+            reader.fail();
+            return false;
+        }
+        if (!reader.readNested(LinearVelocitySensors[_i])) {
+            reader.fail();
+            return false;
+        }
+    }
+    reader.readListEnd();
+    return true;
+}
+
+// write LinearVelocitySensors field
+bool SensorRPCData::write_LinearVelocitySensors(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.writeListBegin(BOTTLE_TAG_LIST, LinearVelocitySensors.size())) {
+        return false;
+    }
+    for (const auto& _item : LinearVelocitySensors) {
+        if (!writer.writeNested(_item)) {
+            return false;
+        }
+    }
+    if (!writer.writeListEnd()) {
+        return false;
+    }
+    return true;
+}
+
+// read (nested) LinearVelocitySensors field
+bool SensorRPCData::nested_read_LinearVelocitySensors(yarp::os::idl::WireReader& reader)
+{
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
+    size_t _csize;
+    yarp::os::idl::WireState _etype;
+    reader.readListBegin(_etype, _csize);
+    // WireReader removes BOTTLE_TAG_LIST from the tag
+    constexpr int expected_tag = ((BOTTLE_TAG_LIST) & (~BOTTLE_TAG_LIST));
+    if constexpr (expected_tag != 0) {
+        if (_csize != 0 && _etype.code != expected_tag) {
+            return false;
+        }
+    }
+    LinearVelocitySensors.resize(_csize);
+    for (size_t _i = 0; _i < _csize; ++_i) {
+        if (reader.noMore()) {
+            reader.fail();
+            return false;
+        }
+        if (!reader.readNested(LinearVelocitySensors[_i])) {
+            reader.fail();
+            return false;
+        }
+    }
+    reader.readListEnd();
+    return true;
+}
+
+// write (nested) LinearVelocitySensors field
+bool SensorRPCData::nested_write_LinearVelocitySensors(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.writeListBegin(BOTTLE_TAG_LIST, LinearVelocitySensors.size())) {
+        return false;
+    }
+    for (const auto& _item : LinearVelocitySensors) {
+        if (!writer.writeNested(_item)) {
+            return false;
+        }
+    }
+    if (!writer.writeListEnd()) {
+        return false;
+    }
+    return true;
+}
+
+// read ThreeAxisAngularAccelerometers field
+bool SensorRPCData::read_ThreeAxisAngularAccelerometers(yarp::os::idl::WireReader& reader)
+{
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
+    size_t _csize;
+    yarp::os::idl::WireState _etype;
+    reader.readListBegin(_etype, _csize);
+    // WireReader removes BOTTLE_TAG_LIST from the tag
+    constexpr int expected_tag = ((BOTTLE_TAG_LIST) & (~BOTTLE_TAG_LIST));
+    if constexpr (expected_tag != 0) {
+        if (_csize != 0 && _etype.code != expected_tag) {
+            return false;
+        }
+    }
+    ThreeAxisAngularAccelerometers.resize(_csize);
+    for (size_t _i = 0; _i < _csize; ++_i) {
+        if (reader.noMore()) {
+            reader.fail();
+            return false;
+        }
+        if (!reader.readNested(ThreeAxisAngularAccelerometers[_i])) {
+            reader.fail();
+            return false;
+        }
+    }
+    reader.readListEnd();
+    return true;
+}
+
+// write ThreeAxisAngularAccelerometers field
+bool SensorRPCData::write_ThreeAxisAngularAccelerometers(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.writeListBegin(BOTTLE_TAG_LIST, ThreeAxisAngularAccelerometers.size())) {
+        return false;
+    }
+    for (const auto& _item : ThreeAxisAngularAccelerometers) {
+        if (!writer.writeNested(_item)) {
+            return false;
+        }
+    }
+    if (!writer.writeListEnd()) {
+        return false;
+    }
+    return true;
+}
+
+// read (nested) ThreeAxisAngularAccelerometers field
+bool SensorRPCData::nested_read_ThreeAxisAngularAccelerometers(yarp::os::idl::WireReader& reader)
+{
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
+    size_t _csize;
+    yarp::os::idl::WireState _etype;
+    reader.readListBegin(_etype, _csize);
+    // WireReader removes BOTTLE_TAG_LIST from the tag
+    constexpr int expected_tag = ((BOTTLE_TAG_LIST) & (~BOTTLE_TAG_LIST));
+    if constexpr (expected_tag != 0) {
+        if (_csize != 0 && _etype.code != expected_tag) {
+            return false;
+        }
+    }
+    ThreeAxisAngularAccelerometers.resize(_csize);
+    for (size_t _i = 0; _i < _csize; ++_i) {
+        if (reader.noMore()) {
+            reader.fail();
+            return false;
+        }
+        if (!reader.readNested(ThreeAxisAngularAccelerometers[_i])) {
+            reader.fail();
+            return false;
+        }
+    }
+    reader.readListEnd();
+    return true;
+}
+
+// write (nested) ThreeAxisAngularAccelerometers field
+bool SensorRPCData::nested_write_ThreeAxisAngularAccelerometers(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.writeListBegin(BOTTLE_TAG_LIST, ThreeAxisAngularAccelerometers.size())) {
+        return false;
+    }
+    for (const auto& _item : ThreeAxisAngularAccelerometers) {
         if (!writer.writeNested(_item)) {
             return false;
         }

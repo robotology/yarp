@@ -20,7 +20,9 @@ SensorStreamingData::SensorStreamingData(const SensorMeasurements& ThreeAxisGyro
                                          const SensorMeasurements& ContactLoadCellArrays,
                                          const SensorMeasurements& EncoderArrays,
                                          const SensorMeasurements& SkinPatches,
-                                         const SensorMeasurements& PositionSensors) :
+                                         const SensorMeasurements& PositionSensors,
+                                         const SensorMeasurements& LinearVelocitySensors,
+                                         const SensorMeasurements& ThreeAxisAngularAccelerometers) :
         WirePortable(),
         ThreeAxisGyroscopes(ThreeAxisGyroscopes),
         ThreeAxisLinearAccelerometers(ThreeAxisLinearAccelerometers),
@@ -31,7 +33,9 @@ SensorStreamingData::SensorStreamingData(const SensorMeasurements& ThreeAxisGyro
         ContactLoadCellArrays(ContactLoadCellArrays),
         EncoderArrays(EncoderArrays),
         SkinPatches(SkinPatches),
-        PositionSensors(PositionSensors)
+        PositionSensors(PositionSensors),
+        LinearVelocitySensors(LinearVelocitySensors),
+        ThreeAxisAngularAccelerometers(ThreeAxisAngularAccelerometers)
 {
 }
 
@@ -68,6 +72,12 @@ bool SensorStreamingData::read(yarp::os::idl::WireReader& reader)
     if (!read_PositionSensors(reader)) {
         return false;
     }
+    if (!read_LinearVelocitySensors(reader)) {
+        return false;
+    }
+    if (!read_ThreeAxisAngularAccelerometers(reader)) {
+        return false;
+    }
     if (reader.isError()) {
         return false;
     }
@@ -78,7 +88,7 @@ bool SensorStreamingData::read(yarp::os::idl::WireReader& reader)
 bool SensorStreamingData::read(yarp::os::ConnectionReader& connection)
 {
     yarp::os::idl::WireReader reader(connection);
-    if (!reader.readListHeader(10)) {
+    if (!reader.readListHeader(12)) {
         return false;
     }
     if (!read(reader)) {
@@ -120,6 +130,12 @@ bool SensorStreamingData::write(const yarp::os::idl::WireWriter& writer) const
     if (!write_PositionSensors(writer)) {
         return false;
     }
+    if (!write_LinearVelocitySensors(writer)) {
+        return false;
+    }
+    if (!write_ThreeAxisAngularAccelerometers(writer)) {
+        return false;
+    }
     if (writer.isError()) {
         return false;
     }
@@ -130,7 +146,7 @@ bool SensorStreamingData::write(const yarp::os::idl::WireWriter& writer) const
 bool SensorStreamingData::write(yarp::os::ConnectionWriter& connection) const
 {
     yarp::os::idl::WireWriter writer(connection);
-    if (!writer.writeListHeader(10)) {
+    if (!writer.writeListHeader(12)) {
         return false;
     }
     if (!write(writer)) {
@@ -604,6 +620,98 @@ bool SensorStreamingData::nested_read_PositionSensors(yarp::os::idl::WireReader&
 bool SensorStreamingData::nested_write_PositionSensors(const yarp::os::idl::WireWriter& writer) const
 {
     if (!writer.writeNested(PositionSensors)) {
+        return false;
+    }
+    return true;
+}
+
+// read LinearVelocitySensors field
+bool SensorStreamingData::read_LinearVelocitySensors(yarp::os::idl::WireReader& reader)
+{
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
+    if (!reader.read(LinearVelocitySensors)) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+// write LinearVelocitySensors field
+bool SensorStreamingData::write_LinearVelocitySensors(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.write(LinearVelocitySensors)) {
+        return false;
+    }
+    return true;
+}
+
+// read (nested) LinearVelocitySensors field
+bool SensorStreamingData::nested_read_LinearVelocitySensors(yarp::os::idl::WireReader& reader)
+{
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
+    if (!reader.readNested(LinearVelocitySensors)) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+// write (nested) LinearVelocitySensors field
+bool SensorStreamingData::nested_write_LinearVelocitySensors(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.writeNested(LinearVelocitySensors)) {
+        return false;
+    }
+    return true;
+}
+
+// read ThreeAxisAngularAccelerometers field
+bool SensorStreamingData::read_ThreeAxisAngularAccelerometers(yarp::os::idl::WireReader& reader)
+{
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
+    if (!reader.read(ThreeAxisAngularAccelerometers)) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+// write ThreeAxisAngularAccelerometers field
+bool SensorStreamingData::write_ThreeAxisAngularAccelerometers(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.write(ThreeAxisAngularAccelerometers)) {
+        return false;
+    }
+    return true;
+}
+
+// read (nested) ThreeAxisAngularAccelerometers field
+bool SensorStreamingData::nested_read_ThreeAxisAngularAccelerometers(yarp::os::idl::WireReader& reader)
+{
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
+    if (!reader.readNested(ThreeAxisAngularAccelerometers)) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+// write (nested) ThreeAxisAngularAccelerometers field
+bool SensorStreamingData::nested_write_ThreeAxisAngularAccelerometers(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.writeNested(ThreeAxisAngularAccelerometers)) {
         return false;
     }
     return true;
