@@ -40,7 +40,7 @@ class  streamFrameListener;
  *
  * See the documentation for more details about each interface.
  *
- * This device is paired with its server called RGBDSensorWrapper to stream the images and perform remote operations.
+ * This device is paired with its server called rgbdSensor_nws_yarp to stream the images and perform remote operations.
  *
  * The config file is subdivided into 5 major sections called "SETTINGS", "HW_DESCRIPTION", "RGB_INTRINSIC_PARAMETERS",
  * "DEPTH_INTRINSIC_PARAMETERS", "EXTRINSIC_PARAMETERS".
@@ -125,7 +125,7 @@ class  streamFrameListener;
  *
  * \code{.unparsed}
 
-device       RGBDSensorWrapper
+device       rgbdSensor_nws_yarp
 subdevice    depthCamera
 name         /depthCamera
 
