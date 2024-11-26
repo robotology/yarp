@@ -19,7 +19,7 @@ YARP_LOG_COMPONENT(MULTIPLEANALOGSENSORSREMAPPER, "yarp.device.multipleanalogsen
 }
 
 const size_t MAS_NrOfSensorTypes{12};
-static_assert(MAS_SensorType::LinearVelocitySensors+1 == MAS_NrOfSensorTypes, "Consistency error between MAS_NrOfSensorTypes and MAS_SensorType");
+static_assert(MAS_SensorType::ThreeAxisAngularAccelerometers+1 == MAS_NrOfSensorTypes, "Consistency error between MAS_NrOfSensorTypes and MAS_SensorType");
 
 /**
  * Internal identifier of the type of sensors.

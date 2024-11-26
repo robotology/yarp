@@ -21,16 +21,16 @@ enum MAS_SensorType
 {
     ThreeAxisGyroscopes=0,
     ThreeAxisLinearAccelerometers=1,
-    ThreeAxisAngularAccelerometers=2,
-    ThreeAxisMagnetometers=3,
-    OrientationSensors=4,
-    TemperatureSensors=5,
-    SixAxisForceTorqueSensors=6,
-    ContactLoadCellArrays=7,
-    EncoderArrays=8,
-    SkinPatches=9,
-    PositionSensors=10,
-    LinearVelocitySensors=11
+    ThreeAxisMagnetometers=2,
+    OrientationSensors=3,
+    TemperatureSensors=4,
+    SixAxisForceTorqueSensors=5,
+    ContactLoadCellArrays=6,
+    EncoderArrays=7,
+    SkinPatches=8,
+    PositionSensors=9,
+    LinearVelocitySensors=10,
+    ThreeAxisAngularAccelerometers=11
 };
 
 /**
