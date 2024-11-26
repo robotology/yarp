@@ -30,7 +30,7 @@ int main(int argc, char* argv[])
     // Keyword 'device' is used by YARP framework
 
     // Wrapper config
-    wrapperConfig.put("device", "RGBDSensorWrapper"); // Network server broadcasting data through YARP network
+    wrapperConfig.put("device", "rgbdSensor_nws_yarp"); // Network server broadcasting data through YARP network
     wrapperConfig.put("name", "/server");             // Prefix for port names opened by the YARP server
 
     // Device driver config
