@@ -18,7 +18,7 @@ In this example we will use a fake device, for testing purposes: the `fakeDepthC
 
 ```
 Terminal 1: yarpserver
-Terminal 2: yarpdev --device RGBDSensorWrapper --name /server --subdevice fakeDepthCamera --mode ball
+Terminal 2: yarpdev --device rgbdSensor_nws_yarp --name /server --subdevice fakeDepthCamera --mode ball
 ```
 The parameters here means:
 - device: The server we want to open
@@ -84,14 +84,14 @@ The general procedure for instantiating devices does not change when using serve
 
 #### Server side:
 The server side application will still open the device driver, but now it will also open the corresponding YARP server used to broadcast data over the network and reply to Remote Procedure Calls (RPC).
-This way of using a device driver is shown in file [`RGBD_test_1b_server.cpp`](RGBD_test_1b_server.cpp), the server class is called `RGBDSensorWrapper`:
+This way of using a device driver is shown in file [`RGBD_test_1b_server.cpp`](RGBD_test_1b_server.cpp), the server class is called `rgbdSensor_nws_yarp`:
 
 ``` c++
 PolyDriver wrapperDriver;
 Property   wrapperConfig;
 
 // Wrapper config
-wrapperConfig.put("device", "RGBDSensorWrapper");       // Network server broadcasting data through network
+wrapperConfig.put("device", "rgbdSensor_nws_yarp");       // Network server broadcasting data through network
 wrapperConfig.put("name",   "/server");                 // Prefix for port names opened by the YARP server
 
 // Instantiating RGBD server
