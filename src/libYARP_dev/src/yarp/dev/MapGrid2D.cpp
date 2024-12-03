@@ -953,21 +953,21 @@ bool MapGrid2D::write(yarp::os::ConnectionWriter& connection) const
 {
     connection.appendInt32(BOTTLE_TAG_LIST);
     connection.appendInt32(10);
-    connection.appendInt32(BOTTLE_TAG_INT32);
+    connection.appendInt32(BOTTLE_TAG_INT32); //1
     connection.appendInt32(m_width);
-    connection.appendInt32(BOTTLE_TAG_INT32);
+    connection.appendInt32(BOTTLE_TAG_INT32); //2
     connection.appendInt32(m_height);
-    connection.appendInt32(BOTTLE_TAG_FLOAT64);
+    connection.appendInt32(BOTTLE_TAG_FLOAT64); // 3
     connection.appendFloat64(m_origin.get_x());
-    connection.appendInt32(BOTTLE_TAG_FLOAT64);
+    connection.appendInt32(BOTTLE_TAG_FLOAT64); // 4
     connection.appendFloat64(m_origin.get_y());
-    connection.appendInt32(BOTTLE_TAG_FLOAT64);
+    connection.appendInt32(BOTTLE_TAG_FLOAT64); // 5
     connection.appendFloat64(m_origin.get_theta());
-    connection.appendInt32(BOTTLE_TAG_FLOAT64);
+    connection.appendInt32(BOTTLE_TAG_FLOAT64); // 6
     connection.appendFloat64(m_resolution);
-    connection.appendInt32(BOTTLE_TAG_STRING);
+    connection.appendInt32(BOTTLE_TAG_STRING); // 7
     connection.appendString(m_map_name);
-    connection.appendInt32(BOTTLE_TAG_INT8);
+    connection.appendInt32(BOTTLE_TAG_INT8); // 8
     connection.appendInt8(m_compressed_data_over_network);
 
     if (m_compressed_data_over_network)
@@ -980,7 +980,7 @@ bool MapGrid2D::write(yarp::os::ConnectionWriter& connection) const
             unsigned char* dataCompressed = new unsigned char[sizeCompressed];
             int z_result = compress((Bytef*)dataCompressed, (uLongf*)&sizeCompressed, (Bytef*)dataUncompressed, sizeUncompressed);
             YARP_UNUSED(z_result);
-            connection.appendInt32(BOTTLE_TAG_BLOB);
+            connection.appendInt32(BOTTLE_TAG_BLOB); // 9
             connection.appendInt32(sizeCompressed);
             connection.appendBlock((char*)dataCompressed, sizeCompressed);
             delete [] dataCompressed;
@@ -992,7 +992,7 @@ bool MapGrid2D::write(yarp::os::ConnectionWriter& connection) const
             unsigned char* dataCompressed = new unsigned char[sizeCompressed];
             int z_result = compress((Bytef*)dataCompressed, (uLongf*)&sizeCompressed, (Bytef*)dataUncompressed, sizeUncompressed);
             YARP_UNUSED(z_result);
-            connection.appendInt32(BOTTLE_TAG_BLOB);
+            connection.appendInt32(BOTTLE_TAG_BLOB); // 10
             connection.appendInt32(sizeCompressed);
             connection.appendBlock((char*)dataCompressed, sizeCompressed);
             delete[] dataCompressed;
