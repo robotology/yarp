@@ -175,7 +175,7 @@ yarp::os::Things& ImageRotation::update(yarp::os::Things& thing)
             //just rotation
             cv::rotate(m_cvInImage, m_cvOutImage1, m_rot_flags);
             m_outImgRgb = yarp::cv::fromCvMat<yarp::sig::PixelRgb>(m_cvOutImage1);
-        } 
+        }
         else if (m_options_flip_str != "flip_none" && m_options_rotate_str == "rotation_none")
         {
             //just flip
