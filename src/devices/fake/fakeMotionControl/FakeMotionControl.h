@@ -139,6 +139,7 @@ private:
     };
 
     std::recursive_mutex _mutex;
+    double _cycleTimestamp;
     int  _njoints;
     int *_axisMap;                              /** axis remapping lookup-table */
     double *_angleToEncoder;                    /** angle to iCubDegrees conversion factors */
