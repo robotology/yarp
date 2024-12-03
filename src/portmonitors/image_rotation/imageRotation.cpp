@@ -36,10 +36,17 @@ bool ImageRotation::create(const yarp::os::Property& options)
     getParamsFromCommandLine(str, m_user_params);
     yCDebug(IMAGEROTATION) << "parsed params:" << m_user_params.toString();
 
+    //get the value of the parameters
     if (m_user_params.check("options_rotate"))
     {
         m_options_rotate_str = m_user_params.find("options_rotate").asString();
     }
+    if (m_user_params.check("options_flip"))
+    {
+        m_options_flip_str = m_user_params.find("options_flip").asString();
+    }
+
+    //translate the parameters in opencv
     if (m_options_rotate_str == std::string("rotate_cw"))
     {
         m_rot_flags = cv::ROTATE_90_CLOCKWISE;
@@ -48,11 +55,40 @@ bool ImageRotation::create(const yarp::os::Property& options)
     {
         m_rot_flags = cv::ROTATE_90_COUNTERCLOCKWISE;
     }
+    else if (m_options_rotate_str == std::string("rotate_180"))
+    {
+        m_rot_flags = cv::ROTATE_180;
+    }
+    else if (m_options_rotate_str == std::string("rotate_none"))
+    {
+    }
     else
-   {
-        yCDebug(IMAGEROTATION) << "Invalid value of `options` parameter";
+    {
+        yCDebug(IMAGEROTATION) << "Invalid value of `options_rotate` parameter";
         return false;
     }
+
+    if (m_options_flip_str == std::string("flip_x"))
+    {
+        m_flip_code = 0;
+    }
+    else if (m_options_flip_str == std::string("flip_y"))
+    {
+        m_flip_code = 1;
+    }
+    else if (m_options_flip_str == std::string("flip_xy"))
+    {
+        m_flip_code = -1;
+    }
+    else if (m_options_flip_str == std::string("flip_none"))
+    {
+    }
+    else
+    {
+        yCDebug(IMAGEROTATION) << "Invalid value of `options_flip` parameter";
+        return false;
+    }
+
     return true;
 }
 
@@ -134,14 +170,30 @@ yarp::os::Things& ImageRotation::update(yarp::os::Things& thing)
         m_outImgRgb.resize(yarpimg->width(), yarpimg->height());
         m_outImgRgb.zero();
 
-        //double angle = 90;
-        //cv::Point2f center((yarpimg->width() - 1) / 2.0, (yarpimg->height() - 1) / 2.0);
-        //cv::Mat rotation_matix = getRotationMatrix2D(center, angle, 1.0);
-        //cv::warpAffine(cvInImage, cvOutImage, rotation_matix, cvInImage.size());
-
-        cv::rotate(m_cvInImage, m_cvOutImage, m_rot_flags);
-
-        m_outImgRgb = yarp::cv::fromCvMat<yarp::sig::PixelRgb>(m_cvOutImage);
+        if (m_options_flip_str == "flip_none" && m_options_rotate_str != "rotation_none")
+        {
+            //just rotation
+            cv::rotate(m_cvInImage, m_cvOutImage1, m_rot_flags);
+            m_outImgRgb = yarp::cv::fromCvMat<yarp::sig::PixelRgb>(m_cvOutImage1);
+        } 
+        else if (m_options_flip_str != "flip_none" && m_options_rotate_str == "rotation_none")
+        {
+            //just flip
+            cv::flip(m_cvInImage, m_cvOutImage1, m_flip_code);
+            m_outImgRgb = yarp::cv::fromCvMat<yarp::sig::PixelRgb>(m_cvOutImage1);
+        }
+        else if (m_options_flip_str == "flip_none" && m_options_rotate_str == "rotation_none")
+        {
+            //just copy
+            m_outImgRgb = yarp::cv::fromCvMat<yarp::sig::PixelRgb>(m_cvInImage);
+        }
+        else
+        {
+            //first a rotation, then a flip
+            cv::rotate(m_cvInImage, m_cvOutImage1, m_rot_flags);
+            cv::flip(m_cvOutImage1, m_cvOutImage2, m_flip_code);
+            m_outImgRgb = yarp::cv::fromCvMat<yarp::sig::PixelRgb>(m_cvOutImage2);
+        }
         m_th.setPortWriter(&m_outImgRgb);
     }
     else if (yarpimg->getPixelCode() == VOCAB_PIXEL_MONO_FLOAT)
@@ -151,14 +203,25 @@ yarp::os::Things& ImageRotation::update(yarp::os::Things& thing)
         m_outImgFloat.resize(yarpimg->width(), yarpimg->height());
         m_outImgFloat.zero();
 
-        //double angle = 90;
-        //cv::Point2f center((yarpimg->width() - 1) / 2.0, (yarpimg->height() - 1) / 2.0);
-        //cv::Mat rotation_matix = getRotationMatrix2D(center, angle, 1.0);
-        //cv::warpAffine(cvInImage, cvOutImage, rotation_matix, cvInImage.size());
-
-        cv::rotate(m_cvInImage, m_cvOutImage, m_rot_flags);
-
-        m_outImgFloat = yarp::cv::fromCvMat<yarp::sig::PixelFloat>(m_cvOutImage);
+        if (m_options_flip_str == "flip_none")
+        {
+            // just rotation
+            cv::rotate(m_cvInImage, m_cvOutImage1, m_rot_flags);
+            m_outImgFloat = yarp::cv::fromCvMat<yarp::sig::PixelFloat>(m_cvOutImage1);
+        }
+        else if (m_options_flip_str == "rotation_none")
+        {
+            // just flip
+            cv::flip(m_cvInImage, m_cvOutImage1, m_flip_code);
+            m_outImgFloat = yarp::cv::fromCvMat<yarp::sig::PixelFloat>(m_cvOutImage1);
+        }
+        else
+        {
+            // first a rotation, then a flip
+            cv::rotate(m_cvInImage, m_cvOutImage1, m_rot_flags);
+            cv::flip(m_cvOutImage1, m_cvOutImage2, m_flip_code);
+            m_outImgFloat = yarp::cv::fromCvMat<yarp::sig::PixelFloat>(m_cvOutImage2);
+        }
         m_th.setPortWriter(&m_outImgFloat);
     }
     else

@@ -41,9 +41,13 @@ private:
     yarp::sig::ImageOf<yarp::sig::PixelRgb> m_outImgRgb;
 
     std::string m_options_rotate_str = "rotate_cw";
+    std::string m_options_flip_str = "flip_none";
     cv::RotateFlags m_rot_flags;
+    int m_flip_code;
+
     cv::Mat m_cvInImage;
-    cv::Mat m_cvOutImage;
+    cv::Mat m_cvOutImage1;
+    cv::Mat m_cvOutImage2;
 };
 
 #endif  // YARP_PORTMONITOR_IMAGEROTATION_H
