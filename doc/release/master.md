@@ -30,3 +30,7 @@ Breaking Changes
 * Updated protocol between `RemoteControlBoard` and `controlBoard_nws_yarp`: the motor `temperature` data is
   now obtained through the streaming port instead of an RPC. 
   This new feature is implemented through a breaking change in the definition of data fields in `stateExt.thrift`
+
+### libYARP_sig
+
+* Removed field `topIsLow` from `yarp::sig::Image`
