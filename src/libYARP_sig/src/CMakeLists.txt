@@ -16,6 +16,7 @@ set(YARP_sig_HDRS
   yarp/sig/ImageNetworkHeader.h
   yarp/sig/ImageUtils.h
   yarp/sig/IntrinsicParams.h
+  yarp/sig/LayeredImage.h
   yarp/sig/LaserMeasurementData.h
   yarp/sig/Matrix.h
   yarp/sig/PointCloud.h
@@ -40,6 +41,7 @@ set(YARP_sig_SRCS
   yarp/sig/ImageUtils.cpp
   yarp/sig/IntrinsicParams.cpp
   yarp/sig/LaserMeasurementData.cpp
+  yarp/sig/LayeredImage.cpp
   yarp/sig/Matrix.cpp
   yarp/sig/PointCloudBase.cpp
   yarp/sig/PointCloudUtils.cpp
