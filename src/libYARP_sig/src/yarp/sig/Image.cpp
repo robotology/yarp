@@ -45,12 +45,11 @@ inline bool readFromConnection(Image &dest, ImageNetworkHeader &header, Connecti
     //this check is redundant with assertion, I would remove it
     if (dest.getRawImageSize() != static_cast<size_t>(header.imgSize)) {
         printf("There is a problem reading an image\n");
-        printf("incoming: width %zu, height %zu, code %zu, quantum %zu, topIsLow %zu, size %zu\n",
+        printf("incoming: width %zu, height %zu, code %zu, quantum %zu, size %zu\n",
                static_cast<size_t>(header.width),
                static_cast<size_t>(header.height),
                static_cast<size_t>(header.id),
                static_cast<size_t>(header.quantum),
-               static_cast<size_t>(header.topIsLow),
                static_cast<size_t>(header.imgSize));
         printf("my space: width %zu, height %zu, code %d, quantum %zu, size %zu\n",
             dest.width(), dest.height(), dest.getPixelCode(), dest.getQuantum(), allocatedBytes);
