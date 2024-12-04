@@ -21,8 +21,7 @@
 #include <cstring>
 #include <string>
 #include <utility>
-
-#include <opencv2/opencv.hpp>
+#include <math.h>
 
 using namespace yarp::sig;
 using namespace yarp::os;
@@ -143,7 +142,6 @@ bool LayeredImage::read(yarp::os::ConnectionReader& connection)
 
 bool LayeredImage::write(yarp::os::ConnectionWriter& connection) const
 {
-    bool ok = true;
     size_t layers_num = layers.size();
 
     //LIST OF ELEMENTS

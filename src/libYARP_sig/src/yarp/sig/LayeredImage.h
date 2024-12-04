@@ -8,11 +8,12 @@
 
 #include <yarp/os/Portable.h>
 #include <yarp/sig/Image.h>
-#include <Vector>
+#include <vector>
 
 namespace yarp::sig {
 class LayeredImage;
 class ImageLayer;
+} // namespace yarp::sig
 
 /**
  * \ingroup sig_class
@@ -141,8 +142,5 @@ public:
         return yarp::os::Type::byName("yarp/layeredimage");
     }
 };
-
-
-} // namespace yarp::sig
 
 #endif // YARP_LAYERED_IMAGE_H
