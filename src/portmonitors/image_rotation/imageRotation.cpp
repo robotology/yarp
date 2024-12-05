@@ -5,12 +5,13 @@
 
 #include "imageRotation.h"
 
-#include <algorithm>
-#include <cmath>
-
 #include <yarp/os/LogComponent.h>
 #include <yarp/os/LogStream.h>
+
 #include <yarp/sig/Image.h>
+
+#include <algorithm>
+#include <cmath>
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/videoio/videoio.hpp>
@@ -29,62 +30,42 @@ YARP_LOG_COMPONENT(IMAGEROTATION,
 
 bool ImageRotation::create(const yarp::os::Property& options)
 {
-    //parse the user parameters
+    // parse the user parameters
     yarp::os::Property m_user_params;
     yCDebug(IMAGEROTATION) << "user params:" << options.toString();
     std::string str = options.find("carrier").asString();
     getParamsFromCommandLine(str, m_user_params);
     yCDebug(IMAGEROTATION) << "parsed params:" << m_user_params.toString();
 
-    //get the value of the parameters
-    if (m_user_params.check("options_rotate"))
-    {
+    // get the value of the parameters
+    if (m_user_params.check("options_rotate")) {
         m_options_rotate_str = m_user_params.find("options_rotate").asString();
     }
-    if (m_user_params.check("options_flip"))
-    {
+    if (m_user_params.check("options_flip")) {
         m_options_flip_str = m_user_params.find("options_flip").asString();
     }
 
-    //translate the parameters in opencv
-    if (m_options_rotate_str == std::string("rotate_cw"))
-    {
+    // translate the parameters in opencv
+    if (m_options_rotate_str == std::string("rotate_cw")) {
         m_rot_flags = cv::ROTATE_90_CLOCKWISE;
-    }
-    else if (m_options_rotate_str == std::string("rotate_ccw"))
-    {
+    } else if (m_options_rotate_str == std::string("rotate_ccw")) {
         m_rot_flags = cv::ROTATE_90_COUNTERCLOCKWISE;
-    }
-    else if (m_options_rotate_str == std::string("rotate_180"))
-    {
+    } else if (m_options_rotate_str == std::string("rotate_180")) {
         m_rot_flags = cv::ROTATE_180;
-    }
-    else if (m_options_rotate_str == std::string("rotate_none"))
-    {
-    }
-    else
-    {
+    } else if (m_options_rotate_str == std::string("rotate_none")) {
+    } else {
         yCDebug(IMAGEROTATION) << "Invalid value of `options_rotate` parameter";
         return false;
     }
 
-    if (m_options_flip_str == std::string("flip_x"))
-    {
+    if (m_options_flip_str == std::string("flip_x")) {
         m_flip_code = 0;
-    }
-    else if (m_options_flip_str == std::string("flip_y"))
-    {
+    } else if (m_options_flip_str == std::string("flip_y")) {
         m_flip_code = 1;
-    }
-    else if (m_options_flip_str == std::string("flip_xy"))
-    {
+    } else if (m_options_flip_str == std::string("flip_xy")) {
         m_flip_code = -1;
-    }
-    else if (m_options_flip_str == std::string("flip_none"))
-    {
-    }
-    else
-    {
+    } else if (m_options_flip_str == std::string("flip_none")) {
+    } else {
         yCDebug(IMAGEROTATION) << "Invalid value of `options_flip` parameter";
         return false;
     }
@@ -112,12 +93,10 @@ void ImageRotation::getParamsFromCommandLine(std::string carrierString, yarp::os
     split(carrierString, '+', parameters);
 
     // Iterate over result strings
-    for (std::string param : parameters)
-    {
+    for (std::string param : parameters) {
         // If there is no '.', then the param is bad formatted, skip it.
         auto pointPosition = param.find('.');
-        if (pointPosition == std::string::npos)
-        {
+        if (pointPosition == std::string::npos) {
             continue;
         }
 
@@ -127,7 +106,7 @@ void ImageRotation::getParamsFromCommandLine(std::string carrierString, yarp::os
         std::string s = param.substr(pointPosition + 1, param.length());
         paramValue.fromString(s.c_str());
 
-        //and append to the returned property
+        // and append to the returned property
         prop.put(paramKey, paramValue);
     }
     return;
@@ -146,14 +125,11 @@ bool ImageRotation::getparam(yarp::os::Property& params)
 bool ImageRotation::accept(yarp::os::Things& thing)
 {
     auto* img = thing.cast_as<yarp::sig::Image>();
-    if(img == nullptr)
-    {
+    if (img == nullptr) {
         yCError(IMAGEROTATION, "Expected type Image, but got wrong data type!");
         return false;
     }
-    if (img->getPixelCode() != VOCAB_PIXEL_RGB &&
-        img->getPixelCode() != VOCAB_PIXEL_MONO_FLOAT)
-    {
+    if (img->getPixelCode() != VOCAB_PIXEL_RGB && img->getPixelCode() != VOCAB_PIXEL_MONO_FLOAT) {
         yCError(IMAGEROTATION, "Received image with invalid/unsupported pixelCode!");
         return false;
     }
@@ -162,70 +138,53 @@ bool ImageRotation::accept(yarp::os::Things& thing)
 
 yarp::os::Things& ImageRotation::update(yarp::os::Things& thing)
 {
-    yarp::sig::Image* yarpimg = thing.cast_as<yarp::sig::Image >();
-    if (yarpimg->getPixelCode() == VOCAB_PIXEL_RGB)
-    {
+    yarp::sig::Image* yarpimg = thing.cast_as<yarp::sig::Image>();
+    if (yarpimg->getPixelCode() == VOCAB_PIXEL_RGB) {
         m_cvInImage = yarp::cv::toCvMat(*yarpimg);
 
         m_outImgRgb.resize(yarpimg->width(), yarpimg->height());
         m_outImgRgb.zero();
 
-        if (m_options_flip_str == "flip_none" && m_options_rotate_str != "rotation_none")
-        {
-            //just rotation
+        if (m_options_flip_str == "flip_none" && m_options_rotate_str != "rotation_none") {
+            // just rotation
             cv::rotate(m_cvInImage, m_cvOutImage1, m_rot_flags);
             m_outImgRgb = yarp::cv::fromCvMat<yarp::sig::PixelRgb>(m_cvOutImage1);
-        } 
-        else if (m_options_flip_str != "flip_none" && m_options_rotate_str == "rotation_none")
-        {
-            //just flip
+        } else if (m_options_flip_str != "flip_none" && m_options_rotate_str == "rotation_none") {
+            // just flip
             cv::flip(m_cvInImage, m_cvOutImage1, m_flip_code);
             m_outImgRgb = yarp::cv::fromCvMat<yarp::sig::PixelRgb>(m_cvOutImage1);
-        }
-        else if (m_options_flip_str == "flip_none" && m_options_rotate_str == "rotation_none")
-        {
-            //just copy
+        } else if (m_options_flip_str == "flip_none" && m_options_rotate_str == "rotation_none") {
+            // just copy
             m_outImgRgb = yarp::cv::fromCvMat<yarp::sig::PixelRgb>(m_cvInImage);
-        }
-        else
-        {
-            //first a rotation, then a flip
+        } else {
+            // first a rotation, then a flip
             cv::rotate(m_cvInImage, m_cvOutImage1, m_rot_flags);
             cv::flip(m_cvOutImage1, m_cvOutImage2, m_flip_code);
             m_outImgRgb = yarp::cv::fromCvMat<yarp::sig::PixelRgb>(m_cvOutImage2);
         }
         m_th.setPortWriter(&m_outImgRgb);
-    }
-    else if (yarpimg->getPixelCode() == VOCAB_PIXEL_MONO_FLOAT)
-    {
+    } else if (yarpimg->getPixelCode() == VOCAB_PIXEL_MONO_FLOAT) {
         m_cvInImage = yarp::cv::toCvMat(*yarpimg);
 
         m_outImgFloat.resize(yarpimg->width(), yarpimg->height());
         m_outImgFloat.zero();
 
-        if (m_options_flip_str == "flip_none")
-        {
+        if (m_options_flip_str == "flip_none") {
             // just rotation
             cv::rotate(m_cvInImage, m_cvOutImage1, m_rot_flags);
             m_outImgFloat = yarp::cv::fromCvMat<yarp::sig::PixelFloat>(m_cvOutImage1);
-        }
-        else if (m_options_flip_str == "rotation_none")
-        {
+        } else if (m_options_flip_str == "rotation_none") {
             // just flip
             cv::flip(m_cvInImage, m_cvOutImage1, m_flip_code);
             m_outImgFloat = yarp::cv::fromCvMat<yarp::sig::PixelFloat>(m_cvOutImage1);
-        }
-        else
-        {
+        } else {
             // first a rotation, then a flip
             cv::rotate(m_cvInImage, m_cvOutImage1, m_rot_flags);
             cv::flip(m_cvOutImage1, m_cvOutImage2, m_flip_code);
             m_outImgFloat = yarp::cv::fromCvMat<yarp::sig::PixelFloat>(m_cvOutImage2);
         }
         m_th.setPortWriter(&m_outImgFloat);
-    }
-    else
-    {
+    } else {
         yCError(IMAGEROTATION, "Invalid Image type!");
     }
     return m_th;
