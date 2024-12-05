@@ -176,7 +176,7 @@ public:
      * Get the last reading of the specified sensor.
      *
      * @param[in] sens_index The index of the specified sensor (should be between 0 and getNrOfThreeAxisAngularAccelerometers()-1).
-     * @param[out] out The requested measure. The vector should be 3-dimensional. The measure is expressed in meters^2/seconds.
+     * @param[out] out The requested measure. The vector should be 3-dimensional. The measure is expressed in degrees^2/seconds.
      * @param[out] timestamp The timestamp of the requested measure, expressed in seconds.
      * @return false if an error occurred, true otherwise.
      */
