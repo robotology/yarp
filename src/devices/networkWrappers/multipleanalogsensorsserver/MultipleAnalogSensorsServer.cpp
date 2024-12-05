@@ -32,7 +32,9 @@ enum MAS_SensorTypeServer
     ContactLoadCellArrays=6,
     EncoderArrays=7,
     SkinPatches=8,
-    PositionSensors=9
+    PositionSensors=9,
+    LinearVelocitySensors=10,
+    ThreeAxisAngularAccelerometers=11
 };
 
 /**
@@ -48,6 +50,9 @@ inline size_t MAS_getMeasureSizeFromEnum(const MAS_SensorTypeServer type)
         case ThreeAxisLinearAccelerometers:
             return 3;
             break;
+        case ThreeAxisAngularAccelerometers:
+            return 3;
+            break;
         case ThreeAxisMagnetometers:
             return 3;
             break;
@@ -55,6 +60,9 @@ inline size_t MAS_getMeasureSizeFromEnum(const MAS_SensorTypeServer type)
             return 3;
             break;
         case PositionSensors:
+            return 3;
+            break;
+        case LinearVelocitySensors:
             return 3;
             break;
         case TemperatureSensors:
@@ -243,6 +251,10 @@ bool MultipleAnalogSensorsServer::populateAllSensorsMetadata()
                                        &yarp::dev::IThreeAxisLinearAccelerometers::getNrOfThreeAxisLinearAccelerometers,
                                        &yarp::dev::IThreeAxisLinearAccelerometers::getThreeAxisLinearAccelerometerName,
                                        &yarp::dev::IThreeAxisLinearAccelerometers::getThreeAxisLinearAccelerometerFrameName);
+    ok = ok && populateSensorsMetadata(m_iThreeAxisAngularAccelerometers, m_sensorMetadata.ThreeAxisAngularAccelerometers, "ThreeAxisAngularAccelerometers",
+                                       &yarp::dev::IThreeAxisAngularAccelerometers::getNrOfThreeAxisAngularAccelerometers,
+                                       &yarp::dev::IThreeAxisAngularAccelerometers::getThreeAxisAngularAccelerometerName,
+                                       &yarp::dev::IThreeAxisAngularAccelerometers::getThreeAxisAngularAccelerometerFrameName);
     ok = ok && populateSensorsMetadata(m_iThreeAxisMagnetometers, m_sensorMetadata.ThreeAxisMagnetometers, "ThreeAxisMagnetometers",
                                        &yarp::dev::IThreeAxisMagnetometers::getNrOfThreeAxisMagnetometers,
                                        &yarp::dev::IThreeAxisMagnetometers::getThreeAxisMagnetometerName,
@@ -251,6 +263,10 @@ bool MultipleAnalogSensorsServer::populateAllSensorsMetadata()
                                        &yarp::dev::IPositionSensors::getNrOfPositionSensors,
                                        &yarp::dev::IPositionSensors::getPositionSensorName,
                                        &yarp::dev::IPositionSensors::getPositionSensorFrameName);
+    ok = ok && populateSensorsMetadata(m_iLinearVelocitySensors, m_sensorMetadata.LinearVelocitySensors, "LinearVelocitySensors",
+                                       &yarp::dev::ILinearVelocitySensors::getNrOfLinearVelocitySensors,
+                                       &yarp::dev::ILinearVelocitySensors::getLinearVelocitySensorName,
+                                       &yarp::dev::ILinearVelocitySensors::getLinearVelocitySensorFrameName);
     ok = ok && populateSensorsMetadata(m_iOrientationSensors, m_sensorMetadata.OrientationSensors, "OrientationSensors",
                                        &yarp::dev::IOrientationSensors::getNrOfOrientationSensors,
                                        &yarp::dev::IOrientationSensors::getOrientationSensorName,
@@ -325,10 +341,14 @@ bool MultipleAnalogSensorsServer::resizeAllMeasureVectors(SensorStreamingData& s
                                     streamingData.ThreeAxisGyroscopes.measurements, MAS_getMeasureSizeFromEnum(ThreeAxisGyroscopes));
     ok = ok && resizeMeasureVectors(m_iThreeAxisLinearAccelerometers, m_sensorMetadata.ThreeAxisLinearAccelerometers,
                                     streamingData.ThreeAxisLinearAccelerometers.measurements, MAS_getMeasureSizeFromEnum(ThreeAxisLinearAccelerometers));
+    ok = ok && resizeMeasureVectors(m_iThreeAxisAngularAccelerometers, m_sensorMetadata.ThreeAxisAngularAccelerometers,
+                                    streamingData.ThreeAxisAngularAccelerometers.measurements, MAS_getMeasureSizeFromEnum(ThreeAxisAngularAccelerometers));
     ok = ok && resizeMeasureVectors(m_iThreeAxisMagnetometers, m_sensorMetadata.ThreeAxisMagnetometers,
                                     streamingData.ThreeAxisMagnetometers.measurements, MAS_getMeasureSizeFromEnum(ThreeAxisMagnetometers));
     ok = ok && resizeMeasureVectors(m_iPositionSensors, m_sensorMetadata.PositionSensors,
                                     streamingData.PositionSensors.measurements, MAS_getMeasureSizeFromEnum(PositionSensors));
+    ok = ok && resizeMeasureVectors(m_iLinearVelocitySensors, m_sensorMetadata.LinearVelocitySensors,
+                                    streamingData.LinearVelocitySensors.measurements, MAS_getMeasureSizeFromEnum(LinearVelocitySensors));
     ok = ok && resizeMeasureVectors(m_iOrientationSensors, m_sensorMetadata.OrientationSensors,
                                     streamingData.OrientationSensors.measurements, MAS_getMeasureSizeFromEnum(OrientationSensors));
     ok = ok && resizeMeasureVectors(m_iTemperatureSensors, m_sensorMetadata.TemperatureSensors,
@@ -379,8 +399,10 @@ bool MultipleAnalogSensorsServer::attachAll(const yarp::dev::PolyDriverList& p)
     // View all the interfaces
     poly->view(m_iThreeAxisGyroscopes);
     poly->view(m_iThreeAxisLinearAccelerometers);
+    poly->view(m_iThreeAxisAngularAccelerometers);
     poly->view(m_iThreeAxisMagnetometers);
     poly->view(m_iPositionSensors);
+    poly->view(m_iLinearVelocitySensors);
     poly->view(m_iOrientationSensors);
     poly->view(m_iTemperatureSensors);
     poly->view(m_iSixAxisForceTorqueSensors);
@@ -512,6 +534,12 @@ void MultipleAnalogSensorsServer::run()
                                  &yarp::dev::IThreeAxisLinearAccelerometers::getThreeAxisLinearAccelerometerMeasure,
                                  "ThreeAxisLinearAccelerometer");
 
+    ok = ok && genericStreamData(m_iThreeAxisAngularAccelerometers, m_sensorMetadata.ThreeAxisAngularAccelerometers,
+                                 streamingData.ThreeAxisAngularAccelerometers.measurements,
+                                 &yarp::dev::IThreeAxisAngularAccelerometers::getThreeAxisAngularAccelerometerStatus,
+                                 &yarp::dev::IThreeAxisAngularAccelerometers::getThreeAxisAngularAccelerometerMeasure,
+                                 "ThreeAxisAngularAccelerometer");
+
     ok = ok && genericStreamData(m_iThreeAxisMagnetometers, m_sensorMetadata.ThreeAxisMagnetometers,
                                  streamingData.ThreeAxisMagnetometers.measurements,
                                  &yarp::dev::IThreeAxisMagnetometers::getThreeAxisMagnetometerStatus,
@@ -523,6 +551,12 @@ void MultipleAnalogSensorsServer::run()
                                  &yarp::dev::IPositionSensors::getPositionSensorStatus,
                                  &yarp::dev::IPositionSensors::getPositionSensorMeasure,
                                  "PositionSensor");
+
+    ok = ok && genericStreamData(m_iLinearVelocitySensors, m_sensorMetadata.LinearVelocitySensors,
+                                 streamingData.LinearVelocitySensors.measurements,
+                                 &yarp::dev::ILinearVelocitySensors::getLinearVelocitySensorStatus,
+                                 &yarp::dev::ILinearVelocitySensors::getLinearVelocitySensorMeasure,
+                                 "LinearVelocitySensor");
 
     ok = ok && genericStreamData(m_iOrientationSensors, m_sensorMetadata.OrientationSensors,
                                  streamingData.OrientationSensors.measurements,

@@ -28,7 +28,9 @@ enum MAS_SensorType
     ContactLoadCellArrays=6,
     EncoderArrays=7,
     SkinPatches=8,
-    PositionSensors=9
+    PositionSensors=9,
+    LinearVelocitySensors=10,
+    ThreeAxisAngularAccelerometers=11
 };
 
 /**
@@ -86,6 +88,7 @@ class MultipleAnalogSensorsRemapper :
         public yarp::dev::IMultipleWrapper,
         public yarp::dev::IThreeAxisGyroscopes,
         public yarp::dev::IThreeAxisLinearAccelerometers,
+        public yarp::dev::IThreeAxisAngularAccelerometers,
         public yarp::dev::IThreeAxisMagnetometers,
         public yarp::dev::IOrientationSensors,
         public yarp::dev::ITemperatureSensors,
@@ -93,7 +96,8 @@ class MultipleAnalogSensorsRemapper :
         public yarp::dev::IContactLoadCellArrays,
         public yarp::dev::IEncoderArrays,
         public yarp::dev::ISkinPatches,
-        public yarp::dev::IPositionSensors
+        public yarp::dev::IPositionSensors,
+        public yarp::dev::ILinearVelocitySensors
 {
 private:
     bool m_verbose{false};
@@ -118,6 +122,7 @@ private:
 
     std::vector<yarp::dev::IThreeAxisGyroscopes*> m_iThreeAxisGyroscopes;
     std::vector<yarp::dev::IThreeAxisLinearAccelerometers*> m_iThreeAxisLinearAccelerometers;
+    std::vector<yarp::dev::IThreeAxisAngularAccelerometers*> m_iThreeAxisAngularAccelerometers;
     std::vector<yarp::dev::IThreeAxisMagnetometers*> m_iThreeAxisMagnetometers;
     std::vector<yarp::dev::IOrientationSensors*> m_iOrientationSensors;
     std::vector<yarp::dev::ITemperatureSensors*> m_iTemperatureSensors;
@@ -126,6 +131,7 @@ private:
     std::vector<yarp::dev::IEncoderArrays*> m_iEncoderArrays;
     std::vector<yarp::dev::ISkinPatches*> m_iSkinPatches;
     std::vector<yarp::dev::IPositionSensors*> m_iPositionSensors;
+    std::vector<yarp::dev::ILinearVelocitySensors*> m_iLinearVelocitySensors;
 
 
     // Templated methods to streamline of the function implementation for all the different sensors
@@ -189,6 +195,13 @@ public:
     bool getThreeAxisLinearAccelerometerFrameName(size_t sens_index, std::string &frameName) const override;
     bool getThreeAxisLinearAccelerometerMeasure(size_t sens_index, yarp::sig::Vector& out, double& timestamp) const override;
 
+    /* IThreeAxisAngularAccelerometers methods */
+    size_t getNrOfThreeAxisAngularAccelerometers() const override;
+    yarp::dev::MAS_status getThreeAxisAngularAccelerometerStatus(size_t sens_index) const override;
+    bool getThreeAxisAngularAccelerometerName(size_t sens_index, std::string &name) const override;
+    bool getThreeAxisAngularAccelerometerFrameName(size_t sens_index, std::string &frameName) const override;
+    bool getThreeAxisAngularAccelerometerMeasure(size_t sens_index, yarp::sig::Vector& out, double& timestamp) const override;
+
     /* IThreeAxisMagnetometers methods */
     size_t getNrOfThreeAxisMagnetometers() const override;
     yarp::dev::MAS_status getThreeAxisMagnetometerStatus(size_t sens_index) const override;
@@ -245,6 +258,13 @@ public:
     bool getPositionSensorName(size_t sens_index, std::string& name) const override;
     bool getPositionSensorFrameName(size_t sens_index, std::string& frameName) const override;
     bool getPositionSensorMeasure(size_t sens_index, yarp::sig::Vector& xyz, double& timestamp) const override;
+
+    /* ILinearVelocitySensors methods */
+    size_t getNrOfLinearVelocitySensors() const override;
+    yarp::dev::MAS_status getLinearVelocitySensorStatus(size_t sens_index) const override;
+    bool getLinearVelocitySensorName(size_t sens_index, std::string& name) const override;
+    bool getLinearVelocitySensorFrameName(size_t sens_index, std::string& frameName) const override;
+    bool getLinearVelocitySensorMeasure(size_t sens_index, yarp::sig::Vector& xyz, double& timestamp) const override;
 };
 
 

@@ -30,6 +30,8 @@ public:
     std::vector<SensorMetadata> EncoderArrays{};
     std::vector<SensorMetadata> SkinPatches{};
     std::vector<SensorMetadata> PositionSensors{};
+    std::vector<SensorMetadata> LinearVelocitySensors{};
+    std::vector<SensorMetadata> ThreeAxisAngularAccelerometers{};
 
     // Default constructor
     SensorRPCData() = default;
@@ -44,7 +46,9 @@ public:
                   const std::vector<SensorMetadata>& ContactLoadCellArrays,
                   const std::vector<SensorMetadata>& EncoderArrays,
                   const std::vector<SensorMetadata>& SkinPatches,
-                  const std::vector<SensorMetadata>& PositionSensors);
+                  const std::vector<SensorMetadata>& PositionSensors,
+                  const std::vector<SensorMetadata>& LinearVelocitySensors,
+                  const std::vector<SensorMetadata>& ThreeAxisAngularAccelerometers);
 
     // Read structure on a Wire
     bool read(yarp::os::idl::WireReader& reader) override;
@@ -124,6 +128,18 @@ private:
     bool write_PositionSensors(const yarp::os::idl::WireWriter& writer) const;
     bool nested_read_PositionSensors(yarp::os::idl::WireReader& reader);
     bool nested_write_PositionSensors(const yarp::os::idl::WireWriter& writer) const;
+
+    // read/write LinearVelocitySensors field
+    bool read_LinearVelocitySensors(yarp::os::idl::WireReader& reader);
+    bool write_LinearVelocitySensors(const yarp::os::idl::WireWriter& writer) const;
+    bool nested_read_LinearVelocitySensors(yarp::os::idl::WireReader& reader);
+    bool nested_write_LinearVelocitySensors(const yarp::os::idl::WireWriter& writer) const;
+
+    // read/write ThreeAxisAngularAccelerometers field
+    bool read_ThreeAxisAngularAccelerometers(yarp::os::idl::WireReader& reader);
+    bool write_ThreeAxisAngularAccelerometers(const yarp::os::idl::WireWriter& writer) const;
+    bool nested_read_ThreeAxisAngularAccelerometers(yarp::os::idl::WireReader& reader);
+    bool nested_write_ThreeAxisAngularAccelerometers(const yarp::os::idl::WireWriter& writer) const;
 };
 
 #endif // YARP_THRIFT_GENERATOR_STRUCT_SENSORRPCDATA_H
