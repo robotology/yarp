@@ -35,6 +35,8 @@ void FakeMotionControl::run()
 {
     std::lock_guard lock(_mutex);
 
+    _cycleTimestamp = yarp::os::Time::now();
+
     for (int i=0;i <_njoints ;i++)
     {
         if (_controlModes[i] == VOCAB_CM_VELOCITY)
@@ -1694,7 +1696,7 @@ bool FakeMotionControl::getEncodersTimedRaw(double *encs, double *stamps)
     bool ret = getEncodersRaw(encs);
     _mutex.lock();
     for (int i = 0; i < _njoints; i++) {
-        stamps[i] = _encodersStamp[i];
+        stamps[i] = _encodersStamp[i] = _cycleTimestamp;
     }
     _mutex.unlock();
     return ret;
@@ -1704,7 +1706,7 @@ bool FakeMotionControl::getEncoderTimedRaw(int j, double *encs, double *stamp)
 {
     bool ret = getEncoderRaw(j, encs);
     _mutex.lock();
-    *stamp = _encodersStamp[j];
+    *stamp = _encodersStamp[j] = _cycleTimestamp;
     _mutex.unlock();
 
     return ret;
@@ -1802,7 +1804,7 @@ bool FakeMotionControl::getMotorEncodersTimedRaw(double *encs, double *stamps)
     bool ret = getMotorEncodersRaw(encs);
     _mutex.lock();
     for (int i = 0; i < _njoints; i++) {
-        stamps[i] = _encodersStamp[i];
+        stamps[i] = _encodersStamp[i] = _cycleTimestamp;
     }
     _mutex.unlock();
 
@@ -1813,7 +1815,7 @@ bool FakeMotionControl::getMotorEncoderTimedRaw(int m, double *encs, double *sta
 {
     bool ret = getMotorEncoderRaw(m, encs);
     _mutex.lock();
-    *stamp = _encodersStamp[m];
+    *stamp = _encodersStamp[m] = _cycleTimestamp;
     _mutex.unlock();
 
     return ret;

@@ -34,6 +34,12 @@ public:
 
     int dispatch(const char *name, int argc, char *argv[]);
 
+    enum showEnvelopeEnum
+    {
+        do_not_show = 0,
+        show_inline = 1,
+        show_two_lines = 2
+    };
 
     // Defined in Companion.cmdCheck.cpp
     int cmdCheck(int argc, char *argv[]);
@@ -102,7 +108,7 @@ public:
     int cmdPrioritySched(int argc, char *argv[]);
 
     // Defined in Companion.cmdRead.cpp
-    int read(const char *name, const char *src = nullptr, bool showEnvelope = false, bool justOnce = false, int trim = -1);
+    int read(const char *name, const char *src = nullptr, showEnvelopeEnum showEnvelope = showEnvelopeEnum::do_not_show, bool justOnce = false, int trim = -1);
     int cmdRead(int argc, char *argv[]);
 
     // Defined in Companion.cmdReadWrite.cpp

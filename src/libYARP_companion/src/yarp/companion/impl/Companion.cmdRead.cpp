@@ -29,7 +29,7 @@ using yarp::os::NetworkBase;
  * @param trim number of characters of the string that should be printed
  * @return 0 on success, non-zero on failure
  */
-int Companion::read(const char *name, const char *src, bool showEnvelope, bool justOnce, int trim)
+int Companion::read(const char *name, const char *src, Companion::showEnvelopeEnum showEnvelope, bool justOnce, int trim)
 {
     Companion::installHandler();
     BottleReader reader;
@@ -58,12 +58,15 @@ int Companion::cmdRead(int argc, char *argv[])
 
     const char *name = argv[0];
     const char *src = nullptr;
-    bool showEnvelope = false;
+    showEnvelopeEnum showEnvelope = showEnvelopeEnum::do_not_show;
     size_t trim = -1;
     bool justOnce = false;
+    bool envelopeInline = true;
     while (argc>1) {
-        if (strcmp(argv[1], "envelope")==0) {
-            showEnvelope = true;
+        if (strcmp(argv[1], "envelope") == 0) {
+            showEnvelope = showEnvelopeEnum::show_inline;
+        } else if (strcmp(argv[1], "envelope2") == 0) {
+            showEnvelope = showEnvelopeEnum::show_two_lines;
         } else if (strcmp(argv[1], "trim") == 0) {
             argc--;
             argv++;

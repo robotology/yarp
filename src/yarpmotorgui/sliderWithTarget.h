@@ -20,7 +20,7 @@ public:
     bool enableViewLabel = true;
     bool enableViewTargetBox = true;
     bool enableViewTargetValue = false;
-    int  number_of_decimals = 0;
+    int  number_of_decimals = 2;
     bool disableClickOutOfHandle;
     SliderWithTarget(QWidget * parent = 0);
     ~SliderWithTarget();
