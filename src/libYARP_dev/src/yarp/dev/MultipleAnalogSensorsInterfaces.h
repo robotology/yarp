@@ -151,7 +151,7 @@ class YARP_dev_API yarp::dev::IThreeAxisAngularAccelerometers
 {
 public:
     /**
-     * \brief Get the number of three axis linear accelerometers exposed by this device.
+     * \brief Get the number of three axis angular accelerometers exposed by this device.
      */
     virtual size_t getNrOfThreeAxisAngularAccelerometers() const = 0;
 
