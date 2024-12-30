@@ -58,6 +58,14 @@ public:
         height = image.height();
         paramBlobLen = image.getRawImageSize();
     }
+
+    void setToImage(FlexImage& image)
+    {
+        image.setPixelCode(id);
+        //setPixelSize() is already set by setPixelCode
+        image.setQuantum(quantum);
+        image.resize(width, height);
+    }
 };
 YARP_END_PACK
 

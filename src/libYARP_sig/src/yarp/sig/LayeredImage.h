@@ -29,12 +29,20 @@ class YARP_sig_API yarp::sig::ImageLayer
     {
         bool enable = true;
         int  value=0;
+
+        //default constructor
+        colorkey_s() = default;
     } colorkey;
+
     struct alpha_s
     {
         bool  enable = true;
         float value=1.0;
+
+        //default constructor
+        alpha_s() = default;
     } alpha;
+
     bool can_be_compressed = true;
     int offset_x=0;
     int offset_y=0;
