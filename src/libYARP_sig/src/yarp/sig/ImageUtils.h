@@ -69,10 +69,10 @@ bool YARP_sig_API cropRect(const yarp::sig::Image& inImg,
                            yarp::sig::Image& outImg);
 
 /**
- * @brief applies an image on the top over another image.
- * @param[in/out] OutImg the output image. It must be a valid image on the top of which data will be summed. It may contain a backgroud or it can be zero.
+ * @brief applies an image on the top over another image. Currently it is implemented only for RGB Images
+ * @param[in/out] OutImg the output image. It must be a valid image on the top of which data will be summed. It may contain a background or it can be zero.
  * @param[in] InImg the layer to be applied
- * @param[in] colorkey colorkey for the InImg image. If a pixel is == colorkey, then it will be made transparent and the backgroud will be visible.
+ * @param[in] colorkey colorkey for the InImg image. If a pixel is == colorkey, then it will be made transparent and the background will be visible.
  * @param[in] alpha to be applied to InImg.
  * @param[in] off_x horizontal offset applied to InImg. Excess will be cropped.
  * @param[in] off_y vertical offset applied to InImg. Excess will be cropped.

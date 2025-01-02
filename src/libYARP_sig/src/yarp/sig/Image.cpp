@@ -605,9 +605,13 @@ bool Image::operator==(const Image& alt) const
     //test byte per byte
     unsigned char* raw1 = getRawImage();
     unsigned char* raw2 = alt.getRawImage();
-    for (size_t i = 0; i < raw1size; i++, raw1++, raw2++)
+    if (raw1 == nullptr) { return false;}
+    if (raw2 == nullptr) { return false;}
+    for (size_t i = 0; i < raw1size; i++)
     {
-        if (*raw1 != *raw2) { return false; }
+        if (raw1[i] != raw2[i]) {
+            return false;
+        }
     }
     return true;
 }

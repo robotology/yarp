@@ -159,9 +159,7 @@ bool utils::sum(Image& OutImg, const Image& InImg, bool enable_colorkey, int col
     }
 
     yarp::sig::PixelRgb ColorkeyRGB;
-    ColorkeyRGB.r = colorkey;
-    ColorkeyRGB.g = colorkey;
-    ColorkeyRGB.b = colorkey;
+    ColorkeyRGB = *reinterpret_cast<yarp::sig::PixelRgb*>(&colorkey);
 
     size_t yis = InImg.height();
     size_t xis = InImg.width();

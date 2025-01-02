@@ -21,7 +21,23 @@ using namespace yarp::os::impl;
 using namespace yarp::sig;
 using namespace yarp::os;
 
-TEST_CASE("sig::LayeredImageTest", "[yarp::sig]")
+void fillTestImage(FlexImage& img)
+{
+#if 1
+    img.zero();
+#else
+    yarp::sig::ImageOf<yarp::sig::PixelRgb> rgb_img = *(reinterpret_cast<yarp::sig::ImageOf<yarp::sig::PixelRgb>*>(&img));
+    for (size_t iy = 0; iy < rgb_img.height(); iy++)
+        for (size_t ix = 0; ix < rgb_img.width(); ix++)
+        {
+            rgb_img.pixel(ix, iy).r = 1 + ix + iy*10;
+            rgb_img.pixel(ix, iy).g = 2 + ix + iy*10;
+            rgb_img.pixel(ix, iy).b = 3 + ix + iy*10;
+        }
+#endif
+}
+
+    TEST_CASE("sig::LayeredImageTest", "[yarp::sig]")
 {
     NetworkBase::setLocalMode(true);
 
@@ -30,14 +46,17 @@ TEST_CASE("sig::LayeredImageTest", "[yarp::sig]")
         FlexImage imageback;
         imageback.setPixelCode(VOCAB_PIXEL_RGB);
         imageback.resize(4, 8);
+        fillTestImage(imageback);
 
         FlexImage lay0;
         lay0.setPixelCode(VOCAB_PIXEL_RGB);
         lay0.resize(4, 8);
+        fillTestImage(lay0);
 
         FlexImage lay1;
         lay1.setPixelCode(VOCAB_PIXEL_RGB);
         lay1.resize(4, 8);
+        fillTestImage(lay1);
 
         LayeredImage multiLayerImageIn;
         multiLayerImageIn.background = imageback;
@@ -71,6 +90,7 @@ TEST_CASE("sig::LayeredImageTest", "[yarp::sig]")
         FlexImage imageback;
         imageback.setPixelCode(VOCAB_PIXEL_RGB);
         imageback.resize(16, 8);
+        fillTestImage(imageback);
 
         LayeredImage multiLayerImageIn;
         multiLayerImageIn.background = imageback;
@@ -190,26 +210,29 @@ TEST_CASE("sig::LayeredImageTest", "[yarp::sig]")
         yarp::sig::ImageOf<yarp::sig::PixelRgb> lay0;
         lay0.resize(4, 4);
         lay0.zero();
-        imageback.pixel(0, 0).r = 20;
-        imageback.pixel(1, 0).r = 20;
-        imageback.pixel(2, 0).r = 20;
-        imageback.pixel(3, 0).r = 20;
-        imageback.pixel(0, 1).r = 20;
-        imageback.pixel(1, 1).r = 50;
-        imageback.pixel(2, 1).r = 50;
-        imageback.pixel(3, 1).r = 20;
-        imageback.pixel(0, 2).r = 20;
-        imageback.pixel(1, 2).r = 50;
-        imageback.pixel(2, 2).r = 50;
-        imageback.pixel(3, 2).r = 20;
-        imageback.pixel(0, 3).r = 20;
-        imageback.pixel(1, 3).r = 50;
-        imageback.pixel(2, 3).r = 20;
-        imageback.pixel(3, 3).r = 20;
+        lay0.pixel(0, 0).r = 20;
+        lay0.pixel(1, 0).r = 20;
+        lay0.pixel(2, 0).r = 20;
+        lay0.pixel(3, 0).r = 20;
+        lay0.pixel(0, 1).r = 20;
+        lay0.pixel(1, 1).r = 50;
+        lay0.pixel(2, 1).r = 50;
+        lay0.pixel(3, 1).r = 20;
+        lay0.pixel(0, 2).r = 20;
+        lay0.pixel(1, 2).r = 50;
+        lay0.pixel(2, 2).r = 50;
+        lay0.pixel(3, 2).r = 20;
+        lay0.pixel(0, 3).r = 20;
+        lay0.pixel(1, 3).r = 50;
+        lay0.pixel(2, 3).r = 20;
+        lay0.pixel(3, 3).r = 20;
 
         LayeredImage multiLayerImageIn;
         multiLayerImageIn.background = *(reinterpret_cast<yarp::sig::FlexImage*>(&imageback));
         multiLayerImageIn.layers.push_back(*(reinterpret_cast<yarp::sig::FlexImage*>(&lay0)));
+        yarp::sig::PixelRgb colorkeyRgb;
+        colorkeyRgb.r = 20;
+        multiLayerImageIn.layers[0].colorkey.setValueAsPixelRgb(colorkeyRgb);
 
         FlexImage flat_img = multiLayerImageIn;
         yarp::sig::ImageOf<yarp::sig::PixelRgb> flat_rgb_img = *(reinterpret_cast<yarp::sig::ImageOf<yarp::sig::PixelRgb>*>(&flat_img));

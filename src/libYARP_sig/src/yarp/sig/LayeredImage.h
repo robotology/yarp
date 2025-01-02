@@ -25,29 +25,42 @@ class YARP_sig_API yarp::sig::ImageLayer
     public:
     yarp::sig::FlexImage layer;
     bool enable=true;
-    struct colorkey_s
+    class colorkey_s
     {
-        bool enable = true;
-        int  value=0;
+        public:
+        int  value;
+        bool enable;
 
         //default constructor
-        colorkey_s() = default;
-    } colorkey;
+        colorkey_s() : enable(true), value(0) {}
 
-    struct alpha_s
+        void setValueAsPixelRgb(yarp::sig::PixelRgb v)
+        {
+            value = *reinterpret_cast<int*>(&v);
+        }
+        yarp::sig::PixelRgb getValueAsPixelRgb()
+        {
+            return *reinterpret_cast<yarp::sig::PixelRgb*>(&value);
+        }
+    };
+    colorkey_s colorkey;
+
+    class alpha_s
     {
-        bool  enable = true;
-        float value=1.0;
+        public:
+        bool enable;
+        float value;
 
-        //default constructor
-        alpha_s() = default;
-    } alpha;
+        // default constructor
+        alpha_s() : enable(true), value(1.0) {}
+    };
+    alpha_s alpha;
 
     bool can_be_compressed = true;
     int offset_x=0;
     int offset_y=0;
 
-    ImageLayer(const yarp::sig::FlexImage& img, bool ena = true, colorkey_s ckey = colorkey_s {}, alpha_s alph = alpha_s {}, bool compress=true, int off_x = 0, int off_y = 0)
+    ImageLayer(const yarp::sig::FlexImage& img, bool ena = true, colorkey_s ckey = colorkey_s(), alpha_s alph = alpha_s(), bool compress = true, int off_x = 0, int off_y = 0)
     {
         layer = img;
         enable = ena;
