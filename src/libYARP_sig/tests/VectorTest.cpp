@@ -380,7 +380,20 @@ TEST_CASE("sig::VectorTest", "[yarp::sig]")
         CHECK(v[2] == 3.0); // Checking data consistency
     }
 
-    SECTION("Checking the the for range based")
+    SECTION("Checking the erase method")
+    {
+        Vector v{0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0};
+        Vector vtest1{0.0, 1.0, 3.0, 4.0, 5.0, 6.0};
+        Vector vtest2{0.0, 1.0, 5.0, 6.0};
+
+        v.erase(v.begin() + 2);
+        CHECK(v == vtest1);
+
+        v.erase(v.begin() + 2, v.begin()+4);
+        CHECK(v == vtest2);
+    }
+
+    SECTION("Checking the for range based")
     {
         Vector v{0.0, 1.0, 2.0, 3.0, 4.0};
         double i = 0.0;
