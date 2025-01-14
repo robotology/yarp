@@ -43,6 +43,7 @@ set(YARP_sig_SRCS
   yarp/sig/LaserMeasurementData.cpp
   yarp/sig/LayeredImage.cpp
   yarp/sig/Matrix.cpp
+  yarp/sig/PointCloud.cpp
   yarp/sig/PointCloudBase.cpp
   yarp/sig/PointCloudUtils.cpp
   yarp/sig/Sound.cpp

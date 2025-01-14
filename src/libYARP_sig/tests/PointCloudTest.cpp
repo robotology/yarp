@@ -23,6 +23,23 @@ using namespace yarp::os;
 
 float acceptedDiff = 1e-6f;
 
+
+void fillPointCloud(PointCloud<DataXYZRGBA>& pc, int i, double z)
+{
+    pc(i).x = i * 10.0;
+    pc(i).y = i * 10.0;
+    pc(i).z = z;
+    pc(i).r = i * 10;
+    pc(i).g = i * 20;
+    pc(i).b = i * 30;
+    pc(i).a = i * 40;
+}
+
+void testPointCloud(const PointCloud<DataXYZRGBA>& pc, int i, double z)
+{
+    CHECK(pc(i).z == z);
+}
+
 TEST_CASE("sig::PointCloudTest", "[yarp::sig]")
 {
     Network::setLocalMode(true);
@@ -1019,5 +1036,49 @@ TEST_CASE("sig::PointCloudTest", "[yarp::sig]")
 
         CHECK(ok); // Checking data consistency
     }
+
+    SECTION("Testing SortZ")
+    {
+        PointCloud<DataXYZRGBA> testPC;
+        int width = 3;
+        int height = 2;
+        testPC.resize(width, height);
+
+        fillPointCloud(testPC, 0, 2.0);
+        fillPointCloud(testPC, 1, 4.0);
+        fillPointCloud(testPC, 2, 5.0);
+        fillPointCloud(testPC, 3, 3.0);
+        fillPointCloud(testPC, 4, 0.0);
+        fillPointCloud(testPC, 5, 1.0);
+
+        testPC.sortDataZ();
+
+        testPointCloud(testPC, 0, 0.0);
+        testPointCloud(testPC, 1, 1.0);
+        testPointCloud(testPC, 2, 2.0);
+        testPointCloud(testPC, 3, 3.0);
+        testPointCloud(testPC, 4, 4.0);
+        testPointCloud(testPC, 5, 5.0);
+    }
+
+    SECTION("Testing filterDataZ")
+    {
+        PointCloud<DataXYZ> testPC;
+        testPC.push_back(DataXYZ {0, 0, 0.0});
+        testPC.push_back(DataXYZ {0, 0, 3.0});
+        testPC.push_back(DataXYZ {0, 0, 5.0});
+        testPC.push_back(DataXYZ {0, 0, 6.0});
+        testPC.push_back(DataXYZ {0, 0, 7.0});
+        testPC.push_back(DataXYZ {0, 0, 9.0});
+        testPC.push_back(DataXYZ {0, 0, 10.0});
+
+        testPC.filterDataZ(5, 7);
+
+        CHECK(testPC.size() == 3);
+        CHECK(testPC(0).z == 5.0);
+        CHECK(testPC(1).z == 6.0);
+        CHECK(testPC(2).z == 7.0);
+    }
+
     Network::setLocalMode(false);
 }
