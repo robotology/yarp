@@ -224,7 +224,26 @@ public:
     }
 
     /**
-    * Resize the vector and initilize the element to a default value.
+    * Remove an element from the vector.
+    * @param pos iterator pointing at the element to remove
+    */
+    void erase(iterator pos)
+    {
+        bytes.erase(pos);
+    }
+
+    /**
+    * Remove one or more elements from the vector.
+    * @param first iterator pointing at the first element to remove
+    * @param last iterator pointing at the last element to remove
+    */
+    void erase(iterator first, iterator last)
+    {
+        bytes.erase(first, last);
+    }
+
+    /**
+    * Resize the vector and initialize the element to a default value.
     * @param s the new size
     * @param def the default value
     */
@@ -263,7 +282,7 @@ public:
     /**
      * @brief Construct a new element in the vector: size is changed
      * @param args, arguments to be forwarded for constructing the new element.
-     * @return the reference to the new element contructed.
+     * @return the reference to the new element constructed.
      */
     template<typename... _Args>
     inline T& emplace_back(_Args&&... args)
