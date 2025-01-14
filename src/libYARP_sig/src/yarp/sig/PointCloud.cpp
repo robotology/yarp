@@ -305,11 +305,11 @@ void PointCloud<T>::push_back(const T& pt)
 
 } //namespace yarp::sig
 
-template class yarp::sig::PointCloud<yarp::sig::DataXY>;
-template class yarp::sig::PointCloud<yarp::sig::DataXYZ>;
-template class yarp::sig::PointCloud<yarp::sig::DataXYZI>;
-template class yarp::sig::PointCloud<yarp::sig::DataNormal>;
-template class yarp::sig::PointCloud<yarp::sig::DataXYZRGBA>;
-template class yarp::sig::PointCloud<yarp::sig::DataXYZNormal>;
-template class yarp::sig::PointCloud<yarp::sig::DataXYZNormalRGBA>;
-template class yarp::sig::PointCloud<yarp::sig::DataInterestPointXYZ>;
+template class YARP_sig_API yarp::sig::PointCloud<yarp::sig::DataXY>;
+template class YARP_sig_API yarp::sig::PointCloud<yarp::sig::DataXYZ>;
+template class YARP_sig_API yarp::sig::PointCloud<yarp::sig::DataXYZI>;
+template class YARP_sig_API yarp::sig::PointCloud<yarp::sig::DataNormal>;
+template class YARP_sig_API yarp::sig::PointCloud<yarp::sig::DataXYZRGBA>;
+template class YARP_sig_API yarp::sig::PointCloud<yarp::sig::DataXYZNormal>;
+template class YARP_sig_API yarp::sig::PointCloud<yarp::sig::DataXYZNormalRGBA>;
+template class YARP_sig_API yarp::sig::PointCloud<yarp::sig::DataInterestPointXYZ>;
