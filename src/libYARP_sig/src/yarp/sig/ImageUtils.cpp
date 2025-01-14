@@ -6,6 +6,8 @@
 #include <yarp/sig/ImageUtils.h>
 #include <cstring>
 #include <algorithm> // std::math
+#include <yarp/os/Log.h>
+#include <yarp/os/LogStream.h>
 
 using namespace yarp::sig;
 
@@ -137,6 +139,69 @@ bool utils::cropRect(const yarp::sig::Image& inImg,
         const auto * pixelIn = inImg.getPixelAddress(tlx, tly + row);
         memcpy(pixelOut, pixelIn, outImg.getRowSize());
         pixelOut += outImg.getRowSize();
+    }
+
+    return true;
+}
+
+bool utils::sum(Image& OutImg, const Image& InImg, bool enable_colorkey, int colorkey, bool enable_alpha, float alpha, size_t offset_x, size_t offset_y)
+{
+    if (OutImg.getPixelCode() != InImg.getPixelCode())
+    {
+        yError() << "utils::sum() Input and Output images must have the same pixelcode";
+        return false;
+     }
+
+    if (InImg.getPixelCode() != VOCAB_PIXEL_RGB)
+    {
+        yError() << "utils::sum() Unimplemented pixelcode";
+        return false;
+    }
+
+    yarp::sig::PixelRgb ColorkeyRGB;
+    ColorkeyRGB = *reinterpret_cast<yarp::sig::PixelRgb*>(&colorkey);
+
+    size_t yis = InImg.height();
+    size_t xis = InImg.width();
+    size_t yos = OutImg.height();
+    size_t xos = OutImg.width();
+
+    for (size_t y = 0; y < yis; ++y)
+    {
+        for (size_t x = 0; x < xis; ++x)
+        {
+            size_t xo = x + offset_x;
+            size_t yo = y + offset_y;
+            if (xo > xos) {
+                xo = xos;
+            }
+            if (yo > yos) {
+                yo = yos;
+            }
+
+            unsigned char* layer_pointer = InImg.getPixelAddress(x, y);
+            unsigned char* outimg_pointer = OutImg.getPixelAddress(xo, yo);
+
+            yarp::sig::PixelRgb* layer_pointer_rgb = reinterpret_cast<yarp::sig::PixelRgb*>(layer_pointer);
+            yarp::sig::PixelRgb* outimg_pointer_rgb = reinterpret_cast<yarp::sig::PixelRgb*>(outimg_pointer);
+
+            if (enable_colorkey && layer_pointer_rgb->r == ColorkeyRGB.r && layer_pointer_rgb->g == ColorkeyRGB.g && layer_pointer_rgb->b == ColorkeyRGB.b)
+            {
+                continue;
+            }
+            else if (enable_alpha)
+            {
+                outimg_pointer_rgb->r = layer_pointer_rgb->r * alpha + outimg_pointer_rgb->r * (1 - alpha);
+                outimg_pointer_rgb->g = layer_pointer_rgb->g * alpha + outimg_pointer_rgb->g * (1 - alpha);
+                outimg_pointer_rgb->b = layer_pointer_rgb->b * alpha + outimg_pointer_rgb->b * (1 - alpha);
+            }
+            else
+            {
+                outimg_pointer_rgb->r = layer_pointer_rgb->r;
+                outimg_pointer_rgb->g = layer_pointer_rgb->g;
+                outimg_pointer_rgb->b = layer_pointer_rgb->b;
+            }
+        }
     }
 
     return true;

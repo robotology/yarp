@@ -8,6 +8,7 @@ add_executable(harness_sig)
 target_sources(harness_sig
   PRIVATE
     ImageTest.cpp
+    LayeredImageTest.cpp
     MatrixTest.cpp
     PointCloudTest.cpp
     SoundTest.cpp

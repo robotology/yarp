@@ -25,6 +25,7 @@
 #include <yarp/os/ResourceFinder.h>
 #include <yarp/os/LogStream.h>
 #include <yarp/sig/Image.h>
+#include <yarp/sig/LayeredImage.h>
 
 using namespace yarp::os;
 using namespace yarp::sig;
@@ -62,6 +63,7 @@ void display_help()
     yInfo() << "--record_start";
     yInfo() << "--record_fps";
     yInfo() << "--record_codec";
+    yInfo() << "--layered";
 }
 
 int main(int argc, char* argv[])
@@ -98,14 +100,38 @@ int main(int argc, char* argv[])
     std::string remote = rf.check("remote", Value(""), "remote port name").asString();
     std::string carrier = rf.check("carrier", Value("fast_tcp"), "carrier name").asString();
     std::string local = rf.check("local", Value("/yarpopencvdisplay:i"), "local port name").asString();
+    bool layered = rf.check("layered", Value(false), "set if the input port will receive a layered image or not").asBool();
+    size_t visible_layers = 10;
 
     yInfo() << "yarpopencvdisplay ready. Press ESC to quit.";
 
-    BufferedPort<yarp::sig::ImageOf<yarp::sig::PixelRgb>> inputPort;
-    if (inputPort.open(local) == false) {
+    yarp::os::Contactable* inputPort = nullptr;
+    if (!layered)
+    {
+        inputPort = new BufferedPort<yarp::sig::ImageOf<yarp::sig::PixelRgb>>;
+    }
+    else
+    {
+        inputPort = new BufferedPort<yarp::sig::LayeredImage>;
+    }
+
+    if (inputPort->open(local) == false)
+    {
         yError() << "Failed to open port" << local;
         return 0;
     }
+    else
+    {
+        if (layered)
+        {
+            yInfo() << "Opened LAYERED port:" << local;
+        }
+        else
+        {
+            yInfo() << "Opened port:" << local;
+        }
+    }
+
     if (!remote.empty()) {
         if (yarp::os::Network::connect(remote, local, carrier)) {
             yInfo() << "Successfully connected to port:" << remote;
@@ -125,29 +151,69 @@ int main(int argc, char* argv[])
 
     bool exit = false;
 
+
+    FlexImage* fl = nullptr;
+    yarp::sig::ImageOf<yarp::sig::PixelRgb>* imgdata = nullptr;
+
     while(!exit)
     {
         //Receive image and draw
         {
-            auto* imgport = inputPort.read(false);
-            if (imgport)
+            if (layered)
+            {
+                BufferedPort<yarp::sig::LayeredImage>* ip = dynamic_cast<BufferedPort<yarp::sig::LayeredImage>*>(inputPort);
+                yarp::sig::LayeredImage* ly = ip->read(false);
+                if (ly)
+                {
+                    if (fl)
+                    {
+                        delete fl;
+                        fl = nullptr;
+                    }
+                    for (size_t i = 0; i < ly->layers.size(); i++)
+                    {
+                        if (i < visible_layers)
+                        {
+                            ly->layers[i].enable = true;
+                        }
+                        else
+                        {
+                            ly->layers[i].enable = false;
+                        }
+                    }
+                    fl = new FlexImage(*ly);
+                    imgdata = (reinterpret_cast<yarp::sig::ImageOf<yarp::sig::PixelRgb>*>(fl));
+                }
+            }
+            else
+            {
+                BufferedPort <yarp::sig::ImageOf<yarp::sig::PixelRgb>>* ip = dynamic_cast < BufferedPort < yarp::sig::ImageOf<yarp::sig::PixelRgb>>*>(inputPort);
+                yarp::sig::ImageOf<yarp::sig::PixelRgb>* ir = ip->read(false);
+                if (ir)
+                {
+                    imgdata = ir;
+                }
+            }
+
+            //if received a new frame, then draw/save it
+            if (imgdata!=nullptr)
             {
                 static double old = yarp::os::Time::now();
                 double now = yarp::os::Time::now();
                 stats.interval_time = now - old;
                 old = yarp::os::Time::now();
 
-                //if first received frame
+                //if this is first received frame, allocate a buffer on the specific size
                 if (frame.empty())
                 {
-                    yDebug() << "First frame received with size" << imgport->width() << imgport->height();
+                    yDebug() << "First frame received with size" << imgdata->width() << imgdata->height();
                     //create the buffer for the frame
-                    frame = cv::Mat(imgport->width(), imgport->height(), CV_8UC3);
-                    //if optionally requested to create an avi file, cretate the file
+                    frame = cv::Mat(imgdata->width(), imgdata->height(), CV_8UC3);
+                    //if optionally requested to create an avi file, create the file
                     if (filename.empty() == false)
                     {
                         int codec = cv::VideoWriter::fourcc(codec_s[0], codec_s[1], codec_s[2], codec_s[3]);
-                        cv::Size frame_size(imgport->width(), imgport->height());
+                        cv::Size frame_size(imgdata->width(), imgdata->height());
                         bool ret = videowriter.open(filename.c_str(), codec, fps, frame_size, true);
                         if (!ret || videowriter.isOpened() == false)
                         {
@@ -156,35 +222,39 @@ int main(int argc, char* argv[])
                         }
                     }
                 }
-                else if (frame.cols != (int)imgport->width() || frame.rows != (int)imgport->height())
+                //you also need to realloc the buffer if the received frame changed size
+                else if (frame.cols != (int)imgdata->width() || frame.rows != (int)imgdata->height())
                 {
-                    frame = cv::Mat(imgport->height(), imgport->width(), CV_8UC3);
+                    yDebug() << "Steam has received a frame with different size" << imgdata->width() << imgdata->height();
+                    frame = cv::Mat(imgdata->height(), imgdata->width(), CV_8UC3);
                 }
 
+                //copy the data from the yarp structure 'imgdata' to the opencv structure 'frame'
                 double a = yarp::os::Time::now();
-                for (size_t y = 0; y < imgport->height(); y++) {
-                    for (size_t x = 0; x < imgport->width(); x++) {
-                        PixelRgb& yarpPixel = imgport->pixel(x, y);
+                for (size_t y = 0; y < imgdata->height(); y++) {
+                    for (size_t x = 0; x < imgdata->width(); x++) {
+                        PixelRgb& yarpPixel = imgdata->pixel(x, y);
                         frame.at<cv::Vec3b>(y, x) = cv::Vec3b(yarpPixel.b, yarpPixel.g, yarpPixel.r);
                     }
                 }
+
+                //add stats to frame
                 double b = yarp::os::Time::now();
                 stats.copy_time = b - a;
-
-                if (!frame.empty())
+                if (verbose)
                 {
-                    if (verbose)
-                    {
-                        yDebug("copytime: %5.3f frameintervale %5.3f", stats.copy_time, stats.interval_time);
-                        drawImageExtraStuff(frame);
-                    }
-
-                    if (recording) {
-                        videowriter.write(frame);
-                    }
-
-                    cv::imshow(window_name, frame);
+                    yDebug("copytime: %5.3f frameintervale %5.3f", stats.copy_time, stats.interval_time);
+                    drawImageExtraStuff(frame);
                 }
+
+                //save to file
+                if (recording)
+                {
+                    videowriter.write(frame);
+                }
+
+                //draw
+                cv::imshow(window_name, frame);
             }
         }
 
@@ -206,8 +276,12 @@ int main(int argc, char* argv[])
                 yInfo("recording is now OFF");
             }
         }
-        if(keypressed == 's')
-        {
+        if (keypressed == 'l') {
+            visible_layers++;
+            if (visible_layers > 10) {
+                visible_layers = 0;
+                yInfo("Changed max number of visible Layers: %d", visible_layers);
+            }
         }
         if(keypressed == 'v' )
         {
@@ -220,7 +294,8 @@ int main(int argc, char* argv[])
         }
     }
 
-    inputPort.close();
+    inputPort->close();
+    delete inputPort;
 
     cv::destroyAllWindows();
 
