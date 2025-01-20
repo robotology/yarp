@@ -1590,6 +1590,29 @@ typedef yarp::os::BufferedPort<ImageRgbFloat> BufferedPortImageRgbFloat;
     }
 }
 
+%extend yarp::dev::IFrameTransform {
+    std::string allFramesAsString() {
+        std::string outputString;
+        bool ok = self->allFramesAsString(outputString);
+        if (!ok) return "";
+        return outputString;
+    }
+
+    std::vector<std::string> getAllFrameIds() {
+        std::vector<std::string> frameIds;
+        bool ok = self->getAllFrameIds(frameIds);
+        if (!ok) return std::vector<std::string>();
+        return frameIds;
+    }
+
+    std::string getParent(const std::string& frameId) {
+        std::string parent;
+        bool ok = self->getParent(frameId, parent);
+        if (!ok) return "unknown";
+        return parent;
+    }
+}
+
 // This is part is currently broken in SWIG + java generator since SWIG 3.0.3
 // (last swig version tested: 3.0.12)
 // See also https://github.com/robotology/yarp/issues/1770
