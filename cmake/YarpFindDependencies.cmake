@@ -497,6 +497,10 @@ yarp_dependent_option(
 )
 yarp_renamed_option(CREATE_LIB_MATH YARP_COMPILE_libYARP_math) # Deprecated since YARP 3.2
 
+if(NOT YARP_COMPILE_libYARP_math)
+  add_definitions(-DYARP_NO_MATH)
+endif()
+
 yarp_dependent_option(
   YARP_COMPILE_libYARP_robotinterface "Do you want to compile the library YARP_robotinterface?" ON
   "YARP_HAS_TinyXML" OFF
