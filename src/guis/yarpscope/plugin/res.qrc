@@ -3,9 +3,9 @@
     <file>YARPScopeToolBar.qml</file>
     <file>YARPScopeMenu.qml</file>
     <file>YARPScopeAbout.qml</file>
-    <file alias="images/pause.png">../../../data/icons/256x256/pause.png</file>
-    <file alias="images/play.png">../../../data/icons/256x256/play.png</file>
-    <file alias="images/action-clear.png">../../../data/icons/256x256/action-clear.png</file>
-    <file alias="images/action-rescale.png">../../../data/icons/256x256/action-rescale.png</file>
+    <file alias="images/pause.png">../../../../data/icons/256x256/pause.png</file>
+    <file alias="images/play.png">../../../../data/icons/256x256/play.png</file>
+    <file alias="images/action-clear.png">../../../../data/icons/256x256/action-clear.png</file>
+    <file alias="images/action-rescale.png">../../../../data/icons/256x256/action-rescale.png</file>
 </qresource>
 </RCC>
