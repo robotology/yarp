@@ -13,6 +13,15 @@ namespace {
 YARP_LOG_COMPONENT(POINTCLOUDUTILS, "yarp.sig.PointCloudUtils")
 }
 
+inline void manipulateCoords(double& x, double& y, double& z, const char axis [7] = "+x+y+z")
+{
+    if (axis[0] == '-') {x=-x;}
+    if (axis[1] == 'x') {x=x;}
+
+    if (axis[2] == '-') {y=-y;}
+    if (axis[4] == '-') {z=-z;}
+}
+
 PointCloud<DataXYZ> utils::depthToPC(const yarp::sig::ImageOf<PixelFloat> &depth,
                                      const yarp::sig::IntrinsicParams &intrinsic)
 {
@@ -29,9 +38,14 @@ PointCloud<DataXYZ> utils::depthToPC(const yarp::sig::ImageOf<PixelFloat> &depth
             //                          x = (u - ppx)/ fx * z
             //                          y = (v - ppy)/ fy * z
             //                          z = z
-            pointCloud(u,v).x = (u - intrinsic.principalPointX)/intrinsic.focalLengthX*depth.pixel(u,v);
-            pointCloud(u,v).y = (v - intrinsic.principalPointY)/intrinsic.focalLengthY*depth.pixel(u,v);
-            pointCloud(u,v).z = depth.pixel(u,v);
+            double x = (u - intrinsic.principalPointX)/intrinsic.focalLengthX*depth.pixel(u,v);
+            double y = (v - intrinsic.principalPointY)/intrinsic.focalLengthY*depth.pixel(u,v);
+            double z = depth.pixel(u,v);
+            char ttt [7]= "+x+y+z";
+            manipulateCoords(x, y, z, ttt);
+            pointCloud(u, v).x = x;
+            pointCloud(u, v).y = y;
+            pointCloud(u, v).z = z;
         }
     }
     return pointCloud;
@@ -65,9 +79,14 @@ PointCloud<DataXYZ> utils::depthToPC(const yarp::sig::ImageOf<PixelFloat>& depth
             //                          x = (u - ppx)/ fx * z
             //                          y = (v - ppy)/ fy * z
             //                          z = z
-            pointCloud(i, j).x = (u - intrinsic.principalPointX) / intrinsic.focalLengthX * depth.pixel(u, v);
-            pointCloud(i, j).y = (v - intrinsic.principalPointY) / intrinsic.focalLengthY * depth.pixel(u, v);
-            pointCloud(i, j).z = depth.pixel(u, v);
+            double x = (u - intrinsic.principalPointX) / intrinsic.focalLengthX * depth.pixel(u, v);
+            double y = (v - intrinsic.principalPointY) / intrinsic.focalLengthY * depth.pixel(u, v);
+            double z = depth.pixel(u, v);
+            char ttt [7]= "+x+y+z";
+            manipulateCoords(x, y, z, ttt);
+            pointCloud(i, j).x = x;
+            pointCloud(i, j).y = y;
+            pointCloud(i, j).z = z;
         }
     }
     return pointCloud;
