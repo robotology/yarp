@@ -19,4 +19,3 @@ if(YARP_COMPILE_EXECUTABLES)
     add_subdirectory(yarplaserscannergui)
     add_subdirectory(yarpopencvdisplay)
 endif()
-

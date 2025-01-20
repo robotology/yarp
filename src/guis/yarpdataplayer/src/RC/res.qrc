@@ -1,19 +1,19 @@
 <!DOCTYPE RCC><RCC version="1.0">
 <qresource>
-    <file alias="forward.svg">../../../../data/icons/scalable/actions-media-seek-forward.svg</file>
-    <file alias="pause.svg">../../../../data/icons/scalable/actions-media-pause.svg</file>
-    <file alias="play.svg">../../../../data/icons/scalable/actions-media-play.svg</file>
-    <file alias="backward.svg">../../../../data/icons/scalable/actions-media-seek-backward.svg</file>
-    <file alias="stop.svg">../../../../data/icons/scalable/actions-media-stop.svg</file>
-    <file alias="folder-new.svg">../../../../data/icons/scalable/folder-new.svg</file>
-    <file alias="close.svg">../../../../data/icons/scalable/actions-close.svg</file>
-    <file alias="images/splash/bg1.png">../../../../data/icons/512x512/bg1.png</file>
-    <file alias="images/splash/bg2.png">../../../../data/icons/512x512/bg2.png</file>
-    <file alias="images/splash/bg3.png">../../../../data/icons/512x512/bg3.png</file>
-    <file alias="images/splash/bg4.png">../../../../data/icons/512x512/bg4.png</file>
-    <file alias="images/splash/bg5.png">../../../../data/icons/512x512/bg5.png</file>
-    <file alias="images/splash/bg6.png">../../../../data/icons/512x512/bg6.png</file>
-    <file alias="images/splash/bg7.png">../../../../data/icons/512x512/bg7.png</file>
-    <file alias="images/splash/bg8.png">../../../../data/icons/512x512/bg8.png</file>
+    <file alias="forward.svg">../../../../../data/icons/scalable/actions-media-seek-forward.svg</file>
+    <file alias="pause.svg">../../../../../data/icons/scalable/actions-media-pause.svg</file>
+    <file alias="play.svg">../../../../../data/icons/scalable/actions-media-play.svg</file>
+    <file alias="backward.svg">../../../../../data/icons/scalable/actions-media-seek-backward.svg</file>
+    <file alias="stop.svg">../../../../../data/icons/scalable/actions-media-stop.svg</file>
+    <file alias="folder-new.svg">../../../../../data/icons/scalable/folder-new.svg</file>
+    <file alias="close.svg">../../../../../data/icons/scalable/actions-close.svg</file>
+    <file alias="images/splash/bg1.png">../../../../../data/icons/512x512/bg1.png</file>
+    <file alias="images/splash/bg2.png">../../../../../data/icons/512x512/bg2.png</file>
+    <file alias="images/splash/bg3.png">../../../../../data/icons/512x512/bg3.png</file>
+    <file alias="images/splash/bg4.png">../../../../../data/icons/512x512/bg4.png</file>
+    <file alias="images/splash/bg5.png">../../../../../data/icons/512x512/bg5.png</file>
+    <file alias="images/splash/bg6.png">../../../../../data/icons/512x512/bg6.png</file>
+    <file alias="images/splash/bg7.png">../../../../../data/icons/512x512/bg7.png</file>
+    <file alias="images/splash/bg8.png">../../../../../data/icons/512x512/bg8.png</file>
 </qresource>
 </RCC>

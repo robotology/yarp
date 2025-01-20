@@ -1,21 +1,21 @@
 <!DOCTYPE RCC><RCC version="1.0">
 <qresource>
-    <file alias="logo.svg">../../data/icons/scalable/yarplogger.svg</file>
-    <file alias="images/run.png">../../data/icons/24x24/run.png</file>
-    <file alias="images/stop.png">../../data/icons/24x24/stop.png</file>
-    <file alias="images/progress.png">../../data/icons/24x24/progress.png</file>
-    <file alias="images/save.png">../../data/icons/24x24/save.png</file>
-    <file alias="images/error.png">../../data/icons/24x24/error.png</file>
-    <file alias="images/error_b.png">../../data/icons/24x24/error_b.png</file>
-    <file alias="images/info.png">../../data/icons/24x24/info.png</file>
-    <file alias="images/info_b.png">../../data/icons/24x24/info_b.png</file>
-    <file alias="images/warning.png">../../data/icons/24x24/warning.png</file>
-    <file alias="images/warning_b.png">../../data/icons/24x24/warning_b.png</file>
-    <file alias="images/trace.png">../../data/icons/24x24/trace.png</file>
-    <file alias="images/trace_b.png">../../data/icons/24x24/trace_b.png</file>
-    <file alias="images/all.png">../../data/icons/22x22/all.png</file>
-    <file alias="images/all_b.png">../../data/icons/22x22/all_b.png</file>
-    <file alias="images/debug.png">../../data/icons/22x22/debug.png</file>
-    <file alias="images/debug_b.png">../../data/icons/22x22/debug_b.png</file>
+    <file alias="logo.svg">../../../data/icons/scalable/yarplogger.svg</file>
+    <file alias="images/run.png">../../../data/icons/24x24/run.png</file>
+    <file alias="images/stop.png">../../../data/icons/24x24/stop.png</file>
+    <file alias="images/progress.png">../../../data/icons/24x24/progress.png</file>
+    <file alias="images/save.png">../../../data/icons/24x24/save.png</file>
+    <file alias="images/error.png">../../../data/icons/24x24/error.png</file>
+    <file alias="images/error_b.png">../../../data/icons/24x24/error_b.png</file>
+    <file alias="images/info.png">../../../data/icons/24x24/info.png</file>
+    <file alias="images/info_b.png">../../../data/icons/24x24/info_b.png</file>
+    <file alias="images/warning.png">../../../data/icons/24x24/warning.png</file>
+    <file alias="images/warning_b.png">../../../data/icons/24x24/warning_b.png</file>
+    <file alias="images/trace.png">../../../data/icons/24x24/trace.png</file>
+    <file alias="images/trace_b.png">../../../data/icons/24x24/trace_b.png</file>
+    <file alias="images/all.png">../../../data/icons/22x22/all.png</file>
+    <file alias="images/all_b.png">../../../data/icons/22x22/all_b.png</file>
+    <file alias="images/debug.png">../../../data/icons/22x22/debug.png</file>
+    <file alias="images/debug_b.png">../../../data/icons/22x22/debug_b.png</file>
 </qresource>
 </RCC>
