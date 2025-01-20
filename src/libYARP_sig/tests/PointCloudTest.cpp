@@ -1080,5 +1080,81 @@ TEST_CASE("sig::PointCloudTest", "[yarp::sig]")
         CHECK(testPC(2).z == 7.0);
     }
 
+    SECTION("Testing depthRgbToPC with decimation (organized)")
+    {
+        ImageOf<PixelFloat> depth;
+        size_t width {40};
+        size_t height {30};
+        depth.resize(width, height);
+        IntrinsicParams intp;
+
+        auto pc = utils::depthToPC(depth, intp);
+        CHECK(pc.width() == depth.width());   // Checking PC width
+        CHECK(pc.height() == depth.height()); // Checking PC height
+
+        // create the depth
+        double distance = 0;
+        for (size_t y = 0; y < depth.height(); y++)
+           for (size_t x = 0; x < depth.width(); x++)
+            {
+                depth(x, y) = distance;
+                distance += 1.0f;
+            }
+
+        ImageOf<PixelRgba> color;
+        color.resize(width, height);
+        auto pcCol = utils::depthRgbToPC<DataXYZRGBA, PixelRgba>(depth, color, intp,yarp::sig::utils::OrganizationType::Organized, 2,2);
+
+        //check the contents
+        CHECK(pcCol.width() == depth.width()/2); // Checking PC width
+        CHECK(pcCol.height() == depth.height()/2); // Checking PC height
+        double distance_c = 0;
+        for (size_t y = 0; y < depth.height()/2; y++)
+            for (size_t x = 0; x < depth.width()/2; x++)
+            {
+                distance_c = (y * 2.0 * depth.width() + x * 2.0);
+                CHECK(pcCol(x, y).z == distance_c);
+            }
+    }
+
+    SECTION("Testing depthRgbToPC with decimation (not organized)")
+    {
+        ImageOf<PixelFloat> depth;
+        size_t width {6};
+        size_t height {4};
+        depth.resize(width, height);
+        IntrinsicParams intp;
+
+        auto pc = utils::depthToPC(depth, intp);
+        CHECK(pc.width() == depth.width());   // Checking PC width
+        CHECK(pc.height() == depth.height()); // Checking PC height
+
+        // create the depth
+        double distance = 0;
+        for (size_t y = 0; y < depth.height(); y++)
+            for (size_t x = 0; x < depth.width(); x++)
+            {
+                depth(x, y) = distance;
+                distance += 1.0f;
+            }
+
+        ImageOf<PixelRgba> color;
+        color.resize(width, height);
+        auto pcCol = utils::depthRgbToPC<DataXYZRGBA, PixelRgba>(depth, color, intp,yarp::sig::utils::OrganizationType::Unorganized, 2,2);
+
+        //check the contents
+        CHECK(pcCol.width() == width*height/4); // Checking PC width
+        CHECK(pcCol.height() == 1); // unorganized PC are one height only
+        double distance_c = 0;
+        for (size_t y = 0; y < 1; y++)
+            for (size_t x = 0; x < depth.width()/2*depth.height()/2; x++)
+            {
+                size_t cx = x % (depth.height()/2);
+                size_t cy = x / (depth.height()/2);
+                distance_c = (cy * 2.0 + cx * 2.0 * depth.width());
+                CHECK(pcCol(x, y).z == distance_c);
+            }
+    }
+
     Network::setLocalMode(false);
 }
