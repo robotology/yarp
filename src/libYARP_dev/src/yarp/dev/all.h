@@ -41,6 +41,7 @@
 #include <yarp/dev/ISpeechTranscription.h>
 #include <yarp/dev/ILLM.h>
 #include <yarp/dev/IChatBot.h>
+#include <yarp/dev/IFrameTransform.h>
 
 #ifndef YARP_NO_DEPRECATED // since YARP 3.5
 #define YARP_INCLUDING_DEPRECATED_HEADER_YARP_DEV_FRAMEGRABBER_H_ON_PURPOSE

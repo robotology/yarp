@@ -430,6 +430,7 @@ MAKE_COMMS(Bottle)
 %include <yarp/dev/ISpeechTranscription.h>
 %include <yarp/dev/ILLM.h>
 %include <yarp/dev/MultipleAnalogSensorsInterfaces.h>
+#include <yarp/dev/IFrameTransform.h>
 
 #ifndef YARP_NO_DEPRECATED // Since YARP 3.5.0
 %include <yarp/dev/IFrameGrabber.h>
@@ -825,6 +826,7 @@ typedef yarp::os::BufferedPort<ImageRgbFloat> BufferedPortImageRgbFloat;
     CAST_POLYDRIVER_TO_INTERFACE(ISpeechSynthesizer)
     CAST_POLYDRIVER_TO_INTERFACE(ISpeechTranscription)
     CAST_POLYDRIVER_TO_INTERFACE(ILLM)
+    CAST_POLYDRIVER_TO_INTERFACE(IFrameTransform)
 
 // These views are currently disabled in SWIG + java generator since they are
 // useless without the EXTENDED_ANALOG_SENSOR_INTERFACE part.
