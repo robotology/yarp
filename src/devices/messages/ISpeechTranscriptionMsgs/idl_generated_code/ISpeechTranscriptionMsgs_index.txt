@@ -1,3 +1,5 @@
+return_set_language.h
+return_set_language.cpp
 return_get_language.h
 return_get_language.cpp
 return_transcribe.h

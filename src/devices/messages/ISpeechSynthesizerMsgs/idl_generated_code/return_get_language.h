@@ -13,20 +13,21 @@
 
 #include <yarp/os/Wire.h>
 #include <yarp/os/idl/WireTypes.h>
+#include <yarp/dev/ReturnValue.h>
 
 class return_get_language :
         public yarp::os::idl::WirePortable
 {
 public:
     // Fields
-    bool ret{false};
+    yarp::dev::yarp_ret_value ret{};
     std::string language{};
 
     // Default constructor
     return_get_language() = default;
 
     // Constructor with field values
-    return_get_language(const bool ret,
+    return_get_language(const yarp::dev::yarp_ret_value& ret,
                         const std::string& language);
 
     // Read structure on a Wire

@@ -13,20 +13,21 @@
 
 #include <yarp/os/Wire.h>
 #include <yarp/os/idl/WireTypes.h>
+#include <yarp/dev/ReturnValue.h>
 
 class return_get_speed :
         public yarp::os::idl::WirePortable
 {
 public:
     // Fields
-    bool ret{false};
+    yarp::dev::yarp_ret_value ret{};
     double speed{0.0};
 
     // Default constructor
     return_get_speed() = default;
 
     // Constructor with field values
-    return_get_speed(const bool ret,
+    return_get_speed(const yarp::dev::yarp_ret_value& ret,
                      const double speed);
 
     // Read structure on a Wire

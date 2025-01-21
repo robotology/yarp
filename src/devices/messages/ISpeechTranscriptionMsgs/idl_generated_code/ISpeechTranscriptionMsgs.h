@@ -14,6 +14,7 @@
 #include <yarp/os/Wire.h>
 #include <yarp/os/idl/WireTypes.h>
 #include <return_get_language.h>
+#include <return_set_language.h>
 #include <return_transcribe.h>
 #include <yarp/sig/Sound.h>
 
@@ -24,7 +25,7 @@ public:
     // Constructor
     ISpeechTranscriptionMsgs();
 
-    virtual bool set_language(const std::string& language);
+    virtual return_set_language set_language(const std::string& language);
 
     virtual return_get_language get_language();
 

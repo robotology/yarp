@@ -13,20 +13,21 @@
 
 #include <yarp/os/Wire.h>
 #include <yarp/os/idl/WireTypes.h>
+#include <yarp/dev/ReturnValue.h>
 
 class return_get_pitch :
         public yarp::os::idl::WirePortable
 {
 public:
     // Fields
-    bool ret{false};
+    yarp::dev::yarp_ret_value ret{};
     double pitch{0.0};
 
     // Default constructor
     return_get_pitch() = default;
 
     // Constructor with field values
-    return_get_pitch(const bool ret,
+    return_get_pitch(const yarp::dev::yarp_ret_value& ret,
                      const double pitch);
 
     // Read structure on a Wire
