@@ -21,7 +21,7 @@ open my $handle, '<', "tests/misc/check_license_skip.txt";
 chomp(my @skip_files = <$handle>);
 close $handle;
 
-my $copyright_iit = "(2006-2021|2006-2022|2006-2023|2023|2023-2023|2024|2024-2024) Istituto Italiano di Tecnologia \\(IIT\\)";
+my $copyright_iit = "(2006-2021|2006-2022|2006-2023|2023|2023-2023|2024|2024-2024|2025|2025-2025) Istituto Italiano di Tecnologia \\(IIT\\)";
 my $copyright_robocub = "2006-2010 RobotCub Consortium";
 
 my $str_bsd3_cpp = <<END;
@@ -427,8 +427,8 @@ foreach my $filename (@files) {
 
     # GPL3+
     if ("$txt" =~ /$str_gpl3_or_later/s) {
-        if ("$filename" =~ /src\/yarpviz\/.*\.(cpp|h|qml)/ ||
-            "$filename" =~ /src\/yarpscope\/.*\.(cpp|h|qml)/ ||
+        if ("$filename" =~ /src\/guis\/yarpviz\/.*\.(cpp|h|qml)/ ||
+            "$filename" =~ /src\/guis\/yarpscope\/.*\.(cpp|h|qml)/ ||
             "$filename" =~ /example\/ContainerExample\/.*\.(cpp|h|qml)/) {
             # yarpviz and yarpscope are necessarily GPL3+
             print_if_verbose "[OK - GPL3+ (.$1)] $filename\n";

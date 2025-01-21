@@ -1,0 +1,38 @@
+<!DOCTYPE RCC><RCC version="1.0">
+<qresource prefix="/">
+    <file alias="play.svg">../../../data/icons/scalable/actions-media-play_B.svg</file>
+    <file alias="play-all.svg">../../../data/icons/scalable/actions-media-seek-forward_B.svg</file>
+    <file alias="idle.svg">../../../data/icons/scalable/actions-media-pause_B.svg</file>
+    <file alias="stop.svg">../../../data/icons/scalable/actions-media-stop_B.svg</file>
+    <file alias="home.svg">../../../data/icons/scalable/home.svg</file>
+    <file alias="time.svg">../../../data/icons/scalable/clock.svg</file>
+    <file alias="file-save.svg">../../../data/icons/scalable/file-save.svg</file>
+    <file alias="file-new.svg">../../../data/icons/scalable/file-new.svg</file>
+    <file alias="file-open.svg">../../../data/icons/scalable/file-open.svg</file>
+    <file alias="apply.svg">../../../data/icons/scalable/actions-apply.svg</file>
+    <file alias="warning.svg">../../../data/icons/scalable/actions-warning.svg</file>
+    <file alias="folder-new.svg">../../../data/icons/scalable/folder-new.svg</file>
+    <file alias="logo.svg">../../../data/icons/scalable/home.svg</file>
+    <file alias="action1.svg">../../../data/icons/scalable/action1.svg</file>
+    <file alias="action2.svg">../../../data/icons/scalable/action2.svg</file>
+    <file alias="images/goAll.png">../../../data/icons/256x256/goAll.png</file>
+    <file alias="images/cycleAllSequence.png">../../../data/icons/256x256/cycleAllSequence.png</file>
+    <file alias="images/cycleAllSequenceTime.png">../../../data/icons/256x256/cycleAllSequenceTime.png</file>
+    <file alias="images/load.png">../../../data/icons/256x256/load.png</file>
+    <file alias="images/loadAllSequence.png">../../../data/icons/256x256/loadAllSequence.png</file>
+    <file alias="images/openSequence.png">../../../data/icons/256x256/openSequence.png</file>
+    <file alias="images/runSequence.png">../../../data/icons/256x256/runSequence.png</file>
+    <file alias="images/runSequenceTime.png">../../../data/icons/256x256/runSequenceTime.png</file>
+    <file alias="images/saveAllSequence.png">../../../data/icons/256x256/saveAllSequence.png</file>
+    <file alias="images/stop.png">../../../data/icons/256x256/stop.png</file>
+    <file alias="images/playParts.png">../../../data/icons/256x256/playParts.png</file>
+    <file alias="images/jointOk.svg">../../../data/icons/scalable/jointOk.svg</file>
+    <file alias="images/warning.png">../../../data/icons/256x256/warning.png</file>
+    <file alias="images/app-upload.png">../../../data/icons/128x128/app-upload.png</file>
+    <file alias="images/calibrate.png">../../../data/icons/128x128/calibrate.png</file>
+    <file alias="images/idle.png">../../../data/icons/128x128/idle.png</file>
+    <file alias="images/save.png">../../../data/icons/128x128/save.png</file>
+    <file alias="images/downArrow.png">../../../data/icons/16x16/downArrow.png</file>
+
+</qresource>
+</RCC>
