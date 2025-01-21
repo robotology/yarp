@@ -430,6 +430,7 @@ MAKE_COMMS(Bottle)
 %include <yarp/dev/ISpeechTranscription.h>
 %include <yarp/dev/ILLM.h>
 %include <yarp/dev/MultipleAnalogSensorsInterfaces.h>
+#include <yarp/dev/IFrameTransform.h>
 
 #ifndef YARP_NO_DEPRECATED // Since YARP 3.5.0
 %include <yarp/dev/IFrameGrabber.h>
@@ -825,6 +826,7 @@ typedef yarp::os::BufferedPort<ImageRgbFloat> BufferedPortImageRgbFloat;
     CAST_POLYDRIVER_TO_INTERFACE(ISpeechSynthesizer)
     CAST_POLYDRIVER_TO_INTERFACE(ISpeechTranscription)
     CAST_POLYDRIVER_TO_INTERFACE(ILLM)
+    CAST_POLYDRIVER_TO_INTERFACE(IFrameTransform)
 
 // These views are currently disabled in SWIG + java generator since they are
 // useless without the EXTENDED_ANALOG_SENSOR_INTERFACE part.
@@ -1585,6 +1587,29 @@ typedef yarp::os::BufferedPort<ImageRgbFloat> BufferedPortImageRgbFloat;
 
     bool ask(const std::string& question, yarp::dev::LLM_Message& answer) {
         return self->ask(question, answer);
+    }
+}
+
+%extend yarp::dev::IFrameTransform {
+    std::string allFramesAsString() {
+        std::string outputString;
+        bool ok = self->allFramesAsString(outputString);
+        if (!ok) return "";
+        return outputString;
+    }
+
+    std::vector<std::string> getAllFrameIds() {
+        std::vector<std::string> frameIds;
+        bool ok = self->getAllFrameIds(frameIds);
+        if (!ok) return std::vector<std::string>();
+        return frameIds;
+    }
+
+    std::string getParent(const std::string& frameId) {
+        std::string parent;
+        bool ok = self->getParent(frameId, parent);
+        if (!ok) return "unknown";
+        return parent;
     }
 }
 
