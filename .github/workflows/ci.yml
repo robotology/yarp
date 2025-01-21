@@ -1434,6 +1434,7 @@ jobs:
           set(_cmake_extra_options ${{ matrix.config.cmake_extra_options }})
         endif()
 
+        #SWIGFIX temporary fix for swig 4.2.1. The following lines should be removed.
         set(_swig_extra_options)
         if(NOT "${{ matrix.config.swig_extra_options }}" STREQUAL "")
           set(_swig_extra_options ${{ matrix.config.swig_extra_options }})
@@ -1592,6 +1593,12 @@ jobs:
                                        -D CMAKE_CXX_COMPILER_LAUNCHER=${_ccache_cmd})
         endif()
 
+        #SWIGFIX temporary fix for swig 4.2.1. The following lines should be removed.
+        set(_swig_extra_options)
+        if(NOT "${{ matrix.config.swig_extra_options }}" STREQUAL "")
+          set(_swig_extra_options ${{ matrix.config.swig_extra_options }})
+        endif()
+
         execute_process_x(
           COMMAND ${CMAKE_COMMAND}
             -S bindings
@@ -1667,6 +1674,12 @@ jobs:
           find_program(_ccache_cmd ccache PATHS ENV GITHUB_WORKSPACE)
           set(_cmake_compiler_lauchers -D CMAKE_C_COMPILER_LAUNCHER=${_ccache_cmd}
                                        -D CMAKE_CXX_COMPILER_LAUNCHER=${_ccache_cmd})
+        endif()
+
+        #SWIGFIX temporary fix for swig 4.2.1. The following lines should be removed.
+        set(_swig_extra_options)
+        if(NOT "${{ matrix.config.swig_extra_options }}" STREQUAL "")
+          set(_swig_extra_options ${{ matrix.config.swig_extra_options }})
         endif()
 
         execute_process_x(

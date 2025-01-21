@@ -451,8 +451,10 @@ MAKE_COMMS(Bottle)
   %include "matlab/vectors_fromTo_matlab.i"
 #endif
 
+#if SWIG_VERSION < 0x040201
 #if defined(SWIGCSHARP)
   SWIG_STD_VECTOR_SPECIALIZE_MINIMUM(Pid,yarp::dev::Pid)
+#endif
 #endif
 %template(PidVector) std::vector<yarp::dev::Pid>;
 
