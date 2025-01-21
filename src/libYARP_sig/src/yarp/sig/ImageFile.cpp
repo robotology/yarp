@@ -167,6 +167,7 @@ bool ImageReadRGB_PNG(ImageOf<PixelRgb>& img, const char* filename)
     png_structp png = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
     if (!png)
     {
+        fclose(fp);
         yCError(IMAGEFILE) << "PNG internal error";
         return false;
     }
@@ -174,12 +175,14 @@ bool ImageReadRGB_PNG(ImageOf<PixelRgb>& img, const char* filename)
     png_infop info = png_create_info_struct(png);
     if (!info)
     {
+        fclose(fp);
         yCError(IMAGEFILE) << "PNG internal error";
         return false;
     }
 
     if (setjmp(png_jmpbuf(png)))
     {
+        fclose(fp);
         yCError(IMAGEFILE) << "PNG internal error";
         return false;
     }
