@@ -72,6 +72,15 @@ TEST_CASE("dev::speechSynthesizer_nwc_yarp", "[yarp::dev]")
         double speed = 100;
         double speedReturned;
 
+        CHECK(iSpeech->setLanguage("ENG"));
+        std::string getLang;
+        CHECK(iSpeech->getLanguage(getLang));
+        CHECK(getLang == "ENG");
+
+        yarp::sig::Sound ss2;
+        CHECK(!iSpeech->synthesize("",ss2));
+        CHECK(ss2.getSamples() == 0);
+
         CHECK(iSpeech->setVoice(voice));
         CHECK(iSpeech->getVoice(voiceReturned));
         CHECK(voice == voiceReturned);

@@ -185,4 +185,15 @@ TEST_CASE("dev::ReturnValue", "[yarp::dev]")
         CHECK(ok);
         CHECK(val_ti == val_to);
     }
+
+    SECTION("test block 7")
+    {
+        auto ret1 = YARP_METHOD_NOT_YET_IMPLEMENTED();
+        CHECK(ret1 == yarp_ret_value::return_code::return_value_error_not_implemented_by_device);
+        CHECK(!(ret1 == yarp_ret_value::return_code::return_value_ok));
+
+        auto ret2 = YARP_METHOD_DEPRECATED();
+        CHECK(ret2 == yarp_ret_value::return_code::return_value_error_deprecated);
+        CHECK(!(ret2 == yarp_ret_value::return_code::return_value_ok));
+    }
 }
