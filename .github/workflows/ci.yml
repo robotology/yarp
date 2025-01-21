@@ -992,7 +992,7 @@ jobs:
           }
         - {
             id: '303',
-            os: macos-12,
+            os: macos-14,
             build_type: "Release",
             cc: "clang",
             cxx: "clang++",
@@ -1001,7 +1001,7 @@ jobs:
           }
         - {
             id: '304',
-            os: macos-12,
+            os: macos-14,
             build_type: "Release",
             cc: "clang",
             cxx: "clang++",
@@ -1725,7 +1725,7 @@ jobs:
         )
 
     - name: Upload artifact
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: installation-${{ matrix.config.id }}
         path: install.tar
