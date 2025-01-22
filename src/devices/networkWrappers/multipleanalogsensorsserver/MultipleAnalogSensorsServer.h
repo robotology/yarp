@@ -11,7 +11,7 @@
 #include <yarp/os/Stamp.h>
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/dev/PolyDriver.h>
-#include <yarp/dev/IMultipleWrapper.h>
+#include <yarp/dev/WrapperSingle.h>
 #include <yarp/dev/MultipleAnalogSensorsInterfaces.h>
 
 // Thrift-generated classes
@@ -33,7 +33,7 @@
 class MultipleAnalogSensorsServer :
         public yarp::os::PeriodicThread,
         public yarp::dev::DeviceDriver,
-        public yarp::dev::IMultipleWrapper,
+        public yarp::dev::WrapperSingle,
         public MultipleAnalogSensorsMetadata,
         public MultipleAnalogSensorsServer_ParamsParser
 {
@@ -108,9 +108,9 @@ public:
     bool open(yarp::os::Searchable &params) override;
     bool close() override;
 
-    /* IMultipleWrapper methods */
-    bool attachAll(const yarp::dev::PolyDriverList &p) override;
-    bool detachAll() override;
+    /* IWrapper methods */
+    bool attach(yarp::dev::PolyDriver* p) override;
+    bool detach() override;
 
     /* RateThread methods */
     void threadRelease() override;

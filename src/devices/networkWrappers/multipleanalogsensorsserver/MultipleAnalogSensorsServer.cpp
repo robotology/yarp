@@ -365,33 +365,11 @@ bool MultipleAnalogSensorsServer::resizeAllMeasureVectors(SensorStreamingData& s
     return ok;
 }
 
-bool MultipleAnalogSensorsServer::attachAll(const yarp::dev::PolyDriverList& p)
+bool MultipleAnalogSensorsServer::attach(yarp::dev::PolyDriver* poly)
 {
-    // Attach the device
-    if (p.size() > 1)
-    {
-        yCError(MULTIPLEANALOGSENSORSSERVER,
-                "This device only supports exposing a "
-                "single MultipleAnalogSensors device on YARP ports, but %d devices have been passed in attachAll.",
-                p.size());
-        yCError(MULTIPLEANALOGSENSORSSERVER,
-                "Please use the multipleanalogsensorsremapper device to combine several device in a new device.");
-        close();
-        return false;
-    }
-
-    if (p.size() == 0)
-    {
-        yCError(MULTIPLEANALOGSENSORSSERVER, "No device passed to attachAll, please pass a device to expose on YARP ports.");
-        close();
-        return false;
-    }
-
-    yarp::dev::PolyDriver* poly = p[0]->poly;
-
     if (!poly)
     {
-        yCError(MULTIPLEANALOGSENSORSSERVER, "Null pointer passed to attachAll.");
+        yCError(MULTIPLEANALOGSENSORSSERVER, "Null pointer passed to attach.");
         close();
         return false;
     }
@@ -460,7 +438,7 @@ bool MultipleAnalogSensorsServer::attachAll(const yarp::dev::PolyDriverList& p)
     return true;
 }
 
-bool MultipleAnalogSensorsServer::detachAll()
+bool MultipleAnalogSensorsServer::detach()
 {
     // Stop the thread on detach
     if (this->isRunning())
