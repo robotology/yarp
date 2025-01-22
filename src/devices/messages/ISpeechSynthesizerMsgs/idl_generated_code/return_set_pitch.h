@@ -20,13 +20,13 @@ class return_set_pitch :
 {
 public:
     // Fields
-    yarp::dev::yarp_ret_value ret{};
+    yarp::dev::ReturnValue ret{};
 
     // Default constructor
     return_set_pitch() = default;
 
     // Constructor with field values
-    return_set_pitch(const yarp::dev::yarp_ret_value& ret);
+    return_set_pitch(const yarp::dev::ReturnValue& ret);
 
     // Read structure on a Wire
     bool read(yarp::os::idl::WireReader& reader) override;

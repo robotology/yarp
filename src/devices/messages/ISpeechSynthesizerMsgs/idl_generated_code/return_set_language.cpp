@@ -11,7 +11,7 @@
 #include <return_set_language.h>
 
 // Constructor with field values
-return_set_language::return_set_language(const yarp::dev::yarp_ret_value& ret) :
+return_set_language::return_set_language(const yarp::dev::ReturnValue& ret) :
         WirePortable(),
         ret(ret)
 {

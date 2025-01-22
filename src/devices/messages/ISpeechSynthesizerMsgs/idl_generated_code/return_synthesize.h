@@ -21,14 +21,14 @@ class return_synthesize :
 {
 public:
     // Fields
-    yarp::dev::yarp_ret_value ret{};
+    yarp::dev::ReturnValue ret{};
     yarp::sig::Sound sound{};
 
     // Default constructor
     return_synthesize() = default;
 
     // Constructor with field values
-    return_synthesize(const yarp::dev::yarp_ret_value& ret,
+    return_synthesize(const yarp::dev::ReturnValue& ret,
                       const yarp::sig::Sound& sound);
 
     // Read structure on a Wire

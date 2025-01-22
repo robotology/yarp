@@ -62,7 +62,7 @@ bool SpeechTranscription_nwc_yarp::closeMain()
     return true;
 }
 
-yarp::dev::yarp_ret_value SpeechTranscription_nwc_yarp::setLanguage(const std::string& language)
+yarp::dev::ReturnValue SpeechTranscription_nwc_yarp::setLanguage(const std::string& language)
 {
     return_set_language result = m_thriftClient.set_language(language);
     if(!result.ret)
@@ -75,7 +75,7 @@ yarp::dev::yarp_ret_value SpeechTranscription_nwc_yarp::setLanguage(const std::s
     return result.ret;
 }
 
-yarp::dev::yarp_ret_value SpeechTranscription_nwc_yarp::getLanguage(std::string& language)
+yarp::dev::ReturnValue SpeechTranscription_nwc_yarp::getLanguage(std::string& language)
 {
     return_get_language result = m_thriftClient.get_language();
     if(!result.ret)
@@ -89,7 +89,7 @@ yarp::dev::yarp_ret_value SpeechTranscription_nwc_yarp::getLanguage(std::string&
     return result.ret;
 }
 
-yarp::dev::yarp_ret_value SpeechTranscription_nwc_yarp::transcribe(const yarp::sig::Sound& sound, std::string& transcription, double& score)
+yarp::dev::ReturnValue SpeechTranscription_nwc_yarp::transcribe(const yarp::sig::Sound& sound, std::string& transcription, double& score)
 {
     YARP_UNUSED(sound);
     YARP_UNUSED(transcription);

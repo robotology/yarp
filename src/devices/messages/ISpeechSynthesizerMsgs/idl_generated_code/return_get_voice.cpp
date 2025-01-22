@@ -11,7 +11,7 @@
 #include <return_get_voice.h>
 
 // Constructor with field values
-return_get_voice::return_get_voice(const yarp::dev::yarp_ret_value& ret,
+return_get_voice::return_get_voice(const yarp::dev::ReturnValue& ret,
                                    const std::string& voice) :
         WirePortable(),
         ret(ret),

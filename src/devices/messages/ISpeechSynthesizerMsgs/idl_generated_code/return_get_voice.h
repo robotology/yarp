@@ -20,14 +20,14 @@ class return_get_voice :
 {
 public:
     // Fields
-    yarp::dev::yarp_ret_value ret{};
+    yarp::dev::ReturnValue ret{};
     std::string voice{};
 
     // Default constructor
     return_get_voice() = default;
 
     // Constructor with field values
-    return_get_voice(const yarp::dev::yarp_ret_value& ret,
+    return_get_voice(const yarp::dev::ReturnValue& ret,
                      const std::string& voice);
 
     // Read structure on a Wire

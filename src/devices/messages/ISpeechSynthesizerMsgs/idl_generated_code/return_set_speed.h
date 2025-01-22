@@ -20,13 +20,13 @@ class return_set_speed :
 {
 public:
     // Fields
-    yarp::dev::yarp_ret_value ret{};
+    yarp::dev::ReturnValue ret{};
 
     // Default constructor
     return_set_speed() = default;
 
     // Constructor with field values
-    return_set_speed(const yarp::dev::yarp_ret_value& ret);
+    return_set_speed(const yarp::dev::ReturnValue& ret);
 
     // Read structure on a Wire
     bool read(yarp::os::idl::WireReader& reader) override;

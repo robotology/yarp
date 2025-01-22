@@ -11,7 +11,7 @@
 #include <return_get_pitch.h>
 
 // Constructor with field values
-return_get_pitch::return_get_pitch(const yarp::dev::yarp_ret_value& ret,
+return_get_pitch::return_get_pitch(const yarp::dev::ReturnValue& ret,
                                    const double pitch) :
         WirePortable(),
         ret(ret),

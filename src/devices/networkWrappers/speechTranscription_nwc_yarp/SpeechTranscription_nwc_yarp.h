@@ -55,9 +55,9 @@ public:
     bool close() override;
 
     //yarp::dev::ISpeechTranscription
-    yarp::dev::yarp_ret_value setLanguage(const std::string& language="auto") override;
-    yarp::dev::yarp_ret_value getLanguage(std::string& language) override;
-    yarp::dev::yarp_ret_value transcribe(const yarp::sig::Sound& sound, std::string& transcription, double& score) override;
+    yarp::dev::ReturnValue setLanguage(const std::string& language="auto") override;
+    yarp::dev::ReturnValue getLanguage(std::string& language) override;
+    yarp::dev::ReturnValue transcribe(const yarp::sig::Sound& sound, std::string& transcription, double& score) override;
 
     // Parameters
 private:

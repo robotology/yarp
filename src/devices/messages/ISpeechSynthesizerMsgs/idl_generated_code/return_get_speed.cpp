@@ -11,7 +11,7 @@
 #include <return_get_speed.h>
 
 // Constructor with field values
-return_get_speed::return_get_speed(const yarp::dev::yarp_ret_value& ret,
+return_get_speed::return_get_speed(const yarp::dev::ReturnValue& ret,
                                    const double speed) :
         WirePortable(),
         ret(ret),

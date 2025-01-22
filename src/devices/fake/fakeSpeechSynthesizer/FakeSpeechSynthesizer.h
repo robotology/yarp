@@ -41,15 +41,15 @@ public:
     bool open(yarp::os::Searchable& config) override;
     bool close() override;
 
-    virtual yarp::dev::yarp_ret_value setLanguage(const std::string& language) override;
-    virtual yarp::dev::yarp_ret_value getLanguage(std::string& language) override;
-    virtual yarp::dev::yarp_ret_value setVoice(const std::string& voice) override;
-    virtual yarp::dev::yarp_ret_value getVoice(std::string& voice) override;
-    virtual yarp::dev::yarp_ret_value setSpeed(const double speed) override;
-    virtual yarp::dev::yarp_ret_value getSpeed(double& voice) override;
-    virtual yarp::dev::yarp_ret_value setPitch(const double pitch) override;
-    virtual yarp::dev::yarp_ret_value getPitch(double& voice) override;
-    virtual yarp::dev::yarp_ret_value synthesize(const std::string& text, yarp::sig::Sound& sound) override;
+    virtual yarp::dev::ReturnValue setLanguage(const std::string& language) override;
+    virtual yarp::dev::ReturnValue getLanguage(std::string& language) override;
+    virtual yarp::dev::ReturnValue setVoice(const std::string& voice) override;
+    virtual yarp::dev::ReturnValue getVoice(std::string& voice) override;
+    virtual yarp::dev::ReturnValue setSpeed(const double speed) override;
+    virtual yarp::dev::ReturnValue getSpeed(double& voice) override;
+    virtual yarp::dev::ReturnValue setPitch(const double pitch) override;
+    virtual yarp::dev::ReturnValue getPitch(double& voice) override;
+    virtual yarp::dev::ReturnValue synthesize(const std::string& text, yarp::sig::Sound& sound) override;
 };
 
 #endif

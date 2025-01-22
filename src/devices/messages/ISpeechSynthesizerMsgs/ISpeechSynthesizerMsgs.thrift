@@ -11,7 +11,7 @@ struct yarp_sig_Sound {
 
 struct yReturnValue {
 } (
-  yarp.name = "yarp::dev::yarp_ret_value"
+  yarp.name = "yarp::dev::ReturnValue"
   yarp.includefile = "yarp/dev/ReturnValue.h"
 )
 

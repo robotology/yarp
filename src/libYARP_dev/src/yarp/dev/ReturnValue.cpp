@@ -10,12 +10,12 @@
 using namespace yarp::dev;
 using namespace yarp::os;
 
-yarp_ret_value::yarp_ret_value()
+ReturnValue::ReturnValue()
 {
 }
 
 #ifndef DISABLE_BOOL_INPUT
-yarp_ret_value::yarp_ret_value(const bool& val)
+ReturnValue::ReturnValue(const bool& val)
 {
     if (val)
     {
@@ -28,7 +28,7 @@ yarp_ret_value::yarp_ret_value(const bool& val)
 }
 #endif
 
-yarp_ret_value& yarp_ret_value::operator && (const yarp_ret_value& other)
+ReturnValue& ReturnValue::operator && (const ReturnValue& other)
 {
     //  THIS IS THE IMPLEMENTATION RULE:
     //     OP1         OP2          RESULT
@@ -48,7 +48,7 @@ yarp_ret_value& yarp_ret_value::operator && (const yarp_ret_value& other)
     return *this;
 }
 
-yarp_ret_value& yarp_ret_value::operator &= (const yarp_ret_value& other)
+ReturnValue& ReturnValue::operator &= (const ReturnValue& other)
 {
     //  THIS IS THE IMPLEMENTATION RULE:
     //     OP1         OP2          RESULT
@@ -69,7 +69,7 @@ yarp_ret_value& yarp_ret_value::operator &= (const yarp_ret_value& other)
 }
 
 #ifndef DISABLE_BOOL_INPUT
-yarp_ret_value& yarp_ret_value::operator=(const bool& bool_val)
+ReturnValue& ReturnValue::operator=(const bool& bool_val)
 {
     if (bool_val)
     {
@@ -83,14 +83,14 @@ yarp_ret_value& yarp_ret_value::operator=(const bool& bool_val)
 }
 #endif
 
-std::string yarp_ret_value::toString()
+std::string ReturnValue::toString()
 {
     switch (value_b)
     {
         case return_code::return_value_ok:
             return std::string("ok");
-        case return_code::return_value_unitialized:
-            return std::string("return_value_unitialized");
+        case return_code::return_value_uninitialized:
+            return std::string("return_value_uninitialized");
         case return_code::return_value_error_deprecated:
             return std::string("return_value_error_deprecated");
         case return_code::return_value_error_generic:
@@ -106,30 +106,30 @@ std::string yarp_ret_value::toString()
     }
 }
 
-yarp_ret_value::operator bool() const
+ReturnValue::operator bool() const
 {
     return value_b == return_code::return_value_ok;
 }
 
-yarp_ret_value::yarp_ret_value(return_code code)
+ReturnValue::ReturnValue(return_code code)
 {
     value_b = code;
 }
 
-bool yarp_ret_value::operator == (const return_code& code) const
+bool ReturnValue::operator == (const return_code& code) const
 {
     if (code == this->value_b) return true;
     return false;
 }
 
-bool yarp_ret_value::read(yarp::os::ConnectionReader& connection)
+bool ReturnValue::read(yarp::os::ConnectionReader& connection)
 {
     connection.convertTextMode();
-    this->value_b = (yarp_ret_value::return_code)(connection.expectInt64());
+    this->value_b = (ReturnValue::return_code)(connection.expectInt64());
     return true;
 }
 
-bool yarp_ret_value::write(yarp::os::ConnectionWriter& connection) const
+bool ReturnValue::write(yarp::os::ConnectionWriter& connection) const
 {
     connection.convertTextMode();
     connection.appendInt64((int64_t)(this->value_b));

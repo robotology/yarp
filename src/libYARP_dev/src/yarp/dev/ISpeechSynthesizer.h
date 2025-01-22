@@ -27,56 +27,56 @@ public:
      * \param language a string (code) representing the speech language (e.g. ita, eng...). Default value is "auto".
      * \return true on success
      */
-    virtual yarp::dev::yarp_ret_value setLanguage(const std::string& language="auto") = 0;
+    virtual yarp::dev::ReturnValue setLanguage(const std::string& language="auto") = 0;
 
     /**
      * Gets the current language set for speech synthesis.
      * \param language the returned string (code) representing the speech language (e.g. ita, eng...). Default value is "auto".
      * \return true on success
      */
-    virtual yarp::dev::yarp_ret_value getLanguage(std::string& language) = 0;
+    virtual yarp::dev::ReturnValue getLanguage(std::string& language) = 0;
 
     /**
      * Sets the voice set for speech synthesis.
      * \param voice_name the name of of the voice (device dependent).
      * \return true on success
      */
-    virtual yarp::dev::yarp_ret_value setVoice(const std::string& voice_name = "auto") = 0;
+    virtual yarp::dev::ReturnValue setVoice(const std::string& voice_name = "auto") = 0;
 
     /**
      * Gets the current voice set for speech synthesis.
      * \param voice_name the currently used voice (device dependent).
      * \return true on success
      */
-    virtual yarp::dev::yarp_ret_value getVoice(std::string& voice_name) = 0;
+    virtual yarp::dev::ReturnValue getVoice(std::string& voice_name) = 0;
 
     /**
      * Sets the voice speed for speech synthesis.
      * \param speed the voice speed.
      * \return true on success
      */
-    virtual yarp::dev::yarp_ret_value setSpeed(const double speed=0) = 0;
+    virtual yarp::dev::ReturnValue setSpeed(const double speed=0) = 0;
 
     /**
      * Gets the current voice speed.
      * \param speed the current voice speed.
      * \return true on success
      */
-    virtual yarp::dev::yarp_ret_value getSpeed(double& speed) = 0;
+    virtual yarp::dev::ReturnValue getSpeed(double& speed) = 0;
 
     /**
      * Sets the pitch for speech synthesis.
      * \param pitch the voice pitch.
      * \return true on success
      */
-    virtual yarp::dev::yarp_ret_value setPitch(const double pitch) = 0;
+    virtual yarp::dev::ReturnValue setPitch(const double pitch) = 0;
 
     /**
      * Gets the current pitch set for speech synthesis.
      * \param pitch the current voice pitch.
      * \return true on success
      */
-    virtual yarp::dev::yarp_ret_value getPitch(double& voice) = 0;
+    virtual yarp::dev::ReturnValue getPitch(double& voice) = 0;
 
     /**
      * Performs the speech synthesis.
@@ -84,7 +84,7 @@ public:
      * \param sound the synthesized audio stream
      * \return true on success
      */
-    virtual yarp::dev::yarp_ret_value synthesize(const std::string& text, yarp::sig::Sound& sound) = 0;
+    virtual yarp::dev::ReturnValue synthesize(const std::string& text, yarp::sig::Sound& sound) = 0;
 };
 
 } // namespace yarp::dev

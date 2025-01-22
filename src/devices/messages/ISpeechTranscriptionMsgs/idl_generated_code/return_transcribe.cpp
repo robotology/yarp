@@ -11,7 +11,7 @@
 #include <return_transcribe.h>
 
 // Constructor with field values
-return_transcribe::return_transcribe(const yarp::dev::yarp_ret_value& ret,
+return_transcribe::return_transcribe(const yarp::dev::ReturnValue& ret,
                                      const std::string& transcription,
                                      const double score) :
         WirePortable(),

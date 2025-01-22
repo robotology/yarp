@@ -20,14 +20,14 @@ class return_get_language :
 {
 public:
     // Fields
-    yarp::dev::yarp_ret_value ret{};
+    yarp::dev::ReturnValue ret{};
     std::string language{};
 
     // Default constructor
     return_get_language() = default;
 
     // Constructor with field values
-    return_get_language(const yarp::dev::yarp_ret_value& ret,
+    return_get_language(const yarp::dev::ReturnValue& ret,
                         const std::string& language);
 
     // Read structure on a Wire

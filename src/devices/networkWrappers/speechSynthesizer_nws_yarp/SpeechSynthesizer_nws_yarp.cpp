@@ -122,7 +122,7 @@ return_set_language ISpeechSynthesizerMsgsd::set_language(const std::string& lan
         return m_isptr->setLanguage(language);
     }
     yCError(SPEECHSYNTH_NWS, "ISpeechSynthesizer interface was not set");
-    ret.ret = yarp_ret_value::return_code::return_value_error_generic;
+    ret.ret = ReturnValue::return_code::return_value_error_generic;
     return ret;
 }
 
@@ -133,13 +133,13 @@ return_get_language ISpeechSynthesizerMsgsd::get_language()
     if (m_isptr)
     {
         std::string language;
-        yarp_ret_value b =  m_isptr->getLanguage(language);
+        ReturnValue b =  m_isptr->getLanguage(language);
         ret.ret = b;
         ret.language = language;
         return ret;
     }
     yCError(SPEECHSYNTH_NWS, "ISpeechSynthesizer interface was not set");
-    ret.ret = yarp_ret_value::return_code::return_value_error_generic;
+    ret.ret = ReturnValue::return_code::return_value_error_generic;
     return ret;
 }
 
@@ -162,13 +162,13 @@ return_get_voice ISpeechSynthesizerMsgsd::get_voice()
     if (m_isptr)
     {
         std::string voice;
-        yarp_ret_value b = m_isptr->getVoice(voice);
+        ReturnValue b = m_isptr->getVoice(voice);
         ret.ret = b;
         ret.voice = voice;
         return ret;
     }
     yCError(SPEECHSYNTH_NWS, "ISpeechSynthesizer interface was not set");
-    ret.ret = yarp_ret_value::return_code::return_value_error_generic;
+    ret.ret = ReturnValue::return_code::return_value_error_generic;
     return ret;
 }
 
@@ -181,7 +181,7 @@ return_set_pitch ISpeechSynthesizerMsgsd::set_pitch(double pitch)
         return m_isptr->setPitch(pitch);
     }
     yCError(SPEECHSYNTH_NWS, "ISpeechSynthesizer interface was not set");
-    ret.ret = yarp_ret_value::return_code::return_value_error_generic;
+    ret.ret = ReturnValue::return_code::return_value_error_generic;
     return ret;
 }
 
@@ -192,7 +192,7 @@ return_get_pitch ISpeechSynthesizerMsgsd::get_pitch()
     if (m_isptr)
     {
         double pitch;
-        yarp_ret_value b = m_isptr->getPitch(pitch);
+        ReturnValue b = m_isptr->getPitch(pitch);
         ret.ret = b;
         ret.pitch = pitch;
         return ret;
@@ -210,7 +210,7 @@ return_set_speed ISpeechSynthesizerMsgsd::set_speed(double speed)
         return m_isptr->setSpeed(speed);
     }
     yCError(SPEECHSYNTH_NWS, "ISpeechSynthesizer interface was not set");
-    ret.ret = yarp_ret_value::return_code::return_value_error_generic;
+    ret.ret = ReturnValue::return_code::return_value_error_generic;
     return ret;
 }
 
@@ -221,13 +221,13 @@ return_get_speed ISpeechSynthesizerMsgsd::get_speed()
     if (m_isptr)
     {
         double speed;
-        yarp_ret_value b = m_isptr->getSpeed(speed);
+        ReturnValue b = m_isptr->getSpeed(speed);
         ret.ret = b;
         ret.speed = speed;
         return ret;
     }
     yCError(SPEECHSYNTH_NWS, "ISpeechSynthesizer interface was not set");
-    ret.ret = yarp_ret_value::return_code::return_value_error_generic;
+    ret.ret = ReturnValue::return_code::return_value_error_generic;
     return ret;
 }
 
@@ -239,7 +239,7 @@ return_synthesize ISpeechSynthesizerMsgsd::synthesize(const std::string& text)
     {
         yarp::sig::Sound snd;
         double score;
-        yarp_ret_value b = m_isptr->synthesize(text, snd);
+        ReturnValue b = m_isptr->synthesize(text, snd);
         ret.ret = b;
         ret.sound = snd;
 
@@ -251,7 +251,7 @@ return_synthesize ISpeechSynthesizerMsgsd::synthesize(const std::string& text)
         return ret;
     }
     yCError(SPEECHSYNTH_NWS, "ISpeechSynthesizer interface was not set");
-    ret.ret = yarp_ret_value::return_code::return_value_error_generic;
+    ret.ret = ReturnValue::return_code::return_value_error_generic;
     return ret;
 }
 

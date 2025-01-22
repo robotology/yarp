@@ -3,8 +3,8 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#ifndef YARP_RET_VALUE_H
-#define YARP_RET_VALUE_H
+#ifndef ReturnValue_H
+#define ReturnValue_H
 
 #include <yarp/dev/api.h>
 #include <yarp/os/Log.h>
@@ -13,20 +13,20 @@
 #include <string>
 
 // The following macro is used for testing/development purposes only, but it must be generally not enabled.
-// If enabled, a bool value cannot be automatically converted to yarp_ret_value
+// If enabled, a bool value cannot be automatically converted to ReturnValue
 // In this way, the developer can check if some old devices/interfaces do unwanted automatic
 // conversions and fix them.
  #define DISABLE_BOOL_INPUT
 
 // The following macro is used for testing/development purposes only, but it must be generally not enabled.
-// If enabled, a yarp_ret_value cannot be automatically converted to bool unless explicitly requested
+// If enabled, a ReturnValue cannot be automatically converted to bool unless explicitly requested
 // using the bool() operator.
 // If enabled, it will break backward compatibility with user-application code.
 // #define DISABLE_BOOL_OUTPUT
 
 namespace yarp::dev {
 
-class YARP_dev_API yarp_ret_value : public yarp::os::Portable
+class YARP_dev_API ReturnValue : public yarp::os::Portable
 {
     public:
     enum class YARP_dev_API return_code
@@ -37,24 +37,24 @@ class YARP_dev_API yarp_ret_value : public yarp::os::Portable
         return_value_error_nws_nwc_communication_error = 3, /// Command answer lost during network transmission. Status unknown.
         return_value_error_deprecated = 4, /// Method is deprecated
         return_value_error_method_failed = 5, /// Method failed due to invalid internal status/invalid request
-        return_value_unitialized = 100 /// Default value, should never be explicitly assigned
+        return_value_uninitialized = 100 /// Default value, should never be explicitly assigned
     };
 
     private:
-    return_code value_b = return_code::return_value_unitialized;
+    return_code value_b = return_code::return_value_uninitialized;
 
     public:
-    yarp_ret_value();
-    ~yarp_ret_value() = default;
+    ReturnValue();
+    ~ReturnValue() = default;
 #ifndef DISABLE_BOOL_INPUT
-    yarp_ret_value(const bool& val);
+    ReturnValue(const bool& val);
 #endif
-    yarp_ret_value(return_code code);
-    yarp_ret_value(const yarp_ret_value& other) = default;
-    yarp_ret_value& operator && (const yarp_ret_value& other);
-    yarp_ret_value& operator &= (const yarp_ret_value& other);
+    ReturnValue(return_code code);
+    ReturnValue(const ReturnValue& other) = default;
+    ReturnValue& operator && (const ReturnValue& other);
+    ReturnValue& operator &= (const ReturnValue& other);
 #ifndef DISABLE_BOOL_INPUT
-    yarp_ret_value& operator=(const bool& bool_val);
+    ReturnValue& operator=(const bool& bool_val);
 #endif
     bool operator == (const return_code& code) const;
     std::string toString();
@@ -69,30 +69,30 @@ public:
     bool write(yarp::os::ConnectionWriter& connection) const override;
 };
 
-#define yarp_ret_value_ok yarp_ret_value(yarp::dev::yarp_ret_value::return_code::return_value_ok)
+#define ReturnValue_ok ReturnValue(yarp::dev::ReturnValue::return_code::return_value_ok)
 
 #if __cplusplus >= 202002L
-inline yarp_ret_value YARP_METHOD_NOT_YET_IMPLEMENTED(const std::source_location& location = std::source_location::current())
+inline ReturnValue YARP_METHOD_NOT_YET_IMPLEMENTED(const std::source_location& location = std::source_location::current())
 {
     yError("Method %s not yet implemented\n", location.function_name());
-    return yarp_ret_value(yarp::dev::yarp_ret_value::return_code::return_value_error_not_implemented_by_device);
+    return ReturnValue(yarp::dev::ReturnValue::return_code::return_value_error_not_implemented_by_device);
 }
-inline yarp_ret_value YARP_METHOD_DEPRECATED(const std::source_location& location = std::source_location::current())
+inline ReturnValue YARP_METHOD_DEPRECATED(const std::source_location& location = std::source_location::current())
 {
     yError("Method %s has been deprecated\n", location.function_name());
-    return yarp_ret_value(yarp::dev::yarp_ret_value::return_code::return_value_error_deprecated);
+    return ReturnValue(yarp::dev::ReturnValue::return_code::return_value_error_deprecated);
 }
 #else
-inline yarp_ret_value yarp_method_not_implemented(const char* location)
+inline ReturnValue yarp_method_not_implemented(const char* location)
 {
     yError("Method %s not yet implemented\n", location);
-    return yarp_ret_value(yarp::dev::yarp_ret_value::return_code::return_value_error_not_implemented_by_device);
+    return ReturnValue(yarp::dev::ReturnValue::return_code::return_value_error_not_implemented_by_device);
 }
 #define YARP_METHOD_NOT_YET_IMPLEMENTED() yarp_method_not_implemented(__func__)
-inline yarp_ret_value yarp_method_deprecated(const char* location)
+inline ReturnValue yarp_method_deprecated(const char* location)
 {
     yError("Method %s has been deprecated\n", location);
-    return yarp_ret_value(yarp::dev::yarp_ret_value::return_code::return_value_error_deprecated);
+    return ReturnValue(yarp::dev::ReturnValue::return_code::return_value_error_deprecated);
 }
 #define YARP_METHOD_DEPRECATED() yarp_method_deprecated(__func__)
 #endif
@@ -100,4 +100,4 @@ inline yarp_ret_value yarp_method_deprecated(const char* location)
 
 }
 
-#endif // YARP_RET_VALUE_H
+#endif // ReturnValue_H

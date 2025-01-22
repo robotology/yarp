@@ -11,7 +11,7 @@
 #include <return_synthesize.h>
 
 // Constructor with field values
-return_synthesize::return_synthesize(const yarp::dev::yarp_ret_value& ret,
+return_synthesize::return_synthesize(const yarp::dev::ReturnValue& ret,
                                      const yarp::sig::Sound& sound) :
         WirePortable(),
         ret(ret),

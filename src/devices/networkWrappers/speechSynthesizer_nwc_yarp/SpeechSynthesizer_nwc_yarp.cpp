@@ -64,7 +64,7 @@ bool SpeechSynthesizer_nwc_yarp::closeMain()
     return true;
 }
 
-yarp_ret_value SpeechSynthesizer_nwc_yarp::setLanguage(const std::string& language)
+ReturnValue SpeechSynthesizer_nwc_yarp::setLanguage(const std::string& language)
 {
     auto result = m_thriftClient.set_language(language);
     if(!result.ret)
@@ -76,7 +76,7 @@ yarp_ret_value SpeechSynthesizer_nwc_yarp::setLanguage(const std::string& langua
     return result.ret;
 }
 
-yarp_ret_value SpeechSynthesizer_nwc_yarp::getLanguage(std::string& language)
+ReturnValue SpeechSynthesizer_nwc_yarp::getLanguage(std::string& language)
 {
     auto result = m_thriftClient.get_language();
     if(!result.ret)
@@ -90,7 +90,7 @@ yarp_ret_value SpeechSynthesizer_nwc_yarp::getLanguage(std::string& language)
     return result.ret;
 }
 
-yarp_ret_value SpeechSynthesizer_nwc_yarp::setVoice(const std::string& voice_name)
+ReturnValue SpeechSynthesizer_nwc_yarp::setVoice(const std::string& voice_name)
 {
     auto result = m_thriftClient.set_voice(voice_name);
     if(!result.ret)
@@ -102,7 +102,7 @@ yarp_ret_value SpeechSynthesizer_nwc_yarp::setVoice(const std::string& voice_nam
     return result.ret;
 }
 
-yarp_ret_value SpeechSynthesizer_nwc_yarp::getVoice(std::string& voice_name)
+ReturnValue SpeechSynthesizer_nwc_yarp::getVoice(std::string& voice_name)
 {
     auto result = m_thriftClient.get_voice();
     if(!result.ret)
@@ -116,7 +116,7 @@ yarp_ret_value SpeechSynthesizer_nwc_yarp::getVoice(std::string& voice_name)
     return result.ret;
 }
 
-yarp_ret_value SpeechSynthesizer_nwc_yarp::setSpeed(const double speed)
+ReturnValue SpeechSynthesizer_nwc_yarp::setSpeed(const double speed)
 {
     auto result = m_thriftClient.set_speed(speed);
     if(!result.ret)
@@ -128,7 +128,7 @@ yarp_ret_value SpeechSynthesizer_nwc_yarp::setSpeed(const double speed)
     return result.ret;
 }
 
-yarp_ret_value SpeechSynthesizer_nwc_yarp::getSpeed(double& speed)
+ReturnValue SpeechSynthesizer_nwc_yarp::getSpeed(double& speed)
 {
     auto result = m_thriftClient.get_speed();
     if(!result.ret)
@@ -142,7 +142,7 @@ yarp_ret_value SpeechSynthesizer_nwc_yarp::getSpeed(double& speed)
     return result.ret;
 }
 
-yarp_ret_value SpeechSynthesizer_nwc_yarp::setPitch(const double pitch)
+ReturnValue SpeechSynthesizer_nwc_yarp::setPitch(const double pitch)
 {
     auto result = m_thriftClient.set_pitch(pitch);
     if(!result.ret)
@@ -154,7 +154,7 @@ yarp_ret_value SpeechSynthesizer_nwc_yarp::setPitch(const double pitch)
     return result.ret;
 }
 
-yarp_ret_value SpeechSynthesizer_nwc_yarp::getPitch(double& pitch)
+ReturnValue SpeechSynthesizer_nwc_yarp::getPitch(double& pitch)
 {
     auto result = m_thriftClient.get_pitch();
     if(!result.ret)
@@ -168,7 +168,7 @@ yarp_ret_value SpeechSynthesizer_nwc_yarp::getPitch(double& pitch)
     return result.ret;
 }
 
-yarp_ret_value SpeechSynthesizer_nwc_yarp::synthesize(const std::string& text, yarp::sig::Sound& sound)
+ReturnValue SpeechSynthesizer_nwc_yarp::synthesize(const std::string& text, yarp::sig::Sound& sound)
 {
     auto result = m_thriftClient.synthesize(text);
     if(!result.ret)

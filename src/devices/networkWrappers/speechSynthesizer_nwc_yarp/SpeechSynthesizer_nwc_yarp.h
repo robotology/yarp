@@ -57,15 +57,15 @@ public:
     bool close() override;
 
     // yarp::dev::ISpeechSynthesizer
-    yarp::dev::yarp_ret_value setLanguage(const std::string& language="auto") override;
-    yarp::dev::yarp_ret_value getLanguage(std::string& language) override;
-    yarp::dev::yarp_ret_value setVoice(const std::string& voice_name = "auto") override;
-    yarp::dev::yarp_ret_value getVoice(std::string& voice_name) override;
-    yarp::dev::yarp_ret_value setSpeed(const double speed=0) override;
-    yarp::dev::yarp_ret_value getSpeed(double& speed) override;
-    yarp::dev::yarp_ret_value setPitch(const double pitch) override;
-    yarp::dev::yarp_ret_value getPitch(double& pitch) override;
-    yarp::dev::yarp_ret_value synthesize(const std::string& text, yarp::sig::Sound& sound) override;
+    yarp::dev::ReturnValue setLanguage(const std::string& language="auto") override;
+    yarp::dev::ReturnValue getLanguage(std::string& language) override;
+    yarp::dev::ReturnValue setVoice(const std::string& voice_name = "auto") override;
+    yarp::dev::ReturnValue getVoice(std::string& voice_name) override;
+    yarp::dev::ReturnValue setSpeed(const double speed=0) override;
+    yarp::dev::ReturnValue getSpeed(double& speed) override;
+    yarp::dev::ReturnValue setPitch(const double pitch) override;
+    yarp::dev::ReturnValue getPitch(double& pitch) override;
+    yarp::dev::ReturnValue synthesize(const std::string& text, yarp::sig::Sound& sound) override;
 
     // Parameters
 private:

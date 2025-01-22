@@ -20,7 +20,7 @@ class return_transcribe :
 {
 public:
     // Fields
-    yarp::dev::yarp_ret_value ret{};
+    yarp::dev::ReturnValue ret{};
     std::string transcription{};
     double score{0.0};
 
@@ -28,7 +28,7 @@ public:
     return_transcribe() = default;
 
     // Constructor with field values
-    return_transcribe(const yarp::dev::yarp_ret_value& ret,
+    return_transcribe(const yarp::dev::ReturnValue& ret,
                       const std::string& transcription,
                       const double score);
 

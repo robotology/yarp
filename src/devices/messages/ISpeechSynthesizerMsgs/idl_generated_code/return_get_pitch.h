@@ -20,14 +20,14 @@ class return_get_pitch :
 {
 public:
     // Fields
-    yarp::dev::yarp_ret_value ret{};
+    yarp::dev::ReturnValue ret{};
     double pitch{0.0};
 
     // Default constructor
     return_get_pitch() = default;
 
     // Constructor with field values
-    return_get_pitch(const yarp::dev::yarp_ret_value& ret,
+    return_get_pitch(const yarp::dev::ReturnValue& ret,
                      const double pitch);
 
     // Read structure on a Wire

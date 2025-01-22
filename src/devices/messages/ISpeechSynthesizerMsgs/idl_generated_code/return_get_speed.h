@@ -20,14 +20,14 @@ class return_get_speed :
 {
 public:
     // Fields
-    yarp::dev::yarp_ret_value ret{};
+    yarp::dev::ReturnValue ret{};
     double speed{0.0};
 
     // Default constructor
     return_get_speed() = default;
 
     // Constructor with field values
-    return_get_speed(const yarp::dev::yarp_ret_value& ret,
+    return_get_speed(const yarp::dev::ReturnValue& ret,
                      const double speed);
 
     // Read structure on a Wire

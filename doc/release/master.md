@@ -35,3 +35,12 @@ New Features
 
 * added new datatype `yarp::sig::LayeredImage`
 * added `yarp::sig::utils::sum()` to transform `yarp::sig::LayeredImage` to `yarp::sig::Image`
+
+#### `libYARP_dev`
+
+* added new class `yarp::dev::ReturnValue`
+* modified interfaces `yarp::dev::ISpeechSynthesizer`,`yarp::dev::ISpeechTranscription` to use the new class ReturnValue.
+
+#### `devices`
+
+* modified devices implementing `yarp::dev::ISpeechSynthesizer`,`yarp::dev::ISpeechTranscription` to use the new class ReturnValue.
