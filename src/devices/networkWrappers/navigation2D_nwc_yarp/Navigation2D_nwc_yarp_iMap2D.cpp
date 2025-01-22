@@ -24,13 +24,13 @@ YARP_LOG_COMPONENT(NAVIGATION2D_NWC, "yarp.device.navigation2D_nwc_yarp")
 
 //------------------------------------------------------------------------------------------------------------------------------
 
-bool Navigation2D_nwc_yarp::store_map(const MapGrid2D& map)
+ReturnValue Navigation2D_nwc_yarp::store_map(const MapGrid2D& map)
 {
     std::lock_guard <std::mutex> lg(m_mutex);
     return m_map_RPC.store_map_RPC(map);
 }
 
-bool Navigation2D_nwc_yarp::get_map(std::string map_name, MapGrid2D& map)
+ReturnValue Navigation2D_nwc_yarp::get_map(std::string map_name, MapGrid2D& map)
 {
     std::lock_guard <std::mutex> lg(m_mutex);
     auto ret = m_map_RPC.get_map_RPC(map_name);
@@ -43,13 +43,13 @@ bool Navigation2D_nwc_yarp::get_map(std::string map_name, MapGrid2D& map)
     return true;
 }
 
-bool Navigation2D_nwc_yarp::clearAllMaps()
+ReturnValue Navigation2D_nwc_yarp::clearAllMaps()
 {
     std::lock_guard <std::mutex> lg(m_mutex);
     return m_map_RPC.clear_all_maps_RPC();
 }
 
-bool Navigation2D_nwc_yarp::get_map_names(std::vector<std::string>& map_names)
+ReturnValue Navigation2D_nwc_yarp::get_map_names(std::vector<std::string>& map_names)
 {
     std::lock_guard <std::mutex> lg(m_mutex);
     auto ret = m_map_RPC.get_map_names_RPC();
@@ -62,31 +62,31 @@ bool Navigation2D_nwc_yarp::get_map_names(std::vector<std::string>& map_names)
     return true;
 }
 
-bool Navigation2D_nwc_yarp::remove_map(std::string map_name)
+ReturnValue Navigation2D_nwc_yarp::remove_map(std::string map_name)
 {
     std::lock_guard <std::mutex> lg(m_mutex);
     return m_map_RPC.remove_map_RPC(map_name);
 }
 
-bool Navigation2D_nwc_yarp::storeLocation(std::string location_name, Map2DLocation loc)
+ReturnValue Navigation2D_nwc_yarp::storeLocation(std::string location_name, Map2DLocation loc)
 {
     std::lock_guard <std::mutex> lg(m_mutex);
     return m_map_RPC.store_location_RPC(location_name, loc);
 }
 
-bool Navigation2D_nwc_yarp::storeArea(std::string area_name, Map2DArea area)
+ReturnValue Navigation2D_nwc_yarp::storeArea(std::string area_name, Map2DArea area)
 {
     std::lock_guard <std::mutex> lg(m_mutex);
     return m_map_RPC.store_area_RPC(area_name, area);
 }
 
-bool Navigation2D_nwc_yarp::storePath(std::string path_name, Map2DPath path)
+ReturnValue Navigation2D_nwc_yarp::storePath(std::string path_name, Map2DPath path)
 {
     std::lock_guard <std::mutex> lg(m_mutex);
     return m_map_RPC.store_path_RPC(path_name, path);
 }
 
-bool   Navigation2D_nwc_yarp::getLocationsList(std::vector<std::string>& locations)
+ReturnValue   Navigation2D_nwc_yarp::getLocationsList(std::vector<std::string>& locations)
 {
     std::lock_guard <std::mutex> lg(m_mutex);
     auto ret = m_map_RPC.get_locations_list_RPC();
@@ -99,7 +99,7 @@ bool   Navigation2D_nwc_yarp::getLocationsList(std::vector<std::string>& locatio
     return true;
 }
 
-bool   Navigation2D_nwc_yarp::getAreasList(std::vector<std::string>& areas)
+ReturnValue   Navigation2D_nwc_yarp::getAreasList(std::vector<std::string>& areas)
 {
     std::lock_guard <std::mutex> lg(m_mutex);
     auto ret = m_map_RPC.get_areas_list_RPC();
@@ -112,7 +112,7 @@ bool   Navigation2D_nwc_yarp::getAreasList(std::vector<std::string>& areas)
     return true;
 }
 
-bool   Navigation2D_nwc_yarp::getPathsList(std::vector<std::string>& paths)
+ReturnValue   Navigation2D_nwc_yarp::getPathsList(std::vector<std::string>& paths)
 {
     std::lock_guard <std::mutex> lg(m_mutex);
     auto ret = m_map_RPC.get_paths_list_RPC();
@@ -125,7 +125,7 @@ bool   Navigation2D_nwc_yarp::getPathsList(std::vector<std::string>& paths)
     return true;
 }
 
-bool   Navigation2D_nwc_yarp::getAllLocations(std::vector<yarp::dev::Nav2D::Map2DLocation>& locations)
+ReturnValue   Navigation2D_nwc_yarp::getAllLocations(std::vector<yarp::dev::Nav2D::Map2DLocation>& locations)
 {
     std::lock_guard <std::mutex> lg(m_mutex);
     auto ret = m_map_RPC.get_all_locations_RPC();
@@ -138,7 +138,7 @@ bool   Navigation2D_nwc_yarp::getAllLocations(std::vector<yarp::dev::Nav2D::Map2
     return true;
 }
 
-bool   Navigation2D_nwc_yarp::getAllAreas(std::vector<yarp::dev::Nav2D::Map2DArea>& areas)
+ReturnValue   Navigation2D_nwc_yarp::getAllAreas(std::vector<yarp::dev::Nav2D::Map2DArea>& areas)
 {
     std::lock_guard <std::mutex> lg(m_mutex);
     auto ret = m_map_RPC.get_all_areas_RPC();
@@ -151,7 +151,7 @@ bool   Navigation2D_nwc_yarp::getAllAreas(std::vector<yarp::dev::Nav2D::Map2DAre
     return true;
 }
 
-bool   Navigation2D_nwc_yarp::getAllPaths(std::vector<yarp::dev::Nav2D::Map2DPath>& paths)
+ReturnValue   Navigation2D_nwc_yarp::getAllPaths(std::vector<yarp::dev::Nav2D::Map2DPath>& paths)
 {
     std::lock_guard <std::mutex> lg(m_mutex);
     auto ret = m_map_RPC.get_all_paths_RPC();
@@ -164,7 +164,7 @@ bool   Navigation2D_nwc_yarp::getAllPaths(std::vector<yarp::dev::Nav2D::Map2DPat
     return true;
 }
 
-bool   Navigation2D_nwc_yarp::getLocation(std::string location_name, Map2DLocation& loc)
+ReturnValue   Navigation2D_nwc_yarp::getLocation(std::string location_name, Map2DLocation& loc)
 {
     std::lock_guard <std::mutex> lg(m_mutex);
     auto ret = m_map_RPC.get_location_RPC(location_name);
@@ -177,7 +177,7 @@ bool   Navigation2D_nwc_yarp::getLocation(std::string location_name, Map2DLocati
     return true;
 }
 
-bool   Navigation2D_nwc_yarp::getArea(std::string area_name, Map2DArea& area)
+ReturnValue   Navigation2D_nwc_yarp::getArea(std::string area_name, Map2DArea& area)
 {
     std::lock_guard <std::mutex> lg(m_mutex);
     auto ret = m_map_RPC.get_area_RPC(area_name);
@@ -190,7 +190,7 @@ bool   Navigation2D_nwc_yarp::getArea(std::string area_name, Map2DArea& area)
     return true;
 }
 
-bool   Navigation2D_nwc_yarp::getPath(std::string path_name, Map2DPath& path)
+ReturnValue   Navigation2D_nwc_yarp::getPath(std::string path_name, Map2DPath& path)
 {
     std::lock_guard <std::mutex> lg(m_mutex);
     auto ret = m_map_RPC.get_path_RPC(path_name);
@@ -203,109 +203,109 @@ bool   Navigation2D_nwc_yarp::getPath(std::string path_name, Map2DPath& path)
     return true;
 }
 
-bool   Navigation2D_nwc_yarp::deleteLocation(std::string location_name)
+ReturnValue   Navigation2D_nwc_yarp::deleteLocation(std::string location_name)
 {
     std::lock_guard <std::mutex> lg(m_mutex);
     return m_map_RPC.delete_location_RPC(location_name);
 }
 
-bool   Navigation2D_nwc_yarp::renameLocation(std::string original_name, std::string new_name)
+ReturnValue   Navigation2D_nwc_yarp::renameLocation(std::string original_name, std::string new_name)
 {
     std::lock_guard <std::mutex> lg(m_mutex);
     return m_map_RPC.rename_location_RPC(original_name, new_name);
 }
 
-bool   Navigation2D_nwc_yarp::deleteArea(std::string location_name)
+ReturnValue   Navigation2D_nwc_yarp::deleteArea(std::string location_name)
 {
     std::lock_guard <std::mutex> lg(m_mutex);
     return m_map_RPC.delete_area_RPC(location_name);
 }
 
-bool   Navigation2D_nwc_yarp::deletePath(std::string path_name)
+ReturnValue   Navigation2D_nwc_yarp::deletePath(std::string path_name)
 {
     std::lock_guard <std::mutex> lg(m_mutex);
     return m_map_RPC.delete_path_RPC(path_name);
 }
 
-bool   Navigation2D_nwc_yarp::renameArea(std::string original_name, std::string new_name)
+ReturnValue   Navigation2D_nwc_yarp::renameArea(std::string original_name, std::string new_name)
 {
     std::lock_guard <std::mutex> lg(m_mutex);
     return m_map_RPC.rename_area_RPC(original_name, new_name);
 }
 
-bool   Navigation2D_nwc_yarp::renamePath(std::string original_name, std::string new_name)
+ReturnValue   Navigation2D_nwc_yarp::renamePath(std::string original_name, std::string new_name)
 {
     std::lock_guard <std::mutex> lg(m_mutex);
     return m_map_RPC.rename_path_RPC(original_name, new_name);
 }
 
-bool   Navigation2D_nwc_yarp::clearAllLocations()
+ReturnValue   Navigation2D_nwc_yarp::clearAllLocations()
 {
     std::lock_guard <std::mutex> lg(m_mutex);
     return m_map_RPC.clear_all_locations_RPC();
 }
 
-bool   Navigation2D_nwc_yarp::clearAllAreas()
+ReturnValue   Navigation2D_nwc_yarp::clearAllAreas()
 {
     std::lock_guard <std::mutex> lg(m_mutex);
     return m_map_RPC.clear_all_areas_RPC();
 }
 
-bool   Navigation2D_nwc_yarp::clearAllMapsTemporaryFlags()
+ReturnValue   Navigation2D_nwc_yarp::clearAllMapsTemporaryFlags()
 {
     std::lock_guard <std::mutex> lg(m_mutex);
     return m_map_RPC.clear_all_maps_temporary_flags_RPC();
 }
 
-bool   Navigation2D_nwc_yarp::clearMapTemporaryFlags(std::string map_name)
+ReturnValue   Navigation2D_nwc_yarp::clearMapTemporaryFlags(std::string map_name)
 {
     std::lock_guard <std::mutex> lg(m_mutex);
     return m_map_RPC.clear_map_temporary_flags_RPC(map_name);
 }
 
-bool   Navigation2D_nwc_yarp::clearAllPaths()
+ReturnValue   Navigation2D_nwc_yarp::clearAllPaths()
 {
     std::lock_guard <std::mutex> lg(m_mutex);
     return m_map_RPC.clear_all_paths_RPC();
 }
 
-bool Navigation2D_nwc_yarp::saveMapsCollection(std::string maps_collection)
+ReturnValue Navigation2D_nwc_yarp::saveMapsCollection(std::string maps_collection)
 {
     std::lock_guard <std::mutex> lg(m_mutex);
     return m_map_RPC.save_maps_collection_RPC(maps_collection);
 }
 
-bool Navigation2D_nwc_yarp::loadMapsCollection(std::string maps_collection)
+ReturnValue Navigation2D_nwc_yarp::loadMapsCollection(std::string maps_collection)
 {
     std::lock_guard <std::mutex> lg(m_mutex);
     return m_map_RPC.load_maps_collection_RPC(maps_collection);
 }
 
-bool Navigation2D_nwc_yarp::saveLocationsAndExtras(std::string locations_collection)
+ReturnValue Navigation2D_nwc_yarp::saveLocationsAndExtras(std::string locations_collection)
 {
     std::lock_guard <std::mutex> lg(m_mutex);
     return m_map_RPC.save_locations_and_extras_RPC(locations_collection);
 }
 
-bool Navigation2D_nwc_yarp::loadLocationsAndExtras(std::string locations_collection)
+ReturnValue Navigation2D_nwc_yarp::loadLocationsAndExtras(std::string locations_collection)
 {
     std::lock_guard <std::mutex> lg(m_mutex);
     return m_map_RPC.load_locations_and_extras_RPC(locations_collection);
 }
 
-bool Navigation2D_nwc_yarp::saveMapToDisk(std::string map_name, std::string file_name)
+ReturnValue Navigation2D_nwc_yarp::saveMapToDisk(std::string map_name, std::string file_name)
 {
     std::lock_guard <std::mutex> lg(m_mutex);
     return m_map_RPC.save_map_to_disk_RPC(map_name, file_name);
 }
 
-bool Navigation2D_nwc_yarp::loadMapFromDisk(std::string file_name)
+ReturnValue Navigation2D_nwc_yarp::loadMapFromDisk(std::string file_name)
 {
     std::lock_guard <std::mutex> lg(m_mutex);
     return m_map_RPC.load_map_from_disk_RPC(file_name);
 }
 
-bool Navigation2D_nwc_yarp::enableMapsCompression(bool enable)
+ReturnValue Navigation2D_nwc_yarp::enableMapsCompression(bool enable)
 {
     std::lock_guard <std::mutex> lg(m_mutex);
     return m_map_RPC.enable_maps_compression_RPC(enable);

@@ -180,7 +180,7 @@ bool Navigation2D_nwc_yarp::read(yarp::os::ConnectionReader& connection)
     return true;
 }
 
-bool Navigation2D_nwc_yarp::checkNearToLocation(Map2DLocation loc, double linear_tolerance, double angular_tolerance)
+ReturnValue Navigation2D_nwc_yarp::checkNearToLocation(Map2DLocation loc, double linear_tolerance, double angular_tolerance)
 {
     Map2DLocation curr_loc;
     if (getCurrentPosition(curr_loc) == false)
@@ -192,7 +192,7 @@ bool Navigation2D_nwc_yarp::checkNearToLocation(Map2DLocation loc, double linear
     return curr_loc.is_near_to(loc, linear_tolerance, angular_tolerance);
 }
 
-bool Navigation2D_nwc_yarp::checkNearToLocation(std::string location_name, double linear_tolerance, double angular_tolerance)
+ReturnValue Navigation2D_nwc_yarp::checkNearToLocation(std::string location_name, double linear_tolerance, double angular_tolerance)
 {
     Map2DLocation loc;
     Map2DLocation curr_loc;
@@ -211,7 +211,7 @@ bool Navigation2D_nwc_yarp::checkNearToLocation(std::string location_name, doubl
     return curr_loc.is_near_to(loc, linear_tolerance, angular_tolerance);
 }
 
-bool  Navigation2D_nwc_yarp::checkInsideArea(Map2DArea area)
+ReturnValue  Navigation2D_nwc_yarp::checkInsideArea(Map2DArea area)
 {
     Map2DLocation curr_loc;
     if (getCurrentPosition(curr_loc) == false)
@@ -229,7 +229,7 @@ bool  Navigation2D_nwc_yarp::checkInsideArea(Map2DArea area)
     return true;
 }
 
-bool Navigation2D_nwc_yarp::checkInsideArea(std::string area_name)
+ReturnValue Navigation2D_nwc_yarp::checkInsideArea(std::string area_name)
 {
     Map2DLocation curr_loc;
     Map2DArea area;
@@ -254,7 +254,7 @@ bool Navigation2D_nwc_yarp::checkInsideArea(std::string area_name)
     return true;
 }
 
-bool Navigation2D_nwc_yarp::gotoTargetByLocationName(std::string location_name)
+ReturnValue Navigation2D_nwc_yarp::gotoTargetByLocationName(std::string location_name)
 {
     Map2DLocation loc;
     Map2DArea area;
@@ -298,7 +298,7 @@ bool Navigation2D_nwc_yarp::gotoTargetByLocationName(std::string location_name)
 }
 
 
-bool Navigation2D_nwc_yarp::getNameOfCurrentTarget(std::string& location_name)
+ReturnValue Navigation2D_nwc_yarp::getNameOfCurrentTarget(std::string& location_name)
 {
     std::lock_guard <std::mutex> lg(m_mutex);
     auto ret = m_nav_RPC.get_name_of_current_target_RPC();
@@ -311,7 +311,7 @@ bool Navigation2D_nwc_yarp::getNameOfCurrentTarget(std::string& location_name)
     return true;
 }
 
-bool Navigation2D_nwc_yarp::storeCurrentPosition(std::string location_name)
+ReturnValue Navigation2D_nwc_yarp::storeCurrentPosition(std::string location_name)
 {
     Map2DLocation loc;
     bool b = this->getCurrentPosition(loc);

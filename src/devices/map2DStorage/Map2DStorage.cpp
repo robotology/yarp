@@ -36,7 +36,7 @@ Map2DStorage::Map2DStorage()
 
 Map2DStorage::~Map2DStorage() = default;
 
-bool Map2DStorage::saveMapsCollection(std::string mapsfile)
+ReturnValue Map2DStorage::saveMapsCollection(std::string mapsfile)
 {
     //check if the storage is not empty
     if (m_maps_storage.size() == 0)
@@ -72,7 +72,7 @@ bool Map2DStorage::saveMapsCollection(std::string mapsfile)
     return ret;
 }
 
-bool Map2DStorage::loadMapsCollection(std::string mapsfile)
+ReturnValue Map2DStorage::loadMapsCollection(std::string mapsfile)
 {
     bool ret = true;
     std::ifstream file;
@@ -562,7 +562,7 @@ bool Map2DStorage::priv_load_locations_and_areas_v3(std::ifstream& file)
     return true;
 }
 
-bool Map2DStorage::loadLocationsAndExtras(std::string locations_file)
+ReturnValue Map2DStorage::loadLocationsAndExtras(std::string locations_file)
 {
     std::ifstream file;
     file.open (locations_file.c_str());
@@ -628,7 +628,7 @@ bool Map2DStorage::loadLocationsAndExtras(std::string locations_file)
     return true;
 }
 
-bool Map2DStorage::saveLocationsAndExtras(std::string locations_file)
+ReturnValue Map2DStorage::saveLocationsAndExtras(std::string locations_file)
 {
     std::ofstream file;
     file.open (locations_file.c_str());
@@ -700,13 +700,13 @@ bool Map2DStorage::saveLocationsAndExtras(std::string locations_file)
 }
 
 
-bool Map2DStorage::clearAllMaps()
+ReturnValue Map2DStorage::clearAllMaps()
 {
     m_maps_storage.clear();
     return true;
 }
 
-bool Map2DStorage::store_map(const yarp::dev::Nav2D::MapGrid2D& map)
+ReturnValue Map2DStorage::store_map(const yarp::dev::Nav2D::MapGrid2D& map)
 {
     std::string map_name = map.getMapName();
     auto it = m_maps_storage.find(map_name);
@@ -723,7 +723,7 @@ bool Map2DStorage::store_map(const yarp::dev::Nav2D::MapGrid2D& map)
     return true;
 }
 
-bool Map2DStorage::get_map(std::string map_name, yarp::dev::Nav2D::MapGrid2D& map)
+ReturnValue Map2DStorage::get_map(std::string map_name, yarp::dev::Nav2D::MapGrid2D& map)
 {
     auto it = m_maps_storage.find(map_name);
     if (it != m_maps_storage.end())
@@ -734,7 +734,7 @@ bool Map2DStorage::get_map(std::string map_name, yarp::dev::Nav2D::MapGrid2D& ma
     return false;
 }
 
-bool Map2DStorage::get_map_names(std::vector<std::string>& map_names)
+ReturnValue Map2DStorage::get_map_names(std::vector<std::string>& map_names)
 {
     map_names.clear();
     for (auto& it : m_maps_storage)
@@ -744,7 +744,7 @@ bool Map2DStorage::get_map_names(std::vector<std::string>& map_names)
     return true;
 }
 
-bool Map2DStorage::remove_map(std::string map_name)
+ReturnValue Map2DStorage::remove_map(std::string map_name)
 {
     size_t rem = m_maps_storage.erase(map_name);
     if (rem == 0)
@@ -757,25 +757,25 @@ bool Map2DStorage::remove_map(std::string map_name)
     }
 }
 
-bool Map2DStorage::storeLocation(std::string location_name, yarp::dev::Nav2D::Map2DLocation loc)
+ReturnValue Map2DStorage::storeLocation(std::string location_name, yarp::dev::Nav2D::Map2DLocation loc)
 {
     m_locations_storage.insert(std::pair<std::string, Map2DLocation>(location_name, loc));
     return true;
 }
 
-bool Map2DStorage::storeArea(std::string area_name, yarp::dev::Nav2D::Map2DArea area)
+ReturnValue Map2DStorage::storeArea(std::string area_name, yarp::dev::Nav2D::Map2DArea area)
 {
     m_areas_storage.insert(std::pair<std::string, Map2DArea>(area_name, area));
     return true;
 }
 
-bool Map2DStorage::storePath(std::string path_name, yarp::dev::Nav2D::Map2DPath path)
+ReturnValue Map2DStorage::storePath(std::string path_name, yarp::dev::Nav2D::Map2DPath path)
 {
     m_paths_storage.insert(std::pair<std::string, Map2DPath>(path_name, path));
     return true;
 }
 
-bool Map2DStorage::getLocation(std::string location_name, yarp::dev::Nav2D::Map2DLocation& loc)
+ReturnValue Map2DStorage::getLocation(std::string location_name, yarp::dev::Nav2D::Map2DLocation& loc)
 {
     auto it = m_locations_storage.find(location_name);
     if (it != m_locations_storage.end())
@@ -786,7 +786,7 @@ bool Map2DStorage::getLocation(std::string location_name, yarp::dev::Nav2D::Map2
     return false;
 }
 
-bool Map2DStorage::getArea(std::string area_name, yarp::dev::Nav2D::Map2DArea& area)
+ReturnValue Map2DStorage::getArea(std::string area_name, yarp::dev::Nav2D::Map2DArea& area)
 {
     auto it = m_areas_storage.find(area_name);
     if (it != m_areas_storage.end())
@@ -797,7 +797,7 @@ bool Map2DStorage::getArea(std::string area_name, yarp::dev::Nav2D::Map2DArea& a
     return false;
 }
 
-bool Map2DStorage::getPath(std::string path_name, yarp::dev::Nav2D::Map2DPath& path)
+ReturnValue Map2DStorage::getPath(std::string path_name, yarp::dev::Nav2D::Map2DPath& path)
 {
     auto it = m_paths_storage.find(path_name);
     if (it != m_paths_storage.end())
@@ -808,7 +808,7 @@ bool Map2DStorage::getPath(std::string path_name, yarp::dev::Nav2D::Map2DPath& p
     return false;
 }
 
-bool Map2DStorage::getLocationsList(std::vector<std::string>& locations)
+ReturnValue Map2DStorage::getLocationsList(std::vector<std::string>& locations)
 {
     locations.clear();
     for (auto& it : m_locations_storage)
@@ -818,7 +818,7 @@ bool Map2DStorage::getLocationsList(std::vector<std::string>& locations)
     return true;
 }
 
-bool Map2DStorage::getAreasList(std::vector<std::string>& areas)
+ReturnValue Map2DStorage::getAreasList(std::vector<std::string>& areas)
 {
     areas.clear();
     for (auto& it : m_areas_storage)
@@ -828,7 +828,7 @@ bool Map2DStorage::getAreasList(std::vector<std::string>& areas)
     return true;
 }
 
-bool Map2DStorage::getPathsList(std::vector<std::string>& paths)
+ReturnValue Map2DStorage::getPathsList(std::vector<std::string>& paths)
 {
     paths.clear();
     for (auto& it : m_paths_storage)
@@ -838,7 +838,7 @@ bool Map2DStorage::getPathsList(std::vector<std::string>& paths)
     return true;
 }
 
-bool Map2DStorage::getAllLocations (std::vector<yarp::dev::Nav2D::Map2DLocation>& locations)
+ReturnValue Map2DStorage::getAllLocations (std::vector<yarp::dev::Nav2D::Map2DLocation>& locations)
 {
     locations.clear();
     for (auto& it : m_locations_storage)
@@ -848,7 +848,7 @@ bool Map2DStorage::getAllLocations (std::vector<yarp::dev::Nav2D::Map2DLocation>
     return true;
 }
 
-bool Map2DStorage::getAllAreas (std::vector<yarp::dev::Nav2D::Map2DArea>& areas)
+ReturnValue Map2DStorage::getAllAreas (std::vector<yarp::dev::Nav2D::Map2DArea>& areas)
 {
     for (auto& it : m_areas_storage)
     {
@@ -857,7 +857,7 @@ bool Map2DStorage::getAllAreas (std::vector<yarp::dev::Nav2D::Map2DArea>& areas)
     return true;
 }
 
-bool Map2DStorage::getAllPaths (std::vector<yarp::dev::Nav2D::Map2DPath>& paths)
+ReturnValue Map2DStorage::getAllPaths (std::vector<yarp::dev::Nav2D::Map2DPath>& paths)
 {
     paths.clear();
     for (auto& it : m_paths_storage)
@@ -867,7 +867,7 @@ bool Map2DStorage::getAllPaths (std::vector<yarp::dev::Nav2D::Map2DPath>& paths)
     return true;
 }
 
-bool Map2DStorage::renameLocation(std::string original_name, std::string new_name)
+ReturnValue Map2DStorage::renameLocation(std::string original_name, std::string new_name)
 {
     std::map<std::string, Map2DLocation>::iterator orig_it;
     orig_it = m_locations_storage.find(original_name);
@@ -885,7 +885,7 @@ bool Map2DStorage::renameLocation(std::string original_name, std::string new_nam
     return false;
 }
 
-bool Map2DStorage::deleteLocation(std::string location_name)
+ReturnValue Map2DStorage::deleteLocation(std::string location_name)
 {
     std::map<std::string, Map2DLocation>::iterator it;
     it = m_locations_storage.find(location_name);
@@ -897,7 +897,7 @@ bool Map2DStorage::deleteLocation(std::string location_name)
     return false;
 }
 
-bool Map2DStorage::deleteArea(std::string area_name)
+ReturnValue Map2DStorage::deleteArea(std::string area_name)
 {
     std::map<std::string, Map2DArea>::iterator it;
     it = m_areas_storage.find(area_name);
@@ -909,7 +909,7 @@ bool Map2DStorage::deleteArea(std::string area_name)
     return false;
 }
 
-bool Map2DStorage::deletePath(std::string path_name)
+ReturnValue Map2DStorage::deletePath(std::string path_name)
 {
     std::map<std::string, Map2DPath>::iterator it;
     it = m_paths_storage.find(path_name);
@@ -921,7 +921,7 @@ bool Map2DStorage::deletePath(std::string path_name)
     return false;
 }
 
-bool Map2DStorage::renameArea(std::string original_name, std::string new_name)
+ReturnValue Map2DStorage::renameArea(std::string original_name, std::string new_name)
 {
 
     std::map<std::string, Map2DArea>::iterator orig_it;
@@ -940,7 +940,7 @@ bool Map2DStorage::renameArea(std::string original_name, std::string new_name)
     return false;
 }
 
-bool Map2DStorage::renamePath(std::string original_name, std::string new_name)
+ReturnValue Map2DStorage::renamePath(std::string original_name, std::string new_name)
 {
 
     std::map<std::string, Map2DPath>::iterator orig_it;
@@ -961,25 +961,25 @@ bool Map2DStorage::renamePath(std::string original_name, std::string new_name)
 
 
 
-bool Map2DStorage::clearAllLocations()
+ReturnValue Map2DStorage::clearAllLocations()
 {
     m_locations_storage.clear();
     return true;
 }
 
-bool Map2DStorage::clearAllAreas()
+ReturnValue Map2DStorage::clearAllAreas()
 {
     m_areas_storage.clear();
     return true;
 }
 
-bool Map2DStorage::clearAllPaths()
+ReturnValue Map2DStorage::clearAllPaths()
 {
     m_paths_storage.clear();
     return true;
 }
 
-bool Map2DStorage::clearAllMapsTemporaryFlags()
+ReturnValue Map2DStorage::clearAllMapsTemporaryFlags()
 {
     for (auto it = m_maps_storage.begin(); it != m_maps_storage.end(); it++)
     {
@@ -988,7 +988,7 @@ bool Map2DStorage::clearAllMapsTemporaryFlags()
     return true;
 }
 
-bool Map2DStorage::clearMapTemporaryFlags(std::string map_name)
+ReturnValue Map2DStorage::clearMapTemporaryFlags(std::string map_name)
 {
     auto it = m_maps_storage.find(map_name);
     if (it != m_maps_storage.end())
@@ -1037,7 +1037,7 @@ bool Map2DStorage::read(yarp::os::ConnectionReader& connection)
     return true;
 }
 
-bool Map2DStorage::saveMapToDisk(std::string map_name, std::string file_name)
+ReturnValue Map2DStorage::saveMapToDisk(std::string map_name, std::string file_name)
 {
     auto p = m_maps_storage.find(map_name);
     if (p == m_maps_storage.end())
@@ -1062,7 +1062,7 @@ bool Map2DStorage::saveMapToDisk(std::string map_name, std::string file_name)
     return true;
 }
 
-bool Map2DStorage::loadMapFromDisk(std::string file_name)
+ReturnValue Map2DStorage::loadMapFromDisk(std::string file_name)
 {
     MapGrid2D map;
     bool r = map.loadFromFile(file_name);
@@ -1090,7 +1090,7 @@ bool Map2DStorage::loadMapFromDisk(std::string file_name)
     return true;
 }
 
-bool Map2DStorage::enableMapsCompression(bool enable)
+ReturnValue Map2DStorage::enableMapsCompression(bool enable)
 {
     bool b = true;
     for (auto it = m_maps_storage.begin(); it != m_maps_storage.end(); it++)

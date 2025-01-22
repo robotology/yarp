@@ -24,7 +24,7 @@ namespace {
 
 //------------------------------------------------------------------------------------------------------------------------------
 
-bool  Navigation2D_nwc_yarp::getLastVelocityCommand(double& x_vel, double& y_vel, double& theta_vel)
+ReturnValue  Navigation2D_nwc_yarp::getLastVelocityCommand(double& x_vel, double& y_vel, double& theta_vel)
 {
     std::lock_guard <std::mutex> lg(m_mutex);
     auto ret = m_nav_RPC.get_last_velocity_command_RPC();
@@ -39,7 +39,7 @@ bool  Navigation2D_nwc_yarp::getLastVelocityCommand(double& x_vel, double& y_vel
     return true;
 }
 
-bool  Navigation2D_nwc_yarp::applyVelocityCommand(double x_vel, double y_vel, double theta_vel, double timeout)
+ReturnValue  Navigation2D_nwc_yarp::applyVelocityCommand(double x_vel, double y_vel, double theta_vel, double timeout)
 {
     std::lock_guard <std::mutex> lg(m_mutex);
     return m_nav_RPC.apply_velocity_command_RPC(x_vel,y_vel,theta_vel, timeout);

@@ -24,25 +24,25 @@ YARP_LOG_COMPONENT(NAVIGATION2D_NWC_YARP, "yarp.device.navigation2D_nwc_yarp")
 
 //------------------------------------------------------------------------------------------------------------------------------
 
-bool Navigation2D_nwc_yarp::gotoTargetByAbsoluteLocation(Map2DLocation loc)
+ReturnValue Navigation2D_nwc_yarp::gotoTargetByAbsoluteLocation(Map2DLocation loc)
 {
     std::lock_guard <std::mutex> lg(m_mutex);
     return m_nav_RPC.goto_target_by_absolute_location_RPC(loc);
 }
 
-bool Navigation2D_nwc_yarp::gotoTargetByRelativeLocation(double x, double y)
+ReturnValue Navigation2D_nwc_yarp::gotoTargetByRelativeLocation(double x, double y)
 {
     std::lock_guard <std::mutex> lg(m_mutex);
     return m_nav_RPC.goto_target_by_relative_location1_RPC(x,y);
 }
 
-bool Navigation2D_nwc_yarp::gotoTargetByRelativeLocation(double x, double y, double theta)
+ReturnValue Navigation2D_nwc_yarp::gotoTargetByRelativeLocation(double x, double y, double theta)
 {
     std::lock_guard <std::mutex> lg(m_mutex);
     return m_nav_RPC.goto_target_by_relative_location2_RPC(x,y,theta);
 }
 
-bool Navigation2D_nwc_yarp::getAbsoluteLocationOfCurrentTarget(Map2DLocation &loc)
+ReturnValue Navigation2D_nwc_yarp::getAbsoluteLocationOfCurrentTarget(Map2DLocation &loc)
 {
     std::lock_guard <std::mutex> lg(m_mutex);
     auto ret = m_nav_RPC.get_absolute_location_of_current_target_RPC();
@@ -55,7 +55,7 @@ bool Navigation2D_nwc_yarp::getAbsoluteLocationOfCurrentTarget(Map2DLocation &lo
     return true;
 }
 
-bool Navigation2D_nwc_yarp::getRelativeLocationOfCurrentTarget(double& x, double& y, double& theta)
+ReturnValue Navigation2D_nwc_yarp::getRelativeLocationOfCurrentTarget(double& x, double& y, double& theta)
 {
     std::lock_guard <std::mutex> lg(m_mutex);
     auto ret = m_nav_RPC.get_relative_location_of_current_target_RPC();
@@ -70,7 +70,7 @@ bool Navigation2D_nwc_yarp::getRelativeLocationOfCurrentTarget(double& x, double
     return true;
 }
 
-bool Navigation2D_nwc_yarp::followPath(const yarp::dev::Nav2D::Map2DPath& locs)
+ReturnValue Navigation2D_nwc_yarp::followPath(const yarp::dev::Nav2D::Map2DPath& locs)
 {
     std::lock_guard <std::mutex> lg(m_mutex);
     return m_nav_RPC.follow_path_RPC(locs);

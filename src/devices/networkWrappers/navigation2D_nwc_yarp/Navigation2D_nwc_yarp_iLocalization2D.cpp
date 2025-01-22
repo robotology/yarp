@@ -24,13 +24,13 @@ namespace {
 
 //------------------------------------------------------------------------------------------------------------------------------
 
-bool  Navigation2D_nwc_yarp::setInitialPose(const Map2DLocation& loc)
+ReturnValue  Navigation2D_nwc_yarp::setInitialPose(const Map2DLocation& loc)
 {
     std::lock_guard <std::mutex> lg(m_mutex);
     return m_loc_RPC.set_initial_pose1_RPC(loc);
 }
 
-bool Navigation2D_nwc_yarp::setInitialPose(const Map2DLocation& loc, const yarp::sig::Matrix& cov)
+ReturnValue Navigation2D_nwc_yarp::setInitialPose(const Map2DLocation& loc, const yarp::sig::Matrix& cov)
 {
     if (cov.rows() != 3 || cov.cols() != 3)
     {
@@ -42,7 +42,7 @@ bool Navigation2D_nwc_yarp::setInitialPose(const Map2DLocation& loc, const yarp:
     return m_loc_RPC.set_initial_pose2_RPC(loc, cov);
 }
 
-bool  Navigation2D_nwc_yarp::getCurrentPosition(Map2DLocation& loc, yarp::sig::Matrix& cov)
+ReturnValue  Navigation2D_nwc_yarp::getCurrentPosition(Map2DLocation& loc, yarp::sig::Matrix& cov)
 {
     std::lock_guard <std::mutex> lg(m_mutex);
     auto ret = m_loc_RPC.get_current_position2_RPC();
@@ -56,7 +56,7 @@ bool  Navigation2D_nwc_yarp::getCurrentPosition(Map2DLocation& loc, yarp::sig::M
     return true;
 }
 
-bool  Navigation2D_nwc_yarp::getEstimatedOdometry(yarp::dev::OdometryData& odom)
+ReturnValue  Navigation2D_nwc_yarp::getEstimatedOdometry(yarp::dev::OdometryData& odom)
 {
     std::lock_guard <std::mutex> lg(m_mutex);
     auto ret = m_loc_RPC.get_estimated_odometry_RPC();
@@ -69,7 +69,7 @@ bool  Navigation2D_nwc_yarp::getEstimatedOdometry(yarp::dev::OdometryData& odom)
     return true;
 }
 
-bool  Navigation2D_nwc_yarp::getCurrentPosition(Map2DLocation& loc)
+ReturnValue  Navigation2D_nwc_yarp::getCurrentPosition(Map2DLocation& loc)
 {
     std::lock_guard <std::mutex> lg(m_mutex);
     auto ret = m_loc_RPC.get_current_position1_RPC();
@@ -82,7 +82,7 @@ bool  Navigation2D_nwc_yarp::getCurrentPosition(Map2DLocation& loc)
     return true;
 }
 
-bool  Navigation2D_nwc_yarp::getLocalizationStatus(yarp::dev::Nav2D::LocalizationStatusEnum& status)
+ReturnValue  Navigation2D_nwc_yarp::getLocalizationStatus(yarp::dev::Nav2D::LocalizationStatusEnum& status)
 {
     std::lock_guard <std::mutex> lg(m_mutex);
     auto ret = m_loc_RPC.get_localization_status_RPC();
@@ -95,7 +95,7 @@ bool  Navigation2D_nwc_yarp::getLocalizationStatus(yarp::dev::Nav2D::Localizatio
     return true;
 }
 
-bool  Navigation2D_nwc_yarp::getEstimatedPoses(std::vector<Map2DLocation>& poses)
+ReturnValue  Navigation2D_nwc_yarp::getEstimatedPoses(std::vector<Map2DLocation>& poses)
 {
     std::lock_guard <std::mutex> lg(m_mutex);
     auto ret = m_loc_RPC.get_estimated_poses_RPC();
@@ -108,13 +108,13 @@ bool  Navigation2D_nwc_yarp::getEstimatedPoses(std::vector<Map2DLocation>& poses
     return true;
 }
 
-bool  Navigation2D_nwc_yarp::startLocalizationService()
+ReturnValue  Navigation2D_nwc_yarp::startLocalizationService()
 {
     std::lock_guard <std::mutex> lg(m_mutex);
     return m_loc_RPC.start_localization_service_RPC();
 }
 
-bool  Navigation2D_nwc_yarp::stopLocalizationService()
+ReturnValue  Navigation2D_nwc_yarp::stopLocalizationService()
 {
     std::lock_guard <std::mutex> lg(m_mutex);
     return m_loc_RPC.stop_localization_service_RPC();

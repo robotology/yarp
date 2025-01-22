@@ -61,7 +61,7 @@ bool MobileBaseVelocityControl_nwc_yarp::close()
     return true;
 }
 
-bool MobileBaseVelocityControl_nwc_yarp::getLastVelocityCommand(double& x_vel, double& y_vel, double& theta_vel)
+ReturnValue MobileBaseVelocityControl_nwc_yarp::getLastVelocityCommand(double& x_vel, double& y_vel, double& theta_vel)
 {
     std::lock_guard <std::mutex> lg(m_mutex);
     auto ret = m_RPC.getLastVelocityCommandRPC();
@@ -76,7 +76,7 @@ bool MobileBaseVelocityControl_nwc_yarp::getLastVelocityCommand(double& x_vel, d
     return true;
 }
 
-bool MobileBaseVelocityControl_nwc_yarp::applyVelocityCommand(double x_vel, double y_vel, double theta_vel, double timeout)
+ReturnValue MobileBaseVelocityControl_nwc_yarp::applyVelocityCommand(double x_vel, double y_vel, double theta_vel, double timeout)
 {
     std::lock_guard <std::mutex> lg(m_mutex);
     return m_RPC.applyVelocityCommandRPC(x_vel,y_vel,theta_vel,timeout);

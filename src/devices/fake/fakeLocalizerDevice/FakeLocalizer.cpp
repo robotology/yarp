@@ -37,19 +37,19 @@ namespace {
 YARP_LOG_COMPONENT(FAKELOCALIZER, "yarp.device.fakeLocalizer")
 }
 
-bool   FakeLocalizer::getLocalizationStatus(yarp::dev::Nav2D::LocalizationStatusEnum& status)
+yarp::dev::ReturnValue   FakeLocalizer::getLocalizationStatus(yarp::dev::Nav2D::LocalizationStatusEnum& status)
 {
     std::lock_guard<std::mutex> lock(m_mutex);
-    if (!locThread) { yCError(FAKELOCALIZER) << "Invalid status"; return false; }
+    if (!locThread) { yCError(FAKELOCALIZER) << "Invalid status"; return yarp::dev::ReturnValue::return_code::return_value_error_method_failed;; }
 
     status = yarp::dev::Nav2D::LocalizationStatusEnum::localization_status_localized_ok;
-    return true;
+    return yarp::dev::ReturnValue_ok;
 }
 
-bool   FakeLocalizer::getEstimatedPoses(std::vector<Map2DLocation>& poses)
+yarp::dev::ReturnValue   FakeLocalizer::getEstimatedPoses(std::vector<Map2DLocation>& poses)
 {
     std::lock_guard<std::mutex> lock(m_mutex);
-    if (!locThread) { yCError(FAKELOCALIZER) << "Invalid status"; return false; }
+    if (!locThread) { yCError(FAKELOCALIZER) << "Invalid status"; return yarp::dev::ReturnValue::return_code::return_value_error_method_failed;; }
 
     poses.clear();
     Map2DLocation loc;
@@ -74,56 +74,56 @@ bool   FakeLocalizer::getEstimatedPoses(std::vector<Map2DLocation>& poses)
         poses.push_back(newloc);
     }
 #endif
-    return true;
+    return yarp::dev::ReturnValue_ok;
 }
 
-bool   FakeLocalizer::getCurrentPosition(Map2DLocation& loc)
+yarp::dev::ReturnValue   FakeLocalizer::getCurrentPosition(Map2DLocation& loc)
 {
     std::lock_guard<std::mutex> lock(m_mutex);
-    if (!locThread) { yCError(FAKELOCALIZER) << "Invalid status"; return false; }
+    if (!locThread) { yCError(FAKELOCALIZER) << "Invalid status"; return yarp::dev::ReturnValue::return_code::return_value_error_method_failed; }
 
     locThread->getCurrentLoc(loc);
-    return true;
+    return yarp::dev::ReturnValue_ok;
 }
 
-bool   FakeLocalizer::setInitialPose(const Map2DLocation& loc)
+yarp::dev::ReturnValue   FakeLocalizer::setInitialPose(const Map2DLocation& loc)
 {
     std::lock_guard<std::mutex> lock(m_mutex);
-    if (!locThread) { yCError(FAKELOCALIZER) << "Invalid status"; return false; }
+    if (!locThread) { yCError(FAKELOCALIZER) << "Invalid status"; return yarp::dev::ReturnValue::return_code::return_value_error_method_failed; }
 
     locThread->initializeLocalization(loc);
-    return true;
+    return yarp::dev::ReturnValue_ok;
 }
 
-bool   FakeLocalizer::getCurrentPosition(Map2DLocation& loc, yarp::sig::Matrix& cov)
+yarp::dev::ReturnValue   FakeLocalizer::getCurrentPosition(Map2DLocation& loc, yarp::sig::Matrix& cov)
 {
     std::lock_guard<std::mutex> lock(m_mutex);
-    if (!locThread) { yCError(FAKELOCALIZER) << "Invalid status"; return false; }
+    if (!locThread) { yCError(FAKELOCALIZER) << "Invalid status"; return yarp::dev::ReturnValue::return_code::return_value_error_method_failed;; }
 
     locThread->getCurrentLoc(loc,cov);
-    return true;
+    return yarp::dev::ReturnValue_ok;
 }
 
-bool   FakeLocalizer::setInitialPose(const Map2DLocation& loc, const yarp::sig::Matrix& cov)
+yarp::dev::ReturnValue   FakeLocalizer::setInitialPose(const Map2DLocation& loc, const yarp::sig::Matrix& cov)
 {
     std::lock_guard<std::mutex> lock(m_mutex);
-    if (!locThread) { yCError(FAKELOCALIZER) << "Invalid status"; return false; }
+    if (!locThread) { yCError(FAKELOCALIZER) << "Invalid status"; return yarp::dev::ReturnValue::return_code::return_value_error_method_failed;; }
 
     locThread->initializeLocalization(loc);
-    return true;
+    return yarp::dev::ReturnValue_ok;
 }
 
-bool   FakeLocalizer::getEstimatedOdometry(yarp::dev::OdometryData& odom)
+yarp::dev::ReturnValue   FakeLocalizer::getEstimatedOdometry(yarp::dev::OdometryData& odom)
 {
     std::lock_guard<std::mutex> lock(m_mutex);
-    if (!locThread) { yCError(FAKELOCALIZER) << "Invalid status" ; return false; }
+    if (!locThread) { yCError(FAKELOCALIZER) << "Invalid status" ; return yarp::dev::ReturnValue::return_code::return_value_error_method_failed;; }
 
     Map2DLocation loc;
     locThread->getCurrentLoc(loc);
     odom.odom_x = loc.x;
     odom.odom_y = loc.y;
     odom.odom_theta = loc.theta;
-    return true;
+    return yarp::dev::ReturnValue_ok;
 }
 
 bool FakeLocalizer::open(yarp::os::Searchable& config)
@@ -151,20 +151,20 @@ FakeLocalizer::~FakeLocalizer()
 {
 }
 
-bool FakeLocalizer::startLocalizationService()
+yarp::dev::ReturnValue FakeLocalizer::startLocalizationService()
 {
     std::lock_guard<std::mutex> lock(m_mutex);
-    if (!locThread) { yCError(FAKELOCALIZER) << "Invalid status"; return false; }
+    if (!locThread) { yCError(FAKELOCALIZER) << "Invalid status"; return yarp::dev::ReturnValue::return_code::return_value_error_method_failed;; }
 
-    return true;
+    return yarp::dev::ReturnValue_ok;
 }
 
-bool FakeLocalizer::stopLocalizationService()
+yarp::dev::ReturnValue FakeLocalizer::stopLocalizationService()
 {
     std::lock_guard<std::mutex> lock(m_mutex);
-    if (!locThread) { yCError(FAKELOCALIZER) << "Invalid status"; return false; }
+    if (!locThread) { yCError(FAKELOCALIZER) << "Invalid status"; return yarp::dev::ReturnValue::return_code::return_value_error_method_failed;; }
 
-    return true;
+    return yarp::dev::ReturnValue_ok;
 }
 
 bool FakeLocalizer::close()
