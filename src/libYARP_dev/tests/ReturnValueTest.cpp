@@ -11,6 +11,16 @@
 
 using namespace yarp::dev;
 
+yarp_ret_value test_method1()
+{
+    return YARP_METHOD_NOT_YET_IMPLEMENTED();
+}
+
+yarp_ret_value test_method2()
+{
+    return YARP_METHOD_DEPRECATED();
+}
+
 TEST_CASE("dev::ReturnValue", "[yarp::dev]")
 {
 #ifndef DISABLE_BOOL_INPUT
@@ -188,11 +198,11 @@ TEST_CASE("dev::ReturnValue", "[yarp::dev]")
 
     SECTION("test block 7")
     {
-        auto ret1 = YARP_METHOD_NOT_YET_IMPLEMENTED();
+        auto ret1 = test_method1();
         CHECK(ret1 == yarp_ret_value::return_code::return_value_error_not_implemented_by_device);
         CHECK(!(ret1 == yarp_ret_value::return_code::return_value_ok));
 
-        auto ret2 = YARP_METHOD_DEPRECATED();
+        auto ret2 = test_method2();
         CHECK(ret2 == yarp_ret_value::return_code::return_value_error_deprecated);
         CHECK(!(ret2 == yarp_ret_value::return_code::return_value_ok));
     }

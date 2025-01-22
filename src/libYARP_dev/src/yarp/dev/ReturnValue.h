@@ -71,19 +71,32 @@ public:
 
 #define yarp_ret_value_ok yarp_ret_value(yarp::dev::yarp_ret_value::return_code::return_value_ok)
 
-inline yarp_ret_value YARP_METHOD_NOT_YET_IMPLEMENTED()
+#if __cplusplus >= 202002L
+inline yarp_ret_value YARP_METHOD_NOT_YET_IMPLEMENTED(const std::source_location& location = std::source_location::current())
 {
-    const std::source_location& location = std::source_location::current();
     yError("Method %s not yet implemented\n", location.function_name());
     return yarp_ret_value(yarp::dev::yarp_ret_value::return_code::return_value_error_not_implemented_by_device);
 }
-
-inline yarp_ret_value YARP_METHOD_DEPRECATED()
+inline yarp_ret_value YARP_METHOD_DEPRECATED(const std::source_location& location = std::source_location::current())
 {
-    const std::source_location& location = std::source_location::current();
-    yError("Method %s has been deprecated!\n", location.function_name());
+    yError("Method %s has been deprecated\n", location.function_name());
     return yarp_ret_value(yarp::dev::yarp_ret_value::return_code::return_value_error_deprecated);
 }
+#else
+inline yarp_ret_value yarp_method_not_implemented(const char* location)
+{
+    yError("Method %s not yet implemented\n", location);
+    return yarp_ret_value(yarp::dev::yarp_ret_value::return_code::return_value_error_not_implemented_by_device);
+}
+#define YARP_METHOD_NOT_YET_IMPLEMENTED() yarp_method_not_implemented(__func__)
+inline yarp_ret_value yarp_method_deprecated(const char* location)
+{
+    yError("Method %s has been deprecated\n", location);
+    return yarp_ret_value(yarp::dev::yarp_ret_value::return_code::return_value_error_deprecated);
+}
+#define YARP_METHOD_DEPRECATED() yarp_method_deprecated(__func__)
+#endif
+
 
 }
 
