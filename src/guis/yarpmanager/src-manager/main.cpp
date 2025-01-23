@@ -33,6 +33,7 @@ Options:\n\
   --auto_connect        \n\
   --auto_dependency     \n\
   --add_current_dir     add the current dir to the search path\n\
+  --elapsed_time        if present the time stamp for log messages will be relative to the GUI start time\n\
 "
 
 #define DEF_CONFIG_FILE     "ymanager.ini"
@@ -204,6 +205,12 @@ int main(int argc, char *argv[])
 
     if(!config.check("auto_dependency")){
         config.put("auto_dependency", "no");
+    }
+
+    if(!config.check("elapsed_time"))
+    {
+        yarp::manager::ClockStart& clock = yarp::manager::ClockStart::getInstance();
+        clock.setStartTime("00:00:00");
     }
 
 #if defined(_WIN32)
