@@ -575,9 +575,9 @@ jobs:
             cmake_generator: "Unix Makefiles",
             cmake_initial_cache_file: ".ci/initial-cache.gh.linux.cmake",
             test_external_bindings: true,
-            #SWIGFIX temporary fix for swig 4.2.1. The following lines should be removed.
+            #SWIGFIX temporary fix for swig 4.3.0. The following lines should be removed.
             swig_extra_options: "-DSWIG_EXECUTABLE=/usr/bin/swig
-                                  -DSWIG_DIR=/usr/share/swig/4.2.1",
+                                  -DSWIG_DIR=/usr/share/swig/4.3.0",
           }
         - {
             id: '102',
@@ -588,9 +588,9 @@ jobs:
             cmake_generator: "Unix Makefiles",
             cmake_initial_cache_file: ".ci/initial-cache.gh.linux.cmake",
             test_external_bindings: true,
-            #SWIGFIX temporary fix for swig 4.2.1. The following lines should be removed.
+            #SWIGFIX temporary fix for swig 4.3.0. The following lines should be removed.
             swig_extra_options: "-DSWIG_EXECUTABLE=/usr/bin/swig
-                                  -DSWIG_DIR=/usr/share/swig/4.2.1",
+                                  -DSWIG_DIR=/usr/share/swig/4.3.0",
           }
         - {
             id: '103',
@@ -603,9 +603,9 @@ jobs:
             cmake_initial_cache_file: ".ci/initial-cache.gh.linux.cmake",
             cmake_extra_options: "-DCMAKE_DISABLE_FIND_PACKAGE_ACE=ON
                                   -DSKIP_ACE:BOOL=ON",
-            #SWIGFIX temporary fix for swig 4.2.1. The following lines should be removed.
+            #SWIGFIX temporary fix for swig 4.3.0. The following lines should be removed.
             swig_extra_options:  "-DSWIG_EXECUTABLE=/usr/bin/swig
-                                  -DSWIG_DIR=/usr/share/swig/4.2.1",
+                                  -DSWIG_DIR=/usr/share/swig/4.3.0",
             test_external_bindings: true,
           }
         - {
@@ -619,9 +619,9 @@ jobs:
             cmake_initial_cache_file: ".ci/initial-cache.gh.linux.cmake",
             cmake_extra_options: "-DCMAKE_DISABLE_FIND_PACKAGE_ACE:BOOL=ON
                                   -DSKIP_ACE:BOOL=ON",
-            #SWIGFIX temporary fix for swig 4.2.1. The following lines should be removed.
+            #SWIGFIX temporary fix for swig 4.3.0. The following lines should be removed.
             swig_extra_options:  "-DSWIG_EXECUTABLE=/usr/bin/swig
-                                  -DSWIG_DIR=/usr/share/swig/4.2.1",
+                                  -DSWIG_DIR=/usr/share/swig/4.3.0",
             test_external_bindings: true,
           }
         - {
@@ -688,9 +688,9 @@ jobs:
             cmake_generator: "Unix Makefiles",
             cmake_initial_cache_file: ".ci/initial-cache.gh.linux.cmake",
             cmake_extra_options: "-DBUILD_SHARED_LIBS:BOOL=OFF",
-            #SWIGFIX temporary fix for swig 4.2.1. The following lines should be removed.
+            #SWIGFIX temporary fix for swig 4.3.0. The following lines should be removed.
             swig_extra_options: "-DSWIG_EXECUTABLE=/usr/bin/swig
-                                  -DSWIG_DIR=/usr/share/swig/4.2.1",
+                                  -DSWIG_DIR=/usr/share/swig/4.3.0",
           }
         - {
             id: '110',
@@ -702,9 +702,9 @@ jobs:
             cmake_generator: "Unix Makefiles",
             cmake_initial_cache_file: ".ci/initial-cache.gh.linux.cmake",
             cmake_extra_options: "-DBUILD_SHARED_LIBS:BOOL=OFF",
-            #SWIGFIX temporary fix for swig 4.2.1. The following lines should be removed.
+            #SWIGFIX temporary fix for swig 4.3.0. The following lines should be removed.
             swig_extra_options: "-DSWIG_EXECUTABLE=/usr/bin/swig
-                                  -DSWIG_DIR=/usr/share/swig/4.2.1",
+                                  -DSWIG_DIR=/usr/share/swig/4.3.0",
           }
         - {
             id: '111',
@@ -744,9 +744,9 @@ jobs:
             cmake_generator: "Unix Makefiles",
             cmake_initial_cache_file: ".ci/initial-cache.gh.linux.cmake",
             cmake_extra_options: "-DYARP_NO_DEPRECATED:BOOL=ON",
-            #SWIGFIX temporary fix for swig 4.2.1. The following lines should be removed.
+            #SWIGFIX temporary fix for swig 4.3.0. The following lines should be removed.
             swig_extra_options: "-DSWIG_EXECUTABLE=/usr/bin/swig
-                                  -DSWIG_DIR=/usr/share/swig/4.2.1",
+                                  -DSWIG_DIR=/usr/share/swig/4.3.0",
           }
         - {
             id: '114',
@@ -758,9 +758,9 @@ jobs:
             cmake_generator: "Unix Makefiles",
             cmake_initial_cache_file: ".ci/initial-cache.gh.linux.cmake",
             cmake_extra_options: "-DYARP_NO_DEPRECATED:BOOL=ON",
-            #SWIGFIX temporary fix for swig 4.2.1. The following lines should be removed.
+            #SWIGFIX temporary fix for swig 4.3.0. The following lines should be removed.
             swig_extra_options: "-DSWIG_EXECUTABLE=/usr/bin/swig
-                                  -DSWIG_DIR=/usr/share/swig/4.2.1",
+                                  -DSWIG_DIR=/usr/share/swig/4.3.0",
           }
         - {
             id: '115',
@@ -773,9 +773,9 @@ jobs:
             cmake_initial_cache_file: ".ci/initial-cache.gh.linux.cmake",
             cmake_extra_options: "-DYARP_COMPILE_EXECUTABLES:BOOL=OFF
                                   -DYARP_COMPILE_TESTS:BOOL=OFF",
-            #SWIGFIX temporary fix for swig 4.2.1. The following lines should be removed.
+            #SWIGFIX temporary fix for swig 4.3.0. The following lines should be removed.
             swig_extra_options: "-DSWIG_EXECUTABLE=/usr/bin/swig
-                                  -DSWIG_DIR=/usr/share/swig/4.2.1",
+                                  -DSWIG_DIR=/usr/share/swig/4.3.0",
           }
         - {
             id: '116',
@@ -788,9 +788,9 @@ jobs:
             cmake_initial_cache_file: ".ci/initial-cache.gh.linux.cmake",
             cmake_extra_options: "-DYARP_COMPILE_EXECUTABLES:BOOL=OFF
                                   -DYARP_COMPILE_TESTS:BOOL=OFF",
-            #SWIGFIX temporary fix for swig 4.2.1. The following lines should be removed.
+            #SWIGFIX temporary fix for swig 4.3.0. The following lines should be removed.
             swig_extra_options: "-DSWIG_EXECUTABLE=/usr/bin/swig
-                                  -DSWIG_DIR=/usr/share/swig/4.2.1",
+                                  -DSWIG_DIR=/usr/share/swig/4.3.0",
           }
         - {
             id: '117',
@@ -804,9 +804,9 @@ jobs:
             cmake_extra_options: "-DCMAKE_DISABLE_FIND_PACKAGE_SQLite:BOOL=ON
                                   -DCMAKE_DISABLE_FIND_PACKAGE_TinyXML:BOOL=ON
                                   -DCMAKE_DISABLE_FIND_PACKAGE_QCustomPlot:BOOL=ON",
-            #SWIGFIX temporary fix for swig 4.2.1. The following lines should be removed.
+            #SWIGFIX temporary fix for swig 4.3.0. The following lines should be removed.
             swig_extra_options: "-DSWIG_EXECUTABLE=/usr/bin/swig
-                                  -DSWIG_DIR=/usr/share/swig/4.2.1",
+                                  -DSWIG_DIR=/usr/share/swig/4.3.0",
           }
         - {
             id: '118',
@@ -820,9 +820,9 @@ jobs:
             cmake_extra_options: "-DCMAKE_DISABLE_FIND_PACKAGE_SQLite:BOOL=ON
                                   -DCMAKE_DISABLE_FIND_PACKAGE_TinyXML:BOOL=ON
                                   -DCMAKE_DISABLE_FIND_PACKAGE_QCustomPlot:BOOL=ON",
-            #SWIGFIX temporary fix for swig 4.2.1. The following lines should be removed.
+            #SWIGFIX temporary fix for swig 4.3.0. The following lines should be removed.
             swig_extra_options: "-DSWIG_EXECUTABLE=/usr/bin/swig
-                                  -DSWIG_DIR=/usr/share/swig/4.2.1",
+                                  -DSWIG_DIR=/usr/share/swig/4.3.0",
           }
         - {
             id: '119',
@@ -832,9 +832,9 @@ jobs:
             cxx: "g++",
             cmake_generator: "Ninja",
             cmake_initial_cache_file: ".ci/initial-cache.gh.linux.cmake",
-            #SWIGFIX temporary fix for swig 4.2.1. The following lines should be removed.
+            #SWIGFIX temporary fix for swig 4.3.0. The following lines should be removed.
             swig_extra_options: "-DSWIG_EXECUTABLE=/usr/bin/swig
-                                  -DSWIG_DIR=/usr/share/swig/4.2.1",
+                                  -DSWIG_DIR=/usr/share/swig/4.3.0",
           }
         - {
             id: '120',
@@ -844,9 +844,9 @@ jobs:
             cxx: "clang++-17",
             cmake_generator: "Ninja",
             cmake_initial_cache_file: ".ci/initial-cache.gh.linux.cmake",
-            #SWIGFIX temporary fix for swig 4.2.1. The following lines should be removed.
+            #SWIGFIX temporary fix for swig 4.3.0. The following lines should be removed.
             swig_extra_options: "-DSWIG_EXECUTABLE=/usr/bin/swig
-                                  -DSWIG_DIR=/usr/share/swig/4.2.1",
+                                  -DSWIG_DIR=/usr/share/swig/4.3.0",
           }
         - {
             id: '121',
@@ -992,7 +992,7 @@ jobs:
           }
         - {
             id: '303',
-            os: macos-12,
+            os: macos-14,
             build_type: "Release",
             cc: "clang",
             cxx: "clang++",
@@ -1001,7 +1001,7 @@ jobs:
           }
         - {
             id: '304',
-            os: macos-12,
+            os: macos-14,
             build_type: "Release",
             cc: "clang",
             cxx: "clang++",
@@ -1108,12 +1108,12 @@ jobs:
           # On Ubuntu 24.04 this corresponds to swig 4.2.0 which is affected by a bug: https://github.com/robotology/yarp/issues/3083
           # sudo apt-get install -qq -y swig 
           #
-          # we thus install manually swig 4.2.1
+          # we thus install manually swig 4.3.0
           sudo apt-get purge -y swig
-          wget -nv https://github.com/robotology/robotology-vcpkg-ports/releases/download/storage/swig_4_2_1_ubuntu_24_04.zip
-          unzip -q swig_4_2_1_ubuntu_24_04.zip
-          sudo mv swig_4_2_1_ubuntu_24_04_install/bin/* /usr/bin
-          sudo mv swig_4_2_1_ubuntu_24_04_install/share/swig /usr/share
+          wget -nv https://github.com/robotology/robotology-vcpkg-ports/releases/download/storage/swig_4_3_0_ubuntu_24_04.zip
+          unzip -q swig_4_3_0_ubuntu_24_04.zip
+          sudo mv swig_4_3_0_ubuntu_24_04_install/bin/* /usr/bin
+          sudo mv swig_4_3_0_ubuntu_24_04_install/share/swig /usr/share
 
           # Other tools useful in github actions
           sudo apt-get install -qq -y jq \
@@ -1135,9 +1135,9 @@ jobs:
           choco install --no-progress -y wget 7zip
           echo ""
           echo " Download and install SWIG"
-          wget -nv https://sourceforge.net/projects/swig/files/swigwin/swigwin-4.2.1/swigwin-4.2.1.zip -O swigwin.zip
+          wget -nv https://sourceforge.net/projects/swig/files/swigwin/swigwin-4.3.0/swigwin-4.3.0.zip -O swigwin.zip
           7z x swigwin.zip
-          mv swigwin-4.2.1/swig.exe swig.exe
+          mv swigwin-4.3.0/swig.exe swig.exe
           echo ""
           echo " To avoid problems with non-relocatable packages, we unzip the archive exactly in the same C:/robotology/vcpkg that has been used to create the pre-compiled archive"
           wget -nv https://github.com/robotology/robotology-superbuild-dependencies-vcpkg/releases/download/v0.10.1/vcpkg-robotology-yarp-only.zip
@@ -1434,7 +1434,7 @@ jobs:
           set(_cmake_extra_options ${{ matrix.config.cmake_extra_options }})
         endif()
 
-        #SWIGFIX temporary fix for swig 4.2.1. The following lines should be removed.
+        #SWIGFIX temporary fix for swig 4.3.0. The following lines should be removed.
         set(_swig_extra_options)
         if(NOT "${{ matrix.config.swig_extra_options }}" STREQUAL "")
           set(_swig_extra_options ${{ matrix.config.swig_extra_options }})
@@ -1593,7 +1593,7 @@ jobs:
                                        -D CMAKE_CXX_COMPILER_LAUNCHER=${_ccache_cmd})
         endif()
 
-        #SWIGFIX temporary fix for swig 4.2.1. The following lines should be removed.
+        #SWIGFIX temporary fix for swig 4.3.0. The following lines should be removed.
         set(_swig_extra_options)
         if(NOT "${{ matrix.config.swig_extra_options }}" STREQUAL "")
           set(_swig_extra_options ${{ matrix.config.swig_extra_options }})
@@ -1676,7 +1676,7 @@ jobs:
                                        -D CMAKE_CXX_COMPILER_LAUNCHER=${_ccache_cmd})
         endif()
 
-        #SWIGFIX temporary fix for swig 4.2.1. The following lines should be removed.
+        #SWIGFIX temporary fix for swig 4.3.0. The following lines should be removed.
         set(_swig_extra_options)
         if(NOT "${{ matrix.config.swig_extra_options }}" STREQUAL "")
           set(_swig_extra_options ${{ matrix.config.swig_extra_options }})
@@ -1725,7 +1725,7 @@ jobs:
         )
 
     - name: Upload artifact
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: installation-${{ matrix.config.id }}
         path: install.tar
@@ -1829,12 +1829,12 @@ jobs:
           # On Ubuntu 24.04 this corresponds to swig 4.2.0 which is affected by a bug: https://github.com/robotology/yarp/issues/3083
           # sudo apt-get install -qq -y swig 
           #
-          # we thus install manually swig 4.2.1
+          # we thus install manually swig 4.3.0
           sudo apt-get purge -y swig
-          wget -nv https://github.com/robotology/robotology-vcpkg-ports/releases/download/storage/swig_4_2_1_ubuntu_24_04.zip
-          unzip -q swig_4_2_1_ubuntu_24_04.zip
-          sudo mv swig_4_2_1_ubuntu_24_04_install/bin/* /usr/bin
-          sudo mv swig_4_2_1_ubuntu_24_04_install/share/swig /usr/share
+          wget -nv https://github.com/robotology/robotology-vcpkg-ports/releases/download/storage/swig_4_3_0_ubuntu_24_04.zip
+          unzip -q swig_4_3_0_ubuntu_24_04.zip
+          sudo mv swig_4_3_0_ubuntu_24_04_install/bin/* /usr/bin
+          sudo mv swig_4_3_0_ubuntu_24_04_install/share/swig /usr/share
 
           # Other tools useful in github actions
           sudo apt-get install -qq -y jq \
@@ -2031,12 +2031,12 @@ jobs:
           # On Ubuntu 24.04 this corresponds to swig 4.2.0 which is affected by a bug: https://github.com/robotology/yarp/issues/3083
           # sudo apt-get install -qq -y swig 
           #
-          # we thus install manually swig 4.2.1
+          # we thus install manually swig 4.3.0
           sudo apt-get purge -y swig
-          wget -nv https://github.com/robotology/robotology-vcpkg-ports/releases/download/storage/swig_4_2_1_ubuntu_24_04.zip
-          unzip -q swig_4_2_1_ubuntu_24_04.zip
-          sudo mv swig_4_2_1_ubuntu_24_04_install/bin/* /usr/bin
-          sudo mv swig_4_2_1_ubuntu_24_04_install/share/swig /usr/share
+          wget -nv https://github.com/robotology/robotology-vcpkg-ports/releases/download/storage/swig_4_3_0_ubuntu_24_04.zip
+          unzip -q swig_4_3_0_ubuntu_24_04.zip
+          sudo mv swig_4_3_0_ubuntu_24_04_install/bin/* /usr/bin
+          sudo mv swig_4_3_0_ubuntu_24_04_install/share/swig /usr/share
 
           # Other tools useful in github actions
           sudo apt-get install -qq -y jq \
@@ -2249,12 +2249,12 @@ jobs:
           # On Ubuntu 24.04 this corresponds to swig 4.2.0 which is affected by a bug: https://github.com/robotology/yarp/issues/3083
           # sudo apt-get install -qq -y swig 
           #
-          # we thus install manually swig 4.2.1
+          # we thus install manually swig 4.3.0
           sudo apt-get purge -y swig
-          wget -nv https://github.com/robotology/robotology-vcpkg-ports/releases/download/storage/swig_4_2_1_ubuntu_24_04.zip
-          unzip -q swig_4_2_1_ubuntu_24_04.zip
-          sudo mv swig_4_2_1_ubuntu_24_04_install/bin/* /usr/bin
-          sudo mv swig_4_2_1_ubuntu_24_04_install/share/swig /usr/share
+          wget -nv https://github.com/robotology/robotology-vcpkg-ports/releases/download/storage/swig_4_3_0_ubuntu_24_04.zip
+          unzip -q swig_4_3_0_ubuntu_24_04.zip
+          sudo mv swig_4_3_0_ubuntu_24_04_install/bin/* /usr/bin
+          sudo mv swig_4_3_0_ubuntu_24_04_install/share/swig /usr/share
 
           # Other tools useful in github actions
           sudo apt-get install -qq -y jq \
@@ -2420,7 +2420,7 @@ jobs:
             -Dsonar.cfamily.cache.enabled=${SONAR_CFAMILY_CACHE_ENABLED} \
             -Dsonar.coverageReportPaths=build/coverage.xml \
             -Dsonar.junit.reportPaths=build/JUnitTestResults.xml \
-            -Dsonar.exclusions="src/yarp*/**/* src/carriers/**/* src/devices/**/* src/idls/**/* src/libyarp*/**/* src/robottestingframework-plugins/**/* tests/**/*" \
+            -Dsonar.exclusions="src/yarp*/**/* src/guis/* src/carriers/**/* src/devices/**/* src/idls/**/* src/libyarp*/**/* src/robottestingframework-plugins/**/* tests/**/*" \
             -Dsonar.coverage.exclusions="\
                  src/libYARP_dev/src/yarp/dev/tests/*,\
                  src/devices/*/tests/*,\
@@ -2428,6 +2428,7 @@ jobs:
                  src/portmonitors/*/tests/*,\
                  tests/**/*,\
                  src/yarp*/**/*,\
+                 src/guis/*,\
                  robottestingframework-plugins/**/*\
                  " \
             -Dsonar.branch.longLivedBranches.regex="^(master|yarp-.+)$" \
