@@ -38,7 +38,7 @@ The following systems are officially supported and tested by github CI.
 Installation
 ------------
 
-See full instructions at http://www.yarp.it/install.html
+See full instructions at [https://www.yarp.it/latest/yarp_installation.html](https://www.yarp.it/latest/yarp_installation.html)
 
 * On Linux:
 
