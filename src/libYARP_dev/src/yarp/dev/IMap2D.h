@@ -36,31 +36,31 @@ public:
 
     /**
      Removes all the registered maps from the server.
-    * @return true/false
+    * @return a ReturnValue, convertible to true/false
     */
     virtual yarp::dev::ReturnValue     clearAllMaps () = 0;
 
     /**
     Stores a map into the map server.
-    * @return true/false
+    * @return a ReturnValue, convertible to true/false
     */
     virtual yarp::dev::ReturnValue     store_map(const yarp::dev::Nav2D::MapGrid2D& map) = 0;
 
     /**
     Gets a map from the map server.
-    * @return true/false
+    * @return a ReturnValue, convertible to true/false
     */
     virtual yarp::dev::ReturnValue     get_map(std::string map_name, yarp::dev::Nav2D::MapGrid2D& map) = 0;
 
     /**
     Gets a list containing the names of all registered maps.
-    * @return true/false
+    * @return a ReturnValue, convertible to true/false
     */
     virtual yarp::dev::ReturnValue     get_map_names(std::vector<std::string>& map_names) = 0;
 
     /**
     Removes a map from the map server.
-    * @return true/false
+    * @return a ReturnValue, convertible to true/false
     */
     virtual yarp::dev::ReturnValue     remove_map(std::string map_name) = 0;
 
@@ -68,7 +68,7 @@ public:
     * Store a location specified by the user in the world reference frame
     * @param location_name the name of the location
     * @param loc the location of the robot
-    * @return true/false
+    * @return a ReturnValue, convertible to true/false
     */
     virtual yarp::dev::ReturnValue storeLocation(std::string location_name, yarp::dev::Nav2D::Map2DLocation loc) = 0;
 
@@ -76,7 +76,7 @@ public:
     * Store an area
     * @param area_name the name of the area
     * @param area the area
-    * @return true/false
+    * @return a ReturnValue, convertible to true/false
     */
     virtual yarp::dev::ReturnValue storeArea(std::string area_name, yarp::dev::Nav2D::Map2DArea area) = 0;
 
@@ -84,7 +84,7 @@ public:
     * Store a path
     * @param path_name the name of the path
     * @param path the path
-    * @return true/false
+    * @return a ReturnValue, convertible to true/false
     */
     virtual yarp::dev::ReturnValue storePath(std::string path_name, yarp::dev::Nav2D::Map2DPath path) = 0;
 
@@ -92,7 +92,7 @@ public:
     * Retrieves a location specified by the user in the world reference frame
     * @param location_name the name of the location
     * @param loc the location
-    * @return true/false
+    * @return a ReturnValue, convertible to true/false
     */
     virtual yarp::dev::ReturnValue getLocation(std::string location_name, yarp::dev::Nav2D::Map2DLocation& loc) = 0;
 
@@ -100,7 +100,7 @@ public:
     * Retrieves an area
     * @param area_name the name of the area
     * @param area the area
-    * @return true/false
+    * @return a ReturnValue, convertible to true/false
     */
     virtual yarp::dev::ReturnValue getArea(std::string area_name, yarp::dev::Nav2D::Map2DArea& area) = 0;
 
@@ -108,49 +108,49 @@ public:
     * Retrieves a path
     * @param path_name the name of the path
     * @param path the path
-    * @return true/false
+    * @return a ReturnValue, convertible to true/false
     */
     virtual yarp::dev::ReturnValue getPath(std::string path_name, yarp::dev::Nav2D::Map2DPath& path) = 0;
 
     /**
     * Get a list of the names of all stored locations
     * @param the returned list of locations names
-    * @return true/false
+    * @return a ReturnValue, convertible to true/false
     */
     virtual yarp::dev::ReturnValue getLocationsList(std::vector<std::string>& locations) = 0;
 
     /**
     * Get a list of the names of all stored areas
     * @param the returned list of areas names
-    * @return true/false
+    * @return a ReturnValue, convertible to true/false
     */
     virtual yarp::dev::ReturnValue getAreasList(std::vector<std::string>& areas) = 0;
 
     /**
     * Get a list of the names of all stored paths
     * @param the returned list of paths names
-    * @return true/false
+    * @return a ReturnValue, convertible to true/false
     */
     virtual yarp::dev::ReturnValue getPathsList(std::vector<std::string>& paths) = 0;
 
     /**
     * Get a list of all stored locations
     * @param the returned list of locations
-    * @return true/false
+    * @return a ReturnValue, convertible to true/false
     */
     virtual yarp::dev::ReturnValue getAllLocations(std::vector<yarp::dev::Nav2D::Map2DLocation>& locations) = 0;
 
     /**
     * Get a list of all stored areas
     * @param the returned list of areas
-    * @return true/false
+    * @return a ReturnValue, convertible to true/false
     */
     virtual yarp::dev::ReturnValue getAllAreas(std::vector<yarp::dev::Nav2D::Map2DArea>& areas) = 0;
 
     /**
     * Get a list of all stored paths
     * @param the returned list of paths
-    * @return true/false
+    * @return a ReturnValue, convertible to true/false
     */
     virtual yarp::dev::ReturnValue getAllPaths(std::vector<yarp::dev::Nav2D::Map2DPath>& paths) = 0;
 
@@ -158,21 +158,21 @@ public:
     * Searches for a location and renames it
     * @param original_name the name of the area
     * @param new_name the new name of the area
-    * @return true/false
+    * @return a ReturnValue, convertible to true/false
     */
     virtual yarp::dev::ReturnValue renameLocation(std::string original_name, std::string new_name) = 0;
 
     /**
     * Delete a location
     * @param location_name the name of the location
-    * @return true/false
+    * @return a ReturnValue, convertible to true/false
     */
     virtual yarp::dev::ReturnValue deleteLocation(std::string location_name) = 0;
 
     /**
     * Delete a path
     * @param path_name the name of the path
-    * @return true/false
+    * @return a ReturnValue, convertible to true/false
     */
     virtual yarp::dev::ReturnValue deletePath(std::string path_name) = 0;
 
@@ -180,7 +180,7 @@ public:
     * Searches for an area and renames it
     * @param original_name the name of the area
     * @param new_name the new name of the area
-    * @return true/false
+    * @return a ReturnValue, convertible to true/false
     */
     virtual yarp::dev::ReturnValue renameArea(std::string original_name, std::string new_name) = 0;
 
@@ -188,44 +188,44 @@ public:
     * Searches for a path and renames it
     * @param original_name the name of the path
     * @param new_name the new name of the path
-    * @return true/false
+    * @return a ReturnValue, convertible to true/false
     */
     virtual yarp::dev::ReturnValue renamePath(std::string original_name, std::string new_name) = 0;
 
     /**
     * Delete an area
     * @param area_name the name of the area
-    * @return true/false
+    * @return a ReturnValue, convertible to true/false
     */
     virtual yarp::dev::ReturnValue deleteArea(std::string area_name) = 0;
 
     /**
     * Delete all stored locations
-    * @return true/false
+    * @return a ReturnValue, convertible to true/false
     */
     virtual yarp::dev::ReturnValue clearAllLocations() = 0;
 
     /**
     * Delete all stored areas
-    * @return true/false
+    * @return a ReturnValue, convertible to true/false
     */
     virtual yarp::dev::ReturnValue clearAllAreas() = 0;
 
     /**
     * Delete all stored paths
-    * @return true/false
+    * @return a ReturnValue, convertible to true/false
     */
     virtual yarp::dev::ReturnValue clearAllPaths() = 0;
 
     /**
     * Clear all temporary flags from all stored maps
-    * @return true/false
+    * @return a ReturnValue, convertible to true/false
     */
     virtual yarp::dev::ReturnValue clearAllMapsTemporaryFlags() = 0;
 
     /**
     * Clear all temporary flags from a specific map
-    * @return true/false
+    * @return a ReturnValue, convertible to true/false
     */
     virtual yarp::dev::ReturnValue clearMapTemporaryFlags(std::string map_name) = 0;
 
@@ -233,49 +233,49 @@ public:
     * Save a map to disk
     * @param map_name the name of the area
     * @param file_name file name with full path
-    * @return true/false
+    * @return a ReturnValue, convertible to true/false
     */
     virtual yarp::dev::ReturnValue saveMapToDisk(std::string map_name, std::string file_name) = 0;
 
     /**
     * Load a map from disk
     * @param file_name file name with full path
-    * @return true/false
+    * @return a ReturnValue, convertible to true/false
     */
     virtual yarp::dev::ReturnValue loadMapFromDisk(std::string file_name) = 0;
 
     /**
     * Save a collection of maps to disk
     * @param file_name file name with full path
-    * @return true/false
+    * @return a ReturnValue, convertible to true/false
     */
     virtual yarp::dev::ReturnValue saveMapsCollection(std::string file_name) = 0;
 
     /**
     * Load a collection of maps from disk
     * @param file_name file name with full path
-    * @return true/false
+    * @return a ReturnValue, convertible to true/false
     */
     virtual yarp::dev::ReturnValue loadMapsCollection(std::string file_name) = 0;
 
     /**
     * Save a collection of locations/area/paths etc to disk
     * @param file_name file name with full path
-    * @return true/false
+    * @return a ReturnValue, convertible to true/false
     */
     virtual yarp::dev::ReturnValue saveLocationsAndExtras(std::string file_name) = 0;
 
     /**
     * Load a collection of locations/areas/paths etc from disk
     * @param file_name file name with full path
-    * @return true/false
+    * @return a ReturnValue, convertible to true/false
     */
     virtual yarp::dev::ReturnValue loadLocationsAndExtras(std::string file_name) = 0;
 
     /**
-    * 99999999999
+    * Enable/disables maps compression over the network
     * @param enable
-    * @return true/false
+    * @return a ReturnValue, convertible to true/false
     */
     virtual yarp::dev::ReturnValue enableMapsCompression(bool enable) = 0;
 };

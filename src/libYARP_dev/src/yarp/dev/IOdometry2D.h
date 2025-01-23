@@ -30,13 +30,13 @@ public:
     /**
     * Gets the odometry of the robot, including its velocity expressed in the world and in the local reference frame.
     * @param odom the odometry.
-    * @return true/false
+    * @return a ReturnValue, convertible to true/false
     */
     virtual yarp::dev::ReturnValue   getOdometry(yarp::dev::OdometryData& odom, double* timestamp = nullptr) = 0;
 
     /**
     * Resets the odometry of the robot to zero
-    * @return true/false
+    * @return a ReturnValue, convertible to true/false
     */
     virtual yarp::dev::ReturnValue   resetOdometry() = 0;
 };
