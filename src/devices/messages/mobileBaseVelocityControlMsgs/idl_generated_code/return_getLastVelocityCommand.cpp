@@ -11,12 +11,12 @@
 #include <return_getLastVelocityCommand.h>
 
 // Constructor with field values
-return_getLastVelocityCommand::return_getLastVelocityCommand(const bool retvalue,
+return_getLastVelocityCommand::return_getLastVelocityCommand(const yarp::dev::ReturnValue& ret,
                                                              const double x_vel,
                                                              const double y_vel,
                                                              const double theta_vel) :
         WirePortable(),
-        retvalue(retvalue),
+        ret(ret),
         x_vel(x_vel),
         y_vel(y_vel),
         theta_vel(theta_vel)
@@ -26,7 +26,7 @@ return_getLastVelocityCommand::return_getLastVelocityCommand(const bool retvalue
 // Read structure on a Wire
 bool return_getLastVelocityCommand::read(yarp::os::idl::WireReader& reader)
 {
-    if (!read_retvalue(reader)) {
+    if (!nested_read_ret(reader)) {
         return false;
     }
     if (!read_x_vel(reader)) {
@@ -60,7 +60,7 @@ bool return_getLastVelocityCommand::read(yarp::os::ConnectionReader& connection)
 // Write structure on a Wire
 bool return_getLastVelocityCommand::write(const yarp::os::idl::WireWriter& writer) const
 {
-    if (!write_retvalue(writer)) {
+    if (!nested_write_ret(writer)) {
         return false;
     }
     if (!write_x_vel(writer)) {
@@ -101,47 +101,47 @@ std::string return_getLastVelocityCommand::toString() const
     return b.toString();
 }
 
-// read retvalue field
-bool return_getLastVelocityCommand::read_retvalue(yarp::os::idl::WireReader& reader)
+// read ret field
+bool return_getLastVelocityCommand::read_ret(yarp::os::idl::WireReader& reader)
 {
     if (reader.noMore()) {
         reader.fail();
         return false;
     }
-    if (!reader.readBool(retvalue)) {
+    if (!reader.read(ret)) {
         reader.fail();
         return false;
     }
     return true;
 }
 
-// write retvalue field
-bool return_getLastVelocityCommand::write_retvalue(const yarp::os::idl::WireWriter& writer) const
+// write ret field
+bool return_getLastVelocityCommand::write_ret(const yarp::os::idl::WireWriter& writer) const
 {
-    if (!writer.writeBool(retvalue)) {
+    if (!writer.write(ret)) {
         return false;
     }
     return true;
 }
 
-// read (nested) retvalue field
-bool return_getLastVelocityCommand::nested_read_retvalue(yarp::os::idl::WireReader& reader)
+// read (nested) ret field
+bool return_getLastVelocityCommand::nested_read_ret(yarp::os::idl::WireReader& reader)
 {
     if (reader.noMore()) {
         reader.fail();
         return false;
     }
-    if (!reader.readBool(retvalue)) {
+    if (!reader.readNested(ret)) {
         reader.fail();
         return false;
     }
     return true;
 }
 
-// write (nested) retvalue field
-bool return_getLastVelocityCommand::nested_write_retvalue(const yarp::os::idl::WireWriter& writer) const
+// write (nested) ret field
+bool return_getLastVelocityCommand::nested_write_ret(const yarp::os::idl::WireWriter& writer) const
 {
-    if (!writer.writeBool(retvalue)) {
+    if (!writer.writeNested(ret)) {
         return false;
     }
     return true;

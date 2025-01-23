@@ -14,20 +14,21 @@
 #include <yarp/os/Wire.h>
 #include <yarp/os/idl/WireTypes.h>
 #include <yarp/dev/Map2DLocation.h>
+#include <yarp/dev/ReturnValue.h>
 
 class return_get_current_position1 :
         public yarp::os::idl::WirePortable
 {
 public:
     // Fields
-    bool ret{false};
+    yarp::dev::ReturnValue ret{};
     yarp::dev::Nav2D::Map2DLocation loc{};
 
     // Default constructor
     return_get_current_position1() = default;
 
     // Constructor with field values
-    return_get_current_position1(const bool ret,
+    return_get_current_position1(const yarp::dev::ReturnValue& ret,
                                  const yarp::dev::Nav2D::Map2DLocation& loc);
 
     // Read structure on a Wire

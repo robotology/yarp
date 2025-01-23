@@ -11,7 +11,7 @@
 #include <return_get_current_nav_waypoint.h>
 
 // Constructor with field values
-return_get_current_nav_waypoint::return_get_current_nav_waypoint(const bool ret,
+return_get_current_nav_waypoint::return_get_current_nav_waypoint(const yarp::dev::ReturnValue& ret,
                                                                  const yarp::dev::Nav2D::Map2DLocation& waypoint) :
         WirePortable(),
         ret(ret),
@@ -22,7 +22,7 @@ return_get_current_nav_waypoint::return_get_current_nav_waypoint(const bool ret,
 // Read structure on a Wire
 bool return_get_current_nav_waypoint::read(yarp::os::idl::WireReader& reader)
 {
-    if (!read_ret(reader)) {
+    if (!nested_read_ret(reader)) {
         return false;
     }
     if (!nested_read_waypoint(reader)) {
@@ -50,7 +50,7 @@ bool return_get_current_nav_waypoint::read(yarp::os::ConnectionReader& connectio
 // Write structure on a Wire
 bool return_get_current_nav_waypoint::write(const yarp::os::idl::WireWriter& writer) const
 {
-    if (!write_ret(writer)) {
+    if (!nested_write_ret(writer)) {
         return false;
     }
     if (!nested_write_waypoint(writer)) {
@@ -88,8 +88,13 @@ std::string return_get_current_nav_waypoint::toString() const
 // read ret field
 bool return_get_current_nav_waypoint::read_ret(yarp::os::idl::WireReader& reader)
 {
-    if (!reader.readBool(ret)) {
-        ret = false;
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
+    if (!reader.read(ret)) {
+        reader.fail();
+        return false;
     }
     return true;
 }
@@ -97,7 +102,7 @@ bool return_get_current_nav_waypoint::read_ret(yarp::os::idl::WireReader& reader
 // write ret field
 bool return_get_current_nav_waypoint::write_ret(const yarp::os::idl::WireWriter& writer) const
 {
-    if (!writer.writeBool(ret)) {
+    if (!writer.write(ret)) {
         return false;
     }
     return true;
@@ -106,8 +111,13 @@ bool return_get_current_nav_waypoint::write_ret(const yarp::os::idl::WireWriter&
 // read (nested) ret field
 bool return_get_current_nav_waypoint::nested_read_ret(yarp::os::idl::WireReader& reader)
 {
-    if (!reader.readBool(ret)) {
-        ret = false;
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
+    if (!reader.readNested(ret)) {
+        reader.fail();
+        return false;
     }
     return true;
 }
@@ -115,7 +125,7 @@ bool return_get_current_nav_waypoint::nested_read_ret(yarp::os::idl::WireReader&
 // write (nested) ret field
 bool return_get_current_nav_waypoint::nested_write_ret(const yarp::os::idl::WireWriter& writer) const
 {
-    if (!writer.writeBool(ret)) {
+    if (!writer.writeNested(ret)) {
         return false;
     }
     return true;

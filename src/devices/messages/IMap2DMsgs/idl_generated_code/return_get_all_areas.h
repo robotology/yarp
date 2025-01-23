@@ -14,20 +14,21 @@
 #include <yarp/os/Wire.h>
 #include <yarp/os/idl/WireTypes.h>
 #include <yarp/dev/Map2DArea.h>
+#include <yarp/dev/ReturnValue.h>
 
 class return_get_all_areas :
         public yarp::os::idl::WirePortable
 {
 public:
     // Fields
-    bool retval{false};
+    yarp::dev::ReturnValue retval{};
     std::vector<yarp::dev::Nav2D::Map2DArea> areas{};
 
     // Default constructor
     return_get_all_areas() = default;
 
     // Constructor with field values
-    return_get_all_areas(const bool retval,
+    return_get_all_areas(const yarp::dev::ReturnValue& retval,
                          const std::vector<yarp::dev::Nav2D::Map2DArea>& areas);
 
     // Read structure on a Wire

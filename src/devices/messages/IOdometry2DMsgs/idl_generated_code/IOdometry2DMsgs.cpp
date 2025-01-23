@@ -55,10 +55,10 @@ public:
         bool write(const yarp::os::idl::WireWriter& writer) const override;
         bool read(yarp::os::idl::WireReader& reader) override;
 
-        bool return_helper{false};
+        yarp::dev::ReturnValue return_helper{};
     };
 
-    using funcptr_t = bool (*)();
+    using funcptr_t = yarp::dev::ReturnValue (*)();
     void call(IOdometry2DMsgs* ptr);
 
     Command cmd;
@@ -68,7 +68,7 @@ public:
     static constexpr size_t s_tag_len{3};
     static constexpr size_t s_cmd_len{3};
     static constexpr size_t s_reply_len{1};
-    static constexpr const char* s_prototype{"bool IOdometry2DMsgs::reset_odometry_RPC()"};
+    static constexpr const char* s_prototype{"yarp::dev::ReturnValue IOdometry2DMsgs::reset_odometry_RPC()"};
     static constexpr const char* s_help{""};
 };
 
@@ -174,10 +174,7 @@ bool IOdometry2DMsgs_reset_odometry_RPC_helper::Reply::read(yarp::os::Connection
 bool IOdometry2DMsgs_reset_odometry_RPC_helper::Reply::write(const yarp::os::idl::WireWriter& writer) const
 {
     if (!writer.isNull()) {
-        if (!writer.writeListHeader(s_reply_len)) {
-            return false;
-        }
-        if (!writer.writeBool(return_helper)) {
+        if (!writer.write(return_helper)) {
             return false;
         }
     }
@@ -186,14 +183,11 @@ bool IOdometry2DMsgs_reset_odometry_RPC_helper::Reply::write(const yarp::os::idl
 
 bool IOdometry2DMsgs_reset_odometry_RPC_helper::Reply::read(yarp::os::idl::WireReader& reader)
 {
-    if (!reader.readListReturn()) {
-        return false;
-    }
     if (reader.noMore()) {
         reader.fail();
         return false;
     }
-    if (!reader.readBool(return_helper)) {
+    if (!reader.read(return_helper)) {
         reader.fail();
         return false;
     }
@@ -211,14 +205,14 @@ IOdometry2DMsgs::IOdometry2DMsgs()
     yarp().setOwner(*this);
 }
 
-bool IOdometry2DMsgs::reset_odometry_RPC()
+yarp::dev::ReturnValue IOdometry2DMsgs::reset_odometry_RPC()
 {
     if (!yarp().canWrite()) {
         yError("Missing server method '%s'?", IOdometry2DMsgs_reset_odometry_RPC_helper::s_prototype);
     }
     IOdometry2DMsgs_reset_odometry_RPC_helper helper{};
     bool ok = yarp().write(helper, helper);
-    return ok ? helper.reply.return_helper : bool{};
+    return ok ? helper.reply.return_helper : yarp::dev::ReturnValue{};
 }
 
 // help method

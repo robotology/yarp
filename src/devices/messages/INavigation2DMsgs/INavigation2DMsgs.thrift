@@ -42,37 +42,43 @@ enum yarp_dev_Nav2D_TrajectoryTypeEnum {
   yarp.enumbase = "yarp::conf::vocab32_t"
 )
 
+struct yReturnValue {
+} (
+  yarp.name = "yarp::dev::ReturnValue"
+  yarp.includefile = "yarp/dev/ReturnValue.h"
+)
+
 // ---------------------------------------------------------------
 
 struct return_get_navigation_status {
-  1: bool ret = false;
+  1: yReturnValue ret;
   2: yarp_dev_Nav2D_NavigationStatusEnum status ( yarp.vocab = "true" );
 }
 
 struct return_get_all_nav_waypoints {
-  1: bool ret = false;
+  1: yReturnValue ret;
   2: yarp_dev_Nav2D_Map2DPath waypoints;
 }
 
 struct return_get_current_nav_map {
-  1: bool ret = false;
+  1: yReturnValue ret;
   2: yarp_dev_Nav2D_MapGrid2D mapgrid;
 }
 
 struct return_get_current_nav_waypoint {
-  1: bool ret = false;
+  1: yReturnValue ret;
   2: yarp_dev_Nav2D_Map2DLocation waypoint;
 }
 
 // ---------------------------------------------------------------
 
 struct return_get_abs_loc_of_curr_target {
-  1: bool ret = false;
+  1: yReturnValue ret;
   2: yarp_dev_Nav2D_Map2DLocation loc;
 }
 
 struct return_get_rel_loc_of_curr_target {
-  1: bool ret = false;
+  1: yReturnValue ret;
   2: double x;
   3: double y;
   4: double theta;
@@ -81,7 +87,7 @@ struct return_get_rel_loc_of_curr_target {
 // ---------------------------------------------------------------
 
 struct return_get_last_velocity_command {
-  1: bool ret = false;
+  1: yReturnValue ret;
   2: double x_vel;
   3: double y_vel;
   4: double theta_vel;
@@ -90,7 +96,7 @@ struct return_get_last_velocity_command {
 // ---------------------------------------------------------------
 
 struct return_get_name_of_current_target {
-  1: bool ret = false;
+  1: yReturnValue ret;
   2: string name;
 }
 
@@ -98,24 +104,24 @@ struct return_get_name_of_current_target {
 
 service INavigation2DMsgs
 {
-  bool                               stop_navigation_RPC               ();
-  bool                               resume_navigation_RPC             ();
-  bool                               suspend_navigation_RPC            (1:double time_s);
-  bool                               recompute_current_navigation_path_RPC ();
+  yReturnValue                       stop_navigation_RPC               ();
+  yReturnValue                       resume_navigation_RPC             ();
+  yReturnValue                       suspend_navigation_RPC            (1:double time_s);
+  yReturnValue                       recompute_current_navigation_path_RPC ();
   return_get_navigation_status       get_navigation_status_RPC         ();
   return_get_current_nav_waypoint    get_current_nav_waypoint_RPC      ();
   return_get_all_nav_waypoints       get_all_navigation_waypoints_RPC  (1:yarp_dev_Nav2D_TrajectoryTypeEnum trajectory_type);
   return_get_current_nav_map         get_current_navigation_map_RPC    (1:yarp_dev_Nav2D_NavigationMapTypeEnum map_type);
 
-  bool                               goto_target_by_absolute_location_RPC         (1:yarp_dev_Nav2D_Map2DLocation loc);
-  bool                               follow_path_RPC  (1:yarp_dev_Nav2D_Map2DPath path);
-  bool                               goto_target_by_relative_location1_RPC        (1:double x, 2:double y);
-  bool                               goto_target_by_relative_location2_RPC        (1:double x, 2:double y, 3: double theta);
+  yReturnValue                       goto_target_by_absolute_location_RPC         (1:yarp_dev_Nav2D_Map2DLocation loc);
+  yReturnValue                       follow_path_RPC  (1:yarp_dev_Nav2D_Map2DPath path);
+  yReturnValue                       goto_target_by_relative_location1_RPC        (1:double x, 2:double y);
+  yReturnValue                       goto_target_by_relative_location2_RPC        (1:double x, 2:double y, 3: double theta);
   return_get_abs_loc_of_curr_target  get_absolute_location_of_current_target_RPC  ();
   return_get_rel_loc_of_curr_target  get_relative_location_of_current_target_RPC  ();
-  bool                               goto_target_by_absolute_location_and_set_name_RPC  (1:yarp_dev_Nav2D_Map2DLocation loc, 2: string name);
+  yReturnValue                       goto_target_by_absolute_location_and_set_name_RPC  (1:yarp_dev_Nav2D_Map2DLocation loc, 2: string name);
 
-  bool                               apply_velocity_command_RPC                   (1:double x_vel, 2:double y_vel, 3:double theta_vel, 4:double timeout);
+  yReturnValue                       apply_velocity_command_RPC                   (1:double x_vel, 2:double y_vel, 3:double theta_vel, 4:double timeout);
   return_get_last_velocity_command   get_last_velocity_command_RPC                ();
 
   return_get_name_of_current_target  get_name_of_current_target_RPC               ();

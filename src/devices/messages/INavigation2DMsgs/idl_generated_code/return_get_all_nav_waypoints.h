@@ -14,20 +14,21 @@
 #include <yarp/os/Wire.h>
 #include <yarp/os/idl/WireTypes.h>
 #include <yarp/dev/Map2DPath.h>
+#include <yarp/dev/ReturnValue.h>
 
 class return_get_all_nav_waypoints :
         public yarp::os::idl::WirePortable
 {
 public:
     // Fields
-    bool ret{false};
+    yarp::dev::ReturnValue ret{};
     yarp::dev::Nav2D::Map2DPath waypoints{};
 
     // Default constructor
     return_get_all_nav_waypoints() = default;
 
     // Constructor with field values
-    return_get_all_nav_waypoints(const bool ret,
+    return_get_all_nav_waypoints(const yarp::dev::ReturnValue& ret,
                                  const yarp::dev::Nav2D::Map2DPath& waypoints);
 
     // Read structure on a Wire

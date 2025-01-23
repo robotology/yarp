@@ -14,20 +14,21 @@
 #include <yarp/os/Wire.h>
 #include <yarp/os/idl/WireTypes.h>
 #include <yarp/dev/ILocalization2D.h>
+#include <yarp/dev/ReturnValue.h>
 
 class return_get_localization_status :
         public yarp::os::idl::WirePortable
 {
 public:
     // Fields
-    bool ret{false};
+    yarp::dev::ReturnValue ret{};
     yarp::dev::Nav2D::LocalizationStatusEnum status{};
 
     // Default constructor
     return_get_localization_status() = default;
 
     // Constructor with field values
-    return_get_localization_status(const bool ret,
+    return_get_localization_status(const yarp::dev::ReturnValue& ret,
                                    const yarp::dev::Nav2D::LocalizationStatusEnum status);
 
     // Read structure on a Wire

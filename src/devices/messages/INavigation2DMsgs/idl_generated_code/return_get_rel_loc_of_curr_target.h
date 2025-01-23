@@ -13,13 +13,14 @@
 
 #include <yarp/os/Wire.h>
 #include <yarp/os/idl/WireTypes.h>
+#include <yarp/dev/ReturnValue.h>
 
 class return_get_rel_loc_of_curr_target :
         public yarp::os::idl::WirePortable
 {
 public:
     // Fields
-    bool ret{false};
+    yarp::dev::ReturnValue ret{};
     double x{0.0};
     double y{0.0};
     double theta{0.0};
@@ -28,7 +29,7 @@ public:
     return_get_rel_loc_of_curr_target() = default;
 
     // Constructor with field values
-    return_get_rel_loc_of_curr_target(const bool ret,
+    return_get_rel_loc_of_curr_target(const yarp::dev::ReturnValue& ret,
                                       const double x,
                                       const double y,
                                       const double theta);

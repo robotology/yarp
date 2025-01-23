@@ -14,20 +14,21 @@
 #include <yarp/os/Wire.h>
 #include <yarp/os/idl/WireTypes.h>
 #include <yarp/dev/Map2DPath.h>
+#include <yarp/dev/ReturnValue.h>
 
 class return_get_all_paths :
         public yarp::os::idl::WirePortable
 {
 public:
     // Fields
-    bool retval{false};
+    yarp::dev::ReturnValue retval{};
     std::vector<yarp::dev::Nav2D::Map2DPath> paths{};
 
     // Default constructor
     return_get_all_paths() = default;
 
     // Constructor with field values
-    return_get_all_paths(const bool retval,
+    return_get_all_paths(const yarp::dev::ReturnValue& retval,
                          const std::vector<yarp::dev::Nav2D::Map2DPath>& paths);
 
     // Read structure on a Wire

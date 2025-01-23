@@ -25,52 +25,57 @@ struct yarp_dev_Nav2D_MapGrid2D{
   yarp.includefile="yarp/dev/MapGrid2D.h"
 )
 
+struct yReturnValue {
+} (
+  yarp.name = "yarp::dev::ReturnValue"
+  yarp.includefile = "yarp/dev/ReturnValue.h"
+)
 //-------------------------------------------------
 
 struct return_get_map {
-  1: bool retval = false;
+  1: yReturnValue retval;
   2: yarp_dev_Nav2D_MapGrid2D themap;
 }
 
 struct return_get_map_names {
-  1: bool retval = false;
+  1: yReturnValue retval;
   2: list<string> map_names;
 }
 
 struct return_get_location {
-  1: bool retval = false;
+  1: yReturnValue retval;
   2: yarp_dev_Nav2D_Map2DLocation loc;
 }
 struct return_get_area {
-  1: bool retval = false;
+  1: yReturnValue retval;
   2: yarp_dev_Nav2D_Map2DArea area;
 }
 struct return_get_path {
-  1: bool retval = false;
+  1: yReturnValue retval;
   2: yarp_dev_Nav2D_Map2DPath path;
 }
 struct return_get_locations_list {
-  1: bool retval = false;
+  1: yReturnValue retval;
   2: list<string> locations;
 }
 struct return_get_areas_list {
-  1: bool retval = false;
+  1: yReturnValue retval;
   2: list<string> areas;
 }
 struct return_get_paths_list {
-  1: bool retval = false;
+  1: yReturnValue retval;
   2: list<string> paths;
 }
 struct return_get_all_locations {
-  1: bool retval = false;
+  1: yReturnValue retval;
   2: list<yarp_dev_Nav2D_Map2DLocation> locations;
 }
 struct return_get_all_areas {
-  1: bool retval = false;
+  1: yReturnValue retval;
   2: list<yarp_dev_Nav2D_Map2DArea> areas;
 }
 struct return_get_all_paths {
-  1: bool retval = false;
+  1: yReturnValue retval;
   2: list<yarp_dev_Nav2D_Map2DPath> paths;
 }
 
@@ -78,14 +83,14 @@ struct return_get_all_paths {
 
 service IMap2DMsgs
 {
-    bool clear_all_maps_RPC ();
-    bool store_map_RPC (1:yarp_dev_Nav2D_MapGrid2D themap);
+    yReturnValue clear_all_maps_RPC ();
+    yReturnValue store_map_RPC (1:yarp_dev_Nav2D_MapGrid2D themap);
     return_get_map get_map_RPC (1:string map_name);
     return_get_map_names get_map_names_RPC();
-    bool remove_map_RPC (1:string map_name);
-    bool store_location_RPC (1:string location_name, 2:yarp_dev_Nav2D_Map2DLocation loc);
-    bool store_area_RPC (1:string area_name, 2:yarp_dev_Nav2D_Map2DArea area);
-    bool store_path_RPC (1:string path_name, 2:yarp_dev_Nav2D_Map2DPath path);
+    yReturnValue remove_map_RPC (1:string map_name);
+    yReturnValue store_location_RPC (1:string location_name, 2:yarp_dev_Nav2D_Map2DLocation loc);
+    yReturnValue store_area_RPC (1:string area_name, 2:yarp_dev_Nav2D_Map2DArea area);
+    yReturnValue store_path_RPC (1:string path_name, 2:yarp_dev_Nav2D_Map2DPath path);
     return_get_location get_location_RPC (1:string location_name);
     return_get_area get_area_RPC (1:string area_name);
     return_get_path get_path_RPC (1:string path_name);
@@ -95,22 +100,22 @@ service IMap2DMsgs
     return_get_all_locations get_all_locations_RPC ();
     return_get_all_areas get_all_areas_RPC ();
     return_get_all_paths get_all_paths_RPC ();
-    bool rename_location_RPC (1:string original_name, 2:string new_name);
-    bool delete_location_RPC (1:string location_name);
-    bool delete_path_RPC (1:string path_name);
-    bool rename_area_RPC (1:string original_name, 2:string new_name);
-    bool rename_path_RPC (1:string original_name, 2:string new_name);
-    bool delete_area_RPC (1:string area_name);
-    bool clear_all_locations_RPC ();
-    bool clear_all_areas_RPC ();
-    bool clear_all_paths_RPC ();
-    bool clear_all_maps_temporary_flags_RPC ();
-    bool clear_map_temporary_flags_RPC (1:string map_name);
-    bool save_maps_collection_RPC (1:string maps_collection_file);
-    bool load_maps_collection_RPC (1:string maps_collection_file);
-    bool save_locations_and_extras_RPC (1:string locations_collection_file);
-    bool load_locations_and_extras_RPC (1:string locations_collection_file);
-    bool save_map_to_disk_RPC(1:string map_name, 2:string file_name);
-    bool load_map_from_disk_RPC(1:string file_name);
-    bool enable_maps_compression_RPC(1:bool enable_compression);
+    yReturnValue rename_location_RPC (1:string original_name, 2:string new_name);
+    yReturnValue delete_location_RPC (1:string location_name);
+    yReturnValue delete_path_RPC (1:string path_name);
+    yReturnValue rename_area_RPC (1:string original_name, 2:string new_name);
+    yReturnValue rename_path_RPC (1:string original_name, 2:string new_name);
+    yReturnValue delete_area_RPC (1:string area_name);
+    yReturnValue clear_all_locations_RPC ();
+    yReturnValue clear_all_areas_RPC ();
+    yReturnValue clear_all_paths_RPC ();
+    yReturnValue clear_all_maps_temporary_flags_RPC ();
+    yReturnValue clear_map_temporary_flags_RPC (1:string map_name);
+    yReturnValue save_maps_collection_RPC (1:string maps_collection_file);
+    yReturnValue load_maps_collection_RPC (1:string maps_collection_file);
+    yReturnValue save_locations_and_extras_RPC (1:string locations_collection_file);
+    yReturnValue load_locations_and_extras_RPC (1:string locations_collection_file);
+    yReturnValue save_map_to_disk_RPC(1:string map_name, 2:string file_name);
+    yReturnValue load_map_from_disk_RPC(1:string file_name);
+    yReturnValue enable_maps_compression_RPC(1:bool enable_compression);
 }

@@ -13,20 +13,21 @@
 
 #include <yarp/os/Wire.h>
 #include <yarp/os/idl/WireTypes.h>
+#include <yarp/dev/ReturnValue.h>
 
 class return_get_map_names :
         public yarp::os::idl::WirePortable
 {
 public:
     // Fields
-    bool retval{false};
+    yarp::dev::ReturnValue retval{};
     std::vector<std::string> map_names{};
 
     // Default constructor
     return_get_map_names() = default;
 
     // Constructor with field values
-    return_get_map_names(const bool retval,
+    return_get_map_names(const yarp::dev::ReturnValue& retval,
                          const std::vector<std::string>& map_names);
 
     // Read structure on a Wire

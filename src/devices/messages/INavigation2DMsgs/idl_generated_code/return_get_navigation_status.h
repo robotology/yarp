@@ -14,20 +14,21 @@
 #include <yarp/os/Wire.h>
 #include <yarp/os/idl/WireTypes.h>
 #include <yarp/dev/INavigation2D.h>
+#include <yarp/dev/ReturnValue.h>
 
 class return_get_navigation_status :
         public yarp::os::idl::WirePortable
 {
 public:
     // Fields
-    bool ret{false};
+    yarp::dev::ReturnValue ret{};
     yarp::dev::Nav2D::NavigationStatusEnum status{};
 
     // Default constructor
     return_get_navigation_status() = default;
 
     // Constructor with field values
-    return_get_navigation_status(const bool ret,
+    return_get_navigation_status(const yarp::dev::ReturnValue& ret,
                                  const yarp::dev::Nav2D::NavigationStatusEnum status);
 
     // Read structure on a Wire

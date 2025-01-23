@@ -19,6 +19,7 @@
 #include <return_get_estimated_poses.h>
 #include <return_get_localization_status.h>
 #include <yarp/dev/Map2DLocation.h>
+#include <yarp/dev/ReturnValue.h>
 #include <yarp/sig/Matrix.h>
 
 class ILocalization2DMsgs :
@@ -28,9 +29,9 @@ public:
     // Constructor
     ILocalization2DMsgs();
 
-    virtual bool start_localization_service_RPC();
+    virtual yarp::dev::ReturnValue start_localization_service_RPC();
 
-    virtual bool stop_localization_service_RPC();
+    virtual yarp::dev::ReturnValue stop_localization_service_RPC();
 
     virtual return_get_localization_status get_localization_status_RPC();
 
@@ -42,9 +43,9 @@ public:
 
     virtual return_get_estimated_odometry get_estimated_odometry_RPC();
 
-    virtual bool set_initial_pose1_RPC(const yarp::dev::Nav2D::Map2DLocation& loc);
+    virtual yarp::dev::ReturnValue set_initial_pose1_RPC(const yarp::dev::Nav2D::Map2DLocation& loc);
 
-    virtual bool set_initial_pose2_RPC(const yarp::dev::Nav2D::Map2DLocation& loc, const yarp::sig::Matrix& cov);
+    virtual yarp::dev::ReturnValue set_initial_pose2_RPC(const yarp::dev::Nav2D::Map2DLocation& loc, const yarp::sig::Matrix& cov);
 
     // help method
     virtual std::vector<std::string> help(const std::string& functionName = "--all");

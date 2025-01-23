@@ -11,7 +11,7 @@
 #include <return_get_estimated_poses.h>
 
 // Constructor with field values
-return_get_estimated_poses::return_get_estimated_poses(const bool ret,
+return_get_estimated_poses::return_get_estimated_poses(const yarp::dev::ReturnValue& ret,
                                                        const std::vector<yarp::dev::Nav2D::Map2DLocation>& poses) :
         WirePortable(),
         ret(ret),
@@ -22,7 +22,7 @@ return_get_estimated_poses::return_get_estimated_poses(const bool ret,
 // Read structure on a Wire
 bool return_get_estimated_poses::read(yarp::os::idl::WireReader& reader)
 {
-    if (!read_ret(reader)) {
+    if (!nested_read_ret(reader)) {
         return false;
     }
     if (!read_poses(reader)) {
@@ -50,7 +50,7 @@ bool return_get_estimated_poses::read(yarp::os::ConnectionReader& connection)
 // Write structure on a Wire
 bool return_get_estimated_poses::write(const yarp::os::idl::WireWriter& writer) const
 {
-    if (!write_ret(writer)) {
+    if (!nested_write_ret(writer)) {
         return false;
     }
     if (!write_poses(writer)) {
@@ -88,8 +88,13 @@ std::string return_get_estimated_poses::toString() const
 // read ret field
 bool return_get_estimated_poses::read_ret(yarp::os::idl::WireReader& reader)
 {
-    if (!reader.readBool(ret)) {
-        ret = false;
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
+    if (!reader.read(ret)) {
+        reader.fail();
+        return false;
     }
     return true;
 }
@@ -97,7 +102,7 @@ bool return_get_estimated_poses::read_ret(yarp::os::idl::WireReader& reader)
 // write ret field
 bool return_get_estimated_poses::write_ret(const yarp::os::idl::WireWriter& writer) const
 {
-    if (!writer.writeBool(ret)) {
+    if (!writer.write(ret)) {
         return false;
     }
     return true;
@@ -106,8 +111,13 @@ bool return_get_estimated_poses::write_ret(const yarp::os::idl::WireWriter& writ
 // read (nested) ret field
 bool return_get_estimated_poses::nested_read_ret(yarp::os::idl::WireReader& reader)
 {
-    if (!reader.readBool(ret)) {
-        ret = false;
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
+    if (!reader.readNested(ret)) {
+        reader.fail();
+        return false;
     }
     return true;
 }
@@ -115,7 +125,7 @@ bool return_get_estimated_poses::nested_read_ret(yarp::os::idl::WireReader& read
 // write (nested) ret field
 bool return_get_estimated_poses::nested_write_ret(const yarp::os::idl::WireWriter& writer) const
 {
-    if (!writer.writeBool(ret)) {
+    if (!writer.writeNested(ret)) {
         return false;
     }
     return true;
