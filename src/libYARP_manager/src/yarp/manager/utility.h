@@ -13,6 +13,8 @@
 #include <cstring>
 #include <iostream>
 #include <sstream>
+#include <chrono>
+#include <iomanip>
 
 #include <yarp/manager/ymm-types.h>
 
@@ -78,8 +80,65 @@ private:
     std::vector<std::string> warnings;
 };
 
+/**
+ * Singleton class For storing execution start time
+ */
+class ClockStart {
+public:
+    static ClockStart& getInstance() {
+        static ClockStart instance;
+        return instance;
+    }
+
+    ClockStart(const ClockStart&) = delete;
+    ClockStart& operator=(const ClockStart&) = delete;
+
+    /**
+     * @brief Get the starting time as a string in HH:MM:SS format
+     * @return the starting time as a string
+     */
+    std::string getStartTime() const {
+        std::ostringstream oss;
+        oss << std::put_time(&startTimeStruct, "%H:%M:%S");
+        return oss.str();
+    }
+
+    /**
+     * @brief Set the starting time from a string in HH:MM:SS format
+     * @param startTimeStr the starting time as a string
+     */
+    void setStartTime(std::string startTimeStr) {
+        std::istringstream iss(startTimeStr);
+        std::tm tm = {};
+        if (iss >> std::get_time(&tm, "%H:%M:%S")) {
+            startTimeStruct = tm;
+        }
+    }
+
+private:
+    std::chrono::system_clock::time_point startTime;
+    std::tm startTimeStruct;
+
+    /**
+     * @brief Private constructor to initialize the start time
+     * @details The start time is initialized to the current time
+     */
+    ClockStart() {
+        startTime = std::chrono::system_clock::now();
+        std::time_t startTimeT = std::chrono::system_clock::to_time_t(startTime);
+
+#ifdef _WIN32
+        localtime_s(&startTimeStruct, &startTimeT);
+#else
+        localtime_r(&startTimeT, &startTimeStruct);
+#endif
+    }
+};
+
 
 bool compareString(const char* szFirst, const char* szSecond);
+std::string getCurrentTimeString();
+std::string getElapsedTimeString(const std::string& startTimeStr);
 void trimString(std::string& str);
 OS strToOS(const char* szOS);
 

@@ -103,12 +103,20 @@ ErrorLogger* ErrorLogger::Instance()
 
 void ErrorLogger::addWarning(const char* szWarning) {
     if (szWarning) {
-        warnings.emplace_back(szWarning);
+        ClockStart& clock = ClockStart::getInstance();
+        std::string elapsedTime = getElapsedTimeString(clock.getStartTime());
+        std::string timeinfo = "[time: " + elapsedTime + "] ";
+        std::string szWarningWithTime = timeinfo + szWarning;
+        warnings.emplace_back(szWarningWithTime);
     }
 }
 
 void ErrorLogger::addWarning(const std::string &str) {
-    warnings.push_back(str);
+    ClockStart& clock = ClockStart::getInstance();
+    std::string elapsedTime = getElapsedTimeString(clock.getStartTime());
+    std::string timeinfo = "[time: " + elapsedTime + "] ";
+    std::string strWithTime = timeinfo + str;
+    warnings.push_back(strWithTime);
 }
 
 void ErrorLogger::addWarning(OSTRINGSTREAM &stream) {
@@ -117,12 +125,20 @@ void ErrorLogger::addWarning(OSTRINGSTREAM &stream) {
 
 void ErrorLogger::addError(const char* szError) {
     if (szError) {
-        errors.emplace_back(szError);
+        ClockStart& clock = ClockStart::getInstance();
+        std::string elapsedTime = getElapsedTimeString(clock.getStartTime());
+        std::string timeinfo = "[time: " + elapsedTime + "] ";
+        std::string szErrorWithTime = timeinfo + szError;
+        errors.emplace_back(szErrorWithTime);
     }
 }
 
 void ErrorLogger::addError(const std::string &str) {
-    errors.push_back(str);
+    ClockStart& clock = ClockStart::getInstance();
+    std::string elapsedTime = getElapsedTimeString(clock.getStartTime());
+    std::string timeinfo = "[time: " + elapsedTime + "] ";
+    std::string strWithTime = timeinfo + str;
+    errors.push_back(strWithTime);
 }
 
 void ErrorLogger::addError(OSTRINGSTREAM &stream) {
@@ -326,6 +342,62 @@ bool yarp::manager::compareString(const char* szFirst, const char* szSecond)
         return true;
     }
     return false;
+}
+
+std::string yarp::manager::getCurrentTimeString() {
+    auto now = std::chrono::system_clock::now();
+    std::time_t currentTime = std::chrono::system_clock::to_time_t(now);
+
+    std::tm localTime;
+#ifdef _WIN32
+    localtime_s(&localTime, &currentTime); // Windows
+#else
+    localtime_r(&currentTime, &localTime); // POSIX
+#endif
+    std::ostringstream oss;
+    oss << std::put_time(&localTime, "%H:%M:%S");
+    return oss.str();
+}
+
+std::string yarp::manager::getElapsedTimeString(const std::string& startTimeStr) {
+    std::tm startTime{};
+    std::istringstream iss(startTimeStr);
+    iss >> std::get_time(&startTime, "%H:%M:%S");
+    if (iss.fail()) {
+        throw std::invalid_argument("Invalid time format. Expected %H:%M:%S");
+    }
+
+    auto now = std::chrono::system_clock::now();
+    std::time_t currentTime = std::chrono::system_clock::to_time_t(now);
+
+    std::tm localTime;
+#ifdef _WIN32
+    localtime_s(&localTime, &currentTime); // Windows
+#else
+    localtime_r(&currentTime, &localTime); // POSIX
+#endif
+
+    localTime.tm_hour = startTime.tm_hour;
+    localTime.tm_min = startTime.tm_min;
+    localTime.tm_sec = startTime.tm_sec;
+
+    std::time_t startTimestamp = std::mktime(&localTime);
+
+    auto elapsedSeconds = std::difftime(currentTime, startTimestamp);
+    if (elapsedSeconds < 0) {
+        elapsedSeconds += 24 * 60 * 60; // Handle cases where the start time is on the previous day
+    }
+
+    int hours = static_cast<int>(elapsedSeconds) / 3600;
+    int minutes = (static_cast<int>(elapsedSeconds) % 3600) / 60;
+    int seconds = static_cast<int>(elapsedSeconds) % 60;
+
+    std::ostringstream oss;
+    oss << std::setfill('0') << std::setw(2) << hours << ":"
+        << std::setfill('0') << std::setw(2) << minutes << ":"
+        << std::setfill('0') << std::setw(2) << seconds;
+
+    return oss.str();
 }
 
 void yarp::manager::trimString(std::string& str)
