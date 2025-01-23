@@ -9,6 +9,7 @@
 #include "IOdometry2DMsgs.h"
 #include <yarp/dev/IOdometry2D.h>
 #include <yarp/os/Stamp.h>
+#include <yarp/dev/ReturnValue.h>
 
 class IOdometry2DRPCd : public IOdometry2DMsgs
 {
@@ -17,9 +18,9 @@ class IOdometry2DRPCd : public IOdometry2DMsgs
     std::mutex                     m_mutex;
 
     public:
-    void setInterface(yarp::dev::Nav2D::IOdometry2D* _odom) { m_iOdom = _odom; }
+    IOdometry2DRPCd (yarp::dev::Nav2D::IOdometry2D* _odom) { m_iOdom = _odom; }
 
-    bool reset_odometry_RPC() override;
+    yarp::dev::ReturnValue reset_odometry_RPC() override;
 
     std::mutex* getMutex() {return &m_mutex;}
 };

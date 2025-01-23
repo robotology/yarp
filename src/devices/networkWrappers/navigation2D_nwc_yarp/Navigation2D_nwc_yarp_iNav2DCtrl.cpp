@@ -31,10 +31,10 @@ ReturnValue Navigation2D_nwc_yarp::getNavigationStatus(NavigationStatusEnum& sta
     if (!ret.ret)
     {
         yCError(NAVIGATION2D_NWC_YARP, "Unable to get_navigation_status_RPC");
-        return false;
+        return ret.ret;
     }
     status = yarp::dev::Nav2D::NavigationStatusEnum(ret.status);
-    return true;
+    return ret.ret;
 }
 
 ReturnValue  Navigation2D_nwc_yarp::recomputeCurrentNavigationPath()
@@ -68,10 +68,10 @@ ReturnValue   Navigation2D_nwc_yarp::getAllNavigationWaypoints(yarp::dev::Nav2D:
     if (!ret.ret)
     {
         yCError(NAVIGATION2D_NWC_YARP, "Unable to get_current_nav_waypoint_RPC");
-        return false;
+        return ret.ret;
     }
     waypoints = ret.waypoints;
-    return true;
+    return ret.ret;
 }
 
 ReturnValue   Navigation2D_nwc_yarp::getCurrentNavigationWaypoint(Map2DLocation& curr_waypoint)
@@ -81,10 +81,10 @@ ReturnValue   Navigation2D_nwc_yarp::getCurrentNavigationWaypoint(Map2DLocation&
     if (!ret.ret)
     {
         yCError(NAVIGATION2D_NWC_YARP, "Unable to get_current_nav_waypoint_RPC");
-        return false;
+        return ret.ret;
     }
     curr_waypoint = ret.waypoint;
-    return true;
+    return ret.ret;
 }
 
 ReturnValue Navigation2D_nwc_yarp::getCurrentNavigationMap(yarp::dev::Nav2D::NavigationMapTypeEnum map_type,MapGrid2D& map)
@@ -94,8 +94,8 @@ ReturnValue Navigation2D_nwc_yarp::getCurrentNavigationMap(yarp::dev::Nav2D::Nav
     if (!ret.ret)
     {
         yCError(NAVIGATION2D_NWC_YARP, "Unable to get_current_nav_waypoint_RPC");
-        return false;
+        return ret.ret;
     }
     map = ret.mapgrid;
-    return true;
+    return ret.ret;
 }

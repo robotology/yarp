@@ -43,7 +43,7 @@ class Localization2D_nws_yarp :
 protected:
 
     //thrift
-    ILocalization2DRPCd                       m_RPC;
+    ILocalization2DRPCd*                      m_RPC=nullptr;
 
     //yarp
     std::string                               m_local_name = "/localization2D_nws_yarp";
@@ -59,6 +59,7 @@ protected:
     yarp::dev::Nav2D::ILocalization2D*      iLoc = nullptr;
 
     double                                  m_stats_time_last;
+    bool                                    m_getdata_using_periodic_thread=true;
 
 private:
     void publish_2DLocation_on_yarp_port();

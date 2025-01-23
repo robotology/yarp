@@ -49,10 +49,10 @@ ReturnValue Navigation2D_nwc_yarp::getAbsoluteLocationOfCurrentTarget(Map2DLocat
     if (!ret.ret)
     {
         yCError(NAVIGATION2D_NWC_YARP, "Unable to get_absolute_location_of_current_target_RPC");
-        return false;
+        return ret.ret;
     }
     loc = ret.loc;
-    return true;
+    return ret.ret;
 }
 
 ReturnValue Navigation2D_nwc_yarp::getRelativeLocationOfCurrentTarget(double& x, double& y, double& theta)
@@ -62,12 +62,12 @@ ReturnValue Navigation2D_nwc_yarp::getRelativeLocationOfCurrentTarget(double& x,
     if (!ret.ret)
     {
         yCError(NAVIGATION2D_NWC_YARP, "Unable to get_relative_location_of_current_target_RPC");
-        return false;
+        return ret.ret;
     }
     x = ret.x;
     y = ret.y;
     theta = ret.theta;
-    return true;
+    return ret.ret;
 }
 
 ReturnValue Navigation2D_nwc_yarp::followPath(const yarp::dev::Nav2D::Map2DPath& locs)

@@ -64,7 +64,7 @@ public:
 
 private:
     //thrift
-    IMap2DRPCd                   m_RPC;
+    IMap2DRPCd*                  m_RPC = nullptr;
 
     //drivers and interfaces
     yarp::dev::Nav2D::IMap2D*    m_iMap2D = nullptr;

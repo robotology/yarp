@@ -52,7 +52,7 @@ bool Navigation2D_nws_yarp::attach(PolyDriver* driver)
         yCWarning(NAVIGATION2D_NWS_YARP, "The attached subdevice does not implement INavigation2DVelocityActions interface");
     }
 
-    m_RPC.setInterfaces(iNav_target, iNav_ctrl, iNav_vel);
+    m_RPC = new INavigation2DRPCd(iNav_target, iNav_ctrl, iNav_vel);
 
     PeriodicThread::setPeriod(m_GENERAL_period);
     return PeriodicThread::start();
@@ -63,6 +63,12 @@ bool Navigation2D_nws_yarp::detach()
     if (PeriodicThread::isRunning())
     {
         PeriodicThread::stop();
+    }
+
+    if (m_RPC)
+    {
+        delete m_RPC;
+        m_RPC = nullptr;
     }
 
     m_statusPort.close();
@@ -121,7 +127,9 @@ bool Navigation2D_nws_yarp::close()
 
 bool Navigation2D_nws_yarp::read(yarp::os::ConnectionReader& connection)
 {
-    bool b = m_RPC.read(connection);
+    if (!m_RPC) { return false; }
+
+    bool b = m_RPC->read(connection);
     if (b)
     {
         return true;

@@ -51,7 +51,8 @@ bool Localization2D_nws_yarp::attach(PolyDriver* driver)
     if (driver->isValid())
     {
         driver->view(iLoc);
-        m_RPC.setInterface(iLoc);
+        m_RPC = new ILocalization2DRPCd(iLoc);
+        m_RPC->m_getdata_using_periodic_thread = m_getdata_using_periodic_thread;
     }
 
     if (nullptr == iLoc)
@@ -68,8 +69,8 @@ bool Localization2D_nws_yarp::attach(PolyDriver* driver)
     ret &= iLoc->getCurrentPosition(loc);
     if (ret)
     {
-        m_RPC.m_current_status = status;
-        m_RPC.m_current_position = loc;
+        m_RPC->m_current_status = status;
+        m_RPC->m_current_position = loc;
     }
     else
     {
@@ -94,6 +95,12 @@ bool Localization2D_nws_yarp::detach()
     }
     m_rpcPort.interrupt();
     m_rpcPort.close();
+    if (m_RPC)
+    {
+        delete m_RPC;
+        m_RPC = nullptr;
+    }
+
     iLoc = nullptr;
     return true;
 }
@@ -105,7 +112,7 @@ bool Localization2D_nws_yarp::open(Searchable& config)
     //check some parameters consistency
     if (!m_GENERAL_retrieve_position_periodically)
     {
-        m_RPC.m_getdata_using_periodic_thread = false;
+        m_getdata_using_periodic_thread = false;
 
         if (!m_GENERAL_publish_odometry)
            {yCWarning(LOCALIZATION2D_NWS_YARP) << "retrieve_position_periodically is true, but data is not published because publish_odometry is false. This configuration is strange";}
@@ -114,11 +121,11 @@ bool Localization2D_nws_yarp::open(Searchable& config)
     }
     else
     {
-        m_RPC.m_getdata_using_periodic_thread = true;
+        m_getdata_using_periodic_thread = true;
     }
 
     //Some debug prints
-    if (m_RPC.m_getdata_using_periodic_thread)
+    if (m_getdata_using_periodic_thread)
     {
         yCInfo(LOCALIZATION2D_NWS_YARP) << "retrieve_position_periodically requested, Period:" << m_GENERAL_period;
     }
@@ -132,8 +139,6 @@ bool Localization2D_nws_yarp::open(Searchable& config)
     m_rpcPortName = m_local_name + "/rpc";
     m_2DLocationPortName = m_local_name + "/streaming:o";
     m_odometryPortName = m_local_name + "/odometry:o";
-
-    yCInfo(LOCALIZATION2D_NWS_YARP) << "Waiting for device to attach";
 
     m_stats_time_last = yarp::os::Time::now();
 
@@ -181,7 +186,9 @@ bool Localization2D_nws_yarp::close()
 
 bool Localization2D_nws_yarp::read(yarp::os::ConnectionReader& connection)
 {
-    bool b = m_RPC.read(connection);
+    if (!m_RPC) { return false;}
+
+    bool b = m_RPC->read(connection);
     if (b)
     {
         return true;
@@ -203,35 +210,36 @@ void Localization2D_nws_yarp::run()
     }
 
     //enter the critical section
-    m_RPC.getMutex()->lock();
+    if (!m_RPC) { return;}
+    m_RPC->getMutex()->lock();
     {
-        if (m_RPC.m_getdata_using_periodic_thread)
+        if (m_RPC->m_getdata_using_periodic_thread)
         {
-            bool ret = iLoc->getLocalizationStatus(m_RPC.m_current_status);
+            bool ret = iLoc->getLocalizationStatus(m_RPC->m_current_status);
             if (ret == false)
             {
                 yCError(LOCALIZATION2D_NWS_YARP) << "getLocalizationStatus() failed";
             }
 
-            if (m_RPC.m_current_status == LocalizationStatusEnum::localization_status_localized_ok)
+            if (m_RPC->m_current_status == LocalizationStatusEnum::localization_status_localized_ok)
             {
-                bool ret2 = iLoc->getCurrentPosition(m_RPC.m_current_position);
+                bool ret2 = iLoc->getCurrentPosition(m_RPC->m_current_position);
                 if (ret2 == false)
                 {
                     yCError(LOCALIZATION2D_NWS_YARP) << "getCurrentPosition() failed";
                 }
                 else
                 {
-                    m_RPC.m_loc_stamp.update();
+                    m_RPC->m_loc_stamp.update();
                 }
-                bool ret3 = iLoc->getEstimatedOdometry(m_RPC.m_current_odometry);
+                bool ret3 = iLoc->getEstimatedOdometry(m_RPC->m_current_odometry);
                 if (ret3 == false)
                 {
                     //yCError(LOCALIZATION2D_NWS_YARP) << "getEstimatedOdometry() failed";
                 }
                 else
                 {
-                    m_RPC.m_odom_stamp.update();
+                    m_RPC->m_odom_stamp.update();
                 }
             }
             else
@@ -240,7 +248,7 @@ void Localization2D_nws_yarp::run()
             }
         }
     }
-    m_RPC.getMutex()->unlock();
+    m_RPC->getMutex()->unlock();
 
     if (m_GENERAL_publish_odometry) {
         publish_odometry_on_yarp_port();
@@ -252,25 +260,29 @@ void Localization2D_nws_yarp::run()
 
 void Localization2D_nws_yarp::publish_odometry_on_yarp_port()
 {
+    if (!m_RPC) return;
+
     if (m_odometryPort.getOutputCount() > 0)
     {
         yarp::dev::OdometryData& odom = m_odometryPort.prepare();
-        odom = m_RPC.m_current_odometry;
+        odom = m_RPC->m_current_odometry;
 
         //send data to port
-        m_odometryPort.setEnvelope(m_RPC.m_odom_stamp);
+        m_odometryPort.setEnvelope(m_RPC->m_odom_stamp);
         m_odometryPort.write();
     }
 }
 
 void Localization2D_nws_yarp::publish_2DLocation_on_yarp_port()
 {
+    if (!m_RPC) return;
+
     if (m_2DLocationPort.getOutputCount() > 0)
     {
         Nav2D::Map2DLocation& loc = m_2DLocationPort.prepare();
-        if (m_RPC.m_current_status == LocalizationStatusEnum::localization_status_localized_ok)
+        if (m_RPC->m_current_status == LocalizationStatusEnum::localization_status_localized_ok)
         {
-            loc = m_RPC.m_current_position;
+            loc = m_RPC->m_current_position;
         }
         else
         {
@@ -282,7 +294,7 @@ void Localization2D_nws_yarp::publish_2DLocation_on_yarp_port()
         }
 
         //send data to port
-        m_2DLocationPort.setEnvelope(m_RPC.m_loc_stamp);
+        m_2DLocationPort.setEnvelope(m_RPC->m_loc_stamp);
         m_2DLocationPort.write();
     }
 }

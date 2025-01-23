@@ -31,12 +31,12 @@ ReturnValue  Navigation2D_nwc_yarp::getLastVelocityCommand(double& x_vel, double
     if (!ret.ret)
     {
         yCError(NAVIGATION2D_NWC_YARP, "Unable to get_last_velocity_command_RPC");
-        return false;
+        return ret.ret;
     }
     x_vel = ret.x_vel;
     y_vel = ret.y_vel;
     theta_vel = ret.theta_vel;
-    return true;
+    return ret.ret;
 }
 
 ReturnValue  Navigation2D_nwc_yarp::applyVelocityCommand(double x_vel, double y_vel, double theta_vel, double timeout)

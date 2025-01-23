@@ -180,78 +180,80 @@ bool Navigation2D_nwc_yarp::read(yarp::os::ConnectionReader& connection)
     return true;
 }
 
-ReturnValue Navigation2D_nwc_yarp::checkNearToLocation(Map2DLocation loc, double linear_tolerance, double angular_tolerance)
+ReturnValue Navigation2D_nwc_yarp::checkNearToLocation(Map2DLocation loc, bool& is_near, double linear_tolerance, double angular_tolerance)
 {
     Map2DLocation curr_loc;
-    if (getCurrentPosition(curr_loc) == false)
+    auto ret = getCurrentPosition(curr_loc);
+    if (!ret)
     {
         yCError(NAVIGATION2D_NWC_YARP) << "checkInsideArea() unable to get robot position";
-        return false;
+        return ret;
     }
 
-    return curr_loc.is_near_to(loc, linear_tolerance, angular_tolerance);
+    is_near = curr_loc.is_near_to(loc, linear_tolerance, angular_tolerance);
+
+    return ReturnValue_ok;
 }
 
-ReturnValue Navigation2D_nwc_yarp::checkNearToLocation(std::string location_name, double linear_tolerance, double angular_tolerance)
+ReturnValue Navigation2D_nwc_yarp::checkNearToLocation(std::string location_name, bool& is_near, double linear_tolerance, double angular_tolerance)
 {
     Map2DLocation loc;
     Map2DLocation curr_loc;
-    if (this->getLocation(location_name, loc) == false)
+    auto ret1 = getLocation(location_name, loc);
+    if (!ret1)
     {
         yCError(NAVIGATION2D_NWC_YARP) << "Location" << location_name << "not found";
-        return false;
+        return ret1;
     }
 
-    if (getCurrentPosition(curr_loc) == false)
+    auto ret2 = getCurrentPosition(curr_loc);
+    if (!ret2)
     {
         yCError(NAVIGATION2D_NWC_YARP) << "checkInsideArea() unable to get robot position";
-        return false;
+        return ret2;
     }
 
-    return curr_loc.is_near_to(loc, linear_tolerance, angular_tolerance);
+    is_near = curr_loc.is_near_to(loc, linear_tolerance, angular_tolerance);
+
+    return ReturnValue_ok;
 }
 
-ReturnValue  Navigation2D_nwc_yarp::checkInsideArea(Map2DArea area)
+ReturnValue  Navigation2D_nwc_yarp::checkInsideArea(Map2DArea area, bool& is_inside)
 {
     Map2DLocation curr_loc;
-    if (getCurrentPosition(curr_loc) == false)
+    auto ret1 = getCurrentPosition(curr_loc);
+    if (!ret1)
     {
         yCError(NAVIGATION2D_NWC_YARP) << "checkInsideArea() unable to get robot position";
-        return false;
+        return ret1;
     }
 
-    if (area.checkLocationInsideArea(curr_loc) == false)
-    {
-        //yCDebug(NAVIGATION2D_NWC) << "Not inside Area";
-        return false;
-    }
+    is_inside = area.checkLocationInsideArea(curr_loc);
 
-    return true;
+    return ReturnValue_ok;
 }
 
-ReturnValue Navigation2D_nwc_yarp::checkInsideArea(std::string area_name)
+ReturnValue Navigation2D_nwc_yarp::checkInsideArea(std::string area_name, bool& is_inside)
 {
     Map2DLocation curr_loc;
     Map2DArea area;
-    if (this->getArea(area_name, area) == false)
+    auto ret1 = getArea(area_name, area);
+    if (!ret1)
     {
         yCError(NAVIGATION2D_NWC_YARP) << "Area" << area_name << "not found";
-        return false;
+        return ret1;
     }
 
-    if (getCurrentPosition(curr_loc) == false)
+    auto ret2 = getCurrentPosition(curr_loc);
+    if (!ret2)
     {
         yCError(NAVIGATION2D_NWC_YARP) << "checkInsideArea() unable to get robot position";
-        return false;
+        return ret2;
     }
 
-    if (area.checkLocationInsideArea(curr_loc) == false)
-    {
-        //yCDebug(NAVIGATION2D_NWC) << "Not inside Area";
-        return false;
-    }
+    is_inside = area.checkLocationInsideArea(curr_loc);
 
-    return true;
+    return ReturnValue_ok;
 }
 
 ReturnValue Navigation2D_nwc_yarp::gotoTargetByLocationName(std::string location_name)
@@ -289,7 +291,7 @@ ReturnValue Navigation2D_nwc_yarp::gotoTargetByLocationName(std::string location
     {
         yCError(NAVIGATION2D_NWC_YARP) << "Location not found, stopping navigation";
         m_nav_RPC.stop_navigation_RPC();
-        return false;
+        return ReturnValue::return_code::return_value_error_method_failed;
     }
 
     //...otherwise we can go to the found/computed location!
@@ -305,18 +307,18 @@ ReturnValue Navigation2D_nwc_yarp::getNameOfCurrentTarget(std::string& location_
     if (!ret.ret)
     {
         yCError(NAVIGATION2D_NWC_YARP, "Unable to get_name_of_current_target_RPC");
-        return false;
+        return ret.ret;
     }
     location_name = ret.name;
-    return true;
+    return ret.ret;
 }
 
 ReturnValue Navigation2D_nwc_yarp::storeCurrentPosition(std::string location_name)
 {
     Map2DLocation loc;
-    bool b = this->getCurrentPosition(loc);
-    if (!b) {return false;}
-    this->storeLocation(location_name,loc);
-    if (!b) {return false;}
-    return true;
+    auto ret = this->getCurrentPosition(loc);
+    if (!ret) {return ret;}
+    auto ret2 = this->storeLocation(location_name,loc);
+    if (!ret2) {return ret2;}
+    return ReturnValue_ok;
 }

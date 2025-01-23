@@ -9,6 +9,7 @@
 #include "ILocalization2DMsgs.h"
 #include <yarp/dev/ILocalization2D.h>
 #include <yarp/os/Stamp.h>
+#include <yarp/dev/ReturnValue.h>
 
 class Localization2DServer;
 
@@ -19,17 +20,17 @@ class ILocalization2DRPCd : public ILocalization2DMsgs
     std::mutex                         m_mutex;
 
     public:
-    void setInterface(yarp::dev::Nav2D::ILocalization2D* _iloc) { m_iLoc = _iloc; }
+    ILocalization2DRPCd(yarp::dev::Nav2D::ILocalization2D* _iloc) { m_iLoc = _iloc; }
 
-    bool start_localization_service_RPC() override;
-    bool stop_localization_service_RPC()  override;
+    yarp::dev::ReturnValue start_localization_service_RPC() override;
+    yarp::dev::ReturnValue stop_localization_service_RPC()  override;
     return_get_localization_status get_localization_status_RPC() override;
     return_get_estimated_poses     get_estimated_poses_RPC() override;
     return_get_current_position1   get_current_position1_RPC() override;
     return_get_current_position2   get_current_position2_RPC() override;
     return_get_estimated_odometry  get_estimated_odometry_RPC() override;
-    bool set_initial_pose1_RPC(const yarp::dev::Nav2D::Map2DLocation& loc) override;
-    bool set_initial_pose2_RPC(const yarp::dev::Nav2D::Map2DLocation& loc, const yarp::sig::Matrix& cov) override;
+    yarp::dev::ReturnValue set_initial_pose1_RPC(const yarp::dev::Nav2D::Map2DLocation& loc) override;
+    yarp::dev::ReturnValue set_initial_pose2_RPC(const yarp::dev::Nav2D::Map2DLocation& loc, const yarp::sig::Matrix& cov) override;
 
     std::mutex* getMutex() {return &m_mutex;}
 

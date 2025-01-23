@@ -66,10 +66,10 @@ public:
 
     /* The following methods belong to INavigation2D interface */
            // subcategory: INavigation2DExtraActions
-    yarp::dev::ReturnValue   checkInsideArea(yarp::dev::Nav2D::Map2DArea area) override;
-    yarp::dev::ReturnValue   checkInsideArea(std::string area_name)  override;
-    yarp::dev::ReturnValue   checkNearToLocation(yarp::dev::Nav2D::Map2DLocation loc, double linear_tolerance, double angular_tolerance = std::numeric_limits<double>::infinity()) override;
-    yarp::dev::ReturnValue   checkNearToLocation(std::string location_name, double linear_tolerance, double angular_tolerance = std::numeric_limits<double>::infinity()) override;
+    yarp::dev::ReturnValue   checkInsideArea(yarp::dev::Nav2D::Map2DArea area, bool& is_inside) override;
+    yarp::dev::ReturnValue   checkInsideArea(std::string area_name, bool& is_inside)  override;
+    yarp::dev::ReturnValue   checkNearToLocation(yarp::dev::Nav2D::Map2DLocation loc, bool& is_near, double linear_tolerance, double angular_tolerance = std::numeric_limits<double>::infinity()) override;
+    yarp::dev::ReturnValue   checkNearToLocation(std::string location_name, bool& is_near, double linear_tolerance, double angular_tolerance = std::numeric_limits<double>::infinity()) override;
     yarp::dev::ReturnValue   storeCurrentPosition(std::string location_name) override;
            // subcategory: INavigation2DControlActions
     yarp::dev::ReturnValue   getNavigationStatus(yarp::dev::Nav2D::NavigationStatusEnum& status) override;

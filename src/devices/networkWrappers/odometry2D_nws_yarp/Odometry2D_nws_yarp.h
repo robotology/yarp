@@ -58,7 +58,7 @@ public:
 
 private:
     //thrift
-    IOdometry2DRPCd  m_RPC;
+    IOdometry2DRPCd* m_RPC=nullptr;
 
     //rpc port
     bool read(yarp::os::ConnectionReader& connection) override;

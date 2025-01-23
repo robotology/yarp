@@ -38,7 +38,7 @@ bool Odometry2D_nws_yarp::attach(yarp::dev::PolyDriver* driver)
         return false;
     }
 
-    m_RPC.setInterface(m_odometry2D_interface);
+    m_RPC=new IOdometry2DRPCd(m_odometry2D_interface);
 
     bool b = PeriodicThread::start();
 
@@ -51,6 +51,11 @@ bool Odometry2D_nws_yarp::detach()
     if (PeriodicThread::isRunning())
     {
         PeriodicThread::stop();
+    }
+    if (m_RPC)
+    {
+        delete m_RPC;
+        m_RPC = nullptr;
     }
     m_odometry2D_interface = nullptr;
     return true;
@@ -185,10 +190,12 @@ bool Odometry2D_nws_yarp::close()
 
 bool Odometry2D_nws_yarp::read(yarp::os::ConnectionReader& connection)
 {
-    bool b = m_RPC.read(connection);
-    if (b)
+    if (m_RPC)
     {
-        return true;
+        bool b = m_RPC->read(connection);
+        if (b) {
+            return true;
+        }
     }
     yCDebug(ODOMETRY2D_NWS_YARP) << "read() Command failed";
     return false;

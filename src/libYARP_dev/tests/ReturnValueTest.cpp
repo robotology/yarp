@@ -46,7 +46,7 @@ TEST_CASE("dev::ReturnValue", "[yarp::dev]")
     SECTION("test block 2")
     {
         ReturnValue val1;
-        CHECK(val1 == ReturnValue::return_code::return_value_unitialized);
+        CHECK(val1 == ReturnValue::return_code::return_value_uninitialized);
 
         std::string s;
         val1 = ReturnValue::return_code::return_value_ok;
@@ -74,7 +74,7 @@ TEST_CASE("dev::ReturnValue", "[yarp::dev]")
         CHECK(!val1);
         CHECK(s != "unknown");
 
-        val1 = ReturnValue::return_code::return_value_unitialized;
+        val1 = ReturnValue::return_code::return_value_uninitialized;
         s = val1.toString();
         CHECK(!val1);
         CHECK(s != "unknown");

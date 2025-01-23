@@ -27,32 +27,28 @@ YARP_LOG_COMPONENT(LOCALIZATION2DSERVER, "yarp.device.localization2DServer")
 
 #define CHECK_POINTER(xxx) {if (xxx==nullptr) {yCError(LOCALIZATION2DSERVER, "Invalid interface"); return false;}}
 
-bool ILocalization2DRPCd::start_localization_service_RPC()
+ReturnValue ILocalization2DRPCd::start_localization_service_RPC()
 {
     std::lock_guard <std::mutex> lg(m_mutex);
 
-    {if (m_iLoc == nullptr) { yCError(LOCALIZATION2DSERVER, "Invalid interface"); return false; }}
-
-    if (!m_iLoc->startLocalizationService())
+    auto ret = m_iLoc->startLocalizationService();
+    if (!ret)
     {
         yCError(LOCALIZATION2DSERVER, "Unable to startLocalizationService");
-        return false;
     }
-    return true;
+    return ret;
 }
 
-bool ILocalization2DRPCd::stop_localization_service_RPC()
+ReturnValue ILocalization2DRPCd::stop_localization_service_RPC()
 {
     std::lock_guard <std::mutex> lg(m_mutex);
 
-    {if (m_iLoc == nullptr) { yCError(LOCALIZATION2DSERVER, "Invalid interface"); return false; }}
-
-    if (!m_iLoc->stopLocalizationService())
+    auto ret = m_iLoc->stopLocalizationService();
+    if (!ret)
     {
         yCError(LOCALIZATION2DSERVER, "Unable to stopLocalizationService");
-        return false;
     }
-    return true;
+    return ret;
 }
 
 return_get_localization_status ILocalization2DRPCd::get_localization_status_RPC()
@@ -62,23 +58,20 @@ return_get_localization_status ILocalization2DRPCd::get_localization_status_RPC(
     return_get_localization_status ret;
     if (m_getdata_using_periodic_thread)
     {
-        ret.ret = true;
+        ret.ret = ReturnValue::return_code::return_value_ok;
         ret.status = yarp::dev::Nav2D::LocalizationStatusEnum(m_current_status);
         return ret;
     }
 
-    {if (m_iLoc == nullptr) { yCError(LOCALIZATION2DSERVER, "Invalid interface"); return ret; }}
-
     yarp::dev::Nav2D::LocalizationStatusEnum status;
-    if (!m_iLoc->getLocalizationStatus(status))
+    ret.ret = m_iLoc->getLocalizationStatus(status);
+    if (!ret.ret)
     {
         yCError(LOCALIZATION2DSERVER, "Unable to getLocalizationStatus");
-        ret.ret=false;
         ret.status = yarp::dev::Nav2D::LocalizationStatusEnum(yarp::dev::Nav2D::LocalizationStatusEnum::localization_status_error) ;
     }
     else
     {
-        ret.ret=true;
         ret.status = yarp::dev::Nav2D::LocalizationStatusEnum(status);
     }
     return ret;
@@ -89,16 +82,14 @@ return_get_estimated_poses ILocalization2DRPCd::get_estimated_poses_RPC()
     std::lock_guard <std::mutex> lg(m_mutex);
 
     return_get_estimated_poses ret;
-    {if (m_iLoc == nullptr) { yCError(LOCALIZATION2DSERVER, "Invalid interface"); return ret; }}
     std::vector<yarp::dev::Nav2D::Map2DLocation> poses;
-    if (!m_iLoc->getEstimatedPoses(poses))
+    ret.ret = m_iLoc->getEstimatedPoses(poses);
+    if (ret.ret)
     {
         yCError(LOCALIZATION2DSERVER, "Unable to getEstimatedPoses");
-        ret.ret = false;
     }
     else
     {
-        ret.ret = true;
         ret.poses=poses;
     }
     return ret;
@@ -111,22 +102,19 @@ return_get_current_position1 ILocalization2DRPCd::get_current_position1_RPC()
     return_get_current_position1 ret;
     if (m_getdata_using_periodic_thread)
     {
-        ret.ret = true;
+        ret.ret = ReturnValue::return_code::return_value_ok;
         ret.loc = this->m_current_position;
         return ret;
     }
 
-    {if (m_iLoc == nullptr) { yCError(LOCALIZATION2DSERVER, "Invalid interface"); return ret; }}
-
     yarp::dev::Nav2D::Map2DLocation pos;
-    if (!m_iLoc->getCurrentPosition(pos))
+    ret.ret = m_iLoc->getCurrentPosition(pos);
+    if (!ret.ret)
     {
         yCError(LOCALIZATION2DSERVER, "Unable to getCurrentPosition");
-        ret.ret = false;
     }
     else
     {
-        ret.ret = true;
         ret.loc = pos;
     }
     return ret;
@@ -137,17 +125,15 @@ return_get_current_position2 ILocalization2DRPCd::get_current_position2_RPC()
     std::lock_guard <std::mutex> lg(m_mutex);
 
     return_get_current_position2 ret;
-    {if (m_iLoc == nullptr) { yCError(LOCALIZATION2DSERVER, "Invalid interface"); return ret; }}
     yarp::dev::Nav2D::Map2DLocation pos;
     yarp::sig::Matrix cov;
-    if (!m_iLoc->getCurrentPosition(pos,cov))
+    ret.ret = m_iLoc->getCurrentPosition(pos, cov);
+    if (ret.ret)
     {
         yCError(LOCALIZATION2DSERVER, "Unable to getCurrentPosition");
-        ret.ret = false;
     }
     else
     {
-        ret.ret = true;
         ret.loc=pos;
         ret.cov=cov;
     }
@@ -161,50 +147,44 @@ return_get_estimated_odometry ILocalization2DRPCd::get_estimated_odometry_RPC()
     return_get_estimated_odometry ret;
     if (m_getdata_using_periodic_thread)
     {
-        ret.ret = true;
+        ret.ret = ReturnValue::return_code::return_value_ok;
         ret.odom = this->m_current_odometry;
         return ret;
     }
 
-    {if (m_iLoc == nullptr) { yCError(LOCALIZATION2DSERVER, "Invalid interface"); return ret; }}
-
     yarp::dev::OdometryData odom;
-    if (!m_iLoc->getEstimatedOdometry(odom))
+    ret.ret = m_iLoc->getEstimatedOdometry(odom);
+    if (!ret.ret)
     {
         yCError(LOCALIZATION2DSERVER, "Unable to getEstimatedOdometry");
-        ret.ret = false;
     }
     else
     {
-        ret.ret = true;
         ret.odom = odom;
     }
     return ret;
 }
 
-bool ILocalization2DRPCd::set_initial_pose1_RPC(const yarp::dev::Nav2D::Map2DLocation& loc)
+ReturnValue ILocalization2DRPCd::set_initial_pose1_RPC(const yarp::dev::Nav2D::Map2DLocation& loc)
 {
     std::lock_guard <std::mutex> lg(m_mutex);
 
-    {if (m_iLoc == nullptr) { yCError(LOCALIZATION2DSERVER, "Invalid interface"); return false; }}
-    if (!m_iLoc->setInitialPose(loc))
+    auto ret = m_iLoc->setInitialPose(loc);
+    if (!ret)
     {
         yCError(LOCALIZATION2DSERVER, "Unable to setInitialPose");
-        return false;
     }
-    return true;
+    return ret;
 }
 
-bool ILocalization2DRPCd::set_initial_pose2_RPC(const yarp::dev::Nav2D::Map2DLocation& loc, const yarp::sig::Matrix& cov)
+ReturnValue ILocalization2DRPCd::set_initial_pose2_RPC(const yarp::dev::Nav2D::Map2DLocation& loc, const yarp::sig::Matrix& cov)
 {
     std::lock_guard <std::mutex> lg(m_mutex);
 
-    {if (m_iLoc == nullptr) { yCError(LOCALIZATION2DSERVER, "Invalid interface"); return false; }}
-
-    if (!m_iLoc->setInitialPose(loc,cov))
+    auto ret = m_iLoc->setInitialPose(loc,cov);
+    if (!ret)
     {
         yCError(LOCALIZATION2DSERVER, "Unable to setInitialPose");
-        return false;
     }
-    return true;
+    return ret;
 }

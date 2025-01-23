@@ -37,10 +37,10 @@ ReturnValue Navigation2D_nwc_yarp::get_map(std::string map_name, MapGrid2D& map)
     if (!ret.retval)
     {
         yCError(NAVIGATION2D_NWC, "Unable to get_map");
-        return false;
+        return ret.retval;
     }
     map = ret.themap;
-    return true;
+    return ret.retval;
 }
 
 ReturnValue Navigation2D_nwc_yarp::clearAllMaps()
@@ -56,10 +56,10 @@ ReturnValue Navigation2D_nwc_yarp::get_map_names(std::vector<std::string>& map_n
     if (!ret.retval)
     {
         yCError(NAVIGATION2D_NWC, "Unable to get_map_names");
-        return false;
+        return ret.retval;
     }
     map_names = ret.map_names;
-    return true;
+    return ret.retval;
 }
 
 ReturnValue Navigation2D_nwc_yarp::remove_map(std::string map_name)
@@ -93,10 +93,10 @@ ReturnValue   Navigation2D_nwc_yarp::getLocationsList(std::vector<std::string>& 
     if (!ret.retval)
     {
         yCError(NAVIGATION2D_NWC, "Unable to getLocationsList");
-        return false;
+        return ret.retval;
     }
     locations = ret.locations;
-    return true;
+    return ret.retval;
 }
 
 ReturnValue   Navigation2D_nwc_yarp::getAreasList(std::vector<std::string>& areas)
@@ -106,10 +106,10 @@ ReturnValue   Navigation2D_nwc_yarp::getAreasList(std::vector<std::string>& area
     if (!ret.retval)
     {
         yCError(NAVIGATION2D_NWC, "Unable to getAreasList");
-        return false;
+        return ret.retval;
     }
     areas = ret.areas;
-    return true;
+    return ret.retval;
 }
 
 ReturnValue   Navigation2D_nwc_yarp::getPathsList(std::vector<std::string>& paths)
@@ -119,10 +119,10 @@ ReturnValue   Navigation2D_nwc_yarp::getPathsList(std::vector<std::string>& path
     if (!ret.retval)
     {
         yCError(NAVIGATION2D_NWC, "Unable to getPathsList");
-        return false;
+        return ret.retval;
     }
     paths = ret.paths;
-    return true;
+    return ret.retval;
 }
 
 ReturnValue   Navigation2D_nwc_yarp::getAllLocations(std::vector<yarp::dev::Nav2D::Map2DLocation>& locations)
@@ -132,10 +132,10 @@ ReturnValue   Navigation2D_nwc_yarp::getAllLocations(std::vector<yarp::dev::Nav2
     if (!ret.retval)
     {
         yCError(NAVIGATION2D_NWC, "Unable to getAllLocations");
-        return false;
+        return ret.retval;
     }
     locations = ret.locations;
-    return true;
+    return ret.retval;
 }
 
 ReturnValue   Navigation2D_nwc_yarp::getAllAreas(std::vector<yarp::dev::Nav2D::Map2DArea>& areas)
@@ -145,10 +145,10 @@ ReturnValue   Navigation2D_nwc_yarp::getAllAreas(std::vector<yarp::dev::Nav2D::M
     if (!ret.retval)
     {
         yCError(NAVIGATION2D_NWC, "Unable to getAllAreas");
-        return false;
+        return ret.retval;
     }
     areas = ret.areas;
-    return true;
+    return ret.retval;
 }
 
 ReturnValue   Navigation2D_nwc_yarp::getAllPaths(std::vector<yarp::dev::Nav2D::Map2DPath>& paths)
@@ -158,10 +158,10 @@ ReturnValue   Navigation2D_nwc_yarp::getAllPaths(std::vector<yarp::dev::Nav2D::M
     if (!ret.retval)
     {
         yCError(NAVIGATION2D_NWC, "Unable to getAllPaths");
-        return false;
+        return ret.retval;
     }
     paths = ret.paths;
-    return true;
+    return ret.retval;
 }
 
 ReturnValue   Navigation2D_nwc_yarp::getLocation(std::string location_name, Map2DLocation& loc)
@@ -171,10 +171,10 @@ ReturnValue   Navigation2D_nwc_yarp::getLocation(std::string location_name, Map2
     if (!ret.retval)
     {
         yCError(NAVIGATION2D_NWC, "Unable to getLocation");
-        return false;
+        return ret.retval;
     }
     loc = ret.loc;
-    return true;
+    return ret.retval;
 }
 
 ReturnValue   Navigation2D_nwc_yarp::getArea(std::string area_name, Map2DArea& area)
@@ -184,10 +184,10 @@ ReturnValue   Navigation2D_nwc_yarp::getArea(std::string area_name, Map2DArea& a
     if (!ret.retval)
     {
         yCError(NAVIGATION2D_NWC, "Unable to getArea");
-        return false;
+        return ret.retval;
     }
     area = ret.area;
-    return true;
+    return ret.retval;
 }
 
 ReturnValue   Navigation2D_nwc_yarp::getPath(std::string path_name, Map2DPath& path)
@@ -197,10 +197,10 @@ ReturnValue   Navigation2D_nwc_yarp::getPath(std::string path_name, Map2DPath& p
     if (!ret.retval)
     {
         yCError(NAVIGATION2D_NWC, "Unable to getPath");
-        return false;
+        return ret.retval;
     }
     path = ret.path;
-    return true;
+    return ret.retval;
 }
 
 ReturnValue   Navigation2D_nwc_yarp::deleteLocation(std::string location_name)

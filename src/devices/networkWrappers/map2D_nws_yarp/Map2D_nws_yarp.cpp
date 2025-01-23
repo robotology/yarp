@@ -42,7 +42,9 @@ Map2D_nws_yarp::~Map2D_nws_yarp() = default;
 
 bool Map2D_nws_yarp::read(yarp::os::ConnectionReader& connection)
 {
-    bool b = m_RPC.read(connection);
+    if (!m_RPC) {return false;}
+
+    bool b = m_RPC->read(connection);
     if (b)
     {
         return true;
@@ -81,6 +83,13 @@ bool Map2D_nws_yarp::close()
 bool Map2D_nws_yarp::detach()
 {
     m_iMap2D = nullptr;
+
+    if (m_RPC)
+    {
+        delete m_RPC;
+        m_RPC = nullptr;
+    }
+
     return true;
 }
 
@@ -89,7 +98,7 @@ bool Map2D_nws_yarp::attach(PolyDriver* driver)
     if (driver->isValid())
     {
         driver->view(m_iMap2D);
-        m_RPC.setInterface(m_iMap2D);
+        m_RPC = new IMap2DRPCd(m_iMap2D);
     }
 
     if (nullptr == m_iMap2D)

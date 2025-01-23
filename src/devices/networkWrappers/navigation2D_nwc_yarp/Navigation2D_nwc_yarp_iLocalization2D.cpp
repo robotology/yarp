@@ -35,7 +35,7 @@ ReturnValue Navigation2D_nwc_yarp::setInitialPose(const Map2DLocation& loc, cons
     if (cov.rows() != 3 || cov.cols() != 3)
     {
         yCError(NAVIGATION2D_NWC) << "Covariance matrix is expected to have size (3,3)";
-        return false;
+        return ReturnValue::return_code::return_value_error_method_failed;
     }
 
     std::lock_guard <std::mutex> lg(m_mutex);
@@ -49,11 +49,11 @@ ReturnValue  Navigation2D_nwc_yarp::getCurrentPosition(Map2DLocation& loc, yarp:
     if (!ret.ret)
     {
         yCError(NAVIGATION2D_NWC, "Unable to get_current_position2_RPC");
-        return false;
+        return ret.ret;
     }
     loc = ret.loc;
     cov = ret.cov;
-    return true;
+    return ret.ret;
 }
 
 ReturnValue  Navigation2D_nwc_yarp::getEstimatedOdometry(yarp::dev::OdometryData& odom)
@@ -63,10 +63,10 @@ ReturnValue  Navigation2D_nwc_yarp::getEstimatedOdometry(yarp::dev::OdometryData
     if (!ret.ret)
     {
         yCError(NAVIGATION2D_NWC, "Unable to get_estimated_odometry_RPC");
-        return false;
+        return ret.ret;
     }
     odom = ret.odom;
-    return true;
+    return ret.ret;
 }
 
 ReturnValue  Navigation2D_nwc_yarp::getCurrentPosition(Map2DLocation& loc)
@@ -76,10 +76,10 @@ ReturnValue  Navigation2D_nwc_yarp::getCurrentPosition(Map2DLocation& loc)
     if (!ret.ret)
     {
         yCError(NAVIGATION2D_NWC, "Unable to get_current_position1_RPC");
-        return false;
+        return ret.ret;
     }
     loc = ret.loc;
-    return true;
+    return ret.ret;
 }
 
 ReturnValue  Navigation2D_nwc_yarp::getLocalizationStatus(yarp::dev::Nav2D::LocalizationStatusEnum& status)
@@ -89,10 +89,10 @@ ReturnValue  Navigation2D_nwc_yarp::getLocalizationStatus(yarp::dev::Nav2D::Loca
     if (!ret.ret)
     {
         yCError(NAVIGATION2D_NWC, "Unable to get_localization_status_RPC");
-        return false;
+        return ret.ret;
     }
     status = yarp::dev::Nav2D::LocalizationStatusEnum(ret.status);
-    return true;
+    return ret.ret;
 }
 
 ReturnValue  Navigation2D_nwc_yarp::getEstimatedPoses(std::vector<Map2DLocation>& poses)
@@ -102,10 +102,10 @@ ReturnValue  Navigation2D_nwc_yarp::getEstimatedPoses(std::vector<Map2DLocation>
     if (!ret.ret)
     {
         yCError(NAVIGATION2D_NWC, "Unable to get_estimated_poses_RPC");
-        return false;
+        return ret.ret;
     }
     poses = ret.poses;
-    return true;
+    return ret.ret;
 }
 
 ReturnValue  Navigation2D_nwc_yarp::startLocalizationService()

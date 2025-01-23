@@ -23,15 +23,16 @@ namespace yarp::dev::tests
         b0 = inav->setInitialPose(Map2DLocation("map_1", 10.2, 20.1, angle1)); CHECK(b0);
         yarp::os::Time::delay(0.1);
         INFO("Testing angle" + std::to_string(angle1) + " is similar to:" + std::to_string(angle2));
-        b1 = inav->checkNearToLocation(Map2DLocation("map_1", 10.2, 20.1, angle2), 0.1, 10.0); CHECK(b1);
+        bool is_near;
+        b1 = inav->checkNearToLocation(Map2DLocation("map_1", 10.2, 20.1, angle2), is_near, 0.1, 10.0);   CHECK(b1); CHECK(is_near);
         //yInfo() << "Testing angle" << angle1 << " is similar to:" << angle2 + 5.0;
-        b1 = inav->checkNearToLocation(Map2DLocation("map_1", 10.2, 20.1, angle2 + 5.0), 0.1, 10.0); CHECK(b1);
+        b1 = inav->checkNearToLocation(Map2DLocation("map_1", 10.2, 20.1, angle2 + 5.0), is_near,0.1, 10.0); CHECK(b1); CHECK(is_near);
         //yInfo() << "Testing angle" << angle1 << " is different from:" << angle2 + 20.0;
-        b1 = inav->checkNearToLocation(Map2DLocation("map_1", 10.2, 20.1, angle2 + 20.0), 0.1, 10.0); CHECK(!b1);
+        b1 = inav->checkNearToLocation(Map2DLocation("map_1", 10.2, 20.1, angle2 + 20.0), is_near,0.1, 10.0); CHECK(b1);  CHECK(!is_near);
         //yInfo() << "Testing angle" << angle1 << " is similar to:" << angle2 - 5.0;
-        b1 = inav->checkNearToLocation(Map2DLocation("map_1", 10.2, 20.1, angle2 - 5.0), 0.1, 10.0); CHECK(b1);
+        b1 = inav->checkNearToLocation(Map2DLocation("map_1", 10.2, 20.1, angle2 - 5.0), is_near,0.1, 10.0); CHECK(b1); CHECK(is_near);
         //yInfo() << "Testing angle" << angle1 << " is different from:" << angle2 - 20.0;
-        b1 = inav->checkNearToLocation(Map2DLocation("map_1", 10.2, 20.1, angle2 - 20.0), 0.1, 10.0); CHECK(!b1);
+        b1 = inav->checkNearToLocation(Map2DLocation("map_1", 10.2, 20.1, angle2 - 20.0), is_near,0.1, 10.0); CHECK(b1); CHECK(!is_near);
     }
 
     inline void exec_iNav2D_test_1(INavigation2D* inav, IMap2D* imap)
@@ -49,16 +50,17 @@ namespace yarp::dev::tests
         b0 = imap->storeLocation("loc_test", loc_test); CHECK(b0);
 
         {
+            bool is_inside;
             b0 = inav->setInitialPose(my_current_loc); CHECK(b0);
             yarp::os::Time::delay(0.1);
             b0 = inav->getCurrentPosition(loc_to_be_tested); CHECK(b0); CHECK(loc_to_be_tested == my_current_loc);
-            b1 = inav->checkInsideArea("area_test");  CHECK(b1 == false);
-            b1 = inav->checkInsideArea(area_test);    CHECK(b1 == false);
+            b1 = inav->checkInsideArea("area_test",is_inside);  CHECK(b1); CHECK(!is_inside);
+            b1 = inav->checkInsideArea(area_test,is_inside);    CHECK(b1); CHECK(!is_inside);
             b0 = inav->setInitialPose(Map2DLocation("map_1", 0, 0, 0)); CHECK(b0);
             yarp::os::Time::delay(0.1);
             b0 = inav->getCurrentPosition(loc_to_be_tested); CHECK(loc_to_be_tested == Map2DLocation("map_1", 0, 0, 0));
-            b1 = inav->checkInsideArea("area_test");  CHECK(b1);
-            b1 = inav->checkInsideArea(area_test);    CHECK(b1);
+            b1 = inav->checkInsideArea("area_test",is_inside);  CHECK(b1); CHECK(is_inside);
+            b1 = inav->checkInsideArea(area_test,is_inside);    CHECK(b1); CHECK(is_inside);
         }
 
         {
@@ -66,36 +68,40 @@ namespace yarp::dev::tests
             double ang_tol = 1.0; //deg
             b0 = inav->setInitialPose(my_current_loc); CHECK(b0);
             yarp::os::Time::delay(0.1);
-            b1 = inav->checkNearToLocation("loc_test", lin_tol, ang_tol); CHECK(b1);
-            b1 = inav->checkNearToLocation(loc_test, lin_tol, ang_tol); CHECK(b1);
+            bool is_near;
+            b1 = inav->checkNearToLocation("loc_test", is_near, lin_tol, ang_tol); CHECK(b1); CHECK(is_near);
+            b1 = inav->checkNearToLocation(loc_test, is_near, lin_tol, ang_tol); CHECK(b1); CHECK(is_near);
         }
         {
             double lin_tol = 0.0001; //m
             double ang_tol = 0.0001; //deg
             b0 = inav->setInitialPose(my_current_loc); CHECK(b0);
             yarp::os::Time::delay(0.1);
-            b1 = inav->checkNearToLocation("loc_test", lin_tol, ang_tol); CHECK(b1 == false);
-            b1 = inav->checkNearToLocation(loc_test, lin_tol, ang_tol); CHECK(b1 == false);
+            bool is_near;
+            b1 = inav->checkNearToLocation("loc_test", is_near, lin_tol, ang_tol); CHECK(b1); CHECK(!is_near);
+            b1 = inav->checkNearToLocation(loc_test, is_near, lin_tol, ang_tol); CHECK(b1); CHECK(!is_near);
         }
         {
             double lin_tol = 1.0; //m
             Map2DLocation my_current_loc2 = my_current_loc; my_current_loc2.theta = 90;
             b0 = inav->setInitialPose(my_current_loc2); CHECK(b0);
             yarp::os::Time::delay(0.1);
-            b1 = inav->checkNearToLocation("loc_test", lin_tol); CHECK(b1);
-            b1 = inav->checkNearToLocation(loc_test, lin_tol); CHECK(b1);
+            bool is_near;
+            b1 = inav->checkNearToLocation("loc_test", is_near, lin_tol); CHECK(b1); CHECK(is_near);
+            b1 = inav->checkNearToLocation(loc_test, is_near, lin_tol); CHECK(b1); CHECK(is_near);
         }
         {
             double lin_tol = 0.1; //m
             double ang_tol = 0.1; //deg
+            bool is_near;
             b0 = inav->setInitialPose(my_current_loc); CHECK(b0); yarp::os::Time::delay(0.1);
-            b1 = inav->checkNearToLocation(Map2DLocation("map_1", 10.2, 20.1, 15.5), lin_tol, ang_tol); CHECK(b1);
-            b1 = inav->checkNearToLocation(Map2DLocation("map_1", 10.2, 20.1, 15.5 + 180), lin_tol, ang_tol); CHECK(b1 == false);
-            b1 = inav->checkNearToLocation(Map2DLocation("map_1", 10.2, 20.1, 15.5 + 360), lin_tol, ang_tol); CHECK(b1);
-            b1 = inav->checkNearToLocation(Map2DLocation("map_1", 10.2, 20.1, 15.5 + 720), lin_tol, ang_tol); CHECK(b1);
-            b1 = inav->checkNearToLocation(Map2DLocation("map_1", 10.2, 20.1, 15.5 - 180), lin_tol, ang_tol); CHECK(b1 == false);
-            b1 = inav->checkNearToLocation(Map2DLocation("map_1", 10.2, 20.1, 15.5 - 360), lin_tol, ang_tol); CHECK(b1);
-            b1 = inav->checkNearToLocation(Map2DLocation("map_1", 10.2, 20.1, 15.5 - 720), lin_tol, ang_tol); CHECK(b1);
+            b1 = inav->checkNearToLocation(Map2DLocation("map_1", 10.2, 20.1, 15.5), is_near, lin_tol, ang_tol); CHECK(b1);
+            b1 = inav->checkNearToLocation(Map2DLocation("map_1", 10.2, 20.1, 15.5 + 180), is_near, lin_tol, ang_tol); CHECK(b1); CHECK(!is_near);
+            b1 = inav->checkNearToLocation(Map2DLocation("map_1", 10.2, 20.1, 15.5 + 360), is_near, lin_tol, ang_tol); CHECK(b1); CHECK(is_near);
+            b1 = inav->checkNearToLocation(Map2DLocation("map_1", 10.2, 20.1, 15.5 + 720), is_near, lin_tol, ang_tol); CHECK(b1); CHECK(is_near);
+            b1 = inav->checkNearToLocation(Map2DLocation("map_1", 10.2, 20.1, 15.5 - 180), is_near, lin_tol, ang_tol); CHECK(b1); CHECK(!is_near);
+            b1 = inav->checkNearToLocation(Map2DLocation("map_1", 10.2, 20.1, 15.5 - 360), is_near, lin_tol, ang_tol); CHECK(b1); CHECK(is_near);
+            b1 = inav->checkNearToLocation(Map2DLocation("map_1", 10.2, 20.1, 15.5 - 720), is_near, lin_tol, ang_tol); CHECK(b1); CHECK(is_near);
 
             //in the following tests, the tolerance is set to 10.0 deg
             test_similar_angles(inav, +2.0, +2.0);

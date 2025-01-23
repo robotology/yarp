@@ -226,14 +226,14 @@ public:
      * @param area_name the name of an area previously saved
      * @return true/false
      */
-    virtual yarp::dev::ReturnValue checkInsideArea(std::string area_name) = 0;
+    virtual yarp::dev::ReturnValue checkInsideArea(std::string area_name, bool& is_inside) = 0;
 
     /**
      * Check if the robot is currently inside the specified area
      * @param area the area to be checked
      * @return true/false
      */
-    virtual yarp::dev::ReturnValue checkInsideArea(Nav2D::Map2DArea area) = 0;
+    virtual yarp::dev::ReturnValue checkInsideArea(Nav2D::Map2DArea area, bool& is_inside) = 0;
 
     /**
      * Check if the robot is currently near to the specified area
@@ -242,7 +242,7 @@ public:
      * @param angular_tolerance [deg 0-360]
      * @return true/false
      */
-    virtual yarp::dev::ReturnValue checkNearToLocation(Nav2D::Map2DLocation loc, double linear_tolerance, double angular_tolerance = std::numeric_limits<double>::infinity()) = 0;
+    virtual yarp::dev::ReturnValue checkNearToLocation(Nav2D::Map2DLocation loc, bool& is_near, double linear_tolerance, double angular_tolerance = std::numeric_limits<double>::infinity()) = 0;
 
     /**
      * Check if the robot is currently near to the specified area
@@ -251,7 +251,7 @@ public:
      * @param angular_tolerance [deg]
      * @return true/false
      */
-    virtual yarp::dev::ReturnValue checkNearToLocation(std::string location_name, double linear_tolerance, double angular_tolerance = std::numeric_limits<double>::infinity()) = 0;
+    virtual yarp::dev::ReturnValue checkNearToLocation(std::string location_name, bool& is_near, double linear_tolerance, double angular_tolerance = std::numeric_limits<double>::infinity()) = 0;
 
     /**
      * Gets the name of the current target, if available (set by gotoTargetByLocationName)

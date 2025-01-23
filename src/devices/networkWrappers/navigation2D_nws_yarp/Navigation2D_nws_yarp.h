@@ -44,7 +44,7 @@ class Navigation2D_nws_yarp : public yarp::dev::DeviceDriver,
 {
 protected:
     //thrift
-    INavigation2DRPCd                            m_RPC;
+    INavigation2DRPCd*                           m_RPC=nullptr;
 
     yarp::os::Port                               m_rpcPort;
     yarp::os::Port                               m_statusPort;

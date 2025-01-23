@@ -19,6 +19,8 @@ if(NOT SKIP_mobileBaseVelocityControl_nws_yarp)
       MobileBaseVelocityControl_nws_yarp.h
       MobileBaseVelocityControl_nws_yarp_ParamsParser.cpp
       MobileBaseVelocityControl_nws_yarp_ParamsParser.h
+      MobileBaseVelocityControlServerImpl.cpp
+      MobileBaseVelocityControlServerImpl.h
   )
 
   target_sources(yarp_mobileBaseVelocityControl_nws_yarp PRIVATE $<TARGET_OBJECTS:MobileBaseVelocityControlMsgs>)
