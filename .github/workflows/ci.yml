@@ -2420,7 +2420,7 @@ jobs:
             -Dsonar.cfamily.cache.enabled=${SONAR_CFAMILY_CACHE_ENABLED} \
             -Dsonar.coverageReportPaths=build/coverage.xml \
             -Dsonar.junit.reportPaths=build/JUnitTestResults.xml \
-            -Dsonar.exclusions="src/yarp*/**/* src/carriers/**/* src/devices/**/* src/idls/**/* src/libyarp*/**/* src/robottestingframework-plugins/**/* tests/**/*" \
+            -Dsonar.exclusions="src/yarp*/**/* src/guis/* src/carriers/**/* src/devices/**/* src/idls/**/* src/libyarp*/**/* src/robottestingframework-plugins/**/* tests/**/*" \
             -Dsonar.coverage.exclusions="\
                  src/libYARP_dev/src/yarp/dev/tests/*,\
                  src/devices/*/tests/*,\
@@ -2428,6 +2428,7 @@ jobs:
                  src/portmonitors/*/tests/*,\
                  tests/**/*,\
                  src/yarp*/**/*,\
+                 src/guis/*,\
                  robottestingframework-plugins/**/*\
                  " \
             -Dsonar.branch.longLivedBranches.regex="^(master|yarp-.+)$" \
