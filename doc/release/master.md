@@ -29,7 +29,7 @@ Fixes
 New Features
 ------------
 
-### devices 
+### devices
 
 #### multiplenalogsensorremapper
 
@@ -41,6 +41,10 @@ New Features
 #### `yarpopencvdisplay`
 
 * `yarpopencvdisplay` is now able to display a `yarp::sig::LayeredImage`
+
+#### `yarpmanager`
+  * Added time info to `libYARP_manager` logger and to `yarpmanager` GUI.
+  * The time info can be displayed as the current time (obtained from `std::chrono::system_clock::now()`) or as time elapsed since yarpmanager GUI launch
 
 ### Libraries
 
@@ -62,7 +66,7 @@ New Features
   IMap2D
   INavigation2D
   IOdometry2D
-  
+
 #### `devices`
 
 * Updated all devices which use the interfaces employing the new class `ReturnValue`:
