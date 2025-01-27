@@ -13,6 +13,7 @@
 
 #include <yarp/os/Wire.h>
 #include <yarp/os/idl/WireTypes.h>
+#include <yarp/dev/ReturnValue.h>
 #include <yarp/math/FrameTransform.h>
 
 class FrameTransformStorageSetRPC :
@@ -22,13 +23,13 @@ public:
     // Constructor
     FrameTransformStorageSetRPC();
 
-    virtual bool setTransformsRPC(const std::vector<yarp::math::FrameTransform>& transforms);
+    virtual yarp::dev::ReturnValue setTransformsRPC(const std::vector<yarp::math::FrameTransform>& transforms);
 
-    virtual bool setTransformRPC(const yarp::math::FrameTransform& transform);
+    virtual yarp::dev::ReturnValue setTransformRPC(const yarp::math::FrameTransform& transform);
 
-    virtual bool deleteTransformRPC(const std::string& src, const std::string& dst);
+    virtual yarp::dev::ReturnValue deleteTransformRPC(const std::string& src, const std::string& dst);
 
-    virtual bool clearAllRPC();
+    virtual yarp::dev::ReturnValue clearAllRPC();
 
     // help method
     virtual std::vector<std::string> help(const std::string& functionName = "--all");

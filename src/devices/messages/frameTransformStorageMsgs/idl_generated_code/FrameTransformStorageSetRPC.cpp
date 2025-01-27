@@ -60,10 +60,10 @@ public:
         bool write(const yarp::os::idl::WireWriter& writer) const override;
         bool read(yarp::os::idl::WireReader& reader) override;
 
-        bool return_helper{false};
+        yarp::dev::ReturnValue return_helper{};
     };
 
-    using funcptr_t = bool (*)(const std::vector<yarp::math::FrameTransform>&);
+    using funcptr_t = yarp::dev::ReturnValue (*)(const std::vector<yarp::math::FrameTransform>&);
     void call(FrameTransformStorageSetRPC* ptr);
 
     Command cmd;
@@ -73,7 +73,7 @@ public:
     static constexpr size_t s_tag_len{1};
     static constexpr size_t s_cmd_len{2};
     static constexpr size_t s_reply_len{1};
-    static constexpr const char* s_prototype{"bool FrameTransformStorageSetRPC::setTransformsRPC(const std::vector<yarp::math::FrameTransform>& transforms)"};
+    static constexpr const char* s_prototype{"yarp::dev::ReturnValue FrameTransformStorageSetRPC::setTransformsRPC(const std::vector<yarp::math::FrameTransform>& transforms)"};
     static constexpr const char* s_help{""};
 };
 
@@ -123,10 +123,10 @@ public:
         bool write(const yarp::os::idl::WireWriter& writer) const override;
         bool read(yarp::os::idl::WireReader& reader) override;
 
-        bool return_helper{false};
+        yarp::dev::ReturnValue return_helper{};
     };
 
-    using funcptr_t = bool (*)(const yarp::math::FrameTransform&);
+    using funcptr_t = yarp::dev::ReturnValue (*)(const yarp::math::FrameTransform&);
     void call(FrameTransformStorageSetRPC* ptr);
 
     Command cmd;
@@ -136,7 +136,7 @@ public:
     static constexpr size_t s_tag_len{1};
     static constexpr size_t s_cmd_len{2};
     static constexpr size_t s_reply_len{1};
-    static constexpr const char* s_prototype{"bool FrameTransformStorageSetRPC::setTransformRPC(const yarp::math::FrameTransform& transform)"};
+    static constexpr const char* s_prototype{"yarp::dev::ReturnValue FrameTransformStorageSetRPC::setTransformRPC(const yarp::math::FrameTransform& transform)"};
     static constexpr const char* s_help{""};
 };
 
@@ -187,10 +187,10 @@ public:
         bool write(const yarp::os::idl::WireWriter& writer) const override;
         bool read(yarp::os::idl::WireReader& reader) override;
 
-        bool return_helper{false};
+        yarp::dev::ReturnValue return_helper{};
     };
 
-    using funcptr_t = bool (*)(const std::string&, const std::string&);
+    using funcptr_t = yarp::dev::ReturnValue (*)(const std::string&, const std::string&);
     void call(FrameTransformStorageSetRPC* ptr);
 
     Command cmd;
@@ -200,7 +200,7 @@ public:
     static constexpr size_t s_tag_len{1};
     static constexpr size_t s_cmd_len{3};
     static constexpr size_t s_reply_len{1};
-    static constexpr const char* s_prototype{"bool FrameTransformStorageSetRPC::deleteTransformRPC(const std::string& src, const std::string& dst)"};
+    static constexpr const char* s_prototype{"yarp::dev::ReturnValue FrameTransformStorageSetRPC::deleteTransformRPC(const std::string& src, const std::string& dst)"};
     static constexpr const char* s_help{""};
 };
 
@@ -245,10 +245,10 @@ public:
         bool write(const yarp::os::idl::WireWriter& writer) const override;
         bool read(yarp::os::idl::WireReader& reader) override;
 
-        bool return_helper{false};
+        yarp::dev::ReturnValue return_helper{};
     };
 
-    using funcptr_t = bool (*)();
+    using funcptr_t = yarp::dev::ReturnValue (*)();
     void call(FrameTransformStorageSetRPC* ptr);
 
     Command cmd;
@@ -258,7 +258,7 @@ public:
     static constexpr size_t s_tag_len{1};
     static constexpr size_t s_cmd_len{1};
     static constexpr size_t s_reply_len{1};
-    static constexpr const char* s_prototype{"bool FrameTransformStorageSetRPC::clearAllRPC()"};
+    static constexpr const char* s_prototype{"yarp::dev::ReturnValue FrameTransformStorageSetRPC::clearAllRPC()"};
     static constexpr const char* s_help{""};
 };
 
@@ -411,10 +411,7 @@ bool FrameTransformStorageSetRPC_setTransformsRPC_helper::Reply::read(yarp::os::
 bool FrameTransformStorageSetRPC_setTransformsRPC_helper::Reply::write(const yarp::os::idl::WireWriter& writer) const
 {
     if (!writer.isNull()) {
-        if (!writer.writeListHeader(s_reply_len)) {
-            return false;
-        }
-        if (!writer.writeBool(return_helper)) {
+        if (!writer.write(return_helper)) {
             return false;
         }
     }
@@ -423,14 +420,11 @@ bool FrameTransformStorageSetRPC_setTransformsRPC_helper::Reply::write(const yar
 
 bool FrameTransformStorageSetRPC_setTransformsRPC_helper::Reply::read(yarp::os::idl::WireReader& reader)
 {
-    if (!reader.readListReturn()) {
-        return false;
-    }
     if (reader.noMore()) {
         reader.fail();
         return false;
     }
-    if (!reader.readBool(return_helper)) {
+    if (!reader.read(return_helper)) {
         reader.fail();
         return false;
     }
@@ -565,10 +559,7 @@ bool FrameTransformStorageSetRPC_setTransformRPC_helper::Reply::read(yarp::os::C
 bool FrameTransformStorageSetRPC_setTransformRPC_helper::Reply::write(const yarp::os::idl::WireWriter& writer) const
 {
     if (!writer.isNull()) {
-        if (!writer.writeListHeader(s_reply_len)) {
-            return false;
-        }
-        if (!writer.writeBool(return_helper)) {
+        if (!writer.write(return_helper)) {
             return false;
         }
     }
@@ -577,14 +568,11 @@ bool FrameTransformStorageSetRPC_setTransformRPC_helper::Reply::write(const yarp
 
 bool FrameTransformStorageSetRPC_setTransformRPC_helper::Reply::read(yarp::os::idl::WireReader& reader)
 {
-    if (!reader.readListReturn()) {
-        return false;
-    }
     if (reader.noMore()) {
         reader.fail();
         return false;
     }
-    if (!reader.readBool(return_helper)) {
+    if (!reader.read(return_helper)) {
         reader.fail();
         return false;
     }
@@ -731,10 +719,7 @@ bool FrameTransformStorageSetRPC_deleteTransformRPC_helper::Reply::read(yarp::os
 bool FrameTransformStorageSetRPC_deleteTransformRPC_helper::Reply::write(const yarp::os::idl::WireWriter& writer) const
 {
     if (!writer.isNull()) {
-        if (!writer.writeListHeader(s_reply_len)) {
-            return false;
-        }
-        if (!writer.writeBool(return_helper)) {
+        if (!writer.write(return_helper)) {
             return false;
         }
     }
@@ -743,14 +728,11 @@ bool FrameTransformStorageSetRPC_deleteTransformRPC_helper::Reply::write(const y
 
 bool FrameTransformStorageSetRPC_deleteTransformRPC_helper::Reply::read(yarp::os::idl::WireReader& reader)
 {
-    if (!reader.readListReturn()) {
-        return false;
-    }
     if (reader.noMore()) {
         reader.fail();
         return false;
     }
-    if (!reader.readBool(return_helper)) {
+    if (!reader.read(return_helper)) {
         reader.fail();
         return false;
     }
@@ -864,10 +846,7 @@ bool FrameTransformStorageSetRPC_clearAllRPC_helper::Reply::read(yarp::os::Conne
 bool FrameTransformStorageSetRPC_clearAllRPC_helper::Reply::write(const yarp::os::idl::WireWriter& writer) const
 {
     if (!writer.isNull()) {
-        if (!writer.writeListHeader(s_reply_len)) {
-            return false;
-        }
-        if (!writer.writeBool(return_helper)) {
+        if (!writer.write(return_helper)) {
             return false;
         }
     }
@@ -876,14 +855,11 @@ bool FrameTransformStorageSetRPC_clearAllRPC_helper::Reply::write(const yarp::os
 
 bool FrameTransformStorageSetRPC_clearAllRPC_helper::Reply::read(yarp::os::idl::WireReader& reader)
 {
-    if (!reader.readListReturn()) {
-        return false;
-    }
     if (reader.noMore()) {
         reader.fail();
         return false;
     }
-    if (!reader.readBool(return_helper)) {
+    if (!reader.read(return_helper)) {
         reader.fail();
         return false;
     }
@@ -901,44 +877,44 @@ FrameTransformStorageSetRPC::FrameTransformStorageSetRPC()
     yarp().setOwner(*this);
 }
 
-bool FrameTransformStorageSetRPC::setTransformsRPC(const std::vector<yarp::math::FrameTransform>& transforms)
+yarp::dev::ReturnValue FrameTransformStorageSetRPC::setTransformsRPC(const std::vector<yarp::math::FrameTransform>& transforms)
 {
     if (!yarp().canWrite()) {
         yError("Missing server method '%s'?", FrameTransformStorageSetRPC_setTransformsRPC_helper::s_prototype);
     }
     FrameTransformStorageSetRPC_setTransformsRPC_helper helper{transforms};
     bool ok = yarp().write(helper, helper);
-    return ok ? helper.reply.return_helper : bool{};
+    return ok ? helper.reply.return_helper : yarp::dev::ReturnValue{};
 }
 
-bool FrameTransformStorageSetRPC::setTransformRPC(const yarp::math::FrameTransform& transform)
+yarp::dev::ReturnValue FrameTransformStorageSetRPC::setTransformRPC(const yarp::math::FrameTransform& transform)
 {
     if (!yarp().canWrite()) {
         yError("Missing server method '%s'?", FrameTransformStorageSetRPC_setTransformRPC_helper::s_prototype);
     }
     FrameTransformStorageSetRPC_setTransformRPC_helper helper{transform};
     bool ok = yarp().write(helper, helper);
-    return ok ? helper.reply.return_helper : bool{};
+    return ok ? helper.reply.return_helper : yarp::dev::ReturnValue{};
 }
 
-bool FrameTransformStorageSetRPC::deleteTransformRPC(const std::string& src, const std::string& dst)
+yarp::dev::ReturnValue FrameTransformStorageSetRPC::deleteTransformRPC(const std::string& src, const std::string& dst)
 {
     if (!yarp().canWrite()) {
         yError("Missing server method '%s'?", FrameTransformStorageSetRPC_deleteTransformRPC_helper::s_prototype);
     }
     FrameTransformStorageSetRPC_deleteTransformRPC_helper helper{src, dst};
     bool ok = yarp().write(helper, helper);
-    return ok ? helper.reply.return_helper : bool{};
+    return ok ? helper.reply.return_helper : yarp::dev::ReturnValue{};
 }
 
-bool FrameTransformStorageSetRPC::clearAllRPC()
+yarp::dev::ReturnValue FrameTransformStorageSetRPC::clearAllRPC()
 {
     if (!yarp().canWrite()) {
         yError("Missing server method '%s'?", FrameTransformStorageSetRPC_clearAllRPC_helper::s_prototype);
     }
     FrameTransformStorageSetRPC_clearAllRPC_helper helper{};
     bool ok = yarp().write(helper, helper);
-    return ok ? helper.reply.return_helper : bool{};
+    return ok ? helper.reply.return_helper : yarp::dev::ReturnValue{};
 }
 
 // help method
