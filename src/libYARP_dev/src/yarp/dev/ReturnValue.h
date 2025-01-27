@@ -37,6 +37,7 @@ class YARP_dev_API ReturnValue : public yarp::os::Portable
         return_value_error_nws_nwc_communication_error = 3, /// Command answer lost during network transmission. Status unknown.
         return_value_error_deprecated = 4, /// Method is deprecated
         return_value_error_method_failed = 5, /// Method failed due to invalid internal status/invalid request
+        return_value_error_not_ready = 6, /// Method failed because some initialization is missing
         return_value_uninitialized = 100 /// Default value, should never be explicitly assigned
     };
 

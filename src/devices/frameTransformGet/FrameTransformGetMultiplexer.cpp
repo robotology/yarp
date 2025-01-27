@@ -75,7 +75,7 @@ bool FrameTransformGetMultiplexer::attachAll(const yarp::dev::PolyDriverList& de
 }
 
 
-bool FrameTransformGetMultiplexer::getTransforms(std::vector<yarp::math::FrameTransform>& transforms) const
+yarp::dev::ReturnValue FrameTransformGetMultiplexer::getTransforms(std::vector<yarp::math::FrameTransform>& transforms) const
 {
     for (size_t i = 0; i < m_iFrameTransformStorageGetList.size(); i++)
     {
@@ -86,10 +86,11 @@ bool FrameTransformGetMultiplexer::getTransforms(std::vector<yarp::math::FrameTr
                               localTransform.begin(),
                               localTransform.end());
         }
-        else {
+        else
+        {
             yCError(FRAMETRANSFORMGETMULTIPLEXER) << "pointer to interface IFrameTransformStorageGet not valid";
-            return false;
+            return ReturnValue::return_code::return_value_error_method_failed;
         }
     }
-    return true;
+    return ReturnValue_ok;
 }

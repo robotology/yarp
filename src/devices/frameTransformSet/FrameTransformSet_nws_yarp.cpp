@@ -80,53 +80,60 @@ bool FrameTransformSet_nws_yarp::detach()
     return true;
 }
 
-bool FrameTransformSet_nws_yarp::setTransformRPC(const yarp::math::FrameTransform& transform)
+ReturnValue FrameTransformSet_nws_yarp::setTransformRPC(const yarp::math::FrameTransform& transform)
 {
     std::lock_guard <std::mutex> lg(m_pd_mutex);
 
-    if(!m_iSetIf->setTransform(transform))
+    auto ret = m_iSetIf->setTransform(transform);
+    if(!ret)
     {
         yCError(FRAMETRANSFORMSETNWSYARP, "Unable to set transform");
-        return false;
+        return ret;
     }
 
-    return true;
+    return ret;
 }
 
-bool FrameTransformSet_nws_yarp::setTransformsRPC(const std::vector<yarp::math::FrameTransform>& transforms)
+ReturnValue FrameTransformSet_nws_yarp::setTransformsRPC(const std::vector<yarp::math::FrameTransform>& transforms)
 {
     std::lock_guard <std::mutex> lg(m_pd_mutex);
-    if(!m_iSetIf->setTransforms(transforms))
+
+    auto ret = m_iSetIf->setTransforms(transforms);
+    if(!ret)
     {
         yCError(FRAMETRANSFORMSETNWSYARP, "Unable to set transformations");
-        return false;
+        return ret;
     }
 
-    return true;
+    return ret;
 }
 
-bool FrameTransformSet_nws_yarp::deleteTransformRPC(const std::string& src, const std::string& dst)
+ReturnValue FrameTransformSet_nws_yarp::deleteTransformRPC(const std::string& src, const std::string& dst)
 {
     std::lock_guard <std::mutex> lg(m_pd_mutex);
-    if (!m_iSetIf->deleteTransform(src,dst))
+
+    auto ret = m_iSetIf->deleteTransform(src, dst);
+    if (!ret)
     {
         yCError(FRAMETRANSFORMSETNWSYARP, "Unable to delete transforms");
-        return false;
+        return ret;
     }
 
-    return true;
+    return ret;
 }
 
-bool FrameTransformSet_nws_yarp::clearAllRPC()
+ReturnValue FrameTransformSet_nws_yarp::clearAllRPC()
 {
     std::lock_guard <std::mutex> lg(m_pd_mutex);
-    if (!m_iSetIf->clearAll())
+
+    auto ret = m_iSetIf->clearAll();
+    if (!ret)
     {
         yCError(FRAMETRANSFORMSETNWSYARP, "Unable to clear all transforms");
-        return false;
+        return ret;
     }
 
-    return true;
+    return ret;
 }
 
 

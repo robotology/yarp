@@ -7,7 +7,9 @@
 
 #include <yarp/os/LogComponent.h>
 #include <yarp/os/LogStream.h>
+#include <yarp/dev/ReturnValue.h>
 
+using namespace yarp::dev;
 
 YARP_LOG_COMPONENT(FRAMETRANSFORMGETNWSYARP, "yarp.devices.FrameTransformGet_nws_yarp")
 
@@ -143,26 +145,37 @@ bool FrameTransformGet_nws_yarp::attach( yarp::dev::PolyDriver* deviceToAttach)
 return_getAllTransforms FrameTransformGet_nws_yarp::getTransformsRPC()
 {
     std::lock_guard<std::mutex> m_lock(m_mutex);
-    if (m_iFrameTransformStorageGet != nullptr) {
+
+    return_getAllTransforms ret;
+    if (m_iFrameTransformStorageGet != nullptr)
+    {
         std::vector<yarp::math::FrameTransform> localTransform;
-        if (m_iFrameTransformStorageGet->getTransforms(localTransform)) {
-            return return_getAllTransforms(true, localTransform);
+        if (m_iFrameTransformStorageGet->getTransforms(localTransform))
+        {
+            ret.transforms_list = localTransform;
+            ret.retvalue = ReturnValue_ok;
+            return ret;
         }
     }
     yCError(FRAMETRANSFORMGETNWSYARP) << "error getting transform from interface";
-    return return_getAllTransforms(false, std::vector<yarp::math::FrameTransform>());;
+    ret.transforms_list = std::vector<yarp::math::FrameTransform>();
+    ret.retvalue = ReturnValue::return_code::return_value_error_method_failed;
+    return ret;
 
 }
 
 void FrameTransformGet_nws_yarp::run()
 {
     std::lock_guard<std::mutex> m_lock(m_mutex);
+
     if (m_iFrameTransformStorageGet != nullptr)
     {
         std::vector<yarp::math::FrameTransform> localTransform;
         if (m_iFrameTransformStorageGet->getTransforms(localTransform))
         {
-            return_getAllTransforms rgt(true, localTransform);
+            return_getAllTransforms rgt;
+            rgt.retvalue = ReturnValue_ok;
+            rgt.transforms_list = localTransform;
             m_streaming_port.write(rgt);
         }
     }

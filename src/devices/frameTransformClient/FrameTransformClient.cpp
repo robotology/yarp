@@ -120,15 +120,20 @@ bool FrameTransformClient::read(yarp::os::ConnectionReader& connection)
         std::string full_port_name = m_local_name + "/" + port_name;
 
         //print a warning if the frames do not exists yet
-        if (this->frameExists(src) == false)
+        bool exists = false;
+        auto r1 = this->frameExists(src, exists);
+        if (!r1) { return r1; }
+        if (exists == false)
         {
             out.addString("Requested src frame " + src + " does not exists.");
             yCWarning(FRAMETRANSFORMCLIENT, "Requested src frame %s does not exists.", src.c_str());
         }
-        if (this->frameExists(dst) == false)
+        auto r2 = this->frameExists(dst, exists);
+        if (!r2) { return r2; }
+        if (exists == false)
         {
             out.addString("Requested dst frame " + dst + " does not exists.");
-            yCWarning(FRAMETRANSFORMCLIENT, "Requested fst frame %s does not exists.", dst.c_str());
+            yCWarning(FRAMETRANSFORMCLIENT, "Requested dst frame %s does not exists.", dst.c_str());
         }
 
         //check if the port is already active in yarp
@@ -427,16 +432,16 @@ bool FrameTransformClient::close()
     return true;
 }
 
-bool FrameTransformClient::allFramesAsString(std::string &all_frames)
+yarp::dev::ReturnValue FrameTransformClient::allFramesAsString(std::string &all_frames)
 {
     if(!m_ift_util)
     {
         yCError(FRAMETRANSFORMCLIENT, "%s: No IFrameTransformStorageUtils interface found. Your device is wrongly configured", __func__);
-        return false;
+        return ReturnValue::return_code::return_value_error_generic;
     }
     FrameTransformContainer* p_cont = nullptr;
-    bool br = m_ift_util->getInternalContainer(p_cont);
-    if (!br || p_cont == nullptr) { yCError(FRAMETRANSFORMCLIENT) << "Failure"; return false; }
+    auto br = m_ift_util->getInternalContainer(p_cont);
+    if (!br || p_cont == nullptr) { yCError(FRAMETRANSFORMCLIENT) << "Failure"; return ReturnValue::return_code::return_value_error_generic; }
 
     //protect the internal container from concurrent access
     std::lock_guard<std::recursive_mutex> l(p_cont->m_trf_mutex);
@@ -446,7 +451,7 @@ bool FrameTransformClient::allFramesAsString(std::string &all_frames)
     {
          all_frames += it->toString() + " ";
     }
-    return true;
+    return ReturnValue_ok;
 }
 
 FrameTransformClient::ConnectionType FrameTransformClient::priv_getConnectionType(const std::string &target_frame, const std::string &source_frame, std::string* commonAncestor = nullptr)
@@ -509,41 +514,50 @@ FrameTransformClient::ConnectionType FrameTransformClient::priv_getConnectionTyp
     return ConnectionType::DISCONNECTED;
 }
 
-bool FrameTransformClient::canTransform(const std::string &target_frame, const std::string &source_frame)
+yarp::dev::ReturnValue FrameTransformClient::canTransform(const std::string &target_frame, const std::string &source_frame, bool& canTransform)
 {
     if(!m_ift_util)
     {
         yCError(FRAMETRANSFORMCLIENT, "%s: No IFrameTransformStorageUtils interface found. Your device is wrongly configured", __func__);
-        return false;
+        return ReturnValue::return_code::return_value_error_generic;
     }
-    return priv_getConnectionType(target_frame, source_frame) != ConnectionType::DISCONNECTED;
+    auto conntype = priv_getConnectionType(target_frame, source_frame);
+    if (conntype != ConnectionType::DISCONNECTED)
+    {
+        canTransform = true;
+    }
+    else
+    {
+        canTransform = false;
+    }
+    return ReturnValue_ok;
 }
 
-bool FrameTransformClient::clear()
+yarp::dev::ReturnValue FrameTransformClient::clear()
 {
     if(!m_ift_set)
     {
         yCError(FRAMETRANSFORMCLIENT, "%s: No IFrameTransformStorageSet interface found. Your device is wrongly configured",__func__);
-        return false;
+        return ReturnValue::return_code::return_value_error_not_ready;
     }
     if (m_ift_set)
     {
         return m_ift_set->clearAll();
     }
     yCError(FRAMETRANSFORMCLIENT, "clear(): interface not available");
-    return false;
+    return ReturnValue::return_code::return_value_error_not_ready;
 }
 
-bool FrameTransformClient::frameExists(const std::string &frame_id)
+yarp::dev::ReturnValue FrameTransformClient::frameExists(const std::string &frame_id, bool& exists)
 {
     if(!m_ift_util)
     {
         yCError(FRAMETRANSFORMCLIENT, "%s: No IFrameTransformStorageUtils interface found. Your device is wrongly configured", __func__);
-        return false;
+        return ReturnValue::return_code::return_value_error_not_ready;
     }
     FrameTransformContainer* p_cont = nullptr;
-    bool br = m_ift_util->getInternalContainer(p_cont);
-    if (!br || p_cont == nullptr) { yCError(FRAMETRANSFORMCLIENT) << "Failure"; return false; }
+    auto br = m_ift_util->getInternalContainer(p_cont);
+    if (!br || p_cont == nullptr) { yCError(FRAMETRANSFORMCLIENT) << "Failure"; return ReturnValue::return_code::return_value_error_generic; }
 
     //protect the internal container from concurrent access
     std::lock_guard<std::recursive_mutex> l(p_cont->m_trf_mutex);
@@ -551,24 +565,25 @@ bool FrameTransformClient::frameExists(const std::string &frame_id)
     //process data
     for (auto it = p_cont->begin(); it != p_cont->end(); it++)
     {
-        if (it->src_frame_id == frame_id) { return true; }
-        if (it->dst_frame_id == frame_id) { return true; }
+        if (it->src_frame_id == frame_id) { exists = true; return ReturnValue_ok; }
+        if (it->dst_frame_id == frame_id) { exists = true; return ReturnValue_ok; }
     }
 
     // condition reached if not found or container is empty
-    return false;
+    exists = false;
+    return ReturnValue_ok;
 }
 
-bool FrameTransformClient::getAllFrameIds(std::vector<std::string> &ids)
+yarp::dev::ReturnValue FrameTransformClient::getAllFrameIds(std::vector<std::string> &ids)
 {
     if(!m_ift_util)
     {
         yCError(FRAMETRANSFORMCLIENT, "%s: No IFrameTransformStorageUtils interface found. Your device is wrongly configured",__func__);
-        return false;
+        return ReturnValue::return_code::return_value_error_not_ready;
     }
     FrameTransformContainer* p_cont = nullptr;
-    bool br = m_ift_util->getInternalContainer(p_cont);
-    if (!br || p_cont == nullptr) { yCError(FRAMETRANSFORMCLIENT) << "Failure"; return false; }
+    auto br = m_ift_util->getInternalContainer(p_cont);
+    if (!br || p_cont == nullptr) { yCError(FRAMETRANSFORMCLIENT) << "Failure"; return ReturnValue::return_code::return_value_error_generic; }
 
     //protect the internal container from concurrent access
     std::lock_guard<std::recursive_mutex> l(p_cont->m_trf_mutex);
@@ -598,19 +613,19 @@ bool FrameTransformClient::getAllFrameIds(std::vector<std::string> &ids)
         }
     }
 
-    return true;
+    return ReturnValue_ok;
 }
 
-bool FrameTransformClient::getParent(const std::string &frame_id, std::string &parent_frame_id)
+yarp::dev::ReturnValue FrameTransformClient::getParent(const std::string &frame_id, std::string &parent_frame_id)
 {
     if(!m_ift_util)
     {
         yCError(FRAMETRANSFORMCLIENT, "%s: No IFrameTransformStorageUtils interface found. Your device is wrongly configured",__func__);
-        return false;
+        return ReturnValue::return_code::return_value_error_not_ready;
     }
     FrameTransformContainer* p_cont = nullptr;
-    bool br = m_ift_util->getInternalContainer(p_cont);
-    if (!br || p_cont == nullptr) { yCError(FRAMETRANSFORMCLIENT) << "Failure"; return false; }
+    auto br = m_ift_util->getInternalContainer(p_cont);
+    if (!br || p_cont == nullptr) { yCError(FRAMETRANSFORMCLIENT) << "Failure"; return ReturnValue::return_code::return_value_error_generic; }
 
     //protect the internal container from concurrent access
     std::lock_guard<std::recursive_mutex> l(p_cont->m_trf_mutex);
@@ -622,10 +637,10 @@ bool FrameTransformClient::getParent(const std::string &frame_id, std::string &p
         if (it->dst_frame_id == frame_id)
         {
             parent_frame_id = it->src_frame_id;
-            return true;
+            return ReturnValue_ok;
         }
     }
-    return false;
+    return ReturnValue::return_code::return_value_error_method_failed;
 }
 
 bool FrameTransformClient::priv_canExplicitTransform(const std::string& target_frame_id, const std::string& source_frame_id) const
@@ -681,26 +696,34 @@ bool FrameTransformClient::priv_getChainedTransform(const std::string& target_fr
     return false;
 }
 
-bool FrameTransformClient::getTransform(const std::string& target_frame_id, const std::string& source_frame_id, yarp::sig::Matrix& transform)
+yarp::dev::ReturnValue FrameTransformClient::getTransform(const std::string& target_frame_id, const std::string& source_frame_id, yarp::sig::Matrix& transform)
 {
     if(!m_ift_util)
     {
         yCError(FRAMETRANSFORMCLIENT, "%s: No IFrameTransformStorageUtils interface found. Your device is wrongly configured",__func__);
-        return false;
+        return ReturnValue::return_code::return_value_error_not_ready;
     }
     ConnectionType ct;
     std::string ancestor;
     ct = priv_getConnectionType(target_frame_id, source_frame_id, &ancestor);
     if (ct == ConnectionType::DIRECT)
     {
-        return priv_getChainedTransform(target_frame_id, source_frame_id, transform);
+        bool ok = priv_getChainedTransform(target_frame_id, source_frame_id, transform);
+        if (ok)
+        {
+            return ReturnValue_ok;
+        }
+        else
+        {
+            return ReturnValue::return_code::return_value_error_method_failed;
+        }
     }
     else if (ct == ConnectionType::INVERSE)
     {
         yarp::sig::Matrix m(4, 4);
         priv_getChainedTransform(source_frame_id, target_frame_id, m);
         transform = yarp::math::SE3inv(m);
-        return true;
+        return ReturnValue_ok;
     }
     else if(ct == ConnectionType::UNDIRECT)
     {
@@ -708,37 +731,41 @@ bool FrameTransformClient::getTransform(const std::string& target_frame_id, cons
         priv_getChainedTransform(source_frame_id, ancestor, root2src);
         priv_getChainedTransform(target_frame_id, ancestor, root2tar);
         transform = yarp::math::SE3inv(root2src) * root2tar;
-        return true;
+        return ReturnValue_ok;
     }
     else if (ct == ConnectionType::IDENTITY)
     {
         yarp::sig::Matrix tmp(4, 4); tmp.eye();
         transform = tmp;
-        return true;
+        return ReturnValue_ok;
     }
 
     yCErrorThrottle(FRAMETRANSFORMCLIENT, LOG_THROTTLE_PERIOD) << "getTransform(): Frames " << source_frame_id << " and " << target_frame_id << " are not connected";
-    return false;
+    return ReturnValue::return_code::return_value_error_method_failed;
 }
 
-bool FrameTransformClient::setTransform(const std::string& target_frame_id, const std::string& source_frame_id, const yarp::sig::Matrix& transform)
+yarp::dev::ReturnValue FrameTransformClient::setTransform(const std::string& target_frame_id, const std::string& source_frame_id, const yarp::sig::Matrix& transform)
 {
     if(!m_ift_util)
     {
         yCError(FRAMETRANSFORMCLIENT, "%s: No IFrameTransformStorageUtils interface found. Your device is wrongly configured",__func__);
-        return false;
+        return ReturnValue::return_code::return_value_error_not_ready;
     }
     if(target_frame_id == source_frame_id)
     {
         yCErrorThrottle(FRAMETRANSFORMCLIENT, LOG_THROTTLE_PERIOD) << "setTransform(): Invalid transform detected.\n" \
                     "\t Source frame and target frame are both equal to " << source_frame_id;
-        return false;
+        return ReturnValue::return_code::return_value_error_method_failed;
     }
 
-    if (!priv_canExplicitTransform(target_frame_id, source_frame_id) && canTransform(target_frame_id, source_frame_id))
+    bool b1 = priv_canExplicitTransform(target_frame_id, source_frame_id);
+    bool bcanTransform = false;
+    auto retc = canTransform(target_frame_id, source_frame_id, bcanTransform);
+    if (!retc) { return retc; }
+    if (!b1 && bcanTransform)
     {
         yCErrorThrottle(FRAMETRANSFORMCLIENT, LOG_THROTTLE_PERIOD) << "setTransform(): Such transform already exist by chaining transforms";
-        return false;
+        return ReturnValue::return_code::return_value_error_method_failed;
     }
 
     yarp::os::Bottle b;
@@ -748,7 +775,7 @@ bool FrameTransformClient::setTransform(const std::string& target_frame_id, cons
     if (!tf.fromMatrix(transform))
     {
         yCErrorThrottle(FRAMETRANSFORMCLIENT, LOG_THROTTLE_PERIOD) << "setTransform(): Wrong matrix format, it has to be 4 by 4";
-        return false;
+        return ReturnValue::return_code::return_value_error_method_failed;
     }
 
     tf.src_frame_id = source_frame_id;
@@ -761,34 +788,36 @@ bool FrameTransformClient::setTransform(const std::string& target_frame_id, cons
         return m_ift_set->setTransform(tf);
     }
     yCError(FRAMETRANSFORMCLIENT, "setTransform(): interface not available");
-    return false;
+    return ReturnValue::return_code::return_value_error_not_ready;
 }
 
-bool FrameTransformClient::setTransformStatic(const std::string &target_frame_id, const std::string &source_frame_id, const yarp::sig::Matrix &transform)
+yarp::dev::ReturnValue FrameTransformClient::setTransformStatic(const std::string &target_frame_id, const std::string &source_frame_id, const yarp::sig::Matrix &transform)
 {
     if(!m_ift_util)
     {
         yCError(FRAMETRANSFORMCLIENT, "%s: No IFrameTransformStorageUtils interface found. Your device is wrongly configured",__func__);
-        return false;
+        return ReturnValue::return_code::return_value_error_not_ready;
     }
     if(target_frame_id == source_frame_id)
     {
         yCErrorThrottle(FRAMETRANSFORMCLIENT, LOG_THROTTLE_PERIOD) << "setTransformStatic(): Invalid transform detected.\n" \
                     "\t Source frame and target frame are both equal to " << source_frame_id;
-        return false;
+        return ReturnValue::return_code::return_value_error_method_failed;
     }
 
-    if (canTransform(target_frame_id, source_frame_id))
+    bool bcanTransform = false;
+    canTransform(target_frame_id, source_frame_id, bcanTransform);
+    if (bcanTransform)
     {
         yCErrorThrottle(FRAMETRANSFORMCLIENT, LOG_THROTTLE_PERIOD) << "setTransform(): Such static transform already exist, directly or by chaining transforms";
-        return false;
+        return ReturnValue::return_code::return_value_error_method_failed;
     }
 
     FrameTransform   tf;
     if (!tf.fromMatrix(transform))
     {
         yCErrorThrottle(FRAMETRANSFORMCLIENT, LOG_THROTTLE_PERIOD) << "setTransform(): Wrong matrix format, it has to be 4 by 4";
-        return false;
+        return ReturnValue::return_code::return_value_error_method_failed;
     }
     tf.src_frame_id = source_frame_id;
     tf.dst_frame_id = target_frame_id;
@@ -800,55 +829,55 @@ bool FrameTransformClient::setTransformStatic(const std::string &target_frame_id
         return m_ift_set->setTransform(tf);
     }
     yCError(FRAMETRANSFORMCLIENT, "setTransformStatic(): interface not available");
-    return false;
+    return ReturnValue::return_code::return_value_error_not_ready;
 }
 
-bool FrameTransformClient::deleteTransform(const std::string &target_frame_id, const std::string &source_frame_id)
+yarp::dev::ReturnValue FrameTransformClient::deleteTransform(const std::string &target_frame_id, const std::string &source_frame_id)
 {
     if (m_ift_set)
     {
         return m_ift_set->deleteTransform(target_frame_id, source_frame_id);
     }
     yCError(FRAMETRANSFORMCLIENT, "deleteTransform(): interface not available");
-    return false;
+    return ReturnValue::return_code::return_value_error_not_ready;
 }
 
-bool FrameTransformClient::transformPoint(const std::string &target_frame_id, const std::string &source_frame_id, const yarp::sig::Vector &input_point, yarp::sig::Vector &transformed_point)
+yarp::dev::ReturnValue FrameTransformClient::transformPoint(const std::string &target_frame_id, const std::string &source_frame_id, const yarp::sig::Vector &input_point, yarp::sig::Vector &transformed_point)
 {
     if(!m_ift_util)
     {
         yCError(FRAMETRANSFORMCLIENT, "%s: No IFrameTransformStorageUtils interface found. Your device is wrongly configured",__func__);
-        return false;
+        return ReturnValue::return_code::return_value_error_not_ready;
     }
     if (input_point.size() != 3)
     {
         yCErrorThrottle(FRAMETRANSFORMCLIENT, LOG_THROTTLE_PERIOD) << "Only 3 dimensional vector allowed.";
-        return false;
+        return ReturnValue::return_code::return_value_error_method_failed;
     }
     yarp::sig::Matrix m(4, 4);
     if (!getTransform(target_frame_id, source_frame_id, m))
     {
         yCErrorThrottle(FRAMETRANSFORMCLIENT, LOG_THROTTLE_PERIOD) << "No transform found between source '" << target_frame_id << "' and target '" << source_frame_id << "'";
-        return false;
+        return ReturnValue::return_code::return_value_error_method_failed;
     }
     yarp::sig::Vector in = input_point;
     in.push_back(1);
     transformed_point = m * in;
     transformed_point.pop_back();
-    return true;
+    return ReturnValue_ok;
 }
 
-bool FrameTransformClient::transformPose(const std::string &target_frame_id, const std::string &source_frame_id, const yarp::sig::Vector &input_pose, yarp::sig::Vector &transformed_pose)
+yarp::dev::ReturnValue FrameTransformClient::transformPose(const std::string &target_frame_id, const std::string &source_frame_id, const yarp::sig::Vector &input_pose, yarp::sig::Vector &transformed_pose)
 {
     if(!m_ift_util)
     {
         yCError(FRAMETRANSFORMCLIENT, "%s: No IFrameTransformStorageUtils interface found. Your device is wrongly configured",__func__);
-        return false;
+        return ReturnValue::return_code::return_value_error_not_ready;
     }
     if (input_pose.size() != 6)
     {
         yCErrorThrottle(FRAMETRANSFORMCLIENT, LOG_THROTTLE_PERIOD) << "Only 6 dimensional vector (3 axes + roll pith and yaw) allowed.";
-        return false;
+        return ReturnValue::return_code::return_value_error_method_failed;
     }
     if (transformed_pose.size() != 6)
     {
@@ -859,7 +888,7 @@ bool FrameTransformClient::transformPose(const std::string &target_frame_id, con
     if (!getTransform(target_frame_id, source_frame_id, m))
     {
         yCErrorThrottle(FRAMETRANSFORMCLIENT, LOG_THROTTLE_PERIOD) << "No transform found between source '" << target_frame_id << "' and target '" << source_frame_id << "'";
-        return false;
+        return ReturnValue::return_code::return_value_error_method_failed;
     }
     FrameTransform t;
     t.transFromVec(input_pose[0], input_pose[1], input_pose[2]);
@@ -874,47 +903,48 @@ bool FrameTransformClient::transformPose(const std::string &target_frame_id, con
     transformed_pose[3] = rot[0];
     transformed_pose[4] = rot[1];
     transformed_pose[5] = rot[2];
-    return true;
+    return ReturnValue_ok;
 }
 
-bool FrameTransformClient::transformQuaternion(const std::string &target_frame_id, const std::string &source_frame_id, const yarp::math::Quaternion &input_quaternion, yarp::math::Quaternion &transformed_quaternion)
+yarp::dev::ReturnValue FrameTransformClient::transformQuaternion(const std::string &target_frame_id, const std::string &source_frame_id, const yarp::math::Quaternion &input_quaternion, yarp::math::Quaternion &transformed_quaternion)
 {
     if(!m_ift_util)
     {
         yCError(FRAMETRANSFORMCLIENT, "%s: No IFrameTransformStorageUtils interface found. Your device is wrongly configured",__func__);
-        return false;
+        return ReturnValue::return_code::return_value_error_not_ready;
     }
     yarp::sig::Matrix m(4, 4);
     if (!getTransform(target_frame_id, source_frame_id, m))
     {
         yCErrorThrottle(FRAMETRANSFORMCLIENT, LOG_THROTTLE_PERIOD) << "No transform found between source '" << target_frame_id << "' and target '" << source_frame_id <<"'";
-        return false;
+        return ReturnValue::return_code::return_value_error_method_failed;
     }
     FrameTransform t;
     t.rotation=input_quaternion;
     transformed_quaternion.fromRotationMatrix(m * t.toMatrix());
-    return true;
+    return ReturnValue_ok;
 }
 
-bool FrameTransformClient::waitForTransform(const std::string &target_frame_id, const std::string &source_frame_id, const double &timeout)
+yarp::dev::ReturnValue FrameTransformClient::waitForTransform(const std::string &target_frame_id, const std::string &source_frame_id, const double &timeout)
 {
     if(!m_ift_util)
     {
         yCError(FRAMETRANSFORMCLIENT, "%s: No IFrameTransformStorageUtils interface found. Your device is wrongly configured",__func__);
-        return false;
+        return ReturnValue::return_code::return_value_error_not_ready;
     }
     //loop until canTransform == true or timeout expires
     double start = yarp::os::SystemClock::nowSystem();
-    while (!canTransform(target_frame_id, source_frame_id))
-    {
-        if (yarp::os::SystemClock::nowSystem() - start > timeout)
-        {
+    bool bcan = false;
+    while (!bcan) {
+        if (yarp::os::SystemClock::nowSystem() - start > timeout) {
             yCError(FRAMETRANSFORMCLIENT) << "waitForTransform(): timeout expired";
-            return false;
+            return ReturnValue::return_code::return_value_error_method_failed;
         }
         yarp::os::SystemClock::delaySystem(0.001);
+        ReturnValue ret = canTransform(target_frame_id, source_frame_id, bcan);
+        if (!ret) { return ret;}
     }
-    return true;
+    return ReturnValue_ok;
 }
 
 FrameTransformClient::FrameTransformClient() : PeriodicThread(0.01)

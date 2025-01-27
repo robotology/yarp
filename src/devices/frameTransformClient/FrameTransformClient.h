@@ -106,20 +106,20 @@ public:
     bool read(yarp::os::ConnectionReader& connection) override;
 
     //IFrameTransform
-    bool     allFramesAsString(std::string &all_frames) override;
-    bool     canTransform(const std::string &target_frame, const std::string &source_frame) override;
-    bool     clear() override;
-    bool     frameExists(const std::string &frame_id) override;
-    bool     getAllFrameIds(std::vector< std::string > &ids) override;
-    bool     getParent(const std::string &frame_id, std::string &parent_frame_id) override;
-    bool     getTransform(const std::string &target_frame_id, const std::string &source_frame_id, yarp::sig::Matrix &transform) override;
-    bool     setTransform(const std::string &target_frame_id, const std::string &source_frame_id, const yarp::sig::Matrix &transform) override;
-    bool     setTransformStatic(const std::string &target_frame_id, const std::string &source_frame_id, const yarp::sig::Matrix &transform) override;
-    bool     deleteTransform(const std::string &target_frame_id, const std::string &source_frame_id) override;
-    bool     transformPoint(const std::string &target_frame_id, const std::string &source_frame_id, const yarp::sig::Vector &input_point, yarp::sig::Vector &transformed_point) override;
-    bool     transformPose(const std::string &target_frame_id, const std::string &source_frame_id, const yarp::sig::Vector &input_pose, yarp::sig::Vector &transformed_pose) override;
-    bool     transformQuaternion(const std::string &target_frame_id, const std::string &source_frame_id, const yarp::math::Quaternion &input_quaternion, yarp::math::Quaternion &transformed_quaternion) override;
-    bool     waitForTransform(const std::string &target_frame_id, const std::string &source_frame_id, const double &timeout) override;
+    yarp::dev::ReturnValue  allFramesAsString(std::string &all_frames) override;
+    yarp::dev::ReturnValue  canTransform(const std::string &target_frame, const std::string &source_frame, bool& exists) override;
+    yarp::dev::ReturnValue  clear() override;
+    yarp::dev::ReturnValue  frameExists(const std::string &frame_id, bool& exists) override;
+    yarp::dev::ReturnValue  getAllFrameIds(std::vector< std::string > &ids) override;
+    yarp::dev::ReturnValue  getParent(const std::string &frame_id, std::string &parent_frame_id) override;
+    yarp::dev::ReturnValue  getTransform(const std::string &target_frame_id, const std::string &source_frame_id, yarp::sig::Matrix &transform) override;
+    yarp::dev::ReturnValue  setTransform(const std::string &target_frame_id, const std::string &source_frame_id, const yarp::sig::Matrix &transform) override;
+    yarp::dev::ReturnValue  setTransformStatic(const std::string &target_frame_id, const std::string &source_frame_id, const yarp::sig::Matrix &transform) override;
+    yarp::dev::ReturnValue  deleteTransform(const std::string &target_frame_id, const std::string &source_frame_id) override;
+    yarp::dev::ReturnValue  transformPoint(const std::string &target_frame_id, const std::string &source_frame_id, const yarp::sig::Vector &input_point, yarp::sig::Vector &transformed_point) override;
+    yarp::dev::ReturnValue  transformPose(const std::string &target_frame_id, const std::string &source_frame_id, const yarp::sig::Vector &input_pose, yarp::sig::Vector &transformed_pose) override;
+    yarp::dev::ReturnValue  transformQuaternion(const std::string &target_frame_id, const std::string &source_frame_id, const yarp::math::Quaternion &input_quaternion, yarp::math::Quaternion &transformed_quaternion) override;
+    yarp::dev::ReturnValue  waitForTransform(const std::string &target_frame_id, const std::string &source_frame_id, const double &timeout) override;
 
     //PeriodicThread
     bool     threadInit() override;

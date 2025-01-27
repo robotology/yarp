@@ -8,6 +8,8 @@
 #include <yarp/os/LogComponent.h>
 #include <yarp/os/LogStream.h>
 
+using namespace yarp::dev;
+
 YARP_LOG_COMPONENT(FRAMETRANSFORMGETNWCYARP, "yarp.devices.FrameTransformGet_nwc_yarp")
 
 
@@ -136,7 +138,7 @@ bool FrameTransformGet_nwc_yarp::close()
 }
 
 
-bool FrameTransformGet_nwc_yarp::getTransforms(std::vector<yarp::math::FrameTransform>& transforms) const
+ReturnValue FrameTransformGet_nwc_yarp::getTransforms(std::vector<yarp::math::FrameTransform>& transforms) const
 {
     if (!m_streaming_port_enabled)
     {
@@ -144,10 +146,10 @@ bool FrameTransformGet_nwc_yarp::getTransforms(std::vector<yarp::math::FrameTran
         if(!retrievedFromRPC.retvalue)
         {
             yCError(FRAMETRANSFORMGETNWCYARP, "Unable to get transformations");
-            return false;
+            return retrievedFromRPC.retvalue;
         }
         transforms = retrievedFromRPC.transforms_list;
-        return true;
+        return retrievedFromRPC.retvalue;
     }
     else
     {
@@ -156,10 +158,10 @@ bool FrameTransformGet_nwc_yarp::getTransforms(std::vector<yarp::math::FrameTran
             return_getAllTransforms retrievedFromSteaming;
             m_dataReader->getData(retrievedFromSteaming);
             transforms = retrievedFromSteaming.transforms_list;
-            return true;
+            return retrievedFromSteaming.retvalue;
         }
         yCError(FRAMETRANSFORMGETNWCYARP, "Unable to get transformations");
-        return false;
+        return yarp::dev::ReturnValue::return_code::return_value_error_generic;
     }
 }
 

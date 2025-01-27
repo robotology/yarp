@@ -73,10 +73,10 @@ public:
     bool detach() override;
 
     //FrameTransformStorageSetRPC functions
-    bool setTransformsRPC(const std::vector<yarp::math::FrameTransform>& transforms) override;
-    bool setTransformRPC(const yarp::math::FrameTransform& transform) override;
-    bool deleteTransformRPC(const std::string& src, const std::string& dst) override;
-    bool clearAllRPC()override;
+    yarp::dev::ReturnValue setTransformsRPC(const std::vector<yarp::math::FrameTransform>& transforms) override;
+    yarp::dev::ReturnValue setTransformRPC(const yarp::math::FrameTransform& transform) override;
+    yarp::dev::ReturnValue deleteTransformRPC(const std::string& src, const std::string& dst) override;
+    yarp::dev::ReturnValue clearAllRPC()override;
 
 private:
     mutable std::mutex                      m_pd_mutex;

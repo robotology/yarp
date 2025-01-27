@@ -167,17 +167,23 @@ namespace yarp::dev::tests
 
         //test3
         {
+            bool exists = false;
             yInfo() << "Running Sub-test3";
-            CHECK(itf->frameExists("frame3"));
-            CHECK_FALSE(itf->frameExists("frame3_err")); // frameExists ok
+            CHECK(itf->frameExists("frame3", exists));
+            CHECK(exists);
+            CHECK(itf->frameExists("frame3_err",exists)); // frameExists ok
+            CHECK(!exists);
             yInfo() << "Sub-test complete";
         }
 
         //test4
         {
+            bool canTransform = false;
             yInfo() << "Running Sub-test4";
-            CHECK(itf->canTransform("frame2", "frame1"));
-            CHECK_FALSE(itf->canTransform("frame11", "frame1")); // canTransform ok
+            CHECK(itf->canTransform("frame2", "frame1", canTransform));
+            CHECK(canTransform);
+            CHECK(itf->canTransform("frame11", "frame1", canTransform)); // canTransform ok
+            CHECK(!canTransform);
             yInfo() << "Sub-test complete";
         }
 
@@ -185,18 +191,22 @@ namespace yarp::dev::tests
         {
             yInfo() << "Running Sub-test4b";
             bool b_canb1;
-            b_canb1 = itf->canTransform("frame3b", "frame1");
+            bool canTransform = false;
+            b_canb1 = itf->canTransform("frame3b", "frame1", canTransform);
             CHECK(b_canb1); // canTransform Bis ok
+            CHECK(canTransform);
             yInfo() << "Sub-test complete";
         }
 
-        //test4 tris (transform between sibilings)
+        //test4tris (transform between siblings)
         {
             yInfo() << "Running Sub-test4c";
             yarp::sig::Matrix sib;
-            CHECK(itf->canTransform("sibiling_test_frame", "frame3")); // canTransform between sibilings ok
-            CHECK(itf->getTransform("sibiling_test_frame", "frame3", sib)); // getTransform between sibilings ok
-            CHECK(isEqual(sib, SE3inv(m2) * SE3inv(m1) * sibiling, precision)); // transform between sibilings ok
+            bool canTransform = false;
+            CHECK(itf->canTransform("sibiling_test_frame", "frame3",canTransform)); // canTransform between siblings ok
+            CHECK(canTransform);
+            CHECK(itf->getTransform("sibiling_test_frame", "frame3", sib)); // getTransform between siblings ok
+            CHECK(isEqual(sib, SE3inv(m2) * SE3inv(m1) * sibiling, precision)); // transform between siblings ok
             yInfo() << "Sub-test complete";
         }
 
@@ -290,18 +300,22 @@ namespace yarp::dev::tests
             yInfo() << "Running Sub-test8";
             itf->setTransformStatic("frame_test", "frame1", m1);
             yarp::os::Time::delay(1);
-            bool del_bool = itf->frameExists("frame_test");
+            bool exists = false;
+            bool del_bool = itf->frameExists("frame_test", exists);
             CHECK(del_bool); // frame exists
+            CHECK(exists);
             del_bool &= itf->deleteTransform("frame_test", "frame1");
             CHECK(del_bool); // deleteTransform ok
-            del_bool &= (!itf->frameExists("frame_test"));
+            del_bool &= (itf->frameExists("frame_test", exists));
             CHECK(del_bool); // check if frame has been successfully removed
+            CHECK(!exists);
 
             //let's wait some time and check gain to be sure that
             //frame does not reappears....
             yarp::os::Time::delay(0.5);
-            del_bool &= (!itf->frameExists("frame_test"));
+            del_bool = itf->frameExists("frame_test", exists);
             CHECK(del_bool);
+            CHECK(!exists);
 
             //just print
             std::string strs;
@@ -337,11 +351,14 @@ namespace yarp::dev::tests
             itf->setTransform("frame2", "frame10", m1);
             yarp::os::Time::delay(0.050);
             bool b_can;
-            b_can = itf->canTransform("frame2", "frame10");
+            bool canTransform = false;
+            b_can = itf->canTransform("frame2", "frame10",canTransform);
             CHECK(b_can); // itf->setTransform ok
+            CHECK(canTransform);
             yarp::os::Time::delay(0.6);
-            b_can = itf->canTransform("frame2", "frame10");
-            CHECK_FALSE(b_can); // itf->setTransform successfully expired after 0.6s
+            b_can = itf->canTransform("frame2", "frame10",canTransform);
+            CHECK(b_can);
+            CHECK(!canTransform); // itf->setTransform successfully expired after 0.6s
             yInfo() << "Sub-test complete";
         }
 
@@ -455,14 +472,18 @@ namespace yarp::dev::tests
             yInfo() << "Running Sub-test13";
             itf->clear();
             bool bcan = false;
-            bcan = itf->canTransform("not_existing_frame", "not_existing_frame");
+            bool canTransform = false;
+            bcan = itf->canTransform("not_existing_frame", "not_existing_frame", canTransform);
             CHECK(bcan);
+            CHECK(canTransform);
 
             CHECK(itf->setTransformStatic("frame2", "frame1", m1));
-            bcan = itf->canTransform("frame2", "frame2");
+            bcan = itf->canTransform("frame2", "frame2", canTransform);
             CHECK(bcan);
-            bcan = itf->canTransform("frame1", "frame1");
+            CHECK(canTransform);
+            bcan = itf->canTransform("frame1", "frame1", canTransform);
             CHECK(bcan);
+            CHECK(canTransform);
 
             yarp::sig::Matrix mt1;
             yarp::sig::Matrix eyemat(4, 4); eyemat.eye();
@@ -523,12 +544,18 @@ namespace yarp::dev::tests
         }
 
         // test canTransform
-        CHECK(itf->canTransform("/finger", "/arm"));
-        CHECK(!itf->canTransform("/finger", "/head"));
+        bool canTransform = false;
+        CHECK(itf->canTransform("/finger", "/arm", canTransform));
+        CHECK(canTransform);
+        CHECK(itf->canTransform("/finger", "/head", canTransform));
+        CHECK(!canTransform);
 
         // test frameExists
-        CHECK(itf->frameExists("/finger"));
-        CHECK(!itf->frameExists("/head"));
+        bool exists = false;
+        CHECK(itf->frameExists("/finger", exists));
+        CHECK(exists);
+        CHECK(itf->frameExists("/head", exists));
+        CHECK(!exists);
 
         // test getAllFrameIds
         CHECK(itf->clear());
