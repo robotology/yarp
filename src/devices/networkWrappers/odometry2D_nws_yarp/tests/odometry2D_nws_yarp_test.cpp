@@ -30,8 +30,8 @@ TEST_CASE("dev::odometry2d_nws_yarpTest", "[yarp::dev]")
         {
             Property nws_cfg;
             nws_cfg.put("device", "odometry2D_nws_yarp");
-            nws_cfg.put("period", "0.010");
-            nws_cfg.put("name", "/laser");
+            nws_cfg.put("period", 0.010);
+            nws_cfg.put("name", "/odom");
             REQUIRE(nws_driver.open(nws_cfg));
         }
 
@@ -48,8 +48,8 @@ TEST_CASE("dev::odometry2d_nws_yarpTest", "[yarp::dev]")
         {
             Property pnws_cfg;
             pnws_cfg.put("device", "odometry2D_nws_yarp");
-            pnws_cfg.put("period", "0.010");
-            pnws_cfg.put("name", "/laser");
+            pnws_cfg.put("period", 0.010);
+            pnws_cfg.put("name", "/odom");
             REQUIRE(ddnws.open(pnws_cfg));
 
             Property pdev_cfg;
