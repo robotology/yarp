@@ -55,7 +55,7 @@ private:
     yarp::os::Port* m_output_port{ nullptr };
 
 public:
-    virtual bool                set_language(const std::string& language) override;
+    virtual return_set_language set_language(const std::string& language) override;
     virtual return_get_language get_language() override;
     virtual return_transcribe   transcribe(const yarp::sig::Sound& sound) override;
 

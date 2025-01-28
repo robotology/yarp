@@ -13,6 +13,7 @@
 
 #include <yarp/os/Wire.h>
 #include <yarp/os/idl/WireTypes.h>
+#include <yarp/dev/ReturnValue.h>
 #include <yarp/sig/Sound.h>
 
 class return_synthesize :
@@ -20,14 +21,14 @@ class return_synthesize :
 {
 public:
     // Fields
-    bool ret{false};
+    yarp::dev::ReturnValue ret{};
     yarp::sig::Sound sound{};
 
     // Default constructor
     return_synthesize() = default;
 
     // Constructor with field values
-    return_synthesize(const bool ret,
+    return_synthesize(const yarp::dev::ReturnValue& ret,
                       const yarp::sig::Sound& sound);
 
     // Read structure on a Wire

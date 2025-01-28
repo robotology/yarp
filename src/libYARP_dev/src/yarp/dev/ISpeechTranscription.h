@@ -8,6 +8,7 @@
 
 #include <yarp/dev/api.h>
 #include <yarp/sig/Sound.h>
+#include <yarp/dev/ReturnValue.h>
 
 namespace yarp::dev {
 
@@ -26,14 +27,14 @@ public:
      * \param language a string (code) representing the speech language (e.g. ita, eng...). Default value is "auto".
      * \return true on success
      */
-    virtual bool setLanguage(const std::string& language="auto") = 0;
+    virtual yarp::dev::ReturnValue setLanguage(const std::string& language="auto") = 0;
 
     /**
      * Gets the current language set for speech transcription.
      * \param language the returned string (code) representing the speech language (e.g. ita, eng...). Default value is "auto".
      * \return true on success
      */
-    virtual bool getLanguage(std::string& language) = 0;
+    virtual yarp::dev::ReturnValue getLanguage(std::string& language) = 0;
 
     /**
      * Performs the speech transcription.
@@ -42,7 +43,7 @@ public:
      * \param score the returned score/confidence value in the range (0-1.0). It may be not implemented.
      * \return true on success
      */
-    virtual bool transcribe(const yarp::sig::Sound& sound, std::string& transcription, double& score) = 0;
+    virtual yarp::dev::ReturnValue transcribe(const yarp::sig::Sound& sound, std::string& transcription, double& score) = 0;
 };
 
 } // namespace yarp::dev

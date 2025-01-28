@@ -13,13 +13,14 @@
 
 #include <yarp/os/Wire.h>
 #include <yarp/os/idl/WireTypes.h>
+#include <yarp/dev/ReturnValue.h>
 
 class return_transcribe :
         public yarp::os::idl::WirePortable
 {
 public:
     // Fields
-    bool ret{false};
+    yarp::dev::ReturnValue ret{};
     std::string transcription{};
     double score{0.0};
 
@@ -27,7 +28,7 @@ public:
     return_transcribe() = default;
 
     // Constructor with field values
-    return_transcribe(const bool ret,
+    return_transcribe(const yarp::dev::ReturnValue& ret,
                       const std::string& transcription,
                       const double score);
 

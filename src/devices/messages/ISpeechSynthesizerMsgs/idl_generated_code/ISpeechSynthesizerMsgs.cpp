@@ -60,10 +60,10 @@ public:
         bool write(const yarp::os::idl::WireWriter& writer) const override;
         bool read(yarp::os::idl::WireReader& reader) override;
 
-        bool return_helper{false};
+        return_set_language return_helper{};
     };
 
-    using funcptr_t = bool (*)(const std::string&);
+    using funcptr_t = return_set_language (*)(const std::string&);
     void call(ISpeechSynthesizerMsgs* ptr);
 
     Command cmd;
@@ -73,7 +73,7 @@ public:
     static constexpr size_t s_tag_len{2};
     static constexpr size_t s_cmd_len{3};
     static constexpr size_t s_reply_len{1};
-    static constexpr const char* s_prototype{"bool ISpeechSynthesizerMsgs::set_language(const std::string& language)"};
+    static constexpr const char* s_prototype{"return_set_language ISpeechSynthesizerMsgs::set_language(const std::string& language)"};
     static constexpr const char* s_help{""};
 };
 
@@ -181,10 +181,10 @@ public:
         bool write(const yarp::os::idl::WireWriter& writer) const override;
         bool read(yarp::os::idl::WireReader& reader) override;
 
-        bool return_helper{false};
+        return_set_voice return_helper{};
     };
 
-    using funcptr_t = bool (*)(const std::string&);
+    using funcptr_t = return_set_voice (*)(const std::string&);
     void call(ISpeechSynthesizerMsgs* ptr);
 
     Command cmd;
@@ -194,7 +194,7 @@ public:
     static constexpr size_t s_tag_len{2};
     static constexpr size_t s_cmd_len{3};
     static constexpr size_t s_reply_len{1};
-    static constexpr const char* s_prototype{"bool ISpeechSynthesizerMsgs::set_voice(const std::string& language)"};
+    static constexpr const char* s_prototype{"return_set_voice ISpeechSynthesizerMsgs::set_voice(const std::string& language)"};
     static constexpr const char* s_help{""};
 };
 
@@ -302,10 +302,10 @@ public:
         bool write(const yarp::os::idl::WireWriter& writer) const override;
         bool read(yarp::os::idl::WireReader& reader) override;
 
-        bool return_helper{false};
+        return_set_speed return_helper{};
     };
 
-    using funcptr_t = bool (*)(const double);
+    using funcptr_t = return_set_speed (*)(const double);
     void call(ISpeechSynthesizerMsgs* ptr);
 
     Command cmd;
@@ -315,7 +315,7 @@ public:
     static constexpr size_t s_tag_len{2};
     static constexpr size_t s_cmd_len{3};
     static constexpr size_t s_reply_len{1};
-    static constexpr const char* s_prototype{"bool ISpeechSynthesizerMsgs::set_speed(const double speed)"};
+    static constexpr const char* s_prototype{"return_set_speed ISpeechSynthesizerMsgs::set_speed(const double speed)"};
     static constexpr const char* s_help{""};
 };
 
@@ -423,10 +423,10 @@ public:
         bool write(const yarp::os::idl::WireWriter& writer) const override;
         bool read(yarp::os::idl::WireReader& reader) override;
 
-        bool return_helper{false};
+        return_set_pitch return_helper{};
     };
 
-    using funcptr_t = bool (*)(const double);
+    using funcptr_t = return_set_pitch (*)(const double);
     void call(ISpeechSynthesizerMsgs* ptr);
 
     Command cmd;
@@ -436,7 +436,7 @@ public:
     static constexpr size_t s_tag_len{2};
     static constexpr size_t s_cmd_len{3};
     static constexpr size_t s_reply_len{1};
-    static constexpr const char* s_prototype{"bool ISpeechSynthesizerMsgs::set_pitch(const double pitch)"};
+    static constexpr const char* s_prototype{"return_set_pitch ISpeechSynthesizerMsgs::set_pitch(const double pitch)"};
     static constexpr const char* s_help{""};
 };
 
@@ -687,7 +687,7 @@ bool ISpeechSynthesizerMsgs_set_language_helper::Reply::write(const yarp::os::id
         if (!writer.writeListHeader(s_reply_len)) {
             return false;
         }
-        if (!writer.writeBool(return_helper)) {
+        if (!writer.write(return_helper)) {
             return false;
         }
     }
@@ -703,7 +703,7 @@ bool ISpeechSynthesizerMsgs_set_language_helper::Reply::read(yarp::os::idl::Wire
         reader.fail();
         return false;
     }
-    if (!reader.readBool(return_helper)) {
+    if (!reader.read(return_helper)) {
         reader.fail();
         return false;
     }
@@ -974,7 +974,7 @@ bool ISpeechSynthesizerMsgs_set_voice_helper::Reply::write(const yarp::os::idl::
         if (!writer.writeListHeader(s_reply_len)) {
             return false;
         }
-        if (!writer.writeBool(return_helper)) {
+        if (!writer.write(return_helper)) {
             return false;
         }
     }
@@ -990,7 +990,7 @@ bool ISpeechSynthesizerMsgs_set_voice_helper::Reply::read(yarp::os::idl::WireRea
         reader.fail();
         return false;
     }
-    if (!reader.readBool(return_helper)) {
+    if (!reader.read(return_helper)) {
         reader.fail();
         return false;
     }
@@ -1261,7 +1261,7 @@ bool ISpeechSynthesizerMsgs_set_speed_helper::Reply::write(const yarp::os::idl::
         if (!writer.writeListHeader(s_reply_len)) {
             return false;
         }
-        if (!writer.writeBool(return_helper)) {
+        if (!writer.write(return_helper)) {
             return false;
         }
     }
@@ -1277,7 +1277,7 @@ bool ISpeechSynthesizerMsgs_set_speed_helper::Reply::read(yarp::os::idl::WireRea
         reader.fail();
         return false;
     }
-    if (!reader.readBool(return_helper)) {
+    if (!reader.read(return_helper)) {
         reader.fail();
         return false;
     }
@@ -1548,7 +1548,7 @@ bool ISpeechSynthesizerMsgs_set_pitch_helper::Reply::write(const yarp::os::idl::
         if (!writer.writeListHeader(s_reply_len)) {
             return false;
         }
-        if (!writer.writeBool(return_helper)) {
+        if (!writer.write(return_helper)) {
             return false;
         }
     }
@@ -1564,7 +1564,7 @@ bool ISpeechSynthesizerMsgs_set_pitch_helper::Reply::read(yarp::os::idl::WireRea
         reader.fail();
         return false;
     }
-    if (!reader.readBool(return_helper)) {
+    if (!reader.read(return_helper)) {
         reader.fail();
         return false;
     }
@@ -1869,14 +1869,14 @@ ISpeechSynthesizerMsgs::ISpeechSynthesizerMsgs()
     yarp().setOwner(*this);
 }
 
-bool ISpeechSynthesizerMsgs::set_language(const std::string& language)
+return_set_language ISpeechSynthesizerMsgs::set_language(const std::string& language)
 {
     if (!yarp().canWrite()) {
         yError("Missing server method '%s'?", ISpeechSynthesizerMsgs_set_language_helper::s_prototype);
     }
     ISpeechSynthesizerMsgs_set_language_helper helper{language};
     bool ok = yarp().write(helper, helper);
-    return ok ? helper.reply.return_helper : bool{};
+    return ok ? helper.reply.return_helper : return_set_language{};
 }
 
 return_get_language ISpeechSynthesizerMsgs::get_language()
@@ -1889,14 +1889,14 @@ return_get_language ISpeechSynthesizerMsgs::get_language()
     return ok ? helper.reply.return_helper : return_get_language{};
 }
 
-bool ISpeechSynthesizerMsgs::set_voice(const std::string& language)
+return_set_voice ISpeechSynthesizerMsgs::set_voice(const std::string& language)
 {
     if (!yarp().canWrite()) {
         yError("Missing server method '%s'?", ISpeechSynthesizerMsgs_set_voice_helper::s_prototype);
     }
     ISpeechSynthesizerMsgs_set_voice_helper helper{language};
     bool ok = yarp().write(helper, helper);
-    return ok ? helper.reply.return_helper : bool{};
+    return ok ? helper.reply.return_helper : return_set_voice{};
 }
 
 return_get_voice ISpeechSynthesizerMsgs::get_voice()
@@ -1909,14 +1909,14 @@ return_get_voice ISpeechSynthesizerMsgs::get_voice()
     return ok ? helper.reply.return_helper : return_get_voice{};
 }
 
-bool ISpeechSynthesizerMsgs::set_speed(const double speed)
+return_set_speed ISpeechSynthesizerMsgs::set_speed(const double speed)
 {
     if (!yarp().canWrite()) {
         yError("Missing server method '%s'?", ISpeechSynthesizerMsgs_set_speed_helper::s_prototype);
     }
     ISpeechSynthesizerMsgs_set_speed_helper helper{speed};
     bool ok = yarp().write(helper, helper);
-    return ok ? helper.reply.return_helper : bool{};
+    return ok ? helper.reply.return_helper : return_set_speed{};
 }
 
 return_get_speed ISpeechSynthesizerMsgs::get_speed()
@@ -1929,14 +1929,14 @@ return_get_speed ISpeechSynthesizerMsgs::get_speed()
     return ok ? helper.reply.return_helper : return_get_speed{};
 }
 
-bool ISpeechSynthesizerMsgs::set_pitch(const double pitch)
+return_set_pitch ISpeechSynthesizerMsgs::set_pitch(const double pitch)
 {
     if (!yarp().canWrite()) {
         yError("Missing server method '%s'?", ISpeechSynthesizerMsgs_set_pitch_helper::s_prototype);
     }
     ISpeechSynthesizerMsgs_set_pitch_helper helper{pitch};
     bool ok = yarp().write(helper, helper);
-    return ok ? helper.reply.return_helper : bool{};
+    return ok ? helper.reply.return_helper : return_set_pitch{};
 }
 
 return_get_pitch ISpeechSynthesizerMsgs::get_pitch()

@@ -17,6 +17,10 @@
 #include <return_get_pitch.h>
 #include <return_get_speed.h>
 #include <return_get_voice.h>
+#include <return_set_language.h>
+#include <return_set_pitch.h>
+#include <return_set_speed.h>
+#include <return_set_voice.h>
 #include <return_synthesize.h>
 
 class ISpeechSynthesizerMsgs :
@@ -26,19 +30,19 @@ public:
     // Constructor
     ISpeechSynthesizerMsgs();
 
-    virtual bool set_language(const std::string& language);
+    virtual return_set_language set_language(const std::string& language);
 
     virtual return_get_language get_language();
 
-    virtual bool set_voice(const std::string& language);
+    virtual return_set_voice set_voice(const std::string& language);
 
     virtual return_get_voice get_voice();
 
-    virtual bool set_speed(const double speed);
+    virtual return_set_speed set_speed(const double speed);
 
     virtual return_get_speed get_speed();
 
-    virtual bool set_pitch(const double pitch);
+    virtual return_set_pitch set_pitch(const double pitch);
 
     virtual return_get_pitch get_pitch();
 

@@ -70,6 +70,9 @@ TEST_CASE("dev::speechTranscription_nwc_yarp", "[yarp::dev]")
         CHECK(text == "hello world");
         CHECK(score == 1);
 
+        yarp::sig::Sound s2;
+        CHECK(!iSpeech->transcribe(s2,text,score));
+
         //"Close all polydrivers and check"
         {
             CHECK(ddnwc.close());

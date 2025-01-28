@@ -60,10 +60,10 @@ public:
         bool write(const yarp::os::idl::WireWriter& writer) const override;
         bool read(yarp::os::idl::WireReader& reader) override;
 
-        bool return_helper{false};
+        return_set_language return_helper{};
     };
 
-    using funcptr_t = bool (*)(const std::string&);
+    using funcptr_t = return_set_language (*)(const std::string&);
     void call(ISpeechTranscriptionMsgs* ptr);
 
     Command cmd;
@@ -73,7 +73,7 @@ public:
     static constexpr size_t s_tag_len{2};
     static constexpr size_t s_cmd_len{3};
     static constexpr size_t s_reply_len{1};
-    static constexpr const char* s_prototype{"bool ISpeechTranscriptionMsgs::set_language(const std::string& language)"};
+    static constexpr const char* s_prototype{"return_set_language ISpeechTranscriptionMsgs::set_language(const std::string& language)"};
     static constexpr const char* s_help{""};
 };
 
@@ -324,7 +324,7 @@ bool ISpeechTranscriptionMsgs_set_language_helper::Reply::write(const yarp::os::
         if (!writer.writeListHeader(s_reply_len)) {
             return false;
         }
-        if (!writer.writeBool(return_helper)) {
+        if (!writer.write(return_helper)) {
             return false;
         }
     }
@@ -340,7 +340,7 @@ bool ISpeechTranscriptionMsgs_set_language_helper::Reply::read(yarp::os::idl::Wi
         reader.fail();
         return false;
     }
-    if (!reader.readBool(return_helper)) {
+    if (!reader.read(return_helper)) {
         reader.fail();
         return false;
     }
@@ -645,14 +645,14 @@ ISpeechTranscriptionMsgs::ISpeechTranscriptionMsgs()
     yarp().setOwner(*this);
 }
 
-bool ISpeechTranscriptionMsgs::set_language(const std::string& language)
+return_set_language ISpeechTranscriptionMsgs::set_language(const std::string& language)
 {
     if (!yarp().canWrite()) {
         yError("Missing server method '%s'?", ISpeechTranscriptionMsgs_set_language_helper::s_prototype);
     }
     ISpeechTranscriptionMsgs_set_language_helper helper{language};
     bool ok = yarp().write(helper, helper);
-    return ok ? helper.reply.return_helper : bool{};
+    return ok ? helper.reply.return_helper : return_set_language{};
 }
 
 return_get_language ISpeechTranscriptionMsgs::get_language()

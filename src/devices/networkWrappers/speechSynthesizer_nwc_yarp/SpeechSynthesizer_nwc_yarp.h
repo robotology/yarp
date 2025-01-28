@@ -20,6 +20,7 @@
 #include <yarp/os/Bottle.h>
 #include <yarp/os/RpcServer.h>
 #include <yarp/dev/WrapperSingle.h>
+#include <yarp/dev/ReturnValue.h>
 #include "ISpeechSynthesizerMsgs.h"
 #include "SpeechSynthesizer_nwc_yarp_ParamsParser.h"
 
@@ -56,15 +57,15 @@ public:
     bool close() override;
 
     // yarp::dev::ISpeechSynthesizer
-    bool setLanguage(const std::string& language="auto") override;
-    bool getLanguage(std::string& language) override;
-    bool setVoice(const std::string& voice_name = "auto") override;
-    bool getVoice(std::string& voice_name) override;
-    bool setSpeed(const double speed=0) override;
-    bool getSpeed(double& speed) override;
-    bool setPitch(const double pitch) override;
-    bool getPitch(double& pitch) override;
-    bool synthesize(const std::string& text, yarp::sig::Sound& sound) override;
+    yarp::dev::ReturnValue setLanguage(const std::string& language="auto") override;
+    yarp::dev::ReturnValue getLanguage(std::string& language) override;
+    yarp::dev::ReturnValue setVoice(const std::string& voice_name = "auto") override;
+    yarp::dev::ReturnValue getVoice(std::string& voice_name) override;
+    yarp::dev::ReturnValue setSpeed(const double speed=0) override;
+    yarp::dev::ReturnValue getSpeed(double& speed) override;
+    yarp::dev::ReturnValue setPitch(const double pitch) override;
+    yarp::dev::ReturnValue getPitch(double& pitch) override;
+    yarp::dev::ReturnValue synthesize(const std::string& text, yarp::sig::Sound& sound) override;
 
     // Parameters
 private:

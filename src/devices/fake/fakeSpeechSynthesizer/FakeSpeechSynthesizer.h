@@ -41,15 +41,15 @@ public:
     bool open(yarp::os::Searchable& config) override;
     bool close() override;
 
-    virtual bool setLanguage(const std::string& language) override;
-    virtual bool getLanguage(std::string& language) override;
-    virtual bool setVoice(const std::string& voice) override;
-    virtual bool getVoice(std::string& voice) override;
-    virtual bool setSpeed(const double speed) override;
-    virtual bool getSpeed(double& voice) override;
-    virtual bool setPitch(const double pitch) override;
-    virtual bool getPitch(double& voice) override;
-    virtual bool synthesize(const std::string& text, yarp::sig::Sound& sound) override;
+    virtual yarp::dev::ReturnValue setLanguage(const std::string& language) override;
+    virtual yarp::dev::ReturnValue getLanguage(std::string& language) override;
+    virtual yarp::dev::ReturnValue setVoice(const std::string& voice) override;
+    virtual yarp::dev::ReturnValue getVoice(std::string& voice) override;
+    virtual yarp::dev::ReturnValue setSpeed(const double speed) override;
+    virtual yarp::dev::ReturnValue getSpeed(double& voice) override;
+    virtual yarp::dev::ReturnValue setPitch(const double pitch) override;
+    virtual yarp::dev::ReturnValue getPitch(double& voice) override;
+    virtual yarp::dev::ReturnValue synthesize(const std::string& text, yarp::sig::Sound& sound) override;
 };
 
 #endif
