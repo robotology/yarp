@@ -42,7 +42,10 @@ Map2D_nws_yarp::~Map2D_nws_yarp() = default;
 
 bool Map2D_nws_yarp::read(yarp::os::ConnectionReader& connection)
 {
-    if (!m_RPC) {return false;}
+    if (!connection.isValid()) { return false;}
+    if (!m_RPC) { return false;}
+
+    std::lock_guard<std::mutex> lock (m_mutex);
 
     bool b = m_RPC->read(connection);
     if (b)
@@ -77,11 +80,15 @@ bool Map2D_nws_yarp::close()
     m_rpcPort.interrupt();
     m_rpcPort.close();
 
+    detach();
+
     return true;
 }
 
 bool Map2D_nws_yarp::detach()
 {
+    std::lock_guard lock (m_mutex);
+
     m_iMap2D = nullptr;
 
     if (m_RPC)
@@ -95,6 +102,8 @@ bool Map2D_nws_yarp::detach()
 
 bool Map2D_nws_yarp::attach(PolyDriver* driver)
 {
+    std::lock_guard lock(m_mutex);
+
     if (driver->isValid())
     {
         driver->view(m_iMap2D);

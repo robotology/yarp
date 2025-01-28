@@ -26,6 +26,7 @@ Odometry2D_nws_yarp::~Odometry2D_nws_yarp()
 
 bool Odometry2D_nws_yarp::attach(yarp::dev::PolyDriver* driver)
 {
+    std::lock_guard lock(m_mutex);
 
     if (driver->isValid())
     {
@@ -48,6 +49,8 @@ bool Odometry2D_nws_yarp::attach(yarp::dev::PolyDriver* driver)
 
 bool Odometry2D_nws_yarp::detach()
 {
+    std::lock_guard lock(m_mutex);
+
     if (PeriodicThread::isRunning())
     {
         PeriodicThread::stop();
@@ -120,6 +123,8 @@ void Odometry2D_nws_yarp::threadRelease()
 
 void Odometry2D_nws_yarp::run()
 {
+    std::lock_guard lock(m_mutex);
+
     if (m_odometry2D_interface!=nullptr)
     {
         yarp::dev::OdometryData odometryData;
@@ -190,6 +195,10 @@ bool Odometry2D_nws_yarp::close()
 
 bool Odometry2D_nws_yarp::read(yarp::os::ConnectionReader& connection)
 {
+    if (!connection.isValid()) { return false;}
+    if (!m_RPC) { return false;}
+
+    std::lock_guard<std::mutex> lock(m_mutex);
     if (m_RPC)
     {
         bool b = m_RPC->read(connection);

@@ -99,6 +99,8 @@ bool SpeechTranscription_nws_yarp::closeMain()
 
 bool SpeechTranscription_nws_yarp::read(yarp::os::ConnectionReader& connection)
 {
+    if (!connection.isValid()) { return false;}
+
     bool b = m_rpc.read(connection);
     if (b)
     {

@@ -48,6 +48,8 @@ Localization2D_nws_yarp::Localization2D_nws_yarp() : PeriodicThread(DEFAULT_THRE
 
 bool Localization2D_nws_yarp::attach(PolyDriver* driver)
 {
+    std::lock_guard<std::mutex> lock(m_mutex);
+
     if (driver->isValid())
     {
         driver->view(iLoc);
@@ -83,15 +85,17 @@ bool Localization2D_nws_yarp::attach(PolyDriver* driver)
         return false;
     }
 
-    PeriodicThread::setPeriod(m_GENERAL_period);
-    return PeriodicThread::start();
+    this->setPeriod(m_GENERAL_period);
+    return this->start();
 }
 
 bool Localization2D_nws_yarp::detach()
 {
-    if (PeriodicThread::isRunning())
+    std::lock_guard<std::mutex> lock(m_mutex);
+
+    if (this->isRunning())
     {
-        PeriodicThread::stop();
+        this->stop();
     }
     m_rpcPort.interrupt();
     m_rpcPort.close();
@@ -186,7 +190,10 @@ bool Localization2D_nws_yarp::close()
 
 bool Localization2D_nws_yarp::read(yarp::os::ConnectionReader& connection)
 {
+    if (!connection.isValid()) { return false;}
     if (!m_RPC) { return false;}
+
+    std::lock_guard<std::mutex> lock(m_mutex);
 
     bool b = m_RPC->read(connection);
     if (b)
@@ -202,6 +209,8 @@ bool Localization2D_nws_yarp::read(yarp::os::ConnectionReader& connection)
 
 void Localization2D_nws_yarp::run()
 {
+    std::lock_guard<std::mutex> lock(m_mutex);
+
     double m_stats_time_curr = yarp::os::Time::now();
     if (m_stats_time_curr - m_stats_time_last > 5.0)
     {

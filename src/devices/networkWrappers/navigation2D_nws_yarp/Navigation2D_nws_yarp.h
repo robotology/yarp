@@ -45,6 +45,7 @@ class Navigation2D_nws_yarp : public yarp::dev::DeviceDriver,
 protected:
     //thrift
     INavigation2DRPCd*                           m_RPC=nullptr;
+    std::mutex                                   m_mutex;
 
     yarp::os::Port                               m_rpcPort;
     yarp::os::Port                               m_statusPort;

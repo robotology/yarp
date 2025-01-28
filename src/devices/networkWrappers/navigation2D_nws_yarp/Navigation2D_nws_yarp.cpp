@@ -33,6 +33,8 @@ Navigation2D_nws_yarp::Navigation2D_nws_yarp() : PeriodicThread(DEFAULT_THREAD_P
 
 bool Navigation2D_nws_yarp::attach(PolyDriver* driver)
 {
+    std::lock_guard lock (m_mutex);
+
     if (driver->isValid())
     {
         driver->view(iNav_target);
@@ -60,6 +62,8 @@ bool Navigation2D_nws_yarp::attach(PolyDriver* driver)
 
 bool Navigation2D_nws_yarp::detach()
 {
+    std::lock_guard lock (m_mutex);
+
     if (PeriodicThread::isRunning())
     {
         PeriodicThread::stop();
@@ -127,7 +131,10 @@ bool Navigation2D_nws_yarp::close()
 
 bool Navigation2D_nws_yarp::read(yarp::os::ConnectionReader& connection)
 {
-    if (!m_RPC) { return false; }
+    if (!connection.isValid()) { return false;}
+    if (!m_RPC) { return false;}
+
+    std::lock_guard<std::mutex> lock(m_mutex);
 
     bool b = m_RPC->read(connection);
     if (b)
@@ -143,6 +150,8 @@ bool Navigation2D_nws_yarp::read(yarp::os::ConnectionReader& connection)
 
 void Navigation2D_nws_yarp::run()
 {
+    std::lock_guard lock(m_mutex);
+
     bool ok = iNav_ctrl->getNavigationStatus(m_navigation_status);
 
     double m_stats_time_curr = yarp::os::Time::now();

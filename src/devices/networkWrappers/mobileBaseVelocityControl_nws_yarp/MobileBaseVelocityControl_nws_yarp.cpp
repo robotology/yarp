@@ -79,11 +79,15 @@ bool MobileBaseVelocityControl_nws_yarp::close()
 {
     m_rpc_port_navigation_server.close();
     m_StreamingInput.close();
+
+    detach();
     return true;
 }
 
 bool MobileBaseVelocityControl_nws_yarp::detach()
 {
+    std::lock_guard lock (m_mutex);
+
     m_iNavVel = nullptr;
 
     if (m_RPC)
@@ -97,6 +101,8 @@ bool MobileBaseVelocityControl_nws_yarp::detach()
 
 bool MobileBaseVelocityControl_nws_yarp::attach(PolyDriver* driver)
 {
+    std::lock_guard lock (m_mutex);
+
     if (driver->isValid())
     {
         driver->view(m_iNavVel);
@@ -117,7 +123,10 @@ bool MobileBaseVelocityControl_nws_yarp::attach(PolyDriver* driver)
 
 bool MobileBaseVelocityControl_nws_yarp::read(yarp::os::ConnectionReader& connection)
 {
-    if (!m_RPC) { return false; }
+    if (!connection.isValid()) { return false;}
+    if (!m_RPC) { return false;}
+
+    std::lock_guard<std::mutex> lock(m_mutex);
 
     bool b = m_RPC->read(connection);
     if (b)

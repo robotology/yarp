@@ -57,6 +57,8 @@ public:
     void run() override;
 
 private:
+    std::mutex        m_mutex;
+
     //thrift
     IOdometry2DRPCd* m_RPC=nullptr;
 

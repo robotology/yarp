@@ -57,6 +57,7 @@ protected:
     //drivers and interfaces
     yarp::dev::PolyDriver                   pLoc;
     yarp::dev::Nav2D::ILocalization2D*      iLoc = nullptr;
+    std::mutex                              m_mutex;
 
     double                                  m_stats_time_last;
     bool                                    m_getdata_using_periodic_thread=true;
