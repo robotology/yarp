@@ -28,41 +28,47 @@ enum yarp_dev_Nav2D_LocalizationStatusEnum {
   yarp.enumbase = "yarp::conf::vocab32_t"
 )
 
+struct yReturnValue {
+} (
+  yarp.name = "yarp::dev::ReturnValue"
+  yarp.includefile = "yarp/dev/ReturnValue.h"
+)
+
 struct return_get_localization_status {
-  1: bool ret = false;
+  1: yReturnValue ret;
   2: yarp_dev_Nav2D_LocalizationStatusEnum status ( yarp.vocab = "true" );
 }
 
 struct return_get_estimated_poses {
-  1: bool ret = false;
+  1: yReturnValue ret;
   2: list<yarp_dev_Nav2D_Map2DLocation> poses;
 }
 
 struct return_get_current_position1 {
-  1: bool ret = false;
+  1: yReturnValue ret;
   2: yarp_dev_Nav2D_Map2DLocation loc;
 }
 
 struct return_get_current_position2 {
-  1: bool ret = false;
+  1: yReturnValue ret;
   2: yarp_dev_Nav2D_Map2DLocation loc;
   3: yarp_sig_Matrix cov;
 }
 
 struct return_get_estimated_odometry {
-  1: bool ret = false;
+  1: yReturnValue ret;
   2: yarp_dev_OdometryData odom;
 }
 
 service ILocalization2DMsgs
 {
-  bool                               start_localization_service_RPC ();
-  bool                               stop_localization_service_RPC  ();
+  yReturnValue                       start_localization_service_RPC ();
+  yReturnValue                       stop_localization_service_RPC  ();
   return_get_localization_status     get_localization_status_RPC    ();
   return_get_estimated_poses         get_estimated_poses_RPC        ();
   return_get_current_position1       get_current_position1_RPC      ();
   return_get_current_position2       get_current_position2_RPC      ();
   return_get_estimated_odometry      get_estimated_odometry_RPC     ();
-  bool                               set_initial_pose1_RPC          (1: yarp_dev_Nav2D_Map2DLocation loc);
-  bool                               set_initial_pose2_RPC          (1: yarp_dev_Nav2D_Map2DLocation loc, 2: yarp_sig_Matrix cov);
+  yReturnValue                       set_initial_pose1_RPC          (1: yarp_dev_Nav2D_Map2DLocation loc);
+  yReturnValue                       set_initial_pose2_RPC          (1: yarp_dev_Nav2D_Map2DLocation loc, 2: yarp_sig_Matrix cov);
 }

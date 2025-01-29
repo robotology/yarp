@@ -25,14 +25,14 @@ public:
     /**
      * Sets the language for speech transcription.
      * \param language a string (code) representing the speech language (e.g. ita, eng...). Default value is "auto".
-     * \return true on success
+     * \return a ReturnValue, convertible to true/false
      */
     virtual yarp::dev::ReturnValue setLanguage(const std::string& language="auto") = 0;
 
     /**
      * Gets the current language set for speech transcription.
      * \param language the returned string (code) representing the speech language (e.g. ita, eng...). Default value is "auto".
-     * \return true on success
+     * \return a ReturnValue, convertible to true/false
      */
     virtual yarp::dev::ReturnValue getLanguage(std::string& language) = 0;
 
@@ -41,7 +41,7 @@ public:
      * \param sound the audio data to transcribe
      * \param transcription the returned transcription (it may be empty)
      * \param score the returned score/confidence value in the range (0-1.0). It may be not implemented.
-     * \return true on success
+     * \return a ReturnValue, convertible to true/false
      */
     virtual yarp::dev::ReturnValue transcribe(const yarp::sig::Sound& sound, std::string& transcription, double& score) = 0;
 };

@@ -15,6 +15,7 @@ target_sources(MobileBaseVelocityControlMsgs PRIVATE ${FTM_THRIFT_GEN_FILES})
 target_link_libraries(MobileBaseVelocityControlMsgs
   PRIVATE
     YARP::YARP_os
+    YARP::YARP_dev
     YARP::YARP_sig
     YARP::YARP_math
 )

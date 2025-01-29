@@ -13,6 +13,7 @@
 
 #include <yarp/os/Wire.h>
 #include <yarp/os/idl/WireTypes.h>
+#include <yarp/dev/ReturnValue.h>
 
 class IOdometry2DMsgs :
         public yarp::os::Wire
@@ -21,7 +22,7 @@ public:
     // Constructor
     IOdometry2DMsgs();
 
-    virtual bool reset_odometry_RPC();
+    virtual yarp::dev::ReturnValue reset_odometry_RPC();
 
     // help method
     virtual std::vector<std::string> help(const std::string& functionName = "--all");

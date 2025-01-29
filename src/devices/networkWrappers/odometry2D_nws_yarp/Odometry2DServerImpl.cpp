@@ -26,16 +26,14 @@ YARP_LOG_COMPONENT(ODOM2D_RPC, "yarp.device.map2D_nws_yarp.IMap2DRPCd")
 
 #define CHECK_POINTER(xxx) {if (xxx==nullptr) {yCError(ODOM2D_RPC, "Invalid interface"); return false;}}
 
-bool IOdometry2DRPCd::reset_odometry_RPC()
+ReturnValue IOdometry2DRPCd::reset_odometry_RPC()
 {
     std::lock_guard <std::mutex> lg(m_mutex);
 
-    {if (m_iOdom == nullptr) { yCError(ODOM2D_RPC, "Invalid interface"); return false; }}
-
-    if (!m_iOdom->resetOdometry())
+    auto ret = m_iOdom->resetOdometry();
+    if (!ret)
     {
         yCError(ODOM2D_RPC, "Unable to resetOdometry");
-        return false;
     }
-    return true;
+    return ret;
 }

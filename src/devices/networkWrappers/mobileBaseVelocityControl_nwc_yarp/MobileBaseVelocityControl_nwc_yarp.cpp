@@ -61,22 +61,22 @@ bool MobileBaseVelocityControl_nwc_yarp::close()
     return true;
 }
 
-bool MobileBaseVelocityControl_nwc_yarp::getLastVelocityCommand(double& x_vel, double& y_vel, double& theta_vel)
+ReturnValue MobileBaseVelocityControl_nwc_yarp::getLastVelocityCommand(double& x_vel, double& y_vel, double& theta_vel)
 {
     std::lock_guard <std::mutex> lg(m_mutex);
-    auto ret = m_RPC.getLastVelocityCommandRPC();
-    if (!ret.retvalue)
+    auto retrpc = m_RPC.getLastVelocityCommandRPC();
+    if (!retrpc.ret)
     {
         yCError(MOBVEL_NWC_YARP, "Unable to set transformation");
-        return false;
+        return retrpc.ret;
     }
-    x_vel = ret.x_vel;
-    y_vel = ret.y_vel;
-    theta_vel = ret.theta_vel;
-    return true;
+    x_vel = retrpc.x_vel;
+    y_vel = retrpc.y_vel;
+    theta_vel = retrpc.theta_vel;
+    return retrpc.ret;
 }
 
-bool MobileBaseVelocityControl_nwc_yarp::applyVelocityCommand(double x_vel, double y_vel, double theta_vel, double timeout)
+ReturnValue MobileBaseVelocityControl_nwc_yarp::applyVelocityCommand(double x_vel, double y_vel, double theta_vel, double timeout)
 {
     std::lock_guard <std::mutex> lg(m_mutex);
     return m_RPC.applyVelocityCommandRPC(x_vel,y_vel,theta_vel,timeout);

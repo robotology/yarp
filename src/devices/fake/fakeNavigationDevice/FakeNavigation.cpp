@@ -43,7 +43,7 @@ bool FakeNavigation:: close()
     return true;
 }
 
-bool FakeNavigation::gotoTargetByAbsoluteLocation(Map2DLocation loc)
+ReturnValue FakeNavigation::gotoTargetByAbsoluteLocation(Map2DLocation loc)
 {
     if (m_status == NavigationStatusEnum::navigation_status_idle)
     {
@@ -51,114 +51,114 @@ bool FakeNavigation::gotoTargetByAbsoluteLocation(Map2DLocation loc)
         m_absgoal_loc = loc;
         m_time_counter= this->m_navigation_time;
     }
-    return true;
+    return ReturnValue_ok;
 }
 
-bool FakeNavigation::gotoTargetByRelativeLocation(double x, double y, double theta)
+ReturnValue FakeNavigation::gotoTargetByRelativeLocation(double x, double y, double theta)
 {
     yCInfo(FAKENAVIGATION) << "gotoTargetByRelativeLocation not yet implemented";
-    return true;
+    return ReturnValue_ok;
 }
 
-bool FakeNavigation::gotoTargetByRelativeLocation(double x, double y)
+ReturnValue FakeNavigation::gotoTargetByRelativeLocation(double x, double y)
 {
     yCInfo(FAKENAVIGATION) << "gotoTargetByRelativeLocation not yet implemented";
-    return true;
+    return ReturnValue_ok;
 }
 
-bool FakeNavigation::followPath(const yarp::dev::Nav2D::Map2DPath& path)
+ReturnValue FakeNavigation::followPath(const yarp::dev::Nav2D::Map2DPath& path)
 {
     yCInfo(FAKENAVIGATION) << "followPath not yet implemented";
-    return true;
+    return ReturnValue_ok;
 }
 
-bool FakeNavigation::applyVelocityCommand(double x_vel, double y_vel, double theta_vel, double timeout)
+ReturnValue FakeNavigation::applyVelocityCommand(double x_vel, double y_vel, double theta_vel, double timeout)
 {
     m_control_out.linear_xvel = x_vel;
     m_control_out.linear_yvel = y_vel;
     m_control_out.angular_vel = theta_vel;
     m_control_out.timeout = timeout;
     m_control_out.reception_time = yarp::os::Time::now();
-    return true;
+    return ReturnValue_ok;
 }
 
-bool FakeNavigation::getLastVelocityCommand(double& x_vel, double& y_vel, double& theta_vel)
+ReturnValue FakeNavigation::getLastVelocityCommand(double& x_vel, double& y_vel, double& theta_vel)
 {
     double current_time = yarp::os::Time::now();
     x_vel = m_control_out.linear_xvel;
     y_vel = m_control_out.linear_yvel;
     theta_vel = m_control_out.angular_vel;
-    return true;
+    return ReturnValue_ok;
 }
 
-bool FakeNavigation::stopNavigation()
+ReturnValue FakeNavigation::stopNavigation()
 {
     m_status=NavigationStatusEnum::navigation_status_idle;
     m_absgoal_loc=Map2DLocation();
-    return true;
+    return ReturnValue_ok;
 }
 
-bool FakeNavigation::suspendNavigation(double time)
+ReturnValue FakeNavigation::suspendNavigation(double time)
 {
     if (m_status == NavigationStatusEnum::navigation_status_moving)
     {
         m_status=NavigationStatusEnum::navigation_status_paused;
     }
-    return true;
+    return ReturnValue_ok;
 }
 
-bool FakeNavigation::resumeNavigation()
+ReturnValue FakeNavigation::resumeNavigation()
 {
     if (m_status == NavigationStatusEnum::navigation_status_paused)
     {
         m_status = NavigationStatusEnum::navigation_status_moving;
     }
-    return true;
+    return ReturnValue_ok;
 }
 
-bool FakeNavigation::getAllNavigationWaypoints(yarp::dev::Nav2D::TrajectoryTypeEnum trajectory_type, yarp::dev::Nav2D::Map2DPath& waypoints)
+ReturnValue FakeNavigation::getAllNavigationWaypoints(yarp::dev::Nav2D::TrajectoryTypeEnum trajectory_type, yarp::dev::Nav2D::Map2DPath& waypoints)
 {
     yCInfo(FAKENAVIGATION) << "getAllNavigationWaypoints not yet implemented";
-    return true;
+    return ReturnValue_ok;
 }
 
-bool FakeNavigation::getCurrentNavigationWaypoint(Map2DLocation& curr_waypoint)
+ReturnValue FakeNavigation::getCurrentNavigationWaypoint(Map2DLocation& curr_waypoint)
 {
     yCInfo(FAKENAVIGATION) << "getCurrentNavigationWaypoint not yet implemented";
-    return true;
+    return ReturnValue_ok;
 }
 
-bool FakeNavigation::getCurrentNavigationMap(yarp::dev::Nav2D::NavigationMapTypeEnum map_type, MapGrid2D& map)
+ReturnValue FakeNavigation::getCurrentNavigationMap(yarp::dev::Nav2D::NavigationMapTypeEnum map_type, MapGrid2D& map)
 {
     yCInfo(FAKENAVIGATION) << "getCurrentNavigationMap not yet implemented";
-    return true;
+    return ReturnValue_ok;
 }
 
-bool FakeNavigation::getNavigationStatus(yarp::dev::Nav2D::NavigationStatusEnum& status)
+ReturnValue FakeNavigation::getNavigationStatus(yarp::dev::Nav2D::NavigationStatusEnum& status)
 {
     status = m_status;
-    return true;
+    return ReturnValue_ok;
 }
 
-bool FakeNavigation::getAbsoluteLocationOfCurrentTarget(Map2DLocation& target)
+ReturnValue FakeNavigation::getAbsoluteLocationOfCurrentTarget(Map2DLocation& target)
 {
-    target=m_absgoal_loc;
-    return true;
+    target = m_absgoal_loc;
+    return ReturnValue_ok;
 }
 
-bool FakeNavigation::recomputeCurrentNavigationPath()
+ReturnValue FakeNavigation::recomputeCurrentNavigationPath()
 {
     if (m_status == NavigationStatusEnum::navigation_status_moving)
     {
         //do something
     }
-    return true;
+    return ReturnValue_ok;
 }
 
-bool FakeNavigation::getRelativeLocationOfCurrentTarget(double& x, double& y, double& theta)
+ReturnValue FakeNavigation::getRelativeLocationOfCurrentTarget(double& x, double& y, double& theta)
 {
     yCInfo(FAKENAVIGATION) << "getRelativeLocationOfCurrentTarget not yet implemented";
-    return true;
+    return ReturnValue_ok;
 }
 
 bool FakeNavigation::threadInit()

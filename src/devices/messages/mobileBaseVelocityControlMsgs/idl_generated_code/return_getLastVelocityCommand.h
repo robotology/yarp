@@ -13,13 +13,14 @@
 
 #include <yarp/os/Wire.h>
 #include <yarp/os/idl/WireTypes.h>
+#include <yarp/dev/ReturnValue.h>
 
 class return_getLastVelocityCommand :
         public yarp::os::idl::WirePortable
 {
 public:
     // Fields
-    bool retvalue{false};
+    yarp::dev::ReturnValue ret{};
     double x_vel{0.0};
     double y_vel{0.0};
     double theta_vel{0.0};
@@ -28,7 +29,7 @@ public:
     return_getLastVelocityCommand() = default;
 
     // Constructor with field values
-    return_getLastVelocityCommand(const bool retvalue,
+    return_getLastVelocityCommand(const yarp::dev::ReturnValue& ret,
                                   const double x_vel,
                                   const double y_vel,
                                   const double theta_vel);
@@ -52,11 +53,11 @@ public:
     typedef yarp::os::idl::Unwrapped<return_getLastVelocityCommand> unwrapped;
 
 private:
-    // read/write retvalue field
-    bool read_retvalue(yarp::os::idl::WireReader& reader);
-    bool write_retvalue(const yarp::os::idl::WireWriter& writer) const;
-    bool nested_read_retvalue(yarp::os::idl::WireReader& reader);
-    bool nested_write_retvalue(const yarp::os::idl::WireWriter& writer) const;
+    // read/write ret field
+    bool read_ret(yarp::os::idl::WireReader& reader);
+    bool write_ret(const yarp::os::idl::WireWriter& writer) const;
+    bool nested_read_ret(yarp::os::idl::WireReader& reader);
+    bool nested_write_ret(const yarp::os::idl::WireWriter& writer) const;
 
     // read/write x_vel field
     bool read_x_vel(yarp::os::idl::WireReader& reader);

@@ -13,13 +13,14 @@
 
 #include <yarp/os/Wire.h>
 #include <yarp/os/idl/WireTypes.h>
+#include <yarp/dev/ReturnValue.h>
 
 class return_get_last_velocity_command :
         public yarp::os::idl::WirePortable
 {
 public:
     // Fields
-    bool ret{false};
+    yarp::dev::ReturnValue ret{};
     double x_vel{0.0};
     double y_vel{0.0};
     double theta_vel{0.0};
@@ -28,7 +29,7 @@ public:
     return_get_last_velocity_command() = default;
 
     // Constructor with field values
-    return_get_last_velocity_command(const bool ret,
+    return_get_last_velocity_command(const yarp::dev::ReturnValue& ret,
                                      const double x_vel,
                                      const double y_vel,
                                      const double theta_vel);

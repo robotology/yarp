@@ -14,6 +14,7 @@
 #include <yarp/os/Wire.h>
 #include <yarp/os/idl/WireTypes.h>
 #include <return_getLastVelocityCommand.h>
+#include <yarp/dev/ReturnValue.h>
 
 class MobileBaseVelocityControlRPC :
         public yarp::os::Wire
@@ -22,7 +23,7 @@ public:
     // Constructor
     MobileBaseVelocityControlRPC();
 
-    virtual bool applyVelocityCommandRPC(const double x_vel, const double y_vel, const double theta_vel, const double timeout);
+    virtual yarp::dev::ReturnValue applyVelocityCommandRPC(const double x_vel, const double y_vel, const double theta_vel, const double timeout);
 
     virtual return_getLastVelocityCommand getLastVelocityCommandRPC();
 

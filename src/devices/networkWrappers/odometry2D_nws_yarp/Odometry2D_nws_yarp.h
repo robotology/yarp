@@ -57,8 +57,10 @@ public:
     void run() override;
 
 private:
+    std::mutex        m_mutex;
+
     //thrift
-    IOdometry2DRPCd  m_RPC;
+    IOdometry2DRPCd* m_RPC=nullptr;
 
     //rpc port
     bool read(yarp::os::ConnectionReader& connection) override;

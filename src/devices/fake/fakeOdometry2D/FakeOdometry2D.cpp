@@ -71,7 +71,7 @@ bool FakeOdometry2D::close()
 }
 
 
-bool FakeOdometry2D::getOdometry(yarp::dev::OdometryData& odom, double* timestamp)
+yarp::dev::ReturnValue FakeOdometry2D::getOdometry(yarp::dev::OdometryData& odom, double* timestamp)
 {
     std::lock_guard lock(m_odometry_mutex);
     odom.odom_x = m_odometryData.odom_x;
@@ -87,11 +87,11 @@ bool FakeOdometry2D::getOdometry(yarp::dev::OdometryData& odom, double* timestam
     {
         *timestamp = m_timestamp;
     }
-    return true;
+    return yarp::dev::ReturnValue_ok;
 }
 
 
-bool FakeOdometry2D::resetOdometry()
+yarp::dev::ReturnValue FakeOdometry2D::resetOdometry()
 {
     std::lock_guard lock(m_odometry_mutex);
     m_odometryData.odom_x = 0;
@@ -103,5 +103,5 @@ bool FakeOdometry2D::resetOdometry()
     m_odometryData.odom_vel_x = 0;
     m_odometryData.odom_vel_y = 0;
     m_odometryData.odom_vel_theta = 0;
-    return true;
+    return yarp::dev::ReturnValue_ok;
 }

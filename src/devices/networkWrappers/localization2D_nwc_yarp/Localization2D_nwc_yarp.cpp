@@ -71,97 +71,97 @@ bool Localization2D_nwc_yarp::open(yarp::os::Searchable &config)
     return true;
 }
 
-bool Localization2D_nwc_yarp::setInitialPose(const Map2DLocation& loc)
+ReturnValue Localization2D_nwc_yarp::setInitialPose(const Map2DLocation& loc)
 {
     std::lock_guard <std::mutex> lg(m_mutex);
     return m_RPC.set_initial_pose1_RPC(loc);
 }
 
-bool Localization2D_nwc_yarp::setInitialPose(const Map2DLocation& loc, const yarp::sig::Matrix& cov)
+ReturnValue Localization2D_nwc_yarp::setInitialPose(const Map2DLocation& loc, const yarp::sig::Matrix& cov)
 {
     if (cov.rows() != 3 || cov.cols() != 3)
     {
         yCError(LOCALIZATION2D_NWC_YARP) << "Covariance matrix is expected to have size (3,3)";
-        return false;
+        return ReturnValue::return_code::return_value_error_method_failed;
     }
 
     std::lock_guard <std::mutex> lg(m_mutex);
     return m_RPC.set_initial_pose2_RPC(loc,cov);
 }
 
-bool  Localization2D_nwc_yarp::getEstimatedOdometry(yarp::dev::OdometryData& odom)
+ReturnValue  Localization2D_nwc_yarp::getEstimatedOdometry(yarp::dev::OdometryData& odom)
 {
     std::lock_guard <std::mutex> lg(m_mutex);
-    auto ret = m_RPC.get_estimated_odometry_RPC();
-    if (!ret.ret)
+    auto retrpc = m_RPC.get_estimated_odometry_RPC();
+    if (!retrpc.ret)
     {
         yCError(LOCALIZATION2D_NWC_YARP, "Unable to set transformation");
-        return false;
+        return retrpc.ret;
     }
-    odom = ret.odom;
-    return true;
+    odom = retrpc.odom;
+    return retrpc.ret;
 }
 
-bool  Localization2D_nwc_yarp::getCurrentPosition(Map2DLocation& loc)
+ReturnValue  Localization2D_nwc_yarp::getCurrentPosition(Map2DLocation& loc)
 {
     std::lock_guard <std::mutex> lg(m_mutex);
-    auto ret = m_RPC.get_current_position1_RPC();
-    if (!ret.ret)
+    auto retrpc = m_RPC.get_current_position1_RPC();
+    if (!retrpc.ret)
     {
         yCError(LOCALIZATION2D_NWC_YARP, "Unable to set transformation");
-        return false;
+        return retrpc.ret;
     }
-    loc = ret.loc;
-    return true;
+    loc = retrpc.loc;
+    return retrpc.ret;
 }
 
-bool  Localization2D_nwc_yarp::getCurrentPosition(Map2DLocation& loc, yarp::sig::Matrix& cov)
+ReturnValue  Localization2D_nwc_yarp::getCurrentPosition(Map2DLocation& loc, yarp::sig::Matrix& cov)
 {
     std::lock_guard <std::mutex> lg(m_mutex);
-    auto ret = m_RPC.get_current_position2_RPC();
-    if (!ret.ret)
+    auto retrpc = m_RPC.get_current_position2_RPC();
+    if (!retrpc.ret)
     {
         yCError(LOCALIZATION2D_NWC_YARP, "Unable to set transformation");
-        return false;
+        return retrpc.ret;
     }
-    loc = ret.loc;
-    cov = ret.cov;
-    return true;
+    loc = retrpc.loc;
+    cov = retrpc.cov;
+    return retrpc.ret;
 }
 
-bool  Localization2D_nwc_yarp::getEstimatedPoses(std::vector<Map2DLocation>& poses)
+ReturnValue  Localization2D_nwc_yarp::getEstimatedPoses(std::vector<Map2DLocation>& poses)
 {
     std::lock_guard <std::mutex> lg(m_mutex);
-    auto ret = m_RPC.get_estimated_poses_RPC();
-    if (!ret.ret)
+    auto retrpc = m_RPC.get_estimated_poses_RPC();
+    if (!retrpc.ret)
     {
         yCError(LOCALIZATION2D_NWC_YARP, "Unable to set transformation");
-        return false;
+        return retrpc.ret;
     }
-    poses = ret.poses;
-    return true;
+    poses = retrpc.poses;
+    return retrpc.ret;
 }
 
-bool  Localization2D_nwc_yarp::getLocalizationStatus(yarp::dev::Nav2D::LocalizationStatusEnum& status)
+ReturnValue  Localization2D_nwc_yarp::getLocalizationStatus(yarp::dev::Nav2D::LocalizationStatusEnum& status)
 {
     std::lock_guard <std::mutex> lg(m_mutex);
-    auto ret = m_RPC.get_localization_status_RPC();
-    if (!ret.ret)
+    auto retrpc = m_RPC.get_localization_status_RPC();
+    if (!retrpc.ret)
     {
         yCError(LOCALIZATION2D_NWC_YARP, "Unable to set transformation");
-        return false;
+        return retrpc.ret;
     }
-    status = yarp::dev::Nav2D::LocalizationStatusEnum(ret.status);
-    return true;
+    status = yarp::dev::Nav2D::LocalizationStatusEnum(retrpc.status);
+    return retrpc.ret;
 }
 
-bool  Localization2D_nwc_yarp::startLocalizationService()
+ReturnValue  Localization2D_nwc_yarp::startLocalizationService()
 {
     std::lock_guard <std::mutex> lg(m_mutex);
     return m_RPC.start_localization_service_RPC();
 }
 
-bool  Localization2D_nwc_yarp::stopLocalizationService()
+ReturnValue  Localization2D_nwc_yarp::stopLocalizationService()
 {
     std::lock_guard <std::mutex> lg(m_mutex);
     return m_RPC.stop_localization_service_RPC();
@@ -170,5 +170,5 @@ bool  Localization2D_nwc_yarp::stopLocalizationService()
 bool Localization2D_nwc_yarp::close()
 {
     m_rpc_port_localization_server.close();
-    return true;
+    return ReturnValue_ok;
 }

@@ -10,6 +10,7 @@
 #include <yarp/dev/api.h>
 #include <yarp/dev/Map2DLocation.h>
 #include <yarp/dev/OdometryData.h>
+#include <yarp/dev/ReturnValue.h>
 #include <yarp/sig/Matrix.h>
 #include <vector>
 
@@ -39,65 +40,65 @@ public:
 
     /**
     * Starts the localization service
-    * @return true/false
+    * @return a ReturnValue, convertible to true/false
     */
-    virtual bool   startLocalizationService() = 0;
+    virtual yarp::dev::ReturnValue startLocalizationService() = 0;
 
     /**
     * Stops the localization service
-    * @return true/false
+    * @return a ReturnValue, convertible to true/false
     */
-    virtual bool   stopLocalizationService() = 0;
+    virtual yarp::dev::ReturnValue stopLocalizationService() = 0;
 
     /**
      * Gets the current status of the localization task.
-     * @return true/false
+     * @return a ReturnValue, convertible to true/false
      */
-    virtual bool   getLocalizationStatus(LocalizationStatusEnum& status) = 0;
+    virtual yarp::dev::ReturnValue getLocalizationStatus(LocalizationStatusEnum& status) = 0;
 
     /**
      * Gets a set of pose estimates computed by the localization algorithm.
-     * @return true/false
+     * @return a ReturnValue, convertible to true/false
      */
-    virtual bool   getEstimatedPoses(std::vector<yarp::dev::Nav2D::Map2DLocation>& poses) = 0;
+    virtual yarp::dev::ReturnValue getEstimatedPoses(std::vector<yarp::dev::Nav2D::Map2DLocation>& poses) = 0;
 
     /**
      * Gets the current position of the robot w.r.t world reference frame
      * @param loc the location of the robot
-     * @return true/false
+     * @return a ReturnValue, convertible to true/false
      */
-    virtual bool   getCurrentPosition(yarp::dev::Nav2D::Map2DLocation& loc) = 0;
+    virtual yarp::dev::ReturnValue getCurrentPosition(yarp::dev::Nav2D::Map2DLocation& loc) = 0;
 
     /**
     * Gets the current position of the robot w.r.t world reference frame, plus the covariance
     * @param loc the location of the robot
     * @param cov the 3x3 covariance matrix
-    * @return true/false
+    * @return a ReturnValue, convertible to true/false
     */
-    virtual bool   getCurrentPosition(yarp::dev::Nav2D::Map2DLocation& loc, yarp::sig::Matrix& cov) = 0;
+    virtual yarp::dev::ReturnValue getCurrentPosition(yarp::dev::Nav2D::Map2DLocation& loc, yarp::sig::Matrix& cov) = 0;
 
     /**
     * Gets the estimated odometry the robot, including its velocity expressed in the world and in the local reference frame.
     * @param loc the estimated odometry.
-    * @return true/false
+    * @return a ReturnValue, convertible to true/false
     */
-    virtual bool   getEstimatedOdometry(yarp::dev::OdometryData& odom) = 0;
+    virtual yarp::dev::ReturnValue getEstimatedOdometry(yarp::dev::OdometryData& odom) = 0;
 
 
     /**
      * Sets the initial pose for the localization algorithm which estimates the current position of the robot w.r.t world reference frame.
      * @param loc the location of the robot
-     * @return true/false
+     * @return a ReturnValue, convertible to true/false
      */
-    virtual bool   setInitialPose(const yarp::dev::Nav2D::Map2DLocation& loc) = 0;
+    virtual yarp::dev::ReturnValue setInitialPose(const yarp::dev::Nav2D::Map2DLocation& loc) = 0;
 
     /**
     * Sets the initial pose for the localization algorithm which estimates the current position of the robot w.r.t world reference frame.
     * @param loc the location of the robot
     * @param cov the 3x3 covariance matrix
-    * @return true/false
+    * @return a ReturnValue, convertible to true/false
     */
-    virtual bool   setInitialPose(const yarp::dev::Nav2D::Map2DLocation& loc, const yarp::sig::Matrix& cov) = 0;
+    virtual yarp::dev::ReturnValue setInitialPose(const yarp::dev::Nav2D::Map2DLocation& loc, const yarp::sig::Matrix& cov) = 0;
 };
 
 constexpr yarp::conf::vocab32_t VOCAB_INAVIGATION            = yarp::os::createVocab32('i','n','a','v');

@@ -45,8 +45,8 @@ public:
     bool close() override;
 
     // IOdometry2D
-    bool   getOdometry(yarp::dev::OdometryData& odom, double* timestamp=nullptr) override;
-    bool   resetOdometry() override;
+    yarp::dev::ReturnValue   getOdometry(yarp::dev::OdometryData& odom, double* timestamp=nullptr) override;
+    yarp::dev::ReturnValue   resetOdometry() override;
 
 private:
     yarp::dev::OdometryData m_odometryData;

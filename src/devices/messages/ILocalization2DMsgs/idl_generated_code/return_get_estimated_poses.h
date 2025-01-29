@@ -14,20 +14,21 @@
 #include <yarp/os/Wire.h>
 #include <yarp/os/idl/WireTypes.h>
 #include <yarp/dev/Map2DLocation.h>
+#include <yarp/dev/ReturnValue.h>
 
 class return_get_estimated_poses :
         public yarp::os::idl::WirePortable
 {
 public:
     // Fields
-    bool ret{false};
+    yarp::dev::ReturnValue ret{};
     std::vector<yarp::dev::Nav2D::Map2DLocation> poses{};
 
     // Default constructor
     return_get_estimated_poses() = default;
 
     // Constructor with field values
-    return_get_estimated_poses(const bool ret,
+    return_get_estimated_poses(const yarp::dev::ReturnValue& ret,
                                const std::vector<yarp::dev::Nav2D::Map2DLocation>& poses);
 
     // Read structure on a Wire

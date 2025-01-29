@@ -72,64 +72,14 @@ public:
     virtual bool close() override;
 
 public:
-    /**
-    * Gets the current status of the localization task.
-    * @return true/false
-    */
-    bool   getLocalizationStatus(yarp::dev::Nav2D::LocalizationStatusEnum& status) override;
-
-    /**
-    * Gets a set of pose estimates computed by the localization algorithm.
-    * @return true/false
-    */
-    bool   getEstimatedPoses(std::vector<yarp::dev::Nav2D::Map2DLocation>& poses) override;
-
-    /**
-    * Gets the current position of the robot w.r.t world reference frame
-    * @param loc the location of the robot
-    * @return true/false
-    */
-    bool   getCurrentPosition(yarp::dev::Nav2D::Map2DLocation& loc) override;
-
-    /**
-    * Sets the initial pose for the localization algorithm which estimates the current position of the robot w.r.t world reference frame.
-    * @param loc the location of the robot
-    * @return true/false
-    */
-    bool   setInitialPose(const yarp::dev::Nav2D::Map2DLocation& loc) override;
-
-    /**
-    * Sets the initial pose for the localization algorithm which estimates the current position of the robot w.r.t world reference frame.
-    * @param loc the location of the robot
-    * @param cov the 3x3 covariance matrix
-    * @return true/false
-    */
-    virtual bool   setInitialPose(const yarp::dev::Nav2D::Map2DLocation& loc, const yarp::sig::Matrix& cov) override;
-
-    /**
-    * Gets the current position of the robot w.r.t world reference frame, plus the covariance
-    * @param loc the location of the robot
-    * @param cov the 3x3 covariance matrix
-    * @return true/false
-    */
-    virtual bool   getCurrentPosition(yarp::dev::Nav2D::Map2DLocation& loc, yarp::sig::Matrix& cov) override;
-
-    /**
-    * Gets the estimated odometry the robot, including its velocity expressed in the world and in the local reference frame.
-    * @param loc the estimated odometry.
-    * @return true/false
-    */
-    virtual bool   getEstimatedOdometry(yarp::dev::OdometryData& odom)  override;
-
-    /**
-    * Starts the localization service
-    * @return true/false
-    */
-    virtual bool   startLocalizationService() override;
-
-    /**
-    * Stops the localization service
-    * @return true/false
-    */
-    virtual bool   stopLocalizationService() override;
+    //methods inherited from yarp::dev::Nav2D::ILocalization2D
+    yarp::dev::ReturnValue   getLocalizationStatus(yarp::dev::Nav2D::LocalizationStatusEnum& status) override;
+    yarp::dev::ReturnValue   getEstimatedPoses(std::vector<yarp::dev::Nav2D::Map2DLocation>& poses) override;
+    yarp::dev::ReturnValue   getCurrentPosition(yarp::dev::Nav2D::Map2DLocation& loc) override;
+    yarp::dev::ReturnValue   setInitialPose(const yarp::dev::Nav2D::Map2DLocation& loc) override;
+    yarp::dev::ReturnValue   setInitialPose(const yarp::dev::Nav2D::Map2DLocation& loc, const yarp::sig::Matrix& cov) override;
+    yarp::dev::ReturnValue   getCurrentPosition(yarp::dev::Nav2D::Map2DLocation& loc, yarp::sig::Matrix& cov) override;
+    yarp::dev::ReturnValue   getEstimatedOdometry(yarp::dev::OdometryData& odom)  override;
+    yarp::dev::ReturnValue   startLocalizationService() override;
+    yarp::dev::ReturnValue   stopLocalizationService() override;
 };

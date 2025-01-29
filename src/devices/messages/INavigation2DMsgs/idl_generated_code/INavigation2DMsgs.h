@@ -24,6 +24,7 @@
 #include <yarp/dev/INavigation2D.h>
 #include <yarp/dev/Map2DLocation.h>
 #include <yarp/dev/Map2DPath.h>
+#include <yarp/dev/ReturnValue.h>
 
 class INavigation2DMsgs :
         public yarp::os::Wire
@@ -32,13 +33,13 @@ public:
     // Constructor
     INavigation2DMsgs();
 
-    virtual bool stop_navigation_RPC();
+    virtual yarp::dev::ReturnValue stop_navigation_RPC();
 
-    virtual bool resume_navigation_RPC();
+    virtual yarp::dev::ReturnValue resume_navigation_RPC();
 
-    virtual bool suspend_navigation_RPC(const double time_s);
+    virtual yarp::dev::ReturnValue suspend_navigation_RPC(const double time_s);
 
-    virtual bool recompute_current_navigation_path_RPC();
+    virtual yarp::dev::ReturnValue recompute_current_navigation_path_RPC();
 
     virtual return_get_navigation_status get_navigation_status_RPC();
 
@@ -48,21 +49,21 @@ public:
 
     virtual return_get_current_nav_map get_current_navigation_map_RPC(const yarp::dev::Nav2D::NavigationMapTypeEnum map_type);
 
-    virtual bool goto_target_by_absolute_location_RPC(const yarp::dev::Nav2D::Map2DLocation& loc);
+    virtual yarp::dev::ReturnValue goto_target_by_absolute_location_RPC(const yarp::dev::Nav2D::Map2DLocation& loc);
 
-    virtual bool follow_path_RPC(const yarp::dev::Nav2D::Map2DPath& path);
+    virtual yarp::dev::ReturnValue follow_path_RPC(const yarp::dev::Nav2D::Map2DPath& path);
 
-    virtual bool goto_target_by_relative_location1_RPC(const double x, const double y);
+    virtual yarp::dev::ReturnValue goto_target_by_relative_location1_RPC(const double x, const double y);
 
-    virtual bool goto_target_by_relative_location2_RPC(const double x, const double y, const double theta);
+    virtual yarp::dev::ReturnValue goto_target_by_relative_location2_RPC(const double x, const double y, const double theta);
 
     virtual return_get_abs_loc_of_curr_target get_absolute_location_of_current_target_RPC();
 
     virtual return_get_rel_loc_of_curr_target get_relative_location_of_current_target_RPC();
 
-    virtual bool goto_target_by_absolute_location_and_set_name_RPC(const yarp::dev::Nav2D::Map2DLocation& loc, const std::string& name);
+    virtual yarp::dev::ReturnValue goto_target_by_absolute_location_and_set_name_RPC(const yarp::dev::Nav2D::Map2DLocation& loc, const std::string& name);
 
-    virtual bool apply_velocity_command_RPC(const double x_vel, const double y_vel, const double theta_vel, const double timeout);
+    virtual yarp::dev::ReturnValue apply_velocity_command_RPC(const double x_vel, const double y_vel, const double theta_vel, const double timeout);
 
     virtual return_get_last_velocity_command get_last_velocity_command_RPC();
 

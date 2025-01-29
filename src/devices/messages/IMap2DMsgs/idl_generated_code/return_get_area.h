@@ -14,20 +14,21 @@
 #include <yarp/os/Wire.h>
 #include <yarp/os/idl/WireTypes.h>
 #include <yarp/dev/Map2DArea.h>
+#include <yarp/dev/ReturnValue.h>
 
 class return_get_area :
         public yarp::os::idl::WirePortable
 {
 public:
     // Fields
-    bool retval{false};
+    yarp::dev::ReturnValue retval{};
     yarp::dev::Nav2D::Map2DArea area{};
 
     // Default constructor
     return_get_area() = default;
 
     // Constructor with field values
-    return_get_area(const bool retval,
+    return_get_area(const yarp::dev::ReturnValue& retval,
                     const yarp::dev::Nav2D::Map2DArea& area);
 
     // Read structure on a Wire

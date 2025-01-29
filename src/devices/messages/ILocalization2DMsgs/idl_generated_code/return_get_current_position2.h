@@ -14,6 +14,7 @@
 #include <yarp/os/Wire.h>
 #include <yarp/os/idl/WireTypes.h>
 #include <yarp/dev/Map2DLocation.h>
+#include <yarp/dev/ReturnValue.h>
 #include <yarp/sig/Matrix.h>
 
 class return_get_current_position2 :
@@ -21,7 +22,7 @@ class return_get_current_position2 :
 {
 public:
     // Fields
-    bool ret{false};
+    yarp::dev::ReturnValue ret{};
     yarp::dev::Nav2D::Map2DLocation loc{};
     yarp::sig::Matrix cov{};
 
@@ -29,7 +30,7 @@ public:
     return_get_current_position2() = default;
 
     // Constructor with field values
-    return_get_current_position2(const bool ret,
+    return_get_current_position2(const yarp::dev::ReturnValue& ret,
                                  const yarp::dev::Nav2D::Map2DLocation& loc,
                                  const yarp::sig::Matrix& cov);
 

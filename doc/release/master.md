@@ -39,8 +39,33 @@ New Features
 #### `libYARP_dev`
 
 * added new class `yarp::dev::ReturnValue`
-* modified interfaces `yarp::dev::ISpeechSynthesizer`,`yarp::dev::ISpeechTranscription` to use the new class ReturnValue.
-
+* The following interfaces have been modified to the new class ReturnValue:
+  ISpeechSynthesizer
+  ISpeechTranscription
+  ILocalization2D
+  IMap2D
+  INavigation2D
+  IOdometry2D
+  
 #### `devices`
 
-* modified devices implementing `yarp::dev::ISpeechSynthesizer`,`yarp::dev::ISpeechTranscription` to use the new class ReturnValue.
+* Updated all devices which use the interfaces employing the new class `ReturnValue`:
+  FakeSpeechSynthesizer
+  FakeSpeechTranscription
+  FakeNavigation
+  FakeLocalizer
+  FakeOdometry2D
+  Map2DStorage
+  SpeechTranscription_nws_yarp
+  SpeechTranscription_nwc_yarp
+  SpeechSynthesizer_nws_yarp
+  SpeechSynthesizer_nwc_yarp
+  Localization2D_nws_yarp
+  Localization2D_nwc_yarp
+  Map2D_nws_yarp
+  Map2D_nwc_yarp
+  MobileBaseVelocityControl_nws_yarp
+  MobileBaseVelocityControl_nwc_yarp
+  Navigation2D_nwc_yarp
+  Navigation2D_nws_yarp
+  Odometry2D_nws_yarp

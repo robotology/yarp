@@ -55,10 +55,10 @@ public:
         bool write(const yarp::os::idl::WireWriter& writer) const override;
         bool read(yarp::os::idl::WireReader& reader) override;
 
-        bool return_helper{false};
+        yarp::dev::ReturnValue return_helper{};
     };
 
-    using funcptr_t = bool (*)();
+    using funcptr_t = yarp::dev::ReturnValue (*)();
     void call(ILocalization2DMsgs* ptr);
 
     Command cmd;
@@ -68,7 +68,7 @@ public:
     static constexpr size_t s_tag_len{4};
     static constexpr size_t s_cmd_len{4};
     static constexpr size_t s_reply_len{1};
-    static constexpr const char* s_prototype{"bool ILocalization2DMsgs::start_localization_service_RPC()"};
+    static constexpr const char* s_prototype{"yarp::dev::ReturnValue ILocalization2DMsgs::start_localization_service_RPC()"};
     static constexpr const char* s_help{""};
 };
 
@@ -113,10 +113,10 @@ public:
         bool write(const yarp::os::idl::WireWriter& writer) const override;
         bool read(yarp::os::idl::WireReader& reader) override;
 
-        bool return_helper{false};
+        yarp::dev::ReturnValue return_helper{};
     };
 
-    using funcptr_t = bool (*)();
+    using funcptr_t = yarp::dev::ReturnValue (*)();
     void call(ILocalization2DMsgs* ptr);
 
     Command cmd;
@@ -126,7 +126,7 @@ public:
     static constexpr size_t s_tag_len{4};
     static constexpr size_t s_cmd_len{4};
     static constexpr size_t s_reply_len{1};
-    static constexpr const char* s_prototype{"bool ILocalization2DMsgs::stop_localization_service_RPC()"};
+    static constexpr const char* s_prototype{"yarp::dev::ReturnValue ILocalization2DMsgs::stop_localization_service_RPC()"};
     static constexpr const char* s_help{""};
 };
 
@@ -466,10 +466,10 @@ public:
         bool write(const yarp::os::idl::WireWriter& writer) const override;
         bool read(yarp::os::idl::WireReader& reader) override;
 
-        bool return_helper{false};
+        yarp::dev::ReturnValue return_helper{};
     };
 
-    using funcptr_t = bool (*)(const yarp::dev::Nav2D::Map2DLocation&);
+    using funcptr_t = yarp::dev::ReturnValue (*)(const yarp::dev::Nav2D::Map2DLocation&);
     void call(ILocalization2DMsgs* ptr);
 
     Command cmd;
@@ -479,7 +479,7 @@ public:
     static constexpr size_t s_tag_len{4};
     static constexpr size_t s_cmd_len{5};
     static constexpr size_t s_reply_len{1};
-    static constexpr const char* s_prototype{"bool ILocalization2DMsgs::set_initial_pose1_RPC(const yarp::dev::Nav2D::Map2DLocation& loc)"};
+    static constexpr const char* s_prototype{"yarp::dev::ReturnValue ILocalization2DMsgs::set_initial_pose1_RPC(const yarp::dev::Nav2D::Map2DLocation& loc)"};
     static constexpr const char* s_help{""};
 };
 
@@ -530,10 +530,10 @@ public:
         bool write(const yarp::os::idl::WireWriter& writer) const override;
         bool read(yarp::os::idl::WireReader& reader) override;
 
-        bool return_helper{false};
+        yarp::dev::ReturnValue return_helper{};
     };
 
-    using funcptr_t = bool (*)(const yarp::dev::Nav2D::Map2DLocation&, const yarp::sig::Matrix&);
+    using funcptr_t = yarp::dev::ReturnValue (*)(const yarp::dev::Nav2D::Map2DLocation&, const yarp::sig::Matrix&);
     void call(ILocalization2DMsgs* ptr);
 
     Command cmd;
@@ -543,7 +543,7 @@ public:
     static constexpr size_t s_tag_len{4};
     static constexpr size_t s_cmd_len{6};
     static constexpr size_t s_reply_len{1};
-    static constexpr const char* s_prototype{"bool ILocalization2DMsgs::set_initial_pose2_RPC(const yarp::dev::Nav2D::Map2DLocation& loc, const yarp::sig::Matrix& cov)"};
+    static constexpr const char* s_prototype{"yarp::dev::ReturnValue ILocalization2DMsgs::set_initial_pose2_RPC(const yarp::dev::Nav2D::Map2DLocation& loc, const yarp::sig::Matrix& cov)"};
     static constexpr const char* s_help{""};
 };
 
@@ -649,10 +649,7 @@ bool ILocalization2DMsgs_start_localization_service_RPC_helper::Reply::read(yarp
 bool ILocalization2DMsgs_start_localization_service_RPC_helper::Reply::write(const yarp::os::idl::WireWriter& writer) const
 {
     if (!writer.isNull()) {
-        if (!writer.writeListHeader(s_reply_len)) {
-            return false;
-        }
-        if (!writer.writeBool(return_helper)) {
+        if (!writer.write(return_helper)) {
             return false;
         }
     }
@@ -661,14 +658,11 @@ bool ILocalization2DMsgs_start_localization_service_RPC_helper::Reply::write(con
 
 bool ILocalization2DMsgs_start_localization_service_RPC_helper::Reply::read(yarp::os::idl::WireReader& reader)
 {
-    if (!reader.readListReturn()) {
-        return false;
-    }
     if (reader.noMore()) {
         reader.fail();
         return false;
     }
-    if (!reader.readBool(return_helper)) {
+    if (!reader.read(return_helper)) {
         reader.fail();
         return false;
     }
@@ -782,10 +776,7 @@ bool ILocalization2DMsgs_stop_localization_service_RPC_helper::Reply::read(yarp:
 bool ILocalization2DMsgs_stop_localization_service_RPC_helper::Reply::write(const yarp::os::idl::WireWriter& writer) const
 {
     if (!writer.isNull()) {
-        if (!writer.writeListHeader(s_reply_len)) {
-            return false;
-        }
-        if (!writer.writeBool(return_helper)) {
+        if (!writer.write(return_helper)) {
             return false;
         }
     }
@@ -794,14 +785,11 @@ bool ILocalization2DMsgs_stop_localization_service_RPC_helper::Reply::write(cons
 
 bool ILocalization2DMsgs_stop_localization_service_RPC_helper::Reply::read(yarp::os::idl::WireReader& reader)
 {
-    if (!reader.readListReturn()) {
-        return false;
-    }
     if (reader.noMore()) {
         reader.fail();
         return false;
     }
-    if (!reader.readBool(return_helper)) {
+    if (!reader.read(return_helper)) {
         reader.fail();
         return false;
     }
@@ -1601,10 +1589,7 @@ bool ILocalization2DMsgs_set_initial_pose1_RPC_helper::Reply::read(yarp::os::Con
 bool ILocalization2DMsgs_set_initial_pose1_RPC_helper::Reply::write(const yarp::os::idl::WireWriter& writer) const
 {
     if (!writer.isNull()) {
-        if (!writer.writeListHeader(s_reply_len)) {
-            return false;
-        }
-        if (!writer.writeBool(return_helper)) {
+        if (!writer.write(return_helper)) {
             return false;
         }
     }
@@ -1613,14 +1598,11 @@ bool ILocalization2DMsgs_set_initial_pose1_RPC_helper::Reply::write(const yarp::
 
 bool ILocalization2DMsgs_set_initial_pose1_RPC_helper::Reply::read(yarp::os::idl::WireReader& reader)
 {
-    if (!reader.readListReturn()) {
-        return false;
-    }
     if (reader.noMore()) {
         reader.fail();
         return false;
     }
-    if (!reader.readBool(return_helper)) {
+    if (!reader.read(return_helper)) {
         reader.fail();
         return false;
     }
@@ -1767,10 +1749,7 @@ bool ILocalization2DMsgs_set_initial_pose2_RPC_helper::Reply::read(yarp::os::Con
 bool ILocalization2DMsgs_set_initial_pose2_RPC_helper::Reply::write(const yarp::os::idl::WireWriter& writer) const
 {
     if (!writer.isNull()) {
-        if (!writer.writeListHeader(s_reply_len)) {
-            return false;
-        }
-        if (!writer.writeBool(return_helper)) {
+        if (!writer.write(return_helper)) {
             return false;
         }
     }
@@ -1779,14 +1758,11 @@ bool ILocalization2DMsgs_set_initial_pose2_RPC_helper::Reply::write(const yarp::
 
 bool ILocalization2DMsgs_set_initial_pose2_RPC_helper::Reply::read(yarp::os::idl::WireReader& reader)
 {
-    if (!reader.readListReturn()) {
-        return false;
-    }
     if (reader.noMore()) {
         reader.fail();
         return false;
     }
-    if (!reader.readBool(return_helper)) {
+    if (!reader.read(return_helper)) {
         reader.fail();
         return false;
     }
@@ -1804,24 +1780,24 @@ ILocalization2DMsgs::ILocalization2DMsgs()
     yarp().setOwner(*this);
 }
 
-bool ILocalization2DMsgs::start_localization_service_RPC()
+yarp::dev::ReturnValue ILocalization2DMsgs::start_localization_service_RPC()
 {
     if (!yarp().canWrite()) {
         yError("Missing server method '%s'?", ILocalization2DMsgs_start_localization_service_RPC_helper::s_prototype);
     }
     ILocalization2DMsgs_start_localization_service_RPC_helper helper{};
     bool ok = yarp().write(helper, helper);
-    return ok ? helper.reply.return_helper : bool{};
+    return ok ? helper.reply.return_helper : yarp::dev::ReturnValue{};
 }
 
-bool ILocalization2DMsgs::stop_localization_service_RPC()
+yarp::dev::ReturnValue ILocalization2DMsgs::stop_localization_service_RPC()
 {
     if (!yarp().canWrite()) {
         yError("Missing server method '%s'?", ILocalization2DMsgs_stop_localization_service_RPC_helper::s_prototype);
     }
     ILocalization2DMsgs_stop_localization_service_RPC_helper helper{};
     bool ok = yarp().write(helper, helper);
-    return ok ? helper.reply.return_helper : bool{};
+    return ok ? helper.reply.return_helper : yarp::dev::ReturnValue{};
 }
 
 return_get_localization_status ILocalization2DMsgs::get_localization_status_RPC()
@@ -1874,24 +1850,24 @@ return_get_estimated_odometry ILocalization2DMsgs::get_estimated_odometry_RPC()
     return ok ? helper.reply.return_helper : return_get_estimated_odometry{};
 }
 
-bool ILocalization2DMsgs::set_initial_pose1_RPC(const yarp::dev::Nav2D::Map2DLocation& loc)
+yarp::dev::ReturnValue ILocalization2DMsgs::set_initial_pose1_RPC(const yarp::dev::Nav2D::Map2DLocation& loc)
 {
     if (!yarp().canWrite()) {
         yError("Missing server method '%s'?", ILocalization2DMsgs_set_initial_pose1_RPC_helper::s_prototype);
     }
     ILocalization2DMsgs_set_initial_pose1_RPC_helper helper{loc};
     bool ok = yarp().write(helper, helper);
-    return ok ? helper.reply.return_helper : bool{};
+    return ok ? helper.reply.return_helper : yarp::dev::ReturnValue{};
 }
 
-bool ILocalization2DMsgs::set_initial_pose2_RPC(const yarp::dev::Nav2D::Map2DLocation& loc, const yarp::sig::Matrix& cov)
+yarp::dev::ReturnValue ILocalization2DMsgs::set_initial_pose2_RPC(const yarp::dev::Nav2D::Map2DLocation& loc, const yarp::sig::Matrix& cov)
 {
     if (!yarp().canWrite()) {
         yError("Missing server method '%s'?", ILocalization2DMsgs_set_initial_pose2_RPC_helper::s_prototype);
     }
     ILocalization2DMsgs_set_initial_pose2_RPC_helper helper{loc, cov};
     bool ok = yarp().write(helper, helper);
-    return ok ? helper.reply.return_helper : bool{};
+    return ok ? helper.reply.return_helper : yarp::dev::ReturnValue{};
 }
 
 // help method

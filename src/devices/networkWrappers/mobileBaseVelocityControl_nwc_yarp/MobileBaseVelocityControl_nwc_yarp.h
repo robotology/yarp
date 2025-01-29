@@ -47,8 +47,8 @@ public:
     bool close() override;
 
     /* The following methods belong to INavigation2D interface */
-    bool   applyVelocityCommand(double x_vel, double y_vel, double theta_vel, double timeout = 0.1) override;
-    bool   getLastVelocityCommand(double& x_vel, double& y_vel, double& theta_vel) override;
+    yarp::dev::ReturnValue   applyVelocityCommand(double x_vel, double y_vel, double theta_vel, double timeout = 0.1) override;
+    yarp::dev::ReturnValue   getLastVelocityCommand(double& x_vel, double& y_vel, double& theta_vel) override;
 };
 
 #endif // YARP_DEV_MOBILEBASEVELOCITYCONTROL_NWC_YARP

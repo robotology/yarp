@@ -28,6 +28,7 @@
 #include <yarp/dev/Map2DLocation.h>
 #include <yarp/dev/Map2DPath.h>
 #include <yarp/dev/MapGrid2D.h>
+#include <yarp/dev/ReturnValue.h>
 
 class IMap2DMsgs :
         public yarp::os::Wire
@@ -36,21 +37,21 @@ public:
     // Constructor
     IMap2DMsgs();
 
-    virtual bool clear_all_maps_RPC();
+    virtual yarp::dev::ReturnValue clear_all_maps_RPC();
 
-    virtual bool store_map_RPC(const yarp::dev::Nav2D::MapGrid2D& themap);
+    virtual yarp::dev::ReturnValue store_map_RPC(const yarp::dev::Nav2D::MapGrid2D& themap);
 
     virtual return_get_map get_map_RPC(const std::string& map_name);
 
     virtual return_get_map_names get_map_names_RPC();
 
-    virtual bool remove_map_RPC(const std::string& map_name);
+    virtual yarp::dev::ReturnValue remove_map_RPC(const std::string& map_name);
 
-    virtual bool store_location_RPC(const std::string& location_name, const yarp::dev::Nav2D::Map2DLocation& loc);
+    virtual yarp::dev::ReturnValue store_location_RPC(const std::string& location_name, const yarp::dev::Nav2D::Map2DLocation& loc);
 
-    virtual bool store_area_RPC(const std::string& area_name, const yarp::dev::Nav2D::Map2DArea& area);
+    virtual yarp::dev::ReturnValue store_area_RPC(const std::string& area_name, const yarp::dev::Nav2D::Map2DArea& area);
 
-    virtual bool store_path_RPC(const std::string& path_name, const yarp::dev::Nav2D::Map2DPath& path);
+    virtual yarp::dev::ReturnValue store_path_RPC(const std::string& path_name, const yarp::dev::Nav2D::Map2DPath& path);
 
     virtual return_get_location get_location_RPC(const std::string& location_name);
 
@@ -70,41 +71,41 @@ public:
 
     virtual return_get_all_paths get_all_paths_RPC();
 
-    virtual bool rename_location_RPC(const std::string& original_name, const std::string& new_name);
+    virtual yarp::dev::ReturnValue rename_location_RPC(const std::string& original_name, const std::string& new_name);
 
-    virtual bool delete_location_RPC(const std::string& location_name);
+    virtual yarp::dev::ReturnValue delete_location_RPC(const std::string& location_name);
 
-    virtual bool delete_path_RPC(const std::string& path_name);
+    virtual yarp::dev::ReturnValue delete_path_RPC(const std::string& path_name);
 
-    virtual bool rename_area_RPC(const std::string& original_name, const std::string& new_name);
+    virtual yarp::dev::ReturnValue rename_area_RPC(const std::string& original_name, const std::string& new_name);
 
-    virtual bool rename_path_RPC(const std::string& original_name, const std::string& new_name);
+    virtual yarp::dev::ReturnValue rename_path_RPC(const std::string& original_name, const std::string& new_name);
 
-    virtual bool delete_area_RPC(const std::string& area_name);
+    virtual yarp::dev::ReturnValue delete_area_RPC(const std::string& area_name);
 
-    virtual bool clear_all_locations_RPC();
+    virtual yarp::dev::ReturnValue clear_all_locations_RPC();
 
-    virtual bool clear_all_areas_RPC();
+    virtual yarp::dev::ReturnValue clear_all_areas_RPC();
 
-    virtual bool clear_all_paths_RPC();
+    virtual yarp::dev::ReturnValue clear_all_paths_RPC();
 
-    virtual bool clear_all_maps_temporary_flags_RPC();
+    virtual yarp::dev::ReturnValue clear_all_maps_temporary_flags_RPC();
 
-    virtual bool clear_map_temporary_flags_RPC(const std::string& map_name);
+    virtual yarp::dev::ReturnValue clear_map_temporary_flags_RPC(const std::string& map_name);
 
-    virtual bool save_maps_collection_RPC(const std::string& maps_collection_file);
+    virtual yarp::dev::ReturnValue save_maps_collection_RPC(const std::string& maps_collection_file);
 
-    virtual bool load_maps_collection_RPC(const std::string& maps_collection_file);
+    virtual yarp::dev::ReturnValue load_maps_collection_RPC(const std::string& maps_collection_file);
 
-    virtual bool save_locations_and_extras_RPC(const std::string& locations_collection_file);
+    virtual yarp::dev::ReturnValue save_locations_and_extras_RPC(const std::string& locations_collection_file);
 
-    virtual bool load_locations_and_extras_RPC(const std::string& locations_collection_file);
+    virtual yarp::dev::ReturnValue load_locations_and_extras_RPC(const std::string& locations_collection_file);
 
-    virtual bool save_map_to_disk_RPC(const std::string& map_name, const std::string& file_name);
+    virtual yarp::dev::ReturnValue save_map_to_disk_RPC(const std::string& map_name, const std::string& file_name);
 
-    virtual bool load_map_from_disk_RPC(const std::string& file_name);
+    virtual yarp::dev::ReturnValue load_map_from_disk_RPC(const std::string& file_name);
 
-    virtual bool enable_maps_compression_RPC(const bool enable_compression);
+    virtual yarp::dev::ReturnValue enable_maps_compression_RPC(const bool enable_compression);
 
     // help method
     virtual std::vector<std::string> help(const std::string& functionName = "--all");

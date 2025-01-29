@@ -55,10 +55,10 @@ public:
         bool write(const yarp::os::idl::WireWriter& writer) const override;
         bool read(yarp::os::idl::WireReader& reader) override;
 
-        bool return_helper{false};
+        yarp::dev::ReturnValue return_helper{};
     };
 
-    using funcptr_t = bool (*)();
+    using funcptr_t = yarp::dev::ReturnValue (*)();
     void call(INavigation2DMsgs* ptr);
 
     Command cmd;
@@ -68,7 +68,7 @@ public:
     static constexpr size_t s_tag_len{3};
     static constexpr size_t s_cmd_len{3};
     static constexpr size_t s_reply_len{1};
-    static constexpr const char* s_prototype{"bool INavigation2DMsgs::stop_navigation_RPC()"};
+    static constexpr const char* s_prototype{"yarp::dev::ReturnValue INavigation2DMsgs::stop_navigation_RPC()"};
     static constexpr const char* s_help{""};
 };
 
@@ -113,10 +113,10 @@ public:
         bool write(const yarp::os::idl::WireWriter& writer) const override;
         bool read(yarp::os::idl::WireReader& reader) override;
 
-        bool return_helper{false};
+        yarp::dev::ReturnValue return_helper{};
     };
 
-    using funcptr_t = bool (*)();
+    using funcptr_t = yarp::dev::ReturnValue (*)();
     void call(INavigation2DMsgs* ptr);
 
     Command cmd;
@@ -126,7 +126,7 @@ public:
     static constexpr size_t s_tag_len{3};
     static constexpr size_t s_cmd_len{3};
     static constexpr size_t s_reply_len{1};
-    static constexpr const char* s_prototype{"bool INavigation2DMsgs::resume_navigation_RPC()"};
+    static constexpr const char* s_prototype{"yarp::dev::ReturnValue INavigation2DMsgs::resume_navigation_RPC()"};
     static constexpr const char* s_help{""};
 };
 
@@ -176,10 +176,10 @@ public:
         bool write(const yarp::os::idl::WireWriter& writer) const override;
         bool read(yarp::os::idl::WireReader& reader) override;
 
-        bool return_helper{false};
+        yarp::dev::ReturnValue return_helper{};
     };
 
-    using funcptr_t = bool (*)(const double);
+    using funcptr_t = yarp::dev::ReturnValue (*)(const double);
     void call(INavigation2DMsgs* ptr);
 
     Command cmd;
@@ -189,7 +189,7 @@ public:
     static constexpr size_t s_tag_len{3};
     static constexpr size_t s_cmd_len{4};
     static constexpr size_t s_reply_len{1};
-    static constexpr const char* s_prototype{"bool INavigation2DMsgs::suspend_navigation_RPC(const double time_s)"};
+    static constexpr const char* s_prototype{"yarp::dev::ReturnValue INavigation2DMsgs::suspend_navigation_RPC(const double time_s)"};
     static constexpr const char* s_help{""};
 };
 
@@ -234,10 +234,10 @@ public:
         bool write(const yarp::os::idl::WireWriter& writer) const override;
         bool read(yarp::os::idl::WireReader& reader) override;
 
-        bool return_helper{false};
+        yarp::dev::ReturnValue return_helper{};
     };
 
-    using funcptr_t = bool (*)();
+    using funcptr_t = yarp::dev::ReturnValue (*)();
     void call(INavigation2DMsgs* ptr);
 
     Command cmd;
@@ -247,7 +247,7 @@ public:
     static constexpr size_t s_tag_len{5};
     static constexpr size_t s_cmd_len{5};
     static constexpr size_t s_reply_len{1};
-    static constexpr const char* s_prototype{"bool INavigation2DMsgs::recompute_current_navigation_path_RPC()"};
+    static constexpr const char* s_prototype{"yarp::dev::ReturnValue INavigation2DMsgs::recompute_current_navigation_path_RPC()"};
     static constexpr const char* s_help{""};
 };
 
@@ -539,10 +539,10 @@ public:
         bool write(const yarp::os::idl::WireWriter& writer) const override;
         bool read(yarp::os::idl::WireReader& reader) override;
 
-        bool return_helper{false};
+        yarp::dev::ReturnValue return_helper{};
     };
 
-    using funcptr_t = bool (*)(const yarp::dev::Nav2D::Map2DLocation&);
+    using funcptr_t = yarp::dev::ReturnValue (*)(const yarp::dev::Nav2D::Map2DLocation&);
     void call(INavigation2DMsgs* ptr);
 
     Command cmd;
@@ -552,7 +552,7 @@ public:
     static constexpr size_t s_tag_len{6};
     static constexpr size_t s_cmd_len{7};
     static constexpr size_t s_reply_len{1};
-    static constexpr const char* s_prototype{"bool INavigation2DMsgs::goto_target_by_absolute_location_RPC(const yarp::dev::Nav2D::Map2DLocation& loc)"};
+    static constexpr const char* s_prototype{"yarp::dev::ReturnValue INavigation2DMsgs::goto_target_by_absolute_location_RPC(const yarp::dev::Nav2D::Map2DLocation& loc)"};
     static constexpr const char* s_help{""};
 };
 
@@ -602,10 +602,10 @@ public:
         bool write(const yarp::os::idl::WireWriter& writer) const override;
         bool read(yarp::os::idl::WireReader& reader) override;
 
-        bool return_helper{false};
+        yarp::dev::ReturnValue return_helper{};
     };
 
-    using funcptr_t = bool (*)(const yarp::dev::Nav2D::Map2DPath&);
+    using funcptr_t = yarp::dev::ReturnValue (*)(const yarp::dev::Nav2D::Map2DPath&);
     void call(INavigation2DMsgs* ptr);
 
     Command cmd;
@@ -615,7 +615,7 @@ public:
     static constexpr size_t s_tag_len{3};
     static constexpr size_t s_cmd_len{4};
     static constexpr size_t s_reply_len{1};
-    static constexpr const char* s_prototype{"bool INavigation2DMsgs::follow_path_RPC(const yarp::dev::Nav2D::Map2DPath& path)"};
+    static constexpr const char* s_prototype{"yarp::dev::ReturnValue INavigation2DMsgs::follow_path_RPC(const yarp::dev::Nav2D::Map2DPath& path)"};
     static constexpr const char* s_help{""};
 };
 
@@ -666,10 +666,10 @@ public:
         bool write(const yarp::os::idl::WireWriter& writer) const override;
         bool read(yarp::os::idl::WireReader& reader) override;
 
-        bool return_helper{false};
+        yarp::dev::ReturnValue return_helper{};
     };
 
-    using funcptr_t = bool (*)(const double, const double);
+    using funcptr_t = yarp::dev::ReturnValue (*)(const double, const double);
     void call(INavigation2DMsgs* ptr);
 
     Command cmd;
@@ -679,7 +679,7 @@ public:
     static constexpr size_t s_tag_len{6};
     static constexpr size_t s_cmd_len{8};
     static constexpr size_t s_reply_len{1};
-    static constexpr const char* s_prototype{"bool INavigation2DMsgs::goto_target_by_relative_location1_RPC(const double x, const double y)"};
+    static constexpr const char* s_prototype{"yarp::dev::ReturnValue INavigation2DMsgs::goto_target_by_relative_location1_RPC(const double x, const double y)"};
     static constexpr const char* s_help{""};
 };
 
@@ -731,10 +731,10 @@ public:
         bool write(const yarp::os::idl::WireWriter& writer) const override;
         bool read(yarp::os::idl::WireReader& reader) override;
 
-        bool return_helper{false};
+        yarp::dev::ReturnValue return_helper{};
     };
 
-    using funcptr_t = bool (*)(const double, const double, const double);
+    using funcptr_t = yarp::dev::ReturnValue (*)(const double, const double, const double);
     void call(INavigation2DMsgs* ptr);
 
     Command cmd;
@@ -744,7 +744,7 @@ public:
     static constexpr size_t s_tag_len{6};
     static constexpr size_t s_cmd_len{9};
     static constexpr size_t s_reply_len{1};
-    static constexpr const char* s_prototype{"bool INavigation2DMsgs::goto_target_by_relative_location2_RPC(const double x, const double y, const double theta)"};
+    static constexpr const char* s_prototype{"yarp::dev::ReturnValue INavigation2DMsgs::goto_target_by_relative_location2_RPC(const double x, const double y, const double theta)"};
     static constexpr const char* s_help{""};
 };
 
@@ -911,10 +911,10 @@ public:
         bool write(const yarp::os::idl::WireWriter& writer) const override;
         bool read(yarp::os::idl::WireReader& reader) override;
 
-        bool return_helper{false};
+        yarp::dev::ReturnValue return_helper{};
     };
 
-    using funcptr_t = bool (*)(const yarp::dev::Nav2D::Map2DLocation&, const std::string&);
+    using funcptr_t = yarp::dev::ReturnValue (*)(const yarp::dev::Nav2D::Map2DLocation&, const std::string&);
     void call(INavigation2DMsgs* ptr);
 
     Command cmd;
@@ -924,7 +924,7 @@ public:
     static constexpr size_t s_tag_len{9};
     static constexpr size_t s_cmd_len{11};
     static constexpr size_t s_reply_len{1};
-    static constexpr const char* s_prototype{"bool INavigation2DMsgs::goto_target_by_absolute_location_and_set_name_RPC(const yarp::dev::Nav2D::Map2DLocation& loc, const std::string& name)"};
+    static constexpr const char* s_prototype{"yarp::dev::ReturnValue INavigation2DMsgs::goto_target_by_absolute_location_and_set_name_RPC(const yarp::dev::Nav2D::Map2DLocation& loc, const std::string& name)"};
     static constexpr const char* s_help{""};
 };
 
@@ -977,10 +977,10 @@ public:
         bool write(const yarp::os::idl::WireWriter& writer) const override;
         bool read(yarp::os::idl::WireReader& reader) override;
 
-        bool return_helper{false};
+        yarp::dev::ReturnValue return_helper{};
     };
 
-    using funcptr_t = bool (*)(const double, const double, const double, const double);
+    using funcptr_t = yarp::dev::ReturnValue (*)(const double, const double, const double, const double);
     void call(INavigation2DMsgs* ptr);
 
     Command cmd;
@@ -990,7 +990,7 @@ public:
     static constexpr size_t s_tag_len{4};
     static constexpr size_t s_cmd_len{8};
     static constexpr size_t s_reply_len{1};
-    static constexpr const char* s_prototype{"bool INavigation2DMsgs::apply_velocity_command_RPC(const double x_vel, const double y_vel, const double theta_vel, const double timeout)"};
+    static constexpr const char* s_prototype{"yarp::dev::ReturnValue INavigation2DMsgs::apply_velocity_command_RPC(const double x_vel, const double y_vel, const double theta_vel, const double timeout)"};
     static constexpr const char* s_help{""};
 };
 
@@ -1212,10 +1212,7 @@ bool INavigation2DMsgs_stop_navigation_RPC_helper::Reply::read(yarp::os::Connect
 bool INavigation2DMsgs_stop_navigation_RPC_helper::Reply::write(const yarp::os::idl::WireWriter& writer) const
 {
     if (!writer.isNull()) {
-        if (!writer.writeListHeader(s_reply_len)) {
-            return false;
-        }
-        if (!writer.writeBool(return_helper)) {
+        if (!writer.write(return_helper)) {
             return false;
         }
     }
@@ -1224,14 +1221,11 @@ bool INavigation2DMsgs_stop_navigation_RPC_helper::Reply::write(const yarp::os::
 
 bool INavigation2DMsgs_stop_navigation_RPC_helper::Reply::read(yarp::os::idl::WireReader& reader)
 {
-    if (!reader.readListReturn()) {
-        return false;
-    }
     if (reader.noMore()) {
         reader.fail();
         return false;
     }
-    if (!reader.readBool(return_helper)) {
+    if (!reader.read(return_helper)) {
         reader.fail();
         return false;
     }
@@ -1345,10 +1339,7 @@ bool INavigation2DMsgs_resume_navigation_RPC_helper::Reply::read(yarp::os::Conne
 bool INavigation2DMsgs_resume_navigation_RPC_helper::Reply::write(const yarp::os::idl::WireWriter& writer) const
 {
     if (!writer.isNull()) {
-        if (!writer.writeListHeader(s_reply_len)) {
-            return false;
-        }
-        if (!writer.writeBool(return_helper)) {
+        if (!writer.write(return_helper)) {
             return false;
         }
     }
@@ -1357,14 +1348,11 @@ bool INavigation2DMsgs_resume_navigation_RPC_helper::Reply::write(const yarp::os
 
 bool INavigation2DMsgs_resume_navigation_RPC_helper::Reply::read(yarp::os::idl::WireReader& reader)
 {
-    if (!reader.readListReturn()) {
-        return false;
-    }
     if (reader.noMore()) {
         reader.fail();
         return false;
     }
-    if (!reader.readBool(return_helper)) {
+    if (!reader.read(return_helper)) {
         reader.fail();
         return false;
     }
@@ -1499,10 +1487,7 @@ bool INavigation2DMsgs_suspend_navigation_RPC_helper::Reply::read(yarp::os::Conn
 bool INavigation2DMsgs_suspend_navigation_RPC_helper::Reply::write(const yarp::os::idl::WireWriter& writer) const
 {
     if (!writer.isNull()) {
-        if (!writer.writeListHeader(s_reply_len)) {
-            return false;
-        }
-        if (!writer.writeBool(return_helper)) {
+        if (!writer.write(return_helper)) {
             return false;
         }
     }
@@ -1511,14 +1496,11 @@ bool INavigation2DMsgs_suspend_navigation_RPC_helper::Reply::write(const yarp::o
 
 bool INavigation2DMsgs_suspend_navigation_RPC_helper::Reply::read(yarp::os::idl::WireReader& reader)
 {
-    if (!reader.readListReturn()) {
-        return false;
-    }
     if (reader.noMore()) {
         reader.fail();
         return false;
     }
-    if (!reader.readBool(return_helper)) {
+    if (!reader.read(return_helper)) {
         reader.fail();
         return false;
     }
@@ -1632,10 +1614,7 @@ bool INavigation2DMsgs_recompute_current_navigation_path_RPC_helper::Reply::read
 bool INavigation2DMsgs_recompute_current_navigation_path_RPC_helper::Reply::write(const yarp::os::idl::WireWriter& writer) const
 {
     if (!writer.isNull()) {
-        if (!writer.writeListHeader(s_reply_len)) {
-            return false;
-        }
-        if (!writer.writeBool(return_helper)) {
+        if (!writer.write(return_helper)) {
             return false;
         }
     }
@@ -1644,14 +1623,11 @@ bool INavigation2DMsgs_recompute_current_navigation_path_RPC_helper::Reply::writ
 
 bool INavigation2DMsgs_recompute_current_navigation_path_RPC_helper::Reply::read(yarp::os::idl::WireReader& reader)
 {
-    if (!reader.readListReturn()) {
-        return false;
-    }
     if (reader.noMore()) {
         reader.fail();
         return false;
     }
-    if (!reader.readBool(return_helper)) {
+    if (!reader.read(return_helper)) {
         reader.fail();
         return false;
     }
@@ -2364,10 +2340,7 @@ bool INavigation2DMsgs_goto_target_by_absolute_location_RPC_helper::Reply::read(
 bool INavigation2DMsgs_goto_target_by_absolute_location_RPC_helper::Reply::write(const yarp::os::idl::WireWriter& writer) const
 {
     if (!writer.isNull()) {
-        if (!writer.writeListHeader(s_reply_len)) {
-            return false;
-        }
-        if (!writer.writeBool(return_helper)) {
+        if (!writer.write(return_helper)) {
             return false;
         }
     }
@@ -2376,14 +2349,11 @@ bool INavigation2DMsgs_goto_target_by_absolute_location_RPC_helper::Reply::write
 
 bool INavigation2DMsgs_goto_target_by_absolute_location_RPC_helper::Reply::read(yarp::os::idl::WireReader& reader)
 {
-    if (!reader.readListReturn()) {
-        return false;
-    }
     if (reader.noMore()) {
         reader.fail();
         return false;
     }
-    if (!reader.readBool(return_helper)) {
+    if (!reader.read(return_helper)) {
         reader.fail();
         return false;
     }
@@ -2518,10 +2488,7 @@ bool INavigation2DMsgs_follow_path_RPC_helper::Reply::read(yarp::os::ConnectionR
 bool INavigation2DMsgs_follow_path_RPC_helper::Reply::write(const yarp::os::idl::WireWriter& writer) const
 {
     if (!writer.isNull()) {
-        if (!writer.writeListHeader(s_reply_len)) {
-            return false;
-        }
-        if (!writer.writeBool(return_helper)) {
+        if (!writer.write(return_helper)) {
             return false;
         }
     }
@@ -2530,14 +2497,11 @@ bool INavigation2DMsgs_follow_path_RPC_helper::Reply::write(const yarp::os::idl:
 
 bool INavigation2DMsgs_follow_path_RPC_helper::Reply::read(yarp::os::idl::WireReader& reader)
 {
-    if (!reader.readListReturn()) {
-        return false;
-    }
     if (reader.noMore()) {
         reader.fail();
         return false;
     }
-    if (!reader.readBool(return_helper)) {
+    if (!reader.read(return_helper)) {
         reader.fail();
         return false;
     }
@@ -2684,10 +2648,7 @@ bool INavigation2DMsgs_goto_target_by_relative_location1_RPC_helper::Reply::read
 bool INavigation2DMsgs_goto_target_by_relative_location1_RPC_helper::Reply::write(const yarp::os::idl::WireWriter& writer) const
 {
     if (!writer.isNull()) {
-        if (!writer.writeListHeader(s_reply_len)) {
-            return false;
-        }
-        if (!writer.writeBool(return_helper)) {
+        if (!writer.write(return_helper)) {
             return false;
         }
     }
@@ -2696,14 +2657,11 @@ bool INavigation2DMsgs_goto_target_by_relative_location1_RPC_helper::Reply::writ
 
 bool INavigation2DMsgs_goto_target_by_relative_location1_RPC_helper::Reply::read(yarp::os::idl::WireReader& reader)
 {
-    if (!reader.readListReturn()) {
-        return false;
-    }
     if (reader.noMore()) {
         reader.fail();
         return false;
     }
-    if (!reader.readBool(return_helper)) {
+    if (!reader.read(return_helper)) {
         reader.fail();
         return false;
     }
@@ -2862,10 +2820,7 @@ bool INavigation2DMsgs_goto_target_by_relative_location2_RPC_helper::Reply::read
 bool INavigation2DMsgs_goto_target_by_relative_location2_RPC_helper::Reply::write(const yarp::os::idl::WireWriter& writer) const
 {
     if (!writer.isNull()) {
-        if (!writer.writeListHeader(s_reply_len)) {
-            return false;
-        }
-        if (!writer.writeBool(return_helper)) {
+        if (!writer.write(return_helper)) {
             return false;
         }
     }
@@ -2874,14 +2829,11 @@ bool INavigation2DMsgs_goto_target_by_relative_location2_RPC_helper::Reply::writ
 
 bool INavigation2DMsgs_goto_target_by_relative_location2_RPC_helper::Reply::read(yarp::os::idl::WireReader& reader)
 {
-    if (!reader.readListReturn()) {
-        return false;
-    }
     if (reader.noMore()) {
         reader.fail();
         return false;
     }
-    if (!reader.readBool(return_helper)) {
+    if (!reader.read(return_helper)) {
         reader.fail();
         return false;
     }
@@ -3294,10 +3246,7 @@ bool INavigation2DMsgs_goto_target_by_absolute_location_and_set_name_RPC_helper:
 bool INavigation2DMsgs_goto_target_by_absolute_location_and_set_name_RPC_helper::Reply::write(const yarp::os::idl::WireWriter& writer) const
 {
     if (!writer.isNull()) {
-        if (!writer.writeListHeader(s_reply_len)) {
-            return false;
-        }
-        if (!writer.writeBool(return_helper)) {
+        if (!writer.write(return_helper)) {
             return false;
         }
     }
@@ -3306,14 +3255,11 @@ bool INavigation2DMsgs_goto_target_by_absolute_location_and_set_name_RPC_helper:
 
 bool INavigation2DMsgs_goto_target_by_absolute_location_and_set_name_RPC_helper::Reply::read(yarp::os::idl::WireReader& reader)
 {
-    if (!reader.readListReturn()) {
-        return false;
-    }
     if (reader.noMore()) {
         reader.fail();
         return false;
     }
-    if (!reader.readBool(return_helper)) {
+    if (!reader.read(return_helper)) {
         reader.fail();
         return false;
     }
@@ -3484,10 +3430,7 @@ bool INavigation2DMsgs_apply_velocity_command_RPC_helper::Reply::read(yarp::os::
 bool INavigation2DMsgs_apply_velocity_command_RPC_helper::Reply::write(const yarp::os::idl::WireWriter& writer) const
 {
     if (!writer.isNull()) {
-        if (!writer.writeListHeader(s_reply_len)) {
-            return false;
-        }
-        if (!writer.writeBool(return_helper)) {
+        if (!writer.write(return_helper)) {
             return false;
         }
     }
@@ -3496,14 +3439,11 @@ bool INavigation2DMsgs_apply_velocity_command_RPC_helper::Reply::write(const yar
 
 bool INavigation2DMsgs_apply_velocity_command_RPC_helper::Reply::read(yarp::os::idl::WireReader& reader)
 {
-    if (!reader.readListReturn()) {
-        return false;
-    }
     if (reader.noMore()) {
         reader.fail();
         return false;
     }
-    if (!reader.readBool(return_helper)) {
+    if (!reader.read(return_helper)) {
         reader.fail();
         return false;
     }
@@ -3787,44 +3727,44 @@ INavigation2DMsgs::INavigation2DMsgs()
     yarp().setOwner(*this);
 }
 
-bool INavigation2DMsgs::stop_navigation_RPC()
+yarp::dev::ReturnValue INavigation2DMsgs::stop_navigation_RPC()
 {
     if (!yarp().canWrite()) {
         yError("Missing server method '%s'?", INavigation2DMsgs_stop_navigation_RPC_helper::s_prototype);
     }
     INavigation2DMsgs_stop_navigation_RPC_helper helper{};
     bool ok = yarp().write(helper, helper);
-    return ok ? helper.reply.return_helper : bool{};
+    return ok ? helper.reply.return_helper : yarp::dev::ReturnValue{};
 }
 
-bool INavigation2DMsgs::resume_navigation_RPC()
+yarp::dev::ReturnValue INavigation2DMsgs::resume_navigation_RPC()
 {
     if (!yarp().canWrite()) {
         yError("Missing server method '%s'?", INavigation2DMsgs_resume_navigation_RPC_helper::s_prototype);
     }
     INavigation2DMsgs_resume_navigation_RPC_helper helper{};
     bool ok = yarp().write(helper, helper);
-    return ok ? helper.reply.return_helper : bool{};
+    return ok ? helper.reply.return_helper : yarp::dev::ReturnValue{};
 }
 
-bool INavigation2DMsgs::suspend_navigation_RPC(const double time_s)
+yarp::dev::ReturnValue INavigation2DMsgs::suspend_navigation_RPC(const double time_s)
 {
     if (!yarp().canWrite()) {
         yError("Missing server method '%s'?", INavigation2DMsgs_suspend_navigation_RPC_helper::s_prototype);
     }
     INavigation2DMsgs_suspend_navigation_RPC_helper helper{time_s};
     bool ok = yarp().write(helper, helper);
-    return ok ? helper.reply.return_helper : bool{};
+    return ok ? helper.reply.return_helper : yarp::dev::ReturnValue{};
 }
 
-bool INavigation2DMsgs::recompute_current_navigation_path_RPC()
+yarp::dev::ReturnValue INavigation2DMsgs::recompute_current_navigation_path_RPC()
 {
     if (!yarp().canWrite()) {
         yError("Missing server method '%s'?", INavigation2DMsgs_recompute_current_navigation_path_RPC_helper::s_prototype);
     }
     INavigation2DMsgs_recompute_current_navigation_path_RPC_helper helper{};
     bool ok = yarp().write(helper, helper);
-    return ok ? helper.reply.return_helper : bool{};
+    return ok ? helper.reply.return_helper : yarp::dev::ReturnValue{};
 }
 
 return_get_navigation_status INavigation2DMsgs::get_navigation_status_RPC()
@@ -3867,44 +3807,44 @@ return_get_current_nav_map INavigation2DMsgs::get_current_navigation_map_RPC(con
     return ok ? helper.reply.return_helper : return_get_current_nav_map{};
 }
 
-bool INavigation2DMsgs::goto_target_by_absolute_location_RPC(const yarp::dev::Nav2D::Map2DLocation& loc)
+yarp::dev::ReturnValue INavigation2DMsgs::goto_target_by_absolute_location_RPC(const yarp::dev::Nav2D::Map2DLocation& loc)
 {
     if (!yarp().canWrite()) {
         yError("Missing server method '%s'?", INavigation2DMsgs_goto_target_by_absolute_location_RPC_helper::s_prototype);
     }
     INavigation2DMsgs_goto_target_by_absolute_location_RPC_helper helper{loc};
     bool ok = yarp().write(helper, helper);
-    return ok ? helper.reply.return_helper : bool{};
+    return ok ? helper.reply.return_helper : yarp::dev::ReturnValue{};
 }
 
-bool INavigation2DMsgs::follow_path_RPC(const yarp::dev::Nav2D::Map2DPath& path)
+yarp::dev::ReturnValue INavigation2DMsgs::follow_path_RPC(const yarp::dev::Nav2D::Map2DPath& path)
 {
     if (!yarp().canWrite()) {
         yError("Missing server method '%s'?", INavigation2DMsgs_follow_path_RPC_helper::s_prototype);
     }
     INavigation2DMsgs_follow_path_RPC_helper helper{path};
     bool ok = yarp().write(helper, helper);
-    return ok ? helper.reply.return_helper : bool{};
+    return ok ? helper.reply.return_helper : yarp::dev::ReturnValue{};
 }
 
-bool INavigation2DMsgs::goto_target_by_relative_location1_RPC(const double x, const double y)
+yarp::dev::ReturnValue INavigation2DMsgs::goto_target_by_relative_location1_RPC(const double x, const double y)
 {
     if (!yarp().canWrite()) {
         yError("Missing server method '%s'?", INavigation2DMsgs_goto_target_by_relative_location1_RPC_helper::s_prototype);
     }
     INavigation2DMsgs_goto_target_by_relative_location1_RPC_helper helper{x, y};
     bool ok = yarp().write(helper, helper);
-    return ok ? helper.reply.return_helper : bool{};
+    return ok ? helper.reply.return_helper : yarp::dev::ReturnValue{};
 }
 
-bool INavigation2DMsgs::goto_target_by_relative_location2_RPC(const double x, const double y, const double theta)
+yarp::dev::ReturnValue INavigation2DMsgs::goto_target_by_relative_location2_RPC(const double x, const double y, const double theta)
 {
     if (!yarp().canWrite()) {
         yError("Missing server method '%s'?", INavigation2DMsgs_goto_target_by_relative_location2_RPC_helper::s_prototype);
     }
     INavigation2DMsgs_goto_target_by_relative_location2_RPC_helper helper{x, y, theta};
     bool ok = yarp().write(helper, helper);
-    return ok ? helper.reply.return_helper : bool{};
+    return ok ? helper.reply.return_helper : yarp::dev::ReturnValue{};
 }
 
 return_get_abs_loc_of_curr_target INavigation2DMsgs::get_absolute_location_of_current_target_RPC()
@@ -3927,24 +3867,24 @@ return_get_rel_loc_of_curr_target INavigation2DMsgs::get_relative_location_of_cu
     return ok ? helper.reply.return_helper : return_get_rel_loc_of_curr_target{};
 }
 
-bool INavigation2DMsgs::goto_target_by_absolute_location_and_set_name_RPC(const yarp::dev::Nav2D::Map2DLocation& loc, const std::string& name)
+yarp::dev::ReturnValue INavigation2DMsgs::goto_target_by_absolute_location_and_set_name_RPC(const yarp::dev::Nav2D::Map2DLocation& loc, const std::string& name)
 {
     if (!yarp().canWrite()) {
         yError("Missing server method '%s'?", INavigation2DMsgs_goto_target_by_absolute_location_and_set_name_RPC_helper::s_prototype);
     }
     INavigation2DMsgs_goto_target_by_absolute_location_and_set_name_RPC_helper helper{loc, name};
     bool ok = yarp().write(helper, helper);
-    return ok ? helper.reply.return_helper : bool{};
+    return ok ? helper.reply.return_helper : yarp::dev::ReturnValue{};
 }
 
-bool INavigation2DMsgs::apply_velocity_command_RPC(const double x_vel, const double y_vel, const double theta_vel, const double timeout)
+yarp::dev::ReturnValue INavigation2DMsgs::apply_velocity_command_RPC(const double x_vel, const double y_vel, const double theta_vel, const double timeout)
 {
     if (!yarp().canWrite()) {
         yError("Missing server method '%s'?", INavigation2DMsgs_apply_velocity_command_RPC_helper::s_prototype);
     }
     INavigation2DMsgs_apply_velocity_command_RPC_helper helper{x_vel, y_vel, theta_vel, timeout};
     bool ok = yarp().write(helper, helper);
-    return ok ? helper.reply.return_helper : bool{};
+    return ok ? helper.reply.return_helper : yarp::dev::ReturnValue{};
 }
 
 return_get_last_velocity_command INavigation2DMsgs::get_last_velocity_command_RPC()

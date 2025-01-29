@@ -8,6 +8,7 @@
 
 #include <yarp/dev/api.h>
 #include <yarp/dev/OdometryData.h>
+#include <yarp/dev/ReturnValue.h>
 
 namespace yarp::dev::Nav2D {
 class IOdometry2D;
@@ -29,15 +30,15 @@ public:
     /**
     * Gets the odometry of the robot, including its velocity expressed in the world and in the local reference frame.
     * @param odom the odometry.
-    * @return true/false
+    * @return a ReturnValue, convertible to true/false
     */
-    virtual bool   getOdometry(yarp::dev::OdometryData& odom, double* timestamp = nullptr) = 0;
+    virtual yarp::dev::ReturnValue   getOdometry(yarp::dev::OdometryData& odom, double* timestamp = nullptr) = 0;
 
     /**
     * Resets the odometry of the robot to zero
-    * @return true/false
+    * @return a ReturnValue, convertible to true/false
     */
-    virtual bool   resetOdometry() = 0;
+    virtual yarp::dev::ReturnValue   resetOdometry() = 0;
 };
 
 #endif // YARP_DEV_IODOMETRY2D_H

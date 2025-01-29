@@ -36,13 +36,13 @@ Map2DStorage::Map2DStorage()
 
 Map2DStorage::~Map2DStorage() = default;
 
-bool Map2DStorage::saveMapsCollection(std::string mapsfile)
+ReturnValue Map2DStorage::saveMapsCollection(std::string mapsfile)
 {
     //check if the storage is not empty
     if (m_maps_storage.size() == 0)
     {
         yCError(MAP2DSTORAGE) << "Map storage is empty";
-        return false;
+        return ReturnValue::return_code::return_value_error_method_failed;
     }
 
     //open the map collection file
@@ -51,7 +51,7 @@ bool Map2DStorage::saveMapsCollection(std::string mapsfile)
     if (!file.is_open())
     {
         yCError(MAP2DSTORAGE) << "Sorry unable to open" << mapsfile;
-        return false;
+        return ReturnValue::return_code::return_value_error_method_failed;
     }
 
     bool ret = true;
@@ -67,12 +67,17 @@ bool Map2DStorage::saveMapsCollection(std::string mapsfile)
         //save each individual map to a file
         ret &= it.second.saveToFile(map_filename);
     }
-
     file.close();
-    return ret;
+
+    if (!ret)
+    {
+        return ReturnValue::return_code::return_value_error_method_failed;
+    }
+
+    return ReturnValue_ok;
 }
 
-bool Map2DStorage::loadMapsCollection(std::string mapsfile)
+ReturnValue Map2DStorage::loadMapsCollection(std::string mapsfile)
 {
     bool ret = true;
     std::ifstream file;
@@ -80,7 +85,7 @@ bool Map2DStorage::loadMapsCollection(std::string mapsfile)
     if (!file.is_open())
     {
         yCError(MAP2DSTORAGE) << "loadMaps() Unable to open:" << mapsfile;
-        return false;
+        return ReturnValue::return_code::return_value_error_method_failed;
     }
     while (!file.eof())
     {
@@ -133,7 +138,13 @@ bool Map2DStorage::loadMapsCollection(std::string mapsfile)
         }
     }
     file.close();
-    return ret;
+
+    if (!ret)
+    {
+        return ReturnValue::return_code::return_value_error_method_failed;
+    }
+
+    return ReturnValue_ok;
 }
 
 bool Map2DStorage::open(yarp::os::Searchable &config)
@@ -562,7 +573,7 @@ bool Map2DStorage::priv_load_locations_and_areas_v3(std::ifstream& file)
     return true;
 }
 
-bool Map2DStorage::loadLocationsAndExtras(std::string locations_file)
+ReturnValue Map2DStorage::loadLocationsAndExtras(std::string locations_file)
 {
     std::ifstream file;
     file.open (locations_file.c_str());
@@ -570,7 +581,7 @@ bool Map2DStorage::loadLocationsAndExtras(std::string locations_file)
     if(!file.is_open())
     {
         yCError(MAP2DSTORAGE) << "Unable to open" << locations_file << "locations file.";
-        return false;
+        return ReturnValue::return_code::return_value_error_method_failed;
     }
 
     std::string     buffer;
@@ -580,7 +591,7 @@ bool Map2DStorage::loadLocationsAndExtras(std::string locations_file)
     {
         yCError(MAP2DSTORAGE) << "Unable to parse Version section!";
         file.close();
-        return false;
+        return ReturnValue::return_code::return_value_error_method_failed;
     }
     std::getline(file, buffer);
     int version = atoi(buffer.c_str());
@@ -591,7 +602,7 @@ bool Map2DStorage::loadLocationsAndExtras(std::string locations_file)
         {
             yCError(MAP2DSTORAGE) << "Call to load_locations_and_areas_v1 failed";
             file.close();
-            return false;
+            return ReturnValue::return_code::return_value_error_method_failed;
         }
     }
     else if (version == 2)
@@ -600,7 +611,7 @@ bool Map2DStorage::loadLocationsAndExtras(std::string locations_file)
         {
             yCError(MAP2DSTORAGE) << "Call to load_locations_and_areas_v2 failed";
             file.close();
-            return false;
+            return ReturnValue::return_code::return_value_error_method_failed;
         }
     }
     else if (version == 3)
@@ -609,14 +620,14 @@ bool Map2DStorage::loadLocationsAndExtras(std::string locations_file)
         {
             yCError(MAP2DSTORAGE) << "Call to load_locations_and_areas_v3 failed";
             file.close();
-            return false;
+            return ReturnValue::return_code::return_value_error_method_failed;
         }
     }
     else
     {
         yCError(MAP2DSTORAGE) << "Only versions 1-3 supported!";
         file.close();
-        return false;
+        return ReturnValue::return_code::return_value_error_method_failed;
     }
 
     //on success
@@ -625,10 +636,10 @@ bool Map2DStorage::loadLocationsAndExtras(std::string locations_file)
                           << m_locations_storage.size() << "locations and "
                           << m_areas_storage.size() << " areas and "
                           << m_paths_storage.size() << " paths available";
-    return true;
+    return ReturnValue_ok;
 }
 
-bool Map2DStorage::saveLocationsAndExtras(std::string locations_file)
+ReturnValue Map2DStorage::saveLocationsAndExtras(std::string locations_file)
 {
     std::ofstream file;
     file.open (locations_file.c_str());
@@ -636,7 +647,7 @@ bool Map2DStorage::saveLocationsAndExtras(std::string locations_file)
     if(!file.is_open())
     {
         yCError(MAP2DSTORAGE) << "Unable to open" << locations_file << "locations file.";
-        return false;
+        return ReturnValue::return_code::return_value_error_method_failed;
     }
 
     std::string s = " ";
@@ -696,17 +707,17 @@ bool Map2DStorage::saveLocationsAndExtras(std::string locations_file)
 
     file.close();
     yCDebug(MAP2DSTORAGE) << "Locations file" << locations_file << "saved.";
-    return true;
+    return ReturnValue_ok;
 }
 
 
-bool Map2DStorage::clearAllMaps()
+ReturnValue Map2DStorage::clearAllMaps()
 {
     m_maps_storage.clear();
-    return true;
+    return ReturnValue_ok;
 }
 
-bool Map2DStorage::store_map(const yarp::dev::Nav2D::MapGrid2D& map)
+ReturnValue Map2DStorage::store_map(const yarp::dev::Nav2D::MapGrid2D& map)
 {
     std::string map_name = map.getMapName();
     auto it = m_maps_storage.find(map_name);
@@ -720,154 +731,154 @@ bool Map2DStorage::store_map(const yarp::dev::Nav2D::MapGrid2D& map)
         //the map already exists
         m_maps_storage[map_name] = map;
     }
-    return true;
+    return ReturnValue_ok;
 }
 
-bool Map2DStorage::get_map(std::string map_name, yarp::dev::Nav2D::MapGrid2D& map)
+ReturnValue Map2DStorage::get_map(std::string map_name, yarp::dev::Nav2D::MapGrid2D& map)
 {
     auto it = m_maps_storage.find(map_name);
     if (it != m_maps_storage.end())
     {
         map=it->second;
-        return true;
+        return ReturnValue_ok;
     }
-    return false;
+    return ReturnValue::return_code::return_value_error_method_failed;
 }
 
-bool Map2DStorage::get_map_names(std::vector<std::string>& map_names)
+ReturnValue Map2DStorage::get_map_names(std::vector<std::string>& map_names)
 {
     map_names.clear();
     for (auto& it : m_maps_storage)
     {
         map_names.push_back(it.first);
     }
-    return true;
+    return ReturnValue_ok;
 }
 
-bool Map2DStorage::remove_map(std::string map_name)
+ReturnValue Map2DStorage::remove_map(std::string map_name)
 {
     size_t rem = m_maps_storage.erase(map_name);
     if (rem == 0)
     {
-        return false;
+        return ReturnValue::return_code::return_value_error_method_failed;
     }
     else
     {
-        return true;
+        return ReturnValue_ok;
     }
 }
 
-bool Map2DStorage::storeLocation(std::string location_name, yarp::dev::Nav2D::Map2DLocation loc)
+ReturnValue Map2DStorage::storeLocation(std::string location_name, yarp::dev::Nav2D::Map2DLocation loc)
 {
     m_locations_storage.insert(std::pair<std::string, Map2DLocation>(location_name, loc));
-    return true;
+    return ReturnValue_ok;
 }
 
-bool Map2DStorage::storeArea(std::string area_name, yarp::dev::Nav2D::Map2DArea area)
+ReturnValue Map2DStorage::storeArea(std::string area_name, yarp::dev::Nav2D::Map2DArea area)
 {
     m_areas_storage.insert(std::pair<std::string, Map2DArea>(area_name, area));
-    return true;
+    return ReturnValue_ok;
 }
 
-bool Map2DStorage::storePath(std::string path_name, yarp::dev::Nav2D::Map2DPath path)
+ReturnValue Map2DStorage::storePath(std::string path_name, yarp::dev::Nav2D::Map2DPath path)
 {
     m_paths_storage.insert(std::pair<std::string, Map2DPath>(path_name, path));
-    return true;
+    return ReturnValue_ok;
 }
 
-bool Map2DStorage::getLocation(std::string location_name, yarp::dev::Nav2D::Map2DLocation& loc)
+ReturnValue Map2DStorage::getLocation(std::string location_name, yarp::dev::Nav2D::Map2DLocation& loc)
 {
     auto it = m_locations_storage.find(location_name);
     if (it != m_locations_storage.end())
     {
         loc = it->second;
-        return true;
+        return ReturnValue_ok;
     }
-    return false;
+    return ReturnValue::return_code::return_value_error_method_failed;
 }
 
-bool Map2DStorage::getArea(std::string area_name, yarp::dev::Nav2D::Map2DArea& area)
+ReturnValue Map2DStorage::getArea(std::string area_name, yarp::dev::Nav2D::Map2DArea& area)
 {
     auto it = m_areas_storage.find(area_name);
     if (it != m_areas_storage.end())
     {
         area = it->second;
-        return true;
+        return ReturnValue_ok;
     }
-    return false;
+    return ReturnValue::return_code::return_value_error_method_failed;
 }
 
-bool Map2DStorage::getPath(std::string path_name, yarp::dev::Nav2D::Map2DPath& path)
+ReturnValue Map2DStorage::getPath(std::string path_name, yarp::dev::Nav2D::Map2DPath& path)
 {
     auto it = m_paths_storage.find(path_name);
     if (it != m_paths_storage.end())
     {
         path = it->second;
-        return true;
+        return ReturnValue_ok;
     }
-    return false;
+    return ReturnValue::return_code::return_value_error_method_failed;
 }
 
-bool Map2DStorage::getLocationsList(std::vector<std::string>& locations)
+ReturnValue Map2DStorage::getLocationsList(std::vector<std::string>& locations)
 {
     locations.clear();
     for (auto& it : m_locations_storage)
     {
         locations.push_back(it.first);
     }
-    return true;
+    return ReturnValue_ok;
 }
 
-bool Map2DStorage::getAreasList(std::vector<std::string>& areas)
+ReturnValue Map2DStorage::getAreasList(std::vector<std::string>& areas)
 {
     areas.clear();
     for (auto& it : m_areas_storage)
     {
         areas.push_back(it.first);
     }
-    return true;
+    return ReturnValue_ok;
 }
 
-bool Map2DStorage::getPathsList(std::vector<std::string>& paths)
+ReturnValue Map2DStorage::getPathsList(std::vector<std::string>& paths)
 {
     paths.clear();
     for (auto& it : m_paths_storage)
     {
         paths.push_back(it.first);
     }
-    return true;
+    return ReturnValue_ok;
 }
 
-bool Map2DStorage::getAllLocations (std::vector<yarp::dev::Nav2D::Map2DLocation>& locations)
+ReturnValue Map2DStorage::getAllLocations (std::vector<yarp::dev::Nav2D::Map2DLocation>& locations)
 {
     locations.clear();
     for (auto& it : m_locations_storage)
     {
         locations.push_back(it.second);
     }
-    return true;
+    return ReturnValue_ok;
 }
 
-bool Map2DStorage::getAllAreas (std::vector<yarp::dev::Nav2D::Map2DArea>& areas)
+ReturnValue Map2DStorage::getAllAreas (std::vector<yarp::dev::Nav2D::Map2DArea>& areas)
 {
     for (auto& it : m_areas_storage)
     {
         areas.push_back(it.second);
     }
-    return true;
+    return ReturnValue_ok;
 }
 
-bool Map2DStorage::getAllPaths (std::vector<yarp::dev::Nav2D::Map2DPath>& paths)
+ReturnValue Map2DStorage::getAllPaths (std::vector<yarp::dev::Nav2D::Map2DPath>& paths)
 {
     paths.clear();
     for (auto& it : m_paths_storage)
     {
         paths.push_back(it.second);
     }
-    return true;
+    return ReturnValue_ok;
 }
 
-bool Map2DStorage::renameLocation(std::string original_name, std::string new_name)
+ReturnValue Map2DStorage::renameLocation(std::string original_name, std::string new_name)
 {
     std::map<std::string, Map2DLocation>::iterator orig_it;
     orig_it = m_locations_storage.find(original_name);
@@ -880,48 +891,48 @@ bool Map2DStorage::renameLocation(std::string original_name, std::string new_nam
         auto loc = orig_it->second;
         m_locations_storage.erase(orig_it);
         m_locations_storage.insert(std::pair<std::string, Map2DLocation>(new_name, loc));
-        return true;
+        return ReturnValue_ok;
     }
-    return false;
+    return ReturnValue::return_code::return_value_error_method_failed;
 }
 
-bool Map2DStorage::deleteLocation(std::string location_name)
+ReturnValue Map2DStorage::deleteLocation(std::string location_name)
 {
     std::map<std::string, Map2DLocation>::iterator it;
     it = m_locations_storage.find(location_name);
     if (it != m_locations_storage.end())
     {
         m_locations_storage.erase(it);
-        return true;
+        return ReturnValue_ok;
     }
-    return false;
+    return ReturnValue::return_code::return_value_error_method_failed;
 }
 
-bool Map2DStorage::deleteArea(std::string area_name)
+ReturnValue Map2DStorage::deleteArea(std::string area_name)
 {
     std::map<std::string, Map2DArea>::iterator it;
     it = m_areas_storage.find(area_name);
     if (it != m_areas_storage.end())
     {
         m_areas_storage.erase(it);
-        return true;
+        return ReturnValue_ok;
     }
-    return false;
+    return ReturnValue::return_code::return_value_error_method_failed;
 }
 
-bool Map2DStorage::deletePath(std::string path_name)
+ReturnValue Map2DStorage::deletePath(std::string path_name)
 {
     std::map<std::string, Map2DPath>::iterator it;
     it = m_paths_storage.find(path_name);
     if (it != m_paths_storage.end())
     {
         m_paths_storage.erase(it);
-        return true;
+        return ReturnValue_ok;
     }
-    return false;
+    return ReturnValue::return_code::return_value_error_method_failed;
 }
 
-bool Map2DStorage::renameArea(std::string original_name, std::string new_name)
+ReturnValue Map2DStorage::renameArea(std::string original_name, std::string new_name)
 {
 
     std::map<std::string, Map2DArea>::iterator orig_it;
@@ -935,12 +946,12 @@ bool Map2DStorage::renameArea(std::string original_name, std::string new_name)
         auto area = orig_it->second;
         m_areas_storage.erase(orig_it);
         m_areas_storage.insert(std::pair<std::string, Map2DArea>(new_name, area));
-        return true;
+        return ReturnValue_ok;
     }
-    return false;
+    return ReturnValue::return_code::return_value_error_method_failed;
 }
 
-bool Map2DStorage::renamePath(std::string original_name, std::string new_name)
+ReturnValue Map2DStorage::renamePath(std::string original_name, std::string new_name)
 {
 
     std::map<std::string, Map2DPath>::iterator orig_it;
@@ -954,51 +965,51 @@ bool Map2DStorage::renamePath(std::string original_name, std::string new_name)
         auto area = orig_it->second;
         m_paths_storage.erase(orig_it);
         m_paths_storage.insert(std::pair<std::string, Map2DPath>(new_name, area));
-        return true;
+        return ReturnValue_ok;
     }
-    return false;
+    return ReturnValue::return_code::return_value_error_method_failed;
 }
 
 
 
-bool Map2DStorage::clearAllLocations()
+ReturnValue Map2DStorage::clearAllLocations()
 {
     m_locations_storage.clear();
-    return true;
+    return ReturnValue_ok;
 }
 
-bool Map2DStorage::clearAllAreas()
+ReturnValue Map2DStorage::clearAllAreas()
 {
     m_areas_storage.clear();
-    return true;
+    return ReturnValue_ok;
 }
 
-bool Map2DStorage::clearAllPaths()
+ReturnValue Map2DStorage::clearAllPaths()
 {
     m_paths_storage.clear();
-    return true;
+    return ReturnValue_ok;
 }
 
-bool Map2DStorage::clearAllMapsTemporaryFlags()
+ReturnValue Map2DStorage::clearAllMapsTemporaryFlags()
 {
     for (auto it = m_maps_storage.begin(); it != m_maps_storage.end(); it++)
     {
         it->second.clearMapTemporaryFlags();
     }
-    return true;
+    return ReturnValue_ok;
 }
 
-bool Map2DStorage::clearMapTemporaryFlags(std::string map_name)
+ReturnValue Map2DStorage::clearMapTemporaryFlags(std::string map_name)
 {
     auto it = m_maps_storage.find(map_name);
     if (it != m_maps_storage.end())
     {
         it->second.clearMapTemporaryFlags();
-        return true;
+        return ReturnValue_ok;
     }
     else
     {
-        return false;
+        return ReturnValue::return_code::return_value_error_method_failed;
     }
 }
 
@@ -1037,13 +1048,13 @@ bool Map2DStorage::read(yarp::os::ConnectionReader& connection)
     return true;
 }
 
-bool Map2DStorage::saveMapToDisk(std::string map_name, std::string file_name)
+ReturnValue Map2DStorage::saveMapToDisk(std::string map_name, std::string file_name)
 {
     auto p = m_maps_storage.find(map_name);
     if (p == m_maps_storage.end())
     {
         yCError(MAP2DSTORAGE) << "saveMapToDisk failed: map " << map_name << " not found";
-        return false;
+        return ReturnValue::return_code::return_value_error_method_failed;
     }
     else
     {
@@ -1051,18 +1062,18 @@ bool Map2DStorage::saveMapToDisk(std::string map_name, std::string file_name)
         if (b)
         {
             yCInfo(MAP2DSTORAGE) << "file" << file_name << " successfully saved";
-            return true;
+            return ReturnValue_ok;
         }
         else
         {
             yCError(MAP2DSTORAGE) << "save_map failed: unable to save " << map_name << " to " << file_name;
-            return false;
+            return ReturnValue::return_code::return_value_error_method_failed;
         }
     }
-    return true;
+    return ReturnValue_ok;
 }
 
-bool Map2DStorage::loadMapFromDisk(std::string file_name)
+ReturnValue Map2DStorage::loadMapFromDisk(std::string file_name)
 {
     MapGrid2D map;
     bool r = map.loadFromFile(file_name);
@@ -1074,23 +1085,23 @@ bool Map2DStorage::loadMapFromDisk(std::string file_name)
         {
             m_maps_storage[map_name] = map;
             yCInfo (MAP2DSTORAGE) << "file" << file_name << "successfully loaded.";
-            return true;
+            return ReturnValue_ok;
         }
         else
         {
             yCError(MAP2DSTORAGE) << map_name << " already exists, skipping.";
-            return false;
+            return ReturnValue::return_code::return_value_error_method_failed;
         }
     }
     else
     {
         yCError(MAP2DSTORAGE) <<  "load_map failed. Unable to load " + file_name;
-        return false;
+        return ReturnValue::return_code::return_value_error_method_failed;
     }
-    return true;
+    return ReturnValue_ok;
 }
 
-bool Map2DStorage::enableMapsCompression(bool enable)
+ReturnValue Map2DStorage::enableMapsCompression(bool enable)
 {
     bool b = true;
     for (auto it = m_maps_storage.begin(); it != m_maps_storage.end(); it++)
@@ -1101,9 +1112,9 @@ bool Map2DStorage::enableMapsCompression(bool enable)
     {
         if (enable) {yCInfo(MAP2DSTORAGE) << "compression mode of all maps enabled";}
         else        {yCInfo(MAP2DSTORAGE) << "compression mode of all maps disabled";}
-        return true;
+        return ReturnValue_ok;
     }
 
     yCError(MAP2DSTORAGE) << "failed to set compression mode";
-    return false;
+    return ReturnValue::return_code::return_value_error_method_failed;
 }

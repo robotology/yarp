@@ -66,91 +66,91 @@ public:
 
     /* The following methods belong to INavigation2D interface */
            // subcategory: INavigation2DExtraActions
-    bool   checkInsideArea(yarp::dev::Nav2D::Map2DArea area) override;
-    bool   checkInsideArea(std::string area_name)  override;
-    bool   checkNearToLocation(yarp::dev::Nav2D::Map2DLocation loc, double linear_tolerance, double angular_tolerance = std::numeric_limits<double>::infinity()) override;
-    bool   checkNearToLocation(std::string location_name, double linear_tolerance, double angular_tolerance = std::numeric_limits<double>::infinity()) override;
-    bool   storeCurrentPosition(std::string location_name) override;
+    yarp::dev::ReturnValue   checkInsideArea(yarp::dev::Nav2D::Map2DArea area, bool& is_inside) override;
+    yarp::dev::ReturnValue   checkInsideArea(std::string area_name, bool& is_inside)  override;
+    yarp::dev::ReturnValue   checkNearToLocation(yarp::dev::Nav2D::Map2DLocation loc, bool& is_near, double linear_tolerance, double angular_tolerance = std::numeric_limits<double>::infinity()) override;
+    yarp::dev::ReturnValue   checkNearToLocation(std::string location_name, bool& is_near, double linear_tolerance, double angular_tolerance = std::numeric_limits<double>::infinity()) override;
+    yarp::dev::ReturnValue   storeCurrentPosition(std::string location_name) override;
            // subcategory: INavigation2DControlActions
-    bool   getNavigationStatus(yarp::dev::Nav2D::NavigationStatusEnum& status) override;
-    bool   recomputeCurrentNavigationPath() override;
-    bool   stopNavigation() override;
-    bool   suspendNavigation(const double time_s) override;
-    bool   resumeNavigation() override;
-    bool   getAllNavigationWaypoints(yarp::dev::Nav2D::TrajectoryTypeEnum trajectory_type, yarp::dev::Nav2D::Map2DPath& waypoints) override;
-    bool   getCurrentNavigationWaypoint(yarp::dev::Nav2D::Map2DLocation& curr_waypoint) override;
-    bool   getCurrentNavigationMap(yarp::dev::Nav2D::NavigationMapTypeEnum map_type, yarp::dev::Nav2D::MapGrid2D& map) override;
+    yarp::dev::ReturnValue   getNavigationStatus(yarp::dev::Nav2D::NavigationStatusEnum& status) override;
+    yarp::dev::ReturnValue   recomputeCurrentNavigationPath() override;
+    yarp::dev::ReturnValue   stopNavigation() override;
+    yarp::dev::ReturnValue   suspendNavigation(const double time_s) override;
+    yarp::dev::ReturnValue   resumeNavigation() override;
+    yarp::dev::ReturnValue   getAllNavigationWaypoints(yarp::dev::Nav2D::TrajectoryTypeEnum trajectory_type, yarp::dev::Nav2D::Map2DPath& waypoints) override;
+    yarp::dev::ReturnValue   getCurrentNavigationWaypoint(yarp::dev::Nav2D::Map2DLocation& curr_waypoint) override;
+    yarp::dev::ReturnValue   getCurrentNavigationMap(yarp::dev::Nav2D::NavigationMapTypeEnum map_type, yarp::dev::Nav2D::MapGrid2D& map) override;
            // subcategory: INavigation2DTargetActions
-    bool   gotoTargetByAbsoluteLocation(yarp::dev::Nav2D::Map2DLocation loc) override;
-    bool   gotoTargetByLocationName(std::string location_name) override;
-    bool   gotoTargetByRelativeLocation(double x, double y, double theta) override;
-    bool   gotoTargetByRelativeLocation(double x, double y) override;
-    bool   followPath(const yarp::dev::Nav2D::Map2DPath& locs) override;
-    bool   getAbsoluteLocationOfCurrentTarget(yarp::dev::Nav2D::Map2DLocation& loc) override;
-    bool   getNameOfCurrentTarget(std::string& location_name) override;
-    bool   getRelativeLocationOfCurrentTarget(double& x, double& y, double& theta) override;
+    yarp::dev::ReturnValue   gotoTargetByAbsoluteLocation(yarp::dev::Nav2D::Map2DLocation loc) override;
+    yarp::dev::ReturnValue   gotoTargetByLocationName(std::string location_name) override;
+    yarp::dev::ReturnValue   gotoTargetByRelativeLocation(double x, double y, double theta) override;
+    yarp::dev::ReturnValue   gotoTargetByRelativeLocation(double x, double y) override;
+    yarp::dev::ReturnValue   followPath(const yarp::dev::Nav2D::Map2DPath& locs) override;
+    yarp::dev::ReturnValue   getAbsoluteLocationOfCurrentTarget(yarp::dev::Nav2D::Map2DLocation& loc) override;
+    yarp::dev::ReturnValue   getNameOfCurrentTarget(std::string& location_name) override;
+    yarp::dev::ReturnValue   getRelativeLocationOfCurrentTarget(double& x, double& y, double& theta) override;
            // subcategory: INavigation2DVelocityActions
-    bool   applyVelocityCommand(double x_vel, double y_vel, double theta_vel, double timeout = 0.1) override;
-    bool   getLastVelocityCommand(double& x_vel, double& y_vel, double& theta_vel) override;
+    yarp::dev::ReturnValue   applyVelocityCommand(double x_vel, double y_vel, double theta_vel, double timeout = 0.1) override;
+    yarp::dev::ReturnValue   getLastVelocityCommand(double& x_vel, double& y_vel, double& theta_vel) override;
 
     /* The following methods belong to INavigation2D, inherited from ILocalization2D interface */
-    bool   getCurrentPosition(yarp::dev::Nav2D::Map2DLocation &loc) override;
-    bool   getEstimatedOdometry(yarp::dev::OdometryData& odom) override;
-    bool   setInitialPose(const yarp::dev::Nav2D::Map2DLocation& loc) override;
-    bool   getLocalizationStatus(yarp::dev::Nav2D::LocalizationStatusEnum& status) override;
-    bool   getEstimatedPoses(std::vector<yarp::dev::Nav2D::Map2DLocation>& poses) override;
-    bool   setInitialPose(const yarp::dev::Nav2D::Map2DLocation& loc, const yarp::sig::Matrix& cov) override;
-    bool   getCurrentPosition(yarp::dev::Nav2D::Map2DLocation& loc, yarp::sig::Matrix& cov) override;
-    bool   startLocalizationService() override;
-    bool   stopLocalizationService() override;
+    yarp::dev::ReturnValue   getCurrentPosition(yarp::dev::Nav2D::Map2DLocation &loc) override;
+    yarp::dev::ReturnValue   getEstimatedOdometry(yarp::dev::OdometryData& odom) override;
+    yarp::dev::ReturnValue   setInitialPose(const yarp::dev::Nav2D::Map2DLocation& loc) override;
+    yarp::dev::ReturnValue   getLocalizationStatus(yarp::dev::Nav2D::LocalizationStatusEnum& status) override;
+    yarp::dev::ReturnValue   getEstimatedPoses(std::vector<yarp::dev::Nav2D::Map2DLocation>& poses) override;
+    yarp::dev::ReturnValue   setInitialPose(const yarp::dev::Nav2D::Map2DLocation& loc, const yarp::sig::Matrix& cov) override;
+    yarp::dev::ReturnValue   getCurrentPosition(yarp::dev::Nav2D::Map2DLocation& loc, yarp::sig::Matrix& cov) override;
+    yarp::dev::ReturnValue   startLocalizationService() override;
+    yarp::dev::ReturnValue   stopLocalizationService() override;
 
     /* The following methods belong to INavigation2D, inherited from IMap2D interface */
-    bool   storeLocation(std::string location_name, yarp::dev::Nav2D::Map2DLocation loc) override;
-    bool   storeArea(std::string location_name, yarp::dev::Nav2D::Map2DArea area) override;
-    bool   storePath(std::string path_name, yarp::dev::Nav2D::Map2DPath path) override;
+    yarp::dev::ReturnValue   storeLocation(std::string location_name, yarp::dev::Nav2D::Map2DLocation loc) override;
+    yarp::dev::ReturnValue   storeArea(std::string location_name, yarp::dev::Nav2D::Map2DArea area) override;
+    yarp::dev::ReturnValue   storePath(std::string path_name, yarp::dev::Nav2D::Map2DPath path) override;
 
-    bool   getLocation(std::string location_name, yarp::dev::Nav2D::Map2DLocation& loc) override;
-    bool   getArea(std::string location_name, yarp::dev::Nav2D::Map2DArea& area) override;
-    bool   getPath(std::string path_name, yarp::dev::Nav2D::Map2DPath& path) override;
+    yarp::dev::ReturnValue   getLocation(std::string location_name, yarp::dev::Nav2D::Map2DLocation& loc) override;
+    yarp::dev::ReturnValue   getArea(std::string location_name, yarp::dev::Nav2D::Map2DArea& area) override;
+    yarp::dev::ReturnValue   getPath(std::string path_name, yarp::dev::Nav2D::Map2DPath& path) override;
 
-    bool   renameLocation(std::string original_name, std::string new_name) override;
-    bool   renameArea(std::string original_name, std::string new_name) override;
-    bool   renamePath(std::string original_name, std::string new_name) override;
+    yarp::dev::ReturnValue   renameLocation(std::string original_name, std::string new_name) override;
+    yarp::dev::ReturnValue   renameArea(std::string original_name, std::string new_name) override;
+    yarp::dev::ReturnValue   renamePath(std::string original_name, std::string new_name) override;
 
-    bool   deleteLocation(std::string location_name) override;
-    bool   deleteArea(std::string location_name) override;
-    bool   deletePath(std::string path_name) override;
+    yarp::dev::ReturnValue   deleteLocation(std::string location_name) override;
+    yarp::dev::ReturnValue   deleteArea(std::string location_name) override;
+    yarp::dev::ReturnValue   deletePath(std::string path_name) override;
 
-    bool   getLocationsList(std::vector<std::string>& locations) override;
-    bool   getAreasList(std::vector<std::string>& locations) override;
-    bool   getPathsList(std::vector<std::string>& paths) override;
+    yarp::dev::ReturnValue   getLocationsList(std::vector<std::string>& locations) override;
+    yarp::dev::ReturnValue   getAreasList(std::vector<std::string>& locations) override;
+    yarp::dev::ReturnValue   getPathsList(std::vector<std::string>& paths) override;
 
-    bool   getAllLocations(std::vector<yarp::dev::Nav2D::Map2DLocation>& locations) override;
-    bool   getAllAreas(std::vector<yarp::dev::Nav2D::Map2DArea>& areas) override;
-    bool   getAllPaths(std::vector<yarp::dev::Nav2D::Map2DPath>& paths) override;
+    yarp::dev::ReturnValue   getAllLocations(std::vector<yarp::dev::Nav2D::Map2DLocation>& locations) override;
+    yarp::dev::ReturnValue   getAllAreas(std::vector<yarp::dev::Nav2D::Map2DArea>& areas) override;
+    yarp::dev::ReturnValue   getAllPaths(std::vector<yarp::dev::Nav2D::Map2DPath>& paths) override;
 
-    bool   clearAllLocations() override;
-    bool   clearAllAreas() override;
-    bool   clearAllPaths() override;
+    yarp::dev::ReturnValue   clearAllLocations() override;
+    yarp::dev::ReturnValue   clearAllAreas() override;
+    yarp::dev::ReturnValue   clearAllPaths() override;
 
-    bool   clearAllMaps() override;
-    bool   remove_map(std::string map_name) override;
-    bool   store_map(const yarp::dev::Nav2D::MapGrid2D& map) override;
-    bool   get_map(std::string map_name, yarp::dev::Nav2D::MapGrid2D& map) override;
-    bool   get_map_names(std::vector<std::string>& map_names) override;
+    yarp::dev::ReturnValue   clearAllMaps() override;
+    yarp::dev::ReturnValue   remove_map(std::string map_name) override;
+    yarp::dev::ReturnValue   store_map(const yarp::dev::Nav2D::MapGrid2D& map) override;
+    yarp::dev::ReturnValue   get_map(std::string map_name, yarp::dev::Nav2D::MapGrid2D& map) override;
+    yarp::dev::ReturnValue   get_map_names(std::vector<std::string>& map_names) override;
 
-    bool   clearAllMapsTemporaryFlags() override;
-    bool   clearMapTemporaryFlags(std::string map_name) override;
+    yarp::dev::ReturnValue   clearAllMapsTemporaryFlags() override;
+    yarp::dev::ReturnValue   clearMapTemporaryFlags(std::string map_name) override;
 
-    bool   saveMapsCollection(std::string maps_collection_file) override;
-    bool   loadMapsCollection(std::string maps_collection_file) override;
-    bool   saveLocationsAndExtras(std::string locations_collection_file) override;
-    bool   loadLocationsAndExtras(std::string locations_collection_file) override;
+    yarp::dev::ReturnValue   saveMapsCollection(std::string maps_collection_file) override;
+    yarp::dev::ReturnValue   loadMapsCollection(std::string maps_collection_file) override;
+    yarp::dev::ReturnValue   saveLocationsAndExtras(std::string locations_collection_file) override;
+    yarp::dev::ReturnValue   loadLocationsAndExtras(std::string locations_collection_file) override;
 
-    bool   saveMapToDisk(std::string map_name, std::string file_name) override;
-    bool   loadMapFromDisk(std::string file_name) override;
+    yarp::dev::ReturnValue   saveMapToDisk(std::string map_name, std::string file_name) override;
+    yarp::dev::ReturnValue   loadMapFromDisk(std::string file_name) override;
 
-    bool   enableMapsCompression(bool enable) override;
+    yarp::dev::ReturnValue   enableMapsCompression(bool enable) override;
 };
 
 #endif // YARP_DEV_NAVIGATION2D_NWC_YARP_H

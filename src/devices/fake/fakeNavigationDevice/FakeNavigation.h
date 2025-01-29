@@ -55,22 +55,22 @@ public:
 
 public:
     //methods inherited from INavigation2Dxxx interfaces
-    bool gotoTargetByAbsoluteLocation(yarp::dev::Nav2D::Map2DLocation loc) override;
-    bool gotoTargetByRelativeLocation(double x, double y, double theta) override;
-    bool gotoTargetByRelativeLocation(double x, double y) override;
-    bool followPath(const yarp::dev::Nav2D::Map2DPath& path) override;
-    bool getAbsoluteLocationOfCurrentTarget(yarp::dev::Nav2D::Map2DLocation& target) override;
-    bool getRelativeLocationOfCurrentTarget(double& x, double& y, double& theta) override;
-    bool getNavigationStatus(yarp::dev::Nav2D::NavigationStatusEnum& status) override;
-    bool stopNavigation() override;
-    bool suspendNavigation(double time) override;
-    bool resumeNavigation() override;
-    bool getAllNavigationWaypoints(yarp::dev::Nav2D::TrajectoryTypeEnum trajectory_type, yarp::dev::Nav2D::Map2DPath& waypoints) override;
-    bool getCurrentNavigationWaypoint(yarp::dev::Nav2D::Map2DLocation& curr_waypoint) override;
-    bool getCurrentNavigationMap(yarp::dev::Nav2D::NavigationMapTypeEnum map_type, yarp::dev::Nav2D::MapGrid2D& map) override;
-    bool recomputeCurrentNavigationPath() override;
-    bool applyVelocityCommand(double x_vel, double y_vel, double theta_vel, double timeout = 0.1) override;
-    bool getLastVelocityCommand(double& x_vel, double& y_vel, double& theta_vel) override;
+    yarp::dev::ReturnValue gotoTargetByAbsoluteLocation(yarp::dev::Nav2D::Map2DLocation loc) override;
+    yarp::dev::ReturnValue gotoTargetByRelativeLocation(double x, double y, double theta) override;
+    yarp::dev::ReturnValue gotoTargetByRelativeLocation(double x, double y) override;
+    yarp::dev::ReturnValue followPath(const yarp::dev::Nav2D::Map2DPath& path) override;
+    yarp::dev::ReturnValue getAbsoluteLocationOfCurrentTarget(yarp::dev::Nav2D::Map2DLocation& target) override;
+    yarp::dev::ReturnValue getRelativeLocationOfCurrentTarget(double& x, double& y, double& theta) override;
+    yarp::dev::ReturnValue getNavigationStatus(yarp::dev::Nav2D::NavigationStatusEnum& status) override;
+    yarp::dev::ReturnValue stopNavigation() override;
+    yarp::dev::ReturnValue suspendNavigation(double time) override;
+    yarp::dev::ReturnValue resumeNavigation() override;
+    yarp::dev::ReturnValue getAllNavigationWaypoints(yarp::dev::Nav2D::TrajectoryTypeEnum trajectory_type, yarp::dev::Nav2D::Map2DPath& waypoints) override;
+    yarp::dev::ReturnValue getCurrentNavigationWaypoint(yarp::dev::Nav2D::Map2DLocation& curr_waypoint) override;
+    yarp::dev::ReturnValue getCurrentNavigationMap(yarp::dev::Nav2D::NavigationMapTypeEnum map_type, yarp::dev::Nav2D::MapGrid2D& map) override;
+    yarp::dev::ReturnValue recomputeCurrentNavigationPath() override;
+    yarp::dev::ReturnValue applyVelocityCommand(double x_vel, double y_vel, double theta_vel, double timeout = 0.1) override;
+    yarp::dev::ReturnValue getLastVelocityCommand(double& x_vel, double& y_vel, double& theta_vel) override;
 
     bool threadInit() override;
     void threadRelease() override;

@@ -54,11 +54,7 @@ bool MobileBaseVelocityControl_nws_yarp::open(yarp::os::Searchable &config)
             return false;
         }
 
-        if (!this->yarp().attachAsServer(m_rpc_port_navigation_server))
-        {
-            yCError(MOBVEL_NWS_YARP, "Error! Cannot attach the port as a server");
-            return false;
-        }
+        m_rpc_port_navigation_server.setReader(*this);
     }
 
     //streaming input block
@@ -83,17 +79,30 @@ bool MobileBaseVelocityControl_nws_yarp::close()
 {
     m_rpc_port_navigation_server.close();
     m_StreamingInput.close();
+
+    detach();
     return true;
 }
 
 bool MobileBaseVelocityControl_nws_yarp::detach()
 {
+    std::lock_guard lock (m_mutex);
+
     m_iNavVel = nullptr;
+
+    if (m_RPC)
+    {
+        delete m_RPC;
+        m_RPC = nullptr;
+    }
+
     return true;
 }
 
 bool MobileBaseVelocityControl_nws_yarp::attach(PolyDriver* driver)
 {
+    std::lock_guard lock (m_mutex);
+
     if (driver->isValid())
     {
         driver->view(m_iNavVel);
@@ -106,48 +115,27 @@ bool MobileBaseVelocityControl_nws_yarp::attach(PolyDriver* driver)
     }
     m_StreamingInput.m_iVel = m_iNavVel;
 
+    m_RPC = new IMobileBaseVelocityControlRPCd(m_iNavVel);
+
     yCInfo(MOBVEL_NWS_YARP) << "Attach complete";
     return true;
 }
 
-bool MobileBaseVelocityControl_nws_yarp::applyVelocityCommandRPC(const double x_vel, const double y_vel, const double theta_vel, const double timeout)
+bool MobileBaseVelocityControl_nws_yarp::read(yarp::os::ConnectionReader& connection)
 {
-    std::lock_guard <std::mutex> lg(m_mutex);
-    if (nullptr == m_iNavVel)
+    if (!connection.isValid()) { return false;}
+    if (!m_RPC) { return false;}
+
+    std::lock_guard<std::mutex> lock(m_mutex);
+
+    bool b = m_RPC->read(connection);
+    if (b)
     {
-        yCError(MOBVEL_NWS_YARP, "Unable to applyVelocityCommandRPC");
+        return true;
+    }
+    else
+    {
+        yCDebug(MOBVEL_NWS_YARP) << "read() Command failed";
         return false;
     }
-
-    bool b =m_iNavVel->applyVelocityCommand(x_vel, y_vel, theta_vel, timeout);
-
-    if (!b)
-    {
-        yCError(MOBVEL_NWS_YARP, "Unable to applyVelocityCommandRPC");
-        return false;
-    }
-    return true;
-}
-
-return_getLastVelocityCommand MobileBaseVelocityControl_nws_yarp::getLastVelocityCommandRPC()
-{
-    return_getLastVelocityCommand retrievedFromRPC;
-    std::lock_guard <std::mutex> lg(m_mutex);
-    if (nullptr == m_iNavVel)
-    {
-        yCError(MOBVEL_NWS_YARP, "Unable to getLastVelocityCommand");
-        retrievedFromRPC.retvalue = false;
-        return retrievedFromRPC;
-    }
-
-    double x_vel = 0;
-    double y_vel = 0;
-    double t_vel = 0;
-    bool b = m_iNavVel->getLastVelocityCommand(x_vel, y_vel, t_vel);
-
-    retrievedFromRPC.retvalue = b;
-    retrievedFromRPC.x_vel = x_vel;
-    retrievedFromRPC.y_vel = y_vel;
-    retrievedFromRPC.theta_vel = t_vel;
-    return retrievedFromRPC;
 }

@@ -14,20 +14,21 @@
 #include <yarp/os/Wire.h>
 #include <yarp/os/idl/WireTypes.h>
 #include <yarp/dev/MapGrid2D.h>
+#include <yarp/dev/ReturnValue.h>
 
 class return_get_map :
         public yarp::os::idl::WirePortable
 {
 public:
     // Fields
-    bool retval{false};
+    yarp::dev::ReturnValue retval{};
     yarp::dev::Nav2D::MapGrid2D themap{};
 
     // Default constructor
     return_get_map() = default;
 
     // Constructor with field values
-    return_get_map(const bool retval,
+    return_get_map(const yarp::dev::ReturnValue& retval,
                    const yarp::dev::Nav2D::MapGrid2D& themap);
 
     // Read structure on a Wire
