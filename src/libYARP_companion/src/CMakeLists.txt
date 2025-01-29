@@ -92,7 +92,7 @@ target_include_directories(YARP_companion
 target_link_libraries(YARP_companion PUBLIC YARP::YARP_os)
 list(APPEND YARP_companion_PUBLIC_DEPS YARP_os )
 
-target_compile_features(YARP_companion PUBLIC cxx_std_17)
+target_compile_features(YARP_companion PUBLIC cxx_std_20)
 
 if(YARP_HAS_ACE)
   target_compile_definitions(YARP_companion PRIVATE YARP_HAS_ACE)

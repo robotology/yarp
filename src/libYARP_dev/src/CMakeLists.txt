@@ -334,7 +334,7 @@ target_include_directories(YARP_dev
     $<BUILD_INTERFACE:${YARP_dev_idl_BUILD_INTERFACE_INCLUDE_DIRS}>
     $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
 )
-target_compile_features(YARP_dev PUBLIC cxx_std_17)
+target_compile_features(YARP_dev PUBLIC cxx_std_20)
 
 target_link_libraries(YARP_dev
   PUBLIC

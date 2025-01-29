@@ -104,7 +104,7 @@ target_link_libraries (YARP_dev_tests
     YARP::YARP_dev
     YARP::YARP_catch2)
 
-target_compile_features(YARP_dev_tests PRIVATE cxx_std_17)
+target_compile_features(YARP_dev_tests PRIVATE cxx_std_20)
 
 set_property (
   TARGET YARP_dev_tests
