@@ -15,6 +15,7 @@
 #include <yarp/os/idl/WireTypes.h>
 
 #include <IAudioGrabberMsgs_common.h>
+#include <yarp/dev/ReturnValue.h>
 #include <yarp/sig/Sound.h>
 
 class return_getSound :
@@ -22,14 +23,14 @@ class return_getSound :
 {
 public:
     // Fields
-    bool ret{false};
+    yarp::dev::ReturnValue ret{};
     yarp::sig::Sound sound{};
 
     // Default constructor
     return_getSound() = default;
 
     // Constructor with field values
-    return_getSound(const bool ret,
+    return_getSound(const yarp::dev::ReturnValue& ret,
                     const yarp::sig::Sound& sound);
 
     // Read structure on a Wire

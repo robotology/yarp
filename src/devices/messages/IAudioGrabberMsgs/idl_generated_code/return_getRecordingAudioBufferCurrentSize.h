@@ -15,6 +15,7 @@
 #include <yarp/os/idl/WireTypes.h>
 
 #include <IAudioGrabberMsgs_common.h>
+#include <yarp/dev/ReturnValue.h>
 #include <yarp/sig/AudioBufferSize.h>
 
 class return_getRecordingAudioBufferCurrentSize :
@@ -22,14 +23,14 @@ class return_getRecordingAudioBufferCurrentSize :
 {
 public:
     // Fields
-    bool ret{false};
+    yarp::dev::ReturnValue ret{};
     yarp::sig::AudioBufferSize bufsize{};
 
     // Default constructor
     return_getRecordingAudioBufferCurrentSize() = default;
 
     // Constructor with field values
-    return_getRecordingAudioBufferCurrentSize(const bool ret,
+    return_getRecordingAudioBufferCurrentSize(const yarp::dev::ReturnValue& ret,
                                               const yarp::sig::AudioBufferSize& bufsize);
 
     // Read structure on a Wire
