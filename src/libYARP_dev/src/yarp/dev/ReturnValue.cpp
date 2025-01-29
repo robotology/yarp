@@ -89,8 +89,6 @@ std::string ReturnValue::toString()
     {
         case return_code::return_value_ok:
             return std::string("ok");
-        case return_code::return_value_uninitialized:
-            return std::string("return_value_uninitialized");
         case return_code::return_value_error_deprecated:
             return std::string("return_value_error_deprecated");
         case return_code::return_value_error_generic:
@@ -101,8 +99,11 @@ std::string ReturnValue::toString()
             return std::string("return_value_error_not_implemented_by_device");
         case return_code::return_value_error_nws_nwc_communication_error:
             return std::string("return_value_error_nws_nwc_communication_error");
+        case return_code::return_value_error_not_ready:
+            return std::string("return_value_error_not_ready");
         default:
-            return std::string("unknown");
+        case return_code::return_value_uninitialized:
+            return std::string("unknown/uninitialized");
     }
 }
 

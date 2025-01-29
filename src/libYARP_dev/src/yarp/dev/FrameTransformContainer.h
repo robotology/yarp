@@ -14,6 +14,7 @@
 #include <yarp/dev/api.h>
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/IMultipleWrapper.h>
+#include <yarp/dev/ReturnValue.h>
 #include <mutex>
 #include <map>
 
@@ -105,15 +106,15 @@ public:
     ~FrameTransformContainer() {}
 
     //IFrameTransformStorageSet interface
-    bool setTransforms(const std::vector<yarp::math::FrameTransform>& transforms) override;
-    bool setTransform(const yarp::math::FrameTransform& transform) override;
+    yarp::dev::ReturnValue setTransforms(const std::vector<yarp::math::FrameTransform>& transforms) override;
+    yarp::dev::ReturnValue setTransform(const yarp::math::FrameTransform& transform) override;
 
     //IFrameTransformStorageGet interface
-    bool getTransforms(std::vector<yarp::math::FrameTransform>& transforms) const override;
+    yarp::dev::ReturnValue getTransforms(std::vector<yarp::math::FrameTransform>& transforms) const override;
 
     //IFrameTransformStorageUtils interface
-    bool deleteTransform(std::string t1, std::string t2) override;
-    bool clearAll() override;
+    yarp::dev::ReturnValue deleteTransform(std::string t1, std::string t2) override;
+    yarp::dev::ReturnValue clearAll() override;
 
     bool size(size_t& size) const;
 

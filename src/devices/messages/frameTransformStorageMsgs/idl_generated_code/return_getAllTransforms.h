@@ -13,6 +13,7 @@
 
 #include <yarp/os/Wire.h>
 #include <yarp/os/idl/WireTypes.h>
+#include <yarp/dev/ReturnValue.h>
 #include <yarp/math/FrameTransform.h>
 
 class return_getAllTransforms :
@@ -20,14 +21,14 @@ class return_getAllTransforms :
 {
 public:
     // Fields
-    bool retvalue{false};
+    yarp::dev::ReturnValue retvalue{};
     std::vector<yarp::math::FrameTransform> transforms_list{};
 
     // Default constructor
     return_getAllTransforms() = default;
 
     // Constructor with field values
-    return_getAllTransforms(const bool retvalue,
+    return_getAllTransforms(const yarp::dev::ReturnValue& retvalue,
                             const std::vector<yarp::math::FrameTransform>& transforms_list);
 
     // Read structure on a Wire

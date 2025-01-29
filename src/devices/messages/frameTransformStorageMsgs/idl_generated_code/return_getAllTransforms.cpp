@@ -11,7 +11,7 @@
 #include <return_getAllTransforms.h>
 
 // Constructor with field values
-return_getAllTransforms::return_getAllTransforms(const bool retvalue,
+return_getAllTransforms::return_getAllTransforms(const yarp::dev::ReturnValue& retvalue,
                                                  const std::vector<yarp::math::FrameTransform>& transforms_list) :
         WirePortable(),
         retvalue(retvalue),
@@ -22,7 +22,7 @@ return_getAllTransforms::return_getAllTransforms(const bool retvalue,
 // Read structure on a Wire
 bool return_getAllTransforms::read(yarp::os::idl::WireReader& reader)
 {
-    if (!read_retvalue(reader)) {
+    if (!nested_read_retvalue(reader)) {
         return false;
     }
     if (!read_transforms_list(reader)) {
@@ -50,7 +50,7 @@ bool return_getAllTransforms::read(yarp::os::ConnectionReader& connection)
 // Write structure on a Wire
 bool return_getAllTransforms::write(const yarp::os::idl::WireWriter& writer) const
 {
-    if (!write_retvalue(writer)) {
+    if (!nested_write_retvalue(writer)) {
         return false;
     }
     if (!write_transforms_list(writer)) {
@@ -92,7 +92,7 @@ bool return_getAllTransforms::read_retvalue(yarp::os::idl::WireReader& reader)
         reader.fail();
         return false;
     }
-    if (!reader.readBool(retvalue)) {
+    if (!reader.read(retvalue)) {
         reader.fail();
         return false;
     }
@@ -102,7 +102,7 @@ bool return_getAllTransforms::read_retvalue(yarp::os::idl::WireReader& reader)
 // write retvalue field
 bool return_getAllTransforms::write_retvalue(const yarp::os::idl::WireWriter& writer) const
 {
-    if (!writer.writeBool(retvalue)) {
+    if (!writer.write(retvalue)) {
         return false;
     }
     return true;
@@ -115,7 +115,7 @@ bool return_getAllTransforms::nested_read_retvalue(yarp::os::idl::WireReader& re
         reader.fail();
         return false;
     }
-    if (!reader.readBool(retvalue)) {
+    if (!reader.readNested(retvalue)) {
         reader.fail();
         return false;
     }
@@ -125,7 +125,7 @@ bool return_getAllTransforms::nested_read_retvalue(yarp::os::idl::WireReader& re
 // write (nested) retvalue field
 bool return_getAllTransforms::nested_write_retvalue(const yarp::os::idl::WireWriter& writer) const
 {
-    if (!writer.writeBool(retvalue)) {
+    if (!writer.writeNested(retvalue)) {
         return false;
     }
     return true;

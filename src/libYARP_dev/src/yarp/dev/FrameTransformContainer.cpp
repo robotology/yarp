@@ -35,25 +35,25 @@ void FrameTransformContainer::invalidateTransform(yarp::math::FrameTransform& tr
     }
 }
 
-bool FrameTransformContainer::getTransforms(std::vector<yarp::math::FrameTransform>& transforms) const
+ReturnValue FrameTransformContainer::getTransforms(std::vector<yarp::math::FrameTransform>& transforms) const
 {
     std::lock_guard<std::recursive_mutex> lock(m_trf_mutex);
     std::copy_if (m_transforms.begin(), m_transforms.end(), std::back_inserter(transforms), [](const yarp::math::FrameTransform& trf){return trf.isValid();});
-    return true;
+    return ReturnValue_ok;
 }
 
-bool FrameTransformContainer::setTransforms(const std::vector<yarp::math::FrameTransform>& transforms)
+ReturnValue FrameTransformContainer::setTransforms(const std::vector<yarp::math::FrameTransform>& transforms)
 {
     for (auto& it : transforms)
     {
         setTransform(it);
     }
-    return true;
+    return ReturnValue_ok;
 }
 
-bool FrameTransformContainer::setTransform(const yarp::math::FrameTransform& new_tr)
+ReturnValue FrameTransformContainer::setTransform(const yarp::math::FrameTransform& new_tr)
 {
-    if (new_tr.isValid()==false) return true;
+    if (new_tr.isValid()==false) return ReturnValue_ok;
 
     std::lock_guard<std::recursive_mutex> lock(m_trf_mutex);
     for (auto& it : m_transforms)
@@ -69,27 +69,27 @@ bool FrameTransformContainer::setTransform(const yarp::math::FrameTransform& new
                 if (new_tr.timestamp > it.timestamp)
                 {
                     it = new_tr;
-                    return true;
+                    return ReturnValue_ok;
                 }
                 else
                 {
                     //yCDebug(FRAMETRANSFORMCONTAINER) << "Received old transform" << it.dst_frame_id << it.src_frame_id << std::to_string(it.timestamp) << it.isStatic;
-                    return true;
+                    return ReturnValue_ok;
                 }
             }
             else
             {
-                return true;
+                return ReturnValue_ok;
             }
         }
     }
 
     //add a new transform
     m_transforms.push_back(new_tr);
-    return true;
+    return ReturnValue_ok;
 }
 
-bool FrameTransformContainer::deleteTransform(std::string t1, std::string t2)
+ReturnValue FrameTransformContainer::deleteTransform(std::string t1, std::string t2)
 {
     std::lock_guard<std::recursive_mutex> lock(m_trf_mutex);
     if (t1 == "*" && t2 == "*")
@@ -98,7 +98,7 @@ bool FrameTransformContainer::deleteTransform(std::string t1, std::string t2)
         {
             invalidateTransform(m_transforms[i]);
         }
-        return true;
+        return ReturnValue_ok;
     }
     else
     {
@@ -112,7 +112,7 @@ bool FrameTransformContainer::deleteTransform(std::string t1, std::string t2)
                     invalidateTransform(m_transforms[i]);
                 }
             }
-            return true;
+            return ReturnValue_ok;
         }
         else
         {
@@ -126,7 +126,7 @@ bool FrameTransformContainer::deleteTransform(std::string t1, std::string t2)
                         invalidateTransform(m_transforms[i]);
                     }
                 }
-                return true;
+                return ReturnValue_ok;
             }
             else
             {
@@ -136,7 +136,7 @@ bool FrameTransformContainer::deleteTransform(std::string t1, std::string t2)
                         (m_transforms[i].dst_frame_id == t2 && m_transforms[i].src_frame_id == t1))
                     {
                         invalidateTransform(m_transforms[i]);
-                        return true;
+                        return ReturnValue_ok;
                     }
                 }
             }
@@ -144,17 +144,17 @@ bool FrameTransformContainer::deleteTransform(std::string t1, std::string t2)
     }
 
     yCError(FRAMETRANSFORMCONTAINER) << "Transformation deletion not successful";
-    return false;
+    return ReturnValue::return_code::return_value_error_method_failed;
 }
 
-bool FrameTransformContainer::clearAll()
+ReturnValue FrameTransformContainer::clearAll()
 {
     std::lock_guard<std::recursive_mutex> lock(m_trf_mutex);
     for (size_t i = 0; i < m_transforms.size(); i++)
     {
         invalidateTransform(m_transforms[i]);
     }
-    return true;
+    return ReturnValue_ok;
 }
 
 bool FrameTransformContainer::checkAndRemoveExpired()
@@ -180,7 +180,7 @@ bool FrameTransformContainer::checkAndRemoveExpired()
             goto check_vector;
         }
     }
-    return true;
+    return ReturnValue_ok;
 }
 
 bool FrameTransformContainer::checkAndRemoveExpired() const

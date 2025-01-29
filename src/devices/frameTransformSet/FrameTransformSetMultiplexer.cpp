@@ -78,38 +78,40 @@ bool FrameTransformSetMultiplexer::attachAll(const yarp::dev::PolyDriverList& de
 }
 
 
-bool FrameTransformSetMultiplexer::setTransforms(const std::vector<yarp::math::FrameTransform>& transforms)
+yarp::dev::ReturnValue FrameTransformSetMultiplexer::setTransforms(const std::vector<yarp::math::FrameTransform>& transforms)
 {
     for (size_t i = 0; i < m_iFrameTransformStorageSetList.size(); i++)
     {
         if (m_iFrameTransformStorageSetList[i] != nullptr) {
             m_iFrameTransformStorageSetList[i]->setTransforms(transforms);
         }
-        else {
+        else
+        {
             yCError(FRAMETRANSFORMSETMULTIPLEXER) << "pointer to interface IFrameTransformStorageSet not valid";
-            return false;
+            return ReturnValue::return_code::return_value_error_method_failed;
         }
     }
-    return true;
+    return ReturnValue_ok;
 }
 
 
-bool FrameTransformSetMultiplexer::setTransform(const yarp::math::FrameTransform& transform)
+yarp::dev::ReturnValue FrameTransformSetMultiplexer::setTransform(const yarp::math::FrameTransform& transform)
 {
     for (size_t i = 0; i < m_iFrameTransformStorageSetList.size(); i++)
     {
         if (m_iFrameTransformStorageSetList[i] != nullptr) {
             m_iFrameTransformStorageSetList[i]->setTransform(transform);
         }
-        else {
+        else
+        {
             yCError(FRAMETRANSFORMSETMULTIPLEXER) << "pointer to interface IFrameTransformStorageSet not valid";
-            return false;
+            return ReturnValue::return_code::return_value_error_method_failed;
         }
     }
-    return true;
+    return ReturnValue_ok;
 }
 
-bool FrameTransformSetMultiplexer::deleteTransform(std::string t1, std::string t2)
+yarp::dev::ReturnValue FrameTransformSetMultiplexer::deleteTransform(std::string t1, std::string t2)
 {
     //stopThreads();
 
@@ -121,18 +123,21 @@ bool FrameTransformSetMultiplexer::deleteTransform(std::string t1, std::string t
         {
             frame_deleted &= m_iFrameTransformStorageSetList[i]->deleteTransform(t1,t2);
         }
-        else {
+        else
+        {
             yCError(FRAMETRANSFORMSETMULTIPLEXER) << "pointer to interface IFrameTransformStorageSet not valid";
-            return false;
+            return ReturnValue::return_code::return_value_error_method_failed;
         }
     }
 
     //startThreads();
 
-    return frame_deleted;
+    if (frame_deleted) { return ReturnValue_ok; }
+
+    return ReturnValue::return_code::return_value_error_method_failed;
 }
 
-bool FrameTransformSetMultiplexer::clearAll()
+yarp::dev::ReturnValue FrameTransformSetMultiplexer::clearAll()
 {
     //stopThreads();
 
@@ -141,15 +146,16 @@ bool FrameTransformSetMultiplexer::clearAll()
         if (m_iFrameTransformStorageSetList[i] != nullptr) {
             m_iFrameTransformStorageSetList[i]->clearAll();
         }
-        else {
+        else
+        {
             yCError(FRAMETRANSFORMSETMULTIPLEXER) << "pointer to interface IFrameTransformStorageSet not valid";
-            return false;
+            return ReturnValue::return_code::return_value_error_method_failed;
         }
     }
 
     //startThreads();
 
-    return true;
+    return ReturnValue_ok;
 }
 
 void FrameTransformSetMultiplexer::stopThreads()

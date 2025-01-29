@@ -16,6 +16,7 @@
 #include <yarp/dev/FrameTransformContainer.h>
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/WrapperSingle.h>
+#include <yarp/dev/ReturnValue.h>
 #include <mutex>
 #include <map>
 #include <mutex>
@@ -55,19 +56,19 @@ public:
     bool close() override;
 
     //IFrameTransformStorageSet interface
-    bool setTransforms(const std::vector<yarp::math::FrameTransform>& transforms) override;
-    bool setTransform(const yarp::math::FrameTransform& transform) override;
+    yarp::dev::ReturnValue setTransforms(const std::vector<yarp::math::FrameTransform>& transforms) override;
+    yarp::dev::ReturnValue setTransform(const yarp::math::FrameTransform& transform) override;
 
     //IFrameTransformStorageGet interface
-    bool getTransforms(std::vector<yarp::math::FrameTransform>& transforms) const override;
+    yarp::dev::ReturnValue getTransforms(std::vector<yarp::math::FrameTransform>& transforms) const override;
 
     //IFrameTransformStorageUtils interface
-    bool deleteTransform(std::string t1, std::string t2) override;
-    bool size(size_t& size) const override;
-    bool clearAll() override;
-    bool getInternalContainer(yarp::dev::FrameTransformContainer*&  container) override;
-    bool startStorageThread() override;
-    bool stopStorageThread() override;
+    yarp::dev::ReturnValue deleteTransform(std::string t1, std::string t2) override;
+    yarp::dev::ReturnValue size(size_t& size) const override;
+    yarp::dev::ReturnValue clearAll() override;
+    yarp::dev::ReturnValue getInternalContainer(yarp::dev::FrameTransformContainer*&  container) override;
+    yarp::dev::ReturnValue startStorageThread() override;
+    yarp::dev::ReturnValue stopStorageThread() override;
 
     //wrapper and interfaces
     bool attach(yarp::dev::PolyDriver* driver) override;
