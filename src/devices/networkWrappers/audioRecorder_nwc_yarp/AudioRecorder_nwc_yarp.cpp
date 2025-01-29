@@ -115,89 +115,89 @@ bool AudioRecorder_nwc_yarp::close()
     return true;
 }
 
-bool AudioRecorder_nwc_yarp::setSWGain(double gain)
+ReturnValue AudioRecorder_nwc_yarp::setSWGain(double gain)
 {
-    bool b = m_audiograb_RPC.setSWGain_RPC(gain);
+    ReturnValue b = m_audiograb_RPC.setSWGain_RPC(gain);
     return b;
 }
 
-bool AudioRecorder_nwc_yarp::setHWGain(double gain)
+ReturnValue AudioRecorder_nwc_yarp::setHWGain(double gain)
 {
-    bool b = m_audiograb_RPC.setHWGain_RPC(gain);
+    ReturnValue b = m_audiograb_RPC.setHWGain_RPC(gain);
     return b;
 }
 
-bool AudioRecorder_nwc_yarp::startRecording()
+ReturnValue AudioRecorder_nwc_yarp::startRecording()
 {
-    bool b = m_audiograb_RPC.startRecording_RPC();
+    ReturnValue b = m_audiograb_RPC.startRecording_RPC();
     return b;
 }
 
-bool AudioRecorder_nwc_yarp::stopRecording()
+ReturnValue AudioRecorder_nwc_yarp::stopRecording()
 {
-    bool b = m_audiograb_RPC.stopRecording_RPC();
+    ReturnValue b = m_audiograb_RPC.stopRecording_RPC();
     return b;
 }
 
-bool AudioRecorder_nwc_yarp::resetRecordingAudioBuffer()
+ReturnValue AudioRecorder_nwc_yarp::resetRecordingAudioBuffer()
 {
-    bool b = m_audiograb_RPC.resetRecordingAudioBuffer_RPC();
+    ReturnValue b = m_audiograb_RPC.resetRecordingAudioBuffer_RPC();
     return b;
 }
 
-bool   AudioRecorder_nwc_yarp::isRecording(bool& recording_enabled)
+ReturnValue AudioRecorder_nwc_yarp::isRecording(bool& recording_enabled)
 {
     std::lock_guard <std::mutex> lg(m_mutex);
     auto ret = m_audiograb_RPC.isRecording_RPC();
     if (!ret.ret)
     {
         yCError(AUDIORECORDER_NWC, "Unable to: isRecording()");
-        return false;
+        return ret.ret;
     }
     recording_enabled = ret.isRecording;
-    return true;
+    return ret.ret;
 }
 
-bool   AudioRecorder_nwc_yarp::getRecordingAudioBufferMaxSize(yarp::sig::AudioBufferSize& size)
+ReturnValue AudioRecorder_nwc_yarp::getRecordingAudioBufferMaxSize(yarp::sig::AudioBufferSize& size)
 {
     std::lock_guard <std::mutex> lg(m_mutex);
     auto ret = m_audiograb_RPC.getRecordingAudioBufferMaxSize_RPC();
     if (!ret.ret)
     {
         yCError(AUDIORECORDER_NWC, "Unable to: getRecordingAudioBufferMaxSize()");
-        return false;
+        return ret.ret;
     }
     size = ret.bufsize;
-    return true;
+    return ret.ret;
 }
 
-bool   AudioRecorder_nwc_yarp::getRecordingAudioBufferCurrentSize(yarp::sig::AudioBufferSize& size)
+ReturnValue AudioRecorder_nwc_yarp::getRecordingAudioBufferCurrentSize(yarp::sig::AudioBufferSize& size)
 {
     std::lock_guard <std::mutex> lg(m_mutex);
     auto ret = m_audiograb_RPC.getRecordingAudioBufferCurrentSize_RPC();
     if (!ret.ret)
     {
         yCError(AUDIORECORDER_NWC, "Unable to: getRecordingAudioBufferCurrentSize()");
-        return false;
+        return ret.ret;
     }
     size = ret.bufsize;
-    return true;
+    return ret.ret;
 }
 
-bool AudioRecorder_nwc_yarp::getSound(yarp::sig::Sound& sound, size_t min_number_of_samples, size_t max_number_of_samples, double max_samples_timeout_s)
+ReturnValue AudioRecorder_nwc_yarp::getSound(yarp::sig::Sound& sound, size_t min_number_of_samples, size_t max_number_of_samples, double max_samples_timeout_s)
 {
     if (m_useStream)
     {
         yCError(AUDIORECORDER_NWC, "Unable to: getSound() streaming version not yet implemented");
-        return false;
+        return ReturnValue::return_code::return_value_error_not_implemented_by_device;
     }
     std::lock_guard <std::mutex> lg(m_mutex);
     auto ret = m_audiograb_RPC.getSound_RPC(min_number_of_samples,max_number_of_samples, max_samples_timeout_s);
     if (!ret.ret)
     {
         yCError(AUDIORECORDER_NWC, "Unable to: getSound()");
-        return false;
+        return ret.ret;
     }
     sound = ret.sound;
-    return true;
+    return ret.ret;
 }

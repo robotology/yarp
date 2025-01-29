@@ -60,14 +60,14 @@ protected:
     enum { RENDER_APPEND = 0, RENDER_IMMEDIATE = 1 } m_renderMode= RENDER_APPEND;
 
 public:
-    virtual bool renderSound(const yarp::sig::Sound& sound) override;
-    virtual bool startPlayback() override;
-    virtual bool stopPlayback() override;
-    virtual bool isPlaying(bool& playback_enabled) override;
-    virtual bool getPlaybackAudioBufferMaxSize(yarp::sig::AudioBufferSize& size) override;
-    virtual bool getPlaybackAudioBufferCurrentSize(yarp::sig::AudioBufferSize& size) override;
-    virtual bool resetPlaybackAudioBuffer() override;
-    virtual bool setSWGain(double gain) override;
+    virtual yarp::dev::ReturnValue renderSound(const yarp::sig::Sound& sound) override;
+    virtual yarp::dev::ReturnValue startPlayback() override;
+    virtual yarp::dev::ReturnValue stopPlayback() override;
+    virtual yarp::dev::ReturnValue isPlaying(bool& playback_enabled) override;
+    virtual yarp::dev::ReturnValue getPlaybackAudioBufferMaxSize(yarp::sig::AudioBufferSize& size) override;
+    virtual yarp::dev::ReturnValue getPlaybackAudioBufferCurrentSize(yarp::sig::AudioBufferSize& size) override;
+    virtual yarp::dev::ReturnValue resetPlaybackAudioBuffer() override;
+    virtual yarp::dev::ReturnValue setSWGain(double gain) override;
 
     virtual ~AudioPlayerDeviceBase();
 

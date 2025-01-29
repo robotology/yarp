@@ -10,6 +10,7 @@
 #include <yarp/sig/Sound.h>
 #include <yarp/dev/api.h>
 #include <yarp/sig/AudioBufferSize.h>
+#include <yarp/dev/ReturnValue.h>
 
 namespace yarp::dev {
 
@@ -33,48 +34,48 @@ public:
      * @param sound the sound to be rendered
      * @return true/false upon success/failure
      */
-    virtual bool renderSound(const yarp::sig::Sound& sound) = 0;
+    virtual yarp::dev::ReturnValue renderSound(const yarp::sig::Sound& sound) = 0;
 
     /**
      * Start the playback.
      *
      * @return true/false upon success/failure
      */
-    virtual bool startPlayback() = 0;
+    virtual yarp::dev::ReturnValue startPlayback() = 0;
 
     /**
      * Stop the playback.
      *
      * @return true/false upon success/failure
      */
-    virtual bool stopPlayback() = 0;
+    virtual yarp::dev::ReturnValue stopPlayback() = 0;
 
     /**
      * Check if the playback has been enabled (e.g. via startPlayback()/stopPlayback())
      * @param playback_enabled the status of the device
      * @return true/false upon success/failure
      */
-    virtual bool isPlaying(bool& playback_enabled) = 0;
+    virtual yarp::dev::ReturnValue isPlaying(bool& playback_enabled) = 0;
 
-    virtual bool getPlaybackAudioBufferMaxSize(yarp::sig::AudioBufferSize& size) = 0;
+    virtual yarp::dev::ReturnValue getPlaybackAudioBufferMaxSize(yarp::sig::AudioBufferSize& size) = 0;
 
-    virtual bool getPlaybackAudioBufferCurrentSize(yarp::sig::AudioBufferSize& size) = 0;
+    virtual yarp::dev::ReturnValue getPlaybackAudioBufferCurrentSize(yarp::sig::AudioBufferSize& size) = 0;
 
-    virtual bool resetPlaybackAudioBuffer() = 0;
+    virtual yarp::dev::ReturnValue resetPlaybackAudioBuffer() = 0;
 
     /**
      * Sets a software gain for the played audio
      * @param gain the audio gain (1.0 is the default value)
      * @return true/false upon success/failure
      */
-    virtual bool setSWGain(double gain) = 0;
+    virtual yarp::dev::ReturnValue setSWGain(double gain) = 0;
 
     /**
      * Sets the hardware gain of the playback device (if supported by the hardware)
      * @param gain the audio gain (1.0 is the default value)
      * @return true/false upon success/failure
      */
-    virtual bool setHWGain(double gain) = 0;
+    virtual yarp::dev::ReturnValue setHWGain(double gain) = 0;
 };
 
 } // namespace yarp::dev

@@ -36,10 +36,10 @@ AudioFromFileDevice::~AudioFromFileDevice()
 {
 }
 
-bool AudioFromFileDevice::setHWGain(double gain)
+ReturnValue AudioFromFileDevice::setHWGain(double gain)
 {
     yCInfo(AUDIOFROMFILE) << "Not yet implemented";
-    return false;
+    return ReturnValue::return_code::return_value_error_not_implemented_by_device;
 }
 
 bool AudioFromFileDevice::open(yarp::os::Searchable &config)
@@ -100,9 +100,9 @@ bool AudioFromFileDevice::close()
     return true;
 }
 
-bool AudioFromFileDevice::stopRecording()
+ReturnValue AudioFromFileDevice::stopRecording()
 {
-    bool b = AudioRecorderDeviceBase::stopRecording();
+    ReturnValue b = AudioRecorderDeviceBase::stopRecording();
     if (b && m_reset_on_stop)
     {
         m_bpnt=0;

@@ -99,15 +99,15 @@ void FakeSpeaker::run()
     }
 }
 
-bool FakeSpeaker::setHWGain(double gain)
+ReturnValue FakeSpeaker::setHWGain(double gain)
 {
     std::lock_guard<std::recursive_mutex> lock(m_mutex);
     if (gain > 0)
     {
         m_hw_gain = gain;
-        return true;
+        return ReturnValue_ok;
     }
-    return false;
+    return ReturnValue::return_code::return_value_error_method_failed;
 }
 
 bool FakeSpeaker::configureDeviceAndStart()

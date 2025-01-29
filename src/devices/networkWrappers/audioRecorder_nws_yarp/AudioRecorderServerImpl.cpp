@@ -18,76 +18,81 @@ namespace {
 YARP_LOG_COMPONENT(AUDIOGRAB_RPC, "yarp.device.map2D_nws_yarp.IAudioGrabberRPCd")
 }
 
-#define CHECK_POINTER(xxx) {if (xxx==nullptr) {yCError(AUDIOGRAB_RPC, "Invalid interface"); return false;}}
+#define CHECK_POINTER(xxx) {if (xxx==nullptr) {yCError(AUDIOGRAB_RPC, "Invalid interface"); return ReturnValue::return_code::return_value_error_not_ready;}}
 
-bool IAudioGrabberRPCd::setHWGain_RPC(const double gain)
+ReturnValue IAudioGrabberRPCd::setHWGain_RPC(const double gain)
 {
     std::lock_guard <std::mutex> lg(m_mutex);
 
-    {if (m_igrab == nullptr) { yCError(AUDIOGRAB_RPC, "Invalid interface"); return false; }}
+    CHECK_POINTER(m_igrab)
 
-    if (!m_igrab->setHWGain(gain))
+    auto ret = m_igrab->setHWGain(gain);
+    if (!ret)
     {
         yCError(AUDIOGRAB_RPC, "Unable to setHWGain");
-        return false;
+        return ret;
     }
-    return true;
+    return ret;
 }
 
-bool IAudioGrabberRPCd::setSWGain_RPC(const double gain)
+ReturnValue IAudioGrabberRPCd::setSWGain_RPC(const double gain)
 {
     std::lock_guard <std::mutex> lg(m_mutex);
 
-    {if (m_igrab == nullptr) { yCError(AUDIOGRAB_RPC, "Invalid interface"); return false; }}
+    CHECK_POINTER(m_igrab)
 
-    if (!m_igrab->setSWGain(gain))
+    auto ret = m_igrab->setSWGain(gain);
+    if (!ret)
     {
         yCError(AUDIOGRAB_RPC, "Unable to setSWGain");
-        return false;
+        return ret;
     }
-    return true;
+    return ret;
 }
 
-bool IAudioGrabberRPCd::resetRecordingAudioBuffer_RPC()
+ReturnValue IAudioGrabberRPCd::resetRecordingAudioBuffer_RPC()
 {
     std::lock_guard <std::mutex> lg(m_mutex);
 
-    {if (m_igrab == nullptr) { yCError(AUDIOGRAB_RPC, "Invalid interface"); return false; }}
+    CHECK_POINTER(m_igrab)
 
-    if (!m_igrab->resetRecordingAudioBuffer())
+    auto ret = m_igrab->resetRecordingAudioBuffer();
+    if (!ret)
     {
         yCError(AUDIOGRAB_RPC, "Unable to resetRecordingAudioBuffer");
-        return false;
+        return ret;
     }
-    return true;
+    return ret;
 }
 
-bool IAudioGrabberRPCd::startRecording_RPC()
+ReturnValue IAudioGrabberRPCd::startRecording_RPC()
 {
     std::lock_guard <std::mutex> lg(m_mutex);
 
-    {if (m_igrab == nullptr) { yCError(AUDIOGRAB_RPC, "Invalid interface"); return false; }}
+    CHECK_POINTER(m_igrab)
 
-    if (!m_igrab->startRecording())
+    auto ret = m_igrab->startRecording();
+    if (!ret)
     {
         yCError(AUDIOGRAB_RPC, "Unable to startRecording");
-        return false;
+        return ret;
     }
-    return true;
+    return ret;
 }
 
-bool IAudioGrabberRPCd::stopRecording_RPC()
+ReturnValue IAudioGrabberRPCd::stopRecording_RPC()
 {
     std::lock_guard <std::mutex> lg(m_mutex);
 
-    {if (m_igrab == nullptr) { yCError(AUDIOGRAB_RPC, "Invalid interface"); return false; }}
+    CHECK_POINTER(m_igrab)
 
-    if (!m_igrab->stopRecording())
+    auto ret = m_igrab->stopRecording();
+    if (!ret)
     {
         yCError(AUDIOGRAB_RPC, "Unable to stopRecording");
-        return false;
+        return ret;
     }
-    return true;
+    return ret;
 }
 
 return_isRecording IAudioGrabberRPCd::isRecording_RPC()
@@ -98,19 +103,20 @@ return_isRecording IAudioGrabberRPCd::isRecording_RPC()
     if (m_igrab == nullptr)
     {
         yCError(AUDIOGRAB_RPC, "Invalid interface");
-        ret.ret=false;
+        ret.ret = ReturnValue::return_code::return_value_error_not_ready;
         return ret;
     }
 
-    bool recording_enabled;
-    if (!m_igrab->isRecording(recording_enabled))
+    bool recording_enabled=false;
+    auto rec_ret = m_igrab->isRecording(recording_enabled);
+    if (!rec_ret)
     {
         yCError(AUDIOGRAB_RPC, "Unable to evaluate isRecording");
-        ret.ret = false;
+        ret.ret = rec_ret;
         return ret;
     }
 
-    ret.ret = true;
+    ret.ret = ReturnValue_ok;
     ret.isRecording= recording_enabled;
     return ret;
 }
@@ -123,18 +129,18 @@ return_getSound IAudioGrabberRPCd::getSound_RPC(const size_t min_number_of_sampl
     if (m_igrab == nullptr)
     {
         yCError(AUDIOGRAB_RPC, "Invalid interface");
-        ret.ret = false;
+        ret.ret = ReturnValue::return_code::return_value_error_not_ready;
         return ret;
     }
 
-    if (!m_igrab->getSound(ret.sound, min_number_of_samples, max_number_of_samples, max_samples_timeout_s))
+    ret.ret = m_igrab->getSound(ret.sound, min_number_of_samples, max_number_of_samples, max_samples_timeout_s);
+    if (!ret.ret)
     {
         yCError(AUDIOGRAB_RPC, "Unable to evaluate isRecording");
-        ret.ret = false;
         return ret;
     }
 
-    ret.ret = true;
+    ret.ret = ReturnValue_ok;
     return ret;
 }
 
@@ -146,18 +152,19 @@ return_getRecordingAudioBufferMaxSize IAudioGrabberRPCd::getRecordingAudioBuffer
     if (m_igrab == nullptr)
     {
         yCError(AUDIOGRAB_RPC, "Invalid interface");
-        ret.ret = false;
+        ret.ret = ReturnValue::return_code::return_value_error_not_ready;
         return ret;
     }
 
-    if (!m_igrab->getRecordingAudioBufferMaxSize(ret.bufsize))
+    ReturnValue r2 = m_igrab->getRecordingAudioBufferMaxSize(ret.bufsize);
+    if (!r2)
     {
         yCError(AUDIOGRAB_RPC, "Unable to evaluate isRecording");
-        ret.ret = false;
+        ret.ret = r2;
         return ret;
     }
 
-    ret.ret = true;
+    ret.ret = ReturnValue_ok;
     return ret;
 }
 
@@ -169,17 +176,18 @@ return_getRecordingAudioBufferCurrentSize IAudioGrabberRPCd::getRecordingAudioBu
     if (m_igrab == nullptr)
     {
         yCError(AUDIOGRAB_RPC, "Invalid interface");
-        ret.ret = false;
+        ret.ret = ReturnValue::return_code::return_value_error_not_ready;
         return ret;
     }
 
-    if (!m_igrab->getRecordingAudioBufferCurrentSize(ret.bufsize))
+    ReturnValue r2 = m_igrab->getRecordingAudioBufferCurrentSize(ret.bufsize);
+    if (!r2)
     {
         yCError(AUDIOGRAB_RPC, "Unable to evaluate isRecording");
-        ret.ret = false;
+        ret.ret = r2;
         return ret;
     }
 
-    ret.ret = true;
+    ret.ret = ReturnValue_ok;
     return ret;
 }

@@ -85,15 +85,15 @@ bool FakeMicrophone::close()
     return true;
 }
 
-bool FakeMicrophone::setHWGain(double gain)
+ReturnValue FakeMicrophone::setHWGain(double gain)
 {
     std::lock_guard<std::mutex> lock(m_mutex);
     if (gain > 0)
     {
         m_hw_gain = gain;
-        return true;
+        return ReturnValue_ok;
     }
-    return false;
+    return ReturnValue::return_code::return_value_error_method_failed;
 }
 
 bool FakeMicrophone::threadInit()

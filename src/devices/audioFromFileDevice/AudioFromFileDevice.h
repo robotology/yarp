@@ -52,8 +52,8 @@ private:
     void run() override;
 
 public:
-    bool setHWGain(double gain) override;
-    bool stopRecording () override;
+    yarp::dev::ReturnValue setHWGain(double gain) override;
+    yarp::dev::ReturnValue stopRecording () override;
 
 private:
     yarp::sig::Sound m_audioFile;

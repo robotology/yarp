@@ -42,7 +42,7 @@ public:
     virtual ~FakeMicrophone() override;
 
 public:
-    bool setHWGain(double gain) override;
+    yarp::dev::ReturnValue setHWGain(double gain) override;
 
 public: // DeviceDriver
     bool open(yarp::os::Searchable &config) override;

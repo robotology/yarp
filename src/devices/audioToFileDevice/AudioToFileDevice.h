@@ -60,10 +60,10 @@ public:
     bool close() override;
 
 public:
-    virtual bool renderSound(const yarp::sig::Sound& sound) override;
-    virtual bool startPlayback() override;
-    virtual bool stopPlayback()override;
-    virtual bool setHWGain(double gain) override;
+    virtual yarp::dev::ReturnValue renderSound(const yarp::sig::Sound& sound) override;
+    virtual yarp::dev::ReturnValue startPlayback() override;
+    virtual yarp::dev::ReturnValue stopPlayback()override;
+    virtual yarp::dev::ReturnValue setHWGain(double gain) override;
     virtual bool configureDeviceAndStart() override;
     virtual bool interruptDeviceAndClose() override;
     virtual void waitUntilPlaybackStreamIsComplete() override;

@@ -8,6 +8,7 @@
 #define YARP_DEV_IAUDIOGRABBERSOUND_H
 
 #include <yarp/dev/api.h>
+#include <yarp/dev/ReturnValue.h>
 #include <yarp/sig/AudioBufferSize.h>
 #include <yarp/sig/Sound.h>
 
@@ -38,48 +39,48 @@ public:
      * @param max_samples_timeout_s. The timeout (in seconds) to retrieve max_number_of_samples.
      * @return true upon success, false for an invalid set of parameters, such as max_number_of_samples<min_number_of_samples, etc.
      */
-    virtual bool getSound(yarp::sig::Sound& sound, size_t min_number_of_samples, size_t max_number_of_samples, double max_samples_timeout_s) = 0;
+    virtual yarp::dev::ReturnValue getSound(yarp::sig::Sound& sound, size_t min_number_of_samples, size_t max_number_of_samples, double max_samples_timeout_s) = 0;
 
     /**
      * Start the recording.
      *
      * @return true/false upon success/failure
      */
-    virtual bool startRecording() = 0;
+    virtual yarp::dev::ReturnValue startRecording() = 0;
 
     /**
      * Stop the recording.
      *
      * @return true/false upon success/failure
      */
-    virtual bool stopRecording() = 0;
+    virtual yarp::dev::ReturnValue stopRecording() = 0;
 
     /**
      * Check if the recording has been enabled (e.g. via startRecording()/stopRecording())
      * @param recording_enabled the status of the device
      * @return true/false upon success/failure
      */
-    virtual bool isRecording(bool& recording_enabled) = 0;
+    virtual yarp::dev::ReturnValue isRecording(bool& recording_enabled) = 0;
 
-    virtual bool getRecordingAudioBufferMaxSize(yarp::sig::AudioBufferSize& size) = 0;
+    virtual yarp::dev::ReturnValue getRecordingAudioBufferMaxSize(yarp::sig::AudioBufferSize& size) = 0;
 
-    virtual bool getRecordingAudioBufferCurrentSize(yarp::sig::AudioBufferSize& size) = 0;
+    virtual yarp::dev::ReturnValue getRecordingAudioBufferCurrentSize(yarp::sig::AudioBufferSize& size) = 0;
 
-    virtual bool resetRecordingAudioBuffer() = 0;
+    virtual yarp::dev::ReturnValue resetRecordingAudioBuffer() = 0;
 
     /**
      * Sets a software gain for the grabbed audio
      * @param gain the audio gain (1.0 is the default value)
      * @return true/false upon success/failure
      */
-    virtual bool setSWGain(double gain) = 0;
+    virtual yarp::dev::ReturnValue setSWGain(double gain) = 0;
 
     /**
      * Sets the hardware gain of the grabbing device (if supported by the hardware)
      * @param gain the audio gain (1.0 is the default value)
      * @return true/false upon success/failure
      */
-    virtual bool setHWGain(double gain) = 0;
+    virtual yarp::dev::ReturnValue setHWGain(double gain) = 0;
 };
 
 } // namespace yarp::dev

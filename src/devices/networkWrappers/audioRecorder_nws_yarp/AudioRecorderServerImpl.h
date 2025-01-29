@@ -8,6 +8,7 @@
 
 #include "IAudioGrabberMsgs.h"
 #include <yarp/dev/IAudioGrabberSound.h>
+#include <yarp/dev/ReturnValue.h>
 #include <yarp/os/Stamp.h>
 
 class IAudioGrabberRPCd : public IAudioGrabberMsgs
@@ -19,11 +20,11 @@ class IAudioGrabberRPCd : public IAudioGrabberMsgs
     public:
     void setInterface(yarp::dev::IAudioGrabberSound* _iaudiograb) { m_igrab = _iaudiograb; }
 
-    virtual bool setHWGain_RPC(const double gain) override;
-    virtual bool setSWGain_RPC(const double gain) override;
-    virtual bool resetRecordingAudioBuffer_RPC() override;
-    virtual bool startRecording_RPC() override;
-    virtual bool stopRecording_RPC() override;
+    virtual yarp::dev::ReturnValue setHWGain_RPC(const double gain) override;
+    virtual yarp::dev::ReturnValue setSWGain_RPC(const double gain) override;
+    virtual yarp::dev::ReturnValue resetRecordingAudioBuffer_RPC() override;
+    virtual yarp::dev::ReturnValue startRecording_RPC() override;
+    virtual yarp::dev::ReturnValue stopRecording_RPC() override;
     virtual return_isRecording isRecording_RPC() override;
     virtual return_getSound getSound_RPC(const size_t min_number_of_samples, const size_t max_number_of_samples, const double max_samples_timeout_s) override;
     virtual return_getRecordingAudioBufferMaxSize getRecordingAudioBufferMaxSize_RPC() override;
