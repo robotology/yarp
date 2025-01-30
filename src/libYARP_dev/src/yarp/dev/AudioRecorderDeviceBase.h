@@ -57,14 +57,14 @@ protected:
     int16_t         m_cliptol = 3;
 
 public:
-    virtual bool getSound(yarp::sig::Sound& sound, size_t min_number_of_samples, size_t max_number_of_samples, double max_samples_timeout_s) override;
-    virtual bool startRecording() override;
-    virtual bool stopRecording() override;
-    virtual bool isRecording(bool& recording_enabled) override;
-    virtual bool getRecordingAudioBufferMaxSize(yarp::sig::AudioBufferSize& size) override;
-    virtual bool getRecordingAudioBufferCurrentSize(yarp::sig::AudioBufferSize& size) override;
-    virtual bool resetRecordingAudioBuffer() override;
-    virtual bool setSWGain(double gain) override;
+    virtual yarp::dev::ReturnValue getSound(yarp::sig::Sound& sound, size_t min_number_of_samples, size_t max_number_of_samples, double max_samples_timeout_s) override;
+    virtual yarp::dev::ReturnValue startRecording() override;
+    virtual yarp::dev::ReturnValue stopRecording() override;
+    virtual yarp::dev::ReturnValue isRecording(bool& recording_enabled) override;
+    virtual yarp::dev::ReturnValue getRecordingAudioBufferMaxSize(yarp::sig::AudioBufferSize& size) override;
+    virtual yarp::dev::ReturnValue getRecordingAudioBufferCurrentSize(yarp::sig::AudioBufferSize& size) override;
+    virtual yarp::dev::ReturnValue resetRecordingAudioBuffer() override;
+    virtual yarp::dev::ReturnValue setSWGain(double gain) override;
 
     virtual ~AudioRecorderDeviceBase();
 

@@ -299,10 +299,10 @@ bool PortAudioPlayerDeviceDriver::abortSound()
     return (m_err==paNoError);
 }
 
-bool PortAudioPlayerDeviceDriver::setHWGain(double gain)
+ReturnValue PortAudioPlayerDeviceDriver::setHWGain(double gain)
 {
     yCError(PORTAUDIOPLAYER, "Not yet implemented");
-    return false;
+    return ReturnValue::return_code::return_value_error_not_implemented_by_device;
 }
 
 void PortAudioPlayerDeviceDriver::waitUntilPlaybackStreamIsComplete()
@@ -317,20 +317,20 @@ void PortAudioPlayerDeviceDriver::waitUntilPlaybackStreamIsComplete()
     }
 }
 
-bool PortAudioPlayerDeviceDriver::startPlayback()
+ReturnValue PortAudioPlayerDeviceDriver::startPlayback()
 {
     AudioPlayerDeviceBase::startPlayback();
     m_err = Pa_StartStream(m_stream);
-    if (m_err < 0) { handleError(); return false; }
+    if (m_err < 0) { handleError(); return ReturnValue::return_code::return_value_error_method_failed; }
     yCInfo(PORTAUDIOPLAYER) << "started playback";
-    return true;
+    return ReturnValue_ok;
 }
 
-bool PortAudioPlayerDeviceDriver::stopPlayback()
+ReturnValue PortAudioPlayerDeviceDriver::stopPlayback()
 {
     AudioPlayerDeviceBase::stopPlayback();
     m_err = Pa_StopStream(m_stream);
-    if (m_err < 0) { handleError(); return false; }
+    if (m_err < 0) { handleError(); return ReturnValue::return_code::return_value_error_method_failed; }
     yCInfo(PORTAUDIOPLAYER) << "stopped playback";
-    return true;
+    return ReturnValue_ok;
 }

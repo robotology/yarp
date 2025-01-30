@@ -60,10 +60,10 @@ public:
         bool write(const yarp::os::idl::WireWriter& writer) const override;
         bool read(yarp::os::idl::WireReader& reader) override;
 
-        bool return_helper{false};
+        yarp::dev::ReturnValue return_helper{};
     };
 
-    using funcptr_t = bool (*)(const double);
+    using funcptr_t = yarp::dev::ReturnValue (*)(const double);
     void call(IAudioGrabberMsgs* ptr);
 
     Command cmd;
@@ -73,7 +73,7 @@ public:
     static constexpr size_t s_tag_len{2};
     static constexpr size_t s_cmd_len{3};
     static constexpr size_t s_reply_len{1};
-    static constexpr const char* s_prototype{"bool IAudioGrabberMsgs::setHWGain_RPC(const double gain)"};
+    static constexpr const char* s_prototype{"yarp::dev::ReturnValue IAudioGrabberMsgs::setHWGain_RPC(const double gain)"};
     static constexpr const char* s_help{""};
 };
 
@@ -123,10 +123,10 @@ public:
         bool write(const yarp::os::idl::WireWriter& writer) const override;
         bool read(yarp::os::idl::WireReader& reader) override;
 
-        bool return_helper{false};
+        yarp::dev::ReturnValue return_helper{};
     };
 
-    using funcptr_t = bool (*)(const double);
+    using funcptr_t = yarp::dev::ReturnValue (*)(const double);
     void call(IAudioGrabberMsgs* ptr);
 
     Command cmd;
@@ -136,7 +136,7 @@ public:
     static constexpr size_t s_tag_len{2};
     static constexpr size_t s_cmd_len{3};
     static constexpr size_t s_reply_len{1};
-    static constexpr const char* s_prototype{"bool IAudioGrabberMsgs::setSWGain_RPC(const double gain)"};
+    static constexpr const char* s_prototype{"yarp::dev::ReturnValue IAudioGrabberMsgs::setSWGain_RPC(const double gain)"};
     static constexpr const char* s_help{""};
 };
 
@@ -181,10 +181,10 @@ public:
         bool write(const yarp::os::idl::WireWriter& writer) const override;
         bool read(yarp::os::idl::WireReader& reader) override;
 
-        bool return_helper{false};
+        yarp::dev::ReturnValue return_helper{};
     };
 
-    using funcptr_t = bool (*)();
+    using funcptr_t = yarp::dev::ReturnValue (*)();
     void call(IAudioGrabberMsgs* ptr);
 
     Command cmd;
@@ -194,7 +194,7 @@ public:
     static constexpr size_t s_tag_len{2};
     static constexpr size_t s_cmd_len{2};
     static constexpr size_t s_reply_len{1};
-    static constexpr const char* s_prototype{"bool IAudioGrabberMsgs::resetRecordingAudioBuffer_RPC()"};
+    static constexpr const char* s_prototype{"yarp::dev::ReturnValue IAudioGrabberMsgs::resetRecordingAudioBuffer_RPC()"};
     static constexpr const char* s_help{""};
 };
 
@@ -239,10 +239,10 @@ public:
         bool write(const yarp::os::idl::WireWriter& writer) const override;
         bool read(yarp::os::idl::WireReader& reader) override;
 
-        bool return_helper{false};
+        yarp::dev::ReturnValue return_helper{};
     };
 
-    using funcptr_t = bool (*)();
+    using funcptr_t = yarp::dev::ReturnValue (*)();
     void call(IAudioGrabberMsgs* ptr);
 
     Command cmd;
@@ -252,7 +252,7 @@ public:
     static constexpr size_t s_tag_len{2};
     static constexpr size_t s_cmd_len{2};
     static constexpr size_t s_reply_len{1};
-    static constexpr const char* s_prototype{"bool IAudioGrabberMsgs::startRecording_RPC()"};
+    static constexpr const char* s_prototype{"yarp::dev::ReturnValue IAudioGrabberMsgs::startRecording_RPC()"};
     static constexpr const char* s_help{""};
 };
 
@@ -297,10 +297,10 @@ public:
         bool write(const yarp::os::idl::WireWriter& writer) const override;
         bool read(yarp::os::idl::WireReader& reader) override;
 
-        bool return_helper{false};
+        yarp::dev::ReturnValue return_helper{};
     };
 
-    using funcptr_t = bool (*)();
+    using funcptr_t = yarp::dev::ReturnValue (*)();
     void call(IAudioGrabberMsgs* ptr);
 
     Command cmd;
@@ -310,7 +310,7 @@ public:
     static constexpr size_t s_tag_len{2};
     static constexpr size_t s_cmd_len{2};
     static constexpr size_t s_reply_len{1};
-    static constexpr const char* s_prototype{"bool IAudioGrabberMsgs::stopRecording_RPC()"};
+    static constexpr const char* s_prototype{"yarp::dev::ReturnValue IAudioGrabberMsgs::stopRecording_RPC()"};
     static constexpr const char* s_help{""};
 };
 
@@ -676,10 +676,7 @@ bool IAudioGrabberMsgs_setHWGain_RPC_helper::Reply::read(yarp::os::ConnectionRea
 bool IAudioGrabberMsgs_setHWGain_RPC_helper::Reply::write(const yarp::os::idl::WireWriter& writer) const
 {
     if (!writer.isNull()) {
-        if (!writer.writeListHeader(s_reply_len)) {
-            return false;
-        }
-        if (!writer.writeBool(return_helper)) {
+        if (!writer.write(return_helper)) {
             return false;
         }
     }
@@ -688,14 +685,11 @@ bool IAudioGrabberMsgs_setHWGain_RPC_helper::Reply::write(const yarp::os::idl::W
 
 bool IAudioGrabberMsgs_setHWGain_RPC_helper::Reply::read(yarp::os::idl::WireReader& reader)
 {
-    if (!reader.readListReturn()) {
-        return false;
-    }
     if (reader.noMore()) {
         reader.fail();
         return false;
     }
-    if (!reader.readBool(return_helper)) {
+    if (!reader.read(return_helper)) {
         reader.fail();
         return false;
     }
@@ -830,10 +824,7 @@ bool IAudioGrabberMsgs_setSWGain_RPC_helper::Reply::read(yarp::os::ConnectionRea
 bool IAudioGrabberMsgs_setSWGain_RPC_helper::Reply::write(const yarp::os::idl::WireWriter& writer) const
 {
     if (!writer.isNull()) {
-        if (!writer.writeListHeader(s_reply_len)) {
-            return false;
-        }
-        if (!writer.writeBool(return_helper)) {
+        if (!writer.write(return_helper)) {
             return false;
         }
     }
@@ -842,14 +833,11 @@ bool IAudioGrabberMsgs_setSWGain_RPC_helper::Reply::write(const yarp::os::idl::W
 
 bool IAudioGrabberMsgs_setSWGain_RPC_helper::Reply::read(yarp::os::idl::WireReader& reader)
 {
-    if (!reader.readListReturn()) {
-        return false;
-    }
     if (reader.noMore()) {
         reader.fail();
         return false;
     }
-    if (!reader.readBool(return_helper)) {
+    if (!reader.read(return_helper)) {
         reader.fail();
         return false;
     }
@@ -963,10 +951,7 @@ bool IAudioGrabberMsgs_resetRecordingAudioBuffer_RPC_helper::Reply::read(yarp::o
 bool IAudioGrabberMsgs_resetRecordingAudioBuffer_RPC_helper::Reply::write(const yarp::os::idl::WireWriter& writer) const
 {
     if (!writer.isNull()) {
-        if (!writer.writeListHeader(s_reply_len)) {
-            return false;
-        }
-        if (!writer.writeBool(return_helper)) {
+        if (!writer.write(return_helper)) {
             return false;
         }
     }
@@ -975,14 +960,11 @@ bool IAudioGrabberMsgs_resetRecordingAudioBuffer_RPC_helper::Reply::write(const 
 
 bool IAudioGrabberMsgs_resetRecordingAudioBuffer_RPC_helper::Reply::read(yarp::os::idl::WireReader& reader)
 {
-    if (!reader.readListReturn()) {
-        return false;
-    }
     if (reader.noMore()) {
         reader.fail();
         return false;
     }
-    if (!reader.readBool(return_helper)) {
+    if (!reader.read(return_helper)) {
         reader.fail();
         return false;
     }
@@ -1096,10 +1078,7 @@ bool IAudioGrabberMsgs_startRecording_RPC_helper::Reply::read(yarp::os::Connecti
 bool IAudioGrabberMsgs_startRecording_RPC_helper::Reply::write(const yarp::os::idl::WireWriter& writer) const
 {
     if (!writer.isNull()) {
-        if (!writer.writeListHeader(s_reply_len)) {
-            return false;
-        }
-        if (!writer.writeBool(return_helper)) {
+        if (!writer.write(return_helper)) {
             return false;
         }
     }
@@ -1108,14 +1087,11 @@ bool IAudioGrabberMsgs_startRecording_RPC_helper::Reply::write(const yarp::os::i
 
 bool IAudioGrabberMsgs_startRecording_RPC_helper::Reply::read(yarp::os::idl::WireReader& reader)
 {
-    if (!reader.readListReturn()) {
-        return false;
-    }
     if (reader.noMore()) {
         reader.fail();
         return false;
     }
-    if (!reader.readBool(return_helper)) {
+    if (!reader.read(return_helper)) {
         reader.fail();
         return false;
     }
@@ -1229,10 +1205,7 @@ bool IAudioGrabberMsgs_stopRecording_RPC_helper::Reply::read(yarp::os::Connectio
 bool IAudioGrabberMsgs_stopRecording_RPC_helper::Reply::write(const yarp::os::idl::WireWriter& writer) const
 {
     if (!writer.isNull()) {
-        if (!writer.writeListHeader(s_reply_len)) {
-            return false;
-        }
-        if (!writer.writeBool(return_helper)) {
+        if (!writer.write(return_helper)) {
             return false;
         }
     }
@@ -1241,14 +1214,11 @@ bool IAudioGrabberMsgs_stopRecording_RPC_helper::Reply::write(const yarp::os::id
 
 bool IAudioGrabberMsgs_stopRecording_RPC_helper::Reply::read(yarp::os::idl::WireReader& reader)
 {
-    if (!reader.readListReturn()) {
-        return false;
-    }
     if (reader.noMore()) {
         reader.fail();
         return false;
     }
-    if (!reader.readBool(return_helper)) {
+    if (!reader.read(return_helper)) {
         reader.fail();
         return false;
     }
@@ -1843,54 +1813,54 @@ IAudioGrabberMsgs::IAudioGrabberMsgs()
     yarp().setOwner(*this);
 }
 
-bool IAudioGrabberMsgs::setHWGain_RPC(const double gain)
+yarp::dev::ReturnValue IAudioGrabberMsgs::setHWGain_RPC(const double gain)
 {
     if (!yarp().canWrite()) {
         yError("Missing server method '%s'?", IAudioGrabberMsgs_setHWGain_RPC_helper::s_prototype);
     }
     IAudioGrabberMsgs_setHWGain_RPC_helper helper{gain};
     bool ok = yarp().write(helper, helper);
-    return ok ? helper.reply.return_helper : bool{};
+    return ok ? helper.reply.return_helper : yarp::dev::ReturnValue{};
 }
 
-bool IAudioGrabberMsgs::setSWGain_RPC(const double gain)
+yarp::dev::ReturnValue IAudioGrabberMsgs::setSWGain_RPC(const double gain)
 {
     if (!yarp().canWrite()) {
         yError("Missing server method '%s'?", IAudioGrabberMsgs_setSWGain_RPC_helper::s_prototype);
     }
     IAudioGrabberMsgs_setSWGain_RPC_helper helper{gain};
     bool ok = yarp().write(helper, helper);
-    return ok ? helper.reply.return_helper : bool{};
+    return ok ? helper.reply.return_helper : yarp::dev::ReturnValue{};
 }
 
-bool IAudioGrabberMsgs::resetRecordingAudioBuffer_RPC()
+yarp::dev::ReturnValue IAudioGrabberMsgs::resetRecordingAudioBuffer_RPC()
 {
     if (!yarp().canWrite()) {
         yError("Missing server method '%s'?", IAudioGrabberMsgs_resetRecordingAudioBuffer_RPC_helper::s_prototype);
     }
     IAudioGrabberMsgs_resetRecordingAudioBuffer_RPC_helper helper{};
     bool ok = yarp().write(helper, helper);
-    return ok ? helper.reply.return_helper : bool{};
+    return ok ? helper.reply.return_helper : yarp::dev::ReturnValue{};
 }
 
-bool IAudioGrabberMsgs::startRecording_RPC()
+yarp::dev::ReturnValue IAudioGrabberMsgs::startRecording_RPC()
 {
     if (!yarp().canWrite()) {
         yError("Missing server method '%s'?", IAudioGrabberMsgs_startRecording_RPC_helper::s_prototype);
     }
     IAudioGrabberMsgs_startRecording_RPC_helper helper{};
     bool ok = yarp().write(helper, helper);
-    return ok ? helper.reply.return_helper : bool{};
+    return ok ? helper.reply.return_helper : yarp::dev::ReturnValue{};
 }
 
-bool IAudioGrabberMsgs::stopRecording_RPC()
+yarp::dev::ReturnValue IAudioGrabberMsgs::stopRecording_RPC()
 {
     if (!yarp().canWrite()) {
         yError("Missing server method '%s'?", IAudioGrabberMsgs_stopRecording_RPC_helper::s_prototype);
     }
     IAudioGrabberMsgs_stopRecording_RPC_helper helper{};
     bool ok = yarp().write(helper, helper);
-    return ok ? helper.reply.return_helper : bool{};
+    return ok ? helper.reply.return_helper : yarp::dev::ReturnValue{};
 }
 
 return_isRecording IAudioGrabberMsgs::isRecording_RPC()

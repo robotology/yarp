@@ -26,7 +26,7 @@ YARP_LOG_COMPONENT(AUDIORECORDER_BASE, "yarp.devices.AudioRecorderDeviceBase")
 #define DEFAULT_NUM_CHANNELS    (2)
 #define DEFAULT_SAMPLE_SIZE     (2)
 
-bool AudioRecorderDeviceBase::getSound(yarp::sig::Sound& sound, size_t min_number_of_samples, size_t max_number_of_samples, double max_samples_timeout_s)
+ReturnValue AudioRecorderDeviceBase::getSound(yarp::sig::Sound& sound, size_t min_number_of_samples, size_t max_number_of_samples, double max_samples_timeout_s)
 {
     //check for something_to_record
     {
@@ -56,7 +56,7 @@ bool AudioRecorderDeviceBase::getSound(yarp::sig::Sound& sound, size_t min_numbe
     if (max_number_of_samples < min_number_of_samples)
     {
         yCError(AUDIORECORDER_BASE) << "max_number_of_samples must be greater than min_number_of_samples!";
-        return false;
+        return ReturnValue::return_code::return_value_error_method_failed;
     }
     if (max_number_of_samples > this->m_audiorecorder_cfg.numSamples)
     {
@@ -120,59 +120,60 @@ bool AudioRecorderDeviceBase::getSound(yarp::sig::Sound& sound, size_t min_numbe
     double ct2 = yarp::os::Time::now();
     yCDebug(AUDIORECORDER_BASE) << ct2 - ct1;
     #endif
-    return true;
+    return ReturnValue_ok;
 }
 
-bool AudioRecorderDeviceBase::getRecordingAudioBufferMaxSize(yarp::sig::AudioBufferSize& size)
+ReturnValue AudioRecorderDeviceBase::getRecordingAudioBufferMaxSize(yarp::sig::AudioBufferSize& size)
 {
     if (m_inputBuffer == nullptr)
     {
         yCError(AUDIORECORDER_BASE) << "getRecordingAudioBufferMaxSize() called, but no audio buffer is allocated yet";
-        return false;
+        return ReturnValue::return_code::return_value_error_not_ready;
     }
     //no lock guard is needed here
     size = this->m_inputBuffer->getMaxSize();
-    return true;
+    return ReturnValue_ok;
 }
 
 
-bool AudioRecorderDeviceBase::getRecordingAudioBufferCurrentSize(yarp::sig::AudioBufferSize& size)
+ReturnValue AudioRecorderDeviceBase::getRecordingAudioBufferCurrentSize(yarp::sig::AudioBufferSize& size)
 {
     if (m_inputBuffer == nullptr)
     {
         yCError(AUDIORECORDER_BASE) << "getRecordingAudioBufferCurrentSize() called, but no audio buffer is allocated yet";
-        return false;
+        return ReturnValue::return_code::return_value_error_not_ready;
     }
     //no lock guard is needed here
     size = this->m_inputBuffer->size();
-    return true;
+    return ReturnValue_ok;
 }
 
-bool AudioRecorderDeviceBase::setSWGain(double gain)
+ReturnValue AudioRecorderDeviceBase::setSWGain(double gain)
 {
     std::lock_guard<std::mutex> lock(m_mutex);
     if (gain > 0)
     {
         m_sw_gain = gain;
-        return true;
+        return ReturnValue_ok;
     }
-    return false;
+    //negative gain
+    return ReturnValue::return_code::return_value_error_method_failed;
 }
 
-bool AudioRecorderDeviceBase::resetRecordingAudioBuffer()
+ReturnValue AudioRecorderDeviceBase::resetRecordingAudioBuffer()
 {
     if (m_inputBuffer == nullptr)
     {
         yCError(AUDIORECORDER_BASE) << "resetRecordingAudioBuffer() called, but no audio buffer is allocated yet";
-        return false;
+        return ReturnValue::return_code::return_value_error_not_ready;
     }
     std::lock_guard<std::mutex> lock(m_mutex);
     m_inputBuffer->clear();
     yCDebug(AUDIORECORDER_BASE) << "resetRecordingAudioBuffer";
-    return true;
+    return ReturnValue_ok;
 }
 
-bool AudioRecorderDeviceBase::startRecording()
+ReturnValue AudioRecorderDeviceBase::startRecording()
 {
     std::lock_guard<std::mutex> lock(m_mutex);
     m_recording_enabled = true;
@@ -181,10 +182,10 @@ bool AudioRecorderDeviceBase::startRecording()
         this->m_inputBuffer->clear();
     }
     yCInfo(AUDIORECORDER_BASE) << "Recording started";
-    return true;
+    return ReturnValue_ok;
 }
 
-bool AudioRecorderDeviceBase::stopRecording()
+ReturnValue AudioRecorderDeviceBase::stopRecording()
 {
     std::lock_guard<std::mutex> lock(m_mutex);
     m_recording_enabled = false;
@@ -195,13 +196,13 @@ bool AudioRecorderDeviceBase::stopRecording()
         //this->m_inputBuffer->clear();
     }
     yCInfo(AUDIORECORDER_BASE) << "Recording stopped";
-    return true;
+    return ReturnValue_ok;
 }
 
-bool AudioRecorderDeviceBase::isRecording(bool& recording_enabled)
+ReturnValue AudioRecorderDeviceBase::isRecording(bool& recording_enabled)
 {
     recording_enabled = m_recording_enabled;
-    return true;
+    return ReturnValue_ok;
 }
 
 AudioRecorderDeviceBase::~AudioRecorderDeviceBase()

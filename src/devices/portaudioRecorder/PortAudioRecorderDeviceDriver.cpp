@@ -220,28 +220,28 @@ bool PortAudioRecorderDeviceDriver::close()
     return (m_err==paNoError);
 }
 
-bool PortAudioRecorderDeviceDriver::startRecording()
+ReturnValue PortAudioRecorderDeviceDriver::startRecording()
 {
     AudioRecorderDeviceBase::startRecording();
     m_err = Pa_StartStream(m_stream );
-    if(m_err < 0 ) {handleError(); return false;}
+    if(m_err < 0 ) {handleError(); return ReturnValue::return_code::return_value_error_method_failed;}
     yCInfo(PORTAUDIORECORDER) << "started recording";
-    return true;
+    return ReturnValue_ok;
 }
 
-bool PortAudioRecorderDeviceDriver::setHWGain(double gain)
+ReturnValue PortAudioRecorderDeviceDriver::setHWGain(double gain)
 {
     yCInfo(PORTAUDIORECORDER) << "not yet implemented recording";
-    return false;
+    return ReturnValue::return_code::return_value_error_not_implemented_by_device;
 }
 
-bool PortAudioRecorderDeviceDriver::stopRecording()
+ReturnValue PortAudioRecorderDeviceDriver::stopRecording()
 {
     AudioRecorderDeviceBase::stopRecording();
     m_err = Pa_StopStream(m_stream );
-    if(m_err < 0 ) {handleError(); return false;}
+    if(m_err < 0 ) {handleError(); return ReturnValue::return_code::return_value_error_method_failed;}
     yCInfo(PORTAUDIORECORDER) << "stopped recording";
-    return true;
+    return ReturnValue_ok;
 }
 
 void PortAudioRecorderDeviceDriver::threadRelease()

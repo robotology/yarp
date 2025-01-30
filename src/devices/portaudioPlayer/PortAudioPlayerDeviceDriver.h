@@ -59,10 +59,11 @@ public: //DeviceDriver
 
 public: //AudioRecorderDeviceBase(IAudioGrabberSound)
     void waitUntilPlaybackStreamIsComplete() override;
-    bool setHWGain(double gain) override;
+    yarp::dev::ReturnValue setHWGain(double gain) override;
+    yarp::dev::ReturnValue startPlayback() override;
+    yarp::dev::ReturnValue stopPlayback() override;
+
     bool interruptDeviceAndClose() override;
-    bool startPlayback() override;
-    bool stopPlayback() override;
 
 public: //Thread
     void threadRelease() override;

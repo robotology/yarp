@@ -15,20 +15,21 @@
 #include <yarp/os/idl/WireTypes.h>
 
 #include <IAudioGrabberMsgs_common.h>
+#include <yarp/dev/ReturnValue.h>
 
 class return_isRecording :
         public yarp::os::idl::WirePortable
 {
 public:
     // Fields
-    bool ret{false};
+    yarp::dev::ReturnValue ret{};
     bool isRecording{false};
 
     // Default constructor
     return_isRecording() = default;
 
     // Constructor with field values
-    return_isRecording(const bool ret,
+    return_isRecording(const yarp::dev::ReturnValue& ret,
                        const bool isRecording);
 
     // Read structure on a Wire

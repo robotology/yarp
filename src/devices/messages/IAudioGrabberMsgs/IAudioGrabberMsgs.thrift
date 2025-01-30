@@ -5,11 +5,6 @@
 
 //-------------------------------------------------
 
-struct return_isRecording {
-  1: bool ret = false;
-  2: bool isRecording = false;
-}
-
 struct yarp_sig_AudioBufferSize {
 } (
   yarp.name = "yarp::sig::AudioBufferSize"
@@ -22,18 +17,29 @@ struct yarp_sig_Sound {
   yarp.includefile = "yarp/sig/Sound.h"
 )
 
+struct yReturnValue {
+} (
+  yarp.name = "yarp::dev::ReturnValue"
+  yarp.includefile = "yarp/dev/ReturnValue.h"
+)
+
+struct return_isRecording {
+  1: yReturnValue ret;
+  2: bool isRecording = false;
+}
+
 struct return_getSound {
-  1: bool ret = false;
+  1: yReturnValue ret;
   2: yarp_sig_Sound sound;
 }
 
 struct return_getRecordingAudioBufferCurrentSize {
-  1: bool ret = false;
+  1: yReturnValue ret;
   2: yarp_sig_AudioBufferSize bufsize;
 }
 
 struct return_getRecordingAudioBufferMaxSize {
-  1: bool ret = false;
+  1: yReturnValue ret;
   2: yarp_sig_AudioBufferSize bufsize;
 }
 
@@ -41,13 +47,13 @@ typedef i32 ( yarp.type = "size_t" ) size_t
 
 service IAudioGrabberMsgs
 {
-    bool setHWGain_RPC (1:double gain);
-    bool setSWGain_RPC (1:double gain);
-    bool resetRecordingAudioBuffer_RPC ();
-    bool startRecording_RPC ();
-    bool stopRecording_RPC ();
-    return_isRecording isRecording_RPC ();
-    return_getSound getSound_RPC (1: size_t min_number_of_samples, 2: size_t max_number_of_samples, 3: double max_samples_timeout_s);
-    return_getRecordingAudioBufferMaxSize getRecordingAudioBufferMaxSize_RPC ();
+    yReturnValue                              setHWGain_RPC (1:double gain);
+    yReturnValue                              setSWGain_RPC (1:double gain);
+    yReturnValue                              resetRecordingAudioBuffer_RPC ();
+    yReturnValue                              startRecording_RPC ();
+    yReturnValue                              stopRecording_RPC ();
+    return_isRecording                        isRecording_RPC ();
+    return_getSound                           getSound_RPC (1: size_t min_number_of_samples, 2: size_t max_number_of_samples, 3: double max_samples_timeout_s);
+    return_getRecordingAudioBufferMaxSize     getRecordingAudioBufferMaxSize_RPC ();
     return_getRecordingAudioBufferCurrentSize getRecordingAudioBufferCurrentSize_RPC ();
 }

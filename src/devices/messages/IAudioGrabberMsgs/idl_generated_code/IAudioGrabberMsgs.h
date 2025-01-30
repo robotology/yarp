@@ -18,6 +18,7 @@
 #include <return_getRecordingAudioBufferMaxSize.h>
 #include <return_getSound.h>
 #include <return_isRecording.h>
+#include <yarp/dev/ReturnValue.h>
 
 class IAudioGrabberMsgs :
         public yarp::os::Wire
@@ -26,15 +27,15 @@ public:
     // Constructor
     IAudioGrabberMsgs();
 
-    virtual bool setHWGain_RPC(const double gain);
+    virtual yarp::dev::ReturnValue setHWGain_RPC(const double gain);
 
-    virtual bool setSWGain_RPC(const double gain);
+    virtual yarp::dev::ReturnValue setSWGain_RPC(const double gain);
 
-    virtual bool resetRecordingAudioBuffer_RPC();
+    virtual yarp::dev::ReturnValue resetRecordingAudioBuffer_RPC();
 
-    virtual bool startRecording_RPC();
+    virtual yarp::dev::ReturnValue startRecording_RPC();
 
-    virtual bool stopRecording_RPC();
+    virtual yarp::dev::ReturnValue stopRecording_RPC();
 
     virtual return_isRecording isRecording_RPC();
 

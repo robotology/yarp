@@ -53,9 +53,9 @@ public: //DeviceDriver
     bool close() override;
 
 public: //AudioRecorderDeviceBase(IAudioGrabberSound)
-    bool startRecording() override;
-    bool stopRecording() override;
-    bool setHWGain(double gain) override;
+    yarp::dev::ReturnValue startRecording() override;
+    yarp::dev::ReturnValue stopRecording() override;
+    yarp::dev::ReturnValue setHWGain(double gain) override;
 
 public: //Thread
     void threadRelease() override;

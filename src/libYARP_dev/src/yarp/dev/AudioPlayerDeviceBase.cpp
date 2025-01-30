@@ -28,28 +28,28 @@ YARP_LOG_COMPONENT(AUDIOPLAYER_BASE, "yarp.devices.AudioPlayerDeviceBase")
 #define DEFAULT_NUM_CHANNELS    (2)
 #define DEFAULT_SAMPLE_SIZE     (2)
 
-bool AudioPlayerDeviceBase::getPlaybackAudioBufferCurrentSize(yarp::sig::AudioBufferSize& size)
+ReturnValue AudioPlayerDeviceBase::getPlaybackAudioBufferCurrentSize(yarp::sig::AudioBufferSize& size)
 {
     if (m_outputBuffer == nullptr)
     {
         yCError(AUDIOPLAYER_BASE) << "getPlaybackAudioBufferCurrentSize() called, but no audio buffer is allocated yet";
-        return false;
+        return ReturnValue::return_code::return_value_error_not_ready;
     }
     //no lock guard is needed here
     size = this->m_outputBuffer->size();
-    return true;
+    return ReturnValue_ok;
 }
 
-bool AudioPlayerDeviceBase::getPlaybackAudioBufferMaxSize(yarp::sig::AudioBufferSize& size)
+ReturnValue AudioPlayerDeviceBase::getPlaybackAudioBufferMaxSize(yarp::sig::AudioBufferSize& size)
 {
     if (m_outputBuffer == nullptr)
     {
         yCError(AUDIOPLAYER_BASE) << "getPlaybackAudioBufferMaxSize() called, but no audio buffer is allocated yet";
-        return false;
+        return ReturnValue::return_code::return_value_error_not_ready;
     }
     //no lock guard is needed here
     size = this->m_outputBuffer->getMaxSize();
-    return true;
+    return ReturnValue_ok;
 }
 
 AudioPlayerDeviceBase::~AudioPlayerDeviceBase()
@@ -61,53 +61,54 @@ AudioPlayerDeviceBase::~AudioPlayerDeviceBase()
     }
 }
 
-bool AudioPlayerDeviceBase::setSWGain(double gain)
+ReturnValue AudioPlayerDeviceBase::setSWGain(double gain)
 {
     std::lock_guard<std::recursive_mutex> lock(m_mutex);
     if (gain>0)
     {
         m_sw_gain = gain;
-        return true;
+        return ReturnValue_ok;
     }
-    return false;
+    //negative gain
+    return ReturnValue::return_code::return_value_error_method_failed;
 }
 
-bool AudioPlayerDeviceBase::startPlayback()
+ReturnValue AudioPlayerDeviceBase::startPlayback()
 {
     std::lock_guard<std::recursive_mutex> lock(m_mutex);
     m_playback_enabled = true;
     if (m_enable_buffer_autoclear && this->m_outputBuffer)
         {this->m_outputBuffer->clear();}
     yCInfo(AUDIOPLAYER_BASE) << "Playback started";
-    return true;
+    return ReturnValue_ok;
 }
 
-bool AudioPlayerDeviceBase::stopPlayback()
+ReturnValue AudioPlayerDeviceBase::stopPlayback()
 {
     std::lock_guard<std::recursive_mutex> lock(m_mutex);
     m_playback_enabled = false;
     if (m_enable_buffer_autoclear && this->m_outputBuffer)
         {this->m_outputBuffer->clear();}
     yCInfo(AUDIOPLAYER_BASE) << "Playback stopped";
-    return true;
+    return ReturnValue_ok;
 }
 
-bool AudioPlayerDeviceBase::isPlaying(bool& playback_enabled)
+ReturnValue AudioPlayerDeviceBase::isPlaying(bool& playback_enabled)
 {
     playback_enabled = m_playback_enabled;
-    return true;
+    return ReturnValue_ok;
 }
 
-bool AudioPlayerDeviceBase::resetPlaybackAudioBuffer()
+ReturnValue AudioPlayerDeviceBase::resetPlaybackAudioBuffer()
 {
     if (m_outputBuffer == nullptr)
     {
         yCError(AUDIOPLAYER_BASE) << "resetPlaybackAudioBuffer() called, but no audio buffer is allocated yet";
-        return false;
+        return ReturnValue::return_code::return_value_error_not_ready;
     }
     std::lock_guard<std::recursive_mutex> lock(m_mutex);
     this->m_outputBuffer->clear();
-    return true;
+    return ReturnValue_ok;
 }
 
 bool AudioPlayerDeviceBase::appendSound(const yarp::sig::Sound& sound)
@@ -142,7 +143,7 @@ bool AudioPlayerDeviceBase::immediateSound(const yarp::sig::Sound& sound)
     return true;
 }
 
-bool AudioPlayerDeviceBase::renderSound(const yarp::sig::Sound& sound)
+ReturnValue AudioPlayerDeviceBase::renderSound(const yarp::sig::Sound& sound)
 {
     //prevents simultaneous start/stop/reset etc.
     std::lock_guard<std::recursive_mutex> lock(m_mutex);
@@ -152,12 +153,12 @@ bool AudioPlayerDeviceBase::renderSound(const yarp::sig::Sound& sound)
     if (freq == 0)
     {
         yCError(AUDIOPLAYER_BASE) << "received a bad audio sample of frequency 0";
-        return false;
+        return ReturnValue::return_code::return_value_error_method_failed;
     }
     if (chans == 0)
     {
         yCError(AUDIOPLAYER_BASE) << "received a bad audio sample with 0 channels";
-        return false;
+        return ReturnValue::return_code::return_value_error_method_failed;
     }
 
     //process the sound, if required
@@ -189,7 +190,7 @@ bool AudioPlayerDeviceBase::renderSound(const yarp::sig::Sound& sound)
         if (ok == false)
         {
             yCError(AUDIOPLAYER_BASE, "error occurred during audio driver reconfiguration, aborting");
-            return false;
+            return ReturnValue::return_code::return_value_error_method_failed;
         }
         //restore the playback_enabled status before device reconfiguration
         if (was_playing)
@@ -198,13 +199,21 @@ bool AudioPlayerDeviceBase::renderSound(const yarp::sig::Sound& sound)
         }
     }
 
-    if (m_renderMode == RENDER_IMMEDIATE) {
-        return immediateSound(procsound);
-    } else if (m_renderMode == RENDER_APPEND) {
-        return appendSound(procsound);
+    if (m_renderMode == RENDER_IMMEDIATE)
+    {
+        if (immediateSound(procsound))
+            return ReturnValue_ok;
+        else
+            return ReturnValue::return_code::return_value_error_method_failed;
+    } else if (m_renderMode == RENDER_APPEND)
+    {
+        if (appendSound(procsound))
+            return ReturnValue_ok;
+        else
+            return ReturnValue::return_code::return_value_error_method_failed;
     }
 
-    return false;
+    return ReturnValue::return_code::return_value_error_method_failed;
 }
 
 bool AudioPlayerDeviceBase::configurePlayerAudioDevice(yarp::os::Searchable& config, std::string device_name)

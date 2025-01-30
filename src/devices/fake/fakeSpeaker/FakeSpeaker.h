@@ -46,7 +46,7 @@ public:
     bool close() override;
 
     //interface
-    virtual bool setHWGain(double gain) override;
+    virtual yarp::dev::ReturnValue setHWGain(double gain) override;
     virtual bool configureDeviceAndStart() override;
     virtual bool interruptDeviceAndClose() override;
 
