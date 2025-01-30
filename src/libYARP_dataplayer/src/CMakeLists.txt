@@ -41,7 +41,7 @@ if(MSVC)
   target_include_directories(YARP_dataplayer SYSTEM PRIVATE ${dirent_INCLUDE_DIRS})
 endif()
 
-target_compile_features(YARP_dataplayer PUBLIC cxx_std_17)
+target_compile_features(YARP_dataplayer PUBLIC cxx_std_20)
 
 target_link_libraries(YARP_dataplayer
   PUBLIC

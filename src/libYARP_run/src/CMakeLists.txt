@@ -63,7 +63,7 @@ target_include_directories(YARP_run
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
     $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
 )
-target_compile_features(YARP_run PUBLIC cxx_std_17)
+target_compile_features(YARP_run PUBLIC cxx_std_20)
 
 option(YARP_ENABLE_YARPRUN_LOG "Enable yarprun log file in temp dir" OFF)
 mark_as_advanced(YARP_ENABLE_YARPRUN_LOG)
