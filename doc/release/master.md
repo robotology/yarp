@@ -10,6 +10,15 @@ YARP <yarp-3.11> Release Notes
 A (partial) list of bug fixed and issues resolved in this release can be found
 [here](https://github.com/robotology/yarp/issues?q=label%3A%22Fixed+in%3A+YARP+yarp-3.10%22).
 
+Breaking Changes
+----------------
+
+### Library
+
+#### `libYARP_dev`
+
+The signature of methods `IFrameTransform::frameExists(const std::string &frame_id)` and `IFrameTransform::canTransform(const std::string &target_frame, const std::string &source_frame)` change to `IFrameTransform::frameExists(const std::string &frame_id, bool& exits)` and `IFrameTransform::canTransform(const std::string &target_frame, const std::string &source_frame, bool& exists)`.
+
 Fixes
 -----
 
