@@ -47,6 +47,7 @@ private:
     bool checkNameserver();
     bool checkNode(const std::string& name);
     void updateServerEntries();
+    void reportErrors();
 
 
     Ui::ClusterWidget *ui;
