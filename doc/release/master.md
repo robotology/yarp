@@ -19,6 +19,10 @@ Breaking Changes
 
 The signature of methods `IFrameTransform::frameExists(const std::string &frame_id)` and `IFrameTransform::canTransform(const std::string &target_frame, const std::string &source_frame)` change to `IFrameTransform::frameExists(const std::string &frame_id, bool& exits)` and `IFrameTransform::canTransform(const std::string &target_frame, const std::string &source_frame, bool& exists)`.
 
+### Tests
+
+The set of tests for individual plugins, previously called `harness_dev_xxx` has been renamed to `harness_devices_xxx`
+
 Fixes
 -----
 

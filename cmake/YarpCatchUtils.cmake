@@ -25,12 +25,12 @@ function(create_device_test test_name)
       set (extra_libs ${ARGV1})
     endif()
 
-    add_executable(harness_dev_${test_name})
-    target_sources(harness_dev_${test_name}
+    add_executable(harness_device_${test_name})
+    target_sources(harness_device_${test_name}
       PRIVATE
         ${test_name}_test.cpp
     )
-    target_link_libraries(harness_dev_${test_name}
+    target_link_libraries(harness_device_${test_name}
       PRIVATE
         YARP_harness
         YARP::YARP_os
@@ -39,6 +39,6 @@ function(create_device_test test_name)
         YARP::YARP_dev_tests
         ${extra_libs}
     )
-    set_property(TARGET harness_dev_${test_name} PROPERTY FOLDER "Test")
-    yarp_catch_discover_tests(harness_dev_${test_name})
+    set_property(TARGET harness_device_${test_name} PROPERTY FOLDER "Test")
+    yarp_catch_discover_tests(harness_device_${test_name})
 endfunction()
