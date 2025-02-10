@@ -44,6 +44,9 @@ New Features
 
 * added new datatype `yarp::sig::LayeredImage`
 * added `yarp::sig::utils::sum()` to transform `yarp::sig::LayeredImage` to `yarp::sig::Image`
+* modified signature of method `yarp::sig::utils::depthToPC` and `yarp::sig::utils::depthRgbToPC`.
+  They now accept step_x and step_y parameters to perform pointcloud decimation.
+  They also accept a new parameter `output_order` which allows to swap the axis of the output point cloud (see code documentation)
 
 #### `libYARP_dev`
 

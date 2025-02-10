@@ -29,9 +29,9 @@ PointCloud<DataXYZ> utils::depthToPC(const yarp::sig::ImageOf<PixelFloat> &depth
             //                          x = (u - ppx)/ fx * z
             //                          y = (v - ppy)/ fy * z
             //                          z = z
-            pointCloud(u,v).x = (u - intrinsic.principalPointX)/intrinsic.focalLengthX*depth.pixel(u,v);
-            pointCloud(u,v).y = (v - intrinsic.principalPointY)/intrinsic.focalLengthY*depth.pixel(u,v);
-            pointCloud(u,v).z = depth.pixel(u,v);
+            double x = (u - intrinsic.principalPointX)/intrinsic.focalLengthX*depth.pixel(u,v);
+            double y = (v - intrinsic.principalPointY)/intrinsic.focalLengthY*depth.pixel(u,v);
+            double z = depth.pixel(u,v);
         }
     }
     return pointCloud;
@@ -41,7 +41,8 @@ PointCloud<DataXYZ> utils::depthToPC(const yarp::sig::ImageOf<PixelFloat>& depth
                                      const yarp::sig::IntrinsicParams& intrinsic,
                                      const PCL_ROI& roi,
                                      size_t step_x,
-                                     size_t step_y)
+                                     size_t step_y,
+                                     const std::string& output_order)
 {
     yCAssert(POINTCLOUDUTILS, depth.width() != 0);
     yCAssert(POINTCLOUDUTILS, depth.height() != 0);
@@ -59,15 +60,24 @@ PointCloud<DataXYZ> utils::depthToPC(const yarp::sig::ImageOf<PixelFloat>& depth
     size_t size_y = (max_y - min_y) / step_y;
     pointCloud.resize(size_x, size_y);
 
-    for (size_t i = 0, u = min_x; u < max_x; i++, u += step_x) {
-        for (size_t j = 0, v = min_y; v < max_y; j++, v += step_y) {
+    const char* mapping = output_order.c_str();
+    double values_xyz[3];
+    char axes[3] = {mapping[1], mapping[3], mapping[5]};
+    for (size_t i = 0, u = min_x; u < max_x; i++, u += step_x)
+    {
+        for (size_t j = 0, v = min_y; v < max_y; j++, v += step_y)
+        {
             // De-projection equation (pinhole model):
             //                          x = (u - ppx)/ fx * z
             //                          y = (v - ppy)/ fy * z
             //                          z = z
-            pointCloud(i, j).x = (u - intrinsic.principalPointX) / intrinsic.focalLengthX * depth.pixel(u, v);
-            pointCloud(i, j).y = (v - intrinsic.principalPointY) / intrinsic.focalLengthY * depth.pixel(u, v);
-            pointCloud(i, j).z = depth.pixel(u, v);
+            values_xyz[0] = (u - intrinsic.principalPointX) / intrinsic.focalLengthX * depth.pixel(u, v);
+            values_xyz[1] = (v - intrinsic.principalPointY) / intrinsic.focalLengthY * depth.pixel(u, v);
+            values_xyz[2] = depth.pixel(u, v);
+
+            pointCloud(i,j).x = (mapping[0] == '-') ? (-values_xyz[axes[0] - 'X']) : (values_xyz[axes[0] - 'X']);
+            pointCloud(i,j).y = (mapping[2] == '-') ? (-values_xyz[axes[1] - 'X']) : (values_xyz[axes[1] - 'X']);
+            pointCloud(i,j).z = (mapping[4] == '-') ? (-values_xyz[axes[2] - 'X']) : (values_xyz[axes[2] - 'X']);
         }
     }
     return pointCloud;
