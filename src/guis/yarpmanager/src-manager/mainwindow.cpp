@@ -890,6 +890,8 @@ void MainWindow::onLogWarning(QString msg)
  */
 void MainWindow::onLogMessage(QString msg)
 {
+    ClockStart& clock = ClockStart::getInstance();
+    msg = QString("[time: %1] ").arg(getElapsedTimeString(clock.getStartTime()).c_str()) + msg;
     QString text = QString ("[MSG] %1").arg(msg);
     ui->logWidget->addItem(text);
     ui->logWidget->setCurrentRow(ui->logWidget->count() - 1);

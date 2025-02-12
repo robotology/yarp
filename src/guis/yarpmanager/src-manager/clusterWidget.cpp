@@ -157,6 +157,7 @@ void ClusterWidget::onRunServer()
 {
     updateServerEntries();
 
+    yarp::manager::ErrorLogger* logger  = yarp::manager::ErrorLogger::Instance();
     std::string cmdRunServer = getSSHCmd(cluster.user, cluster.nsNode, cluster.ssh_options);
     if (ui->checkRos->isChecked())
     {
@@ -169,7 +170,8 @@ void ClusterWidget::onRunServer()
     if (system(cmdRunServer.c_str()) != 0)
     {
         std::string err = "ClusterWidget: failed to run the server on " + cluster.nsNode;
-        logError(QString(err.c_str()));
+        logger->addError(err);
+        reportErrors();
     }
     else
     {
@@ -201,10 +203,13 @@ void ClusterWidget::onStopServer()
 
     cmdStopServer = cmdStopServer + " killall yarpserver &";
 
+    yarp::manager::ErrorLogger* logger  = yarp::manager::ErrorLogger::Instance();
+
     if (system(cmdStopServer.c_str()) != 0)
     {
         std::string err = "ClusterWidget: failed to stop the server on " + cluster.nsNode;
-        logError(QString(err.c_str()));
+        logger->addError(err);
+        reportErrors();
     }
     else
     {
@@ -232,10 +237,12 @@ void ClusterWidget::onKillServer()
 
     cmdKillServer = cmdKillServer + " killall -9 yarpserver &";
 
+    yarp::manager::ErrorLogger* logger  = yarp::manager::ErrorLogger::Instance();
     if (system(cmdKillServer.c_str()) != 0)
     {
         std::string err = "ClusterWidget: failed to kill the server on " + cluster.nsNode;
-        logError(QString(err.c_str()));
+        logger->addError(err);
+        reportErrors();
     }
     else
     {
@@ -284,10 +291,12 @@ void ClusterWidget::onRunSelected()
         {
             cmdRunYarprun.append("'");
         }
+        yarp::manager::ErrorLogger* logger  = yarp::manager::ErrorLogger::Instance();
         if (system(cmdRunYarprun.c_str()) != 0)
         {
             std::string err = "ClusterWidget: failed to run yarprun on " + node.name;
-            logError(QString(err.c_str()));
+            logger->addError(err);
+            reportErrors();
         }
         else
         {
@@ -322,10 +331,12 @@ void ClusterWidget::onStopSelected()
 
         cmdStopYarprun.append(" yarprun --exit --on ").append(portName).append(" &");
 
+        yarp::manager::ErrorLogger* logger  = yarp::manager::ErrorLogger::Instance();
         if (system(cmdStopYarprun.c_str()) != 0)
         {
             std::string err = "ClusterWidget: failed to stop yarprun on " + node.name;
-            logError(QString(err.c_str()));
+            logger->addError(err);
+            reportErrors();
         }
         else
         {
@@ -354,10 +365,12 @@ void ClusterWidget::onKillSelected()
 
         cmdKillYarprun.append(" killall -9 yarprun &");
 
+        yarp::manager::ErrorLogger* logger  = yarp::manager::ErrorLogger::Instance();
         if (system(cmdKillYarprun.c_str()) != 0)
         {
             std::string err = "ClusterWidget: failed to kill yarprun on " + node.name;
-            logError(QString(err.c_str()));
+            logger->addError(err);
+            reportErrors();
         }
         else
         {
@@ -399,10 +412,12 @@ void ClusterWidget::onExecute()
 
     cmdExecute.append(" ").append(command);
 
+    yarp::manager::ErrorLogger* logger  = yarp::manager::ErrorLogger::Instance();
     if (system(cmdExecute.c_str()) != 0)
     {
         std::string err = "ClusterWidget: failed to run "+ command + " on " + node.name;
-        logError(QString(err.c_str()));
+        logger->addError(err);
+        reportErrors();
     }
     else
     {
@@ -592,6 +607,20 @@ void ClusterWidget::updateServerEntries()
     // remove all the whitespaces
     cluster.user   = ui->lineEditUser->text().simplified().trimmed().toStdString();
     cluster.nsNode = ui->nsNodeComboBox->currentText().simplified().trimmed().toStdString();
+}
+
+void ClusterWidget::reportErrors()
+{
+    yarp::manager::ErrorLogger* logger  = yarp::manager::ErrorLogger::Instance();
+    if (logger->errorCount() || logger->warningCount())
+    {
+        const char* err;
+        while((err=logger->getLastError()))
+        {
+            QString msg = QString("ClusterWidget: %1").arg(err);
+            emit logError(msg);
+        }
+    }
 }
 
 ClusterWidget::~ClusterWidget()

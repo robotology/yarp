@@ -97,6 +97,7 @@ Options:\n\
   --silent                Do not print the status messages (should be used with --application)\n\
   --exit                  Immediately exit after executing the commands (should be used with --application)\n\
   --from <conf>           Configuration file name\n\
+  --elapsed_time          if present the time stamp for log messages will be relative to the GUI start time\n\
   --version               Show current version\n\
   --help                  Show help\n"
 
@@ -150,6 +151,13 @@ YConsoleManager::YConsoleManager(int argc, char* argv[]) : Manager()
     {
         std::cout<<VERSION_MESSAGE<<'\n';
         return;
+    }
+
+    // I the option elapsed_time is not set, set the start time to 00:00:00 (For error and warning logging)
+    if(!config.check("elapsed_time"))
+    {
+        yarp::manager::ClockStart& clock = yarp::manager::ClockStart::getInstance();
+        clock.setStartTime("00:00:00");
     }
 
     /**
