@@ -9,6 +9,7 @@
 #include <yarp/dev/api.h>
 #include <yarp/os/Vocab.h>
 #include <yarp/sig/Vector.h>
+#include <yarp/sig/Matrix.h>
 
 namespace yarp::dev {
 class IJointCoupling;
@@ -236,6 +237,17 @@ public:
      * @return true/false on success/failure
      */
     virtual bool getPhysicalJointLimits(size_t physicalJointIndex, double& min, double& max)=0;
+
+    /**
+     * @brief Get the Jacobian mapping the Actuated Axes to Physical Joints velocity
+     *
+     * @return true/false on success/failure
+     * @param[in] actAxesPos Actuated Axes position
+     * @param[out] actAxesVelToPhysJointsVelJacobian Jacobian mapping the Actuated
+     * Axes to Physical Joints velocity
+     */
+    virtual bool evaluateCoupledJointsJacobian(const yarp::sig::Vector& actAxesPos, yarp::sig::Matrix& actAxesVelToPhysJointsVelJacobian)=0;
+
 };
 
 #endif // YARP_DEV_IJOINTCOUPLING_H

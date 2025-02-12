@@ -79,3 +79,8 @@ bool ImplementJointCoupling::getPhysicalJointLimits(size_t physicalJointIndex, d
     }
     return false;
 }
+
+bool ImplementJointCoupling::evaluateCoupledJointsJacobian(const yarp::sig::Vector& actAxesPos, yarp::sig::Matrix& actAxesVelToPhysJointsVelJacobian){
+    /* Override this function */
+    return false;
+}
