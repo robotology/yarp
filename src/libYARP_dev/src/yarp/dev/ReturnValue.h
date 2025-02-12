@@ -16,13 +16,13 @@
 // If enabled, a bool value cannot be automatically converted to ReturnValue
 // In this way, the developer can check if some old devices/interfaces do unwanted automatic
 // conversions and fix them.
- #define DISABLE_BOOL_INPUT
+// #define YARP_RETURN_VALUE_DISABLE_BOOL_INPUT
 
 // The following macro is used for testing/development purposes only, but it must be generally not enabled.
 // If enabled, a ReturnValue cannot be automatically converted to bool unless explicitly requested
 // using the bool() operator.
 // If enabled, it will break backward compatibility with user-application code.
-// #define DISABLE_BOOL_OUTPUT
+// #define YARP_RETURN_VALUE_DISABLE_BOOL_OUTPUT
 
 namespace yarp::dev {
 
@@ -54,12 +54,12 @@ class YARP_dev_API ReturnValue : public yarp::os::Portable
     ReturnValue(const ReturnValue& other) = default;
     ReturnValue& operator && (const ReturnValue& other);
     ReturnValue& operator &= (const ReturnValue& other);
-#ifndef DISABLE_BOOL_INPUT
+#ifndef YARP_RETURN_VALUE_DISABLE_BOOL_INPUT
     ReturnValue& operator=(const bool& bool_val);
 #endif
     bool operator == (const return_code& code) const;
     std::string toString();
-#ifndef DISABLE_BOOL_OUTPUT
+#ifndef YARP_RETURN_VALUE_DISABLE_BOOL_OUTPUT
     operator bool() const;
 #else
     explicit operator bool const();
