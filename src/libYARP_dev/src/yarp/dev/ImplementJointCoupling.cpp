@@ -79,3 +79,13 @@ bool ImplementJointCoupling::getPhysicalJointLimits(size_t physicalJointIndex, d
     }
     return false;
 }
+
+bool ImplementJointCoupling::evaluateJacobianFromActuatedAxesToPhysicalJointsVel(const yarp::sig::Vector& actAxesPos, yarp::sig::Matrix& actAxesToPhysJointsVelJacobian){
+    /* Override this function */
+    return false;
+}
+
+bool ImplementJointCoupling::evaluateJacobianFromPhysicalJointsToActuatedAxeseVel(const yarp::sig::Vector& physJointsPos, yarp::sig::Matrix& physJointsToActAxesVelJacobian){
+    /* Override this function */
+    return false;
+}

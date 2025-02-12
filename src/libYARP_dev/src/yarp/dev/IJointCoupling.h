@@ -9,6 +9,7 @@
 #include <yarp/dev/api.h>
 #include <yarp/os/Vocab.h>
 #include <yarp/sig/Vector.h>
+#include <yarp/sig/Matrix.h>
 
 namespace yarp::dev {
 class IJointCoupling;
@@ -236,6 +237,38 @@ public:
      * @return true/false on success/failure
      */
     virtual bool getPhysicalJointLimits(size_t physicalJointIndex, double& min, double& max)=0;
+
+    /**
+     * @brief Get the Jacobian mapping the Actuated Axes to Physical Joints velocity
+     *
+     * This method implements $\frac{\partial}{\partial \theta} g(\theta(t))$, defined such that:
+     *
+     * $$
+     * \dot{q}(t) = \frac{\partial}{\partial \theta} g(\theta(t)) \dot{\theta}(t)
+     * $$
+     *
+     * @return true/false on success/failure
+     * @param[in] actAxesPos Actuated Axes position
+     * @param[out] actAxesToPhysJointsVelJacobian Jacobian mapping the Actuated
+     * Axes to Physical Joints velocity
+     */
+    virtual bool evaluateJacobianFromActuatedAxesToPhysicalJointsVel(const yarp::sig::Vector& actAxesPos, yarp::sig::Matrix& actAxesToPhysJointsVelJacobian)=0;
+
+    /**
+     * @brief Get the Jacobian mapping the Physical Joints to Actuated Axes velocity
+     *
+     * This method implements $\frac{\partial}{\partial \q} f(\q(t))$, defined such that:
+     *
+     * $$
+     * \dot{theta}(t) = \frac{\partial}{\partial \q} f(\q(t)) \dot{\q}(t)
+     * $$
+     *
+     * @return true/false on success/failure
+     * @param[in] physJointsPos Physical Joints position
+     * @param[out] physJointsToActAxesVelJacobian Jacobian mapping the Physical Joints
+     * to Actuated Axes velocity
+     */
+    virtual bool evaluateJacobianFromPhysicalJointsToActuatedAxeseVel(const yarp::sig::Vector& physJointsPos, yarp::sig::Matrix& physJointsToActAxesVelJacobian)=0;
 };
 
 #endif // YARP_DEV_IJOINTCOUPLING_H
