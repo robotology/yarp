@@ -25,7 +25,7 @@ Here is an example of a trajectory file for two joints, with positions sampled a
 11   0.110   9.823   9.823
 12   0.120   9.980   9.980
 ```
-This format is consistent with the output of the state port of a `controlBoard_nws_yarp`. 
+This format is consistent with the output of the state port of a `controlBoard_nws_yarp`.
 The following command can be used to record the trajectory of a moving robot and obtain a trajectory file that can reproduced with `yarpActionsPlayer`.
 ```
 yarp read ... /robot/part/state:o envelope > file.txt
@@ -34,7 +34,7 @@ The joints commands are assigned to the robot by using a `remoteControlBoardrema
 The following file, configuration.ini (see the `example` folder) creates two different controllers, `controller1` and `controller2`. The first one will control the joints called `hjoint1` and `hjoint2` of the robot part `/robot/head`.
 The second one will attach to two different parts of the robot, i.e. `/robot/head` `/robot/arm` and control the joints`hjoint1`,`ajoint1`,`ajoint3` which belong to these parts.
 Please note that the number of joints described in the controller (and their order) must match the number of joints indicated in the trajectory file.
-As shown in the following example, user has to associate a controller for each action file to correctly map the trajectories described in the file with the joints to actuate. 
+As shown in the following example, user has to associate a controller for each action file to correctly map the trajectories described in the file with the joints to actuate.
 ```
 [CONTROLLERS]
 controller1 (/robot/head) (hjoint1 hjoint2)
@@ -60,7 +60,7 @@ Another important parameter to consider is the trajectory sampling period. By de
 When this option is enabled, all trajectories are resampled at the specified frequency using linear interpolation. This feature can help compensate for nonlinearities in the joint position controller’s response and reduce vibrations caused by overshoots (*)
 It is generally recommended to keep this sampling period small, in the 0.005 - 0.0010 seconds range to avoid overshoots of the controller when performing a direct position control of the joint. Small values will also guarantee that the difference in position between two subsequent frames is small.
 ---
-(*) The response of the controller for the following two set of trajectories is generally different, event if the final position is reached in the same amount of time: 
+(*) The response of the controller for the following two set of trajectories is generally different, event if the final position is reached in the same amount of time:
 ```
 q2(t2=0.1)  = 1
 q1(t1=0.0)  = 0

@@ -236,7 +236,7 @@ void action_class::interpolate_action_frames(double timestep)
 
     // Generates new timestamps with the given constant time step
     size_t c = 0;
-    for (double t = t_min; t <= t_max; t += timestep) 
+    for (double t = t_min; t <= t_max; t += timestep)
     {
         // Find the closest frames on the left and on the right
         auto it = std::lower_bound(action_frames_vector.begin(), action_frames_vector.end(), t,

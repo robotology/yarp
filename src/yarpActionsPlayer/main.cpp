@@ -42,7 +42,7 @@ protected:
     std::string         m_current_action_id;
 
     public:
-    scriptModule() 
+    scriptModule()
     {
         m_verbose=true;
     }
@@ -189,7 +189,7 @@ protected:
                 tmpAction.action_name = action_name;
                 tmpAction.controller_name = controller_name;
                 size_t njoints = m_robotControllers[controller_name]->getNJoints();
-                
+
                 if (!tmpAction.openFile(action_file_name, njoints, 0.010))
                 {
                     yError() << "Unable to parse file";
@@ -520,6 +520,6 @@ int main(int argc, char *argv[])
     }
 
     scriptModule mod;
- 
+
     return mod.runModule(rf);
 }
