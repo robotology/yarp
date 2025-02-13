@@ -52,7 +52,7 @@ bool FrameTransformGet_nwc_yarp::open(yarp::os::Searchable& config)
         m_thrift_server_rpcPort_Name = prefix + "/thrift";
         yCWarning(FRAMETRANSFORMGETNWCYARP) << "no nws_thrift_port_prefix param found. The resulting port name will be: " << m_thrift_server_rpcPort_Name;
     }
-    // rpc inizialisation
+    // rpc initialization
     if(!m_thrift_rpcPort.open(m_thrift_rpcPort_Name))
     {
         yCError(FRAMETRANSFORMGETNWCYARP,"Could not open \"%s\" port",m_thrift_rpcPort_Name.c_str());
@@ -130,10 +130,15 @@ bool FrameTransformGet_nwc_yarp::close()
 {
     if (m_streaming_port_enabled)
     {
-        m_dataReader->interrupt();
         m_dataReader->close();
     }
     m_thrift_rpcPort.close();
+
+    if (m_dataReader)
+    {
+        delete m_dataReader;
+        m_dataReader = nullptr;
+    }
     return true;
 }
 
