@@ -107,7 +107,7 @@ protected:
         return ss;
     }
 
-    bool loadConfiguration(std::string filename)
+    bool loadConfiguration(std::string filename, double resample_period)
     {
         yarp::os::Property p;
         if (!p.fromConfigFile(filename))
@@ -195,6 +195,10 @@ protected:
                     yError() << "Unable to parse file";
                     return false;
                 }
+                if (resample_period!=0.0)
+                {
+                    tmpAction.interpolate_action_frames(resample_period);
+                }
 
                 //put the action in the list
                 m_actions[action_name] = tmpAction;
@@ -212,51 +216,55 @@ protected:
 
     void print_help()
     {
-        yInfo() << "command line";
-        yInfo() << "yarpActionsPlayer --filename `name` [--name `module_name`] [--execute] [--period period_s] [--pos_tolerance pos] [--pos_timeout pos] [--pos_strict_check enable] ";
+        yInfo();
+        yInfo() << "Command line:";
+        yInfo() << "yarpActionsPlayer --filename `name` [--name `module_name`] [--execute] [--period period_s] [--resample resample_period_s] [--pos_tolerance pos] [--pos_timeout pos] [--pos_strict_check enable] ";
+        yInfo();
         yInfo() << "`name` : file containing the actions";
-        yInfo() << "`module_name` : prefix of the ports opened by the module (default: yarpActionsPlayer)";
+        yInfo() << "`module_name` : prefix of the ports opened by the module (default: /yarpActionsPlayer)";
         yInfo() << "`execute` : if enabled, the yarpActionsPlayer will send commands to the robot. Otherwise, only it will operate in simulation mode only";
         yInfo() << "`pos_tolerance` : the tolerance (in degrees) that will be checked by the initial movement in position mode, before switching to positionDirect mode. Default: 2degrees";
         yInfo() << "`pos_timeout` : the amount of time (in seconds) the robot will attempt to reach the target position within the specified position tolerance. Default: 2s";
         yInfo() << "`pos_strict_check` : if set to true, the system will halt if home position is halted, otherwise it will continue after the timeout expires. Default: false";
+        yInfo() << "`period` : the period (in s) of the thread processing the commands. Default 0.010s";
+        yInfo() << "`resample`: all the loaded trajectory files are internally resampled at the specified period. Default: not enabled";
+        yInfo();
     }
 
-    virtual bool configure(yarp::os::ResourceFinder &rf)
+    virtual bool configure(yarp::os::ResourceFinder& rf)
     {
         std::string test_string = rf.toString();
 
-        //generic configuration
+        // generic configuration
         if (rf.check("name"))
-            m_name=std::string("/")+rf.find("name").asString().c_str();
+            m_name = std::string("/") + rf.find("name").asString().c_str();
         else
-            m_name="/yarpActionsPlayer";
+            m_name = "/yarpActionsPlayer";
 
-        //rpc port
-        m_rpcPort.open((m_name+"/rpc").c_str());
+        // rpc port
+        m_rpcPort.open((m_name + "/rpc").c_str());
         attach(m_rpcPort);
 
-        //Instantiate the thread
-        m_wthread = new ControlThread(m_name);
+        // get the configuration for parameter period
+        double period = 0.005;
+        if (rf.check("period") == true)
+        {
+            period = rf.find("period").asFloat64();
+        }
+
+        // Instantiate the thread
+        m_wthread = new ControlThread(m_name,period);
 
         //set the configuration for parameter execute
         if (rf.check("execute")==true)
         {
             yInfo() << "Enabling iPid->setReference() controller";
-            m_wthread->enable_execute_joint_command = true;
+            m_wthread->m_enable_execute_joint_command = true;
         }
         else
         {
             yInfo() << "Not using iPid->setReference() controller";
-            m_wthread->enable_execute_joint_command = false;
-        }
-
-        //set the configuration for parameter period
-        if (rf.check("period")==true)
-        {
-            double period = rf.find("period").asFloat64();
-            yInfo() << "Thread period set to " << period << "s";
-            m_wthread->setPeriod(period);
+            m_wthread->m_enable_execute_joint_command = false;
         }
 
         //set the position tolerance
@@ -289,13 +297,20 @@ protected:
             m_wthread->setPositionStrictCheck(enable);
         }
 
+        double resample_period = 0;
+        if (rf.check("resample") == true)
+        {
+            resample_period = rf.find("resample_period").asFloat64();
+            yInfo() << "Set resample period equal to:" << resample_period << "s";
+        }
+
         //open the configuration file
         if (rf.check("filename")==true)
         {
             if (rf.find("filename").isString())
             {
                 std::string filename = rf.find("filename").asString();
-                bool b = loadConfiguration(filename);
+                bool b = loadConfiguration(filename, resample_period);
                 if (!b)
                 {
                     yError() << "Configuration error!";
@@ -351,6 +366,7 @@ protected:
             {
                 if  (cmdstring == "help")
                 {
+                    //---
                     std::cout << "Available commands:"          << std::endl;
                     std::cout << "=== commands for current action ===="          << std::endl;
                     std::cout << "start" << std::endl;
@@ -359,10 +375,14 @@ protected:
                     std::cout << "clear" << std::endl;
                     std::cout << "forever" << std::endl;
                     std::cout << "print" << std::endl;
+                    std::cout << "speed_factor <value>" << std::endl;
+                    std::cout << "resample <value>" << std::endl;
                     std::cout << "=== general commands ====" << std::endl;
                     std::cout << "choose_action <id>" << std::endl;
                     std::cout << "play <id>"<< std::endl;
                     std::cout << "show_actions" << std::endl;
+                    std::cout << "set_thread_period <value>" << std::endl;
+                    //---
                     reply.addVocab32("many");
                     reply.addVocab32("ack");
                     reply.addString("Available commands:");
@@ -372,10 +392,13 @@ protected:
                     reply.addString("reset");
                     reply.addString("forever");
                     reply.addString("print");
+                    reply.addString("speed_factor <value>");
+                    reply.addString("resample <value>");
                     reply.addString("=== general commands ====");
                     reply.addString("choose_action <id>");
                     reply.addString("play <id>");
                     reply.addString("show_actions");
+                    reply.addString("set_thread_period <value>");
                 }
                 else if  (cmdstring == "start")
                 {
@@ -402,6 +425,18 @@ protected:
                     bool b = this->m_wthread->action_print();
                     reply.addVocab32("ack");
                 }
+                else if  (cmdstring == "speed_factor")
+                {
+                    double factor= command.get(1).asFloat32();
+                    bool b = this->m_wthread->action_setSpeedFactor(factor);
+                    reply.addVocab32("ack");
+                }
+                else if  (cmdstring == "resample")
+                {
+                    double resample= command.get(1).asFloat32();
+                    bool b = this->m_wthread->action_resample(resample);
+                    reply.addVocab32("ack");
+                }
                 else if (cmdstring == "choose_action")
                 {
                     std::string action_id = command.get(1).asString();
@@ -426,6 +461,20 @@ protected:
                     reply.addVocab32("ack");
                     yInfo() << "current_action: " <<current_action_name;
                     yInfo() << actions_str;
+                }
+                else if (cmdstring == "set_thread_period")
+                {
+                    double period = command.get(1).asFloat32();
+                    if (period > 0)
+                    {
+                        m_wthread->setPeriod(period);
+                        yError("invalid period value");
+                    }
+                    else
+                    {
+                        yInfo("Period set to %f", period);
+                    }
+                    reply.addVocab32("ack");
                 }
                 else
                 {
@@ -461,17 +510,6 @@ int main(int argc, char *argv[])
     yarp::os::ResourceFinder rf;
     rf.setDefaultContext("yarpActionsPlayer");
     rf.configure(argc,argv);
-
-    if (rf.check("help"))
-    {
-        yInfo() << "Options:";
-        yInfo() << "\t--name         <moduleName>: sets the module name (default: yarpActionsPlayer)";
-        yInfo() << "\t--filename     <filename>:   the configuration file";
-        yInfo() << "\t--execute      activate the iPid->setReference() control";
-        yInfo() << "\t--period       <period>: the period in s of the internal thread";
-        yInfo() << "\t--verbose      to display additional infos";
-        return 0;
-    }
 
     yarp::os::Network yarp;
 

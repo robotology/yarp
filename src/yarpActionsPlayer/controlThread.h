@@ -16,6 +16,7 @@
 
 #include "robotDriver.h"
 #include "robotAction.h"
+#include "controlClock.h"
 
 #ifndef CONTROL_THREAD
 #define CONTROL_THREAD
@@ -23,24 +24,24 @@
 class ControlThread: public yarp::os::PeriodicThread
 {
 private:
-    std::mutex            mtx;
-    std::string           module_name;
-    yarp::os::BufferedPort<yarp::os::Bottle>  port_command_out;
-    yarp::os::BufferedPort<yarp::os::Bottle>  port_command_joints;
-    double                start_time = 0.0;
+    std::mutex            m_mtx;
+    std::string           m_module_name;
+    yarp::os::BufferedPort<yarp::os::Bottle>  m_port_command_out;
+    yarp::os::BufferedPort<yarp::os::Bottle>  m_port_command_joints;
 
-    action_class          *current_action = nullptr;
-    robotDriver           *current_driver=nullptr;
-    action_status_enum    status = ACTION_IDLE;
+    action_class          *m_current_action = nullptr;
+    robotDriver           *m_current_driver=nullptr;
+    action_status_enum    m_status = ACTION_IDLE;
 
     //if set to true, the system will halt if home position is halted.
     //otherwise it will continue after the timeout expires
-    bool                  home_position_strict_check_enabled = false;
-    double                home_position_tolerance = 2.0;
-    double                home_position_timeout = 2.0;
+    bool                  m_home_position_strict_check_enabled = false;
+    double                m_home_position_tolerance = 2.0;
+    double                m_home_position_timeout = 2.0;
 
 public:
-    bool                  enable_execute_joint_command=false;
+    bool                  m_enable_execute_joint_command=false;
+    ControlClock          m_clock;
 
     action_status_enum getStatus();
     bool action_stop();
@@ -50,8 +51,10 @@ public:
     bool action_start();
     bool action_change(action_class *action, robotDriver *driver);
     bool action_getname(std::string& name);
+    bool action_setSpeedFactor(double factor = 1);
+    bool action_resample(double value);
 
-    ControlThread(std::string name, double period = 0.005);
+    ControlThread(std::string name, double period);
     ~ControlThread();
     bool threadInit() override;
     void run() override;

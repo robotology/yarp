@@ -49,6 +49,7 @@ public:
     std::string    controller_name;
     size_t         current_frame;
     bool           forever;
+    double         speed_factor = 1.0;
     std::deque<action_frame> action_frames_vector;
 
     action_class();
@@ -58,10 +59,17 @@ public:
     bool openFile(std::string filename, size_t njoints, double timestep=-1);
     size_t get_njoints();
 
+    //Re-interpolates the action frames with the given constant time step
+    void interpolate_action_frames(double timestep);
+
 private:
     //internal use. Called by openFile
     bool parseCommandLineFixTime(std::string command_line, size_t n_joints, size_t wallcount, double wallTime);
     bool parseCommandLineVarTime(std::string command_line, size_t n_joints);
+
+    //At time t1, joints have position q1. At time t2>t1, joints have position q2.
+    //This function computes the value of joints q, at time t1<t<t2.
+    std::vector<double> interpolate_joints(const std::vector<double>& q1, const std::vector<double>& q2, double t1, double t2, double t);
 };
 
 #endif

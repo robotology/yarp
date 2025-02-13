@@ -51,6 +51,7 @@ size_t action_class::get_njoints()
 
 void action_class::clear()
 {
+    speed_factor = 1.0;
     forever = false;
     current_frame = 0;
     action_frames_vector.clear();
@@ -203,4 +204,69 @@ bool action_class::parseCommandLineVarTime(std::string command_line, size_t njoi
         action_frames_vector.insert(action_frames_it, tmp_frame);
     }
     return true;
+}
+
+std::vector<double> action_class::interpolate_joints(const std::vector<double>& q1, const std::vector<double>& q2, double t1, double t2, double t)
+{
+    std::vector<double> q_interp(q1.size());
+    double alpha = (t - t1) / (t2 - t1);
+    for (size_t i = 0; i < q1.size(); ++i)
+    {
+        q_interp[i] = q1[i] + alpha * (q2[i] - q1[i]);
+    }
+    return q_interp;
+}
+
+void action_class::interpolate_action_frames(double timestep)
+{
+    if (action_frames_vector.empty())
+    {
+        yError("The vector of actions frames is empty!");
+        return;
+    }
+    if (timestep <= 0)
+    {
+        yError("The timestep cannot be <=0 !");
+        return;
+    }
+
+    std::deque<action_frame> interpolated_frames;
+    double t_min = action_frames_vector.front().time;
+    double t_max = action_frames_vector.back().time;
+
+    // Generates new timestamps with the given constant time step
+    size_t c = 0;
+    for (double t = t_min; t <= t_max; t += timestep) 
+    {
+        // Find the closest frames on the left and on the right
+        auto it = std::lower_bound(action_frames_vector.begin(), action_frames_vector.end(), t,
+            [](const action_frame& frame, double time)
+            {
+                return frame.time < time;
+            });
+
+        if (it == action_frames_vector.begin())
+        {
+            interpolated_frames.push_back(*it);
+            continue;
+        }
+
+        if (it == action_frames_vector.end())
+        {
+            interpolated_frames.push_back(action_frames_vector.back());
+            break;
+        }
+
+        auto it_prev = std::prev(it);
+
+        // Interpolates joints values
+        action_frame new_frame;
+        new_frame.counter = c++;
+        new_frame.time = t;
+        new_frame.q_joints = interpolate_joints(it_prev->q_joints, it->q_joints, it_prev->time, it->time, t);
+
+        interpolated_frames.push_back(new_frame);
+    }
+
+    action_frames_vector = interpolated_frames;
 }

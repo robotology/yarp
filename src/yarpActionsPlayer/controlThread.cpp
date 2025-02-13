@@ -12,96 +12,124 @@
 
 action_status_enum ControlThread::getStatus()
 {
-    std::lock_guard<std::mutex> lg(mtx);
-    return status;
+    std::lock_guard<std::mutex> lg(m_mtx);
+    return m_status;
 }
 
 bool ControlThread::action_getname(std::string& name)
 {
-    std::lock_guard<std::mutex> lg(mtx);
-    name = current_action->action_name;
+    std::lock_guard<std::mutex> lg(m_mtx);
+    name = m_current_action->action_name;
     return true;
 }
 
 bool ControlThread::action_stop()
 {
-    std::lock_guard<std::mutex> lg(mtx);
-    status = ACTION_STOP;
+    std::lock_guard<std::mutex> lg(m_mtx);
+    m_status = ACTION_STOP;
+    m_clock.pauseTimer();
     return true;
 }
 
 bool ControlThread::action_print()
 {
-    std::lock_guard<std::mutex> lg(mtx);
-    current_action->print();
+    std::lock_guard<std::mutex> lg(m_mtx);
+    m_current_action->print();
     return true;
 }
 
 bool ControlThread::action_reset()
 {
-    std::lock_guard<std::mutex> lg(mtx);
-    status = ACTION_RESET;
-    current_action->current_frame = 0;
+    std::lock_guard<std::mutex> lg(m_mtx);
+    m_status = ACTION_RESET;
+    m_current_action->current_frame = 0;
+    m_clock.resetTimer();
     return true;
 }
 
 bool ControlThread::action_forever()
 {
-    std::lock_guard<std::mutex> lg(mtx);
-    if (current_action->current_frame == 0)
-        status = ACTION_START;
+    std::lock_guard<std::mutex> lg(m_mtx);
+    if (m_current_action->current_frame == 0)
+    {
+        m_status = ACTION_START;
+    }
     else
-        status = ACTION_RUNNING;
-    current_action->forever = true;
+    {
+        m_status = ACTION_RUNNING;
+    }
+    m_current_action->forever = true;
     return true;
 }
 
 bool ControlThread::action_start()
 {
-    std::lock_guard<std::mutex> lg(mtx);
-    if (current_action->current_frame == 0)
+    std::lock_guard<std::mutex> lg(m_mtx);
+    if (m_current_action->current_frame == 0)
     {
-        status = ACTION_START;
+        m_status = ACTION_START;
     }
     else
     {
-        status = ACTION_RUNNING;
+        m_status = ACTION_RUNNING;
     }
-    current_action->forever = false;
+    m_current_action->forever = false;
     return true;
 }
 
 bool ControlThread::action_change(action_class* action, robotDriver* driver)
 {
-    std::lock_guard<std::mutex> lg(mtx);
-    current_action = action;
-    current_driver = driver;
-    status = ACTION_IDLE;
-    current_action->current_frame = 0;
+    std::lock_guard<std::mutex> lg(m_mtx);
+    m_current_action = action;
+    m_current_driver = driver;
+    m_status = ACTION_IDLE;
+    m_current_action->current_frame = 0;
+    return true;
+}
+
+bool ControlThread::action_setSpeedFactor(double factor)
+{
+    std::lock_guard<std::mutex> lg(m_mtx);
+    m_current_action->speed_factor = factor;
+    //also reset the action to avoid issue if it is playing..
+    m_status = ACTION_RESET;
+    m_current_action->current_frame = 0;
+    return true;
+}
+
+bool ControlThread::action_resample(double value)
+{
+    std::lock_guard<std::mutex> lg(m_mtx);
+    m_current_action->interpolate_action_frames(value);
+
+    //also reset the action to avoid issue if it is playing..
+    m_status = ACTION_RESET;
+    m_current_action->current_frame = 0;
     return true;
 }
 
 ControlThread::ControlThread(std::string name, double period): PeriodicThread(period)
 {
-    module_name = name;
+    yInfo() << "Control thread period set to: " << period;
+    m_module_name = name;
 }
 
 ControlThread::~ControlThread()
 {
-    port_command_out.interrupt();
-    port_command_out.close();
-    port_command_joints.interrupt();
-    port_command_joints.close();
+    m_port_command_out.interrupt();
+    m_port_command_out.close();
+    m_port_command_joints.interrupt();
+    m_port_command_joints.close();
 }
 
 bool ControlThread::threadInit()
 {
-    if (!port_command_out.open(std::string("/")+module_name+"/port_command_out:o"))
+    if (!m_port_command_out.open(std::string("/")+m_module_name+"/port_command_out:o"))
     {
         return false;
     }
 
-    if (!port_command_joints.open(std::string("/")+module_name+"/port_joints:o"))
+    if (!m_port_command_joints.open(std::string("/")+m_module_name+"/port_joints:o"))
     {
         return false;
     }
@@ -110,15 +138,15 @@ bool ControlThread::threadInit()
 
 bool ControlThread::execute_joint_command(int frame_id)
 {
-    if (!current_driver) return false;
-    if (!enable_execute_joint_command) return true;
+    if (!m_current_driver) return false;
+    if (!m_enable_execute_joint_command) return true;
 
-    double *ll = current_action->action_frames_vector[frame_id].q_joints.data();
-    size_t nj = current_action->get_njoints();
+    double *ll = m_current_action->action_frames_vector[frame_id].q_joints.data();
+    size_t nj = m_current_action->get_njoints();
 
     for (size_t j = 0; j < nj; j++)
     {
-        current_driver->setPosition((int)j, ll[j]);
+        m_current_driver->setPosition((int)j, ll[j]);
     }
     return true;
 }
@@ -126,13 +154,13 @@ bool ControlThread::execute_joint_command(int frame_id)
 void ControlThread::compute_and_send_command(int frame_id)
 {
     //prepare the output command
-    yarp::os::Bottle& bot = port_command_out.prepare();
+    yarp::os::Bottle& bot = m_port_command_out.prepare();
     bot.clear();
-    bot.addInt32((int)current_action->action_frames_vector[frame_id].counter);
-    bot.addFloat64(current_action->action_frames_vector[frame_id].time);
+    bot.addInt32((int)m_current_action->action_frames_vector[frame_id].counter);
+    bot.addFloat64(m_current_action->action_frames_vector[frame_id].time);
 
     //send the output command
-    port_command_out.write();
+    m_port_command_out.write();
 
     //execute the command
     if (!execute_joint_command(frame_id))
@@ -142,13 +170,13 @@ void ControlThread::compute_and_send_command(int frame_id)
 
     //quick reads the current position
     std::vector<double> encs;
-    if (current_driver)
+    if (m_current_driver)
     {
-        size_t nj = current_action->get_njoints();
+        size_t nj = m_current_action->get_njoints();
         encs.resize(nj);
         for (size_t j = 0; j < nj; j++)
         {
-            current_driver->getEncoder((int)j, &encs[j]);
+            m_current_driver->getEncoder((int)j, &encs[j]);
         }
     }
     else
@@ -158,12 +186,12 @@ void ControlThread::compute_and_send_command(int frame_id)
     }
 
     //send the joints angles on debug port
-    double *ll = current_action->action_frames_vector[frame_id].q_joints.data();
-    yarp::os::Bottle& bot2 = this->port_command_joints.prepare();
+    double *ll = m_current_action->action_frames_vector[frame_id].q_joints.data();
+    yarp::os::Bottle& bot2 = this->m_port_command_joints.prepare();
     bot2.clear();
-    bot2.addInt32((int)current_action->action_frames_vector[frame_id].counter);
-    bot2.addFloat64(current_action->action_frames_vector[frame_id].time);
-    size_t nj = current_action->get_njoints();
+    bot2.addInt32((int)m_current_action->action_frames_vector[frame_id].counter);
+    bot2.addFloat64(m_current_action->action_frames_vector[frame_id].time);
+    size_t nj = m_current_action->get_njoints();
     bot2.addString("commands:");
     for (size_t ix=0;ix<nj;ix++)
     {
@@ -174,112 +202,125 @@ void ControlThread::compute_and_send_command(int frame_id)
     {
         bot2.addFloat64(encs[ix]);
     }
-    this->port_command_joints.write();
+    this->m_port_command_joints.write();
+}
+
+size_t getCurrentFrame(double elapsed, std::deque<action_frame>& dq)
+{
+    //example
+    // 0  0.0 > 1.1 ? no, continue
+    // 1  0.5 > 1.1 ? no, continue
+    // 2  1.0 > 1.1 ? no, continue
+    // 3  1.5 > 1.1 ? yes, return 3
+    // 4  2.0
+
+    size_t i = 0;
+    for (i = 0; i < dq.size(); i++)
+    {
+        if (dq[i].time > elapsed)
+            return i;
+    }
+    return i;
 }
 
 void ControlThread::run()
 {
-    std::lock_guard<std::mutex> lck(mtx);
+    std::lock_guard<std::mutex> lck(m_mtx);
 
-    double current_time = yarp::os::Time::now();
-    size_t nj = current_action->get_njoints();
+    size_t nj = m_current_action->get_njoints();
 
-    if (this->status == ACTION_IDLE)
+    if (this->m_status == ACTION_IDLE)
     {
         // do nothing
         //yDebug() << "ACTION_IDLE";
     }
-    else if (this->status == ACTION_STOP)
+    else if (this->m_status == ACTION_STOP)
     {
         yInfo() << "ACTION_STOP";
-        this->status = ACTION_IDLE;
+        this->m_status = ACTION_IDLE;
     }
-    else if (this->status == ACTION_RESET)
+    else if (this->m_status == ACTION_RESET)
     {
         yInfo() << "ACTION_RESET";
 
         for (size_t j = 0; j < nj; j++)
         {
-            current_driver->setControlMode((int)j, VOCAB_CM_POSITION);
+            m_current_driver->setControlMode((int)j, VOCAB_CM_POSITION);
         }
-        this->status = ACTION_IDLE;
+        this->m_status = ACTION_IDLE;
     }
-    else if (this->status == ACTION_RUNNING)
+    else if (this->m_status == ACTION_RUNNING)
     {
-        size_t last_frame = current_action->action_frames_vector.size();
+        size_t last_frame = m_current_action->action_frames_vector.size();
         if (last_frame == 0)
         {
             yError("ACTION_RUNNING: sequence empty!");
-            this->status = ACTION_RESET;
+            this->m_status = ACTION_RESET;
             return;
         }
 
         //if it's not the last frame
-        if (current_action->current_frame < last_frame - 1)
+        double curr_frame_time = m_clock.getElapsedTime() * m_current_action->speed_factor;
+        size_t newcurrframe = getCurrentFrame(curr_frame_time, m_current_action->action_frames_vector);
+        m_current_action->current_frame = newcurrframe;
+
+        // not the last frame
+        if (m_current_action->current_frame < last_frame - 1)
         {
-            double elapsed_time = current_action->action_frames_vector[current_action->current_frame].time;
-            if (current_time-start_time > elapsed_time)
-            {
-                current_action->current_frame++;
-                compute_and_send_command((int)current_action->current_frame);
-                yDebug("Executing action: %4zd/%4zd", current_action->current_frame , last_frame);
-                //printf("EXECUTING %d, elapsed_time:%.5f requested_time:%.5f\n", actions.current_action, current_time-last_time, duration);
-            }
-            else
-            {
-                //printf("WAITING %d, elapsed_time:%.5f requested_time:%.5f\n", actions.current_action, current_time-last_time, duration);
-            }
+            compute_and_send_command((int)m_current_action->current_frame);
+            yDebug("Executing action: %4zd/%4zd (%.3fs)", m_current_action->current_frame , last_frame, m_clock.getElapsedTime());
         }
         else //the action is complete
         {
-            if (current_action->forever)
+            if (m_current_action->forever)
             {
-                yInfo("sequence completed in: %f s, restarting", yarp::os::Time::now() - start_time);
-                current_action->current_frame=0;
-                start_time = yarp::os::Time::now();
+                yInfo("sequence completed in: %.3f s, restarting", m_clock.getElapsedTime());
+                m_current_action->current_frame=0;
+                m_clock.resetTimer();
+                m_clock.startTimer();
             }
             else
             {
-                yInfo("sequence completed in: %f s",yarp::os::Time::now()-start_time);
+                yInfo("sequence completed in: %.3f s", m_clock.getElapsedTime());
                 for (size_t j = 0; j < nj; j++)
                 {
-                    current_driver->setControlMode((int)j, VOCAB_CM_POSITION);
+                    m_current_driver->setControlMode((int)j, VOCAB_CM_POSITION);
                 }
-                this->status=ACTION_IDLE;
+                this->m_status=ACTION_IDLE;
             }
         }
     }
-    else if (this->status == ACTION_START)
+    else if (this->m_status == ACTION_START)
     {
-        if (current_action->action_frames_vector.size() > 0)
+        if (m_current_action->action_frames_vector.size() > 0)
         {
-            double *ll = current_action->action_frames_vector[0].q_joints.data();
-            size_t nj = current_action->get_njoints();
+            double *ll = m_current_action->action_frames_vector[0].q_joints.data();
+            size_t nj = m_current_action->get_njoints();
 
             //first go to first frame in standard position mode
             yDebug() << "ACTION_START: switch to position mode";
             for (size_t j = 0; j < nj; j++)
             {
-                current_driver->setControlMode((int)j, VOCAB_CM_POSITION);
+                m_current_driver->setControlMode((int)j, VOCAB_CM_POSITION);
             }
             yarp::os::Time::delay(0.1);
             for (size_t j = 0; j < nj; j++)
             {
-                current_driver->positionMove((int)j, ll[j]);
+                m_current_driver->positionMove((int)j, ll[j]);
             }
 
             //check if it reached the position within the desired tolerance
             yInfo() << "ACTION_START: going to start position";
             double enc= 0.0;
             bool check = true;
-            double start_time = yarp::os::Time::now();
+            double move_start_time = yarp::os::Time::now();
             do
             {
                 for (size_t j = 0; j < nj; j++)
                 {
-                    current_driver->getEncoder((int)j, &enc);
+                    m_current_driver->getEncoder((int)j, &enc);
                     double err = fabs(enc - ll[j]);
-                    check = (err < home_position_tolerance);
+                    check = (err < m_home_position_tolerance);
                 }
                 yarp::os::Time::delay(0.1);
                 if (check)
@@ -287,7 +328,7 @@ void ControlThread::run()
                     yInfo() << "ACTION_START: start position reached successfully";
                     break;
                 }
-                if (yarp::os::Time::now() - start_time > home_position_timeout)
+                if (yarp::os::Time::now() - move_start_time > m_home_position_timeout)
                 {
                     yWarning() << "ACTION_START: timeout while trying to reach start position";
                     break;
@@ -301,42 +342,42 @@ void ControlThread::run()
 
                 for (int j = 0; j <nj; j++)
                 {
-                    current_driver->setControlMode(j, VOCAB_CM_POSITION_DIRECT);
+                    m_current_driver->setControlMode(j, VOCAB_CM_POSITION_DIRECT);
                 }
                 yarp::os::Time::delay(0.1);
                 compute_and_send_command(0);
 
-                this->status = ACTION_RUNNING;
-                start_time = yarp::os::Time::now();
+                this->m_status = ACTION_RUNNING;
             }
             else
             {
                 yError() << "ACTION_START: unable to reach start position!";
-                if (home_position_strict_check_enabled)
+                if (m_home_position_strict_check_enabled)
                 {
                     //very strict behavior! if your are controlling fingers, you will probably end here
-                    this->status = ACTION_STOP;
+                    this->m_status = ACTION_STOP;
                 }
                 else
                 {
                     yDebug() << "ACTION_START: switch to position direct mode";
                     for (int j = 0; j <nj; j++)
                     {
-                        current_driver->setControlMode(j, VOCAB_CM_POSITION_DIRECT);
+                        m_current_driver->setControlMode(j, VOCAB_CM_POSITION_DIRECT);
                     }
                     yarp::os::Time::delay(0.1);
                     compute_and_send_command(0);
 
-                    this->status = ACTION_RUNNING;
-                    start_time = yarp::os::Time::now();
+                    this->m_status = ACTION_RUNNING;
                 }
             }
+            m_clock.startTimer();
             yInfo() << "ACTION_START: sequence started";
         }
         else
         {
             yWarning("no sequence in memory");
-            this->status = ACTION_STOP;
+            m_clock.resetTimer();
+            this->m_status = ACTION_STOP;
         }
     }
     else
@@ -349,7 +390,7 @@ void ControlThread::setPositionTolerance(double tolerance)
 {
     if (tolerance > 0)
     {
-        home_position_tolerance = tolerance;
+        m_home_position_tolerance = tolerance;
     }
 }
 
@@ -357,11 +398,11 @@ void ControlThread::setPositionTimeout(double timeout)
 {
     if (timeout > 0)
     {
-        home_position_timeout = timeout;
+        m_home_position_timeout = timeout;
     }
 }
 
 void ControlThread::setPositionStrictCheck(bool enable)
 {
-    home_position_strict_check_enabled=enable;
+    m_home_position_strict_check_enabled=enable;
 }
