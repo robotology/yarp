@@ -8,7 +8,6 @@
 #include <yarp/os/BufferedPort.h>
 #include <yarp/os/PeriodicThread.h>
 #include <yarp/sig/Vector.h>
-#include <yarp/math/Math.h>
 
 #include <string>
 #include <cmath>

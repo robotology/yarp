@@ -5,6 +5,7 @@
 
 #include <yarp/os/Log.h>
 #include <yarp/os/LogStream.h>
+#include <algorithm>
 
 #include <fstream>
 

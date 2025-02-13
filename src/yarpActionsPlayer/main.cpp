@@ -10,7 +10,6 @@
 #include <yarp/os/LogStream.h>
 #include <yarp/os/BufferedPort.h>
 #include <yarp/sig/Vector.h>
-#include <yarp/math/Math.h>
 
 #include <fstream>
 #include <iostream>

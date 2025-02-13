@@ -9,7 +9,6 @@
 #include <yarp/os/LogStream.h>
 #include <yarp/os/BufferedPort.h>
 #include <yarp/sig/Vector.h>
-#include <yarp/math/Math.h>
 
 #include <yarp/dev/ControlBoardInterfaces.h>
 #include <yarp/dev/PolyDriver.h>
@@ -20,7 +19,6 @@ using namespace std;
 using namespace yarp::os;
 using namespace yarp::sig;
 using namespace yarp::dev;
-using namespace yarp::math;
 
 #include "robotDriver.h"
 
