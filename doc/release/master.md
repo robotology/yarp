@@ -89,3 +89,8 @@ New Features
   Navigation2D_nwc_yarp
   Navigation2D_nws_yarp
   Odometry2D_nws_yarp
+
+### Other
+
+* Added new CLI executable yarpActionPlayer to playback trajectories on robot.
+  See the related documentation included in the README.md file
