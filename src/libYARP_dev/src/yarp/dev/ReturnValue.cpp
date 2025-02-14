@@ -14,7 +14,7 @@ ReturnValue::ReturnValue()
 {
 }
 
-#ifndef DISABLE_BOOL_INPUT
+#if !YARP_RETURNVALUE_DISABLE_BOOL_INPUT
 ReturnValue::ReturnValue(const bool& val)
 {
     if (val)
@@ -68,7 +68,7 @@ ReturnValue& ReturnValue::operator &= (const ReturnValue& other)
     return *this;
 }
 
-#ifndef DISABLE_BOOL_INPUT
+#if !YARP_RETURNVALUE_DISABLE_BOOL_INPUT
 ReturnValue& ReturnValue::operator=(const bool& bool_val)
 {
     if (bool_val)
@@ -120,6 +120,12 @@ ReturnValue::ReturnValue(return_code code)
 bool ReturnValue::operator == (const return_code& code) const
 {
     if (code == this->value_b) return true;
+    return false;
+}
+
+bool ReturnValue::operator == (const ReturnValue& value) const
+{
+    if (value == this->value_b) return true;
     return false;
 }
 

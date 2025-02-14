@@ -12,17 +12,16 @@
 #include <source_location>
 #include <string>
 
-// The following macro is used for testing/development purposes only, but it must be generally not enabled.
-// If enabled, a bool value cannot be automatically converted to ReturnValue
-// In this way, the developer can check if some old devices/interfaces do unwanted automatic
-// conversions and fix them.
- #define DISABLE_BOOL_INPUT
+// If this macro is enabled (default value=enabled), a bool value cannot be automatically converted to ReturnValue.
+// Automatic conversions of this type should be generally avoided, because they make the code less clear.
+// It is thus preferable that user assigns a precise value to a ReturnValue.
+#define YARP_RETURNVALUE_DISABLE_BOOL_INPUT 1
 
-// The following macro is used for testing/development purposes only, but it must be generally not enabled.
-// If enabled, a ReturnValue cannot be automatically converted to bool unless explicitly requested
-// using the bool() operator.
+// If this macro is enabled (default value=disabled), a ReturnValue cannot be automatically converted to bool
+// unless explicitly requested using the bool() operator.
+// The following macro is used for testing/development purposes only.
 // If enabled, it will break backward compatibility with user-application code.
-// #define DISABLE_BOOL_OUTPUT
+#define YARP_RETURNVALUE_DISABLE_BOOL_OUTPUT 0
 
 namespace yarp::dev {
 
@@ -47,22 +46,23 @@ class YARP_dev_API ReturnValue : public yarp::os::Portable
     public:
     ReturnValue();
     ~ReturnValue() = default;
-#ifndef DISABLE_BOOL_INPUT
+#if !YARP_RETURNVALUE_DISABLE_BOOL_INPUT
     ReturnValue(const bool& val);
 #endif
     ReturnValue(return_code code);
     ReturnValue(const ReturnValue& other) = default;
     ReturnValue& operator && (const ReturnValue& other);
     ReturnValue& operator &= (const ReturnValue& other);
-#ifndef DISABLE_BOOL_INPUT
+#if !YARP_RETURNVALUE_DISABLE_BOOL_INPUT
     ReturnValue& operator=(const bool& bool_val);
 #endif
     bool operator == (const return_code& code) const;
+    bool operator == (const ReturnValue& value) const;
     std::string toString();
-#ifndef DISABLE_BOOL_OUTPUT
+#if !YARP_RETURNVALUE_DISABLE_BOOL_OUTPUT
     operator bool() const;
 #else
-    explicit operator bool const();
+    explicit operator bool() const;
 #endif
 
 public:
