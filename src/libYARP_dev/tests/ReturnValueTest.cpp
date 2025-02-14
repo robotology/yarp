@@ -23,7 +23,7 @@ ReturnValue test_method2()
 
 TEST_CASE("dev::ReturnValue", "[yarp::dev]")
 {
-#ifndef DISABLE_BOOL_INPUT
+#if !YARP_RETURNVALUE_DISABLE_BOOL_INPUT
     SECTION("test block 1")
     {
         ReturnValue val_f1(false);
@@ -94,7 +94,7 @@ TEST_CASE("dev::ReturnValue", "[yarp::dev]")
         CHECK(val3 == ReturnValue::return_code::return_value_error_method_failed);
     }
 
-#ifndef DISABLE_BOOL_INPUT
+#ifndef YARP_RETURNVALUE_DISABLE_BOOL_INPUT
     SECTION("test block 4a")
     {
         ReturnValue val_f1(false);
@@ -115,6 +115,18 @@ TEST_CASE("dev::ReturnValue", "[yarp::dev]")
         CHECK(bool_f2 == false);
         CHECK(bool_t2 == true);
     }
+
+#ifndef YARP_RETURNVALUE_DISABLE_BOOL_INPUT
+    SECTION("test block 4c")
+    {
+        ReturnValue val_f1 = false;
+        ReturnValue val_t1 = true;
+        bool bool_f1 = val_f1;
+        bool bool_t1 = val_t1;
+        CHECK (bool_f1 == false);
+        CHECK (bool_t1 == true);
+    }
+#endif
 
     SECTION("test block 5")
     {

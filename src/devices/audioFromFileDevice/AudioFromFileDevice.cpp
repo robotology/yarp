@@ -103,7 +103,7 @@ bool AudioFromFileDevice::close()
 ReturnValue AudioFromFileDevice::stopRecording()
 {
     ReturnValue b = AudioRecorderDeviceBase::stopRecording();
-    if (b && m_reset_on_stop)
+    if (m_reset_on_stop)
     {
         m_bpnt=0;
     }
