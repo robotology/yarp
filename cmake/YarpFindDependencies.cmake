@@ -525,6 +525,10 @@ yarp_dependent_option(
   "YARP_COMPILE_EXECUTABLES" OFF
 )
 yarp_dependent_option(
+  YARP_COMPILE_yarpActionsPlayer "Do you want to compile yarpActionsPlayer?" ON
+  "YARP_COMPILE_EXECUTABLES" OFF
+)
+yarp_dependent_option(
   YARP_COMPILE_yarpview "Do you want to compile yarpview?" ON
   "YARP_COMPILE_EXECUTABLES;YARP_COMPILE_GUIS;YARP_HAS_Qt5" OFF
 )
@@ -682,6 +686,7 @@ yarp_print_feature(YARP_COMPILE_EXECUTABLES 0 "Compile executables")
 yarp_print_feature(YARP_COMPILE_yarprobotinterface 1 "Compile yarprobotinterface${YARP_COMPILE_yarprobotinterface_disable_reason}")
 yarp_print_feature(YARP_COMPILE_yarpmanager-console 1 "Compile YARP Module Manager (console)${YARP_COMPILE_yarpmanager-console_disable_reason}")
 yarp_print_feature(YARP_COMPILE_yarpdatadumper 1 "Compile yarpdatadumper${YARP_COMPILE_yarpdatadumper_disable_reason}")
+yarp_print_feature(YARP_COMPILE_yarpActionsPlayer 1 "Compile yarpActionsPlayer${YARP_COMPILE_yarpActionsPlayer_disable_reason}")
 yarp_print_feature("YARP_COMPILE_yarpdatadumper AND YARP_HAS_OpenCV" 2 "yarpdatadumper video support")
 yarp_print_feature(YARP_COMPILE_GUIS 1 "Compile GUIs${YARP_COMPILE_GUIS_disable_reason}")
 yarp_print_feature(YARP_COMPILE_yarpview 2 "Compile yarpview${YARP_COMPILE_yarpview_disable_reason}")
