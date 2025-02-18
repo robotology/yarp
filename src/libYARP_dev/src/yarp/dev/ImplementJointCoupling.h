@@ -40,6 +40,8 @@ public:
     bool getPhysicalJointName(size_t physicalJointIndex, std::string& physicalJointName) override final;
     bool getActuatedAxisName(size_t actuatedAxisIndex, std::string& actuatedAxisName) override final;
     bool getPhysicalJointLimits(size_t physicalJointIndex, double& min, double& max) override final;
+    bool evaluateJacobianFromActuatedAxesToPhysicalJointsVel(const yarp::sig::Vector& actAxesPos, yarp::sig::Matrix& actAxesToPhysJointsVelJacobian) override;
+    bool evaluateJacobianFromPhysicalJointsToActuatedAxeseVel(const yarp::sig::Vector& physJointsPos, yarp::sig::Matrix& physJointsToActAxesVelJacobian) override;
 protected:
     bool checkPhysicalJointIsCoupled(size_t physicalJointIndex);
 
