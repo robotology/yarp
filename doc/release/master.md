@@ -23,6 +23,10 @@ The signature of methods `IFrameTransform::frameExists(const std::string &frame_
 
 The set of tests for individual plugins, previously called `harness_dev_xxx` has been renamed to `harness_devices_xxx`
 
+### Compiler features
+
+target_compile_features updated from cxx_std_17 to cxx_std_20
+
 Fixes
 -----
 
@@ -55,6 +59,7 @@ New Features
 * modified signature of method `yarp::sig::utils::depthToPC` and `yarp::sig::utils::depthRgbToPC`.
   They now accept step_x and step_y parameters to perform pointcloud decimation.
   They also accept a new parameter `output_order` which allows to swap the axis of the output point cloud (see code documentation)
+* added method yarp::sig::Vector::erase()
 
 #### `libYARP_dev`
 
@@ -94,3 +99,4 @@ New Features
 
 * Added new CLI executable yarpActionPlayer to playback trajectories on robot.
   See the related documentation included in the README.md file
+* Updated to SWIG 4.3.0

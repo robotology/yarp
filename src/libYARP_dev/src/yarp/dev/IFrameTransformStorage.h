@@ -34,20 +34,20 @@ public:
     /**
     * Save some frame transforms in a storage.
     * @param transforms the list of transforms to be stored
-    * @return true/false
+    * @return a ReturnValue, convertible to true/false
     */
     virtual yarp::dev::ReturnValue setTransforms(const std::vector<yarp::math::FrameTransform>& transforms) = 0;
 
     /**
     * Save a frame transform in a storage.
     * @param transforms the transform to be stored
-    * @return true/false
+    * @return a ReturnValue, convertible to true/false
     */
     virtual yarp::dev::ReturnValue setTransform(const yarp::math::FrameTransform& transform) = 0;
 
     /**
     * Delete all transforms in a storage.
-    * @return true/false
+    * @return a ReturnValue, convertible to true/false
     */
     virtual yarp::dev::ReturnValue clearAll() = 0;
 
@@ -55,7 +55,7 @@ public:
     * Delete a single transform in the storage.
     * @param src the source of frame transform to delete
     * @param dst the destination of frame transform to delete
-    * @return true/false
+    * @return a ReturnValue, convertible to true/false
     */
     virtual yarp::dev::ReturnValue deleteTransform(std::string src, std::string dst) = 0;
 };
@@ -73,7 +73,7 @@ public:
     /**
     * Obtains all frame transforms saved in a storage.
     * @param transforms the returned list of frame transforms
-    * @return true/false
+    * @return a ReturnValue, convertible to true/false
     */
     virtual yarp::dev::ReturnValue getTransforms(std::vector<yarp::math::FrameTransform>& transforms) const = 0;
 };

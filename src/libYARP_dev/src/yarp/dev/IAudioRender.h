@@ -32,28 +32,28 @@ public:
      * Render a sound using a device (i.e. send it to the speakers).
      *
      * @param sound the sound to be rendered
-     * @return true/false upon success/failure
+     * @return a ReturnValue, convertible to true/false
      */
     virtual yarp::dev::ReturnValue renderSound(const yarp::sig::Sound& sound) = 0;
 
     /**
      * Start the playback.
      *
-     * @return true/false upon success/failure
+     * @return a ReturnValue, convertible to true/false
      */
     virtual yarp::dev::ReturnValue startPlayback() = 0;
 
     /**
      * Stop the playback.
      *
-     * @return true/false upon success/failure
+     * @return a ReturnValue, convertible to true/false
      */
     virtual yarp::dev::ReturnValue stopPlayback() = 0;
 
     /**
      * Check if the playback has been enabled (e.g. via startPlayback()/stopPlayback())
      * @param playback_enabled the status of the device
-     * @return true/false upon success/failure
+     * @return a ReturnValue, convertible to true/false
      */
     virtual yarp::dev::ReturnValue isPlaying(bool& playback_enabled) = 0;
 
@@ -66,14 +66,14 @@ public:
     /**
      * Sets a software gain for the played audio
      * @param gain the audio gain (1.0 is the default value)
-     * @return true/false upon success/failure
+     * @return a ReturnValue, convertible to true/false
      */
     virtual yarp::dev::ReturnValue setSWGain(double gain) = 0;
 
     /**
      * Sets the hardware gain of the playback device (if supported by the hardware)
      * @param gain the audio gain (1.0 is the default value)
-     * @return true/false upon success/failure
+     * @return a ReturnValue, convertible to true/false
      */
     virtual yarp::dev::ReturnValue setHWGain(double gain) = 0;
 };
