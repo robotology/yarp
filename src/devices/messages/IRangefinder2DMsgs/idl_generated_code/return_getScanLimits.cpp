@@ -11,7 +11,7 @@
 #include <return_getScanLimits.h>
 
 // Constructor with field values
-return_getScanLimits::return_getScanLimits(const bool retval,
+return_getScanLimits::return_getScanLimits(const yarp::dev::ReturnValue& retval,
                                            const double min,
                                            const double max) :
         WirePortable(),
@@ -24,7 +24,7 @@ return_getScanLimits::return_getScanLimits(const bool retval,
 // Read structure on a Wire
 bool return_getScanLimits::read(yarp::os::idl::WireReader& reader)
 {
-    if (!read_retval(reader)) {
+    if (!nested_read_retval(reader)) {
         return false;
     }
     if (!read_min(reader)) {
@@ -55,7 +55,7 @@ bool return_getScanLimits::read(yarp::os::ConnectionReader& connection)
 // Write structure on a Wire
 bool return_getScanLimits::write(const yarp::os::idl::WireWriter& writer) const
 {
-    if (!write_retval(writer)) {
+    if (!nested_write_retval(writer)) {
         return false;
     }
     if (!write_min(writer)) {
@@ -96,8 +96,13 @@ std::string return_getScanLimits::toString() const
 // read retval field
 bool return_getScanLimits::read_retval(yarp::os::idl::WireReader& reader)
 {
-    if (!reader.readBool(retval)) {
-        retval = false;
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
+    if (!reader.read(retval)) {
+        reader.fail();
+        return false;
     }
     return true;
 }
@@ -105,7 +110,7 @@ bool return_getScanLimits::read_retval(yarp::os::idl::WireReader& reader)
 // write retval field
 bool return_getScanLimits::write_retval(const yarp::os::idl::WireWriter& writer) const
 {
-    if (!writer.writeBool(retval)) {
+    if (!writer.write(retval)) {
         return false;
     }
     return true;
@@ -114,8 +119,13 @@ bool return_getScanLimits::write_retval(const yarp::os::idl::WireWriter& writer)
 // read (nested) retval field
 bool return_getScanLimits::nested_read_retval(yarp::os::idl::WireReader& reader)
 {
-    if (!reader.readBool(retval)) {
-        retval = false;
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
+    if (!reader.readNested(retval)) {
+        reader.fail();
+        return false;
     }
     return true;
 }
@@ -123,7 +133,7 @@ bool return_getScanLimits::nested_read_retval(yarp::os::idl::WireReader& reader)
 // write (nested) retval field
 bool return_getScanLimits::nested_write_retval(const yarp::os::idl::WireWriter& writer) const
 {
-    if (!writer.writeBool(retval)) {
+    if (!writer.writeNested(retval)) {
         return false;
     }
     return true;

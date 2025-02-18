@@ -13,20 +13,21 @@
 
 #include <yarp/os/Wire.h>
 #include <yarp/os/idl/WireTypes.h>
+#include <yarp/dev/ReturnValue.h>
 
 class return_getScanRate :
         public yarp::os::idl::WirePortable
 {
 public:
     // Fields
-    bool retval{false};
+    yarp::dev::ReturnValue retval{};
     double rate{0.0};
 
     // Default constructor
     return_getScanRate() = default;
 
     // Constructor with field values
-    return_getScanRate(const bool retval,
+    return_getScanRate(const yarp::dev::ReturnValue& retval,
                        const double rate);
 
     // Read structure on a Wire

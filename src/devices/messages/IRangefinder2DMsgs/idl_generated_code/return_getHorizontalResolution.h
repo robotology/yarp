@@ -13,20 +13,21 @@
 
 #include <yarp/os/Wire.h>
 #include <yarp/os/idl/WireTypes.h>
+#include <yarp/dev/ReturnValue.h>
 
 class return_getHorizontalResolution :
         public yarp::os::idl::WirePortable
 {
 public:
     // Fields
-    bool retval{false};
+    yarp::dev::ReturnValue retval{};
     double step{0.0};
 
     // Default constructor
     return_getHorizontalResolution() = default;
 
     // Constructor with field values
-    return_getHorizontalResolution(const bool retval,
+    return_getHorizontalResolution(const yarp::dev::ReturnValue& retval,
                                    const double step);
 
     // Read structure on a Wire

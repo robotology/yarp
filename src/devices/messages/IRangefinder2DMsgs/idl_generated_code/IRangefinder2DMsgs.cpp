@@ -409,10 +409,10 @@ public:
         bool write(const yarp::os::idl::WireWriter& writer) const override;
         bool read(yarp::os::idl::WireReader& reader) override;
 
-        bool return_helper{false};
+        yarp::dev::ReturnValue return_helper{};
     };
 
-    using funcptr_t = bool (*)(const double, const double);
+    using funcptr_t = yarp::dev::ReturnValue (*)(const double, const double);
     void call(IRangefinder2DMsgs* ptr);
 
     Command cmd;
@@ -422,7 +422,7 @@ public:
     static constexpr size_t s_tag_len{2};
     static constexpr size_t s_cmd_len{4};
     static constexpr size_t s_reply_len{1};
-    static constexpr const char* s_prototype{"bool IRangefinder2DMsgs::setDistanceRange_RPC(const double min, const double max)"};
+    static constexpr const char* s_prototype{"yarp::dev::ReturnValue IRangefinder2DMsgs::setDistanceRange_RPC(const double min, const double max)"};
     static constexpr const char* s_help{""};
 };
 
@@ -473,10 +473,10 @@ public:
         bool write(const yarp::os::idl::WireWriter& writer) const override;
         bool read(yarp::os::idl::WireReader& reader) override;
 
-        bool return_helper{false};
+        yarp::dev::ReturnValue return_helper{};
     };
 
-    using funcptr_t = bool (*)(const double, const double);
+    using funcptr_t = yarp::dev::ReturnValue (*)(const double, const double);
     void call(IRangefinder2DMsgs* ptr);
 
     Command cmd;
@@ -486,7 +486,7 @@ public:
     static constexpr size_t s_tag_len{2};
     static constexpr size_t s_cmd_len{4};
     static constexpr size_t s_reply_len{1};
-    static constexpr const char* s_prototype{"bool IRangefinder2DMsgs::setScanLimits_RPC(const double min, const double max)"};
+    static constexpr const char* s_prototype{"yarp::dev::ReturnValue IRangefinder2DMsgs::setScanLimits_RPC(const double min, const double max)"};
     static constexpr const char* s_help{""};
 };
 
@@ -536,10 +536,10 @@ public:
         bool write(const yarp::os::idl::WireWriter& writer) const override;
         bool read(yarp::os::idl::WireReader& reader) override;
 
-        bool return_helper{false};
+        yarp::dev::ReturnValue return_helper{};
     };
 
-    using funcptr_t = bool (*)(const double);
+    using funcptr_t = yarp::dev::ReturnValue (*)(const double);
     void call(IRangefinder2DMsgs* ptr);
 
     Command cmd;
@@ -549,7 +549,7 @@ public:
     static constexpr size_t s_tag_len{2};
     static constexpr size_t s_cmd_len{3};
     static constexpr size_t s_reply_len{1};
-    static constexpr const char* s_prototype{"bool IRangefinder2DMsgs::setHorizontalResolution_RPC(const double step)"};
+    static constexpr const char* s_prototype{"yarp::dev::ReturnValue IRangefinder2DMsgs::setHorizontalResolution_RPC(const double step)"};
     static constexpr const char* s_help{""};
 };
 
@@ -599,10 +599,10 @@ public:
         bool write(const yarp::os::idl::WireWriter& writer) const override;
         bool read(yarp::os::idl::WireReader& reader) override;
 
-        bool return_helper{false};
+        yarp::dev::ReturnValue return_helper{};
     };
 
-    using funcptr_t = bool (*)(const double);
+    using funcptr_t = yarp::dev::ReturnValue (*)(const double);
     void call(IRangefinder2DMsgs* ptr);
 
     Command cmd;
@@ -612,7 +612,7 @@ public:
     static constexpr size_t s_tag_len{2};
     static constexpr size_t s_cmd_len{3};
     static constexpr size_t s_reply_len{1};
-    static constexpr const char* s_prototype{"bool IRangefinder2DMsgs::setScanRate_RPC(const double rate)"};
+    static constexpr const char* s_prototype{"yarp::dev::ReturnValue IRangefinder2DMsgs::setScanRate_RPC(const double rate)"};
     static constexpr const char* s_help{""};
 };
 
@@ -1549,10 +1549,7 @@ bool IRangefinder2DMsgs_setDistanceRange_RPC_helper::Reply::read(yarp::os::Conne
 bool IRangefinder2DMsgs_setDistanceRange_RPC_helper::Reply::write(const yarp::os::idl::WireWriter& writer) const
 {
     if (!writer.isNull()) {
-        if (!writer.writeListHeader(s_reply_len)) {
-            return false;
-        }
-        if (!writer.writeBool(return_helper)) {
+        if (!writer.write(return_helper)) {
             return false;
         }
     }
@@ -1561,14 +1558,11 @@ bool IRangefinder2DMsgs_setDistanceRange_RPC_helper::Reply::write(const yarp::os
 
 bool IRangefinder2DMsgs_setDistanceRange_RPC_helper::Reply::read(yarp::os::idl::WireReader& reader)
 {
-    if (!reader.readListReturn()) {
-        return false;
-    }
     if (reader.noMore()) {
         reader.fail();
         return false;
     }
-    if (!reader.readBool(return_helper)) {
+    if (!reader.read(return_helper)) {
         reader.fail();
         return false;
     }
@@ -1715,10 +1709,7 @@ bool IRangefinder2DMsgs_setScanLimits_RPC_helper::Reply::read(yarp::os::Connecti
 bool IRangefinder2DMsgs_setScanLimits_RPC_helper::Reply::write(const yarp::os::idl::WireWriter& writer) const
 {
     if (!writer.isNull()) {
-        if (!writer.writeListHeader(s_reply_len)) {
-            return false;
-        }
-        if (!writer.writeBool(return_helper)) {
+        if (!writer.write(return_helper)) {
             return false;
         }
     }
@@ -1727,14 +1718,11 @@ bool IRangefinder2DMsgs_setScanLimits_RPC_helper::Reply::write(const yarp::os::i
 
 bool IRangefinder2DMsgs_setScanLimits_RPC_helper::Reply::read(yarp::os::idl::WireReader& reader)
 {
-    if (!reader.readListReturn()) {
-        return false;
-    }
     if (reader.noMore()) {
         reader.fail();
         return false;
     }
-    if (!reader.readBool(return_helper)) {
+    if (!reader.read(return_helper)) {
         reader.fail();
         return false;
     }
@@ -1869,10 +1857,7 @@ bool IRangefinder2DMsgs_setHorizontalResolution_RPC_helper::Reply::read(yarp::os
 bool IRangefinder2DMsgs_setHorizontalResolution_RPC_helper::Reply::write(const yarp::os::idl::WireWriter& writer) const
 {
     if (!writer.isNull()) {
-        if (!writer.writeListHeader(s_reply_len)) {
-            return false;
-        }
-        if (!writer.writeBool(return_helper)) {
+        if (!writer.write(return_helper)) {
             return false;
         }
     }
@@ -1881,14 +1866,11 @@ bool IRangefinder2DMsgs_setHorizontalResolution_RPC_helper::Reply::write(const y
 
 bool IRangefinder2DMsgs_setHorizontalResolution_RPC_helper::Reply::read(yarp::os::idl::WireReader& reader)
 {
-    if (!reader.readListReturn()) {
-        return false;
-    }
     if (reader.noMore()) {
         reader.fail();
         return false;
     }
-    if (!reader.readBool(return_helper)) {
+    if (!reader.read(return_helper)) {
         reader.fail();
         return false;
     }
@@ -2023,10 +2005,7 @@ bool IRangefinder2DMsgs_setScanRate_RPC_helper::Reply::read(yarp::os::Connection
 bool IRangefinder2DMsgs_setScanRate_RPC_helper::Reply::write(const yarp::os::idl::WireWriter& writer) const
 {
     if (!writer.isNull()) {
-        if (!writer.writeListHeader(s_reply_len)) {
-            return false;
-        }
-        if (!writer.writeBool(return_helper)) {
+        if (!writer.write(return_helper)) {
             return false;
         }
     }
@@ -2035,14 +2014,11 @@ bool IRangefinder2DMsgs_setScanRate_RPC_helper::Reply::write(const yarp::os::idl
 
 bool IRangefinder2DMsgs_setScanRate_RPC_helper::Reply::read(yarp::os::idl::WireReader& reader)
 {
-    if (!reader.readListReturn()) {
-        return false;
-    }
     if (reader.noMore()) {
         reader.fail();
         return false;
     }
-    if (!reader.readBool(return_helper)) {
+    if (!reader.read(return_helper)) {
         reader.fail();
         return false;
     }
@@ -2120,44 +2096,44 @@ return_getDeviceInfo IRangefinder2DMsgs::getDeviceInfo_RPC()
     return ok ? helper.reply.return_helper : return_getDeviceInfo{};
 }
 
-bool IRangefinder2DMsgs::setDistanceRange_RPC(const double min, const double max)
+yarp::dev::ReturnValue IRangefinder2DMsgs::setDistanceRange_RPC(const double min, const double max)
 {
     if (!yarp().canWrite()) {
         yError("Missing server method '%s'?", IRangefinder2DMsgs_setDistanceRange_RPC_helper::s_prototype);
     }
     IRangefinder2DMsgs_setDistanceRange_RPC_helper helper{min, max};
     bool ok = yarp().write(helper, helper);
-    return ok ? helper.reply.return_helper : bool{};
+    return ok ? helper.reply.return_helper : yarp::dev::ReturnValue{};
 }
 
-bool IRangefinder2DMsgs::setScanLimits_RPC(const double min, const double max)
+yarp::dev::ReturnValue IRangefinder2DMsgs::setScanLimits_RPC(const double min, const double max)
 {
     if (!yarp().canWrite()) {
         yError("Missing server method '%s'?", IRangefinder2DMsgs_setScanLimits_RPC_helper::s_prototype);
     }
     IRangefinder2DMsgs_setScanLimits_RPC_helper helper{min, max};
     bool ok = yarp().write(helper, helper);
-    return ok ? helper.reply.return_helper : bool{};
+    return ok ? helper.reply.return_helper : yarp::dev::ReturnValue{};
 }
 
-bool IRangefinder2DMsgs::setHorizontalResolution_RPC(const double step)
+yarp::dev::ReturnValue IRangefinder2DMsgs::setHorizontalResolution_RPC(const double step)
 {
     if (!yarp().canWrite()) {
         yError("Missing server method '%s'?", IRangefinder2DMsgs_setHorizontalResolution_RPC_helper::s_prototype);
     }
     IRangefinder2DMsgs_setHorizontalResolution_RPC_helper helper{step};
     bool ok = yarp().write(helper, helper);
-    return ok ? helper.reply.return_helper : bool{};
+    return ok ? helper.reply.return_helper : yarp::dev::ReturnValue{};
 }
 
-bool IRangefinder2DMsgs::setScanRate_RPC(const double rate)
+yarp::dev::ReturnValue IRangefinder2DMsgs::setScanRate_RPC(const double rate)
 {
     if (!yarp().canWrite()) {
         yError("Missing server method '%s'?", IRangefinder2DMsgs_setScanRate_RPC_helper::s_prototype);
     }
     IRangefinder2DMsgs_setScanRate_RPC_helper helper{rate};
     bool ok = yarp().write(helper, helper);
-    return ok ? helper.reply.return_helper : bool{};
+    return ok ? helper.reply.return_helper : yarp::dev::ReturnValue{};
 }
 
 // help method
