@@ -26,10 +26,10 @@ class IRangefinder2DRPCd : public IRangefinder2DMsgs
     return_getHorizontalResolution getHorizontalResolution_RPC() override;
     return_getScanRate getScanRate_RPC() override;
     return_getDeviceInfo getDeviceInfo_RPC() override;
-    bool setDistanceRange_RPC(const double min, const double max) override;
-    bool setScanLimits_RPC(const double min, const double max) override;
-    bool setHorizontalResolution_RPC(const double step) override;
-    bool setScanRate_RPC(const double rate) override;
+    yarp::dev::ReturnValue setDistanceRange_RPC(const double min, const double max) override;
+    yarp::dev::ReturnValue setScanLimits_RPC(const double min, const double max) override;
+    yarp::dev::ReturnValue setHorizontalResolution_RPC(const double step) override;
+    yarp::dev::ReturnValue setScanRate_RPC(const double rate) override;
 
     std::mutex* getMutex() {return &m_mutex;}
 };

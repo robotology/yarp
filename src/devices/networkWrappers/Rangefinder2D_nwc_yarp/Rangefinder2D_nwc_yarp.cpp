@@ -210,7 +210,7 @@ bool Rangefinder2D_nwc_yarp::close()
     return true;
 }
 
-bool Rangefinder2D_nwc_yarp::getRawData(yarp::sig::Vector &data, double* timestamp)
+ReturnValue Rangefinder2D_nwc_yarp::getRawData(yarp::sig::Vector &data, double* timestamp)
 {
     std::lock_guard<std::mutex> lg(m_mutex);
     yarp::sig::LaserScan2D scan;
@@ -222,10 +222,10 @@ bool Rangefinder2D_nwc_yarp::getRawData(yarp::sig::Vector &data, double* timesta
     {
         *timestamp = m_lastTs.getTime();
     }
-    return true;
+    return ReturnValue_ok;
 }
 
-bool Rangefinder2D_nwc_yarp::getLaserMeasurement(std::vector<LaserMeasurementData> &data, double* timestamp)
+ReturnValue Rangefinder2D_nwc_yarp::getLaserMeasurement(std::vector<LaserMeasurementData> &data, double* timestamp)
 {
     std::lock_guard<std::mutex> lg(m_mutex);
     yarp::sig::LaserScan2D scan;
@@ -233,7 +233,11 @@ bool Rangefinder2D_nwc_yarp::getLaserMeasurement(std::vector<LaserMeasurementDat
 
     size_t size = scan.scans.size();
     data.resize(size);
-    if (m_scan_angle_max < m_scan_angle_min) { yCError(RANGEFINDER2DCLIENT) << "getLaserMeasurement failed"; return false; }
+    if (m_scan_angle_max < m_scan_angle_min)
+    {
+        yCError(RANGEFINDER2DCLIENT) << "getLaserMeasurement failed";
+        return ReturnValue::return_code::return_value_error_method_failed;
+    }
     double laser_angle_of_view = m_scan_angle_max - m_scan_angle_min;
     for (size_t i = 0; i < size; i++)
     {
@@ -245,118 +249,120 @@ bool Rangefinder2D_nwc_yarp::getLaserMeasurement(std::vector<LaserMeasurementDat
     {
         *timestamp = m_lastTs.getTime();
     }
-    return true;
+    return ReturnValue_ok;
 }
 
-bool Rangefinder2D_nwc_yarp::getDistanceRange(double& min, double& max)
+ReturnValue Rangefinder2D_nwc_yarp::getDistanceRange(double& min, double& max)
 {
     std::lock_guard<std::mutex> lg(m_mutex);
     auto ret = m_RPC.getDistanceRange_RPC();
     if (!ret.retval) {
         yCError(RANGEFINDER2DCLIENT, "Unable to getDistanceRange");
-        return false;
+        return ret.retval;
     }
     min = ret.min;
     max = ret.max;
-    return true;
+    return ret.retval;
 }
 
-bool Rangefinder2D_nwc_yarp::setDistanceRange(double min, double max)
+ReturnValue Rangefinder2D_nwc_yarp::setDistanceRange(double min, double max)
 {
     std::lock_guard<std::mutex> lg(m_mutex);
     auto ret = m_RPC.setDistanceRange_RPC(min, max);
-    if (!ret) {
+    if (!ret)
+    {
         yCError(RANGEFINDER2DCLIENT, "Unable to setDistanceRange");
-        return false;
+        return ret;
     }
-    return true;
+    return ret;
 }
 
-bool Rangefinder2D_nwc_yarp::getScanLimits(double& min, double& max)
+ReturnValue Rangefinder2D_nwc_yarp::getScanLimits(double& min, double& max)
 {
     std::lock_guard<std::mutex> lg(m_mutex);
     auto ret = m_RPC.getScanLimits_RPC();
     if (!ret.retval) {
         yCError(RANGEFINDER2DCLIENT, "Unable to getScanLimits");
-        return false;
+        return ret.retval;
     }
     min = ret.min;
     max = ret.max;
-    return true;
+    return ret.retval;
 }
 
-bool Rangefinder2D_nwc_yarp::setScanLimits(double min, double max)
+ReturnValue Rangefinder2D_nwc_yarp::setScanLimits(double min, double max)
 {
     std::lock_guard<std::mutex> lg(m_mutex);
     auto ret = m_RPC.setScanLimits_RPC(min,max);
     if (!ret) {
         yCError(RANGEFINDER2DCLIENT, "Unable to setScanLimits");
-        return false;
+        return ret;
     }
-    return true;
+    return ret;
 }
 
-bool Rangefinder2D_nwc_yarp::getHorizontalResolution(double& step)
+ReturnValue Rangefinder2D_nwc_yarp::getHorizontalResolution(double& step)
 {
     std::lock_guard<std::mutex> lg(m_mutex);
     auto ret = m_RPC.getHorizontalResolution_RPC();
     if (!ret.retval) {
         yCError(RANGEFINDER2DCLIENT, "Unable to getHorizontalResolution");
-        return false;
+        return ret.retval;
     }
     step = ret.step;
-    return true;
+    return ret.retval;
 }
 
-bool Rangefinder2D_nwc_yarp::setHorizontalResolution(double step)
+ReturnValue Rangefinder2D_nwc_yarp::setHorizontalResolution(double step)
 {
     std::lock_guard<std::mutex> lg(m_mutex);
     auto ret = m_RPC.setScanRate_RPC(step);
     if (!ret) {
         yCError(RANGEFINDER2DCLIENT, "Unable to setHorizontalResolution");
-        return false;
+        return ret;
     }
-    return true;
+    return ret;
 }
 
-bool Rangefinder2D_nwc_yarp::getScanRate(double& rate)
+ReturnValue Rangefinder2D_nwc_yarp::getScanRate(double& rate)
 {
     std::lock_guard<std::mutex> lg(m_mutex);
     auto ret = m_RPC.getScanRate_RPC();
     if (!ret.retval) {
         yCError(RANGEFINDER2DCLIENT, "Unable to getScanRate");
-        return false;
+        return ret.retval;
     }
     rate = ret.rate;
-    return true;
+    return ret.retval;
 }
 
-bool Rangefinder2D_nwc_yarp::setScanRate(double rate)
+ReturnValue Rangefinder2D_nwc_yarp::setScanRate(double rate)
 {
     std::lock_guard<std::mutex> lg(m_mutex);
     auto ret = m_RPC.setScanRate_RPC(rate);
     if (!ret) {
         yCError(RANGEFINDER2DCLIENT, "Unable to setScanRate");
-        return false;
+        return ret;
     }
-    return true;
+    return ret;
 }
 
-bool Rangefinder2D_nwc_yarp::getDeviceStatus(Device_status &status)
+ReturnValue Rangefinder2D_nwc_yarp::getDeviceStatus(Device_status &status)
 {
     std::lock_guard <std::mutex> lg(m_mutex);
     status = m_inputPort.getStatus();
-    return true;
+    return ReturnValue_ok;
 }
 
-bool Rangefinder2D_nwc_yarp::getDeviceInfo(std::string &device_info)
+ReturnValue Rangefinder2D_nwc_yarp::getDeviceInfo(std::string &device_info)
 {
     std::lock_guard<std::mutex> lg(m_mutex);
     auto ret = m_RPC.getDeviceInfo_RPC();
-    if (!ret.retval) {
+    if (!ret.retval)
+    {
         yCError(RANGEFINDER2DCLIENT, "Unable to getDeviceInfo");
-        return false;
+        return ret.retval;
     }
     device_info = ret.device_info;
-    return true;
+    return ret.retval;
 }

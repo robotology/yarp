@@ -86,32 +86,32 @@ bool Rangefinder2DTransformer::close()
     return true;
 }
 
-bool Rangefinder2DTransformer::getRawData(yarp::sig::Vector& data, double* timestamp)
+ReturnValue Rangefinder2DTransformer::getRawData(yarp::sig::Vector& data, double* timestamp)
 {
     std::vector<LaserMeasurementData> scans;
     double lastTs;
 
-    bool ret = sens_p->getLaserMeasurement(scans, &lastTs);
+    auto ret = sens_p->getLaserMeasurement(scans, &lastTs);
     if (!ret) {
-        return false;
+        return ret;
     }
 
     if (timestamp != nullptr)
     {
         *timestamp = lastTs;
     }
-    return true;
+    return ret;
 }
 
-bool Rangefinder2DTransformer::getLaserMeasurement(std::vector<LaserMeasurementData>& data, double* timestamp)
+ReturnValue Rangefinder2DTransformer::getLaserMeasurement(std::vector<LaserMeasurementData>& data, double* timestamp)
 {
     std::vector<LaserMeasurementData> scans;
     double lastTs;
 
-    bool ret = sens_p->getLaserMeasurement(scans,&lastTs);
+    auto ret = sens_p->getLaserMeasurement(scans,&lastTs);
     if (!ret)
     {
-        return false;
+        return ret;
     }
 
     size_t size = scans.size();
@@ -119,7 +119,7 @@ bool Rangefinder2DTransformer::getLaserMeasurement(std::vector<LaserMeasurementD
     if (m_scan_angle_max < m_scan_angle_min)
     {
         yCError(RANGEFINDER2DTRANSFORMER) << "getLaserMeasurement failed";
-        return false;
+        return ReturnValue::return_code::return_value_error_method_failed;
     }
     double laser_angle_of_view = m_scan_angle_max - m_scan_angle_min;
     for (size_t i = 0; i < size; i++)
@@ -138,55 +138,55 @@ bool Rangefinder2DTransformer::getLaserMeasurement(std::vector<LaserMeasurementD
     {
         *timestamp = lastTs;
     }
-    return true;
+    return ReturnValue_ok;
 }
 
-bool Rangefinder2DTransformer::getDistanceRange(double& min, double& max)
+ReturnValue Rangefinder2DTransformer::getDistanceRange(double& min, double& max)
 {
     return sens_p->getDistanceRange(min, max);
 }
 
-bool Rangefinder2DTransformer::setDistanceRange(double min, double max)
+ReturnValue Rangefinder2DTransformer::setDistanceRange(double min, double max)
 {
     return sens_p->setDistanceRange(min, max);
 }
 
-bool Rangefinder2DTransformer::getScanLimits(double& min, double& max)
+ReturnValue Rangefinder2DTransformer::getScanLimits(double& min, double& max)
 {
     return sens_p->getScanLimits(min, max);
 }
 
-bool Rangefinder2DTransformer::setScanLimits(double min, double max)
+ReturnValue Rangefinder2DTransformer::setScanLimits(double min, double max)
 {
     return sens_p->setScanLimits(min, max);
 }
 
-bool Rangefinder2DTransformer::getHorizontalResolution(double& step)
+ReturnValue Rangefinder2DTransformer::getHorizontalResolution(double& step)
 {
     return sens_p->getHorizontalResolution(step);
 }
 
-bool Rangefinder2DTransformer::setHorizontalResolution(double step)
+ReturnValue Rangefinder2DTransformer::setHorizontalResolution(double step)
 {
     return sens_p->setHorizontalResolution(step);
 }
 
-bool Rangefinder2DTransformer::getScanRate(double& rate)
+ReturnValue Rangefinder2DTransformer::getScanRate(double& rate)
 {
     return sens_p->getScanRate(rate);
 }
 
-bool Rangefinder2DTransformer::setScanRate(double rate)
+ReturnValue Rangefinder2DTransformer::setScanRate(double rate)
 {
     return sens_p->setScanRate(rate);
 }
 
-bool Rangefinder2DTransformer::getDeviceStatus(Device_status& status)
+ReturnValue Rangefinder2DTransformer::getDeviceStatus(Device_status& status)
 {
     return sens_p->getDeviceStatus(status);
 }
 
-bool Rangefinder2DTransformer::getDeviceInfo(std::string& device_info)
+ReturnValue Rangefinder2DTransformer::getDeviceInfo(std::string& device_info)
 {
     return sens_p->getDeviceInfo(device_info);
 }
