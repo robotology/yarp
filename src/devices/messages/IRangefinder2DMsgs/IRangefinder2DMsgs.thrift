@@ -10,32 +10,38 @@ enum yarp_dev_IRangefinder2D_Device_status{
   yarp.enumbase = "yarp::conf::vocab32_t"
 )
 
+struct yReturnValue {
+} (
+  yarp.name = "yarp::dev::ReturnValue"
+  yarp.includefile = "yarp/dev/ReturnValue.h"
+)
+
 //-------------------------------------------------
 
 struct return_getDeviceStatus {
-  1: bool retval = false;
+  1: yReturnValue retval;
   2: yarp_dev_IRangefinder2D_Device_status status;
 }
 struct return_getDistanceRange {
-  1: bool retval = false;
+  1: yReturnValue retval;
   2: double min;
   3: double max;
 }
 struct return_getScanLimits {
-  1: bool retval = false;
+  1: yReturnValue retval;
   2: double min;
   3: double max;
 }
 struct return_getHorizontalResolution {
-  1: bool retval = false;
+  1: yReturnValue retval;
   2: double step;
 }
 struct return_getScanRate {
-  1: bool retval = false;
+  1: yReturnValue retval;
   2: double rate;
 }
 struct return_getDeviceInfo {
-  1: bool retval = false;
+  1: yReturnValue retval;
   2: string device_info
 }
 
@@ -49,8 +55,8 @@ service IRangefinder2DMsgs
     return_getHorizontalResolution getHorizontalResolution_RPC();
     return_getScanRate getScanRate_RPC();
     return_getDeviceInfo getDeviceInfo_RPC();
-    bool setDistanceRange_RPC(1:double min, 2:double max);
-    bool setScanLimits_RPC(1:double min, 2:double max);
-    bool setHorizontalResolution_RPC(1:double step);
-    bool setScanRate_RPC(1:double rate);
+    yReturnValue setDistanceRange_RPC(1:double min, 2:double max);
+    yReturnValue setScanLimits_RPC(1:double min, 2:double max);
+    yReturnValue setHorizontalResolution_RPC(1:double step);
+    yReturnValue setScanRate_RPC(1:double rate);
 }

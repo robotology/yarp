@@ -30,8 +30,8 @@ const int LASER_TIMEOUT=100; //ms
 * @ingroup dev_impl_wrapper dev_impl_network_lidar
 *
 * \brief `Rangefinder2DTransformer`: A device which acts a virtual laser, it attaches to another lidar,
-* which provides a stream a measurements, and reclocates them in the space. The new origin can be specified
-* both manually, as a 2D point in space, or though a tranform.
+* which provides a stream a measurements, and relocates them in the space. The new origin can be specified
+* both manually, as a 2D point in space, or though a transform.
 *
 * Parameters required by this device are shown in class: Rangefinder2DTransformer_ParamsParser
 *
@@ -57,18 +57,18 @@ public:
     bool close() override;
 
     /* IRangefinder2D methods */
-    bool getLaserMeasurement(std::vector<yarp::sig::LaserMeasurementData> &data, double* timestamp = nullptr) override;
-    bool getRawData(yarp::sig::Vector &data, double* timestamp = nullptr) override;
-    bool getDeviceStatus(Device_status &status) override;
-    bool getDistanceRange(double& min, double& max) override;
-    bool setDistanceRange(double min, double max) override;
-    bool getScanLimits(double& min, double& max) override;
-    bool setScanLimits(double min, double max) override;
-    bool getHorizontalResolution(double& step) override;
-    bool setHorizontalResolution(double step) override;
-    bool getScanRate(double& rate) override;
-    bool setScanRate(double rate) override;
-    bool getDeviceInfo(std::string &device_info) override;
+    yarp::dev::ReturnValue getLaserMeasurement(std::vector<yarp::sig::LaserMeasurementData> &data, double* timestamp = nullptr) override;
+    yarp::dev::ReturnValue getRawData(yarp::sig::Vector &data, double* timestamp = nullptr) override;
+    yarp::dev::ReturnValue getDeviceStatus(Device_status &status) override;
+    yarp::dev::ReturnValue getDistanceRange(double& min, double& max) override;
+    yarp::dev::ReturnValue setDistanceRange(double min, double max) override;
+    yarp::dev::ReturnValue getScanLimits(double& min, double& max) override;
+    yarp::dev::ReturnValue setScanLimits(double min, double max) override;
+    yarp::dev::ReturnValue getHorizontalResolution(double& step) override;
+    yarp::dev::ReturnValue setHorizontalResolution(double step) override;
+    yarp::dev::ReturnValue getScanRate(double& rate) override;
+    yarp::dev::ReturnValue setScanRate(double rate) override;
+    yarp::dev::ReturnValue getDeviceInfo(std::string &device_info) override;
 
     /* WrapperSingle  methods */
     bool attach(yarp::dev::PolyDriver* driver) override;
