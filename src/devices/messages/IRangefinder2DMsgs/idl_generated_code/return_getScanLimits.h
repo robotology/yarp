@@ -13,13 +13,14 @@
 
 #include <yarp/os/Wire.h>
 #include <yarp/os/idl/WireTypes.h>
+#include <yarp/dev/ReturnValue.h>
 
 class return_getScanLimits :
         public yarp::os::idl::WirePortable
 {
 public:
     // Fields
-    bool retval{false};
+    yarp::dev::ReturnValue retval{};
     double min{0.0};
     double max{0.0};
 
@@ -27,7 +28,7 @@ public:
     return_getScanLimits() = default;
 
     // Constructor with field values
-    return_getScanLimits(const bool retval,
+    return_getScanLimits(const yarp::dev::ReturnValue& retval,
                          const double min,
                          const double max);
 
