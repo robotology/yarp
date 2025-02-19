@@ -249,35 +249,35 @@ bool LaserFromExternalPort::close()
 
 
 
-bool LaserFromExternalPort::setDistanceRange(double min, double max)
+ReturnValue LaserFromExternalPort::setDistanceRange(double min, double max)
 {
     std::lock_guard<std::mutex> guard(m_mutex);
     m_min_distance = min;
     m_max_distance = max;
-    return true;
+    return ReturnValue_ok;
 }
 
-bool LaserFromExternalPort::setScanLimits(double min, double max)
+ReturnValue LaserFromExternalPort::setScanLimits(double min, double max)
 {
     std::lock_guard<std::mutex> guard(m_mutex);
     yCWarning(LASER_FROM_EXTERNAL_PORT) << "setScanLimits not yet implemented";
-    return true;
+    return ReturnValue_ok;
 }
 
 
 
-bool LaserFromExternalPort::setHorizontalResolution(double step)
+ReturnValue LaserFromExternalPort::setHorizontalResolution(double step)
 {
     std::lock_guard<std::mutex> guard(m_mutex);
     yCWarning(LASER_FROM_EXTERNAL_PORT, "setHorizontalResolution not yet implemented");
-    return true;
+    return ReturnValue_ok;
 }
 
-bool LaserFromExternalPort::setScanRate(double rate)
+ReturnValue LaserFromExternalPort::setScanRate(double rate)
 {
     std::lock_guard<std::mutex> guard(m_mutex);
     yCWarning(LASER_FROM_EXTERNAL_PORT, "setScanRate not yet implemented");
-    return false;
+    return ReturnValue::return_code::return_value_error_not_implemented_by_device;
 }
 
 

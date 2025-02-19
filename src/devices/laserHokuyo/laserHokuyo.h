@@ -104,18 +104,18 @@ public:
 
 public:
     //IRangefinder2D interface
-    bool getRawData(yarp::sig::Vector &data, double* timestamp) override;
-    bool getLaserMeasurement(std::vector<yarp::sig::LaserMeasurementData> &data, double* timestamp) override;
-    bool getDeviceStatus     (Device_status &status) override;
-    bool getDeviceInfo       (std::string &device_info) override;
-    bool getDistanceRange    (double& min, double& max) override;
-    bool setDistanceRange    (double min, double max) override;
-    bool getScanLimits        (double& min, double& max) override;
-    bool setScanLimits        (double min, double max) override;
-    bool getHorizontalResolution      (double& step) override;
-    bool setHorizontalResolution      (double step) override;
-    bool getScanRate         (double& rate) override;
-    bool setScanRate         (double rate) override;
+    yarp::dev::ReturnValue getRawData(yarp::sig::Vector &data, double* timestamp) override;
+    yarp::dev::ReturnValue getLaserMeasurement(std::vector<yarp::sig::LaserMeasurementData> &data, double* timestamp) override;
+    yarp::dev::ReturnValue getDeviceStatus     (Device_status &status) override;
+    yarp::dev::ReturnValue getDeviceInfo       (std::string &device_info) override;
+    yarp::dev::ReturnValue getDistanceRange    (double& min, double& max) override;
+    yarp::dev::ReturnValue setDistanceRange    (double min, double max) override;
+    yarp::dev::ReturnValue getScanLimits        (double& min, double& max) override;
+    yarp::dev::ReturnValue setScanLimits        (double min, double max) override;
+    yarp::dev::ReturnValue getHorizontalResolution      (double& step) override;
+    yarp::dev::ReturnValue setHorizontalResolution      (double step) override;
+    yarp::dev::ReturnValue getScanRate         (double& rate) override;
+    yarp::dev::ReturnValue setScanRate         (double rate) override;
 
 private:
     //laser methods
