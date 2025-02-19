@@ -11,7 +11,7 @@
 #include <return_getScanRate.h>
 
 // Constructor with field values
-return_getScanRate::return_getScanRate(const bool retval,
+return_getScanRate::return_getScanRate(const yarp::dev::ReturnValue& retval,
                                        const double rate) :
         WirePortable(),
         retval(retval),
@@ -22,7 +22,7 @@ return_getScanRate::return_getScanRate(const bool retval,
 // Read structure on a Wire
 bool return_getScanRate::read(yarp::os::idl::WireReader& reader)
 {
-    if (!read_retval(reader)) {
+    if (!nested_read_retval(reader)) {
         return false;
     }
     if (!read_rate(reader)) {
@@ -50,7 +50,7 @@ bool return_getScanRate::read(yarp::os::ConnectionReader& connection)
 // Write structure on a Wire
 bool return_getScanRate::write(const yarp::os::idl::WireWriter& writer) const
 {
-    if (!write_retval(writer)) {
+    if (!nested_write_retval(writer)) {
         return false;
     }
     if (!write_rate(writer)) {
@@ -88,8 +88,13 @@ std::string return_getScanRate::toString() const
 // read retval field
 bool return_getScanRate::read_retval(yarp::os::idl::WireReader& reader)
 {
-    if (!reader.readBool(retval)) {
-        retval = false;
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
+    if (!reader.read(retval)) {
+        reader.fail();
+        return false;
     }
     return true;
 }
@@ -97,7 +102,7 @@ bool return_getScanRate::read_retval(yarp::os::idl::WireReader& reader)
 // write retval field
 bool return_getScanRate::write_retval(const yarp::os::idl::WireWriter& writer) const
 {
-    if (!writer.writeBool(retval)) {
+    if (!writer.write(retval)) {
         return false;
     }
     return true;
@@ -106,8 +111,13 @@ bool return_getScanRate::write_retval(const yarp::os::idl::WireWriter& writer) c
 // read (nested) retval field
 bool return_getScanRate::nested_read_retval(yarp::os::idl::WireReader& reader)
 {
-    if (!reader.readBool(retval)) {
-        retval = false;
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
+    if (!reader.readNested(retval)) {
+        reader.fail();
+        return false;
     }
     return true;
 }
@@ -115,7 +125,7 @@ bool return_getScanRate::nested_read_retval(yarp::os::idl::WireReader& reader)
 // write (nested) retval field
 bool return_getScanRate::nested_write_retval(const yarp::os::idl::WireWriter& writer) const
 {
-    if (!writer.writeBool(retval)) {
+    if (!writer.writeNested(retval)) {
         return false;
     }
     return true;

@@ -100,33 +100,33 @@ bool LaserFromDepth::close()
     return true;
 }
 
-bool LaserFromDepth::setDistanceRange(double min, double max)
+ReturnValue LaserFromDepth::setDistanceRange(double min, double max)
 {
     std::lock_guard<std::mutex> guard(m_mutex);
     m_min_distance = min;
     m_max_distance = max;
-    return true;
+    return ReturnValue_ok;
 }
 
-bool LaserFromDepth::setScanLimits(double min, double max)
+ReturnValue LaserFromDepth::setScanLimits(double min, double max)
 {
     std::lock_guard<std::mutex> guard(m_mutex);
     yCWarning(LASER_FROM_DEPTH) << "setScanLimits not yet implemented";
-    return true;
+    return ReturnValue_ok;
 }
 
-bool LaserFromDepth::setHorizontalResolution(double step)
+ReturnValue LaserFromDepth::setHorizontalResolution(double step)
 {
     std::lock_guard<std::mutex> guard(m_mutex);
     yCWarning(LASER_FROM_DEPTH) << "setHorizontalResolution not yet implemented";
-    return true;
+    return ReturnValue_ok;
 }
 
-bool LaserFromDepth::setScanRate(double rate)
+ReturnValue LaserFromDepth::setScanRate(double rate)
 {
     std::lock_guard<std::mutex> guard(m_mutex);
     yCWarning(LASER_FROM_DEPTH) << "setScanRate not yet implemented";
-    return false;
+    return ReturnValue::return_code::return_value_error_not_implemented_by_device;
 }
 
 bool LaserFromDepth::threadInit()

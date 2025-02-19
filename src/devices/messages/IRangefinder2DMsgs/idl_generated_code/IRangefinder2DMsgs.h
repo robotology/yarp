@@ -19,6 +19,7 @@
 #include <return_getHorizontalResolution.h>
 #include <return_getScanLimits.h>
 #include <return_getScanRate.h>
+#include <yarp/dev/ReturnValue.h>
 
 class IRangefinder2DMsgs :
         public yarp::os::Wire
@@ -39,13 +40,13 @@ public:
 
     virtual return_getDeviceInfo getDeviceInfo_RPC();
 
-    virtual bool setDistanceRange_RPC(const double min, const double max);
+    virtual yarp::dev::ReturnValue setDistanceRange_RPC(const double min, const double max);
 
-    virtual bool setScanLimits_RPC(const double min, const double max);
+    virtual yarp::dev::ReturnValue setScanLimits_RPC(const double min, const double max);
 
-    virtual bool setHorizontalResolution_RPC(const double step);
+    virtual yarp::dev::ReturnValue setHorizontalResolution_RPC(const double step);
 
-    virtual bool setScanRate_RPC(const double rate);
+    virtual yarp::dev::ReturnValue setScanRate_RPC(const double rate);
 
     // help method
     virtual std::vector<std::string> help(const std::string& functionName = "--all");

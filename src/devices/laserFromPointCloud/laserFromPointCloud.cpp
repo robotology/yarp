@@ -190,34 +190,34 @@ bool LaserFromPointCloud::close()
     return true;
 }
 
-bool LaserFromPointCloud::setDistanceRange(double min, double max)
+ReturnValue LaserFromPointCloud::setDistanceRange(double min, double max)
 {
     std::lock_guard<std::mutex> guard(m_mutex);
     m_min_distance = min;
     m_max_distance = max;
-    return true;
+    return ReturnValue_ok;
 }
 
 
-bool LaserFromPointCloud::setScanLimits(double min, double max)
+ReturnValue LaserFromPointCloud::setScanLimits(double min, double max)
 {
     std::lock_guard<std::mutex> guard(m_mutex);
     yCWarning(LASER_FROM_POINTCLOUD,"setScanLimits not yet implemented");
-    return true;
+    return ReturnValue_ok;
 }
 
-bool LaserFromPointCloud::setHorizontalResolution(double step)
+ReturnValue LaserFromPointCloud::setHorizontalResolution(double step)
 {
     std::lock_guard<std::mutex> guard(m_mutex);
     yCWarning(LASER_FROM_POINTCLOUD,"setHorizontalResolution not yet implemented");
-    return true;
+    return ReturnValue_ok;
 }
 
-bool LaserFromPointCloud::setScanRate(double rate)
+ReturnValue LaserFromPointCloud::setScanRate(double rate)
 {
     std::lock_guard<std::mutex> guard(m_mutex);
     yCWarning(LASER_FROM_POINTCLOUD,"setScanRate not yet implemented");
-    return false;
+    return ReturnValue::return_code::return_value_error_not_implemented_by_device;
 }
 
 

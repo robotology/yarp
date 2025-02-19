@@ -29,38 +29,38 @@ using namespace yarp::os;
 using namespace yarp::dev;
 using namespace yarp::dev::Nav2D;
 
-bool FakeLaserWithMotor::setDistanceRange(double min, double max)
+ReturnValue FakeLaserWithMotor::setDistanceRange(double min, double max)
 {
     m_mutex.lock();
     m_min_distance = min;
     m_max_distance = max;
     m_mutex.unlock();
-    return true;
+    return ReturnValue_ok;
 }
 
-bool FakeLaserWithMotor::setScanLimits(double min, double max)
+ReturnValue FakeLaserWithMotor::setScanLimits(double min, double max)
 {
     m_mutex.lock();
     m_min_angle = min;
     m_max_angle = max;
     m_mutex.unlock();
-    return true;
+    return ReturnValue_ok;
 }
 
-bool FakeLaserWithMotor::setHorizontalResolution(double step)
+ReturnValue FakeLaserWithMotor::setHorizontalResolution(double step)
 {
     m_mutex.lock();
     m_resolution = step;
     m_mutex.unlock();
-    return true;
+    return ReturnValue_ok;
 }
 
-bool FakeLaserWithMotor::setScanRate(double rate)
+ReturnValue FakeLaserWithMotor::setScanRate(double rate)
 {
     m_mutex.lock();
     m_GENERAL_period = (1.0 / rate);
     m_mutex.unlock();
-    return false;
+    return ReturnValue_ok;
 }
 
 bool FakeLaserWithMotor::acquireDataFromHW()
