@@ -61,7 +61,7 @@ target_include_directories(YARP_math
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
     $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
 )
-target_compile_features(YARP_math PUBLIC cxx_std_20)
+target_compile_features(YARP_math PUBLIC cxx_std_17)
 
 # import math symbols from standard cmath
 target_compile_definitions(YARP_math PRIVATE _USE_MATH_DEFINES)

@@ -113,3 +113,4 @@ add_subdirectory(yarpidl_thrift)
 
 add_subdirectory(integration)
 add_subdirectory(harness_tests)
+add_subdirectory(header_smoke_test)
