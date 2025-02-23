@@ -9,6 +9,7 @@
 #include <yarp/os/Network.h>
 #include <yarp/os/LogComponent.h>
 #include <yarp/os/LogStream.h>
+#include <yarp/dev/ReturnValue.h>
 
 #include <yarp/proto/framegrabber/CameraVocabs.h>
 #include <yarp/sig/ImageUtils.h>
@@ -17,7 +18,7 @@ namespace {
 YARP_LOG_COMPONENT(FRAMEGRABBER_NWC_YARP, "yarp.devices.frameGrabber_nwc_yarp")
 } // namespace
 
-
+using namespace yarp::dev;
 
 // BEGIN StreamReceiver
 int StreamReceiver::lastHeight() const
@@ -138,20 +139,24 @@ int FrameGrabberOf_ForwarderWithStream<ImageType, IfVocab, ImgVocab>::width() co
 template <typename ImageType,
           yarp::conf::vocab32_t IfVocab,
           yarp::conf::vocab32_t ImgVocab>
-bool FrameGrabberOf_ForwarderWithStream<ImageType, IfVocab, ImgVocab>::getImage(ImageType& image)
+yarp::dev::ReturnValue FrameGrabberOf_ForwarderWithStream<ImageType, IfVocab, ImgVocab>::getImage(ImageType& image)
 {
     std::lock_guard<std::mutex> lock(m_mutex);
     if (!m_streamReceiver) {
         return yarp::proto::framegrabber::FrameGrabberOf_Forwarder<ImageType, IfVocab, ImgVocab>::getImage(image);
     }
 
-    return m_streamReceiver->lastImage(image);
+    bool b= m_streamReceiver->lastImage(image);
+    if (!b) {
+        return ReturnValue::return_code::return_value_error_not_ready;
+    }
+    return ReturnValue_ok;
 }
 
 template <typename ImageType,
           yarp::conf::vocab32_t IfVocab,
           yarp::conf::vocab32_t ImgVocab>
-bool FrameGrabberOf_ForwarderWithStream<ImageType, IfVocab, ImgVocab>::getImageCrop(cropType_id_t cropType,
+yarp::dev::ReturnValue FrameGrabberOf_ForwarderWithStream<ImageType, IfVocab, ImgVocab>::getImageCrop(cropType_id_t cropType,
                                                                                     yarp::sig::VectorOf<std::pair<int, int>> vertices,
                                                                                     ImageType& image)
 {
@@ -163,14 +168,14 @@ bool FrameGrabberOf_ForwarderWithStream<ImageType, IfVocab, ImgVocab>::getImageC
     if (cropType == YARP_CROP_RECT) {
         if (vertices.size() != 2) {
             yCError(FRAMEGRABBER_NWC_YARP, "GetImageCrop failed: RECT mode requires 2 vertices");
-            return false;
+            return ReturnValue::return_code::return_value_error_method_failed;
         }
         ImageType full;
         bool b = m_streamReceiver->lastImage(full);
         if (!b || full.width() == 0 || full.height() == 0)
         {
             yCError(FRAMEGRABBER_NWC_YARP, "GetImageCrop failed: No image received");
-            return false;
+            return ReturnValue::return_code::return_value_error_not_ready;
         }
 
         if (!yarp::sig::utils::cropRect(full, vertices[0], vertices[1], image)) {
@@ -179,15 +184,15 @@ bool FrameGrabberOf_ForwarderWithStream<ImageType, IfVocab, ImgVocab>::getImageC
                 vertices[0].second,
                 vertices[1].first,
                 vertices[1].second);
-            return false;
+            return ReturnValue::return_code::return_value_error_method_failed;
         }
     }
     else if (cropType == YARP_CROP_LIST) {
         yCError(FRAMEGRABBER_NWC_YARP, "List type not yet implemented");
-        return false;
+        return ReturnValue::return_code::return_value_error_not_implemented_by_device;
     }
 
-    return true;
+    return ReturnValue_ok;
 }
 
 
@@ -208,10 +213,7 @@ FrameGrabber_nwc_yarp::FrameGrabber_nwc_yarp() :
         FrameGrabberOf_ForwarderWithStream<yarp::sig::ImageOf<yarp::sig::PixelRgb>>(rpcPort),
         FrameGrabberOf_ForwarderWithStream<yarp::sig::ImageOf<yarp::sig::PixelMono>, VOCAB_FRAMEGRABBER_IMAGERAW>(rpcPort),
         FrameGrabberOf_ForwarderWithStream<yarp::sig::ImageOf<yarp::sig::PixelFloat>>(rpcPort),
-        FrameGrabberOf_ForwarderWithStream<yarp::sig::FlexImage>(rpcPort),
-        yarp::proto::framegrabber::FrameGrabberControls_Forwarder(rpcPort),
-        yarp::proto::framegrabber::FrameGrabberControlsDC1394_Forwarder(rpcPort),
-        yarp::proto::framegrabber::RgbVisualParams_Forwarder(rpcPort)
+        FrameGrabberOf_ForwarderWithStream<yarp::sig::FlexImage>(rpcPort)
 {
 }
 

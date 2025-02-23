@@ -14,11 +14,14 @@
 
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/IRGBDSensor.h>
+#include <yarp/dev/IFrameGrabberControls.h>
 #include "RGBDSensorClient_ParamsParser.h"
 
-#include <yarp/proto/framegrabber/FrameGrabberControls_Forwarder.h>
-#include <yarp/proto/framegrabber/RgbVisualParams_Forwarder.h>
-#include <yarp/proto/framegrabber/DepthVisualParams_Forwarder.h>
+#include "IDepthVisualParamsMsgs.h"
+#include "IRGBVisualParamsMsgs.h"
+#include "IFrameGrabberControlMsgs.h"
+
+#include "IRGBDMsgs.h"
 
 #define DEFAULT_THREAD_PERIOD       20    //ms
 #define RGBDSENSOR_TIMEOUT_DEFAULT  100   //ms
@@ -45,19 +48,22 @@ class RGBDSensor_StreamingMsgParser;
 
 class RGBDSensorClient :
         public yarp::dev::DeviceDriver,
-        public yarp::proto::framegrabber::FrameGrabberControls_Forwarder,
+        public yarp::dev::IFrameGrabberControls,
         public yarp::dev::IRGBDSensor,
         public RGBDSensorClient_ParamsParser
 {
 protected:
-    yarp::os::Port rpcPort;
-private:
-    yarp::proto::framegrabber::RgbVisualParams_Forwarder* RgbMsgSender{nullptr};
-    yarp::proto::framegrabber::DepthVisualParams_Forwarder* DepthMsgSender{nullptr};
-protected:
+    yarp::os::Port                  m_rpcPort;
 
-    RgbImageBufferedPort   colorFrame_StreamingPort;
-    FloatImageBufferedPort depthFrame_StreamingPort;
+protected:
+    RgbImageBufferedPort            m_colorFrame_StreamingPort;
+    FloatImageBufferedPort          m_depthFrame_StreamingPort;
+
+    std::mutex                      m_mutex;
+    IDepthVisualParamsMsgs          m_depth_params_RPC;
+    IRGBVisualParamsMsgs            m_rgb_params_RPC;
+    IRGBDMsgs                       m_rgbd_RPC;
+    IFrameGrabberControlMsgs        m_controls_RPC;
 
     // Image data specs
     yarp::dev::IRGBDSensor *sensor_p{nullptr};
@@ -78,145 +84,71 @@ public:
     RGBDSensorClient& operator=(RGBDSensorClient&&) = delete;
     ~RGBDSensorClient() override;
 
+    /*
+     *  IRgbVisualParams interface. Look at IVisualParams.h for documentation
+     */
     int  getRgbHeight() override;
     int  getRgbWidth() override;
-    bool getRgbSupportedConfigurations(yarp::sig::VectorOf<yarp::dev::CameraConfig> &configurations) override;
-    bool getRgbResolution(int &width, int &height) override;
-    bool setRgbResolution(int width, int height) override;
-    bool getRgbFOV(double &horizontalFov, double &verticalFov) override;
-    bool setRgbFOV(double horizontalFov, double verticalFov) override;
-    bool getRgbIntrinsicParam(yarp::os::Property &intrinsic) override;
-    bool getRgbMirroring(bool& mirror) override;
-    bool setRgbMirroring(bool mirror) override;
+    yarp::dev::ReturnValue getRgbSupportedConfigurations(yarp::sig::VectorOf<yarp::dev::CameraConfig> &configurations) override;
+    yarp::dev::ReturnValue getRgbResolution(int &width, int &height) override;
+    yarp::dev::ReturnValue setRgbResolution(int width, int height) override;
+    yarp::dev::ReturnValue getRgbFOV(double &horizontalFov, double &verticalFov) override;
+    yarp::dev::ReturnValue setRgbFOV(double horizontalFov, double verticalFov) override;
+    yarp::dev::ReturnValue getRgbIntrinsicParam(yarp::os::Property &intrinsic) override;
+    yarp::dev::ReturnValue getRgbMirroring(bool& mirror) override;
+    yarp::dev::ReturnValue setRgbMirroring(bool mirror) override;
 
     /*
      * IDepthVisualParams interface. Look at IVisualParams.h for documentation
      */
     int    getDepthHeight() override;
     int    getDepthWidth() override;
-    bool   setDepthResolution(int width, int height) override;
-    bool   getDepthFOV(double &horizontalFov, double &verticalFov) override;
-    bool   setDepthFOV(double horizontalFov, double verticalFov) override;
-    double getDepthAccuracy() override;
-    bool   setDepthAccuracy(double accuracy) override;
-    bool   getDepthClipPlanes(double &near, double &far) override;
-    bool   setDepthClipPlanes(double near, double far) override;
-    bool   getDepthIntrinsicParam(yarp::os::Property &intrinsic) override;
-    bool   getDepthMirroring(bool& mirror) override;
-    bool   setDepthMirroring(bool mirror) override;
-
-    // Device Driver interface //
-    /**
-     * Create and configure a device, by name.  The config
-     * object should have a property called "device" that
-     * is set to the common name of the device.  All other
-     * properties are passed on the the device's
-     * DeviceDriver::open method.
-     *
-     * @param config configuration options for the device
-     *
-     * @return  the device, if it could be created and configured,
-     * otherwise NULL. The user is responsible for deallocating the
-     * device.
-     */
-    bool open(yarp::os::Searchable& config) override;
-
-    /**
-     * Close the DeviceDriver.
-     * @return true/false on success/failure.
-     */
-    bool close() override;
+    yarp::dev::ReturnValue setDepthResolution(int width, int height) override;
+    yarp::dev::ReturnValue getDepthFOV(double &horizontalFov, double &verticalFov) override;
+    yarp::dev::ReturnValue setDepthFOV(double horizontalFov, double verticalFov) override;
+    yarp::dev::ReturnValue getDepthAccuracy(double& accuracy) override;
+    yarp::dev::ReturnValue setDepthAccuracy(double accuracy) override;
+    yarp::dev::ReturnValue getDepthClipPlanes(double &near, double &far) override;
+    yarp::dev::ReturnValue setDepthClipPlanes(double near, double far) override;
+    yarp::dev::ReturnValue getDepthIntrinsicParam(yarp::os::Property &intrinsic) override;
+    yarp::dev::ReturnValue getDepthMirroring(bool& mirror) override;
+    yarp::dev::ReturnValue setDepthMirroring(bool mirror) override;
 
     /*
-     *  IRgbVisualParams interface. Look at IVisualParams.h for documentation
+     * Device Driver interface
      */
+    bool open(yarp::os::Searchable& config) override;
+    bool close() override;
 
     /*
      * IRGBDSensor specific interface methods
      */
+    yarp::dev::ReturnValue getExtrinsicParam(yarp::sig::Matrix &extrinsic) override;
+    yarp::dev::ReturnValue getSensorStatus(IRGBDSensor::RGBDSensor_status& status) override;
+    yarp::dev::ReturnValue getLastErrorMsg(std::string& message, yarp::os::Stamp *timeStamp = nullptr) override;
+    yarp::dev::ReturnValue getRgbImage(yarp::sig::FlexImage &rgbImage, yarp::os::Stamp *timeStamp = nullptr) override;
+    yarp::dev::ReturnValue getDepthImage(yarp::sig::ImageOf<yarp::sig::PixelFloat> &depthImage, yarp::os::Stamp *timeStamp = nullptr) override;
+    yarp::dev::ReturnValue getImages(yarp::sig::FlexImage &colorFrame, yarp::sig::ImageOf<yarp::sig::PixelFloat> &depthFrame, yarp::os::Stamp *colorStamp=nullptr, yarp::os::Stamp *depthStamp=nullptr) override;
 
-    /**
-     * Get the extrinsic parameters from the device
-     * @param  extrinsic  return a rototranslation matrix describing the position
-     *         of the depth optical frame with respect to the rgb frame
-     * @return true if success
+    /*
+     * IFrameGrabberControls specific interface methods
      */
-    bool getExtrinsicParam(yarp::sig::Matrix &extrinsic) override;
+    yarp::dev::ReturnValue getCameraDescription(yarp::dev::CameraDescriptor& camera) override;
+    yarp::dev::ReturnValue hasFeature(int feature, bool& hasFeature) override;
+    yarp::dev::ReturnValue setFeature(int feature, double value) override;
+    yarp::dev::ReturnValue getFeature(int feature, double& value) override;
+    yarp::dev::ReturnValue setFeature(int feature, double value1, double value2) override;
+    yarp::dev::ReturnValue getFeature(int feature, double& value1, double& value2) override;
+    yarp::dev::ReturnValue hasOnOff(int feature, bool& HasOnOff) override;
+    yarp::dev::ReturnValue setActive(int feature, bool onoff) override;
+    yarp::dev::ReturnValue getActive(int feature, bool& isActive) override;
+    yarp::dev::ReturnValue hasAuto(int feature, bool& hasAuto) override;
+    yarp::dev::ReturnValue hasManual(int feature, bool& hasManual) override;
+    yarp::dev::ReturnValue hasOnePush(int feature, bool& hasOnePush) override;
+    yarp::dev::ReturnValue setMode(int feature, yarp::dev::FeatureMode mode) override;
+    yarp::dev::ReturnValue getMode(int feature, yarp::dev::FeatureMode& mode) override;
+    yarp::dev::ReturnValue setOnePush(int feature) override;
 
-    /**
-     * Get the surrent status of the sensor, using enum type
-     *
-     * @return an enum representing the status of the robot or an error code
-     * if any error is present
-     */
-    IRGBDSensor::RGBDSensor_status getSensorStatus() override;
-
-    /**
-     * Return an error message in case of error. For debugging purpose and user notification.
-     * Error message will be reset after any successful command
-     * @return A string explaining the last error occurred.
-     */
-    std::string getLastErrorMsg(yarp::os::Stamp *timeStamp = nullptr) override;
-
-    /**
-     * Get the rgb frame from the device.
-     * The pixel type of the source image will usually be set as a VOCAB_PIXEL_RGB,
-     * but the user can call the function with the pixel type of his/her choice. The conversion
-     * if possible, will be done automatically on client side (TO BO VERIFIED).
-     * Note: this will consume CPU power because it will not use GPU optimization.
-     * Use VOCAB_PIXEL_RGB for best performances.
-     *
-     * @param rgbImage the image to be filled.
-     * @param timeStamp time in which the image was acquired. Optional, the user must provide memory allocation
-     * @return True on success
-     */
-    bool getRgbImage(yarp::sig::FlexImage &rgbImage, yarp::os::Stamp *timeStamp = nullptr) override;
-
-    /**
-     * Get the depth frame from the device.
-     * The pixel type of the source image will usually be set as a VOCAB_PIXEL_RGB,
-     * but the user can call the function with the pixel type of his/her choice. The conversion
-     * if possible, will be done automatically on client side (TO BO VERIFIED).
-     * Note: this will consume CPU power because it will not use GPU optimization.
-     * Use VOCAB_PIXEL_RGB for best performances.
-     *
-     * @param rgbImage the image to be filled.
-     * @param timeStamp time in which the image was acquired. Optional, the user must provide memory allocation
-     * @return True on success
-     */
-    bool getDepthImage(yarp::sig::ImageOf<yarp::sig::PixelFloat> &depthImage, yarp::os::Stamp *timeStamp = nullptr) override;
-
-    /**
-    * Get the both the color and depth frame in a single call. Implementation should assure the best possible synchronization
-    * is achieved accordingly to synch policy set by the user.
-    * TimeStamps are referred to acquisition time of the corresponding piece of information.
-    * If the device is not providing TimeStamps, then 'timeStamp' field should be set to '-1'.
-    * @param colorFrame pointer to FlexImage data to hold the color frame from the sensor
-    * @param depthFrame pointer to FlexImage data to hold the depth frame from the sensor
-    * @param colorStamp pointer to memory to hold the Stamp of the color frame
-    * @param depthStamp pointer to memory to hold the Stamp of the depth frame
-    * @return true if able to get both data.
-    */
-    bool getImages(yarp::sig::FlexImage &colorFrame, yarp::sig::ImageOf<yarp::sig::PixelFloat> &depthFrame, yarp::os::Stamp *colorStamp=nullptr, yarp::os::Stamp *depthStamp=nullptr) override;
-
-
-    // IFrame Grabber Control 2
-    //
-    // Implemented by FrameGrabberControls2_Forwarder
-    //
-    using FrameGrabberControls_Forwarder::getCameraDescription;
-    using FrameGrabberControls_Forwarder::hasFeature;
-    using FrameGrabberControls_Forwarder::setFeature;
-    using FrameGrabberControls_Forwarder::getFeature;
-    using FrameGrabberControls_Forwarder::hasOnOff;
-    using FrameGrabberControls_Forwarder::setActive;
-    using FrameGrabberControls_Forwarder::getActive;
-    using FrameGrabberControls_Forwarder::hasAuto;
-    using FrameGrabberControls_Forwarder::hasManual;
-    using FrameGrabberControls_Forwarder::hasOnePush;
-    using FrameGrabberControls_Forwarder::setMode;
-    using FrameGrabberControls_Forwarder::getMode;
-    using FrameGrabberControls_Forwarder::setOnePush;
 };
 
 #endif // YARP_DEV_RGBDSENSORCLIENT_RGBDSENSORCLIENT_H
