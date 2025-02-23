@@ -340,47 +340,48 @@ int FakeFrameGrabber::getRgbWidth(){
     return m_width;
 }
 
-bool FakeFrameGrabber::getRgbSupportedConfigurations(yarp::sig::VectorOf<CameraConfig> &configurations){
+ReturnValue FakeFrameGrabber::getRgbSupportedConfigurations(yarp::sig::VectorOf<CameraConfig> &configurations){
     configurations=this->configurations;
-    return true;
+    return ReturnValue_ok;
 }
 
-bool FakeFrameGrabber::getRgbResolution(int &width, int &height){
+ReturnValue FakeFrameGrabber::getRgbResolution(int &width, int &height){
     width=m_width;
     height=m_height;
-    return true;
+    return ReturnValue_ok;
 }
 
-bool FakeFrameGrabber::setRgbResolution(int width, int height){
+ReturnValue FakeFrameGrabber::setRgbResolution(int width, int height){
     m_width =width;
     m_height =height;
-    return true;
+    return ReturnValue_ok;
 }
 
-bool FakeFrameGrabber::getRgbFOV(double &horizontalFov, double &verticalFov){
+ReturnValue FakeFrameGrabber::getRgbFOV(double &horizontalFov, double &verticalFov){
     horizontalFov=this->m_horizontalFov;
     verticalFov=this->m_verticalFov;
-    return true;
+    return ReturnValue_ok;
 }
 
-bool FakeFrameGrabber::setRgbFOV(double horizontalFov, double verticalFov){
+ReturnValue FakeFrameGrabber::setRgbFOV(double horizontalFov, double verticalFov){
     this->m_horizontalFov=horizontalFov;
     this->m_verticalFov=verticalFov;
-    return true;
+    return ReturnValue_ok;
 }
 
-bool FakeFrameGrabber::getRgbIntrinsicParam(yarp::os::Property &intrinsic){
+ReturnValue FakeFrameGrabber::getRgbIntrinsicParam(yarp::os::Property &intrinsic){
     intrinsic=this->m_intrinsic;
-    return true;
+    return ReturnValue_ok;
 }
 
-bool FakeFrameGrabber::getRgbMirroring(bool &mirror){
+ReturnValue FakeFrameGrabber::getRgbMirroring(bool &mirror){
     mirror=this->m_mirror;
-    return true;}
+    return ReturnValue_ok;
+}
 
-bool FakeFrameGrabber::setRgbMirroring(bool mirror){
+ReturnValue FakeFrameGrabber::setRgbMirroring(bool mirror){
     this->m_mirror =mirror;
-    return true;
+    return ReturnValue_ok;
 }
 
 void FakeFrameGrabber::run()
@@ -428,10 +429,10 @@ void FakeFrameGrabber::onStop()
 }
 
 
-bool FakeFrameGrabber::getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image)
+ReturnValue FakeFrameGrabber::getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image)
 {
     if (!isRunning()) {
-        return false;
+        return ReturnValue::return_code::return_value_error_not_ready;
     }
 
     if (!m_syncro) {
@@ -450,7 +451,7 @@ bool FakeFrameGrabber::getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image)
         std::unique_lock<std::mutex> lk(mutex[cb]);
         img_ready_cv[cb].wait(lk, [&]{return (!isRunning() || img_ready[cb]);});
         if (!isRunning()) {
-            return false;
+            return ReturnValue::return_code::return_value_error_not_ready;
         }
 
         image.copy(buffs[cb]);
@@ -462,13 +463,13 @@ bool FakeFrameGrabber::getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image)
         curr_buff_mutex.unlock();
     }
 
-    return true;
+    return ReturnValue_ok;
 }
 
-bool FakeFrameGrabber::getImage(yarp::sig::ImageOf<yarp::sig::PixelMono>& image)
+ReturnValue FakeFrameGrabber::getImage(yarp::sig::ImageOf<yarp::sig::PixelMono>& image)
 {
     if (!isRunning()) {
-        return false;
+        return ReturnValue::return_code::return_value_error_not_ready;
     }
 
     if (!m_syncro) {
@@ -489,7 +490,7 @@ bool FakeFrameGrabber::getImage(yarp::sig::ImageOf<yarp::sig::PixelMono>& image)
         std::unique_lock<std::mutex> lk(mutex[cb]);
         img_ready_cv[cb].wait(lk, [&]{return (!isRunning() || img_ready[cb]);});
         if (!isRunning()) {
-            return false;
+            return ReturnValue::return_code::return_value_error_not_ready;
         }
         if (m_bayer) {
             makeSimpleBayer(buffs[cb], image);
@@ -504,10 +505,10 @@ bool FakeFrameGrabber::getImage(yarp::sig::ImageOf<yarp::sig::PixelMono>& image)
         curr_buff_mutex.unlock();
     }
 
-    return true;
+    return ReturnValue_ok;
 }
 
-bool FakeFrameGrabber::getImageCrop(cropType_id_t cropType,
+ReturnValue FakeFrameGrabber::getImageCrop(cropType_id_t cropType,
                                     yarp::sig::VectorOf<std::pair<int, int>> vertices,
                                     yarp::sig::ImageOf<yarp::sig::PixelRgb>& image)
 {
@@ -515,7 +516,7 @@ bool FakeFrameGrabber::getImageCrop(cropType_id_t cropType,
     return yarp::dev::IFrameGrabberOf<yarp::sig::ImageOf<yarp::sig::PixelRgb>>::getImageCrop(cropType, vertices, image);
 }
 
-bool FakeFrameGrabber::getImageCrop(cropType_id_t cropType,
+ReturnValue FakeFrameGrabber::getImageCrop(cropType_id_t cropType,
                                     yarp::sig::VectorOf<std::pair<int, int>> vertices,
                                     yarp::sig::ImageOf<yarp::sig::PixelMono>& image)
 {
@@ -535,21 +536,21 @@ bool FakeFrameGrabber::hasRawVideo() {
     return m_mono;
 }
 
-bool FakeFrameGrabber::getCameraDescription(CameraDescriptor *camera) { return false; }
-bool FakeFrameGrabber::hasFeature(int feature, bool *hasFeature) { return false; }
-bool FakeFrameGrabber::setFeature(int feature, double value) { return false; }
-bool FakeFrameGrabber::getFeature(int feature, double *value) { return false; }
-bool FakeFrameGrabber::setFeature(int feature, double  value1, double  value2) { return false; }
-bool FakeFrameGrabber::getFeature(int feature, double *value1, double *value2) { return false; }
-bool FakeFrameGrabber::hasOnOff(int feature, bool *HasOnOff) { return false; }
-bool FakeFrameGrabber::setActive(int feature, bool onoff) { return false; }
-bool FakeFrameGrabber::getActive(int feature, bool *isActive) { return false; }
-bool FakeFrameGrabber::hasAuto(int feature, bool *hasAuto) { return false; }
-bool FakeFrameGrabber::hasManual(int feature, bool *hasManual) { return false; }
-bool FakeFrameGrabber::hasOnePush(int feature, bool *hasOnePush) { return false; }
-bool FakeFrameGrabber::setMode(int feature, FeatureMode mode) { return false; }
-bool FakeFrameGrabber::getMode(int feature, FeatureMode *mode) { return false; }
-bool FakeFrameGrabber::setOnePush(int feature) { return false; }
+ReturnValue FakeFrameGrabber::getCameraDescription(CameraDescriptor& camera) { return ReturnValue::return_code::return_value_error_not_implemented_by_device; }
+ReturnValue FakeFrameGrabber::hasFeature(int feature, bool& hasFeature) { return ReturnValue::return_code::return_value_error_not_implemented_by_device; }
+ReturnValue FakeFrameGrabber::setFeature(int feature, double value) { return ReturnValue::return_code::return_value_error_not_implemented_by_device; }
+ReturnValue FakeFrameGrabber::getFeature(int feature, double& value) { return ReturnValue::return_code::return_value_error_not_implemented_by_device; }
+ReturnValue FakeFrameGrabber::setFeature(int feature, double  value1, double  value2) { return ReturnValue::return_code::return_value_error_not_implemented_by_device; }
+ReturnValue FakeFrameGrabber::getFeature(int feature, double& value1, double& value2) { return ReturnValue::return_code::return_value_error_not_implemented_by_device; }
+ReturnValue FakeFrameGrabber::hasOnOff(int feature, bool& HasOnOff) { return ReturnValue::return_code::return_value_error_not_implemented_by_device; }
+ReturnValue FakeFrameGrabber::setActive(int feature, bool onoff) { return ReturnValue::return_code::return_value_error_not_implemented_by_device; }
+ReturnValue FakeFrameGrabber::getActive(int feature, bool& isActive) { return ReturnValue::return_code::return_value_error_not_implemented_by_device; }
+ReturnValue FakeFrameGrabber::hasAuto(int feature, bool& hasAuto) { return ReturnValue::return_code::return_value_error_not_implemented_by_device; }
+ReturnValue FakeFrameGrabber::hasManual(int feature, bool& hasManual) { return ReturnValue::return_code::return_value_error_not_implemented_by_device; }
+ReturnValue FakeFrameGrabber::hasOnePush(int feature, bool& hasOnePush) { return ReturnValue::return_code::return_value_error_not_implemented_by_device; }
+ReturnValue FakeFrameGrabber::setMode(int feature, FeatureMode mode) { return ReturnValue::return_code::return_value_error_not_implemented_by_device; }
+ReturnValue FakeFrameGrabber::getMode(int feature, FeatureMode& mode) { return ReturnValue::return_code::return_value_error_not_implemented_by_device; }
+ReturnValue FakeFrameGrabber::setOnePush(int feature) { return ReturnValue::return_code::return_value_error_not_implemented_by_device; }
 
 void FakeFrameGrabber::printTime(unsigned char* pixbuf, size_t pixbuf_w, size_t pixbuf_h, size_t x, size_t y, char* s, size_t size)
 {

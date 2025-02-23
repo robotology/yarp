@@ -23,7 +23,13 @@ if(NOT SKIP_frameGrabber_nwc_yarp)
   )
 
   target_sources(yarp_frameGrabber_nwc_yarp PRIVATE $<TARGET_OBJECTS:framegrabber_protocol>)
+  target_sources(yarp_frameGrabber_nwc_yarp PRIVATE $<TARGET_OBJECTS:IRGBVisualParamsMsgs>)
+  target_sources(yarp_frameGrabber_nwc_yarp PRIVATE $<TARGET_OBJECTS:IFrameGrabberControlMsgs>)
+
   target_include_directories(yarp_frameGrabber_nwc_yarp PRIVATE $<TARGET_PROPERTY:framegrabber_protocol,INTERFACE_INCLUDE_DIRECTORIES>)
+  target_include_directories(yarp_frameGrabber_nwc_yarp PRIVATE $<TARGET_PROPERTY:IRGBVisualParamsMsgs,INTERFACE_INCLUDE_DIRECTORIES>)
+  target_include_directories(yarp_frameGrabber_nwc_yarp PRIVATE $<TARGET_PROPERTY:IFrameGrabberControlMsgs,INTERFACE_INCLUDE_DIRECTORIES>)
+
 
   target_link_libraries(yarp_frameGrabber_nwc_yarp
     PRIVATE

@@ -8,8 +8,6 @@
 #include <yarp/os/LogComponent.h>
 #include <yarp/os/LogStream.h>
 
-#include <yarp/proto/framegrabber/CameraVocabs.h>
-
 #include <cstdio>
 #include <cstring>
 #include <sstream>
@@ -24,33 +22,7 @@ YARP_LOG_COMPONENT(RGBDSENSORNWSYARP, "yarp.devices.RgbdSensor_nws_yarp")
 #define RGBD_INTERFACE_PROTOCOL_VERSION_MAJOR 1
 #define RGBD_INTERFACE_PROTOCOL_VERSION_MINOR 0
 
-
-RGBDSensorParser::RGBDSensorParser() :
-        iRGBDSensor(nullptr)
-{
-}
-
-bool RGBDSensorParser::configure(IRGBDSensor *interface)
-{
-    bool ret;
-    iRGBDSensor = interface;
-    ret  = rgbParser.configure(interface);
-    ret &= depthParser.configure(interface);
-    return ret;
-}
-
-bool RGBDSensorParser::configure(IRgbVisualParams *rgbInterface, IDepthVisualParams* depthInterface)
-{
-    bool ret = rgbParser.configure(rgbInterface);
-    ret &= depthParser.configure(depthInterface);
-    return ret;
-}
-
-bool RGBDSensorParser::configure(IFrameGrabberControls *_fgCtrl)
-{
-    return fgCtrlParsers.configure(_fgCtrl);
-}
-
+/*
 bool RGBDSensorParser::respond(const Bottle& cmd, Bottle& response)
 {
     bool ret = false;
@@ -165,20 +137,19 @@ bool RGBDSensorParser::respond(const Bottle& cmd, Bottle& response)
     return ret;
 }
 
+*/
 
 RgbdSensor_nws_yarp::RgbdSensor_nws_yarp() :
     PeriodicThread(DEFAULT_THREAD_PERIOD),
-    sensor_p(nullptr),
-    fgCtrl(nullptr),
-    sensorStatus(IRGBDSensor::RGBD_SENSOR_NOT_READY),
+    m_sensorStatus(IRGBDSensor::RGBD_SENSOR_NOT_READY),
     verbose(4)
 {}
 
 RgbdSensor_nws_yarp::~RgbdSensor_nws_yarp()
 {
     close();
-    sensor_p = nullptr;
-    fgCtrl = nullptr;
+    m_rgbdsensor = nullptr;
+    m_fgCtrl = nullptr;
 }
 
 /** Device driver interface */
@@ -201,7 +172,7 @@ bool RgbdSensor_nws_yarp::open(yarp::os::Searchable &config)
         yCError(RGBDSENSORNWSYARP) << "Unable to open rpc Port" << rpcPort_Name.c_str();
         bRet = false;
     }
-    rpcPort.setReader(rgbdParser);
+    rpcPort.setReader(*this);
 
     if (!colorFrame_StreamingPort.open(colorFrame_StreamingPort_Name))
     {
@@ -240,45 +211,57 @@ bool RgbdSensor_nws_yarp::close()
 
 bool RgbdSensor_nws_yarp::detach()
 {
+    std::lock_guard lock (m_mutex);
+
     if (yarp::os::PeriodicThread::isRunning()) {
         yarp::os::PeriodicThread::stop();
     }
 
-    sensor_p = nullptr;
-    fgCtrl = nullptr;
+    if (m_rgbd_RPC)
+    {
+        delete m_rgbd_RPC;
+        m_rgbd_RPC = nullptr;
+    }
+    if (m_controls_RPC)
+    {
+        delete m_controls_RPC;
+        m_controls_RPC = nullptr;
+    }
+
+    m_rgbdsensor = nullptr;
+    m_fgCtrl = nullptr;
     return true;
 }
 
 bool RgbdSensor_nws_yarp::attach(PolyDriver* poly)
 {
+    std::lock_guard lock (m_mutex);
+
     if(poly)
     {
-        poly->view(sensor_p);
-        poly->view(fgCtrl);
+        poly->view(m_rgbdsensor);
+        poly->view(m_fgCtrl);
     }
 
-    if(sensor_p == nullptr)
+    if(m_rgbdsensor == nullptr)
     {
         yCError(RGBDSENSORNWSYARP) << "Attached device has no valid IRGBDSensor interface.";
         return false;
     }
-
-    if(!rgbdParser.configure(sensor_p))
+    else
     {
-        yCError(RGBDSENSORNWSYARP) << "Error configuring IRGBD interface";
-        return false;
+        m_rgbd_RPC = new IRGBDSensorRPCd(m_rgbdsensor);
     }
 
-    if(fgCtrl != nullptr)
+    //This interface is optional
+    if(m_fgCtrl == nullptr)
     {
-        if (!rgbdParser.configure(fgCtrl)) {
-            yCError(RGBDSENSORNWSYARP) << "Error configuring interfaces for parsers";
-            return false;
-        }
+        yCWarning(RGBDSENSORNWSYARP) << "Attached device has no valid IFrameGrabberControls interface.";
+        //return false;
     }
     else
     {
-        yCWarning(RGBDSENSORNWSYARP) << "Attached device has no valid IFrameGrabberControls interface.";
+        m_controls_RPC = new IFrameGrabberControlMsgsRPCd(m_fgCtrl);
     }
 
     PeriodicThread::setPeriod(m_period);
@@ -320,7 +303,7 @@ bool RgbdSensor_nws_yarp::setCamInfo(const std::string& frame_id, const UInt& se
     bool                    ok;
 
     currentSensor = sensorType == COLOR_SENSOR ? "Rgb" : "Depth";
-    ok            = sensorType == COLOR_SENSOR ? sensor_p->getRgbIntrinsicParam(camData) : sensor_p->getDepthIntrinsicParam(camData);
+    ok            = sensorType == COLOR_SENSOR ? m_rgbdsensor->getRgbIntrinsicParam(camData) : m_rgbdsensor->getDepthIntrinsicParam(camData);
 
     if (!ok)
     {
@@ -340,9 +323,6 @@ bool RgbdSensor_nws_yarp::setCamInfo(const std::string& frame_id, const UInt& se
         yCError(RGBDSENSORNWSYARP) << "Distortion model not supported";
         return false;
     }
-
-    //std::vector<param<std::string> >     rosStringParam;
-    //rosStringParam.push_back(param<std::string>(nodeName, "asd"));
 
     parVector.emplace_back(phyF,"physFocalLength");
     parVector.emplace_back(fx,"focalLengthX");
@@ -377,7 +357,7 @@ bool RgbdSensor_nws_yarp::writeData()
 
     //             colorImage.resize(hDim, vDim);  // Has this to be done each time? If size is the same what it does?
     //             depthImage.resize(hDim, vDim);
-    if (!sensor_p->getImages(colorImage, depthImage, &colorStamp, &depthStamp))
+    if (!m_rgbdsensor->getImages(colorImage, depthImage, &colorStamp, &depthStamp))
     {
         return false;
     }
@@ -425,11 +405,13 @@ bool RgbdSensor_nws_yarp::writeData()
 
 void RgbdSensor_nws_yarp::run()
 {
-    if (sensor_p!=nullptr)
+    std::lock_guard lock (m_mutex);
+
+    if (m_rgbdsensor!=nullptr)
     {
         static int i = 0;
-        sensorStatus = sensor_p->getSensorStatus();
-        switch (sensorStatus)
+        ReturnValue v = m_rgbdsensor->getSensorStatus(m_sensorStatus);
+        switch (m_sensorStatus)
         {
             case(IRGBDSensor::RGBD_SENSOR_OK_IN_USE) :
             {
@@ -465,4 +447,42 @@ void RgbdSensor_nws_yarp::run()
             yCError(RGBDSENSORNWSYARP, "%s: Sensor interface is not valid", m_name.c_str());
         }
     }
+}
+
+bool RgbdSensor_nws_yarp::read(yarp::os::ConnectionReader& connection)
+{
+    if (!connection.isValid()) { return false;}
+
+    std::lock_guard<std::mutex> lock(m_mutex);
+
+    if (m_rgbd_RPC && m_rgbd_RPC->IDepthVisualParamsMsgs::read(connection))
+    {
+        return true;
+    }
+    else if (m_rgbd_RPC && m_rgbd_RPC->IRGBVisualParamsMsgs::read(connection))
+    {
+        return true;
+    }
+    else if (m_rgbd_RPC && m_rgbd_RPC->IRGBDMsgs::read(connection))
+    {
+        return true;
+    }
+    else if (m_controls_RPC && m_controls_RPC->read(connection))
+    {
+        return true;
+    }
+
+    if (!m_rgbd_RPC)
+    {
+        yCError(RGBDSENSORNWSYARP) << "m_rgbd_RPC interface is not valid";
+        return false;
+    }
+    if (!m_controls_RPC)
+    {
+        yCError(RGBDSENSORNWSYARP) << "m_controls_RPC interface is not valid";
+        return false;
+    }
+
+    yCError(RGBDSENSORNWSYARP) << "read() Command failed";
+    return false;
 }

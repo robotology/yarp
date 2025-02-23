@@ -11,11 +11,9 @@
 #include <yarp/os/Port.h>
 #include <yarp/os/PortReaderBuffer.h>
 #include <yarp/dev/IPreciselyTimed.h>
+#include <yarp/dev/ReturnValue.h>
 
 #include <yarp/proto/framegrabber/FrameGrabberOf_Forwarder.h>
-#include <yarp/proto/framegrabber/FrameGrabberControlsDC1394_Forwarder.h>
-#include <yarp/proto/framegrabber/FrameGrabberControls_Forwarder.h>
-#include <yarp/proto/framegrabber/RgbVisualParams_Forwarder.h>
 
 #include <mutex>
 #include "FrameGrabber_nwc_yarp_ParamsParser.h"
@@ -61,8 +59,8 @@ public:
     // using RPC calls
     int height() const override;
     int width() const override;
-    bool getImage(ImageType& image) override;
-    bool getImageCrop(cropType_id_t cropType,
+    yarp::dev::ReturnValue getImage(ImageType& image) override;
+    yarp::dev::ReturnValue getImageCrop(cropType_id_t cropType,
                       yarp::sig::VectorOf<std::pair<int, int>> vertices,
                       ImageType& image) override;
 
@@ -89,9 +87,6 @@ class FrameGrabber_nwc_yarp :
         public FrameGrabberOf_ForwarderWithStream<yarp::sig::ImageOf<yarp::sig::PixelMono>, VOCAB_FRAMEGRABBER_IMAGERAW>,
         public FrameGrabberOf_ForwarderWithStream<yarp::sig::ImageOf<yarp::sig::PixelFloat>>,
         public FrameGrabberOf_ForwarderWithStream<yarp::sig::FlexImage>,
-        public yarp::proto::framegrabber::FrameGrabberControls_Forwarder,
-        public yarp::proto::framegrabber::FrameGrabberControlsDC1394_Forwarder,
-        public yarp::proto::framegrabber::RgbVisualParams_Forwarder,
         public yarp::dev::IPreciselyTimed,
         public FrameGrabber_nwc_yarp_ParamsParser
 {
