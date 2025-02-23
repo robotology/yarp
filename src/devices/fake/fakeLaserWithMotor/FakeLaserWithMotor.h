@@ -142,10 +142,10 @@ private:
 
 public:
     //IRangefinder2D interface
-    bool setDistanceRange    (double min, double max) override;
-    bool setScanLimits        (double min, double max) override;
-    bool setHorizontalResolution      (double step) override;
-    bool setScanRate         (double rate) override;
+    yarp::dev::ReturnValue setDistanceRange    (double min, double max) override;
+    yarp::dev::ReturnValue setScanLimits        (double min, double max) override;
+    yarp::dev::ReturnValue setHorizontalResolution      (double step) override;
+    yarp::dev::ReturnValue setScanRate         (double rate) override;
 
 public:
     // internal stuff

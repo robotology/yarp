@@ -13,13 +13,14 @@
 
 #include <yarp/os/Wire.h>
 #include <yarp/os/idl/WireTypes.h>
+#include <yarp/dev/ReturnValue.h>
 
 class return_getDistanceRange :
         public yarp::os::idl::WirePortable
 {
 public:
     // Fields
-    bool retval{false};
+    yarp::dev::ReturnValue retval{};
     double min{0.0};
     double max{0.0};
 
@@ -27,7 +28,7 @@ public:
     return_getDistanceRange() = default;
 
     // Constructor with field values
-    return_getDistanceRange(const bool retval,
+    return_getDistanceRange(const yarp::dev::ReturnValue& retval,
                             const double min,
                             const double max);
 

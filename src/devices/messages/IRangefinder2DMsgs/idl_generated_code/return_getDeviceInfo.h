@@ -13,20 +13,21 @@
 
 #include <yarp/os/Wire.h>
 #include <yarp/os/idl/WireTypes.h>
+#include <yarp/dev/ReturnValue.h>
 
 class return_getDeviceInfo :
         public yarp::os::idl::WirePortable
 {
 public:
     // Fields
-    bool retval{false};
+    yarp::dev::ReturnValue retval{};
     std::string device_info{};
 
     // Default constructor
     return_getDeviceInfo() = default;
 
     // Constructor with field values
-    return_getDeviceInfo(const bool retval,
+    return_getDeviceInfo(const yarp::dev::ReturnValue& retval,
                          const std::string& device_info);
 
     // Read structure on a Wire

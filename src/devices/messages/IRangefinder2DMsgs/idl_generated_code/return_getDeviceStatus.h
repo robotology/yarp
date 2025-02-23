@@ -14,20 +14,21 @@
 #include <yarp/os/Wire.h>
 #include <yarp/os/idl/WireTypes.h>
 #include <yarp/dev/IRangefinder2D.h>
+#include <yarp/dev/ReturnValue.h>
 
 class return_getDeviceStatus :
         public yarp::os::idl::WirePortable
 {
 public:
     // Fields
-    bool retval{false};
+    yarp::dev::ReturnValue retval{};
     yarp::dev::IRangefinder2D::Device_status status{};
 
     // Default constructor
     return_getDeviceStatus() = default;
 
     // Constructor with field values
-    return_getDeviceStatus(const bool retval,
+    return_getDeviceStatus(const yarp::dev::ReturnValue& retval,
                            const yarp::dev::IRangefinder2D::Device_status status);
 
     // Read structure on a Wire
