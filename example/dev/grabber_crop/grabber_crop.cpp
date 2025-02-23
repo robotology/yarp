@@ -30,11 +30,11 @@ int main(int argc, char* argv[])
     yarp::dev::IFrameGrabberImage *grabber = nullptr;
     dd.view(grabber);
 
-    const yarp::sig::VectorOf<std::pair< int, int>> vertices {{50,50}, {149, 149}};
+    const std::vector<yarp::dev::vertex_t> vertices {{50, 50}, {149, 149}};
 
     while (true) {
         auto& crop = out.prepare();
-        grabber->getImageCrop(YARP_CROP_RECT, vertices, crop);
+        grabber->getImageCrop(yarp::dev::YARP_CROP_RECT, vertices, crop);
         out.write();
     }
 

@@ -18,12 +18,14 @@ if(NOT SKIP_frameGrabber_nws_yarp)
     PRIVATE
       FrameGrabber_nws_yarp.cpp
       FrameGrabber_nws_yarp.h
+      FrameGrabberMsgsImpl.cpp
+      FrameGrabberMsgsImpl.h
       FrameGrabber_nws_yarp_ParamsParser.cpp
       FrameGrabber_nws_yarp_ParamsParser.h
   )
 
-  target_sources(yarp_frameGrabber_nws_yarp PRIVATE $<TARGET_OBJECTS:framegrabber_protocol>)
-  target_include_directories(yarp_frameGrabber_nws_yarp PRIVATE $<TARGET_PROPERTY:framegrabber_protocol,INTERFACE_INCLUDE_DIRECTORIES>)
+  target_sources(yarp_frameGrabber_nws_yarp PRIVATE $<TARGET_OBJECTS:FrameGrabberMsgs>)
+  target_include_directories(yarp_frameGrabber_nws_yarp PRIVATE $<TARGET_PROPERTY:FrameGrabberMsgs,INTERFACE_INCLUDE_DIRECTORIES>)
 
   target_link_libraries(yarp_frameGrabber_nws_yarp
     PRIVATE

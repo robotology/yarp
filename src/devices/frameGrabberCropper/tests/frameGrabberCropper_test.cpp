@@ -4,9 +4,18 @@
  */
 
 #include <yarp/sig/Image.h>
-#include <yarp/dev/IFrameGrabberImage.h>
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/IWrapper.h>
+
+#include <yarp/dev/IFrameGrabberImage.h>
+#include <yarp/dev/IRgbVisualParams.h>
+#include <yarp/dev/IFrameGrabberControls.h>
+#include <yarp/dev/IFrameGrabberControlsDC1394.h>
+
+#include <yarp/dev/tests/IFrameGrabberImageTest.h>
+#include <yarp/dev/tests/IRgbVisualParamsTest.h>
+#include <yarp/dev/tests/IFrameGrabberControlsTest.h>
+#include <yarp/dev/tests/IFrameGrabberControlsDC1394Test.h>
 
 #include <catch2/catch_amalgamated.hpp>
 #include <harness.h>
@@ -93,6 +102,54 @@ TEST_CASE("dev::frameGrabberCropperTest", "[yarp::dev]")
         // Close all devices
         CHECK(ddl.close());
         CHECK(ddr.close());
+        CHECK(dd.close());
+    }
+
+    SECTION("test the frameGrabberCropper control")
+    {
+        constexpr size_t width = 320;
+        constexpr size_t height = 240;
+
+        // Open fakeFrameGrabber
+        PolyDriver dd;
+        Property p;
+        p.put("device", "fakeFrameGrabber");
+        p.put("width", static_cast<int>(width));
+        p.put("height", static_cast<int>(height));
+        REQUIRE(dd.open(p));
+
+        // Open frameGrabberCropper left
+        PolyDriver ddl;
+        Property pl;
+        pl.put("device","frameGrabberCropper");
+        pl.put("x1", 0);
+        pl.put("y1", 0);
+        pl.put("x2", static_cast<int>(width - 1));
+        pl.put("y2", static_cast<int>(height - 1));
+        REQUIRE(ddl.open(pl));
+
+        // Attach frameGrabberCropper left
+        yarp::dev::IWrapper* wl = nullptr;
+        REQUIRE(ddl.view(wl));
+        REQUIRE(wl);
+        REQUIRE(wl->attach(&dd));
+
+        IFrameGrabberImage *ifgi = nullptr;
+        REQUIRE(ddl.view(ifgi));
+        IRgbVisualParams* rgbParams = nullptr;
+        REQUIRE(dd.view(rgbParams));
+        IFrameGrabberControls* ictl = nullptr;
+        REQUIRE(dd.view(ictl));
+        IFrameGrabberControlsDC1394* ictl1394 = nullptr;
+        REQUIRE(dd.view(ictl1394));
+
+        yarp::dev::tests::exec_IFrameGrabberImage_test_1(ifgi);
+        yarp::dev::tests::exec_IRgbVisualParams_test_1(rgbParams);
+        yarp::dev::tests::exec_IFrameGrabberControls_test_1(ictl);
+        yarp::dev::tests::exec_IFrameGrabberControlsDC1394_test_1(ictl1394);
+
+        // Close all devices
+        CHECK(ddl.close());
         CHECK(dd.close());
     }
 

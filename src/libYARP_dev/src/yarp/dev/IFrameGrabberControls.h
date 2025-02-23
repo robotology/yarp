@@ -8,28 +8,34 @@
 #define YARP_DEV_IFRAMEGRABBERCONTROLS_H
 
 #include <yarp/dev/api.h>
+#include <yarp/dev/ReturnValue.h>
 
 #include <string>
 
+namespace yarp::dev {
 
-typedef enum {
+enum class BusType
+{
     BUS_UNKNOWN = 0,
     BUS_FIREWIRE,
     BUS_USB
-} BusType;
+};
 
-typedef enum {
+enum class FeatureMode
+{
     MODE_UNKNOWN = 0,
     MODE_MANUAL,
     MODE_AUTO
-} FeatureMode;
+};
 
-typedef struct {
-    BusType busType;
+struct CameraDescriptor
+{
+    BusType busType = BusType::BUS_UNKNOWN;
     std::string deviceDescription;
-} CameraDescriptor;
+};
 
-typedef enum {
+enum class cameraFeature_id_t
+{
     YARP_FEATURE_INVALID=-1,
     YARP_FEATURE_BRIGHTNESS=0,
     YARP_FEATURE_EXPOSURE,
@@ -55,9 +61,7 @@ typedef enum {
     YARP_FEATURE_CAPTURE_QUALITY,
     YARP_FEATURE_MIRROR,
     YARP_FEATURE_NUMBER_OF          // this has to be the last one
-} cameraFeature_id_t;
-
-namespace yarp::dev {
+};
 
 /**
  * @ingroup dev_iface_media
@@ -75,11 +79,11 @@ public:
     std::string busType2String(BusType type)
     {
         switch (type) {
-            case BUS_FIREWIRE:
+            case BusType::BUS_FIREWIRE:
                 return "FireWire";
             break;
 
-            case BUS_USB:
+            case BusType::BUS_USB:
                 return "USB";
             break;
 
@@ -91,7 +95,7 @@ public:
 
     inline FeatureMode toFeatureMode(bool _auto)
     {
-        return _auto ? MODE_AUTO : MODE_MANUAL;
+        return _auto ? FeatureMode::MODE_AUTO : FeatureMode::MODE_MANUAL;
     }
     /**
      * Get a basic description of the camera hw. This is mainly used to determine the
@@ -99,7 +103,7 @@ public:
      * @param device returns an identifier for the bus
      * @return returns true if success, false otherwise (e.g. the interface is not implemented)
      */
-    virtual bool getCameraDescription(CameraDescriptor *camera)=0;
+    virtual yarp::dev::ReturnValue getCameraDescription(CameraDescriptor& camera)=0;
 
     /**
      * Check if camera has the requested feature (saturation, brightness ... )
@@ -107,7 +111,7 @@ public:
      * @param hasFeature flag value: true if the feature is present, false otherwise
      * @return returns true if success, false otherwise (e.g. the interface is not implemented)
      */
-    virtual bool hasFeature(int feature, bool *hasFeature)=0;
+    virtual yarp::dev::ReturnValue hasFeature(cameraFeature_id_t, bool& hasFeature) = 0;
 
     /**
      * Set the requested feature to a value (saturation, brightness ... )
@@ -115,7 +119,7 @@ public:
      * @param value new value of the feature, range from 0 to 1 expressed as a percentage
      * @return returns true if success, false otherwise (e.g. the interface is not implemented)
      */
-    virtual bool setFeature(int feature, double value)=0;
+    virtual yarp::dev::ReturnValue setFeature(cameraFeature_id_t feature, double value) = 0;
 
     /**
      * Get the current value for the requested feature.
@@ -123,7 +127,7 @@ public:
      * @param value  pointer to current value of the feature, from 0 to 1 expressed as a percentage
      * @return returns true on success, false on failure.
      */
-    virtual bool getFeature(int feature, double *value)=0;
+    virtual yarp::dev::ReturnValue getFeature(cameraFeature_id_t feature, double& value) = 0;
 
     /**
      * Set the requested feature to a value using 2 params (like white balance)
@@ -133,16 +137,16 @@ public:
      *
      * @return returns true if success, false otherwise (e.g. the interface is not implemented)
      */
-    virtual bool setFeature(int feature, double value1, double value2)=0;
+    virtual yarp::dev::ReturnValue setFeature(cameraFeature_id_t feature, double value1, double value2) = 0;
 
     /**
      * Get the current value for the requested feature.
-     * @param feature the identifier of the feaature to read
+     * @param feature the identifier of the feature to read
      * @param value1  returns the current value of the feature, from 0 to 1 expressed as a percentage
      * @param value2  returns the current value of the feature, from 0 to 1 expressed as a percentage
      * @return returns true on success, false on failure.
      */
-    virtual bool getFeature(int feature, double *value1, double *value2)=0;
+    virtual yarp::dev::ReturnValue getFeature(cameraFeature_id_t feature, double& value1, double& value2) = 0;
 
     /**
      * Check if the camera has the ability to turn on/off the requested feature
@@ -150,7 +154,7 @@ public:
      * @param hasOnOff flag true if this feature can be turned on/off, false otherwise.
      * @return returns true if success, false otherwise (e.g. the interface is not implemented)
      */
-    virtual bool hasOnOff(int feature, bool *HasOnOff)=0;
+    virtual yarp::dev::ReturnValue hasOnOff(cameraFeature_id_t feature, bool& HasOnOff) = 0;
 
     /**
      * Set the requested feature on or off
@@ -158,7 +162,7 @@ public:
      * @param onoff true to activate, off to deactivate the feature
      * @return returns true on success, false on failure.
      */
-    virtual bool setActive(int feature, bool onoff)=0;
+    virtual yarp::dev::ReturnValue setActive(cameraFeature_id_t feature, bool onoff) = 0;
 
     /**
      * Get the current status of the feature, on or off
@@ -166,7 +170,7 @@ public:
      * @param isActive flag true if the feature is active, false otherwise
      * @return returns true if success, false otherwise (e.g. the interface is not implemented)
      */
-    virtual bool getActive(int feature, bool *isActive)=0;
+    virtual yarp::dev::ReturnValue getActive(cameraFeature_id_t feature, bool& isActive) = 0;
 
     /**
      * Check if the requested feature has the 'auto' mode
@@ -174,7 +178,7 @@ public:
      * @param hasAuto flag true if the feature is has 'auto' mode, false otherwise
      * @return returns true if success, false otherwise (e.g. the interface is not implemented)
      */
-    virtual bool hasAuto(int feature, bool *hasAuto)=0;
+    virtual yarp::dev::ReturnValue hasAuto(cameraFeature_id_t feature, bool& hasAuto) = 0;
 
     /**
      * Check if the requested feature has the 'manual' mode
@@ -182,7 +186,7 @@ public:
      * @param hasAuto flag true if the feature is has 'manual' mode, false otherwise
      * @return returns true if success, false otherwise (e.g. the interface is not implemented)
      */
-    virtual bool hasManual(int feature, bool *hasManual)=0;
+    virtual yarp::dev::ReturnValue hasManual(cameraFeature_id_t feature, bool& hasManual) = 0;
 
     /**
      * Check if the requested feature has the 'onePush' mode
@@ -190,7 +194,7 @@ public:
      * @param hasAuto flag true if the feature is has 'onePush' mode, false otherwise
      * @return returns true if success, false otherwise (e.g. the interface is not implemented)
      */
-    virtual bool hasOnePush(int feature, bool *hasOnePush)=0;
+    virtual yarp::dev::ReturnValue hasOnePush(cameraFeature_id_t feature, bool& hasOnePush) = 0;
 
     /**
      * Set the requested mode for the feature
@@ -198,7 +202,7 @@ public:
      * @param auto_onoff true to activate 'auto' mode, false to activate 'manual' mode
      * @return returns true on success, false on failure.
      */
-    virtual bool setMode(int feature, FeatureMode mode)=0;
+    virtual yarp::dev::ReturnValue setMode(cameraFeature_id_t feature, FeatureMode mode) = 0;
 
     /**
      * Get the current mode for the feature
@@ -206,7 +210,7 @@ public:
      * @param hasAuto flag true if the feature is has 'auto' mode, false otherwise
      * @return returns true if success, false otherwise (e.g. the interface is not implemented)
      */
-    virtual bool getMode(int feature, FeatureMode *mode)=0;
+    virtual yarp::dev::ReturnValue getMode(cameraFeature_id_t feature, FeatureMode& mode) = 0;
 
     /**
      * Set the requested feature to a value (saturation, brightness ... )
@@ -214,7 +218,7 @@ public:
      * @param value new value of the feature, from 0 to 1 as a percentage of param range
      * @return returns true on success, false on failure.
      */
-    virtual bool setOnePush(int feature)=0;
+    virtual yarp::dev::ReturnValue setOnePush(cameraFeature_id_t feature) = 0;
 };
 
 } // namespace yarp::dev

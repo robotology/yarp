@@ -22,7 +22,6 @@
 using namespace yarp::os;
 using namespace yarp::dev;
 
-
 ///////////////// generic device //////////////////////////
 
 USBCameraDriver::USBCameraDriver()
@@ -143,74 +142,74 @@ int USBCameraDriver::getRgbWidth()
 }
 
 
-bool USBCameraDriver::getRgbSupportedConfigurations(yarp::sig::VectorOf<CameraConfig>& configurations)
+yarp::dev::ReturnValue USBCameraDriver::getRgbSupportedConfigurations(std::vector<CameraConfig>& configurations)
 {
     if (deviceRgbVisualParam != nullptr) {
         return deviceRgbVisualParam->getRgbSupportedConfigurations(configurations);
     }
-    return false;
+    return ReturnValue::return_code::return_value_error_not_ready;
 }
 
-bool USBCameraDriver::getRgbResolution(int& width, int& height)
+yarp::dev::ReturnValue USBCameraDriver::getRgbResolution(int& width, int& height)
 {
     if (deviceRgbVisualParam != nullptr) {
         return deviceRgbVisualParam->getRgbResolution(width, height);
     }
-    return false;
+    return ReturnValue::return_code::return_value_error_not_ready;
 }
 
-bool USBCameraDriver::setRgbResolution(int width, int height)
+yarp::dev::ReturnValue USBCameraDriver::setRgbResolution(int width, int height)
 {
     if (width <= 0 || height <= 0) {
         yCError(USBCAMERA) << "usbCamera: invalid width or height";
-        return false;
+    return ReturnValue::return_code::return_value_error_method_failed;
     }
     if (deviceRgbVisualParam != nullptr) {
         _width = width;
         _height = height;
         return deviceRgbVisualParam->setRgbResolution(width, height);
     }
-    return false;
+    return ReturnValue::return_code::return_value_error_not_ready;
 }
 
-bool USBCameraDriver::getRgbFOV(double& horizontalFov, double& verticalFov)
+yarp::dev::ReturnValue USBCameraDriver::getRgbFOV(double& horizontalFov, double& verticalFov)
 {
     if (deviceRgbVisualParam != nullptr) {
         return deviceRgbVisualParam->getRgbFOV(horizontalFov, verticalFov);
     }
-    return false;
+    return ReturnValue::return_code::return_value_error_not_ready;
 }
 
-bool USBCameraDriver::setRgbFOV(double horizontalFov, double verticalFov)
+yarp::dev::ReturnValue USBCameraDriver::setRgbFOV(double horizontalFov, double verticalFov)
 {
     if (deviceRgbVisualParam != nullptr) {
         return deviceRgbVisualParam->setRgbFOV(horizontalFov, verticalFov);
     }
-    return false;
+    return ReturnValue::return_code::return_value_error_not_ready;
 }
 
-bool USBCameraDriver::getRgbIntrinsicParam(yarp::os::Property& intrinsic)
+yarp::dev::ReturnValue USBCameraDriver::getRgbIntrinsicParam(yarp::os::Property& intrinsic)
 {
     if (deviceRgbVisualParam != nullptr) {
         return deviceRgbVisualParam->getRgbIntrinsicParam(intrinsic);
     }
-    return false;
+    return ReturnValue::return_code::return_value_error_not_ready;
 }
 
-bool USBCameraDriver::getRgbMirroring(bool& mirror)
+yarp::dev::ReturnValue USBCameraDriver::getRgbMirroring(bool& mirror)
 {
     if (deviceRgbVisualParam != nullptr) {
         return deviceRgbVisualParam->getRgbMirroring(mirror);
     }
-    return false;
+    return ReturnValue::return_code::return_value_error_not_ready;
 }
 
-bool USBCameraDriver::setRgbMirroring(bool mirror)
+yarp::dev::ReturnValue USBCameraDriver::setRgbMirroring(bool mirror)
 {
     if (deviceRgbVisualParam != nullptr) {
         return deviceRgbVisualParam->setRgbMirroring(mirror);
     }
-    return false;
+    return ReturnValue::return_code::return_value_error_not_ready;
 }
 
 
@@ -227,12 +226,12 @@ USBCameraDriverRgb::~USBCameraDriverRgb()
     yCTrace(USBCAMERA);
 }
 
-bool USBCameraDriverRgb::getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image)
+yarp::dev::ReturnValue USBCameraDriverRgb::getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image)
 {
     return frameGrabberImage->getImage(image);
 }
 
-bool USBCameraDriverRgb::getImage(yarp::sig::ImageOf<yarp::sig::PixelMono>& image)
+yarp::dev::ReturnValue USBCameraDriverRgb::getImage(yarp::sig::ImageOf<yarp::sig::PixelMono>& image)
 {
     return frameGrabberImageRaw->getImage(image);
 }
@@ -260,7 +259,7 @@ USBCameraDriverRaw::~USBCameraDriverRaw()
     yCTrace(USBCAMERA);
 }
 
-bool USBCameraDriverRaw::getImage(yarp::sig::ImageOf<yarp::sig::PixelMono>& image)
+yarp::dev::ReturnValue USBCameraDriverRaw::getImage(yarp::sig::ImageOf<yarp::sig::PixelMono>& image)
 {
     return frameGrabberImageRaw->getImage(image);
 }
@@ -281,122 +280,122 @@ int USBCameraDriverRaw::height() const
  * Actual function will be implemented by OS specific devices
  */
 
-bool USBCameraDriver::getCameraDescription(CameraDescriptor* camera)
+yarp::dev::ReturnValue USBCameraDriver::getCameraDescription(yarp::dev::CameraDescriptor& camera)
 {
     if (deviceControls != nullptr) {
         return deviceControls->getCameraDescription(camera);
     }
-    return false;
+    return ReturnValue::return_code::return_value_error_not_ready;
 }
 
-bool USBCameraDriver::hasFeature(int feature, bool* _hasFeature)
+yarp::dev::ReturnValue USBCameraDriver::hasFeature(cameraFeature_id_t feature, bool& _hasFeature)
 {
     if (deviceControls != nullptr) {
         return deviceControls->hasFeature(feature, _hasFeature);
     }
-    return false;
+    return ReturnValue::return_code::return_value_error_not_ready;
 }
 
-bool USBCameraDriver::setFeature(int feature, double value)
+yarp::dev::ReturnValue USBCameraDriver::setFeature(cameraFeature_id_t feature, double value)
 {
     if (deviceControls != nullptr) {
         return deviceControls->setFeature(feature, value);
     }
-    return false;
+    return ReturnValue::return_code::return_value_error_not_ready;
 }
 
-bool USBCameraDriver::getFeature(int feature, double* value)
+yarp::dev::ReturnValue USBCameraDriver::getFeature(cameraFeature_id_t feature, double& value)
 {
     if (deviceControls != nullptr) {
         return deviceControls->getFeature(feature, value);
     }
-    return false;
+    return ReturnValue::return_code::return_value_error_not_ready;
 }
 
-bool USBCameraDriver::getFeature(int feature, double* value1, double* value2)
+yarp::dev::ReturnValue USBCameraDriver::getFeature(cameraFeature_id_t feature, double& value1, double& value2)
 {
     if (deviceControls != nullptr) {
         return deviceControls->getFeature(feature, value1, value2);
     }
-    return false;
+    return ReturnValue::return_code::return_value_error_not_ready;
 }
 
-bool USBCameraDriver::setFeature(int feature, double value1, double value2)
+yarp::dev::ReturnValue USBCameraDriver::setFeature(cameraFeature_id_t feature, double value1, double value2)
 {
     if (deviceControls != nullptr) {
         return deviceControls->setFeature(feature, value1, value2);
     }
-    return false;
+    return ReturnValue::return_code::return_value_error_not_ready;
 }
 
-bool USBCameraDriver::hasOnOff(int feature, bool* _hasOnOff)
+yarp::dev::ReturnValue USBCameraDriver::hasOnOff(cameraFeature_id_t feature, bool& _hasOnOff)
 {
     if (deviceControls != nullptr) {
         return deviceControls->hasOnOff(feature, _hasOnOff);
     }
-    return false;
+    return ReturnValue::return_code::return_value_error_not_ready;
 }
 
-bool USBCameraDriver::setActive(int feature, bool onoff)
+yarp::dev::ReturnValue USBCameraDriver::setActive(cameraFeature_id_t feature, bool onoff)
 {
     if (deviceControls != nullptr) {
         return deviceControls->setActive(feature, onoff);
     }
-    return false;
+    return ReturnValue::return_code::return_value_error_not_ready;
 }
 
-bool USBCameraDriver::getActive(int feature, bool* isActive)
+yarp::dev::ReturnValue USBCameraDriver::getActive(cameraFeature_id_t feature, bool& isActive)
 {
     if (deviceControls != nullptr) {
         return deviceControls->getActive(feature, isActive);
     }
-    return false;
+    return ReturnValue::return_code::return_value_error_not_ready;
 }
 
-bool USBCameraDriver::hasAuto(int feature, bool* _hasAuto)
+yarp::dev::ReturnValue USBCameraDriver::hasAuto(cameraFeature_id_t feature, bool& _hasAuto)
 {
     if (deviceControls != nullptr) {
         return deviceControls->hasAuto(feature, _hasAuto);
     }
-    return false;
+    return ReturnValue::return_code::return_value_error_not_ready;
 }
 
-bool USBCameraDriver::hasManual(int feature, bool* _hasManual)
+yarp::dev::ReturnValue USBCameraDriver::hasManual(cameraFeature_id_t feature, bool& _hasManual)
 {
     if (deviceControls != nullptr) {
         return deviceControls->hasManual(feature, _hasManual);
     }
-    return false;
+    return ReturnValue::return_code::return_value_error_not_ready;
 }
 
-bool USBCameraDriver::hasOnePush(int feature, bool* _hasOnePush)
+yarp::dev::ReturnValue USBCameraDriver::hasOnePush(cameraFeature_id_t feature, bool& _hasOnePush)
 {
     if (deviceControls != nullptr) {
         return deviceControls->hasOnePush(feature, _hasOnePush);
     }
-    return false;
+    return ReturnValue::return_code::return_value_error_not_ready;
 }
 
-bool USBCameraDriver::setMode(int feature, FeatureMode mode)
+yarp::dev::ReturnValue USBCameraDriver::setMode(cameraFeature_id_t feature, FeatureMode mode)
 {
     if (deviceControls != nullptr) {
         return deviceControls->setMode(feature, mode);
     }
-    return false;
+    return ReturnValue::return_code::return_value_error_not_ready;
 }
 
-bool USBCameraDriver::getMode(int feature, FeatureMode* mode)
+yarp::dev::ReturnValue USBCameraDriver::getMode(cameraFeature_id_t feature, FeatureMode& mode)
 {
     if (deviceControls != nullptr) {
         return deviceControls->getMode(feature, mode);
     }
-    return false;
+   return ReturnValue::return_code::return_value_error_not_ready;
 }
 
-bool USBCameraDriver::setOnePush(int feature)
+yarp::dev::ReturnValue USBCameraDriver::setOnePush(cameraFeature_id_t feature)
 {
     if (deviceControls != nullptr) {
         return deviceControls->setOnePush(feature);
     }
-    return false;
+   return ReturnValue::return_code::return_value_error_not_ready;
 }

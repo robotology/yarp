@@ -71,32 +71,32 @@ public:
      *
      * Actual function will be implemented by OS specific devices
      */
-    bool getCameraDescription(CameraDescriptor* camera) override;
-    bool hasFeature(int feature, bool* hasFeature) override;
-    bool setFeature(int feature, double value) override;
-    bool getFeature(int feature, double* value) override;
-    bool setFeature(int feature, double value1, double value2) override;
-    bool getFeature(int feature, double* value1, double* value2) override;
-    bool hasOnOff(int feature, bool* HasOnOff) override;
-    bool setActive(int feature, bool onoff) override;
-    bool getActive(int feature, bool* isActive) override;
-    bool hasAuto(int feature, bool* hasAuto) override;
-    bool hasManual(int feature, bool* hasManual) override;
-    bool hasOnePush(int feature, bool* hasOnePush) override;
-    bool setMode(int feature, FeatureMode mode) override;
-    bool getMode(int feature, FeatureMode* mode) override;
-    bool setOnePush(int feature) override;
+    yarp::dev::ReturnValue getCameraDescription(yarp::dev::CameraDescriptor& camera) override;
+    yarp::dev::ReturnValue hasFeature(yarp::dev::cameraFeature_id_t feature, bool& hasFeature) override;
+    yarp::dev::ReturnValue setFeature(yarp::dev::cameraFeature_id_t feature, double value) override;
+    yarp::dev::ReturnValue getFeature(yarp::dev::cameraFeature_id_t feature, double&value) override;
+    yarp::dev::ReturnValue setFeature(yarp::dev::cameraFeature_id_t feature, double  value1, double  value2) override;
+    yarp::dev::ReturnValue getFeature(yarp::dev::cameraFeature_id_t feature, double& value1, double& value2) override;
+    yarp::dev::ReturnValue setActive(yarp::dev::cameraFeature_id_t feature, bool onoff) override;
+    yarp::dev::ReturnValue getActive(yarp::dev::cameraFeature_id_t feature, bool& isActive) override;
+    yarp::dev::ReturnValue hasOnOff(yarp::dev::cameraFeature_id_t feature, bool& HasOnOff) override;
+    yarp::dev::ReturnValue hasAuto(yarp::dev::cameraFeature_id_t feature, bool& hasAuto) override;
+    yarp::dev::ReturnValue hasManual(yarp::dev::cameraFeature_id_t feature, bool& hasManual) override;
+    yarp::dev::ReturnValue setMode(yarp::dev::cameraFeature_id_t feature, yarp::dev::FeatureMode mode) override;
+    yarp::dev::ReturnValue getMode(yarp::dev::cameraFeature_id_t feature, yarp::dev::FeatureMode& mode) override;
+    yarp::dev::ReturnValue hasOnePush(yarp::dev::cameraFeature_id_t feature, bool& hasOnePush) override;
+    yarp::dev::ReturnValue setOnePush(yarp::dev::cameraFeature_id_t feature) override;
 
     int getRgbHeight() override;
     int getRgbWidth() override;
-    bool getRgbSupportedConfigurations(yarp::sig::VectorOf<yarp::dev::CameraConfig>& configurations) override;
-    bool getRgbResolution(int& width, int& height) override;
-    bool setRgbResolution(int width, int height) override;
-    bool getRgbFOV(double& horizontalFov, double& verticalFov) override;
-    bool setRgbFOV(double horizontalFov, double verticalFov) override;
-    bool getRgbIntrinsicParam(yarp::os::Property& intrinsic) override;
-    bool getRgbMirroring(bool& mirror) override;
-    bool setRgbMirroring(bool mirror) override;
+    yarp::dev::ReturnValue getRgbSupportedConfigurations(std::vector<yarp::dev::CameraConfig>& configurations) override;
+    yarp::dev::ReturnValue getRgbResolution(int& width, int& height) override;
+    yarp::dev::ReturnValue setRgbResolution(int width, int height) override;
+    yarp::dev::ReturnValue getRgbFOV(double& horizontalFov, double& verticalFov) override;
+    yarp::dev::ReturnValue setRgbFOV(double horizontalFov, double verticalFov) override;
+    yarp::dev::ReturnValue getRgbIntrinsicParam(yarp::os::Property& intrinsic) override;
+    yarp::dev::ReturnValue getRgbMirroring(bool& mirror) override;
+    yarp::dev::ReturnValue setRgbMirroring(bool mirror) override;
 };
 
 
@@ -113,8 +113,8 @@ public:
     USBCameraDriverRgb();
     ~USBCameraDriverRgb() override;
 
-    bool getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image) override;
-    bool getImage(yarp::sig::ImageOf<yarp::sig::PixelMono>& image) override;
+    yarp::dev::ReturnValue getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image) override;
+    yarp::dev::ReturnValue getImage(yarp::sig::ImageOf<yarp::sig::PixelMono>& image) override;
     int height() const override;
     int width() const override;
 };
@@ -136,7 +136,7 @@ public:
     USBCameraDriverRaw();
     ~USBCameraDriverRaw() override;
 
-    bool getImage(yarp::sig::ImageOf<yarp::sig::PixelMono>& image) override;
+    yarp::dev::ReturnValue getImage(yarp::sig::ImageOf<yarp::sig::PixelMono>& image) override;
     int height() const override;
     int width() const override;
 };

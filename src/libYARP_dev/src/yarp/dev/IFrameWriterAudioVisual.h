@@ -8,6 +8,7 @@
 #define YARP_DEV_IFRAMEWRITERAUDIOVISUAL_H
 
 #include <yarp/dev/api.h>
+#include <yarp/dev/ReturnValue.h>
 
 #include <yarp/sig/Image.h>
 #include <yarp/sig/Sound.h>
@@ -34,8 +35,8 @@ public:
      * @param sound the sound to be written
      * @return true/false upon success/failure
      */
-    virtual bool putAudioVisual(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image,
-                                yarp::sig::Sound& sound) = 0;
+    virtual yarp::dev::ReturnValue putAudioVisual(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image,
+                                                  yarp::sig::Sound& sound) = 0;
 };
 
 } // namespace yarp::dev

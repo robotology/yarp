@@ -44,7 +44,7 @@ public:
 
     bool open(yarp::os::Searchable & config) override;
     bool close() override;
-    bool getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb> & image) override;
+    yarp::dev::ReturnValue getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb> & image) override;
 
     inline int height() const override { return m_height; }
     inline int width() const override { return m_width; }

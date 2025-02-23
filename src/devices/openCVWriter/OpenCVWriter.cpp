@@ -71,11 +71,11 @@ bool OpenCVWriter::close()
     return true;
 }
 
-bool OpenCVWriter::putImage(ImageOf<PixelRgb> & image)
+ReturnValue OpenCVWriter::putImage(ImageOf<PixelRgb> & image)
 {
     if (image.width() == 0 || image.height() == 0) {
         yCError(OPENCVWRITER) << "Received empty frame";
-        return false;
+        return ReturnValue::return_code::return_value_error_method_failed;
     }
 
     if (m_width == 0) {
@@ -90,18 +90,18 @@ bool OpenCVWriter::putImage(ImageOf<PixelRgb> & image)
         m_writer.open(m_filename, cv::VideoWriter::fourcc('M', 'J', 'P', 'G'), m_framerate, cv::Size(m_width, m_height));
         if (!m_writer.isOpened()) {
             yCError(OPENCVWRITER, "Unable to open output file");
-            return false;
+            return ReturnValue::return_code::return_value_error_method_failed;
         }
         m_isInitialized = true;
     }
 
     if (m_width != image.width()) {
         yCError(OPENCVWRITER) << "Received frame has a width different from the current configuration" << m_width << "<<" << image.width();
-        return false;
+        return ReturnValue::return_code::return_value_error_method_failed;
     }
     if (m_height != image.height()) {
         yCError(OPENCVWRITER) << "Received frame has a height different from the current configuration: " << m_height << "<<" << image.height();
-        return false;
+        return ReturnValue::return_code::return_value_error_method_failed;
     }
 
     //process the frame
@@ -109,5 +109,5 @@ bool OpenCVWriter::putImage(ImageOf<PixelRgb> & image)
     cv::cvtColor(frame, frame, cv::COLOR_RGB2BGR);
     m_writer.write(frame);
 
-    return true;
+    return ReturnValue_ok;
 }

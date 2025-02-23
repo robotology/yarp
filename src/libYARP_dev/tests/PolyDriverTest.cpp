@@ -34,11 +34,11 @@ public:
 
     }
 
-    virtual bool getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image) override
+    virtual ReturnValue getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image) override
     {
         image.resize(w, h);
         image.zero();
-        return true;
+        return ReturnValue_ok;
     }
 
     virtual int height() const override { return h; }

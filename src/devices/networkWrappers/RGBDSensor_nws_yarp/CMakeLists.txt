@@ -2,31 +2,34 @@
 # SPDX-License-Identifier: BSD-3-Clause
 
 
-yarp_prepare_plugin(rgbdSensor_nws_yarp
+yarp_prepare_plugin(RGBDSensor_nws_yarp
   CATEGORY device
-  TYPE RgbdSensor_nws_yarp
-  INCLUDE RgbdSensor_nws_yarp.h
+  TYPE RGBDSensor_nws_yarp
+  INCLUDE RGBDSensor_nws_yarp.h
   EXTRA_CONFIG
-    WRAPPER=rgbdSensor_nws_yarp
+    WRAPPER=RGBDSensor_nws_yarp
   DEFAULT ON
   GENERATE_PARSER
 )
 
-if(NOT SKIP_rgbdSensor_nws_yarp)
-  yarp_add_plugin(yarp_rgbdSensor_nws_yarp)
+if(NOT SKIP_RGBDSensor_nws_yarp)
+  yarp_add_plugin(yarp_RGBDSensor_nws_yarp)
 
-  target_sources(yarp_rgbdSensor_nws_yarp
+  target_sources(yarp_RGBDSensor_nws_yarp
     PRIVATE
-      RgbdSensor_nws_yarp.cpp
-      RgbdSensor_nws_yarp.h
-      RgbdSensor_nws_yarp_ParamsParser.cpp
-      RgbdSensor_nws_yarp_ParamsParser.h
+      RGBDSensor_nws_yarp.cpp
+      RGBDSensor_nws_yarp.h
+      RGBDSensor_nws_yarp_ParamsParser.cpp
+      RGBDSensor_nws_yarp_ParamsParser.h
+      RGBDSensorMsgsImpl.cpp
+      RGBDSensorMsgsImpl.h
   )
 
-  target_sources(yarp_rgbdSensor_nws_yarp PRIVATE $<TARGET_OBJECTS:framegrabber_protocol>)
-  target_include_directories(yarp_rgbdSensor_nws_yarp PRIVATE $<TARGET_PROPERTY:framegrabber_protocol,INTERFACE_INCLUDE_DIRECTORIES>)
+  target_sources(yarp_RGBDSensor_nws_yarp PRIVATE $<TARGET_OBJECTS:RGBDSensorMsgs>)
 
-  target_link_libraries(yarp_rgbdSensor_nws_yarp
+  target_include_directories(yarp_RGBDSensor_nws_yarp PRIVATE $<TARGET_PROPERTY:RGBDSensorMsgs,INTERFACE_INCLUDE_DIRECTORIES>)
+
+  target_link_libraries(yarp_RGBDSensor_nws_yarp
     PRIVATE
       YARP::YARP_os
       YARP::YARP_sig
@@ -40,7 +43,7 @@ if(NOT SKIP_rgbdSensor_nws_yarp)
   )
 
   yarp_install(
-    TARGETS yarp_rgbdSensor_nws_yarp
+    TARGETS yarp_RGBDSensor_nws_yarp
     EXPORT YARP_${YARP_PLUGIN_MASTER}
     COMPONENT ${YARP_PLUGIN_MASTER}
     LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
@@ -50,7 +53,7 @@ if(NOT SKIP_rgbdSensor_nws_yarp)
 
   set(YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS ${YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS} PARENT_SCOPE)
 
-  set_property(TARGET yarp_rgbdSensor_nws_yarp PROPERTY FOLDER "Plugins/Device/NWS")
+  set_property(TARGET yarp_RGBDSensor_nws_yarp PROPERTY FOLDER "Plugins/Device/NWS")
 
   if(YARP_COMPILE_TESTS)
     add_subdirectory(tests)

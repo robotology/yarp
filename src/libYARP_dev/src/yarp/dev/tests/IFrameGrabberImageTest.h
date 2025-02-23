@@ -36,7 +36,7 @@ namespace yarp::dev::tests
     constexpr size_t crop_h = 24;
     constexpr size_t crop_w = 32;
 
-    const yarp::sig::VectorOf<std::pair<int, int>> vertices{ {0, 0}, {crop_w - 1, crop_h - 1} };
+    const std::vector<yarp::dev::vertex_t> vertices {{0, 0}, {crop_w - 1, crop_h - 1}};
 
     inline void exec_IFrameGrabberImage_test_1(IFrameGrabberImage* iframe)
     {
