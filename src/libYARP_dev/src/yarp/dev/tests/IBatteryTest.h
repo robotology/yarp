@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#ifndef IBATTEYTEST_H
+#ifndef IBATTERYTEST_H
 #define IBATTERYTEST_H
 
 #include <yarp/dev/IBattery.h>
