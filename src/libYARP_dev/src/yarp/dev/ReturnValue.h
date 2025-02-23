@@ -9,7 +9,11 @@
 #include <yarp/dev/api.h>
 #include <yarp/os/Log.h>
 #include <yarp/os/Portable.h>
+
+#if __cplusplus >= 202002L
 #include <source_location>
+#endif
+
 #include <string>
 
 // If this macro is enabled (default value=enabled), a bool value cannot be automatically converted to ReturnValue.
