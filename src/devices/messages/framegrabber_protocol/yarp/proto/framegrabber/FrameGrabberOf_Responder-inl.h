@@ -36,7 +36,7 @@ bool FrameGrabberOf_Responder<ImageType, IfVocab, ImgVocab>::configure(yarp::dev
 template <typename ImageType,
           yarp::conf::vocab32_t IfVocab,
           yarp::conf::vocab32_t ImgVocab>
-yarp::dev::ReturnValue FrameGrabberOf_Responder<ImageType, IfVocab, ImgVocab>::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& reply)
+bool FrameGrabberOf_Responder<ImageType, IfVocab, ImgVocab>::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& reply)
 {
     if (!iFrameGrabberOf) {
         reply.addVocab32(VOCAB_FAILED);
@@ -169,7 +169,7 @@ yarp::dev::ReturnValue FrameGrabberOf_Responder<ImageType, IfVocab, ImgVocab>::r
             reply.addVocab32(VOCAB_IS);
             auto& b = reply.addList();
             yarp::os::Portable::copyPortable(cropped, b);
-            return ReturnValue_ok;
+            return true;
         } break;
         }
         break;
@@ -182,7 +182,7 @@ yarp::dev::ReturnValue FrameGrabberOf_Responder<ImageType, IfVocab, ImgVocab>::r
         break;
     }
     }
-    return ReturnValue_ok;
+    return true;
 }
 
 } // namespace yarp::proto::framegrabber

@@ -13,6 +13,14 @@
 #include <yarp/dev/IPreciselyTimed.h>
 #include <yarp/dev/ReturnValue.h>
 
+#include <yarp/dev/IFrameGrabberControls.h>
+#include <yarp/dev/IFrameGrabberControlsDC1394.h>
+#include <yarp/dev/IRgbVisualParams.h>
+
+#include "IRGBVisualParamsMsgs.h"
+#include "IFrameGrabberControlMsgs.h"
+#include "IFrameGrabberControlDC1394Msgs.h"
+
 #include <yarp/proto/framegrabber/FrameGrabberOf_Forwarder.h>
 
 #include <mutex>
@@ -87,6 +95,9 @@ class FrameGrabber_nwc_yarp :
         public FrameGrabberOf_ForwarderWithStream<yarp::sig::ImageOf<yarp::sig::PixelMono>, VOCAB_FRAMEGRABBER_IMAGERAW>,
         public FrameGrabberOf_ForwarderWithStream<yarp::sig::ImageOf<yarp::sig::PixelFloat>>,
         public FrameGrabberOf_ForwarderWithStream<yarp::sig::FlexImage>,
+        public yarp::dev::IFrameGrabberControls,
+        public yarp::dev::IFrameGrabberControlsDC1394,
+        public yarp::dev::IRgbVisualParams,
         public yarp::dev::IPreciselyTimed,
         public FrameGrabber_nwc_yarp_ParamsParser
 {
@@ -98,6 +109,67 @@ public:
     FrameGrabber_nwc_yarp& operator=(FrameGrabber_nwc_yarp&&) = delete;
     ~FrameGrabber_nwc_yarp() override = default;
 
+    //IRgbVisualParams
+    int getRgbHeight() override;
+    int getRgbWidth() override;
+    yarp::dev::ReturnValue getRgbSupportedConfigurations(yarp::sig::VectorOf<yarp::dev::CameraConfig>& configurations) override;
+    yarp::dev::ReturnValue getRgbResolution(int& width, int& height) override;
+    yarp::dev::ReturnValue setRgbResolution(int width, int height) override;
+    yarp::dev::ReturnValue getRgbFOV(double& horizontalFov, double& verticalFov) override;
+    yarp::dev::ReturnValue setRgbFOV(double horizontalFov, double verticalFov) override;
+    yarp::dev::ReturnValue getRgbIntrinsicParam(yarp::os::Property& intrinsic) override;
+    yarp::dev::ReturnValue getRgbMirroring(bool& mirror) override;
+    yarp::dev::ReturnValue setRgbMirroring(bool mirror) override;
+
+    //IFrameGrabberControls
+    yarp::dev::ReturnValue getCameraDescription(yarp::dev::CameraDescriptor& camera) override;
+    yarp::dev::ReturnValue hasFeature(int feature, bool& hasFeature) override;
+    yarp::dev::ReturnValue setFeature(int feature, double value) override;
+    yarp::dev::ReturnValue getFeature(int feature, double&value) override;
+    yarp::dev::ReturnValue setFeature(int feature, double  value1, double  value2) override;
+    yarp::dev::ReturnValue getFeature(int feature, double& value1, double& value2) override;
+    yarp::dev::ReturnValue hasOnOff(int feature, bool& HasOnOff) override;
+    yarp::dev::ReturnValue setActive(int feature, bool onoff) override;
+    yarp::dev::ReturnValue getActive(int feature, bool& isActive) override;
+    yarp::dev::ReturnValue hasAuto(int feature, bool& hasAuto) override;
+    yarp::dev::ReturnValue hasManual(int feature, bool& hasManual) override;
+    yarp::dev::ReturnValue hasOnePush(int feature, bool& hasOnePush) override;
+    yarp::dev::ReturnValue setMode(int feature, yarp::dev::FeatureMode mode) override;
+    yarp::dev::ReturnValue getMode(int feature, yarp::dev::FeatureMode& mode) override;
+    yarp::dev::ReturnValue setOnePush(int feature) override;
+
+    // yarp::dev::IFrameGrabberControlsDC1394
+    yarp::dev::ReturnValue getVideoModeMaskDC1394(unsigned int& val) override;
+    yarp::dev::ReturnValue getVideoModeDC1394(unsigned int& val) override;
+    yarp::dev::ReturnValue setVideoModeDC1394(int video_mode) override;
+    yarp::dev::ReturnValue getFPSMaskDC1394(unsigned int& val) override;
+    yarp::dev::ReturnValue getFPSDC1394(unsigned int& val) override;
+    yarp::dev::ReturnValue setFPSDC1394(int fps) override;
+    yarp::dev::ReturnValue getISOSpeedDC1394(unsigned int& val) override;
+    yarp::dev::ReturnValue setISOSpeedDC1394(int speed) override;
+    yarp::dev::ReturnValue getColorCodingMaskDC1394(unsigned int video_mode, unsigned int& val) override;
+    yarp::dev::ReturnValue getColorCodingDC1394(unsigned int& val) override;
+    yarp::dev::ReturnValue setColorCodingDC1394(int coding) override;
+    yarp::dev::ReturnValue getFormat7MaxWindowDC1394(unsigned int& xdim,
+                                   unsigned int& ydim,
+                                   unsigned int& xstep,
+                                   unsigned int& ystep,
+                                   unsigned int& xoffstep,
+                                   unsigned int& yoffstep) override;
+    yarp::dev::ReturnValue getFormat7WindowDC1394(unsigned int& xdim, unsigned int& ydim, int& x0, int& y0) override;
+    yarp::dev::ReturnValue setFormat7WindowDC1394(unsigned int xdim, unsigned int ydim, int x0, int y0) override;
+    yarp::dev::ReturnValue setOperationModeDC1394(bool b1394b) override;
+    yarp::dev::ReturnValue getOperationModeDC1394(bool& b1394b) override;
+    yarp::dev::ReturnValue setTransmissionDC1394(bool bTxON) override;
+    yarp::dev::ReturnValue getTransmissionDC1394(bool& bTxON) override;
+    yarp::dev::ReturnValue setBroadcastDC1394(bool onoff) override;
+    yarp::dev::ReturnValue setDefaultsDC1394() override;
+    yarp::dev::ReturnValue setResetDC1394() override;
+    yarp::dev::ReturnValue setPowerDC1394(bool onoff) override;
+    yarp::dev::ReturnValue setCaptureDC1394(bool bON) override;
+    yarp::dev::ReturnValue getBytesPerPacketDC1394(unsigned int& bpp) override;
+    yarp::dev::ReturnValue setBytesPerPacketDC1394(unsigned int bpp) override;
+
     // yarp::dev::DeviceDriver
     bool open(yarp::os::Searchable& config) override;
     bool close() override;
@@ -108,6 +180,11 @@ public:
 private:
     StreamReceiver streamReceiver;
     yarp::os::Port rpcPort;
+    std::mutex m_mutex;
+
+    IRGBVisualParamsMsgs m_rgb_params_RPC;
+    IFrameGrabberControlMsgs m_controls_RPC;
+    IFrameGrabberControlDC1394Msgs m_controlsDC1394_RPC;
 };
 
 #endif // YARP_FRAMEGRABBER_NWC_YARP_H
