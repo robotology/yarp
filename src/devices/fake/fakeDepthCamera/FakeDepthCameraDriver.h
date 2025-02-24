@@ -59,6 +59,7 @@ public:
     yarp::dev::ReturnValue   getRgbIntrinsicParam(Property& intrinsic) override;
     int    getDepthHeight() override;
     int    getDepthWidth() override;
+    yarp::dev::ReturnValue   getDepthResolution(int& width, int& height) override;
     yarp::dev::ReturnValue   setDepthResolution(int width, int height) override;
     yarp::dev::ReturnValue   getDepthFOV(double& horizontalFov, double& verticalFov) override;
     yarp::dev::ReturnValue   setDepthFOV(double horizontalFov, double verticalFov) override;
