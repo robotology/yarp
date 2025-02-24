@@ -35,6 +35,14 @@ public:
     virtual int getDepthWidth() = 0;
 
     /**
+     * Get the resolution of the depth image from the camera
+     * @param width  image width
+     * @param height image height
+     * @return true on success
+     */
+    virtual yarp::dev::ReturnValue getDepthResolution(int& width, int& height) = 0;
+
+    /**
      * Set the resolution of the depth image from the camera
      * @param width  image width
      * @param height image height

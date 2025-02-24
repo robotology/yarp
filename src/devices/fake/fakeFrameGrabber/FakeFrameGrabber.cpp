@@ -528,12 +528,22 @@ yarp::os::Stamp FakeFrameGrabber::getLastInputStamp() {
     return stamp;
 }
 
-bool FakeFrameGrabber::hasAudio() { return false; }
+yarp::dev::ReturnValue FakeFrameGrabber::hasAudio(bool& val)
+{ 
+    val = false;
+    return ReturnValue_ok;
+}
 
-bool FakeFrameGrabber::hasVideo() { return !m_mono; }
+yarp::dev::ReturnValue FakeFrameGrabber::hasVideo(bool& val)
+{
+    val = !m_mono;
+    return ReturnValue_ok;
+}
 
-bool FakeFrameGrabber::hasRawVideo() {
-    return m_mono;
+yarp::dev::ReturnValue FakeFrameGrabber::hasRawVideo(bool& val)
+{
+    val = m_mono;
+    return ReturnValue_ok;
 }
 
 ReturnValue FakeFrameGrabber::getCameraDescription(CameraDescriptor& camera) { return ReturnValue::return_code::return_value_error_not_implemented_by_device; }

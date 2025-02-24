@@ -107,11 +107,9 @@ public:
 
     yarp::os::Stamp getLastInputStamp() override;
 
-    bool hasAudio() override;
-
-    bool hasVideo() override;
-
-    bool hasRawVideo() override;
+    yarp::dev::ReturnValue hasAudio(bool& val) override;
+    yarp::dev::ReturnValue hasVideo(bool& val) override;
+    yarp::dev::ReturnValue hasRawVideo(bool& val) override;
 
     yarp::dev::ReturnValue getCameraDescription(yarp::dev::CameraDescriptor& camera) override;
     yarp::dev::ReturnValue hasFeature(int feature, bool& hasFeature) override;
