@@ -27,6 +27,12 @@ struct return_getDepthHeight {
   2: i32 height;
 }
 
+struct return_getDepthResolution {
+  1: yReturnValue ret;
+  2: i32 width;
+  3: i32 height;
+}
+
 struct return_getDepthFOV {
   1: yReturnValue ret;
   2: double horizontalFov;
@@ -60,6 +66,7 @@ service IDepthVisualParamsMsgs
 {
   return_getDepthWidth               getDepthWidthRPC();
   return_getDepthHeight              getDepthHeightRPC();
+  return_getDepthResolution          getDepthResolutionRPC();
   yReturnValue                       setDepthResolutionRPC(1:i32 width, 2:i32 height);
   return_getDepthFOV                 getDepthFOVRPC();
   yReturnValue                       setDepthFOVRPC(1:double horizontalFov, 2:double verticalFov);

@@ -324,6 +324,15 @@ int RGBDSensorClient::getDepthWidth()
     return r.width;
 }
 
+ReturnValue RGBDSensorClient::getDepthResolution(int &width, int &height)
+{
+    std::lock_guard <std::mutex> lg(m_mutex);
+    auto r = m_depth_params_RPC.getDepthResolutionRPC();
+    height = r.height;
+    width = r.width;
+    return r.ret;
+}
+
 ReturnValue RGBDSensorClient::setDepthResolution(int width, int height)
 {
     std::lock_guard<std::mutex> lg(m_mutex);

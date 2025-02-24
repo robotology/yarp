@@ -74,6 +74,13 @@ ReturnValue FakeDepthCameraDriver::setRgbResolution(int width, int height)
     return ReturnValue::return_code::return_value_error_not_implemented_by_device;
 }
 
+ReturnValue FakeDepthCameraDriver::getDepthResolution(int &width, int &height)
+{
+    width  = image->width();
+    height = image->height();
+    return ReturnValue_ok;
+}
+
 ReturnValue FakeDepthCameraDriver::setDepthResolution(int width, int height)
 {
     return ReturnValue::return_code::return_value_error_not_implemented_by_device;
