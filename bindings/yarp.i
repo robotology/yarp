@@ -432,12 +432,6 @@ MAKE_COMMS(Bottle)
 %include <yarp/dev/MultipleAnalogSensorsInterfaces.h>
 #include <yarp/dev/IFrameTransform.h>
 
-#ifndef YARP_NO_DEPRECATED // Since YARP 3.5.0
-%include <yarp/dev/IFrameGrabber.h>
-%include <yarp/dev/IFrameGrabberRgb.h>
-#endif YARP_NO_DEPRECATED // Since YARP 3.5.0
-
-
 %template(DVector) std::vector<double>;
 %template(BVector) std::vector<bool>;
 %template(SVector) std::vector<std::string>;
