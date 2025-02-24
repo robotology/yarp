@@ -63,6 +63,7 @@ namespace yarp::dev::tests
         double data[9] = { 1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0 };
         Vector v(9, data);
         Vector v2;
+        REQUIRE(retM); //segfault otherwise
         std::string retM_string = retM->toString();
         bool cpret = Portable::copyPortable(*retM, v2);
         REQUIRE ((cpret && v2.size()==9)); //Otherwise the following loop will segfault

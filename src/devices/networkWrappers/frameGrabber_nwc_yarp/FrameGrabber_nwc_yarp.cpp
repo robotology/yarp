@@ -272,4 +272,408 @@ yarp::os::Stamp FrameGrabber_nwc_yarp::getLastInputStamp()
     return streamReceiver.lastStamp();
 }
 
+
+/*
+*  IRgbVisualParams interface. Look at IVisualParams.h for documentation
+*/
+int FrameGrabber_nwc_yarp::getRgbHeight()
+{
+    std::lock_guard <std::mutex> lg(m_mutex);
+    auto r = m_rgb_params_RPC.getRgbHeightRPC();
+    return r.height;
+}
+
+int FrameGrabber_nwc_yarp::getRgbWidth()
+{
+    std::lock_guard <std::mutex> lg(m_mutex);
+    auto r = m_rgb_params_RPC.getRgbWidthRPC();
+    return r.width;
+}
+
+ReturnValue FrameGrabber_nwc_yarp::getRgbSupportedConfigurations(yarp::sig::VectorOf<CameraConfig> &configurations)
+{
+    std::lock_guard <std::mutex> lg(m_mutex);
+    auto r = m_rgb_params_RPC.getRgbSupportedConfigurationsRPC();
+    configurations = r.configuration;
+    return r.ret;
+}
+
+ReturnValue FrameGrabber_nwc_yarp::getRgbResolution(int &width, int &height)
+{
+    std::lock_guard <std::mutex> lg(m_mutex);
+    auto r = m_rgb_params_RPC.getRgbResolutionRPC();
+    height = r.height;
+    width = r.width;
+    return r.ret;
+}
+
+ReturnValue FrameGrabber_nwc_yarp::setRgbResolution(int width, int height)
+{
+    std::lock_guard <std::mutex> lg(m_mutex);
+    auto r = m_rgb_params_RPC.setRgbResolutionRPC(width, height);
+    return r;
+}
+
+ReturnValue FrameGrabber_nwc_yarp::getRgbFOV(double &horizontalFov, double &verticalFov)
+{
+    std::lock_guard <std::mutex> lg(m_mutex);
+    auto r = m_rgb_params_RPC.getRgbFOVRPC();
+    horizontalFov = r.horizontalFov;
+    verticalFov = r.verticalFOV;
+    return r.ret;
+}
+
+ReturnValue FrameGrabber_nwc_yarp::setRgbFOV(double horizontalFov, double verticalFov)
+{
+    std::lock_guard <std::mutex> lg(m_mutex);
+    auto r = m_rgb_params_RPC.setRgbFOVRPC(horizontalFov, verticalFov);
+    return r;
+}
+
+ReturnValue FrameGrabber_nwc_yarp::getRgbIntrinsicParam(yarp::os::Property &intrinsic)
+{
+    std::lock_guard <std::mutex> lg(m_mutex);
+    auto r =  m_rgb_params_RPC.getRgbIntrinsicParamRPC();
+    intrinsic = r.params;
+    return r.ret;
+}
+
+ReturnValue FrameGrabber_nwc_yarp::getRgbMirroring(bool& mirror)
+{
+    std::lock_guard <std::mutex> lg(m_mutex);
+    auto r= m_rgb_params_RPC.getRgbMirroringRPC();
+    mirror = r.mirror;
+    return r.ret;
+}
+
+ReturnValue FrameGrabber_nwc_yarp::setRgbMirroring(bool mirror)
+{
+    std::lock_guard <std::mutex> lg(m_mutex);
+    auto r = m_rgb_params_RPC.setRgbMirroringRPC(mirror);
+    return r;
+}
+
+/*
+* IFrameGrabberControls specific interface methods
+*/
+ReturnValue FrameGrabber_nwc_yarp::getCameraDescription(yarp::dev::CameraDescriptor& camera)
+{
+    std::lock_guard<std::mutex> lg(m_mutex);
+    auto r = m_controls_RPC.getCameraDescriptionRPC();
+    camera.busType = r.camera.busType;
+    camera.deviceDescription = r.camera.deviceDescription;
+    return r.ret;
+}
+
+ReturnValue FrameGrabber_nwc_yarp::hasFeature(int feature, bool& hasFeature)
+{
+    std::lock_guard<std::mutex> lg(m_mutex);
+    auto r = m_controls_RPC.hasFeatureRPC(feature);
+    hasFeature = r.hasFeature;
+    return r.ret;
+}
+
+ReturnValue FrameGrabber_nwc_yarp::setFeature(int feature, double value)
+{
+    std::lock_guard<std::mutex> lg(m_mutex);
+    auto r = m_controls_RPC.setFeature1RPC(feature,value);
+    return r;
+}
+
+ReturnValue FrameGrabber_nwc_yarp::getFeature(int feature, double& value)
+{
+    std::lock_guard<std::mutex> lg(m_mutex);
+    auto r = m_controls_RPC.getFeature1RPC(feature);
+    value = r.value;
+    return r.ret;
+}
+
+ReturnValue FrameGrabber_nwc_yarp::setFeature(int feature, double value1, double value2)
+{
+    std::lock_guard<std::mutex> lg(m_mutex);
+    auto r = m_controls_RPC.setFeature2RPC(feature,value1,value2);
+    return r;
+}
+
+ReturnValue FrameGrabber_nwc_yarp::getFeature(int feature, double& value1, double& value2)
+{
+    std::lock_guard<std::mutex> lg(m_mutex);
+    auto r = m_controls_RPC.getFeature2RPC(feature);
+    value1 = r.value1;
+    value2 = r.value2;
+    return r.ret;
+}
+
+ReturnValue FrameGrabber_nwc_yarp::hasOnOff(int feature, bool& HasOnOff)
+{
+    std::lock_guard<std::mutex> lg(m_mutex);
+    auto r = m_controls_RPC.hasOnOffRPC(feature);
+    HasOnOff = r.HasOnOff;
+    return r.ret;
+}
+
+ReturnValue FrameGrabber_nwc_yarp::setActive(int feature, bool onoff)
+{
+    std::lock_guard<std::mutex> lg(m_mutex);
+    auto r = m_controls_RPC.setActiveRPC(feature,onoff);
+    return r;
+}
+
+ReturnValue FrameGrabber_nwc_yarp::getActive(int feature, bool& isActive)
+{
+    std::lock_guard<std::mutex> lg(m_mutex);
+    auto r = m_controls_RPC.getActiveRPC(feature);
+    isActive = r.isActive;
+    return r.ret;
+}
+
+ReturnValue FrameGrabber_nwc_yarp::hasAuto(int feature, bool& hasAuto)
+{
+    std::lock_guard<std::mutex> lg(m_mutex);
+    auto r = m_controls_RPC.hasAutoRPC(feature);
+    hasAuto = r.hasAuto;
+    return r.ret;
+}
+
+ReturnValue FrameGrabber_nwc_yarp::hasManual(int feature, bool& hasManual)
+{
+    std::lock_guard<std::mutex> lg(m_mutex);
+    auto r = m_controls_RPC.hasManualRPC(feature);
+    hasManual = r.hasManual;
+    return r.ret;
+}
+
+ReturnValue FrameGrabber_nwc_yarp::hasOnePush(int feature, bool& hasOnePush)
+{
+    std::lock_guard<std::mutex> lg(m_mutex);
+    auto r = m_controls_RPC.hasOnePushRPC(feature);
+    hasOnePush = r.hasOnePush;
+    return r.ret;
+}
+
+ReturnValue FrameGrabber_nwc_yarp::setMode(int feature, yarp::dev::FeatureMode mode)
+{
+    std::lock_guard<std::mutex> lg(m_mutex);
+    auto r = m_controls_RPC.setModeRPC(feature,mode);
+    return r;
+}
+
+ReturnValue FrameGrabber_nwc_yarp::getMode(int feature, yarp::dev::FeatureMode& mode)
+{
+    std::lock_guard<std::mutex> lg(m_mutex);
+    auto r = m_controls_RPC.getModeRPC(feature);
+    mode = r.mode;
+    return r.ret;
+}
+
+ReturnValue FrameGrabber_nwc_yarp::setOnePush(int feature)
+{
+    std::lock_guard<std::mutex> lg(m_mutex);
+    auto r = m_controls_RPC.setOnePushRPC(feature);
+    return r;
+}
+
+/*
+* IFrameGrabberControlsDC1394 specific interface methods
+*/
+ReturnValue FrameGrabber_nwc_yarp::getVideoModeMaskDC1394(unsigned int& val)
+{
+    std::lock_guard<std::mutex> lg(m_mutex);
+    auto r = m_controlsDC1394_RPC.getVideoModeMaskDC1394RPC();
+    val = r.val;
+    return r.ret;
+}
+
+ReturnValue FrameGrabber_nwc_yarp::getVideoModeDC1394(unsigned int& val)
+{
+    std::lock_guard<std::mutex> lg(m_mutex);
+    auto r = m_controlsDC1394_RPC.getVideoModeDC1394RPC();
+    val = r.val;
+    return r.ret;
+}
+
+ReturnValue FrameGrabber_nwc_yarp::setVideoModeDC1394(int video_mode)
+{
+    std::lock_guard<std::mutex> lg(m_mutex);
+    auto r = m_controlsDC1394_RPC.setVideoModeDC1394RPC(video_mode);
+    return r;
+}
+
+ReturnValue FrameGrabber_nwc_yarp::getFPSMaskDC1394(unsigned int& val)
+{
+    std::lock_guard<std::mutex> lg(m_mutex);
+    auto r = m_controlsDC1394_RPC.getFPSMaskDC1394RPC();
+    val = r.val;
+    return r.ret;
+}
+
+ReturnValue FrameGrabber_nwc_yarp::getFPSDC1394(unsigned int& fps)
+{
+    std::lock_guard<std::mutex> lg(m_mutex);
+    auto r = m_controlsDC1394_RPC.getFPSDC1394RPC();
+    fps = r.fps;
+    return r.ret;
+}
+
+ReturnValue FrameGrabber_nwc_yarp::setFPSDC1394(int fps)
+{
+    std::lock_guard<std::mutex> lg(m_mutex);
+    auto r = m_controlsDC1394_RPC.setFPSDC1394RPC(fps);
+    return r;
+}
+
+ReturnValue FrameGrabber_nwc_yarp::getISOSpeedDC1394(unsigned int& speed)
+{
+    std::lock_guard<std::mutex> lg(m_mutex);
+    auto r = m_controlsDC1394_RPC.getISOSpeedDC1394RPC();
+    speed = r.speed;
+    return r.ret;
+}
+
+ReturnValue FrameGrabber_nwc_yarp::setISOSpeedDC1394(int speed)
+{
+    std::lock_guard<std::mutex> lg(m_mutex);
+    auto r = m_controlsDC1394_RPC.setISOSpeedDC1394RPC(speed);
+    return r;
+}
+
+ReturnValue FrameGrabber_nwc_yarp::getColorCodingMaskDC1394(unsigned int video_mode, unsigned int& val)
+{
+    std::lock_guard<std::mutex> lg(m_mutex);
+    auto r = m_controlsDC1394_RPC.getColorCodingMaskDC1394RPC(video_mode);
+    val = r.val;
+    return r.ret;
+}
+
+ReturnValue FrameGrabber_nwc_yarp::getColorCodingDC1394(unsigned int& val)
+{
+    std::lock_guard<std::mutex> lg(m_mutex);
+    auto r = m_controlsDC1394_RPC.getColorCodingDC1394RPC();
+    val = r.val;
+    return r.ret;
+}
+
+ReturnValue FrameGrabber_nwc_yarp::setColorCodingDC1394(int coding)
+{
+    std::lock_guard<std::mutex> lg(m_mutex);
+    auto r = m_controlsDC1394_RPC.setColorCodingDC1394RPC(coding);
+    return r;
+}
+
+ReturnValue FrameGrabber_nwc_yarp::getFormat7MaxWindowDC1394(unsigned int& xdim,
+                                   unsigned int& ydim,
+                                   unsigned int& xstep,
+                                   unsigned int& ystep,
+                                   unsigned int& xoffstep,
+                                   unsigned int& yoffstep)
+{
+    std::lock_guard<std::mutex> lg(m_mutex);
+    auto r = m_controlsDC1394_RPC.getFormat7MaxWindowDC1394RPC();
+    xdim = r.xdim;
+    ydim = r.ydim;
+    xstep = r.xstep;
+    ystep = r.ystep;
+    xoffstep = r.xoffstep;
+    yoffstep = r.yoffstep;
+    return r.ret;
+}
+
+ReturnValue FrameGrabber_nwc_yarp::getFormat7WindowDC1394(unsigned int& xdim, unsigned int& ydim, int& x0, int& y0)
+{
+    std::lock_guard<std::mutex> lg(m_mutex);
+    auto r = m_controlsDC1394_RPC.getFormat7WindowDC1394RPC();
+    xdim = r.xdim;
+    ydim = r.ydim;
+    x0 = r.x0;
+    y0 = r.y0;
+    return r.ret;
+}
+
+ReturnValue FrameGrabber_nwc_yarp::setFormat7WindowDC1394(unsigned int xdim, unsigned int ydim, int x0, int y0)
+{
+    std::lock_guard<std::mutex> lg(m_mutex);
+    auto r = m_controlsDC1394_RPC.setFormat7WindowDC1394RPC(xdim,ydim,x0,y0);
+    return r;
+}
+
+ReturnValue FrameGrabber_nwc_yarp::setOperationModeDC1394(bool b1394b)
+{
+    std::lock_guard<std::mutex> lg(m_mutex);
+    auto r = m_controlsDC1394_RPC.setOperationModeDC1394RPC(b1394b);
+    return r;
+}
+
+ReturnValue FrameGrabber_nwc_yarp::getOperationModeDC1394(bool& b1394b)
+{
+    std::lock_guard<std::mutex> lg(m_mutex);
+    auto r = m_controlsDC1394_RPC.getOperationModeDC1394RPC();
+    b1394b = r.b1394b;
+    return r.ret;
+}
+
+ReturnValue FrameGrabber_nwc_yarp::setTransmissionDC1394(bool bTxON)
+{
+    std::lock_guard<std::mutex> lg(m_mutex);
+    auto r = m_controlsDC1394_RPC.setTransmissionDC1394RPC(bTxON);
+    return r;
+}
+
+ReturnValue FrameGrabber_nwc_yarp::getTransmissionDC1394(bool& bTxON)
+{
+    std::lock_guard<std::mutex> lg(m_mutex);
+    auto r = m_controlsDC1394_RPC.getTransmissionDC1394RPC();
+    bTxON = r.bTxON;
+    return r.ret;
+}
+
+ReturnValue FrameGrabber_nwc_yarp::setBroadcastDC1394(bool onoff)
+{
+    std::lock_guard<std::mutex> lg(m_mutex);
+    auto r = m_controlsDC1394_RPC.setBroadcastDC1394RPC(onoff);
+    return r;
+}
+
+ReturnValue FrameGrabber_nwc_yarp::setDefaultsDC1394()
+{
+    std::lock_guard<std::mutex> lg(m_mutex);
+    auto r = m_controlsDC1394_RPC.setDefaultsDC1394RPC();
+    return r;
+}
+
+ReturnValue FrameGrabber_nwc_yarp::setResetDC1394()
+{
+    std::lock_guard<std::mutex> lg(m_mutex);
+    auto r = m_controlsDC1394_RPC.setResetDC1394RPC();
+    return r;
+}
+
+ReturnValue FrameGrabber_nwc_yarp::setPowerDC1394(bool onoff)
+{
+    std::lock_guard<std::mutex> lg(m_mutex);
+    auto r = m_controlsDC1394_RPC.setPowerDC1394RPC(onoff);
+    return r;
+}
+
+ReturnValue FrameGrabber_nwc_yarp::setCaptureDC1394(bool bON)
+{
+    std::lock_guard<std::mutex> lg(m_mutex);
+    auto r = m_controlsDC1394_RPC.setCaptureDC1394RPC(bON);
+    return r;
+}
+
+ReturnValue FrameGrabber_nwc_yarp::getBytesPerPacketDC1394(unsigned int& bpp)
+{
+    std::lock_guard<std::mutex> lg(m_mutex);
+    auto r = m_controlsDC1394_RPC.getBytesPerPacketDC1394RPC();
+    bpp = r.bpp;
+    return r.ret;
+}
+
+ReturnValue FrameGrabber_nwc_yarp::setBytesPerPacketDC1394(unsigned int bpp)
+{
+    std::lock_guard<std::mutex> lg(m_mutex);
+    auto r = m_controlsDC1394_RPC.setBytesPerPacketDC1394RPC(bpp);
+    return r;
+}
+
 // END FrameGrabber_nwc_yarp
