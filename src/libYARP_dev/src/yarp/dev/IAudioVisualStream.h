@@ -33,9 +33,7 @@ public:
 
     virtual yarp::dev::ReturnValue hasVideo(bool& has) = 0;
 
-    virtual yarp::dev::ReturnValue hasRawVideo(bool& has) {
-        return hasVideo(has);
-    }
+    virtual yarp::dev::ReturnValue hasRawVideo(bool& has) = 0;
 };
 
 } // namespace yarp::dev
