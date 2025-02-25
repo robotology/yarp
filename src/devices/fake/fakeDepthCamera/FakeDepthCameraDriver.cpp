@@ -21,8 +21,7 @@ namespace {
 YARP_LOG_COMPONENT(FAKEDEPTHCAMERA, "yarp.device.fakeDepthCamera")
 }
 
-FakeDepthCameraDriver::FakeDepthCameraDriver() :
-    image(nullptr)
+FakeDepthCameraDriver::FakeDepthCameraDriver()
 {}
 
 FakeDepthCameraDriver::~FakeDepthCameraDriver() = default;
@@ -36,7 +35,8 @@ bool FakeDepthCameraDriver::open(Searchable& config)
     cfg.unput("device");
     cfg.put("device", "fakeFrameGrabber");
     testgrabber.open(cfg);
-    testgrabber.view(image);
+    testgrabber.view(iimage);
+    testgrabber.view(ictrls);
 
     return true;
 }
@@ -48,12 +48,12 @@ bool FakeDepthCameraDriver::close()
 
 int FakeDepthCameraDriver::getRgbHeight()
 {
-    return image->height();
+    return iimage->height();
 }
 
 int FakeDepthCameraDriver::getRgbWidth()
 {
-    return image->width();
+    return iimage->width();
 }
 
 ReturnValue FakeDepthCameraDriver::getRgbSupportedConfigurations(yarp::sig::VectorOf<CameraConfig> &configurations)
@@ -64,8 +64,8 @@ ReturnValue FakeDepthCameraDriver::getRgbSupportedConfigurations(yarp::sig::Vect
 
 ReturnValue FakeDepthCameraDriver::getRgbResolution(int &width, int &height)
 {
-    width  = image->width();
-    height = image->height();
+    width  = iimage->width();
+    height = iimage->height();
     return ReturnValue_ok;
 }
 
@@ -76,8 +76,8 @@ ReturnValue FakeDepthCameraDriver::setRgbResolution(int width, int height)
 
 ReturnValue FakeDepthCameraDriver::getDepthResolution(int &width, int &height)
 {
-    width  = image->width();
-    height = image->height();
+    width  = iimage->width();
+    height = iimage->height();
     return ReturnValue_ok;
 }
 
@@ -144,12 +144,12 @@ ReturnValue FakeDepthCameraDriver::getRgbIntrinsicParam(Property& intrinsic)
 
 int  FakeDepthCameraDriver::getDepthHeight()
 {
-    return image->height();
+    return iimage->height();
 }
 
 int  FakeDepthCameraDriver::getDepthWidth()
 {
-    return image->width();
+    return iimage->width();
 }
 
 ReturnValue FakeDepthCameraDriver::getDepthFOV(double& horizontalFov, double& verticalFov)
@@ -222,7 +222,7 @@ ReturnValue FakeDepthCameraDriver::getExtrinsicParam(Matrix& extrinsic)
 
 ReturnValue FakeDepthCameraDriver::getRgbImage(FlexImage& rgbImage, Stamp* timeStamp)
 {
-    if (!image->getImage(imageof))
+    if (!iimage->getImage(imageof))
     {
         return ReturnValue::return_code::return_value_error_generic;
     }
@@ -237,7 +237,7 @@ ReturnValue FakeDepthCameraDriver::getRgbImage(FlexImage& rgbImage, Stamp* timeS
 
 ReturnValue FakeDepthCameraDriver::getDepthImage(ImageOf<PixelFloat>& depthImage, Stamp* timeStamp)
 {
-    if (!image->getImage(imageof))
+    if (!iimage->getImage(imageof))
     {
         return ReturnValue::return_code::return_value_error_generic;
     }
@@ -273,4 +273,80 @@ ReturnValue FakeDepthCameraDriver::getLastErrorMsg(std::string& msg, Stamp* time
 {
     msg = std::string("no error");
     return ReturnValue_ok;
+}
+
+//---
+ReturnValue FakeDepthCameraDriver::getCameraDescription(yarp::dev::CameraDescriptor& camera)
+{
+    return ictrls->getCameraDescription(camera);
+}
+
+ReturnValue FakeDepthCameraDriver::hasFeature(int feature, bool& hasFeature)
+{
+    return ictrls->hasFeature(feature, hasFeature);
+}
+
+ReturnValue FakeDepthCameraDriver::setFeature(int feature, double value)
+{
+    return ictrls->setFeature(feature, value);
+}
+
+ReturnValue FakeDepthCameraDriver::getFeature(int feature, double& value)
+{
+    return ictrls->getFeature(feature, value);
+}
+
+ReturnValue FakeDepthCameraDriver::setFeature(int feature, double value1, double value2)
+{
+    return ictrls->setFeature(feature, value1,value2);
+}
+
+ReturnValue FakeDepthCameraDriver::getFeature(int feature, double& value1, double& value2)
+{
+    return ictrls->getFeature(feature, value1,value2);
+}
+
+ReturnValue FakeDepthCameraDriver::hasOnOff(int feature, bool& HasOnOff)
+{
+    return ictrls->hasOnOff(feature, HasOnOff);
+}
+
+ReturnValue FakeDepthCameraDriver::setActive(int feature, bool onoff)
+{
+    return ictrls->setActive(feature, onoff);
+}
+
+ReturnValue FakeDepthCameraDriver::getActive(int feature, bool& isActive)
+{
+    return ictrls->getActive(feature, isActive);
+}
+
+ReturnValue FakeDepthCameraDriver::hasAuto(int feature, bool& hasAuto)
+{
+    return ictrls->hasAuto(feature, hasAuto);
+}
+
+ReturnValue FakeDepthCameraDriver::hasManual(int feature, bool& hasManual)
+{
+    return ictrls->hasManual(feature, hasManual);
+}
+
+ReturnValue FakeDepthCameraDriver::hasOnePush(int feature, bool& hasOnePush)
+{
+    return ictrls->hasOnePush(feature, hasOnePush);
+}
+
+ReturnValue FakeDepthCameraDriver::setMode(int feature, yarp::dev::FeatureMode mode)
+{
+    return ictrls->setMode(feature, mode);
+}
+
+ReturnValue FakeDepthCameraDriver::getMode(int feature, yarp::dev::FeatureMode& mode)
+{
+    return ictrls->getMode(feature, mode);
+}
+
+ReturnValue FakeDepthCameraDriver::setOnePush(int feature)
+{
+    return ictrls->setOnePush(feature);
 }
