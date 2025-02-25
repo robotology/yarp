@@ -546,22 +546,6 @@ yarp::dev::ReturnValue FakeFrameGrabber::hasRawVideo(bool& val)
     return ReturnValue_ok;
 }
 
-ReturnValue FakeFrameGrabber::getCameraDescription(CameraDescriptor& camera) { return ReturnValue::return_code::return_value_error_not_implemented_by_device; }
-ReturnValue FakeFrameGrabber::hasFeature(int feature, bool& hasFeature) { return ReturnValue::return_code::return_value_error_not_implemented_by_device; }
-ReturnValue FakeFrameGrabber::setFeature(int feature, double value) { return ReturnValue::return_code::return_value_error_not_implemented_by_device; }
-ReturnValue FakeFrameGrabber::getFeature(int feature, double& value) { return ReturnValue::return_code::return_value_error_not_implemented_by_device; }
-ReturnValue FakeFrameGrabber::setFeature(int feature, double  value1, double  value2) { return ReturnValue::return_code::return_value_error_not_implemented_by_device; }
-ReturnValue FakeFrameGrabber::getFeature(int feature, double& value1, double& value2) { return ReturnValue::return_code::return_value_error_not_implemented_by_device; }
-ReturnValue FakeFrameGrabber::hasOnOff(int feature, bool& HasOnOff) { return ReturnValue::return_code::return_value_error_not_implemented_by_device; }
-ReturnValue FakeFrameGrabber::setActive(int feature, bool onoff) { return ReturnValue::return_code::return_value_error_not_implemented_by_device; }
-ReturnValue FakeFrameGrabber::getActive(int feature, bool& isActive) { return ReturnValue::return_code::return_value_error_not_implemented_by_device; }
-ReturnValue FakeFrameGrabber::hasAuto(int feature, bool& hasAuto) { return ReturnValue::return_code::return_value_error_not_implemented_by_device; }
-ReturnValue FakeFrameGrabber::hasManual(int feature, bool& hasManual) { return ReturnValue::return_code::return_value_error_not_implemented_by_device; }
-ReturnValue FakeFrameGrabber::hasOnePush(int feature, bool& hasOnePush) { return ReturnValue::return_code::return_value_error_not_implemented_by_device; }
-ReturnValue FakeFrameGrabber::setMode(int feature, FeatureMode mode) { return ReturnValue::return_code::return_value_error_not_implemented_by_device; }
-ReturnValue FakeFrameGrabber::getMode(int feature, FeatureMode& mode) { return ReturnValue::return_code::return_value_error_not_implemented_by_device; }
-ReturnValue FakeFrameGrabber::setOnePush(int feature) { return ReturnValue::return_code::return_value_error_not_implemented_by_device; }
-
 void FakeFrameGrabber::printTime(unsigned char* pixbuf, size_t pixbuf_w, size_t pixbuf_h, size_t x, size_t y, char* s, size_t size)
 {
     for (size_t i = 0; i < size; i++)
