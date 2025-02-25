@@ -13,7 +13,7 @@
 #include <yarp/dev/api.h>
 #include <yarp/dev/IRgbVisualParams.h>
 #include <yarp/dev/IDepthVisualParams.h>
-
+#include <yarp/dev/ReturnValue.h>
 
 namespace yarp::dev {
 
@@ -56,32 +56,6 @@ public:
     virtual ~IRGBDSensor();
 
     /*
-     *  IRgbVisualParams interface. Look at IVisualParams.h for documentation
-     */
-    int  getRgbHeight() override = 0;
-    int  getRgbWidth() override = 0;
-    bool getRgbSupportedConfigurations(yarp::sig::VectorOf<CameraConfig> &configurations) override { return false;};
-    bool getRgbResolution(int &width, int &height) override { return false;};
-    bool setRgbResolution(int width, int height) override = 0;
-    bool getRgbFOV(double &horizontalFov, double &verticalFov) override = 0;
-    bool setRgbFOV(double horizontalFov, double verticalFov) override = 0;
-    bool getRgbIntrinsicParam(yarp::os::Property &intrinsic) override = 0;
-
-    /*
-     * IDepthVisualParams interface. Look at IVisualParams.h for documentation
-     */
-    int    getDepthHeight() override = 0;
-    int    getDepthWidth() override = 0;
-    bool   setDepthResolution(int width, int height) override = 0;
-    bool   getDepthFOV(double &horizontalFov, double &verticalFov) override = 0;
-    bool   setDepthFOV(double horizontalFov, double verticalFov) override = 0;
-    double getDepthAccuracy() override = 0;
-    bool   setDepthAccuracy(double accuracy) override = 0;
-    bool   getDepthClipPlanes(double &nearPlane, double &farPlane) override = 0;
-    bool   setDepthClipPlanes(double nearPlane, double farPlane) override = 0;
-    bool   getDepthIntrinsicParam(yarp::os::Property &intrinsic) override = 0;
-
-    /*
      * IRGBDSensor specific interface methods
      */
 
@@ -91,14 +65,15 @@ public:
      *         of the depth optical frame with respect to the rgb frame
      * @return true if success
      */
-    virtual bool getExtrinsicParam(yarp::sig::Matrix &extrinsic) = 0;
+    virtual yarp::dev::ReturnValue getExtrinsicParam(yarp::sig::Matrix &extrinsic) = 0;
 
     /**
      * Return an error message in case of error. For debugging purpose and user notification.
      * Error message will be reset after any successful command
-     * @return A string explaining the last error occurred.
+     * @param message A string explaining the last error occurred.
+     * @return True on success
      */
-    virtual std::string getLastErrorMsg(yarp::os::Stamp *timeStamp = nullptr) = 0;
+    virtual yarp::dev::ReturnValue getLastErrorMsg(std::string& message, yarp::os::Stamp *timeStamp = nullptr) = 0;
 
     /**
      * Get the rgb frame from the device.
@@ -112,7 +87,7 @@ public:
      * @param timeStamp time in which the image was acquired. Optional, ignored if nullptr.
      * @return True on success
      */
-    virtual bool getRgbImage(yarp::sig::FlexImage &rgbImage, yarp::os::Stamp *timeStamp = nullptr) = 0;
+    virtual yarp::dev::ReturnValue getRgbImage(yarp::sig::FlexImage &rgbImage, yarp::os::Stamp *timeStamp = nullptr) = 0;
 
     /**
      * Get the depth frame from the device.
@@ -121,7 +96,7 @@ public:
      * @param timeStamp time in which the image was acquired. Optional, ignored if nullptr.
      * @return True on success
      */
-    virtual bool getDepthImage(yarp::sig::ImageOf<yarp::sig::PixelFloat> &depthImage, yarp::os::Stamp *timeStamp = nullptr) = 0;
+    virtual yarp::dev::ReturnValue getDepthImage(yarp::sig::ImageOf<yarp::sig::PixelFloat> &depthImage, yarp::os::Stamp *timeStamp = nullptr) = 0;
 
     /**
     * Get the both the color and depth frame in a single call. Implementation should assure the best possible synchronization
@@ -134,15 +109,16 @@ public:
     * @param depthStamp pointer to memory to hold the Stamp of the depth frame
     * @return true if able to get both data.
     */
-    virtual bool getImages(yarp::sig::FlexImage &colorFrame, yarp::sig::ImageOf<yarp::sig::PixelFloat> &depthFrame, yarp::os::Stamp *colorStamp=nullptr, yarp::os::Stamp *depthStamp=nullptr) = 0;
+    virtual yarp::dev::ReturnValue getImages(yarp::sig::FlexImage &colorFrame, yarp::sig::ImageOf<yarp::sig::PixelFloat> &depthFrame, yarp::os::Stamp *colorStamp=nullptr, yarp::os::Stamp *depthStamp=nullptr) = 0;
 
     /**
-     * Get the surrent status of the sensor, using enum type
+     * Get the current status of the sensor, using enum type
      *
-     * @return an enum representing the status of the robot or an error code
+     * @param status an enum representing the status of the robot or an error code
      * if any error is present
+     * @return True on success
      */
-    virtual RGBDSensor_status getSensorStatus() = 0;
+    virtual yarp::dev::ReturnValue getSensorStatus(RGBDSensor_status& status) = 0;
 };
 
 } // namespace yarp::dev

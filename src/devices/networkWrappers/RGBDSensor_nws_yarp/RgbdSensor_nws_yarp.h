@@ -26,10 +26,10 @@
 #include <yarp/dev/WrapperSingle.h>
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/IRGBDSensor.h>
+#include <yarp/dev/IFrameGrabberControls.h>
 
-#include <yarp/proto/framegrabber/FrameGrabberControls_Responder.h>
-#include <yarp/proto/framegrabber/RgbVisualParams_Responder.h>
-#include <yarp/proto/framegrabber/DepthVisualParams_Responder.h>
+#include "RgbdSensorServerImpl.h"
+#include "IFrameGrabberControlsServerImpl.h"
 
 #include "RgbdSensor_nws_yarp_ParamsParser.h"
 
@@ -43,25 +43,6 @@ constexpr yarp::conf::vocab32_t VOCAB_PROTOCOL_VERSION = yarp::os::createVocab32
 #define RGBD_WRAPPER_PROTOCOL_VERSION_MAJOR 1
 #define RGBD_WRAPPER_PROTOCOL_VERSION_MINOR 0
 
-
-
-class RGBDSensorParser :
-        public yarp::dev::DeviceResponder
-{
-private:
-    yarp::dev::IRGBDSensor *iRGBDSensor;
-    yarp::proto::framegrabber::RgbVisualParams_Responder rgbParser;
-    yarp::proto::framegrabber::DepthVisualParams_Responder depthParser;
-    yarp::proto::framegrabber::FrameGrabberControls_Responder fgCtrlParsers;
-
-public:
-    RGBDSensorParser();
-    ~RGBDSensorParser() override = default;
-    bool configure(yarp::dev::IRGBDSensor *interface);
-    bool configure(yarp::dev::IRgbVisualParams *rgbInterface, yarp::dev::IDepthVisualParams *depthInterface);
-    bool configure(yarp::dev::IFrameGrabberControls *_fgCtrl);
-    bool respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& response) override;
-};
 
 } // namespace RGBDImpl
 
@@ -83,7 +64,8 @@ class RgbdSensor_nws_yarp :
         public yarp::dev::DeviceDriver,
         public yarp::dev::WrapperSingle,
         public yarp::os::PeriodicThread,
-        public RgbdSensor_nws_yarp_ParamsParser
+        public yarp::os::PortReader,
+        RgbdSensor_nws_yarp_ParamsParser
 {
 private:
     typedef yarp::sig::ImageOf<yarp::sig::PixelFloat>    DepthImage;
@@ -113,23 +95,19 @@ private:
     // One RPC port should be enough for the wrapper in all cases
     yarp::os::Port        rpcPort;
     std::string           rpcPort_Name;
-    std::string           nodeName;
     yarp::sig::FlexImage  colorImage;
     DepthImage            depthImage;
 
-    // It should be possible to attach this  guy to more than one port, try to see what
-    // will happen when receiving 2 calls at the same time (receive one calls while serving
-    // another one, it will result in concurrent thread most probably) and buffering issues.
-//     sensor::depth::RGBDSensor_RPCMgsParser  RPC_parser;
-
     //Helper class for RPCs
-    RGBDImpl::RGBDSensorParser     rgbdParser;
+    IRGBDSensorRPCd*               m_rgbd_RPC=nullptr;
+    IFrameGrabberControlMsgsRPCd*  m_controls_RPC=nullptr;
+    std::mutex                     m_mutex;
 
     // Image data specs
     // int hDim, vDim;
-    yarp::dev::IRGBDSensor*        sensor_p;
-    yarp::dev::IFrameGrabberControls* fgCtrl;
-    yarp::dev::IRGBDSensor::RGBDSensor_status sensorStatus;
+    yarp::dev::IRGBDSensor* m_rgbdsensor = nullptr;
+    yarp::dev::IFrameGrabberControls* m_fgCtrl = nullptr;
+    yarp::dev::IRGBDSensor::RGBDSensor_status m_sensorStatus;
     int                            verbose;
 
     // Synch
@@ -152,9 +130,7 @@ public:
     bool        open(yarp::os::Searchable &params) override;
     bool        close() override;
 
-    /**
-      * Specify which sensor this thread has to read from.
-      */
+    bool        read(yarp::os::ConnectionReader& connection) override;
 
     bool        attach(yarp::dev::PolyDriver *poly) override;
     bool        detach() override;

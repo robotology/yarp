@@ -21,10 +21,21 @@ if(NOT SKIP_rgbdSensor_nws_yarp)
       RgbdSensor_nws_yarp.h
       RgbdSensor_nws_yarp_ParamsParser.cpp
       RgbdSensor_nws_yarp_ParamsParser.h
+      RgbdSensorServerImpl.cpp
+      RgbdSensorServerImpl.h
+      IFrameGrabberControlsServerImpl.h
+      IFrameGrabberControlsServerImpl.cpp
   )
 
-  target_sources(yarp_rgbdSensor_nws_yarp PRIVATE $<TARGET_OBJECTS:framegrabber_protocol>)
-  target_include_directories(yarp_rgbdSensor_nws_yarp PRIVATE $<TARGET_PROPERTY:framegrabber_protocol,INTERFACE_INCLUDE_DIRECTORIES>)
+  target_sources(yarp_rgbdSensor_nws_yarp PRIVATE $<TARGET_OBJECTS:IDepthVisualParamsMsgs>)
+  target_sources(yarp_rgbdSensor_nws_yarp PRIVATE $<TARGET_OBJECTS:IRGBVisualParamsMsgs>)
+  target_sources(yarp_rgbdSensor_nws_yarp PRIVATE $<TARGET_OBJECTS:IRGBDMsgs>)
+  target_sources(yarp_rgbdSensor_nws_yarp PRIVATE $<TARGET_OBJECTS:IFrameGrabberControlMsgs>)
+
+  target_include_directories(yarp_rgbdSensor_nws_yarp PRIVATE $<TARGET_PROPERTY:IDepthVisualParamsMsgs,INTERFACE_INCLUDE_DIRECTORIES>)
+  target_include_directories(yarp_rgbdSensor_nws_yarp PRIVATE $<TARGET_PROPERTY:IRGBVisualParamsMsgs,INTERFACE_INCLUDE_DIRECTORIES>)
+  target_include_directories(yarp_rgbdSensor_nws_yarp PRIVATE $<TARGET_PROPERTY:IRGBDMsgs,INTERFACE_INCLUDE_DIRECTORIES>)
+  target_include_directories(yarp_rgbdSensor_nws_yarp PRIVATE $<TARGET_PROPERTY:IFrameGrabberControlMsgs,INTERFACE_INCLUDE_DIRECTORIES>)
 
   target_link_libraries(yarp_rgbdSensor_nws_yarp
     PRIVATE

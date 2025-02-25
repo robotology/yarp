@@ -15,21 +15,21 @@ YARP_DECLARE_LOG_COMPONENT(IFRAMEGRABBEROF)
 namespace yarp::dev {
 
 template <typename ImageType>
-bool IFrameGrabberOf<ImageType>::getImageCrop(cropType_id_t cropType,
+yarp::dev::ReturnValue IFrameGrabberOf<ImageType>::getImageCrop(cropType_id_t cropType,
                                               yarp::sig::VectorOf<std::pair<int, int>> vertices,
                                               ImageType& image)
 {
     if (cropType == YARP_CROP_RECT) {
         if (vertices.size() != 2) {
             yCError(IFRAMEGRABBEROF, "GetImageCrop failed: RECT mode requires 2 vertices");
-            return false;
+            return ReturnValue::return_code::return_value_error_method_failed;
         }
         ImageType full;
-        bool b = getImage(full);
+        yarp::dev::ReturnValue b = getImage(full);
         if (!b || full.width() == 0 || full.height() == 0)
         {
             yCError(IFRAMEGRABBEROF, "GetImageCrop failed: No image received");
-            return false;
+            return ReturnValue::return_code::return_value_error_generic;
         }
 
         if (!yarp::sig::utils::cropRect(full, vertices[0], vertices[1], image)) {
@@ -38,14 +38,14 @@ bool IFrameGrabberOf<ImageType>::getImageCrop(cropType_id_t cropType,
                     vertices[0].second,
                     vertices[1].first,
                     vertices[1].second);
-            return false;
+            return ReturnValue::return_code::return_value_error_method_failed;
         }
     } else if(cropType == YARP_CROP_LIST) {
         yCError(IFRAMEGRABBEROF, "List type not yet implemented");
-        return false;
+        return ReturnValue::return_code::return_value_error_not_implemented_by_device;
     }
 
-    return true;
+    return ReturnValue_ok;
 }
 
 } // namespace yarp::dev
