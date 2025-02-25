@@ -140,17 +140,6 @@ if(TARGET YARP::YARP_math)
   )
 endif()
 
-if(NOT YARP_NO_DEPRECATED)
-  list(APPEND YARP_dev_HDRS
-
-
-    yarp/dev/FrameGrabberInterfaces.h    # DEPRECATED Since YARP 3.5.0
-    yarp/dev/IFrameGrabber.h             # DEPRECATED Since YARP 3.5.0
-    yarp/dev/IFrameGrabberRgb.h          # DEPRECATED Since YARP 3.5.0
-    yarp/dev/IVisualParams.h             # DEPRECATED Since YARP 3.5.0
-  )
-endif()
-
 set(YARP_dev_IMPL_HDRS
   yarp/dev/impl/FixedSizeBuffersManager.h
   yarp/dev/impl/FixedSizeBuffersManager-inl.h
@@ -246,14 +235,6 @@ if(TARGET YARP::YARP_math)
     yarp/dev/FrameTransformContainer.cpp
   )
 endif()
-
-if(NOT YARP_NO_DEPRECATED)
-  list(APPEND YARP_dev_SRCS
-    yarp/dev/IFrameGrabber.cpp         # DEPRECATED Since YARP 3.5.0
-    yarp/dev/IFrameGrabberRgb.cpp      # DEPRECATED Since YARP 3.5.0
-  )
-endif()
-
 
 # Handle the YARP thrift messages
 include(YarpChooseIDL)
