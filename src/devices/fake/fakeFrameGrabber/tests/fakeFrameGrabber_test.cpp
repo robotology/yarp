@@ -5,7 +5,11 @@
 
 #include <yarp/dev/IFrameGrabberImage.h>
 #include <yarp/dev/IRgbVisualParams.h>
+#include <yarp/dev/IFrameGrabberControls.h>
+#include <yarp/dev/IFrameGrabberControlsDC1394.h>
 #include <yarp/dev/tests/IFrameGrabberImageTest.h>
+#include <yarp/dev/tests/IFrameGrabberControlsTest.h>
+#include <yarp/dev/tests/IFrameGrabberControlsDC1394Test.h>
 #include <yarp/dev/tests/IRgbVisualParamsTest.h>
 
 #include <yarp/os/Network.h>
@@ -68,7 +72,41 @@ TEST_CASE("dev::fakeFrameGrabberTest", "[yarp::dev]")
         CHECK(dd.close()); // client close reported successful
     }
 
-    // TODO Add tests for the other interfaces
+    SECTION("Test the IFrameGrabberControls interface")
+    {
+        // Open the device
+        PolyDriver dd;
+        Property p;
+        p.put("device","fakeFrameGrabber");
+        REQUIRE(dd.open(p));
+
+        // Get the IRgbVisualParams interface
+        IFrameGrabberControls* ictl = nullptr;
+        REQUIRE(dd.view(ictl));
+
+        yarp::dev::tests::exec_IFrameGrabberControls_test_1(ictl);
+
+        // Close the device
+        CHECK(dd.close()); // client close reported successful
+    }
+
+    SECTION("Test the IFrameGrabberControlsDC1394 interface")
+    {
+        // Open the device
+        PolyDriver dd;
+        Property p;
+        p.put("device","fakeFrameGrabber");
+        REQUIRE(dd.open(p));
+
+        // Get the IRgbVisualParams interface
+        IFrameGrabberControlsDC1394* ictl = nullptr;
+        REQUIRE(dd.view(ictl));
+
+        yarp::dev::tests::exec_IFrameGrabberControlsDC1394_test_1(ictl);
+
+        // Close the device
+        CHECK(dd.close()); // client close reported successful
+    }
 
     Network::setLocalMode(false);
 }
