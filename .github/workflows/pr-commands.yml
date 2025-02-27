@@ -7,7 +7,7 @@ on:
 jobs:
   rebase-pr:
     if: github.repository == 'robotology/yarp'
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
     - name: Checkout
       uses: actions/checkout@v1
@@ -22,7 +22,7 @@ jobs:
 
   squash-pr:
     if: github.repository == 'robotology/yarp'
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
     - name: Checkout
       uses: actions/checkout@v1

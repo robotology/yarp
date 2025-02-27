@@ -144,7 +144,7 @@ jobs:
   check-tests:
     name: 'Check Devices Tests'
     needs: select_environment
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
     - name: Clone repository
       uses: actions/checkout@v3
