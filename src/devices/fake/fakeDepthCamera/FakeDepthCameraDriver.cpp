@@ -21,8 +21,7 @@ namespace {
 YARP_LOG_COMPONENT(FAKEDEPTHCAMERA, "yarp.device.fakeDepthCamera")
 }
 
-FakeDepthCameraDriver::FakeDepthCameraDriver() :
-    image(nullptr)
+FakeDepthCameraDriver::FakeDepthCameraDriver()
 {}
 
 FakeDepthCameraDriver::~FakeDepthCameraDriver() = default;
@@ -36,7 +35,8 @@ bool FakeDepthCameraDriver::open(Searchable& config)
     cfg.unput("device");
     cfg.put("device", "fakeFrameGrabber");
     testgrabber.open(cfg);
-    testgrabber.view(image);
+    testgrabber.view(iimage);
+    testgrabber.view(ictrls);
 
     return true;
 }
@@ -48,76 +48,83 @@ bool FakeDepthCameraDriver::close()
 
 int FakeDepthCameraDriver::getRgbHeight()
 {
-    return image->height();
+    return iimage->height();
 }
 
 int FakeDepthCameraDriver::getRgbWidth()
 {
-    return image->width();
+    return iimage->width();
 }
 
-bool FakeDepthCameraDriver::getRgbSupportedConfigurations(yarp::sig::VectorOf<CameraConfig> &configurations)
+ReturnValue FakeDepthCameraDriver::getRgbSupportedConfigurations(yarp::sig::VectorOf<CameraConfig> &configurations)
 {
     yCWarning(FAKEDEPTHCAMERA) << "getRgbSupportedConfigurations not implemented yet";
-    return false;
+    return ReturnValue::return_code::return_value_error_not_implemented_by_device;
 }
 
-bool FakeDepthCameraDriver::getRgbResolution(int &width, int &height)
+ReturnValue FakeDepthCameraDriver::getRgbResolution(int &width, int &height)
 {
-    width  = image->width();
-    height = image->height();
-    return true;
+    width  = iimage->width();
+    height = iimage->height();
+    return ReturnValue_ok;
 }
 
-bool FakeDepthCameraDriver::setRgbResolution(int width, int height)
+ReturnValue FakeDepthCameraDriver::setRgbResolution(int width, int height)
 {
-    return false;
+    return ReturnValue::return_code::return_value_error_not_implemented_by_device;
 }
 
-bool FakeDepthCameraDriver::setDepthResolution(int width, int height)
+ReturnValue FakeDepthCameraDriver::getDepthResolution(int &width, int &height)
 {
-    return false;
+    width  = iimage->width();
+    height = iimage->height();
+    return ReturnValue_ok;
 }
 
-bool FakeDepthCameraDriver::setRgbFOV(double horizontalFov, double verticalFov)
+ReturnValue FakeDepthCameraDriver::setDepthResolution(int width, int height)
+{
+    return ReturnValue::return_code::return_value_error_not_implemented_by_device;
+}
+
+ReturnValue FakeDepthCameraDriver::setRgbFOV(double horizontalFov, double verticalFov)
 {
     m_rgb_Hfov = horizontalFov;
     m_rgb_Vfov = verticalFov;
-    return true;
+    return ReturnValue_ok;
 }
 
-bool FakeDepthCameraDriver::setDepthFOV(double horizontalFov, double verticalFov)
+ReturnValue FakeDepthCameraDriver::setDepthFOV(double horizontalFov, double verticalFov)
 {
     m_dep_Hfov = horizontalFov;
     m_dep_Vfov = verticalFov;
-    return true;
+    return ReturnValue_ok;
 }
 
-bool FakeDepthCameraDriver::setDepthAccuracy(double in_accuracy)
+ReturnValue FakeDepthCameraDriver::setDepthAccuracy(double in_accuracy)
 {
     m_accuracy = in_accuracy;
-    return true;
+    return ReturnValue_ok;
 }
 
-bool FakeDepthCameraDriver::getRgbFOV(double &horizontalFov, double &verticalFov)
+ReturnValue FakeDepthCameraDriver::getRgbFOV(double &horizontalFov, double &verticalFov)
 {
     horizontalFov = m_rgb_Hfov;
     verticalFov   = m_rgb_Vfov;
-    return false;
+    return ReturnValue_ok;
 }
 
-bool FakeDepthCameraDriver::getRgbMirroring(bool& mirror)
+ReturnValue FakeDepthCameraDriver::getRgbMirroring(bool& mirror)
 {
     mirror = false;
-    return true;
+    return ReturnValue_ok;
 }
 
-bool FakeDepthCameraDriver::setRgbMirroring(bool mirror)
+ReturnValue FakeDepthCameraDriver::setRgbMirroring(bool mirror)
 {
-    return false;
+    return ReturnValue::return_code::return_value_error_not_implemented_by_device;
 }
 
-bool FakeDepthCameraDriver::getRgbIntrinsicParam(Property& intrinsic)
+ReturnValue FakeDepthCameraDriver::getRgbIntrinsicParam(Property& intrinsic)
 {
     intrinsic.put("physFocalLength", 0.5);
     intrinsic.put("focalLengthX",    512);
@@ -132,27 +139,27 @@ bool FakeDepthCameraDriver::getRgbIntrinsicParam(Property& intrinsic)
     intrinsic.put("k3", 0);
 
     intrinsic.put("stamp", yarp::os::Time::now());
-    return true;
+    return ReturnValue_ok;
 }
 
 int  FakeDepthCameraDriver::getDepthHeight()
 {
-    return image->height();
+    return iimage->height();
 }
 
 int  FakeDepthCameraDriver::getDepthWidth()
 {
-    return image->width();
+    return iimage->width();
 }
 
-bool FakeDepthCameraDriver::getDepthFOV(double& horizontalFov, double& verticalFov)
+ReturnValue FakeDepthCameraDriver::getDepthFOV(double& horizontalFov, double& verticalFov)
 {
     horizontalFov = m_dep_Hfov;
     verticalFov   = m_dep_Vfov;
-    return false;
+    return ReturnValue_ok;
 }
 
-bool FakeDepthCameraDriver::getDepthIntrinsicParam(Property& intrinsic)
+ReturnValue FakeDepthCameraDriver::getDepthIntrinsicParam(Property& intrinsic)
 {
     intrinsic.put("physFocalLength", 0.5);
     intrinsic.put("focalLengthX",    512);
@@ -167,40 +174,41 @@ bool FakeDepthCameraDriver::getDepthIntrinsicParam(Property& intrinsic)
     intrinsic.put("k3", 0);
 
     intrinsic.put("stamp", yarp::os::Time::now());
-    return true;
+    return ReturnValue_ok;
 }
 
-double FakeDepthCameraDriver::getDepthAccuracy()
+ReturnValue FakeDepthCameraDriver::getDepthAccuracy(double& accuracy)
 {
-    return m_accuracy;
+    accuracy = m_accuracy;
+    return ReturnValue_ok;
 }
 
-bool FakeDepthCameraDriver::getDepthClipPlanes(double& nearPlane, double& farPlane)
+ReturnValue FakeDepthCameraDriver::getDepthClipPlanes(double& nearPlane, double& farPlane)
 {
     nearPlane = m_dep_near;
     farPlane  = m_dep_far;
-    return true;
+    return ReturnValue_ok;
 }
 
-bool FakeDepthCameraDriver::setDepthClipPlanes(double nearPlane, double farPlane)
+ReturnValue FakeDepthCameraDriver::setDepthClipPlanes(double nearPlane, double farPlane)
 {
     m_dep_near = nearPlane;
     m_dep_far  = farPlane;
-    return true;
+    return ReturnValue_ok;
 }
 
-bool FakeDepthCameraDriver::getDepthMirroring(bool& mirror)
+ReturnValue FakeDepthCameraDriver::getDepthMirroring(bool& mirror)
 {
     mirror = false;
-    return true;
+    return ReturnValue_ok;
 }
 
-bool FakeDepthCameraDriver::setDepthMirroring(bool mirror)
+ReturnValue FakeDepthCameraDriver::setDepthMirroring(bool _mirror)
 {
-    return false;
+    return ReturnValue::return_code::return_value_error_not_implemented_by_device;
 }
 
-bool FakeDepthCameraDriver::getExtrinsicParam(Matrix& extrinsic)
+ReturnValue FakeDepthCameraDriver::getExtrinsicParam(Matrix& extrinsic)
 {
     extrinsic.resize(4, 4);
     extrinsic.zero();
@@ -209,24 +217,30 @@ bool FakeDepthCameraDriver::getExtrinsicParam(Matrix& extrinsic)
     extrinsic[1][1] = 1;
     extrinsic[2][2] = 1;
     extrinsic[3][3] = 1;
-    return true;
+    return ReturnValue_ok;
 }
 
-bool FakeDepthCameraDriver::getRgbImage(FlexImage& rgbImage, Stamp* timeStamp)
+ReturnValue FakeDepthCameraDriver::getRgbImage(FlexImage& rgbImage, Stamp* timeStamp)
 {
-    if (!image->getImage(imageof)) {return false;}
+    if (!iimage->getImage(imageof))
+    {
+        return ReturnValue::return_code::return_value_error_generic;
+    }
     rgbImage.setPixelCode(VOCAB_PIXEL_RGB);
     rgbImage.resize(imageof);
     memcpy((void*)rgbImage.getRawImage(), (void*)imageof.getRawImage(), imageof.getRawImageSize());
     if (timeStamp) {
         timeStamp->update(yarp::os::Time::now());
     }
-    return true;
+    return ReturnValue_ok;
 }
 
-bool FakeDepthCameraDriver::getDepthImage(ImageOf<PixelFloat>& depthImage, Stamp* timeStamp)
+ReturnValue FakeDepthCameraDriver::getDepthImage(ImageOf<PixelFloat>& depthImage, Stamp* timeStamp)
 {
-    if (!image->getImage(imageof)) {return false;}
+    if (!iimage->getImage(imageof))
+    {
+        return ReturnValue::return_code::return_value_error_generic;
+    }
     depthImage.resize(imageof);
     for (size_t i = 0; i < imageof.width(); i++)
     {
@@ -239,20 +253,100 @@ bool FakeDepthCameraDriver::getDepthImage(ImageOf<PixelFloat>& depthImage, Stamp
     if (timeStamp) {
         timeStamp->update(yarp::os::Time::now());
     }
-    return true;
+    return ReturnValue_ok;
 }
 
-bool FakeDepthCameraDriver::getImages(FlexImage& colorFrame, ImageOf<PixelFloat>& depthFrame, Stamp* colorStamp, Stamp* depthStamp)
+ReturnValue FakeDepthCameraDriver::getImages(FlexImage& colorFrame, ImageOf<PixelFloat>& depthFrame, Stamp* colorStamp, Stamp* depthStamp)
 {
-    return getRgbImage(colorFrame, colorStamp) & getDepthImage(depthFrame, depthStamp);
+    auto r1 = getRgbImage(colorFrame, colorStamp);
+    auto r2 = getDepthImage(depthFrame, depthStamp);
+    return r1 && r2;
 }
 
-IRGBDSensor::RGBDSensor_status FakeDepthCameraDriver::getSensorStatus()
+ReturnValue FakeDepthCameraDriver::getSensorStatus(IRGBDSensor::RGBDSensor_status& status)
 {
-    return RGBD_SENSOR_OK_IN_USE;
+    status = RGBD_SENSOR_OK_IN_USE;
+    return ReturnValue_ok;
 }
 
-std::string FakeDepthCameraDriver::getLastErrorMsg(Stamp* timeStamp)
+ReturnValue FakeDepthCameraDriver::getLastErrorMsg(std::string& msg, Stamp* timeStamp)
 {
-    return "no error";
+    msg = std::string("no error");
+    return ReturnValue_ok;
+}
+
+//---
+ReturnValue FakeDepthCameraDriver::getCameraDescription(yarp::dev::CameraDescriptor& camera)
+{
+    return ictrls->getCameraDescription(camera);
+}
+
+ReturnValue FakeDepthCameraDriver::hasFeature(int feature, bool& hasFeature)
+{
+    return ictrls->hasFeature(feature, hasFeature);
+}
+
+ReturnValue FakeDepthCameraDriver::setFeature(int feature, double value)
+{
+    return ictrls->setFeature(feature, value);
+}
+
+ReturnValue FakeDepthCameraDriver::getFeature(int feature, double& value)
+{
+    return ictrls->getFeature(feature, value);
+}
+
+ReturnValue FakeDepthCameraDriver::setFeature(int feature, double value1, double value2)
+{
+    return ictrls->setFeature(feature, value1,value2);
+}
+
+ReturnValue FakeDepthCameraDriver::getFeature(int feature, double& value1, double& value2)
+{
+    return ictrls->getFeature(feature, value1,value2);
+}
+
+ReturnValue FakeDepthCameraDriver::hasOnOff(int feature, bool& HasOnOff)
+{
+    return ictrls->hasOnOff(feature, HasOnOff);
+}
+
+ReturnValue FakeDepthCameraDriver::setActive(int feature, bool onoff)
+{
+    return ictrls->setActive(feature, onoff);
+}
+
+ReturnValue FakeDepthCameraDriver::getActive(int feature, bool& isActive)
+{
+    return ictrls->getActive(feature, isActive);
+}
+
+ReturnValue FakeDepthCameraDriver::hasAuto(int feature, bool& hasAuto)
+{
+    return ictrls->hasAuto(feature, hasAuto);
+}
+
+ReturnValue FakeDepthCameraDriver::hasManual(int feature, bool& hasManual)
+{
+    return ictrls->hasManual(feature, hasManual);
+}
+
+ReturnValue FakeDepthCameraDriver::hasOnePush(int feature, bool& hasOnePush)
+{
+    return ictrls->hasOnePush(feature, hasOnePush);
+}
+
+ReturnValue FakeDepthCameraDriver::setMode(int feature, yarp::dev::FeatureMode mode)
+{
+    return ictrls->setMode(feature, mode);
+}
+
+ReturnValue FakeDepthCameraDriver::getMode(int feature, yarp::dev::FeatureMode& mode)
+{
+    return ictrls->getMode(feature, mode);
+}
+
+ReturnValue FakeDepthCameraDriver::setOnePush(int feature)
+{
+    return ictrls->setOnePush(feature);
 }

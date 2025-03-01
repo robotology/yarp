@@ -11,8 +11,6 @@
 
 #include <yarp/dev/PolyDriver.h>
 
-#include <yarp/proto/framegrabber/CameraVocabs.h>
-
 namespace {
 YARP_LOG_COMPONENT(FRAMEGRABBER_NWS_YARP, "yarp.device.frameGrabber_nws_yarp")
 } // namespace
@@ -89,71 +87,61 @@ bool FrameGrabber_nws_yarp::open(yarp::os::Searchable& config)
 
 bool FrameGrabber_nws_yarp::attach(yarp::dev::PolyDriver* poly)
 {
-    if (!poly->isValid()) {
+    std::lock_guard lock (m_mutex);
+
+    if (!poly->isValid())
+    {
         yCError(FRAMEGRABBER_NWS_YARP) << "Device " << poly << " to attach to is not valid ... cannot proceed";
         return false;
     }
 
-    poly->view(iRgbVisualParams);
-    poly->view(iFrameGrabberImage);
-    poly->view(iFrameGrabberImageRaw);
-    poly->view(iFrameGrabberControls);
-    poly->view(iFrameGrabberControlsDC1394);
-    poly->view(iPreciselyTimed);
+    //Interfaces with RPC
+    poly->view(m_iRgbVisualParams);
+    poly->view(m_iFrameGrabberControls);
+    poly->view(m_iFrameGrabberControlsDC1394);
+
+    //these three interfaces do not need RPC (streaming mode)
+    poly->view(m_iFrameGrabberImage);
+    poly->view(m_iFrameGrabberImageRaw);
+    poly->view(m_iPreciselyTimed);
 
     switch (m_cap) {
     case COLOR: {
-        if (iFrameGrabberImage == nullptr) {
+        if (m_iFrameGrabberImage == nullptr) {
             yCError(FRAMEGRABBER_NWS_YARP) << "Capability \"COLOR\" required not supported";
             return false;
         }
     } break;
     case RAW: {
-        if (iFrameGrabberImageRaw == nullptr) {
+        if (m_iFrameGrabberImageRaw == nullptr) {
             yCError(FRAMEGRABBER_NWS_YARP) << "Capability \"RAW\" required not supported";
             return false;
         }
     }
     }
 
-    if (iRgbVisualParams == nullptr) {
+    if (m_iRgbVisualParams == nullptr) {
         yCWarning(FRAMEGRABBER_NWS_YARP) << "Targets has not IVisualParamInterface, some features cannot be available";
     }
 
     // Configuring parsers
-    if (iFrameGrabberImage != nullptr) {
-        if (!(frameGrabberImage_Responder.configure(iFrameGrabberImage))) {
+    if (m_iFrameGrabberImage != nullptr) {
+        if (!(frameGrabberImage_Responder.configure(m_iFrameGrabberImage))) {
             yCError(FRAMEGRABBER_NWS_YARP) << "Error configuring interfaces for parsers";
             return false;
         }
     }
 
-    if (iFrameGrabberImageRaw != nullptr) {
-        if (!(frameGrabberImageRaw_Responder.configure(iFrameGrabberImageRaw))) {
+    if (m_iFrameGrabberImageRaw != nullptr) {
+        if (!(frameGrabberImageRaw_Responder.configure(m_iFrameGrabberImageRaw))) {
             yCError(FRAMEGRABBER_NWS_YARP) << "Error configuring interfaces for parsers";
             return false;
         }
     }
 
-    if (iRgbVisualParams != nullptr) {
-        if (!(rgbVisualParams_Responder.configure(iRgbVisualParams))) {
-            yCError(FRAMEGRABBER_NWS_YARP) << "Error configuring interfaces for parsers";
-            return false;
-        }
-    }
-    if (iFrameGrabberControls != nullptr) {
-        if (!(frameGrabberControls_Responder.configure(iFrameGrabberControls))) {
-            yCError(FRAMEGRABBER_NWS_YARP) << "Error configuring interfaces for parsers";
-            return false;
-        }
-    }
-
-    if (iFrameGrabberControlsDC1394 != nullptr) {
-        if (!(frameGrabberControlsDC1394_Responder.configure(iFrameGrabberControlsDC1394))) {
-            yCError(FRAMEGRABBER_NWS_YARP) << "Error configuring interfaces for parsers";
-            return false;
-        }
-    }
+    m_RPC_RGBVisualParams = new IRGBVisualParamsMsgsRPCd(m_iRgbVisualParams);
+    m_RPC_FrameGrabControls = new IFrameGrabberControlMsgsRPCd(m_iFrameGrabberControls);
+    m_RPC_FrameGrabControlsDC1394 = new IFrameGrabberControlDC1394MsgsRPCd(m_iFrameGrabberControlsDC1394);
 
     return PeriodicThread::start();
 }
@@ -161,17 +149,35 @@ bool FrameGrabber_nws_yarp::attach(yarp::dev::PolyDriver* poly)
 
 bool FrameGrabber_nws_yarp::detach()
 {
+    std::lock_guard lock (m_mutex);
+
     if (yarp::os::PeriodicThread::isRunning()) {
         yarp::os::PeriodicThread::stop();
     }
 
-    iRgbVisualParams = nullptr;
-    iFrameGrabberImage = nullptr;
-    iFrameGrabberImageRaw = nullptr;
-    iFrameGrabberControls = nullptr;
-    iFrameGrabberControlsDC1394 = nullptr;
-    iPreciselyTimed = nullptr;
+    if (m_RPC_RGBVisualParams)
+    {
+        delete m_RPC_RGBVisualParams;
+        m_RPC_RGBVisualParams = nullptr;
+    }
+    if (m_RPC_FrameGrabControls)
+    {
+        delete m_RPC_FrameGrabControls;
+        m_RPC_FrameGrabControls = nullptr;
+    }
+    if (m_RPC_FrameGrabControlsDC1394)
+    {
+        delete m_RPC_FrameGrabControlsDC1394;
+        m_RPC_FrameGrabControlsDC1394 = nullptr;
+    }
 
+    m_iFrameGrabberImage = nullptr;
+    m_iFrameGrabberImageRaw = nullptr;
+    m_iPreciselyTimed = nullptr;
+    m_iRgbVisualParams = nullptr;
+    m_iFrameGrabberControls = nullptr;
+    m_iFrameGrabberControlsDC1394 = nullptr;
+    
     return true;
 }
 
@@ -196,9 +202,10 @@ void FrameGrabber_nws_yarp::run()
 
     yarp::sig::FlexImage& flex_i = pImg.prepare();
 
-    if (m_cap == COLOR) {
-        if (iFrameGrabberImage != nullptr) {
-            if (iFrameGrabberImage->getImage(*img))
+    if (m_cap == COLOR)
+    {
+        if (m_iFrameGrabberImage != nullptr) {
+            if (m_iFrameGrabberImage->getImage(*img))
                 {flex_i.swap(*img);}
             else
                 {yCError(FRAMEGRABBER_NWS_YARP) << "Image not captured (getImage failed). Check hardware configuration.";}
@@ -207,9 +214,10 @@ void FrameGrabber_nws_yarp::run()
         }
     }
 
-    if (m_cap == RAW) {
-        if (iFrameGrabberImageRaw != nullptr) {
-            if (iFrameGrabberImageRaw->getImage(*img_Raw))
+    if (m_cap == RAW)
+    {
+        if (m_iFrameGrabberImageRaw != nullptr) {
+            if (m_iFrameGrabberImageRaw->getImage(*img_Raw))
                 {flex_i.swap(*img_Raw);}
             else
                 {yCError(FRAMEGRABBER_NWS_YARP) << "Image not captured (getImage failed). Check hardware configuration.";}
@@ -218,8 +226,9 @@ void FrameGrabber_nws_yarp::run()
         }
     }
 
-    if (iPreciselyTimed) {
-        m_stamp = iPreciselyTimed->getLastInputStamp();
+    if (m_iPreciselyTimed)
+    {
+        m_stamp = m_iPreciselyTimed->getLastInputStamp();
     } else {
         m_stamp.update(yarp::os::Time::now());
     }
@@ -229,25 +238,28 @@ void FrameGrabber_nws_yarp::run()
 }
 
 // Respond to the RPC calls
-bool FrameGrabber_nws_yarp::respond(const yarp::os::Bottle& command,
-                                    yarp::os::Bottle& reply)
+bool FrameGrabber_nws_yarp::read(yarp::os::ConnectionReader& connection)
 {
-    yarp::conf::vocab32_t code = command.get(0).asVocab32();
-    switch (code) {
-    case VOCAB_FRAMEGRABBER_IMAGE:
-        return frameGrabberImage_Responder.respond(command, reply);
-    case VOCAB_FRAMEGRABBER_IMAGERAW:
-        return frameGrabberImageRaw_Responder.respond(command, reply);
-    case VOCAB_FRAMEGRABBER_CONTROL:
-        return frameGrabberControls_Responder.respond(command, reply);
-    case VOCAB_RGB_VISUAL_PARAMS:
-        return rgbVisualParams_Responder.respond(command, reply);
-    case VOCAB_FRAMEGRABBER_CONTROL_DC1394:
-        return frameGrabberControlsDC1394_Responder.respond(command, reply);
-    default:
-        yCError(FRAMEGRABBER_NWS_YARP) << "Command not recognized" << command.toString();
-        return false;
+    if (!connection.isValid()) { return false;}
+    if (!m_RPC_RGBVisualParams) { return false;}
+    if (!m_RPC_FrameGrabControls) { return false;}
+    if (!m_RPC_FrameGrabControlsDC1394) { return false;}
+
+    std::lock_guard<std::mutex> lock(m_mutex);
+
+    if (m_RPC_FrameGrabControls->read(connection))
+    {
+        return true;
+    }
+    else if (m_RPC_FrameGrabControlsDC1394->read(connection))
+    {
+        return true;
+    }
+    else if (m_RPC_RGBVisualParams-read(connection))
+    {
+        return true;
     }
 
+    yCError(FRAMEGRABBER_NWS_YARP) << "read() Command failed";
     return false;
 }
