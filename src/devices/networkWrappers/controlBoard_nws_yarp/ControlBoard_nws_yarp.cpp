@@ -397,9 +397,9 @@ void ControlBoard_nws_yarp::run()
     if (iMotor) {
         // the temperature is a double in the interface, but a float in the jointData struct.
         data.temperature_isValid = iMotor->getTemperatures(tmpVariableForFloatSignals.data());
-        
+
         // The temperature values are stored as double in the interface but need to be converted to float in the jointData struct.
-        // We manually copy them, and while this conversion may lead to a minor loss of precision, it is negligible for temperature values, 
+        // We manually copy them, and while this conversion may lead to a minor loss of precision, it is negligible for temperature values,
         // which typically do not require double precision. std::copy ensures a safe and efficient conversion.
         std::copy(tmpVariableForFloatSignals.begin(), tmpVariableForFloatSignals.end(), data.temperature.begin());
     } else {
