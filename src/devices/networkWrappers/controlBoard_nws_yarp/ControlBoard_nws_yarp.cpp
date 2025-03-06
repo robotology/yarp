@@ -365,9 +365,13 @@ void ControlBoard_nws_yarp::run()
     data.motorAcceleration.resize(subdevice_joints);
     data.torque.resize(subdevice_joints);
     data.pwmDutycycle.resize(subdevice_joints);
+    data.temperature.resize(subdevice_joints);
     data.current.resize(subdevice_joints);
     data.controlMode.resize(subdevice_joints);
     data.interactionMode.resize(subdevice_joints);
+
+    // resize the temporary vector
+    tmpVariableForFloatSignals.resize(subdevice_joints);
 
     // Get data from HW
     if (iEncodersTimed) {
@@ -390,6 +394,18 @@ void ControlBoard_nws_yarp::run()
         data.motorAcceleration_isValid = false;
     }
 
+    if (iMotor) {
+        // the temperature is a double in the interface, but a float in the jointData struct.
+        data.temperature_isValid = iMotor->getTemperatures(tmpVariableForFloatSignals.data());
+        
+        // The temperature values are stored as double in the interface but need to be converted to float in the jointData struct.
+        // We manually copy them, and while this conversion may lead to a minor loss of precision, it is negligible for temperature values, 
+        // which typically do not require double precision. std::copy ensures a safe and efficient conversion.
+        std::copy(tmpVariableForFloatSignals.begin(), tmpVariableForFloatSignals.end(), data.temperature.begin());
+    } else {
+        data.temperature_isValid = false;
+    }
+
     if (iTorqueControl) {
         data.torque_isValid = iTorqueControl->getTorques(data.torque.data());
     } else {
@@ -397,7 +413,13 @@ void ControlBoard_nws_yarp::run()
     }
 
     if (iPWMControl) {
-        data.pwmDutycycle_isValid = iPWMControl->getDutyCycles(data.pwmDutycycle.data());
+        // the pwmDutycycle is a double in the interface, but a float in the jointData struct.
+        data.pwmDutycycle_isValid = iPWMControl->getDutyCycles(tmpVariableForFloatSignals.data());
+
+        // The pwmDutycycle values are stored as double in the interface but need to be converted to float in the jointData struct.
+        // We manually copy them, and while this conversion may lead to a minor loss of precision, it is negligible for pwmDutycycle values,
+        // which typically do not require double precision. std::copy ensures a safe and efficient conversion.
+        std::copy(tmpVariableForFloatSignals.begin(), tmpVariableForFloatSignals.end(), data.pwmDutycycle.begin());
     } else {
         data.pwmDutycycle_isValid = false;
     }
