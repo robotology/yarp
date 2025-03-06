@@ -3,6 +3,7 @@
 
 add_subdirectory(fakeDepthCamera)
 add_subdirectory(fakebot)
+add_subdirectory(fakeCartesianControl)
 add_subdirectory(fakeChatBotDevice)
 add_subdirectory(fakeMotionControl)
 add_subdirectory(fakeMotionControlMicro)
