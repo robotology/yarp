@@ -46,6 +46,7 @@ const std::map<int, std::string> tag2FormatStr = {
     {BOTTLE_TAG_VOCAB32, "c"},
     {BOTTLE_TAG_STRING, "s"},
     {BOTTLE_TAG_FLOAT64, "lf"},
+    {BOTTLE_TAG_FLOAT32, "f"}
 };
 
 bool VectorBase::read(yarp::os::ConnectionReader& connection) {

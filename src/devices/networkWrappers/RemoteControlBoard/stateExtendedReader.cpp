@@ -62,6 +62,7 @@ void StateExtendedInputPort::init(int numberOfJoints)
     last.motorAcceleration.resize(numberOfJoints);
     last.torque.resize(numberOfJoints);
     last.pwmDutycycle.resize(numberOfJoints);
+    last.temperature.resize(numberOfJoints);
     last.current.resize(numberOfJoints);
     last.controlMode.resize(numberOfJoints);
     last.interactionMode.resize(numberOfJoints);
@@ -146,13 +147,19 @@ bool StateExtendedInputPort::getLastSingle(int j, int field, double *data, Stamp
 
             case VOCAB_PWMCONTROL_PWM_OUTPUT:
                 ret = last.pwmDutycycle_isValid;
-                *data = last.pwmDutycycle[j];
+                *data = double(last.pwmDutycycle[j]);
             break;
 
             case VOCAB_AMP_CURRENT:
                 ret = last.current_isValid;
                 *data = last.current[j];
                 break;
+
+            case VOCAB_TEMPERATURE:
+                ret = last.temperature_isValid;
+                *data = double(last.temperature[j]);
+                break;
+
 
             default:
                 yCError(REMOTECONTROLBOARD) << "RemoteControlBoard internal error while reading data. Cannot get 'single' data of type " << yarp::os::Vocab32::decode(field);
@@ -247,12 +254,25 @@ bool StateExtendedInputPort::getLastVector(int field, double* data, Stamp& stamp
 
             case VOCAB_PWMCONTROL_PWM_OUTPUTS:
                 ret = last.pwmDutycycle_isValid;
-                memcpy(data, last.pwmDutycycle.data(), last.pwmDutycycle.size() * last.pwmDutycycle.getElementSize());
+
+                // In the interface the pwmDutycycle is a double, but in the jointData it is a float so we need to copy it manually
+                for (size_t i = 0; i < last.pwmDutycycle.size(); i++) {
+                    data[i] = last.pwmDutycycle[i];
+                }
             break;
 
             case VOCAB_AMP_CURRENTS:
                 ret = last.current_isValid;
                 memcpy(data, last.current.data(), last.current.size() * last.current.getElementSize());
+                break;
+
+            case VOCAB_TEMPERATURES:
+                ret = last.temperature_isValid;
+
+                // In the interface the temperature is a double, but in the jointData it is a float so we need to copy it manually
+                for (size_t i = 0; i < last.temperature.size(); i++) {
+                    data[i] = last.temperature[i];
+                }
                 break;
 
             default:
