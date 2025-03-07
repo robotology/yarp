@@ -16,7 +16,6 @@
 
 #include <yarp/dev/IRGBDSensor.h>
 #include <yarp/dev/IFrameGrabberImage.h>
-#include <yarp/dev/IFrameGrabberControls.h>
 
 #include "FakeDepthCameraDriver_ParamsParser.h"
 
@@ -33,7 +32,6 @@
 class FakeDepthCameraDriver :
         public yarp::dev::DeviceDriver,
         public yarp::dev::IRGBDSensor,
-        public yarp::dev::IFrameGrabberControls,
         public FakeDepthCameraDriver_ParamsParser
 {
 private:
@@ -53,7 +51,7 @@ public:
     // IRGBDSensor
     int    getRgbHeight() override;
     int    getRgbWidth() override;
-    yarp::dev::ReturnValue   getRgbSupportedConfigurations(yarp::sig::VectorOf<yarp::dev::CameraConfig>& configurations) override;
+    yarp::dev::ReturnValue   getRgbSupportedConfigurations(std::vector<yarp::dev::CameraConfig>& configurations) override;
     yarp::dev::ReturnValue   getRgbResolution(int& width, int& height) override;
     yarp::dev::ReturnValue   setRgbResolution(int width, int height) override;
     yarp::dev::ReturnValue   getRgbFOV(double& horizontalFov, double& verticalFov) override;
@@ -84,27 +82,18 @@ public:
     yarp::dev::ReturnValue getSensorStatus(RGBDSensor_status& status) override;
     yarp::dev::ReturnValue getLastErrorMsg(std::string& mesg, Stamp* timeStamp = nullptr) override;
 
-    //IFrameGrabberControls
-    yarp::dev::ReturnValue getCameraDescription(yarp::dev::CameraDescriptor& camera) override;
-    yarp::dev::ReturnValue hasFeature(int feature, bool& hasFeature) override;
-    yarp::dev::ReturnValue setFeature(int feature, double value) override;
-    yarp::dev::ReturnValue getFeature(int feature, double&value) override;
-    yarp::dev::ReturnValue setFeature(int feature, double  value1, double  value2) override;
-    yarp::dev::ReturnValue getFeature(int feature, double& value1, double& value2) override;
-    yarp::dev::ReturnValue hasOnOff(int feature, bool& HasOnOff) override;
-    yarp::dev::ReturnValue setActive(int feature, bool onoff) override;
-    yarp::dev::ReturnValue getActive(int feature, bool& isActive) override;
-    yarp::dev::ReturnValue hasAuto(int feature, bool& hasAuto) override;
-    yarp::dev::ReturnValue hasManual(int feature, bool& hasManual) override;
-    yarp::dev::ReturnValue hasOnePush(int feature, bool& hasOnePush) override;
-    yarp::dev::ReturnValue setMode(int feature, yarp::dev::FeatureMode mode) override;
-    yarp::dev::ReturnValue getMode(int feature, yarp::dev::FeatureMode& mode) override;
-    yarp::dev::ReturnValue setOnePush(int feature) override;
-
 private:
-    yarp::sig::ImageOf<yarp::sig::PixelRgb> imageof;
-    yarp::dev::PolyDriver                   testgrabber;
-    yarp::dev::IFrameGrabberImage*          iimage = nullptr;
-    yarp::dev::IFrameGrabberControls*       ictrls = nullptr;
+    FlexImage                  m_rgbImage;
+    depthImage                 m_depthImage;
+    bool m_depth_mirror                            = false;
+    bool m_rgb_mirror                              = false;
+    size_t m_rgb_width = 8;
+    size_t m_rgb_height = 8;
+    size_t m_depth_width = 8;
+    size_t m_depth_height = 8;
+    void regenerate_rgb_image();
+    void regenerate_depth_image();
+
 };
+
 #endif // YARP_FAKEDEPTHCAMERADRIVER_H

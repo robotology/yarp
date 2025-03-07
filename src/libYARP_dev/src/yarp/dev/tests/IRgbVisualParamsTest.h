@@ -97,7 +97,7 @@ namespace yarp::dev::tests
 
         // checking configurations size
         {
-            VectorOf<CameraConfig> configurations;
+            std::vector<CameraConfig> configurations;
             CHECK(irgb->getRgbSupportedConfigurations(configurations));
             CHECK(configurations.size() == 3);
 

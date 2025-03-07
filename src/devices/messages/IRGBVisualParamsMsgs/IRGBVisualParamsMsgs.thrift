@@ -15,12 +15,6 @@ struct yCameraConfig {
   yarp.includefile = "yarp/dev/IRGBVisualParams.h"
 )
 
-struct yVectorOfCameraConfig {
-} (
-  yarp.name = "yarp::sig::VectorOf<yarp::dev::CameraConfig>"
-  yarp.includefile = "yarp/dev/IRGBVisualParams.h"
-)
-
 struct yProperty {
 } (
   yarp.name = "yarp::os::Property"
@@ -47,7 +41,7 @@ struct return_getRgbResolution {
 
 struct return_getRgbSupportedCfg {
   1: yReturnValue ret;
-  2: yVectorOfCameraConfig configuration;
+  2: list<yCameraConfig> configuration;
 }
 
 struct return_getRgbFOV {

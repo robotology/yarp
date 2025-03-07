@@ -207,7 +207,7 @@ namespace yarp::dev::tests
         }
         {
             ReturnValue r;
-            yarp::sig::VectorOf<yarp::dev::CameraConfig> cfg;
+            std::vector<yarp::dev::CameraConfig> cfg;
             r = irgbd->getRgbSupportedConfigurations(cfg);
             CHECK(r);
             CHECK(cfg.size()>0);
