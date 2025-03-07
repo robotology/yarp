@@ -80,35 +80,7 @@ bool RGBDSensorClient::open(yarp::os::Searchable& config)
         return false;
     }
 
-    //1
-    if (!m_depth_params_RPC.yarp().attachAsClient(m_rpcPort))
-    {
-        yCError(RGBDSENSORCLIENT, "Error! Cannot attach the port as a client");
-        m_colorFrame_StreamingPort.close();
-        m_depthFrame_StreamingPort.close();
-        m_rpcPort.close();
-        return false;
-    }
-    //2
-    if (!m_rgb_params_RPC.yarp().attachAsClient(m_rpcPort))
-    {
-        yCError(RGBDSENSORCLIENT, "Error! Cannot attach the port as a client");
-        m_colorFrame_StreamingPort.close();
-        m_depthFrame_StreamingPort.close();
-        m_rpcPort.close();
-        return false;
-    }
-    //3
-    if (!m_rgbd_RPC.yarp().attachAsClient(m_rpcPort))
-    {
-        yCError(RGBDSENSORCLIENT, "Error! Cannot attach the port as a client");
-        m_colorFrame_StreamingPort.close();
-        m_depthFrame_StreamingPort.close();
-        m_rpcPort.close();
-        return false;
-    }
-    //4
-    if (!m_controls_RPC.yarp().attachAsClient(m_rpcPort))
+    if (!m_rgbdsensor_RPC.yarp().attachAsClient(m_rpcPort))
     {
         yCError(RGBDSENSORCLIENT, "Error! Cannot attach the port as a client");
         m_colorFrame_StreamingPort.close();
@@ -162,7 +134,7 @@ bool RGBDSensorClient::close()
 ReturnValue RGBDSensorClient::getExtrinsicParam(yarp::sig::Matrix &extrinsic)
 {
     std::lock_guard <std::mutex> lg(m_mutex);
-    auto r = m_rgbd_RPC.getExtrinsicParamRPC();
+    auto r = m_rgbdsensor_RPC.getExtrinsicParamRPC();
     extrinsic = r.matrix;
     return r.ret;
 }
@@ -171,7 +143,7 @@ ReturnValue RGBDSensorClient::getExtrinsicParam(yarp::sig::Matrix &extrinsic)
 ReturnValue RGBDSensorClient::getSensorStatus(IRGBDSensor::RGBDSensor_status& status)
 {
     std::lock_guard <std::mutex> lg(m_mutex);
-    return_getSensorStatus r = m_rgbd_RPC.getSensorStatusRPC();
+    auto r = m_rgbdsensor_RPC.getSensorStatusRPC();
     status = r.status;
     return r.ret;
 }
@@ -180,7 +152,7 @@ ReturnValue RGBDSensorClient::getSensorStatus(IRGBDSensor::RGBDSensor_status& st
 ReturnValue RGBDSensorClient::getLastErrorMsg(std::string& mesg, yarp::os::Stamp* timeStamp)
 {
     std::lock_guard <std::mutex> lg(m_mutex);
-    return_getLastErrorMsg r = m_rgbd_RPC.getLastErrorMsgRPC();
+    auto r = m_rgbdsensor_RPC.getLastErrorMsgRPC();
     mesg = r.errorMsg;
     if (timeStamp) {
         *timeStamp = r.stamp;
@@ -233,21 +205,21 @@ ReturnValue RGBDSensorClient::getImages(FlexImage &rgbImage, ImageOf<PixelFloat>
 int RGBDSensorClient::getRgbHeight()
 {
     std::lock_guard <std::mutex> lg(m_mutex);
-    auto r = m_rgb_params_RPC.getRgbHeightRPC();
+    auto r = m_rgbdsensor_RPC.getRgbHeightRPC();
     return r.height;
 }
 
 int RGBDSensorClient::getRgbWidth()
 {
     std::lock_guard <std::mutex> lg(m_mutex);
-    auto r = m_rgb_params_RPC.getRgbWidthRPC();
+    auto r = m_rgbdsensor_RPC.getRgbWidthRPC();
     return r.width;
 }
 
-ReturnValue RGBDSensorClient::getRgbSupportedConfigurations(yarp::sig::VectorOf<CameraConfig> &configurations)
+ReturnValue RGBDSensorClient::getRgbSupportedConfigurations(std::vector<CameraConfig> &configurations)
 {
     std::lock_guard <std::mutex> lg(m_mutex);
-    auto r = m_rgb_params_RPC.getRgbSupportedConfigurationsRPC();
+    auto r = m_rgbdsensor_RPC.getRgbSupportedConfigurationsRPC();
     configurations = r.configuration;
     return r.ret;
 }
@@ -255,7 +227,7 @@ ReturnValue RGBDSensorClient::getRgbSupportedConfigurations(yarp::sig::VectorOf<
 ReturnValue RGBDSensorClient::getRgbResolution(int &width, int &height)
 {
     std::lock_guard <std::mutex> lg(m_mutex);
-    auto r = m_rgb_params_RPC.getRgbResolutionRPC();
+    auto r = m_rgbdsensor_RPC.getRgbResolutionRPC();
     height = r.height;
     width = r.width;
     return r.ret;
@@ -264,14 +236,14 @@ ReturnValue RGBDSensorClient::getRgbResolution(int &width, int &height)
 ReturnValue RGBDSensorClient::setRgbResolution(int width, int height)
 {
     std::lock_guard <std::mutex> lg(m_mutex);
-    auto r = m_rgb_params_RPC.setRgbResolutionRPC(width, height);
+    auto r = m_rgbdsensor_RPC.setRgbResolutionRPC(width, height);
     return r;
 }
 
 ReturnValue RGBDSensorClient::getRgbFOV(double &horizontalFov, double &verticalFov)
 {
     std::lock_guard <std::mutex> lg(m_mutex);
-    auto r = m_rgb_params_RPC.getRgbFOVRPC();
+    auto r = m_rgbdsensor_RPC.getRgbFOVRPC();
     horizontalFov = r.horizontalFov;
     verticalFov = r.verticalFOV;
     return r.ret;
@@ -280,14 +252,14 @@ ReturnValue RGBDSensorClient::getRgbFOV(double &horizontalFov, double &verticalF
 ReturnValue RGBDSensorClient::setRgbFOV(double horizontalFov, double verticalFov)
 {
     std::lock_guard <std::mutex> lg(m_mutex);
-    auto r = m_rgb_params_RPC.setRgbFOVRPC(horizontalFov, verticalFov);
+    auto r = m_rgbdsensor_RPC.setRgbFOVRPC(horizontalFov, verticalFov);
     return r;
 }
 
 ReturnValue RGBDSensorClient::getRgbIntrinsicParam(yarp::os::Property &intrinsic)
 {
     std::lock_guard <std::mutex> lg(m_mutex);
-    auto r =  m_rgb_params_RPC.getRgbIntrinsicParamRPC();
+    auto r =  m_rgbdsensor_RPC.getRgbIntrinsicParamRPC();
     intrinsic = r.params;
     return r.ret;
 }
@@ -295,7 +267,7 @@ ReturnValue RGBDSensorClient::getRgbIntrinsicParam(yarp::os::Property &intrinsic
 ReturnValue RGBDSensorClient::getRgbMirroring(bool& mirror)
 {
     std::lock_guard <std::mutex> lg(m_mutex);
-    auto r= m_rgb_params_RPC.getRgbMirroringRPC();
+    auto r= m_rgbdsensor_RPC.getRgbMirroringRPC();
     mirror = r.mirror;
     return r.ret;
 }
@@ -303,7 +275,7 @@ ReturnValue RGBDSensorClient::getRgbMirroring(bool& mirror)
 ReturnValue RGBDSensorClient::setRgbMirroring(bool mirror)
 {
     std::lock_guard <std::mutex> lg(m_mutex);
-    auto r = m_rgb_params_RPC.setRgbMirroringRPC(mirror);
+    auto r = m_rgbdsensor_RPC.setRgbMirroringRPC(mirror);
     return r;
 }
 
@@ -313,21 +285,21 @@ ReturnValue RGBDSensorClient::setRgbMirroring(bool mirror)
 int RGBDSensorClient::getDepthHeight()
 {
     std::lock_guard <std::mutex> lg(m_mutex);
-    auto r = m_depth_params_RPC.getDepthHeightRPC();
+    auto r = m_rgbdsensor_RPC.getDepthHeightRPC();
     return r.height;
 }
 
 int RGBDSensorClient::getDepthWidth()
 {
     std::lock_guard <std::mutex> lg(m_mutex);
-    auto r = m_depth_params_RPC.getDepthWidthRPC();
+    auto r = m_rgbdsensor_RPC.getDepthWidthRPC();
     return r.width;
 }
 
 ReturnValue RGBDSensorClient::getDepthResolution(int &width, int &height)
 {
     std::lock_guard <std::mutex> lg(m_mutex);
-    auto r = m_depth_params_RPC.getDepthResolutionRPC();
+    auto r = m_rgbdsensor_RPC.getDepthResolutionRPC();
     height = r.height;
     width = r.width;
     return r.ret;
@@ -336,14 +308,14 @@ ReturnValue RGBDSensorClient::getDepthResolution(int &width, int &height)
 ReturnValue RGBDSensorClient::setDepthResolution(int width, int height)
 {
     std::lock_guard<std::mutex> lg(m_mutex);
-    auto r = m_depth_params_RPC.setDepthResolutionRPC(width, height);
+    auto r = m_rgbdsensor_RPC.setDepthResolutionRPC(width, height);
     return r;
 }
 
 ReturnValue RGBDSensorClient::getDepthFOV(double &horizontalFov, double &verticalFov)
 {
     std::lock_guard<std::mutex> lg(m_mutex);
-    auto r = m_depth_params_RPC.getDepthFOVRPC();
+    auto r = m_rgbdsensor_RPC.getDepthFOVRPC();
     horizontalFov = r.horizontalFov;
     verticalFov = r.verticalFOV;
     return r.ret;
@@ -352,14 +324,14 @@ ReturnValue RGBDSensorClient::getDepthFOV(double &horizontalFov, double &vertica
 ReturnValue RGBDSensorClient::setDepthFOV(double horizontalFov, double verticalFov)
 {
     std::lock_guard<std::mutex> lg(m_mutex);
-    auto r = m_depth_params_RPC.setDepthFOVRPC(horizontalFov, verticalFov);
+    auto r = m_rgbdsensor_RPC.setDepthFOVRPC(horizontalFov, verticalFov);
     return r;
 }
 
 ReturnValue RGBDSensorClient::getDepthAccuracy(double& accuracy)
 {
     std::lock_guard<std::mutex> lg(m_mutex);
-    auto r = m_depth_params_RPC.getDepthAccuracyRPC();
+    auto r = m_rgbdsensor_RPC.getDepthAccuracyRPC();
     accuracy = r.accuracy;
     return r.ret;
 }
@@ -367,14 +339,14 @@ ReturnValue RGBDSensorClient::getDepthAccuracy(double& accuracy)
 ReturnValue RGBDSensorClient::setDepthAccuracy(double accuracy)
 {
     std::lock_guard<std::mutex> lg(m_mutex);
-    auto r = m_depth_params_RPC.setDepthAccuracyRPC(accuracy);
+    auto r = m_rgbdsensor_RPC.setDepthAccuracyRPC(accuracy);
     return r;
 }
 
 ReturnValue RGBDSensorClient::getDepthClipPlanes(double &nearPlane, double &farPlane)
 {
     std::lock_guard<std::mutex> lg(m_mutex);
-    auto r = m_depth_params_RPC.getDepthClipPlanesRPC();
+    auto r = m_rgbdsensor_RPC.getDepthClipPlanesRPC();
     nearPlane = r.nearPlane;
     farPlane = r.farPlane;
     return r.ret;
@@ -383,14 +355,14 @@ ReturnValue RGBDSensorClient::getDepthClipPlanes(double &nearPlane, double &farP
 ReturnValue RGBDSensorClient::setDepthClipPlanes(double nearPlane, double farPlane)
 {
     std::lock_guard<std::mutex> lg(m_mutex);
-    auto r = m_depth_params_RPC.setDepthClipPlanesRPC(nearPlane, farPlane);
+    auto r = m_rgbdsensor_RPC.setDepthClipPlanesRPC(nearPlane, farPlane);
     return r;
 }
 
 ReturnValue RGBDSensorClient::getDepthIntrinsicParam(yarp::os::Property &intrinsic)
 {
     std::lock_guard<std::mutex> lg(m_mutex);
-    auto r = m_depth_params_RPC.getDepthIntrinsicParamRPC();
+    auto r = m_rgbdsensor_RPC.getDepthIntrinsicParamRPC();
     intrinsic = r.params;
     return r.ret;
 }
@@ -398,7 +370,7 @@ ReturnValue RGBDSensorClient::getDepthIntrinsicParam(yarp::os::Property &intrins
 ReturnValue RGBDSensorClient::getDepthMirroring(bool& mirror)
 {
     std::lock_guard<std::mutex> lg(m_mutex);
-    auto r = m_depth_params_RPC.getDepthMirroringRPC();
+    auto r = m_rgbdsensor_RPC.getDepthMirroringRPC();
     mirror = r.mirror;
     return r.ret;
 }
@@ -406,7 +378,7 @@ ReturnValue RGBDSensorClient::getDepthMirroring(bool& mirror)
 ReturnValue RGBDSensorClient::setDepthMirroring(bool mirror)
 {
     std::lock_guard<std::mutex> lg(m_mutex);
-    auto r = m_depth_params_RPC.setDepthMirroringRPC(mirror);
+    auto r = m_rgbdsensor_RPC.setDepthMirroringRPC(mirror);
     return r;
 }
 
@@ -416,7 +388,7 @@ ReturnValue RGBDSensorClient::setDepthMirroring(bool mirror)
 ReturnValue RGBDSensorClient::getCameraDescription(yarp::dev::CameraDescriptor& camera)
 {
     std::lock_guard<std::mutex> lg(m_mutex);
-    auto r = m_controls_RPC.getCameraDescriptionRPC();
+    auto r = m_rgbdsensor_RPC.getCameraDescriptionRPC();
     camera.busType = r.camera.busType;
     camera.deviceDescription = r.camera.deviceDescription;
     return r.ret;
@@ -425,7 +397,7 @@ ReturnValue RGBDSensorClient::getCameraDescription(yarp::dev::CameraDescriptor& 
 ReturnValue RGBDSensorClient::hasFeature(int feature, bool& hasFeature)
 {
     std::lock_guard<std::mutex> lg(m_mutex);
-    auto r = m_controls_RPC.hasFeatureRPC(feature);
+    auto r = m_rgbdsensor_RPC.hasFeatureRPC(feature);
     hasFeature = r.hasFeature;
     return r.ret;
 }
@@ -433,14 +405,14 @@ ReturnValue RGBDSensorClient::hasFeature(int feature, bool& hasFeature)
 ReturnValue RGBDSensorClient::setFeature(int feature, double value)
 {
     std::lock_guard<std::mutex> lg(m_mutex);
-    auto r = m_controls_RPC.setFeature1RPC(feature,value);
+    auto r = m_rgbdsensor_RPC.setFeature1RPC(feature,value);
     return r;
 }
 
 ReturnValue RGBDSensorClient::getFeature(int feature, double& value)
 {
     std::lock_guard<std::mutex> lg(m_mutex);
-    auto r = m_controls_RPC.getFeature1RPC(feature);
+    auto r = m_rgbdsensor_RPC.getFeature1RPC(feature);
     value = r.value;
     return r.ret;
 }
@@ -448,14 +420,14 @@ ReturnValue RGBDSensorClient::getFeature(int feature, double& value)
 ReturnValue RGBDSensorClient::setFeature(int feature, double value1, double value2)
 {
     std::lock_guard<std::mutex> lg(m_mutex);
-    auto r = m_controls_RPC.setFeature2RPC(feature,value1,value2);
+    auto r = m_rgbdsensor_RPC.setFeature2RPC(feature,value1,value2);
     return r;
 }
 
 ReturnValue RGBDSensorClient::getFeature(int feature, double& value1, double& value2)
 {
     std::lock_guard<std::mutex> lg(m_mutex);
-    auto r = m_controls_RPC.getFeature2RPC(feature);
+    auto r = m_rgbdsensor_RPC.getFeature2RPC(feature);
     value1 = r.value1;
     value2 = r.value2;
     return r.ret;
@@ -464,7 +436,7 @@ ReturnValue RGBDSensorClient::getFeature(int feature, double& value1, double& va
 ReturnValue RGBDSensorClient::hasOnOff(int feature, bool& HasOnOff)
 {
     std::lock_guard<std::mutex> lg(m_mutex);
-    auto r = m_controls_RPC.hasOnOffRPC(feature);
+    auto r = m_rgbdsensor_RPC.hasOnOffRPC(feature);
     HasOnOff = r.HasOnOff;
     return r.ret;
 }
@@ -472,14 +444,14 @@ ReturnValue RGBDSensorClient::hasOnOff(int feature, bool& HasOnOff)
 ReturnValue RGBDSensorClient::setActive(int feature, bool onoff)
 {
     std::lock_guard<std::mutex> lg(m_mutex);
-    auto r = m_controls_RPC.setActiveRPC(feature,onoff);
+    auto r = m_rgbdsensor_RPC.setActiveRPC(feature,onoff);
     return r;
 }
 
 ReturnValue RGBDSensorClient::getActive(int feature, bool& isActive)
 {
     std::lock_guard<std::mutex> lg(m_mutex);
-    auto r = m_controls_RPC.getActiveRPC(feature);
+    auto r = m_rgbdsensor_RPC.getActiveRPC(feature);
     isActive = r.isActive;
     return r.ret;
 }
@@ -487,7 +459,7 @@ ReturnValue RGBDSensorClient::getActive(int feature, bool& isActive)
 ReturnValue RGBDSensorClient::hasAuto(int feature, bool& hasAuto)
 {
     std::lock_guard<std::mutex> lg(m_mutex);
-    auto r = m_controls_RPC.hasAutoRPC(feature);
+    auto r = m_rgbdsensor_RPC.hasAutoRPC(feature);
     hasAuto = r.hasAuto;
     return r.ret;
 }
@@ -495,7 +467,7 @@ ReturnValue RGBDSensorClient::hasAuto(int feature, bool& hasAuto)
 ReturnValue RGBDSensorClient::hasManual(int feature, bool& hasManual)
 {
     std::lock_guard<std::mutex> lg(m_mutex);
-    auto r = m_controls_RPC.hasManualRPC(feature);
+    auto r = m_rgbdsensor_RPC.hasManualRPC(feature);
     hasManual = r.hasManual;
     return r.ret;
 }
@@ -503,7 +475,7 @@ ReturnValue RGBDSensorClient::hasManual(int feature, bool& hasManual)
 ReturnValue RGBDSensorClient::hasOnePush(int feature, bool& hasOnePush)
 {
     std::lock_guard<std::mutex> lg(m_mutex);
-    auto r = m_controls_RPC.hasOnePushRPC(feature);
+    auto r = m_rgbdsensor_RPC.hasOnePushRPC(feature);
     hasOnePush = r.hasOnePush;
     return r.ret;
 }
@@ -511,14 +483,14 @@ ReturnValue RGBDSensorClient::hasOnePush(int feature, bool& hasOnePush)
 ReturnValue RGBDSensorClient::setMode(int feature, yarp::dev::FeatureMode mode)
 {
     std::lock_guard<std::mutex> lg(m_mutex);
-    auto r = m_controls_RPC.setModeRPC(feature,mode);
+    auto r = m_rgbdsensor_RPC.setModeRPC(feature,mode);
     return r;
 }
 
 ReturnValue RGBDSensorClient::getMode(int feature, yarp::dev::FeatureMode& mode)
 {
     std::lock_guard<std::mutex> lg(m_mutex);
-    auto r = m_controls_RPC.getModeRPC(feature);
+    auto r = m_rgbdsensor_RPC.getModeRPC(feature);
     mode = r.mode;
     return r.ret;
 }
@@ -526,6 +498,6 @@ ReturnValue RGBDSensorClient::getMode(int feature, yarp::dev::FeatureMode& mode)
 ReturnValue RGBDSensorClient::setOnePush(int feature)
 {
     std::lock_guard<std::mutex> lg(m_mutex);
-    auto r = m_controls_RPC.setOnePushRPC(feature);
+    auto r = m_rgbdsensor_RPC.setOnePushRPC(feature);
     return r;
 }

@@ -17,11 +17,7 @@
 #include <yarp/dev/IFrameGrabberControls.h>
 #include "RGBDSensorClient_ParamsParser.h"
 
-#include "IDepthVisualParamsMsgs.h"
-#include "IRGBVisualParamsMsgs.h"
-#include "IFrameGrabberControlMsgs.h"
-
-#include "IRGBDMsgs.h"
+#include "RGBDSensorMsgs.h"
 
 #define DEFAULT_THREAD_PERIOD       20    //ms
 #define RGBDSENSOR_TIMEOUT_DEFAULT  100   //ms
@@ -60,10 +56,7 @@ protected:
     FloatImageBufferedPort          m_depthFrame_StreamingPort;
 
     std::mutex                      m_mutex;
-    IDepthVisualParamsMsgs          m_depth_params_RPC;
-    IRGBVisualParamsMsgs            m_rgb_params_RPC;
-    IRGBDMsgs                       m_rgbd_RPC;
-    IFrameGrabberControlMsgs        m_controls_RPC;
+    RGBDSensorMsgs                  m_rgbdsensor_RPC;
 
     // Image data specs
     yarp::dev::IRGBDSensor *sensor_p{nullptr};
@@ -89,7 +82,7 @@ public:
      */
     int  getRgbHeight() override;
     int  getRgbWidth() override;
-    yarp::dev::ReturnValue getRgbSupportedConfigurations(yarp::sig::VectorOf<yarp::dev::CameraConfig> &configurations) override;
+    yarp::dev::ReturnValue getRgbSupportedConfigurations(std::vector<yarp::dev::CameraConfig> &configurations) override;
     yarp::dev::ReturnValue getRgbResolution(int &width, int &height) override;
     yarp::dev::ReturnValue setRgbResolution(int width, int height) override;
     yarp::dev::ReturnValue getRgbFOV(double &horizontalFov, double &verticalFov) override;

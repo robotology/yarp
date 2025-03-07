@@ -222,11 +222,6 @@ bool RgbdSensor_nws_yarp::detach()
         delete m_rgbd_RPC;
         m_rgbd_RPC = nullptr;
     }
-    if (m_controls_RPC)
-    {
-        delete m_controls_RPC;
-        m_controls_RPC = nullptr;
-    }
 
     m_rgbdsensor = nullptr;
     m_fgCtrl = nullptr;
@@ -243,26 +238,20 @@ bool RgbdSensor_nws_yarp::attach(PolyDriver* poly)
         poly->view(m_fgCtrl);
     }
 
+    // m_rgbdsensor is mandatory
     if(m_rgbdsensor == nullptr)
     {
         yCError(RGBDSENSORNWSYARP) << "Attached device has no valid IRGBDSensor interface.";
         return false;
     }
-    else
-    {
-        m_rgbd_RPC = new IRGBDSensorRPCd(m_rgbdsensor);
-    }
 
-    //This interface is optional
     if(m_fgCtrl == nullptr)
     {
         yCWarning(RGBDSENSORNWSYARP) << "Attached device has no valid IFrameGrabberControls interface.";
-        //return false;
     }
-    else
-    {
-        m_controls_RPC = new IFrameGrabberControlMsgsRPCd(m_fgCtrl);
-    }
+
+    // m_fgCtrl is optional and might be null
+    m_rgbd_RPC = new IRGBDSensorRPCd(m_rgbdsensor, m_fgCtrl);
 
     PeriodicThread::setPeriod(m_period);
     return PeriodicThread::start();
@@ -455,31 +444,16 @@ bool RgbdSensor_nws_yarp::read(yarp::os::ConnectionReader& connection)
 
     std::lock_guard<std::mutex> lock(m_mutex);
 
-    if (m_rgbd_RPC && m_rgbd_RPC->IDepthVisualParamsMsgs::read(connection))
+    if (m_rgbd_RPC)
     {
-        return true;
+        if (m_rgbd_RPC->read(connection))
+        {
+            return true;
+        }
     }
-    else if (m_rgbd_RPC && m_rgbd_RPC->IRGBVisualParamsMsgs::read(connection))
-    {
-        return true;
-    }
-    else if (m_rgbd_RPC && m_rgbd_RPC->IRGBDMsgs::read(connection))
-    {
-        return true;
-    }
-    else if (m_controls_RPC && m_controls_RPC->read(connection))
-    {
-        return true;
-    }
-
-    if (!m_rgbd_RPC)
+    else
     {
         yCError(RGBDSENSORNWSYARP) << "m_rgbd_RPC interface is not valid";
-        return false;
-    }
-    if (!m_controls_RPC)
-    {
-        yCError(RGBDSENSORNWSYARP) << "m_controls_RPC interface is not valid";
         return false;
     }
 

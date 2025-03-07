@@ -100,7 +100,6 @@ private:
 
     //Helper class for RPCs
     IRGBDSensorRPCd*               m_rgbd_RPC=nullptr;
-    IFrameGrabberControlMsgsRPCd*  m_controls_RPC=nullptr;
     std::mutex                     m_mutex;
 
     // Image data specs
