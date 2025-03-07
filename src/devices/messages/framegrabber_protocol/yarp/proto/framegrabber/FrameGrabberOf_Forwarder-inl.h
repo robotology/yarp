@@ -92,7 +92,7 @@ int FrameGrabberOf_Forwarder<ImageType, IfVocab, ImgVocab>::width() const
 template <typename ImageType,
           yarp::conf::vocab32_t IfVocab,
           yarp::conf::vocab32_t ImgVocab>
-bool FrameGrabberOf_Forwarder<ImageType, IfVocab, ImgVocab>::getImage(ImageType& image)
+yarp::dev::ReturnValue FrameGrabberOf_Forwarder<ImageType, IfVocab, ImgVocab>::getImage(ImageType& image)
 {
     image.zero();
 
@@ -104,12 +104,12 @@ bool FrameGrabberOf_Forwarder<ImageType, IfVocab, ImgVocab>::getImage(ImageType&
 
     if (m_port.getOutputCount() == 0) {
         yCWarningThrottle(FRAMEGRABBEROF_FORWARDER, 5.0, "Remote port is not connected");
-        return false;
+        return yarp::dev::ReturnValue::return_code::return_value_error_nws_nwc_communication_error;
     }
 
     if (!m_port.write(cmd, response)) {
         yCWarning(FRAMEGRABBEROF_FORWARDER, "Could not execute RPC command");
-        return false;
+        return yarp::dev::ReturnValue::return_code::return_value_error_nws_nwc_communication_error;
     }
 
     // reply should be [fgi|fgir] [imgr|?] [is] (<image>)
@@ -118,24 +118,24 @@ bool FrameGrabberOf_Forwarder<ImageType, IfVocab, ImgVocab>::getImage(ImageType&
         !response.get(2).isVocab32() || (response.get(2).asVocab32() != VOCAB_IS) ||
         !response.get(3).isList()) {
         yCWarning(FRAMEGRABBEROF_FORWARDER, "Invalid reply received");
-        return false;
+        return yarp::dev::ReturnValue::return_code::return_value_error_nws_nwc_communication_error;
     }
 
     auto& serializedImage = response.get(3);
     // FIXME Is there a way to avoid this extra copy?
     if (!yarp::os::Portable::copyPortable(serializedImage, image)) {
         yCWarning(FRAMEGRABBEROF_FORWARDER, "Image is not serialized properly");
-        return false;
+        return yarp::dev::ReturnValue::return_code::return_value_error_nws_nwc_communication_error;
     }
 
-    return true;
+    return yarp::dev::ReturnValue_ok;
 }
 
 
 template <typename ImageType,
           yarp::conf::vocab32_t IfVocab,
           yarp::conf::vocab32_t ImgVocab>
-bool FrameGrabberOf_Forwarder<ImageType, IfVocab, ImgVocab>::getImageCrop(cropType_id_t cropType,
+yarp::dev::ReturnValue FrameGrabberOf_Forwarder<ImageType, IfVocab, ImgVocab>::getImageCrop(cropType_id_t cropType,
                                                                           yarp::sig::VectorOf<std::pair<int, int>> vertices,
                                                                           ImageType& image)
 {
@@ -156,12 +156,12 @@ bool FrameGrabberOf_Forwarder<ImageType, IfVocab, ImgVocab>::getImageCrop(cropTy
 
     if (m_port.getOutputCount() == 0) {
         yCWarningThrottle(FRAMEGRABBEROF_FORWARDER, 5.0, "Remote port is not connected");
-        return false;
+        return yarp::dev::ReturnValue::return_code::return_value_error_nws_nwc_communication_error;
     }
 
     if (!m_port.write(cmd, response)) {
         yCWarning(FRAMEGRABBEROF_FORWARDER, "Could not execute RPC command");
-        return false;
+        return yarp::dev::ReturnValue::return_code::return_value_error_nws_nwc_communication_error;
     }
 
     // reply should be [fgi|fgir] [crop] [is] (<image>)
@@ -170,17 +170,17 @@ bool FrameGrabberOf_Forwarder<ImageType, IfVocab, ImgVocab>::getImageCrop(cropTy
         !response.get(2).isVocab32() || (response.get(2).asVocab32() != VOCAB_IS) ||
         !response.get(3).isList()) {
         yCWarning(FRAMEGRABBEROF_FORWARDER, "Cropped image is not serialized properly");
-        return false;
+        return yarp::dev::ReturnValue::return_code::return_value_error_nws_nwc_communication_error;
     }
 
     auto& serializedImage = response.get(3);
     // FIXME Is there a way to avoid this extra copy?
     if (!yarp::os::Portable::copyPortable(serializedImage, image)) {
         yCWarning(FRAMEGRABBEROF_FORWARDER, "...");
-        return false;
+        return yarp::dev::ReturnValue::return_code::return_value_error_nws_nwc_communication_error;
     }
 
-    return true;
+    return yarp::dev::ReturnValue_ok;
 }
 
 
