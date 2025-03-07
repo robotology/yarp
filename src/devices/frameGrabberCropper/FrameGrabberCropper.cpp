@@ -487,7 +487,10 @@ ReturnValue FrameGrabberCropper::setBytesPerPacketDC1394(unsigned int bpp)
     return iFrameGrabberControlsDC1394->setBytesPerPacketDC1394(bpp);
 }
 
-ReturnValue FrameGrabberCropper::getRgbSupportedConfigurations(yarp::sig::VectorOf<yarp::dev::CameraConfig>& cfgs)
+ReturnValue FrameGrabberCropper::getRgbSupportedConfigurations(std::vector<yarp::dev::CameraConfig>& cfgs)
 {
-    return ReturnValue::return_code::return_value_error_not_implemented_by_device;
+    if (!iFrameGrabberControls) {
+        return ReturnValue::return_code::return_value_error_not_ready;
+    }
+    return iRgbVisualParams->getRgbSupportedConfigurations(cfgs);
 }

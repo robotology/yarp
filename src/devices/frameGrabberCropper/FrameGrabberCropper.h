@@ -158,7 +158,7 @@ public:
     yarp::dev::ReturnValue getRgbFOV(double& horizontalFov, double& verticalFov) override;
     yarp::dev::ReturnValue setRgbFOV(double horizontalFov, double verticalFov) override;
     yarp::dev::ReturnValue getRgbIntrinsicParam(yarp::os::Property& intrinsic) override;
-    yarp::dev::ReturnValue getRgbSupportedConfigurations(yarp::sig::VectorOf<yarp::dev::CameraConfig>& cfgs) override;
+    yarp::dev::ReturnValue getRgbSupportedConfigurations(std::vector<yarp::dev::CameraConfig>& cfgs) override;
     yarp::dev::ReturnValue getRgbMirroring(bool& mirror) override;
     yarp::dev::ReturnValue setRgbMirroring(bool mirror) override;
 
