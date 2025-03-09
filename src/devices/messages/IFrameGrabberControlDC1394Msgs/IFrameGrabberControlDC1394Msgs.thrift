@@ -88,14 +88,14 @@ service IFrameGrabberControlDC1394Msgs
   return_getVideoModeMaskDC1394    getVideoModeMaskDC1394RPC();
   return_getVideoModeDC1394        getVideoModeDC1394RPC();
   yReturnValue                     setVideoModeDC1394RPC(1:i32 videomode);
-  
+
   return_getFPSMaskDC1394          getFPSMaskDC1394RPC();
   return_getFPSDC1394              getFPSDC1394RPC();
   yReturnValue                     setFPSDC1394RPC(1:i32 fps);
-  
+
   return_getISOSpeedDC1394         getISOSpeedDC1394RPC();
   yReturnValue                     setISOSpeedDC1394RPC(1:i32 speed);
-  
+
   return_getColorCodingMaskDC1394  getColorCodingMaskDC1394RPC(1:i32 videomode);
   return_getColorCodingDC1394      getColorCodingDC1394RPC();
   yReturnValue                     setColorCodingDC1394RPC(1:i32 coding);
@@ -108,7 +108,7 @@ service IFrameGrabberControlDC1394Msgs
   return_getOperationModeDC1394    getOperationModeDC1394RPC();
   yReturnValue                     setTransmissionDC1394RPC(1:bool bTxON);
   return_getTransmissionDC1394     getTransmissionDC1394RPC();
-  
+
   yReturnValue                     setBroadcastDC1394RPC(1:bool onoff);
   yReturnValue                     setDefaultsDC1394RPC();
   yReturnValue                     setResetDC1394RPC();

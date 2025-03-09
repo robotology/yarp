@@ -11,7 +11,7 @@ yarp_choose_idl(RGBDSENSOR_THRIFT RGBDSensorMsgs.thrift)
 add_library(RGBDSensorMsgs OBJECT)
 
 target_sources(RGBDSensorMsgs PRIVATE ${RGBDSENSOR_THRIFT_GEN_FILES})
-target_sources(RGBDSensorMsgs PRIVATE 
+target_sources(RGBDSensorMsgs PRIVATE
 C:/Software/iCubSoftware/yarp-master/build/src/devices/messages/RGBDsensorMsgs//IDepthVisualParamsMsgs.cpp
 C:/Software/iCubSoftware/yarp-master/build/src/devices/messages/RGBDsensorMsgs//IFrameGrabberControlMsgs.cpp
 C:/Software/iCubSoftware/yarp-master/build/src/devices/messages/RGBDsensorMsgs//IRGBDMsgs.cpp
@@ -50,7 +50,7 @@ C:/Software/iCubSoftware/yarp-master/build/src/devices/messages/RGBDsensorMsgs//
 C:/Software/iCubSoftware/yarp-master/build/src/devices/messages/RGBDsensorMsgs//RGBDSensorMsgs.cpp
 C:/Software/iCubSoftware/yarp-master/build/src/devices/messages/RGBDsensorMsgs//yCameraDescriptor.cpp
 )
-message(WARNING ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>Oggetti in RGBDSensorMsgs: ${RGBDSENSOR_THRIFT_GEN_FILES}")
+
 get_target_property(SOURCES_LIST RGBDSensorMsgs SOURCES)
 message(WARNING "File sorgenti di RGBDSensorMsgs: ${SOURCES_LIST}")
 

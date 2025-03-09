@@ -17,9 +17,7 @@
 #include <yarp/dev/IFrameGrabberControlsDC1394.h>
 #include <yarp/dev/IRgbVisualParams.h>
 
-#include "IRGBVisualParamsMsgs.h"
-#include "IFrameGrabberControlMsgs.h"
-#include "IFrameGrabberControlDC1394Msgs.h"
+#include "FrameGrabberMsgs.h"
 
 #include <yarp/proto/framegrabber/FrameGrabberOf_Forwarder.h>
 
@@ -112,7 +110,7 @@ public:
     //IRgbVisualParams
     int getRgbHeight() override;
     int getRgbWidth() override;
-    yarp::dev::ReturnValue getRgbSupportedConfigurations(yarp::sig::VectorOf<yarp::dev::CameraConfig>& configurations) override;
+    yarp::dev::ReturnValue getRgbSupportedConfigurations(std::vector<yarp::dev::CameraConfig>& configurations) override;
     yarp::dev::ReturnValue getRgbResolution(int& width, int& height) override;
     yarp::dev::ReturnValue setRgbResolution(int width, int height) override;
     yarp::dev::ReturnValue getRgbFOV(double& horizontalFov, double& verticalFov) override;
@@ -182,9 +180,7 @@ private:
     yarp::os::Port rpcPort;
     std::mutex m_mutex;
 
-    IRGBVisualParamsMsgs m_rgb_params_RPC;
-    IFrameGrabberControlMsgs m_controls_RPC;
-    IFrameGrabberControlDC1394Msgs m_controlsDC1394_RPC;
+    FrameGrabberMsgs m_frameGrabber_RPC;
 };
 
 #endif // YARP_FRAMEGRABBER_NWC_YARP_H
