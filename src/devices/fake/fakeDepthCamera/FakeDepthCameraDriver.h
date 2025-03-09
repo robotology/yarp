@@ -73,7 +73,7 @@ public:
     yarp::dev::ReturnValue   setDepthClipPlanes(double nearPlane, double farPlane) override;
     yarp::dev::ReturnValue   getDepthMirroring(bool& mirror) override;
     yarp::dev::ReturnValue   setDepthMirroring(bool mirror) override;
- 
+
     yarp::dev::ReturnValue getExtrinsicParam(yarp::sig::Matrix& extrinsic) override;
     yarp::dev::ReturnValue getRgbImage(FlexImage& rgbImage, Stamp* timeStamp = nullptr) override;
     yarp::dev::ReturnValue getDepthImage(depthImage& depthImage, Stamp* timeStamp = nullptr) override;

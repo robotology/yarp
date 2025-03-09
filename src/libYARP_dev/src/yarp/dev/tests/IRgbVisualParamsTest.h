@@ -142,6 +142,7 @@ namespace yarp::dev::tests
             int height = 0;
             int width = 0;
             CHECK(irgb->setRgbResolution(101, 102));
+            CHECK(irgb->getRgbResolution(width, height));
             CHECK(width == 101);
             CHECK(height == 102);
         }
