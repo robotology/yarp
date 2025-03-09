@@ -13,7 +13,6 @@
 #include <yarp/dev/IFrameGrabberControls.h>
 #include <yarp/dev/IFrameGrabberControlsDC1394.h>
 #include <yarp/dev/IFrameGrabberImage.h>
-#include <yarp/dev/AudioVisualInterfaces.h>
 #include <yarp/dev/IPreciselyTimed.h>
 #include <yarp/os/Searchable.h>
 #include <yarp/os/Thread.h>
@@ -49,7 +48,6 @@ class FakeFrameGrabber :
         public yarp::dev::IFrameGrabberControls,
         public yarp::dev::IFrameGrabberControlsDC1394,
         public yarp::dev::IPreciselyTimed,
-        public yarp::dev::IAudioVisualStream,
         public yarp::dev::IRgbVisualParams,
         public yarp::os::Thread,
         public yarp::os::PortReader,
@@ -80,14 +78,10 @@ public:
 
     void timing();
 
-    int height() const override;
-
-    int width() const override;
-
     //IRgbVisualParams
     int getRgbHeight() override;
     int getRgbWidth() override;
-    yarp::dev::ReturnValue getRgbSupportedConfigurations(yarp::sig::VectorOf<yarp::dev::CameraConfig>& configurations) override;
+    yarp::dev::ReturnValue getRgbSupportedConfigurations(std::vector<yarp::dev::CameraConfig>& configurations) override;
     yarp::dev::ReturnValue getRgbResolution(int& width, int& height) override;
     yarp::dev::ReturnValue setRgbResolution(int width, int height) override;
     yarp::dev::ReturnValue getRgbFOV(double& horizontalFov, double& verticalFov) override;
@@ -97,6 +91,8 @@ public:
     yarp::dev::ReturnValue setRgbMirroring(bool mirror) override;
 
     //IFrameGrabberImage
+    int height() const override;
+    int width() const override;
     yarp::dev::ReturnValue getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image) override;
     yarp::dev::ReturnValue getImage(yarp::sig::ImageOf<yarp::sig::PixelMono>& image) override;
     yarp::dev::ReturnValue getImageCrop(cropType_id_t cropType,
@@ -109,11 +105,6 @@ public:
     //IPreciselyTimed
     yarp::os::Stamp getLastInputStamp() override;
 
-    //IAudioVisualStream
-    yarp::dev::ReturnValue hasAudio(bool& val) override;
-    yarp::dev::ReturnValue hasVideo(bool& val) override;
-    yarp::dev::ReturnValue hasRawVideo(bool& val) override;
-
     //IFrameGrabberControls Interface
     yarp::dev::ReturnValue getCameraDescription(yarp::dev::CameraDescriptor& camera) override;
     yarp::dev::ReturnValue hasFeature(int feature, bool& hasFeature) override;
@@ -121,14 +112,14 @@ public:
     yarp::dev::ReturnValue getFeature(int feature, double&value) override;
     yarp::dev::ReturnValue setFeature(int feature, double  value1, double  value2) override;
     yarp::dev::ReturnValue getFeature(int feature, double& value1, double& value2) override;
-    yarp::dev::ReturnValue hasOnOff(int feature, bool& HasOnOff) override;
     yarp::dev::ReturnValue setActive(int feature, bool onoff) override;
     yarp::dev::ReturnValue getActive(int feature, bool& isActive) override;
+    yarp::dev::ReturnValue hasOnOff(int feature, bool& HasOnOff) override;
     yarp::dev::ReturnValue hasAuto(int feature, bool& hasAuto) override;
     yarp::dev::ReturnValue hasManual(int feature, bool& hasManual) override;
-    yarp::dev::ReturnValue hasOnePush(int feature, bool& hasOnePush) override;
     yarp::dev::ReturnValue setMode(int feature, yarp::dev::FeatureMode mode) override;
     yarp::dev::ReturnValue getMode(int feature, yarp::dev::FeatureMode& mode) override;
+    yarp::dev::ReturnValue hasOnePush(int feature, bool& hasOnePush) override;
     yarp::dev::ReturnValue setOnePush(int feature) override;
 
     //IFrameGrabberControlsDC1394 Interface
@@ -166,15 +157,15 @@ private:
 
     yarp::os::Port     m_rpcPort;
 
-    size_t ct{0};
-    size_t bx{0};
-    size_t by{0};
-    unsigned long rnd{0};
-    double first{0};
+    size_t m_ct{0};
+    size_t m_bx{0};
+    size_t m_by{0};
+    unsigned long m_rnd{0};
     double prev{0};
-    bool have_bg{false};
+    bool m_have_bg{false};
+
     yarp::os::Property m_intrinsic;
-    yarp::sig::VectorOf<yarp::dev::CameraConfig> configurations;
+    std::vector<yarp::dev::CameraConfig> configurations;
 
     std::random_device rnddev;
     std::default_random_engine randengine{rnddev()};
@@ -190,6 +181,7 @@ private:
     std::condition_variable img_ready_cv[2];
     std::condition_variable img_consumed_cv[2];
     double buff_ts[2];
+    mutable std::mutex rpc_methods_mutex;
 
     yarp::sig::ImageOf<yarp::sig::PixelRgb> background;
     yarp::sig::ImageOf<yarp::sig::PixelRgb> rgb_image;

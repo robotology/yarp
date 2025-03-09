@@ -19,47 +19,124 @@ namespace {
 YARP_LOG_COMPONENT(FAKEFRAMEGRABBER, "yarp.device.fakeFrameGrabber")
 }
 
+struct
+{
+  bool hasFeature = false;
+  double feature  = 0.0;
+  double feature1 = 0.0;
+  double feature2 = 0.0;
+  bool hasOnOff = false;
+  bool hasAuto = false;
+  bool hasManual = false;
+  bool hasOnePush = false;
+  bool isActive = false;
+  FeatureMode mode;
+  CameraDescriptor camera;
+} m_controls;
+
 ReturnValue FakeFrameGrabber::getCameraDescription(CameraDescriptor& camera)
-{ return ReturnValue::return_code::return_value_error_not_implemented_by_device; }
+{
+    std::lock_guard<std::mutex> lock(rpc_methods_mutex);
+    camera = m_controls.camera;
+    return ReturnValue_ok;
+}
 
 ReturnValue FakeFrameGrabber::hasFeature(int feature, bool& hasFeature)
-{ return ReturnValue::return_code::return_value_error_not_implemented_by_device; }
+{
+    std::lock_guard<std::mutex> lock(rpc_methods_mutex);
+    hasFeature = m_controls.hasFeature;
+    return ReturnValue_ok;
+}
 
 ReturnValue FakeFrameGrabber::setFeature(int feature, double value)
-{ return ReturnValue::return_code::return_value_error_not_implemented_by_device; }
+{
+    std::lock_guard<std::mutex> lock(rpc_methods_mutex);
+    m_controls.feature = value;
+    return ReturnValue_ok;
+}
 
 ReturnValue FakeFrameGrabber::getFeature(int feature, double& value)
-{ return ReturnValue::return_code::return_value_error_not_implemented_by_device; }
+{
+    std::lock_guard<std::mutex> lock(rpc_methods_mutex);
+    value = m_controls.feature;
+    return ReturnValue_ok;
+}
 
 ReturnValue FakeFrameGrabber::setFeature(int feature, double  value1, double  value2)
-{ return ReturnValue::return_code::return_value_error_not_implemented_by_device; }
+{
+    std::lock_guard<std::mutex> lock(rpc_methods_mutex);
+    m_controls.feature1 = value1;
+    m_controls.feature2 = value2;
+    return ReturnValue_ok;
+}
 
 ReturnValue FakeFrameGrabber::getFeature(int feature, double& value1, double& value2)
-{ return ReturnValue::return_code::return_value_error_not_implemented_by_device; }
+{
+    std::lock_guard<std::mutex> lock(rpc_methods_mutex);
+    value1 = m_controls.feature2;
+    value2 = m_controls.feature2;
+    return ReturnValue_ok;
+}
 
 ReturnValue FakeFrameGrabber::hasOnOff(int feature, bool& HasOnOff)
-{ return ReturnValue::return_code::return_value_error_not_implemented_by_device; }
+{
+    std::lock_guard<std::mutex> lock(rpc_methods_mutex);
+    HasOnOff = m_controls.hasOnOff;
+    return ReturnValue_ok;
+}
 
 ReturnValue FakeFrameGrabber::setActive(int feature, bool onoff)
-{ return ReturnValue::return_code::return_value_error_not_implemented_by_device; }
+{
+    std::lock_guard<std::mutex> lock(rpc_methods_mutex);
+    m_controls.isActive = onoff;
+    return ReturnValue_ok;
+}
 
 ReturnValue FakeFrameGrabber::getActive(int feature, bool& isActive)
-{ return ReturnValue::return_code::return_value_error_not_implemented_by_device; }
+{
+    std::lock_guard<std::mutex> lock(rpc_methods_mutex);
+    isActive = m_controls.isActive;
+    return ReturnValue_ok;
+}
 
 ReturnValue FakeFrameGrabber::hasAuto(int feature, bool& hasAuto)
-{ return ReturnValue::return_code::return_value_error_not_implemented_by_device; }
+{
+    std::lock_guard<std::mutex> lock(rpc_methods_mutex);
+    hasAuto = m_controls.hasAuto;
+    return ReturnValue_ok;
+}
 
 ReturnValue FakeFrameGrabber::hasManual(int feature, bool& hasManual)
-{ return ReturnValue::return_code::return_value_error_not_implemented_by_device; }
+{
+    std::lock_guard<std::mutex> lock(rpc_methods_mutex);
+    hasManual = m_controls.hasManual;
+    return ReturnValue_ok;
+}
 
 ReturnValue FakeFrameGrabber::hasOnePush(int feature, bool& hasOnePush)
-{ return ReturnValue::return_code::return_value_error_not_implemented_by_device; }
+{
+    std::lock_guard<std::mutex> lock(rpc_methods_mutex);
+    hasOnePush = m_controls.hasOnePush;
+    return ReturnValue_ok;
+}
 
 ReturnValue FakeFrameGrabber::setMode(int feature, FeatureMode mode)
-{ return ReturnValue::return_code::return_value_error_not_implemented_by_device; }
+{
+    std::lock_guard<std::mutex> lock(rpc_methods_mutex);
+    m_controls.mode = mode;
+    return ReturnValue_ok;
+}
 
 ReturnValue FakeFrameGrabber::getMode(int feature, FeatureMode& mode)
-{ return ReturnValue::return_code::return_value_error_not_implemented_by_device; }
+{
+    std::lock_guard<std::mutex> lock(rpc_methods_mutex);
+    mode = m_controls.mode;
+    return ReturnValue_ok;
+}
 
 ReturnValue FakeFrameGrabber::setOnePush(int feature)
-{ return ReturnValue::return_code::return_value_error_not_implemented_by_device; }
+{
+    std::lock_guard<std::mutex> lock(rpc_methods_mutex);
+    m_controls.hasOnePush = true; //????????
+    return ReturnValue_ok;
+}
