@@ -32,8 +32,8 @@ public:
 
     int height() const override;
     int width() const override;
-    bool getImage(ImageType& image) override;
-    bool getImageCrop(cropType_id_t cropType,
+    yarp::dev::ReturnValue getImage(ImageType& image) override;
+    yarp::dev::ReturnValue getImageCrop(cropType_id_t cropType,
                       yarp::sig::VectorOf<std::pair<int, int>> vertices,
                       ImageType& image) override;
 };

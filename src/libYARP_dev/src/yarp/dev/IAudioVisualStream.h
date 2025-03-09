@@ -17,6 +17,8 @@
 
 #include <yarp/dev/api.h>
 
+#include <yarp/dev/ReturnValue.h>
+
 namespace yarp::dev {
 
 class YARP_dev_API IAudioVisualStream
@@ -27,13 +29,11 @@ public:
      */
     virtual ~IAudioVisualStream();
 
-    virtual bool hasAudio() = 0;
+    virtual yarp::dev::ReturnValue hasAudio(bool& has) = 0;
 
-    virtual bool hasVideo() = 0;
+    virtual yarp::dev::ReturnValue hasVideo(bool& has) = 0;
 
-    virtual bool hasRawVideo() {
-        return hasVideo();
-    }
+    virtual yarp::dev::ReturnValue hasRawVideo(bool& has) = 0;
 };
 
 } // namespace yarp::dev

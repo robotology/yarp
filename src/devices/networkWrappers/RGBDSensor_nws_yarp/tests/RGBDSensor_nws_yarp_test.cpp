@@ -41,35 +41,43 @@ TEST_CASE("dev::rgbdSensor_nws_yarpTest", "[yarp::dev]")
 
     SECTION("Test the rgbdSensor_nws_yarp device with fakeDepthCamera device attached")
     {
-        PolyDriver dd_fake;
-        PolyDriver dd_nws;
-        Property p_fake;
-        Property p_nws;
+        std::vector<std::string> fakeSens;
+        fakeSens.push_back("fakeDepthCamera");
+        fakeSens.push_back("fakeDepthCamera_2");
 
-        //open
-        p_nws.put("device", "rgbdSensor_nws_yarp");
-        p_nws.put("name", "/rgbd_nws");
-        p_fake.put("device", "fakeDepthCamera");
-        REQUIRE(dd_fake.open(p_fake));
-        REQUIRE(dd_nws.open(p_nws));
-
-        yarp::os::SystemClock::delaySystem(0.5);
-
-        //attach
+        for (auto it = fakeSens.begin(); it != fakeSens.end(); it++)
         {
-            yarp::dev::WrapperSingle* ww_nws; dd_nws.view(ww_nws);
-            REQUIRE(ww_nws);
-            bool result_att = ww_nws->attach(&dd_fake);
-            REQUIRE(result_att);
-        }
+            PolyDriver dd_fake;
+            PolyDriver dd_nws;
+            Property p_fake;
+            Property p_nws;
 
-        //Wait some time
-        yarp::os::SystemClock::delaySystem(1.0);
+            // open
+            p_nws.put("device", "rgbdSensor_nws_yarp");
+            p_nws.put("name", "/rgbd_nws");
+            p_fake.put("device", *it);
+            REQUIRE(dd_fake.open(p_fake));
+            REQUIRE(dd_nws.open(p_nws));
 
-        //Close all polydrivers and check
-        {
-            CHECK(dd_nws.close());
-            CHECK(dd_fake.close());
+            yarp::os::SystemClock::delaySystem(0.5);
+
+            // attach
+            {
+                yarp::dev::WrapperSingle* ww_nws;
+                dd_nws.view(ww_nws);
+                REQUIRE(ww_nws);
+                bool result_att = ww_nws->attach(&dd_fake);
+                REQUIRE(result_att);
+            }
+
+            // Wait some time
+            yarp::os::SystemClock::delaySystem(1.0);
+
+            // Close all polydrivers and check
+            {
+                CHECK(dd_nws.close());
+                CHECK(dd_fake.close());
+            }
         }
     }
 
