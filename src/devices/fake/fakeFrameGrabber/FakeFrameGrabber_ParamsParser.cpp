@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Mon Sep 16 16:44:50 2024
+// Generated on: Fri Mar  7 11:52:03 2025
 
 
 #include "FakeFrameGrabber_ParamsParser.h"
@@ -54,7 +54,6 @@ std::vector<std::string> FakeFrameGrabber_ParamsParser::getListOfParams() const
     params.push_back("fakeFrameGrabber_rpc_port");
     params.push_back("mirror");
     params.push_back("syncro");
-    params.push_back("topIsLow");
     params.push_back("physFocalLength");
     params.push_back("focalLengthX");
     params.push_back("focalLengthY");
@@ -540,7 +539,6 @@ std::string      FakeFrameGrabber_ParamsParser::getDocumentationOfDeviceParams()
     doc = doc + std::string("'fakeFrameGrabber_rpc_port': rpc port for the fakeFrameGrabber\n");
     doc = doc + std::string("'mirror': mirror height of test image\n");
     doc = doc + std::string("'syncro': synchronize producer and consumer, so that all images are used once and only once\n");
-    doc = doc + std::string("'topIsLow': explicitly set the topIsLow field in the images\n");
     doc = doc + std::string("'physFocalLength': Physical focal length\n");
     doc = doc + std::string("'focalLengthX': Horizontal component of the focal length\n");
     doc = doc + std::string("'focalLengthY': Vertical component of the focal length\n");
@@ -564,7 +562,7 @@ std::string      FakeFrameGrabber_ParamsParser::getDocumentationOfDeviceParams()
     doc = doc + std::string("'rectificationMatrix': Matrix that describes the lens' distortion\n");
     doc = doc + std::string("\n");
     doc = doc + std::string("Here are some examples of invocation command with yarpdev, with all params:\n");
-    doc = doc + " yarpdev --device fakeFrameGrabber --width 320 --height 240 --horizontalFov 1.0 --verticalFov 2.0 --fakeFrameGrabber_rpc_port /fakeFrameGrabber/rpc --mirror false --syncro false --topIsLow true --physFocalLength 3.0 --focalLengthX 4.0 --focalLengthY 5.0 --principalPointX 6.0 --principalPointY 7.0 --distortionModel FishEye --k1 8.0 --k2 9.0 --k3 10.0 --t1 11.0 --t2 12.0 --freq 0 --period 0 --mode [line] --src <optional_value> --add_timestamp false --add_noise false --bayer false --mono false --snr 0.5 --rectificationMatrix \" (1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0) \"\n";
+    doc = doc + " yarpdev --device fakeFrameGrabber --width 320 --height 240 --horizontalFov 1.0 --verticalFov 2.0 --fakeFrameGrabber_rpc_port /fakeFrameGrabber/rpc --mirror false --syncro false --physFocalLength 3.0 --focalLengthX 4.0 --focalLengthY 5.0 --principalPointX 6.0 --principalPointY 7.0 --distortionModel FishEye --k1 8.0 --k2 9.0 --k3 10.0 --t1 11.0 --t2 12.0 --freq 0 --period 0 --mode [line] --src <optional_value> --add_timestamp false --add_noise false --bayer false --mono false --snr 0.5 --rectificationMatrix \" (1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0) \"\n";
     doc = doc + std::string("Using only mandatory params:\n");
     doc = doc + " yarpdev --device fakeFrameGrabber\n";
     doc = doc + std::string("=============================================\n\n");    return doc;
