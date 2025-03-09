@@ -13,7 +13,7 @@ include "../IFrameGrabberControlMsgs/IFrameGrabberControlMsgs.thrift"
 // Those two definitions should be avoided and replaced by
 // IRGBDMsgs.yReturnValue and IFrameGrabberControlMsgs.yFeatureMode
 // Unfortunately this is not supported by thrift compiler so far, so this
-// is a temp workaround. 
+// is a temp workaround.
 
 struct yReturnValue2 {
 } (
@@ -49,7 +49,7 @@ service RGBDSensorMsgs
   IRGBVisualParamsMsgs.return_getRgbIntrinsicParam        getRgbIntrinsicParamRPC();
   IRGBVisualParamsMsgs.return_getRgbMirroring             getRgbMirroringRPC();
   yReturnValue2                                           setRgbMirroringRPC(1:bool mirror);
-  
+
   IDepthVisualParamsMsgs.return_getDepthWidth               getDepthWidthRPC();
   IDepthVisualParamsMsgs.return_getDepthHeight              getDepthHeightRPC();
   IDepthVisualParamsMsgs.return_getDepthResolution          getDepthResolutionRPC();

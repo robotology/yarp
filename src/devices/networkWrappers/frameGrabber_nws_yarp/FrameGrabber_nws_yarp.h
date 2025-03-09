@@ -24,9 +24,7 @@
 
 #include "FrameGrabber_nws_yarp_ParamsParser.h"
 
-#include "IFrameGrabberControlsDC1394ServerImpl.h"
-#include "IFrameGrabberControlsServerImpl.h"
-#include "IRGBVisualParamsServerImpl.h"
+#include "FrameGrabberServerImpl.h"
 
     /**
  * @ingroup dev_impl_nws_yarp
@@ -68,9 +66,7 @@ private:
     // Responders
     yarp::proto::framegrabber::FrameGrabberOf_Responder<yarp::sig::ImageOf<yarp::sig::PixelRgb>> frameGrabberImage_Responder;
     yarp::proto::framegrabber::FrameGrabberOf_Responder<yarp::sig::ImageOf<yarp::sig::PixelMono>, VOCAB_FRAMEGRABBER_IMAGERAW> frameGrabberImageRaw_Responder;
-    IRGBVisualParamsMsgsRPCd*             m_RPC_RGBVisualParams         {nullptr};
-    IFrameGrabberControlMsgsRPCd*         m_RPC_FrameGrabControls       {nullptr};
-    IFrameGrabberControlDC1394MsgsRPCd*   m_RPC_FrameGrabControlsDC1394 {nullptr};
+    FrameGrabberServerRPCd*             m_RPC_FrameGrabber         {nullptr};
 
     // Images
     yarp::sig::ImageOf<yarp::sig::PixelRgb>* img {nullptr};

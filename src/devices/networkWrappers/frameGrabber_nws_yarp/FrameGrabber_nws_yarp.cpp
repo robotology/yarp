@@ -10,7 +10,7 @@
 #include <yarp/os/LogStream.h>
 
 #include <yarp/dev/PolyDriver.h>
-
+#include <yarp/os/DummyConnector.h>
 namespace {
 YARP_LOG_COMPONENT(FRAMEGRABBER_NWS_YARP, "yarp.device.frameGrabber_nws_yarp")
 } // namespace
@@ -139,9 +139,7 @@ bool FrameGrabber_nws_yarp::attach(yarp::dev::PolyDriver* poly)
         }
     }
 
-    m_RPC_RGBVisualParams = new IRGBVisualParamsMsgsRPCd(m_iRgbVisualParams);
-    m_RPC_FrameGrabControls = new IFrameGrabberControlMsgsRPCd(m_iFrameGrabberControls);
-    m_RPC_FrameGrabControlsDC1394 = new IFrameGrabberControlDC1394MsgsRPCd(m_iFrameGrabberControlsDC1394);
+    m_RPC_FrameGrabber = new FrameGrabberServerRPCd(m_iRgbVisualParams,m_iFrameGrabberControls,m_iFrameGrabberControlsDC1394);
 
     return PeriodicThread::start();
 }
@@ -155,20 +153,10 @@ bool FrameGrabber_nws_yarp::detach()
         yarp::os::PeriodicThread::stop();
     }
 
-    if (m_RPC_RGBVisualParams)
+    if (m_RPC_FrameGrabber)
     {
-        delete m_RPC_RGBVisualParams;
-        m_RPC_RGBVisualParams = nullptr;
-    }
-    if (m_RPC_FrameGrabControls)
-    {
-        delete m_RPC_FrameGrabControls;
-        m_RPC_FrameGrabControls = nullptr;
-    }
-    if (m_RPC_FrameGrabControlsDC1394)
-    {
-        delete m_RPC_FrameGrabControlsDC1394;
-        m_RPC_FrameGrabControlsDC1394 = nullptr;
+        delete m_RPC_FrameGrabber;
+        m_RPC_FrameGrabber = nullptr;
     }
 
     m_iFrameGrabberImage = nullptr;
@@ -177,7 +165,7 @@ bool FrameGrabber_nws_yarp::detach()
     m_iRgbVisualParams = nullptr;
     m_iFrameGrabberControls = nullptr;
     m_iFrameGrabberControlsDC1394 = nullptr;
-    
+
     return true;
 }
 
@@ -241,21 +229,11 @@ void FrameGrabber_nws_yarp::run()
 bool FrameGrabber_nws_yarp::read(yarp::os::ConnectionReader& connection)
 {
     if (!connection.isValid()) { return false;}
-    if (!m_RPC_RGBVisualParams) { return false;}
-    if (!m_RPC_FrameGrabControls) { return false;}
-    if (!m_RPC_FrameGrabControlsDC1394) { return false;}
+    if (!m_RPC_FrameGrabber) { return false;}
 
     std::lock_guard<std::mutex> lock(m_mutex);
 
-    if (m_RPC_FrameGrabControls->read(connection))
-    {
-        return true;
-    }
-    else if (m_RPC_FrameGrabControlsDC1394->read(connection))
-    {
-        return true;
-    }
-    else if (m_RPC_RGBVisualParams-read(connection))
+    if (m_RPC_FrameGrabber->read(connection))
     {
         return true;
     }
