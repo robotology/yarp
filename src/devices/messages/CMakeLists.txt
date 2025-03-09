@@ -22,6 +22,7 @@ add_subdirectory(ISpeechTranscriptionMsgs)
 add_subdirectory(mobileBaseVelocityControlMsgs)
 add_subdirectory(multipleAnalogSensorsMsgs)
 add_subdirectory(RGBDSensorMsgs)
+add_subdirectory(frameGrabberMsgs)
 
 if(YARP_COMPILE_TESTS)
     add_subdirectory(tests)
