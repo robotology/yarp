@@ -344,7 +344,29 @@ void MainWindow::init(yarp::os::Property config)
         }
         //manageApplication(application->getName());
     }
-        onYarpNameList();
+
+    if (config.check("load_application")){
+        yarp::manager::XmlAppLoader appload(config.find("load_application").asString().c_str());
+        if(!appload.init()){
+            return;
+        }
+        yarp::manager::Application* application = appload.getNextApplication();
+        if(!application){
+            return;  // TODO far ritornare valore per chiudere in caso di errore
+        }
+        // add this application to the manager if does not exist
+        if(!lazyManager.getKnowledgeBase()->getApplication(application->getName())){
+            lazyManager.getKnowledgeBase()->addApplication(application);
+            syncApplicationList();
+        }
+        // load the application in the main window
+        viewApplication(application, true);
+
+    }
+
+
+
+    onYarpNameList();
 }
 
 /*! \brief Reports tge error on the log window.
