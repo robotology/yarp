@@ -6,7 +6,7 @@
 #include <yarp/os/LogComponent.h>
 #include <yarp/os/LogStream.h>
 
-#include <FakeDeviceServerImpl.h>
+#include <fakeDeviceServerImpl.h>
 
 namespace {
 YARP_LOG_COMPONENT(FAKEDEVICESERVER, "yarp.device.LLMServer")
