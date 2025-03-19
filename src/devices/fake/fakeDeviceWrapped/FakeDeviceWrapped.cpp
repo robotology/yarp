@@ -16,16 +16,18 @@ namespace {
     YARP_LOG_COMPONENT(FAKEDEVICEUNWRAPPED, "yarp.device.fakeDeviceWrapped")
 }
 
-void FakeDeviceWrapped::testSetValue(int value)
+yarp::dev::ReturnValue FakeDeviceWrapped::testSetValue(int value)
 {
     yCInfo(FAKEDEVICEUNWRAPPED) << "testSetValue" << value;
     m_value = value;
+    return ReturnValue_ok;
 }
 
-void FakeDeviceWrapped::testGetValue(int& value)
+yarp::dev::ReturnValue FakeDeviceWrapped::testGetValue(int& value)
 {
     yCInfo(FAKEDEVICEUNWRAPPED) << "testGetValue" << m_value;
     value = m_value;
+    return ReturnValue_ok;
 }
 
 bool FakeDeviceWrapped::open(yarp::os::Searchable& config)
