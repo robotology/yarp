@@ -360,7 +360,7 @@ void MainWindow::init(yarp::os::Property config)
             syncApplicationList();
         }
         // load the application in the main window
-        viewApplication(application, true);
+        viewApplication(application, false);
 
     }
 
