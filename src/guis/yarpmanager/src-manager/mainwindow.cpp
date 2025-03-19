@@ -346,13 +346,16 @@ void MainWindow::init(yarp::os::Property config)
     }
 
     if (config.check("load_application")){
-        yarp::manager::XmlAppLoader appload(config.find("load_application").asString().c_str());
+        std::string applicationName = config.find("load_application").asString().c_str();
+        yarp::manager::XmlAppLoader appload(applicationName);
         if(!appload.init()){
-            return;
+            logger->addError("Cannot load the application with XmlAppLoader from " + applicationName);
+            return -1;
         }
         yarp::manager::Application* application = appload.getNextApplication();
         if(!application){
-            return;  // TODO far ritornare valore per chiudere in caso di errore
+            logger->addError("Cannot load the application from " + applicationName);
+            return -1;  
         }
         // add this application to the manager if does not exist
         if(!lazyManager.getKnowledgeBase()->getApplication(application->getName())){
