@@ -6,7 +6,8 @@
 #ifndef YARP_FAKEDEVICEUNWRAPPED_H
 #define YARP_FAKEDEVICEUNWRAPPED_H
 
-#include <yarp/dev/testInterfaces/IFakeDeviceInterfaceTest.h>
+#include <yarp/dev/testInterfaces/IFakeDeviceInterfaceTest1.h>
+#include <yarp/dev/testInterfaces/IFakeDeviceInterfaceTest2.h>
 #include <yarp/dev/PolyDriver.h>
 
  /**
@@ -17,7 +18,8 @@
  */
 class FakeDeviceUnwrapped :
     public yarp::dev::DeviceDriver,
-    public yarp::dev::test::IFakeDeviceInterfaceTest
+    public yarp::dev::test::IFakeDeviceInterfaceTest1,
+    public yarp::dev::test::IFakeDeviceInterfaceTest2
 {
 protected:
     int m_value = {0};
@@ -35,9 +37,12 @@ public:
     bool open(yarp::os::Searchable& config) override;
     bool close() override;
 
-    //interfaces
-    void testSetValue(int value) override;
-    void testGetValue(int& value) override;
+    //IFakeDeviceInterfaceTest1
+    yarp::dev::ReturnValue doSomething() override;
+
+    //IFakeDeviceInterfaceTest2
+    yarp::dev::ReturnValue testSetValue(int value) override;
+    yarp::dev::ReturnValue testGetValue(int& value) override;
 };
 
 #endif

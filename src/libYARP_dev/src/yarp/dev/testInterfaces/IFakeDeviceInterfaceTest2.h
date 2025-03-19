@@ -3,10 +3,11 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#ifndef YARP_DEV_IFAKEDEVICENTERFACETEST_H
-#define YARP_DEV_IFAKEDEVICENTERFACETEST_H
+#ifndef YARP_DEV_IFAKEDEVICENTERFACETEST2_H
+#define YARP_DEV_IFAKEDEVICENTERFACETEST2_H
 
 #include <yarp/dev/api.h>
+#include <yarp/dev/ReturnValue.h>
 
 namespace yarp::dev::test {
 
@@ -16,20 +17,20 @@ namespace yarp::dev::test {
  * \brief A test interface used internally by continuous integration.
  * See devices: fakeDeviceWrapped, fakeDeviceUnwrapped, fakeDeviceWrapper.
  */
-class YARP_dev_API IFakeDeviceInterfaceTest
+class YARP_dev_API IFakeDeviceInterfaceTest2
 {
 public:
-    virtual ~IFakeDeviceInterfaceTest();
+    virtual ~IFakeDeviceInterfaceTest2();
 
     /**
      * This method is used to set a single value inside the test device
      */
-    virtual void testSetValue(int value) = 0;
+    virtual yarp::dev::ReturnValue testSetValue(int value) = 0;
 
     /**
      * This method is used to get a single value from a test device
      */
-    virtual void testGetValue(int& value) = 0;
+    virtual yarp::dev::ReturnValue testGetValue(int& value) = 0;
 };
 
 } // namespace yarp::dev::test
