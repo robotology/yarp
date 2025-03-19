@@ -19,6 +19,7 @@
 Usage:\n\
    yarpmanager [option]\n\n\
 Options:\n\
+  --load_application    Path to application to load in the main window\n\
   --from                Configuration file name\n\
   --application         Path to application to open\n\
   --ymanagerini_dir     \n\
