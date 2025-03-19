@@ -23,7 +23,6 @@
 #                   [THRIFT_NO_COPYRIGHT}
 #                   [THRIFT_NO_DOC]
 #                   [THRIFT_DEBUG_GENERATOR]
-#                   [ROSMSG_WITH_ROS]
 #                   [VERBOSE])
 #
 # yarp_add_idl
@@ -83,21 +82,6 @@ function(_YARP_IDL_THRIFT_ARGS _prefix _out_dir _verbose _out_var)
   set(${_out_var} ${_args} PARENT_SCOPE)
 endfunction()
 
-# Internal function.
-function(_YARP_IDL_ROSMSG_ARGS _prefix _out_dir _verbose _out_var)
-  unset(_args)
-  if(NOT ${_prefix}_ROSMSG_WITH_ROS)
-    list(APPEND _args --no-ros true)
-  endif()
-  list(APPEND _args --no-cache)
-  if(_verbose)
-    list(APPEND _args --verbose)
-  endif()
-  list(APPEND _args --out "${_out_dir}")
-
-  set(${_out_var} ${_args} PARENT_SCOPE)
-endfunction()
-
 
 # Internal function.
 # Perform the actual code generation
@@ -129,7 +113,7 @@ function(_YARP_IDL_TO_DIR_GENERATE _family _file _name _index_file_name _output_
   if("${_family}" STREQUAL "thrift")
     _yarp_idl_thrift_args(_YITD "${_temp_dir}" ${_verbose} _args)
   else()
-    _yarp_idl_rosmsg_args(_YITD "${_temp_dir}" ${_verbose} _args)
+      message(ERROR "Unknown family")
   endif()
 
   set(_output_quiet OUTPUT_QUIET)
@@ -202,7 +186,6 @@ function(YARP_IDL_TO_DIR)
     THRIFT_NO_COPYRIGHT
     THRIFT_NO_DOC
     THRIFT_DEBUG_GENERATOR
-    ROSMSG_WITH_ROS
   )
   set(_oneValueArgs
     OUTPUT_DIR
@@ -304,14 +287,6 @@ function(YARP_IDL_TO_DIR)
     if(_ext STREQUAL ".thrift")
       set(_family thrift)
       set(_dir_add "${_name_lower}")
-    elseif("${_ext}" MATCHES "\\.(msg|srv)" OR
-           "${_file}" MATCHES "^(time|duration)$")
-      set(_family rosmsg)
-      if("${_file}" STREQUAL "time")
-        set(_name TickTime)
-      elseif("${_file}" STREQUAL "duration")
-        set(_name TickDuration)
-      endif()
     else()
       message(FATAL_ERROR "yarp_idl_to_dir does not know what to do with \"${_file}\", unrecognized extension \"${_ext}\"")
     endif()
@@ -319,20 +294,6 @@ function(YARP_IDL_TO_DIR)
     if("${_family}" STREQUAL "thrift")
       set(_target_name "${_file}")
       set(_index_file_name "${_name}_index.txt")
-    elseif("${_family}" STREQUAL "rosmsg")
-      get_filename_component(_rospkg_name "${_include_prefix}" NAME)
-      get_filename_component(_include_prefix "${_include_prefix}" DIRECTORY)
-      if(_rospkg_name MATCHES "^(msg|srv)$")
-        get_filename_component(_rospkg_name "${_include_prefix}" NAME)
-        get_filename_component(_include_prefix "${_include_prefix}" DIRECTORY)
-      endif()
-      if(NOT "${_rospkg_name}" STREQUAL "")
-        set(_target_name "${_rospkg_name}_${_name}${_ext}")
-        set(_index_file_name "${_rospkg_name}_${_name}_index.txt")
-      else()
-        set(_target_name "${_name}${_ext}")
-        set(_index_file_name "${_name}_index.txt")
-      endif()
     endif()
     string(REGEX REPLACE "[^a-zA-Z0-9]" "_" _target_name ${_target_name})
     set(_index_file "${_YITD_OUTPUT_DIR}/${_index_file_name}")
@@ -453,56 +414,6 @@ function(_YARP_IDL_THRIFT_TO_FILE_LIST file path basename ext gen_srcs_var gen_h
   set(${gen_hdrs_var} ${gen_hdrs} PARENT_SCOPE)
 endfunction()
 
-
-# Internal function.
-# Calculate a list of sources generated from a .msg or a .srv file
-function(_YARP_IDL_ROSMSG_TO_FILE_LIST file path pkg basename ext gen_srcs_var gen_hdrs_var)
-  set(gen_srcs )
-  set(gen_hdrs )
-
-  get_filename_component(ext ${file} EXT)
-
-  unset(gen_hdrs)
-  if(NOT "${pkg}" STREQUAL "")
-    list(APPEND gen_hdrs "yarp/rosmsg/${pkg}/${basename}.h")
-  else()
-    list(APPEND gen_hdrs "yarp/rosmsg/${basename}.h")
-  endif()
-
-  if(NOT YARP_NO_DEPRECATED)
-    if(NOT "${pkg}" STREQUAL "")
-      list(APPEND gen_hdrs "${pkg}/${basename}.h"
-                           "${pkg}_${basename}.h")
-    else()
-      list(APPEND gen_hdrs "${basename}.h")
-    endif()
-  endif()
-
-  if("${ext}" STREQUAL ".srv")
-    if(NOT "${pkg}" STREQUAL "")
-      list(APPEND gen_hdrs "yarp/rosmsg/${pkg}/${basename}Reply.h")
-    else()
-      list(APPEND gen_hdrs "yarp/rosmsg/${basename}Reply.h")
-    endif()
-
-    if(NOT YARP_NO_DEPRECATED)
-      if(NOT "${pkg}" STREQUAL "")
-        list(APPEND gen_hdrs "${pkg}/${basename}Reply.h"
-                             "${pkg}_${basename}Reply.h")
-      else()
-        list(APPEND gen_hdrs "${basename}Reply.h")
-      endif()
-    endif()
-  endif()
-
-  string(REGEX REPLACE "/(/|$)" "\\1" gen_srcs "${gen_srcs}")
-  string(REGEX REPLACE "/(/|$)" "\\1" gen_hdrs "${gen_hdrs}")
-
-  set(${gen_srcs_var} ${gen_srcs} PARENT_SCOPE)
-  set(${gen_hdrs_var} ${gen_hdrs} PARENT_SCOPE)
-endfunction()
-
-
 function(YARP_ADD_IDL var)
 
   # Ensure that the output variable is empty
@@ -538,31 +449,8 @@ function(YARP_ADD_IDL var)
     if("${ext}" STREQUAL ".thrift")
       set(family thrift)
       _yarp_idl_thrift_to_file_list("${file}" "${path}" "${basename}" ${ext} gen_srcs gen_hdrs)
-    elseif("${ext}" MATCHES "^\\.(msg|srv)$")
-      set(family rosmsg)
-      get_filename_component(pkg "${path}" NAME)
-      get_filename_component(path "${path}" DIRECTORY)
-      if(pkg MATCHES "(msg|srv)")
-        get_filename_component(pkg "${path}" NAME)
-        get_filename_component(path "${path}" DIRECTORY)
-      endif()
-      _yarp_idl_rosmsg_to_file_list("${file}" "${path}" "${pkg}" "${basename}" ${ext} gen_srcs gen_hdrs)
-    elseif("${file}" STREQUAL "time")
-      set(family rosmsg)
-      set(native 1)
-      set(gen_hdrs yarp/rosmsg/TickTime.h)
-      if(NOT YARP_NO_DEPRECATED)
-        list(APPEND gen_hdrs TickTime.h)
-      endif()
-    elseif("${file}" STREQUAL "duration")
-      set(family rosmsg)
-      set(native 1)
-      set(gen_hdrs yarp/rosmsg/TickDuration.h)
-      if(NOT YARP_NO_DEPRECATED)
-        list(APPEND gen_hdrs TickDuration.h)
-      endif()
     else()
-      message(FATAL_ERROR "Unknown extension ${ext}. Supported extensions are .thrift, .msg, and .srv")
+      message(FATAL_ERROR "Unknown extension ${ext}. Supported extensions are .thrift")
     endif()
 
     # FIXME This should handle cross-compiling
@@ -575,21 +463,18 @@ function(YARP_ADD_IDL var)
     file(MAKE_DIRECTORY "${out_dir}")
 
     set(_verbose 0)
-    if(YARPIDL_rosmsg_VERBOSE)
-      set(_verbose 1)
-    endif()
 
     if("${family}" STREQUAL "thrift")
       _yarp_idl_thrift_args(YARP_ADD_IDL "${out_dir}" ${_verbose} _args)
     else()
-      _yarp_idl_rosmsg_args(YARP_ADD_IDL "${out_dir}" ${_verbose} _args)
+      message(ERROR "Unknown family")
     endif()
 
     # Prepare main command
     if("${family}" STREQUAL "thrift")
       set(cmd ${YARPIDL_thrift_COMMAND} ${_args} "${file}")
     else()
-      set(cmd ${YARPIDL_rosmsg_COMMAND} --no-index ${_args} "${file}")
+      message(ERROR "Unknown family")
     endif()
 
     # Populate output variable
