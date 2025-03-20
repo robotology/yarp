@@ -58,6 +58,7 @@ set(YARP_dev_HDRS
   yarp/dev/IHapticDevice.h
   yarp/dev/IImpedanceControl.h
   yarp/dev/IInteractionMode.h
+  yarp/dev/IJacobianCoupling.h
   yarp/dev/IJointCoupling.h
   yarp/dev/IJoypadController.h
   yarp/dev/IJointFault.h
@@ -118,7 +119,8 @@ set(YARP_dev_HDRS
   yarp/dev/ServiceInterfaces.h
   yarp/dev/WrapperMultiple.h
   yarp/dev/WrapperSingle.h
-  yarp/dev/testInterfaces/IFakeDeviceInterfaceTest.h
+  yarp/dev/testInterfaces/IFakeDeviceInterfaceTest1.h
+  yarp/dev/testInterfaces/IFakeDeviceInterfaceTest2.h
 )
 
 if(TARGET YARP::YARP_math)
@@ -216,7 +218,8 @@ set(YARP_dev_SRCS
   yarp/dev/RGBDSensorParamParser.cpp
   yarp/dev/WrapperMultiple.cpp
   yarp/dev/WrapperSingle.cpp
-  yarp/dev/testInterfaces/IFakeDeviceInterfaceTest.cpp
+  yarp/dev/testInterfaces/IFakeDeviceInterfaceTest1.cpp
+  yarp/dev/testInterfaces/IFakeDeviceInterfaceTest2.cpp
 )
 
 if(TARGET YARP::YARP_math)

@@ -6,7 +6,7 @@
 #include <yarp/os/Network.h>
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/WrapperSingle.h>
-#include <yarp/dev/testInterfaces/IFakeDeviceInterfaceTest.h>
+#include <yarp/dev/testInterfaces/IFakeDeviceInterfaceTest2.h>
 
 #include <catch2/catch_amalgamated.hpp>
 #include <harness.h>
@@ -24,7 +24,7 @@ TEST_CASE("dev::fakeDeviceWrapper", "[yarp::dev]")
     SECTION("Checking fakeDeviceWrapper device alone")
     {
         PolyDriver dd;
-        yarp::dev::test::IFakeDeviceInterfaceTest* iTest = nullptr;
+        yarp::dev::test::IFakeDeviceInterfaceTest2* iTest = nullptr;
 
         ////////"Checking opening device polydrivers"
         {
@@ -43,8 +43,8 @@ TEST_CASE("dev::fakeDeviceWrapper", "[yarp::dev]")
     {
         PolyDriver dd;
         PolyDriver dd_wrapper;
-        yarp::dev::test::IFakeDeviceInterfaceTest* iTest1 = nullptr;
-        yarp::dev::test::IFakeDeviceInterfaceTest* iTest2 = nullptr;
+        yarp::dev::test::IFakeDeviceInterfaceTest2* iTest1 = nullptr;
+        yarp::dev::test::IFakeDeviceInterfaceTest2* iTest2 = nullptr;
 
         ////////"Checking opening device polydrivers"
         {

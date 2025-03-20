@@ -16,20 +16,20 @@ namespace {
 YARP_LOG_COMPONENT(FAKEDEVICEWRAPPER, "yarp.device.fakeDeviceWrapper")
 }
 
-void FakeDeviceWrapper::testSetValue(int value)
+yarp::dev::ReturnValue FakeDeviceWrapper::testSetValue(int value)
 {
     if (!iTest) { yCError(FAKEDEVICEWRAPPER) << "Invalid/not yet attached interface"; }
 
     yCInfo(FAKEDEVICEWRAPPER) << "testSetValue() called";
-    iTest->testSetValue(value);
+    return iTest->testSetValue(value);
 }
 
-void FakeDeviceWrapper::testGetValue(int& value)
+yarp::dev::ReturnValue FakeDeviceWrapper::testGetValue(int& value)
 {
     if (!iTest) { yCError(FAKEDEVICEWRAPPER) << "Invalid/not yet attached interface"; }
 
     yCInfo(FAKEDEVICEWRAPPER) << "testGetValue() called";
-    iTest->testGetValue(value);
+    return iTest->testGetValue(value);
 }
 
 bool FakeDeviceWrapper::open(yarp::os::Searchable& config)

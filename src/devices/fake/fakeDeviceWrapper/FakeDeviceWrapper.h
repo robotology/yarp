@@ -6,7 +6,7 @@
 #ifndef YARP_FAKEDEVICEWRAPPER_H
 #define YARP_FAKEDEVICEWRAPPER_H
 
-#include <yarp/dev/testInterfaces/IFakeDeviceInterfaceTest.h>
+#include <yarp/dev/testInterfaces/IFakeDeviceInterfaceTest2.h>
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/WrapperSingle.h>
 
@@ -19,10 +19,10 @@
 class FakeDeviceWrapper :
         public yarp::dev::DeviceDriver,
         public yarp::dev::WrapperSingle,
-        public yarp::dev::test::IFakeDeviceInterfaceTest
+        public yarp::dev::test::IFakeDeviceInterfaceTest2
 {
 private:
-    yarp::dev::test::IFakeDeviceInterfaceTest* iTest=nullptr;
+    yarp::dev::test::IFakeDeviceInterfaceTest2* iTest=nullptr;
 
 public:
     FakeDeviceWrapper() = default;
@@ -42,8 +42,8 @@ public:
     bool attach(yarp::dev::PolyDriver* drv) override;
 
     //interfaces
-    void testSetValue(int value) override;
-    void testGetValue(int& value) override;
+    yarp::dev::ReturnValue testSetValue(int value) override;
+    yarp::dev::ReturnValue testGetValue(int& value) override;
 };
 
 #endif
