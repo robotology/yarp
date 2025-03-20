@@ -355,7 +355,7 @@ void MainWindow::init(yarp::os::Property config)
         yarp::manager::Application* application = appload.getNextApplication();
         if(!application){
             logger->addError("Cannot load the application from " + applicationName);
-            return -1;  
+            return -1;
         }
         // add this application to the manager if does not exist
         if(!lazyManager.getKnowledgeBase()->getApplication(application->getName())){
@@ -366,8 +366,6 @@ void MainWindow::init(yarp::os::Property config)
         viewApplication(application, false);
 
     }
-
-
 
     onYarpNameList();
 }
