@@ -1,2 +1,3 @@
+fakeTestMsgs_common.h
 FakeTestMsgs.h
 FakeTestMsgs.cpp

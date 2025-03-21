@@ -1,4 +1,3 @@
-/* t_yarp_generator::generate_service:3629 */
 /*
  * SPDX-FileCopyrightText: 2006-2021 Istituto Italiano di Tecnologia (IIT)
  * SPDX-License-Identifier: BSD-3-Clause
@@ -14,25 +13,27 @@
 
 #include <yarp/os/Wire.h>
 #include <yarp/os/idl/WireTypes.h>
+#include <yarp/os/ApplicationNetworkProtocolVersion.h>
+#include <fakeTestMsgs_common.h>
 #include <yarp/dev/ReturnValue.h>
 
-/* t_yarp_generator::generate_service:3717 */
 class FakeTestMsgs :
         public yarp::os::Wire
 {
 public:
-/* t_yarp_generator::generate_service_constructor:4429 */
+    //ProtocolVersion
+    virtual yarp::os::ApplicationNetworkProtocolVersion getLocalProtocolVersion();
+    virtual yarp::os::ApplicationNetworkProtocolVersion getRemoteProtocolVersion();
+
     // Constructor
     FakeTestMsgs();
 
-/* t_yarp_generator::generate_service_method:4454 */
+    //Service methods
     virtual yarp::dev::ReturnValue doSomethingRPC();
 
-/* t_yarp_generator::generate_service_help:4507 */
     // help method
     virtual std::vector<std::string> help(const std::string& functionName = "--all");
 
-/* t_yarp_generator::generate_service_read:4589 */
     // read from ConnectionReader
     bool read(yarp::os::ConnectionReader& connection) override;
 };
