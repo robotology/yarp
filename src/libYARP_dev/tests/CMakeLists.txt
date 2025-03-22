@@ -9,6 +9,7 @@ target_sources(harness_dev
     MapGrid2DTest.cpp
     PolyDriverTest.cpp
     ReturnValueTest.cpp
+    StaticPluginsTest.cpp
 )
 
 target_link_libraries(harness_dev

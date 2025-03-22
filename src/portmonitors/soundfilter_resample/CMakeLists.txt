@@ -30,8 +30,8 @@ target_link_libraries(yarp_pm_soundfilter_resample
 
 yarp_install(
   TARGETS yarp_pm_soundfilter_resample
-  EXPORT yarp_pm_soundfilter_resample
-  COMPONENT runtime
+  EXPORT YARP_${YARP_PLUGIN_MASTER}
+  COMPONENT ${YARP_PLUGIN_MASTER}
   LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
   ARCHIVE DESTINATION ${YARP_STATIC_PLUGINS_INSTALL_DIR}
   YARP_INI DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR}
