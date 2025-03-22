@@ -110,5 +110,9 @@ bool SerialPort_nwc_yarp::open(Searchable& config)
         }
     }
 
+    //Check the protocol version
+    if (!m_RPC.checkProtocolVersion()) { return false; }
+
+    yCInfo(RANGEFINDER2DCLIENT) << "Opening of NWC successful";
     return true;
 }

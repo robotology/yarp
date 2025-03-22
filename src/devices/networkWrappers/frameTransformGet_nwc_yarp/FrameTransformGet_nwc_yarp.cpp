@@ -122,6 +122,10 @@ bool FrameTransformGet_nwc_yarp::open(yarp::os::Searchable& config)
         yCInfo(FRAMETRANSFORMGETNWCYARP) << "Receiving transforms from Yarp port NOT enabled";
     }
 
+    //Check the protocol version
+    if (!m_frameTransformStorageGetRPC.checkProtocolVersion()) { return false; }
+
+    yCInfo(FRAMETRANSFORMGETNWCYARP) << "Opening of NWC successful";
     return true;
 }
 

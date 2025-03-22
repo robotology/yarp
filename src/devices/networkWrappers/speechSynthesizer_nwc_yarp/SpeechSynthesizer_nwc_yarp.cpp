@@ -53,6 +53,10 @@ bool SpeechSynthesizer_nwc_yarp::open(yarp::os::Searchable& config)
         return false;
     }
 
+    //Check the protocol version
+    if (!m_thriftClient.checkProtocolVersion()) { return false; }
+
+    yCInfo(SPEECHSYNTH_NWC) << "Opening of NWC successful";
     return true;
 }
 
