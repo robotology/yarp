@@ -10,10 +10,17 @@
 
 #include <yarp/conf/version.h>
 #include <FakeTestMsgs.h>
+#include <yarp/os/LogComponent.h>
+#include <yarp/os/LogStream.h>
 
 #include <yarp/os/idl/WireTypes.h>
 
 #include <algorithm>
+
+namespace
+{
+    YARP_LOG_COMPONENT(SERVICE_LOG_COMPONENT, "FakeTestMsgs")
+}
 
 //FakeTestMsgs_getRemoteProtocolVersion_helper declaration
 class FakeTestMsgs_getRemoteProtocolVersion_helper :
@@ -69,12 +76,27 @@ yarp::os::ApplicationNetworkProtocolVersion FakeTestMsgs::getRemoteProtocolVersi
         return failureproto;}
 }
 
+//ProtocolVersion, client side
+bool FakeTestMsgs::checkProtocolVersion()
+ {
+        auto locproto = this->getLocalProtocolVersion();
+        auto remproto = this->getRemoteProtocolVersion();
+        if (remproto.protocol_version != locproto.protocol_version)
+        {
+            yCError(SERVICE_LOG_COMPONENT) << "Invalid communication protocol.";
+            yCError(SERVICE_LOG_COMPONENT) << "Local Protocol Version: " << locproto.toString();
+            yCError(SERVICE_LOG_COMPONENT) << "Remote Protocol Version: " << remproto.toString();
+            return false;
+        }
+        return true;
+}
+
 //ProtocolVersion, server side
 yarp::os::ApplicationNetworkProtocolVersion FakeTestMsgs::getLocalProtocolVersion()
 {
     yarp::os::ApplicationNetworkProtocolVersion myproto;
     myproto.protocol_version = protocol_version;
-     myproto.yarp_major = YARP_VERSION_MAJOR;
+    myproto.yarp_major = YARP_VERSION_MAJOR;
     myproto.yarp_minor = YARP_VERSION_MINOR;
     myproto.yarp_patch = YARP_VERSION_PATCH;
     return myproto;

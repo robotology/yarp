@@ -3692,10 +3692,10 @@ void t_yarp_generator::generate_service(t_service* tservice)
     // Add includes to .cpp file
     f_cpp_ << "#include <yarp/conf/version.h>\n";
     f_cpp_ << "#include <" << get_include_prefix(tservice->get_program()) + service_name + ".h>" << '\n';
+    f_cpp_ << "#include <yarp/os/LogComponent.h>\n";
+    f_cpp_ << "#include <yarp/os/LogStream.h>\n";
     f_cpp_ << '\n';
     if (monitor_enabled) {
-        f_cpp_ << "#include <yarp/os/LogComponent.h>\n";
-        f_cpp_ << "#include <yarp/os/LogStream.h>\n";
         f_cpp_ << "#include <yarp/os/SystemClock.h>\n";
         f_cpp_ << "#include <yarp/os/CommandBottle.h>\n";
         f_cpp_ << "#include <map>\n";
@@ -3703,6 +3703,11 @@ void t_yarp_generator::generate_service(t_service* tservice)
     f_cpp_ << "#include <yarp/os/idl/WireTypes.h>\n";
     f_cpp_ << '\n';
     f_cpp_ << "#include <algorithm>\n";
+    f_cpp_ << '\n';
+    f_cpp_ << "namespace\n";
+    f_cpp_ << "{\n";
+    f_cpp_ << "    YARP_LOG_COMPONENT(SERVICE_LOG_COMPONENT, \"" << tservice->get_name() << "\")\n";
+    f_cpp_ << "}\n";
     f_cpp_ << '\n';
 
     // Produce an error if a function starts with the same name as another one
@@ -3752,6 +3757,7 @@ void t_yarp_generator::generate_service(t_service* tservice)
         f_h_ << indent_h() << "//ProtocolVersion\n";
         f_h_ << indent_h() << "virtual yarp::os::ApplicationNetworkProtocolVersion getLocalProtocolVersion();\n";
         f_h_ << indent_h() << "virtual yarp::os::ApplicationNetworkProtocolVersion getRemoteProtocolVersion();\n";
+        f_h_ << indent_h() << "virtual bool checkProtocolVersion();\n";
         f_h_ << "\n";
 
         THRIFT_DEBUG_COMMENT(f_cpp_);
@@ -3811,6 +3817,21 @@ void t_yarp_generator::generate_service(t_service* tservice)
         f_cpp_ << "        return failureproto;}\n";
         f_cpp_ << "}\n";
         f_cpp_ << "\n";
+        f_cpp_ << "//ProtocolVersion, client side\n";
+        f_cpp_ << "bool " << tservice->get_name() << "::checkProtocolVersion()\n ";
+        f_cpp_ << "{\n";
+        f_cpp_ << "        auto locproto = this->getLocalProtocolVersion();\n";
+        f_cpp_ << "        auto remproto = this->getRemoteProtocolVersion();\n";
+        f_cpp_ << "        if (remproto.protocol_version != locproto.protocol_version)\n";
+        f_cpp_ << "        {\n";
+        f_cpp_ << "            yCError(SERVICE_LOG_COMPONENT) << \"Invalid communication protocol.\";\n";
+        f_cpp_ << "            yCError(SERVICE_LOG_COMPONENT) << \"Local Protocol Version: \" << locproto.toString();\n";
+        f_cpp_ << "            yCError(SERVICE_LOG_COMPONENT) << \"Remote Protocol Version: \" << remproto.toString();\n";
+        f_cpp_ << "            return false;\n";
+        f_cpp_ << "        }\n";
+        f_cpp_ << "        return true;\n";
+        f_cpp_ << "}\n";
+        f_cpp_ << "\n";
 
         f_cpp_ << "//ProtocolVersion, server side\n";
         f_cpp_ << "yarp::os::ApplicationNetworkProtocolVersion " << tservice->get_name() << "::getLocalProtocolVersion()\n";
@@ -3818,7 +3839,7 @@ void t_yarp_generator::generate_service(t_service* tservice)
         f_cpp_ << "    yarp::os::ApplicationNetworkProtocolVersion myproto;\n";
         if (version_found)
         {
-            f_cpp_ << "    myproto.protocol_version = " << proto_constant_name << ";\n ";
+            f_cpp_ << "    myproto.protocol_version = " << proto_constant_name << ";\n";
         }
         else
         {

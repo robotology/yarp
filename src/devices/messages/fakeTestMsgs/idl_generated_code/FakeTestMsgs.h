@@ -24,6 +24,7 @@ public:
     //ProtocolVersion
     virtual yarp::os::ApplicationNetworkProtocolVersion getLocalProtocolVersion();
     virtual yarp::os::ApplicationNetworkProtocolVersion getRemoteProtocolVersion();
+    virtual bool checkProtocolVersion();
 
     // Constructor
     FakeTestMsgs();
