@@ -1,2 +1,0 @@
-The code contained in this folder has been deprecated and it is no more maintained.
-It will be removed in the near future.
