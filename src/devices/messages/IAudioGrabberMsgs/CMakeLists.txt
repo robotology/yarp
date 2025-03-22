@@ -21,4 +21,4 @@ target_link_libraries(IAudioGrabberMsgs
 
 target_include_directories(IAudioGrabberMsgs PUBLIC ${IAUDIOGRABBERMSG_THRIFT_BUILD_INTERFACE_INCLUDE_DIRS})
 
-set_property(TARGET IAudioGrabberMsgs PROPERTY FOLDER "Devices/Shared")
+set_property(TARGET IAudioGrabberMsgs PROPERTY FOLDER "Plugins/Shared")

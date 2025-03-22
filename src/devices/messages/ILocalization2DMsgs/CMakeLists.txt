@@ -22,4 +22,4 @@ target_link_libraries(ILocalization2DMsgs
 
 target_include_directories(ILocalization2DMsgs PUBLIC ${ILOC2D_THRIFT_BUILD_INTERFACE_INCLUDE_DIRS})
 
-set_property(TARGET ILocalization2DMsgs PROPERTY FOLDER "Devices/Shared")
+set_property(TARGET ILocalization2DMsgs PROPERTY FOLDER "Plugins/Shared")

@@ -21,4 +21,4 @@ target_link_libraries(IRangefinder2DMsgs
 
 target_include_directories(IRangefinder2DMsgs PUBLIC ${IRANGEFINDER2DMSG_THRIFT_BUILD_INTERFACE_INCLUDE_DIRS})
 
-set_property(TARGET IRangefinder2DMsgs PROPERTY FOLDER "Devices/Shared")
+set_property(TARGET IRangefinder2DMsgs PROPERTY FOLDER "Plugins/Shared")

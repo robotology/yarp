@@ -20,4 +20,4 @@ target_link_libraries(multipleAnalogSensorsSerializations
 
 target_include_directories(multipleAnalogSensorsSerializations PUBLIC ${MAS_THRIFT_BUILD_INTERFACE_INCLUDE_DIRS})
 
-set_property(TARGET multipleAnalogSensorsSerializations PROPERTY FOLDER "Devices/Shared")
+set_property(TARGET multipleAnalogSensorsSerializations PROPERTY FOLDER "Plugins/Shared")

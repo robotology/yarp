@@ -21,4 +21,4 @@ target_link_libraries(IChatBotMsgs
 
 target_include_directories(IChatBotMsgs PUBLIC ${ICHATBOTMSGS_THRIFT_BUILD_INTERFACE_INCLUDE_DIRS})
 
-set_property(TARGET IChatBotMsgs PROPERTY FOLDER "Devices/Shared")
+set_property(TARGET IChatBotMsgs PROPERTY FOLDER "Plugins/Shared")

@@ -37,5 +37,5 @@ if(YARP_COMPILE_DEVICE_PLUGINS)
 
   target_include_directories(framegrabber_protocol PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
-  set_property(TARGET framegrabber_protocol PROPERTY FOLDER "Devices/Shared")
+  set_property(TARGET framegrabber_protocol PROPERTY FOLDER "Plugins/Shared")
 endif()

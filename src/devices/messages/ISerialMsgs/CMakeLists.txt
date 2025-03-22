@@ -21,4 +21,4 @@ target_link_libraries(ISerialMsgs
 
 target_include_directories(ISerialMsgs PUBLIC ${ISERIALMSG_THRIFT_BUILD_INTERFACE_INCLUDE_DIRS})
 
-set_property(TARGET ISerialMsgs PROPERTY FOLDER "Devices/Shared")
+set_property(TARGET ISerialMsgs PROPERTY FOLDER "Plugins/Shared")

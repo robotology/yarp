@@ -21,4 +21,4 @@ target_link_libraries(IOdometry2DMsgs
 
 target_include_directories(IOdometry2DMsgs PUBLIC ${IODOMETRY2DMSG_THRIFT_BUILD_INTERFACE_INCLUDE_DIRS})
 
-set_property(TARGET IOdometry2DMsgs PROPERTY FOLDER "Devices/Shared")
+set_property(TARGET IOdometry2DMsgs PROPERTY FOLDER "Plugins/Shared")

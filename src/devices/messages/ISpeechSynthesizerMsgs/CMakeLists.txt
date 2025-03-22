@@ -21,4 +21,4 @@ target_link_libraries(ISpeechSynthesizerMsgs
 
 target_include_directories(ISpeechSynthesizerMsgs PUBLIC ${ISPEECHTRANSCMSG_THRIFT_BUILD_INTERFACE_INCLUDE_DIRS})
 
-set_property(TARGET ISpeechSynthesizerMsgs PROPERTY FOLDER "Devices/Shared")
+set_property(TARGET ISpeechSynthesizerMsgs PROPERTY FOLDER "Plugins/Shared")

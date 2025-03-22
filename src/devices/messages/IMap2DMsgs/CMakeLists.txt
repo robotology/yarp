@@ -22,4 +22,4 @@ target_link_libraries(IMap2DMsgs
 
 target_include_directories(IMap2DMsgs PUBLIC ${IMAP2DMSG_THRIFT_BUILD_INTERFACE_INCLUDE_DIRS})
 
-set_property(TARGET IMap2DMsgs PROPERTY FOLDER "Devices/Shared")
+set_property(TARGET IMap2DMsgs PROPERTY FOLDER "Plugins/Shared")

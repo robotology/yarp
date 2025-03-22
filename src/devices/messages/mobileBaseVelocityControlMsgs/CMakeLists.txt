@@ -22,4 +22,4 @@ target_link_libraries(MobileBaseVelocityControlMsgs
 
 target_include_directories(MobileBaseVelocityControlMsgs PUBLIC ${FTM_THRIFT_BUILD_INTERFACE_INCLUDE_DIRS})
 
-set_property(TARGET MobileBaseVelocityControlMsgs PROPERTY FOLDER "Devices/Shared")
+set_property(TARGET MobileBaseVelocityControlMsgs PROPERTY FOLDER "Plugins/Shared")

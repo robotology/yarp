@@ -21,4 +21,4 @@ target_link_libraries(joypadcontrolnetutils
     YARP::YARP_sig
 )
 
-set_property(TARGET joypadcontrolnetutils PROPERTY FOLDER "Devices/Shared")
+set_property(TARGET joypadcontrolnetutils PROPERTY FOLDER "Plugins/Shared")

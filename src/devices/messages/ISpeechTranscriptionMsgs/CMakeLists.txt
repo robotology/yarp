@@ -21,4 +21,4 @@ target_link_libraries(ISpeechTranscriptionMsgs
 
 target_include_directories(ISpeechTranscriptionMsgs PUBLIC ${ISPEECHTRANSCMSG_THRIFT_BUILD_INTERFACE_INCLUDE_DIRS})
 
-set_property(TARGET ISpeechTranscriptionMsgs PROPERTY FOLDER "Devices/Shared")
+set_property(TARGET ISpeechTranscriptionMsgs PROPERTY FOLDER "Plugins/Shared")

@@ -22,4 +22,4 @@ target_link_libraries(frameTransformStorageMsgs
 
 target_include_directories(frameTransformStorageMsgs PUBLIC ${FTM_THRIFT_BUILD_INTERFACE_INCLUDE_DIRS})
 
-set_property(TARGET frameTransformStorageMsgs PROPERTY FOLDER "Devices/Shared")
+set_property(TARGET frameTransformStorageMsgs PROPERTY FOLDER "Plugins/Shared")

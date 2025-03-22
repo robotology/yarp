@@ -21,4 +21,4 @@ target_link_libraries(fakeTestMsgs
 
 target_include_directories(fakeTestMsgs PUBLIC ${FAKETESTMSGS_THRIFT_BUILD_INTERFACE_INCLUDE_DIRS})
 
-set_property(TARGET fakeTestMsgs PROPERTY FOLDER "Devices/Shared")
+set_property(TARGET fakeTestMsgs PROPERTY FOLDER "Plugins/Shared")
