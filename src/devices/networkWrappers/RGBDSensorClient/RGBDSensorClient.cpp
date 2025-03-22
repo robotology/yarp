@@ -240,7 +240,7 @@ bool RGBDSensorClient::getRgbFOV(double &horizontalFov, double &verticalFov)
 
 bool RGBDSensorClient::setRgbFOV(double horizontalFov, double verticalFov)
 {
-    return RgbMsgSender->getRgbFOV(horizontalFov, verticalFov);
+    return RgbMsgSender->setRgbFOV(horizontalFov, verticalFov);
 }
 
 bool RGBDSensorClient::getRgbIntrinsicParam(yarp::os::Property &intrinsic)
