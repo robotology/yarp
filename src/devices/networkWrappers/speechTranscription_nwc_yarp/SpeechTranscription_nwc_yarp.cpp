@@ -51,6 +51,10 @@ bool SpeechTranscription_nwc_yarp::open(yarp::os::Searchable& config)
         return false;
     }
 
+    //Check the protocol version
+    if (!m_thriftClient.checkProtocolVersion()) { return false; }
+
+    yCInfo(SPEECHTR_NWC) << "Opening of NWC successful";
     return true;
 }
 
