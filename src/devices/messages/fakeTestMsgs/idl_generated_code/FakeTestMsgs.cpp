@@ -1,4 +1,3 @@
-/* t_yarp_generator::generate_service:3630 */
 /*
  * SPDX-FileCopyrightText: 2006-2021 Istituto Italiano di Tecnologia (IIT)
  * SPDX-License-Identifier: BSD-3-Clause
@@ -9,15 +8,100 @@
 // This is an automatically generated file.
 // It could get re-generated if the ALLOW_IDL_GENERATION flag is on.
 
+#include <yarp/conf/version.h>
 #include <FakeTestMsgs.h>
+#include <yarp/os/LogComponent.h>
+#include <yarp/os/LogStream.h>
 
 #include <yarp/os/idl/WireTypes.h>
 
 #include <algorithm>
 
-/* t_yarp_generator::generate_service:3718 */
-/* t_yarp_generator::generate_service_helper_classes:3766 */
-/* t_yarp_generator::generate_service_helper_classes_decl:3783 */
+namespace
+{
+    YARP_LOG_COMPONENT(SERVICE_LOG_COMPONENT, "FakeTestMsgs")
+}
+
+//FakeTestMsgs_getRemoteProtocolVersion_helper declaration
+class FakeTestMsgs_getRemoteProtocolVersion_helper :
+public yarp::os::Portable
+{
+public:
+    FakeTestMsgs_getRemoteProtocolVersion_helper() = default;
+    bool write(yarp::os::ConnectionWriter& connection) const override;
+    bool read(yarp::os::ConnectionReader& connection) override;
+
+    yarp::os::ApplicationNetworkProtocolVersion helper_proto;
+};
+
+bool FakeTestMsgs_getRemoteProtocolVersion_helper::write(yarp::os::ConnectionWriter& connection) const
+{
+    yarp::os::idl::WireWriter writer(connection);
+    if (!writer.writeListHeader(1)) {
+        return false;
+    }
+    if (!writer.writeString("getRemoteProtocolVersion")) {
+        return false;
+    }
+    return true;
+}
+
+bool FakeTestMsgs_getRemoteProtocolVersion_helper ::read(yarp::os::ConnectionReader & connection)
+ {
+    yarp::os::idl::WireReader reader(connection);
+    if (!reader.readListHeader()) {
+        reader.fail();
+        return false;
+    }
+
+    if (!helper_proto.read(connection)) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+//ProtocolVersion, client side
+yarp::os::ApplicationNetworkProtocolVersion FakeTestMsgs::getRemoteProtocolVersion()
+ {
+    if(!yarp().canWrite()) {
+        yError(" Missing server method FakeTestMsgs::getRemoteProtocolVersion");
+    }
+    FakeTestMsgs_getRemoteProtocolVersion_helper helper{};
+    bool ok = yarp().write(helper, helper);
+    if (ok) {
+        return helper.helper_proto;}
+    else {
+        yarp::os::ApplicationNetworkProtocolVersion failureproto;
+        return failureproto;}
+}
+
+//ProtocolVersion, client side
+bool FakeTestMsgs::checkProtocolVersion()
+ {
+        auto locproto = this->getLocalProtocolVersion();
+        auto remproto = this->getRemoteProtocolVersion();
+        if (remproto.protocol_version != locproto.protocol_version)
+        {
+            yCError(SERVICE_LOG_COMPONENT) << "Invalid communication protocol.";
+            yCError(SERVICE_LOG_COMPONENT) << "Local Protocol Version: " << locproto.toString();
+            yCError(SERVICE_LOG_COMPONENT) << "Remote Protocol Version: " << remproto.toString();
+            return false;
+        }
+        return true;
+}
+
+//ProtocolVersion, server side
+yarp::os::ApplicationNetworkProtocolVersion FakeTestMsgs::getLocalProtocolVersion()
+{
+    yarp::os::ApplicationNetworkProtocolVersion myproto;
+    myproto.protocol_version = protocol_version;
+    myproto.yarp_major = YARP_VERSION_MAJOR;
+    myproto.yarp_minor = YARP_VERSION_MINOR;
+    myproto.yarp_patch = YARP_VERSION_PATCH;
+    return myproto;
+}
+
 // doSomethingRPC helper class declaration
 class FakeTestMsgs_doSomethingRPC_helper :
         public yarp::os::Portable
@@ -76,32 +160,26 @@ public:
     static constexpr const char* s_help{""};
 };
 
-/* t_yarp_generator::generate_service_helper_classes_impl:3929 */
 // doSomethingRPC helper class implementation
-/* t_yarp_generator::generate_service_helper_classes_impl_write:3995 */
 bool FakeTestMsgs_doSomethingRPC_helper::write(yarp::os::ConnectionWriter& connection) const
 {
     return cmd.write(connection);
 }
 
-/* t_yarp_generator::generate_service_helper_classes_impl_read:4043 */
 bool FakeTestMsgs_doSomethingRPC_helper::read(yarp::os::ConnectionReader& connection)
 {
     return reply.read(connection);
 }
 
-/* t_yarp_generator::generate_service_helper_classes_impl_command_write_connectionwriter:4063 */
 bool FakeTestMsgs_doSomethingRPC_helper::Command::write(yarp::os::ConnectionWriter& connection) const
 {
     yarp::os::idl::WireWriter writer(connection);
     if (!writer.writeListHeader(s_cmd_len)) {
-        yWarning("%s:%d - %s", __FILE__, __LINE__, __YFUNCTION__);
         return false;
     }
     return write(writer);
 }
 
-/* t_yarp_generator::generate_service_helper_classes_impl_command_read_connectionreader:4085 */
 bool FakeTestMsgs_doSomethingRPC_helper::Command::read(yarp::os::ConnectionReader& connection)
 {
     yarp::os::idl::WireReader reader(connection);
@@ -112,56 +190,45 @@ bool FakeTestMsgs_doSomethingRPC_helper::Command::read(yarp::os::ConnectionReade
     return read(reader);
 }
 
-/* t_yarp_generator::generate_service_helper_classes_impl_command_write_wirewriter:4115 */
 bool FakeTestMsgs_doSomethingRPC_helper::Command::write(const yarp::os::idl::WireWriter& writer) const
 {
     if (!writeTag(writer)) {
-        yWarning("%s:%d - %s", __FILE__, __LINE__, __YFUNCTION__);
         return false;
     }
     if (!writeArgs(writer)) {
-        yWarning("%s:%d - %s", __FILE__, __LINE__, __YFUNCTION__);
         return false;
     }
     return true;
 }
 
-/* t_yarp_generator::generate_service_helper_classes_impl_command_writetag:4137 */
 bool FakeTestMsgs_doSomethingRPC_helper::Command::writeTag(const yarp::os::idl::WireWriter& writer) const
 {
     if (!writer.writeTag(s_tag, 1, s_tag_len)) {
-        yWarning("%s:%d - %s", __FILE__, __LINE__, __YFUNCTION__);
         return false;
     }
     return true;
 }
 
-/* t_yarp_generator::generate_service_helper_classes_impl_command_writeargs:4158 */
 bool FakeTestMsgs_doSomethingRPC_helper::Command::writeArgs(const yarp::os::idl::WireWriter& writer [[maybe_unused]]) const
 {
     return true;
 }
 
-/* t_yarp_generator::generate_service_helper_classes_impl_command_read_wirereader:4186 */
 bool FakeTestMsgs_doSomethingRPC_helper::Command::read(yarp::os::idl::WireReader& reader)
 {
     if (!readTag(reader)) {
-        yWarning("%s:%d - %s", __FILE__, __LINE__, __YFUNCTION__);
         return false;
     }
     if (!readArgs(reader)) {
-        yWarning("%s:%d - %s", __FILE__, __LINE__, __YFUNCTION__);
         return false;
     }
     return true;
 }
 
-/* t_yarp_generator::generate_service_helper_classes_impl_command_readtag:4206 */
 bool FakeTestMsgs_doSomethingRPC_helper::Command::readTag(yarp::os::idl::WireReader& reader)
 {
     std::string tag = reader.readTag(s_tag_len);
     if (reader.isError()) {
-        yWarning("%s:%d - %s", __FILE__, __LINE__, __YFUNCTION__);
         return false;
     }
     if (tag != s_tag) {
@@ -171,7 +238,6 @@ bool FakeTestMsgs_doSomethingRPC_helper::Command::readTag(yarp::os::idl::WireRea
     return true;
 }
 
-/* t_yarp_generator::generate_service_helper_classes_impl_command_readargs:4234 */
 bool FakeTestMsgs_doSomethingRPC_helper::Command::readArgs(yarp::os::idl::WireReader& reader)
 {
     if (!reader.noMore()) {
@@ -181,65 +247,52 @@ bool FakeTestMsgs_doSomethingRPC_helper::Command::readArgs(yarp::os::idl::WireRe
     return true;
 }
 
-/* t_yarp_generator::generate_service_helper_classes_impl_reply_write_connectionwriter:4264 */
 bool FakeTestMsgs_doSomethingRPC_helper::Reply::write(yarp::os::ConnectionWriter& connection) const
 {
     yarp::os::idl::WireWriter writer(connection);
     return write(writer);
 }
 
-/* t_yarp_generator::generate_service_helper_classes_impl_reply_read_connectionreader:4285 */
 bool FakeTestMsgs_doSomethingRPC_helper::Reply::read(yarp::os::ConnectionReader& connection)
 {
     yarp::os::idl::WireReader reader(connection);
     return read(reader);
 }
 
-/* t_yarp_generator::generate_service_helper_classes_impl_reply_write_wirewriter:4306 */
 bool FakeTestMsgs_doSomethingRPC_helper::Reply::write(const yarp::os::idl::WireWriter& writer) const
 {
     if (!writer.isNull()) {
-/* t_yarp_generator::generate_serialize_field:1137 */
-/* t_yarp_generator::generate_serialize_struct:1259 */
         if (!writer.write(return_helper)) {
-            yWarning("%s:%d - %s", __FILE__, __LINE__, __YFUNCTION__);
             return false;
         }
     }
     return true;
 }
 
-/* t_yarp_generator::generate_service_helper_classes_impl_reply_read_wirereader:4352 */
 bool FakeTestMsgs_doSomethingRPC_helper::Reply::read(yarp::os::idl::WireReader& reader)
 {
-/* t_yarp_generator::generate_deserialize_field:1404 */
     if (reader.noMore()) {
         reader.fail();
         return false;
     }
-/* t_yarp_generator::generate_deserialize_struct:1559 */
     if (!reader.read(return_helper)) {
-/* t_yarp_generator::generate_deserialize_field_fallback:1387 */
         reader.fail();
         return false;
     }
     return true;
 }
 
-/* t_yarp_generator::generate_service_helper_classes_impl_call:4390 */
 void FakeTestMsgs_doSomethingRPC_helper::call(FakeTestMsgs* ptr)
 {
     reply.return_helper = ptr->doSomethingRPC();
 }
 
-/* t_yarp_generator::generate_service_constructor:4430 */
 // Constructor
 FakeTestMsgs::FakeTestMsgs()
 {
     yarp().setOwner(*this);
 }
 
-/* t_yarp_generator::generate_service_method:4455 */
 yarp::dev::ReturnValue FakeTestMsgs::doSomethingRPC()
 {
     if (!yarp().canWrite()) {
@@ -250,7 +303,6 @@ yarp::dev::ReturnValue FakeTestMsgs::doSomethingRPC()
     return ok ? helper.reply.return_helper : yarp::dev::ReturnValue{};
 }
 
-/* t_yarp_generator::generate_service_help:4508 */
 // help method
 std::vector<std::string> FakeTestMsgs::help(const std::string& functionName)
 {
@@ -277,7 +329,6 @@ std::vector<std::string> FakeTestMsgs::help(const std::string& functionName)
     return helpString;
 }
 
-/* t_yarp_generator::generate_service_read:4590 */
 // read from ConnectionReader
 bool FakeTestMsgs::read(yarp::os::ConnectionReader& connection)
 {
@@ -297,10 +348,29 @@ bool FakeTestMsgs::read(yarp::os::ConnectionReader& connection)
         tag = reader.readTag(1);
     }
     while (tag_len <= max_tag_len && !reader.isError()) {
+        if(tag == "getRemoteProtocolVersion") {
+            if (!reader.noMore()) {
+                yError("Reader invalid protocol?! %s:%d - %s", __FILE__, __LINE__, __YFUNCTION__);
+                reader.fail();
+                return false;
+            }
+
+            auto proto = getLocalProtocolVersion();
+
+            yarp::os::idl::WireWriter writer(reader);
+           if (!writer.writeListHeader(1)) {
+                yWarning("Writer invalid protocol?! %s:%d - %s", __FILE__, __LINE__, __YFUNCTION__);
+               return false;}
+            if (!writer.write(proto)) {
+                yWarning("Writer invalid protocol?! %s:%d - %s", __FILE__, __LINE__, __YFUNCTION__);
+                return false;
+            }
+            reader.accept();
+            return true;
+        }
         if (tag == FakeTestMsgs_doSomethingRPC_helper::s_tag) {
             FakeTestMsgs_doSomethingRPC_helper helper;
             if (!helper.cmd.readArgs(reader)) {
-                yWarning("%s:%d - %s", __FILE__, __LINE__, __YFUNCTION__);
                 return false;
             }
 
@@ -308,7 +378,6 @@ bool FakeTestMsgs::read(yarp::os::ConnectionReader& connection)
 
             yarp::os::idl::WireWriter writer(reader);
             if (!helper.reply.write(writer)) {
-                yWarning("%s:%d - %s", __FILE__, __LINE__, __YFUNCTION__);
                 return false;
             }
             reader.accept();
@@ -323,25 +392,20 @@ bool FakeTestMsgs::read(yarp::os::ConnectionReader& connection)
             yarp::os::idl::WireWriter writer(reader);
             if (!writer.isNull()) {
                 if (!writer.writeListHeader(2)) {
-                    yWarning("%s:%d - %s", __FILE__, __LINE__, __YFUNCTION__);
                     return false;
                 }
                 if (!writer.writeTag("many", 1, 0)) {
-                    yWarning("%s:%d - %s", __FILE__, __LINE__, __YFUNCTION__);
                     return false;
                 }
                 if (!writer.writeListBegin(0, help_strings.size())) {
-                    yWarning("%s:%d - %s", __FILE__, __LINE__, __YFUNCTION__);
                     return false;
                 }
                 for (const auto& help_string : help_strings) {
                     if (!writer.writeString(help_string)) {
-                        yWarning("%s:%d - %s", __FILE__, __LINE__, __YFUNCTION__);
                         return false;
                     }
                 }
                 if (!writer.writeListEnd()) {
-                    yWarning("%s:%d - %s", __FILE__, __LINE__, __YFUNCTION__);
                     return false;
                 }
             }

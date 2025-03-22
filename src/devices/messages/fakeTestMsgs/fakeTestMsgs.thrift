@@ -3,6 +3,8 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
+const i16  protocol_version = 1
+
 struct yReturnValue {
 } (
   yarp.name = "yarp::dev::ReturnValue"

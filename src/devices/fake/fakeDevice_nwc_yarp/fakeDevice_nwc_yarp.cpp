@@ -35,7 +35,11 @@ bool FakeDevice_nwc_yarp::open(yarp::os::Searchable &config)
         yCError(FAKEDEVICE_NWC_YARP, "Cannot attach the RPC port as client");
     }
 
+    //Check the protocol version
+    if (!m_thrift_RPC.checkProtocolVersion()) { return false; }
+
     yCDebug(FAKEDEVICE_NWC_YARP) << "Opening of NWC successful";
+
     return true;
 }
 

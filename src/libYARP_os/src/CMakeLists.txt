@@ -11,6 +11,7 @@ if(NOT YARP_NO_DEPRECATED) # since YARP 3.3
 endif()
 
 set(YARP_os_HDRS
+  yarp/os/ApplicationNetworkProtocolVersion.h
   yarp/os/AbstractCarrier.h
   yarp/os/AbstractContactable.h
   yarp/os/all.h
@@ -142,6 +143,7 @@ set(YARP_os_HDRS
 )
 
 set(YARP_os_SRCS
+  yarp/os/ApplicationNetworkProtocolVersion.cpp
   yarp/os/AbstractCarrier.cpp
   yarp/os/AbstractContactable.cpp
   yarp/os/Bottle.cpp

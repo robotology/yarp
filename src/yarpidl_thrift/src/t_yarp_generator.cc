@@ -42,6 +42,7 @@ class t_yarp_generator : public t_oop_generator
     bool no_copyright_{false};
     bool no_doc_{false};
     bool debug_generator_{false};
+    bool addDeviceProtocolVersion_ {true};
 
     // Other
     bool need_common_{false}; //are there consts and typedef that we need to keep in a common file?
@@ -1620,7 +1621,7 @@ void t_yarp_generator::generate_deserialize_container(std::ostringstream& f_cpp_
         f_cpp_ << indent_cpp() << "yarp::os::idl::WireState _etype;\n";
         f_cpp_ << indent_cpp() << "reader.readListBegin(_etype, _csize);\n";
 
-        // The check nust be performed only if expected_tag is != 0.
+        // The check must be performed only if expected_tag is != 0.
         // We cannot compare if it is 0, because in this case WireReader
         // usually returns -1, but I have no idea if there are other corner
         // cases.
@@ -3659,6 +3660,10 @@ void t_yarp_generator::generate_service(t_service* tservice)
         f_h_ << "#include <yarp/os/Things.h>\n";
     }
 
+    if (addDeviceProtocolVersion_) {
+        f_h_ << "#include <yarp/os/ApplicationNetworkProtocolVersion.h>\n";
+    }
+
     if (need_common_) {
         f_h_ << "#include <" << get_include_prefix(program_) << program_->get_name() << "_common.h>" << '\n';
     }
@@ -3685,11 +3690,12 @@ void t_yarp_generator::generate_service(t_service* tservice)
     f_h_ << '\n';
 
     // Add includes to .cpp file
+    f_cpp_ << "#include <yarp/conf/version.h>\n";
     f_cpp_ << "#include <" << get_include_prefix(tservice->get_program()) + service_name + ".h>" << '\n';
+    f_cpp_ << "#include <yarp/os/LogComponent.h>\n";
+    f_cpp_ << "#include <yarp/os/LogStream.h>\n";
     f_cpp_ << '\n';
     if (monitor_enabled) {
-        f_cpp_ << "#include <yarp/os/LogComponent.h>\n";
-        f_cpp_ << "#include <yarp/os/LogStream.h>\n";
         f_cpp_ << "#include <yarp/os/SystemClock.h>\n";
         f_cpp_ << "#include <yarp/os/CommandBottle.h>\n";
         f_cpp_ << "#include <map>\n";
@@ -3697,6 +3703,11 @@ void t_yarp_generator::generate_service(t_service* tservice)
     f_cpp_ << "#include <yarp/os/idl/WireTypes.h>\n";
     f_cpp_ << '\n';
     f_cpp_ << "#include <algorithm>\n";
+    f_cpp_ << '\n';
+    f_cpp_ << "namespace\n";
+    f_cpp_ << "{\n";
+    f_cpp_ << "    YARP_LOG_COMPONENT(SERVICE_LOG_COMPONENT, \"" << tservice->get_name() << "\")\n";
+    f_cpp_ << "}\n";
     f_cpp_ << '\n';
 
     // Produce an error if a function starts with the same name as another one
@@ -3727,9 +3738,128 @@ void t_yarp_generator::generate_service(t_service* tservice)
     indent_up_h();
     f_h_ << indent_access_specifier_h() << "public:\n";
 
+    if (addDeviceProtocolVersion_) {
+
+        //Checks if the thrift file contains the definition of a protocol constant
+        //see the usage of version_found below.
+        const short int default_proto_version = 0;
+        const std::string proto_constant_name = "protocol_version";
+        auto cc = tservice->get_program()->get_consts();
+        bool version_found = false;
+        for (auto it = cc.begin(); it != cc.end(); it++)
+        {
+            if ((*(*it)).get_name() == proto_constant_name &&
+                (*(*it)).get_type()->get_name() == "i16") {
+                version_found = true; }
+        }
+
+        THRIFT_DEBUG_COMMENT(f_h_);
+        f_h_ << indent_h() << "//ProtocolVersion\n";
+        f_h_ << indent_h() << "virtual yarp::os::ApplicationNetworkProtocolVersion getLocalProtocolVersion();\n";
+        f_h_ << indent_h() << "virtual yarp::os::ApplicationNetworkProtocolVersion getRemoteProtocolVersion();\n";
+        f_h_ << indent_h() << "virtual bool checkProtocolVersion();\n";
+        f_h_ << "\n";
+
+        THRIFT_DEBUG_COMMENT(f_cpp_);
+        f_cpp_ << "//" << tservice->get_name() << "_getRemoteProtocolVersion_helper declaration\n";
+        f_cpp_ << "class " << tservice->get_name() << "_getRemoteProtocolVersion_helper :\n";
+        f_cpp_ << "public yarp::os::Portable\n";
+        f_cpp_ << "{\n";
+        f_cpp_ << "public:\n";
+        f_cpp_ << "    " << tservice->get_name() << "_getRemoteProtocolVersion_helper() = default;\n";
+        f_cpp_ << "    bool write(yarp::os::ConnectionWriter& connection) const override;\n";
+        f_cpp_ << "    bool read(yarp::os::ConnectionReader& connection) override;\n";
+        f_cpp_ << "\n";
+        f_cpp_ << "    yarp::os::ApplicationNetworkProtocolVersion helper_proto;\n";
+        f_cpp_ << "};\n";
+        f_cpp_ << "\n";
+        f_cpp_ << "bool " << tservice->get_name() << "_getRemoteProtocolVersion_helper::write(yarp::os::ConnectionWriter& connection) const\n";
+        f_cpp_ << "{\n";
+        f_cpp_ << "    yarp::os::idl::WireWriter writer(connection);\n";
+        f_cpp_ << "    if (!writer.writeListHeader(1)) {\n";
+        f_cpp_ << "        return false;\n";
+        f_cpp_ << "    }\n";
+        f_cpp_ << "    if (!writer.writeString(\"getRemoteProtocolVersion\")) {\n";
+        f_cpp_ << "        return false;\n";
+        f_cpp_ << "    }\n";
+        f_cpp_ << "    return true;\n";
+        f_cpp_ << "}\n";
+        f_cpp_ << "\n";
+        f_cpp_ << "bool " << tservice->get_name() << "_getRemoteProtocolVersion_helper ::read(yarp::os::ConnectionReader & connection)\n ";
+        f_cpp_ << "{\n";
+        f_cpp_ << "    yarp::os::idl::WireReader reader(connection);\n";
+        f_cpp_ << "    if (!reader.readListHeader()) {\n";
+        f_cpp_ << "        reader.fail();\n";
+        f_cpp_ << "        return false;\n";
+        f_cpp_ << "    }\n";
+        f_cpp_ << "\n";
+        f_cpp_ << "    if (!helper_proto.read(connection)) {\n";
+        f_cpp_ << "        reader.fail();\n";
+        f_cpp_ << "        return false;\n";
+        f_cpp_ << "    }\n";
+        f_cpp_ << "    return true;\n";
+        f_cpp_ << "}\n";
+        f_cpp_ << "\n";
+
+        THRIFT_DEBUG_COMMENT(f_cpp_);
+        f_cpp_ << "//ProtocolVersion, client side\n";
+        f_cpp_ << "yarp::os::ApplicationNetworkProtocolVersion " << tservice->get_name() << "::getRemoteProtocolVersion()\n ";
+        f_cpp_ << "{\n";
+        f_cpp_ << "    if(!yarp().canWrite()) {\n";
+        f_cpp_ << "        yError(\" Missing server method " << tservice->get_name() << "::getRemoteProtocolVersion\");\n";
+        f_cpp_ << "    }\n";
+        f_cpp_ << "    " << tservice->get_name() << "_getRemoteProtocolVersion_helper helper{};\n";
+        f_cpp_ << "    bool ok = yarp().write(helper, helper);\n";
+        f_cpp_ << "    if (ok) {\n";
+        f_cpp_ << "        return helper.helper_proto;}\n";
+        f_cpp_ << "    else {\n";
+        f_cpp_ << "        yarp::os::ApplicationNetworkProtocolVersion failureproto;\n";
+        f_cpp_ << "        return failureproto;}\n";
+        f_cpp_ << "}\n";
+        f_cpp_ << "\n";
+        f_cpp_ << "//ProtocolVersion, client side\n";
+        f_cpp_ << "bool " << tservice->get_name() << "::checkProtocolVersion()\n ";
+        f_cpp_ << "{\n";
+        f_cpp_ << "        auto locproto = this->getLocalProtocolVersion();\n";
+        f_cpp_ << "        auto remproto = this->getRemoteProtocolVersion();\n";
+        f_cpp_ << "        if (remproto.protocol_version != locproto.protocol_version)\n";
+        f_cpp_ << "        {\n";
+        f_cpp_ << "            yCError(SERVICE_LOG_COMPONENT) << \"Invalid communication protocol.\";\n";
+        f_cpp_ << "            yCError(SERVICE_LOG_COMPONENT) << \"Local Protocol Version: \" << locproto.toString();\n";
+        f_cpp_ << "            yCError(SERVICE_LOG_COMPONENT) << \"Remote Protocol Version: \" << remproto.toString();\n";
+        f_cpp_ << "            return false;\n";
+        f_cpp_ << "        }\n";
+        f_cpp_ << "        return true;\n";
+        f_cpp_ << "}\n";
+        f_cpp_ << "\n";
+
+        f_cpp_ << "//ProtocolVersion, server side\n";
+        f_cpp_ << "yarp::os::ApplicationNetworkProtocolVersion " << tservice->get_name() << "::getLocalProtocolVersion()\n";
+        f_cpp_ << "{\n";
+        f_cpp_ << "    yarp::os::ApplicationNetworkProtocolVersion myproto;\n";
+        if (version_found)
+        {
+            f_cpp_ << "    myproto.protocol_version = " << proto_constant_name << ";\n";
+        }
+        else
+        {
+            f_cpp_ << "    //myproto.protocol_version using default value = " << std::to_string(default_proto_version) <<"\n";
+            f_cpp_ << "    //to change this value add the following line to the .thrift file:\n";
+            f_cpp_ << "    //const i16 " << proto_constant_name <<" = <your_number_here>\n";
+            f_cpp_ << "    myproto.protocol_version = " << std::to_string(default_proto_version) << ";\n";
+        }
+        f_cpp_ << "    myproto.yarp_major = YARP_VERSION_MAJOR;\n";
+        f_cpp_ << "    myproto.yarp_minor = YARP_VERSION_MINOR;\n";
+        f_cpp_ << "    myproto.yarp_patch = YARP_VERSION_PATCH;\n";
+        f_cpp_ << "    return myproto;\n";
+        f_cpp_ << "}\n";
+        f_cpp_ << "\n";
+    }
+
     generate_service_helper_classes(tservice, f_cpp_);
     generate_service_constructor(tservice, f_h_, f_cpp_);
 
+    f_h_ << indent_h() << "//Service methods\n";
     // Functions
     for (const auto& function : tservice->get_functions()) {
         generate_service_method(tservice, function, f_h_, f_cpp_);
@@ -4636,6 +4766,31 @@ void t_yarp_generator::generate_service_read(t_service* tservice, std::ostringst
         f_cpp_ << indent_cpp() << "while (tag_len <= max_tag_len && !reader.isError()) {\n";
         indent_up_cpp();
         {
+            // Add the protocol check
+            if (addDeviceProtocolVersion_)
+            {
+                f_cpp_ << indent_cpp() <<"if(tag == \"getRemoteProtocolVersion\") {\n";
+                f_cpp_ << indent_cpp() <<"    if (!reader.noMore()) {\n";
+                f_cpp_ << indent_cpp() <<"        yError(\"Reader invalid protocol?! %s:%d - %s\", __FILE__, __LINE__, __YFUNCTION__);\n";
+                f_cpp_ << indent_cpp() <<"        reader.fail();\n";
+                f_cpp_ << indent_cpp() <<"        return false;\n";
+                f_cpp_ << indent_cpp() <<"    }\n";
+                f_cpp_ << "\n";
+                f_cpp_ << indent_cpp() <<"    auto proto = getLocalProtocolVersion();\n";
+                f_cpp_ << "\n";
+                f_cpp_ << indent_cpp() <<"    yarp::os::idl::WireWriter writer(reader);\n";
+                f_cpp_ << indent_cpp() << "   if (!writer.writeListHeader(1)) {\n";
+                f_cpp_ << indent_cpp() <<"        yWarning(\"Writer invalid protocol?! %s:%d - %s\", __FILE__, __LINE__, __YFUNCTION__);\n";
+                f_cpp_ << indent_cpp() << "       return false;}\n";
+                f_cpp_ << indent_cpp() <<"    if (!writer.write(proto)) {\n";
+                f_cpp_ << indent_cpp() <<"        yWarning(\"Writer invalid protocol?! %s:%d - %s\", __FILE__, __LINE__, __YFUNCTION__);\n";
+                f_cpp_ << indent_cpp() <<"        return false;\n";
+                f_cpp_ << indent_cpp() <<"    }\n";
+                f_cpp_ << indent_cpp() <<"    reader.accept();\n";
+                f_cpp_ << indent_cpp() <<"    return true;\n";
+                f_cpp_ << indent_cpp() <<"}\n";
+            }
+
             // TODO: use quick lookup, this is just a test
             for (const auto& function : tservice->get_functions()) {
 
