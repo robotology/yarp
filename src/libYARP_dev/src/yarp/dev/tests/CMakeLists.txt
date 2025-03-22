@@ -12,6 +12,7 @@ set(YARP_dev_test_HDRS
     IAxisInfoTest.h
     IRGBDSensorTest.h
     IBatteryTest.h
+    ICartesianControlTest.h
     IJoypadControllerTest.h
     ILLMTest.h
     IChatBotTest.h
@@ -36,6 +37,7 @@ set(YARP_dev_test_SRCS
     IAxisInfoTest.cpp
     IRGBDSensorTest.cpp
     IBatteryTest.cpp
+    ICartesianControlTest.cpp
     IJoypadControllerTest.cpp
     ILLMTest.cpp
     IChatBotTest.cpp
