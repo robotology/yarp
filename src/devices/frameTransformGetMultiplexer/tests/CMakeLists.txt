@@ -2,6 +2,5 @@
 # SPDX-License-Identifier: BSD-3-Clause
 
 if(TARGET YARP::YARP_math)
-  create_device_test(FrameTransformGet_nws_yarp YARP::YARP_math)
-  create_device_test(FrameTransformGet_nwc_yarp YARP::YARP_math)
+  create_device_test(FrameTransformGetMultiplexer YARP::YARP_math)
 endif()
