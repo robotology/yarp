@@ -6,7 +6,6 @@
 #include "Battery_nws_yarp.h"
 #include <sstream>
 #include <string>
-#include <yarp/dev/ControlBoardInterfaces.h>
 #include <yarp/os/LogComponent.h>
 #include <yarp/os/LogStream.h>
 #include <time.h>
@@ -23,7 +22,6 @@ YARP_LOG_COMPONENT(BATTERYWRAPPER, "yarp.devices.Battery_nws_yarp")
 Battery_nws_yarp::Battery_nws_yarp() : PeriodicThread(DEFAULT_THREAD_PERIOD)
 {
     m_period = DEFAULT_THREAD_PERIOD;
-    m_ibattery_p = nullptr;
     memset(m_log_buffer, 0, 1024);
 }
 
@@ -47,6 +45,7 @@ bool Battery_nws_yarp::attach(PolyDriver* driver)
         yCError(BATTERYWRAPPER, "Unable to view IBattery interface");
         return false;
     }
+    m_msgsImpl = std::make_unique<IBatteryMsgsImpl>(m_ibattery_p);
 
     PeriodicThread::setPeriod(m_period);
     PeriodicThread::start();
@@ -65,53 +64,19 @@ bool Battery_nws_yarp::detach()
 
 bool Battery_nws_yarp::read(yarp::os::ConnectionReader& connection)
 {
-    yarp::os::Bottle in;
-    yarp::os::Bottle out;
-    bool ok = in.read(connection);
-    if (!ok) {
-        return false;
-    }
+    if (!connection.isValid()) { return false;}
+    if (!m_msgsImpl) { return false;}
 
-    // parse in, prepare out
-    int code = in.get(0).asVocab32();
-    bool ret = false;
-    if (code == VOCAB_IBATTERY)
+    bool b = m_msgsImpl->read(connection);
+    if (b)
     {
-        int cmd = in.get(1).asVocab32();
-        if (cmd == VOCAB_BATTERY_INFO)
-        {
-            if (m_ibattery_p)
-            {
-                std::string info;
-                m_ibattery_p->getBatteryInfo(info);
-                out.addVocab32(VOCAB_IS);
-                out.addVocab32(cmd);
-                out.addString(info);
-                ret = true;
-            }
-        }
-        else
-        {
-            yCError(BATTERYWRAPPER, "Invalid vocab received");
-        }
+        return true;
     }
     else
     {
-        yCError(BATTERYWRAPPER, "Invalid vocab received");
+        yCError(BATTERYWRAPPER, "read() Command failed");
+        return false;
     }
-
-    if (!ret)
-    {
-        out.clear();
-        out.addVocab32(VOCAB_FAILED);
-    }
-
-    yarp::os::ConnectionWriter *returnToSender = connection.getWriter();
-    if (returnToSender != nullptr)
-    {
-        out.write(*returnToSender);
-    }
-    return true;
 }
 
 bool Battery_nws_yarp::threadInit()
@@ -208,13 +173,12 @@ void Battery_nws_yarp::run()
         if (ret_sts)
         {
             m_lastStateStamp.update();
-            yarp::os::Bottle& b = m_streamingPort.prepare();
-            b.clear();
-            b.addFloat64(m_battery_voltage); //0
-            b.addFloat64(m_battery_current); //1
-            b.addFloat64(m_battery_charge);  //2
-            b.addFloat64(m_battery_temperature); //3
-            b.addInt32(m_battery_status); //4
+            yarp::dev::BatteryData& b = m_streamingPort.prepare();
+            b.voltage = m_battery_voltage;
+            b.current = m_battery_current;
+            b.charge = m_battery_charge;
+            b.temperature = m_battery_temperature;
+            b.status = m_battery_status;
             m_streamingPort.setEnvelope(m_lastStateStamp);
             m_streamingPort.write();
 
@@ -250,9 +214,7 @@ bool Battery_nws_yarp::close()
         PeriodicThread::stop();
     }
 
-    m_streamingPort.interrupt();
     m_streamingPort.close();
-    m_rpcPort.interrupt();
     m_rpcPort.close();
 
     // save data to file
@@ -366,4 +328,29 @@ void Battery_nws_yarp::stop_robot(std::string quit_port)
     port_shutdown.write(bot);
     port_shutdown.interrupt();
     port_shutdown.close();
+}
+
+return_get_BatteryInfo    IBatteryMsgsImpl::getBatteryInfoRPC()
+{
+    std::lock_guard <std::mutex> lg(m_mutex);
+    return_get_BatteryInfo response;
+    std::string info;
+
+    auto ret = m_iBat->getBatteryInfo(info);
+    if(!ret)
+    {
+        yCError(BATTERYWRAPPER) << "Could not retrieve the battery status";
+        response.result = ret;
+        return response;
+    }
+
+    response.result = ret;
+    response.info = info;
+
+    return response;
+}
+
+IBatteryMsgsImpl::IBatteryMsgsImpl(yarp::dev::IBattery* _iBattery)
+{
+    m_iBat = _iBattery;
 }

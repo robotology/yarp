@@ -37,7 +37,7 @@ Battery_InputPortProcessor::Battery_InputPortProcessor()
     resetStat();
 }
 
-void Battery_InputPortProcessor::onRead(yarp::os::Bottle &b)
+void Battery_InputPortProcessor::onRead(yarp::dev::BatteryData &b)
 {
     now=Time::now();
     mutex.lock();
@@ -56,7 +56,7 @@ void Battery_InputPortProcessor::onRead(yarp::os::Bottle &b)
         //compare network time
         if (tmpDT*1000<BATTERY_TIMEOUT)
         {
-            state = b.get(5).asInt32();
+            state = b.status;
         }
         else
         {
@@ -67,7 +67,7 @@ void Battery_InputPortProcessor::onRead(yarp::os::Bottle &b)
     prev=now;
     count++;
 
-    lastBottle=b;
+    lastData=b;
     Stamp newStamp;
     getEnvelope(newStamp);
 
@@ -80,7 +80,7 @@ void Battery_InputPortProcessor::onRead(yarp::os::Bottle &b)
     //now compare timestamps
     if ((1000*(newStamp.getTime()-lastStamp.getTime()))<BATTERY_TIMEOUT)
     {
-        state = b.get(5).asInt32();
+        state = b.status;
     }
     else
     {
@@ -91,13 +91,13 @@ void Battery_InputPortProcessor::onRead(yarp::os::Bottle &b)
     mutex.unlock();
 }
 
-inline int Battery_InputPortProcessor::getLast(yarp::os::Bottle &data, Stamp &stmp)
+inline int Battery_InputPortProcessor::getLast(yarp::dev::BatteryData &data, Stamp &stmp)
 {
     mutex.lock();
     int ret=state;
     if (ret != IBattery::BATTERY_GENERAL_ERROR)
     {
-        data=lastBottle;
+        data=lastData;
         stmp = lastStamp;
     }
     mutex.unlock();
@@ -108,7 +108,7 @@ inline int Battery_InputPortProcessor::getLast(yarp::os::Bottle &data, Stamp &st
 double Battery_InputPortProcessor::getVoltage()
 {
     mutex.lock();
-    double voltage = lastBottle.get(0).asFloat64();
+    double voltage = lastData.voltage;
     mutex.unlock();
     return voltage;
 }
@@ -116,7 +116,7 @@ double Battery_InputPortProcessor::getVoltage()
 double Battery_InputPortProcessor::getCurrent()
 {
     mutex.lock();
-    double current = lastBottle.get(1).asFloat64();
+    double current = lastData.current;
     mutex.unlock();
     return current;
 }
@@ -124,15 +124,15 @@ double Battery_InputPortProcessor::getCurrent()
 double Battery_InputPortProcessor::getCharge()
 {
     mutex.lock();
-    double charge = lastBottle.get(2).asFloat64();
+    double charge = lastData.charge;
     mutex.unlock();
     return charge;
 }
 
-int    Battery_InputPortProcessor::getStatus()
+yarp::dev::IBattery::Battery_status Battery_InputPortProcessor::getStatus()
 {
     mutex.lock();
-    int status = lastBottle.get(4).asInt32();
+    yarp::dev::IBattery::Battery_status status = (yarp::dev::IBattery::Battery_status)lastData.status;
     mutex.unlock();
     return status;
 }
@@ -140,7 +140,7 @@ int    Battery_InputPortProcessor::getStatus()
 double Battery_InputPortProcessor::getTemperature()
 {
     mutex.lock();
-    double temperature = lastBottle.get(3).asFloat64();
+    double temperature = lastData.temperature;
     mutex.unlock();
     return temperature;
 }
@@ -211,6 +211,11 @@ bool Battery_nwc_yarp::open(yarp::os::Searchable &config)
        yCError(BATTERYCLIENT, "open() Could not connect %s -> %s", remote_rpc.c_str(), local_rpc.c_str());
        return false;
     }
+    if (!m_battery_RPC.yarp().attachAsClient(rpcPort))
+    {
+        yCError(BATTERYCLIENT, "Error! Cannot attach the rpcPort as a client");
+        return false;
+    }
 
     return true;
 }
@@ -222,48 +227,46 @@ bool Battery_nwc_yarp::close()
     return true;
 }
 
-bool Battery_nwc_yarp::getBatteryVoltage(double &voltage)
+ReturnValue Battery_nwc_yarp::getBatteryVoltage(double &voltage)
 {
     voltage = inputPort.getVoltage();
-    return true;
+    return ReturnValue_ok;
 }
 
-bool Battery_nwc_yarp::getBatteryCurrent(double &current)
+ReturnValue Battery_nwc_yarp::getBatteryCurrent(double &current)
 {
     current = inputPort.getCurrent();
-    return true;
+    return ReturnValue_ok;
 }
 
-bool Battery_nwc_yarp::getBatteryCharge(double &charge)
+ReturnValue Battery_nwc_yarp::getBatteryCharge(double &charge)
 {
     charge = inputPort.getCharge();
-    return true;
+    return ReturnValue_ok;
 }
 
-bool Battery_nwc_yarp::getBatteryStatus(Battery_status &status)
+ReturnValue Battery_nwc_yarp::getBatteryStatus(Battery_status &status)
 {
     status = (Battery_status)inputPort.getStatus();
-    return true;
+    return ReturnValue_ok;
 }
 
-bool Battery_nwc_yarp::getBatteryTemperature(double &temperature)
+ReturnValue Battery_nwc_yarp::getBatteryTemperature(double &temperature)
 {
     temperature = inputPort.getTemperature();
-    return true;
+    return ReturnValue_ok;
 }
 
-bool Battery_nwc_yarp::getBatteryInfo(std::string &battery_info)
+ReturnValue Battery_nwc_yarp::getBatteryInfo(std::string &battery_info)
 {
-    Bottle cmd, response;
-    cmd.addVocab32(VOCAB_IBATTERY);
-    cmd.addVocab32(VOCAB_BATTERY_INFO);
-    bool ok = rpcPort.write(cmd, response);
-    if (CHECK_FAIL(ok, response)!=false)
+    auto ret = m_battery_RPC.getBatteryInfoRPC();
+    if (!ret.result)
     {
-        battery_info = response.get(2).asString();
-        return true;
+        yCError(BATTERYCLIENT, "Unable to: getBatteryInfo()");
+        return ret.result;
     }
-    return false;
+    battery_info = ret.info;
+    return ret.result;
 }
 
 Stamp Battery_nwc_yarp::getLastInputStamp()

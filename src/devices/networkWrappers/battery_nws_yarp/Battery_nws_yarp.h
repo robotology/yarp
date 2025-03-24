@@ -30,10 +30,30 @@
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/dev/WrapperSingle.h>
 #include <yarp/dev/api.h>
+#include <yarp/dev/BatteryData.h>
+
+#include "IBatteryMsgs.h"
 
 #include "Battery_nws_yarp_ParamsParser.h"
 
 #define DEFAULT_THREAD_PERIOD 0.02 //s
+
+// rpc commands
+class IBatteryMsgsImpl : public IBatteryMsgs
+{
+private:
+    std::mutex                m_mutex;
+    yarp::dev::IBattery*      m_iBat{nullptr};
+
+public:
+    return_get_BatteryInfo    getBatteryInfoRPC() override;
+    IBatteryMsgsImpl          (yarp::dev::IBattery* iBattery);
+    ~IBatteryMsgsImpl() = default;
+
+public:
+    std::mutex* getMutex() { return &m_mutex; }
+};
+
 
  /**
  *  @ingroup dev_impl_wrapper
@@ -65,13 +85,14 @@ public:
 
 private:
 
-    yarp::dev::IBattery *m_ibattery_p;             // the battery read from
+    yarp::dev::IBattery *m_ibattery_p = nullptr;
+    std::unique_ptr<IBatteryMsgsImpl>  m_msgsImpl;
 
     //ports stuff
     std::string m_streamingPortName;
     std::string m_rpcPortName;
     yarp::os::Port m_rpcPort;
-    yarp::os::BufferedPort<yarp::os::Bottle> m_streamingPort;
+    yarp::os::BufferedPort<yarp::dev::BatteryData> m_streamingPort;
 
     //data
     double m_battery_charge = std::nan("");
@@ -80,13 +101,13 @@ private:
     double m_battery_temperature = std::nan("");
     yarp::dev::IBattery::Battery_status m_battery_status = yarp::dev::IBattery::Battery_status::BATTERY_TIMEOUT;
 
-    yarp::os::Stamp m_lastStateStamp;             // the last reading time stamp
+    yarp::os::Stamp m_lastStateStamp;
     double m_period;
     std::string m_sensorId;
 
     //log stuff
     char                m_log_buffer[1024];
-    FILE                *m_logFile;
+    FILE                *m_logFile=nullptr;
 
     //public methods
     bool read(yarp::os::ConnectionReader& connection) override;

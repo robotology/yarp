@@ -6,6 +6,7 @@
 #ifndef YARP_DEV_BATTERYCLIENT_BATTERYCLIENT_H
 #define YARP_DEV_BATTERYCLIENT_BATTERYCLIENT_H
 
+#include <mutex>
 
 #include <yarp/os/Network.h>
 #include <yarp/os/BufferedPort.h>
@@ -16,17 +17,18 @@
 #include <yarp/sig/Vector.h>
 #include <yarp/os/Time.h>
 #include <yarp/dev/PolyDriver.h>
+#include <yarp/dev/BatteryData.h>
 
-#include <mutex>
+#include "IBatteryMsgs.h"
 #include "Battery_nwc_yarp_ParamsParser.h"
 
 #define DEFAULT_THREAD_PERIOD 20 //ms
 
-class Battery_InputPortProcessor : public yarp::os::BufferedPort<yarp::os::Bottle>
+class Battery_InputPortProcessor : public yarp::os::BufferedPort<yarp::dev::BatteryData>
 {
     const int BATTERY_TIMEOUT=100; //ms
 
-    yarp::os::Bottle lastBottle;
+    yarp::dev::BatteryData lastData;
     std::mutex mutex;
     yarp::os::Stamp lastStamp;
     double deltaT;
@@ -44,10 +46,10 @@ public:
 
     Battery_InputPortProcessor();
 
-    using yarp::os::BufferedPort<yarp::os::Bottle>::onRead;
-    void onRead(yarp::os::Bottle &v) override;
+    using yarp::os::BufferedPort<yarp::dev::BatteryData>::onRead;
+    void onRead(yarp::dev::BatteryData &v) override;
 
-    inline int getLast(yarp::os::Bottle &data, yarp::os::Stamp &stmp);
+    inline int getLast(yarp::dev::BatteryData &data, yarp::os::Stamp &stmp);
 
     inline int getIterations();
 
@@ -58,7 +60,7 @@ public:
     double getCurrent();
     double getCharge();
     double getTemperature();
-    int getStatus();
+    yarp::dev::IBattery::Battery_status getStatus();
 
 };
 
@@ -79,6 +81,7 @@ class Battery_nwc_yarp :
 protected:
     Battery_InputPortProcessor inputPort;
     yarp::os::Port rpcPort;
+    IBatteryMsgs   m_battery_RPC;
     yarp::os::Stamp lastTs; //used by IPreciselyTimed
     std::string deviceId;
 
@@ -101,42 +104,42 @@ public:
     * @param voltage the voltage measurement
     * @return true/false.
     */
-    bool getBatteryVoltage(double &voltage) override;
+    yarp::dev::ReturnValue getBatteryVoltage(double &voltage) override;
 
     /**
     * Get the instantaneous current measurement
     * @param current the current measurement
     * @return true/false.
     */
-    bool getBatteryCurrent(double &current) override;
+    yarp::dev::ReturnValue getBatteryCurrent(double &current) override;
 
     /**
     * get the battery status of charge
     * @param charge the charge measurement (0-100%)
     * @return true/false.
     */
-    bool getBatteryCharge(double &charge) override;
+    yarp::dev::ReturnValue getBatteryCharge(double &charge) override;
 
     /**
     * get the battery status
     * @param status the battery status
     * @return true/false.
     */
-    bool getBatteryStatus(Battery_status &status) override;
+    yarp::dev::ReturnValue getBatteryStatus(yarp::dev::IBattery::Battery_status &status) override;
 
     /**
-    * get the battery hardware charactestics (e.g. max voltage etc)
+    * get the battery hardware characteristics (e.g. max voltage etc)
     * @param a string containing the battery infos
     * @return true/false.
     */
-    bool getBatteryInfo(std::string &battery_info) override;
+    yarp::dev::ReturnValue getBatteryInfo(std::string &battery_info) override;
 
     /**
     * get the battery temperature
-    * @param temprature the battery temperature
+    * @param temperature the battery temperature
     * @return true/false.
     */
-    bool getBatteryTemperature(double &temperature) override;
+    yarp::dev::ReturnValue getBatteryTemperature(double &temperature) override;
 };
 
 #endif // YARP_DEV_BATTERYCLIENT_BATTERYCLIENT_H

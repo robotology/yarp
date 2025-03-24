@@ -243,6 +243,7 @@ endif()
 include(YarpChooseIDL)
 
 set(YARP_dev_IDL
+  idl/BatteryData.thrift
   idl/stateExt.thrift
 
   idl/OdometryData.thrift
