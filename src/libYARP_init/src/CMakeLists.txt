@@ -7,7 +7,7 @@ add_library(YARP::YARP_init ALIAS YARP_init)
 
 set(YARP_init_HDRS)
 set(YARP_init_IMPL_HDRS)
-set(YARP_custom_init_SRC "yarp/os/Network.CustomInit.cpp"
+set(YARP_custom_init_SRC "yarp/os/Network.CustomInit.cpp")
 set(YARP_init_SRCS
   ${YARP_custom_init_SRC}
 )
