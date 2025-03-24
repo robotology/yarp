@@ -28,7 +28,7 @@ inline int checkResponse(bool ok, const yarp::os::Bottle& response)
 
 } // namespace
 
-inline void InputPortProcessor::resetStat()
+inline void AnalogSensorClient_InputPortProcessor::resetStat()
 {
     mutex.lock();
     count=0;
@@ -40,13 +40,13 @@ inline void InputPortProcessor::resetStat()
     mutex.unlock();
 }
 
-InputPortProcessor::InputPortProcessor()
+AnalogSensorClient_InputPortProcessor::AnalogSensorClient_InputPortProcessor()
 {
     state=IAnalogSensor::AS_ERROR;
     resetStat();
 }
 
-void InputPortProcessor::onRead(yarp::sig::Vector &v)
+void AnalogSensorClient_InputPortProcessor::onRead(yarp::sig::Vector &v)
 {
     now=Time::now();
     mutex.lock();
@@ -100,7 +100,7 @@ void InputPortProcessor::onRead(yarp::sig::Vector &v)
     mutex.unlock();
 }
 
-inline int InputPortProcessor::getLast(yarp::sig::Vector &data, Stamp &stmp)
+inline int AnalogSensorClient_InputPortProcessor::getLast(yarp::sig::Vector &data, Stamp &stmp)
 {
     mutex.lock();
     int ret=state;
@@ -114,7 +114,7 @@ inline int InputPortProcessor::getLast(yarp::sig::Vector &data, Stamp &stmp)
     return ret;
 }
 
-inline int InputPortProcessor::getIterations()
+inline int AnalogSensorClient_InputPortProcessor::getIterations()
 {
     mutex.lock();
     int ret=count;
@@ -123,7 +123,7 @@ inline int InputPortProcessor::getIterations()
 }
 
 // time is in ms
-void InputPortProcessor::getEstFrequency(int &ite, double &av, double &min, double &max)
+void AnalogSensorClient_InputPortProcessor::getEstFrequency(int &ite, double &av, double &min, double &max)
 {
     mutex.lock();
     ite=count;
@@ -141,12 +141,12 @@ void InputPortProcessor::getEstFrequency(int &ite, double &av, double &min, doub
     mutex.unlock();
 }
 
-int InputPortProcessor::getState()
+int AnalogSensorClient_InputPortProcessor::getState()
 {
     return state;
 }
 
-int InputPortProcessor::getChannels()
+int AnalogSensorClient_InputPortProcessor::getChannels()
 {
     if (state==IAnalogSensor::AS_ERROR)
     {

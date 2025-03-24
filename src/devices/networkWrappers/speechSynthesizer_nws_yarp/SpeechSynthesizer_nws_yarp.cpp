@@ -7,6 +7,7 @@
 
 #include <yarp/os/LogComponent.h>
 #include <yarp/os/Os.h>
+#include <memory>
 
 namespace {
 YARP_LOG_COMPONENT(SPEECHSYNTH_NWS, "yarp.devices.speechSynthesizer_nws_yarp")
@@ -68,7 +69,7 @@ bool  SpeechSynthesizer_nws_yarp::attach(yarp::dev::PolyDriver* deviceToAttach)
 
     yCInfo(SPEECHSYNTH_NWS, "Attach done");
 
-    callback_impl = new ImplementCallbackHelper2(m_isptr,&m_outputPort);
+    callback_impl = std::make_unique<SpeechSynthesizer_CallbackHelper>(m_isptr,&m_outputPort);
     input_buffer.useCallback(*callback_impl);
     m_rpc.setInterfaces(m_isptr);
     m_rpc.setOutputPort(&m_outputPort);
@@ -93,7 +94,6 @@ bool SpeechSynthesizer_nws_yarp::closeMain()
     m_inputPort.close();
     m_outputPort.close();
     m_rpcPort.close();
-    if (callback_impl) {delete callback_impl; callback_impl=nullptr;}
     return true;
 }
 
@@ -259,7 +259,7 @@ return_synthesize ISpeechSynthesizerMsgsd::synthesize(const std::string& text)
 
 //--------------------------------------------------
 // ImplementCallbackHelper class.
-ImplementCallbackHelper2::ImplementCallbackHelper2(yarp::dev::ISpeechSynthesizer*x, yarp::os::Port* p)
+SpeechSynthesizer_CallbackHelper::SpeechSynthesizer_CallbackHelper(yarp::dev::ISpeechSynthesizer*x, yarp::os::Port* p)
 {
     if (x ==nullptr || p==nullptr)
     {
@@ -270,7 +270,7 @@ ImplementCallbackHelper2::ImplementCallbackHelper2(yarp::dev::ISpeechSynthesizer
     m_output_port = p;
 }
 
-void ImplementCallbackHelper2::onRead(yarp::os::Bottle &b)
+void SpeechSynthesizer_CallbackHelper::onRead(yarp::os::Bottle &b)
 {
     if (m_isptr)
     {

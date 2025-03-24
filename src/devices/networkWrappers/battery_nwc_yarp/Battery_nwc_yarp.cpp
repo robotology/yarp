@@ -19,7 +19,7 @@ namespace {
 YARP_LOG_COMPONENT(BATTERYCLIENT, "yarp.device.Battery_nwc_yarp")
 } // namespace
 
-inline void BatteryInputPortProcessor::resetStat()
+inline void Battery_InputPortProcessor::resetStat()
 {
     mutex.lock();
     count=0;
@@ -31,13 +31,13 @@ inline void BatteryInputPortProcessor::resetStat()
     mutex.unlock();
 }
 
-BatteryInputPortProcessor::BatteryInputPortProcessor()
+Battery_InputPortProcessor::Battery_InputPortProcessor()
 {
     state=IBattery::BATTERY_GENERAL_ERROR;
     resetStat();
 }
 
-void BatteryInputPortProcessor::onRead(yarp::os::Bottle &b)
+void Battery_InputPortProcessor::onRead(yarp::os::Bottle &b)
 {
     now=Time::now();
     mutex.lock();
@@ -91,7 +91,7 @@ void BatteryInputPortProcessor::onRead(yarp::os::Bottle &b)
     mutex.unlock();
 }
 
-inline int BatteryInputPortProcessor::getLast(yarp::os::Bottle &data, Stamp &stmp)
+inline int Battery_InputPortProcessor::getLast(yarp::os::Bottle &data, Stamp &stmp)
 {
     mutex.lock();
     int ret=state;
@@ -105,7 +105,7 @@ inline int BatteryInputPortProcessor::getLast(yarp::os::Bottle &data, Stamp &stm
     return ret;
 }
 
-double BatteryInputPortProcessor::getVoltage()
+double Battery_InputPortProcessor::getVoltage()
 {
     mutex.lock();
     double voltage = lastBottle.get(0).asFloat64();
@@ -113,7 +113,7 @@ double BatteryInputPortProcessor::getVoltage()
     return voltage;
 }
 
-double BatteryInputPortProcessor::getCurrent()
+double Battery_InputPortProcessor::getCurrent()
 {
     mutex.lock();
     double current = lastBottle.get(1).asFloat64();
@@ -121,7 +121,7 @@ double BatteryInputPortProcessor::getCurrent()
     return current;
 }
 
-double BatteryInputPortProcessor::getCharge()
+double Battery_InputPortProcessor::getCharge()
 {
     mutex.lock();
     double charge = lastBottle.get(2).asFloat64();
@@ -129,7 +129,7 @@ double BatteryInputPortProcessor::getCharge()
     return charge;
 }
 
-int    BatteryInputPortProcessor::getStatus()
+int    Battery_InputPortProcessor::getStatus()
 {
     mutex.lock();
     int status = lastBottle.get(4).asInt32();
@@ -137,7 +137,7 @@ int    BatteryInputPortProcessor::getStatus()
     return status;
 }
 
-double BatteryInputPortProcessor::getTemperature()
+double Battery_InputPortProcessor::getTemperature()
 {
     mutex.lock();
     double temperature = lastBottle.get(3).asFloat64();
@@ -145,7 +145,7 @@ double BatteryInputPortProcessor::getTemperature()
     return temperature;
 }
 
-inline int BatteryInputPortProcessor::getIterations()
+inline int Battery_InputPortProcessor::getIterations()
 {
     mutex.lock();
     int ret=count;
@@ -154,7 +154,7 @@ inline int BatteryInputPortProcessor::getIterations()
 }
 
 // time is in ms
-void BatteryInputPortProcessor::getEstFrequency(int &ite, double &av, double &min, double &max)
+void Battery_InputPortProcessor::getEstFrequency(int &ite, double &av, double &min, double &max)
 {
     mutex.lock();
     ite=count;

@@ -68,7 +68,7 @@ bool  SpeechTranscription_nws_yarp::attach(yarp::dev::PolyDriver* deviceToAttach
 
     yCInfo(SPEECHTR_NWS, "Attach done");
 
-    callback_impl = new ImplementCallbackHelper2(m_isptr,&m_outputPort);
+    callback_impl = std::make_unique<SpeechTranscription_CallbackHelper>(m_isptr,&m_outputPort);
     input_buffer.useCallback(*callback_impl);
     m_rpc.setInterfaces(m_isptr);
     m_rpc.setOutputPort(&m_outputPort);
@@ -93,7 +93,6 @@ bool SpeechTranscription_nws_yarp::closeMain()
     m_inputPort.close();
     m_outputPort.close();
     m_rpcPort.close();
-    if (callback_impl) {delete callback_impl; callback_impl=nullptr;}
     return true;
 }
 
@@ -175,7 +174,7 @@ return_transcribe ISpeechTranscriptionMsgsd::transcribe(const yarp::sig::Sound& 
 
 //--------------------------------------------------
 // ImplementCallbackHelper class.
-ImplementCallbackHelper2::ImplementCallbackHelper2(yarp::dev::ISpeechTranscription*x, yarp::os::Port* p)
+SpeechTranscription_CallbackHelper::SpeechTranscription_CallbackHelper(yarp::dev::ISpeechTranscription*x, yarp::os::Port* p)
 {
     if (x ==nullptr || p==nullptr)
     {
@@ -186,7 +185,7 @@ ImplementCallbackHelper2::ImplementCallbackHelper2(yarp::dev::ISpeechTranscripti
     m_output_port = p;
 }
 
-void ImplementCallbackHelper2::onRead(yarp::sig::Sound &b)
+void SpeechTranscription_CallbackHelper::onRead(yarp::sig::Sound &b)
 {
     if (m_isptr)
     {

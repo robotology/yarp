@@ -19,12 +19,10 @@
 
 #include <mutex>
 
-
-const int ANALOG_TIMEOUT=100; //ms
-
-
-class InputPortProcessor : public yarp::os::BufferedPort<yarp::sig::Vector>
+class AnalogSensorClient_InputPortProcessor : public yarp::os::BufferedPort<yarp::sig::Vector>
 {
+    const int ANALOG_TIMEOUT = 100; // ms
+
     yarp::sig::Vector lastVector;
     std::mutex mutex;
     yarp::os::Stamp lastStamp;
@@ -38,20 +36,19 @@ class InputPortProcessor : public yarp::os::BufferedPort<yarp::sig::Vector>
     int count;
 
 public:
-
     inline void resetStat();
 
-    InputPortProcessor();
+    AnalogSensorClient_InputPortProcessor();
 
     using yarp::os::BufferedPort<yarp::sig::Vector>::onRead;
-    void onRead(yarp::sig::Vector &v) override;
+    void onRead(yarp::sig::Vector& v) override;
 
-    inline int getLast(yarp::sig::Vector &data, yarp::os::Stamp &stmp);
+    inline int getLast(yarp::sig::Vector& data, yarp::os::Stamp& stmp);
 
     inline int getIterations();
 
     // time is in ms
-    void getEstFrequency(int &ite, double &av, double &min, double &max);
+    void getEstFrequency(int& ite, double& av, double& min, double& max);
 
     int getState();
 
@@ -89,7 +86,7 @@ class AnalogSensorClient :
         public yarp::dev::IAnalogSensor
 {
 protected:
-    InputPortProcessor inputPort;
+    AnalogSensorClient_InputPortProcessor inputPort;
     yarp::os::Port rpcPort;
     std::string local;
     std::string remote;

@@ -9,6 +9,7 @@
 #include <cstdio>
 #include <cstdlib>
 #include <mutex>
+#include <memory>
 
 #include <yarp/os/BufferedPort.h>
 #include <yarp/dev/PolyDriver.h>
@@ -26,8 +27,7 @@ using namespace yarp::os;
 using namespace yarp::dev;
 
 // Callback implementation after buffered input.
-class ChatBotRPC_CallbackHelper :
-        public yarp::os::TypedReaderCallback<yarp::os::Bottle>
+class ChatBotRPC_CallbackHelper : public yarp::os::TypedReaderCallback<yarp::os::Bottle>
 {
 protected:
     yarp::dev::IChatBot* m_iChatBot{nullptr};
@@ -90,7 +90,7 @@ private:
     IChatBotMsgsImpl     m_msgsImpl;
 
     yarp::os::PortReaderBuffer <yarp::os::Bottle> m_inputBuffer;
-    ChatBotRPC_CallbackHelper*                    m_cbkHelper{ nullptr };
+    std::unique_ptr<ChatBotRPC_CallbackHelper>    m_cbkHelper;
 
     // yarp::dev::IWrapper
     bool  attach(yarp::dev::PolyDriver* deviceToAttach) override;

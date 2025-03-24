@@ -26,7 +26,17 @@ YARP_LOG_COMPONENT(IMAGEROTATION,
                    yarp::os::Log::LogTypeReserved,
                    yarp::os::Log::printCallback(),
                    nullptr)
+
+void split(const std::string& s, char delim, std::vector<std::string>& elements)
+{
+    std::istringstream iss(s);
+    std::string item;
+    while (std::getline(iss, item, delim))
+    {
+        elements.push_back(item);
+    }
 }
+} //anonymous namespace
 
 bool ImageRotation::create(const yarp::os::Property& options)
 {
@@ -75,15 +85,6 @@ bool ImageRotation::create(const yarp::os::Property& options)
 
 void ImageRotation::destroy()
 {
-}
-
-void split(const std::string& s, char delim, std::vector<std::string>& elements)
-{
-    std::istringstream iss(s);
-    std::string item;
-    while (std::getline(iss, item, delim)) {
-        elements.push_back(item);
-    }
 }
 
 void ImageRotation::getParamsFromCommandLine(std::string carrierString, yarp::os::Property& prop)
