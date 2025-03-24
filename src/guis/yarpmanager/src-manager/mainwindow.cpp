@@ -350,12 +350,12 @@ void MainWindow::init(yarp::os::Property config)
         yarp::manager::XmlAppLoader appload(applicationName);
         if(!appload.init()){
             logger->addError("Cannot load the application with XmlAppLoader from " + applicationName);
-            return -1;
+            return;
         }
         yarp::manager::Application* application = appload.getNextApplication();
         if(!application){
             logger->addError("Cannot load the application from " + applicationName);
-            return -1;
+            return;
         }
         // add this application to the manager if does not exist
         if(!lazyManager.getKnowledgeBase()->getApplication(application->getName())){
