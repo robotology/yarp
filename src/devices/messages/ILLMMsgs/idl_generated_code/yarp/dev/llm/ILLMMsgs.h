@@ -13,6 +13,8 @@
 
 #include <yarp/os/Wire.h>
 #include <yarp/os/idl/WireTypes.h>
+#include <yarp/os/ApplicationNetworkProtocolVersion.h>
+#include <yarp/dev/ReturnValue.h>
 #include <yarp/dev/llm/return_ask.h>
 #include <yarp/dev/llm/return_getConversation.h>
 #include <yarp/dev/llm/return_readPrompt.h>
@@ -23,10 +25,16 @@ class ILLMMsgs :
         public yarp::os::Wire
 {
 public:
+    //ProtocolVersion
+    virtual yarp::os::ApplicationNetworkProtocolVersion getLocalProtocolVersion();
+    virtual yarp::os::ApplicationNetworkProtocolVersion getRemoteProtocolVersion();
+    virtual bool checkProtocolVersion();
+
     // Constructor
     ILLMMsgs();
 
-    virtual bool setPrompt(const std::string& prompt);
+    //Service methods
+    virtual yarp::dev::ReturnValue setPrompt(const std::string& prompt);
 
     virtual return_readPrompt readPrompt();
 
@@ -34,9 +42,9 @@ public:
 
     virtual return_getConversation getConversation();
 
-    virtual bool deleteConversation();
+    virtual yarp::dev::ReturnValue deleteConversation();
 
-    virtual bool refreshConversation();
+    virtual yarp::dev::ReturnValue refreshConversation();
 
     // help method
     virtual std::vector<std::string> help(const std::string& functionName = "--all");

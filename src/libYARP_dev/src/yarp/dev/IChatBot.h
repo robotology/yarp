@@ -7,6 +7,7 @@
 #define YARP_DEV_ICHATBOT_H
 
 #include <yarp/dev/api.h>
+#include <yarp/dev/ReturnValue.h>
 
 #include <string>
 #include <vector>
@@ -35,34 +36,34 @@ public:
     * @param messageOut the output message
     * @return true/false
     */
-    virtual bool interact(const std::string& messageIn, std::string& messageOut) = 0;
+    virtual yarp::dev::ReturnValue interact(const std::string& messageIn, std::string& messageOut) = 0;
 
     /**
      * Sets the chat bot language.
      * \param language a string (code) representing the speech language (e.g. ita, eng...). Default value is "auto".
      * \return true on success
      */
-    virtual bool setLanguage(const std::string& language="auto") = 0;
+    virtual yarp::dev::ReturnValue setLanguage(const std::string& language="auto") = 0;
 
     /**
      * Gets the current chatbot language.
      * \param language the returned string (code) representing the speech language (e.g. ita, eng...). Default value is "auto".
      * \return true on success
      */
-    virtual bool getLanguage(std::string& language) = 0;
+    virtual yarp::dev::ReturnValue getLanguage(std::string& language) = 0;
 
     /**
      * Gets the current status of the bot
      * \param status the current bot status
      * \return true on success
     */
-    virtual bool getStatus(std::string& status) = 0;
+    virtual yarp::dev::ReturnValue getStatus(std::string& status) = 0;
 
     /**
      * Resets the chatbot
      * \return true on success
     */
-    virtual bool resetBot() = 0;
+    virtual yarp::dev::ReturnValue resetBot() = 0;
 };
 
 

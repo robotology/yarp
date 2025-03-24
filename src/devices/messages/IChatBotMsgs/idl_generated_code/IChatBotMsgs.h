@@ -13,26 +13,34 @@
 
 #include <yarp/os/Wire.h>
 #include <yarp/os/idl/WireTypes.h>
+#include <yarp/os/ApplicationNetworkProtocolVersion.h>
 #include <return_getLanguage.h>
 #include <return_getStatus.h>
 #include <return_interact.h>
+#include <yarp/dev/ReturnValue.h>
 
 class IChatBotMsgs :
         public yarp::os::Wire
 {
 public:
+    //ProtocolVersion
+    virtual yarp::os::ApplicationNetworkProtocolVersion getLocalProtocolVersion();
+    virtual yarp::os::ApplicationNetworkProtocolVersion getRemoteProtocolVersion();
+    virtual bool checkProtocolVersion();
+
     // Constructor
     IChatBotMsgs();
 
+    //Service methods
     virtual return_interact interactRPC(const std::string& messageIn);
 
-    virtual bool setLanguageRPC(const std::string& language);
+    virtual yarp::dev::ReturnValue setLanguageRPC(const std::string& language);
 
     virtual return_getLanguage getLanguageRPC();
 
     virtual return_getStatus getStatusRPC();
 
-    virtual bool resetBotRPC();
+    virtual yarp::dev::ReturnValue resetBotRPC();
 
     // help method
     virtual std::vector<std::string> help(const std::string& functionName = "--all");

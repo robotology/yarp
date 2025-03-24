@@ -13,6 +13,8 @@ namespace
     YARP_LOG_COMPONENT(CHATBOT_NWC_YARP, "yarp.device.chatBot_nwc_yarp")
 }
 
+using namespace yarp::dev;
+
 bool ChatBot_nwc_yarp::open(yarp::os::Searchable &config)
 {
     if (!parseParams(config)) { return false; }
@@ -50,59 +52,61 @@ bool ChatBot_nwc_yarp::close()
     return true;
 }
 
-bool ChatBot_nwc_yarp::interact(const std::string& messageIn, std::string& messageOut)
+ReturnValue ChatBot_nwc_yarp::interact(const std::string& messageIn, std::string& messageOut)
 {
     return_interact output = m_thriftClient.interactRPC(messageIn);
     if(!output.result)
     {
         yCError(CHATBOT_NWC_YARP) << "Could not interact with the chatbot";
-        return false;
+        return output.result;
     }
 
     messageOut = output.messageOut;
-    return true;
+    return ReturnValue_ok;
 }
 
-bool ChatBot_nwc_yarp::setLanguage(const std::string& language)
+ReturnValue ChatBot_nwc_yarp::setLanguage(const std::string& language)
 {
-    if(!m_thriftClient.setLanguageRPC(language))
+    auto ret = m_thriftClient.setLanguageRPC(language);
+    if(!ret)
     {
         yCError(CHATBOT_NWC_YARP) << "Could not set the chatbot language to" << language;
-        return false;
+        return ret;
     }
-    return true;
+    return ReturnValue_ok;
 }
 
-bool ChatBot_nwc_yarp::getLanguage(std::string& language)
+ReturnValue ChatBot_nwc_yarp::getLanguage(std::string& language)
 {
-    return_getLanguage output = m_thriftClient.getLanguageRPC();
+    auto output = m_thriftClient.getLanguageRPC();
     if(!output.result)
     {
         yCError(CHATBOT_NWC_YARP) << "Could not retrieve the currently set language";
-        return false;
+        return output.result;
     }
     language = output.language;
-    return true;
+    return ReturnValue_ok;
 }
 
-bool ChatBot_nwc_yarp::getStatus(std::string& status)
+ReturnValue ChatBot_nwc_yarp::getStatus(std::string& status)
 {
-    return_getStatus output = m_thriftClient.getStatusRPC();
+    auto output = m_thriftClient.getStatusRPC();
     if(!output.result)
     {
         yCError(CHATBOT_NWC_YARP) << "Could not retrieve the current bot status";
-        return false;
+        return output.result;
     }
     status = output.status;
-    return true;
+    return ReturnValue_ok;
 }
 
-bool ChatBot_nwc_yarp::resetBot()
+ReturnValue ChatBot_nwc_yarp::resetBot()
 {
-    if(!m_thriftClient.resetBotRPC())
+    auto output = m_thriftClient.resetBotRPC();
+    if(!output)
     {
         yCError(CHATBOT_NWC_YARP) << "Could not reset the chatbot";
-        return false;
+        return output;
     }
-    return true;
+    return ReturnValue_ok;
 }

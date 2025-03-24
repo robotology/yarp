@@ -11,7 +11,7 @@
 #include <return_getStatus.h>
 
 // Constructor with field values
-return_getStatus::return_getStatus(const bool result,
+return_getStatus::return_getStatus(const yarp::dev::ReturnValue& result,
                                    const std::string& status) :
         WirePortable(),
         result(result),
@@ -22,7 +22,7 @@ return_getStatus::return_getStatus(const bool result,
 // Read structure on a Wire
 bool return_getStatus::read(yarp::os::idl::WireReader& reader)
 {
-    if (!read_result(reader)) {
+    if (!nested_read_result(reader)) {
         return false;
     }
     if (!read_status(reader)) {
@@ -50,7 +50,7 @@ bool return_getStatus::read(yarp::os::ConnectionReader& connection)
 // Write structure on a Wire
 bool return_getStatus::write(const yarp::os::idl::WireWriter& writer) const
 {
-    if (!write_result(writer)) {
+    if (!nested_write_result(writer)) {
         return false;
     }
     if (!write_status(writer)) {
@@ -92,7 +92,7 @@ bool return_getStatus::read_result(yarp::os::idl::WireReader& reader)
         reader.fail();
         return false;
     }
-    if (!reader.readBool(result)) {
+    if (!reader.read(result)) {
         reader.fail();
         return false;
     }
@@ -102,7 +102,7 @@ bool return_getStatus::read_result(yarp::os::idl::WireReader& reader)
 // write result field
 bool return_getStatus::write_result(const yarp::os::idl::WireWriter& writer) const
 {
-    if (!writer.writeBool(result)) {
+    if (!writer.write(result)) {
         return false;
     }
     return true;
@@ -115,7 +115,7 @@ bool return_getStatus::nested_read_result(yarp::os::idl::WireReader& reader)
         reader.fail();
         return false;
     }
-    if (!reader.readBool(result)) {
+    if (!reader.readNested(result)) {
         reader.fail();
         return false;
     }
@@ -125,7 +125,7 @@ bool return_getStatus::nested_read_result(yarp::os::idl::WireReader& reader)
 // write (nested) result field
 bool return_getStatus::nested_write_result(const yarp::os::idl::WireWriter& writer) const
 {
-    if (!writer.writeBool(result)) {
+    if (!writer.writeNested(result)) {
         return false;
     }
     return true;

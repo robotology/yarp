@@ -8,11 +8,102 @@
 // This is an automatically generated file.
 // It could get re-generated if the ALLOW_IDL_GENERATION flag is on.
 
+#include <yarp/conf/version.h>
 #include <IChatBotMsgs.h>
+#include <yarp/os/LogComponent.h>
+#include <yarp/os/LogStream.h>
 
 #include <yarp/os/idl/WireTypes.h>
 
 #include <algorithm>
+
+namespace
+{
+    YARP_LOG_COMPONENT(SERVICE_LOG_COMPONENT, "IChatBotMsgs")
+}
+
+//IChatBotMsgs_getRemoteProtocolVersion_helper declaration
+class IChatBotMsgs_getRemoteProtocolVersion_helper :
+public yarp::os::Portable
+{
+public:
+    IChatBotMsgs_getRemoteProtocolVersion_helper() = default;
+    bool write(yarp::os::ConnectionWriter& connection) const override;
+    bool read(yarp::os::ConnectionReader& connection) override;
+
+    yarp::os::ApplicationNetworkProtocolVersion helper_proto;
+};
+
+bool IChatBotMsgs_getRemoteProtocolVersion_helper::write(yarp::os::ConnectionWriter& connection) const
+{
+    yarp::os::idl::WireWriter writer(connection);
+    if (!writer.writeListHeader(1)) {
+        return false;
+    }
+    if (!writer.writeString("getRemoteProtocolVersion")) {
+        return false;
+    }
+    return true;
+}
+
+bool IChatBotMsgs_getRemoteProtocolVersion_helper ::read(yarp::os::ConnectionReader & connection)
+ {
+    yarp::os::idl::WireReader reader(connection);
+    if (!reader.readListHeader()) {
+        reader.fail();
+        return false;
+    }
+
+    if (!helper_proto.read(connection)) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+//ProtocolVersion, client side
+yarp::os::ApplicationNetworkProtocolVersion IChatBotMsgs::getRemoteProtocolVersion()
+ {
+    if(!yarp().canWrite()) {
+        yError(" Missing server method IChatBotMsgs::getRemoteProtocolVersion");
+    }
+    IChatBotMsgs_getRemoteProtocolVersion_helper helper{};
+    bool ok = yarp().write(helper, helper);
+    if (ok) {
+        return helper.helper_proto;}
+    else {
+        yarp::os::ApplicationNetworkProtocolVersion failureproto;
+        return failureproto;}
+}
+
+//ProtocolVersion, client side
+bool IChatBotMsgs::checkProtocolVersion()
+ {
+        auto locproto = this->getLocalProtocolVersion();
+        auto remproto = this->getRemoteProtocolVersion();
+        if (remproto.protocol_version != locproto.protocol_version)
+        {
+            yCError(SERVICE_LOG_COMPONENT) << "Invalid communication protocol.";
+            yCError(SERVICE_LOG_COMPONENT) << "Local Protocol Version: " << locproto.toString();
+            yCError(SERVICE_LOG_COMPONENT) << "Remote Protocol Version: " << remproto.toString();
+            return false;
+        }
+        return true;
+}
+
+//ProtocolVersion, server side
+yarp::os::ApplicationNetworkProtocolVersion IChatBotMsgs::getLocalProtocolVersion()
+{
+    yarp::os::ApplicationNetworkProtocolVersion myproto;
+    //myproto.protocol_version using default value = 0
+    //to change this value add the following line to the .thrift file:
+    //const i16 protocol_version = <your_number_here>
+    myproto.protocol_version = 0;
+    myproto.yarp_major = YARP_VERSION_MAJOR;
+    myproto.yarp_minor = YARP_VERSION_MINOR;
+    myproto.yarp_patch = YARP_VERSION_PATCH;
+    return myproto;
+}
 
 // interactRPC helper class declaration
 class IChatBotMsgs_interactRPC_helper :
@@ -123,10 +214,10 @@ public:
         bool write(const yarp::os::idl::WireWriter& writer) const override;
         bool read(yarp::os::idl::WireReader& reader) override;
 
-        bool return_helper{false};
+        yarp::dev::ReturnValue return_helper{};
     };
 
-    using funcptr_t = bool (*)(const std::string&);
+    using funcptr_t = yarp::dev::ReturnValue (*)(const std::string&);
     void call(IChatBotMsgs* ptr);
 
     Command cmd;
@@ -136,7 +227,7 @@ public:
     static constexpr size_t s_tag_len{1};
     static constexpr size_t s_cmd_len{2};
     static constexpr size_t s_reply_len{1};
-    static constexpr const char* s_prototype{"bool IChatBotMsgs::setLanguageRPC(const std::string& language)"};
+    static constexpr const char* s_prototype{"yarp::dev::ReturnValue IChatBotMsgs::setLanguageRPC(const std::string& language)"};
     static constexpr const char* s_help{""};
 };
 
@@ -297,10 +388,10 @@ public:
         bool write(const yarp::os::idl::WireWriter& writer) const override;
         bool read(yarp::os::idl::WireReader& reader) override;
 
-        bool return_helper{false};
+        yarp::dev::ReturnValue return_helper{};
     };
 
-    using funcptr_t = bool (*)();
+    using funcptr_t = yarp::dev::ReturnValue (*)();
     void call(IChatBotMsgs* ptr);
 
     Command cmd;
@@ -310,7 +401,7 @@ public:
     static constexpr size_t s_tag_len{1};
     static constexpr size_t s_cmd_len{1};
     static constexpr size_t s_reply_len{1};
-    static constexpr const char* s_prototype{"bool IChatBotMsgs::resetBotRPC()"};
+    static constexpr const char* s_prototype{"yarp::dev::ReturnValue IChatBotMsgs::resetBotRPC()"};
     static constexpr const char* s_help{""};
 };
 
@@ -591,10 +682,7 @@ bool IChatBotMsgs_setLanguageRPC_helper::Reply::read(yarp::os::ConnectionReader&
 bool IChatBotMsgs_setLanguageRPC_helper::Reply::write(const yarp::os::idl::WireWriter& writer) const
 {
     if (!writer.isNull()) {
-        if (!writer.writeListHeader(s_reply_len)) {
-            return false;
-        }
-        if (!writer.writeBool(return_helper)) {
+        if (!writer.write(return_helper)) {
             return false;
         }
     }
@@ -603,14 +691,11 @@ bool IChatBotMsgs_setLanguageRPC_helper::Reply::write(const yarp::os::idl::WireW
 
 bool IChatBotMsgs_setLanguageRPC_helper::Reply::read(yarp::os::idl::WireReader& reader)
 {
-    if (!reader.readListReturn()) {
-        return false;
-    }
     if (reader.noMore()) {
         reader.fail();
         return false;
     }
-    if (!reader.readBool(return_helper)) {
+    if (!reader.read(return_helper)) {
         reader.fail();
         return false;
     }
@@ -990,10 +1075,7 @@ bool IChatBotMsgs_resetBotRPC_helper::Reply::read(yarp::os::ConnectionReader& co
 bool IChatBotMsgs_resetBotRPC_helper::Reply::write(const yarp::os::idl::WireWriter& writer) const
 {
     if (!writer.isNull()) {
-        if (!writer.writeListHeader(s_reply_len)) {
-            return false;
-        }
-        if (!writer.writeBool(return_helper)) {
+        if (!writer.write(return_helper)) {
             return false;
         }
     }
@@ -1002,14 +1084,11 @@ bool IChatBotMsgs_resetBotRPC_helper::Reply::write(const yarp::os::idl::WireWrit
 
 bool IChatBotMsgs_resetBotRPC_helper::Reply::read(yarp::os::idl::WireReader& reader)
 {
-    if (!reader.readListReturn()) {
-        return false;
-    }
     if (reader.noMore()) {
         reader.fail();
         return false;
     }
-    if (!reader.readBool(return_helper)) {
+    if (!reader.read(return_helper)) {
         reader.fail();
         return false;
     }
@@ -1037,14 +1116,14 @@ return_interact IChatBotMsgs::interactRPC(const std::string& messageIn)
     return ok ? helper.reply.return_helper : return_interact{};
 }
 
-bool IChatBotMsgs::setLanguageRPC(const std::string& language)
+yarp::dev::ReturnValue IChatBotMsgs::setLanguageRPC(const std::string& language)
 {
     if (!yarp().canWrite()) {
         yError("Missing server method '%s'?", IChatBotMsgs_setLanguageRPC_helper::s_prototype);
     }
     IChatBotMsgs_setLanguageRPC_helper helper{language};
     bool ok = yarp().write(helper, helper);
-    return ok ? helper.reply.return_helper : bool{};
+    return ok ? helper.reply.return_helper : yarp::dev::ReturnValue{};
 }
 
 return_getLanguage IChatBotMsgs::getLanguageRPC()
@@ -1067,14 +1146,14 @@ return_getStatus IChatBotMsgs::getStatusRPC()
     return ok ? helper.reply.return_helper : return_getStatus{};
 }
 
-bool IChatBotMsgs::resetBotRPC()
+yarp::dev::ReturnValue IChatBotMsgs::resetBotRPC()
 {
     if (!yarp().canWrite()) {
         yError("Missing server method '%s'?", IChatBotMsgs_resetBotRPC_helper::s_prototype);
     }
     IChatBotMsgs_resetBotRPC_helper helper{};
     bool ok = yarp().write(helper, helper);
-    return ok ? helper.reply.return_helper : bool{};
+    return ok ? helper.reply.return_helper : yarp::dev::ReturnValue{};
 }
 
 // help method
@@ -1138,6 +1217,26 @@ bool IChatBotMsgs::read(yarp::os::ConnectionReader& connection)
         tag = reader.readTag(1);
     }
     while (tag_len <= max_tag_len && !reader.isError()) {
+        if(tag == "getRemoteProtocolVersion") {
+            if (!reader.noMore()) {
+                yError("Reader invalid protocol?! %s:%d - %s", __FILE__, __LINE__, __YFUNCTION__);
+                reader.fail();
+                return false;
+            }
+
+            auto proto = getLocalProtocolVersion();
+
+            yarp::os::idl::WireWriter writer(reader);
+           if (!writer.writeListHeader(1)) {
+                yWarning("Writer invalid protocol?! %s:%d - %s", __FILE__, __LINE__, __YFUNCTION__);
+               return false;}
+            if (!writer.write(proto)) {
+                yWarning("Writer invalid protocol?! %s:%d - %s", __FILE__, __LINE__, __YFUNCTION__);
+                return false;
+            }
+            reader.accept();
+            return true;
+        }
         if (tag == IChatBotMsgs_interactRPC_helper::s_tag) {
             IChatBotMsgs_interactRPC_helper helper;
             if (!helper.cmd.readArgs(reader)) {

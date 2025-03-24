@@ -11,7 +11,7 @@
 #include <return_getLanguage.h>
 
 // Constructor with field values
-return_getLanguage::return_getLanguage(const bool result,
+return_getLanguage::return_getLanguage(const yarp::dev::ReturnValue& result,
                                        const std::string& language) :
         WirePortable(),
         result(result),
@@ -22,7 +22,7 @@ return_getLanguage::return_getLanguage(const bool result,
 // Read structure on a Wire
 bool return_getLanguage::read(yarp::os::idl::WireReader& reader)
 {
-    if (!read_result(reader)) {
+    if (!nested_read_result(reader)) {
         return false;
     }
     if (!read_language(reader)) {
@@ -50,7 +50,7 @@ bool return_getLanguage::read(yarp::os::ConnectionReader& connection)
 // Write structure on a Wire
 bool return_getLanguage::write(const yarp::os::idl::WireWriter& writer) const
 {
-    if (!write_result(writer)) {
+    if (!nested_write_result(writer)) {
         return false;
     }
     if (!write_language(writer)) {
@@ -92,7 +92,7 @@ bool return_getLanguage::read_result(yarp::os::idl::WireReader& reader)
         reader.fail();
         return false;
     }
-    if (!reader.readBool(result)) {
+    if (!reader.read(result)) {
         reader.fail();
         return false;
     }
@@ -102,7 +102,7 @@ bool return_getLanguage::read_result(yarp::os::idl::WireReader& reader)
 // write result field
 bool return_getLanguage::write_result(const yarp::os::idl::WireWriter& writer) const
 {
-    if (!writer.writeBool(result)) {
+    if (!writer.write(result)) {
         return false;
     }
     return true;
@@ -115,7 +115,7 @@ bool return_getLanguage::nested_read_result(yarp::os::idl::WireReader& reader)
         reader.fail();
         return false;
     }
-    if (!reader.readBool(result)) {
+    if (!reader.readNested(result)) {
         reader.fail();
         return false;
     }
@@ -125,7 +125,7 @@ bool return_getLanguage::nested_read_result(yarp::os::idl::WireReader& reader)
 // write (nested) result field
 bool return_getLanguage::nested_write_result(const yarp::os::idl::WireWriter& writer) const
 {
-    if (!writer.writeBool(result)) {
+    if (!writer.writeNested(result)) {
         return false;
     }
     return true;

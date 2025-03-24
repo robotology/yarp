@@ -27,11 +27,11 @@ class FakeChatBotDevice : public yarp::dev::IChatBot,
 
 public:
     FakeChatBotDevice();
-    bool interact(const std::string& messageIn, std::string& messageOut) override;
-    bool setLanguage(const std::string& language) override;
-    bool getLanguage(std::string& language) override;
-    bool getStatus(std::string& status) override;
-    bool resetBot() override;
+    yarp::dev::ReturnValue interact(const std::string& messageIn, std::string& messageOut) override;
+    yarp::dev::ReturnValue setLanguage(const std::string& language) override;
+    yarp::dev::ReturnValue getLanguage(std::string& language) override;
+    yarp::dev::ReturnValue getStatus(std::string& status) override;
+    yarp::dev::ReturnValue resetBot() override;
 
     bool open(yarp::os::Searchable& config) override;
     bool close() override;

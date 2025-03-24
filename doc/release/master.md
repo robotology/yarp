@@ -43,6 +43,8 @@ Breaking Changes
 
 * The following interfaces have been modified to use `yarp::dev::ReturnValue`:
   - `IRangeFinder2D`
+  - `ILLM`
+  - `IChatBot`
 
 ### Devices
 
@@ -52,6 +54,9 @@ Breaking Changes
   - `FakeLaserWithMotor`
   - `Rangefinder2D_nws_yarp`
   - `Rangefinder2D_nwc_yarp`
-
-
-
+  - `fakeChatBotDevice`
+  - `chatBot_nws_yarp`
+  - `chatBot_nwc_yarp`
+  - `fakeLLMDevice`
+  - `LLM_nwc_yarp`
+  - `LLM_nws_yarp`

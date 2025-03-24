@@ -11,26 +11,32 @@ struct LLM_Message {
   yarp.includefile="yarp/dev/ILLM.h"
 )
 
+struct yReturnValue {
+} (
+  yarp.name = "yarp::dev::ReturnValue"
+  yarp.includefile = "yarp/dev/ReturnValue.h"
+)
+
 struct return_readPrompt{
-    1: bool ret = false;
+    1: yReturnValue ret;
     2: string prompt;
 }
 
 struct return_ask{
-    1: bool ret = false;
+    1: yReturnValue ret;
     2: LLM_Message answer;
 }
 
 struct return_getConversation{
-    1: bool ret = false;
+    1: yReturnValue ret;
     2: list<LLM_Message> conversation;
 }
 
 service ILLMMsgs {
-    bool setPrompt(1: string prompt);
+    yReturnValue setPrompt(1: string prompt);
     return_readPrompt readPrompt();
     return_ask ask(1: string question);
     return_getConversation getConversation();
-    bool deleteConversation();
-    bool refreshConversation();
+    yReturnValue deleteConversation();
+    yReturnValue refreshConversation();
 }
