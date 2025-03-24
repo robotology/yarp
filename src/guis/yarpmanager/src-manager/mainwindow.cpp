@@ -346,8 +346,8 @@ void MainWindow::init(yarp::os::Property config)
     }
 
     if (config.check("load_application")){
-        std::string applicationName = config.find("load_application").asString().c_str();
-        yarp::manager::XmlAppLoader appload(applicationName);
+        std::string applicationName = config.find("load_application").asString();
+        yarp::manager::XmlAppLoader appload(applicationName.c_str());
         if(!appload.init()){
             logger->addError("Cannot load the application with XmlAppLoader from " + applicationName);
             return;
