@@ -7,8 +7,9 @@ add_library(YARP::YARP_init ALIAS YARP_init)
 
 set(YARP_init_HDRS)
 set(YARP_init_IMPL_HDRS)
+set(YARP_custom_init_SRC "yarp/os/Network.CustomInit.cpp")
 set(YARP_init_SRCS
-  yarp/os/Network.CustomInit.cpp
+  ${YARP_custom_init_SRC}
 )
 
 source_group(
@@ -39,7 +40,7 @@ target_compile_features(YARP_init PUBLIC cxx_std_17)
 if(YARP_LINK_PLUGINS)
   if(YARP_COMPILE_CARRIER_PLUGINS)
     set_property(
-      SOURCE CustomInit.cpp
+      SOURCE ${YARP_custom_init_SRC}
       APPEND PROPERTY COMPILE_DEFINITIONS yarpcar_INIT_FUNCTION=add_yarpcar_plugins
     )
     target_link_libraries(YARP_init PRIVATE YARP::yarpcar)
@@ -48,7 +49,7 @@ if(YARP_LINK_PLUGINS)
 
   if(YARP_COMPILE_PORTMONITOR_PLUGINS)
     set_property(
-      SOURCE CustomInit.cpp
+      SOURCE ${YARP_custom_init_SRC}
       APPEND PROPERTY COMPILE_DEFINITIONS yarppm_INIT_FUNCTION=add_yarppm_plugins
     )
     target_link_libraries(YARP_init PRIVATE YARP::yarppm)
@@ -57,7 +58,7 @@ if(YARP_LINK_PLUGINS)
 
   if(YARP_COMPILE_DEVICE_PLUGINS)
     set_property(
-      SOURCE CustomInit.cpp
+      SOURCE ${YARP_custom_init_SRC}
       APPEND PROPERTY COMPILE_DEFINITIONS yarpmod_INIT_FUNCTION=add_yarpmod_plugins
     )
     target_link_libraries(YARP_init PRIVATE YARP::yarpmod)
@@ -66,7 +67,7 @@ if(YARP_LINK_PLUGINS)
 
   if(YARP_COMPILE_RFMODULE_PLUGINS)
     set_property(
-      SOURCE CustomInit.cpp
+      SOURCE ${YARP_custom_init_SRC}
       APPEND PROPERTY COMPILE_DEFINITIONS yarprfmod_INIT_FUNCTION=add_yarprfmod_plugins
     )
     target_link_libraries(YARP_init PRIVATE YARP::yarprfmod)
