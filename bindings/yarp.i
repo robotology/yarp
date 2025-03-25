@@ -1607,6 +1607,20 @@ typedef yarp::os::BufferedPort<ImageRgbFloat> BufferedPortImageRgbFloat;
         if (!ok) return "unknown";
         return parent;
     }
+
+    bool canTransform(const std::string& sourceFrame, const std::string& targetFrame) {
+        bool canTransform;
+        bool ok = self->canTransform(sourceFrame, targetFrame, canTransform);
+        if (!ok) return false;
+        return canTransform;
+    }
+
+    bool frameExists(const std::string& frameId) {
+        bool frameExists;
+        bool ok = self->frameExists(frameId, frameExists);
+        if (!ok) return false;
+        return frameExists;
+    }
 }
 
 // This is part is currently broken in SWIG + java generator since SWIG 3.0.3
