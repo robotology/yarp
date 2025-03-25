@@ -9,6 +9,7 @@
 #include <yarp/dev/ControlBoardInterfaces.h>
 #include <yarp/os/LogComponent.h>
 #include <yarp/os/LogStream.h>
+#include <yarp/conf/environment.h>
 
 using namespace yarp::sig;
 using namespace yarp::dev;
@@ -378,17 +379,18 @@ bool AnalogWrapper::initialize_YARP(yarp::os::Searchable &params)
 {
     // Create the list of ports
     // port names are optional, do not check for correctness.
+    std::string prefix = yarp::conf::environment::get_string("YARP_PORT_PREFIX");
     if(!params.check("ports"))
     {
         // if there is no "ports" section open only 1 port and use name as is.
-        if (Network::exists(streamingPortName + "/rpc:i") || Network::exists(streamingPortName))
+        if (Network::exists(prefix + streamingPortName + "/rpc:i") || Network::exists(prefix + streamingPortName))
         {
             yCError(ANALOGWRAPPER) << "AnalogWrapper: unable to open the analog server, address conflict";
             return false;
         }
         createPort((streamingPortName ).c_str(), _rate );
         // since createPort always return true, check the port is really been opened is done here
-        if (!Network::exists(streamingPortName + "/rpc:i")) {
+        if (!Network::exists(prefix + streamingPortName + "/rpc:i")) {
             return false;
         }
     }
@@ -420,8 +422,8 @@ bool AnalogWrapper::initialize_YARP(yarp::os::Searchable &params)
                 return false;
             }
 
-            if (Network::exists(streamingPortName + "/" + std::string(ports->get(k).asString()) + "/rpc:i")
-                || Network::exists(streamingPortName + "/" + std::string(ports->get(k).asString())))
+            if (Network::exists(prefix + streamingPortName + "/" + std::string(ports->get(k).asString()) + "/rpc:i")
+                || Network::exists(prefix + streamingPortName + "/" + std::string(ports->get(k).asString())))
             {
                 yCError(ANALOGWRAPPER) << "AnalogWrapper: unable to open the analog server, address conflict";
                 return false;
