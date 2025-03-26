@@ -68,16 +68,6 @@ bool AudioRecorder_nws_yarp::close()
     m_statusPort.interrupt();
     m_statusPort.close();
 
-    if (m_dataThread)
-    {
-        delete m_dataThread;
-        m_dataThread = nullptr;
-    }
-    if (m_statusThread)
-    {
-        delete m_statusThread;
-        m_statusThread = nullptr;
-    }
     return true;
 }
 
@@ -107,8 +97,8 @@ bool AudioRecorder_nws_yarp::attach(PolyDriver* driver)
 
     m_RPC.setInterface(m_mic);
 
-    m_dataThread = new AudioRecorderDataThread(this);
-    m_statusThread = new AudioRecorderStatusThread(this);
+    m_dataThread = std::make_unique<AudioRecorderDataThread>(this);
+    m_statusThread = std::make_unique<AudioRecorderStatusThread>(this);
     m_dataThread->setPeriod(m_period);
     m_dataThread->start();
     m_statusThread->start();
@@ -142,7 +132,7 @@ bool AudioRecorder_nws_yarp::detach()
     return true;
 }
 
-void AudioRecorderStatusThread::run()
+void AudioRecorder_nws_yarp::AudioRecorderStatusThread::run()
 {
     yarp::sig::AudioBufferSize device_buffer_current_size;
     yarp::sig::AudioBufferSize device_buffer_max_size;
@@ -171,7 +161,7 @@ void AudioRecorderStatusThread::run()
     m_ARW->m_statusPort.write(status);
 }
 
-void AudioRecorderDataThread::run()
+void AudioRecorder_nws_yarp::AudioRecorderDataThread::run()
 {
     if (0)
     {
@@ -267,7 +257,7 @@ void AudioRecorderDataThread::run()
     }
 }
 
-bool AudioRecorderDataThread::sendSound(yarp::sig::Sound& s)
+bool AudioRecorder_nws_yarp::AudioRecorderDataThread::sendSound(yarp::sig::Sound& s)
 {
     //check before sending data
     if (s.getSamples() == 0)

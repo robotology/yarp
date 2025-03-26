@@ -8,6 +8,7 @@
 
 #include <cstdio>
 #include <cstdlib>
+#include <memory>
 
 #include <yarp/os/BufferedPort.h>
 #include <yarp/dev/PolyDriver.h>
@@ -27,20 +28,18 @@ using namespace yarp::os;
 using namespace yarp::sig;
 using namespace yarp::dev;
 
-class SerialPort_nws_yarp;
-
 // Callback implementation after buffered input.
-class ImplementCallbackHelper2 :
+class SpeechSynthesizer_CallbackHelper :
         public yarp::os::TypedReaderCallback<yarp::os::Bottle>
 {
 protected:
-    yarp::dev::ISpeechSynthesizer* m_isptr{nullptr};
-    yarp::os::Port* m_output_port{ nullptr };
+    yarp::dev::ISpeechSynthesizer* m_isptr {nullptr};
+    yarp::os::Port* m_output_port {nullptr};
 
 public:
-    ImplementCallbackHelper2() = delete;
-    ImplementCallbackHelper2(yarp::dev::ISpeechSynthesizer* x, yarp::os::Port* output_port);
-    virtual ~ImplementCallbackHelper2() override {};
+    SpeechSynthesizer_CallbackHelper() = delete;
+    SpeechSynthesizer_CallbackHelper(yarp::dev::ISpeechSynthesizer* x, yarp::os::Port* output_port);
+    virtual ~SpeechSynthesizer_CallbackHelper() override {};
 
     using yarp::os::TypedReaderCallback<yarp::os::Bottle>::onRead;
     void onRead(yarp::os::Bottle& b) override;
@@ -100,7 +99,7 @@ private:
     ISpeechSynthesizerMsgsd   m_rpc;
 
     yarp::os::PortReaderBuffer <yarp::os::Bottle> input_buffer;
-    ImplementCallbackHelper2* callback_impl{ nullptr };
+    std::unique_ptr<SpeechSynthesizer_CallbackHelper> callback_impl;
 
     // yarp::dev::IWrapper
     bool  attach(yarp::dev::PolyDriver* deviceToAttach) override;

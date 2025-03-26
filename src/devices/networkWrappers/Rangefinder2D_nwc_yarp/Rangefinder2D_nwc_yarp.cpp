@@ -31,7 +31,7 @@ namespace {
 YARP_LOG_COMPONENT(RANGEFINDER2DCLIENT, "yarp.device.Rangefinder2D_nwc_yarp")
 }
 
-inline void  Rangefinder2DInputPortProcessor::resetStat()
+inline void  Rangefinder2D_InputPortProcessor::resetStat()
 {
     mutex.lock();
     count=0;
@@ -43,13 +43,13 @@ inline void  Rangefinder2DInputPortProcessor::resetStat()
     mutex.unlock();
 }
 
-Rangefinder2DInputPortProcessor::Rangefinder2DInputPortProcessor()
+Rangefinder2D_InputPortProcessor::Rangefinder2D_InputPortProcessor()
 {
     state = IRangefinder2D::DEVICE_GENERAL_ERROR;
     resetStat();
 }
 
-void Rangefinder2DInputPortProcessor::onRead(yarp::sig::LaserScan2D& b)
+void Rangefinder2D_InputPortProcessor::onRead(yarp::sig::LaserScan2D& b)
 {
     now=SystemClock::nowSystem();
     mutex.lock();
@@ -103,7 +103,7 @@ void Rangefinder2DInputPortProcessor::onRead(yarp::sig::LaserScan2D& b)
     mutex.unlock();
 }
 
-inline int Rangefinder2DInputPortProcessor::getLast(yarp::sig::LaserScan2D& data, Stamp& stmp)
+inline int Rangefinder2D_InputPortProcessor::getLast(yarp::sig::LaserScan2D& data, Stamp& stmp)
 {
     mutex.lock();
     int ret=state;
@@ -117,7 +117,7 @@ inline int Rangefinder2DInputPortProcessor::getLast(yarp::sig::LaserScan2D& data
     return ret;
 }
 
-yarp::dev::IRangefinder2D::Device_status Rangefinder2DInputPortProcessor::getStatus()
+yarp::dev::IRangefinder2D::Device_status Rangefinder2D_InputPortProcessor::getStatus()
 {
     mutex.lock();
     auto status = (yarp::dev::IRangefinder2D::Device_status) lastScan.status;
@@ -125,7 +125,7 @@ yarp::dev::IRangefinder2D::Device_status Rangefinder2DInputPortProcessor::getSta
     return status;
 }
 
-inline int Rangefinder2DInputPortProcessor::getIterations()
+inline int Rangefinder2D_InputPortProcessor::getIterations()
 {
     mutex.lock();
     int ret=count;
@@ -134,7 +134,7 @@ inline int Rangefinder2DInputPortProcessor::getIterations()
 }
 
 // time is in ms
-void Rangefinder2DInputPortProcessor::getEstFrequency(int &ite, double &av, double &min, double &max)
+void Rangefinder2D_InputPortProcessor::getEstFrequency(int &ite, double &av, double &min, double &max)
 {
     mutex.lock();
     ite=count;

@@ -26,14 +26,7 @@
 typedef unsigned char byte;
 
 //---------------------------------------------------------------------------------------------------------------
-enum base_enum
-{
-    BASE_IS_NAN = 0,
-    BASE_IS_INF = 1,
-    BASE_IS_ZERO = 2
-};
-
-class InputPortProcessor :
+class LaserFromExternalPort_InputPortProcessor :
         public yarp::os::BufferedPort<yarp::sig::LaserScan2D>
 {
     std::mutex             m_port_mutex;
@@ -42,7 +35,7 @@ class InputPortProcessor :
     bool                   m_contains_data;
 
 public:
-    InputPortProcessor(const InputPortProcessor& alt) :
+    LaserFromExternalPort_InputPortProcessor(const LaserFromExternalPort_InputPortProcessor& alt) :
             yarp::os::BufferedPort<yarp::sig::LaserScan2D>(),
             m_lastScan(alt.m_lastScan),
             m_lastStamp(alt.m_lastStamp),
@@ -50,7 +43,7 @@ public:
     {
     }
 
-    InputPortProcessor();
+    LaserFromExternalPort_InputPortProcessor();
     using yarp::os::BufferedPort<yarp::sig::LaserScan2D>::onRead;
     void onRead(yarp::sig::LaserScan2D& v) override;
     void getLast(yarp::sig::LaserScan2D& data, yarp::os::Stamp& stmp);
@@ -88,10 +81,17 @@ class LaserFromExternalPort : public yarp::dev::Lidar2DDeviceBase,
                               public yarp::os::PeriodicThread,
                               public yarp::dev::DeviceDriver
 {
+    enum base_enum
+    {
+        BASE_IS_NAN = 0,
+        BASE_IS_INF = 1,
+        BASE_IS_ZERO = 2
+    };
+
 protected:
     bool                            m_option_override_limits;
     std::vector <std::string>       m_port_names;
-    std::vector<InputPortProcessor> m_input_ports;
+    std::vector<LaserFromExternalPort_InputPortProcessor> m_input_ports;
     std::vector <yarp::os::Stamp>        m_last_stamp;
     std::vector<yarp::sig::LaserScan2D> m_last_scan_data;
     yarp::dev::PolyDriver                m_tc_driver;

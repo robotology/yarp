@@ -9,6 +9,7 @@
 
 using namespace yarp::os;
 
+namespace {
 YARP_LOG_COMPONENT(SOUNDFILTER_RESAMPLE, "soundfilter_resample")
 
 void split(const std::string& s, char delim, std::vector<std::string>& elements)
@@ -19,6 +20,7 @@ void split(const std::string& s, char delim, std::vector<std::string>& elements)
         elements.push_back(item);
     }
 }
+} //anonymous namespace
 
 void SoundFilter_resample::getParamsFromCommandLine(std::string carrierString, yarp::os::Property& prop)
 {

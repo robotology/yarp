@@ -22,7 +22,7 @@
 
 #include "MobileBaseVelocityControl_nws_yarp_ParamsParser.h"
 
-class VelocityInputPortProcessor : public yarp::os::BufferedPort<yarp::dev::MobileBaseVelocity>
+class Velocity_InputPortProcessor : public yarp::os::BufferedPort<yarp::dev::MobileBaseVelocity>
 {
 public:
     double m_timeout = 0.1;
@@ -56,7 +56,7 @@ class MobileBaseVelocityControl_nws_yarp:
 protected:
     std::mutex                    m_mutex;
     yarp::os::Port                m_rpc_port_navigation_server;
-    VelocityInputPortProcessor    m_StreamingInput;
+    Velocity_InputPortProcessor   m_StreamingInput;
 
     yarp::dev::Nav2D::INavigation2DVelocityActions* m_iNavVel = nullptr;
 

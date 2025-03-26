@@ -19,6 +19,7 @@
 #include <yarp/os/Bottle.h>
 #include <yarp/os/RpcServer.h>
 #include <yarp/dev/WrapperSingle.h>
+#include <memory>
 #include "ISerialMsgs.h"
 
 #include "SerialPort_nws_yarp_ParamsParser.h"
@@ -29,19 +30,17 @@ using namespace yarp::dev;
 
 class SerialPort_nws_yarp;
 
-/**
- * Callback implementation after buffered input.
- */
-class ImplementCallbackHelper2 :
+// Callback implementation after buffered input.
+class SerialPort_CallbackHelper :
         public yarp::os::TypedReaderCallback<yarp::os::Bottle>
 {
 protected:
     yarp::dev::ISerialDevice* m_iser{nullptr};
 
 public:
-    ImplementCallbackHelper2();
-    ImplementCallbackHelper2(yarp::dev::ISerialDevice* x);
-    virtual ~ImplementCallbackHelper2() override {};
+    SerialPort_CallbackHelper();
+    SerialPort_CallbackHelper(yarp::dev::ISerialDevice* x);
+    virtual ~SerialPort_CallbackHelper() override {};
 
     using yarp::os::TypedReaderCallback<Bottle>::onRead;
     void onRead(Bottle& b) override;
@@ -91,7 +90,7 @@ private:
 
     yarp::os::PortWriterBuffer <yarp::os::Bottle> reply_buffer;
     yarp::os::PortReaderBuffer <yarp::os::Bottle> command_buffer;
-    ImplementCallbackHelper2* callback_impl{ nullptr };
+    std::unique_ptr<SerialPort_CallbackHelper> callback_impl;
 
     // yarp::dev::IWrapper
     bool  attach(yarp::dev::PolyDriver* deviceToAttach) override;

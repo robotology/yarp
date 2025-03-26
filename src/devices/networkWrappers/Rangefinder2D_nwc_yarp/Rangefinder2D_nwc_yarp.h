@@ -23,7 +23,7 @@
 #include "IRangefinder2DMsgs.h"
 #include "Rangefinder2D_nwc_yarp_ParamsParser.h"
 
-class Rangefinder2DInputPortProcessor :
+class Rangefinder2D_InputPortProcessor :
         public yarp::os::BufferedPort<yarp::sig::LaserScan2D>
 {
     yarp::sig::LaserScan2D lastScan;
@@ -42,7 +42,7 @@ public:
 
     inline void resetStat();
 
-    Rangefinder2DInputPortProcessor();
+    Rangefinder2D_InputPortProcessor();
 
     using yarp::os::BufferedPort<yarp::sig::LaserScan2D>::onRead;
     void onRead(yarp::sig::LaserScan2D& v) override;
@@ -72,7 +72,7 @@ class Rangefinder2D_nwc_yarp:
         public Rangefinder2D_nwc_yarp_ParamsParser
 {
 protected:
-    Rangefinder2DInputPortProcessor m_inputPort;
+    Rangefinder2D_InputPortProcessor m_inputPort;
     IRangefinder2DMsgs m_RPC;
     std::mutex         m_mutex;
 
