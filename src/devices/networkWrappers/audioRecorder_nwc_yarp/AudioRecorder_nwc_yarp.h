@@ -19,19 +19,19 @@
 #include <mutex>
 #include "AudioRecorder_nwc_yarp_ParamsParser.h"
 
-class InputPortProcessor : public yarp::os::BufferedPort<yarp::sig::Sound>
+class AudioRecorder_InputPortProcessor : public yarp::os::BufferedPort<yarp::sig::Sound>
 {
     yarp::sig::Sound lastSound;
-    yarp::os::Stamp  lastStamp;
+    yarp::os::Stamp lastStamp;
     std::mutex mutex;
 
 public:
-    InputPortProcessor();
+    AudioRecorder_InputPortProcessor();
 
     using yarp::os::BufferedPort<yarp::sig::Sound>::onRead;
-    void onRead(yarp::sig::Sound&v) override;
+    void onRead(yarp::sig::Sound& v) override;
 
-    inline bool getLast(yarp::sig::Sound& data, yarp::os::Stamp &stmp);
+    inline bool getLast(yarp::sig::Sound& data, yarp::os::Stamp& stmp);
 };
 
 /**
@@ -51,7 +51,7 @@ class AudioRecorder_nwc_yarp :
         public AudioRecorder_nwc_yarp_ParamsParser
 {
 protected:
-    InputPortProcessor  m_inputPort;
+    AudioRecorder_InputPortProcessor  m_inputPort;
     yarp::os::Port      m_rpcPort;
     IAudioGrabberMsgs   m_audiograb_RPC;
     std::mutex          m_mutex;

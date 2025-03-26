@@ -80,7 +80,7 @@ bool  SerialPort_nws_yarp::attach(yarp::dev::PolyDriver* deviceToAttach)
 
     yCInfo(SERIAL_NWS, "Attach done");
 
-    callback_impl = new ImplementCallbackHelper2(m_iserial);
+    callback_impl = std::make_unique<SerialPort_CallbackHelper>(m_iserial);
     command_buffer.useCallback(*callback_impl);
     m_rpc.setInterfaces(m_iserial);
 
@@ -129,7 +129,6 @@ bool SerialPort_nws_yarp::closeMain()
     toDevice.close();
     fromDevice.close();
     m_rpcPort.close();
-    if (callback_impl) {delete callback_impl; callback_impl=nullptr;}
     return true;
 }
 
@@ -173,7 +172,7 @@ int ISerialMsgsd::flush()
 
 //--------------------------------------------------
 // ImplementCallbackHelper class.
-ImplementCallbackHelper2::ImplementCallbackHelper2(yarp::dev::ISerialDevice*x)
+SerialPort_CallbackHelper::SerialPort_CallbackHelper(yarp::dev::ISerialDevice*x)
 {
     if (x ==nullptr)
     {
@@ -183,7 +182,7 @@ ImplementCallbackHelper2::ImplementCallbackHelper2(yarp::dev::ISerialDevice*x)
     m_iser= x;
 }
 
-void ImplementCallbackHelper2::onRead(Bottle &b)
+void SerialPort_CallbackHelper::onRead(Bottle &b)
 {
     if (m_iser)
     {

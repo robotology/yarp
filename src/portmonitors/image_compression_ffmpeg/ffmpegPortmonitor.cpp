@@ -41,31 +41,23 @@ using namespace yarp::os;
 using namespace yarp::sig;
 
 namespace {
-
-// YARP logging component
 YARP_LOG_COMPONENT(FFMPEGMONITOR,
                    "yarp.carrier.portmonitor.image_compression_ffmpeg",
                    yarp::os::Log::minimumPrintLevel(),
                    yarp::os::Log::LogTypeReserved,
                    yarp::os::Log::printCallback(),
                    nullptr)
-}
 
-/**
- * @brief This function simply splits a string into a vector of strings basing on a delimiter character.
- * It it used for command line parameters parsing.
- *
- * @param s         The initial string.
- * @param delim     The delimiter character.
- * @param elements  The final vector of strings.
- */
-void split(const std::string &s, char delim, std::vector<std::string> &elements) {
+void split(const std::string& s, char delim, std::vector<std::string>& elements)
+{
     std::istringstream iss(s);
     std::string item;
-    while (std::getline(iss, item, delim)) {
+    while (std::getline(iss, item, delim))
+    {
         elements.push_back(item);
     }
 }
+} // anonymous namespace
 
 // As per version 5.1.2 of ffmpeg, there seem to be race conditions between sws_scale and
 // sws_freeContext even when called from different instances on different threads.

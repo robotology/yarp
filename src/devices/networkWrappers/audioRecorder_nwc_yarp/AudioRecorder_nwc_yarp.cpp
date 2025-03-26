@@ -17,11 +17,11 @@ namespace {
 YARP_LOG_COMPONENT(AUDIORECORDER_NWC, "yarp.device.audioRecorder_nwc_yarp")
 } // namespace
 
-InputPortProcessor::InputPortProcessor()
+AudioRecorder_InputPortProcessor::AudioRecorder_InputPortProcessor()
 {
 }
 
-void InputPortProcessor::onRead(yarp::sig::Sound& b)
+void AudioRecorder_InputPortProcessor::onRead(yarp::sig::Sound& b)
 {
     mutex.lock();
 
@@ -40,7 +40,7 @@ void InputPortProcessor::onRead(yarp::sig::Sound& b)
     mutex.unlock();
 }
 
-inline bool InputPortProcessor::getLast(yarp::sig::Sound& data, Stamp &stmp)
+inline bool AudioRecorder_InputPortProcessor::getLast(yarp::sig::Sound& data, Stamp &stmp)
 {
     mutex.lock();
       data = lastSound;

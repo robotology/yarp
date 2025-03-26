@@ -42,12 +42,12 @@ double constrainAngle(double x)
     return x;
 }
 
-InputPortProcessor::InputPortProcessor()
+LaserFromExternalPort_InputPortProcessor::LaserFromExternalPort_InputPortProcessor()
 {
     m_contains_data=false;
 }
 
-void InputPortProcessor::onRead(yarp::sig::LaserScan2D& b)
+void LaserFromExternalPort_InputPortProcessor::onRead(yarp::sig::LaserScan2D& b)
 {
     m_port_mutex.lock();
         m_lastScan = b;
@@ -56,7 +56,7 @@ void InputPortProcessor::onRead(yarp::sig::LaserScan2D& b)
     m_port_mutex.unlock();
 }
 
-inline void InputPortProcessor::getLast(yarp::sig::LaserScan2D& data, Stamp& stmp)
+inline void LaserFromExternalPort_InputPortProcessor::getLast(yarp::sig::LaserScan2D& data, Stamp& stmp)
 {
     //this blocks untils the first data is received;
     size_t counter =0;
@@ -107,7 +107,7 @@ bool LaserFromExternalPort::open(yarp::os::Searchable& config)
 
         for (size_t i = 0; i < m_port_names.size(); i++)
         {
-            InputPortProcessor proc;
+            LaserFromExternalPort_InputPortProcessor proc;
             m_input_ports.push_back(proc);
         }
         m_last_stamp.resize(m_port_names.size());

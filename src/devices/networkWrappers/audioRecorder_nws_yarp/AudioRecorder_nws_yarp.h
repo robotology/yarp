@@ -26,9 +26,6 @@
 #include "AudioRecorderServerImpl.h"
 #include "AudioRecorder_nws_yarp_ParamsParser.h"
 
-class AudioRecorderStatusThread;
-class AudioRecorderDataThread;
-
 /**
  * @ingroup dev_impl_nws_yarp
  *
@@ -46,6 +43,9 @@ class AudioRecorder_nws_yarp :
         public AudioRecorder_nws_yarp_ParamsParser
 {
 private:
+    class AudioRecorderStatusThread;
+    class AudioRecorderDataThread;
+
     yarp::dev::PolyDriver          m_driver;
     yarp::dev::IAudioGrabberSound* m_mic = nullptr; //The microphone device
     yarp::os::Property             m_config;
@@ -53,8 +53,8 @@ private:
     yarp::os::Port                 m_streamingPort;
     yarp::os::Port                 m_statusPort;
     yarp::os::Stamp                m_stamp;
-    AudioRecorderStatusThread*     m_statusThread = nullptr;
-    AudioRecorderDataThread*       m_dataThread =nullptr;
+    std::unique_ptr<AudioRecorderStatusThread> m_statusThread;
+    std::unique_ptr<AudioRecorderDataThread> m_dataThread;
     const bool                     m_debug_enabled = false;
     std::list <yarp::sig::Sound>   m_listofsnds;
 
@@ -89,7 +89,7 @@ public:
 };
 
 //----------------------------------------------------------------
-class AudioRecorderStatusThread : public yarp::os::PeriodicThread
+class AudioRecorder_nws_yarp::AudioRecorderStatusThread : public yarp::os::PeriodicThread
 {
 public:
     AudioRecorder_nws_yarp* m_ARW = nullptr;
@@ -103,7 +103,7 @@ public:
 };
 
 //----------------------------------------------------------------
-class AudioRecorderDataThread : public yarp::os::PeriodicThread
+class AudioRecorder_nws_yarp::AudioRecorderDataThread : public yarp::os::PeriodicThread
 {
 public:
     AudioRecorder_nws_yarp* m_ARW = nullptr;

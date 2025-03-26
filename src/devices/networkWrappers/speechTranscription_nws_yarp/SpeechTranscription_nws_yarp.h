@@ -30,17 +30,17 @@ using namespace yarp::dev;
 class SerialPort_nws_yarp;
 
 // Callback implementation after buffered input.
-class ImplementCallbackHelper2 :
+class SpeechTranscription_CallbackHelper :
         public yarp::os::TypedReaderCallback<yarp::sig::Sound>
 {
 protected:
-    yarp::dev::ISpeechTranscription* m_isptr{nullptr};
-    yarp::os::Port* m_output_port{ nullptr };
+    yarp::dev::ISpeechTranscription* m_isptr {nullptr};
+    yarp::os::Port* m_output_port {nullptr};
 
 public:
-    ImplementCallbackHelper2() = delete;
-    ImplementCallbackHelper2(yarp::dev::ISpeechTranscription* x, yarp::os::Port* output_port);
-    virtual ~ImplementCallbackHelper2() override {};
+    SpeechTranscription_CallbackHelper() = delete;
+    SpeechTranscription_CallbackHelper(yarp::dev::ISpeechTranscription* x, yarp::os::Port* output_port);
+    virtual ~SpeechTranscription_CallbackHelper() override {};
 
     using yarp::os::TypedReaderCallback<yarp::sig::Sound>::onRead;
     void onRead(yarp::sig::Sound& b) override;
@@ -94,7 +94,7 @@ private:
     ISpeechTranscriptionMsgsd m_rpc;
 
     yarp::os::PortReaderBuffer <yarp::sig::Sound> input_buffer;
-    ImplementCallbackHelper2* callback_impl{ nullptr };
+    std::unique_ptr<SpeechTranscription_CallbackHelper> callback_impl;
 
     // yarp::dev::IWrapper
     bool  attach(yarp::dev::PolyDriver* deviceToAttach) override;

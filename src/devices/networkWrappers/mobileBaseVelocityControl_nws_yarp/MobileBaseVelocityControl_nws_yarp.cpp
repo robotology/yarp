@@ -24,7 +24,7 @@ YARP_LOG_COMPONENT(MOBVEL_NWS_YARP, "yarp.device.MobileBaseVelocityControl_nws_y
 
 //------------------------------------------------------------------------------------------------------------------------------
 
-void VelocityInputPortProcessor::onRead(yarp::dev::MobileBaseVelocity& v)
+void Velocity_InputPortProcessor::onRead(yarp::dev::MobileBaseVelocity& v)
 {
     if (m_iVel)
     {

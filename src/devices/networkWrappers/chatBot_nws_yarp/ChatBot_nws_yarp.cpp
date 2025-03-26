@@ -64,12 +64,10 @@ bool  ChatBot_nws_yarp::attach(yarp::dev::PolyDriver* deviceToAttach)
 
     yCInfo(CHATBOT_NWS_YARP, "Attach done");
 
-    m_cbkHelper = new ChatBotRPC_CallbackHelper();
+    m_cbkHelper = std::make_unique<ChatBotRPC_CallbackHelper>();
     if(!m_cbkHelper->setCommunications(m_iChatBot,&m_outputPort))
     {
         yCError(CHATBOT_NWS_YARP) << "Error setting ChatBot_CallbackHelper object interfaces";
-        delete m_cbkHelper;
-        m_cbkHelper=nullptr;
         return false;
     }
     m_inputBuffer.useCallback(*m_cbkHelper);
@@ -95,7 +93,6 @@ bool ChatBot_nws_yarp::closeMain()
     m_inputPort.close();
     m_outputPort.close();
     m_thriftServerPort.close();
-    if (m_cbkHelper) {delete m_cbkHelper; m_cbkHelper=nullptr;}
     return true;
 }
 

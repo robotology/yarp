@@ -23,7 +23,7 @@
 #define DEG2RAD M_PI/180.0
 #endif
 
-YARP_LOG_COMPONENT(FAKE_LASER, "yarp.devices.fakeLaserWithMotor")
+YARP_LOG_COMPONENT(FAKE_LASER_WITH_MOTOR, "yarp.devices.fakeLaserWithMotor")
 
 using namespace yarp::os;
 using namespace yarp::dev;
@@ -42,18 +42,18 @@ bool FakeLaserWithMotor::open(yarp::os::Searchable& config)
 
     if (config.check("help"))
     {
-        yCInfo(FAKE_LASER,"Some examples:");
-        yCInfo(FAKE_LASER,"yarpdev --device fakeLaserWithMotor --help");
-        yCInfo(FAKE_LASER,"yarpdev --device rangefinder2D_nws_yarp --subdevice fakeLaserWithMotor --period 0.01 --name /fakeLaser:o --test no_obstacles");
-        yCInfo(FAKE_LASER,"yarpdev --device rangefinder2D_nws_yarp --subdevice fakeLaserWithMotor --period 0.01 --name /fakeLaser:o --test use_pattern");
-        yCInfo(FAKE_LASER,"yarpdev --device rangefinder2D_nws_yarp --subdevice fakeLaserWithMotor --period 0.01 --name /fakeLaser:o --test use_constant --const_distance 0.5");
-        yCInfo(FAKE_LASER,"yarpdev --device rangefinder2D_nws_yarp --subdevice fakeLaserWithMotor --period 0.01 --name /fakeLaser:o --test use_constant --const_distance 0.5 --SENSOR::resolution 0.5 --SKIP::min 0 50 --SKIP::max 10 60");
-        yCInfo(FAKE_LASER,"yarpdev --device rangefinder2D_nws_yarp --subdevice fakeLaserWithMotor --period 0.01 --name /fakeLaser:o --test use_mapfile --map_file mymap.map");
-        yCInfo(FAKE_LASER,"yarpdev --device rangefinder2D_nws_yarp --subdevice fakeLaserWithMotor --period 0.01 --name /fakeLaser:o --test use_mapfile --map_file mymap.map --localization_port /fakeLaser/location:i");
-        yCInfo(FAKE_LASER,"yarpdev --device rangefinder2D_nws_yarp --subdevice fakeLaserWithMotor --period 0.01 --name /fakeLaser:o --test use_mapfile --map_file mymap.map --localization_server /localizationServer");
-        yCInfo(FAKE_LASER,"yarpdev --device rangefinder2D_nws_yarp --subdevice fakeLaserWithMotor --period 0.01 --name /fakeLaser:o --test use_mapfile --map_file mymap.map --localization_client /fakeLaser/localizationClient --localization_server /localizationServer");
-        yCInfo(FAKE_LASER,"yarpdev --device rangefinder2D_nws_yarp --subdevice fakeLaserWithMotor --period 0.01 --name /fakeLaser:o --test use_mapfile --map_context context --map_file mymap.map");
-        yCInfo(FAKE_LASER,"yarpdev --device rangefinder2D_nws_yarp --subdevice fakeLaserWithMotor --period 0.01 --name /fakeLaser:o --test use_mapfile --map_file mymap.map --localization_client /fakeLaser/localizationClient --localization_server /localization2D_nws_yarp --localization_device localization2D_nwc_yarp");
+        yCInfo(FAKE_LASER_WITH_MOTOR,"Some examples:");
+        yCInfo(FAKE_LASER_WITH_MOTOR,"yarpdev --device fakeLaserWithMotor --help");
+        yCInfo(FAKE_LASER_WITH_MOTOR,"yarpdev --device rangefinder2D_nws_yarp --subdevice fakeLaserWithMotor --period 0.01 --name /fakeLaser:o --test no_obstacles");
+        yCInfo(FAKE_LASER_WITH_MOTOR,"yarpdev --device rangefinder2D_nws_yarp --subdevice fakeLaserWithMotor --period 0.01 --name /fakeLaser:o --test use_pattern");
+        yCInfo(FAKE_LASER_WITH_MOTOR,"yarpdev --device rangefinder2D_nws_yarp --subdevice fakeLaserWithMotor --period 0.01 --name /fakeLaser:o --test use_constant --const_distance 0.5");
+        yCInfo(FAKE_LASER_WITH_MOTOR,"yarpdev --device rangefinder2D_nws_yarp --subdevice fakeLaserWithMotor --period 0.01 --name /fakeLaser:o --test use_constant --const_distance 0.5 --SENSOR::resolution 0.5 --SKIP::min 0 50 --SKIP::max 10 60");
+        yCInfo(FAKE_LASER_WITH_MOTOR,"yarpdev --device rangefinder2D_nws_yarp --subdevice fakeLaserWithMotor --period 0.01 --name /fakeLaser:o --test use_mapfile --map_file mymap.map");
+        yCInfo(FAKE_LASER_WITH_MOTOR,"yarpdev --device rangefinder2D_nws_yarp --subdevice fakeLaserWithMotor --period 0.01 --name /fakeLaser:o --test use_mapfile --map_file mymap.map --localization_port /fakeLaser/location:i");
+        yCInfo(FAKE_LASER_WITH_MOTOR,"yarpdev --device rangefinder2D_nws_yarp --subdevice fakeLaserWithMotor --period 0.01 --name /fakeLaser:o --test use_mapfile --map_file mymap.map --localization_server /localizationServer");
+        yCInfo(FAKE_LASER_WITH_MOTOR,"yarpdev --device rangefinder2D_nws_yarp --subdevice fakeLaserWithMotor --period 0.01 --name /fakeLaser:o --test use_mapfile --map_file mymap.map --localization_client /fakeLaser/localizationClient --localization_server /localizationServer");
+        yCInfo(FAKE_LASER_WITH_MOTOR,"yarpdev --device rangefinder2D_nws_yarp --subdevice fakeLaserWithMotor --period 0.01 --name /fakeLaser:o --test use_mapfile --map_context context --map_file mymap.map");
+        yCInfo(FAKE_LASER_WITH_MOTOR,"yarpdev --device rangefinder2D_nws_yarp --subdevice fakeLaserWithMotor --period 0.01 --name /fakeLaser:o --test use_mapfile --map_file mymap.map --localization_client /fakeLaser/localizationClient --localization_server /localization2D_nws_yarp --localization_device localization2D_nwc_yarp");
         return false;
     }
 
@@ -63,12 +63,12 @@ bool FakeLaserWithMotor::open(yarp::os::Searchable& config)
     else if (string_test_mode == "use_mapfile") { m_test_mode = USE_MAPFILE; }
     else if (string_test_mode == "use_constant") { m_test_mode = USE_CONSTANT_VALUE; }
     else if (string_test_mode == "use_square_trap") { m_test_mode = USE_SQUARE_TRAP; }
-    else    { yCError(FAKE_LASER) << "invalid/unknown value for param 'test'"; return false; }
+    else    { yCError(FAKE_LASER_WITH_MOTOR) << "invalid/unknown value for param 'test'"; return false; }
 
     //parse all the parameters related to the linear/angular range of the sensor
     if (this->parseConfiguration(config) == false)
     {
-        yCError(FAKE_LASER) << ": error parsing parameters";
+        yCError(FAKE_LASER_WITH_MOTOR) << ": error parsing parameters";
         return false;
     }
 
@@ -110,12 +110,12 @@ bool FakeLaserWithMotor::open(yarp::os::Searchable& config)
                 map_file = rf.findFile(tmp_filename);
                 if (map_file == "")
                 {
-                    yCWarning(FAKE_LASER, "Unable to find file: %s from context: %s\n", tmp_filename.c_str(), tmp_contextname.c_str());
+                    yCWarning(FAKE_LASER_WITH_MOTOR, "Unable to find file: %s from context: %s\n", tmp_filename.c_str(), tmp_contextname.c_str());
                 }
             }
             else
             {
-                yCWarning(FAKE_LASER, "Unable to find file: %s from context: %s\n", tmp_filename.c_str(), tmp_contextname.c_str());
+                yCWarning(FAKE_LASER_WITH_MOTOR, "Unable to find file: %s from context: %s\n", tmp_filename.c_str(), tmp_contextname.c_str());
             }
         }
         else if (!m_MAP_MODE_map_file.empty())
@@ -124,19 +124,19 @@ bool FakeLaserWithMotor::open(yarp::os::Searchable& config)
         }
         else
         {
-            yCError(FAKE_LASER) << "Missing `map_file` or `map_context`+`map_file` parameters";
+            yCError(FAKE_LASER_WITH_MOTOR) << "Missing `map_file` or `map_context`+`map_file` parameters";
             return false;
         }
 
         if (map_file=="")
         {
-            yCError(FAKE_LASER) << "File not found";
+            yCError(FAKE_LASER_WITH_MOTOR) << "File not found";
             return false;
         }
         bool ret = m_originally_loaded_map.loadFromFile(map_file);
         if (ret == false)
         {
-            yCError(FAKE_LASER) << "A problem occurred while opening:" << map_file;
+            yCError(FAKE_LASER_WITH_MOTOR) << "A problem occurred while opening:" << map_file;
             return false;
         }
         m_map = m_originally_loaded_map;
@@ -145,8 +145,8 @@ bool FakeLaserWithMotor::open(yarp::os::Searchable& config)
         m_robot_loc_t=0;
     }
 
-    yCInfo(FAKE_LASER) << "Starting debug mode";
-    yCInfo(FAKE_LASER) << "test mode:"<< m_test_mode << " i.e. " << string_test_mode;
+    yCInfo(FAKE_LASER_WITH_MOTOR) << "Starting debug mode";
+    yCInfo(FAKE_LASER_WITH_MOTOR) << "test mode:"<< m_test_mode << " i.e. " << string_test_mode;
 
     //  INIT ALL INTERFACES
     std::vector<double> tmpZeros; tmpZeros.resize(m_njoints, 0.0);
@@ -163,7 +163,7 @@ bool FakeLaserWithMotor::open(yarp::os::Searchable& config)
     ImplementAxisInfo::initialize(m_njoints, axisMap.data());
     if (!alloc(m_njoints))
     {
-        yCError(FAKE_LASER) << "Malloc failed";
+        yCError(FAKE_LASER_WITH_MOTOR) << "Malloc failed";
         return false;
     }
     _jointType[0] = VOCAB_JOINTTYPE_PRISMATIC;
@@ -178,7 +178,7 @@ bool FakeLaserWithMotor::open(yarp::os::Searchable& config)
 
     if (!m_rpcPort.open("/fakeLaser/rpc:i"))
     {
-        yCError(FAKE_LASER, "Failed to open port %s", "/fakeLaser/rpc:i");
+        yCError(FAKE_LASER_WITH_MOTOR, "Failed to open port %s", "/fakeLaser/rpc:i");
         return false;
     }
     m_rpcPort.setReader(*this);
@@ -301,7 +301,7 @@ bool FakeLaserWithMotor::read(yarp::os::ConnectionReader& connection)
     }
     else
     {
-        yCError(FAKE_LASER) << "Invalid command";
+        yCError(FAKE_LASER_WITH_MOTOR) << "Invalid command";
         reply.addVocab32(VOCAB_ERR);
     }
 

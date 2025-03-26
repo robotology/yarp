@@ -21,11 +21,11 @@
 #include "Battery_nwc_yarp_ParamsParser.h"
 
 #define DEFAULT_THREAD_PERIOD 20 //ms
-const int BATTERY_TIMEOUT=100; //ms
 
-
-class BatteryInputPortProcessor : public yarp::os::BufferedPort<yarp::os::Bottle>
+class Battery_InputPortProcessor : public yarp::os::BufferedPort<yarp::os::Bottle>
 {
+    const int BATTERY_TIMEOUT=100; //ms
+
     yarp::os::Bottle lastBottle;
     std::mutex mutex;
     yarp::os::Stamp lastStamp;
@@ -42,7 +42,7 @@ public:
 
     inline void resetStat();
 
-    BatteryInputPortProcessor();
+    Battery_InputPortProcessor();
 
     using yarp::os::BufferedPort<yarp::os::Bottle>::onRead;
     void onRead(yarp::os::Bottle &v) override;
@@ -77,7 +77,7 @@ class Battery_nwc_yarp :
         public Battery_nwc_yarp_ParamsParser
 {
 protected:
-    BatteryInputPortProcessor inputPort;
+    Battery_InputPortProcessor inputPort;
     yarp::os::Port rpcPort;
     yarp::os::Stamp lastTs; //used by IPreciselyTimed
     std::string deviceId;
