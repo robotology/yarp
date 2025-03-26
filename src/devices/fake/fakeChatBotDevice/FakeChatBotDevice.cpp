@@ -9,6 +9,8 @@
 
 YARP_LOG_COMPONENT(FAKECHATBOTDEVICE, "yarp.devices.FakeChatBotDevice")
 
+using namespace yarp::dev;
+
 FakeChatBotDevice::FakeChatBotDevice() :
     m_fallback{"Sorry, I did not get that. Can you repeat?"},
     m_noInput{"I heard nothing. Can you please speak up?"},
@@ -25,17 +27,17 @@ FakeChatBotDevice::FakeChatBotDevice() :
         }
 {}
 
-bool FakeChatBotDevice::interact(const std::string& messageIn, std::string& messageOut)
+ReturnValue FakeChatBotDevice::interact(const std::string& messageIn, std::string& messageOut)
 {
     if(messageIn.empty())
     {
         messageOut = m_noInput;
-        return true;
+        return ReturnValue_ok;
     }
     if(m_qAndA[m_status].count(messageIn) < 1)
     {
         messageOut = m_fallback;
-        return true;
+        return ReturnValue_ok;
     }
 
     messageOut = m_qAndA[m_status][messageIn];
@@ -45,38 +47,37 @@ bool FakeChatBotDevice::interact(const std::string& messageIn, std::string& mess
         m_status = "chatting";
     }
 
-    return true;
+    return ReturnValue_ok;
 }
 
-bool FakeChatBotDevice::setLanguage(const std::string& language)
+ReturnValue FakeChatBotDevice::setLanguage(const std::string& language)
 {
     if (language != "eng")
     {
-        yCError(FAKECHATBOTDEVICE) << "Unsopported language. Only English is supported for the moment being";
-        return false;
+        yCError(FAKECHATBOTDEVICE) << "Unsupported language. Only English is supported for the moment being";
+        return ReturnValue::return_code::return_value_error_method_failed;
     }
     m_language = language;
 
-    return true;
+    return ReturnValue_ok;
 }
 
-bool FakeChatBotDevice::getLanguage(std::string& language)
+ReturnValue FakeChatBotDevice::getLanguage(std::string& language)
 {
     language = m_language;
-
-    return true;
+    return ReturnValue_ok;
 }
 
-bool FakeChatBotDevice::getStatus(std::string& status)
+ReturnValue FakeChatBotDevice::getStatus(std::string& status)
 {
     status = m_status;
-    return true;
+    return ReturnValue_ok;
 }
 
-bool FakeChatBotDevice::resetBot()
+ReturnValue FakeChatBotDevice::resetBot()
 {
     m_status = "greetings";
-    return true;
+    return ReturnValue_ok;
 }
 
 bool FakeChatBotDevice::open(yarp::os::Searchable& config)

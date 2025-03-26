@@ -13,6 +13,8 @@ namespace {
 YARP_LOG_COMPONENT(ICHATBOTMSGSIMPL, "yarp.devices.chatBot_nws_yarp.ChatBotRPC_CallbackHelper")
 }
 
+using namespace yarp::dev;
+
 bool IChatBotMsgsImpl::setInterfaces(yarp::dev::IChatBot* iChatBot)
 {
     if(!iChatBot)
@@ -32,28 +34,31 @@ return_interact IChatBotMsgsImpl::interactRPC(const std::string& messageIn)
     return_interact response;
     std::string messageOut;
 
-    if(!m_iChatBot->interact(messageIn,messageOut))
+    auto ret = m_iChatBot->interact(messageIn, messageOut);
+    if(!ret)
     {
         yCError(ICHATBOTMSGSIMPL) << "An error occurred while interacting with the chatBot";
-        response.result = false;
+        response.result = ret;
         return response;
     }
 
+    response.result = ret;
     response.messageOut = messageOut;
-    response.result = true;
     return response;
 }
 
-bool IChatBotMsgsImpl::setLanguageRPC(const std::string& language)
+ReturnValue IChatBotMsgsImpl::setLanguageRPC(const std::string& language)
 {
     std::lock_guard <std::mutex> lg(m_mutex);
-    if(!m_iChatBot->setLanguage(language))
+
+    auto ret = m_iChatBot->setLanguage(language);
+    if(!ret)
     {
         yCError(ICHATBOTMSGSIMPL) << "Could not set bot language to" << language;
-        return false;
+        return ret;
     }
 
-    return true;
+    return ReturnValue_ok;
 }
 
 return_getLanguage IChatBotMsgsImpl::getLanguageRPC()
@@ -61,14 +66,16 @@ return_getLanguage IChatBotMsgsImpl::getLanguageRPC()
     std::lock_guard <std::mutex> lg(m_mutex);
     return_getLanguage response;
     std::string language;
-    if(!m_iChatBot->getLanguage(language))
+
+    auto ret = m_iChatBot->getLanguage(language);
+    if(!ret)
     {
         yCError(ICHATBOTMSGSIMPL) << "Could not retrieve the chatbot language";
-        response.result = false;
+        response.result = ret;
         return response;
     }
 
-    response.result = true;
+    response.result = ret;
     response.language = language;
 
     return response;
@@ -79,28 +86,31 @@ return_getStatus IChatBotMsgsImpl::getStatusRPC()
     std::lock_guard <std::mutex> lg(m_mutex);
     return_getStatus response;
     std::string status;
-    if(!m_iChatBot->getStatus(status))
+
+    auto ret = m_iChatBot->getStatus(status);
+    if(!ret)
     {
         yCError(ICHATBOTMSGSIMPL) << "Could not retrieve the chatbot status";
-        response.result = false;
+        response.result = ret;
         return response;
     }
 
-    response.result = true;
+    response.result = ret;
     response.status = status;
 
     return response;
 }
 
-bool IChatBotMsgsImpl::resetBotRPC()
+ReturnValue IChatBotMsgsImpl::resetBotRPC()
 {
     std::lock_guard <std::mutex> lg(m_mutex);
-    if(!m_iChatBot->resetBot())
+
+    auto ret = m_iChatBot->resetBot();
+    if(!ret)
     {
         yCError(ICHATBOTMSGSIMPL) << "Could not reset the bot";
-
-        return false;
+        return ret;
     }
 
-    return true;
+    return ReturnValue_ok;
 }

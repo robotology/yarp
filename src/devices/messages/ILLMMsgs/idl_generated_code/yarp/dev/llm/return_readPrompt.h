@@ -13,6 +13,7 @@
 
 #include <yarp/os/Wire.h>
 #include <yarp/os/idl/WireTypes.h>
+#include <yarp/dev/ReturnValue.h>
 
 namespace yarp::dev::llm {
 
@@ -21,14 +22,14 @@ class return_readPrompt :
 {
 public:
     // Fields
-    bool ret{false};
+    yarp::dev::ReturnValue ret{};
     std::string prompt{};
 
     // Default constructor
     return_readPrompt() = default;
 
     // Constructor with field values
-    return_readPrompt(const bool ret,
+    return_readPrompt(const yarp::dev::ReturnValue& ret,
                       const std::string& prompt);
 
     // Read structure on a Wire

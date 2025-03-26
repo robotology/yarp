@@ -30,10 +30,10 @@ public:
         m_streaming_port.close();
     }
     // From IGPTMsgs
-    bool setPrompt(const std::string& prompt) override;
+    yarp::dev::ReturnValue setPrompt(const std::string& prompt) override;
     yarp::dev::llm::return_readPrompt readPrompt() override;
     yarp::dev::llm::return_ask ask(const std::string& question) override;
     yarp::dev::llm::return_getConversation getConversation() override;
-    bool deleteConversation() override;
-    bool refreshConversation() override;
+    yarp::dev::ReturnValue deleteConversation() override;
+    yarp::dev::ReturnValue refreshConversation() override;
 };

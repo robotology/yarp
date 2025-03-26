@@ -13,7 +13,7 @@
 namespace yarp::dev::llm {
 
 // Constructor with field values
-return_getConversation::return_getConversation(const bool ret,
+return_getConversation::return_getConversation(const yarp::dev::ReturnValue& ret,
                                                const std::vector<yarp::dev::LLM_Message>& conversation) :
         WirePortable(),
         ret(ret),
@@ -24,7 +24,7 @@ return_getConversation::return_getConversation(const bool ret,
 // Read structure on a Wire
 bool return_getConversation::read(yarp::os::idl::WireReader& reader)
 {
-    if (!read_ret(reader)) {
+    if (!nested_read_ret(reader)) {
         return false;
     }
     if (!read_conversation(reader)) {
@@ -52,7 +52,7 @@ bool return_getConversation::read(yarp::os::ConnectionReader& connection)
 // Write structure on a Wire
 bool return_getConversation::write(const yarp::os::idl::WireWriter& writer) const
 {
-    if (!write_ret(writer)) {
+    if (!nested_write_ret(writer)) {
         return false;
     }
     if (!write_conversation(writer)) {
@@ -90,8 +90,13 @@ std::string return_getConversation::toString() const
 // read ret field
 bool return_getConversation::read_ret(yarp::os::idl::WireReader& reader)
 {
-    if (!reader.readBool(ret)) {
-        ret = false;
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
+    if (!reader.read(ret)) {
+        reader.fail();
+        return false;
     }
     return true;
 }
@@ -99,7 +104,7 @@ bool return_getConversation::read_ret(yarp::os::idl::WireReader& reader)
 // write ret field
 bool return_getConversation::write_ret(const yarp::os::idl::WireWriter& writer) const
 {
-    if (!writer.writeBool(ret)) {
+    if (!writer.write(ret)) {
         return false;
     }
     return true;
@@ -108,8 +113,13 @@ bool return_getConversation::write_ret(const yarp::os::idl::WireWriter& writer) 
 // read (nested) ret field
 bool return_getConversation::nested_read_ret(yarp::os::idl::WireReader& reader)
 {
-    if (!reader.readBool(ret)) {
-        ret = false;
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
+    if (!reader.readNested(ret)) {
+        reader.fail();
+        return false;
     }
     return true;
 }
@@ -117,7 +127,7 @@ bool return_getConversation::nested_read_ret(yarp::os::idl::WireReader& reader)
 // write (nested) ret field
 bool return_getConversation::nested_write_ret(const yarp::os::idl::WireWriter& writer) const
 {
-    if (!writer.writeBool(ret)) {
+    if (!writer.writeNested(ret)) {
         return false;
     }
     return true;

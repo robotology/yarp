@@ -8,25 +8,28 @@
 
 #include <ILLMServerImpl.h>
 
+using namespace yarp::dev;
+
 namespace {
 YARP_LOG_COMPONENT(LLMSERVER, "yarp.device.LLMServer")
 }
 
-bool ILLMRPCd::setPrompt(const std::string& prompt)
+ReturnValue ILLMRPCd::setPrompt(const std::string& prompt)
 {
     if (m_iLlm == nullptr) {
         yCError(LLMSERVER, "Invalid interface");
-        return false;
+        return ReturnValue::return_code::return_value_error_not_ready;
     }
 
-    if (!m_iLlm->setPrompt(prompt)) {
+    auto ret = m_iLlm->setPrompt(prompt);
+    if (!ret) {
         yCError(LLMSERVER, "setPrompt failed");
-        return false;
+        return ret;
     }
 
     m_stream_conversation();
 
-    return true;
+    return ret;
 }
 
 yarp::dev::llm::return_readPrompt ILLMRPCd::readPrompt()
@@ -36,7 +39,7 @@ yarp::dev::llm::return_readPrompt ILLMRPCd::readPrompt()
 
     if (m_iLlm == nullptr) {
         yCError(LLMSERVER, "Invalid interface");
-        ret.ret = false;
+        ret.ret = ReturnValue::return_code::return_value_error_not_ready;
         return ret;
     }
 
@@ -51,7 +54,7 @@ yarp::dev::llm::return_ask ILLMRPCd::ask(const std::string& question)
 
     if (m_iLlm == nullptr) {
         yCError(LLMSERVER, "Invalid interface");
-        ret.ret = false;
+        ret.ret = ReturnValue::return_code::return_value_error_not_ready;
         return ret;
     }
 
@@ -102,7 +105,7 @@ yarp::dev::llm::return_getConversation ILLMRPCd::getConversation()
 
     if (m_iLlm == nullptr) {
         yCError(LLMSERVER, "Invalid interface");
-        ret.ret = false;
+        ret.ret = ReturnValue::return_code::return_value_error_not_ready;
         return ret;
     }
 
@@ -113,15 +116,14 @@ yarp::dev::llm::return_getConversation ILLMRPCd::getConversation()
     return ret;
 }
 
-bool ILLMRPCd::deleteConversation()
+ReturnValue ILLMRPCd::deleteConversation()
 {
-    bool ret = false;
     if (m_iLlm == nullptr) {
         yCError(LLMSERVER, "Invalid interface");
-        return false;
+        return ReturnValue::return_code::return_value_error_not_ready;
     }
 
-    ret = m_iLlm->deleteConversation();
+    auto ret = m_iLlm->deleteConversation();
 
     if (ret) {
         m_stream_conversation();
@@ -130,15 +132,14 @@ bool ILLMRPCd::deleteConversation()
     return ret;
 }
 
-bool ILLMRPCd::refreshConversation()
+ReturnValue ILLMRPCd::refreshConversation()
 {
-    bool ret = false;
     if (m_iLlm == nullptr) {
         yCError(LLMSERVER, "Invalid interface");
-        return false;
+        return ReturnValue::return_code::return_value_error_not_ready;
     }
 
-    ret = m_iLlm->refreshConversation();
+    auto ret = m_iLlm->refreshConversation();
 
     if (ret) {
         m_stream_conversation();

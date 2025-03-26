@@ -14,6 +14,7 @@
 #include <yarp/os/Wire.h>
 #include <yarp/os/idl/WireTypes.h>
 #include <yarp/dev/ILLM.h>
+#include <yarp/dev/ReturnValue.h>
 
 namespace yarp::dev::llm {
 
@@ -22,14 +23,14 @@ class return_ask :
 {
 public:
     // Fields
-    bool ret{false};
+    yarp::dev::ReturnValue ret{};
     yarp::dev::LLM_Message answer{};
 
     // Default constructor
     return_ask() = default;
 
     // Constructor with field values
-    return_ask(const bool ret,
+    return_ask(const yarp::dev::ReturnValue& ret,
                const yarp::dev::LLM_Message& answer);
 
     // Read structure on a Wire

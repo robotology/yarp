@@ -13,6 +13,8 @@ namespace
     YARP_LOG_COMPONENT(LLM_NWC_YARP, "yarp.device.LLM_nwc_yarp")
 }
 
+using namespace yarp::dev;
+
 bool LLM_nwc_yarp::open(yarp::os::Searchable &config)
 {
     if (!parseParams(config)) { return false; }
@@ -47,12 +49,12 @@ bool LLM_nwc_yarp::close()
     return true;
 }
 
-bool LLM_nwc_yarp::setPrompt(const std::string &prompt)
+ReturnValue LLM_nwc_yarp::setPrompt(const std::string &prompt)
 {
     return m_LLM_RPC.setPrompt(prompt);
 }
 
-bool LLM_nwc_yarp::readPrompt(std::string &oPrompt)
+ReturnValue LLM_nwc_yarp::readPrompt(std::string &oPrompt)
 {
     auto ret = m_LLM_RPC.readPrompt();
 
@@ -60,7 +62,7 @@ bool LLM_nwc_yarp::readPrompt(std::string &oPrompt)
     return ret.ret;
 }
 
-bool LLM_nwc_yarp::ask(const std::string &question, yarp::dev::LLM_Message &oAnswer)
+ReturnValue LLM_nwc_yarp::ask(const std::string &question, yarp::dev::LLM_Message &oAnswer)
 {
     auto ret = m_LLM_RPC.ask(question);
 
@@ -68,7 +70,7 @@ bool LLM_nwc_yarp::ask(const std::string &question, yarp::dev::LLM_Message &oAns
     return ret.ret;
 }
 
-bool LLM_nwc_yarp::getConversation(std::vector<yarp::dev::LLM_Message> &oConversation)
+ReturnValue LLM_nwc_yarp::getConversation(std::vector<yarp::dev::LLM_Message> &oConversation)
 {
     auto ret = m_LLM_RPC.getConversation();
     for (const auto &message : ret.conversation)
@@ -76,15 +78,15 @@ bool LLM_nwc_yarp::getConversation(std::vector<yarp::dev::LLM_Message> &oConvers
         oConversation.push_back(message);
     }
 
-    return true;
+    return ReturnValue_ok;
 }
 
-bool LLM_nwc_yarp::deleteConversation()
+ReturnValue LLM_nwc_yarp::deleteConversation()
 {
     return m_LLM_RPC.deleteConversation();
 }
 
-bool LLM_nwc_yarp::refreshConversation()
+ReturnValue LLM_nwc_yarp::refreshConversation()
 {
     return m_LLM_RPC.refreshConversation();
 }

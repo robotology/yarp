@@ -7,33 +7,35 @@
 #include <yarp/os/Log.h>
 #include <yarp/os/LogStream.h>
 
-bool FakeLLMDevice::setPrompt(const std::string &prompt)
+using namespace yarp::dev;
+
+ReturnValue FakeLLMDevice::setPrompt(const std::string &prompt)
 {
     if(!m_conversation.empty())
     {
         yError() << "The conversation is already ongoing. You must first delete the whole conversation and start from scratch.";
-        return false;
+        return ReturnValue::return_code::return_value_error_method_failed;
     }
 
     m_conversation.push_back(yarp::dev::LLM_Message("system", prompt,{},{}));
-    return true;
+    return ReturnValue_ok;
 }
 
-bool FakeLLMDevice::readPrompt(std::string &oPrompt)
+ReturnValue FakeLLMDevice::readPrompt(std::string &oPrompt)
 {
     for (const auto &message : m_conversation)
     {
         if (message.type == "system")
         {
             oPrompt = message.content;
-            return true;
+            return ReturnValue_ok;
         }
     }
 
-    return false;
+    return ReturnValue::return_code::return_value_error_method_failed;
 }
 
-bool FakeLLMDevice::ask(const std::string &question, yarp::dev::LLM_Message &oAnswer)
+ReturnValue FakeLLMDevice::ask(const std::string &question, yarp::dev::LLM_Message &oAnswer)
 {
     // In the fake device we ignore the question
     yarp::dev::LLM_Message answer;
@@ -52,29 +54,29 @@ bool FakeLLMDevice::ask(const std::string &question, yarp::dev::LLM_Message &oAn
     m_conversation.push_back(yarp::dev::LLM_Message("user", question,{},{}));
     m_conversation.push_back(answer);
     oAnswer = answer;
-    return true;
+    return ReturnValue_ok;
 }
 
-bool FakeLLMDevice::getConversation(std::vector<yarp::dev::LLM_Message>& oConversation)
+ReturnValue FakeLLMDevice::getConversation(std::vector<yarp::dev::LLM_Message>& oConversation)
 {
     oConversation = m_conversation;
-    return true;
+    return ReturnValue_ok;
 }
 
-bool FakeLLMDevice::deleteConversation() noexcept
+ReturnValue FakeLLMDevice::deleteConversation() noexcept
 {
     m_conversation.clear();
-    return true;
+    return ReturnValue_ok;
 }
 
-bool FakeLLMDevice::refreshConversation() noexcept
+ReturnValue FakeLLMDevice::refreshConversation() noexcept
 {
     std::string current_prompt;
 
     if(!this->readPrompt(current_prompt))
     {
         yError() << "No prompt found in the conversation. Cannot refresh.";
-        return false;
+        return ReturnValue::return_code::return_value_error_method_failed;
     }
 
     this->deleteConversation();
@@ -82,10 +84,11 @@ bool FakeLLMDevice::refreshConversation() noexcept
     if(!this->setPrompt(current_prompt))
     {
         yError() << "Failed to refresh the conversation.";
-        return false;
+        return ReturnValue::return_code::return_value_error_method_failed;
+
     }
 
-    return true;
+    return ReturnValue_ok;
 }
 
 bool FakeLLMDevice::open(yarp::os::Searchable& config)

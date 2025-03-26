@@ -13,20 +13,21 @@
 
 #include <yarp/os/Wire.h>
 #include <yarp/os/idl/WireTypes.h>
+#include <yarp/dev/ReturnValue.h>
 
 class return_interact :
         public yarp::os::idl::WirePortable
 {
 public:
     // Fields
-    bool result{false};
+    yarp::dev::ReturnValue result{};
     std::string messageOut{};
 
     // Default constructor
     return_interact() = default;
 
     // Constructor with field values
-    return_interact(const bool result,
+    return_interact(const yarp::dev::ReturnValue& result,
                     const std::string& messageOut);
 
     // Read structure on a Wire

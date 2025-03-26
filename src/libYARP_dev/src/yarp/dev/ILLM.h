@@ -7,6 +7,7 @@
 #define YARP_DEV_ILLM_H
 
 #include <yarp/dev/api.h>
+#include <yarp/dev/ReturnValue.h>
 #include <yarp/dev/LLM_Message.h>
 
 #include <string>
@@ -34,14 +35,14 @@ public:
     * @param prompt provides a prompt to the LLM
     * @return true/false
     */
-    virtual bool setPrompt(const std::string& prompt) = 0;
+    virtual yarp::dev::ReturnValue setPrompt(const std::string& prompt) = 0;
 
     /**
     * Retrieves the provided prompt
     * @param prompt the stored prompt
     * @return true/false
     */
-    virtual bool readPrompt(std::string& oPrompt) = 0;
+    virtual yarp::dev::ReturnValue readPrompt(std::string& oPrompt) = 0;
 
     /**
     * Performs a question
@@ -49,26 +50,26 @@ public:
     * @param answer the returned answer
     * @return true/false
     */
-    virtual bool ask(const std::string& question, yarp::dev::LLM_Message& answer) = 0;
+    virtual yarp::dev::ReturnValue ask(const std::string& question, yarp::dev::LLM_Message& answer) = 0;
 
     /**
     * Retrieves the whole conversation
     * @param conversation the conversation
     * @return true/false
     */
-    virtual bool getConversation(std::vector<yarp::dev::LLM_Message>& conversation) = 0;
+    virtual yarp::dev::ReturnValue getConversation(std::vector<yarp::dev::LLM_Message>& conversation) = 0;
 
     /**
     * Delete the conversation and clear the system context from any internally stored context.
     * @return true/false
     */
-    virtual bool deleteConversation() = 0;
+    virtual yarp::dev::ReturnValue deleteConversation() = 0;
 
     /**
     *  Refresh the conversation
     * @return true/false
     */
-    virtual bool refreshConversation() = 0;
+    virtual yarp::dev::ReturnValue refreshConversation() = 0;
 };
 
 #endif
