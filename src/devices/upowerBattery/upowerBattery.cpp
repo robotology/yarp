@@ -48,13 +48,13 @@ bool UpowerBattery::close()
     return true;
 }
 
-bool UpowerBattery::getBatteryVoltage(double& voltage)
+yarp::dev::ReturnValue UpowerBattery::getBatteryVoltage(double& voltage)
 {
     voltage = m_interface->property("Voltage").toDouble();
-    return true;
+    return ReturnValue_ok;
 }
 
-bool UpowerBattery::getBatteryCurrent(double& current)
+yarp::dev::ReturnValue UpowerBattery::getBatteryCurrent(double& current)
 {
     auto energyrate = m_interface->property("EnergyRate").toDouble();
     auto voltage = m_interface->property("Voltage").toDouble();
@@ -63,16 +63,16 @@ bool UpowerBattery::getBatteryCurrent(double& current)
     if (current > 0 && state == 1 /* Charging */) {
         current = -current;
     }
-    return true;
+    return ReturnValue_ok;
 }
 
-bool UpowerBattery::getBatteryCharge(double& charge)
+yarp::dev::ReturnValue UpowerBattery::getBatteryCharge(double& charge)
 {
     charge = m_interface->property("Percentage").toInt();
-    return true;
+    return ReturnValue_ok;
 }
 
-bool UpowerBattery::getBatteryStatus(Battery_status& status)
+yarp::dev::ReturnValue UpowerBattery::getBatteryStatus(Battery_status& status)
 {
     status = yarp::dev::IBattery::BATTERY_OK_STANDBY;
     auto st = m_interface->property("State").toUInt();
@@ -114,16 +114,16 @@ bool UpowerBattery::getBatteryStatus(Battery_status& status)
         break;
     }
 
-    return true;
+    return ReturnValue_ok;
 }
 
-bool UpowerBattery::getBatteryTemperature(double& temperature)
+yarp::dev::ReturnValue UpowerBattery::getBatteryTemperature(double& temperature)
 {
     temperature = m_interface->property("Temperature").toDouble();
-    return true;
+    return ReturnValue_ok;
 }
 
-bool UpowerBattery::getBatteryInfo(std::string& info)
+yarp::dev::ReturnValue UpowerBattery::getBatteryInfo(std::string& info)
 {
     info = QStringLiteral("Vendor: %1, Model: %2, Serial: %3")
                 .arg(m_interface->property("Vendor").toString())
@@ -131,5 +131,5 @@ bool UpowerBattery::getBatteryInfo(std::string& info)
                 .arg(m_interface->property("Serial").toString())
                 .toStdString();
     yCDebug(UPOWERBATTERY) << info;
-    return true;
+    return ReturnValue_ok;
 }

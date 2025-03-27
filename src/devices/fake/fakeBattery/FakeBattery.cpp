@@ -80,46 +80,46 @@ void FakeBattery::run()
     updateStatus();
 }
 
-bool FakeBattery::getBatteryVoltage(double& voltage)
+ReturnValue FakeBattery::getBatteryVoltage(double& voltage)
 {
     std::lock_guard<std::mutex> lock(m_mutex);
     voltage = battery_voltage;
-    return true;
+    return ReturnValue_ok;
 }
 
-bool FakeBattery::getBatteryCurrent(double& current)
+ReturnValue FakeBattery::getBatteryCurrent(double& current)
 {
     std::lock_guard<std::mutex> lock(m_mutex);
     current = battery_current;
-    return true;
+    return ReturnValue_ok;
 }
 
-bool FakeBattery::getBatteryCharge(double& charge)
+ReturnValue FakeBattery::getBatteryCharge(double& charge)
 {
     std::lock_guard<std::mutex> lock(m_mutex);
     charge = battery_charge;
-    return true;
+    return ReturnValue_ok;
 }
 
-bool FakeBattery::getBatteryStatus(Battery_status& status)
+ReturnValue FakeBattery::getBatteryStatus(Battery_status& status)
 {
     std::lock_guard<std::mutex> lock(m_mutex);
     status = battery_status;
-    return true;
+    return ReturnValue_ok;
 }
 
-bool FakeBattery::getBatteryTemperature(double& temperature)
+ReturnValue FakeBattery::getBatteryTemperature(double& temperature)
 {
     std::lock_guard<std::mutex> lock(m_mutex);
     temperature = battery_temperature;
-    return true;
+    return ReturnValue_ok;
 }
 
-bool FakeBattery::getBatteryInfo(std::string& info)
+ReturnValue FakeBattery::getBatteryInfo(std::string& info)
 {
     std::lock_guard<std::mutex> lock(m_mutex);
     info = battery_info;
-    return true;
+    return ReturnValue_ok;
 }
 
 void FakeBattery::setBatteryVoltage(const double voltage)

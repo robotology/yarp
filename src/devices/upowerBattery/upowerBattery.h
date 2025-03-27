@@ -35,12 +35,12 @@ public:
     bool open(yarp::os::Searchable& config) override;
     bool close() override;
 
-    bool getBatteryVoltage(double& voltage) override;
-    bool getBatteryCurrent(double& current) override;
-    bool getBatteryCharge(double& charge) override;
-    bool getBatteryStatus(Battery_status& status) override;
-    bool getBatteryInfo(std::string& info) override;
-    bool getBatteryTemperature(double& temperature) override;
+    yarp::dev::ReturnValue getBatteryVoltage(double& voltage) override;
+    yarp::dev::ReturnValue getBatteryCurrent(double& current) override;
+    yarp::dev::ReturnValue getBatteryCharge(double& charge) override;
+    yarp::dev::ReturnValue getBatteryStatus(Battery_status& status) override;
+    yarp::dev::ReturnValue getBatteryInfo(std::string& info) override;
+    yarp::dev::ReturnValue getBatteryTemperature(double& temperature) override;
 
 private:
     QDBusInterface *m_interface { nullptr };

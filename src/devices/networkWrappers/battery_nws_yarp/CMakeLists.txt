@@ -22,7 +22,10 @@ if(NOT SKIP_battery_nws_yarp)
       Battery_nws_yarp_ParamsParser.h
   )
 
-  target_link_libraries(yarp_battery_nws_yarp
+  target_sources(yarp_battery_nws_yarp PRIVATE $<TARGET_OBJECTS:IBatteryMsgs>)
+  target_include_directories(yarp_battery_nws_yarp PRIVATE $<TARGET_PROPERTY:IBatteryMsgs,INTERFACE_INCLUDE_DIRECTORIES>)
+
+    target_link_libraries(yarp_battery_nws_yarp
     PRIVATE
       YARP::YARP_os
       YARP::YARP_sig
