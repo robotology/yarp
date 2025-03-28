@@ -52,6 +52,10 @@ bool MobileBaseVelocityControl_nwc_yarp::open(yarp::os::Searchable &config)
         return false;
     }
 
+    //Check the protocol version
+    if (!m_RPC.checkProtocolVersion()) { return false; }
+
+    yCInfo(MOBVEL_NWC_YARP) << "Opening of NWC successful";
     return true;
 }
 
