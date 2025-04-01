@@ -60,7 +60,7 @@ private:
     std::mutex        m_mutex;
 
     //thrift
-    IOdometry2DRPCd* m_RPC=nullptr;
+    std::unique_ptr<IOdometry2DRPCd> m_RPC;
 
     //rpc port
     bool read(yarp::os::ConnectionReader& connection) override;
