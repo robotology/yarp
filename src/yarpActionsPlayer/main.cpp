@@ -10,6 +10,7 @@
 #include <yarp/os/LogStream.h>
 #include <yarp/os/BufferedPort.h>
 #include <yarp/sig/Vector.h>
+#include "yarpActionsPlayer_IDL.h"
 
 #include <fstream>
 #include <iostream>
@@ -27,7 +28,7 @@
 #include "controlThread.h"
 
 // ******************** THE MODULE
-class scriptModule: public yarp::os::RFModule
+class scriptModule: public yarp::os::RFModule, public yarpActionsPlayer_IDL
 {
 protected:
     yarp::os::Port      m_rpcPort;
@@ -39,6 +40,19 @@ protected:
     BroadcastingThread* m_bthread=nullptr;
 
     std::string         m_current_action_id;
+
+    public: //yarpActionsPlayer_IDL methods
+    bool start() override;
+    bool stop() override;
+    bool reset() override;
+    bool forever() override;
+    bool print_frames() override;
+    bool speed_factor(const double value) override;
+    bool resample(const double value) override;
+    bool choose_action(const std::string& action_name) override;
+    bool play_action(const std::string& action_name) override;
+    bool show_actions() override;
+    bool set_thread_period(const double value) override;
 
     public:
     scriptModule()
@@ -95,7 +109,7 @@ protected:
         return m_wthread->action_change(action, driver);
     }
 
-    std::string show_actions()
+    std::string string_list_actions()
     {
         std::string ss = "actions:\n";
         size_t i = 0;
@@ -243,7 +257,7 @@ protected:
 
         // rpc port
         m_rpcPort.open((m_name + "/rpc").c_str());
-        attach(m_rpcPort);
+        this->yarp().attachAsServer(m_rpcPort);
 
         // get the configuration for parameter period
         double period = 0.005;
@@ -356,147 +370,8 @@ protected:
         return true;
     }
 
-    virtual bool respond(const yarp::os::Bottle &command, yarp::os::Bottle &reply)
-    {
-        bool ret=true;
-
-        if (command.size()!=0)
-        {
-            std::string cmdstring = command.get(0).asString().c_str();
-            {
-                if  (cmdstring == "help")
-                {
-                    //---
-                    std::cout << "Available commands:"          << std::endl;
-                    std::cout << "=== commands for current action ===="          << std::endl;
-                    std::cout << "start" << std::endl;
-                    std::cout << "stop"  << std::endl;
-                    std::cout << "reset" << std::endl;
-                    std::cout << "clear" << std::endl;
-                    std::cout << "forever" << std::endl;
-                    std::cout << "print" << std::endl;
-                    std::cout << "speed_factor <value>" << std::endl;
-                    std::cout << "resample <value>" << std::endl;
-                    std::cout << "=== general commands ====" << std::endl;
-                    std::cout << "choose_action <id>" << std::endl;
-                    std::cout << "play <id>"<< std::endl;
-                    std::cout << "show_actions" << std::endl;
-                    std::cout << "set_thread_period <value>" << std::endl;
-                    //---
-                    reply.addVocab32("many");
-                    reply.addVocab32("ack");
-                    reply.addString("Available commands:");
-                    reply.addString("=== commands for current action ====");
-                    reply.addString("start");
-                    reply.addString("stop");
-                    reply.addString("reset");
-                    reply.addString("forever");
-                    reply.addString("print");
-                    reply.addString("speed_factor <value>");
-                    reply.addString("resample <value>");
-                    reply.addString("=== general commands ====");
-                    reply.addString("choose_action <id>");
-                    reply.addString("play <id>");
-                    reply.addString("show_actions");
-                    reply.addString("set_thread_period <value>");
-                }
-                else if  (cmdstring == "start")
-                {
-                    bool b = this->m_wthread->action_start();
-                    reply.addVocab32("ack");
-                }
-                else if  (cmdstring == "forever")
-                {
-                    bool b = this->m_wthread->action_forever();
-                    reply.addVocab32("ack");
-                }
-                else if  (cmdstring == "stop")
-                {
-                    bool b = this->m_wthread->action_stop();
-                    reply.addVocab32("ack");
-                }
-                else if  (cmdstring == "reset")
-                {
-                    bool b = this->m_wthread->action_reset();
-                    reply.addVocab32("ack");
-                }
-                else if  (cmdstring == "print")
-                {
-                    bool b = this->m_wthread->action_print();
-                    reply.addVocab32("ack");
-                }
-                else if  (cmdstring == "speed_factor")
-                {
-                    double factor= command.get(1).asFloat32();
-                    bool b = this->m_wthread->action_setSpeedFactor(factor);
-                    reply.addVocab32("ack");
-                }
-                else if  (cmdstring == "resample")
-                {
-                    double resample= command.get(1).asFloat32();
-                    bool b = this->m_wthread->action_resample(resample);
-                    reply.addVocab32("ack");
-                }
-                else if (cmdstring == "choose_action")
-                {
-                    std::string action_id = command.get(1).asString();
-                    bool b = this->chooseActionByName(action_id);
-                    reply.addVocab32("ack");
-                }
-                else if (cmdstring == "play")
-                {
-                    std::string action_id = command.get(1).asString();
-                    bool b = this->chooseActionByName(action_id);
-                    if (b)
-                    {
-                        bool b1 = this->m_wthread->action_start();
-                    }
-                    do { yarp::os::Time::delay(0.010); }
-                    while (this->m_wthread->getStatus() != action_status_enum::ACTION_IDLE);
-                    reply.addVocab32("ack");
-                }
-                else if (cmdstring == "show_actions")
-                {
-                    std::string actions_str = this->show_actions();
-                    std::string current_action_name;
-                    bool b = m_wthread->action_getname(current_action_name);
-                    reply.addVocab32("ack");
-                    yInfo() << "current_action: " <<current_action_name;
-                    yInfo() << actions_str;
-                }
-                else if (cmdstring == "set_thread_period")
-                {
-                    double period = command.get(1).asFloat32();
-                    if (period > 0)
-                    {
-                        m_wthread->setPeriod(period);
-                        yError("invalid period value");
-                    }
-                    else
-                    {
-                        yInfo("Period set to %f", period);
-                    }
-                    reply.addVocab32("ack");
-                }
-                else
-                {
-                    reply.addVocab32("nack");
-                    ret = false;
-                }
-            }
-        }
-        else
-        {
-            reply.addVocab32("nack");
-            ret = false;
-        }
-
-        return ret;
-    }
-
     virtual bool close()
     {
-        m_rpcPort.interrupt();
         m_rpcPort.close();
 
         return true;
@@ -524,4 +399,80 @@ int main(int argc, char *argv[])
     scriptModule mod;
 
     return mod.runModule(rf);
+}
+
+bool scriptModule::start()
+{
+    return this->m_wthread->action_start();
+}
+
+bool scriptModule::stop()
+{
+    return this->m_wthread->action_stop();
+}
+
+bool scriptModule::reset()
+{
+    return this->m_wthread->action_reset();
+}
+
+bool scriptModule::forever()
+{
+    return this->m_wthread->action_forever();
+}
+
+bool scriptModule::print_frames()
+{
+    return this->m_wthread->action_print();
+}
+
+bool scriptModule::speed_factor(const double value)
+{
+    return this->m_wthread->action_setSpeedFactor(value);
+}
+
+bool scriptModule::resample(const double value)
+{
+    return this->m_wthread->action_resample(value);
+}
+
+bool scriptModule::choose_action(const std::string& action_name)
+{
+    return this->chooseActionByName(action_name);
+}
+
+bool scriptModule::play_action(const std::string& action_name)
+{
+    bool b = this->chooseActionByName(action_name);
+    if (b)
+    {
+        bool b1 = this->m_wthread->action_start();
+    }
+    do { yarp::os::Time::delay(0.010); }
+    while (this->m_wthread->getStatus() != action_status_enum::ACTION_IDLE);
+    return true;
+}
+
+bool scriptModule::show_actions()
+{
+    std::string actions_str = this->string_list_actions();
+    std::string current_action_name;
+    bool b = m_wthread->action_getname(current_action_name);
+    yInfo() << "current_action: " <<current_action_name;
+    yInfo() << actions_str;
+    return true;
+}
+
+bool scriptModule::set_thread_period(const double value)
+{
+    if (value > 0)
+    {
+        m_wthread->setPeriod(value);
+        yError("invalid period value");
+    }
+    else
+    {
+        yInfo("Period set to %f", value);
+    }
+    return true;
 }
