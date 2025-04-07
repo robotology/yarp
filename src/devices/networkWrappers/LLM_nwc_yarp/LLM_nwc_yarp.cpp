@@ -39,7 +39,10 @@ bool LLM_nwc_yarp::open(yarp::os::Searchable &config)
         yCError(LLM_NWC_YARP, "Cannot attach the m_rpc_port_to_LLM_server port as client");
     }
 
-    yCDebug(LLM_NWC_YARP) << "Opening of nwc successful";
+    //Check the protocol version
+    if (!m_LLM_RPC.checkProtocolVersion()) { return false; }
+
+    yCInfo(LLM_NWC_YARP) << "Opening of NWC successful";
     return true;
 }
 

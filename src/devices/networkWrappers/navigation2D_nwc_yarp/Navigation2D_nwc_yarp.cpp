@@ -120,6 +120,12 @@ bool Navigation2D_nwc_yarp::open(yarp::os::Searchable &config)
         return false;
     }
 
+    //Check the protocol version
+    if (!m_loc_RPC.checkProtocolVersion()) { return false; }
+    if (!m_nav_RPC.checkProtocolVersion()) { return false; }
+    if (!m_map_RPC.checkProtocolVersion()) { return false; }
+
+    yCInfo(NAVIGATION2D_NWC_YARP) << "Opening of NWC successful";
     m_rpc_port_user_commands.setReader(*this);
     return true;
 }
