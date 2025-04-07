@@ -32,6 +32,9 @@ if(NOT SKIP_robotDescriptionClient)
     YARP_dev
   )
 
+  target_sources(yarp_robotDescriptionClient PRIVATE $<TARGET_OBJECTS:IRobotDescriptionMsgs>)
+  target_include_directories(yarp_robotDescriptionClient PRIVATE $<TARGET_PROPERTY:IRobotDescriptionMsgs,INTERFACE_INCLUDE_DIRECTORIES>)
+
   yarp_install(
     TARGETS yarp_robotDescriptionClient
     EXPORT YARP_${YARP_PLUGIN_MASTER}

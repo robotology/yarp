@@ -18,6 +18,9 @@
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/IRobotDescription.h>
 
+#include "IRobotDescriptionMsgs.h"
+
+
 #include "RobotDescriptionClient_ParamsParser.h"
 
 /**
@@ -34,33 +37,20 @@ class RobotDescriptionClient :
         public RobotDescriptionClient_ParamsParser
 {
 protected:
-    std::mutex          m_mutex;
-    yarp::os::Port      m_rpc_port;
+    std::mutex              m_mutex;
+    yarp::os::Port          m_rpc_port;
+    IRobotDescriptionMsgs   m_RPC;
 
 public:
     /* DeviceDriver methods */
     bool open(yarp::os::Searchable& config) override;
     bool close() override;
 
-    /**
-    * Ask the complete list of all yarp device drivers registered by a robot description server.
-    */
-    bool getAllDevices(std::vector<yarp::dev::DeviceDescription>& dev_list) override;
-
-    /**
-    * Ask a list of all registered yarp device drivers whose type corresponds to the given param.
-    */
-    bool getAllDevicesByType(const std::string &type, std::vector<yarp::dev::DeviceDescription>& dev_list) override;
-
-    /**
-    * Register a new running yarp device into a robot description server.
-    */
-    bool registerDevice(const yarp::dev::DeviceDescription& dev) override;
-
-    /**
-    * Unregister a running yarp device from a robot description server.
-    */
-    bool unregisterDevice(const std::string& device_name) override;
+    yarp::dev::ReturnValue getAllDevices(std::vector<yarp::dev::DeviceDescription>& dev_list) override;
+    yarp::dev::ReturnValue getAllDevicesByType(const std::string &type, std::vector<yarp::dev::DeviceDescription>& dev_list) override;
+    yarp::dev::ReturnValue registerDevice(const yarp::dev::DeviceDescription& dev) override;
+    yarp::dev::ReturnValue unregisterDevice(const std::string& device_name) override;
+    yarp::dev::ReturnValue unregisterAll() override;
 };
 
 #endif // YARP_DEV_ROBOTDESCRIPTION_CLIENT_H

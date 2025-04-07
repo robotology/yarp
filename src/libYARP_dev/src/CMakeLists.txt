@@ -245,6 +245,7 @@ include(YarpChooseIDL)
 set(YARP_dev_IDL
   idl/BatteryData.thrift
   idl/stateExt.thrift
+  idl/DeviceDescriptionData.thrift
 
   idl/OdometryData.thrift
   idl/OdometryData6D.thrift
