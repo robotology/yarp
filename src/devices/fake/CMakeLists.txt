@@ -27,6 +27,7 @@ add_subdirectory(fakeLaserWithMotor)
 add_subdirectory(fakeMicrophone)
 add_subdirectory(fakeSpeaker)
 add_subdirectory(fakeFrameGrabber)
+add_subdirectory(fakeFrameWriter)
 add_subdirectory(fakeLocalizerDevice)
 add_subdirectory(fakeNavigationDevice)
 
