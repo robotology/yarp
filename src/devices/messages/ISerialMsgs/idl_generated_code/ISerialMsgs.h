@@ -13,14 +13,21 @@
 
 #include <yarp/os/Wire.h>
 #include <yarp/os/idl/WireTypes.h>
+#include <yarp/os/ApplicationNetworkProtocolVersion.h>
 
 class ISerialMsgs :
         public yarp::os::Wire
 {
 public:
+    //ProtocolVersion
+    virtual yarp::os::ApplicationNetworkProtocolVersion getLocalProtocolVersion();
+    virtual yarp::os::ApplicationNetworkProtocolVersion getRemoteProtocolVersion();
+    virtual bool checkProtocolVersion();
+
     // Constructor
     ISerialMsgs();
 
+    //Service methods
     virtual bool setDTR(const bool enable);
 
     virtual std::int32_t flush();

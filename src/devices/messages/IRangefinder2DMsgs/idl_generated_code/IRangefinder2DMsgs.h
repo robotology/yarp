@@ -13,6 +13,7 @@
 
 #include <yarp/os/Wire.h>
 #include <yarp/os/idl/WireTypes.h>
+#include <yarp/os/ApplicationNetworkProtocolVersion.h>
 #include <return_getDeviceInfo.h>
 #include <return_getDeviceStatus.h>
 #include <return_getDistanceRange.h>
@@ -25,9 +26,15 @@ class IRangefinder2DMsgs :
         public yarp::os::Wire
 {
 public:
+    //ProtocolVersion
+    virtual yarp::os::ApplicationNetworkProtocolVersion getLocalProtocolVersion();
+    virtual yarp::os::ApplicationNetworkProtocolVersion getRemoteProtocolVersion();
+    virtual bool checkProtocolVersion();
+
     // Constructor
     IRangefinder2DMsgs();
 
+    //Service methods
     virtual return_getDeviceStatus getDeviceStatus_RPC();
 
     virtual return_getDistanceRange getDistanceRange_RPC();

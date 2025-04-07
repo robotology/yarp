@@ -13,6 +13,7 @@
 
 #include <yarp/os/Wire.h>
 #include <yarp/os/idl/WireTypes.h>
+#include <yarp/os/ApplicationNetworkProtocolVersion.h>
 #include <return_get_abs_loc_of_curr_target.h>
 #include <return_get_all_nav_waypoints.h>
 #include <return_get_current_nav_map.h>
@@ -30,9 +31,15 @@ class INavigation2DMsgs :
         public yarp::os::Wire
 {
 public:
+    //ProtocolVersion
+    virtual yarp::os::ApplicationNetworkProtocolVersion getLocalProtocolVersion();
+    virtual yarp::os::ApplicationNetworkProtocolVersion getRemoteProtocolVersion();
+    virtual bool checkProtocolVersion();
+
     // Constructor
     INavigation2DMsgs();
 
+    //Service methods
     virtual yarp::dev::ReturnValue stop_navigation_RPC();
 
     virtual yarp::dev::ReturnValue resume_navigation_RPC();

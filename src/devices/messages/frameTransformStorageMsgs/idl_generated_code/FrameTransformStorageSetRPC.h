@@ -13,6 +13,7 @@
 
 #include <yarp/os/Wire.h>
 #include <yarp/os/idl/WireTypes.h>
+#include <yarp/os/ApplicationNetworkProtocolVersion.h>
 #include <yarp/dev/ReturnValue.h>
 #include <yarp/math/FrameTransform.h>
 
@@ -20,9 +21,15 @@ class FrameTransformStorageSetRPC :
         public yarp::os::Wire
 {
 public:
+    //ProtocolVersion
+    virtual yarp::os::ApplicationNetworkProtocolVersion getLocalProtocolVersion();
+    virtual yarp::os::ApplicationNetworkProtocolVersion getRemoteProtocolVersion();
+    virtual bool checkProtocolVersion();
+
     // Constructor
     FrameTransformStorageSetRPC();
 
+    //Service methods
     virtual yarp::dev::ReturnValue setTransformsRPC(const std::vector<yarp::math::FrameTransform>& transforms);
 
     virtual yarp::dev::ReturnValue setTransformRPC(const yarp::math::FrameTransform& transform);
