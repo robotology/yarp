@@ -1,0 +1,1 @@
+ * |   | name           | string  | -              |   /writer   | No       | Prefix name of the ports opened by the FrameWriter_nws_yarp                     | Required suffix like '/rpc' will be added by the device |
