@@ -13,6 +13,7 @@
 
 #include <yarp/os/Wire.h>
 #include <yarp/os/idl/WireTypes.h>
+#include <yarp/os/ApplicationNetworkProtocolVersion.h>
 #include <return_get_language.h>
 #include <return_set_language.h>
 #include <return_transcribe.h>
@@ -22,9 +23,15 @@ class ISpeechTranscriptionMsgs :
         public yarp::os::Wire
 {
 public:
+    //ProtocolVersion
+    virtual yarp::os::ApplicationNetworkProtocolVersion getLocalProtocolVersion();
+    virtual yarp::os::ApplicationNetworkProtocolVersion getRemoteProtocolVersion();
+    virtual bool checkProtocolVersion();
+
     // Constructor
     ISpeechTranscriptionMsgs();
 
+    //Service methods
     virtual return_set_language set_language(const std::string& language);
 
     virtual return_get_language get_language();

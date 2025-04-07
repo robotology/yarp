@@ -13,6 +13,7 @@
 
 #include <yarp/os/Wire.h>
 #include <yarp/os/idl/WireTypes.h>
+#include <yarp/os/ApplicationNetworkProtocolVersion.h>
 #include <IAudioGrabberMsgs_common.h>
 #include <return_getRecordingAudioBufferCurrentSize.h>
 #include <return_getRecordingAudioBufferMaxSize.h>
@@ -24,9 +25,15 @@ class IAudioGrabberMsgs :
         public yarp::os::Wire
 {
 public:
+    //ProtocolVersion
+    virtual yarp::os::ApplicationNetworkProtocolVersion getLocalProtocolVersion();
+    virtual yarp::os::ApplicationNetworkProtocolVersion getRemoteProtocolVersion();
+    virtual bool checkProtocolVersion();
+
     // Constructor
     IAudioGrabberMsgs();
 
+    //Service methods
     virtual yarp::dev::ReturnValue setHWGain_RPC(const double gain);
 
     virtual yarp::dev::ReturnValue setSWGain_RPC(const double gain);

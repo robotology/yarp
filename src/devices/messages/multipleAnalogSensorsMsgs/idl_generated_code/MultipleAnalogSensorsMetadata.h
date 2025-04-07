@@ -13,15 +13,22 @@
 
 #include <yarp/os/Wire.h>
 #include <yarp/os/idl/WireTypes.h>
+#include <yarp/os/ApplicationNetworkProtocolVersion.h>
 #include <SensorRPCData.h>
 
 class MultipleAnalogSensorsMetadata :
         public yarp::os::Wire
 {
 public:
+    //ProtocolVersion
+    virtual yarp::os::ApplicationNetworkProtocolVersion getLocalProtocolVersion();
+    virtual yarp::os::ApplicationNetworkProtocolVersion getRemoteProtocolVersion();
+    virtual bool checkProtocolVersion();
+
     // Constructor
     MultipleAnalogSensorsMetadata();
 
+    //Service methods
     /**
      * Read the sensor metadata necessary to configure the MultipleAnalogSensorsClient device.
      */

@@ -13,6 +13,7 @@
 
 #include <yarp/os/Wire.h>
 #include <yarp/os/idl/WireTypes.h>
+#include <yarp/os/ApplicationNetworkProtocolVersion.h>
 #include <return_get_current_position1.h>
 #include <return_get_current_position2.h>
 #include <return_get_estimated_odometry.h>
@@ -26,9 +27,15 @@ class ILocalization2DMsgs :
         public yarp::os::Wire
 {
 public:
+    //ProtocolVersion
+    virtual yarp::os::ApplicationNetworkProtocolVersion getLocalProtocolVersion();
+    virtual yarp::os::ApplicationNetworkProtocolVersion getRemoteProtocolVersion();
+    virtual bool checkProtocolVersion();
+
     // Constructor
     ILocalization2DMsgs();
 
+    //Service methods
     virtual yarp::dev::ReturnValue start_localization_service_RPC();
 
     virtual yarp::dev::ReturnValue stop_localization_service_RPC();

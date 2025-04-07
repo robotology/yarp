@@ -13,6 +13,7 @@
 
 #include <yarp/os/Wire.h>
 #include <yarp/os/idl/WireTypes.h>
+#include <yarp/os/ApplicationNetworkProtocolVersion.h>
 #include <return_getLastVelocityCommand.h>
 #include <yarp/dev/ReturnValue.h>
 
@@ -20,9 +21,15 @@ class MobileBaseVelocityControlRPC :
         public yarp::os::Wire
 {
 public:
+    //ProtocolVersion
+    virtual yarp::os::ApplicationNetworkProtocolVersion getLocalProtocolVersion();
+    virtual yarp::os::ApplicationNetworkProtocolVersion getRemoteProtocolVersion();
+    virtual bool checkProtocolVersion();
+
     // Constructor
     MobileBaseVelocityControlRPC();
 
+    //Service methods
     virtual yarp::dev::ReturnValue applyVelocityCommandRPC(const double x_vel, const double y_vel, const double theta_vel, const double timeout);
 
     virtual return_getLastVelocityCommand getLastVelocityCommandRPC();
