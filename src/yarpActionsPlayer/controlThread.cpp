@@ -27,7 +27,7 @@ bool ControlThread::action_stop()
 {
     std::lock_guard<std::mutex> lg(m_mtx);
     m_status = ACTION_STOP;
-    m_clock.pauseTimer();
+    //the clock is paused in ACTION_STOP
     return true;
 }
 
@@ -43,7 +43,7 @@ bool ControlThread::action_reset()
     std::lock_guard<std::mutex> lg(m_mtx);
     m_status = ACTION_RESET;
     m_current_action->current_frame = 0;
-    m_clock.resetTimer();
+    //the clock is resetted in ACTION_RESET
     return true;
 }
 
@@ -53,10 +53,13 @@ bool ControlThread::action_forever()
     if (m_current_action->current_frame == 0)
     {
         m_status = ACTION_START;
+        //if the action is just started the clock will be started in ACTION_START
     }
     else
     {
         m_status = ACTION_RUNNING;
+        //if we are resuming a paused action, start the timer previously stopped by aCTION_STOP
+        m_clock.startTimer();
     }
     m_current_action->forever = true;
     return true;
@@ -68,10 +71,13 @@ bool ControlThread::action_start()
     if (m_current_action->current_frame == 0)
     {
         m_status = ACTION_START;
+        //if the action is just started the clock will be started in ACTION_START
     }
     else
     {
         m_status = ACTION_RUNNING;
+        //if we are resuming a paused action, start the timer previously stopped by aCTION_STOP
+        m_clock.startTimer();
     }
     m_current_action->forever = false;
     return true;
@@ -237,6 +243,7 @@ void ControlThread::run()
     else if (this->m_status == ACTION_STOP)
     {
         yInfo() << "ACTION_STOP";
+        m_clock.pauseTimer();
         this->m_status = ACTION_IDLE;
     }
     else if (this->m_status == ACTION_RESET)
@@ -247,6 +254,7 @@ void ControlThread::run()
         {
             m_current_driver->setControlMode((int)j, VOCAB_CM_POSITION);
         }
+        m_clock.resetTimer();
         this->m_status = ACTION_IDLE;
     }
     else if (this->m_status == ACTION_RUNNING)

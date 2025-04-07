@@ -102,9 +102,9 @@ bool action_class::openFile(string filename, size_t njoints, double timestep)
     }
 
     std::string line;
-    std::getline(file, line); //Removes the remaining part of the line
+    //std::getline(file, line); //Removes the remaining part of the line
 
-    size_t linecount = 0;
+    size_t linecount = 1;
     size_t wallcount = 0;
     double walltime = 0;
     while (std::getline(file, line))
@@ -113,7 +113,7 @@ bool action_class::openFile(string filename, size_t njoints, double timestep)
         {
             if(!parseCommandLineVarTime(line, njoints))
             {
-                yError ("error parsing file, line %d\n", linecount++);
+                yError ("error parsing file, line %u\n", linecount);
                 return false;
             };
         }
@@ -121,11 +121,12 @@ bool action_class::openFile(string filename, size_t njoints, double timestep)
         {
             if (!parseCommandLineFixTime(line, njoints, wallcount, walltime))
             {
-                yError("error parsing file, line %d\n", linecount++);
+                yError("error parsing file, line %u\n", linecount);
                 return false;
             }
             walltime += timestep;
             wallcount++;
+            linecount++;
         }
     }
 
@@ -152,7 +153,7 @@ bool action_class::parseCommandLineFixTime(std::string command_line, size_t njoi
 
     if (tempElements.size() != njoints)
     {
-        yError("Invalid number of elements");
+        yError("Invalid number of elements, expected: %u, read: %u",  njoints, tempElements.size());
         return false;
     }
     for (size_t i = 0; i < njoints;i++)
@@ -186,7 +187,7 @@ bool action_class::parseCommandLineVarTime(std::string command_line, size_t njoi
 
     if (tempElements.size() != njoints)
     {
-        yError("Invalid number of elements");
+        yError("Invalid number of elements, expected: %u, read: %u", njoints, tempElements.size());
         return false;
     }
     for (size_t i = 0; i << njoints;i++)

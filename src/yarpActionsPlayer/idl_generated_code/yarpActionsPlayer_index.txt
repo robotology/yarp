@@ -1,0 +1,2 @@
+yarpActionsPlayer_IDL.h
+yarpActionsPlayer_IDL.cpp
