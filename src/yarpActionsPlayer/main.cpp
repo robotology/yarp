@@ -166,6 +166,7 @@ protected:
         }
         for (size_t i = 1; i < bot_action.size(); i++)
         {
+            std::string str = bot_action.toString();
             yDebug() << bot_action.get(i).toString();
             yarp::os::Bottle* bot_act_elem = bot_action.get(i).asList();
             size_t num_of_aelems = bot_act_elem->size();
@@ -450,6 +451,8 @@ protected:
                     {
                         bool b1 = this->m_wthread->action_start();
                     }
+                    do { yarp::os::Time::delay(0.010); }
+                    while (this->m_wthread->getStatus() != action_status_enum::ACTION_IDLE);
                     reply.addVocab32("ack");
                 }
                 else if (cmdstring == "show_actions")
