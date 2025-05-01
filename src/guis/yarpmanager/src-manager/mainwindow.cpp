@@ -344,7 +344,30 @@ void MainWindow::init(yarp::os::Property config)
         }
         //manageApplication(application->getName());
     }
-        onYarpNameList();
+
+    if (config.check("load_application")){
+        std::string applicationName = config.find("load_application").asString();
+        yarp::manager::XmlAppLoader appload(applicationName.c_str());
+        if(!appload.init()){
+            logger->addError("Cannot load the application with XmlAppLoader from " + applicationName);
+            return;
+        }
+        yarp::manager::Application* application = appload.getNextApplication();
+        if(!application){
+            logger->addError("Cannot load the application from " + applicationName);
+            return;
+        }
+        // add this application to the manager if does not exist
+        if(!lazyManager.getKnowledgeBase()->getApplication(application->getName())){
+            lazyManager.getKnowledgeBase()->addApplication(application);
+            syncApplicationList();
+        }
+        // load the application in the main window
+        viewApplication(application, false);
+
+    }
+
+    onYarpNameList();
 }
 
 /*! \brief Reports tge error on the log window.
