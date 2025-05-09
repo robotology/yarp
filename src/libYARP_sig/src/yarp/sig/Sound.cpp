@@ -607,7 +607,7 @@ size_t Sound::getChannels() const
 
 double Sound::getDuration() const
 {
-    return (double)(this->m_samples)*(double)(1 / this->m_frequency);
+    return (double)(this->m_samples)*(double)(1.0 / this->m_frequency);
 }
 
 void Sound::normalizeChannel(size_t channel)
