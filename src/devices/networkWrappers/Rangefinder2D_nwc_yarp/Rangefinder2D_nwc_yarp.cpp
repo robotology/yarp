@@ -199,6 +199,10 @@ bool Rangefinder2D_nwc_yarp::open(yarp::os::Searchable &config)
        return false;
     }
 
+    //Check the protocol version
+    if (!m_RPC.checkProtocolVersion()) { return false; }
+
+    yCInfo(RANGEFINDER2DCLIENT) << "Opening of NWC successful";
     return true;
 }
 

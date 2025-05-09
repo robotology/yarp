@@ -6,6 +6,7 @@
 #include "SerialPort_nwc_yarp.h"
 
 #include <yarp/os/LogComponent.h>
+#include <yarp/os/LogStream.h>
 #include <yarp/os/Os.h>
 
 namespace {
@@ -110,5 +111,9 @@ bool SerialPort_nwc_yarp::open(Searchable& config)
         }
     }
 
+    //Check the protocol version
+    if (!m_rpc.checkProtocolVersion()) { return false; }
+
+    yCInfo(SERIAL_NWC) << "Opening of NWC successful";
     return true;
 }
