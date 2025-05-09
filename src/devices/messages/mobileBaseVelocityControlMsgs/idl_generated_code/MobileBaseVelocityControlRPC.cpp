@@ -8,11 +8,102 @@
 // This is an automatically generated file.
 // It could get re-generated if the ALLOW_IDL_GENERATION flag is on.
 
+#include <yarp/conf/version.h>
 #include <MobileBaseVelocityControlRPC.h>
+#include <yarp/os/LogComponent.h>
+#include <yarp/os/LogStream.h>
 
 #include <yarp/os/idl/WireTypes.h>
 
 #include <algorithm>
+
+namespace
+{
+    YARP_LOG_COMPONENT(SERVICE_LOG_COMPONENT, "MobileBaseVelocityControlRPC")
+}
+
+//MobileBaseVelocityControlRPC_getRemoteProtocolVersion_helper declaration
+class MobileBaseVelocityControlRPC_getRemoteProtocolVersion_helper :
+public yarp::os::Portable
+{
+public:
+    MobileBaseVelocityControlRPC_getRemoteProtocolVersion_helper() = default;
+    bool write(yarp::os::ConnectionWriter& connection) const override;
+    bool read(yarp::os::ConnectionReader& connection) override;
+
+    yarp::os::ApplicationNetworkProtocolVersion helper_proto;
+};
+
+bool MobileBaseVelocityControlRPC_getRemoteProtocolVersion_helper::write(yarp::os::ConnectionWriter& connection) const
+{
+    yarp::os::idl::WireWriter writer(connection);
+    if (!writer.writeListHeader(1)) {
+        return false;
+    }
+    if (!writer.writeString("getRemoteProtocolVersion")) {
+        return false;
+    }
+    return true;
+}
+
+bool MobileBaseVelocityControlRPC_getRemoteProtocolVersion_helper ::read(yarp::os::ConnectionReader & connection)
+ {
+    yarp::os::idl::WireReader reader(connection);
+    if (!reader.readListHeader()) {
+        reader.fail();
+        return false;
+    }
+
+    if (!helper_proto.read(connection)) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+//ProtocolVersion, client side
+yarp::os::ApplicationNetworkProtocolVersion MobileBaseVelocityControlRPC::getRemoteProtocolVersion()
+ {
+    if(!yarp().canWrite()) {
+        yError(" Missing server method MobileBaseVelocityControlRPC::getRemoteProtocolVersion");
+    }
+    MobileBaseVelocityControlRPC_getRemoteProtocolVersion_helper helper{};
+    bool ok = yarp().write(helper, helper);
+    if (ok) {
+        return helper.helper_proto;}
+    else {
+        yarp::os::ApplicationNetworkProtocolVersion failureproto;
+        return failureproto;}
+}
+
+//ProtocolVersion, client side
+bool MobileBaseVelocityControlRPC::checkProtocolVersion()
+ {
+        auto locproto = this->getLocalProtocolVersion();
+        auto remproto = this->getRemoteProtocolVersion();
+        if (remproto.protocol_version != locproto.protocol_version)
+        {
+            yCError(SERVICE_LOG_COMPONENT) << "Invalid communication protocol.";
+            yCError(SERVICE_LOG_COMPONENT) << "Local Protocol Version: " << locproto.toString();
+            yCError(SERVICE_LOG_COMPONENT) << "Remote Protocol Version: " << remproto.toString();
+            return false;
+        }
+        return true;
+}
+
+//ProtocolVersion, server side
+yarp::os::ApplicationNetworkProtocolVersion MobileBaseVelocityControlRPC::getLocalProtocolVersion()
+{
+    yarp::os::ApplicationNetworkProtocolVersion myproto;
+    //myproto.protocol_version using default value = 0
+    //to change this value add the following line to the .thrift file:
+    //const i16 protocol_version = <your_number_here>
+    myproto.protocol_version = 0;
+    myproto.yarp_major = YARP_VERSION_MAJOR;
+    myproto.yarp_minor = YARP_VERSION_MINOR;
+    myproto.yarp_patch = YARP_VERSION_PATCH;
+    return myproto;
+}
 
 // applyVelocityCommandRPC helper class declaration
 class MobileBaseVelocityControlRPC_applyVelocityCommandRPC_helper :
@@ -530,6 +621,26 @@ bool MobileBaseVelocityControlRPC::read(yarp::os::ConnectionReader& connection)
         tag = reader.readTag(1);
     }
     while (tag_len <= max_tag_len && !reader.isError()) {
+        if(tag == "getRemoteProtocolVersion") {
+            if (!reader.noMore()) {
+                yError("Reader invalid protocol?! %s:%d - %s", __FILE__, __LINE__, __YFUNCTION__);
+                reader.fail();
+                return false;
+            }
+
+            auto proto = getLocalProtocolVersion();
+
+            yarp::os::idl::WireWriter writer(reader);
+           if (!writer.writeListHeader(1)) {
+                yWarning("Writer invalid protocol?! %s:%d - %s", __FILE__, __LINE__, __YFUNCTION__);
+               return false;}
+            if (!writer.write(proto)) {
+                yWarning("Writer invalid protocol?! %s:%d - %s", __FILE__, __LINE__, __YFUNCTION__);
+                return false;
+            }
+            reader.accept();
+            return true;
+        }
         if (tag == MobileBaseVelocityControlRPC_applyVelocityCommandRPC_helper::s_tag) {
             MobileBaseVelocityControlRPC_applyVelocityCommandRPC_helper helper;
             if (!helper.cmd.readArgs(reader)) {

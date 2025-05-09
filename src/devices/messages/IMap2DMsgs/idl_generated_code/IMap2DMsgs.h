@@ -13,6 +13,7 @@
 
 #include <yarp/os/Wire.h>
 #include <yarp/os/idl/WireTypes.h>
+#include <yarp/os/ApplicationNetworkProtocolVersion.h>
 #include <return_get_all_areas.h>
 #include <return_get_all_locations.h>
 #include <return_get_all_paths.h>
@@ -34,9 +35,15 @@ class IMap2DMsgs :
         public yarp::os::Wire
 {
 public:
+    //ProtocolVersion
+    virtual yarp::os::ApplicationNetworkProtocolVersion getLocalProtocolVersion();
+    virtual yarp::os::ApplicationNetworkProtocolVersion getRemoteProtocolVersion();
+    virtual bool checkProtocolVersion();
+
     // Constructor
     IMap2DMsgs();
 
+    //Service methods
     virtual yarp::dev::ReturnValue clear_all_maps_RPC();
 
     virtual yarp::dev::ReturnValue store_map_RPC(const yarp::dev::Nav2D::MapGrid2D& themap);

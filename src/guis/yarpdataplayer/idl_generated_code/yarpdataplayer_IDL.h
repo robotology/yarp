@@ -13,6 +13,7 @@
 
 #include <yarp/os/Wire.h>
 #include <yarp/os/idl/WireTypes.h>
+#include <yarp/os/ApplicationNetworkProtocolVersion.h>
 
 /**
  * yarpdataplayer_IDL
@@ -22,9 +23,15 @@ class yarpdataplayer_IDL :
         public yarp::os::Wire
 {
 public:
+    //ProtocolVersion
+    virtual yarp::os::ApplicationNetworkProtocolVersion getLocalProtocolVersion();
+    virtual yarp::os::ApplicationNetworkProtocolVersion getRemoteProtocolVersion();
+    virtual bool checkProtocolVersion();
+
     // Constructor
     yarpdataplayer_IDL();
 
+    //Service methods
     /**
      * Steps the player once. The player will be stepped
      * until all parts have sent data
