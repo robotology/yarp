@@ -45,16 +45,39 @@ bool OpenCVWriter::open(Searchable & config)
         return false;
     }
 
+    if (m_filename == "")
+    {
+        yCError(OPENCVWRITER) << "Invalid filename null";
+        return false;
+    }
+
+    if (m_framerate == 0)
+    {
+        yCError(OPENCVWRITER) << "Invalid framerate 0";
+        return false;
+    }
+
+    if (m_width == 0)
+    {
+        yCError(OPENCVWRITER) << "Invalid width 0";
+        return false;
+    }
+
+    if (m_height == 0)
+    {
+        yCError(OPENCVWRITER) << "Invalid height 0";
+        return false;
+    }
+
     m_writer.open(m_filename, cv::VideoWriter::fourcc('M', 'J', 'P', 'G'), m_framerate, cv::Size(m_width, m_height));
     if (!m_writer.isOpened())
     {
-        yCError(OPENCVWRITER, "Unable to open outputfile");
+        yCError(OPENCVWRITER, "Unable to open output file");
         return false;
     }
     m_isInitialized = true;
-    return true;
 
-    yCInfo(OPENCVWRITER, "OpenCVGrabber opened");
+    yCInfo(OPENCVWRITER, "OpenCVWriter opened");
     return true;
 }
 
@@ -64,15 +87,12 @@ bool OpenCVWriter::close()
     {
         m_writer.release();
     }
-    yCInfo(OPENCVWRITER, "OpenCVGrabber closed");
+    yCInfo(OPENCVWRITER, "OpenCVWriter closed");
     return true;
 }
 
 bool OpenCVWriter::putImage(ImageOf<PixelRgb> & image)
 {
-    if (m_width == 0)  {m_width = image.width();}
-    if (m_height == 0) {m_height = image.height();}
-
     cv::Mat frame(m_height, m_width, CV_8UC3, (void*)image.getRawImage());
         cv::cvtColor(frame, frame, cv::COLOR_RGB2BGR);
 

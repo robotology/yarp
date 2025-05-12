@@ -34,8 +34,11 @@ TEST_CASE("dev::opencvWriterTest", "[yarp::dev]")
         ////////"Checking opening polydriver"
         {
             Property cfg;
-            cfg.put("device", "opencv_writer");
-            cfg.put("movie", filepath);
+            cfg.put("device", "opencvWriter");
+            cfg.put("framerate", 30);
+            cfg.put("width", 320);
+            cfg.put("height", 240);
+            cfg.put("filename", filepath);
             REQUIRE(dd.open(cfg));
         }
 
