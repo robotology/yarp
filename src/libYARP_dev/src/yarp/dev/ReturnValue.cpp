@@ -6,9 +6,22 @@
 #include <yarp/dev/ReturnValue.h>
 #include <yarp/os/ConnectionReader.h>
 #include <yarp/os/ConnectionWriter.h>
+#include <yarp/os/Bottle.h>
+#include <yarp/os/NetInt32.h>
 
 using namespace yarp::dev;
 using namespace yarp::os;
+
+YARP_BEGIN_PACK
+class ReturnValueHeader
+{
+public:
+    yarp::os::NetInt32 dataTag{0};
+    yarp::os::NetInt32 data{0};
+
+    ReturnValueHeader() = default;
+};
+YARP_END_PACK
 
 ReturnValue::ReturnValue()
 {
@@ -132,13 +145,21 @@ bool ReturnValue::operator == (const ReturnValue& value) const
 bool ReturnValue::read(yarp::os::ConnectionReader& connection)
 {
     connection.convertTextMode();
-    this->value_b = (ReturnValue::return_code)(connection.expectInt64());
+    ReturnValueHeader header;
+    bool ok = connection.expectBlock((char*)&header, sizeof(header));
+    if (!ok) {
+        return false;
+    }
+    this->value_b = (ReturnValue::return_code)(header.data);
     return true;
 }
 
 bool ReturnValue::write(yarp::os::ConnectionWriter& connection) const
 {
+    ReturnValueHeader header;
+    header.dataTag = BOTTLE_TAG_INT32;
+    header.data = (int32_t)(this->value_b);
+    connection.appendBlock((char*)&header, sizeof(header));
     connection.convertTextMode();
-    connection.appendInt64((int64_t)(this->value_b));
     return true;
 }

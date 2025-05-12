@@ -423,6 +423,10 @@ TEST_CASE("sig::SoundTest", "[yarp::sig]")
         Sound snd1;
         snd1.resize(30000, 2);
         snd1.setFrequency(44100);
+        double duration = snd1.getDuration();
+        CHECK(duration > 0.6);
+        CHECK(duration < 0.7);
+
         generate_test_sound(snd1, 30000, 2);
         bool b1 = yarp::sig::file::write(snd1, "testmp3.mp3");
         #ifdef YARP_MP3_SUPPORTED
