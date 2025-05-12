@@ -100,6 +100,7 @@ ReturnValue FakeSpeechSynthesizer::synthesize(const std::string& text, yarp::sig
         return ReturnValue::return_code::return_value_error_method_failed;
     }
 
+    sound.setFrequency(44100);
     sound.resize(100,2);
 
     return ReturnValue_ok;
