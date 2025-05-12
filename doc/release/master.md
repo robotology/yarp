@@ -32,9 +32,13 @@ New Features
 ### Devices
 
 * Added new devices:
-  - `FakeDevice_nws_yarp`
-  - `FakeDevice_nwc_yarp`
- `FakeDevice_nwc_yarp` also uses the new `checkProtocolVersion()` to verify the communication with `FakeDevice_nws_yarp`
+  - `fakeDevice_nws_yarp`
+  - `fakeDevice_nwc_yarp`
+ `FakeDevice_nwc_yarp` also uses the new `checkProtocolVersion()` to verify the communication with `fakeDevice_nws_yarp`
+  - `fakeFrameWriter`
+  - `opencvWriter`
+  - `frameWriter_nws_yarp`
+
 
 Breaking Changes
 ----------------
@@ -60,3 +64,5 @@ Breaking Changes
   - `fakeLLMDevice`
   - `LLM_nwc_yarp`
   - `LLM_nws_yarp`
+
+* Device `opencv_grabber` renamed to `opencvGrabber`

@@ -13,9 +13,9 @@ yarp_prepare_plugin(fakeDevice_nws_yarp
 )
 
 if(NOT SKIP_fakeDevice_nws_yarp)
-  yarp_add_plugin(fakeDevice_nws_yarp)
+  yarp_add_plugin(yarp_fakeDevice_nws_yarp)
 
-  target_sources(fakeDevice_nws_yarp
+  target_sources(yarp_fakeDevice_nws_yarp
     PRIVATE
     fakeDevice_nws_yarp.cpp
     fakeDevice_nws_yarp.h
@@ -23,13 +23,13 @@ if(NOT SKIP_fakeDevice_nws_yarp)
     fakeDeviceServerImpl.h
   )
 
-  target_sources(fakeDevice_nws_yarp PRIVATE $<TARGET_OBJECTS:fakeTestMsgs>)
+  target_sources(yarp_fakeDevice_nws_yarp PRIVATE $<TARGET_OBJECTS:fakeTestMsgs>)
 
-  target_include_directories(fakeDevice_nws_yarp PRIVATE
+  target_include_directories(yarp_fakeDevice_nws_yarp PRIVATE
     $<TARGET_PROPERTY:fakeTestMsgs,INTERFACE_INCLUDE_DIRECTORIES>
     ${CMAKE_CURRENT_SOURCE_DIR})
 
-  target_link_libraries(fakeDevice_nws_yarp PRIVATE
+  target_link_libraries(yarp_fakeDevice_nws_yarp PRIVATE
     YARP::YARP_os
     YARP::YARP_dev
   )
@@ -39,7 +39,7 @@ if(NOT SKIP_fakeDevice_nws_yarp)
   )
 
   yarp_install(
-    TARGETS fakeDevice_nws_yarp
+    TARGETS yarp_fakeDevice_nws_yarp
     EXPORT YARP_${YARP_PLUGIN_MASTER}
     COMPONENT ${YARP_PLUGIN_MASTER}
     LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
@@ -49,7 +49,7 @@ if(NOT SKIP_fakeDevice_nws_yarp)
 
   set(YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS ${YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS} PARENT_SCOPE)
 
-  set_property(TARGET fakeDevice_nws_yarp PROPERTY FOLDER "Plugins/Device/Fake")
+  set_property(TARGET yarp_fakeDevice_nws_yarp PROPERTY FOLDER "Plugins/Device/Fake")
 
   if(YARP_COMPILE_TESTS)
     add_subdirectory(tests)
