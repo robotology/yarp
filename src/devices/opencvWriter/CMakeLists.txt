@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: 2025-2025 Istituto Italiano di Tecnologia (IIT)
 # SPDX-License-Identifier: BSD-3-Clause
 
-yarp_prepare_plugin(opencv_writer
+yarp_prepare_plugin(opencvWriter
   CATEGORY device
   TYPE OpenCVWriter
   INCLUDE OpenCVWriter.h
@@ -11,7 +11,7 @@ yarp_prepare_plugin(opencv_writer
   DEPENDS "YARP_HAS_OpenCV"
 )
 
-if(NOT SKIP_opencv_writer)
+if(NOT SKIP_opencvWriter)
   yarp_add_plugin(yarp_opencvWriter)
 
   target_sources(yarp_opencvWriter

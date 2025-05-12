@@ -2,7 +2,7 @@
 # SPDX-FileCopyrightText: 2006-2010 RobotCub Consortium
 # SPDX-License-Identifier: BSD-3-Clause
 
-yarp_prepare_plugin(opencv_grabber
+yarp_prepare_plugin(opencvGrabber
   CATEGORY device
   TYPE OpenCVGrabber
   INCLUDE OpenCVGrabber.h
@@ -12,7 +12,7 @@ yarp_prepare_plugin(opencv_grabber
   DEPENDS "YARP_HAS_OpenCV"
 )
 
-if(NOT SKIP_opencv_grabber)
+if(NOT SKIP_opencvGrabber)
   yarp_add_plugin(yarp_opencvGrabber)
 
   target_sources(yarp_opencvGrabber

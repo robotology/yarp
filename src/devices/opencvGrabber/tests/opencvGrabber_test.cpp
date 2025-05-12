@@ -17,7 +17,7 @@ using namespace yarp::os;
 
 TEST_CASE("dev::opencvGrabberTest", "[yarp::dev]")
 {
-    YARP_REQUIRE_PLUGIN("opencv_grabber", "device");
+    YARP_REQUIRE_PLUGIN("opencvGrabber", "device");
 
     Network::setLocalMode(true);
 
@@ -32,7 +32,7 @@ TEST_CASE("dev::opencvGrabberTest", "[yarp::dev]")
         ////////"Checking opening polydriver"
         {
             Property cfg;
-            cfg.put("device", "opencv_grabber");
+            cfg.put("device", "opencvGrabber");
             cfg.put("movie", filepath);
             REQUIRE(dd.open(cfg));
         }
