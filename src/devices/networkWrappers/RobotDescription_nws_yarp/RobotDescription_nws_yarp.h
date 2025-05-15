@@ -1,33 +1,32 @@
 /*
- * SPDX-FileCopyrightText: 2006-2021 Istituto Italiano di Tecnologia (IIT)
+ * SPDX-FileCopyrightText: 2025-2025 Istituto Italiano di Tecnologia (IIT)
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#ifndef YARP_DEV_ROBOTDESCRIPTIONSERVER_H
-#define YARP_DEV_ROBOTDESCRIPTIONSERVER_H
+#ifndef YARP_DEV_ROBOTDESCRIPTION_NWS_YARP_H
+#define YARP_DEV_ROBOTDESCRIPTION_NWS_YARP_H
 
 #include <mutex>
 #include <string>
 
 #include <yarp/dev/ReturnValue.h>
 #include <yarp/dev/PolyDriver.h>
-#include <yarp/dev/IMultipleWrapper.h>
+#include <yarp/dev/WrapperSingle.h>
 #include <yarp/dev/IRobotDescription.h>
 
 #include "IRobotDescriptionMsgs.h"
 
-#include "RobotDescriptionStorage.h"
-#include "RobotDescriptionServer_ParamsParser.h"
+#include "RobotDescription_nws_yarp_ParamsParser.h"
 
 class IRobotDescriptiond : public IRobotDescriptionMsgs
 {
     private:
-    yarp::dev::IRobotDescription*   m_storage = nullptr;
+    yarp::dev::IRobotDescription*   m_istorage = nullptr;
     std::mutex                      m_mutex;
 
     public:
-    IRobotDescriptiond () { m_storage = new RobotDescriptionStorage; }
-    virtual ~IRobotDescriptiond()  { delete m_storage; }
+    IRobotDescriptiond (yarp::dev::IRobotDescription* stor) { m_istorage = stor;}
+    virtual ~IRobotDescriptiond()  { m_istorage=nullptr; }
 
     virtual return_getAllDevices getAllDevicesRPC()  override;
     virtual return_getAllDevicesByType getAllDevicesByTypeRPC(const std::string& type) override;
@@ -39,21 +38,21 @@ class IRobotDescriptiond : public IRobotDescriptionMsgs
 };
 
 /**
-* @ingroup dev_impl_wrapper
+* @ingroup dev_impl_nws_yarp
 *
-* \brief `robotDescriptionServer`: This device is a storage which contains a list of the currently opened device drivers.
+* \brief `RobotDescription_nws_yarp`: This device is a storage which contains a list of the currently opened device drivers.
 *
 * yarprobotinterfaces adds/removes devices to the storage using attachAll()/detachAll() methods.
-* A robotDescriptionClient devices can used by the user to retrieve information about the currently opened devices.
+* A robotDescription_nwc_yarp device can used by the user to retrieve information about the currently opened devices.
 *
-* Parameters required by this device are shown in class: RobotDescriptionServer_ParamsParser
+* Parameters required by this device are shown in class: RobotDescription_nws_yarp_ParamsParser
 */
 
-class RobotDescriptionServer :
+class RobotDescription_nws_yarp :
         public yarp::dev::DeviceDriver,
         public yarp::os::PortReader,
-        public yarp::dev::IMultipleWrapper,
-        public RobotDescriptionServer_ParamsParser
+        public yarp::dev::WrapperSingle,
+        public RobotDescription_nws_yarp_ParamsParser
 {
 protected:
     std::mutex                                m_mutex;
@@ -67,9 +66,9 @@ public:
     bool open(yarp::os::Searchable& config) override;
     bool close() override;
 
-    bool detachAll() override;
-    bool attachAll(const yarp::dev::PolyDriverList &l) override;
+    bool detach() override;
+    bool attach(yarp::dev::PolyDriver* driver) override;
     bool read(yarp::os::ConnectionReader& connection) override;
 };
 
-#endif // YARP_DEV_ROBOTDESCRIPTIONSERVER_H
+#endif // YARP_DEV_ROBOTDESCRIPTION_NWS_YARP_H

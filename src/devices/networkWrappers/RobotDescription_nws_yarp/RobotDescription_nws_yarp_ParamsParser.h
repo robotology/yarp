@@ -8,11 +8,11 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Thu Mar  7 17:59:49 2024
+// Generated on: Thu May 15 11:11:17 2025
 
 
-#ifndef ROBOTDESCRIPTIONSERVER_PARAMSPARSER_H
-#define ROBOTDESCRIPTIONSERVER_PARAMSPARSER_H
+#ifndef ROBOTDESCRIPTION_NWS_YARP_PARAMSPARSER_H
+#define ROBOTDESCRIPTION_NWS_YARP_PARAMSPARSER_H
 
 #include <yarp/os/Searchable.h>
 #include <yarp/dev/IDeviceDriverParams.h>
@@ -20,7 +20,7 @@
 #include <cmath>
 
 /**
-* This class is the parameters parser for class RobotDescriptionServer.
+* This class is the parameters parser for class RobotDescription_nws_yarp.
 *
 * These are the used parameters:
 * | Group name | Parameter name | Type   | Units | Default Value               | Required | Description                          | Notes |
@@ -29,24 +29,24 @@
 *
 * The device can be launched by yarpdev using one of the following examples (with and without all optional parameters):
 * \code{.unparsed}
-* yarpdev --device robotDescriptionServer --local /robotDescriptionServer/rpc
+* yarpdev --device robotDescription_nws_yarp --local /robotDescriptionServer/rpc
 * \endcode
 *
 * \code{.unparsed}
-* yarpdev --device robotDescriptionServer --local /robotDescriptionServer/rpc
+* yarpdev --device robotDescription_nws_yarp --local /robotDescriptionServer/rpc
 * \endcode
 *
 */
 
-class RobotDescriptionServer_ParamsParser : public yarp::dev::IDeviceDriverParams
+class RobotDescription_nws_yarp_ParamsParser : public yarp::dev::IDeviceDriverParams
 {
 public:
-    RobotDescriptionServer_ParamsParser();
-    ~RobotDescriptionServer_ParamsParser() override = default;
+    RobotDescription_nws_yarp_ParamsParser();
+    ~RobotDescription_nws_yarp_ParamsParser() override = default;
 
 public:
-    const std::string m_device_classname = {"RobotDescriptionServer"};
-    const std::string m_device_name = {"robotDescriptionServer"};
+    const std::string m_device_classname = {"RobotDescription_nws_yarp"};
+    const std::string m_device_name = {"robotDescription_nws_yarp"};
     bool m_parser_is_strict = false;
     struct parser_version_type
     {
