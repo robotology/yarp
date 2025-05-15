@@ -35,6 +35,7 @@ New Features
   - `FakeDevice_nws_yarp`
   - `FakeDevice_nwc_yarp`
  `FakeDevice_nwc_yarp` also uses the new `checkProtocolVersion()` to verify the communication with `FakeDevice_nws_yarp`
+  - `RobotDescriptionStorage`
 
 Breaking Changes
 ----------------
@@ -60,3 +61,8 @@ Breaking Changes
   - `fakeLLMDevice`
   - `LLM_nwc_yarp`
   - `LLM_nws_yarp`
+  - `RobotDescriptionServer` refactored to `RobotDescription_nws_yarp`
+  - `RobotDescriptionClient` refactored to `RobotDescription_nwc_yarp`
+
+* The `attachAll()` mechanism used to keep track of the devices opened by yarprobotinterface (previously implemented by `RobotDescriptionServer`)
+  has been transferred to `RobotDescriptionStorage`.

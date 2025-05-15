@@ -8,24 +8,24 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Thu Mar  7 17:59:49 2024
+// Generated on: Thu May 15 11:11:17 2025
 
 
-#include "RobotDescriptionServer_ParamsParser.h"
+#include "RobotDescription_nws_yarp_ParamsParser.h"
 #include <yarp/os/LogStream.h>
 #include <yarp/os/Value.h>
 
 namespace {
-    YARP_LOG_COMPONENT(RobotDescriptionServerParamsCOMPONENT, "yarp.device.RobotDescriptionServer")
+    YARP_LOG_COMPONENT(RobotDescription_nws_yarpParamsCOMPONENT, "yarp.device.RobotDescription_nws_yarp")
 }
 
 
-RobotDescriptionServer_ParamsParser::RobotDescriptionServer_ParamsParser()
+RobotDescription_nws_yarp_ParamsParser::RobotDescription_nws_yarp_ParamsParser()
 {
 }
 
 
-std::vector<std::string> RobotDescriptionServer_ParamsParser::getListOfParams() const
+std::vector<std::string> RobotDescription_nws_yarp_ParamsParser::getListOfParams() const
 {
     std::vector<std::string> params;
     params.push_back("local");
@@ -33,12 +33,12 @@ std::vector<std::string> RobotDescriptionServer_ParamsParser::getListOfParams() 
 }
 
 
-bool      RobotDescriptionServer_ParamsParser::parseParams(const yarp::os::Searchable & config)
+bool      RobotDescription_nws_yarp_ParamsParser::parseParams(const yarp::os::Searchable & config)
 {
     //Check for --help option
     if (config.check("help"))
     {
-        yCInfo(RobotDescriptionServerParamsCOMPONENT) << getDocumentationOfDeviceParams();
+        yCInfo(RobotDescription_nws_yarpParamsCOMPONENT) << getDocumentationOfDeviceParams();
     }
 
     std::string config_string = config.toString();
@@ -48,12 +48,12 @@ bool      RobotDescriptionServer_ParamsParser::parseParams(const yarp::os::Searc
         if (config.check("local"))
         {
             m_local = config.find("local").asString();
-            yCInfo(RobotDescriptionServerParamsCOMPONENT) << "Parameter 'local' using value:" << m_local;
+            yCInfo(RobotDescription_nws_yarpParamsCOMPONENT) << "Parameter 'local' using value:" << m_local;
         }
         else
         {
-            yCError(RobotDescriptionServerParamsCOMPONENT) << "Mandatory parameter 'local' not found!";
-            yCError(RobotDescriptionServerParamsCOMPONENT) << "Description of the parameter: Full port name opened by the device.";
+            yCError(RobotDescription_nws_yarpParamsCOMPONENT) << "Mandatory parameter 'local' not found!";
+            yCError(RobotDescription_nws_yarpParamsCOMPONENT) << "Description of the parameter: Full port name opened by the device.";
             return false;
         }
         prop_check.unput("local");
@@ -69,12 +69,12 @@ bool      RobotDescriptionServer_ParamsParser::parseParams(const yarp::os::Searc
         {
             if (m_parser_is_strict)
             {
-                yCError(RobotDescriptionServerParamsCOMPONENT) << "User asking for parameter: "<<it->name <<" which is unknown to this parser!";
+                yCError(RobotDescription_nws_yarpParamsCOMPONENT) << "User asking for parameter: "<<it->name <<" which is unknown to this parser!";
                 extra_params_found = true;
             }
             else
             {
-                yCWarning(RobotDescriptionServerParamsCOMPONENT) << "User asking for parameter: "<< it->name <<" which is unknown to this parser!";
+                yCWarning(RobotDescription_nws_yarpParamsCOMPONENT) << "User asking for parameter: "<< it->name <<" which is unknown to this parser!";
             }
         }
 
@@ -88,18 +88,18 @@ bool      RobotDescriptionServer_ParamsParser::parseParams(const yarp::os::Searc
 }
 
 
-std::string      RobotDescriptionServer_ParamsParser::getDocumentationOfDeviceParams() const
+std::string      RobotDescription_nws_yarp_ParamsParser::getDocumentationOfDeviceParams() const
 {
     std::string doc;
     doc = doc + std::string("\n=============================================\n");
-    doc = doc + std::string("This is the help for device: RobotDescriptionServer\n");
+    doc = doc + std::string("This is the help for device: RobotDescription_nws_yarp\n");
     doc = doc + std::string("\n");
     doc = doc + std::string("This is the list of the parameters accepted by the device:\n");
     doc = doc + std::string("'local': Full port name opened by the device.\n");
     doc = doc + std::string("\n");
     doc = doc + std::string("Here are some examples of invocation command with yarpdev, with all params:\n");
-    doc = doc + " yarpdev --device robotDescriptionServer --local /robotDescriptionServer/rpc\n";
+    doc = doc + " yarpdev --device robotDescription_nws_yarp --local /robotDescriptionServer/rpc\n";
     doc = doc + std::string("Using only mandatory params:\n");
-    doc = doc + " yarpdev --device robotDescriptionServer --local /robotDescriptionServer/rpc\n";
+    doc = doc + " yarpdev --device robotDescription_nws_yarp --local /robotDescriptionServer/rpc\n";
     doc = doc + std::string("=============================================\n\n");    return doc;
 }

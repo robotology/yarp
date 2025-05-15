@@ -237,11 +237,11 @@ The tables shown hereunder report all the information needed to understand the f
  * RGBDSensorClient
    * ![#00ff00](https://via.placeholder.com/15/00ff00/000000?text=+) **RGBDSensorClient**
 
-* RobotDescriptionClient
-  * ![#00ff00](https://via.placeholder.com/15/00ff00/000000?text=+) **robotDescriptionClient**
+* RobotDescription_nwc_yarp
+  * ![#00ff00](https://via.placeholder.com/15/00ff00/000000?text=+) robotDescription_nwc_yarp
 
-* RobotDescriptionServer
-  * ![#00ffff](https://via.placeholder.com/15/00ffff/000000?text=+) **robotDescriptionServer**
+* RobotDescriptionS_nws_yarp
+  * ![#00ffff](https://via.placeholder.com/15/00ffff/000000?text=+) robotDescription_nws_yarp
 
 * rpLidar
   * ![#ffff00](https://via.placeholder.com/15/ffff00/000000?text=+) rpLidar

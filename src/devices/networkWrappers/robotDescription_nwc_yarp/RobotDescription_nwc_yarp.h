@@ -1,11 +1,10 @@
 /*
- * SPDX-FileCopyrightText: 2006-2021 Istituto Italiano di Tecnologia (IIT)
- * SPDX-FileCopyrightText: 2006-2010 RobotCub Consortium
+ * SPDX-FileCopyrightText: 2025-2025 Istituto Italiano di Tecnologia (IIT)
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#ifndef YARP_DEV_ROBOTDESCRIPTION_CLIENT_H
-#define YARP_DEV_ROBOTDESCRIPTION_CLIENT_H
+#ifndef YARP_DEV_ROBOTDESCRIPTION_NWC_YARP_H
+#define YARP_DEV_ROBOTDESCRIPTION_NWC_YARP_H
 
 #include <yarp/os/Network.h>
 #include <yarp/os/BufferedPort.h>
@@ -21,20 +20,20 @@
 #include "IRobotDescriptionMsgs.h"
 
 
-#include "RobotDescriptionClient_ParamsParser.h"
+#include "RobotDescription_nwc_yarp_ParamsParser.h"
 
 /**
-* @ingroup dev_impl_network_clients
+* @ingroup dev_impl_nwc_yarp
 *
-* \brief `robotDescriptionClient`: This client device is used to connect to a robotDescriptionServer and ask info about the currently opened devices.
+* \brief `robotDescription_nwc_yarp`: This client device is used to connect to a robotDescription_nws_yarp and ask info about the currently opened devices.
 *
-* Parameters required by this device are shown in class: RobotDescriptionClient_ParamsParser
+* Parameters required by this device are shown in class: RobotDescription_nwc_yarp_ParamsParser
 */
 
-class RobotDescriptionClient :
+class RobotDescription_nwc_yarp :
         public yarp::dev::DeviceDriver,
         public yarp::dev::IRobotDescription,
-        public RobotDescriptionClient_ParamsParser
+        public RobotDescription_nwc_yarp_ParamsParser
 {
 protected:
     std::mutex              m_mutex;
@@ -53,4 +52,4 @@ public:
     yarp::dev::ReturnValue unregisterAll() override;
 };
 
-#endif // YARP_DEV_ROBOTDESCRIPTION_CLIENT_H
+#endif // YARP_DEV_ROBOTDESCRIPTION_NWC_YARP_H

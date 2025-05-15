@@ -45,6 +45,7 @@ yarp_begin_plugin_library(yarpmod
   add_subdirectory(controlBoardRemapper)
   add_subdirectory(JoypadControlNetUtils)
   add_subdirectory(frameGrabberCropper)
+  add_subdirectory(robotDescriptionStorage)
 
   # Test devices
   add_subdirectory(test_segfault)

@@ -6,6 +6,7 @@
 
 #include <yarp/dev/IRobotDescription.h>
 
+#include <yarp/dev/IWrapper.h>
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/Network.h>
@@ -21,29 +22,40 @@ using namespace yarp::dev;
 
 TEST_CASE("dev::robotDescriptionClientTest", "[yarp::dev]")
 {
-    YARP_REQUIRE_PLUGIN("robotDescriptionServer", "device");
-    YARP_REQUIRE_PLUGIN("robotDescriptionClient", "device");
+    YARP_REQUIRE_PLUGIN("robotDescription_nws_yarp", "device");
+    YARP_REQUIRE_PLUGIN("robotDescription_nwc_yarp", "device");
+    YARP_REQUIRE_PLUGIN("robotDescriptionStorage", "device");
     YARP_REQUIRE_PLUGIN("controlBoard_nws_yarp", "device");
 
     Network::setLocalMode(true);
 
     SECTION("Test the robotDescriptionClient device")
     {
-        PolyDriver ddserver;
+        PolyDriver ddstorage;
+        Property pstorage_cfg;
+        pstorage_cfg.put("device", "robotDescriptionStorage");
+        REQUIRE(ddstorage.open(pstorage_cfg)); // robotDescriptionStorage open reported successful
+
+        PolyDriver ddnws;
         Property pserver_cfg;
-        pserver_cfg.put("device", "robotDescriptionServer");
-        pserver_cfg.put("local", "/robotDescriptionServerPort");
-        REQUIRE(ddserver.open(pserver_cfg)); // robotDescriptionServer open reported successful
+        pserver_cfg.put("device", "robotDescription_nws_yarp");
+        pserver_cfg.put("local", "/robotDescription_nws_yarp/rpc");
+        REQUIRE(ddnws.open(pserver_cfg)); // robotDescription_nws_yarp open reported successful
+
+        yarp::dev::IWrapper* ww_nws = nullptr; ddnws.view(ww_nws);
+        REQUIRE(ww_nws);
+        bool result_att = ww_nws->attach(&ddstorage);
+        REQUIRE(result_att);
 
         IRobotDescription* idesc = nullptr;
-        PolyDriver ddclient;
+        PolyDriver ddnwc;
         Property pclient_cfg;
-        pclient_cfg.put("device", "robotDescriptionClient");
-        pclient_cfg.put("local",  "/robotDescriptionClientPort");
-        pclient_cfg.put("remote", "/robotDescriptionServerPort");
-        REQUIRE(ddclient.open(pclient_cfg)); // robotDescriptionClient open reported successful
+        pclient_cfg.put("device", "robotDescription_nwc_yarp");
+        pclient_cfg.put("local",  "/robotDescription_nwc_yarp/rpc");
+        pclient_cfg.put("remote", "/robotDescription_nws_yarp/rpc");
+        REQUIRE(ddnwc.open(pclient_cfg)); // robotDescription_nwc_yarp open reported successful
 
-        REQUIRE(ddclient.view(idesc)); // IRobotDescription interface open reported successful
+        REQUIRE(ddnwc.view(idesc)); // IRobotDescription interface open reported successful
         REQUIRE(idesc);
 
         DeviceDescription dev1; dev1.device_name = "/icubTest/left_arm"; dev1.device_type = "controlBoard_nws_yarp";
@@ -86,8 +98,9 @@ TEST_CASE("dev::robotDescriptionClientTest", "[yarp::dev]")
         CHECK(r8);
 
         // Close devices
-        CHECK(ddclient.close()); // robotDescriptionClient successfully closed
-        CHECK(ddserver.close()); // robotDescriptionServer successfully closed
+        CHECK(ddnwc.close());     // robotDescription_nwc_yarp successfully closed
+        CHECK(ddnws.close());     // robotDescription_nws_yarp successfully closed
+        CHECK(ddstorage.close()); // robotDescriptionStorage successfully closed
     }
 
     Network::setLocalMode(false);

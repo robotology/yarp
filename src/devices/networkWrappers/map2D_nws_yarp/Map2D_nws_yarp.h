@@ -68,7 +68,6 @@ private:
 
     //drivers and interfaces
     yarp::dev::Nav2D::IMap2D*    m_iMap2D = nullptr;
-    yarp::dev::PolyDriver        m_drv;
 
 private:
     std::mutex                   m_mutex;

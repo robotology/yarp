@@ -9,13 +9,26 @@
 #include <mutex>
 #include <string>
 
+#include <yarp/dev/DeviceDriver.h>
 #include <yarp/dev/ReturnValue.h>
 #include <yarp/dev/IRobotDescription.h>
+#include <yarp/dev/IMultipleWrapper.h>
 
-class RobotDescriptionStorage : public yarp::dev::IRobotDescription
+/**
+* @ingroup dev_impl_nws_yarp
+*
+* \brief `RobotDescription_nws_yarp`: This device is a storage which contains a list of the currently opened device drivers.
+*
+* yarprobotinterface might adds/removes devices to the storage using attachAll()/detachAll() methods.
+*
+* This device does not accepts parameters
+*/
+class RobotDescriptionStorage : public yarp::dev::DeviceDriver,
+                                public yarp::dev::IRobotDescription,
+                                public yarp::dev::IMultipleWrapper
 {
     private:
-    std::mutex                                m_mutex;
+    std::recursive_mutex                      m_recmutex;
     std::vector<yarp::dev::DeviceDescription> m_devices;
 
     private:
@@ -25,6 +38,12 @@ class RobotDescriptionStorage : public yarp::dev::IRobotDescription
     public:
     RobotDescriptionStorage( )= default;
     virtual ~RobotDescriptionStorage() = default;
+    bool open(yarp::os::Searchable& params) override { return true; }
+    bool close() override { return true; }
+
+    public:
+    bool detachAll() override;
+    bool attachAll(const yarp::dev::PolyDriverList &l) override;
 
     public:
     yarp::dev::ReturnValue getAllDevices(std::vector<yarp::dev::DeviceDescription>& dev_list) override;
