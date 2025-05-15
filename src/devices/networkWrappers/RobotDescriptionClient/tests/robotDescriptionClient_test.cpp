@@ -49,20 +49,25 @@ TEST_CASE("dev::robotDescriptionClientTest", "[yarp::dev]")
         DeviceDescription dev1; dev1.device_name = "/icubTest/left_arm"; dev1.device_type = "controlBoard_nws_yarp";
         DeviceDescription dev2; dev2.device_name = "/icubTest/left_leg"; dev2.device_type = "controlBoard_nws_yarp";
         DeviceDescription dev3; dev3.device_name = "/icubTest/test";     dev3.device_type = "testDevice";
-        idesc->registerDevice(dev1);
-        idesc->registerDevice(dev2);
-        idesc->registerDevice(dev3);
+        auto r1 = idesc->registerDevice(dev1);
+        auto r2 = idesc->registerDevice(dev2);
+        auto r3 = idesc->registerDevice(dev3);
+        CHECK(r1);
+        CHECK(r2);
+        CHECK(r3);
         std::vector<DeviceDescription> list1;
         std::vector<DeviceDescription> list2;
 
-        idesc->getAllDevices(list1);
+        auto r4 = idesc->getAllDevices(list1);
+        CHECK(r4);
         CHECK(list1.size() == 3);
         CHECK(std::find(list1.begin(), list1.end(), dev1) != list1.end());
         CHECK(std::find(list1.begin(), list1.end(), dev2) != list1.end());
         CHECK(std::find(list1.begin(), list1.end(), dev3) != list1.end());
         // IRobotDescription::getAllDevices() successfully tested
 
-        idesc->getAllDevicesByType("controlBoard_nws_yarp", list2);
+        auto r5 = idesc->getAllDevicesByType("controlBoard_nws_yarp", list2);
+        CHECK(r5);
         CHECK(list2.size() == 2);
         CHECK(std::find(list2.begin(), list2.end(), dev1) != list2.end());
         CHECK(std::find(list2.begin(), list2.end(), dev2) != list2.end());
@@ -70,9 +75,15 @@ TEST_CASE("dev::robotDescriptionClientTest", "[yarp::dev]")
         // IRobotDescription::getControlBoardWrapperDevices() successfully tested
 
         // Test unregister device
-        idesc->unregisterDevice("/icubTest/test");
-        idesc->getAllDevicesByType("testDevice", list2);
+        auto r6 = idesc->unregisterDevice("/icubTest/test");
+        auto r7 = idesc->getAllDevicesByType("testDevice", list2);
+        CHECK(r6);
+        CHECK(r7);
         CHECK(list2.size() == 0); // IRobotDescription::unregisterDevice() successfully tested
+
+        // Test clear all
+        auto r8 = idesc->unregisterAll();
+        CHECK(r8);
 
         // Close devices
         CHECK(ddclient.close()); // robotDescriptionClient successfully closed

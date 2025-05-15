@@ -16,6 +16,8 @@ if(NOT SKIP_robotDescriptionServer)
     PRIVATE
       RobotDescriptionServer.cpp
       RobotDescriptionServer.h
+      RobotDescriptionStorage.cpp
+      RobotDescriptionStorage.h
       RobotDescriptionServer_ParamsParser.cpp
       RobotDescriptionServer_ParamsParser.h
   )
@@ -31,6 +33,8 @@ if(NOT SKIP_robotDescriptionServer)
     YARP_sig
     YARP_dev
   )
+  target_sources(yarp_robotDescriptionServer PRIVATE $<TARGET_OBJECTS:IRobotDescriptionMsgs>)
+  target_include_directories(yarp_robotDescriptionServer PRIVATE $<TARGET_PROPERTY:IRobotDescriptionMsgs,INTERFACE_INCLUDE_DIRECTORIES>)
 
   yarp_install(
     TARGETS yarp_robotDescriptionServer

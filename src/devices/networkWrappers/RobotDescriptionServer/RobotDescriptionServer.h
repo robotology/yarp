@@ -6,19 +6,37 @@
 #ifndef YARP_DEV_ROBOTDESCRIPTIONSERVER_H
 #define YARP_DEV_ROBOTDESCRIPTIONSERVER_H
 
-
-#include <yarp/os/Network.h>
-#include <yarp/os/BufferedPort.h>
-#include <yarp/dev/ControlBoardHelpers.h>
-#include <yarp/sig/Vector.h>
 #include <mutex>
-#include <yarp/os/Time.h>
 #include <string>
+
+#include <yarp/dev/ReturnValue.h>
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/IMultipleWrapper.h>
 #include <yarp/dev/IRobotDescription.h>
 
+#include "IRobotDescriptionMsgs.h"
+
+#include "RobotDescriptionStorage.h"
 #include "RobotDescriptionServer_ParamsParser.h"
+
+class IRobotDescriptiond : public IRobotDescriptionMsgs
+{
+    private:
+    yarp::dev::IRobotDescription*   m_storage = nullptr;
+    std::mutex                      m_mutex;
+
+    public:
+    IRobotDescriptiond () { m_storage = new RobotDescriptionStorage; }
+    virtual ~IRobotDescriptiond()  { delete m_storage; }
+
+    virtual return_getAllDevices getAllDevicesRPC()  override;
+    virtual return_getAllDevicesByType getAllDevicesByTypeRPC(const std::string& type) override;
+    virtual yarp::dev::ReturnValue registerDeviceRPC(const yarp::dev::DeviceDescription& dev) override;
+    virtual yarp::dev::ReturnValue unregisterDeviceRPC(const std::string& dev) override;
+    virtual yarp::dev::ReturnValue unregisterAllRPC() override;
+
+    std::mutex* getMutex() {return &m_mutex;}
+};
 
 /**
 * @ingroup dev_impl_wrapper
@@ -38,10 +56,11 @@ class RobotDescriptionServer :
         public RobotDescriptionServer_ParamsParser
 {
 protected:
-    std::mutex                                m_external_mutex;
-    std::mutex                                m_internal_mutex;
+    std::mutex                                m_mutex;
     yarp::os::Port                            m_rpc_port;
-    std::vector<yarp::dev::DeviceDescription> m_robot_devices;
+
+    //thrift
+    std::unique_ptr <IRobotDescriptiond>      m_RPC;
 
 public:
     /* DeviceDriver methods */
@@ -51,10 +70,6 @@ public:
     bool detachAll() override;
     bool attachAll(const yarp::dev::PolyDriverList &l) override;
     bool read(yarp::os::ConnectionReader& connection) override;
-
-private:
-    bool add_device(yarp::dev::DeviceDescription dev);
-    bool remove_device(yarp::dev::DeviceDescription dev);
 };
 
 #endif // YARP_DEV_ROBOTDESCRIPTIONSERVER_H

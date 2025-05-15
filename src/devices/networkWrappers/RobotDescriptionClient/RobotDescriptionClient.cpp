@@ -43,6 +43,14 @@ bool RobotDescriptionClient::open(yarp::os::Searchable &config)
         return false;
     }
 
+    if (!m_RPC.yarp().attachAsClient(m_rpc_port))
+    {
+       yCError(ROBOTDESCRIPTIONCLIENT, "Error! Cannot attach the port as a client");
+       return false;
+    }
+
+    //protocol check
+    //to be added here
 
     return true;
 }
@@ -54,132 +62,60 @@ bool RobotDescriptionClient::close()
     return true;
 }
 
-bool RobotDescriptionClient::getAllDevicesByType(const std::string &type, std::vector<DeviceDescription>& dev_list)
+yarp::dev::ReturnValue RobotDescriptionClient::getAllDevicesByType(const std::string &type, std::vector<DeviceDescription>& dev_list)
 {
-    yarp::os::Bottle b;
-    yarp::os::Bottle resp;
-    dev_list.clear();
-
-    b.addVocab32(VOCAB_IROBOT_DESCRIPTION);
-    b.addVocab32(VOCAB_IROBOT_GET);
-    b.addVocab32(VOCAB_IROBOT_BY_TYPE);
-    b.addString(type);
-    bool ret = m_rpc_port.write(b, resp);
-    if (ret)
-    {
-        if (resp.get(0).asVocab32() != VOCAB_OK)
-        {
-            yCError(ROBOTDESCRIPTIONCLIENT) << "getAllDevices(): Received error from server";
-            return false;
-        }
-        else
-        {
-            Bottle *b = resp.get(1).asList();
-            for (size_t i = 0; i < b->size(); i += 2)
-            {
-                DeviceDescription desc;
-                desc.device_name = b->get(i).asString();
-                desc.device_type = b->get(i + 1).asString();
-                dev_list.push_back(desc);
-            }
-            return true;
-        }
+    std::lock_guard<std::mutex> lg(m_mutex);
+    auto ret = m_RPC.getAllDevicesByTypeRPC(type);
+    if (!ret.ret) {
+        yCError(ROBOTDESCRIPTIONCLIENT, "Unable to getAllDevicesByType");
+        return ret.ret;
     }
-    else
-    {
-        yCError(ROBOTDESCRIPTIONCLIENT) << "Error on writing on rpc port";
-        return false;
-    }
-    return true;
+    dev_list = ret.devices;
+    return ReturnValue_ok;
 }
 
-bool RobotDescriptionClient::unregisterDevice(const std::string& device_name)
+yarp::dev::ReturnValue RobotDescriptionClient::unregisterDevice(const std::string& device_name)
 {
-    yarp::os::Bottle b;
-    yarp::os::Bottle resp;
-
-    b.addVocab32(VOCAB_IROBOT_DESCRIPTION);
-    b.addVocab32(VOCAB_IROBOT_DELETE);
-    b.addVocab32(VOCAB_IROBOT_DEVICE);
-    b.addString(device_name);
-    bool ret = m_rpc_port.write(b, resp);
-    if (ret)
-    {
-        if (resp.get(0).asVocab32() != VOCAB_OK)
-        {
-            yCError(ROBOTDESCRIPTIONCLIENT) << "unregisterDevice(): Received error from server";
-            return false;
-        }
+    std::lock_guard<std::mutex> lg(m_mutex);
+    auto ret = m_RPC.unregisterDeviceRPC(device_name);
+    if (!ret) {
+        yCError(ROBOTDESCRIPTIONCLIENT, "Unable to unregisterDevice");
+        return ret;
     }
-    else
-    {
-        yCError(ROBOTDESCRIPTIONCLIENT) << "Error on writing on rpc port";
-        return false;
-    }
-    return true;
+    return ReturnValue_ok;
 }
 
-bool RobotDescriptionClient::registerDevice(const DeviceDescription& dev)
+yarp::dev::ReturnValue RobotDescriptionClient::registerDevice(const DeviceDescription& dev)
 {
-    yarp::os::Bottle b;
-    yarp::os::Bottle resp;
-
-    b.addVocab32(VOCAB_IROBOT_DESCRIPTION);
-    b.addVocab32(VOCAB_IROBOT_SET);
-    b.addVocab32(VOCAB_IROBOT_DEVICE);
-    b.addString(dev.device_name);
-    b.addString(dev.device_type);
-    bool ret = m_rpc_port.write(b, resp);
-    if (ret)
-    {
-        if (resp.get(0).asVocab32() != VOCAB_OK)
-        {
-            yCError(ROBOTDESCRIPTIONCLIENT) << "registerDevice(): Received error from server";
-            return false;
-        }
+    std::lock_guard<std::mutex> lg(m_mutex);
+    auto ret = m_RPC.registerDeviceRPC(dev);
+    if (!ret) {
+        yCError(ROBOTDESCRIPTIONCLIENT, "Unable to registerDevice");
+        return ret;
     }
-    else
-    {
-        yCError(ROBOTDESCRIPTIONCLIENT) << "Error on writing on rpc port";
-        return false;
-    }
-    return true;
+    return ReturnValue_ok;
 }
 
-bool RobotDescriptionClient::getAllDevices(std::vector<DeviceDescription>& dev_list)
-{
-    yarp::os::Bottle b;
-    yarp::os::Bottle resp;
-    dev_list.clear();
 
-    b.addVocab32(VOCAB_IROBOT_DESCRIPTION);
-    b.addVocab32(VOCAB_IROBOT_GET);
-    b.addVocab32(VOCAB_IROBOT_ALL);
-    bool ret = m_rpc_port.write(b, resp);
-    if (ret)
-    {
-        if (resp.get(0).asVocab32() != VOCAB_OK)
-        {
-            yCError(ROBOTDESCRIPTIONCLIENT) << "getAllDevices(): Received error from server";
-            return false;
-        }
-        else
-        {
-            Bottle *b = resp.get(1).asList();
-            for (size_t i = 0; i < b->size();i+=2)
-            {
-                DeviceDescription desc;
-                desc.device_name = b->get(i).asString();
-                desc.device_type = b->get(i+1).asString();
-                dev_list.push_back(desc);
-            }
-            return true;
-        }
+yarp::dev::ReturnValue RobotDescriptionClient::getAllDevices(std::vector<DeviceDescription>& dev_list)
+{
+    std::lock_guard<std::mutex> lg(m_mutex);
+    return_getAllDevices ret = m_RPC.getAllDevicesRPC();
+    if (!ret.ret) {
+        yCError(ROBOTDESCRIPTIONCLIENT, "Unable to getAllDevices");
+        return ret.ret;
     }
-    else
-    {
-        yCError(ROBOTDESCRIPTIONCLIENT) << "Error on writing on rpc port";
-        return false;
+    dev_list = ret.devices;
+    return ReturnValue_ok;
+}
+
+yarp::dev::ReturnValue RobotDescriptionClient::unregisterAll()
+{
+    std::lock_guard<std::mutex> lg(m_mutex);
+    auto ret = m_RPC.unregisterAllRPC();
+    if (!ret) {
+        yCError(ROBOTDESCRIPTIONCLIENT, "Unable to unregisterAll");
+        return ret;
     }
-    return true;
+    return ReturnValue_ok;
 }
