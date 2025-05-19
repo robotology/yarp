@@ -122,6 +122,7 @@ bool RobotDescription_nws_yarp::attach(yarp::dev::PolyDriver* driver)
 bool RobotDescription_nws_yarp::detach()
 {
     std::lock_guard lock (m_mutex);
+    m_RPC.reset();
     return true;
 }
 

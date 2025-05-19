@@ -37,6 +37,13 @@ New Features
  `FakeDevice_nwc_yarp` also uses the new `checkProtocolVersion()` to verify the communication with `FakeDevice_nws_yarp`
   - `RobotDescriptionStorage`
 
+### yarprobotinterface
+
+* Added new option `autocloseAfterStart` which automatically terminates the module after opening and attaching all devices (used bor CI and debug)
+* yarprobotinterface now opens internally a device `RobotDescriptionStorage` and register all other opened devices inside it.
+* User can open a `RobotDescription_nws_yarp` and attach it to the `RobotDescriptionStorage` to obtain info about opened devices. See example: 
+`yarp\src\yarprobotinterface\tests\robotDescription`
+
 Breaking Changes
 ----------------
 

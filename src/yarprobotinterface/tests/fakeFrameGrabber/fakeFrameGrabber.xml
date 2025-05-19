@@ -12,14 +12,14 @@
         <param name="fakeFrameGrabber_rpc_port"> /fakeFrameGrabber_left/rpc </param>
         <param name="width">360</param>
         <param name="height">240</param>
-        <param name="mode" extern-name="mode">grid</param>
+        <param name="mode" extern-name="mode">"[grid]"</param>
     </device>
 
     <device name="grabber_right" type="fakeFrameGrabber">
         <param name="fakeFrameGrabber_rpc_port"> /fakeFrameGrabber_right/rpc </param>
         <param name="width">360</param>
         <param name="height">240</param>
-        <param name="mode" extern-name="mode">grid</param>
+        <param name="mode" extern-name="mode">"[grid]"</param>
     </device>
 
     <device name="wrapper_left" type="frameGrabber_nws_yarp">

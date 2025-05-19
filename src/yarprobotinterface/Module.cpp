@@ -22,6 +22,10 @@
 #  include <execinfo.h>
 #endif
 
+namespace {
+YARP_LOG_COMPONENT(YRI, "yarp.yri")
+}
+
 class yarprobotinterface::Module::Private
 {
 public:
@@ -39,6 +43,7 @@ public:
     yarp::os::RpcServer rpcPort;
     bool closed;
     bool closeOk;
+    bool autocloseAfterStart;
 };
 
 #if defined(YARP_HAS_EXECINFO_H) && !defined(__APPLE__) && !defined(__arm__) && !defined(__aarch64__) && !defined(__PPC__)
@@ -114,6 +119,7 @@ bool yarprobotinterface::Module::configure(yarp::os::ResourceFinder& rf)
     bool verbosity = rf.check("verbose");
     bool deprecated = rf.check("allow-deprecated-dtd");
     bool dryrun = rf.check("dryrun");
+    mPriv->autocloseAfterStart = rf.check("autocloseAfterStart");
 
     yarp::robotinterface::XMLReader reader;
     reader.setVerbose(verbosity);
@@ -184,7 +190,14 @@ double yarprobotinterface::Module::getPeriod()
 
 bool yarprobotinterface::Module::updateModule()
 {
-    yDebug() << "yarprobotinterface running happily";
+    yCDebug(YRI) << "yarprobotinterface running happily";
+    if (mPriv->autocloseAfterStart && mPriv->robot.currentPhase() == yarp::robotinterface::ActionPhaseRun)
+    {
+        yCInfo(YRI) << "`autocloseAfterStart` option selected. Calling close()";
+       // close();
+        return false;
+    }
+
     return true;
 }
 
@@ -192,7 +205,7 @@ bool yarprobotinterface::Module::interruptModule()
 {
     mPriv->interruptReceived++;
 
-    yWarning() << "Interrupt #" << mPriv->interruptReceived << "# received.";
+    yCWarning(YRI) << "Interrupt #" << mPriv->interruptReceived << "# received.";
 
     mPriv->robot.interrupt();
 
@@ -209,13 +222,13 @@ bool yarprobotinterface::Module::interruptModule()
         break;
     case 2:
         if (!mPriv->robot.enterPhase(yarp::robotinterface::ActionPhaseInterrupt2)) {
-            yError() << "Error in" << ActionPhaseToString(yarp::robotinterface::ActionPhaseInterrupt2) << "phase... see previous messages for more info";
+            yCError(YRI) << "Error in" << ActionPhaseToString(yarp::robotinterface::ActionPhaseInterrupt2) << "phase... see previous messages for more info";
             return false;
         }
         break;
     case 3:
         if (!mPriv->robot.enterPhase(yarp::robotinterface::ActionPhaseInterrupt3)) {
-            yError() << "Error in" << ActionPhaseToString(yarp::robotinterface::ActionPhaseInterrupt3) << "phase... see previous messages for more info";
+            yCError(YRI) << "Error in" << ActionPhaseToString(yarp::robotinterface::ActionPhaseInterrupt3) << "phase... see previous messages for more info";
             return false;
         }
         break;
@@ -238,7 +251,7 @@ bool yarprobotinterface::Module::close()
     switch (mPriv->interruptReceived) {
     case 1:
         if (!mPriv->robot.enterPhase(yarp::robotinterface::ActionPhaseInterrupt1)) {
-            yError() << "Error in" << ActionPhaseToString(yarp::robotinterface::ActionPhaseInterrupt1) << "phase... see previous messages for more info";
+            yCError(YRI) << "Error in" << ActionPhaseToString(yarp::robotinterface::ActionPhaseInterrupt1) << "phase... see previous messages for more info";
             mPriv->closeOk = false;
         }
         break;
@@ -251,7 +264,7 @@ bool yarprobotinterface::Module::close()
 
     // Finally call the shutdown phase.
     if (!mPriv->robot.enterPhase(yarp::robotinterface::ActionPhaseShutdown)) {
-        yError() << "Error in" << ActionPhaseToString(yarp::robotinterface::ActionPhaseShutdown) << "phase... see previous messages for more info";
+        yCError(YRI) << "Error in" << ActionPhaseToString(yarp::robotinterface::ActionPhaseShutdown) << "phase... see previous messages for more info";
         mPriv->closeOk = false;
     }
 

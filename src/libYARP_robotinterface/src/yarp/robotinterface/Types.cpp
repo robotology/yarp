@@ -13,6 +13,10 @@
 #include <string>
 
 
+namespace {
+YARP_LOG_COMPONENT(YRI_TYPES, "yarp.yri.Types")
+}
+
 bool yarp::robotinterface::hasParam(const yarp::robotinterface::ParamList& list, const std::string& name)
 {
     for (const auto& param : list) {
@@ -30,7 +34,7 @@ std::string yarp::robotinterface::findParam(const yarp::robotinterface::ParamLis
             return param.value();
         }
     }
-    yError() << "Param" << name << "not found";
+    yCError(YRI_TYPES) << "Param" << name << "not found";
     return {};
 }
 
@@ -51,7 +55,7 @@ std::string yarp::robotinterface::findGroup(const yarp::robotinterface::ParamLis
             return param.value();
         }
     }
-    yError() << "Param" << name << "not found";
+    yCError(YRI_TYPES) << "Param" << name << "not found";
     return {};
 }
 
@@ -64,7 +68,7 @@ yarp::robotinterface::ParamList yarp::robotinterface::mergeDuplicateGroups(const
             yarp::robotinterface::Param& param2 = *it2;
             if (param1.name() == param2.name()) {
                 if (!param1.isGroup() || !param2.isGroup()) {
-                    yFatal() << "Duplicate parameter \"" << param1.name() << "\" found and at least one of them is not a group.";
+                    yCFatal(YRI_TYPES) << "Duplicate parameter \"" << param1.name() << "\" found and at least one of them is not a group.";
                 }
                 param1.value() += std::string(" ");
                 param1.value() += param2.value();

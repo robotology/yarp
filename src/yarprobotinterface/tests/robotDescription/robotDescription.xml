@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!--
+  SPDX-FileCopyrightText: 2025-2025 Istituto Italiano di Tecnologia (IIT)
+  SPDX-License-Identifier: BSD-3-Clause
+-->
+
+<!DOCTYPE robot PUBLIC "-//YARP//DTD yarprobotinterface 3.0//EN" "http://www.yarp.it/DTD/yarprobotinterfaceV3.0.dtd">
+
+<robot name="test_description" build="2" portprefix="test" xmlns:xi="http://www.w3.org/2001/XInclude">
+
+<devices robot="grabber_left" build="3">
+    <device name="grabber_left" type="fakeDeviceUnwrapped">
+    </device>
+
+    <device name="grabber_right" type="fakeDeviceUnwrapped">
+    </device>
+
+    <device name="wrapper_left" type="fakeDeviceWrapper">
+        <action phase="startup" level="5" type="attach">
+            <param name="device"> grabber_left </param>
+        </action>
+        <action phase="shutdown" level="5" type="detach" />
+    </device>
+
+    <device name="wrapper_right" type="fakeDeviceWrapper">
+        <action phase="startup" level="10" type="attach">
+            <param name="device"> grabber_right </param>
+        </action>
+        <action phase="shutdown" level="10" type="detach" />
+    </device>
+
+    <device name="robotDescriptionNWS" type="robotDescription_nws_yarp">
+        <param name="local">/yarpRobotInterface/devices/rpc</param>
+        <action phase="startup" level="5" type="attach">
+            <param name="device"> yriDescriptionStorage </param>
+        </action>
+        <action phase="shutdown" level="5" type="detach" />
+    </device>
+
+</devices>
+
+</robot>
