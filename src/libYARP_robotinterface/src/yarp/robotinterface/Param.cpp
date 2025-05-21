@@ -10,6 +10,9 @@
 
 #include <string>
 
+namespace {
+YARP_LOG_COMPONENT(YRI_PARAM, "yarp.yri.Param")
+}
 
 std::ostream& std::operator<<(std::ostream& oss, const yarp::robotinterface::Param& t)
 {

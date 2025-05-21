@@ -11,6 +11,9 @@
 
 #include <string>
 
+namespace {
+YARP_LOG_COMPONENT(YRI_ACTION, "yarp.yri.Action")
+}
 
 class yarp::robotinterface::Action::Private
 {

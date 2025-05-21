@@ -21,6 +21,9 @@
 
 #include <string>
 
+namespace {
+YARP_LOG_COMPONENT(YRI_DEVICE, "yarp.yri.Device")
+}
 
 class yarp::robotinterface::Device::Private
 {
@@ -65,7 +68,7 @@ public:
 
             if (driver->driver->isValid()) {
                 if (!driver->driver->close()) {
-                    yWarning() << "Cannot close device" << name;
+                    yCWarning(YRI_DEVICE) << "Cannot close device" << name;
                 }
             }
 
@@ -168,7 +171,7 @@ public:
                 }
             }
             if (counter != 0) {
-                yWarning() << "Parentheses not balanced for param " << param.name();
+                yCWarning(YRI_DEVICE) << "Parentheses not balanced for param " << param.name();
             }
 
             std::string s = "(" + param.name() + " " + param.value() + ")";
@@ -295,12 +298,12 @@ const yarp::robotinterface::ActionList& yarp::robotinterface::Device::actions() 
 bool yarp::robotinterface::Device::open()
 {
     if (mPriv->isValid()) {
-        yError() << "Trying to open an already opened device.";
+        yCError(YRI_DEVICE) << "Trying to open an already opened device.";
         return false;
     }
 
     if (!mPriv->open()) {
-        yWarning() << "Cannot open device" << mPriv->name;
+        yCWarning(YRI_DEVICE) << "Cannot open device" << mPriv->name;
         return false;
     }
 
@@ -316,7 +319,7 @@ bool yarp::robotinterface::Device::close()
     }
 
     if (!mPriv->close()) {
-        yWarning() << "Cannot close device" << mPriv->name;
+        yCWarning(YRI_DEVICE) << "Cannot close device" << mPriv->name;
         return false;
     }
 
@@ -356,19 +359,19 @@ void yarp::robotinterface::Device::stopThreads() const
 bool yarp::robotinterface::Device::calibrate(const yarp::dev::PolyDriverDescriptor& target) const
 {
     if (!driver()) {
-        yDebug() << "Device do not exists, cannot do " << ActionTypeToString(ActionTypeDetach) << "action";
+        yCDebug(YRI_DEVICE) << "Device do not exists, cannot do " << ActionTypeToString(ActionTypeDetach) << "action";
         return false;
     }
 
     yarp::dev::ICalibrator* calibrator;
     if (!driver()->view(calibrator)) {
-        yError() << name() << "is not a yarp::dev::ICalibrator, therefore it cannot have" << ActionTypeToString(ActionTypeCalibrate) << "actions";
+        yCError(YRI_DEVICE) << name() << "is not a yarp::dev::ICalibrator, therefore it cannot have" << ActionTypeToString(ActionTypeCalibrate) << "actions";
         return false;
     }
 
     yarp::dev::IControlCalibration* controlCalibrator;
     if (!target.poly->view(controlCalibrator)) {
-        yError() << target.key << "is not a yarp::dev::IControlCalibration2, therefore it cannot have" << ActionTypeToString(ActionTypeCalibrate) << "actions";
+        yCError(YRI_DEVICE) << target.key << "is not a yarp::dev::IControlCalibration2, therefore it cannot have" << ActionTypeToString(ActionTypeCalibrate) << "actions";
         return false;
     }
 
@@ -381,14 +384,14 @@ bool yarp::robotinterface::Device::calibrate(const yarp::dev::PolyDriverDescript
     bool rem_calibrator_available = true;
 
     if (!target.poly->view(rem_calibrator_wrap)) {
-        yWarning() << "Device " << target.key << "is not implementing a yarp::dev::IRemoteCalibrator, therefore it cannot attach to a Calibrator device. \n \
+        yCWarning(YRI_DEVICE) << "Device " << target.key << "is not implementing a yarp::dev::IRemoteCalibrator, therefore it cannot attach to a Calibrator device. \n \
                                                      Please verify that the target of calibrate action is a controlBoard_nws_yarp device.  \
                                                      This doesn't prevent the yarprobotinterface to correctly operate, but no remote calibration and homing will be available";
         rem_calibrator_available = false;
     }
 
     if ((rem_calibrator_available) && (!driver()->view(rem_calibrator_calib))) {
-        yWarning() << "Device " << name() << "is not implementing a yarp::dev::IRemoteCalibrator, therefore it cannot be used as a remote calibration device. \n \
+        yCWarning(YRI_DEVICE) << "Device " << name() << "is not implementing a yarp::dev::IRemoteCalibrator, therefore it cannot be used as a remote calibration device. \n \
                                                This doesn't prevent the yarprobotinterface to correctly operate, but no remote calibration and homing will be available";
         rem_calibrator_available = false;
     }
@@ -406,7 +409,7 @@ bool yarp::robotinterface::Device::calibrate(const yarp::dev::PolyDriverDescript
     registerThread(calibratorThread);
 
     if (!calibratorThread->start()) {
-        yError() << "Device" << name() << "cannot execute" << ActionTypeToString(ActionTypeCalibrate) << "on device" << target.key;
+        yCError(YRI_DEVICE) << "Device" << name() << "cannot execute" << ActionTypeToString(ActionTypeCalibrate) << "on device" << target.key;
         return false;
     }
 
@@ -416,7 +419,7 @@ bool yarp::robotinterface::Device::calibrate(const yarp::dev::PolyDriverDescript
 bool yarp::robotinterface::Device::attach(const yarp::dev::PolyDriverList& drivers) const
 {
     if (!driver()) {
-        yDebug() << "Device do not exists, cannot do " << ActionTypeToString(ActionTypeDetach) << "action";
+        yCDebug(YRI_DEVICE) << "Device do not exists, cannot do " << ActionTypeToString(ActionTypeDetach) << "action";
         return false;
     }
 
@@ -426,24 +429,24 @@ bool yarp::robotinterface::Device::attach(const yarp::dev::PolyDriverList& drive
     if (drivers.size() == 1) {
         yarp::dev::IWrapper* wrapper;
         if (!driver()->view(wrapper)) {
-            yInfo() << name() << "is not an IWrapper. Trying IMultipleWrapper";
+            yCInfo(YRI_DEVICE) << name() << "is not an IWrapper. Trying IMultipleWrapper";
         } else if (wrapper->attach(drivers[0]->poly)) {
             return true;
         } else if (!multiplewrapper) {
-            yError() << "Device" << name() << "cannot execute" << ActionTypeToString(ActionTypeAttach);
+            yCError(YRI_DEVICE) << "Device" << name() << "cannot execute" << ActionTypeToString(ActionTypeAttach);
             return false;
         } else {
-            yInfo() << name() << "IWrapper::attach() failed. Trying IMultipleWrapper::attach().";
+            yCInfo(YRI_DEVICE) << name() << "IWrapper::attach() failed. Trying IMultipleWrapper::attach().";
         }
     }
 
     if (!multiplewrapper) {
-        yError() << name() << "is not a multiplewrapper, therefore it cannot have" << ActionTypeToString(ActionTypeAttach) << "actions";
+        yCError(YRI_DEVICE) << name() << "is not a multiplewrapper, therefore it cannot have" << ActionTypeToString(ActionTypeAttach) << "actions";
         return false;
     }
 
     if (!multiplewrapper->attachAll(drivers)) {
-        yError() << "Device" << name() << "cannot execute" << ActionTypeToString(ActionTypeAttach);
+        yCError(YRI_DEVICE) << "Device" << name() << "cannot execute" << ActionTypeToString(ActionTypeAttach);
         return false;
     }
 
@@ -453,7 +456,7 @@ bool yarp::robotinterface::Device::attach(const yarp::dev::PolyDriverList& drive
 bool yarp::robotinterface::Device::detach() const
 {
     if (!driver()) {
-        yDebug() << "Device do not exists, cannot do " << ActionTypeToString(ActionTypeDetach) << "action";
+        yCDebug(YRI_DEVICE) << "Device do not exists, cannot do " << ActionTypeToString(ActionTypeDetach) << "action";
         return false;
     }
 
@@ -463,7 +466,7 @@ bool yarp::robotinterface::Device::detach() const
     driver()->view(multiplewrapper);
 
     if (!wrapper && !multiplewrapper) {
-        yError() << name() << "is neither a wrapper nor a multiplewrapper, therefore it cannot have" << ActionTypeToString(ActionTypeDetach) << "actions";
+        yCError(YRI_DEVICE) << name() << "is neither a wrapper nor a multiplewrapper, therefore it cannot have" << ActionTypeToString(ActionTypeDetach) << "actions";
         return false;
     }
 
@@ -472,14 +475,14 @@ bool yarp::robotinterface::Device::detach() const
             return true;
         }
         if (!wrapper) {
-            yError() << "Device" << name() << "cannot execute" << ActionTypeToString(ActionTypeDetach);
+            yCError(YRI_DEVICE) << "Device" << name() << "cannot execute" << ActionTypeToString(ActionTypeDetach);
             return false;
         }
-        yInfo() << name() << "IMultipleWrapper::detachAll() failed. Trying IWrapper::detach().";
+        yCInfo(YRI_DEVICE) << name() << "IMultipleWrapper::detachAll() failed. Trying IWrapper::detach().";
     }
 
     if (wrapper && !wrapper->detach()) {
-        yError() << "Device" << name() << "cannot execute" << ActionTypeToString(ActionTypeDetach);
+        yCError(YRI_DEVICE) << "Device" << name() << "cannot execute" << ActionTypeToString(ActionTypeDetach);
         return false;
     }
 
@@ -490,23 +493,23 @@ bool yarp::robotinterface::Device::park(const yarp::dev::PolyDriverDescriptor& t
 {
     yarp::dev::ICalibrator* calibrator;
     if (!driver()) {
-        yDebug() << "Device do not exists, cannot do " << ActionTypeToString(ActionTypeDetach) << "action";
+        yCDebug(YRI_DEVICE) << "Device do not exists, cannot do " << ActionTypeToString(ActionTypeDetach) << "action";
         return false;
     }
 
     if (!driver()->isValid()) {
-        yError() << "park device do not exists";
+        yCError(YRI_DEVICE) << "park device do not exists";
         return false;
     }
 
     if (!driver()->view(calibrator)) {
-        yError() << name() << "is not a yarp::dev::ICalibrator, therefore it cannot have" << ActionTypeToString(ActionTypePark) << "actions";
+        yCError(YRI_DEVICE) << name() << "is not a yarp::dev::ICalibrator, therefore it cannot have" << ActionTypeToString(ActionTypePark) << "actions";
         return false;
     }
 
     yarp::dev::IControlCalibration* controlCalibrator;
     if (!target.poly->view(controlCalibrator)) {
-        yError() << target.key << "is not a yarp::dev::IControlCalibration2, therefore it cannot have" << ActionTypeToString(ActionTypePark) << "actions";
+        yCError(YRI_DEVICE) << target.key << "is not a yarp::dev::IControlCalibration2, therefore it cannot have" << ActionTypeToString(ActionTypePark) << "actions";
         return false;
     }
 
@@ -520,7 +523,7 @@ bool yarp::robotinterface::Device::park(const yarp::dev::PolyDriverDescriptor& t
     registerThread(parkerThread);
 
     if (!parkerThread->start()) {
-        yError() << "Device" << name() << "cannot execute" << ActionTypeToString(ActionTypePark) << "on device" << target.key;
+        yCError(YRI_DEVICE) << "Device" << name() << "cannot execute" << ActionTypeToString(ActionTypePark) << "on device" << target.key;
         return false;
     }
 

@@ -1,28 +1,25 @@
 # SPDX-FileCopyrightText: 2006-2021 Istituto Italiano di Tecnologia (IIT)
 # SPDX-License-Identifier: BSD-3-Clause
 
-yarp_prepare_plugin(robotDescriptionServer
+yarp_prepare_plugin(robotDescriptionStorage
   CATEGORY device
-  TYPE RobotDescriptionServer
-  INCLUDE RobotDescriptionServer.h
-  GENERATE_PARSER
+  TYPE RobotDescriptionStorage
+  INCLUDE RobotDescriptionStorage.h
   DEFAULT ON
 )
 
-if(NOT SKIP_robotDescriptionServer)
-  yarp_add_plugin(yarp_robotDescriptionServer)
+if(NOT SKIP_robotDescriptionStorage)
+  yarp_add_plugin(yarp_robotDescriptionStorage)
 
-  target_sources(yarp_robotDescriptionServer
+  target_sources(yarp_robotDescriptionStorage
     PRIVATE
-      RobotDescriptionServer.cpp
-      RobotDescriptionServer.h
       RobotDescriptionStorage.cpp
       RobotDescriptionStorage.h
-      RobotDescriptionServer_ParamsParser.cpp
-      RobotDescriptionServer_ParamsParser.h
+      RobotDescriptionStorage.cpp
+      RobotDescriptionStorage.h
   )
 
-  target_link_libraries(yarp_robotDescriptionServer
+  target_link_libraries(yarp_robotDescriptionStorage
     PRIVATE
       YARP::YARP_os
       YARP::YARP_sig
@@ -33,11 +30,9 @@ if(NOT SKIP_robotDescriptionServer)
     YARP_sig
     YARP_dev
   )
-  target_sources(yarp_robotDescriptionServer PRIVATE $<TARGET_OBJECTS:IRobotDescriptionMsgs>)
-  target_include_directories(yarp_robotDescriptionServer PRIVATE $<TARGET_PROPERTY:IRobotDescriptionMsgs,INTERFACE_INCLUDE_DIRECTORIES>)
 
   yarp_install(
-    TARGETS yarp_robotDescriptionServer
+    TARGETS yarp_robotDescriptionStorage
     EXPORT YARP_${YARP_PLUGIN_MASTER}
     COMPONENT ${YARP_PLUGIN_MASTER}
     LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
@@ -47,7 +42,7 @@ if(NOT SKIP_robotDescriptionServer)
 
   set(YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS ${YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS} PARENT_SCOPE)
 
-  set_property(TARGET yarp_robotDescriptionServer PROPERTY FOLDER "Plugins/Device")
+  set_property(TARGET yarp_robotDescriptionStorage PROPERTY FOLDER "Plugins/Device")
 
   if(YARP_COMPILE_TESTS)
     add_subdirectory(tests)

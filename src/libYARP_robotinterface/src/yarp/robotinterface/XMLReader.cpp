@@ -29,8 +29,12 @@
 #include <tinyxml.h>
 #include <vector>
 
-#define SYNTAX_ERROR(line) yError() << "Syntax error while loading" << curr_filename << "at line" << line << "."
-#define SYNTAX_WARNING(line) yWarning() << "Invalid syntax while loading" << curr_filename << "at line" << line << "."
+namespace {
+YARP_LOG_COMPONENT(YRI_XMLDREADER, "yarp.yri.XMLReader")
+}
+
+#define SYNTAX_ERROR(line) yCError(YRI_XMLDREADER) << "Syntax error while loading" << curr_filename << "at line" << line << "."
+#define SYNTAX_WARNING(line) yCWarning(YRI_XMLDREADER) << "Invalid syntax while loading" << curr_filename << "at line" << line << "."
 
 // BUG in TinyXML, see
 // https://sourceforge.net/tracker/?func=detail&aid=3567726&group_id=13559&atid=113559
@@ -81,7 +85,7 @@ yarp::robotinterface::XMLReaderResult yarp::robotinterface::XMLReader::getRobotF
     std::string curr_filename = fileName;
     std::string path = filename.substr(0, filename.rfind(yarp::conf::filesystem::preferred_separator));
 
-    yDebug() << "Reading file" << filename.c_str();
+    yCDebug(YRI_XMLDREADER) << "Reading file" << filename.c_str();
     auto doc = std::make_unique< TiXmlDocument>(TiXmlDocument(filename.c_str()));
     if (!doc->LoadFile()) {
         SYNTAX_ERROR(doc->ErrorRow()) << doc->ErrorDesc();
@@ -115,25 +119,25 @@ yarp::robotinterface::XMLReaderResult yarp::robotinterface::XMLReader::getRobotF
     }
 
     if (dtd.majorVersion == 1) {
-        yError() << "DTD V1.x has been deprecated. Please update your configuration files to DTD v3.x";
+        yCError(YRI_XMLDREADER) << "DTD V1.x has been deprecated. Please update your configuration files to DTD v3.x";
         if (mPriv->enable_deprecated) {
-            yWarning() << "yarprobotinterface: using DEPRECATED xml parser for DTD v1.x";
+            yCWarning(YRI_XMLDREADER) << "yarprobotinterface: using DEPRECATED xml parser for DTD v1.x";
             mPriv->mReader = new yarp::robotinterface::impl::XMLReaderFileV1;
             return mPriv->mReader->getRobotFromFile(filename, config, mPriv->verbose);
         }
 
-        yError("Invalid DTD version, execution stopped.");
+        yCError(YRI_XMLDREADER,"Invalid DTD version, execution stopped.");
         return yarp::robotinterface::XMLReaderResult::ParsingFailed();
 
     }
     if (dtd.majorVersion == 3) {
-        yDebug() << "yarprobotinterface: using xml parser for DTD v3.x";
+        yCDebug(YRI_XMLDREADER) << "yarprobotinterface: using xml parser for DTD v3.x";
         mPriv->mReader = new yarp::robotinterface::impl::XMLReaderFileV3;
         return mPriv->mReader->getRobotFromFile(filename, config, mPriv->verbose);
     }
 
     //ERROR HERE
-    yError("Invalid DTD version. Unable to choose parser for DTD.major: %d", dtd.majorVersion);
+    yCError(YRI_XMLDREADER,"Invalid DTD version. Unable to choose parser for DTD.major: %d", dtd.majorVersion);
     return yarp::robotinterface::XMLReaderResult::ParsingFailed();
 }
 
@@ -174,22 +178,22 @@ yarp::robotinterface::XMLReaderResult yarp::robotinterface::XMLReader::getRobotF
     }
 
     if (dtd.majorVersion == 1) {
-        yError() << "DTD V1.x has been deprecated. Please update your configuration files to DTD v3.x";
+        yCError(YRI_XMLDREADER) << "DTD V1.x has been deprecated. Please update your configuration files to DTD v3.x";
         if (mPriv->enable_deprecated) {
-            yWarning() << "yarprobotinterface: using DEPRECATED xml parser for DTD v1.x";
+            yCWarning(YRI_XMLDREADER) << "yarprobotinterface: using DEPRECATED xml parser for DTD v1.x";
             mPriv->mReader = new yarp::robotinterface::impl::XMLReaderFileV1;
             return mPriv->mReader->getRobotFromString(xmlString, config, mPriv->verbose);
         } else {
-            yError("Invalid DTD version, execution stopped.");
+            yCError(YRI_XMLDREADER,"Invalid DTD version, execution stopped.");
             return yarp::robotinterface::XMLReaderResult::ParsingFailed();
         }
     } else if (dtd.majorVersion == 3) {
-        yDebug() << "yarprobotinterface: using xml parser for DTD v3.x";
+        yCDebug(YRI_XMLDREADER) << "yarprobotinterface: using xml parser for DTD v3.x";
         mPriv->mReader = new yarp::robotinterface::impl::XMLReaderFileV3;
         return mPriv->mReader->getRobotFromString(xmlString, config, mPriv->verbose);
     }
 
     //ERROR HERE
-    yError("Invalid DTD version. Unable to choose parser for DTD.major: %d", dtd.majorVersion);
+    yCError(YRI_XMLDREADER,"Invalid DTD version. Unable to choose parser for DTD.major: %d", dtd.majorVersion);
     return yarp::robotinterface::XMLReaderResult::ParsingFailed();
 }

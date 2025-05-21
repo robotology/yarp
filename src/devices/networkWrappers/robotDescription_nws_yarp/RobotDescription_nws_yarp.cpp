@@ -1,10 +1,10 @@
 /*
- * SPDX-FileCopyrightText: 2006-2021 Istituto Italiano di Tecnologia (IIT)
+ * SPDX-FileCopyrightText: 2025-2025 Istituto Italiano di Tecnologia (IIT)
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
 #include <yarp/dev/IRobotDescription.h>
-#include "RobotDescriptionServer.h"
+#include "RobotDescription_nws_yarp.h"
 #include <yarp/os/Log.h>
 #include <yarp/os/LogComponent.h>
 #include <yarp/os/LogStream.h>
@@ -14,7 +14,7 @@ using namespace yarp::dev;
 using namespace yarp::os;
 
 namespace {
-YARP_LOG_COMPONENT(ROBOTDESCRIPTIONSERVER, "yarp.device.robotDescriptionServer")
+YARP_LOG_COMPONENT(ROBOTDESCRIPTION_NWS_YARP, "yarp.device.robotDescription_nws_yarp")
 }
 
 return_getAllDevices IRobotDescriptiond::getAllDevicesRPC()
@@ -23,11 +23,11 @@ return_getAllDevices IRobotDescriptiond::getAllDevicesRPC()
 
     std::vector<DeviceDescription> dev_list;
     return_getAllDevices retval;
-    retval.ret = m_storage->getAllDevices(dev_list);
+    retval.ret = m_istorage->getAllDevices(dev_list);
     if (retval.ret) {
         retval.devices = dev_list;
     } else {
-        yCError(ROBOTDESCRIPTIONSERVER, "Unable to getAllDevices");
+        yCError(ROBOTDESCRIPTION_NWS_YARP, "Unable to getAllDevices");
     }
     return retval;
 }
@@ -38,11 +38,11 @@ return_getAllDevicesByType IRobotDescriptiond::getAllDevicesByTypeRPC(const std:
 
     std::vector<DeviceDescription> dev_list;
     return_getAllDevicesByType retval;
-    retval.ret = m_storage->getAllDevicesByType(type, dev_list);
+    retval.ret = m_istorage->getAllDevicesByType(type, dev_list);
     if (retval.ret) {
         retval.devices = dev_list;
     } else {
-        yCError(ROBOTDESCRIPTIONSERVER, "Unable to getAllDevicesByType");
+        yCError(ROBOTDESCRIPTION_NWS_YARP, "Unable to getAllDevicesByType");
     }
     return retval;
 }
@@ -51,10 +51,10 @@ yarp::dev::ReturnValue IRobotDescriptiond::registerDeviceRPC(const yarp::dev::De
 {
     std::lock_guard <std::mutex> lg(m_mutex);
 
-    auto ret = m_storage->registerDevice(dev);
+    auto ret = m_istorage->registerDevice(dev);
     if (!ret)
     {
-        yCError(ROBOTDESCRIPTIONSERVER, "Unable to registerDevice");
+        yCError(ROBOTDESCRIPTION_NWS_YARP, "Unable to registerDevice");
     }
     return ret;
 }
@@ -63,10 +63,10 @@ yarp::dev::ReturnValue IRobotDescriptiond::unregisterDeviceRPC(const std::string
 {
     std::lock_guard <std::mutex> lg(m_mutex);
 
-    auto ret = m_storage->unregisterDevice(dev);
+    auto ret = m_istorage->unregisterDevice(dev);
     if (!ret)
     {
-        yCError(ROBOTDESCRIPTIONSERVER, "Unable to unregisterDevice");
+        yCError(ROBOTDESCRIPTION_NWS_YARP, "Unable to unregisterDevice");
     }
     return ret;
 }
@@ -75,69 +75,64 @@ yarp::dev::ReturnValue IRobotDescriptiond::unregisterAllRPC()
 {
     std::lock_guard <std::mutex> lg(m_mutex);
 
-    auto ret = m_storage->unregisterAll();
+    auto ret = m_istorage->unregisterAll();
     if (!ret)
     {
-        yCError(ROBOTDESCRIPTIONSERVER, "Unable to unregisterAll");
+        yCError(ROBOTDESCRIPTION_NWS_YARP, "Unable to unregisterAll");
     }
     return ret;
 }
 
 //------------------------------------------------------------------------------------------------------------------------------
 
-bool RobotDescriptionServer::open(yarp::os::Searchable &config)
+bool RobotDescription_nws_yarp::open(yarp::os::Searchable &config)
 {
     if (!this->parseParams(config)) { return false; }
 
     if (!m_rpc_port.open(m_local))
     {
-        yCError(ROBOTDESCRIPTIONSERVER, "open(): Could not open rpc port %s, check network", m_local.c_str());
+        yCError(ROBOTDESCRIPTION_NWS_YARP, "open(): Could not open rpc port %s, check network", m_local.c_str());
         return false;
     }
-
-    m_RPC = std::make_unique<IRobotDescriptiond>();
 
     m_rpc_port.setReader(*this);
     return true;
 }
 
-bool RobotDescriptionServer::attachAll(const PolyDriverList &p)
+bool RobotDescription_nws_yarp::attach(yarp::dev::PolyDriver* driver)
 {
-    std::lock_guard<std::mutex> guard(m_mutex);
-    for (int i = 0; i < p.size(); i++)
+    std::lock_guard lock(m_mutex);
+
+    if (driver->isValid())
     {
-        DeviceDescription dev;
-
-        //BROKEN HERE. TO BE REIMPLEMENTED
-        //Register every device to which the server is attached
-        //dev.device_name = p[i]->poly->getValue("name").toString();
-        //dev.device_type = p[i]->poly->getValue("device").toString();
-
-        auto ret = m_RPC->registerDeviceRPC(dev);
-        if (!ret)
+        IRobotDescription* ird = nullptr;
+        driver->view(ird);
+        if (!ird)
         {
-            yCError(ROBOTDESCRIPTIONSERVER) << "attachAll(): Something strange happened here";
-            //return false;
+            yCError(ROBOTDESCRIPTION_NWS_YARP, "Subdevice passed to attach method is invalid");
+            return false;
         }
+        m_RPC = std::make_unique<IRobotDescriptiond>(ird);
     }
+
+    yCInfo(ROBOTDESCRIPTION_NWS_YARP, "Attach done");
     return true;
 }
 
-bool RobotDescriptionServer::detachAll()
+bool RobotDescription_nws_yarp::detach()
 {
-    //Clear the storage
-    m_RPC->unregisterAllRPC();
-
+    std::lock_guard lock (m_mutex);
+    m_RPC.reset();
     return true;
 }
 
-bool RobotDescriptionServer::close()
+bool RobotDescription_nws_yarp::close()
 {
     m_rpc_port.close();
     return true;
 }
 
-bool RobotDescriptionServer::read(yarp::os::ConnectionReader& connection)
+bool RobotDescription_nws_yarp::read(yarp::os::ConnectionReader& connection)
 {
     if (!connection.isValid()) { return false;}
     if (!m_RPC) { return false;}
@@ -151,6 +146,6 @@ bool RobotDescriptionServer::read(yarp::os::ConnectionReader& connection)
         }
     }
 
-    yCDebug(ROBOTDESCRIPTIONSERVER) << "read() Command failed";
+    yCDebug(ROBOTDESCRIPTION_NWS_YARP) << "read() Command failed";
     return false;
 }
