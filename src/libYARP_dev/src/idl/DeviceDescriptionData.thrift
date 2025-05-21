@@ -11,6 +11,10 @@ struct DeviceDescriptionData
     1: string device_name;
     /** type of the device */
     2: string device_type;
+    /** configuration parameters of the device */
+    3: string device_configuration;
+    /** user defined extra information */
+    4: string device_extra_info;
 }
 (
     yarp.api.include = "yarp/dev/api.h"

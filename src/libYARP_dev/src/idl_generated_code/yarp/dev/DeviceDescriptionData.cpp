@@ -14,10 +14,14 @@ namespace yarp::dev {
 
 // Constructor with field values
 DeviceDescriptionData::DeviceDescriptionData(const std::string& device_name,
-                                             const std::string& device_type) :
+                                             const std::string& device_type,
+                                             const std::string& device_configuration,
+                                             const std::string& device_extra_info) :
         WirePortable(),
         device_name(device_name),
-        device_type(device_type)
+        device_type(device_type),
+        device_configuration(device_configuration),
+        device_extra_info(device_extra_info)
 {
 }
 
@@ -30,6 +34,12 @@ bool DeviceDescriptionData::read(yarp::os::idl::WireReader& reader)
     if (!read_device_type(reader)) {
         return false;
     }
+    if (!read_device_configuration(reader)) {
+        return false;
+    }
+    if (!read_device_extra_info(reader)) {
+        return false;
+    }
     if (reader.isError()) {
         return false;
     }
@@ -40,7 +50,7 @@ bool DeviceDescriptionData::read(yarp::os::idl::WireReader& reader)
 bool DeviceDescriptionData::read(yarp::os::ConnectionReader& connection)
 {
     yarp::os::idl::WireReader reader(connection);
-    if (!reader.readListHeader(2)) {
+    if (!reader.readListHeader(4)) {
         return false;
     }
     if (!read(reader)) {
@@ -58,6 +68,12 @@ bool DeviceDescriptionData::write(const yarp::os::idl::WireWriter& writer) const
     if (!write_device_type(writer)) {
         return false;
     }
+    if (!write_device_configuration(writer)) {
+        return false;
+    }
+    if (!write_device_extra_info(writer)) {
+        return false;
+    }
     if (writer.isError()) {
         return false;
     }
@@ -68,7 +84,7 @@ bool DeviceDescriptionData::write(const yarp::os::idl::WireWriter& writer) const
 bool DeviceDescriptionData::write(yarp::os::ConnectionWriter& connection) const
 {
     yarp::os::idl::WireWriter writer(connection);
-    if (!writer.writeListHeader(2)) {
+    if (!writer.writeListHeader(4)) {
         return false;
     }
     if (!write(writer)) {
@@ -174,6 +190,98 @@ bool DeviceDescriptionData::nested_read_device_type(yarp::os::idl::WireReader& r
 bool DeviceDescriptionData::nested_write_device_type(const yarp::os::idl::WireWriter& writer) const
 {
     if (!writer.writeString(device_type)) {
+        return false;
+    }
+    return true;
+}
+
+// read device_configuration field
+bool DeviceDescriptionData::read_device_configuration(yarp::os::idl::WireReader& reader)
+{
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
+    if (!reader.readString(device_configuration)) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+// write device_configuration field
+bool DeviceDescriptionData::write_device_configuration(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.writeString(device_configuration)) {
+        return false;
+    }
+    return true;
+}
+
+// read (nested) device_configuration field
+bool DeviceDescriptionData::nested_read_device_configuration(yarp::os::idl::WireReader& reader)
+{
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
+    if (!reader.readString(device_configuration)) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+// write (nested) device_configuration field
+bool DeviceDescriptionData::nested_write_device_configuration(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.writeString(device_configuration)) {
+        return false;
+    }
+    return true;
+}
+
+// read device_extra_info field
+bool DeviceDescriptionData::read_device_extra_info(yarp::os::idl::WireReader& reader)
+{
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
+    if (!reader.readString(device_extra_info)) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+// write device_extra_info field
+bool DeviceDescriptionData::write_device_extra_info(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.writeString(device_extra_info)) {
+        return false;
+    }
+    return true;
+}
+
+// read (nested) device_extra_info field
+bool DeviceDescriptionData::nested_read_device_extra_info(yarp::os::idl::WireReader& reader)
+{
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
+    if (!reader.readString(device_extra_info)) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+// write (nested) device_extra_info field
+bool DeviceDescriptionData::nested_write_device_extra_info(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.writeString(device_extra_info)) {
         return false;
     }
     return true;
