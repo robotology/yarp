@@ -102,6 +102,10 @@ bool AudioRecorder_nwc_yarp::open(yarp::os::Searchable &config)
         return false;
     }
 
+    //Check the protocol version
+    if (!m_audiograb_RPC.checkProtocolVersion()) { return false; }
+
+    yCInfo(AUDIORECORDER_NWC) << "Opening of NWC successful";
     return true;
 }
 
