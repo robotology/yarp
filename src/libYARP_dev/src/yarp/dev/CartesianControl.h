@@ -10,6 +10,7 @@
 #include <yarp/os/Bottle.h>
 #include <yarp/os/Stamp.h>
 #include <yarp/dev/api.h>
+#include <yarp/dev/ReturnValue.h>
 #include <yarp/sig/Vector.h>
 
 /*!
@@ -140,7 +141,7 @@ public:
      *       In non-tracking mode the controller releases the limb as
      *       soon as the desired pose is reached.
      */
-    virtual bool setTrackingMode(const bool f) = 0;
+    virtual yarp::dev::ReturnValue setTrackingMode(const bool f) = 0;
 
     /*!
      * Get the current controller mode. [wait for reply]
@@ -148,7 +149,7 @@ public:
      *          mode, false otherwise.
      * \return true/false on success/failure.
      */
-    virtual bool getTrackingMode(bool *f) = 0;
+    virtual yarp::dev::ReturnValue getTrackingMode(bool *f) = 0;
 
     /*!
      * Ask the controller to close the loop with the low-level joints
@@ -163,7 +164,7 @@ public:
      *       useful in a scenario where the commands are executed by
      *       the control boards with resort to torque actuation.
      */
-    virtual bool setReferenceMode(const bool f) = 0;
+    virtual yarp::dev::ReturnValue setReferenceMode(const bool f) = 0;
 
     /*!
      * Get the current controller reference mode. [wait for reply]
@@ -172,7 +173,7 @@ public:
      *         actual encoders feedback.
      * \return true/false on success/failure.
      */
-    virtual bool getReferenceMode(bool *f) = 0;
+    virtual yarp::dev::ReturnValue getReferenceMode(bool *f) = 0;
 
     /*!
      * Ask the controller to weigh more either the position or the
@@ -180,14 +181,14 @@ public:
      * \param p can be "position" or "orientation".
      * \return true/false on success/failure.
      */
-    virtual bool setPosePriority(const std::string &p) = 0;
+    virtual yarp::dev::ReturnValue setPosePriority(const std::string &p) = 0;
 
     /*!
      * Get the current pose priority. [wait for reply]
      * \param p here is returned either as "position" or "orientation".
      * \return true/false on success/failure.
      */
-    virtual bool getPosePriority(std::string &p) = 0;
+    virtual yarp::dev::ReturnValue getPosePriority(std::string &p) = 0;
 
     /*!
      * Get the current pose of the end-effector. [do not wait for
@@ -201,8 +202,8 @@ public:
      *              pose.
      * \return true/false on success/failure.
      */
-    virtual bool getPose(yarp::sig::Vector &x, yarp::sig::Vector &o,
-                         yarp::os::Stamp *stamp=NULL) = 0;
+    virtual yarp::dev::ReturnValue getPose(yarp::sig::Vector &x, yarp::sig::Vector &o,
+                                           yarp::os::Stamp *stamp=NULL) = 0;
 
     /*!
      * Get the current pose of the specified link belonging to the
@@ -218,9 +219,9 @@ public:
      *              pose.
      * \return true/false on success/failure.
      */
-    virtual bool getPose(const int axis, yarp::sig::Vector &x,
-                         yarp::sig::Vector &o,
-                         yarp::os::Stamp *stamp=NULL) = 0;
+    virtual yarp::dev::ReturnValue getPose(const int axis, yarp::sig::Vector &x,
+                                           yarp::sig::Vector &o,
+                                           yarp::os::Stamp *stamp=NULL) = 0;
 
     /*!
      * Move the end-effector to a specified pose (position
@@ -235,9 +236,9 @@ public:
      *
      * \note Intended for streaming mode.
      */
-    virtual bool goToPose(const yarp::sig::Vector &xd,
-                          const yarp::sig::Vector &od,
-                          const double t = 0.0) = 0;
+    virtual yarp::dev::ReturnValue goToPose(const yarp::sig::Vector &xd,
+                                            const yarp::sig::Vector &od,
+                                            const double t = 0.0) = 0;
 
     /*!
      * Move the end-effector to a specified position in cartesian
@@ -250,8 +251,8 @@ public:
      *
      * \note Intended for streaming mode.
      */
-    virtual bool goToPosition(const yarp::sig::Vector &xd,
-                              const double t = 0.0) = 0;
+    virtual yarp::dev::ReturnValue goToPosition(const yarp::sig::Vector &xd,
+                                                const double t = 0.0) = 0;
 
     /*!
      * Move the end-effector to a specified pose (position
@@ -267,9 +268,9 @@ public:
      * \note The reply is returned as soon as the controller has
      *       initiated the movement.
      */
-    virtual bool goToPoseSync(const yarp::sig::Vector &xd,
-                              const yarp::sig::Vector &od,
-                              const double t = 0.0) = 0;
+    virtual yarp::dev::ReturnValue goToPoseSync(const yarp::sig::Vector &xd,
+                                                const yarp::sig::Vector &od,
+                                                const double t = 0.0) = 0;
 
     /*!
      * Move the end-effector to a specified position in cartesian
@@ -283,8 +284,8 @@ public:
      * \note The reply is returned as soon as the controller has
      *       initiated the movement.
      */
-    virtual bool goToPositionSync(const yarp::sig::Vector &xd,
-                                  const double t = 0.0) = 0;
+    virtual yarp::dev::ReturnValue goToPositionSync(const yarp::sig::Vector &xd,
+                                                    const double t = 0.0) = 0;
 
     /*!
      * Get the actual desired pose and joints configuration as result
@@ -300,9 +301,9 @@ public:
      *             couple (xdhat,odhat) is achieved [deg].
      * \return true/false on success/failure.
      */
-    virtual bool getDesired(yarp::sig::Vector &xdhat,
-                            yarp::sig::Vector &odhat,
-                            yarp::sig::Vector &qdhat) = 0;
+    virtual yarp::dev::ReturnValue getDesired(yarp::sig::Vector &xdhat,
+                                              yarp::sig::Vector &odhat,
+                                              yarp::sig::Vector &qdhat) = 0;
 
     /*!
      * Ask for inverting a given pose without actually moving there.
@@ -323,11 +324,11 @@ public:
      *          the couple (xdhat,odhat) is achieved [deg].
      * \return true/false on success/failure.
      */
-    virtual bool askForPose(const yarp::sig::Vector &xd,
-                            const yarp::sig::Vector &od,
-                            yarp::sig::Vector &xdhat,
-                            yarp::sig::Vector &odhat,
-                            yarp::sig::Vector &qdhat) = 0;
+    virtual yarp::dev::ReturnValue askForPose(const yarp::sig::Vector &xd,
+                                              const yarp::sig::Vector &od,
+                                              yarp::sig::Vector &xdhat,
+                                              yarp::sig::Vector &odhat,
+                                              yarp::sig::Vector &qdhat) = 0;
 
     /*!
      * Ask for inverting a given pose without actually moving there.
@@ -351,12 +352,12 @@ public:
      *          the couple (xdhat,odhat) is achieved [deg].
      * \return true/false on success/failure.
      */
-    virtual bool askForPose(const yarp::sig::Vector &q0,
-                            const yarp::sig::Vector &xd,
-                            const yarp::sig::Vector &od,
-                            yarp::sig::Vector &xdhat,
-                            yarp::sig::Vector &odhat,
-                            yarp::sig::Vector &qdhat) = 0;
+    virtual yarp::dev::ReturnValue askForPose(const yarp::sig::Vector &q0,
+                                              const yarp::sig::Vector &xd,
+                                              const yarp::sig::Vector &od,
+                                              yarp::sig::Vector &xdhat,
+                                              yarp::sig::Vector &odhat,
+                                              yarp::sig::Vector &qdhat) = 0;
 
     /*!
      * Ask for inverting a given position without actually moving
@@ -374,10 +375,10 @@ public:
      *          the couple (xdhat,odhat) is achieved [deg].
      * \return true/false on success/failure.
      */
-    virtual bool askForPosition(const yarp::sig::Vector &xd,
-                                yarp::sig::Vector &xdhat,
-                                yarp::sig::Vector &odhat,
-                                yarp::sig::Vector &qdhat) = 0;
+    virtual yarp::dev::ReturnValue askForPosition(const yarp::sig::Vector &xd,
+                                                  yarp::sig::Vector &xdhat,
+                                                  yarp::sig::Vector &odhat,
+                                                  yarp::sig::Vector &qdhat) = 0;
 
     /*!
      * Ask for inverting a given position without actually moving
@@ -398,11 +399,11 @@ public:
      *          the couple (xdhat,odhat) is achieved [deg].
      * \return true/false on success/failure.
      */
-    virtual bool askForPosition(const yarp::sig::Vector &q0,
-                                const yarp::sig::Vector &xd,
-                                yarp::sig::Vector &xdhat,
-                                yarp::sig::Vector &odhat,
-                                yarp::sig::Vector &qdhat) = 0;
+    virtual yarp::dev::ReturnValue askForPosition(const yarp::sig::Vector &q0,
+                                                  const yarp::sig::Vector &xd,
+                                                  yarp::sig::Vector &xdhat,
+                                                  yarp::sig::Vector &odhat,
+                                                  yarp::sig::Vector &qdhat) = 0;
 
     /*!
      * Get the current DOF configuration of the limb. [wait for
@@ -416,7 +417,7 @@ public:
      *       associated joint is controlled (i.e. it is an actuated
      *       DOF), 0 otherwise.
      */
-    virtual bool getDOF(yarp::sig::Vector &curDof) = 0;
+    virtual yarp::dev::ReturnValue getDOF(yarp::sig::Vector &curDof) = 0;
 
     /*!
      * Set a new DOF configuration for the limb. [wait for reply]
@@ -433,8 +434,8 @@ public:
      *       special value 2 indicates that the joint status won't be
      *       modified (useful as a placeholder).
      */
-    virtual bool setDOF(const yarp::sig::Vector &newDof,
-                        yarp::sig::Vector &curDof) = 0;
+    virtual yarp::dev::ReturnValue setDOF(const yarp::sig::Vector &newDof,
+                                          yarp::sig::Vector &curDof) = 0;
 
     /*!
      * Get the current joints rest position. [wait for reply]
@@ -447,7 +448,7 @@ public:
      *       rest position; further, each rest component may be
      *       weighted differently providing the weights vector.
      */
-    virtual bool getRestPos(yarp::sig::Vector &curRestPos) = 0;
+    virtual yarp::dev::ReturnValue getRestPos(yarp::sig::Vector &curRestPos) = 0;
 
     /*!
      * Set a new joints rest position. [wait for reply]
@@ -463,8 +464,8 @@ public:
      *       rest position; further, each rest component may be
      *       weighted differently providing the weights vector.
      */
-    virtual bool setRestPos(const yarp::sig::Vector &newRestPos,
-                            yarp::sig::Vector &curRestPos) = 0;
+    virtual yarp::dev::ReturnValue setRestPos(const yarp::sig::Vector &newRestPos,
+                                              yarp::sig::Vector &curRestPos) = 0;
 
     /*!
      * Get the current joints rest weights. [wait for reply]
@@ -477,7 +478,7 @@ public:
      *       rest position; further, each rest component may be
      *       weighted differently providing the weights vector.
      */
-    virtual bool getRestWeights(yarp::sig::Vector &curRestWeights) = 0;
+    virtual yarp::dev::ReturnValue getRestWeights(yarp::sig::Vector &curRestWeights) = 0;
 
     /*!
      * Set a new joints rest position. [wait for reply]
@@ -493,8 +494,8 @@ public:
      *       rest position; further, each rest component may be
      *       weighted differently providing the weights vector.
      */
-    virtual bool setRestWeights(const yarp::sig::Vector &newRestWeights,
-                                yarp::sig::Vector &curRestWeights) = 0;
+    virtual yarp::dev::ReturnValue setRestWeights(const yarp::sig::Vector &newRestWeights,
+                                                  yarp::sig::Vector &curRestWeights) = 0;
 
     /*!
      * Get the current range for the axis. [wait for reply]
@@ -504,7 +505,7 @@ public:
      * \param max where the maximum value is returned [deg].
      * \return true/false on success/failure.
      */
-    virtual bool getLimits(const int axis, double *min, double *max) = 0;
+    virtual yarp::dev::ReturnValue getLimits(const int axis, double *min, double *max) = 0;
 
     /*!
      * Set new range for the axis. Allowed range shall be a valid
@@ -515,21 +516,21 @@ public:
      * \param max the new maximum value [deg].
      * \return true/false on success/failure.
      */
-    virtual bool setLimits(const int axis, const double min, const double max) = 0;
+    virtual yarp::dev::ReturnValue setLimits(const int axis, const double min, const double max) = 0;
 
     /*!
      * Get the current trajectory duration. [wait for reply]
      * \param t the memory location where the time is returned [s].
      * \return true/false on success/failure.
      */
-    virtual bool getTrajTime(double *t) = 0;
+    virtual yarp::dev::ReturnValue getTrajTime(double *t) = 0;
 
     /*!
      * Set the duration of the trajectory. [wait for reply]
      * \param t time [s].
      * \return true/false on success/failure.
      */
-    virtual bool setTrajTime(const double t) = 0;
+    virtual yarp::dev::ReturnValue setTrajTime(const double t) = 0;
 
     /*!
      * Return tolerance for in-target check. [wait for reply]
@@ -539,7 +540,7 @@ public:
      * \note The trajectory is supposed to be completed as soon as
      *       norm(xd-end_effector)<tol.
      */
-    virtual bool getInTargetTol(double *tol) = 0;
+    virtual yarp::dev::ReturnValue getInTargetTol(double *tol) = 0;
 
     /*!
      * Set tolerance for in-target check. [wait for reply]
@@ -549,7 +550,7 @@ public:
      * \note The trajectory is supposed to be completed as soon as
      *       norm(xd-end_effector)<tol.
      */
-    virtual bool setInTargetTol(const double tol) = 0;
+    virtual yarp::dev::ReturnValue setInTargetTol(const double tol) = 0;
 
     /*!
      * Return joints velocities. [wait for reply]
@@ -557,7 +558,7 @@ public:
      *             [deg/s] sent to the robot by the controller.
      * \return true/false on success/failure.
      */
-    virtual bool getJointsVelocities(yarp::sig::Vector &qdot) = 0;
+    virtual yarp::dev::ReturnValue getJointsVelocities(yarp::sig::Vector &qdot) = 0;
 
     /*!
      * Return velocities of the end-effector in the task space. [wait
@@ -572,8 +573,8 @@ public:
      *             velocities.
      * \return true/false on success/failure.
      */
-    virtual bool getTaskVelocities(yarp::sig::Vector &xdot,
-                                   yarp::sig::Vector &odot) = 0;
+    virtual yarp::dev::ReturnValue getTaskVelocities(yarp::sig::Vector &xdot,
+                                                     yarp::sig::Vector &odot) = 0;
 
     /*!
      * Set the reference velocities of the end-effector in the task
@@ -584,8 +585,8 @@ public:
      *             reference velocity [rad/s] of the end-effector
      * \return true/false on success/failure.
      */
-    virtual bool setTaskVelocities(const yarp::sig::Vector &xdot,
-                                   const yarp::sig::Vector &odot) = 0;
+    virtual yarp::dev::ReturnValue setTaskVelocities(const yarp::sig::Vector &xdot,
+                                                     const yarp::sig::Vector &odot) = 0;
 
     /*!
      * Attach a tip frame to the end-effector.
@@ -598,8 +599,8 @@ public:
      * \note By attaching a tip to the end-effector, the specified
      *       tip will be the new end-effector for the controller.
      */
-    virtual bool attachTipFrame(const yarp::sig::Vector &x,
-                                const yarp::sig::Vector &o) = 0;
+    virtual yarp::dev::ReturnValue attachTipFrame(const yarp::sig::Vector &x,
+                                                  const yarp::sig::Vector &o) = 0;
 
     /*!
      * Retrieve the tip frame currently attached to the end-effector.
@@ -609,7 +610,7 @@ public:
      *          frame wrt the end-effector (axis-angle notation).
      * \return true/false if successful/failed.
      */
-    virtual bool getTipFrame(yarp::sig::Vector &x, yarp::sig::Vector &o) = 0;
+    virtual yarp::dev::ReturnValue getTipFrame(yarp::sig::Vector &x, yarp::sig::Vector &o) = 0;
 
     /*!
      * Remove the tip frame currently attached to the end-effector.
@@ -617,7 +618,7 @@ public:
      *
      * \note The actual end-effector is again under control.
      */
-    virtual bool removeTipFrame() = 0;
+    virtual yarp::dev::ReturnValue removeTipFrame() = 0;
 
     /*!
      * Check once if the current trajectory is terminated. [wait for
@@ -625,7 +626,7 @@ public:
      * \param f where the result is returned.
      * \return true/false on success/failure.
      */
-    virtual bool checkMotionDone(bool *f) = 0;
+    virtual yarp::dev::ReturnValue checkMotionDone(bool *f) = 0;
 
     /*!
      * Wait until the current trajectory is terminated. [wait for
@@ -637,8 +638,8 @@ public:
      * \return true for success, false for failure and timeout
      *         expired.
      */
-    virtual bool waitMotionDone(const double period = 0.1,
-                                const double timeout = 0.0) = 0;
+    virtual yarp::dev::ReturnValue waitMotionDone(const double period = 0.1,
+                                                  const double timeout = 0.0) = 0;
 
     /*!
      * Ask for an immediate stop motion. [wait for reply]
@@ -647,7 +648,7 @@ public:
      * \note The control is completely released, i.e. a direct switch
      *       to non-tracking mode is executed.
      */
-    virtual bool stopControl() = 0;
+    virtual yarp::dev::ReturnValue stopControl() = 0;
 
     /*!
      * Store the controller context. [wait for reply]
@@ -658,7 +659,7 @@ public:
      *       variables, such as the tracking mode, the active dofs,
      *       the trajectory time and so on.
      */
-    virtual bool storeContext(int *id) = 0;
+    virtual yarp::dev::ReturnValue storeContext(int *id) = 0;
 
     /*!
      * Restore the controller context previously stored. [wait for
@@ -670,14 +671,14 @@ public:
      *       variables, such as the tracking mode, the active dofs,
      *       the trajectory time and so on.
      */
-    virtual bool restoreContext(const int id) = 0;
+    virtual yarp::dev::ReturnValue restoreContext(const int id) = 0;
 
     /*!
      * Delete a specified controller context. [wait for reply]
      * \param id specify the context id to be removed.
      * \return true/false on success/failure.
      */
-    virtual bool deleteContext(const int id) = 0;
+    virtual yarp::dev::ReturnValue deleteContext(const int id) = 0;
 
     /*!
      * Return useful info on the operating state of the controller.
@@ -685,7 +686,7 @@ public:
      * \param info is a property-like bottle containing the info.
      * \return true/false on success/failure.
      */
-    virtual bool getInfo(yarp::os::Bottle &info) = 0;
+    virtual yarp::dev::ReturnValue getInfo(yarp::os::Bottle &info) = 0;
 
     /*!
      * Register an event.
@@ -695,14 +696,14 @@ public:
      * \note the special type "*" can be used to attach a callback to
      *       all the available events.
      */
-    virtual bool registerEvent(yarp::dev::CartesianEvent &event) = 0;
+    virtual yarp::dev::ReturnValue registerEvent(yarp::dev::CartesianEvent &event) = 0;
 
     /*!
      * Unregister an event.
      * \param event the event to be unregistered.
      * \return true/false on success/failure.
      */
-    virtual bool unregisterEvent(yarp::dev::CartesianEvent &event) = 0;
+    virtual yarp::dev::ReturnValue unregisterEvent(yarp::dev::CartesianEvent &event) = 0;
 
     /*!
      * Tweak low-level controller's parameters. [wait for reply]
@@ -713,7 +714,7 @@ public:
      * \note This method is intended for accessing low-level
      *       controller's configuration.
      */
-    virtual bool tweakSet(const yarp::os::Bottle &options) = 0;
+    virtual yarp::dev::ReturnValue tweakSet(const yarp::os::Bottle &options) = 0;
 
     /*!
      * Return low-level controller's parameters. [wait for reply]
@@ -725,7 +726,7 @@ public:
      * \note This method is intended for accessing low-level
      *       controller's configuration.
      */
-    virtual bool tweakGet(yarp::os::Bottle &options) = 0;
+    virtual yarp::dev::ReturnValue tweakGet(yarp::os::Bottle &options) = 0;
 };
 
 #endif // YARP_DEV_CARTESIANCONTROL_H
