@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Thu Mar  7 17:59:44 2024
+// Generated on: Wed May 21 11:58:38 2025
 
 
 #include "FrameGrabber_nws_yarp_ParamsParser.h"
@@ -33,6 +33,36 @@ std::vector<std::string> FrameGrabber_nws_yarp_ParamsParser::getListOfParams() c
     params.push_back("capabilities");
     params.push_back("no_drop");
     return params;
+}
+
+
+bool FrameGrabber_nws_yarp_ParamsParser::getParamValue(const std::string& paramName, std::string& paramValue) const
+{
+    if (paramName =="period")
+    {
+        paramValue = std::to_string(m_period);
+        return true;
+    }
+    if (paramName =="name")
+    {
+        paramValue = m_name;
+        return true;
+    }
+    if (paramName =="capabilities")
+    {
+        paramValue = m_capabilities;
+        return true;
+    }
+    if (paramName =="no_drop")
+    {
+        if (m_no_drop==true) paramValue = "true";
+        else paramValue = "false";
+        return true;
+    }
+
+    yError() <<"parameter '" << paramName << "' was not found";
+    return false;
+
 }
 
 

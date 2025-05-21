@@ -23,7 +23,7 @@ const bool enable_debug_prints = false;
 #define S_TAB2 "        "
 #define S_TAB3 "            "
 
-#define MACRO_PARSER_VERSION_MAJOR 1
+#define MACRO_PARSER_VERSION_MAJOR 2
 #define MACRO_PARSER_VERSION_MINOR 0
 
 class ParamsFilesGenerator
@@ -51,6 +51,7 @@ public:
     std::string generateCpp();
     std::string generateConstructor();
     std::string generateFunction_getListOfParams();
+    std::string generateFunction_getParamValue();
     std::string generateFunction_parseParams();
     std::string generateFunction_getDeviceType() { return ""; };
     std::string generateFunction_getDocumentationOfDeviceParams();

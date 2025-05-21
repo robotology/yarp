@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Thu Mar  7 17:59:42 2024
+// Generated on: Wed May 21 11:58:30 2025
 
 
 #include "FakeMicrophone_ParamsParser.h"
@@ -34,6 +34,40 @@ std::vector<std::string> FakeMicrophone_ParamsParser::getListOfParams() const
     params.push_back("signal_amplitude");
     params.push_back("driver_frame_size");
     return params;
+}
+
+
+bool FakeMicrophone_ParamsParser::getParamValue(const std::string& paramName, std::string& paramValue) const
+{
+    if (paramName =="period")
+    {
+        paramValue = std::to_string(m_period);
+        return true;
+    }
+    if (paramName =="waveform")
+    {
+        paramValue = m_waveform;
+        return true;
+    }
+    if (paramName =="signal_frequency")
+    {
+        paramValue = std::to_string(m_signal_frequency);
+        return true;
+    }
+    if (paramName =="signal_amplitude")
+    {
+        paramValue = std::to_string(m_signal_amplitude);
+        return true;
+    }
+    if (paramName =="driver_frame_size")
+    {
+        paramValue = std::to_string(m_driver_frame_size);
+        return true;
+    }
+
+    yError() <<"parameter '" << paramName << "' was not found";
+    return false;
+
 }
 
 

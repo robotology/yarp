@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Thu Sep  5 14:59:20 2024
+// Generated on: Wed May 21 11:58:46 2025
 
 
 #include "Rangefinder2DTransformer_ParamsParser.h"
@@ -34,6 +34,40 @@ std::vector<std::string> Rangefinder2DTransformer_ParamsParser::getListOfParams(
     params.push_back("laser_frame_name");
     params.push_back("robot_frame_name");
     return params;
+}
+
+
+bool Rangefinder2DTransformer_ParamsParser::getParamValue(const std::string& paramName, std::string& paramValue) const
+{
+    if (paramName =="device_position_x")
+    {
+        paramValue = std::to_string(m_device_position_x);
+        return true;
+    }
+    if (paramName =="device_position_y")
+    {
+        paramValue = std::to_string(m_device_position_y);
+        return true;
+    }
+    if (paramName =="device_position_theta")
+    {
+        paramValue = std::to_string(m_device_position_theta);
+        return true;
+    }
+    if (paramName =="laser_frame_name")
+    {
+        paramValue = m_laser_frame_name;
+        return true;
+    }
+    if (paramName =="robot_frame_name")
+    {
+        paramValue = m_robot_frame_name;
+        return true;
+    }
+
+    yError() <<"parameter '" << paramName << "' was not found";
+    return false;
+
 }
 
 

@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Thu Mar  7 17:59:41 2024
+// Generated on: Wed May 21 11:58:27 2025
 
 
 #include "FakeIMU_ParamsParser.h"
@@ -33,6 +33,36 @@ std::vector<std::string> FakeIMU_ParamsParser::getListOfParams() const
     params.push_back("sensorName");
     params.push_back("frameName");
     return params;
+}
+
+
+bool FakeIMU_ParamsParser::getParamValue(const std::string& paramName, std::string& paramValue) const
+{
+    if (paramName =="period")
+    {
+        paramValue = std::to_string(m_period);
+        return true;
+    }
+    if (paramName =="constantValue")
+    {
+        if (m_constantValue==true) paramValue = "true";
+        else paramValue = "false";
+        return true;
+    }
+    if (paramName =="sensorName")
+    {
+        paramValue = m_sensorName;
+        return true;
+    }
+    if (paramName =="frameName")
+    {
+        paramValue = m_frameName;
+        return true;
+    }
+
+    yError() <<"parameter '" << paramName << "' was not found";
+    return false;
+
 }
 
 

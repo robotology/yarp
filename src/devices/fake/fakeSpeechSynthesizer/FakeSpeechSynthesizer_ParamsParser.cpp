@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Thu Mar  7 17:59:42 2024
+// Generated on: Wed May 21 11:58:29 2025
 
 
 #include "FakeSpeechSynthesizer_ParamsParser.h"
@@ -33,6 +33,35 @@ std::vector<std::string> FakeSpeechSynthesizer_ParamsParser::getListOfParams() c
     params.push_back("speed");
     params.push_back("pitch");
     return params;
+}
+
+
+bool FakeSpeechSynthesizer_ParamsParser::getParamValue(const std::string& paramName, std::string& paramValue) const
+{
+    if (paramName =="language")
+    {
+        paramValue = m_language;
+        return true;
+    }
+    if (paramName =="voice")
+    {
+        paramValue = m_voice;
+        return true;
+    }
+    if (paramName =="speed")
+    {
+        paramValue = std::to_string(m_speed);
+        return true;
+    }
+    if (paramName =="pitch")
+    {
+        paramValue = std::to_string(m_pitch);
+        return true;
+    }
+
+    yError() <<"parameter '" << paramName << "' was not found";
+    return false;
+
 }
 
 

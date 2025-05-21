@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Thu Mar  7 17:59:40 2024
+// Generated on: Wed May 21 11:58:26 2025
 
 
 #include "FakeChatBotDevice_ParamsParser.h"
@@ -30,6 +30,20 @@ std::vector<std::string> FakeChatBotDevice_ParamsParser::getListOfParams() const
     std::vector<std::string> params;
     params.push_back("language");
     return params;
+}
+
+
+bool FakeChatBotDevice_ParamsParser::getParamValue(const std::string& paramName, std::string& paramValue) const
+{
+    if (paramName =="language")
+    {
+        paramValue = m_language;
+        return true;
+    }
+
+    yError() <<"parameter '" << paramName << "' was not found";
+    return false;
+
 }
 
 

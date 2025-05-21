@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Thu Mar  7 17:59:42 2024
+// Generated on: Wed May 21 11:58:28 2025
 
 
 #include "FakeSerialPort_ParamsParser.h"
@@ -49,6 +49,113 @@ std::vector<std::string> FakeSerialPort_ParamsParser::getListOfParams() const
     params.push_back("line_terminator_char1");
     params.push_back("line_terminator_char2");
     return params;
+}
+
+
+bool FakeSerialPort_ParamsParser::getParamValue(const std::string& paramName, std::string& paramValue) const
+{
+    if (paramName =="comport")
+    {
+        paramValue = m_comport;
+        return true;
+    }
+    if (paramName =="verbose")
+    {
+        paramValue = std::to_string(m_verbose);
+        return true;
+    }
+    if (paramName =="baudrate")
+    {
+        paramValue = std::to_string(m_baudrate);
+        return true;
+    }
+    if (paramName =="xonlim")
+    {
+        paramValue = std::to_string(m_xonlim);
+        return true;
+    }
+    if (paramName =="xofflim")
+    {
+        paramValue = std::to_string(m_xofflim);
+        return true;
+    }
+    if (paramName =="readmincharacters")
+    {
+        paramValue = std::to_string(m_readmincharacters);
+        return true;
+    }
+    if (paramName =="readtimeoutmsec")
+    {
+        paramValue = std::to_string(m_readtimeoutmsec);
+        return true;
+    }
+    if (paramName =="paritymode")
+    {
+        paramValue = m_paritymode;
+        return true;
+    }
+    if (paramName =="ctsenb")
+    {
+        paramValue = std::to_string(m_ctsenb);
+        return true;
+    }
+    if (paramName =="rtsenb")
+    {
+        paramValue = std::to_string(m_rtsenb);
+        return true;
+    }
+    if (paramName =="xinenb")
+    {
+        paramValue = std::to_string(m_xinenb);
+        return true;
+    }
+    if (paramName =="xoutenb")
+    {
+        paramValue = std::to_string(m_xoutenb);
+        return true;
+    }
+    if (paramName =="modem")
+    {
+        paramValue = std::to_string(m_modem);
+        return true;
+    }
+    if (paramName =="rcvenb")
+    {
+        paramValue = std::to_string(m_rcvenb);
+        return true;
+    }
+    if (paramName =="dsrenb")
+    {
+        paramValue = std::to_string(m_dsrenb);
+        return true;
+    }
+    if (paramName =="dtrdisable")
+    {
+        paramValue = std::to_string(m_dtrdisable);
+        return true;
+    }
+    if (paramName =="databits")
+    {
+        paramValue = std::to_string(m_databits);
+        return true;
+    }
+    if (paramName =="stopbits")
+    {
+        paramValue = std::to_string(m_stopbits);
+        return true;
+    }
+    if (paramName =="line_terminator_char1")
+    {
+        return false;
+    }
+    if (paramName =="line_terminator_char2")
+    {
+        return false;
+    }
+
+    yError() <<"parameter '" << paramName << "' was not found";
+    return false;
+
 }
 
 

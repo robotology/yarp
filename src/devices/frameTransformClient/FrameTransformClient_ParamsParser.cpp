@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Sat Apr  6 12:05:03 2024
+// Generated on: Wed May 21 11:58:45 2025
 
 
 #include "FrameTransformClient_ParamsParser.h"
@@ -35,6 +35,46 @@ std::vector<std::string> FrameTransformClient_ParamsParser::getListOfParams() co
     params.push_back("FrameTransform_verbose_debug");
     params.push_back("period");
     return params;
+}
+
+
+bool FrameTransformClient_ParamsParser::getParamValue(const std::string& paramName, std::string& paramValue) const
+{
+    if (paramName =="testxml_from")
+    {
+        paramValue = m_testxml_from;
+        return true;
+    }
+    if (paramName =="testxml_context")
+    {
+        paramValue = m_testxml_context;
+        return true;
+    }
+    if (paramName =="filexml_option")
+    {
+        paramValue = m_filexml_option;
+        return true;
+    }
+    if (paramName =="local_rpc")
+    {
+        paramValue = m_local_rpc;
+        return true;
+    }
+    if (paramName =="FrameTransform_verbose_debug")
+    {
+        if (m_FrameTransform_verbose_debug==true) paramValue = "true";
+        else paramValue = "false";
+        return true;
+    }
+    if (paramName =="period")
+    {
+        paramValue = std::to_string(m_period);
+        return true;
+    }
+
+    yError() <<"parameter '" << paramName << "' was not found";
+    return false;
+
 }
 
 

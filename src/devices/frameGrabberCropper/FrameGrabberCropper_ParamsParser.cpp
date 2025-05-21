@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Fri Apr  5 16:06:46 2024
+// Generated on: Wed May 21 11:58:46 2025
 
 
 #include "FrameGrabberCropper_ParamsParser.h"
@@ -34,6 +34,41 @@ std::vector<std::string> FrameGrabberCropper_ParamsParser::getListOfParams() con
     params.push_back("y2");
     params.push_back("forwardRgbVisualParams");
     return params;
+}
+
+
+bool FrameGrabberCropper_ParamsParser::getParamValue(const std::string& paramName, std::string& paramValue) const
+{
+    if (paramName =="x1")
+    {
+        paramValue = std::to_string(m_x1);
+        return true;
+    }
+    if (paramName =="y1")
+    {
+        paramValue = std::to_string(m_y1);
+        return true;
+    }
+    if (paramName =="x2")
+    {
+        paramValue = std::to_string(m_x2);
+        return true;
+    }
+    if (paramName =="y2")
+    {
+        paramValue = std::to_string(m_y2);
+        return true;
+    }
+    if (paramName =="forwardRgbVisualParams")
+    {
+        if (m_forwardRgbVisualParams==true) paramValue = "true";
+        else paramValue = "false";
+        return true;
+    }
+
+    yError() <<"parameter '" << paramName << "' was not found";
+    return false;
+
 }
 
 

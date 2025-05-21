@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Thu Mar  7 17:59:41 2024
+// Generated on: Wed May 21 11:58:28 2025
 
 
 #include "FakeLLMDevice_ParamsParser.h"
@@ -30,6 +30,20 @@ std::vector<std::string> FakeLLMDevice_ParamsParser::getListOfParams() const
     std::vector<std::string> params;
     params.push_back("initial_prompt");
     return params;
+}
+
+
+bool FakeLLMDevice_ParamsParser::getParamValue(const std::string& paramName, std::string& paramValue) const
+{
+    if (paramName =="initial_prompt")
+    {
+        paramValue = m_initial_prompt;
+        return true;
+    }
+
+    yError() <<"parameter '" << paramName << "' was not found";
+    return false;
+
 }
 
 

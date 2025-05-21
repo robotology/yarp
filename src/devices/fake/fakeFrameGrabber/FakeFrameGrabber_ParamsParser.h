@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Mon Sep 16 16:44:50 2024
+// Generated on: Wed May 21 11:58:30 2025
 
 
 #ifndef FAKEFRAMEGRABBER_PARAMSPARSER_H
@@ -32,7 +32,6 @@
 * | -          | fakeFrameGrabber_rpc_port | string         | -     | /fakeFrameGrabber/rpc                 | 0        | rpc port for the fakeFrameGrabber                                                                              | -             |
 * | -          | mirror                    | bool           | -     | false                                 | 0        | mirror height of test image                                                                                    | -             |
 * | -          | syncro                    | bool           | -     | false                                 | 0        | synchronize producer and consumer, so that all images are used once and only once                              | -             |
-* | -          | topIsLow                  | bool           | -     | true                                  | 0        | explicitly set the topIsLow field in the images                                                                | -             |
 * | -          | physFocalLength           | double         | -     | 3.0                                   | 0        | Physical focal length                                                                                          | -             |
 * | -          | focalLengthX              | double         | -     | 4.0                                   | 0        | Horizontal component of the focal length                                                                       | -             |
 * | -          | focalLengthY              | double         | -     | 5.0                                   | 0        | Vertical component of the focal length                                                                         | -             |
@@ -57,7 +56,7 @@
 *
 * The device can be launched by yarpdev using one of the following examples (with and without all optional parameters):
 * \code{.unparsed}
-* yarpdev --device fakeFrameGrabber --width 320 --height 240 --horizontalFov 1.0 --verticalFov 2.0 --fakeFrameGrabber_rpc_port /fakeFrameGrabber/rpc --mirror false --syncro false --topIsLow true --physFocalLength 3.0 --focalLengthX 4.0 --focalLengthY 5.0 --principalPointX 6.0 --principalPointY 7.0 --distortionModel FishEye --k1 8.0 --k2 9.0 --k3 10.0 --t1 11.0 --t2 12.0 --freq 0 --period 0 --mode [line] --src <optional_value> --add_timestamp false --add_noise false --bayer false --mono false --snr 0.5 --rectificationMatrix \" (1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0) \"
+* yarpdev --device fakeFrameGrabber --width 320 --height 240 --horizontalFov 1.0 --verticalFov 2.0 --fakeFrameGrabber_rpc_port /fakeFrameGrabber/rpc --mirror false --syncro false --physFocalLength 3.0 --focalLengthX 4.0 --focalLengthY 5.0 --principalPointX 6.0 --principalPointY 7.0 --distortionModel FishEye --k1 8.0 --k2 9.0 --k3 10.0 --t1 11.0 --t2 12.0 --freq 0 --period 0 --mode [line] --src <optional_value> --add_timestamp false --add_noise false --bayer false --mono false --snr 0.5 --rectificationMatrix \" (1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0) \"
 * \endcode
 *
 * \code{.unparsed}
@@ -90,7 +89,6 @@ public:
     const std::string m_fakeFrameGrabber_rpc_port_defaultValue = {"/fakeFrameGrabber/rpc"};
     const std::string m_mirror_defaultValue = {"false"};
     const std::string m_syncro_defaultValue = {"false"};
-    const std::string m_topIsLow_defaultValue = {"true"};
     const std::string m_physFocalLength_defaultValue = {"3.0"};
     const std::string m_focalLengthX_defaultValue = {"4.0"};
     const std::string m_focalLengthY_defaultValue = {"5.0"};
@@ -147,6 +145,7 @@ public:
     std::string   getDeviceName() const override { return m_device_name; }
     std::string   getDocumentationOfDeviceParams() const override;
     std::vector<std::string> getListOfParams() const override;
+    bool getParamValue(const std::string& paramName, std::string& paramValue) const override;
 };
 
 #endif

@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Fri Mar  8 16:13:05 2024
+// Generated on: Wed May 21 11:58:44 2025
 
 
 #include "AudioFromFileDevice_ParamsParser.h"
@@ -34,6 +34,42 @@ std::vector<std::string> AudioFromFileDevice_ParamsParser::getListOfParams() con
     params.push_back("driver_frame_size");
     params.push_back("reset_on_stop");
     return params;
+}
+
+
+bool AudioFromFileDevice_ParamsParser::getParamValue(const std::string& paramName, std::string& paramValue) const
+{
+    if (paramName =="use_params_from_file")
+    {
+        if (m_use_params_from_file==true) paramValue = "true";
+        else paramValue = "false";
+        return true;
+    }
+    if (paramName =="file_name")
+    {
+        paramValue = m_file_name;
+        return true;
+    }
+    if (paramName =="period")
+    {
+        paramValue = std::to_string(m_period);
+        return true;
+    }
+    if (paramName =="driver_frame_size")
+    {
+        paramValue = std::to_string(m_driver_frame_size);
+        return true;
+    }
+    if (paramName =="reset_on_stop")
+    {
+        if (m_reset_on_stop==true) paramValue = "true";
+        else paramValue = "false";
+        return true;
+    }
+
+    yError() <<"parameter '" << paramName << "' was not found";
+    return false;
+
 }
 
 

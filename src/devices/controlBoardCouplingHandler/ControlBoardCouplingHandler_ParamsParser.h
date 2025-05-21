@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Wed Mar  6 13:18:29 2024
+// Generated on: Wed May 21 11:58:46 2025
 
 
 #ifndef CONTROLBOARDCOUPLINGHANDLER_PARAMSPARSER_H
@@ -27,7 +27,7 @@
 * |:----------:|:---------------:|:------:|:-----:|:-------------:|:--------:|:--------------------------------------------:|:-----:|
 * | -          | coupling_device | string | -     | -             | 1        | Name of the device that handles the coupling | -     |
 *
-* The device can be launched by yarpdev using one of the following examples:
+* The device can be launched by yarpdev using one of the following examples (with and without all optional parameters):
 * \code{.unparsed}
 * yarpdev --device controlBoardCouplingHandler --coupling_device <mandatory_value>
 * \endcode
@@ -64,6 +64,7 @@ public:
     std::string   getDeviceName() const override { return m_device_name; }
     std::string   getDocumentationOfDeviceParams() const override;
     std::vector<std::string> getListOfParams() const override;
+    bool getParamValue(const std::string& paramName, std::string& paramValue) const override;
 };
 
 #endif

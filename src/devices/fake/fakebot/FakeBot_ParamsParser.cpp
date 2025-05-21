@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Thu Mar  7 17:59:40 2024
+// Generated on: Wed May 21 11:58:26 2025
 
 
 #include "FakeBot_ParamsParser.h"
@@ -35,6 +35,45 @@ std::vector<std::string> FakeBot_ParamsParser::getListOfParams() const
     params.push_back("sy");
     params.push_back("lifetime");
     return params;
+}
+
+
+bool FakeBot_ParamsParser::getParamValue(const std::string& paramName, std::string& paramValue) const
+{
+    if (paramName =="background")
+    {
+        paramValue = m_background;
+        return true;
+    }
+    if (paramName =="target")
+    {
+        paramValue = m_target;
+        return true;
+    }
+    if (paramName =="noise")
+    {
+        paramValue = std::to_string(m_noise);
+        return true;
+    }
+    if (paramName =="sx")
+    {
+        paramValue = std::to_string(m_sx);
+        return true;
+    }
+    if (paramName =="sy")
+    {
+        paramValue = std::to_string(m_sy);
+        return true;
+    }
+    if (paramName =="lifetime")
+    {
+        paramValue = std::to_string(m_lifetime);
+        return true;
+    }
+
+    yError() <<"parameter '" << paramName << "' was not found";
+    return false;
+
 }
 
 

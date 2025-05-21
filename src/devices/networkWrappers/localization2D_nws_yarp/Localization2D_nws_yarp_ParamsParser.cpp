@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Thu Mar  7 17:59:46 2024
+// Generated on: Wed May 21 11:58:40 2025
 
 
 #include "Localization2D_nws_yarp_ParamsParser.h"
@@ -34,6 +34,43 @@ std::vector<std::string> Localization2D_nws_yarp_ParamsParser::getListOfParams()
     params.push_back("GENERAL::publish_odometry");
     params.push_back("GENERAL::publish_location");
     return params;
+}
+
+
+bool Localization2D_nws_yarp_ParamsParser::getParamValue(const std::string& paramName, std::string& paramValue) const
+{
+    if (paramName =="GENERAL::period")
+    {
+        paramValue = std::to_string(m_GENERAL_period);
+        return true;
+    }
+    if (paramName =="GENERAL::retrieve_position_periodically")
+    {
+        if (m_GENERAL_retrieve_position_periodically==true) paramValue = "true";
+        else paramValue = "false";
+        return true;
+    }
+    if (paramName =="GENERAL::name")
+    {
+        paramValue = m_GENERAL_name;
+        return true;
+    }
+    if (paramName =="GENERAL::publish_odometry")
+    {
+        if (m_GENERAL_publish_odometry==true) paramValue = "true";
+        else paramValue = "false";
+        return true;
+    }
+    if (paramName =="GENERAL::publish_location")
+    {
+        if (m_GENERAL_publish_location==true) paramValue = "true";
+        else paramValue = "false";
+        return true;
+    }
+
+    yError() <<"parameter '" << paramName << "' was not found";
+    return false;
+
 }
 
 

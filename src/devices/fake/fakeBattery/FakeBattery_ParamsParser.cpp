@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Thu Mar  7 17:59:41 2024
+// Generated on: Wed May 21 11:58:27 2025
 
 
 #include "FakeBattery_ParamsParser.h"
@@ -36,6 +36,50 @@ std::vector<std::string> FakeBattery_ParamsParser::getListOfParams() const
     params.push_back("info");
     params.push_back("rpc_port_name");
     return params;
+}
+
+
+bool FakeBattery_ParamsParser::getParamValue(const std::string& paramName, std::string& paramValue) const
+{
+    if (paramName =="period")
+    {
+        paramValue = std::to_string(m_period);
+        return true;
+    }
+    if (paramName =="charge")
+    {
+        paramValue = std::to_string(m_charge);
+        return true;
+    }
+    if (paramName =="voltage")
+    {
+        paramValue = std::to_string(m_voltage);
+        return true;
+    }
+    if (paramName =="current")
+    {
+        paramValue = std::to_string(m_current);
+        return true;
+    }
+    if (paramName =="temperature")
+    {
+        paramValue = std::to_string(m_temperature);
+        return true;
+    }
+    if (paramName =="info")
+    {
+        paramValue = m_info;
+        return true;
+    }
+    if (paramName =="rpc_port_name")
+    {
+        paramValue = m_rpc_port_name;
+        return true;
+    }
+
+    yError() <<"parameter '" << paramName << "' was not found";
+    return false;
+
 }
 
 

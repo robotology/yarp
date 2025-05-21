@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Mon Sep 16 16:44:50 2024
+// Generated on: Wed May 21 11:58:30 2025
 
 
 #include "FakeFrameGrabber_ParamsParser.h"
@@ -54,7 +54,6 @@ std::vector<std::string> FakeFrameGrabber_ParamsParser::getListOfParams() const
     params.push_back("fakeFrameGrabber_rpc_port");
     params.push_back("mirror");
     params.push_back("syncro");
-    params.push_back("topIsLow");
     params.push_back("physFocalLength");
     params.push_back("focalLengthX");
     params.push_back("focalLengthY");
@@ -77,6 +76,159 @@ std::vector<std::string> FakeFrameGrabber_ParamsParser::getListOfParams() const
     params.push_back("snr");
     params.push_back("rectificationMatrix");
     return params;
+}
+
+
+bool FakeFrameGrabber_ParamsParser::getParamValue(const std::string& paramName, std::string& paramValue) const
+{
+    if (paramName =="width")
+    {
+        paramValue = std::to_string(m_width);
+        return true;
+    }
+    if (paramName =="height")
+    {
+        paramValue = std::to_string(m_height);
+        return true;
+    }
+    if (paramName =="horizontalFov")
+    {
+        paramValue = std::to_string(m_horizontalFov);
+        return true;
+    }
+    if (paramName =="verticalFov")
+    {
+        paramValue = std::to_string(m_verticalFov);
+        return true;
+    }
+    if (paramName =="fakeFrameGrabber_rpc_port")
+    {
+        paramValue = m_fakeFrameGrabber_rpc_port;
+        return true;
+    }
+    if (paramName =="mirror")
+    {
+        if (m_mirror==true) paramValue = "true";
+        else paramValue = "false";
+        return true;
+    }
+    if (paramName =="syncro")
+    {
+        if (m_syncro==true) paramValue = "true";
+        else paramValue = "false";
+        return true;
+    }
+    if (paramName =="physFocalLength")
+    {
+        paramValue = std::to_string(m_physFocalLength);
+        return true;
+    }
+    if (paramName =="focalLengthX")
+    {
+        paramValue = std::to_string(m_focalLengthX);
+        return true;
+    }
+    if (paramName =="focalLengthY")
+    {
+        paramValue = std::to_string(m_focalLengthY);
+        return true;
+    }
+    if (paramName =="principalPointX")
+    {
+        paramValue = std::to_string(m_principalPointX);
+        return true;
+    }
+    if (paramName =="principalPointY")
+    {
+        paramValue = std::to_string(m_principalPointY);
+        return true;
+    }
+    if (paramName =="distortionModel")
+    {
+        paramValue = m_distortionModel;
+        return true;
+    }
+    if (paramName =="k1")
+    {
+        paramValue = std::to_string(m_k1);
+        return true;
+    }
+    if (paramName =="k2")
+    {
+        paramValue = std::to_string(m_k2);
+        return true;
+    }
+    if (paramName =="k3")
+    {
+        paramValue = std::to_string(m_k3);
+        return true;
+    }
+    if (paramName =="t1")
+    {
+        paramValue = std::to_string(m_t1);
+        return true;
+    }
+    if (paramName =="t2")
+    {
+        paramValue = std::to_string(m_t2);
+        return true;
+    }
+    if (paramName =="freq")
+    {
+        paramValue = std::to_string(m_freq);
+        return true;
+    }
+    if (paramName =="period")
+    {
+        paramValue = std::to_string(m_period);
+        return true;
+    }
+    if (paramName =="mode")
+    {
+        paramValue = m_mode;
+        return true;
+    }
+    if (paramName =="src")
+    {
+        paramValue = m_src;
+        return true;
+    }
+    if (paramName =="add_timestamp")
+    {
+        if (m_add_timestamp==true) paramValue = "true";
+        else paramValue = "false";
+        return true;
+    }
+    if (paramName =="add_noise")
+    {
+        if (m_add_noise==true) paramValue = "true";
+        else paramValue = "false";
+        return true;
+    }
+    if (paramName =="bayer")
+    {
+        if (m_bayer==true) paramValue = "true";
+        else paramValue = "false";
+        return true;
+    }
+    if (paramName =="mono")
+    {
+        if (m_mono==true) paramValue = "true";
+        else paramValue = "false";
+        return true;
+    }
+    if (paramName =="snr")
+    {
+        paramValue = std::to_string(m_snr);
+        return true;
+    }
+    if (paramName =="rectificationMatrix")
+    {
+    }
+
+    yError() <<"parameter '" << paramName << "' was not found";
+    return false;
+
 }
 
 
@@ -540,7 +692,6 @@ std::string      FakeFrameGrabber_ParamsParser::getDocumentationOfDeviceParams()
     doc = doc + std::string("'fakeFrameGrabber_rpc_port': rpc port for the fakeFrameGrabber\n");
     doc = doc + std::string("'mirror': mirror height of test image\n");
     doc = doc + std::string("'syncro': synchronize producer and consumer, so that all images are used once and only once\n");
-    doc = doc + std::string("'topIsLow': explicitly set the topIsLow field in the images\n");
     doc = doc + std::string("'physFocalLength': Physical focal length\n");
     doc = doc + std::string("'focalLengthX': Horizontal component of the focal length\n");
     doc = doc + std::string("'focalLengthY': Vertical component of the focal length\n");
@@ -564,7 +715,7 @@ std::string      FakeFrameGrabber_ParamsParser::getDocumentationOfDeviceParams()
     doc = doc + std::string("'rectificationMatrix': Matrix that describes the lens' distortion\n");
     doc = doc + std::string("\n");
     doc = doc + std::string("Here are some examples of invocation command with yarpdev, with all params:\n");
-    doc = doc + " yarpdev --device fakeFrameGrabber --width 320 --height 240 --horizontalFov 1.0 --verticalFov 2.0 --fakeFrameGrabber_rpc_port /fakeFrameGrabber/rpc --mirror false --syncro false --topIsLow true --physFocalLength 3.0 --focalLengthX 4.0 --focalLengthY 5.0 --principalPointX 6.0 --principalPointY 7.0 --distortionModel FishEye --k1 8.0 --k2 9.0 --k3 10.0 --t1 11.0 --t2 12.0 --freq 0 --period 0 --mode [line] --src <optional_value> --add_timestamp false --add_noise false --bayer false --mono false --snr 0.5 --rectificationMatrix \" (1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0) \"\n";
+    doc = doc + " yarpdev --device fakeFrameGrabber --width 320 --height 240 --horizontalFov 1.0 --verticalFov 2.0 --fakeFrameGrabber_rpc_port /fakeFrameGrabber/rpc --mirror false --syncro false --physFocalLength 3.0 --focalLengthX 4.0 --focalLengthY 5.0 --principalPointX 6.0 --principalPointY 7.0 --distortionModel FishEye --k1 8.0 --k2 9.0 --k3 10.0 --t1 11.0 --t2 12.0 --freq 0 --period 0 --mode [line] --src <optional_value> --add_timestamp false --add_noise false --bayer false --mono false --snr 0.5 --rectificationMatrix \" (1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0) \"\n";
     doc = doc + std::string("Using only mandatory params:\n");
     doc = doc + " yarpdev --device fakeFrameGrabber\n";
     doc = doc + std::string("=============================================\n\n");    return doc;

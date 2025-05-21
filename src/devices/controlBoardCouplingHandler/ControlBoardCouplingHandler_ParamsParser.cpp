@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Wed Mar  6 13:18:29 2024
+// Generated on: Wed May 21 11:58:46 2025
 
 
 #include "ControlBoardCouplingHandler_ParamsParser.h"
@@ -30,6 +30,20 @@ std::vector<std::string> ControlBoardCouplingHandler_ParamsParser::getListOfPara
     std::vector<std::string> params;
     params.push_back("coupling_device");
     return params;
+}
+
+
+bool ControlBoardCouplingHandler_ParamsParser::getParamValue(const std::string& paramName, std::string& paramValue) const
+{
+    if (paramName =="coupling_device")
+    {
+        paramValue = m_coupling_device;
+        return true;
+    }
+
+    yError() <<"parameter '" << paramName << "' was not found";
+    return false;
+
 }
 
 

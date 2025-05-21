@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Fri Mar  8 16:13:05 2024
+// Generated on: Wed May 21 11:58:44 2025
 
 
 #ifndef AUDIOFROMFILEDEVICE_PARAMSPARSER_H
@@ -76,6 +76,7 @@ public:
     std::string   getDeviceName() const override { return m_device_name; }
     std::string   getDocumentationOfDeviceParams() const override;
     std::vector<std::string> getListOfParams() const override;
+    bool getParamValue(const std::string& paramName, std::string& paramValue) const override;
 };
 
 #endif

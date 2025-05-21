@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Mon Mar 24 13:54:58 2025
+// Generated on: Wed May 21 11:58:41 2025
 
 
 #ifndef ODOMETRY2D_NWC_YARP_PARAMSPARSER_H
@@ -70,6 +70,7 @@ public:
     std::string   getDeviceName() const override { return m_device_name; }
     std::string   getDocumentationOfDeviceParams() const override;
     std::vector<std::string> getListOfParams() const override;
+    bool getParamValue(const std::string& paramName, std::string& paramValue) const override;
 };
 
 #endif

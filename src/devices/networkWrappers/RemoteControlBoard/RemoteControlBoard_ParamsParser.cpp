@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Thu Mar  7 17:59:48 2024
+// Generated on: Wed May 21 11:58:43 2025
 
 
 #include "RemoteControlBoard_ParamsParser.h"
@@ -44,6 +44,94 @@ std::vector<std::string> RemoteControlBoard_ParamsParser::getListOfParams() cons
     params.push_back("ignoreProtocolCheck");
     params.push_back("diagnostic");
     return params;
+}
+
+
+bool RemoteControlBoard_ParamsParser::getParamValue(const std::string& paramName, std::string& paramValue) const
+{
+    if (paramName =="remote")
+    {
+        paramValue = m_remote;
+        return true;
+    }
+    if (paramName =="local")
+    {
+        paramValue = m_local;
+        return true;
+    }
+    if (paramName =="writeStrict")
+    {
+        paramValue = m_writeStrict;
+        return true;
+    }
+    if (paramName =="carrier")
+    {
+        paramValue = m_carrier;
+        return true;
+    }
+    if (paramName =="timeout")
+    {
+        paramValue = std::to_string(m_timeout);
+        return true;
+    }
+    if (paramName =="local_qos::enable")
+    {
+        if (m_local_qos_enable==true) paramValue = "true";
+        else paramValue = "false";
+        return true;
+    }
+    if (paramName =="local_qos::thread_priority")
+    {
+        paramValue = std::to_string(m_local_qos_thread_priority);
+        return true;
+    }
+    if (paramName =="local_qos::thread_policy")
+    {
+        paramValue = std::to_string(m_local_qos_thread_policy);
+        return true;
+    }
+    if (paramName =="local_qos::packet_priority")
+    {
+        paramValue = m_local_qos_packet_priority;
+        return true;
+    }
+    if (paramName =="remote_qos::enable")
+    {
+        if (m_remote_qos_enable==true) paramValue = "true";
+        else paramValue = "false";
+        return true;
+    }
+    if (paramName =="remote_qos::thread_priority")
+    {
+        paramValue = std::to_string(m_remote_qos_thread_priority);
+        return true;
+    }
+    if (paramName =="remote_qos::thread_policy")
+    {
+        paramValue = std::to_string(m_remote_qos_thread_policy);
+        return true;
+    }
+    if (paramName =="remote_qos::packet_priority")
+    {
+        paramValue = m_remote_qos_packet_priority;
+        return true;
+    }
+    if (paramName =="ignoreProtocolCheck")
+    {
+        if (m_ignoreProtocolCheck==true) paramValue = "true";
+        else paramValue = "false";
+        return true;
+    }
+    if (paramName =="diagnostic")
+    {
+        if (m_diagnostic==true) paramValue = "true";
+        else paramValue = "false";
+        return true;
+    }
+
+    yError() <<"parameter '" << paramName << "' was not found";
+    return false;
+
 }
 
 

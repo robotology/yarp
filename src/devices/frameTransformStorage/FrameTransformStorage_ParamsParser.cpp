@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Sat Apr  6 12:45:14 2024
+// Generated on: Wed May 21 11:58:45 2025
 
 
 #include "FrameTransformStorage_ParamsParser.h"
@@ -31,6 +31,26 @@ std::vector<std::string> FrameTransformStorage_ParamsParser::getListOfParams() c
     params.push_back("FrameTransform_verbose_debug");
     params.push_back("FrameTransform_container_timeout");
     return params;
+}
+
+
+bool FrameTransformStorage_ParamsParser::getParamValue(const std::string& paramName, std::string& paramValue) const
+{
+    if (paramName =="FrameTransform_verbose_debug")
+    {
+        if (m_FrameTransform_verbose_debug==true) paramValue = "true";
+        else paramValue = "false";
+        return true;
+    }
+    if (paramName =="FrameTransform_container_timeout")
+    {
+        paramValue = std::to_string(m_FrameTransform_container_timeout);
+        return true;
+    }
+
+    yError() <<"parameter '" << paramName << "' was not found";
+    return false;
+
 }
 
 

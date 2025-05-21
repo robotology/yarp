@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Thu May 15 11:11:17 2025
+// Generated on: Wed May 21 11:58:44 2025
 
 
 #include "RobotDescription_nws_yarp_ParamsParser.h"
@@ -30,6 +30,20 @@ std::vector<std::string> RobotDescription_nws_yarp_ParamsParser::getListOfParams
     std::vector<std::string> params;
     params.push_back("local");
     return params;
+}
+
+
+bool RobotDescription_nws_yarp_ParamsParser::getParamValue(const std::string& paramName, std::string& paramValue) const
+{
+    if (paramName =="local")
+    {
+        paramValue = m_local;
+        return true;
+    }
+
+    yError() <<"parameter '" << paramName << "' was not found";
+    return false;
+
 }
 
 

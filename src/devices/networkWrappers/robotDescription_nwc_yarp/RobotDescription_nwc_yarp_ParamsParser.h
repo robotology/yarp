@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Thu May 15 11:11:17 2025
+// Generated on: Wed May 21 11:58:43 2025
 
 
 #ifndef ROBOTDESCRIPTION_NWC_YARP_PARAMSPARSER_H
@@ -23,18 +23,18 @@
 * This class is the parameters parser for class RobotDescription_nwc_yarp.
 *
 * These are the used parameters:
-* | Group name | Parameter name | Type   | Units | Default Value               | Required | Description                                                                            | Notes |
-* |:----------:|:--------------:|:------:|:-----:|:---------------------------:|:--------:|:--------------------------------------------------------------------------------------:|:-----:|
-* | -          | local          | string | -     | /robotDescriptionClient/rpc | 1        | Full port name opened by the device.                                                   | -     |
-* | -          | remote         | string | -     | /robotDescriptionServer/rpc | 1        | Full port name of the port opened on the server side, to which the device connects to. | -     |
+* | Group name | Parameter name | Type   | Units | Default Value                  | Required | Description                                                                            | Notes |
+* |:----------:|:--------------:|:------:|:-----:|:------------------------------:|:--------:|:--------------------------------------------------------------------------------------:|:-----:|
+* | -          | local          | string | -     | /robotDescription_nwc_yarp/rpc | 1        | Full port name opened by the device.                                                   | -     |
+* | -          | remote         | string | -     | /robotDescription_nws_yarp/rpc | 1        | Full port name of the port opened on the server side, to which the device connects to. | -     |
 *
 * The device can be launched by yarpdev using one of the following examples (with and without all optional parameters):
 * \code{.unparsed}
-* yarpdev --device robotDescription_nwc_yarp --local /robotDescriptionClient/rpc --remote /robotDescriptionServer/rpc
+* yarpdev --device robotDescription_nwc_yarp --local /robotDescription_nwc_yarp/rpc --remote /robotDescription_nws_yarp/rpc
 * \endcode
 *
 * \code{.unparsed}
-* yarpdev --device robotDescription_nwc_yarp --local /robotDescriptionClient/rpc --remote /robotDescriptionServer/rpc
+* yarpdev --device robotDescription_nwc_yarp --local /robotDescription_nwc_yarp/rpc --remote /robotDescription_nws_yarp/rpc
 * \endcode
 *
 */
@@ -56,17 +56,18 @@ public:
     };
     const parser_version_type m_parser_version = {};
 
-    const std::string m_local_defaultValue = {"/robotDescriptionClient/rpc"};
-    const std::string m_remote_defaultValue = {"/robotDescriptionServer/rpc"};
+    const std::string m_local_defaultValue = {"/robotDescription_nwc_yarp/rpc"};
+    const std::string m_remote_defaultValue = {"/robotDescription_nws_yarp/rpc"};
 
-    std::string m_local = {"/robotDescriptionClient/rpc"};
-    std::string m_remote = {"/robotDescriptionServer/rpc"};
+    std::string m_local = {"/robotDescription_nwc_yarp/rpc"};
+    std::string m_remote = {"/robotDescription_nws_yarp/rpc"};
 
     bool          parseParams(const yarp::os::Searchable & config) override;
     std::string   getDeviceClassName() const override { return m_device_classname; }
     std::string   getDeviceName() const override { return m_device_name; }
     std::string   getDocumentationOfDeviceParams() const override;
     std::vector<std::string> getListOfParams() const override;
+    bool getParamValue(const std::string& paramName, std::string& paramValue) const override;
 };
 
 #endif

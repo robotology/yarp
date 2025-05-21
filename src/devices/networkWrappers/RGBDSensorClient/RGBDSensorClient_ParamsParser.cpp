@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Thu Mar  7 17:59:49 2024
+// Generated on: Wed May 21 11:58:43 2025
 
 
 #include "RGBDSensorClient_ParamsParser.h"
@@ -38,6 +38,60 @@ std::vector<std::string> RGBDSensorClient_ParamsParser::getListOfParams() const
     params.push_back("ImageCarrier");
     params.push_back("DepthCarrier");
     return params;
+}
+
+
+bool RGBDSensorClient_ParamsParser::getParamValue(const std::string& paramName, std::string& paramValue) const
+{
+    if (paramName =="period")
+    {
+        paramValue = std::to_string(m_period);
+        return true;
+    }
+    if (paramName =="localImagePort")
+    {
+        paramValue = m_localImagePort;
+        return true;
+    }
+    if (paramName =="localDepthPort")
+    {
+        paramValue = m_localDepthPort;
+        return true;
+    }
+    if (paramName =="remoteImagePort")
+    {
+        paramValue = m_remoteImagePort;
+        return true;
+    }
+    if (paramName =="remoteDepthPort")
+    {
+        paramValue = m_remoteDepthPort;
+        return true;
+    }
+    if (paramName =="localRpcPort")
+    {
+        paramValue = m_localRpcPort;
+        return true;
+    }
+    if (paramName =="remoteRpcPort")
+    {
+        paramValue = m_remoteRpcPort;
+        return true;
+    }
+    if (paramName =="ImageCarrier")
+    {
+        paramValue = m_ImageCarrier;
+        return true;
+    }
+    if (paramName =="DepthCarrier")
+    {
+        paramValue = m_DepthCarrier;
+        return true;
+    }
+
+    yError() <<"parameter '" << paramName << "' was not found";
+    return false;
+
 }
 
 

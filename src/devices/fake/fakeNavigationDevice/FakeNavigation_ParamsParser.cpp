@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Thu Mar  7 17:59:43 2024
+// Generated on: Wed May 21 11:58:30 2025
 
 
 #include "FakeNavigation_ParamsParser.h"
@@ -31,6 +31,25 @@ std::vector<std::string> FakeNavigation_ParamsParser::getListOfParams() const
     params.push_back("navigation_time");
     params.push_back("reached_time");
     return params;
+}
+
+
+bool FakeNavigation_ParamsParser::getParamValue(const std::string& paramName, std::string& paramValue) const
+{
+    if (paramName =="navigation_time")
+    {
+        paramValue = std::to_string(m_navigation_time);
+        return true;
+    }
+    if (paramName =="reached_time")
+    {
+        paramValue = std::to_string(m_reached_time);
+        return true;
+    }
+
+    yError() <<"parameter '" << paramName << "' was not found";
+    return false;
+
 }
 
 

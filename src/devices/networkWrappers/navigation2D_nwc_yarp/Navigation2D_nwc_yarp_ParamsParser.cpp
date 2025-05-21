@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Thu Mar  7 17:59:47 2024
+// Generated on: Wed May 21 11:58:41 2025
 
 
 #include "Navigation2D_nwc_yarp_ParamsParser.h"
@@ -33,6 +33,35 @@ std::vector<std::string> Navigation2D_nwc_yarp_ParamsParser::getListOfParams() c
     params.push_back("map_locations_server");
     params.push_back("localization_server");
     return params;
+}
+
+
+bool Navigation2D_nwc_yarp_ParamsParser::getParamValue(const std::string& paramName, std::string& paramValue) const
+{
+    if (paramName =="local")
+    {
+        paramValue = m_local;
+        return true;
+    }
+    if (paramName =="navigation_server")
+    {
+        paramValue = m_navigation_server;
+        return true;
+    }
+    if (paramName =="map_locations_server")
+    {
+        paramValue = m_map_locations_server;
+        return true;
+    }
+    if (paramName =="localization_server")
+    {
+        paramValue = m_localization_server;
+        return true;
+    }
+
+    yError() <<"parameter '" << paramName << "' was not found";
+    return false;
+
 }
 
 

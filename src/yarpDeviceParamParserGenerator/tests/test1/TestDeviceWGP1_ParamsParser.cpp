@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Thu Mar  7 16:55:07 2024
+// Generated on: Wed May 21 11:31:05 2025
 
 
 #include "TestDeviceWGP1_ParamsParser.h"
@@ -130,6 +130,226 @@ std::vector<std::string> TestDeviceWGP1_ParamsParser::getListOfParams() const
     params.push_back("param_vec8");
     params.push_back("param_vec9");
     return params;
+}
+
+
+bool TestDeviceWGP1_ParamsParser::getParamsValue(const std::string& paramName, std::string& paramValue) const
+{
+    if (paramName =="param_1")
+    {
+        paramValue = m_param_1;
+        return true;
+    }
+    if (paramName =="param_2")
+    {
+        paramValue = std::to_string(m_param_2);
+        return true;
+    }
+    if (paramName =="param_3")
+    {
+        if (m_param_3==true) paramValue = "true";
+        else paramValue = "false";
+        return true;
+    }
+    if (paramName =="param_4")
+    {
+        paramValue = std::to_string(m_param_4);
+        return true;
+    }
+    if (paramName =="param_5")
+    {
+        return false;
+    }
+    if (paramName =="param_6")
+    {
+        paramValue = std::to_string(m_param_6);
+        return true;
+    }
+    if (paramName =="param_7")
+    {
+        paramValue = std::to_string(m_param_7);
+        return true;
+    }
+    if (paramName =="group1::param_1")
+    {
+        paramValue = m_group1_param_1;
+        return true;
+    }
+    if (paramName =="group1::param_2")
+    {
+        paramValue = std::to_string(m_group1_param_2);
+        return true;
+    }
+    if (paramName =="group1::param_3")
+    {
+        if (m_group1_param_3==true) paramValue = "true";
+        else paramValue = "false";
+        return true;
+    }
+    if (paramName =="group1::param_4")
+    {
+        paramValue = std::to_string(m_group1_param_4);
+        return true;
+    }
+    if (paramName =="group2::param_1")
+    {
+        paramValue = m_group2_param_1;
+        return true;
+    }
+    if (paramName =="group2::param_2")
+    {
+        paramValue = std::to_string(m_group2_param_2);
+        return true;
+    }
+    if (paramName =="group2::param_3")
+    {
+        if (m_group2_param_3==true) paramValue = "true";
+        else paramValue = "false";
+        return true;
+    }
+    if (paramName =="group2::param_4")
+    {
+        paramValue = std::to_string(m_group2_param_4);
+        return true;
+    }
+    if (paramName =="group3::param_1")
+    {
+        paramValue = m_group3_param_1;
+        return true;
+    }
+    if (paramName =="group3::param_2")
+    {
+        paramValue = std::to_string(m_group3_param_2);
+        return true;
+    }
+    if (paramName =="group3::param_3")
+    {
+        if (m_group3_param_3==true) paramValue = "true";
+        else paramValue = "false";
+        return true;
+    }
+    if (paramName =="group3::param_4")
+    {
+        paramValue = std::to_string(m_group3_param_4);
+        return true;
+    }
+    if (paramName =="group4::subgroup1::param_1")
+    {
+        paramValue = std::to_string(m_group4_subgroup1_param_1);
+        return true;
+    }
+    if (paramName =="group4::subgroup1::param_2")
+    {
+        paramValue = std::to_string(m_group4_subgroup1_param_2);
+        return true;
+    }
+    if (paramName =="group4::subgroup1::param_3")
+    {
+        paramValue = std::to_string(m_group4_subgroup1_param_3);
+        return true;
+    }
+    if (paramName =="group4::subgroup1::param_4")
+    {
+        paramValue = std::to_string(m_group4_subgroup1_param_4);
+        return true;
+    }
+    if (paramName =="group4::subgroup2::param_1")
+    {
+        paramValue = std::to_string(m_group4_subgroup2_param_1);
+        return true;
+    }
+    if (paramName =="group4::subgroup2::param_2")
+    {
+        paramValue = std::to_string(m_group4_subgroup2_param_2);
+        return true;
+    }
+    if (paramName =="group4::subgroup2::param_3")
+    {
+        paramValue = std::to_string(m_group4_subgroup2_param_3);
+        return true;
+    }
+    if (paramName =="group4::subgroup2::param_4")
+    {
+        paramValue = std::to_string(m_group4_subgroup2_param_4);
+        return true;
+    }
+    if (paramName =="group5::subgroup1::param_1")
+    {
+        paramValue = std::to_string(m_group5_subgroup1_param_1);
+        return true;
+    }
+    if (paramName =="group5::subgroup1::param_2")
+    {
+        paramValue = std::to_string(m_group5_subgroup1_param_2);
+        return true;
+    }
+    if (paramName =="group5::subgroup1::param_3")
+    {
+        paramValue = std::to_string(m_group5_subgroup1_param_3);
+        return true;
+    }
+    if (paramName =="group5::subgroup1::param_4")
+    {
+        paramValue = std::to_string(m_group5_subgroup1_param_4);
+        return true;
+    }
+    if (paramName =="group5::subgroup2::param_1")
+    {
+        paramValue = std::to_string(m_group5_subgroup2_param_1);
+        return true;
+    }
+    if (paramName =="group5::subgroup2::param_2")
+    {
+        paramValue = std::to_string(m_group5_subgroup2_param_2);
+        return true;
+    }
+    if (paramName =="group5::subgroup2::param_3")
+    {
+        paramValue = std::to_string(m_group5_subgroup2_param_3);
+        return true;
+    }
+    if (paramName =="group5::subgroup2::param_4")
+    {
+        paramValue = std::to_string(m_group5_subgroup2_param_4);
+        return true;
+    }
+    if (paramName =="param_vec1")
+    {
+        return false;
+    }
+    if (paramName =="param_vec2")
+    {
+    }
+    if (paramName =="param_vec3")
+    {
+        return false;
+    }
+    if (paramName =="param_vec4")
+    {
+        return false;
+    }
+    if (paramName =="param_vec5")
+    {
+    }
+    if (paramName =="param_vec6")
+    {
+        return false;
+    }
+    if (paramName =="param_vec7")
+    {
+        return false;
+    }
+    if (paramName =="param_vec8")
+    {
+    }
+    if (paramName =="param_vec9")
+    {
+        return false;
+    }
+
+    yError() <<"parameter '" << paramName << "' was not found";
+    return false;
+
 }
 
 

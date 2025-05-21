@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Thu Mar  7 17:59:43 2024
+// Generated on: Wed May 21 11:58:37 2025
 
 
 #include "AudioPlayerWrapper_ParamsParser.h"
@@ -34,6 +34,42 @@ std::vector<std::string> AudioPlayerWrapper_ParamsParser::getListOfParams() cons
     params.push_back("playback_network_buffer_size");
     params.push_back("start");
     return params;
+}
+
+
+bool AudioPlayerWrapper_ParamsParser::getParamValue(const std::string& paramName, std::string& paramValue) const
+{
+    if (paramName =="name")
+    {
+        paramValue = m_name;
+        return true;
+    }
+    if (paramName =="period")
+    {
+        paramValue = std::to_string(m_period);
+        return true;
+    }
+    if (paramName =="debug")
+    {
+        if (m_debug==true) paramValue = "true";
+        else paramValue = "false";
+        return true;
+    }
+    if (paramName =="playback_network_buffer_size")
+    {
+        paramValue = std::to_string(m_playback_network_buffer_size);
+        return true;
+    }
+    if (paramName =="start")
+    {
+        if (m_start==true) paramValue = "true";
+        else paramValue = "false";
+        return true;
+    }
+
+    yError() <<"parameter '" << paramName << "' was not found";
+    return false;
+
 }
 
 

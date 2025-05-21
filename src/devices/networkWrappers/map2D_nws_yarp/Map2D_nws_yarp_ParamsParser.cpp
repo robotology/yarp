@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Thu Mar  7 17:59:47 2024
+// Generated on: Wed May 21 11:58:41 2025
 
 
 #include "Map2D_nws_yarp_ParamsParser.h"
@@ -30,6 +30,20 @@ std::vector<std::string> Map2D_nws_yarp_ParamsParser::getListOfParams() const
     std::vector<std::string> params;
     params.push_back("name");
     return params;
+}
+
+
+bool Map2D_nws_yarp_ParamsParser::getParamValue(const std::string& paramName, std::string& paramValue) const
+{
+    if (paramName =="name")
+    {
+        paramValue = m_name;
+        return true;
+    }
+
+    yError() <<"parameter '" << paramName << "' was not found";
+    return false;
+
 }
 
 

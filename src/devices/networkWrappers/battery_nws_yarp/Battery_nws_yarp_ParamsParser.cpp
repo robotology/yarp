@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Thu Mar  7 17:59:44 2024
+// Generated on: Wed May 21 11:58:38 2025
 
 
 #include "Battery_nws_yarp_ParamsParser.h"
@@ -34,6 +34,42 @@ std::vector<std::string> Battery_nws_yarp_ParamsParser::getListOfParams() const
     params.push_back("enable_log");
     params.push_back("quitPortName");
     return params;
+}
+
+
+bool Battery_nws_yarp_ParamsParser::getParamValue(const std::string& paramName, std::string& paramValue) const
+{
+    if (paramName =="name")
+    {
+        paramValue = m_name;
+        return true;
+    }
+    if (paramName =="period")
+    {
+        paramValue = std::to_string(m_period);
+        return true;
+    }
+    if (paramName =="enable_shutdown")
+    {
+        if (m_enable_shutdown==true) paramValue = "true";
+        else paramValue = "false";
+        return true;
+    }
+    if (paramName =="enable_log")
+    {
+        if (m_enable_log==true) paramValue = "true";
+        else paramValue = "false";
+        return true;
+    }
+    if (paramName =="quitPortName")
+    {
+        paramValue = m_quitPortName;
+        return true;
+    }
+
+    yError() <<"parameter '" << paramName << "' was not found";
+    return false;
+
 }
 
 

@@ -164,6 +164,7 @@ public:\n";
     std::string   getDeviceName() const override { return m_device_name; }\n\
     std::string   getDocumentationOfDeviceParams() const override;\n\
     std::vector<std::string> getListOfParams() const override;\n\
+    bool getParamValue(const std::string& paramName, std::string& paramValue) const override;\n\
 };\n\
 ";
 

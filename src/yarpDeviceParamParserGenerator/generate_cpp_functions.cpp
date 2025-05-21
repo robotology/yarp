@@ -82,6 +82,69 @@ s << S_TAB1 << "return params;\n\
     return s.str();
 }
 
+std::string ParamsFilesGenerator::generateFunction_getParamValue()
+{
+    std::ostringstream s;
+    ADD_DEBUG_COMMENT(s)
+    s << "\n\
+bool "
+      << m_classname << "_ParamsParser::getParamValue(const std::string& paramName, std::string& paramValue) const\n\
+{\n";
+
+    if (m_params.size() == 0)
+    {
+        s << S_TAB1 << "return false\n\
+}\n\
+\n\
+";
+    }
+
+    ADD_DEBUG_COMMENT(s)
+    for (const auto& param : m_params)
+    {
+        s << S_TAB1 << "if (paramName ==\"" << param.getFullParamName() << "\")\n";
+        s << S_TAB1 << "{\n";
+        if (param.type == "string") {
+            s << S_TAB1 << "    paramValue = m_" << param.getFullParamVariable() << ";\n";
+            s << S_TAB1 << "    return true;\n";
+        } else if (param.type == "bool") {
+            s << S_TAB1 << "    if (m_" << param.getFullParamVariable() << "==true) paramValue = \"true\";\n";
+            s << S_TAB1 << "    else paramValue = \"false\";\n";
+            s << S_TAB1 << "    return true;\n";
+        } else if (param.type == "double") {
+            s << S_TAB1 << "    paramValue = std::to_string(m_" << param.getFullParamVariable() << ");\n";
+            s << S_TAB1 << "    return true;\n";
+        } else if (param.type == "int") {
+            s << S_TAB1 << "    paramValue = std::to_string(m_" << param.getFullParamVariable() << ");\n";
+            s << S_TAB1 << "    return true;\n";
+        } else if (param.type == "size_t") {
+            s << S_TAB1 << "    paramValue = std::to_string(m_" << param.getFullParamVariable() << ");\n";
+            s << S_TAB1 << "    return true;\n";
+        } else if (param.type == "float") {
+            s << S_TAB1 << "    paramValue = std::to_string(m_" << param.getFullParamVariable() << ");\n";
+            s << S_TAB1 << "    return true;\n";
+        } else if (param.type == "char") {
+            s << S_TAB1 << "    return false;\n";
+        } else if (param.type == "vector<int>") {
+            s << S_TAB1 << "    return false;\n";
+        } else if (param.type == "vector<string>") {
+            s << S_TAB1 << "    return false;\n";
+        } else if (param.type == "vector<double>") {
+            s << S_TAB1 << "    return false;\n";
+        }
+        s << S_TAB1 << "}\n";
+    }
+    s << "\n";
+    s << S_TAB1 << "yError() <<" << "\"parameter '\" << paramName << \"' was not found\";\n";
+    s << S_TAB1 << "return false;\n";
+    s << "\n\
+}\n\
+\n\
+";
+
+    return s.str();
+}
+
 std::string ParamsFilesGenerator::generateFunction_getDocumentationOfDeviceParams()
 {
     std::ostringstream s;

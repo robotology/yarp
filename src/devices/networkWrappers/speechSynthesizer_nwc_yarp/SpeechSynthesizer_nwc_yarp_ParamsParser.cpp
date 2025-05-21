@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Thu Mar  7 17:59:48 2024
+// Generated on: Wed May 21 11:58:42 2025
 
 
 #include "SpeechSynthesizer_nwc_yarp_ParamsParser.h"
@@ -31,6 +31,25 @@ std::vector<std::string> SpeechSynthesizer_nwc_yarp_ParamsParser::getListOfParam
     params.push_back("local");
     params.push_back("remote");
     return params;
+}
+
+
+bool SpeechSynthesizer_nwc_yarp_ParamsParser::getParamValue(const std::string& paramName, std::string& paramValue) const
+{
+    if (paramName =="local")
+    {
+        paramValue = m_local;
+        return true;
+    }
+    if (paramName =="remote")
+    {
+        paramValue = m_remote;
+        return true;
+    }
+
+    yError() <<"parameter '" << paramName << "' was not found";
+    return false;
+
 }
 
 

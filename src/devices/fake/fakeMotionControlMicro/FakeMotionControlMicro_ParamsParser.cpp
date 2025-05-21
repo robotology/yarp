@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Thu Mar  7 17:59:40 2024
+// Generated on: Wed May 21 11:58:26 2025
 
 
 #include "FakeMotionControlMicro_ParamsParser.h"
@@ -34,6 +34,36 @@ std::vector<std::string> FakeMotionControlMicro_ParamsParser::getListOfParams() 
     params.push_back("GENERAL::AxisType");
     params.push_back("GENERAL::Encoder");
     return params;
+}
+
+
+bool FakeMotionControlMicro_ParamsParser::getParamValue(const std::string& paramName, std::string& paramValue) const
+{
+    if (paramName =="GENERAL::Joints")
+    {
+        paramValue = std::to_string(m_GENERAL_Joints);
+        return true;
+    }
+    if (paramName =="GENERAL::AxisMap")
+    {
+        return false;
+    }
+    if (paramName =="GENERAL::AxisName")
+    {
+        return false;
+    }
+    if (paramName =="GENERAL::AxisType")
+    {
+        return false;
+    }
+    if (paramName =="GENERAL::Encoder")
+    {
+        return false;
+    }
+
+    yError() <<"parameter '" << paramName << "' was not found";
+    return false;
+
 }
 
 

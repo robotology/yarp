@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Thu Mar  7 17:59:40 2024
+// Generated on: Wed May 21 11:58:26 2025
 
 
 #include "FakeDepthCameraDriver_ParamsParser.h"
@@ -40,6 +40,70 @@ std::vector<std::string> FakeDepthCameraDriver_ParamsParser::getListOfParams() c
     params.push_back("dep_near");
     params.push_back("dep_far");
     return params;
+}
+
+
+bool FakeDepthCameraDriver_ParamsParser::getParamValue(const std::string& paramName, std::string& paramValue) const
+{
+    if (paramName =="rgb_h")
+    {
+        paramValue = std::to_string(m_rgb_h);
+        return true;
+    }
+    if (paramName =="rgb_w")
+    {
+        paramValue = std::to_string(m_rgb_w);
+        return true;
+    }
+    if (paramName =="dep_h")
+    {
+        paramValue = std::to_string(m_dep_h);
+        return true;
+    }
+    if (paramName =="dep_w")
+    {
+        paramValue = std::to_string(m_dep_w);
+        return true;
+    }
+    if (paramName =="accuracy")
+    {
+        paramValue = std::to_string(m_accuracy);
+        return true;
+    }
+    if (paramName =="rgb_Vfov")
+    {
+        paramValue = std::to_string(m_rgb_Vfov);
+        return true;
+    }
+    if (paramName =="rgb_Hfov")
+    {
+        paramValue = std::to_string(m_rgb_Hfov);
+        return true;
+    }
+    if (paramName =="dep_Vfov")
+    {
+        paramValue = std::to_string(m_dep_Vfov);
+        return true;
+    }
+    if (paramName =="dep_Hfov")
+    {
+        paramValue = std::to_string(m_dep_Hfov);
+        return true;
+    }
+    if (paramName =="dep_near")
+    {
+        paramValue = std::to_string(m_dep_near);
+        return true;
+    }
+    if (paramName =="dep_far")
+    {
+        paramValue = std::to_string(m_dep_far);
+        return true;
+    }
+
+    yError() <<"parameter '" << paramName << "' was not found";
+    return false;
+
 }
 
 

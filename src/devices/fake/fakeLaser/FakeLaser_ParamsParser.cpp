@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Thu Mar  7 17:59:42 2024
+// Generated on: Wed May 21 11:58:29 2025
 
 
 #include "FakeLaser_ParamsParser.h"
@@ -40,6 +40,70 @@ std::vector<std::string> FakeLaser_ParamsParser::getListOfParams() const
     params.push_back("GENERAL::period");
     params.push_back("CONSTANT_MODE::const_distance");
     return params;
+}
+
+
+bool FakeLaser_ParamsParser::getParamValue(const std::string& paramName, std::string& paramValue) const
+{
+    if (paramName =="test")
+    {
+        paramValue = m_test;
+        return true;
+    }
+    if (paramName =="localization_port")
+    {
+        paramValue = m_localization_port;
+        return true;
+    }
+    if (paramName =="localization_server")
+    {
+        paramValue = m_localization_server;
+        return true;
+    }
+    if (paramName =="localization_client")
+    {
+        paramValue = m_localization_client;
+        return true;
+    }
+    if (paramName =="localization_device")
+    {
+        paramValue = m_localization_device;
+        return true;
+    }
+    if (paramName =="MAP_MODE::map_file")
+    {
+        paramValue = m_MAP_MODE_map_file;
+        return true;
+    }
+    if (paramName =="MAP_MODE::map_context")
+    {
+        paramValue = m_MAP_MODE_map_context;
+        return true;
+    }
+    if (paramName =="clip_max")
+    {
+        paramValue = std::to_string(m_clip_max);
+        return true;
+    }
+    if (paramName =="clip_min")
+    {
+        paramValue = std::to_string(m_clip_min);
+        return true;
+    }
+    if (paramName =="GENERAL::period")
+    {
+        paramValue = std::to_string(m_GENERAL_period);
+        return true;
+    }
+    if (paramName =="CONSTANT_MODE::const_distance")
+    {
+        paramValue = std::to_string(m_CONSTANT_MODE_const_distance);
+        return true;
+    }
+
+    yError() <<"parameter '" << paramName << "' was not found";
+    return false;
+
 }
 
 

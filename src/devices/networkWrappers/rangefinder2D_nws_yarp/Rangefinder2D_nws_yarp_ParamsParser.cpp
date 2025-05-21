@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Thu Mar  7 17:59:45 2024
+// Generated on: Wed May 21 11:58:39 2025
 
 
 #include "Rangefinder2D_nws_yarp_ParamsParser.h"
@@ -32,6 +32,30 @@ std::vector<std::string> Rangefinder2D_nws_yarp_ParamsParser::getListOfParams() 
     params.push_back("name");
     params.push_back("frame_id");
     return params;
+}
+
+
+bool Rangefinder2D_nws_yarp_ParamsParser::getParamValue(const std::string& paramName, std::string& paramValue) const
+{
+    if (paramName =="period")
+    {
+        paramValue = std::to_string(m_period);
+        return true;
+    }
+    if (paramName =="name")
+    {
+        paramValue = m_name;
+        return true;
+    }
+    if (paramName =="frame_id")
+    {
+        paramValue = m_frame_id;
+        return true;
+    }
+
+    yError() <<"parameter '" << paramName << "' was not found";
+    return false;
+
 }
 
 

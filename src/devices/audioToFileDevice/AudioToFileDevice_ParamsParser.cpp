@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Fri Mar  8 16:13:05 2024
+// Generated on: Wed May 21 11:58:44 2025
 
 
 #include "AudioToFileDevice_ParamsParser.h"
@@ -32,6 +32,31 @@ std::vector<std::string> AudioToFileDevice_ParamsParser::getListOfParams() const
     params.push_back("save_mode");
     params.push_back("add_marker");
     return params;
+}
+
+
+bool AudioToFileDevice_ParamsParser::getParamValue(const std::string& paramName, std::string& paramValue) const
+{
+    if (paramName =="file_name")
+    {
+        paramValue = m_file_name;
+        return true;
+    }
+    if (paramName =="save_mode")
+    {
+        paramValue = m_save_mode;
+        return true;
+    }
+    if (paramName =="add_marker")
+    {
+        if (m_add_marker==true) paramValue = "true";
+        else paramValue = "false";
+        return true;
+    }
+
+    yError() <<"parameter '" << paramName << "' was not found";
+    return false;
+
 }
 
 

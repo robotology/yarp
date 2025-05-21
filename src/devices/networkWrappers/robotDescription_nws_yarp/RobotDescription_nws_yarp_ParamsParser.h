@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Thu May 15 11:11:17 2025
+// Generated on: Wed May 21 11:58:44 2025
 
 
 #ifndef ROBOTDESCRIPTION_NWS_YARP_PARAMSPARSER_H
@@ -64,6 +64,7 @@ public:
     std::string   getDeviceName() const override { return m_device_name; }
     std::string   getDocumentationOfDeviceParams() const override;
     std::vector<std::string> getListOfParams() const override;
+    bool getParamValue(const std::string& paramName, std::string& paramValue) const override;
 };
 
 #endif

@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Thu Mar  7 17:59:40 2024
+// Generated on: Wed May 21 11:58:26 2025
 
 
 #include "FakeMotionControl_ParamsParser.h"
@@ -38,6 +38,48 @@ std::vector<std::string> FakeMotionControl_ParamsParser::getListOfParams() const
     params.push_back("LIMITS::Max");
     params.push_back("LIMITS::Min");
     return params;
+}
+
+
+bool FakeMotionControl_ParamsParser::getParamValue(const std::string& paramName, std::string& paramValue) const
+{
+    if (paramName =="GENERAL::Joints")
+    {
+        paramValue = std::to_string(m_GENERAL_Joints);
+        return true;
+    }
+    if (paramName =="GENERAL::AxisMap")
+    {
+        return false;
+    }
+    if (paramName =="GENERAL::AxisName")
+    {
+        return false;
+    }
+    if (paramName =="GENERAL::AxisType")
+    {
+        return false;
+    }
+    if (paramName =="GENERAL::ampsToSensor")
+    {
+    }
+    if (paramName =="GENERAL::fullscalePWM")
+    {
+    }
+    if (paramName =="GENERAL::Encoder")
+    {
+        return false;
+    }
+    if (paramName =="LIMITS::Max")
+    {
+    }
+    if (paramName =="LIMITS::Min")
+    {
+    }
+
+    yError() <<"parameter '" << paramName << "' was not found";
+    return false;
+
 }
 
 
