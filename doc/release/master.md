@@ -74,6 +74,6 @@ Breaking Changes
   - `LLM_nws_yarp`
   - `RobotDescriptionServer` refactored to `RobotDescription_nws_yarp`
   - `RobotDescriptionClient` refactored to `RobotDescription_nwc_yarp`
-
 * The `attachAll()` mechanism used to keep track of the devices opened by yarprobotinterface (previously implemented by `RobotDescriptionServer`)
   has been transferred to `RobotDescriptionStorage`.
+* device 'opencv_grabber` has been renamed to `openCVGrabber`
