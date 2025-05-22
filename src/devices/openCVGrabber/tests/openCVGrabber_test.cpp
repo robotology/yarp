@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: 2025-2025 Istituto Italiano di Tecnologia (IIT)
+ * SPDX-FileCopyrightText: 2006-2021 Istituto Italiano di Tecnologia (IIT)
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
@@ -15,30 +15,25 @@
 using namespace yarp::dev;
 using namespace yarp::os;
 
-TEST_CASE("dev::opencvWriterTest", "[yarp::dev]")
+TEST_CASE("dev::openCVGrabberTest", "[yarp::dev]")
 {
-    YARP_REQUIRE_PLUGIN("opencv_writer", "device");
+    YARP_REQUIRE_PLUGIN("openCVGrabber", "device");
 
     Network::setLocalMode(true);
 
-    SECTION("Checking opencv_writer device")
+    SECTION("Checking openCVGrabber device, opening an avi file")
     {
         PolyDriver dd;
 
         yarp::os::ResourceFinder res;
-
-        //This is not yet used
-        res.setDefaultContext("tests/opencvWriter");
+        res.setDefaultContext("tests/openCVGrabber");
         std::string filepath = res.findFileByName("test.avi");
 
         ////////"Checking opening polydriver"
         {
             Property cfg;
-            cfg.put("device", "opencvWriter");
-            cfg.put("framerate", 30);
-            cfg.put("width", 320);
-            cfg.put("height", 240);
-            cfg.put("filename", filepath);
+            cfg.put("device", "openCVGrabber");
+            cfg.put("movie", filepath);
             REQUIRE(dd.open(cfg));
         }
 
