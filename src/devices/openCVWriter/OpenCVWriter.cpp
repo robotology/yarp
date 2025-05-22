@@ -57,26 +57,6 @@ bool OpenCVWriter::open(Searchable & config)
         return false;
     }
 
-    if (m_width == 0)
-    {
-        yCError(OPENCVWRITER) << "Invalid width 0";
-        return false;
-    }
-
-    if (m_height == 0)
-    {
-        yCError(OPENCVWRITER) << "Invalid height 0";
-        return false;
-    }
-
-    m_writer.open(m_filename, cv::VideoWriter::fourcc('M', 'J', 'P', 'G'), m_framerate, cv::Size(m_width, m_height));
-    if (!m_writer.isOpened())
-    {
-        yCError(OPENCVWRITER, "Unable to open output file");
-        return false;
-    }
-    m_isInitialized = true;
-
     yCInfo(OPENCVWRITER, "OpenCVWriter opened");
     return true;
 }
@@ -93,21 +73,40 @@ bool OpenCVWriter::close()
 
 bool OpenCVWriter::putImage(ImageOf<PixelRgb> & image)
 {
-    cv::Mat frame(m_height, m_width, CV_8UC3, (void*)image.getRawImage());
-        cv::cvtColor(frame, frame, cv::COLOR_RGB2BGR);
-
-    if (frame.empty())
-    {
+    if (image.width() == 0 || image.height() == 0) {
         yCError(OPENCVWRITER) << "Received empty frame";
         return false;
     }
 
-    if (frame.cols != m_width || frame.rows != m_height)
+    if (m_width == 0) {
+        m_width = image.width();
+    }
+    if (m_height == 0) {
+        m_height = image.height();
+    }
+
+    if (!m_isInitialized)
     {
-        yCError(OPENCVWRITER) << "Invalid frame size";
+        m_writer.open(m_filename, cv::VideoWriter::fourcc('M', 'J', 'P', 'G'), m_framerate, cv::Size(m_width, m_height));
+        if (!m_writer.isOpened()) {
+            yCError(OPENCVWRITER, "Unable to open output file");
+            return false;
+        }
+        m_isInitialized = true;
+    }
+
+    if (m_width != image.width()) {
+        yCError(OPENCVWRITER) << "Received frame has a width different from the current configuration" << m_width << "<<" << image.width();
+        return false;
+    }
+    if (m_height != image.height()) {
+        yCError(OPENCVWRITER) << "Received frame has a height different from the current configuration: " << m_height << "<<" << image.height();
         return false;
     }
 
+    //process the frame
+    cv::Mat frame(m_height, m_width, CV_8UC3, (void*)image.getRawImage());
+    cv::cvtColor(frame, frame, cv::COLOR_RGB2BGR);
     m_writer.write(frame);
 
     return true;

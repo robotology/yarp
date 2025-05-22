@@ -36,9 +36,7 @@ public:
     bool putImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image) override;
 
 protected:
-    int  m_width;
-    int  vheight;
-    bool m_isInitialized;
+    bool m_isInitialized =false;
 };
 
 #endif // YARP_OPENCV_DEVICE_OPENCVWRITER_H

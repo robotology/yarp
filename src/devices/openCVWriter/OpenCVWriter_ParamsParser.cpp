@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Thu May 22 20:45:27 2025
+// Generated on: Thu May 22 22:41:38 2025
 
 
 #include "OpenCVWriter_ParamsParser.h"

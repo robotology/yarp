@@ -40,7 +40,7 @@ public:
 
 protected:
     cv::VideoWriter m_writer;
-    bool m_isInitialized;
+    bool m_isInitialized =false;
 };
 
 #endif // YARP_OPENCV_DEVICE_OPENCVWRITER_H

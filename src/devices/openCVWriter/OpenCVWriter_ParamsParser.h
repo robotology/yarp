@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Thu May 22 20:45:27 2025
+// Generated on: Thu May 22 22:41:38 2025
 
 
 #ifndef OPENCVWRITER_PARAMSPARSER_H
@@ -23,12 +23,12 @@
 * This class is the parameters parser for class OpenCVWriter.
 *
 * These are the used parameters:
-* | Group name | Parameter name | Type   | Units | Default Value | Required | Description                   | Notes |
-* |:----------:|:--------------:|:------:|:-----:|:-------------:|:--------:|:-----------------------------:|:-----:|
-* | -          | filename       | string | -     | output.avi    | 0        | output file name              | -     |
-* | -          | framerate      | double | -     | 30            | 0        | framerate for the output file | -     |
-* | -          | width          | int    | -     | 0             | 0        | frame width                   | -     |
-* | -          | height         | int    | -     | 0             | 0        | frame height                  | -     |
+* | Group name | Parameter name | Type   | Units | Default Value | Required | Description                   | Notes                                                              |
+* |:----------:|:--------------:|:------:|:-----:|:-------------:|:--------:|:-----------------------------:|:------------------------------------------------------------------:|
+* | -          | filename       | string | -     | output.avi    | 0        | output file name              | -                                                                  |
+* | -          | framerate      | double | -     | 30            | 0        | framerate for the output file | -                                                                  |
+* | -          | width          | int    | -     | 0             | 0        | frame width                   | if 0, it will automatically detected from the first received frame |
+* | -          | height         | int    | -     | 0             | 0        | frame height                  | if 0, it will automatically detected from the first received frame |
 *
 * The device can be launched by yarpdev using one of the following examples (with and without all optional parameters):
 * \code{.unparsed}

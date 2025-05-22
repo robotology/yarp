@@ -49,18 +49,6 @@ bool FakeFrameWriter::open(Searchable& config)
         return false;
     }
 
-    if (m_width == 0) {
-        yCError(FAKEIMAGEWRITER) << "Invalid width 0";
-        return false;
-    }
-
-    if (m_height == 0) {
-        yCError(FAKEIMAGEWRITER) << "Invalid height 0";
-        return false;
-    }
-
-    m_isInitialized = true;
-
     yCInfo(FAKEIMAGEWRITER, "FakeFrameWriter opened");
     return true;
 }
@@ -76,14 +64,30 @@ bool FakeFrameWriter::close()
 
 bool FakeFrameWriter::putImage(ImageOf<PixelRgb>& image)
 {
-    yCDebug(FAKEIMAGEWRITER) << "Frame received:" << image.width() << image.height();
-
-    if (image.width() != m_width ||
-        image.height() != m_height)
-    {
-        yCDebug(FAKEIMAGEWRITER) << "Invalid frame size: current configuration is:" << m_width << " " << m_height;
+    if (image.width() == 0 || image.height() == 0) {
+        yCError(FAKEIMAGEWRITER) << "Received empty frame";
         return false;
     }
+
+    if (m_width == 0)  {m_width = image.width();}
+    if (m_height == 0) {m_height = image.height();}
+
+    if (!m_isInitialized)
+    {
+        m_isInitialized = true;
+    }
+
+    if (m_width != image.width())
+    {
+        yCError(FAKEIMAGEWRITER) << "Received frame has a width different from the current configuration" << m_width << "<<" << image.width();
+        return false;
+    }
+    if (m_height != image.height()) {
+        yCError(FAKEIMAGEWRITER) << "Received frame has a height different from the current configuration: " << m_height << "<<" << image.height();
+        return false;
+    }
+
+    yCDebug(FAKEIMAGEWRITER) << "Frame received:" << image.width() << image.height();
 
     return true;
 }
