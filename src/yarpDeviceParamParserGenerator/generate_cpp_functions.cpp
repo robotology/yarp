@@ -82,7 +82,25 @@ s << S_TAB1 << "return params;\n\
     return s.str();
 }
 
-std::string ParamsFilesGenerator::generateFunction_getParamValue()
+std::string ParamsFilesGenerator::generateFunction_getConfiguration()
+{
+    std::ostringstream s;
+    ADD_DEBUG_COMMENT(s)
+    s << "\n\
+std::string "
+      << m_classname << "_ParamsParser::getConfiguration() const\n\
+{\n";
+    s << S_TAB1 << "//This is a sub-optimal solution.\n";
+    s << S_TAB1 << "//Ideally getConfiguration() should return all parameters but it is currently\n";
+    s << S_TAB1 << "//returning only user provided parameters (excluding default values)\n";
+    s << S_TAB1 << "//This behaviour will be fixed in the near future.\n";
+    s << S_TAB1 << "std::string s_cfg = m_provided_configuration;\n";
+    s << S_TAB1 << "return s_cfg;\n";
+    s << "}\n";
+    return s.str();
+}
+
+    std::string ParamsFilesGenerator::generateFunction_getParamValue()
 {
     std::ostringstream s;
     ADD_DEBUG_COMMENT(s)
@@ -369,8 +387,8 @@ bool      "<< m_classname << "_ParamsParser::parseParams(const yarp::os::Searcha
     s << "\n";
 
     ADD_DEBUG_COMMENT(s)
-    s << S_TAB1 << "std::string config_string = config.toString();\n";
-    s << S_TAB1 << "yarp::os::Property prop_check(config_string.c_str());\n";
+    s << S_TAB1 << "m_provided_configuration = config.toString();\n";
+    s << S_TAB1 << "yarp::os::Property prop_check(m_provided_configuration.c_str());\n";
 
     ADD_DEBUG_COMMENT(s)
     auto copy_of_m_params = m_params;

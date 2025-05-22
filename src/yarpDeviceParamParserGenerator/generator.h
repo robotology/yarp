@@ -52,6 +52,7 @@ public:
     std::string generateConstructor();
     std::string generateFunction_getListOfParams();
     std::string generateFunction_getParamValue();
+    std::string generateFunction_getConfiguration();
     std::string generateFunction_parseParams();
     std::string generateFunction_getDeviceType() { return ""; };
     std::string generateFunction_getDocumentationOfDeviceParams();

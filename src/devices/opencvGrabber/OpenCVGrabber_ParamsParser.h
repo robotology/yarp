@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Wed May 21 14:05:00 2025
+// Generated on: Thu May 22 11:32:46 2025
 
 
 #ifndef OPENCVGRABBER_PARAMSPARSER_H
@@ -63,6 +63,8 @@ public:
     };
     const parser_version_type m_parser_version = {};
 
+    std::string m_provided_configuration;
+
     const std::string m_movie_defaultValue = {""};
     const std::string m_loop_defaultValue = {"false"};
     const std::string m_camera_defaultValue = {"0"};
@@ -89,6 +91,7 @@ public:
     std::string   getDocumentationOfDeviceParams() const override;
     std::vector<std::string> getListOfParams() const override;
     bool getParamValue(const std::string& paramName, std::string& paramValue) const override;
+    std::string   getConfiguration() const override;
 };
 
 #endif

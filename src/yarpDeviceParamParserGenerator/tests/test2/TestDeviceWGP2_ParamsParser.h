@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Wed May 21 12:33:46 2025
+// Generated on: Thu May 22 11:34:45 2025
 
 
 #ifndef TESTDEVICEWGP2_PARAMSPARSER_H
@@ -70,6 +70,8 @@ public:
     };
     const parser_version_type m_parser_version = {};
 
+    std::string m_provided_configuration;
+
     const std::string m_param_vec4_defaultValue = {"(1 2 3)"};
     const std::string m_param_vec5_defaultValue = {"(1.0 2.0 3.0)"};
     const std::string m_param_vec6_defaultValue = {"(\"sa1\" \"sa2\" \"sa3\")"};
@@ -90,6 +92,7 @@ public:
     std::string   getDocumentationOfDeviceParams() const override;
     std::vector<std::string> getListOfParams() const override;
     bool getParamValue(const std::string& paramName, std::string& paramValue) const override;
+    std::string   getConfiguration() const override;
 };
 
 #endif

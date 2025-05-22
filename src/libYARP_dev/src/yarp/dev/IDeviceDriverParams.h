@@ -62,6 +62,12 @@ public:
      * @return True if the requested parameter was succesfully retrieved.
      */
     virtual bool getParamValue(const std::string& paramName, std::string& paramValue) const = 0;
+
+    /**
+     * Return the configuration of the device.
+     * @return The configuration of the device, represented in a string format.
+     */
+    virtual std::string getConfiguration() const = 0;
 };
 
 #endif //YARP_DEV_IDEVICEDRIVERPARAMETERS_H

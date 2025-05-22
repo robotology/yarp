@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Wed May 21 12:33:46 2025
+// Generated on: Thu May 22 11:34:45 2025
 
 
 #include "TestDeviceWGP2_ParamsParser.h"
@@ -128,6 +128,16 @@ bool TestDeviceWGP2_ParamsParser::getParamValue(const std::string& paramName, st
 }
 
 
+std::string TestDeviceWGP2_ParamsParser::getConfiguration() const
+{
+    //This is a sub-optimal solution.
+    //Ideally getConfiguration() should return all parameters but it is currently
+    //returning only user provided parameters (excluding default values)
+    //This behaviour will be fixed in the near future.
+    std::string s_cfg = m_provided_configuration;
+    return s_cfg;
+}
+
 bool      TestDeviceWGP2_ParamsParser::parseParams(const yarp::os::Searchable & config)
 {
     //Check for --help option
@@ -136,8 +146,8 @@ bool      TestDeviceWGP2_ParamsParser::parseParams(const yarp::os::Searchable & 
         yCInfo(TestDeviceWGP2ParamsCOMPONENT) << getDocumentationOfDeviceParams();
     }
 
-    std::string config_string = config.toString();
-    yarp::os::Property prop_check(config_string.c_str());
+    m_provided_configuration = config.toString();
+    yarp::os::Property prop_check(m_provided_configuration.c_str());
     //Parser of parameter param_vec4
     {
         if (config.check("param_vec4"))

@@ -323,6 +323,7 @@ namespace {\n\
     s << generateConstructor();
     s << generateFunction_getListOfParams();
     s << generateFunction_getParamValue();
+    s << generateFunction_getConfiguration();
     s << generateFunction_parseParams();
     s << generateFunction_getDeviceType();
     s << generateFunction_getDocumentationOfDeviceParams();
