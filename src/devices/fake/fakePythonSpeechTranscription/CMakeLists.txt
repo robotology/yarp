@@ -5,6 +5,11 @@ if (YARP_COMPILE_ALL_FAKE_DEVICES)
   set(ENABLE_yarpmod_fakePythonSpeechTranscription ON CACHE BOOL "" FORCE)
 endif()
 
+if (NOT BUILD_SHARED_LIBS)
+  set(ENABLE_yarpmod_fakePythonSpeechTranscription OFF CACHE BOOL "" FORCE)
+  message(WARNING "fakePythonSpeechTranscription device cannot be built as static plugin")
+endif()
+
 yarp_prepare_plugin(fakePythonSpeechTranscription
   CATEGORY device
   TYPE FakePythonSpeechTranscription

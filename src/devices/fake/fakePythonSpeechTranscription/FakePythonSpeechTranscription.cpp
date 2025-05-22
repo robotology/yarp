@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#include "fakePythonSpeechTranscription.h"
+#include "FakePythonSpeechTranscription.h"
 
 #include <yarp/os/Log.h>
 #include <yarp/os/LogStream.h>
@@ -136,7 +136,7 @@ bool FakePythonSpeechTranscription::close()
     return ret;
 }
 
-bool FakePythonSpeechTranscription::setLanguage(const std::string& language)
+yarp::dev::ReturnValue FakePythonSpeechTranscription::setLanguage(const std::string& language)
 {
    if (!Py_IsInitialized())
     {
@@ -153,14 +153,14 @@ bool FakePythonSpeechTranscription::setLanguage(const std::string& language)
     if(! classWrapper(m_classInstance, methodName, pInput, pRetVal))
     {
         yCError(FAKE_SPEECHTR) << "[setLanguage] Returned False at classWrapper \n";
-        return false;
+        return ReturnValue::return_code::return_value_error_generic;
     }
     bool result;
 
     if (!boolWrapper(pRetVal, result))
     {
         yCError(FAKE_SPEECHTR) << "[setLanguage] Unable to convert returned PyObject to bool \n";
-        return false;
+        return ReturnValue::return_code::return_value_error_generic;
     }
 
     if (pInput!=NULL)
@@ -173,10 +173,10 @@ bool FakePythonSpeechTranscription::setLanguage(const std::string& language)
     Py_XDECREF(pRetVal);
     yInfo() << "Returning from setLanguage: " << result;
 
-    return true;
+    return ReturnValue_ok;
 }
 
-bool FakePythonSpeechTranscription::getLanguage(std::string& language)
+yarp::dev::ReturnValue FakePythonSpeechTranscription::getLanguage(std::string& language)
 {
     if (!Py_IsInitialized())
     {
@@ -191,24 +191,24 @@ bool FakePythonSpeechTranscription::getLanguage(std::string& language)
     if(! classWrapper(m_classInstance, methodName, pClassMethodArgs, pRetVal))
     {
         yCError(FAKE_SPEECHTR) << "[getLanguage] Returned False at classWrapper \n";
-        return false;
+        return ReturnValue::return_code::return_value_error_generic;
     }
 
     std::string ret;
     if (!stringWrapper(pRetVal, ret))
     {
         yCError(FAKE_SPEECHTR) << "[getLanguage] Unable to covert PyObject to string, Null value \n";
-        return false;
+        return ReturnValue::return_code::return_value_error_generic;
     }
 
     yInfo() << "Returning from getLanguage: " << ret;
     language = ret;
     Py_XDECREF(pRetVal);
 
-    return true;
+    return ReturnValue_ok;
 }
 
-bool FakePythonSpeechTranscription::transcribe(const yarp::sig::Sound& sound, std::string& transcription, double& score)
+yarp::dev::ReturnValue FakePythonSpeechTranscription::transcribe(const yarp::sig::Sound& sound, std::string& transcription, double& score)
 {
     if (sound.getSamples() == 0 ||
         sound.getChannels() == 0)
@@ -216,12 +216,12 @@ bool FakePythonSpeechTranscription::transcribe(const yarp::sig::Sound& sound, st
         yCError(FAKE_SPEECHTR) << "Invalid Sound sample received";
         transcription = "";
         score = 0.0;
-        return false;
+        return ReturnValue::return_code::return_value_error_method_failed;
     }
 
     transcription = "hello world";
     score = 1.0;
-    return true;
+    return ReturnValue_ok;
 }
 
 bool FakePythonSpeechTranscription::functionWrapper(std::string moduleName, std::string functionName, PyObject* &pArgs, PyObject* &pValue)
