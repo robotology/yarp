@@ -24,7 +24,7 @@ public:
     explicit StartDlg(QWidget *parent = 0);
     ~StartDlg();
 
-    void init(QStringList partsName);
+    void init(std::vector<std::string> partsName);
     std::vector<bool> getEnabledParts();
 
 private:

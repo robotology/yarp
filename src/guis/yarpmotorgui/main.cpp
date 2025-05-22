@@ -28,7 +28,7 @@ using namespace yarp::dev;
 using namespace yarp::os;
 
 
-QStringList partsName;
+std::vector<std::string> partsName;
 MainWindow* mainW = nullptr;
 
 bool debug_param_enabled     = false;
@@ -70,7 +70,7 @@ int main(int argc, char *argv[])
     finder.configure(argc, argv);
 
     Bottle         pParts;
-    QStringList    enabledParts;
+    std::vector<std::string> enabledParts;
     std::vector<bool>   enabled;
     MainWindow     w;
 
@@ -125,15 +125,16 @@ int main(int argc, char *argv[])
             adr = Network::queryName(descLocalName);
         }
 
-        if (yarp::os::Network::exists("/robotDescription/rpc"))
+        std::string remote_port = "/yarpRobotInterface/devices/rpc";
+        if (yarp::os::Network::exists(remote_port.c_str()))
         {
             PolyDriver* desc_driver = nullptr;
             desc_driver = new PolyDriver;
             std::vector<DeviceDescription> cbw2_list;
             Property desc_driver_options;
-            desc_driver_options.put("device", "robotDescriptionClient");
+            desc_driver_options.put("device", "robotDescription_nwc_yarp");
             desc_driver_options.put("local", descLocalName);
-            desc_driver_options.put("remote", "/robotDescription");
+            desc_driver_options.put("remote",remote_port.c_str());
             if (desc_driver && desc_driver->open(desc_driver_options))
             {
                 IRobotDescription* idesc = nullptr;
@@ -146,8 +147,12 @@ int main(int argc, char *argv[])
                     wrappers_list.insert(wrappers_list.end(), cbw2_list.begin(), cbw2_list.end());
                     for (auto& i : wrappers_list)
                     {
+                        ///////////////////////////////this should be the port name!!
                         yDebug() << i.device_name;
-                        pParts.addString(i.device_name);
+                        yDebug() << i.device_configuration;
+                        yarp::os::Property prop(i.device_configuration.c_str());
+                        std::string nws_port = prop.find("name").asString();
+                        pParts.addString(nws_port);
                     }
                 }
             }
@@ -160,14 +165,15 @@ int main(int argc, char *argv[])
         }
         else
         {
-            yWarning() << "robotDescriptionServer not found, robot parts will be set manually.";
+            yWarning() << "robotDescription_nws_yarp not found, robot parts will be set manually.";
         }
     }
 
     std::string robotName = finder.find("robot").asString();
     Bottle* b_part_skip = finder.find("skip_parts").asList();
     Bottle* b_part = finder.find("parts").asList();
-    Bottle* b_name = finder.find("names").asList();    if (pParts.size() == 0)
+    Bottle* b_name = finder.find("names").asList();
+    if (pParts.size() == 0)
     {
         if (robotName != "" && b_name != nullptr)
         {
@@ -229,15 +235,16 @@ int main(int argc, char *argv[])
     //Check 1 in the panel
     for(size_t n = 0; n < pParts.size(); n++)
     {
-        QString part = QString("%1").arg(pParts.get(n).asString().c_str());
+        std::string part = pParts.get(n).asString();
+        //std::string part = QString("%1").arg(pParts.get(n).asString().c_str()).toStdString();
         if (b_part_skip)
         {
-            if (b_part_skip->check(part.toStdString())) {
+            if (b_part_skip->check(part)) {
                 continue;
             }
         }
-        yDebug("Appending %s", part.toUtf8().constData());
-        partsName.append(part);
+        yDebug("Appending %s", part.c_str());
+        partsName.push_back(part);
     }
 
     if(!finder.check("skip"))
@@ -256,12 +263,12 @@ int main(int argc, char *argv[])
         }
     }
 
-    for(int i = 0; i < partsName.count(); i++)
+    for(int i = 0; i < partsName.size(); i++)
     {
         if(enabled.at(i))
         {
-            std::string debug_s2 = partsName.at(i).toStdString();
-            enabledParts.append(partsName.at(i));
+            std::string debug_s2 = partsName.at(i);
+            enabledParts.push_back(partsName.at(i));
         }
     }
 

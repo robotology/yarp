@@ -27,13 +27,13 @@ StartDlg::~StartDlg()
 }
 
 
-void StartDlg::init(QStringList partsName)
+void StartDlg::init(std::vector<std::string> partsName)
 {
     auto* layout = new FlowLayout(ui->groupBox);
 
-    for(int i=0;i<partsName.count();i++)
+    for(int i=0;i<partsName.size();i++)
     {
-        auto* check = new QCheckBox(partsName.at(i),ui->groupBox);
+        auto* check = new QCheckBox(QString(partsName[i].c_str()), ui->groupBox);
         check->setChecked(true);
         check->setMinimumSize(QSize(100, check->height()));
         layout->addWidget(check);

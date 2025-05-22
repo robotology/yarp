@@ -22,7 +22,7 @@
 #include <cmath>
 #include <cstdio>
 
-PartItem::PartItem(QString robotName, int id, QString partName, ResourceFinder& _finder,
+PartItem::PartItem(std::string robotName, int id, std::string partName, ResourceFinder& _finder,
                    bool debug_param_enabled,
                    bool speedview_param_enabled,
                    bool enable_calib_all, QWidget *parent) :
@@ -34,23 +34,10 @@ PartItem::PartItem(QString robotName, int id, QString partName, ResourceFinder& 
     m_pwmEnabled(false),
     m_currentEnabled(false),
     m_currentPidDlg(nullptr),
-    m_controlModes(nullptr),
-    m_refTrajectorySpeeds(nullptr),
-    m_refTrajectoryPositions(nullptr),
-    m_refTorques(nullptr),
-    m_refVelocitySpeeds(nullptr),
-    m_torques(nullptr),
-    m_positions(nullptr),
-    m_speeds(nullptr),
-    m_currents(nullptr),
-    m_motorPositions(nullptr),
-    m_dutyCycles(nullptr),
-    m_done(nullptr),
     m_part_speedVisible(false),
     m_part_motorPositionVisible(false),
     m_part_dutyVisible(false),
     m_part_currentVisible(false),
-    m_interactionModes(nullptr),
     m_finder(&_finder),
     m_iMot(nullptr),
     m_iinfo(nullptr),
@@ -62,18 +49,18 @@ PartItem::PartItem(QString robotName, int id, QString partName, ResourceFinder& 
     //PolyDriver *cartesiandd[MAX_NUMBER_ACTIVATED];
 
     if (robotName.at(0) == '/') {
-        robotName.remove(0, 1);
+        robotName.erase(0, 1);
     }
     if (partName.at(0) == '/') {
-        partName.remove(0, 1);
+        partName.erase(0, 1);
     }
-    m_robotPartPort = QString("/%1/%2").arg(robotName).arg(partName);
+    m_robotPartPort = std::string("/") + robotName +std::string("/") + partName;
     m_partName = partName;
     m_robotName = robotName;
 
     //checking existence of the port
     int ind = 0;
-    QString portLocalName = QString("/yarpmotorgui%1/%2").arg(ind).arg(m_robotPartPort);
+    QString portLocalName = QString("/yarpmotorgui%1/%2").arg(ind).arg(m_robotPartPort.c_str());
 
 
     QString nameToCheck = portLocalName;
@@ -91,7 +78,7 @@ PartItem::PartItem(QString robotName, int id, QString partName, ResourceFinder& 
     while(adr.isValid()){
         ind++;
 
-        portLocalName = QString("/yarpmotorgui%1/%2").arg(ind).arg(m_robotPartPort);
+        portLocalName = QString("/yarpmotorgui%1/%2").arg(ind).arg(m_robotPartPort.c_str());
 
         nameToCheck = portLocalName;
         nameToCheck += "/rpc:o";
@@ -104,7 +91,7 @@ PartItem::PartItem(QString robotName, int id, QString partName, ResourceFinder& 
     // Initializing the polydriver options and instantiating the polydrivers
     m_partOptions.put("local", portLocalName.toLatin1().data());
     m_partOptions.put("device", "remote_controlboard");
-    m_partOptions.put("remote", m_robotPartPort.toLatin1().data());
+    m_partOptions.put("remote", m_robotPartPort);
     m_partOptions.put("carrier", "udp");
 
     m_partsdd = new PolyDriver();
@@ -113,8 +100,8 @@ PartItem::PartItem(QString robotName, int id, QString partName, ResourceFinder& 
     m_interfaceError = !openPolyDrivers();
     if (m_interfaceError == true)
     {
-        yError("Opening PolyDriver for part %s failed...", m_robotPartPort.toLatin1().data());
-        QMessageBox::critical(nullptr, "Error opening a device", QString("Error while opening device for part ").append(m_robotPartPort.toLatin1().data()));
+        yError("Opening PolyDriver for part %s failed...", m_robotPartPort.c_str());
+        QMessageBox::critical(nullptr, "Error opening a device", QString("Error while opening device for part ").append(m_robotPartPort.c_str()));
     }
 
     /*********************************************************************/
@@ -124,7 +111,7 @@ PartItem::PartItem(QString robotName, int id, QString partName, ResourceFinder& 
         yDebug("Setting a valid finder \n");
     }
 
-    QString sequence_portname = QString("/yarpmotorgui/%1/sequence:o").arg(partName);
+    QString sequence_portname = QString("/yarpmotorgui/%1/sequence:o").arg(partName.c_str());
     m_sequence_port.open(sequence_portname.toLatin1().data());
 
     initInterfaces();
@@ -137,61 +124,61 @@ PartItem::PartItem(QString robotName, int id, QString partName, ResourceFinder& 
         int number_of_joints;
         m_iPos->getAxes(&number_of_joints);
 
-        m_controlModes = new int[number_of_joints]; //for (i = 0; i < number_of_joints; i++) m_controlModes = 0;
-        m_refTrajectorySpeeds = new double[number_of_joints];
+        m_controlModes.resize(number_of_joints); //for (i = 0; i < number_of_joints; i++) m_controlModes = 0;
+        m_refTrajectorySpeeds.resize(number_of_joints);
         for (i = 0; i < number_of_joints; i++) {
             m_refTrajectorySpeeds[i] = std::nan("");
         }
-        m_refTrajectoryPositions = new double[number_of_joints];
+        m_refTrajectoryPositions.resize(number_of_joints);
         for (i = 0; i < number_of_joints; i++) {
             m_refTrajectoryPositions[i] = std::nan("");
         }
-        m_refTorques = new double[number_of_joints];
+        m_refTorques.resize(number_of_joints);
         for (i = 0; i < number_of_joints; i++) {
             m_refTorques[i] = std::nan("");
         }
-        m_refVelocitySpeeds = new double[number_of_joints];
+        m_refVelocitySpeeds.resize(number_of_joints);
         for (i = 0; i < number_of_joints; i++) {
             m_refVelocitySpeeds[i] = std::nan("");
         }
-        m_torques = new double[number_of_joints];
+        m_torques.resize(number_of_joints);
         for (i = 0; i < number_of_joints; i++) {
             m_torques[i] = std::nan("");
         }
-        m_positions = new double[number_of_joints];
+        m_positions.resize(number_of_joints);
         for (i = 0; i < number_of_joints; i++) {
             m_positions[i] = std::nan("");
         }
-        m_speeds = new double[number_of_joints];
+        m_speeds.resize(number_of_joints);
         for (i = 0; i < number_of_joints; i++) {
             m_speeds[i] = std::nan("");
         }
-        m_currents = new double[number_of_joints];
+        m_currents.resize(number_of_joints);
         for (i = 0; i < number_of_joints; i++) {
             m_currents[i] = std::nan("");
         }
-        m_motorPositions = new double[number_of_joints];
+        m_motorPositions.resize(number_of_joints);
         for (i = 0; i < number_of_joints; i++) {
             m_motorPositions[i] = std::nan("");
         }
-        m_dutyCycles = new double[number_of_joints];
+        m_dutyCycles.resize(number_of_joints);
         for (i = 0; i < number_of_joints; i++) {
             m_dutyCycles[i] = std::nan("");
         }
-        m_done = new bool[number_of_joints];
-        m_interactionModes = new yarp::dev::InteractionModeEnum[number_of_joints];
+        m_done.resize(number_of_joints);
+        m_interactionModes.resize(number_of_joints);
 
         bool ret = false;
         SystemClock::delaySystem(0.050);
         do {
-            ret = m_iencs->getEncoders(m_positions);
+            ret = m_iencs->getEncoders(m_positions.data());
             if (!ret) {
-                yError("%s iencs->getEncoders() failed, retrying...\n", partName.toLatin1().data());
+                yError("%s iencs->getEncoders() failed, retrying...\n", partName.c_str());
                 SystemClock::delaySystem(0.050);
             }
         } while (!ret);
 
-        yInfo("%s iencs->getEncoders() ok!\n", partName.toLatin1().data());
+        yInfo("%s iencs->getEncoders() ok!\n", partName.c_str());
 
         double min_pos = 0;
         double max_pos = 100;
@@ -206,15 +193,15 @@ PartItem::PartItem(QString robotName, int id, QString partName, ResourceFinder& 
             bool bcr = m_iCur->getCurrentRange(k, &min_cur, &max_cur);
             if (bpl == false)
             {
-                yError() << "Error while getting position limits, part " << partName.toStdString() << " joint " << k;
+                yError() << "Error while getting position limits, part " << partName << " joint " << k;
             }
             if (bvl == false || (min_vel == 0 && max_vel == 0))
             {
-                yError() << "Error while getting velocity limits, part " << partName.toStdString() << " joint " << k;
+                yError() << "Error while getting velocity limits, part " << partName << " joint " << k;
             }
             if (bcr == false || (min_cur == 0 && max_cur == 0))
             {
-                yError() << "Error while getting current range, part " << partName.toStdString() << " joint " << k;
+                yError() << "Error while getting current range, part " << partName << " joint " << k;
             }
 
             QSettings settings("YARP", "yarpmotorgui");
@@ -340,20 +327,6 @@ PartItem::~PartItem()
         delete m_partsdd;
         m_partsdd = nullptr;
     }
-
-    if (m_controlModes) { delete[] m_controlModes; m_controlModes = nullptr; }
-    if (m_refTrajectorySpeeds) { delete[] m_refTrajectorySpeeds; m_refTrajectorySpeeds = nullptr; }
-    if (m_refTrajectoryPositions) { delete[] m_refTrajectoryPositions; m_refTrajectoryPositions = nullptr; }
-    if (m_refTorques) { delete[] m_refTorques; m_refTorques = nullptr; }
-    if (m_refVelocitySpeeds) { delete[] m_refVelocitySpeeds; m_refVelocitySpeeds = nullptr; }
-    if (m_torques) { delete[] m_torques; m_torques = nullptr; }
-    if (m_positions) { delete[] m_positions; m_positions = nullptr; }
-    if (m_speeds) { delete[] m_speeds; m_speeds = nullptr; }
-    if (m_currents) { delete[] m_currents; m_currents = nullptr; }
-    if (m_motorPositions) { delete[] m_motorPositions; m_motorPositions = nullptr; }
-    if (m_dutyCycles) { delete[] m_dutyCycles; m_dutyCycles = nullptr; }
-    if (m_done) { delete[] m_done; m_done = nullptr; }
-    if (m_interactionModes) { delete [] m_interactionModes; m_interactionModes = nullptr; }
 }
 
 bool PartItem::openPolyDrivers()
@@ -512,7 +485,7 @@ bool PartItem::getInterfaceError()
 
 QString PartItem::getPartName()
 {
-    return m_partName;
+    return m_partName.c_str();
 }
 
 void PartItem::onSliderPWMCommand(double pwmVal, int index)
@@ -868,7 +841,7 @@ void PartItem::onPidClicked(JointItem *joint)
 {
     const int jointIndex = joint->getJointIndex();
     QString jointName = joint->getJointName();
-    m_currentPidDlg = new PidDlg(m_partName, jointIndex, jointName);
+    m_currentPidDlg = new PidDlg(m_partName.c_str(), jointIndex, jointName);
     connect(m_currentPidDlg, SIGNAL(sendPositionPid(int, Pid)), this, SLOT(onSendPositionPid(int, Pid)));
     connect(m_currentPidDlg, SIGNAL(sendVelocityPid(int, Pid)), this, SLOT(onSendVelocityPid(int, Pid)));
     connect(m_currentPidDlg, SIGNAL(sendCurrentPid(int, Pid)), this, SLOT(onSendCurrentPid(int, Pid)));
@@ -1146,7 +1119,7 @@ void PartItem::calibratePart()
         bool isCalib = false;
         m_iremCalib->isCalibratorDevicePresent(&isCalib);
         if (!isCalib) {
-            QMessageBox::critical(this, "Calibration failed", QString("No calibrator device was configured to perform this action, please verify that the wrapper config file for part %1 has the 'Calibrator' keyword in the attach phase").arg(m_partName));
+            QMessageBox::critical(this, "Calibration failed", QString("No calibrator device was configured to perform this action, please verify that the wrapper config file for part %1 has the 'Calibrator' keyword in the attach phase").arg(m_partName.c_str()));
         } else {
             QMessageBox::critical(this, "Calibration failed", QString("The remote calibrator reported that something went wrong during the calibration procedure"));
         }
@@ -1168,7 +1141,7 @@ bool PartItem::homeJoint(int jointIndex)
         m_iremCalib->isCalibratorDevicePresent(&isCalib);
         if (!isCalib)
         {
-            QMessageBox::critical(this, "Operation failed", QString("No calibrator device was configured to perform this action, please verify that the wrapper config file for part %1 has the 'Calibrator' keyword in the attach phase").arg(m_partName));
+            QMessageBox::critical(this, "Operation failed", QString("No calibrator device was configured to perform this action, please verify that the wrapper config file for part %1 has the 'Calibrator' keyword in the attach phase").arg(m_partName.c_str()));
             return false;
         }
         else
@@ -1195,7 +1168,7 @@ bool PartItem::homePart()
         m_iremCalib->isCalibratorDevicePresent(&isCalib);
         if (!isCalib)
         {
-            QMessageBox::critical(this, "Operation failed", QString("No calibrator device was configured to perform this action, please verify that the wrapper config file for part %1 has the 'Calibrator' keyword in the attach phase").arg(m_partName));
+            QMessageBox::critical(this, "Operation failed", QString("No calibrator device was configured to perform this action, please verify that the wrapper config file for part %1 has the 'Calibrator' keyword in the attach phase").arg(m_partName.c_str()));
             return false;
         }
         else
@@ -1214,15 +1187,15 @@ bool PartItem::homeToCustomPosition(const yarp::os::Bottle& positionElement)
     m_iPos->getAxes(&NUMBER_OF_JOINTS);
 
     if (positionElement.isNull()) {
-        QMessageBox::critical(this, "Operation failed", QString("No custom position supplied in configuration file for part ") + QString(m_partName));
+        QMessageBox::critical(this, "Operation failed", QString("No custom position supplied in configuration file for part ") + QString(m_partName.c_str()));
         return false;
     }
 
     //Look for group called m_robotPartPort_Position and m_robotPartPort_Velocity
     Bottle xtmp, ytmp;
-    xtmp = positionElement.findGroup(m_robotPartPort.toStdString() + "_Position");
+    xtmp = positionElement.findGroup(m_robotPartPort + "_Position");
     ok = ok && (xtmp.size() == (size_t) NUMBER_OF_JOINTS + 1);
-    ytmp = positionElement.findGroup(m_robotPartPort.toStdString() + "_Velocity");
+    ytmp = positionElement.findGroup(m_robotPartPort + "_Velocity");
     ok = ok && (ytmp.size() == (size_t) NUMBER_OF_JOINTS + 1);
 
     if(ok)
@@ -1237,7 +1210,7 @@ bool PartItem::homeToCustomPosition(const yarp::os::Bottle& positionElement)
     }
     else
     {
-        QMessageBox::critical(this, "Error", QString("Check the number of entries in the group %1").arg(m_robotPartPort));
+        QMessageBox::critical(this, "Error", QString("Check the number of entries in the group %1").arg(m_robotPartPort.c_str()));
         ok = false;
     }
 
@@ -1328,7 +1301,7 @@ void PartItem::closeSequenceWindow()
 void PartItem::openSequenceWindow()
 {
     if (!m_sequenceWindow){
-        m_sequenceWindow = new SequenceWindow(m_partName, m_layout->count());
+        m_sequenceWindow = new SequenceWindow(m_partName.c_str(), m_layout->count());
         connect(m_sequenceWindow, SIGNAL(itemDoubleClicked(int)), this, SLOT(onSequenceWindowDoubleClicked(int)), Qt::DirectConnection);
         connect(this, SIGNAL(sendPartJointsValues(int, QList<double>, QList<double>)), m_sequenceWindow, SLOT(onReceiveValues(int, QList<double>, QList<double>)), Qt::DirectConnection);
         connect(m_sequenceWindow, SIGNAL(goToPosition(SequenceItem)), this, SLOT(onGo(SequenceItem)));
@@ -1388,19 +1361,19 @@ void PartItem::onStopSequence()
 
 void PartItem::onOpenSequence()
 {
-    QString fileName = QFileDialog::getOpenFileName(m_sequenceWindow, QString("Load Sequence for part %1 As").arg(m_partName), QDir::homePath());
+    QString fileName = QFileDialog::getOpenFileName(m_sequenceWindow, QString("Load Sequence for part %1 As").arg(m_partName.c_str()), QDir::homePath());
 
     QFileInfo fInfo(fileName);
     if(!fInfo.exists()){
         return;
     }
 
-    QString desiredExtension = QString("pos%1").arg(m_partName);
+    QString desiredExtension = QString("pos%1").arg(m_partName.c_str());
     QString extension = fInfo.suffix();
 
     if(desiredExtension != extension){
         QMessageBox::critical(this,"Error Loading The Sequence",
-            QString("Wrong format (check extensions) of the file associated with: ").arg(m_partName));
+            QString("Wrong format (check extensions) of the file associated with: ").arg(m_partName.c_str()));
         return;
     }
 
@@ -1501,7 +1474,7 @@ void PartItem::onSaveSequence(QList<SequenceItem> values, QString fileName)
 {
     if (fileName=="")
     {
-        fileName = QFileDialog::getSaveFileName(this, QString("Save Sequence for part %1 As").arg(m_partName), QDir::homePath());
+        fileName = QFileDialog::getSaveFileName(this, QString("Save Sequence for part %1 As").arg(m_partName.c_str()), QDir::homePath());
     }
 
     if(fileName.isEmpty()){
@@ -1509,7 +1482,7 @@ void PartItem::onSaveSequence(QList<SequenceItem> values, QString fileName)
     }
 
     QFileInfo fInfo(fileName);
-    QString completeFileName = QString("%1/%2.pos%3").arg(fInfo.absolutePath()).arg(fInfo.baseName()).arg(m_partName);
+    QString completeFileName = QString("%1/%2.pos%3").arg(fInfo.absolutePath()).arg(fInfo.baseName()).arg(m_partName.c_str());
     std::string completeFileName_s = completeFileName.toStdString();
 
     //QFile file(completeFileName);
@@ -1524,10 +1497,10 @@ void PartItem::onSaveSequence(QList<SequenceItem> values, QString fileName)
     writer.setAutoFormatting(true);
     writer.writeStartDocument();
 
-    writer.writeStartElement(QString("Sequence_pos%1").arg(m_partName));
+    writer.writeStartElement(QString("Sequence_pos%1").arg(m_partName.c_str()));
 
     writer.writeAttribute("TotPositions", QString("%1").arg(values.count()));
-    writer.writeAttribute("ReferencePart", m_partName);
+    writer.writeAttribute("ReferencePart", m_partName.c_str());
 
     for(int i=0;i<values.count();i++){
         SequenceItem sequenceItem = values.at(i);
@@ -2115,7 +2088,7 @@ const QVector<JointItem::JointState> &PartItem::getPartModes()
 
 void PartItem::updateControlMode()
 {
-    bool ret = m_ictrlmode->getControlModes(m_controlModes);
+    bool ret = m_ictrlmode->getControlModes(m_controlModes.data());
 
 
     if(ret==false){
@@ -2200,38 +2173,40 @@ bool PartItem::updatePart()
     bool b = true;
     if (true)
     {
-        b = m_iencs->getEncoders(m_positions);
+        b = m_iencs->getEncoders(m_positions.data());
         if (!b) { yWarning("Unable to update encoders"); return false; }
     }
     if (true)
     {
-        b = m_iTrq->getTorques(m_torques);
+        b = m_iTrq->getTorques(m_torques.data());
         if (!b) { yWarning("Unable to update torques"); }
     }
     if (this->m_part_currentVisible)
     {
-        b = m_iCur->getCurrents(m_currents);
+        b = m_iCur->getCurrents(m_currents.data());
         if (!b) { yWarning("Unable to update currents"); }
     }
     if (this->m_part_speedVisible)
     {
-        b = m_iencs->getEncoderSpeeds(m_speeds);
+        b = m_iencs->getEncoderSpeeds(m_speeds.data());
         if (!b) { yWarning("Unable to update speeds"); }
     }
     if (this->m_part_motorPositionVisible)
     {
-        b = m_iMot->getMotorEncoders(m_motorPositions);
+        b = m_iMot->getMotorEncoders(m_motorPositions.data());
         if (!b) { yWarning("Unable to update motorPositions"); }
     }
     if (this->m_part_dutyVisible)
     {
-        b = m_iPWM->getDutyCycles(m_dutyCycles);
+        b = m_iPWM->getDutyCycles(m_dutyCycles.data());
         if (!b) { yWarning("Unable to update dutyCycles"); }
     }
 
     // *** update checkMotionDone, refTorque, refTrajectorySpeed, refSpeed ***
     // (only one at a time in order to save bandwidth)
-    bool b_motdone = m_iPos->checkMotionDone(m_slow_k, &m_done[m_slow_k]); //using k to save bandwidth
+    bool boolval = true;
+    bool b_motdone = m_iPos->checkMotionDone(m_slow_k, &boolval); //using k to save bandwidth
+    m_done[m_slow_k] = boolval;
     bool b_refTrq = m_iTrq->getRefTorque(m_slow_k, &m_refTorques[m_slow_k]); //using k to save bandwidth
     bool b_refPosSpeed = m_iPos->getRefSpeed(m_slow_k, &m_refTrajectorySpeeds[m_slow_k]); //using k to save bandwidth
     bool b_refVel = m_iVel->getRefVelocity(m_slow_k, &m_refVelocitySpeeds[m_slow_k]); //this interface is missing!
@@ -2298,7 +2273,7 @@ bool PartItem::updatePart()
     //    if(ret==false){
     //        LOG_ERROR("ictrl->getControlMode failed\n" );
     //    }
-    ret = m_iinteract->getInteractionModes(m_interactionModes);
+    ret = m_iinteract->getInteractionModes(m_interactionModes.data());
     if(ret==false){
         LOG_ERROR("iint->getInteractionlMode failed\n" );
     }

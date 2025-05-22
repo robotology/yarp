@@ -40,9 +40,9 @@ class PartItem : public QWidget
 {
     Q_OBJECT
 public:
-    explicit PartItem(QString robotName,
+    explicit PartItem(std::string robotName,
                       int partId,
-                      QString partName,
+                      std::string partName,
                       ResourceFinder& _finder,
                       bool debug_param_enabled,
                       bool speedview_param_enabled,
@@ -92,9 +92,9 @@ protected:
 private:
     FlowLayout *m_layout;
     SequenceWindow *m_sequenceWindow;
-    QString m_robotPartPort;
-    QString m_robotName;
-    QString m_partName;
+    std::string m_robotPartPort;
+    std::string m_robotName;
+    std::string m_partName;
     int     m_partId;
     bool   m_mixedEnabled;
     bool   m_positionDirectEnabled;
@@ -111,23 +111,23 @@ private:
     QList<SequenceItem> m_runTimeValues;
     QList<SequenceItem> m_cycleValues;
     QList<SequenceItem> m_cycleTimeValues;
-    int*    m_controlModes;
-    double* m_refTrajectorySpeeds;
-    double* m_refTrajectoryPositions;
-    double* m_refTorques;
-    double* m_refVelocitySpeeds;
-    double* m_torques;
-    double* m_positions;
-    double* m_speeds;
-    double* m_currents;
-    double* m_motorPositions;
-    double* m_dutyCycles;
-    bool*   m_done;
+    std::vector<int>    m_controlModes;
+    std::vector<double> m_refTrajectorySpeeds;
+    std::vector<double> m_refTrajectoryPositions;
+    std::vector<double> m_refTorques;
+    std::vector<double> m_refVelocitySpeeds;
+    std::vector<double> m_torques;
+    std::vector<double> m_positions;
+    std::vector<double> m_speeds;
+    std::vector<double> m_currents;
+    std::vector<double> m_motorPositions;
+    std::vector<double> m_dutyCycles;
+    std::vector<bool>   m_done;
     bool    m_part_speedVisible;
     bool    m_part_motorPositionVisible;
     bool    m_part_dutyVisible;
     bool    m_part_currentVisible;
-    yarp::dev::InteractionModeEnum* m_interactionModes;
+    std::vector<InteractionModeEnum>  m_interactionModes;
     QVector<JointItem::JointState> m_modesList;
 
     ResourceFinder* m_finder;

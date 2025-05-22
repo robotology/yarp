@@ -589,7 +589,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
 
 
 
-bool MainWindow::init(QStringList enabledParts,
+bool MainWindow::init(std::vector<std::string> enabledParts,
                       ResourceFinder& finder,
                       bool debug_param_enabled,
                       bool speedview_param_enabled,
@@ -628,9 +628,15 @@ bool MainWindow::init(QStringList enabledParts,
 
     for (int i = 0; i < enabledParts.size(); i++)
     {
-        std::string ss = enabledParts.at(i).toStdString();
+        std::string ss = enabledParts.at(i);
         size_t b1 = ss.find('/');
         size_t b2 = ss.find('/', b1 + 1);
+        if (b1 == std::string::npos ||
+            b2 == std::string::npos)
+        {
+            yError() << "Invalid parts name, missing / char?";
+            return false;
+        }
         std::string cur_robot_name = ss.substr(b1, b2 - b1);
         auto it = robots.find(cur_robot_name);
         if (it == robots.end())
@@ -644,7 +650,7 @@ bool MainWindow::init(QStringList enabledParts,
         }
         part_type p;
         p.partindex = i;
-        p.complete_name = enabledParts.at(i).toStdString();
+        p.complete_name = enabledParts.at(i);
         p.part_name_without_slash = ss.substr(b2);
         if (p.part_name_without_slash[0] == '/') {
             p.part_name_without_slash.erase(0, 1);
