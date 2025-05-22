@@ -31,13 +31,23 @@ public:
      * type of the device
      */
     std::string device_type{};
+    /**
+     * configuration parameters of the device
+     */
+    std::string device_configuration{};
+    /**
+     * user defined extra information
+     */
+    std::string device_extra_info{};
 
     // Default constructor
     DeviceDescriptionData() = default;
 
     // Constructor with field values
     DeviceDescriptionData(const std::string& device_name,
-                          const std::string& device_type);
+                          const std::string& device_type,
+                          const std::string& device_configuration,
+                          const std::string& device_extra_info);
 
     // Read structure on a Wire
     bool read(yarp::os::idl::WireReader& reader) override;
@@ -69,6 +79,18 @@ private:
     bool write_device_type(const yarp::os::idl::WireWriter& writer) const;
     bool nested_read_device_type(yarp::os::idl::WireReader& reader);
     bool nested_write_device_type(const yarp::os::idl::WireWriter& writer) const;
+
+    // read/write device_configuration field
+    bool read_device_configuration(yarp::os::idl::WireReader& reader);
+    bool write_device_configuration(const yarp::os::idl::WireWriter& writer) const;
+    bool nested_read_device_configuration(yarp::os::idl::WireReader& reader);
+    bool nested_write_device_configuration(const yarp::os::idl::WireWriter& writer) const;
+
+    // read/write device_extra_info field
+    bool read_device_extra_info(yarp::os::idl::WireReader& reader);
+    bool write_device_extra_info(const yarp::os::idl::WireWriter& writer) const;
+    bool nested_read_device_extra_info(yarp::os::idl::WireReader& reader);
+    bool nested_write_device_extra_info(const yarp::os::idl::WireWriter& writer) const;
 };
 
 } // namespace yarp::dev

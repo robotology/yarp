@@ -92,6 +92,11 @@ TEST_CASE("dev::TestDeviceWGP1", "[yarp::dev]")
 
             std::vector<std::string> vv = idevparams->getListOfParams();
             CHECK(vv.empty() == false);
+
+            std::string param_str;
+            bool getpv = idevparams->getParamValue("param_1", param_str);
+            CHECK(getpv);
+            CHECK(param_str == "string");
         }
 
         yarp::os::Time::delay(1.0);

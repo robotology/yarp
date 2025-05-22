@@ -36,6 +36,9 @@ New Features
   - `FakeDevice_nwc_yarp`
  `FakeDevice_nwc_yarp` also uses the new `checkProtocolVersion()` to verify the communication with `FakeDevice_nws_yarp`
   - `RobotDescriptionStorage`
+* Added new methods `getParamValue()`, `getConfiguration()` to IDeviceDriverParams interface.
+* Updated yarpDeviceParamParserGenerator tool
+* All device params parsers have been regenerated
 
 ### yarprobotinterface
 
@@ -43,6 +46,7 @@ New Features
 * yarprobotinterface now opens internally a device `RobotDescriptionStorage` and register all other opened devices inside it.
 * User can open a `RobotDescription_nws_yarp` and attach it to the `RobotDescriptionStorage` to obtain info about opened devices. See example: 
 `yarp\src\yarprobotinterface\tests\robotDescription`
+
 
 Breaking Changes
 ----------------
@@ -70,6 +74,6 @@ Breaking Changes
   - `LLM_nws_yarp`
   - `RobotDescriptionServer` refactored to `RobotDescription_nws_yarp`
   - `RobotDescriptionClient` refactored to `RobotDescription_nwc_yarp`
-
 * The `attachAll()` mechanism used to keep track of the devices opened by yarprobotinterface (previously implemented by `RobotDescriptionServer`)
   has been transferred to `RobotDescriptionStorage`.
+* device 'opencv_grabber` has been renamed to `openCVGrabber`

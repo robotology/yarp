@@ -82,6 +82,87 @@ s << S_TAB1 << "return params;\n\
     return s.str();
 }
 
+std::string ParamsFilesGenerator::generateFunction_getConfiguration()
+{
+    std::ostringstream s;
+    ADD_DEBUG_COMMENT(s)
+    s << "\n\
+std::string "
+      << m_classname << "_ParamsParser::getConfiguration() const\n\
+{\n";
+    s << S_TAB1 << "//This is a sub-optimal solution.\n";
+    s << S_TAB1 << "//Ideally getConfiguration() should return all parameters but it is currently\n";
+    s << S_TAB1 << "//returning only user provided parameters (excluding default values)\n";
+    s << S_TAB1 << "//This behaviour will be fixed in the near future.\n";
+    s << S_TAB1 << "std::string s_cfg = m_provided_configuration;\n";
+    s << S_TAB1 << "return s_cfg;\n";
+    s << "}\n";
+    return s.str();
+}
+
+    std::string ParamsFilesGenerator::generateFunction_getParamValue()
+{
+    std::ostringstream s;
+    ADD_DEBUG_COMMENT(s)
+    s << "\n\
+bool "
+      << m_classname << "_ParamsParser::getParamValue(const std::string& paramName, std::string& paramValue) const\n\
+{\n";
+
+    if (m_params.size() == 0)
+    {
+        s << S_TAB1 << "return false\n\
+}\n\
+\n\
+";
+    }
+
+    ADD_DEBUG_COMMENT(s)
+    for (const auto& param : m_params)
+    {
+        s << S_TAB1 << "if (paramName ==\"" << param.getFullParamName() << "\")\n";
+        s << S_TAB1 << "{\n";
+        if (param.type == "string") {
+            s << S_TAB1 << "    paramValue = m_" << param.getFullParamVariable() << ";\n";
+            s << S_TAB1 << "    return true;\n";
+        } else if (param.type == "bool") {
+            s << S_TAB1 << "    if (m_" << param.getFullParamVariable() << "==true) paramValue = \"true\";\n";
+            s << S_TAB1 << "    else paramValue = \"false\";\n";
+            s << S_TAB1 << "    return true;\n";
+        } else if (param.type == "double") {
+            s << S_TAB1 << "    paramValue = std::to_string(m_" << param.getFullParamVariable() << ");\n";
+            s << S_TAB1 << "    return true;\n";
+        } else if (param.type == "int") {
+            s << S_TAB1 << "    paramValue = std::to_string(m_" << param.getFullParamVariable() << ");\n";
+            s << S_TAB1 << "    return true;\n";
+        } else if (param.type == "size_t") {
+            s << S_TAB1 << "    paramValue = std::to_string(m_" << param.getFullParamVariable() << ");\n";
+            s << S_TAB1 << "    return true;\n";
+        } else if (param.type == "float") {
+            s << S_TAB1 << "    paramValue = std::to_string(m_" << param.getFullParamVariable() << ");\n";
+            s << S_TAB1 << "    return true;\n";
+        } else if (param.type == "char") {
+            s << S_TAB1 << "    return false;\n";
+        } else if (param.type == "vector<int>") {
+            s << S_TAB1 << "    return false;\n";
+        } else if (param.type == "vector<string>") {
+            s << S_TAB1 << "    return false;\n";
+        } else if (param.type == "vector<double>") {
+            s << S_TAB1 << "    return false;\n";
+        }
+        s << S_TAB1 << "}\n";
+    }
+    s << "\n";
+    s << S_TAB1 << "yError() <<" << "\"parameter '\" << paramName << \"' was not found\";\n";
+    s << S_TAB1 << "return false;\n";
+    s << "\n\
+}\n\
+\n\
+";
+
+    return s.str();
+}
+
 std::string ParamsFilesGenerator::generateFunction_getDocumentationOfDeviceParams()
 {
     std::ostringstream s;
@@ -306,8 +387,8 @@ bool      "<< m_classname << "_ParamsParser::parseParams(const yarp::os::Searcha
     s << "\n";
 
     ADD_DEBUG_COMMENT(s)
-    s << S_TAB1 << "std::string config_string = config.toString();\n";
-    s << S_TAB1 << "yarp::os::Property prop_check(config_string.c_str());\n";
+    s << S_TAB1 << "m_provided_configuration = config.toString();\n";
+    s << S_TAB1 << "yarp::os::Property prop_check(m_provided_configuration.c_str());\n";
 
     ADD_DEBUG_COMMENT(s)
     auto copy_of_m_params = m_params;

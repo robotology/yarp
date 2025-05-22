@@ -20,7 +20,7 @@
 /**
  * @ingroup dev_impl_media
  *
- * @brief `opencv_grabber`: An image frame grabber device using OpenCV to
+ * @brief `openCVGrabber`: An image frame grabber device using OpenCV to
  * capture images from cameras and AVI files.
  *
  * Parameters required by this device are shown in class: OpenCVGrabber_ParamsParser

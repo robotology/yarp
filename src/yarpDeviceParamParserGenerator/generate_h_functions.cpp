@@ -83,6 +83,8 @@ public:\n";
     s << S_TAB1 << "     int minor = "<< std::to_string(MACRO_PARSER_VERSION_MINOR) << ";\n";
     s << S_TAB1 << "};\n";
     s << S_TAB1 << "const parser_version_type m_parser_version = {};\n";
+    s << "\n";
+    s << S_TAB1 << "std::string m_provided_configuration;\n";
 
     s << "\n";
     for (const auto& param : m_params)
@@ -164,6 +166,8 @@ public:\n";
     std::string   getDeviceName() const override { return m_device_name; }\n\
     std::string   getDocumentationOfDeviceParams() const override;\n\
     std::vector<std::string> getListOfParams() const override;\n\
+    bool getParamValue(const std::string& paramName, std::string& paramValue) const override;\n\
+    std::string   getConfiguration() const override;\n\
 };\n\
 ";
 
