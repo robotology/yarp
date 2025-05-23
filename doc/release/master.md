@@ -36,6 +36,9 @@ New Features
   - `FakeDevice_nwc_yarp`
  `FakeDevice_nwc_yarp` also uses the new `checkProtocolVersion()` to verify the communication with `FakeDevice_nws_yarp`
   - `RobotDescriptionStorage`
+  - `fakeFrameWriter`
+  - `openCVWriter`
+  - `frameWriter_nws_yarp`
 * Added new methods `getParamValue()`, `getConfiguration()` to IDeviceDriverParams interface.
 * Updated yarpDeviceParamParserGenerator tool
 * All device params parsers have been regenerated

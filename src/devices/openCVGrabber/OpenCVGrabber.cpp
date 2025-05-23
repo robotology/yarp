@@ -49,7 +49,7 @@ using namespace yarp::dev;
 
 
 namespace {
-YARP_LOG_COMPONENT(OPENCVGRABBER, "yarp.device.opencv_grabber")
+YARP_LOG_COMPONENT(OPENCVGRABBER, "yarp.device.openCVGrabber")
 }
 
 

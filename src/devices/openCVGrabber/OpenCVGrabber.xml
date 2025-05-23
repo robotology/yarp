@@ -4,7 +4,7 @@
 -->
 
 <module>
-    <name>opencv_grabber</name>
+    <name>openCVGrabber</name>
     <description> An opencv-based frame grabber</description>
     <version>1.0</version>
 
@@ -19,7 +19,7 @@
     <data>
         <input port_type="service">
             <type>Rpc</type>
-            <port>/opencv_grabber/quit</port>
+            <port>/openCVGrabber/quit</port>
             <required>no</required>
             <priority>no</priority>
             <description> a port which receives rpc command such as 'quit'.</description>

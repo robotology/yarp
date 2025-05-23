@@ -57,8 +57,6 @@ Device "inertiacube2", C++ class InertiaCube2, has no network wrapper
 Device "jamesarmcalibrator", C++ class JamesArmCalibrator, has no network wrapper
 Device "jameshead", C++ class JamesHead, has no network wrapper
 Device "XSensMTx", C++ class XSensMTx, wrapped by "inertial"
-Device "opencv_grabber", C++ class OpenCVGrabber, wrapped by "grabber"
-Device "ffmpeg_grabber", C++ class FfmpegGrabber, wrapped by "grabber"
 Device "fakeFrameGrabber", C++ class FakeFrameGrabber, wrapped by "grabber"
 Device "grabber", C++ class ServerFrameGrabber, is a network wrapper.
 Device "inertial", C++ class ServerInertial, is a network wrapper.

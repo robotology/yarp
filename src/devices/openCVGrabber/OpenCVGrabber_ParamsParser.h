@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Thu May 22 11:32:46 2025
+// Generated on: Thu May 22 20:45:26 2025
 
 
 #ifndef OPENCVGRABBER_PARAMSPARSER_H

@@ -15,24 +15,24 @@
 using namespace yarp::dev;
 using namespace yarp::os;
 
-TEST_CASE("dev::opencvGrabberTest", "[yarp::dev]")
+TEST_CASE("dev::openCVGrabberTest", "[yarp::dev]")
 {
-    YARP_REQUIRE_PLUGIN("opencv_grabber", "device");
+    YARP_REQUIRE_PLUGIN("openCVGrabber", "device");
 
     Network::setLocalMode(true);
 
-    SECTION("Checking opencv_grabber device, opening an avi file")
+    SECTION("Checking openCVGrabber device, opening an avi file")
     {
         PolyDriver dd;
 
         yarp::os::ResourceFinder res;
-        res.setDefaultContext("tests/opencvGrabber");
+        res.setDefaultContext("tests/openCVGrabber");
         std::string filepath = res.findFileByName("test.avi");
 
         ////////"Checking opening polydriver"
         {
             Property cfg;
-            cfg.put("device", "opencv_grabber");
+            cfg.put("device", "openCVGrabber");
             cfg.put("movie", filepath);
             REQUIRE(dd.open(cfg));
         }
