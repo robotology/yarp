@@ -202,7 +202,7 @@ The tables shown hereunder report all the information needed to understand the f
   * ![#00ffff](https://via.placeholder.com/15/00ffff/000000?text=+) odometry2D_nws_yarp
 
 * opencv
-  * ![#ffff00](https://via.placeholder.com/15/ffff00/000000?text=+) opencv_grabber
+  * ![#ffff00](https://via.placeholder.com/15/ffff00/000000?text=+) openCVGrabber
 
 *  openNI2DepthCamera
    * ![#ffff00](https://via.placeholder.com/15/ffff00/000000?text=+) openNI2DepthCamera

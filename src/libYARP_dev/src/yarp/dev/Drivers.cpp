@@ -392,8 +392,7 @@ int Drivers::yarpdev(int argc, char *argv[]) {
 
     // yarpdev will by default try to pass its thread on to the device.
     // this is because some libraries need configuration and all
-    // access methods done in the same thread (e.g. opencv_grabber
-    // apparently).
+    // access methods done in the same thread.
     options.put("single_threaded", 1);
 
     // interpret command line options as a set of flags

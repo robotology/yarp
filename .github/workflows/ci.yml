@@ -539,7 +539,8 @@ jobs:
                                   -DENABLE_yarpmod_portaudio:BOOL=OFF
                                   -DENABLE_yarpmod_portaudioPlayer:BOOL=OFF
                                   -DENABLE_yarpmod_portaudioRecorder:BOOL=OFF
-                                  -DENABLE_yarpmod_opencv_grabber:BOOL=OFF",
+                                  -DENABLE_yarpmod_openCVGrabber:BOOL=OFF
+                                  -DENABLE_yarpmod_openCVWriter:BOOL=OFF",
           }
         - {
             id: '22',
@@ -564,7 +565,8 @@ jobs:
                                   -DENABLE_yarpmod_portaudio:BOOL=OFF
                                   -DENABLE_yarpmod_portaudioPlayer:BOOL=OFF
                                   -DENABLE_yarpmod_portaudioRecorder:BOOL=OFF
-                                  -DENABLE_yarpmod_opencv_grabber:BOOL=OFF",
+                                  -DENABLE_yarpmod_openCVGrabber:BOOL=OFF
+                                  -DENABLE_yarpmod_openCVWriter:BOOL=OFF",
           }
         - {
             id: '101',
@@ -869,7 +871,8 @@ jobs:
                                   -DENABLE_yarpmod_portaudio:BOOL=OFF
                                   -DENABLE_yarpmod_portaudioPlayer:BOOL=OFF
                                   -DENABLE_yarpmod_portaudioRecorder:BOOL=OFF
-                                  -DENABLE_yarpmod_opencv_grabber:BOOL=OFF",
+                                  -DENABLE_yarpmod_openCVGrabber:BOOL=OFF
+                                  -DENABLE_yarpmod_openCVWriter:BOOL=OFF",
           }
         - {
             id: '122',
@@ -894,7 +897,8 @@ jobs:
                                   -DENABLE_yarpmod_portaudio:BOOL=OFF
                                   -DENABLE_yarpmod_portaudioPlayer:BOOL=OFF
                                   -DENABLE_yarpmod_portaudioRecorder:BOOL=OFF
-                                  -DENABLE_yarpmod_opencv_grabber:BOOL=OFF",
+                                  -DENABLE_yarpmod_openCVGrabber:BOOL=OFF
+                                  -DENABLE_yarpmod_openCVWriter:BOOL=OFF",
           }
         - {
             id: '201',

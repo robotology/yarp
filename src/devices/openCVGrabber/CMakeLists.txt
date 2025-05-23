@@ -48,7 +48,7 @@ if(NOT SKIP_openCVGrabber)
     YARP_INI DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR}
   )
   yarp_install(
-    FILES openCVGrabber.xml
+    FILES OpenCVGrabber.xml
     DESTINATION ${YARP_MODULES_INSTALL_DIR}
   )
 

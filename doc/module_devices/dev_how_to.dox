@@ -157,7 +157,7 @@ contains a list something like this:
 #cmakedefine ENABLE_inertiacube2
 #cmakedefine ENABLE_XSensMTx
 #cmakedefine ENABLE_portaudio
-#cmakedefine ENABLE_opencv_grabber
+#cmakedefine ENABLE_openCVGrabber
 #cmakedefine ENABLE_ffmpeg
 \endcode
 and add:
@@ -178,7 +178,7 @@ PopulateDrivers.cpp.in.
 
 Now find the part of PopulateDrivers.cpp.in that has lines like:
 \code
-#ifdef ENABLE_opencv_grabber
+#ifdef ENABLE_openCVGrabber
 #include <yarp/OpenCVGrabber.h>
 #endif
 \endcode

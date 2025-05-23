@@ -34,7 +34,7 @@ using namespace yarp::dev;
 
 
 namespace {
-YARP_LOG_COMPONENT(OPENCVWRITER, "yarp.device.opencv_writer")
+YARP_LOG_COMPONENT(OPENCVWRITER, "yarp.device.openCVWriter")
 }
 
 
