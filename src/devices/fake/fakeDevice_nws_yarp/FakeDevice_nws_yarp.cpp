@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#include "fakeDevice_nws_yarp.h"
+#include "FakeDevice_nws_yarp.h"
 
 #include <yarp/os/LogComponent.h>
 #include <yarp/os/LogStream.h>

@@ -17,10 +17,10 @@ if(NOT SKIP_fakeDevice_nws_yarp)
 
   target_sources(yarp_fakeDevice_nws_yarp
     PRIVATE
-    fakeDevice_nws_yarp.cpp
-    fakeDevice_nws_yarp.h
-    fakeDeviceServerImpl.cpp
-    fakeDeviceServerImpl.h
+    FakeDevice_nws_yarp.cpp
+    FakeDevice_nws_yarp.h
+    FakeDeviceServerImpl.cpp
+    FakeDeviceServerImpl.h
   )
 
   target_sources(yarp_fakeDevice_nws_yarp PRIVATE $<TARGET_OBJECTS:fakeTestMsgs>)

@@ -100,7 +100,10 @@ bool RobotDescriptionStorage::attachAll(const PolyDriverList &p)
         dev.device_type = pd->poly->id();
         yarp::dev::IDeviceDriverParams* icparams = nullptr;
         pd->poly->view(icparams);
-        dev.device_configuration = icparams->getConfiguration();
+        if (icparams)
+        {
+            dev.device_configuration = icparams->getConfiguration();
+        }
 
         if (dev.device_name == "")
         {
@@ -114,7 +117,7 @@ bool RobotDescriptionStorage::attachAll(const PolyDriverList &p)
             raise_error = true;
             continue;
         }
-        if (dev.device_configuration.empty())
+        if (!icparams || dev.device_configuration.empty())
         {
             yCError(ROBOTDESCRIPTIONSTORAGE) << "Unable to get configuration for device:" << dev.device_name << ", counter id:" << i;
         }
