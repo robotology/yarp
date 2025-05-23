@@ -2,7 +2,6 @@
 # SPDX-License-Identifier: BSD-3-Clause
 
 add_subdirectory(audioPlayerWrapper)
-add_subdirectory(audioRecorderWrapper)
 add_subdirectory(audioRecorder_nwc_yarp)
 add_subdirectory(audioRecorder_nws_yarp)
 add_subdirectory(frameGrabber_nwc_yarp)
