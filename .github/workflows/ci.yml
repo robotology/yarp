@@ -534,6 +534,7 @@ jobs:
                                   -DYARP_COMPILE_BINDINGS:BOOL=OFF
                                   -DCMAKE_DISABLE_FIND_PACKAGE_FFMPEG=ON
                                   -DYARP_COMPILE_GUIS:BOOL=OFF
+                                  -DENABLE_yarpmod_fakePythonSpeechTranscription:BOOL=OFF
                                   -DENABLE_yarpmod_usbCamera:BOOL=OFF
                                   -DENABLE_yarpmod_usbCameraRaw:BOOL=OFF
                                   -DENABLE_yarpmod_portaudio:BOOL=OFF
@@ -560,6 +561,7 @@ jobs:
                                   -DYARP_COMPILE_BINDINGS:BOOL=OFF
                                   -DCMAKE_DISABLE_FIND_PACKAGE_FFMPEG=ON
                                   -DYARP_COMPILE_GUIS:BOOL=OFF
+                                  -DENABLE_yarpmod_fakePythonSpeechTranscription:BOOL=OFF
                                   -DENABLE_yarpmod_usbCamera:BOOL=OFF
                                   -DENABLE_yarpmod_usbCameraRaw:BOOL=OFF
                                   -DENABLE_yarpmod_portaudio:BOOL=OFF
@@ -866,6 +868,7 @@ jobs:
                                   -DYARP_COMPILE_BINDINGS:BOOL=OFF
                                   -DCMAKE_DISABLE_FIND_PACKAGE_FFMPEG=ON
                                   -DYARP_COMPILE_GUIS:BOOL=OFF
+                                  -DENABLE_yarpmod_fakePythonSpeechTranscription:BOOL=OFF
                                   -DENABLE_yarpmod_usbCamera:BOOL=OFF
                                   -DENABLE_yarpmod_usbCameraRaw:BOOL=OFF
                                   -DENABLE_yarpmod_portaudio:BOOL=OFF
@@ -892,6 +895,7 @@ jobs:
                                   -DYARP_COMPILE_BINDINGS:BOOL=OFF
                                   -DCMAKE_DISABLE_FIND_PACKAGE_FFMPEG=ON
                                   -DYARP_COMPILE_GUIS:BOOL=OFF
+                                  -DENABLE_yarpmod_fakePythonSpeechTranscription:BOOL=OFF
                                   -DENABLE_yarpmod_usbCamera:BOOL=OFF
                                   -DENABLE_yarpmod_usbCameraRaw:BOOL=OFF
                                   -DENABLE_yarpmod_portaudio:BOOL=OFF
