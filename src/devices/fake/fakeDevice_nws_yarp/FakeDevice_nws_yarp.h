@@ -10,7 +10,7 @@
 #include <yarp/os/RpcServer.h>
 #include <yarp/dev/testInterfaces/IFakeDeviceInterfaceTest1.h>
 
-#include "fakeDeviceServerImpl.h"
+#include "FakeDeviceServerImpl.h"
 
 /**
 * @ingroup dev_impl_nws_yarp
