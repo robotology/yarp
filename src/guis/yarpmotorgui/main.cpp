@@ -86,6 +86,7 @@ int main(int argc, char *argv[])
         yInfo("--names ""( <name1> <name2> )"": full name of the ports of the robot to add to the list. (e.g. /icub/left_arm). This option is mutually exclusive with --robot --parts options");
         yInfo("--skip_parts ""( <name1> <name2> )"": parts of the robot to skip.");
         yInfo("--calib to enable calibration buttons (be careful!)");
+        yInfo("--remoteRobotDescriptionPort <portname>: port opened by the robotDescription_nws_yarp (yarprbotinterface). Default Value is /yarpRobotInterface/devices/rpc");
         return 0;
     }
 
@@ -112,6 +113,12 @@ int main(int argc, char *argv[])
         speedview_param_enabled = true;
     }
 
+    std::string descriprionServerRemotePort = "/yarpRobotInterface/devices/rpc";
+    if (finder.check("remoteRobotDescriptionPort"))
+    {
+        descriprionServerRemotePort = finder.find("remoteRobotDescriptionPort").asString();
+    }
+
     if (finder.check("skip_description_server")==false) //option --skip_description_server is for debug only, users should not use it
     {
         //ask the robot part to the description server
@@ -125,8 +132,7 @@ int main(int argc, char *argv[])
             adr = Network::queryName(descLocalName);
         }
 
-        std::string remote_port = "/yarpRobotInterface/devices/rpc";
-        if (yarp::os::Network::exists(remote_port.c_str()))
+        if (yarp::os::Network::exists(descriprionServerRemotePort.c_str()))
         {
             PolyDriver* desc_driver = nullptr;
             desc_driver = new PolyDriver;
@@ -134,7 +140,7 @@ int main(int argc, char *argv[])
             Property desc_driver_options;
             desc_driver_options.put("device", "robotDescription_nwc_yarp");
             desc_driver_options.put("local", descLocalName);
-            desc_driver_options.put("remote",remote_port.c_str());
+            desc_driver_options.put("remote", descriprionServerRemotePort.c_str());
             if (desc_driver && desc_driver->open(desc_driver_options))
             {
                 IRobotDescription* idesc = nullptr;
@@ -155,16 +161,21 @@ int main(int argc, char *argv[])
                         pParts.addString(nws_port);
                     }
                 }
-            }
-
-            if (desc_driver)
-            {
+                else
+                {
+                    yError() << "Unable to get IRobotDescription interface? This is a bug";
+                }
                 desc_driver->close();
                 delete desc_driver;
+            }
+            else
+            {
+                yError() << "Unable to open robotDescription_nwc_yarp, robot parts will be set manually.";
             }
         }
         else
         {
+            yWarning() << "Attempt to connect to port:" << descriprionServerRemotePort << "failed";
             yWarning() << "robotDescription_nws_yarp not found, robot parts will be set manually.";
         }
     }
