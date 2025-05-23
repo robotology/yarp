@@ -14,6 +14,8 @@
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/PolyDriverList.h>
 
+#include <yarp/dev/IDeviceDriverParams.h>
+
 #include <algorithm>
 #include <iostream>
 #include <string>
@@ -222,9 +224,24 @@ bool yarp::robotinterface::Robot::Private::openDevices()
         {
             if (m_istorage)
             {
+                std::vector<std::string> stp;
+                std::string scfg;
+                yarp::dev::PolyDriver* pddrv = device.driver();
+                yarp::dev::IDeviceDriverParams* dparams = nullptr;
+                if (pddrv)
+                {
+                    pddrv->view(dparams);
+                    stp = dparams->getListOfParams();
+                    scfg = dparams->getConfiguration();
+                }
+                if (!pddrv || scfg.empty())
+                {
+                    yCError(YRI_ROBOT) << "Unable to get device" << device.name() << "configuration";
+                }
                 yarp::dev::DeviceDescription devdesc;
                 devdesc.device_name = device.name();
                 devdesc.device_type = device.type();
+                devdesc.device_configuration = scfg;
                 yarp::dev::ReturnValue ret = m_istorage->registerDevice(devdesc);
                 if (!ret)
                 {

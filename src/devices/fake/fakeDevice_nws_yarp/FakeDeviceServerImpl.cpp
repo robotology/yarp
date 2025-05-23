@@ -6,10 +6,10 @@
 #include <yarp/os/LogComponent.h>
 #include <yarp/os/LogStream.h>
 
-#include <fakeDeviceServerImpl.h>
+#include <FakeDeviceServerImpl.h>
 
 namespace {
-YARP_LOG_COMPONENT(FAKEDEVICESERVER, "yarp.device.LLMServer")
+YARP_LOG_COMPONENT(FAKEDEVICESERVER, "yarp.device.FakeDeviceServer")
 }
 
 yarp::dev::ReturnValue FakeServerRPCd::doSomethingRPC()

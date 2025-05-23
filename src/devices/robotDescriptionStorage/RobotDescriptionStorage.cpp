@@ -7,6 +7,7 @@
 #include <yarp/os/Log.h>
 #include <yarp/os/LogComponent.h>
 #include <yarp/os/LogStream.h>
+#include <yarp/dev/IDeviceDriverParams.h>
 
 using namespace yarp::dev;
 using namespace yarp::os;
@@ -97,6 +98,13 @@ bool RobotDescriptionStorage::attachAll(const PolyDriverList &p)
         DeviceDescription dev;
         dev.device_name = pd->key;
         dev.device_type = pd->poly->id();
+        yarp::dev::IDeviceDriverParams* icparams = nullptr;
+        pd->poly->view(icparams);
+        if (icparams)
+        {
+            dev.device_configuration = icparams->getConfiguration();
+        }
+
         if (dev.device_name == "")
         {
             yCError(ROBOTDESCRIPTIONSTORAGE) << "Invalid device name for device type:" << dev.device_type << ", counter id:" << i;
@@ -108,6 +116,10 @@ bool RobotDescriptionStorage::attachAll(const PolyDriverList &p)
             yCError(ROBOTDESCRIPTIONSTORAGE) << "Invalid device type for device name:" << dev.device_name << ", counter id:" << i;
             raise_error = true;
             continue;
+        }
+        if (!icparams || dev.device_configuration.empty())
+        {
+            yCError(ROBOTDESCRIPTIONSTORAGE) << "Unable to get configuration for device:" << dev.device_name << ", counter id:" << i;
         }
 
         auto ret = registerDevice(dev);

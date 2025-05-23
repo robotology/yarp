@@ -23,6 +23,7 @@ TEST_CASE("dev::robotDescriptionStorage_Test", "[yarp::dev]")
 {
     YARP_REQUIRE_PLUGIN("robotDescriptionStorage", "device");
     YARP_REQUIRE_PLUGIN("fakeDeviceUnwrapped", "device");
+    YARP_REQUIRE_PLUGIN("controlBoard_nws_yarp", "device");
 
     Network::setLocalMode(true);
 
@@ -69,6 +70,34 @@ TEST_CASE("dev::robotDescriptionStorage_Test", "[yarp::dev]")
         REQUIRE(ww_nws);
         yarp::dev::PolyDriverList drivers_list;
         drivers_list.push(&dd_adevice,"fakedev");
+        bool result_att = ww_nws->attachAll(drivers_list);
+        REQUIRE(result_att);
+
+        yarp::os::Time::delay(1.0);
+
+        // Close devices
+        CHECK(ddstor.close()); // robotDescription_nws_yarp successfully closed
+        CHECK(dd_adevice.close());
+    }
+
+    SECTION("Test the robotDescriptionStorage device with attach")
+    {
+        PolyDriver dd_adevice;
+        Property p_cfg_adevice;
+        p_cfg_adevice.put("device", "controlBoard_nws_yarp");
+        p_cfg_adevice.put("name",   "/test");
+        REQUIRE(dd_adevice.open(p_cfg_adevice));
+
+        PolyDriver ddstor;
+        Property pcfg;
+        pcfg.put("device", "robotDescriptionStorage");
+        REQUIRE(ddstor.open(pcfg)); // robotDescription_nws_yarp open reported successful
+
+        yarp::dev::IMultipleWrapper* ww_nws = nullptr;
+        ddstor.view(ww_nws);
+        REQUIRE(ww_nws);
+        yarp::dev::PolyDriverList drivers_list;
+        drivers_list.push(&dd_adevice, "fakedev");
         bool result_att = ww_nws->attachAll(drivers_list);
         REQUIRE(result_att);
 

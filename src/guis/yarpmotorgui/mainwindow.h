@@ -23,6 +23,7 @@
 #include "modestreemanager.h"
 
 #include <vector>
+#include <string>
 
 namespace Ui {
 class MainWindow;
@@ -35,7 +36,7 @@ class MainWindow : public QMainWindow
 
 public:
     explicit MainWindow(QWidget *parent = 0);
-    bool init(QStringList enabledParts,
+    bool init(std::vector<std::string> enabledParts,
               ResourceFinder& finder,
               bool debug_param_enabled,
               bool speedview_param_enabled,

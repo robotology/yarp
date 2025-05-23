@@ -50,6 +50,11 @@ New Features
 * User can open a `RobotDescription_nws_yarp` and attach it to the `RobotDescriptionStorage` to obtain info about opened devices. See example: 
 `yarp\src\yarprobotinterface\tests\robotDescription`
 
+### yarpmotorgui
+
+* It now uses `RobotDescription_nwc_yarp` to ask to a `RobotDescription_nws_yarp` opened by a yarprobotinterface the name of the parts to which connect to.
+If the connection fails, the yarpmotorgui will continue to use the previous strategy (via parameters provided by command line or via file yarpmotorgui.ini)
+* the new parameter `remoteRobotDescriptionPort` allows to select the RobotDescription_nws_yarp port. Default value is /yarpRobotInterface/devices/rpc
 
 Breaking Changes
 ----------------
