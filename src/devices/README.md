@@ -49,8 +49,8 @@ The tables shown hereunder report all the information needed to understand the f
 * audioPlayerWrapper
   * ![#00ffff](https://via.placeholder.com/15/00ffff/000000?text=+) **AudioPlayerWrapper**
 
-* audioRecorderWrapper
-  * ![#00ffff](https://via.placeholder.com/15/00ffff/000000?text=+)  **AudioRecorderWrapper**
+* audioRecorder_nws
+  * ![#00ffff](https://via.placeholder.com/15/00ffff/000000?text=+)  audioRecorder_nws
 
 * audioToFileDevice
   * ![#ffff00](https://via.placeholder.com/15/ffff00/000000?text=+) audioToFileDevice

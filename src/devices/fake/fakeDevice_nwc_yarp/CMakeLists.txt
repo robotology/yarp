@@ -8,7 +8,7 @@ endif()
 yarp_prepare_plugin(fakeDevice_nwc_yarp
   CATEGORY device
   TYPE FakeDevice_nwc_yarp
-  INCLUDE fakeDevice_nwc_yarp.h
+  INCLUDE FakeDevice_nwc_yarp.h
   DEFAULT ON
 )
 

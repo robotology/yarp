@@ -85,3 +85,4 @@ Breaking Changes
 * The `attachAll()` mechanism used to keep track of the devices opened by yarprobotinterface (previously implemented by `RobotDescriptionServer`)
   has been transferred to `RobotDescriptionStorage`.
 * device 'opencv_grabber` has been renamed to `openCVGrabber`
+* device `audioRecorderWrapper`, deprecated in yarp 3.9 has been completely removed
