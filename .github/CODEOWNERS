@@ -8,8 +8,6 @@
 /src/devices/**                                  @randaz81 @traversaro @Nicogene
 /src/devices/Rangefinder2DClient/**              @randaz81
 /src/devices/Rangefinder2DWrapper/**             @randaz81
-/src/devices/audioPlayerWrapper/**               @randaz81
-/src/devices/audioRecorderWrapper/**             @randaz81
 /src/devices/batteryClient/**                    @randaz81
 /src/devices/batteryWrapper/**                   @randaz81
 /src/devices/fakeBattery/**                      @randaz81

@@ -27,9 +27,9 @@ Audio-related devices include <b>physical device drivers</b> and <b>wrapper devi
 \section driver_devices Physical device drivers 
 - fakeMicrophone a device which generates a predefined audio tone for testing purposes.
 - fakeSpeaker a device which receives audio data and consume it (without playing) for testing purposes.
-- audioFromFileDevice a device which reads a audio file from disk and sends it over the network via audioRecorderWrapper.
+- audioFromFileDevice a device which reads a audio file from disk and sends it over the network via audioRecorder_nws_yarp.
 - audioToFileDevice a device which receives audio data and writes it on disk.
-- portaudioRecorder (PortAudioRecorderDeviceDriver) a device which records audio from the local hardware using <a href="http://portaudio.com/">portaudio</a>  library and sends it over the network via audioRecorderWrapper
+- portaudioRecorder (PortAudioRecorderDeviceDriver) a device which records audio from the local hardware using <a href="http://portaudio.com/">portaudio</a>  library and sends it over the network via audioRecorder_nws_yarp
 - portaudioPlayer (PortAudioPlayerDeviceDriver) a device which receives audio data and plays it on the local hardware, using <a href="http://portaudio.com/">portaudio</a>  library.
 
 All these devices derive from the same base classes yarp::dev::AudioRecorderDeviceBase and yarp::dev::AudioPlayerDeviceBase which are also responsible for parsing 
@@ -98,17 +98,17 @@ The following example reads an audio from a file, sends data through the network
 The chosen configuration uses an internal buffer of 32000 samples (corresponding to 2 seconds of audio if audio samples with a freq of 16KHz are received).
 The playback has a latency of 0.1s.
 \code
-yarpdev --device audioRecorderWrapper --subdevice audioFromFileDevice --start --file_name audio_in.wav
-yarpdev --device audioPlayerWrapper --subdevice portaudioPlayer --start --playback_network_buffer_size 0.1 --AUDIO_BASE::samples 32000
-yarp connect /audioRecorderWrapper/audio:o /audioPlayerWrapper/audio:i
+yarpdev --device deviceBundler --wrapper_device audioRecorder_nws_yarp --attached_device audioFromFileDevice --start --file_name audio_in.wav
+yarpdev --device deviceBundler --wrapper_device AudioPlayerWrapper --attached_device portaudioPlayer --start --playback_network_buffer_size 0.1 --AUDIO_BASE::samples 32000
+yarp connect /audioRecorder_nws/audio:o /audioPlayerWrapper/audio:i
 \endcode
 
 The following example grabs data from a microphone, sends data through the network, and saves it to a file.
 The chosen configuration forces the recorderWrapper to send data packets composed by 3200 samples, corresponding to 0.2s.
 \code
-yarpdev --device audioRecorderWrapper --subdevice portaudioRecorder --start --min_samples_over_network 3200 --max_samples_over_network 3200 --AUDIO_BASE::rate 16000 --AUDIO_BASE::samples 6400 --AUDIO_BASE::channels 1
-yarpdev --device audioPlayerWrapper --subdevice audioToFileDevice --start  --file_name audio_out.wav --save_mode overwrite_file
-yarp connect /audioRecorderWrapper/audio:o /audioPlayerWrapper/audio:i
+yarpdev --device deviceBundler --wrapper_device audioRecorder_nws_yarp --attached_device portaudioRecorder --start --min_samples_over_network 3200 --max_samples_over_network 3200 --AUDIO_BASE::rate 16000 --AUDIO_BASE::samples 6400 --AUDIO_BASE::channels 1
+yarpdev --device deviceBundler --wrapper_device AudioPlayerWrapper --attached_device audioToFileDevice --start  --file_name audio_out.wav --save_mode overwrite_file
+yarp connect /audioRecorder_nws/audio:o /audioPlayerWrapper/audio:i
 \endcode
 
 
@@ -116,9 +116,9 @@ yarp connect /audioRecorderWrapper/audio:o /audioPlayerWrapper/audio:i
 The audio system currently do not support real-time audio transmission for audio conference purposes. Of course the systems allows to do it, as shown in 
 following example:
 \code
-yarpdev --device audioRecorderWrapper --subdevice portaudioRecorder --start --min_samples_over_network 3200 --max_samples_over_network 3200 --AUDIO_BASE::rate 16000 --AUDIO_BASE::samples 6400 --AUDIO_BASE::channels 1
-yarpdev --device audioPlayerWrapper --subdevice portaudioPlayer --start --playback_network_buffer_size 0.1 --AUDIO_BASE::samples 32000
-yarp connect /audioRecorderWrapper/audio:o /audioPlayerWrapper/audio:i
+yarpdev --device deviceBundler --wrapper_device audioRecorder_nws_yarp --attached_device portaudioRecorder --start --min_samples_over_network 3200 --max_samples_over_network 3200 --AUDIO_BASE::rate 16000 --AUDIO_BASE::samples 6400 --AUDIO_BASE::channels 1
+yarpdev --device deviceBundler --wrapper_device AudioPlayerWrapper --attached_device portaudioPlayer --start --playback_network_buffer_size 0.1 --AUDIO_BASE::samples 32000
+yarp connect /audioRecorder_nws/audio:o /audioPlayerWrapper/audio:i
 \endcode
 This example has several problems. First of some inevitable pop-clicks distortions will be happens,
 due to the fact the finite buffers have finite size. Since the network transmission has physical non-zero latency, the receiver accumulates

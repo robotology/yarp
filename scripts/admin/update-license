@@ -92,7 +92,6 @@ GPL-2.0 or later, GPL-3.0 or later, or Apache-2.0 License:
    or later.
    + devices:
      - \`audioPlayerWrapper\`
-     - \`audioRecorderWrapper\`
      - \`batteryClient\`
      - \`batteryWrapper\`
      - \`depthCamera\`
