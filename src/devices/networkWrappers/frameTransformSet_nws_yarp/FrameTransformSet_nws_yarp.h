@@ -16,6 +16,8 @@
 #include <mutex>
 #include <map>
 
+#include "FrameTransformSet_nws_yarp_ParamsParser.h"
+
 /**
  * @ingroup dev_impl_nws_yarp
  *
@@ -24,11 +26,7 @@
  * \section FrameTransformSet_nws_yarp_device_parameters Parameters
  * This device is paired with its server called FrameTransformSet_nwc_yarp.
  *
- *   Parameters required by this device are:
- * | Parameter name               | SubParameter            | Type    | Units          | Default Value  | Required  | Description                                                                                                                                             |
- * |:----------------------------:|:-----------------------:|:-------:|:--------------:|:--------------:|:------- -:|:-------------------------------------------------------------------------------------------------------------------------------------------------------:|
- * | default-config               |      -                  | bool    | -              | true           | No        | tells whether or not the nws is instanciated by the frameTransformServer device. If true, "/frameTransformServer" will appended to the port name prefix |
- * | nws_thrift_port_prefix       |      -                  | string  | -              | ""             | No        | a prefix for the nws thrift rpc port name                                                                                                               |
+ * Parameters required by this device are shown in class: FrameTransformSet_nws_yarpParamsParser
  *
  * \section FrameTransformGet_nwc_yarp_port_example Port names examples
  * Here follow some examples of port names obtained with different parameters configurations
@@ -57,7 +55,8 @@
 class FrameTransformSet_nws_yarp :
     public yarp::dev::DeviceDriver,
     public FrameTransformStorageSetRPC,
-    public yarp::dev::WrapperSingle
+    public yarp::dev::WrapperSingle,
+    public FrameTransformSet_nws_yarp_ParamsParser
 {
 
 public:
