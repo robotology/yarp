@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: BSD-3-Clause
 
 if (YARP_COMPILE_ALL_FAKE_DEVICES)
-  set(ENABLE_yarpmod_fake_nws_yarp ON CACHE BOOL "" FORCE)
+  set(ENABLE_yarpmod_fakeDevice_nws_yarp ON CACHE BOOL "" FORCE)
 endif()
 
 yarp_prepare_plugin(fakeDevice_nws_yarp

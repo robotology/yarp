@@ -1,9 +1,10 @@
 # SPDX-FileCopyrightText: 2023-2023 Istituto Italiano di Tecnologia (IIT)
 # SPDX-License-Identifier: BSD-3-Clause
 
-if (YARP_COMPILE_ALL_FAKE_DEVICES)
-  set(ENABLE_yarpmod_fakePythonSpeechTranscription ON CACHE BOOL "" FORCE)
-endif()
+#Disabled to avoid valgrind CI test
+#if (YARP_COMPILE_ALL_FAKE_DEVICES)
+#  set(ENABLE_yarpmod_fakePythonSpeechTranscription ON CACHE BOOL "" FORCE)
+#endif()
 
 if (NOT BUILD_SHARED_LIBS)
   set(ENABLE_yarpmod_fakePythonSpeechTranscription OFF CACHE BOOL "" FORCE)
