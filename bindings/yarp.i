@@ -430,7 +430,7 @@ MAKE_COMMS(Bottle)
 %include <yarp/dev/ISpeechTranscription.h>
 %include <yarp/dev/ILLM.h>
 %include <yarp/dev/MultipleAnalogSensorsInterfaces.h>
-#include <yarp/dev/IFrameTransform.h>
+%include <yarp/dev/IFrameTransform.h>
 
 %template(DVector) std::vector<double>;
 %template(BVector) std::vector<bool>;
