@@ -86,3 +86,11 @@ Breaking Changes
   has been transferred to `RobotDescriptionStorage`.
 * device 'opencv_grabber` has been renamed to `openCVGrabber`
 * device `audioRecorderWrapper`, deprecated in yarp 3.9 has been completely removed
+
+Other
+-----
+
+* all yarp command line executables are now located under the folder `commands` similar to the folder `guis`/
+* yarp documentation was improved.
+
+

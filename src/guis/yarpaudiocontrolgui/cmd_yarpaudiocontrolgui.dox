@@ -1,0 +1,35 @@
+/**
+\defgroup yarpaudiocontrolgui yarpaudiocontrolgui: Controls the playback/recording of an audio device
+
+Controls the playback/recording of an audio device.
+
+\ingroup yarp_guis
+
+\tableofcontents
+
+\section yarpaudiocontrolgui_intro Description
+
+The gui allows to start/stop the playback of audioPlayer device (\ref yarp::dev::IAudioRender) or, alternatively, to start/stop the recording of an audioRecorder device
+ (\ref yarp::dev::IAudioGrabberSound). See also \ref AudioDoc
+
+\image html yarpaudiocontrolgui_example.png
+
+\section yarpaudiocontrolgui_ports Ports accessed
+
+The gui opens a `audioPlayer_nwc_yarp` device or a \ref AudioRecorder_nws_yarp to connect to a `audioPlayer_nws_yarp` or \ref AudioRecorder_nws_yarp respectively.
+
+\section yarpaudiocontrolgui_lib Libraries
+
+- Qt5 libraries.
+
+\section yarpaudiocontrolgu_parameters Parameters
+
+\verbatim
+--local <portname>         an optional parameter which defines the name of the local port. Default is /yarpaudiocontrolgui. Multiple yarpaudiocontrolgui must use different local names.
+--remote-rec  <portname>   an optional parameter which defines the name of the rpc port of a audioRecorder_nws_yarp device.
+--remote-play <portname>   an optional parameter which defines the name of the rpc port of a audioPlayer_nws_yarp device.
+\endverbatim
+
+NOTE: `remote-rec` and `remote-play` options are mutually exclusive.
+
+*/

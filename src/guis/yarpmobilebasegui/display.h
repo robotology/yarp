@@ -12,6 +12,7 @@
 #include <yarp/os/Os.h>
 #include <yarp/os/Network.h>
 #include <yarp/os/ResourceFinder.h>
+#include <yarp/os/Stamp.h>
 #include <yarp/dev/IBattery.h>
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/Drivers.h>
@@ -76,6 +77,7 @@ private:
     QTimer*                          mainTimer;
     Joywidget*                       joy;
     char buff[100];
+    yarp::os::Stamp                  m_stamp;
 
 public:
     yarp::os::Port                   outputport;

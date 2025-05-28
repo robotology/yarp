@@ -1,0 +1,69 @@
+/**
+\defgroup yarpidl_thrift yarpidl_thrift: YARP code generator/compiler for Thrift IDL
+
+\ingroup yarp_commands
+
+\tableofcontents
+
+\section yarpidl_thrift_intro Description
+
+This tool takes in input a .thrift file and generates code (.cpp / .h files) for a YARP interface or YARP data type.
+
+See also the YARP idl documentation page: idls_page
+See also the official IDL thrift documentation https://thrift.apache.org/docs/idl
+
+\section yarpidl_thrift_params Parameters
+
+\verbatim
+Usage: thrift [options] file
+Options:
+  -version    Print the compiler version
+  -o dir      Set the output directory for gen-* packages
+               (default: current directory)
+  -out dir    Set the ouput location for generated files.
+               (no gen-* folder will be created)
+  -I dir      Add a directory to the list of directories
+                searched for include directives
+  -nowarn     Suppress all compiler warnings (BAD!)
+  -strict     Strict compiler warnings on
+  -v[erbose]  Verbose mode
+  -r[ecurse]  Also generate included files
+  -debug      Parse debug trace to stdout
+  --allow-neg-keys  Allow negative field keys (Used to preserve protocol
+                compatibility with older .thrift files)
+  --allow-64bit-consts  Do not print warnings about using 64-bit constants
+  --gen STR   Generate code with a dynamically-registered generator.
+                STR has the form language[:key1=val1[,key2[,key3=val3]]].
+                Keys and values are options passed to the generator.
+                Many options will not require values.
+
+Options related to audit operation
+   --audit OldFile   Old Thrift file to be audited with 'file'
+  -Iold dir    Add a directory to the list of directories
+                searched for include directives for old thrift file
+  -Inew dir    Add a directory to the list of directories
+                searched for include directives for new thrift file
+
+Available generators (and options):
+  cpp (C++):
+    cob_style:       Generate "Continuation OBject"-style classes.
+    no_client_completion:
+                     Omit calls to completion__() in CobClient class.
+    no_default_operators:
+                     Omits generation of default operators ==, != and <
+    templates:       Generate templatized reader/writer methods.
+    pure_enums:      Generate pure enums instead of wrapper classes.
+    include_prefix:  Use full include paths in generated files.
+    moveable_types:  Generate move constructors and assignment operators.
+    no_ostream_operators:
+                     Omit generation of ostream definitions.
+    no_skeleton:     Omits generation of skeleton.
+  yarp (YARP):
+    include_prefix:       The include prefix to use for the generated files
+    no_namespace_prefix:  Omit the namespace from the include prefix
+    no_copyright:         Omit the copyright header.
+    no_doc:               Omit doxygen documentation.
+    debug_generator:      Add generator debug information in generated code.
+\endverbatim
+
+*/

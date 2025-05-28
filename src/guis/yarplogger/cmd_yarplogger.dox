@@ -1,0 +1,69 @@
+/**
+\defgroup yarplogger yarplogger: visualize log from YARP programs
+
+\ingroup yarp_guis
+
+\section yarplogger_intro Description
+
+A gui to display yarp log messages.
+The gui consists of two sections: on the left a list of log entries, each of them corresponding to a single process. For each log entry, the pid of the process and the ip address of
+the machine on which it is running is displayed. The entry becomes yellow/red if one or more warnings/errors are received.
+For each log entry, the received log messages are displayed on the right windows. It is possible to filter out specific log levels of messages (debug,info,warning,error) by activating
+the specific filters. It is also possible to type a text and display only the log messages containing that specific text.
+
+When the gui is launched, the logging is activity is not automatically started, as the user might want to use the logger to load previously saved logging sessions.
+If the logging is started, then the gui will wait for new processes to log: when a new yarp process is started, it will automatically detected and added to list of logged processes.
+If the user want to add to the logging activity a process that was started before the yarplogger, than a port scan (using the refresh button) must be performed.
+The logger will ask to the nameserver a list of all `/log` ports opened by the various processes and will connect it to the input port of the logger gui.
+
+See also \ref yarplogger-console a command line version of this tool (with less functionalities).
+
+See also \ref yarp_logging
+
+\image html yarplogger_example.png width=400px
+
+\section yarplogger_menu menus and commands
+
+General commands:
+\verbatim
+`file->start logger`: the gui is launched, the log is not automatically started. Click on this command to start the log.
+`file->stop logger`: stops the logging process.
+`file->save log session`: store all the logs of all the logged process into a binary file. The file can be visualized later using the loaf command.
+`file->load log session`: recovers a previously saved binary log file.
+`file->clear session`: clears the current log session, cleaning up all the logged process.
+`file->refresh`: searches for new process to log. (see the general description/usage)
+\endverbatim
+
+Commands which affect a specific logged entry (process):
+\verbatim
+`log->clear current log`: clears the log of the selected entry.
+`log->export to text`: save the selected log to a text file.
+`log->enable/disable`: suspend/activates the reception of new log messages for the selected process
+`log->reset counters`: resets the warning/error counters for the specific log entry.
+\endverbatim
+
+Other options:
+\verbatim
+`options->advanced`: allows to set the limits for the received log messages.
+\endverbatim
+
+\section yarplogger_params Parameters
+
+The gui accepts the following options:
+
+\verbatim
+--name <portname> name of the input port opened by the logger gui (default value: /yarplogger). It need to be modified if multiple loggers are required.
+--unlimited_size if this flag is enabled, each process logged by the gui can store unlimited messages
+--start the gui automatically starts logging when launched
+\endverbatim
+
+\section yarplogger_ports Accessed ports
+
+The module opens a port `/yarplogger` which is used as an input port to receive logs from other processes, each of them opening a `/log/xxx` port.
+All these connections are performed automatically when the user clicks on the `refresh` button.
+
+\section yarplogger_lib Libraries
+
+- Qt5 libraries.
+
+*/

@@ -1,0 +1,41 @@
+/**
+\defgroup yarpmobilebasegui yarpmobilebasegui: Control the mobile base of the robot
+
+\ingroup yarp_guis
+
+\tableofcontents
+
+\section yarpmobilebasegui_intro Description
+
+A simple GUI to control the mobile base of the robot via mouse or keyboard:
+
+\image html yarpmobilebasegui_example.png
+
+The keyboard controls are:
+\verbatim
+W,S    forward/backward (x-axis)
+Q      turn left
+E      turn right
+A,D    lateral (y-axis) (only holonomic robots)
+I,K    change linear velocity
+O,L    change angular velocity
+\endverbatim
+
+The gui streams a `yarp::dev::MobileBaseVelocity` messages on a YARP port, with a default period of 10 milliseconds.
+
+\section yarplogger_params Parameters
+
+The gui accepts the following parameters:
+\verbatim
+--port <name>         the full name of the output port default value: /yarpmobilebasegui:o
+--step_lin_vel        the increase step of linear velocity (m/s) default value 0.05m/s
+--step_ang_vel        the increase step of angular velocity (deg/s) default value 5 deg/s
+--default_lin_vel     the default value for max linear velocity (m/s) default value: 1m/s
+--default_ang_vel     the default value for max angular velocity (deg/s) default value: 10 deg/s
+\endverbatim
+
+\section yarplogger_lib Libraries
+
+- Qt5 libraries.
+
+*/

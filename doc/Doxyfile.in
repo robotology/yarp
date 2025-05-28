@@ -906,6 +906,8 @@ INPUT                  = @CMAKE_SOURCE_DIR@/src/libYARP_conf/src \
                          @CMAKE_SOURCE_DIR@/src/devices \
                          @CMAKE_SOURCE_DIR@/src/carriers \
                          @CMAKE_SOURCE_DIR@/src/portmonitors \
+                         @CMAKE_SOURCE_DIR@/src/guis \
+                         @CMAKE_SOURCE_DIR@/src/commands \
                          @CMAKE_SOURCE_DIR@/doc \
                          @CMAKE_SOURCE_DIR@/doc/release \
                          @CMAKE_SOURCE_DIR@/opt-modules \
@@ -981,7 +983,10 @@ EXCLUDE_PATTERNS       =  */doc/release/yarp_* \
                           */src/devices/*/*_ParamsParser.md \
                           */src/devices/*/*extraComm* \
                           */src/portmonitors/*/README.md \
-                          */src/carriers/*/README.md
+                          */src/carriers/*/README.md \
+                          */src/guis/*/doc/README.md \
+                          */src/commands/*/doc/README.md \
+                          */src/commands/yarpDeviceParamParserGenerator/tests/*
 
 # The EXCLUDE_SYMBOLS tag can be used to specify one or more symbol names
 # (namespaces, classes, functions, etc.) that should be excluded from the
@@ -1018,9 +1023,38 @@ EXAMPLE_RECURSIVE      = YES
 # that contain images that are to be included in the documentation (see the
 # \image command).
 
-IMAGE_PATH             = @CMAKE_SOURCE_DIR@/doc/images \
-                         @CMAKE_SOURCE_DIR@/.github
-
+IMAGE_PATH    = @CMAKE_SOURCE_DIR@/doc/images \
+                @CMAKE_SOURCE_DIR@/.github \
+                @CMAKE_SOURCE_DIR@/src/commands/yarp/doc \ 
+                @CMAKE_SOURCE_DIR@/src/commands/yarp-config/doc \
+                @CMAKE_SOURCE_DIR@/src/commands/yarpActionsPlayer/doc \
+                @CMAKE_SOURCE_DIR@/src/commands/yarpconnectionsinfo/doc \
+                @CMAKE_SOURCE_DIR@/src/commands/yarpdatadumper/doc \
+                @CMAKE_SOURCE_DIR@/src/commands/yarpdatadumperAppGenerator/doc \
+                @CMAKE_SOURCE_DIR@/src/commands/yarpdataplayer-console/doc \
+                @CMAKE_SOURCE_DIR@/src/commands/yarpdev/doc \
+                @CMAKE_SOURCE_DIR@/src/commands/yarpDeviceParamParserGenerator/doc \
+                @CMAKE_SOURCE_DIR@/src/commands/yarphear/doc \
+                @CMAKE_SOURCE_DIR@/src/commands/yarpidl_thrift/doc \
+                @CMAKE_SOURCE_DIR@/src/commands/yarplogger-console/doc \
+                @CMAKE_SOURCE_DIR@/src/commands/yarpmanager-console/doc \
+                @CMAKE_SOURCE_DIR@/src/commands/yarprobotinterface/doc \
+                @CMAKE_SOURCE_DIR@/src/commands/yarprun/doc \
+                @CMAKE_SOURCE_DIR@/src/commands/yarpserver/doc \
+                @CMAKE_SOURCE_DIR@/src/guis/yarpaudiocontrolgui/doc \
+                @CMAKE_SOURCE_DIR@/src/guis/yarpbatterygui/doc \
+                @CMAKE_SOURCE_DIR@/src/guis/yarpdataplayer/doc \
+                @CMAKE_SOURCE_DIR@/src/guis/yarplaserscannergui/doc \
+                @CMAKE_SOURCE_DIR@/src/guis/yarpllmgui/doc \
+                @CMAKE_SOURCE_DIR@/src/guis/yarplogger/doc \
+                @CMAKE_SOURCE_DIR@/src/guis/yarpmanager/doc \
+                @CMAKE_SOURCE_DIR@/src/guis/yarpmobilebasegui/doc \
+                @CMAKE_SOURCE_DIR@/src/guis/yarpmotorgui/doc \
+                @CMAKE_SOURCE_DIR@/src/guis/yarpopencvdisplay/doc \
+                @CMAKE_SOURCE_DIR@/src/guis/yarpscope/doc \
+                @CMAKE_SOURCE_DIR@/src/guis/yarpview/doc \
+                @CMAKE_SOURCE_DIR@/src/guis/yarpviz/doc 
+ 
 # The INPUT_FILTER tag can be used to specify a program that doxygen should
 # invoke to filter for each input file. Doxygen will invoke the filter program
 # by executing (via popen()) the command:

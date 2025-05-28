@@ -1,0 +1,63 @@
+/**
+\defgroup yarplaserscannergui yarplaserscannergui: visualize data from a laser scanner
+
+\ingroup yarp_guis
+
+\tableofcontents
+
+A simple GUI to display the distance measurements of a 2D laser scanner.
+
+\section yarplaserscannergui_intro Description
+
+The gui display lidar measurements ( yarp::sig::LaserMeasurementData) on a polar diagram.
+
+\image html yarplaserscannergui_example.png width=400px
+
+\section yarplaserscannergui_lib Libraries
+
+- OpenCV libraries.
+
+\section yarplaserscannergui_parameters Parameters
+
+\verbatim
+--scale <double>            zoom factor (default 100)
+--robot_radius <double>     the radius of the displayed robot footprint
+--sens_position_x <double>  the position in meters of the laser center respect to the center of the robot (default 0 m)
+--sens_position_y <double>  the position in meters of the laser center respect to the center of the robot (default 0 m)
+--sens_position_theta <double> the orientation in degrees of the laser sensor respect to the center of the robot (default 0 deg)
+--verbose <bool>            toggles debug messages on/off (default false)
+--absolute <bool>           display the laser in absolute o relative mode (default false)
+--compass <bool>            displays the compass (default true)
+--period <double>           the refresh period (default 50 ms)
+--aspect <0/1>              draws line/points (default 0=lines)
+--sens_port <string>        the name of the port used by rangefinder2D_nwc_yarp to connect to the laser device. (mandatory)
+--carrier <string>          the name of the carrier used by rangefinder2D_nwc_yarp for connection to the server
+--lidar_debug               shows NaN values
+--local <string>            the prefix for the client port. By default /laserScannerGui. Useful in case of multiple instances.
+\endverbatim
+
+Available commands (pressing the key during execution):
+\verbatim
+c ...... enables/disables compass.
+a ...... set absolute/relative mode.
+w ...... zoom in.
+s ...... zoom out.
+v ...... set verbose mode on/off.
+r ...... set refresh period (50/100/200ms).
+b ...... change aspect (lines/points)
+\endverbatim
+
+\section yarplaserscannergui_portsa Ports Accessed
+
+The gui uses as \ref Rangefinder2D_nwc_yarp device to connect to a \ref Rangefinder2D_nws_yarp and receive data.
+
+\section yarplaserscannergui_in_files Input Data Files
+None.
+
+\section yarplaserscannergui_out_data Output Data Files
+None.
+
+\section yarplaserscannergui_conf_file Configuration Files
+None.
+
+*/

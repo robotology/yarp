@@ -1,0 +1,73 @@
+/**
+\defgroup yarprobotinterface yarprobotinterface: Start multiple YARP devices as specified in an xml file.
+
+\ingroup yarp_commands
+\ingroup robointerface_all
+
+\tableofcontents
+
+\section yarprobotinterface_intro Description
+
+The yarprobotinterface is a command line tool that is useful to launch multiple YARP devices at once.
+
+Its name derives from the fact that the first and main use of the yarprobotinterface was used as the
+main program to provide a network "interface", via YARP Network Server Wrappers (NWS) devices, to a robot.
+
+However, the yarprobotinterface can be used to launch YARP devices of any kind. In a sense, it is an extension of the
+yarpdev command, that instead can be used only to launch one or two devices, while yarprobotinterface can launch an
+arbitrary number of YARP devices.
+
+The details of the xml format of the files loaded by yarprobotinterface are documented in \ref yarp_robotinterface_xml_config_files .
+
+\section yarprobotinterface_parameters Parameters
+
+`--config ./configdir/config.xml`
+- Specify the path of the `.xml` file to load and that
+  describes the YARP devices to launch.
+
+`--portprefix portprefix`
+- If specified, this values override the portprefix attribute
+  of the robot element of the xml file.
+
+`--verbose`
+- If this option is specified, enable verbose output of the xml parser.
+
+`--dryrun`
+- If this option is specified, then xml file is only loaded without actually opening devices.
+  This option is useful to validate if xml files are well formed.
+
+`--enable_tags (xxx yyy ... zzz)`
+- This options can be used to enable optional devices which have been marked with the in `enabled_by` attribute in the xml file. See \ref yarp_robotinterface_xml_config_files
+
+`--disable_tags (xxx yyy ... zzz)`
+- This options can be used to disable included devices which have been marked with the in `disabled_by` attribute in the xml file. See \ref yarp_robotinterface_xml_config_files
+
+`--autocloseAfterStart`
+- This options automatically closes yarprobotinterface after opening all requested devices. It can be used for debugging purposes to check the behavior of selected devices and
+ if they properly close.
+
+\section yarprobotinterface_conf_file Configuration Files
+
+yarprobotinterface loads the xml file from the location specified in the `--config` option.
+
+\section yarprobotinterface_devicesStorage description of opened devices
+
+yarprobotinterface keeps track of the opened devices using an internal storage (a \ref RobotDescriptionStorage "robotDescriptionStorage"). This operation is
+performed automatically by yarprobotinterface, but it is not exposed outside by default.
+If the user want to access it, it has to instantiate a \ref RobotDescription_nws_yarp "robotDescription_nws_yarp" and attach it to the storage. This can be done
+adding to the xml configuration a block similar to:
+\verbatim
+<device name="robotDescriptionNWS" type="robotDescription_nws_yarp">
+    <param name="local">/yarpRobotInterface/devices/rpc</param>
+    <action phase="startup" level="5" type="attach">
+        <param name="device"> yriDescriptionStorage </param>
+    </action>
+    <action phase="shutdown" level="5" type="detach" />
+</device>
+\endverbatim
+Note that `yriDescriptionStorage` is default name of the internal `robotDescriptionStorage` and that `/yarpRobotInterface/devices/rpc` is the rpc port opened by the nws.
+A \ref RobotDescription_nwc_yarp "robotDescription_nwc_yarp" can be used to connect to the nws device and get list of opened devices and their configuration run-time.
+An example of such mechanism can be found in \ref yarpmotorgui "yarpmotorgui" which by default tries to open a `robotDescription_nwc_yarp` to the get a list
+of all /ref controlBoard_nws_yarp "controlBoard_nws_yarp" devices in order to connect to he various parts of the robot.
+
+*/

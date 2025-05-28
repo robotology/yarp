@@ -47,8 +47,8 @@ int main(int argc, char *argv[])
     if (rf.check("help"))
     {
         yInfo() << "Options:";
-        yInfo() << "--local <name>              The name of local opened by this module. e.g. batteryMonitor";
-        yInfo() << "--remote <name>             The prefix name of the port to connect to, e.g. /mybattery.";
+        yInfo() << "--local <name>              The name of the local port opened by this module. e.g. batteryMonitor";
+        yInfo() << "--remote <name>             The name of the remote port to connect to, e.g. /mybattery.";
         yInfo() << "                            The port name is completed by the client adding /data:o, /rpc:i";
         yInfo() << "--refresh_period <seconds>  Refresh period of the gui. Default value: 10s";
         yInfo() << "--keep-above                Keep window above the others";
@@ -57,18 +57,6 @@ int main(int argc, char *argv[])
 
     yarp::dev::IBattery*   ibat = nullptr;
     yarp::dev::PolyDriver* drv = nullptr;
-
-    if (rf.check("robot"))
-    {
-        yError() << "This option is deprecated. Use --remote instead";
-        return 0;
-    }
-
-    if (rf.check("name"))
-    {
-        yError() << "This option is deprecated. Use --remote instead";
-        return 0;
-    }
 
     std::string remotePort = "";
     if (rf.check("remote"))

@@ -55,14 +55,14 @@ void drawImageExtraStuff(cv::Mat& img)
 void display_help()
 {
     yInfo() << "Available options:";
-    yInfo() << "--stats";
-    yInfo() << "--remote <portname>";
-    yInfo() << "--local <portname>";
-    yInfo() << "--carrier <carriername>";
-    yInfo() << "--record_filename <filename>";
-    yInfo() << "--record_start";
-    yInfo() << "--record_fps";
-    yInfo() << "--record_codec";
+    yInfo() << "--stats display statistics about the recevied iamges";
+    yInfo() << "--remote <portname> the port to which the gui connects to";
+    yInfo() << "--local <portname> the name of the port opened by the gui";
+    yInfo() << "--carrier <carriername> the communication protocol used to connect to the remote port";
+    yInfo() << "--record_filename <filename> the name of the output file";
+    yInfo() << "--record_start automatically start recording on receiving the first frame (or press `w` runtime)";
+    yInfo() << "--record_fps the framerate of the output file";
+    yInfo() << "--record_codec the codec used to save the file";
     yInfo() << "--layered";
 }
 

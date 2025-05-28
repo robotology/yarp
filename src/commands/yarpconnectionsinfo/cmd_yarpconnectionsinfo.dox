@@ -1,0 +1,50 @@
+/**
+\defgroup yarpconnectionsinfo yarpconnectionsinfo: A tool to display YARP ports and connections
+\ingroup yarp_commands
+
+\section Introduction
+
+This tool displays the YARP ports and connections.
+
+By default it prints on screen all the connections found on the yarp network.
+use the --to_dotfile <filename> to write the list of connections to a file in the `dot format`.
+use an online dot editor (e.g. https://dreampuf.github.io/GraphvizOnline) to visualize the graph.
+
+Filter options (filters are added using AND logic):
+filters on the ip (default value: *):
+\code
+--from_ip <ip>
+--to_ip <ip>
+\endcode
+
+filters on the portnumbers (default value: *)
+\code
+--from_portnumber <ip>
+--to_portnumber <ip>
+\endcode
+
+filters on the port names (default value: *)
+\code
+--from_portname <name>
+--to_portname name>
+\endcode
+
+Additional options (default value: false):
+\code
+--display_unconnnected_ports
+--display_log_ports
+--display_clock_ports
+--display_yarprun_processes
+\endcode
+
+Example of output:
+\code
+[INFO] Connections:
+/writer1 (127.0.0.1:10003) -> /reader1 (127.0.0.1:10002) with carrier: (tcp)
+/writer1 (127.0.0.1:10003) -> /reader2 (127.0.0.1:10004) with carrier: (tcp)
+\endcode
+
+\image html yarpconnectionsinfo.png width=400px
+\image latex yarpconnectionsinfo.png "The YARP ports connections" width=15cm
+
+*/
