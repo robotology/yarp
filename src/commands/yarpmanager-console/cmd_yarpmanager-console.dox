@@ -1,0 +1,36 @@
+/**
+\defgroup yarpmanager-console yarpmanager-console: run and manage multiple programs on a set of machines
+
+\ingroup yarp_commands
+
+\tableofcontents
+
+\section yarpmanager-console_intro Description
+
+yarpmanager-console is the command line version of \ref yarpmanager "yarpmanager gui".
+
+\section yarpmanager-console_usage Usage
+
+\code
+Usage:
+      yarpmanager-console [option...]
+Options:
+  --application <app>     Load a specific application identified by its xml file
+  --run                   Run the current application (should be used with --application)
+  --stop                  Stop the current application (should be used with --application)
+  --kill                  Kill the current application (should be used with --application)
+  --connect               Connect all connections from the current application (should be used with --application)
+  --disconnect            Disconnect all connections from the current application (should be used with --application)
+  --assign_hosts          Automatically assign modules to proper nodes using load balancer. (should be used with --application)
+  --check_dep             Check for all resource dependencies of the current application (should be used with --application)
+  --check_state           Check for running state of modules of the current application (should be used with --application)
+  --check_con             Check the connections states of the of the current application (should be used with --application)
+  --silent                Do not print the status messages (should be used with --application)
+  --exit                  Immediately exit after executing the commands (should be used with --application)
+  --from <conf>           Configuration file name
+  --elapsed_time          if present the time stamp for log messages will be relative to the GUI start time
+  --version               Show current version
+  --help                  Show help
+\endcode
+
+*/

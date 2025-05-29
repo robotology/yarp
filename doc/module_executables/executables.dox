@@ -1,7 +1,7 @@
 /**
-\defgroup yarp_tools Yarp tools
+\defgroup yarp_commands Yarp tools
 
-This page includes all the yarp executables, both command lines and gui.
+This page includes all command line executables
 */
 
 /**

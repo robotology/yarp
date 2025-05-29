@@ -84,7 +84,7 @@ periodically check it.
 \li \ref portmonitors_module
 
 \section yarp_command_line_tools Command line tools
-A comprenshive list of all yarp command tools is provided here: \ref yarp_tools
+A comprenshive list of all yarp command tools is provided here: \ref yarp_commands
 
 Here is a list of the main executables:
 \li \ref yarp

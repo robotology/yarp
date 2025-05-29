@@ -446,7 +446,7 @@ foreach my $filename (@files) {
 
     # Apache 2.0
     if ("$txt" =~ /$str_apache_2/s) {
-        if ("$filename" eq "src/yarpidl_thrift/src/t_yarp_generator.cc") {
+        if ("$filename" eq "src/commands/yarpidl_thrift/src/t_yarp_generator.cc") {
             print_if_verbose "[OK - Apache 2.0] $filename\n";
             $ok++;
         } else {

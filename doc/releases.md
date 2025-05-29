@@ -3,6 +3,18 @@ YARP ChangeLog                                                      {#changelog}
 
 This page lists the main changes introduced in YARP at each release.
 
+## YARP 3.12 Series                                           {#yarp_3_12_series}
+* \subpage v3_12_0
+
+## YARP 3.11 Series                                           {#yarp_3_11_series}
+* \subpage v3_11_2
+* \subpage v3_11_1
+* \subpage v3_11_0
+
+## YARP 3.10 Series                                           {#yarp_3_10_series}
+* \subpage v3_10_1
+* \subpage v3_10_0
+
 ## YARP 3.9 Series                                            {#yarp_3_9_series}
 * \subpage v3_9_1
 * \subpage v3_9_0

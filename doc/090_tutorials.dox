@@ -21,7 +21,7 @@ Here are a collection of tutorials on various topics in YARP.
 - \ref yarp_without_nameserver
 - \ref yarp_with_ros
 - \ref yarp_http
-- \ref idls
+- \ref idls_page
 
 \section tutorial_buffering Make sure you understand how to control YARP buffering policies the life-cycle of messages:
 

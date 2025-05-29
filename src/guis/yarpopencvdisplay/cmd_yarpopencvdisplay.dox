@@ -1,0 +1,31 @@
+/**
+\defgroup yarpopencvdisplay yarpopencvdisplay: Visualize yarp images
+
+\ingroup yarp_guis
+
+\tableofcontents
+
+\section yarpopencvdisplay_intro Description
+
+yarpopencvdisplay is a standard openCV-based graphical interface for viewing images transmitted on the network.
+
+\image html yarpopencvdisplay_example.png
+
+\section yarpopencvdisplay_lib Libraries
+
+- openCV libraries.
+
+\section yarpopencvdisplay_parameters Parameters
+
+\verbatim
+--stats display statistics about the recevied iamges
+--remote <portname> the port to which the gui connects to
+--local <portname> the name of the port opened by the gui
+--carrier <carriername> the communication protocol used to connect to the remote port
+--record_filename <filename> the name of the output file
+--record_start automatically start recording on receiving the first frame (or press `w` runtime)
+--record_fps the framerate of the output file
+--record_codec the codec used to save the file
+\endverbatim
+
+*/
