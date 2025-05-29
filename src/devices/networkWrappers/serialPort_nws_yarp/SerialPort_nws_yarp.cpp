@@ -28,12 +28,6 @@ bool SerialPort_nws_yarp::open(Searchable& config)
 
     std::string rootName = m_name;
 
-    command_buffer.attach(toDevice);
-    reply_buffer.attach(fromDevice);
-
-    toDevice.open(rootName+"/in");
-    fromDevice.open(rootName+"/out");
-
     if (!m_rpcPort.open(rootName+"/rpc"))
     {
         yCError(SERIAL_NWS, "Failed to open rpc port");
@@ -52,14 +46,6 @@ void SerialPort_nws_yarp::run()
     //double before, now;
     while (!isStopping())
     {
-        //before = SystemClock::nowSystem();
-        Bottle& b = reply_buffer.get();
-        b.clear();
-        receive( b );
-        /*if(b.size() > 0)*/ /* this line was creating a memory leak !! */
-        reply_buffer.write();
-        //now = SystemClock::nowSystem();
-        // give other threads the chance to run
         yarp::os::SystemClock::delaySystem(0.010);
     }
     yCInfo(SERIAL_NWS, "Server Serial stopping");
@@ -80,8 +66,6 @@ bool  SerialPort_nws_yarp::attach(yarp::dev::PolyDriver* deviceToAttach)
 
     yCInfo(SERIAL_NWS, "Attach done");
 
-    callback_impl = std::make_unique<SerialPort_CallbackHelper>(m_iserial);
-    command_buffer.useCallback(*callback_impl);
     m_rpc.setInterfaces(m_iserial);
 
     start();
@@ -94,40 +78,12 @@ bool  SerialPort_nws_yarp::detach()
     return true;
 }
 
-bool SerialPort_nws_yarp::receive(Bottle& msg)
-{
-    if (m_iserial != nullptr)
-    {
-        m_iserial->receive(msg);
-        return true;
-    }
-    else
-    {
-        return false;
-    }
-}
-
-int SerialPort_nws_yarp::receiveChar(char& c)
-{
-    if (m_iserial != nullptr)
-    {
-        return m_iserial->receiveChar(c);
-    }
-    else
-    {
-        return -1;
-    }
-}
-
 bool SerialPort_nws_yarp::closeMain()
 {
     if (Thread::isRunning()) {
         Thread::stop();
     }
     //close the port connection here
-    command_buffer.disableCallback();
-    toDevice.close();
-    fromDevice.close();
     m_rpcPort.close();
     return true;
 }
@@ -148,52 +104,139 @@ bool SerialPort_nws_yarp::read(yarp::os::ConnectionReader& connection)
 
 //--------------------------------------------------
 // RPC methods
-bool ISerialMsgsd::setDTR(bool enable)
+ReturnValue ISerialMsgsd::setDTR(bool enable)
 {
     std::lock_guard <std::mutex> lg(m_mutex);
-    if (m_iser)
-    {
-        return m_iser->setDTR(enable);
-    }
-    yCError(SERIAL_NWS, "ISerialDevice interface was not set");
-    return false;
-}
-
-int ISerialMsgsd::flush()
-{
-    std::lock_guard <std::mutex> lg(m_mutex);
-    if (m_iser)
-    {
-        return m_iser->flush();
-    }
-    yCError(SERIAL_NWS, "ISerialDevice interface was not set");
-    return false;
-}
-
-//--------------------------------------------------
-// ImplementCallbackHelper class.
-SerialPort_CallbackHelper::SerialPort_CallbackHelper(yarp::dev::ISerialDevice*x)
-{
-    if (x ==nullptr)
-    {
-        yCError(SERIAL_NWS, "Could not get ISerialDevice interface");
-        std::exit(1);
-    }
-    m_iser= x;
-}
-
-void SerialPort_CallbackHelper::onRead(Bottle &b)
-{
-    if (m_iser)
-    {
-        bool ok = m_iser->send(b);
-        if (!ok)
-        {
-            yCError(SERIAL_NWS, "Problems while trying to send data");
-        }
-    }
-    else
+    if (!m_iser)
     {
         yCError(SERIAL_NWS, "ISerialDevice interface was not set");
+        return ReturnValue::return_code::return_value_error_not_ready;
+    }
+
+    return m_iser->setDTR(enable);
+}
+
+ReturnValue ISerialMsgsd::flush()
+{
+    std::lock_guard <std::mutex> lg(m_mutex);
+    if (!m_iser)
+    {
+        yCError(SERIAL_NWS, "ISerialDevice interface was not set");
+        return ReturnValue::return_code::return_value_error_not_ready;
+    }
+
+    return m_iser->flush();
+}
+
+return_flush ISerialMsgsd::flushWithRet()
+{
+    std::lock_guard<std::mutex> lg(m_mutex);
+    return_flush ret;
+    if (!m_iser)
+    {
+        yCError(SERIAL_NWS, "ISerialDevice interface was not set");
+        ret.retval = ReturnValue::return_code::return_value_error_not_ready;
+        return ret;
+    }
+
+    size_t val;
+    ret.retval = m_iser->flush(val);
+    ret.flushed_bytes = val;
+    return ret;
+}
+
+ReturnValue ISerialMsgsd::sendString(const std::string& message)
+{
+    std::lock_guard<std::mutex> lg(m_mutex);
+    if (!m_iser)
+    {
+        yCError(SERIAL_NWS, "ISerialDevice interface was not set");
+        return ReturnValue::return_code::return_value_error_not_ready;
+    }
+
+    ReturnValue ret = m_iser->sendString(message);
+    return ret;
+}
+
+ReturnValue ISerialMsgsd::sendBytes(const std::vector<std::int8_t>& message)
+{
+    std::lock_guard<std::mutex> lg(m_mutex);
+    if (!m_iser) {
+        yCError(SERIAL_NWS, "ISerialDevice interface was not set");
+        return ReturnValue::return_code::return_value_error_not_ready;
+    }
+
+    ReturnValue ret = m_iser->sendBytes(message);
+    return ret;
+}
+
+ReturnValue ISerialMsgsd::sendByte(const std::int8_t message)
+{
+    std::lock_guard<std::mutex> lg(m_mutex);
+    if (!m_iser) {
+        yCError(SERIAL_NWS, "ISerialDevice interface was not set");
+        return ReturnValue::return_code::return_value_error_not_ready;
+    }
+
+    ReturnValue ret = m_iser->sendByte(message);
+    return ret;
+}
+
+return_receiveString ISerialMsgsd::receiveString()
+{
+    std::lock_guard<std::mutex> lg(m_mutex);
+    return_receiveString ret;
+    if (!m_iser) {
+        yCError(SERIAL_NWS, "ISerialDevice interface was not set");
+        ret.retval = ReturnValue::return_code::return_value_error_not_ready;
+        return ret;
+    }
+
+    std::string msg;
+    ret.retval = m_iser->receiveString(msg);
+    ret.message = msg;
+    return ret;
+}
+
+return_receiveBytes ISerialMsgsd::receiveBytes(const std::int32_t maxNumberOfByes)
+{
+    std::lock_guard<std::mutex> lg(m_mutex);
+    return_receiveBytes ret;
+    if (!m_iser) {
+        yCError(SERIAL_NWS, "ISerialDevice interface was not set");
+        ret.retval = ReturnValue::return_code::return_value_error_not_ready;
+        return ret;
+    }
+
+    std::vector<unsigned char> msg;
+    ret.retval = m_iser->receiveBytes(msg, maxNumberOfByes);
+    ret.message = msg;
+    return ret;
+}
+
+return_receiveByte ISerialMsgsd::receiveByte()
+{
+    std::lock_guard<std::mutex> lg(m_mutex);
+    return_receiveByte ret;
+    if (!m_iser) {
+        yCError(SERIAL_NWS, "ISerialDevice interface was not set");
+        ret.retval = ReturnValue::return_code::return_value_error_not_ready;
+        return ret;
+    }
+
+    unsigned char msg;
+    ret.retval = m_iser->receiveByte (msg);
+    ret.message = msg;
+    return ret;
+}
+
+return_receiveLine ISerialMsgsd::receiveLine(const std::int32_t maxNumberOfByes)
+{
+    std::lock_guard<std::mutex> lg(m_mutex);
+    return_receiveLine ret;
+    if (!m_iser) {
+        yCError(SERIAL_NWS, "ISerialDevice interface was not set");
+        ret.retval = ReturnValue::return_code::return_value_error_not_ready;
+        return ret;
     }
 }

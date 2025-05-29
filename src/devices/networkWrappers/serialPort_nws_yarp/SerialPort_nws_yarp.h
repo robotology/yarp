@@ -30,22 +30,6 @@ using namespace yarp::dev;
 
 class SerialPort_nws_yarp;
 
-// Callback implementation after buffered input.
-class SerialPort_CallbackHelper :
-        public yarp::os::TypedReaderCallback<yarp::os::Bottle>
-{
-protected:
-    yarp::dev::ISerialDevice* m_iser{nullptr};
-
-public:
-    SerialPort_CallbackHelper();
-    SerialPort_CallbackHelper(yarp::dev::ISerialDevice* x);
-    virtual ~SerialPort_CallbackHelper() override {};
-
-    using yarp::os::TypedReaderCallback<Bottle>::onRead;
-    void onRead(Bottle& b) override;
-};
-
 class ISerialMsgsd : public ISerialMsgs
 {
 private:
@@ -53,8 +37,16 @@ private:
     yarp::dev::ISerialDevice* m_iser = nullptr;
 
 public:
-    bool setDTR(bool enable) override;
-    int flush() override;
+    yarp::dev::ReturnValue  sendString(const std::string& message) override;
+    yarp::dev::ReturnValue  sendBytes(const std::vector<std::int8_t>& message) override;
+    yarp::dev::ReturnValue  sendByte(const std::int8_t message) override;
+    return_receiveString    receiveString() override;
+    return_receiveBytes     receiveBytes(const std::int32_t maxNumberOfByes) override;
+    return_receiveByte      receiveByte() override;
+    return_receiveLine      receiveLine(const std::int32_t maxNumberOfByes) override;
+    yarp::dev::ReturnValue  setDTR(const bool enable) override;
+    yarp::dev::ReturnValue  flush() override;
+    return_flush            flushWithRet() override;
 
 public:
     void setInterfaces(yarp::dev::ISerialDevice* iser) {m_iser = iser;}
@@ -83,22 +75,14 @@ class SerialPort_nws_yarp :
 {
 private:
     yarp::dev::ISerialDevice* m_iserial{ nullptr };
-    yarp::os::Port            toDevice;
-    yarp::os::Port            fromDevice;
     yarp::os::Port            m_rpcPort;
     ISerialMsgsd              m_rpc;
-
-    yarp::os::PortWriterBuffer <yarp::os::Bottle> reply_buffer;
-    yarp::os::PortReaderBuffer <yarp::os::Bottle> command_buffer;
-    std::unique_ptr<SerialPort_CallbackHelper> callback_impl;
 
     // yarp::dev::IWrapper
     bool  attach(yarp::dev::PolyDriver* deviceToAttach) override;
     bool  detach() override;
 
 private:
-    bool receive(Bottle& msg);
-    int  receiveChar(char& c);
     bool closeMain();
 
 public:

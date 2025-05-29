@@ -11,6 +11,7 @@
 #include <yarp/os/Bottle.h>
 #include <yarp/dev/api.h>
 #include <yarp/sig/Vector.h>
+#include <yarp/dev/ReturnValue.h>
 
 
 namespace yarp::dev {
@@ -30,51 +31,72 @@ public:
      * \param msg the string to send
      * \return true on success
      */
-    virtual bool send(const yarp::os::Bottle& msg) = 0;
-    virtual bool send(const char *msg, size_t size) = 0;
+    virtual yarp::dev::ReturnValue sendString(const std::string& msg) = 0;
 
-    //bool putMessage(Bottle& msg, bool waitreply, double replytimeout, Bottle& reply, char *replydelimiter, int replysize );
+    /**
+     * Sends a string of bytes to the serial communications channel.
+     * \param msg the string to send
+     * \return true on success
+     */
+    virtual yarp::dev::ReturnValue sendBytes(const std::vector<unsigned char>& line) = 0;
+
     /**
      * Gets the existing chars in the receive queue.
      * \param msg the received string
      * \return true on success; false if no messages available
      */
-    virtual bool receive(yarp::os::Bottle& msg) = 0;
+    virtual yarp::dev::ReturnValue receiveString(std::string& msg) = 0;
+
+     /**
+     * Send one single char to the serial device
+     * \param chr the byte to be sent
+     * @return true on success
+     */
+    virtual yarp::dev::ReturnValue sendByte(unsigned char chr) = 0;
 
     /**
      * Gets one single char from the receive queue.
      * \param chr the received char.
-     * \return 0 if no chars are received; 1 if one char is received.
+     * @return true on success
      */
-    virtual int receiveChar(char& chr) = 0;
+    virtual yarp::dev::ReturnValue receiveByte(unsigned char& chr) = 0;
 
     /**
-    * Gets an array of bytes (unsigned char) with size <= 'size' parameter. The array is NOT null terminated.
-    * @param bytes a previously allocated buffer where the received data is stored.
-    * @param size the size of the 'bytes' parameter.
-    * @return the number of received bytes. The function returns 0 if no bytes are received.
+    * Gets an array of bytes (unsigned char) with size <= 'size' parameter.
+    * @param thee returned sequence of bytes.
+    * @param MaxSize the maximum number of bytes that we want to read
+    * @return true on success
     */
-    virtual int receiveBytes(unsigned char* bytes, const int size) = 0;
+    virtual yarp::dev::ReturnValue receiveBytes(std::vector<unsigned char>& line, const int MaxSize) = 0;
 
     /**
-    * Gets one line (a sequence of chars with a ending '\\n' or '\\r') from the receive queue. The ending '\\n''\\r' chars are not removed in the returned line.
-    * \param line a previously allocated buffer where the received line is stored.
-    * \param MaxLineLength the size of the 'line' parameter.
-    * \return the number of received characters (including the '\n''\r' chars, plus the buffer terminator '\\0'). The function returns 0 if no chars are received.
+    * Gets one line (a sequence of chars with a ending '\\n' or '\\r') from the receive queue.
+    * The ending '\\n''\\r' chars are not removed in the returned line.
+    * \param line the returned sequence of characters.
+    * \param MaxLineLength the maximum number of chars that we want to read
+    * @return true on success
     */
+    virtual yarp::dev::ReturnValue receiveLine(std::vector<char>& line, const int MaxLineLength) = 0;
 
-    virtual int receiveLine(char* line, const int MaxLineLength) = 0;
     /**
     * Enable/Disable DTR protocol
     * @param enable Enable/Disable DTR protocol
     * @return true on success
     */
-    virtual bool setDTR(bool enable) = 0;
+    virtual yarp::dev::ReturnValue setDTR(bool enable) = 0;
+
     /**
      * Flushes the internal buffer.
-     * \return the number of flushed characters.
+     * \param flushed the number of flushed characters.
+     * @return true on success
      */
-    virtual int flush() = 0;
+    virtual yarp::dev::ReturnValue flush(size_t& flushed_chars) = 0;
+
+    /**
+     * Flushes the internal buffer.
+     * @return true on success
+     */
+    virtual yarp::dev::ReturnValue flush() = 0;
 };
 
 } // namespace yarp::dev

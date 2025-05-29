@@ -112,19 +112,19 @@ bool laserHokuyo::open(yarp::os::Searchable& config)
         return false;
     }
 
-    Bottle b;
-    Bottle b_ans;
+    std::string b;
+    std::string b_ans;
     std::string ans;
 
     // *** Check if the URG device is present ***
-    b.addString("SCIP2.0\n");
-    pSerial->send(b);
+    b = std::string("SCIP2.0\n");
+    pSerial->sendString(b);
     yarp::os::SystemClock::delaySystem(0.040);
-    pSerial->receive(b_ans);
+    pSerial->receiveString(b_ans);
     if (b_ans.size()>0)
     {
         yCInfo(LASERHOKUYO, "URG device successfully initialized.");
-        yCDebug(LASERHOKUYO, "%s", b_ans.get(0).asString().c_str());
+        yCDebug(LASERHOKUYO, "%s", b_ans.c_str());
     }
     else
     {
@@ -145,30 +145,30 @@ bool laserHokuyo::open(yarp::os::Searchable& config)
     b_ans.clear();*/
 
     // *** Read the firmware version parameters ***
-    b.addString("VV\n");
-    pSerial->send(b);
+    b = std::string("VV\n");
+    pSerial->sendString(b);
     yarp::os::SystemClock::delaySystem(0.040);
-    pSerial->receive(b_ans);
-    ans = b_ans.get(0).asString();
+    pSerial->receiveString(b_ans);
+    ans = b_ans;
     yCDebug(LASERHOKUYO, "%s",ans.c_str());
     b.clear();
     b_ans.clear();
 
     // *** Read the sensor specifications ***
-    b.addString("II\n");
-    pSerial->send(b);
+    b = std::string("II\n");
+    pSerial->sendString(b);
     yarp::os::SystemClock::delaySystem(0.040);
-    pSerial->receive(b_ans);
-    ans = b_ans.get(0).asString();
+    pSerial->receiveString(b_ans);
+    ans = b_ans;
     yCDebug(LASERHOKUYO, "%s", ans.c_str());
     b.clear();
     b_ans.clear();
 
     // *** Read the URG configuration parameters ***
-    b.addString("PP\n");
-    pSerial->send(b);
+    b = std::string("PP\n");
+    pSerial->sendString(b);
     yarp::os::SystemClock::delaySystem(0.040);
-    pSerial->receive(b_ans);
+    pSerial->receiveString(b_ans);
     /*
     syntax of the answer:
     MODL ... Model information of the sensor.
@@ -180,7 +180,7 @@ bool laserHokuyo::open(yarp::os::Searchable& config)
     AFRT ... Step number on the sensor's front axis
     SCAN ... Standard angular velocity
     */
-    ans = b_ans.get(0).asString();
+    ans = b_ans;
     yCDebug(LASERHOKUYO,  "%s", ans.c_str());
     //parsing the answer
     size_t found;
@@ -220,10 +220,10 @@ bool laserHokuyo::open(yarp::os::Searchable& config)
     b_ans.clear();
 
     // *** Turns on the Laser ***
-    b.addString("BM\n");
-    pSerial->send(b);
+    b = std::string("BM\n");
+    pSerial->sendString(b);
     yarp::os::SystemClock::delaySystem(0.040);
-    pSerial->receive(b_ans);
+    pSerial->receiveString(b_ans);
     // @@@TODO: Check the answer
     b.clear();
     b_ans.clear();
@@ -239,8 +239,8 @@ bool laserHokuyo::open(yarp::os::Searchable& config)
         // *** Starts endless acquisition mode***
         char message [255];
         std::snprintf(message, 255, "MD%04d%04d%02d%01d%02d\n",start_position,end_position,1,1,0);
-        b.addString(message);
-        pSerial->send(b);
+        b = std::string(message);
+        pSerial->sendString(b);
         b.clear();
         b_ans.clear();
     }
@@ -250,8 +250,8 @@ bool laserHokuyo::open(yarp::os::Searchable& config)
         // *** Starts one single acquisition ***
         char message [255];
         std::snprintf(message, 255, "GD%04d%04d%02d\n",start_position,end_position,1);
-        b.addString(message);
-        pSerial->send(b);
+        b = std::string(message);
+        pSerial->sendString(b);
         b.clear();
         b_ans.clear();
     }
@@ -263,13 +263,13 @@ bool laserHokuyo::close()
 {
     PeriodicThread::stop();
 
-    Bottle b;
-    Bottle b_ans;
+    std::string b;
+    std::string b_ans;
 
     // *** Turns off the Laser ***
-    b.addString("QT\n");
-    pSerial->send(b);
-    pSerial->receive(b_ans);
+    b= std::string("QT\n");
+    pSerial->sendString(b);
+    pSerial->receiveString(b_ans);
 
     // @@@TODO: Check the answer
 
@@ -506,8 +506,8 @@ int laserHokuyo::readData(const Laser_mode_type laser_mode, const char* text_dat
 void laserHokuyo::run()
 {
     //send the GD command: get one single measurement, D precision
-    Bottle b;
-    Bottle b_ans;
+    std::string b;
+    std::string b_ans;
     constexpr int buffer_size = 128;
     char command [buffer_size];
     char answer  [buffer_size];
@@ -567,8 +567,8 @@ void laserHokuyo::run()
     if (laser_mode==GD_MODE)
     {
         std::snprintf(command, buffer_size, "GD%04d%04d%02d\n",start_position,end_position,1);
-        b.addString(command);
-        pSerial->send(b);
+        b = std::string(command);
+        pSerial->sendString(b);
     }
 
     //SystemClock::delaySystem (0.100);

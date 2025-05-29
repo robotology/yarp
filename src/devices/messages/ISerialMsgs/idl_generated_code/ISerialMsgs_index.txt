@@ -1,2 +1,12 @@
+return_flush.h
+return_flush.cpp
+return_receiveString.h
+return_receiveString.cpp
+return_receiveBytes.h
+return_receiveBytes.cpp
+return_receiveLine.h
+return_receiveLine.cpp
+return_receiveByte.h
+return_receiveByte.cpp
 ISerialMsgs.h
 ISerialMsgs.cpp

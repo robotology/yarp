@@ -104,64 +104,65 @@ bool SerialDeviceDriver::close() {
     return true;
 }
 
-bool SerialDeviceDriver::setDTR(bool value) {
+ReturnValue SerialDeviceDriver::setDTR(bool value)
+{
     ACE_TTY_IO::Serial_Params arg;
     int ret = _serial_dev.control(_serial_dev.GETPARAMS, &arg);
     if (ret == -1) {
-        return false;
+        return ReturnValue::return_code::return_value_error_method_failed;
     }
     arg.dtrdisable = !value;
     ret = _serial_dev.control(_serial_dev.SETPARAMS, &arg);
     if (ret == -1) {
-        return false;
+        return ReturnValue::return_code::return_value_error_method_failed;
     }
-    return true;
+    return ReturnValue_ok;
 }
 
-bool SerialDeviceDriver::send(const Bottle& msg)
+ReturnValue SerialDeviceDriver::sendString(const std::string& msg)
 {
     if (msg.size() > 0)
     {
-        int message_size = msg.get(0).asString().length();
-
-        if (message_size > 0)
+        if (verbose)
         {
-            if (verbose)
-            {
-                yCDebug(SERIALPORT, "Sending string: %s", msg.get(0).asString().c_str());
-            }
-
-            // Write message to the serial device
-            ssize_t bytes_written = _serial_dev.send_n((void *) msg.get(0).asString().c_str(), message_size);
-
-            if (bytes_written == -1)
-            {
-                yCError(SERIALPORT, "Unable to write to serial port");
-                return false;
-            }
+            yCDebug(SERIALPORT, "Sending string: %s", msg.c_str());
         }
-        else
+
+        // Write message to the serial device
+        ssize_t bytes_written = _serial_dev.send_n((void*)msg.c_str(), msg.size());
+
+        if (bytes_written == -1)
         {
-            if (verbose) {
-                yCDebug(SERIALPORT, "The input command bottle contains an empty string.");
-            }
-           return false;
+            yCError(SERIALPORT, "Unable to write to serial port");
+            return ReturnValue::return_code::return_value_error_method_failed;
         }
     }
     else
     {
         if (verbose) {
-            yCDebug(SERIALPORT, "The input command bottle is empty. \n");
+            yCDebug(SERIALPORT, "The input command bottle contains an empty string.");
         }
-        return false;
+        return ReturnValue::return_code::return_value_error_method_failed;
     }
 
-    return true;
+    return ReturnValue_ok;
 }
 
-bool SerialDeviceDriver::send(const char *msg, size_t size)
+ReturnValue SerialDeviceDriver::sendByte(unsigned char byt)
 {
-    if (size > 0)
+    ssize_t bytes_written = _serial_dev.send_n((void*)byt, 1);
+    if (bytes_written == -1)
+    {
+        yCError(SERIALPORT, "Unable to write to serial port");
+        return ReturnValue::return_code::return_value_error_method_failed;
+    }
+
+    return ReturnValue_ok;
+}
+
+ReturnValue SerialDeviceDriver::sendBytes(const std::vector<unsigned char>& msg)
+{
+    if (msg.size() > 0)
     {
         if (verbose)
         {
@@ -169,12 +170,12 @@ bool SerialDeviceDriver::send(const char *msg, size_t size)
         }
 
         // Write message in the serial device
-        ssize_t bytes_written = _serial_dev.send_n((void *)msg, size);
+        ssize_t bytes_written = _serial_dev.send_n((void*)msg.data(), msg.size());
 
         if (bytes_written == -1)
         {
             yCError(SERIALPORT, "Unable to write to serial port");
-            return false;
+            return ReturnValue::return_code::return_value_error_method_failed;
         }
     }
     else
@@ -182,13 +183,13 @@ bool SerialDeviceDriver::send(const char *msg, size_t size)
         if (verbose) {
             yCDebug(SERIALPORT, "The input message is empty. \n");
         }
-        return false;
+        return ReturnValue::return_code::return_value_error_method_failed;
     }
 
-    return true;
+    return ReturnValue_ok;
 }
 
-int SerialDeviceDriver::receiveChar(char& c)
+ReturnValue SerialDeviceDriver::receiveByte(unsigned char& c)
 {
     char chr;
 
@@ -198,57 +199,58 @@ int SerialDeviceDriver::receiveChar(char& c)
     if (bytes_read == -1)
     {
         yCError(SERIALPORT, "Error in SerialDeviceDriver::receive()");
-        return 0;
+        return ReturnValue::return_code::return_value_error_method_failed;
     }
 
     if (bytes_read == 0)
     {
-        return 0;
+        return ReturnValue::return_code::return_value_error_method_failed;
     }
 
     c=chr;
-    return 1;
+    return ReturnValue_ok;
 }
 
-int  SerialDeviceDriver::flush()
+ReturnValue SerialDeviceDriver::flush(size_t& flushed)
 {
-    char chr [100];
-    int count=0;
-    ssize_t bytes_read=0;
-    do
-    {
-        bytes_read = _serial_dev.recv((void *) &chr, 100);
-        count+=bytes_read;
-        if (count > MAX_FLUSHED_BYTES) {
-            break; //to prevent endless loop
+    char chr[100];
+    flushed = 0;
+    ssize_t bytes_read = 0;
+    do {
+        bytes_read = _serial_dev.recv((void*)&chr, 100);
+        flushed += bytes_read;
+        if (flushed > MAX_FLUSHED_BYTES) {
+            break; // to prevent endless loop
         }
-    }
-    while (bytes_read>0);
-    return count;
+    } while (bytes_read > 0);
+    return ReturnValue_ok;
 }
 
-int SerialDeviceDriver::receiveBytes(unsigned char* bytes, const int size)
+ReturnValue  SerialDeviceDriver::flush()
 {
-#if 1
-    //this function call blocks
-    return _serial_dev.recv((void *)bytes, size);
-#else
-    int i;
-    for (i = 0; i < size ; ++i)
-    {
-        char recv_ch;
-        int n = receiveChar(recv_ch);
-        if (n <= 0)
-        {
-            return i;
-        }
-        bytes[i] = recv_ch;
-    }
-    return i;
-#endif
+    size_t dummy_counter = 0;
+    return flush(dummy_counter);
 }
 
-int SerialDeviceDriver::receiveLine(char* buffer, const int MaxLineLength)
+ReturnValue SerialDeviceDriver::receiveBytes(std::vector<unsigned char>& bytes, const int MaxSize)
+{
+    char* buffer = new char[MaxSize];
+
+    // this function call blocks
+    ssize_t bytes_read = _serial_dev.recv((void*)buffer, MaxSize);
+
+    bytes.clear();
+    bytes.resize(bytes_read);
+    for (size_t i = 0; i < bytes_read; bytes_read++)
+    {
+        bytes[i] = buffer[i];
+    }
+
+    delete[] buffer;
+    return ReturnValue_ok;
+}
+
+ReturnValue SerialDeviceDriver::receiveLine(std::vector<char>& line, const int MaxLineLength)
 {
     int i;
     for (i = 0; i < MaxLineLength -1; ++i)
@@ -276,7 +278,7 @@ int SerialDeviceDriver::receiveLine(char* buffer, const int MaxLineLength)
      return i;
 }
 
-bool SerialDeviceDriver::receive(Bottle& msg)
+ReturnValue SerialDeviceDriver::receiveString(std::string& msg)
 {
     const int msgSize = 1001;
     char message[1001];
@@ -287,11 +289,12 @@ bool SerialDeviceDriver::receive(Bottle& msg)
     if (bytes_read == -1)
     {
         yCError(SERIALPORT, "Error in SerialDeviceDriver::receive()");
-        return false;
+        return ReturnValue::return_code::return_value_error_method_failed;
     }
 
-    if (bytes_read == 0) { //nothing there
-        return true;
+    if (bytes_read == 0)
+    { //nothing there
+        return ReturnValue_ok;
     }
 
     message[bytes_read] = 0;
@@ -302,8 +305,8 @@ bool SerialDeviceDriver::receive(Bottle& msg)
     }
 
 
-    // Put message in the bottle
-    msg.addString(message);
+    // Return the message
+    msg=message;
 
-    return true;
+    return ReturnValue_ok;
 }

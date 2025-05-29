@@ -18,47 +18,66 @@ SerialPort_nwc_yarp::~SerialPort_nwc_yarp()
     closeMain();
 }
 
-bool SerialPort_nwc_yarp::send(const Bottle& msg)
+ReturnValue SerialPort_nwc_yarp::sendString(const std::string& msg)
 {
-    m_sendPort.write(msg);
-    return true;
-}
-
-bool SerialPort_nwc_yarp::send(const char *msg, size_t size)
-{
-    Bottle b;
-    b.addString(std::string(msg));
-    m_sendPort.write(b);
-    return true;
-}
-
-bool SerialPort_nwc_yarp::receive(Bottle& msg)
-{
-    return false;
-}
-
-int SerialPort_nwc_yarp::receiveChar(char& c)
-{
-    return 0;
-}
-
-int SerialPort_nwc_yarp::flush()
-{
-    int ret = m_rpc.flush();
+    auto ret = m_rpc.sendString(msg);
     return ret;
 }
 
-int SerialPort_nwc_yarp::receiveLine(char* line, const int MaxLineLength)
+ReturnValue SerialPort_nwc_yarp::sendBytes(const std::vector<unsigned char>& line)
 {
-    return 0;
+    auto ret = m_rpc.sendBytes(line);
+    return ret;
 }
 
-int SerialPort_nwc_yarp::receiveBytes(unsigned char* bytes, const int size)
+ReturnValue SerialPort_nwc_yarp::sendByte(unsigned char chr)
 {
-    return 0;
+    auto ret = m_rpc.sendByte(chr);
+    return ret;
 }
 
-bool SerialPort_nwc_yarp::setDTR(bool enable)
+ReturnValue SerialPort_nwc_yarp::receiveString(std::string& msg)
+{
+    auto ret = m_rpc.receiveString();
+    msg = ret.message;
+    return ret.retval;
+}
+
+ReturnValue SerialPort_nwc_yarp::receiveByte(unsigned char& c)
+{
+    auto ret = m_rpc.receiveByte();
+    c = ret.message;
+    return ret.retval;
+}
+
+ReturnValue SerialPort_nwc_yarp::flush()
+{
+    ReturnValue ret = m_rpc.flush();
+    return ret;
+}
+
+ReturnValue SerialPort_nwc_yarp::flush(size_t& flushed)
+{
+    auto ret = m_rpc.flushWithRet();
+    flushed = ret.flushed_bytes;
+    return ret.retval;
+
+}
+ReturnValue SerialPort_nwc_yarp::receiveLine(std::vector<char>& line, const int MaxLineLength)
+{
+    auto ret = m_rpc.receiveLine(MaxLineLength);
+    line = ret.message;
+    return ret.retval;
+}
+
+ReturnValue SerialPort_nwc_yarp::receiveBytes(std::vector<unsigned char>& line, const int MaxSize)
+{
+    auto ret = m_rpc.receiveBytes(MaxSize);
+    line = ret.message;
+    return ret.retval;
+}
+
+ReturnValue SerialPort_nwc_yarp::setDTR(bool enable)
 {
     return m_rpc.setDTR(enable);
 }
@@ -95,25 +114,10 @@ bool SerialPort_nwc_yarp::open(Searchable& config)
         }
     }
 
-    {
-        std::string local_send = "/serialPort_nwc_yarp/out";
-        std::string remote_send = "/serialPort_nws_yarp/in";
-        if (!m_sendPort.open(local_send))
-        {
-            yCError(SERIAL_NWC, "open() error could not open rpc port %s, check network", local_send.c_str());
-            return false;
-        }
-
-        if (!Network::connect(local_send, remote_send))
-        {
-            yCError(SERIAL_NWC, "open() error could not connect to %s", remote_send.c_str());
-            return false;
-        }
-    }
-
     //Check the protocol version
     if (!m_rpc.checkProtocolVersion()) { return false; }
 
     yCInfo(SERIAL_NWC) << "Opening of NWC successful";
+
     return true;
 }
