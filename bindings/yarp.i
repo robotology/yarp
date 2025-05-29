@@ -430,6 +430,7 @@ MAKE_COMMS(Bottle)
 %include <yarp/dev/ISpeechTranscription.h>
 %include <yarp/dev/ILLM.h>
 %include <yarp/dev/MultipleAnalogSensorsInterfaces.h>
+%include <yarp/dev/IRGBDSensor.h>
 %include <yarp/dev/IFrameTransform.h>
 
 %template(DVector) std::vector<double>;
@@ -823,6 +824,7 @@ typedef yarp::os::BufferedPort<ImageRgbFloat> BufferedPortImageRgbFloat;
     CAST_POLYDRIVER_TO_INTERFACE(ISpeechTranscription)
     CAST_POLYDRIVER_TO_INTERFACE(ILLM)
     CAST_POLYDRIVER_TO_INTERFACE(IFrameTransform)
+    CAST_POLYDRIVER_TO_INTERFACE(IRGBDSensor)
 
 // These views are currently disabled in SWIG + java generator since they are
 // useless without the EXTENDED_ANALOG_SENSOR_INTERFACE part.
@@ -2041,6 +2043,16 @@ public:
         FeatureMode result;
         self->getMode(feature, &result);
         return result;
+    }
+}
+
+//////////////////////////////////////////////////////////////////////////
+// Adding IRGBDSensor
+%extend yarp::dev::IRGBDSensor {
+    bool getRgbImage(yarp::sig::FlexImage& rgbImage) {
+        yarp::os::Stamp timeStamp;
+        bool ok = self->getRgbImage(rgbImage, &timeStamp);
+        return ok;
     }
 }
 
