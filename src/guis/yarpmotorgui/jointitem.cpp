@@ -28,6 +28,14 @@ void JointItem::home()
     {
        velocityTimer.stop();
     }
+    else if(this->internalState == Pwm)
+    {
+        pwmTimer.stop();
+    }
+    else if(this->internalState == Current)
+    {
+        currentTimer.stop();
+    }
     emit homeClicked(this);
 }
 
@@ -37,6 +45,14 @@ void JointItem::run()
     {
        velocityTimer.stop();
     }
+    else if(this->internalState == Pwm)
+    {
+        pwmTimer.stop();
+    }
+    else if(this->internalState == Current)
+    {
+        currentTimer.stop();
+    }
     emit runClicked(this);
 }
 
@@ -45,6 +61,14 @@ void JointItem::idle()
     if (this->internalState == Velocity)
     {
        velocityTimer.stop();
+    }
+    else if(this->internalState == Pwm)
+    {
+        pwmTimer.stop();
+    }
+    else if(this->internalState == Current)
+    {
+        currentTimer.stop();
     }
     emit idleClicked(this);
 }
@@ -222,6 +246,10 @@ JointItem::JointItem(int index,QWidget *parent) :
     joint_dutyVisible = false;
     lastVelocity = 0;
     velocityModeEnabled = false;
+    lastPwm = 0;
+    pwmModeEnabled =  false;
+    lastCurrent = 0;
+    currentModeEnabled = false;
     motionDone = true;
 
     max_position = 0;
@@ -390,10 +418,22 @@ JointItem::JointItem(int index,QWidget *parent) :
 
     setJointInternalState(IDLE);
 
+    // control modes timers initialization
     ui->stackedWidget->widget(VELOCITY)->setEnabled(false);
     velocityTimer.setInterval(50);
     velocityTimer.setSingleShot(false);
     connect(&velocityTimer,SIGNAL(timeout()),this,SLOT(onVelocityTimer()));
+
+    ui->stackedWidget->widget(PWM)->setEnabled(false);
+    pwmTimer.setInterval(50);
+    pwmTimer.setSingleShot(false);
+    connect(&pwmTimer,SIGNAL(timeout()),this,SLOT(onPwmTimer()));
+
+    ui->stackedWidget->widget(CURRENT)->setEnabled(false);
+    currentTimer.setInterval(50);
+    currentTimer.setSingleShot(false);
+    connect(&currentTimer,SIGNAL(timeout()),this,SLOT(onCurrentTimer()));
+    
 }
 
 bool JointItem::eventFilter(QObject *obj, QEvent *event)
@@ -535,12 +575,22 @@ void JointItem::enableControlPositionDirect(bool control)
 
 void JointItem::enableControlPWM(bool control)
 {
-    ui->stackedWidget->widget(PWM)->setEnabled(control);
+    pwmModeEnabled = control;
+    ui->stackedWidget->widget(PWM)->setEnabled(pwmModeEnabled);
+    if(ui->stackedWidget->currentIndex() == PWM && pwmModeEnabled)
+    {
+        pwmTimer.start();
+    }
 }
 
 void JointItem::enableControlCurrent(bool control)
 {
-    ui->stackedWidget->widget(CURRENT)->setEnabled(control);
+    currentModeEnabled = control;
+    ui->stackedWidget->widget(CURRENT)->setEnabled(currentModeEnabled);
+    if(ui->stackedWidget->currentIndex() == CURRENT && currentModeEnabled)
+    {
+        currentTimer.start();
+    }
 }
 
 void JointItem::viewPositionTargetBox(bool visible)
@@ -1336,16 +1386,46 @@ void JointItem::installFilter()
 
 void JointItem::onStackedWidgetChanged(int index)
 {
-    if(index == VELOCITY){
-        if(velocityModeEnabled){
+    if(index == VELOCITY)
+    {
+        if(velocityModeEnabled)
+        {
             velocityTimer.start();
         }
-    }else{
+    }
+    else if(index == PWM)
+    {
+        if(pwmModeEnabled)
+        {
+            pwmTimer.start();
+        }
+    }
+    else if(index == CURRENT)
+    {
+        if(currentModeEnabled)
+        {
+            currentTimer.start();
+        }
+    }
+    else
+    {
         if(velocityModeEnabled)
         {
             velocityTimer.stop();
             lastVelocity = 0;
             updateSliderVelocity(0);
+        }
+        else if(pwmModeEnabled)
+        {
+            pwmTimer.stop();
+            lastPwm = 0;
+            updateSliderPWM(0);
+        }
+        else if(currentModeEnabled)
+        {
+            currentTimer.stop();
+            lastCurrent = 0;
+            updateSliderCurrent(0);
         }
     }
 }
@@ -1354,6 +1434,14 @@ void JointItem::onModeChanged(int index)
 {
     if (this->internalState == Velocity){
        velocityTimer.stop();
+    }
+    else if(this->internalState == Pwm)
+    {
+        pwmTimer.stop();
+    }
+    else if(this->internalState == Current)
+    {
+        currentTimer.stop();
     }
     Q_UNUSED(index);
     int mode = ui->comboMode->currentData(Qt::UserRole).toInt();
@@ -1415,6 +1503,22 @@ void JointItem::onVelocityTimer()
     if(velocityModeEnabled)
     {
         emit sliderVelocityCommand(lastVelocity,jointIndex);
+    }
+}
+
+void JointItem::onPwmTimer()
+{
+    if(pwmModeEnabled)
+    {
+        emit sliderPWMCommand(lastPwm,jointIndex);
+    }
+}
+
+void JointItem::onCurrentTimer()
+{
+    if(currentModeEnabled)
+    {
+        emit sliderCurrentCommand(lastCurrent,jointIndex);
     }
 }
 
@@ -1497,8 +1601,7 @@ void JointItem::onSliderPWMPressed()
 
 void JointItem::onSliderPWMReleased()
 {
-    ref_pwm = (double)ui->sliderPWMOutput->value() / ui->sliderPWMOutput->getSliderStep();
-    emit sliderPWMCommand(ref_pwm, jointIndex);
+    lastPwm = (double)ui->sliderPWMOutput->value() / ui->sliderPWMOutput->getSliderStep();
     sliderPWMPressed = false;
 }
 
@@ -1509,8 +1612,7 @@ void JointItem::onSliderCurrentPressed()
 
 void JointItem::onSliderCurrentReleased()
 {
-    ref_current = (double)ui->sliderCurrentOutput->value() / ui->sliderCurrentOutput->getSliderStep();
-    emit sliderCurrentCommand(ref_current, jointIndex);
+    lastCurrent = (double)ui->sliderCurrentOutput->value() / ui->sliderCurrentOutput->getSliderStep();
     sliderCurrentPressed = false;
 }
 
@@ -2288,6 +2390,14 @@ void JointItem::onCalibClicked()
     if (this->internalState == Velocity)
     {
        velocityTimer.stop();
+    }
+    else if(this->internalState == Pwm)
+    {
+        pwmTimer.stop();
+    }
+    else if(this->internalState == Current)
+    {
+        currentTimer.stop();
     }
     emit calibClicked(this);
 }
