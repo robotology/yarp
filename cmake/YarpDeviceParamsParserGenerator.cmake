@@ -21,7 +21,7 @@ function(generateDeviceParamsParser_commandline COMMANDLINE)
 
         if (YARP_DEVICE_PARAMS_PARSER_GEN_FOUND)
             string(REGEX MATCHALL "[^ ]+" COMMAND_LIST "${COMMANDLINE}")
-            execute_process(COMMAND ${PP_EXECUTABLE} ${COMMAND_LIST}
+            execute_process(COMMAND ${YARP_DEVICE_PARAMS_PARSER_GEN_FOUND} ${COMMAND_LIST}
                             WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
                             RESULT_VARIABLE result)
 
