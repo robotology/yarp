@@ -32,8 +32,8 @@ add_subdirectory(devices)
 add_subdirectory(libYARP_init)
 
 if(YARP_COMPILE_EXECUTABLES)
-    # idl compilers (thrift and ros)
-    add_subdirectory(yarpidl_thrift)
+    # thrift idl compiler
+    add_subdirectory(commands/yarpidl_thrift)
     if(NOT CREATE_SHARED_LIBS)
         include(YarpInstallBasicPackageFiles)
         yarp_install_basic_package_files(
@@ -43,26 +43,13 @@ if(YARP_COMPILE_EXECUTABLES)
     endif()
 
     # executables
-    add_subdirectory(yarpserver)
-    add_subdirectory(yarp)
-    add_subdirectory(yarp-config)
-    add_subdirectory(yarprun)
-    add_subdirectory(yarphear)
-    add_subdirectory(yarpdev)
-    add_subdirectory(yarprobotinterface)
-    add_subdirectory(yarpconnectionsinfo)
-    add_subdirectory(yarpmanager-console)
-    add_subdirectory(yarplogger-console)
-    add_subdirectory(yarpdataplayer-console)
-    add_subdirectory(yarpdatadumper)
-    add_subdirectory(yarpActionsPlayer)
+    add_subdirectory(commands)
 
     # GUIs
     add_subdirectory(guis)
 
     #other
     add_subdirectory(yarpgstreamerplugins)
-    add_subdirectory(yarpDeviceParamParserGenerator)
 endif()
 
 # Robot Testing Framework addons

@@ -1,0 +1,33 @@
+/**
+\defgroup yarpbatterygui yarpbatterygui: Visualize battery information
+
+Visualize battery information such as: voltage, charge, temperature etc.
+
+\ingroup yarp_guis
+
+\tableofcontents
+
+\section yarpbatterygui_intro Description
+
+This gui is a simple display which can be used to remotely check the status of the battery.
+
+\image html yarpbatterygui_example.png
+
+\section yarpbatterygui_ports Ports accessed
+
+The gui opens a \ref Battery_nwc_yarp device to connect to a \ref Battery_nws_yarp and receive battery data.
+
+\section yarpbatterygui_lib Libraries
+
+- Qt5 libraries.
+
+\section yarpbatterygui_parameters Parameters
+
+\verbatim
+--local <name>              The name of the local port opened by this module. e.g. /batteryMonitor
+--remote <name>             The name of the remote port port to connect to, e.g. /mybattery
+--refresh_period <seconds>  Refresh period of the gui. Default value: 10s
+--keep-above                Keep window above the others
+\endverbatim
+
+*/

@@ -1,0 +1,87 @@
+/**
+\defgroup yarprun yarprun: run programs on a set of machines
+
+\ingroup yarp_commands
+
+\tableofcontents
+
+The command-line utility "yarprun" provides a client-server environment that is able to run, kill and monitor applications commands on a remote machine, with the same syntax and behaviour in Windows and Linux.
+
+Typical YARP applications consist of several intercommunicating modules distributed on different machines. If a yarprun server is running on each machine, distributed applications can be remotely launched, monitored and terminated by yarprun commands.
+
+yarprun is also an API library that supplies access to yarprun services. See \ref yarp::run::Run class for documentation.
+
+\section yarprun_server Running a server
+
+To run a yarprun server on a machine:
+
+\verbatim
+$ yarprun --server /SERVERPORT
+\endverbatim
+
+- /SERVERPORT must be unique and identifies the remote machine.
+
+\section yarprun_cmd Running an application
+
+The basic command to run a command/application on a remote machine is:
+
+\verbatim
+$ yarprun --on /SERVERPORT --as TAG --cmd COMMAND [ARGLIST]
+\endverbatim
+
+- /SERVERPORT is the name of the server that actually runs the command
+- TAG identifies the application process set, and must be unique
+- COMMAND is the application that has to be executed, followed by the optional argument list
+
+Some options can be added to the basic format of yarprun:
+
+\verbatim
+$ yarprun --on /SERVERPORT1 --as TAG --cmd COMMAND [ARGLIST] --stdio /SERVERPORT2
+\endverbatim
+
+opens a remote shell window where the stdin, stdout and stderr of the application will be redirected.
+- /SERVERPORT2 specifies the machine where the IO shell will be executed, and can be either a remote machine or be equal to /SERVERPORT1 itself.
+
+If "--stdio" is specified, there are two useful sub-options (linux only):
+- --hold keep the stdio window open even if the command is terminated or aborted.
+- --geometry WxH+X+Y set the stdio window size and position. Example: --geometry 320x240+80+20
+
+\section yarprun_other Other commands
+
+To terminate an application, the yarprun syntax is:
+
+\verbatim
+$ yarprun --on /SERVERPORT --sigterm TAG
+\endverbatim
+
+To send a signal to an application (usually SIGKILL) use:
+
+\verbatim
+$ yarprun --on /SERVERPORT --kill TAG SIGNUM
+\endverbatim
+
+To terminate all the applications managed by a yarprun server, use:
+
+\verbatim
+$ yarprun --on /SERVERPORT --sigtermall
+\endverbatim
+
+To check if an application is still running on a yarprun server, use:
+
+\verbatim
+$ yarprun --on /SERVERPORT --isrunning TAG
+\endverbatim
+
+To get a report of applications running on a yarprun server, use:
+
+\verbatim
+$ yarprun --on /SERVERPORT --ps
+\endverbatim
+
+To shutdown a yarprun server, use:
+
+\verbatim
+$ yarprun --on /SERVERPORT --exit
+\endverbatim
+
+*/

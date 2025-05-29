@@ -1,0 +1,25 @@
+/**
+\defgroup yarpllmgui yarpllmgui: Controls a LLM device
+
+Controls and displays the conversation with a LLM device.
+
+\ingroup yarp_guis
+
+\section yarpllmgui_intro Description
+
+\image html yarpllmgui_example.png
+
+The gui uses a LLM_nwc_yarp device to connect to a remote LLM_nws_yarp device.
+
+\section yarpllmgui_parameters Parameters
+
+\verbatim
+remote_rpc          Mandatory.   Name of the rpc port opened by the nws.
+streaming_port      Optional.    Name of the streaming port opened by the nws (by default /llm/conv:o).
+\endverbatim
+
+\section yarpllmgui_lib Libraries
+
+- Qt5 libraries.
+
+*/

@@ -122,6 +122,8 @@ void MainWindow::updateMain()
     snprintf(buff, 100, s_cur_ang_vel, cur_vel_theta);
     ui->label_cur_ang_vel->setText(buff);
 
+    m_stamp.update();
+    outputport.setEnvelope(m_stamp);
     outputport.write(output_data);
 
     return;

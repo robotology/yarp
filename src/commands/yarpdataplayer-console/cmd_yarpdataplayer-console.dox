@@ -1,0 +1,27 @@
+/**
+\defgroup yarpdataplayer-console yarp: yarpdataplayer-console
+\ingroup yarp_commands
+
+A module that reproduces in a synchronized way, previously acquired data
+(using \ref yarpdatadumper) from a source of input.
+
+\section yarpdataplayer-console_intro Description
+
+The functionality is similar to \ref yarpdataplayer, without a gui.
+
+\section yarpdataplayer-console_paramaters Accessed Parameters
+
+\verbatim
+module_name     name of the moudule (default value: yarpdataplayer)
+add_prefix      adds a prefix to the ports opened by the tool
+verbose         display extra debug messages
+dataset         name of the dataset to load
+withExtraTimeCol <id> loads the log files created by the datadumper with both rx and tx time. The user must select which timestamp to use (txTime index = 1 or rxTime index = 2)
+\endverbatim
+
+\section yarpdataplayer-console_ports Accessed ports
+
+The module opens an rpc port `/yarpdataplayer/rpc:i` on which it receives user commands. The rpc command `help` displays the list of available commands.
+
+
+*/

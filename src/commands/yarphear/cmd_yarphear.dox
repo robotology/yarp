@@ -1,0 +1,19 @@
+/**
+\defgroup yarphear yarphear: listen to YARP audio streams
+
+\ingroup yarp_commands
+
+\tableofcontents
+
+\section yarphear_intro Description
+
+The command-line utility `yarphear` opens a port and connects it to the
+speakers.  If data is sent to the port, it is rendered to the speakers.
+the module internally uses a \ref PortAudioPlayerDeviceDriver device driver to render the sound.
+
+Type `help` for commands for saving, muting, etc.
+
+This module is not largely used, since there are preferred ways to reproduce audio in YARP.
+For extra information about audio in YARP see also: \ref AudioDoc
+
+*/

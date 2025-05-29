@@ -1,0 +1,21 @@
+# SPDX-FileCopyrightText: 2025 Istituto Italiano di Tecnologia (IIT)
+# SPDX-License-Identifier: BSD-3-Clause
+
+if(YARP_COMPILE_EXECUTABLES)
+    # Command line executables
+    add_subdirectory(yarpserver)
+    add_subdirectory(yarp)
+    add_subdirectory(yarp-config)
+    add_subdirectory(yarprun)
+    add_subdirectory(yarphear)
+    add_subdirectory(yarpdev)
+    add_subdirectory(yarprobotinterface)
+    add_subdirectory(yarpconnectionsinfo)
+    add_subdirectory(yarpmanager-console)
+    add_subdirectory(yarplogger-console)
+    add_subdirectory(yarpdataplayer-console)
+    add_subdirectory(yarpdatadumper)
+    add_subdirectory(yarpdatadumperAppGenerator)
+    add_subdirectory(yarpActionsPlayer)
+    add_subdirectory(yarpDeviceParamParserGenerator)
+endif()

@@ -1,0 +1,40 @@
+/**
+\defgroup yarplogger-console yarplogger-console: visualize log from YARP programs
+
+\ingroup yarp_commands
+
+\tableofcontents
+
+\section yarplogger-console_intro Description
+
+yarplogger-console is the command line version of \ref yarplogger "yarplogger gui".
+See also \ref yarp_logging
+
+\section yarplogger-console_Params Parameters
+
+The module does not accept input parameters.
+
+\section yarplogger-console_ports Accessed ports
+
+The module opens a port `/logger` which is used as an input port to receive logs from other processes, each of them opening a `/log/xxx` port.
+All these connections are performed automatically when the user performs the `discovery` and `connect` operations.
+
+The module opens the port `/logger/rpc` which accepts the following text commands:
+
+\code
+
+start              Starts logging
+stop               Stops logging
+quit               Terminates the execution of the process
+load  <filaname>   Loads previously saved logs
+save  <filaname>   Save currently received logs to a file
+
+ask_by_proc <process_name> print all the logs received from the selected process
+ask_all            print all the received logs
+discover           ask the nameserver for a list of all processes which are ready to send logs
+connect            connects the input port /logger to all /log ports opened by other processes
+get_info           gets infos about the currently received logs (process names, timestamps, number or errors received etc)
+
+\endcode
+
+*/

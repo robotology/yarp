@@ -781,7 +781,7 @@ void MainWindow::on_actionShow_Mute_Ports_toggled(bool checked)
 
 void MainWindow::on_actionAbout_QtYarpLogger_triggered()
 {
-    QDesktopServices::openUrl(QUrl("http://wiki.icub.org/yarpdoc/qtyarplogger.html"));
+    QDesktopServices::openUrl(QUrl("https://www.yarp.it/latest/yarp_logging.html"));
 }
 
 void MainWindow::on_actionSave_Log_triggered(bool checked)
