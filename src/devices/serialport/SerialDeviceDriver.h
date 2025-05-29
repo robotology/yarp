@@ -102,55 +102,16 @@ public:
 
     bool close() override;
 
-    /**
-     * Sends a string of chars to the serial communications channel.
-     * @param msg the string to send
-     * @return true on success
-     */
-    bool send(const Bottle& msg) override;
-    bool send(const char *msg, size_t size) override;
-    //bool putMessage(Bottle& msg, bool waitreply, double replytimeout, Bottle& reply, char *replydelimiter, int replysize );
-    /**
-     * Gets the existing chars in the receive queue.
-     * @param msg - the received string
-     * @return - true on success; false if no messages available
-     */
-    bool receive(Bottle& msg) override;
-    /**
-     * Gets one single char from the receive queue.
-     * @param chr - the received char.
-     * @return - 0 if no chars are received; 1 if one char is received.
-     */
-    int  receiveChar(char& chr) override;
-
-    /**
-     * Gets an array of bytes (unsigned char) with size <= 'size' parameter. The array is NOT null terminated.
-     * @param bytes - a previously allocated buffer where the received data is stored.
-     * @param size - the size of the 'bytes' parameter.
-     * @return - the number of received bytes. The function returns 0 if no bytes are received.
-     */
-    int  receiveBytes(unsigned char* bytes, const int size) override;
-
-    /**
-    * Gets one line (a sequence of chars with a ending '\\n' or '\\r') from the receive queue. The ending '\\n''\\r' chars are not removed in the returned line.
-    * \param line - a previously allocated buffer where the received line is stored.
-    * \param MaxLineLength - the size of the 'line' parameter.
-    * \return - the number of received characters (including the '\n''\r' chars, plus the buffer terminator '\\0'). The function returns 0 if no chars are received.
-    */
-    int  receiveLine(char* line, const int MaxLineLength) override;
-
-    /**
-    * Enable/Disable DTR protocol
-    * @param enable Enable/Disable DTR protocol
-    * @return true on success
-    */
-    bool setDTR(bool value) override;
-
-    /**
-     * Flushes the internal buffer.
-     * @return - the number of flushed characters.
-     */
-    int  flush() override;
+    yarp::dev::ReturnValue sendString(const std::string& msg) override;
+    yarp::dev::ReturnValue sendBytes(const std::vector<unsigned char>& line) override;
+    yarp::dev::ReturnValue sendByte(unsigned char byt);
+    yarp::dev::ReturnValue receiveString(std::string& msg) override;
+    yarp::dev::ReturnValue receiveBytes(std::vector<unsigned char>& line, const int MaxSize) override;
+    yarp::dev::ReturnValue receiveByte(unsigned char& chr) override;
+    yarp::dev::ReturnValue receiveLine(std::vector<char>& line, const int MaxLineLength) override;
+    yarp::dev::ReturnValue setDTR(bool enable) override;
+    yarp::dev::ReturnValue flush(size_t& flushed_chars) override;
+    yarp::dev::ReturnValue flush() override;
 };
 
 #endif

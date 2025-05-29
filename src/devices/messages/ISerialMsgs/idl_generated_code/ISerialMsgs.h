@@ -14,6 +14,12 @@
 #include <yarp/os/Wire.h>
 #include <yarp/os/idl/WireTypes.h>
 #include <yarp/os/ApplicationNetworkProtocolVersion.h>
+#include <return_flush.h>
+#include <return_receiveByte.h>
+#include <return_receiveBytes.h>
+#include <return_receiveLine.h>
+#include <return_receiveString.h>
+#include <yarp/dev/ReturnValue.h>
 
 class ISerialMsgs :
         public yarp::os::Wire
@@ -28,9 +34,25 @@ public:
     ISerialMsgs();
 
     //Service methods
-    virtual bool setDTR(const bool enable);
+    virtual yarp::dev::ReturnValue sendString(const std::string& message);
 
-    virtual std::int32_t flush();
+    virtual yarp::dev::ReturnValue sendBytes(const std::vector<std::int8_t>& message);
+
+    virtual yarp::dev::ReturnValue sendByte(const std::int8_t message);
+
+    virtual return_receiveString receiveString();
+
+    virtual return_receiveBytes receiveBytes(const std::int32_t maxNumberOfByes);
+
+    virtual return_receiveByte receiveByte();
+
+    virtual return_receiveLine receiveLine(const std::int32_t maxNumberOfByes);
+
+    virtual yarp::dev::ReturnValue setDTR(const bool enable);
+
+    virtual yarp::dev::ReturnValue flush();
+
+    virtual return_flush flushWithRet();
 
     // help method
     virtual std::vector<std::string> help(const std::string& functionName = "--all");

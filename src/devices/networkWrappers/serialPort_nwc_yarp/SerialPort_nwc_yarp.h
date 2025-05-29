@@ -40,14 +40,10 @@ class SerialPort_nwc_yarp :
 private:
     ISerialMsgs               m_rpc;
     yarp::os::Port            m_rpcPort;
-    yarp::os::Port            m_sendPort;
-    yarp::os::Port            m_receivePort;
 
     bool closeMain()
     {
         m_rpcPort.close();
-        m_sendPort.close();
-        m_receivePort.close();
         return true;
     }
 
@@ -60,14 +56,17 @@ public:
     ~SerialPort_nwc_yarp() override;
 
     // ISerialDevice methods
-    bool send(const Bottle& msg) override;
-    bool send(const char *msg, size_t size) override;
-    bool receive(Bottle& msg) override;
-    int receiveChar(char& c) override;
-    int flush () override;
-    int receiveLine(char* line, const int MaxLineLength) override;
-    int receiveBytes(unsigned char* bytes, const int size) override;
-    bool setDTR(bool enable) override;
+    yarp::dev::ReturnValue sendString(const std::string& msg) override;
+    yarp::dev::ReturnValue sendBytes(const std::vector<unsigned char>& line) override;
+    yarp::dev::ReturnValue sendByte(unsigned char byt) override;
+    yarp::dev::ReturnValue receiveString(std::string& msg) override;
+    yarp::dev::ReturnValue receiveBytes(std::vector<unsigned char>& line, const int MaxSize) override;
+    yarp::dev::ReturnValue receiveByte(unsigned char& chr) override;
+    yarp::dev::ReturnValue receiveLine(std::vector<char>& line, const int MaxLineLength) override;
+    yarp::dev::ReturnValue setDTR(bool enable) override;
+    yarp::dev::ReturnValue flush(size_t& flushed_chars) override;
+    yarp::dev::ReturnValue flush() override;
+
     bool close() override;
     bool open(Searchable& prop) override;
 
