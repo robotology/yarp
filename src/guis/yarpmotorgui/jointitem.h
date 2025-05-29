@@ -151,6 +151,12 @@ private:
     QTimer velocityTimer;
     double lastVelocity;
     bool velocityModeEnabled;
+    QTimer pwmTimer;
+    double lastPwm;
+    bool pwmModeEnabled;
+    QTimer currentTimer;
+    double lastCurrent;
+    bool currentModeEnabled;
 
     int     IDLE;
     int     POSITION;
@@ -224,6 +230,8 @@ private slots:
     void onRunClicked();
     void onPidClicked();
     void onVelocityTimer();
+    void onPwmTimer();
+    void onCurrentTimer();
     void onStackedWidgetChanged(int);
 
 signals:
