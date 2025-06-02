@@ -92,5 +92,4 @@ Other
 
 * all yarp command line executables are now located under the folder `commands` similar to the folder `guis`/
 * yarp documentation was improved.
-
-
+* expose bindings for `IFrameGrabberControls::getFeature(int, double*, double*)`

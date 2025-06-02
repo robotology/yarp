@@ -2009,6 +2009,10 @@ public:
         return result;
     }
 
+    bool getFeature(int j, std::vector<double>& value1, std::vector<double>& value2) {
+        return self->getFeature(j, &value1[0], &value2[0]);
+    }
+
     bool hasOnOff(int feature) {
         bool result;
         self->hasOnOff(feature, &result);
