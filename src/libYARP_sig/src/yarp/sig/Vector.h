@@ -92,6 +92,11 @@ inline int BottleTagMap <double> () {
   }
 
 template<>
+inline int BottleTagMap <float> () {
+    return BOTTLE_TAG_FLOAT32;
+  }
+
+template<>
 inline int BottleTagMap <int> () {
     return BOTTLE_TAG_INT32;
   }

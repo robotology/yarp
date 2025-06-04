@@ -12,6 +12,13 @@ struct VectorOfDouble {
   yarp.includefile="yarp/sig/Vector.h"
 )
 
+struct VectorOfFloat {
+  1: list<float> content;
+} (
+  yarp.name = "yarp::sig::VectorOf<float>"
+  yarp.includefile="yarp/sig/Vector.h"
+)
+
 struct VectorOfInt {
   1: list<i32> content;
 } (
@@ -35,7 +42,7 @@ struct jointData
   12: bool motorAcceleration_isValid;
   13: VectorOfDouble torque;
   14: bool torque_isValid;
-  15: VectorOfDouble pwmDutycycle;
+  15: VectorOfFloat pwmDutycycle;
   16: bool pwmDutycycle_isValid;
   17: VectorOfDouble current;
   18: bool current_isValid;
@@ -43,6 +50,8 @@ struct jointData
   20: bool controlMode_isValid;
   21: VectorOfInt interactionMode;
   22: bool interactionMode_isValid;
+  23: VectorOfFloat temperature;
+  24: bool temperature_isValid;
 } (
     yarp.api.include = "yarp/dev/api.h"
     yarp.api.keyword = "YARP_dev_API"

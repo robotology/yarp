@@ -1542,12 +1542,23 @@ bool RemoteControlBoard::getNumberOfMotors(int *num)
 
 bool RemoteControlBoard::getTemperature      (int m, double* val)
 {
-    return get1V1I1D(VOCAB_TEMPERATURE, m, val);
+    double localArrivalTime = 0.0;
+
+    extendedPortMutex.lock();
+    bool ret = extendedIntputStatePort.getLastSingle(m, VOCAB_TEMPERATURE, val, lastStamp, localArrivalTime);
+    extendedPortMutex.unlock();
+    return ret;
 }
 
 bool RemoteControlBoard::getTemperatures     (double *vals)
 {
-    return get1VDA(VOCAB_TEMPERATURES, vals);
+    double localArrivalTime = 0.0;
+
+    extendedPortMutex.lock();
+    bool ret = extendedIntputStatePort.getLastVector(VOCAB_TEMPERATURE, vals, lastStamp, localArrivalTime);
+    extendedPortMutex.unlock();
+
+    return ret;
 }
 
 bool RemoteControlBoard::getTemperatureLimit (int m, double* val)
