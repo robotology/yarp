@@ -1,9 +1,9 @@
-YARP <yarp-3.11> (UNRELEASED)                                         {#yarp_3_11}
+YARP <yarp-3.12> (UNRELEASED)                                         {#yarp_3_12}
 ============================
 
 [TOC]
 
-YARP <yarp-3.11> Release Notes
+YARP <yarp-3.12> Release Notes
 =============================
 
 
@@ -93,3 +93,4 @@ Other
 * all yarp command line executables are now located under the folder `commands` similar to the folder `guis`/
 * yarp documentation was improved.
 * expose bindings for `IFrameGrabberControls::getFeature(int, double*, double*)`
+* Added `IRGBDSensor interface to python bindings.
