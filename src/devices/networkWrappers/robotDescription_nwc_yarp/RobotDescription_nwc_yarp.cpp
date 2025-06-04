@@ -46,8 +46,10 @@ bool RobotDescription_nwc_yarp::open(yarp::os::Searchable &config)
        return false;
     }
 
-    //protocol check
-    //to be added here
+    // Check the protocol version
+    if (!m_RPC.checkProtocolVersion()) {
+        return false;
+    }
 
     return true;
 }

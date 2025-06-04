@@ -54,6 +54,10 @@ bool Map2D_nwc_yarp::open(yarp::os::Searchable &config)
         return false;
     }
 
+    //Check the protocol version
+    if (!m_map_RPC.checkProtocolVersion()) { return false; }
+
+    yCInfo(MAP2D_NWC_YARP) << "Opening of NWC successful";
     return true;
 }
 

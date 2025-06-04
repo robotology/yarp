@@ -246,6 +246,11 @@ bool FrameGrabber_nwc_yarp::open(yarp::os::Searchable& config)
         yCInfo(FRAMEGRABBER_NWC_YARP) << "No remote specified. Waiting for connection";
     }
 
+    // Check the protocol version
+    //if (!rpcPort.checkProtocolVersion()) {
+    //    return false;
+    //}
+
     return true;
 }
 

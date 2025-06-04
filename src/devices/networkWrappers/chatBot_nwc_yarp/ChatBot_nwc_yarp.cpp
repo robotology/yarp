@@ -42,7 +42,10 @@ bool ChatBot_nwc_yarp::open(yarp::os::Searchable &config)
         return false;
     }
 
-    yCDebug(CHATBOT_NWC_YARP) << "Opening of nwc successful";
+    //Check the protocol version
+    if (!m_thriftClient.checkProtocolVersion()) { return false; }
+
+    yCInfo(CHATBOT_NWC_YARP) << "Opening of NWC successful";
     return true;
 }
 

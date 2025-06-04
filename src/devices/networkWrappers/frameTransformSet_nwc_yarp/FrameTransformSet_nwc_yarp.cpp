@@ -79,6 +79,10 @@ bool FrameTransformSet_nwc_yarp::open(yarp::os::Searchable& config)
         return false;
     }
 
+    //Check the protocol version
+    if (!m_setRPC.checkProtocolVersion()) { return false; }
+
+    yCInfo(FRAMETRANSFORMSETNWCYARP) << "Opening of NWC successful";
     return true;
 }
 

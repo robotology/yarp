@@ -217,6 +217,12 @@ bool Battery_nwc_yarp::open(yarp::os::Searchable &config)
         return false;
     }
 
+    //Check the protocol version
+    if (!m_battery_RPC.checkProtocolVersion()) {
+        return false;
+    }
+
+    yCInfo(BATTERYCLIENT) << "Opening of NWC successful";
     return true;
 }
 
