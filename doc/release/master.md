@@ -15,6 +15,18 @@ New Features
 
 ### Devices
 
-All nwc devices now use the method checkProtocolVersion() to guarantee netowrk protocol 
+All nwc devices now use the method checkProtocolVersion() to guarantee network protocol 
 compatibility with the corresponding nws device.
 
+### libYARP_sig
+
+Added VectorOf<float> (32 bit)
+
+Breaking Changes
+----------------
+
+### Devices
+
+* Updated protocol between `RemoteControlBoard` and `controlBoard_nws_yarp`: the motor `temperature` data is
+  now obtained through the streaming port instead of an RPC. 
+  This new feature is implemented through a breaking change in the definition of data fields in `stateExt.thrift`
