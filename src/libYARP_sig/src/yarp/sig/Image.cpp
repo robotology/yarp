@@ -68,7 +68,6 @@ public:
     int extern_type_id;
     size_t extern_type_quantum;
     size_t quantum;
-    bool topIsLow;
     int type_id;
 
 protected:
@@ -87,10 +86,8 @@ protected:
     void _alloc_data ();
     void _free ();
 
-    bool _set_ipl_header(size_t x, size_t y, int pixel_type, size_t quantum,
-                         bool topIsLow);
-    void _alloc_complete(size_t x, size_t y, int pixel_type, size_t quantum,
-                         bool topIsLow);
+    bool _set_ipl_header(size_t x, size_t y, int pixel_type, size_t quantum);
+    void _alloc_complete(size_t x, size_t y, int pixel_type, size_t quantum);
     void _free_complete();
 
 
@@ -109,7 +106,6 @@ public:
         Data = nullptr;
         is_owner = 1;
         quantum = 0;
-        topIsLow = true;
         extern_type_id = 0;
         extern_type_quantum = -1;
     }
@@ -118,13 +114,13 @@ public:
         _free_complete();
     }
 
-    void resize(size_t x, size_t y, int pixel_type, size_t quantum, bool topIsLow);
-    void _alloc_complete_extern(const void *buf, size_t x, size_t y, int pixel_type, size_t quantum, bool topIsLow);
+    void resize(size_t x, size_t y, int pixel_type, size_t quantum);
+    void _alloc_complete_extern(const void *buf, size_t x, size_t y, int pixel_type, size_t quantum);
 };
 
 
-void ImageStorage::resize(size_t x, size_t y, int pixel_type,
-                          size_t quantum, bool topIsLow) {
+void ImageStorage::resize(size_t x, size_t y, int pixel_type, size_t quantum)
+{
     int need_recreation = 1;
 
     if (quantum==0) {
@@ -134,7 +130,7 @@ void ImageStorage::resize(size_t x, size_t y, int pixel_type,
     if (need_recreation) {
         _free_complete();
         DBGPF1 printf("HIT recreation for %p %p: %zu %zu %d\n", static_cast<void*>(this), static_cast<void*>(pImage), x, y, pixel_type);
-        _alloc_complete (x, y, pixel_type, quantum, topIsLow);
+        _alloc_complete (x, y, pixel_type, quantum);
     }
     extern_type_id = pixel_type;
     extern_type_quantum = quantum;
@@ -185,11 +181,7 @@ void ImageStorage::_alloc_data ()
 
     for (int r = 0; r < height; r++)
         {
-            if (topIsLow) {
-                Data[r] = DataArea;
-            } else {
-                Data[height-r-1] = DataArea;
-            }
+            Data[r] = DataArea;
             DataArea += pImage->widthStep;
         }
     DBGPF1 printf("alloc_data4\n");
@@ -225,11 +217,10 @@ void ImageStorage::_free_complete()
     pImage = nullptr;
 }
 
-void ImageStorage::_alloc_complete(size_t x, size_t y, int pixel_type, size_t quantum,
-                                   bool topIsLow)
+void ImageStorage::_alloc_complete(size_t x, size_t y, int pixel_type, size_t quantum)
 {
     _free_complete();
-    _set_ipl_header(x, y, pixel_type, quantum, topIsLow);
+    _set_ipl_header(x, y, pixel_type, quantum);
     _alloc ();
     _alloc_data ();
 }
@@ -270,8 +261,7 @@ const std::map<int, pixelTypeIplParams> pixelCode2iplParams = {
     {-4,                                {1, IPL_DEPTH_32S}}
 };
 
-bool ImageStorage::_set_ipl_header(size_t x, size_t y, int pixel_type, size_t quantum,
-                                   bool topIsLow)
+bool ImageStorage::_set_ipl_header(size_t x, size_t y, int pixel_type, size_t quantum)
 {
     if (pImage != nullptr) {
         iplDeallocateImage(pImage);
@@ -293,26 +283,23 @@ bool ImageStorage::_set_ipl_header(size_t x, size_t y, int pixel_type, size_t qu
     if (quantum==0) {
         quantum = IPL_ALIGN_QWORD;
     }
-    int origin = topIsLow ? IPL_ORIGIN_TL : IPL_ORIGIN_BL;
 
-    pImage = iplCreateImageHeader(param.nChannels, param.depth, origin, quantum, x, y);
+    pImage = iplCreateImageHeader(param.nChannels, param.depth, quantum, x, y);
 
     type_id = pixel_type;
     this->quantum = quantum;
-    this->topIsLow = topIsLow;
     return true;
 }
 
-void ImageStorage::_alloc_complete_extern(const void *buf, size_t x, size_t y, int pixel_type, size_t quantum, bool topIsLow)
+void ImageStorage::_alloc_complete_extern(const void *buf, size_t x, size_t y, int pixel_type, size_t quantum)
 {
     if (quantum==0) {
         quantum = 1;
     }
     this->quantum = quantum;
-    this->topIsLow = topIsLow;
 
     _free_complete();
-    _set_ipl_header(x, y, pixel_type, quantum, topIsLow);
+    _set_ipl_header(x, y, pixel_type, quantum);
     Data = nullptr;
     _alloc_extern (buf);
     _alloc_data ();
@@ -367,7 +354,6 @@ void Image::initialize() {
     imgPixelSize = imgRowSize = 0;
     imgPixelCode = 0;
     imgQuantum = 0;
-    topIsLow = true;
     implementation = new ImageStorage(*this);
     yAssert(implementation!=nullptr);
 }
@@ -421,8 +407,7 @@ void Image::resize(size_t imgWidth, size_t imgHeight) {
         (static_cast<ImageStorage*>(implementation))->resize(imgWidth,
                                                              imgHeight,
                                                              imgPixelCode,
-                                                             imgQuantum,
-                                                             topIsLow);
+                                                             imgQuantum);
         synchronize();
         //printf("CHANGE! %ld\n", (long int)(this));
     }
@@ -466,7 +451,6 @@ void Image::synchronize() {
         imgQuantum = impl->quantum;
         imgRowSize = impl->pImage->widthStep;
         setPixelCode(impl->type_id);
-        topIsLow = impl->pImage->origin == IPL_ORIGIN_TL;
     } else {
         data = nullptr;
         imgWidth = 0;
@@ -652,7 +636,7 @@ bool Image::copy(const Image& alt)
         copyPixels(alt.getRawImage(),alt.getPixelCode(),
                    getRawImage(),getPixelCode(),
                    width(),height(),
-                   getRawImageSize(),q1,q2,false,false);
+                   getRawImageSize(),q1,q2);
     }
     return true;
 }
@@ -695,8 +679,7 @@ void Image::setExternal(const void *data, size_t imgWidth, size_t imgHeight) {
                                                                          imgWidth,
                                                                          imgHeight,
                                                                          getPixelCode(),
-                                                                         imgQuantum,
-                                                                         topIsLow);
+                                                                         imgQuantum);
     synchronize();
 }
 
