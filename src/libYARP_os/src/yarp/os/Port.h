@@ -234,9 +234,6 @@ public:
     // Documented in Contactable
     void releaseProperties(Property* prop) override;
 
-    // Documented in Contactable
-    void includeNodeInName(bool flag) override;
-
     /**
      * Check if the port has been opened.
      */

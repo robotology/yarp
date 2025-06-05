@@ -134,9 +134,6 @@ public:
     bool replyAndDrop(PortWriter& writer) override;
 
     // Documented in Contactable
-    void includeNodeInName(bool flag) override;
-
-    // Documented in Contactable
     bool setCallbackLock(std::mutex* mutex = nullptr) override;
 
     // Documented in Contactable

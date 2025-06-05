@@ -308,8 +308,3 @@ void yarp::os::impl::PortCoreAdapter::setOpen(bool opened)
 {
     this->opened = opened;
 }
-
-void yarp::os::impl::PortCoreAdapter::includeNodeInName(bool flag)
-{
-    includeNode = flag;
-}

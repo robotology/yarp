@@ -119,30 +119,9 @@ bool Port::open(const Contact& contact, bool registerName, const char* fakeName)
         n = "...";
     }
 
-    NestedContact nc(n);
-    if (!nc.getNestedName().empty()) {
-        if (nc.getNodeName().empty()) {
-            Nodes& nodes = NameClient::getNameClient().getNodes();
-            nodes.requireActiveName();
-            std::string node_name = nodes.getActiveName();
-            if (!node_name.empty()) {
-                n = n + node_name;
-            }
-        }
-    }
-
     PortCoreAdapter* currentCore = &(IMPL());
     if (currentCore != nullptr) {
         currentCore->active = false;
-        if (!n.empty() && (n[0] != '/' || currentCore->includeNode) && n[0] != '=' && n != "..." && n.substr(0, 3) != "...") {
-            if (fakeName == nullptr) {
-                Nodes& nodes = NameClient::getNameClient().getNodes();
-                std::string node_name = nodes.getActiveName();
-                if (!node_name.empty()) {
-                    n = (n[0] == '/' ? "" : "/") + n + "@" + node_name;
-                }
-            }
-        }
     }
     if (!n.empty() && n[0] != '/' && n[0] != '=' && n != "..." && n.substr(0, 3) != "...") {
         if (fakeName == nullptr) {
@@ -647,11 +626,6 @@ Property* Port::acquireProperties(bool readOnly)
 void Port::releaseProperties(Property* prop)
 {
     IMPL().releaseProperties(prop);
-}
-
-void Port::includeNodeInName(bool flag)
-{
-    IMPL().includeNodeInName(flag);
 }
 
 bool Port::isOpen() const

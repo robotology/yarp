@@ -172,11 +172,6 @@ bool yarp::os::AbstractContactable::replyAndDrop(PortWriter& writer)
     return asPort().replyAndDrop(writer);
 }
 
-void yarp::os::AbstractContactable::includeNodeInName(bool flag)
-{
-    asPort().includeNodeInName(flag);
-}
-
 bool yarp::os::AbstractContactable::setCallbackLock(std::mutex* mutex)
 {
     return asPort().setCallbackLock(mutex);

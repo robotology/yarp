@@ -276,9 +276,6 @@ public:
     void releaseProperties(Property* prop) override;
 
     // documented in Contactable
-    void includeNodeInName(bool flag) override;
-
-    // documented in Contactable
     bool setCallbackLock(std::mutex* mutex) override;
 
     // documented in Contactable
