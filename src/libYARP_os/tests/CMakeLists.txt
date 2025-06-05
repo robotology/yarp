@@ -21,13 +21,11 @@ target_sources(harness_os PRIVATE
   NetTypeTest.cpp
   NetworkClockTest.cpp
   NetworkTest.cpp
-  NodeTest.cpp
   PeriodicThreadTest.cpp
   PortablePairTest.cpp
   PortReaderBufferTest.cpp
   PortTest.cpp
   PropertyTest.cpp
-  PublisherTest.cpp
   ResourceFinderTest.cpp
   RFModuleTest.cpp
   RouteTest.cpp
