@@ -337,12 +337,6 @@ void yarp::os::BufferedPort<T>::releaseProperties(Property* prop)
 }
 
 template <typename T>
-void yarp::os::BufferedPort<T>::includeNodeInName(bool flag)
-{
-    return port.includeNodeInName(flag);
-}
-
-template <typename T>
 bool yarp::os::BufferedPort<T>::setCallbackLock(std::mutex* mutex)
 {
     return port.setCallbackLock(mutex);

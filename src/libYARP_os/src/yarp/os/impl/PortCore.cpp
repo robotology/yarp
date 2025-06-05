@@ -14,7 +14,6 @@
 #include <yarp/os/Name.h>
 #include <yarp/os/Network.h>
 #include <yarp/os/PortInfo.h>
-#include <yarp/os/RosNameSpace.h>
 #include <yarp/os/StringOutputStream.h>
 #include <yarp/os/SystemInfo.h>
 #include <yarp/os/Time.h>
@@ -1539,10 +1538,6 @@ enum class PortCoreCommand : yarp::conf::vocab32_t
     Set = yarp::os::createVocab32('s', 'e', 't'),
     Get = yarp::os::createVocab32('g', 'e', 't'),
     Prop = yarp::os::createVocab32('p', 'r', 'o', 'p'),
-    RosPublisherUpdate = yarp::os::createVocab32('r', 'p', 'u', 'p'),
-    RosRequestTopic = yarp::os::createVocab32('r', 't', 'o', 'p'),
-    RosGetPid = yarp::os::createVocab32('p', 'i', 'd'),
-    RosGetBusInfo = yarp::os::createVocab32('b', 'u', 's'),
 };
 
 enum class PortCoreConnectionDirection : yarp::conf::vocab32_t
@@ -1561,24 +1556,6 @@ enum class PortCorePropertyAction : yarp::conf::vocab32_t
 
 PortCoreCommand parseCommand(const yarp::os::Value& v)
 {
-    if (v.isString()) {
-        // We support ROS client API these days.  Here we recode some long ROS
-        // command names, just for convenience.
-        std::string cmd = v.asString();
-        if (cmd == "publisherUpdate") {
-            return PortCoreCommand::RosPublisherUpdate;
-        }
-        if (cmd == "requestTopic") {
-            return PortCoreCommand::RosRequestTopic;
-        }
-        if (cmd == "getPid") {
-            return PortCoreCommand::RosGetPid;
-        }
-        if (cmd == "getBusInfo") {
-            return PortCoreCommand::RosGetBusInfo;
-        }
-    }
-
     auto cmd = static_cast<PortCoreCommand>(v.asVocab32());
     switch (cmd) {
     case PortCoreCommand::Help:
@@ -1592,10 +1569,6 @@ PortCoreCommand parseCommand(const yarp::os::Value& v)
     case PortCoreCommand::Set:
     case PortCoreCommand::Get:
     case PortCoreCommand::Prop:
-    case PortCoreCommand::RosPublisherUpdate:
-    case PortCoreCommand::RosRequestTopic:
-    case PortCoreCommand::RosGetPid:
-    case PortCoreCommand::RosGetBusInfo:
         return cmd;
     default:
         return PortCoreCommand::Unknown;
@@ -2654,32 +2627,6 @@ bool PortCore::adminBlock(ConnectionReader& reader,
             break;
         }
     } break;
-    case PortCoreCommand::RosPublisherUpdate: {
-        yCIDebug(PORTCORE, getName(), "publisherUpdate! --> %s", cmd.toString().c_str());
-        // std::string caller_id = cmd.get(1).asString(); // Currently unused
-        std::string topic = RosNameSpace::fromRosName(cmd.get(2).asString());
-        Bottle* pubs = cmd.get(3).asList();
-        result = handleAdminRosPublisherUpdateCmd(topic, pubs);
-        reader.requestDrop(); // ROS needs us to close down.
-    } break;
-    case PortCoreCommand::RosRequestTopic:
-        yCIDebug(PORTCORE, getName(), "requestTopic! --> %s", cmd.toString().c_str());
-        // std::string caller_id = cmd.get(1).asString(); // Currently unused
-        // std::string topic = RosNameSpace::fromRosName(cmd.get(2).asString()); // Currently unused
-        // Bottle protocols = cmd.get(3).asList(); // Currently unused
-        result = handleAdminRosRequestTopicCmd();
-        reader.requestDrop(); // ROS likes to close down.
-        break;
-    case PortCoreCommand::RosGetPid:
-        // std::string caller_id = cmd.get(1).asString(); // Currently unused
-        result = handleAdminRosGetPidCmd();
-        reader.requestDrop(); // ROS likes to close down.
-        break;
-    case PortCoreCommand::RosGetBusInfo:
-        // std::string caller_id = cmd.get(1).asString(); // Currently unused
-        result = handleAdminRosGetBusInfoCmd();
-        reader.requestDrop(); // ROS likes to close down.
-        break;
     case PortCoreCommand::Unknown:
         result = handleAdminUnknownCmd(cmd);
         break;

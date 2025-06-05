@@ -283,14 +283,6 @@ public:
     virtual void releaseProperties(Property* prop) = 0;
 
     /**
-     * Choose whether to prepend a node name (if one is available) to
-     * the port's name. Node names are set using yarp::os::Node.
-     *
-     * @param flag true if the node name should be added to port names
-     */
-    virtual void includeNodeInName(bool flag) = 0;
-
-    /**
      * Shorthand for setInputMode(true), setOutputMode(false), setRpcMode(false)
      */
     void setReadOnly();

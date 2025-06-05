@@ -42,7 +42,6 @@ private:
     bool usedForRpc { false };
 
 public:
-    bool includeNode { false };
     bool commitToRead { false };
     bool commitToWrite { false };
     bool commitToRpc { false };
@@ -76,7 +75,6 @@ public:
     int checkWaitAfterSend();
     bool isOpened();
     void setOpen(bool opened);
-    void includeNodeInName(bool flag);
 };
 
 } // namespace yarp::os::impl

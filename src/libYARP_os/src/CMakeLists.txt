@@ -67,8 +67,6 @@ set(YARP_os_HDRS
   yarp/os/NetUint64.h
   yarp/os/Network.h
   yarp/os/NetworkClock.h
-  yarp/os/Nodes.h
-  yarp/os/Node.h
   yarp/os/NullConnection.h
   yarp/os/NullConnectionReader.h
   yarp/os/NullConnectionWriter.h
@@ -92,13 +90,11 @@ set(YARP_os_HDRS
   yarp/os/PortWriterBufferBase.h
   yarp/os/PortWriter.h
   yarp/os/Property.h
-  yarp/os/Publisher.h
   yarp/os/Random.h
   yarp/os/ResourceFinder.h
   yarp/os/ResourceFinderOptions.h
   yarp/os/RFModule.h
   yarp/os/RFPlugin.h
-  yarp/os/RosNameSpace.h
   yarp/os/Route.h
   yarp/os/RpcClient.h
   yarp/os/RpcServer.h
@@ -114,7 +110,6 @@ set(YARP_os_HDRS
   yarp/os/Stamp.h
   yarp/os/StringInputStream.h
   yarp/os/StringOutputStream.h
-  yarp/os/Subscriber.h
   yarp/os/SystemClock.h
   yarp/os/Terminator.h
   yarp/os/Things.h
@@ -186,8 +181,6 @@ set(YARP_os_SRCS
   yarp/os/NetUint64.cpp
   yarp/os/Network.cpp
   yarp/os/NetworkClock.cpp
-  yarp/os/Nodes.cpp
-  yarp/os/Node.cpp
   yarp/os/NullConnection.cpp
   yarp/os/NullConnectionReader.cpp
   yarp/os/NullConnectionWriter.cpp
@@ -212,7 +205,6 @@ set(YARP_os_SRCS
   yarp/os/ResourceFinderOptions.cpp
   yarp/os/RFModule.cpp
   yarp/os/RFPlugin.cpp
-  yarp/os/RosNameSpace.cpp
   yarp/os/Route.cpp
   yarp/os/RpcClient.cpp
   yarp/os/RpcServer.cpp

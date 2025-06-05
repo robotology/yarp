@@ -9,7 +9,6 @@
 
 #include <sqlite3.h>
 
-#include <yarp/os/RosNameSpace.h>
 #include <yarp/serversql/impl/LogComponent.h>
 #include <yarp/serversql/impl/SubscriberOnSql.h>
 #include <yarp/serversql/impl/ParseName.h>

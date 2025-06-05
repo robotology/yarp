@@ -34,3 +34,8 @@ Breaking Changes
 ### libYARP_sig
 
 * Removed field `topIsLow` from `yarp::sig::Image`
+
+### libYARP_os
+
+* Removed classes `yarp::os::Node`,`yarp::os::Nodes`,`yarp::os::Publisher`,`yarp::os::Subscriber`
+* Removed ROS1-related management logic in YARP nameserver
