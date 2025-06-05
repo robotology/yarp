@@ -105,6 +105,437 @@ yarp::os::ApplicationNetworkProtocolVersion ISerialMsgs::getLocalProtocolVersion
     return myproto;
 }
 
+// sendString helper class declaration
+class ISerialMsgs_sendString_helper :
+        public yarp::os::Portable
+{
+public:
+    ISerialMsgs_sendString_helper() = default;
+    explicit ISerialMsgs_sendString_helper(const std::string& message);
+    bool write(yarp::os::ConnectionWriter& connection) const override;
+    bool read(yarp::os::ConnectionReader& connection) override;
+
+    class Command :
+            public yarp::os::idl::WirePortable
+    {
+    public:
+        Command() = default;
+        explicit Command(const std::string& message);
+
+        ~Command() override = default;
+
+        bool write(yarp::os::ConnectionWriter& connection) const override;
+        bool read(yarp::os::ConnectionReader& connection) override;
+
+        bool write(const yarp::os::idl::WireWriter& writer) const override;
+        bool writeTag(const yarp::os::idl::WireWriter& writer) const;
+        bool writeArgs(const yarp::os::idl::WireWriter& writer) const;
+
+        bool read(yarp::os::idl::WireReader& reader) override;
+        bool readTag(yarp::os::idl::WireReader& reader);
+        bool readArgs(yarp::os::idl::WireReader& reader);
+
+        std::string message{};
+    };
+
+    class Reply :
+            public yarp::os::idl::WirePortable
+    {
+    public:
+        Reply() = default;
+        ~Reply() override = default;
+
+        bool write(yarp::os::ConnectionWriter& connection) const override;
+        bool read(yarp::os::ConnectionReader& connection) override;
+
+        bool write(const yarp::os::idl::WireWriter& writer) const override;
+        bool read(yarp::os::idl::WireReader& reader) override;
+
+        yarp::dev::ReturnValue return_helper{};
+    };
+
+    using funcptr_t = yarp::dev::ReturnValue (*)(const std::string&);
+    void call(ISerialMsgs* ptr);
+
+    Command cmd;
+    Reply reply;
+
+    static constexpr const char* s_tag{"sendString"};
+    static constexpr size_t s_tag_len{1};
+    static constexpr size_t s_cmd_len{2};
+    static constexpr size_t s_reply_len{1};
+    static constexpr const char* s_prototype{"yarp::dev::ReturnValue ISerialMsgs::sendString(const std::string& message)"};
+    static constexpr const char* s_help{""};
+};
+
+// sendBytes helper class declaration
+class ISerialMsgs_sendBytes_helper :
+        public yarp::os::Portable
+{
+public:
+    ISerialMsgs_sendBytes_helper() = default;
+    explicit ISerialMsgs_sendBytes_helper(const std::vector<std::int8_t>& message);
+    bool write(yarp::os::ConnectionWriter& connection) const override;
+    bool read(yarp::os::ConnectionReader& connection) override;
+
+    class Command :
+            public yarp::os::idl::WirePortable
+    {
+    public:
+        Command() = default;
+        explicit Command(const std::vector<std::int8_t>& message);
+
+        ~Command() override = default;
+
+        bool write(yarp::os::ConnectionWriter& connection) const override;
+        bool read(yarp::os::ConnectionReader& connection) override;
+
+        bool write(const yarp::os::idl::WireWriter& writer) const override;
+        bool writeTag(const yarp::os::idl::WireWriter& writer) const;
+        bool writeArgs(const yarp::os::idl::WireWriter& writer) const;
+
+        bool read(yarp::os::idl::WireReader& reader) override;
+        bool readTag(yarp::os::idl::WireReader& reader);
+        bool readArgs(yarp::os::idl::WireReader& reader);
+
+        std::vector<std::int8_t> message{};
+    };
+
+    class Reply :
+            public yarp::os::idl::WirePortable
+    {
+    public:
+        Reply() = default;
+        ~Reply() override = default;
+
+        bool write(yarp::os::ConnectionWriter& connection) const override;
+        bool read(yarp::os::ConnectionReader& connection) override;
+
+        bool write(const yarp::os::idl::WireWriter& writer) const override;
+        bool read(yarp::os::idl::WireReader& reader) override;
+
+        yarp::dev::ReturnValue return_helper{};
+    };
+
+    using funcptr_t = yarp::dev::ReturnValue (*)(const std::vector<std::int8_t>&);
+    void call(ISerialMsgs* ptr);
+
+    Command cmd;
+    Reply reply;
+
+    static constexpr const char* s_tag{"sendBytes"};
+    static constexpr size_t s_tag_len{1};
+    static constexpr size_t s_cmd_len{2};
+    static constexpr size_t s_reply_len{1};
+    static constexpr const char* s_prototype{"yarp::dev::ReturnValue ISerialMsgs::sendBytes(const std::vector<std::int8_t>& message)"};
+    static constexpr const char* s_help{""};
+};
+
+// sendByte helper class declaration
+class ISerialMsgs_sendByte_helper :
+        public yarp::os::Portable
+{
+public:
+    ISerialMsgs_sendByte_helper() = default;
+    explicit ISerialMsgs_sendByte_helper(const std::int8_t message);
+    bool write(yarp::os::ConnectionWriter& connection) const override;
+    bool read(yarp::os::ConnectionReader& connection) override;
+
+    class Command :
+            public yarp::os::idl::WirePortable
+    {
+    public:
+        Command() = default;
+        explicit Command(const std::int8_t message);
+
+        ~Command() override = default;
+
+        bool write(yarp::os::ConnectionWriter& connection) const override;
+        bool read(yarp::os::ConnectionReader& connection) override;
+
+        bool write(const yarp::os::idl::WireWriter& writer) const override;
+        bool writeTag(const yarp::os::idl::WireWriter& writer) const;
+        bool writeArgs(const yarp::os::idl::WireWriter& writer) const;
+
+        bool read(yarp::os::idl::WireReader& reader) override;
+        bool readTag(yarp::os::idl::WireReader& reader);
+        bool readArgs(yarp::os::idl::WireReader& reader);
+
+        std::int8_t message{0};
+    };
+
+    class Reply :
+            public yarp::os::idl::WirePortable
+    {
+    public:
+        Reply() = default;
+        ~Reply() override = default;
+
+        bool write(yarp::os::ConnectionWriter& connection) const override;
+        bool read(yarp::os::ConnectionReader& connection) override;
+
+        bool write(const yarp::os::idl::WireWriter& writer) const override;
+        bool read(yarp::os::idl::WireReader& reader) override;
+
+        yarp::dev::ReturnValue return_helper{};
+    };
+
+    using funcptr_t = yarp::dev::ReturnValue (*)(const std::int8_t);
+    void call(ISerialMsgs* ptr);
+
+    Command cmd;
+    Reply reply;
+
+    static constexpr const char* s_tag{"sendByte"};
+    static constexpr size_t s_tag_len{1};
+    static constexpr size_t s_cmd_len{2};
+    static constexpr size_t s_reply_len{1};
+    static constexpr const char* s_prototype{"yarp::dev::ReturnValue ISerialMsgs::sendByte(const std::int8_t message)"};
+    static constexpr const char* s_help{""};
+};
+
+// receiveString helper class declaration
+class ISerialMsgs_receiveString_helper :
+        public yarp::os::Portable
+{
+public:
+    ISerialMsgs_receiveString_helper() = default;
+    bool write(yarp::os::ConnectionWriter& connection) const override;
+    bool read(yarp::os::ConnectionReader& connection) override;
+
+    class Command :
+            public yarp::os::idl::WirePortable
+    {
+    public:
+        Command() = default;
+        ~Command() override = default;
+
+        bool write(yarp::os::ConnectionWriter& connection) const override;
+        bool read(yarp::os::ConnectionReader& connection) override;
+
+        bool write(const yarp::os::idl::WireWriter& writer) const override;
+        bool writeTag(const yarp::os::idl::WireWriter& writer) const;
+        bool writeArgs(const yarp::os::idl::WireWriter& writer) const;
+
+        bool read(yarp::os::idl::WireReader& reader) override;
+        bool readTag(yarp::os::idl::WireReader& reader);
+        bool readArgs(yarp::os::idl::WireReader& reader);
+    };
+
+    class Reply :
+            public yarp::os::idl::WirePortable
+    {
+    public:
+        Reply() = default;
+        ~Reply() override = default;
+
+        bool write(yarp::os::ConnectionWriter& connection) const override;
+        bool read(yarp::os::ConnectionReader& connection) override;
+
+        bool write(const yarp::os::idl::WireWriter& writer) const override;
+        bool read(yarp::os::idl::WireReader& reader) override;
+
+        return_receiveString return_helper{};
+    };
+
+    using funcptr_t = return_receiveString (*)();
+    void call(ISerialMsgs* ptr);
+
+    Command cmd;
+    Reply reply;
+
+    static constexpr const char* s_tag{"receiveString"};
+    static constexpr size_t s_tag_len{1};
+    static constexpr size_t s_cmd_len{1};
+    static constexpr size_t s_reply_len{2};
+    static constexpr const char* s_prototype{"return_receiveString ISerialMsgs::receiveString()"};
+    static constexpr const char* s_help{""};
+};
+
+// receiveBytes helper class declaration
+class ISerialMsgs_receiveBytes_helper :
+        public yarp::os::Portable
+{
+public:
+    ISerialMsgs_receiveBytes_helper() = default;
+    explicit ISerialMsgs_receiveBytes_helper(const std::int32_t maxNumberOfByes);
+    bool write(yarp::os::ConnectionWriter& connection) const override;
+    bool read(yarp::os::ConnectionReader& connection) override;
+
+    class Command :
+            public yarp::os::idl::WirePortable
+    {
+    public:
+        Command() = default;
+        explicit Command(const std::int32_t maxNumberOfByes);
+
+        ~Command() override = default;
+
+        bool write(yarp::os::ConnectionWriter& connection) const override;
+        bool read(yarp::os::ConnectionReader& connection) override;
+
+        bool write(const yarp::os::idl::WireWriter& writer) const override;
+        bool writeTag(const yarp::os::idl::WireWriter& writer) const;
+        bool writeArgs(const yarp::os::idl::WireWriter& writer) const;
+
+        bool read(yarp::os::idl::WireReader& reader) override;
+        bool readTag(yarp::os::idl::WireReader& reader);
+        bool readArgs(yarp::os::idl::WireReader& reader);
+
+        std::int32_t maxNumberOfByes{0};
+    };
+
+    class Reply :
+            public yarp::os::idl::WirePortable
+    {
+    public:
+        Reply() = default;
+        ~Reply() override = default;
+
+        bool write(yarp::os::ConnectionWriter& connection) const override;
+        bool read(yarp::os::ConnectionReader& connection) override;
+
+        bool write(const yarp::os::idl::WireWriter& writer) const override;
+        bool read(yarp::os::idl::WireReader& reader) override;
+
+        return_receiveBytes return_helper{};
+    };
+
+    using funcptr_t = return_receiveBytes (*)(const std::int32_t);
+    void call(ISerialMsgs* ptr);
+
+    Command cmd;
+    Reply reply;
+
+    static constexpr const char* s_tag{"receiveBytes"};
+    static constexpr size_t s_tag_len{1};
+    static constexpr size_t s_cmd_len{2};
+    static constexpr size_t s_reply_len{2};
+    static constexpr const char* s_prototype{"return_receiveBytes ISerialMsgs::receiveBytes(const std::int32_t maxNumberOfByes)"};
+    static constexpr const char* s_help{""};
+};
+
+// receiveByte helper class declaration
+class ISerialMsgs_receiveByte_helper :
+        public yarp::os::Portable
+{
+public:
+    ISerialMsgs_receiveByte_helper() = default;
+    bool write(yarp::os::ConnectionWriter& connection) const override;
+    bool read(yarp::os::ConnectionReader& connection) override;
+
+    class Command :
+            public yarp::os::idl::WirePortable
+    {
+    public:
+        Command() = default;
+        ~Command() override = default;
+
+        bool write(yarp::os::ConnectionWriter& connection) const override;
+        bool read(yarp::os::ConnectionReader& connection) override;
+
+        bool write(const yarp::os::idl::WireWriter& writer) const override;
+        bool writeTag(const yarp::os::idl::WireWriter& writer) const;
+        bool writeArgs(const yarp::os::idl::WireWriter& writer) const;
+
+        bool read(yarp::os::idl::WireReader& reader) override;
+        bool readTag(yarp::os::idl::WireReader& reader);
+        bool readArgs(yarp::os::idl::WireReader& reader);
+    };
+
+    class Reply :
+            public yarp::os::idl::WirePortable
+    {
+    public:
+        Reply() = default;
+        ~Reply() override = default;
+
+        bool write(yarp::os::ConnectionWriter& connection) const override;
+        bool read(yarp::os::ConnectionReader& connection) override;
+
+        bool write(const yarp::os::idl::WireWriter& writer) const override;
+        bool read(yarp::os::idl::WireReader& reader) override;
+
+        return_receiveByte return_helper{};
+    };
+
+    using funcptr_t = return_receiveByte (*)();
+    void call(ISerialMsgs* ptr);
+
+    Command cmd;
+    Reply reply;
+
+    static constexpr const char* s_tag{"receiveByte"};
+    static constexpr size_t s_tag_len{1};
+    static constexpr size_t s_cmd_len{1};
+    static constexpr size_t s_reply_len{2};
+    static constexpr const char* s_prototype{"return_receiveByte ISerialMsgs::receiveByte()"};
+    static constexpr const char* s_help{""};
+};
+
+// receiveLine helper class declaration
+class ISerialMsgs_receiveLine_helper :
+        public yarp::os::Portable
+{
+public:
+    ISerialMsgs_receiveLine_helper() = default;
+    explicit ISerialMsgs_receiveLine_helper(const std::int32_t maxNumberOfByes);
+    bool write(yarp::os::ConnectionWriter& connection) const override;
+    bool read(yarp::os::ConnectionReader& connection) override;
+
+    class Command :
+            public yarp::os::idl::WirePortable
+    {
+    public:
+        Command() = default;
+        explicit Command(const std::int32_t maxNumberOfByes);
+
+        ~Command() override = default;
+
+        bool write(yarp::os::ConnectionWriter& connection) const override;
+        bool read(yarp::os::ConnectionReader& connection) override;
+
+        bool write(const yarp::os::idl::WireWriter& writer) const override;
+        bool writeTag(const yarp::os::idl::WireWriter& writer) const;
+        bool writeArgs(const yarp::os::idl::WireWriter& writer) const;
+
+        bool read(yarp::os::idl::WireReader& reader) override;
+        bool readTag(yarp::os::idl::WireReader& reader);
+        bool readArgs(yarp::os::idl::WireReader& reader);
+
+        std::int32_t maxNumberOfByes{0};
+    };
+
+    class Reply :
+            public yarp::os::idl::WirePortable
+    {
+    public:
+        Reply() = default;
+        ~Reply() override = default;
+
+        bool write(yarp::os::ConnectionWriter& connection) const override;
+        bool read(yarp::os::ConnectionReader& connection) override;
+
+        bool write(const yarp::os::idl::WireWriter& writer) const override;
+        bool read(yarp::os::idl::WireReader& reader) override;
+
+        return_receiveLine return_helper{};
+    };
+
+    using funcptr_t = return_receiveLine (*)(const std::int32_t);
+    void call(ISerialMsgs* ptr);
+
+    Command cmd;
+    Reply reply;
+
+    static constexpr const char* s_tag{"receiveLine"};
+    static constexpr size_t s_tag_len{1};
+    static constexpr size_t s_cmd_len{2};
+    static constexpr size_t s_reply_len{2};
+    static constexpr const char* s_prototype{"return_receiveLine ISerialMsgs::receiveLine(const std::int32_t maxNumberOfByes)"};
+    static constexpr const char* s_help{""};
+};
+
 // setDTR helper class declaration
 class ISerialMsgs_setDTR_helper :
         public yarp::os::Portable
@@ -151,10 +582,10 @@ public:
         bool write(const yarp::os::idl::WireWriter& writer) const override;
         bool read(yarp::os::idl::WireReader& reader) override;
 
-        bool return_helper{false};
+        yarp::dev::ReturnValue return_helper{};
     };
 
-    using funcptr_t = bool (*)(const bool);
+    using funcptr_t = yarp::dev::ReturnValue (*)(const bool);
     void call(ISerialMsgs* ptr);
 
     Command cmd;
@@ -164,7 +595,7 @@ public:
     static constexpr size_t s_tag_len{1};
     static constexpr size_t s_cmd_len{2};
     static constexpr size_t s_reply_len{1};
-    static constexpr const char* s_prototype{"bool ISerialMsgs::setDTR(const bool enable)"};
+    static constexpr const char* s_prototype{"yarp::dev::ReturnValue ISerialMsgs::setDTR(const bool enable)"};
     static constexpr const char* s_help{""};
 };
 
@@ -209,10 +640,10 @@ public:
         bool write(const yarp::os::idl::WireWriter& writer) const override;
         bool read(yarp::os::idl::WireReader& reader) override;
 
-        std::int32_t return_helper{0};
+        yarp::dev::ReturnValue return_helper{};
     };
 
-    using funcptr_t = std::int32_t (*)();
+    using funcptr_t = yarp::dev::ReturnValue (*)();
     void call(ISerialMsgs* ptr);
 
     Command cmd;
@@ -222,9 +653,1102 @@ public:
     static constexpr size_t s_tag_len{1};
     static constexpr size_t s_cmd_len{1};
     static constexpr size_t s_reply_len{1};
-    static constexpr const char* s_prototype{"std::int32_t ISerialMsgs::flush()"};
+    static constexpr const char* s_prototype{"yarp::dev::ReturnValue ISerialMsgs::flush()"};
     static constexpr const char* s_help{""};
 };
+
+// flushWithRet helper class declaration
+class ISerialMsgs_flushWithRet_helper :
+        public yarp::os::Portable
+{
+public:
+    ISerialMsgs_flushWithRet_helper() = default;
+    bool write(yarp::os::ConnectionWriter& connection) const override;
+    bool read(yarp::os::ConnectionReader& connection) override;
+
+    class Command :
+            public yarp::os::idl::WirePortable
+    {
+    public:
+        Command() = default;
+        ~Command() override = default;
+
+        bool write(yarp::os::ConnectionWriter& connection) const override;
+        bool read(yarp::os::ConnectionReader& connection) override;
+
+        bool write(const yarp::os::idl::WireWriter& writer) const override;
+        bool writeTag(const yarp::os::idl::WireWriter& writer) const;
+        bool writeArgs(const yarp::os::idl::WireWriter& writer) const;
+
+        bool read(yarp::os::idl::WireReader& reader) override;
+        bool readTag(yarp::os::idl::WireReader& reader);
+        bool readArgs(yarp::os::idl::WireReader& reader);
+    };
+
+    class Reply :
+            public yarp::os::idl::WirePortable
+    {
+    public:
+        Reply() = default;
+        ~Reply() override = default;
+
+        bool write(yarp::os::ConnectionWriter& connection) const override;
+        bool read(yarp::os::ConnectionReader& connection) override;
+
+        bool write(const yarp::os::idl::WireWriter& writer) const override;
+        bool read(yarp::os::idl::WireReader& reader) override;
+
+        return_flush return_helper{};
+    };
+
+    using funcptr_t = return_flush (*)();
+    void call(ISerialMsgs* ptr);
+
+    Command cmd;
+    Reply reply;
+
+    static constexpr const char* s_tag{"flushWithRet"};
+    static constexpr size_t s_tag_len{1};
+    static constexpr size_t s_cmd_len{1};
+    static constexpr size_t s_reply_len{2};
+    static constexpr const char* s_prototype{"return_flush ISerialMsgs::flushWithRet()"};
+    static constexpr const char* s_help{""};
+};
+
+// sendString helper class implementation
+ISerialMsgs_sendString_helper::ISerialMsgs_sendString_helper(const std::string& message) :
+        cmd{message}
+{
+}
+
+bool ISerialMsgs_sendString_helper::write(yarp::os::ConnectionWriter& connection) const
+{
+    return cmd.write(connection);
+}
+
+bool ISerialMsgs_sendString_helper::read(yarp::os::ConnectionReader& connection)
+{
+    return reply.read(connection);
+}
+
+ISerialMsgs_sendString_helper::Command::Command(const std::string& message) :
+        message{message}
+{
+}
+
+bool ISerialMsgs_sendString_helper::Command::write(yarp::os::ConnectionWriter& connection) const
+{
+    yarp::os::idl::WireWriter writer(connection);
+    if (!writer.writeListHeader(s_cmd_len)) {
+        return false;
+    }
+    return write(writer);
+}
+
+bool ISerialMsgs_sendString_helper::Command::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    if (!reader.readListHeader()) {
+        reader.fail();
+        return false;
+    }
+    return read(reader);
+}
+
+bool ISerialMsgs_sendString_helper::Command::write(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writeTag(writer)) {
+        return false;
+    }
+    if (!writeArgs(writer)) {
+        return false;
+    }
+    return true;
+}
+
+bool ISerialMsgs_sendString_helper::Command::writeTag(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.writeTag(s_tag, 1, s_tag_len)) {
+        return false;
+    }
+    return true;
+}
+
+bool ISerialMsgs_sendString_helper::Command::writeArgs(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.writeString(message)) {
+        return false;
+    }
+    return true;
+}
+
+bool ISerialMsgs_sendString_helper::Command::read(yarp::os::idl::WireReader& reader)
+{
+    if (!readTag(reader)) {
+        return false;
+    }
+    if (!readArgs(reader)) {
+        return false;
+    }
+    return true;
+}
+
+bool ISerialMsgs_sendString_helper::Command::readTag(yarp::os::idl::WireReader& reader)
+{
+    std::string tag = reader.readTag(s_tag_len);
+    if (reader.isError()) {
+        return false;
+    }
+    if (tag != s_tag) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool ISerialMsgs_sendString_helper::Command::readArgs(yarp::os::idl::WireReader& reader)
+{
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
+    if (!reader.readString(message)) {
+        reader.fail();
+        return false;
+    }
+    if (!reader.noMore()) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool ISerialMsgs_sendString_helper::Reply::write(yarp::os::ConnectionWriter& connection) const
+{
+    yarp::os::idl::WireWriter writer(connection);
+    return write(writer);
+}
+
+bool ISerialMsgs_sendString_helper::Reply::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    return read(reader);
+}
+
+bool ISerialMsgs_sendString_helper::Reply::write(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.isNull()) {
+        if (!writer.write(return_helper)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+bool ISerialMsgs_sendString_helper::Reply::read(yarp::os::idl::WireReader& reader)
+{
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
+    if (!reader.read(return_helper)) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+void ISerialMsgs_sendString_helper::call(ISerialMsgs* ptr)
+{
+    reply.return_helper = ptr->sendString(cmd.message);
+}
+
+// sendBytes helper class implementation
+ISerialMsgs_sendBytes_helper::ISerialMsgs_sendBytes_helper(const std::vector<std::int8_t>& message) :
+        cmd{message}
+{
+}
+
+bool ISerialMsgs_sendBytes_helper::write(yarp::os::ConnectionWriter& connection) const
+{
+    return cmd.write(connection);
+}
+
+bool ISerialMsgs_sendBytes_helper::read(yarp::os::ConnectionReader& connection)
+{
+    return reply.read(connection);
+}
+
+ISerialMsgs_sendBytes_helper::Command::Command(const std::vector<std::int8_t>& message) :
+        message{message}
+{
+}
+
+bool ISerialMsgs_sendBytes_helper::Command::write(yarp::os::ConnectionWriter& connection) const
+{
+    yarp::os::idl::WireWriter writer(connection);
+    if (!writer.writeListHeader(s_cmd_len)) {
+        return false;
+    }
+    return write(writer);
+}
+
+bool ISerialMsgs_sendBytes_helper::Command::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    if (!reader.readListHeader()) {
+        reader.fail();
+        return false;
+    }
+    return read(reader);
+}
+
+bool ISerialMsgs_sendBytes_helper::Command::write(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writeTag(writer)) {
+        return false;
+    }
+    if (!writeArgs(writer)) {
+        return false;
+    }
+    return true;
+}
+
+bool ISerialMsgs_sendBytes_helper::Command::writeTag(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.writeTag(s_tag, 1, s_tag_len)) {
+        return false;
+    }
+    return true;
+}
+
+bool ISerialMsgs_sendBytes_helper::Command::writeArgs(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.writeListBegin(BOTTLE_TAG_INT8, message.size())) {
+        return false;
+    }
+    if (!writer.writeBlock(reinterpret_cast<const char*>(message.data()), message.size() * sizeof(std::int8_t))) {
+        return false;
+    }
+    if (!writer.writeListEnd()) {
+        return false;
+    }
+    return true;
+}
+
+bool ISerialMsgs_sendBytes_helper::Command::read(yarp::os::idl::WireReader& reader)
+{
+    if (!readTag(reader)) {
+        return false;
+    }
+    if (!readArgs(reader)) {
+        return false;
+    }
+    return true;
+}
+
+bool ISerialMsgs_sendBytes_helper::Command::readTag(yarp::os::idl::WireReader& reader)
+{
+    std::string tag = reader.readTag(s_tag_len);
+    if (reader.isError()) {
+        return false;
+    }
+    if (tag != s_tag) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool ISerialMsgs_sendBytes_helper::Command::readArgs(yarp::os::idl::WireReader& reader)
+{
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
+    size_t _csize;
+    yarp::os::idl::WireState _etype;
+    reader.readListBegin(_etype, _csize);
+    // WireReader removes BOTTLE_TAG_LIST from the tag
+    constexpr int expected_tag = ((BOTTLE_TAG_INT8) & (~BOTTLE_TAG_LIST));
+    if constexpr (expected_tag != 0) {
+        if (_csize != 0 && _etype.code != expected_tag) {
+            return false;
+        }
+    }
+    message.resize(_csize);
+    if (_csize != 0 && !reader.readBlock(reinterpret_cast<char*>(message.data()), message.size() * sizeof(std::int8_t))) {
+        return false;
+    }
+    reader.readListEnd();
+    if (!reader.noMore()) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool ISerialMsgs_sendBytes_helper::Reply::write(yarp::os::ConnectionWriter& connection) const
+{
+    yarp::os::idl::WireWriter writer(connection);
+    return write(writer);
+}
+
+bool ISerialMsgs_sendBytes_helper::Reply::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    return read(reader);
+}
+
+bool ISerialMsgs_sendBytes_helper::Reply::write(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.isNull()) {
+        if (!writer.write(return_helper)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+bool ISerialMsgs_sendBytes_helper::Reply::read(yarp::os::idl::WireReader& reader)
+{
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
+    if (!reader.read(return_helper)) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+void ISerialMsgs_sendBytes_helper::call(ISerialMsgs* ptr)
+{
+    reply.return_helper = ptr->sendBytes(cmd.message);
+}
+
+// sendByte helper class implementation
+ISerialMsgs_sendByte_helper::ISerialMsgs_sendByte_helper(const std::int8_t message) :
+        cmd{message}
+{
+}
+
+bool ISerialMsgs_sendByte_helper::write(yarp::os::ConnectionWriter& connection) const
+{
+    return cmd.write(connection);
+}
+
+bool ISerialMsgs_sendByte_helper::read(yarp::os::ConnectionReader& connection)
+{
+    return reply.read(connection);
+}
+
+ISerialMsgs_sendByte_helper::Command::Command(const std::int8_t message) :
+        message{message}
+{
+}
+
+bool ISerialMsgs_sendByte_helper::Command::write(yarp::os::ConnectionWriter& connection) const
+{
+    yarp::os::idl::WireWriter writer(connection);
+    if (!writer.writeListHeader(s_cmd_len)) {
+        return false;
+    }
+    return write(writer);
+}
+
+bool ISerialMsgs_sendByte_helper::Command::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    if (!reader.readListHeader()) {
+        reader.fail();
+        return false;
+    }
+    return read(reader);
+}
+
+bool ISerialMsgs_sendByte_helper::Command::write(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writeTag(writer)) {
+        return false;
+    }
+    if (!writeArgs(writer)) {
+        return false;
+    }
+    return true;
+}
+
+bool ISerialMsgs_sendByte_helper::Command::writeTag(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.writeTag(s_tag, 1, s_tag_len)) {
+        return false;
+    }
+    return true;
+}
+
+bool ISerialMsgs_sendByte_helper::Command::writeArgs(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.writeI8(message)) {
+        return false;
+    }
+    return true;
+}
+
+bool ISerialMsgs_sendByte_helper::Command::read(yarp::os::idl::WireReader& reader)
+{
+    if (!readTag(reader)) {
+        return false;
+    }
+    if (!readArgs(reader)) {
+        return false;
+    }
+    return true;
+}
+
+bool ISerialMsgs_sendByte_helper::Command::readTag(yarp::os::idl::WireReader& reader)
+{
+    std::string tag = reader.readTag(s_tag_len);
+    if (reader.isError()) {
+        return false;
+    }
+    if (tag != s_tag) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool ISerialMsgs_sendByte_helper::Command::readArgs(yarp::os::idl::WireReader& reader)
+{
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
+    if (!reader.readI8(message)) {
+        reader.fail();
+        return false;
+    }
+    if (!reader.noMore()) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool ISerialMsgs_sendByte_helper::Reply::write(yarp::os::ConnectionWriter& connection) const
+{
+    yarp::os::idl::WireWriter writer(connection);
+    return write(writer);
+}
+
+bool ISerialMsgs_sendByte_helper::Reply::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    return read(reader);
+}
+
+bool ISerialMsgs_sendByte_helper::Reply::write(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.isNull()) {
+        if (!writer.write(return_helper)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+bool ISerialMsgs_sendByte_helper::Reply::read(yarp::os::idl::WireReader& reader)
+{
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
+    if (!reader.read(return_helper)) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+void ISerialMsgs_sendByte_helper::call(ISerialMsgs* ptr)
+{
+    reply.return_helper = ptr->sendByte(cmd.message);
+}
+
+// receiveString helper class implementation
+bool ISerialMsgs_receiveString_helper::write(yarp::os::ConnectionWriter& connection) const
+{
+    return cmd.write(connection);
+}
+
+bool ISerialMsgs_receiveString_helper::read(yarp::os::ConnectionReader& connection)
+{
+    return reply.read(connection);
+}
+
+bool ISerialMsgs_receiveString_helper::Command::write(yarp::os::ConnectionWriter& connection) const
+{
+    yarp::os::idl::WireWriter writer(connection);
+    if (!writer.writeListHeader(s_cmd_len)) {
+        return false;
+    }
+    return write(writer);
+}
+
+bool ISerialMsgs_receiveString_helper::Command::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    if (!reader.readListHeader()) {
+        reader.fail();
+        return false;
+    }
+    return read(reader);
+}
+
+bool ISerialMsgs_receiveString_helper::Command::write(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writeTag(writer)) {
+        return false;
+    }
+    if (!writeArgs(writer)) {
+        return false;
+    }
+    return true;
+}
+
+bool ISerialMsgs_receiveString_helper::Command::writeTag(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.writeTag(s_tag, 1, s_tag_len)) {
+        return false;
+    }
+    return true;
+}
+
+bool ISerialMsgs_receiveString_helper::Command::writeArgs(const yarp::os::idl::WireWriter& writer [[maybe_unused]]) const
+{
+    return true;
+}
+
+bool ISerialMsgs_receiveString_helper::Command::read(yarp::os::idl::WireReader& reader)
+{
+    if (!readTag(reader)) {
+        return false;
+    }
+    if (!readArgs(reader)) {
+        return false;
+    }
+    return true;
+}
+
+bool ISerialMsgs_receiveString_helper::Command::readTag(yarp::os::idl::WireReader& reader)
+{
+    std::string tag = reader.readTag(s_tag_len);
+    if (reader.isError()) {
+        return false;
+    }
+    if (tag != s_tag) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool ISerialMsgs_receiveString_helper::Command::readArgs(yarp::os::idl::WireReader& reader)
+{
+    if (!reader.noMore()) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool ISerialMsgs_receiveString_helper::Reply::write(yarp::os::ConnectionWriter& connection) const
+{
+    yarp::os::idl::WireWriter writer(connection);
+    return write(writer);
+}
+
+bool ISerialMsgs_receiveString_helper::Reply::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    return read(reader);
+}
+
+bool ISerialMsgs_receiveString_helper::Reply::write(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.isNull()) {
+        if (!writer.writeListHeader(s_reply_len)) {
+            return false;
+        }
+        if (!writer.write(return_helper)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+bool ISerialMsgs_receiveString_helper::Reply::read(yarp::os::idl::WireReader& reader)
+{
+    if (!reader.readListReturn()) {
+        return false;
+    }
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
+    if (!reader.read(return_helper)) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+void ISerialMsgs_receiveString_helper::call(ISerialMsgs* ptr)
+{
+    reply.return_helper = ptr->receiveString();
+}
+
+// receiveBytes helper class implementation
+ISerialMsgs_receiveBytes_helper::ISerialMsgs_receiveBytes_helper(const std::int32_t maxNumberOfByes) :
+        cmd{maxNumberOfByes}
+{
+}
+
+bool ISerialMsgs_receiveBytes_helper::write(yarp::os::ConnectionWriter& connection) const
+{
+    return cmd.write(connection);
+}
+
+bool ISerialMsgs_receiveBytes_helper::read(yarp::os::ConnectionReader& connection)
+{
+    return reply.read(connection);
+}
+
+ISerialMsgs_receiveBytes_helper::Command::Command(const std::int32_t maxNumberOfByes) :
+        maxNumberOfByes{maxNumberOfByes}
+{
+}
+
+bool ISerialMsgs_receiveBytes_helper::Command::write(yarp::os::ConnectionWriter& connection) const
+{
+    yarp::os::idl::WireWriter writer(connection);
+    if (!writer.writeListHeader(s_cmd_len)) {
+        return false;
+    }
+    return write(writer);
+}
+
+bool ISerialMsgs_receiveBytes_helper::Command::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    if (!reader.readListHeader()) {
+        reader.fail();
+        return false;
+    }
+    return read(reader);
+}
+
+bool ISerialMsgs_receiveBytes_helper::Command::write(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writeTag(writer)) {
+        return false;
+    }
+    if (!writeArgs(writer)) {
+        return false;
+    }
+    return true;
+}
+
+bool ISerialMsgs_receiveBytes_helper::Command::writeTag(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.writeTag(s_tag, 1, s_tag_len)) {
+        return false;
+    }
+    return true;
+}
+
+bool ISerialMsgs_receiveBytes_helper::Command::writeArgs(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.writeI32(maxNumberOfByes)) {
+        return false;
+    }
+    return true;
+}
+
+bool ISerialMsgs_receiveBytes_helper::Command::read(yarp::os::idl::WireReader& reader)
+{
+    if (!readTag(reader)) {
+        return false;
+    }
+    if (!readArgs(reader)) {
+        return false;
+    }
+    return true;
+}
+
+bool ISerialMsgs_receiveBytes_helper::Command::readTag(yarp::os::idl::WireReader& reader)
+{
+    std::string tag = reader.readTag(s_tag_len);
+    if (reader.isError()) {
+        return false;
+    }
+    if (tag != s_tag) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool ISerialMsgs_receiveBytes_helper::Command::readArgs(yarp::os::idl::WireReader& reader)
+{
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
+    if (!reader.readI32(maxNumberOfByes)) {
+        reader.fail();
+        return false;
+    }
+    if (!reader.noMore()) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool ISerialMsgs_receiveBytes_helper::Reply::write(yarp::os::ConnectionWriter& connection) const
+{
+    yarp::os::idl::WireWriter writer(connection);
+    return write(writer);
+}
+
+bool ISerialMsgs_receiveBytes_helper::Reply::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    return read(reader);
+}
+
+bool ISerialMsgs_receiveBytes_helper::Reply::write(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.isNull()) {
+        if (!writer.writeListHeader(s_reply_len)) {
+            return false;
+        }
+        if (!writer.write(return_helper)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+bool ISerialMsgs_receiveBytes_helper::Reply::read(yarp::os::idl::WireReader& reader)
+{
+    if (!reader.readListReturn()) {
+        return false;
+    }
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
+    if (!reader.read(return_helper)) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+void ISerialMsgs_receiveBytes_helper::call(ISerialMsgs* ptr)
+{
+    reply.return_helper = ptr->receiveBytes(cmd.maxNumberOfByes);
+}
+
+// receiveByte helper class implementation
+bool ISerialMsgs_receiveByte_helper::write(yarp::os::ConnectionWriter& connection) const
+{
+    return cmd.write(connection);
+}
+
+bool ISerialMsgs_receiveByte_helper::read(yarp::os::ConnectionReader& connection)
+{
+    return reply.read(connection);
+}
+
+bool ISerialMsgs_receiveByte_helper::Command::write(yarp::os::ConnectionWriter& connection) const
+{
+    yarp::os::idl::WireWriter writer(connection);
+    if (!writer.writeListHeader(s_cmd_len)) {
+        return false;
+    }
+    return write(writer);
+}
+
+bool ISerialMsgs_receiveByte_helper::Command::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    if (!reader.readListHeader()) {
+        reader.fail();
+        return false;
+    }
+    return read(reader);
+}
+
+bool ISerialMsgs_receiveByte_helper::Command::write(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writeTag(writer)) {
+        return false;
+    }
+    if (!writeArgs(writer)) {
+        return false;
+    }
+    return true;
+}
+
+bool ISerialMsgs_receiveByte_helper::Command::writeTag(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.writeTag(s_tag, 1, s_tag_len)) {
+        return false;
+    }
+    return true;
+}
+
+bool ISerialMsgs_receiveByte_helper::Command::writeArgs(const yarp::os::idl::WireWriter& writer [[maybe_unused]]) const
+{
+    return true;
+}
+
+bool ISerialMsgs_receiveByte_helper::Command::read(yarp::os::idl::WireReader& reader)
+{
+    if (!readTag(reader)) {
+        return false;
+    }
+    if (!readArgs(reader)) {
+        return false;
+    }
+    return true;
+}
+
+bool ISerialMsgs_receiveByte_helper::Command::readTag(yarp::os::idl::WireReader& reader)
+{
+    std::string tag = reader.readTag(s_tag_len);
+    if (reader.isError()) {
+        return false;
+    }
+    if (tag != s_tag) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool ISerialMsgs_receiveByte_helper::Command::readArgs(yarp::os::idl::WireReader& reader)
+{
+    if (!reader.noMore()) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool ISerialMsgs_receiveByte_helper::Reply::write(yarp::os::ConnectionWriter& connection) const
+{
+    yarp::os::idl::WireWriter writer(connection);
+    return write(writer);
+}
+
+bool ISerialMsgs_receiveByte_helper::Reply::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    return read(reader);
+}
+
+bool ISerialMsgs_receiveByte_helper::Reply::write(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.isNull()) {
+        if (!writer.writeListHeader(s_reply_len)) {
+            return false;
+        }
+        if (!writer.write(return_helper)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+bool ISerialMsgs_receiveByte_helper::Reply::read(yarp::os::idl::WireReader& reader)
+{
+    if (!reader.readListReturn()) {
+        return false;
+    }
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
+    if (!reader.read(return_helper)) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+void ISerialMsgs_receiveByte_helper::call(ISerialMsgs* ptr)
+{
+    reply.return_helper = ptr->receiveByte();
+}
+
+// receiveLine helper class implementation
+ISerialMsgs_receiveLine_helper::ISerialMsgs_receiveLine_helper(const std::int32_t maxNumberOfByes) :
+        cmd{maxNumberOfByes}
+{
+}
+
+bool ISerialMsgs_receiveLine_helper::write(yarp::os::ConnectionWriter& connection) const
+{
+    return cmd.write(connection);
+}
+
+bool ISerialMsgs_receiveLine_helper::read(yarp::os::ConnectionReader& connection)
+{
+    return reply.read(connection);
+}
+
+ISerialMsgs_receiveLine_helper::Command::Command(const std::int32_t maxNumberOfByes) :
+        maxNumberOfByes{maxNumberOfByes}
+{
+}
+
+bool ISerialMsgs_receiveLine_helper::Command::write(yarp::os::ConnectionWriter& connection) const
+{
+    yarp::os::idl::WireWriter writer(connection);
+    if (!writer.writeListHeader(s_cmd_len)) {
+        return false;
+    }
+    return write(writer);
+}
+
+bool ISerialMsgs_receiveLine_helper::Command::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    if (!reader.readListHeader()) {
+        reader.fail();
+        return false;
+    }
+    return read(reader);
+}
+
+bool ISerialMsgs_receiveLine_helper::Command::write(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writeTag(writer)) {
+        return false;
+    }
+    if (!writeArgs(writer)) {
+        return false;
+    }
+    return true;
+}
+
+bool ISerialMsgs_receiveLine_helper::Command::writeTag(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.writeTag(s_tag, 1, s_tag_len)) {
+        return false;
+    }
+    return true;
+}
+
+bool ISerialMsgs_receiveLine_helper::Command::writeArgs(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.writeI32(maxNumberOfByes)) {
+        return false;
+    }
+    return true;
+}
+
+bool ISerialMsgs_receiveLine_helper::Command::read(yarp::os::idl::WireReader& reader)
+{
+    if (!readTag(reader)) {
+        return false;
+    }
+    if (!readArgs(reader)) {
+        return false;
+    }
+    return true;
+}
+
+bool ISerialMsgs_receiveLine_helper::Command::readTag(yarp::os::idl::WireReader& reader)
+{
+    std::string tag = reader.readTag(s_tag_len);
+    if (reader.isError()) {
+        return false;
+    }
+    if (tag != s_tag) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool ISerialMsgs_receiveLine_helper::Command::readArgs(yarp::os::idl::WireReader& reader)
+{
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
+    if (!reader.readI32(maxNumberOfByes)) {
+        reader.fail();
+        return false;
+    }
+    if (!reader.noMore()) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool ISerialMsgs_receiveLine_helper::Reply::write(yarp::os::ConnectionWriter& connection) const
+{
+    yarp::os::idl::WireWriter writer(connection);
+    return write(writer);
+}
+
+bool ISerialMsgs_receiveLine_helper::Reply::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    return read(reader);
+}
+
+bool ISerialMsgs_receiveLine_helper::Reply::write(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.isNull()) {
+        if (!writer.writeListHeader(s_reply_len)) {
+            return false;
+        }
+        if (!writer.write(return_helper)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+bool ISerialMsgs_receiveLine_helper::Reply::read(yarp::os::idl::WireReader& reader)
+{
+    if (!reader.readListReturn()) {
+        return false;
+    }
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
+    if (!reader.read(return_helper)) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+void ISerialMsgs_receiveLine_helper::call(ISerialMsgs* ptr)
+{
+    reply.return_helper = ptr->receiveLine(cmd.maxNumberOfByes);
+}
 
 // setDTR helper class implementation
 ISerialMsgs_setDTR_helper::ISerialMsgs_setDTR_helper(const bool enable) :
@@ -349,10 +1873,7 @@ bool ISerialMsgs_setDTR_helper::Reply::read(yarp::os::ConnectionReader& connecti
 bool ISerialMsgs_setDTR_helper::Reply::write(const yarp::os::idl::WireWriter& writer) const
 {
     if (!writer.isNull()) {
-        if (!writer.writeListHeader(s_reply_len)) {
-            return false;
-        }
-        if (!writer.writeBool(return_helper)) {
+        if (!writer.write(return_helper)) {
             return false;
         }
     }
@@ -361,14 +1882,11 @@ bool ISerialMsgs_setDTR_helper::Reply::write(const yarp::os::idl::WireWriter& wr
 
 bool ISerialMsgs_setDTR_helper::Reply::read(yarp::os::idl::WireReader& reader)
 {
-    if (!reader.readListReturn()) {
-        return false;
-    }
     if (reader.noMore()) {
         reader.fail();
         return false;
     }
-    if (!reader.readBool(return_helper)) {
+    if (!reader.read(return_helper)) {
         reader.fail();
         return false;
     }
@@ -482,10 +2000,7 @@ bool ISerialMsgs_flush_helper::Reply::read(yarp::os::ConnectionReader& connectio
 bool ISerialMsgs_flush_helper::Reply::write(const yarp::os::idl::WireWriter& writer) const
 {
     if (!writer.isNull()) {
-        if (!writer.writeListHeader(s_reply_len)) {
-            return false;
-        }
-        if (!writer.writeI32(return_helper)) {
+        if (!writer.write(return_helper)) {
             return false;
         }
     }
@@ -494,14 +2009,11 @@ bool ISerialMsgs_flush_helper::Reply::write(const yarp::os::idl::WireWriter& wri
 
 bool ISerialMsgs_flush_helper::Reply::read(yarp::os::idl::WireReader& reader)
 {
-    if (!reader.readListReturn()) {
-        return false;
-    }
     if (reader.noMore()) {
         reader.fail();
         return false;
     }
-    if (!reader.readI32(return_helper)) {
+    if (!reader.read(return_helper)) {
         reader.fail();
         return false;
     }
@@ -513,30 +2025,243 @@ void ISerialMsgs_flush_helper::call(ISerialMsgs* ptr)
     reply.return_helper = ptr->flush();
 }
 
+// flushWithRet helper class implementation
+bool ISerialMsgs_flushWithRet_helper::write(yarp::os::ConnectionWriter& connection) const
+{
+    return cmd.write(connection);
+}
+
+bool ISerialMsgs_flushWithRet_helper::read(yarp::os::ConnectionReader& connection)
+{
+    return reply.read(connection);
+}
+
+bool ISerialMsgs_flushWithRet_helper::Command::write(yarp::os::ConnectionWriter& connection) const
+{
+    yarp::os::idl::WireWriter writer(connection);
+    if (!writer.writeListHeader(s_cmd_len)) {
+        return false;
+    }
+    return write(writer);
+}
+
+bool ISerialMsgs_flushWithRet_helper::Command::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    if (!reader.readListHeader()) {
+        reader.fail();
+        return false;
+    }
+    return read(reader);
+}
+
+bool ISerialMsgs_flushWithRet_helper::Command::write(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writeTag(writer)) {
+        return false;
+    }
+    if (!writeArgs(writer)) {
+        return false;
+    }
+    return true;
+}
+
+bool ISerialMsgs_flushWithRet_helper::Command::writeTag(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.writeTag(s_tag, 1, s_tag_len)) {
+        return false;
+    }
+    return true;
+}
+
+bool ISerialMsgs_flushWithRet_helper::Command::writeArgs(const yarp::os::idl::WireWriter& writer [[maybe_unused]]) const
+{
+    return true;
+}
+
+bool ISerialMsgs_flushWithRet_helper::Command::read(yarp::os::idl::WireReader& reader)
+{
+    if (!readTag(reader)) {
+        return false;
+    }
+    if (!readArgs(reader)) {
+        return false;
+    }
+    return true;
+}
+
+bool ISerialMsgs_flushWithRet_helper::Command::readTag(yarp::os::idl::WireReader& reader)
+{
+    std::string tag = reader.readTag(s_tag_len);
+    if (reader.isError()) {
+        return false;
+    }
+    if (tag != s_tag) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool ISerialMsgs_flushWithRet_helper::Command::readArgs(yarp::os::idl::WireReader& reader)
+{
+    if (!reader.noMore()) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool ISerialMsgs_flushWithRet_helper::Reply::write(yarp::os::ConnectionWriter& connection) const
+{
+    yarp::os::idl::WireWriter writer(connection);
+    return write(writer);
+}
+
+bool ISerialMsgs_flushWithRet_helper::Reply::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    return read(reader);
+}
+
+bool ISerialMsgs_flushWithRet_helper::Reply::write(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.isNull()) {
+        if (!writer.writeListHeader(s_reply_len)) {
+            return false;
+        }
+        if (!writer.write(return_helper)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+bool ISerialMsgs_flushWithRet_helper::Reply::read(yarp::os::idl::WireReader& reader)
+{
+    if (!reader.readListReturn()) {
+        return false;
+    }
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
+    if (!reader.read(return_helper)) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+void ISerialMsgs_flushWithRet_helper::call(ISerialMsgs* ptr)
+{
+    reply.return_helper = ptr->flushWithRet();
+}
+
 // Constructor
 ISerialMsgs::ISerialMsgs()
 {
     yarp().setOwner(*this);
 }
 
-bool ISerialMsgs::setDTR(const bool enable)
+yarp::dev::ReturnValue ISerialMsgs::sendString(const std::string& message)
+{
+    if (!yarp().canWrite()) {
+        yError("Missing server method '%s'?", ISerialMsgs_sendString_helper::s_prototype);
+    }
+    ISerialMsgs_sendString_helper helper{message};
+    bool ok = yarp().write(helper, helper);
+    return ok ? helper.reply.return_helper : yarp::dev::ReturnValue{};
+}
+
+yarp::dev::ReturnValue ISerialMsgs::sendBytes(const std::vector<std::int8_t>& message)
+{
+    if (!yarp().canWrite()) {
+        yError("Missing server method '%s'?", ISerialMsgs_sendBytes_helper::s_prototype);
+    }
+    ISerialMsgs_sendBytes_helper helper{message};
+    bool ok = yarp().write(helper, helper);
+    return ok ? helper.reply.return_helper : yarp::dev::ReturnValue{};
+}
+
+yarp::dev::ReturnValue ISerialMsgs::sendByte(const std::int8_t message)
+{
+    if (!yarp().canWrite()) {
+        yError("Missing server method '%s'?", ISerialMsgs_sendByte_helper::s_prototype);
+    }
+    ISerialMsgs_sendByte_helper helper{message};
+    bool ok = yarp().write(helper, helper);
+    return ok ? helper.reply.return_helper : yarp::dev::ReturnValue{};
+}
+
+return_receiveString ISerialMsgs::receiveString()
+{
+    if (!yarp().canWrite()) {
+        yError("Missing server method '%s'?", ISerialMsgs_receiveString_helper::s_prototype);
+    }
+    ISerialMsgs_receiveString_helper helper{};
+    bool ok = yarp().write(helper, helper);
+    return ok ? helper.reply.return_helper : return_receiveString{};
+}
+
+return_receiveBytes ISerialMsgs::receiveBytes(const std::int32_t maxNumberOfByes)
+{
+    if (!yarp().canWrite()) {
+        yError("Missing server method '%s'?", ISerialMsgs_receiveBytes_helper::s_prototype);
+    }
+    ISerialMsgs_receiveBytes_helper helper{maxNumberOfByes};
+    bool ok = yarp().write(helper, helper);
+    return ok ? helper.reply.return_helper : return_receiveBytes{};
+}
+
+return_receiveByte ISerialMsgs::receiveByte()
+{
+    if (!yarp().canWrite()) {
+        yError("Missing server method '%s'?", ISerialMsgs_receiveByte_helper::s_prototype);
+    }
+    ISerialMsgs_receiveByte_helper helper{};
+    bool ok = yarp().write(helper, helper);
+    return ok ? helper.reply.return_helper : return_receiveByte{};
+}
+
+return_receiveLine ISerialMsgs::receiveLine(const std::int32_t maxNumberOfByes)
+{
+    if (!yarp().canWrite()) {
+        yError("Missing server method '%s'?", ISerialMsgs_receiveLine_helper::s_prototype);
+    }
+    ISerialMsgs_receiveLine_helper helper{maxNumberOfByes};
+    bool ok = yarp().write(helper, helper);
+    return ok ? helper.reply.return_helper : return_receiveLine{};
+}
+
+yarp::dev::ReturnValue ISerialMsgs::setDTR(const bool enable)
 {
     if (!yarp().canWrite()) {
         yError("Missing server method '%s'?", ISerialMsgs_setDTR_helper::s_prototype);
     }
     ISerialMsgs_setDTR_helper helper{enable};
     bool ok = yarp().write(helper, helper);
-    return ok ? helper.reply.return_helper : bool{};
+    return ok ? helper.reply.return_helper : yarp::dev::ReturnValue{};
 }
 
-std::int32_t ISerialMsgs::flush()
+yarp::dev::ReturnValue ISerialMsgs::flush()
 {
     if (!yarp().canWrite()) {
         yError("Missing server method '%s'?", ISerialMsgs_flush_helper::s_prototype);
     }
     ISerialMsgs_flush_helper helper{};
     bool ok = yarp().write(helper, helper);
-    return ok ? helper.reply.return_helper : std::int32_t{};
+    return ok ? helper.reply.return_helper : yarp::dev::ReturnValue{};
+}
+
+return_flush ISerialMsgs::flushWithRet()
+{
+    if (!yarp().canWrite()) {
+        yError("Missing server method '%s'?", ISerialMsgs_flushWithRet_helper::s_prototype);
+    }
+    ISerialMsgs_flushWithRet_helper helper{};
+    bool ok = yarp().write(helper, helper);
+    return ok ? helper.reply.return_helper : return_flush{};
 }
 
 // help method
@@ -546,15 +2271,47 @@ std::vector<std::string> ISerialMsgs::help(const std::string& functionName)
     std::vector<std::string> helpString;
     if (showAll) {
         helpString.emplace_back("*** Available commands:");
+        helpString.emplace_back(ISerialMsgs_sendString_helper::s_tag);
+        helpString.emplace_back(ISerialMsgs_sendBytes_helper::s_tag);
+        helpString.emplace_back(ISerialMsgs_sendByte_helper::s_tag);
+        helpString.emplace_back(ISerialMsgs_receiveString_helper::s_tag);
+        helpString.emplace_back(ISerialMsgs_receiveBytes_helper::s_tag);
+        helpString.emplace_back(ISerialMsgs_receiveByte_helper::s_tag);
+        helpString.emplace_back(ISerialMsgs_receiveLine_helper::s_tag);
         helpString.emplace_back(ISerialMsgs_setDTR_helper::s_tag);
         helpString.emplace_back(ISerialMsgs_flush_helper::s_tag);
+        helpString.emplace_back(ISerialMsgs_flushWithRet_helper::s_tag);
         helpString.emplace_back("help");
     } else {
+        if (functionName == ISerialMsgs_sendString_helper::s_tag) {
+            helpString.emplace_back(ISerialMsgs_sendString_helper::s_prototype);
+        }
+        if (functionName == ISerialMsgs_sendBytes_helper::s_tag) {
+            helpString.emplace_back(ISerialMsgs_sendBytes_helper::s_prototype);
+        }
+        if (functionName == ISerialMsgs_sendByte_helper::s_tag) {
+            helpString.emplace_back(ISerialMsgs_sendByte_helper::s_prototype);
+        }
+        if (functionName == ISerialMsgs_receiveString_helper::s_tag) {
+            helpString.emplace_back(ISerialMsgs_receiveString_helper::s_prototype);
+        }
+        if (functionName == ISerialMsgs_receiveBytes_helper::s_tag) {
+            helpString.emplace_back(ISerialMsgs_receiveBytes_helper::s_prototype);
+        }
+        if (functionName == ISerialMsgs_receiveByte_helper::s_tag) {
+            helpString.emplace_back(ISerialMsgs_receiveByte_helper::s_prototype);
+        }
+        if (functionName == ISerialMsgs_receiveLine_helper::s_tag) {
+            helpString.emplace_back(ISerialMsgs_receiveLine_helper::s_prototype);
+        }
         if (functionName == ISerialMsgs_setDTR_helper::s_tag) {
             helpString.emplace_back(ISerialMsgs_setDTR_helper::s_prototype);
         }
         if (functionName == ISerialMsgs_flush_helper::s_tag) {
             helpString.emplace_back(ISerialMsgs_flush_helper::s_prototype);
+        }
+        if (functionName == ISerialMsgs_flushWithRet_helper::s_tag) {
+            helpString.emplace_back(ISerialMsgs_flushWithRet_helper::s_prototype);
         }
         if (functionName == "help") {
             helpString.emplace_back("std::vector<std::string> help(const std::string& functionName = \"--all\")");
@@ -608,6 +2365,111 @@ bool ISerialMsgs::read(yarp::os::ConnectionReader& connection)
             reader.accept();
             return true;
         }
+        if (tag == ISerialMsgs_sendString_helper::s_tag) {
+            ISerialMsgs_sendString_helper helper;
+            if (!helper.cmd.readArgs(reader)) {
+                return false;
+            }
+
+            helper.call(this);
+
+            yarp::os::idl::WireWriter writer(reader);
+            if (!helper.reply.write(writer)) {
+                return false;
+            }
+            reader.accept();
+            return true;
+        }
+        if (tag == ISerialMsgs_sendBytes_helper::s_tag) {
+            ISerialMsgs_sendBytes_helper helper;
+            if (!helper.cmd.readArgs(reader)) {
+                return false;
+            }
+
+            helper.call(this);
+
+            yarp::os::idl::WireWriter writer(reader);
+            if (!helper.reply.write(writer)) {
+                return false;
+            }
+            reader.accept();
+            return true;
+        }
+        if (tag == ISerialMsgs_sendByte_helper::s_tag) {
+            ISerialMsgs_sendByte_helper helper;
+            if (!helper.cmd.readArgs(reader)) {
+                return false;
+            }
+
+            helper.call(this);
+
+            yarp::os::idl::WireWriter writer(reader);
+            if (!helper.reply.write(writer)) {
+                return false;
+            }
+            reader.accept();
+            return true;
+        }
+        if (tag == ISerialMsgs_receiveString_helper::s_tag) {
+            ISerialMsgs_receiveString_helper helper;
+            if (!helper.cmd.readArgs(reader)) {
+                return false;
+            }
+
+            helper.call(this);
+
+            yarp::os::idl::WireWriter writer(reader);
+            if (!helper.reply.write(writer)) {
+                return false;
+            }
+            reader.accept();
+            return true;
+        }
+        if (tag == ISerialMsgs_receiveBytes_helper::s_tag) {
+            ISerialMsgs_receiveBytes_helper helper;
+            if (!helper.cmd.readArgs(reader)) {
+                return false;
+            }
+
+            helper.call(this);
+
+            yarp::os::idl::WireWriter writer(reader);
+            if (!helper.reply.write(writer)) {
+                return false;
+            }
+            reader.accept();
+            return true;
+        }
+        if (tag == ISerialMsgs_receiveByte_helper::s_tag) {
+            ISerialMsgs_receiveByte_helper helper;
+            if (!helper.cmd.readArgs(reader)) {
+                return false;
+            }
+
+            helper.call(this);
+
+            yarp::os::idl::WireWriter writer(reader);
+            if (!helper.reply.write(writer)) {
+                return false;
+            }
+            reader.accept();
+            return true;
+        }
+        if (tag == ISerialMsgs_receiveLine_helper::s_tag) {
+            ISerialMsgs_receiveLine_helper helper;
+            if (!helper.cmd.readArgs(reader)) {
+                return false;
+            }
+
+            helper.call(this);
+
+            yarp::os::idl::WireWriter writer(reader);
+            if (!helper.reply.write(writer)) {
+                return false;
+            }
+            reader.accept();
+            return true;
+        }
         if (tag == ISerialMsgs_setDTR_helper::s_tag) {
             ISerialMsgs_setDTR_helper helper;
             if (!helper.cmd.readArgs(reader)) {
@@ -625,6 +2487,21 @@ bool ISerialMsgs::read(yarp::os::ConnectionReader& connection)
         }
         if (tag == ISerialMsgs_flush_helper::s_tag) {
             ISerialMsgs_flush_helper helper;
+            if (!helper.cmd.readArgs(reader)) {
+                return false;
+            }
+
+            helper.call(this);
+
+            yarp::os::idl::WireWriter writer(reader);
+            if (!helper.reply.write(writer)) {
+                return false;
+            }
+            reader.accept();
+            return true;
+        }
+        if (tag == ISerialMsgs_flushWithRet_helper::s_tag) {
+            ISerialMsgs_flushWithRet_helper helper;
             if (!helper.cmd.readArgs(reader)) {
                 return false;
             }
