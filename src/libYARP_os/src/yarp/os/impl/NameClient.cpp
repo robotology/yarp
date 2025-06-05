@@ -495,11 +495,6 @@ std::string NameClient::getMode()
     return mode;
 }
 
-yarp::os::Nodes& NameClient::getNodes()
-{
-    return nodes;
-}
-
 NameServer& NameClient::getServer()
 {
     if (fakeServer == nullptr) {

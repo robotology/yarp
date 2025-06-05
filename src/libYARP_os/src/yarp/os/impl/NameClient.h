@@ -9,7 +9,6 @@
 
 #include <yarp/os/Contact.h>
 #include <yarp/os/ContactStyle.h>
-#include <yarp/os/Nodes.h>
 
 namespace yarp::os {
 
@@ -193,8 +192,6 @@ public:
 
     std::string getMode();
 
-    yarp::os::Nodes& getNodes();
-
 private:
     Contact address;
     YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string) host;
@@ -207,7 +204,6 @@ private:
     bool reportSaveScan;
     bool isSetup;
     NameStore* altStore;
-    yarp::os::Nodes nodes;
 
     NameServer& getServer();
     void setup();

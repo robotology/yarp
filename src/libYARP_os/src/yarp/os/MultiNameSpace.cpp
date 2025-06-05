@@ -5,7 +5,6 @@
 
 #include <yarp/os/MultiNameSpace.h>
 
-#include <yarp/os/RosNameSpace.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/YarpNameSpace.h>
 #include <yarp/os/impl/LogComponent.h>
@@ -144,10 +143,6 @@ public:
             if (mode == "yarp" || mode == "//") {
                 // add a yarp namespace
                 NameSpace* ns = new YarpNameSpace(address);
-                spaces.push_back(ns);
-            } else if (mode == "ros") {
-                // add a ros namespace
-                NameSpace* ns = new RosNameSpace(address);
                 spaces.push_back(ns);
             } else if (mode == "local") {
                 NameSpace* ns = new YarpDummyNameSpace;
@@ -438,20 +433,12 @@ Contact MultiNameSpace::detectNameServer(bool useDetectedServer,
                                          bool& serverUsed)
 {
     // This code looks like a placeholder that never got replaced.
-    // It is using a heuristic that namespaces with "/ros" in the
-    // name are ros namespaces.  There's no need for guesswork like
-    // that anymore.  Also, code duplication.  Should spin this
+    // Also, code duplication.  Should spin this
     // off into a proper plugin mechanism for namespaces.
     std::string name = NetworkBase::getNameServerName();
     Contact fake;
     Contact r;
-    if (name.find("/ros") != std::string::npos) {
-        RosNameSpace ns(fake);
-        r = ns.detectNameServer(useDetectedServer, scanNeeded, serverUsed);
-        if (r.isValid() && useDetectedServer && scanNeeded) {
-            HELPER(this).activate(true);
-        }
-    } else {
+    {
         YarpNameSpace ns(fake);
         r = ns.detectNameServer(useDetectedServer, scanNeeded, serverUsed);
         if (r.isValid() && useDetectedServer && scanNeeded) {

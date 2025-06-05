@@ -10,7 +10,6 @@
 
 #include <yarp/os/Carriers.h>
 #include <yarp/os/Network.h>
-#include <yarp/os/RosNameSpace.h>
 #include <yarp/os/Value.h>
 #include <yarp/name/BootstrapServer.h>
 #include <yarp/serversql/impl/LogComponent.h>
@@ -31,7 +30,6 @@ using yarp::os::NetworkBase;
 using yarp::os::Network;
 using yarp::os::Value;
 using yarp::os::Carriers;
-using yarp::os::RosNameSpace;
 using yarp::name::BootstrapServer;
 using yarp::serversql::impl::ComposedNameService;
 using yarp::serversql::impl::NameServiceOnTriples;
@@ -123,32 +121,6 @@ bool NameServerContainer::open(Searchable& options)
                                                   options.check("write"))) {
             yCError(NAMESERVERCONTAINER, "Aborting.\n");
             return false;
-        }
-    }
-
-    if (options.check("ros") || yarp::conf::environment::get_string("YARP_USE_ROS")!="") {
-        yarp::os::Bottle lst = yarp::os::Carriers::listCarriers();
-        std::string lstStr(lst.toString());
-        if (lstStr.find("rossrv") == std::string::npos ||
-            lstStr.find("tcpros") == std::string::npos ||
-            lstStr.find("xmlrpc") == std::string::npos) {
-            yCError(NAMESERVERCONTAINER, "Missing one or more required carriers ");
-            yCError(NAMESERVERCONTAINER, "for yarpserver --ros (rossrv, tcpros, xmlrpc).\n");
-            yCError(NAMESERVERCONTAINER, "Run 'yarp connect --list-carriers' to see carriers on your machine\n");
-            yCError(NAMESERVERCONTAINER, "Aborting.\n");
-            return false;
-        }
-        std::string addr = yarp::conf::environment::get_string("ROS_MASTER_URI");
-        Contact c = Contact::fromString(addr);
-        if (c.isValid()) {
-            c.setCarrier("xmlrpc");
-            c.setName("/ros");
-            space = new RosNameSpace(c);
-            subscriber.setDelegate(space);
-            ns.setDelegate(space);
-            yCInfo(NAMESERVERCONTAINER, "Using ROS with ROS_MASTER_URI=%s\n", addr.c_str());
-        } else {
-            yCFatal(NAMESERVERCONTAINER, "Cannot find ROS, check ROS_MASTER_URI (currently '%s')\n", addr.c_str());
         }
     }
 

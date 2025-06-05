@@ -270,12 +270,6 @@ bool Port::open(const Contact& contact, bool registerName, const char* fakeName)
     core.setControlRegistration(registerName);
     success = (address.isValid() || local) && (fakeName == nullptr);
 
-    if (success) {
-        // create a node if needed
-        Nodes& nodes = NameClient::getNameClient().getNodes();
-        nodes.prepare(address.getRegName());
-    }
-
     // If we are a service client, go ahead and connect
     if (success) {
         NestedContact nc;
@@ -338,12 +332,6 @@ bool Port::open(const Contact& contact, bool registerName, const char* fakeName)
                 blame.c_str());
     }
 
-    if (success) {
-        // create a node if needed
-        Nodes& nodes = NameClient::getNameClient().getNodes();
-        nodes.add(*this);
-    }
-
     if (success && currentCore != nullptr) {
         currentCore->active = true;
     }
@@ -366,9 +354,6 @@ void Port::close()
         return;
     }
 
-    Nodes& nodes = NameClient::getNameClient().getNodes();
-    nodes.remove(*this);
-
     PortCoreAdapter& core = IMPL();
     core.finishReading();
     core.finishWriting();
@@ -382,9 +367,6 @@ void Port::close()
 
 void Port::interrupt()
 {
-    Nodes& nodes = NameClient::getNameClient().getNodes();
-    nodes.remove(*this);
-
     PortCoreAdapter& core = IMPL();
     core.interrupt();
 }
@@ -397,8 +379,6 @@ void Port::resume()
         return;
     }
     core.resumeFull();
-    Nodes& nodes = NameClient::getNameClient().getNodes();
-    nodes.add(*this);
 }
 
 

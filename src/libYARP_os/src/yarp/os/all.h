@@ -34,7 +34,6 @@
 #include <yarp/os/NetUint8.h>
 #include <yarp/os/Network.h>
 #include <yarp/os/NetworkClock.h>
-#include <yarp/os/Node.h>
 #include <yarp/os/Os.h>
 #include <yarp/os/PeriodicThread.h>
 #include <yarp/os/Port.h>
@@ -47,7 +46,6 @@
 #include <yarp/os/Portable.h>
 #include <yarp/os/PortablePair.h>
 #include <yarp/os/Property.h>
-#include <yarp/os/Publisher.h>
 #include <yarp/os/RFModule.h>
 #include <yarp/os/Random.h>
 #include <yarp/os/RpcClient.h>
@@ -55,7 +53,6 @@
 #include <yarp/os/Searchable.h>
 #include <yarp/os/Semaphore.h>
 #include <yarp/os/Stamp.h>
-#include <yarp/os/Subscriber.h>
 #include <yarp/os/SystemClock.h>
 #include <yarp/os/Terminator.h>
 #include <yarp/os/Things.h>
