@@ -82,8 +82,6 @@ typedef struct _IplImage {
     int  nChannels;     /**< Most of OpenCV functions support 1,2,3 or 4 channels */
     int  depth;         /**< pixel depth in bits: IPL_DEPTH_8U, IPL_DEPTH_8S, IPL_DEPTH_16S,
                           IPL_DEPTH_32S, IPL_DEPTH_32F and IPL_DEPTH_64F are supported */
-    int  origin;        /**< 0 - top-left origin,
-                          1 - bottom-left origin (Windows bitmaps style) */
     int  align;         /**< Alignment of image rows (4 or 8).
                           OpenCV ignores it and uses widthStep instead */
     int  width;         /**< image width in pixels */
@@ -114,7 +112,7 @@ IPLAPIIMPL(void, iplDeallocateImage, (MiniIplImage * image));
 
 IPLAPIIMPL(MiniIplImage*, iplCreateImageHeader,
            (int   nChannels,  int     depth,
-            int   origin,     int     align,
+            int   align,
             int   width,      int   height));
 
 IPLAPIIMPL(void, iplDeallocateHeader, (MiniIplImage * image));

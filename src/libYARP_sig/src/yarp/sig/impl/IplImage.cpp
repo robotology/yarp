@@ -80,7 +80,7 @@ IPLAPIIMPL(void, iplDeallocateImage, (MiniIplImage* image))
 
 IPLAPIIMPL(MiniIplImage*, iplCreateImageHeader,
            (int   nChannels,  int     depth,
-            int   origin,     int     align,
+            int   align,
             int   width,      int   height))
 {
     switch (depth)
@@ -103,8 +103,6 @@ IPLAPIIMPL(MiniIplImage*, iplCreateImageHeader,
 
     r->nChannels = nChannels;
     r->depth = depth;
-
-    r->origin = origin;
 
     r->align = align;
     r->width = width;

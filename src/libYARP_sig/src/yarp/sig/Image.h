@@ -341,7 +341,6 @@ private:
     static const std::map<YarpVocabPixelTypesEnum, size_t> pixelCode2Size;
     size_t imgWidth, imgHeight, imgPixelSize, imgRowSize, imgQuantum;
     int imgPixelCode;
-    bool topIsLow;
 
     char **data;
     void *implementation;
@@ -351,8 +350,7 @@ private:
 
     void copyPixels(const unsigned char *src, size_t id1,
                     unsigned char *dest, size_t id2, size_t w, size_t h,
-                    size_t imageSize, size_t quantum1, size_t quantum2,
-                    bool topIsLow1, bool topIsLow2);
+                    size_t imageSize, size_t quantum1, size_t quantum2);
 };
 
 

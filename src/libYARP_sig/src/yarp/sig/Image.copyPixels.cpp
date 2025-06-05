@@ -1245,18 +1245,17 @@ using Def_VOCAB_PIXEL_INT = PixelInt;
 using Def_VOCAB_PIXEL_RGB_INT = PixelRgbInt;
 
 #define HASH(id1, id2) ((int)(((int)(id1%65537))*11 + ((long int)(id2))))
-#define HANDLE_CASE(len, x1, T1, q1, o1, x2, T2, q2, o2) CopyPixels(reinterpret_cast<const T1*>(x1), q1, reinterpret_cast<T2*>(x2), q2, w, h, o1!=o2);
-#define MAKE_CASE(id1, id2) case HASH(id1, id2): HANDLE_CASE(len, src, Def_##id1, quantum1, topIsLow1, dest, Def_##id2, quantum2, topIsLow2); break;
+#define HANDLE_CASE(len, x1, T1, q1, x2, T2, q2) CopyPixels(reinterpret_cast<const T1*>(x1), q1, reinterpret_cast<T2*>(x2), q2, w, h, false);
+#define MAKE_CASE(id1, id2) case HASH(id1, id2): HANDLE_CASE(len, src, Def_##id1, quantum1, dest, Def_##id2, quantum2); break;
 
 // More elegant ways to do this, but needs to be efficient at pixel level
 void Image::copyPixels(const unsigned char *src, size_t id1,
                        char unsigned *dest, size_t id2, size_t w, size_t h,
-                       size_t imageSize, size_t quantum1, size_t quantum2,
-                       bool topIsLow1, bool topIsLow2)
+                       size_t imageSize, size_t quantum1, size_t quantum2)
 {
     DBG printf("copyPixels...\n");
 
-    if (id1==id2&&quantum1==quantum2&&topIsLow1==topIsLow2) {
+    if (id1==id2&&quantum1==quantum2) {
         memcpy(dest,src,imageSize);
         return;
     }
