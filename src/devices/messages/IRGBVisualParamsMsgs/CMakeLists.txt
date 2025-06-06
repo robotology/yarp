@@ -21,4 +21,4 @@ target_link_libraries(IRGBVisualParamsMsgs
 
 target_include_directories(IRGBVisualParamsMsgs PUBLIC ${IRGBVISUALPARAMS_THRIFT_BUILD_INTERFACE_INCLUDE_DIRS})
 
-set_property(TARGET IRGBVisualParamsMsgs PROPERTY FOLDER "Devices/Shared")
+set_property(TARGET IRGBVisualParamsMsgs PROPERTY FOLDER "Plugins/Shared")

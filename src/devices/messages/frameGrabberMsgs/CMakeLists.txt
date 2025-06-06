@@ -55,4 +55,4 @@ C:/Software/iCubSoftware/yarp-master/build/src/devices/messages/frameGrabberMsgs
 C:/Software/iCubSoftware/yarp-master/build/src/devices/messages/frameGrabberMsgs//yCameraDescriptor.cpp
 )
 
-set_property(TARGET FrameGrabberMsgs PROPERTY FOLDER "Devices/Shared")
+set_property(TARGET FrameGrabberMsgs PROPERTY FOLDER "Plugins/Shared")

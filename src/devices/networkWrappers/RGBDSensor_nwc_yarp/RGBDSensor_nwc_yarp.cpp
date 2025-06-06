@@ -14,9 +14,6 @@ using namespace yarp::os;
 using namespace yarp::sig;
 using namespace yarp::dev;
 
-#define RGBD_INTERFACE_PROTOCOL_VERSION_MAJOR 1
-#define RGBD_INTERFACE_PROTOCOL_VERSION_MINOR 0
-
 YARP_LOG_COMPONENT(RGBDSENSOR_NWC_YARP, "yarp.devices.RGBDSensor_nwc_yarp")
 
 
@@ -89,31 +86,10 @@ bool RGBDSensor_nwc_yarp::open(yarp::os::Searchable& config)
         return false;
     }
 
-    /*
-    // Check protocol version
-    yarp::os::Bottle cmd;
-    yarp::os::Bottle response;
-    cmd.addVocab32(VOCAB_RGBD_SENSOR);
-    cmd.addVocab32(VOCAB_GET);
-    cmd.addVocab32(VOCAB_RGBD_PROTOCOL_VERSION);
-    m_rpcPort.write(cmd, response);
-    int major = response.get(3).asInt32();
-    int minor = response.get(4).asInt32();
-
-    if (major != RGBD_INTERFACE_PROTOCOL_VERSION_MAJOR)
-    {
-        yCError(RGBDSENSORCLIENT) << "Major protocol number does not match, please verify client and server are updated. \
-                    Expected: " << RGBD_INTERFACE_PROTOCOL_VERSION_MAJOR << " received: " << major;
+    // Check the protocol version
+    if (!m_rgbdsensor_RPC.checkProtocolVersion()) {
         return false;
     }
-
-
-    if (minor != RGBD_INTERFACE_PROTOCOL_VERSION_MINOR)
-    {
-        yCWarning(RGBDSENSORCLIENT) << "Minor protocol number does not match, please verify client and server are updated.\
-                      Expected: " << RGBD_INTERFACE_PROTOCOL_VERSION_MINOR << " received: " << minor;
-    }
-    */
 
     streamingReader->attach(&m_colorFrame_StreamingPort, &m_depthFrame_StreamingPort);
 

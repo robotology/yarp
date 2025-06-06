@@ -21,4 +21,4 @@ target_link_libraries(IRGBDMsgs
 
 target_include_directories(IRGBDMsgs PUBLIC ${IRGBD_THRIFT_BUILD_INTERFACE_INCLUDE_DIRS})
 
-set_property(TARGET IRGBDMsgs PROPERTY FOLDER "Devices/Shared")
+set_property(TARGET IRGBDMsgs PROPERTY FOLDER "Plugins/Shared")
