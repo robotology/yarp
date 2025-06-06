@@ -123,34 +123,6 @@ public:
                                const std::string& key) = 0;
 
     /**
-     * Publish a port to a topic.
-     */
-    virtual bool connectPortToTopic(const Contact& src,
-                                    const Contact& dest,
-                                    const ContactStyle& style) = 0;
-
-    /**
-     * Subscribe a port to a topic.
-     */
-    virtual bool connectTopicToPort(const Contact& src,
-                                    const Contact& dest,
-                                    const ContactStyle& style) = 0;
-
-    /**
-     * Stop publishing a port to a topic.
-     */
-    virtual bool disconnectPortFromTopic(const Contact& src,
-                                         const Contact& dest,
-                                         const ContactStyle& style) = 0;
-
-    /**
-     * Stop subscribing a port to a topic.
-     */
-    virtual bool disconnectTopicFromPort(const Contact& src,
-                                         const Contact& dest,
-                                         const ContactStyle& style) = 0;
-
-    /**
      * Connect two ports with persistence.
      */
     virtual bool connectPortToPortPersistently(const Contact& src,

@@ -40,22 +40,6 @@ public:
 
     Value* getProperty(const std::string& name, const std::string& key) override;
 
-    virtual bool connectPortToTopic(const Contact& src,
-                                    const Contact& dest,
-                                    const ContactStyle& style) override;
-
-    virtual bool connectTopicToPort(const Contact& src,
-                                    const Contact& dest,
-                                    const ContactStyle& style) override;
-
-    virtual bool disconnectPortFromTopic(const Contact& src,
-                                         const Contact& dest,
-                                         const ContactStyle& style) override;
-
-    virtual bool disconnectTopicFromPort(const Contact& src,
-                                         const Contact& dest,
-                                         const ContactStyle& style) override;
-
     virtual bool connectPortToPortPersistently(const Contact& src,
                                                const Contact& dest,
                                                const ContactStyle& style) override;
