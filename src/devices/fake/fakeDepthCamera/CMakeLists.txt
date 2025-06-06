@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: BSD-3-Clause
 
 if (YARP_COMPILE_ALL_FAKE_DEVICES)
-  set(ENABLE_yarpmod_fakeDepthCamera ON CACHE BOOL "" FORCE)
+  set(ENABLE_yarpmod_fakeDepthCamera   ON CACHE BOOL "" FORCE)
 endif()
 
 yarp_prepare_plugin(fakeDepthCamera
@@ -15,6 +15,7 @@ yarp_prepare_plugin(fakeDepthCamera
 )
 
 if(ENABLE_fakeDepthCamera)
+
   yarp_add_plugin(yarp_fakeDepthCamera)
 
   target_sources(yarp_fakeDepthCamera
@@ -50,8 +51,61 @@ if(ENABLE_fakeDepthCamera)
 
   set_property(TARGET yarp_fakeDepthCamera PROPERTY FOLDER "Plugins/Device/Fake")
 
+endif()
+
+#------------------
+
+yarp_prepare_plugin(fakeDepthCamera_2
+  CATEGORY device
+  TYPE FakeDepthCameraDriver_2
+  INCLUDE FakeDepthCameraDriver_2.h
+  EXTRA_CONFIG
+    WRAPPER=rgbdSensor_nws_yarp
+)
+
+if(ENABLE_fakeDepthCamera_2)
+
+  yarp_add_plugin(yarp_fakeDepthCamera_2)
+
+  target_sources(yarp_fakeDepthCamera_2
+    PRIVATE
+      FakeDepthCameraDriver.cpp
+      FakeDepthCameraDriver.h
+      FakeDepthCameraDriver_2.cpp
+      FakeDepthCameraDriver_2.h
+      FakeDepthCameraDriver_2_ParamsParser.cpp
+      FakeDepthCameraDriver_2_ParamsParser.h
+  )
+
+  target_link_libraries(yarp_fakeDepthCamera_2
+    PRIVATE
+      YARP::YARP_os
+      YARP::YARP_sig
+      YARP::YARP_dev
+  )
+  list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS
+    YARP_os
+    YARP_sig
+    YARP_dev
+  )
+
+  yarp_install(
+    TARGETS yarp_fakeDepthCamera_2
+    EXPORT YARP_${YARP_PLUGIN_MASTER}
+    COMPONENT ${YARP_PLUGIN_MASTER}
+    LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
+    ARCHIVE DESTINATION ${YARP_STATIC_PLUGINS_INSTALL_DIR}
+    YARP_INI DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR}
+  )
+
+  set(YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS ${YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS} PARENT_SCOPE)
+
+  set_property(TARGET yarp_fakeDepthCamera_2 PROPERTY FOLDER "Plugins/Device/Fake")
+
+endif()
+
+if (ENABLE_fakeDepthCamera OR ENABLE_fakeDepthCamera_2)
   if(YARP_COMPILE_TESTS)
     add_subdirectory(tests)
   endif()
-
 endif()

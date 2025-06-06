@@ -7,6 +7,8 @@ add_library(YARP::YARP_dev_tests ALIAS YARP_dev_tests)
 set(YARP_dev_test_HDRS
     IDummyTest.h
     IEncodersTimedTest.h
+    IFrameGrabberControlsTest.h
+    IFrameGrabberControlsDC1394Test.h
     IPositionControlTest.h
     ITorqueControlTest.h
     IAxisInfoTest.h
@@ -31,6 +33,8 @@ set(YARP_dev_test_HDRS
 set(YARP_dev_test_SRCS
     IDummyTest.cpp
     IEncodersTimedTest.cpp
+    IFrameGrabberControlsTest.cpp
+    IFrameGrabberControlsDC1394Test.cpp
     IPositionControlTest.cpp
     ITorqueControlTest.cpp
     IAxisInfoTest.cpp

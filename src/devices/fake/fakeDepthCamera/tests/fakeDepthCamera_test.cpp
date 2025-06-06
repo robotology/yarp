@@ -4,7 +4,9 @@
  */
 
 #include <yarp/dev/IRGBDSensor.h>
+#include <yarp/dev/IFrameGrabberControls.h>
 #include <yarp/dev/tests/IRGBDSensorTest.h>
+#include <yarp/dev/tests/IFrameGrabberControlsTest.h>
 
 #include <yarp/os/Network.h>
 #include <yarp/sig/Image.h>
@@ -41,7 +43,11 @@ TEST_CASE("dev::fakeDepthCameraTest", "[yarp::dev]")
         IRGBDSensor* irgbd = nullptr;
         REQUIRE(dd.view(irgbd));
 
+        IFrameGrabberControls* ictl = nullptr;
+        REQUIRE(dd.view(ictl));
+
         yarp::dev::tests::exec_iRGBDSensor_test_1(irgbd);
+        yarp::dev::tests::exec_IFrameGrabberControls_test_1(ictl);
 
         // Close the device
         CHECK(dd.close());
