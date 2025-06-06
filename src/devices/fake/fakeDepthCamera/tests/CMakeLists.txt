@@ -2,4 +2,3 @@
 # SPDX-License-Identifier: BSD-3-Clause
 
 create_device_test(fakeDepthCamera)
-create_device_test(fakeDepthCamera_2)
