@@ -57,49 +57,11 @@ Contact YarpNameSpace::registerContact(const Contact& contact)
     Contact address = nic.registerName(contact.getName(), contact);
     yCDebug(YARPNAMESPACE, "Registered address: %s", address.toURI().c_str());
 
-    if (address.isValid()) {
-        NestedContact nc;
-        nc.fromString(address.getRegName());
-        std::string cat = nc.getCategory();
-        if (!nc.getNestedName().empty()) {
-            //bool service = (cat.find("1") != std::string::npos);
-            bool publish = (cat.find('+') != std::string::npos);
-            bool subscribe = (cat.find('-') != std::string::npos);
-            ContactStyle style;
-            Contact c1(nc.getFullName());
-            Contact c2(std::string("topic:/") + nc.getNestedName());
-            if (subscribe) {
-                style.persistenceType = ContactStyle::END_WITH_TO_PORT;
-                connectPortToTopic(c2, c1, style);
-            }
-            if (publish) {
-                style.persistenceType = ContactStyle::END_WITH_FROM_PORT;
-                connectPortToTopic(c1, c2, style);
-            }
-        }
-    }
     return address;
 }
 
 Contact YarpNameSpace::unregisterName(const std::string& name)
 {
-    NestedContact nc;
-    nc.fromString(name);
-    std::string cat = nc.getCategory();
-    if (!nc.getNestedName().empty()) {
-        //bool service = (cat.find("1") != std::string::npos);
-        bool publish = (cat.find('+') != std::string::npos);
-        bool subscribe = (cat.find('-') != std::string::npos);
-        ContactStyle style;
-        Contact c1(nc.getFullName());
-        Contact c2(std::string("topic:/") + nc.getNestedName());
-        if (subscribe) {
-            disconnectPortFromTopic(c2, c1, style);
-        }
-        if (publish) {
-            disconnectPortFromTopic(c1, c2, style);
-        }
-    }
     NameClient& nic = HELPER(this);
     return nic.unregisterName(name);
 }

@@ -280,50 +280,6 @@ Contact MultiNameSpace::queryName(const std::string& name)
     return HELPER(this).queryName(name);
 }
 
-bool MultiNameSpace::connectPortToTopic(const Contact& src,
-                                        const Contact& dest,
-                                        const ContactStyle& style)
-{
-    NameSpace* ns = HELPER(this).getOne();
-    if (ns == nullptr) {
-        return false;
-    }
-    return ns->connectPortToTopic(src, dest, style);
-}
-
-bool MultiNameSpace::connectTopicToPort(const Contact& src,
-                                        const Contact& dest,
-                                        const ContactStyle& style)
-{
-    NameSpace* ns = HELPER(this).getOne();
-    if (ns == nullptr) {
-        return false;
-    }
-    return ns->connectTopicToPort(src, dest, style);
-}
-
-bool MultiNameSpace::disconnectPortFromTopic(const Contact& src,
-                                             const Contact& dest,
-                                             const ContactStyle& style)
-{
-    NameSpace* ns = HELPER(this).getOne();
-    if (ns == nullptr) {
-        return false;
-    }
-    return ns->disconnectPortFromTopic(src, dest, style);
-}
-
-bool MultiNameSpace::disconnectTopicFromPort(const Contact& src,
-                                             const Contact& dest,
-                                             const ContactStyle& style)
-{
-    NameSpace* ns = HELPER(this).getOne();
-    if (ns == nullptr) {
-        return false;
-    }
-    return ns->disconnectTopicFromPort(src, dest, style);
-}
-
 bool MultiNameSpace::connectPortToPortPersistently(const Contact& src,
                                                    const Contact& dest,
                                                    const ContactStyle& style)

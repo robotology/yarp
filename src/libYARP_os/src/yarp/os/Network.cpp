@@ -490,42 +490,6 @@ static int metaConnect(const std::string& src,
         destIsTopic = true;
     }
 
-    if (srcIsTopic || destIsTopic) {
-        Bottle cmd;
-        Bottle reply;
-        NameSpace& ns = getNameSpace();
-
-        bool ok = false;
-        if (srcIsTopic) {
-            if (mode == YARP_ENACT_CONNECT) {
-                ok = ns.connectTopicToPort(staticSrc, staticDest, style);
-            } else if (mode == YARP_ENACT_DISCONNECT) {
-                ok = ns.disconnectTopicFromPort(staticSrc, staticDest, style);
-            } else {
-                yCError(NETWORK, "Failure: cannot check subscriptions yet");
-                return 1;
-            }
-        } else {
-            if (mode == YARP_ENACT_CONNECT) {
-                ok = ns.connectPortToTopic(staticSrc, staticDest, style);
-            } else if (mode == YARP_ENACT_DISCONNECT) {
-                ok = ns.disconnectPortFromTopic(staticSrc, staticDest, style);
-            } else {
-                yCError(NETWORK, "Failure: cannot check subscriptions yet");
-                return 1;
-            }
-        }
-        if (!ok) {
-            return 1;
-        }
-        if (!style.quiet) {
-            if (style.verboseOnSuccess) {
-                yCInfo(NETWORK, "Success: connection to topic %s.", mode == YARP_ENACT_CONNECT ? "added" : "removed");
-            }
-        }
-        return 0;
-    }
-
     yCTrace(NETWORK,
             "dynamicSrc.getCarrier() = %s",
             dynamicSrc.getCarrier().c_str());

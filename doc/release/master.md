@@ -46,5 +46,7 @@ Breaking Changes
 
 ### libYARP_os
 
+* Removed the following methods from `yarp::os::NameSpace` : `connectPortToTopic`, `connectTopicToPort`,
+  `disconnectPortFromTopic`, `disconnectTopicFromPort`
 * Removed classes `yarp::os::Node`,`yarp::os::Nodes`,`yarp::os::Publisher`,`yarp::os::Subscriber`
 * Removed ROS1-related management logic in YARP nameserver
