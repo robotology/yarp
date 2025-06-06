@@ -22,6 +22,15 @@ compatibility with the corresponding nws device.
 
 Added VectorOf<float> (32 bit)
 
+
+Deprecations and removals
+---------------------------
+
+### Devices
+
+* Removed deprecated devices `analogWrapper`, `analogSensorClient`
+
+
 Breaking Changes
 ----------------
 
