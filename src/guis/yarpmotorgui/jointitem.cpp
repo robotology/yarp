@@ -36,6 +36,10 @@ void JointItem::home()
     {
         currentTimer.stop();
     }
+    else if(this->internalState == Torque)
+    {
+        torqueTimer.stop();
+    }
     emit homeClicked(this);
 }
 
@@ -69,6 +73,10 @@ void JointItem::idle()
     else if(this->internalState == Current)
     {
         currentTimer.stop();
+    }
+    else if(this->internalState == Torque)
+    {
+        torqueTimer.stop();
     }
     emit idleClicked(this);
 }
@@ -250,6 +258,8 @@ JointItem::JointItem(int index,QWidget *parent) :
     pwmModeEnabled =  false;
     lastCurrent = 0;
     currentModeEnabled = false;
+    lastTorque = 0;
+    torqueModeEnabled = false;
     motionDone = true;
 
     max_position = 0;
@@ -434,6 +444,10 @@ JointItem::JointItem(int index,QWidget *parent) :
     currentTimer.setSingleShot(false);
     connect(&currentTimer,SIGNAL(timeout()),this,SLOT(onCurrentTimer()));
     
+    ui->stackedWidget->widget(TORQUE)->setEnabled(false);
+    torqueTimer.setInterval(50);
+    torqueTimer.setSingleShot(false);
+    connect(&torqueTimer,SIGNAL(timeout()),this,SLOT(onTorqueTimer()));
 }
 
 bool JointItem::eventFilter(QObject *obj, QEvent *event)
@@ -590,6 +604,16 @@ void JointItem::enableControlCurrent(bool control)
     if(ui->stackedWidget->currentIndex() == CURRENT && currentModeEnabled)
     {
         currentTimer.start();
+    }
+}
+
+void JointItem::enableControlTorque(bool control)
+{
+    torqueModeEnabled = control;
+    ui->stackedWidget->widget(TORQUE)->setEnabled(torqueModeEnabled);
+    if(ui->stackedWidget->currentIndex() == TORQUE && torqueModeEnabled)
+    {
+        torqueTimer.start();
     }
 }
 
@@ -1407,6 +1431,13 @@ void JointItem::onStackedWidgetChanged(int index)
             currentTimer.start();
         }
     }
+    else if(index == TORQUE)
+    {
+        if(torqueModeEnabled)
+        {
+            torqueTimer.start();
+        }
+    }
     else
     {
         if(velocityModeEnabled)
@@ -1427,6 +1458,12 @@ void JointItem::onStackedWidgetChanged(int index)
             lastCurrent = 0;
             updateSliderCurrent(0);
         }
+        else if(torqueModeEnabled)
+        {
+            torqueTimer.stop();
+            lastTorque = 0;
+            updateSliderTorque(0);
+        }
     }
 }
 
@@ -1442,6 +1479,10 @@ void JointItem::onModeChanged(int index)
     else if(this->internalState == Current)
     {
         currentTimer.stop();
+    }
+    else if(this->internalState == TORQUE)
+    {
+        torqueTimer.stop();
     }
     Q_UNUSED(index);
     int mode = ui->comboMode->currentData(Qt::UserRole).toInt();
@@ -1519,6 +1560,14 @@ void JointItem::onCurrentTimer()
     if(currentModeEnabled)
     {
         emit sliderCurrentCommand(lastCurrent,jointIndex);
+    }
+}
+
+void JointItem::onTorqueTimer()
+{
+    if(torqueModeEnabled)
+    {
+        emit sliderTorqueCommand(lastTorque, jointIndex);
     }
 }
 
@@ -1623,8 +1672,7 @@ void JointItem::onSliderTorquePressed()
 
 void JointItem::onSliderTorqueReleased()
 {
-    ref_torque = (double)ui->sliderTorqueTorque->value() / ui->sliderTorqueTorque->getSliderStep();
-    emit sliderTorqueCommand(ref_torque, jointIndex);
+    lastTorque = (double)ui->sliderTorqueTorque->value() / ui->sliderTorqueTorque->getSliderStep();
     sliderTorquePressed = false;
 }
 
@@ -2398,6 +2446,10 @@ void JointItem::onCalibClicked()
     else if(this->internalState == Current)
     {
         currentTimer.stop();
+    }
+    else if(this->internalState == Torque)
+    {
+        torqueTimer.stop();
     }
     emit calibClicked(this);
 }

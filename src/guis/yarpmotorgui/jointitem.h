@@ -78,6 +78,7 @@ class JointItem : public QWidget
     void enableControlPositionDirect(bool control);
     void enableControlPWM(bool control);
     void enableControlCurrent(bool control);
+    void enableControlTorque(bool control);
     void sequenceActivated();
     void sequenceStopped();
 
@@ -157,6 +158,9 @@ private:
     QTimer currentTimer;
     double lastCurrent;
     bool currentModeEnabled;
+    QTimer torqueTimer;
+    double lastTorque;
+    bool torqueModeEnabled;
 
     int     IDLE;
     int     POSITION;
@@ -232,6 +236,7 @@ private slots:
     void onVelocityTimer();
     void onPwmTimer();
     void onCurrentTimer();
+    void onTorqueTimer();
     void onStackedWidgetChanged(int);
 
 signals:
