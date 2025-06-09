@@ -257,9 +257,9 @@ bool FrameGrabber_nwc_yarp::open(yarp::os::Searchable& config)
     }
 
     // Check the protocol version
-    //if (!rpcPort.checkProtocolVersion()) {
-    //    return false;
-    //}
+    if (!m_frameGrabber_RPC.checkProtocolVersion()) {
+        return false;
+    }
 
     return true;
 }
