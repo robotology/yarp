@@ -10,6 +10,7 @@
 #include <yarp/dev/api.h>
 #include <yarp/sig/Image.h>
 #include <yarp/sig/Vector.h>
+#include <yarp/dev/ReturnValue.h>
 
 typedef enum {
     YARP_CROP_RECT = 0,             // Rectangular region of interest style, requires the two corner as a parameter
@@ -62,7 +63,7 @@ public:
      * @param image the image to be filled
      * @return true/false upon success/failure
      */
-    virtual bool getImage(ImageType& image) = 0;
+    virtual yarp::dev::ReturnValue getImage(ImageType& image) = 0;
 
     /**
      * @brief Get a crop of the image from the frame grabber.
@@ -78,7 +79,7 @@ public:
      * @param image the image to be filled
      * @return true/false upon success/failure
      */
-    virtual bool getImageCrop(cropType_id_t cropType,
+    virtual yarp::dev::ReturnValue getImageCrop(cropType_id_t cropType,
                               yarp::sig::VectorOf<std::pair<int, int>> vertices,
                               ImageType& image);
 };
