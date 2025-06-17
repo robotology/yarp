@@ -428,7 +428,6 @@ JointItem::JointItem(int index,QWidget *parent) :
 
     setJointInternalState(IDLE);
 
-    // control modes timers initialization
     ui->stackedWidget->widget(VELOCITY)->setEnabled(false);
     velocityTimer.setInterval(50);
     velocityTimer.setSingleShot(false);
@@ -443,7 +442,7 @@ JointItem::JointItem(int index,QWidget *parent) :
     currentTimer.setInterval(50);
     currentTimer.setSingleShot(false);
     connect(&currentTimer,SIGNAL(timeout()),this,SLOT(onCurrentTimer()));
-    
+
     ui->stackedWidget->widget(TORQUE)->setEnabled(false);
     torqueTimer.setInterval(50);
     torqueTimer.setSingleShot(false);
