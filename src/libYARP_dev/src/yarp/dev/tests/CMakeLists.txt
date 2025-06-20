@@ -26,6 +26,7 @@ set(YARP_dev_test_HDRS
     IRemoteCalibratorTest.h
     IJointFaultTest.h
     IControlLimitsTest.h
+    ISerialTest.h
 )
 
 set(YARP_dev_test_SRCS
@@ -50,6 +51,7 @@ set(YARP_dev_test_SRCS
     IRemoteCalibratorTest.cpp
     IJointFaultTest.cpp
     IControlLimitsTest.cpp
+    ISerialTest.cpp
 )
 
 if(TARGET YARP::YARP_math)

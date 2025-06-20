@@ -7,6 +7,7 @@
 #include <yarp/os/Network.h>
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/WrapperSingle.h>
+#include <yarp/dev/tests/ISerialTest.h>
 
 #include <catch2/catch_amalgamated.hpp>
 #include <harness.h>
@@ -56,10 +57,7 @@ TEST_CASE("dev::serialPort_nwc_yarp", "[yarp::dev]")
 
         //tests
         {
-            CHECK (iser->setDTR(true));
-            yarp::os::Time::delay(0.1);
-            std::string s("fake_command");
-            CHECK (iser->send(s.c_str(),s.size()));
+            yarp::dev::tests::exec_iSerial_test_1(iser);
         }
 
         //"Close all polydrivers and check"

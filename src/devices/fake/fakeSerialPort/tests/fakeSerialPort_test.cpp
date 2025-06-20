@@ -7,7 +7,7 @@
 #include <yarp/os/Network.h>
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/WrapperSingle.h>
-//#include <yarp/dev/tests/ILocalization2DTest.h>
+#include <yarp/dev/tests/ISerialTest.h>
 
 #include <catch2/catch_amalgamated.hpp>
 #include <harness.h>
@@ -23,10 +23,10 @@ TEST_CASE("dev::fakeSerialPort", "[yarp::dev]")
 
     SECTION("Checking fakeSerialPort device")
     {
-        yarp::dev::ISerialDevice* iser=nullptr;
+        yarp::dev::ISerialDevice* iser = nullptr;
         PolyDriver ddfake;
 
-        //open the device
+        // open the device
         {
 
             Property pdev_cfg;
@@ -38,8 +38,10 @@ TEST_CASE("dev::fakeSerialPort", "[yarp::dev]")
             REQUIRE(iser);
         }
 
-        iser->flush();
-        //yarp::dev::tests::exec_iLocalization2D_test_1(iser);
+        // tests
+        {
+            yarp::dev::tests::exec_iSerial_test_1(iser);
+        }
 
         //"Close all polydrivers and check"
         {

@@ -40,6 +40,10 @@ Breaking Changes
   now obtained through the streaming port instead of an RPC. 
   This new feature is implemented through a breaking change in the definition of data fields in `stateExt.thrift`
 
+* `ISerialDevice` interface was refactored to use `yarp::dev::ReturnValue`. Some methods changed their signature
+  to improve interface usability.
+  Affected devices: `serialPort_nwc_yarp`, `serialPort_nws_yarp`, `fakeSerialPort`, `serialDeviceDriver`
+
 ### libYARP_sig
 
 * Removed field `topIsLow` from `yarp::sig::Image`

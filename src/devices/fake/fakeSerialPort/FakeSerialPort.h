@@ -43,14 +43,16 @@ public:
     bool open(yarp::os::Searchable& config) override;
     bool close() override;
 
-    bool send(const Bottle& msg) override;
-    bool send(const char *msg, size_t size) override;
-    bool receive(Bottle& msg) override;
-    int  receiveChar(char& chr) override;
-    int  receiveBytes(unsigned char* bytes, const int size) override;
-    int  receiveLine(char* line, const int MaxLineLength) override;
-    bool setDTR(bool value) override;
-    int  flush() override;
+    yarp::dev::ReturnValue sendString(const std::string& msg) override;
+    yarp::dev::ReturnValue sendBytes(const std::vector<unsigned char>& line) override;
+    yarp::dev::ReturnValue sendByte(unsigned char byte) override;
+    yarp::dev::ReturnValue receiveString(std::string& msg) override;
+    yarp::dev::ReturnValue receiveBytes(std::vector<unsigned char>& line, const int MaxSize) override;
+    yarp::dev::ReturnValue receiveByte(unsigned char& chr) override;
+    yarp::dev::ReturnValue receiveLine(std::vector<char>& line, const int MaxLineLength) override;
+    yarp::dev::ReturnValue setDTR(bool enable) override;
+    yarp::dev::ReturnValue flush() override;
+    yarp::dev::ReturnValue flush(size_t& flushed_chars) override;
 };
 
 #endif
