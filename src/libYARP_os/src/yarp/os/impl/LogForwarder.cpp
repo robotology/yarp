@@ -46,7 +46,7 @@ yarp::os::impl::LogForwarder::LogForwarder()
     if (!outputPort.open(logPortName)) {
         printf("LogForwarder error while opening port %s\n", logPortName.c_str());
     }
-    outputPort.enableBackgroundWrite(true);
+    outputPort.enableBackgroundWrite(false);
     outputPort.addOutput("/yarplogger", "fast_tcp");
 
     started = true;
