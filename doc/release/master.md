@@ -22,6 +22,9 @@ compatibility with the corresponding nws device.
 
 Added VectorOf<float> (32 bit)
 
+### guis
+
+* `yarpmotorgui` now uses `throttleDown` portmonitor to reduce bandwidth usage
 
 Deprecations and removals
 ---------------------------
