@@ -617,6 +617,13 @@ bool MainWindow::init(std::vector<std::string> enabledParts,
     m_finder = finder;
     m_user_script1 = m_finder.find("script1").asString();
     m_user_script2 = m_finder.find("script2").asString();
+    //The following line is used to keep the bandwidth consumption low,
+    //throttling down to 10Hz the data from controlBoard_nws to RemoteControlBoard (controlBoard_nwc)
+    std::string rcb_protocol = "fast_tcp+send.portmonitor+type.dll+file.throttleDown+period_ms.100";
+    if (m_finder.check("rcb_protocol"))
+    {
+        rcb_protocol = m_finder.find("rcb_protocol").asString();
+    }
 
     struct robot_type
     {
@@ -687,7 +694,7 @@ bool MainWindow::init(std::vector<std::string> enabledParts,
         std::string robot_name_without_slash = i_parts.second.robot_name_without_slash;
         std::string part_name_without_slash = i_parts.second.part_name_without_slash;
         int         part_id = i_parts.second.partindex;
-        part = new PartItem(robot_name_without_slash.c_str(), part_id, part_name_without_slash.c_str(), finder, debug_param_enabled, speedview_param_enabled, enable_calib_all, scroll);
+        part = new PartItem(robot_name_without_slash.c_str(), part_id, part_name_without_slash.c_str(), finder, debug_param_enabled, speedview_param_enabled, enable_calib_all, rcb_protocol, scroll);
 
         if(part && !part->getInterfaceError())
         {
