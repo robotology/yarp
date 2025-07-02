@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Thu May 22 11:32:44 2025
+// Generated on: Tue Jul  1 14:13:55 2025
 
 
 #include "RemoteControlBoard_ParamsParser.h"
@@ -41,7 +41,6 @@ std::vector<std::string> RemoteControlBoard_ParamsParser::getListOfParams() cons
     params.push_back("remote_qos::thread_priority");
     params.push_back("remote_qos::thread_policy");
     params.push_back("remote_qos::packet_priority");
-    params.push_back("ignoreProtocolCheck");
     params.push_back("diagnostic");
     return params;
 }
@@ -114,12 +113,6 @@ bool RemoteControlBoard_ParamsParser::getParamValue(const std::string& paramName
     if (paramName =="remote_qos::packet_priority")
     {
         paramValue = m_remote_qos_packet_priority;
-        return true;
-    }
-    if (paramName =="ignoreProtocolCheck")
-    {
-        if (m_ignoreProtocolCheck==true) paramValue = "true";
-        else paramValue = "false";
         return true;
     }
     if (paramName =="diagnostic")
@@ -357,20 +350,6 @@ bool      RemoteControlBoard_ParamsParser::parseParams(const yarp::os::Searchabl
         prop_check.unput("remote_qos::packet_priority");
     }
 
-    //Parser of parameter ignoreProtocolCheck
-    {
-        if (config.check("ignoreProtocolCheck"))
-        {
-            m_ignoreProtocolCheck = config.find("ignoreProtocolCheck").asBool();
-            yCInfo(RemoteControlBoardParamsCOMPONENT) << "Parameter 'ignoreProtocolCheck' using value:" << m_ignoreProtocolCheck;
-        }
-        else
-        {
-            yCInfo(RemoteControlBoardParamsCOMPONENT) << "Parameter 'ignoreProtocolCheck' using DEFAULT value:" << m_ignoreProtocolCheck;
-        }
-        prop_check.unput("ignoreProtocolCheck");
-    }
-
     //Parser of parameter diagnostic
     {
         if (config.check("diagnostic"))
@@ -424,7 +403,7 @@ std::string      RemoteControlBoard_ParamsParser::getDocumentationOfDeviceParams
     doc = doc + std::string("'remote': Prefix of the port to which to connect.\n");
     doc = doc + std::string("'local': Port prefix of the port opened by this device.\n");
     doc = doc + std::string("'writeStrict': It can be 'on' or 'off'\n");
-    doc = doc + std::string("'carrier': carrier used for streaming robot state\n");
+    doc = doc + std::string("'carrier': carrier used for receiving streamed robot state\n");
     doc = doc + std::string("'timeout': timeout for the input port which receives the streamed robot state\n");
     doc = doc + std::string("'local_qos::enable': Enable the usage of local Qos\n");
     doc = doc + std::string("'local_qos::thread_priority': Local Qos. See https://yarp.it/latest/channelprioritization.html\n");
@@ -434,11 +413,10 @@ std::string      RemoteControlBoard_ParamsParser::getDocumentationOfDeviceParams
     doc = doc + std::string("'remote_qos::thread_priority': Remote Qos. See https://yarp.it/latest/channelprioritization.html\n");
     doc = doc + std::string("'remote_qos::thread_policy': Remote Qos. See https://yarp.it/latest/channelprioritization.html.\n");
     doc = doc + std::string("'remote_qos::packet_priority': Remote Qos. See https://yarp.it/latest/channelprioritization.html.\n");
-    doc = doc + std::string("'ignoreProtocolCheck': For development purpose only\n");
     doc = doc + std::string("'diagnostic': For development purpose only\n");
     doc = doc + std::string("\n");
     doc = doc + std::string("Here are some examples of invocation command with yarpdev, with all params:\n");
-    doc = doc + " yarpdev --device remote_controlboard --remote <mandatory_value> --local <mandatory_value> --writeStrict <optional_value> --carrier udp --timeout 0.5 --local_qos::enable false --local_qos::thread_priority 0 --local_qos::thread_policy 0 --local_qos::packet_priority <optional_value> --remote_qos::enable false --remote_qos::thread_priority 0 --remote_qos::thread_policy 0 --remote_qos::packet_priority <optional_value> --ignoreProtocolCheck false --diagnostic false\n";
+    doc = doc + " yarpdev --device remote_controlboard --remote <mandatory_value> --local <mandatory_value> --writeStrict <optional_value> --carrier fast_tcp --timeout 0.5 --local_qos::enable false --local_qos::thread_priority 0 --local_qos::thread_policy 0 --local_qos::packet_priority <optional_value> --remote_qos::enable false --remote_qos::thread_priority 0 --remote_qos::thread_policy 0 --remote_qos::packet_priority <optional_value> --diagnostic false\n";
     doc = doc + std::string("Using only mandatory params:\n");
     doc = doc + " yarpdev --device remote_controlboard --remote <mandatory_value> --local <mandatory_value>\n";
     doc = doc + std::string("=============================================\n\n");    return doc;

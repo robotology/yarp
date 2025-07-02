@@ -61,6 +61,15 @@ bool ControlBoard_nws_yarp::open(Searchable& config)
 {
     if (!parseParams(config)) { return false; }
 
+    // open rpc port
+    std::string server_rpc_portname = m_name + "/nws/rpc";
+    if (!m_rpcPort.open(server_rpc_portname))
+    {
+        yCError(CONTROLBOARD, "Failed to open port %s", server_rpc_portname.c_str());
+        return false;
+    }
+    m_rpcPort.setReader(*this);
+
     std::string rootName = m_name;
 
     // Open ports, then attach the readers or callbacks
@@ -332,6 +341,8 @@ bool ControlBoard_nws_yarp::attach(yarp::dev::PolyDriver* poly)
         return false;
     }
 
+    m_RPC = std::make_unique<ControlBoardRPCd>(/*interfaceToBeAdded*/);
+
     return true;
 }
 
@@ -458,6 +469,7 @@ void ControlBoard_nws_yarp::run()
     time.update(std::accumulate(times.begin(), times.end(), 0.0) / subdevice_joints);
     yarp::os::Stamp averageTime = time;
 
+    extendedOutputStatePort.enableBackgroundWrite();
     extendedOutputStatePort.setEnvelope(averageTime);
     extendedOutputState_buffer.write();
 
@@ -468,4 +480,22 @@ void ControlBoard_nws_yarp::run()
 
     outputPositionStatePort.setEnvelope(averageTime);
     outputPositionStatePort.write();
+}
+
+bool ControlBoard_nws_yarp::read(yarp::os::ConnectionReader& connection)
+{
+    if (!connection.isValid()) {
+        return false;
+    }
+    if (!m_RPC) {
+        return false;
+    }
+
+    std::lock_guard<std::mutex> lock(m_mutex);
+    bool b = m_RPC->read(connection);
+    if (b) {
+        return true;
+    }
+    yCDebug(CONTROLBOARD) << "read() Command failed";
+    return false;
 }

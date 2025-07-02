@@ -26,6 +26,8 @@ class YARP_os_API ApplicationNetworkProtocolVersion : public yarp::os::Portable
 
     public:
     std::string toString();
+    bool operator== (const ApplicationNetworkProtocolVersion& other) const;
+    bool operator!= (const ApplicationNetworkProtocolVersion& other) const;
 
     public:
     bool read(yarp::os::ConnectionReader& connection) override;
