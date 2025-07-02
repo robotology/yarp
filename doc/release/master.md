@@ -22,6 +22,9 @@ compatibility with the corresponding nws device.
 
 Added VectorOf<float> (32 bit)
 
+### PortMonitors
+
+Added new PortMonitor `throttleDown` to limit the bandwidth usage over a port connection.
 
 Deprecations and removals
 ---------------------------
