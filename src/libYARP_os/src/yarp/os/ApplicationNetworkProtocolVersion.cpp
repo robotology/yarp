@@ -42,3 +42,16 @@ bool ApplicationNetworkProtocolVersion::write(yarp::os::ConnectionWriter& connec
     connection.appendInt16(this->yarp_patch);
     return true;
 }
+
+bool ApplicationNetworkProtocolVersion::operator==(const ApplicationNetworkProtocolVersion& other) const
+{
+    return protocol_version == other.protocol_version &&
+           yarp_major == other.yarp_major &&
+           yarp_minor == other.yarp_minor &&
+           yarp_patch == other.yarp_patch;
+}
+
+bool ApplicationNetworkProtocolVersion::operator!=(const ApplicationNetworkProtocolVersion& other) const
+{
+    return !(*this == other);
+}

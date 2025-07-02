@@ -1,6 +1,7 @@
-# SPDX-FileCopyrightText: 2023-2023 Istituto Italiano di Tecnologia (IIT)
+# SPDX-FileCopyrightText: 2025-2025 Istituto Italiano di Tecnologia (IIT)
 # SPDX-License-Identifier: BSD-3-Clause
 
+add_subdirectory(ControlBoardMsgs)
 add_subdirectory(framegrabber_protocol)
 add_subdirectory(frameTransformStorageMsgs)
 add_subdirectory(IChatBotMsgs)

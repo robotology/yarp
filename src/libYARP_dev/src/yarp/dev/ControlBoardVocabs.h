@@ -33,7 +33,4 @@ constexpr yarp::conf::vocab32_t VOCAB_VELOCITY_MODE  = yarp::os::createVocab32('
 constexpr yarp::conf::vocab32_t VOCAB_VELOCITY_MOVE  = yarp::os::createVocab32('v','m','o');
 constexpr yarp::conf::vocab32_t VOCAB_VELOCITY_MOVES = yarp::os::createVocab32('v','m','o','s');
 
-// protocol version
-constexpr yarp::conf::vocab32_t VOCAB_PROTOCOL_VERSION = yarp::os::createVocab32('p', 'r', 'o', 't');
-
 #endif // YARP_DEV_CONTROLBOARDVOCABS_H

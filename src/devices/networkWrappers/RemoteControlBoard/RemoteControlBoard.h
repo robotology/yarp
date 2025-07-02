@@ -35,13 +35,7 @@
 
 #include "stateExtendedReader.h"
 #include "RemoteControlBoard_ParamsParser.h"
-
-struct ProtocolVersion
-{
-    int major{0};
-    int minor{0};
-    int tweak{0};
-};
+#include "ControlBoardMsgs.h"
 
 class DiagnosticThread;
 
@@ -86,6 +80,7 @@ protected:
     yarp::os::Port rpc_p;
     yarp::os::Port command_p;
     DiagnosticThread *diagnosticThread{nullptr};
+    yarp::os::Port m_rpcPort;
 
     yarp::os::PortReaderBuffer<yarp::sig::Vector> state_buffer;
     yarp::os::PortWriterBuffer<CommandMessage> command_buffer;
@@ -105,13 +100,11 @@ protected:
     size_t nj{0};
     bool njIsKnown{false};
 
-    ProtocolVersion protocolVersion;
+    ControlBoardMsgs m_RPC;
 
     // Check for number of joints, if needed.
     // This is to allow for delayed connection to the remote control board.
     bool isLive();
-
-    bool checkProtocolVersion(bool ignore);
 
     bool send1V(int v);
     bool send2V(int v1, int v2);

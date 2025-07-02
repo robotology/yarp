@@ -32,7 +32,12 @@ if(NOT SKIP_controlBoard_nws_yarp)
       StreamingMessagesParser.h
       ControlBoardLogComponent.cpp
       ControlBoardLogComponent.h
+      ControlBoardServerImpl.cpp
+      ControlBoardServerImpl.h
   )
+
+  target_sources(yarp_controlBoard_nws_yarp PRIVATE $<TARGET_OBJECTS:ControlBoardMsgs>)
+  target_include_directories(yarp_controlBoard_nws_yarp PRIVATE $<TARGET_PROPERTY:ControlBoardMsgs,INTERFACE_INCLUDE_DIRECTORIES>)
 
   target_link_libraries(yarp_controlBoard_nws_yarp
     PRIVATE
