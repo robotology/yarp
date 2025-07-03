@@ -26,6 +26,9 @@ if(NOT SKIP_remote_controlboard)
       stateExtendedReader.h
   )
 
+  target_sources(yarp_remote_controlboard PRIVATE $<TARGET_OBJECTS:ControlBoardMsgs>)
+  target_include_directories(yarp_remote_controlboard PRIVATE $<TARGET_PROPERTY:ControlBoardMsgs,INTERFACE_INCLUDE_DIRECTORIES>)
+
   target_link_libraries(yarp_remote_controlboard
     PRIVATE
       YARP::YARP_os

@@ -114,70 +114,6 @@ bool RemoteControlBoard::isLive()
     return njIsKnown;
 }
 
-
-bool RemoteControlBoard::checkProtocolVersion(bool ignore)
-{
-    bool error=false;
-    // verify protocol
-    Bottle cmd, reply;
-    cmd.addVocab32(VOCAB_GET);
-    cmd.addVocab32(VOCAB_PROTOCOL_VERSION);
-    rpc_p.write(cmd, reply);
-
-    // check size and format of messages, expected [prot] int int int [ok]
-    if (reply.size() != 5) {
-        error = true;
-    }
-
-    if (reply.get(0).asVocab32() != VOCAB_PROTOCOL_VERSION) {
-        error = true;
-    }
-
-    if (!error)
-    {
-        protocolVersion.major=reply.get(1).asInt32();
-        protocolVersion.minor=reply.get(2).asInt32();
-        protocolVersion.tweak=reply.get(3).asInt32();
-
-        //verify protocol
-        if (protocolVersion.major != PROTOCOL_VERSION_MAJOR) {
-            error = true;
-        }
-
-        if (protocolVersion.minor != PROTOCOL_VERSION_MINOR) {
-            error = true;
-        }
-    }
-
-    if (!error) {
-        return true;
-    }
-
-    // protocol did not match
-    yCError(REMOTECONTROLBOARD,
-            "Expecting protocol %d %d %d, but the device we are connecting to has protocol version %d %d %d",
-            PROTOCOL_VERSION_MAJOR,
-            PROTOCOL_VERSION_MINOR,
-            PROTOCOL_VERSION_TWEAK,
-            protocolVersion.major,
-            protocolVersion.minor,
-            protocolVersion.tweak);
-
-    bool ret;
-    if (ignore)
-    {
-        yCWarning(REMOTECONTROLBOARD, "Ignoring error but please update YARP or the remotecontrolboard implementation");
-        ret = true;
-    }
-    else
-    {
-        yCError(REMOTECONTROLBOARD, "Please update YARP or the remotecontrolboard implementation");
-        ret = false;
-    }
-
-    return ret;
-}
-
 bool RemoteControlBoard::open(Searchable& config)
 {
     if (!parseParams(config)) { return false; }
@@ -307,23 +243,38 @@ bool RemoteControlBoard::open(Searchable& config)
     state_buffer.setStrict(false);
     command_buffer.attach(command_p);
 
-    if (!checkProtocolVersion(m_ignoreProtocolCheck))
-    {
-        yCError(REMOTECONTROLBOARD) << "checkProtocolVersion failed";
-        command_buffer.detach();
-        rpc_p.close();
-        command_p.close();
-        extendedIntputStatePort.close();
+    // open rpc port
+    std::string local_rpc_portname = m_local + "/nwc/rpc";
+    if (!m_rpcPort.open(local_rpc_portname)) {
+        yCError(REMOTECONTROLBOARD, "open() error could not open rpc port %s, check network\n", local_rpc_portname.c_str());
         return false;
     }
 
-    if (!isLive()) {
+    //Attach the ControlBoardMsgs to the port
+    if (!m_RPC.yarp().attachAsClient(m_rpcPort))
+    {
+        yCError(REMOTECONTROLBOARD, "Error! Cannot attach the port as a client");
+        return false;
+    }
+
+    // connection for the rpc port
+    std::string nws_rpc_portname = m_remote + "/nws/rpc";
+    if (!Network::connect(local_rpc_portname, nws_rpc_portname))
+    {
+        yCError(REMOTECONTROLBOARD, "open() error could not connect to %s\n", nws_rpc_portname.c_str());
+        return false;
+    }
+
+    // Check the protocol version
+    if (!m_RPC.checkProtocolVersion())
+    {
+        return false;
+    }
+
+    if (!isLive())
+    {
         if (m_remote!="") {
             yCError(REMOTECONTROLBOARD, "Problems with obtaining the number of controlled axes");
-            command_buffer.detach();
-            rpc_p.close();
-            command_p.close();
-            extendedIntputStatePort.close();
             return false;
         }
     }
@@ -372,9 +323,11 @@ bool RemoteControlBoard::close()
         delete diagnosticThread;
     }
 
-    rpc_p.interrupt();
-    command_p.interrupt();
-    extendedIntputStatePort.interrupt();
+    command_buffer.detach(); //TBC
+
+    rpc_p.interrupt(); // TBC
+    command_p.interrupt(); // TBC
+    extendedIntputStatePort.interrupt(); // TBC
 
     rpc_p.close();
     command_p.close();
