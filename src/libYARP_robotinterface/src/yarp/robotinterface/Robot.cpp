@@ -238,12 +238,14 @@ bool yarp::robotinterface::Robot::Private::openDevices()
                     }
                     else
                     {
-                        yCError(YRI_ROBOT) << "Device" << device.name() << "does not derive from IDeviceDriverParams.";
+                        yCWarning(YRI_ROBOT) << "Device" << device.name() << "does not derive from IDeviceDriverParams.";
                     }
                 }
                 if (!pddrv || scfg.empty())
                 {
-                    yCError(YRI_ROBOT) << "Unable to get device" << device.name() << "configuration";
+                    yCWarning(YRI_ROBOT) << "Unable to get device" << device.name() << "configuration. yarprobotinterface will continue, but some features for inspecting the device parameters will be disabled.";
+                    yCDebug(YRI_ROBOT) << "It is recommended that devices used by yarprobinterface implement the `yarp::dev::IDeviceDriverParams` interface.";
+                    yCDebug(YRI_ROBOT) << "See yarprobotinterface documentation page.";
                 }
                 yarp::dev::DeviceDescription devdesc;
                 devdesc.device_name = device.name();
