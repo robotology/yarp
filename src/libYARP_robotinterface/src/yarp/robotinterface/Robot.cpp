@@ -236,10 +236,6 @@ bool yarp::robotinterface::Robot::Private::openDevices()
                         stp = dparams->getListOfParams();
                         scfg = dparams->getConfiguration();
                     }
-                    else
-                    {
-                        yCError(YRI_ROBOT) << "Device" << device.name() << "does not derive from IDeviceDriverParams.";
-                    }
                 }
                 if (!pddrv || scfg.empty())
                 {
