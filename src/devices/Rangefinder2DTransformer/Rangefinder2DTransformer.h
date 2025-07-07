@@ -27,7 +27,7 @@
 const int LASER_TIMEOUT=100; //ms
 
 /**
-* @ingroup dev_impl_wrapper dev_impl_network_lidar
+* @ingroup dev_impl_other dev_impl_lidar
 *
 * \brief `Rangefinder2DTransformer`: A device which acts a virtual laser, it attaches to another lidar,
 * which provides a stream a measurements, and relocates them in the space. The new origin can be specified

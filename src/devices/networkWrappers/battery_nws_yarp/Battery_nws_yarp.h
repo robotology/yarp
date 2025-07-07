@@ -56,7 +56,7 @@ public:
 
 
  /**
- *  @ingroup dev_impl_wrapper
+ *  @ingroup dev_impl_nws_yarp
  *
  * \brief `Battery_nws_yarp`: Device that expose a battery sensor (using the IBattery interface) on the YARP network.
  *

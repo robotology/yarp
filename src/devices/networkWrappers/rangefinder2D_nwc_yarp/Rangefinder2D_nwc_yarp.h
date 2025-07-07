@@ -59,7 +59,7 @@ public:
 };
 
 /**
-* @ingroup dev_impl_network_clients dev_impl_network_lidar
+* @ingroup dev_impl_network_clients dev_impl_lidar
 *
 * \brief `Rangefinder2D_nwc_yarp`: The client side of any ILaserRangefinder2D capable device.
 *

@@ -12,7 +12,7 @@
 #include "DeviceBundler_ParamsParser.h"
 
 /**
-* @ingroup dev_impl_wrapper
+* @ingroup dev_impl_other
 *
 * \brief `DeviceBundler`: A device capable of opening two additional devices, specified by the user, and
 * perform an attach operation.
