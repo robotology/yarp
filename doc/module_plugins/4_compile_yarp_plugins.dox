@@ -1,24 +1,14 @@
 /**
-\defgroup yarp_plugins Ways to compile YARP plugins
-\ingroup dev_tutorials
+\defgroup compile_yarp_plugins Ways to compile YARP plugins
+\ingroup yarp_plugins_module
 
 \tableofcontents
-
-This documents an area of YARP that is in flux: runtime plugins.
-Subject to change during early 2013.
 
 For examples in this section, we assume a Linux environment.
 
 Historically, YARP plugins have been selected at compile-time, and linked
-with the YARP_init library.  At the time of writing, this remains the default.
+with the YARP_init library.
 However, it is now also possible to load YARP plugins at runtime.
-
-\section yarp_plugins_warning Warning to YARP users
-
-If you are a USER of YARP, rather than a PACKAGER of YARP
-then consider sticking with the default operation of plugins
-rather than runtime loading.  Runtime loading adds extra
-ways for things to go wrong, and more paths to keep track of.
 
 \section yarp_plugins_basics The basics
 
@@ -32,6 +22,7 @@ YARP plugins are enabled by default, in order to disable them you can set to
 
  \li YARP_COMPILE_DEVICE_PLUGINS
  \li YARP_COMPILE_CARRIER_PLUGINS
+ \li YARP_COMPILE_PORTMONITOR_PLUGINS
 
 The most important plugins are enabled by default, but you can select or
 deselect each plugin by changing the value of the corresponding option, for
@@ -40,17 +31,17 @@ example:
  \li ENABLE_yarpmod_fakebot = ON
  \li ENABLE_yarpcar_human_carrier = ON
 
-This would give us a device called "fakebot" (that generates visual
+This would give us a device called `fakebot` (that generates visual
 imagery from a simple simulated pan/tilt camera) and a carrier called
-"human" (a test carrier that actually requires a human agent to pass on
+`human` (a test carrier that actually requires a human agent to pass on
 messages from one port to another).
 
 \section yarp_plugins_listing Listing plugins available at runtime
 
-To list all plugins available at runtime, use "yarp plugin".  Once
+To list all plugins available at runtime, use `yarp plugin`.  Once
 YARP is compiled with the settings given in
 \ref yarp_plugins_basics, the list should include a carrier
-called "human" and a device called "fakebot":
+called `human` and a device called `fakebot`:
 
 \verbatim
 $ ./bin/yarp plugin
@@ -67,11 +58,11 @@ device fakebot
 
 In fact, those plugins are also "compiled in" to YARP, as normal.
 
-If we now recompile yarp with ENABLE_yarpmod_fakebot and
-ENABLE_yarpcar_human_carrier turned OFF, these plugins
+If we now recompile yarp with `ENABLE_yarpmod_fakebot` and
+`ENABLE_yarpcar_human_carrier` turned OFF, these plugins
 are no longer compiled into YARP.  But unless we have actually
-removed the library files we already built (libyarp_fakebot.so and
-libyarp_human.so), YARP will still be able to find them and load
+removed the library files we already built (`libyarp_fakebot.so` and
+`libyarp_human.so`), YARP will still be able to find them and load
 them at runtime.  Running `./bin/yarp plugin` should give the same
 results as before.
 

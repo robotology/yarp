@@ -1,5 +1,5 @@
 /**
-\defgroup add_a_device How to add a device to YARP
+\defgroup add_a_device CMake tutorial: how to add a device to YARP
 \ingroup dev_tutorials
 
 \tableofcontents
@@ -8,7 +8,7 @@ In YARP, a device driver is a class that implements one or more
 \ref dev_iface "interfaces".
 
 If you're interested in learning how to use device drivers, see \ref
-note_devices, \ref dev_examples, and \ref yarpdev.  If you're read all
+note_devices, and \ref yarpdev.  If you're read all
 that before and are interested in learning how to create devices, then
 read on...
 
@@ -21,7 +21,7 @@ device drivers, such as open and close.
 
 Additionally a device driver should implement a selection of other
 interfaces that capture what it shares with other families of
-devices. For example a camera might implement \c yarp:dev::IFrameGrabber (a
+devices. For example a camera might implement \c yarp::dev::IFrameGrabber (a
 "raw" interface to the raw data) and/or \c yarp::dev::IFrameGrabberImage
 (a higher-level source of images). For example,
 the \c yarp::dev::DragonflyDeviceDriver class implements a few of
@@ -31,7 +31,7 @@ interface he/she needs, if that interface is supported by the
 device. This is quite similar to the way COM works (in a simplified way).
 
 In practice to implement a new device you create a new class which
-derives from \c DeviceDriver and from the interfacees you want to support,
+derives from \c DeviceDriver and from the interfaces you want to support,
 and you implement them. The interfaces are documented in the code,
 using the doxygen standard. See \ref note_devices for an example.
 
@@ -121,13 +121,13 @@ So you want to add a device to YARP?
   endif()
 \endcode
 \li To actually try compiling your device, edit
-    \c $YARP_ROOT/src/devices/CMakeLists.txt and add in where all the similar
+    `$YARP_ROOT/src/devices/CMakeLists.txt` and add in where all the similar
     lines are:
 \code{.cmake}
   add_subdirectory(foo)
 \endcode
-\li (Alternatively, you can copy \c $YARP_ROOT/src/devices/CMakeLists.txt to
-    some other directory, remove all the other \c add_subdirectory lines and
+\li (Alternatively, you can copy `$YARP_ROOT/src/devices/CMakeLists.txt` to
+    some other directory, remove all the other `add_subdirectory` lines and
     just leave your own)
 \li Now rebuild the YARP library.
     You should now be able to configure it to link your device.

@@ -1,0 +1,32 @@
+/**
+\defgroup yarp_plugins_module Yarp Plugins
+
+Plugins are optional components that extend YARP functionalities.
+
+There are three main types of plugins in YARP:
+
+\li \ref dev_all
+\li \ref carriers_module
+\li \ref portmonitors_module
+
+Devices are plugins dedicated to the management of hardware or logical components through
+a standardized interface. For example, a YARP device can read data from a sensor and publish data over a
+yarp port. 
+
+Carriers are plugins dedicated to implement a specific network transportation protocol, for example TCP,UDP, etc
+
+Portmonitors are plugins able to modify data over the network transmission, implementing compressions, filtering, synchronization or data reordering.
+
+Plugins can be compiled either `dynamically` or `statically`.
+If a plugin is compiled dynamically, the result of the compilation will be a shared object (.so in linux)
+or dynamically-linked library (.dll in windows) which will be loaded runtime.
+If a plugin is compiled statically, the result of the compilation will be a static library (.a in linux, .lib in windows)
+which needs to be linked by the executable that will use it.
+By default, the preferred choice in YARP is dynamic linking.
+This choice maintains small the size of the executable while individual components can be rebuilt without relinking the main application.
+However, if the OS/architecture does not supports dynamic linking (such as embedded systems) than it is possible
+to build plugins statically by setting the CMake option `BUILD_SHARED_LIBS` to false.
+
+More details are discussed in: \ref compile_yarp_plugins
+
+*/

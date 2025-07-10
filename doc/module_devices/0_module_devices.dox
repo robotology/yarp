@@ -1,52 +1,56 @@
 /**
 \defgroup dev_all Devices
 
-Dealing with devices. What do you need to know to use devices in
-YARP?  First, we try to write our devices so that they implement a
-set of \link dev_iface interfaces\endlink.  Your program ideally would use
-the minimal set of interfaces needed for the particular task you
-have in mind.  Then you'll be later able to switch to any
-\link dev_impl implementation \endlink that meets your interface.  This
-is something you often have to do in robotics.
+In YARP, a Device is a software abstraction of a hardware or logical component,
+which provides a standardized interface to access specific functionalities within
+the middleware. 
+Devices can abstract everything: motor controllers, sensors, cameras, simulated components
+and even algorithms.
 
-Of course, pretty much every device has some special magic numbers
-you need to set up at the beginning.  This process of
-\link dev_class configuration \endlink process is separated out in YARP
-to make it easy to control it via external command line switches
-or configuration files.
+A device ideally should use the minimal set of \link dev_iface interfaces\endlink
+needed to \link dev_impl implement \endlink a particular task.
 
-YARP devices can be started from the \link dev_runtime commandline\endlink,
-via yarprobotinterface or from c++ code.
+\image html device.png ""
 
-Devices that can be created and configured from the command-line.
-Generally you can create them with the yarpdev command by
-specifying a "--device" option followed by their name, for example:
+In Yarp, devices are implemented as \link dev_impl plugins \endlink, meaning that 
+they are not a stand-alone executables: they require an external wrapper to be executed.
+More in particular, they can be started from the <b>commandline</b>,
+via <b>yarprobotinterface</b> or from a <b>programming language</b> (c++, python, etc.).
+
+## Running a Device via command line
+
+Devices that can be created and configured from the
+command-line tool \link yarpdev yarpdev\endlink by 
+specifying a `--device` option followed by their name, for example:
 
 \verbatim
 yarpdev --device fakeFrameGrabber
 \endverbatim
 
-This creates a fakeFrameGrabber device with default options.  You will
-generally need to specify additional options, for example:
+This creates a `fakeFrameGrabber` device with default options.
+Additional configuration options can be added as optional parameters:
 
 \verbatim
-yarpdev --device fakeFrameGrabber --width 640 --height 480 --name /test
+yarpdev --device fakeFrameGrabber --width 640 --height 480
 \endverbatim
 
-How do you know what options are available?
+The special parameter "--help" will show all the available parameters for
+that specific device.
+
 You can check the documentation of that device (list of all devices \ref dev_impl here).
 Or When you try to run
 "yarpdev --device yourdevice"
-and add the "--verbose" flag, it will tell you what options it is
+and add the "--help" flag, it will tell you what options it is
 checking, and any documentation present for those options.
 
-For example, try running:
 \verbatim
-yarpdev --device fakeFrameGrabber --verbose
+yarpdev --device fakeFrameGrabber --help
 \endverbatim
 
+
+
 You can also write the parameters in a .ini file a load it from command line.
-For example, you create a grabber_test.ini file with the following text:
+For example, you create a `grabber_test.ini` file with the following text:
 
 \verbatim
 device frameGrabber_nws_yarp
@@ -62,15 +66,48 @@ and launch the device with:
 yarpdev --file grabber_test.ini
 \endverbatim
 
-Finally, you can open a device from your C++ application by with:
+## Running a Device via Yarprobotinterface
 
-\code
+The commandline executable \link yarprobotinterface yarprobotinterface\endlink provides a more advanced way to open
+one or more devices simultaneously (or in a specific order), and to attach them each other so that they can
+exchange data. Additional information is provided in yarprobotinterface documentation page.
+
+## Running a Device via programming language
+
+A user application can easily open a device in c++ by instantiating a
+`yarp::dev::PolyDriver` object and passing to it the required parameters
+via a `yarp::os::Property`.
+
+\code{.cpp}
 yarp::os::Property p;
 p.fromConfigFile("grabber_test.ini");
 // of course you could construct the Property object on-the-fly
 yarp::dev::PolyDriver dev;
 dev.open(p);
-if (dev.isValid()) { /* use the device via view method */ }
+if (!dev.isValid()) {return;}
+yarp::dev::IGrabberInterface* igrab= nullptr;
+dev.view(igrab);
+//do something with igrab interface...
+dev.close();
+\endcode
+
+Other programming languages (e.g. python) are available through \link yarp_swig yarp bindings\endlink.
+\code{.py}
+driver = yarp.PolyDriver()
+
+options = yarp.Property()
+options.put("robot", "icub")
+options.put("device", "remote_controlboard")
+options.put("remote", "/icub/left_arm")
+
+driver.open(options)
+if not driver.isValid():
+    print('Cannot open the driver!')
+    sys.exit()
+
+ienc = driver.viewIEncoders()
+//do something with ienc interface...
+driver.close()
 \endcode
 
 */
@@ -130,16 +167,6 @@ up to work across the YARP network (see \ref nws_and_nwc_architecture).
 /**
 \ingroup dev_impl
 
-\defgroup dev_impl_nws_ros ROS Network Wrapper Servers (NWS)
-
-These devices take implementations of existing interfaces and wrap them
-up to work across the ROS network (see \ref nws_and_nwc_architecture).
-
-*/
-
-/**
-\ingroup dev_impl
-
 \defgroup dev_impl_nws_ros2 ROS2 Network Wrapper Servers (NWS)
 
 These devices take implementations of existing interfaces and wrap them
@@ -153,16 +180,6 @@ up to work across the ROS2 network (see \ref nws_and_nwc_architecture).
 \defgroup dev_impl_nwc_yarp YARP Network Wrapper Clients (NWC)
 
 These devices connects to their NWS counterpart through YARP network and expose a yarp::dev interface
-(see \ref nws_and_nwc_architecture).
-
-*/
-
-/**
-\ingroup dev_impl
-
-\defgroup dev_impl_nwc_ros ROS Network Wrapper Clients (NWC)
-
-These devices connects to ROS network and expose a yarp::dev interface
 (see \ref nws_and_nwc_architecture).
 
 */
@@ -266,15 +283,6 @@ Miscellaneous device implementations.
 \defgroup dev_impl_deprecated Obsolete or deprecated devices
 
 Devices marked for deprecation in the upcoming Yarp releases
-*/
-
-/**
-\ingroup dev_all
-
-\defgroup dev_examples Device invocation examples
-
-Example configuration files.
-
 */
 
 /**

@@ -1,0 +1,190 @@
+/**
+
+\defgroup nws_and_nwc_examples Examples of common NWS/NWC Architectures 
+\ingroup dev_tutorials
+
+[TOC]
+
+## Architecture Description
+
+NWS and NWC logic is discussed \link nws_and_nwc_architecture here\endlink.
+In this page we show some practical examples with graphical diagrams which depict common use cases.
+
+## Preliminary
+
+
+### Example 1 Just a device driver 
+
+Example 1 shows a basic example where a user application (e.g. an executable) instantiates a YARP
+device driver (using the \ref yarp::os::Polydriver class, see \link note_devices the devices tutorial \endlink ).
+Let's suppose that the device in this example is a RGB Camera.
+The YARP device controls the hardware through a set of APIs (provided by the hardware vendor).
+The user application communicates with the YARP device using the interface exposed by the device,
+for example:
+\code
+class YARP_dev_API yarp::dev::ICameraControl
+{
+   public:
+   yarp::dev::ReturnValue getImage(yarp::sig::Image& image) const;
+   yarp::dev::ReturnValue getResolution (int& w, int& h) const;
+   yarp::dev::ReturnValue setResolution (int w, int h);
+};
+
+class CameraDevice : public yarp::dev::DeviceDriver,
+                     yarp::dev::ICameraControl
+{
+   public:
+   //yarp::dev::DeviceDriver methods
+   bool open(yarp::os::Searchable& config) override;
+   bool close() override;
+
+   //yarp::dev::ICameraControl methods
+   yarp::dev::ReturnValue getImage(yarp::sig::Image& image) const;
+   yarp::dev::ReturnValue getResolution (int& w, int& h) const;
+   yarp::dev::ReturnValue setResolution (int w, int h);
+};
+\endcode
+
+Example 1 is self-contained: the user controls the physical device device through the YARP
+interface and no network communication is involved.
+
+\image html NWSNWC1.png "Example 1"
+
+### Example 2 A primitive approach 
+
+This example shows a primitive network communication, where the YARP device also implements a streaming port
+which periodically publishes the camera output. This approach has the main fallback that it mixes device management logic
+(communication with the OS device driver) and YARP network communication. If the network protocol needs to be modified or extended,
+modification to the device logic could be required. The developer must be thus careful to separate
+the control flow on different threads and protect the shared variable with mutexes, resulting in code complexity.
+Additionally, the system scales poorly if we want to extend the communication protocol to other middlewares: the device should
+link external libraries and implement complex enabling logic for each communication channels.
+
+\image html NWSNWC2.png "Example 2"
+
+## NWS/NWC Architectures
+
+### Example 3 A basic YARP NWS/NWC communication
+
+This example shows the basic approach where the control of the device driver is remotized using a
+NWS/NWC couple. The user application opens a NWC device, which exposes the same identical interface of
+the physical camera. When a command is sent to this interface, the NWC sends it to the NWS using a RPC
+port, and the NWS sends it to the physical device.
+ 
+Note: while a get/set communication can be completely handled using an RPC port, some NWS/NWC pairs uses
+a mix of RPC and streaming ports to minimize latency (Example 3b). For example a NWS can implement a  
+\link yarp::os::PeriodicThread periodic thread\endlink
+which continuously "extracts" data from the physical device and publishes it on an YARP port (see also Example 2).
+The NWC receives this data using a \link nws_and_nwc_architecture callback\endlink and caches it locally,
+so that it will be ready to provide it to the user on the next request (without sending an RPC and waiting for the reply) 
+ 
+\image html NWSNWC3.png "Example 3"
+
+\image html NWSNWC3b.png "Example 3b"
+
+### Example 4 Extending the NWS architecture to other middlewares
+
+One major advantage of the separation between the logic of the device driver and the network communication
+is that that the architecture can be easily extended to other middlewares.
+Example4 shows a typical ROS/ROS2 publisher which is attached to the same YARP interface used in the previous
+examples. In this case a ROS application subscribes to the topic opened by the ROS2 NWS.
+The latter will be implemented as a thread which periodically gets data from the YARP device and publishes it on the network. 
+
+\image html NWSNWC4.png "Example 4"
+
+The dual example is shown in Example 4b. A YARP module can receive data from ROS2 using a ROS2 NWC which
+"emulates" a YARP Device. Also more complex structures can be achieved: for example user can receive 
+data using a ROS2 NWC, elaborate data inside a custom device and republish it in ROS2 using a NWS...
+
+\image html NWSNWC4b.png "Example 4b"
+
+### Example 5 Multiple NWS/NWCs
+
+The previous example can be extended so that multiple NWSs can be attached to the same device to
+provide simultaneously network communication though different middlewares.
+Example 5a demonstrates the simultaneous usage of a YARP NWS and a ROS2 NWS, so that the same camera device
+is exposed to both middlewares.
+
+\image html NWSNWC5a.png "Example 5a"
+
+Multiple NWCs, opened by the different user applications, can be served by the
+same NWS. This is very convenient to centralize the access to the hardware in a single point, and distribute data
+to multiple machine connected to the network. However, it must be remembered that the network bandwidth
+(especially through a wifi) is a limited resource, and that each YARP NWS/NWC pair which implements a streaming port
+will consume a portion of it. 
+
+\image html NWSNWC5b.png "Example 5b"
+
+### Example 6 Repeaters
+
+To address the bandwidth issues discussed in Example 5b, the "repeater" strategy illustrated in Example 6 can be used.
+Suppose there is a device physically connected to a machine, and the goal is to stream data
+from this device to two applications running on an machine connected via a Wi-Fi network.
+If both applications are directly connected to the Network Wrapper Server (NWS),
+two separate data streams are created over the network, effectively doubling the bandwidth consumption.
+To reduce this, we instantiate an additional yarprobotinterface on the client side of
+the Wi-Fi connection. This interface includes another NWS connected to a Network Wrapper Client (NWC).
+This is a valid setup because the NWC provides a YARP interface identical to that of the original physical device.
+With this configuration, the new yarprobotinterface acts as a repeater, forwarding data over the network.
+As a result, only one data stream is established across the Wi-Fi connection, significantly reducing bandwidth usage.
+\image html NWSNWC6.png "Example 6"
+
+### Example 7 Chaining Devices
+
+It is important to notice that it is not mandatory to connect a NWS directly to physical YARP device.
+Instead, it can be attached to any component, as long as they share the same YARP interfaces.
+In some cases, it is convenient to attach a device between the physical device and the NWS to perform
+some computations, data reordering, etc.
+
+Few examples in YARP are the \ref ControlBoardRemapper device, which is used
+to swap the orders of the joint in a motionControl joints or the [cerDoubleLidar](https://github.com/robotology/cer/tree/master/cermod/cerDoubleLidar) device
+which creates a virtual lidar, with measurements obtained by multiple devices.
+These virtual devices expose the same identical interface of the physical ones.
+
+\image html NWSNWC7a.png "Example 7a"
+
+The same logic can be replicated also on the NWC side, implementing a auxiliary device which performs
+remapping or other operations. An example in YARP is the \ref RemoteControlBoardRemapper device.
+
+\image html NWSNWC7b.png "Example 7b"
+
+### Example 8 Just a Joke!
+
+This example is useless! It does not help in any particular case!
+However it recaps two specific features of the NWS/NWC architecture:
+
+-- Since the NWC replicates the same interface of the YARP devices, chains of interconnected NWS/NWC pairs
+can extend infinitely. 
+
+-- YARP NWSs can be connected to YARP NWCs also inside a yarprobotinterface instance, they will use YARP port
+identical to external connections (a `shmem` carrier or `unixSocket` carrier can be used to share memory, minimizing latency).
+See also the \link carriers_module carriers page. \endlink 
+
+\image html NWSNWC8.png "Example 8"
+
+## Extra notes
+
+-- Python language can be integrated inside a C++ YARP device, see \ref FakePythonSpeechTranscription example.
+
+-- YARP NWS and NWC might include a version check in their open() to verify if they implement
+the same communication protocol. If the check fails, the connection might be refused.
+
+-- YARP NWC typically implements an automatic connection to the NWS in its open(). If the NWS is terminated,
+this connection might be interrupted as well (and not automatically restored).
+
+-- The communication between YARP NWS and NWC might use different YARP carriers or even portmonitors.
+Typically, the user can select the preferred option through the NWC parameters.
+
+-- An NWS device can attach only to a single device (it derives from class yarp::dev::WrapperSingle). 
+Indeed, if multiple devices need to be remotized, it means that some logic is involved, hence a remapper
+similar to the one presented in Example 7 is required.
+
+-- It is recommended that NWS and NWC devices use the \ref yarpDeviceParamParserGenerator to internally 
+generate the parameters parsers and to document their available options.
+
+-- A single yarprobotinterface can open tens of devices simultaneously and perform very intricate connections
+between them! See for example [this](https://github.com/robotology/robots-configuration/blob/master/R1SN003/R1.xml) xml file.
+The command line executable \link yarpRobotDescriptionInfo yarpRobotDescriptionInfo \endlink can be a useful tool
+to inspect the devices instantiated by yarprobotinterface and display a graphical diagram of their connections.
+
+*/
