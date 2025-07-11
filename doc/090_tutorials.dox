@@ -41,7 +41,6 @@ Here are a collection of tutorials on various topics in YARP.
 - \ref note_devices
 - \ref yarpdev
 - \ref yarp_motor_control
-- \ref dev_examples
 - \ref add_a_plugin (older method: \ref add_a_device)
 - \ref yarp_config_files
 

@@ -1,41 +1,26 @@
 /**
 \defgroup add_a_plugin Add a plugin to YARP
-\ingroup dev_tutorials
+\ingroup yarp_plugins_module
 
 \tableofcontents
-
-In YARP, a "plugin" is an implementation of some service for which
-there are many choices and alternatives.  There are two basic types of
-plugin for YARP: devices and carriers.  Devices implement
-interfaces to cameras, controlboards, and other hardware.  Carriers
-implement different network protocols.  Users select which devices
-and carriers they want to have included in YARP (or they can compile
-them separately).
-
-Optional devices and carriers are enabled or disabled via CMake options.
-Enabling a device or carrier may require extra libraries to be installed.
-
-Before discussing how to add new devices or carriers into the YARP library
-itself, we look at how a user can make their own library of plugins.
-This is a useful first step in getting confident about how plugins work.
 
 \section add_a_plugin_single Making a single plugin
 
 Let's take the FakeFrameGrabber example device developed in \ref note_devices
-and turn it into a plugin.  Make a directory called "fake_grabber"
+and turn it into a plugin.  Make a directory called `fake_grabber`
 (or whatever you like), and add the following
-as "fake_grabber/FakeFrameGrabber.h".
+as `fake_grabber/FakeFrameGrabber.h`.
 \include example/plugin/userlib/fake_grabber/FakeFrameGrabber.h
 
-And add this as "fake_grabber/FakeFrameGrabber.cpp":
+And add this as `fake_grabber/FakeFrameGrabber.cpp`:
 \include example/plugin/userlib/fake_grabber/FakeFrameGrabber.h
 
-Here's a quick test program for the device, call it "fake_grabber/test_fake_grabber.cpp":
+Here's a quick test program for the device, call it `fake_grabber/test_fake_grabber.cpp`:
 \include example/plugin/userlib/fake_grabber/test_fake_grabber.cpp
 
 YARP plugins need a CMakeLists.txt that says how to build them.  The
 CMakeLists.txt is written in the following style (this
-would be "fake_grabber/CMakeLists.txt"):
+would be `fake_grabber/CMakeLists.txt`):
 \include example/plugin/userlib/fake_grabber/CMakeLists.txt
 
 This style is used so that individual plugin directories can be
@@ -50,7 +35,7 @@ YARP.
 
 Here we put together a library of YARP plugins from scratch.
 
-First, let's start with a stub test program, "userlib/test_userlib.cpp":
+First, let's start with a stub test program, `userlib/test_userlib.cpp`:
 \code
 #include <stdio.h>
 int main(int argc, char *argv[]) {
@@ -59,7 +44,7 @@ int main(int argc, char *argv[]) {
 }
 \endcode
 
-Here's a CMakeLists.txt ("userlib/CMakeLists.txt") to compile this:
+Here's a CMakeLists.txt (`userlib/CMakeLists.txt`) to compile this:
 
 \verbatim
 cmake_minimum_required(VERSION 3.16)
@@ -75,26 +60,27 @@ YarpPlugin in order to get some
 helper functions for this.  We'll just have one plugin for
 now, the fake_grabber device.
 Here's the modified
-"userlib/CMakeLists.txt" file:
+`userlib/CMakeLists.txt` file:
 \include example/plugin/userlib/CMakeLists.txt
 
-This assumes that we have moved "fake_grabber" into the "userlib"
+This assumes that we have moved `fake_grabber` into the `userlib`
 directory.
 
-Now, let's update our test program, "userlib/test_userlib.cpp":
+Now, let's update our test program, `userlib/test_userlib.cpp`:
 \include example/plugin/userlib/test_userlib.cpp
 
-We can now use cmake to configure and build, either in the "userlib"
-directory, or in the "userlib/fake_grabber" directory.  These files
+We can now use cmake to configure and build, either in the `userlib`
+directory, or in the `userlib/fake_grabber` directory.  These files
 are available in the YARP source package, under the directory
-"example/plugins".
+`example/plugins`.
 
 \section add_a_plugin_in_yarp Adding a plugin into YARP
 
-In directory ${YARP_ROOT}/src/devices/CMakeLists.txt, there
+In directory `${YARP_ROOT}/src/devices/CMakeLists.txt`, there
 is a list of device directories.  We could just add another line to
-insert fake_grabber.  There is no requirement that the fake_grabber
+insert `fake_grabber`.  There is no requirement that the fake_grabber
 subdirectory be in any particular location.  Similarly, carriers
-can be added in $YARP_ROOT/src/carriers/CMakeLists.txt.
+can be added in `$YARP_ROOT/src/carriers/CMakeLists.txt` and portmonitors
+in `$YARP_ROOT/src/portmonitors/CMakeLists.txt`.
 
 */

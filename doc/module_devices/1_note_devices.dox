@@ -41,7 +41,7 @@ Let's look at some examples to make this clear.
 
 \section note_devices_example Framegrabber interfaces
 
-We call devices that produce a stream of images "framegrabbers" for
+We call devices that produce a stream of images `framegrabbers` for
 historical reasons.  There are a number of interfaces associated with
 framegrabbers.  Here's one, IFrameGrabberImage:
 
@@ -54,45 +54,17 @@ public:
 };
 \endcode
 
-Notice that IFrameGrabberImage doesn't do anything itself -- it
+Notice that `IFrameGrabberImage` doesn't do anything itself -- it
 just declares methods to get an image and image dimensions.
 There are several classes in YARP that implement this interface
 (in other words, they inherit from it and define the methods).
-One example is DragonflyDeviceDriver.  This interfaces
-with a Point Grey digital camera, using different libraries on
-different operating systems.  It implements several
-interfaces; here are just two of them:
+One example is \ref openCVGrabber.
 
-\dot
-digraph device_example1 {
-	node [shape=record, fontname=Helvetica, fontsize=10];
-	edge [fontname=Helvetica, fontsize=10, arrowhead="open", style="solid"];
-	IFrameGrabberImage;
-	IFrameGrabberControls;
-
-//	PicoloDeviceDriver;
-	DragonflyDeviceDriver;
-//	FakeFrameGrabber;
-//	RemoteFrameGrabber;
-//	ServerFrameGrabber;
-
-//	PicoloDeviceDriver    -> IFrameGrabberImage;
-//	PicoloDeviceDriver    -> IFrameGrabberControls;
-	DragonflyDeviceDriver -> IFrameGrabberImage;
-	DragonflyDeviceDriver -> IFrameGrabberControls;
-//	FakeFrameGrabber      -> IFrameGrabberImage;
-//	FakeFrameGrabber      -> IFrameGrabberControls;
-//	RemoteFrameGrabber    -> IFrameGrabberImage;
-//	RemoteFrameGrabber    -> IFrameGrabberControls;
-//	ServerFrameGrabber    -> IFrameGrabberImage;
-//	ServerFrameGrabber    -> IFrameGrabberControls;
-
-}
-\enddot
+\section note_devices_example2 Writing a Device
 
 Since you may not have any hardware devices available to you
 right now, let's make a "fake" framegrabber that implements
-the IFrameGrabberImage interface:
+the `IFrameGrabberImage` interface:
 
 \code
 class FakeFrameGrabber : public IFrameGrabberImage {
@@ -120,7 +92,7 @@ public:
 \endcode
 
 All this does is return blank images roughly every half second,
-but it does indeed implement the IFrameGrabberImage interface.
+but it does indeed implement the `IFrameGrabberImage` interface.
 
 We very nearly have a YARP device driver.  Sometimes we want
 to be able to create devices flexibly, based on a configuration
@@ -188,7 +160,7 @@ We've chosen to require that the width and height of images
 be greater than zero, which seems reasonable.
 
 
-\section note_devices_library Creating and configuring the new device
+\section note_devices_library Direct instantiation of a device
 
 We can create, configure, and use our device directly, without
 any bureaucracy:
@@ -198,6 +170,7 @@ fakey.open(640,480);
 ImageOf<PixelRgb> img;
 fakey.getImage(img);
 ...
+fakey.close();
 \endcode
 
 If we're smart, we'd make as much of our code as possible depend
@@ -212,16 +185,17 @@ IFrameGrabberImage& genericGrabber = fakey;
 ImageOf<PixelRgb> img;
 genericGrabber.getImage(img);
 ...
+fakey.close();
 \endcode
 This is a standard software engineering technique for minimizing unnecessary
 coupling between modules.
 
+\section note_devices_library2 Instantiation of a registered device
+
 Suppose we want to go further, and let the framegrabber
 we use be controlled by a command line option.  So it could
 either be our FakeFrameGrabber, or a real device like
-DragonflyDeviceDriver or PicoloDeviceDriver (another framegrabber),
-or RemoteFrameGrabber (a proxy for a framegrabber device on another
-machine).
+`DragonflyFrameGrabber` or `OpenCVFrameGrabber`, etc.
 
 YARP comes with a helper for doing this.  It maintains a simple
 database of the drivers you have compiled and available.
@@ -233,26 +207,24 @@ Here are devices listed for your system:
 
 Device <dragonfly>
    documented by the C++ class DragonflyDeviceDriver
-   Wrapped for the network by <grabber>
+   Wrapped for the network by <frameGrabber_nws_yarp>
 
 Device <fakeFrameGrabber>
    documented by the C++ class FakeFrameGrabber
-   Wrapped for the network by <grabber>
+   Wrapped for the network by <frameGrabber_nws_yarp>
 
-Device <grabber>
-   documented by the C++ class ServerFrameGrabber
-   Does not need a network wrapper.
+Device <openCVGrabber>
+   documented by the C++ class OpenCVGrabber
+   Wrapped for the network by <frameGrabber_nws_yarp>
 ...
 \endverbatim
-We see a "dragonfly" listing associated with the DragonflyDeviceDriver
+We see a `dragonfly` listing associated with the `DragonflyDeviceDriver`
 class --
 "dragonfly" is this devices <i>common name</i> to which it is referred to in
 configuration files, command line options, etc..
-There is also a "fakeFrameGrabber" listing associated with a FakeFrameGrabber
+There is also a `fakeFrameGrabber` listing associated with a `FakeFrameGrabber`
 class -- this is in fact a more elaborate version of the fake framegrabber
-we've been working on, for testing purposes.  We can ignore it for now.
-There is also a "grabber" device listed, with is a network wrapper
-that works for all framegrabber devices.
+we've been working on, for testing purposes. We can ignore it for now.
 
 You can instantiate any device listed here from your code as follows:
 \code
@@ -280,6 +252,8 @@ You can instantiate any device listed here from your code as follows:
   }
 \endcode
 Just replace the name "dragonfly" with the device you want.
+
+\section note_devices_library3 Registering a new device to the database
 
 If we want to be able to create a FakeFrameGrabber through the
 same mechanism, we need to add a <i>factory</i> for it to
@@ -316,21 +290,19 @@ we do:
   ...
 \endcode
 
-Once we've reached this point, some fun things become possible.
-For example:
-\code
-  Property config("(device frameGrabber_nws_yarp) (subdevice fakey) (w 640) (h 480)");
-  PolyDriver dd(config);
-  ...
-\endcode
-This will create and configure a FakeFrameGrabber, then
-wrap it up in a ServerFrameGrabber so that it can be accessed on
-the network.
+\section note_devices_library4 Automatic device registration as Yarp Plugin
 
-\subsection note_devices_list Find out available devices and their parameters
+YARP plugins architecture allows an easy way to register a new device in the database, since it
+automatically generates the code for related to Drivers::factory().
+See the page \ref add_a_plugin.
 
-To have a full lost of devices and check their parameters follow the instruction at the page \ref yarpdev
+\section note_devices_library5 Automatically generated parameters parsers
 
-More advanced topics: true nesting of device properties; calibration objects.
+As shown in the example, the user parameter parsing is performed inside the open() function.
+It might become challenging to correctly parse tens of parameters, and to keep updated the documentation.
+For this reason, an tool, called `yarpDeviceParamParserGenerator` was developed.
+The tool takes in input a text file containing a list of parameters and generates the corresponding .cpp
+and .h files to be included in the project.
+Details are provided in the \ref yarpDeviceParamParserGenerator page.
 
 */

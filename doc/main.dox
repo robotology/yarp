@@ -77,9 +77,10 @@ periodically check it.
 \section yarp_core_modules Core Yarp Modules
 \li \ref os_module
 \li \ref yarpdev_module
-\li \ref dev_all
 \li \ref sig_class
 \li \ref robointerface_all
+\li \ref yarp_plugins_module
+\li \ref dev_all
 \li \ref carriers_module
 \li \ref portmonitors_module
 

@@ -68,6 +68,16 @@ adding to the xml configuration a block similar to:
 Note that `yriDescriptionStorage` is default name of the internal `robotDescriptionStorage` and that `/yarpRobotInterface/devices/rpc` is the rpc port opened by the nws.
 A \ref RobotDescription_nwc_yarp "robotDescription_nwc_yarp" can be used to connect to the nws device and get list of opened devices and their configuration run-time.
 An example of such mechanism can be found in \ref yarpmotorgui "yarpmotorgui" which by default tries to open a `robotDescription_nwc_yarp` to the get a list
-of all /ref controlBoard_nws_yarp "controlBoard_nws_yarp" devices in order to connect to he various parts of the robot.
+of all \ref controlBoard_nws_yarp "controlBoard_nws_yarp" devices in order to connect to he various parts of the robot.
+
+It is highly recommended that every device opened by yarprobotinterface derives from interface yarp::dev::IDeviceDriverParams,
+which is automatically present if the device parameters parser has been generated with the tool \ref yarpDeviceParamParserGenerator "yarpDeviceParamParserGenerator".
+By doing so, yarprobotinterface will be able to access also to the device configuration parameters, exposing them to external application for inspection.
+
+If this interface is not available, yarprobotinterface will generate a warning `yarp::dev::IDeviceDriverParams not available` in the startup phase,
+but it will continue its normal execution.
+
+A run-time generated list of the devices opened by yarprobotinterface can by obtained by the command line tool \ref yarpRobotDescriptionInfo which also
+generates a graphical connection map of them.
 
 */

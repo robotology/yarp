@@ -26,7 +26,6 @@ our printable user manual.
 \li \ref yarp_protocol
 \li \ref name_server
 \li \ref yarp_os
-\li \ref dev_examples
 \li \ref yarpdev
 
 */

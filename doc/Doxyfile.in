@@ -1039,6 +1039,7 @@ IMAGE_PATH    = @CMAKE_SOURCE_DIR@/doc/images \
                 @CMAKE_SOURCE_DIR@/src/commands/yarplogger-console/doc \
                 @CMAKE_SOURCE_DIR@/src/commands/yarpmanager-console/doc \
                 @CMAKE_SOURCE_DIR@/src/commands/yarprobotinterface/doc \
+                @CMAKE_SOURCE_DIR@/src/commands/yarpRobotDescriptionInfo/doc \
                 @CMAKE_SOURCE_DIR@/src/commands/yarprun/doc \
                 @CMAKE_SOURCE_DIR@/src/commands/yarpserver/doc \
                 @CMAKE_SOURCE_DIR@/src/guis/yarpaudiocontrolgui/doc \
