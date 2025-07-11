@@ -9,7 +9,7 @@
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/dev/WrapperSingle.h>
 #include <yarp/os/PeriodicThread.h>
-#include <yarp/os/RPCServer.h>
+#include <yarp/os/RpcServer.h>
 
 #include <yarp/dev/IPidControl.h>
 #include <yarp/dev/IPositionControl.h>

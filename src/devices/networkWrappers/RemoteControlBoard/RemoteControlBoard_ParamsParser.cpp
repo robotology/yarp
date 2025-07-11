@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Tue Jul  1 14:13:55 2025
+// Generated on: Fri Jul 11 11:27:18 2025
 
 
 #include "RemoteControlBoard_ParamsParser.h"
@@ -416,7 +416,7 @@ std::string      RemoteControlBoard_ParamsParser::getDocumentationOfDeviceParams
     doc = doc + std::string("'diagnostic': For development purpose only\n");
     doc = doc + std::string("\n");
     doc = doc + std::string("Here are some examples of invocation command with yarpdev, with all params:\n");
-    doc = doc + " yarpdev --device remote_controlboard --remote <mandatory_value> --local <mandatory_value> --writeStrict <optional_value> --carrier fast_tcp --timeout 0.5 --local_qos::enable false --local_qos::thread_priority 0 --local_qos::thread_policy 0 --local_qos::packet_priority <optional_value> --remote_qos::enable false --remote_qos::thread_priority 0 --remote_qos::thread_policy 0 --remote_qos::packet_priority <optional_value> --diagnostic false\n";
+    doc = doc + " yarpdev --device remote_controlboard --remote <mandatory_value> --local <mandatory_value> --writeStrict <optional_value> --carrier udp --timeout 0.5 --local_qos::enable false --local_qos::thread_priority 0 --local_qos::thread_policy 0 --local_qos::packet_priority <optional_value> --remote_qos::enable false --remote_qos::thread_priority 0 --remote_qos::thread_policy 0 --remote_qos::packet_priority <optional_value> --diagnostic false\n";
     doc = doc + std::string("Using only mandatory params:\n");
     doc = doc + " yarpdev --device remote_controlboard --remote <mandatory_value> --local <mandatory_value>\n";
     doc = doc + std::string("=============================================\n\n");    return doc;

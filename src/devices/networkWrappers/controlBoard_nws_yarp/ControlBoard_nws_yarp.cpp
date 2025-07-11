@@ -469,7 +469,7 @@ void ControlBoard_nws_yarp::run()
     time.update(std::accumulate(times.begin(), times.end(), 0.0) / subdevice_joints);
     yarp::os::Stamp averageTime = time;
 
-    extendedOutputStatePort.enableBackgroundWrite();
+    extendedOutputStatePort.enableBackgroundWrite(true);
     extendedOutputStatePort.setEnvelope(averageTime);
     extendedOutputState_buffer.write();
 
