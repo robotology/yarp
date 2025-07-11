@@ -581,6 +581,10 @@ yarp_dependent_option(
   "YARP_COMPILE_EXECUTABLES" OFF
 )
 yarp_dependent_option(
+  YARP_COMPILE_yarpRobotDescriptionInfo "Do you want to compile yarpRobotDescriptionInfo?" ON
+  "YARP_COMPILE_EXECUTABLES" OFF
+)
+yarp_dependent_option(
   YARP_COMPILE_RobotTestingFramework_ADDONS "Compile Robot Testing Framework addons." ON
   "YARP_HAS_RobotTestingFramework" OFF
 )
