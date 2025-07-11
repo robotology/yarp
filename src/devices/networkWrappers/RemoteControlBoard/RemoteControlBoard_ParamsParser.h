@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Thu May 22 11:32:44 2025
+// Generated on: Fri Jul 11 11:27:18 2025
 
 
 #ifndef REMOTECONTROLBOARD_PARAMSPARSER_H
@@ -23,27 +23,26 @@
 * This class is the parameters parser for class RemoteControlBoard.
 *
 * These are the used parameters:
-* | Group name | Parameter name      | Type   | Units | Default Value | Required | Description                                                        | Notes              |
-* |:----------:|:-------------------:|:------:|:-----:|:-------------:|:--------:|:------------------------------------------------------------------:|:------------------:|
-* | -          | remote              | string | -     | -             | 1        | Prefix of the port to which to connect.                            | -                  |
-* | -          | local               | string | -     | -             | 1        | Port prefix of the port opened by this device.                     | -                  |
-* | -          | writeStrict         | string | -     | -             | 0        | It can be 'on' or 'off'                                            | See implementation |
-* | -          | carrier             | string | -     | udp           | 0        | carrier used for streaming robot state                             | -                  |
-* | -          | timeout             | float  | -     | 0.5           | 0        | timeout for the input port which receives the streamed robot state | -                  |
-* | local_qos  | enable              | bool   | -     | false         | 0        | Enable the usage of local Qos                                      | -                  |
-* | local_qos  | thread_priority     | int    | -     | 0             | 0        | Local Qos. See https://yarp.it/latest/channelprioritization.html   | -                  |
-* | local_qos  | thread_policy       | int    | -     | 0             | 0        | Local Qos. See https://yarp.it/latest/channelprioritization.html   | -                  |
-* | local_qos  | packet_priority     | string | -     | -             | 0        | Local Qos. See https://yarp.it/latest/channelprioritization.html   | -                  |
-* | remote_qos | enable              | bool   | -     | false         | 0        | Enable the usage of remote Qos                                     | -                  |
-* | remote_qos | thread_priority     | int    | -     | 0             | 0        | Remote Qos. See https://yarp.it/latest/channelprioritization.html  | -                  |
-* | remote_qos | thread_policy       | int    | -     | 0             | 0        | Remote Qos. See https://yarp.it/latest/channelprioritization.html. | -                  |
-* | remote_qos | packet_priority     | string | -     | -             | 0        | Remote Qos. See https://yarp.it/latest/channelprioritization.html. | -                  |
-* | -          | ignoreProtocolCheck | bool   | -     | false         | 0        | For development purpose only                                       | -                  |
-* | -          | diagnostic          | bool   | -     | false         | 0        | For development purpose only                                       | -                  |
+* | Group name | Parameter name  | Type   | Units | Default Value | Required | Description                                                        | Notes              |
+* |:----------:|:---------------:|:------:|:-----:|:-------------:|:--------:|:------------------------------------------------------------------:|:------------------:|
+* | -          | remote          | string | -     | -             | 1        | Prefix of the port to which to connect.                            | -                  |
+* | -          | local           | string | -     | -             | 1        | Port prefix of the port opened by this device.                     | -                  |
+* | -          | writeStrict     | string | -     | -             | 0        | It can be 'on' or 'off'                                            | See implementation |
+* | -          | carrier         | string | -     | udp           | 0        | carrier used for receiving streamed robot state                    | -                  |
+* | -          | timeout         | float  | -     | 0.5           | 0        | timeout for the input port which receives the streamed robot state | -                  |
+* | local_qos  | enable          | bool   | -     | false         | 0        | Enable the usage of local Qos                                      | -                  |
+* | local_qos  | thread_priority | int    | -     | 0             | 0        | Local Qos. See https://yarp.it/latest/channelprioritization.html   | -                  |
+* | local_qos  | thread_policy   | int    | -     | 0             | 0        | Local Qos. See https://yarp.it/latest/channelprioritization.html   | -                  |
+* | local_qos  | packet_priority | string | -     | -             | 0        | Local Qos. See https://yarp.it/latest/channelprioritization.html   | -                  |
+* | remote_qos | enable          | bool   | -     | false         | 0        | Enable the usage of remote Qos                                     | -                  |
+* | remote_qos | thread_priority | int    | -     | 0             | 0        | Remote Qos. See https://yarp.it/latest/channelprioritization.html  | -                  |
+* | remote_qos | thread_policy   | int    | -     | 0             | 0        | Remote Qos. See https://yarp.it/latest/channelprioritization.html. | -                  |
+* | remote_qos | packet_priority | string | -     | -             | 0        | Remote Qos. See https://yarp.it/latest/channelprioritization.html. | -                  |
+* | -          | diagnostic      | bool   | -     | false         | 0        | For development purpose only                                       | -                  |
 *
 * The device can be launched by yarpdev using one of the following examples (with and without all optional parameters):
 * \code{.unparsed}
-* yarpdev --device remote_controlboard --remote <mandatory_value> --local <mandatory_value> --writeStrict <optional_value> --carrier udp --timeout 0.5 --local_qos::enable false --local_qos::thread_priority 0 --local_qos::thread_policy 0 --local_qos::packet_priority <optional_value> --remote_qos::enable false --remote_qos::thread_priority 0 --remote_qos::thread_policy 0 --remote_qos::packet_priority <optional_value> --ignoreProtocolCheck false --diagnostic false
+* yarpdev --device remote_controlboard --remote <mandatory_value> --local <mandatory_value> --writeStrict <optional_value> --carrier udp --timeout 0.5 --local_qos::enable false --local_qos::thread_priority 0 --local_qos::thread_policy 0 --local_qos::packet_priority <optional_value> --remote_qos::enable false --remote_qos::thread_priority 0 --remote_qos::thread_policy 0 --remote_qos::packet_priority <optional_value> --diagnostic false
 * \endcode
 *
 * \code{.unparsed}
@@ -84,7 +83,6 @@ public:
     const std::string m_remote_qos_thread_priority_defaultValue = {"0"};
     const std::string m_remote_qos_thread_policy_defaultValue = {"0"};
     const std::string m_remote_qos_packet_priority_defaultValue = {""};
-    const std::string m_ignoreProtocolCheck_defaultValue = {"false"};
     const std::string m_diagnostic_defaultValue = {"false"};
 
     std::string m_remote = {}; //This default value is autogenerated. It is highly recommended to provide a suggested value also for mandatory parameters.
@@ -100,7 +98,6 @@ public:
     int m_remote_qos_thread_priority = {0};
     int m_remote_qos_thread_policy = {0};
     std::string m_remote_qos_packet_priority = {}; //This default value of this string is an empty string. It is highly recommended to provide a suggested value also for optional string parameters.
-    bool m_ignoreProtocolCheck = {false};
     bool m_diagnostic = {false};
 
     bool          parseParams(const yarp::os::Searchable & config) override;

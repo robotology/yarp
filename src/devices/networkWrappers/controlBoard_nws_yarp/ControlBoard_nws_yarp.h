@@ -9,6 +9,7 @@
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/dev/WrapperSingle.h>
 #include <yarp/os/PeriodicThread.h>
+#include <yarp/os/RpcServer.h>
 
 #include <yarp/dev/IPidControl.h>
 #include <yarp/dev/IPositionControl.h>
@@ -42,6 +43,7 @@
 
 #include "StreamingMessagesParser.h"
 #include "RPCMessagesParser.h"
+#include "ControlBoardServerImpl.h"
 #include "ControlBoard_nws_yarp_ParamsParser.h"
 
 /**
@@ -64,9 +66,16 @@ class ControlBoard_nws_yarp :
         public yarp::dev::DeviceDriver,
         public yarp::os::PeriodicThread,
         public yarp::dev::WrapperSingle,
+        public yarp::os::PortReader,
         public ControlBoard_nws_yarp_ParamsParser
 {
 private:
+    std::mutex m_mutex;
+
+    // thrift
+    std::unique_ptr<ControlBoardRPCd> m_RPC;
+    yarp::os::RpcServer               m_rpcPort;
+
     yarp::os::BufferedPort<yarp::sig::Vector> outputPositionStatePort; // Port /state:o streaming out the encoder positions
     yarp::os::BufferedPort<CommandMessage> inputStreamingPort;         // Input streaming port for high frequency commands
     yarp::os::Port inputRPCPort;                                       // Input RPC port for set/get remote calls
@@ -128,6 +137,9 @@ public:
     // yarp::dev::WrapperSingle
     bool attach(yarp::dev::PolyDriver* poly) override;
     bool detach() override;
+
+    // rpc port
+    bool read(yarp::os::ConnectionReader& connection) override;
 
     // yarp::os::PeriodicThread
     void run() override;
