@@ -1,0 +1,28 @@
+/**
+\defgroup yarpRobotDescriptionInfo yarpRobotDescriptionInfo: A tool to inspect YARP devices used by yarprobotinterface
+\ingroup yarp_commands
+
+\section Introduction
+
+This tool generate a .dot file which describes a graph representing all the devices used by yarpobotinterface
+and their connections.
+The module requires a running yarprobotinterface to which connect to (the yarprobotinterface module
+must expose the a robotDescription_nws_yarp device with an RPC port)
+Use an online dot editor (e.g. https://dreampuf.github.io/GraphvizOnline) to visualize the generated .dot graph.
+See also the \link yarprobotinterface yarprobotinterface \endlink page.
+
+Options:
+\code
+--file <filename>
+--remote <remote_port>
+\endcode
+
+-- use the `--file <filename>` option to choose the name of the output file. (default: outputfile.dot)
+
+-- use the `--remote <remote_port>` to select a specific the `robotDescription_nws_yarp` rpc port
+(default: /robotDescription_nws_yarp/rpc)
+
+\image html yarpRobotDescriptionInfo.png width=800px
+\image latex yarpRobotDescriptionInfo.png "The yarp devices" width=30cm
+
+*/

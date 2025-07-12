@@ -66,7 +66,7 @@ The generated .cpp and .h files contains the code (including Doxygen documentati
 In order to use it, the user has to include the .h file and publicly derive its class from the generated one,
 as shown in this snippet example for the class ChatBot_nwc_yarp:
 
-\code{.cmake}
+\code{.cpp}
 class ChatBot_nwc_yarp : public yarp::dev::DeviceDriver,
                          public yarp::dev::IChatBot,
                          public ChatBot_nwc_yarp_ParamsParser //<--
@@ -74,7 +74,7 @@ class ChatBot_nwc_yarp : public yarp::dev::DeviceDriver,
 
 Then the parsing of the parameters can be done in the open() method as shown below:
 
-\code{.cmake}
+\code{.cpp}
 bool ChatBot_nwc_yarp::open(yarp::os::Searchable &config)
 {
     if (!parseParams(config)) { return false; } //<--
