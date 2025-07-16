@@ -13,6 +13,8 @@
 #include <cmath>
 
 #include <yarp/os/Log.h>
+#include <yarp/os/LogStream.h>
+
 #include <QDebug>
 #include <QKeyEvent>
 
@@ -56,6 +58,10 @@ void JointItem::run()
     else if(this->internalState == Current)
     {
         currentTimer.stop();
+    }
+    else if(this->internalState == Torque)
+    {
+        torqueTimer.stop();
     }
     emit runClicked(this);
 }
@@ -1445,19 +1451,19 @@ void JointItem::onStackedWidgetChanged(int index)
             lastVelocity = 0;
             updateSliderVelocity(0);
         }
-        else if(pwmModeEnabled)
+        if(pwmModeEnabled)
         {
             pwmTimer.stop();
             lastPwm = 0;
             updateSliderPWM(0);
         }
-        else if(currentModeEnabled)
+        if(currentModeEnabled)
         {
             currentTimer.stop();
             lastCurrent = 0;
             updateSliderCurrent(0);
         }
-        else if(torqueModeEnabled)
+        if(torqueModeEnabled)
         {
             torqueTimer.stop();
             lastTorque = 0;
@@ -1468,21 +1474,11 @@ void JointItem::onStackedWidgetChanged(int index)
 
 void JointItem::onModeChanged(int index)
 {
-    if (this->internalState == Velocity){
-       velocityTimer.stop();
-    }
-    else if(this->internalState == Pwm)
-    {
-        pwmTimer.stop();
-    }
-    else if(this->internalState == Current)
-    {
-        currentTimer.stop();
-    }
-    else if(this->internalState == TORQUE)
-    {
-        torqueTimer.stop();
-    }
+    // Stop all timers, the correct one will be enabled by onStackedWidgetChanged()
+    velocityTimer.stop();
+    pwmTimer.stop();
+    currentTimer.stop();
+    torqueTimer.stop();
     Q_UNUSED(index);
     int mode = ui->comboMode->currentData(Qt::UserRole).toInt();
     emit changeMode(mode,this);
