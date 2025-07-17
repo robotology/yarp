@@ -188,21 +188,6 @@ public:
     {
         return reinterpret_cast<char*>(this->data());
     }
-#ifndef YARP_NO_DEPRECATED // since YARP 3.2.0
-    YARP_DEPRECATED_MSG("Use either data() if you need the pointer to the first element,"
-                        " or cbegin() if you need the iterator")
-    inline const T *getFirst() const
-    {
-        return this->data();
-    }
-
-    YARP_DEPRECATED_MSG("Use either data() if you need the pointer to the first element,"
-                        " or begin() if you need the iterator")
-    inline T *getFirst()
-    {
-        return this->data();
-    }
-#endif // YARP_NO_DEPRECATED
 
     /**
     * Return a pointer to the first element of the vector.

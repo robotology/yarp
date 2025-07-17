@@ -21,97 +21,6 @@ using namespace yarp::sig::draw;
 
 namespace {
 YARP_LOG_COMPONENT(FAKEFRAMEGRABBER, "yarp.device.fakeFrameGrabber")
-
-//the following data are used by [time] test
-constexpr char num[12][16]
-{
-    // '0'
-    "***"
-    "* *"
-    "* *"
-    "* *"
-    "***",
-
-    // '1'
-    " * "
-    " * "
-    " * "
-    " * "
-    " * ",
-
-    // '2'
-    "***"
-    "  *"
-    "***"
-    "*  "
-    "***",
-
-    // '3'
-    "***"
-    "  *"
-    "***"
-    "  *"
-    "***",
-
-    // '4'
-    "* *"
-    "* *"
-    "***"
-    "  *"
-    "  *",
-
-    // '5'
-    "***"
-    "*  "
-    "***"
-    "  *"
-    "***",
-
-    // '6'
-    "***"
-    "*  "
-    "***"
-    "* *"
-    "***",
-
-    // '7'
-    "***"
-    "  *"
-    "  *"
-    "  *"
-    "  *",
-
-    // '8'
-    "***"
-    "* *"
-    "***"
-    "* *"
-    "***",
-
-    // '9'
-    "***"
-    "* *"
-    "***"
-    "  *"
-    "***",
-
-    // ' '
-    "   "
-    "   "
-    "   "
-    "   "
-    "   ",
-
-    // '.'
-    "   "
-    "   "
-    "   "
-    " **"
-    " **",
-};
-constexpr size_t num_width = 3;
-constexpr size_t num_height = 5;
-
 } // namespace
 
 bool FakeFrameGrabber::read(yarp::os::ConnectionReader& connection)
@@ -143,7 +52,7 @@ bool FakeFrameGrabber::read(yarp::os::ConnectionReader& connection)
     {
         if (command.get(1).asString() == "off")
         {
-            have_bg=false;
+            m_have_bg=false;
             reply.addString("ack");
         }
         else
@@ -152,12 +61,12 @@ bool FakeFrameGrabber::read(yarp::os::ConnectionReader& connection)
             {
                 m_width = background.width();
                 m_height = background.height();
-                have_bg = true;
+                m_have_bg = true;
                 reply.addString("ack");
             }
             else
             {
-                have_bg = false;
+                m_have_bg = false;
                 reply.addString("err");
             }
         }
@@ -271,7 +180,7 @@ bool FakeFrameGrabber::open(yarp::os::Searchable& config)
         }
         m_width = background.width();
         m_height = background.height();
-        have_bg = true;
+        m_have_bg = true;
     }
 
 
@@ -284,8 +193,8 @@ bool FakeFrameGrabber::open(yarp::os::Searchable& config)
                (1.0/m_period),
                m_mode.c_str());
 
-    bx = m_width/2;
-    by = m_height/2;
+    m_bx = m_width/2;
+    m_by = m_height/2;
 
     for (auto& buff : buffs) {
         buff.resize(m_width, m_height);
@@ -310,7 +219,6 @@ void FakeFrameGrabber::timing() {
     double now = yarp::os::Time::now();
 
     if (now-prev>1000) {
-        first = now;
         prev = now;
     }
     double dt = m_period-(now-prev);
@@ -324,63 +232,16 @@ void FakeFrameGrabber::timing() {
     prev += m_period;
 }
 
-int FakeFrameGrabber::height() const {
+int FakeFrameGrabber::height() const
+{
+    std::lock_guard<std::mutex> lock(rpc_methods_mutex);
     return m_height;
 }
 
-int FakeFrameGrabber::width() const {
+int FakeFrameGrabber::width() const
+{
+    std::lock_guard<std::mutex> lock(rpc_methods_mutex);
     return m_width;
-}
-
-int FakeFrameGrabber::getRgbHeight(){
-    return m_height;
-}
-
-int FakeFrameGrabber::getRgbWidth(){
-    return m_width;
-}
-
-bool FakeFrameGrabber::getRgbSupportedConfigurations(yarp::sig::VectorOf<CameraConfig> &configurations){
-    configurations=this->configurations;
-    return true;
-}
-
-bool FakeFrameGrabber::getRgbResolution(int &width, int &height){
-    width=m_width;
-    height=m_height;
-    return true;
-}
-
-bool FakeFrameGrabber::setRgbResolution(int width, int height){
-    m_width =width;
-    m_height =height;
-    return true;
-}
-
-bool FakeFrameGrabber::getRgbFOV(double &horizontalFov, double &verticalFov){
-    horizontalFov=this->m_horizontalFov;
-    verticalFov=this->m_verticalFov;
-    return true;
-}
-
-bool FakeFrameGrabber::setRgbFOV(double horizontalFov, double verticalFov){
-    this->m_horizontalFov=horizontalFov;
-    this->m_verticalFov=verticalFov;
-    return true;
-}
-
-bool FakeFrameGrabber::getRgbIntrinsicParam(yarp::os::Property &intrinsic){
-    intrinsic=this->m_intrinsic;
-    return true;
-}
-
-bool FakeFrameGrabber::getRgbMirroring(bool &mirror){
-    mirror=this->m_mirror;
-    return true;}
-
-bool FakeFrameGrabber::setRgbMirroring(bool mirror){
-    this->m_mirror =mirror;
-    return true;
 }
 
 void FakeFrameGrabber::run()
@@ -428,10 +289,10 @@ void FakeFrameGrabber::onStop()
 }
 
 
-bool FakeFrameGrabber::getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image)
+ReturnValue FakeFrameGrabber::getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image)
 {
     if (!isRunning()) {
-        return false;
+        return ReturnValue::return_code::return_value_error_not_ready;
     }
 
     if (!m_syncro) {
@@ -450,7 +311,7 @@ bool FakeFrameGrabber::getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image)
         std::unique_lock<std::mutex> lk(mutex[cb]);
         img_ready_cv[cb].wait(lk, [&]{return (!isRunning() || img_ready[cb]);});
         if (!isRunning()) {
-            return false;
+            return ReturnValue::return_code::return_value_error_not_ready;
         }
 
         image.copy(buffs[cb]);
@@ -462,13 +323,13 @@ bool FakeFrameGrabber::getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image)
         curr_buff_mutex.unlock();
     }
 
-    return true;
+    return ReturnValue_ok;
 }
 
-bool FakeFrameGrabber::getImage(yarp::sig::ImageOf<yarp::sig::PixelMono>& image)
+ReturnValue FakeFrameGrabber::getImage(yarp::sig::ImageOf<yarp::sig::PixelMono>& image)
 {
     if (!isRunning()) {
-        return false;
+        return ReturnValue::return_code::return_value_error_not_ready;
     }
 
     if (!m_syncro) {
@@ -489,7 +350,7 @@ bool FakeFrameGrabber::getImage(yarp::sig::ImageOf<yarp::sig::PixelMono>& image)
         std::unique_lock<std::mutex> lk(mutex[cb]);
         img_ready_cv[cb].wait(lk, [&]{return (!isRunning() || img_ready[cb]);});
         if (!isRunning()) {
-            return false;
+            return ReturnValue::return_code::return_value_error_not_ready;
         }
         if (m_bayer) {
             makeSimpleBayer(buffs[cb], image);
@@ -504,376 +365,27 @@ bool FakeFrameGrabber::getImage(yarp::sig::ImageOf<yarp::sig::PixelMono>& image)
         curr_buff_mutex.unlock();
     }
 
-    return true;
+    return ReturnValue_ok;
 }
 
-bool FakeFrameGrabber::getImageCrop(cropType_id_t cropType,
-                                    yarp::sig::VectorOf<std::pair<int, int>> vertices,
+ReturnValue FakeFrameGrabber::getImageCrop(cropType_id_t cropType,
+                                    std::vector<yarp::dev::vertex_t> vertices,
                                     yarp::sig::ImageOf<yarp::sig::PixelRgb>& image)
 {
     yCDebugThrottle(FAKEFRAMEGRABBER, 5.0) << "Hardware crop requested!";
     return yarp::dev::IFrameGrabberOf<yarp::sig::ImageOf<yarp::sig::PixelRgb>>::getImageCrop(cropType, vertices, image);
 }
 
-bool FakeFrameGrabber::getImageCrop(cropType_id_t cropType,
-                                    yarp::sig::VectorOf<std::pair<int, int>> vertices,
+ReturnValue FakeFrameGrabber::getImageCrop(cropType_id_t cropType,
+                                    std::vector<yarp::dev::vertex_t> vertices,
                                     yarp::sig::ImageOf<yarp::sig::PixelMono>& image)
 {
     yCDebugThrottle(FAKEFRAMEGRABBER, 5.0) << "Hardware crop requested!";
     return yarp::dev::IFrameGrabberOf<yarp::sig::ImageOf<yarp::sig::PixelMono>>::getImageCrop(cropType, vertices, image);
 }
 
-yarp::os::Stamp FakeFrameGrabber::getLastInputStamp() {
-    return stamp;
-}
-
-bool FakeFrameGrabber::hasAudio() { return false; }
-
-bool FakeFrameGrabber::hasVideo() { return !m_mono; }
-
-bool FakeFrameGrabber::hasRawVideo() {
-    return m_mono;
-}
-
-bool FakeFrameGrabber::getCameraDescription(CameraDescriptor *camera) { return false; }
-bool FakeFrameGrabber::hasFeature(int feature, bool *hasFeature) { return false; }
-bool FakeFrameGrabber::setFeature(int feature, double value) { return false; }
-bool FakeFrameGrabber::getFeature(int feature, double *value) { return false; }
-bool FakeFrameGrabber::setFeature(int feature, double  value1, double  value2) { return false; }
-bool FakeFrameGrabber::getFeature(int feature, double *value1, double *value2) { return false; }
-bool FakeFrameGrabber::hasOnOff(int feature, bool *HasOnOff) { return false; }
-bool FakeFrameGrabber::setActive(int feature, bool onoff) { return false; }
-bool FakeFrameGrabber::getActive(int feature, bool *isActive) { return false; }
-bool FakeFrameGrabber::hasAuto(int feature, bool *hasAuto) { return false; }
-bool FakeFrameGrabber::hasManual(int feature, bool *hasManual) { return false; }
-bool FakeFrameGrabber::hasOnePush(int feature, bool *hasOnePush) { return false; }
-bool FakeFrameGrabber::setMode(int feature, FeatureMode mode) { return false; }
-bool FakeFrameGrabber::getMode(int feature, FeatureMode *mode) { return false; }
-bool FakeFrameGrabber::setOnePush(int feature) { return false; }
-
-void FakeFrameGrabber::printTime(unsigned char* pixbuf, size_t pixbuf_w, size_t pixbuf_h, size_t x, size_t y, char* s, size_t size)
+yarp::os::Stamp FakeFrameGrabber::getLastInputStamp()
 {
-    for (size_t i = 0; i < size; i++)
-    {
-        const char* num_p = nullptr;
-        switch (s[i]) {
-            case '0': num_p = num[0]; break;
-            case '1': num_p = num[1]; break;
-            case '2': num_p = num[2]; break;
-            case '3': num_p = num[3]; break;
-            case '4': num_p = num[4]; break;
-            case '5': num_p = num[5]; break;
-            case '6': num_p = num[6]; break;
-            case '7': num_p = num[7]; break;
-            case '8': num_p = num[8]; break;
-            case '9': num_p = num[9]; break;
-            case ' ': num_p = num[10]; break;
-            case '.': num_p = num[11]; break;
-            default: num_p = num[10]; break;
-        }
-
-        for (size_t yi = 0; yi < num_height; yi++) {
-            for (size_t xi = 0; xi < num_width; xi++) {
-                size_t ii = yi * num_width + xi;
-                if (num_p[ii] == '*') {
-                    for (size_t r = yi * num_height; r < yi*num_height + num_height; r++) {
-                        size_t off = i * (num_height + 20);
-                        for (size_t c = xi * num_height + off; c < xi*num_height + num_height + off; c++) {
-                            if (c >= pixbuf_h || r >= pixbuf_w) {
-                                //avoid drawing out of the image memory
-                                return;
-                            }
-                            unsigned char *pixel = pixbuf;
-                            size_t offset = c * sizeof(yarp::sig::PixelRgb) + r * (pixbuf_w * sizeof(yarp::sig::PixelRgb));
-                            pixel = pixel + offset;
-                            pixel[0] = 0;
-                            pixel[1] = 0;
-                            pixel[2] = 255;
-                        }
-                    }
-                }
-            }
-        }
-    }
-}
-
-void FakeFrameGrabber::createTestImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image,
-                                       double& timestamp) {
-    // to test IPreciselyTimed, make timestamps be mysteriously NNN.NNN42
-    double t = Time::now();
-    t -= (((t*1000) - static_cast<int64_t>(t*1000)) / 1000);
-    t += 0.00042;
-    timestamp = t;
-    image.resize(m_width,m_height);
-
-    if (m_mode == "[Time]")
-    {
-        {
-            if (have_bg) {
-                image.copy(background);
-            } else {
-                image.zero();
-            }
-            char txtbuf[50];
-            static const double start_time = t;
-            double time = t - start_time;
-            std::snprintf(txtbuf, 50, "%.3f", time);
-            int len = strlen(txtbuf);
-            if (len < 20)
-            {
-                printTime((unsigned char*)image.getRawImage(), image.width(), image.height(), 0, 0, txtbuf, len);
-            }
-        }
-    }
-    else if (m_mode == "[ball]")
-    {
-        {
-            if (have_bg) {
-                image.copy(background);
-            } else {
-                image.zero();
-            }
-            addCircle(image,PixelRgb{0,255,0},bx,by,15);
-            addCircle(image,PixelRgb{0,255,255},bx,by,8);
-            if (ct%5!=0) {
-                rnd *= 65537;
-                rnd += 17;
-                int delta_x = (rnd % 5) - 2;
-                bx += delta_x;
-                rnd *= 65537;
-                rnd += 17;
-                int delta_y = (rnd % 5) - 2;
-                by += delta_y;
-            } else {
-                int dx = m_width/2 - bx;
-                int dy = m_height/2 - by;
-                if (dx>0) { bx++; }
-                if (dx<0) { bx--; }
-                if (dy>0) { by++; }
-                if (dy<0) { by--; }
-            }
-        }
-    }
-    else if (m_mode == "[grid]")
-    {
-        {
-            size_t ww = image.width();
-            size_t hh = image.height();
-            if (ww>1&&hh>1) {
-                for (size_t x=0; x<ww; x++) {
-                    for (size_t y=0; y<hh; y++) {
-                        double xx = ((double)x)/(ww-1);
-                        double yy = ((double)y)/(hh-1);
-                        bool act = (y==ct);
-                        auto r = static_cast<unsigned char>(0.5 + 255 * xx);
-                        auto g = static_cast<unsigned char>(0.5 + 255 * yy);
-                        auto b = static_cast<unsigned char>(act * 255);
-                        image.pixel(x, y) = PixelRgb{r, g, b};
-                    }
-                }
-            }
-        }
-    }
-    else if (m_mode == "[size]")
-    {
-        static int count = 0;
-        count++;
-        if (count== 100)
-        {
-            yCDebug(FAKEFRAMEGRABBER) << "size 100, 100";
-            image.resize(100,100);
-        }
-        else if (count == 200)
-        {
-            yCDebug(FAKEFRAMEGRABBER) << "size 200, 100";
-            image.resize(200, 100);
-        }
-        else if (count == 300)
-        {
-            yCDebug(FAKEFRAMEGRABBER) << "size 300, 50";
-            image.resize(300, 50);
-            count = 0;
-        }
-
-        size_t ww = m_width = image.width();
-        size_t hh = m_height = image.height();
-        if (ww>1 && hh>1) {
-            for (size_t x = 0; x<ww; x++) {
-                for (size_t y = 0; y<hh; y++) {
-                    double xx = ((double)x) / (ww - 1);
-                    double yy = ((double)y) / (hh - 1);
-                    bool act = (y == ct);
-                    auto r = static_cast<unsigned char>(0.5 + 255 * xx);
-                    auto g = static_cast<unsigned char>(0.5 + 255 * yy);
-                    auto b = static_cast<unsigned char>(act * 255);
-                    image.pixel(x, y) = PixelRgb{r, g, b};
-                }
-            }
-        }
-    }
-    else if (m_mode == "[line]")
-    {
-        {
-            if (have_bg) {
-                image.copy(background);
-            } else {
-                image.zero();
-            }
-            for (size_t i=0; i<image.width(); i++) {
-                image.pixel(i,ct).r = 255;
-            }
-        }
-    }
-    else if (m_mode == "[rand]")
-    {
-        {
-            static unsigned char r = 128;
-            static unsigned char g = 128;
-            static unsigned char b = 128;
-
-            size_t ww = image.width();
-            size_t hh = image.height();
-
-            if (ww>1&&hh>1) {
-                for (size_t x=0; x<ww; x++) {
-                    for (size_t y=0; y<hh; y++) {
-                        r += udist(randengine);
-                        g += udist(randengine);
-                        b += udist(randengine);
-                        image.pixel(x,y) = PixelRgb{r,g,b};
-                    }
-                }
-            }
-        }
-    }
-    else if (m_mode == "[none]")
-    {
-        {
-            if (have_bg) {
-                image.copy(background);
-            } else {
-                image.zero();
-            }
-        }
-    }
-    else
-    {
-        yCError(FAKEFRAMEGRABBER, "Invalid mode %s", m_mode.c_str());
-    }
-
-    ct++;
-    if (ct>=image.height()) {
-        ct = 0;
-    }
-    if (by>=image.height()) {
-        by = image.height()-1;
-    }
-    if (bx>=image.width()) {
-        bx = image.width()-1;
-    }
-
-    if (m_add_noise) {
-        static const double nsr = 1.0 - m_snr;
-        for (size_t x = 0; x < image.width(); ++x) {
-            for (size_t y = 0; y < image.height(); ++y) {
-                auto rand = ucdist(randengine);
-                image.pixel(x,y) = PixelRgb {
-                    static_cast<unsigned char>(image.pixel(x,y).r * m_snr + (rand * nsr * 255)),
-                    static_cast<unsigned char>(image.pixel(x,y).g * m_snr + (rand * nsr * 255)),
-                    static_cast<unsigned char>(image.pixel(x,y).b * m_snr + (rand * nsr * 255))
-                };
-            }
-        }
-    }
-
-    if (m_add_timestamp) {
-        char ttxt[50];
-        std::snprintf(ttxt, 50, "%021.10f", timestamp);
-        image.pixel(0, 0).r = ttxt[0] - '0';
-        image.pixel(0, 0).g = ttxt[1] - '0';
-        image.pixel(0, 0).b = ttxt[2] - '0';
-
-        image.pixel(1, 0).r = ttxt[3] - '0';
-        image.pixel(1, 0).g = ttxt[4] - '0';
-        image.pixel(1, 0).b = ttxt[5] - '0';
-
-        image.pixel(2, 0).r = ttxt[6] - '0';
-        image.pixel(2, 0).g = ttxt[7] - '0';
-        image.pixel(2, 0).b = ttxt[8] - '0';
-
-        image.pixel(3, 0).r = ttxt[9] - '0';
-        image.pixel(3, 0).g = ttxt[10] - '0';
-        image.pixel(3, 0).b = ttxt[11] - '0';
-
-        image.pixel(4, 0).r = ttxt[12] - '0';
-        image.pixel(4, 0).g = ttxt[13] - '0';
-        image.pixel(4, 0).b = ttxt[14] - '0';
-
-        image.pixel(5, 0).r = ttxt[15] - '0';
-        image.pixel(5, 0).g = ttxt[16] - '0';
-        image.pixel(5, 0).b = ttxt[17] - '0';
-
-        image.pixel(6, 0).r = ttxt[18] - '0';
-        image.pixel(6, 0).g = ttxt[19] - '0';
-        image.pixel(6, 0).b = ttxt[20] - '0';
-    }
-}
-
-
-
-// From iCub staticgrabber device.
-// DF2 bayer sequence.
-// -- in staticgrabber: first row GBGBGB, second row RGRGRG.
-// -- changed here to:  first row GRGRGR, second row BGBGBG.
-bool FakeFrameGrabber::makeSimpleBayer(
-        ImageOf<PixelRgb>& img,
-        ImageOf<PixelMono>& bayer) {
-
-    bayer.resize(img.width(), img.height());
-
-    const size_t w = img.width();
-    const size_t h = img.height();
-
-    size_t i, j;
-    for (i = 0; i < h; i++) {
-        auto* row = (PixelRgb *)img.getRow(i);
-        auto* rd = (PixelMono *)bayer.getRow(i);
-
-        for (j = 0; j < w; j++) {
-
-            if ((i%2) == 0) {
-                switch (j%4) {
-                    case 0:
-                    case 2:
-                        *rd++ = row->g;
-                        row++;
-                        break;
-
-                    case 1:
-                    case 3:
-                        *rd++ = row->r;
-                        row++;
-                        break;
-                }
-            }
-
-            if ((i%2) == 1) {
-                switch (j%4) {
-                    case 1:
-                    case 3:
-                        *rd++ = row->g;
-                        row++;
-                        break;
-
-                    case 0:
-                    case 2:
-                        *rd++ = row->b;
-                        row++;
-                        break;
-                }
-            }
-        }
-    }
-
-    return true;
+    std::lock_guard<std::mutex> lock(rpc_methods_mutex);
+    return stamp;
 }

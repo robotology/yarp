@@ -33,7 +33,8 @@ public:
 
     bool open(yarp::os::Searchable & config) override;
     bool close() override;
-    bool putImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image) override;
+
+    yarp::dev::ReturnValue putImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image) override;
 
 protected:
     bool m_isInitialized =false;

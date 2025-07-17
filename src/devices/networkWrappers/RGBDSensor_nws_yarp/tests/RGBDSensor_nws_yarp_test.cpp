@@ -16,21 +16,21 @@ using namespace yarp::dev;
 using namespace yarp::sig;
 using namespace yarp::os;
 
-TEST_CASE("dev::rgbdSensor_nws_yarpTest", "[yarp::dev]")
+TEST_CASE("dev::RGBDSensor_nws_yarpTest", "[yarp::dev]")
 {
     YARP_REQUIRE_PLUGIN("fakeDepthCamera", "device");
-    YARP_REQUIRE_PLUGIN("rgbdSensor_nws_yarp", "device");
+    YARP_REQUIRE_PLUGIN("RGBDSensor_nws_yarp", "device");
 
     Network::setLocalMode(true);
 
-    SECTION("Checking rgbdSensor_nws_yarp device")
+    SECTION("Checking RGBDSensor_nws_yarp device")
     {
         PolyDriver nws_driver;
 
         ////////"Checking opening polydriver"
         {
             Property nws_cfg;
-            nws_cfg.put("device", "rgbdSensor_nws_yarp");
+            nws_cfg.put("device", "RGBDSensor_nws_yarp");
             nws_cfg.put("name", "/rgbd_nws");
             REQUIRE(nws_driver.open(nws_cfg));
         }
@@ -39,37 +39,50 @@ TEST_CASE("dev::rgbdSensor_nws_yarpTest", "[yarp::dev]")
         CHECK(nws_driver.close());
     }
 
-    SECTION("Test the rgbdSensor_nws_yarp device with fakeDepthCamera device attached")
+    SECTION("Test the RGBDSensor_nws_yarp device with fakeDepthCamera device attached")
     {
-        PolyDriver dd_fake;
-        PolyDriver dd_nws;
-        Property p_fake;
-        Property p_nws;
+        std::vector<std::string> fakeSens;
+        fakeSens.push_back("fakeDepthCamera");
+        fakeSens.push_back("fakeDepthCamera_mini");
 
-        //open
-        p_nws.put("device", "rgbdSensor_nws_yarp");
-        p_nws.put("name", "/rgbd_nws");
-        p_fake.put("device", "fakeDepthCamera");
-        REQUIRE(dd_fake.open(p_fake));
-        REQUIRE(dd_nws.open(p_nws));
-
-        yarp::os::SystemClock::delaySystem(0.5);
-
-        //attach
+        for (auto it = fakeSens.begin(); it != fakeSens.end(); it++)
         {
-            yarp::dev::WrapperSingle* ww_nws; dd_nws.view(ww_nws);
-            REQUIRE(ww_nws);
-            bool result_att = ww_nws->attach(&dd_fake);
-            REQUIRE(result_att);
-        }
+            PolyDriver dd_fake;
+            PolyDriver dd_nws;
+            Property p_fake;
+            Property p_nws;
 
-        //Wait some time
-        yarp::os::SystemClock::delaySystem(1.0);
+            // open
+            p_nws.put("device", "RGBDSensor_nws_yarp");
+            p_nws.put("name", "/rgbd_nws");
+            p_fake.put("device", *it);
+            // small values to improve valgrind speed
+            p_fake.put("rgb_w", 32);
+            p_fake.put("rgb_h", 24);
+            p_fake.put("dep_w", 32);
+            p_fake.put("dep_h", 24);
+            REQUIRE(dd_fake.open(p_fake));
+            REQUIRE(dd_nws.open(p_nws));
 
-        //Close all polydrivers and check
-        {
-            CHECK(dd_nws.close());
-            CHECK(dd_fake.close());
+            yarp::os::SystemClock::delaySystem(0.5);
+
+            // attach
+            {
+                yarp::dev::WrapperSingle* ww_nws;
+                dd_nws.view(ww_nws);
+                REQUIRE(ww_nws);
+                bool result_att = ww_nws->attach(&dd_fake);
+                REQUIRE(result_att);
+            }
+
+            // Wait some time
+            yarp::os::SystemClock::delaySystem(1.0);
+
+            // Close all polydrivers and check
+            {
+                CHECK(dd_nws.close());
+                CHECK(dd_fake.close());
+            }
         }
     }
 

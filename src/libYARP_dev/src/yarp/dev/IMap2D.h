@@ -280,19 +280,4 @@ public:
     virtual yarp::dev::ReturnValue enableMapsCompression(bool enable) = 0;
 };
 
-//This section of vocabs is used just by deprecated device Map2DServer and Map2DClient
-//It can be thus safely eliminated as soon as these devices are removed from yarp
-constexpr yarp::conf::vocab32_t VOCAB_IMAP                      = yarp::os::createVocab32('i','m','a','p');
-constexpr yarp::conf::vocab32_t VOCAB_IMAP_SET_MAP              = yarp::os::createVocab32('s','e','t');
-constexpr yarp::conf::vocab32_t VOCAB_IMAP_GET_MAP              = yarp::os::createVocab32('g','e','t');
-constexpr yarp::conf::vocab32_t VOCAB_IMAP_GET_NAMES            = yarp::os::createVocab32('n','a','m','s');
-constexpr yarp::conf::vocab32_t VOCAB_IMAP_CLEAR_ALL_MAPS       = yarp::os::createVocab32('c','l','r');
-constexpr yarp::conf::vocab32_t VOCAB_IMAP_REMOVE               = yarp::os::createVocab32('r','e','m','v');
-constexpr yarp::conf::vocab32_t VOCAB_IMAP_LOAD_X               = yarp::os::createVocab32('l','o','a','d');
-constexpr yarp::conf::vocab32_t VOCAB_IMAP_SAVE_X               = yarp::os::createVocab32('s','a','v','e');
-constexpr yarp::conf::vocab32_t VOCAB_IMAP_MAPS_COLLECTION      = yarp::os::createVocab32('m','a','p','s');
-constexpr yarp::conf::vocab32_t VOCAB_IMAP_LOCATIONS_COLLECTION = yarp::os::createVocab32('l','o','c','s');
-constexpr yarp::conf::vocab32_t VOCAB_IMAP_OK                   = yarp::os::createVocab32('o','k','k');
-constexpr yarp::conf::vocab32_t VOCAB_IMAP_ERROR                = yarp::os::createVocab32('e','r','r');
-
 #endif // YARP_DEV_IMAP2D_H

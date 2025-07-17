@@ -7,16 +7,41 @@
 #ifndef YARP_DEV_IFRAMEGRABBERIMAGE_H
 #define YARP_DEV_IFRAMEGRABBERIMAGE_H
 
-#include <yarp/dev/api.h>
+#include <yarp/os/ConnectionWriter.h>
+#include <yarp/os/ConnectionReader.h>
+#include <yarp/os/Portable.h>
+
 #include <yarp/sig/Image.h>
 #include <yarp/sig/Vector.h>
 
-typedef enum {
-    YARP_CROP_RECT = 0,             // Rectangular region of interest style, requires the two corner as a parameter
-    YARP_CROP_LIST                  // Unordered list of points, the returned image will be a nx1 image with n the
-                                    // number of points required by user (size of input vector), with the corresponding
-                                    // pixel color.
-} cropType_id_t;
+#include <yarp/dev/api.h>
+#include <yarp/dev/ReturnValue.h>
+
+namespace yarp::dev
+{
+    typedef enum
+    {
+        YARP_CROP_RECT = 0, // Rectangular region of interest style, requires the two corner as a parameter
+        YARP_CROP_LIST      // Unordered list of points, the returned image will be a nx1 image with n the
+                            // number of points required by user (size of input vector), with the corresponding
+                            // pixel color.
+    } cropType_id_t;
+
+    class YARP_dev_API vertex_t : public yarp::os::Portable
+    {
+        public:
+        virtual ~vertex_t();
+        vertex_t() = default;
+        vertex_t(int x, int y);
+
+        int x=0;
+        int y=0;
+
+        bool read(yarp::os::ConnectionReader& connection) override;
+        bool write(yarp::os::ConnectionWriter& connection) const override;
+
+    };
+} // namespace yarp::dev
 
 namespace yarp::dev {
 
@@ -62,7 +87,7 @@ public:
      * @param image the image to be filled
      * @return true/false upon success/failure
      */
-    virtual bool getImage(ImageType& image) = 0;
+    virtual yarp::dev::ReturnValue getImage(ImageType& image) = 0;
 
     /**
      * @brief Get a crop of the image from the frame grabber.
@@ -78,8 +103,8 @@ public:
      * @param image the image to be filled
      * @return true/false upon success/failure
      */
-    virtual bool getImageCrop(cropType_id_t cropType,
-                              yarp::sig::VectorOf<std::pair<int, int>> vertices,
+    virtual yarp::dev::ReturnValue getImageCrop(yarp::dev::cropType_id_t cropType,
+                              std::vector<vertex_t> vertices,
                               ImageType& image);
 };
 

@@ -4,7 +4,9 @@
  */
 
 #include <yarp/dev/IRGBDSensor.h>
+#include <yarp/dev/IFrameGrabberControls.h>
 #include <yarp/dev/tests/IRGBDSensorTest.h>
+#include <yarp/dev/tests/IFrameGrabberControlsTest.h>
 
 #include <yarp/os/Network.h>
 #include <yarp/sig/Image.h>
@@ -35,13 +37,22 @@ TEST_CASE("dev::fakeDepthCameraTest", "[yarp::dev]")
         PolyDriver dd;
         Property p;
         p.put("device", "fakeDepthCamera");
+        // small values to improve valgrind speed
+        p.put("rgb_w", 32);
+        p.put("rgb_h", 24);
+        p.put("dep_w", 32);
+        p.put("dep_h", 24);
         REQUIRE(dd.open(p));
 
         // Get the IFrameGrabberImage interface
         IRGBDSensor* irgbd = nullptr;
         REQUIRE(dd.view(irgbd));
 
+        IFrameGrabberControls* ictl = nullptr;
+        REQUIRE(dd.view(ictl));
+
         yarp::dev::tests::exec_iRGBDSensor_test_1(irgbd);
+        yarp::dev::tests::exec_IFrameGrabberControls_test_1(ictl);
 
         // Close the device
         CHECK(dd.close());
