@@ -1,10 +1,10 @@
-ARG base_img=ubuntu:22.04
+ARG base_img=ubuntu:24.04
 FROM ${base_img}
 LABEL maintainer="Marco Randazzo"
 
 # Non-interactive installation mode
 ENV DEBIAN_FRONTEND=noninteractive
-ENV DOCKER_UPDATED_ON=23_11_2023
+ENV DOCKER_UPDATED_ON=21_07_2025
 
 # Install essentials
 RUN apt-get update && apt-get install -y apt-utils \
@@ -54,6 +54,7 @@ COPY ./common/xorg.conf /etc/X11/xorg.conf
 RUN apt-get install -y     libace-dev \
                            libsqlite3-dev \
                            libtinyxml-dev \
+                           libtinyxml2-dev \
                            libedit-dev \
                            qtbase5-dev \
                            qtdeclarative5-dev \
