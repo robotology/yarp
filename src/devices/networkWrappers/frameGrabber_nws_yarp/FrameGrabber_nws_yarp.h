@@ -20,14 +20,11 @@
 #include <yarp/dev/IRgbVisualParams.h>
 #include <yarp/dev/WrapperSingle.h>
 
-#include <yarp/proto/framegrabber/FrameGrabberControlsDC1394_Responder.h>
-#include <yarp/proto/framegrabber/FrameGrabberControls_Responder.h>
-#include <yarp/proto/framegrabber/FrameGrabberOf_Responder.h>
-#include <yarp/proto/framegrabber/RgbVisualParams_Responder.h>
-
 #include "FrameGrabber_nws_yarp_ParamsParser.h"
 
-/**
+#include "FrameGrabberMsgsImpl.h"
+
+    /**
  * @ingroup dev_impl_nws_yarp
  *
  * \brief `frameGrabber_nws_yarp`: A YARP NWS for camera devices.
@@ -47,7 +44,7 @@ class FrameGrabber_nws_yarp :
         public yarp::dev::DeviceDriver,
         public yarp::dev::WrapperSingle,
         public yarp::os::PeriodicThread,
-        public yarp::dev::DeviceResponder,
+        public yarp::os::PortReader,
         public FrameGrabber_nws_yarp_ParamsParser
 {
 private:
@@ -56,19 +53,15 @@ private:
     yarp::os::BufferedPort<yarp::sig::FlexImage> pImg;
 
     // Interfaces handled
-    yarp::dev::IRgbVisualParams* iRgbVisualParams {nullptr};
-    yarp::dev::IFrameGrabberImage* iFrameGrabberImage {nullptr};
-    yarp::dev::IFrameGrabberImageRaw* iFrameGrabberImageRaw {nullptr};
-    yarp::dev::IFrameGrabberControls* iFrameGrabberControls {nullptr};
-    yarp::dev::IFrameGrabberControlsDC1394* iFrameGrabberControlsDC1394 {nullptr};
-    yarp::dev::IPreciselyTimed* iPreciselyTimed {nullptr};
+    std::mutex m_mutex;
+    yarp::dev::IRgbVisualParams* m_iRgbVisualParams {nullptr};
+    yarp::dev::IFrameGrabberImage* m_iFrameGrabberImage {nullptr};
+    yarp::dev::IFrameGrabberImageRaw* m_iFrameGrabberImageRaw {nullptr};
+    yarp::dev::IFrameGrabberControls* m_iFrameGrabberControls {nullptr};
+    yarp::dev::IFrameGrabberControlsDC1394* m_iFrameGrabberControlsDC1394 {nullptr};
+    yarp::dev::IPreciselyTimed* m_iPreciselyTimed {nullptr};
 
-    // Responders
-    yarp::proto::framegrabber::FrameGrabberOf_Responder<yarp::sig::ImageOf<yarp::sig::PixelRgb>> frameGrabberImage_Responder;
-    yarp::proto::framegrabber::FrameGrabberOf_Responder<yarp::sig::ImageOf<yarp::sig::PixelMono>, VOCAB_FRAMEGRABBER_IMAGERAW> frameGrabberImageRaw_Responder;
-    yarp::proto::framegrabber::RgbVisualParams_Responder rgbVisualParams_Responder;
-    yarp::proto::framegrabber::FrameGrabberControls_Responder frameGrabberControls_Responder;
-    yarp::proto::framegrabber::FrameGrabberControlsDC1394_Responder frameGrabberControlsDC1394_Responder;
+    std::unique_ptr<FrameGrabberMsgsImpl> m_RPC_FrameGrabber;
 
     // Images
     yarp::sig::ImageOf<yarp::sig::PixelRgb>* img {nullptr};
@@ -104,8 +97,8 @@ public:
     bool threadInit() override;
     void run() override;
 
-    // DeviceResponder
-    bool respond(const yarp::os::Bottle& command, yarp::os::Bottle& reply) override;
+    // PortReader
+    virtual bool read(yarp::os::ConnectionReader& connection) override;
 };
 
 #endif // YARP_FRAMEGRABBER_NWS_YARP_H

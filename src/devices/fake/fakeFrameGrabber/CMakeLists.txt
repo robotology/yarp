@@ -23,6 +23,10 @@ if(ENABLE_fakeFrameGrabber)
       FakeFrameGrabber.h
       FakeFrameGrabber_ParamsParser.cpp
       FakeFrameGrabber_ParamsParser.h
+      FakeFrameGrabber_Controls.cpp
+      FakeFrameGrabber_ControlsDC1394.cpp
+      FakeFrameGrabber_RGBVisualParams.cpp
+      FakeFrameGrabber_Utils.cpp
   )
 
   target_link_libraries(yarp_fakeFrameGrabber

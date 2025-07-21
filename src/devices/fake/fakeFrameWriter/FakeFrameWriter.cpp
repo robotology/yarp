@@ -62,11 +62,11 @@ bool FakeFrameWriter::close()
     return true;
 }
 
-bool FakeFrameWriter::putImage(ImageOf<PixelRgb>& image)
+yarp::dev::ReturnValue FakeFrameWriter::putImage(ImageOf<PixelRgb>& image)
 {
     if (image.width() == 0 || image.height() == 0) {
         yCError(FAKEIMAGEWRITER) << "Received empty frame";
-        return false;
+        return ReturnValue::return_code::return_value_error_method_failed;
     }
 
     if (m_width == 0)  {m_width = image.width();}
@@ -80,14 +80,14 @@ bool FakeFrameWriter::putImage(ImageOf<PixelRgb>& image)
     if (m_width != image.width())
     {
         yCError(FAKEIMAGEWRITER) << "Received frame has a width different from the current configuration" << m_width << "<<" << image.width();
-        return false;
+        return ReturnValue::return_code::return_value_error_method_failed;
     }
     if (m_height != image.height()) {
         yCError(FAKEIMAGEWRITER) << "Received frame has a height different from the current configuration: " << m_height << "<<" << image.height();
-        return false;
+        return ReturnValue::return_code::return_value_error_method_failed;
     }
 
     yCDebug(FAKEIMAGEWRITER) << "Frame received:" << image.width() << image.height();
 
-    return true;
+    return ReturnValue_ok;
 }

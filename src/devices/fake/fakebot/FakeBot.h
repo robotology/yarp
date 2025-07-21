@@ -74,7 +74,7 @@ public:
     bool open(yarp::os::Searchable& config) override;
 
     // IFrameGrabberImage
-    bool getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image) override;
+    yarp::dev::ReturnValue getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image) override;
 
     int height() const override{
         return m_h;

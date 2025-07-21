@@ -24,24 +24,24 @@ class FrameGrabberCropperOf :
 {
 protected:
     yarp::dev::IFrameGrabberOf<ImageType>* iFrameGrabberOf {nullptr};
-    static constexpr cropType_id_t cropType {YARP_CROP_RECT};
-    yarp::sig::VectorOf<std::pair<int, int>> vertices;
+    static constexpr yarp::dev::cropType_id_t cropType {yarp::dev::cropType_id_t::YARP_CROP_RECT};
+    std::vector<yarp::dev::vertex_t> vertices;
 
 public:
     ~FrameGrabberCropperOf() override = default;
 
-    bool getImage(ImageType& image) override
+    yarp::dev::ReturnValue getImage(ImageType& image) override
     {
         if (iFrameGrabberOf != nullptr) {
             return iFrameGrabberOf->getImageCrop(cropType, vertices, image);
         }
-        return false;
+        return yarp::dev::ReturnValue::return_code::return_value_error_not_ready;
     }
 
     int height() const override
     {
         if (vertices.size() == 2) {
-            return vertices[1].second - vertices[0].second + 1;
+            return vertices[1].y - vertices[0].y + 1;
         }
         return 0;
     }
@@ -49,7 +49,7 @@ public:
     int width() const override
     {
         if (vertices.size() == 2) {
-            return vertices[1].first - vertices[0].first + 1;
+            return vertices[1].x - vertices[0].x + 1;
         }
         return 0;
     }
@@ -102,400 +102,65 @@ public:
 
 
     // yarp::dev::IFrameGrabberControls
-    bool getCameraDescription(CameraDescriptor* camera) override
-    {
-        if (!iFrameGrabberControls) {
-            return false;
-        }
-        return iFrameGrabberControls->getCameraDescription(camera);
-    }
-
-    bool hasFeature(int feature, bool* hasFeature) override
-    {
-        if (!iFrameGrabberControls) {
-            return false;
-        }
-        return iFrameGrabberControls->hasFeature(feature, hasFeature);
-    }
-
-    bool setFeature(int feature, double value) override
-    {    if (!iFrameGrabberControls) {
-            return false;
-        }
-        return iFrameGrabberControls->setFeature(feature, value);
-    }
-
-    bool getFeature(int feature, double* value) override
-    {
-        if (!iFrameGrabberControls) {
-            return false;
-        }
-        return iFrameGrabberControls->getFeature(feature, value);
-    }
-
-    bool setFeature(int feature, double value1, double value2) override
-    {
-        if (!iFrameGrabberControls) {
-            return false;
-        }
-        return iFrameGrabberControls->setFeature(feature, value1, value2);
-    }
-
-    bool getFeature(int feature, double* value1, double* value2) override
-    {
-        if (!iFrameGrabberControls) {
-            return false;
-        }
-        return iFrameGrabberControls->getFeature(feature, value1, value2);
-    }
-
-    bool hasOnOff(int feature, bool* HasOnOff) override
-    {
-        if (!iFrameGrabberControls) {
-            return false;
-        }
-        return iFrameGrabberControls->hasOnOff(feature, HasOnOff);
-    }
-
-    bool setActive(int feature, bool onoff) override
-    {
-        if (!iFrameGrabberControls) {
-            return false;
-        }
-        return iFrameGrabberControls->setActive(feature, onoff);
-    }
-
-    bool getActive(int feature, bool* isActive) override
-    {
-        if (!iFrameGrabberControls) {
-            return false;
-        }
-        return iFrameGrabberControls->getActive(feature, isActive);
-    }
-
-    bool hasAuto(int feature, bool* hasAuto) override
-    {
-        if (!iFrameGrabberControls) {
-            return false;
-        }
-        return iFrameGrabberControls->hasAuto(feature, hasAuto);
-    }
-
-    bool hasManual(int feature, bool* hasManual) override
-    {
-        if (!iFrameGrabberControls) {
-            return false;
-        }
-        return iFrameGrabberControls->hasManual(feature, hasManual);
-    }
-
-    bool hasOnePush(int feature, bool* hasOnePush) override
-    {
-        if (!iFrameGrabberControls) {
-            return false;
-        }
-        return iFrameGrabberControls->hasOnePush(feature, hasOnePush);
-    }
-
-    bool setMode(int feature, FeatureMode mode) override
-    {
-        if (!iFrameGrabberControls) {
-            return false;
-        }
-        return iFrameGrabberControls->setMode(feature, mode);
-    }
-
-    bool getMode(int feature, FeatureMode* mode) override
-    {
-        if (!iFrameGrabberControls) {
-            return false;
-        }
-        return iFrameGrabberControls->getMode(feature, mode);
-    }
-
-    bool setOnePush(int feature) override
-    {
-        if (!iFrameGrabberControls) {
-            return false;
-        }
-        return iFrameGrabberControls->setOnePush(feature);
-    }
-
+    yarp::dev::ReturnValue getCameraDescription(yarp::dev::CameraDescriptor& camera) override;
+    yarp::dev::ReturnValue hasFeature(yarp::dev::cameraFeature_id_t feature, bool& hasFeature) override;
+    yarp::dev::ReturnValue setFeature(yarp::dev::cameraFeature_id_t feature, double value) override;
+    yarp::dev::ReturnValue getFeature(yarp::dev::cameraFeature_id_t feature, double& value) override;
+    yarp::dev::ReturnValue setFeature(yarp::dev::cameraFeature_id_t feature, double value1, double value2) override;
+    yarp::dev::ReturnValue getFeature(yarp::dev::cameraFeature_id_t feature, double& value1, double& value2) override;
+    yarp::dev::ReturnValue hasOnOff(yarp::dev::cameraFeature_id_t feature, bool& HasOnOff) override;
+    yarp::dev::ReturnValue setActive(yarp::dev::cameraFeature_id_t feature, bool onoff) override;
+    yarp::dev::ReturnValue getActive(yarp::dev::cameraFeature_id_t feature, bool& isActive) override;
+    yarp::dev::ReturnValue hasAuto(yarp::dev::cameraFeature_id_t feature, bool& hasAuto) override;
+    yarp::dev::ReturnValue hasManual(yarp::dev::cameraFeature_id_t feature, bool& hasManual) override;
+    yarp::dev::ReturnValue hasOnePush(yarp::dev::cameraFeature_id_t feature, bool& hasOnePush) override;
+    yarp::dev::ReturnValue setMode(yarp::dev::cameraFeature_id_t feature, yarp::dev::FeatureMode mode) override;
+    yarp::dev::ReturnValue getMode(yarp::dev::cameraFeature_id_t feature, yarp::dev::FeatureMode& mode) override;
+    yarp::dev::ReturnValue setOnePush(yarp::dev::cameraFeature_id_t feature) override;
 
     // yarp::dev::IFrameGrabberControlsDC1394
-    unsigned int getVideoModeMaskDC1394() override
-    {
-        if (!iFrameGrabberControlsDC1394) {
-            return 0;
-        }
-        return iFrameGrabberControlsDC1394->getVideoModeMaskDC1394();
-    }
-
-    unsigned int getVideoModeDC1394() override
-    {
-        if (!iFrameGrabberControlsDC1394) {
-            return 0;
-        }
-        return iFrameGrabberControlsDC1394->getVideoModeMaskDC1394();
-    }
-
-    bool setVideoModeDC1394(int video_mode) override
-    {
-        if (!iFrameGrabberControlsDC1394) {
-            return false;
-        }
-        return iFrameGrabberControlsDC1394->setVideoModeDC1394(video_mode);
-    }
-
-    unsigned int getFPSMaskDC1394() override
-    {
-        if (!iFrameGrabberControlsDC1394) {
-            return 0;
-        }
-        return iFrameGrabberControlsDC1394->getFPSMaskDC1394();
-    }
-
-    unsigned int getFPSDC1394() override
-
-    {
-        if (!iFrameGrabberControlsDC1394) {
-            return 0;
-        }
-        return iFrameGrabberControlsDC1394->getFPSDC1394();
-    }
-
-    bool setFPSDC1394(int fps) override
-
-    {
-        if (!iFrameGrabberControlsDC1394) {
-            return false;
-        }
-        return iFrameGrabberControlsDC1394->setFPSDC1394(fps);
-    }
-
-    unsigned int getISOSpeedDC1394() override
-    {
-        if (!iFrameGrabberControlsDC1394) {
-            return 0;
-        }
-        return iFrameGrabberControlsDC1394->getISOSpeedDC1394();
-    }
-
-    bool setISOSpeedDC1394(int speed) override
-
-    {
-        if (!iFrameGrabberControlsDC1394) {
-            return false;
-        }
-        return iFrameGrabberControlsDC1394->setISOSpeedDC1394(speed);
-    }
-
-    unsigned int getColorCodingMaskDC1394(unsigned int video_mode) override
-    {
-        if (!iFrameGrabberControlsDC1394) {
-            return 0;
-        }
-        return iFrameGrabberControlsDC1394->getColorCodingMaskDC1394(video_mode);
-    }
-
-    unsigned int getColorCodingDC1394() override
-    {
-        if (!iFrameGrabberControlsDC1394) {
-            return 0;
-        }
-        return iFrameGrabberControlsDC1394->getColorCodingDC1394();
-    }
-
-    bool setColorCodingDC1394(int coding) override
-    {
-        if (!iFrameGrabberControlsDC1394) {
-            return false;
-        }
-        return iFrameGrabberControlsDC1394->setColorCodingDC1394(coding);
-    }
-
-    bool getFormat7MaxWindowDC1394(unsigned int& xdim,
+    yarp::dev::ReturnValue getVideoModeMaskDC1394(unsigned int& val) override;
+    yarp::dev::ReturnValue getVideoModeDC1394(unsigned int& val) override;
+    yarp::dev::ReturnValue setVideoModeDC1394(int video_mode) override;
+    yarp::dev::ReturnValue getFPSMaskDC1394(unsigned int& val) override;
+    yarp::dev::ReturnValue getFPSDC1394(unsigned int& val) override;
+    yarp::dev::ReturnValue setFPSDC1394(int fps) override;
+    yarp::dev::ReturnValue getISOSpeedDC1394(unsigned int& val) override;
+    yarp::dev::ReturnValue setISOSpeedDC1394(int speed) override;
+    yarp::dev::ReturnValue getColorCodingMaskDC1394(unsigned int video_mode, unsigned int& val) override;
+    yarp::dev::ReturnValue getColorCodingDC1394(unsigned int& val) override;
+    yarp::dev::ReturnValue setColorCodingDC1394(int coding) override;
+    yarp::dev::ReturnValue getFormat7MaxWindowDC1394(unsigned int& xdim,
                                    unsigned int& ydim,
                                    unsigned int& xstep,
                                    unsigned int& ystep,
                                    unsigned int& xoffstep,
-                                   unsigned int& yoffstep) override
-    {
-        if (!iFrameGrabberControlsDC1394) {
-            return false;
-        }
-        return iFrameGrabberControlsDC1394->getFormat7MaxWindowDC1394(xdim, ydim, xstep, ystep, xoffstep, yoffstep);
-    }
-
-    bool getFormat7WindowDC1394(unsigned int& xdim, unsigned int& ydim, int& x0, int& y0) override
-    {
-        if (!iFrameGrabberControlsDC1394) {
-            return false;
-        }
-        return iFrameGrabberControlsDC1394->getFormat7WindowDC1394(xdim, ydim, x0, y0);
-    }
-
-    bool setFormat7WindowDC1394(unsigned int xdim, unsigned int ydim, int x0, int y0) override
-    {
-        if (!iFrameGrabberControlsDC1394) {
-            return false;
-        }
-        return iFrameGrabberControlsDC1394->setFormat7WindowDC1394(xdim, ydim, x0, y0);
-    }
-
-    bool setOperationModeDC1394(bool b1394b) override
-    {
-        if (!iFrameGrabberControlsDC1394) {
-            return false;
-        }
-        return iFrameGrabberControlsDC1394->setOperationModeDC1394(b1394b);
-    }
-
-    bool getOperationModeDC1394() override
-    {
-        if (!iFrameGrabberControlsDC1394) {
-            return false;
-        }
-        return iFrameGrabberControlsDC1394->getOperationModeDC1394();
-    }
-
-    bool setTransmissionDC1394(bool bTxON) override
-    {
-        if (!iFrameGrabberControlsDC1394) {
-            return false;
-        }
-        return iFrameGrabberControlsDC1394->setTransmissionDC1394(bTxON);
-    }
-
-    bool getTransmissionDC1394() override
-    {
-        if (!iFrameGrabberControlsDC1394) {
-            return false;
-        }
-        return iFrameGrabberControlsDC1394->getTransmissionDC1394();
-    }
-
-    bool setBroadcastDC1394(bool onoff) override
-    {
-        if (!iFrameGrabberControlsDC1394) {
-            return false;
-        }
-        return iFrameGrabberControlsDC1394->setBroadcastDC1394(onoff);
-    }
-
-    bool setDefaultsDC1394() override
-    {
-        if (!iFrameGrabberControlsDC1394) {
-            return false;
-        }
-        return iFrameGrabberControlsDC1394->setDefaultsDC1394();
-    }
-
-    bool setResetDC1394() override
-    {
-        if (!iFrameGrabberControlsDC1394) {
-            return false;
-        }
-        return iFrameGrabberControlsDC1394->setResetDC1394();
-    }
-
-    bool setPowerDC1394(bool onoff) override
-    {
-        if (!iFrameGrabberControlsDC1394) {
-            return false;
-        }
-        return iFrameGrabberControlsDC1394->setPowerDC1394(onoff);
-    }
-
-    bool setCaptureDC1394(bool bON) override
-    {
-        if (!iFrameGrabberControlsDC1394) {
-            return false;
-        }
-        return iFrameGrabberControlsDC1394->setCaptureDC1394(bON);
-    }
-
-    unsigned int getBytesPerPacketDC1394() override
-    {
-        if (!iFrameGrabberControlsDC1394) {
-            return 0;
-        }
-        return iFrameGrabberControlsDC1394->getBytesPerPacketDC1394();
-    }
-
-    bool setBytesPerPacketDC1394(unsigned int bpp) override
-    {
-        if (!iFrameGrabberControlsDC1394) {
-            return false;
-        }
-        return iFrameGrabberControlsDC1394->setBytesPerPacketDC1394(bpp);
-    }
-
+                                   unsigned int& yoffstep) override;
+    yarp::dev::ReturnValue getFormat7WindowDC1394(unsigned int& xdim, unsigned int& ydim, int& x0, int& y0) override;
+    yarp::dev::ReturnValue setFormat7WindowDC1394(unsigned int xdim, unsigned int ydim, int x0, int y0) override;
+    yarp::dev::ReturnValue setOperationModeDC1394(bool b1394b) override;
+    yarp::dev::ReturnValue getOperationModeDC1394(bool& b1394b) override;
+    yarp::dev::ReturnValue setTransmissionDC1394(bool bTxON) override;
+    yarp::dev::ReturnValue getTransmissionDC1394(bool& bTxON) override;
+    yarp::dev::ReturnValue setBroadcastDC1394(bool onoff) override;
+    yarp::dev::ReturnValue setDefaultsDC1394() override;
+    yarp::dev::ReturnValue setResetDC1394() override;
+    yarp::dev::ReturnValue setPowerDC1394(bool onoff) override;
+    yarp::dev::ReturnValue setCaptureDC1394(bool bON) override;
+    yarp::dev::ReturnValue getBytesPerPacketDC1394(unsigned int& bpp) override;
+    yarp::dev::ReturnValue setBytesPerPacketDC1394(unsigned int bpp) override;
 
     // yarp::dev::IRgbVisualParams
-    int getRgbHeight() override
-    {
-        return FrameGrabberCropperOf<yarp::sig::ImageOf<yarp::sig::PixelRgb>>::height();
-    }
-
-    int getRgbWidth() override
-    {
-        return FrameGrabberCropperOf<yarp::sig::ImageOf<yarp::sig::PixelRgb>>::width();
-    }
-
-    bool setRgbResolution(int width, int height) override
-    {
-        if (!iRgbVisualParams || !m_forwardRgbVisualParams) {
-            return false;
-        }
-        return iRgbVisualParams->setRgbResolution(width, height);
-    }
-
-    bool getRgbFOV(double& horizontalFov, double& verticalFov) override
-    {
-        if (!iRgbVisualParams || !m_forwardRgbVisualParams) {
-            horizontalFov = std::numeric_limits<double>::quiet_NaN();
-            verticalFov = std::numeric_limits<double>::quiet_NaN();
-            return false;
-        }
-        return iRgbVisualParams->getRgbFOV(horizontalFov, verticalFov);
-    }
-
-    bool setRgbFOV(double horizontalFov, double verticalFov) override
-    {
-        if (!iRgbVisualParams || !m_forwardRgbVisualParams) {
-            return false;
-        }
-        return iRgbVisualParams->setRgbFOV(horizontalFov, verticalFov);
-    }
-
-    bool getRgbIntrinsicParam(yarp::os::Property& intrinsic) override
-    {
-        if (!iRgbVisualParams || !m_forwardRgbVisualParams) {
-            intrinsic.clear();
-            return false;
-        }
-        return iRgbVisualParams->getRgbIntrinsicParam(intrinsic);
-    }
-
-    bool getRgbMirroring(bool& mirror) override
-    {
-        if (!iRgbVisualParams || !m_forwardRgbVisualParams) {
-            mirror = false;
-            return false;
-        }
-        return iRgbVisualParams->getRgbMirroring(mirror);
-
-    }
-
-    bool setRgbMirroring(bool mirror) override
-    {
-        if (!iRgbVisualParams || !m_forwardRgbVisualParams) {
-            return false;
-        }
-        return iRgbVisualParams->setRgbMirroring(mirror);
-    }
-
+    int getRgbHeight() override;
+    int getRgbWidth() override;
+    yarp::dev::ReturnValue getRgbResolution(int& width, int& height) override;
+    yarp::dev::ReturnValue setRgbResolution(int width, int height) override;
+    yarp::dev::ReturnValue getRgbFOV(double& horizontalFov, double& verticalFov) override;
+    yarp::dev::ReturnValue setRgbFOV(double horizontalFov, double verticalFov) override;
+    yarp::dev::ReturnValue getRgbIntrinsicParam(yarp::os::Property& intrinsic) override;
+    yarp::dev::ReturnValue getRgbSupportedConfigurations(std::vector<yarp::dev::CameraConfig>& cfgs) override;
+    yarp::dev::ReturnValue getRgbMirroring(bool& mirror) override;
+    yarp::dev::ReturnValue setRgbMirroring(bool mirror) override;
 
     // yarp::dev::IPreciselyTimed
     yarp::os::Stamp getLastInputStamp() override

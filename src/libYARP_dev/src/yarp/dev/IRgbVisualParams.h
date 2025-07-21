@@ -10,8 +10,13 @@
 
 #include <yarp/os/Property.h>
 
+#include <yarp/os/ConnectionWriter.h>
+#include <yarp/os/ConnectionReader.h>
+#include <yarp/os/Portable.h>
+
 #include <yarp/sig/Image.h>
 #include <yarp/sig/Vector.h>
+#include <yarp/dev/ReturnValue.h>
 
 namespace yarp::dev {
 
@@ -22,15 +27,20 @@ namespace yarp::dev {
  * @param framerate camera framerate
  * @param pixelCoding camera pixel coding
  */
-YARP_BEGIN_PACK
-struct CameraConfig
+class YARP_dev_API CameraConfig: public yarp::os::Portable
 {
+public:
+    CameraConfig() = default;
+    CameraConfig(int w, int h, double rate, YarpVocabPixelTypesEnum enc);
+
     int width {0};
     int height {0};
     double framerate {0.0};
     YarpVocabPixelTypesEnum pixelCoding {VOCAB_PIXEL_INVALID};
+
+    bool read(yarp::os::ConnectionReader& connection) override;
+    bool write(yarp::os::ConnectionWriter& connection) const override;
 };
-YARP_END_PACK
 
 /**
  * @ingroup dev_iface_other
@@ -59,11 +69,7 @@ public:
      * @param configurations  list of camera supported configurations as CameraConfig type
      * @return true on success
      */
-    virtual bool getRgbSupportedConfigurations(yarp::sig::VectorOf<yarp::dev::CameraConfig>& configurations)
-    {
-        YARP_UNUSED(configurations);
-        return false;
-    }
+    virtual yarp::dev::ReturnValue getRgbSupportedConfigurations(std::vector<yarp::dev::CameraConfig>& configurations) = 0;
 
     /**
      * Get the resolution of the rgb image from the camera
@@ -71,12 +77,7 @@ public:
      * @param height image height
      * @return true on success
      */
-    virtual bool getRgbResolution(int& width, int& height)
-    {
-        YARP_UNUSED(width);
-        YARP_UNUSED(height);
-        return false;
-    }
+    virtual yarp::dev::ReturnValue getRgbResolution(int& width, int& height) = 0;
 
     /**
      * Set the resolution of the rgb image from the camera
@@ -84,7 +85,7 @@ public:
      * @param height image height
      * @return true on success
      */
-    virtual bool setRgbResolution(int width, int height) = 0;
+    virtual yarp::dev::ReturnValue setRgbResolution(int width, int height) = 0;
 
     /**
      * Get the field of view (FOV) of the rgb camera.
@@ -93,7 +94,7 @@ public:
      * @param  verticalFov   will return the value of the vertical fov in degrees
      * @return true on success
      */
-    virtual bool getRgbFOV(double& horizontalFov, double& verticalFov) = 0;
+    virtual yarp::dev::ReturnValue getRgbFOV(double& horizontalFov, double& verticalFov) = 0;
 
     /**
      * Set the field of view (FOV) of the rgb camera.
@@ -102,7 +103,7 @@ public:
      * @param  verticalFov   will set the value of the vertical fov in degrees
      * @return true on success
      */
-    virtual bool setRgbFOV(double horizontalFov, double verticalFov) = 0;
+    virtual yarp::dev::ReturnValue setRgbFOV(double horizontalFov, double verticalFov) = 0;
 
     /**
      * Get the intrinsic parameters of the rgb camera
@@ -130,7 +131,7 @@ public:
      * |                              |   t1                | double              | -              |   -           |   Yes                            |  Tangential distortion of the lens                                                     |                                                                       |
      * |                              |   t2                | double              | -              |   -           |   Yes                            |  Tangential distortion of the lens                                                     |                                                                       |
      */
-    virtual bool getRgbIntrinsicParam(yarp::os::Property& intrinsic) = 0;
+    virtual yarp::dev::ReturnValue getRgbIntrinsicParam(yarp::os::Property& intrinsic) = 0;
 
     /**
      * Get the mirroring setting of the sensor
@@ -138,7 +139,7 @@ public:
      * @param mirror: true if image is mirrored, false otherwise
      * @return true if success
      */
-    virtual bool getRgbMirroring(bool& mirror) = 0;
+    virtual yarp::dev::ReturnValue getRgbMirroring(bool& mirror) = 0;
 
     /**
      * Set the mirroring setting of the sensor
@@ -146,7 +147,7 @@ public:
      * @param mirror: true if image should be mirrored, false otherwise
      * @return true if success
      */
-    virtual bool setRgbMirroring(bool mirror) = 0;
+    virtual yarp::dev::ReturnValue setRgbMirroring(bool mirror) = 0;
 };
 
 } // namespace yarp::dev

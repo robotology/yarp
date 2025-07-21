@@ -15,6 +15,7 @@
 #include <yarp/os/Bottle.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/Log.h>
+#include <yarp/os/LogStream.h>
 #include <yarp/os/PeriodicThread.h>
 
 #include <catch2/catch_amalgamated.hpp>
@@ -130,6 +131,17 @@ TEST_CASE("sig::ImageTest", "[yarp::sig]")
             }
             CHECK(mismatch == 0); // pixel match check
         }
+    }
+
+    SECTION("test Image::copy(). part2")
+    {
+        FlexImage imgsrc;
+        imgsrc.setPixelCode(VOCAB_PIXEL_RGB);
+        imgsrc.resize(32,24);
+        FlexImage imgdest;
+        imgdest.copy (imgsrc);
+        CHECK(imgdest.width()==32);
+        CHECK(imgdest.height()==24);
     }
 
     SECTION("test Image::move().")

@@ -198,55 +198,54 @@ public:
     bool close() override;
 
     // IRGBDSensor
-    int    getRgbHeight() override;
-    int    getRgbWidth() override;
-    bool   getRgbSupportedConfigurations(yarp::sig::VectorOf<yarp::dev::CameraConfig>& configurations) override;
-    bool   getRgbResolution(int& width, int& height) override;
-    bool   setRgbResolution(int width, int height) override;
-    bool   getRgbFOV(double& horizontalFov, double& verticalFov) override;
-    bool   setRgbFOV(double horizontalFov, double verticalFov) override;
-    bool   getRgbMirroring(bool& mirror) override;
-    bool   setRgbMirroring(bool mirror) override;
+    int                      getRgbHeight() override;
+    int                      getRgbWidth() override;
+    yarp::dev::ReturnValue   getRgbSupportedConfigurations(std::vector<yarp::dev::CameraConfig>& configurations) override;
+    yarp::dev::ReturnValue   getRgbResolution(int& width, int& height) override;
+    yarp::dev::ReturnValue   setRgbResolution(int width, int height) override;
+    yarp::dev::ReturnValue   getRgbFOV(double& horizontalFov, double& verticalFov) override;
+    yarp::dev::ReturnValue   setRgbFOV(double horizontalFov, double verticalFov) override;
+    yarp::dev::ReturnValue   getRgbMirroring(bool& mirror) override;
+    yarp::dev::ReturnValue   setRgbMirroring(bool mirror) override;
 
-    bool   getRgbIntrinsicParam(Property& intrinsic) override;
-    int    getDepthHeight() override;
-    int    getDepthWidth() override;
-    bool   setDepthResolution(int width, int height) override;
-    bool   getDepthFOV(double& horizontalFov, double& verticalFov) override;
-    bool   setDepthFOV(double horizontalFov, double verticalFov) override;
-    bool   getDepthIntrinsicParam(Property& intrinsic) override;
-    double getDepthAccuracy() override;
-    bool   setDepthAccuracy(double accuracy) override;
-    bool   getDepthClipPlanes(double& nearPlane, double& farPlane) override;
-    bool   setDepthClipPlanes(double nearPlane, double farPlane) override;
-    bool   getDepthMirroring(bool& mirror) override;
-    bool   setDepthMirroring(bool mirror) override;
+    int                      getDepthHeight() override;
+    int                      getDepthWidth() override;
+    yarp::dev::ReturnValue   getRgbIntrinsicParam(Property& intrinsic) override;
+    yarp::dev::ReturnValue   setDepthResolution(int width, int height) override;
+    yarp::dev::ReturnValue   getDepthFOV(double& horizontalFov, double& verticalFov) override;
+    yarp::dev::ReturnValue   setDepthFOV(double horizontalFov, double verticalFov) override;
+    yarp::dev::ReturnValue   getDepthIntrinsicParam(Property& intrinsic) override;
+    yarp::dev::ReturnValue   getDepthAccuracy(double& accuracy) override;
+    yarp::dev::ReturnValue   setDepthAccuracy(double accuracy) override;
+    yarp::dev::ReturnValue   getDepthClipPlanes(double& nearPlane, double& farPlane) override;
+    yarp::dev::ReturnValue   setDepthClipPlanes(double nearPlane, double farPlane) override;
+    yarp::dev::ReturnValue   getDepthMirroring(bool& mirror) override;
+    yarp::dev::ReturnValue   setDepthMirroring(bool mirror) override;
 
+    yarp::dev::ReturnValue   getExtrinsicParam(yarp::sig::Matrix& extrinsic) override;
+    yarp::dev::ReturnValue   getRgbImage(FlexImage& rgbImage, Stamp* timeStamp = NULL) override;
+    yarp::dev::ReturnValue   getDepthImage(depthImage& depthImage, Stamp* timeStamp = NULL) override;
+    yarp::dev::ReturnValue   getImages(FlexImage& colorFrame, depthImage& depthFrame, Stamp* colorStamp=NULL, Stamp* depthStamp=NULL) override;
 
-    bool   getExtrinsicParam(yarp::sig::Matrix& extrinsic) override;
-    bool   getRgbImage(FlexImage& rgbImage, Stamp* timeStamp = NULL) override;
-    bool   getDepthImage(depthImage& depthImage, Stamp* timeStamp = NULL) override;
-    bool   getImages(FlexImage& colorFrame, depthImage& depthFrame, Stamp* colorStamp=NULL, Stamp* depthStamp=NULL) override;
-
-    RGBDSensor_status     getSensorStatus() override;
-    std::string getLastErrorMsg(Stamp* timeStamp = NULL) override;
+    RGBDSensor_status        getSensorStatus() override;
+    std::string              getLastErrorMsg(Stamp* timeStamp = NULL) override;
 
     //IFrameGrabberControls
-    bool   getCameraDescription(CameraDescriptor *camera) override;
-    bool   hasFeature(int feature, bool*   hasFeature) override;
-    bool   setFeature(int feature, double  value) override;
-    bool   getFeature(int feature, double* value) override;
-    bool   setFeature(int feature, double  value1,  double  value2) override;
-    bool   getFeature(int feature, double* value1,  double* value2) override;
-    bool   hasOnOff(  int feature, bool*   HasOnOff) override;
-    bool   setActive( int feature, bool    onoff) override;
-    bool   getActive( int feature, bool*   isActive) override;
-    bool   hasAuto(   int feature, bool*   hasAuto) override;
-    bool   hasManual( int feature, bool*   hasManual) override;
-    bool   hasOnePush(int feature, bool*   hasOnePush) override;
-    bool   setMode(   int feature, FeatureMode mode) override;
-    bool   getMode(   int feature, FeatureMode *mode) override;
-    bool   setOnePush(int feature) override;
+    yarp::dev::ReturnValue   getCameraDescription(CameraDescriptor *camera) override;
+    yarp::dev::ReturnValue   hasFeature(int feature, bool*   hasFeature) override;
+    yarp::dev::ReturnValue   setFeature(int feature, double  value) override;
+    yarp::dev::ReturnValue   getFeature(int feature, double* value) override;
+    yarp::dev::ReturnValue   setFeature(int feature, double  value1,  double  value2) override;
+    yarp::dev::ReturnValue   getFeature(int feature, double* value1,  double* value2) override;
+    yarp::dev::ReturnValue   hasOnOff(  int feature, bool*   HasOnOff) override;
+    yarp::dev::ReturnValue   setActive( int feature, bool    onoff) override;
+    yarp::dev::ReturnValue   getActive( int feature, bool*   isActive) override;
+    yarp::dev::ReturnValue   hasAuto(   int feature, bool*   hasAuto) override;
+    yarp::dev::ReturnValue   hasManual( int feature, bool*   hasManual) override;
+    yarp::dev::ReturnValue   hasOnePush(int feature, bool*   hasOnePush) override;
+    yarp::dev::ReturnValue   setMode(   int feature, FeatureMode mode) override;
+    yarp::dev::ReturnValue   getMode(   int feature, FeatureMode *mode) override;
+    yarp::dev::ReturnValue   setOnePush(int feature) override;
 
 private:
     //method

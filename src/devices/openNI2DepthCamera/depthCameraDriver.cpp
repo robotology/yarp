@@ -478,13 +478,13 @@ int depthCameraDriver::getRgbWidth()
     return m_imageStream.getVideoMode().getResolutionX();
 }
 
-bool depthCameraDriver::getRgbSupportedConfigurations(yarp::sig::VectorOf<CameraConfig> &configurations)
+ReturnValue depthCameraDriver::getRgbSupportedConfigurations(std::vector<CameraConfig> &configurations)
 {
     yCWarning(DEPTHCAMERA) << "getRgbSupportedConfigurations not implemented yet";
     return false;
 }
 
-bool depthCameraDriver::getRgbResolution(int &width, int &height)
+ReturnValue depthCameraDriver::getRgbResolution(int &width, int &height)
 {
     if (params_map[rgbRes].isDescription)
     {
@@ -494,10 +494,10 @@ bool depthCameraDriver::getRgbResolution(int &width, int &height)
         width  = m_imageStream.getVideoMode().getResolutionX();
         height = m_imageStream.getVideoMode().getResolutionY();
     }
-    return true;
+    return ReturnValue_ok;
 }
 
-bool depthCameraDriver::setDepthResolution(int width, int height)
+ReturnValue depthCameraDriver::setDepthResolution(int width, int height)
 {
     if (params_map[depthRes].isDescription)
     {
@@ -508,7 +508,7 @@ bool depthCameraDriver::setDepthResolution(int width, int height)
     return setResolution(width, height, m_depthStream);
 }
 
-bool depthCameraDriver::setResolution(int width, int height, VideoStream& stream)
+ReturnValue depthCameraDriver::setResolution(int width, int height, VideoStream& stream)
 {
     VideoMode vm;
     bool      bRet;
@@ -527,7 +527,7 @@ bool depthCameraDriver::setResolution(int width, int height, VideoStream& stream
     return bRet;
 }
 
-bool depthCameraDriver::setRgbResolution(int width, int height)
+ReturnValue depthCameraDriver::setRgbResolution(int width, int height)
 {
     if (params_map[rgbRes].isDescription)
     {
@@ -537,14 +537,14 @@ bool depthCameraDriver::setRgbResolution(int width, int height)
     return setResolution(width, height, m_imageStream);
 }
 
-bool depthCameraDriver::setFOV(double horizontalFov, double verticalFov, VideoStream& stream)
+ReturnValue depthCameraDriver::setFOV(double horizontalFov, double verticalFov, VideoStream& stream)
 {
     RETURN_FALSE_STATUS_NOT_OK(stream.setProperty(STREAM_PROPERTY_VERTICAL_FOV, verticalFov * DEG2RAD));
     RETURN_FALSE_STATUS_NOT_OK(stream.setProperty(STREAM_PROPERTY_HORIZONTAL_FOV, horizontalFov * DEG2RAD));
-    return true;
+    return ReturnValue_ok;
 }
 
-bool depthCameraDriver::setRgbFOV(double horizontalFov, double verticalFov)
+ReturnValue depthCameraDriver::setRgbFOV(double horizontalFov, double verticalFov)
 {
     if (params_map[rgb_Fov].isDescription)
     {
@@ -553,7 +553,7 @@ bool depthCameraDriver::setRgbFOV(double horizontalFov, double verticalFov)
     return setFOV(horizontalFov, verticalFov, m_depthStream);
 }
 
-bool depthCameraDriver::setDepthFOV(double horizontalFov, double verticalFov)
+ReturnValue depthCameraDriver::setDepthFOV(double horizontalFov, double verticalFov)
 {
     if (params_map[depth_Fov].isDescription)
     {
@@ -562,7 +562,7 @@ bool depthCameraDriver::setDepthFOV(double horizontalFov, double verticalFov)
     return setFOV(horizontalFov, verticalFov, m_depthStream);
 }
 
-bool depthCameraDriver::setDepthAccuracy(double _accuracy)
+ReturnValue depthCameraDriver::setDepthAccuracy(double _accuracy)
 {
     if (params_map[accuracy].isDescription)
     {
@@ -596,32 +596,32 @@ bool depthCameraDriver::setDepthAccuracy(double _accuracy)
     return ret;
 }
 
-bool depthCameraDriver::getRgbFOV(double &horizontalFov, double &verticalFov)
+ReturnValue depthCameraDriver::getRgbFOV(double &horizontalFov, double &verticalFov)
 {
     if (params_map[rgb_Fov].isDescription)
     {
         horizontalFov = params_map[rgb_Fov].val[0].asFloat64();
         verticalFov   = params_map[rgb_Fov].val[1].asFloat64();
-        return true;
+        return ReturnValue_ok;
     }
     horizontalFov = m_imageStream.getHorizontalFieldOfView() * RAD2DEG;
     verticalFov   = m_imageStream.getVerticalFieldOfView()   * RAD2DEG;
-    return true;
+    return ReturnValue_ok;
 }
 
-bool depthCameraDriver::getRgbMirroring(bool& mirror)
+ReturnValue depthCameraDriver::getRgbMirroring(bool& mirror)
 {
     if (params_map[rgbMirroring].isDescription)
     {
         mirror = params_map[rgbMirroring].val[0].asBool();
-        return true;
+        return ReturnValue_ok;
     }
 
     mirror = m_imageStream.getMirroringEnabled();
-    return true;
+    return ReturnValue_ok;
 }
 
-bool depthCameraDriver::setRgbMirroring(bool mirror)
+ReturnValue depthCameraDriver::setRgbMirroring(bool mirror)
 {
     if (params_map[rgbMirroring].isDescription)
     {
@@ -638,13 +638,13 @@ bool depthCameraDriver::setRgbMirroring(bool mirror)
     return (ret == mirror);
 }
 
-bool depthCameraDriver::setIntrinsic(Property& intrinsic, const yarp::sig::IntrinsicParams& values)
+ReturnValue depthCameraDriver::setIntrinsic(Property& intrinsic, const yarp::sig::IntrinsicParams& values)
 {
     values.toProperty(intrinsic);
-    return true;
+    return ReturnValue_ok;
 }
 
-bool depthCameraDriver::getRgbIntrinsicParam(Property& intrinsic)
+ReturnValue depthCameraDriver::getRgbIntrinsicParam(Property& intrinsic)
 {
     return setIntrinsic(intrinsic, m_paramParser->rgbIntrinsic);
 }
@@ -667,25 +667,25 @@ int  depthCameraDriver::getDepthWidth()
     return m_depthStream.getVideoMode().getResolutionX();
 }
 
-bool depthCameraDriver::getDepthFOV(double& horizontalFov, double& verticalFov)
+ReturnValue depthCameraDriver::getDepthFOV(double& horizontalFov, double& verticalFov)
 {
     if (params_map[depth_Fov].isDescription)
     {
         horizontalFov = params_map[depth_Fov].val[0].asFloat64();
         verticalFov   = params_map[depth_Fov].val[1].asFloat64();
-        return true;
+        return ReturnValue_ok;
     }
     horizontalFov = m_depthStream.getHorizontalFieldOfView() * RAD2DEG;
     verticalFov   = m_depthStream.getVerticalFieldOfView()   * RAD2DEG;
-    return true;
+    return ReturnValue_ok;
 }
 
-bool depthCameraDriver::getDepthIntrinsicParam(Property& intrinsic)
+ReturnValue depthCameraDriver::getDepthIntrinsicParam(Property& intrinsic)
 {
     return setIntrinsic(intrinsic, m_paramParser->rgbIntrinsic);
 }
 
-double depthCameraDriver::getDepthAccuracy()
+ReturnValue depthCameraDriver::getDepthAccuracy()
 {
     if (params_map[accuracy].isDescription)
     {
@@ -694,22 +694,22 @@ double depthCameraDriver::getDepthAccuracy()
     return m_depthStream.getVideoMode().getPixelFormat() == PIXEL_FORMAT_DEPTH_1_MM ? 0.001 : 0.0001;
 }
 
-bool depthCameraDriver::getDepthClipPlanes(double& nearPlane, double& farPlane)
+ReturnValue depthCameraDriver::getDepthClipPlanes(double& nearPlane, double& farPlane)
 {
     if (params_map[clipPlanes].isDescription)
     {
         nearPlane = params_map[clipPlanes].val[0].asFloat64();
         farPlane  = params_map[clipPlanes].val[1].asFloat64();
-        return true;
+        return ReturnValue_ok;
     }
     double factor;
     factor = getDepthAccuracy();
     nearPlane   = m_depthStream.getMinPixelValue() * factor;
     farPlane    = m_depthStream.getMaxPixelValue() * factor;
-    return true;
+    return ReturnValue_ok;
 }
 
-bool depthCameraDriver::setDepthClipPlanes(double nearPlane, double farPlane)
+ReturnValue depthCameraDriver::setDepthClipPlanes(double nearPlane, double farPlane)
 {
     if (params_map[clipPlanes].isDescription)
     {
@@ -719,20 +719,20 @@ bool depthCameraDriver::setDepthClipPlanes(double nearPlane, double farPlane)
     factor = getDepthAccuracy();
     RETURN_FALSE_STATUS_NOT_OK(m_depthStream.setProperty(STREAM_PROPERTY_MAX_VALUE, int(farPlane  / factor)));
     RETURN_FALSE_STATUS_NOT_OK(m_depthStream.setProperty(STREAM_PROPERTY_MIN_VALUE, int(nearPlane / factor)));
-    return true;
+    return ReturnValue_ok;
 }
 
-bool depthCameraDriver::getDepthMirroring(bool& mirror)
+ReturnValue depthCameraDriver::getDepthMirroring(bool& mirror)
 {
     if (params_map[depthMirroring].isDescription)
     {
         return params_map[depthMirroring].val[0].asBool();
     }
     mirror = m_depthStream.getMirroringEnabled();
-    return true;
+    return ReturnValue_ok;
 }
 
-bool depthCameraDriver::setDepthMirroring(bool mirror)
+ReturnValue depthCameraDriver::setDepthMirroring(bool mirror)
 {
     if (params_map[depthMirroring].isDescription)
     {
@@ -745,18 +745,18 @@ bool depthCameraDriver::setDepthMirroring(bool mirror)
     return (ret == mirror);
 }
 
-bool depthCameraDriver::getExtrinsicParam(Matrix& extrinsic)
+ReturnValue depthCameraDriver::getExtrinsicParam(Matrix& extrinsic)
 {
     extrinsic = m_paramParser->transformationMatrix;
-    return true;
+    return ReturnValue_ok;
 }
 
-bool depthCameraDriver::getRgbImage(FlexImage& rgbImage, Stamp* timeStamp)
+ReturnValue depthCameraDriver::getRgbImage(FlexImage& rgbImage, Stamp* timeStamp)
 {
     return getImage(rgbImage, timeStamp, m_imageFrame);
 }
 
-bool depthCameraDriver::getDepthImage(ImageOf<PixelFloat>& depthImage, Stamp* timeStamp)
+ReturnValue depthCameraDriver::getDepthImage(ImageOf<PixelFloat>& depthImage, Stamp* timeStamp)
 {
     return getImage(depthImage, timeStamp, m_depthFrame);
 }
@@ -812,14 +812,14 @@ int depthCameraDriver::pixFormatToCode(PixelFormat p)
     return VOCAB_PIXEL_INVALID;
 }
 
-bool depthCameraDriver::getImage(FlexImage& Frame, Stamp* Stamp, streamFrameListener* sourceFrame)
+ReturnValue depthCameraDriver::getImage(FlexImage& Frame, Stamp* Stamp, streamFrameListener* sourceFrame)
 {
     bool ret = sourceFrame->getImage(Frame);
     *Stamp   = sourceFrame->getStamp();
     return ret;
 }
 
-bool depthCameraDriver::getImage(ImageOf<PixelFloat>& Frame, Stamp* Stamp, streamFrameListener* sourceFrame)
+ReturnValue depthCameraDriver::getImage(ImageOf<PixelFloat>& Frame, Stamp* Stamp, streamFrameListener* sourceFrame)
 {
     std::lock_guard<std::mutex> guard(sourceFrame->mutex);
     if (!sourceFrame->isReady)
@@ -854,10 +854,10 @@ bool depthCameraDriver::getImage(ImageOf<PixelFloat>& Frame, Stamp* Stamp, strea
         rawImage[i] = srcRawImage[i] * factor;
     }
     *Stamp   = sourceFrame->stamp;
-    return true;
+    return ReturnValue_ok;
 }
 
-bool depthCameraDriver::getImages(FlexImage& colorFrame, ImageOf<PixelFloat>& depthFrame, Stamp* colorStamp, Stamp* depthStamp)
+ReturnValue depthCameraDriver::getImages(FlexImage& colorFrame, ImageOf<PixelFloat>& depthFrame, Stamp* colorStamp, Stamp* depthStamp)
 {
     return getImage(colorFrame, colorStamp, m_imageFrame) & getImage(depthFrame, depthStamp, m_depthFrame);
 }
@@ -894,14 +894,14 @@ std::string depthCameraDriver::getLastErrorMsg(Stamp* timeStamp)
     return OpenNI::getExtendedError();
 }
 
-bool depthCameraDriver::getCameraDescription(CameraDescriptor* camera)
+ReturnValue depthCameraDriver::getCameraDescription(CameraDescriptor* camera)
 {
     camera->deviceDescription = m_device.getDeviceInfo().getName();
     camera->busType = BUS_USB;
-    return true;
+    return ReturnValue_ok;
 }
 
-bool depthCameraDriver::hasFeature(int feature, bool* hasFeature)
+ReturnValue depthCameraDriver::hasFeature(int feature, bool* hasFeature)
 {
     cameraFeature_id_t f;
     f = static_cast<cameraFeature_id_t>(feature);
@@ -919,10 +919,10 @@ bool depthCameraDriver::hasFeature(int feature, bool* hasFeature)
         *hasFeature = false;
     }
 
-    return true;
+    return ReturnValue_ok;
 }
 
-bool depthCameraDriver::setFeature(int feature, double value)
+ReturnValue depthCameraDriver::setFeature(int feature, double value)
 {
     bool b;
     if (!hasFeature(feature, &b) || !b)
@@ -960,10 +960,10 @@ bool depthCameraDriver::setFeature(int feature, double value)
         yCError(DEPTHCAMERA) << "Feature not supported!";
         return false;
     }
-    return true;
+    return ReturnValue_ok;
 }
 
-bool depthCameraDriver::getFeature(int feature, double *value)
+ReturnValue depthCameraDriver::getFeature(int feature, double *value)
 {
     bool b;
     if (!hasFeature(feature, &b) || !b)
@@ -990,22 +990,22 @@ bool depthCameraDriver::getFeature(int feature, double *value)
     default:
         return false;
     }
-    return true;
+    return ReturnValue_ok;
 }
 
-bool depthCameraDriver::setFeature(int feature, double value1, double value2)
+ReturnValue depthCameraDriver::setFeature(int feature, double value1, double value2)
 {
     yCError(DEPTHCAMERA) << "No 2-valued feature are supported";
     return false;
 }
 
-bool depthCameraDriver::getFeature(int feature, double *value1, double *value2)
+ReturnValue depthCameraDriver::getFeature(int feature, double *value1, double *value2)
 {
     yCError(DEPTHCAMERA) << "No 2-valued feature are supported";
     return false;
 }
 
-bool depthCameraDriver::hasOnOff(  int feature, bool *HasOnOff)
+ReturnValue depthCameraDriver::hasOnOff(  int feature, bool *HasOnOff)
 {
     bool b;
     if (!hasFeature(feature, &b) || !b)
@@ -1018,13 +1018,13 @@ bool depthCameraDriver::hasOnOff(  int feature, bool *HasOnOff)
     if (f == YARP_FEATURE_WHITE_BALANCE || f == YARP_FEATURE_MIRROR)
     {
         *HasOnOff = true;
-        return true;
+        return ReturnValue_ok;
     }
     *HasOnOff = false;
-    return true;
+    return ReturnValue_ok;
 }
 
-bool depthCameraDriver::setActive( int feature, bool onoff)
+ReturnValue depthCameraDriver::setActive( int feature, bool onoff)
 {
     bool b;
     if (!hasFeature(feature, &b) || !b)
@@ -1053,10 +1053,10 @@ bool depthCameraDriver::setActive( int feature, bool onoff)
     }
 
 
-    return true;
+    return ReturnValue_ok;
 }
 
-bool depthCameraDriver::getActive( int feature, bool *isActive)
+ReturnValue depthCameraDriver::getActive( int feature, bool *isActive)
 {
     bool b;
     if (!hasFeature(feature, &b) || !b)
@@ -1072,10 +1072,10 @@ bool depthCameraDriver::getActive( int feature, bool *isActive)
     }
 
     *isActive = m_imageStream.getCameraSettings()->getAutoWhiteBalanceEnabled();
-    return true;
+    return ReturnValue_ok;
 }
 
-bool depthCameraDriver::hasAuto(int feature, bool *hasAuto)
+ReturnValue depthCameraDriver::hasAuto(int feature, bool *hasAuto)
 {
     bool b;
     if (!hasFeature(feature, &b) || !b)
@@ -1088,13 +1088,13 @@ bool depthCameraDriver::hasAuto(int feature, bool *hasAuto)
     if (f == YARP_FEATURE_EXPOSURE || f == YARP_FEATURE_WHITE_BALANCE)
     {
         *hasAuto = true;
-        return true;
+        return ReturnValue_ok;
     }
     *hasAuto = false;
-    return true;
+    return ReturnValue_ok;
 }
 
-bool depthCameraDriver::hasManual( int feature, bool* hasManual)
+ReturnValue depthCameraDriver::hasManual( int feature, bool* hasManual)
 {
     bool b;
     if (!hasFeature(feature, &b) || !b)
@@ -1107,13 +1107,13 @@ bool depthCameraDriver::hasManual( int feature, bool* hasManual)
     if (f == YARP_FEATURE_EXPOSURE || f == YARP_FEATURE_FRAME_RATE || f == YARP_FEATURE_GAIN)
     {
         *hasManual = true;
-        return true;
+        return ReturnValue_ok;
     }
     *hasManual = false;
-    return true;
+    return ReturnValue_ok;
 }
 
-bool depthCameraDriver::hasOnePush(int feature, bool* hasOnePush)
+ReturnValue depthCameraDriver::hasOnePush(int feature, bool* hasOnePush)
 {
     bool b;
     if (!hasFeature(feature, &b) || !b)
@@ -1125,7 +1125,7 @@ bool depthCameraDriver::hasOnePush(int feature, bool* hasOnePush)
     return hasAuto(feature, hasOnePush);
 }
 
-bool depthCameraDriver::setMode(int feature, FeatureMode mode)
+ReturnValue depthCameraDriver::setMode(int feature, FeatureMode mode)
 {
     bool b;
     if (!hasFeature(feature, &b) || !b)
@@ -1150,14 +1150,14 @@ bool depthCameraDriver::setMode(int feature, FeatureMode mode)
         default:
             return false;
         }
-        return true;
+        return ReturnValue_ok;
     }
 
     yCError(DEPTHCAMERA) << "Feature does not have both auto and manual mode";
     return false;
 }
 
-bool depthCameraDriver::getMode(int feature, FeatureMode* mode)
+ReturnValue depthCameraDriver::getMode(int feature, FeatureMode* mode)
 {
     bool b;
     if (!hasFeature(feature, &b) || !b)
@@ -1170,14 +1170,14 @@ bool depthCameraDriver::getMode(int feature, FeatureMode* mode)
     if (f == YARP_FEATURE_EXPOSURE)
     {
         *mode = m_imageStream.getCameraSettings()->getAutoExposureEnabled() ? MODE_AUTO : MODE_MANUAL;
-        return true;
+        return ReturnValue_ok;
     }
 
     yCError(DEPTHCAMERA) << "Feature does not have both auto and manual mode";
     return false;
 }
 
-bool depthCameraDriver::setOnePush(int feature)
+ReturnValue depthCameraDriver::setOnePush(int feature)
 {
     bool b;
     if (!hasFeature(feature, &b) || !b)
@@ -1195,5 +1195,5 @@ bool depthCameraDriver::setOnePush(int feature)
     setMode(feature, MODE_AUTO);
     setMode(feature, MODE_MANUAL);
 
-    return true;
+    return ReturnValue_ok;
 }

@@ -143,11 +143,11 @@ bool OpenCVGrabber::close() {
  * returned, the image will be resized to the dimensions used by
  * the grabber, but all pixels will be zeroed.
  */
-bool OpenCVGrabber::getImage(ImageOf<PixelRgb> & image) {
+ReturnValue OpenCVGrabber::getImage(ImageOf<PixelRgb> & image) {
     // Must have a capture object
     if (!m_cap.isOpened()) {
         image.zero();
-        return false;
+        return ReturnValue::return_code::return_value_error_method_failed;
     }
 
     // Callers may have not initialized the image dimensions (may happen if this device is not wrapped)
@@ -162,14 +162,14 @@ bool OpenCVGrabber::getImage(ImageOf<PixelRgb> & image) {
     if (bgr.empty() && m_loop) {
         bool ok = open(m_config);
         if (!ok) {
-            return false;
+           return ReturnValue::return_code::return_value_error_method_failed;
         }
         m_cap.read(bgr);
     }
 
     if (bgr.empty()) {
         image.zero();
-        return false;
+        return ReturnValue::return_code::return_value_error_method_failed;
     }
 
     // Memory allocation occurs at the YARP image object
@@ -225,5 +225,5 @@ bool OpenCVGrabber::getImage(ImageOf<PixelRgb> & image) {
 
     yCTrace(OPENCVGRABBER, "%d by %d image", frame.cols, frame.rows);
 
-    return true;
+    return ReturnValue_ok;
 }

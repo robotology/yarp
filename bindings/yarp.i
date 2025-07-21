@@ -1993,59 +1993,59 @@ public:
 %extend yarp::dev::IFrameGrabberControls {
     CameraDescriptor getCameraDescription() {
         CameraDescriptor result;
-        self->getCameraDescription(&result);
+        self->getCameraDescription(result);
         return result;
     }
 
-    bool hasFeature(int feature) {
+    bool hasFeature(cameraFeature_id_t feature) {
         bool result;
-        self->hasFeature(feature, &result);
+        self->hasFeature(feature, result);
         return result;
     }
 
-    double getFeature(int feature) {
+    double getFeature(cameraFeature_id_t feature) {
         double result;
-        self->getFeature(feature, &result);
+        self->getFeature(feature, result);
         return result;
     }
 
-    bool getFeature(int j, std::vector<double>& value1, std::vector<double>& value2) {
-        return self->getFeature(j, &value1[0], &value2[0]);
+    bool getFeature(cameraFeature_id_t j, std::vector<double>& value1, std::vector<double>& value2) {
+        return self->getFeature(j, value1[0], value2[0]);
     }
 
-    bool hasOnOff(int feature) {
+    bool hasOnOff(cameraFeature_id_t feature) {
         bool result;
-        self->hasOnOff(feature, &result);
+        self->hasOnOff(feature, result);
         return result;
     }
 
-    bool getActive(int feature) {
+    bool getActive(cameraFeature_id_t feature) {
         bool result;
-        self->getActive(feature, &result);
+        self->getActive(feature, result);
         return result;
     }
 
-    bool hasAuto(int feature) {
+    bool hasAuto(cameraFeature_id_t feature) {
         bool result;
-        self->hasAuto(feature, &result);
+        self->hasAuto(feature, result);
         return result;
     }
 
-    bool hasManual(int feature) {
+    bool hasManual(cameraFeature_id_t feature) {
         bool result;
-        self->hasManual(feature, &result);
+        self->hasManual(feature, result);
         return result;
     }
 
-    bool hasOnePush(int feature) {
+    bool hasOnePush(cameraFeature_id_t feature) {
         bool result;
-        self->hasOnePush(feature, &result);
+        self->hasOnePush(feature, result);
         return result;
     }
 
-    FeatureMode getMode(int feature) {
+    FeatureMode getMode(cameraFeature_id_t feature) {
         FeatureMode result;
-        self->getMode(feature, &result);
+        self->getMode(feature, result);
         return result;
     }
 }

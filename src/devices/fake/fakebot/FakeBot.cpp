@@ -106,7 +106,7 @@ bool FakeBot::open(yarp::os::Searchable& config)
 
 
 // IFrameGrabberImage
-bool FakeBot::getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image) {
+ReturnValue FakeBot::getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image) {
     if (fabs(dpos[0])>0.001||fabs(dpos[0])>0.001) {
         pos[0] = m_dx+dpos[0];
         dpos[0] = 0;
@@ -162,7 +162,7 @@ bool FakeBot::getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image) {
         scramble(pix.b,f);
     }
     Time::delay(0.1); // simulated hardware delay, using mutable clock
-    return true;
+    return ReturnValue_ok;
 }
 
 void FakeBot::run() {

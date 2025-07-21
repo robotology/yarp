@@ -8,6 +8,8 @@
 #define YARP_DEV_IFRAMEWRITERIMAGE_H
 
 #include <yarp/dev/api.h>
+
+#include <yarp/dev/ReturnValue.h>
 #include <yarp/sig/Image.h>
 
 namespace yarp::dev {
@@ -31,7 +33,7 @@ public:
      * @param image the image to write
      * @return true/false upon success/failure
      */
-    virtual bool putImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image) = 0;
+    virtual yarp::dev::ReturnValue putImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image) = 0;
 };
 
 } // namespace yarp::dev
