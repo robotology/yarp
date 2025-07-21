@@ -3,6 +3,7 @@
 
 if(YARP_COMPILE_EXECUTABLES)
     # Qt5 GUIs
+    add_subdirectory(yarpframegrabbergui)
     add_subdirectory(yarpview)
     add_subdirectory(yarpscope)
     add_subdirectory(yarpmanager)
