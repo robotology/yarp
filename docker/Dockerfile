@@ -43,9 +43,7 @@ RUN apt-get update && apt-get install -y apt-utils \
                           gdb \
                           bash-completion \
                           btop \
-                          mlocate
-
-RUN pip3 install numpy bpytop
+                          plocate
 
 RUN sed -i 's/allowed_users=console/allowed_users=anybody/' /etc/X11/Xwrapper.config
 COPY ./common/xorg.conf /etc/X11/xorg.conf
@@ -79,17 +77,28 @@ RUN apt-get install -y     libace-dev \
                            libpcl-dev \
                            libsoxr-dev \
                            libgstreamer1.0-dev \
-                           libgstreamer-plugins-base1.0-dev
+                           libgstreamer-plugins-base1.0-dev \
+                           unzip
+
+# Install SWIG
+# On Ubuntu 24.04 this corresponds to swig 4.2.0 which is affected by a bug: https://github.com/robotology/yarp/issues/3083
+# RUN apt-get install -qq -y swig 
+#
+# we thus install manually swig 4.3.0
+RUN apt-get purge -y swig
+RUN wget -nv https://github.com/robotology/robotology-vcpkg-ports/releases/download/storage/swig_4_3_0_ubuntu_24_04.zip
+RUN unzip -q swig_4_3_0_ubuntu_24_04.zip
+RUN mv swig_4_3_0_ubuntu_24_04_install/bin/* /usr/bin
+RUN mv swig_4_3_0_ubuntu_24_04_install/share/swig /usr/share
 
 # Install SWIG and bindings dependencies
-RUN apt-get install -qq -y swig \
-                           mono-mcs \
+RUN apt-get install -qq -y mono-mcs \
                            liblua5.3-dev \
                            lua5.3 \
                            tcl-dev \
                            tk-dev \
                            python3-dev \
-                           liboctave-dev \
+                           octave-dev \
                            ruby-dev \
                            ruby \
                            perl
@@ -144,7 +153,9 @@ ENV YARP_DIR=$robotology_install_folder/yarp/build
 # YARP bindings
 USER $robotology_install_user
 WORKDIR $robotology_install_folder
-RUN cd yarp && cd bindings &&  mkdir build && cd build && cmake .. -DCREATE_PYTHON=ON && make -j11
+RUN cd yarp && cd bindings &&  mkdir build && cd build && \
+    cmake .. -DCREATE_PYTHON=ON -DSWIG_EXECUTABLE=/usr/bin/swig -DSWIG_DIR=/usr/share/swig/4.3.0 && \
+    make -j11
 
 # Install YARP completion
 RUN sudo ln -s /usr/local/share/bash-completion/completions/yarp /usr/share/bash-completion/completions
