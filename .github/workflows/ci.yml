@@ -1047,6 +1047,7 @@ jobs:
 
           sudo apt-get install -y     libsqlite3-dev \
                                       libtinyxml-dev \
+                                      libtinyxml2-dev \
                                       libedit-dev \
                                       qtbase5-dev \
                                       qtdeclarative5-dev \
@@ -1162,7 +1163,7 @@ jobs:
           brew update
           brew install ccache
           brew install ace
-          brew install sqlite tinyxml libedit libpng qt5 opencv eigen graphviz libsoxr
+          brew install sqlite tinyxml2 libedit libpng qt5 opencv eigen graphviz libsoxr
 
     - name: Prepare Environment Script
       id: prepare_environment_script
@@ -1769,6 +1770,7 @@ jobs:
           sudo apt-get install -qq -y libace-dev \
                                       libsqlite3-dev \
                                       libtinyxml-dev \
+                                      libtinyxml2-dev \
                                       libedit-dev \
                                       qtbase5-dev \
                                       qtdeclarative5-dev \
@@ -1972,6 +1974,7 @@ jobs:
           sudo apt-get install -qq -y libace-dev \
                                       libsqlite3-dev \
                                       libtinyxml-dev \
+                                      libtinyxml2-dev \
                                       libedit-dev \
                                       qtbase5-dev \
                                       qtdeclarative5-dev \
@@ -2190,6 +2193,7 @@ jobs:
           sudo apt-get install -qq -y libace-dev \
                                       libsqlite3-dev \
                                       libtinyxml-dev \
+                                      libtinyxml2-dev \
                                       libedit-dev \
                                       qtbase5-dev \
                                       qtdeclarative5-dev \
