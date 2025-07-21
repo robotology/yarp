@@ -61,6 +61,7 @@ set(YARP_dev_HDRS
   yarp/dev/IJacobianCoupling.h
   yarp/dev/IJointCoupling.h
   yarp/dev/IJoypadController.h
+  yarp/dev/IJointBrake.h
   yarp/dev/IJointFault.h
   yarp/dev/ILLM.h
   yarp/dev/IMotor.h
