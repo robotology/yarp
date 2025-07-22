@@ -46,12 +46,14 @@ target_include_directories(${SWIG_MODULE_yarp_python_REAL_NAME} BEFORE PRIVATE $
 
 # installation path is determined reliably on most platforms using sysconfig
 if(Python3_VERSION VERSION_GREATER_EQUAL 3.12)
-    execute_process(COMMAND ${Python3_EXECUTABLE} -c "import os;import sysconfig;relative_site_packages = sysconfig.get_path('purelib').replace(sysconfig.get_path('data'), '').lstrip(os.path.sep);print(relative_site_packages)"
-      OUTPUT_VARIABLE Python3_INSTDIR)
-  else()
-    execute_process(COMMAND ${Python3_EXECUTABLE} -c "from distutils import sysconfig; print(sysconfig.get_python_lib(1,0,prefix=''))"
-      OUTPUT_VARIABLE Python3_INSTDIR)
-  endif()
+  execute_process(COMMAND ${Python3_EXECUTABLE} -c "import os;import sysconfig;relative_site_packages = sysconfig.get_path('purelib').replace(sysconfig.get_path('data'), '').lstrip(os.path.sep);print(relative_site_packages)"
+    OUTPUT_VARIABLE Python3_INSTDIR
+    OUTPUT_STRIP_TRAILING_WHITESPACE)
+else()
+  execute_process(COMMAND ${Python3_EXECUTABLE} -c "from distutils import sysconfig; print(sysconfig.get_python_lib(1,0,prefix=''))"
+    OUTPUT_VARIABLE Python3_INSTDIR
+    OUTPUT_STRIP_TRAILING_WHITESPACE)
+endif()
 
 set(_CMAKE_INSTALL_PYTHON3DIR "${Python3_INSTDIR}")
 set(CMAKE_INSTALL_PYTHON3DIR ${_CMAKE_INSTALL_PYTHON3DIR} CACHE PATH "python3 bindings (${_CMAKE_INSTALL_PYTHON3DIR})")
