@@ -1,0 +1,56 @@
+/**
+\defgroup yarpframegrabbergui yarpframegrabbergui: a gui to control camera parameters
+
+\ingroup yarp_guis
+
+\tableofcontents
+
+A simple GUI to control several parameters of a camera device.
+
+\section yarpframegrabbergui_intro Description
+
+The gui allows to control the following main parameters (the device must implement the corresponding controls):
+\verbatim
+- shutter
+- brightness
+- gain
+- exposure
+- sharpness
+- hue
+- saturation
+- gamma
+- iris
+- focus
+\endverbatim
+
+\image html yarpframegrabbergui_example.png width=400px
+
+\section yarpframegrabbergui_lib Libraries
+
+- QT5 libraries.
+
+\section yarpframegrabbergui_parameters Parameters
+
+\verbatim
+--PosX <int>    x position where the window will be opened
+--PosY <int>    y position where the window will be opened
+--width <int>   width of the opened window
+--height <int>  height of the opened window
+--local <string>   name of the port opened by the gui (frameGrabber_nwc_yarp)
+--remote <string>  name of the port to which the guis connect to (frameGrabber_nws_yarp)
+\endverbatim
+
+\section yarpframegrabbergui_ports Ports Accessed
+
+The gui uses as \ref frameGrabber_nwc_yarp device to connect to a \ref frameGrabber_nws_yarp device.
+
+\section yarpframegrabbergui_in_files Input Data Files
+None.
+
+\section yarpframegrabbergui_out_data Output Data Files
+None.
+
+\section yarpframegrabbergui_conf_file Configuration Files
+None.
+
+*/

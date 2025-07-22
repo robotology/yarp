@@ -577,6 +577,10 @@ yarp_dependent_option(
   "YARP_COMPILE_EXECUTABLES;YARP_COMPILE_GUIS;YARP_HAS_Qt5;YARP_HAS_Graphviz;YARP_HAS_QGVCore" OFF
 )
 yarp_dependent_option(
+  YARP_COMPILE_yarpframegrabbergui "Do you want to compile yarpframegrabbergui?" ON
+  "YARP_COMPILE_EXECUTABLES;YARP_COMPILE_GUIS;YARP_HAS_Qt5" OFF
+)
+yarp_dependent_option(
   YARP_COMPILE_yarpconnectionsinfo "Do you want to compile yarpconnectionsinfo?" ON
   "YARP_COMPILE_EXECUTABLES" OFF
 )
