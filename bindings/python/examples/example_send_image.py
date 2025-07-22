@@ -9,7 +9,7 @@ import yarp
 yarp.Network.init()
 
 p = yarp.BufferedPortImageRgb()
-p.open("/python");
+p.open("/python:o");
 
 top = 100;
 for i in range(1,top):

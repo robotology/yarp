@@ -8,12 +8,7 @@ import yarp
 
 yarp.Network.init()
 
-# alternative callback classes depending on the underlying data type:
-# - yarp.PropertyCallback
-# - yarp.TypedReaderCallbackImage(Rgb|Rgba|Mono|Mono16|Int|Float|RgbFloat)
-# - yarp.TypedReaderCallbackVector (yarp.DVector)
-# - yarp.TypedReaderCallbackSound
-class CustomCallback(yarp.TypedReaderCallbackImageRgb):
+class CustomCallback(yarp.ImageRgbCallback):
     def __init__(self):
         super().__init__()
         # remove this constructor if no class members need to be initialized,
@@ -22,12 +17,15 @@ class CustomCallback(yarp.TypedReaderCallbackImageRgb):
     def onRead(self, img, reader):
         print("Port %s received an image with size: %d %d" % (reader.getName(), img.width(), img.height() ))
 
-# alternative buffered port classes depending on the underlying data type:
-# - yarp.BufferedPortProperty
-# - yarp.BufferedPortImage(Rgb|Rgba|Mono|Mono16|Int|Float|RgbFloat)
-# - yarp.BufferedPortVector (yarp.DVector)
-# - yarp.BufferedPortSound
 p = yarp.BufferedPortImageRgb()
+
+port_name = "/python:i"
+p.open(port_name)
+
+if not yarp.Network.connect("/python:o", port_name):
+    print("Not connected")
+    exit(1)
+
 c = CustomCallback()
 p.useCallback(c)
 

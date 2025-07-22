@@ -7,17 +7,14 @@ import yarp
 
 yarp.Network.init()
 
-p = yarp.BufferedPortMatrix()
+p = yarp.BufferedPortSound()
 p.open("/python:o");
 
 top = 100;
 for i in range(1,top):
-    mat = p.prepare()
-    mat.resize(2,2)
-    mat.set(0,0,0)
-    mat.set(0,1,1)
-    mat.set(1,0,2)
-    mat[1,1]=3 # just a different way to assign
+    snd = p.prepare()
+    snd.setFrequency(16000);
+    snd.resize(32000,2);
     p.write()
     yarp.delay(0.5)
 p.close();

@@ -378,7 +378,9 @@ void setExternal2(yarp::sig::Image *img, PyObject* mem, int w, int h) {
 %feature("notabstract") BufferedPort ## name;
 
 #if !defined (SWIGMATLAB)
+%feature("director") yarp::os::TypedReader<fullname>;
 %feature("director") yarp::os::TypedReaderCallback<fullname>;
+%feature("director") yarp::os::BufferedPort<fullname>;
 #endif
 
 %template(TypedReader ## name) yarp::os::TypedReader<fullname>;
@@ -512,8 +514,8 @@ void setExternal2(yarp::sig::Image *img, PyObject* mem, int w, int h) {
 //typedef yarp::sig::ImageOf<yarp::sig::PixelInt> ImageInt;
 //typedef yarp::sig::ImageOf<yarp::sig::PixelFloat> ImageFloat;
 //typedef yarp::sig::ImageOf<yarp::sig::PixelRgbFloat> ImageRgbFloat;
-//typedef yarp::sig::VectorOf<double> Vector;
-//typedef yarp::sig::VectorOf<int> VectorInt;
+typedef yarp::sig::VectorOf<double> Vector;
+typedef yarp::sig::VectorOf<int> VectorInt;
 typedef yarp::sig::Matrix Matrix;
 
 //These definitions are for C++
@@ -537,17 +539,18 @@ typedef yarp::sig::Matrix Matrix;
 #endif
 
 MAKE_COMMS  (Property, Property)
-MAKE_COMMS  (Bottle, Bottle)
+MAKE_COMMS  (Bottle, yarp::os::Bottle)
 MAKE_COMMS2 (ImageRgb, yarp::sig::ImageOf<yarp::sig::PixelRgb>)
 MAKE_COMMS2 (ImageRgba, yarp::sig::ImageOf<yarp::sig::PixelRgba>)
 MAKE_COMMS2 (ImageMono, yarp::sig::ImageOf<yarp::sig::PixelMono>)
 MAKE_COMMS2 (ImageMono16, yarp::sig::ImageOf<yarp::sig::PixelMono16>)
 MAKE_COMMS2 (ImageInt, yarp::sig::ImageOf<yarp::sig::PixelInt>)
 MAKE_COMMS2 (ImageFloat, yarp::sig::ImageOf<yarp::sig::PixelFloat>)
+MAKE_COMMS2 (ImageRgbFloat, yarp::sig::ImageOf<yarp::sig::PixelRgbFloat>)
 MAKE_COMMS2 (Vector, yarp::sig::VectorOf<double>)
 MAKE_COMMS2 (VectorInt,yarp::sig::VectorOf<int>)
-MAKE_COMMS  (Matrix, Matrix)
-MAKE_COMMS  (Sound, Sound)
+MAKE_COMMS  (Matrix, yarp::sig::Matrix)
+MAKE_COMMS  (Sound, yarp::sig::Sound)
 
 // Add getPixel and setPixel methods to access float values
 %extend yarp::sig::ImageOf<yarp::sig::PixelFloat> {

@@ -8,7 +8,7 @@ import yarp
 yarp.Network.init()
 
 p = yarp.BufferedPortVector()
-p.open("/python");
+p.open("/python:o");
 
 top = 100;
 for i in range(1,top):
