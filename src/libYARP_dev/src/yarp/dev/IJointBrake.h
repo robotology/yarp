@@ -7,6 +7,7 @@
 #define YARP_DEV_IJOINTBRAKE_H
 
 #include <yarp/dev/api.h>
+#include <yarp/dev/ReturnValue.h>
 
 namespace yarp::dev {
 class IJointBrakeRaw;
@@ -44,7 +45,7 @@ public:
     * can automatically choose when to enable the joint brake (for example when
     * the joint is in hardware_fault mode).
     * @param j joint number
-    * @param active true to enable the automatic joint brake
+    * @param enabled true to enable the automatic joint brake
     * @return: true/false success failure.
     */
     virtual yarp::dev::ReturnValue setAutoBrakeEnabled(int j, bool enabled) =0;
