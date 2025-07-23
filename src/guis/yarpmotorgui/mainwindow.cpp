@@ -254,6 +254,7 @@ MainWindow::MainWindow(QWidget *parent) :
     QAction *enableControlPositionDirect = windows->addAction("Enable Position Direct Control");
     QAction *enableControlPWM = windows->addAction("Enable PWM Control");
     QAction *enableControlCurrent = windows->addAction("Enable Current Control");
+    QAction *enableControlTorque = windows->addAction("Enable Torque Control");
     QAction *sliderOptions = windows->addAction("Slider Options...");
 
     viewGlobalToolbar->setCheckable(true);
@@ -267,6 +268,7 @@ MainWindow::MainWindow(QWidget *parent) :
     enableControlPositionDirect->setCheckable(true);
     enableControlPWM->setCheckable(true);
     enableControlCurrent->setCheckable(true);
+    enableControlTorque->setCheckable(true);
     viewPositionTargetBox->setCheckable(true);
     viewPositionTargetValue->setCheckable(true);
 
@@ -293,6 +295,7 @@ MainWindow::MainWindow(QWidget *parent) :
     enableControlPositionDirect->setChecked(false);
     enableControlPWM->setChecked(false);
     enableControlCurrent->setChecked(false);
+    enableControlTorque->setChecked(false);
 
     m_globalToolBar->setVisible(bViewGlobalToolbar);
     m_partToolBar->setVisible(bViewPartToolbar);
@@ -310,6 +313,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(enableControlPositionDirect, SIGNAL(triggered(bool)), this, SLOT(onEnableControlPositionDirect(bool)));
     connect(enableControlPWM, SIGNAL(triggered(bool)), this, SLOT(onEnableControlPWM(bool)));
     connect(enableControlCurrent, SIGNAL(triggered(bool)), this, SLOT(onEnableControlCurrent(bool)));
+    connect(enableControlTorque, SIGNAL(triggered(bool)), this, SLOT(onEnableControlTorque(bool)));
     connect(sliderOptions, SIGNAL(triggered()), this, SLOT(onSliderOptionsClicked()));
 
     connect(this,SIGNAL(sig_internalClose()),this,SLOT(close()),Qt::QueuedConnection);
@@ -453,6 +457,11 @@ void MainWindow::onEnableControlPWM(bool val)
 void MainWindow::onEnableControlCurrent(bool val)
 {
     emit sig_enableControlCurrent(val);
+}
+
+void MainWindow::onEnableControlTorque(bool val)
+{
+    emit sig_enableControlTorque(val);
 }
 
 void MainWindow::onSliderOptionsClicked()
@@ -698,6 +707,7 @@ bool MainWindow::init(std::vector<std::string> enabledParts,
             connect(this, SIGNAL(sig_enableControlPositionDirect(bool)), part, SLOT(onEnableControlPositionDirect(bool)));
             connect(this, SIGNAL(sig_enableControlPWM(bool)), part, SLOT(onEnableControlPWM(bool)));
             connect(this, SIGNAL(sig_enableControlCurrent(bool)), part, SLOT(onEnableControlCurrent(bool)));
+            connect(this, SIGNAL(sig_enableControlTorque(bool)), part, SLOT(onEnableControlTorque(bool)));
 
             scroll->setWidget(part);
             int tabIndex = m_tabPanel->addTab(scroll, part_name.c_str());
