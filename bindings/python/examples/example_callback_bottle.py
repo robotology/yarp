@@ -8,11 +8,6 @@ import yarp
 
 yarp.Network.init()
 
-# alternative callback classes depending on the underlying data type:
-# - yarp.PropertyCallback
-# - yarp.TypedReaderCallbackImage(Rgb|Rgba|Mono|Mono16|Int|Float|RgbFloat)
-# - yarp.TypedReaderCallbackVector (yarp.DVector)
-# - yarp.TypedReaderCallbackSound
 class CustomCallback(yarp.BottleCallback):
     def __init__(self):
         super().__init__()
@@ -22,12 +17,15 @@ class CustomCallback(yarp.BottleCallback):
     def onRead(self, bot, reader):
         print("Port %s received: %s" % (reader.getName(), bot.toString()))
 
-# alternative buffered port classes depending on the underlying data type:
-# - yarp.BufferedPortProperty
-# - yarp.BufferedPortImage(Rgb|Rgba|Mono|Mono16|Int|Float|RgbFloat)
-# - yarp.BufferedPortVector (yarp.DVector)
-# - yarp.BufferedPortSound
 p = yarp.BufferedPortBottle()
+
+port_name = "/python:i"
+p.open(port_name)
+
+if not yarp.Network.connect("/python:o", port_name):
+    print("Not connected")
+    exit(1)
+
 c = CustomCallback()
 p.useCallback(c)
 

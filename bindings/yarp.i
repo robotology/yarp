@@ -369,22 +369,44 @@ void setExternal2(yarp::sig::Image *img, PyObject* mem, int w, int h) {
 %include <yarp/os/WireLink.h>
 %include <yarp/os/Type.h>
 
-%define MAKE_COMMS(name)
-%feature("notabstract") yarp::os::BufferedPort<name>;
+//--------------------------------------------------------------------
+%define MAKE_COMMS(name, fullname)
+
+%feature("notabstract") name;
+
+%feature("notabstract") yarp::os::BufferedPort<fullname>;
 %feature("notabstract") BufferedPort ## name;
 
 #if !defined (SWIGMATLAB)
-%feature("director") yarp::os::TypedReaderCallback<name>;
-%feature("director") yarp::os::TypedReaderCallback<yarp::os::name>;
+%feature("director") yarp::os::TypedReader<fullname>;
+%feature("director") yarp::os::TypedReaderCallback<fullname>;
+%feature("director") yarp::os::BufferedPort<fullname>;
 #endif
 
-%template(TypedReader ## name) yarp::os::TypedReader<name>;
-%template(name ## Callback) yarp::os::TypedReaderCallback<name>;
-%template(BufferedPort ## name) yarp::os::BufferedPort<name>;
+%template(TypedReader ## name) yarp::os::TypedReader<fullname>;
+%template(name ## Callback) yarp::os::TypedReaderCallback<fullname>;
+%template(BufferedPort ## name) yarp::os::BufferedPort<fullname>;
 %enddef
+//--------------------------------------------------------------------
 
-MAKE_COMMS(Property)
-MAKE_COMMS(Bottle)
+//--------------------------------------------------------------------
+%define MAKE_COMMS2(name, templatename)
+
+%template(name) templatename;
+%feature("notabstract") name;
+
+%feature("notabstract") yarp::os::BufferedPort<templatename>;
+%feature("notabstract") BufferedPort ## name;
+
+#if !defined (SWIGMATLAB)
+%feature("director") yarp::os::TypedReaderCallback<templatename>;
+#endif
+
+%template(TypedReader ## name) yarp::os::TypedReader<templatename>;
+%template(name ## Callback) yarp::os::TypedReaderCallback<templatename>;
+%template(BufferedPort ## name) yarp::os::BufferedPort<templatename>;
+%enddef
+//--------------------------------------------------------------------
 
 %include <yarp/sig/Image.h>
 %include <yarp/sig/ImageFile.h>
@@ -478,141 +500,57 @@ MAKE_COMMS(Bottle)
 
 //////////////////////////////////////////////////////////////////////////
 // Deal with some templated classes
-//
-// We have to shuffle things around a little bit
-//   ImageRgb = ImageOf<PixelRgb>
-//   BufferedPortImageRgb = BufferedPort<ImageOf<PixelRgb> >
-//   BufferedPortBottle = BufferedPort<Bottle>
-//   BufferedPortProperty = BufferedPort<Property>
-//   BufferedPortImageRgbFloat = BufferedPort<ImageOf<PixelRgbFloat> >
+//////////////////////////////////////////////////////////////////////////
+//%template(Vector) yarp::sig::VectorOf<double>;
+//%template(VectorInt) yarp::sig::VectorOf<int>;
+//%feature("notabstract") Vector;
+//%feature("notabstract") VectorInt;
 
-%{
-typedef yarp::sig::ImageOf<yarp::sig::PixelRgb> ImageRgb;
-typedef yarp::os::TypedReader<ImageRgb> TypedReaderImageRgb;
-typedef yarp::os::TypedReaderCallback<ImageRgb> TypedReaderCallbackImageRgb;
-typedef yarp::os::BufferedPort<ImageRgb> BufferedPortImageRgb;
-%}
-
-%{
-typedef yarp::sig::ImageOf<yarp::sig::PixelRgba> ImageRgba;
-typedef yarp::os::TypedReader<ImageRgba> TypedReaderImageRgba;
-typedef yarp::os::TypedReaderCallback<ImageRgba> TypedReaderCallbackImageRgba;
-typedef yarp::os::BufferedPort<ImageRgba> BufferedPortImageRgba;
-%}
-
-%{
-typedef yarp::sig::ImageOf<yarp::sig::PixelMono> ImageMono;
-typedef yarp::os::TypedReader<ImageMono> TypedReaderImageMono;
-typedef yarp::os::TypedReaderCallback<ImageMono> TypedReaderCallbackImageMono;
-typedef yarp::os::BufferedPort<ImageMono> BufferedPortImageMono;
-%}
-
-%{
-typedef yarp::sig::ImageOf<yarp::sig::PixelMono16> ImageMono16;
-typedef yarp::os::TypedReader<ImageMono16> TypedReaderImageMono16;
-typedef yarp::os::TypedReaderCallback<ImageMono16> TypedReaderCallbackImageMono16;
-typedef yarp::os::BufferedPort<ImageMono16> BufferedPortImageMono16;
-%}
-
-%{
-typedef yarp::sig::ImageOf<yarp::sig::PixelInt> ImageInt;
-typedef yarp::os::TypedReader<ImageInt> TypedReaderImageInt;
-typedef yarp::os::TypedReaderCallback<ImageInt> TypedReaderCallbackImageInt;
-typedef yarp::os::BufferedPort<ImageInt> BufferedPortImageInt;
-%}
-
-%{
-typedef yarp::os::TypedReader<Sound> TypedReaderSound;
-typedef yarp::os::TypedReaderCallback<Sound> TypedReaderCallbackSound;
-typedef yarp::os::BufferedPort<Sound> BufferedPortSound;
-%}
-
-%inline
-%{
+//These definitions are for SWIG
+//typedef yarp::sig::ImageOf<yarp::sig::PixelRgb> ImageRgb;
+//typedef yarp::sig::ImageOf<yarp::sig::PixelRgba> ImageRgba;
+//typedef yarp::sig::ImageOf<yarp::sig::PixelMono> ImageMono;
+//typedef yarp::sig::ImageOf<yarp::sig::PixelMono16> ImageMono16;
+//typedef yarp::sig::ImageOf<yarp::sig::PixelInt> ImageInt;
+//typedef yarp::sig::ImageOf<yarp::sig::PixelFloat> ImageFloat;
+//typedef yarp::sig::ImageOf<yarp::sig::PixelRgbFloat> ImageRgbFloat;
 typedef yarp::sig::VectorOf<double> Vector;
 typedef yarp::sig::VectorOf<int> VectorInt;
-%}
+typedef yarp::sig::Matrix Matrix;
 
+//These definitions are for C++
 %{
-typedef yarp::os::TypedReader<Vector> TypedReaderVector;
-typedef yarp::os::TypedReaderCallback<Vector> TypedReaderCallbackVector;
-typedef yarp::os::BufferedPort<Vector> BufferedPortVector;
+typedef yarp::sig::ImageOf<yarp::sig::PixelRgb> ImageRgb;
+typedef yarp::sig::ImageOf<yarp::sig::PixelRgba> ImageRgba;
+typedef yarp::sig::ImageOf<yarp::sig::PixelMono> ImageMono;
+typedef yarp::sig::ImageOf<yarp::sig::PixelMono16> ImageMono16;
+typedef yarp::sig::ImageOf<yarp::sig::PixelInt> ImageInt;
+typedef yarp::sig::ImageOf<yarp::sig::PixelFloat> ImageFloat;
+typedef yarp::sig::ImageOf<yarp::sig::PixelRgbFloat> ImageRgbFloat;
+typedef yarp::sig::VectorOf<double> Vector;
+typedef yarp::sig::VectorOf<int> VectorInt;
+typedef yarp::sig::Sound  Sound;
+typedef yarp::sig::Matrix Matrix;
 %}
 
-%feature("notabstract") ImageRgb;
-%feature("notabstract") yarp::os::BufferedPort<ImageRgb>;
-%feature("notabstract") BufferedPortImageRgb;
-
-%feature("notabstract") ImageRgba;
-%feature("notabstract") yarp::os::BufferedPort<ImageRgba>;
-%feature("notabstract") BufferedPortImageRgba;
-
-%feature("notabstract") ImageMono;
-%feature("notabstract") yarp::os::BufferedPort<ImageMono>;
-%feature("notabstract") BufferedPortImageMono;
-
-%feature("notabstract") ImageMono16;
-%feature("notabstract") yarp::os::BufferedPort<ImageMono16>;
-%feature("notabstract") BufferedPortImageMono16;
-
-%feature("notabstract") ImageInt;
-%feature("notabstract") yarp::os::BufferedPort<ImageInt>;
-%feature("notabstract") BufferedPortImageInt;
-
-%feature("notabstract") Sound;
-%feature("notabstract") yarp::os::BufferedPort<Sound>;
-%feature("notabstract") BufferedPortSound;
-
-%feature("notabstract") Vector;
-%feature("notabstract") yarp::os::BufferedPort<Vector>;
-%feature("notabstract") BufferedPortVector;
-
-%template(ImageRgb) yarp::sig::ImageOf<yarp::sig::PixelRgb>;
-%template(TypedReaderImageRgb) yarp::os::TypedReader<yarp::sig::ImageOf<yarp::sig::PixelRgb> >;
-%template(TypedReaderCallbackImageRgb) yarp::os::TypedReaderCallback<yarp::sig::ImageOf<yarp::sig::PixelRgb> >;
-%template(BufferedPortImageRgb) yarp::os::BufferedPort<yarp::sig::ImageOf<yarp::sig::PixelRgb> >;
-
-%template(ImageRgba) yarp::sig::ImageOf<yarp::sig::PixelRgba>;
-%template(TypedReaderImageRgba) yarp::os::TypedReader<yarp::sig::ImageOf<yarp::sig::PixelRgba> >;
-%template(TypedReaderCallbackImageRgba) yarp::os::TypedReaderCallback<yarp::sig::ImageOf<yarp::sig::PixelRgba> >;
-%template(BufferedPortImageRgba) yarp::os::BufferedPort<yarp::sig::ImageOf<yarp::sig::PixelRgba> >;
-
-%template(ImageMono) yarp::sig::ImageOf<yarp::sig::PixelMono>;
-%template(TypedReaderImageMono) yarp::os::TypedReader<yarp::sig::ImageOf<yarp::sig::PixelMono> >;
-%template(TypedReaderCallbackImageMono) yarp::os::TypedReaderCallback<yarp::sig::ImageOf<yarp::sig::PixelMono> >;
-%template(BufferedPortImageMono) yarp::os::BufferedPort<yarp::sig::ImageOf<yarp::sig::PixelMono> >;
-
-%template(ImageMono16) yarp::sig::ImageOf<yarp::sig::PixelMono16>;
-%template(TypedReaderImageMono16) yarp::os::TypedReader<yarp::sig::ImageOf<yarp::sig::PixelMono16> >;
-%template(TypedReaderCallbackImageMono16) yarp::os::TypedReaderCallback<yarp::sig::ImageOf<yarp::sig::PixelMono16> >;
-%template(BufferedPortImageMono16) yarp::os::BufferedPort<yarp::sig::ImageOf<yarp::sig::PixelMono16> >;
-
-%template(ImageInt) yarp::sig::ImageOf<yarp::sig::PixelInt>;
-%template(TypedReaderImageInt) yarp::os::TypedReader<yarp::sig::ImageOf<yarp::sig::PixelInt> >;
-%template(TypedReaderCallbackImageInt) yarp::os::TypedReaderCallback<yarp::sig::ImageOf<yarp::sig::PixelInt> >;
-%template(BufferedPortImageInt) yarp::os::BufferedPort<yarp::sig::ImageOf<yarp::sig::PixelInt> >;
-
-#if !defined (SWIGMATLAB)
-%feature("director") yarp::os::TypedReaderCallback<Sound>;
-%feature("director") yarp::os::TypedReaderCallback<yarp::sig::Sound>;
-#endif
-%template(TypedReaderSound) yarp::os::TypedReader<yarp::sig::Sound >;
-%template(TypedReaderCallbackSound) yarp::os::TypedReaderCallback<yarp::sig::Sound>;
-%template(BufferedPortSound) yarp::os::BufferedPort<yarp::sig::Sound >;
-
-%template(Vector) yarp::sig::VectorOf<double>;
 #if SWIG_VERSION < 0x030012
 %rename(VectorIterator) yarp::sig::VectorOf<double>::iterator;
 %rename(VectorConstIterator) yarp::sig::VectorOf<double>::const_iterator;
 #endif
-%template(TypedReaderVector) yarp::os::TypedReader<yarp::sig::VectorOf<double> >;
-%template(TypedReaderCallbackVector) yarp::os::TypedReaderCallback<yarp::sig::VectorOf<double> >;
-%template(BufferedPortVector) yarp::os::BufferedPort<yarp::sig::VectorOf<double> >;
 
-%template(VectorInt) yarp::sig::VectorOf<int>;
-%template(TypedReaderVectorInt) yarp::os::TypedReader<yarp::sig::VectorOf<int> >;
-%template(TypedReaderCallbackVectorInt) yarp::os::TypedReaderCallback<yarp::sig::VectorOf<int> >;
-%template(BufferedPortVectorInt) yarp::os::BufferedPort<yarp::sig::VectorOf<int> >;
+MAKE_COMMS  (Property, Property)
+MAKE_COMMS  (Bottle, yarp::os::Bottle)
+MAKE_COMMS2 (ImageRgb, yarp::sig::ImageOf<yarp::sig::PixelRgb>)
+MAKE_COMMS2 (ImageRgba, yarp::sig::ImageOf<yarp::sig::PixelRgba>)
+MAKE_COMMS2 (ImageMono, yarp::sig::ImageOf<yarp::sig::PixelMono>)
+MAKE_COMMS2 (ImageMono16, yarp::sig::ImageOf<yarp::sig::PixelMono16>)
+MAKE_COMMS2 (ImageInt, yarp::sig::ImageOf<yarp::sig::PixelInt>)
+MAKE_COMMS2 (ImageFloat, yarp::sig::ImageOf<yarp::sig::PixelFloat>)
+MAKE_COMMS2 (ImageRgbFloat, yarp::sig::ImageOf<yarp::sig::PixelRgbFloat>)
+MAKE_COMMS2 (Vector, yarp::sig::VectorOf<double>)
+MAKE_COMMS2 (VectorInt,yarp::sig::VectorOf<int>)
+MAKE_COMMS  (Matrix, yarp::sig::Matrix)
+MAKE_COMMS  (Sound, yarp::sig::Sound)
 
 // Add getPixel and setPixel methods to access float values
 %extend yarp::sig::ImageOf<yarp::sig::PixelFloat> {
@@ -695,22 +633,6 @@ typedef yarp::os::BufferedPort<Vector> BufferedPortVector;
     }
 }
 
-%{
-typedef yarp::sig::ImageOf<yarp::sig::PixelFloat> ImageFloat;
-typedef yarp::os::TypedReader<ImageFloat> TypedReaderImageFloat;
-typedef yarp::os::TypedReaderCallback<ImageFloat> TypedReaderCallbackImageFloat;
-typedef yarp::os::BufferedPort<ImageFloat> BufferedPortImageFloat;
-%}
-
-%feature("notabstract") ImageFloat;
-%feature("notabstract") yarp::os::BufferedPort<ImageFloat>;
-%feature("notabstract") BufferedPortImageFloat;
-
-%template(ImageFloat) yarp::sig::ImageOf<yarp::sig::PixelFloat>;
-%template(TypedReaderImageFloat) yarp::os::TypedReader<yarp::sig::ImageOf<yarp::sig::PixelFloat> >;
-%template(TypedReaderCallbackImageFloat) yarp::os::TypedReaderCallback<yarp::sig::ImageOf<yarp::sig::PixelFloat> >;
-%template(BufferedPortImageFloat) yarp::os::BufferedPort<yarp::sig::ImageOf<yarp::sig::PixelFloat> >;
-
 // Add getPixel and setPixel methods to access float values
 // %extend yarp::sig::ImageOf<yarp::sig::PixelRgbFloat> {
 //    float getPixel(int x, int y) {
@@ -721,22 +643,6 @@ typedef yarp::os::BufferedPort<ImageFloat> BufferedPortImageFloat;
 //        self->pixel(x,y) = v;
 //        }
 // }
-
-%{
-typedef yarp::sig::ImageOf<yarp::sig::PixelRgbFloat> ImageRgbFloat;
-typedef yarp::os::TypedReader<ImageRgbFloat> TypedReaderImageRgbFloat;
-typedef yarp::os::TypedReaderCallback<ImageRgbFloat> TypedReaderCallbackImageRgbFloat;
-typedef yarp::os::BufferedPort<ImageRgbFloat> BufferedPortImageRgbFloat;
-%}
-
-%feature("notabstract") ImageRgbFloat;
-%feature("notabstract") yarp::os::BufferedPort<ImageRgbFloat>;
-%feature("notabstract") BufferedPortImageRgbFloat;
-
-%template(ImageRgbFloat) yarp::sig::ImageOf<yarp::sig::PixelRgbFloat>;
-%template(TypedReaderImageRgbFloat) yarp::os::TypedReader<yarp::sig::ImageOf<yarp::sig::PixelRgbFloat> >;
-%template(TypedReaderCallbackImageRgbFloat) yarp::os::TypedReaderCallback<yarp::sig::ImageOf<yarp::sig::PixelRgbFloat> >;
-%template(BufferedPortImageRgbFloat) yarp::os::BufferedPort<yarp::sig::ImageOf<yarp::sig::PixelRgbFloat> >;
 
 //////////////////////////////////////////////////////////////////////////
 // Deal with poor translation of interface inheritance in current SWIG
