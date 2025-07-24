@@ -125,6 +125,7 @@ private slots:
     void onEnableControlPositionDirect(bool val);
     void onEnableControlPWM(bool val);
     void onEnableControlCurrent(bool val);
+    void onEnableControlTorque(bool val);
     void onSliderOptionsClicked();
     void onSetPosSliderOptionMW(int, double, int);
     void onSetVelSliderOptionMW(int, double);
@@ -139,6 +140,7 @@ signals:
     void sig_enableControlPositionDirect(bool);
     void sig_enableControlPWM(bool);
     void sig_enableControlCurrent(bool);
+    void sig_enableControlTorque(bool);
     void sig_viewSpeedValues(bool);
     void sig_viewCurrentValues(bool);
     void sig_viewMotorPositions(bool);
