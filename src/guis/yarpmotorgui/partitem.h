@@ -186,6 +186,7 @@ public slots:
     void onEnableControlPositionDirect(bool control);
     void onEnableControlPWM(bool control);
     void onEnableControlCurrent(bool control);
+    void onEnableControlTorque(bool control);
 
 private slots:
     void onSequenceActivated();

@@ -1923,6 +1923,15 @@ void PartItem::onEnableControlCurrent(bool control)
     }
 }
 
+void PartItem::onEnableControlTorque(bool control)
+{
+    for (int i = 0; i<m_layout->count(); i++)
+    {
+        auto* joint = (JointItem*)m_layout->itemAt(i)->widget();
+        joint->enableControlTorque(control);
+    }
+}
+
 void PartItem::onViewSpeedValues(bool view)
 {
     m_part_speedVisible = view;
