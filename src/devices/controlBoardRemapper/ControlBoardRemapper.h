@@ -89,10 +89,12 @@ class ControlBoardRemapper :
         public yarp::dev::IPreciselyTimed,
         public yarp::dev::IInteractionMode,
         public yarp::dev::IRemoteVariables,
-        public yarp::dev::IJointFault {
+        public yarp::dev::IJointFault,
+        public yarp::dev::IJointBrake
+{
 private:
     std::vector<std::string> axesNames;
-    RemappedControlBoards remappedControlBoards;
+    mutable RemappedControlBoards remappedControlBoards;
 
     /** number of axes controlled by this controlboard */
     int controlledJoints{0};
@@ -579,6 +581,12 @@ public:
     bool getRefCurrents(double *currs) override;
 
     bool getRefCurrent(int m, double *curr) override;
+
+    // IJointBrake
+    yarp::dev::ReturnValue isJointBraked(int j, bool& braked) const override;
+    yarp::dev::ReturnValue setManualBrakeActive(int j, bool active) override;
+    yarp::dev::ReturnValue setAutoBrakeEnabled(int j, bool enabled) override;
+    yarp::dev::ReturnValue getAutoBrakeEnabled(int j, bool& enabled) const override;
 };
 
 #endif // YARP_DEV_CONTROLBOARDREMAPPER_CONTROLBOARDREMAPPER_H

@@ -35,6 +35,7 @@
 #include <yarp/dev/tests/IRemoteCalibratorTest.h>
 #include <yarp/dev/tests/IJointFaultTest.h>
 #include <yarp/dev/tests/IControlLimitsTest.h>
+#include <yarp/dev/tests/IJointBrakeTest.h>
 
 #include <catch2/catch_amalgamated.hpp>
 #include <harness.h>
@@ -71,6 +72,7 @@ TEST_CASE("dev::RemoteControlBoardTest", "[yarp::dev]")
         IJointFault* ifault = nullptr;
         IControlLimits* ilims = nullptr;
         //IRemoteCalibrator* iremotecalib = nullptr;
+        IJointBrake* ibrake = nullptr;
 
         ////////"Checking opening fakeMotionControl and controlBoard_nws_yarp polydrivers"
         {
@@ -124,6 +126,7 @@ TEST_CASE("dev::RemoteControlBoardTest", "[yarp::dev]")
         ddnwc.view(icurr);   REQUIRE(icurr);
         ddnwc.view(ifault);  REQUIRE(ifault);
         ddnwc.view(ilims);   REQUIRE(ilims);
+        ddnwc.view(ibrake);  REQUIRE(ibrake);
         //ddnwc.view(icalib);  REQUIRE(iremotecalib);
 
         yarp::dev::tests::exec_iPositionControl_test_1(ipos,icmd);
@@ -142,6 +145,7 @@ TEST_CASE("dev::RemoteControlBoardTest", "[yarp::dev]")
         //yarp::dev::tests::exec_iRemoteCalibrator_test_1(icalib);
         yarp::dev::tests::exec_iJointFault_test_1(ifault);
         yarp::dev::tests::exec_iControlLimits_test1(ilims, iinfo);
+        yarp::dev::tests::exec_iJointBrake_test1(ibrake);
 
         //"Close all polydrivers and check"
         {

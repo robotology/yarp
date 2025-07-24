@@ -43,28 +43,29 @@ class RemappedSubControlBoard
 public:
     std::string id;
 
-    yarp::dev::PolyDriver            *subdevice;
-    yarp::dev::IPidControl           *pid;
-    yarp::dev::IPositionControl      *pos;
-    yarp::dev::IVelocityControl      *vel;
-    yarp::dev::IEncodersTimed        *iJntEnc;
-    yarp::dev::IMotorEncoders        *iMotEnc;
-    yarp::dev::IAmplifierControl     *amp;
-    yarp::dev::IControlLimits        *lim;
-    yarp::dev::IControlCalibration   *calib;
-    yarp::dev::IRemoteCalibrator     *remcalib;
-    yarp::dev::IPreciselyTimed       *iTimed;
-    yarp::dev::ITorqueControl        *iTorque;
-    yarp::dev::IImpedanceControl     *iImpedance;
-    yarp::dev::IControlMode          *iMode;
-    yarp::dev::IAxisInfo             *info;
-    yarp::dev::IPositionDirect       *posDir;
-    yarp::dev::IInteractionMode      *iInteract;
-    yarp::dev::IMotor                *imotor;
-    yarp::dev::IRemoteVariables      *iVar;
-    yarp::dev::IPWMControl           *iPwm;
-    yarp::dev::ICurrentControl       *iCurr;
-    yarp::dev::IJointFault           *iFault;
+    yarp::dev::PolyDriver            *subdevice = nullptr;
+    yarp::dev::IPidControl           *pid = nullptr;
+    yarp::dev::IPositionControl      *pos = nullptr;
+    yarp::dev::IVelocityControl      *vel = nullptr;
+    yarp::dev::IEncodersTimed        *iJntEnc = nullptr;
+    yarp::dev::IMotorEncoders        *iMotEnc = nullptr;
+    yarp::dev::IAmplifierControl     *amp = nullptr;
+    yarp::dev::IControlLimits        *lim = nullptr;
+    yarp::dev::IControlCalibration   *calib = nullptr;
+    yarp::dev::IRemoteCalibrator     *remcalib = nullptr;
+    yarp::dev::IPreciselyTimed       *iTimed = nullptr;
+    yarp::dev::ITorqueControl        *iTorque = nullptr;
+    yarp::dev::IImpedanceControl     *iImpedance = nullptr;
+    yarp::dev::IControlMode          *iMode = nullptr;
+    yarp::dev::IAxisInfo             *info = nullptr;
+    yarp::dev::IPositionDirect       *posDir = nullptr;
+    yarp::dev::IInteractionMode      *iInteract = nullptr;
+    yarp::dev::IMotor                *imotor = nullptr;
+    yarp::dev::IRemoteVariables      *iVar = nullptr;
+    yarp::dev::IPWMControl           *iPwm = nullptr;
+    yarp::dev::ICurrentControl       *iCurr = nullptr;
+    yarp::dev::IJointFault           *iFault = nullptr;
+    yarp::dev::IJointBrake           *iBrake = nullptr;
 
     RemappedSubControlBoard();
 

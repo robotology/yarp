@@ -31,6 +31,7 @@
 #include <yarp/dev/IPWMControl.h>
 #include <yarp/dev/ICurrentControl.h>
 #include <yarp/dev/IJointFault.h>
+#include <yarp/dev/IJointBrake.h>
 #include <yarp/dev/ControlBoardHelpers.h>
 
 #include "stateExtendedReader.h"
@@ -74,6 +75,7 @@ class RemoteControlBoard :
         public yarp::dev::IPWMControl,
         public yarp::dev::ICurrentControl,
         public yarp::dev::IJointFault,
+        public yarp::dev::IJointBrake,
         public RemoteControlBoard_ParamsParser
 {
 protected:
@@ -492,6 +494,12 @@ public:
     bool getRefDutyCycles(double *refs) override;
     bool getDutyCycle(int j, double *out) override;
     bool getDutyCycles(double *outs) override;
+
+    //IJointBrake
+    yarp::dev::ReturnValue isJointBraked(int j, bool& braked) const override;
+    yarp::dev::ReturnValue setManualBrakeActive(int j, bool active) override;
+    yarp::dev::ReturnValue setAutoBrakeEnabled(int j, bool enabled) override;
+    yarp::dev::ReturnValue getAutoBrakeEnabled(int j, bool& enabled) const override;
 };
 
 

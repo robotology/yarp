@@ -32,6 +32,7 @@
 #include <yarp/dev/ICurrentControl.h>
 #include <yarp/dev/IPreciselyTimed.h>
 #include <yarp/dev/IMotor.h>
+#include <yarp/dev/IJointBrake.h>
 
 #include <yarp/os/BufferedPort.h>
 #include <yarp/os/Stamp.h>
@@ -115,6 +116,7 @@ private:
     yarp::dev::IPWMControl* iPWMControl{nullptr};
     yarp::dev::ICurrentControl* iCurrentControl{nullptr};
     yarp::dev::IJointFault* iJointFault{ nullptr };
+    yarp::dev::IJointBrake* iJointBrake {nullptr};
 
     bool setDevice(yarp::dev::DeviceDriver* device, bool owned);
     bool openAndAttachSubDevice(yarp::os::Property& prop);

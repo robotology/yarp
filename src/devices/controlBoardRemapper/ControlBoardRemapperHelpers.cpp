@@ -70,7 +70,7 @@ void RemappedSubControlBoard::detach()
     iVar = nullptr;
     iPwm = nullptr;
     iCurr = nullptr;
-
+    iBrake = nullptr;
     attachedF=false;
 }
 
@@ -113,6 +113,7 @@ bool RemappedSubControlBoard::attach(yarp::dev::PolyDriver *d, const std::string
         subdevice->view(iPwm);
         subdevice->view(iCurr);
         subdevice->view(iFault);
+        subdevice->view(iBrake);
     }
     else
     {
@@ -170,6 +171,9 @@ bool RemappedSubControlBoard::attach(yarp::dev::PolyDriver *d, const std::string
         yCWarning(CONTROLBOARDREMAPPER) << "IJointFault not valid interface";
     }
 
+    if ((iBrake == nullptr) && (_subDevVerbose)) {
+        yCWarning(CONTROLBOARDREMAPPER) << "IJointBrake not valid interface";
+    }
 
     // checking minimum set of interfaces required
     if( !(pos) )

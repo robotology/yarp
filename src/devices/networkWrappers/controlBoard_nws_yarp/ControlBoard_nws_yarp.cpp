@@ -122,124 +122,109 @@ bool ControlBoard_nws_yarp::setDevice(yarp::dev::DeviceDriver* driver, bool owne
     // Save the pointer and subDeviceOwned
     yarp::dev::DeviceDriver* subdevice_ptr = driver;
 
-    // yarp::dev::IJointFault* iJointFault{nullptr};
     subdevice_ptr->view(iJointFault);
     if (!iJointFault) {
         yCWarning(CONTROLBOARD, "Part <%s>: iJointFault interface was not found in subdevice.", partName.c_str());
     }
 
-    // yarp::dev::IPidControl* iPidControl{nullptr};
     subdevice_ptr->view(iPidControl);
     if (!iPidControl) {
         yCWarning(CONTROLBOARD, "Part <%s>: IPidControl interface was not found in subdevice.", partName.c_str());
     }
 
-    // yarp::dev::IPositionControl* iPositionControl{nullptr};
     subdevice_ptr->view(iPositionControl);
     if (!iPositionControl) {
         yCWarning(CONTROLBOARD, "Part <%s>: IPositionControl interface was not found in subdevice.", partName.c_str());
     }
 
-    // yarp::dev::IPositionDirect* iPositionDirect{nullptr};
     subdevice_ptr->view(iPositionDirect);
     if (!iPositionDirect) {
         yCWarning(CONTROLBOARD, "Part <%s>: IPositionDirect interface was not found in subdevice.", partName.c_str());
     }
 
-    // yarp::dev::IVelocityControl* iVelocityControl{nullptr};
     subdevice_ptr->view(iVelocityControl);
     if (!iVelocityControl) {
         yCWarning(CONTROLBOARD, "Part <%s>: IVelocityControl interface was not found in subdevice.", partName.c_str());
     }
 
-    // yarp::dev::IEncodersTimed* iEncodersTimed{nullptr};
     subdevice_ptr->view(iEncodersTimed);
     if (!iEncodersTimed) {
         yCWarning(CONTROLBOARD, "Part <%s>: IEncodersTimed interface was not found in subdevice.", partName.c_str());
     }
 
-    // yarp::dev::IMotor* iMotor{nullptr};
     subdevice_ptr->view(iMotor);
     if (!iMotor) {
         yCWarning(CONTROLBOARD, "Part <%s>: IMotor interface was not found in subdevice.", partName.c_str());
     }
 
-    // yarp::dev::IMotorEncoders* iMotorEncoders{nullptr};
     subdevice_ptr->view(iMotorEncoders);
     if (!iMotorEncoders) {
         yCWarning(CONTROLBOARD, "Part <%s>: IMotorEncoders interface was not found in subdevice.", partName.c_str());
     }
 
-    // yarp::dev::IAmplifierControl* iAmplifierControl{nullptr};
     subdevice_ptr->view(iAmplifierControl);
     if (!iAmplifierControl) {
         yCWarning(CONTROLBOARD, "Part <%s>: IAmplifierControl interface was not found in subdevice.", partName.c_str());
     }
 
-    // yarp::dev::IControlLimits* iControlLimits{nullptr};
     subdevice_ptr->view(iControlLimits);
     if (!iControlLimits) {
         yCWarning(CONTROLBOARD, "Part <%s>: IControlLimits interface was not found in subdevice.", partName.c_str());
     }
 
-    // yarp::dev::IControlCalibration* iControlCalibration{nullptr};
-    subdevice_ptr->view(iControlCalibration);
+     subdevice_ptr->view(iControlCalibration);
     if (!iControlCalibration) {
         yCWarning(CONTROLBOARD, "Part <%s>: IControlCalibration interface was not found in subdevice.", partName.c_str());
     }
 
-    // yarp::dev::ITorqueControl* iTorqueControl{nullptr};
     subdevice_ptr->view(iTorqueControl);
     if (!iTorqueControl) {
         yCWarning(CONTROLBOARD, "Part <%s>: ITorqueControl interface was not found in subdevice.", partName.c_str());
     }
 
-    // yarp::dev::IImpedanceControl* iImpedanceControl{nullptr};
     subdevice_ptr->view(iImpedanceControl);
     if (!iImpedanceControl) {
         yCWarning(CONTROLBOARD, "Part <%s>: IImpedanceControl interface was not found in subdevice.", partName.c_str());
     }
 
-    // yarp::dev::IControlMode* iControlMode{nullptr};
     subdevice_ptr->view(iControlMode);
     if (!iControlMode) {
         yCWarning(CONTROLBOARD, "Part <%s>: IControlMode interface was not found in subdevice.", partName.c_str());
     }
 
-    // yarp::dev::IAxisInfo* iAxisInfo{nullptr};
     subdevice_ptr->view(iAxisInfo);
     if (!iAxisInfo) {
         yCWarning(CONTROLBOARD, "Part <%s>: IAxisInfo interface was not found in subdevice.", partName.c_str());
     }
 
-    // yarp::dev::IPreciselyTimed* iPreciselyTimed{nullptr};
     subdevice_ptr->view(iPreciselyTimed);
     if (!iPreciselyTimed) {
         yCWarning(CONTROLBOARD, "Part <%s>: IPreciselyTimed interface was not found in subdevice.", partName.c_str());
     }
 
-    // yarp::dev::IInteractionMode* iInteractionMode{nullptr};
     subdevice_ptr->view(iInteractionMode);
     if (!iInteractionMode) {
         yCWarning(CONTROLBOARD, "Part <%s>: IInteractionMode interface was not found in subdevice.", partName.c_str());
     }
 
-    // yarp::dev::IRemoteVariables* iRemoteVariables{nullptr};
     subdevice_ptr->view(iRemoteVariables);
     if (!iRemoteVariables) {
         yCWarning(CONTROLBOARD, "Part <%s>: IRemoteVariables interface was not found in subdevice.", partName.c_str());
     }
 
-    // yarp::dev::IPWMControl* iPWMControl{nullptr};
     subdevice_ptr->view(iPWMControl);
     if (!iPWMControl) {
         yCWarning(CONTROLBOARD, "Part <%s>: IPWMControl interface was not found in subdevice.", partName.c_str());
     }
 
-    // yarp::dev::ICurrentControl* iCurrentControl{nullptr};
     subdevice_ptr->view(iCurrentControl);
     if (!iCurrentControl) {
         yCWarning(CONTROLBOARD, "Part <%s>: ICurrentControl interface was not found in subdevice.", partName.c_str());
+    }
+
+    subdevice_ptr->view(iJointBrake);
+    if (!iJointBrake) {
+        yCWarning(CONTROLBOARD, "Part <%s>: iJointBrake interface was not found in subdevice.", partName.c_str());
     }
 
     // Get the number of controlled joints
@@ -341,7 +326,7 @@ bool ControlBoard_nws_yarp::attach(yarp::dev::PolyDriver* poly)
         return false;
     }
 
-    m_RPC = std::make_unique<ControlBoardRPCd>(/*interfaceToBeAdded*/);
+    m_RPC = std::make_unique<ControlBoardRPCd>(iJointBrake);
 
     return true;
 }

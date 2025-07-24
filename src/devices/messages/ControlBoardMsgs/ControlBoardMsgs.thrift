@@ -10,8 +10,23 @@ struct yReturnValue {
 )
 
 //-------------------------------------------------
+// IJointBrake
+struct return_isJointBraked {
+  1: yReturnValue ret;
+  2: bool isBraked;
+}
+
+struct return_getAutoBrakeEnabled {
+  1: yReturnValue ret;
+  2: bool enabled;
+}
+//-------------------------------------------------
 
 service ControlBoardMsgs
 {
-    yReturnValue dummyTest_RPC ();
+    return_isJointBraked       isJointBraked_RPC(1:i16 j) (yarp.qualifier = "const");
+    yReturnValue               setManualBrakeActive_RPC(1: i16 j, 2:bool active);
+    yReturnValue               setAutoBrakeEnabled_RPC(1: i16 j, 2:bool enabled);
+    return_getAutoBrakeEnabled getAutoBrakeEnabled_RPC(1: i16 j) (yarp.qualifier = "const");
+
 }

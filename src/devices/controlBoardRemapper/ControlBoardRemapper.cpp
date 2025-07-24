@@ -4583,3 +4583,63 @@ bool ControlBoardRemapper::getRefCurrents(double* currs)
 
     return ret;
 }
+
+ReturnValue ControlBoardRemapper::isJointBraked(int j, bool& braked) const
+{
+    ReturnValue ret = ReturnValue::return_code::return_value_error_not_ready;
+
+    size_t subIndex = remappedControlBoards.lut[j].subControlBoardIndex;
+    RemappedSubControlBoard* p = remappedControlBoards.getSubControlBoard(subIndex);
+
+    if (p && p->iBrake) {
+        int off = (int)remappedControlBoards.lut[j].axisIndexInSubControlBoard;
+        ret = p->iBrake->isJointBraked(off, braked);
+    }
+
+    return ret;
+}
+
+ReturnValue ControlBoardRemapper::setManualBrakeActive(int j, bool active)
+{
+    ReturnValue ret = ReturnValue::return_code::return_value_error_not_ready;
+
+    size_t subIndex = remappedControlBoards.lut[j].subControlBoardIndex;
+    RemappedSubControlBoard* p = remappedControlBoards.getSubControlBoard(subIndex);
+
+    if (p && p->iBrake) {
+        int off = (int)remappedControlBoards.lut[j].axisIndexInSubControlBoard;
+        ret = p->iBrake->setManualBrakeActive(off, active);
+    }
+
+    return ret;
+}
+
+ReturnValue ControlBoardRemapper::setAutoBrakeEnabled(int j, bool enabled)
+{
+    ReturnValue ret = ReturnValue::return_code::return_value_error_not_ready;
+
+    size_t subIndex = remappedControlBoards.lut[j].subControlBoardIndex;
+    RemappedSubControlBoard* p = remappedControlBoards.getSubControlBoard(subIndex);
+
+    if (p && p->iBrake) {
+        int off = (int)remappedControlBoards.lut[j].axisIndexInSubControlBoard;
+        ret = p->iBrake->setAutoBrakeEnabled(off, enabled);
+    }
+
+    return ret;
+}
+
+ReturnValue ControlBoardRemapper::getAutoBrakeEnabled(int j, bool& enabled) const
+{
+    ReturnValue ret = ReturnValue::return_code::return_value_error_not_ready;
+
+    size_t subIndex = remappedControlBoards.lut[j].subControlBoardIndex;
+    RemappedSubControlBoard* p = remappedControlBoards.getSubControlBoard(subIndex);
+
+    if (p && p->iBrake) {
+        int off = (int)remappedControlBoards.lut[j].axisIndexInSubControlBoard;
+        ret = p->iBrake->getAutoBrakeEnabled(off, enabled);
+    }
+
+    return ret;
+}

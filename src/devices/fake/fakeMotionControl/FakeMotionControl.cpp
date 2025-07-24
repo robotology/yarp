@@ -227,7 +227,8 @@ bool FakeMotionControl::alloc(int nj)
     _rotorlimits_min = allocAndCheck<double>(nj);
     _hwfault_code = allocAndCheck<int>(nj);
     _hwfault_message = allocAndCheck<std::string>(nj);
-
+    _braked = allocAndCheck<bool>(nj);
+    _autobraked = allocAndCheck<bool>(nj);
 
     _ppids=allocAndCheck<Pid>(nj);
     _tpids=allocAndCheck<Pid>(nj);
@@ -308,6 +309,8 @@ bool FakeMotionControl::dealloc()
     checkAndDestroy(_gearbox);
     checkAndDestroy(_torqueSensorId);
     checkAndDestroy(_torqueSensorChan);
+    checkAndDestroy(_braked);
+    checkAndDestroy(_autobraked);
     checkAndDestroy(_maxTorque);
     checkAndDestroy(_maxJntCmdVelocity);
     checkAndDestroy(_maxMotorVelocity);
@@ -397,6 +400,7 @@ FakeMotionControl::FakeMotionControl() :
     ImplementAxisInfo(this),
     ImplementVirtualAnalogSensor(this),
     ImplementJointFault(this),
+    ImplementJointBrake(this),
     _mutex(),
     _njoints       (0),
     _axisMap       (nullptr),
@@ -569,6 +573,7 @@ bool FakeMotionControl::open(yarp::os::Searchable &config)
     ImplementCurrentControl::initialize(_njoints, _axisMap, _ampsToSensor);
     ImplementVirtualAnalogSensor::initialize(_njoints, _axisMap, _newtonsToSensor);
     ImplementJointFault::initialize(_njoints, _axisMap);
+    ImplementJointBrake::initialize(_njoints, _axisMap);
 
     //start the rateThread
     bool init = this->start();
@@ -752,6 +757,8 @@ bool FakeMotionControl::close()
     ImplementInteractionMode::uninitialize();
     ImplementAxisInfo::uninitialize();
     ImplementVirtualAnalogSensor::uninitialize();
+    ImplementJointFault::uninitialize();
+    ImplementJointBrake::uninitialize();
 
 //     cleanup();
 
@@ -2591,6 +2598,29 @@ bool FakeMotionControl::getLastJointFaultRaw(int j, int& fault, std::string& mes
     return true;
 }
 
+ReturnValue FakeMotionControl::isJointBrakedRaw(int j, bool& braked) const
+{
+    braked = _braked[j];
+    return ReturnValue_ok;
+}
+
+ReturnValue FakeMotionControl::setManualBrakeActiveRaw(int j, bool active)
+{
+    _braked[j] = active;
+    return ReturnValue_ok;
+}
+
+ReturnValue FakeMotionControl::setAutoBrakeEnabledRaw(int j, bool enabled)
+{
+    _autobraked[j] = enabled;
+    return ReturnValue_ok;
+}
+
+ReturnValue FakeMotionControl::getAutoBrakeEnabledRaw(int j, bool& enabled) const
+{
+    enabled = _autobraked[j];
+    return ReturnValue_ok;
+}
 
 /*
 bool FakeMotionControl::parseImpedanceGroup_NewFormat(Bottle& pidsGroup, ImpedanceParameters vals[])
