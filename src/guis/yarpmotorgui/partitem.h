@@ -47,6 +47,7 @@ public:
                       bool debug_param_enabled,
                       bool speedview_param_enabled,
                       bool enable_calib_all,
+                      std::string rcb_protocol,
                       QWidget *parent = 0);
 
 

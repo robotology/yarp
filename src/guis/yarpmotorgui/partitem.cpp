@@ -25,7 +25,9 @@
 PartItem::PartItem(std::string robotName, int id, std::string partName, ResourceFinder& _finder,
                    bool debug_param_enabled,
                    bool speedview_param_enabled,
-                   bool enable_calib_all, QWidget *parent) :
+                   bool enable_calib_all,
+                   std::string rcb_protocol,
+                   QWidget *parent) :
     QWidget(parent),
     m_sequenceWindow(nullptr),
     m_partId(id),
@@ -92,7 +94,7 @@ PartItem::PartItem(std::string robotName, int id, std::string partName, Resource
     m_partOptions.put("local", portLocalName.toLatin1().data());
     m_partOptions.put("device", "remote_controlboard");
     m_partOptions.put("remote", m_robotPartPort);
-    m_partOptions.put("carrier", "udp");
+    m_partOptions.put("carrier", rcb_protocol);
 
     m_partsdd = new PolyDriver();
 
