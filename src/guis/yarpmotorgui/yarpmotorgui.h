@@ -21,6 +21,7 @@ const QColor currentColor        = QColor(250, 200, 120);
 const QColor errorColor          = QColor(255,0,0);
 const QColor disconnectColor     = QColor(190,190,190);
 const QColor hwFaultColor        = QColor(255,50,50);
+const QColor hwFaultColorBraked  = QColor(205, 50, 50);
 const QColor calibratingColor    = QColor(220,220,220);
 
 enum {

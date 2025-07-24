@@ -168,6 +168,10 @@ PartItem::PartItem(std::string robotName, int id, std::string partName, Resource
             m_dutyCycles[i] = std::nan("");
         }
         m_done.resize(number_of_joints);
+        m_braked.resize(number_of_joints);
+        for (i = 0; i < number_of_joints; i++) {
+            m_braked[i] = false;
+        }
         m_interactionModes.resize(number_of_joints);
 
         bool ret = false;
@@ -437,32 +441,31 @@ bool PartItem::openInterfaces()
         //optional interfaces
         if (!m_partsdd->view(m_ijointfault))
         {
-            yError("...m_iJointFault was not ok...");
+            yWarning("...m_iJointFault was not ok...");
         }
-
+        if (!m_partsdd->view(m_ijointbrake))
+        {
+            yWarning("...m_iJointBrake was not ok...");
+        }
         if (!m_partsdd->view(m_iVar))
         {
-            yError("...iVar was not ok...");
+            yWarning("...iVar was not ok...");
         }
-
         if (!m_partsdd->view(m_iMot))
         {
-            yError("...iMot was not ok...");
+            yWarning("...iMot was not ok...");
         }
-
         if (!m_partsdd->view(m_iremCalib))
         {
-            yError("...remCalib was not ok...");
+            yWarning("...remCalib was not ok...");
         }
-
         if (!m_partsdd->view(m_iinfo))
         {
-            yError("...axisInfo was not ok...");
+            yWarning("...axisInfo was not ok...");
         }
-
         if (!m_partsdd->view(m_iCur))
         {
-            yError("...iCur was not ok...");
+            yWarning("...iCur was not ok...");
         }
 
         if (!ok) {
@@ -2215,33 +2218,66 @@ bool PartItem::updatePart()
 
     // *** update checkMotionDone, refTorque, refTrajectorySpeed, refSpeed ***
     // (only one at a time in order to save bandwidth)
-    bool boolval = true;
-    bool b_motdone = m_iPos->checkMotionDone(m_slow_k, &boolval); //using k to save bandwidth
-    m_done[m_slow_k] = boolval;
-    bool b_refTrq = m_iTrq->getRefTorque(m_slow_k, &m_refTorques[m_slow_k]); //using k to save bandwidth
-    bool b_refPosSpeed = m_iPos->getRefSpeed(m_slow_k, &m_refTrajectorySpeeds[m_slow_k]); //using k to save bandwidth
-    bool b_refVel = m_iVel->getRefVelocity(m_slow_k, &m_refVelocitySpeeds[m_slow_k]); //this interface is missing!
-    bool b_refPos = m_iPos->getTargetPosition(m_slow_k, &m_refTrajectoryPositions[m_slow_k]);
+    bool ret_motdone = false;
+    bool ret_refTrq = false;
+    bool ret_refPosSpeed = false;
+    bool ret_refVel = false;
+    bool ret_refPos = false;
+    bool ret_jntbrk = false;
 
-    if (!b_refPos)
+    if (m_iPos)
+    {
+        bool boolval = true;
+        m_iPos->checkMotionDone(m_slow_k, &boolval); // using k to save bandwidth
+        m_done[m_slow_k] = boolval;
+    }
+    if (m_ijointbrake)
+    {
+        bool boolval = true;
+        ret_jntbrk = m_ijointbrake->isJointBraked(m_slow_k, boolval);
+        m_braked[m_slow_k] = boolval;
+    }
+    if (m_iTrq)
+    {
+        ret_refTrq = m_iTrq->getRefTorque(m_slow_k, &m_refTorques[m_slow_k]); // using k to save bandwidth
+    }
+    if (m_iPos)
+    {
+        ret_refPosSpeed = m_iPos->getRefSpeed(m_slow_k, &m_refTrajectorySpeeds[m_slow_k]); // using k to save bandwidth
+    }
+    if (m_iVel)
+    {
+        ret_refVel = m_iVel->getRefVelocity(m_slow_k, &m_refVelocitySpeeds[m_slow_k]); // this interface is missing!
+    }
+    if (m_iPos)
+    {
+        ret_refPos = m_iPos->getTargetPosition(m_slow_k, &m_refTrajectoryPositions[m_slow_k]);
+    }
+
+    //Check return values of methods
+    if (!ret_refPos)
     {
         yError() << "Missing Implementation of getTargetPosition()";
     }
-    if (!b_refVel)
+    if (!ret_refVel)
     {
         yError() << "Missing Implementation of getRefVelocity()";
     }
-    if (!b_refPosSpeed)
+    if (!ret_refPosSpeed)
     {
         yError() << "Missing Implementation of getRefSpeed()";
     }
-    if (!b_refTrq)
+    if (!ret_refTrq)
     {
         yError() << "Missing Implementation of getRefTorque()";
     }
-    if (!b_motdone)
+    if (!ret_motdone)
     {
         yError() << "Missing Implementation of checkMotionDone()";
+    }
+    if (!ret_jntbrk)
+    {
+        yWarning() << "Missing Implementation of isJointBraked()";
     }
 
     // *** update the widget every cycle ***
@@ -2265,15 +2301,17 @@ bool PartItem::updatePart()
     // *** update the widget NOT every cycle ***
     {
         auto* joint_slow_k = (JointItem*)m_layout->itemAt(m_slow_k)->widget();
-        if (b_refTrq) { joint_slow_k->setRefTorque(m_refTorques[m_slow_k]); }
+        if (ret_refTrq) { joint_slow_k->setRefTorque(m_refTorques[m_slow_k]); }
         else {}
-        if (b_refPosSpeed) { joint_slow_k->setRefTrajectorySpeed(m_refTrajectorySpeeds[m_slow_k]); }
+        if (ret_refPosSpeed) { joint_slow_k->setRefTrajectorySpeed(m_refTrajectorySpeeds[m_slow_k]); }
         else {}
-        if (b_refPos) { joint_slow_k->setRefTrajectoryPosition(m_refTrajectoryPositions[m_slow_k]); }
+        if (ret_refPos) { joint_slow_k->setRefTrajectoryPosition(m_refTrajectoryPositions[m_slow_k]); }
         else {}
-        if (b_refVel) { joint_slow_k->setRefVelocitySpeed(m_refVelocitySpeeds[m_slow_k]); }
+        if (ret_refVel) { joint_slow_k->setRefVelocitySpeed(m_refVelocitySpeeds[m_slow_k]); }
         else {}
-        if (b_motdone) { joint_slow_k->updateMotionDone(m_done[m_slow_k]); }
+        if (ret_motdone) { joint_slow_k->updateMotionDone(m_done[m_slow_k]); }
+        else {}
+        if (ret_jntbrk) { joint_slow_k->updateBraked(m_braked[m_slow_k]); }
         else {}
     }
 
