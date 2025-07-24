@@ -2079,12 +2079,18 @@ bool FakeMotionControl::getTorquesRaw(double *t)
 
 bool FakeMotionControl::getTorqueRangeRaw(int j, double *min, double *max)
 {
-    return NOT_YET_IMPLEMENTED("getTorqueRangeRaw");
+    *min = -100;
+    *max = 100;
+    return true;
 }
 
 bool FakeMotionControl::getTorqueRangesRaw(double *min, double *max)
 {
-    return NOT_YET_IMPLEMENTED("getTorqueRangesRaw");
+    bool ret = true;
+    for (int j = 0; j < _njoints && ret; j++) {
+        ret &= getTorqueRangeRaw(j, &min[j], &max[j]);
+    }
+    return ret;
 }
 
 bool FakeMotionControl::setRefTorquesRaw(const double *t)

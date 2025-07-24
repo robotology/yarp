@@ -24,9 +24,9 @@ struct return_getAutoBrakeEnabled {
 
 service ControlBoardMsgs
 {
-    return_isJointBraked       isJointBraked_RPC(1:i16 j) (yarp.qualifier = "const");
-    yReturnValue               setManualBrakeActive_RPC(1: i16 j, 2:bool active);
-    yReturnValue               setAutoBrakeEnabled_RPC(1: i16 j, 2:bool enabled);
-    return_getAutoBrakeEnabled getAutoBrakeEnabled_RPC(1: i16 j) (yarp.qualifier = "const");
+    return_isJointBraked       isJointBrakedRPC(1:i16 j) (yarp.qualifier = "const");
+    yReturnValue               setManualBrakeActiveRPC(1: i16 j, 2:bool active);
+    yReturnValue               setAutoBrakeEnabledRPC(1: i16 j, 2:bool enabled);
+    return_getAutoBrakeEnabled getAutoBrakeEnabledRPC(1: i16 j) (yarp.qualifier = "const");
 
 }

@@ -2903,7 +2903,7 @@ bool RemoteControlBoard::getDutyCycles(double *outs)
 yarp::dev::ReturnValue RemoteControlBoard::isJointBraked(int j, bool& braked) const
 {
     //std::lock_guard<std::mutex> lg(m_mutex);
-    auto ret = m_RPC.isJointBraked_RPC(j);
+    auto ret = m_RPC.isJointBrakedRPC(j);
     if (!ret.ret) {
         yCError(REMOTECONTROLBOARD, "Unable to isJointBraked");
         return ret.ret;
@@ -2915,7 +2915,7 @@ yarp::dev::ReturnValue RemoteControlBoard::isJointBraked(int j, bool& braked) co
 yarp::dev::ReturnValue RemoteControlBoard::setManualBrakeActive(int j, bool active)
 {
     // std::lock_guard<std::mutex> lg(m_mutex);
-    auto ret = m_RPC.setManualBrakeActive_RPC(j,active);
+    auto ret = m_RPC.setManualBrakeActiveRPC(j,active);
     if (!ret) {
         yCError(REMOTECONTROLBOARD, "Unable to setManualBrakeActive");
         return ret;
@@ -2926,7 +2926,7 @@ yarp::dev::ReturnValue RemoteControlBoard::setManualBrakeActive(int j, bool acti
 yarp::dev::ReturnValue RemoteControlBoard::setAutoBrakeEnabled(int j, bool enabled)
 {
     // std::lock_guard<std::mutex> lg(m_mutex);
-    auto ret = m_RPC.setAutoBrakeEnabled_RPC(j,enabled);
+    auto ret = m_RPC.setAutoBrakeEnabledRPC(j,enabled);
     if (!ret) {
         yCError(REMOTECONTROLBOARD, "Unable to isJointBraked");
         return ret;
@@ -2937,7 +2937,7 @@ yarp::dev::ReturnValue RemoteControlBoard::setAutoBrakeEnabled(int j, bool enabl
 yarp::dev::ReturnValue RemoteControlBoard::getAutoBrakeEnabled(int j, bool& enabled) const
 {
     // std::lock_guard<std::mutex> lg(m_mutex);
-    auto ret = m_RPC.getAutoBrakeEnabled_RPC(j);
+    auto ret = m_RPC.getAutoBrakeEnabledRPC(j);
     if (!ret.ret) {
         yCError(REMOTECONTROLBOARD, "Unable to getAutoBrakeEnabled");
         return ret.ret;

@@ -26,10 +26,10 @@ class ControlBoardRPCd : public ControlBoardMsgs
     }
 
     //IJointBrake
-    return_isJointBraked isJointBraked_RPC(const std::int16_t j) const override;
-    yarp::dev::ReturnValue setManualBrakeActive_RPC(const std::int16_t j, const bool active) override;
-    yarp::dev::ReturnValue setAutoBrakeEnabled_RPC(const std::int16_t j, const bool enabled) override;
-    return_getAutoBrakeEnabled getAutoBrakeEnabled_RPC(const std::int16_t j) const override;
+    return_isJointBraked isJointBrakedRPC(const std::int16_t j) const override;
+    yarp::dev::ReturnValue setManualBrakeActiveRPC(const std::int16_t j, const bool active) override;
+    yarp::dev::ReturnValue setAutoBrakeEnabledRPC(const std::int16_t j, const bool enabled) override;
+    return_getAutoBrakeEnabled getAutoBrakeEnabledRPC(const std::int16_t j) const override;
 
 
     std::mutex* getMutex() {return &m_mutex;}

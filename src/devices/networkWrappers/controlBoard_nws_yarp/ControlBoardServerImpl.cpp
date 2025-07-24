@@ -17,7 +17,7 @@ namespace {
 YARP_LOG_COMPONENT(CB_RPC, "yarp.device.controlBoard_nws_yarp")
 }
 
-return_isJointBraked ControlBoardRPCd::isJointBraked_RPC(const std::int16_t j) const
+return_isJointBraked ControlBoardRPCd::isJointBrakedRPC(const std::int16_t j) const
 {
     std::lock_guard<std::mutex> lg(m_mutex);
     return_isJointBraked ret;
@@ -36,7 +36,7 @@ return_isJointBraked ControlBoardRPCd::isJointBraked_RPC(const std::int16_t j) c
     return ret;
 }
 
-ReturnValue ControlBoardRPCd::setManualBrakeActive_RPC(const std::int16_t j, const bool active)
+ReturnValue ControlBoardRPCd::setManualBrakeActiveRPC(const std::int16_t j, const bool active)
 {
     std::lock_guard<std::mutex> lg(m_mutex);
     ReturnValue ret;
@@ -53,7 +53,7 @@ ReturnValue ControlBoardRPCd::setManualBrakeActive_RPC(const std::int16_t j, con
     return ret;
 }
 
-ReturnValue ControlBoardRPCd::setAutoBrakeEnabled_RPC(const std::int16_t j, const bool enabled)
+ReturnValue ControlBoardRPCd::setAutoBrakeEnabledRPC(const std::int16_t j, const bool enabled)
 {
     std::lock_guard<std::mutex> lg(m_mutex);
     ReturnValue ret;
@@ -70,7 +70,7 @@ ReturnValue ControlBoardRPCd::setAutoBrakeEnabled_RPC(const std::int16_t j, cons
     return ret;
 }
 
-return_getAutoBrakeEnabled ControlBoardRPCd::getAutoBrakeEnabled_RPC(const std::int16_t j) const
+return_getAutoBrakeEnabled ControlBoardRPCd::getAutoBrakeEnabledRPC(const std::int16_t j) const
 {
     std::lock_guard<std::mutex> lg(m_mutex);
     return_getAutoBrakeEnabled ret;
