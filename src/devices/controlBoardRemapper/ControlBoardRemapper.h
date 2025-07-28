@@ -72,6 +72,7 @@ class ControlBoardRemapper :
         public yarp::dev::IPositionControl,
         public yarp::dev::IPositionDirect,
         public yarp::dev::IVelocityControl,
+        public yarp::dev::IVelocityDirect,
         public yarp::dev::IPWMControl,
         public yarp::dev::ICurrentControl,
         public yarp::dev::IEncodersTimed,
@@ -587,6 +588,15 @@ public:
     yarp::dev::ReturnValue setManualBrakeActive(int j, bool active) override;
     yarp::dev::ReturnValue setAutoBrakeEnabled(int j, bool enabled) override;
     yarp::dev::ReturnValue getAutoBrakeEnabled(int j, bool& enabled) const override;
+
+    // IVelocityDirect
+    yarp::dev::ReturnValue getAxes(size_t& axes) override;
+    yarp::dev::ReturnValue setDesiredVelocity(int jnt, double vel) override;
+    yarp::dev::ReturnValue setDesiredVelocity(const std::vector<double>& vels) override;
+    yarp::dev::ReturnValue setDesiredVelocity(const std::vector<int>& jnts, const std::vector<double>& vels) override;
+    yarp::dev::ReturnValue getDesiredVelocity(const int jnt, double& vel) override;
+    yarp::dev::ReturnValue getDesiredVelocity(std::vector<double>& vels) override;
+    yarp::dev::ReturnValue getDesiredVelocity(const std::vector<int>& jnts, std::vector<double>& vels) override;
 };
 
 #endif // YARP_DEV_CONTROLBOARDREMAPPER_CONTROLBOARDREMAPPER_H

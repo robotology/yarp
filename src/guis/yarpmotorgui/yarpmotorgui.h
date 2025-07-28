@@ -15,6 +15,7 @@ const QColor positionColor       = QColor( 149,221,186);
 const QColor positionDirectColor = QColor( 119,206,111);
 const QColor mixedColor          = QColor( 150,(221+190)/2,(186+255)/2);
 const QColor velocityColor       = QColor( 150,190,255);
+const QColor velocityDirectColor = QColor( 120,160,225);
 const QColor torqueColor         = QColor( 219,166,171);
 const QColor pwmColor            = QColor( 250,250,250);
 const QColor currentColor        = QColor(250, 200, 120);

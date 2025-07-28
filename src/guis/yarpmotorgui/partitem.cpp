@@ -956,6 +956,18 @@ void PartItem::onJointChangeMode(int mode,JointItem *joint)
         }*/
 
     }
+    case JointItem::VelocityDirect: {
+        //if(positionDirectEnabled){
+            yInfo("joint: %d in VELOCITY DIRECT mode", jointIndex);
+            if (m_ictrlmode)
+            {
+                joint->resetTarget();
+                m_ictrlmode->setControlMode(jointIndex, VOCAB_CM_VELOCITY_DIRECT);
+            } else {
+                yError("ERROR: cannot do!");
+            }
+            break;
+    }
     case JointItem::Velocity:{
         //if(positionDirectEnabled){
             yInfo("joint: %d in VELOCITY mode", jointIndex);
@@ -2128,6 +2140,9 @@ void PartItem::updateControlMode()
         case VOCAB_CM_VELOCITY:
             m_modesList[k] = JointItem::Velocity;
             break;
+        case VOCAB_CM_VELOCITY_DIRECT:
+            m_modesList[k] = JointItem::VelocityDirect;
+            break;
         case VOCAB_CM_TORQUE:
             m_modesList[k] = JointItem::Torque;
             break;
@@ -2369,6 +2384,9 @@ bool PartItem::updatePart()
                 break;
             case VOCAB_CM_VELOCITY:
                 joint->setJointState(JointItem::Velocity);
+                break;
+            case VOCAB_CM_VELOCITY_DIRECT:
+                joint->setJointState(JointItem::VelocityDirect);
                 break;
             case VOCAB_CM_TORQUE:
                 joint->setJointState(JointItem::Torque);

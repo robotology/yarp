@@ -16,6 +16,7 @@
 #include <yarp/dev/ImplementControlMode.h>
 #include <yarp/dev/ImplementPositionControl.h>
 #include <yarp/dev/ImplementVelocityControl.h>
+#include <yarp/dev/ImplementVelocityDirect.h>
 #include <yarp/dev/ImplementTorqueControl.h>
 #include <yarp/dev/ImplementCurrentControl.h>
 #include <yarp/dev/ImplementPWMControl.h>
@@ -28,6 +29,7 @@
 #include <yarp/dev/ImplementControlLimits.h>
 #include <yarp/dev/ImplementPositionDirect.h>
 #include <yarp/dev/ImplementInteractionMode.h>
+#include <yarp/dev/ImplementJointFault.h>
 
 // old interface implementation file
 #include <yarp/dev/ImplementControlBoardInterfaces.h>

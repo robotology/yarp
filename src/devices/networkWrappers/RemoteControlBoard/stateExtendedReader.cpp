@@ -168,7 +168,8 @@ bool StateExtendedInputPort::getLastSingle(int j, int field, double *data, Stamp
 
         localArrivalTime=now;
         stamp = lastStamp;
-        if (ret && ((Time::now() - localArrivalTime) > timeout)) {
+        double current_time = Time::now();
+        if (ret && ((current_time - localArrivalTime) > timeout)) {
             ret = false;
         }
     }
@@ -201,7 +202,8 @@ bool StateExtendedInputPort::getLastSingle(int j, int field, int *data, Stamp &s
         }
         localArrivalTime=now;
         stamp = lastStamp;
-        if (ret && ((Time::now() - localArrivalTime) > timeout)) {
+        double curr_time = Time::now();
+        if (ret && (( curr_time - localArrivalTime) > timeout)) {
             ret = false;
         }
     }

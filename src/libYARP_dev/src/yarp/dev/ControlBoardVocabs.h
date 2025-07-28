@@ -30,7 +30,5 @@ constexpr yarp::conf::vocab32_t VOCAB_STOPS             = yarp::os::createVocab3
 
 // interface IVelocityControl sets
 constexpr yarp::conf::vocab32_t VOCAB_VELOCITY_MODE  = yarp::os::createVocab32('v','e','l','d');
-constexpr yarp::conf::vocab32_t VOCAB_VELOCITY_MOVE  = yarp::os::createVocab32('v','m','o');
-constexpr yarp::conf::vocab32_t VOCAB_VELOCITY_MOVES = yarp::os::createVocab32('v','m','o','s');
 
 #endif // YARP_DEV_CONTROLBOARDVOCABS_H
