@@ -30,7 +30,7 @@ class JointItem : public QWidget
     Q_OBJECT
 
     public:
-    enum JointState {Idle = 0,Position,PositionDirect,Mixed,Velocity,Torque,Pwm,Current,
+    enum JointState {Idle = 0,Position,PositionDirect,Mixed,Velocity,VelocityDirect, Torque,Pwm,Current,
                      Disconnected, HwFault, Calibrating, CalibDone, NotConfigured, Configured,Unknown, StateStarting} ;
     enum JointInteraction {Stiff, Compliant, InteractionStarting} ;
     explicit JointItem(int index, QWidget *parent = 0);
@@ -163,15 +163,16 @@ private:
     double lastTorque = 0;
     bool torqueModeEnabled = false;
 
-    int IDLE = 0;
-    int POSITION = 1;
-    int POSITION_DIR = 2;
-    int MIXED = 3;
-    int VELOCITY = 4;
-    int TORQUE = 5;
-    int PWM = 6;
-    int CURRENT = 7;
-    int HW_FAULT = 8;
+    int     IDLE = 0;
+    int     POSITION = 1;
+    int     POSITION_DIR = 2;
+    int     MIXED = 3;
+    int     VELOCITY = 4;
+    int     VELOCITY_DIR =5;
+    int     TORQUE =6;
+    int     PWM =7;
+    int     CURRENT=8;
+    int     HW_FAULT= 9;
 
     int shiftPositions;
 

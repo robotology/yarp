@@ -116,6 +116,10 @@ QColor JointItem::GetModeColor(JointState mode)
         output = velocityColor;
         break;
     }
+    case JointItem::VelocityDirect:{
+        output = velocityDirectColor;
+        break;
+    }
     case JointItem::Torque:{
         output = torqueColor;
         break;
@@ -181,6 +185,10 @@ QString JointItem::GetModeString(JointState mode)
     }
     case JointItem::Velocity:{
         output = "Velocity";
+        break;
+    }
+    case JointItem::VelocityDirect:{
+        output = "Velocity Direct";
         break;
     }
     case JointItem::Torque:{
@@ -362,6 +370,7 @@ JointItem::JointItem(int index,QWidget *parent) :
     ui->comboMode->setItemData( POSITION_DIR,   positionDirectColor, Qt::BackgroundRole );
     ui->comboMode->setItemData( MIXED,          mixedColor, Qt::BackgroundRole );
     ui->comboMode->setItemData( VELOCITY,       velocityColor, Qt::BackgroundRole );
+    ui->comboMode->setItemData( VELOCITY_DIR,   velocityDirectColor, Qt::BackgroundRole );
     ui->comboMode->setItemData( TORQUE,         torqueColor, Qt::BackgroundRole );
     ui->comboMode->setItemData( PWM,            pwmColor, Qt::BackgroundRole );
     ui->comboMode->setItemData( CURRENT,        currentColor, Qt::BackgroundRole);
@@ -371,6 +380,7 @@ JointItem::JointItem(int index,QWidget *parent) :
     ui->comboMode->setItemData( POSITION_DIR,   QColor(35, 38, 41), Qt::ForegroundRole );
     ui->comboMode->setItemData( MIXED,          QColor(35, 38, 41), Qt::ForegroundRole );
     ui->comboMode->setItemData( VELOCITY,       QColor(35, 38, 41), Qt::ForegroundRole );
+    ui->comboMode->setItemData( VELOCITY_DIR,   QColor(35, 38, 41), Qt::ForegroundRole );
     ui->comboMode->setItemData( TORQUE,         QColor(35, 38, 41), Qt::ForegroundRole );
     ui->comboMode->setItemData( PWM,            QColor(35, 38, 41), Qt::ForegroundRole );
     ui->comboMode->setItemData( CURRENT,        QColor(35, 38, 41), Qt::ForegroundRole );
@@ -380,6 +390,7 @@ JointItem::JointItem(int index,QWidget *parent) :
     ui->comboMode->setItemData( POSITION_DIR,   PositionDirect, Qt::UserRole );
     ui->comboMode->setItemData( MIXED,          Mixed, Qt::UserRole );
     ui->comboMode->setItemData( VELOCITY,       Velocity, Qt::UserRole );
+    ui->comboMode->setItemData( VELOCITY_DIR,   VelocityDirect, Qt::UserRole );
     ui->comboMode->setItemData( TORQUE,         Torque, Qt::UserRole );
     ui->comboMode->setItemData( PWM,            Pwm, Qt::UserRole);
     ui->comboMode->setItemData( CURRENT,        Current, Qt::UserRole);
@@ -607,6 +618,7 @@ void JointItem::setUnits(yarp::dev::JointTypeEnum t)
         ui->labelPWMvelUnits->setText(vel_metric_revolute);
         ui->labelCurrentvelUnits->setText(vel_metric_revolute);
         ui->labelVelocityvelUnits->setText(vel_metric_revolute);
+//&        ui->labelVelocityDirvelUnits->setText(vel_metric_revolute);
 
         ui->labelIdleTorque->setText(trq_metric_revolute_title);
         ui->labelPositionTorque->setText(trq_metric_revolute_title);
@@ -616,6 +628,7 @@ void JointItem::setUnits(yarp::dev::JointTypeEnum t)
         ui->labelPWMTorque->setText(trq_metric_revolute_title);
         ui->labelCurrentTorque->setText(trq_metric_revolute_title);
         ui->labelVelocityTorque->setText(trq_metric_revolute_title);
+//&       ui->labelVelocityDirTorque->setText(trq_metric_revolute_title);
 
         ui->labelIdleposUnits->setText(pos_metric_revolute);
         ui->labelPositionposUnits->setText(pos_metric_revolute);
@@ -625,6 +638,7 @@ void JointItem::setUnits(yarp::dev::JointTypeEnum t)
         ui->labelPWMposUnits->setText(pos_metric_revolute);
         ui->labelCurrentposUnits->setText(pos_metric_revolute);
         ui->labelVelocityposUnits->setText(pos_metric_revolute);
+//&        ui->labelVelocityDirposUnits->setText(pos_metric_revolute);
         ui->labelFaultposUnits->setText(pos_metric_revolute);
 
         //ui->labelIdleMotorPosUnits->setText(pos_metric_revolute);
@@ -638,6 +652,7 @@ void JointItem::setUnits(yarp::dev::JointTypeEnum t)
         ui->labelPWMtrqUnits->setText(trq_metric_revolute);
         ui->labelCurrenttrqUnits->setText(pos_metric_revolute);
         ui->labelVelocitytrqUnits->setText(trq_metric_revolute);
+//&        ui->labelVelocityDirtrqUnits->setText(trq_metric_revolute);
     }
     else if (t == yarp::dev::VOCAB_JOINTTYPE_PRISMATIC)
     {
@@ -649,6 +664,7 @@ void JointItem::setUnits(yarp::dev::JointTypeEnum t)
         ui->labelPWMvelUnits->setText(vel_metric_prism);
         ui->labelCurrentvelUnits->setText(vel_metric_prism);
         ui->labelVelocityvelUnits->setText(vel_metric_prism);
+//&        ui->labelVelocityDirvelUnits->setText(vel_metric_prism);
 
         ui->labelIdleTorque->setText(trq_metric_prism_title);
         ui->labelPositionTorque->setText(trq_metric_prism_title);
@@ -658,6 +674,7 @@ void JointItem::setUnits(yarp::dev::JointTypeEnum t)
         ui->labelPWMTorque->setText(trq_metric_prism_title);
         ui->labelCurrentTorque->setText(trq_metric_prism_title);
         ui->labelVelocityTorque->setText(trq_metric_prism_title);
+ //&       ui->labelVelocityDirTorque->setText(vel_metric_prism);
 
         ui->labelIdleposUnits->setText(pos_metric_prism);
         ui->labelPositionposUnits->setText(pos_metric_prism);
@@ -667,6 +684,7 @@ void JointItem::setUnits(yarp::dev::JointTypeEnum t)
         ui->labelPWMposUnits->setText(pos_metric_prism);
         ui->labelCurrentposUnits->setText(pos_metric_prism);
         ui->labelVelocityposUnits->setText(pos_metric_prism);
+ //&       ui->labelVelocityDirtposUnits->setText(pos_metric_prism);
         ui->labelFaultposUnits->setText(pos_metric_prism);
 
         //ui->labelIdleMotorPosUnits->setText(pos_metric_prism);
@@ -680,6 +698,7 @@ void JointItem::setUnits(yarp::dev::JointTypeEnum t)
         ui->labelPWMtrqUnits->setText(trq_metric_prism);
         ui->labelCurrenttrqUnits->setText(trq_metric_prism);
         ui->labelVelocitytrqUnits->setText(trq_metric_prism);
+ //&       ui->labelVelocityDirtrqUnits->setText(trq_metric_prism);
     }
     else
     {
@@ -698,6 +717,7 @@ void JointItem::setMotorPositionVisible(bool visible)
     ui->editPWMMotorPos->setVisible(visible);
     ui->editCurrentMotorPos->setVisible(visible);
     ui->editVelocityMotorPos->setVisible(visible);
+  //&  ui->editVelocityDirMotorPos->setVisible(visible);
     ui->editFaultMotorPos->setVisible(visible);
 
     ui->labelIdleMotorPos->setVisible(visible);
@@ -708,6 +728,7 @@ void JointItem::setMotorPositionVisible(bool visible)
     ui->labelPWMMotorPos->setVisible(visible);
     ui->labelCurrentMotorPos->setVisible(visible);
     ui->labelVelocityMotorPos->setVisible(visible);
+//&    ui->labelVelocityDirMotorPos->setVisible(visible);
     ui->labelFaultMotorPos->setVisible(visible);
 
     ui->labelIdleMotorPosUnits->setVisible(visible);
@@ -718,6 +739,7 @@ void JointItem::setMotorPositionVisible(bool visible)
     ui->labelPWMMotorPosUnits->setVisible(visible);
     ui->labelCurrentMotorPosUnits->setVisible(visible);
     ui->labelVelocityMotorPosUnits->setVisible(visible);
+//&    ui->labelVelocityDirMotorPosUnits->setVisible(visible);
     ui->labelFaultMotorPosUnits->setVisible(visible);
 
     if (!visible) {
@@ -729,6 +751,7 @@ void JointItem::setMotorPositionVisible(bool visible)
         ui->editPWMMotorPos->setMinimumHeight(0);
         ui->editCurrentMotorPos->setMinimumHeight(0);
         ui->editVelocityMotorPos->setMinimumHeight(0);
+ //&       ui->editVelocityDirMotorPos->setMinimumHeight(0);
         ui->editFaultMotorPos->setMinimumHeight(0);
 
         ui->labelPositionMotorPos->setMinimumHeight(0);
@@ -745,6 +768,8 @@ void JointItem::setMotorPositionVisible(bool visible)
         ui->labelCurrentMotorPosUnits->setMinimumHeight(0);
         ui->labelVelocityMotorPos->setMinimumHeight(0);
         ui->labelVelocityMotorPosUnits->setMinimumHeight(0);
+ //&       ui->labelVelocityDirMotorPos->setMinimumHeight(0);
+//&        ui->labelVelocityDirMotorPosUnits->setMinimumHeight(0);
         ui->labelIdleMotorPos->setMinimumHeight(0);
         ui->labelIdleMotorPosUnits->setMinimumHeight(0);
         ui->labelFaultMotorPos->setMinimumHeight(0);
@@ -759,6 +784,7 @@ void JointItem::setMotorPositionVisible(bool visible)
         ui->editPWMMotorPos->setMinimumHeight(20);
         ui->editCurrentMotorPos->setMinimumHeight(20);
         ui->editVelocityMotorPos->setMinimumHeight(20);
+ //&       ui->editVelocityDirMotorPos->setMinimumHeight(20);
         ui->editFaultMotorPos->setMinimumHeight(20);
 
         ui->labelPositionMotorPos->setMinimumHeight(20);
@@ -775,6 +801,8 @@ void JointItem::setMotorPositionVisible(bool visible)
         ui->labelCurrentMotorPosUnits->setMinimumHeight(20);
         ui->labelVelocityMotorPos->setMinimumHeight(20);
         ui->labelVelocityMotorPosUnits->setMinimumHeight(20);
+  //&      ui->labelVelocityDirMotorPos->setMinimumHeight(20);
+  //&      ui->labelVelocityDirMotorPosUnits->setMinimumHeight(20);
         ui->labelIdleMotorPos->setMinimumHeight(20);
         ui->labelIdleMotorPosUnits->setMinimumHeight(20);
         ui->labelFaultMotorPos->setMinimumHeight(20);
@@ -897,7 +925,8 @@ void JointItem::setCurrentsVisible(bool visible)
     //ui->labelCurrentCurrentUnits->setVisible(visible);
     ui->labelVelocityCurrent->setVisible(visible);
     ui->labelVelocityCurrentUnits->setVisible(visible);
-
+ //&   ui->labelVelocityDirCurrent->setVisible(visible);
+ //&   ui->labelVelocityDirCurrentUnits->setVisible(visible);
 
     if (!visible) {
         ui->editIdleCurrent->setMinimumHeight(0);
@@ -2281,6 +2310,10 @@ void JointItem::setJointState(JointState newState)
     }
     case Velocity:{
         setJointInternalState(VELOCITY);
+        break;
+    }
+    case VelocityDirect:{
+        setJointInternalState(VELOCITY_DIR);
         break;
     }
     case Torque:{
