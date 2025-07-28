@@ -602,7 +602,8 @@ bool MainWindow::init(std::vector<std::string> enabledParts,
                       ResourceFinder& finder,
                       bool debug_param_enabled,
                       bool speedview_param_enabled,
-                      bool enable_calib_all)
+                      bool enable_calib_all,
+                      std::string rcb_protocol)
 {
     m_tabPanel = new QTabWidget(m_ui->mainContainer);
 
@@ -617,13 +618,6 @@ bool MainWindow::init(std::vector<std::string> enabledParts,
     m_finder = finder;
     m_user_script1 = m_finder.find("script1").asString();
     m_user_script2 = m_finder.find("script2").asString();
-    //The following line is used to keep the bandwidth consumption low,
-    //throttling down to 10Hz the data from controlBoard_nws to RemoteControlBoard (controlBoard_nwc)
-    std::string rcb_protocol = "fast_tcp+send.portmonitor+type.dll+file.throttleDown+period_ms.100";
-    if (m_finder.check("rcb_protocol"))
-    {
-        rcb_protocol = m_finder.find("rcb_protocol").asString();
-    }
 
     struct robot_type
     {
