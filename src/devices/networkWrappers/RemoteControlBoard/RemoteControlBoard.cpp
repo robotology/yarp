@@ -190,6 +190,7 @@ bool RemoteControlBoard::open(Searchable& config)
         // RPC port needs to be tcp, therefore no carrier option is added here
         // ok=Network::connect(s2.c_str(), s1.c_str());         //This doesn't take into consideration possible YARP_PORT_PREFIX on local ports
         // ok=Network::connect(rpc_p.getName(), s1.c_str());    //This should work also with YARP_PORT_PREFIX because getting back the name of the port will return the modified name
+        std::string dummy = rpc_p.getName();
         ok=rpc_p.addOutput(s1);                         //This works because we are manipulating only remote side and let yarp handle the local side
         if (!ok) {
             yCError(REMOTECONTROLBOARD, "Problem connecting to %s, is the remote device available?", s1.c_str());
@@ -202,7 +203,7 @@ bool RemoteControlBoard::open(Searchable& config)
         s2 += "/command:o";
         //ok = Network::connect(s2.c_str(), s1.c_str(), carrier);
         // ok=Network::connect(command_p.getName(), s1.c_str(), carrier); //doesn't take into consideration possible YARP_PORT_PREFIX on local ports
-        ok = command_p.addOutput(s1, m_carrier);
+        ok = command_p.addOutput(s1, m_carrier_cmd);
         if (!ok) {
             yCError(REMOTECONTROLBOARD, "Problem connecting to %s, is the remote device available?", s1.c_str());
             connectionProblem = true;

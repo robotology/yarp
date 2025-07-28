@@ -40,7 +40,8 @@ public:
               ResourceFinder& finder,
               bool debug_param_enabled,
               bool speedview_param_enabled,
-              bool enable_calib_all);
+              bool enable_calib_all,
+              std::string rcb_protocol);
     ~MainWindow();
 
     void term();

@@ -87,6 +87,8 @@ int main(int argc, char *argv[])
         yInfo("--skip_parts ""( <name1> <name2> )"": parts of the robot to skip.");
         yInfo("--calib to enable calibration buttons (be careful!)");
         yInfo("--remoteRobotDescriptionPort <portname>: port opened by the robotDescription_nws_yarp (yarprbotinterface). Default Value is /yarpRobotInterface/devices/rpc");
+        yInfo("--reduce_bandwidth: attempts to reduce network bandwidth usage by throttling streaming communication with the robot");
+        yInfo("--rcb_protocol <carrier>: the yarp network protocol to connect with the ports opened by the robot (e.g. tcp, udp). Portmonitors can be included too.");
         return 0;
     }
 
@@ -113,10 +115,21 @@ int main(int argc, char *argv[])
         speedview_param_enabled = true;
     }
 
-    std::string descriprionServerRemotePort = "/yarpRobotInterface/devices/rpc";
+    //*remote control board portocol configuration*/
+    std::string rcb_protocol = "fast_tcp"; //fast_tcp is the default
+    if (finder.check("rcb_protocol")) {
+        rcb_protocol = finder.find("rcb_protocol").asString();
+    }
+    if (finder.check("reduce_bandwidth")) {
+        // The following line is used to keep the bandwidth consumption low,
+        // throttling down to 10Hz the data from controlBoard_nws to RemoteControlBoard (controlBoard_nwc)
+        rcb_protocol = "fast_tcp+send.portmonitor+type.dll+file.throttleDown+period_ms.100";
+    }
+
+    std::string descriptionServerRemotePort = "/yarpRobotInterface/devices/rpc";
     if (finder.check("remoteRobotDescriptionPort"))
     {
-        descriprionServerRemotePort = finder.find("remoteRobotDescriptionPort").asString();
+        descriptionServerRemotePort = finder.find("remoteRobotDescriptionPort").asString();
     }
 
     if (finder.check("skip_description_server")==false) //option --skip_description_server is for debug only, users should not use it
@@ -132,7 +145,7 @@ int main(int argc, char *argv[])
             adr = Network::queryName(descLocalName);
         }
 
-        if (yarp::os::Network::exists(descriprionServerRemotePort.c_str()))
+        if (yarp::os::Network::exists(descriptionServerRemotePort.c_str()))
         {
             PolyDriver* desc_driver = nullptr;
             desc_driver = new PolyDriver;
@@ -140,7 +153,7 @@ int main(int argc, char *argv[])
             Property desc_driver_options;
             desc_driver_options.put("device", "robotDescription_nwc_yarp");
             desc_driver_options.put("local", descLocalName);
-            desc_driver_options.put("remote", descriprionServerRemotePort.c_str());
+            desc_driver_options.put("remote", descriptionServerRemotePort.c_str());
             if (desc_driver && desc_driver->open(desc_driver_options))
             {
                 IRobotDescription* idesc = nullptr;
@@ -175,7 +188,7 @@ int main(int argc, char *argv[])
         }
         else
         {
-            yWarning() << "Attempt to connect to port:" << descriprionServerRemotePort << "failed";
+            yWarning() << "Attempt to connect to port:" << descriptionServerRemotePort << "failed";
             yWarning() << "robotDescription_nws_yarp not found, robot parts will be set manually.";
         }
     }
@@ -288,7 +301,7 @@ int main(int argc, char *argv[])
 
     mainW  = &w;
     appRet = 0;
-    ret = w.init(enabledParts, finder, debug_param_enabled, speedview_param_enabled, enable_calib_all);
+    ret = w.init(enabledParts, finder, debug_param_enabled, speedview_param_enabled, enable_calib_all, rcb_protocol);
 
     if(ret)
     {

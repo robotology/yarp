@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Fri Jul 11 11:27:18 2025
+// Generated on: Thu Jul 24 17:45:33 2025
 
 
 #include "RemoteControlBoard_ParamsParser.h"
@@ -32,6 +32,7 @@ std::vector<std::string> RemoteControlBoard_ParamsParser::getListOfParams() cons
     params.push_back("local");
     params.push_back("writeStrict");
     params.push_back("carrier");
+    params.push_back("carrier_cmd");
     params.push_back("timeout");
     params.push_back("local_qos::enable");
     params.push_back("local_qos::thread_priority");
@@ -66,6 +67,11 @@ bool RemoteControlBoard_ParamsParser::getParamValue(const std::string& paramName
     if (paramName =="carrier")
     {
         paramValue = m_carrier;
+        return true;
+    }
+    if (paramName =="carrier_cmd")
+    {
+        paramValue = m_carrier_cmd;
         return true;
     }
     if (paramName =="timeout")
@@ -206,6 +212,20 @@ bool      RemoteControlBoard_ParamsParser::parseParams(const yarp::os::Searchabl
             yCInfo(RemoteControlBoardParamsCOMPONENT) << "Parameter 'carrier' using DEFAULT value:" << m_carrier;
         }
         prop_check.unput("carrier");
+    }
+
+    //Parser of parameter carrier_cmd
+    {
+        if (config.check("carrier_cmd"))
+        {
+            m_carrier_cmd = config.find("carrier_cmd").asString();
+            yCInfo(RemoteControlBoardParamsCOMPONENT) << "Parameter 'carrier_cmd' using value:" << m_carrier_cmd;
+        }
+        else
+        {
+            yCInfo(RemoteControlBoardParamsCOMPONENT) << "Parameter 'carrier_cmd' using DEFAULT value:" << m_carrier_cmd;
+        }
+        prop_check.unput("carrier_cmd");
     }
 
     //Parser of parameter timeout
@@ -404,6 +424,7 @@ std::string      RemoteControlBoard_ParamsParser::getDocumentationOfDeviceParams
     doc = doc + std::string("'local': Port prefix of the port opened by this device.\n");
     doc = doc + std::string("'writeStrict': It can be 'on' or 'off'\n");
     doc = doc + std::string("'carrier': carrier used for receiving streamed robot state\n");
+    doc = doc + std::string("'carrier_cmd': carrier used for sending streamed commands\n");
     doc = doc + std::string("'timeout': timeout for the input port which receives the streamed robot state\n");
     doc = doc + std::string("'local_qos::enable': Enable the usage of local Qos\n");
     doc = doc + std::string("'local_qos::thread_priority': Local Qos. See https://yarp.it/latest/channelprioritization.html\n");
@@ -416,7 +437,7 @@ std::string      RemoteControlBoard_ParamsParser::getDocumentationOfDeviceParams
     doc = doc + std::string("'diagnostic': For development purpose only\n");
     doc = doc + std::string("\n");
     doc = doc + std::string("Here are some examples of invocation command with yarpdev, with all params:\n");
-    doc = doc + " yarpdev --device remote_controlboard --remote <mandatory_value> --local <mandatory_value> --writeStrict <optional_value> --carrier udp --timeout 0.5 --local_qos::enable false --local_qos::thread_priority 0 --local_qos::thread_policy 0 --local_qos::packet_priority <optional_value> --remote_qos::enable false --remote_qos::thread_priority 0 --remote_qos::thread_policy 0 --remote_qos::packet_priority <optional_value> --diagnostic false\n";
+    doc = doc + " yarpdev --device remote_controlboard --remote <mandatory_value> --local <mandatory_value> --writeStrict <optional_value> --carrier fast_tcp --carrier_cmd fast_tcp --timeout 0.5 --local_qos::enable false --local_qos::thread_priority 0 --local_qos::thread_policy 0 --local_qos::packet_priority <optional_value> --remote_qos::enable false --remote_qos::thread_priority 0 --remote_qos::thread_policy 0 --remote_qos::packet_priority <optional_value> --diagnostic false\n";
     doc = doc + std::string("Using only mandatory params:\n");
     doc = doc + " yarpdev --device remote_controlboard --remote <mandatory_value> --local <mandatory_value>\n";
     doc = doc + std::string("=============================================\n\n");    return doc;

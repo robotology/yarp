@@ -602,7 +602,8 @@ bool MainWindow::init(std::vector<std::string> enabledParts,
                       ResourceFinder& finder,
                       bool debug_param_enabled,
                       bool speedview_param_enabled,
-                      bool enable_calib_all)
+                      bool enable_calib_all,
+                      std::string rcb_protocol)
 {
     m_tabPanel = new QTabWidget(m_ui->mainContainer);
 
@@ -687,7 +688,7 @@ bool MainWindow::init(std::vector<std::string> enabledParts,
         std::string robot_name_without_slash = i_parts.second.robot_name_without_slash;
         std::string part_name_without_slash = i_parts.second.part_name_without_slash;
         int         part_id = i_parts.second.partindex;
-        part = new PartItem(robot_name_without_slash.c_str(), part_id, part_name_without_slash.c_str(), finder, debug_param_enabled, speedview_param_enabled, enable_calib_all, scroll);
+        part = new PartItem(robot_name_without_slash.c_str(), part_id, part_name_without_slash.c_str(), finder, debug_param_enabled, speedview_param_enabled, enable_calib_all, rcb_protocol, scroll);
 
         if(part && !part->getInterfaceError())
         {

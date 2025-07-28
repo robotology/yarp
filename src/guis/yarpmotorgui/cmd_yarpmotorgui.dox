@@ -33,15 +33,18 @@ This GUI can be used for the following pouposes:
 \section yarpmotorgui_parameters Parameters
 
 \code
---robot:    name of the robot (used to form port names)
---parts:    a list of parts to be added.
+--robot <name>:    name of the robot (used to form port names)
+--parts "(<name1> <name2>)": a list of parts to be added.
+--names "(<name1> <name2>)": full name of the ports of the robot to add to the list. (e.g. /icub/left_arm). This option is mutually exclusive with --robot --parts options
+--skip_parts "( <name1> <name2>)": parts of the robot to skip.
+--remoteRobotDescriptionPort <portname>: port opened by the robotDescription_nws_yarp (yarprbotinterface). Default Value is /yarpRobotInterface/devices/rpc.
 --skip:     skips the initial dialog and keeps the default parts.
---speed:    enables the speed visualisation.
+--speed:    enables the speed visualization.
 --calib:    enables the calib buttons.
 --debug:    opens the debugInterfaceClient (for firmware debugging).
---direct:   enables the position direct mode.
---openloop: enables the openloop mode.
---admin:    enables all the previous parameters (debug, direct, openloob, calib).
+--reduce_bandwidth: attempts to reduce network bandwidth usage by throttling streaming communication with the robot. It is an alias for: --rcb_protocol fast_tcp+send.portmonitor+type.dll+file.throttleDown+period_ms.100
+--rcb_protocol <carrier>: the yarp network protocol to connect with the ports opened by the robot (e.g. tcp, udp). Portmonitors can be included too.
+
 \endcode
 Example:
 \code
