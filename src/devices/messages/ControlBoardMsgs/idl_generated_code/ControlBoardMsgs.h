@@ -14,6 +14,8 @@
 #include <yarp/os/Wire.h>
 #include <yarp/os/idl/WireTypes.h>
 #include <yarp/os/ApplicationNetworkProtocolVersion.h>
+#include <return_getAutoBrakeEnabled.h>
+#include <return_isJointBraked.h>
 #include <yarp/dev/ReturnValue.h>
 
 class ControlBoardMsgs :
@@ -29,7 +31,13 @@ public:
     ControlBoardMsgs();
 
     //Service methods
-    virtual yarp::dev::ReturnValue dummyTest_RPC();
+    virtual return_isJointBraked isJointBrakedRPC(const std::int16_t j) const;
+
+    virtual yarp::dev::ReturnValue setManualBrakeActiveRPC(const std::int16_t j, const bool active);
+
+    virtual yarp::dev::ReturnValue setAutoBrakeEnabledRPC(const std::int16_t j, const bool enabled);
+
+    virtual return_getAutoBrakeEnabled getAutoBrakeEnabledRPC(const std::int16_t j) const;
 
     // help method
     virtual std::vector<std::string> help(const std::string& functionName = "--all");
