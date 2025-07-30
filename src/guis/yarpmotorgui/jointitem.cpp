@@ -244,54 +244,6 @@ JointItem::JointItem(int index,QWidget *parent) :
     internalState = StateStarting;
     internalInteraction = InteractionStarting;
     jointIndex = index;
-    sliderDirectPositionPressed = false;
-    sliderMixedPositionPressed = false;
-    sliderMixedVelocityPressed = false;
-    sliderTrajectoryPositionPressed = false;
-    sliderTrajectoryVelocityPressed = false;
-    sliderTorquePressed = false;
-    sliderPWMPressed = false;
-    sliderCurrentPressed = false;
-    sliderVelocityPressed = false;
-    enableCalib = true;
-    joint_speedVisible = false;
-    joint_motorPositionVisible = false;
-    joint_currentVisible = false;
-    joint_dutyVisible = false;
-    lastVelocity = 0;
-    velocityModeEnabled = false;
-    lastPwm = 0;
-    pwmModeEnabled =  false;
-    lastCurrent = 0;
-    currentModeEnabled = false;
-    lastTorque = 0;
-    torqueModeEnabled = false;
-    motionDone = true;
-
-    max_position = 0;
-    min_position = 0;
-    max_velocity = 0;
-    min_velocity = 0;
-    max_trajectory_velocity = 0;
-    max_torque = 0;
-    min_torque = 0;
-    max_current = 0;
-    min_current = 0;
-    ref_torque = 0;
-    ref_pwm = 0;
-    ref_current = 0;
-
-    IDLE            = 0;
-    POSITION        = 1;
-    POSITION_DIR    = 2;
-    MIXED           = 3;
-    VELOCITY        = 4;
-    TORQUE          = 5;
-    PWM             = 6;
-    CURRENT         = 7;
-    HW_FAULT        = 8;
-
-
 
     connect(ui->comboMode,SIGNAL(currentIndexChanged(int)),this,SLOT(onModeChanged(int)));
     connect(ui->comboInteraction,SIGNAL(currentIndexChanged(int)),this,SLOT(onInteractionChanged(int)));
@@ -1692,7 +1644,19 @@ double JointItem::getTrajectoryVelocityValue()
     return vel;
 }
 
-void JointItem::updateMotionDone(bool done)
+void JointItem::updateBraked(bool brk)
+{
+    ui->BrakeLabel->setText(brk ? "Braked" : "");
+    if (brk) {
+       ui->BrakeLabel->setStyleSheet("background-color: black; color: rgb(255, 38, 41); font-weight: bold;");
+       ui->BrakeLabel->setAlignment(Qt::AlignCenter);
+    } else {
+       ui->BrakeLabel->setStyleSheet("background-color: transparent; color: rgb(35, 38, 41); font-weight: normal;");
+       ui->BrakeLabel->setAlignment(Qt::AlignCenter);
+    }
+}
+
+    void JointItem::updateMotionDone(bool done)
 {
     motionDone = done;
     int index = ui->stackedWidget->currentIndex();
@@ -2138,6 +2102,7 @@ void JointItem::setJointInternalState(int mode)
                 break;
             case HwFault:
                 ui->groupBox->setTitle(QString("JOINT %1 (%2) -  HARDWARE FAULT").arg(jointIndex).arg(jointName));
+                c = hwFaultColor;
                 ui->stackedWidget->setEnabled(false);
                 //ui->buttonsContainer->setEnabled(false);
                 ui->buttonHome->setEnabled(false);
@@ -2147,7 +2112,6 @@ void JointItem::setJointInternalState(int mode)
                 ui->comboInteraction->setEnabled(false);
                 ui->buttonIdle->setEnabled(true);
                 ui->buttonPid->setEnabled(true);
-                c = hwFaultColor;
                 break;
             case Unknown:
             case NotConfigured:

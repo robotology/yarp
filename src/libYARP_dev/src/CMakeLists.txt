@@ -61,6 +61,7 @@ set(YARP_dev_HDRS
   yarp/dev/IJacobianCoupling.h
   yarp/dev/IJointCoupling.h
   yarp/dev/IJoypadController.h
+  yarp/dev/IJointBrake.h
   yarp/dev/IJointFault.h
   yarp/dev/ILLM.h
   yarp/dev/IMotor.h
@@ -97,6 +98,7 @@ set(YARP_dev_HDRS
   yarp/dev/ImplementImpedanceControl.h
   yarp/dev/ImplementInteractionMode.h
   yarp/dev/ImplementJointCoupling.h
+  yarp/dev/ImplementJointBrake.h
   yarp/dev/ImplementJointFault.h
   yarp/dev/ImplementMotor.h
   yarp/dev/ImplementMotorEncoders.h
@@ -199,6 +201,7 @@ set(YARP_dev_SRCS
   yarp/dev/ImplementInteractionMode.cpp
   yarp/dev/ImplementJointCoupling.cpp
   yarp/dev/ImplementJointFault.cpp
+  yarp/dev/ImplementJointBrake.cpp
   yarp/dev/ImplementMotor.cpp
   yarp/dev/ImplementMotorEncoders.cpp
   yarp/dev/ImplementPWMControl.cpp

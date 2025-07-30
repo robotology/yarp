@@ -6,20 +6,31 @@
 #ifndef YARP_DEV_CONTROLBOARDSERVERIMPL_H
 #define YARP_DEV_CONTROLBOARDSERVERIMPL_H
 
+#include <mutex>
+
 #include "ControlBoardMsgs.h"
 #include <yarp/dev/ReturnValue.h>
+
+#include <yarp/dev/IJointBrake.h>
 
 class ControlBoardRPCd : public ControlBoardMsgs
 {
     private:
-    std::mutex                     m_mutex;
+    mutable std::mutex             m_mutex;
+    yarp::dev::IJointBrake*        m_iJointBrake = nullptr;
 
     public:
-    ControlBoardRPCd()
+    ControlBoardRPCd(yarp::dev::IJointBrake* iJointBrake)
     {
+        m_iJointBrake = iJointBrake;
     }
 
-    yarp::dev::ReturnValue dummyTest_RPC() override;
+    //IJointBrake
+    return_isJointBraked isJointBrakedRPC(const std::int16_t j) const override;
+    yarp::dev::ReturnValue setManualBrakeActiveRPC(const std::int16_t j, const bool active) override;
+    yarp::dev::ReturnValue setAutoBrakeEnabledRPC(const std::int16_t j, const bool enabled) override;
+    return_getAutoBrakeEnabled getAutoBrakeEnabledRPC(const std::int16_t j) const override;
+
 
     std::mutex* getMutex() {return &m_mutex;}
 };

@@ -124,6 +124,7 @@ private:
     std::vector<double> m_motorPositions;
     std::vector<double> m_dutyCycles;
     std::vector<bool>   m_done;
+    std::vector<bool>   m_braked;
     bool    m_part_speedVisible;
     bool    m_part_motorPositionVisible;
     bool    m_part_dutyVisible;
@@ -131,31 +132,32 @@ private:
     std::vector<InteractionModeEnum>  m_interactionModes;
     QVector<JointItem::JointState> m_modesList;
 
-    ResourceFinder* m_finder;
-    PolyDriver*     m_partsdd;
+    ResourceFinder* m_finder = nullptr;
+    PolyDriver*     m_partsdd=nullptr;
     Property        m_partOptions;
     Port            m_sequence_port;
     bool            m_interfaceError;
 
-    IPositionControl   *m_iPos;
-    IPositionDirect    *m_iDir;
-    IVelocityControl  *m_iVel;
-    IRemoteVariables   *m_iVar;
-    IEncoders          *m_iencs;
-    IMotorEncoders     *m_iMot;
-    IAmplifierControl  *m_iAmp;
-    IPidControl        *m_iPid;
-    ICurrentControl    *m_iCur;
-    IPWMControl        *m_iPWM;
-    ITorqueControl     *m_iTrq;
-    IImpedanceControl  *m_iImp;
-    IAxisInfo         *m_iinfo;
-    IControlLimits          *m_iLim;
-    IControlCalibration    *m_ical;
-    IControlMode           *m_ictrlmode;
-    IInteractionMode        *m_iinteract;
-    IJointFault             *m_ijointfault;
-    IRemoteCalibrator   *m_iremCalib;
+    IPositionControl* m_iPos = nullptr;
+    IJointBrake* m_ijointbrake = nullptr;
+    IPositionDirect* m_iDir = nullptr;
+    IVelocityControl* m_iVel = nullptr;
+    IRemoteVariables* m_iVar = nullptr;
+    IEncoders* m_iencs = nullptr;
+    IMotorEncoders* m_iMot = nullptr;
+    IAmplifierControl* m_iAmp = nullptr;
+    IPidControl* m_iPid = nullptr;
+    ICurrentControl* m_iCur = nullptr;
+    IPWMControl* m_iPWM = nullptr;
+    ITorqueControl* m_iTrq = nullptr;
+    IImpedanceControl* m_iImp = nullptr;
+    IAxisInfo* m_iinfo = nullptr;
+    IControlLimits* m_iLim = nullptr;
+    IControlCalibration* m_ical = nullptr;
+    IControlMode* m_ictrlmode = nullptr;
+    IInteractionMode* m_iinteract = nullptr;
+    IJointFault* m_ijointfault = nullptr;
+    IRemoteCalibrator* m_iremCalib = nullptr;
     int m_slow_k;
 
 signals:

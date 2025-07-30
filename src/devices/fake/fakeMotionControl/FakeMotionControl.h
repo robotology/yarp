@@ -18,6 +18,7 @@
 #include <yarp/dev/ImplementPositionControl.h>
 #include <yarp/dev/ImplementVelocityControl.h>
 #include <yarp/dev/ImplementJointFault.h>
+#include <yarp/dev/ImplementJointBrake.h>
 
 #include <mutex>
 #include "FakeMotionControl_ParamsParser.h"
@@ -105,6 +106,7 @@ class FakeMotionControl :
         public yarp::dev::IInteractionModeRaw,
         public yarp::dev::IAxisInfoRaw,
         public yarp::dev::IVirtualAnalogSensorRaw, //*
+        public yarp::dev::IJointBrakeRaw,
         public yarp::dev::IJointFaultRaw,
         public yarp::dev::ImplementControlCalibration,
         public yarp::dev::ImplementAmplifierControl,
@@ -114,6 +116,7 @@ class FakeMotionControl :
         public yarp::dev::ImplementVelocityControl,
         public yarp::dev::ImplementControlMode,
         public yarp::dev::ImplementImpedanceControl,
+        public yarp::dev::ImplementJointBrake,
         public yarp::dev::ImplementJointFault,
         public yarp::dev::ImplementMotorEncoders,
         public yarp::dev::ImplementTorqueControl,
@@ -141,73 +144,75 @@ private:
     std::recursive_mutex _mutex;
     double _cycleTimestamp;
     int  _njoints;
-    int *_axisMap;                              /** axis remapping lookup-table */
-    double *_angleToEncoder;                    /** angle to iCubDegrees conversion factors */
-    double  *_encodersStamp;                    /** keep information about acquisition time for encoders read */
-    double *_ampsToSensor;
-    double *_dutycycleToPWM;
-    float *_DEPRECATED_encoderconversionfactor;            /** iCubDegrees to encoder conversion factors */
-    float *_DEPRECATED_encoderconversionoffset;            /** iCubDegrees offset */
-//     uint8_t *_jointEncoderType;                 /** joint encoder type*/
-    int    *_jointEncoderRes;                   /** joint encoder resolution */
-    int    *_rotorEncoderRes;                   /** rotor encoder resolution */
-//     uint8_t *_rotorEncoderType;                  /** rotor encoder type*/
-    double *_gearbox;                           /** the gearbox ratio */
-    bool   *_hasHallSensor;                     /** */
-    bool   *_hasTempSensor;                     /** */
-    bool   *_hasRotorEncoder;                   /** */
-    bool   *_hasRotorEncoderIndex;              /** */
-    int    *_rotorIndexOffset;                  /** */
-    int    *_motorPoles;                        /** */
-    double *_rotorlimits_max;                   /** */
-    double *_rotorlimits_min;                   /** */
-    yarp::dev::Pid *_ppids;                                /** initial position gains */
-    yarp::dev::Pid *_tpids;                                /** initial torque gains */
-    yarp::dev::Pid *_cpids;                                /** initial current gains */
-    yarp::dev::Pid *_vpids;                                /** initial velocity gains */
-    bool *_ppids_ena;
-    bool *_tpids_ena;
-    bool *_cpids_ena;
-    bool *_vpids_ena;
-    double *_ppids_lim;
-    double *_tpids_lim;
-    double *_cpids_lim;
-    double *_vpids_lim;
-    double *_ppids_ref;
-    double *_tpids_ref;
-    double *_cpids_ref;
-    double *_vpids_ref;
+    int *_axisMap= nullptr;                              /** axis remapping lookup-table */
+    double* _angleToEncoder = nullptr; /** angle to iCubDegrees conversion factors */
+    double* _encodersStamp = nullptr;                    /** keep information about acquisition time for encoders read */
+    double* _ampsToSensor = nullptr;
+    double* _dutycycleToPWM = nullptr;
+    float* _DEPRECATED_encoderconversionfactor = nullptr; /** iCubDegrees to encoder conversion factors */
+    float* _DEPRECATED_encoderconversionoffset = nullptr;            /** iCubDegrees offset */
+//     uint8_t *_jointEncoderType;              /** joint encoder type*/
+    int* _jointEncoderRes = nullptr;            /** joint encoder resolution */
+    int* _rotorEncoderRes = nullptr;            /** rotor encoder resolution */
+                                                //     uint8_t *_rotorEncoderType= nullptr;                  /** rotor encoder type*/
+    double* _gearbox = nullptr;                 /** the gearbox ratio */
+    bool* _hasHallSensor = nullptr;             /** */
+    bool* _hasTempSensor = nullptr;             /** */
+    bool* _hasRotorEncoder = nullptr;           /** */
+    bool* _hasRotorEncoderIndex = nullptr;      /** */
+    int* _rotorIndexOffset = nullptr;           /** */
+    int* _motorPoles = nullptr;                 /** */
+    double* _rotorlimits_max = nullptr;         /** */
+    double* _rotorlimits_min = nullptr;         /** */
+    yarp::dev::Pid *_ppids= nullptr;            /** initial position gains */
+    yarp::dev::Pid *_tpids= nullptr;            /** initial torque gains */
+    yarp::dev::Pid *_cpids= nullptr;            /** initial current gains */
+    yarp::dev::Pid *_vpids= nullptr;            /** initial velocity gains */
+    bool *_ppids_ena= nullptr;
+    bool *_tpids_ena= nullptr;
+    bool *_cpids_ena= nullptr;
+    bool *_vpids_ena= nullptr;
+    double *_ppids_lim= nullptr;
+    double *_tpids_lim= nullptr;
+    double *_cpids_lim= nullptr;
+    double *_vpids_lim= nullptr;
+    double *_ppids_ref= nullptr;
+    double *_tpids_ref= nullptr;
+    double *_cpids_ref= nullptr;
+    double *_vpids_ref= nullptr;
 
-    std::string *_axisName;                          /** axis name */
-    yarp::dev::JointTypeEnum *_jointType;                          /** axis type */
-//     ImpedanceLimits     *_impedance_limits;     /** impedance limits */
-    double *_limitsMin;                         /** joint limits, max*/
-    double *_limitsMax;                         /** joint limits, min*/
-    double *_kinematic_mj;                      /** the kinematic coupling matrix from joints space to motor space */
-    //double *_currentLimits;                     /** current limits */
-//     MotorCurrentLimits *_currentLimits;
-    double *_maxJntCmdVelocity;                 /** max joint commanded velocity */
-    double *_maxMotorVelocity;                  /** max motor velocity */
-    int *_velocityShifts;                       /** velocity shifts */
-    int *_velocityTimeout;                      /** velocity shifts */
-    double *_kbemf;                             /** back-emf compensation parameter */
-    double *_ktau;                              /** motor torque constant */
-    int *_kbemf_scale;                          /** back-emf compensation parameter */
-    int *_ktau_scale;                           /** motor torque constant */
-    double *_viscousPos;                        /** viscous pos friction  */
-    double *_viscousNeg;                        /** viscous neg friction  */
-    double *_coulombPos;                        /** coulomb up friction  */
-    double *_coulombNeg;                        /** coulomb neg friction */
-    double *_velocityThres;                     /** velocity threshold for torque control */
-    int * _filterType;                          /** the filter type (int value) used by the force control algorithm */
-    int *_torqueSensorId;                       /** Id of associated Joint Torque Sensor */
-    int *_torqueSensorChan;                     /** Channel of associated Joint Torque Sensor */
-    double *_maxTorque;                         /** Max torque of a joint */
-    double *_newtonsToSensor;                   /** Newtons to force sensor units conversion factors */
-    bool  *checking_motiondone;                 /* flag telling if I'm already waiting for motion done */
-    double *_last_position_move_time;           /** time stamp for last received position move command*/
-    double *_motorPwmLimits;                    /** motors PWM limits*/
-    double *_torques;                           /** joint torques */
+    std::string* _axisName = nullptr;                      /** axis name */
+    yarp::dev::JointTypeEnum* _jointType = nullptr;        /** axis type */
+//    ImpedanceLimits     *_impedance_limits= nullptr;     /** impedance limits */
+    double* _limitsMin = nullptr;               /** joint limits, max*/
+    double* _limitsMax = nullptr;               /** joint limits, min*/
+    double* _kinematic_mj = nullptr;            /** the kinematic coupling matrix from joints space to motor space */
+    //double *_currentLimits= nullptr;          /** current limits */
+//     MotorCurrentLimits *_currentLimits= nullptr;
+    double* _maxJntCmdVelocity = nullptr;       /** max joint commanded velocity */
+    double* _maxMotorVelocity = nullptr;        /** max motor velocity */
+    int* _velocityShifts = nullptr;             /** velocity shifts */
+    int* _velocityTimeout = nullptr;            /** velocity shifts */
+    double* _kbemf = nullptr;                   /** back-emf compensation parameter */
+    double* _ktau = nullptr;                    /** motor torque constant */
+    int* _kbemf_scale = nullptr;                /** back-emf compensation parameter */
+    int* _ktau_scale = nullptr;                 /** motor torque constant */
+    double* _viscousPos = nullptr;              /** viscous pos friction  */
+    double* _viscousNeg = nullptr;              /** viscous neg friction  */
+    double* _coulombPos = nullptr;              /** coulomb up friction  */
+    double* _coulombNeg = nullptr;              /** coulomb neg friction */
+    double* _velocityThres = nullptr;           /** velocity threshold for torque control */
+    int* _filterType = nullptr;                 /** the filter type (int value) used by the force control algorithm */
+    int* _torqueSensorId = nullptr;             /** Id of associated Joint Torque Sensor */
+    int* _torqueSensorChan = nullptr;           /** Channel of associated Joint Torque Sensor */
+    double* _maxTorque = nullptr;               /** Max torque of a joint */
+    double* _newtonsToSensor = nullptr;         /** Newtons to force sensor units conversion factors */
+    bool* checking_motiondone = nullptr;        /* flag telling if I'm already waiting for motion done */
+    double* _last_position_move_time = nullptr; /** time stamp for last received position move command*/
+    double* _motorPwmLimits = nullptr;          /** motors PWM limits*/
+    double* _torques = nullptr;                 /** joint torques */
+    bool* _braked= nullptr;
+    bool* _autobraked= nullptr;
 
 //     ImpedanceParameters *_impedance_params;     /** impedance parameters */
 
@@ -490,6 +495,12 @@ public:
     bool getRefDutyCyclesRaw(double *v) override;
     bool getDutyCycleRaw(int j, double *v) override;
     bool getDutyCyclesRaw(double *v) override;
+
+    //IJointBrake
+    yarp::dev::ReturnValue isJointBrakedRaw(int j, bool& braked) const override;
+    yarp::dev::ReturnValue setManualBrakeActiveRaw(int j, bool active) override;
+    yarp::dev::ReturnValue setAutoBrakeEnabledRaw(int j, bool enabled) override;
+    yarp::dev::ReturnValue getAutoBrakeEnabledRaw(int j, bool& enabled) const override;
 
     // Current interface
     //bool getAxes(int *ax) override;
