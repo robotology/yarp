@@ -246,6 +246,12 @@
 #include <yarp/os/all.h>
 #include <yarp/sig/all.h>
 #include <yarp/dev/all.h>
+//Navigation interfaces
+#include <yarp/dev/IMap2D.h>
+#include <yarp/dev/ILocalization2D.h>
+#include <yarp/dev/INavigation2D.h>
+#include <yarp/dev/IOdometry2D.h>
+#include <yarp/dev/IRangefinder2D.h>
 
 
 // Sometimes ACE redefines main() - we don't want that
@@ -454,6 +460,12 @@ void setExternal2(yarp::sig::Image *img, PyObject* mem, int w, int h) {
 %include <yarp/dev/MultipleAnalogSensorsInterfaces.h>
 %include <yarp/dev/IRGBDSensor.h>
 %include <yarp/dev/IFrameTransform.h>
+//Navigation interfaces
+%include <yarp/dev/IMap2D.h>
+%include <yarp/dev/ILocalization2D.h>
+%include <yarp/dev/INavigation2D.h>
+%include <yarp/dev/IOdometry2D.h>
+%include <yarp/dev/IRangefinder2D.h>
 
 %template(DVector) std::vector<double>;
 %template(BVector) std::vector<bool>;
