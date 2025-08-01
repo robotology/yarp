@@ -21,6 +21,7 @@
 #include <yarp/dev/ITorqueControl.h>
 #include <yarp/dev/IImpedanceControl.h>
 #include <yarp/dev/IVelocityControl.h>
+#include <yarp/dev/IVelocityDirect.h>
 #include <yarp/dev/IPositionControl.h>
 #include <yarp/dev/ICurrentControl.h>
 #include <yarp/dev/IPWMControl.h>

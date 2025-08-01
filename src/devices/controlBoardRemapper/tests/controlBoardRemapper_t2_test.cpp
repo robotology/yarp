@@ -3,20 +3,6 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#include <yarp/dev/IAxisInfo.h>
-#include <yarp/dev/IPositionControl.h>
-#include <yarp/dev/IVelocityControl.h>
-#include <yarp/dev/ITorqueControl.h>
-#include <yarp/dev/IEncodersTimed.h>
-#include <yarp/dev/IAxisInfo.h>
-#include <yarp/dev/IInteractionMode.h>
-#include <yarp/dev/IMotorEncoders.h>
-#include <yarp/dev/IMotor.h>
-#include <yarp/dev/IPidControl.h>
-#include <yarp/dev/IPWMControl.h>
-#include <yarp/dev/ICurrentControl.h>
-#include <yarp/dev/IRemoteCalibrator.h>
-#include <yarp/dev/IControlLimits.h>
 #include <yarp/os/Network.h>
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/WrapperMultiple.h>
@@ -36,6 +22,7 @@
 #include <yarp/dev/tests/IJointFaultTest.h>
 #include <yarp/dev/tests/IControlLimitsTest.h>
 #include <yarp/dev/tests/IJointBrakeTest.h>
+#include <yarp/dev/tests/IVelocityDirectTest.h>
 
 #include <catch2/catch_amalgamated.hpp>
 #include <harness.h>
@@ -70,6 +57,7 @@ TEST_CASE("dev::ControlBoardRemapperTest2", "[yarp::dev]")
         IJointFault* ifault = nullptr;
         IControlLimits* ilims = nullptr;
         IJointBrake* ibrake = nullptr;
+        IVelocityDirect* ivelDir = nullptr;
         //IRemoteCalibrator* iremotecalib = nullptr;
 
         ////////"Checking opening map2DServer and map2DClient polydrivers"
@@ -110,6 +98,7 @@ TEST_CASE("dev::ControlBoardRemapperTest2", "[yarp::dev]")
         ddremapper.view(ifault);  REQUIRE(ifault);
         ddremapper.view(ilims);   REQUIRE(ilims);
         ddremapper.view(ibrake);  REQUIRE(ibrake);
+        ddremapper.view(ivelDir); REQUIRE(ivelDir);
         //ddremapper.view(iremotecalib);  REQUIRE(iremotecalib);
 
         yarp::dev::tests::exec_iPositionControl_test_1(ipos, icmd);
@@ -129,6 +118,7 @@ TEST_CASE("dev::ControlBoardRemapperTest2", "[yarp::dev]")
         yarp::dev::tests::exec_iJointFault_test_1(ifault);
         yarp::dev::tests::exec_iControlLimits_test1(ilims, iinfo);
         yarp::dev::tests::exec_iJointBrake_test1(ibrake);
+        yarp::dev::tests::exec_iVelocityDirect_test_1(ivelDir, icmd);
 
         //"Close all polydrivers and check"
         {

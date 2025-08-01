@@ -123,6 +123,7 @@ constexpr yarp::conf::vocab32_t VOCAB_CM_TORQUE          =   yarp::os::createVoc
 constexpr yarp::conf::vocab32_t VOCAB_CM_POSITION        =   yarp::os::createVocab32('p','o','s');
 constexpr yarp::conf::vocab32_t VOCAB_CM_POSITION_DIRECT =   yarp::os::createVocab32('p','o','s','d');
 constexpr yarp::conf::vocab32_t VOCAB_CM_VELOCITY        =   yarp::os::createVocab32('v','e','l');
+constexpr yarp::conf::vocab32_t VOCAB_CM_VELOCITY_DIRECT =   yarp::os::createVocab32('v','e','l','d');
 constexpr yarp::conf::vocab32_t VOCAB_CM_CURRENT         =   yarp::os::createVocab32('i','c','u','r');
 constexpr yarp::conf::vocab32_t VOCAB_CM_PWM             =   yarp::os::createVocab32('i','p','w','m');
 constexpr yarp::conf::vocab32_t VOCAB_CM_IMPEDANCE_POS   =   yarp::os::createVocab32('i','m','p','o');  // deprecated

@@ -30,6 +30,10 @@ void JointItem::home()
     {
        velocityTimer.stop();
     }
+    else if (this->internalState == VelocityDirect)
+    {
+       velocityDirectTimer.stop();
+    }
     else if(this->internalState == Pwm)
     {
         pwmTimer.stop();
@@ -51,6 +55,10 @@ void JointItem::run()
     {
        velocityTimer.stop();
     }
+    else if (this->internalState == VelocityDirect)
+    {
+       velocityDirectTimer.stop();
+    }
     else if(this->internalState == Pwm)
     {
         pwmTimer.stop();
@@ -71,6 +79,10 @@ void JointItem::idle()
     if (this->internalState == Velocity)
     {
        velocityTimer.stop();
+    }
+    else if (this->internalState == VelocityDirect)
+    {
+       velocityDirectTimer.stop();
     }
     else if(this->internalState == Pwm)
     {
@@ -114,6 +126,10 @@ QColor JointItem::GetModeColor(JointState mode)
     }
     case JointItem::Velocity:{
         output = velocityColor;
+        break;
+    }
+    case JointItem::VelocityDirect:{
+        output = velocityDirectColor;
         break;
     }
     case JointItem::Torque:{
@@ -181,6 +197,10 @@ QString JointItem::GetModeString(JointState mode)
     }
     case JointItem::Velocity:{
         output = "Velocity";
+        break;
+    }
+    case JointItem::VelocityDirect:{
+        output = "Velocity Direct";
         break;
     }
     case JointItem::Torque:{
@@ -283,6 +303,13 @@ JointItem::JointItem(int index,QWidget *parent) :
     ui->sliderDirectPosition->enableViewTargetBox = false;
     ui->sliderDirectPosition->enableViewTargetValue = false;
 
+    ui->sliderVelocityDirectVelocityDirect->installEventFilter(this);
+    connect(ui->sliderVelocityDirectVelocityDirect, SIGNAL(sliderPressed()), this, SLOT(onSliderVelocityDirectPressed()));
+    connect(ui->sliderVelocityDirectVelocityDirect, SIGNAL(sliderReleased()), this, SLOT(onSliderVelocityDirectReleased()));
+    ui->sliderVelocityDirectVelocityDirect->disableClickOutOfHandle = true;
+    ui->sliderVelocityDirectVelocityDirect->enableViewTargetBox = false;
+    ui->sliderVelocityDirectVelocityDirect->enableViewTargetValue = false;
+
     ui->sliderMixedPosition->installEventFilter(this);
     connect(ui->sliderMixedPosition, SIGNAL(sliderPressed()), this, SLOT(onSliderMixedPositionPressed()));
     connect(ui->sliderMixedPosition, SIGNAL(sliderReleased()), this, SLOT(onSliderMixedPositionReleased()));
@@ -362,6 +389,7 @@ JointItem::JointItem(int index,QWidget *parent) :
     ui->comboMode->setItemData( POSITION_DIR,   positionDirectColor, Qt::BackgroundRole );
     ui->comboMode->setItemData( MIXED,          mixedColor, Qt::BackgroundRole );
     ui->comboMode->setItemData( VELOCITY,       velocityColor, Qt::BackgroundRole );
+    ui->comboMode->setItemData( VELOCITY_DIR,   velocityDirectColor, Qt::BackgroundRole );
     ui->comboMode->setItemData( TORQUE,         torqueColor, Qt::BackgroundRole );
     ui->comboMode->setItemData( PWM,            pwmColor, Qt::BackgroundRole );
     ui->comboMode->setItemData( CURRENT,        currentColor, Qt::BackgroundRole);
@@ -371,6 +399,7 @@ JointItem::JointItem(int index,QWidget *parent) :
     ui->comboMode->setItemData( POSITION_DIR,   QColor(35, 38, 41), Qt::ForegroundRole );
     ui->comboMode->setItemData( MIXED,          QColor(35, 38, 41), Qt::ForegroundRole );
     ui->comboMode->setItemData( VELOCITY,       QColor(35, 38, 41), Qt::ForegroundRole );
+    ui->comboMode->setItemData( VELOCITY_DIR,   QColor(35, 38, 41), Qt::ForegroundRole );
     ui->comboMode->setItemData( TORQUE,         QColor(35, 38, 41), Qt::ForegroundRole );
     ui->comboMode->setItemData( PWM,            QColor(35, 38, 41), Qt::ForegroundRole );
     ui->comboMode->setItemData( CURRENT,        QColor(35, 38, 41), Qt::ForegroundRole );
@@ -380,6 +409,7 @@ JointItem::JointItem(int index,QWidget *parent) :
     ui->comboMode->setItemData( POSITION_DIR,   PositionDirect, Qt::UserRole );
     ui->comboMode->setItemData( MIXED,          Mixed, Qt::UserRole );
     ui->comboMode->setItemData( VELOCITY,       Velocity, Qt::UserRole );
+    ui->comboMode->setItemData( VELOCITY_DIR,   VelocityDirect, Qt::UserRole );
     ui->comboMode->setItemData( TORQUE,         Torque, Qt::UserRole );
     ui->comboMode->setItemData( PWM,            Pwm, Qt::UserRole);
     ui->comboMode->setItemData( CURRENT,        Current, Qt::UserRole);
@@ -390,6 +420,11 @@ JointItem::JointItem(int index,QWidget *parent) :
     velocityTimer.setInterval(50);
     velocityTimer.setSingleShot(false);
     connect(&velocityTimer,SIGNAL(timeout()),this,SLOT(onVelocityTimer()));
+
+    ui->stackedWidget->widget(VELOCITY_DIR)->setEnabled(false);
+    velocityDirectTimer.setInterval(50);
+    velocityDirectTimer.setSingleShot(false);
+    connect(&velocityDirectTimer,SIGNAL(timeout()),this,SLOT(onVelocityDirectTimer()));
 
     ui->stackedWidget->widget(PWM)->setEnabled(false);
     pwmTimer.setInterval(50);
@@ -534,6 +569,15 @@ void JointItem::enableControlVelocity(bool control)
     }
 }
 
+void JointItem::enableControlVelocityDirect(bool control)
+{
+    velocityDirectModeEnabled = control;
+    ui->stackedWidget->widget(VELOCITY_DIR)->setEnabled(velocityDirectModeEnabled);
+    if(ui->stackedWidget->currentIndex() == VELOCITY_DIR && velocityDirectModeEnabled){
+        velocityDirectTimer.start();
+    }
+}
+
 void JointItem::enableControlMixed(bool control)
 {
     ui->stackedWidget->widget(MIXED)->setEnabled(control);
@@ -607,6 +651,7 @@ void JointItem::setUnits(yarp::dev::JointTypeEnum t)
         ui->labelPWMvelUnits->setText(vel_metric_revolute);
         ui->labelCurrentvelUnits->setText(vel_metric_revolute);
         ui->labelVelocityvelUnits->setText(vel_metric_revolute);
+        ui->labelVelocityDirvelUnits->setText(vel_metric_revolute);
 
         ui->labelIdleTorque->setText(trq_metric_revolute_title);
         ui->labelPositionTorque->setText(trq_metric_revolute_title);
@@ -616,6 +661,7 @@ void JointItem::setUnits(yarp::dev::JointTypeEnum t)
         ui->labelPWMTorque->setText(trq_metric_revolute_title);
         ui->labelCurrentTorque->setText(trq_metric_revolute_title);
         ui->labelVelocityTorque->setText(trq_metric_revolute_title);
+        ui->labelVelocityDirTorque->setText(trq_metric_revolute_title);
 
         ui->labelIdleposUnits->setText(pos_metric_revolute);
         ui->labelPositionposUnits->setText(pos_metric_revolute);
@@ -625,6 +671,7 @@ void JointItem::setUnits(yarp::dev::JointTypeEnum t)
         ui->labelPWMposUnits->setText(pos_metric_revolute);
         ui->labelCurrentposUnits->setText(pos_metric_revolute);
         ui->labelVelocityposUnits->setText(pos_metric_revolute);
+        ui->labelVelocityDirposUnits->setText(pos_metric_revolute);
         ui->labelFaultposUnits->setText(pos_metric_revolute);
 
         //ui->labelIdleMotorPosUnits->setText(pos_metric_revolute);
@@ -638,6 +685,7 @@ void JointItem::setUnits(yarp::dev::JointTypeEnum t)
         ui->labelPWMtrqUnits->setText(trq_metric_revolute);
         ui->labelCurrenttrqUnits->setText(pos_metric_revolute);
         ui->labelVelocitytrqUnits->setText(trq_metric_revolute);
+        ui->labelVelocityDirtrqUnits->setText(trq_metric_revolute);
     }
     else if (t == yarp::dev::VOCAB_JOINTTYPE_PRISMATIC)
     {
@@ -649,6 +697,7 @@ void JointItem::setUnits(yarp::dev::JointTypeEnum t)
         ui->labelPWMvelUnits->setText(vel_metric_prism);
         ui->labelCurrentvelUnits->setText(vel_metric_prism);
         ui->labelVelocityvelUnits->setText(vel_metric_prism);
+        ui->labelVelocityDirvelUnits->setText(vel_metric_prism);
 
         ui->labelIdleTorque->setText(trq_metric_prism_title);
         ui->labelPositionTorque->setText(trq_metric_prism_title);
@@ -658,6 +707,7 @@ void JointItem::setUnits(yarp::dev::JointTypeEnum t)
         ui->labelPWMTorque->setText(trq_metric_prism_title);
         ui->labelCurrentTorque->setText(trq_metric_prism_title);
         ui->labelVelocityTorque->setText(trq_metric_prism_title);
+        ui->labelVelocityDirTorque->setText(vel_metric_prism);
 
         ui->labelIdleposUnits->setText(pos_metric_prism);
         ui->labelPositionposUnits->setText(pos_metric_prism);
@@ -667,6 +717,7 @@ void JointItem::setUnits(yarp::dev::JointTypeEnum t)
         ui->labelPWMposUnits->setText(pos_metric_prism);
         ui->labelCurrentposUnits->setText(pos_metric_prism);
         ui->labelVelocityposUnits->setText(pos_metric_prism);
+        ui->labelVelocityDirposUnits->setText(pos_metric_prism);
         ui->labelFaultposUnits->setText(pos_metric_prism);
 
         //ui->labelIdleMotorPosUnits->setText(pos_metric_prism);
@@ -680,6 +731,7 @@ void JointItem::setUnits(yarp::dev::JointTypeEnum t)
         ui->labelPWMtrqUnits->setText(trq_metric_prism);
         ui->labelCurrenttrqUnits->setText(trq_metric_prism);
         ui->labelVelocitytrqUnits->setText(trq_metric_prism);
+        ui->labelVelocityDirtrqUnits->setText(trq_metric_prism);
     }
     else
     {
@@ -698,6 +750,7 @@ void JointItem::setMotorPositionVisible(bool visible)
     ui->editPWMMotorPos->setVisible(visible);
     ui->editCurrentMotorPos->setVisible(visible);
     ui->editVelocityMotorPos->setVisible(visible);
+    ui->editVelocityDirMotorPos->setVisible(visible);
     ui->editFaultMotorPos->setVisible(visible);
 
     ui->labelIdleMotorPos->setVisible(visible);
@@ -708,6 +761,7 @@ void JointItem::setMotorPositionVisible(bool visible)
     ui->labelPWMMotorPos->setVisible(visible);
     ui->labelCurrentMotorPos->setVisible(visible);
     ui->labelVelocityMotorPos->setVisible(visible);
+    ui->labelVelocityDirMotorPos->setVisible(visible);
     ui->labelFaultMotorPos->setVisible(visible);
 
     ui->labelIdleMotorPosUnits->setVisible(visible);
@@ -718,6 +772,7 @@ void JointItem::setMotorPositionVisible(bool visible)
     ui->labelPWMMotorPosUnits->setVisible(visible);
     ui->labelCurrentMotorPosUnits->setVisible(visible);
     ui->labelVelocityMotorPosUnits->setVisible(visible);
+    ui->labelVelocityDirMotorPosUnits->setVisible(visible);
     ui->labelFaultMotorPosUnits->setVisible(visible);
 
     if (!visible) {
@@ -729,6 +784,7 @@ void JointItem::setMotorPositionVisible(bool visible)
         ui->editPWMMotorPos->setMinimumHeight(0);
         ui->editCurrentMotorPos->setMinimumHeight(0);
         ui->editVelocityMotorPos->setMinimumHeight(0);
+        ui->editVelocityDirMotorPos->setMinimumHeight(0);
         ui->editFaultMotorPos->setMinimumHeight(0);
 
         ui->labelPositionMotorPos->setMinimumHeight(0);
@@ -745,6 +801,8 @@ void JointItem::setMotorPositionVisible(bool visible)
         ui->labelCurrentMotorPosUnits->setMinimumHeight(0);
         ui->labelVelocityMotorPos->setMinimumHeight(0);
         ui->labelVelocityMotorPosUnits->setMinimumHeight(0);
+        ui->labelVelocityDirMotorPos->setMinimumHeight(0);
+        ui->labelVelocityDirMotorPosUnits->setMinimumHeight(0);
         ui->labelIdleMotorPos->setMinimumHeight(0);
         ui->labelIdleMotorPosUnits->setMinimumHeight(0);
         ui->labelFaultMotorPos->setMinimumHeight(0);
@@ -759,6 +817,7 @@ void JointItem::setMotorPositionVisible(bool visible)
         ui->editPWMMotorPos->setMinimumHeight(20);
         ui->editCurrentMotorPos->setMinimumHeight(20);
         ui->editVelocityMotorPos->setMinimumHeight(20);
+        ui->editVelocityDirMotorPos->setMinimumHeight(20);
         ui->editFaultMotorPos->setMinimumHeight(20);
 
         ui->labelPositionMotorPos->setMinimumHeight(20);
@@ -775,6 +834,8 @@ void JointItem::setMotorPositionVisible(bool visible)
         ui->labelCurrentMotorPosUnits->setMinimumHeight(20);
         ui->labelVelocityMotorPos->setMinimumHeight(20);
         ui->labelVelocityMotorPosUnits->setMinimumHeight(20);
+        ui->labelVelocityDirMotorPos->setMinimumHeight(20);
+        ui->labelVelocityDirMotorPosUnits->setMinimumHeight(20);
         ui->labelIdleMotorPos->setMinimumHeight(20);
         ui->labelIdleMotorPosUnits->setMinimumHeight(20);
         ui->labelFaultMotorPos->setMinimumHeight(20);
@@ -880,6 +941,7 @@ void JointItem::setCurrentsVisible(bool visible)
     ui->editPWMCurrent->setVisible(visible);
     //ui->editCurrentCurrent->setVisible(visible);
     ui->editVelocityCurrent->setVisible(visible);
+    ui->editVelocityDirCurrent->setVisible(visible);
 
     ui->labelIdleCurrent->setVisible(visible);
     ui->labelIdleCurrentUnits->setVisible(visible);
@@ -897,7 +959,8 @@ void JointItem::setCurrentsVisible(bool visible)
     //ui->labelCurrentCurrentUnits->setVisible(visible);
     ui->labelVelocityCurrent->setVisible(visible);
     ui->labelVelocityCurrentUnits->setVisible(visible);
-
+    ui->labelVelocityDirCurrent->setVisible(visible);
+    ui->labelVelocityDirCurrentUnits->setVisible(visible);
 
     if (!visible) {
         ui->editIdleCurrent->setMinimumHeight(0);
@@ -908,6 +971,7 @@ void JointItem::setCurrentsVisible(bool visible)
         ui->editPWMCurrent->setMinimumHeight(0);
         //ui->editCurrentCurrent->setMinimumHeight(0);
         ui->editVelocityCurrent->setMinimumHeight(0);
+        ui->editVelocityDirCurrent->setMinimumHeight(0);
 
         ui->labelPositionCurrent->setMinimumHeight(0);
         ui->labelPositionCurrentUnits->setMinimumHeight(0);
@@ -923,6 +987,8 @@ void JointItem::setCurrentsVisible(bool visible)
         //ui->labelCurrentCurrentUnits->setMinimumHeight(0);
         ui->labelVelocityCurrent->setMinimumHeight(0);
         ui->labelVelocityCurrentUnits->setMinimumHeight(0);
+        ui->labelVelocityDirCurrent->setMinimumHeight(0);
+        ui->labelVelocityDirCurrentUnits->setMinimumHeight(0);
         ui->labelIdleCurrent->setMinimumHeight(0);
         ui->labelIdleCurrentUnits->setMinimumHeight(0);
     }
@@ -935,6 +1001,7 @@ void JointItem::setCurrentsVisible(bool visible)
         ui->editPWMCurrent->setMinimumHeight(20);
         //ui->editCurrentCurrent->setMinimumHeight(20);
         ui->editVelocityCurrent->setMinimumHeight(20);
+        ui->editVelocityDirCurrent->setMinimumHeight(20);
 
         ui->labelPositionCurrent->setMinimumHeight(20);
         ui->labelPositionCurrentUnits->setMinimumHeight(20);
@@ -950,6 +1017,8 @@ void JointItem::setCurrentsVisible(bool visible)
         //ui->labelCurrentCurrentUnits->setMinimumHeight(20);
         ui->labelVelocityCurrent->setMinimumHeight(20);
         ui->labelVelocityCurrentUnits->setMinimumHeight(20);
+        ui->labelVelocityDirCurrent->setMinimumHeight(20);
+        ui->labelVelocityDirCurrentUnits->setMinimumHeight(20);
         ui->labelIdleCurrent->setMinimumHeight(20);
         ui->labelIdleCurrentUnits->setMinimumHeight(20);
     }
@@ -966,6 +1035,7 @@ void JointItem::setSpeedVisible(bool visible)
     ui->editPWMSpeed->setVisible(visible);
     ui->editCurrentSpeed->setVisible(visible);
     ui->editVelocitySpeed->setVisible(visible);
+    ui->editVelocityDirSpeed->setVisible(visible);
 
     ui->labelIdleSpeed->setVisible(visible);
     ui->labelIdlevelUnits->setVisible(visible);
@@ -982,8 +1052,9 @@ void JointItem::setSpeedVisible(bool visible)
     ui->labelPWMvelUnits->setVisible(visible);
     ui->labelCurrentvelUnits->setVisible(visible);
     ui->labelVelocitySpeed->setVisible(visible);
+    ui->labelVelocityDirSpeed->setVisible(visible);
     ui->labelVelocityvelUnits->setVisible(visible);
-
+    ui->labelVelocityDirvelUnits->setVisible(visible);
 
     if(!visible){
         ui->editIdleSpeed->setMinimumHeight(0);
@@ -994,6 +1065,7 @@ void JointItem::setSpeedVisible(bool visible)
         ui->editPWMSpeed->setMinimumHeight(0);
         ui->editCurrentSpeed->setMinimumHeight(0);
         ui->editVelocitySpeed->setMinimumHeight(0);
+        ui->editVelocityDirSpeed->setMinimumHeight(0);
 
         ui->labelPositionSpeed->setMinimumHeight(0);
         ui->labelPositionvelUnits->setMinimumHeight(0);
@@ -1020,6 +1092,7 @@ void JointItem::setSpeedVisible(bool visible)
         ui->editPWMSpeed->setMinimumHeight(20);
         ui->editCurrentSpeed->setMinimumHeight(20);
         ui->editVelocitySpeed->setMinimumHeight(20);
+        ui->editVelocityDirSpeed->setMinimumHeight(20);
 
         ui->labelPositionSpeed->setMinimumHeight(20);
         ui->labelPositionvelUnits->setMinimumHeight(20);
@@ -1034,7 +1107,9 @@ void JointItem::setSpeedVisible(bool visible)
         ui->labelCurrentSpeed->setMinimumHeight(20);
         ui->labelCurrentvelUnits->setMinimumHeight(20);
         ui->labelVelocitySpeed->setMinimumHeight(20);
+        ui->labelVelocityDirSpeed->setMinimumHeight(20);
         ui->labelVelocityvelUnits->setMinimumHeight(20);
+        ui->labelVelocityDirvelUnits->setMinimumHeight(20);
         ui->labelIdleSpeed->setMinimumHeight(20);
         ui->labelIdlevelUnits->setMinimumHeight(20);
     }
@@ -1374,6 +1449,13 @@ void JointItem::onStackedWidgetChanged(int index)
             velocityTimer.start();
         }
     }
+    else if(index == VELOCITY_DIR)
+    {
+        if(velocityDirectModeEnabled)
+        {
+            velocityDirectTimer.start();
+        }
+    }
     else if(index == PWM)
     {
         if(pwmModeEnabled)
@@ -1403,6 +1485,12 @@ void JointItem::onStackedWidgetChanged(int index)
             lastVelocity = 0;
             updateSliderVelocity(0);
         }
+        if(velocityDirectModeEnabled)
+        {
+            velocityDirectTimer.stop();
+            lastVelocityDirect = 0;
+            updateSliderVelocityDirect(0);
+        }
         if(pwmModeEnabled)
         {
             pwmTimer.stop();
@@ -1428,6 +1516,7 @@ void JointItem::onModeChanged(int index)
 {
     // Stop all timers, the correct one will be enabled by onStackedWidgetChanged()
     velocityTimer.stop();
+    velocityDirectTimer.stop();
     pwmTimer.stop();
     currentTimer.stop();
     torqueTimer.stop();
@@ -1463,6 +1552,18 @@ void JointItem::onSliderVelocityReleased()
     sliderVelocityPressed = false;
 }
 
+void JointItem::onSliderVelocityDirectPressed()
+{
+    sliderVelocityDirectPressed = true;
+}
+
+void JointItem::onSliderVelocityDirectReleased()
+{
+    lastVelocityDirect = (double)ui->sliderVelocityDirectVelocityDirect->value() / ui->sliderVelocityDirectVelocityDirect->getSliderStep();
+    sliderVelocityDirectPressed = false;
+}
+
+
 void JointItem::onSliderMixedVelocityPressed()
 {
     sliderMixedVelocityPressed = true;
@@ -1491,6 +1592,14 @@ void JointItem::onVelocityTimer()
     if(velocityModeEnabled)
     {
         emit sliderVelocityCommand(lastVelocity,jointIndex);
+    }
+}
+
+void JointItem::onVelocityDirectTimer()
+{
+    if(velocityDirectModeEnabled)
+    {
+        emit sliderVelocityDirectCommand(lastVelocityDirect,jointIndex);
     }
 }
 
@@ -1708,6 +1817,15 @@ void JointItem::updateSliderVelocity(double val)
     ui->sliderVelocityVelocity->setValue(val);
 }
 
+void JointItem::updateSliderVelocityDirect(double val)
+{
+    if (sliderVelocityDirectPressed)
+    {
+        return;
+    }
+    ui->sliderVelocityDirectVelocityDirect->setValue(val);
+}
+
 void JointItem::updateSliderPWM(double val)
 {
     if (sliderPWMPressed)  {
@@ -1811,7 +1929,9 @@ void JointItem::setPosition(double val)
 
     if(ui->stackedWidget->currentIndex() == VELOCITY){
         ui->editVelocityJointPos->setText(sVal);
-
+    }
+    if(ui->stackedWidget->currentIndex() == VELOCITY_DIR){
+        ui->editVelocityDirJointPos->setText(sVal);
     }
     if(ui->stackedWidget->currentIndex() == TORQUE){
         ui->editTorqueJointPos->setText(sVal);
@@ -1890,6 +2010,9 @@ void JointItem::setTorque(double val)
     if(ui->stackedWidget->currentIndex() == VELOCITY){
         ui->editVelocityTorque->setText(sVal);
     }
+    if(ui->stackedWidget->currentIndex() == VELOCITY_DIR){
+        ui->editVelocityDirTorque->setText(sVal);
+    }
     if(ui->stackedWidget->currentIndex() == TORQUE){
         ui->editTorqueTorque->setText(sVal);
     }
@@ -1932,6 +2055,10 @@ void JointItem::setMotorPosition(double val)
 
     if (ui->stackedWidget->currentIndex() == VELOCITY) {
         ui->editVelocityMotorPos->setText(sVal);
+    }
+
+    if (ui->stackedWidget->currentIndex() == VELOCITY_DIR) {
+        ui->editVelocityDirMotorPos->setText(sVal);
     }
 
     if (ui->stackedWidget->currentIndex() == TORQUE) {
@@ -2021,6 +2148,13 @@ void JointItem::setSpeed(double meas)
             //updateSlider(ui->sliderVelocityVelocity,ui->labelVelocityVelocity,val);
         }
     }
+
+    if(ui->stackedWidget->currentIndex() == VELOCITY_DIR){
+        if(!sliderVelocityDirectPressed){
+            ui->editVelocityDirSpeed->setText(sVal);
+            //updateSlider(ui->sliderVelocityVelocity,ui->labelVelocityVelocity,val);
+        }
+    }
     if(ui->stackedWidget->currentIndex() == TORQUE){
         ui->editTorqueSpeed->setText(sVal);
         //updateSliderTorque(val);
@@ -2062,6 +2196,9 @@ void JointItem::setCurrent(double meas)
 
     if (ui->stackedWidget->currentIndex() == VELOCITY) {
         ui->editVelocityCurrent->setText(sVal);
+    }
+    if (ui->stackedWidget->currentIndex() == VELOCITY_DIR) {
+        ui->editVelocityDirCurrent->setText(sVal);
     }
     if (ui->stackedWidget->currentIndex() == TORQUE) {
         ui->editTorqueCurrent->setText(sVal);
@@ -2283,6 +2420,10 @@ void JointItem::setJointState(JointState newState)
         setJointInternalState(VELOCITY);
         break;
     }
+    case VelocityDirect:{
+        setJointInternalState(VELOCITY_DIR);
+        break;
+    }
     case Torque:{
         setJointInternalState(TORQUE);
         break;
@@ -2397,6 +2538,10 @@ void JointItem::onCalibClicked()
     if (this->internalState == Velocity)
     {
        velocityTimer.stop();
+    }
+    if (this->internalState == VelocityDirect)
+    {
+       velocityDirectTimer.stop();
     }
     else if(this->internalState == Pwm)
     {

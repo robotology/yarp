@@ -17,31 +17,6 @@ using namespace yarp::sig;
 RemappedSubControlBoard::RemappedSubControlBoard()
 {
     id = "";
-
-    pid = nullptr;
-    pos = nullptr;
-    posDir = nullptr;
-    vel = nullptr;
-    iJntEnc = nullptr;
-    iMotEnc = nullptr;
-    amp = nullptr;
-    lim = nullptr;
-    calib = nullptr;
-    remcalib = nullptr;
-    iTimed= nullptr;
-    info = nullptr;
-    iTorque=nullptr;
-    iImpedance=nullptr;
-    iMode=nullptr;
-    iInteract=nullptr;
-    imotor=nullptr;
-    iVar = nullptr;
-    iPwm = nullptr;
-    iCurr = nullptr;
-
-    subdevice=nullptr;
-
-
     attachedF=false;
     _subDevVerbose = false;
 }
@@ -71,6 +46,8 @@ void RemappedSubControlBoard::detach()
     iPwm = nullptr;
     iCurr = nullptr;
     iBrake = nullptr;
+    iVelDir = nullptr;
+
     attachedF=false;
 }
 
@@ -114,6 +91,7 @@ bool RemappedSubControlBoard::attach(yarp::dev::PolyDriver *d, const std::string
         subdevice->view(iCurr);
         subdevice->view(iFault);
         subdevice->view(iBrake);
+        subdevice->view(iVelDir);
     }
     else
     {
@@ -173,6 +151,11 @@ bool RemappedSubControlBoard::attach(yarp::dev::PolyDriver *d, const std::string
 
     if ((iBrake == nullptr) && (_subDevVerbose)) {
         yCWarning(CONTROLBOARDREMAPPER) << "IJointBrake not valid interface";
+    }
+
+    if ((iVelDir == nullptr) && (_subDevVerbose))
+    {
+        yCWarning(CONTROLBOARDREMAPPER) << "IVelocityDirect not valid interface";
     }
 
     // checking minimum set of interfaces required

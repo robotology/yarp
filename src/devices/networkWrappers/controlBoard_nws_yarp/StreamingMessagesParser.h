@@ -54,6 +54,7 @@ protected:
     yarp::dev::IPositionControl* stream_IPosCtrl {nullptr};
     yarp::dev::IPositionDirect* stream_IPosDirect {nullptr};
     yarp::dev::IVelocityControl* stream_IVel {nullptr};
+    yarp::dev::IVelocityDirect* stream_IVelDirect {nullptr};
     yarp::dev::ITorqueControl* stream_ITorque {nullptr};
     yarp::dev::IPWMControl* stream_IPWM {nullptr};
     yarp::dev::ICurrentControl* stream_ICurrent {nullptr};

@@ -227,6 +227,11 @@ bool ControlBoard_nws_yarp::setDevice(yarp::dev::DeviceDriver* driver, bool owne
         yCWarning(CONTROLBOARD, "Part <%s>: iJointBrake interface was not found in subdevice.", partName.c_str());
     }
 
+    subdevice_ptr->view(iVelocityDirect);
+    if (!iVelocityDirect) {
+        yCWarning(CONTROLBOARD, "Part <%s>: iVelocityDirect interface was not found in subdevice.", partName.c_str());
+    }
+
     // Get the number of controlled joints
     int tmp_axes = 0;
     if (iAxisInfo)
@@ -307,6 +312,7 @@ void ControlBoard_nws_yarp::closeDevice()
     iPWMControl = nullptr;
     iCurrentControl = nullptr;
     iJointFault = nullptr;
+    iVelocityDirect = nullptr;
 }
 
 bool ControlBoard_nws_yarp::attach(yarp::dev::PolyDriver* poly)
@@ -326,7 +332,7 @@ bool ControlBoard_nws_yarp::attach(yarp::dev::PolyDriver* poly)
         return false;
     }
 
-    m_RPC = std::make_unique<ControlBoardRPCd>(iJointBrake);
+    m_RPC = std::make_unique<ControlBoardRPCd>(iJointBrake, iVelocityDirect);
 
     return true;
 }

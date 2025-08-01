@@ -5,7 +5,6 @@
 
 #include <yarp/os/Time.h>
 #include <yarp/dev/ControlBoardInterfaces.h>
-#include <yarp/dev/IControlMode.h>
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/PolyDriverList.h>
 #include <yarp/dev/IMultipleWrapper.h>
