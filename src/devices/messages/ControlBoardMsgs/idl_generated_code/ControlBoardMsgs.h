@@ -15,6 +15,10 @@
 #include <yarp/os/idl/WireTypes.h>
 #include <yarp/os/ApplicationNetworkProtocolVersion.h>
 #include <return_getAutoBrakeEnabled.h>
+#include <return_getAxes.h>
+#include <return_getDesiredVelocityAll.h>
+#include <return_getDesiredVelocityGroup.h>
+#include <return_getDesiredVelocityOne.h>
 #include <return_isJointBraked.h>
 #include <yarp/dev/ReturnValue.h>
 
@@ -31,13 +35,21 @@ public:
     ControlBoardMsgs();
 
     //Service methods
-    virtual return_isJointBraked isJointBrakedRPC(const std::int16_t j) const;
+    virtual return_isJointBraked isJointBrakedRPC(const std::int32_t j) const;
 
-    virtual yarp::dev::ReturnValue setManualBrakeActiveRPC(const std::int16_t j, const bool active);
+    virtual yarp::dev::ReturnValue setManualBrakeActiveRPC(const std::int32_t j, const bool active);
 
-    virtual yarp::dev::ReturnValue setAutoBrakeEnabledRPC(const std::int16_t j, const bool enabled);
+    virtual yarp::dev::ReturnValue setAutoBrakeEnabledRPC(const std::int32_t j, const bool enabled);
 
-    virtual return_getAutoBrakeEnabled getAutoBrakeEnabledRPC(const std::int16_t j) const;
+    virtual return_getAutoBrakeEnabled getAutoBrakeEnabledRPC(const std::int32_t j) const;
+
+    virtual return_getAxes getAxesRPC() const;
+
+    virtual return_getDesiredVelocityOne getDesiredVelocityOneRPC(const std::int32_t j) const;
+
+    virtual return_getDesiredVelocityAll getDesiredVelocityAllRPC() const;
+
+    virtual return_getDesiredVelocityGroup getDesiredVelocityGroupRPC(const std::vector<std::int32_t>& j) const;
 
     // help method
     virtual std::vector<std::string> help(const std::string& functionName = "--all");
