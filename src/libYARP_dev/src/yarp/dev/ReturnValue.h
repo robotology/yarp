@@ -74,6 +74,7 @@ public:
     bool write(yarp::os::ConnectionWriter& connection) const override;
 };
 
+#ifndef SWIG_PREPROCESSOR_SHOULD_SKIP_THIS
 #define ReturnValue_ok ReturnValue(yarp::dev::ReturnValue::return_code::return_value_ok)
 
 #if __cplusplus >= 202002L
@@ -101,7 +102,7 @@ inline ReturnValue yarp_method_deprecated(const char* location)
 }
 #define YARP_METHOD_DEPRECATED() yarp_method_deprecated(__func__)
 #endif
-
+#endif // SWIG_PREPROCESSOR_SHOULD_SKIP_THIS
 
 }
 
