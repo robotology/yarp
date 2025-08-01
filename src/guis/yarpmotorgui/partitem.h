@@ -75,7 +75,7 @@ public:
     void loadSequence();
     void saveSequence(QString global_filename);
     QTreeWidgetItem *getTreeWidgetModeNode();
-    QString getPartName();
+    std::string getPartName();
     const QVector<JointItem::JointState>& getPartModes();
     void resizeWidget(int w);
     int getNumberOfJoints();
@@ -140,8 +140,9 @@ private:
 
     IPositionControl* m_iPos = nullptr;
     IJointBrake* m_ijointbrake = nullptr;
-    IPositionDirect* m_iDir = nullptr;
+    IPositionDirect* m_iPosDir = nullptr;
     IVelocityControl* m_iVel = nullptr;
+    IVelocityDirect* m_iVelDir = nullptr;
     IRemoteVariables* m_iVar = nullptr;
     IEncoders* m_iencs = nullptr;
     IMotorEncoders* m_iMot = nullptr;
@@ -190,6 +191,7 @@ public slots:
     void onEnableControlPWM(bool control);
     void onEnableControlCurrent(bool control);
     void onEnableControlTorque(bool control);
+    void onEnableControlVelocityDirect(bool control);
 
 private slots:
     void onSequenceActivated();
@@ -218,6 +220,7 @@ private slots:
     void onSliderPWMCommand(double dutyVal, int index);
     void onSliderCurrentCommand(double current, int index);
     void onSliderVelocityCommand(double speedVal, int index);
+    void onSliderVelocityDirectCommand(double speedVal, int index);
     void onSequenceWindowDoubleClicked(int sequenceNum);
     void onHomeClicked(JointItem *joint);
     void onIdleClicked(JointItem *joint);

@@ -75,6 +75,7 @@ class JointItem : public QWidget
     void viewPositionTargetBox(bool);
     void viewPositionTargetValue(bool);
     void enableControlVelocity(bool control);
+    void enableControlVelocityDirect(bool control);
     void enableControlMixed(bool control);
     void enableControlPositionDirect(bool control);
     void enableControlPWM(bool control);
@@ -121,6 +122,7 @@ private:
 
     void updateSliderPosition                (SliderWithTarget *slider, double val);
     void updateSliderVelocity                (double val);
+    void updateSliderVelocityDirect          (double val);
     void updateSliderTrajectoryVelocity      (double val);
     void updateSliderPWM                     (double val);
     void updateSliderCurrent                 (double val);
@@ -135,6 +137,7 @@ private:
     QString comboStyle2;
     int jointIndex;
     QString jointName;
+    bool sliderVelocityDirectPressed = false;
     bool sliderVelocityPressed = false;
     bool sliderDirectPositionPressed = false;
     bool sliderMixedPositionPressed = false;
@@ -151,8 +154,11 @@ private:
     bool joint_currentVisible = false;
     bool joint_dutyVisible = false;
     QTimer velocityTimer;
+    QTimer velocityDirectTimer;
     double lastVelocity = 0;
+    double lastVelocityDirect = 0;
     bool velocityModeEnabled = false;
+    bool velocityDirectModeEnabled = false;
     QTimer pwmTimer;
     double lastPwm = 0;
     bool pwmModeEnabled = false;
@@ -227,6 +233,8 @@ private slots:
 
     void onSliderVelocityReleased();
     void onSliderVelocityPressed();
+    void onSliderVelocityDirectReleased();
+    void onSliderVelocityDirectPressed();
 
     void onCalibClicked();
     void onHomeClicked();
@@ -234,6 +242,7 @@ private slots:
     void onRunClicked();
     void onPidClicked();
     void onVelocityTimer();
+    void onVelocityDirectTimer();
     void onPwmTimer();
     void onCurrentTimer();
     void onTorqueTimer();
@@ -257,6 +266,7 @@ signals:
     void sliderPWMCommand(double val, int jointIndex);
     void sliderCurrentCommand(double val, int jointIndex);
     void sliderVelocityCommand(double val, int jointIndex);
+    void sliderVelocityDirectCommand(double val, int jointIndex);
 };
 
 
