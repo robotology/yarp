@@ -1875,21 +1875,21 @@ QSlider::groove:horizontal:disabled {
               <number>2</number>
              </property>
              <item row="1" column="2">
-              <widget class="QLabel" name="labelVelocitytrqUnits_2">
+              <widget class="QLabel" name="labelVelocityDirtrqUnits">
                <property name="text">
                 <string>Nm</string>
                </property>
               </widget>
              </item>
              <item row="2" column="0">
-              <widget class="QLabel" name="labelVelocitySpeed_2">
+              <widget class="QLabel" name="labelVelocityDirSpeed">
                <property name="text">
                 <string>Speed:</string>
                </property>
               </widget>
              </item>
              <item row="2" column="1">
-              <widget class="QLineEdit" name="editVelocitySpeed_2">
+              <widget class="QLineEdit" name="editVelocityDirSpeed">
                <property name="maximumSize">
                 <size>
                  <width>16777215</width>
@@ -1905,14 +1905,14 @@ QSlider::groove:horizontal:disabled {
               </widget>
              </item>
              <item row="4" column="0">
-              <widget class="QLabel" name="labelVelocityCurrent_2">
+              <widget class="QLabel" name="labelVelocityDirCurrent">
                <property name="text">
                 <string>Current:</string>
                </property>
               </widget>
              </item>
              <item row="1" column="1">
-              <widget class="QLineEdit" name="editVelocityTorque_2">
+              <widget class="QLineEdit" name="editVelocityDirTorque">
                <property name="maximumSize">
                 <size>
                  <width>16777215</width>
@@ -1928,21 +1928,21 @@ QSlider::groove:horizontal:disabled {
               </widget>
              </item>
              <item row="4" column="2">
-              <widget class="QLabel" name="labelVelocityCurrentUnits_2">
+              <widget class="QLabel" name="labelVelocityDirCurrentUnits">
                <property name="text">
                 <string>A</string>
                </property>
               </widget>
              </item>
              <item row="1" column="0">
-              <widget class="QLabel" name="labelVelocityTorque_2">
+              <widget class="QLabel" name="labelVelocityDirTorque">
                <property name="text">
                 <string>Torque:</string>
                </property>
               </widget>
              </item>
              <item row="4" column="1">
-              <widget class="QLineEdit" name="editVelocityCurrent_2">
+              <widget class="QLineEdit" name="editVelocityDirCurrent">
                <property name="styleSheet">
                 <string notr="true">background-color: rgb(255, 255, 255); color: rgb(35, 38, 41);</string>
                </property>
@@ -1952,14 +1952,14 @@ QSlider::groove:horizontal:disabled {
               </widget>
              </item>
              <item row="2" column="2">
-              <widget class="QLabel" name="labelVelocityvelUnits_2">
+              <widget class="QLabel" name="labelVelocityDirvelUnits">
                <property name="text">
                 <string>deg/s</string>
                </property>
               </widget>
              </item>
              <item row="0" column="1">
-              <widget class="QLineEdit" name="editVelocityJointPos_2">
+              <widget class="QLineEdit" name="editVelocityDirJointPos">
                <property name="styleSheet">
                 <string notr="true">background-color: rgb(255, 255, 255); color: rgb(35, 38, 41);</string>
                </property>
@@ -1969,35 +1969,35 @@ QSlider::groove:horizontal:disabled {
               </widget>
              </item>
              <item row="0" column="2">
-              <widget class="QLabel" name="labelVelocityposUnits_2">
+              <widget class="QLabel" name="labelVelocityDirposUnits">
                <property name="text">
                 <string>deg</string>
                </property>
               </widget>
              </item>
              <item row="0" column="0">
-              <widget class="QLabel" name="labelVelocityJointPos_2">
+              <widget class="QLabel" name="labelVelocityDirJointPos">
                <property name="text">
                 <string>Encoder:</string>
                </property>
               </widget>
              </item>
              <item row="3" column="1">
-              <widget class="QLineEdit" name="editVelocityMotorPos_2">
+              <widget class="QLineEdit" name="editVelocityDirMotorPos">
                <property name="styleSheet">
                 <string notr="true">background-color: rgb(255, 255, 255); color: rgb(35, 38, 41);</string>
                </property>
               </widget>
              </item>
              <item row="3" column="2">
-              <widget class="QLabel" name="labelVelocityMotorPosUnits_2">
+              <widget class="QLabel" name="labelVelocityDirMotorPosUnits">
                <property name="text">
                 <string>deg</string>
                </property>
               </widget>
              </item>
              <item row="3" column="0">
-              <widget class="QLabel" name="labelVelocityMotorPos_2">
+              <widget class="QLabel" name="labelVelocityDirMotorPos">
                <property name="text">
                 <string>MotorPos:</string>
                </property>

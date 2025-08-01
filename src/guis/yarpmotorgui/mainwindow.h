@@ -122,6 +122,7 @@ private slots:
     void onViewPositionTargetBox(bool);
     void onViewPositionTargetValue(bool);
     void onEnableControlVelocity(bool val);
+    void onEnableControlVelocityDirect(bool val);
     void onEnableControlMixed(bool val);
     void onEnableControlPositionDirect(bool val);
     void onEnableControlPWM(bool val);
@@ -137,6 +138,7 @@ private slots:
 
 signals:
     void sig_enableControlVelocity(bool);
+    void sig_enableControlVelocityDirect(bool);
     void sig_enableControlMixed(bool);
     void sig_enableControlPositionDirect(bool);
     void sig_enableControlPWM(bool);

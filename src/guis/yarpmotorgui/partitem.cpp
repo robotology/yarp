@@ -266,6 +266,7 @@ PartItem::PartItem(std::string robotName, int id, std::string partName, Resource
             connect(joint, SIGNAL(sliderPWMCommand(double, int)), this, SLOT(onSliderPWMCommand(double, int)));
             connect(joint, SIGNAL(sliderCurrentCommand(double, int)), this, SLOT(onSliderCurrentCommand(double, int)));
             connect(joint, SIGNAL(sliderVelocityCommand(double, int)), this, SLOT(onSliderVelocityCommand(double, int)));
+            connect(joint, SIGNAL(sliderVelocityDirectCommand(double, int)), this, SLOT(onSliderVelocityDirectCommand(double, int)));
             connect(joint, SIGNAL(homeClicked(JointItem*)),this,SLOT(onHomeClicked(JointItem*)));
             connect(joint, SIGNAL(idleClicked(JointItem*)),this,SLOT(onIdleClicked(JointItem*)));
             connect(joint, SIGNAL(runClicked(JointItem*)),this,SLOT(onRunClicked(JointItem*)));
@@ -363,7 +364,8 @@ void PartItem::initInterfaces()
     m_iPos = nullptr;
     m_iVel = nullptr;
     m_iVar = nullptr;
-    m_iDir = nullptr;
+    m_iPosDir = nullptr;
+    m_iVelDir = nullptr;
     m_iencs = nullptr;
     m_iAmp = nullptr;
     m_iPid = nullptr;
@@ -397,9 +399,13 @@ bool PartItem::openInterfaces()
         if(!ok){
             yError("...iPos was not ok...");
         }
-        ok &= m_partsdd->view(m_iDir);
+        ok &= m_partsdd->view(m_iPosDir);
         if(!ok){
             yError("...posDirect was not ok...");
+        }
+        ok &= m_partsdd->view(m_iVelDir);
+        if(!ok){
+            yError("...velDirect was not ok...");
         }
         ok &= m_partsdd->view(m_iVel);
         if(!ok){
@@ -488,9 +494,9 @@ bool PartItem::getInterfaceError()
     return m_interfaceError;
 }
 
-QString PartItem::getPartName()
+std::string PartItem::getPartName()
 {
-    return m_partName.c_str();
+    return m_partName;
 }
 
 void PartItem::onSliderPWMCommand(double pwmVal, int index)
@@ -506,6 +512,11 @@ void PartItem::onSliderCurrentCommand(double currentVal, int index)
 void PartItem::onSliderVelocityCommand(double speedVal, int index)
 {
     m_iVel->velocityMove(index, speedVal);
+}
+
+void PartItem::onSliderVelocityDirectCommand(double speedVal, int index)
+{
+    m_iVelDir->setDesiredVelocity(index, speedVal);
 }
 
 void PartItem::onSliderTorqueCommand(double torqueVal, int index)
@@ -525,7 +536,7 @@ void PartItem::onSliderDirectPositionCommand(double dirpos, int index)
     m_ictrlmode->getControlMode(index, &mode);
     if (mode == VOCAB_CM_POSITION_DIRECT)
     {
-        m_iDir->setPosition(index, dirpos);
+        m_iPosDir->setPosition(index, dirpos);
     }
     else
     {
@@ -1949,6 +1960,15 @@ void PartItem::onEnableControlTorque(bool control)
     }
 }
 
+void PartItem::onEnableControlVelocityDirect(bool control)
+{
+    for (int i = 0; i<m_layout->count(); i++)
+    {
+        auto* joint = (JointItem*)m_layout->itemAt(i)->widget();
+        joint->enableControlVelocityDirect(control);
+    }
+}
+
 void PartItem::onViewSpeedValues(bool view)
 {
     m_part_speedVisible = view;
@@ -2118,7 +2138,7 @@ void PartItem::updateControlMode()
 
 
     if(ret==false){
-        LOG_ERROR("ictrl->getControlMode failed on %s\n", getPartName().toStdString().c_str());
+        LOG_ERROR("ictrl->getControlMode failed on %s\n", getPartName().c_str());
     }
 
     m_modesList.resize(m_layout->count());
