@@ -422,6 +422,7 @@ void setExternal2(yarp::sig::Image *img, PyObject* mem, int w, int h) {
 %include <yarp/dev/DeviceDriver.h>
 %include <yarp/dev/PolyDriver.h>
 %include <yarp/dev/Drivers.h>
+%include <yarp/dev/ReturnValue.h>
 %include <yarp/dev/IFrameGrabberImage.h>
 %include <yarp/dev/IFrameGrabberControls.h>
 %include <yarp/dev/IFrameGrabberControlsDC1394.h>
