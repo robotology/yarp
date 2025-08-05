@@ -803,6 +803,72 @@ public:
     };
 };
 
+// set_initial_move_time helper class declaration
+class yarpActionsPlayer_IDL_set_initial_move_time_helper :
+        public yarp::os::Portable
+{
+public:
+    yarpActionsPlayer_IDL_set_initial_move_time_helper() = default;
+    explicit yarpActionsPlayer_IDL_set_initial_move_time_helper(const double value);
+    bool write(yarp::os::ConnectionWriter& connection) const override;
+    bool read(yarp::os::ConnectionReader& connection) override;
+
+    class Command :
+            public yarp::os::idl::WirePortable
+    {
+    public:
+        Command() = default;
+        explicit Command(const double value);
+
+        ~Command() override = default;
+
+        bool write(yarp::os::ConnectionWriter& connection) const override;
+        bool read(yarp::os::ConnectionReader& connection) override;
+
+        bool write(const yarp::os::idl::WireWriter& writer) const override;
+        bool writeTag(const yarp::os::idl::WireWriter& writer) const;
+        bool writeArgs(const yarp::os::idl::WireWriter& writer) const;
+
+        bool read(yarp::os::idl::WireReader& reader) override;
+        bool readTag(yarp::os::idl::WireReader& reader);
+        bool readArgs(yarp::os::idl::WireReader& reader);
+
+        double value{0.0};
+    };
+
+    class Reply :
+            public yarp::os::idl::WirePortable
+    {
+    public:
+        Reply() = default;
+        ~Reply() override = default;
+
+        bool write(yarp::os::ConnectionWriter& connection) const override;
+        bool read(yarp::os::ConnectionReader& connection) override;
+
+        bool write(const yarp::os::idl::WireWriter& writer) const override;
+        bool read(yarp::os::idl::WireReader& reader) override;
+
+        bool return_helper{false};
+    };
+
+    using funcptr_t = bool (*)(const double);
+    void call(yarpActionsPlayer_IDL* ptr);
+
+    Command cmd;
+    Reply reply;
+
+    static constexpr const char* s_tag{"set_initial_move_time"};
+    static constexpr size_t s_tag_len{4};
+    static constexpr size_t s_cmd_len{5};
+    static constexpr size_t s_reply_len{1};
+    static constexpr const char* s_prototype{"bool yarpActionsPlayer_IDL::set_initial_move_time(const double value)"};
+    static constexpr const char* s_help{
+        "Sets the uration for the initial homing movement (for advanced use only, default value: 2s).\n"
+        "@return true/false on success/failure"
+    };
+};
+
 // start helper class implementation
 bool yarpActionsPlayer_IDL_start_helper::write(yarp::os::ConnectionWriter& connection) const
 {
@@ -2371,6 +2437,160 @@ void yarpActionsPlayer_IDL_set_thread_period_helper::call(yarpActionsPlayer_IDL*
     reply.return_helper = ptr->set_thread_period(cmd.value);
 }
 
+// set_initial_move_time helper class implementation
+yarpActionsPlayer_IDL_set_initial_move_time_helper::yarpActionsPlayer_IDL_set_initial_move_time_helper(const double value) :
+        cmd{value}
+{
+}
+
+bool yarpActionsPlayer_IDL_set_initial_move_time_helper::write(yarp::os::ConnectionWriter& connection) const
+{
+    return cmd.write(connection);
+}
+
+bool yarpActionsPlayer_IDL_set_initial_move_time_helper::read(yarp::os::ConnectionReader& connection)
+{
+    return reply.read(connection);
+}
+
+yarpActionsPlayer_IDL_set_initial_move_time_helper::Command::Command(const double value) :
+        value{value}
+{
+}
+
+bool yarpActionsPlayer_IDL_set_initial_move_time_helper::Command::write(yarp::os::ConnectionWriter& connection) const
+{
+    yarp::os::idl::WireWriter writer(connection);
+    if (!writer.writeListHeader(s_cmd_len)) {
+        return false;
+    }
+    return write(writer);
+}
+
+bool yarpActionsPlayer_IDL_set_initial_move_time_helper::Command::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    if (!reader.readListHeader()) {
+        reader.fail();
+        return false;
+    }
+    return read(reader);
+}
+
+bool yarpActionsPlayer_IDL_set_initial_move_time_helper::Command::write(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writeTag(writer)) {
+        return false;
+    }
+    if (!writeArgs(writer)) {
+        return false;
+    }
+    return true;
+}
+
+bool yarpActionsPlayer_IDL_set_initial_move_time_helper::Command::writeTag(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.writeTag(s_tag, 1, s_tag_len)) {
+        return false;
+    }
+    return true;
+}
+
+bool yarpActionsPlayer_IDL_set_initial_move_time_helper::Command::writeArgs(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.writeFloat64(value)) {
+        return false;
+    }
+    return true;
+}
+
+bool yarpActionsPlayer_IDL_set_initial_move_time_helper::Command::read(yarp::os::idl::WireReader& reader)
+{
+    if (!readTag(reader)) {
+        return false;
+    }
+    if (!readArgs(reader)) {
+        return false;
+    }
+    return true;
+}
+
+bool yarpActionsPlayer_IDL_set_initial_move_time_helper::Command::readTag(yarp::os::idl::WireReader& reader)
+{
+    std::string tag = reader.readTag(s_tag_len);
+    if (reader.isError()) {
+        return false;
+    }
+    if (tag != s_tag) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool yarpActionsPlayer_IDL_set_initial_move_time_helper::Command::readArgs(yarp::os::idl::WireReader& reader)
+{
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
+    if (!reader.readFloat64(value)) {
+        reader.fail();
+        return false;
+    }
+    if (!reader.noMore()) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool yarpActionsPlayer_IDL_set_initial_move_time_helper::Reply::write(yarp::os::ConnectionWriter& connection) const
+{
+    yarp::os::idl::WireWriter writer(connection);
+    return write(writer);
+}
+
+bool yarpActionsPlayer_IDL_set_initial_move_time_helper::Reply::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    return read(reader);
+}
+
+bool yarpActionsPlayer_IDL_set_initial_move_time_helper::Reply::write(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.isNull()) {
+        if (!writer.writeListHeader(s_reply_len)) {
+            return false;
+        }
+        if (!writer.writeBool(return_helper)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+bool yarpActionsPlayer_IDL_set_initial_move_time_helper::Reply::read(yarp::os::idl::WireReader& reader)
+{
+    if (!reader.readListReturn()) {
+        return false;
+    }
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
+    if (!reader.readBool(return_helper)) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+void yarpActionsPlayer_IDL_set_initial_move_time_helper::call(yarpActionsPlayer_IDL* ptr)
+{
+    reply.return_helper = ptr->set_initial_move_time(cmd.value);
+}
+
 // Constructor
 yarpActionsPlayer_IDL::yarpActionsPlayer_IDL()
 {
@@ -2487,6 +2707,16 @@ bool yarpActionsPlayer_IDL::set_thread_period(const double value)
     return ok ? helper.reply.return_helper : bool{};
 }
 
+bool yarpActionsPlayer_IDL::set_initial_move_time(const double value)
+{
+    if (!yarp().canWrite()) {
+        yError("Missing server method '%s'?", yarpActionsPlayer_IDL_set_initial_move_time_helper::s_prototype);
+    }
+    yarpActionsPlayer_IDL_set_initial_move_time_helper helper{value};
+    bool ok = yarp().write(helper, helper);
+    return ok ? helper.reply.return_helper : bool{};
+}
+
 // help method
 std::vector<std::string> yarpActionsPlayer_IDL::help(const std::string& functionName)
 {
@@ -2505,6 +2735,7 @@ std::vector<std::string> yarpActionsPlayer_IDL::help(const std::string& function
         helpString.emplace_back(yarpActionsPlayer_IDL_play_action_helper::s_tag);
         helpString.emplace_back(yarpActionsPlayer_IDL_show_actions_helper::s_tag);
         helpString.emplace_back(yarpActionsPlayer_IDL_set_thread_period_helper::s_tag);
+        helpString.emplace_back(yarpActionsPlayer_IDL_set_initial_move_time_helper::s_tag);
         helpString.emplace_back("help");
     } else {
         if (functionName == yarpActionsPlayer_IDL_start_helper::s_tag) {
@@ -2551,6 +2782,10 @@ std::vector<std::string> yarpActionsPlayer_IDL::help(const std::string& function
             helpString.emplace_back(yarpActionsPlayer_IDL_set_thread_period_helper::s_prototype);
             helpString.emplace_back(yarpActionsPlayer_IDL_set_thread_period_helper::s_help);
         }
+        if (functionName == yarpActionsPlayer_IDL_set_initial_move_time_helper::s_tag) {
+            helpString.emplace_back(yarpActionsPlayer_IDL_set_initial_move_time_helper::s_prototype);
+            helpString.emplace_back(yarpActionsPlayer_IDL_set_initial_move_time_helper::s_help);
+        }
         if (functionName == "help") {
             helpString.emplace_back("std::vector<std::string> help(const std::string& functionName = \"--all\")");
             helpString.emplace_back("Return list of available commands, or help message for a specific function");
@@ -2567,7 +2802,7 @@ std::vector<std::string> yarpActionsPlayer_IDL::help(const std::string& function
 // read from ConnectionReader
 bool yarpActionsPlayer_IDL::read(yarp::os::ConnectionReader& connection)
 {
-    constexpr size_t max_tag_len = 3;
+    constexpr size_t max_tag_len = 4;
     size_t tag_len = 1;
 
     yarp::os::idl::WireReader reader(connection);
@@ -2755,6 +2990,21 @@ bool yarpActionsPlayer_IDL::read(yarp::os::ConnectionReader& connection)
         }
         if (tag == yarpActionsPlayer_IDL_set_thread_period_helper::s_tag) {
             yarpActionsPlayer_IDL_set_thread_period_helper helper;
+            if (!helper.cmd.readArgs(reader)) {
+                return false;
+            }
+
+            helper.call(this);
+
+            yarp::os::idl::WireWriter writer(reader);
+            if (!helper.reply.write(writer)) {
+                return false;
+            }
+            reader.accept();
+            return true;
+        }
+        if (tag == yarpActionsPlayer_IDL_set_initial_move_time_helper::s_tag) {
+            yarpActionsPlayer_IDL_set_initial_move_time_helper helper;
             if (!helper.cmd.readArgs(reader)) {
                 return false;
             }

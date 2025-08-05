@@ -36,7 +36,7 @@ private:
     //otherwise it will continue after the timeout expires
     bool                  m_home_position_strict_check_enabled = false;
     double                m_home_position_tolerance = 2.0;
-    double                m_home_position_timeout = 2.0;
+    double                m_home_position_timeout = 20.0;
 
 public:
     bool                  m_enable_execute_joint_command=false;
@@ -61,6 +61,7 @@ public:
     void setPositionTolerance(double tolerance);
     void setPositionTimeout(double timeloops);
     void setPositionStrictCheck(bool enable);
+    void setInitialMoveTime(double t);
 
 private:
     bool execute_joint_command(int frame_id);
