@@ -53,6 +53,7 @@ protected:
     bool play_action(const std::string& action_name) override;
     bool show_actions() override;
     bool set_thread_period(const double value) override;
+    bool set_initial_move_time(const double value) override;
 
     public:
     scriptModule()
@@ -242,6 +243,7 @@ protected:
         yInfo() << "`pos_strict_check` : if set to true, the system will halt if home position is halted, otherwise it will continue after the timeout expires. Default: false";
         yInfo() << "`period` : the period (in s) of the thread processing the commands. Default 0.010s";
         yInfo() << "`resample`: all the loaded trajectory files are internally resampled at the specified period. Default: not enabled";
+        yInfo() << "`initial_move_time`: the duration (in seconds) of the initial homing position of the joints before starting the trajectory. Default: 4s";
         yInfo();
     }
 
@@ -286,6 +288,12 @@ protected:
         {
             print_help();
             return false;
+        }
+
+        if (rf.check("initial_move_time") == true)
+        {
+            double imt = rf.find("initial_move_time").asFloat64();
+            m_wthread->setInitialMoveTime(imt);
         }
 
         //set the position tolerance
@@ -473,6 +481,20 @@ bool scriptModule::set_thread_period(const double value)
     else
     {
         yInfo("Period set to %f", value);
+    }
+    return true;
+}
+
+bool scriptModule::set_initial_move_time(const double value)
+{
+    if (value > 0)
+    {
+        m_wthread->setInitialMoveTime(value);
+        yError("invalid initial move time");
+    }
+    else
+    {
+        yInfo("Initial move time set to %f", value);
     }
     return true;
 }

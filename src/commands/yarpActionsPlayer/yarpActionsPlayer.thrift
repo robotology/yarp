@@ -78,4 +78,10 @@ service yarpActionsPlayer_IDL
   * @return true/false on success/failure
   */
   bool set_thread_period(1: double value);
+
+  /**
+  * Sets the uration for the initial homing movement (for advanced use only, default value: 2s).
+  * @return true/false on success/failure
+  */
+  bool set_initial_move_time(1: double value);
 }

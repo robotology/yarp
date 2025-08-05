@@ -10,6 +10,7 @@
 #include <yarp/dev/PolyDriver.h>
 
 #include <string>
+#include <vector>
 
 #ifndef ROBOTDRIVER_H
 #define ROBOTDRIVER_H
@@ -20,7 +21,9 @@ class robotDriver
     friend class BroadcastingThread;
 private:
     int               n_joints=0;
-    bool              verbose=true;
+    bool              m_verbose=true;
+    std::vector<double>   m_trajectoryTime; // default trajectory time in seconds
+
     yarp::os::Property          drvOptions_ll;
     yarp::dev::PolyDriver        drv_ll;
     yarp::dev::IPositionControl *ipos_ll=nullptr;
@@ -40,6 +43,8 @@ public:
     bool setPosition(int j, double ref);
     bool getEncoder(int j, double *v);
     bool positionMove(int j, double ref);
+    bool setTrajectoryTime(double t);
+    bool setTrajectoryTime(int j, double t);
 };
 
 #endif
