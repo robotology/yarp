@@ -84,6 +84,10 @@ void FakeMotionControl::run()
         {
             //do nothing
         }
+        else if (_controlModes[i] == VOCAB_CM_CURRENT)
+        {
+            //do nothing
+        }
         else if (_controlModes[i] == VOCAB_CM_VELOCITY_DIRECT)
         {
             //not yet implemented
@@ -2521,8 +2525,8 @@ bool FakeMotionControl::getCurrentsRaw(double *t)
 bool FakeMotionControl::getCurrentRangeRaw(int j, double *min, double *max)
 {
     //just for testing purposes, this is not a real implementation
-    *min = _ref_currents[j] / 100;
-    *max = _ref_currents[j] * 100;
+    *min = -3.5;
+    *max = +3.5;
     return true;
 }
 
@@ -2531,8 +2535,8 @@ bool FakeMotionControl::getCurrentRangesRaw(double *min, double *max)
     //just for testing purposes, this is not a real implementation
     for (int i = 0; i < _njoints; i++)
     {
-        min[i] = _ref_currents[i] / 100;
-        max[i] = _ref_currents[i] * 100;
+        min[i] = -3.5;
+        max[i] = +3.5;
     }
     return true;
 }

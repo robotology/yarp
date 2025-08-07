@@ -679,7 +679,7 @@ QSlider::groove:horizontal:disabled {
               <number>2</number>
              </property>
              <item>
-              <widget class="SliderWithTarget" name="sliderTrajectoryPosition">
+              <widget class="SliderWithTarget" name="sliderPosTrajectory_Position">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Ignored" vsizetype="Fixed">
                  <horstretch>0</horstretch>
@@ -766,7 +766,7 @@ QSlider::groove:horizontal:disabled {
               <number>2</number>
              </property>
              <item>
-              <widget class="SliderWithTarget" name="sliderTrajectoryVelocity">
+              <widget class="SliderWithTarget" name="sliderPosTrajectory_Velocity">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Ignored" vsizetype="Fixed">
                  <horstretch>0</horstretch>
@@ -1565,7 +1565,7 @@ QSlider::groove:horizontal:disabled {
               <number>0</number>
              </property>
              <item>
-              <widget class="SliderWithTarget" name="sliderVelocityVelocity">
+              <widget class="SliderWithTarget" name="sliderVelTrajectory_Velocity">
                <property name="minimumSize">
                 <size>
                  <width>0</width>
@@ -1619,7 +1619,7 @@ QSlider::groove:horizontal:disabled {
               <number>2</number>
              </property>
              <item>
-              <widget class="SliderWithTarget" name="sliderVelocityAcceleration">
+              <widget class="SliderWithTarget" name="sliderVelTrajectory_Acceleration">
                <property name="minimumSize">
                 <size>
                  <width>0</width>

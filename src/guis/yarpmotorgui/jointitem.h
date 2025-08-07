@@ -40,9 +40,10 @@ class JointItem : public QWidget
     void setPosition(double val);
     void setTorque(double meas);
     void setRefTorque(double ref);
-    void setRefVelocitySpeed(double ref);
-    void setRefTrajectorySpeed(double ref);
-    void setRefTrajectoryPosition(double ref);
+    void setVelTrajectory_ReferenceSpeed(double ref);
+    void setVelTrajectory_ReferenceAcceleration(double ref);
+    void setPosTrajectory_ReferenceSpeed(double ref);
+    void setPosTrajectory_ReferencePosition(double ref);
     void setSpeed(double val);
     void setMotorPosition(double meas);
     void setDutyCycles(double duty);
@@ -57,7 +58,7 @@ class JointItem : public QWidget
     int getJointIndex();
     void setPositionRange(double min, double max);
     void setVelocityRange(double min, double max);
-    void setTrajectoryVelocityRange(double max);
+    void setAccelerationRange(double min, double max);
     void setPWMRange(double min, double max);
     void setCurrentRange(double min, double max);
     void setTorqueRange(double max);
@@ -85,22 +86,33 @@ class JointItem : public QWidget
     void sequenceStopped();
 
     void setNumberOfPositionSliderDecimals(size_t num);
+    void setNumberOfVelocitySliderDecimals(size_t num);
+    void setNumberOfAccelerationSliderDecimals(size_t num);
+    void setNumberOfTorqueSliderDecimals(size_t num);
+    void setNumberOfCurrentSliderDecimals(size_t num);
 
+    // valid for all position sliders
     void enablePositionSliderDoubleAuto();
     void enablePositionSliderDoubleValue(double value);
     void disablePositionSliderDouble();
+
+    // valid for all velocity sliders
     void enableVelocitySliderDoubleAuto();
     void enableVelocitySliderDoubleValue(double value);
     void disableVelocitySliderDouble();
+
+    void enableAccelerationSliderDoubleAuto();
+    void enableAccelerationSliderDoubleValue(double value);
+    void disableAccelerationSliderDouble();
+
     void enableTorqueSliderDoubleAuto();
     void enableTorqueSliderDoubleValue(double value);
     void disableTorqueSliderDouble();
+
     void enableCurrentSliderDoubleAuto();
     void enableCurrentSliderDoubleValue(double value);
     void disableCurrentSliderDouble();
-    void enableTrajectoryVelocitySliderDoubleAuto();
-    void enableTrajectoryVelocitySliderDoubleValue(double value);
-    void disableTrajectoryVelocitySliderDouble();
+
     void resetTarget();
 
     void home();
@@ -120,10 +132,13 @@ private:
     void setJointInternalState(int mode);
     void setJointInternalInteraction(int interaction);
 
-    void updateSliderPosition                (SliderWithTarget *slider, double val);
-    void updateSliderVelocity                (double val);
+    void updateSliderPosTrajectoryPosition      (double val);
+    void updateSliderPosTrajectoryVelocity      (double val);
+    void updateSliderVelTrajectoryVelocity      (double val);
+    void updateSliderVelTrajectoryAcceleration  (double val);
+    void updateSliderMixedPosition           (double val);
+    void updateSliderPositionDirect          (double val);
     void updateSliderVelocityDirect          (double val);
-    void updateSliderTrajectoryVelocity      (double val);
     void updateSliderPWM                     (double val);
     void updateSliderCurrent                 (double val);
     void updateSliderTorque                  (double val);
@@ -138,12 +153,13 @@ private:
     int jointIndex;
     QString jointName;
     bool sliderVelocityDirectPressed = false;
-    bool sliderVelocityPressed = false;
     bool sliderDirectPositionPressed = false;
     bool sliderMixedPositionPressed = false;
     bool sliderMixedVelocityPressed = false;
-    bool sliderTrajectoryVelocityPressed = false;
-    bool sliderTrajectoryPositionPressed = false;
+    bool sliderVelTrajectory_VelocityPressed = false;
+    bool sliderVelTrajectory_AccelerationPressed = false;
+    bool sliderPosTrajectory_VelocityPressed = false;
+    bool sliderPosTrajectory_PositionPressed = false;
     bool sliderTorquePressed = false;
     bool sliderPWMPressed = false;
     bool sliderCurrentPressed = false;
@@ -185,21 +201,24 @@ private:
     JointState internalState;
     JointInteraction internalInteraction;
 
-    double max_current = 0;
-    double min_current = 0;
-    double max_torque = 0;
-    double min_torque = 0;
-    double max_position = 0;
-    double min_position = 0;
-    double max_velocity = 0;
-    double min_velocity = 0;
-    double max_trajectory_velocity = 0;
+    double m_max_current = 0;
+    double m_min_current = 0;
+    double m_max_torque = 0;
+    double m_min_torque = 0;
+    double m_max_position = 0;
+    double m_min_position = 0;
+    double m_max_velocity = 0;
+    double m_min_velocity = 0;
+    double m_max_acceleration = 0;
+    double m_min_acceleration = 0;
+
     //double speed = 0;
-    double ref_speed = 0;
-    double ref_torque = 0;
-    double ref_pwm = 0;
-    double ref_current = 0;
-    double ref_trajectory_velocity = 0;
+    double m_ref_speed = 0;
+    double m_ref_torque = 0;
+    double m_ref_pwm = 0;
+    double m_ref_current = 0;
+    double m_ref_PosTrajectory_velocity = 0;
+    double m_ref_VelTrajectory_acceleration = 0;
 
 
 
@@ -207,8 +226,8 @@ private slots:
     void onModeChanged(int index);
     void onInteractionChanged(int index);
 
-    void onSliderTrajectoryPositionPressed();
-    void onSliderTrajectoryPositionReleased();
+    void onSliderPosTrajectory_PositionPressed();
+    void onSliderPosTrajectory_PositionReleased();
 
     void onSliderDirectPositionPressed();
     void onSliderDirectPositionReleased();
@@ -216,8 +235,11 @@ private slots:
     void onSliderMixedPositionPressed();
     void onSliderMixedPositionReleased();
 
-    void onSliderTrajectoryVelocityReleased();
-    void onSliderTrajectoryVelocityPressed();
+    void onSliderPosTrajectory_VelocityReleased();
+    void onSliderPosTrajectory_VelocityPressed();
+
+    void onSliderVelTrajectory_AccelerationReleased();
+    void onSliderVelTrajectory_AccelerationPressed();
 
     void onSliderMixedVelocityReleased();
     void onSliderMixedVelocityPressed();
@@ -231,8 +253,9 @@ private slots:
     void onSliderPWMPressed();
     void onSliderPWMReleased();
 
-    void onSliderVelocityReleased();
-    void onSliderVelocityPressed();
+    void onSliderVelTrajectory_VelocityReleased();
+    void onSliderVelTrajectory_VelocityPressed();
+
     void onSliderVelocityDirectReleased();
     void onSliderVelocityDirectPressed();
 
@@ -257,15 +280,20 @@ signals:
     void changeMode(int mode,JointItem *joint);
     void changeInteraction(int interaction,JointItem *joint);
 
-    void sliderTrajectoryPositionCommand(double val, int jointIndex);
+    void sliderPosTrajectoryPositionCommand(double val, int jointIndex);
+    void sliderPosTrajectoryVelocityCommand(double val, int jointIndex);
+
+    void sliderVelTrajectoryVelocityCommand(double val, int jointIndex);
+    void sliderVelTrajectoryAccelerationCommand(double val, int jointIndex);
+
     void sliderMixedPositionCommand(double val,  int jointIndex);
     void sliderMixedVelocityCommand(double val, int jointIndex);
     void sliderDirectPositionCommand(double val, int jointIndex);
-    void sliderTrajectoryVelocityCommand(double val, int jointIndex);
+
     void sliderTorqueCommand(double val, int jointIndex);
     void sliderPWMCommand(double val, int jointIndex);
     void sliderCurrentCommand(double val, int jointIndex);
-    void sliderVelocityCommand(double val, int jointIndex);
+
     void sliderVelocityDirectCommand(double val, int jointIndex);
 };
 

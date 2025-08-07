@@ -20,7 +20,7 @@
 
 void JointItem::resetTarget()
 {
-    ui->sliderTrajectoryPosition->resetTarget();
+    ui->sliderPosTrajectory_Position->resetTarget();
     ui->sliderMixedPosition->resetTarget();
 }
 
@@ -248,7 +248,7 @@ QString JointItem::GetModeString(JointState mode)
 
 void JointItem::updateTrajectoryPositionTarget(double val)
 {
-    ui->sliderTrajectoryPosition->updateSliderTarget(val);
+    ui->sliderPosTrajectory_Position->updateSliderTarget(val);
 }
 
 void JointItem::updateMixedPositionTarget(double val)
@@ -268,12 +268,12 @@ JointItem::JointItem(int index,QWidget *parent) :
     connect(ui->comboMode,SIGNAL(currentIndexChanged(int)),this,SLOT(onModeChanged(int)));
     connect(ui->comboInteraction,SIGNAL(currentIndexChanged(int)),this,SLOT(onInteractionChanged(int)));
 
-    ui->sliderTrajectoryPosition->installEventFilter(this);
-    connect(ui->sliderTrajectoryPosition,SIGNAL(sliderPressed()),this,SLOT(onSliderTrajectoryPositionPressed()));
-    connect(ui->sliderTrajectoryPosition, SIGNAL(sliderReleased()), this, SLOT(onSliderTrajectoryPositionReleased()));
-    ui->sliderTrajectoryPosition->disableClickOutOfHandle=true;
-    ui->sliderTrajectoryPosition->enableViewTargetBox = true;
-    ui->sliderTrajectoryPosition->enableViewTargetValue = false;
+    ui->sliderPosTrajectory_Position->installEventFilter(this);
+    connect(ui->sliderPosTrajectory_Position,SIGNAL(sliderPressed()),this,SLOT(onSliderPosTrajectory_PositionPressed()));
+    connect(ui->sliderPosTrajectory_Position, SIGNAL(sliderReleased()), this, SLOT(onSliderPosTrajectory_PositionReleased()));
+    ui->sliderPosTrajectory_Position->disableClickOutOfHandle=true;
+    ui->sliderPosTrajectory_Position->enableViewTargetBox = true;
+    ui->sliderPosTrajectory_Position->enableViewTargetValue = false;
 
     ui->sliderTorqueTorque->installEventFilter(this);
     connect(ui->sliderTorqueTorque,SIGNAL(sliderPressed()),this,SLOT(onSliderTorquePressed()));
@@ -317,19 +317,26 @@ JointItem::JointItem(int index,QWidget *parent) :
     ui->sliderMixedPosition->enableViewTargetBox = true;
     ui->sliderMixedPosition->enableViewTargetValue = false;
 
-    ui->sliderVelocityVelocity->installEventFilter(this);
-    connect(ui->sliderVelocityVelocity,SIGNAL(sliderPressed()),this,SLOT(onSliderVelocityPressed()));
-    connect(ui->sliderVelocityVelocity,SIGNAL(sliderReleased()),this,SLOT(onSliderVelocityReleased()));
-    ui->sliderVelocityVelocity->disableClickOutOfHandle = true;
-    ui->sliderVelocityVelocity->enableViewTargetBox = false;
-    ui->sliderVelocityVelocity->enableViewTargetValue = false;
+    ui->sliderVelTrajectory_Velocity->installEventFilter(this);
+    connect(ui->sliderVelTrajectory_Velocity,SIGNAL(sliderPressed()),this,SLOT(onSliderVelTrajectory_VelocityPressed()));
+    connect(ui->sliderVelTrajectory_Velocity,SIGNAL(sliderReleased()),this,SLOT(onSliderVelTrajectory_VelocityReleased()));
+    ui->sliderVelTrajectory_Velocity->disableClickOutOfHandle = true;
+    ui->sliderVelTrajectory_Velocity->enableViewTargetBox = false;
+    ui->sliderVelTrajectory_Velocity->enableViewTargetValue = false;
 
-    ui->sliderTrajectoryVelocity->installEventFilter(this);
-    connect(ui->sliderTrajectoryVelocity, SIGNAL(sliderPressed()), this, SLOT(onSliderTrajectoryVelocityPressed()));
-    connect(ui->sliderTrajectoryVelocity, SIGNAL(sliderReleased()), this, SLOT(onSliderTrajectoryVelocityReleased()));
-    ui->sliderTrajectoryVelocity->disableClickOutOfHandle = true;
-    ui->sliderTrajectoryVelocity->enableViewTargetBox = false;
-    ui->sliderTrajectoryVelocity->enableViewTargetValue = false;
+    ui->sliderPosTrajectory_Velocity->installEventFilter(this);
+    connect(ui->sliderPosTrajectory_Velocity, SIGNAL(sliderPressed()), this, SLOT(onSliderPosTrajectory_VelocityPressed()));
+    connect(ui->sliderPosTrajectory_Velocity, SIGNAL(sliderReleased()), this, SLOT(onSliderPosTrajectory_VelocityReleased()));
+    ui->sliderPosTrajectory_Velocity->disableClickOutOfHandle = true;
+    ui->sliderPosTrajectory_Velocity->enableViewTargetBox = false;
+    ui->sliderPosTrajectory_Velocity->enableViewTargetValue = false;
+
+    ui->sliderVelTrajectory_Acceleration->installEventFilter(this);
+    connect(ui->sliderVelTrajectory_Acceleration, SIGNAL(sliderPressed()), this, SLOT(onSliderVelTrajectory_AccelerationPressed()));
+    connect(ui->sliderVelTrajectory_Acceleration, SIGNAL(sliderReleased()), this, SLOT(onSliderVelTrajectory_AccelerationReleased()));
+    ui->sliderVelTrajectory_Acceleration->disableClickOutOfHandle = true;
+    ui->sliderVelTrajectory_Acceleration->enableViewTargetBox = false;
+    ui->sliderVelTrajectory_Acceleration->enableViewTargetValue = false;
 
     ui->sliderMixedVelocity->installEventFilter(this);
     connect(ui->sliderMixedVelocity, SIGNAL(sliderPressed()), this, SLOT(onSliderMixedVelocityPressed()));
@@ -453,22 +460,22 @@ bool JointItem::eventFilter(QObject *obj, QEvent *event)
             //SliderWithTarget *slider=0;
             QSlider* slider = nullptr;
 
-            if(obj == ui->sliderTrajectoryPosition){
-                slider = ui->sliderTrajectoryPosition;
+            if(obj == ui->sliderPosTrajectory_Position){
+                slider = ui->sliderPosTrajectory_Position;
                 if(keyEvent->type() == QEvent::KeyPress){
-                    onSliderTrajectoryPositionPressed();
+                    onSliderPosTrajectory_PositionPressed();
                 }
                 if(keyEvent->type() == QEvent::KeyRelease){
-                    onSliderTrajectoryPositionReleased();
+                    onSliderPosTrajectory_PositionReleased();
                 }
             }
-            if(obj == ui->sliderTrajectoryVelocity){
-                slider = ui->sliderTrajectoryVelocity;
+            if(obj == ui->sliderPosTrajectory_Velocity){
+                slider = ui->sliderPosTrajectory_Velocity;
                 if (keyEvent->type() == QEvent::KeyPress){
-                    onSliderTrajectoryVelocityPressed();
+                    onSliderPosTrajectory_VelocityPressed();
                 }
                 if (keyEvent->type() == QEvent::KeyRelease){
-                    onSliderTrajectoryVelocityReleased();
+                    onSliderPosTrajectory_VelocityReleased();
                 }
             }
             if(obj == ui->sliderDirectPosition){
@@ -519,13 +526,22 @@ bool JointItem::eventFilter(QObject *obj, QEvent *event)
                     onSliderCurrentReleased();
                 }
             }
-            if(obj == ui->sliderVelocityVelocity){
-                slider = ui->sliderVelocityVelocity;
+            if(obj == ui->sliderVelTrajectory_Velocity){
+                slider = ui->sliderVelTrajectory_Velocity;
                 if(keyEvent->type() == QEvent::KeyPress){
-                    onSliderVelocityPressed();
+                    onSliderVelTrajectory_VelocityPressed();
                 }
                 if(keyEvent->type() == QEvent::KeyRelease){
-                    onSliderVelocityReleased();
+                    onSliderVelTrajectory_VelocityReleased();
+                }
+            }
+            if(obj == ui->sliderVelTrajectory_Acceleration){
+                slider = ui->sliderVelTrajectory_Acceleration;
+                if(keyEvent->type() == QEvent::KeyPress){
+                    onSliderVelTrajectory_AccelerationPressed();
+                }
+                if(keyEvent->type() == QEvent::KeyRelease){
+                    onSliderVelTrajectory_AccelerationPressed();
                 }
             }
 
@@ -620,13 +636,13 @@ void JointItem::enableControlTorque(bool control)
 
 void JointItem::viewPositionTargetBox(bool visible)
 {
-    ui->sliderTrajectoryPosition->enableViewTargetBox = visible;
+    ui->sliderPosTrajectory_Position->enableViewTargetBox = visible;
     ui->sliderMixedPosition->enableViewTargetBox = visible;
 }
 
 void JointItem::viewPositionTargetValue(bool visible)
 {
-    ui->sliderTrajectoryPosition->enableViewTargetValue = visible;
+    ui->sliderPosTrajectory_Position->enableViewTargetValue = visible;
     ui->sliderMixedPosition->enableViewTargetValue = visible;
 }
 
@@ -1117,20 +1133,20 @@ void JointItem::setSpeedVisible(bool visible)
 
 void JointItem::enablePositionSliderDoubleAuto()
 {
-    double positionSliderStep = 1 / (fabs(min_position - max_position) / 100.0);
+    double positionSliderStep = 1 / (fabs(m_min_position - m_max_position) / 100.0);
     ui->sliderMixedPosition->setSliderStep(positionSliderStep);
-    ui->sliderTrajectoryPosition->setSliderStep(positionSliderStep);
+    ui->sliderPosTrajectory_Position->setSliderStep(positionSliderStep);
     ui->sliderDirectPosition->setSliderStep(positionSliderStep);
     ui->sliderMixedPosition->setIsDouble(true);
-    ui->sliderTrajectoryPosition->setIsDouble(true);
+    ui->sliderPosTrajectory_Position->setIsDouble(true);
     ui->sliderDirectPosition->setIsDouble(true);
-    int sliderMin = min_position*positionSliderStep;
-    int sliderMax = max_position*positionSliderStep;
+    int sliderMin = m_min_position*positionSliderStep;
+    int sliderMax = m_max_position*positionSliderStep;
     ui->sliderMixedPosition->setRange(sliderMin, sliderMax);
-    ui->sliderTrajectoryPosition->setRange(sliderMin, sliderMax);
+    ui->sliderPosTrajectory_Position->setRange(sliderMin, sliderMax);
     ui->sliderDirectPosition->setRange(sliderMin, sliderMax);
     ui->sliderMixedPosition->resetTarget();
-    ui->sliderTrajectoryPosition->resetTarget();
+    ui->sliderPosTrajectory_Position->resetTarget();
     ui->sliderDirectPosition->resetTarget();
 }
 
@@ -1138,114 +1154,160 @@ void JointItem::enablePositionSliderDoubleValue(double value)
 {
     double positionSliderStep = 1 / value;
     ui->sliderMixedPosition->setSliderStep(positionSliderStep);
-    ui->sliderTrajectoryPosition->setSliderStep(positionSliderStep);
+    ui->sliderPosTrajectory_Position->setSliderStep(positionSliderStep);
     ui->sliderDirectPosition->setSliderStep(positionSliderStep);
     ui->sliderMixedPosition->setIsDouble(true);
-    ui->sliderTrajectoryPosition->setIsDouble(true);
+    ui->sliderPosTrajectory_Position->setIsDouble(true);
     ui->sliderDirectPosition->setIsDouble(true);
-    int sliderMin = min_position*positionSliderStep;
-    int sliderMax = max_position*positionSliderStep;
+    int sliderMin = m_min_position*positionSliderStep;
+    int sliderMax = m_max_position*positionSliderStep;
     ui->sliderMixedPosition->setRange(sliderMin, sliderMax);
-    ui->sliderTrajectoryPosition->setRange(sliderMin, sliderMax);
+    ui->sliderPosTrajectory_Position->setRange(sliderMin, sliderMax);
     ui->sliderDirectPosition->setRange(sliderMin, sliderMax);
     ui->sliderMixedPosition->resetTarget();
-    ui->sliderTrajectoryPosition->resetTarget();
+    ui->sliderPosTrajectory_Position->resetTarget();
     ui->sliderDirectPosition->resetTarget();
-}
-
-void JointItem::setNumberOfPositionSliderDecimals(size_t num)
-{
-    ui->sliderMixedPosition->number_of_decimals=num;
-    ui->sliderTrajectoryPosition->number_of_decimals = num;
-    ui->sliderDirectPosition->number_of_decimals = num;
-    ui->sliderMixedPosition->number_of_decimals = num;
-    ui->sliderTrajectoryPosition->number_of_decimals = num;
-    ui->sliderDirectPosition->number_of_decimals = num;
 }
 
 void JointItem::disablePositionSliderDouble()
 {
-    if (fabs(max_position - min_position) < 1.0)
+    if (fabs(m_max_position - m_min_position) < 1.0)
     {
         yError("Unable to set integer position slider");
         return;
     }
     double positionSliderStep = 1;
     ui->sliderMixedPosition->setSliderStep(positionSliderStep);
-    ui->sliderTrajectoryPosition->setSliderStep(positionSliderStep);
+    ui->sliderPosTrajectory_Position->setSliderStep(positionSliderStep);
     ui->sliderDirectPosition->setSliderStep(positionSliderStep);
     ui->sliderMixedPosition->setIsDouble(false);
-    ui->sliderTrajectoryPosition->setIsDouble(false);
+    ui->sliderPosTrajectory_Position->setIsDouble(false);
     ui->sliderDirectPosition->setIsDouble(false);
-    int sliderMin = min_position;
-    int sliderMax = max_position;
+    int sliderMin = m_min_position;
+    int sliderMax = m_max_position;
     ui->sliderMixedPosition->setRange(sliderMin, sliderMax);
-    ui->sliderTrajectoryPosition->setRange(sliderMin, sliderMax);
+    ui->sliderPosTrajectory_Position->setRange(sliderMin, sliderMax);
     ui->sliderDirectPosition->setRange(sliderMin, sliderMax);
     ui->sliderMixedPosition->resetTarget();
-    ui->sliderTrajectoryPosition->resetTarget();
+    ui->sliderPosTrajectory_Position->resetTarget();
     ui->sliderDirectPosition->resetTarget();
 }
 
 void JointItem::enableVelocitySliderDoubleAuto()
 {
-    double velocitySliderStep = 1 / (fabs(-max_velocity - max_velocity) / 100.0); //note that we are using -max_velocity
-    ui->sliderVelocityVelocity->setSliderStep(velocitySliderStep);
-    ui->sliderVelocityVelocity->setIsDouble(true);
-    int sliderMin = -max_velocity*velocitySliderStep; //note that we are using -max_velocity
-    int sliderMax = max_velocity*velocitySliderStep;
-    ui->sliderVelocityVelocity->setRange(sliderMin, sliderMax);
-    int v = ui->sliderVelocityVelocity->value();
+    double velocitySliderStep = 1 / (fabs(-m_max_velocity - m_max_velocity) / 100.0); //note that we are using -max_velocity
+    ui->sliderPosTrajectory_Velocity->setSliderStep(velocitySliderStep);
+    ui->sliderPosTrajectory_Velocity->setIsDouble(true);
+    ui->sliderVelTrajectory_Velocity->setSliderStep(velocitySliderStep);
+    ui->sliderVelTrajectory_Velocity->setIsDouble(true);
+    int sliderMin = -m_max_velocity*velocitySliderStep;
+    int sliderMax = m_max_velocity*velocitySliderStep;
+    ui->sliderPosTrajectory_Velocity->setRange(0, sliderMax);
+    ui->sliderVelTrajectory_Velocity->setRange(sliderMin, sliderMax);
+    int v = ui->sliderVelTrajectory_Velocity->value();
     if (v > sliderMax) {}
     if (v < sliderMin) {}
-    setRefVelocitySpeed(ref_speed);
+    setVelTrajectory_ReferenceSpeed(m_ref_speed);
 }
 
 void JointItem::enableVelocitySliderDoubleValue(double value)
 {
     double velocitySliderStep = 1 / value;
-    ui->sliderVelocityVelocity->setSliderStep(velocitySliderStep);
-    ui->sliderVelocityVelocity->setIsDouble(true);
-    int sliderMin = -max_velocity*velocitySliderStep; //note that we are using -max_velocity
-    int sliderMax = max_velocity*velocitySliderStep;
-    ui->sliderVelocityVelocity->setRange(sliderMin, sliderMax);
-    int v = ui->sliderVelocityVelocity->value();
+    ui->sliderPosTrajectory_Velocity->setSliderStep(velocitySliderStep);
+    ui->sliderPosTrajectory_Velocity->setIsDouble(true);
+    ui->sliderVelTrajectory_Velocity->setSliderStep(velocitySliderStep);
+    ui->sliderVelTrajectory_Velocity->setIsDouble(true);
+    int sliderMin = -m_max_velocity*velocitySliderStep;
+    int sliderMax = m_max_velocity*velocitySliderStep;
+    ui->sliderPosTrajectory_Velocity->setRange(0, sliderMax);
+    ui->sliderVelTrajectory_Velocity->setRange(sliderMin, sliderMax);
+    int v = ui->sliderVelTrajectory_Velocity->value();
     if (v > sliderMax) {}
     if (v < sliderMin) {}
-    setRefVelocitySpeed(ref_speed);
+    setVelTrajectory_ReferenceSpeed(m_ref_speed);
 }
 
 void JointItem::disableVelocitySliderDouble()
 {
-    if (fabs(max_velocity) < 1.0)
+    if (fabs(m_max_velocity) < 1.0)
     {
         yError("Unable to set integer velocity slider");
         return;
     }
     double  velocitySliderStep = 1;
-    ui->sliderVelocityVelocity->setSliderStep(velocitySliderStep);
-    ui->sliderVelocityVelocity->setIsDouble(false);
-    int sliderMin = -max_velocity; //note that we are using -max_velocity
-    int sliderMax = max_velocity;
-    ui->sliderVelocityVelocity->setRange(sliderMin, sliderMax);
-    int v = ui->sliderVelocityVelocity->value();
+    ui->sliderPosTrajectory_Velocity->setSliderStep(velocitySliderStep);
+    ui->sliderPosTrajectory_Velocity->setIsDouble(false);
+    ui->sliderVelTrajectory_Velocity->setSliderStep(velocitySliderStep);
+    ui->sliderVelTrajectory_Velocity->setIsDouble(false);
+    int sliderMin = -m_max_velocity;
+    int sliderMax = m_max_velocity;
+    ui->sliderPosTrajectory_Velocity->setRange(0, sliderMax);
+    ui->sliderVelTrajectory_Velocity->setRange(sliderMin, sliderMax);
+    int v = ui->sliderVelTrajectory_Velocity->value();
     if (v > sliderMax) {}
     if (v < sliderMin) {}
-    setRefVelocitySpeed(ref_speed);
+    setVelTrajectory_ReferenceSpeed(m_ref_speed);
+}
+
+void JointItem::enableAccelerationSliderDoubleAuto()
+{
+    double accelerationSliderStep = 1 / (fabs(-m_max_acceleration - m_max_acceleration) / 100.0); //note that we are using -max_velocity
+    ui->sliderVelTrajectory_Acceleration->setSliderStep(accelerationSliderStep);
+    ui->sliderVelTrajectory_Acceleration->setIsDouble(true);
+    int sliderMin = 0;
+    int sliderMax = m_max_acceleration*accelerationSliderStep;
+    ui->sliderVelTrajectory_Acceleration->setRange(sliderMin, sliderMax);
+    int v = ui->sliderVelTrajectory_Acceleration->value();
+    if (v > sliderMax) {}
+    if (v < sliderMin) {}
+    setVelTrajectory_ReferenceAcceleration(m_ref_VelTrajectory_acceleration);
+}
+
+void JointItem::enableAccelerationSliderDoubleValue(double value)
+{
+    double accelerationSliderStep = 1 / value;
+    ui->sliderVelTrajectory_Acceleration->setSliderStep(accelerationSliderStep);
+    ui->sliderVelTrajectory_Acceleration->setIsDouble(true);
+    int sliderMin = 0;
+    int sliderMax = m_max_acceleration*accelerationSliderStep;
+    ui->sliderVelTrajectory_Acceleration->setRange(0, sliderMax);
+    int v = ui->sliderVelTrajectory_Acceleration->value();
+    if (v > sliderMax) {}
+    if (v < sliderMin) {}
+    setVelTrajectory_ReferenceAcceleration(m_ref_VelTrajectory_acceleration);
+}
+
+void JointItem::disableAccelerationSliderDouble()
+{
+    if (fabs(m_max_acceleration) < 1.0)
+    {
+        yError("Unable to set integer acceleration slider");
+        return;
+    }
+    double  accelerationSliderStep = 1;
+    ui->sliderVelTrajectory_Acceleration->setSliderStep(accelerationSliderStep);
+    ui->sliderVelTrajectory_Acceleration->setIsDouble(false);
+    int sliderMin = -m_max_acceleration;
+    int sliderMax = m_max_acceleration;
+    ui->sliderVelTrajectory_Velocity->setRange(0, sliderMax);
+    int v = ui->sliderVelTrajectory_Acceleration->value();
+    if (v > sliderMax) {}
+    if (v < sliderMin) {}
+    setVelTrajectory_ReferenceAcceleration(m_ref_VelTrajectory_acceleration);
 }
 
 void JointItem::enableTorqueSliderDoubleAuto()
 {
-    double torqueSliderStep = 1 / (fabs(-max_torque - max_torque) / 100.0); //note that we are using -max_velocity
+    double torqueSliderStep = 1 / (fabs(-m_max_torque - m_max_torque) / 100.0); //note that we are using -max_velocity
     ui->sliderTorqueTorque->setSliderStep(torqueSliderStep);
     ui->sliderTorqueTorque->setIsDouble(true);
-    int sliderMin = -max_torque*torqueSliderStep; //note that we are using -max_torque
-    int sliderMax = max_torque*torqueSliderStep;
+    int sliderMin = -m_max_torque*torqueSliderStep; //note that we are using -max_torque
+    int sliderMax = m_max_torque*torqueSliderStep;
     ui->sliderTorqueTorque->setRange(sliderMin, sliderMax);
     int v = ui->sliderTorqueTorque->value();
     if (v > sliderMax) {}
     if (v < sliderMin) {}
-    setRefTorque(ref_torque);
+    setRefTorque(m_ref_torque);
 }
 
 void JointItem::enableTorqueSliderDoubleValue(double value)
@@ -1253,18 +1315,18 @@ void JointItem::enableTorqueSliderDoubleValue(double value)
     double torqueSliderStep = 1 / value;
     ui->sliderTorqueTorque->setSliderStep(torqueSliderStep);
     ui->sliderTorqueTorque->setIsDouble(true);
-    int sliderMin = -max_torque*torqueSliderStep; //note that we are using -max_torque
-    int sliderMax = max_torque*torqueSliderStep;
+    int sliderMin = -m_max_torque*torqueSliderStep; //note that we are using -max_torque
+    int sliderMax = m_max_torque*torqueSliderStep;
     ui->sliderTorqueTorque->setRange(sliderMin, sliderMax);
     int v = ui->sliderTorqueTorque->value();
     if (v > sliderMax) {}
     if (v < sliderMin) {}
-    setRefTorque(ref_torque);
+    setRefTorque(m_ref_torque);
 }
 
 void JointItem::disableTorqueSliderDouble()
 {
-    if (fabs(max_torque) < 1.0)
+    if (fabs(m_max_torque) < 1.0)
     {
         yError("Unable to set integer torque slider");
         return;
@@ -1272,27 +1334,27 @@ void JointItem::disableTorqueSliderDouble()
     double torqueSliderStep = 1;
     ui->sliderTorqueTorque->setSliderStep(torqueSliderStep);
     ui->sliderTorqueTorque->setIsDouble(false);
-    int sliderMin = -max_torque; //note that we are using -max_torque
-    int sliderMax = max_torque;
+    int sliderMin = -m_max_torque; //note that we are using -max_torque
+    int sliderMax = m_max_torque;
     ui->sliderTorqueTorque->setRange(sliderMin, sliderMax);
     int v = ui->sliderTorqueTorque->value();
     if (v > sliderMax) {}
     if (v < sliderMin) {}
-    setRefTorque(ref_torque);
+    setRefTorque(m_ref_torque);
 }
 
 void JointItem::enableCurrentSliderDoubleAuto()
 {
-    double currentSliderStep = 1 / (fabs(-max_current - max_current) / 100.0); //note that we are using -max_velocity
+    double currentSliderStep = 1 / (fabs(-m_max_current - m_max_current) / 100.0); //note that we are using -max_velocity
     ui->sliderCurrentOutput->setSliderStep(currentSliderStep);
     ui->sliderCurrentOutput->setIsDouble(true);
-    int sliderMin = -max_current*currentSliderStep; //note that we are using -max_current
-    int sliderMax = max_current*currentSliderStep;
+    int sliderMin = -m_max_current*currentSliderStep; //note that we are using -max_current
+    int sliderMax = m_max_current*currentSliderStep;
     ui->sliderCurrentOutput->setRange(sliderMin, sliderMax);
     int v = ui->sliderCurrentOutput->value();
     if (v > sliderMax) {}
     if (v < sliderMin) {}
-    setRefCurrent(ref_current);
+    setRefCurrent(m_ref_current);
 }
 
 void JointItem::enableCurrentSliderDoubleValue(double value)
@@ -1300,18 +1362,18 @@ void JointItem::enableCurrentSliderDoubleValue(double value)
     double currentSliderStep = 1 / value;
     ui->sliderCurrentOutput->setSliderStep(currentSliderStep);
     ui->sliderCurrentOutput->setIsDouble(true);
-    int sliderMin = -max_current*currentSliderStep; //note that we are using -max_current
-    int sliderMax = max_current*currentSliderStep;
+    int sliderMin = -m_max_current*currentSliderStep; //note that we are using -max_current
+    int sliderMax = m_max_current*currentSliderStep;
     ui->sliderCurrentOutput->setRange(sliderMin, sliderMax);
     int v = ui->sliderCurrentOutput->value();
     if (v > sliderMax) {}
     if (v < sliderMin) {}
-    setRefCurrent(ref_current);
+    setRefCurrent(m_ref_current);
 }
 
 void JointItem::disableCurrentSliderDouble()
 {
-    if (fabs(max_velocity) < 1.0)
+    if (fabs(m_max_velocity) < 1.0)
     {
         yError("Unable to set integer velocity slider");
         return;
@@ -1319,41 +1381,41 @@ void JointItem::disableCurrentSliderDouble()
     double currentSliderStep = 1;
     ui->sliderCurrentOutput->setSliderStep(currentSliderStep);
     ui->sliderCurrentOutput->setIsDouble(false);
-    int sliderMin = -max_current; //note that we are using -max_current
-    int sliderMax = max_current;
+    int sliderMin = -m_max_current; //note that we are using -max_current
+    int sliderMax = m_max_current;
     ui->sliderCurrentOutput->setRange(sliderMin, sliderMax);
     int v = ui->sliderCurrentOutput->value();
     if (v > sliderMax) {}
     if (v < sliderMin) {}
-    setRefCurrent(ref_current);
+    setRefCurrent(m_ref_current);
 }
 
-void JointItem::enableTrajectoryVelocitySliderDoubleAuto()
+/* void JointItem::enableTrajectoryVelocitySliderDoubleAuto()
 {
-    double trajectoryVelocitySliderStep = 1 / (fabs(0 - max_trajectory_velocity) / 100.0); //note that we are using 0
-    ui->sliderTrajectoryVelocity->setSliderStep(trajectoryVelocitySliderStep);
-    ui->sliderTrajectoryVelocity->setIsDouble(true);
+    double trajectoryVelocitySliderStep = 1 / (fabs(0 - m_max_trajectory_velocity) / 100.0); //note that we are using 0
+    ui->sliderPosTrajectory_Velocity->setSliderStep(trajectoryVelocitySliderStep);
+    ui->sliderPosTrajectory_Velocity->setIsDouble(true);
     int sliderMin = 0 * trajectoryVelocitySliderStep; //note that we are using 0
-    int sliderMax = max_trajectory_velocity*trajectoryVelocitySliderStep;
-    ui->sliderTrajectoryVelocity->setRange(sliderMin, sliderMax);
-    int v = ui->sliderTrajectoryVelocity->value();
+    int sliderMax = m_max_trajectory_velocity*trajectoryVelocitySliderStep;
+    ui->sliderPosTrajectory_Velocity->setRange(sliderMin, sliderMax);
+    int v = ui->sliderPosTrajectory_Velocity->value();
     if (v > sliderMax) {}
     if (v < sliderMin) {}
-    setRefTrajectorySpeed(ref_trajectory_velocity);
+    setPosTrajectory_ReferenceSpeed(ref_trajectory_velocity);
 }
 
-void JointItem::enableTrajectoryVelocitySliderDoubleValue(double value)
+void JointItem::enablePosTrajectoryVelocitySliderDoubleValue(double value)
 {
     double trajectoryVelocitySliderStep = 1 / value;
-    ui->sliderTrajectoryVelocity->setSliderStep(trajectoryVelocitySliderStep);
-    ui->sliderTrajectoryVelocity->setIsDouble(true);
+    ui->sliderPosTrajectory_Velocity->setSliderStep(trajectoryVelocitySliderStep);
+    ui->sliderPosTrajectory_Velocity->setIsDouble(true);
     int sliderMin = 0 * trajectoryVelocitySliderStep; //note that we are using 0
-    int sliderMax = max_trajectory_velocity*trajectoryVelocitySliderStep;
-    ui->sliderTrajectoryVelocity->setRange(sliderMin, sliderMax);
-    int v = ui->sliderTrajectoryVelocity->value();
+    int sliderMax = m_max_trajectory_velocity*trajectoryVelocitySliderStep;
+    ui->sliderPosTrajectory_Velocity->setRange(sliderMin, sliderMax);
+    int v = ui->sliderPosTrajectory_Velocity->value();
     if (v > sliderMax) {}
     if (v < sliderMin) {}
-    setRefTrajectorySpeed(ref_trajectory_velocity);
+    setPosTrajectory_ReferenceSpeed(ref_trajectory_velocity);
 }
 
 void JointItem::disableTrajectoryVelocitySliderDouble()
@@ -1361,13 +1423,44 @@ void JointItem::disableTrajectoryVelocitySliderDouble()
     int sliderMin = 0; //note that we are using 0
     int sliderMax = max_trajectory_velocity;
     double trajectoryVelocitySliderStep = 1;
-    ui->sliderTrajectoryVelocity->setSliderStep(trajectoryVelocitySliderStep);
-    ui->sliderTrajectoryVelocity->setRange(sliderMin, sliderMax);
-    ui->sliderTrajectoryVelocity->setIsDouble(false);
-    int v = ui->sliderTrajectoryVelocity->value();
+    ui->sliderPosTrajectory_Velocity->setSliderStep(trajectoryVelocitySliderStep);
+    ui->sliderPosTrajectory_Velocity->setRange(sliderMin, sliderMax);
+    ui->sliderPosTrajectory_Velocity->setIsDouble(false);
+    int v = ui->sliderPosTrajectory_Velocity->value();
     if (v > sliderMax) {}
     if (v < sliderMin) {}
-    setRefTrajectorySpeed(ref_trajectory_velocity);
+    setPosTrajectory_ReferenceSpeed(m_ref_trajectory_velocity);
+}
+*/
+
+
+void JointItem::setNumberOfPositionSliderDecimals(size_t num)
+{
+    ui->sliderMixedPosition->number_of_decimals=num;
+    ui->sliderPosTrajectory_Position->number_of_decimals = num;
+    ui->sliderDirectPosition->number_of_decimals = num;
+    ui->sliderMixedPosition->number_of_decimals = num;
+    ui->sliderPosTrajectory_Position->number_of_decimals = num;
+    ui->sliderDirectPosition->number_of_decimals = num;
+}
+void JointItem::setNumberOfVelocitySliderDecimals(size_t num)
+{
+    ui->sliderMixedVelocity->number_of_decimals=num;
+    ui->sliderPosTrajectory_Velocity->number_of_decimals = num;
+    ui->sliderVelTrajectory_Velocity->number_of_decimals = num;
+    ui->sliderVelocityDirectVelocityDirect->number_of_decimals = num;
+}
+void JointItem::setNumberOfAccelerationSliderDecimals(size_t num)
+{
+    ui->sliderVelTrajectory_Acceleration->number_of_decimals = num;
+}
+void JointItem::setNumberOfTorqueSliderDecimals(size_t num)
+{
+    ui->sliderTorqueTorque->number_of_decimals = num;
+}
+void JointItem::setNumberOfCurrentSliderDecimals(size_t num)
+{
+    ui->sliderCurrentOutput->number_of_decimals = num;
 }
 
 void JointItem::setEnabledOptions(bool debug_param_enabled,
@@ -1390,8 +1483,17 @@ JointItem::~JointItem()
     disconnect(ui->comboMode,SIGNAL(currentIndexChanged(int)),this,SLOT(onModeChanged(int)));
     disconnect(ui->comboInteraction,SIGNAL(currentIndexChanged(int)),this,SLOT(onInteractionChanged(int)));
 
-    disconnect(ui->sliderTrajectoryPosition,SIGNAL(sliderPressed()),this,SLOT(onSliderTrajectoryPositionPressed()));
-    disconnect(ui->sliderTrajectoryPosition,SIGNAL(sliderReleased()),this,SLOT(onSliderTrajectoryPositionReleased()));
+    disconnect(ui->sliderPosTrajectory_Position,SIGNAL(sliderPressed()),this,SLOT(onSliderPosTrajectory_PositionPressed()));
+    disconnect(ui->sliderPosTrajectory_Position,SIGNAL(sliderReleased()),this,SLOT(onSliderPosTrajectory_PositionReleased()));
+
+    disconnect(ui->sliderPosTrajectory_Velocity, SIGNAL(sliderPressed()), this, SLOT(onSliderPosTrajectory_VelocityPressed()));
+    disconnect(ui->sliderPosTrajectory_Velocity, SIGNAL(sliderReleased()), this, SLOT(onSliderPosTrajectory_VelocityReleased()));
+
+    disconnect(ui->sliderVelTrajectory_Velocity,SIGNAL(sliderPressed()),this,SLOT(onSliderVelTrajectory_VelocityPressed()));
+    disconnect(ui->sliderVelTrajectory_Velocity,SIGNAL(sliderReleased()),this,SLOT(onSliderVelTrajectory_VelocityReleased()));
+
+    disconnect(ui->sliderVelTrajectory_Acceleration, SIGNAL(sliderPressed()), this, SLOT(onSliderVelTrajectory_AccelerationPressed()));
+    disconnect(ui->sliderVelTrajectory_Acceleration, SIGNAL(sliderReleased()), this, SLOT(onSliderVelTrajectory_AccelerationReleased()));
 
     disconnect(ui->sliderTorqueTorque,SIGNAL(sliderPressed()),this,SLOT(onSliderTorquePressed()));
     disconnect(ui->sliderTorqueTorque,SIGNAL(sliderReleased()),this,SLOT(onSliderTorqueReleased()));
@@ -1408,7 +1510,7 @@ JointItem::~JointItem()
     disconnect(ui->sliderMixedPosition,SIGNAL(sliderPressed()),this,SLOT(onSliderMixedPositionPressed()));
     disconnect(ui->sliderMixedPosition,SIGNAL(sliderReleased()),this,SLOT(onSliderMixedPositionReleased()));
 
-    disconnect(ui->sliderTrajectoryVelocity, SIGNAL(sliderPressed()), this, SLOT(onSliderTrajectoryVelocityPressed()));
+    disconnect(ui->sliderMixedVelocity, SIGNAL(sliderPressed()), this, SLOT(onSliderMixedVelocityPressed()));
     disconnect(ui->sliderMixedVelocity, SIGNAL(sliderReleased()), this, SLOT(onSliderMixedVelocityReleased()));
 
     disconnect(ui->buttonHome,SIGNAL(clicked()),this,SLOT(onHomeClicked()));
@@ -1434,8 +1536,8 @@ void JointItem::installFilter()
     ui->sliderMixedPosition->installEventFilter(filter);
     ui->sliderMixedVelocity->installEventFilter(filter);
     ui->sliderDirectPosition->installEventFilter(filter);
-    ui->sliderTrajectoryPosition->installEventFilter(filter);
-    ui->sliderTrajectoryVelocity->installEventFilter(filter);
+    ui->sliderPosTrajectory_Position->installEventFilter(filter);
+    ui->sliderPosTrajectory_Velocity->installEventFilter(filter);
     ui->sliderTorqueTorque->installEventFilter(filter);
 }
 
@@ -1483,7 +1585,7 @@ void JointItem::onStackedWidgetChanged(int index)
         {
             velocityTimer.stop();
             lastVelocity = 0;
-            updateSliderVelocity(0);
+            updateSliderVelTrajectoryVelocity(0);
         }
         if(velocityDirectModeEnabled)
         {
@@ -1541,15 +1643,15 @@ QString JointItem::getJointName()
     return jointName;
 }
 
-void JointItem::onSliderVelocityPressed()
+void JointItem::onSliderVelTrajectory_VelocityPressed()
 {
-    sliderVelocityPressed = true;
+    sliderVelTrajectory_VelocityPressed = true;
 }
 
-void JointItem::onSliderVelocityReleased()
+void JointItem::onSliderVelTrajectory_VelocityReleased()
 {
-    lastVelocity = (double)ui->sliderVelocityVelocity->value() / ui->sliderVelocityVelocity->getSliderStep();
-    sliderVelocityPressed = false;
+    lastVelocity = (double)ui->sliderVelTrajectory_Velocity->value() / ui->sliderVelTrajectory_Velocity->getSliderStep();
+    sliderVelTrajectory_VelocityPressed = false;
 }
 
 void JointItem::onSliderVelocityDirectPressed()
@@ -1591,7 +1693,7 @@ void JointItem::onVelocityTimer()
 {
     if(velocityModeEnabled)
     {
-        emit sliderVelocityCommand(lastVelocity,jointIndex);
+        emit sliderVelTrajectoryVelocityCommand(lastVelocity,jointIndex);
     }
 }
 
@@ -1627,26 +1729,26 @@ void JointItem::onTorqueTimer()
     }
 }
 
-void JointItem::onSliderTrajectoryPositionPressed()
+void JointItem::onSliderPosTrajectory_PositionPressed()
 {
-    sliderTrajectoryPositionPressed = true;
+    sliderPosTrajectory_PositionPressed = true;
 }
 
-void JointItem::onSliderTrajectoryPositionReleased()
+void JointItem::onSliderPosTrajectory_PositionReleased()
 {
-    if (ui->sliderTrajectoryPosition->getIsDouble())
+    if (ui->sliderPosTrajectory_Position->getIsDouble())
     {
-        double val = ui->sliderTrajectoryPosition->value();
-        emit sliderTrajectoryPositionCommand(val / ui->sliderTrajectoryPosition->getSliderStep(), jointIndex);
-        updateTrajectoryPositionTarget(val / ui->sliderTrajectoryPosition->getSliderStep());
+        double val = ui->sliderPosTrajectory_Position->value();
+        emit sliderPosTrajectoryPositionCommand(val / ui->sliderPosTrajectory_Position->getSliderStep(), jointIndex);
+        updateTrajectoryPositionTarget(val / ui->sliderPosTrajectory_Position->getSliderStep());
     }
     else
     {
-        double val = ui->sliderTrajectoryPosition->value();
-        emit sliderTrajectoryPositionCommand(val, jointIndex);
+        double val = ui->sliderPosTrajectory_Position->value();
+        emit sliderPosTrajectoryPositionCommand(val, jointIndex);
         updateTrajectoryPositionTarget(val);
     }
-    sliderTrajectoryPositionPressed = false;
+    sliderPosTrajectory_PositionPressed = false;
     motionDone = false;
 }
 
@@ -1687,16 +1789,28 @@ void JointItem::onSliderDirectPositionReleased()
     motionDone = false;
 }
 
-void JointItem::onSliderTrajectoryVelocityPressed()
+void JointItem::onSliderPosTrajectory_VelocityPressed()
 {
-    sliderTrajectoryVelocityPressed = true;
+    sliderPosTrajectory_VelocityPressed = true;
 }
 
-void JointItem::onSliderTrajectoryVelocityReleased()
+void JointItem::onSliderPosTrajectory_VelocityReleased()
 {
-    ref_trajectory_velocity = (double)ui->sliderTrajectoryVelocity->value() / ui->sliderTrajectoryVelocity->getSliderStep();
-    emit sliderTrajectoryVelocityCommand(ref_trajectory_velocity, jointIndex);
-    sliderTrajectoryVelocityPressed = false;
+    m_ref_PosTrajectory_velocity = (double)ui->sliderPosTrajectory_Velocity->value() / ui->sliderPosTrajectory_Velocity->getSliderStep();
+    emit sliderPosTrajectoryVelocityCommand(m_ref_PosTrajectory_velocity, jointIndex);
+    sliderPosTrajectory_VelocityPressed = false;
+}
+
+void JointItem::onSliderVelTrajectory_AccelerationPressed()
+{
+    sliderVelTrajectory_AccelerationPressed = true;
+}
+
+void JointItem::onSliderVelTrajectory_AccelerationReleased()
+{
+    m_ref_VelTrajectory_acceleration = (double)ui->sliderVelTrajectory_Acceleration->value() / ui->sliderVelTrajectory_Acceleration->getSliderStep();
+    emit sliderVelTrajectoryAccelerationCommand(m_ref_VelTrajectory_acceleration, jointIndex);
+    sliderVelTrajectory_AccelerationPressed = false;
 }
 
 void JointItem::onSliderPWMPressed()
@@ -1736,7 +1850,7 @@ void JointItem::onSliderTorqueReleased()
 double JointItem::getTrajectoryPositionValue()
 {
     //this function is mainly used used by the sequencer
-    double pos = (double)ui->sliderTrajectoryPosition->value() / ui->sliderTrajectoryPosition->getSliderStep();
+    double pos = (double)ui->sliderPosTrajectory_Position->value() / ui->sliderPosTrajectory_Position->getSliderStep();
     if (fabs(pos) < 1e-6) {
         pos = 0;
     }
@@ -1746,7 +1860,7 @@ double JointItem::getTrajectoryPositionValue()
 double JointItem::getTrajectoryVelocityValue()
 {
     //this function is mainly used used by the sequencer
-    double vel = (double)ui->sliderTrajectoryVelocity->value() / ui->sliderTrajectoryVelocity->getSliderStep();
+    double vel = (double)ui->sliderPosTrajectory_Velocity->value() / ui->sliderPosTrajectory_Velocity->getSliderStep();
     if (fabs(vel) < 1e-6) {
         vel = 0;
     }
@@ -1790,31 +1904,40 @@ void JointItem::updateBraked(bool brk)
     }
 }
 
-void JointItem::updateSliderPosition(SliderWithTarget *slider, double val)
+void JointItem::updateSliderPosTrajectoryPosition(double val)
 {
-    if(sliderTrajectoryPositionPressed ||
-        sliderMixedPositionPressed ||
-        sliderDirectPositionPressed)
+    if(sliderPosTrajectory_PositionPressed)
     {
         return;
     }
-
-    /*
-    //@@@checkme
-    if (motionDone == false)
-    {
-        return;
-    }*/
-    slider->setValue(val);
+    ui->sliderPosTrajectory_Position->setValue(val);
 }
 
-void JointItem::updateSliderVelocity(double val)
+void JointItem::updateSliderPositionDirect(double val)
 {
-    if (sliderVelocityPressed)
+    if(sliderDirectPositionPressed)
     {
         return;
     }
-    ui->sliderVelocityVelocity->setValue(val);
+    ui->sliderDirectPosition->setValue(val);
+}
+
+void JointItem::updateSliderMixedPosition(double val)
+{
+    if(sliderMixedPositionPressed)
+    {
+        return;
+    }
+    ui->sliderMixedPosition->setValue(val);
+}
+
+void JointItem::updateSliderPosTrajectoryVelocity(double val)
+{
+    if (sliderPosTrajectory_VelocityPressed)
+    {
+        return;
+    }
+    ui->sliderPosTrajectory_Velocity->setValue(val);
 }
 
 void JointItem::updateSliderVelocityDirect(double val)
@@ -1844,8 +1967,11 @@ void JointItem::updateSliderCurrent(double val)
 
 void JointItem::updateJointFault(int i, std::string message)
 {
-    ui->labelFaultCodeEntry->setText(QString::fromStdString(std::to_string(i)));
-    ui->labelFaultMessageEntry->setText(QString::fromStdString(message));
+    std::string entryc = std::to_string(i);
+    QString q1(entryc.c_str());
+    QString q2(message.c_str());
+    ui->labelFaultCodeEntry->setText(q1);
+    ui->labelFaultMessageEntry->setText(q2);
 }
 
 void JointItem::updateSliderTorque(double val)
@@ -1856,12 +1982,20 @@ void JointItem::updateSliderTorque(double val)
     ui->sliderTorqueTorque->setValue(val);
 }
 
-void JointItem::updateSliderTrajectoryVelocity(double val)
+void JointItem::updateSliderVelTrajectoryVelocity(double val)
 {
-    if (sliderTrajectoryVelocityPressed){
+    if (sliderVelTrajectory_VelocityPressed){
         return;
     }
-    ui->sliderTrajectoryVelocity->setValue(val);
+    ui->sliderVelTrajectory_Velocity->setValue(val);
+}
+
+void JointItem::updateSliderVelTrajectoryAcceleration(double val)
+{
+    if (sliderVelTrajectory_AccelerationPressed){
+        return;
+    }
+    ui->sliderVelTrajectory_Acceleration->setValue(val);
 }
 
 void JointItem::setRefPWM(double pwmValue)
@@ -1893,7 +2027,7 @@ void JointItem::setRefCurrent(double currentValue)
 void JointItem::setPosition(double val)
 {
     QString sVal;
-    if (ui->sliderTrajectoryPosition->getIsDouble())
+    if (ui->sliderPosTrajectory_Position->getIsDouble())
     {
         double pos = val;
         sVal = QString("%L1").arg(pos, 0, 'f', 3);
@@ -1914,17 +2048,17 @@ void JointItem::setPosition(double val)
 
     if(ui->stackedWidget->currentIndex() == POSITION){
         ui->editPositionJointPos->setText(sVal);
-        updateSliderPosition(ui->sliderTrajectoryPosition, val);
+        updateSliderPosTrajectoryPosition(val);
     }
 
     if(ui->stackedWidget->currentIndex() == POSITION_DIR){
         ui->editPositionDirJointPos->setText(sVal);
-        updateSliderPosition(ui->sliderDirectPosition, val);
+        updateSliderPositionDirect(val);
     }
 
     if(ui->stackedWidget->currentIndex() == MIXED){
         ui->editMixedJointPos->setText(sVal);
-        updateSliderPosition(ui->sliderMixedPosition, val);
+        updateSliderMixedPosition(val);
     }
 
     if(ui->stackedWidget->currentIndex() == VELOCITY){
@@ -1949,23 +2083,41 @@ void JointItem::setRefTorque(double val)
 {
     if(ui->stackedWidget->currentIndex() == TORQUE){
         updateSliderTorque(val);
-        ref_torque = val;
+        m_ref_torque = val;
     }
 }
 
-void JointItem::setRefVelocitySpeed(double val)
+void JointItem::setVelTrajectory_ReferenceSpeed(double val)
 {
     if (ui->stackedWidget->currentIndex() == VELOCITY){
-        updateSliderVelocity(val);
-        ref_speed = val;
+        updateSliderVelTrajectoryVelocity(val);
+        m_ref_speed = val;
     }
 }
 
-void JointItem::setRefTrajectorySpeed(double val)
+void JointItem::setVelTrajectory_ReferenceAcceleration(double val)
+{
+    if (ui->stackedWidget->currentIndex() == VELOCITY){
+        updateSliderVelTrajectoryAcceleration(val);
+        m_ref_VelTrajectory_acceleration = val;
+
+        if (val < 0.001)
+        {
+            ui->groupBox_2->setStyleSheet("background-color:orange; color: rgb(35, 38, 41);");
+            ui->groupBox_2->setTitle("Acceleration is ZERO!");
+        }
+        else
+        {
+            ui->groupBox_2->setStyleSheet("background-color:transparent; color: rgb(35, 38, 41);");
+            ui->groupBox_2->setTitle("Acceleration");
+        }
+    }
+}
+void JointItem::setPosTrajectory_ReferenceSpeed(double val)
 {
     if (ui->stackedWidget->currentIndex() == POSITION){
-        updateSliderTrajectoryVelocity(val);
-        ref_trajectory_velocity = val;
+        updateSliderPosTrajectoryVelocity(val);
+        m_ref_PosTrajectory_velocity = val;
 
         if (val < 0.001)
         {
@@ -1980,7 +2132,7 @@ void JointItem::setRefTrajectorySpeed(double val)
     }
 }
 
-void JointItem::setRefTrajectoryPosition(double val)
+void JointItem::setPosTrajectory_ReferencePosition(double val)
 {
     if (ui->stackedWidget->currentIndex() == POSITION){
         updateTrajectoryPositionTarget(val);
@@ -2143,7 +2295,7 @@ void JointItem::setSpeed(double meas)
     }
 
     if(ui->stackedWidget->currentIndex() == VELOCITY){
-        if(!sliderVelocityPressed){
+        if(!sliderVelTrajectory_VelocityPressed){
             ui->editVelocitySpeed->setText(sVal);
             //updateSlider(ui->sliderVelocityVelocity,ui->labelVelocityVelocity,val);
         }
@@ -2467,8 +2619,8 @@ void JointItem::setCurrentRange(double min, double max)
 {
     if (min < max)
     {
-        min_current = min;
-        max_current = max;
+        m_min_current = min;
+        m_max_current = max;
     }
     else
     {
@@ -2479,12 +2631,12 @@ void JointItem::setCurrentRange(double min, double max)
 
 void JointItem::setPositionRange(double min, double max)
 {
-    min_position = 1;
-    max_position = 2;
+    m_min_position = 1;
+    m_max_position = 2;
     if(min < max)
     {
-        min_position = min;
-        max_position = max;
+        m_min_position = min;
+        m_max_position = max;
     }
     else
     {
@@ -2494,12 +2646,12 @@ void JointItem::setPositionRange(double min, double max)
 
 void JointItem::setVelocityRange(double min, double max)
 {
-    min_velocity = -100;
-    max_velocity = 100;
+    m_min_velocity = -100;
+    m_max_velocity = 100;
     if (min < max)
     {
-        min_velocity = min;
-        max_velocity = max;
+        m_min_velocity = min;
+        m_max_velocity = max;
     }
     else
     {
@@ -2507,12 +2659,14 @@ void JointItem::setVelocityRange(double min, double max)
     }
 }
 
-void JointItem::setTrajectoryVelocityRange( double max)
+void JointItem::setAccelerationRange(double min, double max)
 {
-    max_trajectory_velocity = 100;
-    if (max >= 0)
+    m_min_acceleration = -100;
+    m_max_acceleration = 100;
+    if (min < max)
     {
-        max_trajectory_velocity = max;
+        m_min_acceleration = min;
+        m_max_acceleration = max;
     }
     else
     {
@@ -2522,10 +2676,10 @@ void JointItem::setTrajectoryVelocityRange( double max)
 
 void JointItem::setTorqueRange(double max)
 {
-    max_torque = 5;
+    m_max_torque = 5;
     if (max >= 0)
     {
-        max_torque = max;
+        m_max_torque = max;
     }
     else
     {
@@ -2585,8 +2739,8 @@ void JointItem::sequenceActivated()
     ui->sliderPWMOutput->setEnabled(false);
     ui->sliderCurrentOutput->setEnabled(false);
     ui->sliderDirectPosition->setEnabled(false);
-    ui->sliderTrajectoryPosition->setEnabled(false);
-    ui->sliderTrajectoryVelocity->setEnabled(false);
+    ui->sliderPosTrajectory_Position->setEnabled(false);
+    ui->sliderPosTrajectory_Velocity->setEnabled(false);
     ui->sliderTorqueTorque->setEnabled(false);
 
 }
@@ -2598,8 +2752,8 @@ void JointItem::sequenceStopped()
     ui->sliderPWMOutput->setEnabled(true);
     ui->sliderCurrentOutput->setEnabled(true);
     ui->sliderDirectPosition->setEnabled(true);
-    ui->sliderTrajectoryPosition->setEnabled(true);
-    ui->sliderTrajectoryVelocity->setEnabled(true);
+    ui->sliderPosTrajectory_Position->setEnabled(true);
+    ui->sliderPosTrajectory_Velocity->setEnabled(true);
     ui->sliderTorqueTorque->setEnabled(true);
 }
 

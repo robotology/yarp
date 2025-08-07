@@ -535,13 +535,21 @@ void MainWindow::onSetPosSliderOptionMW(int choice, double val, int digits)
 {
     emit sig_setPosSliderOptionMW(choice, val, digits);
 }
-void MainWindow::onSetVelSliderOptionMW(int choice, double val)
+void MainWindow::onSetVelSliderOptionMW(int choice, double val, int digits)
 {
-    emit sig_setVelSliderOptionMW(choice, val);
+    emit sig_setVelSliderOptionMW(choice, val, digits);
 }
-void MainWindow::onSetTrqSliderOptionMW(int choice, double val)
+void MainWindow::onSetAccSliderOptionMW(int choice, double val, int digits)
 {
-    emit sig_setTrqSliderOptionMW(choice, val);
+    emit sig_setAccSliderOptionMW(choice, val, digits);
+}
+void MainWindow::onSetTrqSliderOptionMW(int choice, double val, int digits)
+{
+    emit sig_setTrqSliderOptionMW(choice, val, digits);
+}
+void MainWindow::onSetCurSliderOptionMW(int choice, double val, int digits)
+{
+    emit sig_setCurSliderOptionMW(choice, val, digits);
 }
 
 void MainWindow::onJointClicked(int partIndex, int jointIndex)
@@ -708,8 +716,10 @@ bool MainWindow::init(std::vector<std::string> enabledParts,
             connect(this, SIGNAL(sig_viewMotorPositions(bool)), part, SLOT(onViewMotorPositions(bool)));
             connect(this, SIGNAL(sig_viewDutyCycles(bool)), part, SLOT(onViewDutyCycles(bool)));
             connect(this, SIGNAL(sig_setPosSliderOptionMW(int,double,int)), part, SLOT(onSetPosSliderOptionPI(int,double,int)));
-            connect(this, SIGNAL(sig_setVelSliderOptionMW(int,double)), part, SLOT(onSetVelSliderOptionPI(int,double)));
-            connect(this, SIGNAL(sig_setTrqSliderOptionMW(int,double)), part, SLOT(onSetTrqSliderOptionPI(int,double)));
+            connect(this, SIGNAL(sig_setVelSliderOptionMW(int,double,int)), part, SLOT(onSetVelSliderOptionPI(int,double,int)));
+            connect(this, SIGNAL(sig_setAccSliderOptionMW(int,double,int)), part, SLOT(onSetAccSliderOptionPI(int,double,int)));
+            connect(this, SIGNAL(sig_setTrqSliderOptionMW(int,double,int)), part, SLOT(onSetTrqSliderOptionPI(int,double,int)));
+            connect(this, SIGNAL(sig_setCurSliderOptionMW(int,double,int)), part, SLOT(onSetCurSliderOptionPI(int,double,int)));
             connect(this, SIGNAL(sig_viewPositionTargetBox(bool)), part, SLOT(onViewPositionTargetBox(bool)));
             connect(this, SIGNAL(sig_viewPositionTargetValue(bool)), part, SLOT(onViewPositionTargetValue(bool)));
             connect(this, SIGNAL(sig_enableControlVelocity(bool)), part, SLOT(onEnableControlVelocity(bool)));
