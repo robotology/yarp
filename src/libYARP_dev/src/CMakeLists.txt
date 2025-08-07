@@ -9,7 +9,6 @@ set(YARP_dev_HDRS
   yarp/dev/all.h
   yarp/dev/api.h
   yarp/dev/AudioGrabberInterfaces.h
-  yarp/dev/AudioGrabberVocabs.h
   yarp/dev/AudioPlayerDeviceBase.h
   yarp/dev/AudioRecorderDeviceBase.h
   yarp/dev/AudioVisualInterfaces.h
