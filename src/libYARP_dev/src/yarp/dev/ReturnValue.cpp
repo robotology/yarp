@@ -16,6 +16,8 @@ YARP_BEGIN_PACK
 class ReturnValueHeader
 {
 public:
+    yarp::os::NetInt32 outerListTag{ 0 };
+    yarp::os::NetInt32 outerListLen{ 0 };
     yarp::os::NetInt32 dataTag{0};
     yarp::os::NetInt32 data{0};
 
@@ -146,6 +148,7 @@ bool ReturnValue::read(yarp::os::ConnectionReader& connection)
 {
     connection.convertTextMode();
     ReturnValueHeader header;
+
     bool ok = connection.expectBlock((char*)&header, sizeof(header));
     if (!ok) {
         return false;
@@ -157,7 +160,9 @@ bool ReturnValue::read(yarp::os::ConnectionReader& connection)
 bool ReturnValue::write(yarp::os::ConnectionWriter& connection) const
 {
     ReturnValueHeader header;
-    header.dataTag = BOTTLE_TAG_INT32;
+    header.outerListTag = BOTTLE_TAG_LIST;
+    header.outerListLen = 1;
+    header.dataTag = BOTTLE_TAG_VOCAB32;
     header.data = (int32_t)(this->value_b);
     connection.appendBlock((char*)&header, sizeof(header));
     connection.convertTextMode();
