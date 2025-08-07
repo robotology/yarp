@@ -1025,17 +1025,6 @@ bool Map2DStorage::read(yarp::os::ConnectionReader& connection)
         return false;
     }
 
-    //parse string command
-    if (in.get(0).isString())
-    {
-        //parse_string_command(in, out);
-    }
-    // parse vocab command
-    else if (in.get(0).isVocab32())
-    {
-        //parse_vocab_command(in, out);
-    }
-
     yarp::os::ConnectionWriter* returnToSender = connection.getWriter();
     if (returnToSender != nullptr)
     {
