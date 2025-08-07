@@ -37,6 +37,7 @@ using yarp::os::impl::StoreInt8;
 using yarp::os::impl::StoreList;
 using yarp::os::impl::StoreString;
 using yarp::os::impl::StoreVocab32;
+using yarp::os::impl::StoreVocab64;
 
 
 YARP_OS_LOG_COMPONENT(STORABLE, "yarp.os.impl.Storable")
@@ -49,6 +50,7 @@ const int StoreInt64::code = BOTTLE_TAG_INT64;
 const int StoreFloat32::code = BOTTLE_TAG_FLOAT32;
 const int StoreFloat64::code = BOTTLE_TAG_FLOAT64;
 const int StoreVocab32::code = BOTTLE_TAG_VOCAB32;
+const int StoreVocab64::code = BOTTLE_TAG_VOCAB64;
 const int StoreString::code = BOTTLE_TAG_STRING;
 const int StoreBlob::code = BOTTLE_TAG_BLOB;
 const int StoreList::code = BOTTLE_TAG_LIST;
@@ -80,6 +82,9 @@ Storable* Storable::createByCode(std::int32_t id)
         break;
     case StoreVocab32::code:
         storable = new StoreVocab32();
+        break;
+    case StoreVocab64::code:
+        storable = new StoreVocab64();
         break;
     case StoreFloat32::code:
         storable = new StoreFloat32();
@@ -322,6 +327,62 @@ bool StoreVocab32::writeRaw(ConnectionWriter& writer) const
     return true;
 }
 
+////////////////////////////////////////////////////////////////////////////
+// StoreVocab64
+
+std::string StoreVocab64::toString() const
+{
+    if (x == 0) {
+        return "false";
+    }
+    if (x == '1') {
+        return "true";
+    }
+    return Vocab64::decode(x);
+}
+
+void StoreVocab64::fromString(const std::string& src)
+{
+    x = Vocab64::encode(src);
+}
+
+std::string StoreVocab64::toStringNested() const
+{
+    if (x == 0) {
+        return "false";
+    }
+    if (x == '1') {
+        return "true";
+    }
+    return std::string("[") + toString() + "]";
+}
+
+void StoreVocab64::fromStringNested(const std::string& src)
+{
+    x = 0;
+    if (src.length() > 0) {
+        if (src[0] == '[') {
+            // ignore first [ and last ]
+            fromString(src.substr(1, src.length() - 2));
+        } else if (src == "true") {
+            x = static_cast<int>('1');
+        } else if (src == "false") {
+            x = 0;
+        }
+    }
+}
+
+bool StoreVocab64::readRaw(ConnectionReader& reader)
+{
+    x = reader.expectInt64();
+    return true;
+}
+
+bool StoreVocab64::writeRaw(ConnectionWriter& writer) const
+{
+    writer.appendInt64(x);
+    return true;
+}
 
 ////////////////////////////////////////////////////////////////////////////
 // StoreFloat32

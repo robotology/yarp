@@ -177,6 +177,12 @@ bool Value::isVocab32() const
     return proxy->isVocab32();
 }
 
+bool Value::isVocab64() const
+{
+    ok();
+    return proxy->isVocab64();
+}
+
 bool Value::isBlob() const
 {
     ok();
@@ -229,6 +235,12 @@ yarp::conf::vocab32_t Value::asVocab32() const
 {
     ok();
     return proxy->asVocab32();
+}
+
+yarp::conf::vocab64_t Value::asVocab64() const
+{
+    ok();
+    return proxy->asVocab64();
 }
 
 std::string Value::asString() const

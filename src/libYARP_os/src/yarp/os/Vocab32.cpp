@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#include <yarp/os/Vocab.h>
+#include <yarp/os/Vocab32.h>
 
 using namespace yarp::os;
 
