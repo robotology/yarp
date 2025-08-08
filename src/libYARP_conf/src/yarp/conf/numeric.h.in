@@ -76,6 +76,7 @@ namespace conf {
 typedef @YARP_FLOAT32@ float32_t;
 typedef @YARP_FLOAT64@ float64_t;
 typedef std::int32_t vocab32_t;
+typedef std::int64_t vocab64_t;
 #if defined(YARP_HAS_FLOAT128_T)
 typedef @YARP_FLOAT128@ float128_t;
 #endif

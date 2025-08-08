@@ -159,6 +159,15 @@ bool WireWriter::writeVocab32(yarp::conf::vocab32_t x, bool skip_tag) const
     return !writer.isError();
 }
 
+bool WireWriter::writeVocab64(yarp::conf::vocab64_t x, bool skip_tag) const
+{
+    if (!skip_tag) {
+        writer.appendInt32(BOTTLE_TAG_VOCAB64);
+    }
+    writer.appendInt64(x);
+    return !writer.isError();
+}
+
 bool WireWriter::writeSizeT(std::size_t x, bool skip_tag) const
 {
     int tmp = x;

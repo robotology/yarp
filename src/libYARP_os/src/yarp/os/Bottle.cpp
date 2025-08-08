@@ -167,6 +167,12 @@ void Bottle::addVocab32(yarp::conf::vocab32_t x)
     implementation->addVocab32(x);
 }
 
+void Bottle::addVocab64(yarp::conf::vocab64_t x)
+{
+    implementation->edit();
+    implementation->addVocab64(x);
+}
+
 void Bottle::addString(const char* str)
 {
     implementation->edit();
@@ -382,13 +388,16 @@ std::string Bottle::describeBottleCode(int code)
         unitName = "mixed";
         break;
     case BOTTLE_TAG_INT32:
-        unitName = "int";
+        unitName = "int32";
         break;
     case BOTTLE_TAG_VOCAB32:
-        unitName = "vocab";
+        unitName = "vocab32";
+        break;
+    case BOTTLE_TAG_VOCAB64:
+        unitName = "vocab64";
         break;
     case BOTTLE_TAG_FLOAT64:
-        unitName = "float";
+        unitName = "float64";
         break;
     case BOTTLE_TAG_STRING:
         unitName = "string";

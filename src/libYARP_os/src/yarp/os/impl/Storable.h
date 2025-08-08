@@ -13,6 +13,7 @@
 #include <yarp/os/LogComponent.h>
 #include <yarp/os/Value.h>
 #include <yarp/os/Vocab.h>
+#include <yarp/os/Vocab64.h>
 
 
 #define UNIT_MASK         \
@@ -23,6 +24,7 @@
      BOTTLE_TAG_FLOAT32 | \
      BOTTLE_TAG_FLOAT64 | \
      BOTTLE_TAG_VOCAB32 | \
+     BOTTLE_TAG_VOCAB64 | \
      BOTTLE_TAG_STRING  | \
      BOTTLE_TAG_BLOB)
 
@@ -193,7 +195,17 @@ public:
         return false;
     }
 
+    bool isVocab64() const override
+    {
+        return false;
+    }
+
     yarp::conf::vocab32_t asVocab32() const override
+    {
+        return 0;
+    }
+
+    yarp::conf::vocab64_t asVocab64() const override
     {
         return 0;
     }
@@ -822,7 +834,7 @@ public:
 };
 
 /**
- * A vocabulary item.
+ * A 32 bit vocabulary item.
  */
 class YARP_os_impl_API StoreVocab32 :
         public Storable
@@ -897,6 +909,92 @@ public:
     }
 
     yarp::conf::vocab32_t asVocab32() const override
+    {
+        return x;
+    }
+
+    std::string asString() const override
+    {
+        return toString();
+    }
+};
+
+/**
+ * A 64 bit vocabulary item.
+ */
+class YARP_os_impl_API StoreVocab64 :
+        public Storable
+{
+    yarp::conf::vocab64_t x{0};
+
+public:
+    StoreVocab64() = default;
+
+    StoreVocab64(yarp::conf::vocab64_t x) :
+            x(x)
+    {
+    }
+
+    Storable* createStorable() const override
+    {
+        return new StoreVocab64();
+    }
+
+    void copy(const Storable& alt) override
+    {
+        x = alt.asVocab64();
+    }
+
+    std::string toString() const override;
+    void fromString(const std::string& src) override;
+    std::string toStringNested() const override;
+    void fromStringNested(const std::string& src) override;
+
+    static const std::int32_t code;
+    std::int32_t getCode() const override
+    {
+        return code;
+    }
+
+    bool readRaw(ConnectionReader& reader) override;
+    bool writeRaw(ConnectionWriter& writer) const override;
+
+    bool isBool() const override
+    {
+        return (x == 0 || x == '1');
+    }
+
+    bool asBool() const override
+    {
+        return x != 0;
+    }
+
+    std::int32_t asInt32() const override
+    {
+        return x;
+    }
+
+    std::int64_t asInt64() const override
+    {
+        return x;
+    }
+
+    yarp::conf::float32_t asFloat32() const override
+    {
+        return static_cast<yarp::conf::float32_t>(x);
+    }
+
+    yarp::conf::float64_t asFloat64() const override
+    {
+        return x;
+    }
+
+    bool isVocab64() const override
+    {
+        return true;
+    }
+
+    yarp::conf::vocab64_t asVocab64() const override
     {
         return x;
     }

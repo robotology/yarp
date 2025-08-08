@@ -90,6 +90,11 @@ public:
         add(new StoreVocab32(x));
     }
 
+    void addVocab64(yarp::conf::vocab64_t x)
+    {
+        add(new StoreVocab64(x));
+    }
+
     void addString(const std::string& text)
     {
         add(new StoreString(text));

@@ -12,7 +12,8 @@
 #include <yarp/os/Bottle.h>
 #include <yarp/os/Portable.h>
 #include <yarp/os/Searchable.h>
-#include <yarp/os/Vocab.h>
+#include <yarp/os/Vocab32.h>
+#include <yarp/os/Vocab64.h>
 
 #include <cstddef> // defines size_t
 #include <string>
@@ -165,11 +166,18 @@ public:
     virtual bool isDict() const;
 
     /**
-     * Checks if value is a vocabulary identifier. If so, asVocab32()
+     * Checks if value is a 32bit vocabulary identifier. If so, asVocab32()
      * will return it.
      * @return true iff value is a vocabulary identifier
      */
     virtual bool isVocab32() const;
+
+    /**
+     * Checks if value is a 64bit vocabulary identifier. If so, asVocab64()
+     * will return it.
+     * @return true iff value is a vocabulary identifier
+     */
+    virtual bool isVocab64() const;
 
     /**
      * Checks if value is a binary object. If so, asBlob() and asBlobLength()
@@ -253,10 +261,16 @@ public:
     virtual yarp::conf::float64_t asFloat64() const;
 
     /**
-     * Get vocabulary identifier as an integer.
+     * Get 32 bit vocabulary identifier as an integer.
      * @return integer value of vocabulary identifier.
      */
     virtual yarp::conf::vocab32_t asVocab32() const;
+
+    /**
+     * Get 64 bit vocabulary identifier as an integer.
+     * @return integer value of vocabulary identifier.
+     */
+    virtual yarp::conf::vocab64_t asVocab64() const;
 
     /**
      * Get string value.
@@ -411,14 +425,14 @@ public:
     static Value* makeString(const std::string& str);
 
     /**
-     * Create a vocabulary identifier Value
+     * Create a 32 bit vocabulary identifier Value
      * @param v the value to take on
      * @return a vocabulary identifier Value
      */
     static Value* makeVocab32(yarp::conf::vocab32_t v);
 
     /**
-     * Create a vocabulary identifier Value
+     * Create a 32 bit vocabulary identifier Value
      * @param a first character of the vocab
      * @param b second character of the vocab
      * @param c third character of the vocab
@@ -431,7 +445,7 @@ public:
     }
 
     /**
-     * Create a vocabulary identifier Value
+     * Create a 32 bit vocabulary identifier Value
      * If the string is longer than 4 characters, only the first 4 are used.
      * @param str the value to take on
      * @return a vocabulary identifier Value

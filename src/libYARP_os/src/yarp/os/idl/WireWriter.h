@@ -78,6 +78,19 @@ public:
         return writeVocab32(yarp::os::Vocab32::encode(str));
     }
 
+    bool writeVocab64(yarp::conf::vocab64_t x, bool skip_tag = false) const;
+
+    bool writeVocab64(char a, char b = 0, char c = 0, char d = 0, char e = 0,char f = 0,char g = 0,char h = 0, bool skip_tag = false) const
+    {
+        return writeVocab64(yarp::os::createVocab64(a, b, c, d, e, f, g, h));
+    }
+
+    // If the string is longer than 8 characters, only the first 8 are used.
+    bool writeVocab64(const std::string& str, bool skip_tag = false) const
+    {
+        return writeVocab64(yarp::os::Vocab64::encode64(str));
+    }
+
     bool writeSizeT(std::size_t x, bool skip_tag = false) const;
 
     bool isValid() const;

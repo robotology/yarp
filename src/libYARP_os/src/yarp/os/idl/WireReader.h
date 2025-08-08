@@ -72,6 +72,8 @@ public:
 
     bool readVocab32(yarp::conf::vocab32_t& x);
 
+    bool readVocab64(yarp::conf::vocab64_t& x);
+
     bool readSizeT(std::size_t& x);
 
     std::int8_t expectInt8()
@@ -147,7 +149,8 @@ public:
             x = static_cast<EnumBase>(reader.expectInt32());
             state->len--;
             return !reader.isError();
-        case BOTTLE_TAG_INT64:
+        case BOTTLE_TAG_INT64: [[fallthrough]];
+        case BOTTLE_TAG_VOCAB64:
             x = static_cast<EnumBase>(reader.expectInt64());
             state->len--;
             return !reader.isError();
@@ -219,7 +222,7 @@ private:
     bool flush_if_needed {false};
     bool support_get_mode {false};
     bool expecting {false};
-    bool get_is_vocab {false};
+    bool get_is_vocab32 {false};
     YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string) get_string;
     bool get_mode {false};
 
