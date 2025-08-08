@@ -208,6 +208,37 @@ TEST_CASE("dev::ReturnValue", "[yarp::dev]")
         CHECK(val_ti == val_to);
     }
 
+    SECTION("test block 6b")
+    {
+        bool ok;
+        ReturnValue val_fi(ReturnValue::return_code::return_value_error_method_failed);
+        ReturnValue val_ti(ReturnValue::return_code::return_value_ok);
+        yarp::os::Bottle bot_fo;
+        yarp::os::Bottle bot_to;
+        ReturnValue val_ff;
+        ReturnValue val_tf;
+
+        // convert ReturnValue to Bottle
+        ok = yarp::os::Portable::copyPortable(val_fi, bot_fo);
+        CHECK(ok);
+        std::string fs = bot_fo.toString();
+        CHECK(fs == "[err5]");
+        //Not possible to convert a Bottle to ReturnValue in ReturnValue::read()
+        //ok = yarp::os::Portable::copyPortable(bot_fo, val_ff);
+        //CHECK(ok);
+        //CHECK(val_ff==val_fi);
+
+        // convert ReturnValue to Bottle
+        ok = yarp::os::Portable::copyPortable(val_ti, bot_to);
+        CHECK(ok);
+        std::string ts = bot_to.toString();
+        CHECK(ts == "[ok]");
+        //Not possible to convert a Bottle to ReturnValue in ReturnValue::read()
+        //ok = yarp::os::Portable::copyPortable(bot_fo, val_tf);
+        //CHECK(ok);
+        //CHECK(val_tf==val_ti);
+    }
+
     SECTION("test block 7")
     {
         auto ret1 = test_method1();

@@ -9,6 +9,7 @@
 #include <yarp/dev/api.h>
 #include <yarp/os/Log.h>
 #include <yarp/os/Portable.h>
+#include <yarp/os/Vocab.h>
 
 #if __cplusplus >= 202002L
 #include <source_location>
@@ -34,14 +35,15 @@ class YARP_dev_API ReturnValue : public yarp::os::Portable
     public:
     enum class YARP_dev_API return_code
     {
-        return_value_ok = 0, /// Method was successfully executed
-        return_value_error_generic = 1,
-        return_value_error_not_implemented_by_device = 2, /// Method is not (yet) implemented
-        return_value_error_nws_nwc_communication_error = 3, /// Command answer lost during network transmission. Status unknown.
-        return_value_error_deprecated = 4, /// Method is deprecated
-        return_value_error_method_failed = 5, /// Method failed due to invalid internal status/invalid request
-        return_value_error_not_ready = 6, /// Method failed because some initialization is missing
-        return_value_uninitialized = 100 /// Default value, should never be explicitly assigned
+
+        return_value_ok                                = yarp::os::createVocab32('o','k'), /// Method was successfully executed
+        return_value_error_generic                     = yarp::os::createVocab32('e', 'r', 'r', '1'),
+        return_value_error_not_implemented_by_device   = yarp::os::createVocab32('e', 'r', 'r', '2'), /// Method is not (yet) implemented
+        return_value_error_nws_nwc_communication_error = yarp::os::createVocab32('e', 'r', 'r', '3'), /// Command answer lost during network transmission. Status unknown.
+        return_value_error_deprecated                  = yarp::os::createVocab32('e', 'r', 'r', '4'), /// Method is deprecated
+        return_value_error_method_failed               = yarp::os::createVocab32('e', 'r', 'r', '5'), /// Method failed due to invalid internal status/invalid request
+        return_value_error_not_ready                   = yarp::os::createVocab32('e', 'r', 'r', '6'), /// Method failed because some initialization is missing
+        return_value_uninitialized                     = yarp::os::createVocab32('m', 'i', 's', 's') /// Default value, should never be explicitly assigned
     };
 
     private:
