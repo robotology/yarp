@@ -30,12 +30,12 @@ TEST_CASE("os::VocabTest", "[yarp::os]")
 
     SECTION("checking vocabulary conversions 64 bits")
     {
-        CHECK(yarp::os::createVocab64('p', 'r', 'o', 'g') == Vocab64::encode("prog"));                  //  encoding
-        CHECK(Vocab64::decode(Vocab64::encode("prog")) == "prog"); // decoding
-        CHECK(yarp::os::createVocab64('p', 'r', 'o', 'g', 'r', 'a', 'm') == Vocab64::encode("program")); // encoding
-        CHECK(Vocab64::decode(Vocab64::encode("program")) == "program"); // decoding
+        CHECK(yarp::os::createVocab64('p', 'r', 'o', 'g') == Vocab64::encode64("prog"));                  //  encoding
+        CHECK(Vocab64::decode64(Vocab64::encode64("prog")) == "prog"); // decoding
+        CHECK(yarp::os::createVocab64('p', 'r', 'o', 'g', 'r', 'a', 'm') == Vocab64::encode64("program")); // encoding
+        CHECK(Vocab64::decode64(Vocab64::encode64("program")) == "program"); // decoding
         INFO("checking compile-time functions");
-        NetInt64 code = Vocab64::encode("program");
+        NetInt64 code = Vocab64::encode64("program");
         CHECK_FALSE(code == yarp::os::createVocab64('s', 'e', 't')); // very strange error switching
         CHECK(code == yarp::os::createVocab64('p', 'r', 'o', 'g', 'r', 'a','m')); // good switch
     }

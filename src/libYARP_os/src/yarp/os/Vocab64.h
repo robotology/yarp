@@ -65,14 +65,14 @@ namespace Vocab64 {
  * @param str the string to convert
  * @result the integer equivalent of the string form of the identifier
  */
-YARP_os_API NetInt64 encode(const std::string& str);
+YARP_os_API NetInt64 encode64(const std::string& str);
 
 /**
  * Convert a vocabulary identifier into a string.
  * @param code the vocabulary identifier to convert
  * @result the string equivalent of the integer form of the identifier
  */
-YARP_os_API std::string decode(NetInt64 code);
+YARP_os_API std::string decode64(NetInt64 code);
 
 } // namespace Vocab64
 

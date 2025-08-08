@@ -7,7 +7,7 @@
 
 using namespace yarp::os;
 
-NetInt64 Vocab64::encode(const std::string& str)
+NetInt64 Vocab64::encode64(const std::string& str)
 {
     char a = '\0';
     char b = '\0';
@@ -45,7 +45,7 @@ NetInt64 Vocab64::encode(const std::string& str)
 }
 
 
-std::string Vocab64::decode(NetInt64 code)
+std::string Vocab64::decode64(NetInt64 code)
 {
     std::string str;
     for (int i = 0; i < 8; i++) {

@@ -338,12 +338,12 @@ std::string StoreVocab64::toString() const
     if (x == '1') {
         return "true";
     }
-    return Vocab64::decode(x);
+    return Vocab64::decode64(x);
 }
 
 void StoreVocab64::fromString(const std::string& src)
 {
-    x = Vocab64::encode(src);
+    x = Vocab64::encode64(src);
 }
 
 std::string StoreVocab64::toStringNested() const

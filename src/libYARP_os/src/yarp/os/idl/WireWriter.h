@@ -88,7 +88,7 @@ public:
     // If the string is longer than 8 characters, only the first 8 are used.
     bool writeVocab64(const std::string& str, bool skip_tag = false) const
     {
-        return writeVocab64(yarp::os::Vocab64::encode(str));
+        return writeVocab64(yarp::os::Vocab64::encode64(str));
     }
 
     bool writeSizeT(std::size_t x, bool skip_tag = false) const;
