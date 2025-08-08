@@ -250,6 +250,7 @@ MainWindow::MainWindow(QWidget *parent) :
     QAction *viewPositionTargetBox = windows->addAction("View Position Target Box");
     QAction* viewPositionTargetValue = windows->addAction("View Position Target Value");
     QAction *enableControlVelocity = windows->addAction("Enable Velocity Control");
+    QAction *enableControlVelocityDirect = windows->addAction("Enable Velocity Direct Control");
     QAction *enableControlMixed = windows->addAction("Enable Mixed Control");
     QAction *enableControlPositionDirect = windows->addAction("Enable Position Direct Control");
     QAction *enableControlPWM = windows->addAction("Enable PWM Control");
@@ -264,6 +265,7 @@ MainWindow::MainWindow(QWidget *parent) :
     viewMotorPosition->setCheckable(true);
     viewDutyCycles->setCheckable(true);
     enableControlVelocity->setCheckable(true);
+    enableControlVelocityDirect->setCheckable(true);
     enableControlMixed->setCheckable(true);
     enableControlPositionDirect->setCheckable(true);
     enableControlPWM->setCheckable(true);
@@ -291,6 +293,7 @@ MainWindow::MainWindow(QWidget *parent) :
     viewPositionTargetBox->setChecked(bViewPositionTargetBox);
     viewPositionTargetValue->setChecked(bViewPositionTargetValue);
     enableControlVelocity->setChecked(false);
+    enableControlVelocityDirect->setChecked(false);
     enableControlMixed->setChecked(false);
     enableControlPositionDirect->setChecked(false);
     enableControlPWM->setChecked(false);
@@ -309,6 +312,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(viewPositionTargetBox, SIGNAL(triggered(bool)), this, SLOT(onViewPositionTargetBox(bool)));
     connect(viewPositionTargetValue, SIGNAL(triggered(bool)), this, SLOT(onViewPositionTargetValue(bool)));
     connect(enableControlVelocity, SIGNAL(triggered(bool)), this, SLOT(onEnableControlVelocity(bool)));
+    connect(enableControlVelocityDirect, SIGNAL(triggered(bool)), this, SLOT(onEnableControlVelocityDirect(bool)));
     connect(enableControlMixed, SIGNAL(triggered(bool)), this, SLOT(onEnableControlMixed(bool)));
     connect(enableControlPositionDirect, SIGNAL(triggered(bool)), this, SLOT(onEnableControlPositionDirect(bool)));
     connect(enableControlPWM, SIGNAL(triggered(bool)), this, SLOT(onEnableControlPWM(bool)));
@@ -439,6 +443,11 @@ void MainWindow::onEnableControlVelocity(bool val)
     emit sig_enableControlVelocity(val);
 }
 
+void MainWindow::onEnableControlVelocityDirect(bool val)
+{
+    emit sig_enableControlVelocityDirect(val);
+}
+
 void MainWindow::onEnableControlMixed(bool val)
 {
     emit sig_enableControlMixed(val);
@@ -526,13 +535,21 @@ void MainWindow::onSetPosSliderOptionMW(int choice, double val, int digits)
 {
     emit sig_setPosSliderOptionMW(choice, val, digits);
 }
-void MainWindow::onSetVelSliderOptionMW(int choice, double val)
+void MainWindow::onSetVelSliderOptionMW(int choice, double val, int digits)
 {
-    emit sig_setVelSliderOptionMW(choice, val);
+    emit sig_setVelSliderOptionMW(choice, val, digits);
 }
-void MainWindow::onSetTrqSliderOptionMW(int choice, double val)
+void MainWindow::onSetAccSliderOptionMW(int choice, double val, int digits)
 {
-    emit sig_setTrqSliderOptionMW(choice, val);
+    emit sig_setAccSliderOptionMW(choice, val, digits);
+}
+void MainWindow::onSetTrqSliderOptionMW(int choice, double val, int digits)
+{
+    emit sig_setTrqSliderOptionMW(choice, val, digits);
+}
+void MainWindow::onSetCurSliderOptionMW(int choice, double val, int digits)
+{
+    emit sig_setCurSliderOptionMW(choice, val, digits);
 }
 
 void MainWindow::onJointClicked(int partIndex, int jointIndex)
@@ -699,8 +716,10 @@ bool MainWindow::init(std::vector<std::string> enabledParts,
             connect(this, SIGNAL(sig_viewMotorPositions(bool)), part, SLOT(onViewMotorPositions(bool)));
             connect(this, SIGNAL(sig_viewDutyCycles(bool)), part, SLOT(onViewDutyCycles(bool)));
             connect(this, SIGNAL(sig_setPosSliderOptionMW(int,double,int)), part, SLOT(onSetPosSliderOptionPI(int,double,int)));
-            connect(this, SIGNAL(sig_setVelSliderOptionMW(int,double)), part, SLOT(onSetVelSliderOptionPI(int,double)));
-            connect(this, SIGNAL(sig_setTrqSliderOptionMW(int,double)), part, SLOT(onSetTrqSliderOptionPI(int,double)));
+            connect(this, SIGNAL(sig_setVelSliderOptionMW(int,double,int)), part, SLOT(onSetVelSliderOptionPI(int,double,int)));
+            connect(this, SIGNAL(sig_setAccSliderOptionMW(int,double,int)), part, SLOT(onSetAccSliderOptionPI(int,double,int)));
+            connect(this, SIGNAL(sig_setTrqSliderOptionMW(int,double,int)), part, SLOT(onSetTrqSliderOptionPI(int,double,int)));
+            connect(this, SIGNAL(sig_setCurSliderOptionMW(int,double,int)), part, SLOT(onSetCurSliderOptionPI(int,double,int)));
             connect(this, SIGNAL(sig_viewPositionTargetBox(bool)), part, SLOT(onViewPositionTargetBox(bool)));
             connect(this, SIGNAL(sig_viewPositionTargetValue(bool)), part, SLOT(onViewPositionTargetValue(bool)));
             connect(this, SIGNAL(sig_enableControlVelocity(bool)), part, SLOT(onEnableControlVelocity(bool)));
@@ -709,6 +728,7 @@ bool MainWindow::init(std::vector<std::string> enabledParts,
             connect(this, SIGNAL(sig_enableControlPWM(bool)), part, SLOT(onEnableControlPWM(bool)));
             connect(this, SIGNAL(sig_enableControlCurrent(bool)), part, SLOT(onEnableControlCurrent(bool)));
             connect(this, SIGNAL(sig_enableControlTorque(bool)), part, SLOT(onEnableControlTorque(bool)));
+            connect(this, SIGNAL(sig_enableControlVelocityDirect(bool)), part, SLOT(onEnableControlVelocityDirect(bool)));
 
             scroll->setWidget(part);
             int tabIndex = m_tabPanel->addTab(scroll, part_name.c_str());
@@ -920,7 +940,7 @@ void MainWindow::onHomeAllPartsToCustomPosition(const yarp::os::Bottle& position
     {
         auto* scroll = (QScrollArea *)m_tabPanel->widget(i);
         auto* part = (PartItem*)scroll->widget();
-        QString currName = QString("/%1/%2").arg(QString(m_finder.find("robot").asString().c_str())).arg(part->getPartName());
+        QString currName = QString("/%1/%2").arg(QString(m_finder.find("robot").asString().c_str())).arg(QString(part->getPartName().c_str()));
         bool partPresent = positionElement.check(currName.toStdString() + "_Position") && positionElement.check(currName.toStdString() + "_Velocity");
         if(!part || ! partPresent)
         {
@@ -981,7 +1001,8 @@ void MainWindow::onCycleTimeAllSeq()
 
         bool done = part->checkAndCycleTimeAllSeq();
         if(!done){
-            notSelectedParts.append(QString("- %1\n").arg(part->getPartName()));
+            QString qs = QString(part->getPartName().c_str());
+            notSelectedParts.append(QString("- %1\n").arg(qs));
         }
     }
     if(!notSelectedParts.isEmpty()){
@@ -1006,7 +1027,7 @@ void MainWindow::onCycleAllSeq()
 
         bool done = part->checkAndCycleAllSeq();
         if(!done){
-            notSelectedParts.append(QString("- %1\n").arg(part->getPartName()));
+            notSelectedParts.append(QString("- %1\n").arg(QString(part->getPartName().c_str())));
         }
     }
     if(!notSelectedParts.isEmpty()){
@@ -1031,7 +1052,8 @@ void MainWindow::onRunAllSeq()
 
         bool done = part->checkAndRunAllSeq();
         if(!done){
-            notSelectedParts.append(QString("- %1\n").arg(part->getPartName()));
+            QString qs = QString(part->getPartName().c_str());
+            notSelectedParts.append(QString("- %1\n").arg(qs));
         }
     }
     if(!notSelectedParts.isEmpty()){
@@ -1057,7 +1079,8 @@ void MainWindow::onRunTimeAllSeq()
 
         bool done = part->checkAndRunTimeAllSeq();
         if(!done){
-            notSelectedParts.append(QString("- %1\n").arg(part->getPartName()));
+            QString qs = QString(part->getPartName().c_str());
+            notSelectedParts.append(QString("- %1\n").arg(qs));
         }
     }
     if(!notSelectedParts.isEmpty()){
@@ -1142,7 +1165,8 @@ void MainWindow::onGoAll()
 
         bool done = part->checkAndGo();
         if(!done){
-            notSelectedParts.append(QString("- %1\n").arg(part->getPartName()));
+            QString qs = QString(part->getPartName().c_str());
+            notSelectedParts.append(QString("- %1\n").arg(qs));
         }
     }
 

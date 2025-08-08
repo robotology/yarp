@@ -1853,10 +1853,9 @@ bool RemoteControlBoard::getLastJointFault(int j, int& fault, std::string& messa
 
 bool RemoteControlBoard::velocityMove(int j, double v)
 {
- //   return set1V1I1D(VOCAB_VELOCITY_MOVE, j, v);
- if (!isLive()) {
-     return false;
- }
+     if (!isLive()) {
+         return false;
+     }
     CommandMessage& c = command_buffer.get();
     c.head.clear();
     c.head.addVocab32(VOCAB_VELOCITY_MOVE);
@@ -2909,7 +2908,7 @@ yarp::dev::ReturnValue RemoteControlBoard::isJointBraked(int j, bool& braked) co
         return ret.ret;
     }
     braked = ret.isBraked;
-    return ReturnValue_ok;
+    return ret.ret;
 }
 
 yarp::dev::ReturnValue RemoteControlBoard::setManualBrakeActive(int j, bool active)
@@ -2920,7 +2919,7 @@ yarp::dev::ReturnValue RemoteControlBoard::setManualBrakeActive(int j, bool acti
         yCError(REMOTECONTROLBOARD, "Unable to setManualBrakeActive");
         return ret;
     }
-    return ReturnValue_ok;
+    return ret;
 }
 
 yarp::dev::ReturnValue RemoteControlBoard::setAutoBrakeEnabled(int j, bool enabled)
@@ -2931,7 +2930,7 @@ yarp::dev::ReturnValue RemoteControlBoard::setAutoBrakeEnabled(int j, bool enabl
         yCError(REMOTECONTROLBOARD, "Unable to isJointBraked");
         return ret;
     }
-    return ReturnValue_ok;
+    return ret;
 }
 
 yarp::dev::ReturnValue RemoteControlBoard::getAutoBrakeEnabled(int j, bool& enabled) const
@@ -2943,6 +2942,107 @@ yarp::dev::ReturnValue RemoteControlBoard::getAutoBrakeEnabled(int j, bool& enab
         return ret.ret;
     }
     enabled = ret.enabled;
-    return ReturnValue_ok;
+    return ret.ret;
 }
 // END IJointBrake
+
+// IVelocityDirect
+ReturnValue RemoteControlBoard::getAxes(size_t& axes)
+{
+    // std::lock_guard<std::mutex> lg(m_mutex);
+    auto ret = m_RPC.getAxesRPC();
+    if (!ret.ret) {
+        yCError(REMOTECONTROLBOARD, "Unable to getAxes");
+        return ret.ret;
+    }
+    axes = ret.axes;
+    return ret.ret;
+}
+
+ReturnValue RemoteControlBoard::setDesiredVelocity(int jnt, double vel)
+{
+    if (!isLive()) {
+        return ReturnValue::return_code::return_value_error_not_ready;
+    }
+    CommandMessage& c = command_buffer.get();
+    c.head.clear();
+    c.head.addVocab32(VOCAB_VELOCITY_DIRECT_SET_ONE);
+    c.head.addInt32(jnt);
+    c.body.resize(1);
+    c.body[0] = vel;
+    command_buffer.write(writeStrict_singleJoint);
+    return ReturnValue_ok;
+}
+
+ReturnValue RemoteControlBoard::setDesiredVelocity(const std::vector<double>& vels)
+{
+    if (!isLive()) {
+        return ReturnValue::return_code::return_value_error_not_ready;
+    }
+    CommandMessage& c = command_buffer.get();
+    c.head.clear();
+    c.head.addVocab32(VOCAB_VELOCITY_DIRECT_SET_ALL);
+    c.body.resize(nj);
+    for (size_t i = 0; i < vels.size(); i++) {
+        c.body[i]=vels[i];
+    }
+    command_buffer.write(writeStrict_moreJoints);
+    return ReturnValue_ok;
+}
+
+ReturnValue RemoteControlBoard::setDesiredVelocity(const std::vector<int>& jnts, const std::vector<double>& vels)
+{
+    if (!isLive()) {
+        return ReturnValue::return_code::return_value_error_not_ready;
+    }
+    CommandMessage& c = command_buffer.get();
+    c.head.clear();
+    c.head.addVocab32(VOCAB_VELOCITY_DIRECT_SET_GROUP);
+    c.head.addInt32(jnts.size());
+    Bottle &jointList = c.head.addList();
+    for (size_t i = 0; i < jnts.size(); i++) {
+        jointList.addInt32(jnts[i]);
+    }
+    c.body.resize(jnts.size());
+    for (size_t i = 0; i < jnts.size(); i++) {
+        c.body[i]=vels[i];
+    }
+    command_buffer.write(writeStrict_moreJoints);
+    return ReturnValue_ok;
+}
+
+ReturnValue RemoteControlBoard::getDesiredVelocity(const int jnt, double& vel)
+{
+    // std::lock_guard<std::mutex> lg(m_mutex);
+    auto ret = m_RPC.getDesiredVelocityOneRPC(jnt);
+    if (!ret.ret) {
+        yCError(REMOTECONTROLBOARD, "Unable to getDesiredVelocityOneRPC");
+        return ret.ret;
+    }
+    vel = ret.vel;
+    return ret.ret;
+}
+
+ReturnValue RemoteControlBoard::getDesiredVelocity(std::vector<double>& vels)
+{
+    // std::lock_guard<std::mutex> lg(m_mutex);
+    auto ret = m_RPC.getDesiredVelocityAllRPC();
+    if (!ret.ret) {
+        yCError(REMOTECONTROLBOARD, "Unable to getDesiredVelocityAllRPC");
+        return ret.ret;
+    }
+    vels = ret.vel;
+    return ret.ret;
+}
+
+ReturnValue RemoteControlBoard::getDesiredVelocity(const std::vector<int>& jnts, std::vector<double>& vels)
+{
+    // std::lock_guard<std::mutex> lg(m_mutex);
+    auto ret = m_RPC.getDesiredVelocityGroupRPC(jnts);
+    if (!ret.ret) {
+        yCError(REMOTECONTROLBOARD, "Unable to getDesiredVelocityGroupRPC");
+        return ret.ret;
+    }
+    vels = ret.vel;
+    return ret.ret;
+}

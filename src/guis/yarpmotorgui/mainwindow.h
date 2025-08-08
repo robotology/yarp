@@ -122,6 +122,7 @@ private slots:
     void onViewPositionTargetBox(bool);
     void onViewPositionTargetValue(bool);
     void onEnableControlVelocity(bool val);
+    void onEnableControlVelocityDirect(bool val);
     void onEnableControlMixed(bool val);
     void onEnableControlPositionDirect(bool val);
     void onEnableControlPWM(bool val);
@@ -129,14 +130,17 @@ private slots:
     void onEnableControlTorque(bool val);
     void onSliderOptionsClicked();
     void onSetPosSliderOptionMW(int, double, int);
-    void onSetVelSliderOptionMW(int, double);
-    void onSetTrqSliderOptionMW(int, double);
+    void onSetVelSliderOptionMW(int, double, int);
+    void onSetAccSliderOptionMW(int, double, int);
+    void onSetTrqSliderOptionMW(int, double, int);
+    void onSetCurSliderOptionMW(int, double, int);
     void onJointClicked(int partIndex, int jointIndex);
     void onGlowTimerExpired();
     void onPartDoubleClicked(int partIndex);
 
 signals:
     void sig_enableControlVelocity(bool);
+    void sig_enableControlVelocityDirect(bool);
     void sig_enableControlMixed(bool);
     void sig_enableControlPositionDirect(bool);
     void sig_enableControlPWM(bool);
@@ -147,8 +151,10 @@ signals:
     void sig_viewMotorPositions(bool);
     void sig_viewDutyCycles(bool);
     void sig_setPosSliderOptionMW(int, double, int);
-    void sig_setVelSliderOptionMW(int, double);
-    void sig_setTrqSliderOptionMW(int, double);
+    void sig_setVelSliderOptionMW(int, double, int);
+    void sig_setAccSliderOptionMW(int, double, int);
+    void sig_setTrqSliderOptionMW(int, double, int);
+    void sig_setCurSliderOptionMW(int, double, int);
     void sig_viewPositionTargetBox(bool);
     void sig_viewPositionTargetValue(bool);
     void sig_internalClose();

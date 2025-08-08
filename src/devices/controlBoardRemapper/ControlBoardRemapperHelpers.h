@@ -47,6 +47,7 @@ public:
     yarp::dev::IPidControl           *pid = nullptr;
     yarp::dev::IPositionControl      *pos = nullptr;
     yarp::dev::IVelocityControl      *vel = nullptr;
+    yarp::dev::IVelocityDirect       *iVelDir = nullptr;
     yarp::dev::IEncodersTimed        *iJntEnc = nullptr;
     yarp::dev::IMotorEncoders        *iMotEnc = nullptr;
     yarp::dev::IAmplifierControl     *amp = nullptr;

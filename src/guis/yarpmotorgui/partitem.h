@@ -75,7 +75,7 @@ public:
     void loadSequence();
     void saveSequence(QString global_filename);
     QTreeWidgetItem *getTreeWidgetModeNode();
-    QString getPartName();
+    std::string getPartName();
     const QVector<JointItem::JointState>& getPartModes();
     void resizeWidget(int w);
     int getNumberOfJoints();
@@ -117,6 +117,7 @@ private:
     std::vector<double> m_refTrajectoryPositions;
     std::vector<double> m_refTorques;
     std::vector<double> m_refVelocitySpeeds;
+    std::vector<double> m_refVelocityAccelerations;
     std::vector<double> m_torques;
     std::vector<double> m_positions;
     std::vector<double> m_speeds;
@@ -140,8 +141,9 @@ private:
 
     IPositionControl* m_iPos = nullptr;
     IJointBrake* m_ijointbrake = nullptr;
-    IPositionDirect* m_iDir = nullptr;
+    IPositionDirect* m_iPosDir = nullptr;
     IVelocityControl* m_iVel = nullptr;
+    IVelocityDirect* m_iVelDir = nullptr;
     IRemoteVariables* m_iVar = nullptr;
     IEncoders* m_iencs = nullptr;
     IMotorEncoders* m_iMot = nullptr;
@@ -179,9 +181,10 @@ public slots:
     void onViewDutyCycles(bool);
     void onViewCurrentValues(bool);
     void onSetPosSliderOptionPI(int mode, double step, int numOfDec);
-    void onSetVelSliderOptionPI(int mode, double step);
-    void onSetTrqSliderOptionPI(int mode, double step);
-    void onSetCurSliderOptionPI(int mode, double step);
+    void onSetVelSliderOptionPI(int mode, double step, int numOfDec);
+    void onSetAccSliderOptionPI(int mode, double step, int numOfDec);
+    void onSetTrqSliderOptionPI(int mode, double step, int numOfDec);
+    void onSetCurSliderOptionPI(int mode, double step, int numOfDec);
     void onViewPositionTargetBox(bool);
     void onViewPositionTargetValue(bool);
     void onEnableControlVelocity(bool control);
@@ -190,6 +193,7 @@ public slots:
     void onEnableControlPWM(bool control);
     void onEnableControlCurrent(bool control);
     void onEnableControlTorque(bool control);
+    void onEnableControlVelocityDirect(bool control);
 
 private slots:
     void onSequenceActivated();
@@ -213,11 +217,13 @@ private slots:
     void onSliderMixedPositionCommand(double pos, int index);
     void onSliderMixedVelocityCommand(double vel, int index);
     void onSliderTorqueCommand(double torqueVal, int index);
-    void onSliderTrajectoryPositionCommand(double pos, int index);
-    void onSliderTrajectoryVelocityCommand(double speedVal, int index);
+    void onSliderPosTrajectoryPositionCommand(double pos, int index);
+    void onSliderPosTrajectoryVelocityCommand(double speedVal, int index);
     void onSliderPWMCommand(double dutyVal, int index);
     void onSliderCurrentCommand(double current, int index);
-    void onSliderVelocityCommand(double speedVal, int index);
+    void onSliderVelTrajectoryVelocityCommand(double speedVal, int index);
+    void onSliderVelTrajectoryAccelerationCommand(double accVal, int index);
+    void onSliderVelocityDirectCommand(double speedVal, int index);
     void onSequenceWindowDoubleClicked(int sequenceNum);
     void onHomeClicked(JointItem *joint);
     void onIdleClicked(JointItem *joint);

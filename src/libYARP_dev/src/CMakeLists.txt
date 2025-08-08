@@ -82,6 +82,7 @@ set(YARP_dev_HDRS
   yarp/dev/ISpeechTranscription.h
   yarp/dev/ITorqueControl.h
   yarp/dev/IVelocityControl.h
+  yarp/dev/IVelocityDirect.h
   yarp/dev/IVirtualAnalogSensor.h
   yarp/dev/IVisualServoing.h
   yarp/dev/IWrapper.h
@@ -108,6 +109,7 @@ set(YARP_dev_HDRS
   yarp/dev/ImplementRemoteVariables.h
   yarp/dev/ImplementTorqueControl.h
   yarp/dev/ImplementVelocityControl.h
+  yarp/dev/ImplementVelocityDirect.h
   yarp/dev/ImplementVirtualAnalogSensor.h
   yarp/dev/Lidar2DDeviceBase.h
   yarp/dev/MultipleAnalogSensorsInterfaces.h
@@ -210,6 +212,7 @@ set(YARP_dev_SRCS
   yarp/dev/ImplementRemoteVariables.cpp
   yarp/dev/ImplementTorqueControl.cpp
   yarp/dev/ImplementVelocityControl.cpp
+  yarp/dev/ImplementVelocityDirect.cpp
   yarp/dev/ImplementVirtualAnalogSensor.cpp
   yarp/dev/Lidar2DDeviceBase.cpp
   yarp/dev/MultipleAnalogSensorsInterfaces.cpp

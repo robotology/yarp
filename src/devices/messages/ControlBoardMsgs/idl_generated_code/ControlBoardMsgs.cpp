@@ -111,7 +111,7 @@ class ControlBoardMsgs_isJointBrakedRPC_helper :
 {
 public:
     ControlBoardMsgs_isJointBrakedRPC_helper() = default;
-    explicit ControlBoardMsgs_isJointBrakedRPC_helper(const std::int16_t j);
+    explicit ControlBoardMsgs_isJointBrakedRPC_helper(const std::int32_t j);
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
 
@@ -120,7 +120,7 @@ public:
     {
     public:
         Command() = default;
-        explicit Command(const std::int16_t j);
+        explicit Command(const std::int32_t j);
 
         ~Command() override = default;
 
@@ -135,7 +135,7 @@ public:
         bool readTag(yarp::os::idl::WireReader& reader);
         bool readArgs(yarp::os::idl::WireReader& reader);
 
-        std::int16_t j{0};
+        std::int32_t j{0};
     };
 
     class Reply :
@@ -154,7 +154,7 @@ public:
         return_isJointBraked return_helper{};
     };
 
-    using funcptr_t = return_isJointBraked (*)(const std::int16_t);
+    using funcptr_t = return_isJointBraked (*)(const std::int32_t);
     void call(ControlBoardMsgs* ptr);
 
     Command cmd;
@@ -164,7 +164,7 @@ public:
     static constexpr size_t s_tag_len{1};
     static constexpr size_t s_cmd_len{2};
     static constexpr size_t s_reply_len{2};
-    static constexpr const char* s_prototype{"return_isJointBraked ControlBoardMsgs::isJointBrakedRPC(const std::int16_t j) const"};
+    static constexpr const char* s_prototype{"return_isJointBraked ControlBoardMsgs::isJointBrakedRPC(const std::int32_t j) const"};
     static constexpr const char* s_help{""};
 };
 
@@ -174,7 +174,7 @@ class ControlBoardMsgs_setManualBrakeActiveRPC_helper :
 {
 public:
     ControlBoardMsgs_setManualBrakeActiveRPC_helper() = default;
-    ControlBoardMsgs_setManualBrakeActiveRPC_helper(const std::int16_t j, const bool active);
+    ControlBoardMsgs_setManualBrakeActiveRPC_helper(const std::int32_t j, const bool active);
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
 
@@ -183,7 +183,7 @@ public:
     {
     public:
         Command() = default;
-        Command(const std::int16_t j, const bool active);
+        Command(const std::int32_t j, const bool active);
 
         ~Command() override = default;
 
@@ -198,7 +198,7 @@ public:
         bool readTag(yarp::os::idl::WireReader& reader);
         bool readArgs(yarp::os::idl::WireReader& reader);
 
-        std::int16_t j{0};
+        std::int32_t j{0};
         bool active{false};
     };
 
@@ -218,7 +218,7 @@ public:
         yarp::dev::ReturnValue return_helper{};
     };
 
-    using funcptr_t = yarp::dev::ReturnValue (*)(const std::int16_t, const bool);
+    using funcptr_t = yarp::dev::ReturnValue (*)(const std::int32_t, const bool);
     void call(ControlBoardMsgs* ptr);
 
     Command cmd;
@@ -228,7 +228,7 @@ public:
     static constexpr size_t s_tag_len{1};
     static constexpr size_t s_cmd_len{3};
     static constexpr size_t s_reply_len{1};
-    static constexpr const char* s_prototype{"yarp::dev::ReturnValue ControlBoardMsgs::setManualBrakeActiveRPC(const std::int16_t j, const bool active)"};
+    static constexpr const char* s_prototype{"yarp::dev::ReturnValue ControlBoardMsgs::setManualBrakeActiveRPC(const std::int32_t j, const bool active)"};
     static constexpr const char* s_help{""};
 };
 
@@ -238,7 +238,7 @@ class ControlBoardMsgs_setAutoBrakeEnabledRPC_helper :
 {
 public:
     ControlBoardMsgs_setAutoBrakeEnabledRPC_helper() = default;
-    ControlBoardMsgs_setAutoBrakeEnabledRPC_helper(const std::int16_t j, const bool enabled);
+    ControlBoardMsgs_setAutoBrakeEnabledRPC_helper(const std::int32_t j, const bool enabled);
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
 
@@ -247,7 +247,7 @@ public:
     {
     public:
         Command() = default;
-        Command(const std::int16_t j, const bool enabled);
+        Command(const std::int32_t j, const bool enabled);
 
         ~Command() override = default;
 
@@ -262,7 +262,7 @@ public:
         bool readTag(yarp::os::idl::WireReader& reader);
         bool readArgs(yarp::os::idl::WireReader& reader);
 
-        std::int16_t j{0};
+        std::int32_t j{0};
         bool enabled{false};
     };
 
@@ -282,7 +282,7 @@ public:
         yarp::dev::ReturnValue return_helper{};
     };
 
-    using funcptr_t = yarp::dev::ReturnValue (*)(const std::int16_t, const bool);
+    using funcptr_t = yarp::dev::ReturnValue (*)(const std::int32_t, const bool);
     void call(ControlBoardMsgs* ptr);
 
     Command cmd;
@@ -292,7 +292,7 @@ public:
     static constexpr size_t s_tag_len{1};
     static constexpr size_t s_cmd_len{3};
     static constexpr size_t s_reply_len{1};
-    static constexpr const char* s_prototype{"yarp::dev::ReturnValue ControlBoardMsgs::setAutoBrakeEnabledRPC(const std::int16_t j, const bool enabled)"};
+    static constexpr const char* s_prototype{"yarp::dev::ReturnValue ControlBoardMsgs::setAutoBrakeEnabledRPC(const std::int32_t j, const bool enabled)"};
     static constexpr const char* s_help{""};
 };
 
@@ -302,7 +302,7 @@ class ControlBoardMsgs_getAutoBrakeEnabledRPC_helper :
 {
 public:
     ControlBoardMsgs_getAutoBrakeEnabledRPC_helper() = default;
-    explicit ControlBoardMsgs_getAutoBrakeEnabledRPC_helper(const std::int16_t j);
+    explicit ControlBoardMsgs_getAutoBrakeEnabledRPC_helper(const std::int32_t j);
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
 
@@ -311,7 +311,7 @@ public:
     {
     public:
         Command() = default;
-        explicit Command(const std::int16_t j);
+        explicit Command(const std::int32_t j);
 
         ~Command() override = default;
 
@@ -326,7 +326,7 @@ public:
         bool readTag(yarp::os::idl::WireReader& reader);
         bool readArgs(yarp::os::idl::WireReader& reader);
 
-        std::int16_t j{0};
+        std::int32_t j{0};
     };
 
     class Reply :
@@ -345,7 +345,7 @@ public:
         return_getAutoBrakeEnabled return_helper{};
     };
 
-    using funcptr_t = return_getAutoBrakeEnabled (*)(const std::int16_t);
+    using funcptr_t = return_getAutoBrakeEnabled (*)(const std::int32_t);
     void call(ControlBoardMsgs* ptr);
 
     Command cmd;
@@ -355,12 +355,254 @@ public:
     static constexpr size_t s_tag_len{1};
     static constexpr size_t s_cmd_len{2};
     static constexpr size_t s_reply_len{2};
-    static constexpr const char* s_prototype{"return_getAutoBrakeEnabled ControlBoardMsgs::getAutoBrakeEnabledRPC(const std::int16_t j) const"};
+    static constexpr const char* s_prototype{"return_getAutoBrakeEnabled ControlBoardMsgs::getAutoBrakeEnabledRPC(const std::int32_t j) const"};
+    static constexpr const char* s_help{""};
+};
+
+// getAxesRPC helper class declaration
+class ControlBoardMsgs_getAxesRPC_helper :
+        public yarp::os::Portable
+{
+public:
+    ControlBoardMsgs_getAxesRPC_helper() = default;
+    bool write(yarp::os::ConnectionWriter& connection) const override;
+    bool read(yarp::os::ConnectionReader& connection) override;
+
+    class Command :
+            public yarp::os::idl::WirePortable
+    {
+    public:
+        Command() = default;
+        ~Command() override = default;
+
+        bool write(yarp::os::ConnectionWriter& connection) const override;
+        bool read(yarp::os::ConnectionReader& connection) override;
+
+        bool write(const yarp::os::idl::WireWriter& writer) const override;
+        bool writeTag(const yarp::os::idl::WireWriter& writer) const;
+        bool writeArgs(const yarp::os::idl::WireWriter& writer) const;
+
+        bool read(yarp::os::idl::WireReader& reader) override;
+        bool readTag(yarp::os::idl::WireReader& reader);
+        bool readArgs(yarp::os::idl::WireReader& reader);
+    };
+
+    class Reply :
+            public yarp::os::idl::WirePortable
+    {
+    public:
+        Reply() = default;
+        ~Reply() override = default;
+
+        bool write(yarp::os::ConnectionWriter& connection) const override;
+        bool read(yarp::os::ConnectionReader& connection) override;
+
+        bool write(const yarp::os::idl::WireWriter& writer) const override;
+        bool read(yarp::os::idl::WireReader& reader) override;
+
+        return_getAxes return_helper{};
+    };
+
+    using funcptr_t = return_getAxes (*)();
+    void call(ControlBoardMsgs* ptr);
+
+    Command cmd;
+    Reply reply;
+
+    static constexpr const char* s_tag{"getAxesRPC"};
+    static constexpr size_t s_tag_len{1};
+    static constexpr size_t s_cmd_len{1};
+    static constexpr size_t s_reply_len{2};
+    static constexpr const char* s_prototype{"return_getAxes ControlBoardMsgs::getAxesRPC() const"};
+    static constexpr const char* s_help{""};
+};
+
+// getDesiredVelocityOneRPC helper class declaration
+class ControlBoardMsgs_getDesiredVelocityOneRPC_helper :
+        public yarp::os::Portable
+{
+public:
+    ControlBoardMsgs_getDesiredVelocityOneRPC_helper() = default;
+    explicit ControlBoardMsgs_getDesiredVelocityOneRPC_helper(const std::int32_t j);
+    bool write(yarp::os::ConnectionWriter& connection) const override;
+    bool read(yarp::os::ConnectionReader& connection) override;
+
+    class Command :
+            public yarp::os::idl::WirePortable
+    {
+    public:
+        Command() = default;
+        explicit Command(const std::int32_t j);
+
+        ~Command() override = default;
+
+        bool write(yarp::os::ConnectionWriter& connection) const override;
+        bool read(yarp::os::ConnectionReader& connection) override;
+
+        bool write(const yarp::os::idl::WireWriter& writer) const override;
+        bool writeTag(const yarp::os::idl::WireWriter& writer) const;
+        bool writeArgs(const yarp::os::idl::WireWriter& writer) const;
+
+        bool read(yarp::os::idl::WireReader& reader) override;
+        bool readTag(yarp::os::idl::WireReader& reader);
+        bool readArgs(yarp::os::idl::WireReader& reader);
+
+        std::int32_t j{0};
+    };
+
+    class Reply :
+            public yarp::os::idl::WirePortable
+    {
+    public:
+        Reply() = default;
+        ~Reply() override = default;
+
+        bool write(yarp::os::ConnectionWriter& connection) const override;
+        bool read(yarp::os::ConnectionReader& connection) override;
+
+        bool write(const yarp::os::idl::WireWriter& writer) const override;
+        bool read(yarp::os::idl::WireReader& reader) override;
+
+        return_getDesiredVelocityOne return_helper{};
+    };
+
+    using funcptr_t = return_getDesiredVelocityOne (*)(const std::int32_t);
+    void call(ControlBoardMsgs* ptr);
+
+    Command cmd;
+    Reply reply;
+
+    static constexpr const char* s_tag{"getDesiredVelocityOneRPC"};
+    static constexpr size_t s_tag_len{1};
+    static constexpr size_t s_cmd_len{2};
+    static constexpr size_t s_reply_len{2};
+    static constexpr const char* s_prototype{"return_getDesiredVelocityOne ControlBoardMsgs::getDesiredVelocityOneRPC(const std::int32_t j) const"};
+    static constexpr const char* s_help{""};
+};
+
+// getDesiredVelocityAllRPC helper class declaration
+class ControlBoardMsgs_getDesiredVelocityAllRPC_helper :
+        public yarp::os::Portable
+{
+public:
+    ControlBoardMsgs_getDesiredVelocityAllRPC_helper() = default;
+    bool write(yarp::os::ConnectionWriter& connection) const override;
+    bool read(yarp::os::ConnectionReader& connection) override;
+
+    class Command :
+            public yarp::os::idl::WirePortable
+    {
+    public:
+        Command() = default;
+        ~Command() override = default;
+
+        bool write(yarp::os::ConnectionWriter& connection) const override;
+        bool read(yarp::os::ConnectionReader& connection) override;
+
+        bool write(const yarp::os::idl::WireWriter& writer) const override;
+        bool writeTag(const yarp::os::idl::WireWriter& writer) const;
+        bool writeArgs(const yarp::os::idl::WireWriter& writer) const;
+
+        bool read(yarp::os::idl::WireReader& reader) override;
+        bool readTag(yarp::os::idl::WireReader& reader);
+        bool readArgs(yarp::os::idl::WireReader& reader);
+    };
+
+    class Reply :
+            public yarp::os::idl::WirePortable
+    {
+    public:
+        Reply() = default;
+        ~Reply() override = default;
+
+        bool write(yarp::os::ConnectionWriter& connection) const override;
+        bool read(yarp::os::ConnectionReader& connection) override;
+
+        bool write(const yarp::os::idl::WireWriter& writer) const override;
+        bool read(yarp::os::idl::WireReader& reader) override;
+
+        return_getDesiredVelocityAll return_helper{};
+    };
+
+    using funcptr_t = return_getDesiredVelocityAll (*)();
+    void call(ControlBoardMsgs* ptr);
+
+    Command cmd;
+    Reply reply;
+
+    static constexpr const char* s_tag{"getDesiredVelocityAllRPC"};
+    static constexpr size_t s_tag_len{1};
+    static constexpr size_t s_cmd_len{1};
+    static constexpr size_t s_reply_len{2};
+    static constexpr const char* s_prototype{"return_getDesiredVelocityAll ControlBoardMsgs::getDesiredVelocityAllRPC() const"};
+    static constexpr const char* s_help{""};
+};
+
+// getDesiredVelocityGroupRPC helper class declaration
+class ControlBoardMsgs_getDesiredVelocityGroupRPC_helper :
+        public yarp::os::Portable
+{
+public:
+    ControlBoardMsgs_getDesiredVelocityGroupRPC_helper() = default;
+    explicit ControlBoardMsgs_getDesiredVelocityGroupRPC_helper(const std::vector<std::int32_t>& j);
+    bool write(yarp::os::ConnectionWriter& connection) const override;
+    bool read(yarp::os::ConnectionReader& connection) override;
+
+    class Command :
+            public yarp::os::idl::WirePortable
+    {
+    public:
+        Command() = default;
+        explicit Command(const std::vector<std::int32_t>& j);
+
+        ~Command() override = default;
+
+        bool write(yarp::os::ConnectionWriter& connection) const override;
+        bool read(yarp::os::ConnectionReader& connection) override;
+
+        bool write(const yarp::os::idl::WireWriter& writer) const override;
+        bool writeTag(const yarp::os::idl::WireWriter& writer) const;
+        bool writeArgs(const yarp::os::idl::WireWriter& writer) const;
+
+        bool read(yarp::os::idl::WireReader& reader) override;
+        bool readTag(yarp::os::idl::WireReader& reader);
+        bool readArgs(yarp::os::idl::WireReader& reader);
+
+        std::vector<std::int32_t> j{};
+    };
+
+    class Reply :
+            public yarp::os::idl::WirePortable
+    {
+    public:
+        Reply() = default;
+        ~Reply() override = default;
+
+        bool write(yarp::os::ConnectionWriter& connection) const override;
+        bool read(yarp::os::ConnectionReader& connection) override;
+
+        bool write(const yarp::os::idl::WireWriter& writer) const override;
+        bool read(yarp::os::idl::WireReader& reader) override;
+
+        return_getDesiredVelocityGroup return_helper{};
+    };
+
+    using funcptr_t = return_getDesiredVelocityGroup (*)(const std::vector<std::int32_t>&);
+    void call(ControlBoardMsgs* ptr);
+
+    Command cmd;
+    Reply reply;
+
+    static constexpr const char* s_tag{"getDesiredVelocityGroupRPC"};
+    static constexpr size_t s_tag_len{1};
+    static constexpr size_t s_cmd_len{2};
+    static constexpr size_t s_reply_len{2};
+    static constexpr const char* s_prototype{"return_getDesiredVelocityGroup ControlBoardMsgs::getDesiredVelocityGroupRPC(const std::vector<std::int32_t>& j) const"};
     static constexpr const char* s_help{""};
 };
 
 // isJointBrakedRPC helper class implementation
-ControlBoardMsgs_isJointBrakedRPC_helper::ControlBoardMsgs_isJointBrakedRPC_helper(const std::int16_t j) :
+ControlBoardMsgs_isJointBrakedRPC_helper::ControlBoardMsgs_isJointBrakedRPC_helper(const std::int32_t j) :
         cmd{j}
 {
 }
@@ -375,7 +617,7 @@ bool ControlBoardMsgs_isJointBrakedRPC_helper::read(yarp::os::ConnectionReader& 
     return reply.read(connection);
 }
 
-ControlBoardMsgs_isJointBrakedRPC_helper::Command::Command(const std::int16_t j) :
+ControlBoardMsgs_isJointBrakedRPC_helper::Command::Command(const std::int32_t j) :
         j{j}
 {
 }
@@ -420,7 +662,7 @@ bool ControlBoardMsgs_isJointBrakedRPC_helper::Command::writeTag(const yarp::os:
 
 bool ControlBoardMsgs_isJointBrakedRPC_helper::Command::writeArgs(const yarp::os::idl::WireWriter& writer) const
 {
-    if (!writer.writeI16(j)) {
+    if (!writer.writeI32(j)) {
         return false;
     }
     return true;
@@ -456,7 +698,7 @@ bool ControlBoardMsgs_isJointBrakedRPC_helper::Command::readArgs(yarp::os::idl::
         reader.fail();
         return false;
     }
-    if (!reader.readI16(j)) {
+    if (!reader.readI32(j)) {
         reader.fail();
         return false;
     }
@@ -514,7 +756,7 @@ void ControlBoardMsgs_isJointBrakedRPC_helper::call(ControlBoardMsgs* ptr)
 }
 
 // setManualBrakeActiveRPC helper class implementation
-ControlBoardMsgs_setManualBrakeActiveRPC_helper::ControlBoardMsgs_setManualBrakeActiveRPC_helper(const std::int16_t j, const bool active) :
+ControlBoardMsgs_setManualBrakeActiveRPC_helper::ControlBoardMsgs_setManualBrakeActiveRPC_helper(const std::int32_t j, const bool active) :
         cmd{j, active}
 {
 }
@@ -529,7 +771,7 @@ bool ControlBoardMsgs_setManualBrakeActiveRPC_helper::read(yarp::os::ConnectionR
     return reply.read(connection);
 }
 
-ControlBoardMsgs_setManualBrakeActiveRPC_helper::Command::Command(const std::int16_t j, const bool active) :
+ControlBoardMsgs_setManualBrakeActiveRPC_helper::Command::Command(const std::int32_t j, const bool active) :
         j{j},
         active{active}
 {
@@ -575,7 +817,7 @@ bool ControlBoardMsgs_setManualBrakeActiveRPC_helper::Command::writeTag(const ya
 
 bool ControlBoardMsgs_setManualBrakeActiveRPC_helper::Command::writeArgs(const yarp::os::idl::WireWriter& writer) const
 {
-    if (!writer.writeI16(j)) {
+    if (!writer.writeI32(j)) {
         return false;
     }
     if (!writer.writeBool(active)) {
@@ -614,7 +856,7 @@ bool ControlBoardMsgs_setManualBrakeActiveRPC_helper::Command::readArgs(yarp::os
         reader.fail();
         return false;
     }
-    if (!reader.readI16(j)) {
+    if (!reader.readI32(j)) {
         reader.fail();
         return false;
     }
@@ -674,7 +916,7 @@ void ControlBoardMsgs_setManualBrakeActiveRPC_helper::call(ControlBoardMsgs* ptr
 }
 
 // setAutoBrakeEnabledRPC helper class implementation
-ControlBoardMsgs_setAutoBrakeEnabledRPC_helper::ControlBoardMsgs_setAutoBrakeEnabledRPC_helper(const std::int16_t j, const bool enabled) :
+ControlBoardMsgs_setAutoBrakeEnabledRPC_helper::ControlBoardMsgs_setAutoBrakeEnabledRPC_helper(const std::int32_t j, const bool enabled) :
         cmd{j, enabled}
 {
 }
@@ -689,7 +931,7 @@ bool ControlBoardMsgs_setAutoBrakeEnabledRPC_helper::read(yarp::os::ConnectionRe
     return reply.read(connection);
 }
 
-ControlBoardMsgs_setAutoBrakeEnabledRPC_helper::Command::Command(const std::int16_t j, const bool enabled) :
+ControlBoardMsgs_setAutoBrakeEnabledRPC_helper::Command::Command(const std::int32_t j, const bool enabled) :
         j{j},
         enabled{enabled}
 {
@@ -735,7 +977,7 @@ bool ControlBoardMsgs_setAutoBrakeEnabledRPC_helper::Command::writeTag(const yar
 
 bool ControlBoardMsgs_setAutoBrakeEnabledRPC_helper::Command::writeArgs(const yarp::os::idl::WireWriter& writer) const
 {
-    if (!writer.writeI16(j)) {
+    if (!writer.writeI32(j)) {
         return false;
     }
     if (!writer.writeBool(enabled)) {
@@ -774,7 +1016,7 @@ bool ControlBoardMsgs_setAutoBrakeEnabledRPC_helper::Command::readArgs(yarp::os:
         reader.fail();
         return false;
     }
-    if (!reader.readI16(j)) {
+    if (!reader.readI32(j)) {
         reader.fail();
         return false;
     }
@@ -834,7 +1076,7 @@ void ControlBoardMsgs_setAutoBrakeEnabledRPC_helper::call(ControlBoardMsgs* ptr)
 }
 
 // getAutoBrakeEnabledRPC helper class implementation
-ControlBoardMsgs_getAutoBrakeEnabledRPC_helper::ControlBoardMsgs_getAutoBrakeEnabledRPC_helper(const std::int16_t j) :
+ControlBoardMsgs_getAutoBrakeEnabledRPC_helper::ControlBoardMsgs_getAutoBrakeEnabledRPC_helper(const std::int32_t j) :
         cmd{j}
 {
 }
@@ -849,7 +1091,7 @@ bool ControlBoardMsgs_getAutoBrakeEnabledRPC_helper::read(yarp::os::ConnectionRe
     return reply.read(connection);
 }
 
-ControlBoardMsgs_getAutoBrakeEnabledRPC_helper::Command::Command(const std::int16_t j) :
+ControlBoardMsgs_getAutoBrakeEnabledRPC_helper::Command::Command(const std::int32_t j) :
         j{j}
 {
 }
@@ -894,7 +1136,7 @@ bool ControlBoardMsgs_getAutoBrakeEnabledRPC_helper::Command::writeTag(const yar
 
 bool ControlBoardMsgs_getAutoBrakeEnabledRPC_helper::Command::writeArgs(const yarp::os::idl::WireWriter& writer) const
 {
-    if (!writer.writeI16(j)) {
+    if (!writer.writeI32(j)) {
         return false;
     }
     return true;
@@ -930,7 +1172,7 @@ bool ControlBoardMsgs_getAutoBrakeEnabledRPC_helper::Command::readArgs(yarp::os:
         reader.fail();
         return false;
     }
-    if (!reader.readI16(j)) {
+    if (!reader.readI32(j)) {
         reader.fail();
         return false;
     }
@@ -987,13 +1229,604 @@ void ControlBoardMsgs_getAutoBrakeEnabledRPC_helper::call(ControlBoardMsgs* ptr)
     reply.return_helper = ptr->getAutoBrakeEnabledRPC(cmd.j);
 }
 
+// getAxesRPC helper class implementation
+bool ControlBoardMsgs_getAxesRPC_helper::write(yarp::os::ConnectionWriter& connection) const
+{
+    return cmd.write(connection);
+}
+
+bool ControlBoardMsgs_getAxesRPC_helper::read(yarp::os::ConnectionReader& connection)
+{
+    return reply.read(connection);
+}
+
+bool ControlBoardMsgs_getAxesRPC_helper::Command::write(yarp::os::ConnectionWriter& connection) const
+{
+    yarp::os::idl::WireWriter writer(connection);
+    if (!writer.writeListHeader(s_cmd_len)) {
+        return false;
+    }
+    return write(writer);
+}
+
+bool ControlBoardMsgs_getAxesRPC_helper::Command::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    if (!reader.readListHeader()) {
+        reader.fail();
+        return false;
+    }
+    return read(reader);
+}
+
+bool ControlBoardMsgs_getAxesRPC_helper::Command::write(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writeTag(writer)) {
+        return false;
+    }
+    if (!writeArgs(writer)) {
+        return false;
+    }
+    return true;
+}
+
+bool ControlBoardMsgs_getAxesRPC_helper::Command::writeTag(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.writeTag(s_tag, 1, s_tag_len)) {
+        return false;
+    }
+    return true;
+}
+
+bool ControlBoardMsgs_getAxesRPC_helper::Command::writeArgs(const yarp::os::idl::WireWriter& writer [[maybe_unused]]) const
+{
+    return true;
+}
+
+bool ControlBoardMsgs_getAxesRPC_helper::Command::read(yarp::os::idl::WireReader& reader)
+{
+    if (!readTag(reader)) {
+        return false;
+    }
+    if (!readArgs(reader)) {
+        return false;
+    }
+    return true;
+}
+
+bool ControlBoardMsgs_getAxesRPC_helper::Command::readTag(yarp::os::idl::WireReader& reader)
+{
+    std::string tag = reader.readTag(s_tag_len);
+    if (reader.isError()) {
+        return false;
+    }
+    if (tag != s_tag) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool ControlBoardMsgs_getAxesRPC_helper::Command::readArgs(yarp::os::idl::WireReader& reader)
+{
+    if (!reader.noMore()) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool ControlBoardMsgs_getAxesRPC_helper::Reply::write(yarp::os::ConnectionWriter& connection) const
+{
+    yarp::os::idl::WireWriter writer(connection);
+    return write(writer);
+}
+
+bool ControlBoardMsgs_getAxesRPC_helper::Reply::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    return read(reader);
+}
+
+bool ControlBoardMsgs_getAxesRPC_helper::Reply::write(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.isNull()) {
+        if (!writer.writeListHeader(s_reply_len)) {
+            return false;
+        }
+        if (!writer.write(return_helper)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+bool ControlBoardMsgs_getAxesRPC_helper::Reply::read(yarp::os::idl::WireReader& reader)
+{
+    if (!reader.readListReturn()) {
+        return false;
+    }
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
+    if (!reader.read(return_helper)) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+void ControlBoardMsgs_getAxesRPC_helper::call(ControlBoardMsgs* ptr)
+{
+    reply.return_helper = ptr->getAxesRPC();
+}
+
+// getDesiredVelocityOneRPC helper class implementation
+ControlBoardMsgs_getDesiredVelocityOneRPC_helper::ControlBoardMsgs_getDesiredVelocityOneRPC_helper(const std::int32_t j) :
+        cmd{j}
+{
+}
+
+bool ControlBoardMsgs_getDesiredVelocityOneRPC_helper::write(yarp::os::ConnectionWriter& connection) const
+{
+    return cmd.write(connection);
+}
+
+bool ControlBoardMsgs_getDesiredVelocityOneRPC_helper::read(yarp::os::ConnectionReader& connection)
+{
+    return reply.read(connection);
+}
+
+ControlBoardMsgs_getDesiredVelocityOneRPC_helper::Command::Command(const std::int32_t j) :
+        j{j}
+{
+}
+
+bool ControlBoardMsgs_getDesiredVelocityOneRPC_helper::Command::write(yarp::os::ConnectionWriter& connection) const
+{
+    yarp::os::idl::WireWriter writer(connection);
+    if (!writer.writeListHeader(s_cmd_len)) {
+        return false;
+    }
+    return write(writer);
+}
+
+bool ControlBoardMsgs_getDesiredVelocityOneRPC_helper::Command::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    if (!reader.readListHeader()) {
+        reader.fail();
+        return false;
+    }
+    return read(reader);
+}
+
+bool ControlBoardMsgs_getDesiredVelocityOneRPC_helper::Command::write(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writeTag(writer)) {
+        return false;
+    }
+    if (!writeArgs(writer)) {
+        return false;
+    }
+    return true;
+}
+
+bool ControlBoardMsgs_getDesiredVelocityOneRPC_helper::Command::writeTag(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.writeTag(s_tag, 1, s_tag_len)) {
+        return false;
+    }
+    return true;
+}
+
+bool ControlBoardMsgs_getDesiredVelocityOneRPC_helper::Command::writeArgs(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.writeI32(j)) {
+        return false;
+    }
+    return true;
+}
+
+bool ControlBoardMsgs_getDesiredVelocityOneRPC_helper::Command::read(yarp::os::idl::WireReader& reader)
+{
+    if (!readTag(reader)) {
+        return false;
+    }
+    if (!readArgs(reader)) {
+        return false;
+    }
+    return true;
+}
+
+bool ControlBoardMsgs_getDesiredVelocityOneRPC_helper::Command::readTag(yarp::os::idl::WireReader& reader)
+{
+    std::string tag = reader.readTag(s_tag_len);
+    if (reader.isError()) {
+        return false;
+    }
+    if (tag != s_tag) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool ControlBoardMsgs_getDesiredVelocityOneRPC_helper::Command::readArgs(yarp::os::idl::WireReader& reader)
+{
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
+    if (!reader.readI32(j)) {
+        reader.fail();
+        return false;
+    }
+    if (!reader.noMore()) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool ControlBoardMsgs_getDesiredVelocityOneRPC_helper::Reply::write(yarp::os::ConnectionWriter& connection) const
+{
+    yarp::os::idl::WireWriter writer(connection);
+    return write(writer);
+}
+
+bool ControlBoardMsgs_getDesiredVelocityOneRPC_helper::Reply::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    return read(reader);
+}
+
+bool ControlBoardMsgs_getDesiredVelocityOneRPC_helper::Reply::write(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.isNull()) {
+        if (!writer.writeListHeader(s_reply_len)) {
+            return false;
+        }
+        if (!writer.write(return_helper)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+bool ControlBoardMsgs_getDesiredVelocityOneRPC_helper::Reply::read(yarp::os::idl::WireReader& reader)
+{
+    if (!reader.readListReturn()) {
+        return false;
+    }
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
+    if (!reader.read(return_helper)) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+void ControlBoardMsgs_getDesiredVelocityOneRPC_helper::call(ControlBoardMsgs* ptr)
+{
+    reply.return_helper = ptr->getDesiredVelocityOneRPC(cmd.j);
+}
+
+// getDesiredVelocityAllRPC helper class implementation
+bool ControlBoardMsgs_getDesiredVelocityAllRPC_helper::write(yarp::os::ConnectionWriter& connection) const
+{
+    return cmd.write(connection);
+}
+
+bool ControlBoardMsgs_getDesiredVelocityAllRPC_helper::read(yarp::os::ConnectionReader& connection)
+{
+    return reply.read(connection);
+}
+
+bool ControlBoardMsgs_getDesiredVelocityAllRPC_helper::Command::write(yarp::os::ConnectionWriter& connection) const
+{
+    yarp::os::idl::WireWriter writer(connection);
+    if (!writer.writeListHeader(s_cmd_len)) {
+        return false;
+    }
+    return write(writer);
+}
+
+bool ControlBoardMsgs_getDesiredVelocityAllRPC_helper::Command::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    if (!reader.readListHeader()) {
+        reader.fail();
+        return false;
+    }
+    return read(reader);
+}
+
+bool ControlBoardMsgs_getDesiredVelocityAllRPC_helper::Command::write(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writeTag(writer)) {
+        return false;
+    }
+    if (!writeArgs(writer)) {
+        return false;
+    }
+    return true;
+}
+
+bool ControlBoardMsgs_getDesiredVelocityAllRPC_helper::Command::writeTag(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.writeTag(s_tag, 1, s_tag_len)) {
+        return false;
+    }
+    return true;
+}
+
+bool ControlBoardMsgs_getDesiredVelocityAllRPC_helper::Command::writeArgs(const yarp::os::idl::WireWriter& writer [[maybe_unused]]) const
+{
+    return true;
+}
+
+bool ControlBoardMsgs_getDesiredVelocityAllRPC_helper::Command::read(yarp::os::idl::WireReader& reader)
+{
+    if (!readTag(reader)) {
+        return false;
+    }
+    if (!readArgs(reader)) {
+        return false;
+    }
+    return true;
+}
+
+bool ControlBoardMsgs_getDesiredVelocityAllRPC_helper::Command::readTag(yarp::os::idl::WireReader& reader)
+{
+    std::string tag = reader.readTag(s_tag_len);
+    if (reader.isError()) {
+        return false;
+    }
+    if (tag != s_tag) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool ControlBoardMsgs_getDesiredVelocityAllRPC_helper::Command::readArgs(yarp::os::idl::WireReader& reader)
+{
+    if (!reader.noMore()) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool ControlBoardMsgs_getDesiredVelocityAllRPC_helper::Reply::write(yarp::os::ConnectionWriter& connection) const
+{
+    yarp::os::idl::WireWriter writer(connection);
+    return write(writer);
+}
+
+bool ControlBoardMsgs_getDesiredVelocityAllRPC_helper::Reply::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    return read(reader);
+}
+
+bool ControlBoardMsgs_getDesiredVelocityAllRPC_helper::Reply::write(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.isNull()) {
+        if (!writer.writeListHeader(s_reply_len)) {
+            return false;
+        }
+        if (!writer.write(return_helper)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+bool ControlBoardMsgs_getDesiredVelocityAllRPC_helper::Reply::read(yarp::os::idl::WireReader& reader)
+{
+    if (!reader.readListReturn()) {
+        return false;
+    }
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
+    if (!reader.read(return_helper)) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+void ControlBoardMsgs_getDesiredVelocityAllRPC_helper::call(ControlBoardMsgs* ptr)
+{
+    reply.return_helper = ptr->getDesiredVelocityAllRPC();
+}
+
+// getDesiredVelocityGroupRPC helper class implementation
+ControlBoardMsgs_getDesiredVelocityGroupRPC_helper::ControlBoardMsgs_getDesiredVelocityGroupRPC_helper(const std::vector<std::int32_t>& j) :
+        cmd{j}
+{
+}
+
+bool ControlBoardMsgs_getDesiredVelocityGroupRPC_helper::write(yarp::os::ConnectionWriter& connection) const
+{
+    return cmd.write(connection);
+}
+
+bool ControlBoardMsgs_getDesiredVelocityGroupRPC_helper::read(yarp::os::ConnectionReader& connection)
+{
+    return reply.read(connection);
+}
+
+ControlBoardMsgs_getDesiredVelocityGroupRPC_helper::Command::Command(const std::vector<std::int32_t>& j) :
+        j{j}
+{
+}
+
+bool ControlBoardMsgs_getDesiredVelocityGroupRPC_helper::Command::write(yarp::os::ConnectionWriter& connection) const
+{
+    yarp::os::idl::WireWriter writer(connection);
+    if (!writer.writeListHeader(s_cmd_len)) {
+        return false;
+    }
+    return write(writer);
+}
+
+bool ControlBoardMsgs_getDesiredVelocityGroupRPC_helper::Command::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    if (!reader.readListHeader()) {
+        reader.fail();
+        return false;
+    }
+    return read(reader);
+}
+
+bool ControlBoardMsgs_getDesiredVelocityGroupRPC_helper::Command::write(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writeTag(writer)) {
+        return false;
+    }
+    if (!writeArgs(writer)) {
+        return false;
+    }
+    return true;
+}
+
+bool ControlBoardMsgs_getDesiredVelocityGroupRPC_helper::Command::writeTag(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.writeTag(s_tag, 1, s_tag_len)) {
+        return false;
+    }
+    return true;
+}
+
+bool ControlBoardMsgs_getDesiredVelocityGroupRPC_helper::Command::writeArgs(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.writeListBegin(BOTTLE_TAG_INT32, j.size())) {
+        return false;
+    }
+    if (!writer.writeBlock(reinterpret_cast<const char*>(j.data()), j.size() * sizeof(std::int32_t))) {
+        return false;
+    }
+    if (!writer.writeListEnd()) {
+        return false;
+    }
+    return true;
+}
+
+bool ControlBoardMsgs_getDesiredVelocityGroupRPC_helper::Command::read(yarp::os::idl::WireReader& reader)
+{
+    if (!readTag(reader)) {
+        return false;
+    }
+    if (!readArgs(reader)) {
+        return false;
+    }
+    return true;
+}
+
+bool ControlBoardMsgs_getDesiredVelocityGroupRPC_helper::Command::readTag(yarp::os::idl::WireReader& reader)
+{
+    std::string tag = reader.readTag(s_tag_len);
+    if (reader.isError()) {
+        return false;
+    }
+    if (tag != s_tag) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool ControlBoardMsgs_getDesiredVelocityGroupRPC_helper::Command::readArgs(yarp::os::idl::WireReader& reader)
+{
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
+    size_t _csize;
+    yarp::os::idl::WireState _etype;
+    reader.readListBegin(_etype, _csize);
+    // WireReader removes BOTTLE_TAG_LIST from the tag
+    constexpr int expected_tag = ((BOTTLE_TAG_INT32) & (~BOTTLE_TAG_LIST));
+    if constexpr (expected_tag != 0) {
+        if (_csize != 0 && _etype.code != expected_tag) {
+            return false;
+        }
+    }
+    j.resize(_csize);
+    if (_csize != 0 && !reader.readBlock(reinterpret_cast<char*>(j.data()), j.size() * sizeof(std::int32_t))) {
+        return false;
+    }
+    reader.readListEnd();
+    if (!reader.noMore()) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool ControlBoardMsgs_getDesiredVelocityGroupRPC_helper::Reply::write(yarp::os::ConnectionWriter& connection) const
+{
+    yarp::os::idl::WireWriter writer(connection);
+    return write(writer);
+}
+
+bool ControlBoardMsgs_getDesiredVelocityGroupRPC_helper::Reply::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    return read(reader);
+}
+
+bool ControlBoardMsgs_getDesiredVelocityGroupRPC_helper::Reply::write(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.isNull()) {
+        if (!writer.writeListHeader(s_reply_len)) {
+            return false;
+        }
+        if (!writer.write(return_helper)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+bool ControlBoardMsgs_getDesiredVelocityGroupRPC_helper::Reply::read(yarp::os::idl::WireReader& reader)
+{
+    if (!reader.readListReturn()) {
+        return false;
+    }
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
+    if (!reader.read(return_helper)) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+void ControlBoardMsgs_getDesiredVelocityGroupRPC_helper::call(ControlBoardMsgs* ptr)
+{
+    reply.return_helper = ptr->getDesiredVelocityGroupRPC(cmd.j);
+}
+
 // Constructor
 ControlBoardMsgs::ControlBoardMsgs()
 {
     yarp().setOwner(*this);
 }
 
-return_isJointBraked ControlBoardMsgs::isJointBrakedRPC(const std::int16_t j) const
+return_isJointBraked ControlBoardMsgs::isJointBrakedRPC(const std::int32_t j) const
 {
     if (!yarp().canWrite()) {
         yError("Missing server method '%s'?", ControlBoardMsgs_isJointBrakedRPC_helper::s_prototype);
@@ -1003,7 +1836,7 @@ return_isJointBraked ControlBoardMsgs::isJointBrakedRPC(const std::int16_t j) co
     return ok ? helper.reply.return_helper : return_isJointBraked{};
 }
 
-yarp::dev::ReturnValue ControlBoardMsgs::setManualBrakeActiveRPC(const std::int16_t j, const bool active)
+yarp::dev::ReturnValue ControlBoardMsgs::setManualBrakeActiveRPC(const std::int32_t j, const bool active)
 {
     if (!yarp().canWrite()) {
         yError("Missing server method '%s'?", ControlBoardMsgs_setManualBrakeActiveRPC_helper::s_prototype);
@@ -1013,7 +1846,7 @@ yarp::dev::ReturnValue ControlBoardMsgs::setManualBrakeActiveRPC(const std::int1
     return ok ? helper.reply.return_helper : yarp::dev::ReturnValue{};
 }
 
-yarp::dev::ReturnValue ControlBoardMsgs::setAutoBrakeEnabledRPC(const std::int16_t j, const bool enabled)
+yarp::dev::ReturnValue ControlBoardMsgs::setAutoBrakeEnabledRPC(const std::int32_t j, const bool enabled)
 {
     if (!yarp().canWrite()) {
         yError("Missing server method '%s'?", ControlBoardMsgs_setAutoBrakeEnabledRPC_helper::s_prototype);
@@ -1023,7 +1856,7 @@ yarp::dev::ReturnValue ControlBoardMsgs::setAutoBrakeEnabledRPC(const std::int16
     return ok ? helper.reply.return_helper : yarp::dev::ReturnValue{};
 }
 
-return_getAutoBrakeEnabled ControlBoardMsgs::getAutoBrakeEnabledRPC(const std::int16_t j) const
+return_getAutoBrakeEnabled ControlBoardMsgs::getAutoBrakeEnabledRPC(const std::int32_t j) const
 {
     if (!yarp().canWrite()) {
         yError("Missing server method '%s'?", ControlBoardMsgs_getAutoBrakeEnabledRPC_helper::s_prototype);
@@ -1031,6 +1864,46 @@ return_getAutoBrakeEnabled ControlBoardMsgs::getAutoBrakeEnabledRPC(const std::i
     ControlBoardMsgs_getAutoBrakeEnabledRPC_helper helper{j};
     bool ok = yarp().write(helper, helper);
     return ok ? helper.reply.return_helper : return_getAutoBrakeEnabled{};
+}
+
+return_getAxes ControlBoardMsgs::getAxesRPC() const
+{
+    if (!yarp().canWrite()) {
+        yError("Missing server method '%s'?", ControlBoardMsgs_getAxesRPC_helper::s_prototype);
+    }
+    ControlBoardMsgs_getAxesRPC_helper helper{};
+    bool ok = yarp().write(helper, helper);
+    return ok ? helper.reply.return_helper : return_getAxes{};
+}
+
+return_getDesiredVelocityOne ControlBoardMsgs::getDesiredVelocityOneRPC(const std::int32_t j) const
+{
+    if (!yarp().canWrite()) {
+        yError("Missing server method '%s'?", ControlBoardMsgs_getDesiredVelocityOneRPC_helper::s_prototype);
+    }
+    ControlBoardMsgs_getDesiredVelocityOneRPC_helper helper{j};
+    bool ok = yarp().write(helper, helper);
+    return ok ? helper.reply.return_helper : return_getDesiredVelocityOne{};
+}
+
+return_getDesiredVelocityAll ControlBoardMsgs::getDesiredVelocityAllRPC() const
+{
+    if (!yarp().canWrite()) {
+        yError("Missing server method '%s'?", ControlBoardMsgs_getDesiredVelocityAllRPC_helper::s_prototype);
+    }
+    ControlBoardMsgs_getDesiredVelocityAllRPC_helper helper{};
+    bool ok = yarp().write(helper, helper);
+    return ok ? helper.reply.return_helper : return_getDesiredVelocityAll{};
+}
+
+return_getDesiredVelocityGroup ControlBoardMsgs::getDesiredVelocityGroupRPC(const std::vector<std::int32_t>& j) const
+{
+    if (!yarp().canWrite()) {
+        yError("Missing server method '%s'?", ControlBoardMsgs_getDesiredVelocityGroupRPC_helper::s_prototype);
+    }
+    ControlBoardMsgs_getDesiredVelocityGroupRPC_helper helper{j};
+    bool ok = yarp().write(helper, helper);
+    return ok ? helper.reply.return_helper : return_getDesiredVelocityGroup{};
 }
 
 // help method
@@ -1044,6 +1917,10 @@ std::vector<std::string> ControlBoardMsgs::help(const std::string& functionName)
         helpString.emplace_back(ControlBoardMsgs_setManualBrakeActiveRPC_helper::s_tag);
         helpString.emplace_back(ControlBoardMsgs_setAutoBrakeEnabledRPC_helper::s_tag);
         helpString.emplace_back(ControlBoardMsgs_getAutoBrakeEnabledRPC_helper::s_tag);
+        helpString.emplace_back(ControlBoardMsgs_getAxesRPC_helper::s_tag);
+        helpString.emplace_back(ControlBoardMsgs_getDesiredVelocityOneRPC_helper::s_tag);
+        helpString.emplace_back(ControlBoardMsgs_getDesiredVelocityAllRPC_helper::s_tag);
+        helpString.emplace_back(ControlBoardMsgs_getDesiredVelocityGroupRPC_helper::s_tag);
         helpString.emplace_back("help");
     } else {
         if (functionName == ControlBoardMsgs_isJointBrakedRPC_helper::s_tag) {
@@ -1057,6 +1934,18 @@ std::vector<std::string> ControlBoardMsgs::help(const std::string& functionName)
         }
         if (functionName == ControlBoardMsgs_getAutoBrakeEnabledRPC_helper::s_tag) {
             helpString.emplace_back(ControlBoardMsgs_getAutoBrakeEnabledRPC_helper::s_prototype);
+        }
+        if (functionName == ControlBoardMsgs_getAxesRPC_helper::s_tag) {
+            helpString.emplace_back(ControlBoardMsgs_getAxesRPC_helper::s_prototype);
+        }
+        if (functionName == ControlBoardMsgs_getDesiredVelocityOneRPC_helper::s_tag) {
+            helpString.emplace_back(ControlBoardMsgs_getDesiredVelocityOneRPC_helper::s_prototype);
+        }
+        if (functionName == ControlBoardMsgs_getDesiredVelocityAllRPC_helper::s_tag) {
+            helpString.emplace_back(ControlBoardMsgs_getDesiredVelocityAllRPC_helper::s_prototype);
+        }
+        if (functionName == ControlBoardMsgs_getDesiredVelocityGroupRPC_helper::s_tag) {
+            helpString.emplace_back(ControlBoardMsgs_getDesiredVelocityGroupRPC_helper::s_prototype);
         }
         if (functionName == "help") {
             helpString.emplace_back("std::vector<std::string> help(const std::string& functionName = \"--all\")");
@@ -1157,6 +2046,66 @@ bool ControlBoardMsgs::read(yarp::os::ConnectionReader& connection)
         }
         if (tag == ControlBoardMsgs_getAutoBrakeEnabledRPC_helper::s_tag) {
             ControlBoardMsgs_getAutoBrakeEnabledRPC_helper helper;
+            if (!helper.cmd.readArgs(reader)) {
+                return false;
+            }
+
+            helper.call(this);
+
+            yarp::os::idl::WireWriter writer(reader);
+            if (!helper.reply.write(writer)) {
+                return false;
+            }
+            reader.accept();
+            return true;
+        }
+        if (tag == ControlBoardMsgs_getAxesRPC_helper::s_tag) {
+            ControlBoardMsgs_getAxesRPC_helper helper;
+            if (!helper.cmd.readArgs(reader)) {
+                return false;
+            }
+
+            helper.call(this);
+
+            yarp::os::idl::WireWriter writer(reader);
+            if (!helper.reply.write(writer)) {
+                return false;
+            }
+            reader.accept();
+            return true;
+        }
+        if (tag == ControlBoardMsgs_getDesiredVelocityOneRPC_helper::s_tag) {
+            ControlBoardMsgs_getDesiredVelocityOneRPC_helper helper;
+            if (!helper.cmd.readArgs(reader)) {
+                return false;
+            }
+
+            helper.call(this);
+
+            yarp::os::idl::WireWriter writer(reader);
+            if (!helper.reply.write(writer)) {
+                return false;
+            }
+            reader.accept();
+            return true;
+        }
+        if (tag == ControlBoardMsgs_getDesiredVelocityAllRPC_helper::s_tag) {
+            ControlBoardMsgs_getDesiredVelocityAllRPC_helper helper;
+            if (!helper.cmd.readArgs(reader)) {
+                return false;
+            }
+
+            helper.call(this);
+
+            yarp::os::idl::WireWriter writer(reader);
+            if (!helper.reply.write(writer)) {
+                return false;
+            }
+            reader.accept();
+            return true;
+        }
+        if (tag == ControlBoardMsgs_getDesiredVelocityGroupRPC_helper::s_tag) {
+            ControlBoardMsgs_getDesiredVelocityGroupRPC_helper helper;
             if (!helper.cmd.readArgs(reader)) {
                 return false;
             }

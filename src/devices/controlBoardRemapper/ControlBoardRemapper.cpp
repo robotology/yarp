@@ -4584,6 +4584,9 @@ bool ControlBoardRemapper::getRefCurrents(double* currs)
     return ret;
 }
 
+// IJointBraked interface
+
+
 ReturnValue ControlBoardRemapper::isJointBraked(int j, bool& braked) const
 {
     ReturnValue ret = ReturnValue::return_code::return_value_error_not_ready;
@@ -4641,5 +4644,130 @@ ReturnValue ControlBoardRemapper::getAutoBrakeEnabled(int j, bool& enabled) cons
         ret = p->iBrake->getAutoBrakeEnabled(off, enabled);
     }
 
+    return ret;
+}
+
+// IVelocityDirect interface
+
+yarp::dev::ReturnValue ControlBoardRemapper::getAxes(size_t& axes)
+{
+    axes = static_cast<size_t>(controlledJoints);
+    return ReturnValue_ok;
+}
+
+yarp::dev::ReturnValue ControlBoardRemapper::setDesiredVelocity(int jnt, double vel)
+{
+    int off = static_cast<int>(remappedControlBoards.lut[jnt].axisIndexInSubControlBoard);
+    size_t subIndex = remappedControlBoards.lut[jnt].subControlBoardIndex;
+    RemappedSubControlBoard* p = remappedControlBoards.getSubControlBoard(subIndex);
+
+    if (!p || !p->iVelDir)
+    {
+        return ReturnValue::return_code::return_value_error_generic;
+    }
+    return p->iVelDir->setDesiredVelocity(off, vel);
+}
+
+yarp::dev::ReturnValue ControlBoardRemapper::setDesiredVelocity(const std::vector<double>& vels)
+{
+    if (vels.size() != static_cast<size_t>(controlledJoints))
+    {
+        return ReturnValue::return_code::return_value_error_method_failed;
+    }
+    ReturnValue ret = ReturnValue_ok;
+    std::lock_guard<std::mutex> lock(allJointsBuffers.mutex);
+    allJointsBuffers.fillSubControlBoardBuffersFromCompleteJointVector(vels.data(), remappedControlBoards);
+
+    for (size_t ctrlBrd = 0; ctrlBrd < remappedControlBoards.getNrOfSubControlBoards(); ctrlBrd++)
+    {
+        RemappedSubControlBoard* p = remappedControlBoards.getSubControlBoard(ctrlBrd);
+        if (!p || !p->iVelDir)
+        {
+            ret = ReturnValue::return_code::return_value_error_generic;
+            continue;
+        }
+        std::vector<double> subVels = allJointsBuffers.m_bufferForSubControlBoard[ctrlBrd];
+        ret = ret && p->iVelDir->setDesiredVelocity(subVels);
+    }
+    return ret;
+}
+
+yarp::dev::ReturnValue ControlBoardRemapper::setDesiredVelocity(const std::vector<int>& jnts, const std::vector<double>& vels)
+{
+    if (jnts.size() != vels.size())
+    {
+        return ReturnValue::return_code::return_value_error_method_failed;
+    }
+    ReturnValue ret = ReturnValue_ok;
+    std::lock_guard<std::mutex> lock(selectedJointsBuffers.mutex);
+    selectedJointsBuffers.fillSubControlBoardBuffersFromArbitraryJointVector(vels.data(), static_cast<int>(jnts.size()), jnts.data(), remappedControlBoards);
+
+    for (size_t ctrlBrd = 0; ctrlBrd < remappedControlBoards.getNrOfSubControlBoards(); ctrlBrd++)
+    {
+        RemappedSubControlBoard* p = remappedControlBoards.getSubControlBoard(ctrlBrd);
+        if (!p || !p->iVelDir)
+        {
+            ret = ReturnValue::return_code::return_value_error_generic;
+            continue;
+        }
+        std::vector<int> subJnts = selectedJointsBuffers.m_jointsInSubControlBoard[ctrlBrd];
+        std::vector<double> subVels = selectedJointsBuffers.m_bufferForSubControlBoard[ctrlBrd];
+        ret = ret && p->iVelDir->setDesiredVelocity(subJnts, subVels);
+    }
+    return ret;
+}
+
+yarp::dev::ReturnValue ControlBoardRemapper::getDesiredVelocity(const int jnt, double& vel)
+{
+    int off = static_cast<int>(remappedControlBoards.lut[jnt].axisIndexInSubControlBoard);
+    size_t subIndex = remappedControlBoards.lut[jnt].subControlBoardIndex;
+    RemappedSubControlBoard* p = remappedControlBoards.getSubControlBoard(subIndex);
+
+    if (!p || !p->iVelDir)
+    {
+        return ReturnValue::return_code::return_value_error_generic;
+    }
+    return p->iVelDir->getDesiredVelocity(off, vel);
+}
+
+yarp::dev::ReturnValue ControlBoardRemapper::getDesiredVelocity(std::vector<double>& vels)
+{
+    vels.resize(controlledJoints);
+    ReturnValue ret = ReturnValue_ok;
+    std::lock_guard<std::mutex> lock(allJointsBuffers.mutex);
+
+    for (int l = 0; l < controlledJoints; l++)
+    {
+        int off = static_cast<int>(remappedControlBoards.lut[l].axisIndexInSubControlBoard);
+        size_t subIndex = remappedControlBoards.lut[l].subControlBoardIndex;
+        RemappedSubControlBoard* p = remappedControlBoards.getSubControlBoard(subIndex);
+        if (!p || !p->iVelDir)
+        {
+            ret = ReturnValue::return_code::return_value_error_generic;
+            continue;
+        }
+        ret = ret && p->iVelDir->getDesiredVelocity(off, vels[l]);
+    }
+    return ret;
+}
+
+yarp::dev::ReturnValue ControlBoardRemapper::getDesiredVelocity(const std::vector<int>& jnts, std::vector<double>& vels)
+{
+    vels.resize(jnts.size());
+    ReturnValue ret = ReturnValue_ok;
+
+    for (size_t i = 0; i < jnts.size(); ++i)
+    {
+        int j = jnts[i];
+        int off = static_cast<int>(remappedControlBoards.lut[j].axisIndexInSubControlBoard);
+        size_t subIndex = remappedControlBoards.lut[j].subControlBoardIndex;
+        RemappedSubControlBoard* p = remappedControlBoards.getSubControlBoard(subIndex);
+        if (!p || !p->iVelDir)
+        {
+            ret = ReturnValue::return_code::return_value_error_generic;
+            continue;
+        }
+        ret = ret && p->iVelDir->getDesiredVelocity(off, vels[i]);
+    }
     return ret;
 }

@@ -143,6 +143,10 @@ PartItem::PartItem(std::string robotName, int id, std::string partName, Resource
         for (i = 0; i < number_of_joints; i++) {
             m_refVelocitySpeeds[i] = std::nan("");
         }
+        m_refVelocityAccelerations.resize(number_of_joints);
+        for (i = 0; i < number_of_joints; i++) {
+            m_refVelocityAccelerations[i] = std::nan("");
+        }
         m_torques.resize(number_of_joints);
         for (i = 0; i < number_of_joints; i++) {
             m_torques[i] = std::nan("");
@@ -190,6 +194,8 @@ PartItem::PartItem(std::string robotName, int id, std::string partName, Resource
         double max_pos = 100;
         double min_vel = 0;
         double max_vel = 100;
+        double min_acc = 0;
+        double max_acc = 100;
         double min_cur = -2.0;
         double max_cur = +2.0;
         for (int k = 0; k<number_of_joints; k++)
@@ -231,7 +237,7 @@ PartItem::PartItem(std::string robotName, int id, std::string partName, Resource
             m_layout->addWidget(joint);
             joint->setPositionRange(min_pos, max_pos);
             joint->setVelocityRange(min_vel, max_vel);
-            joint->setTrajectoryVelocityRange(max_vel);
+            joint->setAccelerationRange(min_acc, max_acc);
             joint->setTorqueRange(5.0);
             joint->setUnits(jtype);
             joint->enableControlPositionDirect(m_positionDirectEnabled);
@@ -240,16 +246,28 @@ PartItem::PartItem(std::string robotName, int id, std::string partName, Resource
             joint->enableControlCurrent(m_currentEnabled);
 
             int val_pos_choice = settings.value("val_pos_choice", 0).toInt();
-            int val_trq_choice = settings.value("val_trq_choice", 0).toInt();
             int val_vel_choice = settings.value("val_vel_choice", 0).toInt();
+            int val_acc_choice = settings.value("val_acc_choice", 0).toInt();
+            int val_trq_choice = settings.value("val_trq_choice", 0).toInt();
+            int val_cur_choice = settings.value("val_cur_choice", 0).toInt();
+
             int num_of_pos_decimals = settings.value("num_of_pos_decimals", 3).toInt();
+            int num_of_vel_decimals = settings.value("num_of_vel_decimals", 3).toInt();
+            int num_of_acc_decimals = settings.value("num_of_acc_decimals", 3).toInt();
+            int num_of_trq_decimals = settings.value("num_of_trq_decimals", 3).toInt();
+            int num_of_cur_decimals = settings.value("num_of_cur_decimals", 3).toInt();
+
             double val_pos_custom_step = settings.value("val_pos_custom_step", 1.0).toDouble();
-            double val_trq_custom_step = settings.value("val_trq_custom_step", 1.0).toDouble();
             double val_vel_custom_step = settings.value("val_vel_custom_step", 1.0).toDouble();
+            double val_acc_custom_step = settings.value("val_acc_custom_step", 1.0).toDouble();
+            double val_trq_custom_step = settings.value("val_trq_custom_step", 1.0).toDouble();
+            double val_cur_custom_step = settings.value("val_cur_custom_step", 1.0).toDouble();
+
             onSetPosSliderOptionPI(val_pos_choice, val_pos_custom_step, num_of_pos_decimals);
-            onSetVelSliderOptionPI(val_vel_choice, val_vel_custom_step);
-            onSetTrqSliderOptionPI(val_trq_choice, val_trq_custom_step);
-            onSetCurSliderOptionPI(val_trq_choice, val_trq_custom_step);
+            onSetVelSliderOptionPI(val_vel_choice, val_vel_custom_step, num_of_vel_decimals);
+            onSetAccSliderOptionPI(val_acc_choice, val_acc_custom_step, num_of_acc_decimals);
+            onSetTrqSliderOptionPI(val_trq_choice, val_trq_custom_step, num_of_trq_decimals);
+            onSetCurSliderOptionPI(val_cur_choice, val_cur_custom_step, num_of_cur_decimals);
 
             joint->setEnabledOptions(debug_param_enabled,
                                      speedview_param_enabled,
@@ -257,15 +275,17 @@ PartItem::PartItem(std::string robotName, int id, std::string partName, Resource
 
             connect(joint, SIGNAL(changeMode(int,JointItem*)), this, SLOT(onJointChangeMode(int,JointItem*)));
             connect(joint, SIGNAL(changeInteraction(int,JointItem*)), this, SLOT(onJointInteraction(int,JointItem*)));
-            connect(joint, SIGNAL(sliderTrajectoryPositionCommand(double, int)), this, SLOT(onSliderTrajectoryPositionCommand(double, int)));
-            connect(joint, SIGNAL(sliderTrajectoryVelocityCommand(double, int)), this, SLOT(onSliderTrajectoryVelocityCommand(double, int)));
+            connect(joint, SIGNAL(sliderPosTrajectoryPositionCommand(double, int)), this, SLOT(onSliderPosTrajectoryPositionCommand(double, int)));
+            connect(joint, SIGNAL(sliderPosTrajectoryVelocityCommand(double, int)), this, SLOT(onSliderPosTrajectoryVelocityCommand(double, int)));
+            connect(joint, SIGNAL(sliderVelTrajectoryVelocityCommand(double, int)), this, SLOT(onSliderVelTrajectoryVelocityCommand(double, int)));
+            connect(joint, SIGNAL(sliderVelTrajectoryAccelerationCommand(double, int)), this, SLOT(onSliderVelTrajectoryAccelerationCommand(double, int)));
             connect(joint, SIGNAL(sliderMixedPositionCommand(double, int)), this, SLOT(onSliderMixedPositionCommand(double, int)));
             connect(joint, SIGNAL(sliderMixedVelocityCommand(double, int)), this, SLOT(onSliderMixedVelocityCommand(double, int)));
             connect(joint, SIGNAL(sliderTorqueCommand(double, int)), this, SLOT(onSliderTorqueCommand(double, int)));
             connect(joint, SIGNAL(sliderDirectPositionCommand(double, int)), this, SLOT(onSliderDirectPositionCommand(double, int)));
             connect(joint, SIGNAL(sliderPWMCommand(double, int)), this, SLOT(onSliderPWMCommand(double, int)));
             connect(joint, SIGNAL(sliderCurrentCommand(double, int)), this, SLOT(onSliderCurrentCommand(double, int)));
-            connect(joint, SIGNAL(sliderVelocityCommand(double, int)), this, SLOT(onSliderVelocityCommand(double, int)));
+            connect(joint, SIGNAL(sliderVelocityDirectCommand(double, int)), this, SLOT(onSliderVelocityDirectCommand(double, int)));
             connect(joint, SIGNAL(homeClicked(JointItem*)),this,SLOT(onHomeClicked(JointItem*)));
             connect(joint, SIGNAL(idleClicked(JointItem*)),this,SLOT(onIdleClicked(JointItem*)));
             connect(joint, SIGNAL(runClicked(JointItem*)),this,SLOT(onRunClicked(JointItem*)));
@@ -363,7 +383,8 @@ void PartItem::initInterfaces()
     m_iPos = nullptr;
     m_iVel = nullptr;
     m_iVar = nullptr;
-    m_iDir = nullptr;
+    m_iPosDir = nullptr;
+    m_iVelDir = nullptr;
     m_iencs = nullptr;
     m_iAmp = nullptr;
     m_iPid = nullptr;
@@ -397,9 +418,13 @@ bool PartItem::openInterfaces()
         if(!ok){
             yError("...iPos was not ok...");
         }
-        ok &= m_partsdd->view(m_iDir);
+        ok &= m_partsdd->view(m_iPosDir);
         if(!ok){
             yError("...posDirect was not ok...");
+        }
+        ok &= m_partsdd->view(m_iVelDir);
+        if(!ok){
+            yError("...velDirect was not ok...");
         }
         ok &= m_partsdd->view(m_iVel);
         if(!ok){
@@ -488,9 +513,9 @@ bool PartItem::getInterfaceError()
     return m_interfaceError;
 }
 
-QString PartItem::getPartName()
+std::string PartItem::getPartName()
 {
-    return m_partName.c_str();
+    return m_partName;
 }
 
 void PartItem::onSliderPWMCommand(double pwmVal, int index)
@@ -503,9 +528,19 @@ void PartItem::onSliderCurrentCommand(double currentVal, int index)
     m_iCur->setRefCurrent(index, currentVal);
 }
 
-void PartItem::onSliderVelocityCommand(double speedVal, int index)
+void PartItem::onSliderVelTrajectoryVelocityCommand(double speedVal, int index)
 {
     m_iVel->velocityMove(index, speedVal);
+}
+
+void PartItem::onSliderVelTrajectoryAccelerationCommand(double accVal, int index)
+{
+    m_iVel->setRefAcceleration(index, accVal);
+}
+
+void PartItem::onSliderVelocityDirectCommand(double speedVal, int index)
+{
+    m_iVelDir->setDesiredVelocity(index, speedVal);
 }
 
 void PartItem::onSliderTorqueCommand(double torqueVal, int index)
@@ -513,7 +548,7 @@ void PartItem::onSliderTorqueCommand(double torqueVal, int index)
     m_iTrq->setRefTorque(index, torqueVal);
 }
 
-void PartItem::onSliderTrajectoryVelocityCommand(double trajspeedVal, int index)
+void PartItem::onSliderPosTrajectoryVelocityCommand(double trajspeedVal, int index)
 {
     m_iPos->setRefSpeed(index, trajspeedVal);
 }
@@ -525,7 +560,7 @@ void PartItem::onSliderDirectPositionCommand(double dirpos, int index)
     m_ictrlmode->getControlMode(index, &mode);
     if (mode == VOCAB_CM_POSITION_DIRECT)
     {
-        m_iDir->setPosition(index, dirpos);
+        m_iPosDir->setPosition(index, dirpos);
     }
     else
     {
@@ -571,7 +606,7 @@ void PartItem::onDumpAllRemoteVariables()
 }
 
 
-void PartItem::onSliderTrajectoryPositionCommand(double posVal, int index)
+void PartItem::onSliderPosTrajectoryPositionCommand(double posVal, int index)
 {
     int mode;
     m_ictrlmode->getControlMode(index, &mode);
@@ -955,6 +990,18 @@ void PartItem::onJointChangeMode(int mode,JointItem *joint)
             break;
         }*/
 
+    }
+    case JointItem::VelocityDirect: {
+        //if(positionDirectEnabled){
+            yInfo("joint: %d in VELOCITY DIRECT mode", jointIndex);
+            if (m_ictrlmode)
+            {
+                joint->resetTarget();
+                m_ictrlmode->setControlMode(jointIndex, VOCAB_CM_VELOCITY_DIRECT);
+            } else {
+                yError("ERROR: cannot do!");
+            }
+            break;
     }
     case JointItem::Velocity:{
         //if(positionDirectEnabled){
@@ -1937,6 +1984,15 @@ void PartItem::onEnableControlTorque(bool control)
     }
 }
 
+void PartItem::onEnableControlVelocityDirect(bool control)
+{
+    for (int i = 0; i<m_layout->count(); i++)
+    {
+        auto* joint = (JointItem*)m_layout->itemAt(i)->widget();
+        joint->enableControlVelocityDirect(control);
+    }
+}
+
 void PartItem::onViewSpeedValues(bool view)
 {
     m_part_speedVisible = view;
@@ -2019,7 +2075,7 @@ void PartItem::onSetPosSliderOptionPI(int mode, double step, int numOfDec)
         joint->setNumberOfPositionSliderDecimals(numOfDec);
     }
 }
-void PartItem::onSetVelSliderOptionPI(int mode, double step)
+void PartItem::onSetVelSliderOptionPI(int mode, double step, int numOfDec)
 {
     for (int i = 0; i<m_layout->count(); i++)
     {
@@ -2027,27 +2083,47 @@ void PartItem::onSetVelSliderOptionPI(int mode, double step)
         if (mode == 0)
         {
             joint->enableVelocitySliderDoubleAuto();
-            joint->enableTrajectoryVelocitySliderDoubleAuto();
         }
         else if (mode == 1)
         {
             joint->enableVelocitySliderDoubleValue(step);
-            joint->enableTrajectoryVelocitySliderDoubleValue(step);
         }
         else if (mode == 2)
         {
             joint->enableVelocitySliderDoubleValue(1.0);
-            joint->enableTrajectoryVelocitySliderDoubleValue(1.0);
         }
         else
         {
             joint->disableVelocitySliderDouble();
-            joint->disableTrajectoryVelocitySliderDouble();
         }
+        joint->setNumberOfVelocitySliderDecimals(numOfDec);
     }
 }
-
-void PartItem::onSetCurSliderOptionPI(int mode, double step)
+void PartItem::onSetAccSliderOptionPI(int mode, double step, int numOfDec)
+{
+    for (int i = 0; i<m_layout->count(); i++)
+    {
+        auto* joint = (JointItem*)m_layout->itemAt(i)->widget();
+        if (mode == 0)
+        {
+            joint->enableAccelerationSliderDoubleAuto();
+        }
+        else if (mode == 1)
+        {
+            joint->enableAccelerationSliderDoubleValue(step);
+        }
+        else if (mode == 2)
+        {
+            joint->enableAccelerationSliderDoubleValue(1.0);
+        }
+        else
+        {
+            joint->disableAccelerationSliderDouble();
+        }
+        joint->setNumberOfAccelerationSliderDecimals(numOfDec);
+    }
+}
+void PartItem::onSetCurSliderOptionPI(int mode, double step, int numOfDec)
 {
     for (int i = 0; i<m_layout->count(); i++)
     {
@@ -2068,10 +2144,11 @@ void PartItem::onSetCurSliderOptionPI(int mode, double step)
         {
             joint->disableCurrentSliderDouble();
         }
+        joint->setNumberOfCurrentSliderDecimals(numOfDec);
     }
 }
 
-void PartItem::onSetTrqSliderOptionPI(int mode, double step)
+void PartItem::onSetTrqSliderOptionPI(int mode, double step, int numOfDec)
 {
     for (int i = 0; i<m_layout->count(); i++)
     {
@@ -2092,6 +2169,7 @@ void PartItem::onSetTrqSliderOptionPI(int mode, double step)
         {
             joint->disableTorqueSliderDouble();
         }
+        joint->setNumberOfTorqueSliderDecimals(numOfDec);
     }
 }
 
@@ -2106,7 +2184,7 @@ void PartItem::updateControlMode()
 
 
     if(ret==false){
-        LOG_ERROR("ictrl->getControlMode failed on %s\n", getPartName().toStdString().c_str());
+        LOG_ERROR("ictrl->getControlMode failed on %s\n", getPartName().c_str());
     }
 
     m_modesList.resize(m_layout->count());
@@ -2127,6 +2205,9 @@ void PartItem::updateControlMode()
             break;
         case VOCAB_CM_VELOCITY:
             m_modesList[k] = JointItem::Velocity;
+            break;
+        case VOCAB_CM_VELOCITY_DIRECT:
+            m_modesList[k] = JointItem::VelocityDirect;
             break;
         case VOCAB_CM_TORQUE:
             m_modesList[k] = JointItem::Torque;
@@ -2222,6 +2303,7 @@ bool PartItem::updatePart()
     bool ret_refTrq = false;
     bool ret_refPosSpeed = false;
     bool ret_refVel = false;
+    bool ret_refAcc = false;
     bool ret_refPos = false;
     bool ret_jntbrk = false;
 
@@ -2248,6 +2330,10 @@ bool PartItem::updatePart()
     if (m_iVel)
     {
         ret_refVel = m_iVel->getRefVelocity(m_slow_k, &m_refVelocitySpeeds[m_slow_k]); // this interface is missing!
+    }
+    if (m_iVel)
+    {
+        ret_refAcc = m_iVel->getRefAcceleration(m_slow_k, &m_refVelocityAccelerations[m_slow_k]); // this interface is missing!
     }
     if (m_iPos)
     {
@@ -2303,11 +2389,13 @@ bool PartItem::updatePart()
         auto* joint_slow_k = (JointItem*)m_layout->itemAt(m_slow_k)->widget();
         if (ret_refTrq) { joint_slow_k->setRefTorque(m_refTorques[m_slow_k]); }
         else {}
-        if (ret_refPosSpeed) { joint_slow_k->setRefTrajectorySpeed(m_refTrajectorySpeeds[m_slow_k]); }
+        if (ret_refPosSpeed) { joint_slow_k->setPosTrajectory_ReferenceSpeed(m_refTrajectorySpeeds[m_slow_k]); }
         else {}
-        if (ret_refPos) { joint_slow_k->setRefTrajectoryPosition(m_refTrajectoryPositions[m_slow_k]); }
+        if (ret_refPos) { joint_slow_k->setPosTrajectory_ReferencePosition(m_refTrajectoryPositions[m_slow_k]); }
         else {}
-        if (ret_refVel) { joint_slow_k->setRefVelocitySpeed(m_refVelocitySpeeds[m_slow_k]); }
+        if (ret_refVel) { joint_slow_k->setVelTrajectory_ReferenceSpeed(m_refVelocitySpeeds[m_slow_k]); }
+        else {}
+        if (ret_refAcc) { joint_slow_k->setVelTrajectory_ReferenceAcceleration(m_refVelocityAccelerations[m_slow_k]); }
         else {}
         if (ret_motdone) { joint_slow_k->updateMotionDone(m_done[m_slow_k]); }
         else {}
@@ -2369,6 +2457,9 @@ bool PartItem::updatePart()
                 break;
             case VOCAB_CM_VELOCITY:
                 joint->setJointState(JointItem::Velocity);
+                break;
+            case VOCAB_CM_VELOCITY_DIRECT:
+                joint->setJointState(JointItem::VelocityDirect);
                 break;
             case VOCAB_CM_TORQUE:
                 joint->setJointState(JointItem::Torque);

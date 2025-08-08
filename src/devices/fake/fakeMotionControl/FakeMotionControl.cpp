@@ -84,6 +84,14 @@ void FakeMotionControl::run()
         {
             //do nothing
         }
+        else if (_controlModes[i] == VOCAB_CM_CURRENT)
+        {
+            //do nothing
+        }
+        else if (_controlModes[i] == VOCAB_CM_VELOCITY_DIRECT)
+        {
+            //not yet implemented
+        }
         else if (_controlModes[i] == VOCAB_CM_MIXED)
         {
             //not yet implemented
@@ -277,6 +285,7 @@ bool FakeMotionControl::alloc(int nj)
     _posCtrl_references = allocAndCheck<double>(nj);
     _posDir_references = allocAndCheck<double>(nj);
     _command_speeds = allocAndCheck<double>(nj);
+    _dir_vel_commands = allocAndCheck<double>(nj);
     _ref_speeds = allocAndCheck<double>(nj);
     _ref_accs = allocAndCheck<double>(nj);
     _ref_torques = allocAndCheck<double>(nj);
@@ -354,6 +363,7 @@ bool FakeMotionControl::dealloc()
     checkAndDestroy(_posCtrl_references);
     checkAndDestroy(_posDir_references);
     checkAndDestroy(_command_speeds);
+    checkAndDestroy(_dir_vel_commands);
     checkAndDestroy(_ref_speeds);
     checkAndDestroy(_ref_accs);
     checkAndDestroy(_ref_torques);
@@ -387,6 +397,7 @@ FakeMotionControl::FakeMotionControl() :
     ImplementEncodersTimed(this),
     ImplementPositionControl(this),
     ImplementVelocityControl(this),
+    ImplementVelocityDirect(this),
     ImplementControlMode(this),
     ImplementImpedanceControl(this),
     ImplementMotorEncoders(this),
@@ -562,6 +573,7 @@ bool FakeMotionControl::open(yarp::os::Searchable &config)
     ImplementPidControl::setConversionUnits(PidControlTypeEnum::VOCAB_PIDTYPE_TORQUE, PidFeedbackUnitsEnum::METRIC, PidOutputUnitsEnum::DUTYCYCLE_PWM_PERCENT);
     ImplementControlMode::initialize(_njoints, _axisMap);
     ImplementVelocityControl::initialize(_njoints, _axisMap, _angleToEncoder, nullptr);
+    ImplementVelocityDirect::initialize(_njoints, _axisMap, _angleToEncoder, nullptr);
     ImplementControlLimits::initialize(_njoints, _axisMap, _angleToEncoder, nullptr);
     ImplementImpedanceControl::initialize(_njoints, _axisMap, _angleToEncoder, nullptr, _newtonsToSensor);
     ImplementTorqueControl::initialize(_njoints, _axisMap, _angleToEncoder, nullptr, _newtonsToSensor, _ampsToSensor, _dutycycleToPWM, bemfToRaw.data(), ktauToRaw.data());
@@ -747,6 +759,7 @@ bool FakeMotionControl::close()
     ImplementMotorEncoders::uninitialize();
     ImplementPositionControl::uninitialize();
     ImplementVelocityControl::uninitialize();
+    ImplementVelocityDirect::uninitialize();
     ImplementPidControl::uninitialize();
     ImplementControlCalibration::uninitialize();
     ImplementAmplifierControl::uninitialize();
@@ -2512,8 +2525,8 @@ bool FakeMotionControl::getCurrentsRaw(double *t)
 bool FakeMotionControl::getCurrentRangeRaw(int j, double *min, double *max)
 {
     //just for testing purposes, this is not a real implementation
-    *min = _ref_currents[j] / 100;
-    *max = _ref_currents[j] * 100;
+    *min = -3.5;
+    *max = +3.5;
     return true;
 }
 
@@ -2522,8 +2535,8 @@ bool FakeMotionControl::getCurrentRangesRaw(double *min, double *max)
     //just for testing purposes, this is not a real implementation
     for (int i = 0; i < _njoints; i++)
     {
-        min[i] = _ref_currents[i] / 100;
-        max[i] = _ref_currents[i] * 100;
+        min[i] = -3.5;
+        max[i] = +3.5;
     }
     return true;
 }
@@ -2626,6 +2639,92 @@ ReturnValue FakeMotionControl::getAutoBrakeEnabledRaw(int j, bool& enabled) cons
 {
     enabled = _autobraked[j];
     return ReturnValue_ok;
+}
+
+ReturnValue FakeMotionControl::getAxes(size_t& axes)
+{
+    axes = _njoints;
+    return ReturnValue_ok;
+}
+
+ReturnValue FakeMotionControl::setDesiredVelocityRaw(int jnt, double vel)
+{
+    yCTrace(FAKEMOTIONCONTROL);
+    if (jnt < 0 || jnt >= _njoints) {
+        yCError(FAKEMOTIONCONTROL) << "setDesiredVelocityRaw: joint index out of bounds";
+        return ReturnValue::return_code::return_value_error_method_failed;
+    }
+    if (vel < -_maxJntCmdVelocity[jnt] || vel > _maxJntCmdVelocity[jnt]) {
+        yCError(FAKEMOTIONCONTROL) << "setDesiredVelocityRaw: velocity out of bounds for joint" << jnt;
+        return ReturnValue::return_code::return_value_error_method_failed;
+    }
+    _mutex.lock();
+    _dir_vel_commands[jnt] = vel;
+    _mutex.unlock();
+    return ReturnValue_ok;
+}
+
+ReturnValue FakeMotionControl::setDesiredVelocityRaw(const std::vector<double>& vels)
+{
+    yCTrace(FAKEMOTIONCONTROL);
+    ReturnValue ret = ReturnValue_ok;
+    for (int i = 0; i < _njoints; i++) {
+        ret &= setDesiredVelocityRaw(i, vels[i]);
+    }
+    return ret;
+}
+
+ReturnValue FakeMotionControl::setDesiredVelocityRaw(const std::vector<int>& jnts, const std::vector<double>& vels)
+{
+    yCTrace(FAKEMOTIONCONTROL);
+    if (jnts.size() != vels.size()) {
+        yCError(FAKEMOTIONCONTROL) << "setDesiredVelocityRaw: jnts and vels vectors must have the same size";
+        return ReturnValue::return_code::return_value_error_method_failed;
+    }
+    ReturnValue ret = ReturnValue_ok;
+    for (int i = 0; i < _njoints; i++) {
+        ret &= setDesiredVelocityRaw(jnts[i], vels[i]);
+    }
+    return ret;
+}
+
+ReturnValue FakeMotionControl::getDesiredVelocityRaw(const int jnt, double& vel)
+{
+    yCTrace(FAKEMOTIONCONTROL);
+    if (jnt < 0 || jnt >= _njoints) {
+        yCError(FAKEMOTIONCONTROL) << "setDesiredVelocityRaw: joint index out of bounds";
+        return ReturnValue::return_code::return_value_error_method_failed;
+    }
+    _mutex.lock();
+    vel = _dir_vel_commands[jnt];
+    _mutex.unlock();
+    return ReturnValue_ok;
+}
+
+ReturnValue FakeMotionControl::getDesiredVelocityRaw(std::vector<double>& vels)
+{
+    yCTrace(FAKEMOTIONCONTROL);
+    ReturnValue ret = ReturnValue_ok;
+    vels.resize(_njoints);
+    for (int i = 0; i < _njoints; i++) {
+        ret &= getDesiredVelocityRaw(i, vels[i]);
+    }
+    return ret;
+}
+
+ReturnValue FakeMotionControl::getDesiredVelocityRaw(const std::vector<int>& jnts, std::vector<double>& vels)
+{
+    yCTrace(FAKEMOTIONCONTROL);
+    if (jnts.size() != vels.size()) {
+        yCError(FAKEMOTIONCONTROL) << "getDesiredVelocityRaw: jnts and vels vectors must have the same size";
+        return ReturnValue::return_code::return_value_error_method_failed;
+    }
+    ReturnValue ret = ReturnValue_ok;
+    vels.resize(_njoints);
+    for (int i = 0; i < _njoints; i++) {
+        ret &= getDesiredVelocityRaw(jnts[i], vels[i]);
+    }
+    return ret;
 }
 
 /*

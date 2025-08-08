@@ -22,6 +22,7 @@ void StreamingMessagesParser::init(yarp::dev::DeviceDriver* x)
     stream_nJoints = 0;
     x->view(stream_IPosCtrl);
     x->view(stream_IPosDirect);
+    x->view(stream_IVelDirect);
     x->view(stream_IVel);
     x->view(stream_ITorque);
     x->view(stream_IPWM);
@@ -35,6 +36,7 @@ void StreamingMessagesParser::reset()
     stream_IPosCtrl = nullptr;
     stream_IPosDirect = nullptr;
     stream_IVel = nullptr;
+    stream_IVelDirect = nullptr;
     stream_ITorque = nullptr;
     stream_IPWM = nullptr;
     stream_ICurrent = nullptr;
@@ -263,6 +265,57 @@ void StreamingMessagesParser::onRead(CommandMessage& v)
     case VOCAB_POSITION_DIRECTS: {
         if (stream_IPosDirect) {
             bool ok = stream_IPosDirect->setPositions(cmdVector.data());
+            if (!ok) {
+                yCError(CONTROLBOARD, "Error while trying to command a streaming position direct message on all joints\n");
+            }
+        }
+    } break;
+
+    case VOCAB_VELOCITY_DIRECT_SET_ONE: {
+        if (stream_IVelDirect) {
+            bool ok = stream_IVelDirect->setDesiredVelocity(b.get(1).asInt32(), cmdVector[0]); // cmdVector.data());
+            if (!ok) {
+                yCError(CONTROLBOARD, "Errors while trying to command an streaming position direct message on joint %d\n", b.get(1).asInt32());
+            }
+        }
+    } break;
+
+    case VOCAB_VELOCITY_DIRECT_SET_GROUP: {
+        if (stream_IVelDirect) {
+            int n_joints = b.get(1).asInt32();
+            Bottle* jlut = b.get(2).asList();
+            if ((static_cast<int>(jlut->size()) != n_joints) &&
+                (static_cast<int>(cmdVector.size()) != n_joints)) {
+                yCError(CONTROLBOARD, "Received VOCAB_VELOCITY_DIRECT_SET_GROUP size of joints vector or positions vector does not match the selected joint number\n");
+            }
+
+            std::vector<int> joint_list(n_joints);
+            for (int i = 0; i < n_joints; i++) {
+                joint_list[i] = jlut->get(i).asInt32();
+            }
+            std::vector<double> vel_list(n_joints);
+            for (int i = 0; i < n_joints; i++) {
+                vel_list[i] = cmdVector[i];
+            }
+
+            bool ok = stream_IVelDirect->setDesiredVelocity(joint_list, vel_list);
+            if (!ok) {
+                yCError(CONTROLBOARD, "Error while trying to command a streaming position direct message on joint group\n");
+            }
+
+        }
+    } break;
+
+    case VOCAB_VELOCITY_DIRECT_SET_ALL: {
+        if (stream_IVelDirect) {
+
+            int n_joints = cmdVector.size();
+            std::vector<double> vel_list(n_joints);
+            for (int i = 0; i < n_joints; i++) {
+                vel_list[i] = cmdVector[i];
+            }
+
+            bool ok = stream_IVelDirect->setDesiredVelocity(vel_list);
             if (!ok) {
                 yCError(CONTROLBOARD, "Error while trying to command a streaming position direct message on all joints\n");
             }

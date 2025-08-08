@@ -18,6 +18,7 @@ set(YARP_dev_test_HDRS
     ILLMTest.h
     IChatBotTest.h
     IVelocityControlTest.h
+    IVelocityDirectTest.h
     IControlModeTest.h
     IInteractionModeTest.h
     ICurrentControlTest.h
@@ -45,6 +46,7 @@ set(YARP_dev_test_SRCS
     ILLMTest.cpp
     IChatBotTest.cpp
     IVelocityControlTest.cpp
+    IVelocityDirectTest.cpp
     IControlModeTest.cpp
     IInteractionModeTest.cpp
     ICurrentControlTest.cpp

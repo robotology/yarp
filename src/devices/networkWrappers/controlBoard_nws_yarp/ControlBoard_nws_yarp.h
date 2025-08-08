@@ -117,6 +117,7 @@ private:
     yarp::dev::ICurrentControl* iCurrentControl{nullptr};
     yarp::dev::IJointFault* iJointFault{ nullptr };
     yarp::dev::IJointBrake* iJointBrake {nullptr};
+    yarp::dev::IVelocityDirect* iVelocityDirect{ nullptr };
 
     bool setDevice(yarp::dev::DeviceDriver* device, bool owned);
     bool openAndAttachSubDevice(yarp::os::Property& prop);

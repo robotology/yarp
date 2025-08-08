@@ -96,6 +96,7 @@ class FakeMotionControl :
         public yarp::dev::IMotorRaw,
         public yarp::dev::IPositionControlRaw,
         public yarp::dev::IVelocityControlRaw,
+        public yarp::dev::IVelocityDirectRaw,
         public yarp::dev::IControlModeRaw,
         public yarp::dev::IControlLimitsRaw,
         public yarp::dev::IPositionDirectRaw,
@@ -114,6 +115,7 @@ class FakeMotionControl :
         public yarp::dev::ImplementEncodersTimed,
         public yarp::dev::ImplementPositionControl,
         public yarp::dev::ImplementVelocityControl,
+        public yarp::dev::ImplementVelocityDirect,
         public yarp::dev::ImplementControlMode,
         public yarp::dev::ImplementImpedanceControl,
         public yarp::dev::ImplementJointBrake,
@@ -241,6 +243,7 @@ private:
     double  *_posDir_references = nullptr;    // used for position Direct control.
     double  *_ref_speeds = nullptr;           // used for position control.
     double  *_command_speeds = nullptr;       // used for velocity control.
+    double  *_dir_vel_commands = nullptr;      // used for direct velocity control.
     double  *_ref_accs = nullptr;             // for velocity control, in position min jerk eq is used.
     double  *_ref_torques = nullptr;          // for torque control.
     double  *_ref_currents = nullptr;
@@ -501,6 +504,15 @@ public:
     yarp::dev::ReturnValue setManualBrakeActiveRaw(int j, bool active) override;
     yarp::dev::ReturnValue setAutoBrakeEnabledRaw(int j, bool enabled) override;
     yarp::dev::ReturnValue getAutoBrakeEnabledRaw(int j, bool& enabled) const override;
+
+    // IVelocityDirect
+    yarp::dev::ReturnValue getAxes(size_t& axes) override;
+    yarp::dev::ReturnValue setDesiredVelocityRaw(int jnt, double vel) override;
+    yarp::dev::ReturnValue setDesiredVelocityRaw(const std::vector<double>& vels) override;
+    yarp::dev::ReturnValue setDesiredVelocityRaw(const std::vector<int>& jnts, const std::vector<double>& vels) override;
+    yarp::dev::ReturnValue getDesiredVelocityRaw(const int jnt, double& vel) override;
+    yarp::dev::ReturnValue getDesiredVelocityRaw(std::vector<double>& vels) override;
+    yarp::dev::ReturnValue getDesiredVelocityRaw(const std::vector<int>& jnts, std::vector<double>& vels) override;
 
     // Current interface
     //bool getAxes(int *ax) override;
