@@ -9,7 +9,8 @@
 
 #include <yarp/os/DummyConnector.h>
 #include <yarp/os/Stamp.h>
-#include <yarp/os/Vocab.h>
+#include <yarp/os/Vocab32.h>
+#include <yarp/os/Vocab64.h>
 
 #include <yarp/os/impl/BufferedConnectionWriter.h>
 #include <yarp/os/impl/StreamConnectionReader.h>
@@ -176,12 +177,32 @@ TEST_CASE("os::BottleTest", "[yarp::os]")
         CHECK(bot.find("purple").isNull()); //"seek absent key"
     }
 
-    SECTION("testing vocab")
+    SECTION("testing vocab32")
     {
         Bottle bot("[send] 10 20");
         CHECK(bot.size() == (size_t) 3); // "plausible parse"
         CHECK(bot.get(0).isVocab32()); // "vocab present"
         CHECK(bot.get(0).asVocab32() == yarp::os::createVocab32('s', 'e', 'n', 'd')); // "vocab match"
+        //mixing 32 and 64 vocabs
+        CHECK_FALSE(bot.get(0).isVocab64());
+        CHECK(bot.get(0).asVocab64() == yarp::os::createVocab64(0));
+        // check that the string representation is correct
+        std::string sb = bot.toString();
+        CHECK(sb == "[send] 10 20"); // "string representation ok"
+    }
+
+    SECTION("testing vocab64")
+    {
+        Bottle bot("[senddata] 10 20");
+        CHECK(bot.size() == (size_t) 3); // "plausible parse"
+        CHECK(bot.get(0).isVocab64()); // "vocab present"
+        CHECK(bot.get(0).asVocab64() == yarp::os::createVocab64('s', 'e', 'n', 'd', 'd', 'a', 't','a')); // "vocab match"
+        //mixing 32 and 64 vocabs
+        CHECK_FALSE(bot.get(0).isVocab32());
+        CHECK(bot.get(0).asVocab32() == yarp::os::createVocab32(0));
+        // check that the string representation is correct
+        std::string sb = bot.toString();
+        CHECK(sb == "[senddata] 10 20"); // "string representation ok"
     }
 
 
@@ -523,6 +544,28 @@ TEST_CASE("os::BottleTest", "[yarp::os]")
         CHECK(b1.get(0).asInt32() == 42); // "stamp-to-bottle ok"
         Portable::copyPortable(b1, s3);
         CHECK(s3.getCount() == 42); // "bottle-to-stamp ok"
+    }
+
+    SECTION("test copyPortable method on vocab32")
+    {
+        Bottle bi;
+        bi.addVocab32(yarp::os::createVocab32('s', 'e', 'n', 'd'));
+        Bottle bo;
+        Portable::copyPortable(bi, bo);
+        CHECK(bo.size() == 1);
+        CHECK(bo.get(0).isVocab32());
+        CHECK(bo.get(0).asVocab32() == yarp::os::createVocab32('s', 'e', 'n', 'd'));
+    }
+
+    SECTION("test copyPortable method on vocab64")
+    {
+        Bottle bi;
+        bi.addVocab64(yarp::os::createVocab64('s', 'e', 'n', 'd', 'd', 'a', 't','a'));
+        Bottle bo;
+        Portable::copyPortable(bi, bo);
+        CHECK(bo.size() == 1);
+        CHECK(bo.get(0).isVocab64());
+        CHECK(bo.get(0).asVocab64() == yarp::os::createVocab64('s', 'e', 'n', 'd', 'd', 'a', 't','a'));
     }
 
     SECTION("test initializer_list constructor")

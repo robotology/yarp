@@ -21,8 +21,9 @@
 #define BOTTLE_TAG_INT32 1         // 0000 0000 0000 0001
 #define BOTTLE_TAG_INT64 (1 + 16)  // 0000 0000 0001 0001
 #define BOTTLE_TAG_VOCAB32 (1 + 8) // 0000 0000 0000 1001
-#define BOTTLE_TAG_FLOAT32 128     // 0000 0000 1000 0000
-#define BOTTLE_TAG_FLOAT64 (2 + 8) // 0000 0000 0000 1010
+#define BOTTLE_TAG_VOCAB64 (2 + 16)// 0000 0000 0001 0010
+#define BOTTLE_TAG_FLOAT32 (2 + 8) // 0000 0000 0000 1010
+#define BOTTLE_TAG_FLOAT64 (4 + 16)// 0000 0000 0001 0100
 #define BOTTLE_TAG_STRING (4)      // 0000 0000 0000 0100
 #define BOTTLE_TAG_BLOB (4 + 8)    // 0000 0000 0000 1100
 #define BOTTLE_TAG_LIST 256        // 0000 0001 0000 0000
@@ -166,11 +167,18 @@ public:
     void addInt64(std::int64_t x);
 
     /**
-     * Places a vocabulary item in the bottle, at the end of the list.
+     * Places a 32 bit vocabulary item in the bottle, at the end of the list.
      *
      * @param x the item to add.
      */
     void addVocab32(yarp::conf::vocab32_t x);
+
+    /**
+     * Places a 64 bit vocabulary item in the bottle, at the end of the list.
+     *
+     * @param x the item to add.
+     */
+    void addVocab64(yarp::conf::vocab64_t x);
 
     /**
      * Places a vocabulary item in the bottle, at the end of the list.

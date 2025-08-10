@@ -126,6 +126,8 @@ set(YARP_os_HDRS
   yarp/os/UnbufferedContactable.h
   yarp/os/Value.h
   yarp/os/Vocab.h
+  yarp/os/Vocab32.h
+  yarp/os/Vocab64.h
   yarp/os/Wire.h
   yarp/os/WireLink.h
   yarp/os/YarpNameSpace.h
@@ -226,7 +228,8 @@ set(YARP_os_SRCS
   yarp/os/TwoWayStream.cpp
   yarp/os/Type.cpp
   yarp/os/Value.cpp
-  yarp/os/Vocab.cpp
+  yarp/os/Vocab32.cpp
+  yarp/os/Vocab64.cpp
   yarp/os/YarpNameSpace.cpp
   yarp/os/YarpPlugin.cpp
   yarp/os/WireLink.cpp

@@ -219,6 +219,7 @@ bool WireReader::readI64(std::int64_t& x)
         x = static_cast<std::int64_t>(reader.expectInt32());
         break;
     case BOTTLE_TAG_INT64:
+    case BOTTLE_TAG_VOCAB64:
         x = reader.expectInt64();
         break;
     default:
@@ -347,6 +348,25 @@ bool WireReader::readVocab32(yarp::conf::vocab32_t& x)
     return !reader.isError();
 }
 
+bool WireReader::readVocab64(yarp::conf::vocab64_t& x)
+{
+    std::int32_t tag = state->code;
+    if (tag < 0) {
+        if (noMore()) {
+            return false;
+        }
+        tag = reader.expectInt32();
+    }
+    if (tag != BOTTLE_TAG_VOCAB64) {
+        return false;
+    }
+    if (noMore()) {
+        return false;
+    }
+    x = reader.expectInt64();
+    state->len--;
+    return !reader.isError();
+}
 
 bool WireReader::readSizeT(std::size_t& x)
 {
@@ -651,7 +671,7 @@ void WireReader::scanString(std::string& str, bool is_vocab)
     if (get_string.empty()) {
         if (get_mode && get_string.empty()) {
             get_string = str;
-            get_is_vocab = is_vocab;
+            get_is_vocab32 = is_vocab;
         } else if (str == "get") {
             get_mode = true;
         } else {
@@ -668,7 +688,7 @@ bool WireReader::getMode() const
 
 bool WireReader::getIsVocab32() const
 {
-    return get_is_vocab;
+    return get_is_vocab32;
 }
 
 const std::string& WireReader::getString() const

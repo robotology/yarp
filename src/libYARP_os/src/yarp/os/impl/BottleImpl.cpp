@@ -147,7 +147,10 @@ void BottleImpl::smartAdd(const std::string& str)
         } else if (ch == '(') {
             s = new StoreList();
         } else if (ch == '[') {
-            s = new StoreVocab32();
+               if (str.length() <=6) //6 is 4 + `[` + `]`
+                  {s = new StoreVocab32();}
+               else
+                  {s = new StoreVocab64();}
         } else if (ch == '{') {
             s = new StoreBlob();
         } else {

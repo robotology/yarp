@@ -333,7 +333,8 @@ void setExternal2(yarp::sig::Image *img, PyObject* mem, int w, int h) {
 %include <yarp/os/Portable.h>
 %include <yarp/os/Searchable.h>
 %include <yarp/os/Value.h>
-%include <yarp/os/Vocab.h>
+%include <yarp/os/Vocab32.h>
+%include <yarp/os/Vocab64.h>
 %include <yarp/os/BinPortable.h>
 %include <yarp/os/BufferedPort.h>
 %include <yarp/os/Contact.h>
