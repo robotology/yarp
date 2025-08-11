@@ -161,10 +161,18 @@ public:
         yAssert(coulombNegToRaws != nullptr);
         yAssert(velocityThresToRaws != nullptr);
 
-        pid_units[PidControlTypeEnum::VOCAB_PIDTYPE_POSITION] = PosPid_units;
-        pid_units[PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY] = VelPid_units;
-        pid_units[PidControlTypeEnum::VOCAB_PIDTYPE_CURRENT] = CurPid_units;
-        pid_units[PidControlTypeEnum::VOCAB_PIDTYPE_TORQUE] = TrqPid_units;
+        pid_units[PidControlTypeEnum::VOCAB_PIDTYPE_POSITION_1] = PosPid_units;
+        pid_units[PidControlTypeEnum::VOCAB_PIDTYPE_POSITION_2] = PosPid_units;
+        pid_units[PidControlTypeEnum::VOCAB_PIDTYPE_POSITION_3] = PosPid_units;
+        pid_units[PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY_1] = VelPid_units;
+        pid_units[PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY_2] = VelPid_units;
+        pid_units[PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY_3] = VelPid_units;
+        pid_units[PidControlTypeEnum::VOCAB_PIDTYPE_CURRENT_1] = CurPid_units;
+        pid_units[PidControlTypeEnum::VOCAB_PIDTYPE_CURRENT_2] = CurPid_units;
+        pid_units[PidControlTypeEnum::VOCAB_PIDTYPE_CURRENT_3] = CurPid_units;
+        pid_units[PidControlTypeEnum::VOCAB_PIDTYPE_TORQUE_1] = TrqPid_units;
+        pid_units[PidControlTypeEnum::VOCAB_PIDTYPE_TORQUE_2] = TrqPid_units;
+        pid_units[PidControlTypeEnum::VOCAB_PIDTYPE_TORQUE_3] = TrqPid_units;
     }
 
     PrivateUnitsHandler(const PrivateUnitsHandler& other)
@@ -928,10 +936,26 @@ double ControlBoardHelper::get_pidfeedback_conversion_factor_user2raw(const yarp
         case PidFeedbackUnitsEnum::METRIC:
             switch (pidtype)
             {
-                case yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_POSITION: feedback_conversion_factor = mPriv->angleToEncoders[j];  break;
-                case yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY: feedback_conversion_factor = mPriv->angleToEncoders[j];  break;
-                case yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_TORQUE: feedback_conversion_factor = mPriv->newtonsToSensors[j];  break;
-                case yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_CURRENT: feedback_conversion_factor = mPriv->ampereToSensors[j];  break;
+                case yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_POSITION_1:
+                case yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_POSITION_2:
+                case yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_POSITION_3:
+                    feedback_conversion_factor = mPriv->angleToEncoders[j];
+                    break;
+                case yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY_1:
+                case yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY_2:
+                case yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY_3:
+                    feedback_conversion_factor = mPriv->angleToEncoders[j];
+                    break;
+                case yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_TORQUE_1:
+                case yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_TORQUE_2:
+                case yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_TORQUE_3:
+                    feedback_conversion_factor = mPriv->newtonsToSensors[j];
+                    break;
+                case yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_CURRENT_1:
+                case yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_CURRENT_2:
+                case yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_CURRENT_3:
+                    feedback_conversion_factor = mPriv->ampereToSensors[j];
+                    break;
             }
         break;
         case PidFeedbackUnitsEnum::RAW_MACHINE_UNITS:
@@ -1000,18 +1024,26 @@ void ControlBoardHelper::convert_pidunits_to_machine(const yarp::dev::PidControl
     ControlBoardHelper* cb_helper = this;
     switch (pidtype)
     {
-    case yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_POSITION:
+    case yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_POSITION_1:
+    case yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_POSITION_2:
+    case yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_POSITION_3:
         //Beware:posA2E employs zeros, not only angleToEncoders
         //This is fine if convert_pidunits_to_machine() is called by methods that are aware of this feature, that is intentional.
         cb_helper->posA2E(userval, j, machineval, k);
         break;
-    case yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY:
+    case yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY_1:
+    case yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY_2:
+    case yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY_3:
         cb_helper->velA2E(userval, j, machineval, k);
         break;
-    case yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_TORQUE:
+    case yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_TORQUE_1:
+    case yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_TORQUE_2:
+    case yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_TORQUE_3:
         cb_helper->trqN2S(userval, j, machineval, k);
         break;
-    case yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_CURRENT:
+    case yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_CURRENT_1:
+    case yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_CURRENT_2:
+    case yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_CURRENT_3:
         cb_helper->ampereA2S(userval, j, machineval, k);
         break;
     default:
@@ -1025,18 +1057,26 @@ void ControlBoardHelper::convert_pidunits_to_machine(const yarp::dev::PidControl
     ControlBoardHelper* cb_helper = this;
     switch (pidtype)
     {
-    case yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_POSITION:
+    case yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_POSITION_1:
+    case yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_POSITION_2:
+    case yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_POSITION_3:
         //Beware:posA2E employs zeros, not only angleToEncoders
         //This is fine if convert_pidunits_to_machine() is called by methods that are aware of this feature, that is intentional.
         cb_helper->posA2E(userval, machineval);
         break;
-    case yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY:
+    case yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY_1:
+    case yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY_2:
+    case yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY_3:
         cb_helper->velA2E(userval, machineval);
         break;
-    case yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_TORQUE:
+    case yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_TORQUE_1:
+    case yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_TORQUE_2:
+    case yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_TORQUE_3:
         cb_helper->trqN2S(userval, machineval);
         break;
-    case yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_CURRENT:
+    case yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_CURRENT_1:
+    case yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_CURRENT_2:
+    case yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_CURRENT_3:
         cb_helper->ampereA2S(userval, machineval);
         break;
     default:
@@ -1050,18 +1090,26 @@ void ControlBoardHelper::convert_pidunits_to_user(const yarp::dev::PidControlTyp
     ControlBoardHelper* cb_helper = this;
     switch (pidtype)
     {
-    case yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_POSITION:
+    case yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_POSITION_1:
+    case yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_POSITION_2:
+    case yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_POSITION_3:
         //Beware:posE2A employs zeros, not only angleToEncoders.
         //This is fine if convert_pidunits_to_user() is called by methods that are aware of this feature, that is intentional.
         *userval = cb_helper->posE2A(machineval, k);
         break;
-    case yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY:
+    case yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY_1:
+    case yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY_2:
+    case yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY_3:
         *userval = cb_helper->velE2A(machineval, k);
         break;
-    case yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_TORQUE:
+    case yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_TORQUE_1:
+    case yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_TORQUE_2:
+    case yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_TORQUE_3:
         *userval = cb_helper->trqS2N(machineval, k);
         break;
-    case yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_CURRENT:
+    case yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_CURRENT_1:
+    case yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_CURRENT_2:
+    case yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_CURRENT_3:
         *userval = cb_helper->ampereS2A(machineval, k);
         break;
     default:
@@ -1075,18 +1123,26 @@ void ControlBoardHelper::convert_pidunits_to_user(const yarp::dev::PidControlTyp
     ControlBoardHelper* cb_helper = this;
     switch (pidtype)
     {
-    case yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_POSITION:
+    case yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_POSITION_1:
+    case yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_POSITION_2:
+    case yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_POSITION_3:
         //Beware:posE2A employs zeros, not only angleToEncoders.
         //This is fine if convert_pidunits_to_user() is called by methods that are aware of this feature, that is intentional.
         cb_helper->posE2A(machineval, userval);
         break;
-    case yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY:
+    case yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY_1:
+    case yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY_2:
+    case yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY_3:
         cb_helper->velE2A(machineval, userval);
         break;
-    case yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_TORQUE:
+    case yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_TORQUE_1:
+    case yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_TORQUE_2:
+    case yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_TORQUE_3:
         cb_helper->trqS2N(machineval, userval);
         break;
-    case yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_CURRENT:
+    case yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_CURRENT_1:
+    case yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_CURRENT_2:
+    case yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_CURRENT_3:
         cb_helper->ampereS2A(machineval, userval);
         break;
     default:
