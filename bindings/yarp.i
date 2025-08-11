@@ -458,6 +458,7 @@ void setExternal2(yarp::sig::Image *img, PyObject* mem, int w, int h) {
 %include <yarp/dev/IPositionDirect.h>
 %include <yarp/dev/ISpeechSynthesizer.h>
 %include <yarp/dev/ISpeechTranscription.h>
+%include <yarp/dev/LLM_Message.h>
 %include <yarp/dev/ILLM.h>
 %include <yarp/dev/MultipleAnalogSensorsInterfaces.h>
 %include <yarp/dev/IRGBDSensor.h>
@@ -476,6 +477,7 @@ void setExternal2(yarp::sig::Image *img, PyObject* mem, int w, int h) {
 %template(ShortVector) std::vector<short int>;
 %template() std::pair<std::string, std::string>;
 %template(SPairVector) std::vector<std::pair<std::string, std::string>>;
+%template(LLMVector) std::vector<yarp::dev::LLM_Message>;
 
 #ifdef SWIGMATLAB
   // Extend IVector for handling conversion of vectors from and to Matlab
@@ -1501,10 +1503,6 @@ MAKE_COMMS  (Sound, yarp::sig::Sound)
 %extend yarp::dev::ILLM {
     bool readPrompt(std::vector<string>& oPropmt) {
         return self->readPrompt(oPropmt[0]);
-    }
-
-    bool ask(const std::string& question, yarp::dev::LLM_Message& answer) {
-        return self->ask(question, answer);
     }
 }
 
