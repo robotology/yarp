@@ -21,7 +21,7 @@ namespace yarp::dev::tests
         REQUIRE(ipid != nullptr);
         REQUIRE(iaxis != nullptr);
 
-        int ax;
+        int ax=0;
         bool b = false;
 
         b = iaxis->getAxes(&ax);
@@ -86,47 +86,66 @@ namespace yarp::dev::tests
         CHECK(b);
     }
 
-    inline void exec_iPidControl_test_2(IPidControl* ipid)
+    inline void exec_iPidControl_test_2(IPidControl* ipid, IAxisInfo* iaxis)
     {
-        yarp::dev::Pid testpid;
-        testpid.setKp(1); CHECK(testpid.kp ==1);
-        testpid.setKd(2); CHECK(testpid.kd == 2);
-        testpid.setKff(3); CHECK(testpid.kff == 3);
-        testpid.setKi(4); CHECK(testpid.ki == 4);
-        testpid.setMaxInt(5); CHECK(testpid.max_int == 5);
-        testpid.setMaxOut(6); CHECK(testpid.max_output == 6);
-        testpid.setOffset(7); CHECK(testpid.offset == 7);
-        testpid.setScale(8); CHECK(testpid.scale == 8);
-        testpid.setStictionValues(9,10);
-        CHECK(testpid.stiction_up_val == 9);
-        CHECK(testpid.stiction_down_val==10);
+        //test one single pid
+        {
+            yarp::dev::PidControlTypeEnum pp = yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_POSITION;
+            bool b = false;
 
-        yarp::dev::Pid testpid2 (testpid);
-        CHECK(testpid2 == testpid);
+            yarp::dev::Pid retpid;
+            yarp::dev::Pid emptypid;
+            yarp::dev::Pid testpid(0, 1, 2, 3, 4, 5, 6, 7, 8); testpid.name = "testpid";
 
-        yarp::dev::Pid emptypid;
-        testpid2.clear();
-        CHECK(testpid2 == emptypid);
+            b=ipid->setPid(pp,0, emptypid);
+            CHECK(b);
 
-        yarp::dev::Pid testpid3 (1,2,3,4,5,6);
-        CHECK(testpid3.kp == 1);
-        CHECK(testpid3.kd == 2);
-        CHECK(testpid3.ki == 3);
-        CHECK(testpid3.max_int == 4);
-        CHECK(testpid3.scale == 5);
-        CHECK(testpid3.max_output == 6);
+            b=ipid->getPid(pp,0, &retpid);
+            CHECK(b);
+            CHECK(retpid == emptypid);
 
-        yarp::dev::Pid testpid4 (1,2,3,4,5,6,7,8,9);
-        CHECK(testpid4.kp == 1);
-        CHECK(testpid4.kd == 2);
-        CHECK(testpid4.ki == 3);
-        CHECK(testpid4.max_int == 4);
-        CHECK(testpid4.scale == 5);
-        CHECK(testpid4.max_output == 6);
-        CHECK(testpid4.stiction_up_val == 7);
-        CHECK(testpid4.stiction_down_val == 8);
-        CHECK(testpid4.kff == 9);
+            b=ipid->setPid(pp,0, testpid);
+            CHECK(b);
+
+            b=ipid->getPid(pp,0, &retpid);
+            CHECK(b);
+            CHECK(retpid == testpid);
+        }
+
+        //test multiple pids
+        {
+            yarp::dev::PidControlTypeEnum pp = yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_POSITION;
+            bool b = false;
+
+            int ax=0;
+            b = iaxis->getAxes(&ax);
+            CHECK(b);
+            REQUIRE(ax > 0);
+
+            std::vector<yarp::dev::Pid> retpids(ax);
+            std::vector<yarp::dev::Pid> emptypids(ax);
+            std::vector<yarp::dev::Pid> testpids(ax);
+            testpids[0] = yarp::dev::Pid(0, 1, 2, 3, 4, 5, 6, 7, 8);
+            testpids[0].name = "testpid0";
+            testpids[1] = yarp::dev::Pid(10, 11, 12, 13, 14, 15, 16, 17, 18);
+            testpids[1].name = "testpid1";
+
+            b=ipid->setPids(pp, emptypids.data());
+            CHECK(b);
+
+            b=ipid->getPids(pp, retpids.data());
+            CHECK(b);
+            CHECK(retpids != testpids);
+
+            b=ipid->setPids(pp, testpids.data());
+            CHECK(b);
+
+            b=ipid->getPids(pp, retpids.data());
+            CHECK(b);
+            CHECK(retpids == testpids);
+        }
     }
+
 
 }
 

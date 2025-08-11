@@ -789,19 +789,19 @@ void FakeMotionControl::cleanup()
 
 bool FakeMotionControl::setPidRaw(const PidControlTypeEnum& pidtype, int j, const Pid &pid)
 {
-    yCDebug(FAKEMOTIONCONTROL) << "setPidRaw" << pidtype << j << pid.kp;
+    yCDebug(FAKEMOTIONCONTROL) << "setPidRaw" << (yarp::conf::vocab32_t)(pidtype) << j << pid.kp;
     switch (pidtype)
     {
-        case VOCAB_PIDTYPE_POSITION:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_POSITION:
             _ppids[j]=pid;
         break;
-        case VOCAB_PIDTYPE_VELOCITY:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY:
             _vpids[j]=pid;
         break;
-        case VOCAB_PIDTYPE_CURRENT:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_CURRENT:
             _cpids[j]=pid;
         break;
-        case VOCAB_PIDTYPE_TORQUE:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_TORQUE:
             _tpids[j]=pid;
         break;
         default:
@@ -824,16 +824,16 @@ bool FakeMotionControl::setPidReferenceRaw(const PidControlTypeEnum& pidtype, in
 {
     switch (pidtype)
     {
-        case VOCAB_PIDTYPE_POSITION:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_POSITION:
             _ppids_ref[j]=ref;
         break;
-        case VOCAB_PIDTYPE_VELOCITY:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY:
             _vpids_ref[j]=ref;
         break;
-        case VOCAB_PIDTYPE_CURRENT:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_CURRENT:
             _cpids_ref[j]=ref;
         break;
-        case VOCAB_PIDTYPE_TORQUE:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_TORQUE:
             _tpids_ref[j]=ref;
         break;
         default:
@@ -856,16 +856,16 @@ bool FakeMotionControl::setPidErrorLimitRaw(const PidControlTypeEnum& pidtype, i
 {
     switch (pidtype)
     {
-        case VOCAB_PIDTYPE_POSITION:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_POSITION:
             _ppids_lim[j]=limit;
         break;
-        case VOCAB_PIDTYPE_VELOCITY:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY:
             _vpids_lim[j]=limit;
         break;
-        case VOCAB_PIDTYPE_CURRENT:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_CURRENT:
             _cpids_lim[j]=limit;
         break;
-        case VOCAB_PIDTYPE_TORQUE:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_TORQUE:
             _tpids_lim[j]=limit;
         break;
         default:
@@ -888,16 +888,16 @@ bool FakeMotionControl::getPidErrorRaw(const PidControlTypeEnum& pidtype, int j,
 {
     switch (pidtype)
     {
-        case VOCAB_PIDTYPE_POSITION:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_POSITION:
             *err=0.1;
         break;
-        case VOCAB_PIDTYPE_VELOCITY:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY:
             *err=0.2;
         break;
-        case VOCAB_PIDTYPE_CURRENT:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_CURRENT:
             *err=0.3;
         break;
-        case VOCAB_PIDTYPE_TORQUE:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_TORQUE:
             *err=0.4;
         break;
         default:
@@ -920,22 +920,22 @@ bool FakeMotionControl::getPidRaw(const PidControlTypeEnum& pidtype, int j, Pid 
 {
     switch (pidtype)
     {
-        case VOCAB_PIDTYPE_POSITION:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_POSITION:
             *pid=_ppids[j];
         break;
-        case VOCAB_PIDTYPE_VELOCITY:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY:
             *pid=_vpids[j];
         break;
-        case VOCAB_PIDTYPE_CURRENT:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_CURRENT:
             *pid=_cpids[j];
         break;
-        case VOCAB_PIDTYPE_TORQUE:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_TORQUE:
             *pid=_tpids[j];
         break;
         default:
         break;
     }
-    yCDebug(FAKEMOTIONCONTROL) << "getPidRaw" << pidtype << j << pid->kp;
+    yCDebug(FAKEMOTIONCONTROL) << "getPidRaw" << (yarp::conf::vocab32_t)(pidtype) << j << pid->kp;
     return true;
 }
 
@@ -956,16 +956,16 @@ bool FakeMotionControl::getPidReferenceRaw(const PidControlTypeEnum& pidtype, in
 {
     switch (pidtype)
     {
-        case VOCAB_PIDTYPE_POSITION:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_POSITION:
             *ref=_ppids_ref[j];
         break;
-        case VOCAB_PIDTYPE_VELOCITY:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY:
             *ref=_vpids_ref[j];
         break;
-        case VOCAB_PIDTYPE_CURRENT:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_CURRENT:
             *ref=_cpids_ref[j];
         break;
-        case VOCAB_PIDTYPE_TORQUE:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_TORQUE:
             *ref=_tpids_ref[j];
         break;
         default:
@@ -991,16 +991,16 @@ bool FakeMotionControl::getPidErrorLimitRaw(const PidControlTypeEnum& pidtype, i
 {
     switch (pidtype)
     {
-        case VOCAB_PIDTYPE_POSITION:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_POSITION:
             *limit=_ppids_lim[j];
         break;
-        case VOCAB_PIDTYPE_VELOCITY:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY:
             *limit=_vpids_lim[j];
         break;
-        case VOCAB_PIDTYPE_CURRENT:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_CURRENT:
             *limit=_cpids_lim[j];
         break;
-        case VOCAB_PIDTYPE_TORQUE:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_TORQUE:
             *limit=_tpids_lim[j];
         break;
         default:
@@ -1028,16 +1028,16 @@ bool FakeMotionControl::disablePidRaw(const PidControlTypeEnum& pidtype, int j)
 {
     switch (pidtype)
     {
-        case VOCAB_PIDTYPE_POSITION:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_POSITION:
             _ppids_ena[j]=false;
         break;
-        case VOCAB_PIDTYPE_VELOCITY:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY:
             _vpids_ena[j]=false;
         break;
-        case VOCAB_PIDTYPE_CURRENT:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_CURRENT:
             _cpids_ena[j]=false;
         break;
-        case VOCAB_PIDTYPE_TORQUE:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_TORQUE:
             _tpids_ena[j]=false;
         break;
         default:
@@ -1050,16 +1050,16 @@ bool FakeMotionControl::enablePidRaw(const PidControlTypeEnum& pidtype, int j)
 {
     switch (pidtype)
     {
-        case VOCAB_PIDTYPE_POSITION:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_POSITION:
             _ppids_ena[j]=true;
         break;
-        case VOCAB_PIDTYPE_VELOCITY:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY:
             _vpids_ena[j]=true;
         break;
-        case VOCAB_PIDTYPE_CURRENT:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_CURRENT:
             _cpids_ena[j]=true;
         break;
-        case VOCAB_PIDTYPE_TORQUE:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_TORQUE:
             _tpids_ena[j]=true;
         break;
         default:
@@ -1070,19 +1070,19 @@ bool FakeMotionControl::enablePidRaw(const PidControlTypeEnum& pidtype, int j)
 
 bool FakeMotionControl::setPidOffsetRaw(const PidControlTypeEnum& pidtype, int j, double v)
 {
-    yCDebug(FAKEMOTIONCONTROL) << "setPidOffsetRaw" << pidtype << j << v;
+    yCDebug(FAKEMOTIONCONTROL) << "setPidOffsetRaw" << (yarp::conf::vocab32_t)(pidtype) << j << v;
     switch (pidtype)
     {
-        case VOCAB_PIDTYPE_POSITION:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_POSITION:
             _ppids[j].offset=v;
         break;
-        case VOCAB_PIDTYPE_VELOCITY:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY:
             _vpids[j].offset=v;
         break;
-        case VOCAB_PIDTYPE_CURRENT:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_CURRENT:
             _cpids[j].offset=v;
         break;
-        case VOCAB_PIDTYPE_TORQUE:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_TORQUE:
             _tpids[j].offset=v;
         break;
         default:
@@ -1095,16 +1095,16 @@ bool FakeMotionControl::isPidEnabledRaw(const PidControlTypeEnum& pidtype, int j
 {
     switch (pidtype)
     {
-        case VOCAB_PIDTYPE_POSITION:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_POSITION:
             *enabled=_ppids_ena[j];
         break;
-        case VOCAB_PIDTYPE_VELOCITY:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY:
             *enabled=_vpids_ena[j];
         break;
-        case VOCAB_PIDTYPE_CURRENT:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_CURRENT:
             *enabled=_cpids_ena[j];
         break;
-        case VOCAB_PIDTYPE_TORQUE:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_TORQUE:
             *enabled=_tpids_ena[j];
         break;
         default:
@@ -1117,22 +1117,22 @@ bool FakeMotionControl::getPidOutputRaw(const PidControlTypeEnum& pidtype, int j
 {
     switch (pidtype)
     {
-        case VOCAB_PIDTYPE_POSITION:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_POSITION:
             *out=1.1 + j * 10;
         break;
-        case VOCAB_PIDTYPE_VELOCITY:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY:
             *out=1.2 + j * 10;
         break;
-        case VOCAB_PIDTYPE_CURRENT:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_CURRENT:
             *out=1.3 + j * 10;
         break;
-        case VOCAB_PIDTYPE_TORQUE:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_TORQUE:
             *out=1.4 + j * 10;
         break;
         default:
         break;
     }
-    yCDebug(FAKEMOTIONCONTROL) << "getPidOutputRaw" << pidtype << j << *out;
+    yCDebug(FAKEMOTIONCONTROL) << "getPidOutputRaw" << (yarp::conf::vocab32_t)(pidtype) << j << *out;
     return true;
 }
 

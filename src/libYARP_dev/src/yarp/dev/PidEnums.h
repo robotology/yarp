@@ -11,12 +11,20 @@
 #include <yarp/dev/api.h>
 
 namespace yarp::dev {
-enum YARP_dev_API PidControlTypeEnum
+enum class YARP_dev_API PidControlTypeEnum
 {
-    VOCAB_PIDTYPE_POSITION = yarp::os::createVocab32('p', 'o', 's'),
-    VOCAB_PIDTYPE_VELOCITY = yarp::os::createVocab32('v', 'e', 'l'),
-    VOCAB_PIDTYPE_TORQUE = yarp::os::createVocab32('t', 'r', 'q'),
-    VOCAB_PIDTYPE_CURRENT = yarp::os::createVocab32('c', 'u', 'r')
+    VOCAB_PIDTYPE_POSITION   = yarp::os::createVocab32('p', 'o', 's'),
+    VOCAB_PIDTYPE_POSITION_2 = yarp::os::createVocab32('p', 'o', 's','2'),
+    VOCAB_PIDTYPE_POSITION_3 = yarp::os::createVocab32('p', 'o', 's','3'),
+    VOCAB_PIDTYPE_VELOCITY   = yarp::os::createVocab32('v', 'e', 'l'),
+    VOCAB_PIDTYPE_VELOCITY_2 = yarp::os::createVocab32('v', 'e', 'l','2'),
+    VOCAB_PIDTYPE_VELOCITY_3 = yarp::os::createVocab32('v', 'e', 'l','3'),
+    VOCAB_PIDTYPE_TORQUE     = yarp::os::createVocab32('t', 'r', 'q'),
+    VOCAB_PIDTYPE_TORQUE_2   = yarp::os::createVocab32('t', 'r', 'q','2'),
+    VOCAB_PIDTYPE_TORQUE_3   = yarp::os::createVocab32('t', 'r', 'q','3'),
+    VOCAB_PIDTYPE_CURRENT    = yarp::os::createVocab32('c', 'u', 'r'),
+    VOCAB_PIDTYPE_CURRENT_2  = yarp::os::createVocab32('c', 'u', 'r','2'),
+    VOCAB_PIDTYPE_CURRENT_3  = yarp::os::createVocab32('c', 'u', 'r','3')
 };
 
 YARP_WARNING_PUSH
