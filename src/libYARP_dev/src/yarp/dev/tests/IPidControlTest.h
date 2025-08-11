@@ -6,6 +6,7 @@
 #ifndef IPIDCONTROLTEST_H
 #define IPIDCONTROLTEST_H
 
+#include <yarp/os/Vocab32.h>
 #include <yarp/dev/IPidControl.h>
 #include <yarp/dev/IControlMode.h>
 #include <yarp/dev/IAxisInfo.h>
@@ -13,6 +14,26 @@
 
 using namespace yarp::dev;
 using namespace yarp::os;
+
+std::vector<yarp::dev::PidControlTypeEnum> pidenums =
+{
+    yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_POSITION,
+    yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_POSITION_1,
+    yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_POSITION_2,
+    yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_POSITION_3,
+    yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY,
+    yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY_1,
+    yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY_2,
+    yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY_3,
+    yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_TORQUE,
+    yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_TORQUE_1,
+    yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_TORQUE_2,
+    yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_TORQUE_3,
+    yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_CURRENT,
+    yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_CURRENT_1,
+    yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_CURRENT_2,
+    yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_CURRENT_3
+};
 
 namespace yarp::dev::tests
 {
@@ -90,59 +111,67 @@ namespace yarp::dev::tests
     {
         //test one single pid
         {
-            yarp::dev::PidControlTypeEnum pp = yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_POSITION;
-            bool b = false;
+            for (auto pp : pidenums)
+            {
+                std::string dv = yarp::os::Vocab32::decode(yarp::conf::vocab32_t(pp));
+                INFO("Testing PidControlTypeEnum: " << dv);
 
-            yarp::dev::Pid retpid;
-            yarp::dev::Pid emptypid;
-            yarp::dev::Pid testpid(0, 1, 2, 3, 4, 5, 6, 7, 8); testpid.name = "testpid";
+                bool b = false;
+                yarp::dev::Pid retpid;
+                yarp::dev::Pid emptypid;
+                yarp::dev::Pid testpid(0, 1, 2, 3, 4, 5, 6, 7, 8); testpid.name = "testpid";
 
-            b=ipid->setPid(pp,0, emptypid);
-            CHECK(b);
+                b=ipid->setPid(pp,0, emptypid);
+                CHECK(b);
 
-            b=ipid->getPid(pp,0, &retpid);
-            CHECK(b);
-            CHECK(retpid == emptypid);
+                b=ipid->getPid(pp,0, &retpid);
+                CHECK(b);
+                CHECK(retpid == emptypid);
 
-            b=ipid->setPid(pp,0, testpid);
-            CHECK(b);
+                b=ipid->setPid(pp,0, testpid);
+                CHECK(b);
 
-            b=ipid->getPid(pp,0, &retpid);
-            CHECK(b);
-            CHECK(retpid == testpid);
+                b=ipid->getPid(pp,0, &retpid);
+                CHECK(b);
+                CHECK(retpid == testpid);
+            }
         }
 
         //test multiple pids
         {
-            yarp::dev::PidControlTypeEnum pp = yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_POSITION;
-            bool b = false;
+            for (auto pp : pidenums)
+            {
+                std::string dv = yarp::os::Vocab32::decode(yarp::conf::vocab32_t(pp));
+                INFO("Testing PidControlTypeEnum: " << dv);
 
-            int ax=0;
-            b = iaxis->getAxes(&ax);
-            CHECK(b);
-            REQUIRE(ax > 0);
+                bool b = false;
+                int ax=0;
+                b = iaxis->getAxes(&ax);
+                CHECK(b);
+                REQUIRE(ax > 0);
 
-            std::vector<yarp::dev::Pid> retpids(ax);
-            std::vector<yarp::dev::Pid> emptypids(ax);
-            std::vector<yarp::dev::Pid> testpids(ax);
-            testpids[0] = yarp::dev::Pid(0, 1, 2, 3, 4, 5, 6, 7, 8);
-            testpids[0].name = "testpid0";
-            testpids[1] = yarp::dev::Pid(10, 11, 12, 13, 14, 15, 16, 17, 18);
-            testpids[1].name = "testpid1";
+                std::vector<yarp::dev::Pid> retpids(ax);
+                std::vector<yarp::dev::Pid> emptypids(ax);
+                std::vector<yarp::dev::Pid> testpids(ax);
+                testpids[0] = yarp::dev::Pid(0, 1, 2, 3, 4, 5, 6, 7, 8);
+                testpids[0].name = "testpid0";
+                testpids[1] = yarp::dev::Pid(10, 11, 12, 13, 14, 15, 16, 17, 18);
+                testpids[1].name = "testpid1";
 
-            b=ipid->setPids(pp, emptypids.data());
-            CHECK(b);
+                b=ipid->setPids(pp, emptypids.data());
+                CHECK(b);
 
-            b=ipid->getPids(pp, retpids.data());
-            CHECK(b);
-            CHECK(retpids != testpids);
+                b=ipid->getPids(pp, retpids.data());
+                CHECK(b);
+                CHECK(retpids != testpids);
 
-            b=ipid->setPids(pp, testpids.data());
-            CHECK(b);
+                b=ipid->setPids(pp, testpids.data());
+                CHECK(b);
 
-            b=ipid->getPids(pp, retpids.data());
-            CHECK(b);
-            CHECK(retpids == testpids);
+                b=ipid->getPids(pp, retpids.data());
+                CHECK(b);
+                CHECK(retpids == testpids);
+            }
         }
     }
 
