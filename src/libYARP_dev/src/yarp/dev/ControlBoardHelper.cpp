@@ -161,10 +161,10 @@ public:
         yAssert(coulombNegToRaws != nullptr);
         yAssert(velocityThresToRaws != nullptr);
 
-        pid_units[VOCAB_PIDTYPE_POSITION] = PosPid_units;
-        pid_units[VOCAB_PIDTYPE_VELOCITY] = VelPid_units;
-        pid_units[VOCAB_PIDTYPE_CURRENT] = CurPid_units;
-        pid_units[VOCAB_PIDTYPE_TORQUE] = TrqPid_units;
+        pid_units[PidControlTypeEnum::VOCAB_PIDTYPE_POSITION] = PosPid_units;
+        pid_units[PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY] = VelPid_units;
+        pid_units[PidControlTypeEnum::VOCAB_PIDTYPE_CURRENT] = CurPid_units;
+        pid_units[PidControlTypeEnum::VOCAB_PIDTYPE_TORQUE] = TrqPid_units;
     }
 
     PrivateUnitsHandler(const PrivateUnitsHandler& other)
@@ -1000,18 +1000,18 @@ void ControlBoardHelper::convert_pidunits_to_machine(const yarp::dev::PidControl
     ControlBoardHelper* cb_helper = this;
     switch (pidtype)
     {
-    case yarp::dev::VOCAB_PIDTYPE_POSITION:
+    case yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_POSITION:
         //Beware:posA2E employs zeros, not only angleToEncoders
         //This is fine if convert_pidunits_to_machine() is called by methods that are aware of this feature, that is intentional.
         cb_helper->posA2E(userval, j, machineval, k);
         break;
-    case yarp::dev::VOCAB_PIDTYPE_VELOCITY:
+    case yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY:
         cb_helper->velA2E(userval, j, machineval, k);
         break;
-    case yarp::dev::VOCAB_PIDTYPE_TORQUE:
+    case yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_TORQUE:
         cb_helper->trqN2S(userval, j, machineval, k);
         break;
-    case yarp::dev::VOCAB_PIDTYPE_CURRENT:
+    case yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_CURRENT:
         cb_helper->ampereA2S(userval, j, machineval, k);
         break;
     default:
@@ -1025,18 +1025,18 @@ void ControlBoardHelper::convert_pidunits_to_machine(const yarp::dev::PidControl
     ControlBoardHelper* cb_helper = this;
     switch (pidtype)
     {
-    case yarp::dev::VOCAB_PIDTYPE_POSITION:
+    case yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_POSITION:
         //Beware:posA2E employs zeros, not only angleToEncoders
         //This is fine if convert_pidunits_to_machine() is called by methods that are aware of this feature, that is intentional.
         cb_helper->posA2E(userval, machineval);
         break;
-    case yarp::dev::VOCAB_PIDTYPE_VELOCITY:
+    case yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY:
         cb_helper->velA2E(userval, machineval);
         break;
-    case yarp::dev::VOCAB_PIDTYPE_TORQUE:
+    case yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_TORQUE:
         cb_helper->trqN2S(userval, machineval);
         break;
-    case yarp::dev::VOCAB_PIDTYPE_CURRENT:
+    case yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_CURRENT:
         cb_helper->ampereA2S(userval, machineval);
         break;
     default:
@@ -1050,18 +1050,18 @@ void ControlBoardHelper::convert_pidunits_to_user(const yarp::dev::PidControlTyp
     ControlBoardHelper* cb_helper = this;
     switch (pidtype)
     {
-    case yarp::dev::VOCAB_PIDTYPE_POSITION:
+    case yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_POSITION:
         //Beware:posE2A employs zeros, not only angleToEncoders.
         //This is fine if convert_pidunits_to_user() is called by methods that are aware of this feature, that is intentional.
         *userval = cb_helper->posE2A(machineval, k);
         break;
-    case yarp::dev::VOCAB_PIDTYPE_VELOCITY:
+    case yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY:
         *userval = cb_helper->velE2A(machineval, k);
         break;
-    case yarp::dev::VOCAB_PIDTYPE_TORQUE:
+    case yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_TORQUE:
         *userval = cb_helper->trqS2N(machineval, k);
         break;
-    case yarp::dev::VOCAB_PIDTYPE_CURRENT:
+    case yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_CURRENT:
         *userval = cb_helper->ampereS2A(machineval, k);
         break;
     default:
@@ -1075,18 +1075,18 @@ void ControlBoardHelper::convert_pidunits_to_user(const yarp::dev::PidControlTyp
     ControlBoardHelper* cb_helper = this;
     switch (pidtype)
     {
-    case yarp::dev::VOCAB_PIDTYPE_POSITION:
+    case yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_POSITION:
         //Beware:posE2A employs zeros, not only angleToEncoders.
         //This is fine if convert_pidunits_to_user() is called by methods that are aware of this feature, that is intentional.
         cb_helper->posE2A(machineval, userval);
         break;
-    case yarp::dev::VOCAB_PIDTYPE_VELOCITY:
+    case yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY:
         cb_helper->velE2A(machineval, userval);
         break;
-    case yarp::dev::VOCAB_PIDTYPE_TORQUE:
+    case yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_TORQUE:
         cb_helper->trqS2N(machineval, userval);
         break;
-    case yarp::dev::VOCAB_PIDTYPE_CURRENT:
+    case yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_CURRENT:
         cb_helper->ampereS2A(machineval, userval);
         break;
     default:

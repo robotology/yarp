@@ -332,7 +332,7 @@ bool ControlBoard_nws_yarp::attach(yarp::dev::PolyDriver* poly)
         return false;
     }
 
-    m_RPC = std::make_unique<ControlBoardRPCd>(iJointBrake, iVelocityDirect);
+    m_RPC = std::make_unique<ControlBoardRPCd>(this->subdevice_joints, iJointBrake, iVelocityDirect, iPidControl);
 
     return true;
 }
