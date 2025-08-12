@@ -324,11 +324,12 @@ void ControlThread::run()
             double move_start_time = yarp::os::Time::now();
             do
             {
+                check = true;
                 for (size_t j = 0; j < nj; j++)
                 {
                     m_current_driver->getEncoder((int)j, &enc);
                     double err = fabs(enc - ll[j]);
-                    check = (err < m_home_position_tolerance);
+                    check &= (err < m_home_position_tolerance);
                 }
                 yarp::os::Time::delay(0.1);
                 if (check)
@@ -413,4 +414,12 @@ void ControlThread::setPositionTimeout(double timeout)
 void ControlThread::setPositionStrictCheck(bool enable)
 {
     m_home_position_strict_check_enabled=enable;
+}
+
+void ControlThread::setInitialMoveTime(double t)
+{
+    if (m_current_driver)
+    {
+        m_current_driver->setTrajectoryTime(t);
+    }
 }
