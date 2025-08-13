@@ -436,6 +436,7 @@ void setExternal2(yarp::sig::Image *img, PyObject* mem, int w, int h) {
 %include <yarp/dev/ControlBoardPid.h>
 %include <yarp/dev/IControlMode.h>
 %include <yarp/dev/IInteractionMode.h>
+%include <yarp/dev/IJointCoupling.h>
 %include <yarp/dev/IJointFault.h>
 %include <yarp/dev/IEncodersTimed.h>
 %include <yarp/dev/IMotor.h>
@@ -720,6 +721,7 @@ MAKE_COMMS  (Sound, yarp::sig::Sound)
     CAST_POLYDRIVER_TO_INTERFACE(IImpedanceControl)
     CAST_POLYDRIVER_TO_INTERFACE(ITorqueControl)
     CAST_POLYDRIVER_TO_INTERFACE(IControlMode)
+    CAST_POLYDRIVER_TO_INTERFACE(IJointCoupling)
     CAST_POLYDRIVER_TO_INTERFACE(IJointFault)
     CAST_POLYDRIVER_TO_INTERFACE(IInteractionMode)
     CAST_POLYDRIVER_TO_INTERFACE(IPWMControl)
