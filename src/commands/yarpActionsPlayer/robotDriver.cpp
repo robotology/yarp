@@ -3,6 +3,8 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
+#include <cmath>
+
 #include <yarp/os/Network.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/Log.h>
@@ -45,12 +47,25 @@ bool robotDriver::configure(const Property &copt)
     yarp::os::Property& pcb =drvOptions_ll.addGroup("REMOTE_CONTROLBOARD_OPTIONS");
     pcb.put("carrier", "fast_tcp");
 
-    if (verbose)
+    if (m_verbose)
     {
         yDebug() << "driver options:\n" << drvOptions_ll.toString().c_str();
     }
 
     return ret;
+}
+
+bool robotDriver::setTrajectoryTime(double t)
+{
+    for (size_t i=0; i<n_joints; i++)
+    m_trajectoryTime[i] = t;
+    return true;
+}
+
+bool robotDriver::setTrajectoryTime(int j, double t)
+{
+    m_trajectoryTime[j] = t;
+    return true;
 }
 
 bool robotDriver::init()
@@ -77,6 +92,7 @@ bool robotDriver::init()
     ok &= ienc_ll->getAxes(&n_joints);
 
     //set the initial reference speeds
+    m_trajectoryTime.resize(n_joints,4.0);
     std::vector<double> speeds;
     for (int i = 0; i < n_joints; i++)
     {
@@ -112,7 +128,22 @@ bool robotDriver::getEncoder(int j, double *v)
 bool robotDriver::positionMove(int j, double v)
 {
     if (!ipos_ll) return false;
-    return ipos_ll->positionMove(j, v);
+    bool ret = true;
+
+    // set ref speed to each joint so that the motion is completed in
+    // the requested amount of time
+    if (1)
+    {
+        double enc = 0;
+        ret &= ienc_ll->getEncoder(j, &enc);
+        double diff = fabs(v - enc);
+        double speed = diff/m_trajectoryTime[j];
+        ipos_ll->setRefSpeed(j, speed);
+    }
+
+    ret &= ipos_ll->positionMove(j, v);
+
+    return ret;
 }
 
 size_t robotDriver::getNJoints()

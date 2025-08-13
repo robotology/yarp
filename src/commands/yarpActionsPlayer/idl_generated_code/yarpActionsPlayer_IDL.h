@@ -100,6 +100,12 @@ public:
      */
     virtual bool set_thread_period(const double value);
 
+    /**
+     * Sets the uration for the initial homing movement (for advanced use only, default value: 2s).
+     * @return true/false on success/failure
+     */
+    virtual bool set_initial_move_time(const double value);
+
     // help method
     virtual std::vector<std::string> help(const std::string& functionName = "--all");
 
