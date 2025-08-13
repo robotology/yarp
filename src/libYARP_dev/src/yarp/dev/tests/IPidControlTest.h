@@ -119,7 +119,7 @@ namespace yarp::dev::tests
                 bool b = false;
                 yarp::dev::Pid retpid;
                 yarp::dev::Pid emptypid;
-                yarp::dev::Pid testpid(0, 1, 2, 3, 4, 5, 6, 7, 8); testpid.name = "testpid";
+                yarp::dev::Pid testpid(0, 1, 2, 3, 4, 5, 6, 7, 8); testpid.info.pid_description = "testpid";
 
                 b=ipid->setPid(pp,0, emptypid);
                 CHECK(b);
@@ -154,9 +154,9 @@ namespace yarp::dev::tests
                 std::vector<yarp::dev::Pid> emptypids(ax);
                 std::vector<yarp::dev::Pid> testpids(ax);
                 testpids[0] = yarp::dev::Pid(0, 1, 2, 3, 4, 5, 6, 7, 8);
-                testpids[0].name = "testpid0";
+                testpids[0].info.pid_description = "testpid0";
                 testpids[1] = yarp::dev::Pid(10, 11, 12, 13, 14, 15, 16, 17, 18);
-                testpids[1].name = "testpid1";
+                testpids[1].info.pid_description = "testpid1";
 
                 b=ipid->setPids(pp, emptypids.data());
                 CHECK(b);

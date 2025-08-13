@@ -34,9 +34,9 @@ enum class YARP_dev_API PidControlTypeEnum
 inline size_t PidControlTypeEnum2Index(PidControlTypeEnum type)
 {
     int32_t vocab = static_cast<yarp::conf::vocab32_t>(type);
-    char lastChar = static_cast<char>(vocab & 0xFF);
-    if (lastChar >= '0' && lastChar <= '9')
-        return lastChar - '1'; // returns 0 for '1', 1 for '2', etc.
+    std::string  dc = yarp::os::Vocab32::decode(vocab);
+    if (dc[3] >= '0' && dc[3] <= '9')
+        return dc[3] - '1'; // returns 0 for '1', 1 for '2', etc.
     return 0;
 }
 
