@@ -36,6 +36,7 @@
 #include <yarp/dev/IAxisInfo.h>
 #include <yarp/dev/IControlLimits.h>
 #include <yarp/dev/IControlMode.h>
+#include <yarp/dev/IJointCoupling.h>
 #include <yarp/dev/IJointFault.h>
 
 #include <yarp/dev/ControlBoardVocabs.h>
