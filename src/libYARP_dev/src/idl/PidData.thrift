@@ -5,6 +5,19 @@
 
 namespace yarp yarp.dev
 
+struct PidDataInfo
+{
+  /** human-readable description of the pid controller. */
+  1: string pid_description;
+  /** human-readable description of the input data of pid */
+  2: string input_data_description;
+  /** human-readable description of the output data of pid */
+  3: string output_data_description;
+} (
+    yarp.api.include = "yarp/dev/api.h"
+    yarp.api.keyword = "YARP_dev_API"
+)
+
 struct PidData
 {
   /** proportional gain */
@@ -30,8 +43,8 @@ struct PidData
   /** feedforward gain */
   10: double kff;
 
-  /** name/description of the pid */
-  11: string name;
+  /** extra info about the pid controller */
+  11: PidDataInfo info;
 } (
     yarp.api.include = "yarp/dev/api.h"
     yarp.api.keyword = "YARP_dev_API"

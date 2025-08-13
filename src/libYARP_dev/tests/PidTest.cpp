@@ -16,7 +16,7 @@ TEST_CASE("dev::Pid", "[yarp::dev]")
     SECTION("test PID serialization")
     {
         yarp::dev::Pid input(1,2,3,4,5,6,7,8,9);
-        input.name = "test_pid";
+        input.info.pid_description = "test_pid";
 
         yarp::dev::Pid output = input;
         CHECK(output == input);
@@ -25,19 +25,19 @@ TEST_CASE("dev::Pid", "[yarp::dev]")
         bool b = yarp::os::Portable::copyPortable(input,test);
         CHECK(b == true);
         CHECK(test==input);
-        CHECK(test.name == "test_pid");
+        CHECK(test.info.pid_description == "test_pid");
     }
 
     SECTION("test PID serialization 2")
     {
         yarp::dev::Pid input(1,2,3,4,5,6,7,8,9);
         yarp::dev::Pid output;
-        input.name = "test_pid";
+        input.info.pid_description = "test_pid";
 
         yarp::os::Bottle bot;
         bool b = yarp::os::Portable::copyPortable(input,bot);
         CHECK(b == true);
-        CHECK(bot.size() == 11);
+        CHECK(bot.size() == 13);
         std::string sss = bot.toString();
         b = yarp::os::Portable::copyPortable(bot, output);
         CHECK(b == true);
@@ -47,7 +47,7 @@ TEST_CASE("dev::Pid", "[yarp::dev]")
     SECTION("test PID serialization 3")
     {
         yarp::dev::Pid test(1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0);
-        test.name = "test_pid";
+        test.info.pid_description = "test_pid";
 
         yarp::os::Bottle bot;
         bool b = yarp::os::Portable::copyPortable(test,bot);
@@ -55,7 +55,7 @@ TEST_CASE("dev::Pid", "[yarp::dev]")
         std::string ttt;
         ttt = bot.toString();
         size_t sz = bot.size();
-        CHECK(sz == 11);
+        CHECK(sz == 13);
 
         yarp::dev::Pid output;
         b = yarp::os::Portable::copyPortable(bot,output);

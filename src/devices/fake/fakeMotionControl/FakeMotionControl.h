@@ -143,6 +143,8 @@ private:
         VERY_VERY_VERBOSE   = 6     // adds messages printed every cycle, so too much verbose for usage, only for deep debugging
     };
 
+    const int npids = 3;
+
     std::recursive_mutex _mutex;
     double _cycleTimestamp;
     int  _njoints;
@@ -540,6 +542,7 @@ public:
 private:
     void cleanup();
     bool dealloc();
+    void setInfoPPids(int j);
 
     //bool parsePositionPidsGroup(yarp::os::Bottle& pidsGroup, yarp::dev::Pid myPid[]);
     //bool parseTorquePidsGroup(yarp::os::Bottle& pidsGroup, yarp::dev::Pid myPid[], double kbemf[], double ktau[], int filterType[], double viscousPos[], double viscousNeg[], double coulombPos[], double coulombNeg[], double velocityThres[]);

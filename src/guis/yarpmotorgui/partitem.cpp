@@ -730,52 +730,36 @@ void PartItem::onSendStiffness(int jointIdex,double stiff,double damp)
 
 }
 
-void PartItem::onSendTorquePid(int jointIndex,Pid newPid,MotorTorqueParameters newTrqParam)
+void PartItem::onSendMotorParameters(int jointIndex, MotorTorqueParameters newTrqParam)
 {
-    Pid myTrqPid(0,0,0,0,0,0);
-    yarp::dev::MotorTorqueParameters TrqParam;
-    m_iPid->setPid(PidControlTypeEnum::VOCAB_PIDTYPE_TORQUE, jointIndex, newPid);
-
     m_iTrq->setMotorTorqueParams(jointIndex, newTrqParam);
     yarp::os::SystemClock::delaySystem(0.005);
-    m_iPid->getPid(PidControlTypeEnum::VOCAB_PIDTYPE_TORQUE,jointIndex, &myTrqPid);
+
+    yarp::dev::MotorTorqueParameters TrqParam;
     m_iTrq->getMotorTorqueParams(jointIndex, &TrqParam);
 
     if (m_currentPidDlg){
-        m_currentPidDlg->initTorque(myTrqPid, TrqParam);
+        m_currentPidDlg->initMotorParams(TrqParam);
     }
 }
 
-void PartItem::onSendPositionPid(int jointIndex,Pid newPid)
+void PartItem::onSendPid(PidControlTypeEnum pidtype, int jointIndex,Pid newPid)
 {
-    Pid myPosPid(0,0,0,0,0,0);
-    m_iPid->setPid(PidControlTypeEnum::VOCAB_PIDTYPE_POSITION, jointIndex, newPid);
+    Pid curPid;
+    m_iPid->getPid(pidtype, jointIndex, &curPid);
+    newPid.info = curPid.info; // keep the info field of the pid, otherwise it will be lost
+    m_iPid->setPid(pidtype, jointIndex, newPid);
     yarp::os::SystemClock::delaySystem(0.005);
-    m_iPid->getPid(PidControlTypeEnum::VOCAB_PIDTYPE_POSITION, jointIndex, &myPosPid);
 
-    if (m_currentPidDlg){
-        m_currentPidDlg->initPosition(myPosPid);
-    }
-}
-
-void PartItem::onSendVelocityPid(int jointIndex, Pid newPid)
-{
-    Pid myVelPid(0, 0, 0, 0, 0, 0);
-    m_iPid->setPid(PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY, jointIndex, newPid);
-    yarp::os::SystemClock::delaySystem(0.005);
-    m_iPid->getPid(PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY, jointIndex, &myVelPid);
-
-    if (m_currentPidDlg){
-        m_currentPidDlg->initVelocity(myVelPid);
-    }
+    onRefreshPids(jointIndex);
 }
 
 void PartItem::onRefreshPids(int jointIndex)
 {
-    Pid myPosPid(0, 0, 0, 0, 0, 0);
-    Pid myTrqPid(0, 0, 0, 0, 0, 0);
-    Pid myVelPid(0, 0, 0, 0, 0, 0);
-    Pid myCurPid(0, 0, 0, 0, 0, 0);
+    std::vector<Pid> myPosPids(3);
+    std::vector<Pid> myTrqPids(3);
+    std::vector<Pid> myVelPids(3);
+    std::vector<Pid> myCurPids(3);
     MotorTorqueParameters motorTorqueParams;
     double stiff_val = 0;
     double damp_val = 0;
@@ -793,22 +777,30 @@ void PartItem::onRefreshPids(int jointIndex)
     m_iTrq->getTorqueRange(jointIndex, &off_min, &off_max);
 
     // Position
-    m_iPid->getPid(PidControlTypeEnum::VOCAB_PIDTYPE_POSITION, jointIndex, &myPosPid);
+    m_iPid->getPid(PidControlTypeEnum::VOCAB_PIDTYPE_POSITION_1, jointIndex, &myPosPids[0]);
+    m_iPid->getPid(PidControlTypeEnum::VOCAB_PIDTYPE_POSITION_2, jointIndex, &myPosPids[1]);
+    m_iPid->getPid(PidControlTypeEnum::VOCAB_PIDTYPE_POSITION_3, jointIndex, &myPosPids[2]);
     yarp::os::SystemClock::delaySystem(0.005);
 
     // Velocity
-    m_iPid->getPid(PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY, jointIndex, &myVelPid);
+    m_iPid->getPid(PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY_1, jointIndex, &myVelPids[0]);
+    m_iPid->getPid(PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY_2, jointIndex, &myVelPids[1]);
+    m_iPid->getPid(PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY_3, jointIndex, &myVelPids[2]);
     yarp::os::SystemClock::delaySystem(0.005);
 
     // Current
     if (m_iCur)
     {
-        m_iPid->getPid(PidControlTypeEnum::VOCAB_PIDTYPE_CURRENT, jointIndex, &myCurPid);
+        m_iPid->getPid(PidControlTypeEnum::VOCAB_PIDTYPE_CURRENT_1, jointIndex, &myCurPids[0]);
+        m_iPid->getPid(PidControlTypeEnum::VOCAB_PIDTYPE_CURRENT_2, jointIndex, &myCurPids[1]);
+        m_iPid->getPid(PidControlTypeEnum::VOCAB_PIDTYPE_CURRENT_3, jointIndex, &myCurPids[2]);
         yarp::os::SystemClock::delaySystem(0.005);
     }
 
     // Torque
-    m_iPid->getPid(PidControlTypeEnum::VOCAB_PIDTYPE_TORQUE, jointIndex, &myTrqPid);
+    m_iPid->getPid(PidControlTypeEnum::VOCAB_PIDTYPE_TORQUE_1, jointIndex, &myTrqPids[0]);
+    m_iPid->getPid(PidControlTypeEnum::VOCAB_PIDTYPE_TORQUE_2, jointIndex, &myTrqPids[1]);
+    m_iPid->getPid(PidControlTypeEnum::VOCAB_PIDTYPE_TORQUE_3, jointIndex, &myTrqPids[2]);
     m_iTrq->getMotorTorqueParams(jointIndex, &motorTorqueParams);
     yarp::os::SystemClock::delaySystem(0.005);
 
@@ -823,31 +815,14 @@ void PartItem::onRefreshPids(int jointIndex)
 
     if (m_currentPidDlg)
     {
-        m_currentPidDlg->initPosition(myPosPid);
-        m_currentPidDlg->initTorque(myTrqPid, motorTorqueParams);
-        m_currentPidDlg->initVelocity(myVelPid);
-        m_currentPidDlg->initCurrent(myCurPid);
-        m_currentPidDlg->initStiffness(stiff_val, stiff_min, stiff_max, damp_val, damp_min, damp_max);
-        m_currentPidDlg->initTorqueOffset(impedance_offset_val, off_min, off_max);
+        m_currentPidDlg->initPositionPID(myPosPids);
+        m_currentPidDlg->initTorquePID(myTrqPids);
+        m_currentPidDlg->initMotorParams(motorTorqueParams);
+        m_currentPidDlg->initVelocityPID(myVelPids);
+        m_currentPidDlg->initCurrentPID(myCurPids);
+        m_currentPidDlg->initStiffness(stiff_val, stiff_min, stiff_max, damp_val, damp_min, damp_max, impedance_offset_val, off_min, off_max);
         m_currentPidDlg->initPWM(pwm_reference, current_pwm);
         m_currentPidDlg->initRemoteVariables(m_iVar);
-    }
-}
-
-void PartItem::onSendCurrentPid(int jointIndex, Pid newPid)
-{
-    if (m_iCur == nullptr)
-    {
-        yError() << "iCurrent interface not opened";
-        return;
-    }
-    Pid myCurPid(0, 0, 0, 0, 0, 0);
-    m_iPid->setPid(PidControlTypeEnum::VOCAB_PIDTYPE_CURRENT, jointIndex, newPid);
-    yarp::os::SystemClock::delaySystem(0.005);
-    m_iPid->getPid(PidControlTypeEnum::VOCAB_PIDTYPE_CURRENT, jointIndex, &myCurPid);
-
-    if (m_currentPidDlg){
-        m_currentPidDlg->initCurrent(myCurPid);
     }
 }
 
@@ -894,13 +869,11 @@ void PartItem::onPidClicked(JointItem *joint)
     const int jointIndex = joint->getJointIndex();
     QString jointName = joint->getJointName();
     m_currentPidDlg = new PidDlg(m_partName.c_str(), jointIndex, jointName);
-    connect(m_currentPidDlg, SIGNAL(sendPositionPid(int, Pid)), this, SLOT(onSendPositionPid(int, Pid)));
-    connect(m_currentPidDlg, SIGNAL(sendVelocityPid(int, Pid)), this, SLOT(onSendVelocityPid(int, Pid)));
-    connect(m_currentPidDlg, SIGNAL(sendCurrentPid(int, Pid)), this, SLOT(onSendCurrentPid(int, Pid)));
+    connect(m_currentPidDlg, SIGNAL(sendPid(PidControlTypeEnum, int, Pid)), this, SLOT(onSendPid(PidControlTypeEnum, int, Pid)));
     connect(m_currentPidDlg, SIGNAL(sendSingleRemoteVariable(std::string, yarp::os::Bottle)), this, SLOT(onSendSingleRemoteVariable(std::string, yarp::os::Bottle)));
     connect(m_currentPidDlg, SIGNAL(updateAllRemoteVariables()), this, SLOT(onUpdateAllRemoteVariables()));
-    connect(m_currentPidDlg, SIGNAL(sendTorquePid(int, Pid, MotorTorqueParameters)), this, SLOT(onSendTorquePid(int, Pid, MotorTorqueParameters)));
-    connect(m_currentPidDlg, SIGNAL(sendStiffness(int, double, double)), this, SLOT(onSendStiffness(int, double, double)));
+    connect(m_currentPidDlg, SIGNAL(sendMotorParameters(int, MotorTorqueParameters)), this, SLOT(onSendMotorParameters(int, MotorTorqueParameters)));
+    connect(m_currentPidDlg, SIGNAL(sendStiffness(int, double, double, double)), this, SLOT(onSendStiffness(int, double, double, double)));
     connect(m_currentPidDlg, SIGNAL(sendForceOffset(int, double)), this, SLOT(onSendForceOffset(int, double)));
     connect(m_currentPidDlg, SIGNAL(sendPWM(int, double)), this, SLOT(onSendPWM(int, double)));
     connect(m_currentPidDlg, SIGNAL(refreshPids(int)), this, SLOT(onRefreshPids(int)));

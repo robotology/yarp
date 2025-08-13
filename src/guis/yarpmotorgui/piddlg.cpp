@@ -14,10 +14,11 @@
 #define     TAB_POSITION    0
 #define     TAB_VELOCITY    1
 #define     TAB_TORQUE      2
-#define     TAB_STIFF       3
-#define     TAB_PWM         4
-#define     TAB_CURRENT     5
-#define     TAB_VARIABLES   6
+#define     TAB_CURRENT     3
+#define     TAB_MOTORPARAMS 4
+#define     TAB_STIFF       5
+#define     TAB_PWM         6
+#define     TAB_VARIABLES   7
 
 #define     POSITION_KP         0
 #define     POSITION_KD         1
@@ -28,6 +29,7 @@
 #define     POSITION_OFFSET     6
 #define     POSITION_STICTIONUP 7
 #define     POSITION_STICTIONDW 8
+#define     POSITION_KFF        9
 
 #define     VELOCITY_KP         0
 #define     VELOCITY_KD         1
@@ -38,6 +40,7 @@
 #define     VELOCITY_OFFSET     6
 #define     VELOCITY_STICTIONUP 7
 #define     VELOCITY_STICTIONDW 8
+#define     VELOCITY_KFF        9
 
 #define     TORQUE_KP           0
 #define     TORQUE_KD           1
@@ -49,15 +52,16 @@
 #define     TORQUE_STITCTIONUP  7
 #define     TORQUE_STICTIONDW   8
 #define     TORQUE_KFF          9
-#define     TORQUE_BEMFGAIN     10
-#define     TORQUE_BEMFSCALE    11
-#define     TORQUE_KTAUGAIN     12
-#define     TORQUE_KTAUSCALE    13
-#define     TORQUE_VISCOUSPOS   14
-#define     TORQUE_VISCOUSNEG   15
-#define     TORQUE_COULOMBPOS   16
-#define     TORQUE_COULOMBNEG   17
-#define     VELOCITY_THRESHOLD  18
+
+#define     MOTOR_BEMFGAIN     0
+#define     MOTOR_BEMFSCALE    1
+#define     MOTOR_KTAUGAIN     2
+#define     MOTOR_KTAUSCALE    3
+#define     MOTOR_VISCOUSPOS   4
+#define     MOTOR_VISCOUSNEG   5
+#define     MOTOR_COULOMBPOS   6
+#define     MOTOR_COULOMBNEG   7
+#define     MOTOR_VELOCITY_THRESHOLD  8
 
 #define     CURRENT_KP         0
 #define     CURRENT_KD         1
@@ -66,6 +70,7 @@
 #define     CURRENT_MAXOUTPUT  4
 #define     CURRENT_MAXINT     5
 #define     CURRENT_OFFSET     6
+#define     CURRENT_KFF        7
 
 PidDlg::PidDlg(QString partname, int jointIndex, QString jointName, QWidget *parent) :
     QDialog(parent),
@@ -82,6 +87,10 @@ PidDlg::PidDlg(QString partname, int jointIndex, QString jointName, QWidget *par
     connect(ui->btnSend,SIGNAL(clicked()),this,SLOT(onSend()));
     connect(ui->btnCancel,SIGNAL(clicked()),this,SLOT(onCancel()));
     connect(ui->btnDump, SIGNAL(clicked()), this, SLOT(onDumpRemoteVariables()));
+    connect(ui->selectPosition, SIGNAL(currentIndexChanged(int)), this, SLOT(onComboBoxIndexChangedPos(int)));
+    connect(ui->selectVelocity, SIGNAL(currentIndexChanged(int)), this, SLOT(onComboBoxIndexChangedVel(int)));
+    connect(ui->selectTorque  , SIGNAL(currentIndexChanged(int)), this, SLOT(onComboBoxIndexChangedTrq(int)));
+    connect(ui->selectCurrent,  SIGNAL(currentIndexChanged(int)), this, SLOT(onComboBoxIndexChangedCur(int)));
 
     connect(ui->tableStiffness, &QTableWidget::itemChanged, this, [this](QTableWidgetItem* item)
     {
@@ -121,122 +130,150 @@ PidDlg::~PidDlg()
     delete ui;
 }
 
-void PidDlg::initPosition(Pid myPid)
+std::string prepareDescription(const Pid& myPid)
 {
-    ui->tablePosition->item(POSITION_KP,0)->setText(QString("%1").arg((double)myPid.kp));
-    ui->tablePosition->item(POSITION_KP,1)->setText(QString("%1").arg((double)myPid.kp));
-
-    ui->tablePosition->item(POSITION_KD,0)->setText(QString("%1").arg((double)myPid.kd));
-    ui->tablePosition->item(POSITION_KD,1)->setText(QString("%1").arg((double)myPid.kd));
-
-    ui->tablePosition->item(POSITION_KI,0)->setText(QString("%1").arg((double)myPid.ki));
-    ui->tablePosition->item(POSITION_KI,1)->setText(QString("%1").arg((double)myPid.ki));
-
-    ui->tablePosition->item(POSITION_SCALE,0)->setText(QString("%1").arg((int)myPid.scale));
-    ui->tablePosition->item(POSITION_SCALE,1)->setText(QString("%1").arg((int)myPid.scale));
-
-    ui->tablePosition->item(POSITION_OFFSET,0)->setText(QString("%1").arg((int)myPid.offset));
-    ui->tablePosition->item(POSITION_OFFSET,1)->setText(QString("%1").arg((int)myPid.offset));
-
-    ui->tablePosition->item(POSITION_STICTIONUP,0)->setText(QString("%1").arg((double)myPid.stiction_up_val));
-    ui->tablePosition->item(POSITION_STICTIONUP,1)->setText(QString("%1").arg((double)myPid.stiction_up_val));
-
-    ui->tablePosition->item(POSITION_MAXOUTPUT,0)->setText(QString("%1").arg((int)myPid.max_output));
-    ui->tablePosition->item(POSITION_MAXOUTPUT,1)->setText(QString("%1").arg((int)myPid.max_output));
-
-    ui->tablePosition->item(POSITION_STICTIONDW,0)->setText(QString("%1").arg((double)myPid.stiction_down_val));
-    ui->tablePosition->item(POSITION_STICTIONDW,1)->setText(QString("%1").arg((double)myPid.stiction_down_val));
-
-    ui->tablePosition->item(POSITION_MAXINT,0)->setText(QString("%1").arg((int)myPid.max_int));
-    ui->tablePosition->item(POSITION_MAXINT,1)->setText(QString("%1").arg((int)myPid.max_int));
+    return "Description: " + myPid.info.pid_description + "\n" +
+           "Input:       " + myPid.info.input_data_description + "\n" +
+           "Output:      " + myPid.info.output_data_description;
 }
 
-void PidDlg::initVelocity(Pid myPid)
+void PidDlg::initPositionPID(const std::vector<Pid>& myPids)
 {
-    ui->tableVelocity->item(VELOCITY_KP, 0)->setText(QString("%1").arg((double)myPid.kp));
-    ui->tableVelocity->item(VELOCITY_KP, 1)->setText(QString("%1").arg((double)myPid.kp));
+    size_t pidindex = ui->selectPosition->currentIndex();
+    std::string desc = prepareDescription(myPids[pidindex]);
+    ui->descPosition->setText(QString("%1").arg(desc.c_str()));
 
-    ui->tableVelocity->item(VELOCITY_KD, 0)->setText(QString("%1").arg((double)myPid.kd));
-    ui->tableVelocity->item(VELOCITY_KD, 1)->setText(QString("%1").arg((double)myPid.kd));
+    ui->tablePosition->item(POSITION_KP,0)->setText(QString("%1").arg((double)myPids[pidindex].kp));
+    ui->tablePosition->item(POSITION_KP,1)->setText(QString("%1").arg((double)myPids[pidindex].kp));
 
-    ui->tableVelocity->item(VELOCITY_KI, 0)->setText(QString("%1").arg((double)myPid.ki));
-    ui->tableVelocity->item(VELOCITY_KI, 1)->setText(QString("%1").arg((double)myPid.ki));
+    ui->tablePosition->item(POSITION_KD,0)->setText(QString("%1").arg((double)myPids[pidindex].kd));
+    ui->tablePosition->item(POSITION_KD,1)->setText(QString("%1").arg((double)myPids[pidindex].kd));
 
-    ui->tableVelocity->item(VELOCITY_SCALE, 0)->setText(QString("%1").arg((int)myPid.scale));
-    ui->tableVelocity->item(VELOCITY_SCALE, 1)->setText(QString("%1").arg((int)myPid.scale));
+    ui->tablePosition->item(POSITION_KI,0)->setText(QString("%1").arg((double)myPids[pidindex].ki));
+    ui->tablePosition->item(POSITION_KI,1)->setText(QString("%1").arg((double)myPids[pidindex].ki));
 
-    ui->tableVelocity->item(VELOCITY_OFFSET, 0)->setText(QString("%1").arg((int)myPid.offset));
-    ui->tableVelocity->item(VELOCITY_OFFSET, 1)->setText(QString("%1").arg((int)myPid.offset));
+    ui->tablePosition->item(POSITION_SCALE,0)->setText(QString("%1").arg((int)myPids[pidindex].scale));
+    ui->tablePosition->item(POSITION_SCALE,1)->setText(QString("%1").arg((int)myPids[pidindex].scale));
 
-    ui->tableVelocity->item(VELOCITY_STICTIONUP, 0)->setText(QString("%1").arg((double)myPid.stiction_up_val));
-    ui->tableVelocity->item(VELOCITY_STICTIONUP, 1)->setText(QString("%1").arg((double)myPid.stiction_up_val));
+    ui->tablePosition->item(POSITION_OFFSET,0)->setText(QString("%1").arg((int)myPids[pidindex].offset));
+    ui->tablePosition->item(POSITION_OFFSET,1)->setText(QString("%1").arg((int)myPids[pidindex].offset));
 
-    ui->tableVelocity->item(VELOCITY_MAXOUTPUT, 0)->setText(QString("%1").arg((int)myPid.max_output));
-    ui->tableVelocity->item(VELOCITY_MAXOUTPUT, 1)->setText(QString("%1").arg((int)myPid.max_output));
+    ui->tablePosition->item(POSITION_STICTIONUP,0)->setText(QString("%1").arg((double)myPids[pidindex].stiction_up_val));
+    ui->tablePosition->item(POSITION_STICTIONUP,1)->setText(QString("%1").arg((double)myPids[pidindex].stiction_up_val));
 
-    ui->tableVelocity->item(VELOCITY_STICTIONDW, 0)->setText(QString("%1").arg((double)myPid.stiction_down_val));
-    ui->tableVelocity->item(VELOCITY_STICTIONDW, 1)->setText(QString("%1").arg((double)myPid.stiction_down_val));
+    ui->tablePosition->item(POSITION_MAXOUTPUT,0)->setText(QString("%1").arg((int)myPids[pidindex].max_output));
+    ui->tablePosition->item(POSITION_MAXOUTPUT,1)->setText(QString("%1").arg((int)myPids[pidindex].max_output));
 
-    ui->tableVelocity->item(VELOCITY_MAXINT, 0)->setText(QString("%1").arg((int)myPid.max_int));
-    ui->tableVelocity->item(VELOCITY_MAXINT, 1)->setText(QString("%1").arg((int)myPid.max_int));
+    ui->tablePosition->item(POSITION_STICTIONDW,0)->setText(QString("%1").arg((double)myPids[pidindex].stiction_down_val));
+    ui->tablePosition->item(POSITION_STICTIONDW,1)->setText(QString("%1").arg((double)myPids[pidindex].stiction_down_val));
+
+    ui->tablePosition->item(POSITION_MAXINT,0)->setText(QString("%1").arg((int)myPids[pidindex].max_int));
+    ui->tablePosition->item(POSITION_MAXINT,1)->setText(QString("%1").arg((int)myPids[pidindex].max_int));
+
+    ui->tablePosition->item(POSITION_KFF,0)->setText(QString("%1").arg((double)myPids[pidindex].kff));
+    ui->tablePosition->item(POSITION_KFF,1)->setText(QString("%1").arg((double)myPids[pidindex].kff));
 }
 
-void PidDlg::initTorque(Pid myPid, MotorTorqueParameters TrqParam)
+void PidDlg::initVelocityPID(const std::vector<Pid>& myPids)
 {
-    ui->tableTorque->item(TORQUE_KP,0)->setText(QString("%1").arg((double)myPid.kp));
-    ui->tableTorque->item(TORQUE_KP,1)->setText(QString("%1").arg((double)myPid.kp));
+    size_t pidindex = ui->selectVelocity->currentIndex();
+    std::string desc = prepareDescription(myPids[pidindex]);
+    ui->descVelocity->setText(QString("%1").arg(desc.c_str()));
 
-    ui->tableTorque->item(TORQUE_KFF,0)->setText(QString("%1").arg((double)myPid.kff));
-    ui->tableTorque->item(TORQUE_KFF,1)->setText(QString("%1").arg((double)myPid.kff));
+    ui->tableVelocity->item(VELOCITY_KP, 0)->setText(QString("%1").arg((double)myPids[pidindex].kp));
+    ui->tableVelocity->item(VELOCITY_KP, 1)->setText(QString("%1").arg((double)myPids[pidindex].kp));
 
-    ui->tableTorque->item(TORQUE_KD,0)->setText(QString("%1").arg((double)myPid.kd));
-    ui->tableTorque->item(TORQUE_KD,1)->setText(QString("%1").arg((double)myPid.kd));
+    ui->tableVelocity->item(VELOCITY_KD, 0)->setText(QString("%1").arg((double)myPids[pidindex].kd));
+    ui->tableVelocity->item(VELOCITY_KD, 1)->setText(QString("%1").arg((double)myPids[pidindex].kd));
 
-    ui->tableTorque->item(TORQUE_BEMFGAIN,0)->setText(QString("%1").arg((double)TrqParam.bemf));
-    ui->tableTorque->item(TORQUE_BEMFGAIN,1)->setText(QString("%1").arg((double)TrqParam.bemf));
+    ui->tableVelocity->item(VELOCITY_KI, 0)->setText(QString("%1").arg((double)myPids[pidindex].ki));
+    ui->tableVelocity->item(VELOCITY_KI, 1)->setText(QString("%1").arg((double)myPids[pidindex].ki));
 
-    ui->tableTorque->item(TORQUE_BEMFSCALE,0)->setText(QString("%1").arg((int)TrqParam.bemf_scale));
-    ui->tableTorque->item(TORQUE_BEMFSCALE,1)->setText(QString("%1").arg((int)TrqParam.bemf_scale));
+    ui->tableVelocity->item(VELOCITY_SCALE, 0)->setText(QString("%1").arg((int)myPids[pidindex].scale));
+    ui->tableVelocity->item(VELOCITY_SCALE, 1)->setText(QString("%1").arg((int)myPids[pidindex].scale));
 
-    ui->tableTorque->item(TORQUE_KTAUGAIN,0)->setText(QString("%1").arg((double)TrqParam.ktau));
-    ui->tableTorque->item(TORQUE_KTAUGAIN,1)->setText(QString("%1").arg((double)TrqParam.ktau));
+    ui->tableVelocity->item(VELOCITY_OFFSET, 0)->setText(QString("%1").arg((int)myPids[pidindex].offset));
+    ui->tableVelocity->item(VELOCITY_OFFSET, 1)->setText(QString("%1").arg((int)myPids[pidindex].offset));
 
-    ui->tableTorque->item(TORQUE_KTAUSCALE,0)->setText(QString("%1").arg((int)TrqParam.ktau_scale));
-    ui->tableTorque->item(TORQUE_KTAUSCALE,1)->setText(QString("%1").arg((int)TrqParam.ktau_scale));
+    ui->tableVelocity->item(VELOCITY_STICTIONUP, 0)->setText(QString("%1").arg((double)myPids[pidindex].stiction_up_val));
+    ui->tableVelocity->item(VELOCITY_STICTIONUP, 1)->setText(QString("%1").arg((double)myPids[pidindex].stiction_up_val));
 
-    ui->tableTorque->item(TORQUE_VISCOUSPOS, 0)->setText(QString("%1").arg((double)TrqParam.viscousPos));
-    ui->tableTorque->item(TORQUE_VISCOUSPOS, 1)->setText(QString("%1").arg((double)TrqParam.viscousPos));
-    ui->tableTorque->item(TORQUE_VISCOUSNEG, 0)->setText(QString("%1").arg((double)TrqParam.viscousNeg));
-    ui->tableTorque->item(TORQUE_VISCOUSNEG, 1)->setText(QString("%1").arg((double)TrqParam.viscousNeg));
+    ui->tableVelocity->item(VELOCITY_MAXOUTPUT, 0)->setText(QString("%1").arg((int)myPids[pidindex].max_output));
+    ui->tableVelocity->item(VELOCITY_MAXOUTPUT, 1)->setText(QString("%1").arg((int)myPids[pidindex].max_output));
 
-    ui->tableTorque->item(TORQUE_COULOMBPOS, 0)->setText(QString("%1").arg((double)TrqParam.coulombPos));
-    ui->tableTorque->item(TORQUE_COULOMBPOS, 1)->setText(QString("%1").arg((double)TrqParam.coulombPos));
-    ui->tableTorque->item(TORQUE_COULOMBNEG, 0)->setText(QString("%1").arg((double)TrqParam.coulombNeg));
-    ui->tableTorque->item(TORQUE_COULOMBNEG, 1)->setText(QString("%1").arg((double)TrqParam.coulombNeg));
+    ui->tableVelocity->item(VELOCITY_STICTIONDW, 0)->setText(QString("%1").arg((double)myPids[pidindex].stiction_down_val));
+    ui->tableVelocity->item(VELOCITY_STICTIONDW, 1)->setText(QString("%1").arg((double)myPids[pidindex].stiction_down_val));
 
-    ui->tableTorque->item(VELOCITY_THRESHOLD, 0)->setText(QString("%1").arg((double)TrqParam.velocityThres));
-    ui->tableTorque->item(VELOCITY_THRESHOLD, 1)->setText(QString("%1").arg((double)TrqParam.velocityThres));
+    ui->tableVelocity->item(VELOCITY_MAXINT, 0)->setText(QString("%1").arg((int)myPids[pidindex].max_int));
+    ui->tableVelocity->item(VELOCITY_MAXINT, 1)->setText(QString("%1").arg((int)myPids[pidindex].max_int));
 
-    ui->tableTorque->item(TORQUE_KI,0)->setText(QString("%1").arg((double)myPid.ki));
-    ui->tableTorque->item(TORQUE_KI,1)->setText(QString("%1").arg((double)myPid.ki));
+    ui->tableVelocity->item(VELOCITY_KFF,0)->setText(QString("%1").arg((double)myPids[pidindex].kff));
+    ui->tableVelocity->item(VELOCITY_KFF,1)->setText(QString("%1").arg((double)myPids[pidindex].kff));
+}
 
-    ui->tableTorque->item(TORQUE_SCALE,0)->setText(QString("%1").arg((int)myPid.scale));
-    ui->tableTorque->item(TORQUE_SCALE,1)->setText(QString("%1").arg((int)myPid.scale));
+void PidDlg::initTorquePID(const std::vector<Pid>& myPids)
+{
+    size_t pidindex = ui->selectTorque->currentIndex();
+    std::string desc = prepareDescription(myPids[pidindex]);
+    ui->descTorque->setText(QString("%1").arg(desc.c_str()));
 
-    ui->tableTorque->item(TORQUE_OFFSET,0)->setText(QString("%1").arg((int)myPid.offset));
-    ui->tableTorque->item(TORQUE_OFFSET,1)->setText(QString("%1").arg((int)myPid.offset));
+    ui->tableTorque->item(TORQUE_KP,0)->setText(QString("%1").arg((double)myPids[pidindex].kp));
+    ui->tableTorque->item(TORQUE_KP,1)->setText(QString("%1").arg((double)myPids[pidindex].kp));
 
-    ui->tableTorque->item(TORQUE_STITCTIONUP,0)->setText(QString("%1").arg((double)myPid.stiction_up_val));
-    ui->tableTorque->item(TORQUE_STITCTIONUP,1)->setText(QString("%1").arg((double)myPid.stiction_up_val));
+    ui->tableTorque->item(TORQUE_KD,0)->setText(QString("%1").arg((double)myPids[pidindex].kd));
+    ui->tableTorque->item(TORQUE_KD,1)->setText(QString("%1").arg((double)myPids[pidindex].kd));
 
-    ui->tableTorque->item(TORQUE_MAXOUTPUT,0)->setText(QString("%1").arg((int)myPid.max_output));
-    ui->tableTorque->item(TORQUE_MAXOUTPUT,1)->setText(QString("%1").arg((int)myPid.max_output));
+    ui->tableTorque->item(TORQUE_KI,0)->setText(QString("%1").arg((double)myPids[pidindex].ki));
+    ui->tableTorque->item(TORQUE_KI,1)->setText(QString("%1").arg((double)myPids[pidindex].ki));
 
-    ui->tableTorque->item(TORQUE_STICTIONDW,0)->setText(QString("%1").arg((double)myPid.stiction_down_val));
-    ui->tableTorque->item(TORQUE_STICTIONDW,1)->setText(QString("%1").arg((double)myPid.stiction_down_val));
+    ui->tableTorque->item(TORQUE_SCALE,0)->setText(QString("%1").arg((int)myPids[pidindex].scale));
+    ui->tableTorque->item(TORQUE_SCALE,1)->setText(QString("%1").arg((int)myPids[pidindex].scale));
 
-    ui->tableTorque->item(TORQUE_MAXINT,0)->setText(QString("%1").arg((int)myPid.max_int));
-    ui->tableTorque->item(TORQUE_MAXINT,1)->setText(QString("%1").arg((int)myPid.max_int));
+    ui->tableTorque->item(TORQUE_OFFSET,0)->setText(QString("%1").arg((int)myPids[pidindex].offset));
+    ui->tableTorque->item(TORQUE_OFFSET,1)->setText(QString("%1").arg((int)myPids[pidindex].offset));
+
+    ui->tableTorque->item(TORQUE_STITCTIONUP,0)->setText(QString("%1").arg((double)myPids[pidindex].stiction_up_val));
+    ui->tableTorque->item(TORQUE_STITCTIONUP,1)->setText(QString("%1").arg((double)myPids[pidindex].stiction_up_val));
+
+    ui->tableTorque->item(TORQUE_MAXOUTPUT,0)->setText(QString("%1").arg((int)myPids[pidindex].max_output));
+    ui->tableTorque->item(TORQUE_MAXOUTPUT,1)->setText(QString("%1").arg((int)myPids[pidindex].max_output));
+
+    ui->tableTorque->item(TORQUE_STICTIONDW,0)->setText(QString("%1").arg((double)myPids[pidindex].stiction_down_val));
+    ui->tableTorque->item(TORQUE_STICTIONDW,1)->setText(QString("%1").arg((double)myPids[pidindex].stiction_down_val));
+
+    ui->tableTorque->item(TORQUE_MAXINT,0)->setText(QString("%1").arg((int)myPids[pidindex].max_int));
+    ui->tableTorque->item(TORQUE_MAXINT,1)->setText(QString("%1").arg((int)myPids[pidindex].max_int));
+
+    ui->tableTorque->item(TORQUE_KFF,0)->setText(QString("%1").arg((double)myPids[pidindex].kff));
+    ui->tableTorque->item(TORQUE_KFF,1)->setText(QString("%1").arg((double)myPids[pidindex].kff));
+}
+
+void PidDlg::initMotorParams(MotorTorqueParameters MotParam)
+{
+    ui->tableMotorParams->item(MOTOR_BEMFGAIN,0)->setText(QString("%1").arg((double)MotParam.bemf));
+    ui->tableMotorParams->item(MOTOR_BEMFGAIN,1)->setText(QString("%1").arg((double)MotParam.bemf));
+
+    ui->tableMotorParams->item(MOTOR_BEMFSCALE,0)->setText(QString("%1").arg((int)MotParam.bemf_scale));
+    ui->tableMotorParams->item(MOTOR_BEMFSCALE,1)->setText(QString("%1").arg((int)MotParam.bemf_scale));
+
+    ui->tableMotorParams->item(MOTOR_KTAUGAIN,0)->setText(QString("%1").arg((double)MotParam.ktau));
+    ui->tableMotorParams->item(MOTOR_KTAUGAIN,1)->setText(QString("%1").arg((double)MotParam.ktau));
+
+    ui->tableMotorParams->item(MOTOR_KTAUSCALE,0)->setText(QString("%1").arg((int)MotParam.ktau_scale));
+    ui->tableMotorParams->item(MOTOR_KTAUSCALE,1)->setText(QString("%1").arg((int)MotParam.ktau_scale));
+
+    ui->tableMotorParams->item(MOTOR_VISCOUSPOS, 0)->setText(QString("%1").arg((double)MotParam.viscousPos));
+    ui->tableMotorParams->item(MOTOR_VISCOUSPOS, 1)->setText(QString("%1").arg((double)MotParam.viscousPos));
+    ui->tableMotorParams->item(MOTOR_VISCOUSNEG, 0)->setText(QString("%1").arg((double)MotParam.viscousNeg));
+    ui->tableMotorParams->item(MOTOR_VISCOUSNEG, 1)->setText(QString("%1").arg((double)MotParam.viscousNeg));
+
+    ui->tableMotorParams->item(MOTOR_COULOMBPOS, 0)->setText(QString("%1").arg((double)MotParam.coulombPos));
+    ui->tableMotorParams->item(MOTOR_COULOMBPOS, 1)->setText(QString("%1").arg((double)MotParam.coulombPos));
+    ui->tableMotorParams->item(MOTOR_COULOMBNEG, 0)->setText(QString("%1").arg((double)MotParam.coulombNeg));
+    ui->tableMotorParams->item(MOTOR_COULOMBNEG, 1)->setText(QString("%1").arg((double)MotParam.coulombNeg));
+
+    ui->tableMotorParams->item(MOTOR_VELOCITY_THRESHOLD, 0)->setText(QString("%1").arg((double)MotParam.velocityThres));
+    ui->tableMotorParams->item(MOTOR_VELOCITY_THRESHOLD, 1)->setText(QString("%1").arg((double)MotParam.velocityThres));
 }
 
 void PidDlg::onSendRemoteVariable()
@@ -359,28 +396,35 @@ void PidDlg::initPWM(double PWMVal, double pwm)
     ui->tablePWM->item(1,0)->setText(QString("%1").arg(pwm));
 }
 
-void PidDlg::initCurrent(Pid myPid)
+void PidDlg::initCurrentPID(const std::vector<Pid>& myPids)
 {
-    ui->tableCurrent->item(CURRENT_KP, 0)->setText(QString("%1").arg((double)myPid.kp));
-    ui->tableCurrent->item(CURRENT_KP, 1)->setText(QString("%1").arg((double)myPid.kp));
+    size_t pidindex = ui->selectCurrent->currentIndex();
+    std::string desc = prepareDescription(myPids[pidindex]);
+    ui->descCurrent->setText(QString("%1").arg(desc.c_str()));
 
-    ui->tableCurrent->item(CURRENT_KD, 0)->setText(QString("%1").arg((double)myPid.kd));
-    ui->tableCurrent->item(CURRENT_KD, 1)->setText(QString("%1").arg((double)myPid.kd));
+    ui->tableCurrent->item(CURRENT_KP, 0)->setText(QString("%1").arg((double)myPids[pidindex].kp));
+    ui->tableCurrent->item(CURRENT_KP, 1)->setText(QString("%1").arg((double)myPids[pidindex].kp));
 
-    ui->tableCurrent->item(CURRENT_KI, 0)->setText(QString("%1").arg((double)myPid.ki));
-    ui->tableCurrent->item(CURRENT_KI, 1)->setText(QString("%1").arg((double)myPid.ki));
+    ui->tableCurrent->item(CURRENT_KD, 0)->setText(QString("%1").arg((double)myPids[pidindex].kd));
+    ui->tableCurrent->item(CURRENT_KD, 1)->setText(QString("%1").arg((double)myPids[pidindex].kd));
 
-    ui->tableCurrent->item(CURRENT_SCALE, 0)->setText(QString("%1").arg((int)myPid.scale));
-    ui->tableCurrent->item(CURRENT_SCALE, 1)->setText(QString("%1").arg((int)myPid.scale));
+    ui->tableCurrent->item(CURRENT_KI, 0)->setText(QString("%1").arg((double)myPids[pidindex].ki));
+    ui->tableCurrent->item(CURRENT_KI, 1)->setText(QString("%1").arg((double)myPids[pidindex].ki));
 
-    ui->tableCurrent->item(CURRENT_OFFSET, 0)->setText(QString("%1").arg((int)myPid.offset));
-    ui->tableCurrent->item(CURRENT_OFFSET, 1)->setText(QString("%1").arg((int)myPid.offset));
+    ui->tableCurrent->item(CURRENT_SCALE, 0)->setText(QString("%1").arg((int)myPids[pidindex].scale));
+    ui->tableCurrent->item(CURRENT_SCALE, 1)->setText(QString("%1").arg((int)myPids[pidindex].scale));
 
-    ui->tableCurrent->item(CURRENT_MAXOUTPUT, 0)->setText(QString("%1").arg((int)myPid.max_output));
-    ui->tableCurrent->item(CURRENT_MAXOUTPUT, 1)->setText(QString("%1").arg((int)myPid.max_output));
+    ui->tableCurrent->item(CURRENT_MAXOUTPUT, 0)->setText(QString("%1").arg((int)myPids[pidindex].max_output));
+    ui->tableCurrent->item(CURRENT_MAXOUTPUT, 1)->setText(QString("%1").arg((int)myPids[pidindex].max_output));
 
-    ui->tableCurrent->item(CURRENT_MAXINT, 0)->setText(QString("%1").arg((int)myPid.max_int));
-    ui->tableCurrent->item(CURRENT_MAXINT, 1)->setText(QString("%1").arg((int)myPid.max_int));
+    ui->tableCurrent->item(CURRENT_MAXINT, 0)->setText(QString("%1").arg((int)myPids[pidindex].max_int));
+    ui->tableCurrent->item(CURRENT_MAXINT, 1)->setText(QString("%1").arg((int)myPids[pidindex].max_int));
+
+    ui->tableCurrent->item(CURRENT_OFFSET, 0)->setText(QString("%1").arg((int)myPids[pidindex].offset));
+    ui->tableCurrent->item(CURRENT_OFFSET, 1)->setText(QString("%1").arg((int)myPids[pidindex].offset));
+
+    ui->tableCurrent->item(CURRENT_KFF, 0)->setText(QString("%1").arg((double)myPids[pidindex].kff));
+    ui->tableCurrent->item(CURRENT_KFF, 1)->setText(QString("%1").arg((double)myPids[pidindex].kff));
 }
 
 void PidDlg::onRefresh()
@@ -388,13 +432,43 @@ void PidDlg::onRefresh()
     emit refreshPids(jointIndex);
 }
 
+void PidDlg::onComboBoxIndexChangedPos(int selection)
+{
+    emit refreshPids(jointIndex);
+}
+void PidDlg::onComboBoxIndexChangedVel(int selection)
+{
+    emit refreshPids(jointIndex);
+}
+void PidDlg::onComboBoxIndexChangedTrq(int selection)
+{
+    emit refreshPids(jointIndex);
+}
+void PidDlg::onComboBoxIndexChangedCur(int selection)
+{
+    emit refreshPids(jointIndex);
+}
+
+
+PidControlTypeEnum choosePIDType(const PidControlTypeEnum& base, int index)
+{
+    std::string pidtyped = yarp::os::Vocab32::decode((yarp::conf::vocab32_t)base);
+    pidtyped[3] = index +'0';
+    PidControlTypeEnum val = (PidControlTypeEnum)(yarp::os::Vocab32::encode(pidtyped));
+    return val;
+}
+
 void PidDlg::onSend()
 {
     Pid newPid;
     MotorTorqueParameters newMotorTorqueParams;
+    PidControlTypeEnum pidtype;
+    int combo_selection=0;
 
     switch (ui->tabMain->currentIndex()) {
     case TAB_POSITION:
+        combo_selection = ui->selectPosition->currentIndex();
+        pidtype = choosePIDType(PidControlTypeEnum::VOCAB_PIDTYPE_POSITION, combo_selection+1);
         newPid.kp = ui->tablePosition->item(POSITION_KP,1)->text().toDouble();
         newPid.kd = ui->tablePosition->item(POSITION_KD,1)->text().toDouble();
         newPid.ki = ui->tablePosition->item(POSITION_KI,1)->text().toDouble();
@@ -404,9 +478,11 @@ void PidDlg::onSend()
         newPid.max_output = ui->tablePosition->item(POSITION_MAXOUTPUT,1)->text().toDouble();
         newPid.stiction_down_val = ui->tablePosition->item(POSITION_STICTIONDW,1)->text().toDouble();
         newPid.max_int = ui->tablePosition->item(POSITION_MAXINT,1)->text().toDouble();
-        emit sendPositionPid(jointIndex,newPid);
+        emit sendPid(pidtype, jointIndex,newPid);
         break;
     case TAB_VELOCITY:
+        combo_selection = ui->selectVelocity->currentIndex();
+        pidtype = choosePIDType(PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY, combo_selection+1);
         newPid.kp = ui->tableVelocity->item(VELOCITY_KP, 1)->text().toDouble();
         newPid.kd = ui->tableVelocity->item(VELOCITY_KD, 1)->text().toDouble();
         newPid.ki = ui->tableVelocity->item(VELOCITY_KI, 1)->text().toDouble();
@@ -416,21 +492,14 @@ void PidDlg::onSend()
         newPid.max_output = ui->tableVelocity->item(VELOCITY_MAXOUTPUT, 1)->text().toDouble();
         newPid.stiction_down_val = ui->tableVelocity->item(VELOCITY_STICTIONDW, 1)->text().toDouble();
         newPid.max_int = ui->tableVelocity->item(VELOCITY_MAXINT, 1)->text().toDouble();
-        emit sendVelocityPid(jointIndex, newPid);
+        emit sendPid(pidtype, jointIndex, newPid);
         break;
     case TAB_TORQUE:
+        combo_selection = ui->selectTorque->currentIndex();
+        pidtype = choosePIDType(PidControlTypeEnum::VOCAB_PIDTYPE_TORQUE, combo_selection+1);
         newPid.kp = ui->tableTorque->item(TORQUE_KP,1)->text().toDouble();
         newPid.kff = ui->tableTorque->item(TORQUE_KFF,1)->text().toDouble();
         newPid.kd = ui->tableTorque->item(TORQUE_KD,1)->text().toDouble();
-        newMotorTorqueParams.bemf = ui->tableTorque->item(TORQUE_BEMFGAIN,1)->text().toDouble();
-        newMotorTorqueParams.bemf_scale = ui->tableTorque->item(TORQUE_BEMFSCALE,1)->text().toDouble();
-        newMotorTorqueParams.ktau = ui->tableTorque->item(TORQUE_KTAUGAIN,1)->text().toDouble();
-        newMotorTorqueParams.ktau_scale = ui->tableTorque->item(TORQUE_KTAUSCALE,1)->text().toDouble();
-        newMotorTorqueParams.viscousPos = ui->tableTorque->item(TORQUE_VISCOUSPOS,1)->text().toDouble();
-        newMotorTorqueParams.viscousNeg = ui->tableTorque->item(TORQUE_VISCOUSNEG,1)->text().toDouble();
-        newMotorTorqueParams.coulombPos = ui->tableTorque->item(TORQUE_COULOMBPOS,1)->text().toDouble();
-        newMotorTorqueParams.coulombNeg = ui->tableTorque->item(TORQUE_COULOMBNEG,1)->text().toDouble();
-        newMotorTorqueParams.velocityThres =  ui->tableTorque->item(VELOCITY_THRESHOLD,1)->text().toDouble();
         newPid.ki = ui->tableTorque->item(TORQUE_KI,1)->text().toDouble();
         newPid.scale = ui->tableTorque->item(TORQUE_SCALE,1)->text().toDouble();
         newPid.offset = ui->tableTorque->item(TORQUE_OFFSET,1)->text().toDouble();
@@ -438,7 +507,32 @@ void PidDlg::onSend()
         newPid.max_output = ui->tableTorque->item(TORQUE_MAXOUTPUT,1)->text().toDouble();
         newPid.stiction_down_val = ui->tableTorque->item(TORQUE_STICTIONDW,1)->text().toDouble();
         newPid.max_int = ui->tableTorque->item(TORQUE_MAXINT,1)->text().toDouble();
-        emit sendTorquePid(jointIndex,newPid,newMotorTorqueParams);
+        emit sendPid(pidtype, jointIndex,newPid);
+        break;
+    case TAB_CURRENT:{
+        combo_selection = ui->selectCurrent->currentIndex();
+        pidtype = choosePIDType(PidControlTypeEnum::VOCAB_PIDTYPE_CURRENT, combo_selection+1);
+        newPid.kp = ui->tableCurrent->item(CURRENT_KP, 1)->text().toDouble();
+        newPid.kd = ui->tableCurrent->item(CURRENT_KD, 1)->text().toDouble();
+        newPid.ki = ui->tableCurrent->item(CURRENT_KI, 1)->text().toDouble();
+        newPid.scale = ui->tableCurrent->item(CURRENT_SCALE, 1)->text().toDouble();
+        newPid.offset = ui->tableCurrent->item(CURRENT_OFFSET, 1)->text().toDouble();
+        newPid.max_output = ui->tableCurrent->item(CURRENT_MAXOUTPUT, 1)->text().toDouble();
+        newPid.max_int = ui->tableCurrent->item(CURRENT_MAXINT, 1)->text().toDouble();
+        emit sendPid(pidtype, jointIndex, newPid);
+        break;
+    }
+    case TAB_MOTORPARAMS:
+        newMotorTorqueParams.bemf = ui->tableMotorParams->item(MOTOR_BEMFGAIN,1)->text().toDouble();
+        newMotorTorqueParams.bemf_scale = ui->tableMotorParams->item(MOTOR_BEMFSCALE,1)->text().toDouble();
+        newMotorTorqueParams.ktau = ui->tableMotorParams->item(MOTOR_KTAUGAIN,1)->text().toDouble();
+        newMotorTorqueParams.ktau_scale = ui->tableMotorParams->item(MOTOR_KTAUSCALE,1)->text().toDouble();
+        newMotorTorqueParams.viscousPos = ui->tableMotorParams->item(MOTOR_VISCOUSPOS,1)->text().toDouble();
+        newMotorTorqueParams.viscousNeg = ui->tableMotorParams->item(MOTOR_VISCOUSNEG,1)->text().toDouble();
+        newMotorTorqueParams.coulombPos = ui->tableMotorParams->item(MOTOR_COULOMBPOS,1)->text().toDouble();
+        newMotorTorqueParams.coulombNeg = ui->tableMotorParams->item(MOTOR_COULOMBNEG,1)->text().toDouble();
+        newMotorTorqueParams.velocityThres =  ui->tableMotorParams->item(MOTOR_VELOCITY_THRESHOLD,1)->text().toDouble();
+        emit sendMotorParameters(jointIndex,newMotorTorqueParams);
         break;
     case TAB_STIFF:{
         double desiredStiff = ui->tableStiffness->item(0,3)->text().toDouble();
@@ -455,17 +549,6 @@ void PidDlg::onSend()
     case TAB_PWM:{
         int desiredDuty = ui->tablePWM->item(0,1)->text().toDouble();
         emit sendPWM(jointIndex,desiredDuty);
-        break;
-    }
-    case TAB_CURRENT:{
-        newPid.kp = ui->tableCurrent->item(CURRENT_KP, 1)->text().toDouble();
-        newPid.kd = ui->tableCurrent->item(CURRENT_KD, 1)->text().toDouble();
-        newPid.ki = ui->tableCurrent->item(CURRENT_KI, 1)->text().toDouble();
-        newPid.scale = ui->tableCurrent->item(CURRENT_SCALE, 1)->text().toDouble();
-        newPid.offset = ui->tableCurrent->item(CURRENT_OFFSET, 1)->text().toDouble();
-        newPid.max_output = ui->tableCurrent->item(CURRENT_MAXOUTPUT, 1)->text().toDouble();
-        newPid.max_int = ui->tableCurrent->item(CURRENT_MAXINT, 1)->text().toDouble();
-        emit sendCurrentPid(jointIndex, newPid);
         break;
     }
     case TAB_VARIABLES:{
