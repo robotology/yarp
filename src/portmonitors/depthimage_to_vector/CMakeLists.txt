@@ -6,6 +6,7 @@ yarp_prepare_plugin(depthimage_to_vector
   INCLUDE DepthImageVec.h
   CATEGORY portmonitor
   DEPENDS "ENABLE_yarpcar_portmonitor"
+  DEFAULT ON
 )
 
 if(SKIP_depthimage_to_vector)

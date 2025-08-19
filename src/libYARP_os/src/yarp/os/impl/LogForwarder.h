@@ -22,6 +22,7 @@ public:
     static LogForwarder& getInstance();
 
     void forward(const std::string& message);
+    std::string getLogPortName();
     static void shutdown();
 
 private:

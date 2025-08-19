@@ -23,6 +23,7 @@ yarp_begin_plugin_library(yarppm
   add_subdirectory(soundfilter_resample)
   add_subdirectory(sound_marker)
   add_subdirectory(sensorMeasurements_to_vector)
+  add_subdirectory(simulated_network_delay)
 yarp_end_plugin_library(yarppm QUIET)
 add_library(YARP::yarppm ALIAS yarppm)
 

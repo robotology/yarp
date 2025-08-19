@@ -6,6 +6,7 @@ yarp_prepare_plugin(segmentationimage_to_rgb
   INCLUDE SegmentationImage.h
   CATEGORY portmonitor
   DEPENDS "ENABLE_yarpcar_portmonitor"
+  DEFAULT ON
 )
 
 yarp_renamed_option(ENABLE_yarpcar_segmentationimage ENABLE_yarppm_segmentationimage_to_rgb) # YARP_DEPRECATED since 3.5
