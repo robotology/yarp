@@ -876,68 +876,6 @@ void RPCMessagesParser::handlePidMsg(const yarp::os::Bottle& cmd, yarp::os::Bott
             *ok = rpc_IPid->setPidOffset(pidtype, j, v);
         } break;
 
-        case VOCAB_PID: {
-            Pid p;
-            int j = cmd.get(4).asInt32();
-            Bottle* b = cmd.get(5).asList();
-
-            if (b == nullptr) {
-                break;
-            }
-
-            p.kp = b->get(0).asFloat64();
-            p.kd = b->get(1).asFloat64();
-            p.ki = b->get(2).asFloat64();
-            p.max_int = b->get(3).asFloat64();
-            p.max_output = b->get(4).asFloat64();
-            p.offset = b->get(5).asFloat64();
-            p.scale = b->get(6).asFloat64();
-            p.stiction_up_val = b->get(7).asFloat64();
-            p.stiction_down_val = b->get(8).asFloat64();
-            p.kff = b->get(9).asFloat64();
-            *ok = rpc_IPid->setPid(pidtype, j, p);
-        } break;
-
-        case VOCAB_PIDS: {
-            Bottle* b = cmd.get(4).asList();
-
-            if (b == nullptr) {
-                break;
-            }
-
-            const size_t njs = b->size();
-            if (njs == controlledJoints) {
-                Pid* p = new Pid[njs];
-
-                bool allOK = true;
-
-                for (size_t i = 0; i < njs; i++) {
-                    Bottle* c = b->get(i).asList();
-                    if (c != nullptr) {
-                        p[i].kp = c->get(0).asFloat64();
-                        p[i].kd = c->get(1).asFloat64();
-                        p[i].ki = c->get(2).asFloat64();
-                        p[i].max_int = c->get(3).asFloat64();
-                        p[i].max_output = c->get(4).asFloat64();
-                        p[i].offset = c->get(5).asFloat64();
-                        p[i].scale = c->get(6).asFloat64();
-                        p[i].stiction_up_val = c->get(7).asFloat64();
-                        p[i].stiction_down_val = c->get(8).asFloat64();
-                        p[i].kff = c->get(9).asFloat64();
-                    } else {
-                        allOK = false;
-                    }
-                }
-                if (allOK) {
-                    *ok = rpc_IPid->setPids(pidtype, p);
-                } else {
-                    *ok = false;
-                }
-
-                delete[] p;
-            }
-        } break;
-
         case VOCAB_REF: {
             *ok = rpc_IPid->setPidReference(pidtype, cmd.get(4).asInt32(), cmd.get(5).asFloat64());
         } break;
@@ -1046,42 +984,6 @@ void RPCMessagesParser::handlePidMsg(const yarp::os::Bottle& cmd, yarp::os::Bott
             Bottle& b = response.addList();
             for (size_t i = 0; i < controlledJoints; i++) {
                 b.addFloat64(p[i]);
-            }
-            delete[] p;
-        } break;
-
-        case VOCAB_PID: {
-            Pid p;
-            *ok = rpc_IPid->getPid(pidtype, cmd.get(4).asInt32(), &p);
-            Bottle& b = response.addList();
-            b.addFloat64(p.kp);
-            b.addFloat64(p.kd);
-            b.addFloat64(p.ki);
-            b.addFloat64(p.max_int);
-            b.addFloat64(p.max_output);
-            b.addFloat64(p.offset);
-            b.addFloat64(p.scale);
-            b.addFloat64(p.stiction_up_val);
-            b.addFloat64(p.stiction_down_val);
-            b.addFloat64(p.kff);
-        } break;
-
-        case VOCAB_PIDS: {
-            Pid* p = new Pid[controlledJoints];
-            *ok = rpc_IPid->getPids(pidtype, p);
-            Bottle& b = response.addList();
-            for (size_t i = 0; i < controlledJoints; i++) {
-                Bottle& c = b.addList();
-                c.addFloat64(p[i].kp);
-                c.addFloat64(p[i].kd);
-                c.addFloat64(p[i].ki);
-                c.addFloat64(p[i].max_int);
-                c.addFloat64(p[i].max_output);
-                c.addFloat64(p[i].offset);
-                c.addFloat64(p[i].scale);
-                c.addFloat64(p[i].stiction_up_val);
-                c.addFloat64(p[i].stiction_down_val);
-                c.addFloat64(p[i].kff);
             }
             delete[] p;
         } break;

@@ -4,36 +4,18 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#include <yarp/dev/ControlBoardInterfaces.h>
+#include <yarp/dev/ControlBoardPid.h>
 
 using namespace yarp::dev;
 
 Pid::Pid(double p, double d, double i,
          double intm, double sc, double omax):
-    kp(p),
-    kd(d),
-    ki(i),
-    max_int(intm),
-    scale(sc),
-    max_output(omax),
-    offset(0),
-    stiction_up_val(0),
-    stiction_down_val(0),
-    kff(0)
+        PidData(p, d, i, intm, sc, omax, 0.0, 0.0 ,0.0, 0.0, PidDataInfo(std::string(""),std::string(""),std::string("")))
 {}
 
 Pid::Pid(double p, double d, double i,
          double intm, double sc, double omax, double st_up, double st_down, double ff) :
-    kp(p),
-    kd(d),
-    ki(i),
-    max_int(intm),
-    scale(sc),
-    max_output(omax),
-    offset(0),
-    stiction_up_val(st_up),
-    stiction_down_val(st_down),
-    kff(ff)
+        PidData(p, d, i, intm, sc, omax, 0.0, st_up, st_down, ff, PidDataInfo(std::string(""),std::string(""),std::string("")))
 {}
 
 Pid::~Pid() = default;
@@ -146,6 +128,17 @@ bool Pid::operator==(const yarp::dev::Pid &p) const
         return false;
     }
 
-    return true;
+    if (info.pid_description != p.info.pid_description) {
+        return false;
+    }
 
+    if (info.input_data_description != p.info.input_data_description) {
+        return false;
+    }
+
+    if (info.output_data_description != p.info.output_data_description) {
+        return false;
+    }
+
+    return true;
 }

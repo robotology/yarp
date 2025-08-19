@@ -19,7 +19,11 @@
 #include <return_getDesiredVelocityAll.h>
 #include <return_getDesiredVelocityGroup.h>
 #include <return_getDesiredVelocityOne.h>
+#include <return_getPid.h>
+#include <return_getPids.h>
 #include <return_isJointBraked.h>
+#include <yarp/dev/ControlBoardPid.h>
+#include <yarp/dev/PidEnums.h>
 #include <yarp/dev/ReturnValue.h>
 
 class ControlBoardMsgs :
@@ -50,6 +54,14 @@ public:
     virtual return_getDesiredVelocityAll getDesiredVelocityAllRPC() const;
 
     virtual return_getDesiredVelocityGroup getDesiredVelocityGroupRPC(const std::vector<std::int32_t>& j) const;
+
+    virtual yarp::dev::ReturnValue setPidRPC(const yarp::dev::PidControlTypeEnum pidtype, const std::int16_t j, const yarp::dev::Pid& pid);
+
+    virtual yarp::dev::ReturnValue setPidsRPC(const yarp::dev::PidControlTypeEnum pidtype, const std::vector<yarp::dev::Pid>& pids);
+
+    virtual return_getPid getPidRPC(const yarp::dev::PidControlTypeEnum pidtype, const std::int16_t j);
+
+    virtual return_getPids getPidsRPC(const yarp::dev::PidControlTypeEnum pidtype);
 
     // help method
     virtual std::vector<std::string> help(const std::string& functionName = "--all");
