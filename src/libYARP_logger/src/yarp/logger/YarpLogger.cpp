@@ -256,7 +256,7 @@ void LoggerEngine::logger_thread::run()
 
             if (b->size()!=2)
             {
-                fprintf (stderr, "ERROR: unknown log format!\n");
+                fprintf (stderr, "ERROR: unknown log format [err1]!\n");
                 unknown_format_received++;
                 continue;
             }
@@ -270,7 +270,7 @@ void LoggerEngine::logger_thread::run()
             }
             else
             {
-                fprintf(stderr, "ERROR: unknown log format!\n");
+                fprintf(stderr, "ERROR: unknown log format! [err2]\n");
                 unknown_format_received++;
                 continue;
             }
@@ -291,7 +291,7 @@ void LoggerEngine::logger_thread::run()
             }
             else
             {
-                fprintf(stderr, "ERROR: unknown log format!\n");
+                fprintf(stderr, "ERROR: unknown log format! [err3]\n");
                 unknown_format_received++;
                 continue;
             }

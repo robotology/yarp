@@ -52,6 +52,11 @@ yarp::os::impl::LogForwarder::LogForwarder()
     started = true;
 }
 
+std::string yarp::os::impl::LogForwarder::getLogPortName()
+{
+    return outputPort.getName();
+}
+
 void yarp::os::impl::LogForwarder::forward(const std::string& message)
 {
     mutex.lock();

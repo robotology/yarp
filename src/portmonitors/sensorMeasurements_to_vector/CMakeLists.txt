@@ -6,6 +6,7 @@ yarp_prepare_plugin(sensorMeasurements_to_vector
   INCLUDE SM_to_vec.h
   CATEGORY portmonitor
   DEPENDS "ENABLE_yarpcar_portmonitor"
+  DEFAULT ON
 )
 
 if(SKIP_sensorMeasurements_to_vector)
