@@ -77,6 +77,15 @@ void testLogForwarder( yarp::os::impl::LogForwarder& fwd, yarp::yarpLogger::Logg
 
 TEST_CASE("logger::LogForwarderTest", "[yarp::logger]")
 {
+    YARP_REQUIRE_PLUGIN("simulated_network_delay", "portmonitor")
+
+#if defined(DISABLE_FAILING_VALGRIND_TESTS)
+    // Skipping because valgrind introduces unpredicatable delays
+    // To receive all messages the logger should be kept running
+    // for a longer (unknown) time.
+    YARP_SKIP_TEST("Skipping failing tests under valgrind")
+#endif
+
     yarp::os::Network yarp(yarp::os::YARP_CLOCK_SYSTEM);
 
     yarp::os::NetworkBase::setLocalMode(true);
@@ -94,11 +103,11 @@ TEST_CASE("logger::LogForwarderTest", "[yarp::logger]")
 
     yarp::os::Time::delay(1.0);
 
-    const double required_delay = 0.1; // 100 ms delay for the simulated network
+    const double required_delay = 0.07; // 70 ms delay for the simulated network
     std::string required_delay_s = std::to_string(int(required_delay*1000.0));
     testLogForwarder(fwd, the_logger, logportName, "fast_tcp",0.0);
-    testLogForwarder(fwd, the_logger, logportName, "fast_tcp+send.portmonitor+file.simulated_network_delay+delay_ms."+required_delay_s+"+type.dll", 0.1);
-    testLogForwarder(fwd, the_logger, logportName, "fast_tcp+recv.portmonitor+file.simulated_network_delay+delay_ms."+required_delay_s+"+type.dll", 0.1);
+    testLogForwarder(fwd, the_logger, logportName, "fast_tcp+send.portmonitor+file.simulated_network_delay+delay_ms."+required_delay_s+"+type.dll", required_delay);
+    testLogForwarder(fwd, the_logger, logportName, "fast_tcp+recv.portmonitor+file.simulated_network_delay+delay_ms."+required_delay_s+"+type.dll", required_delay);
 
     yarp::os::Time::delay(1.0);
 
