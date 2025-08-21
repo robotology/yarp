@@ -82,6 +82,14 @@ PidDlg::PidDlg(QString partname, int jointIndex, QString jointName, QWidget *par
     connect(ui->btnSend,SIGNAL(clicked()),this,SLOT(onSend()));
     connect(ui->btnCancel,SIGNAL(clicked()),this,SLOT(onCancel()));
     connect(ui->btnDump, SIGNAL(clicked()), this, SLOT(onDumpRemoteVariables()));
+ 
+    connect(ui->tableStiffness, &QTableWidget::itemChanged, this, [this](QTableWidgetItem* item)
+    {
+        if (item == ui->tableStiffness->item(2, 3))
+        {
+            onForceOffsetChanged(item->text());
+        }
+    });
 
     ui->tablePosition->setItemDelegate(new TableDoubleDelegate);
     ui->tableVelocity->setItemDelegate(new TableDoubleDelegate);
@@ -90,6 +98,11 @@ PidDlg::PidDlg(QString partname, int jointIndex, QString jointName, QWidget *par
     ui->tablePWM->setItemDelegate(new TableDoubleDelegate);
     ui->tableCurrent->setItemDelegate(new TableDoubleDelegate);
     ui->tableCurrent->setItemDelegate(new TableGenericDelegate);
+}
+
+void PidDlg::onForceOffsetChanged(QString forceOffset)
+{
+    forceOffsetChanged = true;
 }
 
 void PidDlg::onDumpRemoteVariables()
@@ -315,8 +328,7 @@ void PidDlg::initRemoteVariables(IRemoteVariables* iVar)
 }
 
 void PidDlg::initStiffness(double curStiffVal, double minStiff, double maxStiff,
-                           double curDampVal, double minDamp, double maxDamp,
-                           double curForceVal, double minForce, double maxForce)
+                           double curDampVal, double minDamp, double maxDamp)
 {
     ui->tableStiffness->item(0,0)->setText(QString("%L1").arg(curStiffVal,0,'f',3));
     ui->tableStiffness->item(0,1)->setText(QString("%L1").arg(minStiff,0,'f',3));
@@ -327,7 +339,10 @@ void PidDlg::initStiffness(double curStiffVal, double minStiff, double maxStiff,
     ui->tableStiffness->item(1,1)->setText(QString("%L1").arg(minDamp,0,'f',3));
     ui->tableStiffness->item(1,2)->setText(QString("%L1").arg(maxDamp,0,'f',3));
     ui->tableStiffness->item(1,3)->setText(QString("%L1").arg(curDampVal,0,'f',3));
+}
 
+void PidDlg::initTorqueOffset(double curForceVal, double minForce, double maxForce)
+{
     ui->tableStiffness->item(2,0)->setText(QString("%L1").arg(curForceVal,0,'f',3));
     ui->tableStiffness->item(2,1)->setText(QString("%L1").arg(minForce,0,'f',3));
     ui->tableStiffness->item(2,2)->setText(QString("%L1").arg(maxForce,0,'f',3));
@@ -428,7 +443,12 @@ void PidDlg::onSend()
         double desiredStiff = ui->tableStiffness->item(0,3)->text().toDouble();
         double desiredDamp = ui->tableStiffness->item(1,3)->text().toDouble();
         double desiredForce = ui->tableStiffness->item(2,3)->text().toDouble();
-        emit sendStiffness(jointIndex,desiredStiff,desiredDamp,desiredForce);
+        emit sendStiffness(jointIndex,desiredStiff,desiredDamp);
+        if (forceOffsetChanged)
+        {
+            emit sendForceOffset(jointIndex, desiredForce);
+            forceOffsetChanged = false;
+        }
         break;
     }
     case TAB_PWM:{

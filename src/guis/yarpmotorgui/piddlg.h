@@ -39,14 +39,15 @@ public:
     void initTorque(Pid myPid, MotorTorqueParameters TorqueParam);
     void initCurrent(Pid myPid);
     void initStiffness(double curStiffVal, double minStiff, double maxStiff,
-                       double curDampVal, double minDamp, double maxDamp,
-                       double curForceVal, double minForce, double maxForce);
+                       double curDampVal, double minDamp, double maxDamp);
+    void initTorqueOffset(double curForceVal, double minForce, double maxForce);
     void initPWM(double pwmVal, double pwm);
     void initRemoteVariables(IRemoteVariables* iVar);
 
 
 signals:
-    void sendStiffness(int,double,double,double);
+    void sendStiffness(int,double,double);
+    void sendForceOffset(int,double);
     void sendPositionPid(int jointIndex, Pid pid);
     void sendVelocityPid(int jointIndex, Pid pid);
     void sendTorquePid(int jointIndex,Pid,MotorTorqueParameters newTorqueParam);
@@ -62,6 +63,7 @@ private:
     Ui::PidDlg *ui;
     int jointIndex;
     std::vector <QPushButton*> buttons;
+    bool forceOffsetChanged = false;
 
 private slots:
     void onRefresh();
@@ -69,6 +71,7 @@ private slots:
     void onCancel();
     void onSendRemoteVariable();
     void onDumpRemoteVariables();
+    void onForceOffsetChanged(QString forceOffset);
 };
 
 class TableIntDelegate : public QItemDelegate
