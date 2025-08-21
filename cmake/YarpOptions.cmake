@@ -189,7 +189,7 @@ mark_as_advanced(YARP_ENABLE_EXAMPLES_AS_TESTS)
 
 #########################################################################
 # Test timeout.
-set(YARP_TEST_TIMEOUT_DEFAULT 120)
+set(YARP_TEST_TIMEOUT_DEFAULT 180)
 if (APPLE)
   set(YARP_TEST_TIMEOUT_DEFAULT 300)
 endif()

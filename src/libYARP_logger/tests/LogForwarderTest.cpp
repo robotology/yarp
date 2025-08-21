@@ -16,7 +16,7 @@
 #include <catch2/catch_amalgamated.hpp>
 #include <harness.h>
 
-void testLogForwarder( yarp::os::impl::LogForwarder& fwd, yarp::yarpLogger::LoggerEngine* the_logger,std::string logportName, std::string carrier)
+void testLogForwarder( yarp::os::impl::LogForwarder& fwd, yarp::yarpLogger::LoggerEngine* the_logger,std::string logportName, std::string carrier, double delay)
 {
     INFO("Testing LogForwarder with carrier: " + carrier);
 
@@ -24,13 +24,13 @@ void testLogForwarder( yarp::os::impl::LogForwarder& fwd, yarp::yarpLogger::Logg
     bool logger_connected = yarp::os::Network::connect(logportName, "/logger", carrier, false);
     CHECK(logger_connected);
 
-    const int max_num_messages = 10000;
+    const int max_num_messages = 1000;
     uint64_t counter = 0;
-    double t = 0.00001;
 
-    const double start = yarp::os::SystemClock::nowSystem();
+    yDebug() << "Now sending " << max_num_messages << " messages with a network delay of "+ std::to_string(delay) +"ms. It might take a while..";
 
     // send some messages
+    const double start = yarp::os::SystemClock::nowSystem();
     double ptime = yarp::os::SystemClock::nowSystem();
     for (size_t i = 0; i < max_num_messages; i++)
     {
@@ -39,15 +39,28 @@ void testLogForwarder( yarp::os::impl::LogForwarder& fwd, yarp::yarpLogger::Logg
         std::string message = "message " + std::to_string(counter) + " " + std::to_string(ctime) + " " + std::to_string(difftime);
         fwd.forward(message);
         counter++;
-        yarp::os::Time::delay(t);
+        //   yarp::os::Time::delay(0.00001);
         ptime = ctime;
     }
     const double end = yarp::os::SystemClock::nowSystem();
     double elapsed = end-start;
-    std::string info_msg = "Test duration: " + std::to_string(elapsed);
+    std::string info_msg;
+    info_msg = "Time required to send log messages: " + std::to_string(elapsed) + "s " +
+             + " (" + std::to_string(elapsed/double(max_num_messages)*1000.0) + "ms for message)";
     yDebug() << info_msg;
+    if (delay!=0) {CHECK (elapsed < max_num_messages * delay);}
 
-    yarp::os::Time::delay(1.0);
+    //When adding a simulated delay to the network, some log messages might not arrive
+    //immediately to the logger. Therefeore, it should be kept active for an amount
+    //of time equal to the numer of messages multiplied by the delay time plus a small margin.
+    double estimated_test_duration = (max_num_messages * delay) + elapsed;
+    const double margin = 2.0; // 2 seconds margin to ensure that all messages are received
+    info_msg = "Estimated time to wait to receive all log messages: " + std::to_string(estimated_test_duration)
+             + " (+ margin = " + std::to_string(margin) + ") s";
+    yDebug() << info_msg;
+    yDebug() << "Waiting...";
+    yarp::os::Time::delay(estimated_test_duration+margin);
+    yDebug() << "Wait complete";
 
     //check what the logger received from the forwarder
     std::list<yarp::yarpLogger::MessageEntry> messages;
@@ -64,6 +77,15 @@ void testLogForwarder( yarp::os::impl::LogForwarder& fwd, yarp::yarpLogger::Logg
 
 TEST_CASE("logger::LogForwarderTest", "[yarp::logger]")
 {
+    YARP_REQUIRE_PLUGIN("simulated_network_delay", "portmonitor")
+
+#if defined(DISABLE_FAILING_VALGRIND_TESTS)
+    // Skipping because valgrind introduces unpredicatable delays
+    // To receive all messages the logger should be kept running
+    // for a longer (unknown) time.
+    YARP_SKIP_TEST("Skipping failing tests under valgrind")
+#endif
+
     yarp::os::Network yarp(yarp::os::YARP_CLOCK_SYSTEM);
 
     yarp::os::NetworkBase::setLocalMode(true);
@@ -81,9 +103,11 @@ TEST_CASE("logger::LogForwarderTest", "[yarp::logger]")
 
     yarp::os::Time::delay(1.0);
 
-    testLogForwarder(fwd, the_logger, logportName, "fast_tcp");
-    testLogForwarder(fwd, the_logger, logportName, "fast_tcp+send.portmonitor+file.simulated_network_delay+delay_ms.100+type.dll");
-    testLogForwarder(fwd, the_logger, logportName, "fast_tcp+recv.portmonitor+file.simulated_network_delay+delay_ms.100+type.dll");
+    const double required_delay = 0.07; // 70 ms delay for the simulated network
+    std::string required_delay_s = std::to_string(int(required_delay*1000.0));
+    testLogForwarder(fwd, the_logger, logportName, "fast_tcp",0.0);
+    testLogForwarder(fwd, the_logger, logportName, "fast_tcp+send.portmonitor+file.simulated_network_delay+delay_ms."+required_delay_s+"+type.dll", required_delay);
+    testLogForwarder(fwd, the_logger, logportName, "fast_tcp+recv.portmonitor+file.simulated_network_delay+delay_ms."+required_delay_s+"+type.dll", required_delay);
 
     yarp::os::Time::delay(1.0);
 

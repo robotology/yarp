@@ -106,7 +106,7 @@ void LoggerEngine::discover  (std::list<std::string>& ports)
     std::string logger_portname = log_updater->getPortName();
     p.open(logger_portname+"/discover");
     std::string yarpservername = yarp::os::Network::getNameServerName();
-    yarp::os::Network::connect(logger_portname+"/discover",yarpservername);
+    bool b_connected = yarp::os::Network::connect(logger_portname+"/discover",yarpservername);
     Bottle cmd,response;
     cmd.addString("bot");
     cmd.addString("list");
@@ -188,11 +188,12 @@ void LoggerEngine::connect (const std::list<std::string>& ports)
     style.quiet=true;
 
     std::list<std::string>::const_iterator it;
+    bool b_connected = true;
     for (it = ports.begin(); it != ports.end(); it++)
     {
         if (yarp::os::Network::exists(*it,style) == true)
         {
-            yarp::os::Network::connect(*it,this->log_updater->getPortName());
+            b_connected &= yarp::os::Network::connect(*it,this->log_updater->getPortName());
         }
         else
         {
