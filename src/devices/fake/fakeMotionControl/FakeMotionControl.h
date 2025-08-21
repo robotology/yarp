@@ -239,6 +239,11 @@ private:
     double  *_ref_accs = nullptr;             // for velocity control, in position min jerk eq is used.
     double  *_ref_torques = nullptr;          // for torque control.
     double  *_ref_currents = nullptr;
+
+    double  *_stiffness = nullptr;
+    double  *_damping = nullptr;
+    double  *_force_offset = nullptr;
+
     yarp::sig::Vector       current, nominalCurrent, maxCurrent, peakCurrent;
     yarp::sig::Vector       pwm, pwmLimit, refpwm, supplyVoltage,last_velocity_command, last_pwm_command;
     yarp::sig::Vector pos, dpos, vel, speed, acc, loc, amp;
