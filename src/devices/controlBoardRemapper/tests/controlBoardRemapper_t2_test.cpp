@@ -17,6 +17,7 @@
 #include <yarp/dev/ICurrentControl.h>
 #include <yarp/dev/IRemoteCalibrator.h>
 #include <yarp/dev/IControlLimits.h>
+#include <yarp/dev/IImpedanceControl.h>
 #include <yarp/os/Network.h>
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/WrapperMultiple.h>
@@ -35,6 +36,7 @@
 #include <yarp/dev/tests/IRemoteCalibratorTest.h>
 #include <yarp/dev/tests/IJointFaultTest.h>
 #include <yarp/dev/tests/IControlLimitsTest.h>
+#include <yarp/dev/tests/IImpedanceControlTest.h>
 
 #include <catch2/catch_amalgamated.hpp>
 #include <harness.h>
@@ -68,6 +70,7 @@ TEST_CASE("dev::ControlBoardRemapperTest2", "[yarp::dev]")
         ICurrentControl* icurr = nullptr;
         IJointFault* ifault = nullptr;
         IControlLimits* ilims = nullptr;
+        IImpedanceControl* iimp = nullptr;
         //IRemoteCalibrator* iremotecalib = nullptr;
 
         ////////"Checking opening map2DServer and map2DClient polydrivers"
@@ -107,6 +110,7 @@ TEST_CASE("dev::ControlBoardRemapperTest2", "[yarp::dev]")
         ddremapper.view(icurr);   REQUIRE(icurr);
         ddremapper.view(ifault);  REQUIRE(ifault);
         ddremapper.view(ilims);   REQUIRE(ilims);
+        ddremapper.view(iimp);   REQUIRE(iimp);
         //ddremapper.view(iremotecalib);  REQUIRE(iremotecalib);
 
         yarp::dev::tests::exec_iPositionControl_test_1(ipos, icmd);
@@ -125,6 +129,7 @@ TEST_CASE("dev::ControlBoardRemapperTest2", "[yarp::dev]")
         //yarp::dev::tests::exec_iRemoteCalibrator_test_1(iremotecalib);
         yarp::dev::tests::exec_iJointFault_test_1(ifault);
         yarp::dev::tests::exec_iControlLimits_test1(ilims, iinfo);
+        yarp::dev::tests::exec_iImpedanceControl_test1(iimp);
 
         //"Close all polydrivers and check"
         {
