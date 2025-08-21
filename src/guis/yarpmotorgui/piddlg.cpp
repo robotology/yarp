@@ -82,7 +82,7 @@ PidDlg::PidDlg(QString partname, int jointIndex, QString jointName, QWidget *par
     connect(ui->btnSend,SIGNAL(clicked()),this,SLOT(onSend()));
     connect(ui->btnCancel,SIGNAL(clicked()),this,SLOT(onCancel()));
     connect(ui->btnDump, SIGNAL(clicked()), this, SLOT(onDumpRemoteVariables()));
- 
+
     connect(ui->tableStiffness, &QTableWidget::itemChanged, this, [this](QTableWidgetItem* item)
     {
         if (item == ui->tableStiffness->item(2, 3))
@@ -347,6 +347,7 @@ void PidDlg::initTorqueOffset(double curForceVal, double minForce, double maxFor
     ui->tableStiffness->item(2,1)->setText(QString("%L1").arg(minForce,0,'f',3));
     ui->tableStiffness->item(2,2)->setText(QString("%L1").arg(maxForce,0,'f',3));
     ui->tableStiffness->item(2,3)->setText(QString("%L1").arg(curForceVal,0,'f',3));
+    forceOffsetChanged=false;
 }
 
 

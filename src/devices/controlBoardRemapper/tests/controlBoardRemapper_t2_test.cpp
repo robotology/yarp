@@ -129,7 +129,7 @@ TEST_CASE("dev::ControlBoardRemapperTest2", "[yarp::dev]")
         //yarp::dev::tests::exec_iRemoteCalibrator_test_1(iremotecalib);
         yarp::dev::tests::exec_iJointFault_test_1(ifault);
         yarp::dev::tests::exec_iControlLimits_test1(ilims, iinfo);
-        yarp::dev::tests::exec_iImpedanceControl_test1(iimp);
+        yarp::dev::tests::exec_iImpedanceControl_test_1(iimp);
 
         //"Close all polydrivers and check"
         {
