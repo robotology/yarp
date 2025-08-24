@@ -5,7 +5,7 @@
 
 #include "MultipleAnalogSensorsClient.h"
 
-#include "SensorStreamingData.h"
+#include <yarp/dev/SensorStreamingData.h>
 #include "MultipleAnalogSensorsMetadata.h"
 
 #include <yarp/os/LogComponent.h>
@@ -14,7 +14,7 @@ namespace {
 YARP_LOG_COMPONENT(MULTIPLEANALOGSENSORSCLIENT, "yarp.device.multipleanalogsensorsclient")
 }
 
-void SensorStreamingDataInputPort::onRead(SensorStreamingData& v)
+void SensorStreamingDataInputPort::onRead(yarp::dev::SensorStreamingData& v)
 {
     std::lock_guard<std::mutex> guard(dataMutex);
     receivedData = v;
@@ -127,7 +127,7 @@ bool MultipleAnalogSensorsClient::close()
 }
 
 size_t MultipleAnalogSensorsClient::genericGetNrOfSensors(const std::vector<SensorMetadata>& metadataVector,
-                                                          const SensorMeasurements& measurementsVector) const
+                                                          const yarp::dev::SensorMeasurements& measurementsVector) const
 {
     if (!m_externalConnection) {
         return metadataVector.size();
@@ -196,7 +196,7 @@ bool MultipleAnalogSensorsClient::genericGetFrameName(const  std::vector<SensorM
 }
 
 bool MultipleAnalogSensorsClient::genericGetMeasure(const std::vector<SensorMetadata>& metadataVector, const std::string& tag,
-                                                    const SensorMeasurements& measurementsVector,
+                                                    const yarp::dev::SensorMeasurements& measurementsVector,
                                                     size_t sens_index, yarp::sig::Vector& out, double& timestamp) const
 {
 
@@ -232,7 +232,7 @@ bool MultipleAnalogSensorsClient::genericGetMeasure(const std::vector<SensorMeta
 }
 
 size_t MultipleAnalogSensorsClient::genericGetSize(const std::vector<SensorMetadata>& metadataVector,
-                                                   const std::string& tag, const SensorMeasurements& measurementsVector, size_t sens_index) const
+                                                   const std::string& tag, const yarp::dev::SensorMeasurements& measurementsVector, size_t sens_index) const
 {
     std::lock_guard<std::mutex> guard(m_streamingPort.dataMutex);
     if (m_streamingPort.status != yarp::dev::MAS_OK)

@@ -9,7 +9,7 @@
 #include <yarp/dev/MultipleAnalogSensorsInterfaces.h>
 
 #include "MultipleAnalogSensorsMetadata.h"
-#include "SensorStreamingData.h"
+#include <yarp/dev/SensorStreamingData.h>
 
 #include <yarp/os/BufferedPort.h>
 #include <yarp/os/Network.h>
@@ -21,17 +21,17 @@
 
 
 class SensorStreamingDataInputPort :
-        public yarp::os::BufferedPort<SensorStreamingData>
+        public yarp::os::BufferedPort< yarp::dev::SensorStreamingData>
 {
 public:
-    SensorStreamingData receivedData;
+     yarp::dev::SensorStreamingData receivedData;
     mutable yarp::dev::MAS_status status{yarp::dev::MAS_WAITING_FOR_FIRST_READ};
     mutable std::mutex dataMutex;
     double timeoutInSeconds{0.01};
     double lastTimeStampReadInSeconds{0.0};
 
-    using yarp::os::BufferedPort<SensorStreamingData>::onRead;
-    void onRead(SensorStreamingData &v) override;
+    using yarp::os::BufferedPort< yarp::dev::SensorStreamingData>::onRead;
+    void onRead( yarp::dev::SensorStreamingData &v) override;
     void updateTimeoutStatus() const;
 };
 
@@ -66,17 +66,17 @@ class MultipleAnalogSensorsClient :
     SensorRPCData m_sensorsMetadata;
 
     size_t genericGetNrOfSensors(const std::vector<SensorMetadata>& metadataVector,
-                                 const SensorMeasurements& measurementsVector) const;
+                                 const  yarp::dev::SensorMeasurements& measurementsVector) const;
     yarp::dev::MAS_status genericGetStatus() const;
     bool genericGetName(const std::vector<SensorMetadata>& metadataVector, const std::string& tag,
                           size_t sens_index, std::string &name) const;
     bool genericGetFrameName(const std::vector<SensorMetadata>& metadataVector, const std::string& tag,
                             size_t sens_index, std::string &frameName) const;
     bool genericGetMeasure(const std::vector<SensorMetadata>& metadataVector, const std::string& tag,
-                             const SensorMeasurements& measurementsVector,
+                             const  yarp::dev::SensorMeasurements& measurementsVector,
                              size_t sens_index, yarp::sig::Vector& out, double& timestamp) const;
     size_t genericGetSize(const std::vector<SensorMetadata>& metadataVector,
-                          const std::string& tag, const SensorMeasurements& measurementsVector, size_t sens_index) const;
+                          const std::string& tag, const  yarp::dev::SensorMeasurements& measurementsVector, size_t sens_index) const;
 
 
 public:
