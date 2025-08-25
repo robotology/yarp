@@ -462,7 +462,7 @@ SensorRPCData MultipleAnalogSensorsServer::getMetadata()
 template<typename Interface>
 bool MultipleAnalogSensorsServer::genericStreamData(Interface* wrappedDeviceInterface,
                                                     const std::vector< SensorMetadata >& metadataVector,
-                                                    std::vector<  yarp::dev::SensorMeasurement >& streamingDataVector,
+                                                    std::vector< typename yarp::dev::SensorMeasurement >& streamingDataVector,
                                                     yarp::dev::MAS_status (Interface::*getStatusMethodPtr)(size_t) const,
                                                     bool (Interface::*getMeasureMethodPtr)(size_t, yarp::sig::Vector&, double&) const,
                                                     const char* sensorType)

@@ -15,6 +15,7 @@
 #include <yarp/dev/MultipleAnalogSensorsInterfaces.h>
 
 // Thrift-generated classes
+#include <yarp/dev/SensorMeasurement.h>
 #include <yarp/dev/SensorStreamingData.h>
 #include "MultipleAnalogSensorsMetadata.h"
 
@@ -80,12 +81,12 @@ class MultipleAnalogSensorsServer :
     template<typename Interface>
     bool resizeMeasureVectors(Interface* wrappedDeviceInterface,
                               const std::vector< SensorMetadata >& metadataVector,
-                              std::vector<  yarp::dev::SensorMeasurement >& streamingDataVector,
+                              std::vector<  typename yarp::dev::SensorMeasurement >& streamingDataVector,
                               size_t (Interface::*getMeasureSizePtr)(size_t) const);
     template<typename Interface>
     bool resizeMeasureVectors(Interface* wrappedDeviceInterface,
                               const std::vector< SensorMetadata >& metadataVector,
-                              std::vector<  yarp::dev::SensorMeasurement >& streamingDataVector,
+                              std::vector<  typename yarp::dev::SensorMeasurement >& streamingDataVector,
                               size_t measureSize);
     bool resizeAllMeasureVectors( yarp::dev::SensorStreamingData& streamingData);
 
@@ -94,7 +95,7 @@ class MultipleAnalogSensorsServer :
     template<typename Interface>
     bool genericStreamData(Interface* wrappedDeviceInterface,
                            const std::vector< SensorMetadata >& metadataVector,
-                           std::vector<  yarp::dev::SensorMeasurement >& streamingDataVector,
+                           std::vector<  typename yarp::dev::SensorMeasurement >& streamingDataVector,
                            yarp::dev::MAS_status (Interface::*getStatusMethodPtr)(size_t) const,
                            bool (Interface::*getMeasureMethodPtr)(size_t, yarp::sig::Vector&, double&) const,
                            const char* sensorType);
