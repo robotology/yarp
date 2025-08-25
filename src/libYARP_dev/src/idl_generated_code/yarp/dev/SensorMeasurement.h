@@ -11,15 +11,20 @@
 #ifndef YARP_THRIFT_GENERATOR_STRUCT_SENSORMEASUREMENT_H
 #define YARP_THRIFT_GENERATOR_STRUCT_SENSORMEASUREMENT_H
 
+#include <yarp/dev/api.h>
+
 #include <yarp/os/Wire.h>
 #include <yarp/os/idl/WireTypes.h>
 #include <yarp/sig/Vector.h>
 
-class SensorMeasurement :
+namespace yarp::dev {
+
+class YARP_dev_API SensorMeasurement :
         public yarp::os::idl::WirePortable
 {
 public:
     // Fields
+
     yarp::sig::Vector measurement{};
     double timestamp{0.0};
 
@@ -61,5 +66,7 @@ private:
     bool nested_read_timestamp(yarp::os::idl::WireReader& reader);
     bool nested_write_timestamp(const yarp::os::idl::WireWriter& writer) const;
 };
+
+} // namespace yarp::dev
 
 #endif // YARP_THRIFT_GENERATOR_STRUCT_SENSORMEASUREMENT_H

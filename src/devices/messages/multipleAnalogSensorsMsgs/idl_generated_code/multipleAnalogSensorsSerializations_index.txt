@@ -1,9 +1,3 @@
-SensorMeasurement.h
-SensorMeasurement.cpp
-SensorMeasurements.h
-SensorMeasurements.cpp
-SensorStreamingData.h
-SensorStreamingData.cpp
 SensorMetadata.h
 SensorMetadata.cpp
 SensorRPCData.h

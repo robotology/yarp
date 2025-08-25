@@ -11,11 +11,15 @@
 #ifndef YARP_THRIFT_GENERATOR_STRUCT_SENSORSTREAMINGDATA_H
 #define YARP_THRIFT_GENERATOR_STRUCT_SENSORSTREAMINGDATA_H
 
+#include <yarp/dev/api.h>
+
 #include <yarp/os/Wire.h>
 #include <yarp/os/idl/WireTypes.h>
-#include <SensorMeasurements.h>
+#include <yarp/dev/SensorMeasurements.h>
 
-class SensorStreamingData :
+namespace yarp::dev {
+
+class YARP_dev_API SensorStreamingData :
         public yarp::os::idl::WirePortable
 {
 public:
@@ -141,5 +145,7 @@ private:
     bool nested_read_ThreeAxisAngularAccelerometers(yarp::os::idl::WireReader& reader);
     bool nested_write_ThreeAxisAngularAccelerometers(const yarp::os::idl::WireWriter& writer) const;
 };
+
+} // namespace yarp::dev
 
 #endif // YARP_THRIFT_GENERATOR_STRUCT_SENSORSTREAMINGDATA_H

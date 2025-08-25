@@ -21,18 +21,17 @@ target_sources(yarp_pm_sensorMeasurements_to_vector
     SM_to_vec.h
 )
 
-target_sources(yarp_pm_sensorMeasurements_to_vector PRIVATE $<TARGET_OBJECTS:multipleAnalogSensorsSerializations>)
-
-target_include_directories(yarp_pm_sensorMeasurements_to_vector PRIVATE $<TARGET_PROPERTY:multipleAnalogSensorsSerializations,INTERFACE_INCLUDE_DIRECTORIES>)
-
 target_link_libraries(yarp_pm_sensorMeasurements_to_vector
   PRIVATE
     YARP::YARP_os
     YARP::YARP_sig
+    YARP::YARP_dev
 )
+
 list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS
   YARP_os
   YARP_sig
+  YARP_dev
 )
 
 yarp_install(

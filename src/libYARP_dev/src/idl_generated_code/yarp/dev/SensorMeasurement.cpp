@@ -8,7 +8,9 @@
 // This is an automatically generated file.
 // It could get re-generated if the ALLOW_IDL_GENERATION flag is on.
 
-#include <SensorMeasurement.h>
+#include <yarp/dev/SensorMeasurement.h>
+
+namespace yarp::dev {
 
 // Constructor with field values
 SensorMeasurement::SensorMeasurement(const yarp::sig::Vector& measurement,
@@ -176,3 +178,5 @@ bool SensorMeasurement::nested_write_timestamp(const yarp::os::idl::WireWriter& 
     }
     return true;
 }
+
+} // namespace yarp::dev
