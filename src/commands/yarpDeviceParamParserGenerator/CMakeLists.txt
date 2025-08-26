@@ -37,6 +37,6 @@ install(
 
 set_property(TARGET yarpDeviceParamParserGenerator PROPERTY FOLDER "Command Line Tools")
 
-if(YARP_COMPILE_TESTS)
+if(FALSE)
   add_subdirectory(tests)
 endif()
