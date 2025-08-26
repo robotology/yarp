@@ -1151,6 +1151,36 @@ MAKE_COMMS  (Sound, yarp::sig::Sound)
     }
 }
 
+%extend yarp::dev::IJointCoupling {
+    size_t getNrOfPhysicalJoints() {
+        size_t nrOfPhysicalJoints;
+        bool ok = self->getNrOfPhysicalJoints(nrOfPhysicalJoints);
+        if (!ok) return 0;
+        return nrOfPhysicalJoints;
+    }
+
+    size_t getNrOfActuatedAxes() {
+        size_t nrOfActuatedAxes;
+        bool ok = self->getNrOfActuatedAxes(nrOfActuatedAxes);
+        if (!ok) return 0;
+        return nrOfActuatedAxes;
+    }
+
+    std::string getActuatedAxisName(size_t actuatedAxisIndex) {
+        std::string actuatedAxisName;
+        bool ok = self->getActuatedAxisName(actuatedAxisIndex, actuatedAxisName);
+        if (!ok) return "unknown";
+        return actuatedAxisName;
+    }
+
+    std::string getPhysicalJointName(size_t physicalJointIndex) {
+        std::string physicalJointName;
+        bool ok = self->getPhysicalJointName(physicalJointIndex, physicalJointName);
+        if (!ok) return "unknown";
+        return physicalJointName;
+    }
+}
+
 %extend yarp::dev::IControlMode {
     int getControlMode(int j) {
         int buffer;

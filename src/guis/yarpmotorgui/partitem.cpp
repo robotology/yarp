@@ -686,34 +686,45 @@ void PartItem::onSendPWM(int jointIndex, double pwmVal)
     }
 }
 
-void PartItem::onSendStiffness(int jointIdex,double stiff,double damp,double force)
+void PartItem::onSendForceOffset(int jointIdex,double force)
 {
-    Q_UNUSED(force);
-    double stiff_val=0;
-    double damp_val=0;
     double offset_val=0;
 
+    m_iImp->setImpedanceOffset(jointIdex, force);
+    yarp::os::SystemClock::delaySystem(0.005);
+    m_iImp->getImpedanceOffset(jointIdex, &offset_val);
+
+    double off_max=0.0;
+    double off_min=0.0;
+    m_iTrq->getTorqueRange(jointIdex, &off_min, &off_max);
+
+    if (m_currentPidDlg)
+    {
+        m_currentPidDlg->initTorqueOffset(offset_val, off_min, off_max);
+    }
+}
+
+void PartItem::onSendStiffness(int jointIdex,double stiff,double damp)
+{
+    double stiff_val=0;
+    double damp_val=0;
+
     m_iImp->setImpedance(jointIdex, stiff, damp);
-    //imp->setImpedanceOffset(jointIdex, force);
     yarp::os::SystemClock::delaySystem(0.005);
     m_iImp->getImpedance(jointIdex, &stiff_val, &damp_val);
-    m_iImp->getImpedanceOffset(jointIdex, &offset_val);
 
     //update the impedance limits
     double stiff_max=0.0;
     double stiff_min=0.0;
     double damp_max=0.0;
     double damp_min=0.0;
-    double off_max=0.0;
-    double off_min=0.0;
+
     m_iImp->getCurrentImpedanceLimit(jointIdex, &stiff_min, &stiff_max, &damp_min, &damp_max);
-    m_iTrq->getTorqueRange(jointIdex, &off_min, &off_max);
 
     if (m_currentPidDlg)
     {
         m_currentPidDlg->initStiffness(stiff_val, stiff_min, stiff_max,
-                                     damp_val,damp_min,damp_max,
-                                     offset_val,off_min,off_max);
+                                       damp_val, damp_min, damp_max);
     }
 
 
@@ -816,7 +827,8 @@ void PartItem::onRefreshPids(int jointIndex)
         m_currentPidDlg->initTorque(myTrqPid, motorTorqueParams);
         m_currentPidDlg->initVelocity(myVelPid);
         m_currentPidDlg->initCurrent(myCurPid);
-        m_currentPidDlg->initStiffness(stiff_val, stiff_min, stiff_max, damp_val, damp_min, damp_max, impedance_offset_val, off_min, off_max);
+        m_currentPidDlg->initStiffness(stiff_val, stiff_min, stiff_max, damp_val, damp_min, damp_max);
+        m_currentPidDlg->initTorqueOffset(impedance_offset_val, off_min, off_max);
         m_currentPidDlg->initPWM(pwm_reference, current_pwm);
         m_currentPidDlg->initRemoteVariables(m_iVar);
     }
@@ -888,7 +900,8 @@ void PartItem::onPidClicked(JointItem *joint)
     connect(m_currentPidDlg, SIGNAL(sendSingleRemoteVariable(std::string, yarp::os::Bottle)), this, SLOT(onSendSingleRemoteVariable(std::string, yarp::os::Bottle)));
     connect(m_currentPidDlg, SIGNAL(updateAllRemoteVariables()), this, SLOT(onUpdateAllRemoteVariables()));
     connect(m_currentPidDlg, SIGNAL(sendTorquePid(int, Pid, MotorTorqueParameters)), this, SLOT(onSendTorquePid(int, Pid, MotorTorqueParameters)));
-    connect(m_currentPidDlg, SIGNAL(sendStiffness(int, double, double, double)), this, SLOT(onSendStiffness(int, double, double, double)));
+    connect(m_currentPidDlg, SIGNAL(sendStiffness(int, double, double)), this, SLOT(onSendStiffness(int, double, double)));
+    connect(m_currentPidDlg, SIGNAL(sendForceOffset(int, double)), this, SLOT(onSendForceOffset(int, double)));
     connect(m_currentPidDlg, SIGNAL(sendPWM(int, double)), this, SLOT(onSendPWM(int, double)));
     connect(m_currentPidDlg, SIGNAL(refreshPids(int)), this, SLOT(onRefreshPids(int)));
     connect(m_currentPidDlg, SIGNAL(dumpRemoteVariables()), this, SLOT(onDumpAllRemoteVariables()));

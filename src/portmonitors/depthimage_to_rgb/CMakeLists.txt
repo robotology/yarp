@@ -6,6 +6,7 @@ yarp_prepare_plugin(depthimage_to_rgb
   INCLUDE DepthImage2.h
   CATEGORY portmonitor
   DEPENDS "ENABLE_yarpcar_portmonitor"
+  DEFAULT ON
 )
 
 yarp_renamed_option(ENABLE_yarpcar_depthimage2 ENABLE_yarppm_depthimage_to_rgb) # YARP_DEPRECATED since 3.5

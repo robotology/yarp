@@ -257,6 +257,7 @@ set(YARP_dev_IDL
   idl/MobileBaseVelocity.thrift
 
   idl/LLM_Message.thrift
+  idl/SensorStreamingData.thrift
 )
 
 if(TARGET YARP::YARP_math)

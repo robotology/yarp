@@ -385,7 +385,9 @@ bool FakeMotionControl::dealloc()
     checkAndDestroy(_torques);
     checkAndDestroy(_hwfault_code);
     checkAndDestroy(_hwfault_message);
-
+    checkAndDestroy(_stiffness);
+    checkAndDestroy(_damping);
+    checkAndDestroy(_force_offset);
     return true;
 }
 
@@ -2155,27 +2157,45 @@ bool FakeMotionControl::getRefTorqueRaw(int j, double *t)
 
 bool FakeMotionControl::getImpedanceRaw(int j, double *stiffness, double *damping)
 {
-    return NOT_YET_IMPLEMENTED("getImpedanceRaw");
+    _mutex.lock();
+    *stiffness = _stiffness[j];
+    *damping = _damping[j];
+    _mutex.unlock();
+    return true;
 }
 
 bool FakeMotionControl::setImpedanceRaw(int j, double stiffness, double damping)
 {
-    return NOT_YET_IMPLEMENTED("setImpedanceRaw");
+    _mutex.lock();
+    _stiffness[j] = stiffness;
+    _damping[j] = damping;
+    _mutex.unlock();
+    return true;
 }
 
 bool FakeMotionControl::setImpedanceOffsetRaw(int j, double offset)
 {
-    return NOT_YET_IMPLEMENTED("setImpedanceOffsetRaw");
+    _mutex.lock();
+    _force_offset[j] = offset;
+    _mutex.unlock();
+    return true;
 }
 
 bool FakeMotionControl::getImpedanceOffsetRaw(int j, double *offset)
 {
-    return NOT_YET_IMPLEMENTED("getImpedanceOffsetRaw");
+    _mutex.lock();
+    *offset = _force_offset[j];
+    _mutex.unlock();
+    return true;
 }
 
 bool FakeMotionControl::getCurrentImpedanceLimitRaw(int j, double *min_stiff, double *max_stiff, double *min_damp, double *max_damp)
 {
-    return NOT_YET_IMPLEMENTED("getCurrentImpedanceLimitRaw");
+    *min_stiff=1.0;
+    *max_stiff=10.0;
+    *min_damp=2.0;
+    *max_damp=20.0;
+    return true;
 }
 
 bool FakeMotionControl::getMotorTorqueParamsRaw(int j, MotorTorqueParameters *params)

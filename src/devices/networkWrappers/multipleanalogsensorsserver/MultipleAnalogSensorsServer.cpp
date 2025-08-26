@@ -3,7 +3,8 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#include "SensorStreamingData.h"
+#include <yarp/dev/SensorMeasurement.h>
+#include <yarp/dev/SensorStreamingData.h>
 #include "MultipleAnalogSensorsMetadata.h"
 
 #include "MultipleAnalogSensorsServer.h"
@@ -296,7 +297,7 @@ bool MultipleAnalogSensorsServer::populateAllSensorsMetadata()
 template<typename Interface>
 bool MultipleAnalogSensorsServer::resizeMeasureVectors(Interface* wrappedDeviceInterface,
                                                        const std::vector< SensorMetadata >& metadataVector,
-                                                       std::vector< SensorMeasurement >& streamingDataVector,
+                                                       std::vector< yarp::dev::SensorMeasurement >& streamingDataVector,
                                                        size_t (Interface::*getMeasureSizePtr)(size_t) const)
 {
     if (wrappedDeviceInterface)
@@ -317,7 +318,7 @@ bool MultipleAnalogSensorsServer::resizeMeasureVectors(Interface* wrappedDeviceI
 template<typename Interface>
 bool MultipleAnalogSensorsServer::resizeMeasureVectors(Interface* wrappedDeviceInterface,
                                                        const std::vector< SensorMetadata >& metadataVector,
-                                                       std::vector< SensorMeasurement >& streamingDataVector,
+                                                       std::vector<  yarp::dev::SensorMeasurement >& streamingDataVector,
                                                        size_t measureSize)
 {
     if (wrappedDeviceInterface)
@@ -333,7 +334,7 @@ bool MultipleAnalogSensorsServer::resizeMeasureVectors(Interface* wrappedDeviceI
     return true;
 }
 
-bool MultipleAnalogSensorsServer::resizeAllMeasureVectors(SensorStreamingData& streamingData)
+bool MultipleAnalogSensorsServer::resizeAllMeasureVectors( yarp::dev::SensorStreamingData& streamingData)
 {
     bool ok = true;
     // The size of each sensor is given in the interface documentation
@@ -461,7 +462,7 @@ SensorRPCData MultipleAnalogSensorsServer::getMetadata()
 template<typename Interface>
 bool MultipleAnalogSensorsServer::genericStreamData(Interface* wrappedDeviceInterface,
                                                     const std::vector< SensorMetadata >& metadataVector,
-                                                    std::vector< SensorMeasurement >& streamingDataVector,
+                                                    std::vector< typename yarp::dev::SensorMeasurement >& streamingDataVector,
                                                     yarp::dev::MAS_status (Interface::*getStatusMethodPtr)(size_t) const,
                                                     bool (Interface::*getMeasureMethodPtr)(size_t, yarp::sig::Vector&, double&) const,
                                                     const char* sensorType)
@@ -493,7 +494,7 @@ bool MultipleAnalogSensorsServer::genericStreamData(Interface* wrappedDeviceInte
 
 void MultipleAnalogSensorsServer::run()
 {
-    SensorStreamingData& streamingData = m_streamingPort.prepare();
+    yarp::dev::SensorStreamingData& streamingData = m_streamingPort.prepare();
 
     // Resize the output streaming buffer vectors to be of the correct size
     bool ok = true;

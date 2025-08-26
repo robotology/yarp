@@ -19,6 +19,64 @@
 
 bool yarp::os::impl::LogForwarder::started{false};
 
+yarp::os::impl::ThreadedPort::ThreadedPort() : yarp::os::PeriodicThread(0.005)
+{
+    this->start();
+}
+
+void yarp::os::impl::ThreadedPort::ThreadedPort::run()
+{
+    size_t size=0;
+    do
+    {
+        mut.lock();
+        size = messages.size();
+        mut.unlock();
+        if (size > 0 && m_port) { process(); }
+        else {break;}
+    } while (1);
+}
+
+void yarp::os::impl::ThreadedPort::process()
+{
+    yarp::os::Bottle& b = m_port->prepare();
+    mut.lock();
+    b = messages.back();
+    messages.pop_back();
+    mut.unlock();
+    m_port->write(true);
+}
+
+void yarp::os::impl::ThreadedPort::attach(yarp::os::BufferedPort<yarp::os::Bottle>* port)
+{
+    m_port = port;
+}
+
+void yarp::os::impl::ThreadedPort::terminate()
+{
+    this->stop(); // blocking call, wait for the thread to finish
+    m_port = nullptr;
+}
+
+void yarp::os::impl::ThreadedPort::insert(const yarp::os::Bottle& bot)
+{
+#if 0
+    //if this is enabled, the bottle is sent immediately
+    yarp::os::Bottle& b = m_port->prepare();
+    mut.lock();
+    b = bot;
+    mut.unlock();
+    m_port->write(true);
+#else
+    //if this is enabled, the bottle is sent in a queue and the thread will send it later
+    mut.lock();
+    messages.push_front(bot);
+    mut.unlock();
+#endif
+}
+
+///---------------------------------------------------------------------
+
 yarp::os::impl::LogForwarder& yarp::os::impl::LogForwarder::getInstance()
 {
     static LogForwarder instance;
@@ -46,27 +104,32 @@ yarp::os::impl::LogForwarder::LogForwarder()
     if (!outputPort.open(logPortName)) {
         printf("LogForwarder error while opening port %s\n", logPortName.c_str());
     }
-    outputPort.enableBackgroundWrite(true);
+
     outputPort.addOutput("/yarplogger", "fast_tcp");
+    tport.attach(&outputPort);
 
     started = true;
 }
 
+std::string yarp::os::impl::LogForwarder::getLogPortName()
+{
+    return outputPort.getName();
+}
+
 void yarp::os::impl::LogForwarder::forward(const std::string& message)
 {
-    mutex.lock();
-    static Bottle b;
+    yarp::os::Bottle b;
     b.clear();
     std::string port = "[" + outputPort.getName() + "]";
     b.addString(port);
     b.addString(message);
-    outputPort.write(b);
-    mutex.unlock();
+    tport.insert(b);
 }
 
 void yarp::os::impl::LogForwarder::shutdown()
 {
-    if (started) {
+    if (started)
+    {
         std::ostringstream ost;
         auto systemtime = yarp::os::SystemClock::nowSystem();
         auto networktime = (!yarp::os::NetworkBase::isNetworkInitialized() ? 0.0 : (yarp::os::Time::isSystemClock() ? systemtime : yarp::os::Time::now()));
@@ -80,7 +143,11 @@ void yarp::os::impl::LogForwarder::shutdown()
         while (fw.outputPort.isWriting()) {
             yarp::os::SystemClock::delaySystem(0.2);
         }
+
+        fw.tport.terminate();
         fw.outputPort.interrupt();
         fw.outputPort.close();
+
+        started = false;
     }
 }

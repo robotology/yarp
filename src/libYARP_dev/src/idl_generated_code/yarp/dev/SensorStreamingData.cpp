@@ -8,7 +8,9 @@
 // This is an automatically generated file.
 // It could get re-generated if the ALLOW_IDL_GENERATION flag is on.
 
-#include <SensorStreamingData.h>
+#include <yarp/dev/SensorStreamingData.h>
+
+namespace yarp::dev {
 
 // Constructor with field values
 SensorStreamingData::SensorStreamingData(const SensorMeasurements& ThreeAxisGyroscopes,
@@ -716,3 +718,5 @@ bool SensorStreamingData::nested_write_ThreeAxisAngularAccelerometers(const yarp
     }
     return true;
 }
+
+} // namespace yarp::dev

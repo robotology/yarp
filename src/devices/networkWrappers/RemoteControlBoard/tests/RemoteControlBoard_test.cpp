@@ -15,6 +15,7 @@
 #include <yarp/dev/IPidControl.h>
 #include <yarp/dev/IPWMControl.h>
 #include <yarp/dev/ICurrentControl.h>
+#include <yarp/dev/IImpedanceControl.h>
 #include <yarp/dev/IRemoteCalibrator.h>
 #include <yarp/dev/IControlLimits.h>
 #include <yarp/os/Network.h>
@@ -28,6 +29,7 @@
 #include <yarp/dev/tests/IControlModeTest.h>
 #include <yarp/dev/tests/IInteractionModeTest.h>
 #include <yarp/dev/tests/ICurrentControlTest.h>
+#include <yarp/dev/tests/IImpedanceControlTest.h>
 #include <yarp/dev/tests/IPWMControlTest.h>
 #include <yarp/dev/tests/IPidControlTest.h>
 #include <yarp/dev/tests/IMotorTest.h>
@@ -72,6 +74,7 @@ TEST_CASE("dev::RemoteControlBoardTest", "[yarp::dev]")
         ICurrentControl* icurr = nullptr;
         IJointFault* ifault = nullptr;
         IControlLimits* ilims = nullptr;
+        IImpedanceControl* iimp = nullptr;
         //IRemoteCalibrator* iremotecalib = nullptr;
         IJointBrake* ibrake = nullptr;
         IVelocityDirect* ivelod = nullptr;

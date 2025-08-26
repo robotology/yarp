@@ -9,10 +9,11 @@
 #include <cmath>
 
 #include <yarp/os/LogComponent.h>
-#include "SensorStreamingData.h"
+#include <yarp/dev/SensorStreamingData.h>
 
 using namespace yarp::os;
 using namespace yarp::sig;
+using namespace yarp::dev;
 
 namespace {
 YARP_LOG_COMPONENT(SM2VEC,

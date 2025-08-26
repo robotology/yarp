@@ -11,11 +11,15 @@
 #ifndef YARP_THRIFT_GENERATOR_STRUCT_SENSORMEASUREMENTS_H
 #define YARP_THRIFT_GENERATOR_STRUCT_SENSORMEASUREMENTS_H
 
+#include <yarp/dev/api.h>
+
 #include <yarp/os/Wire.h>
 #include <yarp/os/idl/WireTypes.h>
-#include <SensorMeasurement.h>
+#include <yarp/dev/SensorMeasurement.h>
 
-class SensorMeasurements :
+namespace yarp::dev {
+
+class YARP_dev_API SensorMeasurements :
         public yarp::os::idl::WirePortable
 {
 public:
@@ -53,5 +57,7 @@ private:
     bool nested_read_measurements(yarp::os::idl::WireReader& reader);
     bool nested_write_measurements(const yarp::os::idl::WireWriter& writer) const;
 };
+
+} // namespace yarp::dev
 
 #endif // YARP_THRIFT_GENERATOR_STRUCT_SENSORMEASUREMENTS_H

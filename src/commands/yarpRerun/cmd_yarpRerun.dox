@@ -1,0 +1,61 @@
+/**
+\defgroup yarpRerun yarpRerun: log data of a yarp port to rerun.io
+
+\ingroup yarp_commands
+
+\tableofcontents
+
+\section yarpRerun_intro Description
+
+This module opens a yarp port to receive data, and log its content to a
+rerun server. See https://rerun.io for detailed documentation.
+
+In order to build this module you need to install the optional rerun library.
+https://github.com/rerun-io
+
+Yarp data types currently supported are: Bottle, RGBImage, DepthImage,
+ Vector, RobotState, Lidar2D, Pointcloud, SensorStreamingData.
+
+Type `help` to display the optional parameters supported by yarpRerun.
+*/
+
+\section yarpRerun_tests Some tests
+
+Some tests for yarpRerun:
+
+```
+yarpdev --device fakePositionSensor --name /robot --period 10
+yarpRerun --data SensorStreamingData --remote /robot/measures:o
+```
+
+```
+yarpdev --device deviceBundler --wrapper_device rangefinder2D_nws_yarp --attached_device fakeLaser --test use_pattern --name /laser:o
+yarpRerun --data Lidar2D --remote /laser:o
+```
+
+```
+yarpdev --device fakeMotionControl --name /robot/part --GENERAL::Joints 2
+yarpRerun --data RobotState --remote /robot/part/stateExt:o
+```
+
+```
+yarpdev --device fakeFrameGrabber --period 0.022
+yarpRerun --data ImageRGB--remote /grabber
+```
+
+```
+yarpdev --device fakeDepthCamera --period 0.022 --name /depthCamera
+yarpRerun --data ImageDepth --remote /depthCamera/depthImage:o
+```
+
+```
+yarp write /vec:o --period 0.1
+1.0 2.0 3.0
+yarpRerun --data Vector --remote /vec:o
+```
+
+```
+yarp write /bot:o --period 0.1
+1.0 (3.0 2.0 (1.0 2.0 3.0) 0.0 )
+yarpRerun --data Bottle --remote /bot:o
+```

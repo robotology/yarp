@@ -20,6 +20,7 @@ set(YARP_dev_test_HDRS
     IVelocityControlTest.h
     IVelocityDirectTest.h
     IControlModeTest.h
+    IImpedanceControlTest.h
     IInteractionModeTest.h
     ICurrentControlTest.h
     IPWMControlTest.h
@@ -48,6 +49,7 @@ set(YARP_dev_test_SRCS
     IVelocityControlTest.cpp
     IVelocityDirectTest.cpp
     IControlModeTest.cpp
+    IImpedanceControlTest.cpp
     IInteractionModeTest.cpp
     ICurrentControlTest.cpp
     IPWMControlTest.cpp
