@@ -173,6 +173,7 @@ set(YARP_dev_SRCS
   yarp/dev/IFrameWriterAudioVisual.cpp
   yarp/dev/IFrameWriterImage.cpp
   yarp/dev/IGenericSensor.cpp
+  yarp/dev/IJacobianCoupling.cpp
   yarp/dev/IJoypadController.cpp
   yarp/dev/ILLM.cpp
   yarp/dev/IMultipleWrapper.cpp
