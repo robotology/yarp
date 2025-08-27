@@ -1,6 +1,16 @@
 # SPDX-FileCopyrightText: 2025-2025 Istituto Italiano di Tecnologia (IIT)
 # SPDX-License-Identifier: BSD-3-Clause
 
+if(NOT DEFINED CMAKE_MINIMUM_REQUIRED_VERSION)
+  cmake_minimum_required(VERSION 3.19)
+
+  project(yarp-rerun)
+
+  find_package(YARP REQUIRED)
+
+  include(GNUInstallDirs)
+endif()
+
 find_package(rerun_sdk QUIET)
 if(NOT rerun_sdk_FOUND)
     message(STATUS  "rerun_sdk not found. Skipping yarpRerun.")
