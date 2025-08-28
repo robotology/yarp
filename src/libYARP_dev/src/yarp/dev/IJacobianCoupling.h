@@ -63,7 +63,7 @@ public:
     /**
      * Destructor.
      */
-    virtual ~IJacobianCoupling() {}
+    virtual ~IJacobianCoupling();
 
     /**
      * @brief Get the Jacobian mapping the Actuated Axes to Physical Joints velocity
