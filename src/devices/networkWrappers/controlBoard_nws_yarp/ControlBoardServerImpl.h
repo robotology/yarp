@@ -49,6 +49,8 @@ class ControlBoardRPCd : public ControlBoardMsgs
     yarp::dev::ReturnValue setPidsRPC(const yarp::dev::PidControlTypeEnum pidtype, const std::vector<yarp::dev::Pid>& pids) override;
     return_getPid getPidRPC(const yarp::dev::PidControlTypeEnum pidtype, const std::int16_t j) override;
     return_getPids getPidsRPC(const yarp::dev::PidControlTypeEnum pidtype) override;
+    return_getInfoPid getPidExtraInfoRPC(const yarp::dev::PidControlTypeEnum pidtype, const std::int16_t j) override;
+    return_getInfoPids getPidExtraInfosRPC(const yarp::dev::PidControlTypeEnum pidtypeo) override;
 
     std::mutex* getMutex() {return &m_mutex;}
 };

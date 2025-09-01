@@ -10,12 +10,12 @@ using namespace yarp::dev;
 
 Pid::Pid(double p, double d, double i,
          double intm, double sc, double omax):
-        PidData(p, d, i, intm, sc, omax, 0.0, 0.0 ,0.0, 0.0, PidDataInfo(std::string(""),std::string(""),std::string("")))
+        PidDataGains(p, d, i, intm, sc, omax, 0.0, 0.0 ,0.0, 0.0)
 {}
 
 Pid::Pid(double p, double d, double i,
          double intm, double sc, double omax, double st_up, double st_down, double ff) :
-        PidData(p, d, i, intm, sc, omax, 0.0, st_up, st_down, ff, PidDataInfo(std::string(""),std::string(""),std::string("")))
+        PidDataGains(p, d, i, intm, sc, omax, 0.0, st_up, st_down, ff)
 {}
 
 Pid::~Pid() = default;
@@ -125,18 +125,6 @@ bool Pid::operator==(const yarp::dev::Pid &p) const
     }
 
     if (stiction_up_val != p.stiction_up_val) {
-        return false;
-    }
-
-    if (info.pid_description != p.info.pid_description) {
-        return false;
-    }
-
-    if (info.input_data_description != p.info.input_data_description) {
-        return false;
-    }
-
-    if (info.output_data_description != p.info.output_data_description) {
         return false;
     }
 

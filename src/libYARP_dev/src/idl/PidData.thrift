@@ -5,7 +5,35 @@
 
 namespace yarp yarp.dev
 
-struct PidDataInfo
+struct PidDataUnits
+{  /** proportional gain */
+  1: string units_kp;
+  /** derivative gain */
+  2: string units_kd;
+  /** integrative gain */
+  3: string units_ki;
+
+  /** saturation threshold for the integrator */
+  4: string units_max_int;
+  /** scale for the pid output */
+  5: string units_scale;
+  /** max output */
+  6: string units_max_output;
+
+  /** pwm offset added to the pid output */
+  7: string units_offset;
+  /** up stiction offset added to the pid output */
+  8: string units_stiction_up_val;
+  /** down stiction offset added to the pid output */
+  9: string units_stiction_down_val;
+  /** feedforward gain */
+  10: string units_kff;
+} (
+    yarp.api.include = "yarp/dev/api.h"
+    yarp.api.keyword = "YARP_dev_API"
+)
+
+struct PidDataDescription
 {
   /** human-readable description of the pid controller. */
   1: string pid_description;
@@ -18,7 +46,16 @@ struct PidDataInfo
     yarp.api.keyword = "YARP_dev_API"
 )
 
-struct PidData
+struct PidDataExtraInfo
+{
+   1:PidDataDescription description;
+   2:PidDataUnits       units;
+} (
+    yarp.api.include = "yarp/dev/api.h"
+    yarp.api.keyword = "YARP_dev_API"
+)
+
+struct PidDataGains
 {
   /** proportional gain */
   1: double kp;
@@ -42,9 +79,6 @@ struct PidData
   9: double stiction_down_val;
   /** feedforward gain */
   10: double kff;
-
-  /** extra info about the pid controller */
-  11: PidDataInfo info;
 } (
     yarp.api.include = "yarp/dev/api.h"
     yarp.api.keyword = "YARP_dev_API"

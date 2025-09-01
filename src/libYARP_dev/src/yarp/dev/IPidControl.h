@@ -6,11 +6,15 @@
 #ifndef YARP_DEV_PIDCONTROL_H
 #define YARP_DEV_PIDCONTROL_H
 
+#include <vector>
+
 #include <yarp/os/Vocab.h>
 #include <yarp/dev/api.h>
 #include <yarp/dev/GenericVocabs.h>
 #include <yarp/dev/PidEnums.h>
 #include <yarp/dev/ControlBoardPid.h>
+#include <yarp/dev/PidDataExtraInfo.h>
+#include <yarp/dev/ReturnValue.h>
 
 namespace yarp::dev {
 class IPidControlRaw;
@@ -127,6 +131,21 @@ public:
     * @return success/failure
     */
     virtual bool getPidsRaw(const PidControlTypeEnum& pidtype, Pid *pids) = 0;
+
+    /** Get pid extra info and measurment units for a specific joint.
+    * @param pidtype the id of the pid that will be affected by the command (e.g. position, velocity etc)
+    * @param j joint number
+    * @param units the measurment units for the specified pid.
+    * @return success/failure
+    */
+    virtual yarp::dev::ReturnValue getPidExtraInfoRaw(const PidControlTypeEnum& pidtype, int j, yarp::dev::PidExtraInfo& info) = 0;
+
+    /** Get pid extra info and measurement units for a specific joint.
+    * @param pidtype the id of the pid that will be affected by the command (e.g. position, velocity etc)
+    * @param units vector that will store the info about of the pids.
+    * @return success/failure
+    */
+    virtual yarp::dev::ReturnValue getPidExtraInfosRaw(const PidControlTypeEnum& pidtype, std::vector<yarp::dev::PidExtraInfo>& info) = 0;
 
     /** Get the current reference of the pid controller for a specific joint.
     * @param pidtype the id of the pid that will be affected by the command (e.g. position, velocity etc)
@@ -306,6 +325,21 @@ public:
     * @return success/failure
     */
     virtual bool getPids(const PidControlTypeEnum& pidtype, Pid *pids) = 0;
+
+    /** Get pid extra info and measurement units for a specific joint.
+    * @param pidtype the id of the pid that will be affected by the command (e.g. position, velocity etc)
+    * @param j joint number
+    * @param info the measurment units for the specified pid.
+    * @return success/failure
+    */
+    virtual yarp::dev::ReturnValue getPidExtraInfo(const PidControlTypeEnum& pidtype, int j, yarp::dev::PidExtraInfo& info) = 0;
+
+    /** Get pid extra info and measurement units for a specific joint.
+    * @param pidtype the id of the pid that will be affected by the command (e.g. position, velocity etc)
+    * @param info vector that will store the info about of the pids.
+    * @return success/failure
+    */
+    virtual yarp::dev::ReturnValue getPidExtraInfos(const PidControlTypeEnum& pidtype, std::vector<yarp::dev::PidExtraInfo>& info) = 0;
 
     /** Get the current reference of the pid controller for a specific joint.
     * @param pidtype the id of the pid that will be affected by the command (e.g. position, velocity etc)

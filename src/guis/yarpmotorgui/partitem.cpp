@@ -745,9 +745,6 @@ void PartItem::onSendMotorParameters(int jointIndex, MotorTorqueParameters newTr
 
 void PartItem::onSendPid(PidControlTypeEnum pidtype, int jointIndex,Pid newPid)
 {
-    Pid curPid;
-    m_iPid->getPid(pidtype, jointIndex, &curPid);
-    newPid.info = curPid.info; // keep the info field of the pid, otherwise it will be lost
     m_iPid->setPid(pidtype, jointIndex, newPid);
     yarp::os::SystemClock::delaySystem(0.005);
 
@@ -756,10 +753,10 @@ void PartItem::onSendPid(PidControlTypeEnum pidtype, int jointIndex,Pid newPid)
 
 void PartItem::onRefreshPids(int jointIndex)
 {
-    std::vector<Pid> myPosPids(3);
-    std::vector<Pid> myTrqPids(3);
-    std::vector<Pid> myVelPids(3);
-    std::vector<Pid> myCurPids(3);
+    std::vector<PidWithExtraInfo> myPosPidsWithInfo(3);
+    std::vector<PidWithExtraInfo> myTrqPidsWithInfo(3);
+    std::vector<PidWithExtraInfo> myVelPidsWithInfo(3);
+    std::vector<PidWithExtraInfo> myCurPidsWithInfo(3);
     MotorTorqueParameters motorTorqueParams;
     double stiff_val = 0;
     double damp_val = 0;
@@ -777,30 +774,42 @@ void PartItem::onRefreshPids(int jointIndex)
     m_iTrq->getTorqueRange(jointIndex, &off_min, &off_max);
 
     // Position
-    m_iPid->getPid(PidControlTypeEnum::VOCAB_PIDTYPE_POSITION_1, jointIndex, &myPosPids[0]);
-    m_iPid->getPid(PidControlTypeEnum::VOCAB_PIDTYPE_POSITION_2, jointIndex, &myPosPids[1]);
-    m_iPid->getPid(PidControlTypeEnum::VOCAB_PIDTYPE_POSITION_3, jointIndex, &myPosPids[2]);
+    m_iPid->getPid(PidControlTypeEnum::VOCAB_PIDTYPE_POSITION_1, jointIndex, &myPosPidsWithInfo[0].pid);
+    m_iPid->getPid(PidControlTypeEnum::VOCAB_PIDTYPE_POSITION_2, jointIndex, &myPosPidsWithInfo[1].pid);
+    m_iPid->getPid(PidControlTypeEnum::VOCAB_PIDTYPE_POSITION_3, jointIndex, &myPosPidsWithInfo[2].pid);
+    m_iPid->getPidExtraInfo(PidControlTypeEnum::VOCAB_PIDTYPE_POSITION_1, jointIndex, myPosPidsWithInfo[0].pidExtraInfo);
+    m_iPid->getPidExtraInfo(PidControlTypeEnum::VOCAB_PIDTYPE_POSITION_2, jointIndex, myPosPidsWithInfo[1].pidExtraInfo);
+    m_iPid->getPidExtraInfo(PidControlTypeEnum::VOCAB_PIDTYPE_POSITION_3, jointIndex, myPosPidsWithInfo[2].pidExtraInfo);
     yarp::os::SystemClock::delaySystem(0.005);
 
     // Velocity
-    m_iPid->getPid(PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY_1, jointIndex, &myVelPids[0]);
-    m_iPid->getPid(PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY_2, jointIndex, &myVelPids[1]);
-    m_iPid->getPid(PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY_3, jointIndex, &myVelPids[2]);
+    m_iPid->getPid(PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY_1, jointIndex, &myVelPidsWithInfo[0].pid);
+    m_iPid->getPid(PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY_2, jointIndex, &myVelPidsWithInfo[1].pid);
+    m_iPid->getPid(PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY_3, jointIndex, &myVelPidsWithInfo[2].pid);
+    m_iPid->getPidExtraInfo(PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY_1, jointIndex, myVelPidsWithInfo[0].pidExtraInfo);
+    m_iPid->getPidExtraInfo(PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY_2, jointIndex, myVelPidsWithInfo[1].pidExtraInfo);
+    m_iPid->getPidExtraInfo(PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY_3, jointIndex, myVelPidsWithInfo[2].pidExtraInfo);
     yarp::os::SystemClock::delaySystem(0.005);
 
     // Current
     if (m_iCur)
     {
-        m_iPid->getPid(PidControlTypeEnum::VOCAB_PIDTYPE_CURRENT_1, jointIndex, &myCurPids[0]);
-        m_iPid->getPid(PidControlTypeEnum::VOCAB_PIDTYPE_CURRENT_2, jointIndex, &myCurPids[1]);
-        m_iPid->getPid(PidControlTypeEnum::VOCAB_PIDTYPE_CURRENT_3, jointIndex, &myCurPids[2]);
+        m_iPid->getPid(PidControlTypeEnum::VOCAB_PIDTYPE_CURRENT_1, jointIndex, &myCurPidsWithInfo[0].pid);
+        m_iPid->getPid(PidControlTypeEnum::VOCAB_PIDTYPE_CURRENT_2, jointIndex, &myCurPidsWithInfo[1].pid);
+        m_iPid->getPid(PidControlTypeEnum::VOCAB_PIDTYPE_CURRENT_3, jointIndex, &myCurPidsWithInfo[2].pid);
+        m_iPid->getPidExtraInfo(PidControlTypeEnum::VOCAB_PIDTYPE_CURRENT_1, jointIndex, myCurPidsWithInfo[0].pidExtraInfo);
+        m_iPid->getPidExtraInfo(PidControlTypeEnum::VOCAB_PIDTYPE_CURRENT_2, jointIndex, myCurPidsWithInfo[1].pidExtraInfo);
+        m_iPid->getPidExtraInfo(PidControlTypeEnum::VOCAB_PIDTYPE_CURRENT_3, jointIndex, myCurPidsWithInfo[2].pidExtraInfo);
         yarp::os::SystemClock::delaySystem(0.005);
     }
 
     // Torque
-    m_iPid->getPid(PidControlTypeEnum::VOCAB_PIDTYPE_TORQUE_1, jointIndex, &myTrqPids[0]);
-    m_iPid->getPid(PidControlTypeEnum::VOCAB_PIDTYPE_TORQUE_2, jointIndex, &myTrqPids[1]);
-    m_iPid->getPid(PidControlTypeEnum::VOCAB_PIDTYPE_TORQUE_3, jointIndex, &myTrqPids[2]);
+    m_iPid->getPid(PidControlTypeEnum::VOCAB_PIDTYPE_TORQUE_1, jointIndex, &myTrqPidsWithInfo[0].pid);
+    m_iPid->getPid(PidControlTypeEnum::VOCAB_PIDTYPE_TORQUE_2, jointIndex, &myTrqPidsWithInfo[1].pid);
+    m_iPid->getPid(PidControlTypeEnum::VOCAB_PIDTYPE_TORQUE_3, jointIndex, &myTrqPidsWithInfo[2].pid);
+    m_iPid->getPidExtraInfo(PidControlTypeEnum::VOCAB_PIDTYPE_TORQUE_1, jointIndex, myTrqPidsWithInfo[0].pidExtraInfo);
+    m_iPid->getPidExtraInfo(PidControlTypeEnum::VOCAB_PIDTYPE_TORQUE_2, jointIndex, myTrqPidsWithInfo[1].pidExtraInfo);
+    m_iPid->getPidExtraInfo(PidControlTypeEnum::VOCAB_PIDTYPE_TORQUE_3, jointIndex, myTrqPidsWithInfo[2].pidExtraInfo);
     m_iTrq->getMotorTorqueParams(jointIndex, &motorTorqueParams);
     yarp::os::SystemClock::delaySystem(0.005);
 
@@ -815,11 +824,11 @@ void PartItem::onRefreshPids(int jointIndex)
 
     if (m_currentPidDlg)
     {
-        m_currentPidDlg->initPositionPID(myPosPids);
-        m_currentPidDlg->initTorquePID(myTrqPids);
+        m_currentPidDlg->initPositionPID(myPosPidsWithInfo);
+        m_currentPidDlg->initTorquePID(myTrqPidsWithInfo);
         m_currentPidDlg->initMotorParams(motorTorqueParams);
-        m_currentPidDlg->initVelocityPID(myVelPids);
-        m_currentPidDlg->initCurrentPID(myCurPids);
+        m_currentPidDlg->initVelocityPID(myVelPidsWithInfo);
+        m_currentPidDlg->initCurrentPID(myCurPidsWithInfo);
         m_currentPidDlg->initStiffness(stiff_val, stiff_min, stiff_max, damp_val, damp_min, damp_max);
         m_currentPidDlg->initPWM(pwm_reference, current_pwm);
         m_currentPidDlg->initRemoteVariables(m_iVar);

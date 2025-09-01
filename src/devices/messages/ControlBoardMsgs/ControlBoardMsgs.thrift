@@ -9,6 +9,12 @@ struct yReturnValue {
   yarp.includefile = "yarp/dev/ReturnValue.h"
 )
 
+struct yInfoPid {
+} (
+  yarp.name = "yarp::dev::PidExtraInfo"
+  yarp.includefile = "yarp/dev/ControlBoardPid.h"
+)
+
 struct yPid {
 } (
   yarp.name = "yarp::dev::Pid"
@@ -69,6 +75,16 @@ struct return_getPids {
   2: list<yPid> pids;
 }
 
+struct return_getInfoPid {
+  1: yReturnValue ret;
+  2: yInfoPid info;
+}
+
+struct return_getInfoPids {
+  1: yReturnValue ret;
+  2: list<yInfoPid> info;
+}
+
 //-------------------------------------------------
 service ControlBoardMsgs
 {
@@ -86,4 +102,6 @@ service ControlBoardMsgs
     yReturnValue               setPidsRPC(1: yPidControlTypeEnum pidtype, 2: list<yPid> pids);
     return_getPid              getPidRPC(1: yPidControlTypeEnum pidtype, 2: i16 j);
     return_getPids             getPidsRPC(1: yPidControlTypeEnum pidtype);
+    return_getInfoPid          getPidExtraInfoRPC(1: yPidControlTypeEnum pidtype, 2: i16 j);
+    return_getInfoPids         getPidExtraInfosRPC(1: yPidControlTypeEnum pidtype);
 }

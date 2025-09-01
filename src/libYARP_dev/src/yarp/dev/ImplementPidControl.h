@@ -75,6 +75,9 @@ public:
     bool disablePid(const PidControlTypeEnum& pidtype, int j) override;
     bool setPidOffset(const PidControlTypeEnum& pidtype, int j, double v) override;
     bool isPidEnabled(const PidControlTypeEnum& pidtype, int j, bool* enabled) override;
+    yarp::dev::ReturnValue getPidExtraInfo(const PidControlTypeEnum& pidtype, int j, yarp::dev::PidExtraInfo& units) override;
+    yarp::dev::ReturnValue getPidExtraInfos(const PidControlTypeEnum& pidtype, std::vector<yarp::dev::PidExtraInfo>& units) override;
+
     void b();
 };
 

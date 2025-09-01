@@ -8,8 +8,8 @@
 // This is an automatically generated file.
 // It could get re-generated if the ALLOW_IDL_GENERATION flag is on.
 
-#ifndef YARP_THRIFT_GENERATOR_STRUCT_PIDDATA_H
-#define YARP_THRIFT_GENERATOR_STRUCT_PIDDATA_H
+#ifndef YARP_THRIFT_GENERATOR_STRUCT_PIDDATAGAINS_H
+#define YARP_THRIFT_GENERATOR_STRUCT_PIDDATAGAINS_H
 
 #include <yarp/dev/api.h>
 
@@ -18,7 +18,7 @@
 
 namespace yarp::dev {
 
-class YARP_dev_API PidData :
+class YARP_dev_API PidDataGains :
         public yarp::os::idl::WirePortable
 {
 public:
@@ -63,26 +63,21 @@ public:
      * feedforward gain
      */
     double kff{0.0};
-    /**
-     * name/description of the pid
-     */
-    std::string name{};
 
     // Default constructor
-    PidData() = default;
+    PidDataGains() = default;
 
     // Constructor with field values
-    PidData(const double kp,
-            const double kd,
-            const double ki,
-            const double max_int,
-            const double scale,
-            const double max_output,
-            const double offset,
-            const double stiction_up_val,
-            const double stiction_down_val,
-            const double kff,
-            const std::string& name);
+    PidDataGains(const double kp,
+                 const double kd,
+                 const double ki,
+                 const double max_int,
+                 const double scale,
+                 const double max_output,
+                 const double offset,
+                 const double stiction_up_val,
+                 const double stiction_down_val,
+                 const double kff);
 
     // Read structure on a Wire
     bool read(yarp::os::idl::WireReader& reader) override;
@@ -100,7 +95,7 @@ public:
     std::string toString() const;
 
     // If you want to serialize this class without nesting, use this helper
-    typedef yarp::os::idl::Unwrapped<PidData> unwrapped;
+    typedef yarp::os::idl::Unwrapped<PidDataGains> unwrapped;
 
 private:
     // read/write kp field
@@ -162,14 +157,8 @@ private:
     bool write_kff(const yarp::os::idl::WireWriter& writer) const;
     bool nested_read_kff(yarp::os::idl::WireReader& reader);
     bool nested_write_kff(const yarp::os::idl::WireWriter& writer) const;
-
-    // read/write name field
-    bool read_name(yarp::os::idl::WireReader& reader);
-    bool write_name(const yarp::os::idl::WireWriter& writer) const;
-    bool nested_read_name(yarp::os::idl::WireReader& reader);
-    bool nested_write_name(const yarp::os::idl::WireWriter& writer) const;
 };
 
 } // namespace yarp::dev
 
-#endif // YARP_THRIFT_GENERATOR_STRUCT_PIDDATA_H
+#endif // YARP_THRIFT_GENERATOR_STRUCT_PIDDATAGAINS_H

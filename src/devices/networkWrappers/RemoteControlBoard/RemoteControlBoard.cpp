@@ -1252,6 +1252,30 @@ bool RemoteControlBoard::setPidOffset(const PidControlTypeEnum& pidtype, int j, 
     return setValWithPidType(VOCAB_OFFSET, pidtype, j, v);
 }
 
+ReturnValue RemoteControlBoard::getPidExtraInfo(const PidControlTypeEnum& pidtype, int j, PidExtraInfo& info)
+{
+    //std::lock_guard<std::mutex> lg(m_mutex);
+    auto ret = m_RPC.getPidExtraInfoRPC(pidtype,j);
+    if (!ret.ret) {
+        yCError(REMOTECONTROLBOARD, "Unable to getPidExtraInfo");
+        return ret.ret;
+    }
+    info = ret.info;
+    return ReturnValue_ok;
+}
+
+ReturnValue RemoteControlBoard::getPidExtraInfos(const PidControlTypeEnum& pidtype, std::vector<PidExtraInfo>& info)
+{
+    //std::lock_guard<std::mutex> lg(m_mutex);
+    auto ret = m_RPC.getPidExtraInfosRPC(pidtype);
+    if (!ret.ret) {
+        yCError(REMOTECONTROLBOARD, "Unable to getPidExtraInfos");
+        return ret.ret;
+    }
+    info = ret.info;
+    return ReturnValue_ok;
+}
+
 // END IPidControl
 
 // BEGIN IEncoder

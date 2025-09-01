@@ -8,22 +8,21 @@
 // This is an automatically generated file.
 // It could get re-generated if the ALLOW_IDL_GENERATION flag is on.
 
-#include <yarp/dev/PidData.h>
+#include <yarp/dev/PidDataGains.h>
 
 namespace yarp::dev {
 
 // Constructor with field values
-PidData::PidData(const double kp,
-                 const double kd,
-                 const double ki,
-                 const double max_int,
-                 const double scale,
-                 const double max_output,
-                 const double offset,
-                 const double stiction_up_val,
-                 const double stiction_down_val,
-                 const double kff,
-                 const std::string& name) :
+PidDataGains::PidDataGains(const double kp,
+                           const double kd,
+                           const double ki,
+                           const double max_int,
+                           const double scale,
+                           const double max_output,
+                           const double offset,
+                           const double stiction_up_val,
+                           const double stiction_down_val,
+                           const double kff) :
         WirePortable(),
         kp(kp),
         kd(kd),
@@ -34,13 +33,12 @@ PidData::PidData(const double kp,
         offset(offset),
         stiction_up_val(stiction_up_val),
         stiction_down_val(stiction_down_val),
-        kff(kff),
-        name(name)
+        kff(kff)
 {
 }
 
 // Read structure on a Wire
-bool PidData::read(yarp::os::idl::WireReader& reader)
+bool PidDataGains::read(yarp::os::idl::WireReader& reader)
 {
     if (!read_kp(reader)) {
         return false;
@@ -72,9 +70,6 @@ bool PidData::read(yarp::os::idl::WireReader& reader)
     if (!read_kff(reader)) {
         return false;
     }
-    if (!read_name(reader)) {
-        return false;
-    }
     if (reader.isError()) {
         return false;
     }
@@ -82,10 +77,10 @@ bool PidData::read(yarp::os::idl::WireReader& reader)
 }
 
 // Read structure on a Connection
-bool PidData::read(yarp::os::ConnectionReader& connection)
+bool PidDataGains::read(yarp::os::ConnectionReader& connection)
 {
     yarp::os::idl::WireReader reader(connection);
-    if (!reader.readListHeader(11)) {
+    if (!reader.readListHeader(10)) {
         return false;
     }
     if (!read(reader)) {
@@ -95,7 +90,7 @@ bool PidData::read(yarp::os::ConnectionReader& connection)
 }
 
 // Write structure on a Wire
-bool PidData::write(const yarp::os::idl::WireWriter& writer) const
+bool PidDataGains::write(const yarp::os::idl::WireWriter& writer) const
 {
     if (!write_kp(writer)) {
         return false;
@@ -127,9 +122,6 @@ bool PidData::write(const yarp::os::idl::WireWriter& writer) const
     if (!write_kff(writer)) {
         return false;
     }
-    if (!write_name(writer)) {
-        return false;
-    }
     if (writer.isError()) {
         return false;
     }
@@ -137,10 +129,10 @@ bool PidData::write(const yarp::os::idl::WireWriter& writer) const
 }
 
 // Write structure on a Connection
-bool PidData::write(yarp::os::ConnectionWriter& connection) const
+bool PidDataGains::write(yarp::os::ConnectionWriter& connection) const
 {
     yarp::os::idl::WireWriter writer(connection);
-    if (!writer.writeListHeader(11)) {
+    if (!writer.writeListHeader(10)) {
         return false;
     }
     if (!write(writer)) {
@@ -150,7 +142,7 @@ bool PidData::write(yarp::os::ConnectionWriter& connection) const
 }
 
 // Convert to a printable string
-std::string PidData::toString() const
+std::string PidDataGains::toString() const
 {
     yarp::os::Bottle b;
     if (!yarp::os::Portable::copyPortable(*this, b)) {
@@ -160,7 +152,7 @@ std::string PidData::toString() const
 }
 
 // read kp field
-bool PidData::read_kp(yarp::os::idl::WireReader& reader)
+bool PidDataGains::read_kp(yarp::os::idl::WireReader& reader)
 {
     if (reader.noMore()) {
         reader.fail();
@@ -174,7 +166,7 @@ bool PidData::read_kp(yarp::os::idl::WireReader& reader)
 }
 
 // write kp field
-bool PidData::write_kp(const yarp::os::idl::WireWriter& writer) const
+bool PidDataGains::write_kp(const yarp::os::idl::WireWriter& writer) const
 {
     if (!writer.writeFloat64(kp)) {
         return false;
@@ -183,7 +175,7 @@ bool PidData::write_kp(const yarp::os::idl::WireWriter& writer) const
 }
 
 // read (nested) kp field
-bool PidData::nested_read_kp(yarp::os::idl::WireReader& reader)
+bool PidDataGains::nested_read_kp(yarp::os::idl::WireReader& reader)
 {
     if (reader.noMore()) {
         reader.fail();
@@ -197,7 +189,7 @@ bool PidData::nested_read_kp(yarp::os::idl::WireReader& reader)
 }
 
 // write (nested) kp field
-bool PidData::nested_write_kp(const yarp::os::idl::WireWriter& writer) const
+bool PidDataGains::nested_write_kp(const yarp::os::idl::WireWriter& writer) const
 {
     if (!writer.writeFloat64(kp)) {
         return false;
@@ -206,7 +198,7 @@ bool PidData::nested_write_kp(const yarp::os::idl::WireWriter& writer) const
 }
 
 // read kd field
-bool PidData::read_kd(yarp::os::idl::WireReader& reader)
+bool PidDataGains::read_kd(yarp::os::idl::WireReader& reader)
 {
     if (reader.noMore()) {
         reader.fail();
@@ -220,7 +212,7 @@ bool PidData::read_kd(yarp::os::idl::WireReader& reader)
 }
 
 // write kd field
-bool PidData::write_kd(const yarp::os::idl::WireWriter& writer) const
+bool PidDataGains::write_kd(const yarp::os::idl::WireWriter& writer) const
 {
     if (!writer.writeFloat64(kd)) {
         return false;
@@ -229,7 +221,7 @@ bool PidData::write_kd(const yarp::os::idl::WireWriter& writer) const
 }
 
 // read (nested) kd field
-bool PidData::nested_read_kd(yarp::os::idl::WireReader& reader)
+bool PidDataGains::nested_read_kd(yarp::os::idl::WireReader& reader)
 {
     if (reader.noMore()) {
         reader.fail();
@@ -243,7 +235,7 @@ bool PidData::nested_read_kd(yarp::os::idl::WireReader& reader)
 }
 
 // write (nested) kd field
-bool PidData::nested_write_kd(const yarp::os::idl::WireWriter& writer) const
+bool PidDataGains::nested_write_kd(const yarp::os::idl::WireWriter& writer) const
 {
     if (!writer.writeFloat64(kd)) {
         return false;
@@ -252,7 +244,7 @@ bool PidData::nested_write_kd(const yarp::os::idl::WireWriter& writer) const
 }
 
 // read ki field
-bool PidData::read_ki(yarp::os::idl::WireReader& reader)
+bool PidDataGains::read_ki(yarp::os::idl::WireReader& reader)
 {
     if (reader.noMore()) {
         reader.fail();
@@ -266,7 +258,7 @@ bool PidData::read_ki(yarp::os::idl::WireReader& reader)
 }
 
 // write ki field
-bool PidData::write_ki(const yarp::os::idl::WireWriter& writer) const
+bool PidDataGains::write_ki(const yarp::os::idl::WireWriter& writer) const
 {
     if (!writer.writeFloat64(ki)) {
         return false;
@@ -275,7 +267,7 @@ bool PidData::write_ki(const yarp::os::idl::WireWriter& writer) const
 }
 
 // read (nested) ki field
-bool PidData::nested_read_ki(yarp::os::idl::WireReader& reader)
+bool PidDataGains::nested_read_ki(yarp::os::idl::WireReader& reader)
 {
     if (reader.noMore()) {
         reader.fail();
@@ -289,7 +281,7 @@ bool PidData::nested_read_ki(yarp::os::idl::WireReader& reader)
 }
 
 // write (nested) ki field
-bool PidData::nested_write_ki(const yarp::os::idl::WireWriter& writer) const
+bool PidDataGains::nested_write_ki(const yarp::os::idl::WireWriter& writer) const
 {
     if (!writer.writeFloat64(ki)) {
         return false;
@@ -298,7 +290,7 @@ bool PidData::nested_write_ki(const yarp::os::idl::WireWriter& writer) const
 }
 
 // read max_int field
-bool PidData::read_max_int(yarp::os::idl::WireReader& reader)
+bool PidDataGains::read_max_int(yarp::os::idl::WireReader& reader)
 {
     if (reader.noMore()) {
         reader.fail();
@@ -312,7 +304,7 @@ bool PidData::read_max_int(yarp::os::idl::WireReader& reader)
 }
 
 // write max_int field
-bool PidData::write_max_int(const yarp::os::idl::WireWriter& writer) const
+bool PidDataGains::write_max_int(const yarp::os::idl::WireWriter& writer) const
 {
     if (!writer.writeFloat64(max_int)) {
         return false;
@@ -321,7 +313,7 @@ bool PidData::write_max_int(const yarp::os::idl::WireWriter& writer) const
 }
 
 // read (nested) max_int field
-bool PidData::nested_read_max_int(yarp::os::idl::WireReader& reader)
+bool PidDataGains::nested_read_max_int(yarp::os::idl::WireReader& reader)
 {
     if (reader.noMore()) {
         reader.fail();
@@ -335,7 +327,7 @@ bool PidData::nested_read_max_int(yarp::os::idl::WireReader& reader)
 }
 
 // write (nested) max_int field
-bool PidData::nested_write_max_int(const yarp::os::idl::WireWriter& writer) const
+bool PidDataGains::nested_write_max_int(const yarp::os::idl::WireWriter& writer) const
 {
     if (!writer.writeFloat64(max_int)) {
         return false;
@@ -344,7 +336,7 @@ bool PidData::nested_write_max_int(const yarp::os::idl::WireWriter& writer) cons
 }
 
 // read scale field
-bool PidData::read_scale(yarp::os::idl::WireReader& reader)
+bool PidDataGains::read_scale(yarp::os::idl::WireReader& reader)
 {
     if (reader.noMore()) {
         reader.fail();
@@ -358,7 +350,7 @@ bool PidData::read_scale(yarp::os::idl::WireReader& reader)
 }
 
 // write scale field
-bool PidData::write_scale(const yarp::os::idl::WireWriter& writer) const
+bool PidDataGains::write_scale(const yarp::os::idl::WireWriter& writer) const
 {
     if (!writer.writeFloat64(scale)) {
         return false;
@@ -367,7 +359,7 @@ bool PidData::write_scale(const yarp::os::idl::WireWriter& writer) const
 }
 
 // read (nested) scale field
-bool PidData::nested_read_scale(yarp::os::idl::WireReader& reader)
+bool PidDataGains::nested_read_scale(yarp::os::idl::WireReader& reader)
 {
     if (reader.noMore()) {
         reader.fail();
@@ -381,7 +373,7 @@ bool PidData::nested_read_scale(yarp::os::idl::WireReader& reader)
 }
 
 // write (nested) scale field
-bool PidData::nested_write_scale(const yarp::os::idl::WireWriter& writer) const
+bool PidDataGains::nested_write_scale(const yarp::os::idl::WireWriter& writer) const
 {
     if (!writer.writeFloat64(scale)) {
         return false;
@@ -390,7 +382,7 @@ bool PidData::nested_write_scale(const yarp::os::idl::WireWriter& writer) const
 }
 
 // read max_output field
-bool PidData::read_max_output(yarp::os::idl::WireReader& reader)
+bool PidDataGains::read_max_output(yarp::os::idl::WireReader& reader)
 {
     if (reader.noMore()) {
         reader.fail();
@@ -404,7 +396,7 @@ bool PidData::read_max_output(yarp::os::idl::WireReader& reader)
 }
 
 // write max_output field
-bool PidData::write_max_output(const yarp::os::idl::WireWriter& writer) const
+bool PidDataGains::write_max_output(const yarp::os::idl::WireWriter& writer) const
 {
     if (!writer.writeFloat64(max_output)) {
         return false;
@@ -413,7 +405,7 @@ bool PidData::write_max_output(const yarp::os::idl::WireWriter& writer) const
 }
 
 // read (nested) max_output field
-bool PidData::nested_read_max_output(yarp::os::idl::WireReader& reader)
+bool PidDataGains::nested_read_max_output(yarp::os::idl::WireReader& reader)
 {
     if (reader.noMore()) {
         reader.fail();
@@ -427,7 +419,7 @@ bool PidData::nested_read_max_output(yarp::os::idl::WireReader& reader)
 }
 
 // write (nested) max_output field
-bool PidData::nested_write_max_output(const yarp::os::idl::WireWriter& writer) const
+bool PidDataGains::nested_write_max_output(const yarp::os::idl::WireWriter& writer) const
 {
     if (!writer.writeFloat64(max_output)) {
         return false;
@@ -436,7 +428,7 @@ bool PidData::nested_write_max_output(const yarp::os::idl::WireWriter& writer) c
 }
 
 // read offset field
-bool PidData::read_offset(yarp::os::idl::WireReader& reader)
+bool PidDataGains::read_offset(yarp::os::idl::WireReader& reader)
 {
     if (reader.noMore()) {
         reader.fail();
@@ -450,7 +442,7 @@ bool PidData::read_offset(yarp::os::idl::WireReader& reader)
 }
 
 // write offset field
-bool PidData::write_offset(const yarp::os::idl::WireWriter& writer) const
+bool PidDataGains::write_offset(const yarp::os::idl::WireWriter& writer) const
 {
     if (!writer.writeFloat64(offset)) {
         return false;
@@ -459,7 +451,7 @@ bool PidData::write_offset(const yarp::os::idl::WireWriter& writer) const
 }
 
 // read (nested) offset field
-bool PidData::nested_read_offset(yarp::os::idl::WireReader& reader)
+bool PidDataGains::nested_read_offset(yarp::os::idl::WireReader& reader)
 {
     if (reader.noMore()) {
         reader.fail();
@@ -473,7 +465,7 @@ bool PidData::nested_read_offset(yarp::os::idl::WireReader& reader)
 }
 
 // write (nested) offset field
-bool PidData::nested_write_offset(const yarp::os::idl::WireWriter& writer) const
+bool PidDataGains::nested_write_offset(const yarp::os::idl::WireWriter& writer) const
 {
     if (!writer.writeFloat64(offset)) {
         return false;
@@ -482,7 +474,7 @@ bool PidData::nested_write_offset(const yarp::os::idl::WireWriter& writer) const
 }
 
 // read stiction_up_val field
-bool PidData::read_stiction_up_val(yarp::os::idl::WireReader& reader)
+bool PidDataGains::read_stiction_up_val(yarp::os::idl::WireReader& reader)
 {
     if (reader.noMore()) {
         reader.fail();
@@ -496,7 +488,7 @@ bool PidData::read_stiction_up_val(yarp::os::idl::WireReader& reader)
 }
 
 // write stiction_up_val field
-bool PidData::write_stiction_up_val(const yarp::os::idl::WireWriter& writer) const
+bool PidDataGains::write_stiction_up_val(const yarp::os::idl::WireWriter& writer) const
 {
     if (!writer.writeFloat64(stiction_up_val)) {
         return false;
@@ -505,7 +497,7 @@ bool PidData::write_stiction_up_val(const yarp::os::idl::WireWriter& writer) con
 }
 
 // read (nested) stiction_up_val field
-bool PidData::nested_read_stiction_up_val(yarp::os::idl::WireReader& reader)
+bool PidDataGains::nested_read_stiction_up_val(yarp::os::idl::WireReader& reader)
 {
     if (reader.noMore()) {
         reader.fail();
@@ -519,7 +511,7 @@ bool PidData::nested_read_stiction_up_val(yarp::os::idl::WireReader& reader)
 }
 
 // write (nested) stiction_up_val field
-bool PidData::nested_write_stiction_up_val(const yarp::os::idl::WireWriter& writer) const
+bool PidDataGains::nested_write_stiction_up_val(const yarp::os::idl::WireWriter& writer) const
 {
     if (!writer.writeFloat64(stiction_up_val)) {
         return false;
@@ -528,7 +520,7 @@ bool PidData::nested_write_stiction_up_val(const yarp::os::idl::WireWriter& writ
 }
 
 // read stiction_down_val field
-bool PidData::read_stiction_down_val(yarp::os::idl::WireReader& reader)
+bool PidDataGains::read_stiction_down_val(yarp::os::idl::WireReader& reader)
 {
     if (reader.noMore()) {
         reader.fail();
@@ -542,7 +534,7 @@ bool PidData::read_stiction_down_val(yarp::os::idl::WireReader& reader)
 }
 
 // write stiction_down_val field
-bool PidData::write_stiction_down_val(const yarp::os::idl::WireWriter& writer) const
+bool PidDataGains::write_stiction_down_val(const yarp::os::idl::WireWriter& writer) const
 {
     if (!writer.writeFloat64(stiction_down_val)) {
         return false;
@@ -551,7 +543,7 @@ bool PidData::write_stiction_down_val(const yarp::os::idl::WireWriter& writer) c
 }
 
 // read (nested) stiction_down_val field
-bool PidData::nested_read_stiction_down_val(yarp::os::idl::WireReader& reader)
+bool PidDataGains::nested_read_stiction_down_val(yarp::os::idl::WireReader& reader)
 {
     if (reader.noMore()) {
         reader.fail();
@@ -565,7 +557,7 @@ bool PidData::nested_read_stiction_down_val(yarp::os::idl::WireReader& reader)
 }
 
 // write (nested) stiction_down_val field
-bool PidData::nested_write_stiction_down_val(const yarp::os::idl::WireWriter& writer) const
+bool PidDataGains::nested_write_stiction_down_val(const yarp::os::idl::WireWriter& writer) const
 {
     if (!writer.writeFloat64(stiction_down_val)) {
         return false;
@@ -574,7 +566,7 @@ bool PidData::nested_write_stiction_down_val(const yarp::os::idl::WireWriter& wr
 }
 
 // read kff field
-bool PidData::read_kff(yarp::os::idl::WireReader& reader)
+bool PidDataGains::read_kff(yarp::os::idl::WireReader& reader)
 {
     if (reader.noMore()) {
         reader.fail();
@@ -588,7 +580,7 @@ bool PidData::read_kff(yarp::os::idl::WireReader& reader)
 }
 
 // write kff field
-bool PidData::write_kff(const yarp::os::idl::WireWriter& writer) const
+bool PidDataGains::write_kff(const yarp::os::idl::WireWriter& writer) const
 {
     if (!writer.writeFloat64(kff)) {
         return false;
@@ -597,7 +589,7 @@ bool PidData::write_kff(const yarp::os::idl::WireWriter& writer) const
 }
 
 // read (nested) kff field
-bool PidData::nested_read_kff(yarp::os::idl::WireReader& reader)
+bool PidDataGains::nested_read_kff(yarp::os::idl::WireReader& reader)
 {
     if (reader.noMore()) {
         reader.fail();
@@ -611,55 +603,9 @@ bool PidData::nested_read_kff(yarp::os::idl::WireReader& reader)
 }
 
 // write (nested) kff field
-bool PidData::nested_write_kff(const yarp::os::idl::WireWriter& writer) const
+bool PidDataGains::nested_write_kff(const yarp::os::idl::WireWriter& writer) const
 {
     if (!writer.writeFloat64(kff)) {
-        return false;
-    }
-    return true;
-}
-
-// read name field
-bool PidData::read_name(yarp::os::idl::WireReader& reader)
-{
-    if (reader.noMore()) {
-        reader.fail();
-        return false;
-    }
-    if (!reader.readString(name)) {
-        reader.fail();
-        return false;
-    }
-    return true;
-}
-
-// write name field
-bool PidData::write_name(const yarp::os::idl::WireWriter& writer) const
-{
-    if (!writer.writeString(name)) {
-        return false;
-    }
-    return true;
-}
-
-// read (nested) name field
-bool PidData::nested_read_name(yarp::os::idl::WireReader& reader)
-{
-    if (reader.noMore()) {
-        reader.fail();
-        return false;
-    }
-    if (!reader.readString(name)) {
-        reader.fail();
-        return false;
-    }
-    return true;
-}
-
-// write (nested) name field
-bool PidData::nested_write_name(const yarp::os::idl::WireWriter& writer) const
-{
-    if (!writer.writeString(name)) {
         return false;
     }
     return true;

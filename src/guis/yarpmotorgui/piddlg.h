@@ -34,11 +34,11 @@ public:
     explicit PidDlg(QString partname, int jointIndex, QString jointName, QWidget *parent = 0);
     ~PidDlg();
 
-    void initPositionPID(const std::vector<Pid>& myPids);
-    void initVelocityPID(const std::vector<Pid>& myPids);
-    void initTorquePID(const std::vector<Pid>& myPids);
+    void initPositionPID(const std::vector<PidWithExtraInfo>& myPids);
+    void initVelocityPID(const std::vector<PidWithExtraInfo>& myPids);
+    void initTorquePID(const std::vector<PidWithExtraInfo>& myPids);
     void initMotorParams(MotorTorqueParameters TorqueParam);
-    void initCurrentPID(const std::vector<Pid>& myPids);
+    void initCurrentPID(const std::vector<PidWithExtraInfo>& myPids);
     void initStiffness(double curStiffVal, double minStiff, double maxStiff,
                        double curDampVal, double minDamp, double maxDamp);
     void initTorqueOffset(double curForceVal, double minForce, double maxForce);

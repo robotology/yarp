@@ -16,7 +16,6 @@ TEST_CASE("dev::Pid", "[yarp::dev]")
     SECTION("test PID serialization")
     {
         yarp::dev::Pid input(1,2,3,4,5,6,7,8,9);
-        input.info.pid_description = "test_pid";
 
         yarp::dev::Pid output = input;
         CHECK(output == input);
@@ -25,19 +24,17 @@ TEST_CASE("dev::Pid", "[yarp::dev]")
         bool b = yarp::os::Portable::copyPortable(input,test);
         CHECK(b == true);
         CHECK(test==input);
-        CHECK(test.info.pid_description == "test_pid");
     }
 
     SECTION("test PID serialization 2")
     {
         yarp::dev::Pid input(1,2,3,4,5,6,7,8,9);
         yarp::dev::Pid output;
-        input.info.pid_description = "test_pid";
 
         yarp::os::Bottle bot;
         bool b = yarp::os::Portable::copyPortable(input,bot);
         CHECK(b == true);
-        CHECK(bot.size() == 13);
+        CHECK(bot.size() == 10);
         std::string sss = bot.toString();
         b = yarp::os::Portable::copyPortable(bot, output);
         CHECK(b == true);
@@ -47,7 +44,6 @@ TEST_CASE("dev::Pid", "[yarp::dev]")
     SECTION("test PID serialization 3")
     {
         yarp::dev::Pid test(1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0);
-        test.info.pid_description = "test_pid";
 
         yarp::os::Bottle bot;
         bool b = yarp::os::Portable::copyPortable(test,bot);
@@ -55,7 +51,7 @@ TEST_CASE("dev::Pid", "[yarp::dev]")
         std::string ttt;
         ttt = bot.toString();
         size_t sz = bot.size();
-        CHECK(sz == 13);
+        CHECK(sz == 10);
 
         yarp::dev::Pid output;
         b = yarp::os::Portable::copyPortable(bot,output);
@@ -68,6 +64,65 @@ TEST_CASE("dev::Pid", "[yarp::dev]")
         b = yarp::os::Portable::copyPortable(bot2,output2);
         CHECK(b == true);
         CHECK(output2 == test);
+    }
+
+    SECTION("test PIDWithExtraInfo")
+    {
+        yarp::dev::Pid inpid {1,2,3,4,5,6};
+
+        yarp::dev::PidWithExtraInfo pidWithInfo;
+        pidWithInfo.pidExtraInfo.description.input_data_description = "a";
+        pidWithInfo.pidExtraInfo.description.output_data_description = "b";
+        pidWithInfo.pidExtraInfo.description.pid_description = "c";
+        pidWithInfo.pidExtraInfo.units.units_kp = "1";
+        pidWithInfo.pidExtraInfo.units.units_kd = "2";
+        pidWithInfo.pidExtraInfo.units.units_ki = "3";
+        pidWithInfo.pidExtraInfo.units.units_max_int = "4";
+        pidWithInfo.pidExtraInfo.units.units_max_output = "5";
+        pidWithInfo.pidExtraInfo.units.units_kff = "6";
+        pidWithInfo.pidExtraInfo.units.units_offset = "7";
+        pidWithInfo.pidExtraInfo.units.units_scale = "8";
+        pidWithInfo.pidExtraInfo.units.units_stiction_up_val = "9";
+        pidWithInfo.pidExtraInfo.units.units_stiction_down_val = "0";
+        pidWithInfo = inpid;
+        yarp::dev::Pid outpid = pidWithInfo.pid;
+
+        CHECK(outpid.kp == 1);
+        CHECK(outpid.kd == 2);
+        CHECK(outpid.ki == 3);
+        CHECK(outpid.max_int == 4);
+        CHECK(outpid.scale == 5);
+        CHECK(outpid.max_output == 6);
+
+        CHECK(pidWithInfo.pid.kp == 1);
+        CHECK(pidWithInfo.pid.kd == 2);
+        CHECK(pidWithInfo.pid.ki == 3);
+        CHECK(pidWithInfo.pid.max_int == 4);
+        CHECK(pidWithInfo.pid.scale == 5);
+        CHECK(pidWithInfo.pid.max_output == 6);
+
+        CHECK(pidWithInfo.pidExtraInfo.description.input_data_description == "a");
+        CHECK(pidWithInfo.pidExtraInfo.description.output_data_description == "b");
+        CHECK(pidWithInfo.pidExtraInfo.description.pid_description == "c");
+        CHECK(pidWithInfo.pidExtraInfo.units.units_kp == "1");
+        CHECK(pidWithInfo.pidExtraInfo.units.units_kd == "2");
+        CHECK(pidWithInfo.pidExtraInfo.units.units_ki == "3");
+        CHECK(pidWithInfo.pidExtraInfo.units.units_max_int == "4");
+        CHECK(pidWithInfo.pidExtraInfo.units.units_max_output == "5");
+        CHECK(pidWithInfo.pidExtraInfo.units.units_kff == "6");
+        CHECK(pidWithInfo.pidExtraInfo.units.units_offset == "7");
+        CHECK(pidWithInfo.pidExtraInfo.units.units_scale == "8");
+        CHECK(pidWithInfo.pidExtraInfo.units.units_stiction_up_val == "9");
+        CHECK(pidWithInfo.pidExtraInfo.units.units_stiction_down_val == "0");
+    }
+
+    SECTION("test PIDWithExtraInfo Serialization")
+    {
+        yarp::dev::PidExtraInfo in;
+        yarp::dev::PidExtraInfo out;
+        bool b = yarp::os::Portable::copyPortable(static_cast<yarp::os::PortWriter&>(in), static_cast<yarp::os::PortReader&>(out));
+        CHECK(b == true);
+      //  CHECK(out == in);
     }
 
     SECTION("test PID methods")

@@ -168,10 +168,11 @@ private:
     int* _motorPoles = nullptr;                 /** */
     double* _rotorlimits_max = nullptr;         /** */
     double* _rotorlimits_min = nullptr;         /** */
-    std::vector<yarp::dev::Pid>* _ppids;        /** initial position gains */
-    std::vector<yarp::dev::Pid>* _tpids;        /** initial torque gains */
-    std::vector<yarp::dev::Pid>* _cpids;        /** initial current gains */
-    std::vector<yarp::dev::Pid>* _vpids;        /** initial velocity gains */
+    std::vector<yarp::dev::PidWithExtraInfo>* _ppids;        /** initial position gains */
+    std::vector<yarp::dev::PidWithExtraInfo>* _tpids;        /** initial torque gains */
+    std::vector<yarp::dev::PidWithExtraInfo>* _cpids;        /** initial current gains */
+    std::vector<yarp::dev::PidWithExtraInfo>* _vpids;        /** initial velocity gains */
+
     std::vector<bool> *_ppids_ena;
     std::vector<bool> *_tpids_ena;
     std::vector<bool> *_cpids_ena;
@@ -309,6 +310,8 @@ public:
     bool enablePidRaw(const yarp::dev::PidControlTypeEnum& pidtype,int j) override;
     bool setPidOffsetRaw(const yarp::dev::PidControlTypeEnum& pidtype,int j, double v) override;
     bool isPidEnabledRaw(const yarp::dev::PidControlTypeEnum& pidtype, int j, bool* enabled) override;
+    yarp::dev::ReturnValue getPidExtraInfoRaw(const yarp::dev::PidControlTypeEnum& pidtype, int j, yarp::dev::PidExtraInfo& units) override;
+    yarp::dev::ReturnValue getPidExtraInfosRaw(const yarp::dev::PidControlTypeEnum& pidtype, std::vector<yarp::dev::PidExtraInfo>& units) override;
 
     // POSITION CONTROL INTERFACE RAW
     bool getAxes(int *ax) override;
