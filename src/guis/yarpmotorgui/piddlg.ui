@@ -164,6 +164,9 @@
         <property name="text">
          <string>N/A</string>
         </property>
+        <property name="flags">
+         <set>NoItemFlags</set>
+        </property>
        </item>
        <item row="1" column="0">
         <property name="text">
@@ -202,6 +205,9 @@
        <item row="1" column="2">
         <property name="text">
          <string>N/A</string>
+        </property>
+        <property name="flags">
+         <set>NoItemFlags</set>
         </property>
        </item>
        <item row="2" column="0">
@@ -242,6 +248,9 @@
         <property name="text">
          <string>N/A</string>
         </property>
+        <property name="flags">
+         <set>NoItemFlags</set>
+        </property>
        </item>
        <item row="3" column="0">
         <property name="text">
@@ -280,6 +289,9 @@
        <item row="3" column="2">
         <property name="text">
          <string>N/A</string>
+        </property>
+        <property name="flags">
+         <set>NoItemFlags</set>
         </property>
        </item>
        <item row="4" column="0">
@@ -320,6 +332,9 @@
         <property name="text">
          <string>N/A</string>
         </property>
+        <property name="flags">
+         <set>NoItemFlags</set>
+        </property>
        </item>
        <item row="5" column="0">
         <property name="text">
@@ -358,6 +373,9 @@
        <item row="5" column="2">
         <property name="text">
          <string>N/A</string>
+        </property>
+        <property name="flags">
+         <set>NoItemFlags</set>
         </property>
        </item>
        <item row="6" column="0">
@@ -398,6 +416,9 @@
         <property name="text">
          <string>N/A</string>
         </property>
+        <property name="flags">
+         <set>NoItemFlags</set>
+        </property>
        </item>
        <item row="7" column="0">
         <property name="text">
@@ -436,6 +457,9 @@
        <item row="7" column="2">
         <property name="text">
          <string>N/A</string>
+        </property>
+        <property name="flags">
+         <set>NoItemFlags</set>
         </property>
        </item>
        <item row="7" column="3">
@@ -481,6 +505,9 @@
         <property name="text">
          <string>N/A</string>
         </property>
+        <property name="flags">
+         <set>NoItemFlags</set>
+        </property>
        </item>
        <item row="8" column="3">
         <property name="text">
@@ -512,6 +539,9 @@
        <item row="9" column="2">
         <property name="text">
          <string>N/A</string>
+        </property>
+        <property name="flags">
+         <set>NoItemFlags</set>
         </property>
        </item>
       </widget>
@@ -693,6 +723,9 @@
         <property name="text">
          <string>N/A</string>
         </property>
+        <property name="flags">
+         <set>NoItemFlags</set>
+        </property>
        </item>
        <item row="1" column="0">
         <property name="text">
@@ -731,6 +764,9 @@
        <item row="1" column="2">
         <property name="text">
          <string>N/A</string>
+        </property>
+        <property name="flags">
+         <set>NoItemFlags</set>
         </property>
        </item>
        <item row="2" column="0">
@@ -771,6 +807,9 @@
         <property name="text">
          <string>N/A</string>
         </property>
+        <property name="flags">
+         <set>NoItemFlags</set>
+        </property>
        </item>
        <item row="3" column="0">
         <property name="text">
@@ -809,6 +848,9 @@
        <item row="3" column="2">
         <property name="text">
          <string>N/A</string>
+        </property>
+        <property name="flags">
+         <set>NoItemFlags</set>
         </property>
        </item>
        <item row="4" column="0">
@@ -849,6 +891,9 @@
         <property name="text">
          <string>N/A</string>
         </property>
+        <property name="flags">
+         <set>NoItemFlags</set>
+        </property>
        </item>
        <item row="5" column="0">
         <property name="text">
@@ -887,6 +932,9 @@
        <item row="5" column="2">
         <property name="text">
          <string>N/A</string>
+        </property>
+        <property name="flags">
+         <set>NoItemFlags</set>
         </property>
        </item>
        <item row="6" column="0">
@@ -927,6 +975,9 @@
         <property name="text">
          <string>N/A</string>
         </property>
+        <property name="flags">
+         <set>NoItemFlags</set>
+        </property>
        </item>
        <item row="7" column="0">
         <property name="text">
@@ -965,6 +1016,9 @@
        <item row="7" column="2">
         <property name="text">
          <string>N/A</string>
+        </property>
+        <property name="flags">
+         <set>NoItemFlags</set>
         </property>
        </item>
        <item row="7" column="3">
@@ -1010,6 +1064,9 @@
         <property name="text">
          <string>N/A</string>
         </property>
+        <property name="flags">
+         <set>NoItemFlags</set>
+        </property>
        </item>
        <item row="8" column="3">
         <property name="text">
@@ -1041,6 +1098,9 @@
        <item row="9" column="2">
         <property name="text">
          <string>N/A</string>
+        </property>
+        <property name="flags">
+         <set>NoItemFlags</set>
         </property>
        </item>
       </widget>
@@ -1228,6 +1288,9 @@
         <property name="text">
          <string>N/A</string>
         </property>
+        <property name="flags">
+         <set>NoItemFlags</set>
+        </property>
        </item>
        <item row="1" column="0">
         <property name="text">
@@ -1266,6 +1329,9 @@
        <item row="1" column="2">
         <property name="text">
          <string>N/A</string>
+        </property>
+        <property name="flags">
+         <set>NoItemFlags</set>
         </property>
        </item>
        <item row="2" column="0">
@@ -1306,6 +1372,9 @@
         <property name="text">
          <string>N/A</string>
         </property>
+        <property name="flags">
+         <set>NoItemFlags</set>
+        </property>
        </item>
        <item row="3" column="0">
         <property name="text">
@@ -1344,6 +1413,9 @@
        <item row="3" column="2">
         <property name="text">
          <string>N/A</string>
+        </property>
+        <property name="flags">
+         <set>NoItemFlags</set>
         </property>
        </item>
        <item row="4" column="0">
@@ -1384,6 +1456,9 @@
         <property name="text">
          <string>N/A</string>
         </property>
+        <property name="flags">
+         <set>NoItemFlags</set>
+        </property>
        </item>
        <item row="5" column="0">
         <property name="text">
@@ -1422,6 +1497,9 @@
        <item row="5" column="2">
         <property name="text">
          <string>N/A</string>
+        </property>
+        <property name="flags">
+         <set>NoItemFlags</set>
         </property>
        </item>
        <item row="6" column="0">
@@ -1462,6 +1540,9 @@
         <property name="text">
          <string>N/A</string>
         </property>
+        <property name="flags">
+         <set>NoItemFlags</set>
+        </property>
        </item>
        <item row="7" column="0">
         <property name="text">
@@ -1500,6 +1581,9 @@
        <item row="7" column="2">
         <property name="text">
          <string>N/A</string>
+        </property>
+        <property name="flags">
+         <set>NoItemFlags</set>
         </property>
        </item>
        <item row="7" column="3">
@@ -1545,6 +1629,9 @@
         <property name="text">
          <string>N/A</string>
         </property>
+        <property name="flags">
+         <set>NoItemFlags</set>
+        </property>
        </item>
        <item row="8" column="3">
         <property name="text">
@@ -1588,6 +1675,9 @@
        <item row="9" column="2">
         <property name="text">
          <string>N/A</string>
+        </property>
+        <property name="flags">
+         <set>NoItemFlags</set>
         </property>
        </item>
       </widget>
@@ -2237,6 +2327,9 @@
         <property name="text">
          <string>N/A</string>
         </property>
+        <property name="flags">
+         <set>NoItemFlags</set>
+        </property>
        </item>
        <item row="0" column="3">
         <property name="text">
@@ -2280,6 +2373,9 @@
        <item row="1" column="2">
         <property name="text">
          <string>N/A</string>
+        </property>
+        <property name="flags">
+         <set>NoItemFlags</set>
         </property>
        </item>
        <item row="1" column="3">
@@ -2325,6 +2421,9 @@
         <property name="text">
          <string>N/A</string>
         </property>
+        <property name="flags">
+         <set>NoItemFlags</set>
+        </property>
        </item>
        <item row="3" column="0">
         <property name="text">
@@ -2363,6 +2462,9 @@
        <item row="3" column="2">
         <property name="text">
          <string>N/A</string>
+        </property>
+        <property name="flags">
+         <set>NoItemFlags</set>
         </property>
        </item>
        <item row="4" column="0">
@@ -2403,6 +2505,9 @@
         <property name="text">
          <string>N/A</string>
         </property>
+        <property name="flags">
+         <set>NoItemFlags</set>
+        </property>
        </item>
        <item row="5" column="0">
         <property name="text">
@@ -2441,6 +2546,9 @@
        <item row="5" column="2">
         <property name="text">
          <string>N/A</string>
+        </property>
+        <property name="flags">
+         <set>NoItemFlags</set>
         </property>
        </item>
        <item row="6" column="0">
@@ -2481,6 +2589,9 @@
         <property name="text">
          <string>N/A</string>
         </property>
+        <property name="flags">
+         <set>NoItemFlags</set>
+        </property>
        </item>
        <item row="7" column="0">
         <property name="text">
@@ -2520,6 +2631,9 @@
         <property name="text">
          <string>N/A</string>
         </property>
+        <property name="flags">
+         <set>NoItemFlags</set>
+        </property>
        </item>
        <item row="8" column="0">
         <property name="text">
@@ -2558,6 +2672,9 @@
        <item row="8" column="2">
         <property name="text">
          <string>N/A</string>
+        </property>
+        <property name="flags">
+         <set>NoItemFlags</set>
         </property>
        </item>
       </widget>
@@ -2714,6 +2831,9 @@
         <property name="text">
          <string>N/A</string>
         </property>
+        <property name="flags">
+         <set>NoItemFlags</set>
+        </property>
        </item>
        <item row="1" column="0">
         <property name="text">
@@ -2804,6 +2924,9 @@
        <item row="1" column="4">
         <property name="text">
          <string>N/A</string>
+        </property>
+        <property name="flags">
+         <set>NoItemFlags</set>
         </property>
        </item>
        <item row="2" column="0">
@@ -2896,6 +3019,9 @@
         <property name="text">
          <string>N/A</string>
         </property>
+        <property name="flags">
+         <set>NoItemFlags</set>
+        </property>
        </item>
       </widget>
      </widget>
@@ -2984,6 +3110,9 @@
         <property name="text">
          <string>N/A</string>
         </property>
+        <property name="flags">
+         <set>NoItemFlags</set>
+        </property>
        </item>
        <item row="1" column="0">
         <property name="text">
@@ -3040,6 +3169,9 @@
        <item row="1" column="2">
         <property name="text">
          <string>N/A</string>
+        </property>
+        <property name="flags">
+         <set>NoItemFlags</set>
         </property>
        </item>
       </widget>

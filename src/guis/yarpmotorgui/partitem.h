@@ -233,7 +233,7 @@ private slots:
     void onSendSingleRemoteVariable(std::string key, yarp::os::Bottle val);
     void onUpdateAllRemoteVariables();
     void onSendMotorParameters(int jointIndex, MotorTorqueParameters newTorqueParam);
-    void onSendStiffness(int jointIdex, double stiff, double damp, double force);
+    void onSendStiffness(int jointIdex, double stiff, double damp);
     void onSendForceOffset(int jointIdex, double force);
     void onSendPWM(int jointIndex, double dutyVal);
     void onRefreshPids(int jointIndex);

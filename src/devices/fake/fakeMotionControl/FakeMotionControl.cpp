@@ -218,8 +218,53 @@ void FakeMotionControl::setInfoPPids(int j)
     _ppids[j].at(2).info.pid_description = "Position PID 2";
     _ppids[j].at(2).info.input_data_description = "Encoder Value";
     _ppids[j].at(2).info.output_data_description = "Current";
-
 }
+
+void FakeMotionControl::setInfoTPids(int j)
+{
+    _tpids[j].at(0).info.pid_description = "Torque PID 0";
+    _tpids[j].at(0).info.input_data_description = "Torque";
+    _tpids[j].at(0).info.output_data_description = "PWM";
+
+    _tpids[j].at(1).info.pid_description = "Torque PID 1";
+    _tpids[j].at(1).info.input_data_description = "Torque";
+    _tpids[j].at(1).info.output_data_description = "Velocity";
+
+    _tpids[j].at(2).info.pid_description = "Torque PID 2";
+    _tpids[j].at(2).info.input_data_description = "Torque";
+    _tpids[j].at(2).info.output_data_description = "Current";
+}
+
+void FakeMotionControl::setInfoVPids(int j)
+{
+    _vpids[j].at(0).info.pid_description = "Velocity PID 0";
+    _vpids[j].at(0).info.input_data_description = "Velocity Value";
+    _vpids[j].at(0).info.output_data_description = "PWM";
+
+    _vpids[j].at(1).info.pid_description = "Velocity PID 1";
+    _vpids[j].at(1).info.input_data_description = "Velocity Value";
+    _vpids[j].at(1).info.output_data_description = "PWM";
+
+    _vpids[j].at(2).info.pid_description = "Velocity PID 2";
+    _vpids[j].at(2).info.input_data_description = "Velocity Value";
+    _vpids[j].at(2).info.output_data_description = "Current";
+}
+
+void FakeMotionControl::setInfoCPids(int j)
+{
+    _cpids[j].at(0).info.pid_description = "Current PID 0";
+    _cpids[j].at(0).info.input_data_description = "Current Value";
+    _cpids[j].at(0).info.output_data_description = "PWM";
+
+    _cpids[j].at(1).info.pid_description = "Current PID 1";
+    _cpids[j].at(1).info.input_data_description = "Current Value";
+    _cpids[j].at(1).info.output_data_description = "PWM";
+
+    _cpids[j].at(2).info.pid_description = "Current PID 2";
+    _cpids[j].at(2).info.input_data_description = "Current Value";
+    _cpids[j].at(2).info.output_data_description = "PWM";
+}
+
 
  bool FakeMotionControl::alloc(int nj)
 {
@@ -256,9 +301,9 @@ void FakeMotionControl::setInfoPPids(int j)
     _autobraked = allocAndCheck<bool>(nj);
 
     _ppids = allocAndCheck<std::vector<Pid>>(nj);    for (int i = 0; i < nj; ++i) {_ppids[i].resize(npids); setInfoPPids(i);}
-    _tpids = allocAndCheck<std::vector<Pid>>(nj);    for (int i = 0; i < nj; ++i) {_tpids[i].resize(npids);}
-    _cpids = allocAndCheck<std::vector<Pid>>(nj);    for (int i = 0; i < nj; ++i) {_cpids[i].resize(npids);}
-    _vpids = allocAndCheck<std::vector<Pid>>(nj);    for (int i = 0; i < nj; ++i) {_vpids[i].resize(npids);}
+    _tpids = allocAndCheck<std::vector<Pid>>(nj);    for (int i = 0; i < nj; ++i) {_tpids[i].resize(npids); setInfoTPids(i);}
+    _cpids = allocAndCheck<std::vector<Pid>>(nj);    for (int i = 0; i < nj; ++i) {_cpids[i].resize(npids); setInfoCPids(i);}
+    _vpids = allocAndCheck<std::vector<Pid>>(nj);    for (int i = 0; i < nj; ++i) {_vpids[i].resize(npids); setInfoVPids(i);}
 
     _ppids_ena = allocAndCheck<std::vector<bool>>(nj);    for (int i = 0; i < nj; ++i) _ppids_ena[i].resize(npids);
     _tpids_ena = allocAndCheck<std::vector<bool>>(nj);    for (int i = 0; i < nj; ++i) _tpids_ena[i].resize(npids);
@@ -314,6 +359,10 @@ void FakeMotionControl::setInfoPPids(int j)
     _enabledPid = allocAndCheck<bool>(nj);
     _calibrated = allocAndCheck<bool>(nj);
 //     _cacheImpedance = allocAndCheck<eOmc_impedance_t>(nj);
+
+    _stiffness = allocAndCheck<double>(nj);
+    _damping = allocAndCheck<double>(nj);
+    _force_offset = allocAndCheck<double>(nj);
 
     resizeBuffers();
 

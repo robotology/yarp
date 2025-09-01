@@ -820,7 +820,7 @@ void PartItem::onRefreshPids(int jointIndex)
         m_currentPidDlg->initMotorParams(motorTorqueParams);
         m_currentPidDlg->initVelocityPID(myVelPids);
         m_currentPidDlg->initCurrentPID(myCurPids);
-        m_currentPidDlg->initStiffness(stiff_val, stiff_min, stiff_max, damp_val, damp_min, damp_max, impedance_offset_val, off_min, off_max);
+        m_currentPidDlg->initStiffness(stiff_val, stiff_min, stiff_max, damp_val, damp_min, damp_max);
         m_currentPidDlg->initPWM(pwm_reference, current_pwm);
         m_currentPidDlg->initRemoteVariables(m_iVar);
     }

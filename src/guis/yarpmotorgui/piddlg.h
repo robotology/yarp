@@ -47,7 +47,7 @@ public:
 
 
 signals:
-    void sendStiffness(int,double,double,double);
+    void sendStiffness(int,double,double);
     void sendForceOffset(int,double);
     void sendPid(PidControlTypeEnum pidtype, int jointIndex, Pid newPid);
     void sendMotorParameters(int jointIndex,MotorTorqueParameters newTorqueParam);

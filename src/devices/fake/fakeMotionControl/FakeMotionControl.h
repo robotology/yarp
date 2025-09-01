@@ -543,6 +543,9 @@ private:
     void cleanup();
     bool dealloc();
     void setInfoPPids(int j);
+    void setInfoVPids(int j);
+    void setInfoTPids(int j);
+    void setInfoCPids(int j);
 
     //bool parsePositionPidsGroup(yarp::os::Bottle& pidsGroup, yarp::dev::Pid myPid[]);
     //bool parseTorquePidsGroup(yarp::os::Bottle& pidsGroup, yarp::dev::Pid myPid[], double kbemf[], double ktau[], int filterType[], double viscousPos[], double viscousNeg[], double coulombPos[], double coulombNeg[], double velocityThres[]);
