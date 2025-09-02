@@ -143,6 +143,8 @@ private:
         VERY_VERY_VERBOSE   = 6     // adds messages printed every cycle, so too much verbose for usage, only for deep debugging
     };
 
+    const int npids = 3;
+
     std::recursive_mutex _mutex;
     double _cycleTimestamp;
     int  _njoints;
@@ -166,22 +168,23 @@ private:
     int* _motorPoles = nullptr;                 /** */
     double* _rotorlimits_max = nullptr;         /** */
     double* _rotorlimits_min = nullptr;         /** */
-    yarp::dev::Pid *_ppids= nullptr;            /** initial position gains */
-    yarp::dev::Pid *_tpids= nullptr;            /** initial torque gains */
-    yarp::dev::Pid *_cpids= nullptr;            /** initial current gains */
-    yarp::dev::Pid *_vpids= nullptr;            /** initial velocity gains */
-    bool *_ppids_ena= nullptr;
-    bool *_tpids_ena= nullptr;
-    bool *_cpids_ena= nullptr;
-    bool *_vpids_ena= nullptr;
-    double *_ppids_lim= nullptr;
-    double *_tpids_lim= nullptr;
-    double *_cpids_lim= nullptr;
-    double *_vpids_lim= nullptr;
-    double *_ppids_ref= nullptr;
-    double *_tpids_ref= nullptr;
-    double *_cpids_ref= nullptr;
-    double *_vpids_ref= nullptr;
+    std::vector<yarp::dev::PidWithExtraInfo>* _ppids;        /** initial position gains */
+    std::vector<yarp::dev::PidWithExtraInfo>* _tpids;        /** initial torque gains */
+    std::vector<yarp::dev::PidWithExtraInfo>* _cpids;        /** initial current gains */
+    std::vector<yarp::dev::PidWithExtraInfo>* _vpids;        /** initial velocity gains */
+
+    std::vector<bool> *_ppids_ena;
+    std::vector<bool> *_tpids_ena;
+    std::vector<bool> *_cpids_ena;
+    std::vector<bool> *_vpids_ena;
+    std::vector<double> *_ppids_lim;
+    std::vector<double> *_tpids_lim;
+    std::vector<double> *_cpids_lim;
+    std::vector<double> *_vpids_lim;
+    std::vector<double> *_ppids_ref;
+    std::vector<double> *_tpids_ref;
+    std::vector<double> *_cpids_ref;
+    std::vector<double> *_vpids_ref;
 
     std::string* _axisName = nullptr;                      /** axis name */
     yarp::dev::JointTypeEnum* _jointType = nullptr;        /** axis type */
@@ -307,6 +310,8 @@ public:
     bool enablePidRaw(const yarp::dev::PidControlTypeEnum& pidtype,int j) override;
     bool setPidOffsetRaw(const yarp::dev::PidControlTypeEnum& pidtype,int j, double v) override;
     bool isPidEnabledRaw(const yarp::dev::PidControlTypeEnum& pidtype, int j, bool* enabled) override;
+    yarp::dev::ReturnValue getPidExtraInfoRaw(const yarp::dev::PidControlTypeEnum& pidtype, int j, yarp::dev::PidExtraInfo& units) override;
+    yarp::dev::ReturnValue getPidExtraInfosRaw(const yarp::dev::PidControlTypeEnum& pidtype, std::vector<yarp::dev::PidExtraInfo>& units) override;
 
     // POSITION CONTROL INTERFACE RAW
     bool getAxes(int *ax) override;
@@ -540,6 +545,10 @@ public:
 private:
     void cleanup();
     bool dealloc();
+    void setInfoPPids(int j);
+    void setInfoVPids(int j);
+    void setInfoTPids(int j);
+    void setInfoCPids(int j);
 
     //bool parsePositionPidsGroup(yarp::os::Bottle& pidsGroup, yarp::dev::Pid myPid[]);
     //bool parseTorquePidsGroup(yarp::os::Bottle& pidsGroup, yarp::dev::Pid myPid[], double kbemf[], double ktau[], int filterType[], double viscousPos[], double viscousNeg[], double coulombPos[], double coulombNeg[], double velocityThres[]);

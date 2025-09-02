@@ -349,3 +349,16 @@ bool ImplementPidControl::setConversionUnits(const PidControlTypeEnum& pidtype, 
     castToMapper(helper)->set_pid_conversion_units(pidtype, fbk_conv_units, out_conv_units);
     return true;
 }
+
+yarp::dev::ReturnValue ImplementPidControl::getPidExtraInfo(const PidControlTypeEnum& pidtype, int j, yarp::dev::PidExtraInfo& units)
+{
+    if (j >= castToMapper(helper)->axes()){yError("joint id out of bound"); return ReturnValue::return_code::return_value_error_method_failed;}
+    int k=0;
+    k=castToMapper(helper)->toHw(j);
+    return iPid->getPidExtraInfoRaw(pidtype, k, units);
+}
+
+yarp::dev::ReturnValue ImplementPidControl::getPidExtraInfos(const PidControlTypeEnum& pidtype, std::vector<yarp::dev::PidExtraInfo>& units)
+{
+    return ReturnValue_ok;
+}

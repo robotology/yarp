@@ -9,6 +9,26 @@ struct yReturnValue {
   yarp.includefile = "yarp/dev/ReturnValue.h"
 )
 
+struct yInfoPid {
+} (
+  yarp.name = "yarp::dev::PidExtraInfo"
+  yarp.includefile = "yarp/dev/ControlBoardPid.h"
+)
+
+struct yPid {
+} (
+  yarp.name = "yarp::dev::Pid"
+  yarp.includefile = "yarp/dev/ControlBoardPid.h"
+)
+
+enum yPidControlTypeEnum {
+} (
+  yarp.name = "yarp::dev::PidControlTypeEnum"
+  yarp.includefile = "yarp/dev/PidEnums.h"
+  yarp.enumbase = "int32_t"
+)
+
+
 //-------------------------------------------------
 // IJointBrake
 struct return_isJointBraked {
@@ -21,6 +41,8 @@ struct return_getAutoBrakeEnabled {
   2: bool enabled;
 }
 
+//-------------------------------------------------
+// IVelocityDirect
 struct return_getDesiredVelocityOne {
   1: yReturnValue ret;
   2: double vel;
@@ -42,6 +64,28 @@ struct return_getAxes {
 }
 
 //-------------------------------------------------
+// IPidControl
+struct return_getPid {
+  1: yReturnValue ret;
+  2: yPid pid;
+}
+
+struct return_getPids {
+  1: yReturnValue ret;
+  2: list<yPid> pids;
+}
+
+struct return_getInfoPid {
+  1: yReturnValue ret;
+  2: yInfoPid info;
+}
+
+struct return_getInfoPids {
+  1: yReturnValue ret;
+  2: list<yInfoPid> info;
+}
+
+//-------------------------------------------------
 service ControlBoardMsgs
 {
     return_isJointBraked       isJointBrakedRPC(1:i32 j) (yarp.qualifier = "const");
@@ -53,4 +97,11 @@ service ControlBoardMsgs
     return_getDesiredVelocityOne    getDesiredVelocityOneRPC(1:i32 j) (yarp.qualifier = "const");
     return_getDesiredVelocityAll    getDesiredVelocityAllRPC() (yarp.qualifier = "const");
     return_getDesiredVelocityGroup  getDesiredVelocityGroupRPC(1: list<i32> j) (yarp.qualifier = "const");
+
+    yReturnValue               setPidRPC(1: yPidControlTypeEnum pidtype, 2: i16 j, 3: yPid pid);
+    yReturnValue               setPidsRPC(1: yPidControlTypeEnum pidtype, 2: list<yPid> pids);
+    return_getPid              getPidRPC(1: yPidControlTypeEnum pidtype, 2: i16 j);
+    return_getPids             getPidsRPC(1: yPidControlTypeEnum pidtype);
+    return_getInfoPid          getPidExtraInfoRPC(1: yPidControlTypeEnum pidtype, 2: i16 j);
+    return_getInfoPids         getPidExtraInfosRPC(1: yPidControlTypeEnum pidtype);
 }

@@ -976,6 +976,55 @@ bool ControlBoardRemapper::isPidEnabled(const PidControlTypeEnum& pidtype, int j
     return false;
 }
 
+ReturnValue ControlBoardRemapper::getPidExtraInfo(const PidControlTypeEnum& pidtype, int j, PidExtraInfo& units)
+{
+    int off=(int)remappedControlBoards.lut[j].axisIndexInSubControlBoard;
+    size_t subIndex=remappedControlBoards.lut[j].subControlBoardIndex;
+
+    RemappedSubControlBoard *p=remappedControlBoards.getSubControlBoard(subIndex);
+
+    if (!p)
+    {
+        return ReturnValue::return_code::return_value_error_generic;
+    }
+
+    if (p->pid)
+    {
+        return p->pid->getPidExtraInfo(pidtype, off, units);
+    }
+
+    return ReturnValue::return_code::return_value_error_generic;
+}
+
+ReturnValue ControlBoardRemapper::getPidExtraInfos(const PidControlTypeEnum& pidtype, std::vector<PidExtraInfo>& units)
+{
+    ReturnValue ret=ReturnValue_ok;
+
+    for(int l=0;l<controlledJoints;l++)
+    {
+        int off=(int)remappedControlBoards.lut[l].axisIndexInSubControlBoard;
+        size_t subIndex=remappedControlBoards.lut[l].subControlBoardIndex;
+
+        RemappedSubControlBoard *p=remappedControlBoards.getSubControlBoard(subIndex);
+        if (!p)
+        {
+            return ReturnValue::return_code::return_value_error_generic;
+        }
+
+        if (p->pid)
+        {
+            ReturnValue ok = p->pid->getPidExtraInfo(pidtype, off, units[l]);
+            ret = ok && ret;
+        }
+        else
+        {
+            ret=ReturnValue::return_code::return_value_error_generic;
+        }
+    }
+
+    return ret;
+}
+
 /* IPositionControl */
 bool ControlBoardRemapper::getAxes(int *ax)
 {

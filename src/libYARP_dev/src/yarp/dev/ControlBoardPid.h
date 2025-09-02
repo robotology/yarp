@@ -5,35 +5,30 @@
  */
 
 #include <yarp/dev/api.h>
+#include <yarp/dev/PidDataGains.h>
+#include <yarp/dev/PidDataExtraInfo.h>
+#include <yarp/os/Portable.h>
+#include <string>
 
 #ifndef YARP_DEV_CONTROLBOARDPID_H
 #define YARP_DEV_CONTROLBOARDPID_H
 
 /*!
- * \file ControlBoardPid.h define control board standard interfaces
+ * \file ControlBoardPid.h defines yarp::dev::Pid datatype
  */
 
 namespace yarp::dev {
 class Pid;
+class PidWithExtraInfo;
+typedef PidDataExtraInfo PidExtraInfo;
 }
+
 
 /*!
  * \brief Contains the parameters for a PID
  */
-class YARP_dev_API yarp::dev::Pid
+class YARP_dev_API yarp::dev::Pid : public yarp::dev::PidDataGains
 {
-public:
-    double kp;                 //!< proportional gain
-    double kd;                 //!< derivative gain
-    double ki;                 //!< integrative gain
-    double max_int;            //!< saturation threshold for the integrator
-    double scale;              //!< scale for the pid output
-    double max_output;         //!< max output
-    double offset;             //!< pwm offset added to the pid output
-    double stiction_up_val;    //!< up stiction offset added to the pid output
-    double stiction_down_val;  //!< down stiction offset added to the pid output
-    double kff;                //!< feedforward gain
-
 public:
     /*!
      * \brief Default Constructor.
@@ -149,6 +144,25 @@ public:
     *
     */
     void clear();
+};
+
+class YARP_dev_API yarp::dev::PidWithExtraInfo
+{
+    public:
+    yarp::dev::Pid pid;
+    yarp::dev::PidDataExtraInfo pidExtraInfo;
+
+    yarp::dev::PidWithExtraInfo& operator=(const yarp::dev::Pid& rhs)
+    {
+        pid = rhs;
+        return *this;
+    }
+
+    yarp::dev::PidWithExtraInfo& operator=(const yarp::dev::PidDataExtraInfo& rhs)
+    {
+        pidExtraInfo = rhs;
+        return *this;
+    }
 };
 
 #endif // YARP_DEV_CONTROLBOARDPID_H

@@ -204,7 +204,69 @@ void FakeMotionControl::resizeBuffers()
     supplyVoltage.zero();
 }
 
-bool FakeMotionControl::alloc(int nj)
+
+void FakeMotionControl::setInfoPPids(int j)
+{
+    _ppids[j].at(0).pidExtraInfo.description.pid_description = "Position PID 0";
+    _ppids[j].at(0).pidExtraInfo.description.input_data_description = "Encoder Value";
+    _ppids[j].at(0).pidExtraInfo.description.output_data_description = "PWM";
+
+    _ppids[j].at(1).pidExtraInfo.description.pid_description = "Position PID 1";
+    _ppids[j].at(1).pidExtraInfo.description.input_data_description = "Encoder Value";
+    _ppids[j].at(1).pidExtraInfo.description.output_data_description = "Velocity";
+
+    _ppids[j].at(2).pidExtraInfo.description.pid_description = "Position PID 2";
+    _ppids[j].at(2).pidExtraInfo.description.input_data_description = "Encoder Value";
+    _ppids[j].at(2).pidExtraInfo.description.output_data_description = "Current";
+}
+
+void FakeMotionControl::setInfoTPids(int j)
+{
+    _tpids[j].at(0).pidExtraInfo.description.pid_description = "Torque PID 0";
+    _tpids[j].at(0).pidExtraInfo.description.input_data_description = "Torque";
+    _tpids[j].at(0).pidExtraInfo.description.output_data_description = "PWM";
+
+    _tpids[j].at(1).pidExtraInfo.description.pid_description = "Torque PID 1";
+    _tpids[j].at(1).pidExtraInfo.description.input_data_description = "Torque";
+    _tpids[j].at(1).pidExtraInfo.description.output_data_description = "Velocity";
+
+    _tpids[j].at(2).pidExtraInfo.description.pid_description = "Torque PID 2";
+    _tpids[j].at(2).pidExtraInfo.description.input_data_description = "Torque";
+    _tpids[j].at(2).pidExtraInfo.description.output_data_description = "Current";
+}
+
+void FakeMotionControl::setInfoVPids(int j)
+{
+    _vpids[j].at(0).pidExtraInfo.description.pid_description = "Velocity PID 0";
+    _vpids[j].at(0).pidExtraInfo.description.input_data_description = "Velocity Value";
+    _vpids[j].at(0).pidExtraInfo.description.output_data_description = "PWM";
+
+    _vpids[j].at(1).pidExtraInfo.description.pid_description = "Velocity PID 1";
+    _vpids[j].at(1).pidExtraInfo.description.input_data_description = "Velocity Value";
+    _vpids[j].at(1).pidExtraInfo.description.output_data_description = "PWM";
+
+    _vpids[j].at(2).pidExtraInfo.description.pid_description = "Velocity PID 2";
+    _vpids[j].at(2).pidExtraInfo.description.input_data_description = "Velocity Value";
+    _vpids[j].at(2).pidExtraInfo.description.output_data_description = "Current";
+}
+
+void FakeMotionControl::setInfoCPids(int j)
+{
+    _cpids[j].at(0).pidExtraInfo.description.pid_description = "Current PID 0";
+    _cpids[j].at(0).pidExtraInfo.description.input_data_description = "Current Value";
+    _cpids[j].at(0).pidExtraInfo.description.output_data_description = "PWM";
+
+    _cpids[j].at(1).pidExtraInfo.description.pid_description = "Current PID 1";
+    _cpids[j].at(1).pidExtraInfo.description.input_data_description = "Current Value";
+    _cpids[j].at(1).pidExtraInfo.description.output_data_description = "PWM";
+
+    _cpids[j].at(2).pidExtraInfo.description.pid_description = "Current PID 2";
+    _cpids[j].at(2).pidExtraInfo.description.input_data_description = "Current Value";
+    _cpids[j].at(2).pidExtraInfo.description.output_data_description = "PWM";
+}
+
+
+ bool FakeMotionControl::alloc(int nj)
 {
     _axisMap = allocAndCheck<int>(nj);
     _controlModes = allocAndCheck<int>(nj);
@@ -238,22 +300,25 @@ bool FakeMotionControl::alloc(int nj)
     _braked = allocAndCheck<bool>(nj);
     _autobraked = allocAndCheck<bool>(nj);
 
-    _ppids=allocAndCheck<Pid>(nj);
-    _tpids=allocAndCheck<Pid>(nj);
-    _cpids = allocAndCheck<Pid>(nj);
-    _vpids = allocAndCheck<Pid>(nj);
-    _ppids_ena=allocAndCheck<bool>(nj);
-    _tpids_ena=allocAndCheck<bool>(nj);
-    _cpids_ena = allocAndCheck<bool>(nj);
-    _vpids_ena = allocAndCheck<bool>(nj);
-    _ppids_lim=allocAndCheck<double>(nj);
-    _tpids_lim=allocAndCheck<double>(nj);
-    _cpids_lim = allocAndCheck<double>(nj);
-    _vpids_lim = allocAndCheck<double>(nj);
-    _ppids_ref=allocAndCheck<double>(nj);
-    _tpids_ref=allocAndCheck<double>(nj);
-    _cpids_ref = allocAndCheck<double>(nj);
-    _vpids_ref = allocAndCheck<double>(nj);
+    _ppids = allocAndCheck<std::vector<PidWithExtraInfo>>(nj);    for (int i = 0; i < nj; ++i) {_ppids[i].resize(npids); setInfoPPids(i);}
+    _tpids = allocAndCheck<std::vector<PidWithExtraInfo>>(nj);    for (int i = 0; i < nj; ++i) {_tpids[i].resize(npids); setInfoTPids(i);}
+    _cpids = allocAndCheck<std::vector<PidWithExtraInfo>>(nj);    for (int i = 0; i < nj; ++i) {_cpids[i].resize(npids); setInfoCPids(i);}
+    _vpids = allocAndCheck<std::vector<PidWithExtraInfo>>(nj);    for (int i = 0; i < nj; ++i) {_vpids[i].resize(npids); setInfoVPids(i);}
+
+    _ppids_ena = allocAndCheck<std::vector<bool>>(nj);    for (int i = 0; i < nj; ++i) _ppids_ena[i].resize(npids);
+    _tpids_ena = allocAndCheck<std::vector<bool>>(nj);    for (int i = 0; i < nj; ++i) _tpids_ena[i].resize(npids);
+    _cpids_ena = allocAndCheck<std::vector<bool>>(nj);    for (int i = 0; i < nj; ++i) _cpids_ena[i].resize(npids);
+    _vpids_ena = allocAndCheck<std::vector<bool>>(nj);    for (int i = 0; i < nj; ++i) _vpids_ena[i].resize(npids);
+
+    _ppids_lim = allocAndCheck<std::vector<double>>(nj);    for (int i = 0; i < nj; ++i) _ppids_lim[i].resize(npids);
+    _tpids_lim = allocAndCheck<std::vector<double>>(nj);    for (int i = 0; i < nj; ++i) _tpids_lim[i].resize(npids);
+    _cpids_lim = allocAndCheck<std::vector<double>>(nj);    for (int i = 0; i < nj; ++i) _cpids_lim[i].resize(npids);
+    _vpids_lim = allocAndCheck<std::vector<double>>(nj);    for (int i = 0; i < nj; ++i) _vpids_lim[i].resize(npids);
+
+    _ppids_ref = allocAndCheck<std::vector<double>>(nj);    for (int i = 0; i < nj; ++i) _ppids_ref[i].resize(npids);
+    _tpids_ref = allocAndCheck<std::vector<double>>(nj);    for (int i = 0; i < nj; ++i) _tpids_ref[i].resize(npids);
+    _cpids_ref = allocAndCheck<std::vector<double>>(nj);    for (int i = 0; i < nj; ++i) _cpids_ref[i].resize(npids);
+    _vpids_ref = allocAndCheck<std::vector<double>>(nj);    for (int i = 0; i < nj; ++i) _vpids_ref[i].resize(npids);
 
 //     _impedance_params=allocAndCheck<ImpedanceParameters>(nj);
 //     _impedance_limits=allocAndCheck<ImpedanceLimits>(nj);
@@ -294,6 +359,10 @@ bool FakeMotionControl::alloc(int nj)
     _enabledPid = allocAndCheck<bool>(nj);
     _calibrated = allocAndCheck<bool>(nj);
 //     _cacheImpedance = allocAndCheck<eOmc_impedance_t>(nj);
+
+    _stiffness = allocAndCheck<double>(nj);
+    _damping = allocAndCheck<double>(nj);
+    _force_offset = allocAndCheck<double>(nj);
 
     resizeBuffers();
 
@@ -571,8 +640,18 @@ bool FakeMotionControl::open(yarp::os::Searchable &config)
     ImplementMotorEncoders::initialize(_njoints, _axisMap, _angleToEncoder, nullptr);
     ImplementPositionControl::initialize(_njoints, _axisMap, _angleToEncoder, nullptr);
     ImplementPidControl::initialize(_njoints, _axisMap, _angleToEncoder, nullptr, _newtonsToSensor, _ampsToSensor, _dutycycleToPWM);
-    ImplementPidControl::setConversionUnits(PidControlTypeEnum::VOCAB_PIDTYPE_POSITION, PidFeedbackUnitsEnum::METRIC, PidOutputUnitsEnum::DUTYCYCLE_PWM_PERCENT);
-    ImplementPidControl::setConversionUnits(PidControlTypeEnum::VOCAB_PIDTYPE_TORQUE, PidFeedbackUnitsEnum::METRIC, PidOutputUnitsEnum::DUTYCYCLE_PWM_PERCENT);
+    ImplementPidControl::setConversionUnits(PidControlTypeEnum::VOCAB_PIDTYPE_POSITION_1, PidFeedbackUnitsEnum::METRIC, PidOutputUnitsEnum::DUTYCYCLE_PWM_PERCENT);
+    ImplementPidControl::setConversionUnits(PidControlTypeEnum::VOCAB_PIDTYPE_POSITION_2, PidFeedbackUnitsEnum::METRIC, PidOutputUnitsEnum::DUTYCYCLE_PWM_PERCENT);
+    ImplementPidControl::setConversionUnits(PidControlTypeEnum::VOCAB_PIDTYPE_POSITION_3, PidFeedbackUnitsEnum::METRIC, PidOutputUnitsEnum::DUTYCYCLE_PWM_PERCENT);
+    ImplementPidControl::setConversionUnits(PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY_1, PidFeedbackUnitsEnum::METRIC, PidOutputUnitsEnum::DUTYCYCLE_PWM_PERCENT);
+    ImplementPidControl::setConversionUnits(PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY_2, PidFeedbackUnitsEnum::METRIC, PidOutputUnitsEnum::DUTYCYCLE_PWM_PERCENT);
+    ImplementPidControl::setConversionUnits(PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY_3, PidFeedbackUnitsEnum::METRIC, PidOutputUnitsEnum::DUTYCYCLE_PWM_PERCENT);
+    ImplementPidControl::setConversionUnits(PidControlTypeEnum::VOCAB_PIDTYPE_TORQUE_1, PidFeedbackUnitsEnum::METRIC, PidOutputUnitsEnum::DUTYCYCLE_PWM_PERCENT);
+    ImplementPidControl::setConversionUnits(PidControlTypeEnum::VOCAB_PIDTYPE_TORQUE_2, PidFeedbackUnitsEnum::METRIC, PidOutputUnitsEnum::DUTYCYCLE_PWM_PERCENT);
+    ImplementPidControl::setConversionUnits(PidControlTypeEnum::VOCAB_PIDTYPE_TORQUE_3, PidFeedbackUnitsEnum::METRIC, PidOutputUnitsEnum::DUTYCYCLE_PWM_PERCENT);
+    ImplementPidControl::setConversionUnits(PidControlTypeEnum::VOCAB_PIDTYPE_CURRENT_1, PidFeedbackUnitsEnum::METRIC, PidOutputUnitsEnum::DUTYCYCLE_PWM_PERCENT);
+    ImplementPidControl::setConversionUnits(PidControlTypeEnum::VOCAB_PIDTYPE_CURRENT_2, PidFeedbackUnitsEnum::METRIC, PidOutputUnitsEnum::DUTYCYCLE_PWM_PERCENT);
+    ImplementPidControl::setConversionUnits(PidControlTypeEnum::VOCAB_PIDTYPE_CURRENT_3, PidFeedbackUnitsEnum::METRIC, PidOutputUnitsEnum::DUTYCYCLE_PWM_PERCENT);
     ImplementControlMode::initialize(_njoints, _axisMap);
     ImplementVelocityControl::initialize(_njoints, _axisMap, _angleToEncoder, nullptr);
     ImplementVelocityDirect::initialize(_njoints, _axisMap, _angleToEncoder, nullptr);
@@ -789,22 +868,31 @@ void FakeMotionControl::cleanup()
 
 ///////////// PID INTERFACE
 
-bool FakeMotionControl::setPidRaw(const PidControlTypeEnum& pidtype, int j, const Pid &pid)
+bool FakeMotionControl::setPidRaw(const PidControlTypeEnum& pidtype, int jnt, const Pid &pid)
 {
-    yCDebug(FAKEMOTIONCONTROL) << "setPidRaw" << pidtype << j << pid.kp;
+    yCDebug(FAKEMOTIONCONTROL) << "setPidRaw" << (yarp::conf::vocab32_t)(pidtype) << jnt << pid.kp;
+    size_t index = PidControlTypeEnum2Index(pidtype);
     switch (pidtype)
     {
-        case VOCAB_PIDTYPE_POSITION:
-            _ppids[j]=pid;
+        case PidControlTypeEnum::VOCAB_PIDTYPE_POSITION_1:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_POSITION_2:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_POSITION_3:
+           _ppids[jnt].at(index)=pid;
         break;
-        case VOCAB_PIDTYPE_VELOCITY:
-            _vpids[j]=pid;
+        case PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY_1:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY_2:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY_3:
+            _vpids[jnt].at(index)=pid;
         break;
-        case VOCAB_PIDTYPE_CURRENT:
-            _cpids[j]=pid;
+        case PidControlTypeEnum::VOCAB_PIDTYPE_CURRENT_1:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_CURRENT_2:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_CURRENT_3:
+            _cpids[jnt].at(index)=pid;
         break;
-        case VOCAB_PIDTYPE_TORQUE:
-            _tpids[j]=pid;
+        case PidControlTypeEnum::VOCAB_PIDTYPE_TORQUE_1:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_TORQUE_2:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_TORQUE_3:
+            _tpids[jnt].at(index)=pid;
         break;
         default:
         break;
@@ -824,19 +912,28 @@ bool FakeMotionControl::setPidsRaw(const PidControlTypeEnum& pidtype, const Pid 
 
 bool FakeMotionControl::setPidReferenceRaw(const PidControlTypeEnum& pidtype, int j, double ref)
 {
+    size_t index = PidControlTypeEnum2Index(pidtype);
     switch (pidtype)
     {
-        case VOCAB_PIDTYPE_POSITION:
-            _ppids_ref[j]=ref;
+        case PidControlTypeEnum::VOCAB_PIDTYPE_POSITION_1:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_POSITION_2:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_POSITION_3:
+            _ppids_ref[j].at(index)=ref;
         break;
-        case VOCAB_PIDTYPE_VELOCITY:
-            _vpids_ref[j]=ref;
+        case PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY_1:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY_2:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY_3:
+            _vpids_ref[j].at(index)=ref;
         break;
-        case VOCAB_PIDTYPE_CURRENT:
-            _cpids_ref[j]=ref;
+        case PidControlTypeEnum::VOCAB_PIDTYPE_CURRENT_1:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_CURRENT_2:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_CURRENT_3:
+            _cpids_ref[j].at(index)=ref;
         break;
-        case VOCAB_PIDTYPE_TORQUE:
-            _tpids_ref[j]=ref;
+        case PidControlTypeEnum::VOCAB_PIDTYPE_TORQUE_1:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_TORQUE_2:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_TORQUE_3:
+            _tpids_ref[j].at(index)=ref;
         break;
         default:
         break;
@@ -856,19 +953,28 @@ bool FakeMotionControl::setPidReferencesRaw(const PidControlTypeEnum& pidtype, c
 
 bool FakeMotionControl::setPidErrorLimitRaw(const PidControlTypeEnum& pidtype, int j, double limit)
 {
+    size_t index = PidControlTypeEnum2Index(pidtype);
     switch (pidtype)
     {
-        case VOCAB_PIDTYPE_POSITION:
-            _ppids_lim[j]=limit;
+        case PidControlTypeEnum::VOCAB_PIDTYPE_POSITION_1:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_POSITION_2:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_POSITION_3:
+            _ppids_lim[j].at(index)=limit;
         break;
-        case VOCAB_PIDTYPE_VELOCITY:
-            _vpids_lim[j]=limit;
+        case PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY_1:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY_2:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY_3:
+            _vpids_lim[j].at(index)=limit;
         break;
-        case VOCAB_PIDTYPE_CURRENT:
-            _cpids_lim[j]=limit;
+        case PidControlTypeEnum::VOCAB_PIDTYPE_CURRENT_1:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_CURRENT_2:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_CURRENT_3:
+            _cpids_lim[j].at(index)=limit;
         break;
-        case VOCAB_PIDTYPE_TORQUE:
-            _tpids_lim[j]=limit;
+        case PidControlTypeEnum::VOCAB_PIDTYPE_TORQUE_1:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_TORQUE_2:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_TORQUE_3:
+            _tpids_lim[j].at(index)=limit;
         break;
         default:
         break;
@@ -890,16 +996,24 @@ bool FakeMotionControl::getPidErrorRaw(const PidControlTypeEnum& pidtype, int j,
 {
     switch (pidtype)
     {
-        case VOCAB_PIDTYPE_POSITION:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_POSITION_1:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_POSITION_2:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_POSITION_3:
             *err=0.1;
         break;
-        case VOCAB_PIDTYPE_VELOCITY:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY_1:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY_2:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY_3:
             *err=0.2;
         break;
-        case VOCAB_PIDTYPE_CURRENT:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_CURRENT_1:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_CURRENT_2:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_CURRENT_3:
             *err=0.3;
         break;
-        case VOCAB_PIDTYPE_TORQUE:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_TORQUE_1:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_TORQUE_2:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_TORQUE_3:
             *err=0.4;
         break;
         default:
@@ -918,26 +1032,35 @@ bool FakeMotionControl::getPidErrorsRaw(const PidControlTypeEnum& pidtype, doubl
     return ret;
 }
 
-bool FakeMotionControl::getPidRaw(const PidControlTypeEnum& pidtype, int j, Pid *pid)
+bool FakeMotionControl::getPidRaw(const PidControlTypeEnum& pidtype, int jnt, Pid *pid)
 {
+    size_t index = PidControlTypeEnum2Index(pidtype);
     switch (pidtype)
     {
-        case VOCAB_PIDTYPE_POSITION:
-            *pid=_ppids[j];
+        case PidControlTypeEnum::VOCAB_PIDTYPE_POSITION_1:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_POSITION_2:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_POSITION_3:
+            *pid=_ppids[jnt].at(index).pid;
         break;
-        case VOCAB_PIDTYPE_VELOCITY:
-            *pid=_vpids[j];
+        case PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY_1:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY_2:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY_3:
+            *pid=_vpids[jnt].at(index).pid;
         break;
-        case VOCAB_PIDTYPE_CURRENT:
-            *pid=_cpids[j];
+        case PidControlTypeEnum::VOCAB_PIDTYPE_CURRENT_1:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_CURRENT_2:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_CURRENT_3:
+            *pid=_cpids[jnt].at(index).pid;
         break;
-        case VOCAB_PIDTYPE_TORQUE:
-            *pid=_tpids[j];
+        case PidControlTypeEnum::VOCAB_PIDTYPE_TORQUE_1:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_TORQUE_2:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_TORQUE_3:
+            *pid=_tpids[jnt].at(index).pid;
         break;
         default:
         break;
     }
-    yCDebug(FAKEMOTIONCONTROL) << "getPidRaw" << pidtype << j << pid->kp;
+    yCDebug(FAKEMOTIONCONTROL) << "getPidRaw" << (yarp::conf::vocab32_t)(pidtype) << jnt << pid->kp;
     return true;
 }
 
@@ -956,19 +1079,28 @@ bool FakeMotionControl::getPidsRaw(const PidControlTypeEnum& pidtype, Pid *pids)
 
 bool FakeMotionControl::getPidReferenceRaw(const PidControlTypeEnum& pidtype, int j, double *ref)
 {
+    size_t index = PidControlTypeEnum2Index(pidtype);
     switch (pidtype)
     {
-        case VOCAB_PIDTYPE_POSITION:
-            *ref=_ppids_ref[j];
+        case PidControlTypeEnum::VOCAB_PIDTYPE_POSITION_1:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_POSITION_2:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_POSITION_3:
+            *ref=_ppids_ref[j].at(index);
         break;
-        case VOCAB_PIDTYPE_VELOCITY:
-            *ref=_vpids_ref[j];
+        case PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY_1:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY_2:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY_3:
+            *ref=_vpids_ref[j].at(index);
         break;
-        case VOCAB_PIDTYPE_CURRENT:
-            *ref=_cpids_ref[j];
+        case PidControlTypeEnum::VOCAB_PIDTYPE_CURRENT_1:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_CURRENT_2:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_CURRENT_3:
+            *ref=_cpids_ref[j].at(index);
         break;
-        case VOCAB_PIDTYPE_TORQUE:
-            *ref=_tpids_ref[j];
+        case PidControlTypeEnum::VOCAB_PIDTYPE_TORQUE_1:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_TORQUE_2:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_TORQUE_3:
+            *ref=_tpids_ref[j].at(index);
         break;
         default:
         break;
@@ -991,19 +1123,28 @@ bool FakeMotionControl::getPidReferencesRaw(const PidControlTypeEnum& pidtype, d
 
 bool FakeMotionControl::getPidErrorLimitRaw(const PidControlTypeEnum& pidtype, int j, double *limit)
 {
+    size_t index = PidControlTypeEnum2Index(pidtype);
     switch (pidtype)
     {
-        case VOCAB_PIDTYPE_POSITION:
-            *limit=_ppids_lim[j];
+        case PidControlTypeEnum::VOCAB_PIDTYPE_POSITION_1:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_POSITION_2:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_POSITION_3:
+            *limit=_ppids_lim[j].at(index);
         break;
-        case VOCAB_PIDTYPE_VELOCITY:
-            *limit=_vpids_lim[j];
+        case PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY_1:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY_2:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY_3:
+            *limit=_vpids_lim[j].at(index);
         break;
-        case VOCAB_PIDTYPE_CURRENT:
-            *limit=_cpids_lim[j];
+        case PidControlTypeEnum::VOCAB_PIDTYPE_CURRENT_1:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_CURRENT_2:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_CURRENT_3:
+            *limit=_cpids_lim[j].at(index);
         break;
-        case VOCAB_PIDTYPE_TORQUE:
-            *limit=_tpids_lim[j];
+        case PidControlTypeEnum::VOCAB_PIDTYPE_TORQUE_1:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_TORQUE_2:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_TORQUE_3:
+            *limit=_tpids_lim[j].at(index);
         break;
         default:
         break;
@@ -1028,19 +1169,28 @@ bool FakeMotionControl::resetPidRaw(const PidControlTypeEnum& pidtype, int j)
 
 bool FakeMotionControl::disablePidRaw(const PidControlTypeEnum& pidtype, int j)
 {
+    size_t index = PidControlTypeEnum2Index(pidtype);
     switch (pidtype)
     {
-        case VOCAB_PIDTYPE_POSITION:
-            _ppids_ena[j]=false;
+        case PidControlTypeEnum::VOCAB_PIDTYPE_POSITION_1:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_POSITION_2:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_POSITION_3:
+            _ppids_ena[j].at(index)=false;
         break;
-        case VOCAB_PIDTYPE_VELOCITY:
-            _vpids_ena[j]=false;
+        case PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY_1:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY_2:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY_3:
+            _vpids_ena[j].at(index)=false;
         break;
-        case VOCAB_PIDTYPE_CURRENT:
-            _cpids_ena[j]=false;
+        case PidControlTypeEnum::VOCAB_PIDTYPE_CURRENT_1:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_CURRENT_2:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_CURRENT_3:
+            _cpids_ena[j].at(index)=false;
         break;
-        case VOCAB_PIDTYPE_TORQUE:
-            _tpids_ena[j]=false;
+        case PidControlTypeEnum::VOCAB_PIDTYPE_TORQUE_1:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_TORQUE_2:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_TORQUE_3:
+            _tpids_ena[j].at(index)=false;
         break;
         default:
         break;
@@ -1050,19 +1200,28 @@ bool FakeMotionControl::disablePidRaw(const PidControlTypeEnum& pidtype, int j)
 
 bool FakeMotionControl::enablePidRaw(const PidControlTypeEnum& pidtype, int j)
 {
+    size_t index = PidControlTypeEnum2Index(pidtype);
     switch (pidtype)
     {
-        case VOCAB_PIDTYPE_POSITION:
-            _ppids_ena[j]=true;
+        case PidControlTypeEnum::VOCAB_PIDTYPE_POSITION_1:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_POSITION_2:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_POSITION_3:
+            _ppids_ena[j].at(index)=true;
         break;
-        case VOCAB_PIDTYPE_VELOCITY:
-            _vpids_ena[j]=true;
+        case PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY_1:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY_2:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY_3:
+            _vpids_ena[j].at(index)=true;
         break;
-        case VOCAB_PIDTYPE_CURRENT:
-            _cpids_ena[j]=true;
+        case PidControlTypeEnum::VOCAB_PIDTYPE_CURRENT_1:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_CURRENT_2:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_CURRENT_3:
+            _cpids_ena[j].at(index)=true;
         break;
-        case VOCAB_PIDTYPE_TORQUE:
-            _tpids_ena[j]=true;
+        case PidControlTypeEnum::VOCAB_PIDTYPE_TORQUE_1:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_TORQUE_2:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_TORQUE_3:
+            _tpids_ena[j].at(index)=true;
         break;
         default:
         break;
@@ -1070,22 +1229,31 @@ bool FakeMotionControl::enablePidRaw(const PidControlTypeEnum& pidtype, int j)
     return true;
 }
 
-bool FakeMotionControl::setPidOffsetRaw(const PidControlTypeEnum& pidtype, int j, double v)
+bool FakeMotionControl::setPidOffsetRaw(const PidControlTypeEnum& pidtype, int jnt, double v)
 {
-    yCDebug(FAKEMOTIONCONTROL) << "setPidOffsetRaw" << pidtype << j << v;
+    yCDebug(FAKEMOTIONCONTROL) << "setPidOffsetRaw" << (yarp::conf::vocab32_t)(pidtype) << jnt << v;
+    size_t index = PidControlTypeEnum2Index(pidtype);
     switch (pidtype)
     {
-        case VOCAB_PIDTYPE_POSITION:
-            _ppids[j].offset=v;
+        case PidControlTypeEnum::VOCAB_PIDTYPE_POSITION_1:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_POSITION_2:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_POSITION_3:
+            _ppids[jnt].at(index).pid.offset=v;
         break;
-        case VOCAB_PIDTYPE_VELOCITY:
-            _vpids[j].offset=v;
+        case PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY_1:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY_2:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY_3:
+            _vpids[jnt].at(index).pid.offset=v;
         break;
-        case VOCAB_PIDTYPE_CURRENT:
-            _cpids[j].offset=v;
+        case PidControlTypeEnum::VOCAB_PIDTYPE_CURRENT_1:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_CURRENT_2:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_CURRENT_3:
+            _cpids[jnt].at(index).pid.offset=v;
         break;
-        case VOCAB_PIDTYPE_TORQUE:
-            _tpids[j].offset=v;
+        case PidControlTypeEnum::VOCAB_PIDTYPE_TORQUE_1:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_TORQUE_2:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_TORQUE_3:
+            _tpids[jnt].at(index).pid.offset=v;
         break;
         default:
         break;
@@ -1095,19 +1263,28 @@ bool FakeMotionControl::setPidOffsetRaw(const PidControlTypeEnum& pidtype, int j
 
 bool FakeMotionControl::isPidEnabledRaw(const PidControlTypeEnum& pidtype, int j, bool* enabled)
 {
+    size_t index = PidControlTypeEnum2Index(pidtype);
     switch (pidtype)
     {
-        case VOCAB_PIDTYPE_POSITION:
-            *enabled=_ppids_ena[j];
+        case PidControlTypeEnum::VOCAB_PIDTYPE_POSITION_1:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_POSITION_2:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_POSITION_3:
+            *enabled=_ppids_ena[j].at(index);
         break;
-        case VOCAB_PIDTYPE_VELOCITY:
-            *enabled=_vpids_ena[j];
+        case PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY_1:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY_2:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY_3:
+            *enabled=_vpids_ena[j].at(index);
         break;
-        case VOCAB_PIDTYPE_CURRENT:
-            *enabled=_cpids_ena[j];
+        case PidControlTypeEnum::VOCAB_PIDTYPE_CURRENT_1:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_CURRENT_2:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_CURRENT_3:
+            *enabled=_cpids_ena[j].at(index);
         break;
-        case VOCAB_PIDTYPE_TORQUE:
-            *enabled=_tpids_ena[j];
+        case PidControlTypeEnum::VOCAB_PIDTYPE_TORQUE_1:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_TORQUE_2:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_TORQUE_3:
+            *enabled=_tpids_ena[j].at(index);
         break;
         default:
         break;
@@ -1117,24 +1294,33 @@ bool FakeMotionControl::isPidEnabledRaw(const PidControlTypeEnum& pidtype, int j
 
 bool FakeMotionControl::getPidOutputRaw(const PidControlTypeEnum& pidtype, int j, double *out)
 {
+    size_t index = PidControlTypeEnum2Index(pidtype);
     switch (pidtype)
     {
-        case VOCAB_PIDTYPE_POSITION:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_POSITION_1:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_POSITION_2:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_POSITION_3:
             *out=1.1 + j * 10;
         break;
-        case VOCAB_PIDTYPE_VELOCITY:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY_1:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY_2:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY_3:
             *out=1.2 + j * 10;
         break;
-        case VOCAB_PIDTYPE_CURRENT:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_CURRENT_1:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_CURRENT_2:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_CURRENT_3:
             *out=1.3 + j * 10;
         break;
-        case VOCAB_PIDTYPE_TORQUE:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_TORQUE_1:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_TORQUE_2:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_TORQUE_3:
             *out=1.4 + j * 10;
         break;
         default:
         break;
     }
-    yCDebug(FAKEMOTIONCONTROL) << "getPidOutputRaw" << pidtype << j << *out;
+    yCDebug(FAKEMOTIONCONTROL) << "getPidOutputRaw" << (yarp::conf::vocab32_t)(pidtype) << j << *out;
     return true;
 }
 
@@ -2746,6 +2932,55 @@ ReturnValue FakeMotionControl::getDesiredVelocityRaw(const std::vector<int>& jnt
     }
     return ret;
 }
+
+
+ReturnValue FakeMotionControl::getPidExtraInfoRaw(const PidControlTypeEnum& pidtype, int j, yarp::dev::PidExtraInfo& units)
+{
+    yCTrace(FAKEMOTIONCONTROL);
+    ReturnValue ret = ReturnValue_ok;
+
+    size_t index = PidControlTypeEnum2Index(pidtype);
+    switch (pidtype)
+    {
+        case PidControlTypeEnum::VOCAB_PIDTYPE_POSITION_1:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_POSITION_2:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_POSITION_3:
+            units=_ppids[j].at(index).pidExtraInfo;
+        break;
+        case PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY_1:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY_2:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY_3:
+            units=_vpids[j].at(index).pidExtraInfo;
+        break;
+        case PidControlTypeEnum::VOCAB_PIDTYPE_CURRENT_1:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_CURRENT_2:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_CURRENT_3:
+            units=_cpids[j].at(index).pidExtraInfo;
+        break;
+        case PidControlTypeEnum::VOCAB_PIDTYPE_TORQUE_1:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_TORQUE_2:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_TORQUE_3:
+            units=_tpids[j].at(index).pidExtraInfo;
+        break;
+        default:
+        break;
+    }
+
+    return ret;
+}
+
+
+ReturnValue FakeMotionControl::getPidExtraInfosRaw(const PidControlTypeEnum& pidtype, std::vector<yarp::dev::PidExtraInfo>& units)
+{
+    yCTrace(FAKEMOTIONCONTROL);
+    ReturnValue ret = ReturnValue_ok;
+    units.resize(_njoints);
+    for (int i = 0; i < _njoints; i++) {
+        ret &= getPidExtraInfoRaw(pidtype, i, units[i]);
+    }
+    return ret;
+}
+
 
 /*
 bool FakeMotionControl::parseImpedanceGroup_NewFormat(Bottle& pidsGroup, ImpedanceParameters vals[])
