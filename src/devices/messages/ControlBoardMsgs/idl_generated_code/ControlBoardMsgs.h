@@ -19,6 +19,8 @@
 #include <return_getDesiredVelocityAll.h>
 #include <return_getDesiredVelocityGroup.h>
 #include <return_getDesiredVelocityOne.h>
+#include <return_getInfoPid.h>
+#include <return_getInfoPids.h>
 #include <return_getPid.h>
 #include <return_getPids.h>
 #include <return_isJointBraked.h>
@@ -62,6 +64,10 @@ public:
     virtual return_getPid getPidRPC(const yarp::dev::PidControlTypeEnum pidtype, const std::int16_t j);
 
     virtual return_getPids getPidsRPC(const yarp::dev::PidControlTypeEnum pidtype);
+
+    virtual return_getInfoPid getPidExtraInfoRPC(const yarp::dev::PidControlTypeEnum pidtype, const std::int16_t j);
+
+    virtual return_getInfoPids getPidExtraInfosRPC(const yarp::dev::PidControlTypeEnum pidtype);
 
     // help method
     virtual std::vector<std::string> help(const std::string& functionName = "--all");

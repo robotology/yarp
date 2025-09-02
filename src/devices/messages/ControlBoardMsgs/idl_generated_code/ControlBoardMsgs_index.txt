@@ -14,5 +14,9 @@ return_getPid.h
 return_getPid.cpp
 return_getPids.h
 return_getPids.cpp
+return_getInfoPid.h
+return_getInfoPid.cpp
+return_getInfoPids.h
+return_getInfoPids.cpp
 ControlBoardMsgs.h
 ControlBoardMsgs.cpp

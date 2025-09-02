@@ -857,6 +857,133 @@ public:
     static constexpr const char* s_help{""};
 };
 
+// getPidExtraInfoRPC helper class declaration
+class ControlBoardMsgs_getPidExtraInfoRPC_helper :
+        public yarp::os::Portable
+{
+public:
+    ControlBoardMsgs_getPidExtraInfoRPC_helper() = default;
+    ControlBoardMsgs_getPidExtraInfoRPC_helper(const yarp::dev::PidControlTypeEnum pidtype, const std::int16_t j);
+    bool write(yarp::os::ConnectionWriter& connection) const override;
+    bool read(yarp::os::ConnectionReader& connection) override;
+
+    class Command :
+            public yarp::os::idl::WirePortable
+    {
+    public:
+        Command() = default;
+        Command(const yarp::dev::PidControlTypeEnum pidtype, const std::int16_t j);
+
+        ~Command() override = default;
+
+        bool write(yarp::os::ConnectionWriter& connection) const override;
+        bool read(yarp::os::ConnectionReader& connection) override;
+
+        bool write(const yarp::os::idl::WireWriter& writer) const override;
+        bool writeTag(const yarp::os::idl::WireWriter& writer) const;
+        bool writeArgs(const yarp::os::idl::WireWriter& writer) const;
+
+        bool read(yarp::os::idl::WireReader& reader) override;
+        bool readTag(yarp::os::idl::WireReader& reader);
+        bool readArgs(yarp::os::idl::WireReader& reader);
+
+        yarp::dev::PidControlTypeEnum pidtype{};
+        std::int16_t j{0};
+    };
+
+    class Reply :
+            public yarp::os::idl::WirePortable
+    {
+    public:
+        Reply() = default;
+        ~Reply() override = default;
+
+        bool write(yarp::os::ConnectionWriter& connection) const override;
+        bool read(yarp::os::ConnectionReader& connection) override;
+
+        bool write(const yarp::os::idl::WireWriter& writer) const override;
+        bool read(yarp::os::idl::WireReader& reader) override;
+
+        return_getInfoPid return_helper{};
+    };
+
+    using funcptr_t = return_getInfoPid (*)(const yarp::dev::PidControlTypeEnum, const std::int16_t);
+    void call(ControlBoardMsgs* ptr);
+
+    Command cmd;
+    Reply reply;
+
+    static constexpr const char* s_tag{"getPidExtraInfoRPC"};
+    static constexpr size_t s_tag_len{1};
+    static constexpr size_t s_cmd_len{3};
+    static constexpr size_t s_reply_len{2};
+    static constexpr const char* s_prototype{"return_getInfoPid ControlBoardMsgs::getPidExtraInfoRPC(const yarp::dev::PidControlTypeEnum pidtype, const std::int16_t j)"};
+    static constexpr const char* s_help{""};
+};
+
+// getPidExtraInfosRPC helper class declaration
+class ControlBoardMsgs_getPidExtraInfosRPC_helper :
+        public yarp::os::Portable
+{
+public:
+    ControlBoardMsgs_getPidExtraInfosRPC_helper() = default;
+    explicit ControlBoardMsgs_getPidExtraInfosRPC_helper(const yarp::dev::PidControlTypeEnum pidtype);
+    bool write(yarp::os::ConnectionWriter& connection) const override;
+    bool read(yarp::os::ConnectionReader& connection) override;
+
+    class Command :
+            public yarp::os::idl::WirePortable
+    {
+    public:
+        Command() = default;
+        explicit Command(const yarp::dev::PidControlTypeEnum pidtype);
+
+        ~Command() override = default;
+
+        bool write(yarp::os::ConnectionWriter& connection) const override;
+        bool read(yarp::os::ConnectionReader& connection) override;
+
+        bool write(const yarp::os::idl::WireWriter& writer) const override;
+        bool writeTag(const yarp::os::idl::WireWriter& writer) const;
+        bool writeArgs(const yarp::os::idl::WireWriter& writer) const;
+
+        bool read(yarp::os::idl::WireReader& reader) override;
+        bool readTag(yarp::os::idl::WireReader& reader);
+        bool readArgs(yarp::os::idl::WireReader& reader);
+
+        yarp::dev::PidControlTypeEnum pidtype{};
+    };
+
+    class Reply :
+            public yarp::os::idl::WirePortable
+    {
+    public:
+        Reply() = default;
+        ~Reply() override = default;
+
+        bool write(yarp::os::ConnectionWriter& connection) const override;
+        bool read(yarp::os::ConnectionReader& connection) override;
+
+        bool write(const yarp::os::idl::WireWriter& writer) const override;
+        bool read(yarp::os::idl::WireReader& reader) override;
+
+        return_getInfoPids return_helper{};
+    };
+
+    using funcptr_t = return_getInfoPids (*)(const yarp::dev::PidControlTypeEnum);
+    void call(ControlBoardMsgs* ptr);
+
+    Command cmd;
+    Reply reply;
+
+    static constexpr const char* s_tag{"getPidExtraInfosRPC"};
+    static constexpr size_t s_tag_len{1};
+    static constexpr size_t s_cmd_len{2};
+    static constexpr size_t s_reply_len{2};
+    static constexpr const char* s_prototype{"return_getInfoPids ControlBoardMsgs::getPidExtraInfosRPC(const yarp::dev::PidControlTypeEnum pidtype)"};
+    static constexpr const char* s_help{""};
+};
+
 // isJointBrakedRPC helper class implementation
 ControlBoardMsgs_isJointBrakedRPC_helper::ControlBoardMsgs_isJointBrakedRPC_helper(const std::int32_t j) :
         cmd{j}
@@ -2762,6 +2889,330 @@ void ControlBoardMsgs_getPidsRPC_helper::call(ControlBoardMsgs* ptr)
     reply.return_helper = ptr->getPidsRPC(cmd.pidtype);
 }
 
+// getPidExtraInfoRPC helper class implementation
+ControlBoardMsgs_getPidExtraInfoRPC_helper::ControlBoardMsgs_getPidExtraInfoRPC_helper(const yarp::dev::PidControlTypeEnum pidtype, const std::int16_t j) :
+        cmd{pidtype, j}
+{
+}
+
+bool ControlBoardMsgs_getPidExtraInfoRPC_helper::write(yarp::os::ConnectionWriter& connection) const
+{
+    return cmd.write(connection);
+}
+
+bool ControlBoardMsgs_getPidExtraInfoRPC_helper::read(yarp::os::ConnectionReader& connection)
+{
+    return reply.read(connection);
+}
+
+ControlBoardMsgs_getPidExtraInfoRPC_helper::Command::Command(const yarp::dev::PidControlTypeEnum pidtype, const std::int16_t j) :
+        pidtype{pidtype},
+        j{j}
+{
+}
+
+bool ControlBoardMsgs_getPidExtraInfoRPC_helper::Command::write(yarp::os::ConnectionWriter& connection) const
+{
+    yarp::os::idl::WireWriter writer(connection);
+    if (!writer.writeListHeader(s_cmd_len)) {
+        return false;
+    }
+    return write(writer);
+}
+
+bool ControlBoardMsgs_getPidExtraInfoRPC_helper::Command::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    if (!reader.readListHeader()) {
+        reader.fail();
+        return false;
+    }
+    return read(reader);
+}
+
+bool ControlBoardMsgs_getPidExtraInfoRPC_helper::Command::write(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writeTag(writer)) {
+        return false;
+    }
+    if (!writeArgs(writer)) {
+        return false;
+    }
+    return true;
+}
+
+bool ControlBoardMsgs_getPidExtraInfoRPC_helper::Command::writeTag(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.writeTag(s_tag, 1, s_tag_len)) {
+        return false;
+    }
+    return true;
+}
+
+bool ControlBoardMsgs_getPidExtraInfoRPC_helper::Command::writeArgs(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.writeI32(static_cast<int32_t>(pidtype))) {
+        return false;
+    }
+    if (!writer.writeI16(j)) {
+        return false;
+    }
+    return true;
+}
+
+bool ControlBoardMsgs_getPidExtraInfoRPC_helper::Command::read(yarp::os::idl::WireReader& reader)
+{
+    if (!readTag(reader)) {
+        return false;
+    }
+    if (!readArgs(reader)) {
+        return false;
+    }
+    return true;
+}
+
+bool ControlBoardMsgs_getPidExtraInfoRPC_helper::Command::readTag(yarp::os::idl::WireReader& reader)
+{
+    std::string tag = reader.readTag(s_tag_len);
+    if (reader.isError()) {
+        return false;
+    }
+    if (tag != s_tag) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool ControlBoardMsgs_getPidExtraInfoRPC_helper::Command::readArgs(yarp::os::idl::WireReader& reader)
+{
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
+    int32_t _ecast;
+    if (!reader.readI32(_ecast)) {
+        reader.fail();
+        return false;
+    }
+    pidtype = static_cast<yarp::dev::PidControlTypeEnum>(_ecast);
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
+    if (!reader.readI16(j)) {
+        reader.fail();
+        return false;
+    }
+    if (!reader.noMore()) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool ControlBoardMsgs_getPidExtraInfoRPC_helper::Reply::write(yarp::os::ConnectionWriter& connection) const
+{
+    yarp::os::idl::WireWriter writer(connection);
+    return write(writer);
+}
+
+bool ControlBoardMsgs_getPidExtraInfoRPC_helper::Reply::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    return read(reader);
+}
+
+bool ControlBoardMsgs_getPidExtraInfoRPC_helper::Reply::write(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.isNull()) {
+        if (!writer.writeListHeader(s_reply_len)) {
+            return false;
+        }
+        if (!writer.write(return_helper)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+bool ControlBoardMsgs_getPidExtraInfoRPC_helper::Reply::read(yarp::os::idl::WireReader& reader)
+{
+    if (!reader.readListReturn()) {
+        return false;
+    }
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
+    if (!reader.read(return_helper)) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+void ControlBoardMsgs_getPidExtraInfoRPC_helper::call(ControlBoardMsgs* ptr)
+{
+    reply.return_helper = ptr->getPidExtraInfoRPC(cmd.pidtype, cmd.j);
+}
+
+// getPidExtraInfosRPC helper class implementation
+ControlBoardMsgs_getPidExtraInfosRPC_helper::ControlBoardMsgs_getPidExtraInfosRPC_helper(const yarp::dev::PidControlTypeEnum pidtype) :
+        cmd{pidtype}
+{
+}
+
+bool ControlBoardMsgs_getPidExtraInfosRPC_helper::write(yarp::os::ConnectionWriter& connection) const
+{
+    return cmd.write(connection);
+}
+
+bool ControlBoardMsgs_getPidExtraInfosRPC_helper::read(yarp::os::ConnectionReader& connection)
+{
+    return reply.read(connection);
+}
+
+ControlBoardMsgs_getPidExtraInfosRPC_helper::Command::Command(const yarp::dev::PidControlTypeEnum pidtype) :
+        pidtype{pidtype}
+{
+}
+
+bool ControlBoardMsgs_getPidExtraInfosRPC_helper::Command::write(yarp::os::ConnectionWriter& connection) const
+{
+    yarp::os::idl::WireWriter writer(connection);
+    if (!writer.writeListHeader(s_cmd_len)) {
+        return false;
+    }
+    return write(writer);
+}
+
+bool ControlBoardMsgs_getPidExtraInfosRPC_helper::Command::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    if (!reader.readListHeader()) {
+        reader.fail();
+        return false;
+    }
+    return read(reader);
+}
+
+bool ControlBoardMsgs_getPidExtraInfosRPC_helper::Command::write(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writeTag(writer)) {
+        return false;
+    }
+    if (!writeArgs(writer)) {
+        return false;
+    }
+    return true;
+}
+
+bool ControlBoardMsgs_getPidExtraInfosRPC_helper::Command::writeTag(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.writeTag(s_tag, 1, s_tag_len)) {
+        return false;
+    }
+    return true;
+}
+
+bool ControlBoardMsgs_getPidExtraInfosRPC_helper::Command::writeArgs(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.writeI32(static_cast<int32_t>(pidtype))) {
+        return false;
+    }
+    return true;
+}
+
+bool ControlBoardMsgs_getPidExtraInfosRPC_helper::Command::read(yarp::os::idl::WireReader& reader)
+{
+    if (!readTag(reader)) {
+        return false;
+    }
+    if (!readArgs(reader)) {
+        return false;
+    }
+    return true;
+}
+
+bool ControlBoardMsgs_getPidExtraInfosRPC_helper::Command::readTag(yarp::os::idl::WireReader& reader)
+{
+    std::string tag = reader.readTag(s_tag_len);
+    if (reader.isError()) {
+        return false;
+    }
+    if (tag != s_tag) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool ControlBoardMsgs_getPidExtraInfosRPC_helper::Command::readArgs(yarp::os::idl::WireReader& reader)
+{
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
+    int32_t _ecast;
+    if (!reader.readI32(_ecast)) {
+        reader.fail();
+        return false;
+    }
+    pidtype = static_cast<yarp::dev::PidControlTypeEnum>(_ecast);
+    if (!reader.noMore()) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool ControlBoardMsgs_getPidExtraInfosRPC_helper::Reply::write(yarp::os::ConnectionWriter& connection) const
+{
+    yarp::os::idl::WireWriter writer(connection);
+    return write(writer);
+}
+
+bool ControlBoardMsgs_getPidExtraInfosRPC_helper::Reply::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    return read(reader);
+}
+
+bool ControlBoardMsgs_getPidExtraInfosRPC_helper::Reply::write(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.isNull()) {
+        if (!writer.writeListHeader(s_reply_len)) {
+            return false;
+        }
+        if (!writer.write(return_helper)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+bool ControlBoardMsgs_getPidExtraInfosRPC_helper::Reply::read(yarp::os::idl::WireReader& reader)
+{
+    if (!reader.readListReturn()) {
+        return false;
+    }
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
+    if (!reader.read(return_helper)) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+void ControlBoardMsgs_getPidExtraInfosRPC_helper::call(ControlBoardMsgs* ptr)
+{
+    reply.return_helper = ptr->getPidExtraInfosRPC(cmd.pidtype);
+}
+
 // Constructor
 ControlBoardMsgs::ControlBoardMsgs()
 {
@@ -2888,6 +3339,26 @@ return_getPids ControlBoardMsgs::getPidsRPC(const yarp::dev::PidControlTypeEnum 
     return ok ? helper.reply.return_helper : return_getPids{};
 }
 
+return_getInfoPid ControlBoardMsgs::getPidExtraInfoRPC(const yarp::dev::PidControlTypeEnum pidtype, const std::int16_t j)
+{
+    if (!yarp().canWrite()) {
+        yError("Missing server method '%s'?", ControlBoardMsgs_getPidExtraInfoRPC_helper::s_prototype);
+    }
+    ControlBoardMsgs_getPidExtraInfoRPC_helper helper{pidtype, j};
+    bool ok = yarp().write(helper, helper);
+    return ok ? helper.reply.return_helper : return_getInfoPid{};
+}
+
+return_getInfoPids ControlBoardMsgs::getPidExtraInfosRPC(const yarp::dev::PidControlTypeEnum pidtype)
+{
+    if (!yarp().canWrite()) {
+        yError("Missing server method '%s'?", ControlBoardMsgs_getPidExtraInfosRPC_helper::s_prototype);
+    }
+    ControlBoardMsgs_getPidExtraInfosRPC_helper helper{pidtype};
+    bool ok = yarp().write(helper, helper);
+    return ok ? helper.reply.return_helper : return_getInfoPids{};
+}
+
 // help method
 std::vector<std::string> ControlBoardMsgs::help(const std::string& functionName)
 {
@@ -2907,6 +3378,8 @@ std::vector<std::string> ControlBoardMsgs::help(const std::string& functionName)
         helpString.emplace_back(ControlBoardMsgs_setPidsRPC_helper::s_tag);
         helpString.emplace_back(ControlBoardMsgs_getPidRPC_helper::s_tag);
         helpString.emplace_back(ControlBoardMsgs_getPidsRPC_helper::s_tag);
+        helpString.emplace_back(ControlBoardMsgs_getPidExtraInfoRPC_helper::s_tag);
+        helpString.emplace_back(ControlBoardMsgs_getPidExtraInfosRPC_helper::s_tag);
         helpString.emplace_back("help");
     } else {
         if (functionName == ControlBoardMsgs_isJointBrakedRPC_helper::s_tag) {
@@ -2944,6 +3417,12 @@ std::vector<std::string> ControlBoardMsgs::help(const std::string& functionName)
         }
         if (functionName == ControlBoardMsgs_getPidsRPC_helper::s_tag) {
             helpString.emplace_back(ControlBoardMsgs_getPidsRPC_helper::s_prototype);
+        }
+        if (functionName == ControlBoardMsgs_getPidExtraInfoRPC_helper::s_tag) {
+            helpString.emplace_back(ControlBoardMsgs_getPidExtraInfoRPC_helper::s_prototype);
+        }
+        if (functionName == ControlBoardMsgs_getPidExtraInfosRPC_helper::s_tag) {
+            helpString.emplace_back(ControlBoardMsgs_getPidExtraInfosRPC_helper::s_prototype);
         }
         if (functionName == "help") {
             helpString.emplace_back("std::vector<std::string> help(const std::string& functionName = \"--all\")");
@@ -3164,6 +3643,36 @@ bool ControlBoardMsgs::read(yarp::os::ConnectionReader& connection)
         }
         if (tag == ControlBoardMsgs_getPidsRPC_helper::s_tag) {
             ControlBoardMsgs_getPidsRPC_helper helper;
+            if (!helper.cmd.readArgs(reader)) {
+                return false;
+            }
+
+            helper.call(this);
+
+            yarp::os::idl::WireWriter writer(reader);
+            if (!helper.reply.write(writer)) {
+                return false;
+            }
+            reader.accept();
+            return true;
+        }
+        if (tag == ControlBoardMsgs_getPidExtraInfoRPC_helper::s_tag) {
+            ControlBoardMsgs_getPidExtraInfoRPC_helper helper;
+            if (!helper.cmd.readArgs(reader)) {
+                return false;
+            }
+
+            helper.call(this);
+
+            yarp::os::idl::WireWriter writer(reader);
+            if (!helper.reply.write(writer)) {
+                return false;
+            }
+            reader.accept();
+            return true;
+        }
+        if (tag == ControlBoardMsgs_getPidExtraInfosRPC_helper::s_tag) {
+            ControlBoardMsgs_getPidExtraInfosRPC_helper helper;
             if (!helper.cmd.readArgs(reader)) {
                 return false;
             }
