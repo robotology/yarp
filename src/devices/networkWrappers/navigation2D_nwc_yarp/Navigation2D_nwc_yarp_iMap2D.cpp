@@ -310,3 +310,66 @@ ReturnValue Navigation2D_nwc_yarp::enableMapsCompression(bool enable)
     std::lock_guard <std::mutex> lg(m_mutex);
     return m_map_RPC.enable_maps_compression_RPC(enable);
 }
+
+ReturnValue Navigation2D_nwc_yarp::storeObject(std::string object_name, Map2DObject obj)
+{
+    std::lock_guard <std::mutex> lg(m_mutex);
+    return m_map_RPC.store_object_RPC(object_name, obj);
+}
+
+ReturnValue Navigation2D_nwc_yarp::getObject(std::string object_name, Map2DObject& obj)
+{
+    std::lock_guard <std::mutex> lg(m_mutex);
+    auto ret = m_map_RPC.get_object_RPC(object_name);
+    if (!ret.retval)
+    {
+        yCError(NAVIGATION2D_NWC, "Unable to getObject");
+        return ret.retval;
+    }
+    obj = ret.obj;
+    return ret.retval;
+}
+
+ReturnValue Navigation2D_nwc_yarp::getObjectsList(std::vector<std::string>& objects)
+{
+    std::lock_guard <std::mutex> lg(m_mutex);
+    auto ret = m_map_RPC.get_objects_list_RPC();
+    if (!ret.retval)
+    {
+        yCError(NAVIGATION2D_NWC, "Unable to getObjectsList");
+        return ret.retval;
+    }
+    objects = ret.objects;
+    return ret.retval;
+}
+
+ReturnValue Navigation2D_nwc_yarp::getAllObjects(std::vector<yarp::dev::Nav2D::Map2DObject>& objects)
+{
+    std::lock_guard <std::mutex> lg(m_mutex);
+    auto ret = m_map_RPC.get_all_objects_RPC();
+    if (!ret.retval)
+    {
+        yCError(NAVIGATION2D_NWC, "Unable to getAllObjects");
+        return ret.retval;
+    }
+    objects = ret.objects;
+    return ret.retval;
+}
+
+ReturnValue Navigation2D_nwc_yarp::renameObject(std::string original_name, std::string new_name)
+{
+    std::lock_guard <std::mutex> lg(m_mutex);
+    return m_map_RPC.rename_object_RPC(original_name, new_name);
+}
+
+ReturnValue Navigation2D_nwc_yarp::deleteObject(std::string object_name)
+{
+    std::lock_guard <std::mutex> lg(m_mutex);
+    return m_map_RPC.delete_object_RPC(object_name);
+}
+
+ReturnValue Navigation2D_nwc_yarp::clearAllObjects()
+{
+    std::lock_guard <std::mutex> lg(m_mutex);
+    return m_map_RPC.clear_all_objects_RPC();
+}
