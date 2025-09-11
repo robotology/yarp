@@ -13,6 +13,7 @@
 #include <yarp/dev/MapGrid2D.h>
 #include <yarp/dev/Map2DLocation.h>
 #include <yarp/dev/Map2DArea.h>
+#include <yarp/dev/Map2DObject.h>
 #include <yarp/dev/Map2DPath.h>
 #include <vector>
 #include <string>
@@ -65,9 +66,17 @@ public:
     virtual yarp::dev::ReturnValue     remove_map(std::string map_name) = 0;
 
     /**
+    * Store a object specified by the user in the world reference frame
+    * @param object_name the name of the location
+    * @param obj the location of the object
+    * @return a ReturnValue, convertible to true/false
+    */
+    virtual yarp::dev::ReturnValue storeObject(std::string object_name, yarp::dev::Nav2D::Map2DObject obj) = 0;
+
+    /**
     * Store a location specified by the user in the world reference frame
     * @param location_name the name of the location
-    * @param loc the location of the robot
+    * @param loc the location of the location
     * @return a ReturnValue, convertible to true/false
     */
     virtual yarp::dev::ReturnValue storeLocation(std::string location_name, yarp::dev::Nav2D::Map2DLocation loc) = 0;
@@ -87,6 +96,14 @@ public:
     * @return a ReturnValue, convertible to true/false
     */
     virtual yarp::dev::ReturnValue storePath(std::string path_name, yarp::dev::Nav2D::Map2DPath path) = 0;
+
+    /**
+    * Retrieves a object specified by the user in the world reference frame
+    * @param object_name the name of the location
+    * @param obj the location
+    * @return a ReturnValue, convertible to true/false
+    */
+    virtual yarp::dev::ReturnValue getObject(std::string object_name, yarp::dev::Nav2D::Map2DObject& obj) = 0;
 
     /**
     * Retrieves a location specified by the user in the world reference frame
@@ -113,6 +130,13 @@ public:
     virtual yarp::dev::ReturnValue getPath(std::string path_name, yarp::dev::Nav2D::Map2DPath& path) = 0;
 
     /**
+    * Get a list of the names of all stored objects
+    * @param the returned list of objects names
+    * @return a ReturnValue, convertible to true/false
+    */
+    virtual yarp::dev::ReturnValue getObjectsList(std::vector<std::string> & objects) = 0;
+
+    /**
     * Get a list of the names of all stored locations
     * @param the returned list of locations names
     * @return a ReturnValue, convertible to true/false
@@ -132,6 +156,13 @@ public:
     * @return a ReturnValue, convertible to true/false
     */
     virtual yarp::dev::ReturnValue getPathsList(std::vector<std::string>& paths) = 0;
+
+    /**
+    * Get a list of all stored objects
+    * @param the returned list of objects
+    * @return a ReturnValue, convertible to true/false
+    */
+    virtual yarp::dev::ReturnValue getAllObjects(std::vector<yarp::dev::Nav2D::Map2DObject>& obj) = 0;
 
     /**
     * Get a list of all stored locations
@@ -155,12 +186,27 @@ public:
     virtual yarp::dev::ReturnValue getAllPaths(std::vector<yarp::dev::Nav2D::Map2DPath>& paths) = 0;
 
     /**
+    * Searches for a object and renames it
+    * @param original_name the name of the area
+    * @param new_name the new name of the area
+    * @return a ReturnValue, convertible to true/false
+    */
+    virtual yarp::dev::ReturnValue renameObject(std::string original_name, std::string new_name) = 0;
+
+    /**
     * Searches for a location and renames it
     * @param original_name the name of the area
     * @param new_name the new name of the area
     * @return a ReturnValue, convertible to true/false
     */
     virtual yarp::dev::ReturnValue renameLocation(std::string original_name, std::string new_name) = 0;
+
+    /**
+    * Delete an object
+    * @param object_name the name of the location
+    * @return a ReturnValue, convertible to true/false
+    */
+    virtual yarp::dev::ReturnValue deleteObject(std::string object_name) = 0;
 
     /**
     * Delete a location
@@ -198,6 +244,12 @@ public:
     * @return a ReturnValue, convertible to true/false
     */
     virtual yarp::dev::ReturnValue deleteArea(std::string area_name) = 0;
+
+    /**
+    * Delete all stored objects
+    * @return a ReturnValue, convertible to true/false
+    */
+    virtual yarp::dev::ReturnValue clearAllObjects() = 0;
 
     /**
     * Delete all stored locations

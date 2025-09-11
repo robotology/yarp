@@ -135,6 +135,7 @@ if(TARGET YARP::YARP_math)
     yarp/dev/Map2DLocation.h
     yarp/dev/Map2DArea.h
     yarp/dev/MapGrid2D.h
+    yarp/dev/Map2DObject.h
     yarp/dev/Map2DPath.h
     yarp/dev/NavTypes.h
     yarp/dev/MapGrid2DInfo.h
@@ -233,6 +234,7 @@ if(TARGET YARP::YARP_math)
     yarp/dev/MapGrid2D.cpp
     yarp/dev/Map2DLocation.cpp
     yarp/dev/Map2DArea.cpp
+    yarp/dev/Map2DObject.cpp
     yarp/dev/Map2DPath.cpp
     yarp/dev/MapGrid2DInfo.cpp
     yarp/dev/FrameTransformContainer.cpp
@@ -260,6 +262,7 @@ if(TARGET YARP::YARP_math)
     idl/Map2DLocationData.thrift
     idl/Map2DAreaData.thrift
     idl/Map2DPathData.thrift
+    idl/Map2DObjectData.thrift
   )
 endif()
 
