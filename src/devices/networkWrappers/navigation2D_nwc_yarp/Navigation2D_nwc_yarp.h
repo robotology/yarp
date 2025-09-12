@@ -105,30 +105,37 @@ public:
     yarp::dev::ReturnValue   stopLocalizationService() override;
 
     /* The following methods belong to INavigation2D, inherited from IMap2D interface */
+    yarp::dev::ReturnValue   storeObject(std::string object_name, yarp::dev::Nav2D::Map2DObject loc) override;
     yarp::dev::ReturnValue   storeLocation(std::string location_name, yarp::dev::Nav2D::Map2DLocation loc) override;
     yarp::dev::ReturnValue   storeArea(std::string location_name, yarp::dev::Nav2D::Map2DArea area) override;
     yarp::dev::ReturnValue   storePath(std::string path_name, yarp::dev::Nav2D::Map2DPath path) override;
 
+    yarp::dev::ReturnValue   getObject(std::string object_name, yarp::dev::Nav2D::Map2DObject& loc) override;
     yarp::dev::ReturnValue   getLocation(std::string location_name, yarp::dev::Nav2D::Map2DLocation& loc) override;
     yarp::dev::ReturnValue   getArea(std::string location_name, yarp::dev::Nav2D::Map2DArea& area) override;
     yarp::dev::ReturnValue   getPath(std::string path_name, yarp::dev::Nav2D::Map2DPath& path) override;
 
+    yarp::dev::ReturnValue   renameObject(std::string original_name, std::string new_name) override;
     yarp::dev::ReturnValue   renameLocation(std::string original_name, std::string new_name) override;
     yarp::dev::ReturnValue   renameArea(std::string original_name, std::string new_name) override;
     yarp::dev::ReturnValue   renamePath(std::string original_name, std::string new_name) override;
 
+    yarp::dev::ReturnValue   deleteObject(std::string object_name) override;
     yarp::dev::ReturnValue   deleteLocation(std::string location_name) override;
     yarp::dev::ReturnValue   deleteArea(std::string location_name) override;
     yarp::dev::ReturnValue   deletePath(std::string path_name) override;
 
+    yarp::dev::ReturnValue   getObjectsList(std::vector<std::string>& objects) override;
     yarp::dev::ReturnValue   getLocationsList(std::vector<std::string>& locations) override;
     yarp::dev::ReturnValue   getAreasList(std::vector<std::string>& locations) override;
     yarp::dev::ReturnValue   getPathsList(std::vector<std::string>& paths) override;
 
+    yarp::dev::ReturnValue   getAllObjects(std::vector<yarp::dev::Nav2D::Map2DObject>& objects) override;
     yarp::dev::ReturnValue   getAllLocations(std::vector<yarp::dev::Nav2D::Map2DLocation>& locations) override;
     yarp::dev::ReturnValue   getAllAreas(std::vector<yarp::dev::Nav2D::Map2DArea>& areas) override;
     yarp::dev::ReturnValue   getAllPaths(std::vector<yarp::dev::Nav2D::Map2DPath>& paths) override;
 
+    yarp::dev::ReturnValue   clearAllObjects() override;
     yarp::dev::ReturnValue   clearAllLocations() override;
     yarp::dev::ReturnValue   clearAllAreas() override;
     yarp::dev::ReturnValue   clearAllPaths() override;
