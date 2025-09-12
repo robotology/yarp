@@ -37,6 +37,7 @@ set_target_properties(${SWIG_MODULE_yarp_python_REAL_NAME}
     LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib/python3"
     # treat Python3_INCLUDE_DIRS as non-system so that it can be overriden
     NO_SYSTEM_FROM_IMPORTED TRUE
+    SWIG_DEPENDS "${SWIG_YARP_LIBRARIES}"
 )
 
 # INCLUDE_DIRECTORIES might have gotten polluted by 3rd-party deps, make sure
