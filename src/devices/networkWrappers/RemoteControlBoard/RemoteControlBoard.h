@@ -296,6 +296,8 @@ public:
     bool getPidOutput(const PidControlTypeEnum& pidtype, int j, double *out) override;
     bool getPidOutputs(const PidControlTypeEnum& pidtype, double *outs) override;
     bool setPidOffset(const PidControlTypeEnum& pidtype, int j, double v) override;
+    ReturnValue getPidExtraInfo(const PidControlTypeEnum& pidtype, int j, PidExtraInfo& info) override;
+    ReturnValue getPidExtraInfos(const PidControlTypeEnum& pidtype, std::vector<PidExtraInfo>& info) override;
 
     // IEncoder
     bool resetEncoder(int j) override;

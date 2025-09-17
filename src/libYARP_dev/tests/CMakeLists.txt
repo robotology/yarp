@@ -10,6 +10,7 @@ target_sources(harness_dev
     PolyDriverTest.cpp
     ReturnValueTest.cpp
     StaticPluginsTest.cpp
+    PidTest.cpp
 )
 
 target_link_libraries(harness_dev

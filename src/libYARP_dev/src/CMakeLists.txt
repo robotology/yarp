@@ -252,6 +252,7 @@ set(YARP_dev_IDL
   idl/BatteryData.thrift
   idl/stateExt.thrift
   idl/DeviceDescriptionData.thrift
+  idl/PidData.thrift
 
   idl/OdometryData.thrift
   idl/OdometryData6D.thrift

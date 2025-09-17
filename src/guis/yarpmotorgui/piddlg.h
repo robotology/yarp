@@ -34,10 +34,11 @@ public:
     explicit PidDlg(QString partname, int jointIndex, QString jointName, QWidget *parent = 0);
     ~PidDlg();
 
-    void initPosition(Pid myPid);
-    void initVelocity(Pid myPid);
-    void initTorque(Pid myPid, MotorTorqueParameters TorqueParam);
-    void initCurrent(Pid myPid);
+    void initPositionPID(const std::vector<PidWithExtraInfo>& myPids);
+    void initVelocityPID(const std::vector<PidWithExtraInfo>& myPids);
+    void initTorquePID(const std::vector<PidWithExtraInfo>& myPids);
+    void initMotorParams(MotorTorqueParameters TorqueParam);
+    void initCurrentPID(const std::vector<PidWithExtraInfo>& myPids);
     void initStiffness(double curStiffVal, double minStiff, double maxStiff,
                        double curDampVal, double minDamp, double maxDamp);
     void initTorqueOffset(double curForceVal, double minForce, double maxForce);
@@ -48,12 +49,10 @@ public:
 signals:
     void sendStiffness(int,double,double);
     void sendForceOffset(int,double);
-    void sendPositionPid(int jointIndex, Pid pid);
-    void sendVelocityPid(int jointIndex, Pid pid);
-    void sendTorquePid(int jointIndex,Pid,MotorTorqueParameters newTorqueParam);
+    void sendPid(PidControlTypeEnum pidtype, int jointIndex, Pid newPid);
+    void sendMotorParameters(int jointIndex,MotorTorqueParameters newTorqueParam);
     void sendPWM(int jointIndex,double dutyVal);
     void sendCurrent(int jointIndex,int currentVal);
-    void sendCurrentPid(int jointIndex, Pid pid);
     void sendSingleRemoteVariable(std::string key, yarp::os::Bottle val);
     void refreshPids(int jointIndex);
     void updateAllRemoteVariables();
@@ -72,6 +71,10 @@ private slots:
     void onSendRemoteVariable();
     void onDumpRemoteVariables();
     void onForceOffsetChanged(QString forceOffset);
+    void onComboBoxIndexChangedPos(int);
+    void onComboBoxIndexChangedVel(int);
+    void onComboBoxIndexChangedTrq(int);
+    void onComboBoxIndexChangedCur(int);
 };
 
 class TableIntDelegate : public QItemDelegate

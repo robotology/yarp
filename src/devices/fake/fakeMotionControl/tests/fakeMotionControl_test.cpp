@@ -98,7 +98,7 @@ TEST_CASE("dev::fakeMotionControl", "[yarp::dev]")
         yarp::dev::tests::exec_iMotor_test_1(imot);
         yarp::dev::tests::exec_iMotorEncoders_test_1(imotenc);
         yarp::dev::tests::exec_iPidControl_test_1(ipid, iinfo);
-        yarp::dev::tests::exec_iPidControl_test_2(ipid);
+        yarp::dev::tests::exec_iPidControl_test_2(ipid, iinfo);
         yarp::dev::tests::exec_iPwmControl_test_1(ipwm, icmd);
         yarp::dev::tests::exec_iCurrentControl_test_1(icurr, icmd);
         //yarp::dev::tests::exec_iRemoteCalibrator_test_1(iremotecalib);

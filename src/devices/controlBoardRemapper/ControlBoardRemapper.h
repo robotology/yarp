@@ -249,6 +249,11 @@ public:
 
     bool isPidEnabled(const yarp::dev::PidControlTypeEnum& pidtype, int j, bool* enabled) override;
 
+    yarp::dev::ReturnValue getPidExtraInfo(const yarp::dev::PidControlTypeEnum& pidtype, int j, yarp::dev::PidExtraInfo& units) override;
+
+    yarp::dev::ReturnValue getPidExtraInfos(const yarp::dev::PidControlTypeEnum& pidtype, std::vector<yarp::dev::PidExtraInfo>& units) override;
+
+
     /* IPositionControl */
     bool getAxes(int *ax) override;
 
