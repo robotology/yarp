@@ -171,59 +171,59 @@ jobs:
       matrix:
         config:
         - {
-            cmake_version: "3.19.*",
-            cmake_generator: "Unix Makefiles",
-            ycm_version: "0.15.3",
-          }
-        - {
-            cmake_version: "3.20.*",
-            cmake_generator: "Unix Makefiles",
-            ycm_version: "0.15.3",
-          }
-        - {
             cmake_version: "3.20.*",
             cmake_generator: "Ninja",
-            ycm_version: "0.15.3",
+            ycm_version: "0.18.0",
           }
         - {
             cmake_version: "3.21.*",
             cmake_generator: "Unix Makefiles",
-            ycm_version: "0.15.3",
+            ycm_version: "0.18.0",
           }
         - {
             cmake_version: "3.22.*",
             cmake_generator: "Unix Makefiles",
-            ycm_version: "0.15.3",
+            ycm_version: "0.18.0",
           }
         - {
             cmake_version: "3.23.*",
             cmake_generator: "Unix Makefiles",
-            ycm_version: "0.15.3",
+            ycm_version: "0.18.0",
           }
         - {
             cmake_version: "3.24.*",
             cmake_generator: "Unix Makefiles",
-            ycm_version: "0.15.3",
+            ycm_version: "0.18.0",
           }
         - {
             cmake_version: "3.25.*",
             cmake_generator: "Unix Makefiles",
-            ycm_version: "0.15.3",
+            ycm_version: "0.18.0",
           }
         - {
             cmake_version: "3.26.*",
             cmake_generator: "Unix Makefiles",
-            ycm_version: "0.15.3",
+            ycm_version: "0.18.0",
           }
         - {
             cmake_version: "3.27.*",
             cmake_generator: "Unix Makefiles",
-            ycm_version: "0.15.3",
+            ycm_version: "0.18.0",
           }
         - {
             cmake_version: "3.28.*",
             cmake_generator: "Unix Makefiles",
-            ycm_version: "0.15.3",
+            ycm_version: "0.18.0",
+          }
+        - {
+            cmake_version: "3.29.*",
+            cmake_generator: "Unix Makefiles",
+            ycm_version: "0.18.0",
+          }
+        - {
+            cmake_version: "3.30.*",
+            cmake_generator: "Unix Makefiles",
+            ycm_version: "0.18.0",
           }
     steps:
     - name: remove any previous installation of cmake
@@ -250,8 +250,8 @@ jobs:
 
     - name: Get YCM package
       run: |
-        wget -nv https://github.com/robotology/ycm/releases/download/v0.15.3/ycm-cmake-modules-0.15.3-all.deb
-        sudo dpkg -i ycm-cmake-modules-0.15.3-all.deb
+        wget -nv https://github.com/robotology/ycm/releases/download/v0.18.0/ycm-cmake-modules-0.18.0-all.deb
+        sudo dpkg -i ycm-cmake-modules-0.18.0-all.deb
 
     - name: Print YCM version
       run: |
@@ -1035,8 +1035,8 @@ jobs:
           /usr/bin/cmake --version
 
           # Install ycm
-          wget -nv https://github.com/robotology/ycm/releases/download/v0.15.3/ycm-cmake-modules-0.15.3-all.deb
-          sudo dpkg -i ycm-cmake-modules-0.15.3-all.deb
+          wget -nv https://github.com/robotology/ycm/releases/download/v0.18.0/ycm-cmake-modules-0.18.0-all.deb
+          sudo dpkg -i ycm-cmake-modules-0.18.0-all.deb
 
           # Install build tools
           sudo apt-get install -qq -y ccache \
@@ -1127,7 +1127,7 @@ jobs:
           7z x -oC:\ vcpkg-robotology-yarp-only.zip
           echo ""
           echo " Download and install YCM "
-          wget -nv https://github.com/robotology/ycm/releases/download/v0.15.3/ycm-cmake-modules-0.15.3-all.tar.gz -O ycm.tar.gz
+          wget -nv https://github.com/robotology/ycm/releases/download/v0.18.0/ycm-cmake-modules-0.18.0-all.tar.gz -O ycm.tar.gz
           7z x ycm.tar.gz
           7z x -ttar -oC:\robotology ycm.tar
           echo ""
@@ -1156,7 +1156,7 @@ jobs:
           rm -f /usr/local/bin/python3.11-config
           rm -f /usr/local/bin/python3.12-config
 
-          wget -nv https://github.com/robotology/ycm/releases/download/v0.15.3/ycm-cmake-modules-0.15.3-all.tar.gz -O /Users/runner/work/yarp/ycm.tar.gz
+          wget -nv https://github.com/robotology/ycm/releases/download/v0.18.0/ycm-cmake-modules-0.18.0-all.tar.gz -O /Users/runner/work/yarp/ycm.tar.gz
           7z x /Users/runner/work/yarp/ycm.tar.gz -o/Users/runner/work/yarp
           7z x -ttar /Users/runner/work/yarp/ycm.tar -o/Users/runner/work/yarp
           
@@ -1175,9 +1175,9 @@ jobs:
 
         # if YCM is installed manually, set YCM_DIR to allow CMake to find it
         if("${{ runner.os }}" STREQUAL "Windows")
-          file(APPEND "${_env_script}" "set(ENV{YCM_DIR} \"C:\\\\robotology\\\\YCM-0.15.3-all\")\n")
+          file(APPEND "${_env_script}" "set(ENV{YCM_DIR} \"C:\\\\robotology\\\\YCM-0.18.0-all\")\n")
         elseif("${{ runner.os }}" STREQUAL "macOS")
-          file(APPEND "${_env_script}" "set(ENV{YCM_DIR} \"/Users/runner/work/yarp/YCM-0.15.3-all\")\n")
+          file(APPEND "${_env_script}" "set(ENV{YCM_DIR} \"/Users/runner/work/yarp/YCM-0.18.0-all\")\n")
         endif()
 
         if("${{ runner.os }}" STREQUAL "Windows" AND NOT "${{ matrix.config.environment_script }}" STREQUAL "")
@@ -1757,8 +1757,8 @@ jobs:
           /usr/bin/cmake --version
 
           # Install ycm
-          wget -nv https://github.com/robotology/ycm/releases/download/v0.15.3/ycm-cmake-modules-0.15.3-all.deb
-          sudo dpkg -i ycm-cmake-modules-0.15.3-all.deb
+          wget -nv https://github.com/robotology/ycm/releases/download/v0.18.0/ycm-cmake-modules-0.18.0-all.deb
+          sudo dpkg -i ycm-cmake-modules-0.18.0-all.deb
 
           # Install build tools
           sudo apt-get install -qq -y ccache \
@@ -1961,8 +1961,8 @@ jobs:
           /usr/bin/cmake --version
 
           # Install ycm
-          wget -nv https://github.com/robotology/ycm/releases/download/v0.15.3/ycm-cmake-modules-0.15.3-all.deb
-          sudo dpkg -i ycm-cmake-modules-0.15.3-all.deb
+          wget -nv https://github.com/robotology/ycm/releases/download/v0.18.0/ycm-cmake-modules-0.18.0-all.deb
+          sudo dpkg -i ycm-cmake-modules-0.18.0-all.deb
 
           # Install build tools
           sudo apt-get install -qq -y ccache \
@@ -2180,8 +2180,8 @@ jobs:
           /usr/bin/cmake --version
 
           # Install ycm
-          wget -nv https://github.com/robotology/ycm/releases/download/v0.15.3/ycm-cmake-modules-0.15.3-all.deb
-          sudo dpkg -i ycm-cmake-modules-0.15.3-all.deb
+          wget -nv https://github.com/robotology/ycm/releases/download/v0.18.0/ycm-cmake-modules-0.18.0-all.deb
+          sudo dpkg -i ycm-cmake-modules-0.18.0-all.deb
 
           # Install build tools
           sudo apt-get install -qq -y ccache \
