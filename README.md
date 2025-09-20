@@ -61,8 +61,7 @@ Tutorials
 
 There's a comprehensive list of tutorials here:
 
- * http://www.yarp.it/tutorials.html
-
+ * https://www.yarp.it/latest/yarp-tutorials.html 
 
 License
 -------
