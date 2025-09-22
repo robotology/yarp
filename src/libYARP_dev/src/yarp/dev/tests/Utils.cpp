@@ -8,6 +8,8 @@
 #include <memory>
 #include <numeric>
 
+using namespace std;
+
 namespace yarp::dev::tests
 {
     // Utility function to compare two int vectors for equality

@@ -13,11 +13,11 @@ namespace yarp::dev::tests
 {
     bool YARP_dev_API vectors_equal(const std::vector<double>& a, const std::vector<double>& b);
     bool YARP_dev_API vectors_equal(const std::vector<int>& a, const std::vector<int>& b);
-    bool YARP_dev_API vectors_equal(const size_t siz, const double* a, const double* b);
-    bool YARP_dev_API vectors_equal(const size_t siz, const int* a, const int* b);
+    bool YARP_dev_API vectors_equal(const std::size_t siz, const double* a, const double* b);
+    bool YARP_dev_API vectors_equal(const std::size_t siz, const int* a, const int* b);
     void YARP_dev_API set_vector_crescent(std::vector<double>& a, double val);
-    void YARP_dev_API set_vector_crescent(const size_t siz, double* a, double val);
-    void YARP_dev_API set_vector_crescent(const size_t siz, int* a, int val);
+    void YARP_dev_API set_vector_crescent(const std::size_t siz, double* a, double val);
+    void YARP_dev_API set_vector_crescent(const std::size_t siz, int* a, int val);
 }
 
 #endif
