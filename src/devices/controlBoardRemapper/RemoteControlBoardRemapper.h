@@ -84,7 +84,7 @@
  * Known limitations include:
  *   * If some axes belong to a coupled mechanics, all the axes should be added to the RemoteControlBoardRemapper.
  *     If only an axis of a coupled mechanics is added to the remapper, the semantic of the coupled mechanics
- *     in the underlyng implementation could create confusing behaviour. For example, changing the control mode
+ *     in the underlying implementation could create confusing behaviour. For example, changing the control mode
  *     of an axis in a coupled mechanism could change the control mode of the other coupled axes, even if the
  *     other coupled axes are not part of the remapped controlboard.
  *   * The debug methods provided by IRemoteVariables are not supported by the RemoteControlBoardRemapper .

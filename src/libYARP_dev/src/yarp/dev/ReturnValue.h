@@ -43,6 +43,7 @@ class YARP_dev_API ReturnValue : public yarp::os::Portable
         return_value_error_deprecated                  = yarp::os::createVocab32('e', 'r', 'r', '4'), /// Method is deprecated
         return_value_error_method_failed               = yarp::os::createVocab32('e', 'r', 'r', '5'), /// Method failed due to invalid internal status/invalid request
         return_value_error_not_ready                   = yarp::os::createVocab32('e', 'r', 'r', '6'), /// Method failed because some initialization is missing
+        return_value_error_input_out_of_bounds         = yarp::os::createVocab32('e', 'r', 'r', '7'), /// Method failed because some input parameters are out of bounds
         return_value_uninitialized                     = yarp::os::createVocab32('m', 'i', 's', 's') /// Default value, should never be explicitly assigned
     };
 

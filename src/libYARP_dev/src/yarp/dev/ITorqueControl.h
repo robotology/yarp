@@ -231,6 +231,9 @@ public:
     virtual bool setMotorTorqueParamsRaw(int j,  const yarp::dev::MotorTorqueParameters params) {return false;}
 };
 
+// Interface name
+constexpr yarp::conf::vocab32_t VOCAB_TORQUECONTROL_INTERFACE   = yarp::os::createVocab32('i','t','r','q');
+
 constexpr yarp::conf::vocab32_t VOCAB_TORQUE            = yarp::os::createVocab32('t', 'o', 'r', 'q');
 constexpr yarp::conf::vocab32_t VOCAB_TORQUE_MODE       = yarp::os::createVocab32('t', 'r', 'q', 'd');
 constexpr yarp::conf::vocab32_t VOCAB_TRQS              = yarp::os::createVocab32('t', 'r', 'q', 's');

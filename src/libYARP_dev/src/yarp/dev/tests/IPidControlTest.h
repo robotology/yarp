@@ -7,6 +7,8 @@
 #define IPIDCONTROLTEST_H
 
 #include <yarp/os/Vocab32.h>
+#include <yarp/os/Time.h>
+
 #include <yarp/dev/IPidControl.h>
 #include <yarp/dev/IControlMode.h>
 #include <yarp/dev/IAxisInfo.h>
@@ -50,15 +52,24 @@ namespace yarp::dev::tests
         REQUIRE(ax > 0);
 
         yarp::dev::PidControlTypeEnum pp = yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_POSITION;
+        bool enabled;
         b = ipid->disablePid(pp,0);
         CHECK(b);
+        b = ipid->isPidEnabled(pp, 0, enabled);
+        CHECK(b);
+        CHECK(!enabled);
 
         b = ipid->enablePid(pp,0);
         CHECK(b);
-
-        bool enabled;
-        b = ipid->isPidEnabled(pp, 0, &enabled);
+        b = ipid->isPidEnabled(pp, 0, enabled);
         CHECK(b);
+        CHECK(enabled);
+
+        b = ipid->disablePid(pp,0);
+        CHECK(b);
+        b = ipid->isPidEnabled(pp, 0, enabled);
+        CHECK(b);
+        CHECK(!enabled);
 
         yarp::dev::Pid retpid;
         b=ipid->getPid(pp,0, &retpid);
@@ -79,8 +90,25 @@ namespace yarp::dev::tests
         b = ipid->resetPid(pp,0);
         CHECK(b);
 
-        b = ipid->setPidOffset(pp,0,0);
+        b = ipid->setPidOffset(pp,0,42);
         CHECK(b);
+        //Streaming message sent on separated thread, delay required before get()
+        yarp::os::Time::delay(0.020); 
+
+        double pidoff=0;
+        b = ipid->getPidOffset(pp,0,pidoff);
+        CHECK(b);
+        CHECK(pidoff == 42);
+
+        b = ipid->setPidFeedforward(pp,0,43);
+        CHECK(b);
+        //Streaming message sent on separated thread, delay required before get()
+        yarp::os::Time::delay(0.020); 
+
+        double pidffd=0;
+        b = ipid->getPidFeedforward(pp,0,pidffd);
+        CHECK(b);
+        CHECK(pidffd == 43);
 
         double getpidref=0;
         b = ipid->getPidReference(pp, 0, &getpidref);

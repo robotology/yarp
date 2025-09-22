@@ -102,7 +102,7 @@ public:
      */
     virtual bool setRefAccelerationRaw(int j, double acc)=0;
 
-    /** Set reference acceleration on all joints. This is the valure that is
+    /** Set reference acceleration on all joints. This is the value that is
      * used during the generation of the trajectory.
      * @param accs pointer to the array of acceleration values
      * @return true/false upon success/failure
@@ -179,7 +179,7 @@ public:
      */
     virtual bool setRefSpeedsRaw(const int n_joint, const int *joints, const double *spds)=0;
 
-    /** Set reference acceleration on all joints. This is the valure that is
+    /** Set reference acceleration on all joints. This is the value that is
      * used during the generation of the trajectory.
      * @param joints pointer to the array of joint numbers
      * @param accs   pointer to the array with acceleration values
@@ -329,7 +329,7 @@ public:
      */
     virtual bool setRefAcceleration(int j, double acc)=0;
 
-    /** Set reference acceleration on all joints. This is the valure that is
+    /** Set reference acceleration on all joints. This is the value that is
      * used during the generation of the trajectory.
      * @param accs pointer to the array of acceleration values
      * @return true/false upon success/failure
@@ -405,7 +405,7 @@ public:
      */
     virtual bool setRefSpeeds(const int n_joint, const int *joints, const double *spds)=0;
 
-    /** Set reference acceleration on all joints. This is the valure that is
+    /** Set reference acceleration on all joints. This is the value that is
      * used during the generation of the trajectory.
      * @param joints pointer to the array of joint numbers
      * @param accs   pointer to the array with acceleration values
@@ -468,6 +468,9 @@ public:
      */
     virtual bool getTargetPositions(const int n_joint, const int *joints, double *refs) { return false;}
 };
+
+// Interface name
+constexpr yarp::conf::vocab32_t VOCAB_POSITIONCONTROL_INTERFACE   = yarp::os::createVocab32('i','p','o','s');
 
 constexpr yarp::conf::vocab32_t VOCAB_POSITION_MOVE_GROUP    = yarp::os::createVocab32('p','o','s','g');
 constexpr yarp::conf::vocab32_t VOCAB_RELATIVE_MOVE_GROUP    = yarp::os::createVocab32('r','e','l','g');

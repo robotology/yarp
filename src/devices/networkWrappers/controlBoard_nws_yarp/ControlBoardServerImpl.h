@@ -45,12 +45,18 @@ class ControlBoardRPCd : public ControlBoardMsgs
     return_getDesiredVelocityGroup getDesiredVelocityGroupRPC(const std::vector<std::int32_t>& jnts) const override;
 
     // IPidControl
+    yarp::dev::ReturnValue enablePidRPC(const yarp::dev::PidControlTypeEnum pidtype, const std::int16_t j) override;
+    yarp::dev::ReturnValue disablePidRPC(const yarp::dev::PidControlTypeEnum pidtype, const std::int16_t j) override;
+    yarp::dev::ReturnValue resetPidRPC(const yarp::dev::PidControlTypeEnum pidtype, const std::int16_t j) override;
+    return_isPidEnabled isPidEnabledRPC(const yarp::dev::PidControlTypeEnum pidtype, const std::int16_t j) override;
     yarp::dev::ReturnValue setPidRPC(const yarp::dev::PidControlTypeEnum pidtype, const std::int16_t j, const yarp::dev::Pid& pid) override;
     yarp::dev::ReturnValue setPidsRPC(const yarp::dev::PidControlTypeEnum pidtype, const std::vector<yarp::dev::Pid>& pids) override;
     return_getPid getPidRPC(const yarp::dev::PidControlTypeEnum pidtype, const std::int16_t j) override;
     return_getPids getPidsRPC(const yarp::dev::PidControlTypeEnum pidtype) override;
-    return_getInfoPid getPidExtraInfoRPC(const yarp::dev::PidControlTypeEnum pidtype, const std::int16_t j) override;
-    return_getInfoPids getPidExtraInfosRPC(const yarp::dev::PidControlTypeEnum pidtypeo) override;
+    return_getPidExtraInfo getPidExtraInfoRPC(const yarp::dev::PidControlTypeEnum pidtype, const std::int16_t j) override;
+    return_getPidExtraInfos getPidExtraInfosRPC(const yarp::dev::PidControlTypeEnum pidtypeo) override;
+    return_getPidOffset getPidOffsetRPC(const yarp::dev::PidControlTypeEnum pidtype, const std::int16_t j) override;
+    return_getPidFeedforward getPidFeedforwardRPC(const yarp::dev::PidControlTypeEnum pidtype, const std::int16_t j) override;
 
     std::mutex* getMutex() {return &m_mutex;}
 };

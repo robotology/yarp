@@ -145,6 +145,9 @@ public:
 };
 
 
+// Interface name
+constexpr yarp::conf::vocab32_t VOCAB_VELOCITYDIRECTCONTROL_INTERFACE   = yarp::os::createVocab32('i','v','e','d');
+
 constexpr yarp::conf::vocab32_t VOCAB_VELOCITY_DIRECT_SET_ONE = yarp::os::createVocab32('v', 'd', 's','o');
 constexpr yarp::conf::vocab32_t VOCAB_VELOCITY_DIRECT_SET_ALL   = yarp::os::createVocab32('v','d','s','a');
 constexpr yarp::conf::vocab32_t VOCAB_VELOCITY_DIRECT_SET_GROUP = yarp::os::createVocab32('v','d','s','g') ;

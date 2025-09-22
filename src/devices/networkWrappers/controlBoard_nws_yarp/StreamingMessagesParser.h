@@ -51,15 +51,16 @@ typedef yarp::os::PortablePair<yarp::os::Bottle, yarp::sig::Vector> CommandMessa
 class StreamingMessagesParser : public yarp::os::TypedReaderCallback<CommandMessage>
 {
 protected:
-    yarp::dev::IPositionControl* stream_IPosCtrl {nullptr};
-    yarp::dev::IPositionDirect* stream_IPosDirect {nullptr};
-    yarp::dev::IVelocityControl* stream_IVel {nullptr};
-    yarp::dev::IVelocityDirect* stream_IVelDirect {nullptr};
-    yarp::dev::ITorqueControl* stream_ITorque {nullptr};
-    yarp::dev::IPWMControl* stream_IPWM {nullptr};
-    yarp::dev::ICurrentControl* stream_ICurrent {nullptr};
-    yarp::dev::IAxisInfo* stream_IAxis{ nullptr };
-    int stream_nJoints {0};
+    yarp::dev::IPositionControl*  stream_IPosCtrl {nullptr};
+    yarp::dev::IPositionDirect*   stream_IPosDirect {nullptr};
+    yarp::dev::IVelocityControl*  stream_IVel {nullptr};
+    yarp::dev::IVelocityDirect*   stream_IVelDirect {nullptr};
+    yarp::dev::ITorqueControl*    stream_ITorque {nullptr};
+    yarp::dev::IPWMControl*       stream_IPWM {nullptr};
+    yarp::dev::ICurrentControl*   stream_ICurrent {nullptr};
+    yarp::dev::IPidControl*       stream_IPid {nullptr};
+    yarp::dev::IAxisInfo*         stream_IAxis{ nullptr };
+    int                           stream_nJoints {0};
 
 public:
     /**

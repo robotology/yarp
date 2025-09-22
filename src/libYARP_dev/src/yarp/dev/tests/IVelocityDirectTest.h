@@ -14,18 +14,13 @@
 #include <yarp/dev/IControlMode.h>
 #include <yarp/dev/IVelocityDirect.h>
 #include <catch2/catch_amalgamated.hpp>
+#include "Utils.h"
 
 using namespace yarp::dev;
 using namespace yarp::os;
 
 namespace yarp::dev::tests
 {
-    // Utility function to compare two int vectors for equality
-    inline bool vectors_equal(const std::vector<double>& a, const std::vector<double>& b)
-    {
-        return a.size() == b.size() && std::equal(a.begin(), a.end(), b.begin());
-    }
-
     inline void exec_iVelocityDirect_test_1(IVelocityDirect* ivdir, IControlMode* icmd)
     {
         REQUIRE(ivdir != nullptr);

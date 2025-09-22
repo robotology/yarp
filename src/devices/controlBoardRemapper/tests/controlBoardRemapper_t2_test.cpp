@@ -22,6 +22,7 @@
 #include <yarp/dev/tests/IJointFaultTest.h>
 #include <yarp/dev/tests/IControlLimitsTest.h>
 #include <yarp/dev/tests/IJointBrakeTest.h>
+#include <yarp/dev/tests/IPositionDirectTest.h>
 #include <yarp/dev/tests/IVelocityDirectTest.h>
 
 #include <catch2/catch_amalgamated.hpp>
@@ -57,6 +58,7 @@ TEST_CASE("dev::ControlBoardRemapperTest2", "[yarp::dev]")
         IJointFault* ifault = nullptr;
         IControlLimits* ilims = nullptr;
         IJointBrake* ibrake = nullptr;
+        IPositionDirect* iposDir = nullptr;
         IVelocityDirect* ivelDir = nullptr;
         //IRemoteCalibrator* iremotecalib = nullptr;
 
@@ -98,6 +100,7 @@ TEST_CASE("dev::ControlBoardRemapperTest2", "[yarp::dev]")
         ddremapper.view(ifault);  REQUIRE(ifault);
         ddremapper.view(ilims);   REQUIRE(ilims);
         ddremapper.view(ibrake);  REQUIRE(ibrake);
+        ddremapper.view(iposDir); REQUIRE(iposDir);
         ddremapper.view(ivelDir); REQUIRE(ivelDir);
         //ddremapper.view(iremotecalib);  REQUIRE(iremotecalib);
 
@@ -118,6 +121,7 @@ TEST_CASE("dev::ControlBoardRemapperTest2", "[yarp::dev]")
         yarp::dev::tests::exec_iJointFault_test_1(ifault);
         yarp::dev::tests::exec_iControlLimits_test1(ilims, iinfo);
         yarp::dev::tests::exec_iJointBrake_test1(ibrake);
+        yarp::dev::tests::exec_iPositionDirect_test_1(iposDir, icmd);
         yarp::dev::tests::exec_iVelocityDirect_test_1(ivelDir, icmd);
 
         //"Close all polydrivers and check"

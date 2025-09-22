@@ -18,6 +18,7 @@ set(YARP_dev_test_HDRS
     ILLMTest.h
     IChatBotTest.h
     IVelocityControlTest.h
+    IPositionDirectTest.h
     IVelocityDirectTest.h
     IControlModeTest.h
     IImpedanceControlTest.h
@@ -31,6 +32,7 @@ set(YARP_dev_test_HDRS
     IJointBrakeTest.h
     IJointFaultTest.h
     IControlLimitsTest.h
+    Utils.h
 )
 
 set(YARP_dev_test_SRCS
@@ -47,6 +49,7 @@ set(YARP_dev_test_SRCS
     ILLMTest.cpp
     IChatBotTest.cpp
     IVelocityControlTest.cpp
+    IPositionDirectTest.cpp
     IVelocityDirectTest.cpp
     IControlModeTest.cpp
     IImpedanceControlTest.cpp
@@ -60,6 +63,7 @@ set(YARP_dev_test_SRCS
     IJointBrakeTest.cpp
     IJointFaultTest.cpp
     IControlLimitsTest.cpp
+    Utils.cpp
 )
 
 if(TARGET YARP::YARP_math)

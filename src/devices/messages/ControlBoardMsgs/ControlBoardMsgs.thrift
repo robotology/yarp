@@ -75,14 +75,29 @@ struct return_getPids {
   2: list<yPid> pids;
 }
 
-struct return_getInfoPid {
+struct return_getPidExtraInfo {
   1: yReturnValue ret;
   2: yInfoPid info;
 }
 
-struct return_getInfoPids {
+struct return_getPidExtraInfos {
   1: yReturnValue ret;
   2: list<yInfoPid> info;
+}
+
+struct return_getPidOffset {
+  1: yReturnValue ret;
+  2: double offset;
+}
+
+struct return_getPidFeedforward {
+  1: yReturnValue ret;
+  2: double feedforward;
+}
+
+struct return_isPidEnabled {
+  1: yReturnValue ret;
+  2: bool isEnabled;
 }
 
 //-------------------------------------------------
@@ -98,10 +113,17 @@ service ControlBoardMsgs
     return_getDesiredVelocityAll    getDesiredVelocityAllRPC() (yarp.qualifier = "const");
     return_getDesiredVelocityGroup  getDesiredVelocityGroupRPC(1: list<i32> j) (yarp.qualifier = "const");
 
+    yReturnValue               enablePidRPC(1: yPidControlTypeEnum pidtype, 2: i16 j);
+    yReturnValue               disablePidRPC(1: yPidControlTypeEnum pidtype, 2: i16 j);
+    yReturnValue               resetPidRPC(1: yPidControlTypeEnum pidtype, 2: i16 j);
+    return_isPidEnabled        isPidEnabledRPC(1: yPidControlTypeEnum pidtype, 2: i16 j);
+
     yReturnValue               setPidRPC(1: yPidControlTypeEnum pidtype, 2: i16 j, 3: yPid pid);
     yReturnValue               setPidsRPC(1: yPidControlTypeEnum pidtype, 2: list<yPid> pids);
     return_getPid              getPidRPC(1: yPidControlTypeEnum pidtype, 2: i16 j);
     return_getPids             getPidsRPC(1: yPidControlTypeEnum pidtype);
-    return_getInfoPid          getPidExtraInfoRPC(1: yPidControlTypeEnum pidtype, 2: i16 j);
-    return_getInfoPids         getPidExtraInfosRPC(1: yPidControlTypeEnum pidtype);
+    return_getPidExtraInfo     getPidExtraInfoRPC(1: yPidControlTypeEnum pidtype, 2: i16 j);
+    return_getPidExtraInfos    getPidExtraInfosRPC(1: yPidControlTypeEnum pidtype);
+    return_getPidOffset        getPidOffsetRPC(1: yPidControlTypeEnum pidtype, 2: i16 j);
+    return_getPidFeedforward   getPidFeedforwardRPC(1: yPidControlTypeEnum pidtype, 2: i16 j);
 }
