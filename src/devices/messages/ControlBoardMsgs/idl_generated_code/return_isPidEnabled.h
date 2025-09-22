@@ -8,28 +8,27 @@
 // This is an automatically generated file.
 // It could get re-generated if the ALLOW_IDL_GENERATION flag is on.
 
-#ifndef YARP_THRIFT_GENERATOR_STRUCT_RETURN_GETINFOPID_H
-#define YARP_THRIFT_GENERATOR_STRUCT_RETURN_GETINFOPID_H
+#ifndef YARP_THRIFT_GENERATOR_STRUCT_RETURN_ISPIDENABLED_H
+#define YARP_THRIFT_GENERATOR_STRUCT_RETURN_ISPIDENABLED_H
 
 #include <yarp/os/Wire.h>
 #include <yarp/os/idl/WireTypes.h>
-#include <yarp/dev/ControlBoardPid.h>
 #include <yarp/dev/ReturnValue.h>
 
-class return_getInfoPid :
+class return_isPidEnabled :
         public yarp::os::idl::WirePortable
 {
 public:
     // Fields
     yarp::dev::ReturnValue ret{};
-    yarp::dev::PidExtraInfo info{};
+    bool isEnabled{false};
 
     // Default constructor
-    return_getInfoPid() = default;
+    return_isPidEnabled() = default;
 
     // Constructor with field values
-    return_getInfoPid(const yarp::dev::ReturnValue& ret,
-                      const yarp::dev::PidExtraInfo& info);
+    return_isPidEnabled(const yarp::dev::ReturnValue& ret,
+                        const bool isEnabled);
 
     // Read structure on a Wire
     bool read(yarp::os::idl::WireReader& reader) override;
@@ -47,7 +46,7 @@ public:
     std::string toString() const;
 
     // If you want to serialize this class without nesting, use this helper
-    typedef yarp::os::idl::Unwrapped<return_getInfoPid> unwrapped;
+    typedef yarp::os::idl::Unwrapped<return_isPidEnabled> unwrapped;
 
 private:
     // read/write ret field
@@ -56,11 +55,11 @@ private:
     bool nested_read_ret(yarp::os::idl::WireReader& reader);
     bool nested_write_ret(const yarp::os::idl::WireWriter& writer) const;
 
-    // read/write info field
-    bool read_info(yarp::os::idl::WireReader& reader);
-    bool write_info(const yarp::os::idl::WireWriter& writer) const;
-    bool nested_read_info(yarp::os::idl::WireReader& reader);
-    bool nested_write_info(const yarp::os::idl::WireWriter& writer) const;
+    // read/write isEnabled field
+    bool read_isEnabled(yarp::os::idl::WireReader& reader);
+    bool write_isEnabled(const yarp::os::idl::WireWriter& writer) const;
+    bool nested_read_isEnabled(yarp::os::idl::WireReader& reader);
+    bool nested_write_isEnabled(const yarp::os::idl::WireWriter& writer) const;
 };
 
-#endif // YARP_THRIFT_GENERATOR_STRUCT_RETURN_GETINFOPID_H
+#endif // YARP_THRIFT_GENERATOR_STRUCT_RETURN_ISPIDENABLED_H

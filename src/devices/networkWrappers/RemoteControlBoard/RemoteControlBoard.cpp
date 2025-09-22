@@ -19,6 +19,7 @@
 #include <yarp/os/Stamp.h>
 #include <yarp/os/LogStream.h>
 #include <yarp/os/QosStyle.h>
+#include <yarp/os/Vocab32.h>
 
 
 #include <yarp/dev/ControlBoardInterfaces.h>
@@ -1078,7 +1079,7 @@ bool RemoteControlBoard::getAxes(int *ax)
 
 // BEGIN IPidControl
 
-bool RemoteControlBoard::setPid(const PidControlTypeEnum& pidtype, int j, const Pid &pid)
+ReturnValue RemoteControlBoard::setPid(const PidControlTypeEnum& pidtype, int j, const Pid &pid)
 {
     // std::lock_guard<std::mutex> lg(m_mutex);
     auto ret = m_RPC.setPidRPC(pidtype, j, pid);
@@ -1086,10 +1087,10 @@ bool RemoteControlBoard::setPid(const PidControlTypeEnum& pidtype, int j, const 
         yCError(REMOTECONTROLBOARD, "Unable to setPid");
         return ret;
     }
-    return ReturnValue_ok;
+    return ret;
 }
 
-bool RemoteControlBoard::setPids(const PidControlTypeEnum& pidtype, const Pid *pids)
+ReturnValue RemoteControlBoard::setPids(const PidControlTypeEnum& pidtype, const Pid *pids)
 {
     // std::lock_guard<std::mutex> lg(m_mutex);
     std::vector<Pid> pids_vec(pids, pids + nj);
@@ -1098,7 +1099,7 @@ bool RemoteControlBoard::setPids(const PidControlTypeEnum& pidtype, const Pid *p
         yCError(REMOTECONTROLBOARD, "Unable to setPids");
         return ret;
     }
-    return ReturnValue_ok;
+    return ret;
 }
 
 bool RemoteControlBoard::setPidReference(const PidControlTypeEnum& pidtype, int j, double ref)
@@ -1131,7 +1132,7 @@ bool RemoteControlBoard::getPidErrors(const PidControlTypeEnum& pidtype, double 
     return getValWithPidType(VOCAB_ERRS, pidtype, errs);
 }
 
-bool RemoteControlBoard::getPid(const PidControlTypeEnum& pidtype, int j, Pid *pid)
+ReturnValue RemoteControlBoard::getPid(const PidControlTypeEnum& pidtype, int j, Pid *pid)
 {
     //std::lock_guard<std::mutex> lg(m_mutex);
     auto ret = m_RPC.getPidRPC(pidtype,j);
@@ -1140,10 +1141,10 @@ bool RemoteControlBoard::getPid(const PidControlTypeEnum& pidtype, int j, Pid *p
         return ret.ret;
     }
     *pid = ret.pid;
-    return ReturnValue_ok;
+    return  ret.ret;
 }
 
-bool RemoteControlBoard::getPids(const PidControlTypeEnum& pidtype, Pid *pids)
+ReturnValue RemoteControlBoard::getPids(const PidControlTypeEnum& pidtype, Pid *pids)
 {
     //std::lock_guard<std::mutex> lg(m_mutex);
     auto ret = m_RPC.getPidsRPC(pidtype);
@@ -1152,7 +1153,7 @@ bool RemoteControlBoard::getPids(const PidControlTypeEnum& pidtype, Pid *pids)
         return ret.ret;
     }
     std::copy(ret.pids.begin(), ret.pids.end(), pids);
-    return ReturnValue_ok;
+    return ret.ret;
 }
 
 bool RemoteControlBoard::getPidReference(const PidControlTypeEnum& pidtype, int j, double *ref)
@@ -1175,66 +1176,49 @@ bool RemoteControlBoard::getPidErrorLimits(const PidControlTypeEnum& pidtype, do
     return getValWithPidType(VOCAB_LIMS, pidtype, limits);
 }
 
-bool RemoteControlBoard::resetPid(const PidControlTypeEnum& pidtype, int j)
+ReturnValue RemoteControlBoard::resetPid(const PidControlTypeEnum& pidtype, int j)
 {
-    if (!isLive()) {
-        return false;
+    // std::lock_guard<std::mutex> lg(m_mutex);
+    auto ret = m_RPC.resetPidRPC(pidtype, j);
+    if (!ret) {
+        yCError(REMOTECONTROLBOARD, "Unable to resetPidRPC");
+        return ret;
     }
-    Bottle cmd, response;
-    cmd.addVocab32(VOCAB_SET);
-    cmd.addVocab32(VOCAB_PID);
-    cmd.addVocab32(VOCAB_RESET);
-    cmd.addVocab32((yarp::conf::vocab32_t)(pidtype));
-    cmd.addInt32(j);
-    bool ok = rpc_p.write(cmd, response);
-    return CHECK_FAIL(ok, response);
+    return ret;
 }
 
-bool RemoteControlBoard::disablePid(const PidControlTypeEnum& pidtype, int j)
+ReturnValue RemoteControlBoard::disablePid(const PidControlTypeEnum& pidtype, int j)
 {
-    if (!isLive()) {
-        return false;
+    // std::lock_guard<std::mutex> lg(m_mutex);
+    auto ret = m_RPC.disablePidRPC(pidtype, j);
+    if (!ret) {
+        yCError(REMOTECONTROLBOARD, "Unable to disablePid");
+        return ret;
     }
-    Bottle cmd, response;
-    cmd.addVocab32(VOCAB_SET);
-    cmd.addVocab32(VOCAB_PID);
-    cmd.addVocab32(VOCAB_DISABLE);
-    cmd.addVocab32((yarp::conf::vocab32_t)(pidtype));
-    cmd.addInt32(j);
-    bool ok = rpc_p.write(cmd, response);
-    return CHECK_FAIL(ok, response);
+    return ret;
 }
 
-bool RemoteControlBoard::enablePid(const PidControlTypeEnum& pidtype, int j)
+ReturnValue RemoteControlBoard::enablePid(const PidControlTypeEnum& pidtype, int j)
 {
-    if (!isLive()) {
-        return false;
+    // std::lock_guard<std::mutex> lg(m_mutex);
+    auto ret = m_RPC.enablePidRPC(pidtype, j);
+    if (!ret) {
+        yCError(REMOTECONTROLBOARD, "Unable to enablePidRPC");
+        return ret;
     }
-    Bottle cmd, response;
-    cmd.addVocab32(VOCAB_SET);
-    cmd.addVocab32(VOCAB_PID);
-    cmd.addVocab32(VOCAB_ENABLE);
-    cmd.addVocab32((yarp::conf::vocab32_t)(pidtype));
-    cmd.addInt32(j);
-    bool ok = rpc_p.write(cmd, response);
-    return CHECK_FAIL(ok, response);
+    return ret;
 }
 
-bool RemoteControlBoard::isPidEnabled(const PidControlTypeEnum& pidtype, int j, bool* enabled)
+ReturnValue RemoteControlBoard::isPidEnabled(const PidControlTypeEnum& pidtype, int j, bool& enabled)
 {
-    Bottle cmd, response;
-    cmd.addVocab32(VOCAB_GET);
-    cmd.addVocab32(VOCAB_PID);
-    cmd.addVocab32(VOCAB_ENABLE);
-    cmd.addVocab32((yarp::conf::vocab32_t)(pidtype));
-    cmd.addInt32(j);
-    bool ok = rpc_p.write(cmd, response);
-    if (CHECK_FAIL(ok, response))
-    {
-        *enabled = response.get(2).asBool();
-        return true;
+    //std::lock_guard<std::mutex> lg(m_mutex);
+    auto ret = m_RPC.isPidEnabledRPC(pidtype,j);
+    if (!ret.ret) {
+        yCError(REMOTECONTROLBOARD, "Unable to isPidEnabledRPC");
+        return ret.ret;
     }
-    return false;
+    enabled = ret.isEnabled;
+    return ret.ret;
 }
 
 bool RemoteControlBoard::getPidOutput(const PidControlTypeEnum& pidtype, int j, double *out)
@@ -1247,9 +1231,38 @@ bool RemoteControlBoard::getPidOutputs(const PidControlTypeEnum& pidtype, double
     return getValWithPidType(VOCAB_OUTPUTS, pidtype, outs);
 }
 
-bool RemoteControlBoard::setPidOffset(const PidControlTypeEnum& pidtype, int j, double v)
+ReturnValue RemoteControlBoard::setPidOffset(const PidControlTypeEnum& pidtype, int j, double v)
 {
-    return setValWithPidType(VOCAB_OFFSET, pidtype, j, v);
+    if (!isLive()) {
+        return ReturnValue::return_code::return_value_error_not_ready;
+    }
+    CommandMessage& c = command_buffer.get();
+    c.head.clear();
+    c.head.addVocab32(VOCAB_PIDCONTROL_INTERFACE);
+    c.head.addVocab32(VOCAB_PIDCONTROL_SET_OFFSET);
+    c.head.addVocab32(yarp::conf::vocab32_t(pidtype));
+    c.head.addInt32(j);
+    c.body.resize(1);
+    c.body[0] = v;
+    command_buffer.write(writeStrict_singleJoint);
+    return ReturnValue_ok;
+}
+
+ReturnValue RemoteControlBoard::setPidFeedforward(const PidControlTypeEnum& pidtype, int j, double v)
+{
+    if (!isLive()) {
+        return ReturnValue::return_code::return_value_error_not_ready;
+    }
+    CommandMessage& c = command_buffer.get();
+    c.head.clear();
+    c.head.addVocab32(VOCAB_PIDCONTROL_INTERFACE);
+    c.head.addVocab32(VOCAB_PIDCONTROL_SET_FEEDFORWARD);
+    c.head.addVocab32(yarp::conf::vocab32_t(pidtype));
+    c.head.addInt32(j);
+    c.body.resize(1);
+    c.body[0] = v;
+    command_buffer.write(writeStrict_singleJoint);
+    return ReturnValue_ok;
 }
 
 ReturnValue RemoteControlBoard::getPidExtraInfo(const PidControlTypeEnum& pidtype, int j, PidExtraInfo& info)
@@ -1261,7 +1274,7 @@ ReturnValue RemoteControlBoard::getPidExtraInfo(const PidControlTypeEnum& pidtyp
         return ret.ret;
     }
     info = ret.info;
-    return ReturnValue_ok;
+    return ret.ret;
 }
 
 ReturnValue RemoteControlBoard::getPidExtraInfos(const PidControlTypeEnum& pidtype, std::vector<PidExtraInfo>& info)
@@ -1273,7 +1286,31 @@ ReturnValue RemoteControlBoard::getPidExtraInfos(const PidControlTypeEnum& pidty
         return ret.ret;
     }
     info = ret.info;
-    return ReturnValue_ok;
+    return ret.ret;
+}
+
+ReturnValue RemoteControlBoard::getPidOffset(const PidControlTypeEnum& pidtype, int j, double& value)
+{
+    //std::lock_guard<std::mutex> lg(m_mutex);
+    auto ret = m_RPC.getPidOffsetRPC(pidtype,j);
+    if (!ret.ret) {
+        yCError(REMOTECONTROLBOARD, "Unable to getPidOffsetRPC");
+        return ret.ret;
+    }
+    value = ret.offset;
+    return ret.ret;
+}
+
+ReturnValue RemoteControlBoard::getPidFeedforward(const PidControlTypeEnum& pidtype, int j,  double& value)
+{
+    //std::lock_guard<std::mutex> lg(m_mutex);
+    auto ret = m_RPC.getPidFeedforwardRPC(pidtype,j);
+    if (!ret.ret) {
+        yCError(REMOTECONTROLBOARD, "Unable to getPidFeedforwardRPC");
+        return ret.ret;
+    }
+    value = ret.feedforward;
+    return  ret.ret;
 }
 
 // END IPidControl
@@ -1806,6 +1843,7 @@ bool RemoteControlBoard::velocityMove(int j, double v)
      }
     CommandMessage& c = command_buffer.get();
     c.head.clear();
+    c.head.addVocab32(VOCAB_VELOCITYCONTROL_INTERFACE);
     c.head.addVocab32(VOCAB_VELOCITY_MOVE);
     c.head.addInt32(j);
     c.body.resize(1);
@@ -1821,6 +1859,7 @@ bool RemoteControlBoard::velocityMove(const double *v)
     }
     CommandMessage& c = command_buffer.get();
     c.head.clear();
+    c.head.addVocab32(VOCAB_VELOCITYCONTROL_INTERFACE);
     c.head.addVocab32(VOCAB_VELOCITY_MOVES);
     c.body.resize(nj);
     memcpy(&(c.body[0]), v, sizeof(double)*nj);
@@ -2379,6 +2418,7 @@ bool RemoteControlBoard::setPosition(int j, double ref)
     }
     CommandMessage& c = command_buffer.get();
     c.head.clear();
+    c.head.addVocab32(VOCAB_POSITIONDIRECTCONTROL_INTERFACE);
     c.head.addVocab32(VOCAB_POSITION_DIRECT);
     c.head.addInt32(j);
     c.body.resize(1);
@@ -2394,6 +2434,7 @@ bool RemoteControlBoard::setPositions(const int n_joint, const int *joints, cons
     }
     CommandMessage& c = command_buffer.get();
     c.head.clear();
+    c.head.addVocab32(VOCAB_POSITIONDIRECTCONTROL_INTERFACE);
     c.head.addVocab32(VOCAB_POSITION_DIRECT_GROUP);
     c.head.addInt32(n_joint);
     Bottle &jointList = c.head.addList();
@@ -2413,6 +2454,7 @@ bool RemoteControlBoard::setPositions(const double *refs)
     }
     CommandMessage& c = command_buffer.get();
     c.head.clear();
+    c.head.addVocab32(VOCAB_POSITIONDIRECTCONTROL_INTERFACE);
     c.head.addVocab32(VOCAB_POSITION_DIRECTS);
     c.body.resize(nj);
     memcpy(&(c.body[0]), refs, sizeof(double)*nj);
@@ -2447,6 +2489,7 @@ bool RemoteControlBoard::velocityMove(const int n_joint, const int *joints, cons
     }
     CommandMessage& c = command_buffer.get();
     c.head.clear();
+    c.head.addVocab32(VOCAB_VELOCITYCONTROL_INTERFACE);
     c.head.addVocab32(VOCAB_VELOCITY_MOVE_GROUP);
     c.head.addInt32(n_joint);
     Bottle &jointList = c.head.addList();
@@ -2914,6 +2957,7 @@ ReturnValue RemoteControlBoard::setDesiredVelocity(int jnt, double vel)
     }
     CommandMessage& c = command_buffer.get();
     c.head.clear();
+    c.head.addVocab32(VOCAB_VELOCITYDIRECTCONTROL_INTERFACE);
     c.head.addVocab32(VOCAB_VELOCITY_DIRECT_SET_ONE);
     c.head.addInt32(jnt);
     c.body.resize(1);
@@ -2929,6 +2973,7 @@ ReturnValue RemoteControlBoard::setDesiredVelocity(const std::vector<double>& ve
     }
     CommandMessage& c = command_buffer.get();
     c.head.clear();
+    c.head.addVocab32(VOCAB_VELOCITYDIRECTCONTROL_INTERFACE);
     c.head.addVocab32(VOCAB_VELOCITY_DIRECT_SET_ALL);
     c.body.resize(nj);
     for (size_t i = 0; i < vels.size(); i++) {
@@ -2945,6 +2990,7 @@ ReturnValue RemoteControlBoard::setDesiredVelocity(const std::vector<int>& jnts,
     }
     CommandMessage& c = command_buffer.get();
     c.head.clear();
+    c.head.addVocab32(VOCAB_VELOCITYDIRECTCONTROL_INTERFACE);
     c.head.addVocab32(VOCAB_VELOCITY_DIRECT_SET_GROUP);
     c.head.addInt32(jnts.size());
     Bottle &jointList = c.head.addList();

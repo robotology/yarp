@@ -6,6 +6,8 @@
 #ifndef ICURRENTCONTROLTEST_H
 #define ICURRENTCONTROLTEST_H
 
+#include <yarp/os/Time.h>
+
 #include <yarp/dev/ICurrentControl.h>
 #include <yarp/dev/IControlMode.h>
 #include <catch2/catch_amalgamated.hpp>
@@ -13,6 +15,8 @@
 #include <memory>
 #include <numeric>
 #include <vector>
+
+#include "Utils.h"
 
 using namespace yarp::dev;
 using namespace yarp::os;
@@ -38,12 +42,16 @@ namespace yarp::dev::tests
 
         b = icurr->getRefCurrent(0, &val);
         CHECK(b);
+        CHECK(val != 100);
 
         b = icurr->setRefCurrent(0, 100);
         CHECK(b);
+        //Streaming message sent on separated thread, delay required before get()
+        yarp::os::Time::delay(0.020);
 
         b = icurr->getRefCurrent(0, &val);
         CHECK(b);
+        CHECK(val == 100);
 
         b = icurr->getCurrentRange(0, &min, &max);
         CHECK(b);
@@ -52,17 +60,25 @@ namespace yarp::dev::tests
         auto maxs = std::vector< double >(axis);
         auto currs = std::vector< double >(axis);
 
+        auto refs = std::vector< double >(axis);
+        auto refs_check = std::vector< double >(axis);
+
         b = icurr->getCurrentRanges(mins.data(), maxs.data());
         CHECK(b);
 
         b = icurr->getCurrents(currs.data());
         CHECK(b);
 
-        b = icurr->getRefCurrents(currs.data());
+        set_vector_crescent(axis, refs.data(), 10.0);
+        set_vector_crescent(axis, refs_check.data(), 10.0);
+        b = icurr->setRefCurrents(refs.data());
         CHECK(b);
+        //Streaming message sent on separated thread, delay required before get()
+        yarp::os::Time::delay(0.050);
 
-        b = icurr->setRefCurrents(currs.data());
+        b = icurr->getRefCurrents(refs.data());
         CHECK(b);
+        CHECK(vectors_equal(axis, refs.data(), refs_check.data()));
     }
 }
 

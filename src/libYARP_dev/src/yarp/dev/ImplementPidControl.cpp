@@ -73,9 +73,9 @@ bool ImplementPidControl::uninitialize ()
      return true;
 }
 
-bool ImplementPidControl::setPid(const PidControlTypeEnum& pidtype, int j, const Pid &pid)
+ReturnValue ImplementPidControl::setPid(const PidControlTypeEnum& pidtype, int j, const Pid &pid)
 {
-    JOINTIDCHECK
+    if (j >= castToMapper(helper)->axes()){yError("joint id out of bound"); return ReturnValue::return_code::return_value_error_method_failed;}
     Pid pid_machine;
     int k;
     ControlBoardHelper* cb_helper = castToMapper(helper);
@@ -83,7 +83,7 @@ bool ImplementPidControl::setPid(const PidControlTypeEnum& pidtype, int j, const
     return iPid->setPidRaw(pidtype, k, pid_machine);
 }
 
-bool ImplementPidControl::setPids(const PidControlTypeEnum& pidtype,  const Pid *pids)
+ReturnValue ImplementPidControl::setPids(const PidControlTypeEnum& pidtype,  const Pid *pids)
 {
     ControlBoardHelper* cb_helper = castToMapper(helper);
     int nj= cb_helper->axes();
@@ -97,7 +97,7 @@ bool ImplementPidControl::setPids(const PidControlTypeEnum& pidtype,  const Pid 
     }
 
 
-    bool ret = iPid->setPidsRaw(pidtype, buffValues.getData());
+    auto ret = iPid->setPidsRaw(pidtype, buffValues.getData());
     pidBuffManager->releaseBuffer(buffValues);
     return ret;
 }
@@ -205,29 +205,30 @@ bool ImplementPidControl::getPidOutputs(const PidControlTypeEnum& pidtype, doubl
     return ret;
 }
 
-bool ImplementPidControl::getPid(const PidControlTypeEnum& pidtype, int j, Pid *pid)
+ReturnValue ImplementPidControl::getPid(const PidControlTypeEnum& pidtype, int j, Pid *pid)
 {
-    JOINTIDCHECK
+    if (j >= castToMapper(helper)->axes()){yError("joint id out of bound"); return ReturnValue::return_code::return_value_error_method_failed;}
     ControlBoardHelper* cb_helper = castToMapper(helper);
     int k_raw;
     k_raw=cb_helper->toHw(j);
     Pid rawPid;
-    bool ret = iPid->getPidRaw(pidtype, k_raw, &rawPid);
+    auto ret = iPid->getPidRaw(pidtype, k_raw, &rawPid);
     if (ret)
     {
         cb_helper->convert_pid_to_user(pidtype, rawPid, k_raw, *pid, j);
-        return true;
+        return ret;
     }
-    return false;
+    return ret;
 }
 
-bool ImplementPidControl::getPids(const PidControlTypeEnum& pidtype, Pid *pids)
+ReturnValue ImplementPidControl::getPids(const PidControlTypeEnum& pidtype, Pid *pids)
 {
     yarp::dev::impl::Buffer<Pid> buffValues = pidBuffManager->getBuffer();
-    if(!iPid->getPidsRaw(pidtype, buffValues.getData()))
+    auto ret = iPid->getPidsRaw(pidtype, buffValues.getData());
+    if(!ret)
     {
         pidBuffManager->releaseBuffer(buffValues);
-        return false;
+        return ret;
     }
 
     ControlBoardHelper* cb_helper = castToMapper(helper);
@@ -241,7 +242,7 @@ bool ImplementPidControl::getPids(const PidControlTypeEnum& pidtype, Pid *pids)
         pids[j_usr] = outpid;
     }
     pidBuffManager->releaseBuffer(buffValues);
-    return true;
+    return ret;
 }
 
 bool ImplementPidControl::getPidReference(const PidControlTypeEnum& pidtype, int j, double *ref)
@@ -297,37 +298,38 @@ bool ImplementPidControl::getPidErrorLimits(const PidControlTypeEnum& pidtype, d
     return ret;
 }
 
-bool ImplementPidControl::resetPid(const PidControlTypeEnum& pidtype, int j)
+ReturnValue ImplementPidControl::resetPid(const PidControlTypeEnum& pidtype, int j)
 {
-    JOINTIDCHECK
+    if (j >= castToMapper(helper)->axes()){yError("joint id out of bound"); return ReturnValue::return_code::return_value_error_method_failed;}
     int k=0;
     k=castToMapper(helper)->toHw(j);
 
     return iPid->resetPidRaw(pidtype, k);
 }
 
-bool ImplementPidControl::enablePid(const PidControlTypeEnum& pidtype, int j)
+ReturnValue ImplementPidControl::enablePid(const PidControlTypeEnum& pidtype, int j)
 {
-    JOINTIDCHECK
+    if (j >= castToMapper(helper)->axes()){yError("joint id out of bound"); return ReturnValue::return_code::return_value_error_method_failed;}
     int k=0;
     k=castToMapper(helper)->toHw(j);
 
     return iPid->enablePidRaw(pidtype, k);
 }
 
-bool ImplementPidControl::disablePid(const PidControlTypeEnum& pidtype, int j)
+ReturnValue ImplementPidControl::disablePid(const PidControlTypeEnum& pidtype, int j)
 {
-    JOINTIDCHECK
+    if (j >= castToMapper(helper)->axes()){yError("joint id out of bound"); return ReturnValue::return_code::return_value_error_method_failed;}
     int k=0;
     k=castToMapper(helper)->toHw(j);
 
     return iPid->disablePidRaw(pidtype, k);
 }
 
-bool ImplementPidControl::setPidOffset(const PidControlTypeEnum& pidtype, int j, double off)
+ReturnValue ImplementPidControl::setPidOffset(const PidControlTypeEnum& pidtype, int j, double off)
 {
-    JOINTIDCHECK
+    if (j >= castToMapper(helper)->axes()){yError("joint id out of bound"); return ReturnValue::return_code::return_value_error_method_failed;}
     int k = 0;
+    k=castToMapper(helper)->toHw(j);
     double rawoff;
     ControlBoardHelper* cb_helper = castToMapper(helper);
     double output_conversion_units_user2raw = cb_helper->get_pidoutput_conversion_factor_user2raw(pidtype,j);
@@ -335,9 +337,51 @@ bool ImplementPidControl::setPidOffset(const PidControlTypeEnum& pidtype, int j,
     return iPid->setPidOffsetRaw(pidtype, k, rawoff);
 }
 
-bool ImplementPidControl::isPidEnabled(const PidControlTypeEnum& pidtype, int j, bool* enabled)
+ReturnValue ImplementPidControl::setPidFeedforward(const PidControlTypeEnum& pidtype, int j, double off)
 {
-    JOINTIDCHECK
+    if (j >= castToMapper(helper)->axes()){yError("joint id out of bound"); return ReturnValue::return_code::return_value_error_method_failed;}
+    int k = 0;
+    k=castToMapper(helper)->toHw(j);
+    double rawoff;
+    ControlBoardHelper* cb_helper = castToMapper(helper);
+    double output_conversion_units_user2raw = cb_helper->get_pidoutput_conversion_factor_user2raw(pidtype,j);
+    rawoff = off * output_conversion_units_user2raw;
+    return iPid->setPidFeedforwardRaw(pidtype, k, rawoff);
+}
+
+ReturnValue ImplementPidControl::getPidOffset(const PidControlTypeEnum& pidtype, int j, double& off)
+{
+    if (j >= castToMapper(helper)->axes()){yError("joint id out of bound"); return ReturnValue::return_code::return_value_error_method_failed;}
+    ReturnValue ret;
+    int k;
+    double raw;
+    ControlBoardHelper* cb_helper = castToMapper(helper);
+    k=castToMapper(helper)->toHw(j);
+
+    ret=iPid->getPidOffsetRaw(pidtype, k, raw);
+
+    cb_helper->convert_pidunits_to_user(pidtype,raw,&off,k);
+    return ret;
+}
+
+ReturnValue ImplementPidControl::getPidFeedforward(const PidControlTypeEnum& pidtype, int j, double& ffd)
+{
+    if (j >= castToMapper(helper)->axes()){yError("joint id out of bound"); return ReturnValue::return_code::return_value_error_method_failed;}
+    ReturnValue ret;
+    int k;
+    double raw;
+    ControlBoardHelper* cb_helper = castToMapper(helper);
+    k=castToMapper(helper)->toHw(j);
+
+    ret=iPid->getPidFeedforwardRaw(pidtype, k, raw);
+
+    cb_helper->convert_pidunits_to_user(pidtype,raw,&ffd,k);
+    return ret;
+}
+
+ReturnValue ImplementPidControl::isPidEnabled(const PidControlTypeEnum& pidtype, int j, bool& enabled)
+{
+    if (j >= castToMapper(helper)->axes()){yError("joint id out of bound"); return ReturnValue::return_code::return_value_error_method_failed;}
     int k=0;
     k=castToMapper(helper)->toHw(j);
 

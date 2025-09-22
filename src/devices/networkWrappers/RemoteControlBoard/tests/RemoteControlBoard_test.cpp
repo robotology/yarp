@@ -3,21 +3,6 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#include <yarp/dev/IPositionControl.h>
-#include <yarp/dev/IVelocityControl.h>
-#include <yarp/dev/ITorqueControl.h>
-#include <yarp/dev/IControlMode.h>
-#include <yarp/dev/IEncodersTimed.h>
-#include <yarp/dev/IAxisInfo.h>
-#include <yarp/dev/IInteractionMode.h>
-#include <yarp/dev/IMotorEncoders.h>
-#include <yarp/dev/IMotor.h>
-#include <yarp/dev/IPidControl.h>
-#include <yarp/dev/IPWMControl.h>
-#include <yarp/dev/ICurrentControl.h>
-#include <yarp/dev/IImpedanceControl.h>
-#include <yarp/dev/IRemoteCalibrator.h>
-#include <yarp/dev/IControlLimits.h>
 #include <yarp/os/Network.h>
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/WrapperSingle.h>
@@ -38,6 +23,7 @@
 #include <yarp/dev/tests/IJointFaultTest.h>
 #include <yarp/dev/tests/IControlLimitsTest.h>
 #include <yarp/dev/tests/IJointBrakeTest.h>
+#include <yarp/dev/tests/IPositionDirectTest.h>
 #include <yarp/dev/tests/IVelocityDirectTest.h>
 
 #include <catch2/catch_amalgamated.hpp>
@@ -77,7 +63,8 @@ TEST_CASE("dev::RemoteControlBoardTest", "[yarp::dev]")
         IImpedanceControl* iimp = nullptr;
         //IRemoteCalibrator* iremotecalib = nullptr;
         IJointBrake* ibrake = nullptr;
-        IVelocityDirect* ivelod = nullptr;
+        IPositionDirect* iposdir = nullptr;
+        IVelocityDirect* iveldir = nullptr;
 
         ////////"Checking opening fakeMotionControl and controlBoard_nws_yarp polydrivers"
         {
@@ -132,7 +119,8 @@ TEST_CASE("dev::RemoteControlBoardTest", "[yarp::dev]")
         ddnwc.view(ifault);  REQUIRE(ifault);
         ddnwc.view(ilims);   REQUIRE(ilims);
         ddnwc.view(ibrake);  REQUIRE(ibrake);
-        ddnwc.view(ivelod);  REQUIRE(ivelod);
+        ddnwc.view(iposdir);  REQUIRE(iposdir);
+        ddnwc.view(iveldir);  REQUIRE(iveldir);
         //ddnwc.view(icalib);  REQUIRE(iremotecalib);
 
         yarp::dev::tests::exec_iPositionControl_test_1(ipos,icmd);
@@ -152,7 +140,8 @@ TEST_CASE("dev::RemoteControlBoardTest", "[yarp::dev]")
         yarp::dev::tests::exec_iJointFault_test_1(ifault);
         yarp::dev::tests::exec_iControlLimits_test1(ilims, iinfo);
         yarp::dev::tests::exec_iJointBrake_test1(ibrake);
-        yarp::dev::tests::exec_iVelocityDirect_test_1(ivelod, icmd);
+        yarp::dev::tests::exec_iPositionDirect_test_1(iposdir, icmd);
+        yarp::dev::tests::exec_iVelocityDirect_test_1(iveldir, icmd);
 
         //"Close all polydrivers and check"
         {

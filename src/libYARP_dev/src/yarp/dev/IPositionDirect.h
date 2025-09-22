@@ -16,11 +16,11 @@ class IPositionDirectRaw;
 }
 
 /**
- * @ingroup dev_iface_motor_raw
+ * @ingroup dev_iface_motor
  *
  * Interface for a generic control board device implementing position control.
  * This interface is used to send high frequency streaming commands to the boards, the aim
- * is to reach low level control in firmware bypassing the trajetory generator.
+ * is to reach low level control in firmware bypassing the trajectory generator.
  */
 
 class YARP_dev_API yarp::dev::IPositionDirect
@@ -102,12 +102,12 @@ public:
 
 
 /**
- * @ingroup dev_iface_motor
+ * @ingroup dev_iface_motor_raw
  *
  * Interface for a generic control board device implementing position control in encoder
  * coordinates.
  * This interface is used to send high frequency streaming commands to the boards, the aim
- * is to reach low level control in firmware bypassing the trajetory generator, raw functions.
+ * is to reach low level control in firmware bypassing the trajectory generator, raw functions.
  */
 class YARP_dev_API yarp::dev::IPositionDirectRaw
 {
@@ -184,6 +184,9 @@ public:
      */
     virtual bool getRefPositionsRaw(const int n_joint, const int *joints, double *refs) {return false;}
 };
+
+// Interface name
+constexpr yarp::conf::vocab32_t VOCAB_POSITIONDIRECTCONTROL_INTERFACE   = yarp::os::createVocab32('i','p','o','d');
 
 constexpr yarp::conf::vocab32_t VOCAB_POSITION_DIRECT           = yarp::os::createVocab32('d','p','o');
 constexpr yarp::conf::vocab32_t VOCAB_POSITION_DIRECTS          = yarp::os::createVocab32('d','p','o','s');

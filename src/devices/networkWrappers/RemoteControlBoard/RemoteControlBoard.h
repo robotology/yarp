@@ -275,27 +275,30 @@ public:
     bool getAxes(int *ax) override;
 
     // IPidControl
-    bool setPid(const PidControlTypeEnum& pidtype, int j, const Pid &pid) override;
-    bool setPids(const PidControlTypeEnum& pidtype, const Pid *pids) override;
+    ReturnValue setPid(const PidControlTypeEnum& pidtype, int j, const Pid &pid) override;
+    ReturnValue setPids(const PidControlTypeEnum& pidtype, const Pid *pids) override;
     bool setPidReference(const PidControlTypeEnum& pidtype, int j, double ref) override;
     bool setPidReferences(const PidControlTypeEnum& pidtype, const double *refs) override;
     bool setPidErrorLimit(const PidControlTypeEnum& pidtype, int j, double limit) override;
     bool setPidErrorLimits(const PidControlTypeEnum& pidtype, const double *limits) override;
     bool getPidError(const PidControlTypeEnum& pidtype, int j, double *err) override;
     bool getPidErrors(const PidControlTypeEnum& pidtype, double *errs) override;
-    bool getPid(const PidControlTypeEnum& pidtype, int j, Pid *pid) override;
-    bool getPids(const PidControlTypeEnum& pidtype, Pid *pids) override;
+    ReturnValue getPid(const PidControlTypeEnum& pidtype, int j, Pid *pid) override;
+    ReturnValue getPids(const PidControlTypeEnum& pidtype, Pid *pids) override;
     bool getPidReference(const PidControlTypeEnum& pidtype, int j, double *ref) override;
     bool getPidReferences(const PidControlTypeEnum& pidtype, double *refs) override;
     bool getPidErrorLimit(const PidControlTypeEnum& pidtype, int j, double *limit) override;
     bool getPidErrorLimits(const PidControlTypeEnum& pidtype, double *limits) override;
-    bool resetPid(const PidControlTypeEnum& pidtype, int j) override;
-    bool disablePid(const PidControlTypeEnum& pidtype, int j) override;
-    bool enablePid(const PidControlTypeEnum& pidtype, int j) override;
-    bool isPidEnabled(const PidControlTypeEnum& pidtype, int j, bool* enabled) override;
+    ReturnValue resetPid(const PidControlTypeEnum& pidtype, int j) override;
+    ReturnValue disablePid(const PidControlTypeEnum& pidtype, int j) override;
+    ReturnValue enablePid(const PidControlTypeEnum& pidtype, int j) override;
+    ReturnValue isPidEnabled(const PidControlTypeEnum& pidtype, int j, bool& enabled) override;
     bool getPidOutput(const PidControlTypeEnum& pidtype, int j, double *out) override;
     bool getPidOutputs(const PidControlTypeEnum& pidtype, double *outs) override;
-    bool setPidOffset(const PidControlTypeEnum& pidtype, int j, double v) override;
+    ReturnValue setPidOffset(const PidControlTypeEnum& pidtype, int j, double v) override;
+    ReturnValue setPidFeedforward(const PidControlTypeEnum& pidtype, int j, double v) override;
+    ReturnValue getPidOffset(const PidControlTypeEnum& pidtype, int j, double& v) override;
+    ReturnValue getPidFeedforward(const PidControlTypeEnum& pidtype, int j, double& v) override;
     ReturnValue getPidExtraInfo(const PidControlTypeEnum& pidtype, int j, PidExtraInfo& info) override;
     ReturnValue getPidExtraInfos(const PidControlTypeEnum& pidtype, std::vector<PidExtraInfo>& info) override;
 

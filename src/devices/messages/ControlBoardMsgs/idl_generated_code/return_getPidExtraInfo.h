@@ -8,28 +8,28 @@
 // This is an automatically generated file.
 // It could get re-generated if the ALLOW_IDL_GENERATION flag is on.
 
-#ifndef YARP_THRIFT_GENERATOR_STRUCT_RETURN_GETINFOPIDS_H
-#define YARP_THRIFT_GENERATOR_STRUCT_RETURN_GETINFOPIDS_H
+#ifndef YARP_THRIFT_GENERATOR_STRUCT_RETURN_GETPIDEXTRAINFO_H
+#define YARP_THRIFT_GENERATOR_STRUCT_RETURN_GETPIDEXTRAINFO_H
 
 #include <yarp/os/Wire.h>
 #include <yarp/os/idl/WireTypes.h>
 #include <yarp/dev/ControlBoardPid.h>
 #include <yarp/dev/ReturnValue.h>
 
-class return_getInfoPids :
+class return_getPidExtraInfo :
         public yarp::os::idl::WirePortable
 {
 public:
     // Fields
     yarp::dev::ReturnValue ret{};
-    std::vector<yarp::dev::PidExtraInfo> info{};
+    yarp::dev::PidExtraInfo info{};
 
     // Default constructor
-    return_getInfoPids() = default;
+    return_getPidExtraInfo() = default;
 
     // Constructor with field values
-    return_getInfoPids(const yarp::dev::ReturnValue& ret,
-                       const std::vector<yarp::dev::PidExtraInfo>& info);
+    return_getPidExtraInfo(const yarp::dev::ReturnValue& ret,
+                           const yarp::dev::PidExtraInfo& info);
 
     // Read structure on a Wire
     bool read(yarp::os::idl::WireReader& reader) override;
@@ -47,7 +47,7 @@ public:
     std::string toString() const;
 
     // If you want to serialize this class without nesting, use this helper
-    typedef yarp::os::idl::Unwrapped<return_getInfoPids> unwrapped;
+    typedef yarp::os::idl::Unwrapped<return_getPidExtraInfo> unwrapped;
 
 private:
     // read/write ret field
@@ -63,4 +63,4 @@ private:
     bool nested_write_info(const yarp::os::idl::WireWriter& writer) const;
 };
 
-#endif // YARP_THRIFT_GENERATOR_STRUCT_RETURN_GETINFOPIDS_H
+#endif // YARP_THRIFT_GENERATOR_STRUCT_RETURN_GETPIDEXTRAINFO_H

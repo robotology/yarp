@@ -173,18 +173,22 @@ private:
     std::vector<yarp::dev::PidWithExtraInfo>* _cpids;        /** initial current gains */
     std::vector<yarp::dev::PidWithExtraInfo>* _vpids;        /** initial velocity gains */
 
-    std::vector<bool> *_ppids_ena;
-    std::vector<bool> *_tpids_ena;
-    std::vector<bool> *_cpids_ena;
-    std::vector<bool> *_vpids_ena;
-    std::vector<double> *_ppids_lim;
-    std::vector<double> *_tpids_lim;
-    std::vector<double> *_cpids_lim;
-    std::vector<double> *_vpids_lim;
-    std::vector<double> *_ppids_ref;
-    std::vector<double> *_tpids_ref;
-    std::vector<double> *_cpids_ref;
-    std::vector<double> *_vpids_ref;
+    std::vector<bool> *_ppids_ena    = nullptr;
+    std::vector<bool> *_tpids_ena    = nullptr;
+    std::vector<bool> *_cpids_ena    = nullptr;
+    std::vector<bool> *_vpids_ena    = nullptr;
+    std::vector<double> *_ppids_lim  = nullptr;
+    std::vector<double> *_tpids_lim  = nullptr;
+    std::vector<double> *_cpids_lim  = nullptr;
+    std::vector<double> *_vpids_lim  = nullptr;
+    std::vector<double> *_ppids_ref  = nullptr;
+    std::vector<double> *_tpids_ref  = nullptr;
+    std::vector<double> *_cpids_ref  = nullptr;
+    std::vector<double> *_vpids_ref  = nullptr;
+    std::vector<double> *_ppids_ffd  = nullptr;
+    std::vector<double> *_tpids_ffd  = nullptr;
+    std::vector<double> *_cpids_ffd  = nullptr;
+    std::vector<double> *_vpids_ffd  = nullptr;
 
     std::string* _axisName = nullptr;                      /** axis name */
     yarp::dev::JointTypeEnum* _jointType = nullptr;        /** axis type */
@@ -289,8 +293,8 @@ public:
     void threadRelease() override;
 
     /////////   PID INTERFACE   /////////
-    bool setPidRaw(const yarp::dev::PidControlTypeEnum& pidtype,int j, const yarp::dev::Pid &pid) override;
-    bool setPidsRaw(const yarp::dev::PidControlTypeEnum& pidtype,const yarp::dev::Pid *pids) override;
+    yarp::dev::ReturnValue setPidRaw(const yarp::dev::PidControlTypeEnum& pidtype,int j, const yarp::dev::Pid &pid) override;
+    yarp::dev::ReturnValue setPidsRaw(const yarp::dev::PidControlTypeEnum& pidtype,const yarp::dev::Pid *pids) override;
     bool setPidReferenceRaw(const yarp::dev::PidControlTypeEnum& pidtype,int j, double ref) override;
     bool setPidReferencesRaw(const yarp::dev::PidControlTypeEnum& pidtype,const double *refs) override;
     bool setPidErrorLimitRaw(const yarp::dev::PidControlTypeEnum& pidtype,int j, double limit) override;
@@ -299,17 +303,20 @@ public:
     bool getPidErrorsRaw(const yarp::dev::PidControlTypeEnum& pidtype, double *errs) override;
     bool getPidOutputRaw(const yarp::dev::PidControlTypeEnum& pidtype,int j, double *out) override;
     bool getPidOutputsRaw(const yarp::dev::PidControlTypeEnum& pidtype,double *outs) override;
-    bool getPidRaw(const yarp::dev::PidControlTypeEnum& pidtype,int j, yarp::dev::Pid *pid) override;
-    bool getPidsRaw(const yarp::dev::PidControlTypeEnum& pidtype, yarp::dev::Pid *pids) override;
+    yarp::dev::ReturnValue getPidRaw(const yarp::dev::PidControlTypeEnum& pidtype,int j, yarp::dev::Pid *pid) override;
+    yarp::dev::ReturnValue getPidsRaw(const yarp::dev::PidControlTypeEnum& pidtype, yarp::dev::Pid *pids) override;
     bool getPidReferenceRaw(const yarp::dev::PidControlTypeEnum& pidtype,int j, double *ref) override;
     bool getPidReferencesRaw(const yarp::dev::PidControlTypeEnum& pidtype,double *refs) override;
     bool getPidErrorLimitRaw(const yarp::dev::PidControlTypeEnum& pidtype,int j, double *limit) override;
     bool getPidErrorLimitsRaw(const yarp::dev::PidControlTypeEnum& pidtype,double *limits) override;
-    bool resetPidRaw(const yarp::dev::PidControlTypeEnum& pidtype,int j) override;
-    bool disablePidRaw(const yarp::dev::PidControlTypeEnum& pidtype,int j) override;
-    bool enablePidRaw(const yarp::dev::PidControlTypeEnum& pidtype,int j) override;
-    bool setPidOffsetRaw(const yarp::dev::PidControlTypeEnum& pidtype,int j, double v) override;
-    bool isPidEnabledRaw(const yarp::dev::PidControlTypeEnum& pidtype, int j, bool* enabled) override;
+    yarp::dev::ReturnValue resetPidRaw(const yarp::dev::PidControlTypeEnum& pidtype,int j) override;
+    yarp::dev::ReturnValue disablePidRaw(const yarp::dev::PidControlTypeEnum& pidtype,int j) override;
+    yarp::dev::ReturnValue enablePidRaw(const yarp::dev::PidControlTypeEnum& pidtype,int j) override;
+    yarp::dev::ReturnValue setPidOffsetRaw(const yarp::dev::PidControlTypeEnum& pidtype,int j, double v) override;
+    yarp::dev::ReturnValue setPidFeedforwardRaw(const yarp::dev::PidControlTypeEnum& pidtype,int j, double v) override;
+    yarp::dev::ReturnValue getPidOffsetRaw(const yarp::dev::PidControlTypeEnum& pidtype,int j, double& v) override;
+    yarp::dev::ReturnValue getPidFeedforwardRaw(const yarp::dev::PidControlTypeEnum& pidtype,int j, double& v) override;
+    yarp::dev::ReturnValue isPidEnabledRaw(const yarp::dev::PidControlTypeEnum& pidtype, int j, bool& enabled) override;
     yarp::dev::ReturnValue getPidExtraInfoRaw(const yarp::dev::PidControlTypeEnum& pidtype, int j, yarp::dev::PidExtraInfo& units) override;
     yarp::dev::ReturnValue getPidExtraInfosRaw(const yarp::dev::PidControlTypeEnum& pidtype, std::vector<yarp::dev::PidExtraInfo>& units) override;
 

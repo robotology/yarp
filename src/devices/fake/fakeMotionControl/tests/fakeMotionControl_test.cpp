@@ -24,6 +24,7 @@
 #include <yarp/dev/tests/IJointFaultTest.h>
 #include <yarp/dev/tests/IJointBrakeTest.h>
 #include <yarp/dev/tests/IControlLimitsTest.h>
+#include <yarp/dev/tests/IPositionDirectTest.h>
 #include <yarp/dev/tests/IVelocityDirectTest.h>
 
 #include <catch2/catch_amalgamated.hpp>
@@ -43,6 +44,7 @@ TEST_CASE("dev::fakeMotionControl", "[yarp::dev]")
         PolyDriver ddmc;
 
         IPositionControl* ipos=nullptr;
+        IPositionDirect* iposdir=nullptr;
         IVelocityControl* ivel = nullptr;
         ITorqueControl* itrq=nullptr;
         IAxisInfo* iinfo = nullptr;
@@ -71,6 +73,7 @@ TEST_CASE("dev::fakeMotionControl", "[yarp::dev]")
         }
 
         ddmc.view(ipos);    REQUIRE(ipos);
+        ddmc.view(iposdir); REQUIRE(iposdir);
         ddmc.view(ivel);    REQUIRE(ivel);
         ddmc.view(itrq);    REQUIRE(itrq);
         ddmc.view(iinfo);   REQUIRE(iinfo);
@@ -105,6 +108,7 @@ TEST_CASE("dev::fakeMotionControl", "[yarp::dev]")
         yarp::dev::tests::exec_iJointFault_test_1(ifault);
         yarp::dev::tests::exec_iControlLimits_test1(ilims, iinfo);
         yarp::dev::tests::exec_iJointBrake_test1(ibrake);
+        yarp::dev::tests::exec_iPositionDirect_test_1(iposdir, icmd);
         yarp::dev::tests::exec_iVelocityDirect_test_1(iveldir, icmd);
 
         //"Close all polydrivers and check"

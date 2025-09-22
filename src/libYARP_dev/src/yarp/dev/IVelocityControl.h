@@ -18,7 +18,7 @@ class IVelocityControlRaw;
 /**
  * @ingroup dev_iface_motor_raw
  *
- * Interface for control boards implementig velocity control in encoder coordinates.
+ * Interface for control boards implementing velocity control in encoder coordinates.
  */
 class YARP_dev_API yarp::dev::IVelocityControlRaw
 {
@@ -40,7 +40,7 @@ public:
      * Start motion at a given speed, single joint.
      * @param j joint number
      * @param sp speed value
-     * @return bool/false upone success/failure
+     * @return bool/false upon success/failure
      */
     virtual bool velocityMoveRaw(int j, double sp)=0;
 
@@ -59,7 +59,7 @@ public:
      */
     virtual bool setRefAccelerationRaw(int j, double acc)=0;
 
-    /** Set reference acceleration on all joints. This is the valure that is
+    /** Set reference acceleration on all joints. This is the value that is
      * used during the generation of the trajectory.
      * @param accs pointer to the array of acceleration values
      * @return true/false upon success/failure
@@ -123,7 +123,7 @@ public:
      */
     virtual bool getRefVelocitiesRaw(const int n_joint, const int *joints, double *vels) { return false;}
 
-    /** Set reference acceleration for a subset of joints. This is the valure that is
+    /** Set reference acceleration for a subset of joints. This is the value that is
      * used during the generation of the trajectory.
      * @param joints pointer to the array of joint numbers
      * @param accs   pointer to the array containing acceleration values
@@ -162,7 +162,7 @@ public:
     /**
      * Get the number of controlled axes. This command asks the number of controlled
      * axes for the current physical interface.
-     * parame axes pointer to storage
+     * param axes pointer to storage
      * @return true/false.
      */
     virtual bool getAxes(int *axes) = 0;
@@ -171,7 +171,7 @@ public:
      * Start motion at a given speed, single joint.
      * @param j joint number
      * @param sp speed value
-     * @return bool/false upone success/failure
+     * @return bool/false upon success/failure
      */
     virtual bool velocityMove(int j, double sp)=0;
 
@@ -190,7 +190,7 @@ public:
      */
     virtual bool setRefAcceleration(int j, double acc)=0;
 
-    /** Set reference acceleration on all joints. This is the valure that is
+    /** Set reference acceleration on all joints. This is the value that is
      * used during the generation of the trajectory.
      * @param accs pointer to the array of acceleration values
      * @return true/false upon success/failure
@@ -258,7 +258,7 @@ public:
      */
     virtual bool getRefVelocities(const int n_joint, const int *joints, double *vels) { return false;}
 
-    /** Set reference acceleration for a subset of joints. This is the valure that is
+    /** Set reference acceleration for a subset of joints. This is the value that is
      * used during the generation of the trajectory.
      * @param n_joint how many joints this command is referring to
      * @param joints list of joints controlled. The size of this array is n_joints
@@ -293,6 +293,9 @@ public:
      */
     virtual bool stop(const int n_joint, const int *joints)=0;
 };
+
+// Interface name
+constexpr yarp::conf::vocab32_t VOCAB_VELOCITYCONTROL_INTERFACE   = yarp::os::createVocab32('i','v','e','l');
 
 constexpr yarp::conf::vocab32_t VOCAB_VELOCITY_MOVE  = yarp::os::createVocab32('v','m','o');
 constexpr yarp::conf::vocab32_t VOCAB_VELOCITY_MOVES = yarp::os::createVocab32('v','m','o','s');

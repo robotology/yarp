@@ -172,12 +172,12 @@ yarp::dev::ReturnValue ControlBoardRPCd::setPidRPC(const yarp::dev::PidControlTy
         return ret;
     }
 
-    bool bb = m_iPidControl->setPid(pidtype, j, pid);
-    if (!bb) {
+    ret = m_iPidControl->setPid(pidtype, j, pid);
+    if (!ret) {
         yCError(CB_RPC, "Unable to setPidRPC");
         return ReturnValue::return_code::return_value_error_generic;
     }
-    return ReturnValue_ok;
+    return ret;
 }
 
 yarp::dev::ReturnValue ControlBoardRPCd::setPidsRPC(const yarp::dev::PidControlTypeEnum pidtype, const std::vector<yarp::dev::Pid>& pids)
@@ -190,12 +190,12 @@ yarp::dev::ReturnValue ControlBoardRPCd::setPidsRPC(const yarp::dev::PidControlT
         return ret;
     }
 
-    bool bb = m_iPidControl->setPids(pidtype, pids.data());
-    if (!bb) {
+    ret = m_iPidControl->setPids(pidtype, pids.data());
+    if (!ret) {
         yCError(CB_RPC, "Unable to setPidsRPC");
         return ReturnValue::return_code::return_value_error_generic;
     }
-    return ReturnValue_ok;
+    return ret;
 }
 
 return_getPid ControlBoardRPCd::getPidRPC(const yarp::dev::PidControlTypeEnum pidtype, const std::int16_t j)
@@ -209,14 +209,13 @@ return_getPid ControlBoardRPCd::getPidRPC(const yarp::dev::PidControlTypeEnum pi
         return ret;
     }
 
-    bool bb = m_iPidControl->getPid(pidtype, j, &ret.pid);
-    if (!bb)
+    ret.ret = m_iPidControl->getPid(pidtype, j, &ret.pid);
+    if (!ret.ret)
     {
         yCError(CB_RPC, "Unable to getPidRPC");
         ret.ret = ReturnValue::return_code::return_value_error_generic;
         return ret;
     }
-    ret.ret = ReturnValue_ok;
     return ret;
 }
 
@@ -232,21 +231,20 @@ return_getPids ControlBoardRPCd::getPidsRPC(const yarp::dev::PidControlTypeEnum 
     }
 
     ret.pids.resize(m_njoints);
-    bool bb = m_iPidControl->getPids(pidtype, ret.pids.data());
-    if (!bb)
+    ret.ret = m_iPidControl->getPids(pidtype, ret.pids.data());
+    if (!ret.ret)
     {
         yCError(CB_RPC, "Unable to getPidsRPC");
         ret.ret = ReturnValue::return_code::return_value_error_generic;
         return ret;
     }
-    ret.ret = ReturnValue_ok;
     return ret;
 }
 
-return_getInfoPid ControlBoardRPCd::getPidExtraInfoRPC(const yarp::dev::PidControlTypeEnum pidtype, const std::int16_t j)
+return_getPidExtraInfo ControlBoardRPCd::getPidExtraInfoRPC(const yarp::dev::PidControlTypeEnum pidtype, const std::int16_t j)
 {
     std::lock_guard<std::mutex> lg(m_mutex);
-    return_getInfoPid ret;
+    return_getPidExtraInfo ret;
     if (!m_iPidControl)
     {
         yCError(CB_RPC, "Invalid interface");
@@ -254,21 +252,20 @@ return_getInfoPid ControlBoardRPCd::getPidExtraInfoRPC(const yarp::dev::PidContr
         return ret;
     }
 
-    bool bb = m_iPidControl->getPidExtraInfo(pidtype, j, ret.info);
-    if (!bb)
+    ret.ret = m_iPidControl->getPidExtraInfo(pidtype, j, ret.info);
+    if (!ret.ret)
     {
         yCError(CB_RPC, "Unable to getPidRPC");
         ret.ret = ReturnValue::return_code::return_value_error_generic;
         return ret;
     }
-    ret.ret = ReturnValue_ok;
     return ret;
 }
 
-return_getInfoPids ControlBoardRPCd::getPidExtraInfosRPC(const yarp::dev::PidControlTypeEnum pidtype)
+return_getPidExtraInfos ControlBoardRPCd::getPidExtraInfosRPC(const yarp::dev::PidControlTypeEnum pidtype)
 {
     std::lock_guard<std::mutex> lg(m_mutex);
-    return_getInfoPids ret;
+    return_getPidExtraInfos ret;
     if (!m_iPidControl)
     {
         yCError(CB_RPC, "Invalid interface");
@@ -277,13 +274,129 @@ return_getInfoPids ControlBoardRPCd::getPidExtraInfosRPC(const yarp::dev::PidCon
     }
 
     ret.info.resize(m_njoints);
-    bool bb = m_iPidControl->getPidExtraInfos(pidtype, ret.info);
-    if (!bb)
+    ret.ret = m_iPidControl->getPidExtraInfos(pidtype, ret.info);
+    if (!ret.ret)
     {
         yCError(CB_RPC, "Unable to getPidsRPC");
         ret.ret = ReturnValue::return_code::return_value_error_generic;
         return ret;
     }
-    ret.ret = ReturnValue_ok;
+    return ret;
+}
+
+return_getPidOffset ControlBoardRPCd::getPidOffsetRPC(const yarp::dev::PidControlTypeEnum pidtype, const std::int16_t j)
+{
+    std::lock_guard<std::mutex> lg(m_mutex);
+    return_getPidOffset ret;
+    if (!m_iPidControl)
+    {
+        yCError(CB_RPC, "Invalid interface");
+        ret.ret = ReturnValue::return_code::return_value_error_not_ready;
+        return ret;
+    }
+
+    ret.ret = m_iPidControl->getPidOffset(pidtype, j, ret.offset);
+    if (!ret.ret)
+    {
+        yCError(CB_RPC, "Unable to getPidRPC");
+        ret.ret = ReturnValue::return_code::return_value_error_generic;
+        return ret;
+    }
+    return ret;
+}
+
+return_getPidFeedforward ControlBoardRPCd::getPidFeedforwardRPC(const yarp::dev::PidControlTypeEnum pidtype, const std::int16_t j)
+{
+    std::lock_guard<std::mutex> lg(m_mutex);
+    return_getPidFeedforward ret;
+    if (!m_iPidControl)
+    {
+        yCError(CB_RPC, "Invalid interface");
+        ret.ret = ReturnValue::return_code::return_value_error_not_ready;
+        return ret;
+    }
+
+    ret.ret = m_iPidControl->getPidFeedforward(pidtype, j, ret.feedforward);
+    if (!ret.ret)
+    {
+        yCError(CB_RPC, "Unable to getPidRPC");
+        ret.ret = ReturnValue::return_code::return_value_error_generic;
+        return ret;
+    }
+    return ret;
+}
+
+yarp::dev::ReturnValue ControlBoardRPCd::enablePidRPC(const yarp::dev::PidControlTypeEnum pidtype, const std::int16_t j)
+{
+    std::lock_guard<std::mutex> lg(m_mutex);
+    ReturnValue ret;
+    if (!m_iPidControl) {
+        yCError(CB_RPC, "Invalid interface");
+        ret = ReturnValue::return_code::return_value_error_not_ready;
+        return ret;
+    }
+
+    ret = m_iPidControl->enablePid(pidtype, j);
+    if (!ret) {
+        yCError(CB_RPC, "Unable to enablePid");
+        return ReturnValue::return_code::return_value_error_generic;
+    }
+    return ret;
+}
+
+yarp::dev::ReturnValue ControlBoardRPCd::disablePidRPC(const yarp::dev::PidControlTypeEnum pidtype, const std::int16_t j)
+{
+    std::lock_guard<std::mutex> lg(m_mutex);
+    ReturnValue ret;
+    if (!m_iPidControl) {
+        yCError(CB_RPC, "Invalid interface");
+        ret = ReturnValue::return_code::return_value_error_not_ready;
+        return ret;
+    }
+
+    ret = m_iPidControl->disablePid(pidtype, j);
+    if (!ret) {
+        yCError(CB_RPC, "Unable to disablePid");
+        return ReturnValue::return_code::return_value_error_generic;
+    }
+    return ret;
+}
+
+yarp::dev::ReturnValue ControlBoardRPCd::resetPidRPC(const yarp::dev::PidControlTypeEnum pidtype, const std::int16_t j)
+{
+    std::lock_guard<std::mutex> lg(m_mutex);
+    ReturnValue ret;
+    if (!m_iPidControl) {
+        yCError(CB_RPC, "Invalid interface");
+        ret = ReturnValue::return_code::return_value_error_not_ready;
+        return ret;
+    }
+
+    ret = m_iPidControl->resetPid(pidtype, j);
+    if (!ret) {
+        yCError(CB_RPC, "Unable to resetPid");
+        return ReturnValue::return_code::return_value_error_generic;
+    }
+    return ret;
+}
+
+return_isPidEnabled ControlBoardRPCd::isPidEnabledRPC(const yarp::dev::PidControlTypeEnum pidtype, const std::int16_t j)
+{
+    std::lock_guard<std::mutex> lg(m_mutex);
+    return_isPidEnabled ret;
+    if (!m_iPidControl)
+    {
+        yCError(CB_RPC, "Invalid interface");
+        ret.ret = ReturnValue::return_code::return_value_error_not_ready;
+        return ret;
+    }
+
+    ret.ret = m_iPidControl->isPidEnabled(pidtype, j, ret.isEnabled);
+    if (!ret.ret)
+    {
+        yCError(CB_RPC, "Unable to getPidRPC");
+        ret.ret = ReturnValue::return_code::return_value_error_generic;
+        return ret;
+    }
     return ret;
 }

@@ -920,17 +920,6 @@ void RPCMessagesParser::handlePidMsg(const yarp::os::Bottle& cmd, yarp::os::Bott
             }
         } break;
 
-        case VOCAB_RESET: {
-            *ok = rpc_IPid->resetPid(pidtype, cmd.get(4).asInt32());
-        } break;
-
-        case VOCAB_DISABLE: {
-            *ok = rpc_IPid->disablePid(pidtype, cmd.get(4).asInt32());
-        } break;
-
-        case VOCAB_ENABLE: {
-            *ok = rpc_IPid->enablePid(pidtype, cmd.get(4).asInt32());
-        } break;
         }
     } break;
 
@@ -950,12 +939,6 @@ void RPCMessagesParser::handlePidMsg(const yarp::os::Bottle& cmd, yarp::os::Bott
                 b.addFloat64(p[i]);
             }
             delete[] p;
-        } break;
-
-        case VOCAB_ENABLE: {
-            bool booltmp = false;
-            *ok = rpc_IPid->isPidEnabled(pidtype, cmd.get(4).asInt32(), &booltmp);
-            response.addInt32(booltmp);
         } break;
 
         case VOCAB_ERR: {

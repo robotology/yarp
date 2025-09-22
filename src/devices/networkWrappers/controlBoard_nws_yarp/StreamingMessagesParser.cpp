@@ -28,6 +28,7 @@ void StreamingMessagesParser::init(yarp::dev::DeviceDriver* x)
     x->view(stream_IPWM);
     x->view(stream_ICurrent);
     x->view(stream_IAxis);
+    x->view(stream_IPid);
 }
 
 void StreamingMessagesParser::reset()
@@ -41,6 +42,7 @@ void StreamingMessagesParser::reset()
     stream_IPWM = nullptr;
     stream_ICurrent = nullptr;
     stream_IAxis = nullptr;
+    stream_IPid = nullptr;
 }
 
 bool StreamingMessagesParser::initialize()
@@ -76,274 +78,340 @@ void StreamingMessagesParser::onRead(CommandMessage& v)
     }
 
     switch (b.get(0).asVocab32()) {
-    // manage commands with interface name as first
+    // manage commands with interface name as first...
+    // PWM control
     case VOCAB_PWMCONTROL_INTERFACE: {
         switch (b.get(1).asVocab32()) {
-        case VOCAB_PWMCONTROL_REF_PWM: {
-            if (stream_IPWM) {
-                bool ok = stream_IPWM->setRefDutyCycle(b.get(2).asInt32(), cmdVector[0]);
-                if (!ok) {
-                    yCError(CONTROLBOARD, "Errors while trying to command an pwm message");
+            case VOCAB_PWMCONTROL_REF_PWM: {
+                if (stream_IPWM) {
+                    int joint = b.get(2).asInt32();
+                    bool ok = stream_IPWM->setRefDutyCycle(joint, cmdVector[0]);
+                    if (!ok) {
+                        yCError(CONTROLBOARD, "Errors while trying to command an pwm message");
+                    }
+                } else {
+                    yCError(CONTROLBOARD, "PWM interface not valid");
                 }
-            } else {
-                yCError(CONTROLBOARD, "PWM interface not valid");
-            }
-        } break;
-        case VOCAB_PWMCONTROL_REF_PWMS: {
-            if (stream_IPWM) {
-                bool ok = stream_IPWM->setRefDutyCycles(cmdVector.data());
-                if (!ok) {
-                    yCError(CONTROLBOARD, "Errors while trying to command an pwm message");
+            } break;
+            case VOCAB_PWMCONTROL_REF_PWMS: {
+                if (stream_IPWM) {
+                    bool ok = stream_IPWM->setRefDutyCycles(cmdVector.data());
+                    if (!ok) {
+                        yCError(CONTROLBOARD, "Errors while trying to command an pwm message");
+                    }
+                } else {
+                    yCError(CONTROLBOARD, "PWM interface not valid");
                 }
-            } else {
-                yCError(CONTROLBOARD, "PWM interface not valid");
-            }
-        } break;
+            } break;
+            default:
+            {
+                std::string str = yarp::os::Vocab32::decode(b.get(0).asVocab32());
+                yCError(CONTROLBOARD, "Unrecognized message while receiving on command port (%s)\n", str.c_str());
+            } break;
         }
     } break;
 
+    // PID control
+    case VOCAB_PIDCONTROL_INTERFACE: {
+        switch (b.get(1).asVocab32()) {
+            case VOCAB_PIDCONTROL_SET_OFFSET: {
+                if (stream_IPid) {
+                    PidControlTypeEnum pidtype = PidControlTypeEnum(b.get(2).asVocab32());
+                    int joint = b.get(3).asInt32();
+                    double off = cmdVector[0];
+                    bool ok = stream_IPid->setPidOffset(pidtype, joint, off);
+                    if (!ok) {
+                        yCError(CONTROLBOARD, "Errors while trying to execute streaming command setPidOffset()\n");
+                    }
+                }
+            } break;
+            case VOCAB_PIDCONTROL_SET_FEEDFORWARD: {
+                if (stream_IPid) {
+                    PidControlTypeEnum pidtype = PidControlTypeEnum(b.get(2).asVocab32());
+                    int joint = b.get(3).asInt32();
+                    double ffd = cmdVector[0];
+                    bool ok = stream_IPid->setPidFeedforward(pidtype, joint, ffd);
+                    if (!ok) {
+                        yCError(CONTROLBOARD, "Errors while trying to execute streaming command setPidFeedforward()\n");
+                    }
+                }
+            } break;
+            default:
+            {
+                std::string str = yarp::os::Vocab32::decode(b.get(0).asVocab32());
+                yCError(CONTROLBOARD, "Unrecognized message while receiving on command port (%s)\n", str.c_str());
+            } break;
+        }
+    } break;
+
+    // Current control
     case VOCAB_CURRENTCONTROL_INTERFACE: {
         switch (b.get(1).asVocab32()) {
-        case VOCAB_CURRENT_REF: {
-            if (stream_ICurrent) {
-                bool ok = stream_ICurrent->setRefCurrent(b.get(2).asInt32(), cmdVector[0]);
-                if (!ok) {
-                    yCError(CONTROLBOARD, "Errors while trying to command a streaming current message on single joint\n");
+            case VOCAB_CURRENT_REF: {
+                if (stream_ICurrent) {
+                    int joint = b.get(2).asInt32();
+                    bool ok = stream_ICurrent->setRefCurrent(joint, cmdVector[0]);
+                    if (!ok) {
+                        yCError(CONTROLBOARD, "Errors while trying to execute streaming command setRefCurrent()\n");
+                    }
                 }
-            }
-        } break;
-        case VOCAB_CURRENT_REFS: {
-            if (stream_ICurrent) {
-                bool ok = stream_ICurrent->setRefCurrents(cmdVector.data());
-                if (!ok) {
-                    yCError(CONTROLBOARD, "Errors while trying to command a streaming current message on all joints\n");
+            } break;
+            case VOCAB_CURRENT_REFS: {
+                if (stream_ICurrent) {
+                    bool ok = stream_ICurrent->setRefCurrents(cmdVector.data());
+                    if (!ok) {
+                        yCError(CONTROLBOARD, "Errors while trying to execute streaming command setRefCurrents()\n");
+                    }
                 }
-            }
-        } break;
-        case VOCAB_CURRENT_REF_GROUP: {
-            if (stream_ICurrent) {
-                int n_joints = b.get(2).asInt32();
-                Bottle* jlut = b.get(3).asList();
-                if ((static_cast<int>(jlut->size()) != n_joints) && (static_cast<int>(cmdVector.size()) != n_joints)) {
-                    yCError(CONTROLBOARD, "Received VOCAB_CURRENT_REF_GROUP size of joints vector or currents vector does not match the selected joint number\n");
+            } break;
+            case VOCAB_CURRENT_REF_GROUP: {
+                if (stream_ICurrent) {
+                    int n_joints = b.get(2).asInt32();
+                    Bottle* jlut = b.get(3).asList();
+                    if ((static_cast<int>(jlut->size()) != n_joints) && (static_cast<int>(cmdVector.size()) != n_joints)) {
+                        yCError(CONTROLBOARD, "Received VOCAB_CURRENT_REF_GROUP size of joints vector or currents vector does not match the selected joint number\n");
+                    }
+
+                    int* joint_list = new int[n_joints];
+                    for (int i = 0; i < n_joints; i++) {
+                        joint_list[i] = jlut->get(i).asInt32();
+                    }
+
+
+                    bool ok = stream_ICurrent->setRefCurrents(n_joints, joint_list, cmdVector.data());
+                    if (!ok) {
+                        yCError(CONTROLBOARD, "Errors while trying to execute streaming command setRefCurrents() group\n");
+                    }
+
+                    delete[] joint_list;
                 }
+            } break;
+            default:
+            {
+                std::string str = yarp::os::Vocab32::decode(b.get(0).asVocab32());
+                yCError(CONTROLBOARD, "Unrecognized message while receiving on command port (%s)\n", str.c_str());
+            } break;
+        }
+    } break;
 
-                int* joint_list = new int[n_joints];
-                for (int i = 0; i < n_joints; i++) {
-                    joint_list[i] = jlut->get(i).asInt32();
+    // Torque control
+    case VOCAB_TORQUECONTROL_INTERFACE: {
+        switch (b.get(1).asVocab32()) {
+            case VOCAB_TORQUES_DIRECT: {
+                if (stream_ITorque) {
+                    int joint = b.get(2).asInt32();
+                    bool ok = stream_ITorque->setRefTorque(joint, cmdVector[0]);
+                    if (!ok) {
+                        yCError(CONTROLBOARD, "Errors while trying to command a streaming torque direct message on single joint\n");
+                    }
                 }
-
-
-                bool ok = stream_ICurrent->setRefCurrents(n_joints, joint_list, cmdVector.data());
-                if (!ok) {
-                    yCError(CONTROLBOARD, "Error while trying to command a streaming current message on joint group\n");
+            } break;
+            case VOCAB_TORQUES_DIRECTS: {
+                if (stream_ITorque) {
+                    bool ok = stream_ITorque->setRefTorques(cmdVector.data());
+                    if (!ok) {
+                        yCError(CONTROLBOARD, "Errors while trying to command a streaming torque direct message on all joints\n");
+                    }
                 }
+            } break;
+            case VOCAB_TORQUES_DIRECT_GROUP: {
+                if (stream_ITorque) {
+                    int n_joints = b.get(2).asInt32();
+                    Bottle* jlut = b.get(3).asList();
+                    if ((static_cast<int>(jlut->size()) != n_joints) && (static_cast<int>(cmdVector.size()) != n_joints)) {
+                        yCError(CONTROLBOARD, "Received VOCAB_TORQUES_DIRECT_GROUP size of joints vector or torques vector does not match the selected joint number\n");
+                    }
 
-                delete[] joint_list;
-            }
-        } break;
-        default:
-        {
-            std::string str = yarp::os::Vocab32::decode(b.get(0).asVocab32());
-            yCError(CONTROLBOARD, "Unrecognized message while receiving on command port (%s)\n", str.c_str());
-        } break;
+                    int* joint_list = new int[n_joints];
+                    for (int i = 0; i < n_joints; i++) {
+                        joint_list[i] = jlut->get(i).asInt32();
+                    }
+                    bool ok = stream_ITorque->setRefTorques(n_joints, joint_list, cmdVector.data());
+                    if (!ok) {
+                        yCError(CONTROLBOARD, "Error while trying to command a streaming toruqe direct message on joint group\n");
+                    }
+                    delete[] joint_list;
+                }
+            } break;
+            default:
+            {
+                std::string str = yarp::os::Vocab32::decode(b.get(0).asVocab32());
+                yCError(CONTROLBOARD, "Unrecognized message while receiving on command port (%s)\n", str.c_str());
+            } break;
         }
     } break;
 
-    // fallback to commands without interface name
-    case VOCAB_POSITION_MODE: {
-        yCError(CONTROLBOARD, "Received VOCAB_POSITION_MODE this is an send invalid message on streaming port");
-        break;
-    }
-
-    case VOCAB_POSITION_MOVES: {
-        if (stream_IPosCtrl) {
-            bool ok = stream_IPosCtrl->positionMove(cmdVector.data());
-            if (!ok) {
-                yCError(CONTROLBOARD, "Errors while trying to start a position move");
-            }
-        }
-
-    } break;
-
-    case VOCAB_VELOCITY_MODE: {
-        yCError(CONTROLBOARD, "Received VOCAB_VELOCITY_MODE this is an send invalid message on streaming port");
-        break;
-    }
-
-    case VOCAB_VELOCITY_MOVE: {
-        if (stream_IVel) {
-           bool ok = stream_IVel->velocityMove(b.get(1).asInt32(), cmdVector[0]);
-           if (!ok) {
-               yCError(CONTROLBOARD, "Errors while trying to start a velocity move");
-           }
+    // Position control
+    case VOCAB_POSITIONCONTROL_INTERFACE: {
+        switch (b.get(1).asVocab32()) {
+            case VOCAB_POSITION_MOVES: {
+                if (stream_IPosCtrl) {
+                    bool ok = stream_IPosCtrl->positionMove(cmdVector.data());
+                    if (!ok) {
+                        yCError(CONTROLBOARD, "Errors while trying to start a position move");
+                    }
+                }
+            } break;
+            default:
+            {
+                std::string str = yarp::os::Vocab32::decode(b.get(0).asVocab32());
+                yCError(CONTROLBOARD, "Unrecognized message while receiving on command port (%s)\n", str.c_str());
+            } break;
         }
     } break;
 
-    case VOCAB_VELOCITY_MOVES: {
-        if (stream_IVel) {
-            bool ok = stream_IVel->velocityMove(cmdVector.data());
-            if (!ok) {
-                yCError(CONTROLBOARD, "Errors while trying to start a velocity move");
-            }
+    // Position direct control
+    case VOCAB_POSITIONDIRECTCONTROL_INTERFACE: {
+        switch (b.get(1).asVocab32()) {
+            case VOCAB_POSITION_DIRECT: {
+                if (stream_IPosDirect) {
+                    int joint = b.get(2).asInt32();
+                    bool ok = stream_IPosDirect->setPosition(joint, cmdVector[0]); // cmdVector.data());
+                    if (!ok) {
+                        yCError(CONTROLBOARD, "Errors while trying to command an streaming position direct message on joint %d\n", b.get(1).asInt32());
+                    }
+                }
+            } break;
+            case VOCAB_POSITION_DIRECT_GROUP: {
+                if (stream_IPosDirect) {
+                    int n_joints = b.get(2).asInt32();
+                    Bottle* jlut = b.get(3).asList();
+                    if ((static_cast<int>(jlut->size()) != n_joints) && (static_cast<int>(cmdVector.size()) != n_joints)) {
+                        yCError(CONTROLBOARD, "Received VOCAB_POSITION_DIRECT_GROUP size of joints vector or positions vector does not match the selected joint number\n");
+                    }
+                    int* joint_list = new int[n_joints];
+                    for (int i = 0; i < n_joints; i++) {
+                        joint_list[i] = jlut->get(i).asInt32();
+                    }
+                    bool ok = stream_IPosDirect->setPositions(n_joints, joint_list, cmdVector.data());
+                    if (!ok) {
+                        yCError(CONTROLBOARD, "Error while trying to command a streaming position direct message on joint group\n");
+                    }
+                    delete[] joint_list;
+                }
+            } break;
+            case VOCAB_POSITION_DIRECTS: {
+                if (stream_IPosDirect) {
+                    bool ok = stream_IPosDirect->setPositions(cmdVector.data());
+                    if (!ok) {
+                        yCError(CONTROLBOARD, "Error while trying to command a streaming position direct message on all joints\n");
+                    }
+                }
+            } break;
+            default:
+            {
+                std::string str = yarp::os::Vocab32::decode(b.get(0).asVocab32());
+                yCError(CONTROLBOARD, "Unrecognized message while receiving on command port (%s)\n", str.c_str());
+            } break;
         }
     } break;
 
-    case VOCAB_POSITION_DIRECT: {
-        if (stream_IPosDirect) {
-            bool ok = stream_IPosDirect->setPosition(b.get(1).asInt32(), cmdVector[0]); // cmdVector.data());
-            if (!ok) {
-                yCError(CONTROLBOARD, "Errors while trying to command an streaming position direct message on joint %d\n", b.get(1).asInt32());
-            }
+    // Velocity control
+    case VOCAB_VELOCITYCONTROL_INTERFACE: {
+        switch (b.get(1).asVocab32()) {
+            case VOCAB_VELOCITY_MOVE: {
+                if (stream_IVel) {
+                   int joint = b.get(2).asInt32();
+                   bool ok = stream_IVel->velocityMove(joint, cmdVector[0]);
+                   if (!ok) {
+                       yCError(CONTROLBOARD, "Errors while trying to start a velocity move");
+                   }
+                }
+            } break;
+
+            case VOCAB_VELOCITY_MOVES: {
+                if (stream_IVel) {
+                    bool ok = stream_IVel->velocityMove(cmdVector.data());
+                    if (!ok) {
+                        yCError(CONTROLBOARD, "Errors while trying to start a velocity move");
+                    }
+                }
+            } break;
+            case VOCAB_VELOCITY_MOVE_GROUP: {
+                if (stream_IVel) {
+                    int n_joints = b.get(2).asInt32();
+                    Bottle* jlut = b.get(3).asList();
+                    if ((static_cast<int>(jlut->size()) != n_joints) && (static_cast<int>(cmdVector.size()) != n_joints)) {
+                        yCError(CONTROLBOARD, "Received VOCAB_VELOCITY_MOVE_GROUP size of joints vector or positions vector does not match the selected joint number\n");
+                    }
+
+                    int* joint_list = new int[n_joints];
+                    for (int i = 0; i < n_joints; i++) {
+                        joint_list[i] = jlut->get(i).asInt32();
+                    }
+
+                    bool ok = stream_IVel->velocityMove(n_joints, joint_list, cmdVector.data());
+                    if (!ok) {
+                        yCError(CONTROLBOARD, "Error while trying to command a velocity move on joint group\n");
+                    }
+
+                    delete[] joint_list;
+                }
+            } break;
+            default:
+            {
+                std::string str = yarp::os::Vocab32::decode(b.get(0).asVocab32());
+                yCError(CONTROLBOARD, "Unrecognized message while receiving on command port (%s)\n", str.c_str());
+            } break;
         }
     } break;
 
-    case VOCAB_TORQUES_DIRECT: {
-        if (stream_ITorque) {
-            bool ok = stream_ITorque->setRefTorque(b.get(1).asInt32(), cmdVector[0]);
-            if (!ok) {
-                yCError(CONTROLBOARD, "Errors while trying to command a streaming torque direct message on single joint\n");
-            }
+    // Velocity direct control
+    case VOCAB_VELOCITYDIRECTCONTROL_INTERFACE: {
+        switch (b.get(1).asVocab32()) {
+            case VOCAB_VELOCITY_DIRECT_SET_ONE: {
+                if (stream_IVelDirect) {
+                    int joint = b.get(2).asInt32();
+                    bool ok = stream_IVelDirect->setDesiredVelocity(joint, cmdVector[0]); // cmdVector.data());
+                    if (!ok) {
+                        yCError(CONTROLBOARD, "Errors while trying to command an streaming position direct message on joint %d\n", b.get(1).asInt32());
+                    }
+                }
+            } break;
+            case VOCAB_VELOCITY_DIRECT_SET_GROUP: {
+                if (stream_IVelDirect) {
+                    int n_joints = b.get(2).asInt32();
+                    Bottle* jlut = b.get(3).asList();
+                    if ((static_cast<int>(jlut->size()) != n_joints) &&
+                        (static_cast<int>(cmdVector.size()) != n_joints)) {
+                        yCError(CONTROLBOARD, "Received VOCAB_VELOCITY_DIRECT_SET_GROUP size of joints vector or positions vector does not match the selected joint number\n");
+                    }
+                    std::vector<int> joint_list(n_joints);
+                    for (int i = 0; i < n_joints; i++) {
+                        joint_list[i] = jlut->get(i).asInt32();
+                    }
+                    std::vector<double> vel_list(n_joints);
+                    for (int i = 0; i < n_joints; i++) {
+                        vel_list[i] = cmdVector[i];
+                    }
+                    bool ok = stream_IVelDirect->setDesiredVelocity(joint_list, vel_list);
+                    if (!ok) {
+                        yCError(CONTROLBOARD, "Error while trying to command a streaming position direct message on joint group\n");
+                    }
+                }
+            } break;
+            case VOCAB_VELOCITY_DIRECT_SET_ALL: {
+                if (stream_IVelDirect) {
+                    int n_joints = cmdVector.size();
+                    std::vector<double> vel_list(n_joints);
+                    for (int i = 0; i < n_joints; i++) {
+                        vel_list[i] = cmdVector[i];
+                    }
+                    bool ok = stream_IVelDirect->setDesiredVelocity(vel_list);
+                    if (!ok) {
+                        yCError(CONTROLBOARD, "Error while trying to command a streaming position direct message on all joints\n");
+                    }
+                }
+            } break;
+            default:
+            {
+                std::string str = yarp::os::Vocab32::decode(b.get(0).asVocab32());
+                yCError(CONTROLBOARD, "Unrecognized message while receiving on command port (%s)\n", str.c_str());
+            } break;
         }
     } break;
 
-    case VOCAB_TORQUES_DIRECTS: {
-        if (stream_ITorque) {
-            bool ok = stream_ITorque->setRefTorques(cmdVector.data());
-            if (!ok) {
-                yCError(CONTROLBOARD, "Errors while trying to command a streaming torque direct message on all joints\n");
-            }
-        }
-    } break;
-
-    case VOCAB_TORQUES_DIRECT_GROUP: {
-        if (stream_ITorque) {
-            int n_joints = b.get(1).asInt32();
-            Bottle* jlut = b.get(2).asList();
-            if ((static_cast<int>(jlut->size()) != n_joints) && (static_cast<int>(cmdVector.size()) != n_joints)) {
-                yCError(CONTROLBOARD, "Received VOCAB_TORQUES_DIRECT_GROUP size of joints vector or torques vector does not match the selected joint number\n");
-            }
-
-            int* joint_list = new int[n_joints];
-            for (int i = 0; i < n_joints; i++) {
-                joint_list[i] = jlut->get(i).asInt32();
-            }
-
-
-            bool ok = stream_ITorque->setRefTorques(n_joints, joint_list, cmdVector.data());
-            if (!ok) {
-                yCError(CONTROLBOARD, "Error while trying to command a streaming toruqe direct message on joint group\n");
-            }
-
-            delete[] joint_list;
-        }
-    } break;
-
-    case VOCAB_POSITION_DIRECT_GROUP: {
-        if (stream_IPosDirect) {
-            int n_joints = b.get(1).asInt32();
-            Bottle* jlut = b.get(2).asList();
-            if ((static_cast<int>(jlut->size()) != n_joints) && (static_cast<int>(cmdVector.size()) != n_joints)) {
-                yCError(CONTROLBOARD, "Received VOCAB_POSITION_DIRECT_GROUP size of joints vector or positions vector does not match the selected joint number\n");
-            }
-
-            int* joint_list = new int[n_joints];
-            for (int i = 0; i < n_joints; i++) {
-                joint_list[i] = jlut->get(i).asInt32();
-            }
-
-
-            bool ok = stream_IPosDirect->setPositions(n_joints, joint_list, cmdVector.data());
-            if (!ok) {
-                yCError(CONTROLBOARD, "Error while trying to command a streaming position direct message on joint group\n");
-            }
-
-            delete[] joint_list;
-        }
-    } break;
-
-    case VOCAB_POSITION_DIRECTS: {
-        if (stream_IPosDirect) {
-            bool ok = stream_IPosDirect->setPositions(cmdVector.data());
-            if (!ok) {
-                yCError(CONTROLBOARD, "Error while trying to command a streaming position direct message on all joints\n");
-            }
-        }
-    } break;
-
-    case VOCAB_VELOCITY_DIRECT_SET_ONE: {
-        if (stream_IVelDirect) {
-            bool ok = stream_IVelDirect->setDesiredVelocity(b.get(1).asInt32(), cmdVector[0]); // cmdVector.data());
-            if (!ok) {
-                yCError(CONTROLBOARD, "Errors while trying to command an streaming position direct message on joint %d\n", b.get(1).asInt32());
-            }
-        }
-    } break;
-
-    case VOCAB_VELOCITY_DIRECT_SET_GROUP: {
-        if (stream_IVelDirect) {
-            int n_joints = b.get(1).asInt32();
-            Bottle* jlut = b.get(2).asList();
-            if ((static_cast<int>(jlut->size()) != n_joints) &&
-                (static_cast<int>(cmdVector.size()) != n_joints)) {
-                yCError(CONTROLBOARD, "Received VOCAB_VELOCITY_DIRECT_SET_GROUP size of joints vector or positions vector does not match the selected joint number\n");
-            }
-
-            std::vector<int> joint_list(n_joints);
-            for (int i = 0; i < n_joints; i++) {
-                joint_list[i] = jlut->get(i).asInt32();
-            }
-            std::vector<double> vel_list(n_joints);
-            for (int i = 0; i < n_joints; i++) {
-                vel_list[i] = cmdVector[i];
-            }
-
-            bool ok = stream_IVelDirect->setDesiredVelocity(joint_list, vel_list);
-            if (!ok) {
-                yCError(CONTROLBOARD, "Error while trying to command a streaming position direct message on joint group\n");
-            }
-
-        }
-    } break;
-
-    case VOCAB_VELOCITY_DIRECT_SET_ALL: {
-        if (stream_IVelDirect) {
-
-            int n_joints = cmdVector.size();
-            std::vector<double> vel_list(n_joints);
-            for (int i = 0; i < n_joints; i++) {
-                vel_list[i] = cmdVector[i];
-            }
-
-            bool ok = stream_IVelDirect->setDesiredVelocity(vel_list);
-            if (!ok) {
-                yCError(CONTROLBOARD, "Error while trying to command a streaming position direct message on all joints\n");
-            }
-        }
-    } break;
-
-    case VOCAB_VELOCITY_MOVE_GROUP: {
-        if (stream_IVel) {
-            int n_joints = b.get(1).asInt32();
-            Bottle* jlut = b.get(2).asList();
-            if ((static_cast<int>(jlut->size()) != n_joints) && (static_cast<int>(cmdVector.size()) != n_joints)) {
-                yCError(CONTROLBOARD, "Received VOCAB_VELOCITY_MOVE_GROUP size of joints vector or positions vector does not match the selected joint number\n");
-            }
-
-            int* joint_list = new int[n_joints];
-            for (int i = 0; i < n_joints; i++) {
-                joint_list[i] = jlut->get(i).asInt32();
-            }
-
-            bool ok = stream_IVel->velocityMove(n_joints, joint_list, cmdVector.data());
-            if (!ok) {
-                yCError(CONTROLBOARD, "Error while trying to command a velocity move on joint group\n");
-            }
-
-            delete[] joint_list;
-        }
-    } break;
-
+    // fallback error
     default:
     {
         std::string str = yarp::os::Vocab32::decode(b.get(0).asVocab32());

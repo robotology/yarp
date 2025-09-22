@@ -19,11 +19,14 @@
 #include <return_getDesiredVelocityAll.h>
 #include <return_getDesiredVelocityGroup.h>
 #include <return_getDesiredVelocityOne.h>
-#include <return_getInfoPid.h>
-#include <return_getInfoPids.h>
 #include <return_getPid.h>
+#include <return_getPidExtraInfo.h>
+#include <return_getPidExtraInfos.h>
+#include <return_getPidFeedforward.h>
+#include <return_getPidOffset.h>
 #include <return_getPids.h>
 #include <return_isJointBraked.h>
+#include <return_isPidEnabled.h>
 #include <yarp/dev/ControlBoardPid.h>
 #include <yarp/dev/PidEnums.h>
 #include <yarp/dev/ReturnValue.h>
@@ -57,6 +60,14 @@ public:
 
     virtual return_getDesiredVelocityGroup getDesiredVelocityGroupRPC(const std::vector<std::int32_t>& j) const;
 
+    virtual yarp::dev::ReturnValue enablePidRPC(const yarp::dev::PidControlTypeEnum pidtype, const std::int16_t j);
+
+    virtual yarp::dev::ReturnValue disablePidRPC(const yarp::dev::PidControlTypeEnum pidtype, const std::int16_t j);
+
+    virtual yarp::dev::ReturnValue resetPidRPC(const yarp::dev::PidControlTypeEnum pidtype, const std::int16_t j);
+
+    virtual return_isPidEnabled isPidEnabledRPC(const yarp::dev::PidControlTypeEnum pidtype, const std::int16_t j);
+
     virtual yarp::dev::ReturnValue setPidRPC(const yarp::dev::PidControlTypeEnum pidtype, const std::int16_t j, const yarp::dev::Pid& pid);
 
     virtual yarp::dev::ReturnValue setPidsRPC(const yarp::dev::PidControlTypeEnum pidtype, const std::vector<yarp::dev::Pid>& pids);
@@ -65,9 +76,13 @@ public:
 
     virtual return_getPids getPidsRPC(const yarp::dev::PidControlTypeEnum pidtype);
 
-    virtual return_getInfoPid getPidExtraInfoRPC(const yarp::dev::PidControlTypeEnum pidtype, const std::int16_t j);
+    virtual return_getPidExtraInfo getPidExtraInfoRPC(const yarp::dev::PidControlTypeEnum pidtype, const std::int16_t j);
 
-    virtual return_getInfoPids getPidExtraInfosRPC(const yarp::dev::PidControlTypeEnum pidtype);
+    virtual return_getPidExtraInfos getPidExtraInfosRPC(const yarp::dev::PidControlTypeEnum pidtype);
+
+    virtual return_getPidOffset getPidOffsetRPC(const yarp::dev::PidControlTypeEnum pidtype, const std::int16_t j);
+
+    virtual return_getPidFeedforward getPidFeedforwardRPC(const yarp::dev::PidControlTypeEnum pidtype, const std::int16_t j);
 
     // help method
     virtual std::vector<std::string> help(const std::string& functionName = "--all");
