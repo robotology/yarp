@@ -46,10 +46,12 @@ public:
     double *coulombNegToRaws;
     double *velocityThresToRaws;
 
-    PidUnits* PosPid_units;
-    PidUnits* VelPid_units;
-    PidUnits* CurPid_units;
-    PidUnits* TrqPid_units;
+    PidUnits* PosPid_units = nullptr;
+    PidUnits* PosDirPid_units = nullptr;
+    PidUnits* VelPid_units = nullptr;
+    PidUnits* VelDirPid_units = nullptr;
+    PidUnits* CurPid_units = nullptr;
+    PidUnits* TrqPid_units = nullptr;
     std::map<PidControlTypeEnum, PidUnits*>   pid_units;
 
     explicit PrivateUnitsHandler(int size) :
@@ -69,11 +71,7 @@ public:
         viscousNegToRaws(nullptr),
         coulombPosToRaws(nullptr),
         coulombNegToRaws(nullptr),
-        velocityThresToRaws(nullptr),
-        PosPid_units(nullptr),
-        VelPid_units(nullptr),
-        CurPid_units(nullptr),
-        TrqPid_units(nullptr)
+        velocityThresToRaws(nullptr)
     {
         alloc(size);
         std::fill_n(helper_ones, size, 1.0);
@@ -98,6 +96,8 @@ public:
         checkAndDestroy(VelPid_units);
         checkAndDestroy(TrqPid_units);
         checkAndDestroy(CurPid_units);
+        checkAndDestroy(PosDirPid_units);
+        checkAndDestroy(VelDirPid_units);
         checkAndDestroy<double>(position_zeros);
         checkAndDestroy<double>(helper_ones);
         checkAndDestroy<int>(axisMap);
@@ -132,6 +132,8 @@ public:
         VelPid_units = new PidUnits[nj];
         TrqPid_units = new PidUnits[nj];
         CurPid_units = new PidUnits[nj];
+        PosDirPid_units = new PidUnits[nj];
+        VelDirPid_units = new PidUnits[nj];
         bemfToRaws = new double[nj];
         ktauToRaws = new double[nj];
         viscousPosToRaws = new double[nj];
@@ -153,6 +155,8 @@ public:
         yAssert(VelPid_units != nullptr);
         yAssert(TrqPid_units != nullptr);
         yAssert(CurPid_units != nullptr);
+        yAssert(PosDirPid_units != nullptr);
+        yAssert(VelDirPid_units != nullptr);
         yAssert(bemfToRaws != nullptr);
         yAssert(ktauToRaws != nullptr);
         yAssert(viscousPosToRaws != nullptr);
@@ -173,6 +177,12 @@ public:
         pid_units[PidControlTypeEnum::VOCAB_PIDTYPE_TORQUE_1] = TrqPid_units;
         pid_units[PidControlTypeEnum::VOCAB_PIDTYPE_TORQUE_2] = TrqPid_units;
         pid_units[PidControlTypeEnum::VOCAB_PIDTYPE_TORQUE_3] = TrqPid_units;
+        pid_units[PidControlTypeEnum::VOCAB_PIDTYPE_POSITION_DIRECT_1] = PosDirPid_units;
+        pid_units[PidControlTypeEnum::VOCAB_PIDTYPE_POSITION_DIRECT_2] = PosDirPid_units;
+        pid_units[PidControlTypeEnum::VOCAB_PIDTYPE_POSITION_DIRECT_3] = PosDirPid_units;
+        pid_units[PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY_DIRECT_1] = VelDirPid_units;
+        pid_units[PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY_DIRECT_2] = VelDirPid_units;
+        pid_units[PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY_DIRECT_3] = VelDirPid_units;
     }
 
     PrivateUnitsHandler(const PrivateUnitsHandler& other)
@@ -191,6 +201,8 @@ public:
         memcpy(this->VelPid_units, other.VelPid_units, sizeof(*other.VelPid_units)*nj);
         memcpy(this->TrqPid_units, other.TrqPid_units, sizeof(*other.TrqPid_units)*nj);
         memcpy(this->CurPid_units, other.CurPid_units, sizeof(*other.CurPid_units)*nj);
+        memcpy(this->PosDirPid_units, other.PosDirPid_units, sizeof(*other.PosDirPid_units)*nj);
+        memcpy(this->VelDirPid_units, other.VelDirPid_units, sizeof(*other.VelDirPid_units)*nj);
         memcpy(this->bemfToRaws, other.bemfToRaws, sizeof(*other.bemfToRaws)*nj);
         memcpy(this->ktauToRaws, other.ktauToRaws, sizeof(*other.ktauToRaws)*nj);
         memcpy(this->viscousPosToRaws, other.viscousPosToRaws, sizeof(*other.viscousPosToRaws)*nj);
@@ -939,11 +951,17 @@ double ControlBoardHelper::get_pidfeedback_conversion_factor_user2raw(const yarp
                 case yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_POSITION_1:
                 case yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_POSITION_2:
                 case yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_POSITION_3:
+                case yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_POSITION_DIRECT_1:
+                case yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_POSITION_DIRECT_2:
+                case yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_POSITION_DIRECT_3:
                     feedback_conversion_factor = mPriv->angleToEncoders[j];
                     break;
                 case yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY_1:
                 case yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY_2:
                 case yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY_3:
+                case yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY_DIRECT_1:
+                case yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY_DIRECT_2:
+                case yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY_DIRECT_3:
                     feedback_conversion_factor = mPriv->angleToEncoders[j];
                     break;
                 case yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_TORQUE_1:

@@ -28,7 +28,15 @@ enum class YARP_dev_API PidControlTypeEnum
     VOCAB_PIDTYPE_CURRENT    = yarp::os::createVocab32('c', 'u', 'r','1'),
     VOCAB_PIDTYPE_CURRENT_1  = yarp::os::createVocab32('c', 'u', 'r','1'),
     VOCAB_PIDTYPE_CURRENT_2  = yarp::os::createVocab32('c', 'u', 'r','2'),
-    VOCAB_PIDTYPE_CURRENT_3  = yarp::os::createVocab32('c', 'u', 'r','3')
+    VOCAB_PIDTYPE_CURRENT_3  = yarp::os::createVocab32('c', 'u', 'r','3'),
+    VOCAB_PIDTYPE_POSITION_DIRECT   = yarp::os::createVocab32('p', 'o', 'd','1'),
+    VOCAB_PIDTYPE_POSITION_DIRECT_1 = yarp::os::createVocab32('p', 'o', 'd','1'),
+    VOCAB_PIDTYPE_POSITION_DIRECT_2 = yarp::os::createVocab32('p', 'o', 'd','2'),
+    VOCAB_PIDTYPE_POSITION_DIRECT_3 = yarp::os::createVocab32('p', 'o', 'd','3'),
+    VOCAB_PIDTYPE_VELOCITY_DIRECT   = yarp::os::createVocab32('v', 'e', 'd','1'),
+    VOCAB_PIDTYPE_VELOCITY_DIRECT_1 = yarp::os::createVocab32('v', 'e', 'd','1'),
+    VOCAB_PIDTYPE_VELOCITY_DIRECT_2 = yarp::os::createVocab32('v', 'e', 'd','2'),
+    VOCAB_PIDTYPE_VELOCITY_DIRECT_3 = yarp::os::createVocab32('v', 'e', 'd','3')
 };
 
 inline size_t PidControlTypeEnum2Index(PidControlTypeEnum type)
