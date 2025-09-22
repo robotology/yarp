@@ -8,24 +8,24 @@
 // This is an automatically generated file.
 // It could get re-generated if the ALLOW_IDL_GENERATION flag is on.
 
-#include <return_getInfoPid.h>
+#include <return_getPidOffset.h>
 
 // Constructor with field values
-return_getInfoPid::return_getInfoPid(const yarp::dev::ReturnValue& ret,
-                                     const yarp::dev::PidExtraInfo& info) :
+return_getPidOffset::return_getPidOffset(const yarp::dev::ReturnValue& ret,
+                                         const double offset) :
         WirePortable(),
         ret(ret),
-        info(info)
+        offset(offset)
 {
 }
 
 // Read structure on a Wire
-bool return_getInfoPid::read(yarp::os::idl::WireReader& reader)
+bool return_getPidOffset::read(yarp::os::idl::WireReader& reader)
 {
     if (!nested_read_ret(reader)) {
         return false;
     }
-    if (!nested_read_info(reader)) {
+    if (!read_offset(reader)) {
         return false;
     }
     if (reader.isError()) {
@@ -35,7 +35,7 @@ bool return_getInfoPid::read(yarp::os::idl::WireReader& reader)
 }
 
 // Read structure on a Connection
-bool return_getInfoPid::read(yarp::os::ConnectionReader& connection)
+bool return_getPidOffset::read(yarp::os::ConnectionReader& connection)
 {
     yarp::os::idl::WireReader reader(connection);
     if (!reader.readListHeader(2)) {
@@ -48,12 +48,12 @@ bool return_getInfoPid::read(yarp::os::ConnectionReader& connection)
 }
 
 // Write structure on a Wire
-bool return_getInfoPid::write(const yarp::os::idl::WireWriter& writer) const
+bool return_getPidOffset::write(const yarp::os::idl::WireWriter& writer) const
 {
     if (!nested_write_ret(writer)) {
         return false;
     }
-    if (!nested_write_info(writer)) {
+    if (!write_offset(writer)) {
         return false;
     }
     if (writer.isError()) {
@@ -63,7 +63,7 @@ bool return_getInfoPid::write(const yarp::os::idl::WireWriter& writer) const
 }
 
 // Write structure on a Connection
-bool return_getInfoPid::write(yarp::os::ConnectionWriter& connection) const
+bool return_getPidOffset::write(yarp::os::ConnectionWriter& connection) const
 {
     yarp::os::idl::WireWriter writer(connection);
     if (!writer.writeListHeader(2)) {
@@ -76,7 +76,7 @@ bool return_getInfoPid::write(yarp::os::ConnectionWriter& connection) const
 }
 
 // Convert to a printable string
-std::string return_getInfoPid::toString() const
+std::string return_getPidOffset::toString() const
 {
     yarp::os::Bottle b;
     if (!yarp::os::Portable::copyPortable(*this, b)) {
@@ -86,7 +86,7 @@ std::string return_getInfoPid::toString() const
 }
 
 // read ret field
-bool return_getInfoPid::read_ret(yarp::os::idl::WireReader& reader)
+bool return_getPidOffset::read_ret(yarp::os::idl::WireReader& reader)
 {
     if (reader.noMore()) {
         reader.fail();
@@ -100,7 +100,7 @@ bool return_getInfoPid::read_ret(yarp::os::idl::WireReader& reader)
 }
 
 // write ret field
-bool return_getInfoPid::write_ret(const yarp::os::idl::WireWriter& writer) const
+bool return_getPidOffset::write_ret(const yarp::os::idl::WireWriter& writer) const
 {
     if (!writer.write(ret)) {
         return false;
@@ -109,7 +109,7 @@ bool return_getInfoPid::write_ret(const yarp::os::idl::WireWriter& writer) const
 }
 
 // read (nested) ret field
-bool return_getInfoPid::nested_read_ret(yarp::os::idl::WireReader& reader)
+bool return_getPidOffset::nested_read_ret(yarp::os::idl::WireReader& reader)
 {
     if (reader.noMore()) {
         reader.fail();
@@ -123,7 +123,7 @@ bool return_getInfoPid::nested_read_ret(yarp::os::idl::WireReader& reader)
 }
 
 // write (nested) ret field
-bool return_getInfoPid::nested_write_ret(const yarp::os::idl::WireWriter& writer) const
+bool return_getPidOffset::nested_write_ret(const yarp::os::idl::WireWriter& writer) const
 {
     if (!writer.writeNested(ret)) {
         return false;
@@ -131,47 +131,47 @@ bool return_getInfoPid::nested_write_ret(const yarp::os::idl::WireWriter& writer
     return true;
 }
 
-// read info field
-bool return_getInfoPid::read_info(yarp::os::idl::WireReader& reader)
+// read offset field
+bool return_getPidOffset::read_offset(yarp::os::idl::WireReader& reader)
 {
     if (reader.noMore()) {
         reader.fail();
         return false;
     }
-    if (!reader.read(info)) {
+    if (!reader.readFloat64(offset)) {
         reader.fail();
         return false;
     }
     return true;
 }
 
-// write info field
-bool return_getInfoPid::write_info(const yarp::os::idl::WireWriter& writer) const
+// write offset field
+bool return_getPidOffset::write_offset(const yarp::os::idl::WireWriter& writer) const
 {
-    if (!writer.write(info)) {
+    if (!writer.writeFloat64(offset)) {
         return false;
     }
     return true;
 }
 
-// read (nested) info field
-bool return_getInfoPid::nested_read_info(yarp::os::idl::WireReader& reader)
+// read (nested) offset field
+bool return_getPidOffset::nested_read_offset(yarp::os::idl::WireReader& reader)
 {
     if (reader.noMore()) {
         reader.fail();
         return false;
     }
-    if (!reader.readNested(info)) {
+    if (!reader.readFloat64(offset)) {
         reader.fail();
         return false;
     }
     return true;
 }
 
-// write (nested) info field
-bool return_getInfoPid::nested_write_info(const yarp::os::idl::WireWriter& writer) const
+// write (nested) offset field
+bool return_getPidOffset::nested_write_offset(const yarp::os::idl::WireWriter& writer) const
 {
-    if (!writer.writeNested(info)) {
+    if (!writer.writeFloat64(offset)) {
         return false;
     }
     return true;

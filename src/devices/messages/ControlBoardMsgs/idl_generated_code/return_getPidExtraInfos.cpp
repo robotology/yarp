@@ -8,11 +8,11 @@
 // This is an automatically generated file.
 // It could get re-generated if the ALLOW_IDL_GENERATION flag is on.
 
-#include <return_getInfoPids.h>
+#include <return_getPidExtraInfos.h>
 
 // Constructor with field values
-return_getInfoPids::return_getInfoPids(const yarp::dev::ReturnValue& ret,
-                                       const std::vector<yarp::dev::PidExtraInfo>& info) :
+return_getPidExtraInfos::return_getPidExtraInfos(const yarp::dev::ReturnValue& ret,
+                                                 const std::vector<yarp::dev::PidExtraInfo>& info) :
         WirePortable(),
         ret(ret),
         info(info)
@@ -20,7 +20,7 @@ return_getInfoPids::return_getInfoPids(const yarp::dev::ReturnValue& ret,
 }
 
 // Read structure on a Wire
-bool return_getInfoPids::read(yarp::os::idl::WireReader& reader)
+bool return_getPidExtraInfos::read(yarp::os::idl::WireReader& reader)
 {
     if (!nested_read_ret(reader)) {
         return false;
@@ -35,7 +35,7 @@ bool return_getInfoPids::read(yarp::os::idl::WireReader& reader)
 }
 
 // Read structure on a Connection
-bool return_getInfoPids::read(yarp::os::ConnectionReader& connection)
+bool return_getPidExtraInfos::read(yarp::os::ConnectionReader& connection)
 {
     yarp::os::idl::WireReader reader(connection);
     if (!reader.readListHeader(2)) {
@@ -48,7 +48,7 @@ bool return_getInfoPids::read(yarp::os::ConnectionReader& connection)
 }
 
 // Write structure on a Wire
-bool return_getInfoPids::write(const yarp::os::idl::WireWriter& writer) const
+bool return_getPidExtraInfos::write(const yarp::os::idl::WireWriter& writer) const
 {
     if (!nested_write_ret(writer)) {
         return false;
@@ -63,7 +63,7 @@ bool return_getInfoPids::write(const yarp::os::idl::WireWriter& writer) const
 }
 
 // Write structure on a Connection
-bool return_getInfoPids::write(yarp::os::ConnectionWriter& connection) const
+bool return_getPidExtraInfos::write(yarp::os::ConnectionWriter& connection) const
 {
     yarp::os::idl::WireWriter writer(connection);
     if (!writer.writeListHeader(2)) {
@@ -76,7 +76,7 @@ bool return_getInfoPids::write(yarp::os::ConnectionWriter& connection) const
 }
 
 // Convert to a printable string
-std::string return_getInfoPids::toString() const
+std::string return_getPidExtraInfos::toString() const
 {
     yarp::os::Bottle b;
     if (!yarp::os::Portable::copyPortable(*this, b)) {
@@ -86,7 +86,7 @@ std::string return_getInfoPids::toString() const
 }
 
 // read ret field
-bool return_getInfoPids::read_ret(yarp::os::idl::WireReader& reader)
+bool return_getPidExtraInfos::read_ret(yarp::os::idl::WireReader& reader)
 {
     if (reader.noMore()) {
         reader.fail();
@@ -100,7 +100,7 @@ bool return_getInfoPids::read_ret(yarp::os::idl::WireReader& reader)
 }
 
 // write ret field
-bool return_getInfoPids::write_ret(const yarp::os::idl::WireWriter& writer) const
+bool return_getPidExtraInfos::write_ret(const yarp::os::idl::WireWriter& writer) const
 {
     if (!writer.write(ret)) {
         return false;
@@ -109,7 +109,7 @@ bool return_getInfoPids::write_ret(const yarp::os::idl::WireWriter& writer) cons
 }
 
 // read (nested) ret field
-bool return_getInfoPids::nested_read_ret(yarp::os::idl::WireReader& reader)
+bool return_getPidExtraInfos::nested_read_ret(yarp::os::idl::WireReader& reader)
 {
     if (reader.noMore()) {
         reader.fail();
@@ -123,7 +123,7 @@ bool return_getInfoPids::nested_read_ret(yarp::os::idl::WireReader& reader)
 }
 
 // write (nested) ret field
-bool return_getInfoPids::nested_write_ret(const yarp::os::idl::WireWriter& writer) const
+bool return_getPidExtraInfos::nested_write_ret(const yarp::os::idl::WireWriter& writer) const
 {
     if (!writer.writeNested(ret)) {
         return false;
@@ -132,7 +132,7 @@ bool return_getInfoPids::nested_write_ret(const yarp::os::idl::WireWriter& write
 }
 
 // read info field
-bool return_getInfoPids::read_info(yarp::os::idl::WireReader& reader)
+bool return_getPidExtraInfos::read_info(yarp::os::idl::WireReader& reader)
 {
     if (reader.noMore()) {
         reader.fail();
@@ -164,7 +164,7 @@ bool return_getInfoPids::read_info(yarp::os::idl::WireReader& reader)
 }
 
 // write info field
-bool return_getInfoPids::write_info(const yarp::os::idl::WireWriter& writer) const
+bool return_getPidExtraInfos::write_info(const yarp::os::idl::WireWriter& writer) const
 {
     if (!writer.writeListBegin(BOTTLE_TAG_LIST, info.size())) {
         return false;
@@ -181,7 +181,7 @@ bool return_getInfoPids::write_info(const yarp::os::idl::WireWriter& writer) con
 }
 
 // read (nested) info field
-bool return_getInfoPids::nested_read_info(yarp::os::idl::WireReader& reader)
+bool return_getPidExtraInfos::nested_read_info(yarp::os::idl::WireReader& reader)
 {
     if (reader.noMore()) {
         reader.fail();
@@ -213,7 +213,7 @@ bool return_getInfoPids::nested_read_info(yarp::os::idl::WireReader& reader)
 }
 
 // write (nested) info field
-bool return_getInfoPids::nested_write_info(const yarp::os::idl::WireWriter& writer) const
+bool return_getPidExtraInfos::nested_write_info(const yarp::os::idl::WireWriter& writer) const
 {
     if (!writer.writeListBegin(BOTTLE_TAG_LIST, info.size())) {
         return false;
