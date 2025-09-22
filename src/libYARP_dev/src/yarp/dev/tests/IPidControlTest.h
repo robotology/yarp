@@ -93,7 +93,7 @@ namespace yarp::dev::tests
         b = ipid->setPidOffset(pp,0,42);
         CHECK(b);
         //Streaming message sent on separated thread, delay required before get()
-        yarp::os::Time::delay(0.020); 
+        yarp::os::Time::delay(0.050);
 
         double pidoff=0;
         b = ipid->getPidOffset(pp,0,pidoff);
@@ -103,7 +103,7 @@ namespace yarp::dev::tests
         b = ipid->setPidFeedforward(pp,0,43);
         CHECK(b);
         //Streaming message sent on separated thread, delay required before get()
-        yarp::os::Time::delay(0.020); 
+        yarp::os::Time::delay(0.050);
 
         double pidffd=0;
         b = ipid->getPidFeedforward(pp,0,pidffd);

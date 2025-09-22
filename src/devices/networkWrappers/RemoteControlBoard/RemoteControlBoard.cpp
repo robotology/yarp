@@ -19,6 +19,7 @@
 #include <yarp/os/Stamp.h>
 #include <yarp/os/LogStream.h>
 #include <yarp/os/QosStyle.h>
+#include <yarp/os/Vocab32.h>
 
 
 #include <yarp/dev/ControlBoardInterfaces.h>
@@ -1239,6 +1240,7 @@ ReturnValue RemoteControlBoard::setPidOffset(const PidControlTypeEnum& pidtype, 
     c.head.clear();
     c.head.addVocab32(VOCAB_PIDCONTROL_INTERFACE);
     c.head.addVocab32(VOCAB_PIDCONTROL_SET_OFFSET);
+    c.head.addVocab32(yarp::conf::vocab32_t(pidtype));
     c.head.addInt32(j);
     c.body.resize(1);
     c.body[0] = v;
@@ -1255,6 +1257,7 @@ ReturnValue RemoteControlBoard::setPidFeedforward(const PidControlTypeEnum& pidt
     c.head.clear();
     c.head.addVocab32(VOCAB_PIDCONTROL_INTERFACE);
     c.head.addVocab32(VOCAB_PIDCONTROL_SET_FEEDFORWARD);
+    c.head.addVocab32(yarp::conf::vocab32_t(pidtype));
     c.head.addInt32(j);
     c.body.resize(1);
     c.body[0] = v;

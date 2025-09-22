@@ -118,7 +118,7 @@ void StreamingMessagesParser::onRead(CommandMessage& v)
                 if (stream_IPid) {
                     PidControlTypeEnum pidtype = PidControlTypeEnum(b.get(2).asVocab32());
                     int joint = b.get(3).asInt32();
-                    double off = b.get(4).asFloat64();
+                    double off = cmdVector[0];
                     bool ok = stream_IPid->setPidOffset(pidtype, joint, off);
                     if (!ok) {
                         yCError(CONTROLBOARD, "Errors while trying to execute streaming command setPidOffset()\n");
@@ -129,7 +129,7 @@ void StreamingMessagesParser::onRead(CommandMessage& v)
                 if (stream_IPid) {
                     PidControlTypeEnum pidtype = PidControlTypeEnum(b.get(2).asVocab32());
                     int joint = b.get(3).asInt32();
-                    double ffd = b.get(4).asFloat64();
+                    double ffd = cmdVector[0];
                     bool ok = stream_IPid->setPidFeedforward(pidtype, joint, ffd);
                     if (!ok) {
                         yCError(CONTROLBOARD, "Errors while trying to execute streaming command setPidFeedforward()\n");

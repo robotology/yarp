@@ -915,7 +915,7 @@ int ControlBoardHelper::axes()
 double ControlBoardHelper::get_pidoutput_conversion_factor_user2raw(const yarp::dev::PidControlTypeEnum& pidtype, int j)
 {
     double output_conversion_factor;
-    switch (mPriv->pid_units[pidtype][j].out_units)
+    switch ((mPriv->pid_units[pidtype])[j].out_units)
     {
         case  PidOutputUnitsEnum::DUTYCYCLE_PWM_PERCENT:  output_conversion_factor = mPriv->dutycycleToPWMs[j]; break;
         case  PidOutputUnitsEnum::CURRENT_METRIC:  output_conversion_factor = mPriv->ampereToSensors[j]; break;
@@ -931,7 +931,7 @@ double ControlBoardHelper::get_pidoutput_conversion_factor_user2raw(const yarp::
 double ControlBoardHelper::get_pidfeedback_conversion_factor_user2raw(const yarp::dev::PidControlTypeEnum& pidtype, int j)
 {
     double feedback_conversion_factor = 0.0;
-    switch (mPriv->pid_units[pidtype][j].fbk_units)
+    switch (( mPriv->pid_units[pidtype])[j].fbk_units)
     {
         case PidFeedbackUnitsEnum::METRIC:
             switch (pidtype)

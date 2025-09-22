@@ -47,7 +47,7 @@ namespace yarp::dev::tests
         b = icurr->setRefCurrent(0, 100);
         CHECK(b);
         //Streaming message sent on separated thread, delay required before get()
-        yarp::os::Time::delay(0.020); 
+        yarp::os::Time::delay(0.020);
 
         b = icurr->getRefCurrent(0, &val);
         CHECK(b);
@@ -73,6 +73,8 @@ namespace yarp::dev::tests
         set_vector_crescent(axis, refs_check.data(), 10.0);
         b = icurr->setRefCurrents(refs.data());
         CHECK(b);
+        //Streaming message sent on separated thread, delay required before get()
+        yarp::os::Time::delay(0.050);
 
         b = icurr->getRefCurrents(refs.data());
         CHECK(b);
