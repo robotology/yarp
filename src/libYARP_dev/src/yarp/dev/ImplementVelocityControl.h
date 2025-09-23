@@ -63,21 +63,21 @@ public:
     bool getAxes(int *axes) override;
     bool velocityMove(int j, double sp) override;
     bool velocityMove(const double *sp) override;
-    bool setRefAcceleration(int j, double acc) override;
-    bool setRefAccelerations(const double *accs) override;
-    bool getRefAcceleration(int j, double *acc) override;
-    bool getRefAccelerations(double *accs) override;
+    bool setTrajAcceleration(int j, double acc) override;
+    bool setTrajAccelerations(const double *accs) override;
+    bool getTrajAcceleration(int j, double *acc) override;
+    bool getTrajAccelerations(double *accs) override;
     bool stop(int j) override;
     bool stop() override;
 
 
     // specific of IVelocityControl
     bool velocityMove(const int n_joint, const int *joints, const double *spds) override;
-    bool getRefVelocity(const int joint, double *vel) override;
-    bool getRefVelocities(double *vels) override;
-    bool getRefVelocities(const int n_joint, const int *joints, double *vels) override;
-    bool setRefAccelerations(const int n_joint, const int *joints, const double *accs) override;
-    bool getRefAccelerations(const int n_joint, const int *joints, double *accs) override;
+    bool getTargetVelocity(const int joint, double *vel) override;
+    bool getTargetVelocities(double *vels) override;
+    bool getTargetVelocities(const int n_joint, const int *joints, double *vels) override;
+    bool setTrajAccelerations(const int n_joint, const int *joints, const double *accs) override;
+    bool getTrajAccelerations(const int n_joint, const int *joints, double *accs) override;
     bool stop(const int n_joint, const int *joints) override;
 };
 
@@ -124,17 +124,17 @@ public:
     bool velocityMoveRaw(const double *sp) override
     {return NOT_YET_IMPLEMENTED("velocityMoveRaw");}
 
-    bool setRefAccelerationRaw(int j, double acc) override
-    {return NOT_YET_IMPLEMENTED("setRefAccelerationRaw");}
+    bool setTrajAccelerationRaw(int j, double acc) override
+    {return NOT_YET_IMPLEMENTED("setTrajAccelerationRaw");}
 
-    bool setRefAccelerationsRaw(const double *accs) override
-    {return NOT_YET_IMPLEMENTED("setRefAccelerationsRaw");}
+    bool setTrajAccelerationsRaw(const double *accs) override
+    {return NOT_YET_IMPLEMENTED("setTrajAccelerationsRaw");}
 
-    bool getRefAccelerationRaw(int j, double *acc) override
-    {return NOT_YET_IMPLEMENTED("getRefAccelerationRaw");}
+    bool getTrajAccelerationRaw(int j, double *acc) override
+    {return NOT_YET_IMPLEMENTED("getTrajAccelerationRaw");}
 
-    bool getRefAccelerationsRaw(double *accs) override
-    {return NOT_YET_IMPLEMENTED("getRefAccelerationsRaw");}
+    bool getTrajAccelerationsRaw(double *accs) override
+    {return NOT_YET_IMPLEMENTED("getTrajAccelerationsRaw");}
 
     bool stopRaw(int j) override
     {return NOT_YET_IMPLEMENTED("stopRaw");}
@@ -147,20 +147,20 @@ public:
     bool velocityMoveRaw(const int n_joint, const int *joints, const double *spds) override
     {return NOT_YET_IMPLEMENTED("velocityMoveRaw");}
 
-    bool getRefVelocityRaw(const int joint, double *vel) override
-    {return NOT_YET_IMPLEMENTED("getRefVelocityRaw");}
+    bool getTargetVelocityRaw(const int joint, double *vel) override
+    {return NOT_YET_IMPLEMENTED("getTargetVelocityRaw");}
 
-    bool getRefVelocitiesRaw(double *vels) override
-    {return NOT_YET_IMPLEMENTED("getRefVelocitiesRaw");}
+    bool getTargetVelocitiesRaw(double *vels) override
+    {return NOT_YET_IMPLEMENTED("getTargetVelocitiesRaw");}
 
-    bool getRefVelocitiesRaw(const int n_joint, const int *joints, double *vels) override
-    {return NOT_YET_IMPLEMENTED("getRefVelocitiesRaw");}
+    bool getTargetVelocitiesRaw(const int n_joint, const int *joints, double *vels) override
+    {return NOT_YET_IMPLEMENTED("getTargetVelocitiesRaw");}
 
-    bool setRefAccelerationsRaw(const int n_joint, const int *joints, const double *accs) override
-    {return NOT_YET_IMPLEMENTED("setRefAccelerationsRaw");}
+    bool setTrajAccelerationsRaw(const int n_joint, const int *joints, const double *accs) override
+    {return NOT_YET_IMPLEMENTED("setTrajAccelerationsRaw");}
 
-    bool getRefAccelerationsRaw(const int n_joint, const int *joints, double *accs) override
-    {return NOT_YET_IMPLEMENTED("getRefAccelerationsRaw");}
+    bool getTrajAccelerationsRaw(const int n_joint, const int *joints, double *accs) override
+    {return NOT_YET_IMPLEMENTED("getTrajAccelerationsRaw");}
 
     bool stopRaw(const int n_joint, const int *joints) override
     {return NOT_YET_IMPLEMENTED("stopRaw");}

@@ -93,9 +93,9 @@ TEST_CASE("dev::ControlBoardCouplingHandlerTest", "[yarp::dev]")
 
         {
             // Let's move the underlyng motor control and check the coupling
-            CHECK(ipc->setRefSpeed(0, 1000));
-            CHECK(ipc->setRefSpeed(1, 1000));
-            CHECK(ipc->setRefSpeed(2, 1000));
+            CHECK(ipc->setTrajSpeed(0, 1000));
+            CHECK(ipc->setTrajSpeed(1, 1000));
+            CHECK(ipc->setTrajSpeed(2, 1000));
             CHECK(ipc->positionMove(0, 10));
             CHECK(ipc->positionMove(1, 20));
             CHECK(ipc->positionMove(2, 30));

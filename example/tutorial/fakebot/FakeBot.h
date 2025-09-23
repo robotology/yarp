@@ -128,7 +128,7 @@ public:
     }
 
 
-    virtual bool setRefSpeed(int j, double sp) {
+    virtual bool setTrajSpeed(int j, double sp) {
         if (j<njoints) {
             speed[j] = sp;
         }
@@ -136,7 +136,7 @@ public:
     }
 
 
-    virtual bool setRefSpeeds(const double *spds) {
+    virtual bool setTrajSpeeds(const double *spds) {
         for (int i=0; i<njoints; i++) {
             speed[i] = spds[i];
         }
@@ -144,7 +144,7 @@ public:
     }
 
 
-    virtual bool setRefAcceleration(int j, double acc) {
+    virtual bool setTrajAcceleration(int j, double acc) {
         if (j<njoints) {
             this->acc[j] = acc;
         }
@@ -152,7 +152,7 @@ public:
     }
 
 
-    virtual bool setRefAccelerations(const double *accs) {
+    virtual bool setTrajAccelerations(const double *accs) {
         for (int i=0; i<njoints; i++) {
             acc[i] = accs[i];
         }
@@ -160,7 +160,7 @@ public:
     }
 
 
-    virtual bool getRefSpeed(int j, double *ref) {
+    virtual bool getTrajSpeed(int j, double *ref) {
         if (j<njoints) {
             (*ref) = speed[j];
         }
@@ -168,7 +168,7 @@ public:
     }
 
 
-    virtual bool getRefSpeeds(double *spds) {
+    virtual bool getTrajSpeeds(double *spds) {
         for (int i=0; i<njoints; i++) {
             spds[i] = speed[i];
         }
@@ -176,7 +176,7 @@ public:
     }
 
 
-    virtual bool getRefAcceleration(int j, double *acc) {
+    virtual bool getTrajAcceleration(int j, double *acc) {
         if (j<njoints) {
             (*acc) = this->acc[j];
         }
@@ -184,7 +184,7 @@ public:
     }
 
 
-    virtual bool getRefAccelerations(double *accs) {
+    virtual bool getTrajAccelerations(double *accs) {
         for (int i=0; i<njoints; i++) {
             accs[i] = acc[i];
         }

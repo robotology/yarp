@@ -818,44 +818,44 @@ MAKE_COMMS  (Sound, yarp::sig::Sound)
         return self->relativeMove(n_joint, &joints[0], &data[0]);
     }
 
-    bool setRefSpeeds(std::vector<double>& data) {
-        return self->setRefSpeeds(&data[0]);
+    bool setTrajSpeeds(std::vector<double>& data) {
+        return self->setTrajSpeeds(&data[0]);
     }
 
-    bool setRefSpeeds(int n_joint, std::vector<int>& joints, std::vector<double>& data) {
-        return self->setRefSpeeds(n_joint, &joints[0], &data[0]);
+    bool setTrajSpeeds(int n_joint, std::vector<int>& joints, std::vector<double>& data) {
+        return self->setTrajSpeeds(n_joint, &joints[0], &data[0]);
     }
 
-    bool getRefSpeed(int j, std::vector<double>& data) {
-        return self->getRefSpeed(j, &data[0]);
+    bool getTrajSpeed(int j, std::vector<double>& data) {
+        return self->getTrajSpeed(j, &data[0]);
     }
 
-    bool getRefSpeeds(std::vector<double>& data) {
-        return self->getRefSpeeds(&data[0]);
+    bool getTrajSpeeds(std::vector<double>& data) {
+        return self->getTrajSpeeds(&data[0]);
     }
 
-    bool getRefSpeeds(int n_joint, std::vector<int>& joints, std::vector<double>& data) {
-        return self->getRefSpeeds(n_joint, &joints[0], &data[0]);
+    bool getTrajSpeeds(int n_joint, std::vector<int>& joints, std::vector<double>& data) {
+        return self->getTrajSpeeds(n_joint, &joints[0], &data[0]);
     }
 
-    bool setRefAccelerations(std::vector<double>& data) {
-        return self->setRefAccelerations(&data[0]);
+    bool setTrajAccelerations(std::vector<double>& data) {
+        return self->setTrajAccelerations(&data[0]);
     }
 
-    bool setRefAccelerations(int n_joint, std::vector<int>& joints, std::vector<double>& data) {
-        return self->setRefAccelerations(n_joint, &joints[0], &data[0]);
+    bool setTrajAccelerations(int n_joint, std::vector<int>& joints, std::vector<double>& data) {
+        return self->setTrajAccelerations(n_joint, &joints[0], &data[0]);
     }
 
-    bool getRefAcceleration(int j, std::vector<double>& data) {
-        return self->getRefAcceleration(j, &data[0]);
+    bool getTrajAcceleration(int j, std::vector<double>& data) {
+        return self->getTrajAcceleration(j, &data[0]);
     }
 
-    bool getRefAccelerations(std::vector<double>& data) {
-        return self->getRefAccelerations(&data[0]);
+    bool getTrajAccelerations(std::vector<double>& data) {
+        return self->getTrajAccelerations(&data[0]);
     }
 
-    bool getRefAccelerations(int n_joint, std::vector<int>& joints, std::vector<double>& data) {
-        return self->getRefAccelerations(n_joint, &joints[0], &data[0]);
+    bool getTrajAccelerations(int n_joint, std::vector<int>& joints, std::vector<double>& data) {
+        return self->getTrajAccelerations(n_joint, &joints[0], &data[0]);
     }
 
     bool checkMotionDone() {
@@ -941,40 +941,40 @@ MAKE_COMMS  (Sound, yarp::sig::Sound)
         return self->velocityMove(&data[0]);
     }
 
-    bool setRefAccelerations(std::vector<double>& data) {
-        return self->setRefAccelerations(&data[0]);
+    bool setTrajAccelerations(std::vector<double>& data) {
+        return self->setTrajAccelerations(&data[0]);
     }
 
-    bool getRefAcceleration(int j, std::vector<double>& data) {
-        return self->getRefAcceleration(j, &data[0]);
+    bool getTrajAcceleration(int j, std::vector<double>& data) {
+        return self->getTrajAcceleration(j, &data[0]);
     }
 
-    bool getRefAccelerations(std::vector<double>& data) {
-        return self->getRefAccelerations(&data[0]);
+    bool getTrajAccelerations(std::vector<double>& data) {
+        return self->getTrajAccelerations(&data[0]);
     }
 
     bool velocityMove(int n_joint, std::vector<int>& joints, std::vector<double>& data) {
         return self->velocityMove(n_joint, &joints[0], &data[0]);
     }
 
-    bool getRefVelocity(int j, std::vector<double>& data) {
-        return self->getRefVelocity(j, &data[0]);
+    bool getTargetVelocity(int j, std::vector<double>& data) {
+        return self->getTargetVelocity(j, &data[0]);
     }
 
-    bool getRefVelocities(std::vector<double>& data) {
-        return self->getRefVelocities(&data[0]);
+    bool getTargetVelocities(std::vector<double>& data) {
+        return self->getTargetVelocities(&data[0]);
     }
 
-    bool getRefVelocities(int n_joint, std::vector<int>& joints, std::vector<double>& data) {
-        return self->getRefVelocities(n_joint, &joints[0], &data[0]);
+    bool getTargetVelocities(int n_joint, std::vector<int>& joints, std::vector<double>& data) {
+        return self->getTargetVelocities(n_joint, &joints[0], &data[0]);
     }
 
-    bool setRefAccelerations(int n_joint, std::vector<int>& joints, std::vector<double>& data) {
-        return self->setRefAccelerations(n_joint, &joints[0], &data[0]);
+    bool setTrajAccelerations(int n_joint, std::vector<int>& joints, std::vector<double>& data) {
+        return self->setTrajAccelerations(n_joint, &joints[0], &data[0]);
     }
 
-    bool getRefAccelerations(int n_joint, std::vector<int>& joints, std::vector<double>& data) {
-        return self->getRefAccelerations(n_joint, &joints[0], &data[0]);
+    bool getTrajAccelerations(int n_joint, std::vector<int>& joints, std::vector<double>& data) {
+        return self->getTrajAccelerations(n_joint, &joints[0], &data[0]);
     }
 
     bool stop(int n_joint, std::vector<int>& joints) {

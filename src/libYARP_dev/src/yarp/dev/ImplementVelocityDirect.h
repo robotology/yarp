@@ -53,12 +53,12 @@ public:
     virtual ~ImplementVelocityDirect();
 
     yarp::dev::ReturnValue getAxes(size_t& axes) override;
-    yarp::dev::ReturnValue setDesiredVelocity(int jnt, double vel) override;
-    yarp::dev::ReturnValue setDesiredVelocity(const std::vector<double>& vels) override;
-    yarp::dev::ReturnValue setDesiredVelocity(const std::vector<int>& jnts, const std::vector<double>& vels) override;
-    yarp::dev::ReturnValue getDesiredVelocity(const int jnt, double& vel) override;
-    yarp::dev::ReturnValue getDesiredVelocity(std::vector<double>& vels) override;
-    yarp::dev::ReturnValue getDesiredVelocity(const std::vector<int>& jnts, std::vector<double>& vels) override;
+    yarp::dev::ReturnValue setRefVelocity(int jnt, double vel) override;
+    yarp::dev::ReturnValue setRefVelocity(const std::vector<double>& vels) override;
+    yarp::dev::ReturnValue setRefVelocity(const std::vector<int>& jnts, const std::vector<double>& vels) override;
+    yarp::dev::ReturnValue getRefVelocity(const int jnt, double& vel) override;
+    yarp::dev::ReturnValue getRefVelocity(std::vector<double>& vels) override;
+    yarp::dev::ReturnValue getRefVelocity(const std::vector<int>& jnts, std::vector<double>& vels) override;
 };
 
 #endif // YARP_DEV_IVELOCITYDIRECTIMPL_H

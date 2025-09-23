@@ -133,7 +133,7 @@ public:
      * @param sp speed value
      * @return true/false upon success/failure
      */
-    bool setRefSpeed(int j, double sp) override
+    bool setTrajSpeed(int j, double sp) override
     {
         YARP_UNUSED(j);
         YARP_UNUSED(sp);
@@ -145,13 +145,13 @@ public:
      * @param spds pointer to the array of speed values.
      * @return true/false upon success/failure
      */
-    bool setRefSpeeds(const double* spds) override
+    bool setTrajSpeeds(const double* spds) override
     {
         YARP_UNUSED(spds);
         return true;
     }
 
-    bool setRefSpeeds(const int n_joint, const int* joints, const double* spds) override
+    bool setTrajSpeeds(const int n_joint, const int* joints, const double* spds) override
     {
         YARP_UNUSED(n_joint);
         YARP_UNUSED(joints);
@@ -165,7 +165,7 @@ public:
      * @param acc acceleration value
      * @return true/false upon success/failure
      */
-    bool setRefAcceleration(int j, double acc) override
+    bool setTrajAcceleration(int j, double acc) override
     {
         YARP_UNUSED(j);
         YARP_UNUSED(acc);
@@ -177,13 +177,13 @@ public:
      * @param accs pointer to the array of acceleration values
      * @return true/false upon success/failure
      */
-    bool setRefAccelerations(const double* accs) override
+    bool setTrajAccelerations(const double* accs) override
     {
         YARP_UNUSED(accs);
         return true;
     }
 
-    bool setRefAccelerations(const int n_joint, const int* joints, const double* accs) override
+    bool setTrajAccelerations(const int n_joint, const int* joints, const double* accs) override
     {
         YARP_UNUSED(n_joint);
         YARP_UNUSED(joints);
@@ -197,7 +197,7 @@ public:
      * @param ref pointer to storage for the return value
      * @return true/false on success or failure
      */
-    bool getRefSpeed(int j, double* ref) override
+    bool getTrajSpeed(int j, double* ref) override
     {
         YARP_UNUSED(j);
         YARP_UNUSED(ref);
@@ -208,13 +208,13 @@ public:
      * interpolation of the trajectory.
      * @param spds pointer to the array that will store the speed values.
      */
-    bool getRefSpeeds(double* spds) override
+    bool getTrajSpeeds(double* spds) override
     {
         YARP_UNUSED(spds);
         return true;
     }
 
-    bool getRefSpeeds(const int n_joint, const int* joints, double* spds) override
+    bool getTrajSpeeds(const int n_joint, const int* joints, double* spds) override
     {
         YARP_UNUSED(n_joint);
         YARP_UNUSED(joints);
@@ -228,7 +228,7 @@ public:
      * @param acc pointer to storage for the return value
      * @return true/false on success/failure
      */
-    bool getRefAcceleration(int j, double* acc) override
+    bool getTrajAcceleration(int j, double* acc) override
     {
         YARP_UNUSED(j);
         YARP_UNUSED(acc);
@@ -240,13 +240,13 @@ public:
      * @param accs pointer to the array that will store the acceleration values.
      * @return true/false on success or failure
      */
-    bool getRefAccelerations(double* accs) override
+    bool getTrajAccelerations(double* accs) override
     {
         YARP_UNUSED(accs);
         return true;
     }
 
-    bool getRefAccelerations(const int n_joint, const int* joints, double* accs) override
+    bool getTrajAccelerations(const int n_joint, const int* joints, double* accs) override
     {
         YARP_UNUSED(n_joint);
         YARP_UNUSED(joints);

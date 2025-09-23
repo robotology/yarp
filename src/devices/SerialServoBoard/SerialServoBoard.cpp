@@ -183,7 +183,7 @@ bool SerialServoBoard::checkMotionDone(bool* flag)
 }
 
 
-bool SerialServoBoard::setRefSpeed(int j, double sp)
+bool SerialServoBoard::setTrajSpeed(int j, double sp)
 {
     speeds[j] = sp;
 
@@ -191,29 +191,29 @@ bool SerialServoBoard::setRefSpeed(int j, double sp)
 }
 
 
-bool SerialServoBoard::setRefSpeeds(const double* spds)
+bool SerialServoBoard::setTrajSpeeds(const double* spds)
 {
     for (int k = 0; k < 32; k++) {
-        setRefSpeed(k, spds[k]);
+        setTrajSpeed(k, spds[k]);
     }
 
     return true;
 }
 
 
-bool SerialServoBoard::setRefAcceleration(int j, double acc)
+bool SerialServoBoard::setTrajAcceleration(int j, double acc)
 {
     return true;
 }
 
 
-bool SerialServoBoard::setRefAccelerations(const double* accs)
+bool SerialServoBoard::setTrajAccelerations(const double* accs)
 {
     return true;
 }
 
 
-bool SerialServoBoard::getRefSpeed(int j, double* ref)
+bool SerialServoBoard::getTrajSpeed(int j, double* ref)
 {
     *ref = speeds[j];
 
@@ -221,7 +221,7 @@ bool SerialServoBoard::getRefSpeed(int j, double* ref)
 }
 
 
-bool SerialServoBoard::getRefSpeeds(double* spds)
+bool SerialServoBoard::getTrajSpeeds(double* spds)
 {
     for (int k = 0; k < 32; k++) {
         spds[k] = speeds[k];
@@ -231,13 +231,13 @@ bool SerialServoBoard::getRefSpeeds(double* spds)
 }
 
 
-bool SerialServoBoard::getRefAcceleration(int j, double* acc)
+bool SerialServoBoard::getTrajAcceleration(int j, double* acc)
 {
     return true;
 }
 
 
-bool SerialServoBoard::getRefAccelerations(double* accs)
+bool SerialServoBoard::getTrajAccelerations(double* accs)
 {
     return true;
 }
@@ -266,19 +266,19 @@ bool SerialServoBoard::checkMotionDone(const int n_joint, const int* joints, boo
 {
     return true;
 }
-bool SerialServoBoard::setRefSpeeds(const int n_joint, const int* joints, const double* spds)
+bool SerialServoBoard::setTrajSpeeds(const int n_joint, const int* joints, const double* spds)
 {
     return true;
 }
-bool SerialServoBoard::setRefAccelerations(const int n_joint, const int* joints, const double* accs)
+bool SerialServoBoard::setTrajAccelerations(const int n_joint, const int* joints, const double* accs)
 {
     return true;
 }
-bool SerialServoBoard::getRefSpeeds(const int n_joint, const int* joints, double* spds)
+bool SerialServoBoard::getTrajSpeeds(const int n_joint, const int* joints, double* spds)
 {
     return true;
 }
-bool SerialServoBoard::getRefAccelerations(const int n_joint, const int* joints, double* accs)
+bool SerialServoBoard::getTrajAccelerations(const int n_joint, const int* joints, double* accs)
 {
     return true;
 }

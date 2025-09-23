@@ -99,7 +99,7 @@ yarp::robottestingframework::jointsPosMotion::jointsPosMotion(yarp::dev::PolyDri
 
     //send default speed
     for (size_t i = 0; i < mPriv->n_joints; i++) {
-        mPriv->ipos->setRefSpeed((int)mPriv->jointsList[i], mPriv->speed[i]);
+        mPriv->ipos->setTrajSpeed((int)mPriv->jointsList[i], mPriv->speed[i]);
     }
     mPriv->readJointsLimits();
 }
@@ -166,7 +166,7 @@ void yarp::robottestingframework::jointsPosMotion::setSpeed(yarp::sig::Vector &s
     ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE((speedlist.size() != mPriv->jointsList.size()), "Speed list has a different size of joint list");
     mPriv->speed = speedlist;
     for (size_t i = 0; i < mPriv->n_joints; i++) {
-        mPriv->ipos->setRefSpeed((int)mPriv->jointsList[i], mPriv->speed[i]);
+        mPriv->ipos->setTrajSpeed((int)mPriv->jointsList[i], mPriv->speed[i]);
     }
 }
 

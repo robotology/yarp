@@ -93,50 +93,50 @@ return_getAutoBrakeEnabled ControlBoardRPCd::getAutoBrakeEnabledRPC(const std::i
 //--------------------------------------
 // IVelocityDirect RPC methods
 
-return_getDesiredVelocityOne ControlBoardRPCd::getDesiredVelocityOneRPC(const std::int32_t j) const
+return_getRefVelocityOne ControlBoardRPCd::getRefVelocityOneRPC(const std::int32_t j) const
 {
     std::lock_guard<std::mutex> lg(m_mutex);
-    return_getDesiredVelocityOne ret;
+    return_getRefVelocityOne ret;
     if (!m_iVelocityDirect) {
         yCError(CB_RPC, "Invalid IVelocityDirect interface");
         ret.ret = yarp::dev::ReturnValue::return_code::return_value_error_not_ready;
         return ret;
     }
-    ret.ret = m_iVelocityDirect->getDesiredVelocity(j, ret.vel);
+    ret.ret = m_iVelocityDirect->getRefVelocity(j, ret.vel);
     if (!ret.ret) {
-        yCError(CB_RPC, "getDesiredVelocity() failed");
+        yCError(CB_RPC, "getRefVelocity() failed");
     }
     return ret;
 }
 
-return_getDesiredVelocityAll ControlBoardRPCd::getDesiredVelocityAllRPC() const
+return_getRefVelocityAll ControlBoardRPCd::getRefVelocityAllRPC() const
 {
     std::lock_guard<std::mutex> lg(m_mutex);
-    return_getDesiredVelocityAll ret;
+    return_getRefVelocityAll ret;
     if (!m_iVelocityDirect) {
         yCError(CB_RPC, "Invalid IVelocityDirect interface");
         ret.ret = yarp::dev::ReturnValue::return_code::return_value_error_not_ready;
         return ret;
     }
-    ret.ret = m_iVelocityDirect->getDesiredVelocity(ret.vel);
+    ret.ret = m_iVelocityDirect->getRefVelocity(ret.vel);
     if (!ret.ret) {
-        yCError(CB_RPC, "getDesiredVelocity() failed");
+        yCError(CB_RPC, "getRefVelocity() failed");
     }
     return ret;
 }
 
-return_getDesiredVelocityGroup ControlBoardRPCd::getDesiredVelocityGroupRPC(const std::vector<std::int32_t>& jnts) const
+return_getRefVelocityGroup ControlBoardRPCd::getRefVelocityGroupRPC(const std::vector<std::int32_t>& jnts) const
 {
     std::lock_guard<std::mutex> lg(m_mutex);
-    return_getDesiredVelocityGroup ret;
+    return_getRefVelocityGroup ret;
     if (!m_iVelocityDirect) {
         yCError(CB_RPC, "Invalid IVelocityDirect interface");
         ret.ret = yarp::dev::ReturnValue::return_code::return_value_error_not_ready;
         return ret;
     }
-    ret.ret = m_iVelocityDirect->getDesiredVelocity(jnts, ret.vel);
+    ret.ret = m_iVelocityDirect->getRefVelocity(jnts, ret.vel);
     if (!ret.ret) {
-        yCError(CB_RPC, "getDesiredVelocity() failed");
+        yCError(CB_RPC, "getRefVelocity() failed");
     }
     return ret;
 }

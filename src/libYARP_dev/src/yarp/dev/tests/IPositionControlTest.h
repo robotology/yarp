@@ -43,22 +43,22 @@ namespace yarp::dev::tests
             auto joints = std::vector<int>(ax);
             std::iota(joints.begin(), joints.end(), 0);
 
-            b = ipos->setRefSpeed(0, ref);
+            b = ipos->setTrajSpeed(0, ref);
             CHECK(b);
 
-            b = ipos->setRefSpeeds(refs.data());
+            b = ipos->setTrajSpeeds(refs.data());
             CHECK(b);
 
-            b = ipos->setRefSpeeds(ax, joints.data(), refs.data());
+            b = ipos->setTrajSpeeds(ax, joints.data(), refs.data());
             CHECK(b);
 
-            b = ipos->setRefAcceleration(0, ref);
+            b = ipos->setTrajAcceleration(0, ref);
             CHECK(b);
 
-            b = ipos->setRefAccelerations(refs.data());
+            b = ipos->setTrajAccelerations(refs.data());
             CHECK(b);
 
-            b = ipos->setRefAccelerations(ax, joints.data(), refs.data());
+            b = ipos->setTrajAccelerations(ax, joints.data(), refs.data());
             CHECK(b);
         }
         {
@@ -67,22 +67,22 @@ namespace yarp::dev::tests
             auto joints = std::vector<int>(ax);
             std::iota(joints.begin(), joints.end(), 0);
 
-            b = ipos->getRefSpeed(0,&ref);
+            b = ipos->getTrajSpeed(0,&ref);
             CHECK(b);
 
-            b = ipos->getRefSpeeds(refs.data());
+            b = ipos->getTrajSpeeds(refs.data());
             CHECK(b);
 
-            b = ipos->getRefSpeeds(ax, joints.data(), refs.data());
+            b = ipos->getTrajSpeeds(ax, joints.data(), refs.data());
             CHECK(b);
 
-            b = ipos->getRefAcceleration(0, &ref);
+            b = ipos->getTrajAcceleration(0, &ref);
             CHECK(b);
 
-            b = ipos->getRefAccelerations(refs.data());
+            b = ipos->getTrajAccelerations(refs.data());
             CHECK(b);
 
-            b = ipos->getRefAccelerations(ax, joints.data(), refs.data());
+            b = ipos->getTrajAccelerations(ax, joints.data(), refs.data());
             CHECK(b);
 
             b = ipos->getTargetPosition(0, &ref);
@@ -159,10 +159,10 @@ namespace yarp::dev::tests
         }
 
         double ref = 0;
-        b = ipos->getRefSpeed(0, &ref);
+        b = ipos->getTrajSpeed(0, &ref);
         CHECK(!b);
 
-        b = ipos->getRefAcceleration(0, &ref);
+        b = ipos->getTrajAcceleration(0, &ref);
         CHECK(!b);
 
         b = ipos->getTargetPosition(0, &ref);

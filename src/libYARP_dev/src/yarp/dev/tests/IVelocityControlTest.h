@@ -39,16 +39,16 @@ namespace yarp::dev::tests
 
         const double ref_test=1.123;
         double ref=0;
-        b = ivel->setRefAcceleration(0, ref_test);
+        b = ivel->setTrajAcceleration(0, ref_test);
         CHECK(b);
-        b = ivel->getRefAcceleration(0, &ref);
+        b = ivel->getTrajAcceleration(0, &ref);
         CHECK(b);
         CHECK(fabs(ref-ref_test)<0.001);
 
         b = ivel->velocityMove(0, ref_test);
         CHECK(b);
         yarp::os::Time::delay(0.050);
-        b = ivel->getRefVelocity(0,&ref);
+        b = ivel->getTargetVelocity(0,&ref);
         CHECK(b);
         CHECK(fabs(ref - ref_test) < 0.001);
 
@@ -76,21 +76,21 @@ namespace yarp::dev::tests
             //CHECK(b); //this will fail
         }
 
-        b = ivel->setRefAcceleration(0, ref);
+        b = ivel->setTrajAcceleration(0, ref);
         CHECK(!b);
-        b = ivel->getRefAcceleration(0, &ref);
+        b = ivel->getTrajAcceleration(0, &ref);
         CHECK(!b);
-        b = ivel->setRefAccelerations( refs.data());
+        b = ivel->setTrajAccelerations( refs.data());
         CHECK(!b);
-        b = ivel->getRefAccelerations( refs.data());
+        b = ivel->getTrajAccelerations( refs.data());
         CHECK(!b);
 
         b = ivel->velocityMove(0, ref);
         //CHECK(!b); //this is streaming, it will return true always
 
-        b = ivel->getRefVelocity(0, &ref);
+        b = ivel->getTargetVelocity(0, &ref);
         CHECK(!b);
-        b = ivel->getRefVelocities(refs.data());
+        b = ivel->getTargetVelocities(refs.data());
         CHECK(!b);
 
         b = ivel->stop();

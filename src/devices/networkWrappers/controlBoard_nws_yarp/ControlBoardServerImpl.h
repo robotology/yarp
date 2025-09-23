@@ -40,9 +40,9 @@ class ControlBoardRPCd : public ControlBoardMsgs
 
     // IVelocityDirect
     return_getAxes               getAxesRPC() const override;
-    return_getDesiredVelocityOne getDesiredVelocityOneRPC(const std::int32_t j) const override;
-    return_getDesiredVelocityAll getDesiredVelocityAllRPC() const override;
-    return_getDesiredVelocityGroup getDesiredVelocityGroupRPC(const std::vector<std::int32_t>& jnts) const override;
+    return_getRefVelocityOne getRefVelocityOneRPC(const std::int32_t j) const override;
+    return_getRefVelocityAll getRefVelocityAllRPC() const override;
+    return_getRefVelocityGroup getRefVelocityGroupRPC(const std::vector<std::int32_t>& jnts) const override;
 
     // IPidControl
     yarp::dev::ReturnValue enablePidRPC(const yarp::dev::PidControlTypeEnum pidtype, const std::int16_t j) override;

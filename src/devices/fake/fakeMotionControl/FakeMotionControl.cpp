@@ -1788,7 +1788,7 @@ bool FakeMotionControl::checkMotionDoneRaw(bool *flag)
     return ret;
 }
 
-bool FakeMotionControl::setRefSpeedRaw(int j, double sp)
+bool FakeMotionControl::setTrajSpeedRaw(int j, double sp)
 {
     // Velocity is expressed in iDegrees/s
     // save internally the new value of speed; it'll be used in the positionMove
@@ -1797,7 +1797,7 @@ bool FakeMotionControl::setRefSpeedRaw(int j, double sp)
     return true;
 }
 
-bool FakeMotionControl::setRefSpeedsRaw(const double *spds)
+bool FakeMotionControl::setTrajSpeedsRaw(const double *spds)
 {
     // Velocity is expressed in iDegrees/s
     // save internally the new value of speed; it'll be used in the positionMove
@@ -1808,7 +1808,7 @@ bool FakeMotionControl::setRefSpeedsRaw(const double *spds)
     return true;
 }
 
-bool FakeMotionControl::setRefAccelerationRaw(int j, double acc)
+bool FakeMotionControl::setTrajAccelerationRaw(int j, double acc)
 {
     // Acceleration is expressed in iDegrees/s^2
     // save internally the new value of the acceleration; it'll be used in the velocityMove command
@@ -1829,7 +1829,7 @@ bool FakeMotionControl::setRefAccelerationRaw(int j, double acc)
     return true;
 }
 
-bool FakeMotionControl::setRefAccelerationsRaw(const double *accs)
+bool FakeMotionControl::setTrajAccelerationsRaw(const double *accs)
 {
     // Acceleration is expressed in iDegrees/s^2
     // save internally the new value of the acceleration; it'll be used in the velocityMove command
@@ -1851,25 +1851,25 @@ bool FakeMotionControl::setRefAccelerationsRaw(const double *accs)
     return true;
 }
 
-bool FakeMotionControl::getRefSpeedRaw(int j, double *spd)
+bool FakeMotionControl::getTrajSpeedRaw(int j, double *spd)
 {
     *spd = _ref_speeds[j];
     return true;
 }
 
-bool FakeMotionControl::getRefSpeedsRaw(double *spds)
+bool FakeMotionControl::getTrajSpeedsRaw(double *spds)
 {
     memcpy(spds, _ref_speeds, sizeof(double) * _njoints);
     return true;
 }
 
-bool FakeMotionControl::getRefAccelerationRaw(int j, double *acc)
+bool FakeMotionControl::getTrajAccelerationRaw(int j, double *acc)
 {
     *acc = _ref_accs[j];
     return true;
 }
 
-bool FakeMotionControl::getRefAccelerationsRaw(double *accs)
+bool FakeMotionControl::getTrajAccelerationsRaw(double *accs)
 {
     memcpy(accs, _ref_accs, sizeof(double) * _njoints);
     return true;
@@ -1948,7 +1948,7 @@ bool FakeMotionControl::checkMotionDoneRaw(const int n_joint, const int *joints,
     return ret;
 }
 
-bool FakeMotionControl::setRefSpeedsRaw(const int n_joint, const int *joints, const double *spds)
+bool FakeMotionControl::setTrajSpeedsRaw(const int n_joint, const int *joints, const double *spds)
 {
     if (verbose >= VERY_VERBOSE) {
         yCTrace(FAKEMOTIONCONTROL) << "n_joint " << _njoints;
@@ -1957,12 +1957,12 @@ bool FakeMotionControl::setRefSpeedsRaw(const int n_joint, const int *joints, co
     bool ret = true;
     for(int j=0; j<n_joint; j++)
     {
-        ret = ret &&setRefSpeedRaw(joints[j], spds[j]);
+        ret = ret &&setTrajSpeedRaw(joints[j], spds[j]);
     }
     return ret;
 }
 
-bool FakeMotionControl::setRefAccelerationsRaw(const int n_joint, const int *joints, const double *accs)
+bool FakeMotionControl::setTrajAccelerationsRaw(const int n_joint, const int *joints, const double *accs)
 {
     if (verbose >= VERY_VERBOSE) {
         yCTrace(FAKEMOTIONCONTROL) << "n_joint " << _njoints;
@@ -1971,12 +1971,12 @@ bool FakeMotionControl::setRefAccelerationsRaw(const int n_joint, const int *joi
     bool ret = true;
     for(int j=0; j<n_joint; j++)
     {
-        ret = ret &&setRefAccelerationRaw(joints[j], accs[j]);
+        ret = ret &&setTrajAccelerationRaw(joints[j], accs[j]);
     }
     return ret;
 }
 
-bool FakeMotionControl::getRefSpeedsRaw(const int n_joint, const int *joints, double *spds)
+bool FakeMotionControl::getTrajSpeedsRaw(const int n_joint, const int *joints, double *spds)
 {
     if (verbose >= VERY_VERBOSE) {
         yCTrace(FAKEMOTIONCONTROL) << "n_joint " << _njoints;
@@ -1985,12 +1985,12 @@ bool FakeMotionControl::getRefSpeedsRaw(const int n_joint, const int *joints, do
     bool ret = true;
     for(int j=0; j<n_joint; j++)
     {
-        ret = ret && getRefSpeedRaw(joints[j], &spds[j]);
+        ret = ret && getTrajSpeedRaw(joints[j], &spds[j]);
     }
     return ret;
 }
 
-bool FakeMotionControl::getRefAccelerationsRaw(const int n_joint, const int *joints, double *accs)
+bool FakeMotionControl::getTrajAccelerationsRaw(const int n_joint, const int *joints, double *accs)
 {
     if (verbose >= VERY_VERBOSE) {
         yCTrace(FAKEMOTIONCONTROL) << "n_joint " << _njoints;
@@ -1999,7 +1999,7 @@ bool FakeMotionControl::getRefAccelerationsRaw(const int n_joint, const int *joi
     bool ret = true;
     for(int j=0; j<n_joint; j++)
     {
-        ret = ret && getRefAccelerationRaw(joints[j], &accs[j]);
+        ret = ret && getTrajAccelerationRaw(joints[j], &accs[j]);
     }
     return ret;
 }
@@ -2790,28 +2790,28 @@ bool FakeMotionControl::getTargetPositionsRaw(int nj, const int * jnts, double *
     return ret;
 }
 
-bool FakeMotionControl::getRefVelocityRaw(int axis, double *ref)
+bool FakeMotionControl::getTargetVelocityRaw(int axis, double *ref)
 {
     *ref = _command_speeds[axis];
     return true;
 }
 
-bool FakeMotionControl::getRefVelocitiesRaw(double *refs)
+bool FakeMotionControl::getTargetVelocitiesRaw(double *refs)
 {
     bool ret = true;
     for (int i = 0; i<_njoints; i++)
     {
-        ret &= getRefVelocityRaw(i, &refs[i]);
+        ret &= getTargetVelocityRaw(i, &refs[i]);
     }
     return ret;
 }
 
-bool FakeMotionControl::getRefVelocitiesRaw(int nj, const int * jnts, double *refs)
+bool FakeMotionControl::getTargetVelocitiesRaw(int nj, const int * jnts, double *refs)
 {
     bool ret = true;
     for (int i = 0; i<nj; i++)
     {
-        ret &= getRefVelocityRaw(jnts[i], &refs[i]);
+        ret &= getTargetVelocityRaw(jnts[i], &refs[i]);
     }
     return ret;
 }
@@ -3138,15 +3138,15 @@ ReturnValue FakeMotionControl::getAxes(size_t& axes)
     return ReturnValue_ok;
 }
 
-ReturnValue FakeMotionControl::setDesiredVelocityRaw(int jnt, double vel)
+ReturnValue FakeMotionControl::setRefVelocityRaw(int jnt, double vel)
 {
     yCTrace(FAKEMOTIONCONTROL);
     if (jnt < 0 || jnt >= _njoints) {
-        yCError(FAKEMOTIONCONTROL) << "setDesiredVelocityRaw: joint index out of bounds";
+        yCError(FAKEMOTIONCONTROL) << "setRefVelocityRaw: joint index out of bounds";
         return ReturnValue::return_code::return_value_error_method_failed;
     }
     if (vel < -_maxJntCmdVelocity[jnt] || vel > _maxJntCmdVelocity[jnt]) {
-        yCError(FAKEMOTIONCONTROL) << "setDesiredVelocityRaw: velocity out of bounds for joint" << jnt;
+        yCError(FAKEMOTIONCONTROL) << "setRefVelocityRaw: velocity out of bounds for joint" << jnt;
         return ReturnValue::return_code::return_value_error_method_failed;
     }
     _mutex.lock();
@@ -3155,35 +3155,35 @@ ReturnValue FakeMotionControl::setDesiredVelocityRaw(int jnt, double vel)
     return ReturnValue_ok;
 }
 
-ReturnValue FakeMotionControl::setDesiredVelocityRaw(const std::vector<double>& vels)
+ReturnValue FakeMotionControl::setRefVelocityRaw(const std::vector<double>& vels)
 {
     yCTrace(FAKEMOTIONCONTROL);
     ReturnValue ret = ReturnValue_ok;
     for (int i = 0; i < _njoints; i++) {
-        ret &= setDesiredVelocityRaw(i, vels[i]);
+        ret &= setRefVelocityRaw(i, vels[i]);
     }
     return ret;
 }
 
-ReturnValue FakeMotionControl::setDesiredVelocityRaw(const std::vector<int>& jnts, const std::vector<double>& vels)
+ReturnValue FakeMotionControl::setRefVelocityRaw(const std::vector<int>& jnts, const std::vector<double>& vels)
 {
     yCTrace(FAKEMOTIONCONTROL);
     if (jnts.size() != vels.size()) {
-        yCError(FAKEMOTIONCONTROL) << "setDesiredVelocityRaw: jnts and vels vectors must have the same size";
+        yCError(FAKEMOTIONCONTROL) << "setRefVelocityRaw: jnts and vels vectors must have the same size";
         return ReturnValue::return_code::return_value_error_method_failed;
     }
     ReturnValue ret = ReturnValue_ok;
     for (int i = 0; i < _njoints; i++) {
-        ret &= setDesiredVelocityRaw(jnts[i], vels[i]);
+        ret &= setRefVelocityRaw(jnts[i], vels[i]);
     }
     return ret;
 }
 
-ReturnValue FakeMotionControl::getDesiredVelocityRaw(const int jnt, double& vel)
+ReturnValue FakeMotionControl::getRefVelocityRaw(const int jnt, double& vel)
 {
     yCTrace(FAKEMOTIONCONTROL);
     if (jnt < 0 || jnt >= _njoints) {
-        yCError(FAKEMOTIONCONTROL) << "setDesiredVelocityRaw: joint index out of bounds";
+        yCError(FAKEMOTIONCONTROL) << "setRefVelocityRaw: joint index out of bounds";
         return ReturnValue::return_code::return_value_error_method_failed;
     }
     _mutex.lock();
@@ -3192,28 +3192,28 @@ ReturnValue FakeMotionControl::getDesiredVelocityRaw(const int jnt, double& vel)
     return ReturnValue_ok;
 }
 
-ReturnValue FakeMotionControl::getDesiredVelocityRaw(std::vector<double>& vels)
+ReturnValue FakeMotionControl::getRefVelocityRaw(std::vector<double>& vels)
 {
     yCTrace(FAKEMOTIONCONTROL);
     ReturnValue ret = ReturnValue_ok;
     vels.resize(_njoints);
     for (int i = 0; i < _njoints; i++) {
-        ret &= getDesiredVelocityRaw(i, vels[i]);
+        ret &= getRefVelocityRaw(i, vels[i]);
     }
     return ret;
 }
 
-ReturnValue FakeMotionControl::getDesiredVelocityRaw(const std::vector<int>& jnts, std::vector<double>& vels)
+ReturnValue FakeMotionControl::getRefVelocityRaw(const std::vector<int>& jnts, std::vector<double>& vels)
 {
     yCTrace(FAKEMOTIONCONTROL);
     if (jnts.size() != vels.size()) {
-        yCError(FAKEMOTIONCONTROL) << "getDesiredVelocityRaw: jnts and vels vectors must have the same size";
+        yCError(FAKEMOTIONCONTROL) << "getRefVelocityRaw: jnts and vels vectors must have the same size";
         return ReturnValue::return_code::return_value_error_method_failed;
     }
     ReturnValue ret = ReturnValue_ok;
     vels.resize(_njoints);
     for (int i = 0; i < _njoints; i++) {
-        ret &= getDesiredVelocityRaw(jnts[i], vels[i]);
+        ret &= getRefVelocityRaw(jnts[i], vels[i]);
     }
     return ret;
 }

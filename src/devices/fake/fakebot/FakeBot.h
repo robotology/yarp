@@ -135,7 +135,7 @@ public:
     }
 
 
-    bool setRefSpeed(int j, double sp) override {
+    bool setTrajSpeed(int j, double sp) override {
         if (j<njoints) {
             speed[j] = sp;
         }
@@ -143,7 +143,7 @@ public:
     }
 
 
-    bool setRefSpeeds(const double *spds) override {
+    bool setTrajSpeeds(const double *spds) override {
         for (int i=0; i<njoints; i++) {
             speed[i] = spds[i];
         }
@@ -151,7 +151,7 @@ public:
     }
 
 
-    bool setRefAcceleration(int j, double acc) override {
+    bool setTrajAcceleration(int j, double acc) override {
         if (j<njoints) {
             this->acc[j] = acc;
         }
@@ -159,7 +159,7 @@ public:
     }
 
 
-    bool setRefAccelerations(const double *accs) override {
+    bool setTrajAccelerations(const double *accs) override {
         for (int i=0; i<njoints; i++) {
             acc[i] = accs[i];
         }
@@ -167,7 +167,7 @@ public:
     }
 
 
-    bool getRefSpeed(int j, double *ref) override {
+    bool getTrajSpeed(int j, double *ref) override {
         if (j<njoints) {
             (*ref) = speed[j];
         }
@@ -175,7 +175,7 @@ public:
     }
 
 
-    bool getRefSpeeds(double *spds) override {
+    bool getTrajSpeeds(double *spds) override {
         for (int i=0; i<njoints; i++) {
             spds[i] = speed[i];
         }
@@ -183,7 +183,7 @@ public:
     }
 
 
-    bool getRefAcceleration(int j, double *acc) override {
+    bool getTrajAcceleration(int j, double *acc) override {
         if (j<njoints) {
             (*acc) = this->acc[j];
         }
@@ -191,7 +191,7 @@ public:
     }
 
 
-    bool getRefAccelerations(double *accs) override {
+    bool getTrajAccelerations(double *accs) override {
         for (int i=0; i<njoints; i++) {
             accs[i] = acc[i];
         }
@@ -291,13 +291,13 @@ public:
 
     bool checkMotionDone(const int n_joint, const int *joints, bool *flags) override { return false; }
 
-    bool setRefSpeeds(const int n_joint, const int *joints, const double *spds) override { return false; }
+    bool setTrajSpeeds(const int n_joint, const int *joints, const double *spds) override { return false; }
 
-    bool setRefAccelerations(const int n_joint, const int *joints, const double *accs) override { return false; }
+    bool setTrajAccelerations(const int n_joint, const int *joints, const double *accs) override { return false; }
 
-    bool getRefSpeeds(const int n_joint, const int *joints, double *spds) override { return false; }
+    bool getTrajSpeeds(const int n_joint, const int *joints, double *spds) override { return false; }
 
-    bool getRefAccelerations(const int n_joint, const int *joints, double *accs) override { return false; }
+    bool getTrajAccelerations(const int n_joint, const int *joints, double *accs) override { return false; }
 
     bool stop(const int n_joint, const int *joints) override { return false; }
 

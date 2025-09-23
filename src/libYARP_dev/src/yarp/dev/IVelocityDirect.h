@@ -42,14 +42,14 @@ public:
      * @param vel speed value
      * @return true on success
      */
-    virtual yarp::dev::ReturnValue setDesiredVelocityRaw(int jnt, double vel)=0;
+    virtual yarp::dev::ReturnValue setRefVelocityRaw(int jnt, double vel)=0;
 
     /**
      * Set the velocity of all joints.
      * @param vels vector containing joint velocities for all joints
      * @return true on success
      */
-    virtual yarp::dev::ReturnValue setDesiredVelocityRaw(const std::vector<double>& vels)=0;
+    virtual yarp::dev::ReturnValue setRefVelocityRaw(const std::vector<double>& vels)=0;
 
     /**
      * Set the velocity of a subset of joints.
@@ -57,27 +57,27 @@ public:
      * @param vels vector containing the joint velocities for the required subset.
      * @return true on success
      */
-    virtual yarp::dev::ReturnValue setDesiredVelocityRaw(const std::vector<int>& jnts, const std::vector<double>& vels)=0;
+    virtual yarp::dev::ReturnValue setRefVelocityRaw(const std::vector<int>& jnts, const std::vector<double>& vels)=0;
 
-    /** Get the last reference velocity set by setDesiredVelocity() for a single joint.
+    /** Get the last reference velocity set by setRefVelocity() for a single joint.
      * @param jnt joint number
      * @param vel returns the velocity reference for the specified joint.
      * @return true on success
      */
-    virtual yarp::dev::ReturnValue getDesiredVelocityRaw(const int jnt, double& vel) = 0;
+    virtual yarp::dev::ReturnValue getRefVelocityRaw(const int jnt, double& vel) = 0;
 
-    /** Get the last reference velocity set by setDesiredVelocity() for all joints.
+    /** Get the last reference velocity set by setRefVelocity() for all joints.
      * @param vels vector containing the velocity references of all joints.
      * @return true on success
      */
-    virtual yarp::dev::ReturnValue getDesiredVelocityRaw(std::vector<double>& vels) = 0;
+    virtual yarp::dev::ReturnValue getRefVelocityRaw(std::vector<double>& vels) = 0;
 
-    /** Get the last reference velocity set by setDesiredVelocity() for a group of joints.
+    /** Get the last reference velocity set by setRefVelocity() for a group of joints.
      * @param jnts vector containing the ids of the joints to control.
      * @param vels vector containing the velocity references of the joints belonging to the required subset.
      * @return true on success
      */
-    virtual yarp::dev::ReturnValue getDesiredVelocityRaw(const std::vector<int>& jnts, std::vector<double>& vels)=0;
+    virtual yarp::dev::ReturnValue getRefVelocityRaw(const std::vector<int>& jnts, std::vector<double>& vels)=0;
 };
 
 /**
@@ -106,14 +106,14 @@ public:
      * @param vel speed value
      * @return true on success
      */
-    virtual yarp::dev::ReturnValue setDesiredVelocity(int jnt, double vel)=0;
+    virtual yarp::dev::ReturnValue setRefVelocity(int jnt, double vel)=0;
 
     /**
      * Set the velocity of all joints.
      * @param vels vector containing joint velocities for all joints
      * @return true on success
      */
-    virtual yarp::dev::ReturnValue setDesiredVelocity(const std::vector<double>& vels)=0;
+    virtual yarp::dev::ReturnValue setRefVelocity(const std::vector<double>& vels)=0;
 
     /**
      * Set the velocity of a subset of joints.
@@ -121,27 +121,27 @@ public:
      * @param vels vector containing the joint velocities for the required subset.
      * @return true on success
      */
-    virtual yarp::dev::ReturnValue setDesiredVelocity(const std::vector<int>& jnts, const std::vector<double>& vels)=0;
+    virtual yarp::dev::ReturnValue setRefVelocity(const std::vector<int>& jnts, const std::vector<double>& vels)=0;
 
-    /** Get the last reference velocity set by setDesiredVelocity() for a single joint.
+    /** Get the last reference velocity set by setRefVelocity() for a single joint.
      * @param jnt joint number
      * @param vel returns the velocity reference for the specified joint.
      * @return true on success
      */
-    virtual yarp::dev::ReturnValue getDesiredVelocity(const int jnt, double& vel) = 0;
+    virtual yarp::dev::ReturnValue getRefVelocity(const int jnt, double& vel) = 0;
 
-    /** Get the last reference velocity set by setDesiredVelocity() for all joints.
+    /** Get the last reference velocity set by setRefVelocity() for all joints.
      * @param vels vector containing the velocity references of all joints.
      * @return true on success
      */
-    virtual yarp::dev::ReturnValue getDesiredVelocity(std::vector<double>& vels) = 0;
+    virtual yarp::dev::ReturnValue getRefVelocity(std::vector<double>& vels) = 0;
 
-    /** Get the last reference velocity set by setDesiredVelocity() for a group of joints.
+    /** Get the last reference velocity set by setRefVelocity() for a group of joints.
      * @param jnts vector containing the ids of the joints to control.
      * @param vels vector containing the velocity references of the joints belonging to the required subset.
      * @return true on success
      */
-    virtual yarp::dev::ReturnValue getDesiredVelocity(const std::vector<int>& jnts, std::vector<double>& vels)=0;
+    virtual yarp::dev::ReturnValue getRefVelocity(const std::vector<int>& jnts, std::vector<double>& vels)=0;
 };
 
 

@@ -341,14 +341,14 @@ public:
     bool relativeMoveRaw(const double *deltas) override;
     bool checkMotionDoneRaw(bool *flag) override;
     bool checkMotionDoneRaw(int j, bool *flag) override;
-    bool setRefSpeedRaw(int j, double sp) override;
-    bool setRefSpeedsRaw(const double *spds) override;
-    bool setRefAccelerationRaw(int j, double acc) override;
-    bool setRefAccelerationsRaw(const double *accs) override;
-    bool getRefSpeedRaw(int j, double *ref) override;
-    bool getRefSpeedsRaw(double *spds) override;
-    bool getRefAccelerationRaw(int j, double *acc) override;
-    bool getRefAccelerationsRaw(double *accs) override;
+    bool setTrajSpeedRaw(int j, double sp) override;
+    bool setTrajSpeedsRaw(const double *spds) override;
+    bool setTrajAccelerationRaw(int j, double acc) override;
+    bool setTrajAccelerationsRaw(const double *accs) override;
+    bool getTrajSpeedRaw(int j, double *ref) override;
+    bool getTrajSpeedsRaw(double *spds) override;
+    bool getTrajAccelerationRaw(int j, double *acc) override;
+    bool getTrajAccelerationsRaw(double *accs) override;
     bool stopRaw(int j) override;
     bool stopRaw() override;
 
@@ -356,10 +356,10 @@ public:
     bool positionMoveRaw(const int n_joint, const int *joints, const double *refs) override;
     bool relativeMoveRaw(const int n_joint, const int *joints, const double *deltas) override;
     bool checkMotionDoneRaw(const int n_joint, const int *joints, bool *flags) override;
-    bool setRefSpeedsRaw(const int n_joint, const int *joints, const double *spds) override;
-    bool setRefAccelerationsRaw(const int n_joint, const int *joints, const double *accs) override;
-    bool getRefSpeedsRaw(const int n_joint, const int *joints, double *spds) override;
-    bool getRefAccelerationsRaw(const int n_joint, const int *joints, double *accs) override;
+    bool setTrajSpeedsRaw(const int n_joint, const int *joints, const double *spds) override;
+    bool setTrajAccelerationsRaw(const int n_joint, const int *joints, const double *accs) override;
+    bool getTrajSpeedsRaw(const int n_joint, const int *joints, double *spds) override;
+    bool getTrajAccelerationsRaw(const int n_joint, const int *joints, double *accs) override;
     bool stopRaw(const int n_joint, const int *joints) override;
     bool getTargetPositionRaw(const int joint, double *ref) override;
     bool getTargetPositionsRaw(double *refs) override;
@@ -481,13 +481,13 @@ public:
     bool getRefTorqueRaw(int j, double *t) override;
     bool getMotorTorqueParamsRaw(int j, yarp::dev::MotorTorqueParameters *params) override;
     bool setMotorTorqueParamsRaw(int j, const yarp::dev::MotorTorqueParameters params) override;
-//     int32_t getRefSpeedInTbl(uint8_t boardNum, int j, eOmeas_position_t pos) override;
+//     int32_t getTrajSpeedInTbl(uint8_t boardNum, int j, eOmeas_position_t pos) override;
 
     // IVelocityControl interface
     bool velocityMoveRaw(const int n_joint, const int *joints, const double *spds) override;
-    bool getRefVelocityRaw(const int joint, double *ref) override;
-    bool getRefVelocitiesRaw(double *refs) override;
-    bool getRefVelocitiesRaw(const int n_joint, const int *joints, double *refs) override;
+    bool getTargetVelocityRaw(const int joint, double *ref) override;
+    bool getTargetVelocitiesRaw(double *refs) override;
+    bool getTargetVelocitiesRaw(const int n_joint, const int *joints, double *refs) override;
 
     // Impedance interface
     bool getImpedanceRaw(int j, double *stiffness, double *damping) override;
@@ -537,12 +537,12 @@ public:
 
     // IVelocityDirect
     yarp::dev::ReturnValue getAxes(size_t& axes) override;
-    yarp::dev::ReturnValue setDesiredVelocityRaw(int jnt, double vel) override;
-    yarp::dev::ReturnValue setDesiredVelocityRaw(const std::vector<double>& vels) override;
-    yarp::dev::ReturnValue setDesiredVelocityRaw(const std::vector<int>& jnts, const std::vector<double>& vels) override;
-    yarp::dev::ReturnValue getDesiredVelocityRaw(const int jnt, double& vel) override;
-    yarp::dev::ReturnValue getDesiredVelocityRaw(std::vector<double>& vels) override;
-    yarp::dev::ReturnValue getDesiredVelocityRaw(const std::vector<int>& jnts, std::vector<double>& vels) override;
+    yarp::dev::ReturnValue setRefVelocityRaw(int jnt, double vel) override;
+    yarp::dev::ReturnValue setRefVelocityRaw(const std::vector<double>& vels) override;
+    yarp::dev::ReturnValue setRefVelocityRaw(const std::vector<int>& jnts, const std::vector<double>& vels) override;
+    yarp::dev::ReturnValue getRefVelocityRaw(const int jnt, double& vel) override;
+    yarp::dev::ReturnValue getRefVelocityRaw(std::vector<double>& vels) override;
+    yarp::dev::ReturnValue getRefVelocityRaw(const std::vector<int>& jnts, std::vector<double>& vels) override;
 
     // Current interface
     //bool getAxes(int *ax) override;
