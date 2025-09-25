@@ -2447,6 +2447,10 @@ void JointItem::setJointInteraction(JointInteraction interaction)
     }
 }
 
+JointItem::JointState JointItem::getJointState()
+{
+    return internalState;
+}
 
 void JointItem::setJointState(JointState newState)
 {

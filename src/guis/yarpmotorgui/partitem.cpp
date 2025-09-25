@@ -754,8 +754,11 @@ void PartItem::onSendPid(PidControlTypeEnum pidtype, int jointIndex,Pid newPid)
 void PartItem::onRefreshPids(int jointIndex)
 {
     std::vector<PidWithExtraInfo> myPosPidsWithInfo(3);
+    std::vector<PidWithExtraInfo> myPosDirPidsWithInfo(3);
     std::vector<PidWithExtraInfo> myTrqPidsWithInfo(3);
     std::vector<PidWithExtraInfo> myVelPidsWithInfo(3);
+    std::vector<PidWithExtraInfo> myVelDirPidsWithInfo(3);
+    std::vector<PidWithExtraInfo> myMixedPidsWithInfo(3);
     std::vector<PidWithExtraInfo> myCurPidsWithInfo(3);
     MotorTorqueParameters motorTorqueParams;
     double stiff_val = 0;
@@ -782,6 +785,15 @@ void PartItem::onRefreshPids(int jointIndex)
     m_iPid->getPidExtraInfo(PidControlTypeEnum::VOCAB_PIDTYPE_POSITION_3, jointIndex, myPosPidsWithInfo[2].pidExtraInfo);
     yarp::os::SystemClock::delaySystem(0.005);
 
+    // PositionDirect
+    m_iPid->getPid(PidControlTypeEnum::VOCAB_PIDTYPE_POSITION_DIRECT_1, jointIndex, &myPosDirPidsWithInfo[0].pid);
+    m_iPid->getPid(PidControlTypeEnum::VOCAB_PIDTYPE_POSITION_DIRECT_2, jointIndex, &myPosDirPidsWithInfo[1].pid);
+    m_iPid->getPid(PidControlTypeEnum::VOCAB_PIDTYPE_POSITION_DIRECT_3, jointIndex, &myPosDirPidsWithInfo[2].pid);
+    m_iPid->getPidExtraInfo(PidControlTypeEnum::VOCAB_PIDTYPE_POSITION_DIRECT_1, jointIndex, myPosDirPidsWithInfo[0].pidExtraInfo);
+    m_iPid->getPidExtraInfo(PidControlTypeEnum::VOCAB_PIDTYPE_POSITION_DIRECT_2, jointIndex, myPosDirPidsWithInfo[1].pidExtraInfo);
+    m_iPid->getPidExtraInfo(PidControlTypeEnum::VOCAB_PIDTYPE_POSITION_DIRECT_3, jointIndex, myPosDirPidsWithInfo[2].pidExtraInfo);
+    yarp::os::SystemClock::delaySystem(0.005);
+
     // Velocity
     m_iPid->getPid(PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY_1, jointIndex, &myVelPidsWithInfo[0].pid);
     m_iPid->getPid(PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY_2, jointIndex, &myVelPidsWithInfo[1].pid);
@@ -789,6 +801,24 @@ void PartItem::onRefreshPids(int jointIndex)
     m_iPid->getPidExtraInfo(PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY_1, jointIndex, myVelPidsWithInfo[0].pidExtraInfo);
     m_iPid->getPidExtraInfo(PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY_2, jointIndex, myVelPidsWithInfo[1].pidExtraInfo);
     m_iPid->getPidExtraInfo(PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY_3, jointIndex, myVelPidsWithInfo[2].pidExtraInfo);
+    yarp::os::SystemClock::delaySystem(0.005);
+
+    // VelocityDirect
+    m_iPid->getPid(PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY_DIRECT_1, jointIndex, &myVelDirPidsWithInfo[0].pid);
+    m_iPid->getPid(PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY_DIRECT_2, jointIndex, &myVelDirPidsWithInfo[1].pid);
+    m_iPid->getPid(PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY_DIRECT_3, jointIndex, &myVelDirPidsWithInfo[2].pid);
+    m_iPid->getPidExtraInfo(PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY_DIRECT_1, jointIndex, myVelDirPidsWithInfo[0].pidExtraInfo);
+    m_iPid->getPidExtraInfo(PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY_DIRECT_2, jointIndex, myVelDirPidsWithInfo[1].pidExtraInfo);
+    m_iPid->getPidExtraInfo(PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY_DIRECT_3, jointIndex, myVelDirPidsWithInfo[2].pidExtraInfo);
+    yarp::os::SystemClock::delaySystem(0.005);
+
+    // Mixed
+    m_iPid->getPid(PidControlTypeEnum::VOCAB_PIDTYPE_MIXED_1, jointIndex, &myMixedPidsWithInfo[0].pid);
+    m_iPid->getPid(PidControlTypeEnum::VOCAB_PIDTYPE_MIXED_2, jointIndex, &myMixedPidsWithInfo[1].pid);
+    m_iPid->getPid(PidControlTypeEnum::VOCAB_PIDTYPE_MIXED_3, jointIndex, &myMixedPidsWithInfo[2].pid);
+    m_iPid->getPidExtraInfo(PidControlTypeEnum::VOCAB_PIDTYPE_MIXED_1, jointIndex, myMixedPidsWithInfo[0].pidExtraInfo);
+    m_iPid->getPidExtraInfo(PidControlTypeEnum::VOCAB_PIDTYPE_MIXED_2, jointIndex, myMixedPidsWithInfo[1].pidExtraInfo);
+    m_iPid->getPidExtraInfo(PidControlTypeEnum::VOCAB_PIDTYPE_MIXED_3, jointIndex, myMixedPidsWithInfo[2].pidExtraInfo);
     yarp::os::SystemClock::delaySystem(0.005);
 
     // Current
@@ -825,9 +855,12 @@ void PartItem::onRefreshPids(int jointIndex)
     if (m_currentPidDlg)
     {
         m_currentPidDlg->initPositionPID(myPosPidsWithInfo);
+        m_currentPidDlg->initPositionDirectPID(myPosDirPidsWithInfo);
+        m_currentPidDlg->initVelocityPID(myVelPidsWithInfo);
+        m_currentPidDlg->initVelocityDirectPID(myVelDirPidsWithInfo);
+        m_currentPidDlg->initMixedPID(myMixedPidsWithInfo);
         m_currentPidDlg->initTorquePID(myTrqPidsWithInfo);
         m_currentPidDlg->initMotorParams(motorTorqueParams);
-        m_currentPidDlg->initVelocityPID(myVelPidsWithInfo);
         m_currentPidDlg->initCurrentPID(myCurPidsWithInfo);
         m_currentPidDlg->initStiffness(stiff_val, stiff_min, stiff_max, damp_val, damp_min, damp_max);
         m_currentPidDlg->initPWM(pwm_reference, current_pwm);
@@ -875,9 +908,10 @@ void PartItem::onCalibClicked(JointItem *joint)
 
 void PartItem::onPidClicked(JointItem *joint)
 {
+    int state = (int)joint->getJointState();
     const int jointIndex = joint->getJointIndex();
     QString jointName = joint->getJointName();
-    m_currentPidDlg = new PidDlg(m_partName.c_str(), jointIndex, jointName);
+    m_currentPidDlg = new PidDlg(m_partName.c_str(), jointIndex, jointName, state);
     connect(m_currentPidDlg, SIGNAL(sendPid(PidControlTypeEnum, int, Pid)), this, SLOT(onSendPid(PidControlTypeEnum, int, Pid)));
     connect(m_currentPidDlg, SIGNAL(sendSingleRemoteVariable(std::string, yarp::os::Bottle)), this, SLOT(onSendSingleRemoteVariable(std::string, yarp::os::Bottle)));
     connect(m_currentPidDlg, SIGNAL(updateAllRemoteVariables()), this, SLOT(onUpdateAllRemoteVariables()));

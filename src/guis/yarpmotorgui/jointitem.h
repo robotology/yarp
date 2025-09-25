@@ -37,6 +37,7 @@ class JointItem : public QWidget
     ~JointItem();
     void setJointInteraction(JointInteraction interaction);
     void setJointState(JointState);
+    JointState getJointState();
     void setPosition(double val);
     void setTorque(double meas);
     void setRefTorque(double ref);

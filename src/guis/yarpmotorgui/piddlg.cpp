@@ -11,14 +11,17 @@
 #include <yarp/os/Bottle.h>
 #include <yarp/os/Value.h>
 
-#define     TAB_POSITION    0
-#define     TAB_VELOCITY    1
-#define     TAB_TORQUE      2
-#define     TAB_CURRENT     3
-#define     TAB_MOTORPARAMS 4
-#define     TAB_STIFF       5
-#define     TAB_PWM         6
-#define     TAB_VARIABLES   7
+#define     TAB_POSITION        0
+#define     TAB_POSITION_DIR    1
+#define     TAB_VELOCITY        2
+#define     TAB_VELOCITY_DIR    3
+#define     TAB_MIXED           4
+#define     TAB_TORQUE          5
+#define     TAB_CURRENT         6
+#define     TAB_MOTORPARAMS     7
+#define     TAB_STIFF           8
+#define     TAB_PWM             9
+#define     TAB_VARIABLES       10
 
 #define     POSITION_KP         0
 #define     POSITION_KD         1
@@ -31,6 +34,17 @@
 #define     POSITION_STICTIONDW 8
 #define     POSITION_KFF        9
 
+#define     POSITION_DIR_KP         0
+#define     POSITION_DIR_KD         1
+#define     POSITION_DIR_KI         2
+#define     POSITION_DIR_SCALE      3
+#define     POSITION_DIR_MAXOUTPUT  4
+#define     POSITION_DIR_MAXINT     5
+#define     POSITION_DIR_OFFSET     6
+#define     POSITION_DIR_STICTIONUP 7
+#define     POSITION_DIR_STICTIONDW 8
+#define     POSITION_DIR_KFF        9
+
 #define     VELOCITY_KP         0
 #define     VELOCITY_KD         1
 #define     VELOCITY_KI         2
@@ -41,6 +55,28 @@
 #define     VELOCITY_STICTIONUP 7
 #define     VELOCITY_STICTIONDW 8
 #define     VELOCITY_KFF        9
+
+#define     VELOCITY_DIR_KP         0
+#define     VELOCITY_DIR_KD         1
+#define     VELOCITY_DIR_KI         2
+#define     VELOCITY_DIR_SCALE      3
+#define     VELOCITY_DIR_MAXOUTPUT  4
+#define     VELOCITY_DIR_MAXINT     5
+#define     VELOCITY_DIR_OFFSET     6
+#define     VELOCITY_DIR_STICTIONUP 7
+#define     VELOCITY_DIR_STICTIONDW 8
+#define     VELOCITY_DIR_KFF        9
+
+#define     MIXED_KP         0
+#define     MIXED_KD         1
+#define     MIXED_KI         2
+#define     MIXED_SCALE      3
+#define     MIXED_MAXOUTPUT  4
+#define     MIXED_MAXINT     5
+#define     MIXED_OFFSET     6
+#define     MIXED_STICTIONUP 7
+#define     MIXED_STICTIONDW 8
+#define     MIXED_KFF        9
 
 #define     TORQUE_KP           0
 #define     TORQUE_KD           1
@@ -72,11 +108,52 @@
 #define     CURRENT_OFFSET     6
 #define     CURRENT_KFF        7
 
-PidDlg::PidDlg(QString partname, int jointIndex, QString jointName, QWidget *parent) :
+int getCurrentTabIndexByName(QTabWidget* tabWidget, const QString& name) {
+    for (int i = 0; i < tabWidget->count(); ++i) {
+        if (tabWidget->tabText(i) == name) {
+            return i;
+        }
+    }
+    return 0; // Default to first tab if not found
+}
+
+PidDlg::PidDlg(QString partname, int jointIndex, QString jointName, int cmode, QWidget *parent) :
     QDialog(parent),
     ui(new Ui::PidDlg)
 {
     ui->setupUi(this);
+
+    //pos, posd, vel, veld, trq, cur, pwm
+    switch (cmode)
+    {
+      case 1:
+        ui->tabMain->setCurrentIndex(getCurrentTabIndexByName(ui->tabMain, "Position PID"));
+        break;
+      case 2:
+        ui->tabMain->setCurrentIndex(getCurrentTabIndexByName(ui->tabMain, "PositionDirect PID"));
+        break;
+      case 3:
+        ui->tabMain->setCurrentIndex(getCurrentTabIndexByName(ui->tabMain, "Mixed PID"));
+        break;
+      case 4:
+        ui->tabMain->setCurrentIndex(getCurrentTabIndexByName(ui->tabMain, "Velocity PID"));
+        break;
+      case 5:
+        ui->tabMain->setCurrentIndex(getCurrentTabIndexByName(ui->tabMain, "VelocityDirect PID"));
+        break;
+      case 6:
+        ui->tabMain->setCurrentIndex(getCurrentTabIndexByName(ui->tabMain, "Torque PID"));
+        break;
+      case 7:
+        ui->tabMain->setCurrentIndex(getCurrentTabIndexByName(ui->tabMain, "PWM Params"));
+        break;
+      case 8:
+        ui->tabMain->setCurrentIndex(getCurrentTabIndexByName(ui->tabMain, "Current PID"));
+        break;
+      default:
+        ui->tabMain->setCurrentIndex(0);
+        break;
+    }
 
     this->jointIndex = jointIndex;
 
@@ -89,6 +166,8 @@ PidDlg::PidDlg(QString partname, int jointIndex, QString jointName, QWidget *par
     connect(ui->btnDump, SIGNAL(clicked()), this, SLOT(onDumpRemoteVariables()));
     connect(ui->selectPosition, SIGNAL(currentIndexChanged(int)), this, SLOT(onComboBoxIndexChangedPos(int)));
     connect(ui->selectVelocity, SIGNAL(currentIndexChanged(int)), this, SLOT(onComboBoxIndexChangedVel(int)));
+    connect(ui->selectPositionDir, SIGNAL(currentIndexChanged(int)), this, SLOT(onComboBoxIndexChangedPosDir(int)));
+    connect(ui->selectVelocityDir, SIGNAL(currentIndexChanged(int)), this, SLOT(onComboBoxIndexChangedVelDir(int)));
     connect(ui->selectTorque  , SIGNAL(currentIndexChanged(int)), this, SLOT(onComboBoxIndexChangedTrq(int)));
     connect(ui->selectCurrent,  SIGNAL(currentIndexChanged(int)), this, SLOT(onComboBoxIndexChangedCur(int)));
 
@@ -102,6 +181,8 @@ PidDlg::PidDlg(QString partname, int jointIndex, QString jointName, QWidget *par
 
     ui->tablePosition->setItemDelegate(new TableDoubleDelegate);
     ui->tableVelocity->setItemDelegate(new TableDoubleDelegate);
+    ui->tablePositionDir->setItemDelegate(new TableDoubleDelegate);
+    ui->tableVelocityDir->setItemDelegate(new TableDoubleDelegate);
     ui->tableTorque->setItemDelegate(new TableDoubleDelegate);
     ui->tableStiffness->setItemDelegate(new TableDoubleDelegate);
     ui->tablePWM->setItemDelegate(new TableDoubleDelegate);
@@ -174,6 +255,43 @@ void PidDlg::initPositionPID(const std::vector<PidWithExtraInfo>& myPids)
     ui->tablePosition->item(POSITION_KFF,1)->setText(QString("%1").arg((double)myPids[pidindex].pid.kff));
 }
 
+void PidDlg::initPositionDirectPID(const std::vector<PidWithExtraInfo>& myPids)
+{
+    size_t pidindex = ui->selectPositionDir->currentIndex();
+    std::string desc = prepareDescription(myPids[pidindex]);
+    ui->descPositionDir->setText(QString("%1").arg(desc.c_str()));
+
+    ui->tablePositionDir->item(POSITION_DIR_KP,0)->setText(QString("%1").arg((double)myPids[pidindex].pid.kp));
+    ui->tablePositionDir->item(POSITION_DIR_KP,1)->setText(QString("%1").arg((double)myPids[pidindex].pid.kp));
+
+    ui->tablePositionDir->item(POSITION_DIR_KD,0)->setText(QString("%1").arg((double)myPids[pidindex].pid.kd));
+    ui->tablePositionDir->item(POSITION_DIR_KD,1)->setText(QString("%1").arg((double)myPids[pidindex].pid.kd));
+
+    ui->tablePositionDir->item(POSITION_DIR_KI,0)->setText(QString("%1").arg((double)myPids[pidindex].pid.ki));
+    ui->tablePositionDir->item(POSITION_DIR_KI,1)->setText(QString("%1").arg((double)myPids[pidindex].pid.ki));
+
+    ui->tablePositionDir->item(POSITION_DIR_SCALE,0)->setText(QString("%1").arg((int)myPids[pidindex].pid.scale));
+    ui->tablePositionDir->item(POSITION_DIR_SCALE,1)->setText(QString("%1").arg((int)myPids[pidindex].pid.scale));
+
+    ui->tablePositionDir->item(POSITION_DIR_OFFSET,0)->setText(QString("%1").arg((int)myPids[pidindex].pid.offset));
+    ui->tablePositionDir->item(POSITION_DIR_OFFSET,1)->setText(QString("%1").arg((int)myPids[pidindex].pid.offset));
+
+    ui->tablePositionDir->item(POSITION_DIR_STICTIONUP,0)->setText(QString("%1").arg((double)myPids[pidindex].pid.stiction_up_val));
+    ui->tablePositionDir->item(POSITION_DIR_STICTIONUP,1)->setText(QString("%1").arg((double)myPids[pidindex].pid.stiction_up_val));
+
+    ui->tablePositionDir->item(POSITION_DIR_MAXOUTPUT,0)->setText(QString("%1").arg((int)myPids[pidindex].pid.max_output));
+    ui->tablePositionDir->item(POSITION_DIR_MAXOUTPUT,1)->setText(QString("%1").arg((int)myPids[pidindex].pid.max_output));
+
+    ui->tablePositionDir->item(POSITION_DIR_STICTIONDW,0)->setText(QString("%1").arg((double)myPids[pidindex].pid.stiction_down_val));
+    ui->tablePositionDir->item(POSITION_DIR_STICTIONDW,1)->setText(QString("%1").arg((double)myPids[pidindex].pid.stiction_down_val));
+
+    ui->tablePositionDir->item(POSITION_DIR_MAXINT,0)->setText(QString("%1").arg((int)myPids[pidindex].pid.max_int));
+    ui->tablePositionDir->item(POSITION_DIR_MAXINT,1)->setText(QString("%1").arg((int)myPids[pidindex].pid.max_int));
+
+    ui->tablePositionDir->item(POSITION_DIR_KFF,0)->setText(QString("%1").arg((double)myPids[pidindex].pid.kff));
+    ui->tablePositionDir->item(POSITION_DIR_KFF,1)->setText(QString("%1").arg((double)myPids[pidindex].pid.kff));
+}
+
 void PidDlg::initVelocityPID(const std::vector<PidWithExtraInfo>& myPids)
 {
     size_t pidindex = ui->selectVelocity->currentIndex();
@@ -209,6 +327,80 @@ void PidDlg::initVelocityPID(const std::vector<PidWithExtraInfo>& myPids)
 
     ui->tableVelocity->item(VELOCITY_KFF,0)->setText(QString("%1").arg((double)myPids[pidindex].pid.kff));
     ui->tableVelocity->item(VELOCITY_KFF,1)->setText(QString("%1").arg((double)myPids[pidindex].pid.kff));
+}
+
+void PidDlg::initVelocityDirectPID(const std::vector<PidWithExtraInfo>& myPids)
+{
+    size_t pidindex = ui->selectVelocityDir->currentIndex();
+    std::string desc = prepareDescription(myPids[pidindex]);
+    ui->descVelocityDir->setText(QString("%1").arg(desc.c_str()));
+
+    ui->tableVelocityDir->item(VELOCITY_DIR_KP, 0)->setText(QString("%1").arg((double)myPids[pidindex].pid.kp));
+    ui->tableVelocityDir->item(VELOCITY_DIR_KP, 1)->setText(QString("%1").arg((double)myPids[pidindex].pid.kp));
+
+    ui->tableVelocityDir->item(VELOCITY_DIR_KD, 0)->setText(QString("%1").arg((double)myPids[pidindex].pid.kd));
+    ui->tableVelocityDir->item(VELOCITY_DIR_KD, 1)->setText(QString("%1").arg((double)myPids[pidindex].pid.kd));
+
+    ui->tableVelocityDir->item(VELOCITY_DIR_KI, 0)->setText(QString("%1").arg((double)myPids[pidindex].pid.ki));
+    ui->tableVelocityDir->item(VELOCITY_DIR_KI, 1)->setText(QString("%1").arg((double)myPids[pidindex].pid.ki));
+
+    ui->tableVelocityDir->item(VELOCITY_DIR_SCALE, 0)->setText(QString("%1").arg((int)myPids[pidindex].pid.scale));
+    ui->tableVelocityDir->item(VELOCITY_DIR_SCALE, 1)->setText(QString("%1").arg((int)myPids[pidindex].pid.scale));
+
+    ui->tableVelocityDir->item(VELOCITY_DIR_OFFSET, 0)->setText(QString("%1").arg((int)myPids[pidindex].pid.offset));
+    ui->tableVelocityDir->item(VELOCITY_DIR_OFFSET, 1)->setText(QString("%1").arg((int)myPids[pidindex].pid.offset));
+
+    ui->tableVelocityDir->item(VELOCITY_DIR_STICTIONUP, 0)->setText(QString("%1").arg((double)myPids[pidindex].pid.stiction_up_val));
+    ui->tableVelocityDir->item(VELOCITY_DIR_STICTIONUP, 1)->setText(QString("%1").arg((double)myPids[pidindex].pid.stiction_up_val));
+
+    ui->tableVelocityDir->item(VELOCITY_DIR_MAXOUTPUT, 0)->setText(QString("%1").arg((int)myPids[pidindex].pid.max_output));
+    ui->tableVelocityDir->item(VELOCITY_DIR_MAXOUTPUT, 1)->setText(QString("%1").arg((int)myPids[pidindex].pid.max_output));
+
+    ui->tableVelocityDir->item(VELOCITY_DIR_STICTIONDW, 0)->setText(QString("%1").arg((double)myPids[pidindex].pid.stiction_down_val));
+    ui->tableVelocityDir->item(VELOCITY_DIR_STICTIONDW, 1)->setText(QString("%1").arg((double)myPids[pidindex].pid.stiction_down_val));
+
+    ui->tableVelocityDir->item(VELOCITY_DIR_MAXINT, 0)->setText(QString("%1").arg((int)myPids[pidindex].pid.max_int));
+    ui->tableVelocityDir->item(VELOCITY_DIR_MAXINT, 1)->setText(QString("%1").arg((int)myPids[pidindex].pid.max_int));
+
+    ui->tableVelocityDir->item(VELOCITY_DIR_KFF,0)->setText(QString("%1").arg((double)myPids[pidindex].pid.kff));
+    ui->tableVelocityDir->item(VELOCITY_DIR_KFF,1)->setText(QString("%1").arg((double)myPids[pidindex].pid.kff));
+}
+
+void PidDlg::initMixedPID(const std::vector<PidWithExtraInfo>& myPids)
+{
+    size_t pidindex = ui->selectMixed->currentIndex();
+    std::string desc = prepareDescription(myPids[pidindex]);
+    ui->descMixed->setText(QString("%1").arg(desc.c_str()));
+
+    ui->tableMixed->item(MIXED_KP, 0)->setText(QString("%1").arg((double)myPids[pidindex].pid.kp));
+    ui->tableMixed->item(MIXED_KP, 1)->setText(QString("%1").arg((double)myPids[pidindex].pid.kp));
+
+    ui->tableMixed->item(MIXED_KD, 0)->setText(QString("%1").arg((double)myPids[pidindex].pid.kd));
+    ui->tableMixed->item(MIXED_KD, 1)->setText(QString("%1").arg((double)myPids[pidindex].pid.kd));
+
+    ui->tableMixed->item(MIXED_KI, 0)->setText(QString("%1").arg((double)myPids[pidindex].pid.ki));
+    ui->tableMixed->item(MIXED_KI, 1)->setText(QString("%1").arg((double)myPids[pidindex].pid.ki));
+
+    ui->tableMixed->item(MIXED_SCALE, 0)->setText(QString("%1").arg((int)myPids[pidindex].pid.scale));
+    ui->tableMixed->item(MIXED_SCALE, 1)->setText(QString("%1").arg((int)myPids[pidindex].pid.scale));
+
+    ui->tableMixed->item(MIXED_OFFSET, 0)->setText(QString("%1").arg((int)myPids[pidindex].pid.offset));
+    ui->tableMixed->item(MIXED_OFFSET, 1)->setText(QString("%1").arg((int)myPids[pidindex].pid.offset));
+
+    ui->tableMixed->item(MIXED_STICTIONUP, 0)->setText(QString("%1").arg((double)myPids[pidindex].pid.stiction_up_val));
+    ui->tableMixed->item(MIXED_STICTIONUP, 1)->setText(QString("%1").arg((double)myPids[pidindex].pid.stiction_up_val));
+
+    ui->tableMixed->item(MIXED_MAXOUTPUT, 0)->setText(QString("%1").arg((int)myPids[pidindex].pid.max_output));
+    ui->tableMixed->item(MIXED_MAXOUTPUT, 1)->setText(QString("%1").arg((int)myPids[pidindex].pid.max_output));
+
+    ui->tableMixed->item(MIXED_STICTIONDW, 0)->setText(QString("%1").arg((double)myPids[pidindex].pid.stiction_down_val));
+    ui->tableMixed->item(MIXED_STICTIONDW, 1)->setText(QString("%1").arg((double)myPids[pidindex].pid.stiction_down_val));
+
+    ui->tableMixed->item(MIXED_MAXINT, 0)->setText(QString("%1").arg((int)myPids[pidindex].pid.max_int));
+    ui->tableMixed->item(MIXED_MAXINT, 1)->setText(QString("%1").arg((int)myPids[pidindex].pid.max_int));
+
+    ui->tableMixed->item(MIXED_KFF,0)->setText(QString("%1").arg((double)myPids[pidindex].pid.kff));
+    ui->tableMixed->item(MIXED_KFF,1)->setText(QString("%1").arg((double)myPids[pidindex].pid.kff));
 }
 
 void PidDlg::initTorquePID(const std::vector<PidWithExtraInfo>& myPids)
@@ -440,6 +632,18 @@ void PidDlg::onComboBoxIndexChangedVel(int selection)
 {
     emit refreshPids(jointIndex);
 }
+void PidDlg::onComboBoxIndexChangedPosDir(int selection)
+{
+    emit refreshPids(jointIndex);
+}
+void PidDlg::onComboBoxIndexChangedVelDir(int selection)
+{
+    emit refreshPids(jointIndex);
+}
+void PidDlg::onComboBoxIndexChangedMix(int selection)
+{
+    emit refreshPids(jointIndex);
+}
 void PidDlg::onComboBoxIndexChangedTrq(int selection)
 {
     emit refreshPids(jointIndex);
@@ -469,9 +673,10 @@ void PidDlg::onSend()
     case TAB_POSITION:
         combo_selection = ui->selectPosition->currentIndex();
         pidtype = choosePIDType(PidControlTypeEnum::VOCAB_PIDTYPE_POSITION, combo_selection+1);
-        newPid.kp = ui->tablePosition->item(POSITION_KP,1)->text().toDouble();
-        newPid.kd = ui->tablePosition->item(POSITION_KD,1)->text().toDouble();
-        newPid.ki = ui->tablePosition->item(POSITION_KI,1)->text().toDouble();
+        newPid.kp  = ui->tablePosition->item(POSITION_KP,1)->text().toDouble();
+        newPid.kd  = ui->tablePosition->item(POSITION_KD,1)->text().toDouble();
+        newPid.ki  = ui->tablePosition->item(POSITION_KI,1)->text().toDouble();
+        newPid.kff = ui->tablePosition->item(POSITION_KFF,1)->text().toDouble();
         newPid.scale = ui->tablePosition->item(POSITION_SCALE,1)->text().toDouble();
         newPid.offset = ui->tablePosition->item(POSITION_OFFSET,1)->text().toDouble();
         newPid.stiction_up_val = ui->tablePosition->item(POSITION_STICTIONUP,1)->text().toDouble();
@@ -480,12 +685,28 @@ void PidDlg::onSend()
         newPid.max_int = ui->tablePosition->item(POSITION_MAXINT,1)->text().toDouble();
         emit sendPid(pidtype, jointIndex,newPid);
         break;
+    case TAB_POSITION_DIR:
+        combo_selection = ui->selectPositionDir->currentIndex();
+        pidtype = choosePIDType(PidControlTypeEnum::VOCAB_PIDTYPE_POSITION_DIRECT, combo_selection+1);
+        newPid.kp  = ui->tablePositionDir->item(POSITION_DIR_KP,1)->text().toDouble();
+        newPid.kd  = ui->tablePositionDir->item(POSITION_DIR_KD,1)->text().toDouble();
+        newPid.ki  = ui->tablePositionDir->item(POSITION_DIR_KI,1)->text().toDouble();
+        newPid.kff = ui->tablePositionDir->item(POSITION_DIR_KFF, 1)->text().toDouble();
+        newPid.scale = ui->tablePositionDir->item(POSITION_DIR_SCALE,1)->text().toDouble();
+        newPid.offset = ui->tablePositionDir->item(POSITION_DIR_OFFSET,1)->text().toDouble();
+        newPid.stiction_up_val = ui->tablePositionDir->item(POSITION_DIR_STICTIONUP,1)->text().toDouble();
+        newPid.max_output = ui->tablePositionDir->item(POSITION_DIR_MAXOUTPUT,1)->text().toDouble();
+        newPid.stiction_down_val = ui->tablePositionDir->item(POSITION_DIR_STICTIONDW,1)->text().toDouble();
+        newPid.max_int = ui->tablePositionDir->item(POSITION_DIR_MAXINT,1)->text().toDouble();
+        emit sendPid(pidtype, jointIndex,newPid);
+        break;
     case TAB_VELOCITY:
         combo_selection = ui->selectVelocity->currentIndex();
         pidtype = choosePIDType(PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY, combo_selection+1);
-        newPid.kp = ui->tableVelocity->item(VELOCITY_KP, 1)->text().toDouble();
-        newPid.kd = ui->tableVelocity->item(VELOCITY_KD, 1)->text().toDouble();
-        newPid.ki = ui->tableVelocity->item(VELOCITY_KI, 1)->text().toDouble();
+        newPid.kp  = ui->tableVelocity->item(VELOCITY_KP, 1)->text().toDouble();
+        newPid.kd  = ui->tableVelocity->item(VELOCITY_KD, 1)->text().toDouble();
+        newPid.ki  = ui->tableVelocity->item(VELOCITY_KI, 1)->text().toDouble();
+        newPid.kff = ui->tableVelocity->item(VELOCITY_KFF, 1)->text().toDouble();
         newPid.scale = ui->tableVelocity->item(VELOCITY_SCALE, 1)->text().toDouble();
         newPid.offset = ui->tableVelocity->item(VELOCITY_OFFSET, 1)->text().toDouble();
         newPid.stiction_up_val = ui->tableVelocity->item(VELOCITY_STICTIONUP, 1)->text().toDouble();
@@ -494,13 +715,43 @@ void PidDlg::onSend()
         newPid.max_int = ui->tableVelocity->item(VELOCITY_MAXINT, 1)->text().toDouble();
         emit sendPid(pidtype, jointIndex, newPid);
         break;
+    case TAB_VELOCITY_DIR:
+        combo_selection = ui->selectVelocityDir->currentIndex();
+        pidtype = choosePIDType(PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY_DIRECT, combo_selection+1);
+        newPid.kp  = ui->tableVelocityDir->item(VELOCITY_DIR_KP, 1)->text().toDouble();
+        newPid.kd  = ui->tableVelocityDir->item(VELOCITY_DIR_KD, 1)->text().toDouble();
+        newPid.ki  = ui->tableVelocityDir->item(VELOCITY_DIR_KI, 1)->text().toDouble();
+        newPid.kff = ui->tableVelocityDir->item(VELOCITY_DIR_KFF,1)->text().toDouble();
+        newPid.scale = ui->tableVelocityDir->item(VELOCITY_DIR_SCALE, 1)->text().toDouble();
+        newPid.offset = ui->tableVelocityDir->item(VELOCITY_DIR_OFFSET, 1)->text().toDouble();
+        newPid.stiction_up_val = ui->tableVelocityDir->item(VELOCITY_DIR_STICTIONUP, 1)->text().toDouble();
+        newPid.max_output = ui->tableVelocityDir->item(VELOCITY_DIR_MAXOUTPUT, 1)->text().toDouble();
+        newPid.stiction_down_val = ui->tableVelocityDir->item(VELOCITY_DIR_STICTIONDW, 1)->text().toDouble();
+        newPid.max_int = ui->tableVelocityDir->item(VELOCITY_DIR_MAXINT, 1)->text().toDouble();
+        emit sendPid(pidtype, jointIndex, newPid);
+        break;
+    case TAB_MIXED:
+        combo_selection = ui->selectMixed->currentIndex();
+        pidtype = choosePIDType(PidControlTypeEnum::VOCAB_PIDTYPE_MIXED, combo_selection+1);
+        newPid.kp  = ui->tableMixed->item(MIXED_KP, 1)->text().toDouble();
+        newPid.kd  = ui->tableMixed->item(MIXED_KD, 1)->text().toDouble();
+        newPid.ki  = ui->tableMixed->item(MIXED_KI, 1)->text().toDouble();
+        newPid.kff = ui->tableMixed->item(MIXED_KFF,1)->text().toDouble();
+        newPid.scale = ui->tableMixed->item(MIXED_SCALE, 1)->text().toDouble();
+        newPid.offset = ui->tableMixed->item(MIXED_OFFSET, 1)->text().toDouble();
+        newPid.stiction_up_val = ui->tableMixed->item(MIXED_STICTIONUP, 1)->text().toDouble();
+        newPid.max_output = ui->tableMixed->item(MIXED_MAXOUTPUT, 1)->text().toDouble();
+        newPid.stiction_down_val = ui->tableMixed->item(MIXED_STICTIONDW, 1)->text().toDouble();
+        newPid.max_int = ui->tableMixed->item(MIXED_MAXINT, 1)->text().toDouble();
+        emit sendPid(pidtype, jointIndex, newPid);
+        break;
     case TAB_TORQUE:
         combo_selection = ui->selectTorque->currentIndex();
         pidtype = choosePIDType(PidControlTypeEnum::VOCAB_PIDTYPE_TORQUE, combo_selection+1);
-        newPid.kp = ui->tableTorque->item(TORQUE_KP,1)->text().toDouble();
+        newPid.kp  = ui->tableTorque->item(TORQUE_KP,1)->text().toDouble();
+        newPid.kd  = ui->tableTorque->item(TORQUE_KD,1)->text().toDouble();
+        newPid.ki  = ui->tableTorque->item(TORQUE_KI,1)->text().toDouble();
         newPid.kff = ui->tableTorque->item(TORQUE_KFF,1)->text().toDouble();
-        newPid.kd = ui->tableTorque->item(TORQUE_KD,1)->text().toDouble();
-        newPid.ki = ui->tableTorque->item(TORQUE_KI,1)->text().toDouble();
         newPid.scale = ui->tableTorque->item(TORQUE_SCALE,1)->text().toDouble();
         newPid.offset = ui->tableTorque->item(TORQUE_OFFSET,1)->text().toDouble();
         newPid.stiction_up_val = ui->tableTorque->item(TORQUE_STITCTIONUP,1)->text().toDouble();
@@ -512,9 +763,10 @@ void PidDlg::onSend()
     case TAB_CURRENT:{
         combo_selection = ui->selectCurrent->currentIndex();
         pidtype = choosePIDType(PidControlTypeEnum::VOCAB_PIDTYPE_CURRENT, combo_selection+1);
-        newPid.kp = ui->tableCurrent->item(CURRENT_KP, 1)->text().toDouble();
-        newPid.kd = ui->tableCurrent->item(CURRENT_KD, 1)->text().toDouble();
-        newPid.ki = ui->tableCurrent->item(CURRENT_KI, 1)->text().toDouble();
+        newPid.kp  = ui->tableCurrent->item(CURRENT_KP, 1)->text().toDouble();
+        newPid.kd  = ui->tableCurrent->item(CURRENT_KD, 1)->text().toDouble();
+        newPid.ki  = ui->tableCurrent->item(CURRENT_KI, 1)->text().toDouble();
+        newPid.kff = ui->tableCurrent->item(CURRENT_KFF,1)->text().toDouble();
         newPid.scale = ui->tableCurrent->item(CURRENT_SCALE, 1)->text().toDouble();
         newPid.offset = ui->tableCurrent->item(CURRENT_OFFSET, 1)->text().toDouble();
         newPid.max_output = ui->tableCurrent->item(CURRENT_MAXOUTPUT, 1)->text().toDouble();

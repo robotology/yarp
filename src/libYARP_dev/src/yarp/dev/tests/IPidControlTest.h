@@ -40,7 +40,10 @@ std::vector<yarp::dev::PidControlTypeEnum> pidenums =
     yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_POSITION_DIRECT_3,
     yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY_DIRECT_1,
     yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY_DIRECT_2,
-    yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY_DIRECT_3
+    yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY_DIRECT_3,
+    yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_MIXED_1,
+    yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_MIXED_2,
+    yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_MIXED_3
 };
 
 namespace yarp::dev::tests
