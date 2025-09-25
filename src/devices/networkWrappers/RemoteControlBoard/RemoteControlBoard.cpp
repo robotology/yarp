@@ -1719,62 +1719,62 @@ bool RemoteControlBoard::checkMotionDone(bool *flag)
     return get1V1B(VOCAB_MOTION_DONES, *flag);
 }
 
-bool RemoteControlBoard::setRefSpeed(int j, double sp)
+bool RemoteControlBoard::setTrajSpeed(int j, double sp)
 {
     return set1V1I1D(VOCAB_REF_SPEED, j, sp);
 }
 
-bool RemoteControlBoard::setRefSpeeds(const int n_joint, const int *joints, const double *spds)
+bool RemoteControlBoard::setTrajSpeeds(const int n_joint, const int *joints, const double *spds)
 {
     return set1V1I1IA1DA(VOCAB_REF_SPEED_GROUP, n_joint, joints, spds);
 }
 
-bool RemoteControlBoard::setRefSpeeds(const double *spds)
+bool RemoteControlBoard::setTrajSpeeds(const double *spds)
 {
     return set1VDA(VOCAB_REF_SPEEDS, spds);
 }
 
-bool RemoteControlBoard::setRefAcceleration(int j, double acc)
+bool RemoteControlBoard::setTrajAcceleration(int j, double acc)
 {
     return set1V1I1D(VOCAB_REF_ACCELERATION, j, acc);
 }
 
-bool RemoteControlBoard::setRefAccelerations(const int n_joint, const int *joints, const double *accs)
+bool RemoteControlBoard::setTrajAccelerations(const int n_joint, const int *joints, const double *accs)
 {
     return set1V1I1IA1DA(VOCAB_REF_ACCELERATION_GROUP, n_joint, joints, accs);
 }
 
-bool RemoteControlBoard::setRefAccelerations(const double *accs)
+bool RemoteControlBoard::setTrajAccelerations(const double *accs)
 {
     return set1VDA(VOCAB_REF_ACCELERATIONS, accs);
 }
 
-bool RemoteControlBoard::getRefSpeed(int j, double *ref)
+bool RemoteControlBoard::getTrajSpeed(int j, double *ref)
 {
     return get1V1I1D(VOCAB_REF_SPEED, j, ref);
 }
 
-bool RemoteControlBoard::getRefSpeeds(const int n_joint, const int *joints, double *spds)
+bool RemoteControlBoard::getTrajSpeeds(const int n_joint, const int *joints, double *spds)
 {
     return get1V1I1IA1DA(VOCAB_REF_SPEED_GROUP, n_joint, joints, spds);
 }
 
-bool RemoteControlBoard::getRefSpeeds(double *spds)
+bool RemoteControlBoard::getTrajSpeeds(double *spds)
 {
     return get1VDA(VOCAB_REF_SPEEDS, spds);
 }
 
-bool RemoteControlBoard::getRefAcceleration(int j, double *acc)
+bool RemoteControlBoard::getTrajAcceleration(int j, double *acc)
 {
     return get1V1I1D(VOCAB_REF_ACCELERATION, j, acc);
 }
 
-bool RemoteControlBoard::getRefAccelerations(const int n_joint, const int *joints, double *accs)
+bool RemoteControlBoard::getTrajAccelerations(const int n_joint, const int *joints, double *accs)
 {
     return get1V1I1IA1DA(VOCAB_REF_ACCELERATION_GROUP, n_joint, joints, accs);
 }
 
-bool RemoteControlBoard::getRefAccelerations(double *accs)
+bool RemoteControlBoard::getTrajAccelerations(double *accs)
 {
     return get1VDA(VOCAB_REF_ACCELERATIONS, accs);
 }
@@ -2502,17 +2502,17 @@ bool RemoteControlBoard::velocityMove(const int n_joint, const int *joints, cons
     return true;
 }
 
-bool RemoteControlBoard::getRefVelocity(const int joint, double* vel)
+bool RemoteControlBoard::getTargetVelocity(const int joint, double* vel)
 {
     return get1V1I1D(VOCAB_VELOCITY_MOVE, joint, vel);
 }
 
-bool RemoteControlBoard::getRefVelocities(double* vels)
+bool RemoteControlBoard::getTargetVelocities(double* vels)
 {
     return get1VDA(VOCAB_VELOCITY_MOVES, vels);
 }
 
-bool RemoteControlBoard::getRefVelocities(const int n_joint, const int* joints, double* vels)
+bool RemoteControlBoard::getTargetVelocities(const int n_joint, const int* joints, double* vels)
 {
     return get1V1I1IA1DA(VOCAB_VELOCITY_MOVE_GROUP, n_joint, joints, vels);
 }
@@ -2950,7 +2950,7 @@ ReturnValue RemoteControlBoard::getAxes(size_t& axes)
     return ret.ret;
 }
 
-ReturnValue RemoteControlBoard::setDesiredVelocity(int jnt, double vel)
+ReturnValue RemoteControlBoard::setRefVelocity(int jnt, double vel)
 {
     if (!isLive()) {
         return ReturnValue::return_code::return_value_error_not_ready;
@@ -2966,7 +2966,7 @@ ReturnValue RemoteControlBoard::setDesiredVelocity(int jnt, double vel)
     return ReturnValue_ok;
 }
 
-ReturnValue RemoteControlBoard::setDesiredVelocity(const std::vector<double>& vels)
+ReturnValue RemoteControlBoard::setRefVelocity(const std::vector<double>& vels)
 {
     if (!isLive()) {
         return ReturnValue::return_code::return_value_error_not_ready;
@@ -2983,7 +2983,7 @@ ReturnValue RemoteControlBoard::setDesiredVelocity(const std::vector<double>& ve
     return ReturnValue_ok;
 }
 
-ReturnValue RemoteControlBoard::setDesiredVelocity(const std::vector<int>& jnts, const std::vector<double>& vels)
+ReturnValue RemoteControlBoard::setRefVelocity(const std::vector<int>& jnts, const std::vector<double>& vels)
 {
     if (!isLive()) {
         return ReturnValue::return_code::return_value_error_not_ready;
@@ -3005,36 +3005,36 @@ ReturnValue RemoteControlBoard::setDesiredVelocity(const std::vector<int>& jnts,
     return ReturnValue_ok;
 }
 
-ReturnValue RemoteControlBoard::getDesiredVelocity(const int jnt, double& vel)
+ReturnValue RemoteControlBoard::getRefVelocity(const int jnt, double& vel)
 {
     // std::lock_guard<std::mutex> lg(m_mutex);
-    auto ret = m_RPC.getDesiredVelocityOneRPC(jnt);
+    auto ret = m_RPC.getRefVelocityOneRPC(jnt);
     if (!ret.ret) {
-        yCError(REMOTECONTROLBOARD, "Unable to getDesiredVelocityOneRPC");
+        yCError(REMOTECONTROLBOARD, "Unable to getRefVelocityOneRPC");
         return ret.ret;
     }
     vel = ret.vel;
     return ret.ret;
 }
 
-ReturnValue RemoteControlBoard::getDesiredVelocity(std::vector<double>& vels)
+ReturnValue RemoteControlBoard::getRefVelocity(std::vector<double>& vels)
 {
     // std::lock_guard<std::mutex> lg(m_mutex);
-    auto ret = m_RPC.getDesiredVelocityAllRPC();
+    auto ret = m_RPC.getRefVelocityAllRPC();
     if (!ret.ret) {
-        yCError(REMOTECONTROLBOARD, "Unable to getDesiredVelocityAllRPC");
+        yCError(REMOTECONTROLBOARD, "Unable to getRefVelocityAllRPC");
         return ret.ret;
     }
     vels = ret.vel;
     return ret.ret;
 }
 
-ReturnValue RemoteControlBoard::getDesiredVelocity(const std::vector<int>& jnts, std::vector<double>& vels)
+ReturnValue RemoteControlBoard::getRefVelocity(const std::vector<int>& jnts, std::vector<double>& vels)
 {
     // std::lock_guard<std::mutex> lg(m_mutex);
-    auto ret = m_RPC.getDesiredVelocityGroupRPC(jnts);
+    auto ret = m_RPC.getRefVelocityGroupRPC(jnts);
     if (!ret.ret) {
-        yCError(REMOTECONTROLBOARD, "Unable to getDesiredVelocityGroupRPC");
+        yCError(REMOTECONTROLBOARD, "Unable to getRefVelocityGroupRPC");
         return ret.ret;
     }
     vels = ret.vel;

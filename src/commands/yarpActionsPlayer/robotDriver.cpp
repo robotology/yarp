@@ -98,7 +98,7 @@ bool robotDriver::init()
     {
         speeds.push_back(20.0);
     }
-    ok &= ipos_ll->setRefSpeeds(speeds.data());
+    ok &= ipos_ll->setTrajSpeeds(speeds.data());
 
     return ok;
 }
@@ -138,7 +138,7 @@ bool robotDriver::positionMove(int j, double v)
         ret &= ienc_ll->getEncoder(j, &enc);
         double diff = fabs(v - enc);
         double speed = diff/m_trajectoryTime[j];
-        ipos_ll->setRefSpeed(j, speed);
+        ipos_ll->setTrajSpeed(j, speed);
     }
 
     ret &= ipos_ll->positionMove(j, v);

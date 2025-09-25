@@ -1403,7 +1403,7 @@ bool ControlBoardRemapper::checkMotionDone(const int n_joints, const int *joints
     return ret;
 }
 
-bool ControlBoardRemapper::setRefSpeed(int j, double sp)
+bool ControlBoardRemapper::setTrajSpeed(int j, double sp)
 {
     int off=(int)remappedControlBoards.lut[j].axisIndexInSubControlBoard;
     size_t subIndex=remappedControlBoards.lut[j].subControlBoardIndex;
@@ -1417,13 +1417,13 @@ bool ControlBoardRemapper::setRefSpeed(int j, double sp)
 
     if (p->pos)
     {
-        return p->pos->setRefSpeed(off, sp);
+        return p->pos->setTrajSpeed(off, sp);
     }
 
     return false;
 }
 
-bool ControlBoardRemapper::setRefSpeeds(const double *spds)
+bool ControlBoardRemapper::setTrajSpeeds(const double *spds)
 {
     bool ret=true;
     std::lock_guard<std::mutex> lock(allJointsBuffers.mutex);
@@ -1436,7 +1436,7 @@ bool ControlBoardRemapper::setRefSpeeds(const double *spds)
 
         bool ok = true;
         if (p->pos) {
-            ok = p->pos->setRefSpeeds(allJointsBuffers.m_nJointsInSubControlBoard[ctrlBrd],
+            ok = p->pos->setTrajSpeeds(allJointsBuffers.m_nJointsInSubControlBoard[ctrlBrd],
                                         allJointsBuffers.m_jointsInSubControlBoard[ctrlBrd].data(),
                                         allJointsBuffers.m_bufferForSubControlBoard[ctrlBrd].data());
         }
@@ -1449,7 +1449,7 @@ bool ControlBoardRemapper::setRefSpeeds(const double *spds)
     return ret;
 }
 
-bool ControlBoardRemapper::setRefSpeeds(const int n_joints, const int *joints, const double *spds)
+bool ControlBoardRemapper::setTrajSpeeds(const int n_joints, const int *joints, const double *spds)
 {
     bool ret=true;
     std::lock_guard<std::mutex> lock(selectedJointsBuffers.mutex);
@@ -1462,7 +1462,7 @@ bool ControlBoardRemapper::setRefSpeeds(const int n_joints, const int *joints, c
 
         bool ok = true;
         if (p->pos) {
-            ok = p->pos->setRefSpeeds(selectedJointsBuffers.m_nJointsInSubControlBoard[ctrlBrd],
+            ok = p->pos->setTrajSpeeds(selectedJointsBuffers.m_nJointsInSubControlBoard[ctrlBrd],
                                         selectedJointsBuffers.m_jointsInSubControlBoard[ctrlBrd].data(),
                                         selectedJointsBuffers.m_bufferForSubControlBoard[ctrlBrd].data());
         }
@@ -1475,7 +1475,7 @@ bool ControlBoardRemapper::setRefSpeeds(const int n_joints, const int *joints, c
     return ret;
 }
 
-bool ControlBoardRemapper::setRefAcceleration(int j, double acc)
+bool ControlBoardRemapper::setTrajAcceleration(int j, double acc)
 {
     int off=(int)remappedControlBoards.lut[j].axisIndexInSubControlBoard;
     size_t subIndex=remappedControlBoards.lut[j].subControlBoardIndex;
@@ -1489,13 +1489,13 @@ bool ControlBoardRemapper::setRefAcceleration(int j, double acc)
 
     if (p->pos)
     {
-        return p->pos->setRefAcceleration(off, acc);
+        return p->pos->setTrajAcceleration(off, acc);
     }
 
     return false;
 }
 
-bool ControlBoardRemapper::setRefAccelerations(const double *accs)
+bool ControlBoardRemapper::setTrajAccelerations(const double *accs)
 {
     bool ret=true;
     std::lock_guard<std::mutex> lock(allJointsBuffers.mutex);
@@ -1508,7 +1508,7 @@ bool ControlBoardRemapper::setRefAccelerations(const double *accs)
 
         bool ok = true;
         if (p->pos) {
-            ok = p->pos->setRefAccelerations(allJointsBuffers.m_nJointsInSubControlBoard[ctrlBrd],
+            ok = p->pos->setTrajAccelerations(allJointsBuffers.m_nJointsInSubControlBoard[ctrlBrd],
                                                 allJointsBuffers.m_jointsInSubControlBoard[ctrlBrd].data(),
                                                 allJointsBuffers.m_bufferForSubControlBoard[ctrlBrd].data());
         }
@@ -1521,7 +1521,7 @@ bool ControlBoardRemapper::setRefAccelerations(const double *accs)
     return ret;
 }
 
-bool ControlBoardRemapper::setRefAccelerations(const int n_joints, const int *joints, const double *accs)
+bool ControlBoardRemapper::setTrajAccelerations(const int n_joints, const int *joints, const double *accs)
 {
     bool ret=true;
     std::lock_guard<std::mutex> lock(selectedJointsBuffers.mutex);
@@ -1534,7 +1534,7 @@ bool ControlBoardRemapper::setRefAccelerations(const int n_joints, const int *jo
 
         bool ok = true;
         if (p->pos) {
-            ok = p->pos->setRefAccelerations(selectedJointsBuffers.m_nJointsInSubControlBoard[ctrlBrd],
+            ok = p->pos->setTrajAccelerations(selectedJointsBuffers.m_nJointsInSubControlBoard[ctrlBrd],
                                                selectedJointsBuffers.m_jointsInSubControlBoard[ctrlBrd].data(),
                                                selectedJointsBuffers.m_bufferForSubControlBoard[ctrlBrd].data());
         }
@@ -1547,7 +1547,7 @@ bool ControlBoardRemapper::setRefAccelerations(const int n_joints, const int *jo
     return ret;
 }
 
-bool ControlBoardRemapper::getRefSpeed(int j, double *ref)
+bool ControlBoardRemapper::getTrajSpeed(int j, double *ref)
 {
     int off=(int)remappedControlBoards.lut[j].axisIndexInSubControlBoard;
     size_t subIndex=remappedControlBoards.lut[j].subControlBoardIndex;
@@ -1561,13 +1561,13 @@ bool ControlBoardRemapper::getRefSpeed(int j, double *ref)
 
     if (p->pos)
     {
-        return p->pos->getRefSpeed(off, ref);
+        return p->pos->getTrajSpeed(off, ref);
     }
 
     return false;
 }
 
-bool ControlBoardRemapper::getRefSpeeds(double *spds)
+bool ControlBoardRemapper::getTrajSpeeds(double *spds)
 {
     bool ret=true;
     std::lock_guard<std::mutex> lock(allJointsBuffers.mutex);
@@ -1579,7 +1579,7 @@ bool ControlBoardRemapper::getRefSpeeds(double *spds)
         bool ok = true;
         if( p->pos )
         {
-            ok = p->pos->getRefSpeeds(allJointsBuffers.m_nJointsInSubControlBoard[ctrlBrd],
+            ok = p->pos->getTrajSpeeds(allJointsBuffers.m_nJointsInSubControlBoard[ctrlBrd],
                                        allJointsBuffers.m_jointsInSubControlBoard[ctrlBrd].data(),
                                        allJointsBuffers.m_bufferForSubControlBoard[ctrlBrd].data());
         }
@@ -1597,7 +1597,7 @@ bool ControlBoardRemapper::getRefSpeeds(double *spds)
 }
 
 
-bool ControlBoardRemapper::getRefSpeeds(const int n_joints, const int *joints, double *spds)
+bool ControlBoardRemapper::getTrajSpeeds(const int n_joints, const int *joints, double *spds)
 {
     bool ret=true;
     std::lock_guard<std::mutex> lock(selectedJointsBuffers.mutex);
@@ -1613,7 +1613,7 @@ bool ControlBoardRemapper::getRefSpeeds(const int n_joints, const int *joints, d
 
         if( p->pos )
         {
-            ok = p->pos->getRefSpeeds(selectedJointsBuffers.m_nJointsInSubControlBoard[ctrlBrd],
+            ok = p->pos->getTrajSpeeds(selectedJointsBuffers.m_nJointsInSubControlBoard[ctrlBrd],
                                             selectedJointsBuffers.m_jointsInSubControlBoard[ctrlBrd].data(),
                                             selectedJointsBuffers.m_bufferForSubControlBoard[ctrlBrd].data());
         }
@@ -1630,7 +1630,7 @@ bool ControlBoardRemapper::getRefSpeeds(const int n_joints, const int *joints, d
     return ret;
 }
 
-bool ControlBoardRemapper::getRefAcceleration(int j, double *acc)
+bool ControlBoardRemapper::getTrajAcceleration(int j, double *acc)
 {
     int off=(int)remappedControlBoards.lut[j].axisIndexInSubControlBoard;
     size_t subIndex=remappedControlBoards.lut[j].subControlBoardIndex;
@@ -1644,13 +1644,13 @@ bool ControlBoardRemapper::getRefAcceleration(int j, double *acc)
 
     if (p->pos)
     {
-        return p->pos->getRefAcceleration(off, acc);
+        return p->pos->getTrajAcceleration(off, acc);
     }
 
     return false;
 }
 
-bool ControlBoardRemapper::getRefAccelerations(double *accs)
+bool ControlBoardRemapper::getTrajAccelerations(double *accs)
 {
     bool ret=true;
     std::lock_guard<std::mutex> lock(allJointsBuffers.mutex);
@@ -1663,7 +1663,7 @@ bool ControlBoardRemapper::getRefAccelerations(double *accs)
 
         if( p->pos )
         {
-            ok = p->pos->getRefAccelerations(allJointsBuffers.m_nJointsInSubControlBoard[ctrlBrd],
+            ok = p->pos->getTrajAccelerations(allJointsBuffers.m_nJointsInSubControlBoard[ctrlBrd],
                                               allJointsBuffers.m_jointsInSubControlBoard[ctrlBrd].data(),
                                               allJointsBuffers.m_bufferForSubControlBoard[ctrlBrd].data());
         }
@@ -1680,7 +1680,7 @@ bool ControlBoardRemapper::getRefAccelerations(double *accs)
     return ret;
 }
 
-bool ControlBoardRemapper::getRefAccelerations(const int n_joints, const int *joints, double *accs)
+bool ControlBoardRemapper::getTrajAccelerations(const int n_joints, const int *joints, double *accs)
 {
     bool ret=true;
     std::lock_guard<std::mutex> lock(selectedJointsBuffers.mutex);
@@ -1695,7 +1695,7 @@ bool ControlBoardRemapper::getRefAccelerations(const int n_joints, const int *jo
         bool ok = true;
         if( p->pos )
         {
-            ok = p->pos->getRefAccelerations(selectedJointsBuffers.m_nJointsInSubControlBoard[ctrlBrd],
+            ok = p->pos->getTrajAccelerations(selectedJointsBuffers.m_nJointsInSubControlBoard[ctrlBrd],
                                               selectedJointsBuffers.m_jointsInSubControlBoard[ctrlBrd].data(),
                                               selectedJointsBuffers.m_bufferForSubControlBoard[ctrlBrd].data());
         }
@@ -4117,7 +4117,7 @@ bool ControlBoardRemapper::velocityMove(const int n_joints, const int *joints, c
     return ret;
 }
 
-bool ControlBoardRemapper::getRefVelocity(const int j, double* vel)
+bool ControlBoardRemapper::getTargetVelocity(const int j, double* vel)
 {
     int off=(int)remappedControlBoards.lut[j].axisIndexInSubControlBoard;
     size_t subIndex=remappedControlBoards.lut[j].subControlBoardIndex;
@@ -4131,7 +4131,7 @@ bool ControlBoardRemapper::getRefVelocity(const int j, double* vel)
 
     if (p->vel)
     {
-        bool ret = p->vel->getRefVelocity(off, vel);
+        bool ret = p->vel->getTargetVelocity(off, vel);
         return ret;
     }
 
@@ -4139,7 +4139,7 @@ bool ControlBoardRemapper::getRefVelocity(const int j, double* vel)
 }
 
 
-bool ControlBoardRemapper::getRefVelocities(double* vels)
+bool ControlBoardRemapper::getTargetVelocities(double* vels)
 {
     bool ret=true;
     std::lock_guard<std::mutex> lock(allJointsBuffers.mutex);
@@ -4152,7 +4152,7 @@ bool ControlBoardRemapper::getRefVelocities(double* vels)
 
         if( p->vel )
         {
-            ok = p->vel->getRefVelocities(allJointsBuffers.m_nJointsInSubControlBoard[ctrlBrd],
+            ok = p->vel->getTargetVelocities(allJointsBuffers.m_nJointsInSubControlBoard[ctrlBrd],
                                            allJointsBuffers.m_jointsInSubControlBoard[ctrlBrd].data(),
                                            allJointsBuffers.m_bufferForSubControlBoard[ctrlBrd].data());
         }
@@ -4169,7 +4169,7 @@ bool ControlBoardRemapper::getRefVelocities(double* vels)
     return ret;
 }
 
-bool ControlBoardRemapper::getRefVelocities(const int n_joints, const int* joints, double* vels)
+bool ControlBoardRemapper::getTargetVelocities(const int n_joints, const int* joints, double* vels)
 {
     bool ret=true;
     std::lock_guard<std::mutex> lock(selectedJointsBuffers.mutex);
@@ -4185,7 +4185,7 @@ bool ControlBoardRemapper::getRefVelocities(const int n_joints, const int* joint
 
         if( p->vel )
         {
-            ok = p->vel->getRefVelocities(selectedJointsBuffers.m_nJointsInSubControlBoard[ctrlBrd],
+            ok = p->vel->getTargetVelocities(selectedJointsBuffers.m_nJointsInSubControlBoard[ctrlBrd],
                                            selectedJointsBuffers.m_jointsInSubControlBoard[ctrlBrd].data(),
                                            selectedJointsBuffers.m_bufferForSubControlBoard[ctrlBrd].data());
         }
@@ -4761,7 +4761,7 @@ yarp::dev::ReturnValue ControlBoardRemapper::getAxes(size_t& axes)
     return ReturnValue_ok;
 }
 
-yarp::dev::ReturnValue ControlBoardRemapper::setDesiredVelocity(int jnt, double vel)
+yarp::dev::ReturnValue ControlBoardRemapper::setRefVelocity(int jnt, double vel)
 {
     int off = static_cast<int>(remappedControlBoards.lut[jnt].axisIndexInSubControlBoard);
     size_t subIndex = remappedControlBoards.lut[jnt].subControlBoardIndex;
@@ -4771,10 +4771,10 @@ yarp::dev::ReturnValue ControlBoardRemapper::setDesiredVelocity(int jnt, double 
     {
         return ReturnValue::return_code::return_value_error_generic;
     }
-    return p->iVelDir->setDesiredVelocity(off, vel);
+    return p->iVelDir->setRefVelocity(off, vel);
 }
 
-yarp::dev::ReturnValue ControlBoardRemapper::setDesiredVelocity(const std::vector<double>& vels)
+yarp::dev::ReturnValue ControlBoardRemapper::setRefVelocity(const std::vector<double>& vels)
 {
     if (vels.size() != static_cast<size_t>(controlledJoints))
     {
@@ -4793,12 +4793,12 @@ yarp::dev::ReturnValue ControlBoardRemapper::setDesiredVelocity(const std::vecto
             continue;
         }
         std::vector<double> subVels = allJointsBuffers.m_bufferForSubControlBoard[ctrlBrd];
-        ret = ret && p->iVelDir->setDesiredVelocity(subVels);
+        ret = ret && p->iVelDir->setRefVelocity(subVels);
     }
     return ret;
 }
 
-yarp::dev::ReturnValue ControlBoardRemapper::setDesiredVelocity(const std::vector<int>& jnts, const std::vector<double>& vels)
+yarp::dev::ReturnValue ControlBoardRemapper::setRefVelocity(const std::vector<int>& jnts, const std::vector<double>& vels)
 {
     if (jnts.size() != vels.size())
     {
@@ -4818,12 +4818,12 @@ yarp::dev::ReturnValue ControlBoardRemapper::setDesiredVelocity(const std::vecto
         }
         std::vector<int> subJnts = selectedJointsBuffers.m_jointsInSubControlBoard[ctrlBrd];
         std::vector<double> subVels = selectedJointsBuffers.m_bufferForSubControlBoard[ctrlBrd];
-        ret = ret && p->iVelDir->setDesiredVelocity(subJnts, subVels);
+        ret = ret && p->iVelDir->setRefVelocity(subJnts, subVels);
     }
     return ret;
 }
 
-yarp::dev::ReturnValue ControlBoardRemapper::getDesiredVelocity(const int jnt, double& vel)
+yarp::dev::ReturnValue ControlBoardRemapper::getRefVelocity(const int jnt, double& vel)
 {
     int off = static_cast<int>(remappedControlBoards.lut[jnt].axisIndexInSubControlBoard);
     size_t subIndex = remappedControlBoards.lut[jnt].subControlBoardIndex;
@@ -4833,10 +4833,10 @@ yarp::dev::ReturnValue ControlBoardRemapper::getDesiredVelocity(const int jnt, d
     {
         return ReturnValue::return_code::return_value_error_generic;
     }
-    return p->iVelDir->getDesiredVelocity(off, vel);
+    return p->iVelDir->getRefVelocity(off, vel);
 }
 
-yarp::dev::ReturnValue ControlBoardRemapper::getDesiredVelocity(std::vector<double>& vels)
+yarp::dev::ReturnValue ControlBoardRemapper::getRefVelocity(std::vector<double>& vels)
 {
     vels.resize(controlledJoints);
     ReturnValue ret = ReturnValue_ok;
@@ -4852,12 +4852,12 @@ yarp::dev::ReturnValue ControlBoardRemapper::getDesiredVelocity(std::vector<doub
             ret = ReturnValue::return_code::return_value_error_generic;
             continue;
         }
-        ret = ret && p->iVelDir->getDesiredVelocity(off, vels[l]);
+        ret = ret && p->iVelDir->getRefVelocity(off, vels[l]);
     }
     return ret;
 }
 
-yarp::dev::ReturnValue ControlBoardRemapper::getDesiredVelocity(const std::vector<int>& jnts, std::vector<double>& vels)
+yarp::dev::ReturnValue ControlBoardRemapper::getRefVelocity(const std::vector<int>& jnts, std::vector<double>& vels)
 {
     vels.resize(jnts.size());
     ReturnValue ret = ReturnValue_ok;
@@ -4873,7 +4873,7 @@ yarp::dev::ReturnValue ControlBoardRemapper::getDesiredVelocity(const std::vecto
             ret = ReturnValue::return_code::return_value_error_generic;
             continue;
         }
-        ret = ret && p->iVelDir->getDesiredVelocity(off, vels[i]);
+        ret = ret && p->iVelDir->getRefVelocity(off, vels[i]);
     }
     return ret;
 }

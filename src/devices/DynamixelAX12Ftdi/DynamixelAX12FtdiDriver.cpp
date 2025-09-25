@@ -400,7 +400,7 @@ bool DynamixelAX12FtdiDriver::positionMove(int j, double ref) {
     double speed;
     int blankReturnSize = -1;
     unsigned char blankReturn[] = {0, 0, 0};
-    getRefSpeed(j, &speed);
+    getTrajSpeed(j, &speed);
     const int instl = 5 + 1;
 
     unsigned char inst[instl] = {INST_WRITE, CT_GOAL_POSITION, (unsigned char) (normalisePosition(ref)&0xFF), (unsigned char) ((normalisePosition(ref) >> 8) & 0xFF), (unsigned char) (normaliseSpeed(speed)&0xFF), (unsigned char) ((normaliseSpeed(speed) >> 8)&0xFF)};
@@ -465,7 +465,7 @@ bool DynamixelAX12FtdiDriver::checkMotionDone(bool *flag) {
     return t;
 }
 
-bool DynamixelAX12FtdiDriver::setRefSpeed(int j, double sp) {
+bool DynamixelAX12FtdiDriver::setTrajSpeed(int j, double sp) {
     if (sp < 1) {
         yCInfo(DYNAMIXELAX12FTDIDRIVER, "Invalid speed value, should be from 1 to 114");
         speeds[j] = 1;
@@ -480,10 +480,10 @@ bool DynamixelAX12FtdiDriver::setRefSpeed(int j, double sp) {
     }
 }
 
-bool DynamixelAX12FtdiDriver::setRefSpeeds(const double *spds) {
+bool DynamixelAX12FtdiDriver::setTrajSpeeds(const double *spds) {
     bool t = true;
     for (int k = 0; k < numOfAxes; k++) {
-        if (!setRefSpeed(k, spds[k])) {
+        if (!setTrajSpeed(k, spds[k])) {
             t = false;
         }
     }
@@ -493,23 +493,23 @@ bool DynamixelAX12FtdiDriver::setRefSpeeds(const double *spds) {
 /**
  * not implemented
  */
-bool DynamixelAX12FtdiDriver::setRefAcceleration(int j, double acc) {
-    return NOT_YET_IMPLEMENTED("setRefAcceleration");
+bool DynamixelAX12FtdiDriver::setTrajAcceleration(int j, double acc) {
+    return NOT_YET_IMPLEMENTED("setTrajAcceleration");
 }
 
 /**
  * not implemented
  */
-bool DynamixelAX12FtdiDriver::setRefAccelerations(const double *accs) {
-    return NOT_YET_IMPLEMENTED("setRefAccelerations");
+bool DynamixelAX12FtdiDriver::setTrajAccelerations(const double *accs) {
+    return NOT_YET_IMPLEMENTED("setTrajAccelerations");
 }
 
-bool DynamixelAX12FtdiDriver::getRefSpeed(int j, double *ref) {
+bool DynamixelAX12FtdiDriver::getTrajSpeed(int j, double *ref) {
     *ref = speeds[j];
     return true;
 }
 
-bool DynamixelAX12FtdiDriver::getRefSpeeds(double *spds) {
+bool DynamixelAX12FtdiDriver::getTrajSpeeds(double *spds) {
     for (int k = 0; k < numOfAxes; k++) {
         spds[k] = speeds[k];
     }
@@ -519,15 +519,15 @@ bool DynamixelAX12FtdiDriver::getRefSpeeds(double *spds) {
 /**
  * not implemented
  */
-bool DynamixelAX12FtdiDriver::getRefAcceleration(int j, double *acc) {
-    return NOT_YET_IMPLEMENTED("getRefAcceleration");
+bool DynamixelAX12FtdiDriver::getTrajAcceleration(int j, double *acc) {
+    return NOT_YET_IMPLEMENTED("getTrajAcceleration");
 }
 
 /**
  * not implemented
  */
-bool DynamixelAX12FtdiDriver::getRefAccelerations(double *accs) {
-    return NOT_YET_IMPLEMENTED("getRefAccelerations");
+bool DynamixelAX12FtdiDriver::getTrajAccelerations(double *accs) {
+    return NOT_YET_IMPLEMENTED("getTrajAccelerations");
 }
 
 bool DynamixelAX12FtdiDriver::stop(int j) {
@@ -938,42 +938,42 @@ bool DynamixelAX12FtdiDriver::checkMotionDone(const int n_joint, const int *join
     return ret;
 }
 
-bool DynamixelAX12FtdiDriver::setRefSpeeds(const int n_joint, const int *joints, const double *spds)
+bool DynamixelAX12FtdiDriver::setTrajSpeeds(const int n_joint, const int *joints, const double *spds)
 {
     bool ret = true;
     for(int j=0; j<n_joint; j++)
     {
-        ret &= setRefSpeed(joints[j], spds[j]);
+        ret &= setTrajSpeed(joints[j], spds[j]);
     }
     return ret;
 }
 
-bool DynamixelAX12FtdiDriver::setRefAccelerations(const int n_joint, const int *joints, const double *accs)
+bool DynamixelAX12FtdiDriver::setTrajAccelerations(const int n_joint, const int *joints, const double *accs)
 {
     bool ret = true;
     for(int j=0; j<n_joint; j++)
     {
-        ret &= setRefAcceleration(joints[j], accs[j]);
+        ret &= setTrajAcceleration(joints[j], accs[j]);
     }
     return ret;
 }
 
-bool DynamixelAX12FtdiDriver::getRefSpeeds(const int n_joint, const int *joints, double *spds)
+bool DynamixelAX12FtdiDriver::getTrajSpeeds(const int n_joint, const int *joints, double *spds)
 {
     bool ret = true;
     for(int j=0; j<n_joint; j++)
     {
-        ret &= getRefSpeed(joints[j], &spds[j]);
+        ret &= getTrajSpeed(joints[j], &spds[j]);
     }
     return ret;
 }
 
-bool DynamixelAX12FtdiDriver::getRefAccelerations(const int n_joint, const int *joints, double *accs)
+bool DynamixelAX12FtdiDriver::getTrajAccelerations(const int n_joint, const int *joints, double *accs)
 {
     bool ret = true;
     for(int j=0; j<n_joint; j++)
     {
-        ret &= getRefSpeed(joints[j], &accs[j]);
+        ret &= getTrajSpeed(joints[j], &accs[j]);
     }
     return ret;
 }

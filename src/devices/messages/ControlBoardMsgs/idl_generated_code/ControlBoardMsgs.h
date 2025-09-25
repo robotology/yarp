@@ -16,9 +16,9 @@
 #include <yarp/os/ApplicationNetworkProtocolVersion.h>
 #include <return_getAutoBrakeEnabled.h>
 #include <return_getAxes.h>
-#include <return_getDesiredVelocityAll.h>
-#include <return_getDesiredVelocityGroup.h>
-#include <return_getDesiredVelocityOne.h>
+#include <return_getRefVelocityAll.h>
+#include <return_getRefVelocityGroup.h>
+#include <return_getRefVelocityOne.h>
 #include <return_getPid.h>
 #include <return_getPidExtraInfo.h>
 #include <return_getPidExtraInfos.h>
@@ -54,11 +54,11 @@ public:
 
     virtual return_getAxes getAxesRPC() const;
 
-    virtual return_getDesiredVelocityOne getDesiredVelocityOneRPC(const std::int32_t j) const;
+    virtual return_getRefVelocityOne getRefVelocityOneRPC(const std::int32_t j) const;
 
-    virtual return_getDesiredVelocityAll getDesiredVelocityAllRPC() const;
+    virtual return_getRefVelocityAll getRefVelocityAllRPC() const;
 
-    virtual return_getDesiredVelocityGroup getDesiredVelocityGroupRPC(const std::vector<std::int32_t>& j) const;
+    virtual return_getRefVelocityGroup getRefVelocityGroupRPC(const std::vector<std::int32_t>& j) const;
 
     virtual yarp::dev::ReturnValue enablePidRPC(const yarp::dev::PidControlTypeEnum pidtype, const std::int16_t j);
 

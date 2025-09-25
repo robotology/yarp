@@ -43,17 +43,17 @@ struct return_getAutoBrakeEnabled {
 
 //-------------------------------------------------
 // IVelocityDirect
-struct return_getDesiredVelocityOne {
+struct return_getRefVelocityOne {
   1: yReturnValue ret;
   2: double vel;
 }
 
-struct return_getDesiredVelocityAll {
+struct return_getRefVelocityAll {
   1: yReturnValue ret;
   2: list<double> vel;
 }
 
-struct return_getDesiredVelocityGroup {
+struct return_getRefVelocityGroup {
   1: yReturnValue ret;
   2: list<double> vel;
 }
@@ -108,10 +108,10 @@ service ControlBoardMsgs
     yReturnValue               setAutoBrakeEnabledRPC(1: i32 j, 2:bool enabled);
     return_getAutoBrakeEnabled getAutoBrakeEnabledRPC(1: i32 j) (yarp.qualifier = "const");
 
-    return_getAxes                  getAxesRPC() (yarp.qualifier = "const");
-    return_getDesiredVelocityOne    getDesiredVelocityOneRPC(1:i32 j) (yarp.qualifier = "const");
-    return_getDesiredVelocityAll    getDesiredVelocityAllRPC() (yarp.qualifier = "const");
-    return_getDesiredVelocityGroup  getDesiredVelocityGroupRPC(1: list<i32> j) (yarp.qualifier = "const");
+    return_getAxes              getAxesRPC() (yarp.qualifier = "const");
+    return_getRefVelocityOne    getRefVelocityOneRPC(1:i32 j) (yarp.qualifier = "const");
+    return_getRefVelocityAll    getRefVelocityAllRPC() (yarp.qualifier = "const");
+    return_getRefVelocityGroup  getRefVelocityGroupRPC(1: list<i32> j) (yarp.qualifier = "const");
 
     yReturnValue               enablePidRPC(1: yPidControlTypeEnum pidtype, 2: i16 j);
     yReturnValue               disablePidRPC(1: yPidControlTypeEnum pidtype, 2: i16 j);

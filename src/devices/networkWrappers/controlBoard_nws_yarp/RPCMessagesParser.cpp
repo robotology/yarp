@@ -1495,7 +1495,7 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
 
                 case VOCAB_REF_SPEED: {
                     if (!rpc_IPosCtrl) { ok = false; break; }
-                    ok = rpc_IPosCtrl->setRefSpeed(cmd.get(2).asInt32(), cmd.get(3).asFloat64());
+                    ok = rpc_IPosCtrl->setTrajSpeed(cmd.get(2).asInt32(), cmd.get(3).asFloat64());
                 } break;
 
                 case VOCAB_REF_SPEED_GROUP: {
@@ -1526,7 +1526,7 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
                         spds_tmp[i] = velBottle_p->get(i).asFloat64();
                     }
 
-                    ok = rpc_IPosCtrl->setRefSpeeds(len, j_tmp, spds_tmp);
+                    ok = rpc_IPosCtrl->setTrajSpeeds(len, j_tmp, spds_tmp);
                     delete[] j_tmp;
                     delete[] spds_tmp;
                 } break;
@@ -1547,13 +1547,13 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
                     for (size_t i = 0; i < njs; i++) {
                         p[i] = b->get(i).asFloat64();
                     }
-                    ok = rpc_IPosCtrl->setRefSpeeds(p);
+                    ok = rpc_IPosCtrl->setTrajSpeeds(p);
                     delete[] p;
                 } break;
 
                 case VOCAB_REF_ACCELERATION: {
                     if (!rpc_IPosCtrl) { ok = false; break; }
-                    ok = rpc_IPosCtrl->setRefAcceleration(cmd.get(2).asInt32(), cmd.get(3).asFloat64());
+                    ok = rpc_IPosCtrl->setTrajAcceleration(cmd.get(2).asInt32(), cmd.get(3).asFloat64());
                 } break;
 
                 case VOCAB_REF_ACCELERATION_GROUP: {
@@ -1584,7 +1584,7 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
                         accs_tmp[i] = accBottle_p->get(i).asFloat64();
                     }
 
-                    ok = rpc_IPosCtrl->setRefAccelerations(len, j_tmp, accs_tmp);
+                    ok = rpc_IPosCtrl->setTrajAccelerations(len, j_tmp, accs_tmp);
                     delete[] j_tmp;
                     delete[] accs_tmp;
                 } break;
@@ -1605,7 +1605,7 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
                     for (size_t i = 0; i < njs; i++) {
                         p[i] = b->get(i).asFloat64();
                     }
-                    ok = rpc_IPosCtrl->setRefAccelerations(p);
+                    ok = rpc_IPosCtrl->setTrajAccelerations(p);
                     delete[] p;
                 } break;
 
@@ -1909,7 +1909,7 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
                 case VOCAB_VELOCITY_MOVE: {
                     if (!rpc_IVelCtrl) { ok = false; break; }
                     yCTrace(CONTROLBOARD, "getVelocityMove - cmd: %s", cmd.toString().c_str());
-                    ok = rpc_IVelCtrl->getRefVelocity(cmd.get(2).asInt32(), &dtmp);
+                    ok = rpc_IVelCtrl->getTargetVelocity(cmd.get(2).asInt32(), &dtmp);
 
                     response.addFloat64(dtmp);
                     rec = true;
@@ -1927,7 +1927,7 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
                     for (int j = 0; j < len; j++) {
                         jointList[j] = in.get(j).asInt32();
                     }
-                    ok = rpc_IVelCtrl->getRefVelocities(len, jointList, refs);
+                    ok = rpc_IVelCtrl->getTargetVelocities(len, jointList, refs);
 
                     Bottle& b = response.addList();
                     for (int i = 0; i < len; i++) {
@@ -1943,7 +1943,7 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
                     yCTrace(CONTROLBOARD, "getVelocityMoves - cmd: %s", cmd.toString().c_str());
 
                     auto* refs = new double[controlledJoints];
-                    ok = rpc_IVelCtrl->getRefVelocities(refs);
+                    ok = rpc_IVelCtrl->getTargetVelocities(refs);
                     Bottle& b = response.addList();
                     for (size_t i = 0; i < controlledJoints; i++) {
                         b.addFloat64(refs[i]);
@@ -2001,7 +2001,7 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
 
                 case VOCAB_REF_SPEED: {
                     if (!rpc_IPosCtrl) { ok = false; break; }
-                    ok = rpc_IPosCtrl->getRefSpeed(cmd.get(2).asInt32(), &dtmp);
+                    ok = rpc_IPosCtrl->getTrajSpeed(cmd.get(2).asInt32(), &dtmp);
                     response.addFloat64(dtmp);
                 } break;
 
@@ -2015,7 +2015,7 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
                     for (int j = 0; j < len; j++) {
                         jointList[j] = in.get(j).asInt32();
                     }
-                    ok = rpc_IPosCtrl->getRefSpeeds(len, jointList, speeds);
+                    ok = rpc_IPosCtrl->getTrajSpeeds(len, jointList, speeds);
 
                     Bottle& b = response.addList();
                     for (int i = 0; i < len; i++) {
@@ -2029,7 +2029,7 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
                 case VOCAB_REF_SPEEDS: {
                     if (!rpc_IPosCtrl) { ok = false; break; }
                     auto* p = new double[controlledJoints];
-                    ok = rpc_IPosCtrl->getRefSpeeds(p);
+                    ok = rpc_IPosCtrl->getTrajSpeeds(p);
                     Bottle& b = response.addList();
                     for (size_t i = 0; i < controlledJoints; i++) {
                         b.addFloat64(p[i]);
@@ -2039,7 +2039,7 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
 
                 case VOCAB_REF_ACCELERATION: {
                     if (!rpc_IPosCtrl) { ok = false; break; }
-                    ok = rpc_IPosCtrl->getRefAcceleration(cmd.get(2).asInt32(), &dtmp);
+                    ok = rpc_IPosCtrl->getTrajAcceleration(cmd.get(2).asInt32(), &dtmp);
                     response.addFloat64(dtmp);
                 } break;
 
@@ -2053,7 +2053,7 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
                     for (int j = 0; j < len; j++) {
                         jointList[j] = in.get(j).asInt32();
                     }
-                    ok = rpc_IPosCtrl->getRefAccelerations(len, jointList, accs);
+                    ok = rpc_IPosCtrl->getTrajAccelerations(len, jointList, accs);
 
                     Bottle& b = response.addList();
                     for (int i = 0; i < len; i++) {
@@ -2067,7 +2067,7 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
                 case VOCAB_REF_ACCELERATIONS: {
                     if (!rpc_IPosCtrl) { ok = false; break; }
                     auto* p = new double[controlledJoints];
-                    ok = rpc_IPosCtrl->getRefAccelerations(p);
+                    ok = rpc_IPosCtrl->getTrajAccelerations(p);
                     Bottle& b = response.addList();
                     for (size_t i = 0; i < controlledJoints; i++) {
                         b.addFloat64(p[i]);

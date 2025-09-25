@@ -8,11 +8,11 @@
 // This is an automatically generated file.
 // It could get re-generated if the ALLOW_IDL_GENERATION flag is on.
 
-#include <return_getDesiredVelocityOne.h>
+#include <return_getRefVelocityOne.h>
 
 // Constructor with field values
-return_getDesiredVelocityOne::return_getDesiredVelocityOne(const yarp::dev::ReturnValue& ret,
-                                                           const double vel) :
+return_getRefVelocityOne::return_getRefVelocityOne(const yarp::dev::ReturnValue& ret,
+                                                   const double vel) :
         WirePortable(),
         ret(ret),
         vel(vel)
@@ -20,7 +20,7 @@ return_getDesiredVelocityOne::return_getDesiredVelocityOne(const yarp::dev::Retu
 }
 
 // Read structure on a Wire
-bool return_getDesiredVelocityOne::read(yarp::os::idl::WireReader& reader)
+bool return_getRefVelocityOne::read(yarp::os::idl::WireReader& reader)
 {
     if (!nested_read_ret(reader)) {
         return false;
@@ -35,7 +35,7 @@ bool return_getDesiredVelocityOne::read(yarp::os::idl::WireReader& reader)
 }
 
 // Read structure on a Connection
-bool return_getDesiredVelocityOne::read(yarp::os::ConnectionReader& connection)
+bool return_getRefVelocityOne::read(yarp::os::ConnectionReader& connection)
 {
     yarp::os::idl::WireReader reader(connection);
     if (!reader.readListHeader(2)) {
@@ -48,7 +48,7 @@ bool return_getDesiredVelocityOne::read(yarp::os::ConnectionReader& connection)
 }
 
 // Write structure on a Wire
-bool return_getDesiredVelocityOne::write(const yarp::os::idl::WireWriter& writer) const
+bool return_getRefVelocityOne::write(const yarp::os::idl::WireWriter& writer) const
 {
     if (!nested_write_ret(writer)) {
         return false;
@@ -63,7 +63,7 @@ bool return_getDesiredVelocityOne::write(const yarp::os::idl::WireWriter& writer
 }
 
 // Write structure on a Connection
-bool return_getDesiredVelocityOne::write(yarp::os::ConnectionWriter& connection) const
+bool return_getRefVelocityOne::write(yarp::os::ConnectionWriter& connection) const
 {
     yarp::os::idl::WireWriter writer(connection);
     if (!writer.writeListHeader(2)) {
@@ -76,7 +76,7 @@ bool return_getDesiredVelocityOne::write(yarp::os::ConnectionWriter& connection)
 }
 
 // Convert to a printable string
-std::string return_getDesiredVelocityOne::toString() const
+std::string return_getRefVelocityOne::toString() const
 {
     yarp::os::Bottle b;
     if (!yarp::os::Portable::copyPortable(*this, b)) {
@@ -86,7 +86,7 @@ std::string return_getDesiredVelocityOne::toString() const
 }
 
 // read ret field
-bool return_getDesiredVelocityOne::read_ret(yarp::os::idl::WireReader& reader)
+bool return_getRefVelocityOne::read_ret(yarp::os::idl::WireReader& reader)
 {
     if (reader.noMore()) {
         reader.fail();
@@ -100,7 +100,7 @@ bool return_getDesiredVelocityOne::read_ret(yarp::os::idl::WireReader& reader)
 }
 
 // write ret field
-bool return_getDesiredVelocityOne::write_ret(const yarp::os::idl::WireWriter& writer) const
+bool return_getRefVelocityOne::write_ret(const yarp::os::idl::WireWriter& writer) const
 {
     if (!writer.write(ret)) {
         return false;
@@ -109,7 +109,7 @@ bool return_getDesiredVelocityOne::write_ret(const yarp::os::idl::WireWriter& wr
 }
 
 // read (nested) ret field
-bool return_getDesiredVelocityOne::nested_read_ret(yarp::os::idl::WireReader& reader)
+bool return_getRefVelocityOne::nested_read_ret(yarp::os::idl::WireReader& reader)
 {
     if (reader.noMore()) {
         reader.fail();
@@ -123,7 +123,7 @@ bool return_getDesiredVelocityOne::nested_read_ret(yarp::os::idl::WireReader& re
 }
 
 // write (nested) ret field
-bool return_getDesiredVelocityOne::nested_write_ret(const yarp::os::idl::WireWriter& writer) const
+bool return_getRefVelocityOne::nested_write_ret(const yarp::os::idl::WireWriter& writer) const
 {
     if (!writer.writeNested(ret)) {
         return false;
@@ -132,7 +132,7 @@ bool return_getDesiredVelocityOne::nested_write_ret(const yarp::os::idl::WireWri
 }
 
 // read vel field
-bool return_getDesiredVelocityOne::read_vel(yarp::os::idl::WireReader& reader)
+bool return_getRefVelocityOne::read_vel(yarp::os::idl::WireReader& reader)
 {
     if (reader.noMore()) {
         reader.fail();
@@ -146,7 +146,7 @@ bool return_getDesiredVelocityOne::read_vel(yarp::os::idl::WireReader& reader)
 }
 
 // write vel field
-bool return_getDesiredVelocityOne::write_vel(const yarp::os::idl::WireWriter& writer) const
+bool return_getRefVelocityOne::write_vel(const yarp::os::idl::WireWriter& writer) const
 {
     if (!writer.writeFloat64(vel)) {
         return false;
@@ -155,7 +155,7 @@ bool return_getDesiredVelocityOne::write_vel(const yarp::os::idl::WireWriter& wr
 }
 
 // read (nested) vel field
-bool return_getDesiredVelocityOne::nested_read_vel(yarp::os::idl::WireReader& reader)
+bool return_getRefVelocityOne::nested_read_vel(yarp::os::idl::WireReader& reader)
 {
     if (reader.noMore()) {
         reader.fail();
@@ -169,7 +169,7 @@ bool return_getDesiredVelocityOne::nested_read_vel(yarp::os::idl::WireReader& re
 }
 
 // write (nested) vel field
-bool return_getDesiredVelocityOne::nested_write_vel(const yarp::os::idl::WireWriter& writer) const
+bool return_getRefVelocityOne::nested_write_vel(const yarp::os::idl::WireWriter& writer) const
 {
     if (!writer.writeFloat64(vel)) {
         return false;

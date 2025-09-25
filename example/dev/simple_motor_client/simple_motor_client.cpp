@@ -271,7 +271,7 @@ int main(int argc, char* argv[])
             } break;
 
             case VOCAB_REF_SPEEDS: {
-                pos->getRefSpeeds(tmp);
+                pos->getTrajSpeeds(tmp);
                 printf("%s: (", yarp::os::Vocab32::decode(VOCAB_REF_SPEEDS).c_str());
                 for (i = 0; i < jnts; i++) {
                     printf("%.2f ", tmp[i]);
@@ -280,7 +280,7 @@ int main(int argc, char* argv[])
             } break;
 
             case VOCAB_REF_ACCELERATIONS: {
-                pos->getRefAccelerations(tmp);
+                pos->getTrajAccelerations(tmp);
                 printf("%s: (", yarp::os::Vocab32::decode(VOCAB_REF_ACCELERATIONS).c_str());
                 for (i = 0; i < jnts; i++) {
                     printf("%.2f ", tmp[i]);
@@ -319,14 +319,14 @@ int main(int argc, char* argv[])
                 int j = p.get(2).asInt32();
                 double ref = p.get(3).asFloat64();
                 printf("%s: setting speed for %d to %.2f\n", yarp::os::Vocab32::decode(VOCAB_REF_SPEED).c_str(), j, ref);
-                pos->setRefSpeed(j, ref);
+                pos->setTrajSpeed(j, ref);
             } break;
 
             case VOCAB_REF_ACCELERATION: {
                 int j = p.get(2).asInt32();
                 double ref = p.get(3).asFloat64();
                 printf("%s: setting acceleration for %d to %.2f\n", yarp::os::Vocab32::decode(VOCAB_REF_ACCELERATION).c_str(), j, ref);
-                pos->setRefAcceleration(j, ref);
+                pos->setTrajAcceleration(j, ref);
             } break;
 
             case VOCAB_POSITION_MOVES: {
@@ -353,7 +353,7 @@ int main(int argc, char* argv[])
                     tmp[i] = l->get(i).asFloat64();
                 }
                 printf("%s: setting speed for all joints\n", yarp::os::Vocab32::decode(VOCAB_REF_SPEEDS).c_str());
-                pos->setRefSpeeds(tmp);
+                pos->setTrajSpeeds(tmp);
             } break;
 
             case VOCAB_REF_ACCELERATIONS: {
@@ -362,7 +362,7 @@ int main(int argc, char* argv[])
                     tmp[i] = l->get(i).asFloat64();
                 }
                 printf("%s: setting acceleration for all joints\n", yarp::os::Vocab32::decode(VOCAB_REF_ACCELERATIONS).c_str());
-                pos->setRefAccelerations(tmp);
+                pos->setTrajAccelerations(tmp);
             } break;
 
             case VOCAB_STOP: {

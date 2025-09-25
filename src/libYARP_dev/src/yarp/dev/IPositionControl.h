@@ -85,14 +85,14 @@ public:
      * @param sp speed value
      * @return true/false upon success/failure
      */
-    virtual bool setRefSpeedRaw(int j, double sp)=0;
+    virtual bool setTrajSpeedRaw(int j, double sp)=0;
 
     /** Set reference speed on all joints. These values are used during the
      * interpolation of the trajectory.
      * @param spds pointer to the array of speed values.
      * @return true/false upon success/failure
      */
-    virtual bool setRefSpeedsRaw(const double *spds)=0;
+    virtual bool setTrajSpeedsRaw(const double *spds)=0;
 
     /** Set reference acceleration for a joint. This value is used during the
      * trajectory generation.
@@ -100,14 +100,14 @@ public:
      * @param acc acceleration value
      * @return true/false upon success/failure
      */
-    virtual bool setRefAccelerationRaw(int j, double acc)=0;
+    virtual bool setTrajAccelerationRaw(int j, double acc)=0;
 
     /** Set reference acceleration on all joints. This is the value that is
      * used during the generation of the trajectory.
      * @param accs pointer to the array of acceleration values
      * @return true/false upon success/failure
      */
-    virtual bool setRefAccelerationsRaw(const double *accs)=0;
+    virtual bool setTrajAccelerationsRaw(const double *accs)=0;
 
     /** Get reference speed for a joint. Returns the speed used to
      * generate the trajectory profile.
@@ -115,13 +115,13 @@ public:
      * @param ref pointer to storage for the return value
      * @return true/false on success or failure
      */
-    virtual bool getRefSpeedRaw(int j, double *ref)=0;
+    virtual bool getTrajSpeedRaw(int j, double *ref)=0;
 
     /** Get reference speed of all joints. These are the  values used during the
      * interpolation of the trajectory.
      * @param spds pointer to the array that will store the speed values.
      */
-    virtual bool getRefSpeedsRaw(double *spds)=0;
+    virtual bool getTrajSpeedsRaw(double *spds)=0;
 
     /** Get reference acceleration for a joint. Returns the acceleration used to
      * generate the trajectory profile.
@@ -129,14 +129,14 @@ public:
      * @param acc pointer to storage for the return value
      * @return true/false on success/failure
      */
-    virtual bool getRefAccelerationRaw(int j, double *acc)=0;
+    virtual bool getTrajAccelerationRaw(int j, double *acc)=0;
 
     /** Get reference acceleration of all joints. These are the values used during the
      * interpolation of the trajectory.
      * @param accs pointer to the array that will store the acceleration values.
      * @return true/false on success or failure
      */
-    virtual bool getRefAccelerationsRaw(double *accs)=0;
+    virtual bool getTrajAccelerationsRaw(double *accs)=0;
 
     /** Stop motion, single joint
      * @param j joint number
@@ -177,7 +177,7 @@ public:
      * @param spds   pointer to the array with speed values.
      * @return true/false upon success/failure
      */
-    virtual bool setRefSpeedsRaw(const int n_joint, const int *joints, const double *spds)=0;
+    virtual bool setTrajSpeedsRaw(const int n_joint, const int *joints, const double *spds)=0;
 
     /** Set reference acceleration on all joints. This is the value that is
      * used during the generation of the trajectory.
@@ -185,7 +185,7 @@ public:
      * @param accs   pointer to the array with acceleration values
      * @return true/false upon success/failure
      */
-    virtual bool setRefAccelerationsRaw(const int n_joint, const int *joints, const double *accs)=0;
+    virtual bool setTrajAccelerationsRaw(const int n_joint, const int *joints, const double *accs)=0;
 
     /** Get reference speed of all joints. These are the  values used during the
      * interpolation of the trajectory.
@@ -193,7 +193,7 @@ public:
      * @param spds   pointer to the array that will store the speed values.
      * @return true/false upon success/failure
      */
-    virtual bool getRefSpeedsRaw(const int n_joint, const int *joints, double *spds)=0;
+    virtual bool getTrajSpeedsRaw(const int n_joint, const int *joints, double *spds)=0;
 
     /** Get reference acceleration for a joint. Returns the acceleration used to
      * generate the trajectory profile.
@@ -201,7 +201,7 @@ public:
      * @param accs   pointer to the array that will store the acceleration values
      * @return true/false on success/failure
      */
-    virtual bool getRefAccelerationsRaw(const int n_joint, const int *joints, double *accs)=0;
+    virtual bool getTrajAccelerationsRaw(const int n_joint, const int *joints, double *accs)=0;
 
     /** Stop motion for subset of joints
      * @param joints pointer to the array of joint numbers
@@ -312,14 +312,14 @@ public:
      * @param sp speed value
      * @return true/false upon success/failure
      */
-    virtual bool setRefSpeed(int j, double sp)=0;
+    virtual bool setTrajSpeed(int j, double sp)=0;
 
     /** Set reference speed on all joints. These values are used during the
      * interpolation of the trajectory.
      * @param spds pointer to the array of speed values.
      * @return true/false upon success/failure
      */
-    virtual bool setRefSpeeds(const double *spds)=0;
+    virtual bool setTrajSpeeds(const double *spds)=0;
 
     /** Set reference acceleration for a joint. This value is used during the
      * trajectory generation.
@@ -327,14 +327,14 @@ public:
      * @param acc acceleration value
      * @return true/false upon success/failure
      */
-    virtual bool setRefAcceleration(int j, double acc)=0;
+    virtual bool setTrajAcceleration(int j, double acc)=0;
 
     /** Set reference acceleration on all joints. This is the value that is
      * used during the generation of the trajectory.
      * @param accs pointer to the array of acceleration values
      * @return true/false upon success/failure
      */
-    virtual bool setRefAccelerations(const double *accs)=0;
+    virtual bool setTrajAccelerations(const double *accs)=0;
 
     /** Get reference speed for a joint. Returns the speed used to
      * generate the trajectory profile.
@@ -342,13 +342,13 @@ public:
      * @param ref pointer to storage for the return value
      * @return true/false on success or failure
      */
-    virtual bool getRefSpeed(int j, double *ref)=0;
+    virtual bool getTrajSpeed(int j, double *ref)=0;
 
     /** Get reference speed of all joints. These are the  values used during the
      * interpolation of the trajectory.
      * @param spds pointer to the array that will store the speed values.
      */
-    virtual bool getRefSpeeds(double *spds)=0;
+    virtual bool getTrajSpeeds(double *spds)=0;
 
     /** Get reference acceleration for a joint. Returns the acceleration used to
      * generate the trajectory profile.
@@ -356,14 +356,14 @@ public:
      * @param acc pointer to storage for the return value
      * @return true/false on success/failure
      */
-    virtual bool getRefAcceleration(int j, double *acc)=0;
+    virtual bool getTrajAcceleration(int j, double *acc)=0;
 
     /** Get reference acceleration of all joints. These are the values used during the
      * interpolation of the trajectory.
      * @param accs pointer to the array that will store the acceleration values.
      * @return true/false on success or failure
      */
-    virtual bool getRefAccelerations(double *accs)=0;
+    virtual bool getTrajAccelerations(double *accs)=0;
 
     /** Stop motion, single joint
      * @param j joint number
@@ -403,7 +403,7 @@ public:
      * @param spds   pointer to the array with speed values.
      * @return true/false upon success/failure
      */
-    virtual bool setRefSpeeds(const int n_joint, const int *joints, const double *spds)=0;
+    virtual bool setTrajSpeeds(const int n_joint, const int *joints, const double *spds)=0;
 
     /** Set reference acceleration on all joints. This is the value that is
      * used during the generation of the trajectory.
@@ -411,7 +411,7 @@ public:
      * @param accs   pointer to the array with acceleration values
      * @return true/false upon success/failure
      */
-    virtual bool setRefAccelerations(const int n_joint, const int *joints, const double *accs)=0;
+    virtual bool setTrajAccelerations(const int n_joint, const int *joints, const double *accs)=0;
 
     /** Get reference speed of all joints. These are the  values used during the
      * interpolation of the trajectory.
@@ -419,7 +419,7 @@ public:
      * @param spds   pointer to the array that will store the speed values.
      * @return true/false upon success/failure
      */
-    virtual bool getRefSpeeds(const int n_joint, const int *joints, double *spds)=0;
+    virtual bool getTrajSpeeds(const int n_joint, const int *joints, double *spds)=0;
 
     /** Get reference acceleration for a joint. Returns the acceleration used to
      * generate the trajectory profile.
@@ -427,7 +427,7 @@ public:
      * @param accs   pointer to the array that will store the acceleration values
      * @return true/false on success/failure
      */
-    virtual bool getRefAccelerations(const int n_joint, const int *joints, double *accs)=0;
+    virtual bool getTrajAccelerations(const int n_joint, const int *joints, double *accs)=0;
 
     /** Stop motion for subset of joints
      * @param joints pointer to the array of joint numbers

@@ -535,12 +535,12 @@ void PartItem::onSliderVelTrajectoryVelocityCommand(double speedVal, int index)
 
 void PartItem::onSliderVelTrajectoryAccelerationCommand(double accVal, int index)
 {
-    m_iVel->setRefAcceleration(index, accVal);
+    m_iVel->setTrajAcceleration(index, accVal);
 }
 
 void PartItem::onSliderVelocityDirectCommand(double speedVal, int index)
 {
-    m_iVelDir->setDesiredVelocity(index, speedVal);
+    m_iVelDir->setRefVelocity(index, speedVal);
 }
 
 void PartItem::onSliderTorqueCommand(double torqueVal, int index)
@@ -550,7 +550,7 @@ void PartItem::onSliderTorqueCommand(double torqueVal, int index)
 
 void PartItem::onSliderPosTrajectoryVelocityCommand(double trajspeedVal, int index)
 {
-    m_iPos->setRefSpeed(index, trajspeedVal);
+    m_iPos->setTrajSpeed(index, trajspeedVal);
 }
 
 
@@ -1005,7 +1005,7 @@ void PartItem::onJointChangeMode(int mode,JointItem *joint)
             {
                 m_ictrlmode->setControlMode(jointIndex, VOCAB_CM_VELOCITY);
                 yInfo() << "Changing reference acceleration of joint " << jointIndex << " to 100000";
-                m_iVel->setRefAcceleration(jointIndex, 100000);
+                m_iVel->setTrajAcceleration(jointIndex, 100000);
             } else {
                 yError("ERROR: cannot do!");
             }
@@ -1251,7 +1251,7 @@ bool PartItem::homeToCustomPosition(const yarp::os::Bottle& positionElement)
         {
             double position = xtmp.get(jointIndex+1).asFloat64();
             double velocity = ytmp.get(jointIndex + 1).asFloat64();
-            m_iPos->setRefSpeed(jointIndex, velocity);
+            m_iPos->setTrajSpeed(jointIndex, velocity);
             m_iPos->positionMove(jointIndex, position);
         }
     }
@@ -1683,7 +1683,7 @@ void PartItem::onSequenceCycle(QList<SequenceItem> values)
 
         emit setCurrentIndex(vals.getSequenceNumber());
         //fixedTimeMove(vals.getPositions());
-        m_iPos->setRefSpeeds(cmdVelocities);
+        m_iPos->setTrajSpeeds(cmdVelocities);
         m_iPos->positionMove(cmdPositions);
         m_cycleTimer.start(vals.getTiming() * 1000);
 
@@ -1708,7 +1708,7 @@ void PartItem::onCycleTimerTimeout()
 
         emit setCurrentIndex(vals.getSequenceNumber());
         //fixedTimeMove(vals.getPositions());
-        m_iPos->setRefSpeeds(cmdVelocities);
+        m_iPos->setTrajSpeeds(cmdVelocities);
         m_iPos->positionMove(cmdPositions);
 
         m_cycleTimer.start(vals.getTiming() * 1000);
@@ -1747,7 +1747,7 @@ void PartItem::onSequenceRun(QList<SequenceItem> values)
 
         emit setCurrentIndex(vals.getSequenceNumber());
         //fixedTimeMove(vals.getPositions());
-        m_iPos->setRefSpeeds(cmdVelocities);
+        m_iPos->setTrajSpeeds(cmdVelocities);
         m_iPos->positionMove(cmdPositions);
         m_runTimer.start(vals.getTiming() * 1000);
 
@@ -1773,7 +1773,7 @@ void PartItem::onRunTimeout()
 
         emit setCurrentIndex(vals.getSequenceNumber());
         //fixedTimeMove(vals.getPositions());
-        m_iPos->setRefSpeeds(cmdVelocities);
+        m_iPos->setTrajSpeeds(cmdVelocities);
         m_iPos->positionMove(cmdPositions);
 
 
@@ -1854,7 +1854,7 @@ void PartItem::fixedTimeMove(SequenceItem sequence)
         }
     }
 
-    m_iPos->setRefSpeeds(cmdVelocities);
+    m_iPos->setTrajSpeeds(cmdVelocities);
   m_iPos->positionMove(cmdPositions);
 
   m_sequence_port_stamp.update();
@@ -1880,7 +1880,7 @@ void PartItem::onGo(SequenceItem sequenceItem)
 
     for(int i=0;i<NUMBER_OF_JOINTS;i++)
     {
-        m_iPos->setRefSpeed(i, sequenceItem.getSpeeds().at(i));
+        m_iPos->setTrajSpeed(i, sequenceItem.getSpeeds().at(i));
         m_iPos->positionMove(i, sequenceItem.getPositions().at(i));
     }
 }
@@ -2320,15 +2320,15 @@ bool PartItem::updatePart()
     }
     if (m_iPos)
     {
-        ret_refPosSpeed = m_iPos->getRefSpeed(m_slow_k, &m_refTrajectorySpeeds[m_slow_k]); // using k to save bandwidth
+        ret_refPosSpeed = m_iPos->getTrajSpeed(m_slow_k, &m_refTrajectorySpeeds[m_slow_k]); // using k to save bandwidth
     }
     if (m_iVel)
     {
-        ret_refVel = m_iVel->getRefVelocity(m_slow_k, &m_refVelocitySpeeds[m_slow_k]); // this interface is missing!
+        ret_refVel = m_iVel->getTargetVelocity(m_slow_k, &m_refVelocitySpeeds[m_slow_k]); // this interface is missing!
     }
     if (m_iVel)
     {
-        ret_refAcc = m_iVel->getRefAcceleration(m_slow_k, &m_refVelocityAccelerations[m_slow_k]); // this interface is missing!
+        ret_refAcc = m_iVel->getTrajAcceleration(m_slow_k, &m_refVelocityAccelerations[m_slow_k]); // this interface is missing!
     }
     if (m_iPos)
     {
@@ -2342,11 +2342,11 @@ bool PartItem::updatePart()
     }
     if (!ret_refVel)
     {
-        yError() << "Missing Implementation of getRefVelocity()";
+        yError() << "Missing Implementation of getTargetVelocity()";
     }
     if (!ret_refPosSpeed)
     {
-        yError() << "Missing Implementation of getRefSpeed()";
+        yError() << "Missing Implementation of getTrajSpeed()";
     }
     if (!ret_refTrq)
     {

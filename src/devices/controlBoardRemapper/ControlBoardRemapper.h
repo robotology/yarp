@@ -287,29 +287,29 @@ public:
 
     bool checkMotionDone(const int n_joints, const int *joints, bool *flags) override;
 
-    bool setRefSpeed(int j, double sp) override;
+    bool setTrajSpeed(int j, double sp) override;
 
-    bool setRefSpeeds(const double *spds) override;
+    bool setTrajSpeeds(const double *spds) override;
 
-    bool setRefSpeeds(const int n_joints, const int *joints, const double *spds) override;
+    bool setTrajSpeeds(const int n_joints, const int *joints, const double *spds) override;
 
-    bool setRefAcceleration(int j, double acc) override;
+    bool setTrajAcceleration(int j, double acc) override;
 
-    bool setRefAccelerations(const double *accs) override;
+    bool setTrajAccelerations(const double *accs) override;
 
-    bool setRefAccelerations(const int n_joints, const int *joints, const double *accs) override;
+    bool setTrajAccelerations(const int n_joints, const int *joints, const double *accs) override;
 
-    bool getRefSpeed(int j, double *ref) override;
+    bool getTrajSpeed(int j, double *ref) override;
 
-    bool getRefSpeeds(double *spds) override;
+    bool getTrajSpeeds(double *spds) override;
 
-    bool getRefSpeeds(const int n_joints, const int *joints, double *spds) override;
+    bool getTrajSpeeds(const int n_joints, const int *joints, double *spds) override;
 
-    bool getRefAcceleration(int j, double *acc) override;
+    bool getTrajAcceleration(int j, double *acc) override;
 
-    bool getRefAccelerations(double *accs) override;
+    bool getTrajAccelerations(double *accs) override;
 
-    bool getRefAccelerations(const int n_joints, const int *joints, double *accs) override;
+    bool getTrajAccelerations(const int n_joints, const int *joints, double *accs) override;
 
     bool stop(int j) override;
 
@@ -544,11 +544,11 @@ public:
     // IVelocityControl interface
     bool velocityMove(const int n_joints, const int *joints, const double *spds) override;
 
-    bool getRefVelocity(const int joint, double *vel) override;
+    bool getTargetVelocity(const int joint, double *vel) override;
 
-    bool getRefVelocities(double *vels) override;
+    bool getTargetVelocities(double *vels) override;
 
-    bool getRefVelocities(const int n_joint, const int *joints, double *vels) override;
+    bool getTargetVelocities(const int n_joint, const int *joints, double *vels) override;
 
     bool getInteractionMode(int j, yarp::dev::InteractionModeEnum *mode) override;
 
@@ -602,12 +602,12 @@ public:
 
     // IVelocityDirect
     yarp::dev::ReturnValue getAxes(size_t& axes) override;
-    yarp::dev::ReturnValue setDesiredVelocity(int jnt, double vel) override;
-    yarp::dev::ReturnValue setDesiredVelocity(const std::vector<double>& vels) override;
-    yarp::dev::ReturnValue setDesiredVelocity(const std::vector<int>& jnts, const std::vector<double>& vels) override;
-    yarp::dev::ReturnValue getDesiredVelocity(const int jnt, double& vel) override;
-    yarp::dev::ReturnValue getDesiredVelocity(std::vector<double>& vels) override;
-    yarp::dev::ReturnValue getDesiredVelocity(const std::vector<int>& jnts, std::vector<double>& vels) override;
+    yarp::dev::ReturnValue setRefVelocity(int jnt, double vel) override;
+    yarp::dev::ReturnValue setRefVelocity(const std::vector<double>& vels) override;
+    yarp::dev::ReturnValue setRefVelocity(const std::vector<int>& jnts, const std::vector<double>& vels) override;
+    yarp::dev::ReturnValue getRefVelocity(const int jnt, double& vel) override;
+    yarp::dev::ReturnValue getRefVelocity(std::vector<double>& vels) override;
+    yarp::dev::ReturnValue getRefVelocity(const std::vector<int>& jnts, std::vector<double>& vels) override;
 };
 
 #endif // YARP_DEV_CONTROLBOARDREMAPPER_CONTROLBOARDREMAPPER_H

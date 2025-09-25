@@ -53,33 +53,33 @@ namespace yarp::dev::tests
             auto joints = std::vector<int>(ax);
             std::iota(joints.begin(), joints.end(), 0);
 
-            b = ivdir->setDesiredVelocity(0, ref);
+            b = ivdir->setRefVelocity(0, ref);
             CHECK(b);
             yarp::os::Time::delay(0.020); // Allow some time for the command to take effect
 
-            b = ivdir->getDesiredVelocity(0, ref);
+            b = ivdir->getRefVelocity(0, ref);
             CHECK(b);
             CHECK(ref == ref_check);
 
             std::iota(refs.begin(), refs.end(), 1.0);
             std::iota(refs_check.begin(), refs_check.end(), 1.0);
 
-            b = ivdir->setDesiredVelocity(refs);
+            b = ivdir->setRefVelocity(refs);
             CHECK(b);
             yarp::os::Time::delay(0.020); // Allow some time for the command to take effect
 
-            b = ivdir->getDesiredVelocity(refs);
+            b = ivdir->getRefVelocity(refs);
             CHECK(b);
             CHECK(vectors_equal(refs, refs_check));
 
             std::iota(refs.begin(), refs.end(), 10.0);
             std::iota(refs_check.begin(), refs_check.end(), 10.0);
 
-            b = ivdir->setDesiredVelocity(joints, refs);
+            b = ivdir->setRefVelocity(joints, refs);
             CHECK(b);
             yarp::os::Time::delay(0.020); // Allow some time for the command to take effect
 
-            b = ivdir->getDesiredVelocity(joints, refs);
+            b = ivdir->getRefVelocity(joints, refs);
             CHECK(b);
             CHECK(vectors_equal(refs, refs_check));
         }

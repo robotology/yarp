@@ -155,7 +155,7 @@ bool FakeLaserWithMotor::checkMotionDoneRaw(bool* flag)
     return ret;
 }
 
-bool FakeLaserWithMotor::setRefSpeedRaw(int j, double sp)
+bool FakeLaserWithMotor::setTrajSpeedRaw(int j, double sp)
 {
     // Velocity is expressed in iDegrees/s
     // save internally the new value of speed; it'll be used in the positionMove
@@ -164,7 +164,7 @@ bool FakeLaserWithMotor::setRefSpeedRaw(int j, double sp)
     return true;
 }
 
-bool FakeLaserWithMotor::setRefSpeedsRaw(const double* spds)
+bool FakeLaserWithMotor::setTrajSpeedsRaw(const double* spds)
 {
     // Velocity is expressed in iDegrees/s
     // save internally the new value of speed; it'll be used in the positionMove
@@ -175,7 +175,7 @@ bool FakeLaserWithMotor::setRefSpeedsRaw(const double* spds)
     return true;
 }
 
-bool FakeLaserWithMotor::setRefAccelerationRaw(int j, double acc)
+bool FakeLaserWithMotor::setTrajAccelerationRaw(int j, double acc)
 {
     // Acceleration is expressed in iDegrees/s^2
     // save internally the new value of the acceleration; it'll be used in the velocityMove command
@@ -196,7 +196,7 @@ bool FakeLaserWithMotor::setRefAccelerationRaw(int j, double acc)
     return true;
 }
 
-bool FakeLaserWithMotor::setRefAccelerationsRaw(const double* accs)
+bool FakeLaserWithMotor::setTrajAccelerationsRaw(const double* accs)
 {
     // Acceleration is expressed in iDegrees/s^2
     // save internally the new value of the acceleration; it'll be used in the velocityMove command
@@ -218,25 +218,25 @@ bool FakeLaserWithMotor::setRefAccelerationsRaw(const double* accs)
     return true;
 }
 
-bool FakeLaserWithMotor::getRefSpeedRaw(int j, double* spd)
+bool FakeLaserWithMotor::getTrajSpeedRaw(int j, double* spd)
 {
     *spd = _ref_speeds[j];
     return true;
 }
 
-bool FakeLaserWithMotor::getRefSpeedsRaw(double* spds)
+bool FakeLaserWithMotor::getTrajSpeedsRaw(double* spds)
 {
     memcpy(spds, _ref_speeds, sizeof(double) * m_njoints);
     return true;
 }
 
-bool FakeLaserWithMotor::getRefAccelerationRaw(int j, double* acc)
+bool FakeLaserWithMotor::getTrajAccelerationRaw(int j, double* acc)
 {
     *acc = _ref_accs[j];
     return true;
 }
 
-bool FakeLaserWithMotor::getRefAccelerationsRaw(double* accs)
+bool FakeLaserWithMotor::getTrajAccelerationsRaw(double* accs)
 {
     memcpy(accs, _ref_accs, sizeof(double) * m_njoints);
     return true;
@@ -429,32 +429,32 @@ bool FakeLaserWithMotor::getEncoderAccelerationsRaw(double* accs)
     return ret;
 }
 
-bool FakeLaserWithMotor::setRefAccelerationsRaw(const int n_joint, const int* joints, const double* accs)
+bool FakeLaserWithMotor::setTrajAccelerationsRaw(const int n_joint, const int* joints, const double* accs)
 {
     bool ret = true;
     for (int j = 0; j < n_joint; j++)
     {
-        ret = ret && setRefAccelerationRaw(joints[j], accs[j]);
+        ret = ret && setTrajAccelerationRaw(joints[j], accs[j]);
     }
     return ret;
 }
 
-bool FakeLaserWithMotor::getRefSpeedsRaw(const int n_joint, const int* joints, double* spds)
+bool FakeLaserWithMotor::getTrajSpeedsRaw(const int n_joint, const int* joints, double* spds)
 {
     bool ret = true;
     for (int j = 0; j < n_joint; j++)
     {
-        ret = ret && getRefSpeedRaw(joints[j], &spds[j]);
+        ret = ret && getTrajSpeedRaw(joints[j], &spds[j]);
     }
     return ret;
 }
 
-bool FakeLaserWithMotor::getRefAccelerationsRaw(const int n_joint, const int* joints, double* accs)
+bool FakeLaserWithMotor::getTrajAccelerationsRaw(const int n_joint, const int* joints, double* accs)
 {
     bool ret = true;
     for (int j = 0; j < n_joint; j++)
     {
-        ret = ret && getRefAccelerationRaw(joints[j], &accs[j]);
+        ret = ret && getTrajAccelerationRaw(joints[j], &accs[j]);
     }
     return ret;
 }
@@ -509,12 +509,12 @@ bool FakeLaserWithMotor::checkMotionDoneRaw(const int n_joint, const int* joints
     return ret;
 }
 
-bool FakeLaserWithMotor::setRefSpeedsRaw(const int n_joint, const int* joints, const double* spds)
+bool FakeLaserWithMotor::setTrajSpeedsRaw(const int n_joint, const int* joints, const double* spds)
 {
     bool ret = true;
     for (int j = 0; j < n_joint; j++)
     {
-        ret = ret && setRefSpeedRaw(joints[j], spds[j]);
+        ret = ret && setTrajSpeedRaw(joints[j], spds[j]);
     }
     return ret;
 }
@@ -587,28 +587,28 @@ bool FakeLaserWithMotor::velocityMoveRaw(const int n_joint, const int* joints, c
     return ret;
 }
 
-bool FakeLaserWithMotor::getRefVelocityRaw(int axis, double* ref)
+bool FakeLaserWithMotor::getTargetVelocityRaw(int axis, double* ref)
 {
     *ref = _command_speeds[axis];
     return true;
 }
 
-bool FakeLaserWithMotor::getRefVelocitiesRaw(double* refs)
+bool FakeLaserWithMotor::getTargetVelocitiesRaw(double* refs)
 {
     bool ret = true;
     for (int i = 0; i < m_njoints; i++)
     {
-        ret &= getRefVelocityRaw(i, &refs[i]);
+        ret &= getTargetVelocityRaw(i, &refs[i]);
     }
     return ret;
 }
 
-bool FakeLaserWithMotor::getRefVelocitiesRaw(int nj, const int* jnts, double* refs)
+bool FakeLaserWithMotor::getTargetVelocitiesRaw(int nj, const int* jnts, double* refs)
 {
     bool ret = true;
     for (int i = 0; i < nj; i++)
     {
-        ret &= getRefVelocityRaw(jnts[i], &refs[i]);
+        ret &= getTargetVelocityRaw(jnts[i], &refs[i]);
     }
     return ret;
 }

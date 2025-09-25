@@ -90,14 +90,14 @@ static void checkRemapper(yarp::dev::PolyDriver & ddRemapper, int rand, size_t n
 
     // Vector used for setting/getting data from the controlboard
     std::vector<double> setPosition(nrOfRemappedAxes,-10),
-                        setRefSpeeds(nrOfRemappedAxes,-15),
+                        setTrajSpeeds(nrOfRemappedAxes,-15),
                         readedPosition(nrOfRemappedAxes,-20),
                         readedEncoders(nrOfRemappedAxes,-30);
 
     for(size_t i=0; i < nrOfRemappedAxes; i++)
     {
         setPosition[i]  = i*100.0+50.0 + rand;
-        setRefSpeeds[i] = i*10.0+5 + rand;
+        setTrajSpeeds[i] = i*10.0+5 + rand;
         readedPosition[i] = -100 + rand;
     }
 
@@ -131,7 +131,7 @@ static void checkRemapper(yarp::dev::PolyDriver & ddRemapper, int rand, size_t n
 
     // Set also the speeds in the mean time, so we are sure that we don't get
     // spurios successful set/get of position because of intermediate buffers
-    CHECK(pos->setRefSpeeds(setRefSpeeds.data())); // setRefSpeeds correctly called
+    CHECK(pos->setTrajSpeeds(setTrajSpeeds.data())); // setTrajSpeeds correctly called
 
     // Wait some time to make sure that the vector has been correctly propagated
     // back and forth
@@ -182,14 +182,14 @@ static void checkRemapperMicro(yarp::dev::PolyDriver & ddRemapper, int rand, siz
 
     // Vector used for setting/getting data from the controlboard
     std::vector<double> setPosition(nrOfRemappedAxes,-10),
-                        setRefSpeeds(nrOfRemappedAxes,-15),
+                        setTrajSpeeds(nrOfRemappedAxes,-15),
                         readedPosition(nrOfRemappedAxes,-20),
                         readedEncoders(nrOfRemappedAxes,-30);
 
     for(size_t i=0; i < nrOfRemappedAxes; i++)
     {
         setPosition[i]  = i*100.0+50.0 + rand;
-        setRefSpeeds[i] = i*10.0+5 + rand;
+        setTrajSpeeds[i] = i*10.0+5 + rand;
         readedPosition[i] = -100 + rand;
     }
 
@@ -215,7 +215,7 @@ static void checkRemapperMicro(yarp::dev::PolyDriver & ddRemapper, int rand, siz
 
     // Set also the speeds in the mean time, so we are sure that we don't get
     // spurios successful set/get of position because of intermediate buffers
-    CHECK_FALSE(pos->setRefSpeeds(setRefSpeeds.data()));
+    CHECK_FALSE(pos->setTrajSpeeds(setTrajSpeeds.data()));
 
     // Wait some time to make sure that the vector has been correctly propagated
     // back and forth
