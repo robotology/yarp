@@ -31,11 +31,14 @@ class PidDlg : public QDialog
     Q_OBJECT
 
 public:
-    explicit PidDlg(QString partname, int jointIndex, QString jointName, QWidget *parent = 0);
+    explicit PidDlg(QString partname, int jointIndex, QString jointName, int cmode, QWidget *parent = 0);
     ~PidDlg();
 
     void initPositionPID(const std::vector<PidWithExtraInfo>& myPids);
+    void initPositionDirectPID(const std::vector<PidWithExtraInfo>& myPids);
     void initVelocityPID(const std::vector<PidWithExtraInfo>& myPids);
+    void initVelocityDirectPID(const std::vector<PidWithExtraInfo>& myPids);
+    void initMixedPID(const std::vector<PidWithExtraInfo>& myPids);
     void initTorquePID(const std::vector<PidWithExtraInfo>& myPids);
     void initMotorParams(MotorTorqueParameters TorqueParam);
     void initCurrentPID(const std::vector<PidWithExtraInfo>& myPids);
@@ -73,6 +76,9 @@ private slots:
     void onForceOffsetChanged(QString forceOffset);
     void onComboBoxIndexChangedPos(int);
     void onComboBoxIndexChangedVel(int);
+    void onComboBoxIndexChangedPosDir(int);
+    void onComboBoxIndexChangedVelDir(int);
+    void onComboBoxIndexChangedMix(int);
     void onComboBoxIndexChangedTrq(int);
     void onComboBoxIndexChangedCur(int);
 };

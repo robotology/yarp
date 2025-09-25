@@ -36,7 +36,11 @@ enum class YARP_dev_API PidControlTypeEnum
     VOCAB_PIDTYPE_VELOCITY_DIRECT   = yarp::os::createVocab32('v', 'e', 'd','1'),
     VOCAB_PIDTYPE_VELOCITY_DIRECT_1 = yarp::os::createVocab32('v', 'e', 'd','1'),
     VOCAB_PIDTYPE_VELOCITY_DIRECT_2 = yarp::os::createVocab32('v', 'e', 'd','2'),
-    VOCAB_PIDTYPE_VELOCITY_DIRECT_3 = yarp::os::createVocab32('v', 'e', 'd','3')
+    VOCAB_PIDTYPE_VELOCITY_DIRECT_3 = yarp::os::createVocab32('v', 'e', 'd','3'),
+    VOCAB_PIDTYPE_MIXED   = yarp::os::createVocab32('m', 'i', 'x','1'),
+    VOCAB_PIDTYPE_MIXED_1 = yarp::os::createVocab32('m', 'i', 'x','1'),
+    VOCAB_PIDTYPE_MIXED_2 = yarp::os::createVocab32('m', 'i', 'x','2'),
+    VOCAB_PIDTYPE_MIXED_3 = yarp::os::createVocab32('m', 'i', 'x','3')
 };
 
 inline size_t PidControlTypeEnum2Index(PidControlTypeEnum type)

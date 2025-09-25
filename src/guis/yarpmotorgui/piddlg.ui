@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>835</width>
-    <height>787</height>
+    <width>843</width>
+    <height>643</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -32,7 +32,7 @@
       <string notr="true"/>
      </property>
      <property name="currentIndex">
-      <number>1</number>
+      <number>2</number>
      </property>
      <widget class="QWidget" name="tabPosition">
       <attribute name="title">
@@ -44,7 +44,7 @@
          <x>70</x>
          <y>110</y>
          <width>701</width>
-         <height>501</height>
+         <height>401</height>
         </rect>
        </property>
        <property name="alternatingRowColors">
@@ -593,6 +593,1130 @@
        </item>
       </widget>
      </widget>
+     <widget class="QWidget" name="tabPositionDirect">
+      <attribute name="title">
+       <string>PositionDirect PID</string>
+      </attribute>
+      <widget class="QLabel" name="descPositionDir">
+       <property name="geometry">
+        <rect>
+         <x>230</x>
+         <y>40</y>
+         <width>541</width>
+         <height>61</height>
+        </rect>
+       </property>
+       <property name="autoFillBackground">
+        <bool>false</bool>
+       </property>
+       <property name="frameShape">
+        <enum>QFrame::Box</enum>
+       </property>
+       <property name="frameShadow">
+        <enum>QFrame::Sunken</enum>
+       </property>
+       <property name="text">
+        <string>Description:</string>
+       </property>
+      </widget>
+      <widget class="QComboBox" name="selectPositionDir">
+       <property name="geometry">
+        <rect>
+         <x>70</x>
+         <y>50</y>
+         <width>141</width>
+         <height>31</height>
+        </rect>
+       </property>
+       <item>
+        <property name="text">
+         <string>PositionDirect PID1</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>PositionDirect PID2</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>PositionDirect PID3</string>
+        </property>
+       </item>
+      </widget>
+      <widget class="QTableWidget" name="tablePositionDir">
+       <property name="geometry">
+        <rect>
+         <x>70</x>
+         <y>110</y>
+         <width>701</width>
+         <height>401</height>
+        </rect>
+       </property>
+       <property name="alternatingRowColors">
+        <bool>true</bool>
+       </property>
+       <property name="selectionMode">
+        <enum>QAbstractItemView::NoSelection</enum>
+       </property>
+       <property name="showGrid">
+        <bool>true</bool>
+       </property>
+       <row>
+        <property name="text">
+         <string>PositionDirect Kp</string>
+        </property>
+       </row>
+       <row>
+        <property name="text">
+         <string>PositionDirect Kd</string>
+        </property>
+       </row>
+       <row>
+        <property name="text">
+         <string>PositionDirect Ki</string>
+        </property>
+       </row>
+       <row>
+        <property name="text">
+         <string>PID Shift Factor</string>
+        </property>
+       </row>
+       <row>
+        <property name="text">
+         <string>PID Output Limit</string>
+        </property>
+       </row>
+       <row>
+        <property name="text">
+         <string>PID Integral Limit</string>
+        </property>
+       </row>
+       <row>
+        <property name="text">
+         <string>PID Output Offset</string>
+        </property>
+       </row>
+       <row>
+        <property name="text">
+         <string>Positive Stiction Offset</string>
+        </property>
+       </row>
+       <row>
+        <property name="text">
+         <string>Negative Stiction Offset</string>
+        </property>
+       </row>
+       <row>
+        <property name="text">
+         <string>PositionDirect Kff</string>
+        </property>
+       </row>
+       <column>
+        <property name="text">
+         <string>Current</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>Desired</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>Units</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>Notes</string>
+        </property>
+       </column>
+       <item row="0" column="0">
+        <property name="text">
+         <string/>
+        </property>
+        <property name="background">
+         <brush brushstyle="SolidPattern">
+          <color alpha="255">
+           <red>207</red>
+           <green>207</green>
+           <blue>207</blue>
+          </color>
+         </brush>
+        </property>
+        <property name="foreground">
+         <brush brushstyle="SolidPattern">
+          <color alpha="255">
+           <red>35</red>
+           <green>38</green>
+           <blue>41</blue>
+          </color>
+         </brush>
+        </property>
+        <property name="flags">
+         <set>ItemIsEnabled</set>
+        </property>
+       </item>
+       <item row="0" column="1">
+        <property name="text">
+         <string/>
+        </property>
+        <property name="flags">
+         <set>ItemIsSelectable|ItemIsEditable|ItemIsDragEnabled|ItemIsUserCheckable|ItemIsEnabled</set>
+        </property>
+       </item>
+       <item row="0" column="2">
+        <property name="text">
+         <string>N/A</string>
+        </property>
+        <property name="flags">
+         <set>NoItemFlags</set>
+        </property>
+       </item>
+       <item row="1" column="0">
+        <property name="text">
+         <string/>
+        </property>
+        <property name="background">
+         <brush brushstyle="SolidPattern">
+          <color alpha="255">
+           <red>207</red>
+           <green>207</green>
+           <blue>207</blue>
+          </color>
+         </brush>
+        </property>
+        <property name="foreground">
+         <brush brushstyle="SolidPattern">
+          <color alpha="255">
+           <red>35</red>
+           <green>38</green>
+           <blue>41</blue>
+          </color>
+         </brush>
+        </property>
+        <property name="flags">
+         <set>ItemIsEnabled</set>
+        </property>
+       </item>
+       <item row="1" column="1">
+        <property name="text">
+         <string/>
+        </property>
+        <property name="flags">
+         <set>ItemIsSelectable|ItemIsEditable|ItemIsDragEnabled|ItemIsUserCheckable|ItemIsEnabled</set>
+        </property>
+       </item>
+       <item row="1" column="2">
+        <property name="text">
+         <string>N/A</string>
+        </property>
+        <property name="flags">
+         <set>NoItemFlags</set>
+        </property>
+       </item>
+       <item row="2" column="0">
+        <property name="text">
+         <string/>
+        </property>
+        <property name="background">
+         <brush brushstyle="SolidPattern">
+          <color alpha="255">
+           <red>207</red>
+           <green>207</green>
+           <blue>207</blue>
+          </color>
+         </brush>
+        </property>
+        <property name="foreground">
+         <brush brushstyle="SolidPattern">
+          <color alpha="255">
+           <red>35</red>
+           <green>38</green>
+           <blue>41</blue>
+          </color>
+         </brush>
+        </property>
+        <property name="flags">
+         <set>ItemIsEnabled</set>
+        </property>
+       </item>
+       <item row="2" column="1">
+        <property name="text">
+         <string/>
+        </property>
+        <property name="flags">
+         <set>ItemIsSelectable|ItemIsEditable|ItemIsDragEnabled|ItemIsUserCheckable|ItemIsEnabled</set>
+        </property>
+       </item>
+       <item row="2" column="2">
+        <property name="text">
+         <string>N/A</string>
+        </property>
+        <property name="flags">
+         <set>NoItemFlags</set>
+        </property>
+       </item>
+       <item row="3" column="0">
+        <property name="text">
+         <string/>
+        </property>
+        <property name="background">
+         <brush brushstyle="SolidPattern">
+          <color alpha="255">
+           <red>207</red>
+           <green>207</green>
+           <blue>207</blue>
+          </color>
+         </brush>
+        </property>
+        <property name="foreground">
+         <brush brushstyle="SolidPattern">
+          <color alpha="255">
+           <red>35</red>
+           <green>38</green>
+           <blue>41</blue>
+          </color>
+         </brush>
+        </property>
+        <property name="flags">
+         <set>ItemIsEnabled</set>
+        </property>
+       </item>
+       <item row="3" column="1">
+        <property name="text">
+         <string/>
+        </property>
+        <property name="flags">
+         <set>ItemIsSelectable|ItemIsEditable|ItemIsDragEnabled|ItemIsUserCheckable|ItemIsEnabled</set>
+        </property>
+       </item>
+       <item row="3" column="2">
+        <property name="text">
+         <string>N/A</string>
+        </property>
+        <property name="flags">
+         <set>NoItemFlags</set>
+        </property>
+       </item>
+       <item row="4" column="0">
+        <property name="text">
+         <string/>
+        </property>
+        <property name="background">
+         <brush brushstyle="SolidPattern">
+          <color alpha="255">
+           <red>207</red>
+           <green>207</green>
+           <blue>207</blue>
+          </color>
+         </brush>
+        </property>
+        <property name="foreground">
+         <brush brushstyle="SolidPattern">
+          <color alpha="255">
+           <red>35</red>
+           <green>38</green>
+           <blue>41</blue>
+          </color>
+         </brush>
+        </property>
+        <property name="flags">
+         <set>ItemIsEnabled</set>
+        </property>
+       </item>
+       <item row="4" column="1">
+        <property name="text">
+         <string/>
+        </property>
+        <property name="flags">
+         <set>ItemIsSelectable|ItemIsEditable|ItemIsDragEnabled|ItemIsUserCheckable|ItemIsEnabled</set>
+        </property>
+       </item>
+       <item row="4" column="2">
+        <property name="text">
+         <string>N/A</string>
+        </property>
+        <property name="flags">
+         <set>NoItemFlags</set>
+        </property>
+       </item>
+       <item row="5" column="0">
+        <property name="text">
+         <string/>
+        </property>
+        <property name="background">
+         <brush brushstyle="SolidPattern">
+          <color alpha="255">
+           <red>207</red>
+           <green>207</green>
+           <blue>207</blue>
+          </color>
+         </brush>
+        </property>
+        <property name="foreground">
+         <brush brushstyle="SolidPattern">
+          <color alpha="255">
+           <red>35</red>
+           <green>38</green>
+           <blue>41</blue>
+          </color>
+         </brush>
+        </property>
+        <property name="flags">
+         <set>ItemIsEnabled</set>
+        </property>
+       </item>
+       <item row="5" column="1">
+        <property name="text">
+         <string/>
+        </property>
+        <property name="flags">
+         <set>ItemIsSelectable|ItemIsEditable|ItemIsDragEnabled|ItemIsUserCheckable|ItemIsEnabled</set>
+        </property>
+       </item>
+       <item row="5" column="2">
+        <property name="text">
+         <string>N/A</string>
+        </property>
+        <property name="flags">
+         <set>NoItemFlags</set>
+        </property>
+       </item>
+       <item row="6" column="0">
+        <property name="text">
+         <string/>
+        </property>
+        <property name="background">
+         <brush brushstyle="SolidPattern">
+          <color alpha="255">
+           <red>207</red>
+           <green>207</green>
+           <blue>207</blue>
+          </color>
+         </brush>
+        </property>
+        <property name="foreground">
+         <brush brushstyle="SolidPattern">
+          <color alpha="255">
+           <red>35</red>
+           <green>38</green>
+           <blue>41</blue>
+          </color>
+         </brush>
+        </property>
+        <property name="flags">
+         <set>ItemIsEnabled</set>
+        </property>
+       </item>
+       <item row="6" column="1">
+        <property name="text">
+         <string/>
+        </property>
+        <property name="flags">
+         <set>ItemIsSelectable|ItemIsEditable|ItemIsDragEnabled|ItemIsUserCheckable|ItemIsEnabled</set>
+        </property>
+       </item>
+       <item row="6" column="2">
+        <property name="text">
+         <string>N/A</string>
+        </property>
+        <property name="flags">
+         <set>NoItemFlags</set>
+        </property>
+       </item>
+       <item row="7" column="0">
+        <property name="text">
+         <string/>
+        </property>
+        <property name="background">
+         <brush brushstyle="SolidPattern">
+          <color alpha="255">
+           <red>207</red>
+           <green>207</green>
+           <blue>207</blue>
+          </color>
+         </brush>
+        </property>
+        <property name="foreground">
+         <brush brushstyle="SolidPattern">
+          <color alpha="255">
+           <red>35</red>
+           <green>38</green>
+           <blue>41</blue>
+          </color>
+         </brush>
+        </property>
+        <property name="flags">
+         <set>ItemIsEnabled</set>
+        </property>
+       </item>
+       <item row="7" column="1">
+        <property name="text">
+         <string/>
+        </property>
+        <property name="flags">
+         <set>ItemIsSelectable|ItemIsEditable|ItemIsDragEnabled|ItemIsUserCheckable|ItemIsEnabled</set>
+        </property>
+       </item>
+       <item row="7" column="2">
+        <property name="text">
+         <string>N/A</string>
+        </property>
+        <property name="flags">
+         <set>NoItemFlags</set>
+        </property>
+       </item>
+       <item row="7" column="3">
+        <property name="text">
+         <string>Unused</string>
+        </property>
+       </item>
+       <item row="8" column="0">
+        <property name="text">
+         <string/>
+        </property>
+        <property name="background">
+         <brush brushstyle="SolidPattern">
+          <color alpha="255">
+           <red>207</red>
+           <green>207</green>
+           <blue>207</blue>
+          </color>
+         </brush>
+        </property>
+        <property name="foreground">
+         <brush brushstyle="SolidPattern">
+          <color alpha="255">
+           <red>35</red>
+           <green>38</green>
+           <blue>41</blue>
+          </color>
+         </brush>
+        </property>
+        <property name="flags">
+         <set>ItemIsEnabled</set>
+        </property>
+       </item>
+       <item row="8" column="1">
+        <property name="text">
+         <string/>
+        </property>
+        <property name="flags">
+         <set>ItemIsSelectable|ItemIsEditable|ItemIsDragEnabled|ItemIsUserCheckable|ItemIsEnabled</set>
+        </property>
+       </item>
+       <item row="8" column="2">
+        <property name="text">
+         <string>N/A</string>
+        </property>
+        <property name="flags">
+         <set>NoItemFlags</set>
+        </property>
+       </item>
+       <item row="8" column="3">
+        <property name="text">
+         <string>Unused</string>
+        </property>
+       </item>
+       <item row="9" column="0">
+        <property name="text">
+         <string/>
+        </property>
+        <property name="background">
+         <brush brushstyle="SolidPattern">
+          <color alpha="255">
+           <red>207</red>
+           <green>207</green>
+           <blue>207</blue>
+          </color>
+         </brush>
+        </property>
+        <property name="flags">
+         <set>ItemIsEnabled</set>
+        </property>
+       </item>
+       <item row="9" column="1">
+        <property name="text">
+         <string/>
+        </property>
+        <property name="flags">
+         <set>ItemIsSelectable|ItemIsEditable|ItemIsDragEnabled|ItemIsUserCheckable|ItemIsEnabled</set>
+        </property>
+       </item>
+       <item row="9" column="2">
+        <property name="text">
+         <string>N/A</string>
+        </property>
+        <property name="flags">
+         <set>NoItemFlags</set>
+        </property>
+       </item>
+      </widget>
+     </widget>
+     <widget class="QWidget" name="tabMixed">
+      <attribute name="title">
+       <string>Mixed PID</string>
+      </attribute>
+      <widget class="QLabel" name="descMixed">
+       <property name="geometry">
+        <rect>
+         <x>230</x>
+         <y>40</y>
+         <width>541</width>
+         <height>61</height>
+        </rect>
+       </property>
+       <property name="autoFillBackground">
+        <bool>false</bool>
+       </property>
+       <property name="frameShape">
+        <enum>QFrame::Box</enum>
+       </property>
+       <property name="frameShadow">
+        <enum>QFrame::Sunken</enum>
+       </property>
+       <property name="text">
+        <string>Description:</string>
+       </property>
+      </widget>
+      <widget class="QComboBox" name="selectMixed">
+       <property name="geometry">
+        <rect>
+         <x>70</x>
+         <y>50</y>
+         <width>141</width>
+         <height>31</height>
+        </rect>
+       </property>
+       <item>
+        <property name="text">
+         <string>Mixed PID1</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Mixed PID2</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Mixed PID3</string>
+        </property>
+       </item>
+      </widget>
+      <widget class="QTableWidget" name="tableMixed">
+       <property name="geometry">
+        <rect>
+         <x>70</x>
+         <y>110</y>
+         <width>701</width>
+         <height>401</height>
+        </rect>
+       </property>
+       <property name="alternatingRowColors">
+        <bool>true</bool>
+       </property>
+       <property name="selectionMode">
+        <enum>QAbstractItemView::NoSelection</enum>
+       </property>
+       <property name="showGrid">
+        <bool>true</bool>
+       </property>
+       <row>
+        <property name="text">
+         <string>Mixed Kp</string>
+        </property>
+       </row>
+       <row>
+        <property name="text">
+         <string>Mixed Kd</string>
+        </property>
+       </row>
+       <row>
+        <property name="text">
+         <string>Mixed Ki</string>
+        </property>
+       </row>
+       <row>
+        <property name="text">
+         <string>PID Shift Factor</string>
+        </property>
+       </row>
+       <row>
+        <property name="text">
+         <string>PID Output Limit</string>
+        </property>
+       </row>
+       <row>
+        <property name="text">
+         <string>PID Integral Limit</string>
+        </property>
+       </row>
+       <row>
+        <property name="text">
+         <string>PID Output Offset</string>
+        </property>
+       </row>
+       <row>
+        <property name="text">
+         <string>Positive Stiction Offset</string>
+        </property>
+       </row>
+       <row>
+        <property name="text">
+         <string>Negative Stiction Offset</string>
+        </property>
+       </row>
+       <row>
+        <property name="text">
+         <string>Mixed Kff</string>
+        </property>
+       </row>
+       <column>
+        <property name="text">
+         <string>Current</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>Desired</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>Units</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>Notes</string>
+        </property>
+       </column>
+       <item row="0" column="0">
+        <property name="text">
+         <string/>
+        </property>
+        <property name="background">
+         <brush brushstyle="SolidPattern">
+          <color alpha="255">
+           <red>207</red>
+           <green>207</green>
+           <blue>207</blue>
+          </color>
+         </brush>
+        </property>
+        <property name="foreground">
+         <brush brushstyle="SolidPattern">
+          <color alpha="255">
+           <red>35</red>
+           <green>38</green>
+           <blue>41</blue>
+          </color>
+         </brush>
+        </property>
+        <property name="flags">
+         <set>ItemIsEnabled</set>
+        </property>
+       </item>
+       <item row="0" column="1">
+        <property name="text">
+         <string/>
+        </property>
+        <property name="flags">
+         <set>ItemIsSelectable|ItemIsEditable|ItemIsDragEnabled|ItemIsUserCheckable|ItemIsEnabled</set>
+        </property>
+       </item>
+       <item row="0" column="2">
+        <property name="text">
+         <string>N/A</string>
+        </property>
+        <property name="flags">
+         <set>NoItemFlags</set>
+        </property>
+       </item>
+       <item row="1" column="0">
+        <property name="text">
+         <string/>
+        </property>
+        <property name="background">
+         <brush brushstyle="SolidPattern">
+          <color alpha="255">
+           <red>207</red>
+           <green>207</green>
+           <blue>207</blue>
+          </color>
+         </brush>
+        </property>
+        <property name="foreground">
+         <brush brushstyle="SolidPattern">
+          <color alpha="255">
+           <red>35</red>
+           <green>38</green>
+           <blue>41</blue>
+          </color>
+         </brush>
+        </property>
+        <property name="flags">
+         <set>ItemIsEnabled</set>
+        </property>
+       </item>
+       <item row="1" column="1">
+        <property name="text">
+         <string/>
+        </property>
+        <property name="flags">
+         <set>ItemIsSelectable|ItemIsEditable|ItemIsDragEnabled|ItemIsUserCheckable|ItemIsEnabled</set>
+        </property>
+       </item>
+       <item row="1" column="2">
+        <property name="text">
+         <string>N/A</string>
+        </property>
+        <property name="flags">
+         <set>NoItemFlags</set>
+        </property>
+       </item>
+       <item row="2" column="0">
+        <property name="text">
+         <string/>
+        </property>
+        <property name="background">
+         <brush brushstyle="SolidPattern">
+          <color alpha="255">
+           <red>207</red>
+           <green>207</green>
+           <blue>207</blue>
+          </color>
+         </brush>
+        </property>
+        <property name="foreground">
+         <brush brushstyle="SolidPattern">
+          <color alpha="255">
+           <red>35</red>
+           <green>38</green>
+           <blue>41</blue>
+          </color>
+         </brush>
+        </property>
+        <property name="flags">
+         <set>ItemIsEnabled</set>
+        </property>
+       </item>
+       <item row="2" column="1">
+        <property name="text">
+         <string/>
+        </property>
+        <property name="flags">
+         <set>ItemIsSelectable|ItemIsEditable|ItemIsDragEnabled|ItemIsUserCheckable|ItemIsEnabled</set>
+        </property>
+       </item>
+       <item row="2" column="2">
+        <property name="text">
+         <string>N/A</string>
+        </property>
+        <property name="flags">
+         <set>NoItemFlags</set>
+        </property>
+       </item>
+       <item row="3" column="0">
+        <property name="text">
+         <string/>
+        </property>
+        <property name="background">
+         <brush brushstyle="SolidPattern">
+          <color alpha="255">
+           <red>207</red>
+           <green>207</green>
+           <blue>207</blue>
+          </color>
+         </brush>
+        </property>
+        <property name="foreground">
+         <brush brushstyle="SolidPattern">
+          <color alpha="255">
+           <red>35</red>
+           <green>38</green>
+           <blue>41</blue>
+          </color>
+         </brush>
+        </property>
+        <property name="flags">
+         <set>ItemIsEnabled</set>
+        </property>
+       </item>
+       <item row="3" column="1">
+        <property name="text">
+         <string/>
+        </property>
+        <property name="flags">
+         <set>ItemIsSelectable|ItemIsEditable|ItemIsDragEnabled|ItemIsUserCheckable|ItemIsEnabled</set>
+        </property>
+       </item>
+       <item row="3" column="2">
+        <property name="text">
+         <string>N/A</string>
+        </property>
+        <property name="flags">
+         <set>NoItemFlags</set>
+        </property>
+       </item>
+       <item row="4" column="0">
+        <property name="text">
+         <string/>
+        </property>
+        <property name="background">
+         <brush brushstyle="SolidPattern">
+          <color alpha="255">
+           <red>207</red>
+           <green>207</green>
+           <blue>207</blue>
+          </color>
+         </brush>
+        </property>
+        <property name="foreground">
+         <brush brushstyle="SolidPattern">
+          <color alpha="255">
+           <red>35</red>
+           <green>38</green>
+           <blue>41</blue>
+          </color>
+         </brush>
+        </property>
+        <property name="flags">
+         <set>ItemIsEnabled</set>
+        </property>
+       </item>
+       <item row="4" column="1">
+        <property name="text">
+         <string/>
+        </property>
+        <property name="flags">
+         <set>ItemIsSelectable|ItemIsEditable|ItemIsDragEnabled|ItemIsUserCheckable|ItemIsEnabled</set>
+        </property>
+       </item>
+       <item row="4" column="2">
+        <property name="text">
+         <string>N/A</string>
+        </property>
+        <property name="flags">
+         <set>NoItemFlags</set>
+        </property>
+       </item>
+       <item row="5" column="0">
+        <property name="text">
+         <string/>
+        </property>
+        <property name="background">
+         <brush brushstyle="SolidPattern">
+          <color alpha="255">
+           <red>207</red>
+           <green>207</green>
+           <blue>207</blue>
+          </color>
+         </brush>
+        </property>
+        <property name="foreground">
+         <brush brushstyle="SolidPattern">
+          <color alpha="255">
+           <red>35</red>
+           <green>38</green>
+           <blue>41</blue>
+          </color>
+         </brush>
+        </property>
+        <property name="flags">
+         <set>ItemIsEnabled</set>
+        </property>
+       </item>
+       <item row="5" column="1">
+        <property name="text">
+         <string/>
+        </property>
+        <property name="flags">
+         <set>ItemIsSelectable|ItemIsEditable|ItemIsDragEnabled|ItemIsUserCheckable|ItemIsEnabled</set>
+        </property>
+       </item>
+       <item row="5" column="2">
+        <property name="text">
+         <string>N/A</string>
+        </property>
+        <property name="flags">
+         <set>NoItemFlags</set>
+        </property>
+       </item>
+       <item row="6" column="0">
+        <property name="text">
+         <string/>
+        </property>
+        <property name="background">
+         <brush brushstyle="SolidPattern">
+          <color alpha="255">
+           <red>207</red>
+           <green>207</green>
+           <blue>207</blue>
+          </color>
+         </brush>
+        </property>
+        <property name="foreground">
+         <brush brushstyle="SolidPattern">
+          <color alpha="255">
+           <red>35</red>
+           <green>38</green>
+           <blue>41</blue>
+          </color>
+         </brush>
+        </property>
+        <property name="flags">
+         <set>ItemIsEnabled</set>
+        </property>
+       </item>
+       <item row="6" column="1">
+        <property name="text">
+         <string/>
+        </property>
+        <property name="flags">
+         <set>ItemIsSelectable|ItemIsEditable|ItemIsDragEnabled|ItemIsUserCheckable|ItemIsEnabled</set>
+        </property>
+       </item>
+       <item row="6" column="2">
+        <property name="text">
+         <string>N/A</string>
+        </property>
+        <property name="flags">
+         <set>NoItemFlags</set>
+        </property>
+       </item>
+       <item row="7" column="0">
+        <property name="text">
+         <string/>
+        </property>
+        <property name="background">
+         <brush brushstyle="SolidPattern">
+          <color alpha="255">
+           <red>207</red>
+           <green>207</green>
+           <blue>207</blue>
+          </color>
+         </brush>
+        </property>
+        <property name="foreground">
+         <brush brushstyle="SolidPattern">
+          <color alpha="255">
+           <red>35</red>
+           <green>38</green>
+           <blue>41</blue>
+          </color>
+         </brush>
+        </property>
+        <property name="flags">
+         <set>ItemIsEnabled</set>
+        </property>
+       </item>
+       <item row="7" column="1">
+        <property name="text">
+         <string/>
+        </property>
+        <property name="flags">
+         <set>ItemIsSelectable|ItemIsEditable|ItemIsDragEnabled|ItemIsUserCheckable|ItemIsEnabled</set>
+        </property>
+       </item>
+       <item row="7" column="2">
+        <property name="text">
+         <string>N/A</string>
+        </property>
+        <property name="flags">
+         <set>NoItemFlags</set>
+        </property>
+       </item>
+       <item row="7" column="3">
+        <property name="text">
+         <string>Unused</string>
+        </property>
+       </item>
+       <item row="8" column="0">
+        <property name="text">
+         <string/>
+        </property>
+        <property name="background">
+         <brush brushstyle="SolidPattern">
+          <color alpha="255">
+           <red>207</red>
+           <green>207</green>
+           <blue>207</blue>
+          </color>
+         </brush>
+        </property>
+        <property name="foreground">
+         <brush brushstyle="SolidPattern">
+          <color alpha="255">
+           <red>35</red>
+           <green>38</green>
+           <blue>41</blue>
+          </color>
+         </brush>
+        </property>
+        <property name="flags">
+         <set>ItemIsEnabled</set>
+        </property>
+       </item>
+       <item row="8" column="1">
+        <property name="text">
+         <string/>
+        </property>
+        <property name="flags">
+         <set>ItemIsSelectable|ItemIsEditable|ItemIsDragEnabled|ItemIsUserCheckable|ItemIsEnabled</set>
+        </property>
+       </item>
+       <item row="8" column="2">
+        <property name="text">
+         <string>N/A</string>
+        </property>
+        <property name="flags">
+         <set>NoItemFlags</set>
+        </property>
+       </item>
+       <item row="8" column="3">
+        <property name="text">
+         <string>Unused</string>
+        </property>
+       </item>
+       <item row="9" column="0">
+        <property name="text">
+         <string/>
+        </property>
+        <property name="background">
+         <brush brushstyle="SolidPattern">
+          <color alpha="255">
+           <red>207</red>
+           <green>207</green>
+           <blue>207</blue>
+          </color>
+         </brush>
+        </property>
+        <property name="flags">
+         <set>ItemIsEnabled</set>
+        </property>
+       </item>
+       <item row="9" column="1">
+        <property name="text">
+         <string/>
+        </property>
+        <property name="flags">
+         <set>ItemIsSelectable|ItemIsEditable|ItemIsDragEnabled|ItemIsUserCheckable|ItemIsEnabled</set>
+        </property>
+       </item>
+       <item row="9" column="2">
+        <property name="text">
+         <string>N/A</string>
+        </property>
+        <property name="flags">
+         <set>NoItemFlags</set>
+        </property>
+       </item>
+      </widget>
+     </widget>
      <widget class="QWidget" name="tabVelocity">
       <attribute name="title">
        <string>Velocity PID</string>
@@ -603,7 +1727,7 @@
          <x>70</x>
          <y>110</y>
          <width>701</width>
-         <height>471</height>
+         <height>401</height>
         </rect>
        </property>
        <property name="alternatingRowColors">
@@ -1152,6 +2276,568 @@
        </item>
       </widget>
      </widget>
+     <widget class="QWidget" name="tabVelocityDirect">
+      <attribute name="title">
+       <string>VelocityDirect PID</string>
+      </attribute>
+      <widget class="QLabel" name="descVelocityDir">
+       <property name="geometry">
+        <rect>
+         <x>230</x>
+         <y>40</y>
+         <width>541</width>
+         <height>61</height>
+        </rect>
+       </property>
+       <property name="autoFillBackground">
+        <bool>false</bool>
+       </property>
+       <property name="frameShape">
+        <enum>QFrame::Box</enum>
+       </property>
+       <property name="frameShadow">
+        <enum>QFrame::Sunken</enum>
+       </property>
+       <property name="text">
+        <string>Description:</string>
+       </property>
+      </widget>
+      <widget class="QComboBox" name="selectVelocityDir">
+       <property name="geometry">
+        <rect>
+         <x>70</x>
+         <y>50</y>
+         <width>141</width>
+         <height>31</height>
+        </rect>
+       </property>
+       <item>
+        <property name="text">
+         <string>VelocityDirect PID1</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>VelocityDirect PID2</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>VelocityDirect PID3</string>
+        </property>
+       </item>
+      </widget>
+      <widget class="QTableWidget" name="tableVelocityDir">
+       <property name="geometry">
+        <rect>
+         <x>70</x>
+         <y>110</y>
+         <width>701</width>
+         <height>401</height>
+        </rect>
+       </property>
+       <property name="alternatingRowColors">
+        <bool>true</bool>
+       </property>
+       <property name="selectionMode">
+        <enum>QAbstractItemView::NoSelection</enum>
+       </property>
+       <property name="showGrid">
+        <bool>true</bool>
+       </property>
+       <row>
+        <property name="text">
+         <string>VelocityDirect Kp</string>
+        </property>
+       </row>
+       <row>
+        <property name="text">
+         <string>VelocityDirect Kd</string>
+        </property>
+       </row>
+       <row>
+        <property name="text">
+         <string>VelocityDirect  Ki</string>
+        </property>
+       </row>
+       <row>
+        <property name="text">
+         <string>PID Shift Factor</string>
+        </property>
+       </row>
+       <row>
+        <property name="text">
+         <string>PID Output Limit</string>
+        </property>
+       </row>
+       <row>
+        <property name="text">
+         <string>PID Integral Limit</string>
+        </property>
+       </row>
+       <row>
+        <property name="text">
+         <string>PID Output Offset</string>
+        </property>
+       </row>
+       <row>
+        <property name="text">
+         <string>Positive Stiction Offset</string>
+        </property>
+       </row>
+       <row>
+        <property name="text">
+         <string>Negative Stiction Offset</string>
+        </property>
+       </row>
+       <row>
+        <property name="text">
+         <string>VelocityDirect Kff</string>
+        </property>
+       </row>
+       <column>
+        <property name="text">
+         <string>Current</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>Desired</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>Units</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>Notes</string>
+        </property>
+       </column>
+       <item row="0" column="0">
+        <property name="text">
+         <string/>
+        </property>
+        <property name="background">
+         <brush brushstyle="SolidPattern">
+          <color alpha="255">
+           <red>207</red>
+           <green>207</green>
+           <blue>207</blue>
+          </color>
+         </brush>
+        </property>
+        <property name="foreground">
+         <brush brushstyle="SolidPattern">
+          <color alpha="255">
+           <red>35</red>
+           <green>38</green>
+           <blue>41</blue>
+          </color>
+         </brush>
+        </property>
+        <property name="flags">
+         <set>ItemIsEnabled</set>
+        </property>
+       </item>
+       <item row="0" column="1">
+        <property name="text">
+         <string/>
+        </property>
+        <property name="flags">
+         <set>ItemIsSelectable|ItemIsEditable|ItemIsDragEnabled|ItemIsUserCheckable|ItemIsEnabled</set>
+        </property>
+       </item>
+       <item row="0" column="2">
+        <property name="text">
+         <string>N/A</string>
+        </property>
+        <property name="flags">
+         <set>NoItemFlags</set>
+        </property>
+       </item>
+       <item row="1" column="0">
+        <property name="text">
+         <string/>
+        </property>
+        <property name="background">
+         <brush brushstyle="SolidPattern">
+          <color alpha="255">
+           <red>207</red>
+           <green>207</green>
+           <blue>207</blue>
+          </color>
+         </brush>
+        </property>
+        <property name="foreground">
+         <brush brushstyle="SolidPattern">
+          <color alpha="255">
+           <red>35</red>
+           <green>38</green>
+           <blue>41</blue>
+          </color>
+         </brush>
+        </property>
+        <property name="flags">
+         <set>ItemIsEnabled</set>
+        </property>
+       </item>
+       <item row="1" column="1">
+        <property name="text">
+         <string/>
+        </property>
+        <property name="flags">
+         <set>ItemIsSelectable|ItemIsEditable|ItemIsDragEnabled|ItemIsUserCheckable|ItemIsEnabled</set>
+        </property>
+       </item>
+       <item row="1" column="2">
+        <property name="text">
+         <string>N/A</string>
+        </property>
+        <property name="flags">
+         <set>NoItemFlags</set>
+        </property>
+       </item>
+       <item row="2" column="0">
+        <property name="text">
+         <string/>
+        </property>
+        <property name="background">
+         <brush brushstyle="SolidPattern">
+          <color alpha="255">
+           <red>207</red>
+           <green>207</green>
+           <blue>207</blue>
+          </color>
+         </brush>
+        </property>
+        <property name="foreground">
+         <brush brushstyle="SolidPattern">
+          <color alpha="255">
+           <red>35</red>
+           <green>38</green>
+           <blue>41</blue>
+          </color>
+         </brush>
+        </property>
+        <property name="flags">
+         <set>ItemIsEnabled</set>
+        </property>
+       </item>
+       <item row="2" column="1">
+        <property name="text">
+         <string/>
+        </property>
+        <property name="flags">
+         <set>ItemIsSelectable|ItemIsEditable|ItemIsDragEnabled|ItemIsUserCheckable|ItemIsEnabled</set>
+        </property>
+       </item>
+       <item row="2" column="2">
+        <property name="text">
+         <string>N/A</string>
+        </property>
+        <property name="flags">
+         <set>NoItemFlags</set>
+        </property>
+       </item>
+       <item row="3" column="0">
+        <property name="text">
+         <string/>
+        </property>
+        <property name="background">
+         <brush brushstyle="SolidPattern">
+          <color alpha="255">
+           <red>207</red>
+           <green>207</green>
+           <blue>207</blue>
+          </color>
+         </brush>
+        </property>
+        <property name="foreground">
+         <brush brushstyle="SolidPattern">
+          <color alpha="255">
+           <red>35</red>
+           <green>38</green>
+           <blue>41</blue>
+          </color>
+         </brush>
+        </property>
+        <property name="flags">
+         <set>ItemIsEnabled</set>
+        </property>
+       </item>
+       <item row="3" column="1">
+        <property name="text">
+         <string/>
+        </property>
+        <property name="flags">
+         <set>ItemIsSelectable|ItemIsEditable|ItemIsDragEnabled|ItemIsUserCheckable|ItemIsEnabled</set>
+        </property>
+       </item>
+       <item row="3" column="2">
+        <property name="text">
+         <string>N/A</string>
+        </property>
+        <property name="flags">
+         <set>NoItemFlags</set>
+        </property>
+       </item>
+       <item row="4" column="0">
+        <property name="text">
+         <string/>
+        </property>
+        <property name="background">
+         <brush brushstyle="SolidPattern">
+          <color alpha="255">
+           <red>207</red>
+           <green>207</green>
+           <blue>207</blue>
+          </color>
+         </brush>
+        </property>
+        <property name="foreground">
+         <brush brushstyle="SolidPattern">
+          <color alpha="255">
+           <red>35</red>
+           <green>38</green>
+           <blue>41</blue>
+          </color>
+         </brush>
+        </property>
+        <property name="flags">
+         <set>ItemIsEnabled</set>
+        </property>
+       </item>
+       <item row="4" column="1">
+        <property name="text">
+         <string/>
+        </property>
+        <property name="flags">
+         <set>ItemIsSelectable|ItemIsEditable|ItemIsDragEnabled|ItemIsUserCheckable|ItemIsEnabled</set>
+        </property>
+       </item>
+       <item row="4" column="2">
+        <property name="text">
+         <string>N/A</string>
+        </property>
+        <property name="flags">
+         <set>NoItemFlags</set>
+        </property>
+       </item>
+       <item row="5" column="0">
+        <property name="text">
+         <string/>
+        </property>
+        <property name="background">
+         <brush brushstyle="SolidPattern">
+          <color alpha="255">
+           <red>207</red>
+           <green>207</green>
+           <blue>207</blue>
+          </color>
+         </brush>
+        </property>
+        <property name="foreground">
+         <brush brushstyle="SolidPattern">
+          <color alpha="255">
+           <red>35</red>
+           <green>38</green>
+           <blue>41</blue>
+          </color>
+         </brush>
+        </property>
+        <property name="flags">
+         <set>ItemIsEnabled</set>
+        </property>
+       </item>
+       <item row="5" column="1">
+        <property name="text">
+         <string/>
+        </property>
+        <property name="flags">
+         <set>ItemIsSelectable|ItemIsEditable|ItemIsDragEnabled|ItemIsUserCheckable|ItemIsEnabled</set>
+        </property>
+       </item>
+       <item row="5" column="2">
+        <property name="text">
+         <string>N/A</string>
+        </property>
+        <property name="flags">
+         <set>NoItemFlags</set>
+        </property>
+       </item>
+       <item row="6" column="0">
+        <property name="text">
+         <string/>
+        </property>
+        <property name="background">
+         <brush brushstyle="SolidPattern">
+          <color alpha="255">
+           <red>207</red>
+           <green>207</green>
+           <blue>207</blue>
+          </color>
+         </brush>
+        </property>
+        <property name="foreground">
+         <brush brushstyle="SolidPattern">
+          <color alpha="255">
+           <red>35</red>
+           <green>38</green>
+           <blue>41</blue>
+          </color>
+         </brush>
+        </property>
+        <property name="flags">
+         <set>ItemIsEnabled</set>
+        </property>
+       </item>
+       <item row="6" column="1">
+        <property name="text">
+         <string/>
+        </property>
+        <property name="flags">
+         <set>ItemIsSelectable|ItemIsEditable|ItemIsDragEnabled|ItemIsUserCheckable|ItemIsEnabled</set>
+        </property>
+       </item>
+       <item row="6" column="2">
+        <property name="text">
+         <string>N/A</string>
+        </property>
+        <property name="flags">
+         <set>NoItemFlags</set>
+        </property>
+       </item>
+       <item row="7" column="0">
+        <property name="text">
+         <string/>
+        </property>
+        <property name="background">
+         <brush brushstyle="SolidPattern">
+          <color alpha="255">
+           <red>207</red>
+           <green>207</green>
+           <blue>207</blue>
+          </color>
+         </brush>
+        </property>
+        <property name="foreground">
+         <brush brushstyle="SolidPattern">
+          <color alpha="255">
+           <red>35</red>
+           <green>38</green>
+           <blue>41</blue>
+          </color>
+         </brush>
+        </property>
+        <property name="flags">
+         <set>ItemIsEnabled</set>
+        </property>
+       </item>
+       <item row="7" column="1">
+        <property name="text">
+         <string/>
+        </property>
+        <property name="flags">
+         <set>ItemIsSelectable|ItemIsEditable|ItemIsDragEnabled|ItemIsUserCheckable|ItemIsEnabled</set>
+        </property>
+       </item>
+       <item row="7" column="2">
+        <property name="text">
+         <string>N/A</string>
+        </property>
+        <property name="flags">
+         <set>NoItemFlags</set>
+        </property>
+       </item>
+       <item row="7" column="3">
+        <property name="text">
+         <string>Unused</string>
+        </property>
+       </item>
+       <item row="8" column="0">
+        <property name="text">
+         <string/>
+        </property>
+        <property name="background">
+         <brush brushstyle="SolidPattern">
+          <color alpha="255">
+           <red>207</red>
+           <green>207</green>
+           <blue>207</blue>
+          </color>
+         </brush>
+        </property>
+        <property name="foreground">
+         <brush brushstyle="SolidPattern">
+          <color alpha="255">
+           <red>35</red>
+           <green>38</green>
+           <blue>41</blue>
+          </color>
+         </brush>
+        </property>
+        <property name="flags">
+         <set>ItemIsEnabled</set>
+        </property>
+       </item>
+       <item row="8" column="1">
+        <property name="text">
+         <string/>
+        </property>
+        <property name="flags">
+         <set>ItemIsSelectable|ItemIsEditable|ItemIsDragEnabled|ItemIsUserCheckable|ItemIsEnabled</set>
+        </property>
+       </item>
+       <item row="8" column="2">
+        <property name="text">
+         <string>N/A</string>
+        </property>
+        <property name="flags">
+         <set>NoItemFlags</set>
+        </property>
+       </item>
+       <item row="8" column="3">
+        <property name="text">
+         <string>Unused</string>
+        </property>
+       </item>
+       <item row="9" column="0">
+        <property name="text">
+         <string/>
+        </property>
+        <property name="background">
+         <brush brushstyle="SolidPattern">
+          <color alpha="255">
+           <red>207</red>
+           <green>207</green>
+           <blue>207</blue>
+          </color>
+         </brush>
+        </property>
+        <property name="flags">
+         <set>ItemIsEnabled</set>
+        </property>
+       </item>
+       <item row="9" column="1">
+        <property name="text">
+         <string/>
+        </property>
+        <property name="flags">
+         <set>ItemIsSelectable|ItemIsEditable|ItemIsDragEnabled|ItemIsUserCheckable|ItemIsEnabled</set>
+        </property>
+       </item>
+       <item row="9" column="2">
+        <property name="text">
+         <string>N/A</string>
+        </property>
+        <property name="flags">
+         <set>NoItemFlags</set>
+        </property>
+       </item>
+      </widget>
+     </widget>
      <widget class="QWidget" name="tabTorque">
       <attribute name="title">
        <string>Torque PID</string>
@@ -1162,7 +2848,7 @@
          <x>70</x>
          <y>110</y>
          <width>701</width>
-         <height>601</height>
+         <height>401</height>
         </rect>
        </property>
        <property name="sizePolicy">
@@ -1739,7 +3425,7 @@
          <x>70</x>
          <y>110</y>
          <width>701</width>
-         <height>596</height>
+         <height>401</height>
         </rect>
        </property>
        <property name="alternatingRowColors">
@@ -2196,6 +3882,352 @@
        </item>
       </widget>
      </widget>
+     <widget class="QWidget" name="tabStiff">
+      <attribute name="title">
+       <string>Stiffness Params</string>
+      </attribute>
+      <widget class="QTableWidget" name="tableStiffness">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>20</y>
+         <width>761</width>
+         <height>401</height>
+        </rect>
+       </property>
+       <property name="alternatingRowColors">
+        <bool>true</bool>
+       </property>
+       <property name="selectionMode">
+        <enum>QAbstractItemView::NoSelection</enum>
+       </property>
+       <property name="showGrid">
+        <bool>true</bool>
+       </property>
+       <row>
+        <property name="text">
+         <string>Joint Stiffness</string>
+        </property>
+       </row>
+       <row>
+        <property name="text">
+         <string>Joint Damping</string>
+        </property>
+       </row>
+       <row>
+        <property name="text">
+         <string>Joint Torque Feedforward</string>
+        </property>
+       </row>
+       <column>
+        <property name="text">
+         <string>Current</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>Min</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>Max</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>Desired</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>Units</string>
+        </property>
+       </column>
+       <item row="0" column="0">
+        <property name="text">
+         <string/>
+        </property>
+        <property name="background">
+         <brush brushstyle="SolidPattern">
+          <color alpha="255">
+           <red>207</red>
+           <green>207</green>
+           <blue>207</blue>
+          </color>
+         </brush>
+        </property>
+        <property name="foreground">
+         <brush brushstyle="SolidPattern">
+          <color alpha="255">
+           <red>35</red>
+           <green>38</green>
+           <blue>41</blue>
+          </color>
+         </brush>
+        </property>
+        <property name="flags">
+         <set>ItemIsEnabled</set>
+        </property>
+       </item>
+       <item row="0" column="1">
+        <property name="text">
+         <string/>
+        </property>
+        <property name="background">
+         <brush brushstyle="SolidPattern">
+          <color alpha="255">
+           <red>207</red>
+           <green>207</green>
+           <blue>207</blue>
+          </color>
+         </brush>
+        </property>
+        <property name="foreground">
+         <brush brushstyle="SolidPattern">
+          <color alpha="255">
+           <red>35</red>
+           <green>38</green>
+           <blue>41</blue>
+          </color>
+         </brush>
+        </property>
+        <property name="flags">
+         <set>ItemIsEnabled</set>
+        </property>
+       </item>
+       <item row="0" column="2">
+        <property name="text">
+         <string/>
+        </property>
+        <property name="background">
+         <brush brushstyle="SolidPattern">
+          <color alpha="255">
+           <red>207</red>
+           <green>207</green>
+           <blue>207</blue>
+          </color>
+         </brush>
+        </property>
+        <property name="foreground">
+         <brush brushstyle="SolidPattern">
+          <color alpha="255">
+           <red>35</red>
+           <green>38</green>
+           <blue>41</blue>
+          </color>
+         </brush>
+        </property>
+        <property name="flags">
+         <set>ItemIsEnabled</set>
+        </property>
+       </item>
+       <item row="0" column="3">
+        <property name="text">
+         <string/>
+        </property>
+        <property name="flags">
+         <set>ItemIsSelectable|ItemIsEditable|ItemIsDragEnabled|ItemIsUserCheckable|ItemIsEnabled</set>
+        </property>
+       </item>
+       <item row="0" column="4">
+        <property name="text">
+         <string>N/A</string>
+        </property>
+        <property name="flags">
+         <set>NoItemFlags</set>
+        </property>
+       </item>
+       <item row="1" column="0">
+        <property name="text">
+         <string/>
+        </property>
+        <property name="background">
+         <brush brushstyle="SolidPattern">
+          <color alpha="255">
+           <red>207</red>
+           <green>207</green>
+           <blue>207</blue>
+          </color>
+         </brush>
+        </property>
+        <property name="foreground">
+         <brush brushstyle="SolidPattern">
+          <color alpha="255">
+           <red>35</red>
+           <green>38</green>
+           <blue>41</blue>
+          </color>
+         </brush>
+        </property>
+        <property name="flags">
+         <set>ItemIsEnabled</set>
+        </property>
+       </item>
+       <item row="1" column="1">
+        <property name="text">
+         <string/>
+        </property>
+        <property name="background">
+         <brush brushstyle="SolidPattern">
+          <color alpha="255">
+           <red>207</red>
+           <green>207</green>
+           <blue>207</blue>
+          </color>
+         </brush>
+        </property>
+        <property name="foreground">
+         <brush brushstyle="SolidPattern">
+          <color alpha="255">
+           <red>35</red>
+           <green>38</green>
+           <blue>41</blue>
+          </color>
+         </brush>
+        </property>
+        <property name="flags">
+         <set>ItemIsEnabled</set>
+        </property>
+       </item>
+       <item row="1" column="2">
+        <property name="text">
+         <string/>
+        </property>
+        <property name="background">
+         <brush brushstyle="SolidPattern">
+          <color alpha="255">
+           <red>207</red>
+           <green>207</green>
+           <blue>207</blue>
+          </color>
+         </brush>
+        </property>
+        <property name="foreground">
+         <brush brushstyle="SolidPattern">
+          <color alpha="255">
+           <red>35</red>
+           <green>38</green>
+           <blue>41</blue>
+          </color>
+         </brush>
+        </property>
+        <property name="flags">
+         <set>ItemIsEnabled</set>
+        </property>
+       </item>
+       <item row="1" column="3">
+        <property name="text">
+         <string/>
+        </property>
+        <property name="flags">
+         <set>ItemIsSelectable|ItemIsEditable|ItemIsDragEnabled|ItemIsUserCheckable|ItemIsEnabled</set>
+        </property>
+       </item>
+       <item row="1" column="4">
+        <property name="text">
+         <string>N/A</string>
+        </property>
+        <property name="flags">
+         <set>NoItemFlags</set>
+        </property>
+       </item>
+       <item row="2" column="0">
+        <property name="text">
+         <string/>
+        </property>
+        <property name="background">
+         <brush brushstyle="SolidPattern">
+          <color alpha="255">
+           <red>207</red>
+           <green>207</green>
+           <blue>207</blue>
+          </color>
+         </brush>
+        </property>
+        <property name="foreground">
+         <brush brushstyle="SolidPattern">
+          <color alpha="255">
+           <red>35</red>
+           <green>38</green>
+           <blue>41</blue>
+          </color>
+         </brush>
+        </property>
+        <property name="flags">
+         <set>ItemIsEnabled</set>
+        </property>
+       </item>
+       <item row="2" column="1">
+        <property name="text">
+         <string/>
+        </property>
+        <property name="background">
+         <brush brushstyle="SolidPattern">
+          <color alpha="255">
+           <red>207</red>
+           <green>207</green>
+           <blue>207</blue>
+          </color>
+         </brush>
+        </property>
+        <property name="foreground">
+         <brush brushstyle="SolidPattern">
+          <color alpha="255">
+           <red>35</red>
+           <green>38</green>
+           <blue>41</blue>
+          </color>
+         </brush>
+        </property>
+        <property name="flags">
+         <set>ItemIsEnabled</set>
+        </property>
+       </item>
+       <item row="2" column="2">
+        <property name="text">
+         <string/>
+        </property>
+        <property name="background">
+         <brush brushstyle="SolidPattern">
+          <color alpha="255">
+           <red>207</red>
+           <green>207</green>
+           <blue>207</blue>
+          </color>
+         </brush>
+        </property>
+        <property name="foreground">
+         <brush brushstyle="SolidPattern">
+          <color alpha="255">
+           <red>35</red>
+           <green>38</green>
+           <blue>41</blue>
+          </color>
+         </brush>
+        </property>
+        <property name="flags">
+         <set>ItemIsEnabled</set>
+        </property>
+       </item>
+       <item row="2" column="3">
+        <property name="text">
+         <string/>
+        </property>
+        <property name="flags">
+         <set>ItemIsSelectable|ItemIsEditable|ItemIsDragEnabled|ItemIsUserCheckable|ItemIsEnabled</set>
+        </property>
+       </item>
+       <item row="2" column="4">
+        <property name="text">
+         <string>N/A</string>
+        </property>
+        <property name="flags">
+         <set>NoItemFlags</set>
+        </property>
+       </item>
+      </widget>
+     </widget>
      <widget class="QWidget" name="tabMotorParams">
       <attribute name="title">
        <string>Motor Params</string>
@@ -2206,7 +4238,7 @@
          <x>60</x>
          <y>60</y>
          <width>701</width>
-         <height>601</height>
+         <height>401</height>
         </rect>
        </property>
        <property name="sizePolicy">
@@ -2679,352 +4711,6 @@
        </item>
       </widget>
      </widget>
-     <widget class="QWidget" name="tabStiff">
-      <attribute name="title">
-       <string>Stiffness Params</string>
-      </attribute>
-      <widget class="QTableWidget" name="tableStiffness">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>20</y>
-         <width>761</width>
-         <height>691</height>
-        </rect>
-       </property>
-       <property name="alternatingRowColors">
-        <bool>true</bool>
-       </property>
-       <property name="selectionMode">
-        <enum>QAbstractItemView::NoSelection</enum>
-       </property>
-       <property name="showGrid">
-        <bool>true</bool>
-       </property>
-       <row>
-        <property name="text">
-         <string>Joint Stiffness</string>
-        </property>
-       </row>
-       <row>
-        <property name="text">
-         <string>Joint Damping</string>
-        </property>
-       </row>
-       <row>
-        <property name="text">
-         <string>Joint Torque Feedforward</string>
-        </property>
-       </row>
-       <column>
-        <property name="text">
-         <string>Current</string>
-        </property>
-       </column>
-       <column>
-        <property name="text">
-         <string>Min</string>
-        </property>
-       </column>
-       <column>
-        <property name="text">
-         <string>Max</string>
-        </property>
-       </column>
-       <column>
-        <property name="text">
-         <string>Desired</string>
-        </property>
-       </column>
-       <column>
-        <property name="text">
-         <string>Units</string>
-        </property>
-       </column>
-       <item row="0" column="0">
-        <property name="text">
-         <string/>
-        </property>
-        <property name="background">
-         <brush brushstyle="SolidPattern">
-          <color alpha="255">
-           <red>207</red>
-           <green>207</green>
-           <blue>207</blue>
-          </color>
-         </brush>
-        </property>
-        <property name="foreground">
-         <brush brushstyle="SolidPattern">
-          <color alpha="255">
-           <red>35</red>
-           <green>38</green>
-           <blue>41</blue>
-          </color>
-         </brush>
-        </property>
-        <property name="flags">
-         <set>ItemIsEnabled</set>
-        </property>
-       </item>
-       <item row="0" column="1">
-        <property name="text">
-         <string/>
-        </property>
-        <property name="background">
-         <brush brushstyle="SolidPattern">
-          <color alpha="255">
-           <red>207</red>
-           <green>207</green>
-           <blue>207</blue>
-          </color>
-         </brush>
-        </property>
-        <property name="foreground">
-         <brush brushstyle="SolidPattern">
-          <color alpha="255">
-           <red>35</red>
-           <green>38</green>
-           <blue>41</blue>
-          </color>
-         </brush>
-        </property>
-        <property name="flags">
-         <set>ItemIsEnabled</set>
-        </property>
-       </item>
-       <item row="0" column="2">
-        <property name="text">
-         <string/>
-        </property>
-        <property name="background">
-         <brush brushstyle="SolidPattern">
-          <color alpha="255">
-           <red>207</red>
-           <green>207</green>
-           <blue>207</blue>
-          </color>
-         </brush>
-        </property>
-        <property name="foreground">
-         <brush brushstyle="SolidPattern">
-          <color alpha="255">
-           <red>35</red>
-           <green>38</green>
-           <blue>41</blue>
-          </color>
-         </brush>
-        </property>
-        <property name="flags">
-         <set>ItemIsEnabled</set>
-        </property>
-       </item>
-       <item row="0" column="3">
-        <property name="text">
-         <string/>
-        </property>
-        <property name="flags">
-         <set>ItemIsSelectable|ItemIsEditable|ItemIsDragEnabled|ItemIsUserCheckable|ItemIsEnabled</set>
-        </property>
-       </item>
-       <item row="0" column="4">
-        <property name="text">
-         <string>N/A</string>
-        </property>
-        <property name="flags">
-         <set>NoItemFlags</set>
-        </property>
-       </item>
-       <item row="1" column="0">
-        <property name="text">
-         <string/>
-        </property>
-        <property name="background">
-         <brush brushstyle="SolidPattern">
-          <color alpha="255">
-           <red>207</red>
-           <green>207</green>
-           <blue>207</blue>
-          </color>
-         </brush>
-        </property>
-        <property name="foreground">
-         <brush brushstyle="SolidPattern">
-          <color alpha="255">
-           <red>35</red>
-           <green>38</green>
-           <blue>41</blue>
-          </color>
-         </brush>
-        </property>
-        <property name="flags">
-         <set>ItemIsEnabled</set>
-        </property>
-       </item>
-       <item row="1" column="1">
-        <property name="text">
-         <string/>
-        </property>
-        <property name="background">
-         <brush brushstyle="SolidPattern">
-          <color alpha="255">
-           <red>207</red>
-           <green>207</green>
-           <blue>207</blue>
-          </color>
-         </brush>
-        </property>
-        <property name="foreground">
-         <brush brushstyle="SolidPattern">
-          <color alpha="255">
-           <red>35</red>
-           <green>38</green>
-           <blue>41</blue>
-          </color>
-         </brush>
-        </property>
-        <property name="flags">
-         <set>ItemIsEnabled</set>
-        </property>
-       </item>
-       <item row="1" column="2">
-        <property name="text">
-         <string/>
-        </property>
-        <property name="background">
-         <brush brushstyle="SolidPattern">
-          <color alpha="255">
-           <red>207</red>
-           <green>207</green>
-           <blue>207</blue>
-          </color>
-         </brush>
-        </property>
-        <property name="foreground">
-         <brush brushstyle="SolidPattern">
-          <color alpha="255">
-           <red>35</red>
-           <green>38</green>
-           <blue>41</blue>
-          </color>
-         </brush>
-        </property>
-        <property name="flags">
-         <set>ItemIsEnabled</set>
-        </property>
-       </item>
-       <item row="1" column="3">
-        <property name="text">
-         <string/>
-        </property>
-        <property name="flags">
-         <set>ItemIsSelectable|ItemIsEditable|ItemIsDragEnabled|ItemIsUserCheckable|ItemIsEnabled</set>
-        </property>
-       </item>
-       <item row="1" column="4">
-        <property name="text">
-         <string>N/A</string>
-        </property>
-        <property name="flags">
-         <set>NoItemFlags</set>
-        </property>
-       </item>
-       <item row="2" column="0">
-        <property name="text">
-         <string/>
-        </property>
-        <property name="background">
-         <brush brushstyle="SolidPattern">
-          <color alpha="255">
-           <red>207</red>
-           <green>207</green>
-           <blue>207</blue>
-          </color>
-         </brush>
-        </property>
-        <property name="foreground">
-         <brush brushstyle="SolidPattern">
-          <color alpha="255">
-           <red>35</red>
-           <green>38</green>
-           <blue>41</blue>
-          </color>
-         </brush>
-        </property>
-        <property name="flags">
-         <set>ItemIsEnabled</set>
-        </property>
-       </item>
-       <item row="2" column="1">
-        <property name="text">
-         <string/>
-        </property>
-        <property name="background">
-         <brush brushstyle="SolidPattern">
-          <color alpha="255">
-           <red>207</red>
-           <green>207</green>
-           <blue>207</blue>
-          </color>
-         </brush>
-        </property>
-        <property name="foreground">
-         <brush brushstyle="SolidPattern">
-          <color alpha="255">
-           <red>35</red>
-           <green>38</green>
-           <blue>41</blue>
-          </color>
-         </brush>
-        </property>
-        <property name="flags">
-         <set>ItemIsEnabled</set>
-        </property>
-       </item>
-       <item row="2" column="2">
-        <property name="text">
-         <string/>
-        </property>
-        <property name="background">
-         <brush brushstyle="SolidPattern">
-          <color alpha="255">
-           <red>207</red>
-           <green>207</green>
-           <blue>207</blue>
-          </color>
-         </brush>
-        </property>
-        <property name="foreground">
-         <brush brushstyle="SolidPattern">
-          <color alpha="255">
-           <red>35</red>
-           <green>38</green>
-           <blue>41</blue>
-          </color>
-         </brush>
-        </property>
-        <property name="flags">
-         <set>ItemIsEnabled</set>
-        </property>
-       </item>
-       <item row="2" column="3">
-        <property name="text">
-         <string/>
-        </property>
-        <property name="flags">
-         <set>ItemIsSelectable|ItemIsEditable|ItemIsDragEnabled|ItemIsUserCheckable|ItemIsEnabled</set>
-        </property>
-       </item>
-       <item row="2" column="4">
-        <property name="text">
-         <string>N/A</string>
-        </property>
-        <property name="flags">
-         <set>NoItemFlags</set>
-        </property>
-       </item>
-      </widget>
-     </widget>
      <widget class="QWidget" name="tabPWM">
       <attribute name="title">
        <string>PWM Params</string>
@@ -3035,7 +4721,7 @@
          <x>10</x>
          <y>10</y>
          <width>761</width>
-         <height>521</height>
+         <height>401</height>
         </rect>
        </property>
        <property name="alternatingRowColors">

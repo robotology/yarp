@@ -220,6 +220,21 @@ void FakeMotionControl::setInfoPPids(int j)
     _ppids[j].at(2).pidExtraInfo.description.output_data_description = "Current";
 }
 
+void FakeMotionControl::setInfoPDPids(int j)
+{
+    _pdpids[j].at(0).pidExtraInfo.description.pid_description = "Position Direct PID 0";
+    _pdpids[j].at(0).pidExtraInfo.description.input_data_description = "Encoder Value";
+    _pdpids[j].at(0).pidExtraInfo.description.output_data_description = "PWM";
+
+    _pdpids[j].at(1).pidExtraInfo.description.pid_description = "Position Direct PID 1";
+    _pdpids[j].at(1).pidExtraInfo.description.input_data_description = "Encoder Value";
+    _pdpids[j].at(1).pidExtraInfo.description.output_data_description = "Velocity";
+
+    _pdpids[j].at(2).pidExtraInfo.description.pid_description = "Position Direct PID 2";
+    _pdpids[j].at(2).pidExtraInfo.description.input_data_description = "Encoder Value";
+    _pdpids[j].at(2).pidExtraInfo.description.output_data_description = "Current";
+}
+
 void FakeMotionControl::setInfoTPids(int j)
 {
     _tpids[j].at(0).pidExtraInfo.description.pid_description = "Torque PID 0";
@@ -250,6 +265,21 @@ void FakeMotionControl::setInfoVPids(int j)
     _vpids[j].at(2).pidExtraInfo.description.output_data_description = "Current";
 }
 
+void FakeMotionControl::setInfoVDPids(int j)
+{
+    _vdpids[j].at(0).pidExtraInfo.description.pid_description = "Velocity Direct PID 0";
+    _vdpids[j].at(0).pidExtraInfo.description.input_data_description = "Velocity Value";
+    _vdpids[j].at(0).pidExtraInfo.description.output_data_description = "PWM";
+
+    _vdpids[j].at(1).pidExtraInfo.description.pid_description = "Velocity Direct PID 1";
+    _vdpids[j].at(1).pidExtraInfo.description.input_data_description = "Velocity Value";
+    _vdpids[j].at(1).pidExtraInfo.description.output_data_description = "PWM";
+
+    _vdpids[j].at(2).pidExtraInfo.description.pid_description = "Velocity Direct PID 2";
+    _vdpids[j].at(2).pidExtraInfo.description.input_data_description = "Velocity Value";
+    _vdpids[j].at(2).pidExtraInfo.description.output_data_description = "Current";
+}
+
 void FakeMotionControl::setInfoCPids(int j)
 {
     _cpids[j].at(0).pidExtraInfo.description.pid_description = "Current PID 0";
@@ -265,6 +295,20 @@ void FakeMotionControl::setInfoCPids(int j)
     _cpids[j].at(2).pidExtraInfo.description.output_data_description = "PWM";
 }
 
+void FakeMotionControl::setInfoMPids(int j)
+{
+    _mpids[j].at(0).pidExtraInfo.description.pid_description = "Mixed PID 0";
+    _mpids[j].at(0).pidExtraInfo.description.input_data_description = "Encoder Value";
+    _mpids[j].at(0).pidExtraInfo.description.output_data_description = "PWM";
+
+    _mpids[j].at(1).pidExtraInfo.description.pid_description = "Mixed PID 1";
+    _mpids[j].at(1).pidExtraInfo.description.input_data_description = "Encoder Value";
+    _mpids[j].at(1).pidExtraInfo.description.output_data_description = "PWM";
+
+    _mpids[j].at(2).pidExtraInfo.description.pid_description = "Current PID 2";
+    _mpids[j].at(2).pidExtraInfo.description.input_data_description = "Encoder Value";
+    _mpids[j].at(2).pidExtraInfo.description.output_data_description = "PWM";
+}
 
  bool FakeMotionControl::alloc(int nj)
 {
@@ -304,13 +348,15 @@ void FakeMotionControl::setInfoCPids(int j)
     _tpids = allocAndCheck<std::vector<PidWithExtraInfo>>(nj);    for (int i = 0; i < nj; ++i) {_tpids[i].resize(npids); setInfoTPids(i);}
     _cpids = allocAndCheck<std::vector<PidWithExtraInfo>>(nj);    for (int i = 0; i < nj; ++i) {_cpids[i].resize(npids); setInfoCPids(i);}
     _vpids = allocAndCheck<std::vector<PidWithExtraInfo>>(nj);    for (int i = 0; i < nj; ++i) {_vpids[i].resize(npids); setInfoVPids(i);}
-    _pdpids = allocAndCheck<std::vector<PidWithExtraInfo>>(nj);    for (int i = 0; i < nj; ++i) {_pdpids[i].resize(npids); setInfoPPids(i);}
-    _vdpids = allocAndCheck<std::vector<PidWithExtraInfo>>(nj);    for (int i = 0; i < nj; ++i) {_vdpids[i].resize(npids); setInfoVPids(i);}
+    _mpids = allocAndCheck<std::vector<PidWithExtraInfo>>(nj);    for (int i = 0; i < nj; ++i) {_mpids[i].resize(npids); setInfoMPids(i);}
+    _pdpids = allocAndCheck<std::vector<PidWithExtraInfo>>(nj);    for (int i = 0; i < nj; ++i) {_pdpids[i].resize(npids); setInfoPDPids(i);}
+    _vdpids = allocAndCheck<std::vector<PidWithExtraInfo>>(nj);    for (int i = 0; i < nj; ++i) {_vdpids[i].resize(npids); setInfoVDPids(i);}
 
     _ppids_ena = allocAndCheck<std::vector<bool>>(nj);    for (int i = 0; i < nj; ++i) _ppids_ena[i].resize(npids);
     _tpids_ena = allocAndCheck<std::vector<bool>>(nj);    for (int i = 0; i < nj; ++i) _tpids_ena[i].resize(npids);
     _cpids_ena = allocAndCheck<std::vector<bool>>(nj);    for (int i = 0; i < nj; ++i) _cpids_ena[i].resize(npids);
     _vpids_ena = allocAndCheck<std::vector<bool>>(nj);    for (int i = 0; i < nj; ++i) _vpids_ena[i].resize(npids);
+    _mpids_ena = allocAndCheck<std::vector<bool>>(nj);    for (int i = 0; i < nj; ++i) _mpids_ena[i].resize(npids);
     _pdpids_ena = allocAndCheck<std::vector<bool>>(nj);    for (int i = 0; i < nj; ++i) _pdpids_ena[i].resize(npids);
     _vdpids_ena = allocAndCheck<std::vector<bool>>(nj);    for (int i = 0; i < nj; ++i) _vdpids_ena[i].resize(npids);
 
@@ -318,6 +364,7 @@ void FakeMotionControl::setInfoCPids(int j)
     _tpids_lim = allocAndCheck<std::vector<double>>(nj);    for (int i = 0; i < nj; ++i) _tpids_lim[i].resize(npids);
     _cpids_lim = allocAndCheck<std::vector<double>>(nj);    for (int i = 0; i < nj; ++i) _cpids_lim[i].resize(npids);
     _vpids_lim = allocAndCheck<std::vector<double>>(nj);    for (int i = 0; i < nj; ++i) _vpids_lim[i].resize(npids);
+    _mpids_lim = allocAndCheck<std::vector<double>>(nj);    for (int i = 0; i < nj; ++i) _mpids_lim[i].resize(npids);
     _pdpids_lim = allocAndCheck<std::vector<double>>(nj);    for (int i = 0; i < nj; ++i) _pdpids_lim[i].resize(npids);
     _vdpids_lim = allocAndCheck<std::vector<double>>(nj);    for (int i = 0; i < nj; ++i) _vdpids_lim[i].resize(npids);
 
@@ -325,6 +372,7 @@ void FakeMotionControl::setInfoCPids(int j)
     _tpids_ref = allocAndCheck<std::vector<double>>(nj);    for (int i = 0; i < nj; ++i) _tpids_ref[i].resize(npids);
     _cpids_ref = allocAndCheck<std::vector<double>>(nj);    for (int i = 0; i < nj; ++i) _cpids_ref[i].resize(npids);
     _vpids_ref = allocAndCheck<std::vector<double>>(nj);    for (int i = 0; i < nj; ++i) _vpids_ref[i].resize(npids);
+    _mpids_ref = allocAndCheck<std::vector<double>>(nj);    for (int i = 0; i < nj; ++i) _mpids_ref[i].resize(npids);
     _pdpids_ref = allocAndCheck<std::vector<double>>(nj);    for (int i = 0; i < nj; ++i) _pdpids_ref[i].resize(npids);
     _vdpids_ref = allocAndCheck<std::vector<double>>(nj);    for (int i = 0; i < nj; ++i) _vdpids_ref[i].resize(npids);
 
@@ -332,8 +380,9 @@ void FakeMotionControl::setInfoCPids(int j)
     _tpids_ffd = allocAndCheck<std::vector<double>>(nj);    for (int i = 0; i < nj; ++i) _tpids_ffd[i].resize(npids);
     _cpids_ffd = allocAndCheck<std::vector<double>>(nj);    for (int i = 0; i < nj; ++i) _cpids_ffd[i].resize(npids);
     _vpids_ffd = allocAndCheck<std::vector<double>>(nj);    for (int i = 0; i < nj; ++i) _vpids_ffd[i].resize(npids);
+    _mpids_ffd = allocAndCheck<std::vector<double>>(nj);    for (int i = 0; i < nj; ++i) _mpids_ffd[i].resize(npids);
     _pdpids_ffd = allocAndCheck<std::vector<double>>(nj);    for (int i = 0; i < nj; ++i) _pdpids_ffd[i].resize(npids);
-    _vdpids_ref = allocAndCheck<std::vector<double>>(nj);    for (int i = 0; i < nj; ++i) _vdpids_ref[i].resize(npids);
+    _vdpids_ffd = allocAndCheck<std::vector<double>>(nj);    for (int i = 0; i < nj; ++i) _vdpids_ffd[i].resize(npids);
 
 //     _impedance_params=allocAndCheck<ImpedanceParameters>(nj);
 //     _impedance_limits=allocAndCheck<ImpedanceLimits>(nj);
@@ -413,6 +462,7 @@ bool FakeMotionControl::dealloc()
     checkAndDestroy(_tpids);
     checkAndDestroy(_cpids);
     checkAndDestroy(_vpids);
+    checkAndDestroy(_mpids);
     checkAndDestroy(_pdpids);
     checkAndDestroy(_vdpids);
 
@@ -420,6 +470,7 @@ bool FakeMotionControl::dealloc()
     checkAndDestroy(_tpids_ena);
     checkAndDestroy(_cpids_ena);
     checkAndDestroy(_vpids_ena);
+    checkAndDestroy(_mpids_ena);
     checkAndDestroy(_pdpids_ena);
     checkAndDestroy(_vdpids_ena);
 
@@ -427,6 +478,7 @@ bool FakeMotionControl::dealloc()
     checkAndDestroy(_tpids_lim);
     checkAndDestroy(_cpids_lim);
     checkAndDestroy(_vpids_lim);
+    checkAndDestroy(_mpids_lim);
     checkAndDestroy(_pdpids_lim);
     checkAndDestroy(_vdpids_lim);
 
@@ -434,6 +486,7 @@ bool FakeMotionControl::dealloc()
     checkAndDestroy(_tpids_ref);
     checkAndDestroy(_cpids_ref);
     checkAndDestroy(_vpids_ref);
+    checkAndDestroy(_mpids_ref);
     checkAndDestroy(_pdpids_ref);
     checkAndDestroy(_vdpids_ref);
 
@@ -441,6 +494,7 @@ bool FakeMotionControl::dealloc()
     checkAndDestroy(_tpids_ffd);
     checkAndDestroy(_cpids_ffd);
     checkAndDestroy(_vpids_ffd);
+    checkAndDestroy(_mpids_ffd);
     checkAndDestroy(_pdpids_ffd);
     checkAndDestroy(_vdpids_ffd);
 
@@ -538,22 +592,6 @@ FakeMotionControl::FakeMotionControl() :
     _motorPoles             (nullptr),
     _rotorlimits_max        (nullptr),
     _rotorlimits_min        (nullptr),
-    _ppids                  (nullptr),
-    _tpids                  (nullptr),
-    _cpids                  (nullptr),
-    _vpids                  (nullptr),
-    _ppids_ena              (nullptr),
-    _tpids_ena              (nullptr),
-    _cpids_ena              (nullptr),
-    _vpids_ena              (nullptr),
-    _ppids_lim              (nullptr),
-    _tpids_lim              (nullptr),
-    _cpids_lim              (nullptr),
-    _vpids_lim              (nullptr),
-    _ppids_ref              (nullptr),
-    _tpids_ref              (nullptr),
-    _cpids_ref              (nullptr),
-    _vpids_ref              (nullptr),
     _axisName               (nullptr),
     _jointType              (nullptr),
     _limitsMin              (nullptr),
@@ -687,6 +725,9 @@ bool FakeMotionControl::open(yarp::os::Searchable &config)
     ImplementPidControl::setConversionUnits(PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY_DIRECT_1, PidFeedbackUnitsEnum::METRIC, PidOutputUnitsEnum::DUTYCYCLE_PWM_PERCENT);
     ImplementPidControl::setConversionUnits(PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY_DIRECT_2, PidFeedbackUnitsEnum::METRIC, PidOutputUnitsEnum::DUTYCYCLE_PWM_PERCENT);
     ImplementPidControl::setConversionUnits(PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY_DIRECT_3, PidFeedbackUnitsEnum::METRIC, PidOutputUnitsEnum::DUTYCYCLE_PWM_PERCENT);
+    ImplementPidControl::setConversionUnits(PidControlTypeEnum::VOCAB_PIDTYPE_MIXED_1, PidFeedbackUnitsEnum::METRIC, PidOutputUnitsEnum::DUTYCYCLE_PWM_PERCENT);
+    ImplementPidControl::setConversionUnits(PidControlTypeEnum::VOCAB_PIDTYPE_MIXED_2, PidFeedbackUnitsEnum::METRIC, PidOutputUnitsEnum::DUTYCYCLE_PWM_PERCENT);
+    ImplementPidControl::setConversionUnits(PidControlTypeEnum::VOCAB_PIDTYPE_MIXED_3, PidFeedbackUnitsEnum::METRIC, PidOutputUnitsEnum::DUTYCYCLE_PWM_PERCENT);
     ImplementPidControl::setConversionUnits(PidControlTypeEnum::VOCAB_PIDTYPE_TORQUE_1, PidFeedbackUnitsEnum::METRIC, PidOutputUnitsEnum::DUTYCYCLE_PWM_PERCENT);
     ImplementPidControl::setConversionUnits(PidControlTypeEnum::VOCAB_PIDTYPE_TORQUE_2, PidFeedbackUnitsEnum::METRIC, PidOutputUnitsEnum::DUTYCYCLE_PWM_PERCENT);
     ImplementPidControl::setConversionUnits(PidControlTypeEnum::VOCAB_PIDTYPE_TORQUE_3, PidFeedbackUnitsEnum::METRIC, PidOutputUnitsEnum::DUTYCYCLE_PWM_PERCENT);
@@ -935,6 +976,11 @@ ReturnValue FakeMotionControl::setPidRaw(const PidControlTypeEnum& pidtype, int 
         case PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY_DIRECT_3:
             _vdpids[jnt].at(index)=pid;
         break;
+        case PidControlTypeEnum::VOCAB_PIDTYPE_MIXED_1:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_MIXED_2:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_MIXED_3:
+            _mpids[jnt].at(index)=pid;
+        break;
         case PidControlTypeEnum::VOCAB_PIDTYPE_CURRENT_1:
         case PidControlTypeEnum::VOCAB_PIDTYPE_CURRENT_2:
         case PidControlTypeEnum::VOCAB_PIDTYPE_CURRENT_3:
@@ -946,6 +992,8 @@ ReturnValue FakeMotionControl::setPidRaw(const PidControlTypeEnum& pidtype, int 
             _tpids[jnt].at(index)=pid;
         break;
         default:
+            yCError(FAKEMOTIONCONTROL) << "Invalid pid type";
+            return ReturnValue::return_code::return_value_error_method_failed;
         break;
     }
     return ReturnValue_ok;
@@ -986,6 +1034,11 @@ bool FakeMotionControl::setPidReferenceRaw(const PidControlTypeEnum& pidtype, in
         case PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY_DIRECT_3:
             _vdpids_ref[j].at(index)=ref;
         break;
+        case PidControlTypeEnum::VOCAB_PIDTYPE_MIXED_1:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_MIXED_2:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_MIXED_3:
+            _mpids_ref[j].at(index)=ref;
+        break;
         case PidControlTypeEnum::VOCAB_PIDTYPE_CURRENT_1:
         case PidControlTypeEnum::VOCAB_PIDTYPE_CURRENT_2:
         case PidControlTypeEnum::VOCAB_PIDTYPE_CURRENT_3:
@@ -997,6 +1050,8 @@ bool FakeMotionControl::setPidReferenceRaw(const PidControlTypeEnum& pidtype, in
             _tpids_ref[j].at(index)=ref;
         break;
         default:
+            yCError(FAKEMOTIONCONTROL) << "Invalid pid type";
+            return false;
         break;
     }
     return true;
@@ -1037,6 +1092,11 @@ bool FakeMotionControl::setPidErrorLimitRaw(const PidControlTypeEnum& pidtype, i
         case PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY_DIRECT_3:
             _vdpids_lim[j].at(index)=limit;
         break;
+        case PidControlTypeEnum::VOCAB_PIDTYPE_MIXED_1:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_MIXED_2:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_MIXED_3:
+            _mpids_lim[j].at(index)=limit;
+        break;
         case PidControlTypeEnum::VOCAB_PIDTYPE_CURRENT_1:
         case PidControlTypeEnum::VOCAB_PIDTYPE_CURRENT_2:
         case PidControlTypeEnum::VOCAB_PIDTYPE_CURRENT_3:
@@ -1048,6 +1108,8 @@ bool FakeMotionControl::setPidErrorLimitRaw(const PidControlTypeEnum& pidtype, i
             _tpids_lim[j].at(index)=limit;
         break;
         default:
+            yCError(FAKEMOTIONCONTROL) << "Invalid pid type";
+            return false;
         break;
     }
     return true;
@@ -1087,6 +1149,11 @@ bool FakeMotionControl::getPidErrorRaw(const PidControlTypeEnum& pidtype, int j,
         case PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY_DIRECT_3:
             *err=0.2;
         break;
+        case PidControlTypeEnum::VOCAB_PIDTYPE_MIXED_1:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_MIXED_2:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_MIXED_3:
+            *err=0.2;
+        break;
         case PidControlTypeEnum::VOCAB_PIDTYPE_CURRENT_1:
         case PidControlTypeEnum::VOCAB_PIDTYPE_CURRENT_2:
         case PidControlTypeEnum::VOCAB_PIDTYPE_CURRENT_3:
@@ -1098,6 +1165,8 @@ bool FakeMotionControl::getPidErrorRaw(const PidControlTypeEnum& pidtype, int j,
             *err=0.4;
         break;
         default:
+            yCError(FAKEMOTIONCONTROL) << "Invalid pid type";
+            return false;
         break;
     }
     return true;
@@ -1138,6 +1207,11 @@ ReturnValue FakeMotionControl::getPidRaw(const PidControlTypeEnum& pidtype, int 
         case PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY_DIRECT_3:
             *pid=_vdpids[jnt].at(index).pid;
         break;
+        case PidControlTypeEnum::VOCAB_PIDTYPE_MIXED_1:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_MIXED_2:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_MIXED_3:
+            *pid=_mpids[jnt].at(index).pid;
+        break;
         case PidControlTypeEnum::VOCAB_PIDTYPE_CURRENT_1:
         case PidControlTypeEnum::VOCAB_PIDTYPE_CURRENT_2:
         case PidControlTypeEnum::VOCAB_PIDTYPE_CURRENT_3:
@@ -1149,6 +1223,8 @@ ReturnValue FakeMotionControl::getPidRaw(const PidControlTypeEnum& pidtype, int 
             *pid=_tpids[jnt].at(index).pid;
         break;
         default:
+            yCError(FAKEMOTIONCONTROL) << "Invalid pid type";
+            return ReturnValue::return_code::return_value_error_method_failed;
         break;
     }
     yCDebug(FAKEMOTIONCONTROL) << "getPidRaw" << (yarp::conf::vocab32_t)(pidtype) << jnt << pid->kp;
@@ -1191,6 +1267,11 @@ bool FakeMotionControl::getPidReferenceRaw(const PidControlTypeEnum& pidtype, in
         case PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY_DIRECT_3:
             *ref=_vdpids_ref[j].at(index);
         break;
+        case PidControlTypeEnum::VOCAB_PIDTYPE_MIXED_1:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_MIXED_2:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_MIXED_3:
+            *ref=_mpids_ref[j].at(index);
+        break;
         case PidControlTypeEnum::VOCAB_PIDTYPE_CURRENT_1:
         case PidControlTypeEnum::VOCAB_PIDTYPE_CURRENT_2:
         case PidControlTypeEnum::VOCAB_PIDTYPE_CURRENT_3:
@@ -1202,6 +1283,8 @@ bool FakeMotionControl::getPidReferenceRaw(const PidControlTypeEnum& pidtype, in
             *ref=_tpids_ref[j].at(index);
         break;
         default:
+            yCError(FAKEMOTIONCONTROL) << "Invalid pid type";
+            return false;
         break;
     }
     return true;
@@ -1245,6 +1328,11 @@ bool FakeMotionControl::getPidErrorLimitRaw(const PidControlTypeEnum& pidtype, i
         case PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY_DIRECT_3:
             *limit=_vdpids_lim[j].at(index);
         break;
+        case PidControlTypeEnum::VOCAB_PIDTYPE_MIXED_1:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_MIXED_2:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_MIXED_3:
+            *limit=_mpids_lim[j].at(index);
+        break;
         case PidControlTypeEnum::VOCAB_PIDTYPE_CURRENT_1:
         case PidControlTypeEnum::VOCAB_PIDTYPE_CURRENT_2:
         case PidControlTypeEnum::VOCAB_PIDTYPE_CURRENT_3:
@@ -1256,6 +1344,8 @@ bool FakeMotionControl::getPidErrorLimitRaw(const PidControlTypeEnum& pidtype, i
             *limit=_tpids_lim[j].at(index);
         break;
         default:
+            yCError(FAKEMOTIONCONTROL) << "Invalid pid type";
+            return false;
         break;
     }
     return true;
@@ -1301,6 +1391,11 @@ ReturnValue FakeMotionControl::disablePidRaw(const PidControlTypeEnum& pidtype, 
         case PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY_DIRECT_3:
             _vdpids_ena[j].at(index)=false;
         break;
+        case PidControlTypeEnum::VOCAB_PIDTYPE_MIXED_1:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_MIXED_2:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_MIXED_3:
+            _mpids_ena[j].at(index)=false;
+        break;
         case PidControlTypeEnum::VOCAB_PIDTYPE_CURRENT_1:
         case PidControlTypeEnum::VOCAB_PIDTYPE_CURRENT_2:
         case PidControlTypeEnum::VOCAB_PIDTYPE_CURRENT_3:
@@ -1312,6 +1407,8 @@ ReturnValue FakeMotionControl::disablePidRaw(const PidControlTypeEnum& pidtype, 
             _tpids_ena[j].at(index)=false;
         break;
         default:
+            yCError(FAKEMOTIONCONTROL) << "Invalid pid type";
+            return ReturnValue::return_code::return_value_error_method_failed;
         break;
     }
     return ReturnValue_ok;
@@ -1342,6 +1439,11 @@ ReturnValue FakeMotionControl::enablePidRaw(const PidControlTypeEnum& pidtype, i
         case PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY_DIRECT_3:
             _vdpids_ena[j].at(index)=true;
         break;
+        case PidControlTypeEnum::VOCAB_PIDTYPE_MIXED_1:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_MIXED_2:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_MIXED_3:
+            _mpids_ena[j].at(index)=true;
+        break;
         case PidControlTypeEnum::VOCAB_PIDTYPE_CURRENT_1:
         case PidControlTypeEnum::VOCAB_PIDTYPE_CURRENT_2:
         case PidControlTypeEnum::VOCAB_PIDTYPE_CURRENT_3:
@@ -1353,6 +1455,8 @@ ReturnValue FakeMotionControl::enablePidRaw(const PidControlTypeEnum& pidtype, i
             _tpids_ena[j].at(index)=true;
         break;
         default:
+            yCError(FAKEMOTIONCONTROL) << "Invalid pid type";
+            return ReturnValue::return_code::return_value_error_method_failed;
         break;
     }
     return ReturnValue_ok;
@@ -1384,6 +1488,11 @@ ReturnValue FakeMotionControl::setPidOffsetRaw(const PidControlTypeEnum& pidtype
         case PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY_DIRECT_3:
             _vdpids[jnt].at(index).pid.offset=v;
         break;
+        case PidControlTypeEnum::VOCAB_PIDTYPE_MIXED_1:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_MIXED_2:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_MIXED_3:
+            _mpids[jnt].at(index).pid.offset=v;
+        break;
         case PidControlTypeEnum::VOCAB_PIDTYPE_CURRENT_1:
         case PidControlTypeEnum::VOCAB_PIDTYPE_CURRENT_2:
         case PidControlTypeEnum::VOCAB_PIDTYPE_CURRENT_3:
@@ -1395,6 +1504,8 @@ ReturnValue FakeMotionControl::setPidOffsetRaw(const PidControlTypeEnum& pidtype
             _tpids[jnt].at(index).pid.offset=v;
         break;
         default:
+            yCError(FAKEMOTIONCONTROL) << "Invalid pid type";
+            return ReturnValue::return_code::return_value_error_method_failed;
         break;
     }
     return ReturnValue_ok;
@@ -1425,6 +1536,11 @@ ReturnValue FakeMotionControl::getPidOffsetRaw(const PidControlTypeEnum& pidtype
         case PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY_DIRECT_3:
             v = _vdpids[jnt].at(index).pid.offset;
         break;
+        case PidControlTypeEnum::VOCAB_PIDTYPE_MIXED_1:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_MIXED_2:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_MIXED_3:
+            v = _mpids[jnt].at(index).pid.offset;
+        break;
         case PidControlTypeEnum::VOCAB_PIDTYPE_CURRENT_1:
         case PidControlTypeEnum::VOCAB_PIDTYPE_CURRENT_2:
         case PidControlTypeEnum::VOCAB_PIDTYPE_CURRENT_3:
@@ -1436,6 +1552,8 @@ ReturnValue FakeMotionControl::getPidOffsetRaw(const PidControlTypeEnum& pidtype
             v = _tpids[jnt].at(index).pid.offset;
         break;
         default:
+            yCError(FAKEMOTIONCONTROL) << "Invalid pid type";
+            return ReturnValue::return_code::return_value_error_method_failed;
         break;
     }
     yCDebug(FAKEMOTIONCONTROL) << "getPidOffsetRaw" << (yarp::conf::vocab32_t)(pidtype) << jnt << v;
@@ -1468,6 +1586,11 @@ ReturnValue FakeMotionControl::setPidFeedforwardRaw(const PidControlTypeEnum& pi
         case PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY_DIRECT_3:
             _vdpids_ffd[jnt].at(index)=v;
         break;
+        case PidControlTypeEnum::VOCAB_PIDTYPE_MIXED_1:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_MIXED_2:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_MIXED_3:
+            _mpids_ffd[jnt].at(index)=v;
+        break;
         case PidControlTypeEnum::VOCAB_PIDTYPE_CURRENT_1:
         case PidControlTypeEnum::VOCAB_PIDTYPE_CURRENT_2:
         case PidControlTypeEnum::VOCAB_PIDTYPE_CURRENT_3:
@@ -1479,6 +1602,8 @@ ReturnValue FakeMotionControl::setPidFeedforwardRaw(const PidControlTypeEnum& pi
             _tpids_ffd[jnt].at(index)=v;
         break;
         default:
+            yCError(FAKEMOTIONCONTROL) << "Invalid pid type";
+            return ReturnValue::return_code::return_value_error_method_failed;
         break;
     }
     return ReturnValue_ok;
@@ -1509,6 +1634,11 @@ ReturnValue FakeMotionControl::getPidFeedforwardRaw(const PidControlTypeEnum& pi
         case PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY_DIRECT_3:
             v = _vdpids_ffd[jnt].at(index);
         break;
+        case PidControlTypeEnum::VOCAB_PIDTYPE_MIXED_1:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_MIXED_2:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_MIXED_3:
+            v = _mpids_ffd[jnt].at(index);
+        break;
         case PidControlTypeEnum::VOCAB_PIDTYPE_CURRENT_1:
         case PidControlTypeEnum::VOCAB_PIDTYPE_CURRENT_2:
         case PidControlTypeEnum::VOCAB_PIDTYPE_CURRENT_3:
@@ -1520,6 +1650,8 @@ ReturnValue FakeMotionControl::getPidFeedforwardRaw(const PidControlTypeEnum& pi
             v = _tpids_ffd[jnt].at(index);
         break;
         default:
+            yCError(FAKEMOTIONCONTROL) << "Invalid pid type";
+            return ReturnValue::return_code::return_value_error_method_failed;
         break;
     }
     yCDebug(FAKEMOTIONCONTROL) << "getPidFeedforwardRaw" << (yarp::conf::vocab32_t)(pidtype) << jnt << v;
@@ -1551,6 +1683,11 @@ ReturnValue FakeMotionControl::isPidEnabledRaw(const PidControlTypeEnum& pidtype
         case PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY_DIRECT_3:
             enabled=_vdpids_ena[j].at(index);
         break;
+        case PidControlTypeEnum::VOCAB_PIDTYPE_MIXED_1:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_MIXED_2:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_MIXED_3:
+            enabled=_mpids_ena[j].at(index);
+        break;
         case PidControlTypeEnum::VOCAB_PIDTYPE_CURRENT_1:
         case PidControlTypeEnum::VOCAB_PIDTYPE_CURRENT_2:
         case PidControlTypeEnum::VOCAB_PIDTYPE_CURRENT_3:
@@ -1562,6 +1699,8 @@ ReturnValue FakeMotionControl::isPidEnabledRaw(const PidControlTypeEnum& pidtype
             enabled=_tpids_ena[j].at(index);
         break;
         default:
+            yCError(FAKEMOTIONCONTROL) << "Invalid pid type";
+            return ReturnValue::return_code::return_value_error_method_failed;
         break;
     }
     return ReturnValue_ok;
@@ -1592,6 +1731,11 @@ bool FakeMotionControl::getPidOutputRaw(const PidControlTypeEnum& pidtype, int j
         case PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY_DIRECT_3:
             *out=1.2 + j * 10;
         break;
+        case PidControlTypeEnum::VOCAB_PIDTYPE_MIXED_1:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_MIXED_2:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_MIXED_3:
+            *out=1.2 + j * 10;
+        break;
         case PidControlTypeEnum::VOCAB_PIDTYPE_CURRENT_1:
         case PidControlTypeEnum::VOCAB_PIDTYPE_CURRENT_2:
         case PidControlTypeEnum::VOCAB_PIDTYPE_CURRENT_3:
@@ -1603,6 +1747,8 @@ bool FakeMotionControl::getPidOutputRaw(const PidControlTypeEnum& pidtype, int j
             *out=1.4 + j * 10;
         break;
         default:
+            yCError(FAKEMOTIONCONTROL) << "Invalid pid type";
+            return false;
         break;
     }
     yCDebug(FAKEMOTIONCONTROL) << "getPidOutputRaw" << (yarp::conf::vocab32_t)(pidtype) << j << *out;
@@ -3242,12 +3388,29 @@ ReturnValue FakeMotionControl::getPidExtraInfoRaw(const PidControlTypeEnum& pidt
         case PidControlTypeEnum::VOCAB_PIDTYPE_CURRENT_3:
             units=_cpids[j].at(index).pidExtraInfo;
         break;
+        case PidControlTypeEnum::VOCAB_PIDTYPE_POSITION_DIRECT_1:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_POSITION_DIRECT_2:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_POSITION_DIRECT_3:
+            units=_pdpids[j].at(index).pidExtraInfo;
+        break;
+        case PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY_DIRECT_1:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY_DIRECT_2:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY_DIRECT_3:
+            units=_vdpids[j].at(index).pidExtraInfo;
+        break;
+        case PidControlTypeEnum::VOCAB_PIDTYPE_MIXED_1:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_MIXED_2:
+        case PidControlTypeEnum::VOCAB_PIDTYPE_MIXED_3:
+            units=_mpids[j].at(index).pidExtraInfo;
+        break;
         case PidControlTypeEnum::VOCAB_PIDTYPE_TORQUE_1:
         case PidControlTypeEnum::VOCAB_PIDTYPE_TORQUE_2:
         case PidControlTypeEnum::VOCAB_PIDTYPE_TORQUE_3:
             units=_tpids[j].at(index).pidExtraInfo;
         break;
         default:
+            yCError(FAKEMOTIONCONTROL) << "Invalid pid type";
+            return ReturnValue::return_code::return_value_error_method_failed;
         break;
     }
 

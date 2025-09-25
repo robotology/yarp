@@ -174,6 +174,7 @@ private:
     std::vector<yarp::dev::PidWithExtraInfo>* _vpids = nullptr;        /** initial velocity gains */
     std::vector<yarp::dev::PidWithExtraInfo>* _pdpids = nullptr;       /** initial position direct gains */
     std::vector<yarp::dev::PidWithExtraInfo>* _vdpids = nullptr;       /** initial velocity direct gains */
+    std::vector<yarp::dev::PidWithExtraInfo>* _mpids = nullptr;        /** initial mixed gains */
 
     std::vector<bool> *_ppids_ena    = nullptr;
     std::vector<bool> *_tpids_ena    = nullptr;
@@ -181,6 +182,7 @@ private:
     std::vector<bool> *_vpids_ena    = nullptr;
     std::vector<bool> *_pdpids_ena   = nullptr;
     std::vector<bool> *_vdpids_ena   = nullptr;
+    std::vector<bool> *_mpids_ena    = nullptr;
 
     std::vector<double> *_ppids_lim  = nullptr;
     std::vector<double> *_tpids_lim  = nullptr;
@@ -188,6 +190,7 @@ private:
     std::vector<double> *_vpids_lim  = nullptr;
     std::vector<double> *_pdpids_lim  = nullptr;
     std::vector<double> *_vdpids_lim  = nullptr;
+    std::vector<double> *_mpids_lim  = nullptr;
 
     std::vector<double> *_ppids_ref  = nullptr;
     std::vector<double> *_tpids_ref  = nullptr;
@@ -195,6 +198,7 @@ private:
     std::vector<double> *_vpids_ref  = nullptr;
     std::vector<double> *_pdpids_ref  = nullptr;
     std::vector<double> *_vdpids_ref  = nullptr;
+    std::vector<double> *_mpids_ref  = nullptr;
 
     std::vector<double> *_ppids_ffd  = nullptr;
     std::vector<double> *_tpids_ffd  = nullptr;
@@ -202,6 +206,7 @@ private:
     std::vector<double> *_vpids_ffd  = nullptr;
     std::vector<double> *_pdpids_ffd  = nullptr;
     std::vector<double> *_vdpids_ffd  = nullptr;
+    std::vector<double> *_mpids_ffd  = nullptr;
 
     std::string* _axisName = nullptr;                      /** axis name */
     yarp::dev::JointTypeEnum* _jointType = nullptr;        /** axis type */
@@ -567,8 +572,11 @@ private:
     bool dealloc();
     void setInfoPPids(int j);
     void setInfoVPids(int j);
+    void setInfoPDPids(int j);
+    void setInfoVDPids(int j);
     void setInfoTPids(int j);
     void setInfoCPids(int j);
+    void setInfoMPids(int j);
 
     //bool parsePositionPidsGroup(yarp::os::Bottle& pidsGroup, yarp::dev::Pid myPid[]);
     //bool parseTorquePidsGroup(yarp::os::Bottle& pidsGroup, yarp::dev::Pid myPid[], double kbemf[], double ktau[], int filterType[], double viscousPos[], double viscousNeg[], double coulombPos[], double coulombNeg[], double velocityThres[]);
