@@ -8,27 +8,27 @@
 // This is an automatically generated file.
 // It could get re-generated if the ALLOW_IDL_GENERATION flag is on.
 
-#ifndef YARP_THRIFT_GENERATOR_STRUCT_RETURN_getRefVelocITYONE_H
-#define YARP_THRIFT_GENERATOR_STRUCT_RETURN_getRefVelocITYONE_H
+#ifndef YARP_THRIFT_GENERATOR_STRUCT_RETURN_GETREFVELOCITYALL_H
+#define YARP_THRIFT_GENERATOR_STRUCT_RETURN_GETREFVELOCITYALL_H
 
 #include <yarp/os/Wire.h>
 #include <yarp/os/idl/WireTypes.h>
 #include <yarp/dev/ReturnValue.h>
 
-class return_getRefVelocityOne :
+class return_getRefVelocityAll :
         public yarp::os::idl::WirePortable
 {
 public:
     // Fields
     yarp::dev::ReturnValue ret{};
-    double vel{0.0};
+    std::vector<double> vel{};
 
     // Default constructor
-    return_getRefVelocityOne() = default;
+    return_getRefVelocityAll() = default;
 
     // Constructor with field values
-    return_getRefVelocityOne(const yarp::dev::ReturnValue& ret,
-                                 const double vel);
+    return_getRefVelocityAll(const yarp::dev::ReturnValue& ret,
+                             const std::vector<double>& vel);
 
     // Read structure on a Wire
     bool read(yarp::os::idl::WireReader& reader) override;
@@ -46,7 +46,7 @@ public:
     std::string toString() const;
 
     // If you want to serialize this class without nesting, use this helper
-    typedef yarp::os::idl::Unwrapped<return_getRefVelocityOne> unwrapped;
+    typedef yarp::os::idl::Unwrapped<return_getRefVelocityAll> unwrapped;
 
 private:
     // read/write ret field
@@ -62,4 +62,4 @@ private:
     bool nested_write_vel(const yarp::os::idl::WireWriter& writer) const;
 };
 
-#endif // YARP_THRIFT_GENERATOR_STRUCT_RETURN_getRefVelocITYONE_H
+#endif // YARP_THRIFT_GENERATOR_STRUCT_RETURN_GETREFVELOCITYALL_H

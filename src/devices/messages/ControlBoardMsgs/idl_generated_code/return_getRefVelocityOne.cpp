@@ -12,7 +12,7 @@
 
 // Constructor with field values
 return_getRefVelocityOne::return_getRefVelocityOne(const yarp::dev::ReturnValue& ret,
-                                                           const double vel) :
+                                                   const double vel) :
         WirePortable(),
         ret(ret),
         vel(vel)

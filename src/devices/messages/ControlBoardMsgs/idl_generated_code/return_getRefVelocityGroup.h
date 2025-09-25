@@ -8,8 +8,8 @@
 // This is an automatically generated file.
 // It could get re-generated if the ALLOW_IDL_GENERATION flag is on.
 
-#ifndef YARP_THRIFT_GENERATOR_STRUCT_RETURN_getRefVelocITYGROUP_H
-#define YARP_THRIFT_GENERATOR_STRUCT_RETURN_getRefVelocITYGROUP_H
+#ifndef YARP_THRIFT_GENERATOR_STRUCT_RETURN_GETREFVELOCITYGROUP_H
+#define YARP_THRIFT_GENERATOR_STRUCT_RETURN_GETREFVELOCITYGROUP_H
 
 #include <yarp/os/Wire.h>
 #include <yarp/os/idl/WireTypes.h>
@@ -28,7 +28,7 @@ public:
 
     // Constructor with field values
     return_getRefVelocityGroup(const yarp::dev::ReturnValue& ret,
-                                   const std::vector<double>& vel);
+                               const std::vector<double>& vel);
 
     // Read structure on a Wire
     bool read(yarp::os::idl::WireReader& reader) override;
@@ -62,4 +62,4 @@ private:
     bool nested_write_vel(const yarp::os::idl::WireWriter& writer) const;
 };
 
-#endif // YARP_THRIFT_GENERATOR_STRUCT_RETURN_getRefVelocITYGROUP_H
+#endif // YARP_THRIFT_GENERATOR_STRUCT_RETURN_GETREFVELOCITYGROUP_H
