@@ -85,7 +85,7 @@ void RPCMessagesParser::handleImpedanceMsg(const yarp::os::Bottle& cmd,
             b.addFloat64(offs);
             *rec = true;
         } break;
-        case VOCAB_LIMITS: {
+        case VOCAB_IMP_LIMITS: {
             double min_stiff = 0;
             double max_stiff = 0;
             double min_damp = 0;
@@ -847,161 +847,6 @@ void RPCMessagesParser::handleCurrentMsg(const yarp::os::Bottle& cmd, yarp::os::
     }
 }
 
-void RPCMessagesParser::handlePidMsg(const yarp::os::Bottle& cmd, yarp::os::Bottle& response, bool* rec, bool* ok)
-{
-    yCTrace(CONTROLBOARD, "Handling IPidControl message");
-
-    if (!rpc_IPid) {
-        yCError(CONTROLBOARD, "I do not have a valid IPidControl interface");
-        *ok = false;
-        return;
-    }
-
-    int code = cmd.get(0).asVocab32();
-    int action = cmd.get(2).asVocab32();
-    auto pidtype = static_cast<yarp::dev::PidControlTypeEnum>(cmd.get(3).asVocab32());
-
-    *ok = false;
-    *rec = true;
-    switch (code) {
-    case VOCAB_SET: {
-        *rec = true;
-        yCTrace(CONTROLBOARD, "set command received");
-
-        switch (action) {
-        case VOCAB_OFFSET: {
-            double v;
-            int j = cmd.get(4).asInt32();
-            v = cmd.get(5).asFloat64();
-            *ok = rpc_IPid->setPidOffset(pidtype, j, v);
-        } break;
-
-        case VOCAB_REF: {
-            *ok = rpc_IPid->setPidReference(pidtype, cmd.get(4).asInt32(), cmd.get(5).asFloat64());
-        } break;
-
-        case VOCAB_REFS: {
-            Bottle* b = cmd.get(4).asList();
-
-            if (b == nullptr) {
-                break;
-            }
-
-            const size_t njs = b->size();
-            if (njs == controlledJoints) {
-                auto* p = new double[njs]; // LATER: optimize to avoid allocation.
-                for (size_t i = 0; i < njs; i++) {
-                    p[i] = b->get(i).asFloat64();
-                }
-                *ok = rpc_IPid->setPidReferences(pidtype, p);
-                delete[] p;
-            }
-        } break;
-
-        case VOCAB_LIM: {
-            *ok = rpc_IPid->setPidErrorLimit(pidtype, cmd.get(4).asInt32(), cmd.get(5).asFloat64());
-        } break;
-
-        case VOCAB_LIMS: {
-            Bottle* b = cmd.get(4).asList();
-
-            if (b == nullptr) {
-                break;
-            }
-
-            const size_t njs = b->size();
-            if (njs == controlledJoints) {
-                auto* p = new double[njs]; // LATER: optimize to avoid allocation.
-                for (size_t i = 0; i < njs; i++) {
-                    p[i] = b->get(i).asFloat64();
-                }
-                *ok = rpc_IPid->setPidErrorLimits(pidtype, p);
-                delete[] p;
-            }
-        } break;
-
-        }
-    } break;
-
-    case VOCAB_GET: {
-        *rec = true;
-        yCTrace(CONTROLBOARD, "get command received");
-        double dtmp = 0.0;
-        response.addVocab32(VOCAB_IS);
-        response.add(cmd.get(1));
-
-        switch (action) {
-        case VOCAB_LIMS: {
-            auto* p = new double[controlledJoints];
-            *ok = rpc_IPid->getPidErrorLimits(pidtype, p);
-            Bottle& b = response.addList();
-            for (size_t i = 0; i < controlledJoints; i++) {
-                b.addFloat64(p[i]);
-            }
-            delete[] p;
-        } break;
-
-        case VOCAB_ERR: {
-            *ok = rpc_IPid->getPidError(pidtype, cmd.get(4).asInt32(), &dtmp);
-            response.addFloat64(dtmp);
-        } break;
-
-        case VOCAB_ERRS: {
-            auto* p = new double[controlledJoints];
-            *ok = rpc_IPid->getPidErrors(pidtype, p);
-            Bottle& b = response.addList();
-            for (size_t i = 0; i < controlledJoints; i++) {
-                b.addFloat64(p[i]);
-            }
-            delete[] p;
-        } break;
-
-        case VOCAB_OUTPUT: {
-            *ok = rpc_IPid->getPidOutput(pidtype, cmd.get(4).asInt32(), &dtmp);
-            response.addFloat64(dtmp);
-        } break;
-
-        case VOCAB_OUTPUTS: {
-            auto* p = new double[controlledJoints];
-            *ok = rpc_IPid->getPidOutputs(pidtype, p);
-            Bottle& b = response.addList();
-            for (size_t i = 0; i < controlledJoints; i++) {
-                b.addFloat64(p[i]);
-            }
-            delete[] p;
-        } break;
-
-        case VOCAB_REFERENCE: {
-            *ok = rpc_IPid->getPidReference(pidtype, cmd.get(4).asInt32(), &dtmp);
-            response.addFloat64(dtmp);
-        } break;
-
-        case VOCAB_REFERENCES: {
-            auto* p = new double[controlledJoints];
-            *ok = rpc_IPid->getPidReferences(pidtype, p);
-            Bottle& b = response.addList();
-            for (size_t i = 0; i < controlledJoints; i++) {
-                b.addFloat64(p[i]);
-            }
-            delete[] p;
-        } break;
-
-        case VOCAB_LIM: {
-            *ok = rpc_IPid->getPidErrorLimit(pidtype, cmd.get(4).asInt32(), &dtmp);
-            response.addFloat64(dtmp);
-        } break;
-        }
-    } break;
-
-    default:
-    {
-        yCError(CONTROLBOARD) << "Unknown handlePWMMsg message received";
-        *rec = false;
-        *ok = false;
-    } break;
-    }
-}
-
 void RPCMessagesParser::handlePWMMsg(const yarp::os::Bottle& cmd, yarp::os::Bottle& response, bool* rec, bool* ok)
 {
     yCTrace(CONTROLBOARD, "Handling IPWMControl message");
@@ -1249,9 +1094,6 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
         ok = false;
     } else {
         switch (cmd.get(1).asVocab32()) {
-        case VOCAB_PID:
-            handlePidMsg(cmd, response, &rec, &ok);
-            break;
 
         case VOCAB_TORQUE:
             handleTorqueMsg(cmd, response, &rec, &ok);
@@ -1750,12 +1592,6 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
                     ok = rcp_IAmp->setPWMLimit(cmd.get(2).asInt32(), cmd.get(3).asFloat64());
                 } break;
 
-                case VOCAB_LIMITS: {
-                    if (!rcp_Ilim) {ok= false; break;}
-                    ok = rcp_Ilim->setLimits(cmd.get(2).asInt32(), cmd.get(3).asFloat64(), cmd.get(4).asFloat64());
-                } break;
-
-
                 case VOCAB_TEMPERATURE_LIMIT: {
                     if (!rpc_IMotor) { ok = false; break; }
                     ok = rpc_IMotor->setTemperatureLimit(cmd.get(2).asInt32(), cmd.get(3).asFloat64());
@@ -1764,11 +1600,6 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
                 case VOCAB_GEARBOX_RATIO: {
                     if (!rpc_IMotor) { ok = false; break; }
                     ok = rpc_IMotor->setGearboxRatio(cmd.get(2).asInt32(), cmd.get(3).asFloat64());
-                } break;
-
-                case VOCAB_VEL_LIMITS: {
-                    if (!rcp_Ilim) { ok = false; break; }
-                    ok = rcp_Ilim->setVelLimits(cmd.get(2).asInt32(), cmd.get(3).asFloat64(), cmd.get(4).asFloat64());
                 } break;
 
                 default:
@@ -2260,24 +2091,6 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
                     if (!rcp_IAmp) { ok = false; break; }
                     ok = rcp_IAmp->getPowerSupplyVoltage(m, &dtmp);
                     response.addFloat64(dtmp);
-                } break;
-
-                case VOCAB_LIMITS: {
-                    double min = 0.0;
-                    double max = 0.0;
-                    if (!rcp_Ilim) { ok = false; break; }
-                    ok = rcp_Ilim->getLimits(cmd.get(2).asInt32(), &min, &max);
-                    response.addFloat64(min);
-                    response.addFloat64(max);
-                } break;
-
-                case VOCAB_VEL_LIMITS: {
-                    double min = 0.0;
-                    double max = 0.0;
-                    if (!rcp_Ilim) { ok = false; break; }
-                    ok = rcp_Ilim->getVelLimits(cmd.get(2).asInt32(), &min, &max);
-                    response.addFloat64(min);
-                    response.addFloat64(max);
                 } break;
 
                 case VOCAB_INFO_NAME: {

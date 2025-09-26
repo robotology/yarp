@@ -244,6 +244,7 @@ constexpr yarp::conf::vocab32_t VOCAB_RANGES            = yarp::os::createVocab3
 constexpr yarp::conf::vocab32_t VOCAB_RANGE             = yarp::os::createVocab32('r', 'n', 'g');
 constexpr yarp::conf::vocab32_t VOCAB_IMP_PARAM         = yarp::os::createVocab32('i', 'p', 'r');
 constexpr yarp::conf::vocab32_t VOCAB_IMP_OFFSET        = yarp::os::createVocab32('i', 'o', 'f');
+constexpr yarp::conf::vocab32_t VOCAB_IMP_LIMITS        = yarp::os::createVocab32('i', 'l', 'i','m');
 constexpr yarp::conf::vocab32_t VOCAB_TORQUES_DIRECTS       = yarp::os::createVocab32('d', 't', 'q', 's'); //This implements the setRefTorques for the whole part
 constexpr yarp::conf::vocab32_t VOCAB_TORQUES_DIRECT        = yarp::os::createVocab32('d', 't', 'q'); //This implements the setRefTorque for a single joint
 constexpr yarp::conf::vocab32_t VOCAB_TORQUES_DIRECT_GROUP  = yarp::os::createVocab32('d', 't', 'q', 'g'); //This implements the setRefTorques with joint list

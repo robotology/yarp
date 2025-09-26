@@ -48,7 +48,7 @@ bool ImplementControlLimits::initialize(int size, const int *amap, const double 
 }
 
 
-bool ImplementControlLimits::setLimits(int axis, double min, double max)
+ReturnValue ImplementControlLimits::setPosLimits(int axis, double min, double max)
 {
     double minEnc=0;
     double maxEnc=0;
@@ -65,17 +65,17 @@ bool ImplementControlLimits::setLimits(int axis, double min, double max)
         maxEnc = temp;
     }
 
-    return iLimits2->setLimitsRaw(k, minEnc, maxEnc);
+    return iLimits2->setPosLimitsRaw(k, minEnc, maxEnc);
 }
 
 
-bool ImplementControlLimits::getLimits(int axis, double *min, double *max)
+ReturnValue ImplementControlLimits::getPosLimits(int axis, double *min, double *max)
 {
     double minEnc=0;
     double maxEnc=0;
 
     int k=castToMapper(helper)->toHw(axis);
-    bool ret=iLimits2->getLimitsRaw(k, &minEnc, &maxEnc);
+    ReturnValue ret=iLimits2->getPosLimitsRaw(k, &minEnc, &maxEnc);
 
     *min=castToMapper(helper)->posE2A(minEnc, k);
     *max=castToMapper(helper)->posE2A(maxEnc, k);
@@ -90,7 +90,7 @@ bool ImplementControlLimits::getLimits(int axis, double *min, double *max)
     return ret;
 }
 
-bool ImplementControlLimits::setVelLimits(int axis, double min, double max)
+ReturnValue ImplementControlLimits::setVelLimits(int axis, double min, double max)
 {
     double minEnc=0;
     double maxEnc=0;
@@ -102,13 +102,13 @@ bool ImplementControlLimits::setVelLimits(int axis, double min, double max)
     return iLimits2->setVelLimitsRaw(k, minEnc, maxEnc);
 }
 
-bool ImplementControlLimits::getVelLimits(int axis, double *min, double *max)
+ReturnValue ImplementControlLimits::getVelLimits(int axis, double *min, double *max)
 {
     double minEnc=0;
     double maxEnc=0;
 
     int k=castToMapper(helper)->toHw(axis);
-    bool ret=iLimits2->getVelLimitsRaw(k, &minEnc, &maxEnc);
+    ReturnValue ret=iLimits2->getVelLimitsRaw(k, &minEnc, &maxEnc);
 
     *min = castToMapper(helper)->velE2A_abs(minEnc, k);
     *max = castToMapper(helper)->velE2A_abs(maxEnc, k);

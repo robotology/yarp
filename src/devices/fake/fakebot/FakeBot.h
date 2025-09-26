@@ -400,23 +400,29 @@ public:
         return true;
     }
 
-    bool getLimits(int axis, double *min, double *max) override
+    yarp::dev::ReturnValue getPosLimits(int axis, double *min, double *max) override
     {
         yCWarning(FAKEBOT, "Get limits");
         *min=0;
         *max=0;
-        return true;
+        return yarp::dev::ReturnValue::ReturnValue_ok;
     }
 
-    bool setLimits(int axis, double min, double max) override
+    yarp::dev::ReturnValue setPosLimits(int axis, double min, double max) override
     {
         yCWarning(FAKEBOT, "Set limits");
-        return true;
+        return yarp::dev::ReturnValue::ReturnValue_ok;
     }
 
-    bool setVelLimits(int axis, double min, double max) override { return false; }
+    yarp::dev::ReturnValue setVelLimits(int axis, double min, double max) override
+    {
+        return yarp::dev::ReturnValue::return_code::return_value_error_not_implemented_by_device;
+    }
 
-    bool getVelLimits(int axis, double *min, double *max) override { return false; }
+    yarp::dev::ReturnValue getVelLimits(int axis, double *min, double *max) override
+    {
+        return yarp::dev::ReturnValue::return_code::return_value_error_not_implemented_by_device;
+    }
 
     void run() override;
 };
