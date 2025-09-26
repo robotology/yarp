@@ -200,7 +200,7 @@ PartItem::PartItem(std::string robotName, int id, std::string partName, Resource
         double max_cur = +2.0;
         for (int k = 0; k<number_of_joints; k++)
         {
-            bool bpl = m_iLim->getLimits(k, &min_pos, &max_pos);
+            bool bpl = m_iLim->getPosLimits(k, &min_pos, &max_pos);
             bool bvl = m_iLim->getVelLimits(k, &min_vel, &max_vel);
             bool bcr = m_iCur->getCurrentRange(k, &min_cur, &max_cur);
             if (bpl == false)

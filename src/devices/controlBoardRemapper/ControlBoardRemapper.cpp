@@ -545,7 +545,7 @@ ReturnValue ControlBoardRemapper::setPids(const PidControlTypeEnum& pidtype, con
     return ret;
 }
 
-bool ControlBoardRemapper::setPidReference(const PidControlTypeEnum& pidtype, int j, double ref)
+ReturnValue ControlBoardRemapper::setPidReference(const PidControlTypeEnum& pidtype, int j, double ref)
 {
     int off=(int)remappedControlBoards.lut[j].axisIndexInSubControlBoard;
     size_t subIndex=remappedControlBoards.lut[j].subControlBoardIndex;
@@ -554,7 +554,7 @@ bool ControlBoardRemapper::setPidReference(const PidControlTypeEnum& pidtype, in
 
     if (!p)
     {
-        return false;
+        return ReturnValue::return_code::return_value_error_generic;
     }
 
     if (p->pid)
@@ -562,12 +562,12 @@ bool ControlBoardRemapper::setPidReference(const PidControlTypeEnum& pidtype, in
         return p->pid->setPidReference(pidtype, off, ref);
     }
 
-    return false;
+    return ReturnValue::return_code::return_value_error_generic;
 }
 
-bool ControlBoardRemapper::setPidReferences(const PidControlTypeEnum& pidtype, const double *refs)
+ReturnValue ControlBoardRemapper::setPidReferences(const PidControlTypeEnum& pidtype, const double *refs)
 {
-    bool ret=true;
+    ReturnValue ret=ReturnValue_ok;
 
     for(int l=0;l<controlledJoints;l++)
     {
@@ -578,23 +578,23 @@ bool ControlBoardRemapper::setPidReferences(const PidControlTypeEnum& pidtype, c
         RemappedSubControlBoard *p=remappedControlBoards.getSubControlBoard(subIndex);
         if (!p)
         {
-            return false;
+            return ReturnValue::return_code::return_value_error_generic;
         }
 
         if (p->pid)
         {
-            bool ok = p->pid->setPidReference(pidtype, off, refs[l]);
+            ReturnValue ok = p->pid->setPidReference(pidtype, off, refs[l]);
             ret=ret&&ok;
         }
         else
         {
-            ret=false;
+            ret=ReturnValue::return_code::return_value_error_generic;
         }
     }
     return ret;
 }
 
-bool ControlBoardRemapper::setPidErrorLimit(const PidControlTypeEnum& pidtype, int j, double limit)
+ReturnValue ControlBoardRemapper::setPidErrorLimit(const PidControlTypeEnum& pidtype, int j, double limit)
 {
     int off=(int)remappedControlBoards.lut[j].axisIndexInSubControlBoard;
     size_t subIndex=remappedControlBoards.lut[j].subControlBoardIndex;
@@ -602,7 +602,7 @@ bool ControlBoardRemapper::setPidErrorLimit(const PidControlTypeEnum& pidtype, i
     RemappedSubControlBoard *p=remappedControlBoards.getSubControlBoard(subIndex);
     if (!p)
     {
-        return false;
+        return ReturnValue::return_code::return_value_error_generic;
     }
 
     if (p->pid)
@@ -610,12 +610,12 @@ bool ControlBoardRemapper::setPidErrorLimit(const PidControlTypeEnum& pidtype, i
         return p->pid->setPidErrorLimit(pidtype, off, limit);
     }
 
-    return false;
+    return ReturnValue::return_code::return_value_error_generic;
 }
 
-bool ControlBoardRemapper::setPidErrorLimits(const PidControlTypeEnum& pidtype, const double *limits)
+ReturnValue ControlBoardRemapper::setPidErrorLimits(const PidControlTypeEnum& pidtype, const double *limits)
 {
-    bool ret=true;
+    ReturnValue ret=ReturnValue_ok;
 
     for(int l=0;l<controlledJoints;l++)
     {
@@ -626,23 +626,23 @@ bool ControlBoardRemapper::setPidErrorLimits(const PidControlTypeEnum& pidtype, 
         RemappedSubControlBoard *p=remappedControlBoards.getSubControlBoard(subIndex);
         if (!p)
         {
-            return false;
+            return ReturnValue::return_code::return_value_error_generic;
         }
 
         if (p->pid)
         {
-            bool ok = p->pid->setPidErrorLimit(pidtype, off, limits[l]);
+            ReturnValue ok = p->pid->setPidErrorLimit(pidtype, off, limits[l]);
             ret=ret&&ok;
         }
         else
         {
-            ret=false;
+            ret=ReturnValue::return_code::return_value_error_generic;
         }
     }
     return ret;
 }
 
-bool ControlBoardRemapper::getPidError(const PidControlTypeEnum& pidtype, int j, double *err)
+ReturnValue ControlBoardRemapper::getPidError(const PidControlTypeEnum& pidtype, int j, double *err)
 {
     int off=(int)remappedControlBoards.lut[j].axisIndexInSubControlBoard;
     size_t subIndex=remappedControlBoards.lut[j].subControlBoardIndex;
@@ -651,7 +651,7 @@ bool ControlBoardRemapper::getPidError(const PidControlTypeEnum& pidtype, int j,
 
     if (!p)
     {
-        return false;
+        return ReturnValue::return_code::return_value_error_generic;
     }
 
     if (p->pid)
@@ -659,12 +659,12 @@ bool ControlBoardRemapper::getPidError(const PidControlTypeEnum& pidtype, int j,
         return p->pid->getPidError(pidtype, off, err);
     }
 
-    return false;
+    return ReturnValue::return_code::return_value_error_generic;
 }
 
-bool ControlBoardRemapper::getPidErrors(const PidControlTypeEnum& pidtype, double *errs)
+ReturnValue ControlBoardRemapper::getPidErrors(const PidControlTypeEnum& pidtype, double *errs)
 {
-    bool ret=true;
+    ReturnValue ret=ReturnValue_ok;
 
     for(int l=0;l<controlledJoints;l++)
     {
@@ -674,23 +674,23 @@ bool ControlBoardRemapper::getPidErrors(const PidControlTypeEnum& pidtype, doubl
         RemappedSubControlBoard *p=remappedControlBoards.getSubControlBoard(subIndex);
         if (!p)
         {
-            return false;
+            return ReturnValue::return_code::return_value_error_generic;
         }
 
         if (p->pid)
         {
-            bool ok = p->pid->getPidError(pidtype, off, errs+l);
+            ReturnValue ok = p->pid->getPidError(pidtype, off, errs+l);
             ret=ret&&ok;
         }
         else
         {
-            ret=false;
+            ret=ReturnValue::return_code::return_value_error_generic;
         }
     }
     return ret;
 }
 
-bool ControlBoardRemapper::getPidOutput(const PidControlTypeEnum& pidtype, int j, double *out)
+ReturnValue ControlBoardRemapper::getPidOutput(const PidControlTypeEnum& pidtype, int j, double *out)
 {
     int off=(int)remappedControlBoards.lut[j].axisIndexInSubControlBoard;
     size_t subIndex=remappedControlBoards.lut[j].subControlBoardIndex;
@@ -698,7 +698,7 @@ bool ControlBoardRemapper::getPidOutput(const PidControlTypeEnum& pidtype, int j
     RemappedSubControlBoard *p=remappedControlBoards.getSubControlBoard(subIndex);
     if (!p)
     {
-        return false;
+        return ReturnValue::return_code::return_value_error_generic;
     }
 
     if (p->pid)
@@ -706,12 +706,12 @@ bool ControlBoardRemapper::getPidOutput(const PidControlTypeEnum& pidtype, int j
         return p->pid->getPidOutput(pidtype, off, out);
     }
 
-    return false;
+    return ReturnValue::return_code::return_value_error_generic;
 }
 
-bool ControlBoardRemapper::getPidOutputs(const PidControlTypeEnum& pidtype, double *outs)
+ReturnValue ControlBoardRemapper::getPidOutputs(const PidControlTypeEnum& pidtype, double *outs)
 {
-    bool ret=true;
+    ReturnValue ret=ReturnValue_ok;
 
     for(int l=0;l<controlledJoints;l++)
     {
@@ -722,7 +722,7 @@ bool ControlBoardRemapper::getPidOutputs(const PidControlTypeEnum& pidtype, doub
         RemappedSubControlBoard *p=remappedControlBoards.getSubControlBoard(subIndex);
         if (!p)
         {
-            return false;
+            return ReturnValue::return_code::return_value_error_generic;
         }
 
         if (p->pid)
@@ -731,7 +731,7 @@ bool ControlBoardRemapper::getPidOutputs(const PidControlTypeEnum& pidtype, doub
         }
         else
         {
-            ret=false;
+            ret=ReturnValue::return_code::return_value_error_generic;
         }
     }
     return ret;
@@ -756,7 +756,7 @@ ReturnValue ControlBoardRemapper::setPidOffset(const PidControlTypeEnum& pidtype
     return ReturnValue::return_code::return_value_error_generic;
 }
 
-yarp::dev::ReturnValue ControlBoardRemapper::getPidOffset(const PidControlTypeEnum& pidtype, int j, double& v)
+ReturnValue ControlBoardRemapper::getPidOffset(const PidControlTypeEnum& pidtype, int j, double& v)
 {
     int off=(int)remappedControlBoards.lut[j].axisIndexInSubControlBoard;
     size_t subIndex=remappedControlBoards.lut[j].subControlBoardIndex;
@@ -794,7 +794,7 @@ ReturnValue ControlBoardRemapper::setPidFeedforward(const PidControlTypeEnum& pi
     return ReturnValue::return_code::return_value_error_generic;
 }
 
-yarp::dev::ReturnValue ControlBoardRemapper::getPidFeedforward(const PidControlTypeEnum& pidtype, int j, double& v)
+ReturnValue ControlBoardRemapper::getPidFeedforward(const PidControlTypeEnum& pidtype, int j, double& v)
 {
     int off=(int)remappedControlBoards.lut[j].axisIndexInSubControlBoard;
     size_t subIndex=remappedControlBoards.lut[j].subControlBoardIndex;
@@ -861,7 +861,7 @@ ReturnValue ControlBoardRemapper::getPids(const PidControlTypeEnum& pidtype, Pid
     return ret;
 }
 
-bool ControlBoardRemapper::getPidReference(const PidControlTypeEnum& pidtype, int j, double *ref)
+ReturnValue ControlBoardRemapper::getPidReference(const PidControlTypeEnum& pidtype, int j, double *ref)
 {
     int off=(int)remappedControlBoards.lut[j].axisIndexInSubControlBoard;
     size_t subIndex=remappedControlBoards.lut[j].subControlBoardIndex;
@@ -869,7 +869,7 @@ bool ControlBoardRemapper::getPidReference(const PidControlTypeEnum& pidtype, in
     RemappedSubControlBoard *p=remappedControlBoards.getSubControlBoard(subIndex);
     if (!p)
     {
-        return false;
+        return ReturnValue::return_code::return_value_error_generic;
     }
 
     if (p->pid)
@@ -877,12 +877,12 @@ bool ControlBoardRemapper::getPidReference(const PidControlTypeEnum& pidtype, in
         return p->pid->getPidReference(pidtype, off, ref);
     }
 
-    return false;
+    return ReturnValue::return_code::return_value_error_generic;
 }
 
-bool ControlBoardRemapper::getPidReferences(const PidControlTypeEnum& pidtype, double *refs)
+ReturnValue ControlBoardRemapper::getPidReferences(const PidControlTypeEnum& pidtype, double *refs)
 {
-    bool ret=true;
+    ReturnValue ret=ReturnValue_ok;
 
     for(int l=0;l<controlledJoints;l++)
     {
@@ -893,23 +893,23 @@ bool ControlBoardRemapper::getPidReferences(const PidControlTypeEnum& pidtype, d
         RemappedSubControlBoard *p=remappedControlBoards.getSubControlBoard(subIndex);
         if (!p)
         {
-            return false;
+            return ReturnValue::return_code::return_value_error_generic;
         }
 
         if (p->pid)
         {
-            bool ok = p->pid->getPidReference(pidtype, off, refs+l);
+            ReturnValue ok = p->pid->getPidReference(pidtype, off, refs+l);
             ret=ret && ok;
         }
         else
         {
-            ret=false;
+            ret=ReturnValue::return_code::return_value_error_generic;
         }
     }
     return ret;
 }
 
-bool ControlBoardRemapper::getPidErrorLimit(const PidControlTypeEnum& pidtype, int j, double *limit)
+ReturnValue ControlBoardRemapper::getPidErrorLimit(const PidControlTypeEnum& pidtype, int j, double *limit)
 {
     int off=(int)remappedControlBoards.lut[j].axisIndexInSubControlBoard;
     size_t subIndex=remappedControlBoards.lut[j].subControlBoardIndex;
@@ -918,19 +918,19 @@ bool ControlBoardRemapper::getPidErrorLimit(const PidControlTypeEnum& pidtype, i
 
     if (!p)
     {
-        return false;
+        return ReturnValue::return_code::return_value_error_generic;
     }
 
     if (p->pid)
     {
         return p->pid->getPidErrorLimit(pidtype, off, limit);
     }
-    return false;
+    return ReturnValue::return_code::return_value_error_generic;
 }
 
-bool ControlBoardRemapper::getPidErrorLimits(const PidControlTypeEnum& pidtype, double *limits)
+ReturnValue ControlBoardRemapper::getPidErrorLimits(const PidControlTypeEnum& pidtype, double *limits)
 {
-    bool ret=true;
+    ReturnValue ret=ReturnValue_ok;
 
     for(int l=0;l<controlledJoints;l++)
     {
@@ -942,17 +942,17 @@ bool ControlBoardRemapper::getPidErrorLimits(const PidControlTypeEnum& pidtype, 
 
         if (!p)
         {
-            return false;
+            return ReturnValue::return_code::return_value_error_generic;
         }
 
         if (p->pid)
         {
-            bool ok = p->pid->getPidErrorLimit(pidtype, off, limits+l);
+            ReturnValue ok = p->pid->getPidErrorLimit(pidtype, off, limits+l);
             ret=ret&&ok;
         }
         else
         {
-            ret=false;
+            ret=ReturnValue::return_code::return_value_error_generic;
         }
     }
     return ret;
@@ -2980,7 +2980,7 @@ bool ControlBoardRemapper::getPowerSupplyVoltage(int m, double* val)
 
 /* IControlLimits */
 
-bool ControlBoardRemapper::setLimits(int j, double min, double max)
+ReturnValue ControlBoardRemapper::setPosLimits(int j, double min, double max)
 {
     int off=(int)remappedControlBoards.lut[j].axisIndexInSubControlBoard;
     size_t subIndex=remappedControlBoards.lut[j].subControlBoardIndex;
@@ -2989,18 +2989,18 @@ bool ControlBoardRemapper::setLimits(int j, double min, double max)
 
     if (!p)
     {
-        return false;
+        return ReturnValue::return_code::return_value_error_generic;
     }
 
     if (p->lim)
     {
-        return p->lim->setLimits(off,min, max);
+        return p->lim->setPosLimits(off,min, max);
     }
 
-    return false;
+    return ReturnValue::return_code::return_value_error_generic;
 }
 
-bool ControlBoardRemapper::getLimits(int j, double *min, double *max)
+ReturnValue ControlBoardRemapper::getPosLimits(int j, double *min, double *max)
 {
     int off=(int)remappedControlBoards.lut[j].axisIndexInSubControlBoard;
     size_t subIndex=remappedControlBoards.lut[j].subControlBoardIndex;
@@ -3009,18 +3009,18 @@ bool ControlBoardRemapper::getLimits(int j, double *min, double *max)
 
     if (!p)
     {
-        return false;
+        return ReturnValue::return_code::return_value_error_generic;
     }
 
     if (p->lim)
     {
-        return p->lim->getLimits(off,min, max);
+        return p->lim->getPosLimits(off,min, max);
     }
 
-    return false;
+    return ReturnValue::return_code::return_value_error_generic;
 }
 
-bool ControlBoardRemapper::setVelLimits(int j, double min, double max)
+ReturnValue ControlBoardRemapper::setVelLimits(int j, double min, double max)
 {
     int off=(int)remappedControlBoards.lut[j].axisIndexInSubControlBoard;
     size_t subIndex=remappedControlBoards.lut[j].subControlBoardIndex;
@@ -3029,18 +3029,18 @@ bool ControlBoardRemapper::setVelLimits(int j, double min, double max)
 
     if (!p)
     {
-        return false;
+        return ReturnValue::return_code::return_value_error_generic;
     }
 
     if (!p->lim)
     {
-        return false;
+        return ReturnValue::return_code::return_value_error_generic;
     }
 
     return p->lim->setVelLimits(off,min, max);
 }
 
-bool ControlBoardRemapper::getVelLimits(int j, double *min, double *max)
+ReturnValue ControlBoardRemapper::getVelLimits(int j, double *min, double *max)
 {
     int off=(int)remappedControlBoards.lut[j].axisIndexInSubControlBoard;
     size_t subIndex=remappedControlBoards.lut[j].subControlBoardIndex;
@@ -3049,12 +3049,12 @@ bool ControlBoardRemapper::getVelLimits(int j, double *min, double *max)
 
     if (!p)
     {
-        return false;
+        return ReturnValue::return_code::return_value_error_generic;
     }
 
     if(!p->lim)
     {
-        return false;
+        return ReturnValue::return_code::return_value_error_generic;
     }
 
     return p->lim->getVelLimits(off,min, max);

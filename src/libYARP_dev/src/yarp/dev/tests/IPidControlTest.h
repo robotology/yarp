@@ -14,6 +14,8 @@
 #include <yarp/dev/IAxisInfo.h>
 #include <catch2/catch_amalgamated.hpp>
 
+#include "Utils.h"
+
 using namespace yarp::dev;
 using namespace yarp::os;
 
@@ -61,87 +63,149 @@ namespace yarp::dev::tests
         REQUIRE(ax > 0);
 
         yarp::dev::PidControlTypeEnum pp = yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_POSITION;
-        bool enabled;
-        b = ipid->disablePid(pp,0);
-        CHECK(b);
-        b = ipid->isPidEnabled(pp, 0, enabled);
-        CHECK(b);
-        CHECK(!enabled);
+        yarp::dev::PidControlTypeEnum vv = yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY;
 
-        b = ipid->enablePid(pp,0);
-        CHECK(b);
-        b = ipid->isPidEnabled(pp, 0, enabled);
-        CHECK(b);
-        CHECK(enabled);
+        // Pid enable/disable
+        {
+            bool enabled;
+            b = ipid->disablePid(pp,0);
+            CHECK(b);
+            b = ipid->isPidEnabled(pp, 0, enabled);
+            CHECK(b);
+            CHECK(!enabled);
 
-        b = ipid->disablePid(pp,0);
-        CHECK(b);
-        b = ipid->isPidEnabled(pp, 0, enabled);
-        CHECK(b);
-        CHECK(!enabled);
+            b = ipid->enablePid(pp,0);
+            CHECK(b);
+            b = ipid->isPidEnabled(pp, 0, enabled);
+            CHECK(b);
+            CHECK(enabled);
 
-        yarp::dev::Pid retpid;
-        b=ipid->getPid(pp,0, &retpid);
-        CHECK(b);
+            b = ipid->disablePid(pp,0);
+            CHECK(b);
+            b = ipid->isPidEnabled(pp, 0, enabled);
+            CHECK(b);
+            CHECK(!enabled);
+        }
 
-        auto retpids = std::vector<yarp::dev::Pid>(ax);
-        b= ipid->getPids(pp, retpids.data());
-        CHECK(b);
+        // Pid set/get
+        {
+            yarp::dev::Pid retpid;
+            yarp::dev::Pid setpid;
 
-        yarp::dev::Pid setpid;
-        b = ipid->setPid(pp, 0, setpid);
-        CHECK(b);
+            b=ipid->getPid(pp,0, &retpid);
+            CHECK(b);
 
-        auto setpids = std::vector<yarp::dev::Pid>(ax);
-        b = ipid->setPids(pp, setpids.data());
-        CHECK(b);
+            b = ipid->setPid(pp, 0, setpid);
+            CHECK(b);
+
+            b=ipid->getPid(pp,0, &retpid);
+            CHECK(b);
+            CHECK(retpid == setpid);
+        }
+
+        // Pids set/get
+        {
+            auto retpids = std::vector<yarp::dev::Pid>(ax);
+            auto setpids = std::vector<yarp::dev::Pid>(ax);
+            setpids[0] = yarp::dev::Pid(0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0);
+            setpids[1] = yarp::dev::Pid(0.1, 1.1, 2.1, 3.1, 4.1, 5.1, 6.1, 7.1, 8.1);
+
+            b= ipid->getPids(pp, retpids.data());
+            CHECK(b);
+
+            b = ipid->setPids(pp, setpids.data());
+            CHECK(b);
+
+            b= ipid->getPids(pp, retpids.data());
+            CHECK(b);
+            CHECK(retpids == setpids);
+        }
 
         b = ipid->resetPid(pp,0);
         CHECK(b);
 
-        b = ipid->setPidOffset(pp,0,42);
-        CHECK(b);
-        //Streaming message sent on separated thread, delay required before get()
-        yarp::os::Time::delay(0.050);
+        //PidOffset
+        {
+            double pidoff=0;
+            b = ipid->getPidOffset(pp,0,pidoff);
+            CHECK(b);
+            CHECK(pidoff == 0);
+            b = ipid->setPidOffset(pp,0,42);
+            CHECK(b);
+            //Streaming message sent on separated thread, delay required before get()
+            yarp::os::Time::delay(0.050);
+            b = ipid->getPidOffset(pp,0,pidoff);
+            CHECK(b);
+            CHECK(pidoff == 42);
+        }
 
-        double pidoff=0;
-        b = ipid->getPidOffset(pp,0,pidoff);
-        CHECK(b);
-        CHECK(pidoff == 42);
+        //PidFeedforward
+        {
+            double pidffd=0;
+            b = ipid->getPidFeedforward(pp,0,pidffd);
+            CHECK(b);
+            CHECK(pidffd == 0);
+            b = ipid->setPidFeedforward(pp,0,43);
+            CHECK(b);
+            //Streaming message sent on separated thread, delay required before get()
+            yarp::os::Time::delay(0.050);
+            b = ipid->getPidFeedforward(pp,0,pidffd);
+            CHECK(b);
+            CHECK(pidffd == 43);
+        }
 
-        b = ipid->setPidFeedforward(pp,0,43);
-        CHECK(b);
-        //Streaming message sent on separated thread, delay required before get()
-        yarp::os::Time::delay(0.050);
+        //PidReference
+        {
+            double getpidref=0;
+            b = ipid->getPidReference(pp, 0, &getpidref);
+            CHECK(b);
+            CHECK(getpidref == 0.0);
+            b = ipid->setPidReference(pp, 0, 10.5);
+            CHECK(b);
+            b = ipid->getPidReference(pp, 0, &getpidref);
+            CHECK(b);
+            CHECK(getpidref ==  10.5);
+        }
 
-        double pidffd=0;
-        b = ipid->getPidFeedforward(pp,0,pidffd);
-        CHECK(b);
-        CHECK(pidffd == 43);
+        //PidReferences
+        {
+            auto setpidrefs = std::vector<double>(ax);
+            yarp::dev::tests::set_vector_crescent(setpidrefs, 11.1);
+            auto pidrefs = std::vector<double>(ax);
+            b = ipid->getPidReferences(pp, pidrefs.data());
+            CHECK(b);
+            b = ipid->setPidReferences(vv, setpidrefs.data());
+            CHECK(b);
+            b = ipid->getPidReferences(vv, pidrefs.data());
+            CHECK(b);
+            CHECK(setpidrefs == pidrefs);
+        }
 
-        double getpidref=0;
-        b = ipid->getPidReference(pp, 0, &getpidref);
-        CHECK(b);
+        //Error limit
+        {
+            double errlim=0;
+            b = ipid->getPidErrorLimit(pp, 0, &errlim);
+            CHECK(b);
+            b = ipid->setPidErrorLimit(pp, 0, 5.0);
+            CHECK(b);
+            b = ipid->getPidErrorLimit(pp, 0, &errlim);
+            CHECK(b);
+            CHECK(errlim == 5.0);
+        }
 
-        auto getpidrefs = std::vector<double>(ax);
-        b = ipid->getPidReferences(pp, getpidrefs.data());
-        CHECK(b);
-
-        double setpidref=0;
-        b = ipid->setPidReference(pp, 0, setpidref);
-        CHECK(b);
-
-        auto setpidrefs = std::vector<double>(ax);
-        b = ipid->setPidReferences(pp, setpidrefs.data());
-        CHECK(b);
-
-        double errlim=0;
-        b = ipid->getPidErrorLimit(pp, 0, &errlim);
-        CHECK(b);
-
-        auto errlims = std::vector<double>(ax);
-        b = ipid->getPidErrorLimits(pp, errlims.data());
-        CHECK(b);
+        //Error limits
+        {
+            auto seterrlims = std::vector<double>(ax);
+            auto errlims = std::vector<double>(ax);
+            yarp::dev::tests::set_vector_crescent(seterrlims,22.2);
+            b = ipid->getPidErrorLimits(vv, errlims.data());
+            CHECK(b);
+            b = ipid->setPidErrorLimits(vv, seterrlims.data());
+            CHECK(b);
+            b = ipid->getPidErrorLimits(vv, errlims.data());
+            CHECK(b);
+            CHECK(seterrlims == errlims);
+        }
     }
 
     inline void exec_iPidControl_test_2(IPidControl* ipid, IAxisInfo* iaxis)

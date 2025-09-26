@@ -81,9 +81,9 @@ public:
 #define ReturnValue_ok ReturnValue(yarp::dev::ReturnValue::return_code::return_value_ok)
 
 #if __cplusplus >= 202002L
-inline ReturnValue YARP_METHOD_NOT_YET_IMPLEMENTED(const std::source_location& location = std::source_location::current())
+inline ReturnValue YARP_METHOD_NOT_YET_IMPLEMENTED(const std::source_location& location = std::source_location::current(), std::string custom_string = "")
 {
-    yError("Method %s not yet implemented\n", location.function_name());
+    yError("Method %s not yet implemented, %s\n", location.function_name(), custom_string);
     return ReturnValue(yarp::dev::ReturnValue::return_code::return_value_error_not_implemented_by_device);
 }
 inline ReturnValue YARP_METHOD_DEPRECATED(const std::source_location& location = std::source_location::current())

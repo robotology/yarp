@@ -277,24 +277,24 @@ public:
     // IPidControl
     ReturnValue setPid(const PidControlTypeEnum& pidtype, int j, const Pid &pid) override;
     ReturnValue setPids(const PidControlTypeEnum& pidtype, const Pid *pids) override;
-    bool setPidReference(const PidControlTypeEnum& pidtype, int j, double ref) override;
-    bool setPidReferences(const PidControlTypeEnum& pidtype, const double *refs) override;
-    bool setPidErrorLimit(const PidControlTypeEnum& pidtype, int j, double limit) override;
-    bool setPidErrorLimits(const PidControlTypeEnum& pidtype, const double *limits) override;
-    bool getPidError(const PidControlTypeEnum& pidtype, int j, double *err) override;
-    bool getPidErrors(const PidControlTypeEnum& pidtype, double *errs) override;
+    ReturnValue setPidReference(const PidControlTypeEnum& pidtype, int j, double ref) override;
+    ReturnValue setPidReferences(const PidControlTypeEnum& pidtype, const double *refs) override;
+    ReturnValue setPidErrorLimit(const PidControlTypeEnum& pidtype, int j, double limit) override;
+    ReturnValue setPidErrorLimits(const PidControlTypeEnum& pidtype, const double *limits) override;
+    ReturnValue getPidError(const PidControlTypeEnum& pidtype, int j, double *err) override;
+    ReturnValue getPidErrors(const PidControlTypeEnum& pidtype, double *errs) override;
     ReturnValue getPid(const PidControlTypeEnum& pidtype, int j, Pid *pid) override;
     ReturnValue getPids(const PidControlTypeEnum& pidtype, Pid *pids) override;
-    bool getPidReference(const PidControlTypeEnum& pidtype, int j, double *ref) override;
-    bool getPidReferences(const PidControlTypeEnum& pidtype, double *refs) override;
-    bool getPidErrorLimit(const PidControlTypeEnum& pidtype, int j, double *limit) override;
-    bool getPidErrorLimits(const PidControlTypeEnum& pidtype, double *limits) override;
+    ReturnValue getPidReference(const PidControlTypeEnum& pidtype, int j, double *ref) override;
+    ReturnValue getPidReferences(const PidControlTypeEnum& pidtype, double *refs) override;
+    ReturnValue getPidErrorLimit(const PidControlTypeEnum& pidtype, int j, double *limit) override;
+    ReturnValue getPidErrorLimits(const PidControlTypeEnum& pidtype, double *limits) override;
     ReturnValue resetPid(const PidControlTypeEnum& pidtype, int j) override;
     ReturnValue disablePid(const PidControlTypeEnum& pidtype, int j) override;
     ReturnValue enablePid(const PidControlTypeEnum& pidtype, int j) override;
     ReturnValue isPidEnabled(const PidControlTypeEnum& pidtype, int j, bool& enabled) override;
-    bool getPidOutput(const PidControlTypeEnum& pidtype, int j, double *out) override;
-    bool getPidOutputs(const PidControlTypeEnum& pidtype, double *outs) override;
+    ReturnValue getPidOutput(const PidControlTypeEnum& pidtype, int j, double *out) override;
+    ReturnValue getPidOutputs(const PidControlTypeEnum& pidtype, double *outs) override;
     ReturnValue setPidOffset(const PidControlTypeEnum& pidtype, int j, double v) override;
     ReturnValue setPidFeedforward(const PidControlTypeEnum& pidtype, int j, double v) override;
     ReturnValue getPidOffset(const PidControlTypeEnum& pidtype, int j, double& v) override;
@@ -403,10 +403,10 @@ public:
     bool getPowerSupplyVoltage(int m, double* val) override;
 
     // IControlLimits
-    bool setLimits(int axis, double min, double max) override;
-    bool getLimits(int axis, double *min, double *max) override;
-    bool setVelLimits(int axis, double min, double max) override;
-    bool getVelLimits(int axis, double *min, double *max) override;
+    yarp::dev::ReturnValue setPosLimits(int axis, double min, double max) override;
+    yarp::dev::ReturnValue getPosLimits(int axis, double *min, double *max) override;
+    yarp::dev::ReturnValue setVelLimits(int axis, double min, double max) override;
+    yarp::dev::ReturnValue getVelLimits(int axis, double *min, double *max) override;
 
     // IAxisInfo
     bool getAxisName(int j, std::string& name) override;

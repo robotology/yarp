@@ -328,6 +328,7 @@ void FakeMotionControl::setInfoMPids(int j)
     _torqueSensorChan= allocAndCheck<int>(nj);
     _maxTorque=allocAndCheck<double>(nj);
     _torques = allocAndCheck<double>(nj);
+    _minJntCmdVelocity = allocAndCheck<double>(nj);
     _maxJntCmdVelocity = allocAndCheck<double>(nj);
     _maxMotorVelocity = allocAndCheck<double>(nj);
     _newtonsToSensor=allocAndCheck<double>(nj);
@@ -454,6 +455,7 @@ bool FakeMotionControl::dealloc()
     checkAndDestroy(_braked);
     checkAndDestroy(_autobraked);
     checkAndDestroy(_maxTorque);
+    checkAndDestroy(_minJntCmdVelocity);
     checkAndDestroy(_maxJntCmdVelocity);
     checkAndDestroy(_maxMotorVelocity);
     checkAndDestroy(_newtonsToSensor);
@@ -597,7 +599,6 @@ FakeMotionControl::FakeMotionControl() :
     _limitsMin              (nullptr),
     _limitsMax              (nullptr),
     _kinematic_mj           (nullptr),
-    _maxJntCmdVelocity      (nullptr),
     _maxMotorVelocity       (nullptr),
     _velocityShifts         (nullptr),
     _velocityTimeout        (nullptr),
@@ -660,6 +661,7 @@ bool FakeMotionControl::threadInit()
         last_velocity_command[i] = -1;
         last_pwm_command[i] = -1;
         _controlModes[i]    = VOCAB_CM_POSITION;
+        _minJntCmdVelocity[i]=-50.0;
         _maxJntCmdVelocity[i]=50.0;
     }
     prev_time = yarp::os::Time::now();
@@ -1009,7 +1011,7 @@ ReturnValue FakeMotionControl::setPidsRaw(const PidControlTypeEnum& pidtype, con
     return ret;
 }
 
-bool FakeMotionControl::setPidReferenceRaw(const PidControlTypeEnum& pidtype, int j, double ref)
+ReturnValue FakeMotionControl::setPidReferenceRaw(const PidControlTypeEnum& pidtype, int j, double ref)
 {
     size_t index = PidControlTypeEnum2Index(pidtype);
     switch (pidtype)
@@ -1051,15 +1053,15 @@ bool FakeMotionControl::setPidReferenceRaw(const PidControlTypeEnum& pidtype, in
         break;
         default:
             yCError(FAKEMOTIONCONTROL) << "Invalid pid type";
-            return false;
+            return ReturnValue::return_code::return_value_error_method_failed;
         break;
     }
-    return true;
+    return ReturnValue_ok;
 }
 
-bool FakeMotionControl::setPidReferencesRaw(const PidControlTypeEnum& pidtype, const double *refs)
+ReturnValue FakeMotionControl::setPidReferencesRaw(const PidControlTypeEnum& pidtype, const double *refs)
 {
-    bool ret = true;
+    ReturnValue ret = ReturnValue_ok;
     for(int j=0, index=0; j< _njoints; j++, index++)
     {
         ret &= setPidReferenceRaw(pidtype, j, refs[index]);
@@ -1067,7 +1069,7 @@ bool FakeMotionControl::setPidReferencesRaw(const PidControlTypeEnum& pidtype, c
     return ret;
 }
 
-bool FakeMotionControl::setPidErrorLimitRaw(const PidControlTypeEnum& pidtype, int j, double limit)
+ReturnValue FakeMotionControl::setPidErrorLimitRaw(const PidControlTypeEnum& pidtype, int j, double limit)
 {
     size_t index = PidControlTypeEnum2Index(pidtype);
     switch (pidtype)
@@ -1109,15 +1111,15 @@ bool FakeMotionControl::setPidErrorLimitRaw(const PidControlTypeEnum& pidtype, i
         break;
         default:
             yCError(FAKEMOTIONCONTROL) << "Invalid pid type";
-            return false;
+            return ReturnValue::return_code::return_value_error_method_failed;
         break;
     }
-    return true;
+    return ReturnValue_ok;
 }
 
-bool FakeMotionControl::setPidErrorLimitsRaw(const PidControlTypeEnum& pidtype, const double *limits)
+ReturnValue FakeMotionControl::setPidErrorLimitsRaw(const PidControlTypeEnum& pidtype, const double *limits)
 {
-    bool ret = true;
+    ReturnValue ret = ReturnValue_ok;
     for(int j=0, index=0; j< _njoints; j++, index++)
     {
         ret &= setPidErrorLimitRaw(pidtype, j, limits[index]);
@@ -1125,7 +1127,7 @@ bool FakeMotionControl::setPidErrorLimitsRaw(const PidControlTypeEnum& pidtype, 
     return ret;
 }
 
-bool FakeMotionControl::getPidErrorRaw(const PidControlTypeEnum& pidtype, int j, double *err)
+ReturnValue FakeMotionControl::getPidErrorRaw(const PidControlTypeEnum& pidtype, int j, double *err)
 {
     switch (pidtype)
     {
@@ -1166,15 +1168,15 @@ bool FakeMotionControl::getPidErrorRaw(const PidControlTypeEnum& pidtype, int j,
         break;
         default:
             yCError(FAKEMOTIONCONTROL) << "Invalid pid type";
-            return false;
+            return ReturnValue::return_code::return_value_error_method_failed;
         break;
     }
-    return true;
+    return ReturnValue_ok;
 }
 
-bool FakeMotionControl::getPidErrorsRaw(const PidControlTypeEnum& pidtype, double *errs)
+ReturnValue FakeMotionControl::getPidErrorsRaw(const PidControlTypeEnum& pidtype, double *errs)
 {
-    bool ret = true;
+    ReturnValue ret = ReturnValue_ok;
     for(int j=0; j< _njoints; j++)
     {
         ret &= getPidErrorRaw(pidtype, j, &errs[j]);
@@ -1242,7 +1244,7 @@ ReturnValue FakeMotionControl::getPidsRaw(const PidControlTypeEnum& pidtype, Pid
     return ret;
 }
 
-bool FakeMotionControl::getPidReferenceRaw(const PidControlTypeEnum& pidtype, int j, double *ref)
+ReturnValue FakeMotionControl::getPidReferenceRaw(const PidControlTypeEnum& pidtype, int j, double *ref)
 {
     size_t index = PidControlTypeEnum2Index(pidtype);
     switch (pidtype)
@@ -1284,15 +1286,15 @@ bool FakeMotionControl::getPidReferenceRaw(const PidControlTypeEnum& pidtype, in
         break;
         default:
             yCError(FAKEMOTIONCONTROL) << "Invalid pid type";
-            return false;
+            return ReturnValue::return_code::return_value_error_method_failed;
         break;
     }
-    return true;
+    return ReturnValue_ok;
 }
 
-bool FakeMotionControl::getPidReferencesRaw(const PidControlTypeEnum& pidtype, double *refs)
+ReturnValue FakeMotionControl::getPidReferencesRaw(const PidControlTypeEnum& pidtype, double *refs)
 {
-    bool ret = true;
+    ReturnValue ret = ReturnValue_ok;
 
     // just one joint at time, wait answer before getting to the next.
     // This is because otherwise too many msg will be placed into can queue
@@ -1303,7 +1305,7 @@ bool FakeMotionControl::getPidReferencesRaw(const PidControlTypeEnum& pidtype, d
     return ret;
 }
 
-bool FakeMotionControl::getPidErrorLimitRaw(const PidControlTypeEnum& pidtype, int j, double *limit)
+ReturnValue FakeMotionControl::getPidErrorLimitRaw(const PidControlTypeEnum& pidtype, int j, double *limit)
 {
     size_t index = PidControlTypeEnum2Index(pidtype);
     switch (pidtype)
@@ -1345,15 +1347,15 @@ bool FakeMotionControl::getPidErrorLimitRaw(const PidControlTypeEnum& pidtype, i
         break;
         default:
             yCError(FAKEMOTIONCONTROL) << "Invalid pid type";
-            return false;
+            return ReturnValue::return_code::return_value_error_method_failed;
         break;
     }
-    return true;
+    return ReturnValue_ok;
 }
 
-bool FakeMotionControl::getPidErrorLimitsRaw(const PidControlTypeEnum& pidtype, double *limits)
+ReturnValue FakeMotionControl::getPidErrorLimitsRaw(const PidControlTypeEnum& pidtype, double *limits)
 {
-    bool ret = true;
+    ReturnValue ret = ReturnValue_ok;
     for(int j=0, index=0; j<_njoints; j++, index++)
     {
         ret &=getPidErrorLimitRaw(pidtype, j, &limits[j]);
@@ -1706,7 +1708,7 @@ ReturnValue FakeMotionControl::isPidEnabledRaw(const PidControlTypeEnum& pidtype
     return ReturnValue_ok;
 }
 
-bool FakeMotionControl::getPidOutputRaw(const PidControlTypeEnum& pidtype, int j, double *out)
+ReturnValue FakeMotionControl::getPidOutputRaw(const PidControlTypeEnum& pidtype, int j, double *out)
 {
     size_t index = PidControlTypeEnum2Index(pidtype);
     switch (pidtype)
@@ -1748,16 +1750,16 @@ bool FakeMotionControl::getPidOutputRaw(const PidControlTypeEnum& pidtype, int j
         break;
         default:
             yCError(FAKEMOTIONCONTROL) << "Invalid pid type";
-            return false;
+            return ReturnValue::return_code::return_value_error_method_failed;
         break;
     }
     yCDebug(FAKEMOTIONCONTROL) << "getPidOutputRaw" << (yarp::conf::vocab32_t)(pidtype) << j << *out;
-    return true;
+    return ReturnValue_ok;
 }
 
-bool FakeMotionControl::getPidOutputsRaw(const PidControlTypeEnum& pidtype, double *outs)
+ReturnValue FakeMotionControl::getPidOutputsRaw(const PidControlTypeEnum& pidtype, double *outs)
 {
-    bool ret = true;
+    ReturnValue ret = ReturnValue_ok;
     for(int j=0; j< _njoints; j++)
     {
         ret &= getPidOutputRaw(pidtype, j, &outs[j]);
@@ -2569,17 +2571,18 @@ bool FakeMotionControl::getPowerSupplyVoltageRaw(int m, double* val)
 
 
 // Limit interface
-bool FakeMotionControl::setLimitsRaw(int j, double min, double max)
+ReturnValue FakeMotionControl::setPosLimitsRaw(int j, double min, double max)
 {
-    bool ret = true;
-    return ret;
+    _limitsMin[j] = min;
+    _limitsMax[j] = max;
+    return ReturnValue_ok;
 }
 
-bool FakeMotionControl::getLimitsRaw(int j, double *min, double *max)
+ReturnValue FakeMotionControl::getPosLimitsRaw(int j, double *min, double *max)
 {
     *min = _limitsMin[j];
     *max = _limitsMax[j];
-    return true;
+    return ReturnValue_ok;
 }
 
 bool FakeMotionControl::getGearboxRatioRaw(int j, double *gearbox)
@@ -2680,16 +2683,18 @@ bool FakeMotionControl::getJointTypeRaw(int axis, yarp::dev::JointTypeEnum& type
 }
 
 // IControlLimits
-bool FakeMotionControl::setVelLimitsRaw(int axis, double min, double max)
+ReturnValue FakeMotionControl::setVelLimitsRaw(int axis, double min, double max)
 {
-    return NOT_YET_IMPLEMENTED("setVelLimitsRaw");
+    _minJntCmdVelocity[axis] = min;
+    _maxJntCmdVelocity[axis] = max;
+    return ReturnValue_ok;
 }
 
-bool FakeMotionControl::getVelLimitsRaw(int axis, double *min, double *max)
+ReturnValue FakeMotionControl::getVelLimitsRaw(int axis, double *min, double *max)
 {
-    *min = 0.0;
+    *min = _minJntCmdVelocity[axis];
     *max = _maxJntCmdVelocity[axis];
-    return true;
+    return ReturnValue_ok;
 }
 
 

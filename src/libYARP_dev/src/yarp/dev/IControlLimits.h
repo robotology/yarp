@@ -9,6 +9,7 @@
 
 #include <yarp/os/Vocab.h>
 #include <yarp/dev/api.h>
+#include <yarp/dev/ReturnValue.h>
 
 /*! \file IControlLimits.h define control board standard interfaces*/
 
@@ -20,7 +21,7 @@ class IControlLimits;
 /**
  * @ingroup dev_iface_motor
  *
- * Interface for control devices, commands to get/set position and veloity limits.
+ * Interface for control devices, commands to get/set position and velocity limits.
  */
 class YARP_dev_API yarp::dev::IControlLimits
 {
@@ -38,7 +39,7 @@ public:
      * @param max the value of the upper limit
      * @return true or false on success or failure
      */
-    virtual bool setLimits(int axis, double min, double max)=0;
+    virtual yarp::dev::ReturnValue setPosLimits(int axis, double min, double max)=0;
 
     /**
      * Get the software limits for a particular axis.
@@ -47,7 +48,7 @@ public:
      * @param pointer to store the value of the upper limit
      * @return true if everything goes fine, false otherwise.
      */
-    virtual bool getLimits(int axis, double *min, double *max)=0;
+    virtual yarp::dev::ReturnValue getPosLimits(int axis, double *min, double *max)=0;
 
     /**
      * Set the software speed limits for a particular axis, the behavior of the
@@ -57,7 +58,7 @@ public:
      * @param max the value of the upper limit
      * @return true or false on success or failure
      */
-    virtual bool setVelLimits(int axis, double min, double max)=0;
+    virtual yarp::dev::ReturnValue setVelLimits(int axis, double min, double max)=0;
 
     /**
      * Get the software speed limits for a particular axis.
@@ -66,7 +67,7 @@ public:
      * @param max pointer to store the value of the upper limit
      * @return true if everything goes fine, false otherwise.
      */
-    virtual bool getVelLimits(int axis, double *min, double *max)=0;
+    virtual yarp::dev::ReturnValue getVelLimits(int axis, double *min, double *max)=0;
 };
 
 /**
@@ -90,7 +91,7 @@ public:
      * @param max the value of the upper limit
      * @return true or false on success or failure
      */
-    virtual bool setLimitsRaw(int axis, double min, double max)=0;
+    virtual yarp::dev::ReturnValue setPosLimitsRaw(int axis, double min, double max)=0;
 
     /**
      * Get the software limits for a particular axis.
@@ -99,7 +100,7 @@ public:
      * @param pointer to store the value of the upper limit
      * @return true if everything goes fine, false otherwise.
      */
-    virtual bool getLimitsRaw(int axis, double *min, double *max)=0;
+    virtual yarp::dev::ReturnValue getPosLimitsRaw(int axis, double *min, double *max)=0;
 
     /**
      * Set the software speed limits for a particular axis, the behavior of the
@@ -109,7 +110,7 @@ public:
      * @param max the value of the upper limit
      * @return true or false on success or failure
      */
-    virtual bool setVelLimitsRaw(int axis, double min, double max)=0;
+    virtual yarp::dev::ReturnValue setVelLimitsRaw(int axis, double min, double max)=0;
 
     /**
      * Get the software speed limits for a particular axis.
@@ -118,11 +119,7 @@ public:
      * @param max pointer to store the value of the upper limit
      * @return true if everything goes fine, false otherwise.
      */
-    virtual bool getVelLimitsRaw(int axis, double *min, double *max)=0;
+    virtual yarp::dev::ReturnValue getVelLimitsRaw(int axis, double *min, double *max)=0;
 };
-
-// interface IControlLimits sets/gets
-constexpr yarp::conf::vocab32_t VOCAB_LIMITS     = yarp::os::createVocab32('l','l','i','m');
-constexpr yarp::conf::vocab32_t VOCAB_VEL_LIMITS = yarp::os::createVocab32('v','l','i','m');
 
 #endif // YARP_DEV_ICONTROLLIMITS_H

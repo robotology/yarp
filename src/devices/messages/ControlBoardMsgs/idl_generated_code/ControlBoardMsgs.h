@@ -16,15 +16,25 @@
 #include <yarp/os/ApplicationNetworkProtocolVersion.h>
 #include <return_getAutoBrakeEnabled.h>
 #include <return_getAxes.h>
-#include <return_getRefVelocityAll.h>
-#include <return_getRefVelocityGroup.h>
-#include <return_getRefVelocityOne.h>
 #include <return_getPid.h>
+#include <return_getPidError.h>
+#include <return_getPidErrorLimit.h>
+#include <return_getPidErrorLimits.h>
+#include <return_getPidErrors.h>
 #include <return_getPidExtraInfo.h>
 #include <return_getPidExtraInfos.h>
 #include <return_getPidFeedforward.h>
 #include <return_getPidOffset.h>
+#include <return_getPidOutput.h>
+#include <return_getPidOutputs.h>
+#include <return_getPidReference.h>
+#include <return_getPidReferences.h>
 #include <return_getPids.h>
+#include <return_getPosLimits.h>
+#include <return_getRefVelocityAll.h>
+#include <return_getRefVelocityGroup.h>
+#include <return_getRefVelocityOne.h>
+#include <return_getVelLimits.h>
 #include <return_isJointBraked.h>
 #include <return_isPidEnabled.h>
 #include <yarp/dev/ControlBoardPid.h>
@@ -44,11 +54,11 @@ public:
     ControlBoardMsgs();
 
     //Service methods
-    virtual return_isJointBraked isJointBrakedRPC(const std::int32_t j) const;
-
     virtual yarp::dev::ReturnValue setManualBrakeActiveRPC(const std::int32_t j, const bool active);
 
     virtual yarp::dev::ReturnValue setAutoBrakeEnabledRPC(const std::int32_t j, const bool enabled);
+
+    virtual return_isJointBraked isJointBrakedRPC(const std::int32_t j) const;
 
     virtual return_getAutoBrakeEnabled getAutoBrakeEnabledRPC(const std::int32_t j) const;
 
@@ -60,17 +70,49 @@ public:
 
     virtual return_getRefVelocityGroup getRefVelocityGroupRPC(const std::vector<std::int32_t>& j) const;
 
+    virtual yarp::dev::ReturnValue setPosLimitsRPC(const std::int16_t j, const double min, const double max);
+
+    virtual yarp::dev::ReturnValue setVelLimitsRPC(const std::int16_t j, const double min, const double max);
+
+    virtual return_getPosLimits getPosLimitsRPC(const std::int16_t j);
+
+    virtual return_getVelLimits getVelLimitsRPC(const std::int16_t j);
+
     virtual yarp::dev::ReturnValue enablePidRPC(const yarp::dev::PidControlTypeEnum pidtype, const std::int16_t j);
 
     virtual yarp::dev::ReturnValue disablePidRPC(const yarp::dev::PidControlTypeEnum pidtype, const std::int16_t j);
 
     virtual yarp::dev::ReturnValue resetPidRPC(const yarp::dev::PidControlTypeEnum pidtype, const std::int16_t j);
 
-    virtual return_isPidEnabled isPidEnabledRPC(const yarp::dev::PidControlTypeEnum pidtype, const std::int16_t j);
-
     virtual yarp::dev::ReturnValue setPidRPC(const yarp::dev::PidControlTypeEnum pidtype, const std::int16_t j, const yarp::dev::Pid& pid);
 
     virtual yarp::dev::ReturnValue setPidsRPC(const yarp::dev::PidControlTypeEnum pidtype, const std::vector<yarp::dev::Pid>& pids);
+
+    virtual yarp::dev::ReturnValue setPidReferenceRPC(const yarp::dev::PidControlTypeEnum pidtype, const std::int16_t j, const double ref);
+
+    virtual yarp::dev::ReturnValue setPidReferencesRPC(const yarp::dev::PidControlTypeEnum pidtype, const std::vector<double>& refs);
+
+    virtual yarp::dev::ReturnValue setPidErrorLimitRPC(const yarp::dev::PidControlTypeEnum pidtype, const std::int16_t j, const double limit);
+
+    virtual yarp::dev::ReturnValue setPidErrorLimitsRPC(const yarp::dev::PidControlTypeEnum pidtype, const std::vector<double>& limits);
+
+    virtual return_isPidEnabled isPidEnabledRPC(const yarp::dev::PidControlTypeEnum pidtype, const std::int16_t j);
+
+    virtual return_getPidError getPidErrorRPC(const yarp::dev::PidControlTypeEnum pidtype, const std::int16_t j);
+
+    virtual return_getPidErrors getPidErrorsRPC(const yarp::dev::PidControlTypeEnum pidtype);
+
+    virtual return_getPidReference getPidReferenceRPC(const yarp::dev::PidControlTypeEnum pidtype, const std::int16_t j);
+
+    virtual return_getPidReferences getPidReferencesRPC(const yarp::dev::PidControlTypeEnum pidtype);
+
+    virtual return_getPidErrorLimit getPidErrorLimitRPC(const yarp::dev::PidControlTypeEnum pidtype, const std::int16_t j);
+
+    virtual return_getPidErrorLimits getPidErrorLimitsRPC(const yarp::dev::PidControlTypeEnum pidtype);
+
+    virtual return_getPidOutput getPidOutputRPC(const yarp::dev::PidControlTypeEnum pidtype, const std::int16_t j);
+
+    virtual return_getPidOutputs getPidOutputsRPC(const yarp::dev::PidControlTypeEnum pidtype);
 
     virtual return_getPid getPidRPC(const yarp::dev::PidControlTypeEnum pidtype, const std::int16_t j);
 
