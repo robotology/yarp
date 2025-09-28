@@ -216,6 +216,7 @@ private:
     double* _kinematic_mj = nullptr;            /** the kinematic coupling matrix from joints space to motor space */
     //double *_currentLimits= nullptr;          /** current limits */
 //     MotorCurrentLimits *_currentLimits= nullptr;
+    double* _minJntCmdVelocity = nullptr;       /** max joint commanded velocity */
     double* _maxJntCmdVelocity = nullptr;       /** max joint commanded velocity */
     double* _maxMotorVelocity = nullptr;        /** max motor velocity */
     int* _velocityShifts = nullptr;             /** velocity shifts */
@@ -313,20 +314,20 @@ public:
     /////////   PID INTERFACE   /////////
     yarp::dev::ReturnValue setPidRaw(const yarp::dev::PidControlTypeEnum& pidtype,int j, const yarp::dev::Pid &pid) override;
     yarp::dev::ReturnValue setPidsRaw(const yarp::dev::PidControlTypeEnum& pidtype,const yarp::dev::Pid *pids) override;
-    bool setPidReferenceRaw(const yarp::dev::PidControlTypeEnum& pidtype,int j, double ref) override;
-    bool setPidReferencesRaw(const yarp::dev::PidControlTypeEnum& pidtype,const double *refs) override;
-    bool setPidErrorLimitRaw(const yarp::dev::PidControlTypeEnum& pidtype,int j, double limit) override;
-    bool setPidErrorLimitsRaw(const yarp::dev::PidControlTypeEnum& pidtype,const double *limits) override;
-    bool getPidErrorRaw(const yarp::dev::PidControlTypeEnum& pidtype,int j, double *err) override;
-    bool getPidErrorsRaw(const yarp::dev::PidControlTypeEnum& pidtype, double *errs) override;
-    bool getPidOutputRaw(const yarp::dev::PidControlTypeEnum& pidtype,int j, double *out) override;
-    bool getPidOutputsRaw(const yarp::dev::PidControlTypeEnum& pidtype,double *outs) override;
+    yarp::dev::ReturnValue setPidReferenceRaw(const yarp::dev::PidControlTypeEnum& pidtype,int j, double ref) override;
+    yarp::dev::ReturnValue setPidReferencesRaw(const yarp::dev::PidControlTypeEnum& pidtype,const double *refs) override;
+    yarp::dev::ReturnValue setPidErrorLimitRaw(const yarp::dev::PidControlTypeEnum& pidtype,int j, double limit) override;
+    yarp::dev::ReturnValue setPidErrorLimitsRaw(const yarp::dev::PidControlTypeEnum& pidtype,const double *limits) override;
+    yarp::dev::ReturnValue getPidErrorRaw(const yarp::dev::PidControlTypeEnum& pidtype,int j, double *err) override;
+    yarp::dev::ReturnValue getPidErrorsRaw(const yarp::dev::PidControlTypeEnum& pidtype, double *errs) override;
+    yarp::dev::ReturnValue getPidOutputRaw(const yarp::dev::PidControlTypeEnum& pidtype,int j, double *out) override;
+    yarp::dev::ReturnValue getPidOutputsRaw(const yarp::dev::PidControlTypeEnum& pidtype,double *outs) override;
     yarp::dev::ReturnValue getPidRaw(const yarp::dev::PidControlTypeEnum& pidtype,int j, yarp::dev::Pid *pid) override;
     yarp::dev::ReturnValue getPidsRaw(const yarp::dev::PidControlTypeEnum& pidtype, yarp::dev::Pid *pids) override;
-    bool getPidReferenceRaw(const yarp::dev::PidControlTypeEnum& pidtype,int j, double *ref) override;
-    bool getPidReferencesRaw(const yarp::dev::PidControlTypeEnum& pidtype,double *refs) override;
-    bool getPidErrorLimitRaw(const yarp::dev::PidControlTypeEnum& pidtype,int j, double *limit) override;
-    bool getPidErrorLimitsRaw(const yarp::dev::PidControlTypeEnum& pidtype,double *limits) override;
+    yarp::dev::ReturnValue getPidReferenceRaw(const yarp::dev::PidControlTypeEnum& pidtype,int j, double *ref) override;
+    yarp::dev::ReturnValue getPidReferencesRaw(const yarp::dev::PidControlTypeEnum& pidtype,double *refs) override;
+    yarp::dev::ReturnValue getPidErrorLimitRaw(const yarp::dev::PidControlTypeEnum& pidtype,int j, double *limit) override;
+    yarp::dev::ReturnValue getPidErrorLimitsRaw(const yarp::dev::PidControlTypeEnum& pidtype,double *limits) override;
     yarp::dev::ReturnValue resetPidRaw(const yarp::dev::PidControlTypeEnum& pidtype,int j) override;
     yarp::dev::ReturnValue disablePidRaw(const yarp::dev::PidControlTypeEnum& pidtype,int j) override;
     yarp::dev::ReturnValue enablePidRaw(const yarp::dev::PidControlTypeEnum& pidtype,int j) override;
@@ -348,10 +349,10 @@ public:
     bool checkMotionDoneRaw(int j, bool *flag) override;
     bool setTrajSpeedRaw(int j, double sp) override;
     bool setTrajSpeedsRaw(const double *spds) override;
-    bool setTrajAccelerationRaw(int j, double acc) override;
-    bool setTrajAccelerationsRaw(const double *accs) override;
     bool getTrajSpeedRaw(int j, double *ref) override;
     bool getTrajSpeedsRaw(double *spds) override;
+    bool setTrajAccelerationRaw(int j, double acc) override;
+    bool setTrajAccelerationsRaw(const double *accs) override;
     bool getTrajAccelerationRaw(int j, double *acc) override;
     bool getTrajAccelerationsRaw(double *accs) override;
     bool stopRaw(int j) override;
@@ -370,10 +371,6 @@ public:
     bool getTargetPositionsRaw(double *refs) override;
     bool getTargetPositionsRaw(const int n_joint, const int *joints, double *refs) override;
 
-    //  Velocity control interface raw
-    bool velocityMoveRaw(int j, double sp) override;
-    bool velocityMoveRaw(const double *sp) override;
-
     // IJointFault
     bool getLastJointFaultRaw(int j, int& fault, std::string& message) override;
 
@@ -381,19 +378,16 @@ public:
     bool setCalibrationParametersRaw(int axis, const yarp::dev::CalibrationParameters& params) override;
     bool calibrateAxisWithParamsRaw(int axis, unsigned int type, double p1, double p2, double p3) override;
     bool calibrationDoneRaw(int j) override;
-
-
     /////////////////////////////// END Position Control INTERFACE
 
-    // ControlMode
+    //////////////////////// BEGINControlMode
     bool getControlModeRaw(int j, int *v) override;
     bool getControlModesRaw(int *v) override;
-
-    // ControlMode 2
     bool getControlModesRaw(const int n_joint, const int *joints, int *modes) override;
     bool setControlModeRaw(const int j, const int mode) override;
     bool setControlModesRaw(const int n_joint, const int *joints, int *modes) override;
     bool setControlModesRaw(int *modes) override;
+    //////////////////////// END ControlMode
 
     //////////////////////// BEGIN EncoderInterface
     bool resetEncoderRaw(int j) override;
@@ -468,11 +462,10 @@ public:
     /////////////// END AMPLIFIER INTERFACE
 
     // Limits
-    bool setLimitsRaw(int axis, double min, double max) override;
-    bool getLimitsRaw(int axis, double *min, double *max) override;
-    // Limits 2
-    bool setVelLimitsRaw(int axis, double min, double max) override;
-    bool getVelLimitsRaw(int axis, double *min, double *max) override;
+    yarp::dev::ReturnValue setPosLimitsRaw(int axis, double min, double max) override;
+    yarp::dev::ReturnValue getPosLimitsRaw(int axis, double *min, double *max) override;
+    yarp::dev::ReturnValue setVelLimitsRaw(int axis, double min, double max) override;
+    yarp::dev::ReturnValue getVelLimitsRaw(int axis, double *min, double *max) override;
 
     // Torque control
     bool getTorqueRaw(int j, double *t) override;
@@ -486,9 +479,10 @@ public:
     bool getRefTorqueRaw(int j, double *t) override;
     bool getMotorTorqueParamsRaw(int j, yarp::dev::MotorTorqueParameters *params) override;
     bool setMotorTorqueParamsRaw(int j, const yarp::dev::MotorTorqueParameters params) override;
-//     int32_t getTrajSpeedInTbl(uint8_t boardNum, int j, eOmeas_position_t pos) override;
 
     // IVelocityControl interface
+    bool velocityMoveRaw(int j, double sp) override;
+    bool velocityMoveRaw(const double *sp) override;
     bool velocityMoveRaw(const int n_joint, const int *joints, const double *spds) override;
     bool getTargetVelocityRaw(const int joint, double *ref) override;
     bool getTargetVelocitiesRaw(double *refs) override;

@@ -3,7 +3,6 @@
 
 add_subdirectory(fakeAnalogSensor)
 add_subdirectory(fakeBattery)
-add_subdirectory(fakebot)
 add_subdirectory(fakeChatBotDevice)
 add_subdirectory(fakeDepthCamera)
 add_subdirectory(fakeDeviceWrapped)

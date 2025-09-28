@@ -587,87 +587,6 @@ bool RemoteControlBoard::set2V1I1D(int v1, int v2, int axis, double val)
     return CHECK_FAIL(ok, response);
 }
 
-bool RemoteControlBoard::setValWithPidType(int voc, PidControlTypeEnum type, int axis, double val)
-{
-    if (!isLive()) {
-        return false;
-    }
-    Bottle cmd, response;
-    cmd.addVocab32(VOCAB_SET);
-    cmd.addVocab32(VOCAB_PID);
-    cmd.addVocab32(voc);
-    cmd.addVocab32((yarp::conf::vocab32_t)(type));
-    cmd.addInt32(axis);
-    cmd.addFloat64(val);
-    bool ok = rpc_p.write(cmd, response);
-    return CHECK_FAIL(ok, response);
-}
-
-bool RemoteControlBoard::setValWithPidType(int voc, PidControlTypeEnum type, const double* val_arr)
-{
-    if (!isLive()) {
-        return false;
-    }
-    Bottle cmd, response;
-    cmd.addVocab32(VOCAB_SET);
-    cmd.addVocab32(VOCAB_PID);
-    cmd.addVocab32(voc);
-    cmd.addVocab32((yarp::conf::vocab32_t)(type));
-    Bottle& l = cmd.addList();
-    for (size_t i = 0; i < nj; i++) {
-        l.addFloat64(val_arr[i]);
-    }
-    bool ok = rpc_p.write(cmd, response);
-    return CHECK_FAIL(ok, response);
-}
-
-bool RemoteControlBoard::getValWithPidType(int voc, PidControlTypeEnum type, int j, double *val)
-{
-    Bottle cmd, response;
-    cmd.addVocab32(VOCAB_GET);
-    cmd.addVocab32(VOCAB_PID);
-    cmd.addVocab32(voc);
-    cmd.addVocab32((yarp::conf::vocab32_t)(type));
-    cmd.addInt32(j);
-    bool ok = rpc_p.write(cmd, response);
-
-    if (CHECK_FAIL(ok, response))
-    {
-        *val = response.get(2).asFloat64();
-        getTimeStamp(response, lastStamp);
-        return true;
-    }
-    return false;
-}
-
-bool RemoteControlBoard::getValWithPidType(int voc, PidControlTypeEnum type, double *val)
-{
-    if (!isLive()) {
-        return false;
-    }
-    Bottle cmd, response;
-    cmd.addVocab32(VOCAB_GET);
-    cmd.addVocab32(VOCAB_PID);
-    cmd.addVocab32(voc);
-    cmd.addVocab32((yarp::conf::vocab32_t)(type));
-    bool ok = rpc_p.write(cmd, response);
-    if (CHECK_FAIL(ok, response))
-    {
-        Bottle* lp = response.get(2).asList();
-        if (lp == nullptr) {
-            return false;
-        }
-        Bottle& l = *lp;
-        yCAssert(REMOTECONTROLBOARD, nj == l.size());
-        for (size_t i = 0; i < nj; i++) {
-            val[i] = l.get(i).asFloat64();
-        }
-        getTimeStamp(response, lastStamp);
-        return true;
-    }
-    return false;
-}
-
 bool RemoteControlBoard::set2V1I(int v1, int v2, int axis)
 {
     Bottle cmd, response;
@@ -1102,34 +1021,74 @@ ReturnValue RemoteControlBoard::setPids(const PidControlTypeEnum& pidtype, const
     return ret;
 }
 
-bool RemoteControlBoard::setPidReference(const PidControlTypeEnum& pidtype, int j, double ref)
+ReturnValue RemoteControlBoard::setPidReference(const PidControlTypeEnum& pidtype, int j, double ref)
 {
-    return setValWithPidType(VOCAB_REF, pidtype, j, ref);
+    // std::lock_guard<std::mutex> lg(m_mutex);
+    auto ret = m_RPC.setPidReferenceRPC(pidtype, j, ref);
+    if (!ret) {
+        yCError(REMOTECONTROLBOARD, "Unable to setPidReference");
+        return ret;
+    }
+    return ret;
 }
 
-bool RemoteControlBoard::setPidReferences(const PidControlTypeEnum& pidtype, const double *refs)
+ReturnValue RemoteControlBoard::setPidReferences(const PidControlTypeEnum& pidtype, const double *refs)
 {
-    return setValWithPidType(VOCAB_REFS, pidtype, refs);
+    // std::lock_guard<std::mutex> lg(m_mutex);
+    std::vector<double> pids_refs(refs, refs + nj);
+    auto ret = m_RPC.setPidReferencesRPC(pidtype, pids_refs);
+    if (!ret) {
+        yCError(REMOTECONTROLBOARD, "Unable to setPidReferences");
+        return ret;
+    }
+    return ret;
 }
 
-bool RemoteControlBoard::setPidErrorLimit(const PidControlTypeEnum& pidtype, int j, double limit)
+ReturnValue RemoteControlBoard::setPidErrorLimit(const PidControlTypeEnum& pidtype, int j, double limit)
 {
-    return setValWithPidType(VOCAB_LIM, pidtype, j, limit);
+    // std::lock_guard<std::mutex> lg(m_mutex);
+    auto ret = m_RPC.setPidErrorLimitRPC(pidtype, j, limit);
+    if (!ret) {
+        yCError(REMOTECONTROLBOARD, "Unable to setPidErrorLimit");
+        return ret;
+    }
+    return ret;
 }
 
-bool RemoteControlBoard::setPidErrorLimits(const PidControlTypeEnum& pidtype, const double *limits)
+ReturnValue RemoteControlBoard::setPidErrorLimits(const PidControlTypeEnum& pidtype, const double *limits)
 {
-    return setValWithPidType(VOCAB_LIMS, pidtype, limits);
+    // std::lock_guard<std::mutex> lg(m_mutex);
+    std::vector<double> pids_lims(limits, limits + nj);
+    auto ret = m_RPC.setPidErrorLimitsRPC(pidtype, pids_lims);
+    if (!ret) {
+        yCError(REMOTECONTROLBOARD, "Unable to setPidErrorLimits");
+        return ret;
+    }
+    return ret;
 }
 
-bool RemoteControlBoard::getPidError(const PidControlTypeEnum& pidtype, int j, double *err)
+ReturnValue RemoteControlBoard::getPidError(const PidControlTypeEnum& pidtype, int j, double *err)
 {
-    return getValWithPidType(VOCAB_ERR, pidtype, j, err);
+    //std::lock_guard<std::mutex> lg(m_mutex);
+    auto ret = m_RPC.getPidErrorRPC(pidtype,j);
+    if (!ret.ret) {
+        yCError(REMOTECONTROLBOARD, "Unable to getPidError");
+        return ret.ret;
+    }
+    *err = ret.err;
+    return  ret.ret;
 }
 
-bool RemoteControlBoard::getPidErrors(const PidControlTypeEnum& pidtype, double *errs)
+ReturnValue RemoteControlBoard::getPidErrors(const PidControlTypeEnum& pidtype, double *errs)
 {
-    return getValWithPidType(VOCAB_ERRS, pidtype, errs);
+    //std::lock_guard<std::mutex> lg(m_mutex);
+    auto ret = m_RPC.getPidErrorsRPC(pidtype);
+    if (!ret.ret) {
+        yCError(REMOTECONTROLBOARD, "Unable to getPidErrors");
+        return ret.ret;
+    }
+    std::copy(ret.errs.begin(), ret.errs.end(), errs);
+    return ret.ret;
 }
 
 ReturnValue RemoteControlBoard::getPid(const PidControlTypeEnum& pidtype, int j, Pid *pid)
@@ -1156,24 +1115,52 @@ ReturnValue RemoteControlBoard::getPids(const PidControlTypeEnum& pidtype, Pid *
     return ret.ret;
 }
 
-bool RemoteControlBoard::getPidReference(const PidControlTypeEnum& pidtype, int j, double *ref)
+ReturnValue RemoteControlBoard::getPidReference(const PidControlTypeEnum& pidtype, int j, double *ref)
 {
-    return getValWithPidType(VOCAB_REF, pidtype, j, ref);
+    //std::lock_guard<std::mutex> lg(m_mutex);
+    auto ret = m_RPC.getPidReferenceRPC(pidtype,j);
+    if (!ret.ret) {
+        yCError(REMOTECONTROLBOARD, "Unable to getPidReference");
+        return ret.ret;
+    }
+    *ref = ret.ref;
+    return  ret.ret;
 }
 
-bool RemoteControlBoard::getPidReferences(const PidControlTypeEnum& pidtype, double *refs)
+ReturnValue RemoteControlBoard::getPidReferences(const PidControlTypeEnum& pidtype, double *refs)
 {
-    return getValWithPidType(VOCAB_REFS, pidtype, refs);
+    //std::lock_guard<std::mutex> lg(m_mutex);
+    auto ret = m_RPC.getPidReferencesRPC(pidtype);
+    if (!ret.ret) {
+        yCError(REMOTECONTROLBOARD, "Unable to getPidReferences");
+        return ret.ret;
+    }
+    std::copy(ret.refs.begin(), ret.refs.end(), refs);
+    return ret.ret;
 }
 
-bool RemoteControlBoard::getPidErrorLimit(const PidControlTypeEnum& pidtype, int j, double *limit)
+ReturnValue RemoteControlBoard::getPidErrorLimit(const PidControlTypeEnum& pidtype, int j, double *limit)
 {
-    return getValWithPidType(VOCAB_LIM, pidtype, j, limit);
+    //std::lock_guard<std::mutex> lg(m_mutex);
+    auto ret = m_RPC.getPidErrorLimitRPC(pidtype,j);
+    if (!ret.ret) {
+        yCError(REMOTECONTROLBOARD, "Unable to getPidErrorLimit");
+        return ret.ret;
+    }
+    *limit = ret.lim;
+    return  ret.ret;
 }
 
-bool RemoteControlBoard::getPidErrorLimits(const PidControlTypeEnum& pidtype, double *limits)
+ReturnValue RemoteControlBoard::getPidErrorLimits(const PidControlTypeEnum& pidtype, double *limits)
 {
-    return getValWithPidType(VOCAB_LIMS, pidtype, limits);
+    //std::lock_guard<std::mutex> lg(m_mutex);
+    auto ret = m_RPC.getPidErrorLimitsRPC(pidtype);
+    if (!ret.ret) {
+        yCError(REMOTECONTROLBOARD, "Unable to getPidErrorLimits");
+        return ret.ret;
+    }
+    std::copy(ret.lims.begin(), ret.lims.end(), limits);
+    return ret.ret;
 }
 
 ReturnValue RemoteControlBoard::resetPid(const PidControlTypeEnum& pidtype, int j)
@@ -1221,14 +1208,28 @@ ReturnValue RemoteControlBoard::isPidEnabled(const PidControlTypeEnum& pidtype, 
     return ret.ret;
 }
 
-bool RemoteControlBoard::getPidOutput(const PidControlTypeEnum& pidtype, int j, double *out)
+ReturnValue RemoteControlBoard::getPidOutput(const PidControlTypeEnum& pidtype, int j, double *out)
 {
-    return getValWithPidType(VOCAB_OUTPUT, pidtype, j, out);
+    //std::lock_guard<std::mutex> lg(m_mutex);
+    auto ret = m_RPC.getPidOutputRPC(pidtype,j);
+    if (!ret.ret) {
+        yCError(REMOTECONTROLBOARD, "Unable to getPidOutput");
+        return ret.ret;
+    }
+    *out = ret.out;
+    return  ret.ret;
 }
 
-bool RemoteControlBoard::getPidOutputs(const PidControlTypeEnum& pidtype, double *outs)
+ReturnValue RemoteControlBoard::getPidOutputs(const PidControlTypeEnum& pidtype, double *outs)
 {
-    return getValWithPidType(VOCAB_OUTPUTS, pidtype, outs);
+    //std::lock_guard<std::mutex> lg(m_mutex);
+    auto ret = m_RPC.getPidOutputsRPC(pidtype);
+    if (!ret.ret) {
+        yCError(REMOTECONTROLBOARD, "Unable to getPidOutputs");
+        return ret.ret;
+    }
+    std::copy(ret.outs.begin(), ret.outs.end(), outs);
+    return ret.ret;
 }
 
 ReturnValue RemoteControlBoard::setPidOffset(const PidControlTypeEnum& pidtype, int j, double v)
@@ -1949,24 +1950,52 @@ bool RemoteControlBoard::getPowerSupplyVoltage(int m, double* val)
 
 // BEGIN IControlLimits
 
-bool RemoteControlBoard::setLimits(int axis, double min, double max)
+ReturnValue RemoteControlBoard::setPosLimits(int axis, double min, double max)
 {
-    return set1V1I2D(VOCAB_LIMITS, axis, min, max);
+    // std::lock_guard<std::mutex> lg(m_mutex);
+    auto ret = m_RPC.setPosLimitsRPC(axis,min,max);
+    if (!ret) {
+        yCError(REMOTECONTROLBOARD, "Unable to setPosLimits");
+        return ret;
+    }
+    return ret;
 }
 
-bool RemoteControlBoard::getLimits(int axis, double *min, double *max)
+ReturnValue RemoteControlBoard::getPosLimits(int axis, double *min, double *max)
 {
-    return get1V1I2D(VOCAB_LIMITS, axis, min, max);
+    // std::lock_guard<std::mutex> lg(m_mutex);
+    auto ret = m_RPC.getPosLimitsRPC(axis);
+    if (!ret.ret) {
+        yCError(REMOTECONTROLBOARD, "Unable to getPosLimits");
+        return ret.ret;
+    }
+    *min = ret.min;
+    *max = ret.max;
+    return ret.ret;
 }
 
-bool RemoteControlBoard::setVelLimits(int axis, double min, double max)
+ReturnValue RemoteControlBoard::setVelLimits(int axis, double min, double max)
 {
-    return set1V1I2D(VOCAB_VEL_LIMITS, axis, min, max);
+    // std::lock_guard<std::mutex> lg(m_mutex);
+    auto ret = m_RPC.setVelLimitsRPC(axis,min,max);
+    if (!ret) {
+        yCError(REMOTECONTROLBOARD, "Unable to setVelLimits");
+        return ret;
+    }
+    return ret;
 }
 
-bool RemoteControlBoard::getVelLimits(int axis, double *min, double *max)
+ReturnValue RemoteControlBoard::getVelLimits(int axis, double *min, double *max)
 {
-    return get1V1I2D(VOCAB_VEL_LIMITS, axis, min, max);
+    // std::lock_guard<std::mutex> lg(m_mutex);
+    auto ret = m_RPC.getVelLimitsRPC(axis);
+    if (!ret.ret) {
+        yCError(REMOTECONTROLBOARD, "Unable to getVelLimits");
+        return ret.ret;
+    }
+    *min = ret.min;
+    *max = ret.max;
+    return ret.ret;
 }
 
 // END IControlLimits
@@ -2288,7 +2317,7 @@ bool RemoteControlBoard::getCurrentImpedanceLimit(int j, double *min_stiff, doub
     Bottle cmd, response;
     cmd.addVocab32(VOCAB_GET);
     cmd.addVocab32(VOCAB_IMPEDANCE);
-    cmd.addVocab32(VOCAB_LIMITS);
+    cmd.addVocab32(VOCAB_IMP_LIMITS);
     cmd.addInt32(j);
     bool ok = rpc_p.write(cmd, response);
     if (CHECK_FAIL(ok, response)) {

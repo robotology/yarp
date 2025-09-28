@@ -78,7 +78,7 @@ void yarp::robottestingframework::jointsPosMotion::Private::readJointsLimits()
     max_lims.resize(n_joints);
     min_lims.resize(n_joints);
     for (size_t i = 0; i < n_joints; i++) {
-        ilim->getLimits((int)jointsList[i], &min_lims[i], &max_lims[i]);
+        ilim->getPosLimits((int)jointsList[i], &min_lims[i], &max_lims[i]);
     }
 
 }

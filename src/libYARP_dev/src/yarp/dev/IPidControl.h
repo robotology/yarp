@@ -61,7 +61,7 @@ public:
     * @param ref new reference point
     * @return true/false upon success/failure
     */
-    virtual bool setPidReferenceRaw(const PidControlTypeEnum& pidtype, int j, double ref) = 0;
+    virtual yarp::dev::ReturnValue setPidReferenceRaw(const PidControlTypeEnum& pidtype, int j, double ref) = 0;
 
     /** Set the controller reference, multiple axes.
     * Warning this method can result in very large torques
@@ -72,7 +72,7 @@ public:
     * @param refs pointer to the vector that contains the new reference points.
     * @return true/false upon success/failure
     */
-    virtual bool setPidReferencesRaw(const PidControlTypeEnum& pidtype, const double *refs) = 0;
+    virtual yarp::dev::ReturnValue setPidReferencesRaw(const PidControlTypeEnum& pidtype, const double *refs) = 0;
 
     /** Set the error limit for the controller on a specific joint
     * @param pidtype the id of the PID that will be affected by the command (e.g. position, velocity etc)
@@ -80,14 +80,14 @@ public:
     * @param limit limit value
     * @return true/false on success/failure
     */
-    virtual bool setPidErrorLimitRaw(const PidControlTypeEnum& pidtype, int j, double limit) = 0;
+    virtual yarp::dev::ReturnValue setPidErrorLimitRaw(const PidControlTypeEnum& pidtype, int j, double limit) = 0;
 
     /** Get the error limit for the controller on all joints.
     * @param pidtype the id of the PID that will be affected by the command (e.g. position, velocity etc)
     * @param limits pointer to the vector with the new limits
     * @return true/false on success/failure
     */
-    virtual bool setPidErrorLimitsRaw(const PidControlTypeEnum& pidtype, const double *limits) = 0;
+    virtual yarp::dev::ReturnValue setPidErrorLimitsRaw(const PidControlTypeEnum& pidtype, const double *limits) = 0;
 
     /** Get the current error for a joint.
     * @param pidtype the id of the PID that will be affected by the command (e.g. position, velocity etc)
@@ -95,13 +95,13 @@ public:
     * @param err pointer to the storage for the return value
     * @return true/false on success failure
     */
-    virtual bool getPidErrorRaw(const PidControlTypeEnum& pidtype, int j, double *err) = 0;
+    virtual yarp::dev::ReturnValue getPidErrorRaw(const PidControlTypeEnum& pidtype, int j, double *err) = 0;
 
     /** Get the error of all joints.
     * @param pidtype the id of the PID that will be affected by the command (e.g. position, velocity etc)
     * @param errs pointer to the vector that will store the errors
     */
-    virtual bool getPidErrorsRaw(const PidControlTypeEnum& pidtype, double *errs) = 0;
+    virtual yarp::dev::ReturnValue getPidErrorsRaw(const PidControlTypeEnum& pidtype, double *errs) = 0;
 
     /** Get the output of the controller (e.g. pwm value)
     * @param pidtype the id of the PID that will be affected by the command (e.g. position, velocity etc)
@@ -109,13 +109,13 @@ public:
     * @param out pointer to storage for return value
     * @return success/failure
     */
-    virtual bool getPidOutputRaw(const PidControlTypeEnum& pidtype, int j, double *out) = 0;
+    virtual yarp::dev::ReturnValue getPidOutputRaw(const PidControlTypeEnum& pidtype, int j, double *out) = 0;
 
     /** Get the output of the controllers (e.g. pwm value)
     * @param pidtype the id of the PID that will be affected by the command (e.g. position, velocity etc)
     * @param outs pointer to the vector that will store the output values
     */
-    virtual bool getPidOutputsRaw(const PidControlTypeEnum& pidtype, double *outs) = 0;
+    virtual yarp::dev::ReturnValue getPidOutputsRaw(const PidControlTypeEnum& pidtype, double *outs) = 0;
 
     /** Get current PID value for a specific joint.
     * @param pidtype the id of the PID that will be affected by the command (e.g. position, velocity etc)
@@ -153,13 +153,13 @@ public:
     * @param ref pointer to storage for return value
     * @return reference value
     */
-    virtual bool getPidReferenceRaw(const PidControlTypeEnum& pidtype, int j, double *ref) = 0;
+    virtual yarp::dev::ReturnValue getPidReferenceRaw(const PidControlTypeEnum& pidtype, int j, double *ref) = 0;
 
     /** Get the current reference of all PID controllers.
     * @param pidtype the id of the PID that will be affected by the command (e.g. position, velocity etc)
     * @param refs vector that will store the output.
     */
-    virtual bool getPidReferencesRaw(const PidControlTypeEnum& pidtype, double *refs) = 0;
+    virtual yarp::dev::ReturnValue getPidReferencesRaw(const PidControlTypeEnum& pidtype, double *refs) = 0;
 
     /** Get the error limit for the controller on a specific joint
     * @param pidtype the id of the PID that will be affected by the command (e.g. position, velocity etc)
@@ -167,14 +167,14 @@ public:
     * @param limit pointer to storage
     * @return success/failure
     */
-    virtual bool getPidErrorLimitRaw(const PidControlTypeEnum& pidtype, int j, double *limit) = 0;
+    virtual yarp::dev::ReturnValue getPidErrorLimitRaw(const PidControlTypeEnum& pidtype, int j, double *limit) = 0;
 
     /** Get the error limit for all controllers
     * @param pidtype the id of the PID that will be affected by the command (e.g. position, velocity etc)
     * @param limits pointer to the array that will store the output
     * @return success or failure
     */
-    virtual bool getPidErrorLimitsRaw(const PidControlTypeEnum& pidtype, double *limits) = 0;
+    virtual yarp::dev::ReturnValue getPidErrorLimitsRaw(const PidControlTypeEnum& pidtype, double *limits) = 0;
 
     /** Reset the controller of a given joint, usually sets the current status
     * of the joint as the reference value for the PID, and resets the integrator.
@@ -279,7 +279,7 @@ public:
     * @param ref new reference point
     * @return true/false upon success/failure
     */
-    virtual bool setPidReference(const PidControlTypeEnum& pidtype, int j, double ref) = 0;
+    virtual yarp::dev::ReturnValue setPidReference(const PidControlTypeEnum& pidtype, int j, double ref) = 0;
 
     /** Set the controller reference, multiple axes.
     * Warning this method can result in very large torques
@@ -290,7 +290,7 @@ public:
     * @param refs pointer to the vector that contains the new reference points.
     * @return true/false upon success/failure
     */
-    virtual bool setPidReferences(const PidControlTypeEnum& pidtype, const double *refs) = 0;
+    virtual yarp::dev::ReturnValue setPidReferences(const PidControlTypeEnum& pidtype, const double *refs) = 0;
 
     /** Set the error limit for the controller on a specific joint
     * @param pidtype the id of the PID that will be affected by the command (e.g. position, velocity etc)
@@ -298,14 +298,14 @@ public:
     * @param limit limit value
     * @return true/false on success/failure
     */
-    virtual bool setPidErrorLimit(const PidControlTypeEnum& pidtype, int j, double limit) = 0;
+    virtual yarp::dev::ReturnValue setPidErrorLimit(const PidControlTypeEnum& pidtype, int j, double limit) = 0;
 
     /** Get the error limit for the controller on all joints.
     * @param pidtype the id of the PID that will be affected by the command (e.g. position, velocity etc)
     * @param limits pointer to the vector with the new limits
     * @return true/false on success/failure
     */
-    virtual bool setPidErrorLimits(const PidControlTypeEnum& pidtype, const double *limits) = 0;
+    virtual yarp::dev::ReturnValue setPidErrorLimits(const PidControlTypeEnum& pidtype, const double *limits) = 0;
 
     /** Get the current error for a joint.
     * @param pidtype the id of the PID that will be affected by the command (e.g. position, velocity etc)
@@ -313,13 +313,13 @@ public:
     * @param err pointer to the storage for the return value
     * @return true/false on success failure
     */
-    virtual bool getPidError(const PidControlTypeEnum& pidtype, int j, double *err) = 0;
+    virtual yarp::dev::ReturnValue getPidError(const PidControlTypeEnum& pidtype, int j, double *err) = 0;
 
     /** Get the error of all joints.
     * @param pidtype the id of the PID that will be affected by the command (e.g. position, velocity etc)
     * @param errs pointer to the vector that will store the errors
     */
-    virtual bool getPidErrors(const PidControlTypeEnum& pidtype, double *errs) = 0;
+    virtual yarp::dev::ReturnValue getPidErrors(const PidControlTypeEnum& pidtype, double *errs) = 0;
 
     /** Get the output of the controller (e.g. pwm value)
     * @param pidtype the id of the PID that will be affected by the command (e.g. position, velocity etc)
@@ -327,13 +327,13 @@ public:
     * @param out pointer to storage for return value
     * @return success/failure
     */
-    virtual bool getPidOutput(const PidControlTypeEnum& pidtype, int j, double *out) = 0;
+    virtual yarp::dev::ReturnValue getPidOutput(const PidControlTypeEnum& pidtype, int j, double *out) = 0;
 
     /** Get the output of the controllers (e.g. pwm value)
     * @param pidtype the id of the PID that will be affected by the command (e.g. position, velocity etc)
     * @param outs pointer to the vector that will store the output values
     */
-    virtual bool getPidOutputs(const PidControlTypeEnum& pidtype, double *outs) = 0;
+    virtual yarp::dev::ReturnValue getPidOutputs(const PidControlTypeEnum& pidtype, double *outs) = 0;
 
     /** Get current PID value for a specific joint.
     * @param pidtype the id of the PID that will be affected by the command (e.g. position, velocity etc)
@@ -371,13 +371,13 @@ public:
     * @param ref pointer to storage for return value
     * @return reference value
     */
-    virtual bool getPidReference(const PidControlTypeEnum& pidtype, int j, double *ref) = 0;
+    virtual yarp::dev::ReturnValue getPidReference(const PidControlTypeEnum& pidtype, int j, double *ref) = 0;
 
     /** Get the current reference of all PID controllers.
     * @param pidtype the id of the PID that will be affected by the command (e.g. position, velocity etc)
     * @param refs vector that will store the output.
     */
-    virtual bool getPidReferences(const PidControlTypeEnum& pidtype, double *refs) = 0;
+    virtual yarp::dev::ReturnValue getPidReferences(const PidControlTypeEnum& pidtype, double *refs) = 0;
 
     /** Get the error limit for the controller on a specific joint
     * @param pidtype the id of the PID that will be affected by the command (e.g. position, velocity etc)
@@ -385,14 +385,14 @@ public:
     * @param limit pointer to storage
     * @return success/failure
     */
-    virtual bool getPidErrorLimit(const PidControlTypeEnum& pidtype, int j, double *limit) = 0;
+    virtual yarp::dev::ReturnValue getPidErrorLimit(const PidControlTypeEnum& pidtype, int j, double *limit) = 0;
 
     /** Get the error limit for all controllers
     * @param pidtype the id of the PID that will be affected by the command (e.g. position, velocity etc)
     * @param limits pointer to the array that will store the output
     * @return success or failure
     */
-    virtual bool getPidErrorLimits(const PidControlTypeEnum& pidtype, double *limits) = 0;
+    virtual yarp::dev::ReturnValue getPidErrorLimits(const PidControlTypeEnum& pidtype, double *limits) = 0;
 
     /** Reset the controller of a given joint, usually sets the current status of the joint
     * as the reference value for the PID, and resets the integrator.

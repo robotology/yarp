@@ -1136,8 +1136,8 @@ MAKE_COMMS  (Sound, yarp::sig::Sound)
 }
 
 %extend yarp::dev::IControlLimits {
-    bool getLimits(int axis, std::vector<double>& min, std::vector<double>& max) {
-        return self->getLimits(axis, &min[0], &max[0]);
+    bool getPosLimits(int axis, std::vector<double>& min, std::vector<double>& max) {
+        return self->getPosLimits(axis, &min[0], &max[0]);
     }
 
     bool getVelLimits(int axis, std::vector<double>& min, std::vector<double>& max) {

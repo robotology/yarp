@@ -33,17 +33,31 @@ namespace yarp::dev::tests
 
         double min=0;
         double max=0;
-        b = ilims->getLimits (0, &min, &max);
+        b = ilims->getPosLimits (0, &min, &max);
         CHECK(b);
+        CHECK(min!=100);
+        CHECK(max!=200);
 
         b = ilims->getVelLimits(0, &min, &max);
         CHECK(b);
+        CHECK(min!=1000);
+        CHECK(max!=2000);
 
-        b = ilims->setLimits(0, min, max);
+        b = ilims->setPosLimits(0, 100, 200);
         CHECK(b);
 
-        b = ilims->setVelLimits(0, min, max);
+        b = ilims->setVelLimits(0, 1000, 2000);
         CHECK(b);
+
+        b = ilims->getPosLimits (0, &min, &max);
+        CHECK(b);
+        CHECK(min==100);
+        CHECK(max==200);
+
+        b = ilims->getVelLimits(0, &min, &max);
+        CHECK(b);
+        CHECK(min==1000);
+        CHECK(max==2000);
     }
 }
 
