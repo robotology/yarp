@@ -8,6 +8,7 @@
 
 #include <yarp/dev/api.h>
 #include <yarp/os/Log.h>
+#include <yarp/os/LogComponent.h>
 #include <yarp/os/Portable.h>
 #include <yarp/os/Vocab.h>
 
@@ -83,24 +84,24 @@ public:
 #if __cplusplus >= 202002L
 inline ReturnValue YARP_METHOD_NOT_YET_IMPLEMENTED(const std::source_location& location = std::source_location::current(), std::string custom_string = "")
 {
-    yError("Method %s not yet implemented, %s\n", location.function_name(), custom_string);
+    yError("Method %s not yet implemented. %s\n", location.function_name(), custom_string.c_str());
     return ReturnValue(yarp::dev::ReturnValue::return_code::return_value_error_not_implemented_by_device);
 }
-inline ReturnValue YARP_METHOD_DEPRECATED(const std::source_location& location = std::source_location::current())
+inline ReturnValue YARP_METHOD_DEPRECATED(const std::source_location& location = std::source_location::current(), std::string custom_string = "")
 {
-    yError("Method %s has been deprecated\n", location.function_name());
+    yError("Method %s has been deprecated. %s\n", location.function_name(), custom_string.c_str());
     return ReturnValue(yarp::dev::ReturnValue::return_code::return_value_error_deprecated);
 }
 #else
-inline ReturnValue yarp_method_not_implemented(const char* location)
+inline ReturnValue yarp_method_not_implemented(std::string location, std::string custom_string = "")
 {
-    yError("Method %s not yet implemented\n", location);
+    yError("Method %s not yet implemented. %s\n", location.c_str(), custom_string.c_str());
     return ReturnValue(yarp::dev::ReturnValue::return_code::return_value_error_not_implemented_by_device);
 }
 #define YARP_METHOD_NOT_YET_IMPLEMENTED() yarp_method_not_implemented(__func__)
-inline ReturnValue yarp_method_deprecated(const char* location)
+inline ReturnValue yarp_method_deprecated(std::string location, std::string custom_string = "")
 {
-    yError("Method %s has been deprecated\n", location);
+    yError("Method %s has been deprecated. %s\n", location.c_str(), custom_string.c_str());
     return ReturnValue(yarp::dev::ReturnValue::return_code::return_value_error_deprecated);
 }
 #define YARP_METHOD_DEPRECATED() yarp_method_deprecated(__func__)
