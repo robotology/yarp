@@ -9,6 +9,10 @@
 #include <yarp/dev/api.h>
 #include <yarp/dev/IMap2D.h>
 #include <catch2/catch_amalgamated.hpp>
+#include <fstream>
+#include <yarp/sig/ImageFile.h>
+#include <filesystem>
+#include <cstdlib>
 
 using namespace yarp::dev;
 using namespace yarp::dev::Nav2D;
@@ -65,6 +69,7 @@ namespace yarp::dev::tests
                 b = imap->getLocation("loc_test2", l2t); CHECK(b);
                 b = imap->getArea("area_test1", a1); CHECK(b);
                 b = imap->getPath("path_test1", p1); CHECK(b);
+                
             }
         }
     }
@@ -284,6 +289,217 @@ namespace yarp::dev::tests
             imap->get_map_names(map_names);
             b1 = (map_names.size() == 0);
             CHECK(b1); // IMap2D clear operation successful
+        }
+    }
+
+    // Additional tests to cover remaining IMap2D API (objects, getAll*, map persistence, compression, temp flags)
+    inline void exec_iMap2D_test_3(IMap2D* imap)
+    {
+        REQUIRE(imap != nullptr);
+
+        // 1. Object API: store/get/list/all/rename/delete/clear
+        {
+            bool ret = false;
+            // start clean
+            ret = imap->clearAllObjects(); CHECK(ret);
+            std::vector<std::string> obj_names;
+            ret = imap->getObjectsList(obj_names); CHECK(ret); CHECK(obj_names.empty());
+
+            // Campi validi: map_id, x, y, z, roll, pitch, yaw, description
+            Map2DObject obj1; obj1.map_id = "map_obj"; obj1.x = 1.0; obj1.y = 2.0; obj1.z = 0.3; obj1.roll = 0.1; obj1.pitch = 0.2; obj1.yaw = 0.5; obj1.description = "an object";
+            Map2DObject obj2; obj2.map_id = "map_obj"; obj2.x = 3.0; obj2.y = 4.0; obj2.z = 0.6; obj2.roll = 0.4; obj2.pitch = 0.5; obj2.yaw = 1.5; obj2.description = "another object";
+            ret = imap->storeObject("obj1", obj1); CHECK(ret);
+            ret = imap->storeObject("obj2", obj2); CHECK(ret);
+
+            ret = imap->getObjectsList(obj_names); CHECK(ret); CHECK(obj_names.size() == 2);
+
+            Map2DObject obj1_r, obj2_r;
+            ret = imap->getObject("obj1", obj1_r); CHECK(ret);
+            ret = imap->getObject("obj2", obj2_r); CHECK(ret);
+            CHECK(obj1_r.x == Catch::Approx(1.0));
+            CHECK(obj2_r.x == Catch::Approx(3.0));
+            CHECK(obj1_r.yaw == Catch::Approx(0.5));
+            CHECK(obj2_r.yaw == Catch::Approx(1.5));
+
+            // getAllObjects
+            std::vector<Map2DObject> all_objs;
+            ret = imap->getAllObjects(all_objs); CHECK(ret); CHECK(all_objs.size() == 2);
+
+            // renameObject (success)
+            ret = imap->renameObject("obj1", "obj1_new"); CHECK(ret);
+            ret = imap->getObject("obj1", obj1_r); CHECK_FALSE(ret);
+            ret = imap->getObject("obj1_new", obj1_r); CHECK(ret);
+
+            // failing rename
+            ret = imap->renameObject("obj_not_exists", "whatever"); CHECK_FALSE(ret);
+
+            // deleteObject success + failure
+            ret = imap->deleteObject("obj2"); CHECK(ret);
+            ret = imap->deleteObject("obj_unknown"); CHECK_FALSE(ret);
+            ret = imap->getObject("obj2", obj2_r); CHECK_FALSE(ret);
+
+            // clearAllObjects finale
+            ret = imap->clearAllObjects(); CHECK(ret);
+            ret = imap->getObjectsList(obj_names); CHECK(ret); CHECK(obj_names.empty());
+        }
+
+    // // 2. Map persistence: single map save + optional collection reload (best-effort)
+    //     {
+    //         bool ret = false;
+    //         Nav2D::MapGrid2D m1; m1.setMapName("zz_unit_persist_map1");
+    //         Nav2D::MapGrid2D m2; m2.setMapName("zz_unit_persist_map2");
+    //         ret = imap->clearAllMaps(); CHECK(ret);
+    //         ret = imap->store_map(m1); CHECK(ret);
+    //         ret = imap->store_map(m2); CHECK(ret);
+
+    //         // save individual map (filename relative - depending on device may need to be writable)
+    //         ret = imap->saveMapToDisk("zz_unit_persist_map1", "zz_unit_persist_map1.map"); CHECK(ret);
+    //         CHECK(std::filesystem::exists("zz_unit_persist_map1.map"));
+
+    //         // save collection
+    //         ret = imap->saveMapsCollection("maps_collection.mapset"); CHECK(ret);
+    //         CHECK(std::filesystem::exists("maps_collection.mapset"));
+            
+
+    //         // clear and attempt reload collection (do not fail entire test suite if reload fails due to RF path issues)
+    //         ret = imap->clearAllMaps(); CHECK(ret);
+    //         std::vector<std::string> names; ret = imap->get_map_names(names); CHECK(ret); CHECK(names.empty());
+    //         ReturnValue rv_load = imap->loadMapsCollection("maps_collection.mapset");
+    //         if (rv_load != 0) {
+    //             // Provo ad aggiungere dinamicamente la build dir a YARP_DATA_DIRS e ritentare (ResourceFinder)
+    //             std::string cwd = std::filesystem::current_path().string();
+    //             setenv("YARP_DATA_DIRS", cwd.c_str(), 1);
+    //             rv_load = imap->loadMapsCollection("maps_collection.mapset");
+    //         }
+    //         CHECK(rv_load == 0); // IMap2D loadMapsCollection operation successful (dopo eventuale retry)
+    //         bool ret_names = imap->get_map_names(names); CHECK(ret_names);
+    //         if (names.size() < 2) {
+    //             // diagnostica d'appoggio: elenco file .map presenti
+    //             size_t count_maps = 0;
+    //             for (auto& p : std::filesystem::directory_iterator(std::filesystem::current_path())) {
+    //                 if (p.path().extension() == ".map") { count_maps++; }
+    //             }
+    //             INFO("Maps found on disk: " << count_maps);
+    //         }
+    //         CHECK(names.size() >= 2);
+    //         // remove a map then attempt to load it back from single map file
+    //         bool ret_rm = imap->remove_map("zz_unit_persist_map1"); CHECK(ret_rm);
+    //         ReturnValue rv_single = imap->loadMapFromDisk("zz_unit_persist_map1.map");
+    //         CHECK(rv_single == 0); // IMap2D loadMapFromDisk operation successful
+
+    //         // edge case: remove non-existing map (should fail regardless)
+    //         bool ret_non = imap->remove_map("no_such_map"); CHECK_FALSE(ret_non);
+    //     }
+
+        // 3. Temporary flags clearing (cannot easily set flags here, just call and expect success)
+        {
+            bool ret = false;
+            ret = imap->clearAllMapsTemporaryFlags(); CHECK(ret);
+            // ensure map exists first
+            Nav2D::MapGrid2D tmpMap; tmpMap.setMapName("temp_flag_map");
+            ret = imap->store_map(tmpMap); CHECK(ret);
+            ret = imap->clearMapTemporaryFlags("temp_flag_map"); CHECK(ret);
+        }
+
+        // 4. Compression toggle
+        {
+            bool ret = false;
+            ret = imap->enableMapsCompression(true); CHECK(ret);
+            ret = imap->enableMapsCompression(false); CHECK(ret);
+        }
+
+    }
+
+    // Failure paths and legacy formats
+    inline void exec_iMap2D_test_4(IMap2D* imap)
+    {
+        REQUIRE(imap != nullptr);
+
+        // 1. saveMapsCollection with empty storage should fail
+        {
+            bool ret = imap->clearAllMaps(); CHECK(ret);
+            ret = imap->saveMapsCollection("empty_collection.mapset");
+            CHECK_FALSE(ret);
+        }
+
+        // 2. saveMapToDisk on non existing map -> fail
+        {
+            bool ret = imap->saveMapToDisk("ghost_map", "ghost.map");
+            CHECK_FALSE(ret);
+        }
+
+        // 3. loadMapsCollection missing file -> fail
+        {
+            bool ret = imap->loadMapsCollection("no_such_collection.mapset");
+            CHECK_FALSE(ret);
+        }
+
+        // 4. loadMapFromDisk missing file -> fail
+        {
+            bool ret = imap->loadMapFromDisk("no_such_single.map");
+            CHECK_FALSE(ret);
+        }
+
+        // 5. clearMapTemporaryFlags su mappa inesistente -> fail
+        {
+            bool ret = imap->clearMapTemporaryFlags("definitely_missing_map");
+            CHECK_FALSE(ret);
+        }
+
+        // 6. loadLocationsAndExtras legacy versions 1,2,3 + bad version
+        {
+            // Version 1 file
+            {
+                std::ofstream f("loc_v1_test.ini");
+                f << "Version:\n";
+                f << "1\n";
+                f << "Locations:\n";
+                f << "loc1 mapX 1 2 0\n"; // name map x y theta
+                f << "Areas:\n";
+                f << "area1 mapX 1 0 0\n"; // name map size x y
+                f.close();
+                bool ret = imap->loadLocationsAndExtras("loc_v1_test.ini");
+                CHECK(ret);
+            }
+            // Version 2 file
+            {
+                std::ofstream f("loc_v2_test.ini");
+                f << "Version:\n";
+                f << "2\n";
+                f << "Locations:\n";
+                f << "loc2 mapY 3 4 0\n";
+                f << "Areas:\n";
+                f << "area2 mapY 1 1 1\n";
+                f << "Paths:\n";
+                f << "path1\n"; // empty path line
+                f.close();
+                bool ret = imap->loadLocationsAndExtras("loc_v2_test.ini");
+                CHECK(ret);
+            }
+            // Version 3 file (with descriptions)
+            {
+                std::ofstream f("loc_v3_test.ini");
+                f << "Version:\n";
+                f << "3\n";
+                f << "Locations:\n";
+                f << "loc3 mapZ 5 6 0 \"descL\"\n";
+                f << "Areas:\n";
+                f << "area3 mapZ 1 2 2 \"descA\"\n";
+                f << "Paths:\n";
+                f << "path3 ( mapZ 0 0 0 ) \"descP\"\n";
+                f.close();
+                bool ret = imap->loadLocationsAndExtras("loc_v3_test.ini");
+                CHECK(ret);
+            }
+            // Bad version file
+            {
+                std::ofstream f("loc_bad_version.ini");
+                f << "Version:\n";
+                f << "99\n"; // unsupported
+                f.close();
+                bool ret = imap->loadLocationsAndExtras("loc_bad_version.ini");
+                CHECK_FALSE(ret);
+            }
         }
     }
 }

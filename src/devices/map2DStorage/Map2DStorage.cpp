@@ -630,16 +630,14 @@ bool Map2DStorage::priv_load_locations_and_areas_v4(std::ifstream& file)
                 yCError(MAP2DSTORAGE) << "Unable to parse contents of Locations section!";
                 return false;
             }
-            Map2DObject   objlocation;
+            Map2DLocation   maplocation;
             std::string name = b.get(0).asString();
-            objlocation.map_id = b.get(1).asString();
-            objlocation.x = b.get(2).asFloat64();
-            objlocation.y = b.get(3).asFloat64();
-            objlocation.roll = b.get(4).asFloat64();
-            objlocation.pitch = b.get(5).asFloat64();
-            objlocation.yaw = b.get(6).asFloat64();
-            objlocation.description = b.get(5).asString();
-            m_objects_storage[name] = objlocation;
+            maplocation.map_id = b.get(1).asString();
+            maplocation.x = b.get(2).asFloat64();
+            maplocation.y = b.get(3).asFloat64();
+            maplocation.theta = b.get(4).asFloat64();
+            maplocation.description = b.get(5).asString();
+            m_locations_storage[name] = maplocation;
         }
     }
 
