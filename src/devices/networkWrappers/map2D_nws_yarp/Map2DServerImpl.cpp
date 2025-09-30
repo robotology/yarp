@@ -315,6 +315,191 @@ ReturnValue IMap2DRPCd::load_locations_and_extras_RPC(const std::string& locatio
     return ret;
 }
 
+// --- Object related APIs ---
+ReturnValue IMap2DRPCd::store_object_RPC(const std::string& object_name, const yarp::dev::Nav2D::Map2DObject& obj)
+{
+    std::lock_guard<std::mutex> lg(m_mutex);
+    auto ret = m_iMap->storeObject(object_name, obj);
+    if (!ret)
+    {
+        yCError(MAP2D_RPC, "Unable to storeObject");
+    }
+    return ret;
+}
+
+return_get_object IMap2DRPCd::get_object_RPC(const std::string& object_name)
+{
+    std::lock_guard<std::mutex> lg(m_mutex);
+    return_get_object ret;
+    if (m_iMap == nullptr)
+    {
+        yCError(MAP2D_RPC, "Invalid interface");
+        return ret;
+    }
+    yarp::dev::Nav2D::Map2DObject obj;
+    ret.retval = m_iMap->getObject(object_name, obj);
+    if (!ret.retval)
+    {
+        yCError(MAP2D_RPC, "Unable to getObject");
+    }
+    else
+    {
+        ret.obj = obj;
+    }
+    return ret;
+}
+
+return_get_objects_list IMap2DRPCd::get_objects_list_RPC()
+{
+    std::lock_guard<std::mutex> lg(m_mutex);
+    return_get_objects_list ret;
+    std::vector<std::string> obj_names;
+    ret.retval = m_iMap->getObjectsList(obj_names);
+    if (!ret.retval)
+    {
+        yCError(MAP2D_RPC, "Unable to getObjectsList");
+    }
+    else
+    {
+        ret.objects = obj_names;
+    }
+    return ret;
+}
+
+return_get_all_objects IMap2DRPCd::get_all_objects_RPC()
+{
+    std::lock_guard<std::mutex> lg(m_mutex);
+    return_get_all_objects ret;
+    std::vector<yarp::dev::Nav2D::Map2DObject> objs;
+    ret.retval = m_iMap->getAllObjects(objs);
+    if (!ret.retval)
+    {
+        yCError(MAP2D_RPC, "Unable to getAllObjects");
+    }
+    else
+    {
+        ret.objects = objs;
+    }
+    return ret;
+}
+
+return_get_all_locations IMap2DRPCd::get_all_locations_RPC()
+{
+    std::lock_guard<std::mutex> lg(m_mutex);
+    return_get_all_locations ret;
+    std::vector<yarp::dev::Nav2D::Map2DLocation> locs;
+    ret.retval = m_iMap->getAllLocations(locs);
+    if (!ret.retval)
+    {
+        yCError(MAP2D_RPC, "Unable to getAllLocations");
+    }
+    else
+    {
+        ret.locations = locs;
+    }
+    return ret;
+}
+
+return_get_all_areas IMap2DRPCd::get_all_areas_RPC()
+{
+    std::lock_guard<std::mutex> lg(m_mutex);
+    return_get_all_areas ret;
+    std::vector<yarp::dev::Nav2D::Map2DArea> areas;
+    ret.retval = m_iMap->getAllAreas(areas);
+    if (!ret.retval)
+    {
+        yCError(MAP2D_RPC, "Unable to getAllAreas");
+    }
+    else
+    {
+        ret.areas = areas;
+    }
+    return ret;
+}
+
+return_get_all_paths IMap2DRPCd::get_all_paths_RPC()
+{
+    std::lock_guard<std::mutex> lg(m_mutex);
+    return_get_all_paths ret;
+    std::vector<yarp::dev::Nav2D::Map2DPath> paths;
+    ret.retval = m_iMap->getAllPaths(paths);
+    if (!ret.retval)
+    {
+        yCError(MAP2D_RPC, "Unable to getAllPaths");
+    }
+    else
+    {
+        ret.paths = paths;
+    }
+    return ret;
+}
+
+ReturnValue IMap2DRPCd::rename_object_RPC(const std::string& original_name, const std::string& new_name)
+{
+    std::lock_guard<std::mutex> lg(m_mutex);
+    auto ret = m_iMap->renameObject(original_name, new_name);
+    if (!ret)
+    {
+        yCError(MAP2D_RPC, "Unable to renameObject");
+    }
+    return ret;
+}
+
+ReturnValue IMap2DRPCd::delete_object_RPC(const std::string& object_name)
+{
+    std::lock_guard<std::mutex> lg(m_mutex);
+    auto ret = m_iMap->deleteObject(object_name);
+    if (!ret)
+    {
+        yCError(MAP2D_RPC, "Unable to deleteObject");
+    }
+    return ret;
+}
+
+ReturnValue IMap2DRPCd::clear_all_objects_RPC()
+{
+    std::lock_guard<std::mutex> lg(m_mutex);
+    auto ret = m_iMap->clearAllObjects();
+    if (!ret)
+    {
+        yCError(MAP2D_RPC, "Unable to clearAllObjects");
+    }
+    return ret;
+}
+
+ReturnValue IMap2DRPCd::save_map_to_disk_RPC(const std::string& map_name, const std::string& file_name)
+{
+    std::lock_guard<std::mutex> lg(m_mutex);
+    auto ret = m_iMap->saveMapToDisk(map_name, file_name);
+    if (!ret)
+    {
+        yCError(MAP2D_RPC, "Unable to saveMapToDisk");
+    }
+    return ret;
+}
+
+ReturnValue IMap2DRPCd::load_map_from_disk_RPC(const std::string& file_name)
+{
+    std::lock_guard<std::mutex> lg(m_mutex);
+    auto ret = m_iMap->loadMapFromDisk(file_name);
+    if (!ret)
+    {
+        yCError(MAP2D_RPC, "Unable to loadMapFromDisk");
+    }
+    return ret;
+}
+
+ReturnValue IMap2DRPCd::enable_maps_compression_RPC(const bool enable_compression)
+{
+    std::lock_guard<std::mutex> lg(m_mutex);
+    auto ret = m_iMap->enableMapsCompression(enable_compression);
+    if (!ret)
+    {
+        yCError(MAP2D_RPC, "Unable to enableMapsCompression");
+    }
+    return ret;
+}
+
 return_get_location IMap2DRPCd::get_location_RPC(const std::string& location_name)
 {
     std::lock_guard <std::mutex> lg(m_mutex);
