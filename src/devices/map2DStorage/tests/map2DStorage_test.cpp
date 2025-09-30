@@ -43,6 +43,8 @@ TEST_CASE("dev::Map2DStorageTest", "[yarp::dev]")
         //execute tests
         yarp::dev::tests::exec_iMap2D_test_1 (imap);
         yarp::dev::tests::exec_iMap2D_test_2 (imap);
+        yarp::dev::tests::exec_iMap2D_test_3 (imap);
+        yarp::dev::tests::exec_iMap2D_test_4 (imap);
 
         //"Close all polydrivers and check"
         {
