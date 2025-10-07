@@ -65,7 +65,7 @@ public:
     yarp::dev::ReturnValue getArea(std::string location_name, yarp::dev::Nav2D::Map2DArea& area) override;
     yarp::dev::ReturnValue getPath(std::string path_name, yarp::dev::Nav2D::Map2DPath& path) override;
 
-    yarp::dev::ReturnValue renameObject(std::string original_name, std::string new_name) override; 
+    yarp::dev::ReturnValue renameObject(std::string original_name, std::string new_name) override;
     yarp::dev::ReturnValue renameLocation(std::string original_name, std::string new_name) override;
     yarp::dev::ReturnValue renameArea(std::string original_name, std::string new_name) override;
     yarp::dev::ReturnValue renamePath(std::string original_name, std::string new_name) override;

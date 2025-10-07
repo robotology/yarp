@@ -25,7 +25,7 @@ bool Map2DObject::is_near_to(const Map2DObject& other_loc, double linear_toleran
     {
         return false;
     }
-    if (sqrt(pow((this->x - other_loc.x), 2) + 
+    if (sqrt(pow((this->x - other_loc.x), 2) +
              pow((this->y - other_loc.y), 2) +
              pow((this->z - other_loc.z), 2)) > linear_tolerance)
     {
@@ -47,7 +47,7 @@ bool Map2DObject::is_near_to(const Map2DLocation& other_loc, double linear_toler
     {
         return false;
     }
-    if (sqrt(pow((this->x - other_loc.x), 2) + 
+    if (sqrt(pow((this->x - other_loc.x), 2) +
              pow((this->y - other_loc.y), 2)) > linear_tolerance)
     {
         return false;

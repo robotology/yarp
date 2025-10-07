@@ -69,7 +69,7 @@ namespace yarp::dev::tests
                 b = imap->getLocation("loc_test2", l2t); CHECK(b);
                 b = imap->getArea("area_test1", a1); CHECK(b);
                 b = imap->getPath("path_test1", p1); CHECK(b);
-                
+
             }
         }
     }
@@ -359,7 +359,7 @@ namespace yarp::dev::tests
     //         // save collection
     //         ret = imap->saveMapsCollection("maps_collection.mapset"); CHECK(ret);
     //         CHECK(std::filesystem::exists("maps_collection.mapset"));
-            
+
 
     //         // clear and attempt reload collection (do not fail entire test suite if reload fails due to RF path issues)
     //         ret = imap->clearAllMaps(); CHECK(ret);
