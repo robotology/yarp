@@ -16,6 +16,7 @@
 #include <mutex>
 #include <cstdlib>
 #include <fstream>
+#include <filesystem>
 
 using namespace yarp::sig;
 using namespace yarp::dev;
@@ -24,6 +25,16 @@ using namespace yarp::os;
 
 namespace {
 YARP_LOG_COMPONENT(MAP2DSTORAGE, "yarp.device.map2DStorage")
+}
+
+static std::string extractPathFromFile(std::string full_filename)
+{
+    std::filesystem::path p(full_filename);
+    std::string path = p.parent_path().string();
+    if (path.empty()) return path;
+
+    path.push_back (std::filesystem::path::preferred_separator);
+    return path;
 }
 
 /**
@@ -45,6 +56,8 @@ ReturnValue Map2DStorage::saveMapsCollection(std::string mapsfile)
         return ReturnValue::return_code::return_value_error_method_failed;
     }
 
+    std::string mapsCollectionDir = extractPathFromFile(mapsfile);
+
     //open the map collection file
     std::ofstream file;
     file.open(mapsfile.c_str());
@@ -65,7 +78,7 @@ ReturnValue Map2DStorage::saveMapsCollection(std::string mapsfile)
         file << '\n';
 
         //save each individual map to a file
-        ret &= it.second.saveToFile(map_filename);
+        ret &= it.second.saveToFile(mapsCollectionDir+map_filename);
     }
     file.close();
 
@@ -158,6 +171,7 @@ bool Map2DStorage::open(yarp::os::Searchable &config)
     else
     {
         m_rf_mapCollection.setDefaultContext(m_mapCollectionContext.c_str());
+
         std::string collection_file_with_path = m_rf_mapCollection.findFile(m_mapCollectionFile);
         std::string locations_file_with_path = m_rf_mapCollection.findFile(m_mapLocationsFile);
 
@@ -663,7 +677,7 @@ bool Map2DStorage::priv_load_locations_and_areas_v4(std::ifstream& file)
             Bottle b;
             b.fromString(buffer);
             size_t bot_size = b.size();
-            if (bot_size != 7)
+            if (bot_size != 9)
             {
                 yCError(MAP2DSTORAGE) << "Unable to parse contents of Objects section!";
                 return false;
@@ -673,10 +687,11 @@ bool Map2DStorage::priv_load_locations_and_areas_v4(std::ifstream& file)
             objlocation.map_id = b.get(1).asString();
             objlocation.x = b.get(2).asFloat64();
             objlocation.y = b.get(3).asFloat64();
-            objlocation.roll = b.get(4).asFloat64();
-            objlocation.pitch = b.get(5).asFloat64();
-            objlocation.yaw = b.get(6).asFloat64();
-            objlocation.description = b.get(7).asString();
+            objlocation.z = b.get(4).asFloat64();
+            objlocation.roll = b.get(5).asFloat64();
+            objlocation.pitch = b.get(6).asFloat64();
+            objlocation.yaw = b.get(7).asFloat64();
+            objlocation.description = b.get(8).asString();
             m_objects_storage[name] = objlocation;
         }
     }

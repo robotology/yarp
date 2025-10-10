@@ -28,12 +28,15 @@ struct YARP_dev_API Map2DObject : public Map2DObjectData
      * @param inY: object coordinates w.r.t. map reference frame (expressed in meters)
      * @param inT: object orientation w.r.t. map reference frame (expressed in degrees)
      */
-    Map2DObject(const std::string& map_name, const double& inX, const double& inY, const double& inZ, const std::string& desc = "")
+    Map2DObject(const std::string& map_name, const double& inX, const double& inY, const double& inZ, const double& inr=0,const double& inp=0,const double& iny=0, const std::string& desc = "")
     {
         map_id = map_name;
         x = inX;
         y = inY;
         z = inZ;
+        roll = inr;
+        pitch = inp;
+        yaw = iny;
         description = desc;
     }
 
