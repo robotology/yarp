@@ -196,6 +196,38 @@ TEST_CASE("dev::MapGrid2DTest", "[yarp::dev]")
         }
     }
 
+    SECTION("Test data type Map2DObject")
+    {
+        Map2DObject   obj1("maptest", 1,2,3, 0, 0, 0);
+        Map2DObject   obj2("maptest", 10,20,30, 0, 0, 0);
+        Map2DObject   obj3("maptest_err", 1,2,3, 0, 0, 0);
+        Map2DLocation loc1("maptest", 1,2,3);
+        Map2DLocation loc2("maptest", 10,20,30);
+        Map2DLocation loc3("maptest_err", 1,2,3);
+        bool b;
+        b = obj1.is_near_to(loc1, 0.001);
+        CHECK(b);
+        b = obj1.is_near_to(loc2, 0.001);
+        CHECK_FALSE(b);
+        b = obj1.is_near_to(loc3, 0.001);
+        CHECK_FALSE(b);
+        b = obj1.is_near_to(obj1, 0.001);
+        CHECK(b);
+        b = obj1.is_near_to(obj2, 0.001);
+        CHECK_FALSE(b);
+        b = obj1.is_near_to(obj3, 0.001);
+        CHECK_FALSE(b);
+
+        std::string s = obj1.toString();
+        CHECK(!s.empty());
+
+        CHECK(obj1==obj1);
+        CHECK(obj1!=obj2);
+
+        Map2DObject obj4("maptest", yarp::dev::Nav2D::XYWorld(1,2), "test");
+
+    }
+
     SECTION("Test data type Map2DArea, Map2DLocation")
     {
         bool b;
@@ -295,6 +327,11 @@ TEST_CASE("dev::MapGrid2DTest", "[yarp::dev]")
         b = area1.checkLocationInsideArea(Map2DLocation("maptest", 1, 1, 0)); CHECK(b == false); //on the vertex
         b = area1.checkLocationInsideArea(Map2DLocation("maptest", 0.999, 0.999, 0)); CHECK(b); //on the vertex
         b = area1.checkLocationInsideArea(Map2DLocation("maptest", 2, 2, 0)); CHECK(b == false); //outside
+
+        b = area1.checkObjectInsideArea(Map2DObject("maptest", 0, 0, 0)); CHECK(b); //inside
+        b = area1.checkObjectInsideArea(Map2DObject("maptest", 1, 1, 0)); CHECK(b == false); //on the vertex
+        b = area1.checkObjectInsideArea(Map2DObject("maptest", 0.999, 0.999, 0)); CHECK(b); //on the vertex
+        b = area1.checkObjectInsideArea(Map2DObject("maptest", 2, 2, 0)); CHECK(b == false); //outside
 
         b = area2.checkLocationInsideArea(Map2DLocation("maptest", -0.5, -0.5, 0)); CHECK(b); //inside
         b = area2.checkLocationInsideArea(Map2DLocation("maptest", 0, 0, 0)); CHECK(b == false); //on the edge
