@@ -16,6 +16,7 @@
 #include <yarp/os/ApplicationNetworkProtocolVersion.h>
 #include <return_get_all_areas.h>
 #include <return_get_all_locations.h>
+#include <return_get_all_objects.h>
 #include <return_get_all_paths.h>
 #include <return_get_area.h>
 #include <return_get_areas_list.h>
@@ -23,10 +24,13 @@
 #include <return_get_locations_list.h>
 #include <return_get_map.h>
 #include <return_get_map_names.h>
+#include <return_get_object.h>
+#include <return_get_objects_list.h>
 #include <return_get_path.h>
 #include <return_get_paths_list.h>
 #include <yarp/dev/Map2DArea.h>
 #include <yarp/dev/Map2DLocation.h>
+#include <yarp/dev/Map2DObject.h>
 #include <yarp/dev/Map2DPath.h>
 #include <yarp/dev/MapGrid2D.h>
 #include <yarp/dev/ReturnValue.h>
@@ -54,11 +58,15 @@ public:
 
     virtual yarp::dev::ReturnValue remove_map_RPC(const std::string& map_name);
 
+    virtual yarp::dev::ReturnValue store_object_RPC(const std::string& object_name, const yarp::dev::Nav2D::Map2DObject& loc);
+
     virtual yarp::dev::ReturnValue store_location_RPC(const std::string& location_name, const yarp::dev::Nav2D::Map2DLocation& loc);
 
     virtual yarp::dev::ReturnValue store_area_RPC(const std::string& area_name, const yarp::dev::Nav2D::Map2DArea& area);
 
     virtual yarp::dev::ReturnValue store_path_RPC(const std::string& path_name, const yarp::dev::Nav2D::Map2DPath& path);
+
+    virtual return_get_object get_object_RPC(const std::string& object_name);
 
     virtual return_get_location get_location_RPC(const std::string& location_name);
 
@@ -66,11 +74,15 @@ public:
 
     virtual return_get_path get_path_RPC(const std::string& path_name);
 
+    virtual return_get_objects_list get_objects_list_RPC();
+
     virtual return_get_locations_list get_locations_list_RPC();
 
     virtual return_get_areas_list get_areas_list_RPC();
 
     virtual return_get_paths_list get_paths_list_RPC();
+
+    virtual return_get_all_objects get_all_objects_RPC();
 
     virtual return_get_all_locations get_all_locations_RPC();
 
@@ -80,15 +92,21 @@ public:
 
     virtual yarp::dev::ReturnValue rename_location_RPC(const std::string& original_name, const std::string& new_name);
 
+    virtual yarp::dev::ReturnValue delete_object_RPC(const std::string& object_name);
+
     virtual yarp::dev::ReturnValue delete_location_RPC(const std::string& location_name);
 
     virtual yarp::dev::ReturnValue delete_path_RPC(const std::string& path_name);
+
+    virtual yarp::dev::ReturnValue rename_object_RPC(const std::string& original_name, const std::string& new_name);
 
     virtual yarp::dev::ReturnValue rename_area_RPC(const std::string& original_name, const std::string& new_name);
 
     virtual yarp::dev::ReturnValue rename_path_RPC(const std::string& original_name, const std::string& new_name);
 
     virtual yarp::dev::ReturnValue delete_area_RPC(const std::string& area_name);
+
+    virtual yarp::dev::ReturnValue clear_all_objects_RPC();
 
     virtual yarp::dev::ReturnValue clear_all_locations_RPC();
 

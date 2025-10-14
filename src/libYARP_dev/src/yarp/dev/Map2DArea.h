@@ -11,6 +11,7 @@
 #include <yarp/dev/api.h>
 #include <yarp/dev/Map2DLocation.h>
 #include <yarp/dev/Map2DAreaData.h>
+#include <yarp/dev/Map2DObject.h>
 #include <sstream>
 #include <string>
 #include <vector>
@@ -71,6 +72,13 @@ public:
      * @return true if Map2DLocation is inside the Map2DArea
      */
     bool checkLocationInsideArea(yarp::dev::Nav2D::Map2DLocation loc);
+
+    /**
+     * Check if a Map2DObject is inside a Map2DArea
+     * @return obj the Map2DObject
+     * @return true if Map2DObject is inside the Map2DArea
+     */
+    bool checkObjectInsideArea(yarp::dev::Nav2D::Map2DObject obj);
 
     /**
      * retrieves two Map2DLocations representing the bounding box of the Map2DArea

@@ -10,6 +10,10 @@
 #include <yarp/dev/IMap2D.h>
 #include <yarp/os/Stamp.h>
 #include <yarp/dev/ReturnValue.h>
+// Extra return structs for newly added object and bulk APIs (may not be included yet by generated header)
+#include <return_get_object.h>
+#include <return_get_objects_list.h>
+#include <return_get_all_objects.h>
 
 class IMap2DRPCd : public IMap2DMsgs
 {
@@ -49,6 +53,20 @@ class IMap2DRPCd : public IMap2DMsgs
     yarp::dev::ReturnValue load_maps_collection_RPC(const std::string& maps_collection_file) override;
     yarp::dev::ReturnValue save_locations_and_extras_RPC(const std::string& locations_collection_file) override;
     yarp::dev::ReturnValue load_locations_and_extras_RPC(const std::string& locations_collection_file) override;
+    // Newly introduced object-related RPCs and extended APIs
+    yarp::dev::ReturnValue store_object_RPC(const std::string& object_name, const yarp::dev::Nav2D::Map2DObject& obj) override;
+    return_get_object         get_object_RPC(const std::string& object_name) override;
+    return_get_objects_list   get_objects_list_RPC() override;
+    return_get_all_objects    get_all_objects_RPC() override;
+    return_get_all_locations  get_all_locations_RPC() override;
+    return_get_all_areas      get_all_areas_RPC() override;
+    return_get_all_paths      get_all_paths_RPC() override;
+    yarp::dev::ReturnValue rename_object_RPC(const std::string& original_name, const std::string& new_name) override;
+    yarp::dev::ReturnValue delete_object_RPC(const std::string& object_name) override;
+    yarp::dev::ReturnValue clear_all_objects_RPC() override;
+    yarp::dev::ReturnValue save_map_to_disk_RPC(const std::string& map_name, const std::string& file_name) override;
+    yarp::dev::ReturnValue load_map_from_disk_RPC(const std::string& file_name) override;
+    yarp::dev::ReturnValue enable_maps_compression_RPC(const bool enable_compression) override;
 
     std::mutex* getMutex() {return &m_mutex;}
 };
