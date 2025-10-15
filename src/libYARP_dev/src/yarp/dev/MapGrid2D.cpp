@@ -14,6 +14,7 @@
 #include <yarp/sig/ImageFile.h>
 #include <algorithm>
 #include <fstream>
+#include <filesystem>
 #include <cmath>
 
 #if defined (YARP_HAS_ZLIB)
@@ -38,16 +39,12 @@ using namespace yarp::math;
 //helper functions
 static std::string extractPathFromFile(std::string full_filename)
 {
-    size_t found;
-    found = full_filename.find_last_of('/');
-    if (found != std::string::npos) {
-        return full_filename.substr(0, found) + "/";
-    }
-    found = full_filename.find_last_of('\\');
-    if (found != std::string::npos) {
-        return full_filename.substr(0, found) + "\\";
-    }
-    return full_filename;
+    std::filesystem::path p(full_filename);
+    std::string path = p.parent_path().string();
+    if (path.empty()) return path;
+
+    path.push_back (std::filesystem::path::preferred_separator);
+    return path;
 }
 
 static std::string extractExtensionFromFile(std::string full_filename)
@@ -822,9 +819,9 @@ bool  MapGrid2D::saveToFile(std::string map_file_with_path) const
     {
         return false;
     }
-    map_file << "MapName: "<< this->getMapName() << '\n';
-    map_file << "YarpMapData: "<< yarp_filename << '\n';
-    map_file << "RosMapData: "<< yaml_filename << '\n';
+    map_file << "MapName "<< this->getMapName() << '\n';
+    map_file << "YarpMapData "<< yarp_filename << '\n';
+    map_file << "RosMapData "<< yaml_filename << '\n';
     map_file.close();
 
     std::ofstream yaml_file;

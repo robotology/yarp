@@ -43,6 +43,8 @@ TEST_CASE("dev::Map2DStorageTest", "[yarp::dev]")
         //execute tests
         yarp::dev::tests::exec_iMap2D_test_1 (imap);
         yarp::dev::tests::exec_iMap2D_test_2 (imap);
+        yarp::dev::tests::exec_iMap2D_test_3 (imap);
+        yarp::dev::tests::exec_iMap2D_test_4 (imap);
 
         //"Close all polydrivers and check"
         {
@@ -56,6 +58,8 @@ TEST_CASE("dev::Map2DStorageTest", "[yarp::dev]")
         IMap2D* imap = nullptr;
 
         ////////"Checking opening polydriver"
+        // This will fail because map2DStorage cannot find a
+        //`maps_collection.ini` file in `erraticContext`.
         {
             Property pmapstorage_cfg;
             pmapstorage_cfg.put("device", "map2DStorage");
@@ -64,31 +68,40 @@ TEST_CASE("dev::Map2DStorageTest", "[yarp::dev]")
         }
     }
 
-    /*
     SECTION("Checking map2DStorage device loading files (2/2)")
     {
         PolyDriver ddmapstorage;
         IMap2D* imap = nullptr;
 
-        ////////"Checking opening polydriver"
+        //open a poly, creates a collection from scratch, close the poly
+        {
+            Property pmapstorage_cfg;
+            pmapstorage_cfg.put("device", "map2DStorage");
+            REQUIRE(ddmapstorage.open(pmapstorage_cfg));
+            REQUIRE(ddmapstorage.view(imap));
+            yarp::dev::tests::create_test_collection(imap);
+            CHECK(ddmapstorage.close());
+        }
+
+        //open the poly loading a previously saved collection
         {
             Property pmapstorage_cfg;
             pmapstorage_cfg.put("device", "map2DStorage");
             pmapstorage_cfg.put("mapCollectionContext", "exampleContext");
             REQUIRE(ddmapstorage.open(pmapstorage_cfg));
             REQUIRE(ddmapstorage.view(imap));
-        }
 
-        //execute tests
-        yarp::dev::tests::exec_iMap2D_test_1(imap);
-        yarp::dev::tests::exec_iMap2D_test_2(imap);
+            //execute tests
+            yarp::dev::tests::exec_iMap2D_test_1(imap);
+            yarp::dev::tests::exec_iMap2D_test_2(imap);
 
-        //"Close all polydrivers and check"
-        {
+            //"Close all polydrivers and check"
             CHECK(ddmapstorage.close());
         }
+
+        //remove the collection
+        yarp::dev::tests::remove_test_collection();
     }
-    */
 
     Network::setLocalMode(false);
 }

@@ -98,6 +98,20 @@ bool Map2DArea::checkLocationInsideArea(Map2DLocation loc)
     return false;
 }
 
+bool Map2DArea::checkObjectInsideArea(Map2DObject obj)
+{
+    if (obj.map_id != this->map_id) {
+        return false;
+    }
+    if (points.size() < 3) {
+        return false;
+    }
+    if (pnpoly(points, obj.x, obj.y) > 0) {
+        return true;
+    }
+    return false;
+}
+
 bool Map2DArea::operator!=(const Map2DArea& r) const
 {
     if (

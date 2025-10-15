@@ -16,6 +16,7 @@
 #include <mutex>
 #include <cstdlib>
 #include <fstream>
+#include <filesystem>
 
 using namespace yarp::sig;
 using namespace yarp::dev;
@@ -24,6 +25,16 @@ using namespace yarp::os;
 
 namespace {
 YARP_LOG_COMPONENT(MAP2DSTORAGE, "yarp.device.map2DStorage")
+}
+
+static std::string extractPathFromFile(std::string full_filename)
+{
+    std::filesystem::path p(full_filename);
+    std::string path = p.parent_path().string();
+    if (path.empty()) return path;
+
+    path.push_back (std::filesystem::path::preferred_separator);
+    return path;
 }
 
 /**
@@ -45,6 +56,8 @@ ReturnValue Map2DStorage::saveMapsCollection(std::string mapsfile)
         return ReturnValue::return_code::return_value_error_method_failed;
     }
 
+    std::string mapsCollectionDir = extractPathFromFile(mapsfile);
+
     //open the map collection file
     std::ofstream file;
     file.open(mapsfile.c_str());
@@ -65,7 +78,7 @@ ReturnValue Map2DStorage::saveMapsCollection(std::string mapsfile)
         file << '\n';
 
         //save each individual map to a file
-        ret &= it.second.saveToFile(map_filename);
+        ret &= it.second.saveToFile(mapsCollectionDir+map_filename);
     }
     file.close();
 
@@ -158,6 +171,7 @@ bool Map2DStorage::open(yarp::os::Searchable &config)
     else
     {
         m_rf_mapCollection.setDefaultContext(m_mapCollectionContext.c_str());
+
         std::string collection_file_with_path = m_rf_mapCollection.findFile(m_mapCollectionFile);
         std::string locations_file_with_path = m_rf_mapCollection.findFile(m_mapLocationsFile);
 
@@ -180,6 +194,7 @@ bool Map2DStorage::open(yarp::os::Searchable &config)
         if (loadMapsCollection(collection_file_with_path))
         {
             yCInfo(MAP2DSTORAGE) << "Map collection file:" << collection_file_with_path << "successfully loaded.";
+
             if (m_maps_storage.size() > 0)
             {
                 yCInfo(MAP2DSTORAGE) << "Available maps are:";
@@ -192,6 +207,7 @@ bool Map2DStorage::open(yarp::os::Searchable &config)
             {
                 yCInfo(MAP2DSTORAGE) << "No maps available";
             }
+
             if (m_locations_storage.size() > 0)
             {
                 yCInfo(MAP2DSTORAGE) << "Available Locations are:";
@@ -203,6 +219,19 @@ bool Map2DStorage::open(yarp::os::Searchable &config)
             else
             {
                 yCInfo(MAP2DSTORAGE) << "No locations available";
+            }
+
+            if (m_objects_storage.size() > 0)
+            {
+                yCInfo(MAP2DSTORAGE) << "Available object locations are:";
+                for (auto& it : m_objects_storage)
+                {
+                    yCInfo(MAP2DSTORAGE) << it.first;
+                }
+            }
+            else
+            {
+                yCInfo(MAP2DSTORAGE) << "No object locations available";
             }
 
             if (m_areas_storage.size() > 0)
@@ -330,7 +359,7 @@ bool Map2DStorage::priv_load_locations_and_areas_v2(std::ifstream& file)
     {
         std::getline(file, buffer);
         if (buffer == "Areas:") {
-            break;
+            break; // Go the next section
         }
         if (file.eof())
         {
@@ -365,7 +394,7 @@ bool Map2DStorage::priv_load_locations_and_areas_v2(std::ifstream& file)
         Map2DArea       area;
         std::getline(file, buffer);
         if (buffer == "Paths:") {
-            break;
+            break; // Go the next section
         }
         if (file.eof()) {
             break;
@@ -447,127 +476,318 @@ bool Map2DStorage::priv_load_locations_and_areas_v3(std::ifstream& file)
 {
     std::string     buffer;
     std::getline(file, buffer);
-    if (buffer != "Locations:")
-    {
-        yCError(MAP2DSTORAGE) << "Unable to parse Locations section!";
-        return false;
-    }
 
-    while (1)
+    //LOCATIONS
     {
-        std::getline(file, buffer);
-        if (buffer == "Areas:") {
-            break;
-        }
-        if (file.eof())
+        if (buffer != "Locations:")
         {
-            yCError(MAP2DSTORAGE) << "Unexpected End Of File";
+            yCError(MAP2DSTORAGE) << "Unable to parse Locations section!";
             return false;
         }
-        Bottle b;
-        b.fromString(buffer);
-        size_t bot_size = b.size();
-        if (bot_size != 6)
+
+        while (1)
         {
-            yCError(MAP2DSTORAGE) << "Unable to parse contents of Areas section!";
-            return false;
-        }
-        Map2DLocation   location;
-        std::string name = b.get(0).asString();
-        location.map_id = b.get(1).asString();
-        location.x = b.get(2).asFloat64();
-        location.y = b.get(3).asFloat64();
-        location.theta = b.get(4).asFloat64();
-        location.description = b.get(5).asString();
-        m_locations_storage[name] = location;
-    }
-
-    if (buffer != "Areas:")
-    {
-        yCError(MAP2DSTORAGE) << "Unable to parse Areas section!";
-        return false;
-    }
-
-    while (1)
-    {
-        Map2DArea       area;
-        std::getline(file, buffer);
-        if (buffer == "Paths:") {
-            break;
-        }
-        if (file.eof()) {
-            break;
-        }
-
-        Bottle b;
-        b.fromString(buffer);
-        size_t bot_size = b.size();
-        std::string name = b.get(0).asString();
-        area.map_id = b.get(1).asString();
-        size_t area_size = b.get(2).asInt32();
-        if (area_size <= 0 || bot_size != 3 + area_size * 2 + 1)
-        {
-            yCError(MAP2DSTORAGE) << "Unable to parse contents of Areas section!";
-            return false;
-        }
-        for (size_t ai = 3; ai < bot_size-1; ai += 2)
-        {
-            double xpos = b.get(ai).asFloat64();
-            double ypos = b.get(ai + 1).asFloat64();
-            area.points.push_back(yarp::math::Vec2D<double>(xpos, ypos));
-        }
-        area.description = b.get(bot_size-1).asString();
-        m_areas_storage[name] = area;
-    }
-
-    if (buffer != "Paths:")
-    {
-        yCError(MAP2DSTORAGE) << "Unable to parse Paths section!";
-        return false;
-    }
-
-    while (1)
-    {
-        Map2DPath       path;
-        std::getline(file, buffer);
-        if (file.eof()) {
-            break;
-        }
-
-        Bottle b;
-        b.fromString(buffer);
-        size_t bot_size = b.size();
-        YARP_UNUSED(bot_size);
-        std::string name = b.get(0).asString();
-        size_t i = 1;
-        do
-        {
-            if (b.get(i).isList())
+            std::getline(file, buffer);
+            if (buffer == "Areas:") {
+                break; // Go the next section
+            }
+            if (file.eof())
             {
-                Bottle* ll = b.get(i).asList();
-                if (ll && ll->size() == 4)
+                yCError(MAP2DSTORAGE) << "Unexpected End Of File";
+                return false;
+            }
+            Bottle b;
+            b.fromString(buffer);
+            size_t bot_size = b.size();
+            if (bot_size != 6)
+            {
+                yCError(MAP2DSTORAGE) << "Unable to parse contents of Locations section!";
+                return false;
+            }
+            Map2DLocation   location;
+            std::string name = b.get(0).asString();
+            location.map_id = b.get(1).asString();
+            location.x = b.get(2).asFloat64();
+            location.y = b.get(3).asFloat64();
+            location.theta = b.get(4).asFloat64();
+            location.description = b.get(5).asString();
+            m_locations_storage[name] = location;
+        }
+    }
+
+    //AREAS
+    {
+        if (buffer != "Areas:")
+        {
+            yCError(MAP2DSTORAGE) << "Unable to parse Areas section!";
+            return false; // Go the next section
+        }
+
+        while (1)
+        {
+            Map2DArea       area;
+            std::getline(file, buffer);
+            if (buffer == "Paths:") {
+                break; // Go the next section
+            }
+            if (file.eof()) {
+                break;
+            }
+
+            Bottle b;
+            b.fromString(buffer);
+            size_t bot_size = b.size();
+            std::string name = b.get(0).asString();
+            area.map_id = b.get(1).asString();
+            size_t area_size = b.get(2).asInt32();
+            if (area_size <= 0 || bot_size != 3 + area_size * 2 + 1)
+            {
+                yCError(MAP2DSTORAGE) << "Unable to parse contents of Areas section!";
+                return false;
+            }
+            for (size_t ai = 3; ai < bot_size-1; ai += 2)
+            {
+                double xpos = b.get(ai).asFloat64();
+                double ypos = b.get(ai + 1).asFloat64();
+                area.points.push_back(yarp::math::Vec2D<double>(xpos, ypos));
+            }
+            area.description = b.get(bot_size-1).asString();
+            m_areas_storage[name] = area;
+        }
+    }
+
+    //PATHS
+    {
+        if (buffer != "Paths:")
+        {
+            yCError(MAP2DSTORAGE) << "Unable to parse Paths section!";
+            return false;
+        }
+
+        while (1)
+        {
+            Map2DPath       path;
+            std::getline(file, buffer);
+            if (file.eof()) {
+                break;
+            }
+
+            Bottle b;
+            b.fromString(buffer);
+            size_t bot_size = b.size();
+            YARP_UNUSED(bot_size);
+            std::string name = b.get(0).asString();
+            size_t i = 1;
+            do
+            {
+                if (b.get(i).isList())
                 {
-                    Map2DLocation loc;
-                    loc.map_id = ll->get(0).asString();
-                    loc.x = ll->get(1).asFloat64();
-                    loc.y = ll->get(2).asFloat64();
-                    loc.theta = ll->get(3).asFloat64();
-                    path.push_back(loc);
+                    Bottle* ll = b.get(i).asList();
+                    if (ll && ll->size() == 4)
+                    {
+                        Map2DLocation loc;
+                        loc.map_id = ll->get(0).asString();
+                        loc.x = ll->get(1).asFloat64();
+                        loc.y = ll->get(2).asFloat64();
+                        loc.theta = ll->get(3).asFloat64();
+                        path.push_back(loc);
+                    }
+                    else
+                    {
+                        yCError(MAP2DSTORAGE) << "Unable to parse contents of Paths section!";
+                        return false;
+                    }
                 }
                 else
                 {
-                    yCError(MAP2DSTORAGE) << "Unable to parse contents of Paths section!";
-                    return false;
+                    break;
                 }
+                i++;
+            } while (1);
+            path.description = b.get(bot_size - 1).asString();
+            m_paths_storage[name] = path;
+        }
+    }
+
+    return true;
+}
+
+bool Map2DStorage::priv_load_locations_and_areas_v4(std::ifstream& file)
+{
+    std::string     buffer;
+    std::getline(file, buffer);
+
+    //LOCATIONS
+    {
+        if (buffer != "Locations:")
+        {
+            yCError(MAP2DSTORAGE) << "Unable to parse Locations section!";
+            return false;
+        }
+
+        while (1)
+        {
+            std::getline(file, buffer);
+            if (buffer == "Objects:") {
+                break; // Go the next section
             }
-            else
+            if (file.eof())
             {
+                yCError(MAP2DSTORAGE) << "Unexpected End Of File";
+                return false;
+            }
+            Bottle b;
+            b.fromString(buffer);
+            size_t bot_size = b.size();
+            if (bot_size != 6)
+            {
+                yCError(MAP2DSTORAGE) << "Unable to parse contents of Locations section!";
+                return false;
+            }
+            Map2DLocation   maplocation;
+            std::string name = b.get(0).asString();
+            maplocation.map_id = b.get(1).asString();
+            maplocation.x = b.get(2).asFloat64();
+            maplocation.y = b.get(3).asFloat64();
+            maplocation.theta = b.get(4).asFloat64();
+            maplocation.description = b.get(5).asString();
+            m_locations_storage[name] = maplocation;
+        }
+    }
+
+    //OBJECTS
+    {
+        if (buffer != "Objects:")
+        {
+            yCError(MAP2DSTORAGE) << "Unable to parse Objects section!";
+            return false; // Go the next section
+        }
+
+        while (1)
+        {
+            std::getline(file, buffer);
+            if (buffer == "Areas:") {
                 break;
             }
-            i++;
-        } while (1);
-        path.description = b.get(bot_size - 1).asString();
-        m_paths_storage[name] = path;
+            if (file.eof())
+            {
+                yCError(MAP2DSTORAGE) << "Unexpected End Of File";
+                return false;
+            }
+            Bottle b;
+            b.fromString(buffer);
+            size_t bot_size = b.size();
+            if (bot_size != 9)
+            {
+                yCError(MAP2DSTORAGE) << "Unable to parse contents of Objects section!";
+                return false;
+            }
+            Map2DObject   objlocation;
+            std::string name = b.get(0).asString();
+            objlocation.map_id = b.get(1).asString();
+            objlocation.x = b.get(2).asFloat64();
+            objlocation.y = b.get(3).asFloat64();
+            objlocation.z = b.get(4).asFloat64();
+            objlocation.roll = b.get(5).asFloat64();
+            objlocation.pitch = b.get(6).asFloat64();
+            objlocation.yaw = b.get(7).asFloat64();
+            objlocation.description = b.get(8).asString();
+            m_objects_storage[name] = objlocation;
+        }
+    }
+
+    //AREAS
+    {
+        if (buffer != "Areas:")
+        {
+            yCError(MAP2DSTORAGE) << "Unable to parse Areas section!";
+            return false;
+        }
+
+        while (1)
+        {
+            Map2DArea       area;
+            std::getline(file, buffer);
+            if (buffer == "Paths:") {
+                break; // Go the next section
+            }
+            if (file.eof()) {
+                break;
+            }
+
+            Bottle b;
+            b.fromString(buffer);
+            size_t bot_size = b.size();
+            std::string name = b.get(0).asString();
+            area.map_id = b.get(1).asString();
+            size_t area_size = b.get(2).asInt32();
+            if (area_size <= 0 || bot_size != 3 + area_size * 2 + 1)
+            {
+                yCError(MAP2DSTORAGE) << "Unable to parse contents of Areas section!";
+                return false;
+            }
+            for (size_t ai = 3; ai < bot_size-1; ai += 2)
+            {
+                double xpos = b.get(ai).asFloat64();
+                double ypos = b.get(ai + 1).asFloat64();
+                area.points.push_back(yarp::math::Vec2D<double>(xpos, ypos));
+            }
+            area.description = b.get(bot_size-1).asString();
+            m_areas_storage[name] = area;
+        }
+    }
+
+    //PATHS
+    {
+        if (buffer != "Paths:")
+        {
+            yCError(MAP2DSTORAGE) << "Unable to parse Paths section!";
+            return false;
+        }
+
+        while (1)
+        {
+            Map2DPath       path;
+            std::getline(file, buffer);
+            if (file.eof()) {
+                break;
+            }
+
+            Bottle b;
+            b.fromString(buffer);
+            size_t bot_size = b.size();
+            YARP_UNUSED(bot_size);
+            std::string name = b.get(0).asString();
+            size_t i = 1;
+            do
+            {
+                if (b.get(i).isList())
+                {
+                    Bottle* ll = b.get(i).asList();
+                    if (ll && ll->size() == 4)
+                    {
+                        Map2DLocation loc;
+                        loc.map_id = ll->get(0).asString();
+                        loc.x = ll->get(1).asFloat64();
+                        loc.y = ll->get(2).asFloat64();
+                        loc.theta = ll->get(3).asFloat64();
+                        path.push_back(loc);
+                    }
+                    else
+                    {
+                        yCError(MAP2DSTORAGE) << "Unable to parse contents of Paths section!";
+                        return false;
+                    }
+                }
+                else
+                {
+                    break;
+                }
+                i++;
+            } while (1);
+            path.description = b.get(bot_size - 1).asString();
+            m_paths_storage[name] = path;
+        }
     }
 
     return true;
@@ -623,9 +843,18 @@ ReturnValue Map2DStorage::loadLocationsAndExtras(std::string locations_file)
             return ReturnValue::return_code::return_value_error_method_failed;
         }
     }
+    else if (version == 4)
+    {
+        if (!priv_load_locations_and_areas_v4(file))
+        {
+            yCError(MAP2DSTORAGE) << "Call to load_locations_and_areas_v4 failed";
+            file.close();
+            return ReturnValue::return_code::return_value_error_method_failed;
+        }
+    }
     else
     {
-        yCError(MAP2DSTORAGE) << "Only versions 1-3 supported!";
+        yCError(MAP2DSTORAGE) << "Only versions 1-4 supported!";
         file.close();
         return ReturnValue::return_code::return_value_error_method_failed;
     }
@@ -654,7 +883,7 @@ ReturnValue Map2DStorage::saveLocationsAndExtras(std::string locations_file)
     std::string q = "\"";
 
     file << "Version:\n";
-    file << "3\n";
+    file << "4\n";
 
     {
         Map2DLocation   tmp_loc;
@@ -664,6 +893,19 @@ ReturnValue Map2DStorage::saveLocationsAndExtras(std::string locations_file)
         {
             tmp_loc = it->second;
             file << it->first << s << tmp_loc.map_id << s << tmp_loc.x << s << tmp_loc.y << s << tmp_loc.theta << s;
+            file << q << tmp_loc.description << q << "\n";
+        }
+    }
+
+    {
+        Map2DObject   tmp_loc;
+        file << "Objects:\n";
+        std::map<std::string, Map2DObject>::iterator it;
+        for (it = m_objects_storage.begin(); it != m_objects_storage.end(); ++it)
+        {
+            tmp_loc = it->second;
+            file << it->first << s << tmp_loc.map_id << s << tmp_loc.x << s << tmp_loc.y << s << tmp_loc.z << s;
+            file << tmp_loc.roll << s << tmp_loc.pitch << s << tmp_loc.yaw << s;
             file << q << tmp_loc.description << q << "\n";
         }
     }
@@ -1106,4 +1348,78 @@ ReturnValue Map2DStorage::enableMapsCompression(bool enable)
 
     yCError(MAP2DSTORAGE) << "failed to set compression mode";
     return ReturnValue::return_code::return_value_error_method_failed;
+}
+
+yarp::dev::ReturnValue Map2DStorage::storeObject(std::string object_name, yarp::dev::Nav2D::Map2DObject obj)
+{
+    std::lock_guard<std::mutex> lock(m_mutex);
+    m_objects_storage[object_name] = obj;
+    return yarp::dev::ReturnValue_ok;
+}
+
+yarp::dev::ReturnValue Map2DStorage::getObject(std::string object_name, yarp::dev::Nav2D::Map2DObject& obj)
+{
+    std::lock_guard<std::mutex> lock(m_mutex);
+    auto it = m_objects_storage.find(object_name);
+    if (it != m_objects_storage.end())
+    {
+        obj = it->second;
+        return yarp::dev::ReturnValue_ok;
+    }
+    return yarp::dev::ReturnValue::return_code::return_value_error_method_failed;
+}
+
+yarp::dev::ReturnValue Map2DStorage::getObjectsList(std::vector<std::string>& objects)
+{
+    std::lock_guard<std::mutex> lock(m_mutex);
+    objects.clear();
+    for (auto& it : m_objects_storage)
+    {
+        objects.push_back(it.first);
+    }
+    return yarp::dev::ReturnValue_ok;
+}
+
+yarp::dev::ReturnValue Map2DStorage::getAllObjects(std::vector<yarp::dev::Nav2D::Map2DObject>& objects)
+{
+    std::lock_guard<std::mutex> lock(m_mutex);
+    objects.clear();
+    for (auto& it : m_objects_storage)
+    {
+        objects.push_back(it.second);
+    }
+    return yarp::dev::ReturnValue_ok;
+}
+
+yarp::dev::ReturnValue Map2DStorage::renameObject(std::string original_name, std::string new_name)
+{
+    std::lock_guard<std::mutex> lock(m_mutex);
+    auto it = m_objects_storage.find(original_name);
+    if (it != m_objects_storage.end())
+    {
+        auto obj = it->second;
+        m_objects_storage.erase(it);
+        m_objects_storage[new_name] = obj;
+        return yarp::dev::ReturnValue_ok;
+    }
+    return yarp::dev::ReturnValue::return_code::return_value_error_method_failed;
+}
+
+yarp::dev::ReturnValue Map2DStorage::deleteObject(std::string object_name)
+{
+    std::lock_guard<std::mutex> lock(m_mutex);
+    auto it = m_objects_storage.find(object_name);
+    if (it != m_objects_storage.end())
+    {
+        m_objects_storage.erase(it);
+        return yarp::dev::ReturnValue_ok;
+    }
+    return yarp::dev::ReturnValue::return_code::return_value_error_method_failed;
+}
+
+yarp::dev::ReturnValue Map2DStorage::clearAllObjects()
+{
+    std::lock_guard<std::mutex> lock(m_mutex);
+    m_objects_storage.clear();
+    return yarp::dev::ReturnValue_ok;
 }

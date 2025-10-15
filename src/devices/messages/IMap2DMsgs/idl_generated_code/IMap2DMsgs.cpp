@@ -410,6 +410,70 @@ public:
     static constexpr const char* s_help{""};
 };
 
+// store_object_RPC helper class declaration
+class IMap2DMsgs_store_object_RPC_helper :
+        public yarp::os::Portable
+{
+public:
+    IMap2DMsgs_store_object_RPC_helper() = default;
+    IMap2DMsgs_store_object_RPC_helper(const std::string& object_name, const yarp::dev::Nav2D::Map2DObject& loc);
+    bool write(yarp::os::ConnectionWriter& connection) const override;
+    bool read(yarp::os::ConnectionReader& connection) override;
+
+    class Command :
+            public yarp::os::idl::WirePortable
+    {
+    public:
+        Command() = default;
+        Command(const std::string& object_name, const yarp::dev::Nav2D::Map2DObject& loc);
+
+        ~Command() override = default;
+
+        bool write(yarp::os::ConnectionWriter& connection) const override;
+        bool read(yarp::os::ConnectionReader& connection) override;
+
+        bool write(const yarp::os::idl::WireWriter& writer) const override;
+        bool writeTag(const yarp::os::idl::WireWriter& writer) const;
+        bool writeArgs(const yarp::os::idl::WireWriter& writer) const;
+
+        bool read(yarp::os::idl::WireReader& reader) override;
+        bool readTag(yarp::os::idl::WireReader& reader);
+        bool readArgs(yarp::os::idl::WireReader& reader);
+
+        std::string object_name{};
+        yarp::dev::Nav2D::Map2DObject loc{};
+    };
+
+    class Reply :
+            public yarp::os::idl::WirePortable
+    {
+    public:
+        Reply() = default;
+        ~Reply() override = default;
+
+        bool write(yarp::os::ConnectionWriter& connection) const override;
+        bool read(yarp::os::ConnectionReader& connection) override;
+
+        bool write(const yarp::os::idl::WireWriter& writer) const override;
+        bool read(yarp::os::idl::WireReader& reader) override;
+
+        yarp::dev::ReturnValue return_helper{};
+    };
+
+    using funcptr_t = yarp::dev::ReturnValue (*)(const std::string&, const yarp::dev::Nav2D::Map2DObject&);
+    void call(IMap2DMsgs* ptr);
+
+    Command cmd;
+    Reply reply;
+
+    static constexpr const char* s_tag{"store_object_RPC"};
+    static constexpr size_t s_tag_len{3};
+    static constexpr size_t s_cmd_len{5};
+    static constexpr size_t s_reply_len{1};
+    static constexpr const char* s_prototype{"yarp::dev::ReturnValue IMap2DMsgs::store_object_RPC(const std::string& object_name, const yarp::dev::Nav2D::Map2DObject& loc)"};
+    static constexpr const char* s_help{""};
+};
+
 // store_location_RPC helper class declaration
 class IMap2DMsgs_store_location_RPC_helper :
         public yarp::os::Portable
@@ -602,6 +666,69 @@ public:
     static constexpr const char* s_help{""};
 };
 
+// get_object_RPC helper class declaration
+class IMap2DMsgs_get_object_RPC_helper :
+        public yarp::os::Portable
+{
+public:
+    IMap2DMsgs_get_object_RPC_helper() = default;
+    explicit IMap2DMsgs_get_object_RPC_helper(const std::string& object_name);
+    bool write(yarp::os::ConnectionWriter& connection) const override;
+    bool read(yarp::os::ConnectionReader& connection) override;
+
+    class Command :
+            public yarp::os::idl::WirePortable
+    {
+    public:
+        Command() = default;
+        explicit Command(const std::string& object_name);
+
+        ~Command() override = default;
+
+        bool write(yarp::os::ConnectionWriter& connection) const override;
+        bool read(yarp::os::ConnectionReader& connection) override;
+
+        bool write(const yarp::os::idl::WireWriter& writer) const override;
+        bool writeTag(const yarp::os::idl::WireWriter& writer) const;
+        bool writeArgs(const yarp::os::idl::WireWriter& writer) const;
+
+        bool read(yarp::os::idl::WireReader& reader) override;
+        bool readTag(yarp::os::idl::WireReader& reader);
+        bool readArgs(yarp::os::idl::WireReader& reader);
+
+        std::string object_name{};
+    };
+
+    class Reply :
+            public yarp::os::idl::WirePortable
+    {
+    public:
+        Reply() = default;
+        ~Reply() override = default;
+
+        bool write(yarp::os::ConnectionWriter& connection) const override;
+        bool read(yarp::os::ConnectionReader& connection) override;
+
+        bool write(const yarp::os::idl::WireWriter& writer) const override;
+        bool read(yarp::os::idl::WireReader& reader) override;
+
+        return_get_object return_helper{};
+    };
+
+    using funcptr_t = return_get_object (*)(const std::string&);
+    void call(IMap2DMsgs* ptr);
+
+    Command cmd;
+    Reply reply;
+
+    static constexpr const char* s_tag{"get_object_RPC"};
+    static constexpr size_t s_tag_len{3};
+    static constexpr size_t s_cmd_len{4};
+    static constexpr size_t s_reply_len{2};
+    static constexpr const char* s_prototype{"return_get_object IMap2DMsgs::get_object_RPC(const std::string& object_name)"};
+    static constexpr const char* s_help{""};
+};
+
 // get_location_RPC helper class declaration
 class IMap2DMsgs_get_location_RPC_helper :
         public yarp::os::Portable
@@ -791,6 +918,64 @@ public:
     static constexpr const char* s_help{""};
 };
 
+// get_objects_list_RPC helper class declaration
+class IMap2DMsgs_get_objects_list_RPC_helper :
+        public yarp::os::Portable
+{
+public:
+    IMap2DMsgs_get_objects_list_RPC_helper() = default;
+    bool write(yarp::os::ConnectionWriter& connection) const override;
+    bool read(yarp::os::ConnectionReader& connection) override;
+
+    class Command :
+            public yarp::os::idl::WirePortable
+    {
+    public:
+        Command() = default;
+        ~Command() override = default;
+
+        bool write(yarp::os::ConnectionWriter& connection) const override;
+        bool read(yarp::os::ConnectionReader& connection) override;
+
+        bool write(const yarp::os::idl::WireWriter& writer) const override;
+        bool writeTag(const yarp::os::idl::WireWriter& writer) const;
+        bool writeArgs(const yarp::os::idl::WireWriter& writer) const;
+
+        bool read(yarp::os::idl::WireReader& reader) override;
+        bool readTag(yarp::os::idl::WireReader& reader);
+        bool readArgs(yarp::os::idl::WireReader& reader);
+    };
+
+    class Reply :
+            public yarp::os::idl::WirePortable
+    {
+    public:
+        Reply() = default;
+        ~Reply() override = default;
+
+        bool write(yarp::os::ConnectionWriter& connection) const override;
+        bool read(yarp::os::ConnectionReader& connection) override;
+
+        bool write(const yarp::os::idl::WireWriter& writer) const override;
+        bool read(yarp::os::idl::WireReader& reader) override;
+
+        return_get_objects_list return_helper{};
+    };
+
+    using funcptr_t = return_get_objects_list (*)();
+    void call(IMap2DMsgs* ptr);
+
+    Command cmd;
+    Reply reply;
+
+    static constexpr const char* s_tag{"get_objects_list_RPC"};
+    static constexpr size_t s_tag_len{4};
+    static constexpr size_t s_cmd_len{4};
+    static constexpr size_t s_reply_len{2};
+    static constexpr const char* s_prototype{"return_get_objects_list IMap2DMsgs::get_objects_list_RPC()"};
+    static constexpr const char* s_help{""};
+};
+
 // get_locations_list_RPC helper class declaration
 class IMap2DMsgs_get_locations_list_RPC_helper :
         public yarp::os::Portable
@@ -962,6 +1147,64 @@ public:
     static constexpr size_t s_cmd_len{4};
     static constexpr size_t s_reply_len{2};
     static constexpr const char* s_prototype{"return_get_paths_list IMap2DMsgs::get_paths_list_RPC()"};
+    static constexpr const char* s_help{""};
+};
+
+// get_all_objects_RPC helper class declaration
+class IMap2DMsgs_get_all_objects_RPC_helper :
+        public yarp::os::Portable
+{
+public:
+    IMap2DMsgs_get_all_objects_RPC_helper() = default;
+    bool write(yarp::os::ConnectionWriter& connection) const override;
+    bool read(yarp::os::ConnectionReader& connection) override;
+
+    class Command :
+            public yarp::os::idl::WirePortable
+    {
+    public:
+        Command() = default;
+        ~Command() override = default;
+
+        bool write(yarp::os::ConnectionWriter& connection) const override;
+        bool read(yarp::os::ConnectionReader& connection) override;
+
+        bool write(const yarp::os::idl::WireWriter& writer) const override;
+        bool writeTag(const yarp::os::idl::WireWriter& writer) const;
+        bool writeArgs(const yarp::os::idl::WireWriter& writer) const;
+
+        bool read(yarp::os::idl::WireReader& reader) override;
+        bool readTag(yarp::os::idl::WireReader& reader);
+        bool readArgs(yarp::os::idl::WireReader& reader);
+    };
+
+    class Reply :
+            public yarp::os::idl::WirePortable
+    {
+    public:
+        Reply() = default;
+        ~Reply() override = default;
+
+        bool write(yarp::os::ConnectionWriter& connection) const override;
+        bool read(yarp::os::ConnectionReader& connection) override;
+
+        bool write(const yarp::os::idl::WireWriter& writer) const override;
+        bool read(yarp::os::idl::WireReader& reader) override;
+
+        return_get_all_objects return_helper{};
+    };
+
+    using funcptr_t = return_get_all_objects (*)();
+    void call(IMap2DMsgs* ptr);
+
+    Command cmd;
+    Reply reply;
+
+    static constexpr const char* s_tag{"get_all_objects_RPC"};
+    static constexpr size_t s_tag_len{4};
+    static constexpr size_t s_cmd_len{4};
+    static constexpr size_t s_reply_len{2};
+    static constexpr const char* s_prototype{"return_get_all_objects IMap2DMsgs::get_all_objects_RPC()"};
     static constexpr const char* s_help{""};
 };
 
@@ -1203,6 +1446,69 @@ public:
     static constexpr const char* s_help{""};
 };
 
+// delete_object_RPC helper class declaration
+class IMap2DMsgs_delete_object_RPC_helper :
+        public yarp::os::Portable
+{
+public:
+    IMap2DMsgs_delete_object_RPC_helper() = default;
+    explicit IMap2DMsgs_delete_object_RPC_helper(const std::string& object_name);
+    bool write(yarp::os::ConnectionWriter& connection) const override;
+    bool read(yarp::os::ConnectionReader& connection) override;
+
+    class Command :
+            public yarp::os::idl::WirePortable
+    {
+    public:
+        Command() = default;
+        explicit Command(const std::string& object_name);
+
+        ~Command() override = default;
+
+        bool write(yarp::os::ConnectionWriter& connection) const override;
+        bool read(yarp::os::ConnectionReader& connection) override;
+
+        bool write(const yarp::os::idl::WireWriter& writer) const override;
+        bool writeTag(const yarp::os::idl::WireWriter& writer) const;
+        bool writeArgs(const yarp::os::idl::WireWriter& writer) const;
+
+        bool read(yarp::os::idl::WireReader& reader) override;
+        bool readTag(yarp::os::idl::WireReader& reader);
+        bool readArgs(yarp::os::idl::WireReader& reader);
+
+        std::string object_name{};
+    };
+
+    class Reply :
+            public yarp::os::idl::WirePortable
+    {
+    public:
+        Reply() = default;
+        ~Reply() override = default;
+
+        bool write(yarp::os::ConnectionWriter& connection) const override;
+        bool read(yarp::os::ConnectionReader& connection) override;
+
+        bool write(const yarp::os::idl::WireWriter& writer) const override;
+        bool read(yarp::os::idl::WireReader& reader) override;
+
+        yarp::dev::ReturnValue return_helper{};
+    };
+
+    using funcptr_t = yarp::dev::ReturnValue (*)(const std::string&);
+    void call(IMap2DMsgs* ptr);
+
+    Command cmd;
+    Reply reply;
+
+    static constexpr const char* s_tag{"delete_object_RPC"};
+    static constexpr size_t s_tag_len{3};
+    static constexpr size_t s_cmd_len{4};
+    static constexpr size_t s_reply_len{1};
+    static constexpr const char* s_prototype{"yarp::dev::ReturnValue IMap2DMsgs::delete_object_RPC(const std::string& object_name)"};
+    static constexpr const char* s_help{""};
+};
+
 // delete_location_RPC helper class declaration
 class IMap2DMsgs_delete_location_RPC_helper :
         public yarp::os::Portable
@@ -1326,6 +1632,70 @@ public:
     static constexpr size_t s_cmd_len{4};
     static constexpr size_t s_reply_len{1};
     static constexpr const char* s_prototype{"yarp::dev::ReturnValue IMap2DMsgs::delete_path_RPC(const std::string& path_name)"};
+    static constexpr const char* s_help{""};
+};
+
+// rename_object_RPC helper class declaration
+class IMap2DMsgs_rename_object_RPC_helper :
+        public yarp::os::Portable
+{
+public:
+    IMap2DMsgs_rename_object_RPC_helper() = default;
+    IMap2DMsgs_rename_object_RPC_helper(const std::string& original_name, const std::string& new_name);
+    bool write(yarp::os::ConnectionWriter& connection) const override;
+    bool read(yarp::os::ConnectionReader& connection) override;
+
+    class Command :
+            public yarp::os::idl::WirePortable
+    {
+    public:
+        Command() = default;
+        Command(const std::string& original_name, const std::string& new_name);
+
+        ~Command() override = default;
+
+        bool write(yarp::os::ConnectionWriter& connection) const override;
+        bool read(yarp::os::ConnectionReader& connection) override;
+
+        bool write(const yarp::os::idl::WireWriter& writer) const override;
+        bool writeTag(const yarp::os::idl::WireWriter& writer) const;
+        bool writeArgs(const yarp::os::idl::WireWriter& writer) const;
+
+        bool read(yarp::os::idl::WireReader& reader) override;
+        bool readTag(yarp::os::idl::WireReader& reader);
+        bool readArgs(yarp::os::idl::WireReader& reader);
+
+        std::string original_name{};
+        std::string new_name{};
+    };
+
+    class Reply :
+            public yarp::os::idl::WirePortable
+    {
+    public:
+        Reply() = default;
+        ~Reply() override = default;
+
+        bool write(yarp::os::ConnectionWriter& connection) const override;
+        bool read(yarp::os::ConnectionReader& connection) override;
+
+        bool write(const yarp::os::idl::WireWriter& writer) const override;
+        bool read(yarp::os::idl::WireReader& reader) override;
+
+        yarp::dev::ReturnValue return_helper{};
+    };
+
+    using funcptr_t = yarp::dev::ReturnValue (*)(const std::string&, const std::string&);
+    void call(IMap2DMsgs* ptr);
+
+    Command cmd;
+    Reply reply;
+
+    static constexpr const char* s_tag{"rename_object_RPC"};
+    static constexpr size_t s_tag_len{3};
+    static constexpr size_t s_cmd_len{5};
+    static constexpr size_t s_reply_len{1};
+    static constexpr const char* s_prototype{"yarp::dev::ReturnValue IMap2DMsgs::rename_object_RPC(const std::string& original_name, const std::string& new_name)"};
     static constexpr const char* s_help{""};
 };
 
@@ -1517,6 +1887,64 @@ public:
     static constexpr size_t s_cmd_len{4};
     static constexpr size_t s_reply_len{1};
     static constexpr const char* s_prototype{"yarp::dev::ReturnValue IMap2DMsgs::delete_area_RPC(const std::string& area_name)"};
+    static constexpr const char* s_help{""};
+};
+
+// clear_all_objects_RPC helper class declaration
+class IMap2DMsgs_clear_all_objects_RPC_helper :
+        public yarp::os::Portable
+{
+public:
+    IMap2DMsgs_clear_all_objects_RPC_helper() = default;
+    bool write(yarp::os::ConnectionWriter& connection) const override;
+    bool read(yarp::os::ConnectionReader& connection) override;
+
+    class Command :
+            public yarp::os::idl::WirePortable
+    {
+    public:
+        Command() = default;
+        ~Command() override = default;
+
+        bool write(yarp::os::ConnectionWriter& connection) const override;
+        bool read(yarp::os::ConnectionReader& connection) override;
+
+        bool write(const yarp::os::idl::WireWriter& writer) const override;
+        bool writeTag(const yarp::os::idl::WireWriter& writer) const;
+        bool writeArgs(const yarp::os::idl::WireWriter& writer) const;
+
+        bool read(yarp::os::idl::WireReader& reader) override;
+        bool readTag(yarp::os::idl::WireReader& reader);
+        bool readArgs(yarp::os::idl::WireReader& reader);
+    };
+
+    class Reply :
+            public yarp::os::idl::WirePortable
+    {
+    public:
+        Reply() = default;
+        ~Reply() override = default;
+
+        bool write(yarp::os::ConnectionWriter& connection) const override;
+        bool read(yarp::os::ConnectionReader& connection) override;
+
+        bool write(const yarp::os::idl::WireWriter& writer) const override;
+        bool read(yarp::os::idl::WireReader& reader) override;
+
+        yarp::dev::ReturnValue return_helper{};
+    };
+
+    using funcptr_t = yarp::dev::ReturnValue (*)();
+    void call(IMap2DMsgs* ptr);
+
+    Command cmd;
+    Reply reply;
+
+    static constexpr const char* s_tag{"clear_all_objects_RPC"};
+    static constexpr size_t s_tag_len{4};
+    static constexpr size_t s_cmd_len{4};
+    static constexpr size_t s_reply_len{1};
+    static constexpr const char* s_prototype{"yarp::dev::ReturnValue IMap2DMsgs::clear_all_objects_RPC()"};
     static constexpr const char* s_help{""};
 };
 
@@ -2967,6 +3395,166 @@ void IMap2DMsgs_remove_map_RPC_helper::call(IMap2DMsgs* ptr)
     reply.return_helper = ptr->remove_map_RPC(cmd.map_name);
 }
 
+// store_object_RPC helper class implementation
+IMap2DMsgs_store_object_RPC_helper::IMap2DMsgs_store_object_RPC_helper(const std::string& object_name, const yarp::dev::Nav2D::Map2DObject& loc) :
+        cmd{object_name, loc}
+{
+}
+
+bool IMap2DMsgs_store_object_RPC_helper::write(yarp::os::ConnectionWriter& connection) const
+{
+    return cmd.write(connection);
+}
+
+bool IMap2DMsgs_store_object_RPC_helper::read(yarp::os::ConnectionReader& connection)
+{
+    return reply.read(connection);
+}
+
+IMap2DMsgs_store_object_RPC_helper::Command::Command(const std::string& object_name, const yarp::dev::Nav2D::Map2DObject& loc) :
+        object_name{object_name},
+        loc{loc}
+{
+}
+
+bool IMap2DMsgs_store_object_RPC_helper::Command::write(yarp::os::ConnectionWriter& connection) const
+{
+    yarp::os::idl::WireWriter writer(connection);
+    if (!writer.writeListHeader(s_cmd_len)) {
+        return false;
+    }
+    return write(writer);
+}
+
+bool IMap2DMsgs_store_object_RPC_helper::Command::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    if (!reader.readListHeader()) {
+        reader.fail();
+        return false;
+    }
+    return read(reader);
+}
+
+bool IMap2DMsgs_store_object_RPC_helper::Command::write(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writeTag(writer)) {
+        return false;
+    }
+    if (!writeArgs(writer)) {
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_store_object_RPC_helper::Command::writeTag(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.writeTag(s_tag, 1, s_tag_len)) {
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_store_object_RPC_helper::Command::writeArgs(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.writeString(object_name)) {
+        return false;
+    }
+    if (!writer.writeNested(loc)) {
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_store_object_RPC_helper::Command::read(yarp::os::idl::WireReader& reader)
+{
+    if (!readTag(reader)) {
+        return false;
+    }
+    if (!readArgs(reader)) {
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_store_object_RPC_helper::Command::readTag(yarp::os::idl::WireReader& reader)
+{
+    std::string tag = reader.readTag(s_tag_len);
+    if (reader.isError()) {
+        return false;
+    }
+    if (tag != s_tag) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_store_object_RPC_helper::Command::readArgs(yarp::os::idl::WireReader& reader)
+{
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
+    if (!reader.readString(object_name)) {
+        reader.fail();
+        return false;
+    }
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
+    if (!reader.readNested(loc)) {
+        reader.fail();
+        return false;
+    }
+    if (!reader.noMore()) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_store_object_RPC_helper::Reply::write(yarp::os::ConnectionWriter& connection) const
+{
+    yarp::os::idl::WireWriter writer(connection);
+    return write(writer);
+}
+
+bool IMap2DMsgs_store_object_RPC_helper::Reply::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    return read(reader);
+}
+
+bool IMap2DMsgs_store_object_RPC_helper::Reply::write(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.isNull()) {
+        if (!writer.write(return_helper)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+bool IMap2DMsgs_store_object_RPC_helper::Reply::read(yarp::os::idl::WireReader& reader)
+{
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
+    if (!reader.read(return_helper)) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+void IMap2DMsgs_store_object_RPC_helper::call(IMap2DMsgs* ptr)
+{
+    reply.return_helper = ptr->store_object_RPC(cmd.object_name, cmd.loc);
+}
+
 // store_location_RPC helper class implementation
 IMap2DMsgs_store_location_RPC_helper::IMap2DMsgs_store_location_RPC_helper(const std::string& location_name, const yarp::dev::Nav2D::Map2DLocation& loc) :
         cmd{location_name, loc}
@@ -3447,6 +4035,160 @@ void IMap2DMsgs_store_path_RPC_helper::call(IMap2DMsgs* ptr)
     reply.return_helper = ptr->store_path_RPC(cmd.path_name, cmd.path);
 }
 
+// get_object_RPC helper class implementation
+IMap2DMsgs_get_object_RPC_helper::IMap2DMsgs_get_object_RPC_helper(const std::string& object_name) :
+        cmd{object_name}
+{
+}
+
+bool IMap2DMsgs_get_object_RPC_helper::write(yarp::os::ConnectionWriter& connection) const
+{
+    return cmd.write(connection);
+}
+
+bool IMap2DMsgs_get_object_RPC_helper::read(yarp::os::ConnectionReader& connection)
+{
+    return reply.read(connection);
+}
+
+IMap2DMsgs_get_object_RPC_helper::Command::Command(const std::string& object_name) :
+        object_name{object_name}
+{
+}
+
+bool IMap2DMsgs_get_object_RPC_helper::Command::write(yarp::os::ConnectionWriter& connection) const
+{
+    yarp::os::idl::WireWriter writer(connection);
+    if (!writer.writeListHeader(s_cmd_len)) {
+        return false;
+    }
+    return write(writer);
+}
+
+bool IMap2DMsgs_get_object_RPC_helper::Command::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    if (!reader.readListHeader()) {
+        reader.fail();
+        return false;
+    }
+    return read(reader);
+}
+
+bool IMap2DMsgs_get_object_RPC_helper::Command::write(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writeTag(writer)) {
+        return false;
+    }
+    if (!writeArgs(writer)) {
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_get_object_RPC_helper::Command::writeTag(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.writeTag(s_tag, 1, s_tag_len)) {
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_get_object_RPC_helper::Command::writeArgs(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.writeString(object_name)) {
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_get_object_RPC_helper::Command::read(yarp::os::idl::WireReader& reader)
+{
+    if (!readTag(reader)) {
+        return false;
+    }
+    if (!readArgs(reader)) {
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_get_object_RPC_helper::Command::readTag(yarp::os::idl::WireReader& reader)
+{
+    std::string tag = reader.readTag(s_tag_len);
+    if (reader.isError()) {
+        return false;
+    }
+    if (tag != s_tag) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_get_object_RPC_helper::Command::readArgs(yarp::os::idl::WireReader& reader)
+{
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
+    if (!reader.readString(object_name)) {
+        reader.fail();
+        return false;
+    }
+    if (!reader.noMore()) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_get_object_RPC_helper::Reply::write(yarp::os::ConnectionWriter& connection) const
+{
+    yarp::os::idl::WireWriter writer(connection);
+    return write(writer);
+}
+
+bool IMap2DMsgs_get_object_RPC_helper::Reply::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    return read(reader);
+}
+
+bool IMap2DMsgs_get_object_RPC_helper::Reply::write(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.isNull()) {
+        if (!writer.writeListHeader(s_reply_len)) {
+            return false;
+        }
+        if (!writer.write(return_helper)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+bool IMap2DMsgs_get_object_RPC_helper::Reply::read(yarp::os::idl::WireReader& reader)
+{
+    if (!reader.readListReturn()) {
+        return false;
+    }
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
+    if (!reader.read(return_helper)) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+void IMap2DMsgs_get_object_RPC_helper::call(IMap2DMsgs* ptr)
+{
+    reply.return_helper = ptr->get_object_RPC(cmd.object_name);
+}
+
 // get_location_RPC helper class implementation
 IMap2DMsgs_get_location_RPC_helper::IMap2DMsgs_get_location_RPC_helper(const std::string& location_name) :
         cmd{location_name}
@@ -3909,6 +4651,139 @@ void IMap2DMsgs_get_path_RPC_helper::call(IMap2DMsgs* ptr)
     reply.return_helper = ptr->get_path_RPC(cmd.path_name);
 }
 
+// get_objects_list_RPC helper class implementation
+bool IMap2DMsgs_get_objects_list_RPC_helper::write(yarp::os::ConnectionWriter& connection) const
+{
+    return cmd.write(connection);
+}
+
+bool IMap2DMsgs_get_objects_list_RPC_helper::read(yarp::os::ConnectionReader& connection)
+{
+    return reply.read(connection);
+}
+
+bool IMap2DMsgs_get_objects_list_RPC_helper::Command::write(yarp::os::ConnectionWriter& connection) const
+{
+    yarp::os::idl::WireWriter writer(connection);
+    if (!writer.writeListHeader(s_cmd_len)) {
+        return false;
+    }
+    return write(writer);
+}
+
+bool IMap2DMsgs_get_objects_list_RPC_helper::Command::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    if (!reader.readListHeader()) {
+        reader.fail();
+        return false;
+    }
+    return read(reader);
+}
+
+bool IMap2DMsgs_get_objects_list_RPC_helper::Command::write(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writeTag(writer)) {
+        return false;
+    }
+    if (!writeArgs(writer)) {
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_get_objects_list_RPC_helper::Command::writeTag(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.writeTag(s_tag, 1, s_tag_len)) {
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_get_objects_list_RPC_helper::Command::writeArgs(const yarp::os::idl::WireWriter& writer [[maybe_unused]]) const
+{
+    return true;
+}
+
+bool IMap2DMsgs_get_objects_list_RPC_helper::Command::read(yarp::os::idl::WireReader& reader)
+{
+    if (!readTag(reader)) {
+        return false;
+    }
+    if (!readArgs(reader)) {
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_get_objects_list_RPC_helper::Command::readTag(yarp::os::idl::WireReader& reader)
+{
+    std::string tag = reader.readTag(s_tag_len);
+    if (reader.isError()) {
+        return false;
+    }
+    if (tag != s_tag) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_get_objects_list_RPC_helper::Command::readArgs(yarp::os::idl::WireReader& reader)
+{
+    if (!reader.noMore()) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_get_objects_list_RPC_helper::Reply::write(yarp::os::ConnectionWriter& connection) const
+{
+    yarp::os::idl::WireWriter writer(connection);
+    return write(writer);
+}
+
+bool IMap2DMsgs_get_objects_list_RPC_helper::Reply::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    return read(reader);
+}
+
+bool IMap2DMsgs_get_objects_list_RPC_helper::Reply::write(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.isNull()) {
+        if (!writer.writeListHeader(s_reply_len)) {
+            return false;
+        }
+        if (!writer.write(return_helper)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+bool IMap2DMsgs_get_objects_list_RPC_helper::Reply::read(yarp::os::idl::WireReader& reader)
+{
+    if (!reader.readListReturn()) {
+        return false;
+    }
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
+    if (!reader.read(return_helper)) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+void IMap2DMsgs_get_objects_list_RPC_helper::call(IMap2DMsgs* ptr)
+{
+    reply.return_helper = ptr->get_objects_list_RPC();
+}
+
 // get_locations_list_RPC helper class implementation
 bool IMap2DMsgs_get_locations_list_RPC_helper::write(yarp::os::ConnectionWriter& connection) const
 {
@@ -4306,6 +5181,139 @@ bool IMap2DMsgs_get_paths_list_RPC_helper::Reply::read(yarp::os::idl::WireReader
 void IMap2DMsgs_get_paths_list_RPC_helper::call(IMap2DMsgs* ptr)
 {
     reply.return_helper = ptr->get_paths_list_RPC();
+}
+
+// get_all_objects_RPC helper class implementation
+bool IMap2DMsgs_get_all_objects_RPC_helper::write(yarp::os::ConnectionWriter& connection) const
+{
+    return cmd.write(connection);
+}
+
+bool IMap2DMsgs_get_all_objects_RPC_helper::read(yarp::os::ConnectionReader& connection)
+{
+    return reply.read(connection);
+}
+
+bool IMap2DMsgs_get_all_objects_RPC_helper::Command::write(yarp::os::ConnectionWriter& connection) const
+{
+    yarp::os::idl::WireWriter writer(connection);
+    if (!writer.writeListHeader(s_cmd_len)) {
+        return false;
+    }
+    return write(writer);
+}
+
+bool IMap2DMsgs_get_all_objects_RPC_helper::Command::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    if (!reader.readListHeader()) {
+        reader.fail();
+        return false;
+    }
+    return read(reader);
+}
+
+bool IMap2DMsgs_get_all_objects_RPC_helper::Command::write(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writeTag(writer)) {
+        return false;
+    }
+    if (!writeArgs(writer)) {
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_get_all_objects_RPC_helper::Command::writeTag(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.writeTag(s_tag, 1, s_tag_len)) {
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_get_all_objects_RPC_helper::Command::writeArgs(const yarp::os::idl::WireWriter& writer [[maybe_unused]]) const
+{
+    return true;
+}
+
+bool IMap2DMsgs_get_all_objects_RPC_helper::Command::read(yarp::os::idl::WireReader& reader)
+{
+    if (!readTag(reader)) {
+        return false;
+    }
+    if (!readArgs(reader)) {
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_get_all_objects_RPC_helper::Command::readTag(yarp::os::idl::WireReader& reader)
+{
+    std::string tag = reader.readTag(s_tag_len);
+    if (reader.isError()) {
+        return false;
+    }
+    if (tag != s_tag) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_get_all_objects_RPC_helper::Command::readArgs(yarp::os::idl::WireReader& reader)
+{
+    if (!reader.noMore()) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_get_all_objects_RPC_helper::Reply::write(yarp::os::ConnectionWriter& connection) const
+{
+    yarp::os::idl::WireWriter writer(connection);
+    return write(writer);
+}
+
+bool IMap2DMsgs_get_all_objects_RPC_helper::Reply::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    return read(reader);
+}
+
+bool IMap2DMsgs_get_all_objects_RPC_helper::Reply::write(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.isNull()) {
+        if (!writer.writeListHeader(s_reply_len)) {
+            return false;
+        }
+        if (!writer.write(return_helper)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+bool IMap2DMsgs_get_all_objects_RPC_helper::Reply::read(yarp::os::idl::WireReader& reader)
+{
+    if (!reader.readListReturn()) {
+        return false;
+    }
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
+    if (!reader.read(return_helper)) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+void IMap2DMsgs_get_all_objects_RPC_helper::call(IMap2DMsgs* ptr)
+{
+    reply.return_helper = ptr->get_all_objects_RPC();
 }
 
 // get_all_locations_RPC helper class implementation
@@ -4867,6 +5875,154 @@ void IMap2DMsgs_rename_location_RPC_helper::call(IMap2DMsgs* ptr)
     reply.return_helper = ptr->rename_location_RPC(cmd.original_name, cmd.new_name);
 }
 
+// delete_object_RPC helper class implementation
+IMap2DMsgs_delete_object_RPC_helper::IMap2DMsgs_delete_object_RPC_helper(const std::string& object_name) :
+        cmd{object_name}
+{
+}
+
+bool IMap2DMsgs_delete_object_RPC_helper::write(yarp::os::ConnectionWriter& connection) const
+{
+    return cmd.write(connection);
+}
+
+bool IMap2DMsgs_delete_object_RPC_helper::read(yarp::os::ConnectionReader& connection)
+{
+    return reply.read(connection);
+}
+
+IMap2DMsgs_delete_object_RPC_helper::Command::Command(const std::string& object_name) :
+        object_name{object_name}
+{
+}
+
+bool IMap2DMsgs_delete_object_RPC_helper::Command::write(yarp::os::ConnectionWriter& connection) const
+{
+    yarp::os::idl::WireWriter writer(connection);
+    if (!writer.writeListHeader(s_cmd_len)) {
+        return false;
+    }
+    return write(writer);
+}
+
+bool IMap2DMsgs_delete_object_RPC_helper::Command::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    if (!reader.readListHeader()) {
+        reader.fail();
+        return false;
+    }
+    return read(reader);
+}
+
+bool IMap2DMsgs_delete_object_RPC_helper::Command::write(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writeTag(writer)) {
+        return false;
+    }
+    if (!writeArgs(writer)) {
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_delete_object_RPC_helper::Command::writeTag(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.writeTag(s_tag, 1, s_tag_len)) {
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_delete_object_RPC_helper::Command::writeArgs(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.writeString(object_name)) {
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_delete_object_RPC_helper::Command::read(yarp::os::idl::WireReader& reader)
+{
+    if (!readTag(reader)) {
+        return false;
+    }
+    if (!readArgs(reader)) {
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_delete_object_RPC_helper::Command::readTag(yarp::os::idl::WireReader& reader)
+{
+    std::string tag = reader.readTag(s_tag_len);
+    if (reader.isError()) {
+        return false;
+    }
+    if (tag != s_tag) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_delete_object_RPC_helper::Command::readArgs(yarp::os::idl::WireReader& reader)
+{
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
+    if (!reader.readString(object_name)) {
+        reader.fail();
+        return false;
+    }
+    if (!reader.noMore()) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_delete_object_RPC_helper::Reply::write(yarp::os::ConnectionWriter& connection) const
+{
+    yarp::os::idl::WireWriter writer(connection);
+    return write(writer);
+}
+
+bool IMap2DMsgs_delete_object_RPC_helper::Reply::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    return read(reader);
+}
+
+bool IMap2DMsgs_delete_object_RPC_helper::Reply::write(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.isNull()) {
+        if (!writer.write(return_helper)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+bool IMap2DMsgs_delete_object_RPC_helper::Reply::read(yarp::os::idl::WireReader& reader)
+{
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
+    if (!reader.read(return_helper)) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+void IMap2DMsgs_delete_object_RPC_helper::call(IMap2DMsgs* ptr)
+{
+    reply.return_helper = ptr->delete_object_RPC(cmd.object_name);
+}
+
 // delete_location_RPC helper class implementation
 IMap2DMsgs_delete_location_RPC_helper::IMap2DMsgs_delete_location_RPC_helper(const std::string& location_name) :
         cmd{location_name}
@@ -5161,6 +6317,166 @@ bool IMap2DMsgs_delete_path_RPC_helper::Reply::read(yarp::os::idl::WireReader& r
 void IMap2DMsgs_delete_path_RPC_helper::call(IMap2DMsgs* ptr)
 {
     reply.return_helper = ptr->delete_path_RPC(cmd.path_name);
+}
+
+// rename_object_RPC helper class implementation
+IMap2DMsgs_rename_object_RPC_helper::IMap2DMsgs_rename_object_RPC_helper(const std::string& original_name, const std::string& new_name) :
+        cmd{original_name, new_name}
+{
+}
+
+bool IMap2DMsgs_rename_object_RPC_helper::write(yarp::os::ConnectionWriter& connection) const
+{
+    return cmd.write(connection);
+}
+
+bool IMap2DMsgs_rename_object_RPC_helper::read(yarp::os::ConnectionReader& connection)
+{
+    return reply.read(connection);
+}
+
+IMap2DMsgs_rename_object_RPC_helper::Command::Command(const std::string& original_name, const std::string& new_name) :
+        original_name{original_name},
+        new_name{new_name}
+{
+}
+
+bool IMap2DMsgs_rename_object_RPC_helper::Command::write(yarp::os::ConnectionWriter& connection) const
+{
+    yarp::os::idl::WireWriter writer(connection);
+    if (!writer.writeListHeader(s_cmd_len)) {
+        return false;
+    }
+    return write(writer);
+}
+
+bool IMap2DMsgs_rename_object_RPC_helper::Command::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    if (!reader.readListHeader()) {
+        reader.fail();
+        return false;
+    }
+    return read(reader);
+}
+
+bool IMap2DMsgs_rename_object_RPC_helper::Command::write(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writeTag(writer)) {
+        return false;
+    }
+    if (!writeArgs(writer)) {
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_rename_object_RPC_helper::Command::writeTag(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.writeTag(s_tag, 1, s_tag_len)) {
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_rename_object_RPC_helper::Command::writeArgs(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.writeString(original_name)) {
+        return false;
+    }
+    if (!writer.writeString(new_name)) {
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_rename_object_RPC_helper::Command::read(yarp::os::idl::WireReader& reader)
+{
+    if (!readTag(reader)) {
+        return false;
+    }
+    if (!readArgs(reader)) {
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_rename_object_RPC_helper::Command::readTag(yarp::os::idl::WireReader& reader)
+{
+    std::string tag = reader.readTag(s_tag_len);
+    if (reader.isError()) {
+        return false;
+    }
+    if (tag != s_tag) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_rename_object_RPC_helper::Command::readArgs(yarp::os::idl::WireReader& reader)
+{
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
+    if (!reader.readString(original_name)) {
+        reader.fail();
+        return false;
+    }
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
+    if (!reader.readString(new_name)) {
+        reader.fail();
+        return false;
+    }
+    if (!reader.noMore()) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_rename_object_RPC_helper::Reply::write(yarp::os::ConnectionWriter& connection) const
+{
+    yarp::os::idl::WireWriter writer(connection);
+    return write(writer);
+}
+
+bool IMap2DMsgs_rename_object_RPC_helper::Reply::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    return read(reader);
+}
+
+bool IMap2DMsgs_rename_object_RPC_helper::Reply::write(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.isNull()) {
+        if (!writer.write(return_helper)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+bool IMap2DMsgs_rename_object_RPC_helper::Reply::read(yarp::os::idl::WireReader& reader)
+{
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
+    if (!reader.read(return_helper)) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+void IMap2DMsgs_rename_object_RPC_helper::call(IMap2DMsgs* ptr)
+{
+    reply.return_helper = ptr->rename_object_RPC(cmd.original_name, cmd.new_name);
 }
 
 // rename_area_RPC helper class implementation
@@ -5629,6 +6945,133 @@ bool IMap2DMsgs_delete_area_RPC_helper::Reply::read(yarp::os::idl::WireReader& r
 void IMap2DMsgs_delete_area_RPC_helper::call(IMap2DMsgs* ptr)
 {
     reply.return_helper = ptr->delete_area_RPC(cmd.area_name);
+}
+
+// clear_all_objects_RPC helper class implementation
+bool IMap2DMsgs_clear_all_objects_RPC_helper::write(yarp::os::ConnectionWriter& connection) const
+{
+    return cmd.write(connection);
+}
+
+bool IMap2DMsgs_clear_all_objects_RPC_helper::read(yarp::os::ConnectionReader& connection)
+{
+    return reply.read(connection);
+}
+
+bool IMap2DMsgs_clear_all_objects_RPC_helper::Command::write(yarp::os::ConnectionWriter& connection) const
+{
+    yarp::os::idl::WireWriter writer(connection);
+    if (!writer.writeListHeader(s_cmd_len)) {
+        return false;
+    }
+    return write(writer);
+}
+
+bool IMap2DMsgs_clear_all_objects_RPC_helper::Command::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    if (!reader.readListHeader()) {
+        reader.fail();
+        return false;
+    }
+    return read(reader);
+}
+
+bool IMap2DMsgs_clear_all_objects_RPC_helper::Command::write(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writeTag(writer)) {
+        return false;
+    }
+    if (!writeArgs(writer)) {
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_clear_all_objects_RPC_helper::Command::writeTag(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.writeTag(s_tag, 1, s_tag_len)) {
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_clear_all_objects_RPC_helper::Command::writeArgs(const yarp::os::idl::WireWriter& writer [[maybe_unused]]) const
+{
+    return true;
+}
+
+bool IMap2DMsgs_clear_all_objects_RPC_helper::Command::read(yarp::os::idl::WireReader& reader)
+{
+    if (!readTag(reader)) {
+        return false;
+    }
+    if (!readArgs(reader)) {
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_clear_all_objects_RPC_helper::Command::readTag(yarp::os::idl::WireReader& reader)
+{
+    std::string tag = reader.readTag(s_tag_len);
+    if (reader.isError()) {
+        return false;
+    }
+    if (tag != s_tag) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_clear_all_objects_RPC_helper::Command::readArgs(yarp::os::idl::WireReader& reader)
+{
+    if (!reader.noMore()) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgs_clear_all_objects_RPC_helper::Reply::write(yarp::os::ConnectionWriter& connection) const
+{
+    yarp::os::idl::WireWriter writer(connection);
+    return write(writer);
+}
+
+bool IMap2DMsgs_clear_all_objects_RPC_helper::Reply::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    return read(reader);
+}
+
+bool IMap2DMsgs_clear_all_objects_RPC_helper::Reply::write(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.isNull()) {
+        if (!writer.write(return_helper)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+bool IMap2DMsgs_clear_all_objects_RPC_helper::Reply::read(yarp::os::idl::WireReader& reader)
+{
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
+    if (!reader.read(return_helper)) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+void IMap2DMsgs_clear_all_objects_RPC_helper::call(IMap2DMsgs* ptr)
+{
+    reply.return_helper = ptr->clear_all_objects_RPC();
 }
 
 // clear_all_locations_RPC helper class implementation
@@ -7391,6 +8834,16 @@ yarp::dev::ReturnValue IMap2DMsgs::remove_map_RPC(const std::string& map_name)
     return ok ? helper.reply.return_helper : yarp::dev::ReturnValue{};
 }
 
+yarp::dev::ReturnValue IMap2DMsgs::store_object_RPC(const std::string& object_name, const yarp::dev::Nav2D::Map2DObject& loc)
+{
+    if (!yarp().canWrite()) {
+        yError("Missing server method '%s'?", IMap2DMsgs_store_object_RPC_helper::s_prototype);
+    }
+    IMap2DMsgs_store_object_RPC_helper helper{object_name, loc};
+    bool ok = yarp().write(helper, helper);
+    return ok ? helper.reply.return_helper : yarp::dev::ReturnValue{};
+}
+
 yarp::dev::ReturnValue IMap2DMsgs::store_location_RPC(const std::string& location_name, const yarp::dev::Nav2D::Map2DLocation& loc)
 {
     if (!yarp().canWrite()) {
@@ -7419,6 +8872,16 @@ yarp::dev::ReturnValue IMap2DMsgs::store_path_RPC(const std::string& path_name, 
     IMap2DMsgs_store_path_RPC_helper helper{path_name, path};
     bool ok = yarp().write(helper, helper);
     return ok ? helper.reply.return_helper : yarp::dev::ReturnValue{};
+}
+
+return_get_object IMap2DMsgs::get_object_RPC(const std::string& object_name)
+{
+    if (!yarp().canWrite()) {
+        yError("Missing server method '%s'?", IMap2DMsgs_get_object_RPC_helper::s_prototype);
+    }
+    IMap2DMsgs_get_object_RPC_helper helper{object_name};
+    bool ok = yarp().write(helper, helper);
+    return ok ? helper.reply.return_helper : return_get_object{};
 }
 
 return_get_location IMap2DMsgs::get_location_RPC(const std::string& location_name)
@@ -7451,6 +8914,16 @@ return_get_path IMap2DMsgs::get_path_RPC(const std::string& path_name)
     return ok ? helper.reply.return_helper : return_get_path{};
 }
 
+return_get_objects_list IMap2DMsgs::get_objects_list_RPC()
+{
+    if (!yarp().canWrite()) {
+        yError("Missing server method '%s'?", IMap2DMsgs_get_objects_list_RPC_helper::s_prototype);
+    }
+    IMap2DMsgs_get_objects_list_RPC_helper helper{};
+    bool ok = yarp().write(helper, helper);
+    return ok ? helper.reply.return_helper : return_get_objects_list{};
+}
+
 return_get_locations_list IMap2DMsgs::get_locations_list_RPC()
 {
     if (!yarp().canWrite()) {
@@ -7479,6 +8952,16 @@ return_get_paths_list IMap2DMsgs::get_paths_list_RPC()
     IMap2DMsgs_get_paths_list_RPC_helper helper{};
     bool ok = yarp().write(helper, helper);
     return ok ? helper.reply.return_helper : return_get_paths_list{};
+}
+
+return_get_all_objects IMap2DMsgs::get_all_objects_RPC()
+{
+    if (!yarp().canWrite()) {
+        yError("Missing server method '%s'?", IMap2DMsgs_get_all_objects_RPC_helper::s_prototype);
+    }
+    IMap2DMsgs_get_all_objects_RPC_helper helper{};
+    bool ok = yarp().write(helper, helper);
+    return ok ? helper.reply.return_helper : return_get_all_objects{};
 }
 
 return_get_all_locations IMap2DMsgs::get_all_locations_RPC()
@@ -7521,6 +9004,16 @@ yarp::dev::ReturnValue IMap2DMsgs::rename_location_RPC(const std::string& origin
     return ok ? helper.reply.return_helper : yarp::dev::ReturnValue{};
 }
 
+yarp::dev::ReturnValue IMap2DMsgs::delete_object_RPC(const std::string& object_name)
+{
+    if (!yarp().canWrite()) {
+        yError("Missing server method '%s'?", IMap2DMsgs_delete_object_RPC_helper::s_prototype);
+    }
+    IMap2DMsgs_delete_object_RPC_helper helper{object_name};
+    bool ok = yarp().write(helper, helper);
+    return ok ? helper.reply.return_helper : yarp::dev::ReturnValue{};
+}
+
 yarp::dev::ReturnValue IMap2DMsgs::delete_location_RPC(const std::string& location_name)
 {
     if (!yarp().canWrite()) {
@@ -7537,6 +9030,16 @@ yarp::dev::ReturnValue IMap2DMsgs::delete_path_RPC(const std::string& path_name)
         yError("Missing server method '%s'?", IMap2DMsgs_delete_path_RPC_helper::s_prototype);
     }
     IMap2DMsgs_delete_path_RPC_helper helper{path_name};
+    bool ok = yarp().write(helper, helper);
+    return ok ? helper.reply.return_helper : yarp::dev::ReturnValue{};
+}
+
+yarp::dev::ReturnValue IMap2DMsgs::rename_object_RPC(const std::string& original_name, const std::string& new_name)
+{
+    if (!yarp().canWrite()) {
+        yError("Missing server method '%s'?", IMap2DMsgs_rename_object_RPC_helper::s_prototype);
+    }
+    IMap2DMsgs_rename_object_RPC_helper helper{original_name, new_name};
     bool ok = yarp().write(helper, helper);
     return ok ? helper.reply.return_helper : yarp::dev::ReturnValue{};
 }
@@ -7567,6 +9070,16 @@ yarp::dev::ReturnValue IMap2DMsgs::delete_area_RPC(const std::string& area_name)
         yError("Missing server method '%s'?", IMap2DMsgs_delete_area_RPC_helper::s_prototype);
     }
     IMap2DMsgs_delete_area_RPC_helper helper{area_name};
+    bool ok = yarp().write(helper, helper);
+    return ok ? helper.reply.return_helper : yarp::dev::ReturnValue{};
+}
+
+yarp::dev::ReturnValue IMap2DMsgs::clear_all_objects_RPC()
+{
+    if (!yarp().canWrite()) {
+        yError("Missing server method '%s'?", IMap2DMsgs_clear_all_objects_RPC_helper::s_prototype);
+    }
+    IMap2DMsgs_clear_all_objects_RPC_helper helper{};
     bool ok = yarp().write(helper, helper);
     return ok ? helper.reply.return_helper : yarp::dev::ReturnValue{};
 }
@@ -7703,24 +9216,31 @@ std::vector<std::string> IMap2DMsgs::help(const std::string& functionName)
         helpString.emplace_back(IMap2DMsgs_get_map_RPC_helper::s_tag);
         helpString.emplace_back(IMap2DMsgs_get_map_names_RPC_helper::s_tag);
         helpString.emplace_back(IMap2DMsgs_remove_map_RPC_helper::s_tag);
+        helpString.emplace_back(IMap2DMsgs_store_object_RPC_helper::s_tag);
         helpString.emplace_back(IMap2DMsgs_store_location_RPC_helper::s_tag);
         helpString.emplace_back(IMap2DMsgs_store_area_RPC_helper::s_tag);
         helpString.emplace_back(IMap2DMsgs_store_path_RPC_helper::s_tag);
+        helpString.emplace_back(IMap2DMsgs_get_object_RPC_helper::s_tag);
         helpString.emplace_back(IMap2DMsgs_get_location_RPC_helper::s_tag);
         helpString.emplace_back(IMap2DMsgs_get_area_RPC_helper::s_tag);
         helpString.emplace_back(IMap2DMsgs_get_path_RPC_helper::s_tag);
+        helpString.emplace_back(IMap2DMsgs_get_objects_list_RPC_helper::s_tag);
         helpString.emplace_back(IMap2DMsgs_get_locations_list_RPC_helper::s_tag);
         helpString.emplace_back(IMap2DMsgs_get_areas_list_RPC_helper::s_tag);
         helpString.emplace_back(IMap2DMsgs_get_paths_list_RPC_helper::s_tag);
+        helpString.emplace_back(IMap2DMsgs_get_all_objects_RPC_helper::s_tag);
         helpString.emplace_back(IMap2DMsgs_get_all_locations_RPC_helper::s_tag);
         helpString.emplace_back(IMap2DMsgs_get_all_areas_RPC_helper::s_tag);
         helpString.emplace_back(IMap2DMsgs_get_all_paths_RPC_helper::s_tag);
         helpString.emplace_back(IMap2DMsgs_rename_location_RPC_helper::s_tag);
+        helpString.emplace_back(IMap2DMsgs_delete_object_RPC_helper::s_tag);
         helpString.emplace_back(IMap2DMsgs_delete_location_RPC_helper::s_tag);
         helpString.emplace_back(IMap2DMsgs_delete_path_RPC_helper::s_tag);
+        helpString.emplace_back(IMap2DMsgs_rename_object_RPC_helper::s_tag);
         helpString.emplace_back(IMap2DMsgs_rename_area_RPC_helper::s_tag);
         helpString.emplace_back(IMap2DMsgs_rename_path_RPC_helper::s_tag);
         helpString.emplace_back(IMap2DMsgs_delete_area_RPC_helper::s_tag);
+        helpString.emplace_back(IMap2DMsgs_clear_all_objects_RPC_helper::s_tag);
         helpString.emplace_back(IMap2DMsgs_clear_all_locations_RPC_helper::s_tag);
         helpString.emplace_back(IMap2DMsgs_clear_all_areas_RPC_helper::s_tag);
         helpString.emplace_back(IMap2DMsgs_clear_all_paths_RPC_helper::s_tag);
@@ -7750,6 +9270,9 @@ std::vector<std::string> IMap2DMsgs::help(const std::string& functionName)
         if (functionName == IMap2DMsgs_remove_map_RPC_helper::s_tag) {
             helpString.emplace_back(IMap2DMsgs_remove_map_RPC_helper::s_prototype);
         }
+        if (functionName == IMap2DMsgs_store_object_RPC_helper::s_tag) {
+            helpString.emplace_back(IMap2DMsgs_store_object_RPC_helper::s_prototype);
+        }
         if (functionName == IMap2DMsgs_store_location_RPC_helper::s_tag) {
             helpString.emplace_back(IMap2DMsgs_store_location_RPC_helper::s_prototype);
         }
@@ -7758,6 +9281,9 @@ std::vector<std::string> IMap2DMsgs::help(const std::string& functionName)
         }
         if (functionName == IMap2DMsgs_store_path_RPC_helper::s_tag) {
             helpString.emplace_back(IMap2DMsgs_store_path_RPC_helper::s_prototype);
+        }
+        if (functionName == IMap2DMsgs_get_object_RPC_helper::s_tag) {
+            helpString.emplace_back(IMap2DMsgs_get_object_RPC_helper::s_prototype);
         }
         if (functionName == IMap2DMsgs_get_location_RPC_helper::s_tag) {
             helpString.emplace_back(IMap2DMsgs_get_location_RPC_helper::s_prototype);
@@ -7768,6 +9294,9 @@ std::vector<std::string> IMap2DMsgs::help(const std::string& functionName)
         if (functionName == IMap2DMsgs_get_path_RPC_helper::s_tag) {
             helpString.emplace_back(IMap2DMsgs_get_path_RPC_helper::s_prototype);
         }
+        if (functionName == IMap2DMsgs_get_objects_list_RPC_helper::s_tag) {
+            helpString.emplace_back(IMap2DMsgs_get_objects_list_RPC_helper::s_prototype);
+        }
         if (functionName == IMap2DMsgs_get_locations_list_RPC_helper::s_tag) {
             helpString.emplace_back(IMap2DMsgs_get_locations_list_RPC_helper::s_prototype);
         }
@@ -7776,6 +9305,9 @@ std::vector<std::string> IMap2DMsgs::help(const std::string& functionName)
         }
         if (functionName == IMap2DMsgs_get_paths_list_RPC_helper::s_tag) {
             helpString.emplace_back(IMap2DMsgs_get_paths_list_RPC_helper::s_prototype);
+        }
+        if (functionName == IMap2DMsgs_get_all_objects_RPC_helper::s_tag) {
+            helpString.emplace_back(IMap2DMsgs_get_all_objects_RPC_helper::s_prototype);
         }
         if (functionName == IMap2DMsgs_get_all_locations_RPC_helper::s_tag) {
             helpString.emplace_back(IMap2DMsgs_get_all_locations_RPC_helper::s_prototype);
@@ -7789,11 +9321,17 @@ std::vector<std::string> IMap2DMsgs::help(const std::string& functionName)
         if (functionName == IMap2DMsgs_rename_location_RPC_helper::s_tag) {
             helpString.emplace_back(IMap2DMsgs_rename_location_RPC_helper::s_prototype);
         }
+        if (functionName == IMap2DMsgs_delete_object_RPC_helper::s_tag) {
+            helpString.emplace_back(IMap2DMsgs_delete_object_RPC_helper::s_prototype);
+        }
         if (functionName == IMap2DMsgs_delete_location_RPC_helper::s_tag) {
             helpString.emplace_back(IMap2DMsgs_delete_location_RPC_helper::s_prototype);
         }
         if (functionName == IMap2DMsgs_delete_path_RPC_helper::s_tag) {
             helpString.emplace_back(IMap2DMsgs_delete_path_RPC_helper::s_prototype);
+        }
+        if (functionName == IMap2DMsgs_rename_object_RPC_helper::s_tag) {
+            helpString.emplace_back(IMap2DMsgs_rename_object_RPC_helper::s_prototype);
         }
         if (functionName == IMap2DMsgs_rename_area_RPC_helper::s_tag) {
             helpString.emplace_back(IMap2DMsgs_rename_area_RPC_helper::s_prototype);
@@ -7803,6 +9341,9 @@ std::vector<std::string> IMap2DMsgs::help(const std::string& functionName)
         }
         if (functionName == IMap2DMsgs_delete_area_RPC_helper::s_tag) {
             helpString.emplace_back(IMap2DMsgs_delete_area_RPC_helper::s_prototype);
+        }
+        if (functionName == IMap2DMsgs_clear_all_objects_RPC_helper::s_tag) {
+            helpString.emplace_back(IMap2DMsgs_clear_all_objects_RPC_helper::s_prototype);
         }
         if (functionName == IMap2DMsgs_clear_all_locations_RPC_helper::s_tag) {
             helpString.emplace_back(IMap2DMsgs_clear_all_locations_RPC_helper::s_prototype);
@@ -7967,6 +9508,21 @@ bool IMap2DMsgs::read(yarp::os::ConnectionReader& connection)
             reader.accept();
             return true;
         }
+        if (tag == IMap2DMsgs_store_object_RPC_helper::s_tag) {
+            IMap2DMsgs_store_object_RPC_helper helper;
+            if (!helper.cmd.readArgs(reader)) {
+                return false;
+            }
+
+            helper.call(this);
+
+            yarp::os::idl::WireWriter writer(reader);
+            if (!helper.reply.write(writer)) {
+                return false;
+            }
+            reader.accept();
+            return true;
+        }
         if (tag == IMap2DMsgs_store_location_RPC_helper::s_tag) {
             IMap2DMsgs_store_location_RPC_helper helper;
             if (!helper.cmd.readArgs(reader)) {
@@ -7999,6 +9555,21 @@ bool IMap2DMsgs::read(yarp::os::ConnectionReader& connection)
         }
         if (tag == IMap2DMsgs_store_path_RPC_helper::s_tag) {
             IMap2DMsgs_store_path_RPC_helper helper;
+            if (!helper.cmd.readArgs(reader)) {
+                return false;
+            }
+
+            helper.call(this);
+
+            yarp::os::idl::WireWriter writer(reader);
+            if (!helper.reply.write(writer)) {
+                return false;
+            }
+            reader.accept();
+            return true;
+        }
+        if (tag == IMap2DMsgs_get_object_RPC_helper::s_tag) {
+            IMap2DMsgs_get_object_RPC_helper helper;
             if (!helper.cmd.readArgs(reader)) {
                 return false;
             }
@@ -8057,6 +9628,21 @@ bool IMap2DMsgs::read(yarp::os::ConnectionReader& connection)
             reader.accept();
             return true;
         }
+        if (tag == IMap2DMsgs_get_objects_list_RPC_helper::s_tag) {
+            IMap2DMsgs_get_objects_list_RPC_helper helper;
+            if (!helper.cmd.readArgs(reader)) {
+                return false;
+            }
+
+            helper.call(this);
+
+            yarp::os::idl::WireWriter writer(reader);
+            if (!helper.reply.write(writer)) {
+                return false;
+            }
+            reader.accept();
+            return true;
+        }
         if (tag == IMap2DMsgs_get_locations_list_RPC_helper::s_tag) {
             IMap2DMsgs_get_locations_list_RPC_helper helper;
             if (!helper.cmd.readArgs(reader)) {
@@ -8089,6 +9675,21 @@ bool IMap2DMsgs::read(yarp::os::ConnectionReader& connection)
         }
         if (tag == IMap2DMsgs_get_paths_list_RPC_helper::s_tag) {
             IMap2DMsgs_get_paths_list_RPC_helper helper;
+            if (!helper.cmd.readArgs(reader)) {
+                return false;
+            }
+
+            helper.call(this);
+
+            yarp::os::idl::WireWriter writer(reader);
+            if (!helper.reply.write(writer)) {
+                return false;
+            }
+            reader.accept();
+            return true;
+        }
+        if (tag == IMap2DMsgs_get_all_objects_RPC_helper::s_tag) {
+            IMap2DMsgs_get_all_objects_RPC_helper helper;
             if (!helper.cmd.readArgs(reader)) {
                 return false;
             }
@@ -8162,6 +9763,21 @@ bool IMap2DMsgs::read(yarp::os::ConnectionReader& connection)
             reader.accept();
             return true;
         }
+        if (tag == IMap2DMsgs_delete_object_RPC_helper::s_tag) {
+            IMap2DMsgs_delete_object_RPC_helper helper;
+            if (!helper.cmd.readArgs(reader)) {
+                return false;
+            }
+
+            helper.call(this);
+
+            yarp::os::idl::WireWriter writer(reader);
+            if (!helper.reply.write(writer)) {
+                return false;
+            }
+            reader.accept();
+            return true;
+        }
         if (tag == IMap2DMsgs_delete_location_RPC_helper::s_tag) {
             IMap2DMsgs_delete_location_RPC_helper helper;
             if (!helper.cmd.readArgs(reader)) {
@@ -8179,6 +9795,21 @@ bool IMap2DMsgs::read(yarp::os::ConnectionReader& connection)
         }
         if (tag == IMap2DMsgs_delete_path_RPC_helper::s_tag) {
             IMap2DMsgs_delete_path_RPC_helper helper;
+            if (!helper.cmd.readArgs(reader)) {
+                return false;
+            }
+
+            helper.call(this);
+
+            yarp::os::idl::WireWriter writer(reader);
+            if (!helper.reply.write(writer)) {
+                return false;
+            }
+            reader.accept();
+            return true;
+        }
+        if (tag == IMap2DMsgs_rename_object_RPC_helper::s_tag) {
+            IMap2DMsgs_rename_object_RPC_helper helper;
             if (!helper.cmd.readArgs(reader)) {
                 return false;
             }
@@ -8224,6 +9855,21 @@ bool IMap2DMsgs::read(yarp::os::ConnectionReader& connection)
         }
         if (tag == IMap2DMsgs_delete_area_RPC_helper::s_tag) {
             IMap2DMsgs_delete_area_RPC_helper helper;
+            if (!helper.cmd.readArgs(reader)) {
+                return false;
+            }
+
+            helper.call(this);
+
+            yarp::os::idl::WireWriter writer(reader);
+            if (!helper.reply.write(writer)) {
+                return false;
+            }
+            reader.accept();
+            return true;
+        }
+        if (tag == IMap2DMsgs_clear_all_objects_RPC_helper::s_tag) {
+            IMap2DMsgs_clear_all_objects_RPC_helper helper;
             if (!helper.cmd.readArgs(reader)) {
                 return false;
             }
