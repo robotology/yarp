@@ -5,14 +5,13 @@
 
 #include "yarp/dev/ImplementPWMControl.h"
 #include <yarp/dev/ControlBoardHelper.h>
+#include <yarp/dev/ControlBoardHelpers.h>
 #include <yarp/os/LogStream.h>
 #include <yarp/dev/impl/FixedSizeBuffersManager.h>
 #include <iostream>
 
 using namespace yarp::dev;
 using namespace yarp::os;
-
-#define JOINTIDCHECK if (j >= castToMapper(helper)->axes()){yError("joint id out of bound"); return false;}
 
 /////////////// implement ImplemenPWMControl
 ImplementPWMControl::ImplementPWMControl(IPWMControlRaw *r) :
@@ -58,62 +57,62 @@ bool ImplementPWMControl::uninitialize()
     return true;
 }
 
-bool ImplementPWMControl::getNumberOfMotors(int *axes)
+ReturnValue ImplementPWMControl::getNumberOfMotors(int *axes)
 {
     return raw->getNumberOfMotorsRaw(axes);
 }
 
-bool ImplementPWMControl::setRefDutyCycle(int j, double duty)
+ReturnValue ImplementPWMControl::setRefDutyCycle(int j, double duty)
 {
-    JOINTIDCHECK
+    JOINTIDCHECK(MAPPER_MAXID)
     int k;
     double pwm;
     castToMapper(helper)->dutycycle2PWM(duty, j, pwm, k);
     return raw->setRefDutyCycleRaw(k, pwm);
 }
 
-bool ImplementPWMControl::setRefDutyCycles(const double *duty)
+ReturnValue ImplementPWMControl::setRefDutyCycles(const double *duty)
 {
     yarp::dev::impl::Buffer<double> buffValues = doubleBuffManager->getBuffer();
     castToMapper(helper)->dutycycle2PWM(duty, buffValues.getData());
-    bool ret = raw->setRefDutyCyclesRaw( buffValues.getData());
+    ReturnValue ret = raw->setRefDutyCyclesRaw( buffValues.getData());
     doubleBuffManager->releaseBuffer(buffValues);
     return ret;
 }
 
-bool ImplementPWMControl::getRefDutyCycle(int j, double *v)
+ReturnValue ImplementPWMControl::getRefDutyCycle(int j, double *v)
 {
-    JOINTIDCHECK
+    JOINTIDCHECK(MAPPER_MAXID)
     double pwm;
     int k = castToMapper(helper)->toHw(j);
-    bool ret = raw->getRefDutyCycleRaw(k, &pwm);
+    ReturnValue ret = raw->getRefDutyCycleRaw(k, &pwm);
     *v = castToMapper(helper)->PWM2dutycycle(pwm, k);
     return ret;
 }
 
-bool ImplementPWMControl::getRefDutyCycles(double *duty)
+ReturnValue ImplementPWMControl::getRefDutyCycles(double *duty)
 {
     yarp::dev::impl::Buffer<double> buffValues = doubleBuffManager->getBuffer();
-    bool ret = raw->getRefDutyCyclesRaw(buffValues.getData());
+    ReturnValue ret = raw->getRefDutyCyclesRaw(buffValues.getData());
     castToMapper(helper)->PWM2dutycycle(buffValues.getData(), duty);
     doubleBuffManager->releaseBuffer(buffValues);
     return ret;
 }
 
-bool ImplementPWMControl::getDutyCycle(int j, double *duty)
+ReturnValue ImplementPWMControl::getDutyCycle(int j, double *duty)
 {
-    JOINTIDCHECK
+    JOINTIDCHECK(MAPPER_MAXID)
     double pwm;
     int k = castToMapper(helper)->toHw(j);
-    bool ret = raw->getDutyCycleRaw(k, &pwm);
+    ReturnValue ret = raw->getDutyCycleRaw(k, &pwm);
     *duty = castToMapper(helper)->PWM2dutycycle(pwm, k);
     return ret;
 }
 
-bool ImplementPWMControl::getDutyCycles(double *duty)
+ReturnValue ImplementPWMControl::getDutyCycles(double *duty)
 {
     yarp::dev::impl::Buffer<double> buffValues = doubleBuffManager->getBuffer();
-    bool ret = raw->getDutyCyclesRaw(buffValues.getData());
+    ReturnValue ret = raw->getDutyCyclesRaw(buffValues.getData());
     castToMapper(helper)->PWM2dutycycle(buffValues.getData(), duty);
     doubleBuffManager->releaseBuffer(buffValues);
     return ret;

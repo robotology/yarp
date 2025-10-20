@@ -59,13 +59,13 @@ bool ImplementEncoders::uninitialize ()
     return true;
 }
 
-bool ImplementEncoders::getAxes(int *ax)
+ReturnValue ImplementEncoders::getAxes(int *ax)
 {
     (*ax)=castToMapper(helper)->axes();
-    return true;
+    return ReturnValue_ok;
 }
 
-bool ImplementEncoders::resetEncoder(int j)
+ReturnValue ImplementEncoders::resetEncoder(int j)
 {
     int k;
     k=castToMapper(helper)->toHw(j);
@@ -74,12 +74,12 @@ bool ImplementEncoders::resetEncoder(int j)
 }
 
 
-bool ImplementEncoders::resetEncoders()
+ReturnValue ImplementEncoders::resetEncoders()
 {
     return iEncoders->resetEncodersRaw();
 }
 
-bool ImplementEncoders::setEncoder(int j, double val)
+ReturnValue ImplementEncoders::setEncoder(int j, double val)
 {
     int k;
     double enc;
@@ -89,18 +89,18 @@ bool ImplementEncoders::setEncoder(int j, double val)
     return iEncoders->setEncoderRaw(k, enc);
 }
 
-bool ImplementEncoders::setEncoders(const double *val)
+ReturnValue ImplementEncoders::setEncoders(const double *val)
 {
     castToMapper(helper)->posA2E(val, temp);
 
     return iEncoders->setEncodersRaw(temp);
 }
 
-bool ImplementEncoders::getEncoder(int j, double *v)
+ReturnValue ImplementEncoders::getEncoder(int j, double *v)
 {
     int k;
     double enc;
-    bool ret;
+    ReturnValue ret;
 
     k=castToMapper(helper)->toHw(j);
 
@@ -111,9 +111,9 @@ bool ImplementEncoders::getEncoder(int j, double *v)
     return ret;
 }
 
-bool ImplementEncoders::getEncoders(double *v)
+ReturnValue ImplementEncoders::getEncoders(double *v)
 {
-    bool ret;
+    ReturnValue ret;
     castToMapper(helper)->axes();
 
     ret=iEncoders->getEncodersRaw(temp);
@@ -123,11 +123,11 @@ bool ImplementEncoders::getEncoders(double *v)
     return ret;
 }
 
-bool ImplementEncoders::getEncoderSpeed(int j, double *v)
+ReturnValue ImplementEncoders::getEncoderSpeed(int j, double *v)
 {
     int k;
     double enc;
-    bool ret;
+    ReturnValue ret;
 
     k=castToMapper(helper)->toHw(j);
 
@@ -138,9 +138,9 @@ bool ImplementEncoders::getEncoderSpeed(int j, double *v)
     return ret;
 }
 
-bool ImplementEncoders::getEncoderSpeeds(double *v)
+ReturnValue ImplementEncoders::getEncoderSpeeds(double *v)
 {
-    bool ret;
+    ReturnValue ret;
     ret=iEncoders->getEncoderSpeedsRaw(temp);
 
     castToMapper(helper)->velE2A(temp, v);
@@ -148,11 +148,11 @@ bool ImplementEncoders::getEncoderSpeeds(double *v)
     return ret;
 }
 
-bool ImplementEncoders::getEncoderAcceleration(int j, double *v)
+ReturnValue ImplementEncoders::getEncoderAcceleration(int j, double *v)
 {
     int k;
     double enc;
-    bool ret;
+    ReturnValue ret;
 
     k=castToMapper(helper)->toHw(j);
 
@@ -163,9 +163,9 @@ bool ImplementEncoders::getEncoderAcceleration(int j, double *v)
     return ret;
 }
 
-bool ImplementEncoders::getEncoderAccelerations(double *v)
+ReturnValue ImplementEncoders::getEncoderAccelerations(double *v)
 {
-    bool ret;
+    ReturnValue ret;
     ret=iEncoders->getEncoderAccelerationsRaw(temp);
 
     castToMapper(helper)->accE2A(temp, v);

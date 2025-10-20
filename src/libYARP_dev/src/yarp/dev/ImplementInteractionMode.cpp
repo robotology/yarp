@@ -7,12 +7,12 @@
 
 #include <yarp/dev/ControlBoardInterfacesImpl.h>
 #include <yarp/dev/ControlBoardHelper.h>
+#include <yarp/dev/ControlBoardHelpers.h>
 #include <yarp/dev/ImplementInteractionMode.h>
 #include <yarp/dev/impl/FixedSizeBuffersManager.h>
 
 using namespace yarp::dev;
 using namespace yarp::os;
-#define JOINTIDCHECK if (j >= castToMapper(helper)->axes()){yError("joint id out of bound"); return false;}
 
 ImplementInteractionMode::ImplementInteractionMode(yarp::dev::IInteractionModeRaw *class_p) :
     iInteraction(class_p),
@@ -82,17 +82,15 @@ bool ImplementInteractionMode::uninitialize()
     return true;
 }
 
-bool ImplementInteractionMode::getInteractionMode(int axis, yarp::dev::InteractionModeEnum* mode)
+ReturnValue ImplementInteractionMode::getInteractionMode(int axis, yarp::dev::InteractionModeEnum* mode)
 {
     int j = castToMapper(helper)->toHw(axis);
     return iInteraction->getInteractionModeRaw(j, mode);
 }
 
-bool ImplementInteractionMode::getInteractionModes(int n_joints, int *joints, yarp::dev::InteractionModeEnum* modes)
+ReturnValue ImplementInteractionMode::getInteractionModes(int n_joints, int *joints, yarp::dev::InteractionModeEnum* modes)
 {
-    if (!castToMapper(helper)->checkAxesIds(n_joints, joints)) {
-        return false;
-    }
+    JOINTSIDCHECK
 
     yarp::dev::impl::Buffer<int> buffJoints =  intBuffManager->getBuffer();
 
@@ -100,19 +98,20 @@ bool ImplementInteractionMode::getInteractionModes(int n_joints, int *joints, ya
     {
         buffJoints[i] = castToMapper(helper)->toHw(joints[i]);
     }
-    bool ret = iInteraction->getInteractionModesRaw(n_joints, buffJoints.getData(), modes);
+    ReturnValue ret = iInteraction->getInteractionModesRaw(n_joints, buffJoints.getData(), modes);
 
     intBuffManager->releaseBuffer(buffJoints);
     return ret;
 }
 
-bool ImplementInteractionMode::getInteractionModes(yarp::dev::InteractionModeEnum* modes)
+ReturnValue ImplementInteractionMode::getInteractionModes(yarp::dev::InteractionModeEnum* modes)
 {
     yarp::dev::impl::Buffer<yarp::dev::InteractionModeEnum> buffValues = imodeBuffManager->getBuffer();
-    if(!iInteraction->getInteractionModesRaw(buffValues.getData()) )
+    ReturnValue ret = iInteraction->getInteractionModesRaw(buffValues.getData());
+    if(!ret)
     {
         imodeBuffManager->releaseBuffer(buffValues);
-        return false;
+        return ret;
     }
     for(int idx=0; idx<castToMapper(helper)->axes(); idx++)
     {
@@ -120,20 +119,18 @@ bool ImplementInteractionMode::getInteractionModes(yarp::dev::InteractionModeEnu
         modes[j] = buffValues[idx];
     }
     imodeBuffManager->releaseBuffer(buffValues);
-    return true;
+    return ReturnValue_ok;
 }
 
-bool ImplementInteractionMode::setInteractionMode(int axis, yarp::dev::InteractionModeEnum mode)
+ReturnValue ImplementInteractionMode::setInteractionMode(int axis, yarp::dev::InteractionModeEnum mode)
 {
     int j = castToMapper(helper)->toHw(axis);
     return iInteraction->setInteractionModeRaw(j, mode);
 }
 
-bool ImplementInteractionMode::setInteractionModes(int n_joints, int *joints, yarp::dev::InteractionModeEnum* modes)
+ReturnValue ImplementInteractionMode::setInteractionModes(int n_joints, int *joints, yarp::dev::InteractionModeEnum* modes)
 {
-    if (!castToMapper(helper)->checkAxesIds(n_joints, joints)) {
-        return false;
-    }
+    JOINTSIDCHECK
 
     yarp::dev::impl::Buffer<int> buffJoints =  intBuffManager->getBuffer();
 
@@ -141,12 +138,12 @@ bool ImplementInteractionMode::setInteractionModes(int n_joints, int *joints, ya
     {
         buffJoints[idx] = castToMapper(helper)->toHw(joints[idx]);
     }
-    bool ret = iInteraction->setInteractionModesRaw(n_joints, buffJoints.getData(), modes);
+    ReturnValue ret = iInteraction->setInteractionModesRaw(n_joints, buffJoints.getData(), modes);
     intBuffManager->releaseBuffer(buffJoints);
     return ret;
 }
 
-bool ImplementInteractionMode::setInteractionModes(yarp::dev::InteractionModeEnum* modes)
+ReturnValue ImplementInteractionMode::setInteractionModes(yarp::dev::InteractionModeEnum* modes)
 {
     yarp::dev::impl::Buffer<yarp::dev::InteractionModeEnum> buffValues = imodeBuffManager->getBuffer();
     for(int idx=0; idx< castToMapper(helper)->axes(); idx++)
@@ -155,7 +152,7 @@ bool ImplementInteractionMode::setInteractionModes(yarp::dev::InteractionModeEnu
         buffValues[j] = modes[idx];
     }
 
-    bool ret = iInteraction->setInteractionModesRaw(buffValues.getData());
+    ReturnValue ret = iInteraction->setInteractionModesRaw(buffValues.getData());
     imodeBuffManager->releaseBuffer(buffValues);
     return ret;
 }

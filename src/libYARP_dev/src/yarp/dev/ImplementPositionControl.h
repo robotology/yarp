@@ -71,35 +71,35 @@ public:
      * axes for the current physical interface.
      * @return the number of controlled axes.
      */
-    bool getAxes(int *axis) override;
+    yarp::dev::ReturnValue getAxes(int *axis) override;
 
-    bool positionMove(int j, double ref) override;
-    bool positionMove(const int n_joint, const int *joints, const double *refs) override;
-    bool positionMove(const double *refs) override;
-    bool relativeMove(int j, double delta) override;
-    bool relativeMove(const int n_joint, const int *joints, const double *deltas) override;
-    bool relativeMove(const double *deltas) override;
-    bool checkMotionDone(bool *flag) override;
-    bool checkMotionDone(const int n_joint, const int *joints, bool *flags) override;
-    bool checkMotionDone(int j, bool *flag) override;
-    bool setTrajSpeed(int j, double sp) override;
-    bool setTrajSpeeds(const int n_joint, const int *joints, const double *spds) override;
-    bool setTrajSpeeds(const double *spds) override;
-    bool setTrajAcceleration(int j, double acc) override;
-    bool setTrajAccelerations(const int n_joint, const int *joints, const double *accs) override;
-    bool setTrajAccelerations(const double *accs) override;
-    bool getTrajSpeed(int j, double *ref) override;
-    bool getTrajSpeeds(const int n_joint, const int *joints, double *spds) override;
-    bool getTrajSpeeds(double *spds) override;
-    bool getTrajAcceleration(int j, double *acc) override;
-    bool getTrajAccelerations(const int n_joint, const int *joints, double *accs) override;
-    bool getTrajAccelerations(double *accs) override;
-    bool stop(int j) override;
-    bool stop(const int n_joint, const int *joints) override;
-    bool stop() override;
-    bool getTargetPosition(const int joint, double *ref) override;
-    bool getTargetPositions(double *refs) override;
-    bool getTargetPositions(const int n_joint, const int *joints, double *refs) override;
+    yarp::dev::ReturnValue positionMove(int j, double ref) override;
+    yarp::dev::ReturnValue positionMove(const int n_joint, const int *joints, const double *refs) override;
+    yarp::dev::ReturnValue positionMove(const double *refs) override;
+    yarp::dev::ReturnValue relativeMove(int j, double delta) override;
+    yarp::dev::ReturnValue relativeMove(const int n_joint, const int *joints, const double *deltas) override;
+    yarp::dev::ReturnValue relativeMove(const double *deltas) override;
+    yarp::dev::ReturnValue checkMotionDone(bool *flag) override;
+    yarp::dev::ReturnValue checkMotionDone(const int n_joint, const int *joints, bool *flags) override;
+    yarp::dev::ReturnValue checkMotionDone(int j, bool *flag) override;
+    yarp::dev::ReturnValue setTrajSpeed(int j, double sp) override;
+    yarp::dev::ReturnValue setTrajSpeeds(const int n_joint, const int *joints, const double *spds) override;
+    yarp::dev::ReturnValue setTrajSpeeds(const double *spds) override;
+    yarp::dev::ReturnValue setTrajAcceleration(int j, double acc) override;
+    yarp::dev::ReturnValue setTrajAccelerations(const int n_joint, const int *joints, const double *accs) override;
+    yarp::dev::ReturnValue setTrajAccelerations(const double *accs) override;
+    yarp::dev::ReturnValue getTrajSpeed(int j, double *ref) override;
+    yarp::dev::ReturnValue getTrajSpeeds(const int n_joint, const int *joints, double *spds) override;
+    yarp::dev::ReturnValue getTrajSpeeds(double *spds) override;
+    yarp::dev::ReturnValue getTrajAcceleration(int j, double *acc) override;
+    yarp::dev::ReturnValue getTrajAccelerations(const int n_joint, const int *joints, double *accs) override;
+    yarp::dev::ReturnValue getTrajAccelerations(double *accs) override;
+    yarp::dev::ReturnValue stop(int j) override;
+    yarp::dev::ReturnValue stop(const int n_joint, const int *joints) override;
+    yarp::dev::ReturnValue stop() override;
+    yarp::dev::ReturnValue getTargetPosition(const int joint, double *ref) override;
+    yarp::dev::ReturnValue getTargetPositions(double *refs) override;
+    yarp::dev::ReturnValue getTargetPositions(const int n_joint, const int *joints, double *refs) override;
 };
 
 /**
@@ -128,89 +128,89 @@ private:
 public:
     virtual ~StubImplPositionControlRaw(){}
 
-    bool getAxes(int *ax) override
-    {return NOT_YET_IMPLEMENTED("getAxes");}
+    yarp::dev::ReturnValue getAxes(int *ax) override
+    {return YARP_METHOD_NOT_YET_IMPLEMENTED();}
 
-    bool positionMoveRaw(int j, double ref) override
-    {return NOT_YET_IMPLEMENTED("positionMoveRaw");}
+    yarp::dev::ReturnValue positionMoveRaw(int j, double ref) override
+    {return YARP_METHOD_NOT_YET_IMPLEMENTED();}
 
-    bool positionMoveRaw(const int n_joint, const int *joints, const double *refs) override
-    {return NOT_YET_IMPLEMENTED("positionMoveRaw");}
+    yarp::dev::ReturnValue positionMoveRaw(const int n_joint, const int *joints, const double *refs) override
+    {return YARP_METHOD_NOT_YET_IMPLEMENTED();}
 
-    bool positionMoveRaw(const double *refs) override
-    {return NOT_YET_IMPLEMENTED("positionMoveRaw");}
+    yarp::dev::ReturnValue positionMoveRaw(const double *refs) override
+    {return YARP_METHOD_NOT_YET_IMPLEMENTED();}
 
-    bool relativeMoveRaw(int j, double delta) override
-    {return NOT_YET_IMPLEMENTED("relativeMoveRaw");}
+    yarp::dev::ReturnValue relativeMoveRaw(int j, double delta) override
+    {return YARP_METHOD_NOT_YET_IMPLEMENTED();}
 
-    bool relativeMoveRaw(const int n_joint, const int *joints, const double *refs) override
-    {return NOT_YET_IMPLEMENTED("relativeMoveRaw");}
+    yarp::dev::ReturnValue relativeMoveRaw(const int n_joint, const int *joints, const double *refs) override
+    {return YARP_METHOD_NOT_YET_IMPLEMENTED();}
 
-    bool relativeMoveRaw(const double *deltas) override
-    {return NOT_YET_IMPLEMENTED("relativeMoveRaw");}
+    yarp::dev::ReturnValue relativeMoveRaw(const double *deltas) override
+    {return YARP_METHOD_NOT_YET_IMPLEMENTED();}
 
-    bool checkMotionDoneRaw(int j, bool *flag) override
-    {return NOT_YET_IMPLEMENTED("checkMotionDoneRaw");}
+    yarp::dev::ReturnValue checkMotionDoneRaw(int j, bool *flag) override
+    {return YARP_METHOD_NOT_YET_IMPLEMENTED();}
 
-    bool checkMotionDoneRaw(const int n_joint, const int *joints, bool *flags) override
-    {return NOT_YET_IMPLEMENTED("checkMotionDoneRaw");}
+    yarp::dev::ReturnValue checkMotionDoneRaw(const int n_joint, const int *joints, bool *flags) override
+    {return YARP_METHOD_NOT_YET_IMPLEMENTED();}
 
-    bool checkMotionDoneRaw(bool *flag) override
-    {return NOT_YET_IMPLEMENTED("checkMotionDoneRaw");}
+    yarp::dev::ReturnValue checkMotionDoneRaw(bool *flag) override
+    {return YARP_METHOD_NOT_YET_IMPLEMENTED();}
 
-    bool setTrajSpeedRaw(int j, double sp) override
-    {return NOT_YET_IMPLEMENTED("setTrajSpeedRaw");}
+    yarp::dev::ReturnValue setTrajSpeedRaw(int j, double sp) override
+    {return YARP_METHOD_NOT_YET_IMPLEMENTED();}
 
-    bool setTrajSpeedsRaw(const int n_joint, const int *joints, const double *spds) override
-    {return NOT_YET_IMPLEMENTED("setTrajSpeedsRaw");}
+    yarp::dev::ReturnValue setTrajSpeedsRaw(const int n_joint, const int *joints, const double *spds) override
+    {return YARP_METHOD_NOT_YET_IMPLEMENTED();}
 
-    bool setTrajSpeedsRaw(const double *spds) override
-    {return NOT_YET_IMPLEMENTED("setTrajSpeedsRaw");}
+    yarp::dev::ReturnValue setTrajSpeedsRaw(const double *spds) override
+    {return YARP_METHOD_NOT_YET_IMPLEMENTED();}
 
-    bool setTrajAccelerationRaw(int j, double acc) override
-    {return NOT_YET_IMPLEMENTED("setTrajAccelerationRaw");}
+    yarp::dev::ReturnValue setTrajAccelerationRaw(int j, double acc) override
+    {return YARP_METHOD_NOT_YET_IMPLEMENTED();}
 
-    bool setTrajAccelerationsRaw(const int n_joint, const int *joints, const double *accs) override
-    {return NOT_YET_IMPLEMENTED("setTrajAccelerationsRaw");}
+    yarp::dev::ReturnValue setTrajAccelerationsRaw(const int n_joint, const int *joints, const double *accs) override
+    {return YARP_METHOD_NOT_YET_IMPLEMENTED();}
 
-    bool setTrajAccelerationsRaw(const double *accs) override
-    {return NOT_YET_IMPLEMENTED("setTrajAccelerationsRaw");}
+    yarp::dev::ReturnValue setTrajAccelerationsRaw(const double *accs) override
+    {return YARP_METHOD_NOT_YET_IMPLEMENTED();}
 
-    bool getTrajSpeedRaw(int j, double *ref) override
-    {return NOT_YET_IMPLEMENTED("getTrajSpeedRaw");}
+    yarp::dev::ReturnValue getTrajSpeedRaw(int j, double *ref) override
+    {return YARP_METHOD_NOT_YET_IMPLEMENTED();}
 
-    bool getTrajSpeedsRaw(const int n_joint, const int *joints, double *spds) override
-    {return NOT_YET_IMPLEMENTED("getTrajSpeedsRaw");}
+    yarp::dev::ReturnValue getTrajSpeedsRaw(const int n_joint, const int *joints, double *spds) override
+    {return YARP_METHOD_NOT_YET_IMPLEMENTED();}
 
-    bool getTrajSpeedsRaw(double *spds) override
-    {return NOT_YET_IMPLEMENTED("getTrajSpeedsRaw");}
+    yarp::dev::ReturnValue getTrajSpeedsRaw(double *spds) override
+    {return YARP_METHOD_NOT_YET_IMPLEMENTED();}
 
-    bool getTrajAccelerationRaw(int j, double *acc) override
-    {return NOT_YET_IMPLEMENTED("getTrajAccelerationRaw");}
+    yarp::dev::ReturnValue getTrajAccelerationRaw(int j, double *acc) override
+    {return YARP_METHOD_NOT_YET_IMPLEMENTED();}
 
-    bool getTrajAccelerationsRaw(const int n_joint, const int *joints, double *accs) override
-    {return NOT_YET_IMPLEMENTED("getTrajAccelerationsRaw");}
+    yarp::dev::ReturnValue getTrajAccelerationsRaw(const int n_joint, const int *joints, double *accs) override
+    {return YARP_METHOD_NOT_YET_IMPLEMENTED();}
 
-    bool getTrajAccelerationsRaw(double *accs) override
-    {return NOT_YET_IMPLEMENTED("getTrajAccelerationsRaw");}
+    yarp::dev::ReturnValue getTrajAccelerationsRaw(double *accs) override
+    {return YARP_METHOD_NOT_YET_IMPLEMENTED();}
 
-    bool stopRaw(int j) override
-    {return NOT_YET_IMPLEMENTED("stopRaw");}
+    yarp::dev::ReturnValue stopRaw(int j) override
+    {return YARP_METHOD_NOT_YET_IMPLEMENTED();}
 
-    bool stopRaw(const int n_joint, const int *joints) override
-    {return NOT_YET_IMPLEMENTED("stopRaw");}
+    yarp::dev::ReturnValue stopRaw(const int n_joint, const int *joints) override
+    {return YARP_METHOD_NOT_YET_IMPLEMENTED();}
 
-    bool stopRaw() override
-    {return NOT_YET_IMPLEMENTED("stopRaw");}
+    yarp::dev::ReturnValue stopRaw() override
+    {return YARP_METHOD_NOT_YET_IMPLEMENTED();}
 
-    bool getTargetPositionRaw(const int joint, double *ref) override
-    {return NOT_YET_IMPLEMENTED("stopRaw");}
+    yarp::dev::ReturnValue getTargetPositionRaw(const int joint, double *ref) override
+    {return YARP_METHOD_NOT_YET_IMPLEMENTED();}
 
-    bool getTargetPositionsRaw(double *refs) override
-    {return NOT_YET_IMPLEMENTED("stopRaw");}
+    yarp::dev::ReturnValue getTargetPositionsRaw(double *refs) override
+    {return YARP_METHOD_NOT_YET_IMPLEMENTED();}
 
-    bool getTargetPositionsRaw(const int n_joint, const int *joints, double *refs) override
-    {return NOT_YET_IMPLEMENTED("stopRaw");}
+    yarp::dev::ReturnValue getTargetPositionsRaw(const int n_joint, const int *joints, double *refs) override
+    {return YARP_METHOD_NOT_YET_IMPLEMENTED();}
 };
 
 #endif // YARP_DEV_IPOSITIONCONTROLIMPL_H

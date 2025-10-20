@@ -8,6 +8,7 @@
 
 #include <yarp/os/Vocab.h>
 #include <yarp/dev/api.h>
+#include <yarp/dev/ReturnValue.h>
 
 namespace yarp::dev {
 class IJointFaultRaw;
@@ -23,7 +24,7 @@ class YARP_dev_API yarp::dev::IJointFault
 {
 public:
     virtual ~IJointFault(){}
-    virtual bool getLastJointFault(int j, int& fault, std::string& message)=0;
+    virtual yarp::dev::ReturnValue getLastJointFault(int j, int& fault, std::string& message)=0;
 };
 
 /**
@@ -35,7 +36,7 @@ class YARP_dev_API yarp::dev::IJointFaultRaw
 {
 public:
     virtual ~IJointFaultRaw(){}
-    virtual bool getLastJointFaultRaw(int j, int& mode, std::string& message)=0;
+    virtual yarp::dev::ReturnValue getLastJointFaultRaw(int j, int& mode, std::string& message)=0;
 };
 
 constexpr yarp::conf::vocab32_t  VOCAB_IJOINTFAULT             =    yarp::os::createVocab32('i','j','f','l');

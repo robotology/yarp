@@ -9,6 +9,7 @@
 
 #include <yarp/os/Vocab.h>
 #include <yarp/dev/api.h>
+#include <yarp/dev/ReturnValue.h>
 
 namespace yarp::dev {
 class IVelocityControl;
@@ -34,7 +35,7 @@ public:
      * @param axis pointer to storage, return value
      * @return true/false.
      */
-    virtual bool getAxes(int *axis) = 0;
+    virtual yarp::dev::ReturnValue getAxes(int *axis) = 0;
 
     /**
      * Start motion at a given speed, single joint.
@@ -42,14 +43,14 @@ public:
      * @param sp speed value
      * @return bool/false upon success/failure
      */
-    virtual bool velocityMoveRaw(int j, double sp)=0;
+    virtual yarp::dev::ReturnValue velocityMoveRaw(int j, double sp)=0;
 
     /**
      * Start motion at a given speed, multiple joints.
      * @param sp pointer to the array containing the new speed values
      * @return true/false upon success/failure
      */
-    virtual bool velocityMoveRaw(const double *sp)=0;
+    virtual yarp::dev::ReturnValue velocityMoveRaw(const double *sp)=0;
 
     /** Set reference acceleration for a joint. This value is used during the
      * trajectory generation.
@@ -57,14 +58,14 @@ public:
      * @param acc acceleration value
      * @return true/false upon success/failure
      */
-    virtual bool setTrajAccelerationRaw(int j, double acc)=0;
+    virtual yarp::dev::ReturnValue setTrajAccelerationRaw(int j, double acc)=0;
 
     /** Set reference acceleration on all joints. This is the value that is
      * used during the generation of the trajectory.
      * @param accs pointer to the array of acceleration values
      * @return true/false upon success/failure
      */
-    virtual bool setTrajAccelerationsRaw(const double *accs)=0;
+    virtual yarp::dev::ReturnValue setTrajAccelerationsRaw(const double *accs)=0;
 
     /** Get reference acceleration for a joint. Returns the acceleration used to
      * generate the trajectory profile.
@@ -72,25 +73,25 @@ public:
      * @param acc pointer to storage for the return value
      * @return true/false on success/failure
      */
-    virtual bool getTrajAccelerationRaw(int j, double *acc)=0;
+    virtual yarp::dev::ReturnValue getTrajAccelerationRaw(int j, double *acc)=0;
 
     /** Get reference acceleration of all joints. These are the values used during the
      * interpolation of the trajectory.
      * @param accs pointer to the array that will store the acceleration values.
      * @return true/false on success or failure
      */
-    virtual bool getTrajAccelerationsRaw(double *accs)=0;
+    virtual yarp::dev::ReturnValue getTrajAccelerationsRaw(double *accs)=0;
 
     /** Stop motion, single joint
      * @param j joint number
      * @return true/false on success or failure
      */
-    virtual bool stopRaw(int j)=0;
+    virtual yarp::dev::ReturnValue stopRaw(int j)=0;
 
     /** Stop motion, multiple joints
      * @return true/false on success or failure
      */
-    virtual bool stopRaw()=0;
+    virtual yarp::dev::ReturnValue stopRaw()=0;
 
     /**
      * Start motion at a given speed for a subset of joints.
@@ -99,20 +100,20 @@ public:
      * @param spds    pointer to the array containing the new speed values
      * @return true/false upon success/failure
      */
-    virtual bool velocityMoveRaw(const int n_joint, const int *joints, const double *spds)=0;
+    virtual yarp::dev::ReturnValue velocityMoveRaw(const int n_joint, const int *joints, const double *spds)=0;
 
      /** Get the last reference speed set by velocityMove for single joint.
      * @param j joint number
      * @param vel returns the requested reference.
      * @return true/false on success/failure
      */
-    virtual bool getTargetVelocityRaw(const int joint, double *vel) {return false;}
+    virtual yarp::dev::ReturnValue getTargetVelocityRaw(const int joint, double *vel)=0;
 
     /** Get the last reference speed set by velocityMove for all joints.
      * @param vels pointer to the array containing the new speed values, one value for each joint
      * @return true/false on success/failure
      */
-    virtual bool getTargetVelocitiesRaw(double *vels) {return false;}
+    virtual yarp::dev::ReturnValue getTargetVelocitiesRaw(double *vels)=0;
 
     /** Get the last reference speed set by velocityMove for a group of joints.
      * @param n_joint how many joints this command is referring to
@@ -121,7 +122,7 @@ public:
      *  The size of the array is n_joints.
      * @return true/false on success/failure
      */
-    virtual bool getTargetVelocitiesRaw(const int n_joint, const int *joints, double *vels) { return false;}
+    virtual yarp::dev::ReturnValue getTargetVelocitiesRaw(const int n_joint, const int *joints, double *vels)=0;
 
     /** Set reference acceleration for a subset of joints. This is the value that is
      * used during the generation of the trajectory.
@@ -129,7 +130,7 @@ public:
      * @param accs   pointer to the array containing acceleration values
      * @return true/false upon success/failure
      */
-    virtual bool setTrajAccelerationsRaw(const int n_joint, const int *joints, const double *accs)=0;
+    virtual yarp::dev::ReturnValue setTrajAccelerationsRaw(const int n_joint, const int *joints, const double *accs)=0;
 
     /** Get reference acceleration for a subset of joints. These are the values used during the
      * interpolation of the trajectory.
@@ -137,13 +138,13 @@ public:
      * @param accs   pointer to the array that will store the acceleration values.
      * @return true/false on success or failure
      */
-    virtual bool getTrajAccelerationsRaw(const int n_joint, const int *joints, double *accs)=0;
+    virtual yarp::dev::ReturnValue getTrajAccelerationsRaw(const int n_joint, const int *joints, double *accs)=0;
 
     /** Stop motion for a subset of joints
      * @param joints pointer to the array of joint numbers
      * @return true/false on success or failure
      */
-    virtual bool stopRaw(const int n_joint, const int *joints)=0;
+    virtual yarp::dev::ReturnValue stopRaw(const int n_joint, const int *joints)=0;
 };
 
 /**
@@ -165,7 +166,7 @@ public:
      * param axes pointer to storage
      * @return true/false.
      */
-    virtual bool getAxes(int *axes) = 0;
+    virtual yarp::dev::ReturnValue getAxes(int *axes) = 0;
 
     /**
      * Start motion at a given speed, single joint.
@@ -173,14 +174,14 @@ public:
      * @param sp speed value
      * @return bool/false upon success/failure
      */
-    virtual bool velocityMove(int j, double sp)=0;
+    virtual yarp::dev::ReturnValue velocityMove(int j, double sp)=0;
 
     /**
      * Start motion at a given speed, multiple joints.
      * @param sp pointer to the array containing the new speed values
      * @return true/false upon success/failure
      */
-    virtual bool velocityMove(const double *sp)=0;
+    virtual yarp::dev::ReturnValue velocityMove(const double *sp)=0;
 
     /** Set reference acceleration for a joint. This value is used during the
      * trajectory generation.
@@ -188,14 +189,14 @@ public:
      * @param acc acceleration value
      * @return true/false upon success/failure
      */
-    virtual bool setTrajAcceleration(int j, double acc)=0;
+    virtual yarp::dev::ReturnValue setTrajAcceleration(int j, double acc)=0;
 
     /** Set reference acceleration on all joints. This is the value that is
      * used during the generation of the trajectory.
      * @param accs pointer to the array of acceleration values
      * @return true/false upon success/failure
      */
-    virtual bool setTrajAccelerations(const double *accs)=0;
+    virtual yarp::dev::ReturnValue setTrajAccelerations(const double *accs)=0;
 
     /** Get reference acceleration for a joint. Returns the acceleration used to
      * generate the trajectory profile.
@@ -203,25 +204,25 @@ public:
      * @param acc pointer to storage for the return value
      * @return true/false on success/failure
      */
-    virtual bool getTrajAcceleration(int j, double *acc)=0;
+    virtual yarp::dev::ReturnValue getTrajAcceleration(int j, double *acc)=0;
 
     /** Get reference acceleration of all joints. These are the values used during the
      * interpolation of the trajectory.
      * @param accs pointer to the array that will store the acceleration values.
      * @return true/false on success or failure
      */
-    virtual bool getTrajAccelerations(double *accs)=0;
+    virtual yarp::dev::ReturnValue getTrajAccelerations(double *accs)=0;
 
     /** Stop motion, single joint
      * @param j joint number
      * @return true/false on success or failure
      */
-    virtual bool stop(int j)=0;
+    virtual yarp::dev::ReturnValue stop(int j)=0;
 
     /** Stop motion, multiple joints
      * @return true/false on success or failure
      */
-    virtual bool stop()=0;
+    virtual yarp::dev::ReturnValue stop()=0;
 
     /** Start motion at a given speed for a subset of joints.
      * @param n_joint how many joints this command is referring to
@@ -234,20 +235,20 @@ public:
      *          spds    10 30 40
      * @return true/false on success/failure
      */
-    virtual bool velocityMove(const int n_joint, const int *joints, const double *spds)=0;
+    virtual yarp::dev::ReturnValue velocityMove(const int n_joint, const int *joints, const double *spds)=0;
 
     /** Get the last reference speed set by velocityMove for single joint.
      * @param j joint number
      * @param vel returns the requested reference.
      * @return true/false on success/failure
      */
-    virtual bool getTargetVelocity(const int joint, double *vel) {return false;}
+    virtual yarp::dev::ReturnValue getTargetVelocity(const int joint, double *vel)=0;
 
     /** Get the last reference speed set by velocityMove for all joints.
      * @param vels pointer to the array containing the new speed values, one value for each joint
      * @return true/false on success/failure
      */
-    virtual bool getTargetVelocities(double *vels) {return false;}
+    virtual yarp::dev::ReturnValue getTargetVelocities(double *vels)=0;
 
     /** Get the last reference speed set by velocityMove for a group of joints.
      * @param n_joint how many joints this command is referring to
@@ -256,7 +257,7 @@ public:
      *  The size of the array is n_joints.
      * @return true/false on success/failure
      */
-    virtual bool getTargetVelocities(const int n_joint, const int *joints, double *vels) { return false;}
+    virtual yarp::dev::ReturnValue getTargetVelocities(const int n_joint, const int *joints, double *vels)=0;
 
     /** Set reference acceleration for a subset of joints. This is the value that is
      * used during the generation of the trajectory.
@@ -270,7 +271,7 @@ public:
      *          accs    10 30 40
      * @return true/false on success/failure
      */
-    virtual bool setTrajAccelerations(const int n_joint, const int *joints, const double *accs)=0;
+    virtual yarp::dev::ReturnValue setTrajAccelerations(const int n_joint, const int *joints, const double *accs)=0;
 
     /** Get reference acceleration for a subset of joints. These are the values used during the
      * interpolation of the trajectory.
@@ -284,14 +285,14 @@ public:
      *          accs    10 30 40
      * @return true/false on success/failure
      */
-    virtual bool getTrajAccelerations(const int n_joint, const int *joints, double *accs)=0;
+    virtual yarp::dev::ReturnValue getTrajAccelerations(const int n_joint, const int *joints, double *accs)=0;
 
     /** Stop motion for a subset of joints
      * @param n_joint how many joints this command is referring to
      * @param joints joints pointer to the array of joint numbers
      * @return true/false on success or failure
      */
-    virtual bool stop(const int n_joint, const int *joints)=0;
+    virtual yarp::dev::ReturnValue stop(const int n_joint, const int *joints)=0;
 };
 
 // Interface name

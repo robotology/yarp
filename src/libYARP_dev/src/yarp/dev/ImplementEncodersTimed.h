@@ -53,20 +53,20 @@ public:
 
     virtual ~ImplementEncodersTimed();
 
-    bool getAxes(int *ax) override;
+    yarp::dev::ReturnValue getAxes(int *ax) override;
 
-    bool resetEncoder(int j) override;
-    bool resetEncoders() override;
-    bool setEncoder(int j, double val) override;
-    bool setEncoders(const double *vals) override;
-    bool getEncoder(int j, double *v) override;
-    bool getEncodersTimed(double *encs, double *time) override;
-    bool getEncoderTimed(int j, double *v, double *t) override;
-    bool getEncoders(double *encs) override;
-    bool getEncoderSpeed(int j, double *spds) override;
-    bool getEncoderSpeeds(double *spds) override;
-    bool getEncoderAcceleration(int j, double *spds) override;
-    bool getEncoderAccelerations(double *accs) override;
+    yarp::dev::ReturnValue resetEncoder(int j) override;
+    yarp::dev::ReturnValue resetEncoders() override;
+    yarp::dev::ReturnValue setEncoder(int j, double val) override;
+    yarp::dev::ReturnValue setEncoders(const double *vals) override;
+    yarp::dev::ReturnValue getEncoder(int j, double *v) override;
+    yarp::dev::ReturnValue getEncodersTimed(double *encs, double *time) override;
+    yarp::dev::ReturnValue getEncoderTimed(int j, double *v, double *t) override;
+    yarp::dev::ReturnValue getEncoders(double *encs) override;
+    yarp::dev::ReturnValue getEncoderSpeed(int j, double *spds) override;
+    yarp::dev::ReturnValue getEncoderSpeeds(double *spds) override;
+    yarp::dev::ReturnValue getEncoderAcceleration(int j, double *spds) override;
+    yarp::dev::ReturnValue getEncoderAccelerations(double *accs) override;
 };
 
 #endif // YARP_DEV_IMPLEMENTENCODERSTIMED_H

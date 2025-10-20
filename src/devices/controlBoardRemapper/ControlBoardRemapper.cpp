@@ -1083,13 +1083,13 @@ ReturnValue ControlBoardRemapper::getPidExtraInfos(const PidControlTypeEnum& pid
 }
 
 /* IPositionControl */
-bool ControlBoardRemapper::getAxes(int *ax)
+ReturnValue ControlBoardRemapper::getAxes(int *ax)
 {
     *ax=controlledJoints;
-    return true;
+    return ReturnValue_ok;
 }
 
-bool ControlBoardRemapper::positionMove(int j, double ref)
+ReturnValue ControlBoardRemapper::positionMove(int j, double ref)
 {
     int off=(int)remappedControlBoards.lut[j].axisIndexInSubControlBoard;
     size_t subIndex=remappedControlBoards.lut[j].subControlBoardIndex;
@@ -1098,7 +1098,7 @@ bool ControlBoardRemapper::positionMove(int j, double ref)
 
     if (!p)
     {
-        return false;
+        return ReturnValue::return_code::return_value_error_generic;
     }
 
     if (p->pos)
@@ -1106,12 +1106,12 @@ bool ControlBoardRemapper::positionMove(int j, double ref)
         return p->pos->positionMove(off, ref);
     }
 
-    return false;
+    return ReturnValue::return_code::return_value_error_generic;
 }
 
-bool ControlBoardRemapper::positionMove(const double *refs)
+ReturnValue ControlBoardRemapper::positionMove(const double *refs)
 {
-    bool ret=true;
+    ReturnValue ret=ReturnValue_ok;
     std::lock_guard<std::mutex> lock(allJointsBuffers.mutex);
 
     allJointsBuffers.fillSubControlBoardBuffersFromCompleteJointVector(refs,remappedControlBoards);
@@ -1120,14 +1120,14 @@ bool ControlBoardRemapper::positionMove(const double *refs)
     {
         RemappedSubControlBoard *p=remappedControlBoards.getSubControlBoard(ctrlBrd);
 
-        bool ok = true;
+        ReturnValue ok = ReturnValue_ok;
         if (p->pos) {
             ok = p->pos->positionMove(allJointsBuffers.m_nJointsInSubControlBoard[ctrlBrd],
                                         allJointsBuffers.m_jointsInSubControlBoard[ctrlBrd].data(),
                                         allJointsBuffers.m_bufferForSubControlBoard[ctrlBrd].data());
         }
         else {
-            ok = false;
+            ok = ReturnValue::return_code::return_value_error_generic;
         }
         ret = ret && ok;
     }
@@ -1135,9 +1135,9 @@ bool ControlBoardRemapper::positionMove(const double *refs)
     return ret;
 }
 
-bool ControlBoardRemapper::positionMove(const int n_joints, const int *joints, const double *refs)
+ReturnValue ControlBoardRemapper::positionMove(const int n_joints, const int *joints, const double *refs)
 {
-    bool ret=true;
+    ReturnValue ret=ReturnValue_ok;
     std::lock_guard<std::mutex> lock(selectedJointsBuffers.mutex);
 
     selectedJointsBuffers.fillSubControlBoardBuffersFromArbitraryJointVector(refs,n_joints,joints,remappedControlBoards);
@@ -1146,14 +1146,14 @@ bool ControlBoardRemapper::positionMove(const int n_joints, const int *joints, c
     {
         RemappedSubControlBoard *p=remappedControlBoards.getSubControlBoard(ctrlBrd);
 
-        bool ok = true;
+        ReturnValue ok = ReturnValue_ok;
         if (p->pos) {
             ok = p->pos->positionMove(selectedJointsBuffers.m_nJointsInSubControlBoard[ctrlBrd],
                                         selectedJointsBuffers.m_jointsInSubControlBoard[ctrlBrd].data(),
                                         selectedJointsBuffers.m_bufferForSubControlBoard[ctrlBrd].data());
         }
         else {
-            ok = false;
+            ok = ReturnValue::return_code::return_value_error_generic;
         }
         ret = ret && ok;
     }
@@ -1161,7 +1161,7 @@ bool ControlBoardRemapper::positionMove(const int n_joints, const int *joints, c
     return ret;
 }
 
-bool ControlBoardRemapper::getTargetPosition(const int j, double* ref)
+ReturnValue ControlBoardRemapper::getTargetPosition(const int j, double* ref)
 {
     int off=(int)remappedControlBoards.lut[j].axisIndexInSubControlBoard;
     size_t subIndex=remappedControlBoards.lut[j].subControlBoardIndex;
@@ -1170,28 +1170,28 @@ bool ControlBoardRemapper::getTargetPosition(const int j, double* ref)
 
     if (!p)
     {
-        return false;
+        return ReturnValue::return_code::return_value_error_generic;
     }
 
     if (p->pos)
     {
-        bool ret = p->pos->getTargetPosition(off, ref);
+        ReturnValue ret = p->pos->getTargetPosition(off, ref);
         return ret;
     }
 
-    return false;
+    return ReturnValue::return_code::return_value_error_generic;
 }
 
-bool ControlBoardRemapper::getTargetPositions(double *spds)
+ReturnValue ControlBoardRemapper::getTargetPositions(double *spds)
 {
-    bool ret=true;
+    ReturnValue ret=ReturnValue_ok;
     std::lock_guard<std::mutex> lock(allJointsBuffers.mutex);
 
     for(size_t ctrlBrd=0; ctrlBrd < remappedControlBoards.getNrOfSubControlBoards(); ctrlBrd++)
     {
         RemappedSubControlBoard *p=remappedControlBoards.getSubControlBoard(ctrlBrd);
 
-        bool ok = true;
+        ReturnValue ok = ReturnValue_ok;
 
         if( p->pos )
         {
@@ -1201,7 +1201,7 @@ bool ControlBoardRemapper::getTargetPositions(double *spds)
         }
         else
         {
-            ok = false;
+            ok = ReturnValue::return_code::return_value_error_generic;
         }
 
         ret = ret && ok;
@@ -1213,9 +1213,9 @@ bool ControlBoardRemapper::getTargetPositions(double *spds)
 }
 
 
-bool ControlBoardRemapper::getTargetPositions(const int n_joints, const int *joints, double *targets)
+ReturnValue ControlBoardRemapper::getTargetPositions(const int n_joints, const int *joints, double *targets)
 {
-    bool ret=true;
+    ReturnValue ret=ReturnValue_ok;
     std::lock_guard<std::mutex> lock(selectedJointsBuffers.mutex);
 
     // Resize the input buffers
@@ -1225,7 +1225,7 @@ bool ControlBoardRemapper::getTargetPositions(const int n_joints, const int *joi
     {
         RemappedSubControlBoard *p=remappedControlBoards.getSubControlBoard(ctrlBrd);
 
-        bool ok = true;
+        ReturnValue ok = ReturnValue_ok;
 
         if( p->pos )
         {
@@ -1235,7 +1235,7 @@ bool ControlBoardRemapper::getTargetPositions(const int n_joints, const int *joi
         }
         else
         {
-            ok = false;
+            ok = ReturnValue::return_code::return_value_error_generic;
         }
 
         ret = ret && ok;
@@ -1246,7 +1246,7 @@ bool ControlBoardRemapper::getTargetPositions(const int n_joints, const int *joi
     return ret;
 }
 
-bool ControlBoardRemapper::relativeMove(int j, double delta)
+ReturnValue ControlBoardRemapper::relativeMove(int j, double delta)
 {
     int off=(int)remappedControlBoards.lut[j].axisIndexInSubControlBoard;
     size_t subIndex=remappedControlBoards.lut[j].subControlBoardIndex;
@@ -1255,7 +1255,7 @@ bool ControlBoardRemapper::relativeMove(int j, double delta)
 
     if (!p)
     {
-        return false;
+        return ReturnValue::return_code::return_value_error_generic;
     }
 
     if (p->pos)
@@ -1263,12 +1263,12 @@ bool ControlBoardRemapper::relativeMove(int j, double delta)
         return p->pos->relativeMove(off, delta);
     }
 
-    return false;
+    return ReturnValue::return_code::return_value_error_generic;
 }
 
-bool ControlBoardRemapper::relativeMove(const double *deltas)
+ReturnValue ControlBoardRemapper::relativeMove(const double *deltas)
 {
-    bool ret=true;
+    ReturnValue ret=ReturnValue_ok;
     std::lock_guard<std::mutex> lock(allJointsBuffers.mutex);
 
     allJointsBuffers.fillSubControlBoardBuffersFromCompleteJointVector(deltas,remappedControlBoards);
@@ -1276,14 +1276,14 @@ bool ControlBoardRemapper::relativeMove(const double *deltas)
     for(size_t ctrlBrd=0; ctrlBrd < remappedControlBoards.getNrOfSubControlBoards(); ctrlBrd++)
     {
         RemappedSubControlBoard *p=remappedControlBoards.getSubControlBoard(ctrlBrd);
-        bool ok = true;
+        ReturnValue ok = ReturnValue_ok;
         if (p->pos) {
             ok = p->pos->relativeMove(allJointsBuffers.m_nJointsInSubControlBoard[ctrlBrd],
                                         allJointsBuffers.m_jointsInSubControlBoard[ctrlBrd].data(),
                                         allJointsBuffers.m_bufferForSubControlBoard[ctrlBrd].data());
         }
         else {
-            ok = false;
+            ok = ReturnValue::return_code::return_value_error_generic;
         }
         ret = ret && ok;
     }
@@ -1291,9 +1291,9 @@ bool ControlBoardRemapper::relativeMove(const double *deltas)
     return ret;
 }
 
-bool ControlBoardRemapper::relativeMove(const int n_joints, const int *joints, const double *deltas)
+ReturnValue ControlBoardRemapper::relativeMove(const int n_joints, const int *joints, const double *deltas)
 {
-    bool ret=true;
+    ReturnValue ret=ReturnValue_ok;
     std::lock_guard<std::mutex> lock(selectedJointsBuffers.mutex);
 
     selectedJointsBuffers.fillSubControlBoardBuffersFromArbitraryJointVector(deltas,n_joints,joints,remappedControlBoards);
@@ -1301,14 +1301,14 @@ bool ControlBoardRemapper::relativeMove(const int n_joints, const int *joints, c
     for(size_t ctrlBrd=0; ctrlBrd < remappedControlBoards.getNrOfSubControlBoards(); ctrlBrd++)
     {
         RemappedSubControlBoard *p=remappedControlBoards.getSubControlBoard(ctrlBrd);
-        bool ok = true;
+        ReturnValue ok = ReturnValue_ok;
         if (p->pos) {
             ok = p->pos->relativeMove(selectedJointsBuffers.m_nJointsInSubControlBoard[ctrlBrd],
                                         selectedJointsBuffers.m_jointsInSubControlBoard[ctrlBrd].data(),
                                         selectedJointsBuffers.m_bufferForSubControlBoard[ctrlBrd].data());
         }
         else {
-            ok = false;
+            ok = ReturnValue::return_code::return_value_error_generic;
         }
         ret = ret && ok;
     }
@@ -1316,7 +1316,7 @@ bool ControlBoardRemapper::relativeMove(const int n_joints, const int *joints, c
     return ret;
 }
 
-bool ControlBoardRemapper::checkMotionDone(int j, bool *flag)
+ReturnValue ControlBoardRemapper::checkMotionDone(int j, bool *flag)
 {
     int off=(int)remappedControlBoards.lut[j].axisIndexInSubControlBoard;
     size_t subIndex=remappedControlBoards.lut[j].subControlBoardIndex;
@@ -1325,7 +1325,7 @@ bool ControlBoardRemapper::checkMotionDone(int j, bool *flag)
 
     if (!p)
     {
-        return false;
+        return ReturnValue::return_code::return_value_error_generic;
     }
 
     if (p->pos)
@@ -1333,12 +1333,12 @@ bool ControlBoardRemapper::checkMotionDone(int j, bool *flag)
         return p->pos->checkMotionDone(off, flag);
     }
 
-    return false;
+    return ReturnValue::return_code::return_value_error_generic;
 }
 
-bool ControlBoardRemapper::checkMotionDone(bool *flag)
+ReturnValue ControlBoardRemapper::checkMotionDone(bool *flag)
 {
-    bool ret=true;
+    ReturnValue ret=ReturnValue_ok;
     *flag=true;
 
     for(int l=0;l<controlledJoints;l++)
@@ -1350,27 +1350,27 @@ bool ControlBoardRemapper::checkMotionDone(bool *flag)
 
         if (!p)
         {
-            return false;
+            return ReturnValue::return_code::return_value_error_generic;
         }
 
         if (p->pos)
         {
             bool singleJointMotionDone =false;
-            bool ok = p->pos->checkMotionDone(off, &singleJointMotionDone);
+            ReturnValue ok = p->pos->checkMotionDone(off, &singleJointMotionDone);
             ret = ret && ok;
             *flag = *flag  && singleJointMotionDone;
         }
         else
         {
-            ret = false;
+            ret = ReturnValue::return_code::return_value_error_generic;
         }
     }
     return ret;
 }
 
-bool ControlBoardRemapper::checkMotionDone(const int n_joints, const int *joints, bool *flag)
+ReturnValue ControlBoardRemapper::checkMotionDone(const int n_joints, const int *joints, bool *flag)
 {
-    bool ret=true;
+    ReturnValue ret=ReturnValue_ok;
     *flag=true;
 
     for(int j=0;j<n_joints;j++)
@@ -1384,26 +1384,26 @@ bool ControlBoardRemapper::checkMotionDone(const int n_joints, const int *joints
 
         if (!p)
         {
-            return false;
+            return ReturnValue::return_code::return_value_error_generic;
         }
 
         if (p->pos)
         {
             bool singleJointMotionDone =false;
-            bool ok = p->pos->checkMotionDone(off, &singleJointMotionDone);
+            ReturnValue ok = p->pos->checkMotionDone(off, &singleJointMotionDone);
             ret = ret && ok;
             *flag = *flag  && singleJointMotionDone;
         }
         else
         {
-            ret = false;
+            ret = ReturnValue::return_code::return_value_error_generic;
         }
     }
 
     return ret;
 }
 
-bool ControlBoardRemapper::setTrajSpeed(int j, double sp)
+ReturnValue ControlBoardRemapper::setTrajSpeed(int j, double sp)
 {
     int off=(int)remappedControlBoards.lut[j].axisIndexInSubControlBoard;
     size_t subIndex=remappedControlBoards.lut[j].subControlBoardIndex;
@@ -1412,7 +1412,7 @@ bool ControlBoardRemapper::setTrajSpeed(int j, double sp)
 
     if (!p)
     {
-        return false;
+        return ReturnValue::return_code::return_value_error_generic;
     }
 
     if (p->pos)
@@ -1420,12 +1420,12 @@ bool ControlBoardRemapper::setTrajSpeed(int j, double sp)
         return p->pos->setTrajSpeed(off, sp);
     }
 
-    return false;
+    return ReturnValue::return_code::return_value_error_generic;
 }
 
-bool ControlBoardRemapper::setTrajSpeeds(const double *spds)
+ReturnValue ControlBoardRemapper::setTrajSpeeds(const double *spds)
 {
-    bool ret=true;
+    ReturnValue ret=ReturnValue_ok;
     std::lock_guard<std::mutex> lock(allJointsBuffers.mutex);
 
     allJointsBuffers.fillSubControlBoardBuffersFromCompleteJointVector(spds,remappedControlBoards);
@@ -1434,14 +1434,14 @@ bool ControlBoardRemapper::setTrajSpeeds(const double *spds)
     {
         RemappedSubControlBoard *p=remappedControlBoards.getSubControlBoard(ctrlBrd);
 
-        bool ok = true;
+        ReturnValue ok = ReturnValue_ok;
         if (p->pos) {
             ok = p->pos->setTrajSpeeds(allJointsBuffers.m_nJointsInSubControlBoard[ctrlBrd],
                                         allJointsBuffers.m_jointsInSubControlBoard[ctrlBrd].data(),
                                         allJointsBuffers.m_bufferForSubControlBoard[ctrlBrd].data());
         }
         else {
-            ok = false;
+            ok = ReturnValue::return_code::return_value_error_generic;
         }
         ret = ret && ok;
     }
@@ -1449,9 +1449,9 @@ bool ControlBoardRemapper::setTrajSpeeds(const double *spds)
     return ret;
 }
 
-bool ControlBoardRemapper::setTrajSpeeds(const int n_joints, const int *joints, const double *spds)
+ReturnValue ControlBoardRemapper::setTrajSpeeds(const int n_joints, const int *joints, const double *spds)
 {
-    bool ret=true;
+    ReturnValue ret=ReturnValue_ok;
     std::lock_guard<std::mutex> lock(selectedJointsBuffers.mutex);
 
     selectedJointsBuffers.fillSubControlBoardBuffersFromArbitraryJointVector(spds,n_joints,joints,remappedControlBoards);
@@ -1460,14 +1460,14 @@ bool ControlBoardRemapper::setTrajSpeeds(const int n_joints, const int *joints, 
     {
         RemappedSubControlBoard *p=remappedControlBoards.getSubControlBoard(ctrlBrd);
 
-        bool ok = true;
+        ReturnValue ok = ReturnValue_ok;
         if (p->pos) {
             ok = p->pos->setTrajSpeeds(selectedJointsBuffers.m_nJointsInSubControlBoard[ctrlBrd],
                                         selectedJointsBuffers.m_jointsInSubControlBoard[ctrlBrd].data(),
                                         selectedJointsBuffers.m_bufferForSubControlBoard[ctrlBrd].data());
         }
         else {
-            ok = false;
+            ok = ReturnValue::return_code::return_value_error_generic;
         }
         ret = ret && ok;
     }
@@ -1475,7 +1475,7 @@ bool ControlBoardRemapper::setTrajSpeeds(const int n_joints, const int *joints, 
     return ret;
 }
 
-bool ControlBoardRemapper::setTrajAcceleration(int j, double acc)
+ReturnValue ControlBoardRemapper::setTrajAcceleration(int j, double acc)
 {
     int off=(int)remappedControlBoards.lut[j].axisIndexInSubControlBoard;
     size_t subIndex=remappedControlBoards.lut[j].subControlBoardIndex;
@@ -1484,7 +1484,7 @@ bool ControlBoardRemapper::setTrajAcceleration(int j, double acc)
 
     if (!p)
     {
-        return false;
+        return ReturnValue::return_code::return_value_error_generic;
     }
 
     if (p->pos)
@@ -1492,12 +1492,12 @@ bool ControlBoardRemapper::setTrajAcceleration(int j, double acc)
         return p->pos->setTrajAcceleration(off, acc);
     }
 
-    return false;
+    return ReturnValue::return_code::return_value_error_generic;
 }
 
-bool ControlBoardRemapper::setTrajAccelerations(const double *accs)
+ReturnValue ControlBoardRemapper::setTrajAccelerations(const double *accs)
 {
-    bool ret=true;
+    ReturnValue ret=ReturnValue_ok;
     std::lock_guard<std::mutex> lock(allJointsBuffers.mutex);
 
     allJointsBuffers.fillSubControlBoardBuffersFromCompleteJointVector(accs,remappedControlBoards);
@@ -1506,14 +1506,14 @@ bool ControlBoardRemapper::setTrajAccelerations(const double *accs)
     {
         RemappedSubControlBoard *p=remappedControlBoards.getSubControlBoard(ctrlBrd);
 
-        bool ok = true;
+        ReturnValue ok = ReturnValue_ok;
         if (p->pos) {
             ok = p->pos->setTrajAccelerations(allJointsBuffers.m_nJointsInSubControlBoard[ctrlBrd],
                                                 allJointsBuffers.m_jointsInSubControlBoard[ctrlBrd].data(),
                                                 allJointsBuffers.m_bufferForSubControlBoard[ctrlBrd].data());
         }
         else {
-            ok = false;
+            ok = ReturnValue::return_code::return_value_error_generic;
         }
         ret = ret && ok;
     }
@@ -1521,9 +1521,9 @@ bool ControlBoardRemapper::setTrajAccelerations(const double *accs)
     return ret;
 }
 
-bool ControlBoardRemapper::setTrajAccelerations(const int n_joints, const int *joints, const double *accs)
+ReturnValue ControlBoardRemapper::setTrajAccelerations(const int n_joints, const int *joints, const double *accs)
 {
-    bool ret=true;
+    ReturnValue ret=ReturnValue_ok;
     std::lock_guard<std::mutex> lock(selectedJointsBuffers.mutex);
 
     selectedJointsBuffers.fillSubControlBoardBuffersFromArbitraryJointVector(accs,n_joints,joints,remappedControlBoards);
@@ -1532,14 +1532,14 @@ bool ControlBoardRemapper::setTrajAccelerations(const int n_joints, const int *j
     {
         RemappedSubControlBoard *p=remappedControlBoards.getSubControlBoard(ctrlBrd);
 
-        bool ok = true;
+        ReturnValue ok = ReturnValue_ok;
         if (p->pos) {
             ok = p->pos->setTrajAccelerations(selectedJointsBuffers.m_nJointsInSubControlBoard[ctrlBrd],
                                                selectedJointsBuffers.m_jointsInSubControlBoard[ctrlBrd].data(),
                                                selectedJointsBuffers.m_bufferForSubControlBoard[ctrlBrd].data());
         }
         else {
-            ok = false;
+            ok = ReturnValue::return_code::return_value_error_generic;
         }
         ret = ret && ok;
     }
@@ -1547,7 +1547,7 @@ bool ControlBoardRemapper::setTrajAccelerations(const int n_joints, const int *j
     return ret;
 }
 
-bool ControlBoardRemapper::getTrajSpeed(int j, double *ref)
+ReturnValue ControlBoardRemapper::getTrajSpeed(int j, double *ref)
 {
     int off=(int)remappedControlBoards.lut[j].axisIndexInSubControlBoard;
     size_t subIndex=remappedControlBoards.lut[j].subControlBoardIndex;
@@ -1556,7 +1556,7 @@ bool ControlBoardRemapper::getTrajSpeed(int j, double *ref)
 
     if (!p)
     {
-        return false;
+        return ReturnValue::return_code::return_value_error_generic;
     }
 
     if (p->pos)
@@ -1564,19 +1564,19 @@ bool ControlBoardRemapper::getTrajSpeed(int j, double *ref)
         return p->pos->getTrajSpeed(off, ref);
     }
 
-    return false;
+    return ReturnValue::return_code::return_value_error_generic;
 }
 
-bool ControlBoardRemapper::getTrajSpeeds(double *spds)
+ReturnValue ControlBoardRemapper::getTrajSpeeds(double *spds)
 {
-    bool ret=true;
+    ReturnValue ret=ReturnValue_ok;
     std::lock_guard<std::mutex> lock(allJointsBuffers.mutex);
 
     for(size_t ctrlBrd=0; ctrlBrd < remappedControlBoards.getNrOfSubControlBoards(); ctrlBrd++)
     {
         RemappedSubControlBoard *p=remappedControlBoards.getSubControlBoard(ctrlBrd);
 
-        bool ok = true;
+        ReturnValue ok = ReturnValue_ok;
         if( p->pos )
         {
             ok = p->pos->getTrajSpeeds(allJointsBuffers.m_nJointsInSubControlBoard[ctrlBrd],
@@ -1585,7 +1585,7 @@ bool ControlBoardRemapper::getTrajSpeeds(double *spds)
         }
         else
         {
-            ok = false;
+            ok = ReturnValue::return_code::return_value_error_generic;
         }
 
         ret = ret && ok;
@@ -1597,9 +1597,9 @@ bool ControlBoardRemapper::getTrajSpeeds(double *spds)
 }
 
 
-bool ControlBoardRemapper::getTrajSpeeds(const int n_joints, const int *joints, double *spds)
+ReturnValue ControlBoardRemapper::getTrajSpeeds(const int n_joints, const int *joints, double *spds)
 {
-    bool ret=true;
+    ReturnValue ret=ReturnValue_ok;
     std::lock_guard<std::mutex> lock(selectedJointsBuffers.mutex);
 
     // Resize the input buffers
@@ -1609,7 +1609,7 @@ bool ControlBoardRemapper::getTrajSpeeds(const int n_joints, const int *joints, 
     {
         RemappedSubControlBoard *p=remappedControlBoards.getSubControlBoard(ctrlBrd);
 
-        bool ok = true;
+        ReturnValue ok = ReturnValue_ok;
 
         if( p->pos )
         {
@@ -1619,7 +1619,7 @@ bool ControlBoardRemapper::getTrajSpeeds(const int n_joints, const int *joints, 
         }
         else
         {
-            ok = false;
+            ok = ReturnValue::return_code::return_value_error_generic;
         }
 
         ret = ret && ok;
@@ -1630,7 +1630,7 @@ bool ControlBoardRemapper::getTrajSpeeds(const int n_joints, const int *joints, 
     return ret;
 }
 
-bool ControlBoardRemapper::getTrajAcceleration(int j, double *acc)
+ReturnValue ControlBoardRemapper::getTrajAcceleration(int j, double *acc)
 {
     int off=(int)remappedControlBoards.lut[j].axisIndexInSubControlBoard;
     size_t subIndex=remappedControlBoards.lut[j].subControlBoardIndex;
@@ -1639,7 +1639,7 @@ bool ControlBoardRemapper::getTrajAcceleration(int j, double *acc)
 
     if (!p)
     {
-        return false;
+        return ReturnValue::return_code::return_value_error_generic;
     }
 
     if (p->pos)
@@ -1647,19 +1647,19 @@ bool ControlBoardRemapper::getTrajAcceleration(int j, double *acc)
         return p->pos->getTrajAcceleration(off, acc);
     }
 
-    return false;
+    return ReturnValue::return_code::return_value_error_generic;
 }
 
-bool ControlBoardRemapper::getTrajAccelerations(double *accs)
+ReturnValue ControlBoardRemapper::getTrajAccelerations(double *accs)
 {
-    bool ret=true;
+    ReturnValue ret=ReturnValue_ok;
     std::lock_guard<std::mutex> lock(allJointsBuffers.mutex);
 
     for(size_t ctrlBrd=0; ctrlBrd < remappedControlBoards.getNrOfSubControlBoards(); ctrlBrd++)
     {
         RemappedSubControlBoard *p=remappedControlBoards.getSubControlBoard(ctrlBrd);
 
-        bool ok = true;
+        ReturnValue ok = ReturnValue_ok;
 
         if( p->pos )
         {
@@ -1669,7 +1669,7 @@ bool ControlBoardRemapper::getTrajAccelerations(double *accs)
         }
         else
         {
-            ok = false;
+            ok = ReturnValue::return_code::return_value_error_generic;
         }
 
         ret = ret && ok;
@@ -1680,9 +1680,9 @@ bool ControlBoardRemapper::getTrajAccelerations(double *accs)
     return ret;
 }
 
-bool ControlBoardRemapper::getTrajAccelerations(const int n_joints, const int *joints, double *accs)
+ReturnValue ControlBoardRemapper::getTrajAccelerations(const int n_joints, const int *joints, double *accs)
 {
-    bool ret=true;
+    ReturnValue ret=ReturnValue_ok;
     std::lock_guard<std::mutex> lock(selectedJointsBuffers.mutex);
 
     // Resize the input buffers
@@ -1692,7 +1692,7 @@ bool ControlBoardRemapper::getTrajAccelerations(const int n_joints, const int *j
     {
         RemappedSubControlBoard *p=remappedControlBoards.getSubControlBoard(ctrlBrd);
 
-        bool ok = true;
+        ReturnValue ok = ReturnValue_ok;
         if( p->pos )
         {
             ok = p->pos->getTrajAccelerations(selectedJointsBuffers.m_nJointsInSubControlBoard[ctrlBrd],
@@ -1701,7 +1701,7 @@ bool ControlBoardRemapper::getTrajAccelerations(const int n_joints, const int *j
         }
         else
         {
-            ok = false;
+            ok = ReturnValue::return_code::return_value_error_generic;
         }
 
         ret = ret && ok;
@@ -1712,7 +1712,7 @@ bool ControlBoardRemapper::getTrajAccelerations(const int n_joints, const int *j
     return ret;
 }
 
-bool ControlBoardRemapper::stop(int j)
+ReturnValue ControlBoardRemapper::stop(int j)
 {
     int off=(int)remappedControlBoards.lut[j].axisIndexInSubControlBoard;
     size_t subIndex=remappedControlBoards.lut[j].subControlBoardIndex;
@@ -1721,7 +1721,7 @@ bool ControlBoardRemapper::stop(int j)
 
     if (!p)
     {
-        return false;
+        return ReturnValue::return_code::return_value_error_generic;
     }
 
     if (p->pos)
@@ -1729,32 +1729,36 @@ bool ControlBoardRemapper::stop(int j)
         return p->pos->stop(off);
     }
 
-    return false;
+    return ReturnValue::return_code::return_value_error_generic;
 }
 
-bool ControlBoardRemapper::stop()
+ReturnValue ControlBoardRemapper::stop()
 {
-    bool ret=true;
+    ReturnValue ret=ReturnValue_ok;
     std::lock_guard<std::mutex> lock(allJointsBuffers.mutex);
 
     for(size_t ctrlBrd=0; ctrlBrd < remappedControlBoards.getNrOfSubControlBoards(); ctrlBrd++)
     {
         RemappedSubControlBoard *p=remappedControlBoards.getSubControlBoard(ctrlBrd);
 
-        bool ok = true;
-
-        ok = p->pos ? p->pos->stop(allJointsBuffers.m_nJointsInSubControlBoard[ctrlBrd],
-                                     allJointsBuffers.m_jointsInSubControlBoard[ctrlBrd].data()) : false;
-
+        ReturnValue ok = ReturnValue_ok;
+        if (p->pos) {
+            ok = p->pos->stop(allJointsBuffers.m_nJointsInSubControlBoard[ctrlBrd],
+                                     allJointsBuffers.m_jointsInSubControlBoard[ctrlBrd].data());
+        }
+        else
+        {
+            ok = ReturnValue::return_code::return_value_error_generic;
+        }
         ret = ret && ok;
     }
 
     return ret;
 }
 
-bool ControlBoardRemapper::stop(const int n_joints, const int *joints)
+ReturnValue ControlBoardRemapper::stop(const int n_joints, const int *joints)
 {
-    bool ret=true;
+    ReturnValue ret=ReturnValue_ok;
     std::lock_guard<std::mutex> lock(selectedJointsBuffers.mutex);
     std::lock_guard<std::mutex> lock2(buffers.mutex);
 
@@ -1764,14 +1768,14 @@ bool ControlBoardRemapper::stop(const int n_joints, const int *joints)
     for(size_t ctrlBrd=0; ctrlBrd < remappedControlBoards.getNrOfSubControlBoards(); ctrlBrd++)
     {
         RemappedSubControlBoard *p=remappedControlBoards.getSubControlBoard(ctrlBrd);
-        bool ok = true;
+        ReturnValue ok = ReturnValue_ok;
         if (p->pos) {
             ok = p->pos->stop(selectedJointsBuffers.m_nJointsInSubControlBoard[ctrlBrd],
                                 selectedJointsBuffers.m_jointsInSubControlBoard[ctrlBrd].data());
         }
         else
         {
-            ok = false;
+            ok = ReturnValue::return_code::return_value_error_generic;
         }
         ret = ret && ok;
     }
@@ -1780,7 +1784,7 @@ bool ControlBoardRemapper::stop(const int n_joints, const int *joints)
 }
 
 /* IJointFaultControl */
-bool ControlBoardRemapper::getLastJointFault(int j, int& fault, std::string& message)
+ReturnValue ControlBoardRemapper::getLastJointFault(int j, int& fault, std::string& message)
 {
     int off = (int)remappedControlBoards.lut[j].axisIndexInSubControlBoard;
     size_t subIndex = remappedControlBoards.lut[j].subControlBoardIndex;
@@ -1789,7 +1793,7 @@ bool ControlBoardRemapper::getLastJointFault(int j, int& fault, std::string& mes
 
     if (!p)
     {
-        return false;
+        return ReturnValue::return_code::return_value_error_generic;
     }
 
     if (p->iFault)
@@ -1797,12 +1801,12 @@ bool ControlBoardRemapper::getLastJointFault(int j, int& fault, std::string& mes
         return p->iFault->getLastJointFault(off, fault, message);
     }
 
-    return false;
+    return ReturnValue::return_code::return_value_error_generic;
 }
 
 /* IVelocityControl */
 
-bool ControlBoardRemapper::velocityMove(int j, double v)
+ReturnValue ControlBoardRemapper::velocityMove(int j, double v)
 {
     int off=(int)remappedControlBoards.lut[j].axisIndexInSubControlBoard;
     size_t subIndex=remappedControlBoards.lut[j].subControlBoardIndex;
@@ -1811,7 +1815,7 @@ bool ControlBoardRemapper::velocityMove(int j, double v)
 
     if (!p)
     {
-        return false;
+        return ReturnValue::return_code::return_value_error_generic;
     }
 
     if (p->vel)
@@ -1819,12 +1823,12 @@ bool ControlBoardRemapper::velocityMove(int j, double v)
         return p->vel->velocityMove(off, v);
     }
 
-    return false;
+    return ReturnValue::return_code::return_value_error_generic;
 }
 
-bool ControlBoardRemapper::velocityMove(const double *v)
+ReturnValue ControlBoardRemapper::velocityMove(const double *v)
 {
-    bool ret=true;
+    ReturnValue ret=ReturnValue_ok;
     std::lock_guard<std::mutex> lock(allJointsBuffers.mutex);
 
     allJointsBuffers.fillSubControlBoardBuffersFromCompleteJointVector(v,remappedControlBoards);
@@ -1833,14 +1837,14 @@ bool ControlBoardRemapper::velocityMove(const double *v)
     {
         RemappedSubControlBoard *p=remappedControlBoards.getSubControlBoard(ctrlBrd);
 
-        bool ok = true;
+        ReturnValue ok = ReturnValue_ok;
         if (p->vel) {
             ok = p->vel->velocityMove(allJointsBuffers.m_nJointsInSubControlBoard[ctrlBrd],
                                             allJointsBuffers.m_jointsInSubControlBoard[ctrlBrd].data(),
                                             allJointsBuffers.m_bufferForSubControlBoard[ctrlBrd].data());
         }
         else {
-            ok = false;
+            ok = ReturnValue::return_code::return_value_error_generic;
         }
         ret = ret && ok;
     }
@@ -1849,7 +1853,7 @@ bool ControlBoardRemapper::velocityMove(const double *v)
 }
 
 /* IEncoders */
-bool ControlBoardRemapper::resetEncoder(int j)
+ReturnValue ControlBoardRemapper::resetEncoder(int j)
 {
     int off=(int)remappedControlBoards.lut[j].axisIndexInSubControlBoard;
     size_t subIndex=remappedControlBoards.lut[j].subControlBoardIndex;
@@ -1857,7 +1861,7 @@ bool ControlBoardRemapper::resetEncoder(int j)
     RemappedSubControlBoard *p=remappedControlBoards.getSubControlBoard(subIndex);
     if (!p)
     {
-        return false;
+        return ReturnValue::return_code::return_value_error_generic;
     }
 
     if (p->iJntEnc)
@@ -1865,12 +1869,12 @@ bool ControlBoardRemapper::resetEncoder(int j)
         return p->iJntEnc->resetEncoder(off);
     }
 
-    return false;
+    return ReturnValue::return_code::return_value_error_generic;
 }
 
-bool ControlBoardRemapper::resetEncoders()
+ReturnValue ControlBoardRemapper::resetEncoders()
 {
-    bool ret=true;
+    ReturnValue ret=ReturnValue_ok;
 
     for(int l=0;l<controlledJoints;l++)
     {
@@ -1880,23 +1884,23 @@ bool ControlBoardRemapper::resetEncoders()
         RemappedSubControlBoard *p=remappedControlBoards.getSubControlBoard(subIndex);
         if (!p)
         {
-            return false;
+            return ReturnValue::return_code::return_value_error_generic;
         }
 
         if (p->iJntEnc)
         {
-            bool ok = p->iJntEnc->resetEncoder(off);
+            ReturnValue ok = p->iJntEnc->resetEncoder(off);
             ret = ret && ok;
         }
         else
         {
-            ret=false;
+            ret=ReturnValue::return_code::return_value_error_generic;
         }
     }
     return ret;
 }
 
-bool ControlBoardRemapper::setEncoder(int j, double val)
+ReturnValue ControlBoardRemapper::setEncoder(int j, double val)
 {
     int off=(int)remappedControlBoards.lut[j].axisIndexInSubControlBoard;
     size_t subIndex=remappedControlBoards.lut[j].subControlBoardIndex;
@@ -1905,7 +1909,7 @@ bool ControlBoardRemapper::setEncoder(int j, double val)
 
     if (!p)
     {
-        return false;
+        return ReturnValue::return_code::return_value_error_generic;
     }
 
     if (p->iJntEnc)
@@ -1913,12 +1917,12 @@ bool ControlBoardRemapper::setEncoder(int j, double val)
         return p->iJntEnc->setEncoder(off,val);
     }
 
-    return false;
+    return ReturnValue::return_code::return_value_error_generic;
 }
 
-bool ControlBoardRemapper::setEncoders(const double *vals)
+ReturnValue ControlBoardRemapper::setEncoders(const double *vals)
 {
-    bool ret=true;
+    ReturnValue ret=ReturnValue_ok;
 
     for(int l=0;l<controlledJoints;l++)
     {
@@ -1929,23 +1933,23 @@ bool ControlBoardRemapper::setEncoders(const double *vals)
 
         if (!p)
         {
-            return false;
+            return ReturnValue::return_code::return_value_error_generic;
         }
 
         if (p->iJntEnc)
         {
-            bool ok = p->iJntEnc->setEncoder(off, vals[l]);
+            ReturnValue ok = p->iJntEnc->setEncoder(off, vals[l]);
             ret = ret && ok;
         }
         else
         {
-            ret = false;
+            ret = ReturnValue::return_code::return_value_error_generic;
         }
     }
     return ret;
 }
 
-bool ControlBoardRemapper::getEncoder(int j, double *v)
+ReturnValue ControlBoardRemapper::getEncoder(int j, double *v)
 {
     int off=(int)remappedControlBoards.lut[j].axisIndexInSubControlBoard;
     size_t subIndex=remappedControlBoards.lut[j].subControlBoardIndex;
@@ -1954,7 +1958,7 @@ bool ControlBoardRemapper::getEncoder(int j, double *v)
 
     if (!p)
     {
-        return false;
+        return ReturnValue::return_code::return_value_error_generic;
     }
 
     if (p->iJntEnc)
@@ -1962,12 +1966,12 @@ bool ControlBoardRemapper::getEncoder(int j, double *v)
         return p->iJntEnc->getEncoder(off, v);
     }
 
-    return false;
+    return ReturnValue::return_code::return_value_error_generic;
 }
 
-bool ControlBoardRemapper::getEncoders(double *encs)
+ReturnValue ControlBoardRemapper::getEncoders(double *encs)
 {
-    bool ret=true;
+    ReturnValue ret=ReturnValue_ok;
 
     for(int l=0;l<controlledJoints;l++)
     {
@@ -1978,25 +1982,25 @@ bool ControlBoardRemapper::getEncoders(double *encs)
 
         if (!p)
         {
-            return false;
+            return ReturnValue::return_code::return_value_error_generic;
         }
 
         if (p->iJntEnc)
         {
-            bool ok = p->iJntEnc->getEncoder(off, encs+l);
+            ReturnValue ok = p->iJntEnc->getEncoder(off, encs+l);
             ret = ret && ok;
         }
         else
         {
-            ret = false;
+            ret = ReturnValue::return_code::return_value_error_generic;
         }
     }
     return ret;
 }
 
-bool ControlBoardRemapper::getEncodersTimed(double *encs, double *t)
+ReturnValue ControlBoardRemapper::getEncodersTimed(double *encs, double *t)
 {
-    bool ret=true;
+    ReturnValue ret=ReturnValue_ok;
 
     for(int l=0;l<controlledJoints;l++)
     {
@@ -2007,23 +2011,23 @@ bool ControlBoardRemapper::getEncodersTimed(double *encs, double *t)
 
         if (!p)
         {
-            return false;
+            return ReturnValue::return_code::return_value_error_generic;
         }
 
         if (p->iJntEnc)
         {
-            bool ok = p->iJntEnc->getEncoderTimed(off, encs+l, t+l);
+            ReturnValue ok = p->iJntEnc->getEncoderTimed(off, encs+l, t+l);
             ret = ret && ok;
         }
         else
         {
-            ret = false;
+            ret = ReturnValue::return_code::return_value_error_generic;
         }
     }
     return ret;
 }
 
-bool ControlBoardRemapper::getEncoderTimed(int j, double *v, double *t)
+ReturnValue ControlBoardRemapper::getEncoderTimed(int j, double *v, double *t)
 {
     int off=(int)remappedControlBoards.lut[j].axisIndexInSubControlBoard;
     size_t subIndex=remappedControlBoards.lut[j].subControlBoardIndex;
@@ -2032,7 +2036,7 @@ bool ControlBoardRemapper::getEncoderTimed(int j, double *v, double *t)
 
     if (!p)
     {
-        return false;
+        return ReturnValue::return_code::return_value_error_generic;
     }
 
     if (p->iJntEnc)
@@ -2040,10 +2044,10 @@ bool ControlBoardRemapper::getEncoderTimed(int j, double *v, double *t)
         return p->iJntEnc->getEncoderTimed(off, v, t);
     }
 
-    return false;
+    return ReturnValue::return_code::return_value_error_generic;
 }
 
-bool ControlBoardRemapper::getEncoderSpeed(int j, double *sp)
+ReturnValue ControlBoardRemapper::getEncoderSpeed(int j, double *sp)
 {
     int off=(int)remappedControlBoards.lut[j].axisIndexInSubControlBoard;
     size_t subIndex=remappedControlBoards.lut[j].subControlBoardIndex;
@@ -2052,7 +2056,7 @@ bool ControlBoardRemapper::getEncoderSpeed(int j, double *sp)
 
     if (!p)
     {
-        return false;
+        return ReturnValue::return_code::return_value_error_generic;
     }
 
     if (p->iJntEnc)
@@ -2060,12 +2064,12 @@ bool ControlBoardRemapper::getEncoderSpeed(int j, double *sp)
         return p->iJntEnc->getEncoderSpeed(off, sp);
     }
 
-    return false;
+    return ReturnValue::return_code::return_value_error_generic;
 }
 
-bool ControlBoardRemapper::getEncoderSpeeds(double *spds)
+ReturnValue ControlBoardRemapper::getEncoderSpeeds(double *spds)
 {
-    bool ret=true;
+    ReturnValue ret=ReturnValue_ok;
 
     for(int l=0;l<controlledJoints;l++)
     {
@@ -2076,23 +2080,23 @@ bool ControlBoardRemapper::getEncoderSpeeds(double *spds)
 
         if (!p)
         {
-            return false;
+            return ReturnValue::return_code::return_value_error_generic;
         }
 
         if (p->iJntEnc)
         {
-            bool ok = p->iJntEnc->getEncoderSpeed(off, spds+l);
+            ReturnValue ok = p->iJntEnc->getEncoderSpeed(off, spds+l);
             ret = ret && ok;
         }
         else
         {
-            ret = false;
+            ret = ReturnValue::return_code::return_value_error_generic;
         }
     }
     return ret;
 }
 
-bool ControlBoardRemapper::getEncoderAcceleration(int j, double *acc)
+ReturnValue ControlBoardRemapper::getEncoderAcceleration(int j, double *acc)
 {
     int off=(int)remappedControlBoards.lut[j].axisIndexInSubControlBoard;
     size_t subIndex=remappedControlBoards.lut[j].subControlBoardIndex;
@@ -2101,7 +2105,7 @@ bool ControlBoardRemapper::getEncoderAcceleration(int j, double *acc)
 
     if (!p)
     {
-        return false;
+        return ReturnValue::return_code::return_value_error_generic;
     }
 
     if (p->iJntEnc)
@@ -2109,12 +2113,12 @@ bool ControlBoardRemapper::getEncoderAcceleration(int j, double *acc)
         return p->iJntEnc->getEncoderAcceleration(off,acc);
     }
 
-    return false;
+    return ReturnValue::return_code::return_value_error_generic;
 }
 
-bool ControlBoardRemapper::getEncoderAccelerations(double *accs)
+ReturnValue ControlBoardRemapper::getEncoderAccelerations(double *accs)
 {
-    bool ret=true;
+    ReturnValue ret=ReturnValue_ok;
 
     for(int l=0;l<controlledJoints;l++)
     {
@@ -2125,30 +2129,30 @@ bool ControlBoardRemapper::getEncoderAccelerations(double *accs)
 
         if (!p)
         {
-            return false;
+            return ReturnValue::return_code::return_value_error_generic;
         }
 
         if (p->iJntEnc)
         {
-            bool ok = p->iJntEnc->getEncoderAcceleration(off, accs+l);
+            ReturnValue ok = p->iJntEnc->getEncoderAcceleration(off, accs+l);
             ret = ret && ok;
         }
         else
         {
-            ret = false;
+            ret = ReturnValue::return_code::return_value_error_generic;
         }
     }
     return ret;
 }
 
 /* IMotor */
-bool ControlBoardRemapper::getNumberOfMotors(int *num)
+ReturnValue ControlBoardRemapper::getNumberOfMotors(int *num)
 {
     *num=controlledJoints;
-    return true;
+    return ReturnValue_ok;
 }
 
-bool ControlBoardRemapper::getTemperature(int m, double* val)
+ReturnValue ControlBoardRemapper::getTemperature(int m, double* val)
 {
     int off=(int)remappedControlBoards.lut[m].axisIndexInSubControlBoard;
     size_t subIndex=remappedControlBoards.lut[m].subControlBoardIndex;
@@ -2157,7 +2161,7 @@ bool ControlBoardRemapper::getTemperature(int m, double* val)
 
     if (!p)
     {
-        return false;
+        return ReturnValue::return_code::return_value_error_generic;
     }
 
     if (p->imotor)
@@ -2165,12 +2169,12 @@ bool ControlBoardRemapper::getTemperature(int m, double* val)
         return p->imotor->getTemperature(off, val);
     }
 
-    return false;
+    return ReturnValue::return_code::return_value_error_generic;
 }
 
-bool ControlBoardRemapper::getTemperatures(double *vals)
+ReturnValue ControlBoardRemapper::getTemperatures(double *vals)
 {
-    bool ret=true;
+    ReturnValue ret=ReturnValue_ok;
     for(int l=0;l<controlledJoints;l++)
     {
         int off=(int)remappedControlBoards.lut[l].axisIndexInSubControlBoard;
@@ -2179,7 +2183,7 @@ bool ControlBoardRemapper::getTemperatures(double *vals)
         RemappedSubControlBoard *p=remappedControlBoards.getSubControlBoard(subIndex);
         if (!p)
         {
-            return false;
+            return ReturnValue::return_code::return_value_error_generic;
         }
 
         if (p->imotor)
@@ -2188,13 +2192,13 @@ bool ControlBoardRemapper::getTemperatures(double *vals)
         }
         else
         {
-            ret=false;
+            ret=ReturnValue::return_code::return_value_error_generic;
         }
     }
     return ret;
 }
 
-bool ControlBoardRemapper::getTemperatureLimit(int m, double* val)
+ReturnValue ControlBoardRemapper::getTemperatureLimit(int m, double* val)
 {
     int off=(int)remappedControlBoards.lut[m].axisIndexInSubControlBoard;
     size_t subIndex=remappedControlBoards.lut[m].subControlBoardIndex;
@@ -2203,7 +2207,7 @@ bool ControlBoardRemapper::getTemperatureLimit(int m, double* val)
 
     if (!p)
     {
-        return false;
+        return ReturnValue::return_code::return_value_error_generic;
     }
 
     if (p->imotor)
@@ -2211,10 +2215,10 @@ bool ControlBoardRemapper::getTemperatureLimit(int m, double* val)
         return p->imotor->getTemperatureLimit(off, val);
     }
 
-    return false;
+    return ReturnValue::return_code::return_value_error_generic;
 }
 
-bool ControlBoardRemapper::setTemperatureLimit (int m, const double val)
+ReturnValue ControlBoardRemapper::setTemperatureLimit (int m, const double val)
 {
     int off=(int)remappedControlBoards.lut[m].axisIndexInSubControlBoard;
     size_t subIndex=remappedControlBoards.lut[m].subControlBoardIndex;
@@ -2223,7 +2227,7 @@ bool ControlBoardRemapper::setTemperatureLimit (int m, const double val)
 
     if (!p)
     {
-        return false;
+        return ReturnValue::return_code::return_value_error_generic;
     }
 
     if (p->imotor)
@@ -2231,10 +2235,10 @@ bool ControlBoardRemapper::setTemperatureLimit (int m, const double val)
         return p->imotor->setTemperatureLimit(off,val);
     }
 
-    return false;
+    return ReturnValue::return_code::return_value_error_generic;
 }
 
-bool ControlBoardRemapper::getGearboxRatio(int m, double* val)
+ReturnValue ControlBoardRemapper::getGearboxRatio(int m, double* val)
 {
     int off = (int)remappedControlBoards.lut[m].axisIndexInSubControlBoard;
     size_t subIndex = remappedControlBoards.lut[m].subControlBoardIndex;
@@ -2243,7 +2247,7 @@ bool ControlBoardRemapper::getGearboxRatio(int m, double* val)
 
     if (!p)
     {
-        return false;
+        return ReturnValue::return_code::return_value_error_generic;
     }
 
     if (p->imotor)
@@ -2251,10 +2255,10 @@ bool ControlBoardRemapper::getGearboxRatio(int m, double* val)
         return p->imotor->getGearboxRatio(off, val);
     }
 
-    return false;
+    return ReturnValue::return_code::return_value_error_generic;
 }
 
-bool ControlBoardRemapper::setGearboxRatio(int m, const double val)
+ReturnValue ControlBoardRemapper::setGearboxRatio(int m, const double val)
 {
     int off = (int)remappedControlBoards.lut[m].axisIndexInSubControlBoard;
     size_t subIndex = remappedControlBoards.lut[m].subControlBoardIndex;
@@ -2263,7 +2267,7 @@ bool ControlBoardRemapper::setGearboxRatio(int m, const double val)
 
     if (!p)
     {
-        return false;
+        return ReturnValue::return_code::return_value_error_generic;
     }
 
     if (p->imotor)
@@ -2271,15 +2275,15 @@ bool ControlBoardRemapper::setGearboxRatio(int m, const double val)
         return p->imotor->setGearboxRatio(off, val);
     }
 
-    return false;
+    return ReturnValue::return_code::return_value_error_generic;
 }
 
 /* IRemoteVariables */
-bool ControlBoardRemapper::getRemoteVariable(std::string key, yarp::os::Bottle& val)
+ReturnValue ControlBoardRemapper::getRemoteVariable(std::string key, yarp::os::Bottle& val)
 {
     yCWarning(CONTROLBOARDREMAPPER, "getRemoteVariable is not properly implemented, use at your own risk.");
 
-    bool b = true;
+    ReturnValue b = ReturnValue_ok;
 
     for (unsigned int i = 0; i < remappedControlBoards.getNrOfSubControlBoards(); i++)
     {
@@ -2287,16 +2291,16 @@ bool ControlBoardRemapper::getRemoteVariable(std::string key, yarp::os::Bottle& 
 
         if (!p)
         {
-            return false;
+            return ReturnValue::return_code::return_value_error_generic;
         }
 
         if (!p->iVar)
         {
-            return false;
+            return ReturnValue::return_code::return_value_error_generic;
         }
 
         yarp::os::Bottle tmpval;
-        bool ok = p->iVar->getRemoteVariable(key, tmpval);
+        ReturnValue ok = p->iVar->getRemoteVariable(key, tmpval);
 
         if (ok)
         {
@@ -2309,7 +2313,7 @@ bool ControlBoardRemapper::getRemoteVariable(std::string key, yarp::os::Bottle& 
     return b;
 }
 
-bool ControlBoardRemapper::setRemoteVariable(std::string key, const yarp::os::Bottle& val)
+ReturnValue ControlBoardRemapper::setRemoteVariable(std::string key, const yarp::os::Bottle& val)
 {
     yCWarning(CONTROLBOARDREMAPPER, "setRemoteVariable is not properly implemented, use at your own risk.");
 
@@ -2318,15 +2322,23 @@ bool ControlBoardRemapper::setRemoteVariable(std::string key, const yarp::os::Bo
     if (bottle_size != device_size)
     {
         yCError(CONTROLBOARDREMAPPER, "ControlBoardRemapper::setRemoteVariable bottle_size != device_size failure");
-        return false;
+        return ReturnValue::return_code::return_value_error_generic;
     }
 
-    bool b = true;
+    ReturnValue b = ReturnValue_ok;
     for (unsigned int i = 0; i < device_size; i++)
     {
         RemappedSubControlBoard *p = remappedControlBoards.getSubControlBoard(i);
-        if (!p)  { yCError(CONTROLBOARDREMAPPER, "ControlBoardRemapper::setRemoteVariable !p failure"); return false; }
-        if (!p->iVar) { yCError(CONTROLBOARDREMAPPER, "ControlBoardRemapper::setRemoteVariable !p->iVar failure"); return false; }
+        if (!p)
+        {
+            yCError(CONTROLBOARDREMAPPER, "ControlBoardRemapper::setRemoteVariable !p failure");
+            ReturnValue::return_code::return_value_error_generic;
+        }
+        if (!p->iVar)
+        {
+            yCError(CONTROLBOARDREMAPPER, "ControlBoardRemapper::setRemoteVariable !p->iVar failure");
+            ReturnValue::return_code::return_value_error_generic;
+        }
         Bottle* partial_val = val.get(i).asList();
         if (partial_val)
         {
@@ -2335,14 +2347,14 @@ bool ControlBoardRemapper::setRemoteVariable(std::string key, const yarp::os::Bo
         else
         {
             yCError(CONTROLBOARDREMAPPER, "ControlBoardRemapper::setRemoteVariable general failure");
-            return false;
+            return ReturnValue::return_code::return_value_error_generic;
         }
     }
 
     return b;
 }
 
-bool ControlBoardRemapper::getRemoteVariablesList(yarp::os::Bottle* listOfKeys)
+ReturnValue ControlBoardRemapper::getRemoteVariablesList(yarp::os::Bottle* listOfKeys)
 {
     yCWarning(CONTROLBOARDREMAPPER, "getRemoteVariablesList is not properly implemented, use at your own risk.");
 
@@ -2351,7 +2363,7 @@ bool ControlBoardRemapper::getRemoteVariablesList(yarp::os::Bottle* listOfKeys)
 
     if (!p)
     {
-        return false;
+        return ReturnValue::return_code::return_value_error_generic;
     }
 
     if (p->iVar)
@@ -2359,12 +2371,12 @@ bool ControlBoardRemapper::getRemoteVariablesList(yarp::os::Bottle* listOfKeys)
         return p->iVar->getRemoteVariablesList(listOfKeys);
     }
 
-    return false;
+    return ReturnValue::return_code::return_value_error_generic;
 }
 
 /* IMotorEncoders */
 
-bool ControlBoardRemapper::resetMotorEncoder(int m)
+ReturnValue ControlBoardRemapper::resetMotorEncoder(int m)
 {
     int off=(int)remappedControlBoards.lut[m].axisIndexInSubControlBoard;
     size_t subIndex=remappedControlBoards.lut[m].subControlBoardIndex;
@@ -2373,7 +2385,7 @@ bool ControlBoardRemapper::resetMotorEncoder(int m)
 
     if (!p)
     {
-        return false;
+        return ReturnValue::return_code::return_value_error_generic;
     }
 
     if (p->iMotEnc)
@@ -2381,12 +2393,12 @@ bool ControlBoardRemapper::resetMotorEncoder(int m)
         return p->iMotEnc->resetMotorEncoder(off);
     }
 
-    return false;
+    return ReturnValue::return_code::return_value_error_generic;
 }
 
-bool ControlBoardRemapper::resetMotorEncoders()
+ReturnValue ControlBoardRemapper::resetMotorEncoders()
 {
-    bool ret=true;
+    ReturnValue ret=ReturnValue_ok;
 
     for(int l=0;l<controlledJoints;l++)
     {
@@ -2396,24 +2408,24 @@ bool ControlBoardRemapper::resetMotorEncoders()
         RemappedSubControlBoard *p=remappedControlBoards.getSubControlBoard(subIndex);
         if (!p)
         {
-            return false;
+            return ReturnValue::return_code::return_value_error_generic;
         }
 
         if (p->iMotEnc)
         {
-            bool ok = p->iMotEnc->resetMotorEncoder(off);
+            ReturnValue ok = p->iMotEnc->resetMotorEncoder(off);
             ret= ret && ok;
         }
         else
         {
-            ret=false;
+            ret=ReturnValue::return_code::return_value_error_generic;
         }
     }
 
     return ret;
 }
 
-bool ControlBoardRemapper::setMotorEncoder(int m, const double val)
+ReturnValue ControlBoardRemapper::setMotorEncoder(int m, const double val)
 {
     int off=(int)remappedControlBoards.lut[m].axisIndexInSubControlBoard;
     size_t subIndex=remappedControlBoards.lut[m].subControlBoardIndex;
@@ -2422,7 +2434,7 @@ bool ControlBoardRemapper::setMotorEncoder(int m, const double val)
 
     if (!p)
     {
-        return false;
+        return ReturnValue::return_code::return_value_error_generic;
     }
 
     if (p->iMotEnc)
@@ -2430,12 +2442,12 @@ bool ControlBoardRemapper::setMotorEncoder(int m, const double val)
         return p->iMotEnc->setMotorEncoder(off,val);
     }
 
-    return false;
+    return ReturnValue::return_code::return_value_error_generic;
 }
 
-bool ControlBoardRemapper::setMotorEncoders(const double *vals)
+ReturnValue ControlBoardRemapper::setMotorEncoders(const double *vals)
 {
-    bool ret=true;
+    ReturnValue ret=ReturnValue_ok;
 
     for(int l=0;l<controlledJoints;l++)
     {
@@ -2446,24 +2458,24 @@ bool ControlBoardRemapper::setMotorEncoders(const double *vals)
 
         if (!p)
         {
-            return false;
+            return ReturnValue::return_code::return_value_error_generic;
         }
 
         if (p->iMotEnc)
         {
-            bool ok = p->iMotEnc->setMotorEncoder(off, vals[l]);
+            ReturnValue ok = p->iMotEnc->setMotorEncoder(off, vals[l]);
             ret = ret && ok;
         }
         else
         {
-            ret=false;
+            ret=ReturnValue::return_code::return_value_error_generic;
         }
     }
 
     return ret;
 }
 
-bool ControlBoardRemapper::setMotorEncoderCountsPerRevolution(int m, double cpr)
+ReturnValue ControlBoardRemapper::setMotorEncoderCountsPerRevolution(int m, double cpr)
 {
     int off=(int)remappedControlBoards.lut[m].axisIndexInSubControlBoard;
     size_t subIndex=remappedControlBoards.lut[m].subControlBoardIndex;
@@ -2472,7 +2484,7 @@ bool ControlBoardRemapper::setMotorEncoderCountsPerRevolution(int m, double cpr)
 
     if (!p)
     {
-        return false;
+        return ReturnValue::return_code::return_value_error_generic;
     }
 
     if (p->iMotEnc)
@@ -2480,10 +2492,10 @@ bool ControlBoardRemapper::setMotorEncoderCountsPerRevolution(int m, double cpr)
         return p->iMotEnc->setMotorEncoderCountsPerRevolution(off,cpr);
     }
 
-    return false;
+    return ReturnValue::return_code::return_value_error_generic;
 }
 
-bool ControlBoardRemapper::getMotorEncoderCountsPerRevolution(int m, double *cpr)
+ReturnValue ControlBoardRemapper::getMotorEncoderCountsPerRevolution(int m, double *cpr)
 {
     int off=(int)remappedControlBoards.lut[m].axisIndexInSubControlBoard;
     size_t subIndex=remappedControlBoards.lut[m].subControlBoardIndex;
@@ -2492,7 +2504,7 @@ bool ControlBoardRemapper::getMotorEncoderCountsPerRevolution(int m, double *cpr
 
     if (!p)
     {
-        return false;
+        return ReturnValue::return_code::return_value_error_generic;
     }
 
     if (p->iMotEnc)
@@ -2500,10 +2512,10 @@ bool ControlBoardRemapper::getMotorEncoderCountsPerRevolution(int m, double *cpr
         return p->iMotEnc->getMotorEncoderCountsPerRevolution(off, cpr);
     }
 
-    return false;
+    return ReturnValue::return_code::return_value_error_generic;
 }
 
-bool ControlBoardRemapper::getMotorEncoder(int m, double *v)
+ReturnValue ControlBoardRemapper::getMotorEncoder(int m, double *v)
 {
     int off=(int)remappedControlBoards.lut[m].axisIndexInSubControlBoard;
     size_t subIndex=remappedControlBoards.lut[m].subControlBoardIndex;
@@ -2512,7 +2524,7 @@ bool ControlBoardRemapper::getMotorEncoder(int m, double *v)
 
     if (!p)
     {
-        return false;
+        return ReturnValue::return_code::return_value_error_generic;
     }
 
     if (p->iMotEnc)
@@ -2520,12 +2532,12 @@ bool ControlBoardRemapper::getMotorEncoder(int m, double *v)
         return p->iMotEnc->getMotorEncoder(off, v);
     }
 
-    return false;
+    return ReturnValue::return_code::return_value_error_generic;
 }
 
-bool ControlBoardRemapper::getMotorEncoders(double *encs)
+ReturnValue ControlBoardRemapper::getMotorEncoders(double *encs)
 {
-    bool ret=true;
+    ReturnValue ret=ReturnValue_ok;
 
     for(int l=0;l<controlledJoints;l++)
     {
@@ -2534,22 +2546,22 @@ bool ControlBoardRemapper::getMotorEncoders(double *encs)
 
         RemappedSubControlBoard *p=remappedControlBoards.getSubControlBoard(subIndex);
         if (!p) {
-            return false;
+            return ReturnValue::return_code::return_value_error_generic;
         }
 
         if (p->iMotEnc)
         {
             ret=ret&&p->iMotEnc->getMotorEncoder(off, encs+l);
         } else {
-            ret = false;
+            ret = ReturnValue::return_code::return_value_error_generic;
         }
     }
     return ret;
 }
 
-bool ControlBoardRemapper::getMotorEncodersTimed(double *encs, double *t)
+ReturnValue ControlBoardRemapper::getMotorEncodersTimed(double *encs, double *t)
 {
-    bool ret=true;
+    ReturnValue ret=ReturnValue_ok;
 
     for(int l=0;l<controlledJoints;l++)
     {
@@ -2560,23 +2572,23 @@ bool ControlBoardRemapper::getMotorEncodersTimed(double *encs, double *t)
 
         if (!p)
         {
-            return false;
+            return ReturnValue::return_code::return_value_error_generic;
         }
 
         if (p->iMotEnc)
         {
-            bool ok = p->iMotEnc->getMotorEncoderTimed(off, encs, t);
+            ReturnValue ok = p->iMotEnc->getMotorEncoderTimed(off, encs, t);
             ret = ret && ok;
         }
         else
         {
-            ret = false;
+            ret = ReturnValue::return_code::return_value_error_generic;
         }
     }
     return ret;
 }
 
-bool ControlBoardRemapper::getMotorEncoderTimed(int m, double *v, double *t)
+ReturnValue ControlBoardRemapper::getMotorEncoderTimed(int m, double *v, double *t)
 {
     int off=(int)remappedControlBoards.lut[m].axisIndexInSubControlBoard;
     size_t subIndex=remappedControlBoards.lut[m].subControlBoardIndex;
@@ -2585,7 +2597,7 @@ bool ControlBoardRemapper::getMotorEncoderTimed(int m, double *v, double *t)
 
     if (!p)
     {
-        return false;
+        return ReturnValue::return_code::return_value_error_generic;
     }
 
     if (p->iMotEnc)
@@ -2593,10 +2605,10 @@ bool ControlBoardRemapper::getMotorEncoderTimed(int m, double *v, double *t)
         return p->iMotEnc->getMotorEncoderTimed(off, v, t);
     }
 
-    return false;
+    return ReturnValue::return_code::return_value_error_generic;
 }
 
-bool ControlBoardRemapper::getMotorEncoderSpeed(int m, double *sp)
+ReturnValue ControlBoardRemapper::getMotorEncoderSpeed(int m, double *sp)
 {
     int off=(int)remappedControlBoards.lut[m].axisIndexInSubControlBoard;
     size_t subIndex=remappedControlBoards.lut[m].subControlBoardIndex;
@@ -2605,7 +2617,7 @@ bool ControlBoardRemapper::getMotorEncoderSpeed(int m, double *sp)
 
     if (!p)
     {
-        return false;
+        return ReturnValue::return_code::return_value_error_generic;
     }
 
     if (p->iMotEnc)
@@ -2613,12 +2625,12 @@ bool ControlBoardRemapper::getMotorEncoderSpeed(int m, double *sp)
         return p->iMotEnc->getMotorEncoderSpeed(off, sp);
     }
 
-    return false;
+    return ReturnValue::return_code::return_value_error_generic;
 }
 
-bool ControlBoardRemapper::getMotorEncoderSpeeds(double *spds)
+ReturnValue ControlBoardRemapper::getMotorEncoderSpeeds(double *spds)
 {
-    bool ret=true;
+    ReturnValue ret=ReturnValue_ok;
 
     for(int l=0;l<controlledJoints;l++)
     {
@@ -2629,23 +2641,23 @@ bool ControlBoardRemapper::getMotorEncoderSpeeds(double *spds)
 
         if (!p)
         {
-            return false;
+            return ReturnValue::return_code::return_value_error_generic;
         }
 
         if (p->iMotEnc)
         {
-            bool ok = p->iMotEnc->getMotorEncoderSpeed(off, spds + l);
+            ReturnValue ok = p->iMotEnc->getMotorEncoderSpeed(off, spds + l);
             ret = ret && ok;
         }
         else
         {
-            ret = false;
+            ret = ReturnValue::return_code::return_value_error_generic;
         }
     }
     return ret;
 }
 
-bool ControlBoardRemapper::getMotorEncoderAcceleration(int m, double *acc)
+ReturnValue ControlBoardRemapper::getMotorEncoderAcceleration(int m, double *acc)
 {
     int off = (int) remappedControlBoards.lut[m].axisIndexInSubControlBoard;
     size_t subIndex = remappedControlBoards.lut[m].subControlBoardIndex;
@@ -2654,7 +2666,7 @@ bool ControlBoardRemapper::getMotorEncoderAcceleration(int m, double *acc)
 
     if (!p)
     {
-        return false;
+        return ReturnValue::return_code::return_value_error_generic;
     }
 
     if (p->iMotEnc)
@@ -2662,12 +2674,12 @@ bool ControlBoardRemapper::getMotorEncoderAcceleration(int m, double *acc)
         return p->iMotEnc->getMotorEncoderAcceleration(off,acc);
     }
     *acc=0.0;
-    return false;
+    return ReturnValue::return_code::return_value_error_generic;
 }
 
-bool ControlBoardRemapper::getMotorEncoderAccelerations(double *accs)
+ReturnValue ControlBoardRemapper::getMotorEncoderAccelerations(double *accs)
 {
-    bool ret=true;
+    ReturnValue ret=ReturnValue_ok;
 
     for(int l=0;l<controlledJoints;l++)
     {
@@ -2678,17 +2690,17 @@ bool ControlBoardRemapper::getMotorEncoderAccelerations(double *accs)
 
         if (!p)
         {
-            return false;
+            return ReturnValue::return_code::return_value_error_generic;
         }
 
         if (p->iMotEnc)
         {
-            bool ok = p->iMotEnc->getMotorEncoderAcceleration(off, accs+l);
+            ReturnValue ok = p->iMotEnc->getMotorEncoderAcceleration(off, accs+l);
             ret=ret && ok;
         }
         else
         {
-            ret=false;
+            ret=ReturnValue::return_code::return_value_error_generic;
         }
     }
 
@@ -2696,14 +2708,14 @@ bool ControlBoardRemapper::getMotorEncoderAccelerations(double *accs)
 }
 
 
-bool ControlBoardRemapper::getNumberOfMotorEncoders(int *num)
+ReturnValue ControlBoardRemapper::getNumberOfMotorEncoders(int *num)
 {
     *num=controlledJoints;
-    return true;
+    return ReturnValue_ok;
 }
 
 /* IAmplifierControl */
-bool ControlBoardRemapper::enableAmp(int j)
+ReturnValue ControlBoardRemapper::enableAmp(int j)
 {
     int off=(int)remappedControlBoards.lut[j].axisIndexInSubControlBoard;
     size_t subIndex=remappedControlBoards.lut[j].subControlBoardIndex;
@@ -2712,7 +2724,7 @@ bool ControlBoardRemapper::enableAmp(int j)
 
     if (!p)
     {
-        return false;
+        return ReturnValue::return_code::return_value_error_generic;
     }
 
     if (p->amp)
@@ -2720,17 +2732,17 @@ bool ControlBoardRemapper::enableAmp(int j)
         return p->amp->enableAmp(off);
     }
 
-    return false;
+    return ReturnValue::return_code::return_value_error_generic;
 }
 
-bool ControlBoardRemapper::disableAmp(int j)
+ReturnValue ControlBoardRemapper::disableAmp(int j)
 {
     return this->setControlMode(j, VOCAB_CM_IDLE);
 }
 
-bool ControlBoardRemapper::getAmpStatus(int *st)
+ReturnValue ControlBoardRemapper::getAmpStatus(int *st)
 {
-    bool ret=true;
+    ReturnValue ret=ReturnValue_ok;
 
     for(int l=0;l<controlledJoints;l++)
     {
@@ -2741,24 +2753,24 @@ bool ControlBoardRemapper::getAmpStatus(int *st)
 
         if (!p)
         {
-            return false;
+            return ReturnValue::return_code::return_value_error_generic;
         }
 
         if (p->amp)
         {
-            bool ok = p->amp->getAmpStatus(off, st+l);
+            ReturnValue ok = p->amp->getAmpStatus(off, st+l);
             ret = ret && ok;
         }
         else
         {
-            ret=false;
+            ret=ReturnValue::return_code::return_value_error_generic;
         }
     }
 
     return ret;
 }
 
-bool ControlBoardRemapper::getAmpStatus(int j, int *v)
+ReturnValue ControlBoardRemapper::getAmpStatus(int j, int *v)
 {
     int off=(int)remappedControlBoards.lut[j].axisIndexInSubControlBoard;
     size_t subIndex=remappedControlBoards.lut[j].subControlBoardIndex;
@@ -2767,7 +2779,7 @@ bool ControlBoardRemapper::getAmpStatus(int j, int *v)
 
     if (!p)
     {
-        return false;
+        return ReturnValue::return_code::return_value_error_generic;
     }
 
     if (p->amp)
@@ -2775,10 +2787,10 @@ bool ControlBoardRemapper::getAmpStatus(int j, int *v)
         return p->amp->getAmpStatus(off,v);
     }
 
-    return false;
+    return ReturnValue::return_code::return_value_error_generic;
 }
 
-bool ControlBoardRemapper::setMaxCurrent(int j, double v)
+ReturnValue ControlBoardRemapper::setMaxCurrent(int j, double v)
 {
     int off=(int)remappedControlBoards.lut[j].axisIndexInSubControlBoard;
     size_t subIndex=remappedControlBoards.lut[j].subControlBoardIndex;
@@ -2787,7 +2799,7 @@ bool ControlBoardRemapper::setMaxCurrent(int j, double v)
 
     if (!p)
     {
-        return false;
+        return ReturnValue::return_code::return_value_error_generic;
     }
 
     if (p->amp)
@@ -2795,10 +2807,10 @@ bool ControlBoardRemapper::setMaxCurrent(int j, double v)
         return p->amp->setMaxCurrent(off,v);
     }
 
-    return false;
+    return ReturnValue::return_code::return_value_error_generic;
 }
 
-bool ControlBoardRemapper::getMaxCurrent(int j, double* v)
+ReturnValue ControlBoardRemapper::getMaxCurrent(int j, double* v)
 {
     int off=(int)remappedControlBoards.lut[j].axisIndexInSubControlBoard;
     size_t subIndex=remappedControlBoards.lut[j].subControlBoardIndex;
@@ -2807,7 +2819,7 @@ bool ControlBoardRemapper::getMaxCurrent(int j, double* v)
 
     if (!p)
     {
-        return false;
+        return ReturnValue::return_code::return_value_error_generic;
     }
 
     if (p->amp)
@@ -2815,10 +2827,10 @@ bool ControlBoardRemapper::getMaxCurrent(int j, double* v)
         return p->amp->getMaxCurrent(off,v);
     }
 
-    return false;
+    return ReturnValue::return_code::return_value_error_generic;
 }
 
-bool ControlBoardRemapper::getNominalCurrent(int m, double *val)
+ReturnValue ControlBoardRemapper::getNominalCurrent(int m, double *val)
 {
     int off=(int)remappedControlBoards.lut[m].axisIndexInSubControlBoard;
     size_t subIndex=remappedControlBoards.lut[m].subControlBoardIndex;
@@ -2827,18 +2839,18 @@ bool ControlBoardRemapper::getNominalCurrent(int m, double *val)
 
     if(!p)
     {
-        return false;
+        return ReturnValue::return_code::return_value_error_generic;
     }
 
     if(!p->amp)
     {
-        return false;
+        return ReturnValue::return_code::return_value_error_generic;
     }
 
     return p->amp->getNominalCurrent(off, val);
 }
 
-bool ControlBoardRemapper::getPeakCurrent(int m, double *val)
+ReturnValue ControlBoardRemapper::getPeakCurrent(int m, double *val)
 {
     int off=(int)remappedControlBoards.lut[m].axisIndexInSubControlBoard;
     size_t subIndex=remappedControlBoards.lut[m].subControlBoardIndex;
@@ -2847,18 +2859,18 @@ bool ControlBoardRemapper::getPeakCurrent(int m, double *val)
 
     if(!p)
     {
-        return false;
+        return ReturnValue::return_code::return_value_error_generic;
     }
 
     if(!p->amp)
     {
-        return false;
+        return ReturnValue::return_code::return_value_error_generic;
     }
 
     return p->amp->getPeakCurrent(off, val);
 }
 
-bool ControlBoardRemapper::setPeakCurrent(int m, const double val)
+ReturnValue ControlBoardRemapper::setPeakCurrent(int m, const double val)
 {
     int off=(int)remappedControlBoards.lut[m].axisIndexInSubControlBoard;
     size_t subIndex=remappedControlBoards.lut[m].subControlBoardIndex;
@@ -2867,18 +2879,18 @@ bool ControlBoardRemapper::setPeakCurrent(int m, const double val)
 
     if (!p)
     {
-        return false;
+        return ReturnValue::return_code::return_value_error_generic;
     }
 
     if (!p->amp)
     {
-        return false;
+        return ReturnValue::return_code::return_value_error_generic;
     }
 
     return p->amp->setPeakCurrent(off, val);
 }
 
-bool ControlBoardRemapper::setNominalCurrent(int m, const double val)
+ReturnValue ControlBoardRemapper::setNominalCurrent(int m, const double val)
 {
     int off = (int)remappedControlBoards.lut[m].axisIndexInSubControlBoard;
     size_t subIndex = remappedControlBoards.lut[m].subControlBoardIndex;
@@ -2887,18 +2899,18 @@ bool ControlBoardRemapper::setNominalCurrent(int m, const double val)
 
     if (!p)
     {
-        return false;
+        return ReturnValue::return_code::return_value_error_generic;
     }
 
     if (!p->amp)
     {
-        return false;
+        return ReturnValue::return_code::return_value_error_generic;
     }
 
     return p->amp->setNominalCurrent(off, val);
 }
 
-bool ControlBoardRemapper::getPWM(int m, double* val)
+ReturnValue ControlBoardRemapper::getPWM(int m, double* val)
 {
     int off=(int)remappedControlBoards.lut[m].axisIndexInSubControlBoard;
     size_t subIndex=remappedControlBoards.lut[m].subControlBoardIndex;
@@ -2907,17 +2919,17 @@ bool ControlBoardRemapper::getPWM(int m, double* val)
 
     if(!p)
     {
-        return false;
+        return ReturnValue::return_code::return_value_error_generic;
     }
 
     if(!p->amp)
     {
-        return false;
+        return ReturnValue::return_code::return_value_error_generic;
     }
 
     return p->amp->getPWM(off, val);
 }
-bool ControlBoardRemapper::getPWMLimit(int m, double* val)
+ReturnValue ControlBoardRemapper::getPWMLimit(int m, double* val)
 {
     int off=(int)remappedControlBoards.lut[m].axisIndexInSubControlBoard;
     size_t subIndex=remappedControlBoards.lut[m].subControlBoardIndex;
@@ -2926,18 +2938,18 @@ bool ControlBoardRemapper::getPWMLimit(int m, double* val)
 
     if(!p)
     {
-        return false;
+        return ReturnValue::return_code::return_value_error_generic;
     }
 
     if(!p->amp)
     {
-        return false;
+        return ReturnValue::return_code::return_value_error_generic;
     }
 
     return p->amp->getPWMLimit(off, val);
 }
 
-bool ControlBoardRemapper::setPWMLimit(int m, const double val)
+ReturnValue ControlBoardRemapper::setPWMLimit(int m, const double val)
 {
     int off=(int)remappedControlBoards.lut[m].axisIndexInSubControlBoard;
     size_t subIndex=remappedControlBoards.lut[m].subControlBoardIndex;
@@ -2946,18 +2958,18 @@ bool ControlBoardRemapper::setPWMLimit(int m, const double val)
 
     if (!p)
     {
-        return false;
+        return ReturnValue::return_code::return_value_error_generic;
     }
 
     if (!p->amp)
     {
-        return false;
+        return ReturnValue::return_code::return_value_error_generic;
     }
 
     return p->amp->setPWMLimit(off, val);
 }
 
-bool ControlBoardRemapper::getPowerSupplyVoltage(int m, double* val)
+ReturnValue ControlBoardRemapper::getPowerSupplyVoltage(int m, double* val)
 {
     int off=(int)remappedControlBoards.lut[m].axisIndexInSubControlBoard;
     size_t subIndex=remappedControlBoards.lut[m].subControlBoardIndex;
@@ -2966,12 +2978,12 @@ bool ControlBoardRemapper::getPowerSupplyVoltage(int m, double* val)
 
     if(!p)
     {
-        return false;
+        return ReturnValue::return_code::return_value_error_generic;
     }
 
     if(!p->amp)
     {
-        return false;
+        return ReturnValue::return_code::return_value_error_generic;
     }
 
     return p->amp->getPowerSupplyVoltage(off, val);
@@ -3066,12 +3078,12 @@ IRemoteCalibrator *ControlBoardRemapper::getCalibratorDevice()
     return yarp::dev::IRemoteCalibrator::getCalibratorDevice();
 }
 
-bool ControlBoardRemapper::isCalibratorDevicePresent(bool *isCalib)
+ReturnValue ControlBoardRemapper::isCalibratorDevicePresent(bool *isCalib)
 {
     return yarp::dev::IRemoteCalibrator::isCalibratorDevicePresent(isCalib);
 }
 
-bool ControlBoardRemapper::calibrateSingleJoint(int j)
+ReturnValue ControlBoardRemapper::calibrateSingleJoint(int j)
 {
     if(!getCalibratorDevice())
     {
@@ -3081,7 +3093,7 @@ bool ControlBoardRemapper::calibrateSingleJoint(int j)
         RemappedSubControlBoard *s = remappedControlBoards.getSubControlBoard(subIndex);
         if (!s)
         {
-            return false;
+            return ReturnValue::return_code::return_value_error_generic;
         }
 
         if (s->remcalib)
@@ -3089,7 +3101,7 @@ bool ControlBoardRemapper::calibrateSingleJoint(int j)
             return s->remcalib->calibrateSingleJoint(off);
         }
 
-        return false;
+        return ReturnValue::return_code::return_value_error_generic;
     }
     else
     {
@@ -3097,7 +3109,7 @@ bool ControlBoardRemapper::calibrateSingleJoint(int j)
     }
 }
 
-bool ControlBoardRemapper::calibrateWholePart()
+yarp::dev::ReturnValue ControlBoardRemapper::calibrateWholePart()
 {
     if(!getCalibratorDevice())
     {
@@ -3106,7 +3118,7 @@ bool ControlBoardRemapper::calibrateWholePart()
             RemappedSubControlBoard *s = remappedControlBoards.getSubControlBoard(ctrlBrd);
             if (!s)
             {
-                return false;
+                return ReturnValue::return_code::return_value_error_generic;
             }
 
             if (s->remcalib)
@@ -3115,7 +3127,7 @@ bool ControlBoardRemapper::calibrateWholePart()
             }
         }
 
-        return false;
+        return ReturnValue::return_code::return_value_error_generic;
     }
     else
     {
@@ -3123,7 +3135,7 @@ bool ControlBoardRemapper::calibrateWholePart()
     }
 }
 
-bool ControlBoardRemapper::homingSingleJoint(int j)
+yarp::dev::ReturnValue ControlBoardRemapper::homingSingleJoint(int j)
 {
     if(!getCalibratorDevice())
     {
@@ -3133,7 +3145,7 @@ bool ControlBoardRemapper::homingSingleJoint(int j)
         RemappedSubControlBoard *s = remappedControlBoards.getSubControlBoard(subIndex);
         if (!s)
         {
-            return false;
+            return ReturnValue::return_code::return_value_error_generic;
         }
 
         if (s->remcalib)
@@ -3141,7 +3153,7 @@ bool ControlBoardRemapper::homingSingleJoint(int j)
             return s->remcalib->homingSingleJoint(off);
         }
 
-        return false;
+        return ReturnValue::return_code::return_value_error_generic;
     }
     else
     {
@@ -3149,14 +3161,14 @@ bool ControlBoardRemapper::homingSingleJoint(int j)
     }
 }
 
-bool ControlBoardRemapper::homingWholePart()
+yarp::dev::ReturnValue ControlBoardRemapper::homingWholePart()
 {
     if(!getCalibratorDevice())
     {
-        bool ret = true;
+        ReturnValue ret = ReturnValue_ok;
         for(int l=0;l<controlledJoints;l++)
         {
-            bool ok = this->homingSingleJoint(l);
+            ReturnValue ok = this->homingSingleJoint(l);
             ret = ret && ok;
         }
 
@@ -3168,7 +3180,7 @@ bool ControlBoardRemapper::homingWholePart()
     }
 }
 
-bool ControlBoardRemapper::parkSingleJoint(int j, bool _wait)
+yarp::dev::ReturnValue ControlBoardRemapper::parkSingleJoint(int j, bool _wait)
 {
     if(!getCalibratorDevice())
     {
@@ -3178,7 +3190,7 @@ bool ControlBoardRemapper::parkSingleJoint(int j, bool _wait)
         RemappedSubControlBoard *s = remappedControlBoards.getSubControlBoard(subIndex);
         if (!s)
         {
-            return false;
+            return ReturnValue::return_code::return_value_error_generic;
         }
 
         if (s->remcalib)
@@ -3186,7 +3198,7 @@ bool ControlBoardRemapper::parkSingleJoint(int j, bool _wait)
             return s->remcalib->parkSingleJoint(off,_wait);
         }
 
-        return false;
+        return ReturnValue::return_code::return_value_error_generic;
     }
     else
     {
@@ -3194,16 +3206,16 @@ bool ControlBoardRemapper::parkSingleJoint(int j, bool _wait)
     }
 }
 
-bool ControlBoardRemapper::parkWholePart()
+ReturnValue ControlBoardRemapper::parkWholePart()
 {
     if(!getCalibratorDevice())
     {
-        bool ret = true;
+        ReturnValue ret = ReturnValue_ok;
 
         for(int l=0; l<controlledJoints; l++)
         {
             bool _wait = false;
-            bool ok = this->parkSingleJoint(l,_wait);
+            ReturnValue ok = this->parkSingleJoint(l,_wait);
             ret = ret && ok;
         }
 
@@ -3215,7 +3227,7 @@ bool ControlBoardRemapper::parkWholePart()
     }
 }
 
-bool ControlBoardRemapper::quitCalibrate()
+yarp::dev::ReturnValue ControlBoardRemapper::quitCalibrate()
 {
     if(!getCalibratorDevice())
     {
@@ -3224,7 +3236,7 @@ bool ControlBoardRemapper::quitCalibrate()
             RemappedSubControlBoard *s = remappedControlBoards.getSubControlBoard(ctrlBrd);
             if (!s)
             {
-                return false;
+                return ReturnValue::return_code::return_value_error_generic;
             }
 
             if (s->remcalib)
@@ -3233,7 +3245,7 @@ bool ControlBoardRemapper::quitCalibrate()
             }
         }
 
-        return false;
+        return ReturnValue::return_code::return_value_error_generic;
     }
     else
     {
@@ -3241,7 +3253,7 @@ bool ControlBoardRemapper::quitCalibrate()
     }
 }
 
-bool ControlBoardRemapper::quitPark()
+yarp::dev::ReturnValue ControlBoardRemapper::quitPark()
 {
     if(!getCalibratorDevice())
     {
@@ -3250,7 +3262,7 @@ bool ControlBoardRemapper::quitPark()
             RemappedSubControlBoard *s = remappedControlBoards.getSubControlBoard(ctrlBrd);
             if (!s)
             {
-                return false;
+                return ReturnValue::return_code::return_value_error_generic;
             }
 
             if (s->remcalib)
@@ -3259,7 +3271,7 @@ bool ControlBoardRemapper::quitPark()
             }
         }
 
-        return false;
+        return ReturnValue::return_code::return_value_error_generic;
     }
     else
     {
@@ -3269,7 +3281,7 @@ bool ControlBoardRemapper::quitPark()
 
 
 /* IControlCalibration */
-bool ControlBoardRemapper::calibrateAxisWithParams(int j, unsigned int ui, double v1, double v2, double v3)
+ReturnValue ControlBoardRemapper::calibrateAxisWithParams(int j, unsigned int ui, double v1, double v2, double v3)
 {
     int off=(int)remappedControlBoards.lut[j].axisIndexInSubControlBoard;
     size_t subIndex=remappedControlBoards.lut[j].subControlBoardIndex;
@@ -3280,10 +3292,10 @@ bool ControlBoardRemapper::calibrateAxisWithParams(int j, unsigned int ui, doubl
     {
         return p->calib->calibrateAxisWithParams(off, ui,v1,v2,v3);
     }
-    return false;
+    return ReturnValue::return_code::return_value_error_generic;
 }
 
-bool ControlBoardRemapper::setCalibrationParameters(int j, const CalibrationParameters& params)
+ReturnValue ControlBoardRemapper::setCalibrationParameters(int j, const CalibrationParameters& params)
 {
     int off = (int) remappedControlBoards.lut[j].axisIndexInSubControlBoard;
     size_t subIndex = remappedControlBoards.lut[j].subControlBoardIndex;
@@ -3295,10 +3307,10 @@ bool ControlBoardRemapper::setCalibrationParameters(int j, const CalibrationPara
         return p->calib->setCalibrationParameters(off, params);
     }
 
-    return false;
+    return ReturnValue::return_code::return_value_error_generic;
 }
 
-bool ControlBoardRemapper::calibrationDone(int j)
+ReturnValue ControlBoardRemapper::calibrationDone(int j)
 {
     int off=(int)remappedControlBoards.lut[j].axisIndexInSubControlBoard;
     size_t subIndex=remappedControlBoards.lut[j].subControlBoardIndex;
@@ -3307,7 +3319,7 @@ bool ControlBoardRemapper::calibrationDone(int j)
 
     if (!p)
     {
-        return false;
+        return ReturnValue::return_code::return_value_error_generic;
     }
 
     if (p->calib)
@@ -3315,24 +3327,24 @@ bool ControlBoardRemapper::calibrationDone(int j)
         return p->calib->calibrationDone(off);
     }
 
-    return false;
+    return ReturnValue::return_code::return_value_error_generic;
 }
 
-bool ControlBoardRemapper::abortPark()
+ReturnValue ControlBoardRemapper::abortPark()
 {
     yCError(CONTROLBOARDREMAPPER, "Calling abortPark -- not implemented");
-    return false;
+    return ReturnValue::return_code::return_value_error_generic;
 }
 
-bool ControlBoardRemapper::abortCalibration()
+ReturnValue ControlBoardRemapper::abortCalibration()
 {
     yCError(CONTROLBOARDREMAPPER, "Calling abortCalibration -- not implemented");
-    return false;
+    return ReturnValue::return_code::return_value_error_generic;
 }
 
 /* IAxisInfo */
 
-bool ControlBoardRemapper::getAxisName(int j, std::string& name)
+ReturnValue ControlBoardRemapper::getAxisName(int j, std::string& name)
 {
     int off=(int)remappedControlBoards.lut[j].axisIndexInSubControlBoard;
     size_t subIndex=remappedControlBoards.lut[j].subControlBoardIndex;
@@ -3341,7 +3353,7 @@ bool ControlBoardRemapper::getAxisName(int j, std::string& name)
 
     if (!p)
     {
-        return false;
+        return ReturnValue::return_code::return_value_error_generic;
     }
 
     if (p->info)
@@ -3349,10 +3361,10 @@ bool ControlBoardRemapper::getAxisName(int j, std::string& name)
         return p->info->getAxisName(off, name);
     }
 
-    return false;
+    return ReturnValue::return_code::return_value_error_generic;
 }
 
-bool ControlBoardRemapper::getJointType(int j, yarp::dev::JointTypeEnum& type)
+ReturnValue ControlBoardRemapper::getJointType(int j, yarp::dev::JointTypeEnum& type)
 {
     int off = (int) remappedControlBoards.lut[j].axisIndexInSubControlBoard;
     size_t subIndex = remappedControlBoards.lut[j].subControlBoardIndex;
@@ -3361,7 +3373,7 @@ bool ControlBoardRemapper::getJointType(int j, yarp::dev::JointTypeEnum& type)
 
     if (!p)
     {
-        return false;
+        return ReturnValue::return_code::return_value_error_generic;
     }
 
     if (p->info)
@@ -3369,12 +3381,12 @@ bool ControlBoardRemapper::getJointType(int j, yarp::dev::JointTypeEnum& type)
         return p->info->getJointType(off, type);
     }
 
-    return false;
+    return ReturnValue::return_code::return_value_error_generic;
 }
 
-bool ControlBoardRemapper::getRefTorques(double *refs)
+ReturnValue ControlBoardRemapper::getRefTorques(double *refs)
 {
-    bool ret=true;
+    ReturnValue ret=ReturnValue_ok;
 
     for(int l=0;l<controlledJoints;l++)
     {
@@ -3385,23 +3397,23 @@ bool ControlBoardRemapper::getRefTorques(double *refs)
 
         if (!p)
         {
-            return false;
+            return ReturnValue::return_code::return_value_error_generic;
         }
 
         if (p->iTorque)
         {
-            bool ok = p->iTorque->getRefTorque(off, refs+l);
+            ReturnValue ok = p->iTorque->getRefTorque(off, refs+l);
             ret = ret && ok;
         }
         else
         {
-            ret = false;
+            ret = ReturnValue::return_code::return_value_error_generic;
         }
     }
     return ret;
 }
 
-bool ControlBoardRemapper::getRefTorque(int j, double *t)
+ReturnValue ControlBoardRemapper::getRefTorque(int j, double *t)
 {
     int off=(int)remappedControlBoards.lut[j].axisIndexInSubControlBoard;
     size_t subIndex=remappedControlBoards.lut[j].subControlBoardIndex;
@@ -3410,19 +3422,19 @@ bool ControlBoardRemapper::getRefTorque(int j, double *t)
 
     if (!p)
     {
-        return false;
+        return ReturnValue::return_code::return_value_error_generic;
     }
 
     if (p->iTorque)
     {
         return p->iTorque->getRefTorque(off, t);
     }
-    return false;
+    return ReturnValue::return_code::return_value_error_generic;
 }
 
-bool ControlBoardRemapper::setRefTorques(const double *t)
+ReturnValue ControlBoardRemapper::setRefTorques(const double *t)
 {
-    bool ret=true;
+    ReturnValue ret=ReturnValue_ok;
     std::lock_guard<std::mutex> lock(allJointsBuffers.mutex);
 
     allJointsBuffers.fillSubControlBoardBuffersFromCompleteJointVector(t,remappedControlBoards);
@@ -3431,7 +3443,7 @@ bool ControlBoardRemapper::setRefTorques(const double *t)
     {
         RemappedSubControlBoard *p=remappedControlBoards.getSubControlBoard(ctrlBrd);
 
-        bool ok;
+        ReturnValue ok;
 
         if( p->iTorque )
         {
@@ -3441,7 +3453,7 @@ bool ControlBoardRemapper::setRefTorques(const double *t)
         }
         else
         {
-            ok = false;
+            ok = ReturnValue::return_code::return_value_error_generic;
         }
 
         ret = ret && ok;
@@ -3450,7 +3462,7 @@ bool ControlBoardRemapper::setRefTorques(const double *t)
     return ret;
 }
 
-bool ControlBoardRemapper::setRefTorque(int j, double t)
+ReturnValue ControlBoardRemapper::setRefTorque(int j, double t)
 {
     int off = (int) remappedControlBoards.lut[j].axisIndexInSubControlBoard;
     size_t subIndex = remappedControlBoards.lut[j].subControlBoardIndex;
@@ -3458,19 +3470,19 @@ bool ControlBoardRemapper::setRefTorque(int j, double t)
     RemappedSubControlBoard *p = remappedControlBoards.getSubControlBoard(subIndex);
     if (!p)
     {
-        return false;
+        return ReturnValue::return_code::return_value_error_generic;
     }
 
     if (p->iTorque)
     {
         return p->iTorque->setRefTorque(off, t);
     }
-    return false;
+    return ReturnValue::return_code::return_value_error_generic;
 }
 
-bool ControlBoardRemapper::setRefTorques(const int n_joints, const int *joints, const double *t)
+ReturnValue ControlBoardRemapper::setRefTorques(const int n_joints, const int *joints, const double *t)
 {
-    bool ret=true;
+    ReturnValue ret=ReturnValue_ok;
     std::lock_guard<std::mutex> lock(selectedJointsBuffers.mutex);
 
     selectedJointsBuffers.fillSubControlBoardBuffersFromArbitraryJointVector(t,n_joints,joints,remappedControlBoards);
@@ -3479,7 +3491,7 @@ bool ControlBoardRemapper::setRefTorques(const int n_joints, const int *joints, 
     {
         RemappedSubControlBoard *p=remappedControlBoards.getSubControlBoard(ctrlBrd);
 
-        bool ok = p->iTorque->setRefTorques(selectedJointsBuffers.m_nJointsInSubControlBoard[ctrlBrd],
+        ReturnValue ok = p->iTorque->setRefTorques(selectedJointsBuffers.m_nJointsInSubControlBoard[ctrlBrd],
                                             selectedJointsBuffers.m_jointsInSubControlBoard[ctrlBrd].data(),
                                             selectedJointsBuffers.m_bufferForSubControlBoard[ctrlBrd].data());
         ret = ret && ok;
@@ -3488,7 +3500,7 @@ bool ControlBoardRemapper::setRefTorques(const int n_joints, const int *joints, 
     return ret;
 }
 
-bool ControlBoardRemapper::getMotorTorqueParams(int j,  yarp::dev::MotorTorqueParameters *params)
+ReturnValue ControlBoardRemapper::getMotorTorqueParams(int j,  yarp::dev::MotorTorqueParameters *params)
 {
     int off=(int)remappedControlBoards.lut[j].axisIndexInSubControlBoard;
     size_t subIndex=remappedControlBoards.lut[j].subControlBoardIndex;
@@ -3497,7 +3509,7 @@ bool ControlBoardRemapper::getMotorTorqueParams(int j,  yarp::dev::MotorTorquePa
 
     if (!p)
     {
-        return false;
+        return ReturnValue::return_code::return_value_error_generic;
     }
 
     if (p->iTorque)
@@ -3505,10 +3517,10 @@ bool ControlBoardRemapper::getMotorTorqueParams(int j,  yarp::dev::MotorTorquePa
         return p->iTorque->getMotorTorqueParams(off, params);
     }
 
-    return false;
+    return ReturnValue::return_code::return_value_error_generic;
 }
 
-bool ControlBoardRemapper::setMotorTorqueParams(int j,  const yarp::dev::MotorTorqueParameters params)
+ReturnValue ControlBoardRemapper::setMotorTorqueParams(int j,  const yarp::dev::MotorTorqueParameters params)
 {
     int off=(int)remappedControlBoards.lut[j].axisIndexInSubControlBoard;
     size_t subIndex=remappedControlBoards.lut[j].subControlBoardIndex;
@@ -3517,7 +3529,7 @@ bool ControlBoardRemapper::setMotorTorqueParams(int j,  const yarp::dev::MotorTo
 
     if (!p)
     {
-        return false;
+        return ReturnValue::return_code::return_value_error_generic;
     }
 
     if (p->iTorque)
@@ -3525,10 +3537,10 @@ bool ControlBoardRemapper::setMotorTorqueParams(int j,  const yarp::dev::MotorTo
         return p->iTorque->setMotorTorqueParams(off, params);
     }
 
-    return false;
+    return ReturnValue::return_code::return_value_error_generic;
 }
 
-bool ControlBoardRemapper::setImpedance(int j, double stiff, double damp)
+ReturnValue ControlBoardRemapper::setImpedance(int j, double stiff, double damp)
 {
     int off=(int)remappedControlBoards.lut[j].axisIndexInSubControlBoard;
     size_t subIndex=remappedControlBoards.lut[j].subControlBoardIndex;
@@ -3537,7 +3549,7 @@ bool ControlBoardRemapper::setImpedance(int j, double stiff, double damp)
 
     if (!p)
     {
-        return false;
+        return ReturnValue::return_code::return_value_error_generic;
     }
 
     if (p->iImpedance)
@@ -3545,10 +3557,10 @@ bool ControlBoardRemapper::setImpedance(int j, double stiff, double damp)
         return p->iImpedance->setImpedance(off, stiff, damp);
     }
 
-    return false;
+    return ReturnValue::return_code::return_value_error_generic;
 }
 
-bool ControlBoardRemapper::setImpedanceOffset(int j, double offset)
+ReturnValue ControlBoardRemapper::setImpedanceOffset(int j, double offset)
 {
     int off=(int)remappedControlBoards.lut[j].axisIndexInSubControlBoard;
     size_t subIndex=remappedControlBoards.lut[j].subControlBoardIndex;
@@ -3557,7 +3569,7 @@ bool ControlBoardRemapper::setImpedanceOffset(int j, double offset)
 
     if (!p)
     {
-        return false;
+        return ReturnValue::return_code::return_value_error_generic;
     }
 
     if (p->iImpedance)
@@ -3565,10 +3577,10 @@ bool ControlBoardRemapper::setImpedanceOffset(int j, double offset)
         return p->iImpedance->setImpedanceOffset(off, offset);
     }
 
-    return false;
+    return ReturnValue::return_code::return_value_error_generic;
 }
 
-bool ControlBoardRemapper::getTorque(int j, double *t)
+ReturnValue ControlBoardRemapper::getTorque(int j, double *t)
 {
     int off=(int)remappedControlBoards.lut[j].axisIndexInSubControlBoard;
     size_t subIndex=remappedControlBoards.lut[j].subControlBoardIndex;
@@ -3577,7 +3589,7 @@ bool ControlBoardRemapper::getTorque(int j, double *t)
 
     if (!p)
     {
-        return false;
+        return ReturnValue::return_code::return_value_error_generic;
     }
 
     if (p->iTorque)
@@ -3585,12 +3597,12 @@ bool ControlBoardRemapper::getTorque(int j, double *t)
         return p->iTorque->getTorque(off, t);
     }
 
-    return false;
+    return ReturnValue::return_code::return_value_error_generic;
 }
 
-bool ControlBoardRemapper::getTorques(double *t)
+ReturnValue ControlBoardRemapper::getTorques(double *t)
 {
-    bool ret=true;
+    ReturnValue ret=ReturnValue_ok;
 
     for(int l=0;l<controlledJoints;l++)
     {
@@ -3601,24 +3613,24 @@ bool ControlBoardRemapper::getTorques(double *t)
 
         if (!p)
         {
-            return false;
+            return ReturnValue::return_code::return_value_error_generic;
         }
 
         if (p->iTorque)
         {
-            bool ok = p->iTorque->getTorque(off, t+l);
+            ReturnValue ok = p->iTorque->getTorque(off, t+l);
             ret = ret && ok;
         }
         else
         {
-            ret=false;
+            ret=ReturnValue::return_code::return_value_error_generic;
         }
     }
 
     return ret;
  }
 
-bool ControlBoardRemapper::getTorqueRange(int j, double *min, double *max)
+ReturnValue ControlBoardRemapper::getTorqueRange(int j, double *min, double *max)
 {
     int off=(int)remappedControlBoards.lut[j].axisIndexInSubControlBoard;
     size_t subIndex=remappedControlBoards.lut[j].subControlBoardIndex;
@@ -3627,7 +3639,7 @@ bool ControlBoardRemapper::getTorqueRange(int j, double *min, double *max)
 
     if (!p)
     {
-        return false;
+        return ReturnValue::return_code::return_value_error_generic;
     }
 
     if (p->iTorque)
@@ -3635,12 +3647,12 @@ bool ControlBoardRemapper::getTorqueRange(int j, double *min, double *max)
         return p->iTorque->getTorqueRange(off, min, max);
     }
 
-    return false;
+    return ReturnValue::return_code::return_value_error_generic;
 }
 
-bool ControlBoardRemapper::getTorqueRanges(double *min, double *max)
+ReturnValue ControlBoardRemapper::getTorqueRanges(double *min, double *max)
 {
-    bool ret=true;
+    ReturnValue ret=ReturnValue_ok;
 
     for(int l=0;l<controlledJoints;l++)
     {
@@ -3651,23 +3663,23 @@ bool ControlBoardRemapper::getTorqueRanges(double *min, double *max)
 
         if (!p)
         {
-            return false;
+            return ReturnValue::return_code::return_value_error_generic;
         }
 
         if (p->iTorque)
         {
-            bool ok = p->iTorque->getTorqueRange(off, min+l, max+l);
+            ReturnValue ok = p->iTorque->getTorqueRange(off, min+l, max+l);
             ret = ret && ok;
         }
         else
         {
-            ret=false;
+            ret=ReturnValue::return_code::return_value_error_generic;
         }
     }
     return ret;
  }
 
-bool ControlBoardRemapper::getImpedance(int j, double* stiff, double* damp)
+ReturnValue ControlBoardRemapper::getImpedance(int j, double* stiff, double* damp)
 {
     int off=(int)remappedControlBoards.lut[j].axisIndexInSubControlBoard;
     size_t subIndex=remappedControlBoards.lut[j].subControlBoardIndex;
@@ -3676,7 +3688,7 @@ bool ControlBoardRemapper::getImpedance(int j, double* stiff, double* damp)
 
     if (!p)
     {
-        return false;
+        return ReturnValue::return_code::return_value_error_generic;
     }
 
     if (p->iImpedance)
@@ -3684,10 +3696,10 @@ bool ControlBoardRemapper::getImpedance(int j, double* stiff, double* damp)
         return p->iImpedance->getImpedance(off, stiff, damp);
     }
 
-    return false;
+    return ReturnValue::return_code::return_value_error_generic;
 }
 
-bool ControlBoardRemapper::getImpedanceOffset(int j, double* offset)
+ReturnValue ControlBoardRemapper::getImpedanceOffset(int j, double* offset)
 {
     int off=(int)remappedControlBoards.lut[j].axisIndexInSubControlBoard;
     size_t subIndex=remappedControlBoards.lut[j].subControlBoardIndex;
@@ -3696,7 +3708,7 @@ bool ControlBoardRemapper::getImpedanceOffset(int j, double* offset)
 
     if (!p)
     {
-        return false;
+        return ReturnValue::return_code::return_value_error_generic;
     }
 
     if (p->iImpedance)
@@ -3704,10 +3716,10 @@ bool ControlBoardRemapper::getImpedanceOffset(int j, double* offset)
         return p->iImpedance->getImpedanceOffset(off, offset);
     }
 
-    return false;
+    return ReturnValue::return_code::return_value_error_generic;
 }
 
-bool ControlBoardRemapper::getCurrentImpedanceLimit(int j, double *min_stiff, double *max_stiff, double *min_damp, double *max_damp)
+ReturnValue ControlBoardRemapper::getCurrentImpedanceLimit(int j, double *min_stiff, double *max_stiff, double *min_damp, double *max_damp)
 {
     int off=(int)remappedControlBoards.lut[j].axisIndexInSubControlBoard;
     size_t subIndex=remappedControlBoards.lut[j].subControlBoardIndex;
@@ -3716,7 +3728,7 @@ bool ControlBoardRemapper::getCurrentImpedanceLimit(int j, double *min_stiff, do
 
     if (!p)
     {
-        return false;
+        return ReturnValue::return_code::return_value_error_generic;
     }
 
     if (p->iImpedance)
@@ -3724,42 +3736,42 @@ bool ControlBoardRemapper::getCurrentImpedanceLimit(int j, double *min_stiff, do
         return p->iImpedance->getCurrentImpedanceLimit(off, min_stiff, max_stiff, min_damp, max_damp);
     }
 
-    return false;
+    return ReturnValue::return_code::return_value_error_generic;
 }
 
-bool ControlBoardRemapper::getControlMode(int j, int *mode)
+ReturnValue ControlBoardRemapper::getControlMode(int j, int *mode)
 {
     int off=(int)remappedControlBoards.lut[j].axisIndexInSubControlBoard;
     size_t subIndex=remappedControlBoards.lut[j].subControlBoardIndex;
 
     RemappedSubControlBoard *p=remappedControlBoards.getSubControlBoard(subIndex);
     if (!p) {
-        return false;
+        return ReturnValue::return_code::return_value_error_generic;
     }
 
-    bool ok = true;
+    ReturnValue ok = ReturnValue_ok;
 
     if (p->iMode) {
         ok = p->iMode->getControlMode(off, mode);
     }
     else {
-        ok = false;
+        ok = ReturnValue::return_code::return_value_error_generic;
     }
 
     return ok;
 
 }
 
-bool ControlBoardRemapper::getControlModes(int *modes)
+ReturnValue ControlBoardRemapper::getControlModes(int *modes)
 {
-    bool ret=true;
+    ReturnValue ret=ReturnValue_ok;
     std::lock_guard<std::mutex> lock(allJointsBuffers.mutex);
 
     for(size_t ctrlBrd=0; ctrlBrd < remappedControlBoards.getNrOfSubControlBoards(); ctrlBrd++)
     {
         RemappedSubControlBoard *p=remappedControlBoards.getSubControlBoard(ctrlBrd);
 
-        bool ok;
+        ReturnValue ok;
 
         if( p->iMode )
         {
@@ -3769,7 +3781,7 @@ bool ControlBoardRemapper::getControlModes(int *modes)
         }
         else
         {
-            ok = false;
+            ok = ReturnValue::return_code::return_value_error_generic;
         }
 
         ret = ret && ok;
@@ -3781,9 +3793,9 @@ bool ControlBoardRemapper::getControlModes(int *modes)
 }
 
 // IControlMode interface
-bool ControlBoardRemapper::getControlModes(const int n_joints, const int *joints, int *modes)
+ReturnValue ControlBoardRemapper::getControlModes(const int n_joints, const int *joints, int *modes)
 {
-    bool ret=true;
+    ReturnValue ret=ReturnValue_ok;
     std::lock_guard<std::mutex> lock(selectedJointsBuffers.mutex);
 
     // Resize the input buffers
@@ -3793,7 +3805,7 @@ bool ControlBoardRemapper::getControlModes(const int n_joints, const int *joints
     {
         RemappedSubControlBoard *p=remappedControlBoards.getSubControlBoard(ctrlBrd);
 
-        bool ok;
+        ReturnValue ok;
 
         if( p->iMode )
         {
@@ -3803,7 +3815,7 @@ bool ControlBoardRemapper::getControlModes(const int n_joints, const int *joints
         }
         else
         {
-            ok = false;
+            ok = ReturnValue::return_code::return_value_error_generic;
         }
 
         ret = ret && ok;
@@ -3814,9 +3826,9 @@ bool ControlBoardRemapper::getControlModes(const int n_joints, const int *joints
     return ret;
 }
 
-bool ControlBoardRemapper::setControlMode(const int j, const int mode)
+ReturnValue ControlBoardRemapper::setControlMode(const int j, const int mode)
 {
-    bool ret = true;
+    ReturnValue ret = ReturnValue_ok;
 
     int off=(int)remappedControlBoards.lut[j].axisIndexInSubControlBoard;
     size_t subIndex=remappedControlBoards.lut[j].subControlBoardIndex;
@@ -3825,7 +3837,7 @@ bool ControlBoardRemapper::setControlMode(const int j, const int mode)
 
     if (!p)
     {
-        return false;
+        return ReturnValue::return_code::return_value_error_generic;
     }
 
     if (p->iMode)
@@ -3834,15 +3846,15 @@ bool ControlBoardRemapper::setControlMode(const int j, const int mode)
     }
     else
     {
-        ret = false;
+        ret = ReturnValue::return_code::return_value_error_generic;
     }
 
     return ret;
 }
 
-bool ControlBoardRemapper::setControlModes(const int n_joints, const int *joints, int *modes)
+ReturnValue ControlBoardRemapper::setControlModes(const int n_joints, const int *joints, int *modes)
 {
-    bool ret=true;
+    ReturnValue ret=ReturnValue_ok;
     std::lock_guard<std::mutex> lock(selectedJointsBuffers.mutex);
 
     selectedJointsBuffers.fillSubControlBoardBuffersFromArbitraryJointVector(modes,n_joints,joints,remappedControlBoards);
@@ -3851,14 +3863,14 @@ bool ControlBoardRemapper::setControlModes(const int n_joints, const int *joints
     {
         RemappedSubControlBoard *p=remappedControlBoards.getSubControlBoard(ctrlBrd);
 
-        bool ok = true;
+        ReturnValue ok = ReturnValue_ok;
         if (p->iMode) {
             ok = p->iMode->setControlModes(selectedJointsBuffers.m_nJointsInSubControlBoard[ctrlBrd],
                                              selectedJointsBuffers.m_jointsInSubControlBoard[ctrlBrd].data(),
                                              selectedJointsBuffers.m_bufferForSubControlBoardControlModes[ctrlBrd].data());
         }
         else {
-            ok = false;
+            ok = ReturnValue::return_code::return_value_error_generic;
         }
         ret = ret && ok;
     }
@@ -3866,9 +3878,9 @@ bool ControlBoardRemapper::setControlModes(const int n_joints, const int *joints
     return ret;
 }
 
-bool ControlBoardRemapper::setControlModes(int *modes)
+ReturnValue ControlBoardRemapper::setControlModes(int *modes)
 {
-    bool ret=true;
+    ReturnValue ret=ReturnValue_ok;
     std::lock_guard<std::mutex> lock(allJointsBuffers.mutex);
 
     allJointsBuffers.fillSubControlBoardBuffersFromCompleteJointVector(modes,remappedControlBoards);
@@ -3877,14 +3889,14 @@ bool ControlBoardRemapper::setControlModes(int *modes)
     {
         RemappedSubControlBoard *p=remappedControlBoards.getSubControlBoard(ctrlBrd);
 
-        bool ok = true;
+        ReturnValue ok = ReturnValue_ok;
         if (p->iMode) {
             ok = p->iMode->setControlModes(allJointsBuffers.m_nJointsInSubControlBoard[ctrlBrd],
                                              allJointsBuffers.m_jointsInSubControlBoard[ctrlBrd].data(),
                                              allJointsBuffers.m_bufferForSubControlBoardControlModes[ctrlBrd].data());
         }
         else {
-            ok = false;
+            ok = ReturnValue::return_code::return_value_error_generic;
         }
         ret = ret && ok;
     }
@@ -3892,7 +3904,7 @@ bool ControlBoardRemapper::setControlModes(int *modes)
     return ret;
 }
 
-bool ControlBoardRemapper::setPosition(int j, double ref)
+ReturnValue ControlBoardRemapper::setPosition(int j, double ref)
 {
     int off=(int)remappedControlBoards.lut[j].axisIndexInSubControlBoard;
     size_t subIndex=remappedControlBoards.lut[j].subControlBoardIndex;
@@ -3901,7 +3913,7 @@ bool ControlBoardRemapper::setPosition(int j, double ref)
 
     if (!p)
     {
-        return false;
+        return ReturnValue::return_code::return_value_error_generic;
     }
 
     if (p->posDir)
@@ -3909,12 +3921,12 @@ bool ControlBoardRemapper::setPosition(int j, double ref)
         return p->posDir->setPosition(off, ref);
     }
 
-    return false;
+    return ReturnValue::return_code::return_value_error_generic;
 }
 
-bool ControlBoardRemapper::setPositions(const int n_joints, const int *joints, const double *dpos)
+ReturnValue ControlBoardRemapper::setPositions(const int n_joints, const int *joints, const double *dpos)
 {
-    bool ret=true;
+    ReturnValue ret=ReturnValue_ok;
     std::lock_guard<std::mutex> lock(selectedJointsBuffers.mutex);
 
     selectedJointsBuffers.fillSubControlBoardBuffersFromArbitraryJointVector(dpos,n_joints,joints,remappedControlBoards);
@@ -3923,14 +3935,14 @@ bool ControlBoardRemapper::setPositions(const int n_joints, const int *joints, c
     {
         RemappedSubControlBoard *p=remappedControlBoards.getSubControlBoard(ctrlBrd);
 
-        bool ok = true;
+        ReturnValue ok = ReturnValue_ok;
         if (p->posDir) {
             ok = p->posDir->setPositions(selectedJointsBuffers.m_nJointsInSubControlBoard[ctrlBrd],
                                           selectedJointsBuffers.m_jointsInSubControlBoard[ctrlBrd].data(),
                                           selectedJointsBuffers.m_bufferForSubControlBoard[ctrlBrd].data());
         }
         else {
-            ok = false;
+            ok = ReturnValue::return_code::return_value_error_generic;
         }
         ret = ret && ok;
     }
@@ -3938,9 +3950,9 @@ bool ControlBoardRemapper::setPositions(const int n_joints, const int *joints, c
     return ret;
 }
 
-bool ControlBoardRemapper::setPositions(const double *refs)
+ReturnValue ControlBoardRemapper::setPositions(const double *refs)
 {
-    bool ret=true;
+    ReturnValue ret=ReturnValue_ok;
     std::lock_guard<std::mutex> lock(allJointsBuffers.mutex);
 
     allJointsBuffers.fillSubControlBoardBuffersFromCompleteJointVector(refs,remappedControlBoards);
@@ -3949,14 +3961,14 @@ bool ControlBoardRemapper::setPositions(const double *refs)
     {
         RemappedSubControlBoard *p=remappedControlBoards.getSubControlBoard(ctrlBrd);
 
-        bool ok = true;
+        ReturnValue ok = ReturnValue_ok;
         if (p->posDir) {
             ok = p->posDir->setPositions(allJointsBuffers.m_nJointsInSubControlBoard[ctrlBrd],
                                           allJointsBuffers.m_jointsInSubControlBoard[ctrlBrd].data(),
                                           allJointsBuffers.m_bufferForSubControlBoard[ctrlBrd].data());
         }
         else {
-            ok = false;
+            ok = ReturnValue::return_code::return_value_error_generic;
         }
         ret = ret && ok;
     }
@@ -4002,7 +4014,7 @@ yarp::os::Stamp ControlBoardRemapper::getLastInputStamp()
     return buffers.stamp;
 }
 
-bool ControlBoardRemapper::getRefPosition(const int j, double* ref)
+ReturnValue ControlBoardRemapper::getRefPosition(const int j, double* ref)
 {
     int off=(int)remappedControlBoards.lut[j].axisIndexInSubControlBoard;
     size_t subIndex=remappedControlBoards.lut[j].subControlBoardIndex;
@@ -4011,28 +4023,28 @@ bool ControlBoardRemapper::getRefPosition(const int j, double* ref)
 
     if (!p)
     {
-        return false;
+        return ReturnValue::return_code::return_value_error_generic;
     }
 
     if (p->posDir)
     {
-        bool ret = p->posDir->getRefPosition(off, ref);
+        ReturnValue ret = p->posDir->getRefPosition(off, ref);
         return ret;
     }
 
-    return false;
+    return ReturnValue::return_code::return_value_error_generic;
 }
 
-bool ControlBoardRemapper::getRefPositions(double *spds)
+ReturnValue ControlBoardRemapper::getRefPositions(double *spds)
 {
-    bool ret=true;
+    ReturnValue ret=ReturnValue_ok;
     std::lock_guard<std::mutex> lock(allJointsBuffers.mutex);
 
     for(size_t ctrlBrd=0; ctrlBrd < remappedControlBoards.getNrOfSubControlBoards(); ctrlBrd++)
     {
         RemappedSubControlBoard *p=remappedControlBoards.getSubControlBoard(ctrlBrd);
 
-        bool ok = true;
+        ReturnValue ok = ReturnValue_ok;
 
         if( p->posDir )
         {
@@ -4042,7 +4054,7 @@ bool ControlBoardRemapper::getRefPositions(double *spds)
         }
         else
         {
-            ok = false;
+            ok = ReturnValue::return_code::return_value_error_generic;
         }
 
         ret = ret && ok;
@@ -4054,9 +4066,9 @@ bool ControlBoardRemapper::getRefPositions(double *spds)
 }
 
 
-bool ControlBoardRemapper::getRefPositions(const int n_joints, const int *joints, double *targets)
+ReturnValue ControlBoardRemapper::getRefPositions(const int n_joints, const int *joints, double *targets)
 {
-    bool ret=true;
+    ReturnValue ret=ReturnValue_ok;
     std::lock_guard<std::mutex> lock(selectedJointsBuffers.mutex);
 
     // Resize the input buffers
@@ -4066,7 +4078,7 @@ bool ControlBoardRemapper::getRefPositions(const int n_joints, const int *joints
     {
         RemappedSubControlBoard *p=remappedControlBoards.getSubControlBoard(ctrlBrd);
 
-        bool ok = true;
+        ReturnValue ok = ReturnValue_ok;
 
         if( p->posDir )
         {
@@ -4076,7 +4088,7 @@ bool ControlBoardRemapper::getRefPositions(const int n_joints, const int *joints
         }
         else
         {
-            ok = false;
+            ok = ReturnValue::return_code::return_value_error_generic;
         }
 
         ret = ret && ok;
@@ -4090,9 +4102,9 @@ bool ControlBoardRemapper::getRefPositions(const int n_joints, const int *joints
 
 
 // IVelocityControl interface
-bool ControlBoardRemapper::velocityMove(const int n_joints, const int *joints, const double *spds)
+ReturnValue ControlBoardRemapper::velocityMove(const int n_joints, const int *joints, const double *spds)
 {
-    bool ret=true;
+    ReturnValue ret=ReturnValue_ok;
     std::lock_guard<std::mutex> lock(selectedJointsBuffers.mutex);
 
     selectedJointsBuffers.fillSubControlBoardBuffersFromArbitraryJointVector(spds,n_joints,joints,remappedControlBoards);
@@ -4101,7 +4113,7 @@ bool ControlBoardRemapper::velocityMove(const int n_joints, const int *joints, c
     {
         RemappedSubControlBoard *p=remappedControlBoards.getSubControlBoard(ctrlBrd);
 
-        bool ok = true;
+        ReturnValue ok = ReturnValue_ok;
         if (p->vel) {
             ok = p->vel->velocityMove(selectedJointsBuffers.m_nJointsInSubControlBoard[ctrlBrd],
                                         selectedJointsBuffers.m_jointsInSubControlBoard[ctrlBrd].data(),
@@ -4109,7 +4121,7 @@ bool ControlBoardRemapper::velocityMove(const int n_joints, const int *joints, c
         }
         else
         {
-            ok = false;
+            ok = ReturnValue::return_code::return_value_error_generic;
         }
         ret = ret && ok;
     }
@@ -4117,7 +4129,7 @@ bool ControlBoardRemapper::velocityMove(const int n_joints, const int *joints, c
     return ret;
 }
 
-bool ControlBoardRemapper::getTargetVelocity(const int j, double* vel)
+ReturnValue ControlBoardRemapper::getTargetVelocity(const int j, double* vel)
 {
     int off=(int)remappedControlBoards.lut[j].axisIndexInSubControlBoard;
     size_t subIndex=remappedControlBoards.lut[j].subControlBoardIndex;
@@ -4126,29 +4138,29 @@ bool ControlBoardRemapper::getTargetVelocity(const int j, double* vel)
 
     if (!p)
     {
-        return false;
+        return ReturnValue::return_code::return_value_error_generic;
     }
 
     if (p->vel)
     {
-        bool ret = p->vel->getTargetVelocity(off, vel);
+        ReturnValue ret = p->vel->getTargetVelocity(off, vel);
         return ret;
     }
 
-    return false;
+    return ReturnValue::return_code::return_value_error_generic;
 }
 
 
-bool ControlBoardRemapper::getTargetVelocities(double* vels)
+ReturnValue ControlBoardRemapper::getTargetVelocities(double* vels)
 {
-    bool ret=true;
+    ReturnValue ret=ReturnValue_ok;
     std::lock_guard<std::mutex> lock(allJointsBuffers.mutex);
 
     for(size_t ctrlBrd=0; ctrlBrd < remappedControlBoards.getNrOfSubControlBoards(); ctrlBrd++)
     {
         RemappedSubControlBoard *p=remappedControlBoards.getSubControlBoard(ctrlBrd);
 
-        bool ok = true;
+        ReturnValue ok = ReturnValue_ok;
 
         if( p->vel )
         {
@@ -4158,7 +4170,7 @@ bool ControlBoardRemapper::getTargetVelocities(double* vels)
         }
         else
         {
-            ok = false;
+            ok = ReturnValue::return_code::return_value_error_generic;
         }
 
         ret = ret && ok;
@@ -4169,9 +4181,9 @@ bool ControlBoardRemapper::getTargetVelocities(double* vels)
     return ret;
 }
 
-bool ControlBoardRemapper::getTargetVelocities(const int n_joints, const int* joints, double* vels)
+ReturnValue ControlBoardRemapper::getTargetVelocities(const int n_joints, const int* joints, double* vels)
 {
-    bool ret=true;
+    ReturnValue ret=ReturnValue_ok;
     std::lock_guard<std::mutex> lock(selectedJointsBuffers.mutex);
 
     // Resize the input buffers
@@ -4181,7 +4193,7 @@ bool ControlBoardRemapper::getTargetVelocities(const int n_joints, const int* jo
     {
         RemappedSubControlBoard *p=remappedControlBoards.getSubControlBoard(ctrlBrd);
 
-        bool ok = true;
+        ReturnValue ok = ReturnValue_ok;
 
         if( p->vel )
         {
@@ -4191,7 +4203,7 @@ bool ControlBoardRemapper::getTargetVelocities(const int n_joints, const int* jo
         }
         else
         {
-            ok = false;
+            ok = ReturnValue::return_code::return_value_error_generic;
         }
 
         ret = ret && ok;
@@ -4202,7 +4214,7 @@ bool ControlBoardRemapper::getTargetVelocities(const int n_joints, const int* jo
     return ret;
 }
 
-bool ControlBoardRemapper::getInteractionMode(int j, yarp::dev::InteractionModeEnum* mode)
+ReturnValue ControlBoardRemapper::getInteractionMode(int j, yarp::dev::InteractionModeEnum* mode)
 {
     int off=(int)remappedControlBoards.lut[j].axisIndexInSubControlBoard;
     size_t subIndex=remappedControlBoards.lut[j].subControlBoardIndex;
@@ -4211,7 +4223,7 @@ bool ControlBoardRemapper::getInteractionMode(int j, yarp::dev::InteractionModeE
 
     if (!s)
     {
-        return false;
+        return ReturnValue::return_code::return_value_error_generic;
     }
 
     if (s->iInteract)
@@ -4219,12 +4231,12 @@ bool ControlBoardRemapper::getInteractionMode(int j, yarp::dev::InteractionModeE
         return s->iInteract->getInteractionMode(off, mode);
     }
 
-    return false;
+    return ReturnValue::return_code::return_value_error_generic;
 }
 
-bool ControlBoardRemapper::getInteractionModes(int n_joints, int *joints, yarp::dev::InteractionModeEnum* modes)
+ReturnValue ControlBoardRemapper::getInteractionModes(int n_joints, int *joints, yarp::dev::InteractionModeEnum* modes)
 {
-    bool ret=true;
+    ReturnValue ret=ReturnValue_ok;
     std::lock_guard<std::mutex> lock(selectedJointsBuffers.mutex);
 
     // Resize the input buffers
@@ -4234,7 +4246,7 @@ bool ControlBoardRemapper::getInteractionModes(int n_joints, int *joints, yarp::
     {
         RemappedSubControlBoard *p=remappedControlBoards.getSubControlBoard(ctrlBrd);
 
-        bool ok = true;
+        ReturnValue ok = ReturnValue_ok;
 
         if( p->iMode )
         {
@@ -4244,7 +4256,7 @@ bool ControlBoardRemapper::getInteractionModes(int n_joints, int *joints, yarp::
         }
         else
         {
-            ok = false;
+            ok = ReturnValue::return_code::return_value_error_generic;
         }
 
         ret = ret && ok;
@@ -4255,16 +4267,16 @@ bool ControlBoardRemapper::getInteractionModes(int n_joints, int *joints, yarp::
     return ret;
 }
 
-bool ControlBoardRemapper::getInteractionModes(yarp::dev::InteractionModeEnum* modes)
+ReturnValue ControlBoardRemapper::getInteractionModes(yarp::dev::InteractionModeEnum* modes)
 {
-    bool ret=true;
+    ReturnValue ret=ReturnValue_ok;
     std::lock_guard<std::mutex> lock(allJointsBuffers.mutex);
 
     for(size_t ctrlBrd=0; ctrlBrd < remappedControlBoards.getNrOfSubControlBoards(); ctrlBrd++)
     {
         RemappedSubControlBoard *p=remappedControlBoards.getSubControlBoard(ctrlBrd);
 
-        bool ok = true;
+        ReturnValue ok = ReturnValue_ok;
 
         if( p->iMode )
         {
@@ -4274,7 +4286,7 @@ bool ControlBoardRemapper::getInteractionModes(yarp::dev::InteractionModeEnum* m
         }
         else
         {
-            ok = false;
+            ok = ReturnValue::return_code::return_value_error_generic;
         }
 
         ret = ret && ok;
@@ -4285,7 +4297,7 @@ bool ControlBoardRemapper::getInteractionModes(yarp::dev::InteractionModeEnum* m
     return ret;
 }
 
-bool ControlBoardRemapper::setInteractionMode(int j, yarp::dev::InteractionModeEnum mode)
+ReturnValue ControlBoardRemapper::setInteractionMode(int j, yarp::dev::InteractionModeEnum mode)
 {
     int off=(int)remappedControlBoards.lut[j].axisIndexInSubControlBoard;
     size_t subIndex=remappedControlBoards.lut[j].subControlBoardIndex;
@@ -4294,7 +4306,7 @@ bool ControlBoardRemapper::setInteractionMode(int j, yarp::dev::InteractionModeE
 
     if (!s)
     {
-        return false;
+        return ReturnValue::return_code::return_value_error_generic;
     }
 
     if (s->iInteract)
@@ -4302,12 +4314,12 @@ bool ControlBoardRemapper::setInteractionMode(int j, yarp::dev::InteractionModeE
         return s->iInteract->setInteractionMode(off, mode);
     }
 
-    return false;
+    return ReturnValue::return_code::return_value_error_generic;
 }
 
-bool ControlBoardRemapper::setInteractionModes(int n_joints, int *joints, yarp::dev::InteractionModeEnum* modes)
+ReturnValue ControlBoardRemapper::setInteractionModes(int n_joints, int *joints, yarp::dev::InteractionModeEnum* modes)
 {
-    bool ret=true;
+    ReturnValue ret=ReturnValue_ok;
     std::lock_guard<std::mutex> lock(selectedJointsBuffers.mutex);
 
     selectedJointsBuffers.fillSubControlBoardBuffersFromArbitraryJointVector(modes,n_joints,joints,remappedControlBoards);
@@ -4316,7 +4328,7 @@ bool ControlBoardRemapper::setInteractionModes(int n_joints, int *joints, yarp::
     {
         RemappedSubControlBoard *p=remappedControlBoards.getSubControlBoard(ctrlBrd);
 
-        bool ok = p->iInteract->setInteractionModes(selectedJointsBuffers.m_nJointsInSubControlBoard[ctrlBrd],
+        ReturnValue ok = p->iInteract->setInteractionModes(selectedJointsBuffers.m_nJointsInSubControlBoard[ctrlBrd],
                                                     selectedJointsBuffers.m_jointsInSubControlBoard[ctrlBrd].data(),
                                                     selectedJointsBuffers.m_bufferForSubControlBoardInteractionModes[ctrlBrd].data());
         ret = ret && ok;
@@ -4325,9 +4337,9 @@ bool ControlBoardRemapper::setInteractionModes(int n_joints, int *joints, yarp::
     return ret;
 }
 
-bool ControlBoardRemapper::setInteractionModes(yarp::dev::InteractionModeEnum* modes)
+ReturnValue ControlBoardRemapper::setInteractionModes(yarp::dev::InteractionModeEnum* modes)
 {
-    bool ret=true;
+    ReturnValue ret=ReturnValue_ok;
     std::lock_guard<std::mutex> lock(allJointsBuffers.mutex);
 
     allJointsBuffers.fillSubControlBoardBuffersFromCompleteJointVector(modes,remappedControlBoards);
@@ -4336,7 +4348,7 @@ bool ControlBoardRemapper::setInteractionModes(yarp::dev::InteractionModeEnum* m
     {
         RemappedSubControlBoard *p=remappedControlBoards.getSubControlBoard(ctrlBrd);
 
-        bool ok = p->iInteract->setInteractionModes(allJointsBuffers.m_nJointsInSubControlBoard[ctrlBrd],
+        ReturnValue ok = p->iInteract->setInteractionModes(allJointsBuffers.m_nJointsInSubControlBoard[ctrlBrd],
                                                     allJointsBuffers.m_jointsInSubControlBoard[ctrlBrd].data(),
                                                     allJointsBuffers.m_bufferForSubControlBoardInteractionModes[ctrlBrd].data());
         ret = ret && ok;
@@ -4345,9 +4357,9 @@ bool ControlBoardRemapper::setInteractionModes(yarp::dev::InteractionModeEnum* m
     return ret;
 }
 
-bool ControlBoardRemapper::setRefDutyCycle(int m, double ref)
+ReturnValue ControlBoardRemapper::setRefDutyCycle(int m, double ref)
 {
-    bool ret = false;
+    ReturnValue ret = ReturnValue::return_code::return_value_error_generic;
 
     size_t subIndex=remappedControlBoards.lut[m].subControlBoardIndex;
 
@@ -4362,9 +4374,9 @@ bool ControlBoardRemapper::setRefDutyCycle(int m, double ref)
     return ret;
 }
 
-bool ControlBoardRemapper::setRefDutyCycles(const double* refs)
+ReturnValue ControlBoardRemapper::setRefDutyCycles(const double* refs)
 {
-    bool ret=true;
+    ReturnValue ret=ReturnValue_ok;
 
     for(int l=0;l<controlledJoints;l++)
     {
@@ -4375,26 +4387,26 @@ bool ControlBoardRemapper::setRefDutyCycles(const double* refs)
 
         if (!p)
         {
-            return false;
+            return ReturnValue::return_code::return_value_error_generic;
         }
 
         if (p->iPwm)
         {
-            bool ok = p->iPwm->setRefDutyCycle(off, refs[l]);
+            ReturnValue ok = p->iPwm->setRefDutyCycle(off, refs[l]);
             ret = ret && ok;
         }
         else
         {
-            ret=false;
+            ret=ReturnValue::return_code::return_value_error_generic;
         }
     }
 
     return ret;
 }
 
-bool ControlBoardRemapper::getRefDutyCycle(int m, double* ref)
+ReturnValue ControlBoardRemapper::getRefDutyCycle(int m, double* ref)
 {
-    bool ret = false;
+    ReturnValue ret = ReturnValue::return_code::return_value_error_generic;;
 
     size_t subIndex=remappedControlBoards.lut[m].subControlBoardIndex;
 
@@ -4409,9 +4421,9 @@ bool ControlBoardRemapper::getRefDutyCycle(int m, double* ref)
     return ret;
 }
 
-bool ControlBoardRemapper::getRefDutyCycles(double* refs)
+ReturnValue ControlBoardRemapper::getRefDutyCycles(double* refs)
 {
-    bool ret=true;
+    ReturnValue ret=ReturnValue_ok;
 
     for(int l=0;l<controlledJoints;l++)
     {
@@ -4422,26 +4434,26 @@ bool ControlBoardRemapper::getRefDutyCycles(double* refs)
 
         if (!p)
         {
-            return false;
+            return ReturnValue::return_code::return_value_error_generic;
         }
 
         if (p->iPwm)
         {
-            bool ok = p->iPwm->getRefDutyCycle(off, refs+l);
+            ReturnValue ok = p->iPwm->getRefDutyCycle(off, refs+l);
             ret = ret && ok;
         }
         else
         {
-            ret=false;
+            ret=ReturnValue::return_code::return_value_error_generic;
         }
     }
 
     return ret;
 }
 
-bool ControlBoardRemapper::getDutyCycle(int m, double* val)
+ReturnValue ControlBoardRemapper::getDutyCycle(int m, double* val)
 {
-    bool ret = false;
+    ReturnValue ret = ReturnValue::return_code::return_value_error_generic;
 
     size_t subIndex=remappedControlBoards.lut[m].subControlBoardIndex;
 
@@ -4456,9 +4468,9 @@ bool ControlBoardRemapper::getDutyCycle(int m, double* val)
     return ret;
 }
 
-bool ControlBoardRemapper::getDutyCycles(double* vals)
+ReturnValue ControlBoardRemapper::getDutyCycles(double* vals)
 {
-    bool ret=true;
+    ReturnValue ret=ReturnValue_ok;
 
     for(int l=0;l<controlledJoints;l++)
     {
@@ -4469,26 +4481,26 @@ bool ControlBoardRemapper::getDutyCycles(double* vals)
 
         if (!p)
         {
-            return false;
+            return ReturnValue::return_code::return_value_error_generic;
         }
 
         if (p->iPwm)
         {
-            bool ok = p->iPwm->getDutyCycle(off, vals+l);
+            ReturnValue ok = p->iPwm->getDutyCycle(off, vals+l);
             ret = ret && ok;
         }
         else
         {
-            ret=false;
+            ret=ReturnValue::return_code::return_value_error_generic;
         }
     }
 
     return ret;
 }
 
-bool ControlBoardRemapper::getCurrent(int j, double *val)
+ReturnValue ControlBoardRemapper::getCurrent(int j, double *val)
 {
-    bool ret = false;
+    ReturnValue ret = ReturnValue::return_code::return_value_error_generic;
 
     size_t subIndex=remappedControlBoards.lut[j].subControlBoardIndex;
 
@@ -4503,9 +4515,9 @@ bool ControlBoardRemapper::getCurrent(int j, double *val)
     return ret;
 }
 
-bool ControlBoardRemapper::getCurrents(double *vals)
+ReturnValue ControlBoardRemapper::getCurrents(double *vals)
 {
-    bool ret=true;
+    ReturnValue ret=ReturnValue_ok;
 
     for(int l=0;l<controlledJoints;l++)
     {
@@ -4516,26 +4528,26 @@ bool ControlBoardRemapper::getCurrents(double *vals)
 
         if (!p)
         {
-            return false;
+            return ReturnValue::return_code::return_value_error_generic;
         }
 
         if (p->iCurr)
         {
-            bool ok = p->iCurr->getCurrent(off, vals+l);
+            ReturnValue ok = p->iCurr->getCurrent(off, vals+l);
             ret = ret && ok;
         }
         else
         {
-            ret=false;
+            ret=ReturnValue::return_code::return_value_error_generic;
         }
     }
 
     return ret;
 }
 
-bool ControlBoardRemapper::getCurrentRange(int m, double* min, double* max)
+ReturnValue ControlBoardRemapper::getCurrentRange(int m, double* min, double* max)
 {
-    bool ret = false;
+    ReturnValue ret = ReturnValue::return_code::return_value_error_generic;
 
     size_t subIndex=remappedControlBoards.lut[m].subControlBoardIndex;
 
@@ -4550,9 +4562,9 @@ bool ControlBoardRemapper::getCurrentRange(int m, double* min, double* max)
     return ret;
 }
 
-bool ControlBoardRemapper::getCurrentRanges(double* min, double* max)
+ReturnValue ControlBoardRemapper::getCurrentRanges(double* min, double* max)
 {
-    bool ret=true;
+    ReturnValue ret=ReturnValue_ok;
 
     for(int l=0;l<controlledJoints;l++)
     {
@@ -4563,26 +4575,26 @@ bool ControlBoardRemapper::getCurrentRanges(double* min, double* max)
 
         if (!p)
         {
-            return false;
+            return ReturnValue::return_code::return_value_error_generic;
         }
 
         if (p->iCurr)
         {
-            bool ok = p->iCurr->getCurrentRange(off, min+l, max+l);
+            ReturnValue ok = p->iCurr->getCurrentRange(off, min+l, max+l);
             ret = ret && ok;
         }
         else
         {
-            ret=false;
+            ret=ReturnValue::return_code::return_value_error_generic;
         }
     }
 
     return ret;
 }
 
-bool ControlBoardRemapper::setRefCurrent(int m, double curr)
+ReturnValue ControlBoardRemapper::setRefCurrent(int m, double curr)
 {
-    bool ret = false;
+    ReturnValue ret = ReturnValue::return_code::return_value_error_generic;
 
     size_t subIndex=remappedControlBoards.lut[m].subControlBoardIndex;
 
@@ -4597,9 +4609,9 @@ bool ControlBoardRemapper::setRefCurrent(int m, double curr)
     return ret;
 }
 
-bool ControlBoardRemapper::setRefCurrents(const int n_motor, const int* motors, const double* currs)
+ReturnValue ControlBoardRemapper::setRefCurrents(const int n_motor, const int* motors, const double* currs)
 {
-    bool ret=true;
+    ReturnValue ret=ReturnValue_ok;
     std::lock_guard<std::mutex> lock(selectedJointsBuffers.mutex);
 
     selectedJointsBuffers.fillSubControlBoardBuffersFromArbitraryJointVector(currs,n_motor,motors,remappedControlBoards);
@@ -4610,11 +4622,11 @@ bool ControlBoardRemapper::setRefCurrents(const int n_motor, const int* motors, 
 
         if (!(p && p->iCurr))
         {
-            ret = false;
+            ret = ReturnValue::return_code::return_value_error_generic;
             break;
         }
 
-        bool ok = p->iCurr->setRefCurrents(selectedJointsBuffers.m_nJointsInSubControlBoard[ctrlBrd],
+        ReturnValue ok = p->iCurr->setRefCurrents(selectedJointsBuffers.m_nJointsInSubControlBoard[ctrlBrd],
                                           selectedJointsBuffers.m_jointsInSubControlBoard[ctrlBrd].data(),
                                           selectedJointsBuffers.m_bufferForSubControlBoard[ctrlBrd].data());
         ret = ret && ok;
@@ -4623,9 +4635,9 @@ bool ControlBoardRemapper::setRefCurrents(const int n_motor, const int* motors, 
     return ret;
 }
 
-bool ControlBoardRemapper::setRefCurrents(const double* currs)
+ReturnValue ControlBoardRemapper::setRefCurrents(const double* currs)
 {
-    bool ret=true;
+    ReturnValue ret=ReturnValue_ok;
     std::lock_guard<std::mutex> lock(allJointsBuffers.mutex);
 
     allJointsBuffers.fillSubControlBoardBuffersFromCompleteJointVector(currs,remappedControlBoards);
@@ -4634,7 +4646,7 @@ bool ControlBoardRemapper::setRefCurrents(const double* currs)
     {
         RemappedSubControlBoard *p=remappedControlBoards.getSubControlBoard(ctrlBrd);
 
-        bool ok = p->iCurr->setRefCurrents(allJointsBuffers.m_nJointsInSubControlBoard[ctrlBrd],
+        ReturnValue ok = p->iCurr->setRefCurrents(allJointsBuffers.m_nJointsInSubControlBoard[ctrlBrd],
                                            allJointsBuffers.m_jointsInSubControlBoard[ctrlBrd].data(),
                                            allJointsBuffers.m_bufferForSubControlBoard[ctrlBrd].data());
         ret = ret && ok;
@@ -4643,9 +4655,9 @@ bool ControlBoardRemapper::setRefCurrents(const double* currs)
     return ret;
 }
 
-bool ControlBoardRemapper::getRefCurrent(int m, double* curr)
+ReturnValue ControlBoardRemapper::getRefCurrent(int m, double* curr)
 {
-    bool ret = false;
+    ReturnValue ret = ReturnValue::return_code::return_value_error_generic;
 
     size_t subIndex=remappedControlBoards.lut[m].subControlBoardIndex;
 
@@ -4660,9 +4672,9 @@ bool ControlBoardRemapper::getRefCurrent(int m, double* curr)
     return ret;
 }
 
-bool ControlBoardRemapper::getRefCurrents(double* currs)
+ReturnValue ControlBoardRemapper::getRefCurrents(double* currs)
 {
-    bool ret=true;
+    ReturnValue ret=ReturnValue_ok;
 
     for(int l=0;l<controlledJoints;l++)
     {
@@ -4673,17 +4685,17 @@ bool ControlBoardRemapper::getRefCurrents(double* currs)
 
         if (!p)
         {
-            return false;
+            return ReturnValue::return_code::return_value_error_generic;
         }
 
         if (p->iCurr)
         {
-            bool ok = p->iCurr->getRefCurrent(off, currs+l);
+            ReturnValue ok = p->iCurr->getRefCurrent(off, currs+l);
             ret = ret && ok;
         }
         else
         {
-            ret=false;
+            ret=ReturnValue::return_code::return_value_error_generic;
         }
     }
 

@@ -52,14 +52,13 @@ public:
 
     virtual ~ImplementMotor();
 
-    bool getNumberOfMotors(int *num) override;
-
-    bool getTemperature      (int m, double* val) override;
-    bool getTemperatures     (double *vals) override;
-    bool getTemperatureLimit (int m, double* val) override;
-    bool setTemperatureLimit (int m, const double val) override;
-    bool getGearboxRatio     (int m, double* val) override;
-    bool setGearboxRatio     (int m, const double val) override;
+    yarp::dev::ReturnValue getNumberOfMotors   (int *num) override;
+    yarp::dev::ReturnValue getTemperature      (int m, double* val) override;
+    yarp::dev::ReturnValue getTemperatures     (double *vals) override;
+    yarp::dev::ReturnValue getTemperatureLimit (int m, double* val) override;
+    yarp::dev::ReturnValue setTemperatureLimit (int m, const double val) override;
+    yarp::dev::ReturnValue getGearboxRatio     (int m, double* val) override;
+    yarp::dev::ReturnValue setGearboxRatio     (int m, const double val) override;
 };
 
 #endif // YARP_DEV_IMPLEMENTMOTOR_H

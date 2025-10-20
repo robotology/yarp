@@ -35,13 +35,13 @@ public:
      * generating abrupt movements.
      * @return true/false on success/failure
      */
-    virtual bool enableAmp(int j)=0;
+    virtual yarp::dev::ReturnValue enableAmp(int j)=0;
 
     /** Disable the amplifier on a specific joint. All computations within the board
      * will be carried out normally, but the output will be disabled.
      * @return true/false on success/failure
      */
-    virtual bool disableAmp(int j)=0;
+    virtual yarp::dev::ReturnValue disableAmp(int j)=0;
 
     /* Get the status of the amplifiers, coded in a 32 bits integer for
      * each amplifier (at the moment contains only the fault, it will be
@@ -49,27 +49,27 @@ public:
      * @param st pointer to storage
      * @return true in good luck, false otherwise.
      */
-    virtual bool getAmpStatus(int *st)=0;
+    virtual yarp::dev::ReturnValue getAmpStatus(int *st)=0;
 
      /* Get the status of a single amplifier, coded in a 32 bits integer
      * @param j joint number
      * @param st storage for return value
      * @return true/false success failure.
      */
-    virtual bool getAmpStatus(int j, int *v)=0;
+    virtual yarp::dev::ReturnValue getAmpStatus(int j, int *v)=0;
 
     /* Read the electric current going to all motors.
      * @param vals pointer to storage for the output values
      * @return hopefully true, false in bad luck.
      */
-    virtual bool getCurrents(double *vals)=0;
+    virtual yarp::dev::ReturnValue getCurrents(double *vals)=0;
 
     /* Read the electric current going to a given motor.
      * @param j motor number
      * @param val pointer to storage for the output value
      * @return probably true, might return false in bad times
      */
-    virtual bool getCurrent(int j, double *val)=0;
+    virtual yarp::dev::ReturnValue getCurrent(int j, double *val)=0;
 
     /**
     * Returns the maximum electric current allowed for a given motor.
@@ -78,7 +78,7 @@ public:
     * @param v the return value
     * @return probably true, might return false in bad times
     */
-    virtual bool getMaxCurrent(int j, double *v)=0;
+    virtual yarp::dev::ReturnValue getMaxCurrent(int j, double *v)=0;
 
     /* Set the maximum electric current going to a given motor.
      * Exceeding this value will trigger instantaneous hardware fault.
@@ -86,7 +86,7 @@ public:
      * @param v the new value
      * @return probably true, might return false in bad times
      */
-    virtual bool setMaxCurrent(int j, double v)=0;
+    virtual yarp::dev::ReturnValue setMaxCurrent(int j, double v)=0;
 
     /* Get the nominal current which can be kept for an indefinite amount of time
      * without harming the motor. This value is specific for each motor and it is typically
@@ -97,7 +97,7 @@ public:
      * @param val storage for return value. [Ampere]
      * @return true/false success failure.
      */
-    virtual bool getNominalCurrent(int m, double *val) {return false;};
+    virtual yarp::dev::ReturnValue getNominalCurrent(int m, double *val) =0;
 
     /* Set the nominal current which can be kept for an indefinite amount of time
     * without harming the motor. This value is specific for each motor and it is typically
@@ -108,7 +108,7 @@ public:
     * @param val storage for return value. [Ampere]
     * @return true/false success failure.
     */
-    virtual bool setNominalCurrent(int m, const double val) { return false; };
+    virtual yarp::dev::ReturnValue setNominalCurrent(int m, const double val) =0;
 
     /* Get the peak current which causes damage to the motor if maintained
      * for a long amount of time.
@@ -119,7 +119,7 @@ public:
      * @param val storage for return value. [Ampere]
      * @return true/false success failure.
      */
-    virtual bool getPeakCurrent(int m, double *val) {return false;};
+    virtual yarp::dev::ReturnValue getPeakCurrent(int m, double *val) =0;
 
     /* Set the peak current. This value  which causes damage to the motor if maintained
      * for a long amount of time.
@@ -130,7 +130,7 @@ public:
      * @param val storage for return value. [Ampere]
      * @return true/false success failure.
      */
-    virtual bool setPeakCurrent(int m, const double val) {return false;};
+    virtual yarp::dev::ReturnValue setPeakCurrent(int m, const double val) =0;
 
     /* Get the the current PWM value used to control the motor.
      * The units are firmware dependent, either machine units or percentage.
@@ -138,7 +138,7 @@ public:
      * @param val filled with PWM value.
      * @return true/false success failure.
      */
-    virtual bool getPWM(int j, double* val) {return false;};
+    virtual yarp::dev::ReturnValue getPWM(int j, double* val) =0;
 
     /* Get the PWM limit for the given motor.
      * The units are firmware dependent, either machine units or percentage.
@@ -146,7 +146,7 @@ public:
      * @param val filled with PWM limit value.
      * @return true/false success failure.
      */
-    virtual bool getPWMLimit(int j, double* val) {return false;};
+    virtual yarp::dev::ReturnValue getPWMLimit(int j, double* val) =0;
 
     /* Set the PWM limit for the given motor.
      * The units are firmware dependent, either machine units or percentage.
@@ -154,14 +154,14 @@ public:
      * @param val new value for the PWM limit.
      * @return true/false success failure.
      */
-    virtual bool setPWMLimit(int j, const double val) {return false;};
+    virtual yarp::dev::ReturnValue setPWMLimit(int j, const double val) =0;
 
     /* Get the power source voltage for the given motor in Volt.
      * @param j joint number
      * @param val filled with return value.
      * @return true/false success failure.
      */
-    virtual bool getPowerSupplyVoltage(int j, double* val) {return false;};
+    virtual yarp::dev::ReturnValue getPowerSupplyVoltage(int j, double* val) =0;
 };
 
 /**
@@ -182,13 +182,13 @@ public:
      * generating abrupt movements.
      * @return true/false on success/failure
      */
-    virtual bool enableAmpRaw(int j)=0;
+    virtual yarp::dev::ReturnValue enableAmpRaw(int j)=0;
 
     /** Disable the amplifier on a specific joint. All computations within the board
      * will be carried out normally, but the output will be disabled.
      * @return true/false on success/failure
      */
-    virtual bool disableAmpRaw(int j)=0;
+    virtual yarp::dev::ReturnValue disableAmpRaw(int j)=0;
 
     /* Get the status of the amplifiers, coded in a 32 bits integer for
      * each amplifier (at the moment contains only the fault, it will be
@@ -196,27 +196,27 @@ public:
      * @param st pointer to storage
      * @return true/false success failure.
      */
-    virtual bool getAmpStatusRaw(int *st)=0;
+    virtual yarp::dev::ReturnValue getAmpStatusRaw(int *st)=0;
 
     /* Get the status of a single amplifier, coded in a 32 bits integer
      * @param j joint number
      * @param st storage for return value
      * @return true/false success failure.
      */
-    virtual bool getAmpStatusRaw(int j, int *st)=0;
+    virtual yarp::dev::ReturnValue getAmpStatusRaw(int j, int *st)=0;
 
     /* Read the electric current going to all motors.
      * @param vals pointer to storage for the output values
      * @return hopefully true, false in bad luck.
      */
-    virtual bool getCurrentsRaw(double *vals)=0;
+    virtual yarp::dev::ReturnValue getCurrentsRaw(double *vals)=0;
 
     /* Read the electric current going to a given motor.
      * @param j motor number
      * @param val pointer to storage for the output value
      * @return probably true, might return false in bad times
      */
-    virtual bool getCurrentRaw(int j, double *val)=0;
+    virtual yarp::dev::ReturnValue getCurrentRaw(int j, double *val)=0;
 
     /* Set the maximum electric current going to a given motor.
      * Exceeding this value will trigger instantaneous hardware fault.
@@ -224,7 +224,7 @@ public:
      * @param v the new value
      * @return probably true, might return false in bad times
      */
-    virtual bool setMaxCurrentRaw(int j, double v)=0;
+    virtual yarp::dev::ReturnValue setMaxCurrentRaw(int j, double v)=0;
 
     /**
     * Returns the maximum electric current allowed for a given motor.
@@ -233,7 +233,7 @@ public:
     * @param v the return value
     * @return probably true, might return false in bad times
     */
-    virtual bool getMaxCurrentRaw(int j, double *v)=0;
+    virtual yarp::dev::ReturnValue getMaxCurrentRaw(int j, double *v)=0;
 
     /* Get the nominal current which can be kept for an indefinite amount of time
      * without harming the motor. This value is specific for each motor and it is typically
@@ -244,7 +244,7 @@ public:
      * @param val storage for return value. [Ampere]
      * @return true/false success failure.
      */
-    virtual bool getNominalCurrentRaw(int m, double *val) {return false;};
+    virtual yarp::dev::ReturnValue getNominalCurrentRaw(int m, double *val)=0;
 
     /* Set the nominal current which can be kept for an indefinite amount of time
     * without harming the motor. This value is specific for each motor and it is typically
@@ -255,7 +255,7 @@ public:
     * @param val storage for return value. [Ampere]
     * @return true/false success failure.
     */
-    virtual bool setNominalCurrentRaw(int m, const double val) { return false; };
+    virtual yarp::dev::ReturnValue setNominalCurrentRaw(int m, const double val)=0;
 
     /* Get the peak current which causes damage to the motor if maintained
      * for a long amount of time.
@@ -266,7 +266,7 @@ public:
      * @param val storage for return value. [Ampere]
      * @return true/false success failure.
      */
-    virtual bool getPeakCurrentRaw(int m, double *val) {return false;};
+    virtual yarp::dev::ReturnValue getPeakCurrentRaw(int m, double *val)=0;
 
     /* Set the peak current. This value  which causes damage to the motor if maintained
      * for a long amount of time.
@@ -277,7 +277,7 @@ public:
      * @param val storage for return value. [Ampere]
      * @return true/false success failure.
      */
-    virtual bool setPeakCurrentRaw(int m, const double val) {return false;};
+    virtual yarp::dev::ReturnValue setPeakCurrentRaw(int m, const double val)=0;
 
     /* Get the current PWM value used to control the motor.
      * The units are firmware dependent, either machine units or percentage.
@@ -285,7 +285,7 @@ public:
      * @param val filled with PWM value.
      * @return true/false success failure.
      */
-    virtual bool getPWMRaw(int j, double* val) {return false;};
+    virtual yarp::dev::ReturnValue getPWMRaw(int j, double* val)=0;
 
     /* Get the PWM limit for the given motor.
      * The units are firmware dependent, either machine units or percentage.
@@ -293,7 +293,7 @@ public:
      * @param val filled with PWM limit value.
      * @return true/false success failure.
      */
-    virtual bool getPWMLimitRaw(int j, double* val) {return false;};
+    virtual yarp::dev::ReturnValue getPWMLimitRaw(int j, double* val)=0;
 
     /* Set the PWM limit for the given motor.
      * The units are firmware dependent, either machine units or percentage.
@@ -301,14 +301,14 @@ public:
      * @param val new value for the PWM limit.
      * @return true/false success failure.
      */
-    virtual bool setPWMLimitRaw(int j, const double val) {return false;};
+    virtual yarp::dev::ReturnValue setPWMLimitRaw(int j, const double val)=0;
 
     /* Get the power source voltage for the given motor in Volt.
      * @param j joint number
      * @param val filled with return value. [Volt]
      * @return true/false success failure.
      */
-    virtual bool getPowerSupplyVoltageRaw(int j, double* val) {return false;};
+    virtual yarp::dev::ReturnValue getPowerSupplyVoltageRaw(int j, double* val)=0;
 };
 
 // interface IAmplifierControl sets/gets

@@ -116,29 +116,29 @@ bool ControlBoardCouplingHandler::detach()
 
 
 /* IEncoders */
-bool ControlBoardCouplingHandler::resetEncoder(int j)
+ReturnValue ControlBoardCouplingHandler::resetEncoder(int j)
 {
-    return false;
+    return YARP_METHOD_NOT_YET_IMPLEMENTED();
 }
 
-bool ControlBoardCouplingHandler::resetEncoders()
+ReturnValue ControlBoardCouplingHandler::resetEncoders()
 {
-    return false;
+    return YARP_METHOD_NOT_YET_IMPLEMENTED();
 }
 
-bool ControlBoardCouplingHandler::setEncoder(int j, double val)
+ReturnValue ControlBoardCouplingHandler::setEncoder(int j, double val)
 {
-    return false;
+    return YARP_METHOD_NOT_YET_IMPLEMENTED();
 }
 
-bool ControlBoardCouplingHandler::setEncoders(const double *vals)
+ReturnValue ControlBoardCouplingHandler::setEncoders(const double *vals)
 {
-    return false;
+    return YARP_METHOD_NOT_YET_IMPLEMENTED();
 }
 
-bool ControlBoardCouplingHandler::getEncoder(int j, double *v)
+ReturnValue ControlBoardCouplingHandler::getEncoder(int j, double *v)
 {
-    bool ok = false;
+    ReturnValue ok = ReturnValue::return_code::return_value_error_generic;
     if (iJntEnc && iJntCoupling) {
         ok = iJntEnc->getEncoders(actAxesPos.data());
         ok = ok && iJntCoupling->convertFromActuatedAxesToPhysicalJointsPos(actAxesPos, physJointsPos);
@@ -150,9 +150,9 @@ bool ControlBoardCouplingHandler::getEncoder(int j, double *v)
     return ok;
 }
 
-bool ControlBoardCouplingHandler::getEncoders(double *encs)
+ReturnValue ControlBoardCouplingHandler::getEncoders(double *encs)
 {
-    bool ok = false;
+    ReturnValue ok = ReturnValue::return_code::return_value_error_generic;
     if (iJntEnc && iJntCoupling) {
         ok = iJntEnc->getEncoders(actAxesPos.data());
         ok = ok && iJntCoupling->convertFromActuatedAxesToPhysicalJointsPos(actAxesPos, physJointsPos);
@@ -164,9 +164,9 @@ bool ControlBoardCouplingHandler::getEncoders(double *encs)
     return ok;
 }
 
-bool ControlBoardCouplingHandler::getEncodersTimed(double *encs, double *t)
+ReturnValue ControlBoardCouplingHandler::getEncodersTimed(double *encs, double *t)
 {
-    bool ok = false;
+    ReturnValue ok = ReturnValue::return_code::return_value_error_generic;
     if (iJntEnc && iJntCoupling) {
         // TODO t has to be probably resized
         ok = iJntEnc->getEncodersTimed(actAxesPos.data(), actAxesTime.data());
@@ -184,9 +184,9 @@ bool ControlBoardCouplingHandler::getEncodersTimed(double *encs, double *t)
     return ok;
 }
 
-bool ControlBoardCouplingHandler::getEncoderTimed(int j, double *v, double *t)
+ReturnValue ControlBoardCouplingHandler::getEncoderTimed(int j, double *v, double *t)
 {
-    bool ok = false;
+    ReturnValue ok = ReturnValue::return_code::return_value_error_generic;
     if (iJntEnc && iJntCoupling) {
         ok = iJntEnc->getEncodersTimed(actAxesPos.data(), actAxesTime.data());
         ok = ok && iJntCoupling->convertFromActuatedAxesToPhysicalJointsPos(actAxesPos, physJointsPos);
@@ -200,9 +200,9 @@ bool ControlBoardCouplingHandler::getEncoderTimed(int j, double *v, double *t)
     return ok;
 }
 
-bool ControlBoardCouplingHandler::getEncoderSpeed(int j, double *sp)
+ReturnValue ControlBoardCouplingHandler::getEncoderSpeed(int j, double *sp)
 {
-    bool ok = false;
+    ReturnValue ok = ReturnValue::return_code::return_value_error_generic;
     if (iJntEnc && iJntCoupling) {
         ok = iJntEnc->getEncoders(actAxesPos.data());
         ok = ok && iJntEnc->getEncoderSpeeds(actAxesVel.data());
@@ -215,9 +215,9 @@ bool ControlBoardCouplingHandler::getEncoderSpeed(int j, double *sp)
     return ok;
 }
 
-bool ControlBoardCouplingHandler::getEncoderSpeeds(double *spds)
+ReturnValue ControlBoardCouplingHandler::getEncoderSpeeds(double *spds)
 {
-    bool ok = false;
+    ReturnValue ok = ReturnValue::return_code::return_value_error_generic;
     if (iJntEnc && iJntCoupling) {
         ok = iJntEnc->getEncoders(actAxesPos.data());
         ok = ok && iJntEnc->getEncoderSpeeds(actAxesVel.data());
@@ -230,9 +230,9 @@ bool ControlBoardCouplingHandler::getEncoderSpeeds(double *spds)
     return ok;
 }
 
-bool ControlBoardCouplingHandler::getEncoderAcceleration(int j, double *acc)
+ReturnValue ControlBoardCouplingHandler::getEncoderAcceleration(int j, double *acc)
 {
-    bool ok = false;
+    ReturnValue ok = ReturnValue::return_code::return_value_error_generic;
     if (iJntEnc && iJntCoupling) {
         ok = iJntEnc->getEncoders(actAxesPos.data());
         ok = ok && iJntEnc->getEncoderSpeeds(actAxesVel.data());
@@ -246,9 +246,9 @@ bool ControlBoardCouplingHandler::getEncoderAcceleration(int j, double *acc)
     return ok;
 }
 
-bool ControlBoardCouplingHandler::getEncoderAccelerations(double *accs)
+ReturnValue ControlBoardCouplingHandler::getEncoderAccelerations(double *accs)
 {
-    bool ok = false;
+    ReturnValue ok = ReturnValue::return_code::return_value_error_generic;
     if (iJntEnc && iJntCoupling) {
         ok = iJntEnc->getEncoders(actAxesPos.data());
         ok = ok && iJntEnc->getEncoderSpeeds(actAxesVel.data());
@@ -264,9 +264,9 @@ bool ControlBoardCouplingHandler::getEncoderAccelerations(double *accs)
 
 /* IAxisInfo */
 
-bool ControlBoardCouplingHandler::getAxes(int *ax)
+ReturnValue ControlBoardCouplingHandler::getAxes(int *ax)
 {
-    bool ok{false};
+    ReturnValue ok{ReturnValue::return_code::return_value_error_generic};
     if (iJntCoupling) {
         size_t nrOfPhysicalJoints {0};
         ok = iJntCoupling->getNrOfPhysicalJoints(nrOfPhysicalJoints);
@@ -278,9 +278,9 @@ bool ControlBoardCouplingHandler::getAxes(int *ax)
     return ok;
 }
 
-bool ControlBoardCouplingHandler::getAxisName(int j, std::string& name)
+ReturnValue ControlBoardCouplingHandler::getAxisName(int j, std::string& name)
 {
-    bool ok{false};
+    ReturnValue ok{ReturnValue::return_code::return_value_error_generic};
     if (iJntCoupling) {
         ok = iJntCoupling->getPhysicalJointName(j, name);
         return ok;
@@ -288,10 +288,10 @@ bool ControlBoardCouplingHandler::getAxisName(int j, std::string& name)
     return ok;
 }
 
-bool ControlBoardCouplingHandler::getJointType(int j, yarp::dev::JointTypeEnum& type)
+ReturnValue ControlBoardCouplingHandler::getJointType(int j, yarp::dev::JointTypeEnum& type)
 {
-    bool ok{false};
+    ReturnValue ok{ReturnValue::return_code::return_value_error_generic};
     // TODO I am not sure how to handle this function
     type = VOCAB_JOINTTYPE_REVOLUTE;
-    return true;
+    return ReturnValue_ok;
 }

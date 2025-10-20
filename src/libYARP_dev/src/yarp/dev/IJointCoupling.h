@@ -9,6 +9,7 @@
 #include <yarp/dev/api.h>
 #include <yarp/os/Vocab.h>
 #include <yarp/sig/Vector.h>
+#include <yarp/dev/ReturnValue.h>
 
 namespace yarp::dev {
 class IJointCoupling;
@@ -72,7 +73,7 @@ public:
      * @param[out] actAxesPos Actuated Axes position
      * @return, true/false on success/failure
      */
-    virtual bool convertFromPhysicalJointsToActuatedAxesPos(const yarp::sig::Vector& physJointsPos, yarp::sig::Vector& actAxesPos) = 0;
+    virtual yarp::dev::ReturnValue convertFromPhysicalJointsToActuatedAxesPos(const yarp::sig::Vector& physJointsPos, yarp::sig::Vector& actAxesPos) = 0;
 
     /**
      * @brief Convert from Physical Joints to Actuated Axes velocity.
@@ -87,7 +88,7 @@ public:
      * @param[out] actAxesVel  Actuated Axes velocity
      * @return, true/false on success/failure
      */
-    virtual bool convertFromPhysicalJointsToActuatedAxesVel(const yarp::sig::Vector& physJointsPos, const yarp::sig::Vector& physJointsVel, yarp::sig::Vector& actAxesVel) = 0;
+    virtual yarp::dev::ReturnValue convertFromPhysicalJointsToActuatedAxesVel(const yarp::sig::Vector& physJointsPos, const yarp::sig::Vector& physJointsVel, yarp::sig::Vector& actAxesVel) = 0;
 
     /**
      * @brief Convert from Physical Joints to Actuated Axes acceleration.
@@ -103,7 +104,7 @@ public:
      * @param[out] actAxesAcc  Actuated Axes acceleration
      * @return, true/false on success/failure
      */
-    virtual bool convertFromPhysicalJointsToActuatedAxesAcc(const yarp::sig::Vector& physJointsPos, const yarp::sig::Vector& physJointsVel, const yarp::sig::Vector& physJointsAcc, yarp::sig::Vector& actAxesAcc) = 0;
+    virtual yarp::dev::ReturnValue convertFromPhysicalJointsToActuatedAxesAcc(const yarp::sig::Vector& physJointsPos, const yarp::sig::Vector& physJointsVel, const yarp::sig::Vector& physJointsAcc, yarp::sig::Vector& actAxesAcc) = 0;
 
     /**
      * @brief Convert from Physical Joints to Actuated Axes torque
@@ -113,7 +114,7 @@ public:
      * @param[out] actAxesTrq  Actuated Axes torque
      * @return true/false on success/failure
      */
-    virtual bool convertFromPhysicalJointsToActuatedAxesTrq(const yarp::sig::Vector& physJointsPos, const yarp::sig::Vector& physJointsTrq, yarp::sig::Vector& actAxesTrq) = 0;
+    virtual yarp::dev::ReturnValue convertFromPhysicalJointsToActuatedAxesTrq(const yarp::sig::Vector& physJointsPos, const yarp::sig::Vector& physJointsTrq, yarp::sig::Vector& actAxesTrq) = 0;
 
     /**
      * @brief Convert from Actuated Axes to Physical Joints position
@@ -122,7 +123,7 @@ public:
      * @param[out] physJointsPos Physical Joints position
      * @return true/false on success/failure
      */
-    virtual bool convertFromActuatedAxesToPhysicalJointsPos(const yarp::sig::Vector& actAxesPos, yarp::sig::Vector& physJointsPos) = 0;
+    virtual yarp::dev::ReturnValue convertFromActuatedAxesToPhysicalJointsPos(const yarp::sig::Vector& actAxesPos, yarp::sig::Vector& physJointsPos) = 0;
 
     /**
      * @brief Convert from Actuated Axes to Physical Joints velocity
@@ -137,7 +138,7 @@ public:
      * @param[out] physJointsVel Physical Joints velocity
      * @return true/false on success/failure
      */
-    virtual bool convertFromActuatedAxesToPhysicalJointsVel(const yarp::sig::Vector& actAxesPos, const yarp::sig::Vector& actAxesVel, yarp::sig::Vector& physJointsVel) = 0;
+    virtual yarp::dev::ReturnValue convertFromActuatedAxesToPhysicalJointsVel(const yarp::sig::Vector& actAxesPos, const yarp::sig::Vector& actAxesVel, yarp::sig::Vector& physJointsVel) = 0;
 
     /**
      * @brief Convert from Actuated Axes to Physical Joints acceleration
@@ -154,7 +155,7 @@ public:
      * @param[out] physJointsAcc Physical Joints acceleration
      * @return true/false on success/failure
      */
-    virtual bool convertFromActuatedAxesToPhysicalJointsAcc(const yarp::sig::Vector& actAxesPos, const yarp::sig::Vector& actAxesVel, const yarp::sig::Vector& actAxesAcc, yarp::sig::Vector& physJointsAcc) = 0;
+    virtual yarp::dev::ReturnValue convertFromActuatedAxesToPhysicalJointsAcc(const yarp::sig::Vector& actAxesPos, const yarp::sig::Vector& actAxesVel, const yarp::sig::Vector& actAxesAcc, yarp::sig::Vector& physJointsAcc) = 0;
 
     /**
      * @brief Convert from Actuated Axes to Physical Joints acceleration
@@ -164,7 +165,7 @@ public:
      * @param[out] physJointsTrq Physical Joints torque
      * @return true/false on success/failure
      */
-    virtual bool convertFromActuatedAxesToPhysicalJointsTrq(const yarp::sig::Vector& actAxesPos, const yarp::sig::Vector& actAxesTrq, yarp::sig::Vector& physJointsTrq) = 0;
+    virtual yarp::dev::ReturnValue convertFromActuatedAxesToPhysicalJointsTrq(const yarp::sig::Vector& actAxesPos, const yarp::sig::Vector& actAxesTrq, yarp::sig::Vector& physJointsTrq) = 0;
 
     // In some case, for a given coupling several "physical joints" ad "actuated axis"
     // may be related in a obvious way, i.e. the position and torque of given physical
@@ -179,7 +180,7 @@ public:
      * @param[out] nrOfPhysicalJoints The number of physical joints
      * @return true/false on success/failure
      */
-    virtual bool getNrOfPhysicalJoints(size_t& nrOfPhysicalJoints) = 0;
+    virtual yarp::dev::ReturnValue getNrOfPhysicalJoints(size_t& nrOfPhysicalJoints) = 0;
 
     /**
      * @brief Get the number of actuated axes
@@ -187,7 +188,7 @@ public:
      * @param nrOfActuatedAxes The number of actuated axes
      * @return true/false on success/failure
      */
-    virtual bool getNrOfActuatedAxes(size_t& nrOfActuatedAxes) = 0;
+    virtual yarp::dev::ReturnValue getNrOfActuatedAxes(size_t& nrOfActuatedAxes) = 0;
 
     /**
      * @brief Return the vector of "physical joints indices" (i.e. numbers from 0 to n-1)
@@ -195,7 +196,7 @@ public:
      * @param[out] coupPhysJointsIndexes the vector of "physical joints indices"
      * @return true/false on success/failure
      */
-    virtual bool getCoupledPhysicalJoints(yarp::sig::VectorOf<size_t>& coupPhysJointsIndexes)=0;
+    virtual yarp::dev::ReturnValue getCoupledPhysicalJoints(yarp::sig::VectorOf<size_t>& coupPhysJointsIndexes)=0;
 
     /**
      * @brief Return the vector of "actuator axis indices" (i.e. numbers from 0 to m-1)
@@ -204,7 +205,7 @@ public:
      * @param[out] coupActAxesIndexes the vector of "actuator axis indices"
      * @return true/false on success/failure
      */
-    virtual bool getCoupledActuatedAxes(yarp::sig::VectorOf<size_t>& coupActAxesIndexes)=0;
+    virtual yarp::dev::ReturnValue getCoupledActuatedAxes(yarp::sig::VectorOf<size_t>& coupActAxesIndexes)=0;
 
     /**
      * @brief Get the name of an actuated axis
@@ -214,7 +215,7 @@ public:
      * @param[out] actuatedAxisName the actuated axis name
      * @return true/false on success/failure
      */
-    virtual bool getActuatedAxisName(size_t actuatedAxisIndex, std::string& actuatedAxisName)=0;
+    virtual yarp::dev::ReturnValue getActuatedAxisName(size_t actuatedAxisIndex, std::string& actuatedAxisName)=0;
 
     /**
      * @brief Get the name of a physical joint
@@ -224,7 +225,7 @@ public:
      * @param[out] physicalJointName the physical joint name
      * @return true/false on success/failure
      */
-    virtual bool getPhysicalJointName(size_t physicalJointIndex, std::string& physicalJointName)=0;
+    virtual yarp::dev::ReturnValue getPhysicalJointName(size_t physicalJointIndex, std::string& physicalJointName)=0;
 
     /**
      * @brief Get the Physical Joint Limit object
@@ -235,7 +236,7 @@ public:
      * @param[out] max maximum value
      * @return true/false on success/failure
      */
-    virtual bool getPhysicalJointLimits(size_t physicalJointIndex, double& min, double& max)=0;
+    virtual yarp::dev::ReturnValue getPhysicalJointLimits(size_t physicalJointIndex, double& min, double& max)=0;
 };
 
 #endif // YARP_DEV_IJOINTCOUPLING_H

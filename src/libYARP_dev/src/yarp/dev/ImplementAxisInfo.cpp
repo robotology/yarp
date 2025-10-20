@@ -51,27 +51,25 @@ bool ImplementAxisInfo::uninitialize()
     return true;
 }
 
-bool ImplementAxisInfo::getAxes(int* ax)
+ReturnValue ImplementAxisInfo::getAxes(int* ax)
 {
-    bool ret=true;
+    ReturnValue ret=ReturnValue_ok;
     (*ax) = castToMapper(helper)->axes();
     return ret;
 }
 
-bool ImplementAxisInfo::getAxisName(int axis, std::string& name)
+ReturnValue ImplementAxisInfo::getAxisName(int axis, std::string& name)
 {
-    bool ret;
+    ReturnValue ret;
     int k = castToMapper(helper)->toHw(axis);
     ret = iinfo->getAxisNameRaw(k, name);
     return ret;
 }
 
-bool ImplementAxisInfo::getJointType(int axis, yarp::dev::JointTypeEnum& type)
+ReturnValue ImplementAxisInfo::getJointType(int axis, yarp::dev::JointTypeEnum& type)
 {
-    bool ret;
+    ReturnValue ret;
     int k = castToMapper(helper)->toHw(axis);
     ret = iinfo->getJointTypeRaw(k, type);
     return ret;
 }
-
-bool ret;

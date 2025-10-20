@@ -54,16 +54,16 @@ public:
      */
     virtual ~ImplementCurrentControl();
 
-    bool getNumberOfMotors(int *ax) override;
-    bool getRefCurrent(int j, double *) override;
-    bool getRefCurrents(double *t) override;
-    bool setRefCurrents(const double *t) override;
-    bool setRefCurrent(int j, double t) override;
-    bool setRefCurrents(const int n_joint, const int *joints, const double *t) override;
-    bool getCurrents(double *t) override;
-    bool getCurrent(int j, double *t) override;
-    bool getCurrentRange(int j, double *min, double *max) override;
-    bool getCurrentRanges(double *min, double *max) override;
+    yarp::dev::ReturnValue getNumberOfMotors(int *ax) override;
+    yarp::dev::ReturnValue getRefCurrent(int j, double *) override;
+    yarp::dev::ReturnValue getRefCurrents(double *t) override;
+    yarp::dev::ReturnValue setRefCurrents(const double *t) override;
+    yarp::dev::ReturnValue setRefCurrent(int j, double t) override;
+    yarp::dev::ReturnValue setRefCurrents(const int n_joint, const int *joints, const double *t) override;
+    yarp::dev::ReturnValue getCurrents(double *t) override;
+    yarp::dev::ReturnValue getCurrent(int j, double *t) override;
+    yarp::dev::ReturnValue getCurrentRange(int j, double *min, double *max) override;
+    yarp::dev::ReturnValue getCurrentRanges(double *min, double *max) override;
 };
 
 #endif // YARP_DEV_IMPLEMENTCURRENTCONTROL_H

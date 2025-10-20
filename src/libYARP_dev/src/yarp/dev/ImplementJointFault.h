@@ -45,7 +45,7 @@ public:
      */
     virtual ~ImplementJointFault();
 
-    bool getLastJointFault(int j, int& fault, std::string& message) override;
+    yarp::dev::ReturnValue getLastJointFault(int j, int& fault, std::string& message) override;
 
 };
 

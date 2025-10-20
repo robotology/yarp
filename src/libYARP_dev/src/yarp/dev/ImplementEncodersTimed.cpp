@@ -5,12 +5,12 @@
 
 #include "yarp/dev/ControlBoardInterfacesImpl.h"
 #include <yarp/dev/ControlBoardHelper.h>
+#include <yarp/dev/ControlBoardHelpers.h>
 #include <yarp/dev/impl/FixedSizeBuffersManager.h>
 
 #include <cstdio>
 using namespace yarp::dev;
 using namespace yarp::os;
-#define JOINTIDCHECK if (j >= castToMapper(helper)->axes()){yError("joint id out of bound"); return false;}
 
 ////////////////////////
 // Encoder Interface Timed Implementation
@@ -59,29 +59,29 @@ bool ImplementEncodersTimed::uninitialize ()
     return true;
 }
 
-bool ImplementEncodersTimed::getAxes(int *ax)
+ReturnValue ImplementEncodersTimed::getAxes(int *ax)
 {
     (*ax)=castToMapper(helper)->axes();
-    return true;
+    return ReturnValue_ok;
 }
 
-bool ImplementEncodersTimed::resetEncoder(int j)
+ReturnValue ImplementEncodersTimed::resetEncoder(int j)
 {
-    JOINTIDCHECK
+    JOINTIDCHECK(MAPPER_MAXID)
     int k;
     k=castToMapper(helper)->toHw(j);
 
     return iEncoders->resetEncoderRaw(k);
 }
 
-bool ImplementEncodersTimed::resetEncoders()
+ReturnValue ImplementEncodersTimed::resetEncoders()
 {
     return iEncoders->resetEncodersRaw();
 }
 
-bool ImplementEncodersTimed::setEncoder(int j, double val)
+ReturnValue ImplementEncodersTimed::setEncoder(int j, double val)
 {
-    JOINTIDCHECK
+    JOINTIDCHECK(MAPPER_MAXID)
     int k;
     double enc;
 
@@ -90,21 +90,21 @@ bool ImplementEncodersTimed::setEncoder(int j, double val)
     return iEncoders->setEncoderRaw(k, enc);
 }
 
-bool ImplementEncodersTimed::setEncoders(const double *val)
+ReturnValue ImplementEncodersTimed::setEncoders(const double *val)
 {
     yarp::dev::impl::Buffer<double> buffValues = buffManager->getBuffer();
     castToMapper(helper)->posA2E(val, buffValues.getData());
-    bool ret = iEncoders->setEncodersRaw(buffValues.getData());
+    ReturnValue ret = iEncoders->setEncodersRaw(buffValues.getData());
     buffManager->releaseBuffer(buffValues);
     return ret;
 }
 
-bool ImplementEncodersTimed::getEncoder(int j, double *v)
+ReturnValue ImplementEncodersTimed::getEncoder(int j, double *v)
 {
-    JOINTIDCHECK
+    JOINTIDCHECK(MAPPER_MAXID)
     int k;
     double enc;
-    bool ret;
+    ReturnValue ret;
 
     k=castToMapper(helper)->toHw(j);
 
@@ -115,21 +115,21 @@ bool ImplementEncodersTimed::getEncoder(int j, double *v)
     return ret;
 }
 
-bool ImplementEncodersTimed::getEncoders(double *v)
+ReturnValue ImplementEncodersTimed::getEncoders(double *v)
 {
     yarp::dev::impl::Buffer<double> buffValues =buffManager->getBuffer();
-    bool ret = iEncoders->getEncodersRaw(buffValues.getData());
+    ReturnValue ret = iEncoders->getEncodersRaw(buffValues.getData());
     castToMapper(helper)->posE2A(buffValues.getData(), v);
     buffManager->releaseBuffer(buffValues);
     return ret;
 }
 
-bool ImplementEncodersTimed::getEncoderSpeed(int j, double *v)
+ReturnValue ImplementEncodersTimed::getEncoderSpeed(int j, double *v)
 {
-    JOINTIDCHECK
+    JOINTIDCHECK(MAPPER_MAXID)
     int k;
     double enc;
-    bool ret;
+    ReturnValue ret;
 
     k=castToMapper(helper)->toHw(j);
 
@@ -140,21 +140,21 @@ bool ImplementEncodersTimed::getEncoderSpeed(int j, double *v)
     return ret;
 }
 
-bool ImplementEncodersTimed::getEncoderSpeeds(double *v)
+ReturnValue ImplementEncodersTimed::getEncoderSpeeds(double *v)
 {
     yarp::dev::impl::Buffer<double> buffValues = buffManager->getBuffer();
-    bool ret=iEncoders->getEncoderSpeedsRaw(buffValues.getData());
+    ReturnValue ret=iEncoders->getEncoderSpeedsRaw(buffValues.getData());
     castToMapper(helper)->velE2A(buffValues.getData(), v);
     buffManager->releaseBuffer(buffValues);
     return ret;
 }
 
-bool ImplementEncodersTimed::getEncoderAcceleration(int j, double *v)
+ReturnValue ImplementEncodersTimed::getEncoderAcceleration(int j, double *v)
 {
-    JOINTIDCHECK
+    JOINTIDCHECK(MAPPER_MAXID)
     int k;
     double enc;
-    bool ret;
+    ReturnValue ret;
 
     k=castToMapper(helper)->toHw(j);
 
@@ -165,21 +165,21 @@ bool ImplementEncodersTimed::getEncoderAcceleration(int j, double *v)
     return ret;
 }
 
-bool ImplementEncodersTimed::getEncoderAccelerations(double *v)
+ReturnValue ImplementEncodersTimed::getEncoderAccelerations(double *v)
 {
     yarp::dev::impl::Buffer<double> buffValues = buffManager->getBuffer();
-    bool ret = iEncoders->getEncoderAccelerationsRaw(buffValues.getData());
+    ReturnValue ret = iEncoders->getEncoderAccelerationsRaw(buffValues.getData());
     castToMapper(helper)->accE2A(buffValues.getData(), v);
     buffManager->releaseBuffer(buffValues);
     return ret;
 }
 
-bool ImplementEncodersTimed::getEncoderTimed(int j, double *v, double *t)
+ReturnValue ImplementEncodersTimed::getEncoderTimed(int j, double *v, double *t)
 {
-    JOINTIDCHECK
+    JOINTIDCHECK(MAPPER_MAXID)
     int k;
     double enc;
-    bool ret;
+    ReturnValue ret;
 
     k=castToMapper(helper)->toHw(j);
 
@@ -191,11 +191,11 @@ bool ImplementEncodersTimed::getEncoderTimed(int j, double *v, double *t)
 }
 
 
-bool ImplementEncodersTimed::getEncodersTimed(double *v, double *t)
+ReturnValue ImplementEncodersTimed::getEncodersTimed(double *v, double *t)
 {
     yarp::dev::impl::Buffer<double> b_v = buffManager->getBuffer();
     yarp::dev::impl::Buffer<double> b_t = buffManager->getBuffer();
-    bool ret=iEncoders->getEncodersTimedRaw(b_v.getData(), b_t.getData());
+    ReturnValue ret=iEncoders->getEncodersTimedRaw(b_v.getData(), b_t.getData());
 
     castToMapper(helper)->posE2A(b_v.getData(), v);
     castToMapper(helper)->toUser(b_t.getData(), t);

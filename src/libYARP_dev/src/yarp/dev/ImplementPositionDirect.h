@@ -64,13 +64,13 @@ public:
      */
     virtual ~ImplementPositionDirect();
 
-    bool getAxes(int *axes) override;
-    bool setPosition(int j, double ref) override;
-    bool setPositions(const int n_joint, const int *joints, const double *refs) override;
-    bool setPositions(const double *refs) override;
-    bool getRefPosition(const int joint, double *ref) override;
-    bool getRefPositions(double *refs) override;
-    bool getRefPositions(const int n_joint, const int *joints, double *refs) override;
+    yarp::dev::ReturnValue getAxes(int *axes) override;
+    yarp::dev::ReturnValue setPosition(int j, double ref) override;
+    yarp::dev::ReturnValue setPositions(const int n_joint, const int *joints, const double *refs) override;
+    yarp::dev::ReturnValue setPositions(const double *refs) override;
+    yarp::dev::ReturnValue getRefPosition(const int joint, double *ref) override;
+    yarp::dev::ReturnValue getRefPositions(double *refs) override;
+    yarp::dev::ReturnValue getRefPositions(const int n_joint, const int *joints, double *refs) override;
 };
 
 
@@ -90,27 +90,20 @@ public:
  */
 class YARP_dev_API yarp::dev::StubImplPositionDirectRaw: public IPositionDirect
 {
-private:
-    /**
-     * Helper for printing error message, see below.
-     * Implemented in ControlBoardInterfacesImpl.cpp.
-     */
-    bool NOT_YET_IMPLEMENTED(const char *func=0);
-
 public:
     virtual ~StubImplPositionDirectRaw(){}
 
-    bool getAxes(int *axis) override
-    {return NOT_YET_IMPLEMENTED("getAxes");}
+    yarp::dev::ReturnValue getAxes(int *axis) override
+    {return YARP_METHOD_NOT_YET_IMPLEMENTED();}
 
-    bool setPosition(int j, double ref) override
-    {return NOT_YET_IMPLEMENTED("setPosition");}
+    yarp::dev::ReturnValue setPosition(int j, double ref) override
+    {return YARP_METHOD_NOT_YET_IMPLEMENTED();}
 
-    bool setPositions(const int n_joint, const int *joints, const double *refs) override
-    {return NOT_YET_IMPLEMENTED("setPositions");}
+    yarp::dev::ReturnValue setPositions(const int n_joint, const int *joints, const double *refs) override
+    {return YARP_METHOD_NOT_YET_IMPLEMENTED();}
 
-    bool setPositions(const double *refs) override
-    {return NOT_YET_IMPLEMENTED("setPositions");}
+    yarp::dev::ReturnValue setPositions(const double *refs) override
+    {return YARP_METHOD_NOT_YET_IMPLEMENTED();}
 };
 
 #endif // YARP_IPOSITIONDIRECTIMPL_H

@@ -18,20 +18,20 @@ IControlCalibration::IControlCalibration()
     calibrator=nullptr;
 }
 
-bool IControlCalibration::setCalibrator(ICalibrator *c)
+ReturnValue IControlCalibration::setCalibrator(ICalibrator *c)
 {
     if (c!=nullptr)
     {
         calibrator=c;
-        return true;
+        return ReturnValue_ok;
     }
 
-    return false;
+    return ReturnValue::return_code::return_value_error_input_out_of_bounds;
 }
 
-bool IControlCalibration::calibrateRobot()
+ReturnValue IControlCalibration::calibrateRobot()
 {
-    bool ret = false;
+    ReturnValue ret = ReturnValue::return_code::return_value_error_not_ready;
     if (calibrator!=nullptr)
     {
         yDebug("Going to call calibrator\n");
@@ -43,27 +43,27 @@ bool IControlCalibration::calibrateRobot()
     return ret;
 }
 
-bool IControlCalibration::abortCalibration()
+ReturnValue IControlCalibration::abortCalibration()
 {
-    bool ret=false;
+    ReturnValue ret=ReturnValue::return_code::return_value_error_not_ready;
     if (calibrator != nullptr) {
         ret = calibrator->quitCalibrate();
     }
     return ret;
 }
 
-bool IControlCalibration::abortPark()
+ReturnValue IControlCalibration::abortPark()
 {
-    bool ret=false;
+    ReturnValue ret=ReturnValue::return_code::return_value_error_not_ready;
     if (calibrator != nullptr) {
         ret = calibrator->quitPark();
     }
     return ret;
 }
 
-bool IControlCalibration::park(bool wait)
+ReturnValue IControlCalibration::park(bool wait)
 {
-    bool ret=false;
+    ReturnValue ret=ReturnValue::return_code::return_value_error_not_ready;
     if (calibrator!=nullptr)
     {
         yDebug("Going to call calibrator\n");
@@ -119,21 +119,21 @@ bool ImplementControlCalibration::uninitialize()
     return true;
 }
 
-bool ImplementControlCalibration::calibrationDone(int j)
+ReturnValue ImplementControlCalibration::calibrationDone(int j)
 {
     int k = castToMapper(helper)->toHw(j);
 
     return iCalibrate->calibrationDoneRaw(k);
 }
 
-bool ImplementControlCalibration::calibrateAxisWithParams(int axis, unsigned int type, double p1, double p2, double p3)
+ReturnValue ImplementControlCalibration::calibrateAxisWithParams(int axis, unsigned int type, double p1, double p2, double p3)
 {
     int k = castToMapper(helper)->toHw(axis);
 
     return iCalibrate->calibrateAxisWithParamsRaw(k, type, p1, p2, p3);
 }
 
-bool ImplementControlCalibration::setCalibrationParameters(int axis, const CalibrationParameters& params)
+ReturnValue ImplementControlCalibration::setCalibrationParameters(int axis, const CalibrationParameters& params)
 {
     int k = castToMapper(helper)->toHw(axis);
 

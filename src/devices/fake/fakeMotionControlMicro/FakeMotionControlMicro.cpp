@@ -13,6 +13,7 @@
 #include <yarp/os/LogStream.h>
 #include <yarp/os/NetType.h>
 #include <yarp/dev/Drivers.h>
+#include <yarp/dev/ControlBoardHelpers.h>
 
 #include <sstream>
 #include <cstring>
@@ -351,29 +352,29 @@ void FakeMotionControlMicro::cleanup()
 
 //////////////////////// BEGIN EncoderInterface
 
-bool FakeMotionControlMicro::setEncoderRaw(int j, double val)
+ReturnValue FakeMotionControlMicro::setEncoderRaw(int j, double val)
 {
-    return NOT_YET_IMPLEMENTED("setEncoder");
+    return YARP_METHOD_NOT_YET_IMPLEMENTED();
 }
 
-bool FakeMotionControlMicro::setEncodersRaw(const double *vals)
+ReturnValue FakeMotionControlMicro::setEncodersRaw(const double *vals)
 {
-    return NOT_YET_IMPLEMENTED("setEncoders");
+    return YARP_METHOD_NOT_YET_IMPLEMENTED();
 }
 
-bool FakeMotionControlMicro::resetEncoderRaw(int j)
+ReturnValue FakeMotionControlMicro::resetEncoderRaw(int j)
 {
-    return NOT_YET_IMPLEMENTED("resetEncoder");
+    return YARP_METHOD_NOT_YET_IMPLEMENTED();
 }
 
-bool FakeMotionControlMicro::resetEncodersRaw()
+ReturnValue FakeMotionControlMicro::resetEncodersRaw()
 {
-    return NOT_YET_IMPLEMENTED("resetEncoders");
+    return YARP_METHOD_NOT_YET_IMPLEMENTED();
 }
 
-bool FakeMotionControlMicro::getEncoderRaw(int j, double *value)
+ReturnValue FakeMotionControlMicro::getEncoderRaw(int j, double *value)
 {
-    bool ret = true;
+    ReturnValue ret = ReturnValue_ok;
 
     // To simulate a real controlboard, we assume that the joint
     // encoders is exactly the last set by setPosition(s) or positionMove
@@ -382,28 +383,28 @@ bool FakeMotionControlMicro::getEncoderRaw(int j, double *value)
     return ret;
 }
 
-bool FakeMotionControlMicro::getEncodersRaw(double *encs)
+ReturnValue FakeMotionControlMicro::getEncodersRaw(double *encs)
 {
-    bool ret = true;
+    ReturnValue ret = ReturnValue_ok;
     for(int j=0; j< _njoints; j++)
     {
-        bool ok = getEncoderRaw(j, &encs[j]);
+        ReturnValue ok = getEncoderRaw(j, &encs[j]);
         ret = ret && ok;
 
     }
     return ret;
 }
 
-bool FakeMotionControlMicro::getEncoderSpeedRaw(int j, double *sp)
+ReturnValue FakeMotionControlMicro::getEncoderSpeedRaw(int j, double *sp)
 {
     // To avoid returning uninitialized memory, we set the encoder speed to 0
     *sp = 0.0;
-    return true;
+    return ReturnValue_ok;
 }
 
-bool FakeMotionControlMicro::getEncoderSpeedsRaw(double *spds)
+ReturnValue FakeMotionControlMicro::getEncoderSpeedsRaw(double *spds)
 {
-    bool ret = true;
+    ReturnValue ret = ReturnValue_ok;
     for(int j=0; j< _njoints; j++)
     {
         ret &= getEncoderSpeedRaw(j, &spds[j]);
@@ -411,17 +412,17 @@ bool FakeMotionControlMicro::getEncoderSpeedsRaw(double *spds)
     return ret;
 }
 
-bool FakeMotionControlMicro::getEncoderAccelerationRaw(int j, double *acc)
+ReturnValue FakeMotionControlMicro::getEncoderAccelerationRaw(int j, double *acc)
 {
     // To avoid returning uninitialized memory, we set the encoder acc to 0
     *acc = 0.0;
 
-    return true;
+    return ReturnValue_ok;
 }
 
-bool FakeMotionControlMicro::getEncoderAccelerationsRaw(double *accs)
+ReturnValue FakeMotionControlMicro::getEncoderAccelerationsRaw(double *accs)
 {
-    bool ret = true;
+    ReturnValue ret = ReturnValue_ok;
     for(int j=0; j< _njoints; j++)
     {
         ret &= getEncoderAccelerationRaw(j, &accs[j]);
@@ -431,9 +432,9 @@ bool FakeMotionControlMicro::getEncoderAccelerationsRaw(double *accs)
 
 ///////////////////////// END Encoder Interface
 
-bool FakeMotionControlMicro::getEncodersTimedRaw(double *encs, double *stamps)
+ReturnValue FakeMotionControlMicro::getEncodersTimedRaw(double *encs, double *stamps)
 {
-    bool ret = getEncodersRaw(encs);
+    ReturnValue ret = getEncodersRaw(encs);
     _mutex.lock();
     for (int i = 0; i < _njoints; i++) {
         stamps[i] = _encodersStamp[i];
@@ -442,9 +443,9 @@ bool FakeMotionControlMicro::getEncodersTimedRaw(double *encs, double *stamps)
     return ret;
 }
 
-bool FakeMotionControlMicro::getEncoderTimedRaw(int j, double *encs, double *stamp)
+ReturnValue FakeMotionControlMicro::getEncoderTimedRaw(int j, double *encs, double *stamp)
 {
-    bool ret = getEncoderRaw(j, encs);
+    ReturnValue ret = getEncoderRaw(j, encs);
     _mutex.lock();
     *stamp = _encodersStamp[j];
     _mutex.unlock();
@@ -454,51 +455,51 @@ bool FakeMotionControlMicro::getEncoderTimedRaw(int j, double *encs, double *sta
 
 //////////////////////// BEGIN EncoderInterface
 
-bool FakeMotionControlMicro::getNumberOfMotorEncodersRaw(int* num)
+ReturnValue FakeMotionControlMicro::getNumberOfMotorEncodersRaw(int* num)
 {
     *num=_njoints;
-    return true;
+    return ReturnValue_ok;
 }
 
-bool FakeMotionControlMicro::setMotorEncoderRaw(int m, const double val)
+ReturnValue FakeMotionControlMicro::setMotorEncoderRaw(int m, const double val)
 {
-    return NOT_YET_IMPLEMENTED("setMotorEncoder");
+    return YARP_METHOD_NOT_YET_IMPLEMENTED();
 }
 
-bool FakeMotionControlMicro::setMotorEncodersRaw(const double *vals)
+ReturnValue FakeMotionControlMicro::setMotorEncodersRaw(const double *vals)
 {
-    return NOT_YET_IMPLEMENTED("setMotorEncoders");
+    return YARP_METHOD_NOT_YET_IMPLEMENTED();
 }
 
-bool FakeMotionControlMicro::setMotorEncoderCountsPerRevolutionRaw(int m, const double cpr)
+ReturnValue FakeMotionControlMicro::setMotorEncoderCountsPerRevolutionRaw(int m, const double cpr)
 {
-    return NOT_YET_IMPLEMENTED("setMotorEncoderCountsPerRevolutionRaw");
+    return YARP_METHOD_NOT_YET_IMPLEMENTED();
 }
 
-bool FakeMotionControlMicro::getMotorEncoderCountsPerRevolutionRaw(int m, double *cpr)
+ReturnValue FakeMotionControlMicro::getMotorEncoderCountsPerRevolutionRaw(int m, double *cpr)
 {
-    return NOT_YET_IMPLEMENTED("getMotorEncoderCountsPerRevolutionRaw");
+    return YARP_METHOD_NOT_YET_IMPLEMENTED();
 }
 
-bool FakeMotionControlMicro::resetMotorEncoderRaw(int mj)
+ReturnValue FakeMotionControlMicro::resetMotorEncoderRaw(int mj)
 {
-    return NOT_YET_IMPLEMENTED("resetMotorEncoder");
+    return YARP_METHOD_NOT_YET_IMPLEMENTED();
 }
 
-bool FakeMotionControlMicro::resetMotorEncodersRaw()
+ReturnValue FakeMotionControlMicro::resetMotorEncodersRaw()
 {
-    return NOT_YET_IMPLEMENTED("reseMotortEncoders");
+    return YARP_METHOD_NOT_YET_IMPLEMENTED();
 }
 
-bool FakeMotionControlMicro::getMotorEncoderRaw(int m, double *value)
+ReturnValue FakeMotionControlMicro::getMotorEncoderRaw(int m, double *value)
 {
     *value = pos[m]*10;
-    return true;
+    return ReturnValue_ok;
 }
 
-bool FakeMotionControlMicro::getMotorEncodersRaw(double *encs)
+ReturnValue FakeMotionControlMicro::getMotorEncodersRaw(double *encs)
 {
-    bool ret = true;
+    ReturnValue ret = ReturnValue_ok;
     for(int j=0; j< _njoints; j++)
     {
         ret &= getMotorEncoderRaw(j, &encs[j]);
@@ -507,15 +508,15 @@ bool FakeMotionControlMicro::getMotorEncodersRaw(double *encs)
     return ret;
 }
 
-bool FakeMotionControlMicro::getMotorEncoderSpeedRaw(int m, double *sp)
+ReturnValue FakeMotionControlMicro::getMotorEncoderSpeedRaw(int m, double *sp)
 {
     *sp = 0.0;
-    return true;
+    return ReturnValue_ok;
 }
 
-bool FakeMotionControlMicro::getMotorEncoderSpeedsRaw(double *spds)
+ReturnValue FakeMotionControlMicro::getMotorEncoderSpeedsRaw(double *spds)
 {
-    bool ret = true;
+    ReturnValue ret = ReturnValue_ok;
     for(int j=0; j< _njoints; j++)
     {
         ret &= getMotorEncoderSpeedRaw(j, &spds[j]);
@@ -523,15 +524,15 @@ bool FakeMotionControlMicro::getMotorEncoderSpeedsRaw(double *spds)
     return ret;
 }
 
-bool FakeMotionControlMicro::getMotorEncoderAccelerationRaw(int m, double *acc)
+ReturnValue FakeMotionControlMicro::getMotorEncoderAccelerationRaw(int m, double *acc)
 {
     *acc = 0.0;
-    return true;
+    return ReturnValue_ok;
 }
 
-bool FakeMotionControlMicro::getMotorEncoderAccelerationsRaw(double *accs)
+ReturnValue FakeMotionControlMicro::getMotorEncoderAccelerationsRaw(double *accs)
 {
-    bool ret = true;
+    ReturnValue ret = ReturnValue_ok;
     for(int j=0; j< _njoints; j++)
     {
         ret &= getMotorEncoderAccelerationRaw(j, &accs[j]);
@@ -539,9 +540,9 @@ bool FakeMotionControlMicro::getMotorEncoderAccelerationsRaw(double *accs)
     return ret;
 }
 
-bool FakeMotionControlMicro::getMotorEncodersTimedRaw(double *encs, double *stamps)
+ReturnValue FakeMotionControlMicro::getMotorEncodersTimedRaw(double *encs, double *stamps)
 {
-    bool ret = getMotorEncodersRaw(encs);
+    ReturnValue ret = getMotorEncodersRaw(encs);
     _mutex.lock();
     for (int i = 0; i < _njoints; i++) {
         stamps[i] = _encodersStamp[i];
@@ -551,9 +552,9 @@ bool FakeMotionControlMicro::getMotorEncodersTimedRaw(double *encs, double *stam
     return ret;
 }
 
-bool FakeMotionControlMicro::getMotorEncoderTimedRaw(int m, double *encs, double *stamp)
+ReturnValue FakeMotionControlMicro::getMotorEncoderTimedRaw(int m, double *encs, double *stamp)
 {
-    bool ret = getMotorEncoderRaw(m, encs);
+    ReturnValue ret = getMotorEncoderRaw(m, encs);
     _mutex.lock();
     *stamp = _encodersStamp[m];
     _mutex.unlock();
@@ -563,45 +564,33 @@ bool FakeMotionControlMicro::getMotorEncoderTimedRaw(int m, double *encs, double
 ///////////////////////// END Motor Encoder Interface
 
 
-bool FakeMotionControlMicro::getAxisNameRaw(int axis, std::string& name)
+ReturnValue FakeMotionControlMicro::getAxisNameRaw(int j, std::string& name)
 {
-    if (axis >= 0 && axis < _njoints)
-    {
-        name = _axisName[axis];
-        return true;
-    }
-    else
-    {
-        name = "ERROR";
-        return false;
-    }
+    name = "ERROR";
+    JOINTIDCHECK(_njoints);
+    name = _axisName[j];
+    return ReturnValue_ok;
 }
 
-bool FakeMotionControlMicro::getJointTypeRaw(int axis, yarp::dev::JointTypeEnum& type)
+ReturnValue FakeMotionControlMicro::getJointTypeRaw(int j, yarp::dev::JointTypeEnum& type)
 {
-    if (axis >= 0 && axis < _njoints)
-    {
-        type = _jointType[axis];
-        return true;
-    }
-    else
-    {
-        return false;
-    }
+    JOINTIDCHECK(_njoints);
+    type = _jointType[j];
+    return ReturnValue_ok;
 }
 
-bool FakeMotionControlMicro::getLastJointFaultRaw(int j, int& fault, std::string& message)
+ReturnValue FakeMotionControlMicro::getLastJointFaultRaw(int j, int& fault, std::string& message)
 {
     _mutex.lock();
     fault = _hwfault_code[j];
     message = _hwfault_message[j];
     _mutex.unlock();
-    return true;
+    return ReturnValue_ok;
 }
 
-bool FakeMotionControlMicro::getAxes(int* ax)
+ReturnValue FakeMotionControlMicro::getAxes(int* ax)
 {
     *ax = _njoints;
-    return true;
+    return ReturnValue_ok;
 }
 // eof
