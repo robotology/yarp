@@ -153,6 +153,7 @@ private:
     double* _encodersStamp = nullptr;                    /** keep information about acquisition time for encoders read */
     double* _ampsToSensor = nullptr;
     double* _dutycycleToPWM = nullptr;
+    double* _tempLimit = nullptr;
     float* _DEPRECATED_encoderconversionfactor = nullptr; /** iCubDegrees to encoder conversion factors */
     float* _DEPRECATED_encoderconversionoffset = nullptr;            /** iCubDegrees offset */
 //     uint8_t *_jointEncoderType;              /** joint encoder type*/

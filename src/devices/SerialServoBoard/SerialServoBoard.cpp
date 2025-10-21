@@ -97,7 +97,7 @@ bool SerialServoBoard::open(Searchable& config)
     positions = (double*)malloc(sizeof(double) * 32);
     speeds = (double*)malloc(sizeof(double) * 32);
 
-    return true;
+    return ReturnValue_ok;
 }
 
 bool SerialServoBoard::close()
@@ -111,7 +111,7 @@ bool SerialServoBoard::close()
 }
 
 
-bool SerialServoBoard::getAxes(int* ax)
+ReturnValue SerialServoBoard::getAxes(int* ax)
 {
     if (servoboard == SSC32) {
         *ax = 32;
@@ -127,166 +127,182 @@ bool SerialServoBoard::getAxes(int* ax)
         *ax = 20;
     }
 
-    return true;
+    return ReturnValue_ok;
 }
 
 
-bool SerialServoBoard::positionMove(int j, double ref)
+ReturnValue SerialServoBoard::positionMove(int j, double ref)
 {
     positions[j] = ref;
 
-    return move(j, ref, positions, speeds, serial);
+    if (move(j, ref, positions, speeds, serial))
+        return ReturnValue_ok;
+    return ReturnValue::return_code::return_value_error_method_failed;
 }
 
 
-bool SerialServoBoard::positionMove(const double* refs)
+ReturnValue SerialServoBoard::positionMove(const double* refs)
 {
     for (int k = 0; k < 32; k++) {
         this->positionMove(k, refs[k]);
     }
 
-    return true;
+    return ReturnValue_ok;
 }
 
 
-bool SerialServoBoard::relativeMove(int j, double delta)
+ReturnValue SerialServoBoard::relativeMove(int j, double delta)
 {
     this->positionMove(j, positions[j] + delta);
 
-    return true;
+    return ReturnValue_ok;
 }
 
 
-bool SerialServoBoard::relativeMove(const double* deltas)
+ReturnValue SerialServoBoard::relativeMove(const double* deltas)
 {
     for (int k = 0; k < 32; k++) {
         this->positionMove(k, positions[k] + deltas[k]);
     }
 
-    return true;
+    return ReturnValue_ok;
 }
 
 
-bool SerialServoBoard::checkMotionDone(int j, bool* flag)
+ReturnValue SerialServoBoard::checkMotionDone(int j, bool* flag)
 {
     //TODO: Q?
 
-    return true;
+    return ReturnValue_ok;
 }
 
 
-bool SerialServoBoard::checkMotionDone(bool* flag)
+ReturnValue SerialServoBoard::checkMotionDone(bool* flag)
 {
     //TODO: Q?
 
-    return true;
+    return ReturnValue_ok;
 }
 
 
-bool SerialServoBoard::setTrajSpeed(int j, double sp)
+ReturnValue SerialServoBoard::setTrajSpeed(int j, double sp)
 {
     speeds[j] = sp;
 
-    return true;
+    return ReturnValue_ok;
 }
 
 
-bool SerialServoBoard::setTrajSpeeds(const double* spds)
+ReturnValue SerialServoBoard::setTrajSpeeds(const double* spds)
 {
     for (int k = 0; k < 32; k++) {
         setTrajSpeed(k, spds[k]);
     }
 
-    return true;
+    return ReturnValue_ok;
 }
 
 
-bool SerialServoBoard::setTrajAcceleration(int j, double acc)
+ReturnValue SerialServoBoard::setTrajAcceleration(int j, double acc)
 {
-    return true;
+    return ReturnValue_ok;
 }
 
 
-bool SerialServoBoard::setTrajAccelerations(const double* accs)
+ReturnValue SerialServoBoard::setTrajAccelerations(const double* accs)
 {
-    return true;
+    return ReturnValue_ok;
 }
 
 
-bool SerialServoBoard::getTrajSpeed(int j, double* ref)
+ReturnValue SerialServoBoard::getTrajSpeed(int j, double* ref)
 {
     *ref = speeds[j];
 
-    return true;
+    return ReturnValue_ok;
 }
 
 
-bool SerialServoBoard::getTrajSpeeds(double* spds)
+ReturnValue SerialServoBoard::getTrajSpeeds(double* spds)
 {
     for (int k = 0; k < 32; k++) {
         spds[k] = speeds[k];
     }
 
-    return true;
+    return ReturnValue_ok;
 }
 
 
-bool SerialServoBoard::getTrajAcceleration(int j, double* acc)
+ReturnValue SerialServoBoard::getTrajAcceleration(int j, double* acc)
 {
-    return true;
+    return ReturnValue_ok;
 }
 
 
-bool SerialServoBoard::getTrajAccelerations(double* accs)
+ReturnValue SerialServoBoard::getTrajAccelerations(double* accs)
 {
-    return true;
+    return ReturnValue_ok;
 }
 
 
-bool SerialServoBoard::stop(int j)
+ReturnValue SerialServoBoard::stop(int j)
 {
-    return true;
+    return ReturnValue_ok;
 }
 
 
-bool SerialServoBoard::stop()
+ReturnValue SerialServoBoard::stop()
 {
-    return true;
+    return ReturnValue_ok;
 }
 
-bool SerialServoBoard::positionMove(const int n_joint, const int* joints, const double* refs)
+ReturnValue SerialServoBoard::positionMove(const int n_joint, const int* joints, const double* refs)
 {
-    return true;
+    return ReturnValue_ok;
 }
-bool SerialServoBoard::relativeMove(const int n_joint, const int* joints, const double* deltas)
+ReturnValue SerialServoBoard::relativeMove(const int n_joint, const int* joints, const double* deltas)
 {
-    return true;
+    return ReturnValue_ok;
 }
-bool SerialServoBoard::checkMotionDone(const int n_joint, const int* joints, bool* flags)
+ReturnValue SerialServoBoard::checkMotionDone(const int n_joint, const int* joints, bool* flags)
 {
-    return true;
+    return ReturnValue_ok;
 }
-bool SerialServoBoard::setTrajSpeeds(const int n_joint, const int* joints, const double* spds)
+ReturnValue SerialServoBoard::setTrajSpeeds(const int n_joint, const int* joints, const double* spds)
 {
-    return true;
+    return ReturnValue_ok;
 }
-bool SerialServoBoard::setTrajAccelerations(const int n_joint, const int* joints, const double* accs)
+ReturnValue SerialServoBoard::setTrajAccelerations(const int n_joint, const int* joints, const double* accs)
 {
-    return true;
+    return ReturnValue_ok;
 }
-bool SerialServoBoard::getTrajSpeeds(const int n_joint, const int* joints, double* spds)
+ReturnValue SerialServoBoard::getTrajSpeeds(const int n_joint, const int* joints, double* spds)
 {
-    return true;
+    return ReturnValue_ok;
 }
-bool SerialServoBoard::getTrajAccelerations(const int n_joint, const int* joints, double* accs)
+ReturnValue SerialServoBoard::getTrajAccelerations(const int n_joint, const int* joints, double* accs)
 {
-    return true;
+    return ReturnValue_ok;
 }
-bool SerialServoBoard::stop(const int n_joint, const int* joints)
+ReturnValue SerialServoBoard::stop(const int n_joint, const int* joints)
 {
-    return true;
+    return ReturnValue_ok;
 }
 
+ReturnValue SerialServoBoard::getTargetPosition(const int,double *)
+{
+    return ReturnValue::return_code::return_value_error_not_implemented_by_device;
+}
+
+ReturnValue SerialServoBoard::getTargetPositions(double *)
+{
+    return ReturnValue::return_code::return_value_error_not_implemented_by_device;
+}
+
+ReturnValue SerialServoBoard::getTargetPositions(const int,const int *,double *)
+{
+    return ReturnValue::return_code::return_value_error_not_implemented_by_device;
+}
 
 bool movessc32(int j, double ref, double* positions, double* speeds, ISerialDevice* serial)
 {
@@ -308,7 +324,7 @@ bool movessc32(int j, double ref, double* positions, double* speeds, ISerialDevi
     //    serial->send(str, 2+strlen(str+3));
     //}
 
-    return true;
+    return ReturnValue_ok;
 }
 
 
@@ -325,7 +341,7 @@ bool moveminissc(int j, double ref, double* positions, double* speeds, ISerialDe
 
     serial->send(cmd, 3);
 
-    return true;
+    return ReturnValue_ok;
 }
 
 
@@ -341,7 +357,7 @@ bool movepontech(int j, double ref, double* positions, double* speeds, ISerialDe
 
     serial->send(bot);
 
-    return true;
+    return ReturnValue_ok;
 }
 
 
@@ -358,7 +374,7 @@ bool movemondotronic(int j, double ref, double* positions, double* speeds, ISeri
 
     serial->send(cmd, 3);
 
-    return true;
+    return ReturnValue_ok;
 }
 
 
@@ -379,7 +395,7 @@ bool movepololu(int j, double ref, double* positions, double* speeds, ISerialDev
 
     serial->send(cmd, 6);
 
-    return true;
+    return ReturnValue_ok;
 }
 
 
@@ -405,5 +421,5 @@ bool movepicopic(int j, double ref, double* positions, double* speeds, ISerialDe
 
     serial->send(cmd, 5);
 
-    return true;
+    return ReturnValue_ok;
 }

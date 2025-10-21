@@ -331,6 +331,7 @@ void FakeMotionControl::setInfoMPids(int j)
     _hwfault_message = allocAndCheck<std::string>(nj);
     _braked = allocAndCheck<bool>(nj);
     _autobraked = allocAndCheck<bool>(nj);
+    _tempLimit = allocAndCheck<double>(nj);
 
     _ppids = allocAndCheck<std::vector<PidWithExtraInfo>>(nj);    for (int i = 0; i < nj; ++i) {_ppids[i].resize(npids); setInfoPPids(i);}
     _tpids = allocAndCheck<std::vector<PidWithExtraInfo>>(nj);    for (int i = 0; i < nj; ++i) {_tpids[i].resize(npids); setInfoTPids(i);}
@@ -446,6 +447,7 @@ bool FakeMotionControl::dealloc()
     checkAndDestroy(_maxJntCmdVelocity);
     checkAndDestroy(_maxMotorVelocity);
     checkAndDestroy(_newtonsToSensor);
+    checkAndDestroy(_tempLimit);
 
     checkAndDestroy(_ppids);
     checkAndDestroy(_tpids);
@@ -2240,22 +2242,34 @@ ReturnValue FakeMotionControl::setControlModesRaw(int *modes)
 
 ReturnValue FakeMotionControl::setEncoderRaw(int j, double val)
 {
-    return YARP_METHOD_NOT_YET_IMPLEMENTED();
+    JOINTIDCHECK(_njoints)
+    pos[j] = val;
+    return ReturnValue_ok;
 }
 
 ReturnValue FakeMotionControl::setEncodersRaw(const double *vals)
 {
-    return YARP_METHOD_NOT_YET_IMPLEMENTED();
+    for(int j=0; j< _njoints; j++)
+    {
+        pos[j] = vals[j];
+    }
+    return ReturnValue_ok;
 }
 
 ReturnValue FakeMotionControl::resetEncoderRaw(int j)
 {
-    return YARP_METHOD_NOT_YET_IMPLEMENTED();
+   JOINTIDCHECK(_njoints)
+    pos[j] = 0;
+    return ReturnValue_ok;
 }
 
 ReturnValue FakeMotionControl::resetEncodersRaw()
 {
-    return YARP_METHOD_NOT_YET_IMPLEMENTED();
+    for(int j=0; j< _njoints; j++)
+    {
+        pos[j] = 0;
+    }
+    return ReturnValue_ok;
 }
 
 ReturnValue FakeMotionControl::getEncoderRaw(int j, double *value)
@@ -2573,12 +2587,16 @@ ReturnValue FakeMotionControl::getPosLimitsRaw(int j, double *min, double *max)
 
 ReturnValue FakeMotionControl::getGearboxRatioRaw(int j, double *gearbox)
 {
-    return YARP_METHOD_NOT_YET_IMPLEMENTED();
+    JOINTIDCHECK(_njoints)
+    *gearbox = _gearbox[j];
+    return ReturnValue_ok;
 }
 
-ReturnValue FakeMotionControl::setGearboxRatioRaw(int m, const double val)
+ReturnValue FakeMotionControl::setGearboxRatioRaw(int j, const double val)
 {
-    return YARP_METHOD_NOT_YET_IMPLEMENTED();
+    JOINTIDCHECK(_njoints)
+    _gearbox[j] = val;
+    return ReturnValue_ok;
 }
 
 bool FakeMotionControl::getTorqueControlFilterType(int j, int& type)
@@ -3066,12 +3084,16 @@ ReturnValue FakeMotionControl::getTemperaturesRaw(double *vals)
 
 ReturnValue FakeMotionControl::getTemperatureLimitRaw(int m, double *temp)
 {
-    return YARP_METHOD_NOT_YET_IMPLEMENTED();
+    MOTORIDCHECK(_njoints)
+    *temp = _tempLimit[m];
+    return ReturnValue_ok;
 }
 
 ReturnValue FakeMotionControl::setTemperatureLimitRaw(int m, const double temp)
 {
-    return YARP_METHOD_NOT_YET_IMPLEMENTED();
+    MOTORIDCHECK(_njoints)
+    _tempLimit[m] = temp;
+    return ReturnValue_ok;
 }
 
 //PWM interface

@@ -354,22 +354,22 @@ void FakeMotionControlMicro::cleanup()
 
 ReturnValue FakeMotionControlMicro::setEncoderRaw(int j, double val)
 {
-    return YARP_METHOD_NOT_YET_IMPLEMENTED();
+    return ReturnValue_ok;
 }
 
 ReturnValue FakeMotionControlMicro::setEncodersRaw(const double *vals)
 {
-    return YARP_METHOD_NOT_YET_IMPLEMENTED();
+    return ReturnValue_ok;
 }
 
 ReturnValue FakeMotionControlMicro::resetEncoderRaw(int j)
 {
-    return YARP_METHOD_NOT_YET_IMPLEMENTED();
+    return ReturnValue_ok;
 }
 
 ReturnValue FakeMotionControlMicro::resetEncodersRaw()
 {
-    return YARP_METHOD_NOT_YET_IMPLEMENTED();
+    return ReturnValue_ok;
 }
 
 ReturnValue FakeMotionControlMicro::getEncoderRaw(int j, double *value)
