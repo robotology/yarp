@@ -7,12 +7,13 @@
 
 #include <yarp/dev/ImplementPositionControl.h>
 #include <yarp/dev/ControlBoardHelper.h>
+#include <yarp/dev/ControlBoardHelpers.h>
 #include <yarp/os/Log.h>
 #include <yarp/dev/impl/FixedSizeBuffersManager.h>
 
 using namespace yarp::dev;
 using namespace yarp::os;
-#define JOINTIDCHECK if (j >= castToMapper(helper)->axes()){yError("joint id out of bound"); return false;}
+#define JOINTIDCHECK if (j >= castToMapper(helper)->axes()){yError("joint id out of bound"); return ReturnValue::return_code::return_value_error_input_out_of_bounds;}
 
 ImplementPositionControl::ImplementPositionControl(yarp::dev::IPositionControlRaw *y) :
     iPosition(y),
@@ -89,7 +90,7 @@ bool ImplementPositionControl::uninitialize()
     return true;
 }
 
-bool ImplementPositionControl::positionMove(int j, double ang)
+ReturnValue ImplementPositionControl::positionMove(int j, double ang)
 {
     JOINTIDCHECK
     int k;
@@ -98,38 +99,36 @@ bool ImplementPositionControl::positionMove(int j, double ang)
     return iPosition->positionMoveRaw(k, enc);
 }
 
-bool ImplementPositionControl::positionMove(const int n_joint, const int *joints, const double *refs)
+ReturnValue ImplementPositionControl::positionMove(const int n_joints, const int *joints, const double *refs)
 {
-    if (!castToMapper(helper)->checkAxesIds(n_joint, joints)) {
-        return false;
-    }
+    JOINTSIDCHECK
 
     yarp::dev::impl::Buffer<double> buffValues = doubleBuffManager->getBuffer();
     yarp::dev::impl::Buffer<int> buffJoints = intBuffManager->getBuffer();
 
-    for(int idx=0; idx<n_joint; idx++)
+    for(int idx=0; idx<n_joints; idx++)
     {
         buffJoints[idx] = castToMapper(helper)->toHw(joints[idx]);
         buffValues[idx] = castToMapper(helper)->posA2E(refs[idx], joints[idx]);
     }
-    bool ret = iPosition->positionMoveRaw(n_joint, buffJoints.getData(), buffValues.getData());
+    ReturnValue ret = iPosition->positionMoveRaw(n_joints, buffJoints.getData(), buffValues.getData());
 
     intBuffManager->releaseBuffer(buffJoints);
     doubleBuffManager->releaseBuffer(buffValues);
     return ret;
 }
 
-bool ImplementPositionControl::positionMove(const double *refs)
+ReturnValue ImplementPositionControl::positionMove(const double *refs)
 {
     yarp::dev::impl::Buffer<double> buffValues = doubleBuffManager->getBuffer();
     castToMapper(helper)->posA2E(refs, buffValues.getData());
 
-    bool ret = iPosition->positionMoveRaw(buffValues.getData());
+    ReturnValue ret = iPosition->positionMoveRaw(buffValues.getData());
     doubleBuffManager->releaseBuffer(buffValues);
     return ret;
 }
 
-bool ImplementPositionControl::relativeMove(int j, double delta)
+ReturnValue ImplementPositionControl::relativeMove(int j, double delta)
 {
     JOINTIDCHECK
     int k;
@@ -139,35 +138,33 @@ bool ImplementPositionControl::relativeMove(int j, double delta)
     return iPosition->relativeMoveRaw(k,enc);
 }
 
-bool ImplementPositionControl::relativeMove(const int n_joint, const int *joints, const double *deltas)
+ReturnValue ImplementPositionControl::relativeMove(const int n_joints, const int *joints, const double *deltas)
 {
-    if (!castToMapper(helper)->checkAxesIds(n_joint, joints)) {
-        return false;
-    }
+    JOINTSIDCHECK
 
     yarp::dev::impl::Buffer<double> buffValues = doubleBuffManager->getBuffer();
     yarp::dev::impl::Buffer<int> buffJoints = intBuffManager->getBuffer();
-    for(int idx=0; idx<n_joint; idx++)
+    for(int idx=0; idx<n_joints; idx++)
     {
         buffJoints[idx] = castToMapper(helper)->toHw(joints[idx]);
         buffValues[idx] = castToMapper(helper)->velA2E(deltas[idx], joints[idx]);
     }
-    bool ret = iPosition->relativeMoveRaw(n_joint, buffJoints.getData(), buffValues.getData());
+    ReturnValue ret = iPosition->relativeMoveRaw(n_joints, buffJoints.getData(), buffValues.getData());
     doubleBuffManager->releaseBuffer(buffValues);
     intBuffManager->releaseBuffer(buffJoints);
     return ret;
 }
 
-bool ImplementPositionControl::relativeMove(const double *deltas)
+ReturnValue ImplementPositionControl::relativeMove(const double *deltas)
 {
     yarp::dev::impl::Buffer<double> buffValues = doubleBuffManager->getBuffer();
     castToMapper(helper)->velA2E(deltas, buffValues.getData());
-    bool ret = iPosition->relativeMoveRaw(buffValues.getData());
+    ReturnValue ret = iPosition->relativeMoveRaw(buffValues.getData());
     doubleBuffManager->releaseBuffer(buffValues);
     return ret;
 }
 
-bool ImplementPositionControl::checkMotionDone(int j, bool *flag)
+ReturnValue ImplementPositionControl::checkMotionDone(int j, bool *flag)
 {
     JOINTIDCHECK
     int k=castToMapper(helper)->toHw(j);
@@ -175,28 +172,25 @@ bool ImplementPositionControl::checkMotionDone(int j, bool *flag)
     return iPosition->checkMotionDoneRaw(k,flag);
 }
 
-bool ImplementPositionControl::checkMotionDone(const int n_joint, const int *joints, bool *flags)
+ReturnValue ImplementPositionControl::checkMotionDone(const int n_joints, const int *joints, bool *flags)
 {
-    if (!castToMapper(helper)->checkAxesIds(n_joint, joints)) {
-        return false;
-    }
-
+    JOINTSIDCHECK
     yarp::dev::impl::Buffer<int> buffJoints = intBuffManager->getBuffer();
-    for(int idx=0; idx<n_joint; idx++)
+    for(int idx=0; idx<n_joints; idx++)
     {
         buffJoints[idx] = castToMapper(helper)->toHw(joints[idx]);
     }
-    bool ret = iPosition->checkMotionDoneRaw(n_joint, buffJoints.getData(), flags);
+    ReturnValue ret = iPosition->checkMotionDoneRaw(n_joints, buffJoints.getData(), flags);
     intBuffManager->releaseBuffer(buffJoints);
     return ret;
 }
 
-bool ImplementPositionControl::checkMotionDone(bool *flag)
+ReturnValue ImplementPositionControl::checkMotionDone(bool *flag)
 {
     return iPosition->checkMotionDoneRaw(flag);
 }
 
-bool ImplementPositionControl::setTrajSpeed(int j, double sp)
+ReturnValue ImplementPositionControl::setTrajSpeed(int j, double sp)
 {
     JOINTIDCHECK
     int k;
@@ -205,33 +199,32 @@ bool ImplementPositionControl::setTrajSpeed(int j, double sp)
     return iPosition->setTrajSpeedRaw(k, enc);
 }
 
-bool ImplementPositionControl::setTrajSpeeds(const int n_joint, const int *joints, const double *spds)
+ReturnValue ImplementPositionControl::setTrajSpeeds(const int n_joints, const int *joints, const double *spds)
 {
-    if (!castToMapper(helper)->checkAxesIds(n_joint, joints)) {
-        return false;
-    }
+    JOINTSIDCHECK
+
     yarp::dev::impl::Buffer<double> buffValues = doubleBuffManager->getBuffer();
     yarp::dev::impl::Buffer<int> buffJoints = intBuffManager->getBuffer();
-    for(int idx=0; idx<n_joint; idx++)
+    for(int idx=0; idx<n_joints; idx++)
     {
         castToMapper(helper)->velA2E_abs(spds[idx], joints[idx], buffValues[idx], buffJoints[idx]);
     }
-    bool ret = iPosition->setTrajSpeedsRaw(n_joint, buffJoints.getData(), buffValues.getData());
+    ReturnValue ret = iPosition->setTrajSpeedsRaw(n_joints, buffJoints.getData(), buffValues.getData());
     doubleBuffManager->releaseBuffer(buffValues);
     intBuffManager->releaseBuffer(buffJoints);
     return ret;
 }
 
-bool ImplementPositionControl::setTrajSpeeds(const double *spds)
+ReturnValue ImplementPositionControl::setTrajSpeeds(const double *spds)
 {
     yarp::dev::impl::Buffer<double> buffValues = doubleBuffManager->getBuffer();
     castToMapper(helper)->velA2E_abs(spds, buffValues.getData());
-    bool ret = iPosition->setTrajSpeedsRaw(buffValues.getData());
+    ReturnValue ret = iPosition->setTrajSpeedsRaw(buffValues.getData());
     doubleBuffManager->releaseBuffer(buffValues);
     return ret;
 }
 
-bool ImplementPositionControl::setTrajAcceleration(int j, double acc)
+ReturnValue ImplementPositionControl::setTrajAcceleration(int j, double acc)
 {
     JOINTIDCHECK
     int k;
@@ -241,65 +234,61 @@ bool ImplementPositionControl::setTrajAcceleration(int j, double acc)
     return iPosition->setTrajAccelerationRaw(k, enc);
 }
 
-bool ImplementPositionControl::setTrajAccelerations(const int n_joint, const int *joints, const double *accs)
+ReturnValue ImplementPositionControl::setTrajAccelerations(const int n_joints, const int *joints, const double *accs)
 {
-    if (!castToMapper(helper)->checkAxesIds(n_joint, joints)) {
-        return false;
-    }
+    JOINTSIDCHECK
 
     yarp::dev::impl::Buffer<double> buffValues = doubleBuffManager->getBuffer();
     yarp::dev::impl::Buffer<int> buffJoints = intBuffManager->getBuffer();
-    for(int idx=0; idx<n_joint; idx++)
+    for(int idx=0; idx<n_joints; idx++)
     {
         castToMapper(helper)->accA2E_abs(accs[idx], joints[idx], buffValues[idx], buffJoints[idx]);
     }
 
-    bool ret = iPosition->setTrajAccelerationsRaw(n_joint, buffJoints.getData(), buffValues.getData());
+    ReturnValue ret = iPosition->setTrajAccelerationsRaw(n_joints, buffJoints.getData(), buffValues.getData());
     doubleBuffManager->releaseBuffer(buffValues);
     intBuffManager->releaseBuffer(buffJoints);
     return ret;
 }
 
-bool ImplementPositionControl::setTrajAccelerations(const double *accs)
+ReturnValue ImplementPositionControl::setTrajAccelerations(const double *accs)
 {
     yarp::dev::impl::Buffer<double> buffValues = doubleBuffManager->getBuffer();
     castToMapper(helper)->accA2E_abs(accs, buffValues.getData());
 
-    bool ret = iPosition->setTrajAccelerationsRaw(buffValues.getData());
+    ReturnValue ret = iPosition->setTrajAccelerationsRaw(buffValues.getData());
     doubleBuffManager->releaseBuffer(buffValues);
     return ret;
 }
 
-bool ImplementPositionControl::getTrajSpeed(int j, double *ref)
+ReturnValue ImplementPositionControl::getTrajSpeed(int j, double *ref)
 {
     JOINTIDCHECK
     int k;
     double enc;
     k=castToMapper(helper)->toHw(j);
 
-    bool ret = iPosition->getTrajSpeedRaw(k, &enc);
+    ReturnValue ret = iPosition->getTrajSpeedRaw(k, &enc);
 
     *ref=(castToMapper(helper)->velE2A_abs(enc, k));
 
     return ret;
 }
 
-bool ImplementPositionControl::getTrajSpeeds(const int n_joint, const int *joints, double *spds)
+ReturnValue ImplementPositionControl::getTrajSpeeds(const int n_joints, const int *joints, double *spds)
 {
-    if (!castToMapper(helper)->checkAxesIds(n_joint, joints)) {
-        return false;
-    }
+    JOINTSIDCHECK
 
     yarp::dev::impl::Buffer<int> buffJoints = intBuffManager->getBuffer();
-    for(int idx=0; idx<n_joint; idx++)
+    for(int idx=0; idx<n_joints; idx++)
     {
         buffJoints[idx] = castToMapper(helper)->toHw(joints[idx]);
     }
 
     yarp::dev::impl::Buffer<double> buffValues = doubleBuffManager->getBuffer();
-    bool ret = iPosition->getTrajSpeedsRaw(n_joint, buffJoints.getData(), buffValues.getData());
+    ReturnValue ret = iPosition->getTrajSpeedsRaw(n_joints, buffJoints.getData(), buffValues.getData());
 
-    for(int idx=0; idx<n_joint; idx++)
+    for(int idx=0; idx<n_joints; idx++)
     {
         spds[idx]=castToMapper(helper)->velE2A_abs(buffValues[idx], buffJoints[idx]);
     }
@@ -308,40 +297,38 @@ bool ImplementPositionControl::getTrajSpeeds(const int n_joint, const int *joint
     return ret;
 }
 
-bool ImplementPositionControl::getTrajSpeeds(double *spds)
+ReturnValue ImplementPositionControl::getTrajSpeeds(double *spds)
 {
     yarp::dev::impl::Buffer<double> buffValues = doubleBuffManager->getBuffer();
-    bool ret = iPosition->getTrajSpeedsRaw(buffValues.getData());
+    ReturnValue ret = iPosition->getTrajSpeedsRaw(buffValues.getData());
     castToMapper(helper)->velE2A_abs(buffValues.getData(), spds);
     doubleBuffManager->releaseBuffer(buffValues);
     return ret;
 }
 
-bool ImplementPositionControl::getTrajAccelerations(double *accs)
+ReturnValue ImplementPositionControl::getTrajAccelerations(double *accs)
 {
     yarp::dev::impl::Buffer<double> buffValues = doubleBuffManager->getBuffer();
-    bool ret=iPosition->getTrajAccelerationsRaw(buffValues.getData());
+    ReturnValue ret=iPosition->getTrajAccelerationsRaw(buffValues.getData());
     castToMapper(helper)->accE2A_abs(buffValues.getData(), accs);
     doubleBuffManager->releaseBuffer(buffValues);
     return ret;
 }
 
-bool ImplementPositionControl::getTrajAccelerations(const int n_joint, const int *joints, double *accs)
+ReturnValue ImplementPositionControl::getTrajAccelerations(const int n_joints, const int *joints, double *accs)
 {
-    if (!castToMapper(helper)->checkAxesIds(n_joint, joints)) {
-        return false;
-    }
+    JOINTSIDCHECK
 
     yarp::dev::impl::Buffer<int> buffJoints = intBuffManager->getBuffer();
-    for(int idx=0; idx<n_joint; idx++)
+    for(int idx=0; idx<n_joints; idx++)
     {
         buffJoints[idx] = castToMapper(helper)->toHw(joints[idx]);
     }
 
     yarp::dev::impl::Buffer<double> buffValues = doubleBuffManager->getBuffer();
-    bool ret = iPosition->getTrajAccelerationsRaw(n_joint, buffJoints.getData(), buffValues.getData());
+    ReturnValue ret = iPosition->getTrajAccelerationsRaw(n_joints, buffJoints.getData(), buffValues.getData());
 
-    for(int idx=0; idx<n_joint; idx++)
+    for(int idx=0; idx<n_joints; idx++)
     {
         accs[idx]=castToMapper(helper)->accE2A_abs(buffValues[idx], buffJoints[idx]);
     }
@@ -350,20 +337,20 @@ bool ImplementPositionControl::getTrajAccelerations(const int n_joint, const int
     return ret;
 }
 
-bool ImplementPositionControl::getTrajAcceleration(int j, double *acc)
+ReturnValue ImplementPositionControl::getTrajAcceleration(int j, double *acc)
 {
     JOINTIDCHECK
     int k;
     double enc;
     k=castToMapper(helper)->toHw(j);
-    bool ret = iPosition->getTrajAccelerationRaw(k, &enc);
+    ReturnValue ret = iPosition->getTrajAccelerationRaw(k, &enc);
 
     *acc=castToMapper(helper)->accE2A_abs(enc, k);
 
     return ret;
 }
 
-bool ImplementPositionControl::stop(int j)
+ReturnValue ImplementPositionControl::stop(int j)
 {
     JOINTIDCHECK
     int k;
@@ -372,7 +359,7 @@ bool ImplementPositionControl::stop(int j)
     return iPosition->stopRaw(k);
 }
 
-bool ImplementPositionControl::stop(const int n_joint, const int *joints)
+ReturnValue ImplementPositionControl::stop(const int n_joint, const int *joints)
 {
     yarp::dev::impl::Buffer<int> buffValues =intBuffManager->getBuffer();
     for(int idx=0; idx<n_joint; idx++)
@@ -380,63 +367,60 @@ bool ImplementPositionControl::stop(const int n_joint, const int *joints)
         buffValues[idx] = castToMapper(helper)->toHw(joints[idx]);
     }
 
-    bool ret = iPosition->stopRaw(n_joint, buffValues.getData());
+    ReturnValue ret = iPosition->stopRaw(n_joint, buffValues.getData());
     intBuffManager->releaseBuffer(buffValues);
     return ret;
 }
 
-bool ImplementPositionControl::stop()
+ReturnValue ImplementPositionControl::stop()
 {
     return iPosition->stopRaw();
 }
 
-bool ImplementPositionControl::getAxes(int *axis)
+ReturnValue ImplementPositionControl::getAxes(int *axis)
 {
     (*axis)=castToMapper(helper)->axes();
 
-    return true;
+    return ReturnValue_ok;
 }
 
 
-bool ImplementPositionControl::getTargetPosition(const int joint, double* ref)
+ReturnValue ImplementPositionControl::getTargetPosition(const int j, double* ref)
 {
-    if (!castToMapper(helper)->checkAxisId(joint)) {
-        return false;
-    }
+    JOINTIDCHECK
+
     int k;
     double enc;
-    k=castToMapper(helper)->toHw(joint);
-    bool ret = iPosition->getTargetPositionRaw(k, &enc);
+    k=castToMapper(helper)->toHw(j);
+    ReturnValue ret = iPosition->getTargetPositionRaw(k, &enc);
 
     *ref=castToMapper(helper)->posE2A(enc, k);
 
     return ret;
 }
 
-bool ImplementPositionControl::getTargetPositions(double* refs)
+ReturnValue ImplementPositionControl::getTargetPositions(double* refs)
 {
     yarp::dev::impl::Buffer<double> buffValues = doubleBuffManager->getBuffer();
-    bool ret=iPosition->getTargetPositionsRaw(buffValues.getData());
+    ReturnValue ret=iPosition->getTargetPositionsRaw(buffValues.getData());
     castToMapper(helper)->posE2A(buffValues.getData(), refs);
     doubleBuffManager->releaseBuffer(buffValues);
     return ret;
 }
 
-bool ImplementPositionControl::getTargetPositions(const int n_joint, const int* joints, double* refs)
+ReturnValue ImplementPositionControl::getTargetPositions(const int n_joints, const int* joints, double* refs)
 {
-    if (!castToMapper(helper)->checkAxesIds(n_joint, joints)) {
-        return false;
-    }
+    JOINTSIDCHECK
 
     yarp::dev::impl::Buffer<int> buffJoints =intBuffManager->getBuffer();
-    for(int idx=0; idx<n_joint; idx++)
+    for(int idx=0; idx<n_joints; idx++)
     {
         buffJoints[idx] = castToMapper(helper)->toHw(joints[idx]);
     }
     yarp::dev::impl::Buffer<double> buffValues = doubleBuffManager->getBuffer();
-    bool ret = iPosition->getTargetPositionsRaw(n_joint, buffJoints.getData(), buffValues.getData());
+    ReturnValue ret = iPosition->getTargetPositionsRaw(n_joints, buffJoints.getData(), buffValues.getData());
 
-    for(int idx=0; idx<n_joint; idx++)
+    for(int idx=0; idx<n_joints; idx++)
     {
         refs[idx]=castToMapper(helper)->posE2A(buffValues[idx], buffJoints[idx]);
     }
@@ -445,18 +429,3 @@ bool ImplementPositionControl::getTargetPositions(const int n_joint, const int* 
     return ret;
 }
 /////////////////// End Implement PostionControl
-
-
-
-// Stub interface
-
-bool StubImplPositionControlRaw::NOT_YET_IMPLEMENTED(const char *func)
-{
-    if (func) {
-        yError("%s: not yet implemented\n", func);
-    } else {
-        yError("Function not yet implemented\n");
-    }
-
-    return false;
-}

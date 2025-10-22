@@ -8,6 +8,7 @@
 #define YARP_DEV_REMOTECALIBRATOR_H
 
 #include <yarp/dev/DeviceDriver.h>
+#include <yarp/dev/ReturnValue.h>
 
 namespace yarp::dev {
 
@@ -43,7 +44,7 @@ public:
      * @return true on success
      */
 
-    virtual bool setCalibratorDevice(yarp::dev::IRemoteCalibrator* dev);
+    virtual yarp::dev::ReturnValue setCalibratorDevice(yarp::dev::IRemoteCalibrator* dev);
 
     /**
      * @brief getCalibratorDevice: return the pointer stored with the setCalibratorDevice
@@ -55,62 +56,62 @@ public:
      * @brief isCalibratorDevicePresent: check if a calibrator device has been set
      * @return true if a valid calibrator device has been found
      */
-    virtual bool isCalibratorDevicePresent(bool* isCalib);
+    virtual yarp::dev::ReturnValue isCalibratorDevicePresent(bool* isCalib);
 
     /**
      * @brief releaseCalibratorDevice: reset the internal pointer to NULL when stop using the calibrator
      */
-    virtual void releaseCalibratorDevice();
+    virtual yarp::dev::ReturnValue releaseCalibratorDevice();
 
     /**
      * @brief calibrateSingleJoint: call the calibration procedure for the single joint
      * @param j: joint to be calibrated
      * @return true if calibration was successful
      */
-    virtual bool calibrateSingleJoint(int j) = 0;
+    virtual yarp::dev::ReturnValue calibrateSingleJoint(int j) = 0;
 
     /**
      * @brief calibrateWholePart: call the procedure for calibrating the whole device
      * @return true if calibration was successful
      */
-    virtual bool calibrateWholePart() = 0;
+    virtual yarp::dev::ReturnValue calibrateWholePart() = 0;
 
     /**
      * @brief homingSingleJoint: call the homing procedure for a single joint
      * @param j: joint to be calibrated
      * @return true if homing was successful, false otherwise
      */
-    virtual bool homingSingleJoint(int j) = 0;
+    virtual yarp::dev::ReturnValue homingSingleJoint(int j) = 0;
 
     /**
      * @brief homingWholePart: call the homing procedure for a the whole part/device
      * @return true if homing was successful, false otherwise
      */
-    virtual bool homingWholePart() = 0;
+    virtual yarp::dev::ReturnValue homingWholePart() = 0;
 
     /**
      * @brief parkSingleJoint(): start the parking procedure for the single joint
      * @return true if successful
      */
-    virtual bool parkSingleJoint(int j, bool _wait = true) = 0;
+    virtual yarp::dev::ReturnValue parkSingleJoint(int j, bool _wait = true) = 0;
 
     /**
      * @brief parkWholePart: start the parking procedure for the whole part
      * @return true if successful
      */
-    virtual bool parkWholePart() = 0;
+    virtual yarp::dev::ReturnValue parkWholePart() = 0;
 
     /**
      * @brief quitCalibrate: interrupt the calibration procedure
      * @return true if successful
      */
-    virtual bool quitCalibrate() = 0;
+    virtual yarp::dev::ReturnValue quitCalibrate() = 0;
 
     /**
      * @brief quitPark: interrupt the park procedure
      * @return true if successful
      */
-    virtual bool quitPark() = 0;
+    virtual yarp::dev::ReturnValue quitPark() = 0;
 };
 
 } // namespace yarp::dev

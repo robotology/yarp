@@ -63,53 +63,53 @@ bool ImplementAmplifierControl::uninitialize ()
     return true;
 }
 
-bool ImplementAmplifierControl::enableAmp(int j)
+ReturnValue ImplementAmplifierControl::enableAmp(int j)
 {
     int k=castToMapper(helper)->toHw(j);
 
     return iAmplifier->enableAmpRaw(k);
 }
 
-bool ImplementAmplifierControl::disableAmp(int j)
+ReturnValue ImplementAmplifierControl::disableAmp(int j)
 {
     int k=castToMapper(helper)->toHw(j);
 
     return iAmplifier->disableAmpRaw(k);
 }
 
-bool ImplementAmplifierControl::getCurrents(double *currs)
+ReturnValue ImplementAmplifierControl::getCurrents(double *currs)
 {
-    bool ret=iAmplifier->getCurrentsRaw(dTemp);
+    ReturnValue ret=iAmplifier->getCurrentsRaw(dTemp);
     castToMapper(helper)->ampereS2A(dTemp, currs);
     return ret;
 }
 
-bool ImplementAmplifierControl::getCurrent(int j, double *c)
+ReturnValue ImplementAmplifierControl::getCurrent(int j, double *c)
 {
     double temp = 0;
     int k = castToMapper(helper)->toHw(j);
-    bool ret = iAmplifier->getCurrentRaw(k, &temp);
+    ReturnValue ret = iAmplifier->getCurrentRaw(k, &temp);
     castToMapper(helper)->ampereS2A(temp, k, *c, j);
     return ret;
 }
 
-bool ImplementAmplifierControl::getAmpStatus(int *st)
+ReturnValue ImplementAmplifierControl::getAmpStatus(int *st)
 {
-    bool ret=iAmplifier->getAmpStatusRaw(iTemp);
+    ReturnValue ret=iAmplifier->getAmpStatusRaw(iTemp);
     castToMapper(helper)->toUser(iTemp, st);
 
     return ret;
 }
 
-bool ImplementAmplifierControl::getAmpStatus(int k, int *st)
+ReturnValue ImplementAmplifierControl::getAmpStatus(int k, int *st)
 {
     int j=castToMapper(helper)->toHw(k);
-    bool ret=iAmplifier->getAmpStatusRaw(j, st);
+    ReturnValue ret=iAmplifier->getAmpStatusRaw(j, st);
 
     return ret;
 }
 
-bool ImplementAmplifierControl::setMaxCurrent(int m, double v)
+ReturnValue ImplementAmplifierControl::setMaxCurrent(int m, double v)
 {
     int k;
     double curr;
@@ -117,19 +117,19 @@ bool ImplementAmplifierControl::setMaxCurrent(int m, double v)
     return iAmplifier->setMaxCurrentRaw(k, curr);
 }
 
-bool ImplementAmplifierControl::getMaxCurrent(int j, double* v)
+ReturnValue ImplementAmplifierControl::getMaxCurrent(int j, double* v)
 {
     double val;
     int k=castToMapper(helper)->toHw(j);
-    bool ret = iAmplifier->getMaxCurrentRaw(k, &val);
+    ReturnValue ret = iAmplifier->getMaxCurrentRaw(k, &val);
     *v = castToMapper(helper)->ampereS2A(val, k);
     return ret;
 }
 
-bool ImplementAmplifierControl::getNominalCurrent(int m, double *curr)
+ReturnValue ImplementAmplifierControl::getNominalCurrent(int m, double *curr)
 {
     int k;
-    bool ret;
+    ReturnValue ret;
     double tmp;
 
     k=castToMapper(helper)->toHw(m);
@@ -138,10 +138,10 @@ bool ImplementAmplifierControl::getNominalCurrent(int m, double *curr)
     return ret;
 }
 
-bool ImplementAmplifierControl::getPeakCurrent(int m, double *curr)
+ReturnValue ImplementAmplifierControl::getPeakCurrent(int m, double *curr)
 {
     int k;
-    bool ret;
+    ReturnValue ret;
     double tmp;
 
     k=castToMapper(helper)->toHw(m);
@@ -150,7 +150,7 @@ bool ImplementAmplifierControl::getPeakCurrent(int m, double *curr)
     return ret;
 }
 
-bool ImplementAmplifierControl::setPeakCurrent(int m, const double curr)
+ReturnValue ImplementAmplifierControl::setPeakCurrent(int m, const double curr)
 {
     int k;
     double val;
@@ -158,7 +158,7 @@ bool ImplementAmplifierControl::setPeakCurrent(int m, const double curr)
     return iAmplifier->setPeakCurrentRaw(k, val);
 }
 
-bool ImplementAmplifierControl::setNominalCurrent(int m, const double curr)
+ReturnValue ImplementAmplifierControl::setNominalCurrent(int m, const double curr)
 {
     int k;
     double val;
@@ -166,28 +166,28 @@ bool ImplementAmplifierControl::setNominalCurrent(int m, const double curr)
     return iAmplifier->setNominalCurrentRaw(k, val);
 }
 
-bool ImplementAmplifierControl::getPWM(int m, double* pwm)
+ReturnValue ImplementAmplifierControl::getPWM(int m, double* pwm)
 {
     int k;
     k=castToMapper(helper)->toHw(m);
     return iAmplifier->getPWMRaw(k, pwm);
 }
 
-bool ImplementAmplifierControl::getPWMLimit(int m, double* limit)
+ReturnValue ImplementAmplifierControl::getPWMLimit(int m, double* limit)
 {
     int k;
     k=castToMapper(helper)->toHw(m);
     return iAmplifier->getPWMLimitRaw(k, limit);
 }
 
-bool ImplementAmplifierControl::setPWMLimit(int m, const double limit)
+ReturnValue ImplementAmplifierControl::setPWMLimit(int m, const double limit)
 {
     int k;
     k=castToMapper(helper)->toHw(m);
     return iAmplifier->setPWMLimitRaw(k, limit);
 }
 
-bool ImplementAmplifierControl::getPowerSupplyVoltage(int m, double *voltage)
+ReturnValue ImplementAmplifierControl::getPowerSupplyVoltage(int m, double *voltage)
 {
     int k;
     k=castToMapper(helper)->toHw(m);

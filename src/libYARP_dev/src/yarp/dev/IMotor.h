@@ -9,6 +9,7 @@
 #include <yarp/os/Vocab.h>
 #include <yarp/os/Log.h>
 #include <yarp/dev/api.h>
+#include <yarp/dev/ReturnValue.h>
 
 namespace yarp::dev {
 class IMotorRaw;
@@ -33,7 +34,7 @@ public:
      * @param num retrieved number of available motors
      * @return true/false
      */
-    virtual bool getNumberOfMotorsRaw(int *num) = 0;
+    virtual yarp::dev::ReturnValue getNumberOfMotorsRaw(int *num) = 0;
 
     /**
      * Get temperature of a motor.
@@ -41,23 +42,23 @@ public:
      * @param val retrieved motor temperature
      * @return true/false
      */
-    virtual bool getTemperatureRaw(int m, double* val)=0;
+    virtual yarp::dev::ReturnValue getTemperatureRaw(int m, double* val)=0;
 
     /**
      * Get temperature of all the motors.
      * @param vals pointer to an array containing all motor temperatures
      * @return true/false
      */
-    virtual bool getTemperaturesRaw(double *vals)=0;
+    virtual yarp::dev::ReturnValue getTemperaturesRaw(double *vals)=0;
 
     /**
-     * Retreives the current temperature limit for a specific motor.
+     * Retrieves the current temperature limit for a specific motor.
      * The specific behavior of the motor when the temperature limit is exceeded depends on the implementation (power off recommended)
      * @param m motor number
      * @param temp the current temperature limit.
      * @return true/false
      */
-    virtual bool getTemperatureLimitRaw(int m, double *temp)=0;
+    virtual yarp::dev::ReturnValue getTemperatureLimitRaw(int m, double *temp)=0;
 
     /**
      * Set the temperature limit for a specific motor.
@@ -66,7 +67,7 @@ public:
      * @param temp the temperature limit to be set
      * @return true/false
      */
-    virtual bool setTemperatureLimitRaw(int m, const double temp)=0;
+    virtual yarp::dev::ReturnValue setTemperatureLimitRaw(int m, const double temp)=0;
 
     /**
     * Get the gearbox ratio for a specific motor
@@ -74,7 +75,7 @@ public:
     * @param val retrieved gearbox ratio
     * @return true/false
     */
-    virtual bool getGearboxRatioRaw(int m, double *val) { yWarning("getGearboxRatioRaw() not implemented");  return false; };
+    virtual yarp::dev::ReturnValue getGearboxRatioRaw(int m, double *val) =0;
 
     /**
     * Set the gearbox ratio for a specific motor
@@ -82,7 +83,7 @@ public:
     * @param gearbox ratio to be set
     * @return true/false
     */
-    virtual bool setGearboxRatioRaw(int m, const double val) { yWarning("setGearboxRatioRaw() not implemented");  return false; };
+    virtual yarp::dev::ReturnValue setGearboxRatioRaw(int m, const double val) =0;
 };
 
 /**
@@ -103,7 +104,7 @@ public:
      * @param num retrieved number of available motors
      * @return true/false
      */
-    virtual bool getNumberOfMotors(int *num) = 0;
+    virtual yarp::dev::ReturnValue getNumberOfMotors(int *num) = 0;
 
     /**
      * Get temperature of a motor.
@@ -111,23 +112,23 @@ public:
      * @param val retrieved motor temperature
      * @return true/false
      */
-    virtual bool getTemperature(int m, double *val)=0;
+    virtual yarp::dev::ReturnValue getTemperature(int m, double *val)=0;
 
     /**
      * Get temperature of all the motors.
      * @param vals pointer to an array containing all motor temperatures
      * @return true/false
      */
-    virtual bool getTemperatures(double *vals)=0;
+    virtual yarp::dev::ReturnValue getTemperatures(double *vals)=0;
 
     /**
-     * Retreives the current temperature limit for a specific motor.
+     * Retrieves the current temperature limit for a specific motor.
      * The specific behavior of the motor when the temperature limit is exceeded depends on the implementation (power off recommended)
      * @param m motor number
      * @param temp the current temperature limit.
      * @return true/false
      */
-    virtual bool getTemperatureLimit(int m, double *temp)=0;
+    virtual yarp::dev::ReturnValue getTemperatureLimit(int m, double *temp)=0;
 
     /**
      * Set the temperature limit for a specific motor.
@@ -136,7 +137,7 @@ public:
      * @param temp the temperature limit to be set
      * @return true/false
      */
-    virtual bool setTemperatureLimit(int m, const double temp)=0;
+    virtual yarp::dev::ReturnValue setTemperatureLimit(int m, const double temp)=0;
 
     /**
     * Get the gearbox ratio for a specific motor
@@ -144,7 +145,7 @@ public:
     * @param val retrieved gearbox ratio
     * @return true/false
     */
-    virtual bool getGearboxRatio(int m, double *val) { yError("getGearboxRatioRaw() not implemented");  return false; };
+    virtual yarp::dev::ReturnValue getGearboxRatio(int m, double *val) =0;
 
     /**
     * Set the gearbox ratio for a specific motor
@@ -152,7 +153,7 @@ public:
     * @param gearbox ratio to be set
     * @return true/false
     */
-    virtual bool setGearboxRatio(int m, const double val) { yError("setGearboxRatio() not implemented");  return false; };
+    virtual yarp::dev::ReturnValue setGearboxRatio(int m, const double val) =0;
 };
 
 // interface IMotorEncoders gets

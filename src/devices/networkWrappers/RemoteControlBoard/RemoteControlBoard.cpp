@@ -339,55 +339,43 @@ bool RemoteControlBoard::close()
 
 // BEGIN Helpers functions
 
-bool RemoteControlBoard::send1V(int v)
+yarp::dev::ReturnValue RemoteControlBoard::send1V(int v)
 {
     Bottle cmd, response;
     cmd.addVocab32(v);
     bool ok=rpc_p.write(cmd, response);
-    if (CHECK_FAIL(ok, response)) {
-        return true;
-    }
-    return false;
+    return CHECK_FAIL(ok, response);
 }
 
-bool RemoteControlBoard::send2V(int v1, int v2)
+yarp::dev::ReturnValue RemoteControlBoard::send2V(int v1, int v2)
 {
     Bottle cmd, response;
     cmd.addVocab32(v1);
     cmd.addVocab32(v2);
     bool ok=rpc_p.write(cmd, response);
-    if (CHECK_FAIL(ok, response)) {
-        return true;
-    }
-    return false;
+    return CHECK_FAIL(ok, response);
 }
 
-bool RemoteControlBoard::send2V1I(int v1, int v2, int axis)
+yarp::dev::ReturnValue RemoteControlBoard::send2V1I(int v1, int v2, int axis)
 {
     Bottle cmd, response;
     cmd.addVocab32(v1);
     cmd.addVocab32(v2);
     cmd.addInt32(axis);
     bool ok=rpc_p.write(cmd, response);
-    if (CHECK_FAIL(ok, response)) {
-        return true;
-    }
-    return false;
+    return CHECK_FAIL(ok, response);
 }
 
-bool RemoteControlBoard::send1V1I(int v, int axis)
+yarp::dev::ReturnValue RemoteControlBoard::send1V1I(int v, int axis)
 {
     Bottle cmd, response;
     cmd.addVocab32(v);
     cmd.addInt32(axis);
     bool ok=rpc_p.write(cmd, response);
-    if (CHECK_FAIL(ok, response)) {
-        return true;
-    }
-    return false;
+    return CHECK_FAIL(ok, response);
 }
 
-bool RemoteControlBoard::send3V1I(int v1, int v2, int v3, int j)
+yarp::dev::ReturnValue RemoteControlBoard::send3V1I(int v1, int v2, int v3, int j)
 {
     Bottle cmd, response;
     cmd.addVocab32(v1);
@@ -395,13 +383,10 @@ bool RemoteControlBoard::send3V1I(int v1, int v2, int v3, int j)
     cmd.addVocab32(v3);
     cmd.addInt32(j);
     bool ok=rpc_p.write(cmd, response);
-    if (CHECK_FAIL(ok, response)) {
-        return true;
-    }
-    return false;
+    return CHECK_FAIL(ok, response);
 }
 
-bool RemoteControlBoard::set1V(int code)
+yarp::dev::ReturnValue RemoteControlBoard::set1V(int code)
 {
     Bottle cmd, response;
     cmd.addVocab32(VOCAB_SET);
@@ -411,7 +396,7 @@ bool RemoteControlBoard::set1V(int code)
     return CHECK_FAIL(ok, response);
 }
 
-bool RemoteControlBoard::set1V2D(int code, double v)
+yarp::dev::ReturnValue RemoteControlBoard::set1V2D(int code, double v)
 {
     Bottle cmd, response;
     cmd.addVocab32(VOCAB_SET);
@@ -423,7 +408,7 @@ bool RemoteControlBoard::set1V2D(int code, double v)
     return CHECK_FAIL(ok, response);
 }
 
-bool RemoteControlBoard::set1V1I(int code, int v)
+yarp::dev::ReturnValue RemoteControlBoard::set1V1I(int code, int v)
 {
     Bottle cmd, response;
     cmd.addVocab32(VOCAB_SET);
@@ -435,7 +420,7 @@ bool RemoteControlBoard::set1V1I(int code, int v)
     return CHECK_FAIL(ok, response);
 }
 
-bool RemoteControlBoard::get1V1D(int code, double& v) const
+yarp::dev::ReturnValue RemoteControlBoard::get1V1D(int code, double& v) const
 {
     Bottle cmd;
     Bottle response;
@@ -449,13 +434,13 @@ bool RemoteControlBoard::get1V1D(int code, double& v) const
         v = response.get(2).asFloat64();
 
         getTimeStamp(response, lastStamp);
-        return true;
+        return ReturnValue_ok;
     }
 
-    return false;
+    return ReturnValue::return_code::return_value_error_generic;
 }
 
-bool RemoteControlBoard::get1V1I(int code, int& v) const
+yarp::dev::ReturnValue RemoteControlBoard::get1V1I(int code, int& v) const
 {
     Bottle cmd;
     Bottle response;
@@ -469,13 +454,13 @@ bool RemoteControlBoard::get1V1I(int code, int& v) const
         v = response.get(2).asInt32();
 
         getTimeStamp(response, lastStamp);
-        return true;
+        return ReturnValue_ok;
     }
 
-    return false;
+    return ReturnValue::return_code::return_value_error_generic;
 }
 
-bool RemoteControlBoard::set1V1I1D(int code, int j, double val)
+yarp::dev::ReturnValue RemoteControlBoard::set1V1I1D(int code, int j, double val)
 {
     Bottle cmd, response;
     cmd.addVocab32(VOCAB_SET);
@@ -486,7 +471,7 @@ bool RemoteControlBoard::set1V1I1D(int code, int j, double val)
     return CHECK_FAIL(ok, response);
 }
 
-bool RemoteControlBoard::set1V1I2D(int code, int j, double val1, double val2)
+yarp::dev::ReturnValue RemoteControlBoard::set1V1I2D(int code, int j, double val1, double val2)
 {
     Bottle cmd, response;
     cmd.addVocab32(VOCAB_SET);
@@ -499,10 +484,10 @@ bool RemoteControlBoard::set1V1I2D(int code, int j, double val1, double val2)
     return CHECK_FAIL(ok, response);
 }
 
-bool RemoteControlBoard::set1VDA(int v, const double *val)
+yarp::dev::ReturnValue RemoteControlBoard::set1VDA(int v, const double *val)
 {
     if (!isLive()) {
-        return false;
+        return ReturnValue::return_code::return_value_error_not_ready;
     }
     Bottle cmd, response;
     cmd.addVocab32(VOCAB_SET);
@@ -515,10 +500,10 @@ bool RemoteControlBoard::set1VDA(int v, const double *val)
     return CHECK_FAIL(ok, response);
 }
 
-bool RemoteControlBoard::set2V1DA(int v1, int v2, const double *val)
+yarp::dev::ReturnValue RemoteControlBoard::set2V1DA(int v1, int v2, const double *val)
 {
     if (!isLive()) {
-        return false;
+        return ReturnValue::return_code::return_value_error_not_ready;
     }
     Bottle cmd, response;
     cmd.addVocab32(VOCAB_SET);
@@ -532,10 +517,10 @@ bool RemoteControlBoard::set2V1DA(int v1, int v2, const double *val)
     return CHECK_FAIL(ok, response);
 }
 
-bool RemoteControlBoard::set2V2DA(int v1, int v2, const double *val1, const double *val2)
+yarp::dev::ReturnValue RemoteControlBoard::set2V2DA(int v1, int v2, const double *val1, const double *val2)
 {
     if (!isLive()) {
-        return false;
+        return ReturnValue::return_code::return_value_error_not_ready;
     }
     Bottle cmd, response;
     cmd.addVocab32(VOCAB_SET);
@@ -553,10 +538,10 @@ bool RemoteControlBoard::set2V2DA(int v1, int v2, const double *val1, const doub
     return CHECK_FAIL(ok, response);
 }
 
-bool RemoteControlBoard::set1V1I1IA1DA(int v, const int len, const int *val1, const double *val2)
+yarp::dev::ReturnValue RemoteControlBoard::set1V1I1IA1DA(int v, const int len, const int *val1, const double *val2)
 {
     if (!isLive()) {
-        return false;
+        return ReturnValue::return_code::return_value_error_not_ready;
     }
     Bottle cmd, response;
     cmd.addVocab32(VOCAB_SET);
@@ -575,7 +560,7 @@ bool RemoteControlBoard::set1V1I1IA1DA(int v, const int len, const int *val1, co
     return CHECK_FAIL(ok, response);
 }
 
-bool RemoteControlBoard::set2V1I1D(int v1, int v2, int axis, double val)
+yarp::dev::ReturnValue RemoteControlBoard::set2V1I1D(int v1, int v2, int axis, double val)
 {
     Bottle cmd, response;
     cmd.addVocab32(VOCAB_SET);
@@ -587,7 +572,7 @@ bool RemoteControlBoard::set2V1I1D(int v1, int v2, int axis, double val)
     return CHECK_FAIL(ok, response);
 }
 
-bool RemoteControlBoard::set2V1I(int v1, int v2, int axis)
+yarp::dev::ReturnValue RemoteControlBoard::set2V1I(int v1, int v2, int axis)
 {
     Bottle cmd, response;
     cmd.addVocab32(VOCAB_SET);
@@ -598,7 +583,7 @@ bool RemoteControlBoard::set2V1I(int v1, int v2, int axis)
     return CHECK_FAIL(ok, response);
 }
 
-bool RemoteControlBoard::get1V1I1D(int v, int j, double *val)
+yarp::dev::ReturnValue RemoteControlBoard::get1V1I1D(int v, int j, double *val)
 {
     Bottle cmd, response;
     cmd.addVocab32(VOCAB_GET);
@@ -611,12 +596,12 @@ bool RemoteControlBoard::get1V1I1D(int v, int j, double *val)
         *val = response.get(2).asFloat64();
 
         getTimeStamp(response, lastStamp);
-        return true;
+        return ReturnValue_ok;
     }
-    return false;
+    return ReturnValue::return_code::return_value_error_generic;
 }
 
-bool RemoteControlBoard::get1V1I1I(int v, int j, int *val)
+yarp::dev::ReturnValue RemoteControlBoard::get1V1I1I(int v, int j, int *val)
 {
     Bottle cmd, response;
     cmd.addVocab32(VOCAB_GET);
@@ -628,12 +613,12 @@ bool RemoteControlBoard::get1V1I1I(int v, int j, int *val)
         *val = response.get(2).asInt32();
 
         getTimeStamp(response, lastStamp);
-        return true;
+        return ReturnValue_ok;
     }
-    return false;
+    return ReturnValue::return_code::return_value_error_generic;
 }
 
-bool RemoteControlBoard::get2V1I1D(int v1, int v2, int j, double *val)
+yarp::dev::ReturnValue RemoteControlBoard::get2V1I1D(int v1, int v2, int j, double *val)
 {
     Bottle cmd, response;
     cmd.addVocab32(VOCAB_GET);
@@ -647,12 +632,12 @@ bool RemoteControlBoard::get2V1I1D(int v1, int v2, int j, double *val)
         *val = response.get(2).asFloat64();
 
         getTimeStamp(response, lastStamp);
-        return true;
+        return ReturnValue_ok;
     }
-    return false;
+    return ReturnValue::return_code::return_value_error_generic;
 }
 
-bool RemoteControlBoard::get2V1I2D(int v1, int v2, int j, double *val1, double *val2)
+yarp::dev::ReturnValue RemoteControlBoard::get2V1I2D(int v1, int v2, int j, double *val1, double *val2)
 {
     Bottle cmd, response;
     cmd.addVocab32(VOCAB_GET);
@@ -666,12 +651,12 @@ bool RemoteControlBoard::get2V1I2D(int v1, int v2, int j, double *val1, double *
         *val2 = response.get(3).asFloat64();
 
         getTimeStamp(response, lastStamp);
-        return true;
+        return ReturnValue_ok;
     }
-    return false;
+    return ReturnValue::return_code::return_value_error_generic;
 }
 
-bool RemoteControlBoard::get1V1I2D(int code, int axis, double *v1, double *v2)
+yarp::dev::ReturnValue RemoteControlBoard::get1V1I2D(int code, int axis, double *v1, double *v2)
 {
     Bottle cmd, response;
     cmd.addVocab32(VOCAB_GET);
@@ -683,12 +668,12 @@ bool RemoteControlBoard::get1V1I2D(int code, int axis, double *v1, double *v2)
     if (CHECK_FAIL(ok, response)) {
         *v1 = response.get(2).asFloat64();
         *v2 = response.get(3).asFloat64();
-        return true;
+        return ReturnValue_ok;
     }
-    return false;
+    return ReturnValue::return_code::return_value_error_generic;
 }
 
-bool RemoteControlBoard::get1V1I1B(int v, int j, bool &val)
+yarp::dev::ReturnValue RemoteControlBoard::get1V1I1B(int v, int j, bool &val)
 {
     Bottle cmd, response;
     cmd.addVocab32(VOCAB_GET);
@@ -698,12 +683,12 @@ bool RemoteControlBoard::get1V1I1B(int v, int j, bool &val)
     if (CHECK_FAIL(ok, response)) {
         val = (response.get(2).asInt32()!=0);
         getTimeStamp(response, lastStamp);
-        return true;
+        return ReturnValue_ok;
     }
-    return false;
+    return ReturnValue::return_code::return_value_error_generic;
 }
 
-bool RemoteControlBoard::get1V1I1IA1B(int v,  const int len, const int *val1, bool &retVal)
+yarp::dev::ReturnValue RemoteControlBoard::get1V1I1IA1B(int v,  const int len, const int *val1, bool &retVal)
 {
     Bottle cmd, response;
     cmd.addVocab32(VOCAB_GET);
@@ -719,16 +704,16 @@ bool RemoteControlBoard::get1V1I1IA1B(int v,  const int len, const int *val1, bo
     if (CHECK_FAIL(ok, response)) {
         retVal = (response.get(2).asInt32()!=0);
         getTimeStamp(response, lastStamp);
-        return true;
+        return ReturnValue_ok;
     }
-    return false;
+    return ReturnValue::return_code::return_value_error_generic;
 }
 
-bool RemoteControlBoard::get2V1I1IA1DA(int v1, int v2, const int n_joints, const int *joints, double *retVals, std::string functionName)
+yarp::dev::ReturnValue RemoteControlBoard::get2V1I1IA1DA(int v1, int v2, const int n_joints, const int *joints, double *retVals, std::string functionName)
 {
     Bottle cmd, response;
     if (!isLive()) {
-        return false;
+        return ReturnValue::return_code::return_value_error_not_ready;
     }
 
     cmd.addVocab32(VOCAB_GET);
@@ -756,7 +741,7 @@ bool RemoteControlBoard::get2V1I1IA1DA(int v1, int v2, const int n_joints, const
                     functionName.c_str(),
                     n_joints ,
                     list.size() );
-            return false;
+            return ReturnValue::return_code::return_value_error_generic;
         }
         else
         {
@@ -764,13 +749,13 @@ bool RemoteControlBoard::get2V1I1IA1DA(int v1, int v2, const int n_joints, const
             {
                 retVals[i] = (double) list.get(i).asFloat64();
             }
-            return true;
+            return ReturnValue_ok;
         }
     }
-    return false;
+    return ReturnValue::return_code::return_value_error_generic;
 }
 
-bool RemoteControlBoard::get1V1B(int v, bool &val)
+yarp::dev::ReturnValue RemoteControlBoard::get1V1B(int v, bool &val)
 {
     Bottle cmd, response;
     cmd.addVocab32(VOCAB_GET);
@@ -779,15 +764,15 @@ bool RemoteControlBoard::get1V1B(int v, bool &val)
     if (CHECK_FAIL(ok, response)) {
         val = (response.get(2).asInt32()!=0);
         getTimeStamp(response, lastStamp);
-        return true;
+        return ReturnValue_ok;
     }
-    return false;
+    return ReturnValue::return_code::return_value_error_generic;
 }
 
-bool RemoteControlBoard::get1VIA(int v, int *val)
+yarp::dev::ReturnValue RemoteControlBoard::get1VIA(int v, int *val)
 {
     if (!isLive()) {
-        return false;
+        return ReturnValue::return_code::return_value_error_not_ready;
     }
     Bottle cmd, response;
     cmd.addVocab32(VOCAB_GET);
@@ -796,7 +781,7 @@ bool RemoteControlBoard::get1VIA(int v, int *val)
     if (CHECK_FAIL(ok, response)) {
         Bottle* lp = response.get(2).asList();
         if (lp == nullptr) {
-            return false;
+            return ReturnValue::return_code::return_value_error_generic;
         }
         Bottle& l = *lp;
         yCAssert(REMOTECONTROLBOARD, nj == l.size());
@@ -806,15 +791,15 @@ bool RemoteControlBoard::get1VIA(int v, int *val)
 
         getTimeStamp(response, lastStamp);
 
-        return true;
+        return ReturnValue_ok;
     }
-    return false;
+    return ReturnValue::return_code::return_value_error_generic;
 }
 
-bool RemoteControlBoard::get1VDA(int v, double *val)
+yarp::dev::ReturnValue RemoteControlBoard::get1VDA(int v, double *val)
 {
     if (!isLive()) {
-        return false;
+        return ReturnValue::return_code::return_value_error_not_ready;
     }
     Bottle cmd, response;
     cmd.addVocab32(VOCAB_GET);
@@ -823,7 +808,7 @@ bool RemoteControlBoard::get1VDA(int v, double *val)
     if (CHECK_FAIL(ok, response)) {
         Bottle* lp = response.get(2).asList();
         if (lp == nullptr) {
-            return false;
+            return ReturnValue::return_code::return_value_error_generic;
         }
         Bottle& l = *lp;
         yCAssert(REMOTECONTROLBOARD, nj == l.size());
@@ -833,15 +818,15 @@ bool RemoteControlBoard::get1VDA(int v, double *val)
 
         getTimeStamp(response, lastStamp);
 
-        return true;
+        return ReturnValue_ok;
     }
-    return false;
+    return ReturnValue::return_code::return_value_error_generic;
 }
 
-bool RemoteControlBoard::get1V1DA(int v1, double *val)
+yarp::dev::ReturnValue RemoteControlBoard::get1V1DA(int v1, double *val)
 {
     if (!isLive()) {
-        return false;
+        return ReturnValue::return_code::return_value_error_not_ready;
     }
     Bottle cmd, response;
     cmd.addVocab32(VOCAB_GET);
@@ -851,7 +836,7 @@ bool RemoteControlBoard::get1V1DA(int v1, double *val)
     if (CHECK_FAIL(ok, response)) {
         Bottle* lp = response.get(2).asList();
         if (lp == nullptr) {
-            return false;
+            return ReturnValue::return_code::return_value_error_generic;
         }
         Bottle& l = *lp;
         yCAssert(REMOTECONTROLBOARD, nj == l.size());
@@ -860,15 +845,15 @@ bool RemoteControlBoard::get1V1DA(int v1, double *val)
         }
 
         getTimeStamp(response, lastStamp);
-        return true;
+        return ReturnValue_ok;
     }
-    return false;
+    return ReturnValue::return_code::return_value_error_generic;
 }
 
-bool RemoteControlBoard::get2V1DA(int v1, int v2, double *val)
+yarp::dev::ReturnValue RemoteControlBoard::get2V1DA(int v1, int v2, double *val)
 {
     if (!isLive()) {
-        return false;
+        return ReturnValue::return_code::return_value_error_not_ready;
     }
     Bottle cmd, response;
     cmd.addVocab32(VOCAB_GET);
@@ -879,7 +864,7 @@ bool RemoteControlBoard::get2V1DA(int v1, int v2, double *val)
     if (CHECK_FAIL(ok, response)) {
         Bottle* lp = response.get(2).asList();
         if (lp == nullptr) {
-            return false;
+            return ReturnValue::return_code::return_value_error_generic;
         }
         Bottle& l = *lp;
         yCAssert(REMOTECONTROLBOARD, nj == l.size());
@@ -888,15 +873,15 @@ bool RemoteControlBoard::get2V1DA(int v1, int v2, double *val)
         }
 
         getTimeStamp(response, lastStamp);
-        return true;
+        return ReturnValue_ok;
     }
-    return false;
+    return ReturnValue::return_code::return_value_error_generic;
 }
 
-bool RemoteControlBoard::get2V2DA(int v1, int v2, double *val1, double *val2)
+yarp::dev::ReturnValue RemoteControlBoard::get2V2DA(int v1, int v2, double *val1, double *val2)
 {
     if (!isLive()) {
-        return false;
+        return ReturnValue::return_code::return_value_error_not_ready;
     }
     Bottle cmd, response;
     cmd.addVocab32(VOCAB_GET);
@@ -906,12 +891,12 @@ bool RemoteControlBoard::get2V2DA(int v1, int v2, double *val1, double *val2)
     if (CHECK_FAIL(ok, response)) {
         Bottle* lp1 = response.get(2).asList();
         if (lp1 == nullptr) {
-            return false;
+            return ReturnValue::return_code::return_value_error_generic;
         }
         Bottle& l1 = *lp1;
         Bottle* lp2 = response.get(3).asList();
         if (lp2 == nullptr) {
-            return false;
+            return ReturnValue::return_code::return_value_error_generic;
         }
         Bottle& l2 = *lp2;
 
@@ -928,12 +913,12 @@ bool RemoteControlBoard::get2V2DA(int v1, int v2, double *val1, double *val2)
         }
 
         getTimeStamp(response, lastStamp);
-        return true;
+        return ReturnValue_ok;
     }
-    return false;
+    return ReturnValue::return_code::return_value_error_generic;
 }
 
-bool RemoteControlBoard::get1V1I1S(int code, int j, std::string &name)
+yarp::dev::ReturnValue RemoteControlBoard::get1V1I1S(int code, int j, std::string &name)
 {
     Bottle cmd, response;
     cmd.addVocab32(VOCAB_GET);
@@ -943,16 +928,16 @@ bool RemoteControlBoard::get1V1I1S(int code, int j, std::string &name)
 
     if (CHECK_FAIL(ok, response)) {
         name = response.get(2).asString();
-        return true;
+        return ReturnValue_ok;
     }
-    return false;
+    return ReturnValue::return_code::return_value_error_generic;
 }
 
 
-bool RemoteControlBoard::get1V1I1IA1DA(int v, const int len, const int *val1, double *val2)
+yarp::dev::ReturnValue RemoteControlBoard::get1V1I1IA1DA(int v, const int len, const int *val1, double *val2)
 {
     if (!isLive()) {
-        return false;
+        return ReturnValue::return_code::return_value_error_not_ready;
     }
 
     Bottle cmd, response;
@@ -969,7 +954,7 @@ bool RemoteControlBoard::get1V1I1IA1DA(int v, const int len, const int *val1, do
     if (CHECK_FAIL(ok, response)) {
         Bottle* lp2 = response.get(2).asList();
         if (lp2 == nullptr) {
-            return false;
+            return ReturnValue::return_code::return_value_error_generic;
         }
         Bottle& l2 = *lp2;
 
@@ -977,21 +962,21 @@ bool RemoteControlBoard::get1V1I1IA1DA(int v, const int len, const int *val1, do
         if(nj2 != (unsigned)len)
         {
             yCError(REMOTECONTROLBOARD, "received an answer with an unexpected number of entries!");
-            return false;
+            return ReturnValue::return_code::return_value_error_generic;
         }
         for (size_t i = 0; i < nj2; i++) {
             val2[i] = l2.get(i).asFloat64();
         }
 
         getTimeStamp(response, lastStamp);
-        return true;
+        return ReturnValue_ok;
     }
-    return false;
+    return ReturnValue::return_code::return_value_error_generic;
 }
 
 // END Helpers functions
 
-bool RemoteControlBoard::getAxes(int *ax)
+yarp::dev::ReturnValue RemoteControlBoard::getAxes(int *ax)
 {
     return get1V1I(VOCAB_AXES, *ax);
 }
@@ -1318,37 +1303,37 @@ ReturnValue RemoteControlBoard::getPidFeedforward(const PidControlTypeEnum& pidt
 
 // BEGIN IEncoder
 
-bool RemoteControlBoard::resetEncoder(int j)
+yarp::dev::ReturnValue RemoteControlBoard::resetEncoder(int j)
 {
     return set1V1I(VOCAB_E_RESET, j);
 }
 
-bool RemoteControlBoard::resetEncoders()
+yarp::dev::ReturnValue RemoteControlBoard::resetEncoders()
 {
     return set1V(VOCAB_E_RESETS);
 }
 
-bool RemoteControlBoard::setEncoder(int j, double val)
+yarp::dev::ReturnValue RemoteControlBoard::setEncoder(int j, double val)
 {
     return set1V1I1D(VOCAB_ENCODER, j, val);
 }
 
-bool RemoteControlBoard::setEncoders(const double *vals)
+yarp::dev::ReturnValue RemoteControlBoard::setEncoders(const double *vals)
 {
     return set1VDA(VOCAB_ENCODERS, vals);
 }
 
-bool RemoteControlBoard::getEncoder(int j, double *v)
+yarp::dev::ReturnValue RemoteControlBoard::getEncoder(int j, double *v)
 {
     double localArrivalTime = 0.0;
 
     extendedPortMutex.lock();
     bool ret = extendedIntputStatePort.getLastSingle(j, VOCAB_ENCODER, v, lastStamp, localArrivalTime);
     extendedPortMutex.unlock();
-    return ret;
+    return ret?ReturnValue_ok:ReturnValue::return_code::return_value_error_not_ready;
 }
 
-bool RemoteControlBoard::getEncoderTimed(int j, double *v, double *t)
+yarp::dev::ReturnValue RemoteControlBoard::getEncoderTimed(int j, double *v, double *t)
 {
     double localArrivalTime = 0.0;
 
@@ -1356,21 +1341,20 @@ bool RemoteControlBoard::getEncoderTimed(int j, double *v, double *t)
     bool ret = extendedIntputStatePort.getLastSingle(j, VOCAB_ENCODER, v, lastStamp, localArrivalTime);
     *t=lastStamp.getTime();
     extendedPortMutex.unlock();
-    return ret;
+    return ret?ReturnValue_ok:ReturnValue::return_code::return_value_error_not_ready;
 }
 
-bool RemoteControlBoard::getEncoders(double *encs)
+yarp::dev::ReturnValue RemoteControlBoard::getEncoders(double *encs)
 {
     double localArrivalTime = 0.0;
 
     extendedPortMutex.lock();
     bool ret = extendedIntputStatePort.getLastVector(VOCAB_ENCODERS, encs, lastStamp, localArrivalTime);
     extendedPortMutex.unlock();
-
-    return ret;
+    return ret?ReturnValue_ok:ReturnValue::return_code::return_value_error_not_ready;
 }
 
-bool RemoteControlBoard::getEncodersTimed(double *encs, double *ts)
+yarp::dev::ReturnValue RemoteControlBoard::getEncodersTimed(double *encs, double *ts)
 {
     double localArrivalTime=0.0;
 
@@ -1378,52 +1362,52 @@ bool RemoteControlBoard::getEncodersTimed(double *encs, double *ts)
     bool ret = extendedIntputStatePort.getLastVector(VOCAB_ENCODERS, encs, lastStamp, localArrivalTime);
     std::fill_n(ts, nj, lastStamp.getTime());
     extendedPortMutex.unlock();
-    return ret;
+    return ret?ReturnValue_ok:ReturnValue::return_code::return_value_error_not_ready;
 }
 
-bool RemoteControlBoard::getEncoderSpeed(int j, double *sp)
+yarp::dev::ReturnValue RemoteControlBoard::getEncoderSpeed(int j, double *sp)
 {
     double localArrivalTime=0.0;
 
     extendedPortMutex.lock();
     bool ret = extendedIntputStatePort.getLastSingle(j, VOCAB_ENCODER_SPEED, sp, lastStamp, localArrivalTime);
     extendedPortMutex.unlock();
-    return ret;
+    return ret?ReturnValue_ok:ReturnValue::return_code::return_value_error_not_ready;
 }
 
-bool RemoteControlBoard::getEncoderSpeeds(double *spds)
+yarp::dev::ReturnValue RemoteControlBoard::getEncoderSpeeds(double *spds)
 {
     double localArrivalTime=0.0;
 
     extendedPortMutex.lock();
     bool ret = extendedIntputStatePort.getLastVector(VOCAB_ENCODER_SPEEDS, spds, lastStamp, localArrivalTime);
     extendedPortMutex.unlock();
-    return ret;
+    return ret?ReturnValue_ok:ReturnValue::return_code::return_value_error_not_ready;
 }
 
-bool RemoteControlBoard::getEncoderAcceleration(int j, double *acc)
+yarp::dev::ReturnValue RemoteControlBoard::getEncoderAcceleration(int j, double *acc)
 {
     double localArrivalTime=0.0;
     extendedPortMutex.lock();
     bool ret = extendedIntputStatePort.getLastSingle(j, VOCAB_ENCODER_ACCELERATION, acc, lastStamp, localArrivalTime);
     extendedPortMutex.unlock();
-    return ret;
+    return ret?ReturnValue_ok:ReturnValue::return_code::return_value_error_not_ready;
 }
 
-bool RemoteControlBoard::getEncoderAccelerations(double *accs)
+yarp::dev::ReturnValue RemoteControlBoard::getEncoderAccelerations(double *accs)
 {
     double localArrivalTime=0.0;
     extendedPortMutex.lock();
     bool ret = extendedIntputStatePort.getLastVector(VOCAB_ENCODER_ACCELERATIONS, accs, lastStamp, localArrivalTime);
     extendedPortMutex.unlock();
-    return ret;
+    return ret?ReturnValue_ok:ReturnValue::return_code::return_value_error_not_ready;
 }
 
 // END IEncoder
 
 // BEGIN IRemoteVariable
 
-bool RemoteControlBoard::getRemoteVariable(std::string key, yarp::os::Bottle& val)
+yarp::dev::ReturnValue RemoteControlBoard::getRemoteVariable(std::string key, yarp::os::Bottle& val)
 {
     Bottle cmd, response;
     cmd.addVocab32(VOCAB_GET);
@@ -1434,12 +1418,12 @@ bool RemoteControlBoard::getRemoteVariable(std::string key, yarp::os::Bottle& va
     if (CHECK_FAIL(ok, response))
     {
         val = *(response.get(2).asList());
-        return true;
+        return ReturnValue_ok;
     }
-    return false;
+    return ReturnValue::return_code::return_value_error_generic;
 }
 
-bool RemoteControlBoard::setRemoteVariable(std::string key, const yarp::os::Bottle& val)
+yarp::dev::ReturnValue RemoteControlBoard::setRemoteVariable(std::string key, const yarp::os::Bottle& val)
 {
     Bottle cmd, response;
     cmd.addVocab32(VOCAB_SET);
@@ -1454,7 +1438,7 @@ bool RemoteControlBoard::setRemoteVariable(std::string key, const yarp::os::Bott
 }
 
 
-bool RemoteControlBoard::getRemoteVariablesList(yarp::os::Bottle* listOfKeys)
+yarp::dev::ReturnValue RemoteControlBoard::getRemoteVariablesList(yarp::os::Bottle* listOfKeys)
 {
     Bottle cmd, response;
     cmd.addVocab32(VOCAB_GET);
@@ -1466,57 +1450,56 @@ bool RemoteControlBoard::getRemoteVariablesList(yarp::os::Bottle* listOfKeys)
     {
         *listOfKeys = *(response.get(2).asList());
         //std::string s = listOfKeys->toString();
-        return true;
+        return ReturnValue_ok;
     }
-    return false;
+    return ReturnValue::return_code::return_value_error_generic;
 }
 
 // END IRemoteVariable
 
 // BEGIN IMotor
 
-bool RemoteControlBoard::getNumberOfMotors(int *num)
+yarp::dev::ReturnValue RemoteControlBoard::getNumberOfMotors(int *num)
 {
     return get1V1I(VOCAB_MOTORS_NUMBER, *num);
 }
 
-bool RemoteControlBoard::getTemperature      (int m, double* val)
+yarp::dev::ReturnValue RemoteControlBoard::getTemperature      (int m, double* val)
 {
     double localArrivalTime = 0.0;
 
     extendedPortMutex.lock();
     bool ret = extendedIntputStatePort.getLastSingle(m, VOCAB_TEMPERATURE, val, lastStamp, localArrivalTime);
     extendedPortMutex.unlock();
-    return ret;
+    return ret?ReturnValue_ok:ReturnValue::return_code::return_value_error_not_ready;
 }
 
-bool RemoteControlBoard::getTemperatures     (double *vals)
+yarp::dev::ReturnValue RemoteControlBoard::getTemperatures     (double *vals)
 {
     double localArrivalTime = 0.0;
 
     extendedPortMutex.lock();
     bool ret = extendedIntputStatePort.getLastVector(VOCAB_TEMPERATURE, vals, lastStamp, localArrivalTime);
     extendedPortMutex.unlock();
-
-    return ret;
+    return ret?ReturnValue_ok:ReturnValue::return_code::return_value_error_not_ready;
 }
 
-bool RemoteControlBoard::getTemperatureLimit (int m, double* val)
+yarp::dev::ReturnValue RemoteControlBoard::getTemperatureLimit (int m, double* val)
 {
     return get1V1I1D(VOCAB_TEMPERATURE_LIMIT, m, val);
 }
 
-bool RemoteControlBoard::setTemperatureLimit (int m, const double val)
+yarp::dev::ReturnValue RemoteControlBoard::setTemperatureLimit (int m, const double val)
 {
     return set1V1I1D(VOCAB_TEMPERATURE_LIMIT, m, val);
 }
 
-bool RemoteControlBoard::getGearboxRatio(int m, double* val)
+yarp::dev::ReturnValue RemoteControlBoard::getGearboxRatio(int m, double* val)
 {
     return get1V1I1D(VOCAB_GEARBOX_RATIO, m, val);
 }
 
-bool RemoteControlBoard::setGearboxRatio(int m, const double val)
+yarp::dev::ReturnValue RemoteControlBoard::setGearboxRatio(int m, const double val)
 {
     return set1V1I1D(VOCAB_GEARBOX_RATIO, m, val);
 }
@@ -1525,47 +1508,47 @@ bool RemoteControlBoard::setGearboxRatio(int m, const double val)
 
 // BEGIN IMotorEncoder
 
-bool RemoteControlBoard::resetMotorEncoder(int j)
+yarp::dev::ReturnValue RemoteControlBoard::resetMotorEncoder(int j)
 {
     return set1V1I(VOCAB_MOTOR_E_RESET, j);
 }
 
-bool RemoteControlBoard::resetMotorEncoders()
+yarp::dev::ReturnValue RemoteControlBoard::resetMotorEncoders()
 {
     return set1V(VOCAB_MOTOR_E_RESETS);
 }
 
-bool RemoteControlBoard::setMotorEncoder(int j, const double val)
+yarp::dev::ReturnValue RemoteControlBoard::setMotorEncoder(int j, const double val)
 {
     return set1V1I1D(VOCAB_MOTOR_ENCODER, j, val);
 }
 
-bool RemoteControlBoard::setMotorEncoderCountsPerRevolution(int m, const double cpr)
+yarp::dev::ReturnValue RemoteControlBoard::setMotorEncoderCountsPerRevolution(int m, const double cpr)
 {
     return set1V1I1D(VOCAB_MOTOR_CPR, m, cpr);
 }
 
-bool RemoteControlBoard::getMotorEncoderCountsPerRevolution(int m, double *cpr)
+yarp::dev::ReturnValue RemoteControlBoard::getMotorEncoderCountsPerRevolution(int m, double *cpr)
 {
      return get1V1I1D(VOCAB_MOTOR_CPR, m, cpr);
 }
 
-bool RemoteControlBoard::setMotorEncoders(const double *vals)
+yarp::dev::ReturnValue RemoteControlBoard::setMotorEncoders(const double *vals)
 {
     return set1VDA(VOCAB_MOTOR_ENCODERS, vals);
 }
 
-bool RemoteControlBoard::getMotorEncoder(int j, double *v)
+yarp::dev::ReturnValue RemoteControlBoard::getMotorEncoder(int j, double *v)
 {
     double localArrivalTime = 0.0;
 
     extendedPortMutex.lock();
     bool ret = extendedIntputStatePort.getLastSingle(j, VOCAB_MOTOR_ENCODER, v, lastStamp, localArrivalTime);
     extendedPortMutex.unlock();
-    return ret;
+    return ret?ReturnValue_ok:ReturnValue::return_code::return_value_error_not_ready;
 }
 
-bool RemoteControlBoard::getMotorEncoderTimed(int j, double *v, double *t)
+yarp::dev::ReturnValue RemoteControlBoard::getMotorEncoderTimed(int j, double *v, double *t)
 {
     double localArrivalTime = 0.0;
 
@@ -1573,21 +1556,20 @@ bool RemoteControlBoard::getMotorEncoderTimed(int j, double *v, double *t)
     bool ret = extendedIntputStatePort.getLastSingle(j, VOCAB_MOTOR_ENCODER, v, lastStamp, localArrivalTime);
     *t=lastStamp.getTime();
     extendedPortMutex.unlock();
-    return ret;
+    return ret?ReturnValue_ok:ReturnValue::return_code::return_value_error_not_ready;
 }
 
-bool RemoteControlBoard::getMotorEncoders(double *encs)
+yarp::dev::ReturnValue RemoteControlBoard::getMotorEncoders(double *encs)
 {
     double localArrivalTime=0.0;
 
     extendedPortMutex.lock();
     bool ret = extendedIntputStatePort.getLastVector(VOCAB_MOTOR_ENCODERS, encs, lastStamp, localArrivalTime);
     extendedPortMutex.unlock();
-
-    return ret;
+    return ret?ReturnValue_ok:ReturnValue::return_code::return_value_error_not_ready;
 }
 
-bool RemoteControlBoard::getMotorEncodersTimed(double *encs, double *ts)
+yarp::dev::ReturnValue RemoteControlBoard::getMotorEncodersTimed(double *encs, double *ts)
 {
     double localArrivalTime=0.0;
 
@@ -1595,46 +1577,46 @@ bool RemoteControlBoard::getMotorEncodersTimed(double *encs, double *ts)
     bool ret = extendedIntputStatePort.getLastVector(VOCAB_MOTOR_ENCODERS, encs, lastStamp, localArrivalTime);
     std::fill_n(ts, nj, lastStamp.getTime());
     extendedPortMutex.unlock();
-    return ret;
+    return ret?ReturnValue_ok:ReturnValue::return_code::return_value_error_not_ready;
 }
 
-bool RemoteControlBoard::getMotorEncoderSpeed(int j, double *sp)
+yarp::dev::ReturnValue RemoteControlBoard::getMotorEncoderSpeed(int j, double *sp)
 {
     double localArrivalTime=0.0;
     extendedPortMutex.lock();
     bool ret = extendedIntputStatePort.getLastSingle(j, VOCAB_MOTOR_ENCODER_SPEED, sp, lastStamp, localArrivalTime);
     extendedPortMutex.unlock();
-    return ret;
+    return ret?ReturnValue_ok:ReturnValue::return_code::return_value_error_not_ready;
 }
 
-bool RemoteControlBoard::getMotorEncoderSpeeds(double *spds)
+yarp::dev::ReturnValue RemoteControlBoard::getMotorEncoderSpeeds(double *spds)
 {
     double localArrivalTime=0.0;
     extendedPortMutex.lock();
     bool ret = extendedIntputStatePort.getLastVector(VOCAB_MOTOR_ENCODER_SPEEDS, spds, lastStamp, localArrivalTime);
     extendedPortMutex.unlock();
-    return ret;
+    return ret?ReturnValue_ok:ReturnValue::return_code::return_value_error_not_ready;
 }
 
-bool RemoteControlBoard::getMotorEncoderAcceleration(int j, double *acc)
+yarp::dev::ReturnValue RemoteControlBoard::getMotorEncoderAcceleration(int j, double *acc)
 {
     double localArrivalTime=0.0;
     extendedPortMutex.lock();
     bool ret = extendedIntputStatePort.getLastSingle(j, VOCAB_MOTOR_ENCODER_ACCELERATION, acc, lastStamp, localArrivalTime);
     extendedPortMutex.unlock();
-    return ret;
+    return ret?ReturnValue_ok:ReturnValue::return_code::return_value_error_not_ready;
 }
 
-bool RemoteControlBoard::getMotorEncoderAccelerations(double *accs)
+yarp::dev::ReturnValue RemoteControlBoard::getMotorEncoderAccelerations(double *accs)
 {
     double localArrivalTime=0.0;
     extendedPortMutex.lock();
     bool ret = extendedIntputStatePort.getLastVector(VOCAB_MOTOR_ENCODER_SPEEDS, accs, lastStamp, localArrivalTime);
     extendedPortMutex.unlock();
-    return ret;
+    return ret?ReturnValue_ok:ReturnValue::return_code::return_value_error_not_ready;
 }
 
-bool RemoteControlBoard::getNumberOfMotorEncoders(int *num)
+yarp::dev::ReturnValue RemoteControlBoard::getNumberOfMotorEncoders(int *num)
 {
     return get1V1I(VOCAB_MOTOR_ENCODER_NUMBER, *num);
 }
@@ -1660,135 +1642,135 @@ Stamp RemoteControlBoard::getLastInputStamp()
 
 // BEGIN IPositionControl
 
-bool RemoteControlBoard::positionMove(int j, double ref)
+yarp::dev::ReturnValue RemoteControlBoard::positionMove(int j, double ref)
 {
     return set1V1I1D(VOCAB_POSITION_MOVE, j, ref);
 }
 
-bool RemoteControlBoard::positionMove(const int n_joint, const int *joints, const double *refs)
+yarp::dev::ReturnValue RemoteControlBoard::positionMove(const int n_joint, const int *joints, const double *refs)
 {
     return set1V1I1IA1DA(VOCAB_POSITION_MOVE_GROUP, n_joint, joints, refs);
 }
 
-bool RemoteControlBoard::positionMove(const double *refs)
+yarp::dev::ReturnValue RemoteControlBoard::positionMove(const double *refs)
 {
     return set1VDA(VOCAB_POSITION_MOVES, refs);
 }
 
-bool RemoteControlBoard::getTargetPosition(const int joint, double *ref)
+yarp::dev::ReturnValue RemoteControlBoard::getTargetPosition(const int joint, double *ref)
 {
     return get1V1I1D(VOCAB_POSITION_MOVE, joint, ref);
 }
 
-bool RemoteControlBoard::getTargetPositions(double *refs)
+yarp::dev::ReturnValue RemoteControlBoard::getTargetPositions(double *refs)
 {
     return get1V1DA(VOCAB_POSITION_MOVES, refs);
 }
 
-bool RemoteControlBoard::getTargetPositions(const int n_joint, const int *joints, double *refs)
+yarp::dev::ReturnValue RemoteControlBoard::getTargetPositions(const int n_joint, const int *joints, double *refs)
 {
     return get1V1I1IA1DA(VOCAB_POSITION_MOVE_GROUP, n_joint, joints, refs);
 }
 
-bool RemoteControlBoard::relativeMove(int j, double delta)
+yarp::dev::ReturnValue RemoteControlBoard::relativeMove(int j, double delta)
 {
     return set1V1I1D(VOCAB_RELATIVE_MOVE, j, delta);
 }
 
-bool RemoteControlBoard::relativeMove(const int n_joint, const int *joints, const double *refs)
+yarp::dev::ReturnValue RemoteControlBoard::relativeMove(const int n_joint, const int *joints, const double *refs)
 {
     return set1V1I1IA1DA(VOCAB_RELATIVE_MOVE_GROUP, n_joint, joints, refs);
 }
 
-bool RemoteControlBoard::relativeMove(const double *deltas)
+yarp::dev::ReturnValue RemoteControlBoard::relativeMove(const double *deltas)
 {
     return set1VDA(VOCAB_RELATIVE_MOVES, deltas);
 }
 
-bool RemoteControlBoard::checkMotionDone(int j, bool *flag)
+yarp::dev::ReturnValue RemoteControlBoard::checkMotionDone(int j, bool *flag)
 {
     return get1V1I1B(VOCAB_MOTION_DONE, j, *flag);
 }
 
-bool RemoteControlBoard::checkMotionDone(const int n_joint, const int *joints, bool *flag)
+yarp::dev::ReturnValue RemoteControlBoard::checkMotionDone(const int n_joint, const int *joints, bool *flag)
 {
     return get1V1I1IA1B(VOCAB_MOTION_DONE_GROUP, n_joint, joints, *flag);
 }
 
-bool RemoteControlBoard::checkMotionDone(bool *flag)
+yarp::dev::ReturnValue RemoteControlBoard::checkMotionDone(bool *flag)
 {
     return get1V1B(VOCAB_MOTION_DONES, *flag);
 }
 
-bool RemoteControlBoard::setTrajSpeed(int j, double sp)
+yarp::dev::ReturnValue RemoteControlBoard::setTrajSpeed(int j, double sp)
 {
     return set1V1I1D(VOCAB_REF_SPEED, j, sp);
 }
 
-bool RemoteControlBoard::setTrajSpeeds(const int n_joint, const int *joints, const double *spds)
+yarp::dev::ReturnValue RemoteControlBoard::setTrajSpeeds(const int n_joint, const int *joints, const double *spds)
 {
     return set1V1I1IA1DA(VOCAB_REF_SPEED_GROUP, n_joint, joints, spds);
 }
 
-bool RemoteControlBoard::setTrajSpeeds(const double *spds)
+yarp::dev::ReturnValue RemoteControlBoard::setTrajSpeeds(const double *spds)
 {
     return set1VDA(VOCAB_REF_SPEEDS, spds);
 }
 
-bool RemoteControlBoard::setTrajAcceleration(int j, double acc)
+yarp::dev::ReturnValue RemoteControlBoard::setTrajAcceleration(int j, double acc)
 {
     return set1V1I1D(VOCAB_REF_ACCELERATION, j, acc);
 }
 
-bool RemoteControlBoard::setTrajAccelerations(const int n_joint, const int *joints, const double *accs)
+yarp::dev::ReturnValue RemoteControlBoard::setTrajAccelerations(const int n_joint, const int *joints, const double *accs)
 {
     return set1V1I1IA1DA(VOCAB_REF_ACCELERATION_GROUP, n_joint, joints, accs);
 }
 
-bool RemoteControlBoard::setTrajAccelerations(const double *accs)
+yarp::dev::ReturnValue RemoteControlBoard::setTrajAccelerations(const double *accs)
 {
     return set1VDA(VOCAB_REF_ACCELERATIONS, accs);
 }
 
-bool RemoteControlBoard::getTrajSpeed(int j, double *ref)
+yarp::dev::ReturnValue RemoteControlBoard::getTrajSpeed(int j, double *ref)
 {
     return get1V1I1D(VOCAB_REF_SPEED, j, ref);
 }
 
-bool RemoteControlBoard::getTrajSpeeds(const int n_joint, const int *joints, double *spds)
+yarp::dev::ReturnValue RemoteControlBoard::getTrajSpeeds(const int n_joint, const int *joints, double *spds)
 {
     return get1V1I1IA1DA(VOCAB_REF_SPEED_GROUP, n_joint, joints, spds);
 }
 
-bool RemoteControlBoard::getTrajSpeeds(double *spds)
+yarp::dev::ReturnValue RemoteControlBoard::getTrajSpeeds(double *spds)
 {
     return get1VDA(VOCAB_REF_SPEEDS, spds);
 }
 
-bool RemoteControlBoard::getTrajAcceleration(int j, double *acc)
+yarp::dev::ReturnValue RemoteControlBoard::getTrajAcceleration(int j, double *acc)
 {
     return get1V1I1D(VOCAB_REF_ACCELERATION, j, acc);
 }
 
-bool RemoteControlBoard::getTrajAccelerations(const int n_joint, const int *joints, double *accs)
+yarp::dev::ReturnValue RemoteControlBoard::getTrajAccelerations(const int n_joint, const int *joints, double *accs)
 {
     return get1V1I1IA1DA(VOCAB_REF_ACCELERATION_GROUP, n_joint, joints, accs);
 }
 
-bool RemoteControlBoard::getTrajAccelerations(double *accs)
+yarp::dev::ReturnValue RemoteControlBoard::getTrajAccelerations(double *accs)
 {
     return get1VDA(VOCAB_REF_ACCELERATIONS, accs);
 }
 
-bool RemoteControlBoard::stop(int j)
+yarp::dev::ReturnValue RemoteControlBoard::stop(int j)
 {
     return set1V1I(VOCAB_STOP, j);
 }
 
-bool RemoteControlBoard::stop(const int len, const int *val1)
+yarp::dev::ReturnValue RemoteControlBoard::stop(const int len, const int *val1)
 {
     if (!isLive()) {
-        return false;
+        return ReturnValue::return_code::return_value_error_not_ready;
     }
     Bottle cmd, response;
     cmd.addVocab32(VOCAB_SET);
@@ -1804,7 +1786,7 @@ bool RemoteControlBoard::stop(const int len, const int *val1)
     return CHECK_FAIL(ok, response);
 }
 
-bool RemoteControlBoard::stop()
+yarp::dev::ReturnValue RemoteControlBoard::stop()
 {
     return set1V(VOCAB_STOPS);
 }
@@ -1812,7 +1794,7 @@ bool RemoteControlBoard::stop()
 // END IPositionControl
 
 // BEGIN IJoint Fault
-bool RemoteControlBoard::getLastJointFault(int j, int& fault, std::string& message)
+yarp::dev::ReturnValue RemoteControlBoard::getLastJointFault(int j, int& fault, std::string& message)
 {
     Bottle cmd, response;
 
@@ -1829,18 +1811,18 @@ bool RemoteControlBoard::getLastJointFault(int j, int& fault, std::string& messa
     {
         fault = response.get(1).asInt32();
         message = response.get(2).asString();
-        return true;
+        return ReturnValue_ok;
     }
-    return false;
+    return ReturnValue::return_code::return_value_error_generic;
 }
 // END IJointFault
 
 // BEGIN IVelocityControl
 
-bool RemoteControlBoard::velocityMove(int j, double v)
+yarp::dev::ReturnValue RemoteControlBoard::velocityMove(int j, double v)
 {
      if (!isLive()) {
-         return false;
+        return ReturnValue::return_code::return_value_error_not_ready;
      }
     CommandMessage& c = command_buffer.get();
     c.head.clear();
@@ -1850,13 +1832,13 @@ bool RemoteControlBoard::velocityMove(int j, double v)
     c.body.resize(1);
     memcpy(&(c.body[0]), &v, sizeof(double));
     command_buffer.write(writeStrict_singleJoint);
-    return true;
+    return ReturnValue_ok;
 }
 
-bool RemoteControlBoard::velocityMove(const double *v)
+yarp::dev::ReturnValue RemoteControlBoard::velocityMove(const double *v)
 {
     if (!isLive()) {
-        return false;
+        return ReturnValue::return_code::return_value_error_not_ready;
     }
     CommandMessage& c = command_buffer.get();
     c.head.clear();
@@ -1865,83 +1847,83 @@ bool RemoteControlBoard::velocityMove(const double *v)
     c.body.resize(nj);
     memcpy(&(c.body[0]), v, sizeof(double)*nj);
     command_buffer.write(writeStrict_moreJoints);
-    return true;
+    return ReturnValue_ok;
 }
 
 // END IVelocityControl
 
 // BEGIN IAmplifierControl
 
-bool RemoteControlBoard::enableAmp(int j)
+yarp::dev::ReturnValue RemoteControlBoard::enableAmp(int j)
 {
     return set1V1I(VOCAB_AMP_ENABLE, j);
 }
 
-bool RemoteControlBoard::disableAmp(int j)
+yarp::dev::ReturnValue RemoteControlBoard::disableAmp(int j)
 {
     return set1V1I(VOCAB_AMP_DISABLE, j);
 }
 
-bool RemoteControlBoard::getAmpStatus(int *st)
+yarp::dev::ReturnValue RemoteControlBoard::getAmpStatus(int *st)
 {
     return get1VIA(VOCAB_AMP_STATUS, st);
 }
 
-bool RemoteControlBoard::getAmpStatus(int j, int *st)
+yarp::dev::ReturnValue RemoteControlBoard::getAmpStatus(int j, int *st)
 {
     return get1V1I1I(VOCAB_AMP_STATUS_SINGLE, j, st);
 }
 
-bool RemoteControlBoard::setMaxCurrent(int j, double v)
+yarp::dev::ReturnValue RemoteControlBoard::setMaxCurrent(int j, double v)
 {
     return set1V1I1D(VOCAB_AMP_MAXCURRENT, j, v);
 }
 
-bool RemoteControlBoard::getMaxCurrent(int j, double *v)
+yarp::dev::ReturnValue RemoteControlBoard::getMaxCurrent(int j, double *v)
 {
     return get1V1I1D(VOCAB_AMP_MAXCURRENT, j, v);
 }
 
-bool RemoteControlBoard::getNominalCurrent(int m, double *val)
+yarp::dev::ReturnValue RemoteControlBoard::getNominalCurrent(int m, double *val)
 {
     return get1V1I1D(VOCAB_AMP_NOMINAL_CURRENT, m, val);
 }
 
-bool RemoteControlBoard::setNominalCurrent(int m, const double val)
+yarp::dev::ReturnValue RemoteControlBoard::setNominalCurrent(int m, const double val)
 {
     return set1V1I1D(VOCAB_AMP_NOMINAL_CURRENT, m, val);
 }
 
-bool RemoteControlBoard::getPeakCurrent(int m, double *val)
+yarp::dev::ReturnValue RemoteControlBoard::getPeakCurrent(int m, double *val)
 {
     return get1V1I1D(VOCAB_AMP_PEAK_CURRENT, m, val);
 }
 
-bool RemoteControlBoard::setPeakCurrent(int m, const double val)
+yarp::dev::ReturnValue RemoteControlBoard::setPeakCurrent(int m, const double val)
 {
     return set1V1I1D(VOCAB_AMP_PEAK_CURRENT, m, val);
 }
 
-bool RemoteControlBoard::getPWM(int m, double* val)
+yarp::dev::ReturnValue RemoteControlBoard::getPWM(int m, double* val)
 {
     double localArrivalTime = 0.0;
     extendedPortMutex.lock();
     bool ret = extendedIntputStatePort.getLastSingle(m, VOCAB_PWMCONTROL_PWM_OUTPUT, val, lastStamp, localArrivalTime);
     extendedPortMutex.unlock();
-    return ret;
+    return ret?ReturnValue_ok:ReturnValue::return_code::return_value_error_not_ready;
 }
 
-bool RemoteControlBoard::getPWMLimit(int m, double* val)
+yarp::dev::ReturnValue RemoteControlBoard::getPWMLimit(int m, double* val)
 {
     return get1V1I1D(VOCAB_AMP_PWM_LIMIT, m, val);
 }
 
-bool RemoteControlBoard::setPWMLimit(int m, const double val)
+yarp::dev::ReturnValue RemoteControlBoard::setPWMLimit(int m, const double val)
 {
     return set1V1I1D(VOCAB_AMP_PWM_LIMIT, m, val);
 }
 
-bool RemoteControlBoard::getPowerSupplyVoltage(int m, double* val)
+yarp::dev::ReturnValue RemoteControlBoard::getPowerSupplyVoltage(int m, double* val)
 {
     return get1V1I1D(VOCAB_AMP_VOLTAGE_SUPPLY, m, val);
 }
@@ -2002,12 +1984,12 @@ ReturnValue RemoteControlBoard::getVelLimits(int axis, double *min, double *max)
 
 // BEGIN IAxisInfo
 
-bool RemoteControlBoard::getAxisName(int j, std::string& name)
+yarp::dev::ReturnValue RemoteControlBoard::getAxisName(int j, std::string& name)
 {
     return get1V1I1S(VOCAB_INFO_NAME, j, name);
 }
 
-bool RemoteControlBoard::getJointType(int j, yarp::dev::JointTypeEnum& type)
+yarp::dev::ReturnValue RemoteControlBoard::getJointType(int j, yarp::dev::JointTypeEnum& type)
 {
     return get1V1I1I(VOCAB_INFO_TYPE, j, (int*)&type);
 }
@@ -2015,27 +1997,27 @@ bool RemoteControlBoard::getJointType(int j, yarp::dev::JointTypeEnum& type)
 // END IAxisInfo
 
 // BEGIN IControlCalibration
-bool RemoteControlBoard::calibrateRobot()
+yarp::dev::ReturnValue RemoteControlBoard::calibrateRobot()
 {
     return send1V(VOCAB_CALIBRATE);
 }
 
-bool RemoteControlBoard::abortCalibration()
+yarp::dev::ReturnValue RemoteControlBoard::abortCalibration()
 {
     return send1V(VOCAB_ABORTCALIB);
 }
 
-bool RemoteControlBoard::abortPark()
+yarp::dev::ReturnValue RemoteControlBoard::abortPark()
 {
     return send1V(VOCAB_ABORTPARK);
 }
 
-bool RemoteControlBoard::park(bool wait)
+yarp::dev::ReturnValue RemoteControlBoard::park(bool wait)
 {
     return send1V(VOCAB_PARK);
 }
 
-bool RemoteControlBoard::calibrateAxisWithParams(int j, unsigned int ui, double v1, double v2, double v3)
+yarp::dev::ReturnValue RemoteControlBoard::calibrateAxisWithParams(int j, unsigned int ui, double v1, double v2, double v3)
 {
     Bottle cmd, response;
 
@@ -2049,12 +2031,12 @@ bool RemoteControlBoard::calibrateAxisWithParams(int j, unsigned int ui, double 
     bool ok = rpc_p.write(cmd, response);
 
     if (CHECK_FAIL(ok, response)) {
-        return true;
+        return ReturnValue_ok;
     }
-    return false;
+    return ReturnValue::return_code::return_value_error_generic;
 }
 
-bool RemoteControlBoard::setCalibrationParameters(int j, const CalibrationParameters& params)
+yarp::dev::ReturnValue RemoteControlBoard::setCalibrationParameters(int j, const CalibrationParameters& params)
 {
     Bottle cmd, response;
 
@@ -2069,12 +2051,12 @@ bool RemoteControlBoard::setCalibrationParameters(int j, const CalibrationParame
     bool ok = rpc_p.write(cmd, response);
 
     if (CHECK_FAIL(ok, response)) {
-        return true;
+        return ReturnValue_ok;
     }
-    return false;
+    return ReturnValue::return_code::return_value_error_generic;
 }
 
-bool RemoteControlBoard::calibrationDone(int j)
+yarp::dev::ReturnValue RemoteControlBoard::calibrationDone(int j)
 {
     return send1V1I(VOCAB_CALIBRATE_DONE, j);
 }
@@ -2083,22 +2065,22 @@ bool RemoteControlBoard::calibrationDone(int j)
 
 // BEGIN ITorqueControl
 
-bool RemoteControlBoard::getRefTorque(int j, double *t)
+yarp::dev::ReturnValue RemoteControlBoard::getRefTorque(int j, double *t)
 {
     return get2V1I1D(VOCAB_TORQUE, VOCAB_REF, j, t);
 }
 
-bool RemoteControlBoard::getRefTorques(double *t)
+yarp::dev::ReturnValue RemoteControlBoard::getRefTorques(double *t)
 {
     return get2V1DA(VOCAB_TORQUE, VOCAB_REFS, t);
 }
 
-bool RemoteControlBoard::setRefTorques(const double *t)
+yarp::dev::ReturnValue RemoteControlBoard::setRefTorques(const double *t)
 {
     //Now we use streaming instead of rpc
     //return set2V1DA(VOCAB_TORQUE, VOCAB_REFS, t);
     if (!isLive()) {
-        return false;
+        return ReturnValue::return_code::return_value_error_not_ready;
     }
     CommandMessage& c = command_buffer.get();
     c.head.clear();
@@ -2109,15 +2091,15 @@ bool RemoteControlBoard::setRefTorques(const double *t)
     memcpy(c.body.data(), t, sizeof(double) * nj);
 
     command_buffer.write(writeStrict_moreJoints);
-    return true;
+    return ReturnValue_ok;
 }
 
-bool RemoteControlBoard::setRefTorque(int j, double v)
+yarp::dev::ReturnValue RemoteControlBoard::setRefTorque(int j, double v)
 {
     //return set2V1I1D(VOCAB_TORQUE, VOCAB_REF, j, v);
     // use the streaming port!
     if (!isLive()) {
-        return false;
+        return ReturnValue::return_code::return_value_error_not_ready;
     }
     CommandMessage& c = command_buffer.get();
     c.head.clear();
@@ -2129,15 +2111,15 @@ bool RemoteControlBoard::setRefTorque(int j, double v)
     c.body.resize(1);
     c.body[0] = v;
     command_buffer.write(writeStrict_singleJoint);
-    return true;
+    return ReturnValue_ok;
 }
 
-bool RemoteControlBoard::setRefTorques(const int n_joint, const int *joints, const double *t)
+yarp::dev::ReturnValue RemoteControlBoard::setRefTorques(const int n_joint, const int *joints, const double *t)
 {
     //return set2V1I1D(VOCAB_TORQUE, VOCAB_REF, j, v);
     // use the streaming port!
     if (!isLive()) {
-        return false;
+        return ReturnValue::return_code::return_value_error_not_ready;
     }
     CommandMessage& c = command_buffer.get();
     c.head.clear();
@@ -2151,10 +2133,10 @@ bool RemoteControlBoard::setRefTorques(const int n_joint, const int *joints, con
     c.body.resize(n_joint);
     memcpy(&(c.body[0]), t, sizeof(double)*n_joint);
     command_buffer.write(writeStrict_moreJoints);
-    return true;
+    return ReturnValue_ok;
 }
 
-bool RemoteControlBoard::setMotorTorqueParams(int j, const MotorTorqueParameters params)
+yarp::dev::ReturnValue RemoteControlBoard::setMotorTorqueParams(int j, const MotorTorqueParameters params)
 {
     Bottle cmd, response;
     cmd.addVocab32(VOCAB_SET);
@@ -2175,7 +2157,7 @@ bool RemoteControlBoard::setMotorTorqueParams(int j, const MotorTorqueParameters
     return CHECK_FAIL(ok, response);
 }
 
-bool RemoteControlBoard::getMotorTorqueParams(int j, MotorTorqueParameters *params)
+yarp::dev::ReturnValue RemoteControlBoard::getMotorTorqueParams(int j, MotorTorqueParameters *params)
 {
     Bottle cmd, response;
     cmd.addVocab32(VOCAB_GET);
@@ -2186,13 +2168,13 @@ bool RemoteControlBoard::getMotorTorqueParams(int j, MotorTorqueParameters *para
     if (CHECK_FAIL(ok, response)) {
         Bottle* lp = response.get(2).asList();
         if (lp == nullptr) {
-            return false;
+            return ReturnValue::return_code::return_value_error_generic;
         }
         Bottle& l = *lp;
         if (l.size() != 9)
         {
             yCError(REMOTECONTROLBOARD, "getMotorTorqueParams return value not understood, size != 9");
-            return false;
+            return ReturnValue::return_code::return_value_error_generic;
         }
         params->bemf        = l.get(0).asFloat64();
         params->bemf_scale  = l.get(1).asFloat64();
@@ -2203,35 +2185,35 @@ bool RemoteControlBoard::getMotorTorqueParams(int j, MotorTorqueParameters *para
         params->coulombPos   = l.get(6).asFloat64();
         params->coulombNeg = l.get(7).asFloat64();
         params->velocityThres = l.get(8).asFloat64();
-        return true;
+        return ReturnValue_ok;
     }
-    return false;
+    return ReturnValue::return_code::return_value_error_generic;
 }
 
-bool RemoteControlBoard::getTorque(int j, double *t)
+yarp::dev::ReturnValue RemoteControlBoard::getTorque(int j, double *t)
 {
     double localArrivalTime=0.0;
     extendedPortMutex.lock();
     bool ret = extendedIntputStatePort.getLastSingle(j, VOCAB_TRQ, t, lastStamp, localArrivalTime);
     extendedPortMutex.unlock();
-    return ret;
+    return ret?ReturnValue_ok:ReturnValue::return_code::return_value_error_not_ready;
 }
 
-bool RemoteControlBoard::getTorques(double *t)
+yarp::dev::ReturnValue RemoteControlBoard::getTorques(double *t)
 {
     double localArrivalTime=0.0;
     extendedPortMutex.lock();
     bool ret = extendedIntputStatePort.getLastVector(VOCAB_TRQS, t, lastStamp, localArrivalTime);
     extendedPortMutex.unlock();
-    return ret;
+    return ret?ReturnValue_ok:ReturnValue::return_code::return_value_error_not_ready;
 }
 
-bool RemoteControlBoard::getTorqueRange(int j, double *min, double* max)
+yarp::dev::ReturnValue RemoteControlBoard::getTorqueRange(int j, double *min, double* max)
 {
     return get2V1I2D(VOCAB_TORQUE, VOCAB_RANGE, j, min, max);
 }
 
-bool RemoteControlBoard::getTorqueRanges(double *min, double *max)
+yarp::dev::ReturnValue RemoteControlBoard::getTorqueRanges(double *min, double *max)
 {
     return get2V2DA(VOCAB_TORQUE, VOCAB_RANGES, min, max);
 }
@@ -2240,7 +2222,7 @@ bool RemoteControlBoard::getTorqueRanges(double *min, double *max)
 
 // BEGIN IImpedanceControl
 
-bool RemoteControlBoard::getImpedance(int j, double *stiffness, double *damping)
+yarp::dev::ReturnValue RemoteControlBoard::getImpedance(int j, double *stiffness, double *damping)
 {
     Bottle cmd, response;
     cmd.addVocab32(VOCAB_GET);
@@ -2251,17 +2233,17 @@ bool RemoteControlBoard::getImpedance(int j, double *stiffness, double *damping)
     if (CHECK_FAIL(ok, response)) {
         Bottle* lp = response.get(2).asList();
         if (lp == nullptr) {
-            return false;
+            return ReturnValue::return_code::return_value_error_generic;
         }
         Bottle& l = *lp;
         *stiffness = l.get(0).asFloat64();
         *damping   = l.get(1).asFloat64();
-        return true;
+        return ReturnValue_ok;
     }
-    return false;
+    return ReturnValue::return_code::return_value_error_generic;
 }
 
-bool RemoteControlBoard::getImpedanceOffset(int j, double *offset)
+yarp::dev::ReturnValue RemoteControlBoard::getImpedanceOffset(int j, double *offset)
 {
     Bottle cmd, response;
     cmd.addVocab32(VOCAB_GET);
@@ -2272,16 +2254,16 @@ bool RemoteControlBoard::getImpedanceOffset(int j, double *offset)
     if (CHECK_FAIL(ok, response)) {
         Bottle* lp = response.get(2).asList();
         if (lp == nullptr) {
-            return false;
+            return ReturnValue::return_code::return_value_error_generic;
         }
         Bottle& l = *lp;
         *offset    = l.get(0).asFloat64();
-        return true;
+        return ReturnValue_ok;
     }
-    return false;
+    return ReturnValue::return_code::return_value_error_generic;
 }
 
-bool RemoteControlBoard::setImpedance(int j, double stiffness, double damping)
+yarp::dev::ReturnValue RemoteControlBoard::setImpedance(int j, double stiffness, double damping)
 {
     Bottle cmd, response;
     cmd.addVocab32(VOCAB_SET);
@@ -2297,7 +2279,7 @@ bool RemoteControlBoard::setImpedance(int j, double stiffness, double damping)
     return CHECK_FAIL(ok, response);
 }
 
-bool RemoteControlBoard::setImpedanceOffset(int j, double offset)
+yarp::dev::ReturnValue RemoteControlBoard::setImpedanceOffset(int j, double offset)
 {
     Bottle cmd, response;
     cmd.addVocab32(VOCAB_SET);
@@ -2312,7 +2294,7 @@ bool RemoteControlBoard::setImpedanceOffset(int j, double offset)
     return CHECK_FAIL(ok, response);
 }
 
-bool RemoteControlBoard::getCurrentImpedanceLimit(int j, double *min_stiff, double *max_stiff, double *min_damp, double *max_damp)
+yarp::dev::ReturnValue RemoteControlBoard::getCurrentImpedanceLimit(int j, double *min_stiff, double *max_stiff, double *min_damp, double *max_damp)
 {
     Bottle cmd, response;
     cmd.addVocab32(VOCAB_GET);
@@ -2323,41 +2305,41 @@ bool RemoteControlBoard::getCurrentImpedanceLimit(int j, double *min_stiff, doub
     if (CHECK_FAIL(ok, response)) {
         Bottle* lp = response.get(2).asList();
         if (lp == nullptr) {
-            return false;
+            return ReturnValue::return_code::return_value_error_generic;
         }
         Bottle& l = *lp;
         *min_stiff    = l.get(0).asFloat64();
         *max_stiff    = l.get(1).asFloat64();
         *min_damp     = l.get(2).asFloat64();
         *max_damp     = l.get(3).asFloat64();
-        return true;
+        return ReturnValue_ok;
     }
-    return false;
+    return ReturnValue::return_code::return_value_error_generic;
 }
 
 // END IImpedanceControl
 
 // BEGIN IControlMode
 
-bool RemoteControlBoard::getControlMode(int j, int *mode)
+yarp::dev::ReturnValue RemoteControlBoard::getControlMode(int j, int *mode)
 {
     double localArrivalTime=0.0;
     extendedPortMutex.lock();
     bool ret = extendedIntputStatePort.getLastSingle(j, VOCAB_CM_CONTROL_MODE, mode, lastStamp, localArrivalTime);
     extendedPortMutex.unlock();
-    return ret;
+    return ret?ReturnValue_ok:ReturnValue::return_code::return_value_error_not_ready;
 }
 
-bool RemoteControlBoard::getControlModes(int *modes)
+yarp::dev::ReturnValue RemoteControlBoard::getControlModes(int *modes)
 {
     double localArrivalTime=0.0;
     extendedPortMutex.lock();
     bool ret = extendedIntputStatePort.getLastVector(VOCAB_CM_CONTROL_MODES, modes, lastStamp, localArrivalTime);
     extendedPortMutex.unlock();
-    return ret;
+    return ret?ReturnValue_ok:ReturnValue::return_code::return_value_error_not_ready;
 }
 
-bool RemoteControlBoard::getControlModes(const int n_joint, const int *joints, int *modes)
+yarp::dev::ReturnValue RemoteControlBoard::getControlModes(const int n_joint, const int *joints, int *modes)
 {
     double localArrivalTime=0.0;
 
@@ -2373,13 +2355,13 @@ bool RemoteControlBoard::getControlModes(const int n_joint, const int *joints, i
     }
 
     extendedPortMutex.unlock();
-    return ret;
+    return ret?ReturnValue_ok:ReturnValue::return_code::return_value_error_not_ready;
 }
 
-bool RemoteControlBoard::setControlMode(const int j, const int mode)
+yarp::dev::ReturnValue RemoteControlBoard::setControlMode(const int j, const int mode)
 {
     if (!isLive()) {
-        return false;
+        return ReturnValue::return_code::return_value_error_not_ready;
     }
     Bottle cmd, response;
     cmd.addVocab32(VOCAB_SET);
@@ -2392,10 +2374,10 @@ bool RemoteControlBoard::setControlMode(const int j, const int mode)
     return CHECK_FAIL(ok, response);
 }
 
-bool RemoteControlBoard::setControlModes(const int n_joint, const int *joints, int *modes)
+yarp::dev::ReturnValue RemoteControlBoard::setControlModes(const int n_joint, const int *joints, int *modes)
 {
     if (!isLive()) {
-        return false;
+        return ReturnValue::return_code::return_value_error_not_ready;
     }
     Bottle cmd, response;
     cmd.addVocab32(VOCAB_SET);
@@ -2417,10 +2399,10 @@ bool RemoteControlBoard::setControlModes(const int n_joint, const int *joints, i
     return CHECK_FAIL(ok, response);
 }
 
-bool RemoteControlBoard::setControlModes(int *modes)
+yarp::dev::ReturnValue RemoteControlBoard::setControlModes(int *modes)
 {
     if (!isLive()) {
-        return false;
+        return ReturnValue::return_code::return_value_error_not_ready;
     }
     Bottle cmd, response;
     cmd.addVocab32(VOCAB_SET);
@@ -2440,10 +2422,10 @@ bool RemoteControlBoard::setControlModes(int *modes)
 
 // BEGIN IPositionDirect
 
-bool RemoteControlBoard::setPosition(int j, double ref)
+yarp::dev::ReturnValue RemoteControlBoard::setPosition(int j, double ref)
 {
     if (!isLive()) {
-        return false;
+        return ReturnValue::return_code::return_value_error_not_ready;
     }
     CommandMessage& c = command_buffer.get();
     c.head.clear();
@@ -2453,13 +2435,13 @@ bool RemoteControlBoard::setPosition(int j, double ref)
     c.body.resize(1);
     memcpy(&(c.body[0]), &ref, sizeof(double));
     command_buffer.write(writeStrict_singleJoint);
-    return true;
+    return ReturnValue_ok;
 }
 
-bool RemoteControlBoard::setPositions(const int n_joint, const int *joints, const double *refs)
+yarp::dev::ReturnValue RemoteControlBoard::setPositions(const int n_joint, const int *joints, const double *refs)
 {
     if (!isLive()) {
-        return false;
+        return ReturnValue::return_code::return_value_error_not_ready;
     }
     CommandMessage& c = command_buffer.get();
     c.head.clear();
@@ -2473,13 +2455,13 @@ bool RemoteControlBoard::setPositions(const int n_joint, const int *joints, cons
     c.body.resize(n_joint);
     memcpy(&(c.body[0]), refs, sizeof(double)*n_joint);
     command_buffer.write(writeStrict_moreJoints);
-    return true;
+    return ReturnValue_ok;
 }
 
-bool RemoteControlBoard::setPositions(const double *refs)
+yarp::dev::ReturnValue RemoteControlBoard::setPositions(const double *refs)
 {
     if (!isLive()) {
-        return false;
+        return ReturnValue::return_code::return_value_error_not_ready;
     }
     CommandMessage& c = command_buffer.get();
     c.head.clear();
@@ -2488,20 +2470,20 @@ bool RemoteControlBoard::setPositions(const double *refs)
     c.body.resize(nj);
     memcpy(&(c.body[0]), refs, sizeof(double)*nj);
     command_buffer.write(writeStrict_moreJoints);
-    return true;
+    return ReturnValue_ok;
 }
 
-bool RemoteControlBoard::getRefPosition(const int joint, double* ref)
+yarp::dev::ReturnValue RemoteControlBoard::getRefPosition(const int joint, double* ref)
 {
     return get1V1I1D(VOCAB_POSITION_DIRECT, joint, ref);
 }
 
-bool RemoteControlBoard::getRefPositions(double* refs)
+yarp::dev::ReturnValue RemoteControlBoard::getRefPositions(double* refs)
 {
     return get1V1DA(VOCAB_POSITION_DIRECTS, refs);
 }
 
-bool RemoteControlBoard::getRefPositions(const int n_joint, const int* joints, double* refs)
+yarp::dev::ReturnValue RemoteControlBoard::getRefPositions(const int n_joint, const int* joints, double* refs)
 {
     return get1V1I1IA1DA(VOCAB_POSITION_DIRECT_GROUP, n_joint, joints, refs);
 }
@@ -2510,11 +2492,11 @@ bool RemoteControlBoard::getRefPositions(const int n_joint, const int* joints, d
 
 // BEGIN IVelocityControl
 
-bool RemoteControlBoard::velocityMove(const int n_joint, const int *joints, const double *spds)
+yarp::dev::ReturnValue RemoteControlBoard::velocityMove(const int n_joint, const int *joints, const double *spds)
 {
     // streaming port
     if (!isLive()) {
-        return false;
+        return ReturnValue::return_code::return_value_error_not_ready;
     }
     CommandMessage& c = command_buffer.get();
     c.head.clear();
@@ -2528,20 +2510,20 @@ bool RemoteControlBoard::velocityMove(const int n_joint, const int *joints, cons
     c.body.resize(n_joint);
     memcpy(&(c.body[0]), spds, sizeof(double)*n_joint);
     command_buffer.write(writeStrict_moreJoints);
-    return true;
+    return ReturnValue_ok;
 }
 
-bool RemoteControlBoard::getTargetVelocity(const int joint, double* vel)
+yarp::dev::ReturnValue RemoteControlBoard::getTargetVelocity(const int joint, double* vel)
 {
     return get1V1I1D(VOCAB_VELOCITY_MOVE, joint, vel);
 }
 
-bool RemoteControlBoard::getTargetVelocities(double* vels)
+yarp::dev::ReturnValue RemoteControlBoard::getTargetVelocities(double* vels)
 {
     return get1VDA(VOCAB_VELOCITY_MOVES, vels);
 }
 
-bool RemoteControlBoard::getTargetVelocities(const int n_joint, const int* joints, double* vels)
+yarp::dev::ReturnValue RemoteControlBoard::getTargetVelocities(const int n_joint, const int* joints, double* vels)
 {
     return get1V1I1IA1DA(VOCAB_VELOCITY_MOVE_GROUP, n_joint, joints, vels);
 }
@@ -2550,16 +2532,16 @@ bool RemoteControlBoard::getTargetVelocities(const int n_joint, const int* joint
 
 // BEGIN IInteractionMode
 
-bool RemoteControlBoard::getInteractionMode(int axis, yarp::dev::InteractionModeEnum* mode)
+yarp::dev::ReturnValue RemoteControlBoard::getInteractionMode(int axis, yarp::dev::InteractionModeEnum* mode)
 {
     double localArrivalTime=0.0;
     extendedPortMutex.lock();
     bool ret = extendedIntputStatePort.getLastSingle(axis, VOCAB_INTERACTION_MODE, (int*) mode, lastStamp, localArrivalTime);
     extendedPortMutex.unlock();
-    return ret;
+    return ret?ReturnValue_ok:ReturnValue::return_code::return_value_error_not_ready;
 }
 
-bool RemoteControlBoard::getInteractionModes(int n_joints, int *joints, yarp::dev::InteractionModeEnum* modes)
+yarp::dev::ReturnValue RemoteControlBoard::getInteractionModes(int n_joints, int *joints, yarp::dev::InteractionModeEnum* modes)
 {
     double localArrivalTime=0.0;
 
@@ -2575,23 +2557,23 @@ bool RemoteControlBoard::getInteractionModes(int n_joints, int *joints, yarp::de
     }
 
     extendedPortMutex.unlock();
-    return ret;
+    return ret?ReturnValue_ok:ReturnValue::return_code::return_value_error_not_ready;
 }
 
-bool RemoteControlBoard::getInteractionModes(yarp::dev::InteractionModeEnum* modes)
+yarp::dev::ReturnValue RemoteControlBoard::getInteractionModes(yarp::dev::InteractionModeEnum* modes)
 {
     double localArrivalTime=0.0;
     extendedPortMutex.lock();
     bool ret = extendedIntputStatePort.getLastVector(VOCAB_INTERACTION_MODES, (int*) modes, lastStamp, localArrivalTime);
     extendedPortMutex.unlock();
-    return ret;
+    return ret?ReturnValue_ok:ReturnValue::return_code::return_value_error_not_ready;
 }
 
-bool RemoteControlBoard::setInteractionMode(int axis, yarp::dev::InteractionModeEnum mode)
+yarp::dev::ReturnValue RemoteControlBoard::setInteractionMode(int axis, yarp::dev::InteractionModeEnum mode)
 {
     Bottle cmd, response;
     if (!isLive()) {
-        return false;
+        return ReturnValue::return_code::return_value_error_not_ready;
     }
 
     cmd.addVocab32(VOCAB_SET);
@@ -2604,11 +2586,11 @@ bool RemoteControlBoard::setInteractionMode(int axis, yarp::dev::InteractionMode
     return CHECK_FAIL(ok, response);
 }
 
-bool RemoteControlBoard::setInteractionModes(int n_joints, int *joints, yarp::dev::InteractionModeEnum* modes)
+yarp::dev::ReturnValue RemoteControlBoard::setInteractionModes(int n_joints, int *joints, yarp::dev::InteractionModeEnum* modes)
 {
     Bottle cmd, response;
     if (!isLive()) {
-        return false;
+        return ReturnValue::return_code::return_value_error_not_ready;
     }
 
     cmd.addVocab32(VOCAB_SET);
@@ -2630,11 +2612,11 @@ bool RemoteControlBoard::setInteractionModes(int n_joints, int *joints, yarp::de
     return CHECK_FAIL(ok, response);
 }
 
-bool RemoteControlBoard::setInteractionModes(yarp::dev::InteractionModeEnum* modes)
+yarp::dev::ReturnValue RemoteControlBoard::setInteractionModes(yarp::dev::InteractionModeEnum* modes)
 {
     Bottle cmd, response;
     if (!isLive()) {
-        return false;
+        return ReturnValue::return_code::return_value_error_not_ready;
     }
 
     cmd.addVocab32(VOCAB_SET);
@@ -2654,7 +2636,7 @@ bool RemoteControlBoard::setInteractionModes(yarp::dev::InteractionModeEnum* mod
 
 // BEGIN IRemoteCalibrator
 
-bool RemoteControlBoard::isCalibratorDevicePresent(bool *isCalib)
+yarp::dev::ReturnValue RemoteControlBoard::isCalibratorDevicePresent(bool *isCalib)
 {
     Bottle cmd, response;
     cmd.addVocab32(VOCAB_GET);
@@ -2669,12 +2651,12 @@ bool RemoteControlBoard::isCalibratorDevicePresent(bool *isCalib)
     return CHECK_FAIL(ok, response);
 }
 
-bool RemoteControlBoard::calibrateSingleJoint(int j)
+yarp::dev::ReturnValue RemoteControlBoard::calibrateSingleJoint(int j)
 {
     return set2V1I(VOCAB_REMOTE_CALIBRATOR_INTERFACE, VOCAB_CALIBRATE_SINGLE_JOINT, j);
 }
 
-bool RemoteControlBoard::calibrateWholePart()
+yarp::dev::ReturnValue RemoteControlBoard::calibrateWholePart()
 {
     Bottle cmd, response;
     cmd.addVocab32(VOCAB_SET);
@@ -2684,12 +2666,12 @@ bool RemoteControlBoard::calibrateWholePart()
     return CHECK_FAIL(ok, response);
 }
 
-bool RemoteControlBoard::homingSingleJoint(int j)
+yarp::dev::ReturnValue RemoteControlBoard::homingSingleJoint(int j)
 {
     return set2V1I(VOCAB_REMOTE_CALIBRATOR_INTERFACE, VOCAB_HOMING_SINGLE_JOINT, j);
 }
 
-bool RemoteControlBoard::homingWholePart()
+yarp::dev::ReturnValue RemoteControlBoard::homingWholePart()
 {
     Bottle cmd, response;
     cmd.addVocab32(VOCAB_SET);
@@ -2700,12 +2682,12 @@ bool RemoteControlBoard::homingWholePart()
     return CHECK_FAIL(ok, response);
 }
 
-bool RemoteControlBoard::parkSingleJoint(int j, bool _wait)
+yarp::dev::ReturnValue RemoteControlBoard::parkSingleJoint(int j, bool _wait)
 {
     return set2V1I(VOCAB_REMOTE_CALIBRATOR_INTERFACE, VOCAB_PARK_SINGLE_JOINT, j);
 }
 
-bool RemoteControlBoard::parkWholePart()
+yarp::dev::ReturnValue RemoteControlBoard::parkWholePart()
 {
     Bottle cmd, response;
     cmd.addVocab32(VOCAB_SET);
@@ -2715,7 +2697,7 @@ bool RemoteControlBoard::parkWholePart()
     return CHECK_FAIL(ok, response);
 }
 
-bool RemoteControlBoard::quitCalibrate()
+yarp::dev::ReturnValue RemoteControlBoard::quitCalibrate()
 {
     Bottle cmd, response;
     cmd.addVocab32(VOCAB_SET);
@@ -2725,7 +2707,7 @@ bool RemoteControlBoard::quitCalibrate()
     return CHECK_FAIL(ok, response);
 }
 
-bool RemoteControlBoard::quitPark()
+yarp::dev::ReturnValue RemoteControlBoard::quitPark()
 {
     Bottle cmd, response;
     cmd.addVocab32(VOCAB_SET);
@@ -2739,20 +2721,20 @@ bool RemoteControlBoard::quitPark()
 
 // BEGIN ICurrentControl
 
-bool RemoteControlBoard::getRefCurrents(double *t)
+yarp::dev::ReturnValue RemoteControlBoard::getRefCurrents(double *t)
 {
     return get2V1DA(VOCAB_CURRENTCONTROL_INTERFACE, VOCAB_CURRENT_REFS, t);
 }
 
-bool RemoteControlBoard::getRefCurrent(int j, double *t)
+yarp::dev::ReturnValue RemoteControlBoard::getRefCurrent(int j, double *t)
 {
     return get2V1I1D(VOCAB_CURRENTCONTROL_INTERFACE, VOCAB_CURRENT_REF, j, t);
 }
 
-bool RemoteControlBoard::setRefCurrents(const double *refs)
+yarp::dev::ReturnValue RemoteControlBoard::setRefCurrents(const double *refs)
 {
     if (!isLive()) {
-        return false;
+        return ReturnValue::return_code::return_value_error_not_ready;
     }
     CommandMessage& c = command_buffer.get();
     c.head.clear();
@@ -2761,13 +2743,13 @@ bool RemoteControlBoard::setRefCurrents(const double *refs)
     c.body.resize(nj);
     memcpy(&(c.body[0]), refs, sizeof(double)*nj);
     command_buffer.write(writeStrict_moreJoints);
-    return true;
+    return ReturnValue_ok;
 }
 
-bool RemoteControlBoard::setRefCurrent(int j, double ref)
+yarp::dev::ReturnValue RemoteControlBoard::setRefCurrent(int j, double ref)
 {
     if (!isLive()) {
-        return false;
+        return ReturnValue::return_code::return_value_error_not_ready;
     }
     CommandMessage& c = command_buffer.get();
     c.head.clear();
@@ -2777,13 +2759,13 @@ bool RemoteControlBoard::setRefCurrent(int j, double ref)
     c.body.resize(1);
     memcpy(&(c.body[0]), &ref, sizeof(double));
     command_buffer.write(writeStrict_singleJoint);
-    return true;
+    return ReturnValue_ok;
 }
 
-bool RemoteControlBoard::setRefCurrents(const int n_joint, const int *joints, const double *refs)
+yarp::dev::ReturnValue RemoteControlBoard::setRefCurrents(const int n_joint, const int *joints, const double *refs)
 {
     if (!isLive()) {
-        return false;
+        return ReturnValue::return_code::return_value_error_not_ready;
     }
     CommandMessage& c = command_buffer.get();
     c.head.clear();
@@ -2797,33 +2779,33 @@ bool RemoteControlBoard::setRefCurrents(const int n_joint, const int *joints, co
     c.body.resize(n_joint);
     memcpy(&(c.body[0]), refs, sizeof(double)*n_joint);
     command_buffer.write(writeStrict_moreJoints);
-    return true;
+    return ReturnValue_ok;
 }
 
-bool RemoteControlBoard::getCurrents(double *vals)
+yarp::dev::ReturnValue RemoteControlBoard::getCurrents(double *vals)
 {
     double localArrivalTime=0.0;
     extendedPortMutex.lock();
     bool ret = extendedIntputStatePort.getLastVector(VOCAB_AMP_CURRENTS, vals, lastStamp, localArrivalTime);
     extendedPortMutex.unlock();
-    return ret;
+    return ret?ReturnValue_ok:ReturnValue::return_code::return_value_error_not_ready;
 }
 
-bool RemoteControlBoard::getCurrent(int j, double *val)
+yarp::dev::ReturnValue RemoteControlBoard::getCurrent(int j, double *val)
 {
     double localArrivalTime=0.0;
     extendedPortMutex.lock();
     bool ret = extendedIntputStatePort.getLastSingle(j, VOCAB_AMP_CURRENT, val, lastStamp, localArrivalTime);
     extendedPortMutex.unlock();
-    return ret;
+    return ret?ReturnValue_ok:ReturnValue::return_code::return_value_error_not_ready;
 }
 
-bool RemoteControlBoard::getCurrentRange(int j, double *min, double *max)
+yarp::dev::ReturnValue RemoteControlBoard::getCurrentRange(int j, double *min, double *max)
 {
     return get2V1I2D(VOCAB_CURRENTCONTROL_INTERFACE, VOCAB_CURRENT_RANGE, j, min, max);
 }
 
-bool RemoteControlBoard::getCurrentRanges(double *min, double *max)
+yarp::dev::ReturnValue RemoteControlBoard::getCurrentRanges(double *min, double *max)
 {
     return get2V2DA(VOCAB_CURRENTCONTROL_INTERFACE, VOCAB_CURRENT_RANGES, min, max);
 }
@@ -2831,11 +2813,11 @@ bool RemoteControlBoard::getCurrentRanges(double *min, double *max)
 // END ICurrentControl
 
 // BEGIN IPWMControl
-bool RemoteControlBoard::setRefDutyCycle(int j, double v)
+yarp::dev::ReturnValue RemoteControlBoard::setRefDutyCycle(int j, double v)
 {
     // using the streaming port
     if (!isLive()) {
-        return false;
+        return ReturnValue::return_code::return_value_error_not_ready;
     }
     CommandMessage& c = command_buffer.get();
     c.head.clear();
@@ -2848,14 +2830,14 @@ bool RemoteControlBoard::setRefDutyCycle(int j, double v)
     c.body.resize(1);
     c.body[0] = v;
     command_buffer.write(writeStrict_singleJoint);
-    return true;
+    return ReturnValue_ok;
 }
 
-bool RemoteControlBoard::setRefDutyCycles(const double *v)
+yarp::dev::ReturnValue RemoteControlBoard::setRefDutyCycles(const double *v)
 {
     // using the streaming port
     if (!isLive()) {
-        return false;
+        return ReturnValue::return_code::return_value_error_not_ready;
     }
     CommandMessage& c = command_buffer.get();
     c.head.clear();
@@ -2867,11 +2849,10 @@ bool RemoteControlBoard::setRefDutyCycles(const double *v)
     memcpy(&(c.body[0]), v, sizeof(double)*nj);
 
     command_buffer.write(writeStrict_moreJoints);
-
-    return true;
+    return ReturnValue_ok;
 }
 
-bool RemoteControlBoard::getRefDutyCycle(int j, double *ref)
+yarp::dev::ReturnValue RemoteControlBoard::getRefDutyCycle(int j, double *ref)
 {
     Bottle cmd, response;
     cmd.addVocab32(VOCAB_GET);
@@ -2888,33 +2869,33 @@ bool RemoteControlBoard::getRefDutyCycle(int j, double *ref)
         *ref = response.get(2).asFloat64();
 
         getTimeStamp(response, lastStamp);
-        return true;
+        return ReturnValue_ok;
     } else {
-        return false;
+        return ReturnValue::return_code::return_value_error_generic;
     }
 }
 
-bool RemoteControlBoard::getRefDutyCycles(double *refs)
+yarp::dev::ReturnValue RemoteControlBoard::getRefDutyCycles(double *refs)
 {
     return get2V1DA(VOCAB_PWMCONTROL_INTERFACE, VOCAB_PWMCONTROL_REF_PWMS, refs);
 }
 
-bool RemoteControlBoard::getDutyCycle(int j, double *out)
+yarp::dev::ReturnValue RemoteControlBoard::getDutyCycle(int j, double *out)
 {
     double localArrivalTime = 0.0;
     extendedPortMutex.lock();
     bool ret = extendedIntputStatePort.getLastSingle(j, VOCAB_PWMCONTROL_PWM_OUTPUT, out, lastStamp, localArrivalTime);
     extendedPortMutex.unlock();
-    return ret;
+    return ret?ReturnValue_ok:ReturnValue::return_code::return_value_error_not_ready;
 }
 
-bool RemoteControlBoard::getDutyCycles(double *outs)
+yarp::dev::ReturnValue RemoteControlBoard::getDutyCycles(double *outs)
 {
     double localArrivalTime = 0.0;
     extendedPortMutex.lock();
     bool ret = extendedIntputStatePort.getLastVector(VOCAB_PWMCONTROL_PWM_OUTPUTS, outs, lastStamp, localArrivalTime);
     extendedPortMutex.unlock();
-    return ret;
+    return ret?ReturnValue_ok:ReturnValue::return_code::return_value_error_not_ready;
 }
 // END IPWMControl
 

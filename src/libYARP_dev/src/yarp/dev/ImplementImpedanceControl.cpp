@@ -8,11 +8,11 @@
 
 #include <yarp/dev/ImplementImpedanceControl.h>
 #include <yarp/dev/ControlBoardHelper.h>
+#include <yarp/dev/ControlBoardHelpers.h>
 #include <yarp/os/LogStream.h>
 #include <cmath>
 
 using namespace yarp::dev;
-#define JOINTIDCHECK if (j >= castToMapper(helper)->axes()){yError("joint id out of bound"); return false;}
 
 /////////////// implement ImplementImpedanceControl
 ImplementImpedanceControl::ImplementImpedanceControl(IImpedanceControlRaw *r)
@@ -49,14 +49,14 @@ bool ImplementImpedanceControl::uninitialize ()
     return true;
 }
 
-bool ImplementImpedanceControl::getAxes(int *axes)
+ReturnValue ImplementImpedanceControl::getAxes(int *axes)
 {
     return iImpedanceRaw->getAxes(axes);
 }
 
-bool ImplementImpedanceControl::setImpedance(int j, double stiffness, double damping)
+ReturnValue ImplementImpedanceControl::setImpedance(int j, double stiffness, double damping)
 {
-    JOINTIDCHECK
+    JOINTIDCHECK(MAPPER_MAXID)
     int k;
     double stiff;
     double damp;
@@ -65,12 +65,12 @@ bool ImplementImpedanceControl::setImpedance(int j, double stiffness, double dam
     return iImpedanceRaw->setImpedanceRaw(k, stiff, damp);
 }
 
-bool ImplementImpedanceControl::getImpedance(int j, double *stiffness, double *damping)
+ReturnValue ImplementImpedanceControl::getImpedance(int j, double *stiffness, double *damping)
 {
-    JOINTIDCHECK
+    JOINTIDCHECK(MAPPER_MAXID)
     int k;
     k=castToMapper(helper)->toHw(j);
-    bool ret=iImpedanceRaw->getImpedanceRaw(k, stiffness, damping);
+    ReturnValue ret=iImpedanceRaw->getImpedanceRaw(k, stiffness, damping);
     *stiffness = (castToMapper(helper)->impS2N(*stiffness, k));
     *damping   = (castToMapper(helper)->impS2N(*damping, k));
     //prevent negative stiffness
@@ -79,28 +79,28 @@ bool ImplementImpedanceControl::getImpedance(int j, double *stiffness, double *d
     return ret;
 }
 
-bool ImplementImpedanceControl::setImpedanceOffset(int j, double offset)
+ReturnValue ImplementImpedanceControl::setImpedanceOffset(int j, double offset)
 {
-    JOINTIDCHECK
+    JOINTIDCHECK(MAPPER_MAXID)
     int k;
     double off;
     castToMapper(helper)->trqN2S(offset,j,off,k);
     return iImpedanceRaw->setImpedanceOffsetRaw(k, off);
 }
 
-bool ImplementImpedanceControl::getImpedanceOffset(int j, double *offset)
+ReturnValue ImplementImpedanceControl::getImpedanceOffset(int j, double *offset)
 {
-    JOINTIDCHECK
+    JOINTIDCHECK(MAPPER_MAXID)
     int k;
     k=castToMapper(helper)->toHw(j);
-    bool ret = iImpedanceRaw->getImpedanceOffsetRaw(k, offset);
+    ReturnValue ret = iImpedanceRaw->getImpedanceOffsetRaw(k, offset);
     *offset    = (castToMapper(helper)->trqS2N(*offset,k));
     return ret;
 }
 
-bool ImplementImpedanceControl::getCurrentImpedanceLimit(int j, double *min_stiff, double *max_stiff, double *min_damp, double *max_damp)
+ReturnValue ImplementImpedanceControl::getCurrentImpedanceLimit(int j, double *min_stiff, double *max_stiff, double *min_damp, double *max_damp)
 {
-    JOINTIDCHECK
+    JOINTIDCHECK(MAPPER_MAXID)
     int k;
     k=castToMapper(helper)->toHw(j);
     return iImpedanceRaw->getCurrentImpedanceLimitRaw(k, min_stiff, max_stiff, min_damp, max_damp);

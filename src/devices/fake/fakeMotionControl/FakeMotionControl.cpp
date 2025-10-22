@@ -13,7 +13,7 @@
 #include <yarp/os/LogStream.h>
 #include <yarp/os/NetType.h>
 #include <yarp/dev/Drivers.h>
-
+#include <yarp/dev/ControlBoardHelpers.h>
 #include <sstream>
 #include <cstring>
 
@@ -112,19 +112,6 @@ void FakeMotionControl::run()
     }
     prev_time = yarp::os::Time::now();
 }
-
-static inline bool NOT_YET_IMPLEMENTED(const char *txt)
-{
-    yCDebug(FAKEMOTIONCONTROL) << txt << "is not yet implemented for FakeMotionControl";
-    return true;
-}
-
-static inline bool DEPRECATED(const char *txt)
-{
-    yCError(FAKEMOTIONCONTROL) << txt << "has been deprecated for FakeMotionControl";
-    return true;
-}
-
 
 // replace with to_string as soon as C++11 is required by YARP
 /**
@@ -344,6 +331,7 @@ void FakeMotionControl::setInfoMPids(int j)
     _hwfault_message = allocAndCheck<std::string>(nj);
     _braked = allocAndCheck<bool>(nj);
     _autobraked = allocAndCheck<bool>(nj);
+    _tempLimit = allocAndCheck<double>(nj);
 
     _ppids = allocAndCheck<std::vector<PidWithExtraInfo>>(nj);    for (int i = 0; i < nj; ++i) {_ppids[i].resize(npids); setInfoPPids(i);}
     _tpids = allocAndCheck<std::vector<PidWithExtraInfo>>(nj);    for (int i = 0; i < nj; ++i) {_tpids[i].resize(npids); setInfoTPids(i);}
@@ -459,6 +447,7 @@ bool FakeMotionControl::dealloc()
     checkAndDestroy(_maxJntCmdVelocity);
     checkAndDestroy(_maxMotorVelocity);
     checkAndDestroy(_newtonsToSensor);
+    checkAndDestroy(_tempLimit);
 
     checkAndDestroy(_ppids);
     checkAndDestroy(_tpids);
@@ -1771,7 +1760,7 @@ ReturnValue FakeMotionControl::getPidOutputsRaw(const PidControlTypeEnum& pidtyp
 //    Velocity control interface raw  //
 ////////////////////////////////////////
 
-bool FakeMotionControl::velocityMoveRaw(int j, double sp)
+ReturnValue FakeMotionControl::velocityMoveRaw(int j, double sp)
 {
     int mode=0;
     getControlModeRaw(j, &mode);
@@ -1784,13 +1773,13 @@ bool FakeMotionControl::velocityMoveRaw(int j, double sp)
     }
     _command_speeds[j] = sp;
     last_velocity_command[j]=yarp::os::Time::now();
-    return true;
+    return ReturnValue_ok;
 }
 
-bool FakeMotionControl::velocityMoveRaw(const double *sp)
+ReturnValue FakeMotionControl::velocityMoveRaw(const double *sp)
 {
     yCTrace(FAKEMOTIONCONTROL);
-    bool ret = true;
+    ReturnValue ret = ReturnValue_ok;
     for (int i = 0; i < _njoints; i++) {
         ret &= velocityMoveRaw(i, sp[i]);
     }
@@ -1802,35 +1791,35 @@ bool FakeMotionControl::velocityMoveRaw(const double *sp)
 //    Calibration control interface   //
 ////////////////////////////////////////
 
-bool FakeMotionControl::setCalibrationParametersRaw(int j, const CalibrationParameters& params)
+ReturnValue FakeMotionControl::setCalibrationParametersRaw(int j, const CalibrationParameters& params)
 {
     yCTrace(FAKEMOTIONCONTROL) << "setCalibrationParametersRaw for joint" << j;
-    return true;
+    return ReturnValue_ok;
 }
 
-bool FakeMotionControl::calibrateAxisWithParamsRaw(int j, unsigned int type, double p1, double p2, double p3)
+ReturnValue FakeMotionControl::calibrateAxisWithParamsRaw(int j, unsigned int type, double p1, double p2, double p3)
 {
     yCTrace(FAKEMOTIONCONTROL) << "calibrateRaw for joint" << j;
-    return true;
+    return ReturnValue_ok;
 }
 
-bool FakeMotionControl::calibrationDoneRaw(int axis)
+ReturnValue FakeMotionControl::calibrationDoneRaw(int axis)
 {
-    return NOT_YET_IMPLEMENTED("calibrationDoneRaw");
+    return YARP_METHOD_NOT_YET_IMPLEMENTED();
 }
 
 ////////////////////////////////////////
 //     Position control interface     //
 ////////////////////////////////////////
 
-bool FakeMotionControl::getAxes(int *ax)
+ReturnValue FakeMotionControl::getAxes(int *ax)
 {
     *ax=_njoints;
 
-    return true;
+    return ReturnValue_ok;
 }
 
-bool FakeMotionControl::positionMoveRaw(int j, double ref)
+ReturnValue FakeMotionControl::positionMoveRaw(int j, double ref)
 {
     if (verbose >= VERY_VERBOSE) {
         yCTrace(FAKEMOTIONCONTROL) << "j " << j << " ref " << ref;
@@ -1852,16 +1841,16 @@ bool FakeMotionControl::positionMoveRaw(int j, double ref)
         yCError(FAKEMOTIONCONTROL) << "positionMoveRaw: skipping command because joint " << j << " is not in VOCAB_CM_POSITION mode";
     }
     _posCtrl_references[j] = ref;
-    return true;
+    return ReturnValue_ok;
 }
 
-bool FakeMotionControl::positionMoveRaw(const double *refs)
+ReturnValue FakeMotionControl::positionMoveRaw(const double *refs)
 {
     if (verbose >= VERY_VERBOSE) {
         yCTrace(FAKEMOTIONCONTROL);
     }
 
-    bool ret = true;
+    ReturnValue ret = ReturnValue_ok;
     for(int j=0, index=0; j< _njoints; j++, index++)
     {
         ret &= positionMoveRaw(j, refs[index]);
@@ -1869,7 +1858,7 @@ bool FakeMotionControl::positionMoveRaw(const double *refs)
     return ret;
 }
 
-bool FakeMotionControl::relativeMoveRaw(int j, double delta)
+ReturnValue FakeMotionControl::relativeMoveRaw(int j, double delta)
 {
     if (verbose >= VERY_VERBOSE) {
         yCTrace(FAKEMOTIONCONTROL) << "j " << j << " ref " << delta;
@@ -1890,16 +1879,16 @@ bool FakeMotionControl::relativeMoveRaw(int j, double delta)
         yCError(FAKEMOTIONCONTROL) << "relativeMoveRaw: skipping command because joint " << j << " is not in VOCAB_CM_POSITION mode";
     }
     _posCtrl_references[j] += delta;
-    return true;
+    return ReturnValue_ok;
 }
 
-bool FakeMotionControl::relativeMoveRaw(const double *deltas)
+ReturnValue FakeMotionControl::relativeMoveRaw(const double *deltas)
 {
     if (verbose >= VERY_VERBOSE) {
         yCTrace(FAKEMOTIONCONTROL);
     }
 
-    bool ret = true;
+    ReturnValue ret = ReturnValue_ok;
     for(int j=0, index=0; j< _njoints; j++, index++)
     {
         ret &= relativeMoveRaw(j, deltas[index]);
@@ -1908,23 +1897,23 @@ bool FakeMotionControl::relativeMoveRaw(const double *deltas)
 }
 
 
-bool FakeMotionControl::checkMotionDoneRaw(int j, bool *flag)
+ReturnValue FakeMotionControl::checkMotionDoneRaw(int j, bool *flag)
 {
     if (verbose >= VERY_VERBOSE) {
         yCTrace(FAKEMOTIONCONTROL) << "j ";
     }
 
     *flag = false;
-    return true;
+    return ReturnValue_ok;
 }
 
-bool FakeMotionControl::checkMotionDoneRaw(bool *flag)
+ReturnValue FakeMotionControl::checkMotionDoneRaw(bool *flag)
 {
     if (verbose >= VERY_VERBOSE) {
         yCTrace(FAKEMOTIONCONTROL);
     }
 
-    bool ret = true;
+    ReturnValue ret = ReturnValue_ok;
     bool val, tot_res = true;
 
     for(int j=0, index=0; j< _njoints; j++, index++)
@@ -1936,16 +1925,16 @@ bool FakeMotionControl::checkMotionDoneRaw(bool *flag)
     return ret;
 }
 
-bool FakeMotionControl::setTrajSpeedRaw(int j, double sp)
+ReturnValue FakeMotionControl::setTrajSpeedRaw(int j, double sp)
 {
     // Velocity is expressed in iDegrees/s
     // save internally the new value of speed; it'll be used in the positionMove
     int index = j ;
     _ref_speeds[index] = sp;
-    return true;
+    return ReturnValue_ok;
 }
 
-bool FakeMotionControl::setTrajSpeedsRaw(const double *spds)
+ReturnValue FakeMotionControl::setTrajSpeedsRaw(const double *spds)
 {
     // Velocity is expressed in iDegrees/s
     // save internally the new value of speed; it'll be used in the positionMove
@@ -1953,10 +1942,10 @@ bool FakeMotionControl::setTrajSpeedsRaw(const double *spds)
     {
         _ref_speeds[index] = spds[index];
     }
-    return true;
+    return ReturnValue_ok;
 }
 
-bool FakeMotionControl::setTrajAccelerationRaw(int j, double acc)
+ReturnValue FakeMotionControl::setTrajAccelerationRaw(int j, double acc)
 {
     // Acceleration is expressed in iDegrees/s^2
     // save internally the new value of the acceleration; it'll be used in the velocityMove command
@@ -1974,10 +1963,10 @@ bool FakeMotionControl::setTrajAccelerationRaw(int j, double acc)
         _ref_accs[j ] = acc;
     }
 
-    return true;
+    return ReturnValue_ok;
 }
 
-bool FakeMotionControl::setTrajAccelerationsRaw(const double *accs)
+ReturnValue FakeMotionControl::setTrajAccelerationsRaw(const double *accs)
 {
     // Acceleration is expressed in iDegrees/s^2
     // save internally the new value of the acceleration; it'll be used in the velocityMove command
@@ -1996,42 +1985,42 @@ bool FakeMotionControl::setTrajAccelerationsRaw(const double *accs)
             _ref_accs[index] = accs[j];
         }
     }
-    return true;
+    return ReturnValue_ok;
 }
 
-bool FakeMotionControl::getTrajSpeedRaw(int j, double *spd)
+ReturnValue FakeMotionControl::getTrajSpeedRaw(int j, double *spd)
 {
     *spd = _ref_speeds[j];
-    return true;
+    return ReturnValue_ok;
 }
 
-bool FakeMotionControl::getTrajSpeedsRaw(double *spds)
+ReturnValue FakeMotionControl::getTrajSpeedsRaw(double *spds)
 {
     memcpy(spds, _ref_speeds, sizeof(double) * _njoints);
-    return true;
+    return ReturnValue_ok;
 }
 
-bool FakeMotionControl::getTrajAccelerationRaw(int j, double *acc)
+ReturnValue FakeMotionControl::getTrajAccelerationRaw(int j, double *acc)
 {
     *acc = _ref_accs[j];
-    return true;
+    return ReturnValue_ok;
 }
 
-bool FakeMotionControl::getTrajAccelerationsRaw(double *accs)
+ReturnValue FakeMotionControl::getTrajAccelerationsRaw(double *accs)
 {
     memcpy(accs, _ref_accs, sizeof(double) * _njoints);
-    return true;
+    return ReturnValue_ok;
 }
 
-bool FakeMotionControl::stopRaw(int j)
+ReturnValue FakeMotionControl::stopRaw(int j)
 {
     velocityMoveRaw(j,0);
-    return true;
+    return ReturnValue_ok;
 }
 
-bool FakeMotionControl::stopRaw()
+ReturnValue FakeMotionControl::stopRaw()
 {
-    bool ret = true;
+    ReturnValue ret = ReturnValue_ok;
     for(int j=0; j< _njoints; j++)
     {
         ret &= stopRaw(j);
@@ -2044,7 +2033,7 @@ bool FakeMotionControl::stopRaw()
 //     Position control2 interface    //
 ////////////////////////////////////////
 
-bool FakeMotionControl::positionMoveRaw(const int n_joint, const int *joints, const double *refs)
+ReturnValue FakeMotionControl::positionMoveRaw(const int n_joint, const int *joints, const double *refs)
 {
     if (verbose >= VERY_VERBOSE) {
         yCTrace(FAKEMOTIONCONTROL) << " -> n_joint " << n_joint;
@@ -2055,7 +2044,7 @@ bool FakeMotionControl::positionMoveRaw(const int n_joint, const int *joints, co
         yCDebug(FAKEMOTIONCONTROL, "j: %d; ref %f;\n", joints[j], refs[j]); fflush(stdout);
     }
 
-    bool ret = true;
+    ReturnValue ret = ReturnValue_ok;
     for(int j=0; j<n_joint; j++)
     {
         ret = ret &&positionMoveRaw(joints[j], refs[j]);
@@ -2063,13 +2052,13 @@ bool FakeMotionControl::positionMoveRaw(const int n_joint, const int *joints, co
     return ret;
 }
 
-bool FakeMotionControl::relativeMoveRaw(const int n_joint, const int *joints, const double *deltas)
+ReturnValue FakeMotionControl::relativeMoveRaw(const int n_joint, const int *joints, const double *deltas)
 {
     if (verbose >= VERY_VERBOSE) {
         yCTrace(FAKEMOTIONCONTROL) << "n_joint " << _njoints;
     }
 
-    bool ret = true;
+    ReturnValue ret = ReturnValue_ok;
     for(int j=0; j<n_joint; j++)
     {
         ret = ret &&relativeMoveRaw(joints[j], deltas[j]);
@@ -2077,13 +2066,13 @@ bool FakeMotionControl::relativeMoveRaw(const int n_joint, const int *joints, co
     return ret;
 }
 
-bool FakeMotionControl::checkMotionDoneRaw(const int n_joint, const int *joints, bool *flag)
+ReturnValue FakeMotionControl::checkMotionDoneRaw(const int n_joint, const int *joints, bool *flag)
 {
     if (verbose >= VERY_VERBOSE) {
         yCTrace(FAKEMOTIONCONTROL) << "n_joint " << _njoints;
     }
 
-    bool ret = true;
+    ReturnValue ret = ReturnValue_ok;
     bool val = true;
     bool tot_val = true;
 
@@ -2096,13 +2085,13 @@ bool FakeMotionControl::checkMotionDoneRaw(const int n_joint, const int *joints,
     return ret;
 }
 
-bool FakeMotionControl::setTrajSpeedsRaw(const int n_joint, const int *joints, const double *spds)
+ReturnValue FakeMotionControl::setTrajSpeedsRaw(const int n_joint, const int *joints, const double *spds)
 {
     if (verbose >= VERY_VERBOSE) {
         yCTrace(FAKEMOTIONCONTROL) << "n_joint " << _njoints;
     }
 
-    bool ret = true;
+    ReturnValue ret = ReturnValue_ok;
     for(int j=0; j<n_joint; j++)
     {
         ret = ret &&setTrajSpeedRaw(joints[j], spds[j]);
@@ -2110,13 +2099,13 @@ bool FakeMotionControl::setTrajSpeedsRaw(const int n_joint, const int *joints, c
     return ret;
 }
 
-bool FakeMotionControl::setTrajAccelerationsRaw(const int n_joint, const int *joints, const double *accs)
+ReturnValue FakeMotionControl::setTrajAccelerationsRaw(const int n_joint, const int *joints, const double *accs)
 {
     if (verbose >= VERY_VERBOSE) {
         yCTrace(FAKEMOTIONCONTROL) << "n_joint " << _njoints;
     }
 
-    bool ret = true;
+    ReturnValue ret = ReturnValue_ok;
     for(int j=0; j<n_joint; j++)
     {
         ret = ret &&setTrajAccelerationRaw(joints[j], accs[j]);
@@ -2124,13 +2113,13 @@ bool FakeMotionControl::setTrajAccelerationsRaw(const int n_joint, const int *jo
     return ret;
 }
 
-bool FakeMotionControl::getTrajSpeedsRaw(const int n_joint, const int *joints, double *spds)
+ReturnValue FakeMotionControl::getTrajSpeedsRaw(const int n_joint, const int *joints, double *spds)
 {
     if (verbose >= VERY_VERBOSE) {
         yCTrace(FAKEMOTIONCONTROL) << "n_joint " << _njoints;
     }
 
-    bool ret = true;
+    ReturnValue ret = ReturnValue_ok;
     for(int j=0; j<n_joint; j++)
     {
         ret = ret && getTrajSpeedRaw(joints[j], &spds[j]);
@@ -2138,13 +2127,13 @@ bool FakeMotionControl::getTrajSpeedsRaw(const int n_joint, const int *joints, d
     return ret;
 }
 
-bool FakeMotionControl::getTrajAccelerationsRaw(const int n_joint, const int *joints, double *accs)
+ReturnValue FakeMotionControl::getTrajAccelerationsRaw(const int n_joint, const int *joints, double *accs)
 {
     if (verbose >= VERY_VERBOSE) {
         yCTrace(FAKEMOTIONCONTROL) << "n_joint " << _njoints;
     }
 
-    bool ret = true;
+    ReturnValue ret = ReturnValue_ok;
     for(int j=0; j<n_joint; j++)
     {
         ret = ret && getTrajAccelerationRaw(joints[j], &accs[j]);
@@ -2152,13 +2141,13 @@ bool FakeMotionControl::getTrajAccelerationsRaw(const int n_joint, const int *jo
     return ret;
 }
 
-bool FakeMotionControl::stopRaw(const int n_joint, const int *joints)
+ReturnValue FakeMotionControl::stopRaw(const int n_joint, const int *joints)
 {
     if (verbose >= VERY_VERBOSE) {
         yCTrace(FAKEMOTIONCONTROL) << "n_joint " << _njoints;
     }
 
-    bool ret = true;
+    ReturnValue ret = ReturnValue_ok;
     for(int j=0; j<n_joint; j++)
     {
         ret = ret &&stopRaw(joints[j]);
@@ -2170,21 +2159,20 @@ bool FakeMotionControl::stopRaw(const int n_joint, const int *joints)
 
 // ControlMode
 
-// puo' essere richiesto con get
-bool FakeMotionControl::getControlModeRaw(int j, int *v)
+ReturnValue FakeMotionControl::getControlModeRaw(int j, int *v)
 {
     if (verbose > VERY_VERY_VERBOSE) {
         yCTrace(FAKEMOTIONCONTROL) << "j: " << j;
     }
 
     *v = _controlModes[j];
-    return true;
+    return ReturnValue_ok;
 }
 
 // IControl Mode 2
-bool FakeMotionControl::getControlModesRaw(int* v)
+ReturnValue FakeMotionControl::getControlModesRaw(int* v)
 {
-    bool ret = true;
+    ReturnValue ret = ReturnValue_ok;
     for(int j=0; j< _njoints; j++)
     {
         ret = ret && getControlModeRaw(j, &v[j]);
@@ -2192,9 +2180,9 @@ bool FakeMotionControl::getControlModesRaw(int* v)
     return ret;
 }
 
-bool FakeMotionControl::getControlModesRaw(const int n_joint, const int *joints, int *modes)
+ReturnValue FakeMotionControl::getControlModesRaw(const int n_joint, const int *joints, int *modes)
 {
-    bool ret = true;
+    ReturnValue ret = ReturnValue_ok;
     for(int j=0; j< n_joint; j++)
     {
         ret = ret && getControlModeRaw(joints[j], &modes[j]);
@@ -2202,7 +2190,7 @@ bool FakeMotionControl::getControlModesRaw(const int n_joint, const int *joints,
     return ret;
 }
 
-bool FakeMotionControl::setControlModeRaw(const int j, const int _mode)
+ReturnValue FakeMotionControl::setControlModeRaw(const int j, const int _mode)
 {
     if (verbose >= VERY_VERBOSE) {
         yCTrace(FAKEMOTIONCONTROL) << "j: " << j << " mode: " << yarp::os::Vocab32::decode(_mode);
@@ -2217,17 +2205,17 @@ bool FakeMotionControl::setControlModeRaw(const int j, const int _mode)
         _controlModes[j] = _mode;
     }
     _posCtrl_references[j] = pos[j];
-    return true;
+    return ReturnValue_ok;
 }
 
 
-bool FakeMotionControl::setControlModesRaw(const int n_joint, const int *joints, int *modes)
+ReturnValue FakeMotionControl::setControlModesRaw(const int n_joint, const int *joints, int *modes)
 {
     if (verbose >= VERY_VERBOSE) {
         yCTrace(FAKEMOTIONCONTROL) << "n_joints: " << n_joint;
     }
 
-    bool ret = true;
+    ReturnValue ret = ReturnValue_ok;
     for(int i=0; i<n_joint; i++)
     {
         ret &= setControlModeRaw(joints[i], modes[i]);
@@ -2235,13 +2223,13 @@ bool FakeMotionControl::setControlModesRaw(const int n_joint, const int *joints,
     return ret;
 }
 
-bool FakeMotionControl::setControlModesRaw(int *modes)
+ReturnValue FakeMotionControl::setControlModesRaw(int *modes)
 {
     if (verbose >= VERY_VERBOSE) {
         yCTrace(FAKEMOTIONCONTROL);
     }
 
-    bool ret = true;
+    ReturnValue ret = ReturnValue_ok;
     for(int i=0; i<_njoints; i++)
     {
         ret &= setControlModeRaw(i, modes[i]);
@@ -2252,29 +2240,41 @@ bool FakeMotionControl::setControlModesRaw(int *modes)
 
 //////////////////////// BEGIN EncoderInterface
 
-bool FakeMotionControl::setEncoderRaw(int j, double val)
+ReturnValue FakeMotionControl::setEncoderRaw(int j, double val)
 {
-    return NOT_YET_IMPLEMENTED("setEncoder");
+    JOINTIDCHECK(_njoints)
+    pos[j] = val;
+    return ReturnValue_ok;
 }
 
-bool FakeMotionControl::setEncodersRaw(const double *vals)
+ReturnValue FakeMotionControl::setEncodersRaw(const double *vals)
 {
-    return NOT_YET_IMPLEMENTED("setEncoders");
+    for(int j=0; j< _njoints; j++)
+    {
+        pos[j] = vals[j];
+    }
+    return ReturnValue_ok;
 }
 
-bool FakeMotionControl::resetEncoderRaw(int j)
+ReturnValue FakeMotionControl::resetEncoderRaw(int j)
 {
-    return NOT_YET_IMPLEMENTED("resetEncoder");
+   JOINTIDCHECK(_njoints)
+    pos[j] = 0;
+    return ReturnValue_ok;
 }
 
-bool FakeMotionControl::resetEncodersRaw()
+ReturnValue FakeMotionControl::resetEncodersRaw()
 {
-    return NOT_YET_IMPLEMENTED("resetEncoders");
+    for(int j=0; j< _njoints; j++)
+    {
+        pos[j] = 0;
+    }
+    return ReturnValue_ok;
 }
 
-bool FakeMotionControl::getEncoderRaw(int j, double *value)
+ReturnValue FakeMotionControl::getEncoderRaw(int j, double *value)
 {
-    bool ret = true;
+    ReturnValue ret = ReturnValue_ok;
 
     // To simulate a real controlboard, we assume that the joint
     // encoders is exactly the last set by setPosition(s) or positionMove
@@ -2283,28 +2283,28 @@ bool FakeMotionControl::getEncoderRaw(int j, double *value)
     return ret;
 }
 
-bool FakeMotionControl::getEncodersRaw(double *encs)
+ReturnValue FakeMotionControl::getEncodersRaw(double *encs)
 {
-    bool ret = true;
+    ReturnValue ret = ReturnValue_ok;
     for(int j=0; j< _njoints; j++)
     {
-        bool ok = getEncoderRaw(j, &encs[j]);
+        ReturnValue ok = getEncoderRaw(j, &encs[j]);
         ret = ret && ok;
 
     }
     return ret;
 }
 
-bool FakeMotionControl::getEncoderSpeedRaw(int j, double *sp)
+ReturnValue FakeMotionControl::getEncoderSpeedRaw(int j, double *sp)
 {
     // To avoid returning uninitialized memory, we set the encoder speed to 0
     *sp = 0.0;
-    return true;
+    return ReturnValue_ok;
 }
 
-bool FakeMotionControl::getEncoderSpeedsRaw(double *spds)
+ReturnValue FakeMotionControl::getEncoderSpeedsRaw(double *spds)
 {
-    bool ret = true;
+    ReturnValue ret = ReturnValue_ok;
     for(int j=0; j< _njoints; j++)
     {
         ret &= getEncoderSpeedRaw(j, &spds[j]);
@@ -2312,17 +2312,17 @@ bool FakeMotionControl::getEncoderSpeedsRaw(double *spds)
     return ret;
 }
 
-bool FakeMotionControl::getEncoderAccelerationRaw(int j, double *acc)
+ReturnValue FakeMotionControl::getEncoderAccelerationRaw(int j, double *acc)
 {
     // To avoid returning uninitialized memory, we set the encoder acc to 0
     *acc = 0.0;
 
-    return true;
+    return ReturnValue_ok;
 }
 
-bool FakeMotionControl::getEncoderAccelerationsRaw(double *accs)
+ReturnValue FakeMotionControl::getEncoderAccelerationsRaw(double *accs)
 {
-    bool ret = true;
+    ReturnValue ret = ReturnValue_ok;
     for(int j=0; j< _njoints; j++)
     {
         ret &= getEncoderAccelerationRaw(j, &accs[j]);
@@ -2332,9 +2332,9 @@ bool FakeMotionControl::getEncoderAccelerationsRaw(double *accs)
 
 ///////////////////////// END Encoder Interface
 
-bool FakeMotionControl::getEncodersTimedRaw(double *encs, double *stamps)
+ReturnValue FakeMotionControl::getEncodersTimedRaw(double *encs, double *stamps)
 {
-    bool ret = getEncodersRaw(encs);
+    ReturnValue ret = getEncodersRaw(encs);
     _mutex.lock();
     for (int i = 0; i < _njoints; i++) {
         stamps[i] = _encodersStamp[i] = _cycleTimestamp;
@@ -2343,9 +2343,9 @@ bool FakeMotionControl::getEncodersTimedRaw(double *encs, double *stamps)
     return ret;
 }
 
-bool FakeMotionControl::getEncoderTimedRaw(int j, double *encs, double *stamp)
+ReturnValue FakeMotionControl::getEncoderTimedRaw(int j, double *encs, double *stamp)
 {
-    bool ret = getEncoderRaw(j, encs);
+    ReturnValue ret = getEncoderRaw(j, encs);
     _mutex.lock();
     *stamp = _encodersStamp[j] = _cycleTimestamp;
     _mutex.unlock();
@@ -2355,51 +2355,51 @@ bool FakeMotionControl::getEncoderTimedRaw(int j, double *encs, double *stamp)
 
 //////////////////////// BEGIN EncoderInterface
 
-bool FakeMotionControl::getNumberOfMotorEncodersRaw(int* num)
+ReturnValue FakeMotionControl::getNumberOfMotorEncodersRaw(int* num)
 {
     *num=_njoints;
-    return true;
+    return ReturnValue_ok;
 }
 
-bool FakeMotionControl::setMotorEncoderRaw(int m, const double val)
+ReturnValue FakeMotionControl::setMotorEncoderRaw(int m, const double val)
 {
-    return NOT_YET_IMPLEMENTED("setMotorEncoder");
+    return YARP_METHOD_NOT_YET_IMPLEMENTED();
 }
 
-bool FakeMotionControl::setMotorEncodersRaw(const double *vals)
+ReturnValue FakeMotionControl::setMotorEncodersRaw(const double *vals)
 {
-    return NOT_YET_IMPLEMENTED("setMotorEncoders");
+    return YARP_METHOD_NOT_YET_IMPLEMENTED();
 }
 
-bool FakeMotionControl::setMotorEncoderCountsPerRevolutionRaw(int m, const double cpr)
+ReturnValue FakeMotionControl::setMotorEncoderCountsPerRevolutionRaw(int m, const double cpr)
 {
-    return NOT_YET_IMPLEMENTED("setMotorEncoderCountsPerRevolutionRaw");
+    return YARP_METHOD_NOT_YET_IMPLEMENTED();
 }
 
-bool FakeMotionControl::getMotorEncoderCountsPerRevolutionRaw(int m, double *cpr)
+ReturnValue FakeMotionControl::getMotorEncoderCountsPerRevolutionRaw(int m, double *cpr)
 {
-    return NOT_YET_IMPLEMENTED("getMotorEncoderCountsPerRevolutionRaw");
+    return YARP_METHOD_NOT_YET_IMPLEMENTED();
 }
 
-bool FakeMotionControl::resetMotorEncoderRaw(int mj)
+ReturnValue FakeMotionControl::resetMotorEncoderRaw(int mj)
 {
-    return NOT_YET_IMPLEMENTED("resetMotorEncoder");
+    return YARP_METHOD_NOT_YET_IMPLEMENTED();
 }
 
-bool FakeMotionControl::resetMotorEncodersRaw()
+ReturnValue FakeMotionControl::resetMotorEncodersRaw()
 {
-    return NOT_YET_IMPLEMENTED("reseMotortEncoders");
+    return YARP_METHOD_NOT_YET_IMPLEMENTED();
 }
 
-bool FakeMotionControl::getMotorEncoderRaw(int m, double *value)
+ReturnValue FakeMotionControl::getMotorEncoderRaw(int m, double *value)
 {
     *value = pos[m]*10;
-    return true;
+    return ReturnValue_ok;
 }
 
-bool FakeMotionControl::getMotorEncodersRaw(double *encs)
+ReturnValue FakeMotionControl::getMotorEncodersRaw(double *encs)
 {
-    bool ret = true;
+    ReturnValue ret = ReturnValue_ok;
     for(int j=0; j< _njoints; j++)
     {
         ret &= getMotorEncoderRaw(j, &encs[j]);
@@ -2408,15 +2408,15 @@ bool FakeMotionControl::getMotorEncodersRaw(double *encs)
     return ret;
 }
 
-bool FakeMotionControl::getMotorEncoderSpeedRaw(int m, double *sp)
+ReturnValue FakeMotionControl::getMotorEncoderSpeedRaw(int m, double *sp)
 {
     *sp = 0.0;
-    return true;
+    return ReturnValue_ok;
 }
 
-bool FakeMotionControl::getMotorEncoderSpeedsRaw(double *spds)
+ReturnValue FakeMotionControl::getMotorEncoderSpeedsRaw(double *spds)
 {
-    bool ret = true;
+    ReturnValue ret = ReturnValue_ok;
     for(int j=0; j< _njoints; j++)
     {
         ret &= getMotorEncoderSpeedRaw(j, &spds[j]);
@@ -2424,15 +2424,15 @@ bool FakeMotionControl::getMotorEncoderSpeedsRaw(double *spds)
     return ret;
 }
 
-bool FakeMotionControl::getMotorEncoderAccelerationRaw(int m, double *acc)
+ReturnValue FakeMotionControl::getMotorEncoderAccelerationRaw(int m, double *acc)
 {
     *acc = 0.0;
-    return true;
+    return ReturnValue_ok;
 }
 
-bool FakeMotionControl::getMotorEncoderAccelerationsRaw(double *accs)
+ReturnValue FakeMotionControl::getMotorEncoderAccelerationsRaw(double *accs)
 {
-    bool ret = true;
+    ReturnValue ret = ReturnValue_ok;
     for(int j=0; j< _njoints; j++)
     {
         ret &= getMotorEncoderAccelerationRaw(j, &accs[j]);
@@ -2440,9 +2440,9 @@ bool FakeMotionControl::getMotorEncoderAccelerationsRaw(double *accs)
     return ret;
 }
 
-bool FakeMotionControl::getMotorEncodersTimedRaw(double *encs, double *stamps)
+ReturnValue FakeMotionControl::getMotorEncodersTimedRaw(double *encs, double *stamps)
 {
-    bool ret = getMotorEncodersRaw(encs);
+    ReturnValue ret = getMotorEncodersRaw(encs);
     _mutex.lock();
     for (int i = 0; i < _njoints; i++) {
         stamps[i] = _encodersStamp[i] = _cycleTimestamp;
@@ -2452,9 +2452,9 @@ bool FakeMotionControl::getMotorEncodersTimedRaw(double *encs, double *stamps)
     return ret;
 }
 
-bool FakeMotionControl::getMotorEncoderTimedRaw(int m, double *encs, double *stamp)
+ReturnValue FakeMotionControl::getMotorEncoderTimedRaw(int m, double *encs, double *stamp)
 {
-    bool ret = getMotorEncoderRaw(m, encs);
+    ReturnValue ret = getMotorEncoderRaw(m, encs);
     _mutex.lock();
     *stamp = _encodersStamp[m] = _cycleTimestamp;
     _mutex.unlock();
@@ -2465,27 +2465,27 @@ bool FakeMotionControl::getMotorEncoderTimedRaw(int m, double *encs, double *sta
 
 ////// Amplifier interface
 
-bool FakeMotionControl::enableAmpRaw(int j)
+ReturnValue FakeMotionControl::enableAmpRaw(int j)
 {
-    return DEPRECATED("enableAmpRaw");
+    return YARP_METHOD_NOT_YET_IMPLEMENTED();
 }
 
-bool FakeMotionControl::disableAmpRaw(int j)
+ReturnValue FakeMotionControl::disableAmpRaw(int j)
 {
-    return DEPRECATED("disableAmpRaw");
+    return YARP_METHOD_NOT_YET_IMPLEMENTED();
 }
 
-bool FakeMotionControl::getCurrentRaw(int j, double *value)
+ReturnValue FakeMotionControl::getCurrentRaw(int j, double *value)
 {
     //just for testing purposes, this is not a real implementation
     *value = current[j];
-    return true;
+    return ReturnValue_ok;
 }
 
-bool FakeMotionControl::getCurrentsRaw(double *vals)
+ReturnValue FakeMotionControl::getCurrentsRaw(double *vals)
 {
     //just for testing purposes, this is not a real implementation
-    bool ret = true;
+    ReturnValue ret = ReturnValue_ok;
     for(int j=0; j< _njoints; j++)
     {
         ret &= getCurrentRaw(j, &vals[j]);
@@ -2493,80 +2493,80 @@ bool FakeMotionControl::getCurrentsRaw(double *vals)
     return ret;
 }
 
-bool FakeMotionControl::setMaxCurrentRaw(int m, double val)
+ReturnValue FakeMotionControl::setMaxCurrentRaw(int m, double val)
 {
     maxCurrent[m] = val;
-    return true;
+    return ReturnValue_ok;
 }
 
-bool FakeMotionControl::getMaxCurrentRaw(int m, double *val)
+ReturnValue FakeMotionControl::getMaxCurrentRaw(int m, double *val)
 {
     *val = maxCurrent[m];
-    return true;
+    return ReturnValue_ok;
 }
 
-bool FakeMotionControl::getAmpStatusRaw(int j, int *st)
+ReturnValue FakeMotionControl::getAmpStatusRaw(int j, int *st)
 {
     (_enabledAmp[j ]) ? *st = 1 : *st = 0;
-    return true;
+    return ReturnValue_ok;
 }
 
-bool FakeMotionControl::getAmpStatusRaw(int *sts)
+ReturnValue FakeMotionControl::getAmpStatusRaw(int *sts)
 {
-    bool ret = true;
+    ReturnValue ret = ReturnValue_ok;
     for(int j=0; j<_njoints; j++)
     {
         sts[j] = _enabledAmp[j];
     }
-    return ret;
+    return ReturnValue_ok;
 }
 
-bool FakeMotionControl::getPeakCurrentRaw(int m, double *val)
+ReturnValue FakeMotionControl::getPeakCurrentRaw(int m, double *val)
 {
     *val = peakCurrent[m];
-    return true;
+    return ReturnValue_ok;
 }
 
-bool FakeMotionControl::setPeakCurrentRaw(int m, const double val)
+ReturnValue FakeMotionControl::setPeakCurrentRaw(int m, const double val)
 {
     peakCurrent[m] = val;
-    return true;
+    return ReturnValue_ok;
 }
 
-bool FakeMotionControl::getNominalCurrentRaw(int m, double *val)
+ReturnValue FakeMotionControl::getNominalCurrentRaw(int m, double *val)
 {
     *val = nominalCurrent[m];
-    return true;
+    return ReturnValue_ok;
 }
 
-bool FakeMotionControl::setNominalCurrentRaw(int m, const double val)
+ReturnValue FakeMotionControl::setNominalCurrentRaw(int m, const double val)
 {
     nominalCurrent[m] = val;
-    return true;
+    return ReturnValue_ok;
 }
 
-bool FakeMotionControl::getPWMRaw(int m, double *val)
+ReturnValue FakeMotionControl::getPWMRaw(int m, double *val)
 {
     *val = pwm[m];
-    return true;
+    return ReturnValue_ok;
 }
 
-bool FakeMotionControl::getPWMLimitRaw(int m, double* val)
+ReturnValue FakeMotionControl::getPWMLimitRaw(int m, double* val)
 {
     *val = pwmLimit[m];
-    return true;
+    return ReturnValue_ok;
 }
 
-bool FakeMotionControl::setPWMLimitRaw(int m, const double val)
+ReturnValue FakeMotionControl::setPWMLimitRaw(int m, const double val)
 {
     pwmLimit[m] = val;
-    return true;
+    return ReturnValue_ok;
 }
 
-bool FakeMotionControl::getPowerSupplyVoltageRaw(int m, double* val)
+ReturnValue FakeMotionControl::getPowerSupplyVoltageRaw(int m, double* val)
 {
     *val = supplyVoltage[m];
-    return true;
+    return ReturnValue_ok;
 }
 
 
@@ -2585,101 +2585,92 @@ ReturnValue FakeMotionControl::getPosLimitsRaw(int j, double *min, double *max)
     return ReturnValue_ok;
 }
 
-bool FakeMotionControl::getGearboxRatioRaw(int j, double *gearbox)
+ReturnValue FakeMotionControl::getGearboxRatioRaw(int j, double *gearbox)
 {
-    return NOT_YET_IMPLEMENTED("getGearboxRatioRaw");
+    JOINTIDCHECK(_njoints)
+    *gearbox = _gearbox[j];
+    return ReturnValue_ok;
 }
 
-bool FakeMotionControl::setGearboxRatioRaw(int m, const double val)
+ReturnValue FakeMotionControl::setGearboxRatioRaw(int j, const double val)
 {
-    return NOT_YET_IMPLEMENTED("setGearboxRatioRaw");
+    JOINTIDCHECK(_njoints)
+    _gearbox[j] = val;
+    return ReturnValue_ok;
 }
 
 bool FakeMotionControl::getTorqueControlFilterType(int j, int& type)
 {
-    return NOT_YET_IMPLEMENTED("getTorqueControlFilterType");
+    return YARP_METHOD_NOT_YET_IMPLEMENTED();
 }
 
 bool FakeMotionControl::getRotorEncoderResolutionRaw(int j, double &rotres)
 {
-    return NOT_YET_IMPLEMENTED("getRotorEncoderResolutionRaw");
+    return YARP_METHOD_NOT_YET_IMPLEMENTED();
 }
 
 bool FakeMotionControl::getJointEncoderResolutionRaw(int j, double &jntres)
 {
-    return NOT_YET_IMPLEMENTED("getJointEncoderResolutionRaw");
+    return YARP_METHOD_NOT_YET_IMPLEMENTED();
 }
 
 bool FakeMotionControl::getJointEncoderTypeRaw(int j, int &type)
 {
-    return NOT_YET_IMPLEMENTED("getJointEncoderTypeRaw");
+    return YARP_METHOD_NOT_YET_IMPLEMENTED();
 }
 
 bool FakeMotionControl::getRotorEncoderTypeRaw(int j, int &type)
 {
-    return NOT_YET_IMPLEMENTED("getRotorEncoderTypeRaw");
+    return YARP_METHOD_NOT_YET_IMPLEMENTED();
 }
 
 bool FakeMotionControl::getKinematicMJRaw(int j, double &rotres)
 {
-    return NOT_YET_IMPLEMENTED("getKinematicMJRaw");
+    return YARP_METHOD_NOT_YET_IMPLEMENTED();
 }
 
 bool FakeMotionControl::getHasTempSensorsRaw(int j, int& ret)
 {
-    return NOT_YET_IMPLEMENTED("getHasTempSensorsRaw");
+    return YARP_METHOD_NOT_YET_IMPLEMENTED();
 }
 
 bool FakeMotionControl::getHasHallSensorRaw(int j, int& ret)
 {
-    return NOT_YET_IMPLEMENTED("getHasHallSensorRaw");
+    return YARP_METHOD_NOT_YET_IMPLEMENTED();
 }
 
 bool FakeMotionControl::getHasRotorEncoderRaw(int j, int& ret)
 {
-    return NOT_YET_IMPLEMENTED("getHasRotorEncoderRaw");
+    return YARP_METHOD_NOT_YET_IMPLEMENTED();;
 }
 
 bool FakeMotionControl::getHasRotorEncoderIndexRaw(int j, int& ret)
 {
-    return NOT_YET_IMPLEMENTED("getHasRotorEncoderIndexRaw");
+    return YARP_METHOD_NOT_YET_IMPLEMENTED();
 }
 
 bool FakeMotionControl::getMotorPolesRaw(int j, int& poles)
 {
-    return NOT_YET_IMPLEMENTED("getMotorPolesRaw");
+    return YARP_METHOD_NOT_YET_IMPLEMENTED();
 }
 
 bool FakeMotionControl::getRotorIndexOffsetRaw(int j, double& rotorOffset)
 {
-    return NOT_YET_IMPLEMENTED("getRotorIndexOffsetRaw");
+    return YARP_METHOD_NOT_YET_IMPLEMENTED();
 }
 
-bool FakeMotionControl::getAxisNameRaw(int axis, std::string& name)
+ReturnValue FakeMotionControl::getAxisNameRaw(int j, std::string& name)
 {
-    if (axis >= 0 && axis < _njoints)
-    {
-        name = _axisName[axis];
-        return true;
-    }
-    else
-    {
-        name = "ERROR";
-        return false;
-    }
+    JOINTIDCHECK(_njoints)
+    name = _axisName[j];
+    return ReturnValue_ok;
 }
 
-bool FakeMotionControl::getJointTypeRaw(int axis, yarp::dev::JointTypeEnum& type)
+ReturnValue FakeMotionControl::getJointTypeRaw(int j, yarp::dev::JointTypeEnum& type)
 {
-    if (axis >= 0 && axis < _njoints)
-    {
-        type = _jointType[axis];
-        return true;
-    }
-    else
-    {
-        return false;
-    }
+    JOINTIDCHECK(_njoints)
+    type = _jointType[j];
+    return ReturnValue_ok;
 }
 
 // IControlLimits
@@ -2699,47 +2690,47 @@ ReturnValue FakeMotionControl::getVelLimitsRaw(int axis, double *min, double *ma
 
 
 // Torque control
-bool FakeMotionControl::getTorqueRaw(int j, double *t)
+ReturnValue FakeMotionControl::getTorqueRaw(int j, double *t)
 {
     *t = _torques[j];
-    return true;
+    return ReturnValue_ok;
 }
 
-bool FakeMotionControl::getTorquesRaw(double *t)
+ReturnValue FakeMotionControl::getTorquesRaw(double *t)
 {
     for (int i = 0; i < _njoints; i++)
     {
         t[i]= _torques[i];
     }
-    return true;
+    return ReturnValue_ok;
 }
 
-bool FakeMotionControl::getTorqueRangeRaw(int j, double *min, double *max)
+ReturnValue FakeMotionControl::getTorqueRangeRaw(int j, double *min, double *max)
 {
     *min = -100;
     *max = 100;
-    return true;
+    return ReturnValue_ok;
 }
 
-bool FakeMotionControl::getTorqueRangesRaw(double *min, double *max)
+ReturnValue FakeMotionControl::getTorqueRangesRaw(double *min, double *max)
 {
-    bool ret = true;
+    ReturnValue ret = ReturnValue_ok;
     for (int j = 0; j < _njoints && ret; j++) {
         ret &= getTorqueRangeRaw(j, &min[j], &max[j]);
     }
     return ret;
 }
 
-bool FakeMotionControl::setRefTorquesRaw(const double *t)
+ReturnValue FakeMotionControl::setRefTorquesRaw(const double *t)
 {
-    bool ret = true;
+    ReturnValue ret = ReturnValue_ok;
     for (int j = 0; j < _njoints && ret; j++) {
         ret &= setRefTorqueRaw(j, t[j]);
     }
     return ret;
 }
 
-bool FakeMotionControl::setRefTorqueRaw(int j, double t)
+ReturnValue FakeMotionControl::setRefTorqueRaw(int j, double t)
 {
     _mutex.lock();
     _ref_torques[j]=t;
@@ -2752,75 +2743,75 @@ bool FakeMotionControl::setRefTorqueRaw(int j, double t)
         _controlModes[j] =  VOCAB_CM_HW_FAULT;
     }
     _mutex.unlock();
-    return true;
+    return ReturnValue_ok;
 }
 
-bool FakeMotionControl::setRefTorquesRaw(const int n_joint, const int *joints, const double *t)
+ReturnValue FakeMotionControl::setRefTorquesRaw(const int n_joint, const int *joints, const double *t)
 {
-    return NOT_YET_IMPLEMENTED("setRefTorquesRaw");
+    return YARP_METHOD_NOT_YET_IMPLEMENTED();
 }
 
-bool FakeMotionControl::getRefTorquesRaw(double *t)
+ReturnValue FakeMotionControl::getRefTorquesRaw(double *t)
 {
-    bool ret = true;
+    ReturnValue ret = ReturnValue_ok;
     for (int j = 0; j < _njoints && ret; j++) {
         ret &= getRefTorqueRaw(j, &_ref_torques[j]);
     }
-    return true;
+    return ReturnValue_ok;
 }
 
-bool FakeMotionControl::getRefTorqueRaw(int j, double *t)
+ReturnValue FakeMotionControl::getRefTorqueRaw(int j, double *t)
 {
     _mutex.lock();
     *t = _ref_torques[j];
     _mutex.unlock();
-    return true;
+    return ReturnValue_ok;
 }
 
-bool FakeMotionControl::getImpedanceRaw(int j, double *stiffness, double *damping)
+ReturnValue FakeMotionControl::getImpedanceRaw(int j, double *stiffness, double *damping)
 {
     _mutex.lock();
     *stiffness = _stiffness[j];
     *damping = _damping[j];
     _mutex.unlock();
-    return true;
+    return ReturnValue_ok;
 }
 
-bool FakeMotionControl::setImpedanceRaw(int j, double stiffness, double damping)
+ReturnValue FakeMotionControl::setImpedanceRaw(int j, double stiffness, double damping)
 {
     _mutex.lock();
     _stiffness[j] = stiffness;
     _damping[j] = damping;
     _mutex.unlock();
-    return true;
+    return ReturnValue_ok;
 }
 
-bool FakeMotionControl::setImpedanceOffsetRaw(int j, double offset)
+ReturnValue FakeMotionControl::setImpedanceOffsetRaw(int j, double offset)
 {
     _mutex.lock();
     _force_offset[j] = offset;
     _mutex.unlock();
-    return true;
+    return ReturnValue_ok;
 }
 
-bool FakeMotionControl::getImpedanceOffsetRaw(int j, double *offset)
+ReturnValue FakeMotionControl::getImpedanceOffsetRaw(int j, double *offset)
 {
     _mutex.lock();
     *offset = _force_offset[j];
     _mutex.unlock();
-    return true;
+    return ReturnValue_ok;
 }
 
-bool FakeMotionControl::getCurrentImpedanceLimitRaw(int j, double *min_stiff, double *max_stiff, double *min_damp, double *max_damp)
+ReturnValue FakeMotionControl::getCurrentImpedanceLimitRaw(int j, double *min_stiff, double *max_stiff, double *min_damp, double *max_damp)
 {
     *min_stiff=1.0;
     *max_stiff=10.0;
     *min_damp=2.0;
     *max_damp=20.0;
-    return true;
+    return ReturnValue_ok;
 }
 
-bool FakeMotionControl::getMotorTorqueParamsRaw(int j, MotorTorqueParameters *params)
+ReturnValue FakeMotionControl::getMotorTorqueParamsRaw(int j, MotorTorqueParameters *params)
 {
     params->bemf = _kbemf[j];
     params->bemf_scale = _kbemf_scale[j];
@@ -2840,10 +2831,10 @@ bool FakeMotionControl::getMotorTorqueParamsRaw(int j, MotorTorqueParameters *pa
                                                             << params->coulombPos
                                                             << params->coulombNeg
                                                             << params->velocityThres;
-    return true;
+    return ReturnValue_ok;
 }
 
-bool FakeMotionControl::setMotorTorqueParamsRaw(int j, const MotorTorqueParameters params)
+ReturnValue FakeMotionControl::setMotorTorqueParamsRaw(int j, const MotorTorqueParameters params)
 {
     _kbemf[j] = params.bemf;
     _ktau[j] = params.ktau;
@@ -2863,13 +2854,13 @@ bool FakeMotionControl::setMotorTorqueParamsRaw(int j, const MotorTorqueParamete
                                                             << params.coulombPos
                                                             << params.coulombNeg
                                                             << params.velocityThres;
-    return true;
+    return ReturnValue_ok;
 }
 
 // IVelocityControl interface
-bool FakeMotionControl::velocityMoveRaw(const int n_joint, const int *joints, const double *spds)
+ReturnValue FakeMotionControl::velocityMoveRaw(const int n_joint, const int *joints, const double *spds)
 {
-    bool ret = true;
+    ReturnValue ret = ReturnValue_ok;
     for(int i=0; i<n_joint; i++)
     {
         ret &= velocityMoveRaw(joints[i], spds[i]);
@@ -2878,32 +2869,32 @@ bool FakeMotionControl::velocityMoveRaw(const int n_joint, const int *joints, co
 }
 
 // PositionDirect Interface
-bool FakeMotionControl::setPositionRaw(int j, double ref)
+ReturnValue FakeMotionControl::setPositionRaw(int j, double ref)
 {
     _posDir_references[j] = ref;
-    return true;
+    return ReturnValue_ok;
 }
 
-bool FakeMotionControl::setPositionsRaw(const int n_joint, const int *joints, const double *refs)
+ReturnValue FakeMotionControl::setPositionsRaw(const int n_joint, const int *joints, const double *refs)
 {
     for(int i=0; i< n_joint; i++)
     {
         _posDir_references[joints[i]] = refs[i];
     }
-    return true;
+    return ReturnValue_ok;
 }
 
-bool FakeMotionControl::setPositionsRaw(const double *refs)
+ReturnValue FakeMotionControl::setPositionsRaw(const double *refs)
 {
     for(int i=0; i< _njoints; i++)
     {
         _posDir_references[i] = refs[i];
     }
-    return true;
+    return ReturnValue_ok;
 }
 
 
-bool FakeMotionControl::getTargetPositionRaw(int axis, double *ref)
+ReturnValue FakeMotionControl::getTargetPositionRaw(int axis, double *ref)
 {
     if (verbose >= VERY_VERBOSE) {
         yCTrace(FAKEMOTIONCONTROL) << "j " << axis << " ref " << _posCtrl_references[axis];
@@ -2919,21 +2910,21 @@ bool FakeMotionControl::getTargetPositionRaw(int axis, double *ref)
         "this call is for reference only and may not reflect the actual behaviour of the motor/firmware.";
     }
     *ref = _posCtrl_references[axis];
-    return true;
+    return ReturnValue_ok;
 }
 
-bool FakeMotionControl::getTargetPositionsRaw(double *refs)
+ReturnValue FakeMotionControl::getTargetPositionsRaw(double *refs)
 {
-    bool ret = true;
+    ReturnValue ret = ReturnValue_ok;
     for (int i = 0; i < _njoints; i++) {
         ret &= getTargetPositionRaw(i, &refs[i]);
     }
     return ret;
 }
 
-bool FakeMotionControl::getTargetPositionsRaw(int nj, const int * jnts, double *refs)
+ReturnValue FakeMotionControl::getTargetPositionsRaw(int nj, const int * jnts, double *refs)
 {
-    bool ret = true;
+    ReturnValue ret = ReturnValue_ok;
     for (int i = 0; i<nj; i++)
     {
         ret &= getTargetPositionRaw(jnts[i], &refs[i]);
@@ -2941,15 +2932,15 @@ bool FakeMotionControl::getTargetPositionsRaw(int nj, const int * jnts, double *
     return ret;
 }
 
-bool FakeMotionControl::getTargetVelocityRaw(int axis, double *ref)
+ReturnValue FakeMotionControl::getTargetVelocityRaw(int axis, double *ref)
 {
     *ref = _command_speeds[axis];
-    return true;
+    return ReturnValue_ok;
 }
 
-bool FakeMotionControl::getTargetVelocitiesRaw(double *refs)
+ReturnValue FakeMotionControl::getTargetVelocitiesRaw(double *refs)
 {
-    bool ret = true;
+    ReturnValue ret = ReturnValue_ok;
     for (int i = 0; i<_njoints; i++)
     {
         ret &= getTargetVelocityRaw(i, &refs[i]);
@@ -2957,9 +2948,9 @@ bool FakeMotionControl::getTargetVelocitiesRaw(double *refs)
     return ret;
 }
 
-bool FakeMotionControl::getTargetVelocitiesRaw(int nj, const int * jnts, double *refs)
+ReturnValue FakeMotionControl::getTargetVelocitiesRaw(int nj, const int * jnts, double *refs)
 {
-    bool ret = true;
+    ReturnValue ret = ReturnValue_ok;
     for (int i = 0; i<nj; i++)
     {
         ret &= getTargetVelocityRaw(jnts[i], &refs[i]);
@@ -2967,7 +2958,7 @@ bool FakeMotionControl::getTargetVelocitiesRaw(int nj, const int * jnts, double 
     return ret;
 }
 
-bool FakeMotionControl::getRefPositionRaw(int axis, double *ref)
+ReturnValue FakeMotionControl::getRefPositionRaw(int axis, double *ref)
 {
     int mode = 0;
     getControlModeRaw(axis, &mode);
@@ -2982,12 +2973,12 @@ bool FakeMotionControl::getRefPositionRaw(int axis, double *ref)
 
     *ref = _posDir_references[axis];
 
-    return true;
+    return ReturnValue_ok;
 }
 
-bool FakeMotionControl::getRefPositionsRaw(double *refs)
+ReturnValue FakeMotionControl::getRefPositionsRaw(double *refs)
 {
-    bool ret = true;
+    ReturnValue ret = ReturnValue_ok;
     for (int i = 0; i<_njoints; i++)
     {
         ret &= getRefPositionRaw(i, &refs[i]);
@@ -2995,9 +2986,9 @@ bool FakeMotionControl::getRefPositionsRaw(double *refs)
     return ret;
 }
 
-bool FakeMotionControl::getRefPositionsRaw(int nj, const int * jnts, double *refs)
+ReturnValue FakeMotionControl::getRefPositionsRaw(int nj, const int * jnts, double *refs)
 {
-    bool ret = true;
+    ReturnValue ret = ReturnValue_ok;
     for (int i = 0; i<nj; i++)
     {
         ret &= getRefPositionRaw(jnts[i], &refs[i]);
@@ -3007,18 +2998,18 @@ bool FakeMotionControl::getRefPositionsRaw(int nj, const int * jnts, double *ref
 
 
 // InteractionMode
-bool FakeMotionControl::getInteractionModeRaw(int j, yarp::dev::InteractionModeEnum* _mode)
+ReturnValue FakeMotionControl::getInteractionModeRaw(int j, yarp::dev::InteractionModeEnum* _mode)
 {
     if (verbose > VERY_VERY_VERBOSE) {
         yCTrace(FAKEMOTIONCONTROL) << "j: " << j;
     }
 
     *_mode = (yarp::dev::InteractionModeEnum)_interactMode[j];
-    return true;}
+    return ReturnValue_ok;}
 
-bool FakeMotionControl::getInteractionModesRaw(int n_joints, int *joints, yarp::dev::InteractionModeEnum* modes)
+ReturnValue FakeMotionControl::getInteractionModesRaw(int n_joints, int *joints, yarp::dev::InteractionModeEnum* modes)
 {
-    bool ret = true;
+    ReturnValue ret = ReturnValue_ok;
     for(int j=0; j< n_joints; j++)
     {
         ret = ret && getInteractionModeRaw(joints[j], &modes[j]);
@@ -3027,19 +3018,16 @@ bool FakeMotionControl::getInteractionModesRaw(int n_joints, int *joints, yarp::
 
 }
 
-bool FakeMotionControl::getInteractionModesRaw(yarp::dev::InteractionModeEnum* modes)
+ReturnValue FakeMotionControl::getInteractionModesRaw(yarp::dev::InteractionModeEnum* modes)
 {
-    bool ret = true;
+    ReturnValue ret = ReturnValue_ok;
     for (int j = 0; j < _njoints; j++) {
         ret = ret && getInteractionModeRaw(j, &modes[j]);
     }
     return ret;
 }
 
-// marco.accame: con alberto cardellino abbiamo parlato della correttezza di effettuare la verifica di quanto imposto (in setInteractionModeRaw() ed affini)
-// andando a rileggere il valore nella scheda eth fino a che esso non sia quello atteso. si deve fare oppure no?
-// con il interaction mode il can ora non lo fa. mentre lo fa per il control mode. perche' diverso?
-bool FakeMotionControl::setInteractionModeRaw(int j, yarp::dev::InteractionModeEnum _mode)
+ReturnValue FakeMotionControl::setInteractionModeRaw(int j, yarp::dev::InteractionModeEnum _mode)
 {
     if (verbose >= VERY_VERBOSE) {
         yCTrace(FAKEMOTIONCONTROL) << "j: " << j << " interaction mode: " << yarp::os::Vocab32::decode(_mode);
@@ -3047,13 +3035,13 @@ bool FakeMotionControl::setInteractionModeRaw(int j, yarp::dev::InteractionModeE
 
     _interactMode[j] = _mode;
 
-    return true;
+    return ReturnValue_ok;
 }
 
 
-bool FakeMotionControl::setInteractionModesRaw(int n_joints, int *joints, yarp::dev::InteractionModeEnum* modes)
+ReturnValue FakeMotionControl::setInteractionModesRaw(int n_joints, int *joints, yarp::dev::InteractionModeEnum* modes)
 {
-    bool ret = true;
+    ReturnValue ret = ReturnValue_ok;
     for(int i=0; i<n_joints; i++)
     {
         ret &= setInteractionModeRaw(joints[i], modes[i]);
@@ -3061,9 +3049,9 @@ bool FakeMotionControl::setInteractionModesRaw(int n_joints, int *joints, yarp::
     return ret;
 }
 
-bool FakeMotionControl::setInteractionModesRaw(yarp::dev::InteractionModeEnum* modes)
+ReturnValue FakeMotionControl::setInteractionModesRaw(yarp::dev::InteractionModeEnum* modes)
 {
-    bool ret = true;
+    ReturnValue ret = ReturnValue_ok;
     for(int i=0; i<_njoints; i++)
     {
         ret &= setInteractionModeRaw(i, modes[i]);
@@ -3072,21 +3060,21 @@ bool FakeMotionControl::setInteractionModesRaw(yarp::dev::InteractionModeEnum* m
 
 }
 
-bool FakeMotionControl::getNumberOfMotorsRaw(int* num)
+ReturnValue FakeMotionControl::getNumberOfMotorsRaw(int* num)
 {
     *num=_njoints;
-    return true;
+    return ReturnValue_ok;
 }
 
-bool FakeMotionControl::getTemperatureRaw(int m, double* val)
+ReturnValue FakeMotionControl::getTemperatureRaw(int m, double* val)
 {
     *val = 37.5+double(m);
-    return true;
+    return ReturnValue_ok;
 }
 
-bool FakeMotionControl::getTemperaturesRaw(double *vals)
+ReturnValue FakeMotionControl::getTemperaturesRaw(double *vals)
 {
-    bool ret = true;
+    ReturnValue ret = ReturnValue_ok;
     for(int j=0; j< _njoints; j++)
     {
         ret &= getTemperatureRaw(j, &vals[j]);
@@ -3094,62 +3082,66 @@ bool FakeMotionControl::getTemperaturesRaw(double *vals)
     return ret;
 }
 
-bool FakeMotionControl::getTemperatureLimitRaw(int m, double *temp)
+ReturnValue FakeMotionControl::getTemperatureLimitRaw(int m, double *temp)
 {
-    return NOT_YET_IMPLEMENTED("getTemperatureLimitRaw");
+    MOTORIDCHECK(_njoints)
+    *temp = _tempLimit[m];
+    return ReturnValue_ok;
 }
 
-bool FakeMotionControl::setTemperatureLimitRaw(int m, const double temp)
+ReturnValue FakeMotionControl::setTemperatureLimitRaw(int m, const double temp)
 {
-    return NOT_YET_IMPLEMENTED("setTemperatureLimitRaw");
+    MOTORIDCHECK(_njoints)
+    _tempLimit[m] = temp;
+    return ReturnValue_ok;
 }
 
 //PWM interface
-bool FakeMotionControl::setRefDutyCycleRaw(int j, double v)
+ReturnValue FakeMotionControl::setRefDutyCycleRaw(int j, double v)
 {
     refpwm[j] = v;
     pwm[j] = v;
     last_pwm_command[j]=yarp::os::Time::now();
-    return true;
+    return ReturnValue_ok;
 }
 
-bool FakeMotionControl::setRefDutyCyclesRaw(const double *v)
+ReturnValue FakeMotionControl::setRefDutyCyclesRaw(const double *v)
 {
     for (int i = 0; i < _njoints; i++)
     {
         setRefDutyCycleRaw(i,v[i]);
     }
-    return true;
+    return ReturnValue_ok;
 }
 
-bool FakeMotionControl::getRefDutyCycleRaw(int j, double *v)
+ReturnValue FakeMotionControl::getRefDutyCycleRaw(int j, double *v)
 {
     *v = refpwm[j];
-    return true;
+    return ReturnValue_ok;
 }
 
-bool FakeMotionControl::getRefDutyCyclesRaw(double *v)
+ReturnValue FakeMotionControl::getRefDutyCyclesRaw(double *v)
 {
     for (int i = 0; i < _njoints; i++)
     {
         v[i] = refpwm[i];
     }
-    return true;
+    return ReturnValue_ok;
 }
 
-bool FakeMotionControl::getDutyCycleRaw(int j, double *v)
+ReturnValue FakeMotionControl::getDutyCycleRaw(int j, double *v)
 {
     *v = pwm[j];
-    return true;
+    return ReturnValue_ok;
 }
 
-bool FakeMotionControl::getDutyCyclesRaw(double *v)
+ReturnValue FakeMotionControl::getDutyCyclesRaw(double *v)
 {
     for (int i = 0; i < _njoints; i++)
     {
         v[i] = pwm[i];
     }
-    return true;
+    return ReturnValue_ok;
 }
 
 // Current interface
@@ -3164,15 +3156,15 @@ bool FakeMotionControl::getCurrentsRaw(double *t)
 }
 */
 
-bool FakeMotionControl::getCurrentRangeRaw(int j, double *min, double *max)
+ReturnValue FakeMotionControl::getCurrentRangeRaw(int j, double *min, double *max)
 {
     //just for testing purposes, this is not a real implementation
     *min = -3.5;
     *max = +3.5;
-    return true;
+    return ReturnValue_ok;
 }
 
-bool FakeMotionControl::getCurrentRangesRaw(double *min, double *max)
+ReturnValue FakeMotionControl::getCurrentRangesRaw(double *min, double *max)
 {
     //just for testing purposes, this is not a real implementation
     for (int i = 0; i < _njoints; i++)
@@ -3180,29 +3172,29 @@ bool FakeMotionControl::getCurrentRangesRaw(double *min, double *max)
         min[i] = -3.5;
         max[i] = +3.5;
     }
-    return true;
+    return ReturnValue_ok;
 }
 
-bool FakeMotionControl::setRefCurrentsRaw(const double *t)
+ReturnValue FakeMotionControl::setRefCurrentsRaw(const double *t)
 {
     for (int i = 0; i < _njoints; i++)
     {
         _ref_currents[i] = t[i];
         current[i] = t[i] / 2;
     }
-    return true;
+    return ReturnValue_ok;
 }
 
-bool FakeMotionControl::setRefCurrentRaw(int j, double t)
+ReturnValue FakeMotionControl::setRefCurrentRaw(int j, double t)
 {
     _ref_currents[j] = t;
     current[j] = t / 2;
-    return true;
+    return ReturnValue_ok;
 }
 
-bool FakeMotionControl::setRefCurrentsRaw(const int n_joint, const int *joints, const double *t)
+ReturnValue FakeMotionControl::setRefCurrentsRaw(const int n_joint, const int *joints, const double *t)
 {
-    bool ret = true;
+    ReturnValue ret = ReturnValue_ok;
     for (int j = 0; j<n_joint; j++)
     {
         ret = ret &&setRefCurrentRaw(joints[j], t[j]);
@@ -3210,19 +3202,19 @@ bool FakeMotionControl::setRefCurrentsRaw(const int n_joint, const int *joints, 
     return ret;
 }
 
-bool FakeMotionControl::getRefCurrentsRaw(double *t)
+ReturnValue FakeMotionControl::getRefCurrentsRaw(double *t)
 {
     for (int i = 0; i < _njoints; i++)
     {
         t[i] = _ref_currents[i];
     }
-    return true;
+    return ReturnValue_ok;
 }
 
-bool FakeMotionControl::getRefCurrentRaw(int j, double *t)
+ReturnValue FakeMotionControl::getRefCurrentRaw(int j, double *t)
 {
     *t = _ref_currents[j];
-    return true;
+    return ReturnValue_ok;
 }
 
 yarp::dev::VAS_status  FakeMotionControl::getVirtualAnalogSensorStatusRaw(int ch)
@@ -3250,13 +3242,13 @@ bool FakeMotionControl::updateVirtualAnalogSensorMeasureRaw(int ch, double &meas
     return true;
 }
 
-bool FakeMotionControl::getLastJointFaultRaw(int j, int& fault, std::string& message)
+ReturnValue FakeMotionControl::getLastJointFaultRaw(int j, int& fault, std::string& message)
 {
     _mutex.lock();
     fault = _hwfault_code[j];
     message = _hwfault_message[j];
     _mutex.unlock();
-    return true;
+    return ReturnValue_ok;
 }
 
 ReturnValue FakeMotionControl::isJointBrakedRaw(int j, bool& braked) const

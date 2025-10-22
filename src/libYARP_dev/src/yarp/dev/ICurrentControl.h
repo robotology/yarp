@@ -8,6 +8,7 @@
 
 #include <yarp/os/Vocab.h>
 #include <yarp/dev/api.h>
+#include <yarp/dev/ReturnValue.h>
 
 namespace yarp::dev {
 class ICurrentControlRaw;
@@ -32,20 +33,20 @@ public:
      * @param ax returns the number of controlled axes.
      * @return true/false on success/failure
      */
-    virtual bool getNumberOfMotors(int *ax) = 0;
+    virtual yarp::dev::ReturnValue getNumberOfMotors(int *ax) = 0;
 
     /** Get the instantaneous current measurement for a single motor
     * @param m motor number
     * @param curr pointer to the result value. Value is expressed in amperes.
     * @return true/false on success/failure
     */
-    virtual bool getCurrent(int m, double *curr) = 0;
+    virtual yarp::dev::ReturnValue getCurrent(int m, double *curr) = 0;
 
     /** Get the instantaneous current measurement for all motors
     * @param currs pointer to the array that will store the output. Values are expressed in amperes.
     * @return true/false on success/failure
     */
-    virtual bool getCurrents(double *currs) = 0;
+    virtual yarp::dev::ReturnValue getCurrents(double *currs) = 0;
 
     /** Get the full scale of the current measurement for a given motor (e.g. -20A +20A)
     * Reference values set by user with methods such as setRefCurrent() should be in this range.
@@ -55,7 +56,7 @@ public:
     * @param max maximum current of the motor m
     * @return true/false on success/failure
     */
-    virtual bool getCurrentRange(int m, double *min, double *max) = 0;
+    virtual yarp::dev::ReturnValue getCurrentRange(int m, double *min, double *max) = 0;
 
     /** Get the full scale of the current measurements for all motors motor (e.g. -20A +20A)
     * Reference values set by user with methods such as setRefCurrent() should be in this range.
@@ -64,20 +65,20 @@ public:
     * @param max pointer to the array that will store maximum currents
     * @return true/false on success/failure
     */
-    virtual bool getCurrentRanges(double *min, double *max) = 0;
+    virtual yarp::dev::ReturnValue getCurrentRanges(double *min, double *max) = 0;
 
     /** Set the reference value of the currents for all motors.
     * @param currs the array containing the reference current values. Values are expressed in amperes.
     * @return true/false on success/failure
     */
-    virtual bool setRefCurrents(const double *currs) = 0;
+    virtual yarp::dev::ReturnValue setRefCurrents(const double *currs) = 0;
 
     /** Set the reference value of the current for a single motor.
     * @param m motor number
     * @param curr the current reference value for motor m. Value is expressed in amperes.
     * @return true/false on success/failure
     */
-    virtual bool setRefCurrent(int m, double curr) = 0;
+    virtual yarp::dev::ReturnValue setRefCurrent(int m, double curr) = 0;
 
     /**  Set the reference value of the current for a group of motors.
     * @param n_motor size of motors ans currs arrays
@@ -85,20 +86,20 @@ public:
     * @param currs   pointer to the array specifying the new current references
     * @return true/false on success/failure
     */
-    virtual bool setRefCurrents(const int n_motor, const int *motors, const double *currs) = 0;
+    virtual yarp::dev::ReturnValue setRefCurrents(const int n_motor, const int *motors, const double *currs) = 0;
 
    /** Get the reference value of the currents for all motors.
      * @param currs pointer to the array to be filled with reference current values. Values are expressed in amperes.
      * @return true/false on success/failure
      */
-    virtual bool getRefCurrents(double *currs) = 0;
+    virtual yarp::dev::ReturnValue getRefCurrents(double *currs) = 0;
 
     /** Get the reference value of the current for a single motor.
     * @param m motor number
     * @param curr the current reference value for motor m. Value is expressed in amperes.
     * @return true/false on success/failure
     */
-    virtual bool getRefCurrent(int m, double *curr) = 0;
+    virtual yarp::dev::ReturnValue getRefCurrent(int m, double *curr) = 0;
 };
 
 /**
@@ -119,20 +120,20 @@ public:
     * @param number returns the number of controlled motors.
     * @return true/false on success/failure
     */
-    virtual bool getNumberOfMotorsRaw(int *number) = 0;
+    virtual yarp::dev::ReturnValue getNumberOfMotorsRaw(int *number) = 0;
 
     /** Get the instantaneous current measurement for a single motor.
     * @param m motor number
     * @param curr pointer to the result value
     * @return true/false on success/failure
     */
-    virtual bool getCurrentRaw(int m, double *curr)=0;
+    virtual yarp::dev::ReturnValue getCurrentRaw(int m, double *curr)=0;
 
     /** Get the instantaneous current measurement for all motors.
     * @param currs pointer to the array that will store the output
     * @return true/false on success/failure
     */
-    virtual bool getCurrentsRaw(double *currs)=0;
+    virtual yarp::dev::ReturnValue getCurrentsRaw(double *currs)=0;
 
     /** Get the full scale of the current measurement for a given motor (e.g. -20A +20A)
     * Reference values set by user with methods such as setRefCurrent() should be in this range.
@@ -142,7 +143,7 @@ public:
     * @param max maximum current of the motor m
     * @return true/false on success/failure
     */
-    virtual bool getCurrentRangeRaw(int m, double *min, double *max)=0;
+    virtual yarp::dev::ReturnValue getCurrentRangeRaw(int m, double *min, double *max)=0;
 
     /** Get the full scale of the current measurements for all motors motor (e.g. -20A +20A)
     * Reference values set by user with methods such as setRefCurrent() should be in this range.
@@ -151,20 +152,20 @@ public:
     * @param max pointer to the array that will store maximum currents
     * @return true/false on success/failure
     */
-    virtual bool getCurrentRangesRaw(double *min, double *max)=0;
+    virtual yarp::dev::ReturnValue getCurrentRangesRaw(double *min, double *max)=0;
 
     /** Set the reference value of the currents for all motors.
     * @param currs the array containt the reference current values
     * @return true/false on success/failure
     */
-    virtual bool setRefCurrentsRaw(const double *currs)=0;
+    virtual yarp::dev::ReturnValue setRefCurrentsRaw(const double *currs)=0;
 
     /** Set the reference value of the current for a single motor.
     * @param m motor number
     * @param curr the current reference value for motor m
     * @return true/false on success/failure
     */
-    virtual bool setRefCurrentRaw(int m, double curr)=0;
+    virtual yarp::dev::ReturnValue setRefCurrentRaw(int m, double curr)=0;
 
     /**  Set the reference value of the current for a group of motors.
      * @param n_motor size of motors ans currs arrays
@@ -172,20 +173,20 @@ public:
      * @param refs   pointer to the array specifying the new current reference
      * @return true/false on success/failure
      */
-    virtual bool setRefCurrentsRaw(const int n_motor, const int *motors, const double *currs) = 0;
+    virtual yarp::dev::ReturnValue setRefCurrentsRaw(const int n_motor, const int *motors, const double *currs) = 0;
 
     /** Get the reference value of the currents for all motors.
     * @param currs pointer to the array to be filled with reference current values.
     * @return true/false on success/failure
     */
-    virtual bool getRefCurrentsRaw(double *currs)=0;
+    virtual yarp::dev::ReturnValue getRefCurrentsRaw(double *currs)=0;
 
     /** Get the reference value of the current for a single motor.
     * @param m motor number
     * @param curr the current reference value for motor m
     * @return true/false on success/failure
     */
-    virtual bool getRefCurrentRaw(int m, double *curr)=0;
+    virtual yarp::dev::ReturnValue getRefCurrentRaw(int m, double *curr)=0;
 };
 
 // Interface name

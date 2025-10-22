@@ -8,6 +8,7 @@
 #define YARP_DEV_ICALIBRATOR_H
 
 #include <yarp/dev/DeviceDriver.h>
+#include <yarp/dev/ReturnValue.h>
 
 namespace yarp::dev {
 
@@ -22,13 +23,13 @@ class YARP_dev_API ICalibrator
 public:
     virtual ~ICalibrator() = default;
 
-    virtual bool calibrate(DeviceDriver *dd) = 0;
+    virtual yarp::dev::ReturnValue calibrate(DeviceDriver *dd) = 0;
 
-    virtual bool park(DeviceDriver *dd, bool wait = true) = 0;
+    virtual yarp::dev::ReturnValue park(DeviceDriver *dd, bool wait = true) = 0;
 
-    virtual bool quitCalibrate() = 0;
+    virtual yarp::dev::ReturnValue quitCalibrate() = 0;
 
-    virtual bool quitPark() = 0;
+    virtual yarp::dev::ReturnValue quitPark() = 0;
 };
 
 } // namespace yarp::dev

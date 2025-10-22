@@ -24,43 +24,43 @@ void ImplementJointCoupling::initialise(yarp::sig::VectorOf<size_t> coupled_phys
     m_physicalJointLimits       = physical_joint_limits;
 }
 
-bool ImplementJointCoupling::getNrOfPhysicalJoints(size_t& nrOfPhysicalJoints) {
+ReturnValue ImplementJointCoupling::getNrOfPhysicalJoints(size_t& nrOfPhysicalJoints) {
     nrOfPhysicalJoints = m_physicalJointNames.size();
-    return true;
+    return ReturnValue_ok;
 }
-bool ImplementJointCoupling::getNrOfActuatedAxes(size_t& nrOfActuatedAxes){
+ReturnValue ImplementJointCoupling::getNrOfActuatedAxes(size_t& nrOfActuatedAxes){
     nrOfActuatedAxes = m_actuatedAxesNames.size();
-    return true;
+    return ReturnValue_ok;
 }
 
-bool ImplementJointCoupling::getCoupledPhysicalJoints(yarp::sig::VectorOf<size_t>& coupPhysJointsIndexes) {
+ReturnValue ImplementJointCoupling::getCoupledPhysicalJoints(yarp::sig::VectorOf<size_t>& coupPhysJointsIndexes) {
     coupPhysJointsIndexes = m_coupledPhysicalJoints;
-    return true;
+    return ReturnValue_ok;
 }
 
-bool ImplementJointCoupling::getCoupledActuatedAxes(yarp::sig::VectorOf<size_t>& coupActAxesIndexes) {
+ReturnValue ImplementJointCoupling::getCoupledActuatedAxes(yarp::sig::VectorOf<size_t>& coupActAxesIndexes) {
     coupActAxesIndexes = m_coupledActuatedAxes;
-    return true;
+    return ReturnValue_ok;
 }
 
-bool ImplementJointCoupling::getPhysicalJointName(size_t physicalJointIndex, std::string& physicalJointName){
+ReturnValue ImplementJointCoupling::getPhysicalJointName(size_t physicalJointIndex, std::string& physicalJointName){
     if(physicalJointIndex >= m_physicalJointNames.size()) {
-        return false;
+        return ReturnValue::return_code::return_value_error_input_out_of_bounds;
     }
     else {
         physicalJointName=m_physicalJointNames[physicalJointIndex];
-        return true;
+        return ReturnValue_ok;
     }
 
 }
 
-bool ImplementJointCoupling::getActuatedAxisName(size_t actuatedAxisIndex, std::string& actuatedAxisName){
+ReturnValue ImplementJointCoupling::getActuatedAxisName(size_t actuatedAxisIndex, std::string& actuatedAxisName){
     if(actuatedAxisIndex >= m_actuatedAxesNames.size()) {
-        return false;
+        return ReturnValue::return_code::return_value_error_input_out_of_bounds;
     }
     else {
         actuatedAxisName=m_actuatedAxesNames[actuatedAxisIndex];
-        return true;
+        return ReturnValue_ok;
     }
 }
 
@@ -68,14 +68,14 @@ bool ImplementJointCoupling::checkPhysicalJointIsCoupled(size_t physicalJointInd
     return std::find(m_coupledPhysicalJoints.begin(), m_coupledPhysicalJoints.end(), physicalJointIndex) != m_coupledPhysicalJoints.end();
 }
 
-bool ImplementJointCoupling::getPhysicalJointLimits(size_t physicalJointIndex, double& min, double& max){
+ReturnValue ImplementJointCoupling::getPhysicalJointLimits(size_t physicalJointIndex, double& min, double& max){
     size_t nrOfPhysicalJoints;
     auto ok = getNrOfPhysicalJoints(nrOfPhysicalJoints);
     if (ok && physicalJointIndex < nrOfPhysicalJoints)
     {
         min = m_physicalJointLimits[physicalJointIndex].first;
         max = m_physicalJointLimits[physicalJointIndex].second;
-        return true;
+        return ReturnValue_ok;
     }
-    return false;
+    return ReturnValue::return_code::return_value_error_input_out_of_bounds;
 }

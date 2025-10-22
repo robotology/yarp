@@ -8,6 +8,7 @@
 
 #include <yarp/os/Vocab.h>
 #include <yarp/dev/api.h>
+#include <yarp/dev/ReturnValue.h>
 
 namespace yarp::dev {
 class ITorqueControlRaw;
@@ -48,14 +49,14 @@ public:
      * axes for the current physical interface.
      * @return the number of controlled axes.
      */
-    virtual bool getAxes(int *ax) = 0;
+    virtual yarp::dev::ReturnValue getAxes(int *ax) = 0;
 
    /** Get the reference value of the torque for all joints.
      * This is NOT the feedback (see getTorques instead).
      * @param t pointer to the array of torque values
      * @return true/false on success/failure
      */
-    virtual bool getRefTorques(double *t)=0;
+    virtual yarp::dev::ReturnValue getRefTorques(double *t)=0;
 
     /** Get the reference value of the torque for a given joint.
      * This is NOT the feedback (see getTorque instead).
@@ -63,41 +64,41 @@ public:
      * @param t the returned reference torque of joint j
      * @return true/false on success/failure
      */
-    virtual bool getRefTorque(int j, double *t)=0;
+    virtual yarp::dev::ReturnValue getRefTorque(int j, double *t)=0;
 
     /** Set the reference value of the torque for all joints.
      * @param t pointer to the array of torque values
      * @return true/false on success/failure
      */
-    virtual bool setRefTorques(const double *t)=0;
+    virtual yarp::dev::ReturnValue setRefTorques(const double *t)=0;
 
     /** Set the reference value of the torque for a given joint.
      * @param j joint number
      * @param t new value
      * @return true/false on success/failure
      */
-    virtual bool setRefTorque(int j, double t)=0;
+    virtual yarp::dev::ReturnValue setRefTorque(int j, double t)=0;
 
     /** Set new torque reference for a subset of joints.
      * @param joints pointer to the array of joint numbers
      * @param refs   pointer to the array specifying the new torque reference
      * @return true/false on success/failure
      */
-    virtual bool setRefTorques(const int n_joint, const int *joints, const double *t) {return false;}  // this function has a default implementation to keep backward compatibility with existing devices
+    virtual yarp::dev::ReturnValue setRefTorques(const int n_joint, const int *joints, const double *t)  =0;
 
     /** Get a subset of motor parameters (bemf, ktau etc) useful for torque control.
      * @param j joint number
      * @param params a struct containing the motor parameters to be retrieved
      * @return true/false on success/failure
      */
-    virtual bool getMotorTorqueParams(int j,  yarp::dev::MotorTorqueParameters *params) {return false;}
+    virtual yarp::dev::ReturnValue getMotorTorqueParams(int j,  yarp::dev::MotorTorqueParameters *params)  =0;
 
     /** Set a subset of motor parameters (bemf, ktau etc) useful for torque control.
      * @param j joint number
      * @param params a struct containing the motor parameters to be set
      * @return true/false on success/failure
      */
-    virtual bool setMotorTorqueParams(int j,  const yarp::dev::MotorTorqueParameters params) {return false;}
+    virtual yarp::dev::ReturnValue setMotorTorqueParams(int j,  const yarp::dev::MotorTorqueParameters params)  =0;
 
     /** Get the value of the torque on a given joint (this is the
      * feedback if you have a torque sensor).
@@ -105,14 +106,14 @@ public:
      * @param t pointer to the result value
      * @return true/false on success/failure
      */
-    virtual bool getTorque(int j, double *t)=0;
+    virtual yarp::dev::ReturnValue getTorque(int j, double *t)=0;
 
     /** Get the value of the torque for all joints (this is
      * the feedback if you have torque sensors).
      * @param t pointer to the array that will store the output
      * @return true/false on success/failure
      */
-    virtual bool getTorques(double *t)=0;
+    virtual yarp::dev::ReturnValue getTorques(double *t)=0;
 
     /** Get the full scale of the torque sensor of a given joint
      * @param j joint number
@@ -120,14 +121,14 @@ public:
      * @param max maximum torque of the joint j
      * @return true/false on success/failure
      */
-    virtual bool getTorqueRange(int j, double *min, double *max)=0;
+    virtual yarp::dev::ReturnValue getTorqueRange(int j, double *min, double *max)=0;
 
     /** Get the full scale of the torque sensors of all joints
      * @param min pointer to the array that will store minimum torques of the joints
      * @param max pointer to the array that will store maximum torques of the joints
      * @return true/false on success/failure
      */
-    virtual bool getTorqueRanges(double *min, double *max)=0;
+    virtual yarp::dev::ReturnValue getTorqueRanges(double *min, double *max)=0;
 };
 
 /**
@@ -149,7 +150,7 @@ public:
      * @return the number of controlled axes.
      * @return true/false on success/failure
      */
-    virtual bool getAxes(int *ax) = 0;
+    virtual yarp::dev::ReturnValue getAxes(int *ax) = 0;
 
     /** Get the value of the torque on a given joint (this is the
      * feedback if you have a torque sensor).
@@ -157,14 +158,14 @@ public:
      * @return torque value
      * @return true/false on success/failure
      */
-    virtual bool getTorqueRaw(int j, double *t)=0;
+    virtual yarp::dev::ReturnValue getTorqueRaw(int j, double *t)=0;
 
     /** Get the value of the torque for all joints (this is
      * the feedback if you have torque sensors).
      * @param t pointer to the array that will store the output
      * @return true/false on success/failure
      */
-    virtual bool getTorquesRaw(double *t)=0;
+    virtual yarp::dev::ReturnValue getTorquesRaw(double *t)=0;
 
     /** Get the full scale of the torque sensor of a given joint
      * @param j joint number
@@ -172,41 +173,41 @@ public:
      * @param max maximum torque of the joint j
      * @return true/false on success/failure
      */
-    virtual bool getTorqueRangeRaw(int j, double *min, double *max)=0;
+    virtual yarp::dev::ReturnValue getTorqueRangeRaw(int j, double *min, double *max)=0;
 
     /** Get the full scale of the torque sensors of all joints
      * @param min pointer to the array that will store minimum torques of the joints
      * @param max pointer to the array that will store maximum torques of the joints
      * @return true/false on success/failure
      */
-    virtual bool getTorqueRangesRaw(double *min, double *max)=0;
+    virtual yarp::dev::ReturnValue getTorqueRangesRaw(double *min, double *max)=0;
 
     /** Set the reference value of the torque for all joints.
      * @param t pointer to the array of torque values
      * @return true/false on success/failure
      */
-    virtual bool setRefTorquesRaw(const double *t)=0;
+    virtual yarp::dev::ReturnValue setRefTorquesRaw(const double *t)=0;
 
     /** Set the reference value of the torque for a given joint.
      * @param j joint number
      * @param t new value
      * @return true/false on success/failure
      */
-    virtual bool setRefTorqueRaw(int j, double t)=0;
+    virtual yarp::dev::ReturnValue setRefTorqueRaw(int j, double t)=0;
 
     /** Set new torque reference for a subset of joints.
      * @param joints pointer to the array of joint numbers
      * @param refs   pointer to the array specifying the new torque reference
      * @return true/false on success/failure
      */
-    virtual bool setRefTorquesRaw(const int n_joint, const int *joints, const double *t) {return false;}  // this function has a default implementation to keep backward compatibility with existing devices
+    virtual yarp::dev::ReturnValue setRefTorquesRaw(const int n_joint, const int *joints, const double *t)  =0;
 
     /** Get the reference value of the torque for all joints.
      * This is NOT the feedback (see getTorques instead).
      * @param t pointer to the array of torque values
      * @return true/false on success/failure
      */
-    virtual bool getRefTorquesRaw(double *t)=0;
+    virtual yarp::dev::ReturnValue getRefTorquesRaw(double *t)=0;
 
     /** Set the reference value of the torque for a given joint.
      * This is NOT the feedback (see getTorque instead).
@@ -214,21 +215,21 @@ public:
      * @param t new value
      * @return true/false on success/failure
      */
-    virtual bool getRefTorqueRaw(int j, double *t)=0;
+    virtual yarp::dev::ReturnValue getRefTorqueRaw(int j, double *t)=0;
 
     /** Get the motor parameters.
      * @param j joint number
      * @param params a struct containing the motor parameters to be retrieved
      * @return true/false on success/failure
      */
-    virtual bool getMotorTorqueParamsRaw(int j,  yarp::dev::MotorTorqueParameters *params) {return false;}
+    virtual yarp::dev::ReturnValue getMotorTorqueParamsRaw(int j,  yarp::dev::MotorTorqueParameters *params)  =0;
 
     /** Set the motor parameters.
      * @param j joint number
      * @param params a struct containing the motor parameters to be set
      * @return true/false on success/failure
      */
-    virtual bool setMotorTorqueParamsRaw(int j,  const yarp::dev::MotorTorqueParameters params) {return false;}
+    virtual yarp::dev::ReturnValue setMotorTorqueParamsRaw(int j,  const yarp::dev::MotorTorqueParameters params) =0;
 };
 
 // Interface name

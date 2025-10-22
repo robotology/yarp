@@ -7,13 +7,12 @@
 
 #include <yarp/dev/ControlBoardInterfacesImpl.h>
 #include <yarp/dev/ControlBoardHelper.h>
+#include <yarp/dev/ControlBoardHelpers.h>
 #include <yarp/os/Log.h>
 #include <yarp/dev/impl/FixedSizeBuffersManager.h>
 
 using namespace yarp::dev;
 using namespace yarp::os;
-
-#define JOINTIDCHECK if (j >= castToMapper(helper)->axes()){yError("joint id out of bound"); return false;}
 
 ImplementPositionDirect::ImplementPositionDirect(IPositionDirectRaw *y):
     iPDirect(y),
@@ -69,41 +68,39 @@ bool ImplementPositionDirect::uninitialize()
     return true;
 }
 
-bool ImplementPositionDirect::getAxes(int *axes)
+ReturnValue ImplementPositionDirect::getAxes(int *axes)
 {
     (*axes)=castToMapper(helper)->axes();
-    return true;
+    return ReturnValue_ok;
 }
 
-bool ImplementPositionDirect::setPosition(int j, double ref)
+ReturnValue ImplementPositionDirect::setPosition(int j, double ref)
 {
-    JOINTIDCHECK
+    JOINTIDCHECK(MAPPER_MAXID)
     int k;
     double enc;
     castToMapper(helper)->posA2E(ref, j, enc, k);
     return iPDirect->setPositionRaw(k, enc);
 }
 
-bool ImplementPositionDirect::setPositions(const int n_joint, const int *joints, const double *refs)
+ReturnValue ImplementPositionDirect::setPositions(const int n_joints, const int *joints, const double *refs)
 {
-    if (!castToMapper(helper)->checkAxesIds(n_joint, joints)) {
-        return false;
-    }
+    JOINTSIDCHECK
 
     yarp::dev::impl::Buffer<int> buffJoints = intBuffManager->getBuffer();
     yarp::dev::impl::Buffer<double> buffValues = doubleBuffManager->getBuffer();
 
-    if (n_joint > (int)intBuffManager->getBufferSize()) {
-        return false;
+    if (n_joints > (int)intBuffManager->getBufferSize()) {
+        return ReturnValue::return_code::return_value_error_generic;
     }
 
-    for(int idx=0; idx<n_joint; idx++)
+    for(int idx=0; idx<n_joints; idx++)
     {
         buffJoints.setValue(idx, castToMapper(helper)->toHw(joints[idx]));
         buffValues.setValue(idx, castToMapper(helper)->posA2E(refs[idx], joints[idx]));
     }
 
-    bool ret = iPDirect->setPositionsRaw(n_joint, buffJoints.getData(), buffValues.getData());
+    ReturnValue ret = iPDirect->setPositionsRaw(n_joints, buffJoints.getData(), buffValues.getData());
 
     doubleBuffManager->releaseBuffer(buffValues);
     intBuffManager->releaseBuffer(buffJoints);
@@ -111,45 +108,43 @@ bool ImplementPositionDirect::setPositions(const int n_joint, const int *joints,
     return ret;
 }
 
-bool ImplementPositionDirect::setPositions(const double *refs)
+ReturnValue ImplementPositionDirect::setPositions(const double *refs)
 {
     yarp::dev::impl::Buffer<double> buffValues = doubleBuffManager->getBuffer();
     castToMapper(helper)->posA2E(refs, buffValues.getData());
-    bool ret = iPDirect->setPositionsRaw(buffValues.getData());
+    ReturnValue ret = iPDirect->setPositionsRaw(buffValues.getData());
     doubleBuffManager->releaseBuffer(buffValues);
     return ret;
 }
 
-bool ImplementPositionDirect::getRefPosition(const int j, double* ref)
+ReturnValue ImplementPositionDirect::getRefPosition(const int j, double* ref)
 {
-    JOINTIDCHECK
+    JOINTIDCHECK(MAPPER_MAXID)
     int k;
     double tmp;
     k=castToMapper(helper)->toHw(j);
 
-    bool ret = iPDirect->getRefPositionRaw(k, &tmp);
+    ReturnValue ret = iPDirect->getRefPositionRaw(k, &tmp);
 
     *ref=(castToMapper(helper)->posE2A(tmp, k));
     return ret;
 }
 
-bool ImplementPositionDirect::getRefPositions(const int n_joint, const int* joints, double* refs)
+ReturnValue ImplementPositionDirect::getRefPositions(const int n_joints, const int* joints, double* refs)
 {
-    if (!castToMapper(helper)->checkAxesIds(n_joint, joints)) {
-        return false;
-    }
+    JOINTSIDCHECK
 
     yarp::dev::impl::Buffer<int> buffJoints = intBuffManager->getBuffer();
 
-    for(int idx=0; idx<n_joint; idx++)
+    for(int idx=0; idx<n_joints; idx++)
     {
         buffJoints[idx] = castToMapper(helper)->toHw(joints[idx]);
     }
 
     yarp::dev::impl::Buffer<double> buffValues = doubleBuffManager->getBuffer();
-    bool ret = iPDirect->getRefPositionsRaw(n_joint, buffJoints.getData(), buffValues.getData());
+    ReturnValue ret = iPDirect->getRefPositionsRaw(n_joints, buffJoints.getData(), buffValues.getData());
 
-    for(int idx=0; idx<n_joint; idx++)
+    for(int idx=0; idx<n_joints; idx++)
     {
         refs[idx]=castToMapper(helper)->posE2A(buffValues[idx], buffJoints[idx]);
     }
@@ -160,25 +155,11 @@ bool ImplementPositionDirect::getRefPositions(const int n_joint, const int* join
     return ret;
 }
 
-bool ImplementPositionDirect::getRefPositions(double* refs)
+ReturnValue ImplementPositionDirect::getRefPositions(double* refs)
 {
     yarp::dev::impl::Buffer<double> buffValues = doubleBuffManager->getBuffer();
-    bool ret = iPDirect->getRefPositionsRaw(buffValues.getData());
+    ReturnValue ret = iPDirect->getRefPositionsRaw(buffValues.getData());
     castToMapper(helper)->posE2A(buffValues.getData(), refs);
     doubleBuffManager->releaseBuffer(buffValues);
     return ret;
-}
-
-
-// Stub impl
-
-bool StubImplPositionDirectRaw::NOT_YET_IMPLEMENTED(const char *func)
-{
-    if (func) {
-        yError("%s: not yet implemented\n", func);
-    } else {
-        yError("Function not yet implemented\n");
-    }
-
-    return false;
 }

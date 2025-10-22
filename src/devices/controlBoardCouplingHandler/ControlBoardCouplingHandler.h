@@ -91,36 +91,23 @@ public:
     bool attach(yarp::dev::PolyDriver* poly) override;
 
     /* IEncoders */
-    bool resetEncoder(int j) override;
-
-    bool resetEncoders() override;
-
-    bool setEncoder(int j, double val) override;
-
-    bool setEncoders(const double *vals) override;
-
-    bool getEncoder(int j, double *v) override;
-
-    bool getEncoders(double *encs) override;
-
-    bool getEncodersTimed(double *encs, double *t) override;
-
-    bool getEncoderTimed(int j, double *v, double *t) override;
-
-    bool getEncoderSpeed(int j, double *sp) override;
-
-    bool getEncoderSpeeds(double *spds) override;
-
-    bool getEncoderAcceleration(int j, double *acc) override;
-
-    bool getEncoderAccelerations(double *accs) override;
+    yarp::dev::ReturnValue resetEncoder(int j) override;
+    yarp::dev::ReturnValue resetEncoders() override;
+    yarp::dev::ReturnValue setEncoder(int j, double val) override;
+    yarp::dev::ReturnValue setEncoders(const double *vals) override;
+    yarp::dev::ReturnValue getEncoder(int j, double *v) override;
+    yarp::dev::ReturnValue getEncoders(double *encs) override;
+    yarp::dev::ReturnValue getEncodersTimed(double *encs, double *t) override;
+    yarp::dev::ReturnValue getEncoderTimed(int j, double *v, double *t) override;
+    yarp::dev::ReturnValue getEncoderSpeed(int j, double *sp) override;
+    yarp::dev::ReturnValue getEncoderSpeeds(double *spds) override;
+    yarp::dev::ReturnValue getEncoderAcceleration(int j, double *acc) override;
+    yarp::dev::ReturnValue getEncoderAccelerations(double *accs) override;
 
     /* IAxisInfo */
-    bool getAxes(int *ax) override;
-
-    bool getAxisName(int j, std::string &name) override;
-
-    bool getJointType(int j, yarp::dev::JointTypeEnum &type) override;
+    yarp::dev::ReturnValue getAxes(int *ax) override;
+    yarp::dev::ReturnValue getAxisName(int j, std::string &name) override;
+    yarp::dev::ReturnValue getJointType(int j, yarp::dev::JointTypeEnum &type) override;
 
 };
 

@@ -43,7 +43,7 @@ bool FakeJointCoupling::close() {
     return true;
 }
 
-bool FakeJointCoupling::convertFromPhysicalJointsToActuatedAxesPos(const yarp::sig::Vector& physJointsPos, yarp::sig::Vector& actAxesPos) {
+ReturnValue FakeJointCoupling::convertFromPhysicalJointsToActuatedAxesPos(const yarp::sig::Vector& physJointsPos, yarp::sig::Vector& actAxesPos) {
     size_t nrOfPhysicalJoints;
     size_t nrOfActuatedAxes;
     auto ok = getNrOfPhysicalJoints(nrOfPhysicalJoints);
@@ -51,28 +51,28 @@ bool FakeJointCoupling::convertFromPhysicalJointsToActuatedAxesPos(const yarp::s
     if (!ok || physJointsPos.size() != nrOfPhysicalJoints || actAxesPos.size() != nrOfActuatedAxes) {
         // yCDebug(FAKEJOINTCOUPLING) << ok <<physJointsPos.size()<<nrOfPhysicalJoints<<actAxesPos.size()<<nrOfActuatedAxes;
         yCError(FAKEJOINTCOUPLING) << "convertFromPhysicalJointsToActuatedAxesPos: input or output vectors have wrong size";
-        return false;
+        return ReturnValue::return_code::return_value_error_input_out_of_bounds;
     }
     actAxesPos[0] = physJointsPos[0];
     actAxesPos[1] = physJointsPos[1];
     actAxesPos[2] = physJointsPos[2] + physJointsPos[3];
-    return true;
+    return ReturnValue_ok;
 }
-bool FakeJointCoupling::convertFromPhysicalJointsToActuatedAxesVel(const yarp::sig::Vector& physJointsPos, const yarp::sig::Vector& physJointsVel, yarp::sig::Vector& actAxesVel) {
+ReturnValue FakeJointCoupling::convertFromPhysicalJointsToActuatedAxesVel(const yarp::sig::Vector& physJointsPos, const yarp::sig::Vector& physJointsVel, yarp::sig::Vector& actAxesVel) {
     size_t nrOfPhysicalJoints;
     size_t nrOfActuatedAxes;
     auto ok = getNrOfPhysicalJoints(nrOfPhysicalJoints);
     ok = ok && getNrOfActuatedAxes(nrOfActuatedAxes);
     if (!ok || physJointsPos.size() != nrOfPhysicalJoints || physJointsVel.size() != nrOfPhysicalJoints || actAxesVel.size() != nrOfActuatedAxes) {
         yCError(FAKEJOINTCOUPLING) << "convertFromPhysicalJointsToActuatedAxesPos: input or output vectors have wrong size";
-        return false;
+        return ReturnValue::return_code::return_value_error_input_out_of_bounds;
     }
     actAxesVel[0] = physJointsVel[0];
     actAxesVel[1] = physJointsVel[1];
     actAxesVel[2] = physJointsPos[2] + physJointsPos[3] + physJointsVel[2] + physJointsVel[3];
-    return true;
+    return ReturnValue_ok;
 }
-bool FakeJointCoupling::convertFromPhysicalJointsToActuatedAxesAcc(const yarp::sig::Vector& physJointsPos, const yarp::sig::Vector& physJointsVel,
+ReturnValue FakeJointCoupling::convertFromPhysicalJointsToActuatedAxesAcc(const yarp::sig::Vector& physJointsPos, const yarp::sig::Vector& physJointsVel,
                                                                    const yarp::sig::Vector& physJointsAcc, yarp::sig::Vector& actAxesAcc) {
     size_t nrOfPhysicalJoints;
     size_t nrOfActuatedAxes;
@@ -80,64 +80,62 @@ bool FakeJointCoupling::convertFromPhysicalJointsToActuatedAxesAcc(const yarp::s
     ok = ok && getNrOfActuatedAxes(nrOfActuatedAxes);
     if(!ok || physJointsPos.size() != nrOfPhysicalJoints || physJointsVel.size() != nrOfPhysicalJoints || physJointsAcc.size() != nrOfPhysicalJoints || actAxesAcc.size() != nrOfActuatedAxes) {
         yCError(FAKEJOINTCOUPLING) << "convertFromPhysicalJointsToActuatedAxesPos: input or output vectors have wrong size";
-        return false;
+        return ReturnValue::return_code::return_value_error_input_out_of_bounds;
     }
     actAxesAcc[0] = physJointsAcc[0];
     actAxesAcc[1] = physJointsAcc[1];
     actAxesAcc[2] = physJointsPos[2] + physJointsPos[3] + physJointsVel[2] + physJointsVel[3] + physJointsAcc[2] + physJointsAcc[3];
-    return true;
+    return ReturnValue_ok;
 }
-bool FakeJointCoupling::convertFromPhysicalJointsToActuatedAxesTrq(const yarp::sig::Vector& physJointsPos, const yarp::sig::Vector& physJointsTrq, yarp::sig::Vector& actAxesTrq) {
-    yCError(FAKEJOINTCOUPLING) << "convertFromPhysicalJointsToActuatedAxesTrq: not implemented yet";
-    return false;
+ReturnValue FakeJointCoupling::convertFromPhysicalJointsToActuatedAxesTrq(const yarp::sig::Vector& physJointsPos, const yarp::sig::Vector& physJointsTrq, yarp::sig::Vector& actAxesTrq) {
+    return YARP_METHOD_NOT_YET_IMPLEMENTED();
 }
-bool FakeJointCoupling::convertFromActuatedAxesToPhysicalJointsPos(const yarp::sig::Vector& actAxesPos, yarp::sig::Vector& physJointsPos) {
+ReturnValue FakeJointCoupling::convertFromActuatedAxesToPhysicalJointsPos(const yarp::sig::Vector& actAxesPos, yarp::sig::Vector& physJointsPos) {
     size_t nrOfPhysicalJoints;
     size_t nrOfActuatedAxes;
     auto ok = getNrOfPhysicalJoints(nrOfPhysicalJoints);
     ok = ok && getNrOfActuatedAxes(nrOfActuatedAxes);
     if(!ok || actAxesPos.size() != nrOfActuatedAxes || physJointsPos.size() != nrOfPhysicalJoints) {
         yCError(FAKEJOINTCOUPLING) << "convertFromActuatedAxesToPhysicalJointsPos: input or output vectors have wrong size";
-        return false;
+        return ReturnValue::return_code::return_value_error_input_out_of_bounds;
     }
     physJointsPos[0] = actAxesPos[0];
     physJointsPos[1] = actAxesPos[1];
     physJointsPos[2] = actAxesPos[2] / 2.0;
     physJointsPos[3] = actAxesPos[2] / 2.0;
-    return true;
+    return ReturnValue_ok;
 }
-bool FakeJointCoupling::convertFromActuatedAxesToPhysicalJointsVel(const yarp::sig::Vector& actAxesPos, const yarp::sig::Vector& actAxesVel, yarp::sig::Vector& physJointsVel) {
+ReturnValue FakeJointCoupling::convertFromActuatedAxesToPhysicalJointsVel(const yarp::sig::Vector& actAxesPos, const yarp::sig::Vector& actAxesVel, yarp::sig::Vector& physJointsVel) {
     size_t nrOfPhysicalJoints;
     size_t nrOfActuatedAxes;
     auto ok = getNrOfPhysicalJoints(nrOfPhysicalJoints);
     ok = ok && getNrOfActuatedAxes(nrOfActuatedAxes);
     if(!ok || actAxesPos.size() != nrOfActuatedAxes || actAxesVel.size() != nrOfActuatedAxes || physJointsVel.size() != nrOfPhysicalJoints) {
         yCError(FAKEJOINTCOUPLING) << "convertFromActuatedAxesToPhysicalJointsVel: input or output vectors have wrong size";
-        return false;
+        return ReturnValue::return_code::return_value_error_input_out_of_bounds;
     }
     physJointsVel[0] = actAxesVel[0];
     physJointsVel[1] = actAxesVel[1];
     physJointsVel[2] = actAxesPos[2] / 2.0 - actAxesVel[2] / 2.0;
     physJointsVel[3] = actAxesPos[2] / 2.0 + actAxesVel[2] / 2.0;
-    return true;
+    return ReturnValue_ok;
 
 }
-bool FakeJointCoupling::convertFromActuatedAxesToPhysicalJointsAcc(const yarp::sig::Vector& actAxesPos, const yarp::sig::Vector& actAxesVel, const yarp::sig::Vector& actAxesAcc, yarp::sig::Vector& physJointsAcc) {
+ReturnValue FakeJointCoupling::convertFromActuatedAxesToPhysicalJointsAcc(const yarp::sig::Vector& actAxesPos, const yarp::sig::Vector& actAxesVel, const yarp::sig::Vector& actAxesAcc, yarp::sig::Vector& physJointsAcc) {
     size_t nrOfPhysicalJoints;
     size_t nrOfActuatedAxes;
     auto ok = getNrOfPhysicalJoints(nrOfPhysicalJoints);
     ok = ok && getNrOfActuatedAxes(nrOfActuatedAxes);
     if(!ok || actAxesPos.size() != nrOfActuatedAxes || actAxesVel.size() != nrOfActuatedAxes || actAxesAcc.size() != nrOfActuatedAxes || physJointsAcc.size() != nrOfPhysicalJoints) {
         yCError(FAKEJOINTCOUPLING) << "convertFromActuatedAxesToPhysicalJointsAcc: input or output vectors have wrong size";
-        return false;
+        return ReturnValue::return_code::return_value_error_input_out_of_bounds;
     }
     physJointsAcc[0] = actAxesAcc[0];
     physJointsAcc[1] = actAxesAcc[1];
     physJointsAcc[2] = actAxesPos[2] / 2.0 - actAxesVel[2] / 2.0 - actAxesAcc[2] / 2.0;
     physJointsAcc[3] = actAxesPos[2] / 2.0 + actAxesVel[2] / 2.0 + actAxesAcc[2] / 2.0;
-    return true;
+    return ReturnValue_ok;
 }
-bool FakeJointCoupling::convertFromActuatedAxesToPhysicalJointsTrq(const yarp::sig::Vector& actAxesPos, const yarp::sig::Vector& actAxesTrq, yarp::sig::Vector& physJointsTrq) {
-    yCWarning(FAKEJOINTCOUPLING) << "convertFromActuatedAxesToPhysicalJointsTrq: not implemented yet";
-    return false;
+ReturnValue FakeJointCoupling::convertFromActuatedAxesToPhysicalJointsTrq(const yarp::sig::Vector& actAxesPos, const yarp::sig::Vector& actAxesTrq, yarp::sig::Vector& physJointsTrq) {
+    return YARP_METHOD_NOT_YET_IMPLEMENTED();
 }

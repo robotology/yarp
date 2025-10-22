@@ -9,14 +9,3 @@
 
 #include <cstdio>
 using namespace yarp::dev;
-
-bool StubImplEncodersRaw::NOT_YET_IMPLEMENTED(const char *func)
-{
-    if (func) {
-        yError("%s: not yet implemented\n", func);
-    } else {
-        yError("Function not yet implemented\n");
-    }
-
-    return false;
-}

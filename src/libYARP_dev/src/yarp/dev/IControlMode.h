@@ -8,6 +8,7 @@
 
 #include <yarp/os/Vocab.h>
 #include <yarp/dev/api.h>
+#include <yarp/dev/ReturnValue.h>
 
 namespace yarp::dev {
 class IControlModeRaw;
@@ -30,14 +31,14 @@ public:
     * @param mode a vocab of the current control mode for joint j.
     * @return: true/false success failure.
     */
-    virtual bool getControlMode(int j, int *mode)=0;
+    virtual yarp::dev::ReturnValue getControlMode(int j, int *mode)=0;
 
     /**
     * Get the current control mode (multiple joints).
     * @param modes a vector containing vocabs for the current control modes of the joints.
     * @return: true/false success failure.
     */
-    virtual bool getControlModes(int *modes)=0;
+    virtual yarp::dev::ReturnValue getControlModes(int *modes)=0;
 
     /**
     * Get the current control mode for a subset of axes.
@@ -51,7 +52,7 @@ public:
     *          modes    VOCAB_CM_POSITION VOCAB_CM_VELOCITY VOCAB_CM_POSITION
     * @return true/false success failure.
     */
-    virtual bool getControlModes(const int n_joint, const int *joints, int *modes)=0;
+    virtual yarp::dev::ReturnValue getControlModes(const int n_joint, const int *joints, int *modes)=0;
 
     /**
     * Set the current control mode.
@@ -60,7 +61,7 @@ public:
     * @return true if the new controlMode was successfully set, false if the message was not received or
     *         the joint was unable to switch to the desired controlMode
     *         (e.g. the joint is on a fault condition or the desired mode is not implemented).    */
-    virtual bool setControlMode(const int j, const int mode)=0;
+    virtual yarp::dev::ReturnValue setControlMode(const int j, const int mode)=0;
 
     /**
     * Set the current control mode for a subset of axes.
@@ -76,7 +77,7 @@ public:
     *         the joint was unable to switch to the desired controlMode
     *         (e.g. the joint is on a fault condition or the desired mode is not implemented).
     */
-    virtual bool setControlModes(const int n_joint, const int *joints, int *modes)=0;
+    virtual yarp::dev::ReturnValue setControlModes(const int n_joint, const int *joints, int *modes)=0;
 
     /**
     * Set the current control mode (multiple joints).
@@ -85,7 +86,7 @@ public:
     *         the joint was unable to switch to the desired controlMode
     *         (e.g. the joint is on a fault condition or the desired mode is not implemented).
     */
-    virtual bool setControlModes(int *modes)=0;
+    virtual yarp::dev::ReturnValue setControlModes(int *modes)=0;
 };
 
 
@@ -99,12 +100,12 @@ class YARP_dev_API yarp::dev::IControlModeRaw
 {
 public:
     virtual ~IControlModeRaw(){}
-    virtual bool getControlModeRaw(int j, int *mode)=0;
-    virtual bool getControlModesRaw(int* modes)=0;
-    virtual bool getControlModesRaw(const int n_joint, const int *joints, int *modes)=0;
-    virtual bool setControlModeRaw(const int j, const int mode)=0;
-    virtual bool setControlModesRaw(const int n_joint, const int *joints, int *modes)=0;
-    virtual bool setControlModesRaw(int *modes)=0;
+    virtual yarp::dev::ReturnValue getControlModeRaw(int j, int *mode)=0;
+    virtual yarp::dev::ReturnValue getControlModesRaw(int* modes)=0;
+    virtual yarp::dev::ReturnValue getControlModesRaw(const int n_joint, const int *joints, int *modes)=0;
+    virtual yarp::dev::ReturnValue setControlModeRaw(const int j, const int mode)=0;
+    virtual yarp::dev::ReturnValue setControlModesRaw(const int n_joint, const int *joints, int *modes)=0;
+    virtual yarp::dev::ReturnValue setControlModesRaw(int *modes)=0;
 };
 
 
