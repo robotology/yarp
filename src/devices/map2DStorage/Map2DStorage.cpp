@@ -651,7 +651,18 @@ bool Map2DStorage::priv_load_locations_and_areas_v4(std::ifstream& file)
             maplocation.y = b.get(3).asFloat64();
             maplocation.theta = b.get(4).asFloat64();
             maplocation.description = b.get(5).asString();
-            m_locations_storage[name] = maplocation;
+
+            // check if location already exists
+            auto it = m_locations_storage.find(name);
+            if (it != m_locations_storage.end())
+            {
+                yCError(MAP2DSTORAGE) << "The file contains multiple locations with the same name: " << name;
+                return false;
+            } 
+            else
+            {
+                m_locations_storage[name] = maplocation;
+            }
         }
     }
 
@@ -692,7 +703,18 @@ bool Map2DStorage::priv_load_locations_and_areas_v4(std::ifstream& file)
             objlocation.pitch = b.get(6).asFloat64();
             objlocation.yaw = b.get(7).asFloat64();
             objlocation.description = b.get(8).asString();
-            m_objects_storage[name] = objlocation;
+
+            // check if object already exists
+            auto it = m_objects_storage.find(name);
+            if (it != m_objects_storage.end())
+            {
+                yCError(MAP2DSTORAGE) << "The file contains multiple objects with the same name: " << name;
+                return false;
+            } 
+            else
+            {
+                m_objects_storage[name] = objlocation;
+            }
         }
     }
 
@@ -733,7 +755,18 @@ bool Map2DStorage::priv_load_locations_and_areas_v4(std::ifstream& file)
                 area.points.push_back(yarp::math::Vec2D<double>(xpos, ypos));
             }
             area.description = b.get(bot_size-1).asString();
-            m_areas_storage[name] = area;
+
+            // check if area already exists
+            auto it = m_areas_storage.find(name);
+            if (it != m_areas_storage.end())
+            {
+                yCError(MAP2DSTORAGE) << "The file contains multiple areas with the same name: " << name;
+                return false;
+            } 
+            else
+            {
+                m_areas_storage[name] = area;
+            }
         }
     }
 
@@ -786,7 +819,18 @@ bool Map2DStorage::priv_load_locations_and_areas_v4(std::ifstream& file)
                 i++;
             } while (1);
             path.description = b.get(bot_size - 1).asString();
-            m_paths_storage[name] = path;
+
+            // check if path already exists
+            auto it = m_paths_storage.find(name);
+            if (it != m_paths_storage.end())
+            {
+                yCError(MAP2DSTORAGE) << "The file contains multiple paths with the same name: " << name;
+                return false;
+            } 
+            else
+            {
+                m_paths_storage[name] = path;
+            }
         }
     }
 
