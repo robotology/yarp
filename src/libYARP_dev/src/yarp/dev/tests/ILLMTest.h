@@ -19,14 +19,34 @@ inline void exec_iLLM_test_1(yarp::dev::ILLM* illm)
     REQUIRE(illm != nullptr);
 
     bool b;
+    std::string input_prompt1 = "A prompt";
+    std::string input_prompt2 = "A new prompt";
 
-    b = illm->setPrompt("A prompt");
+    //set a prompt
+    b = illm->setPrompt(input_prompt1);
     CHECK(b);
 
     std::string prompt;
     b = illm->readPrompt(prompt);
     CHECK(b);
+    CHECK(prompt == input_prompt1);
 
+    //a new prompt can be assigned only after deleting conversation
+    b = illm->setPrompt("A new prompt, this will fail, until a reset is done");
+    CHECK(!b);
+
+    b = illm->deleteConversation();
+    CHECK(b);
+
+    //set a new prompt
+    b = illm->setPrompt(input_prompt2);
+    CHECK(b);
+
+    b = illm->readPrompt(prompt);
+    CHECK(b);
+    CHECK(prompt == input_prompt2);
+
+    //check answers
     yarp::dev::LLM_Message answer;
     b = illm->ask("A question", answer);
     CHECK(b);
