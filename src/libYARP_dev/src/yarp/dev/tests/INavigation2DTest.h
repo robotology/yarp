@@ -39,7 +39,9 @@ namespace yarp::dev::tests
     {
         //////////"Checking INavigation2D methods
         Map2DLocation loc_test = Map2DLocation("map_1", 10.0, 20.0, 15);
+        Map2DLocation my_current_loc_zero = Map2DLocation("map_1", 0, 0, 0);
         Map2DLocation my_current_loc = Map2DLocation("map_1", 10.2, 20.1, 15.5);
+        Map2DLocation my_current_loc_wrong = Map2DLocation("map_1", 10000, 10000, 10000);
         Map2DLocation loc_to_be_tested;
         Map2DArea area_test("map_1", std::vector<Map2DLocation> {Map2DLocation("map_1", -10, -10, 0),
             Map2DLocation("map_1", -10, +10, 0),
@@ -61,6 +63,25 @@ namespace yarp::dev::tests
             b0 = inav->getCurrentPosition(loc_to_be_tested); CHECK(loc_to_be_tested == Map2DLocation("map_1", 0, 0, 0));
             b1 = inav->checkInsideArea("area_test",is_inside);  CHECK(b1); CHECK(is_inside);
             b1 = inav->checkInsideArea(area_test,is_inside);    CHECK(b1); CHECK(is_inside);
+        }
+
+        {
+            std::string area_name;
+            Map2DArea area_data;
+
+            b0 = inav->setInitialPose(my_current_loc_zero); CHECK(b0);
+            yarp::os::Time::delay(0.1);
+
+            b0 = inav->findCurrentArea(area_name, area_data); CHECK(b0);
+            CHECK(area_name == "area_test");
+            CHECK(area_data == area_test);
+
+            b0 = inav->setInitialPose(my_current_loc_wrong); CHECK(b0);
+            yarp::os::Time::delay(0.1);
+
+            b0 = inav->findCurrentArea(area_name, area_data); CHECK(b0);
+            CHECK(area_name == "");
+            CHECK(area_data == Map2DArea());
         }
 
         {

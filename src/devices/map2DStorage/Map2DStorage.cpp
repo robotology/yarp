@@ -658,7 +658,7 @@ bool Map2DStorage::priv_load_locations_and_areas_v4(std::ifstream& file)
             {
                 yCError(MAP2DSTORAGE) << "The file contains multiple locations with the same name: " << name;
                 return false;
-            } 
+            }
             else
             {
                 m_locations_storage[name] = maplocation;
@@ -710,7 +710,7 @@ bool Map2DStorage::priv_load_locations_and_areas_v4(std::ifstream& file)
             {
                 yCError(MAP2DSTORAGE) << "The file contains multiple objects with the same name: " << name;
                 return false;
-            } 
+            }
             else
             {
                 m_objects_storage[name] = objlocation;
@@ -762,7 +762,7 @@ bool Map2DStorage::priv_load_locations_and_areas_v4(std::ifstream& file)
             {
                 yCError(MAP2DSTORAGE) << "The file contains multiple areas with the same name: " << name;
                 return false;
-            } 
+            }
             else
             {
                 m_areas_storage[name] = area;
@@ -826,7 +826,7 @@ bool Map2DStorage::priv_load_locations_and_areas_v4(std::ifstream& file)
             {
                 yCError(MAP2DSTORAGE) << "The file contains multiple paths with the same name: " << name;
                 return false;
-            } 
+            }
             else
             {
                 m_paths_storage[name] = path;

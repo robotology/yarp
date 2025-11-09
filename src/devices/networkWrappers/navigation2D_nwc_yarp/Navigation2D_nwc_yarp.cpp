@@ -233,6 +233,45 @@ ReturnValue  Navigation2D_nwc_yarp::checkInsideArea(Map2DArea area, bool& is_ins
     return ReturnValue_ok;
 }
 
+ReturnValue Navigation2D_nwc_yarp::findCurrentArea (std::string& area_name, Nav2D::Map2DArea& area)
+{
+    area_name = "";
+    area = Map2DArea();
+
+    Map2DLocation curr_loc;
+    auto ret1 = getCurrentPosition(curr_loc);
+    if (!ret1)
+    {
+        yCError(NAVIGATION2D_NWC_YARP) << "findCurrentArea() unable to get robot position";
+        return ret1;
+    }
+
+    std::vector<std::string> areaslist;
+    this->getAreasList(areaslist);
+
+    bool is_inside=false;
+    for (const auto& area_name_temp : areaslist)
+    {
+        Map2DArea area_data_temp;
+        auto ret2 = getArea(area_name_temp, area_data_temp);
+        if (!ret2)
+        {
+            yCError(NAVIGATION2D_NWC_YARP) << "Area" << area_name_temp << "not found";
+            return ret2;
+        }
+
+        is_inside = area_data_temp.checkLocationInsideArea(curr_loc);
+        if (is_inside)
+        {
+            area_name = area_name_temp;
+            area = area_data_temp;
+            return ReturnValue_ok;
+        }
+    }
+
+    return ReturnValue_ok;
+}
+
 ReturnValue Navigation2D_nwc_yarp::checkInsideArea(std::string area_name, bool& is_inside)
 {
     Map2DLocation curr_loc;
