@@ -239,10 +239,11 @@ public:
 
     /**
      * Check if the robot is inside any of the currently stored areas. If yes, it returns its data.
-     * @return area_name name of the area (if found), empty string otherwise
-     * @return area data of the area (if found), empty data otherwise
+     * @param[out] area_name name of the area (if found), empty string otherwise
+     * @param[out] area data of the area (if found), empty data otherwise
+     * @return a ReturnValue, convertible to true/false
      */
-    virtual yarp::dev::ReturnValue inWhichAreaIAm(std::string& area_name, Nav2D::Map2DArea& area) = 0;
+    virtual yarp::dev::ReturnValue findCurrentArea (std::string& area_name, Nav2D::Map2DArea& area) = 0;
 
     /**
      * Check if the robot is currently near to the specified area
