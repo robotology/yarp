@@ -364,7 +364,7 @@ void StreamingMessagesParser::onRead(CommandMessage& v)
                     int joint = b.get(2).asInt32();
                     bool ok = stream_IVelDirect->setRefVelocity(joint, cmdVector[0]); // cmdVector.data());
                     if (!ok) {
-                        yCError(CONTROLBOARD, "Errors while trying to command an streaming position direct message on joint %d\n", b.get(1).asInt32());
+                        yCError(CONTROLBOARD, "Errors while trying to command an streaming velocity direct message on joint %d\n", joint);
                     }
                 }
             } break;
