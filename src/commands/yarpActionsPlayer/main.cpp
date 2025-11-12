@@ -55,6 +55,19 @@ protected:
     bool set_thread_period(const double value) override;
     bool set_initial_move_time(const double value) override;
 
+    std::string vectorToString(const std::vector<double>& vec)
+    {
+        std::ostringstream oss;
+        oss << std::fixed << std::setprecision(2);
+        oss << "[";
+        for (size_t i = 0; i < vec.size(); ++i) {
+            oss << vec[i];
+            if (i + 1 != vec.size()) oss << ", ";
+        }
+        oss << "]";
+        return oss.str();
+    }
+
     public:
     scriptModule()
     {
@@ -184,13 +197,19 @@ protected:
             std::string str = bot_action.toString();
             yDebug() << bot_action.get(i).toString();
             yarp::os::Bottle* bot_act_elem = bot_action.get(i).asList();
+            if (bot_act_elem == nullptr)
+            {
+                yError() << "Invalid entry in ACTIONS section";
+                return false;
+            }
             size_t num_of_aelems = bot_act_elem->size();
-            if (bot_act_elem && num_of_aelems==3)
+            if (num_of_aelems==3 || num_of_aelems == 4)
             {
                 //parse a line of the ACTIONS section
                 std::string action_name = bot_act_elem->get(0).toString();
                 std::string controller_name = bot_act_elem->get(1).toString();
                 std::string action_file_name = bot_act_elem->get(2).toString();
+                yarp::os::Bottle* tolerances_bot = bot_act_elem->get(3).asList();
 
                 //check if the controller name exists
                 if (m_robotControllers.find(controller_name) == m_robotControllers.end())
@@ -215,12 +234,31 @@ protected:
                     tmpAction.interpolate_action_frames(resample_period);
                 }
 
+                tmpAction.m_tolerances.resize(njoints);
+                for (size_t i=0; i<njoints; i++)
+                {
+                    tmpAction.m_tolerances[i] = 3.0; //deg
+                }
+                if (tolerances_bot)
+                {
+                    if (tolerances_bot->size() != njoints)
+                    {
+                        yError() << "Invalid size of tolerances vector, should be"<<njoints << "got " << tolerances_bot->size();
+                        return false;
+                    }
+                    for (size_t i=0; i<njoints; i++)
+                    {
+                        tmpAction.m_tolerances[i] = tolerances_bot->get(i).asFloat64();
+                    }
+                }
+                yDebug() << "Tolerances for action:" << action_name << vectorToString(tmpAction.m_tolerances);
+
                 //put the action in the list
                 m_actions[action_name] = tmpAction;
             }
             else
             {
-                yError() << "Invalid entry in ACTIONS section";
+                yError() << "Invalid entry in ACTIONS section, size should be 3 or 4, got " <<num_of_aelems;
                 return false;
             }
         }

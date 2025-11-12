@@ -4,6 +4,7 @@
  */
 
 #include <cmath>
+#include <iomanip>
 
 #include <yarp/os/Network.h>
 #include <yarp/os/Time.h>
@@ -91,20 +92,27 @@ bool robotDriver::init()
     //get the number of the joints
     ok &= ienc_ll->getAxes(&n_joints);
 
-    //set the initial reference speeds
+    //set the trajectory duration for the first movement
     m_trajectoryTime.resize(n_joints,4.0);
-    std::vector<double> speeds;
+
+    //set the initial reference speeds to 20
     for (int i = 0; i < n_joints; i++)
     {
-        speeds.push_back(20.0);
+        m_stored_speed.push_back(20.0);
     }
-    ok &= ipos_ll->setRefSpeeds(speeds.data());
+    ok &= loadRefVelocities();
 
     return ok;
 }
 
 robotDriver::~robotDriver()
 {
+}
+
+bool robotDriver::getControlMode(const int j, int& mode)
+{
+    if (!icmd_ll) return false;
+    return icmd_ll->getControlMode(j, &mode);
 }
 
 bool robotDriver::setControlMode(const int j, const int mode)
@@ -149,4 +157,33 @@ bool robotDriver::positionMove(int j, double v)
 size_t robotDriver::getNJoints()
 {
     return n_joints;
+}
+
+std::string vectorToString(const std::vector<double>& vec)
+{
+    std::ostringstream oss;
+    oss << std::fixed << std::setprecision(2);
+    oss << "(";
+    for (size_t i = 0; i < vec.size(); ++i) {
+        oss << vec[i];
+        if (i + 1 != vec.size()) oss << " ";
+    }
+    oss << ")";
+    return oss.str();
+}
+
+bool robotDriver::storeRefVelocities()
+{
+    bool ok;
+    ok = ipos_ll->getRefSpeeds(m_stored_speed.data());
+    yDebug() << "Storing speeds" << vectorToString(m_stored_speed);
+    return ok;
+}
+
+bool robotDriver::loadRefVelocities()
+{
+    bool ok;
+    yDebug() << "Loading speeds"  << vectorToString(m_stored_speed);
+    ok = ipos_ll->setRefSpeeds(m_stored_speed.data());
+    return ok;
 }
