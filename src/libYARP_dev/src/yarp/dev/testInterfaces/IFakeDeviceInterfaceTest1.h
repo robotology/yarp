@@ -28,6 +28,11 @@ public:
      * A method for testing purposes
      */
     virtual yarp::dev::ReturnValue doSomething() = 0;
+
+    /**
+     * A method for testing purposes, which implementation is not implemented
+     */
+    virtual yarp::dev::ReturnValue doSomethingUnimplemented() = 0;
 };
 
 } // namespace yarp::dev::test

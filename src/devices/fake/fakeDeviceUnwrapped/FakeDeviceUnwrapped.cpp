@@ -22,6 +22,12 @@ yarp::dev::ReturnValue FakeDeviceUnwrapped::doSomething()
     return ReturnValue_ok;
 }
 
+yarp::dev::ReturnValue FakeDeviceUnwrapped::doSomethingUnimplemented()
+{
+    yCInfo(FAKEDEVICEUNWRAPPED) << "doSomethingUnimplemented executed, returning unimplemented";
+    return yarp::dev::ReturnValue::return_code::return_value_error_not_implemented_by_device;
+}
+
 yarp::dev::ReturnValue FakeDeviceUnwrapped::testSetValue(int value)
 {
     yCInfo(FAKEDEVICEUNWRAPPED) << "testSetValue" << value;
