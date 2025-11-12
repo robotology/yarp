@@ -10,6 +10,8 @@
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/WrapperSingle.h>
 
+#include <yarp/os/Port.h>
+
  /**
  * @ingroup dev_impl_fake
  *
@@ -19,10 +21,12 @@
 class FakeDeviceWrapper :
         public yarp::dev::DeviceDriver,
         public yarp::dev::WrapperSingle,
-        public yarp::dev::test::IFakeDeviceInterfaceTest2
+        public yarp::dev::test::IFakeDeviceInterfaceTest2,
+        public yarp::os::PortReader
 {
 private:
     yarp::dev::test::IFakeDeviceInterfaceTest2* iTest=nullptr;
+    yarp::os::Port m_RpcPort;
 
 public:
     FakeDeviceWrapper() = default;
@@ -44,6 +48,9 @@ public:
     //interfaces
     yarp::dev::ReturnValue testSetValue(int value) override;
     yarp::dev::ReturnValue testGetValue(int& value) override;
+
+    // From PortReader
+    bool read(yarp::os::ConnectionReader& connection) override;
 };
 
 #endif
