@@ -35,7 +35,6 @@ private:
     //if set to true, the system will halt if home position is halted.
     //otherwise it will continue after the timeout expires
     bool                  m_home_position_strict_check_enabled = false;
-    double                m_home_position_tolerance = 2.0;
     double                m_home_position_timeout = 20.0;
 
 public:

@@ -22,7 +22,8 @@ class robotDriver
 private:
     int               n_joints=0;
     bool              m_verbose=true;
-    std::vector<double>   m_trajectoryTime; // default trajectory time in seconds
+    std::vector<double>         m_trajectoryTime; // default trajectory time in seconds
+    std::vector<double>         m_stored_speed;   // joint ref speed
 
     yarp::os::Property          drvOptions_ll;
     yarp::dev::PolyDriver        drv_ll;
@@ -39,12 +40,16 @@ public:
     bool init();
     ~robotDriver();
     size_t getNJoints();
+    bool getControlMode(const int j, int& mode);
     bool setControlMode(const int j, const int mode);
     bool setPosition(int j, double ref);
     bool getEncoder(int j, double *v);
     bool positionMove(int j, double ref);
     bool setTrajectoryTime(double t);
     bool setTrajectoryTime(int j, double t);
+
+    bool storeRefVelocities();
+    bool loadRefVelocities();
 };
 
 #endif

@@ -254,6 +254,9 @@ void ControlThread::run()
         {
             m_current_driver->setControlMode((int)j, VOCAB_CM_POSITION);
         }
+
+        m_current_driver->loadRefVelocities();
+
         m_clock.resetTimer();
         this->m_status = ACTION_IDLE;
     }
@@ -276,30 +279,33 @@ void ControlThread::run()
         if (m_current_action->current_frame < last_frame - 1)
         {
             compute_and_send_command((int)m_current_action->current_frame);
-            yDebug("Executing action: %4zd/%4zd (%.3fs)", m_current_action->current_frame , last_frame, m_clock.getElapsedTime());
+            yDebug("ACTION_RUNNING: Executing action: %4zd/%4zd (%.3fs)", m_current_action->current_frame , last_frame, m_clock.getElapsedTime());
         }
         else //the action is complete
         {
             if (m_current_action->forever)
             {
-                yInfo("sequence completed in: %.3f s, restarting", m_clock.getElapsedTime());
+                yInfo("ACTION_RUNNING: sequence completed in: %.3f s, restarting", m_clock.getElapsedTime());
                 m_current_action->current_frame=0;
                 m_clock.resetTimer();
                 m_clock.startTimer();
             }
             else
             {
-                yInfo("sequence completed in: %.3f s", m_clock.getElapsedTime());
+                yInfo("ACTION_RUNNING: sequence completed in: %.3f s", m_clock.getElapsedTime());
                 for (size_t j = 0; j < nj; j++)
                 {
                     m_current_driver->setControlMode((int)j, VOCAB_CM_POSITION);
                 }
                 this->m_status=ACTION_IDLE;
             }
+            m_current_driver->loadRefVelocities();
         }
     }
     else if (this->m_status == ACTION_START)
     {
+        m_current_driver->storeRefVelocities();
+
         if (m_current_action->action_frames_vector.size() > 0)
         {
             double *ll = m_current_action->action_frames_vector[0].q_joints.data();
@@ -321,6 +327,7 @@ void ControlThread::run()
             yInfo() << "ACTION_START: going to start position";
             double enc= 0.0;
             bool check = true;
+            std::vector<double> err(nj);
             double move_start_time = yarp::os::Time::now();
             do
             {
@@ -328,8 +335,8 @@ void ControlThread::run()
                 for (size_t j = 0; j < nj; j++)
                 {
                     m_current_driver->getEncoder((int)j, &enc);
-                    double err = fabs(enc - ll[j]);
-                    check &= (err < m_home_position_tolerance);
+                    err[j] = fabs(enc - ll[j]);
+                    check &= (err[j] < m_current_action->m_tolerances[j]);
                 }
                 yarp::os::Time::delay(0.1);
                 if (check)
@@ -340,45 +347,56 @@ void ControlThread::run()
                 if (yarp::os::Time::now() - move_start_time > m_home_position_timeout)
                 {
                     yWarning() << "ACTION_START: timeout while trying to reach start position";
+                    for (size_t j = 0; j < nj; j++)
+                    {
+                        yWarning() << "j: "<< j << " err:" << err[j] <<  " tol:" << m_current_action->m_tolerances[j];
+                    }
                     break;
                 }
             } while (1);
 
-            //switch to position direct mode
-            if (check)
-            {
-                yDebug() << "ACTION_START: switch to position mode";
-
-                for (int j = 0; j <nj; j++)
-                {
-                    m_current_driver->setControlMode(j, VOCAB_CM_POSITION_DIRECT);
-                }
-                yarp::os::Time::delay(0.1);
-                compute_and_send_command(0);
-
-                this->m_status = ACTION_RUNNING;
-            }
-            else
+            //check after initial position move
+            if (check == false)
             {
                 yError() << "ACTION_START: unable to reach start position!";
                 if (m_home_position_strict_check_enabled)
                 {
                     //very strict behavior! if your are controlling fingers, you will probably end here
                     this->m_status = ACTION_STOP;
-                }
-                else
-                {
-                    yDebug() << "ACTION_START: switch to position direct mode";
-                    for (int j = 0; j <nj; j++)
-                    {
-                        m_current_driver->setControlMode(j, VOCAB_CM_POSITION_DIRECT);
-                    }
-                    yarp::os::Time::delay(0.1);
-                    compute_and_send_command(0);
-
-                    this->m_status = ACTION_RUNNING;
+                    yError() << "ACTION_START: m_home_position_strict_check_enabled, stopping!";
+                    m_current_driver->loadRefVelocities();
+                    return;
                 }
             }
+            for (int j = 0; j <nj; j++)
+            {
+                int mode;
+                m_current_driver->getControlMode(j, mode);
+                if (mode!=VOCAB_CM_POSITION &&
+                    mode!=VOCAB_CM_HW_FAULT
+                   )
+                {
+                    this->m_status = ACTION_STOP;
+                    yError() << "ACTION_START: control mode check failed!";
+                    m_current_driver->loadRefVelocities();
+                    return;
+                }
+            }
+
+            //switch to position direct mode
+            yDebug() << "ACTION_START: switch to position direct mode";
+            for (int j = 0; j <nj; j++)
+            {
+                m_current_driver->setControlMode(j, VOCAB_CM_POSITION_DIRECT);
+            }
+            yarp::os::Time::delay(0.1);
+
+            //go to step 0
+            yDebug() << "ACTION_START: moving to step 0 in direct mode";
+            compute_and_send_command(0);
+
+            //ready to go
+            this->m_status = ACTION_RUNNING;
             m_clock.startTimer();
             yInfo() << "ACTION_START: sequence started";
         }
@@ -399,7 +417,10 @@ void ControlThread::setPositionTolerance(double tolerance)
 {
     if (tolerance > 0)
     {
-        m_home_position_tolerance = tolerance;
+        for (size_t i=0; i< m_current_action->get_njoints(); i++)
+        {
+            m_current_action->m_tolerances[i] = tolerance;
+        }
     }
 }
 
