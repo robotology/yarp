@@ -142,4 +142,6 @@ service IMap2DMsgs
     yReturnValue save_map_to_disk_RPC(1:string map_name, 2:string file_name);
     yReturnValue load_map_from_disk_RPC(1:string file_name);
     yReturnValue enable_maps_compression_RPC(1:bool enable_compression);
+    yReturnValue reload_maps_collection_RPC ();
+    yReturnValue reload_locations_and_extras_RPC ();
 }

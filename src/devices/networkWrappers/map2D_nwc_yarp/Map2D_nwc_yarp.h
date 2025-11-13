@@ -100,6 +100,9 @@ public:
     yarp::dev::ReturnValue saveMapToDisk(std::string map_name, std::string file_name) override;
     yarp::dev::ReturnValue loadMapFromDisk(std::string file_name) override;
     yarp::dev::ReturnValue enableMapsCompression(bool enable) override;
+
+    yarp::dev::ReturnValue reloadMapsCollection() override;
+    yarp::dev::ReturnValue reloadLocationsAndExtras() override;
 };
 
 #endif // YARP_DEV_MAP2D_NWC_YARP_H
