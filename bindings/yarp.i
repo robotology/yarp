@@ -457,6 +457,7 @@ void setExternal2(yarp::sig::Image *img, PyObject* mem, int w, int h) {
 %include <yarp/dev/MultipleAnalogSensorsInterfaces.h>
 %include <yarp/dev/IRGBDSensor.h>
 %include <yarp/dev/IFrameTransform.h>
+%include <yarp/dev/IBattery.h>
 
 %template(DVector) std::vector<double>;
 %template(BVector) std::vector<bool>;
@@ -736,6 +737,7 @@ MAKE_COMMS  (Sound, yarp::sig::Sound)
     CAST_POLYDRIVER_TO_INTERFACE(ILLM)
     CAST_POLYDRIVER_TO_INTERFACE(IFrameTransform)
     CAST_POLYDRIVER_TO_INTERFACE(IRGBDSensor)
+    CAST_POLYDRIVER_TO_INTERFACE(IBattery)
 
 // These views are currently disabled in SWIG + java generator since they are
 // useless without the EXTENDED_ANALOG_SENSOR_INTERFACE part.
@@ -1564,6 +1566,44 @@ MAKE_COMMS  (Sound, yarp::sig::Sound)
     bool getTransform(const std::string& src, const std::string dest, yarp::sig::Matrix mat){
         bool ok = self->getTransform(src, dest, mat);
         return ok;
+    }
+}
+
+%extend yarp::dev::IBattery {
+    double getBatteryVoltage() {
+        double voltage;
+        self->getBatteryVoltage(voltage);
+        return voltage;
+    }
+
+    double getBatteryCurrent() {
+        double current;
+        self->getBatteryCurrent(current);
+        return current;
+    }
+
+    double getBatteryCharge() {
+        double charge;
+        self->getBatteryCharge(charge);
+        return charge;
+    }
+
+    yarp::dev::IBattery::Battery_status getBatteryStatus() {
+        yarp::dev::IBattery::Battery_status status;
+        self->getBatteryStatus(status);
+        return status;
+    }
+
+    double getBatteryTemperature() {
+        double temperature;
+        self->getBatteryTemperature(temperature);
+        return temperature;
+    }
+
+    std::string getBatteryInfo() {
+        std::string info;
+        self->getBatteryInfo(info);
+        return info;
     }
 }
 
