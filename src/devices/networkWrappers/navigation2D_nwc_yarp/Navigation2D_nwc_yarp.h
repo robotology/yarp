@@ -154,6 +154,8 @@ public:
     yarp::dev::ReturnValue   loadMapsCollection(std::string maps_collection_file) override;
     yarp::dev::ReturnValue   saveLocationsAndExtras(std::string locations_collection_file) override;
     yarp::dev::ReturnValue   loadLocationsAndExtras(std::string locations_collection_file) override;
+    yarp::dev::ReturnValue   reloadMapsCollection() override;
+    yarp::dev::ReturnValue   reloadLocationsAndExtras() override;
 
     yarp::dev::ReturnValue   saveMapToDisk(std::string map_name, std::string file_name) override;
     yarp::dev::ReturnValue   loadMapFromDisk(std::string file_name) override;

@@ -609,3 +609,27 @@ return_get_paths_list IMap2DRPCd::get_paths_list_RPC()
     }
     return ret;
 }
+
+ReturnValue IMap2DRPCd::reload_maps_collection_RPC()
+{
+    std::lock_guard <std::mutex> lg(m_mutex);
+
+    auto ret = m_iMap->reloadMapsCollection();
+    if (!ret)
+    {
+        yCError(MAP2D_RPC, "Unable to reloadMapsCollection");
+    }
+    return ret;
+}
+
+ReturnValue IMap2DRPCd::reload_locations_and_extras_RPC()
+{
+    std::lock_guard <std::mutex> lg(m_mutex);
+
+    auto ret = m_iMap->reloadLocationsAndExtras();
+    if (!ret)
+    {
+        yCError(MAP2D_RPC, "Unable to reloadLocationsAndExtras");
+    }
+    return ret;
+}

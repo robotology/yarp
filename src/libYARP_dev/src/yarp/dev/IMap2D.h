@@ -325,6 +325,18 @@ public:
     virtual yarp::dev::ReturnValue loadLocationsAndExtras(std::string file_name) = 0;
 
     /**
+    * Reloads the last opened file containing the maps from disk
+    * @return a ReturnValue, convertible to true/false
+    */
+    virtual yarp::dev::ReturnValue reloadMapsCollection() = 0;
+
+    /**
+    * Reloads the last opened file containing the collection of locations/areas/paths etc from disk
+    * @return a ReturnValue, convertible to true/false
+    */
+    virtual yarp::dev::ReturnValue reloadLocationsAndExtras() = 0;
+
+    /**
     * Enable/disables maps compression over the network
     * @param enable
     * @return a ReturnValue, convertible to true/false

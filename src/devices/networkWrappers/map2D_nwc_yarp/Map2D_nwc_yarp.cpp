@@ -411,3 +411,15 @@ ReturnValue Map2D_nwc_yarp::clearAllObjects()
     std::lock_guard <std::mutex> lg(m_mutex);
     return m_map_RPC.clear_all_objects_RPC();
 }
+
+ReturnValue Map2D_nwc_yarp::reloadMapsCollection()
+{
+    std::lock_guard <std::mutex> lg(m_mutex);
+    return m_map_RPC.reload_maps_collection_RPC();
+}
+
+ReturnValue Map2D_nwc_yarp::reloadLocationsAndExtras()
+{
+    std::lock_guard <std::mutex> lg(m_mutex);
+    return m_map_RPC.reload_locations_and_extras_RPC();
+}
