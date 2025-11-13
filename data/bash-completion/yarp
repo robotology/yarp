@@ -42,7 +42,9 @@ _yarp()
         COMP_WORDS=$words
         COMP_CWORD=$cword ;
     else
-         local cur=$(_get_cword) ;
+        # Fallback for older bash-completion or zsh
+        local cur="${COMP_WORDS[COMP_CWORD]}"
+        local prev="${COMP_WORDS[COMP_CWORD-1]}"
     fi;
     local command="${COMP_WORDS[1]}"
     local cmds=$(_get_yarp_help)
