@@ -1572,13 +1572,15 @@ MAKE_COMMS  (Sound, yarp::sig::Sound)
 %extend yarp::dev::IBattery {
     double getBatteryVoltage() {
         double voltage;
-        self->getBatteryVoltage(voltage);
+        bool ok = self->getBatteryVoltage(voltage);
+        if (!ok) return 0;
         return voltage;
     }
 
     double getBatteryCurrent() {
         double current;
-        self->getBatteryCurrent(current);
+        bool ok = self->getBatteryCurrent(current);
+        if (!ok) return 0;
         return current;
     }
 
@@ -1590,19 +1592,22 @@ MAKE_COMMS  (Sound, yarp::sig::Sound)
 
     yarp::dev::IBattery::Battery_status getBatteryStatus() {
         yarp::dev::IBattery::Battery_status status;
-        self->getBatteryStatus(status);
+        bool ok = self->getBatteryStatus(status);
+        if (!ok) return yarp::dev::IBattery::Battery_status::BATTERY_GENERAL_ERROR;
         return status;
     }
 
     double getBatteryTemperature() {
         double temperature;
-        self->getBatteryTemperature(temperature);
+        bool ok = self->getBatteryTemperature(temperature);
+        if (!ok) return 0;
         return temperature;
     }
 
     std::string getBatteryInfo() {
         std::string info;
-        self->getBatteryInfo(info);
+        bool ok = self->getBatteryInfo(info);
+        if (!ok) return "";
         return info;
     }
 }
