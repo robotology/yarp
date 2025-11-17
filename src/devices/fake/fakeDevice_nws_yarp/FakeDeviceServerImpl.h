@@ -21,4 +21,5 @@ public:
 
     // From FakeTestMsgs
     yarp::dev::ReturnValue doSomethingRPC() override;
+    yarp::dev::ReturnValue doSomethingUnimplementedRPC() override;
 };
