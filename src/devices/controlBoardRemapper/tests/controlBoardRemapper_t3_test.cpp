@@ -44,16 +44,21 @@
 using namespace yarp::dev;
 using namespace yarp::os;
 
-TEST_CASE("dev::ControlBoardRemapperTest2", "[yarp::dev]")
+TEST_CASE("dev::ControlBoardRemapperTest3", "[yarp::dev]")
 {
     YARP_REQUIRE_PLUGIN("fakeMotionControl", "device");
     YARP_REQUIRE_PLUGIN("controlboardremapper", "device");
+    YARP_REQUIRE_PLUGIN("controlBoard_nws_yarp", "device");
+    //YARP_REQUIRE_PLUGIN("controlBoard_nwc_yarp", "device");
+    YARP_REQUIRE_PLUGIN("remote_controlboard", "device");
 
     Network::setLocalMode(true);
 
-    SECTION("Checking controlboardremapper device")
+    SECTION("Checking controlboardremapper device attached to a controlBoard_nwc_yarp device")
     {
-        PolyDriver ddmc;
+        PolyDriver ddfakemc;
+        PolyDriver ddnws;
+        PolyDriver ddnwc;
         PolyDriver ddremapper;
 
         IPositionControl* ipos = nullptr;
@@ -73,26 +78,51 @@ TEST_CASE("dev::ControlBoardRemapperTest2", "[yarp::dev]")
         IImpedanceControl* iimp = nullptr;
         //IRemoteCalibrator* iremotecalib = nullptr;
 
-        ////////"Test a controlboardremapper attached to a fakeMotionControl"
+        ////////"Test a controlboardremapper attached to a controlBoard_nwc_yarp"
         {
             Property p_cfg;
             p_cfg.put("device", "fakeMotionControl");
             Property& grp = p_cfg.addGroup("GENERAL");
-            grp.put("Joints", 2);
-            REQUIRE(ddmc.open(p_cfg));
+            grp.put("Joints", 4);
+            REQUIRE(ddfakemc.open(p_cfg));
+        }
+        {
+            Property p_cfg;
+            p_cfg.put("device", "controlBoard_nws_yarp");
+            p_cfg.put("name", "/alljoints");
+            REQUIRE(ddnws.open(p_cfg));
+        }
+        {
+            yarp::dev::IMultipleWrapper* ww_nws=nullptr; ddnws.view(ww_nws);
+            REQUIRE(ww_nws);
+            yarp::dev::PolyDriverList pdlist; pdlist.push(&ddfakemc,"fakeboard1");
+            bool result_att = ww_nws->attachAll(pdlist);
+            REQUIRE(result_att);
+        }
+
+        yarp::os::Time::delay(0.1);
+
+        //client side
+        {
+            Property p_cfg;
+            //p_cfg.put("device", "controlBoard_nwc_yarp");
+            p_cfg.put("device", "remote_controlboard");
+            p_cfg.put("local", "/localalljoints");
+            p_cfg.put("remote", "/alljoints");
+            REQUIRE(ddnwc.open(p_cfg));
         }
         {
             Property p_cfg;
             p_cfg.put("device", "controlboardremapper");
-            yarp::os::Value* jlist = yarp::os::Value::makeList("joint0 joint1");
+            yarp::os::Value* jlist = yarp::os::Value::makeList("joint3 joint2");
             p_cfg.put("axesNames", jlist);
             REQUIRE(ddremapper.open(p_cfg));
         }
         {
-            yarp::dev::IMultipleWrapper* ww_nws=nullptr; ddremapper.view(ww_nws);
-            REQUIRE(ww_nws);
-            yarp::dev::PolyDriverList pdlist; pdlist.push(&ddmc,"fakeboard1");
-            bool result_att = ww_nws->attachAll(pdlist);
+            yarp::dev::IMultipleWrapper* ww_rem=nullptr; ddremapper.view(ww_rem);
+            REQUIRE(ww_rem);
+            yarp::dev::PolyDriverList pdlist; pdlist.push(&ddnwc,"nwcboard1");
+            bool result_att = ww_rem->attachAll(pdlist);
             REQUIRE(result_att);
         }
 
@@ -116,7 +146,7 @@ TEST_CASE("dev::ControlBoardRemapperTest2", "[yarp::dev]")
         yarp::dev::tests::exec_iPositionControl_test_1(ipos, icmd);
         yarp::dev::tests::exec_iVelocityControl_test_1(ivel, icmd);
         yarp::dev::tests::exec_iTorqueControl_test_1(itrq, icmd);
-        yarp::dev::tests::exec_iAxisInfo_test_1(iinfo);
+        yarp::dev::tests::exec_iAxisInfo_test_1(iinfo, "joint3");
         yarp::dev::tests::exec_iEncodersTimed_test_1(ienc);
         yarp::dev::tests::exec_iControlMode_test_1(icmd, iinfo);
         yarp::dev::tests::exec_iInteractionMode_test_1(iint,iinfo);
@@ -134,7 +164,9 @@ TEST_CASE("dev::ControlBoardRemapperTest2", "[yarp::dev]")
         //"Close all polydrivers and check"
         {
             CHECK(ddremapper.close());
-            CHECK(ddmc.close());
+            CHECK(ddnwc.close());
+            CHECK(ddnws.close());
+            CHECK(ddfakemc.close());
         }
     }
 

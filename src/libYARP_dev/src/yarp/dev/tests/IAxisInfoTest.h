@@ -14,7 +14,7 @@ using namespace yarp::os;
 
 namespace yarp::dev::tests
 {
-    inline void exec_iAxisInfo_test_1(IAxisInfo* iinfo)
+    inline void exec_iAxisInfo_test_1(IAxisInfo* iinfo, std::string jname="joint0")
     {
         REQUIRE(iinfo !=nullptr);
 
@@ -28,7 +28,7 @@ namespace yarp::dev::tests
         std::string name;
         b = iinfo->getAxisName(0,name);
         CHECK(b);
-        CHECK(name == std::string("joint0"));
+        CHECK(name == jname);
 
         yarp::dev::JointTypeEnum type;
         b = iinfo->getJointType(0, type);
