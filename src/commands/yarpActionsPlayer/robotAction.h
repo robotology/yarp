@@ -50,6 +50,7 @@ public:
     size_t         current_frame;
     bool           forever;
     double         speed_factor = 1.0;
+    std::vector<double>      m_tolerances;
     std::deque<action_frame> action_frames_vector;
 
     action_class();

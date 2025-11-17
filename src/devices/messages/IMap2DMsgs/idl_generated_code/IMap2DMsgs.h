@@ -132,6 +132,10 @@ public:
 
     virtual yarp::dev::ReturnValue enable_maps_compression_RPC(const bool enable_compression);
 
+    virtual yarp::dev::ReturnValue reload_maps_collection_RPC();
+
+    virtual yarp::dev::ReturnValue reload_locations_and_extras_RPC();
+
     // help method
     virtual std::vector<std::string> help(const std::string& functionName = "--all");
 

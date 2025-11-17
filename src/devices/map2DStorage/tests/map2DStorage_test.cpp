@@ -52,7 +52,7 @@ TEST_CASE("dev::Map2DStorageTest", "[yarp::dev]")
         }
     }
 
-    SECTION("Checking map2DStorage device loading files (1/2)")
+    SECTION("Checking map2DStorage device loading files (1/3)")
     {
         PolyDriver ddmapstorage;
         IMap2D* imap = nullptr;
@@ -68,7 +68,41 @@ TEST_CASE("dev::Map2DStorageTest", "[yarp::dev]")
         }
     }
 
-    SECTION("Checking map2DStorage device loading files (2/2)")
+    SECTION("Checking map2DStorage device loading files (2/3)")
+    {
+        PolyDriver ddmapstorage;
+        IMap2D* imap = nullptr;
+
+        //open the poly loading a previously saved collection
+        {
+            Property pmapstorage_cfg;
+            pmapstorage_cfg.put("device", "map2DStorage");
+            pmapstorage_cfg.put("mapCollectionContext", "mapGrid2DTest");
+            REQUIRE(ddmapstorage.open(pmapstorage_cfg));
+            REQUIRE(ddmapstorage.view(imap));
+
+            bool b;
+            std::vector<Nav2D::Map2DArea> veca;
+            std::vector<Nav2D::Map2DLocation> vecl;
+            std::vector<Nav2D::Map2DObject> veco;
+            std::vector<Nav2D::Map2DPath> vecp;
+            b = imap->getAllAreas(veca); CHECK(b); CHECK(veca.size()==3);
+            b = imap->getAllLocations(vecl); CHECK(b); CHECK(vecl.size()==3);
+            b = imap->getAllObjects(veco); CHECK(b); CHECK(veco.size()==3);
+            b = imap->getAllPaths(vecp); CHECK(b); CHECK(vecp.size()==3);
+            //Cleanup of vectors which contain elements allocated inside a plugin.
+            //beware! Forgetting this might cause segfault
+            veca.clear();
+            vecl.clear();
+            veco.clear();
+            vecp.clear();
+
+            //"Close all polydrivers and check"
+            CHECK(ddmapstorage.close());
+        }
+    }
+
+    SECTION("Checking map2DStorage device loading files (3/3)")
     {
         PolyDriver ddmapstorage;
         IMap2D* imap = nullptr;

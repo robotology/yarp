@@ -172,29 +172,30 @@ bool Map2DStorage::open(yarp::os::Searchable &config)
     {
         m_rf_mapCollection.setDefaultContext(m_mapCollectionContext.c_str());
 
-        std::string collection_file_with_path = m_rf_mapCollection.findFile(m_mapCollectionFile);
-        std::string locations_file_with_path = m_rf_mapCollection.findFile(m_mapLocationsFile);
+        std::string m_collection_startup_file_with_path = m_rf_mapCollection.findFile(m_mapCollectionFile);
+        std::string m_locations_startup_file_with_path = m_rf_mapCollection.findFile(m_mapLocationsFile);
 
-        if (collection_file_with_path=="")
+        if (m_locations_startup_file_with_path=="")
         {
             yCInfo(MAP2DSTORAGE) << "No locations loaded";
         }
         else
         {
-            bool ret  = loadLocationsAndExtras(locations_file_with_path);
-            if (ret) { yCInfo(MAP2DSTORAGE) << "Location file" << locations_file_with_path << "successfully loaded."; }
-            else { yCError(MAP2DSTORAGE) << "Problems opening file" << locations_file_with_path; }
+            bool ret  = loadLocationsAndExtras(m_locations_startup_file_with_path);
+            if (ret) { yCInfo(MAP2DSTORAGE) << "Location file" << m_locations_startup_file_with_path << "successfully loaded."; }
+            else { yCError(MAP2DSTORAGE) << "Problems opening file" << m_locations_startup_file_with_path; }
         }
 
-        if (collection_file_with_path=="")
+        if (m_collection_startup_file_with_path=="")
         {
             yCError(MAP2DSTORAGE) << "Unable to find file" << m_mapCollectionFile << "within the specified context:" << m_mapCollectionContext;
             return false;
         }
-        if (loadMapsCollection(collection_file_with_path))
+        if (loadMapsCollection(m_collection_startup_file_with_path))
         {
-            yCInfo(MAP2DSTORAGE) << "Map collection file:" << collection_file_with_path << "successfully loaded.";
+            yCInfo(MAP2DSTORAGE) << "Map collection file:" << m_collection_startup_file_with_path << "successfully loaded.";
 
+            //print maps
             if (m_maps_storage.size() > 0)
             {
                 yCInfo(MAP2DSTORAGE) << "Available maps are:";
@@ -208,6 +209,7 @@ bool Map2DStorage::open(yarp::os::Searchable &config)
                 yCInfo(MAP2DSTORAGE) << "No maps available";
             }
 
+            //print locations
             if (m_locations_storage.size() > 0)
             {
                 yCInfo(MAP2DSTORAGE) << "Available Locations are:";
@@ -221,6 +223,7 @@ bool Map2DStorage::open(yarp::os::Searchable &config)
                 yCInfo(MAP2DSTORAGE) << "No locations available";
             }
 
+            //print objects
             if (m_objects_storage.size() > 0)
             {
                 yCInfo(MAP2DSTORAGE) << "Available object locations are:";
@@ -234,6 +237,7 @@ bool Map2DStorage::open(yarp::os::Searchable &config)
                 yCInfo(MAP2DSTORAGE) << "No object locations available";
             }
 
+            //print areas
             if (m_areas_storage.size() > 0)
             {
                 yCInfo(MAP2DSTORAGE) << "Available areas are:";
@@ -246,10 +250,24 @@ bool Map2DStorage::open(yarp::os::Searchable &config)
             {
                 yCInfo(MAP2DSTORAGE) << "No areas available";
             }
+
+            //print paths
+            if (m_paths_storage.size() > 0)
+            {
+                yCInfo(MAP2DSTORAGE) << "Available paths are:";
+                for (auto& it : m_paths_storage)
+                {
+                    yCInfo(MAP2DSTORAGE) << it.first;
+                }
+            }
+            else
+            {
+                yCInfo(MAP2DSTORAGE) << "No paths available";
+            }
         }
         else
         {
-            yCError(MAP2DSTORAGE) << "Unable to load map collection file:" << collection_file_with_path;
+            yCError(MAP2DSTORAGE) << "Unable to load map collection file:" << m_collection_startup_file_with_path;
             return false;
         }
     }
@@ -1466,4 +1484,14 @@ yarp::dev::ReturnValue Map2DStorage::clearAllObjects()
     std::lock_guard<std::mutex> lock(m_mutex);
     m_objects_storage.clear();
     return yarp::dev::ReturnValue_ok;
+}
+
+yarp::dev::ReturnValue Map2DStorage::reloadMapsCollection()
+{
+    return loadMapsCollection(m_collection_startup_file_with_path);
+}
+
+yarp::dev::ReturnValue Map2DStorage::reloadLocationsAndExtras()
+{
+    return loadLocationsAndExtras(m_locations_startup_file_with_path);
 }

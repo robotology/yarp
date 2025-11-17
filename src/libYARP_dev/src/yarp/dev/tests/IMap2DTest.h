@@ -542,6 +542,24 @@ namespace yarp::dev::tests
                 CHECK(ret);
                 CHECK(std::filesystem::remove("loc_v3_test.ini"));
             }
+            // Version 4 file
+            {
+                std::ofstream f("loc_v4_test.ini");
+                f << "Version:\n";
+                f << "4\n";
+                f << "Locations:\n";
+                f << "loc4 mapZ 5 6 0 \"descL\"\n";
+                f << "Objects:\n";
+                f << "obj4 mapZ 5 6 0 7 7 7 \"descO\"\n";
+                f << "Areas:\n";
+                f << "area4 mapZ 1 2 2 \"descA\"\n";
+                f << "Paths:\n";
+                f << "path4 ( mapZ 0 0 0 ) \"descP\"\n";
+                f.close();
+                bool ret = imap->loadLocationsAndExtras("loc_v4_test.ini");
+                CHECK(ret);
+                CHECK(std::filesystem::remove("loc_v4_test.ini"));
+            }
             // Bad version file
             {
                 std::ofstream f("loc_bad_version.ini");
@@ -570,6 +588,7 @@ namespace yarp::dev::tests
     {
         CHECK (remove_map_files("test_map0"));
         CHECK (std::filesystem::remove("maps_collection.ini"));
+        CHECK (std::filesystem::remove("locations.ini"));
     }
 }
 

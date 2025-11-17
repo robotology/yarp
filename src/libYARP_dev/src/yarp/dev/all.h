@@ -41,6 +41,7 @@
 #include <yarp/dev/ISpeechTranscription.h>
 #include <yarp/dev/ILLM.h>
 #include <yarp/dev/IChatBot.h>
+#include <yarp/dev/IBattery.h>
 
 #ifndef YARP_NO_MATH
 #include <yarp/dev/IFrameTransform.h>

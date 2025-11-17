@@ -107,9 +107,12 @@ public:
     yarp::dev::ReturnValue loadMapFromDisk(std::string file_name) override;
     yarp::dev::ReturnValue saveMapsCollection(std::string maps_collection_file) override;
     yarp::dev::ReturnValue loadMapsCollection(std::string maps_collection_file) override;
+    yarp::dev::ReturnValue reloadMapsCollection() override;
     yarp::dev::ReturnValue loadLocationsAndExtras(std::string locations_file) override;
     yarp::dev::ReturnValue saveLocationsAndExtras(std::string locations_file) override;
+    yarp::dev::ReturnValue reloadLocationsAndExtras() override;
     yarp::dev::ReturnValue enableMapsCompression(bool enable) override;
+
 
 private:
     bool priv_load_locations_and_areas_v1(std::ifstream& file);
@@ -121,6 +124,8 @@ private:
     yarp::os::ResourceFinder     m_rf_mapCollection;
     std::mutex                   m_mutex;
     yarp::os::RpcServer          m_rpcPort;
+    std::string                  m_collection_startup_file_with_path;
+    std::string                  m_locations_startup_file_with_path;
 
     bool read(yarp::os::ConnectionReader& connection) override;
 };

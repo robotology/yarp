@@ -464,12 +464,14 @@ void setExternal2(yarp::sig::Image *img, PyObject* mem, int w, int h) {
 %include <yarp/dev/MultipleAnalogSensorsInterfaces.h>
 %include <yarp/dev/IRGBDSensor.h>
 %include <yarp/dev/IFrameTransform.h>
+
 //Navigation interfaces
 %include <yarp/dev/IMap2D.h>
 %include <yarp/dev/ILocalization2D.h>
 %include <yarp/dev/INavigation2D.h>
 %include <yarp/dev/IOdometry2D.h>
 %include <yarp/dev/IRangefinder2D.h>
+%include <yarp/dev/IBattery.h>
 
 %template(DVector) std::vector<double>;
 %template(BVector) std::vector<bool>;
@@ -749,6 +751,7 @@ MAKE_COMMS  (Sound, yarp::sig::Sound)
     CAST_POLYDRIVER_TO_INTERFACE(ILLM)
     CAST_POLYDRIVER_TO_INTERFACE(IFrameTransform)
     CAST_POLYDRIVER_TO_INTERFACE(IRGBDSensor)
+    CAST_POLYDRIVER_TO_INTERFACE(IBattery)
 
 // These views are currently disabled in SWIG + java generator since they are
 // useless without the EXTENDED_ANALOG_SENSOR_INTERFACE part.
@@ -1570,6 +1573,49 @@ MAKE_COMMS  (Sound, yarp::sig::Sound)
     bool getTransform(const std::string& src, const std::string dest, yarp::sig::Matrix mat){
         bool ok = self->getTransform(src, dest, mat);
         return ok;
+    }
+}
+
+%extend yarp::dev::IBattery {
+    double getBatteryVoltage() {
+        double voltage;
+        bool ok = self->getBatteryVoltage(voltage);
+        if (!ok) return 0;
+        return voltage;
+    }
+
+    double getBatteryCurrent() {
+        double current;
+        bool ok = self->getBatteryCurrent(current);
+        if (!ok) return 0;
+        return current;
+    }
+
+    double getBatteryCharge() {
+        double charge;
+        self->getBatteryCharge(charge);
+        return charge;
+    }
+
+    yarp::dev::IBattery::Battery_status getBatteryStatus() {
+        yarp::dev::IBattery::Battery_status status;
+        bool ok = self->getBatteryStatus(status);
+        if (!ok) return yarp::dev::IBattery::Battery_status::BATTERY_GENERAL_ERROR;
+        return status;
+    }
+
+    double getBatteryTemperature() {
+        double temperature;
+        bool ok = self->getBatteryTemperature(temperature);
+        if (!ok) return 0;
+        return temperature;
+    }
+
+    std::string getBatteryInfo() {
+        std::string info;
+        bool ok = self->getBatteryInfo(info);
+        if (!ok) return "";
+        return info;
     }
 }
 
