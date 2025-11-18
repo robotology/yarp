@@ -176,7 +176,7 @@ std::string vectorToString(const std::vector<double>& vec)
 bool robotDriver::storeRefVelocities()
 {
     bool ok;
-    ok = ipos_ll->getRefSpeeds(m_stored_speed.data());
+    ok = ipos_ll->getTrajSpeeds(m_stored_speed.data());
     yDebug() << "Storing speeds" << vectorToString(m_stored_speed);
     return ok;
 }
@@ -185,6 +185,6 @@ bool robotDriver::loadRefVelocities()
 {
     bool ok;
     yDebug() << "Loading speeds"  << vectorToString(m_stored_speed);
-    ok = ipos_ll->setRefSpeeds(m_stored_speed.data());
+    ok = ipos_ll->setTrajSpeeds(m_stored_speed.data());
     return ok;
 }
