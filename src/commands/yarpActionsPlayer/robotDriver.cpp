@@ -28,32 +28,12 @@ using namespace yarp::dev;
 // ******************** ROBOT DRIVER CLASS
 robotDriver::robotDriver()
 {
-    drvOptions_ll.clear();
 }
 
-bool robotDriver::configure(const Property &copt)
+bool robotDriver::configure(yarp::dev::PolyDriver* pd)
 {
-    bool ret=true;
-    Property &options=const_cast<Property &> (copt);
-
-    drvOptions_ll.put("device","remotecontrolboardremapper");
-
-    yDebug() << "remoteControlBoards will use the following configuration:";
-    yDebug() << "set of joints:" << options.find("axesNames").toString();
-    yDebug() << "set of controlboards:" << options.find("remoteControlBoards").toString();
-    drvOptions_ll.put("axesNames", options.find("axesNames"));
-    drvOptions_ll.put("remoteControlBoards",options.find("remoteControlBoards"));
-    drvOptions_ll.put("localPortPrefix", options.find("localPortPrefix"));
-
-    yarp::os::Property& pcb =drvOptions_ll.addGroup("REMOTE_CONTROLBOARD_OPTIONS");
-    pcb.put("carrier", "fast_tcp");
-
-    if (m_verbose)
-    {
-        yDebug() << "driver options:\n" << drvOptions_ll.toString().c_str();
-    }
-
-    return ret;
+   drv_ll = pd;
+   return true;
 }
 
 bool robotDriver::setTrajectoryTime(double t)
@@ -71,13 +51,17 @@ bool robotDriver::setTrajectoryTime(int j, double t)
 
 bool robotDriver::init()
 {
-    drv_ll.open(drvOptions_ll);
-    bool ok = true;
-
-    if (drv_ll.isValid())
+    if (!drv_ll)
     {
-        ok = drv_ll.view(ipos_ll) && drv_ll.view(iposdir_ll) && drv_ll.view(ienc_ll) &&
-             drv_ll.view(ipid_ll) && drv_ll.view(imotenc_ll) && drv_ll.view(icmd_ll);
+        yError() << "Invalid pointer to Polydriver!";
+        return false;
+    }
+
+    bool ok = true;
+    if (drv_ll->isValid())
+    {
+        ok = drv_ll->view(ipos_ll) && drv_ll->view(iposdir_ll) && drv_ll->view(ienc_ll) &&
+             drv_ll->view(ipid_ll) && drv_ll->view(imotenc_ll) && drv_ll->view(icmd_ll);
     }
     else
     {
@@ -86,6 +70,7 @@ bool robotDriver::init()
 
     if (!ok)
     {
+        yError() << "Unable to view some interface!";
         return false;
     }
 

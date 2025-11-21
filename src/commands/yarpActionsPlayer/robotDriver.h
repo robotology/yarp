@@ -25,8 +25,7 @@ private:
     std::vector<double>         m_trajectoryTime; // default trajectory time in seconds
     std::vector<double>         m_stored_speed;   // joint ref speed
 
-    yarp::os::Property          drvOptions_ll;
-    yarp::dev::PolyDriver        drv_ll;
+    yarp::dev::PolyDriver       *drv_ll=nullptr;
     yarp::dev::IPositionControl *ipos_ll=nullptr;
     yarp::dev::IPositionDirect  *iposdir_ll=nullptr;
     yarp::dev::IPidControl      *ipid_ll=nullptr;
@@ -36,7 +35,7 @@ private:
 
 public:
     robotDriver();
-    bool configure(const yarp::os::Property &copt);
+    bool configure(yarp::dev::PolyDriver* pd);
     bool init();
     ~robotDriver();
     size_t getNJoints();
