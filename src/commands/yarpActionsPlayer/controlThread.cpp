@@ -90,6 +90,7 @@ bool ControlThread::action_change(action_class* action, robotDriver* driver)
     m_current_driver = driver;
     m_status = ACTION_IDLE;
     m_current_action->current_frame = 0;
+    m_clock.resetTimer();
     return true;
 }
 

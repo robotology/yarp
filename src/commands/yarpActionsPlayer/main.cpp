@@ -193,12 +193,22 @@ protected:
         {
             yDebug() << bot_clients.get(i).toString();
             yarp::os::Bottle* bot_client_elem = bot_clients.get(i).asList();
+            if (bot_client_elem == nullptr)
+            {
+                yError() << "Invalid entry in CLIENTS section";
+                return false;
+            }
             size_t num_of_client_elems = bot_client_elem->size();
-            if (bot_client_elem && num_of_client_elems == 2)
+            if (num_of_client_elems == 2)
             {
                 //parse a line of the CLIENTS section
                 std::string client_name = bot_client_elem->get(0).toString();
                 std::string remoteControlBoards = bot_client_elem->get(1).toString();
+                if (m_robotClients[client_name] != nullptr)
+                {
+                    yError() << "Duplicate client entry: " << client_name;
+                    return false;
+                }
                 m_robotClients[client_name] = new yarp::dev::PolyDriver;
                 yarp::os::Property clientoptions;
                 clientoptions.put("device", "remote_controlboard");
@@ -216,12 +226,12 @@ protected:
             }
             else
             {
-                yError() << "Invalid entry in CLIENTS section";
+                yError() << "Invalid number of entries in CLIENTS section";
                 return false;
             }
         }
 
-        //load the controllers/remappers
+        //load the remappers
         yarp::os::Bottle& bot_cont = p.findGroup("REMAPPERS");
         if (bot_cont.size() == 0)
         {
@@ -233,11 +243,16 @@ protected:
         {
             yDebug() << bot_cont.get(i).toString();
             yarp::os::Bottle* bot_cont_elem = bot_cont.get(i).asList();
-            size_t num_of_celems = bot_cont_elem->size();
-            if (bot_cont_elem && num_of_celems == 3)
+            if (bot_cont_elem == nullptr)
             {
-                //parse a line of the controllers/remappers section
-                std::string controller_name = bot_cont_elem->get(0).toString();
+                yError() << "Invalid entry in REMAPPERS section";
+                return false;
+            }
+            size_t num_of_celems = bot_cont_elem->size();
+            if (num_of_celems == 3)
+            {
+                //parse a line of the remappers section
+                std::string remapper_name = bot_cont_elem->get(0).toString();
                 yarp::os::Bottle* clients_name = bot_cont_elem->get(1).asList();
                 std::string axes_names = bot_cont_elem->get(2).toString();
                 if (clients_name==nullptr || clients_name->size() == 0)
@@ -251,28 +266,38 @@ protected:
                     return false;
                 }
 
-                //configure the controller/remapper
-                m_robotRemappers[controller_name] = new yarp::dev::PolyDriver;
+                //configure the remapper
+                if (m_robotRemappers[remapper_name] != nullptr)
+                {
+                    yError() << "Duplicate remapper entry: " << remapper_name;
+                    return false;
+                }
+                m_robotRemappers[remapper_name] = new yarp::dev::PolyDriver;
                 yarp::os::Property rmoptions;
                 rmoptions.put("device", "controlboardremapper");
                 yarp::os::Value* jlist = yarp::os::Value::makeList(axes_names.c_str());
                 rmoptions.put("axesNames",jlist);
-                bool rob_ok = m_robotRemappers[controller_name]->open(rmoptions);
+                bool rob_ok = m_robotRemappers[remapper_name]->open(rmoptions);
                 if (!rob_ok)
                 {
-                    yError() << "Unable to initialize remapper: " << controller_name;
+                    yError() << "Unable to initialize remapper: " << remapper_name;
                     return false;
                 }
 
-                //attach the controller/remapper to one or more clients
+                //attach the remapper to one or more clients
                 {
                     yarp::dev::IMultipleWrapper* ww_rem=nullptr;
-                    m_robotRemappers[controller_name]->view(ww_rem);
+                    m_robotRemappers[remapper_name]->view(ww_rem);
                     yarp::dev::PolyDriverList pdlist;
                     for (size_t i=0; i<clients_name->size(); i++)
                     {
                         std::string cnn = clients_name->get(i).toString();
                         yarp::dev::PolyDriver* ddnwc = m_robotClients[cnn];
+                        if (ddnwc == nullptr)
+                        {
+                            yError() << "Configuration error while searching for client" << cnn;
+                            return false;
+                        }
                         std::string boardname = "nwcboard" + std::to_string(i);
                         pdlist.push(ddnwc, boardname.c_str());
                     }
@@ -280,24 +305,29 @@ protected:
                     if (!result_att)
                     {
                         yError() << "Configuration error while trying to attach the remapper: "
-                                 << controller_name << " with the control_boards: " << clients_name->toString();
+                                 << remapper_name << " with the control_boards: " << clients_name->toString();
                         return false;
                     }
                 }
 
                 //put the controller in the list
-                m_robotControllers[controller_name] = new robotDriver;
-                rob_ok = m_robotControllers[controller_name]->configure(m_robotRemappers[controller_name]);
-                rob_ok &= m_robotControllers[controller_name]->init();
+                if (m_robotControllers[remapper_name] != nullptr)
+                {
+                    yError() << "Duplicate controller entry: " << remapper_name;
+                    return false;
+                }
+                m_robotControllers[remapper_name] = new robotDriver;
+                rob_ok = m_robotControllers[remapper_name]->configure(m_robotRemappers[remapper_name]);
+                rob_ok &= m_robotControllers[remapper_name]->init();
                 if (!rob_ok)
                 {
-                    yError() << "Unable to initialize controller: " << controller_name;
+                    yError() << "Unable to initialize controller: " << remapper_name;
                     return false;
                 }
             }
             else
             {
-                yError() << "Invalid entry in CONTROLLERS section";
+                yError() << "Invalid number of entries in REMAPPERS section";
                 return false;
             }
         }
