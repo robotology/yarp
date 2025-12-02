@@ -80,6 +80,14 @@ public:
 
 #ifndef SWIG_PREPROCESSOR_SHOULD_SKIP_THIS
 #define ReturnValue_ok ReturnValue(yarp::dev::ReturnValue::return_code::return_value_ok)
+#define ReturnValue_error_generic                     ReturnValue(yarp::dev::ReturnValue::return_code::return_value_error_generic)
+#define ReturnValue_error_not_implemented_by_device   ReturnValue(yarp::dev::ReturnValue::return_code::return_value_error_not_implemented_by_device)
+#define ReturnValue_error_nws_nwc_communication_error ReturnValue(yarp::dev::ReturnValue::return_code::return_value_error_nws_nwc_communication_error)
+#define ReturnValue_error_deprecated                  ReturnValue(yarp::dev::ReturnValue::return_code::return_value_error_deprecated)
+#define ReturnValue_error_method_failed               ReturnValue(yarp::dev::ReturnValue::return_code::return_value_error_method_failed)
+#define ReturnValue_error_not_ready                   ReturnValue(yarp::dev::ReturnValue::return_code::return_value_error_not_ready)
+#define ReturnValue_error_input_out_of_bounds         ReturnValue(yarp::dev::ReturnValue::return_code::return_value_error_input_out_of_bounds)
+#define ReturnValue_uninitialized                     ReturnValue(yarp::dev::ReturnValue::return_code::return_value_uninitialized)
 
 #if __cplusplus >= 202002L
 inline ReturnValue YARP_METHOD_NOT_YET_IMPLEMENTED(const std::source_location& location = std::source_location::current(), std::string custom_string = "")
