@@ -12,6 +12,9 @@
 #include <yarp/sig/Vector.h>
 #include "yarpActionsPlayer_IDL.h"
 
+#include <yarp/dev/PolyDriver.h>
+#include <yarp/dev/WrapperMultiple.h>
+
 #include <fstream>
 #include <iostream>
 #include <iomanip>
@@ -34,8 +37,10 @@ protected:
     yarp::os::Port      m_rpcPort;
     std::string         m_name;
     bool                m_verbose;
+    std::map<std::string,yarp::dev::PolyDriver*>  m_robotClients;
+    std::map<std::string,yarp::dev::PolyDriver*>  m_robotRemappers;
     std::map<std::string,robotDriver*>  m_robotControllers;
-    std::map<std::string,action_class> m_actions;
+    std::map<std::string,action_class>  m_actions;
     ControlThread*      m_wthread=nullptr;
     BroadcastingThread* m_bthread=nullptr;
 
@@ -76,6 +81,24 @@ protected:
 
     ~scriptModule()
     {
+        // stop the threads
+        if (m_wthread)
+        {
+            m_wthread->stop();
+            yarp::os::Time::delay(0.100);
+            delete m_wthread;
+            m_wthread=nullptr;
+        }
+
+        if (m_bthread)
+        {
+            m_bthread->stop();
+            yarp::os::Time::delay(0.100);
+            delete m_bthread;
+            m_bthread=nullptr;
+        }
+
+        //clear the controllers
         for (auto it = m_robotControllers.begin(); it != m_robotControllers.end(); it++)
         {
             if (it->second)
@@ -84,19 +107,34 @@ protected:
                 it->second = nullptr;
             }
         }
+        m_robotControllers.clear();
+
+        //clear the remappers
+        for (auto it = m_robotRemappers.begin(); it != m_robotRemappers.end(); it++)
+        {
+            if (it->second)
+            {
+                delete it->second;
+                it->second = nullptr;
+            }
+        }
+        m_robotRemappers.clear();
+
+        //clear the clients
+        for (auto it = m_robotClients.begin(); it != m_robotClients.end(); it++)
+        {
+            if (it->second)
+            {
+                delete it->second;
+                it->second = nullptr;
+            }
+        }
+        m_robotClients.clear();
+
+        //clear the storages
+        m_actions.clear();
+
         yInfo() << "cleanup complete";
-
-        if (m_wthread)
-        {
-            delete m_wthread;
-            m_wthread=nullptr;
-        }
-
-        if (m_bthread)
-        {
-            delete m_bthread;
-            m_bthread=nullptr;
-        }
     }
 
     bool chooseActionByName(std::string id)
@@ -143,10 +181,63 @@ protected:
             return false;
         }
 
-        yarp::os::Bottle& bot_cont = p.findGroup("CONTROLLERS");
+        //load the clients
+        yarp::os::Bottle& bot_clients = p.findGroup("CLIENTS");
+        if (bot_clients.size() == 0)
+        {
+            yError() << "Unable to read CLIENTS section";
+            return false;
+        }
+        size_t num_of_clients = bot_clients.size();
+        for (size_t i = 1; i < num_of_clients; i++)
+        {
+            yDebug() << bot_clients.get(i).toString();
+            yarp::os::Bottle* bot_client_elem = bot_clients.get(i).asList();
+            if (bot_client_elem == nullptr)
+            {
+                yError() << "Invalid entry in CLIENTS section";
+                return false;
+            }
+            size_t num_of_client_elems = bot_client_elem->size();
+            if (num_of_client_elems == 2)
+            {
+                //parse a line of the CLIENTS section
+                std::string client_name = bot_client_elem->get(0).toString();
+                std::string remoteControlBoards = bot_client_elem->get(1).toString();
+                if (m_robotClients[client_name] != nullptr)
+                {
+                    yError() << "Duplicate client entry: " << client_name;
+                    return false;
+                }
+                yarp::dev::PolyDriver* pd_client = new yarp::dev::PolyDriver;
+                yarp::os::Property clientoptions;
+                clientoptions.put("device", "remote_controlboard");
+                clientoptions.put("remote", remoteControlBoards);
+                clientoptions.put("local", m_name + "/client/" + client_name);
+                clientoptions.put("carrier", "fast_tcp");
+
+                //configure the client
+                bool rob_ok = pd_client->open(clientoptions);
+                if (!rob_ok)
+                {
+                    yError() << "Unable to initialize client: " << client_name;
+                    delete pd_client;
+                    return false;
+                }
+                m_robotClients[client_name] = pd_client;
+            }
+            else
+            {
+                yError() << "Invalid number of entries in CLIENTS section";
+                return false;
+            }
+        }
+
+        //load the remappers
+        yarp::os::Bottle& bot_cont = p.findGroup("REMAPPERS");
         if (bot_cont.size() == 0)
         {
-            yError() << "Unable to read CONTROLLERS section";
+            yError() << "Unable to read REMAPPERS section";
             return false;
         }
         size_t num_of_controllers = bot_cont.size();
@@ -154,34 +245,96 @@ protected:
         {
             yDebug() << bot_cont.get(i).toString();
             yarp::os::Bottle* bot_cont_elem = bot_cont.get(i).asList();
-            size_t num_of_celems = bot_cont_elem->size();
-            if (bot_cont_elem && num_of_celems == 3)
+            if (bot_cont_elem == nullptr)
             {
-                //parse a line of the controllers section
-                std::string controller_name = bot_cont_elem->get(0).toString();
-                std::string remoteControlBoards = bot_cont_elem->get(1).toString();
-                std::string axesNames = bot_cont_elem->get(2).toString();
-                robotDriver* rob = new robotDriver;
-                yarp::os::Property rmoptions;
-                rmoptions.put("remoteControlBoards", bot_cont_elem->get(1));
-                rmoptions.put("axesNames", bot_cont_elem->get(2));
-                rmoptions.put("localPortPrefix", m_name + "/controller/" + controller_name);
-
-                //configure the controller
-                bool rob_ok = true;
-                rob_ok &= rob->configure(rmoptions);
-                rob_ok &= rob->init();
-                if (!rob_ok)
+                yError() << "Invalid entry in REMAPPERS section";
+                return false;
+            }
+            size_t num_of_celems = bot_cont_elem->size();
+            if (num_of_celems == 3)
+            {
+                //parse a line of the remappers section
+                std::string remapper_name = bot_cont_elem->get(0).toString();
+                yarp::os::Bottle* clients_name = bot_cont_elem->get(1).asList();
+                std::string axes_names = bot_cont_elem->get(2).toString();
+                if (clients_name==nullptr || clients_name->size() == 0)
                 {
-                    yError() << "Unable to initialize controller" << controller_name;
+                    yError() << "error in clients_name";
                     return false;
                 }
+                if (axes_names.empty())
+                {
+                    yError() << "error in axes_names";
+                    return false;
+                }
+
+                //configure the remapper
+                if (m_robotRemappers.count(remapper_name))
+                {
+                    yError() << "Duplicate remapper entry: " << remapper_name;
+                    return false;
+                }
+                yarp::dev::PolyDriver* pd_remapper = new yarp::dev::PolyDriver;
+                yarp::os::Property rmoptions;
+                rmoptions.put("device", "controlboardremapper");
+                yarp::os::Value* jlist = yarp::os::Value::makeList(axes_names.c_str());
+                rmoptions.put("axesNames",jlist);
+                bool rob_ok = pd_remapper->open(rmoptions);
+                if (!rob_ok)
+                {
+                    yError() << "Unable to initialize remapper: " << remapper_name;
+                    delete pd_remapper;
+                    return false;
+                }
+                m_robotRemappers[remapper_name] = pd_remapper;
+
+                //attach the remapper to one or more clients
+                {
+                    yarp::dev::IMultipleWrapper* ww_rem=nullptr;
+                    m_robotRemappers[remapper_name]->view(ww_rem);
+                    yarp::dev::PolyDriverList pdlist;
+                    for (size_t j=0; j<clients_name->size(); j++)
+                    {
+                        std::string cnn = clients_name->get(j).toString();
+                        auto it = m_robotClients.find(cnn);
+                        if (it == m_robotClients.end() || it->second == nullptr)
+                        {
+                            yError() << "Configuration error: client '" << cnn << "' not found or is invalid.";
+                            return false;
+                        }
+                        yarp::dev::PolyDriver* ddnwc = it->second;
+                        std::string boardname = "nwcboard" + std::to_string(j);
+                        pdlist.push(ddnwc, boardname.c_str());
+                    }
+                    bool result_att = ww_rem->attachAll(pdlist);
+                    if (!result_att)
+                    {
+                        yError() << "Configuration error while trying to attach the remapper: "
+                                 << remapper_name << " with the control_boards: " << clients_name->toString();
+                        return false;
+                    }
+                }
+
                 //put the controller in the list
-                m_robotControllers[controller_name] = rob;
+                if (m_robotControllers.count(remapper_name))
+                {
+                    yError() << "Duplicate controller entry: " << remapper_name;
+                    return false;
+                }
+                robotDriver* robDrv = new robotDriver;
+                rob_ok = robDrv->configure(m_robotRemappers[remapper_name]);
+                rob_ok &= robDrv->init();
+                if (!rob_ok)
+                {
+                    yError() << "Unable to initialize controller: " << remapper_name;
+                    delete robDrv;
+                    return false;
+                }
+                m_robotControllers[remapper_name] = robDrv;
             }
             else
             {
-                yError() << "Invalid entry in CONTROLLERS section";
+                yError() << "Invalid number of entries in REMAPPERS section";
                 return false;
             }
         }
@@ -275,6 +428,7 @@ protected:
         yInfo();
         yInfo() << "`name` : file containing the actions";
         yInfo() << "`module_name` : prefix of the ports opened by the module (default: /yarpActionsPlayer)";
+        yInfo() << "`verbose` : if enabled, extra debug messages are shown.";
         yInfo() << "`execute` : if enabled, the yarpActionsPlayer will send commands to the robot. Otherwise, only it will operate in simulation mode only";
         yInfo() << "`pos_tolerance` : the tolerance (in degrees) that will be checked by the initial movement in position mode, before switching to positionDirect mode. Default: 2degrees";
         yInfo() << "`pos_timeout` : the amount of time (in seconds) the robot will attempt to reach the target position within the specified position tolerance. Default: 2s";
@@ -319,6 +473,18 @@ protected:
         {
             yInfo() << "Not using iPid->setReference() controller";
             m_wthread->m_enable_execute_joint_command = false;
+        }
+
+        //set the configuration for parameter verbose
+        if (rf.check("verbose")==true)
+        {
+            yInfo() << "yarpActionPlayer running in verbose mode";
+            m_wthread->m_verbose = true;
+        }
+        else
+        {
+            yInfo() << "yarpActionPlayer running in non-verbose mode";
+            m_wthread->m_verbose = false;
         }
 
         //set the position tolerance
@@ -419,7 +585,6 @@ protected:
     virtual bool close()
     {
         m_rpcPort.close();
-
         return true;
     }
 
