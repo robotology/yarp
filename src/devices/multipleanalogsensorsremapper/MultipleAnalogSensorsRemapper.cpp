@@ -306,7 +306,7 @@ bool MultipleAnalogSensorsRemapper::genericGetName(const MAS_SensorType sensorTy
         {
             yCError(MULTIPLEANALOGSENSORSREMAPPER, "genericGetName sens_index %zu out of range of available sensors (%zu).", sens_index, nrOfAvailableSensors);
         }
-        return MAS_ERROR;
+        return false;
     }
 
     SensorInSubDevice subDeviceSensor = m_indicesMap[sensorType][sens_index];
@@ -326,7 +326,7 @@ bool MultipleAnalogSensorsRemapper::genericGetFrameName(const MAS_SensorType sen
         {
             yCError(MULTIPLEANALOGSENSORSREMAPPER, "genericGetFrameName sens_index %zu out of range of available sensors (%zu).", sens_index, nrOfAvailableSensors);
         }
-        return MAS_ERROR;
+        return false;
     }
 
     SensorInSubDevice subDeviceSensor = m_indicesMap[sensorType][sens_index];
@@ -347,7 +347,7 @@ bool MultipleAnalogSensorsRemapper::genericGetMeasure(const MAS_SensorType senso
         {
             yCError(MULTIPLEANALOGSENSORSREMAPPER, "genericGetMeasure sens_index %zu out of range of available sensors (%zu).", sens_index, nrOfAvailableSensors);
         }
-        return MAS_ERROR;
+        return false;
     }
 
     SensorInSubDevice subDeviceSensor = m_indicesMap[sensorType][sens_index];
