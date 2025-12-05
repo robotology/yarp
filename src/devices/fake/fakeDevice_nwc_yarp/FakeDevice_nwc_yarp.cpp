@@ -54,3 +54,9 @@ yarp::dev::ReturnValue FakeDevice_nwc_yarp::doSomething()
     yarp::dev::ReturnValue ret = m_thrift_RPC.doSomethingRPC();
     return ret;
 }
+
+yarp::dev::ReturnValue FakeDevice_nwc_yarp::doSomethingUnimplemented()
+{
+    yarp::dev::ReturnValue ret = m_thrift_RPC.doSomethingUnimplementedRPC();
+    return ret;
+}
