@@ -715,6 +715,7 @@ Label::Label(QString label, QGraphicsItem *parent) : QGraphicsTextItem(label,par
     QObject::connect(combo,SIGNAL(activated(QString)),
                      sigHandler,SLOT(onConnectionComboChanged(QString)));
 
+    combo->addItem("fast_tcp");
     combo->addItem("tcp");
     combo->addItem("udp");
 

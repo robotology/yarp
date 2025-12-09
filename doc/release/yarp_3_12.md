@@ -60,3 +60,4 @@ A (partial) list of bug fixed and issues resolved in this release can be found
 ## Other
 
 * Improved Bash completion script
+* Yarpmanager now uses `fast_tcp` as default carrier instead of `tcp`

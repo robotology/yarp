@@ -649,10 +649,10 @@ void ApplicationViewWidget::updateApplicationWindow()
         QString carrier = QString("%1").arg((*cnnitr).carrier());
         QString status = "disconnected";
         QString modifier="";
-        // The default carrier is "tcp" if <protocol> is not specified.
+        // The default carrier is "fast_tcp" if <protocol> is not specified.
         if(carrier.isEmpty())
         {
-            carrier = "tcp";
+            carrier = "fast_tcp";
         }
         size_t pos = carrier.toStdString().find('+');
         if(pos != std::string::npos)
