@@ -716,7 +716,7 @@ std::string      FakeFrameGrabber_ParamsParser::getDocumentationOfDeviceParams()
     doc = doc + std::string("'t2': Tangential distortion of the lens(fake)\n");
     doc = doc + std::string("'freq': rate of test images in Hz\n");
     doc = doc + std::string("'period': period of test images in seconds\n");
-    doc = doc + std::string("'mode': bouncy [ball], scrolly [line], grid [grid], grid multisize [size], random [rand], none [none], time test[time]\n");
+    doc = doc + std::string("'mode': ball, line, grid, size, rand, none, time\n");
     doc = doc + std::string("'src': background image to use, if any\n");
     doc = doc + std::string("'add_timestamp': should write the timestamp in the first bytes of the image\n");
     doc = doc + std::string("'add_noise': should add noise to the image (uses snr parameter)\n");
@@ -726,7 +726,7 @@ std::string      FakeFrameGrabber_ParamsParser::getDocumentationOfDeviceParams()
     doc = doc + std::string("'rectificationMatrix': Matrix that describes the lens' distortion\n");
     doc = doc + std::string("\n");
     doc = doc + std::string("Here are some examples of invocation command with yarpdev, with all params:\n");
-    doc = doc + " yarpdev --device fakeFrameGrabber --width 320 --height 240 --horizontalFov 1.0 --verticalFov 2.0 --fakeFrameGrabber_rpc_port /fakeFrameGrabber/rpc --mirror false --syncro false --physFocalLength 3.0 --focalLengthX 4.0 --focalLengthY 5.0 --principalPointX 6.0 --principalPointY 7.0 --distortionModel FishEye --k1 8.0 --k2 9.0 --k3 10.0 --t1 11.0 --t2 12.0 --freq 0 --period 0 --mode [line] --src <optional_value> --add_timestamp false --add_noise false --bayer false --mono false --snr 0.5 --rectificationMatrix \" (1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0) \"\n";
+    doc = doc + " yarpdev --device fakeFrameGrabber --width 320 --height 240 --horizontalFov 1.0 --verticalFov 2.0 --fakeFrameGrabber_rpc_port /fakeFrameGrabber/rpc --mirror false --syncro false --physFocalLength 3.0 --focalLengthX 4.0 --focalLengthY 5.0 --principalPointX 6.0 --principalPointY 7.0 --distortionModel FishEye --k1 8.0 --k2 9.0 --k3 10.0 --t1 11.0 --t2 12.0 --freq 0 --period 0 --mode line --src <optional_value> --add_timestamp false --add_noise false --bayer false --mono false --snr 0.5 --rectificationMatrix \" (1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0) \"\n";
     doc = doc + std::string("Using only mandatory params:\n");
     doc = doc + " yarpdev --device fakeFrameGrabber\n";
     doc = doc + std::string("=============================================\n\n");    return doc;
