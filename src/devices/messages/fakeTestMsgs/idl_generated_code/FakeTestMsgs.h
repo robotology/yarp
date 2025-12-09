@@ -32,6 +32,8 @@ public:
     //Service methods
     virtual yarp::dev::ReturnValue doSomethingRPC();
 
+    virtual yarp::dev::ReturnValue doSomethingUnimplementedRPC();
+
     // help method
     virtual std::vector<std::string> help(const std::string& functionName = "--all");
 
