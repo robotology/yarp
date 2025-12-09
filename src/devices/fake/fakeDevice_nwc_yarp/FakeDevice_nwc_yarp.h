@@ -34,5 +34,6 @@ public:
     bool close() override;
 
     //From IFakeInterface
-    yarp::dev::ReturnValue doSomething();
+    yarp::dev::ReturnValue doSomething() override;
+    yarp::dev::ReturnValue doSomethingUnimplemented() override;
 };
