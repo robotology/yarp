@@ -34,21 +34,29 @@ The following command can be used to record the trajectory of a moving robot and
 ```
 yarp read ... /robot/part/state:o envelope > file.txt
 ```
-The joints commands are assigned to the robot by using a `remoteControlBoardremapper` device. In this way, the user can select to work with joints also belonging to different parts of the robot and synchronize the movements between them.
-The following file, configuration.ini (see the `example` folder) creates two different controllers, `controller1` and `controller2`. The first one will control the joints called `hjoint1` and `hjoint2` of the robot part `/robot/head`.
-The second one will attach to two different parts of the robot, i.e. `/robot/head` `/robot/arm` and control the joints`hjoint1`,`ajoint1`,`ajoint3` which belong to these parts.
-Please note that the number of joints described in the controller (and their order) must match the number of joints indicated in the trajectory file.
+The joints commands are assigned to the robot by using a `controlBoardremapper` device. In this way, the user can select to work with joints also belonging to different parts of the robot and synchronize the movements between them.
+The following file, configuration.ini (see the `example` folder) creates two clients, `client1` and `client2` which perform the connection (typically over the network) with the robot.
+Attached to the clients, two remappers are then intantiated to control the robot joints in different combinations, without adding additional network load.
+The first one, `remapper1`, is used to control the joints called `hjoint1` and `hjoint2` of the `client1` (corresponding to part `/robot/head`).
+The second one, `remapper2`, connects to both the clients `client1` and `client2` (corresponding to parts `/robot/head` and `/robot/arm`) and is used to control the joints `hjoint1`, `ajoint1` and `ajoint3`, which belong to these parts.
+The third one, `remapper3`, is shown to demonstrate the fact that you can have multiple remappers/controllers while using only two clients, thus optimizing the number of connections (and the bandwidth usage) with the robot.
+Please note that the number of joints described in the remapper (and their order) must match the number of joints indicated in the trajectory file.
 As shown in the following example, user has to associate a controller for each action file to correctly map the trajectories described in the file with the joints to actuate.
 ```
-[CONTROLLERS]
-controller1 (/robot/head) (hjoint1 hjoint2)
-controller2 (/robot/head /robot/arm) (hjoint1 ajoint1 ajoint3)
+[CLIENTS]
+client1       /robot/head
+client2       /robot/arm
+
+[REMAPPERS]
+remapper1     (client1) (hjoint1 hjoint2)
+remapper2     (client1 client2) (hjoint1 ajoint1 ajoint3)
+remapper3     (client2) (ajoint2)
 
 [ACTIONS]
-wave_hand        controller1   trajectory_file1.txt
-rise_hand        controller1   trajectory_file2.txt
-turn_head_left   controller2   trajectory_file3.txt
-turn_head_right  controller2   trajectory_file4.txt
+wave_hand        remapper1   trajectory_file1.txt
+rise_hand        remapper1   trajectory_file2.txt
+turn_head_left   remapper2   trajectory_file3.txt
+turn_head_right  remapper2   trajectory_file4.txt
 ```
 ## Basic usage
 
@@ -89,7 +97,7 @@ yarpActionsPlayer controls the robot using `positionDirect` control mode (see ht
 ## Examples
 
 The `example` folder contains the `configuration.ini` and some test trajectories for a fake robot.
-To try the the example, you must instantiate a fakerobot using the following commands:
+To try the the example, you must instantiate two fake control boards devices simulating a fake robot, using the following commands:
 ```
 yarpdev --device deviceBundler --wrapper_device controlBoard_nws_yarp --attached_device fakeMotionControl --name /robot/head   --GENERAL::Joints 3  --GENERAL::AxisName "(hjoint1 hjoint2 hjoint3)"
 yarpdev --device deviceBundler --wrapper_device controlBoard_nws_yarp --attached_device fakeMotionControl --name /robot/arm    --GENERAL::Joints 6  --GENERAL::AxisName "(ajoint1 ajoint2 ajoint3 ajoint4 ajoint5 ajoint6)"
