@@ -18,7 +18,7 @@
   * |      |  t2              | double  | -             |   12.0         | No    | Tangential distortion of the lens(fake)                                     |  |
   * |      |  freq            | double  | -             |   0            | No    | rate of test images in Hz                                     |  |
   * |      |  period          | double  | -             |   0            | No    | period of test images in seconds                              |  |
-  * |      |  mode            | string  | -             |   [line]       | No    | bouncy [ball], scrolly [line], grid [grid], grid multisize [size], random [rand], none [none], time test[time]       |  |
+  * |      |  mode            | string  | -             |   line         | No    | ball, line, grid, size, rand, none, time                      |  |
   * |      |  src             | string  | -             |  -             | No    | background image to use, if any       | e.g. test.ppm |
   * |      |  add_timestamp   | bool    | -             |  false       | No    | should write the timestamp in the first bytes of the image       |  |
   * |      |  add_noise       | bool    | -             |  false       | No    | should add noise to the image (uses snr parameter)           |  |
