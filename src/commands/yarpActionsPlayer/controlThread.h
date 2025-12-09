@@ -38,6 +38,7 @@ private:
     double                m_home_position_timeout = 20.0;
 
 public:
+    bool                  m_verbose = false;
     bool                  m_enable_execute_joint_command=false;
     ControlClock          m_clock;
 
