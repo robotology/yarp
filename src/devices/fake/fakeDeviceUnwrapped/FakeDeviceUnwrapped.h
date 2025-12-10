@@ -39,6 +39,7 @@ public:
 
     //IFakeDeviceInterfaceTest1
     yarp::dev::ReturnValue doSomething() override;
+    yarp::dev::ReturnValue doSomethingUnimplemented() override;
 
     //IFakeDeviceInterfaceTest2
     yarp::dev::ReturnValue testSetValue(int value) override;

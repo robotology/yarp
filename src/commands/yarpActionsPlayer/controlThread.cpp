@@ -90,6 +90,7 @@ bool ControlThread::action_change(action_class* action, robotDriver* driver)
     m_current_driver = driver;
     m_status = ACTION_IDLE;
     m_current_action->current_frame = 0;
+    m_clock.resetTimer();
     return true;
 }
 
@@ -279,7 +280,7 @@ void ControlThread::run()
         if (m_current_action->current_frame < last_frame - 1)
         {
             compute_and_send_command((int)m_current_action->current_frame);
-            yDebug("ACTION_RUNNING: Executing action: %4zd/%4zd (%.3fs)", m_current_action->current_frame , last_frame, m_clock.getElapsedTime());
+            if (m_verbose) {yDebug("ACTION_RUNNING: Executing action: %4zd/%4zd (%.3fs)", m_current_action->current_frame , last_frame, m_clock.getElapsedTime());}
         }
         else //the action is complete
         {

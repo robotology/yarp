@@ -30,6 +30,24 @@ yarp::dev::ReturnValue FakeServerRPCd::doSomethingRPC()
     return yarp::dev::ReturnValue_ok;
 }
 
+yarp::dev::ReturnValue FakeServerRPCd::doSomethingUnimplementedRPC()
+{
+    if (m_iFake == nullptr)
+    {
+        yCError(FAKEDEVICESERVER, "Invalid interface");
+        return yarp::dev::ReturnValue::return_code::return_value_error_not_ready;
+    }
+
+    yarp::dev::ReturnValue ret = m_iFake->doSomethingUnimplemented();
+    if (!ret)
+    {
+        yCError(FAKEDEVICESERVER, "doSomethingUnimplemented() failed");
+        return ret;
+    }
+
+    return yarp::dev::ReturnValue_ok;
+}
+
 void FakeServerRPCd::setInterface(yarp::dev::test::IFakeDeviceInterfaceTest1* _ifake)
 {
     m_iFake = _ifake;

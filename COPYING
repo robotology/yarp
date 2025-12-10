@@ -95,13 +95,13 @@ The list of committers in the YARP repository (ordered by number of commit) is:
   Alberto Cardellino
   Ugo Pattacini
   Ali Paikan
-  YARP Developers
   Silvio Traversaro
+  YARP Developers
   Damiano Enerli
   Andrea Ruzzenenti
   Alessandro Scalzo
-  Elena Ceseracciu
   Ettore Landini
+  Elena Ceseracciu
   Stefano Bernagozzi
   Francesco Romano
   Matteo Brunettini
@@ -120,8 +120,8 @@ The list of committers in the YARP repository (ordered by number of commit) is:
   Tobias Fischer
   Duarte Aragao
   Francesco Nori
-  Diego Ferigo
   robotology-bot (Tag Repository Action)
+  Diego Ferigo
   fbrand-new
   Juan G. Victores
   Nuno Guedelha
@@ -153,8 +153,10 @@ The list of committers in the YARP repository (ordered by number of commit) is:
   Mirko Ferrati
   Alexandre Gomes Pereira Antunes
   Andrea Ruzzenenti
+  Beniamino Squitieri
   Bertrand Higy
   David-Estevez
+  Davide
   Francesco Giovannini
   Jacopo Losi
   Pasquale
@@ -162,13 +164,13 @@ The list of committers in the YARP repository (ordered by number of commit) is:
   hypothe
   Bartek Łukawski
   Bruno Nery
-  Davide
   Davide Pollarolo
   Emilio Cartoni
   Fabien Benureau
   Francesco Orabona
   Gabriele Nava
   Gianpaolo Bontempo
+  Giovanni Fregonese
   Holger Friedrich
   Jacopo
   Johnny Willemsen
@@ -190,7 +192,6 @@ The list of committers in the YARP repository (ordered by number of commit) is:
   Enrico Mingo
   Francesca Stramandinoli
   Francesco Brand
-  Giovanni Fregonese
   Giovanni Saponaro
   Giuseppe L'Erario
   Ines Sorrentino
@@ -211,7 +212,7 @@ The list of committers in the YARP repository (ordered by number of commit) is:
 
 The list of copyright holders for YARP is:
   Copyright (C) 1995, 2000, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025
-    Istituto Italiano di Tecnologia (IIT) (2785 files)
+    Istituto Italiano di Tecnologia (IIT) (2797 files)
     RobotCub Consortium (718 files)
     Daniel Krieg <krieg@fias.uni-frankfurt.de> (16 files)
     Anne van Rossum <anne@almende.com> (11 files)

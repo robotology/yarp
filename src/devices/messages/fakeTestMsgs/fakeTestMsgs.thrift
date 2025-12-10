@@ -16,4 +16,5 @@ struct yReturnValue {
 service FakeTestMsgs
 {
     yReturnValue doSomethingRPC ();
+    yReturnValue doSomethingUnimplementedRPC ();
 }

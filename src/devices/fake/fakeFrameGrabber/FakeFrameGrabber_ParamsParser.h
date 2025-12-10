@@ -45,7 +45,7 @@
 * | -          | t2                        | double         | -     | 12.0                                  | 0        | Tangential distortion of the lens(fake)                                                                        | -             |
 * | -          | freq                      | double         | -     | 0                                     | 0        | rate of test images in Hz                                                                                      | -             |
 * | -          | period                    | double         | -     | 0                                     | 0        | period of test images in seconds                                                                               | -             |
-* | -          | mode                      | string         | -     | [line]                                | 0        | bouncy [ball], scrolly [line], grid [grid], grid multisize [size], random [rand], none [none], time test[time] | -             |
+* | -          | mode                      | string         | -     |  line                                 | 0        | ball, line, grid, size, rand, none, time                                                                       | -             |
 * | -          | src                       | string         | -     | -                                     | 0        | background image to use, if any                                                                                | e.g. test.ppm |
 * | -          | add_timestamp             | bool           | -     | false                                 | 0        | should write the timestamp in the first bytes of the image                                                     | -             |
 * | -          | add_noise                 | bool           | -     | false                                 | 0        | should add noise to the image (uses snr parameter)                                                             | -             |
@@ -56,7 +56,7 @@
 *
 * The device can be launched by yarpdev using one of the following examples (with and without all optional parameters):
 * \code{.unparsed}
-* yarpdev --device fakeFrameGrabber --width 320 --height 240 --horizontalFov 1.0 --verticalFov 2.0 --fakeFrameGrabber_rpc_port /fakeFrameGrabber/rpc --mirror false --syncro false --physFocalLength 3.0 --focalLengthX 4.0 --focalLengthY 5.0 --principalPointX 6.0 --principalPointY 7.0 --distortionModel FishEye --k1 8.0 --k2 9.0 --k3 10.0 --t1 11.0 --t2 12.0 --freq 0 --period 0 --mode [line] --src <optional_value> --add_timestamp false --add_noise false --bayer false --mono false --snr 0.5 --rectificationMatrix \" (1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0) \"
+* yarpdev --device fakeFrameGrabber --width 320 --height 240 --horizontalFov 1.0 --verticalFov 2.0 --fakeFrameGrabber_rpc_port /fakeFrameGrabber/rpc --mirror false --syncro false --physFocalLength 3.0 --focalLengthX 4.0 --focalLengthY 5.0 --principalPointX 6.0 --principalPointY 7.0 --distortionModel FishEye --k1 8.0 --k2 9.0 --k3 10.0 --t1 11.0 --t2 12.0 --freq 0 --period 0 --mode line --src <optional_value> --add_timestamp false --add_noise false --bayer false --mono false --snr 0.5 --rectificationMatrix \" (1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0) \"
 * \endcode
 *
 * \code{.unparsed}
@@ -104,7 +104,7 @@ public:
     const std::string m_t2_defaultValue = {"12.0"};
     const std::string m_freq_defaultValue = {"0"};
     const std::string m_period_defaultValue = {"0"};
-    const std::string m_mode_defaultValue = {"[line]"};
+    const std::string m_mode_defaultValue = {"line"};
     const std::string m_src_defaultValue = {""};
     const std::string m_add_timestamp_defaultValue = {"false"};
     const std::string m_add_noise_defaultValue = {"false"};
@@ -133,7 +133,7 @@ public:
     double m_t2 = {12.0};
     double m_freq = {0};
     double m_period = {0};
-    std::string m_mode = {"[line]"};
+    std::string m_mode = {"line"};
     std::string m_src = {}; //This default value of this string is an empty string. It is highly recommended to provide a suggested value also for optional string parameters.
     bool m_add_timestamp = {false};
     bool m_add_noise = {false};
