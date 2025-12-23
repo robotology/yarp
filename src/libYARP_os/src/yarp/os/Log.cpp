@@ -189,6 +189,13 @@ public:
 #define MAGENTA      (yarp::os::impl::LogPrivate::colored_output.load() ? "\033[35m" : "")
 #define CYAN         (yarp::os::impl::LogPrivate::colored_output.load() ? "\033[36m" : "")
 #define WHITE        (yarp::os::impl::LogPrivate::colored_output.load() ? "\033[37m" : "")
+#define BRI_RED      (yarp::os::impl::LogPrivate::colored_output.load() ? "\033[91m" : "")
+#define BRI_GREEN    (yarp::os::impl::LogPrivate::colored_output.load() ? "\033[92m" : "")
+#define BRI_YELLOW   (yarp::os::impl::LogPrivate::colored_output.load() ? "\033[93m" : "")
+#define BRI_BLUE     (yarp::os::impl::LogPrivate::colored_output.load() ? "\033[94m" : "")
+#define BRI_MAGENTA  (yarp::os::impl::LogPrivate::colored_output.load() ? "\033[95m" : "")
+#define BRI_CYAN     (yarp::os::impl::LogPrivate::colored_output.load() ? "\033[96m" : "")
+#define BRI_WHITE    (yarp::os::impl::LogPrivate::colored_output.load() ? "\033[97m" : "")
 #define RED_BG       (yarp::os::impl::LogPrivate::colored_output.load() ? "\033[41m" : "")
 #define GREEN_BG     (yarp::os::impl::LogPrivate::colored_output.load() ? "\033[42m" : "")
 #define YELLOW_BG    (yarp::os::impl::LogPrivate::colored_output.load() ? "\033[43m" : "")
@@ -305,22 +312,34 @@ inline const char* idToColor(const char* id)
     // Anyway, this is enabled only when YARP_COLORED_OUTPUT is set, therefore
     // it can be easily disabled if this slows down the execution.
     static std::hash<std::string_view> hsh;
-    std::size_t id_hash = hsh(id) % 6;
+    std::size_t id_hash = hsh(id) % 12;
     switch (id_hash) {
     case 0:
-        return RED;
-    case 1:
         return GREEN;
-    case 2:
+    case 1:
         return YELLOW;
-    case 3:
+    case 2:
         return BLUE;
-    case 4:
+    case 3:
         return MAGENTA;
-    case 5:
+    case 4:
         return CYAN;
+    case 5:
+        return WHITE;
+    case 6:
+        return BRI_GREEN;
+    case 7:
+        return BRI_YELLOW;
+    case 8:
+        return BRI_BLUE;
+    case 9:
+        return BRI_MAGENTA;
+    case 10:
+        return BRI_CYAN;
+    case 11:
+        return BRI_WHITE;
     default:
-        return "";
+        return GREEN;
     }
 }
 
