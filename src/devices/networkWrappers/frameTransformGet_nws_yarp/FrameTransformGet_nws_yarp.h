@@ -13,7 +13,8 @@
 #include <yarp/os/PeriodicThread.h>
 #include <FrameTransformStorageGetRPC.h>
 
-// TODO FIXME STE need to check subdevice option
+#include "FrameTransformGet_nws_yarp_ParamsParser.h"
+
 /**
  * @ingroup dev_impl_nws_yarp
  *
@@ -27,14 +28,7 @@
  * The attached device must implement an IFrameTransformStorageGet interface.
  * For further information see \subpage FrameTransform.
  *
- *   Parameters required by this device are:
- * | Parameter name               | SubParameter            | Type    | Units          | Default Value  | Required  | Description                                                                                                                                             |
- * |:----------------------------:|:-----------------------:|:-------:|:--------------:|:--------------:|:------- -:|:-------------------------------------------------------------------------------------------------------------------------------------------------------:|
- * | default-config               |      -                  | bool    | -              | true           | No        | tells whether or not the nws is instanciated by the frameTransformServer device. If true, "/frameTransformServer" will appended to the port name prefix |
- * | nws_thrift_port_prefix       |      -                  | string  | -              | ""             | No        | a prefix for the nws thrift rpc port name                                                                                                               |
- * | output_streaming_port_prefix |      -                  | string  | -              | ""             | No        | a prefix for the output streaming port name                                                                                                             |
- * | streaming_enabled            |      -                  | bool    | -              | true           | No        | enable/disable the tf publishing on the streaming port                                                                                                  |
- * | period                       |                         | float   | s              | 0.010          | No        | It affects the period of thread publishing transforms on the streaming port                                                                             |
+ * Parameters required by this device are shown in class: FrameTransformGet_nws_yarpParamsParser
  *
  * \section FrameTransformGet_nwc_yarp_port_example Port names examples
  * Here follow some examples of port names obtained with different parameters configurations
@@ -76,7 +70,8 @@ class FrameTransformGet_nws_yarp :
         public yarp::dev::DeviceDriver,
         public FrameTransformStorageGetRPC,
         public yarp::dev::WrapperSingle,
-        public yarp::os::PeriodicThread
+        public yarp::os::PeriodicThread,
+        public FrameTransformGet_nws_yarp_ParamsParser
 {
 
 public:

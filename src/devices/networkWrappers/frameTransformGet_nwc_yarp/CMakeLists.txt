@@ -10,6 +10,7 @@ yarp_prepare_plugin(frameTransformGet_nwc_yarp
   EXTRA_CONFIG
     WRAPPER=frameTransformGet_nws_yarp
   DEFAULT ON
+  GENERATE_PARSER
 )
 
 if(NOT SKIP_frameTransformGet_nwc_yarp)
@@ -19,6 +20,8 @@ if(NOT SKIP_frameTransformGet_nwc_yarp)
     PRIVATE
       FrameTransformGet_nwc_yarp.cpp
       FrameTransformGet_nwc_yarp.h
+      FrameTransformGet_nwc_yarp_ParamsParser.cpp
+      FrameTransformGet_nwc_yarp_ParamsParser.h
   )
 
   target_sources(yarp_frameTransformGet_nwc_yarp PRIVATE $<TARGET_OBJECTS:frameTransformStorageMsgs>)
