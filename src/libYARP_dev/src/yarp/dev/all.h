@@ -42,6 +42,9 @@
 #include <yarp/dev/ILLM.h>
 #include <yarp/dev/IChatBot.h>
 #include <yarp/dev/IBattery.h>
+#include <yarp/dev/ILocalization2D.h>
+#include <yarp/dev/IMap2D.h>
+#include <yarp/dev/INavigation2D.h>
 
 #ifndef YARP_NO_MATH
 #include <yarp/dev/IFrameTransform.h>
