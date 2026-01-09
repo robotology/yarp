@@ -172,6 +172,13 @@ if(YARP_COMPILE_BINDINGS)
     list(APPEND SWIG_COMMON_FLAGS "-DYARP_NO_DEPRECATED")
   endif()
 
+  #############################################################################
+  ## Do not build libYARP_math dependent bindings when YARP_NO_MATH is enabled
+
+  if(NOT YARP_COMPILE_libYARP_math)
+    list(APPEND SWIG_COMMON_FLAGS "-DYARP_NO_MATH")
+  endif()
+
   # Append user flags
   list(APPEND SWIG_COMMON_FLAGS ${SWIG_EXTRA_FLAGS})
 

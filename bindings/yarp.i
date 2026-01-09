@@ -456,8 +456,10 @@ void setExternal2(yarp::sig::Image *img, PyObject* mem, int w, int h) {
 %include <yarp/dev/ILLM.h>
 %include <yarp/dev/MultipleAnalogSensorsInterfaces.h>
 %include <yarp/dev/IRGBDSensor.h>
-%include <yarp/dev/IFrameTransform.h>
 %include <yarp/dev/IBattery.h>
+
+#if !defined(YARP_NO_MATH)
+%include <yarp/dev/IFrameTransform.h>
 %include <yarp/dev/ILocalization2D.h>
 %include <yarp/dev/IMap2D.h>
 %include <yarp/dev/INavigation2D.h>
@@ -471,6 +473,7 @@ void setExternal2(yarp::sig::Image *img, PyObject* mem, int w, int h) {
 %include <yarp/dev/Map2DArea.h>
 %include <yarp/dev/MapGrid2D.h>
 %include <yarp/dev/NavTypes.h>
+#endif
 
 %template(DVector) std::vector<double>;
 %template(BVector) std::vector<bool>;
@@ -480,7 +483,10 @@ void setExternal2(yarp::sig::Image *img, PyObject* mem, int w, int h) {
 %template() std::pair<std::string, std::string>;
 %template(SPairVector) std::vector<std::pair<std::string, std::string>>;
 %template(LLMVector) std::vector<yarp::dev::LLM_Message>;
+
+#if !defined(YARP_NO_MATH)
 %template(Map2DLocationVector) std::vector<yarp::dev::Nav2D::Map2DLocation>;
+#endif
 
 #ifdef SWIGMATLAB
   // Extend IVector for handling conversion of vectors from and to Matlab
@@ -550,12 +556,14 @@ typedef yarp::sig::VectorOf<double> Vector;
 typedef yarp::sig::VectorOf<int> VectorInt;
 typedef yarp::sig::Sound  Sound;
 typedef yarp::sig::Matrix Matrix;
+#if !defined(YARP_NO_MATH)
 typedef yarp::dev::Nav2D::Map2DLocation Map2DLocation;
 typedef yarp::dev::Nav2D::MapGrid2D MapGrid2D;
 typedef yarp::dev::Nav2D::Map2DArea Map2DArea;
 typedef yarp::dev::Nav2D::Map2DPath Map2DPath;
 typedef yarp::dev::Nav2D::XYCell XYCell;
 typedef yarp::dev::Nav2D::XYWorld XYWorld;
+#endif
 %}
 
 #if SWIG_VERSION < 0x030012
@@ -576,10 +584,13 @@ MAKE_COMMS2 (Vector, yarp::sig::VectorOf<double>)
 MAKE_COMMS2 (VectorInt,yarp::sig::VectorOf<int>)
 MAKE_COMMS  (Matrix, yarp::sig::Matrix)
 MAKE_COMMS  (Sound, yarp::sig::Sound)
+
+#if !defined(YARP_NO_MATH)
 MAKE_COMMS  (Map2DLocation, yarp::dev::Nav2D::Map2DLocation)
 MAKE_COMMS  (MapGrid2D, yarp::dev::Nav2D::MapGrid2D)
 MAKE_COMMS  (Map2DArea, yarp::dev::Nav2D::Map2DArea)
 MAKE_COMMS  (Map2DPath, yarp::dev::Nav2D::Map2DPath)
+#endif
 
 // Add getPixel and setPixel methods to access float values
 %extend yarp::sig::ImageOf<yarp::sig::PixelFloat> {
@@ -761,10 +772,11 @@ MAKE_COMMS  (Map2DPath, yarp::dev::Nav2D::Map2DPath)
     CAST_POLYDRIVER_TO_INTERFACE(ISpeechSynthesizer)
     CAST_POLYDRIVER_TO_INTERFACE(ISpeechTranscription)
     CAST_POLYDRIVER_TO_INTERFACE(ILLM)
-    CAST_POLYDRIVER_TO_INTERFACE(IFrameTransform)
     CAST_POLYDRIVER_TO_INTERFACE(IRGBDSensor)
     CAST_POLYDRIVER_TO_INTERFACE(IBattery)
 
+#if !defined(YARP_NO_MATH)
+    CAST_POLYDRIVER_TO_INTERFACE(IFrameTransform)
     // View methods for Nav2D interfaces
     yarp::dev::Nav2D::INavigation2D *viewINavigation2D() {
         yarp::dev::Nav2D::INavigation2D *result;
@@ -783,6 +795,7 @@ MAKE_COMMS  (Map2DPath, yarp::dev::Nav2D::Map2DPath)
         self->view(result);
         return result;
     }
+#endif
 
 // These views are currently disabled in SWIG + java generator since they are
 // useless without the EXTENDED_ANALOG_SENSOR_INTERFACE part.
@@ -1572,6 +1585,7 @@ MAKE_COMMS  (Map2DPath, yarp::dev::Nav2D::Map2DPath)
     }
 }
 
+#if !defined(YARP_NO_MATH)
 %extend yarp::dev::IFrameTransform {
     std::string allFramesAsString() {
         std::string outputString;
@@ -1613,6 +1627,7 @@ MAKE_COMMS  (Map2DPath, yarp::dev::Nav2D::Map2DPath)
         return ok;
     }
 }
+#endif
 
 %extend yarp::dev::IBattery {
     double getBatteryVoltage() {
@@ -2089,6 +2104,8 @@ public:
 
 //////////////////////////////////////////////////////////////////////////
 // Adding ILocalization2D
+
+#if !defined(YARP_NO_MATH)
 %extend yarp::dev::Nav2D::ILocalization2D {
     yarp::dev::Nav2D::LocalizationStatusEnum getLocalizationStatus() {
         yarp::dev::Nav2D::LocalizationStatusEnum status;
@@ -2170,6 +2187,7 @@ public:
         return curr_waypoint;
     }
 }
+#endif
 
 //////////////////////////////////////////////////////////////////////////
 // Just in Python (and in yarp bindings itself, not in downstream bindings
