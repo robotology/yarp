@@ -1,0 +1,14 @@
+/**
+\defgroup yarpAudioPlayer yarpAudioPlayer: read audio files from disk and sends them to the network
+
+\ingroup yarp_commands
+
+\tableofcontents
+
+\section yarpAudioPlayer_intro Description
+
+To be written
+
+For extra information about audio in YARP see also: \ref AudioDoc
+
+*/

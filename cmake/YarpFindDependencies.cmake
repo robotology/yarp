@@ -529,6 +529,10 @@ yarp_dependent_option(
   "YARP_COMPILE_EXECUTABLES" OFF
 )
 yarp_dependent_option(
+  YARP_COMPILE_yarpAudioPlayer "Do you want to compile yarpAudioPlayer?" ON
+  "YARP_COMPILE_EXECUTABLES" OFF
+)
+yarp_dependent_option(
   YARP_COMPILE_yarpview "Do you want to compile yarpview?" ON
   "YARP_COMPILE_EXECUTABLES;YARP_COMPILE_GUIS;YARP_HAS_Qt5" OFF
 )
