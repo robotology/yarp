@@ -45,6 +45,10 @@
 
 #ifndef YARP_NO_MATH
 #include <yarp/dev/IFrameTransform.h>
+#include <yarp/dev/IMap2D.h>
+#include <yarp/dev/ILocalization2D.h>
+#include <yarp/dev/INavigation2D.h>
+#include <yarp/dev/IOdometry2D.h>
 #endif // YARP_NO_MATH
 
 
