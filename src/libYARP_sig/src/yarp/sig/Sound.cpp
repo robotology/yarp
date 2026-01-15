@@ -88,12 +88,12 @@ void Sound::overwrite(const Sound& alt, size_t offset, size_t len)
 {
     if (alt.m_channels != m_channels)
     {
-        yCError(SOUND, "unable to concatenate sounds with different number of channels!");
+        yCError(SOUND, "unable to overwrite sounds with different number of channels!");
         return;
     }
     if (alt.m_frequency != m_frequency)
     {
-        yCError(SOUND, "unable to concatenate sounds with different sample rate!");
+        yCError(SOUND, "unable to overwrite sounds with different sample rate!");
         return;
     }
 

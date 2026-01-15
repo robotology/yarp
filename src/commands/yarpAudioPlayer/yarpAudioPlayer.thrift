@@ -16,4 +16,10 @@ service yarpAudioPlayer_IDL
   * @return true/false on success/failure
   */
   bool play(1: string filename);
+
+  /**
+  * Generate and and send a sine test tone
+  * @return true/false on success/failure
+  */
+  bool test(1: double duration);
 }

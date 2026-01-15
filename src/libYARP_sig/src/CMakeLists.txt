@@ -30,6 +30,7 @@ set(YARP_sig_HDRS
   yarp/sig/SoundFilters.h
   yarp/sig/SoundFileMp3.h
   yarp/sig/SoundFileWav.h
+  yarp/sig/SoundUtils.h
   yarp/sig/Vector.h
 )
 
@@ -51,6 +52,7 @@ set(YARP_sig_SRCS
   yarp/sig/SoundFile.cpp
   yarp/sig/SoundFileMp3.cpp
   yarp/sig/SoundFileWav.cpp
+  yarp/sig/SoundUtils.cpp
   yarp/sig/Vector.cpp
 )
 

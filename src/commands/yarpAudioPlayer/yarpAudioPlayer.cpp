@@ -6,6 +6,7 @@
 #include <yarp/os/all.h>
 #include <yarp/sig/Sound.h>
 #include <yarp/sig/SoundFile.h>
+#include <yarp/sig/SoundUtils.h>
 #include <cmath>
 #include "yarpAudioPlayer_IDL.h"
 
@@ -24,6 +25,7 @@ class PlayerModule: public yarp::os::RFModule, public yarpAudioPlayer_IDL
 
     public: //yarpAudioPlayer_IDL methods
     bool play(const std::string& filename) override;
+    bool test(double duration) override;
 
     protected: //internal methods
     bool openFile(const std::string& file_name);
@@ -108,9 +110,23 @@ bool PlayerModule::play(const std::string& filename)
     return true;
 }
 
+bool PlayerModule::test(double duration)
+{
+    bool ret;
+    size_t channels = 1;
+    size_t sampleRate = 16000;
+    ret = yarp::sig::utils::makeTone(m_audioFile,duration,channels,sampleRate);
+    yInfo() << "Generated tone of " << duration << "s, with the following properties: samples:" << m_audioFile.getSamples() << " channels:"<< m_audioFile.getChannels() << " bytes per samples:" << m_audioFile.getBytesPerSample();
+    if (!ret) { return false; }
+
+    ret = send();
+    if (!ret) { return false; }
+    return true;
+}
+
 bool PlayerModule::openFile(const std::string& file_name)
 {
-    yInfo() << "Opening file...";
+    yInfo() << "Opening file:" << file_name;
     double st= yarp::os::Time::now();
     //reset completely the sound (frequency, channels, etc)
     m_audioFile = yarp::sig::Sound();
@@ -130,9 +146,17 @@ bool PlayerModule::openFile(const std::string& file_name)
 
 bool PlayerModule::send()
 {
+    bool ret;
     double st= yarp::os::Time::now();
     yInfo() << "Sending sound...";
-    m_audioPort.write(m_audioFile);
+    if (m_audioPort.getOutputCount() > 0)
+    {
+        ret = m_audioPort.write(m_audioFile);
+    }
+    else
+    {
+        yWarning() << "No receivers are connected";
+    }
     double en= yarp::os::Time::now();
     yInfo() << "Sound sent in: " << en - st << "s";
 
