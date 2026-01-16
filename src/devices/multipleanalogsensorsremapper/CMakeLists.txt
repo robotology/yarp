@@ -8,6 +8,13 @@ yarp_prepare_plugin(multipleanalogsensorsremapper
   DEFAULT ON
 )
 
+yarp_prepare_plugin(multipleanalogsensorsclientremapper
+  CATEGORY device
+  TYPE MultipleAnalogSensorsClientRemapper
+  INCLUDE MultipleAnalogSensorsClientRemapper.h
+  DEFAULT ON
+)
+
 if(ENABLE_multipleanalogsensorsremapper)
   yarp_add_plugin(yarp_multipleanalogsensorsremapper)
 
@@ -15,6 +22,8 @@ if(ENABLE_multipleanalogsensorsremapper)
     PRIVATE
       MultipleAnalogSensorsRemapper.cpp
       MultipleAnalogSensorsRemapper.h
+      MultipleAnalogSensorsClientRemapper.h
+      MultipleAnalogSensorsClientRemapper.cpp
   )
 
   target_sources(yarp_multipleanalogsensorsremapper PRIVATE $<TARGET_OBJECTS:multipleAnalogSensorsSerializations>)
