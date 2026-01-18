@@ -63,13 +63,21 @@ bool decode(AVCodecContext* dec_ctx, AVPacket* pkt, AVFrame* frame, Sound& sound
         yCError(SOUNDFILE_MP3, "Error submitting the packet to the decoder");
         return false;
     }
+
     /* read all the output frames (in general there may be any number of them */
+#if LIBAVCODEC_VERSION_MAJOR >= 61
+    size_t num_channels = dec_ctx->ch_layout.nb_channels;
+#else
+    size_t num_channels = dec_ctx->channels;
+#endif
+
     while (ret >= 0)
     {
         ret = avcodec_receive_frame(dec_ctx, frame);
         if (ret == AVERROR(EAGAIN) || ret == AVERROR_EOF)
         {
-            return false;
+            // all frames have been decoded
+            break;
         }
         else if (ret < 0)
         {
@@ -86,11 +94,6 @@ bool decode(AVCodecContext* dec_ctx, AVPacket* pkt, AVFrame* frame, Sound& sound
         }
 
         yarp::sig::Sound frame_sound;
-#if LIBAVCODEC_VERSION_MAJOR >= 61
-        int num_channels = dec_ctx->ch_layout.nb_channels;
-#else
-        int num_channels = dec_ctx->channels;
-#endif
         frame_sound.resize(frame->nb_samples, num_channels);
         if (sound_data.getChannels()==0) { sound_data.resize(0, num_channels);}
 
@@ -464,8 +467,16 @@ bool read_mp3_istream(Sound& sound_data, std::istream& istream)
         yCError(SOUNDFILE_MP3, "Cannot process invalid (empty) stream");
         return false;
     }
+
+    // temporary storage of sound frames
+    std::vector<yarp::sig::Sound> vector_of_sound_frames;
+
+    // process the sequence of frames
     while (data_size > 0)
     {
+        // add a new empty element to the vector
+        vector_of_sound_frames.emplace_back();
+
         if (!decoded_frame)
         {
             if (!(decoded_frame = av_frame_alloc()))
@@ -483,7 +494,7 @@ bool read_mp3_istream(Sound& sound_data, std::istream& istream)
         data += ret;
         data_size -= ret;
         if (pkt->size) {
-            decode(c, pkt, decoded_frame, sound_data);
+            decode(c, pkt, decoded_frame, vector_of_sound_frames.back());
         }
         if (data_size < AUDIO_REFILL_THRESH)
         {
@@ -496,12 +507,27 @@ bool read_mp3_istream(Sound& sound_data, std::istream& istream)
             }
         }
     }
+
     // flush the decoder
     pkt->data = NULL;
     pkt->size = 0;
-    decode(c, pkt, decoded_frame, sound_data);
+    vector_of_sound_frames.emplace_back(); // the last element
+    decode(c, pkt, decoded_frame, vector_of_sound_frames.back());
 
-    //set the sample rate (is it ok? maybe some codecs allow variable sample rate?)
+    // reconstruct the full sound_data from the vector of frames
+    size_t tot_num_of_samples = 0;
+    for (auto it = vector_of_sound_frames.begin(); it != vector_of_sound_frames.end(); it++)
+    {
+        tot_num_of_samples += it->getSamples();
+    }
+    sound_data.resize(tot_num_of_samples, vector_of_sound_frames[0].getChannels());
+    size_t offset =0;
+    for (auto it = vector_of_sound_frames.begin(); it != vector_of_sound_frames.end(); it++)
+    {
+        sound_data.overwrite(*it, offset, it->getSamples());
+        offset+=it->getSamples();
+    }
+    //sound_data.setFrequency(vector_of_sound_frames[0].getFrequency());
     sound_data.setFrequency(c->sample_rate);
 
     //cleanup
