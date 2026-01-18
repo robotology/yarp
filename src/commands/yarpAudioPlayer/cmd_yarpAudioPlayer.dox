@@ -7,7 +7,15 @@
 
 \section yarpAudioPlayer_intro Description
 
-To be written
+This module read an audio from a file and transmits it on the network.
+The module is controlled by the rpc port (default: `/yarpAudioPlayer`, it can be changed using the option: `--name <portname>`)
+The command `play <filename>` reads an audio file (.wav, .mp3) and sends it over the network.
+The transmitted yarp::sig::Sound is automatically split into chucks (default size: 16000 samples).
+The chuck size can be configured at startup using the option `--split_size <size_value>`.
+Warning: yarp::sig::Sound of size 10000000 or greater may add significant delays to the network transmission.
+The receiver is responsible for reassembling the chunk into a single yarp::sig::Sound.
+The command `test <duration_s>` generates a test tone of the specified duration and transmits it over the network. It can be used
+to the test the network latency with different sound chucks sizes.
 
 For extra information about audio in YARP see also: \ref AudioDoc
 
