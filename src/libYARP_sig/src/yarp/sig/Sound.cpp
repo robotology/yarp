@@ -88,12 +88,12 @@ void Sound::overwrite(const Sound& alt, size_t offset, size_t len)
 {
     if (alt.m_channels != m_channels)
     {
-        yCError(SOUND, "unable to concatenate sounds with different number of channels!");
+        yCError(SOUND, "unable to overwrite sounds with different number of channels!");
         return;
     }
     if (alt.m_frequency != m_frequency)
     {
-        yCError(SOUND, "unable to concatenate sounds with different sample rate!");
+        yCError(SOUND, "unable to overwrite sounds with different sample rate!");
         return;
     }
 
@@ -175,33 +175,22 @@ const Sound& Sound::operator = (const Sound& alt)
     return *this;
 }
 
-Sound Sound::subSound(size_t first_sample, size_t last_sample)
+Sound Sound::subSound(size_t first_sample, size_t len)
 {
-    if (last_sample > this->m_samples) {
-        last_sample = m_samples;
-    }
-    if (first_sample > this->m_samples) {
-        first_sample = m_samples;
-    }
-    if (last_sample < first_sample) {
-        last_sample = first_sample;
-    }
-
     Sound s;
 
-    s.resize(last_sample-first_sample, this->m_channels);
-    s.setFrequency(this->m_frequency);
-
-    /*
-    //faster implementation but currently not working
-    unsigned char* p1    = this->getRawData();
-    unsigned char* p2    = s.getRawData();
-    int j=0;
-    for (int i=first_sample; i<last_sample*2; i++)
-    {
-        p2[j++]=p1[i];
+    // Nothing to copy
+    if (len == 0 || first_sample >= m_samples) {
+        s.setFrequency(m_frequency);
+        s.resize(0, m_channels);
+        return s;
     }
-    */
+
+    size_t last_sample = std::min(first_sample + len, m_samples);
+    size_t out_len = last_sample - first_sample;
+
+    s.resize(out_len, this->m_channels);
+    s.setFrequency(this->m_frequency);
 
     //safe implementation
     size_t j=0;
