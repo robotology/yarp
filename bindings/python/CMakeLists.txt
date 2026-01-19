@@ -45,6 +45,11 @@ set_target_properties(${SWIG_MODULE_yarp_python_REAL_NAME}
 # (set by `swig_link_libraries`) and prepending it to the search path
 target_include_directories(${SWIG_MODULE_yarp_python_REAL_NAME} BEFORE PRIVATE ${Python3_INCLUDE_DIRS})
 
+# Add bigobj option when compiling under Windows
+if(MSVC)
+  target_compile_options(${SWIG_MODULE_yarp_python_REAL_NAME} PRIVATE /bigobj)
+endif()
+
 # installation path is determined reliably on most platforms using sysconfig
 if(Python3_VERSION VERSION_GREATER_EQUAL 3.12)
   execute_process(COMMAND ${Python3_EXECUTABLE} -c "import os;import sysconfig;relative_site_packages = sysconfig.get_path('purelib').replace(sysconfig.get_path('data'), '').lstrip(os.path.sep);print(relative_site_packages)"
