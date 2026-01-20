@@ -414,6 +414,7 @@ void setExternal2(yarp::sig::Image *img, PyObject* mem, int w, int h) {
 %include <yarp/sig/Matrix.h>
 %include <yarp/sig/Vector.h>
 %include <yarp/sig/Pose6D.h>
+%include <yarp/sig/ColorRGB.h>
 %include <yarp/dev/DeviceDriver.h>
 %include <yarp/dev/PolyDriver.h>
 %include <yarp/dev/Drivers.h>
@@ -1589,8 +1590,11 @@ MAKE_COMMS  (Map2DPath, yarp::dev::Nav2D::Map2DPath)
 }
 
 %extend yarp::dev::ISimulatedWorld {
-    bool getList(std::vector<std::string>& names) {
-        return self->getList(names);
+    std::vector<std::string> getList() {
+        std::vector<std::string> names;
+        bool ok = self->getList(names);
+        if (!ok) return std::vector<std::string>();
+        return names;
     }
 
     yarp::sig::Pose6D getPose(std::string id, std::string frame_name="") {
