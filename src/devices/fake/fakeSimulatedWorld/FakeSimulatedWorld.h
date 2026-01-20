@@ -12,9 +12,9 @@
 
 /**
 * @ingroup dev_impl_fake
-* \brief `fakeIMU` : fake device implementing the device interface typically implemented by an Inertial Measurement Unit
+* \brief `fakeSimulatedWorld` : fake device implementing the ISimulatedWorld interface.
 *
-* Parameters required by this device are shown in class: FakeIMU_ParamsParser
+* Parameters required by this device are shown in class: FakeSimulatedWorld_ParamsParser
 *
 */
 class FakeSimulatedWorld :

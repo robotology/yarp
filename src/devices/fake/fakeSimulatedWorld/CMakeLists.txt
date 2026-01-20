@@ -10,9 +10,6 @@ yarp_prepare_plugin(fakeSimulatedWorld
   TYPE FakeSimulatedWorld
   INCLUDE FakeSimulatedWorld.h
   GENERATE_PARSER
-  EXTRA_CONFIG
-    WRAPPER=inertial
-  DEPENDS "TARGET YARP::YARP_math"
 )
 
 if(NOT SKIP_fakeSimulatedWorld)
@@ -31,13 +28,11 @@ if(NOT SKIP_fakeSimulatedWorld)
       YARP::YARP_os
       YARP::YARP_sig
       YARP::YARP_dev
-      YARP::YARP_math
   )
   list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS
     YARP_os
     YARP_sig
     YARP_dev
-    YARP_math
   )
 
   yarp_install(

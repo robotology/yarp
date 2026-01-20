@@ -227,7 +227,7 @@ ReturnValue SimulatedWorld_nwc_yarp::rename(std::string old_name, std::string ne
     std::lock_guard<std::mutex> lg(m_mutex);
     auto ret = m_sim_RPC.rename(old_name,new_name);
     if (!ret) {
-        yCError(SIMWORLDNWC, "Unable to detach");
+        yCError(SIMWORLDNWC, "Unable to rename");
         return ret;
     }
     return ret;

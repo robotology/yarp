@@ -5,7 +5,7 @@
 
 #include <yarp/dev/ISimulatedWorld.h>
 
-//#include <yarp/dev/tests/ISimulatedWorldTest.h>
+#include <yarp/dev/tests/ISimulatedWorldTest.h>
 
 #include <yarp/os/Network.h>
 #include <yarp/sig/Image.h>
@@ -63,8 +63,7 @@ TEST_CASE("dev::SimulatedWorld_nwc_yarp", "[yarp::dev]")
 
         yarp::os::SystemClock::delaySystem(0.5);
 
-        isim->makeSphere("sphere1", 0.1, yarp::sig::Pose6D(), yarp::sig::ColorRGB(1.0, 0.0, 0.0));
-        //yarp::dev::tests::exec_iBattery_test_1(isim);
+        yarp::dev::tests::exec_ISimulatedWorld_test_1(isim);
 
         yarp::os::SystemClock::delaySystem(0.5);
 

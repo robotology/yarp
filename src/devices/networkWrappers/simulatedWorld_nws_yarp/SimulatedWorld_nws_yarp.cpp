@@ -39,7 +39,7 @@ bool SimulatedWorld_nws_yarp::attach(PolyDriver* driver)
     driver->view(m_Isim_p);
     if (nullptr == m_Isim_p)
     {
-        yCError(SIMWORLDNWS, "Unable to view IBattery interface");
+        yCError(SIMWORLDNWS, "Unable to view ISimulatedWorld interface");
         return false;
     }
     m_msgsImpl = std::make_unique<ISimulatedWorldMsgsImpl>(m_Isim_p);
