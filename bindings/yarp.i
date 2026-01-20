@@ -413,6 +413,7 @@ void setExternal2(yarp::sig::Image *img, PyObject* mem, int w, int h) {
 %include <yarp/sig/Sound.h>
 %include <yarp/sig/Matrix.h>
 %include <yarp/sig/Vector.h>
+%include <yarp/sig/Pose6D.h>
 %include <yarp/dev/DeviceDriver.h>
 %include <yarp/dev/PolyDriver.h>
 %include <yarp/dev/Drivers.h>
@@ -457,6 +458,7 @@ void setExternal2(yarp::sig::Image *img, PyObject* mem, int w, int h) {
 %include <yarp/dev/MultipleAnalogSensorsInterfaces.h>
 %include <yarp/dev/IRGBDSensor.h>
 %include <yarp/dev/IBattery.h>
+%include <yarp/dev/ISimulatedWorld.h>
 
 #if !defined(YARP_NO_MATH)
 %include <yarp/dev/IFrameTransform.h>
@@ -774,6 +776,7 @@ MAKE_COMMS  (Map2DPath, yarp::dev::Nav2D::Map2DPath)
     CAST_POLYDRIVER_TO_INTERFACE(ILLM)
     CAST_POLYDRIVER_TO_INTERFACE(IRGBDSensor)
     CAST_POLYDRIVER_TO_INTERFACE(IBattery)
+    CAST_POLYDRIVER_TO_INTERFACE(ISimulatedWorld)
 
 #if !defined(YARP_NO_MATH)
     CAST_POLYDRIVER_TO_INTERFACE(IFrameTransform)
@@ -1582,6 +1585,18 @@ MAKE_COMMS  (Map2DPath, yarp::dev::Nav2D::Map2DPath)
 %extend yarp::dev::ILLM {
     bool readPrompt(std::vector<string>& oPropmt) {
         return self->readPrompt(oPropmt[0]);
+    }
+}
+
+%extend yarp::dev::ISimulatedWorld {
+    bool getList(std::vector<std::string>& names) {
+        return self->getList(names);
+    }
+
+    yarp::sig::Pose6D getPose(std::string id, std::string frame_name="") {
+        yarp::sig::Pose6D pose;
+        self->getPose(id, pose, frame_name);
+        return pose;
     }
 }
 
