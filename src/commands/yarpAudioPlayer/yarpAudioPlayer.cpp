@@ -162,7 +162,10 @@ bool PlayerModule::send()
         {
             //split the file in blocks of fixed size
             size_t totalSamples = m_audioFile.getSamples();
-            size_t iterations = totalSamples/m_split_size;
+
+            //this is a ceiling division on integers so that: 10 / 3 = 4
+            size_t iterations = (totalSamples + m_split_size - 1) / m_split_size;
+
             size_t block_counter =0;
             for (size_t first = 0; first < totalSamples; first += m_split_size)
             {

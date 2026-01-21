@@ -11,6 +11,9 @@
 
 using namespace yarp::sig;
 
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif
 
 bool utils::makeTone(Sound& outSound,double duration_s, size_t channels, size_t sampleRate)
 {
@@ -26,7 +29,7 @@ bool utils::makeTone(Sound& outSound,double duration_s, size_t channels, size_t 
     // Generate sine wave parameters
     double frequency = 440.0;  // A4 standard tone
     double amplitude = 30000;  // max ~32767 for 16-bit
-    double twoPiF = 2.0 * 3.14 * frequency;
+    double twoPiF = 2.0 * M_PI * frequency;
 
     // Create the sound object
     outSound = yarp::sig::Sound();
