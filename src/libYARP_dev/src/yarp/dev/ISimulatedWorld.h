@@ -34,7 +34,7 @@ public:
 
     /**
     * Make a sphere.
-    * @param id the name of the object
+    * @param id the name of the object to create
     * @param radius the radius of the sphere [m]
     * @param pose the pose of the sphere [m]
     * @param color the color of the sphere
@@ -47,7 +47,7 @@ public:
 
     /**
     * Make a box.
-    * @param id the name of the object
+    * @param id the name of the object to create
     * @param width box width [m]
     * @param height box height[m]
     * @param thickness box thickness [m]
@@ -62,7 +62,7 @@ public:
 
     /**
     * Make a cylinder.
-    * @param id the name of the object
+    * @param id the name of the object to create
     * @param radius the radius of the cylinder [m]
     * @param length the length of the cylinder [m]
     * @param pose the pose of the cylinder [m]
@@ -76,8 +76,8 @@ public:
     virtual yarp::dev::ReturnValue makeCylinder (std::string id, double radius, double length, yarp::sig::Pose6D pose, yarp::sig::ColorRGB color, std::string frame_name="", bool gravity_enable=0, bool collision_enable=1) =0;
 
     /**
-    * Make a reference frame.
-    * @param id the name of the object
+    * Make a reference frame (a 3D model with 3 arrows representing the axes)
+    * @param id the name of the object to create
     * @param size the size of the frame [m]
     * @param pose the pose of the frame [m]
     * @param color the color of the frame
@@ -124,7 +124,7 @@ public:
 
      /**
     * Get object pose.
-    * @param id string that identifies object in gazebo (returned after creation)
+    * @param id object id
     * @param frame_name (optional) is specified, the pose will be relative to the specified fully scoped frame (e.g. MODEL_ID::FRAME_ID). Otherwise, world it will be used.
     * @return returns true or false on success failure
     */
@@ -132,16 +132,16 @@ public:
 
     /**
     * Create a model from a file.
-    * @param id the name of the object
-    * @param filename string that specifies the name of the model
+    * @param id the name of the object to create
+    * @param filename string that specifies the name of the model to load
     * @param pose the pose of the object [m]
     * @return returns true or false on success failure
     */
-    virtual yarp::dev::ReturnValue makeModel(std::string id,  std::string filename, yarp::sig::Pose6D pose,  std::string frame_name, bool gravity_enable, bool collision_enable) =0;
+    virtual yarp::dev::ReturnValue makeModel(std::string id,  std::string filename, yarp::sig::Pose6D pose,  std::string frame_name="", bool gravity_enable=0, bool collision_enable=1) =0;
 
     /**
     * Delete an object.
-    * @param id string that identifies object in gazebo (returned after creation)
+    * @param id string that identifies object in gazebo
     * @return returns true or false on success failure
     */
     virtual yarp::dev::ReturnValue deleteObject(std::string id) =0;
@@ -159,16 +159,16 @@ public:
     virtual yarp::dev::ReturnValue getList(std::vector<std::string>& names) =0;
 
     /**
-    * Attach an object to a link of the robot.
-    * @param id string that identifies object in gazebo (returned after creation)
-    * @param link_name name of a link of the robot
+    * Attach an object to a link of another object
+    * @param id string that identifies object in gazebo
+    * @param link_name name of a link
     * @return returns true or false on success failure
     */
     virtual yarp::dev::ReturnValue attach(std::string id, std::string link_name) =0;
 
     /**
     * Detach a previously attached object.
-    * @param id string that identifies object in gazebo (returned after creation)
+    * @param id string that identifies object in gazebo
     * @return returns true or false on success failure
     */
     virtual yarp::dev::ReturnValue detach(std::string id) =0;
