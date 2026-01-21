@@ -42,6 +42,7 @@
 #include <yarp/dev/ILLM.h>
 #include <yarp/dev/IChatBot.h>
 #include <yarp/dev/IBattery.h>
+#include <yarp/dev/ISimulatedWorld.h>
 
 #ifndef YARP_NO_MATH
 #include <yarp/dev/IFrameTransform.h>
