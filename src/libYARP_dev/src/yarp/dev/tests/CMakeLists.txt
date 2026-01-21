@@ -25,6 +25,7 @@ set(YARP_dev_test_HDRS
     IMotorTest.h
     IMotorEncodersTest.h
     IRemoteCalibratorTest.h
+    ISimulatedWorldTest.h
     IJointFaultTest.h
     IControlLimitsTest.h
 )
@@ -50,6 +51,7 @@ set(YARP_dev_test_SRCS
     IMotorTest.cpp
     IMotorEncodersTest.cpp
     IRemoteCalibratorTest.cpp
+    ISimulatedWorldTest.cpp
     IJointFaultTest.cpp
     IControlLimitsTest.cpp
 )

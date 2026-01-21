@@ -74,7 +74,8 @@ set(YARP_sig_IDL
   idl/AudioPlayerStatus.thrift
   idl/AudioRecorderStatus.thrift
   idl/LaserScan2D.thrift
-
+  idl/Pose6D.thrift
+  idl/ColorRGB.thrift
 )
 
 yarp_choose_idl(YARP_sig_idl ${YARP_sig_IDL})
