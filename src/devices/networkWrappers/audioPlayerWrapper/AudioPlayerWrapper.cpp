@@ -168,6 +168,8 @@ bool AudioPlayerWrapper::open(yarp::os::Searchable &config)
         yCError(AUDIOPLAYERWRAPPER, "Failed to open port %s", audioInPortName.c_str());
         return false;
     }
+    m_audioInPort.setStrict(true);
+
     if (!m_statusPort.open(statusPortName))
     {
         yCError(AUDIOPLAYERWRAPPER, "Failed to open port %s", statusPortName.c_str());

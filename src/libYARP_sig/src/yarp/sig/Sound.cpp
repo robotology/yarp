@@ -119,12 +119,14 @@ Sound& Sound::operator += (const Sound& alt)
 {
     if (alt.m_channels!= m_channels)
     {
-        yCError(SOUND, "unable to concatenate sounds with different number of channels!");
+        yCError(SOUND) << "unable to concatenate sounds with different number of channels!" <<
+                           alt.m_channels << "!=" << m_channels;
         return *this;
     }
     if (alt.m_frequency!= m_frequency)
     {
-        yCError(SOUND, "unable to concatenate sounds with different sample rate!");
+        yCError(SOUND) << "unable to concatenate sounds with different sample rate!" <<
+                           alt.m_frequency << "!=" << m_frequency;
         return *this;
     }
 
