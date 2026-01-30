@@ -130,6 +130,7 @@
 %feature("notabstract") Stamp;
 %feature("notabstract") RpcClient;
 %feature("notabstract") RpcServer;
+%feature("notabstract") ReturnValue;
 %feature("abstract") Portable;
 %feature("abstract") PortReader;
 %feature("abstract") PortWriter;
