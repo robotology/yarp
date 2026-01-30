@@ -35,6 +35,7 @@ Options:\n\
   --auto_dependency     \n\
   --add_current_dir     add the current dir to the search path\n\
   --elapsed_time        if present the time stamp for log messages will be relative to the GUI start time\n\
+  --disable_autoreload  if present it will disable applications autoreload on loaded files modifications\n\
 "
 
 #define DEF_CONFIG_FILE     "ymanager.ini"
