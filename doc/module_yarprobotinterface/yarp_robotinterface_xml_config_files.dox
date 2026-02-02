@@ -38,17 +38,19 @@ Here is a minimal config file, let's call it "config.xml":
 \endcode
 
 This configuration files create two devices:
-  * One `fake_motor_device`, that creates a fake motor control board.
-  * One `fake_motor_nws_yarp`, that creates a Network Wrapper Server (NWS) that exposes `fake_motor_device` functionality over YARP ports.
+
+- One `fake_motor_device`, that creates a fake motor control board.
+- One `fake_motor_nws_yarp`, that creates a Network Wrapper Server (NWS) that exposes `fake_motor_device` functionality over YARP ports.
 
 \section yarp_config_file_reference Reference documentation of XML format.
 
 \subsection robot_element robot Element
 
 The `robot` element is the root element of the XML file. It contains the following attributes:
-* `name`: The name of the `robotinterface` instance.
-* `portprefix`: The portprefix to be used by the port created by the `robotinterface` instance. It can be used as `${portprefix}` when specifying a parameter. It must start with a `/`.
-* `build`: Not used.
+
+- `name`: The name of the robotinterface instance. The parser internally generates the macro `${robotname}` which can be used elsewhere in the configuration when specifying a parameter.
+- `portprefix`: The portprefix to be used by the port created by the robotinterface instance. It must start with a leading slash (`/`). The parser internally generates the macros `${portprefix}` and `${portprefixnoslash}` which can be used elsewhere in the configuration when specifying a parameter.
+- `build`: Not used.
 
 \subsection devices_element devices Element
 
@@ -61,8 +63,9 @@ It is a collector of YARP devices that are spawned by the `robotinterface` insta
 The `device` element is a child element of `devices` element.
 
 It is used to specify a YARP device that is spawned by the `robotinterface`. It contains the following attributes:
-* `name`: The name of the specific instance of YARP device that is created.
-* `type`: The name of the type of YARP device to instantiate.
+
+- `name`: The name of the specific instance of YARP device that is created.
+- `type`: The name of the type of YARP device to instantiate.
 
 \subsection group_element group Element
 
@@ -75,12 +78,36 @@ It is a collector of parameters under a specific group name.
 The `param` element is a child element of `device`, `action` or `group` element.
 
 This element it is used to specify a specific configuration parameter. It contain the following attributes:
-* `name`: The name (i.e. key) of the attribute.
+
+- `name`: The name (i.e. key) of the attribute.
+- `extern-name`: This attribute is optional. If present, it allows the user to redefine the value of the parameter from the yarprobotinterface command line. It must be unique.
 
 The inner text of the element represents the **value** of the parameter.
-If the  inner text contains the string ${portprefix}, it will be substituted with the portprefix parameter specified
-in the `portprefix` attribute of the `robot` element.
+If the inner text contains a macros (e.g. ${portprefix}, ${portprefixnoslah}, ${robotname}), the macro will be substituted with its value.
 
+Examples:
+
+Here the value of the parameter depthResolution can be overwrittern by the command line: `yarprobotinterface --depthRes "(640 480)"`
+\code
+  <device xmlns:xi="http://www.w3.org/2001/XInclude" name="realsenseD450" type="realsense2">
+    <group name="SETTINGS">
+      <param extern-name= "depthRes" name="depthResolution"> (640 480) </param>
+      <param extern-name= "rgbRes" name="rgbResolution">  (640 480) </param>
+  </device>
+\endcode
+
+Here the `${portprefix}` and `${portprefixnoslah}` macros are used to generate the value of the parameters.
+\code
+<device xmlns:xi="http://www.w3.org/2001/XInclude" name="RGBDWrapperros" type="rgbdSensor_nws_ros2">
+    <param name="period"> 0.033 </param>
+    <param name="color_topic_name">  {portprefix}/camera_rgbd/color/image_rect_color    </param>
+    <param name="depth_topic_name">  {portprefix}/camera_rgbd/depth/image_rect    </param>
+    <param name="color_frame_id">    ${portprefixnoslah}/depth_center    </param>
+    <param name="depth_frame_id">    ${portprefixnoslah}/depth_center    </param>
+    <param name="node_name">         /rgbdsensor_ros_node    </param>
+    <param name="namespace">         ${portprefixnoslah}    </param>
+</device>
+\endcode
 
 \subsection action_element action Element
 
@@ -131,10 +158,11 @@ It must be noticed that the included file contains just a single `device` sectio
  individual devices.
 Additionally each device included through a xi:include can be enabled/disabled by the the use of `enabled_by` and `disabled_by` attributes.
 By default, if no attribute is added, than the file is automatically included.
-If a `enabled_by` attribute is found, then the include line is not enabled by default and it is enabled only if yarprobotinterface
+
+- If a `enabled_by` attribute is found, then the include line is not enabled by default and it is enabled only if yarprobotinterface
 has been executed with the option `--enable_tags (xxx)` (xxx should match the contents of the `enabled_by` attribute)
-If a `disabled_by` attribute is found, then the include line (either enabled by default or by an `enable_by` attribute ) can
-be disabled if yarprobotinterface has been executed with the specific option `--disable_tags (yyy)` (yyy should match the contetes of the `disabled_by` attribute) 
+- If a `disabled_by` attribute is found, then the include line (either enabled by default or by an `enable_by` attribute ) can
+be disabled if yarprobotinterface has been executed with the specific option `--disable_tags (yyy)` (yyy should match the value of the `disabled_by` attribute) 
 
 Examples:
 - `yarprobotinterface` starts yarprobotinterface including the following devices: odometry_nws_yarp.xml odometry.xml body.xml body_nws_yarp.xml
