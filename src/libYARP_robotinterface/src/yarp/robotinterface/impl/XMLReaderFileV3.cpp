@@ -357,6 +357,8 @@ yarp::robotinterface::XMLReaderResult yarp::robotinterface::impl::XMLReaderFileV
         SYNTAX_ERROR(robotElem->Row()) << R"("robot" element should contain the "name" attribute)";
         return yarp::robotinterface::XMLReaderResult::ParsingFailed();
     }
+    //add the robot name to the cinfiguration
+    config.put("robotname",result.robot.name());
 
 #if TINYXML_UNSIGNED_INT_BUG
     if (robotElem->QueryUnsignedAttribute("build", &result.robot.build()) != TIXML_SUCCESS) {
@@ -376,10 +378,10 @@ yarp::robotinterface::XMLReaderResult yarp::robotinterface::impl::XMLReaderFileV
     // If portprefix is already present in config we use that one
     if (!config.check("portprefix"))
     {
-    if (robotElem->QueryStringAttribute("portprefix", &result.robot.portprefix()) != TIXML_SUCCESS) {
-        SYNTAX_WARNING(robotElem->Row()) << R"("robot" element should contain the "portprefix" attribute. Using "name" attribute)";
-        result.robot.portprefix() = result.robot.name();
-    }
+        if (robotElem->QueryStringAttribute("portprefix", &result.robot.portprefix()) != TIXML_SUCCESS) {
+            SYNTAX_WARNING(robotElem->Row()) << R"("robot" element should contain the "portprefix" attribute. Using "name" attribute)";
+            result.robot.portprefix() = result.robot.name();
+        }
         config.put("portprefix",result.robot.portprefix());
     } else {
         result.robot.portprefix() = config.find("portprefix").asString();
@@ -587,13 +589,37 @@ yarp::robotinterface::Param yarp::robotinterface::impl::XMLReaderFileV3::Private
         param.value() = valueText;
     }
 
-    // After process ${portprefix}
-    std::string paramValueBefore = param.value();
-    std::string paramValueAfter = paramValueBefore;
-    std::string portprefix = config.find("portprefix").toString();
-    ReplaceAllStrings(paramValueAfter, "${portprefix}", portprefix);
-    param.value() = paramValueAfter;
+    std::string debug_string = config.toString();
 
+
+    // Process ${portprefix}
+    {
+        std::string paramValueBefore = param.value();
+        std::string paramValueAfter = paramValueBefore;
+        std::string portprefix = config.find("portprefix").toString();
+        ReplaceAllStrings(paramValueAfter, "${portprefix}", portprefix);
+        param.value() = paramValueAfter;
+    }
+
+    // Process ${robotname}
+    {
+        std::string paramValueBefore = param.value();
+        std::string paramValueAfter = paramValueBefore;
+        std::string robotname = config.find("robotname").toString();
+        ReplaceAllStrings(paramValueAfter, "${robotname}", robotname);
+        param.value() = paramValueAfter;
+    }
+
+    // Process ${portprefixnoslash}
+    {
+        std::string paramValueBefore = param.value();
+        std::string paramValueAfter = paramValueBefore;
+        std::string portprefix = config.find("portprefix").toString();
+        std::string portprefixnoslash = portprefix;
+        if (!portprefixnoslash.empty() && portprefixnoslash[0] == '/') { portprefixnoslash.erase(0, 1); }
+        ReplaceAllStrings(paramValueAfter, "${portprefixnoslash}", portprefixnoslash);
+        param.value() = paramValueAfter;
+    }
 
 
     // yDebug() << param;
