@@ -2905,7 +2905,7 @@ yarp::dev::ReturnValue RemoteControlBoard::isJointBraked(int j, bool& braked) co
     //std::lock_guard<std::mutex> lg(m_mutex);
     auto ret = m_RPC.isJointBrakedRPC(j);
     if (!ret.ret) {
-        yCError(REMOTECONTROLBOARD, "Unable to isJointBraked");
+        //yCError(REMOTECONTROLBOARD, "Unable to isJointBraked");
         return ret.ret;
     }
     braked = ret.isBraked;

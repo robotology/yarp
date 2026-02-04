@@ -2339,8 +2339,8 @@ bool PartItem::updatePart()
     if (m_iPos)
     {
         bool boolval = true;
-        m_iPos->checkMotionDone(m_slow_k, &boolval); // using k to save bandwidth
-        m_done[m_slow_k] = boolval;
+        ret_motdone = m_iPos->checkMotionDone(m_slow_k, &boolval); // using k to save bandwidth
+        m_done[m_slow_k] = boolval; // @randaz: are you sure about set true if ret_motdone==false ?
     }
     if (m_ijointbrake)
     {
@@ -2392,7 +2392,7 @@ bool PartItem::updatePart()
     }
     if (!ret_jntbrk)
     {
-        yWarning() << "Missing Implementation of isJointBraked()";
+     //   yWarning() << "Missing Implementation of isJointBraked()";
     }
 
     // *** update the widget every cycle ***

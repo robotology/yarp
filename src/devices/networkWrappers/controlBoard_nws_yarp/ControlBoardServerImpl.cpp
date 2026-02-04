@@ -34,7 +34,7 @@ return_isJointBraked ControlBoardRPCd::isJointBrakedRPC(const std::int32_t j) co
     ret.ret = m_iJointBrake->isJointBraked(j, ret.isBraked);
     if (!ret.ret)
     {
-        yCError(CB_RPC, "isJointBraked() failed");
+        //yCError(CB_RPC, "isJointBraked() failed");
     }
     return ret;
 }
