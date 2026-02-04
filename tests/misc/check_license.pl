@@ -21,7 +21,7 @@ open my $handle, '<', "tests/misc/check_license_skip.txt";
 chomp(my @skip_files = <$handle>);
 close $handle;
 
-my $copyright_iit = "(2006-2021|2006-2022|2006-2023|2006-2025|2023|2023-2023|2024|2024-2024|2025|2025-2025) Istituto Italiano di Tecnologia \\(IIT\\)";
+my $copyright_iit = "(2006-2021|2006-2022|2006-2023|2006-2025|2023|2023-2023|2024|2024-2024|2025|2025-2025|2026|2026-2026) Istituto Italiano di Tecnologia \\(IIT\\)";
 my $copyright_robocub = "2006-2010 RobotCub Consortium";
 
 my $str_bsd3_cpp = <<END;
