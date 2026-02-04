@@ -31,6 +31,7 @@ public:
     bool uninitialize();
     ImplementControlMode(IControlModeRaw *v);
     ~ImplementControlMode();
+    yarp::dev::ReturnValue getAvailableControlModes(int j, std::vector<yarp::dev::SelectableControlModeEnum>& avail) override;
     yarp::dev::ReturnValue getControlMode(int j, int *f) override;
     yarp::dev::ReturnValue getControlModes(int *modes) override;
     yarp::dev::ReturnValue getControlModes(const int n_joint, const int *joints, int *modes) override;

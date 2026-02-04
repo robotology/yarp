@@ -109,11 +109,6 @@ public:
                               bool* rec,
                               bool* ok);
 
-    void handleControlModeMsg(const yarp::os::Bottle& cmd,
-                              yarp::os::Bottle& response,
-                              bool* rec,
-                              bool* ok);
-
     void handleImpedanceMsg(const yarp::os::Bottle& cmd,
                             yarp::os::Bottle& response,
                             bool* rec,

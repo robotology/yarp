@@ -258,6 +258,13 @@ ReturnValue FakeLaserWithMotor::stopRaw()
 }
 ///////////// END Position Control INTERFACE  //////////////////
 
+ReturnValue FakeLaserWithMotor::getAvailableControlModesRaw(int j, std::vector<yarp::dev::SelectableControlModeEnum>& avail)
+{
+    avail = _availableControlModes[j];
+    return ReturnValue_ok;
+}
+
+
 ReturnValue FakeLaserWithMotor::getControlModeRaw(int j, int* v)
 {
     *v = _controlModes[j];
@@ -333,6 +340,22 @@ bool FakeLaserWithMotor::alloc(int nj)
     _command_speeds = allocAndCheck<double>(nj);
     _ref_speeds = allocAndCheck<double>(nj);
     _ref_accs = allocAndCheck<double>(nj);
+    _availableControlModes = allocAndCheck<std::vector<yarp::dev::SelectableControlModeEnum>>(nj);
+
+    for (int i = 0; i < nj; ++i)
+    {
+        _availableControlModes[i].push_back(yarp::dev::SelectableControlModeEnum::VOCAB_CM_IDLE);
+        _availableControlModes[i].push_back(yarp::dev::SelectableControlModeEnum::VOCAB_CM_IDLE);
+        _availableControlModes[i].push_back(yarp::dev::SelectableControlModeEnum::VOCAB_CM_TORQUE);
+        _availableControlModes[i].push_back(yarp::dev::SelectableControlModeEnum::VOCAB_CM_POSITION);
+        _availableControlModes[i].push_back(yarp::dev::SelectableControlModeEnum::VOCAB_CM_POSITION_DIRECT);
+        _availableControlModes[i].push_back(yarp::dev::SelectableControlModeEnum::VOCAB_CM_VELOCITY);
+        _availableControlModes[i].push_back(yarp::dev::SelectableControlModeEnum::VOCAB_CM_VELOCITY_DIRECT);
+        _availableControlModes[i].push_back(yarp::dev::SelectableControlModeEnum::VOCAB_CM_CURRENT);
+        _availableControlModes[i].push_back(yarp::dev::SelectableControlModeEnum::VOCAB_CM_PWM);
+        _availableControlModes[i].push_back(yarp::dev::SelectableControlModeEnum::VOCAB_CM_MIXED);
+        _availableControlModes[i].push_back(yarp::dev::SelectableControlModeEnum::VOCAB_CM_FORCE_IDLE);
+    }
 
     //resizeBuffers();
 
@@ -349,6 +372,7 @@ bool FakeLaserWithMotor::dealloc()
     checkAndDestroy(_ref_speeds);
     checkAndDestroy(_command_speeds);
     checkAndDestroy(_ref_accs);
+    checkAndDestroy(_availableControlModes);
     return true;
 }
 

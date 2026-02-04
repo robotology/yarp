@@ -497,6 +497,29 @@ bool ControlBoardRemapper::setControlModeAllAxes(const int cm)
 //
 //  IPid Interface
 //
+
+ReturnValue ControlBoardRemapper::getAvailablePids(int j, std::vector<yarp::dev::PidControlTypeEnum>& avail)
+{
+    int off=(int)remappedControlBoards.lut[j].axisIndexInSubControlBoard;
+    size_t subIndex=remappedControlBoards.lut[j].subControlBoardIndex;
+
+    RemappedSubControlBoard *p=remappedControlBoards.getSubControlBoard(subIndex);
+    if (!p) {
+        return ReturnValue::return_code::return_value_error_generic;
+    }
+
+    ReturnValue ok = ReturnValue_ok;
+
+    if (p->pid) {
+        ok = p->pid->getAvailablePids(off, avail);
+    }
+    else {
+        ok = ReturnValue::return_code::return_value_error_generic;
+    }
+
+    return ok;
+}
+
 ReturnValue ControlBoardRemapper::setPid(const PidControlTypeEnum& pidtype, int j, const Pid &p)
 {
     int off=(int)remappedControlBoards.lut[j].axisIndexInSubControlBoard;
@@ -3737,6 +3760,28 @@ ReturnValue ControlBoardRemapper::getCurrentImpedanceLimit(int j, double *min_st
     }
 
     return ReturnValue::return_code::return_value_error_generic;
+}
+
+ReturnValue ControlBoardRemapper::getAvailableControlModes(int j, std::vector<yarp::dev::SelectableControlModeEnum>& avail)
+{
+    int off=(int)remappedControlBoards.lut[j].axisIndexInSubControlBoard;
+    size_t subIndex=remappedControlBoards.lut[j].subControlBoardIndex;
+
+    RemappedSubControlBoard *p=remappedControlBoards.getSubControlBoard(subIndex);
+    if (!p) {
+        return ReturnValue::return_code::return_value_error_generic;
+    }
+
+    ReturnValue ok = ReturnValue_ok;
+
+    if (p->iMode) {
+        ok = p->iMode->getAvailableControlModes(off, avail);
+    }
+    else {
+        ok = ReturnValue::return_code::return_value_error_generic;
+    }
+
+    return ok;
 }
 
 ReturnValue ControlBoardRemapper::getControlMode(int j, int *mode)

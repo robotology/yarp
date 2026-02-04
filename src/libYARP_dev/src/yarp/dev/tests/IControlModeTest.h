@@ -105,11 +105,22 @@ namespace yarp::dev::tests
         b = iinfo->getJointType(0, jointtype_ret);
         CHECK(b); CHECK (jointtype_ret== yarp::dev::JointTypeEnum::VOCAB_JOINTTYPE_REVOLUTE);
 
+
+        // get available control modes
+        {
+            bool b;
+            std::vector<yarp::dev::SelectableControlModeEnum> avail;
+            b = icmd->getAvailableControlModes(0, avail);
+            CHECK(b);
+            CHECK(avail.size() == 10); // expected presence of 10 control modes
+        }
+
         test_joint(icmd, iinfo, VOCAB_CM_IDLE);
         test_joint(icmd, iinfo, VOCAB_CM_TORQUE);
         test_joint(icmd, iinfo, VOCAB_CM_POSITION);
         test_joint(icmd, iinfo, VOCAB_CM_POSITION_DIRECT);
         test_joint(icmd, iinfo, VOCAB_CM_VELOCITY);
+        test_joint(icmd, iinfo, VOCAB_CM_VELOCITY_DIRECT);
         test_joint(icmd, iinfo, VOCAB_CM_CURRENT);
         test_joint(icmd, iinfo, VOCAB_CM_PWM);
         test_joint(icmd, iinfo, VOCAB_CM_IMPEDANCE_POS);

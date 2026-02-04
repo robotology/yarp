@@ -28,6 +28,12 @@ enum yPidControlTypeEnum {
   yarp.enumbase = "int32_t"
 )
 
+enum ySelectableControlModeEnum {
+} (
+  yarp.name = "yarp::dev::SelectableControlModeEnum"
+  yarp.includefile = "yarp/dev/IControlMode.h"
+  yarp.enumbase = "int32_t"
+)
 
 //-------------------------------------------------
 // IJointBrake
@@ -64,7 +70,19 @@ struct return_getAxes {
 }
 
 //-------------------------------------------------
+// IControlModes
+struct return_getAvailableControlModes {
+  1: yReturnValue ret;
+  2: list<ySelectableControlModeEnum> avail;
+}
+
+//-------------------------------------------------
 // IPidControl
+struct return_getAvailablePids {
+  1: yReturnValue ret;
+  2: list<yPidControlTypeEnum> avail;
+}
+
 struct return_getPid {
   1: yReturnValue ret;
   2: yPid pid;
@@ -158,6 +176,8 @@ struct return_getVelLimits {
 //-------------------------------------------------
 service ControlBoardMsgs
 {
+    return_getAvailableControlModes    getAvailableControlModesRPC(1: i16 j);
+    
     yReturnValue               setManualBrakeActiveRPC(1: i32 j, 2:bool active);
     yReturnValue               setAutoBrakeEnabledRPC(1: i32 j, 2:bool enabled);
     return_isJointBraked       isJointBrakedRPC(1:i32 j) (yarp.qualifier = "const");
@@ -167,6 +187,10 @@ service ControlBoardMsgs
     return_getRefVelocityOne    getRefVelocityOneRPC(1:i32 j) (yarp.qualifier = "const");
     return_getRefVelocityAll    getRefVelocityAllRPC() (yarp.qualifier = "const");
     return_getRefVelocityGroup  getRefVelocityGroupRPC(1: list<i32> j) (yarp.qualifier = "const");
+
+    yReturnValue               setControlModeOneRPC(1:i32 j, 2:ySelectableControlModeEnum mod);
+    yReturnValue               setControlModeAllRPC(1:list<ySelectableControlModeEnum> modes);
+    yReturnValue               setControlModeGroupRPC(1: list<i32> j, 2: list<ySelectableControlModeEnum> modes);
 
     yReturnValue               setPosLimitsRPC(1: i16 j, 2: double min, 3: double max);
     yReturnValue               setVelLimitsRPC(1: i16 j, 2: double min, 3: double max);
@@ -182,6 +206,7 @@ service ControlBoardMsgs
     yReturnValue               setPidReferencesRPC(1: yPidControlTypeEnum pidtype, 2: list<double> refs);
     yReturnValue               setPidErrorLimitRPC(1: yPidControlTypeEnum pidtype, 2: i16 j, 3: double limit);
     yReturnValue               setPidErrorLimitsRPC(1: yPidControlTypeEnum pidtype, 2: list<double> limits);
+    return_getAvailablePids    getAvailablePidsRPC(1: i16 j);
     return_isPidEnabled        isPidEnabledRPC(1: yPidControlTypeEnum pidtype, 2: i16 j);
     return_getPidError         getPidErrorRPC(1: yPidControlTypeEnum pidtype, 2: i16 j);
     return_getPidErrors        getPidErrorsRPC(1: yPidControlTypeEnum pidtype);

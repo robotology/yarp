@@ -157,6 +157,7 @@ public:
     double* _ref_speeds = nullptr;           // used for position control.
     double* _command_speeds = nullptr;       // used for velocity control.
     double* _ref_accs = nullptr;             // used for velocity control.
+    std::vector<yarp::dev::SelectableControlModeEnum>* _availableControlModes = nullptr;
 
     bool alloc(int njoints);
     bool dealloc();
@@ -215,6 +216,7 @@ public:
     yarp::dev::ReturnValue setControlModeRaw(const int j, const int mode) override;
     yarp::dev::ReturnValue setControlModesRaw(const int n_joint, const int* joints, int* modes) override;
     yarp::dev::ReturnValue setControlModesRaw(int* modes) override;
+    yarp::dev::ReturnValue getAvailableControlModesRaw(int j, std::vector<yarp::dev::SelectableControlModeEnum>& avail) override;
 
     //IVelocityControl
     yarp::dev::ReturnValue velocityMoveRaw(int j, double sp) override;

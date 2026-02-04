@@ -18,6 +18,89 @@ YARP_LOG_COMPONENT(CB_RPC, "yarp.device.controlBoard_nws_yarp")
 }
 
 //--------------------------------------
+// IControlMode RPC methods
+
+return_getAvailableControlModes ControlBoardRPCd::getAvailableControlModesRPC(const std::int16_t j)
+{
+    std::lock_guard<std::mutex> lg(m_mutex);
+    return_getAvailableControlModes ret;
+    if (!m_iControlMode)
+    {
+        yCError(CB_RPC, "Invalid interface");
+        ret.ret = ReturnValue::return_code::return_value_error_not_ready;
+        return ret;
+    }
+
+    ret.ret = m_iControlMode->getAvailableControlModes(j, ret.avail);
+    if (!ret.ret)
+    {
+        yCError(CB_RPC, "getAvailableControlModes() failed");
+    }
+    return ret;
+}
+
+ReturnValue ControlBoardRPCd::setControlModeOneRPC(const std::int32_t j, const yarp::dev::SelectableControlModeEnum mod)
+{
+    std::lock_guard<std::mutex> lg(m_mutex);
+    ReturnValue ret;
+    if (!m_iControlMode) {
+        yCError(CB_RPC, "Invalid interface");
+        ret = ReturnValue::return_code::return_value_error_not_ready;
+        return ret;
+    }
+
+    ret = m_iControlMode->setControlMode(j, (int)(mod));
+    if (!ret) {
+        yCError(CB_RPC, "setControlMode() failed");
+    }
+    return ret;
+}
+
+ReturnValue ControlBoardRPCd::setControlModeAllRPC(const std::vector<yarp::dev::SelectableControlModeEnum>& modes)
+{
+    std::lock_guard<std::mutex> lg(m_mutex);
+    ReturnValue ret;
+    if (!m_iControlMode) {
+        yCError(CB_RPC, "Invalid interface");
+        ret = ReturnValue::return_code::return_value_error_not_ready;
+        return ret;
+    }
+
+    std::vector<int> tmp;
+    tmp.resize(modes.size());
+    for (size_t i = 0; i < modes.size(); i++)
+    {   tmp[i] = (int)(modes[i]); }
+    ret = m_iControlMode->setControlModes(tmp.data());
+
+    if (!ret) {
+        yCError(CB_RPC, "setControlModes() failed");
+    }
+    return ret;
+}
+
+ReturnValue ControlBoardRPCd::setControlModeGroupRPC(const std::vector<std::int32_t>& j, const std::vector<yarp::dev::SelectableControlModeEnum>& modes)
+{
+    std::lock_guard<std::mutex> lg(m_mutex);
+    ReturnValue ret;
+    if (!m_iControlMode) {
+        yCError(CB_RPC, "Invalid interface");
+        ret = ReturnValue::return_code::return_value_error_not_ready;
+        return ret;
+    }
+
+    std::vector<int> tmp;
+    tmp.resize(modes.size());
+    for (size_t i = 0; i < modes.size(); i++)
+    {   tmp[i] = (int)(modes[i]); }
+    ret = m_iControlMode->setControlModes(j.size(), j.data(), tmp.data());
+
+    if (!ret) {
+        yCError(CB_RPC, "setControlModes() failed");
+    }
+    return ret;
+}
+
+//--------------------------------------
 // IJointBraked RPC methods
 
 return_isJointBraked ControlBoardRPCd::isJointBrakedRPC(const std::int32_t j) const
@@ -194,6 +277,27 @@ yarp::dev::ReturnValue ControlBoardRPCd::setPidsRPC(const yarp::dev::PidControlT
     if (!ret) {
         yCError(CB_RPC, "Unable to setPidsRPC");
         return ReturnValue::return_code::return_value_error_generic;
+    }
+    return ret;
+}
+
+return_getAvailablePids ControlBoardRPCd::getAvailablePidsRPC(const std::int16_t j)
+{
+    std::lock_guard<std::mutex> lg(m_mutex);
+    return_getAvailablePids ret;
+    if (!m_iPidControl)
+    {
+        yCError(CB_RPC, "Invalid interface");
+        ret.ret = ReturnValue::return_code::return_value_error_not_ready;
+        return ret;
+    }
+
+    ret.ret = m_iPidControl->getAvailablePids(j, ret.avail);
+    if (!ret.ret)
+    {
+        yCError(CB_RPC, "Unable to getAvailablePidsRPC");
+        ret.ret = ReturnValue::return_code::return_value_error_generic;
+        return ret;
     }
     return ret;
 }

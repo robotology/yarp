@@ -168,6 +168,7 @@ public:
     yarp::dev::ReturnValue getAxes(int *ax) override;
 
     // IPidControl
+    yarp::dev::ReturnValue getAvailablePids(int j, std::vector<yarp::dev::PidControlTypeEnum>& avail) override;
     yarp::dev::ReturnValue setPid(const PidControlTypeEnum& pidtype, int j, const Pid &pid) override;
     yarp::dev::ReturnValue setPids(const PidControlTypeEnum& pidtype, const Pid *pids) override;
     yarp::dev::ReturnValue setPidReference(const PidControlTypeEnum& pidtype, int j, double ref) override;
@@ -331,6 +332,7 @@ public:
     yarp::dev::ReturnValue getCurrentImpedanceLimit(int j, double *min_stiff, double *max_stiff, double *min_damp, double *max_damp) override;
 
     // IControlMode
+    yarp::dev::ReturnValue getAvailableControlModes(int j, std::vector<yarp::dev::SelectableControlModeEnum>& avail) override;
     yarp::dev::ReturnValue getControlMode(int j, int *mode) override;
     yarp::dev::ReturnValue getControlModes(int *modes) override;
     yarp::dev::ReturnValue getControlModes(const int n_joint, const int *joints, int *modes) override;

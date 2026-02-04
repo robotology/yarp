@@ -73,6 +73,15 @@ bool ImplementPidControl::uninitialize ()
      return true;
 }
 
+ReturnValue ImplementPidControl::getAvailablePids(int j, std::vector<PidControlTypeEnum>& avail)
+{
+    if (j >= castToMapper(helper)->axes()){yError("joint id out of bound"); return ReturnValue::return_code::return_value_error_method_failed;}
+    Pid pid_machine;
+    int k;
+    ControlBoardHelper* cb_helper = castToMapper(helper);
+    return iPid->getAvailablePidsRaw(j, avail);
+}
+
 ReturnValue ImplementPidControl::setPid(const PidControlTypeEnum& pidtype, int j, const Pid &pid)
 {
     if (j >= castToMapper(helper)->axes()){yError("joint id out of bound"); return ReturnValue::return_code::return_value_error_method_failed;}

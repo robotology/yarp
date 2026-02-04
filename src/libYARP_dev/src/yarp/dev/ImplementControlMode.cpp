@@ -53,6 +53,13 @@ bool ImplementControlMode::uninitialize ()
     return true;
 }
 
+ReturnValue ImplementControlMode::getAvailableControlModes(int j, std::vector<yarp::dev::SelectableControlModeEnum>& avail)
+{
+    JOINTIDCHECK(MAPPER_MAXID)
+    int k=castToMapper(helper)->toHw(j);
+    return raw->getAvailableControlModesRaw(k, avail);
+}
+
 ReturnValue ImplementControlMode::getControlMode(int j, int *f)
 {
     JOINTIDCHECK(MAPPER_MAXID)

@@ -6,6 +6,7 @@
 #ifndef YARP_DEV_ICONTROLMODE_H
 #define YARP_DEV_ICONTROLMODE_H
 
+#include <vector>
 #include <yarp/os/Vocab.h>
 #include <yarp/dev/api.h>
 #include <yarp/dev/ReturnValue.h>
@@ -13,6 +14,44 @@
 namespace yarp::dev {
 class IControlModeRaw;
 class IControlMode;
+
+enum class SelectableControlModeEnum
+{
+    VOCAB_CM_IDLE            =   yarp::os::createVocab32('i','d','l'),
+    VOCAB_CM_TORQUE          =   yarp::os::createVocab32('t','o','r','q'),
+    VOCAB_CM_POSITION        =   yarp::os::createVocab32('p','o','s'),
+    VOCAB_CM_POSITION_DIRECT =   yarp::os::createVocab32('p','o','s','d'),
+    VOCAB_CM_VELOCITY        =   yarp::os::createVocab32('v','e','l'),
+    VOCAB_CM_VELOCITY_DIRECT =   yarp::os::createVocab32('v','e','l','d'),
+    VOCAB_CM_CURRENT         =   yarp::os::createVocab32('i','c','u','r'),
+    VOCAB_CM_PWM             =   yarp::os::createVocab32('i','p','w','m'),
+    VOCAB_CM_IMPEDANCE_POS   =   yarp::os::createVocab32('i','m','p','o'),  // deprecated
+    VOCAB_CM_IMPEDANCE_VEL   =   yarp::os::createVocab32('i','m','v','e'),  // deprecated
+    VOCAB_CM_MIXED           =   yarp::os::createVocab32('m','i','x'),
+    VOCAB_CM_FORCE_IDLE      =   yarp::os::createVocab32('f','i','d','l')
+};
+
+enum class ControlModeEnum
+{
+    VOCAB_CM_IDLE            =   yarp::os::createVocab32('i','d','l'),
+    VOCAB_CM_TORQUE          =   yarp::os::createVocab32('t','o','r','q'),
+    VOCAB_CM_POSITION        =   yarp::os::createVocab32('p','o','s'),
+    VOCAB_CM_POSITION_DIRECT =   yarp::os::createVocab32('p','o','s','d'),
+    VOCAB_CM_VELOCITY        =   yarp::os::createVocab32('v','e','l'),
+    VOCAB_CM_VELOCITY_DIRECT =   yarp::os::createVocab32('v','e','l','d'),
+    VOCAB_CM_CURRENT         =   yarp::os::createVocab32('i','c','u','r'),
+    VOCAB_CM_PWM             =   yarp::os::createVocab32('i','p','w','m'),
+    VOCAB_CM_IMPEDANCE_POS   =   yarp::os::createVocab32('i','m','p','o'),  // deprecated
+    VOCAB_CM_IMPEDANCE_VEL   =   yarp::os::createVocab32('i','m','v','e'),  // deprecated
+    VOCAB_CM_MIXED           =   yarp::os::createVocab32('m','i','x'),
+    VOCAB_CM_FORCE_IDLE      =   yarp::os::createVocab32('f','i','d','l'),
+    VOCAB_CM_HW_FAULT        =   yarp::os::createVocab32('h','w','f','a'),
+    VOCAB_CM_CALIBRATING     =   yarp::os::createVocab32('c','a','l'),     // the joint is calibrating
+    VOCAB_CM_CALIB_DONE      =   yarp::os::createVocab32('c','a','l','d'), // calibration successfully completed
+    VOCAB_CM_NOT_CONFIGURED  =   yarp::os::createVocab32('c','f','g','n'), // missing initial configuration (default value at start-up)
+    VOCAB_CM_CONFIGURED      =   yarp::os::createVocab32('c','f','g','y'), // initial configuration completed, if any
+    VOCAB_CM_UNKNOWN         =   yarp::os::createVocab32('u','n','k','w')
+};
 }
 
 /**
@@ -24,6 +63,14 @@ class YARP_dev_API yarp::dev::IControlMode
 {
 public:
     virtual ~IControlMode(){}
+
+    /**
+    * Return a list of available control mode for the given joint.
+    * @param j joint number
+    * @param avail a vector that will contain the list of available control modes for joint j.
+    * @return: true/false success failure.
+    */
+    virtual yarp::dev::ReturnValue getAvailableControlModes(int j, std::vector<yarp::dev::SelectableControlModeEnum>& avail)=0;
 
     /**
     * Get the current control mode.
@@ -100,6 +147,7 @@ class YARP_dev_API yarp::dev::IControlModeRaw
 {
 public:
     virtual ~IControlModeRaw(){}
+    virtual yarp::dev::ReturnValue getAvailableControlModesRaw(int j, std::vector<yarp::dev::SelectableControlModeEnum>& avail)=0;
     virtual yarp::dev::ReturnValue getControlModeRaw(int j, int *mode)=0;
     virtual yarp::dev::ReturnValue getControlModesRaw(int* modes)=0;
     virtual yarp::dev::ReturnValue getControlModesRaw(const int n_joint, const int *joints, int *modes)=0;
