@@ -58,6 +58,9 @@ public:
     // return the device with the given name or <fatal error> if not found
     Device* findDevice(const std::string& name);
 
+    //Print a debug message with a list of devices
+    void PrintDevicesIncludingExternal() const;
+
     // return true if a device with the given name exists
     // considering also the provided external devices
     bool hasDeviceIncludingExternal(const std::string& name) const;
@@ -138,6 +141,14 @@ yarp::robotinterface::Device* yarp::robotinterface::Robot::Private::findDevice(c
         }
     }
     return nullptr;
+}
+
+void yarp::robotinterface::Robot::Private::PrintDevicesIncludingExternal() const
+{
+    for (int i = 0; i < externalDevices.size(); i++) {
+        const yarp::dev::PolyDriverDescriptor* externalDevice = externalDevices[i];
+        yCInfo(YRI_ROBOT) << "- " << externalDevice->key;
+    }
 }
 
 bool yarp::robotinterface::Robot::Private::hasDeviceIncludingExternal(const std::string& name) const
@@ -374,6 +385,8 @@ bool yarp::robotinterface::Robot::Private::calibrate(const yarp::robotinterface:
 
     if (!hasDeviceIncludingExternal(targetDeviceName)) {
         yCError(YRI_ROBOT) << "Target device" << targetDeviceName << "does not exist.";
+        yCError(YRI_ROBOT) << "Available target devices are:";
+        PrintDevicesIncludingExternal();
         return false;
     }
 
@@ -430,6 +443,8 @@ bool yarp::robotinterface::Robot::Private::attach(const yarp::robotinterface::De
 
         if (!hasDeviceIncludingExternal(targetDeviceName)) {
             yCError(YRI_ROBOT) << "Target device" << targetDeviceName << "(network =" << targetNetwork << ") does not exist.";
+            yCError(YRI_ROBOT) << "Available target devices are:";
+            PrintDevicesIncludingExternal();
             return false;
         }
 
@@ -466,6 +481,8 @@ bool yarp::robotinterface::Robot::Private::attach(const yarp::robotinterface::De
             std::string targetDeviceName = yarp::robotinterface::findParam(params, targetNetwork);
             if (!hasDeviceIncludingExternal(targetDeviceName)) {
                 yCError(YRI_ROBOT) << "Target device" << targetDeviceName << "(network =" << targetNetwork << ") does not exist.";
+                yCError(YRI_ROBOT) << "Available target devices are:";
+                PrintDevicesIncludingExternal();
                 return false;
             }
 
@@ -524,6 +541,8 @@ bool yarp::robotinterface::Robot::Private::park(const yarp::robotinterface::Devi
 
     if (!hasDeviceIncludingExternal(targetDeviceName)) {
         yCError(YRI_ROBOT) << "Target device" << targetDeviceName << "does not exist.";
+        yCError(YRI_ROBOT) << "Available target devices are:";
+        PrintDevicesIncludingExternal();
         return false;
     }
 

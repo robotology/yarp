@@ -1,0 +1,2 @@
+yarp/sig/ColorRGB.h
+yarp/sig/ColorRGB.cpp

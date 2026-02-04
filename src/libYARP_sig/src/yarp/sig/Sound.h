@@ -70,9 +70,9 @@ public:
      /**
       * Returns a subpart of the sound
       * @param first_sample the starting sample number
-      * @param last_sample the ending sample number
+      * @param len the max size (in samples) of the subSound
       */
-    Sound subSound(size_t first_sample, size_t last_sample);
+    Sound subSound(size_t first_sample, size_t len);
 
     /**
      * Set the sound size.

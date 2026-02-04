@@ -367,6 +367,10 @@ void MainWindow::init(yarp::os::Property config)
 
     }
 
+    if(config.check("disable_autoreload")){
+        ui->actionAuto_reload->setChecked(false);
+    }
+
     onYarpNameList();
 }
 

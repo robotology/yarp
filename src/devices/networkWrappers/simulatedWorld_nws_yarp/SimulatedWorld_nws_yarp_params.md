@@ -1,0 +1,1 @@
+ * |      |  name             | string  | -              |   /robotName/battery1 | Yes                         | prefix of the ports opened by the device                                         | MUST start with a '/' character. /data:o and /rpc:i is automatically appended by the wrapper at the end |

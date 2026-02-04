@@ -1,0 +1,2 @@
+yarp/sig/Pose6D.h
+yarp/sig/Pose6D.cpp

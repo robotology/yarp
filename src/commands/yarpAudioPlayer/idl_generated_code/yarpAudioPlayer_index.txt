@@ -1,0 +1,2 @@
+yarpAudioPlayer_IDL.h
+yarpAudioPlayer_IDL.cpp

@@ -34,23 +34,6 @@ bool YARP_sig_API read_bytestream(Sound& data, const char* filename, size_t stre
  */
 bool YARP_sig_API write(const Sound& data, const char* filename);
 
-class YARP_sig_API soundStreamReader
-{
-private:
-    Sound m_sound_data;
-    size_t m_index = 0;
-    size_t m_totsize = 0;
-
-public:
-    soundStreamReader() = default;
-    ~soundStreamReader() = default;
-
-    bool open(const char* filename);
-    bool close();
-    size_t readBlock(Sound& dest, size_t block_size);
-    bool rewind(size_t sample_offset = 0);
-    size_t getIndex();
-};
 } // namespace yarp::sig::file
 
 #endif // YARP_SIG_SOUNDFILE_H

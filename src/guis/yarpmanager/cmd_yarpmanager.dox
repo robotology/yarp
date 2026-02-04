@@ -81,6 +81,9 @@ color_theme = dark
 
 # External editor (e.g. gedit, notepad)
 external_editor = gvim
+
+# Disable autoreload
+disable_autoreload
 \endverbatim
 
 Items 'apppath', 'modpath' and 'respath' respectively point to the folder where the XML description files of Applications, Modules and Resources can be found. All description file names must have ".xml" extension. If 'load_subfolders=yes', applications description files will be  recursively loaded from sub folders of 'apppath'.

@@ -130,6 +130,7 @@
 %feature("notabstract") Stamp;
 %feature("notabstract") RpcClient;
 %feature("notabstract") RpcServer;
+%feature("notabstract") ReturnValue;
 %feature("abstract") Portable;
 %feature("abstract") PortReader;
 %feature("abstract") PortWriter;
@@ -744,6 +745,8 @@ MAKE_COMMS  (Map2DPath, yarp::dev::Nav2D::Map2DPath)
     }
 %enddef
 
+// Macro for interfaces in namespaces (e.g., yarp::dev::Nav2D::INavigation2D)
+// Requires full class path and method name suffix
 %extend yarp::dev::PolyDriver {
 
     CAST_POLYDRIVER_TO_INTERFACE(IFrameGrabberImage)

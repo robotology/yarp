@@ -89,6 +89,21 @@ TEST_CASE("sig::SoundTest", "[yarp::sig]")
         CHECK(b3);
     }
 
+    SECTION("Test a very long sound")
+    {
+        Sound snd1;
+        size_t large_size = 44100 * 60 * 5; // 5 minutes of audio at 44.1kHz
+        snd1.resize(large_size, 1);
+
+        Sound snd2;
+        double start = yarp::os::Time::now();
+        bool b1 = Property::copyPortable(snd1, snd2);
+        double end = yarp::os::Time::now();
+        double elapsed = end - start;
+        CHECK(b1);
+        CHECK(snd2.getSamples() == large_size );
+    }
+
     SECTION("check operator ==")
     {
         bool ok = true;
@@ -139,7 +154,7 @@ TEST_CASE("sig::SoundTest", "[yarp::sig]")
         Sound snd1;
         snd1.resize(10, 3);
         generate_test_sound(snd1, 10, 3);
-        Sound subsnd1 = snd1.subSound(3, 7); //this includes samples 3 4 5 6
+        Sound subsnd1 = snd1.subSound(3, 4); //this includes samples 3 4 5 6
 
         Sound snd2;
         snd2.resize(4, 3);
@@ -152,6 +167,16 @@ TEST_CASE("sig::SoundTest", "[yarp::sig]")
         }
         bool ok = (subsnd1 == snd2);
         CHECK(ok);
+
+        Sound subsnd2;
+        subsnd2 = snd1.subSound(3, 4);
+        CHECK(subsnd2.getSamples() == 4);
+        subsnd2 = snd1.subSound(3, 0);
+        CHECK(subsnd2.getSamples() == 0);
+        subsnd2 = snd1.subSound(3, 10);
+        CHECK(subsnd2.getSamples() == 7);
+        subsnd2 = snd1.subSound(99, 10);
+        CHECK(subsnd2.getSamples() == 0);
     }
 
     SECTION("check extractChannel.")
