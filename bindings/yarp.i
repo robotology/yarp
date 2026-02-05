@@ -1549,11 +1549,8 @@ MAKE_COMMS  (Map2DPath, yarp::dev::Nav2D::Map2DPath)
         return self->setPidOffset((yarp::dev::PidControlTypeEnum)pidtype, j, offset);
     }
 
-    bool isPidEnabled(int pidtype, int j, std::vector<bool>& flag) {
-        std::vector<char> data(flag.size());
-        bool result = self->isPidEnabled((yarp::dev::PidControlTypeEnum)pidtype, j, (bool*)(&data[0]));
-        for (size_t i = 0; i < data.size(); i++) flag[i] = data[i] != 0;
-        return result;
+    bool isPidEnabled(int pidtype, int j, bool& flag) {
+        return self->isPidEnabled((yarp::dev::PidControlTypeEnum)pidtype, j, flag);
     }
 }
 
