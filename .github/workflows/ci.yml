@@ -956,7 +956,7 @@ jobs:
           }
         - {
             id: '301',
-            os: macos-13,
+            os: macos-15,
             build_type: "Release",
             cc: "clang",
             cxx: "clang++",
@@ -965,7 +965,7 @@ jobs:
           }
         - {
             id: '302',
-            os: macos-13,
+            os: macos-15,
             build_type: "Release",
             cc: "clang",
             cxx: "clang++",
