@@ -1576,7 +1576,12 @@ void t_yarp_generator::generate_deserialize_container(std::ostringstream& f_cpp_
 {
     THRIFT_DEBUG_COMMENT(f_cpp_);
 
-    if (ttype->is_map()) {
+    if (ttype->is_map())
+    {
+        // Begin scope of _csize
+        f_cpp_ << indent_cpp() << "{\n";
+        indent_up_cpp();
+
         f_cpp_ << indent_cpp() << "size_t _csize;\n";
         // kttpe and vtype available
         f_cpp_ << indent_cpp() << "yarp::os::idl::WireState _ktype;\n";
@@ -1595,7 +1600,16 @@ void t_yarp_generator::generate_deserialize_container(std::ostringstream& f_cpp_
         // Read container end
         f_cpp_ << indent_cpp() << "reader.readMapEnd();\n";
 
-    } else if (ttype->is_set()) {
+        // End scope of _csize
+        indent_down_cpp();
+        f_cpp_ << indent_cpp() << "}\n";
+    }
+    else if (ttype->is_set())
+    {
+        // Begin scope of _csize
+        f_cpp_ << indent_cpp() << "{\n";
+        indent_up_cpp();
+
         f_cpp_ << indent_cpp() << "size_t _csize;\n";
         f_cpp_ << indent_cpp() << "yarp::os::idl::WireState _etype;\n";
         f_cpp_ << indent_cpp() << "reader.readSetBegin(_etype, _csize);\n";
@@ -1612,10 +1626,19 @@ void t_yarp_generator::generate_deserialize_container(std::ostringstream& f_cpp_
         // Read container end
         f_cpp_ << indent_cpp() << "reader.readSetEnd();\n";
 
-    } else if (ttype->is_list()) {
+        // End scope of _csize
+        indent_down_cpp();
+        f_cpp_ << indent_cpp() << "}\n";
+    }
+    else if (ttype->is_list())
+    {
         t_container* tcontainer = static_cast<t_container*>(ttype);
         auto* elem_type = static_cast<t_list*>(ttype)->get_elem_type();
         bool use_push = tcontainer->has_cpp_name() || (static_cast<t_base_type*>(elem_type)->get_base() == t_base_type::TYPE_BOOL);
+
+        // Begin scope of _csize
+        f_cpp_ << indent_cpp() << "{\n";
+        indent_up_cpp();
 
         f_cpp_ << indent_cpp() << "size_t _csize;\n";
         f_cpp_ << indent_cpp() << "yarp::os::idl::WireState _etype;\n";
@@ -1671,6 +1694,10 @@ void t_yarp_generator::generate_deserialize_container(std::ostringstream& f_cpp_
 
         // Read container end
         f_cpp_ << indent_cpp() << "reader.readListEnd();\n";
+
+        // End scope of _csize
+        indent_down_cpp();
+        f_cpp_ << indent_cpp() << "}\n";
     }
 }
 
