@@ -236,7 +236,6 @@ public:
 
 TEST_CASE("IdlThriftTest", "[yarp::idl::thrift]")
 {
-    Network yarp;
     yarp::os::Network::setLocalMode(true);
 
     SECTION("add one")
@@ -294,7 +293,8 @@ TEST_CASE("IdlThriftTest", "[yarp::idl::thrift]")
         RpcServer server_port;
         REQUIRE(client_port.open("/client"));
         REQUIRE(server_port.open("/server"));
-        REQUIRE(yarp.connect(client_port.getName(), server_port.getName()));
+        bool b_conn = yarp::os::Network::connect(client_port.getName(), server_port.getName());
+        REQUIRE(b_conn);
 
         int x = 0;
         client.yarp().attachAsClient(client_port);
@@ -322,7 +322,8 @@ TEST_CASE("IdlThriftTest", "[yarp::idl::thrift]")
         RpcServer server_port;
         REQUIRE(client_port.open("/client"));
         REQUIRE(server_port.open("/server"));
-        REQUIRE(yarp.connect(client_port.getName(), server_port.getName()));
+        bool b_conn = yarp::os::Network::connect(client_port.getName(), server_port.getName());
+        REQUIRE(b_conn);
 
         client.yarp().attachAsClient(client_port);
         server.yarp().attachAsServer(server_port);
@@ -368,7 +369,8 @@ TEST_CASE("IdlThriftTest", "[yarp::idl::thrift]")
         RpcServer server_port;
         REQUIRE(client_port.open("/client"));
         REQUIRE(server_port.open("/server"));
-        REQUIRE(yarp.connect(client_port.getName(), server_port.getName()));
+        bool b_conn = yarp::os::Network::connect(client_port.getName(), server_port.getName());
+        REQUIRE(b_conn);
         client.yarp().attachAsClient(client_port);
         server.yarp().attachAsServer(server_port);
 
@@ -392,7 +394,8 @@ TEST_CASE("IdlThriftTest", "[yarp::idl::thrift]")
         RpcServer server_port;
         client_port.open("/client");
         REQUIRE(server_port.open("/server"));
-        REQUIRE(yarp.connect(client_port.getName(), server_port.getName()));
+        bool b_conn = yarp::os::Network::connect(client_port.getName(), server_port.getName());
+        REQUIRE(b_conn);
         client.yarp().attachAsClient(client_port);
         server.yarp().attachAsServer(server_port);
 
@@ -408,7 +411,8 @@ TEST_CASE("IdlThriftTest", "[yarp::idl::thrift]")
         RpcServer server_port;
         CHECK(client_port.open("/client"));
         REQUIRE(server_port.open("/server"));
-        REQUIRE(yarp.connect(client_port.getName(), server_port.getName()));
+        bool b_conn = yarp::os::Network::connect(client_port.getName(), server_port.getName());
+        REQUIRE(b_conn);
         server.yarp().attachAsServer(server_port);
 
         Bottle msg;
@@ -469,7 +473,8 @@ TEST_CASE("IdlThriftTest", "[yarp::idl::thrift]")
         RpcServer server_port;
         REQUIRE(client_port.open("/client"));
         REQUIRE(server_port.open("/server"));
-        REQUIRE(yarp.connect(client_port.getName(), server_port.getName()));
+        bool b_conn = yarp::os::Network::connect(client_port.getName(), server_port.getName());
+        REQUIRE(b_conn);
         server.yarp().attachAsServer(server_port);
 
         Bottle msg;
@@ -508,7 +513,8 @@ TEST_CASE("IdlThriftTest", "[yarp::idl::thrift]")
         RpcServer server_port;
         REQUIRE(client_port.open("/client"));
         REQUIRE(server_port.open("/server"));
-        REQUIRE(yarp.connect(client_port.getName(), server_port.getName()));
+        bool b_conn = yarp::os::Network::connect(client_port.getName(), server_port.getName());
+        REQUIRE(b_conn);
         server.yarp().attachAsServer(server_port);
 
         Bottle msg;
@@ -566,7 +572,8 @@ TEST_CASE("IdlThriftTest", "[yarp::idl::thrift]")
         RpcServer server_port;
         REQUIRE(client_port.open("/client"));
         REQUIRE(server_port.open("/server"));
-        REQUIRE(yarp.connect(client_port.getName(), server_port.getName()));
+        bool b_conn = yarp::os::Network::connect(client_port.getName(), server_port.getName());
+        REQUIRE(b_conn);
 
         int x = 0;
         client.yarp().attachAsClient(client_port);
@@ -602,7 +609,8 @@ TEST_CASE("IdlThriftTest", "[yarp::idl::thrift]")
         RpcServer server_port;
         REQUIRE(client_port.open("/client"));
         REQUIRE(server_port.open("/server"));
-        REQUIRE(yarp.connect(client_port.getName(), server_port.getName()));
+        bool b_conn = yarp::os::Network::connect(client_port.getName(), server_port.getName());
+        REQUIRE(b_conn);
 
         int x = 0;
         client.yarp().attachAsClient(client_port);
@@ -1010,7 +1018,8 @@ TEST_CASE("IdlThriftTest", "[yarp::idl::thrift]")
 
         REQUIRE(sender_port.open("/sender"));
         REQUIRE(receiver_port.open("/receiver"));
-        REQUIRE(yarp.connect(sender_port.getName(), receiver_port.getName()));
+        bool b_conn = yarp::os::Network::connect(sender_port.getName(), receiver_port.getName());
+        REQUIRE(b_conn);
 
         settings.set_id(5);
         CHECK(receiver.state().id == 5); // int assignment
@@ -1061,7 +1070,8 @@ TEST_CASE("IdlThriftTest", "[yarp::idl::thrift]")
         RpcServer server_port;
         REQUIRE(client_port.open("/client"));
         REQUIRE(server_port.open("/server"));
-        REQUIRE(yarp.connect(client_port.getName(), server_port.getName()));
+        bool b_conn = yarp::os::Network::connect(client_port.getName(), server_port.getName());
+        REQUIRE(b_conn);
         client.yarp().attachAsClient(client_port);
         server.yarp().attachAsServer(server_port);
 
@@ -1080,7 +1090,8 @@ TEST_CASE("IdlThriftTest", "[yarp::idl::thrift]")
         RpcServer server_port;
         REQUIRE(client_port.open("/client"));
         REQUIRE(server_port.open("/server"));
-        REQUIRE(yarp.connect(client_port.getName(), server_port.getName()));
+        bool b_conn = yarp::os::Network::connect(client_port.getName(), server_port.getName());
+        REQUIRE(b_conn);
         client.yarp().attachAsClient(client_port);
         server.yarp().attachAsServer(server_port);
 
@@ -1105,16 +1116,20 @@ TEST_CASE("IdlThriftTest", "[yarp::idl::thrift]")
         RpcServer server_port;
         REQUIRE(client_port.open("/client"));
         REQUIRE(server_port.open("/server"));
-        REQUIRE(yarp.connect(client_port.getName(), server_port.getName()));
+        bool b_conn = yarp::os::Network::connect(client_port.getName(), server_port.getName());
+        REQUIRE(b_conn);
         client.yarp().attachAsClient(client_port);
         server.yarp().attachAsServer(server_port);
 
         INFO("calling a const method");
         CHECK(const_cast<const Demo&>(client).this_is_a_const_method());
     }
+
+    yarp::os::Network::setLocalMode(false);
 }
 
 int main(int argc, char* argv[])
 {
+    Network yarp;
     return Catch::Session().run(argc, argv);
 }
