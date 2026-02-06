@@ -224,7 +224,7 @@ bool ControlBoard_nws_yarp::setDevice(yarp::dev::DeviceDriver* driver, bool owne
 
     subdevice_ptr->view(iJointBrake);
     if (!iJointBrake) {
-        yCWarning(CONTROLBOARD, "Part <%s>: iJointBrake interface was not found in subdevice.", partName.c_str());
+        yCError(CONTROLBOARD, "Part <%s>: iJointBrake interface was not found in subdevice.", partName.c_str());
     }
 
     subdevice_ptr->view(iVelocityDirect);
