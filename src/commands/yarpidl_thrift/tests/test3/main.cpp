@@ -10,7 +10,6 @@
 #include <catch2/catch_amalgamated.hpp>
 
 using namespace yarp::os;
-using namespace yarp::os::impl;
 
 
 TEST_CASE("IdlThriftTest3", "[yarp::idl::thrift3]")
