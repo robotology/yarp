@@ -177,7 +177,7 @@ struct return_getVelLimits {
 service ControlBoardMsgs
 {
     return_getAvailableControlModes    getAvailableControlModesRPC(1: i16 j);
-    
+
     yReturnValue               setManualBrakeActiveRPC(1: i32 j, 2:bool active);
     yReturnValue               setAutoBrakeEnabledRPC(1: i32 j, 2:bool enabled);
     return_isJointBraked       isJointBrakedRPC(1:i32 j) (yarp.qualifier = "const");
