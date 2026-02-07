@@ -65,6 +65,15 @@ namespace yarp::dev::tests
         yarp::dev::PidControlTypeEnum pp = yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_POSITION;
         yarp::dev::PidControlTypeEnum vv = yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY;
 
+        // get available pids
+        {
+            bool b;
+            std::vector<yarp::dev::PidControlTypeEnum> avail;
+            b = ipid->getAvailablePids(0, avail);
+            CHECK(b);
+            CHECK(avail.size() == 7 * 3); // position, velocity, torque, current, position direct, velocity direct, mixed
+        }
+
         // Pid enable/disable
         {
             bool enabled;

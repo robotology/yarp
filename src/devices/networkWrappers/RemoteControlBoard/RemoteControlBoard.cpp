@@ -983,6 +983,18 @@ yarp::dev::ReturnValue RemoteControlBoard::getAxes(int *ax)
 
 // BEGIN IPidControl
 
+ReturnValue RemoteControlBoard::getAvailablePids(int j, std::vector<yarp::dev::PidControlTypeEnum>& avail)
+{
+    // std::lock_guard<std::mutex> lg(m_mutex);
+    auto ret = m_RPC.getAvailablePidsRPC(j);
+    if (!ret.ret) {
+        yCError(REMOTECONTROLBOARD, "Unable to getAvailablePids");
+        return ret.ret;
+    }
+    avail = ret.avail;
+    return ret.ret;
+}
+
 ReturnValue RemoteControlBoard::setPid(const PidControlTypeEnum& pidtype, int j, const Pid &pid)
 {
     // std::lock_guard<std::mutex> lg(m_mutex);
@@ -2321,6 +2333,18 @@ yarp::dev::ReturnValue RemoteControlBoard::getCurrentImpedanceLimit(int j, doubl
 
 // BEGIN IControlMode
 
+ReturnValue RemoteControlBoard::getAvailableControlModes(int j, std::vector<yarp::dev::SelectableControlModeEnum>& avail)
+{
+    // std::lock_guard<std::mutex> lg(m_mutex);
+    auto ret = m_RPC.getAvailableControlModesRPC(j);
+    if (!ret.ret) {
+        yCError(REMOTECONTROLBOARD, "Unable to getAvailableControlModes");
+        return ret.ret;
+    }
+    avail =ret.avail;
+    return ret.ret;
+}
+
 yarp::dev::ReturnValue RemoteControlBoard::getControlMode(int j, int *mode)
 {
     double localArrivalTime=0.0;
@@ -2360,62 +2384,53 @@ yarp::dev::ReturnValue RemoteControlBoard::getControlModes(const int n_joint, co
 
 yarp::dev::ReturnValue RemoteControlBoard::setControlMode(const int j, const int mode)
 {
-    if (!isLive()) {
-        return ReturnValue::return_code::return_value_error_not_ready;
+    // std::lock_guard<std::mutex> lg(m_mutex);
+    yarp::dev::SelectableControlModeEnum emode = (yarp::dev::SelectableControlModeEnum)(mode);
+    auto ret = m_RPC.setControlModeOneRPC(j, emode);
+    if (!ret) {
+        yCError(REMOTECONTROLBOARD, "Unable to setControlMode");
+        return ret;
     }
-    Bottle cmd, response;
-    cmd.addVocab32(VOCAB_SET);
-    cmd.addVocab32(VOCAB_ICONTROLMODE);
-    cmd.addVocab32(VOCAB_CM_CONTROL_MODE);
-    cmd.addInt32(j);
-    cmd.addVocab32(mode);
-
-    bool ok = rpc_p.write(cmd, response);
-    return CHECK_FAIL(ok, response);
+    return ret;
 }
 
 yarp::dev::ReturnValue RemoteControlBoard::setControlModes(const int n_joint, const int *joints, int *modes)
 {
-    if (!isLive()) {
-        return ReturnValue::return_code::return_value_error_not_ready;
-    }
-    Bottle cmd, response;
-    cmd.addVocab32(VOCAB_SET);
-    cmd.addVocab32(VOCAB_ICONTROLMODE);
-    cmd.addVocab32(VOCAB_CM_CONTROL_MODE_GROUP);
-    cmd.addInt32(n_joint);
-    int i;
-    Bottle& l1 = cmd.addList();
-    for (i = 0; i < n_joint; i++) {
-        l1.addInt32(joints[i]);
+    // std::lock_guard<std::mutex> lg(m_mutex);
+    std::vector<int> vjoints;
+    std::vector<yarp::dev::SelectableControlModeEnum> vmodes;
+    vmodes.resize(n_joint);
+    vjoints.resize(n_joint);
+    for (size_t i = 0; i < (size_t)(n_joint); i++)
+    {
+        vjoints[i] = joints[i];
+        vmodes[i] = (yarp::dev::SelectableControlModeEnum)(modes[i]);
     }
 
-    Bottle& l2 = cmd.addList();
-    for (i = 0; i < n_joint; i++) {
-        l2.addVocab32(modes[i]);
+    auto ret = m_RPC.setControlModeGroupRPC(vjoints, vmodes);
+    if (!ret) {
+        yCError(REMOTECONTROLBOARD, "Unable to setControlModes");
+        return ret;
     }
-
-    bool ok = rpc_p.write(cmd, response);
-    return CHECK_FAIL(ok, response);
+    return ret;
 }
 
 yarp::dev::ReturnValue RemoteControlBoard::setControlModes(int *modes)
 {
-    if (!isLive()) {
-        return ReturnValue::return_code::return_value_error_not_ready;
-    }
-    Bottle cmd, response;
-    cmd.addVocab32(VOCAB_SET);
-    cmd.addVocab32(VOCAB_ICONTROLMODE);
-    cmd.addVocab32(VOCAB_CM_CONTROL_MODES);
-
-    Bottle& l2 = cmd.addList();
-    for (size_t i = 0; i < nj; i++) {
-        l2.addVocab32(modes[i]);
+    // std::lock_guard<std::mutex> lg(m_mutex);
+    std::vector<yarp::dev::SelectableControlModeEnum> vmodes;
+    vmodes.resize(nj);
+    for (size_t i = 0; i < nj; i++)
+    {
+        vmodes[i] = (yarp::dev::SelectableControlModeEnum)(modes[i]);
     }
 
-    bool ok = rpc_p.write(cmd, response);
-    return CHECK_FAIL(ok, response);
+    auto ret = m_RPC.setControlModeAllRPC(vmodes);
+    if (!ret) {
+        yCError(REMOTECONTROLBOARD, "Unable to setControlModes");
+        return ret;
+    }
+    return ret;
 }
 
 // END IControlMode

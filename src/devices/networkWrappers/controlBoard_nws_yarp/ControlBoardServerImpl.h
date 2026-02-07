@@ -16,6 +16,7 @@ class ControlBoardRPCd : public ControlBoardMsgs
     private:
     mutable std::mutex             m_mutex;
     size_t                         m_njoints = 0;
+    yarp::dev::IControlMode*       m_iControlMode = nullptr;
     yarp::dev::IJointBrake*        m_iJointBrake = nullptr;
     yarp::dev::IVelocityDirect*    m_iVelocityDirect = nullptr;
     yarp::dev::IPidControl*        m_iPidControl = nullptr;
@@ -26,14 +27,22 @@ class ControlBoardRPCd : public ControlBoardMsgs
                      yarp::dev::IJointBrake* iJointBrake,
                      yarp::dev::IVelocityDirect* IVelocityDirect,
                      yarp::dev::IPidControl* iPid,
-                     yarp::dev::IControlLimits* iLim)
+                     yarp::dev::IControlLimits* iLim,
+                     yarp::dev::IControlMode* iCmd)
     {
         m_njoints = njoints;
         m_iJointBrake = iJointBrake;
         m_iVelocityDirect = IVelocityDirect;
         m_iPidControl = iPid;
         m_iLimits=iLim;
+        m_iControlMode =iCmd;
     }
+
+    //IControlMode
+    return_getAvailableControlModes getAvailableControlModesRPC(const std::int16_t j) override;
+    yarp::dev::ReturnValue setControlModeOneRPC(const std::int32_t j, const yarp::dev::SelectableControlModeEnum mod) override;
+    yarp::dev::ReturnValue setControlModeAllRPC(const std::vector<yarp::dev::SelectableControlModeEnum>& modes) override;
+    yarp::dev::ReturnValue setControlModeGroupRPC(const std::vector<std::int32_t>& j, const std::vector<yarp::dev::SelectableControlModeEnum>& modes) override;
 
     //IJointBrake
     return_isJointBraked isJointBrakedRPC(const std::int32_t j) const override;
@@ -48,6 +57,7 @@ class ControlBoardRPCd : public ControlBoardMsgs
     return_getRefVelocityGroup getRefVelocityGroupRPC(const std::vector<std::int32_t>& jnts) const override;
 
     // IPidControl
+    return_getAvailablePids getAvailablePidsRPC(const std::int16_t j) override;
     yarp::dev::ReturnValue enablePidRPC(const yarp::dev::PidControlTypeEnum pidtype, const std::int16_t j) override;
     yarp::dev::ReturnValue disablePidRPC(const yarp::dev::PidControlTypeEnum pidtype, const std::int16_t j) override;
     yarp::dev::ReturnValue resetPidRPC(const yarp::dev::PidControlTypeEnum pidtype, const std::int16_t j) override;

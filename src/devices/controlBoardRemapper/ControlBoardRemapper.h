@@ -207,6 +207,7 @@ public:
     bool attachAll(const yarp::dev::PolyDriverList &l) override;
 
     /* IPidControl */
+    yarp::dev::ReturnValue getAvailablePids(int j, std::vector<yarp::dev::PidControlTypeEnum>& avail) override;
     yarp::dev::ReturnValue setPid(const yarp::dev::PidControlTypeEnum& pidtype,int j, const yarp::dev::Pid &p) override;
     yarp::dev::ReturnValue setPids(const yarp::dev::PidControlTypeEnum& pidtype,const yarp::dev::Pid *ps) override;
     yarp::dev::ReturnValue setPidReference(const yarp::dev::PidControlTypeEnum& pidtype,int j, double ref) override;
@@ -378,10 +379,11 @@ public:
     yarp::dev::ReturnValue getImpedance(int j, double *stiff, double *damp) override;
     yarp::dev::ReturnValue getImpedanceOffset(int j, double *offset) override;
     yarp::dev::ReturnValue getCurrentImpedanceLimit(int j, double *min_stiff, double *max_stiff, double *min_damp, double *max_damp) override;
-    yarp::dev::ReturnValue getControlMode(int j, int *mode) override;
-    yarp::dev::ReturnValue getControlModes(int *modes) override;
 
     // IControlMode interface
+    yarp::dev::ReturnValue getAvailableControlModes(int j, std::vector<yarp::dev::SelectableControlModeEnum>& avail) override;
+    yarp::dev::ReturnValue getControlMode(int j, int *mode) override;
+    yarp::dev::ReturnValue getControlModes(int *modes) override;
     yarp::dev::ReturnValue getControlModes(const int n_joint, const int *joints, int *modes) override;
     yarp::dev::ReturnValue setControlMode(const int j, const int mode) override;
     yarp::dev::ReturnValue setControlModes(const int n_joints, const int *joints, int *modes) override;

@@ -54,6 +54,7 @@ public:
     */
     virtual ~ImplementPidControl();
 
+    yarp::dev::ReturnValue getAvailablePids(int j, std::vector<PidControlTypeEnum>& avail) override;
     yarp::dev::ReturnValue setPid(const PidControlTypeEnum& pidtype, int j, const Pid &pid) override;
     yarp::dev::ReturnValue setPids(const PidControlTypeEnum& pidtype, const Pid *pids) override;
     yarp::dev::ReturnValue setPidReference(const PidControlTypeEnum& pidtype, int j, double ref) override;

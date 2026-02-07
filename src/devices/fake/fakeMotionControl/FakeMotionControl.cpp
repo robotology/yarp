@@ -372,6 +372,45 @@ void FakeMotionControl::setInfoMPids(int j)
     _mpids_ffd = allocAndCheck<std::vector<double>>(nj);    for (int i = 0; i < nj; ++i) _mpids_ffd[i].resize(npids);
     _pdpids_ffd = allocAndCheck<std::vector<double>>(nj);    for (int i = 0; i < nj; ++i) _pdpids_ffd[i].resize(npids);
     _vdpids_ffd = allocAndCheck<std::vector<double>>(nj);    for (int i = 0; i < nj; ++i) _vdpids_ffd[i].resize(npids);
+    _availableControlModes = allocAndCheck<std::vector<yarp::dev::SelectableControlModeEnum>>(nj);
+    for (int i = 0; i < nj; ++i)
+    {
+        _availableControlModes[i].push_back(yarp::dev::SelectableControlModeEnum::VOCAB_CM_IDLE);
+        _availableControlModes[i].push_back(yarp::dev::SelectableControlModeEnum::VOCAB_CM_TORQUE);
+        _availableControlModes[i].push_back(yarp::dev::SelectableControlModeEnum::VOCAB_CM_POSITION);
+        _availableControlModes[i].push_back(yarp::dev::SelectableControlModeEnum::VOCAB_CM_POSITION_DIRECT);
+        _availableControlModes[i].push_back(yarp::dev::SelectableControlModeEnum::VOCAB_CM_VELOCITY);
+        _availableControlModes[i].push_back(yarp::dev::SelectableControlModeEnum::VOCAB_CM_VELOCITY_DIRECT);
+        _availableControlModes[i].push_back(yarp::dev::SelectableControlModeEnum::VOCAB_CM_CURRENT);
+        _availableControlModes[i].push_back(yarp::dev::SelectableControlModeEnum::VOCAB_CM_PWM);
+        _availableControlModes[i].push_back(yarp::dev::SelectableControlModeEnum::VOCAB_CM_MIXED);
+        _availableControlModes[i].push_back(yarp::dev::SelectableControlModeEnum::VOCAB_CM_FORCE_IDLE);
+    }
+    _availablePids = allocAndCheck<std::vector<yarp::dev::PidControlTypeEnum>>(nj);
+    for (int i = 0; i < nj; ++i)
+    {
+        _availablePids[i].push_back(yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_POSITION_1);
+        _availablePids[i].push_back(yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_POSITION_2);
+        _availablePids[i].push_back(yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_POSITION_3);
+        _availablePids[i].push_back(yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_POSITION_DIRECT_1);
+        _availablePids[i].push_back(yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_POSITION_DIRECT_2);
+        _availablePids[i].push_back(yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_POSITION_DIRECT_3);
+        _availablePids[i].push_back(yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY_1);
+        _availablePids[i].push_back(yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY_2);
+        _availablePids[i].push_back(yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY_3);
+        _availablePids[i].push_back(yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY_DIRECT_1);
+        _availablePids[i].push_back(yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY_DIRECT_2);
+        _availablePids[i].push_back(yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_VELOCITY_DIRECT_3);
+        _availablePids[i].push_back(yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_MIXED_1);
+        _availablePids[i].push_back(yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_MIXED_2);
+        _availablePids[i].push_back(yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_MIXED_3);
+        _availablePids[i].push_back(yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_CURRENT_1);
+        _availablePids[i].push_back(yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_CURRENT_2);
+        _availablePids[i].push_back(yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_CURRENT_3);
+        _availablePids[i].push_back(yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_TORQUE_1);
+        _availablePids[i].push_back(yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_TORQUE_2);
+        _availablePids[i].push_back(yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_TORQUE_3);
+    }
 
 //     _impedance_params=allocAndCheck<ImpedanceParameters>(nj);
 //     _impedance_limits=allocAndCheck<ImpedanceLimits>(nj);
@@ -537,6 +576,9 @@ bool FakeMotionControl::dealloc()
     checkAndDestroy(_stiffness);
     checkAndDestroy(_damping);
     checkAndDestroy(_force_offset);
+    checkAndDestroy(_availableControlModes);
+    checkAndDestroy(_availablePids);
+
     return true;
 }
 
@@ -940,6 +982,15 @@ void FakeMotionControl::cleanup()
 
 
 ///////////// PID INTERFACE
+ReturnValue FakeMotionControl::getAvailablePidsRaw(int j, std::vector<yarp::dev::PidControlTypeEnum>& avail)
+{
+    if (verbose > VERY_VERY_VERBOSE) {
+        yCTrace(FAKEMOTIONCONTROL) << "j: " << j;
+    }
+
+    avail = _availablePids[j];
+    return ReturnValue_ok;
+}
 
 ReturnValue FakeMotionControl::setPidRaw(const PidControlTypeEnum& pidtype, int jnt, const Pid &pid)
 {
@@ -2158,6 +2209,16 @@ ReturnValue FakeMotionControl::stopRaw(const int n_joint, const int *joints)
 ///////////// END Position Control INTERFACE  //////////////////
 
 // ControlMode
+
+ReturnValue FakeMotionControl::getAvailableControlModesRaw(int j, std::vector<yarp::dev::SelectableControlModeEnum>& avail)
+{
+    if (verbose > VERY_VERY_VERBOSE) {
+        yCTrace(FAKEMOTIONCONTROL) << "j: " << j;
+    }
+
+    avail = _availableControlModes[j];
+    return ReturnValue_ok;
+}
 
 ReturnValue FakeMotionControl::getControlModeRaw(int j, int *v)
 {
