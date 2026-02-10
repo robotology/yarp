@@ -220,18 +220,6 @@ void RPCMessagesParser::handleTorqueMsg(const yarp::os::Bottle& cmd,
             }
         } break;
 
-        case VOCAB_TORQUE_MODE: {
-            if (rpc_iCtrlMode) {
-                int* modes = new int[controlledJoints];
-                for (size_t i = 0; i < controlledJoints; i++) {
-                    modes[i] = VOCAB_CM_TORQUE;
-                }
-                *ok = rpc_iCtrlMode->setControlModes(modes);
-                delete[] modes;
-            } else {
-                *ok = false;
-            }
-        } break;
         }
     } break;
 

@@ -2345,34 +2345,27 @@ ReturnValue RemoteControlBoard::getAvailableControlModes(int j, std::vector<yarp
     return ret.ret;
 }
 
-yarp::dev::ReturnValue RemoteControlBoard::getControlMode(int j, int *mode)
+yarp::dev::ReturnValue RemoteControlBoard::getControlMode(int j, yarp::dev::ControlModeEnum& mode)
 {
     double localArrivalTime=0.0;
     extendedPortMutex.lock();
-    bool ret = extendedIntputStatePort.getLastSingle(j, VOCAB_CM_CONTROL_MODE, mode, lastStamp, localArrivalTime);
+    int mode_tmp;
+    bool ret = extendedIntputStatePort.getLastSingle(j, VOCAB_CM_CONTROL_MODE, &mode_tmp, lastStamp, localArrivalTime);
+    mode = (yarp::dev::ControlModeEnum) mode_tmp;
     extendedPortMutex.unlock();
     return ret?ReturnValue_ok:ReturnValue::return_code::return_value_error_not_ready;
 }
 
-yarp::dev::ReturnValue RemoteControlBoard::getControlModes(int *modes)
+yarp::dev::ReturnValue RemoteControlBoard::getControlModes(std::vector<yarp::dev::ControlModeEnum>& modes)
 {
     double localArrivalTime=0.0;
     extendedPortMutex.lock();
-    bool ret = extendedIntputStatePort.getLastVector(VOCAB_CM_CONTROL_MODES, modes, lastStamp, localArrivalTime);
-    extendedPortMutex.unlock();
-    return ret?ReturnValue_ok:ReturnValue::return_code::return_value_error_not_ready;
-}
-
-yarp::dev::ReturnValue RemoteControlBoard::getControlModes(const int n_joint, const int *joints, int *modes)
-{
-    double localArrivalTime=0.0;
-
-    extendedPortMutex.lock();
-    bool ret = extendedIntputStatePort.getLastVector(VOCAB_CM_CONTROL_MODES, last_wholePart.controlMode.data(), lastStamp, localArrivalTime);
+    std::vector<int> modes_tmp(modes.size());
+    bool ret = extendedIntputStatePort.getLastVector(VOCAB_CM_CONTROL_MODES, modes_tmp.data(), lastStamp, localArrivalTime);
     if(ret)
     {
-        for (int i = 0; i < n_joint; i++) {
-            modes[i] = last_wholePart.controlMode[joints[i]];
+        for (int i = 0; i < modes.size(); i++) {
+            modes[i] = (yarp::dev::ControlModeEnum) modes_tmp[i];
         }
     } else {
         ret = false;
@@ -2382,11 +2375,29 @@ yarp::dev::ReturnValue RemoteControlBoard::getControlModes(const int n_joint, co
     return ret?ReturnValue_ok:ReturnValue::return_code::return_value_error_not_ready;
 }
 
-yarp::dev::ReturnValue RemoteControlBoard::setControlMode(const int j, const int mode)
+yarp::dev::ReturnValue RemoteControlBoard::getControlModes(std::vector<int> joints, std::vector<yarp::dev::ControlModeEnum>& modes)
+{
+    double localArrivalTime=0.0;
+
+    extendedPortMutex.lock();
+    bool ret = extendedIntputStatePort.getLastVector(VOCAB_CM_CONTROL_MODES, last_wholePart.controlMode.data(), lastStamp, localArrivalTime);
+    if(ret)
+    {
+        for (int i = 0; i < joints.size(); i++) {
+            modes[i] = (yarp::dev::ControlModeEnum)last_wholePart.controlMode[joints[i]];
+        }
+    } else {
+        ret = false;
+    }
+
+    extendedPortMutex.unlock();
+    return ret?ReturnValue_ok:ReturnValue::return_code::return_value_error_not_ready;
+}
+
+yarp::dev::ReturnValue RemoteControlBoard::setControlMode(int j, yarp::dev::SelectableControlModeEnum mode)
 {
     // std::lock_guard<std::mutex> lg(m_mutex);
-    yarp::dev::SelectableControlModeEnum emode = (yarp::dev::SelectableControlModeEnum)(mode);
-    auto ret = m_RPC.setControlModeOneRPC(j, emode);
+    auto ret = m_RPC.setControlModeOneRPC(j, mode);
     if (!ret) {
         yCError(REMOTECONTROLBOARD, "Unable to setControlMode");
         return ret;
@@ -2394,20 +2405,10 @@ yarp::dev::ReturnValue RemoteControlBoard::setControlMode(const int j, const int
     return ret;
 }
 
-yarp::dev::ReturnValue RemoteControlBoard::setControlModes(const int n_joint, const int *joints, int *modes)
+yarp::dev::ReturnValue RemoteControlBoard::setControlModes(std::vector<int> j, std::vector<yarp::dev::SelectableControlModeEnum> modes)
 {
     // std::lock_guard<std::mutex> lg(m_mutex);
-    std::vector<int> vjoints;
-    std::vector<yarp::dev::SelectableControlModeEnum> vmodes;
-    vmodes.resize(n_joint);
-    vjoints.resize(n_joint);
-    for (size_t i = 0; i < (size_t)(n_joint); i++)
-    {
-        vjoints[i] = joints[i];
-        vmodes[i] = (yarp::dev::SelectableControlModeEnum)(modes[i]);
-    }
-
-    auto ret = m_RPC.setControlModeGroupRPC(vjoints, vmodes);
+    auto ret = m_RPC.setControlModeGroupRPC(j, modes);
     if (!ret) {
         yCError(REMOTECONTROLBOARD, "Unable to setControlModes");
         return ret;
@@ -2415,17 +2416,10 @@ yarp::dev::ReturnValue RemoteControlBoard::setControlModes(const int n_joint, co
     return ret;
 }
 
-yarp::dev::ReturnValue RemoteControlBoard::setControlModes(int *modes)
+yarp::dev::ReturnValue RemoteControlBoard::setControlModes(const std::vector<yarp::dev::SelectableControlModeEnum> modes)
 {
     // std::lock_guard<std::mutex> lg(m_mutex);
-    std::vector<yarp::dev::SelectableControlModeEnum> vmodes;
-    vmodes.resize(nj);
-    for (size_t i = 0; i < nj; i++)
-    {
-        vmodes[i] = (yarp::dev::SelectableControlModeEnum)(modes[i]);
-    }
-
-    auto ret = m_RPC.setControlModeAllRPC(vmodes);
+    auto ret = m_RPC.setControlModeAllRPC(modes);
     if (!ret) {
         yCError(REMOTECONTROLBOARD, "Unable to setControlModes");
         return ret;

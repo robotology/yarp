@@ -18,13 +18,21 @@ namespace yarp::dev::impl {
 template <typename T>
 class FixedSizeBuffersManager;
 
+template <typename T>
+class VectorBufferManager;
+
 } // namespace yarp::dev::impl
 
 class YARP_dev_API yarp::dev::ImplementControlMode: public IControlMode
 {
-    void *helper;
-    yarp::dev::IControlModeRaw *raw;
-    yarp::dev::impl::FixedSizeBuffersManager<int> *buffManager;
+private:
+    void *helper = nullptr;
+    yarp::dev::IControlModeRaw *raw = nullptr;
+
+    std::mutex                                         m_imp_mutex;
+    std::vector<int>                                   m_vectorInt_tmp;
+    std::vector<yarp::dev::ControlModeEnum>            m_vectorCM_tmp;
+    std::vector<yarp::dev::SelectableControlModeEnum>  m_vectorSCM_tmp;
 
 public:
     bool initialize(int k, const int *amap);
@@ -32,12 +40,13 @@ public:
     ImplementControlMode(IControlModeRaw *v);
     ~ImplementControlMode();
     yarp::dev::ReturnValue getAvailableControlModes(int j, std::vector<yarp::dev::SelectableControlModeEnum>& avail) override;
-    yarp::dev::ReturnValue getControlMode(int j, int *f) override;
-    yarp::dev::ReturnValue getControlModes(int *modes) override;
-    yarp::dev::ReturnValue getControlModes(const int n_joint, const int *joints, int *modes) override;
-    yarp::dev::ReturnValue setControlMode(const int j, const int mode) override;
-    yarp::dev::ReturnValue setControlModes(const int n_joint, const int *joints, int *modes) override;
-    yarp::dev::ReturnValue setControlModes(int *modes) override;
+    yarp::dev::ReturnValue getControlMode(int j, yarp::dev::ControlModeEnum& mode) override;
+    yarp::dev::ReturnValue getControlModes(std::vector<int> joints, std::vector<yarp::dev::ControlModeEnum>& modes) override;
+    yarp::dev::ReturnValue getControlModes(std::vector<yarp::dev::ControlModeEnum>& modes) override;
+    yarp::dev::ReturnValue setControlMode(int j, yarp::dev::SelectableControlModeEnum mode) override;
+    yarp::dev::ReturnValue setControlModes(std::vector<int> joints, std::vector<yarp::dev::SelectableControlModeEnum> modes) override;
+    yarp::dev::ReturnValue setControlModes(std::vector<yarp::dev::SelectableControlModeEnum> modes) override;
+
 };
 
 #endif // YARP_DEV_IMPLEMENTCONTROLMODE_H

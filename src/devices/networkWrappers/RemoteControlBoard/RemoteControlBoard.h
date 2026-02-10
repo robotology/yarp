@@ -333,12 +333,13 @@ public:
 
     // IControlMode
     yarp::dev::ReturnValue getAvailableControlModes(int j, std::vector<yarp::dev::SelectableControlModeEnum>& avail) override;
-    yarp::dev::ReturnValue getControlMode(int j, int *mode) override;
-    yarp::dev::ReturnValue getControlModes(int *modes) override;
-    yarp::dev::ReturnValue getControlModes(const int n_joint, const int *joints, int *modes) override;
-    yarp::dev::ReturnValue setControlMode(const int j, const int mode) override;
-    yarp::dev::ReturnValue setControlModes(const int n_joint, const int *joints, int *modes) override;
-    yarp::dev::ReturnValue setControlModes(int *modes) override;
+    yarp::dev::ReturnValue getControlMode(int j, yarp::dev::ControlModeEnum& mode) override;
+    yarp::dev::ReturnValue getControlModes(std::vector<int> joints, std::vector<yarp::dev::ControlModeEnum>& modes) override;
+    yarp::dev::ReturnValue getControlModes(std::vector<yarp::dev::ControlModeEnum>& modes) override;
+    yarp::dev::ReturnValue setControlMode (int j, yarp::dev::SelectableControlModeEnum mode) override;
+    yarp::dev::ReturnValue setControlModes(std::vector<int> joints, std::vector<yarp::dev::SelectableControlModeEnum> modes) override;
+    yarp::dev::ReturnValue setControlModes(std::vector<yarp::dev::SelectableControlModeEnum> modes) override;
+
 
     // IPositionDirect
     yarp::dev::ReturnValue setPosition(int j, double ref) override;

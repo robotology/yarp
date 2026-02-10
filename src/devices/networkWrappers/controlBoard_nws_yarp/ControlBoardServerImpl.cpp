@@ -66,11 +66,7 @@ ReturnValue ControlBoardRPCd::setControlModeAllRPC(const std::vector<yarp::dev::
         return ret;
     }
 
-    std::vector<int> tmp;
-    tmp.resize(modes.size());
-    for (size_t i = 0; i < modes.size(); i++)
-    {   tmp[i] = (int)(modes[i]); }
-    ret = m_iControlMode->setControlModes(tmp.data());
+    ret = m_iControlMode->setControlModes(modes);
 
     if (!ret) {
         yCError(CB_RPC, "setControlModes() failed");
@@ -88,11 +84,7 @@ ReturnValue ControlBoardRPCd::setControlModeGroupRPC(const std::vector<std::int3
         return ret;
     }
 
-    std::vector<int> tmp;
-    tmp.resize(modes.size());
-    for (size_t i = 0; i < modes.size(); i++)
-    {   tmp[i] = (int)(modes[i]); }
-    ret = m_iControlMode->setControlModes(j.size(), j.data(), tmp.data());
+    ret = m_iControlMode->setControlModes(j, modes);
 
     if (!ret) {
         yCError(CB_RPC, "setControlModes() failed");

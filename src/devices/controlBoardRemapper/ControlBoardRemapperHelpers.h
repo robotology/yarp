@@ -175,7 +175,7 @@ public:
       * a vector of joints of the RemappedControlBoard
       * (Version for ControlModes methods)
       */
-    void fillSubControlBoardBuffersFromCompleteJointVector(const int * full,
+    void fillSubControlBoardBuffersFromCompleteJointVector(const yarp::dev::SelectableControlModeEnum * full,
                                                             const RemappedControlBoards & remappedControlBoards);
 
     /**
@@ -200,7 +200,7 @@ public:
      * Before calling this method you should have called the resizeSubControlBoardBuffers method.
      * (Version for ControlModes methods)
      */
-    void fillCompleteJointVectorFromSubControlBoardBuffers(int * full,
+    void fillCompleteJointVectorFromSubControlBoardBuffers(yarp::dev::ControlModeEnum * full,
                                                             const RemappedControlBoards & remappedControlBoards);
 
     /**
@@ -226,8 +226,10 @@ public:
 
 
     std::vector< std::vector<double> > m_bufferForSubControlBoard;
-    std::vector< std::vector<int>    > m_bufferForSubControlBoardControlModes;
-    std::vector< std::vector<yarp::dev::InteractionModeEnum>  > m_bufferForSubControlBoardInteractionModes;
+    std::vector< std::vector<yarp::dev::InteractionModeEnum>  >        m_bufferForSubControlBoardInteractionModes;
+    std::vector< std::vector<yarp::dev::SelectableControlModeEnum>  >  m_bufferForSubControlBoardSelectableControlModesEnum;
+    std::vector< std::vector<yarp::dev::ControlModeEnum>  >            m_bufferForSubControlBoardControlModesEnum;
+
 
     std::vector<int> m_counterForControlBoard;
 };
@@ -271,7 +273,7 @@ public:
      * a vector of joints of the RemappedControlBoards
      * (Version for ControlModes methods)
      */
-    void fillSubControlBoardBuffersFromArbitraryJointVector(const int * arbitraryVec,
+    void fillSubControlBoardBuffersFromArbitraryJointVector(const yarp::dev::SelectableControlModeEnum* arbitraryVec,
                                                             const int n_joints,
                                                             const int *joints,
                                                             const RemappedControlBoards & remappedControlBoards);
@@ -311,7 +313,7 @@ public:
      * Before calling this method you should have called the resizeSubControlBoardBuffers method.
      * (Version for ControlModes methods)
      */
-    void fillArbitraryJointVectorFromSubControlBoardBuffers(int * arbitraryVec,
+    void fillArbitraryJointVectorFromSubControlBoardBuffers(yarp::dev::ControlModeEnum * arbitraryVec,
                                                             const int n_joints, const int *joints,
                                                             const RemappedControlBoards & remappedControlBoards);
 
@@ -341,10 +343,10 @@ public:
     // Buffers for the control board (the size of each one should
     // match the size of m_nJointsInSubControlBoard[ctrlBoard] and
     // the size of m_jointsInSubControlBoard[ctrlBoard].size()
-    std::vector< std::vector<double> > m_bufferForSubControlBoard;
-    std::vector< std::vector<int>    > m_bufferForSubControlBoardControlModes;
-    std::vector< std::vector<yarp::dev::InteractionModeEnum>  > m_bufferForSubControlBoardInteractionModes;
-
+    std::vector< std::vector<double> >                                 m_bufferForSubControlBoard;
+    std::vector< std::vector<yarp::dev::InteractionModeEnum>  >        m_bufferForSubControlBoardInteractionModes;
+    std::vector< std::vector<yarp::dev::SelectableControlModeEnum>  >  m_bufferForSubControlBoardSelectableControlModesEnum;
+    std::vector< std::vector<yarp::dev::ControlModeEnum>  >            m_bufferForSubControlBoardControlModesEnum;
 
     // Counter used when converting a full vector to
     // the subcontrolboard buffers

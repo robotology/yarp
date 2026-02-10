@@ -35,11 +35,12 @@ inline yarp::dev::ReturnValue CHECK_FAIL(bool ok, yarp::os::Bottle& response)
     return yarp::dev::ReturnValue::return_code::return_value_ok;
 }
 
-#define MAPPER_MAXID (castToMapper(helper)->axes())
+#define MAPPER_MAXID        (castToMapper(helper)->axes())
 #define JOINTIDCHECK(max_j) if (j >= max_j) {yError("joint id out of bound"); return yarp::dev::ReturnValue::return_code::return_value_error_input_out_of_bounds;}
 #define MOTORIDCHECK(max_m) if (m >= max_m) {yError("motor id out of bound"); return yarp::dev::ReturnValue::return_code::return_value_error_input_out_of_bounds;}
 
-#define JOINTSIDCHECK if (!castToMapper(helper)->checkAxesIds(n_joints, joints)) { yError("joint id out of bound"); return yarp::dev::ReturnValue::return_code::return_value_error_input_out_of_bounds;}
+#define JOINTSIDCHECK       if (!castToMapper(helper)->checkAxesIds(n_joints, joints)) { yError("joint id out of bound"); return yarp::dev::ReturnValue::return_code::return_value_error_input_out_of_bounds;}
+#define JOINTSIDVECCHECK    if (!castToMapper(helper)->checkAxesIds(joints))           { yError("joint id out of bound"); return yarp::dev::ReturnValue::return_code::return_value_error_input_out_of_bounds;}
 
 #endif // DOXYGEN_SHOULD_SKIP_THIS
 

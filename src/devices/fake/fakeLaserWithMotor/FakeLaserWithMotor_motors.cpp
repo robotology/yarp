@@ -86,12 +86,12 @@ ReturnValue FakeLaserWithMotor::getAxes(int* ax)
 
 yarp::dev::ReturnValue FakeLaserWithMotor::positionMoveRaw(int j, double ref)
 {
-    int mode = 0;
-    getControlModeRaw(j, &mode);
-    if ((mode != VOCAB_CM_POSITION) &&
-        (mode != VOCAB_CM_MIXED) &&
-        (mode != VOCAB_CM_IMPEDANCE_POS) &&
-        (mode != VOCAB_CM_IDLE))
+    yarp::dev::ControlModeEnum mode = yarp::dev::ControlModeEnum::VOCAB_CM_UNKNOWN;
+    auto ret = getControlModeRaw(j, mode);
+    if ((mode != yarp::dev::ControlModeEnum::VOCAB_CM_POSITION) &&
+        (mode != yarp::dev::ControlModeEnum::VOCAB_CM_MIXED) &&
+        (mode != yarp::dev::ControlModeEnum::VOCAB_CM_IMPEDANCE_POS) &&
+        (mode != yarp::dev::ControlModeEnum::VOCAB_CM_IDLE))
     {
         yCError(FAKE_LASER_MOTORS) << "positionMoveRaw: skipping command because joint " << j << " is not in VOCAB_CM_POSITION mode";
     }
@@ -111,12 +111,12 @@ ReturnValue FakeLaserWithMotor::positionMoveRaw(const double* refs)
 
 ReturnValue FakeLaserWithMotor::relativeMoveRaw(int j, double delta)
 {
-    int mode = 0;
-    getControlModeRaw(j, &mode);
-    if ((mode != VOCAB_CM_POSITION) &&
-        (mode != VOCAB_CM_MIXED) &&
-        (mode != VOCAB_CM_IMPEDANCE_POS) &&
-        (mode != VOCAB_CM_IDLE))
+    yarp::dev::ControlModeEnum mode = yarp::dev::ControlModeEnum::VOCAB_CM_UNKNOWN;
+    auto ret = getControlModeRaw(j, mode);
+    if ((mode != yarp::dev::ControlModeEnum::VOCAB_CM_POSITION) &&
+        (mode != yarp::dev::ControlModeEnum::VOCAB_CM_MIXED) &&
+        (mode != yarp::dev::ControlModeEnum::VOCAB_CM_IMPEDANCE_POS) &&
+        (mode != yarp::dev::ControlModeEnum::VOCAB_CM_IDLE))
     {
         yCError(FAKE_LASER_MOTORS) << "relativeMoveRaw: skipping command because joint " << j << " is not in VOCAB_CM_POSITION mode";
     }
@@ -265,60 +265,60 @@ ReturnValue FakeLaserWithMotor::getAvailableControlModesRaw(int j, std::vector<y
 }
 
 
-ReturnValue FakeLaserWithMotor::getControlModeRaw(int j, int* v)
+ReturnValue FakeLaserWithMotor::getControlModeRaw(int j, yarp::dev::ControlModeEnum& mode)
 {
-    *v = _controlModes[j];
+    mode = (yarp::dev::ControlModeEnum)_controlModes[j];
     return ReturnValue_ok;
 }
 
 // IControl Mode 2
-ReturnValue FakeLaserWithMotor::getControlModesRaw(int* v)
+ReturnValue FakeLaserWithMotor::getControlModesRaw(std::vector<yarp::dev::ControlModeEnum>& mode)
 {
     ReturnValue ret = ReturnValue_ok;
     for (int j = 0; j < m_njoints; j++)
     {
-        ret = ret && getControlModeRaw(j, &v[j]);
+        ret = ret && getControlModeRaw(j, mode[j]);
     }
     return ret;
 }
 
-ReturnValue FakeLaserWithMotor::getControlModesRaw(const int n_joint, const int* joints, int* modes)
+ReturnValue FakeLaserWithMotor::getControlModesRaw(std::vector<int> joints, std::vector<yarp::dev::ControlModeEnum>& modes)
 {
     ReturnValue ret = ReturnValue_ok;
-    for (int j = 0; j < n_joint; j++)
+    for (int j = 0; j < joints.size(); j++)
     {
-        ret = ret && getControlModeRaw(joints[j], &modes[j]);
+        ret = ret && getControlModeRaw(joints[j], modes[j]);
     }
     return ret;
 }
 
 
 
-ReturnValue FakeLaserWithMotor::setControlModeRaw(const int j, const int _mode)
+ReturnValue FakeLaserWithMotor::setControlModeRaw(int j, yarp::dev::SelectableControlModeEnum mode)
 {
-    if (_mode == VOCAB_CM_FORCE_IDLE)
+    if (mode == yarp::dev::SelectableControlModeEnum::VOCAB_CM_FORCE_IDLE)
     {
         _controlModes[j] = VOCAB_CM_IDLE;
     }
     else
     {
-        _controlModes[j] = _mode;
+        _controlModes[j] = (int)mode;
     }
     return ReturnValue_ok;
 }
 
 
-ReturnValue FakeLaserWithMotor::setControlModesRaw(const int n_joint, const int* joints, int* modes)
+ReturnValue FakeLaserWithMotor::setControlModesRaw(std::vector<int> joints, std::vector<yarp::dev::SelectableControlModeEnum> modes)
 {
     ReturnValue ret = ReturnValue_ok;
-    for (int i = 0; i < n_joint; i++)
+    for (int i = 0; i < joints.size(); i++)
     {
         ret &= setControlModeRaw(joints[i], modes[i]);
     }
     return ret;
 }
 
-ReturnValue FakeLaserWithMotor::setControlModesRaw(int* modes)
+ReturnValue FakeLaserWithMotor::setControlModesRaw(std::vector<yarp::dev::SelectableControlModeEnum> modes)
 {
     ReturnValue ret = ReturnValue_ok;
     for (int i = 0; i < m_njoints; i++)
@@ -344,7 +344,6 @@ bool FakeLaserWithMotor::alloc(int nj)
 
     for (int i = 0; i < nj; ++i)
     {
-        _availableControlModes[i].push_back(yarp::dev::SelectableControlModeEnum::VOCAB_CM_IDLE);
         _availableControlModes[i].push_back(yarp::dev::SelectableControlModeEnum::VOCAB_CM_IDLE);
         _availableControlModes[i].push_back(yarp::dev::SelectableControlModeEnum::VOCAB_CM_TORQUE);
         _availableControlModes[i].push_back(yarp::dev::SelectableControlModeEnum::VOCAB_CM_POSITION);
@@ -545,11 +544,11 @@ ReturnValue FakeLaserWithMotor::setTrajSpeedsRaw(const int n_joint, const int* j
 
 ReturnValue FakeLaserWithMotor::getTargetPositionRaw(int axis, double* ref)
 {
-    int mode = 0;
-    getControlModeRaw(axis, &mode);
-    if ((mode != VOCAB_CM_POSITION) &&
-        (mode != VOCAB_CM_MIXED) &&
-        (mode != VOCAB_CM_IMPEDANCE_POS))
+    yarp::dev::ControlModeEnum mode = yarp::dev::ControlModeEnum::VOCAB_CM_UNKNOWN;
+    auto ret = getControlModeRaw(axis, mode);
+    if ((mode != yarp::dev::ControlModeEnum::VOCAB_CM_POSITION) &&
+        (mode != yarp::dev::ControlModeEnum::VOCAB_CM_MIXED) &&
+        (mode != yarp::dev::ControlModeEnum::VOCAB_CM_IMPEDANCE_POS))
     {
         yCWarning(FAKE_LASER_MOTORS) << "getTargetPosition: Joint " << axis << " is not in POSITION mode, therefore the value returned by " <<
             "this call is for reference only and may not reflect the actual behaviour of the motor/firmware.";
@@ -579,12 +578,12 @@ ReturnValue FakeLaserWithMotor::getTargetPositionsRaw(int nj, const int* jnts, d
 
 ReturnValue FakeLaserWithMotor::velocityMoveRaw(int j, double sp)
 {
-    int mode = 0;
-    getControlModeRaw(j, &mode);
-    if ((mode != VOCAB_CM_VELOCITY) &&
-        (mode != VOCAB_CM_MIXED) &&
-        (mode != VOCAB_CM_IMPEDANCE_VEL) &&
-        (mode != VOCAB_CM_IDLE))
+    yarp::dev::ControlModeEnum mode = yarp::dev::ControlModeEnum::VOCAB_CM_UNKNOWN;
+    auto ret = getControlModeRaw(j, mode);
+    if ((mode != yarp::dev::ControlModeEnum::VOCAB_CM_VELOCITY) &&
+        (mode != yarp::dev::ControlModeEnum::VOCAB_CM_MIXED) &&
+        (mode != yarp::dev::ControlModeEnum::VOCAB_CM_IMPEDANCE_VEL) &&
+        (mode != yarp::dev::ControlModeEnum::VOCAB_CM_IDLE))
     {
         yCError(FAKE_LASER_MOTORS) << "velocityMoveRaw: skipping command because board " << " joint " << j << " is not in VOCAB_CM_VELOCITY mode";
     }

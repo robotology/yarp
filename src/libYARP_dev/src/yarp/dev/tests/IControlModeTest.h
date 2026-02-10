@@ -16,20 +16,20 @@ using namespace yarp::os;
 
 #define COMMAND_DELAY 1.0
 
-void test_single_joint(IControlMode* icmd, IAxisInfo* iinfo, int mode)
+void test_single_joint(IControlMode* icmd, IAxisInfo* iinfo, SelectableControlModeEnum mode)
 {
     REQUIRE(icmd != nullptr);
     bool b = false;
     b = icmd->setControlMode(0, mode);
     CHECK(b);
     yarp::os::SystemClock::delaySystem(COMMAND_DELAY);
-    int ret=0;
-    b = icmd->getControlMode(0, &ret);
+    ControlModeEnum ret;
+    b = icmd->getControlMode(0, ret);
     CHECK(b);
-    CHECK(mode==ret);
+    CHECK(mode==(SelectableControlModeEnum)ret);
 }
 
-void test_all_joints(IControlMode* icmd, IAxisInfo* iinfo, int mode)
+void test_all_joints(IControlMode* icmd, IAxisInfo* iinfo, SelectableControlModeEnum mode)
 {
     REQUIRE(icmd != nullptr);
     REQUIRE(iinfo != nullptr);
@@ -39,20 +39,20 @@ void test_all_joints(IControlMode* icmd, IAxisInfo* iinfo, int mode)
     REQUIRE(ax==2);
 
     bool b = false;
-    int modes[2];
+    std::vector<SelectableControlModeEnum> modes (2);
     modes[0]=mode;
     modes[1]=mode;
     b = icmd->setControlModes(modes);
     CHECK(b);
     yarp::os::SystemClock::delaySystem(COMMAND_DELAY);
-    int rets[2] = {0,-0};
+    std::vector<ControlModeEnum> rets (2);
     b = icmd->getControlModes(rets);
     CHECK(b);
-    CHECK(mode == rets[0]);
-    CHECK(mode == rets[1]);
+    CHECK(mode == (SelectableControlModeEnum) rets[0]);
+    CHECK(mode == (SelectableControlModeEnum) rets[1]);
 }
 
-void test_multi_joint(IControlMode* icmd, IAxisInfo* iinfo, int mode)
+void test_multi_joint(IControlMode* icmd, IAxisInfo* iinfo, SelectableControlModeEnum mode)
 {
     REQUIRE(icmd != nullptr);
     REQUIRE(iinfo != nullptr);
@@ -62,23 +62,23 @@ void test_multi_joint(IControlMode* icmd, IAxisInfo* iinfo, int mode)
     REQUIRE (ax==2);
 
     bool b = false;
-    int modes[2];
+    std::vector <SelectableControlModeEnum> modes (2);
     modes[0] = mode;
     modes[1] = mode;
-    int joints[2];
+    std::vector<int> joints (2);
     joints[0] = 0;
     joints[1] = 1;
-    b = icmd->setControlModes(2,joints,modes);
+    b = icmd->setControlModes(joints,modes);
     CHECK(b);
     yarp::os::SystemClock::delaySystem(COMMAND_DELAY);
-    int rets[2] = { 0,-0 };
-    b = icmd->getControlModes(2,joints,rets);
+    std::vector<ControlModeEnum> rets (2);
+    b = icmd->getControlModes(joints,rets);
     CHECK(b);
-    CHECK(mode == rets[0]);
-    CHECK(mode == rets[1]);
+    CHECK(mode == (SelectableControlModeEnum) rets[0]);
+    CHECK(mode == (SelectableControlModeEnum) rets[1]);
 }
 
-void test_joint(IControlMode* icmd, IAxisInfo* iinfo, int mode)
+void test_joint(IControlMode* icmd, IAxisInfo* iinfo, SelectableControlModeEnum mode)
 {
     REQUIRE(icmd != nullptr);
     test_single_joint(icmd, iinfo, mode);
@@ -115,17 +115,17 @@ namespace yarp::dev::tests
             CHECK(avail.size() == 10); // expected presence of 10 control modes
         }
 
-        test_joint(icmd, iinfo, VOCAB_CM_IDLE);
-        test_joint(icmd, iinfo, VOCAB_CM_TORQUE);
-        test_joint(icmd, iinfo, VOCAB_CM_POSITION);
-        test_joint(icmd, iinfo, VOCAB_CM_POSITION_DIRECT);
-        test_joint(icmd, iinfo, VOCAB_CM_VELOCITY);
-        test_joint(icmd, iinfo, VOCAB_CM_VELOCITY_DIRECT);
-        test_joint(icmd, iinfo, VOCAB_CM_CURRENT);
-        test_joint(icmd, iinfo, VOCAB_CM_PWM);
-        test_joint(icmd, iinfo, VOCAB_CM_IMPEDANCE_POS);
-        test_joint(icmd, iinfo, VOCAB_CM_IMPEDANCE_VEL);
-        test_joint(icmd, iinfo, VOCAB_CM_MIXED);
+        test_joint(icmd, iinfo, yarp::dev::SelectableControlModeEnum::VOCAB_CM_IDLE);
+        test_joint(icmd, iinfo, yarp::dev::SelectableControlModeEnum::VOCAB_CM_TORQUE);
+        test_joint(icmd, iinfo, yarp::dev::SelectableControlModeEnum::VOCAB_CM_POSITION);
+        test_joint(icmd, iinfo, yarp::dev::SelectableControlModeEnum::VOCAB_CM_POSITION_DIRECT);
+        test_joint(icmd, iinfo, yarp::dev::SelectableControlModeEnum::VOCAB_CM_VELOCITY);
+        test_joint(icmd, iinfo, yarp::dev::SelectableControlModeEnum::VOCAB_CM_VELOCITY_DIRECT);
+        test_joint(icmd, iinfo, yarp::dev::SelectableControlModeEnum::VOCAB_CM_CURRENT);
+        test_joint(icmd, iinfo, yarp::dev::SelectableControlModeEnum::VOCAB_CM_PWM);
+        test_joint(icmd, iinfo, yarp::dev::SelectableControlModeEnum::VOCAB_CM_IMPEDANCE_POS);
+        test_joint(icmd, iinfo, yarp::dev::SelectableControlModeEnum::VOCAB_CM_IMPEDANCE_VEL);
+        test_joint(icmd, iinfo, yarp::dev::SelectableControlModeEnum::VOCAB_CM_MIXED);
     }
 }
 

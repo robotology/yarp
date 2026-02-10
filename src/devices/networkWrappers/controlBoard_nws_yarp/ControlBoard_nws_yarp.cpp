@@ -374,6 +374,7 @@ void ControlBoard_nws_yarp::run()
 
     // resize the temporary vector
     tmpVariableForFloatSignals.resize(subdevice_joints);
+    tmpVariableForControlModes.resize(subdevice_joints);
 
     // Get data from HW
     if (iEncodersTimed) {
@@ -435,7 +436,11 @@ void ControlBoard_nws_yarp::run()
     }
 
     if (iControlMode) {
-        data.controlMode_isValid = iControlMode->getControlModes(data.controlMode.data());
+        data.controlMode_isValid = iControlMode->getControlModes(tmpVariableForControlModes);
+        for (size_t i =0; i< tmpVariableForControlModes.size(); i++)
+        {
+            data.controlMode[i] = static_cast<int>(tmpVariableForControlModes[i]);
+        }
     } else {
         data.controlMode_isValid = false;
     }

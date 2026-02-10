@@ -1813,12 +1813,12 @@ ReturnValue FakeMotionControl::getPidOutputsRaw(const PidControlTypeEnum& pidtyp
 
 ReturnValue FakeMotionControl::velocityMoveRaw(int j, double sp)
 {
-    int mode=0;
-    getControlModeRaw(j, &mode);
-    if( (mode != VOCAB_CM_VELOCITY) &&
-        (mode != VOCAB_CM_MIXED) &&
-        (mode != VOCAB_CM_IMPEDANCE_VEL) &&
-        (mode != VOCAB_CM_IDLE))
+    yarp::dev::ControlModeEnum mode = yarp::dev::ControlModeEnum::VOCAB_CM_UNKNOWN;
+    auto ret = getControlModeRaw(j, mode);
+    if( (mode != yarp::dev::ControlModeEnum::VOCAB_CM_VELOCITY) &&
+        (mode != yarp::dev::ControlModeEnum::VOCAB_CM_MIXED) &&
+        (mode != yarp::dev::ControlModeEnum::VOCAB_CM_IMPEDANCE_VEL) &&
+        (mode != yarp::dev::ControlModeEnum::VOCAB_CM_IDLE))
     {
           yCError(FAKEMOTIONCONTROL) << "velocityMoveRaw: skipping command because board "  << " joint " << j << " is not in VOCAB_CM_VELOCITY mode";
     }
@@ -1882,12 +1882,12 @@ ReturnValue FakeMotionControl::positionMoveRaw(int j, double ref)
 //     }
 //     _last_position_move_time[j] = yarp::os::Time::now();
 
-    int mode = 0;
-    getControlModeRaw(j, &mode);
-    if( (mode != VOCAB_CM_POSITION) &&
-        (mode != VOCAB_CM_MIXED) &&
-        (mode != VOCAB_CM_IMPEDANCE_POS) &&
-        (mode != VOCAB_CM_IDLE))
+    yarp::dev::ControlModeEnum mode = yarp::dev::ControlModeEnum::VOCAB_CM_UNKNOWN;
+    auto ret = getControlModeRaw(j, mode);
+    if( (mode !=  yarp::dev::ControlModeEnum::VOCAB_CM_POSITION) &&
+        (mode !=  yarp::dev::ControlModeEnum::VOCAB_CM_MIXED) &&
+        (mode !=  yarp::dev::ControlModeEnum::VOCAB_CM_IMPEDANCE_POS) &&
+        (mode !=  yarp::dev::ControlModeEnum::VOCAB_CM_IDLE))
     {
         yCError(FAKEMOTIONCONTROL) << "positionMoveRaw: skipping command because joint " << j << " is not in VOCAB_CM_POSITION mode";
     }
@@ -1920,12 +1920,12 @@ ReturnValue FakeMotionControl::relativeMoveRaw(int j, double delta)
 //     }
 //     _last_position_move_time[j] = yarp::os::Time::now();
 
-    int mode = 0;
-    getControlModeRaw(j, &mode);
-    if( (mode != VOCAB_CM_POSITION) &&
-        (mode != VOCAB_CM_MIXED) &&
-        (mode != VOCAB_CM_IMPEDANCE_POS) &&
-        (mode != VOCAB_CM_IDLE))
+    yarp::dev::ControlModeEnum mode = yarp::dev::ControlModeEnum::VOCAB_CM_UNKNOWN;
+    auto ret = getControlModeRaw(j, mode);
+    if( (mode != yarp::dev::ControlModeEnum::VOCAB_CM_POSITION) &&
+        (mode != yarp::dev::ControlModeEnum::VOCAB_CM_MIXED) &&
+        (mode != yarp::dev::ControlModeEnum::VOCAB_CM_IMPEDANCE_POS) &&
+        (mode != yarp::dev::ControlModeEnum::VOCAB_CM_IDLE))
     {
         yCError(FAKEMOTIONCONTROL) << "relativeMoveRaw: skipping command because joint " << j << " is not in VOCAB_CM_POSITION mode";
     }
@@ -2220,71 +2220,71 @@ ReturnValue FakeMotionControl::getAvailableControlModesRaw(int j, std::vector<ya
     return ReturnValue_ok;
 }
 
-ReturnValue FakeMotionControl::getControlModeRaw(int j, int *v)
+ReturnValue FakeMotionControl::getControlModeRaw(int j, yarp::dev::ControlModeEnum& mode)
 {
     if (verbose > VERY_VERY_VERBOSE) {
         yCTrace(FAKEMOTIONCONTROL) << "j: " << j;
     }
 
-    *v = _controlModes[j];
+    mode = (yarp::dev::ControlModeEnum)_controlModes[j];
     return ReturnValue_ok;
 }
 
 // IControl Mode 2
-ReturnValue FakeMotionControl::getControlModesRaw(int* v)
+ReturnValue FakeMotionControl::getControlModesRaw(std::vector<yarp::dev::ControlModeEnum>& mode)
 {
     ReturnValue ret = ReturnValue_ok;
     for(int j=0; j< _njoints; j++)
     {
-        ret = ret && getControlModeRaw(j, &v[j]);
+        ret = ret && getControlModeRaw(j, mode[j]);
     }
     return ret;
 }
 
-ReturnValue FakeMotionControl::getControlModesRaw(const int n_joint, const int *joints, int *modes)
+ReturnValue FakeMotionControl::getControlModesRaw(std::vector<int> joints, std::vector<yarp::dev::ControlModeEnum>& modes)
 {
     ReturnValue ret = ReturnValue_ok;
-    for(int j=0; j< n_joint; j++)
+    for(int j=0; j< joints.size(); j++)
     {
-        ret = ret && getControlModeRaw(joints[j], &modes[j]);
+        ret = ret && getControlModeRaw(joints[j], modes[j]);
     }
     return ret;
 }
 
-ReturnValue FakeMotionControl::setControlModeRaw(const int j, const int _mode)
+ReturnValue FakeMotionControl::setControlModeRaw(int j, yarp::dev::SelectableControlModeEnum mode)
 {
     if (verbose >= VERY_VERBOSE) {
-        yCTrace(FAKEMOTIONCONTROL) << "j: " << j << " mode: " << yarp::os::Vocab32::decode(_mode);
+        yCTrace(FAKEMOTIONCONTROL) << "j: " << j << " mode: " << yarp::os::Vocab32::decode((int)mode);
     }
 
-    if (_mode==VOCAB_CM_FORCE_IDLE)
+    if (mode==yarp::dev::SelectableControlModeEnum::VOCAB_CM_FORCE_IDLE)
     {
         _controlModes[j] = VOCAB_CM_IDLE;
     }
     else
     {
-        _controlModes[j] = _mode;
+        _controlModes[j] = (int)mode;
     }
     _posCtrl_references[j] = pos[j];
     return ReturnValue_ok;
 }
 
 
-ReturnValue FakeMotionControl::setControlModesRaw(const int n_joint, const int *joints, int *modes)
+ReturnValue FakeMotionControl::setControlModesRaw(std::vector<int> joints, std::vector<yarp::dev::SelectableControlModeEnum> modes)
 {
     if (verbose >= VERY_VERBOSE) {
-        yCTrace(FAKEMOTIONCONTROL) << "n_joints: " << n_joint;
+        yCTrace(FAKEMOTIONCONTROL) << "n_joints: " << joints.size();
     }
 
     ReturnValue ret = ReturnValue_ok;
-    for(int i=0; i<n_joint; i++)
+    for(int i=0; i<joints.size(); i++)
     {
         ret &= setControlModeRaw(joints[i], modes[i]);
     }
     return ret;
 }
 
-ReturnValue FakeMotionControl::setControlModesRaw(int *modes)
+ReturnValue FakeMotionControl::setControlModesRaw(std::vector<yarp::dev::SelectableControlModeEnum> modes)
 {
     if (verbose >= VERY_VERBOSE) {
         yCTrace(FAKEMOTIONCONTROL);
@@ -2961,11 +2961,11 @@ ReturnValue FakeMotionControl::getTargetPositionRaw(int axis, double *ref)
         yCTrace(FAKEMOTIONCONTROL) << "j " << axis << " ref " << _posCtrl_references[axis];
     }
 
-    int mode = 0;
-    getControlModeRaw(axis, &mode);
-    if( (mode != VOCAB_CM_POSITION) &&
-        (mode != VOCAB_CM_MIXED) &&
-        (mode != VOCAB_CM_IMPEDANCE_POS))
+    yarp::dev::ControlModeEnum mode = yarp::dev::ControlModeEnum::VOCAB_CM_UNKNOWN;
+    auto ret = getControlModeRaw(axis, mode);
+    if( (mode != yarp::dev::ControlModeEnum::VOCAB_CM_POSITION) &&
+        (mode != yarp::dev::ControlModeEnum::VOCAB_CM_MIXED) &&
+        (mode != yarp::dev::ControlModeEnum::VOCAB_CM_IMPEDANCE_POS))
     {
         yCWarning(FAKEMOTIONCONTROL) << "getTargetPosition: Joint " << axis << " is not in POSITION mode, therefore the value returned by " <<
         "this call is for reference only and may not reflect the actual behaviour of the motor/firmware.";
@@ -3021,12 +3021,12 @@ ReturnValue FakeMotionControl::getTargetVelocitiesRaw(int nj, const int * jnts, 
 
 ReturnValue FakeMotionControl::getRefPositionRaw(int axis, double *ref)
 {
-    int mode = 0;
-    getControlModeRaw(axis, &mode);
-    if( (mode != VOCAB_CM_POSITION) &&
-        (mode != VOCAB_CM_MIXED) &&
-        (mode != VOCAB_CM_IMPEDANCE_POS) &&
-        (mode != VOCAB_CM_POSITION_DIRECT) )
+    yarp::dev::ControlModeEnum mode = yarp::dev::ControlModeEnum::VOCAB_CM_UNKNOWN;
+    auto ret = getControlModeRaw(axis, mode);
+    if( (mode != yarp::dev::ControlModeEnum::VOCAB_CM_POSITION) &&
+        (mode != yarp::dev::ControlModeEnum::VOCAB_CM_MIXED) &&
+        (mode != yarp::dev::ControlModeEnum::VOCAB_CM_IMPEDANCE_POS) &&
+        (mode != yarp::dev::ControlModeEnum::VOCAB_CM_POSITION_DIRECT) )
     {
         yCWarning(FAKEMOTIONCONTROL) << "getRefPosition: Joint " << axis << " is not in POSITION_DIRECT mode, therefore the value returned by \
         this call is for reference only and may not reflect the actual behaviour of the motor/firmware.";
