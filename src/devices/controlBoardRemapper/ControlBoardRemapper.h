@@ -167,13 +167,6 @@ private:
      */
     bool attachAllUsingAxesNames(const yarp::dev::PolyDriverList &l);
 
-    /**
-     * Helper for setting the same control mode in all the axes
-     * of the controlboard.
-     */
-    bool setControlModeAllAxes(const int cm);
-
-
 public:
     ControlBoardRemapper() = default;
     ControlBoardRemapper(const ControlBoardRemapper&) = delete;
@@ -207,6 +200,7 @@ public:
     bool attachAll(const yarp::dev::PolyDriverList &l) override;
 
     /* IPidControl */
+    yarp::dev::ReturnValue getAvailablePids(int j, std::vector<yarp::dev::PidControlTypeEnum>& avail) override;
     yarp::dev::ReturnValue setPid(const yarp::dev::PidControlTypeEnum& pidtype,int j, const yarp::dev::Pid &p) override;
     yarp::dev::ReturnValue setPids(const yarp::dev::PidControlTypeEnum& pidtype,const yarp::dev::Pid *ps) override;
     yarp::dev::ReturnValue setPidReference(const yarp::dev::PidControlTypeEnum& pidtype,int j, double ref) override;
@@ -378,14 +372,17 @@ public:
     yarp::dev::ReturnValue getImpedance(int j, double *stiff, double *damp) override;
     yarp::dev::ReturnValue getImpedanceOffset(int j, double *offset) override;
     yarp::dev::ReturnValue getCurrentImpedanceLimit(int j, double *min_stiff, double *max_stiff, double *min_damp, double *max_damp) override;
-    yarp::dev::ReturnValue getControlMode(int j, int *mode) override;
-    yarp::dev::ReturnValue getControlModes(int *modes) override;
 
     // IControlMode interface
-    yarp::dev::ReturnValue getControlModes(const int n_joint, const int *joints, int *modes) override;
-    yarp::dev::ReturnValue setControlMode(const int j, const int mode) override;
-    yarp::dev::ReturnValue setControlModes(const int n_joints, const int *joints, int *modes) override;
-    yarp::dev::ReturnValue setControlModes(int *modes) override;
+    yarp::dev::ReturnValue getAvailableControlModes(int j, std::vector<yarp::dev::SelectableControlModeEnum>& avail) override;
+    yarp::dev::ReturnValue getControlMode(int j, yarp::dev::ControlModeEnum& mode) override;
+    yarp::dev::ReturnValue getControlModes(std::vector<int> joints, std::vector<yarp::dev::ControlModeEnum>& modes) override;
+    yarp::dev::ReturnValue getControlModes(std::vector<yarp::dev::ControlModeEnum>& mode) override;
+    yarp::dev::ReturnValue setControlMode(int j, yarp::dev::SelectableControlModeEnum mode) override;
+    yarp::dev::ReturnValue setControlModes(std::vector<int> joints, std::vector<yarp::dev::SelectableControlModeEnum> modes) override;
+    yarp::dev::ReturnValue setControlModes(std::vector<yarp::dev::SelectableControlModeEnum> mode) override;
+
+    // IPositionDirect interface
     yarp::dev::ReturnValue setPosition(int j, double ref) override;
     yarp::dev::ReturnValue setPositions(const int n_joints, const int *joints, const double *dpos) override;
     yarp::dev::ReturnValue setPositions(const double *refs) override;

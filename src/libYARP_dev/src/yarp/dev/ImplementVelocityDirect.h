@@ -17,10 +17,11 @@ class ImplementVelocityDirect;
 class YARP_dev_API yarp::dev::ImplementVelocityDirect : public IVelocityDirect
 {
 protected:
-    IVelocityDirectRaw *m_iVelocityDirectRaw=nullptr;
-    void    *m_helper=nullptr;
-    std::vector<int> m_buffer_ints;
-    std::vector<double> m_buffer_doubles;
+    IVelocityDirectRaw*      m_iVelocityDirectRaw=nullptr;
+    void*                    helper=nullptr;
+    std::vector<int>         m_buffer_ints;
+    std::vector<double>      m_buffer_doubles;
+    std::mutex               m_imp_mutex;
 
     /**
      * Initialize the internal data and alloc memory.

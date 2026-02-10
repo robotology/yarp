@@ -5,11 +5,13 @@
 
 #include <yarp/dev/IRangefinder2D.h>
 #include <yarp/dev/IPositionControl.h>
+#include <yarp/dev/IControlMode.h>
 #include <yarp/os/Network.h>
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/WrapperSingle.h>
 #include <yarp/dev/tests/IRangefinder2DTest.h>
 #include <yarp/dev/tests/IPositionControlTest.h>
+#include <yarp/dev/tests/IControlModeTest.h>
 
 #include <catch2/catch_amalgamated.hpp>
 #include <harness.h>
@@ -30,6 +32,7 @@ TEST_CASE("dev::FakeLaserWithMotorTest", "[yarp::dev]")
         IRangefinder2D* irng = nullptr;
         IPositionControl* ipos = nullptr;
         IControlMode* icmd = nullptr;
+        IAxisInfo* iinfo = nullptr;
 
         ////////"Checking opening polydriver"
         {
@@ -42,11 +45,13 @@ TEST_CASE("dev::FakeLaserWithMotorTest", "[yarp::dev]")
             REQUIRE(fakelaserdev.view(irng));
             REQUIRE(fakelaserdev.view(ipos));
             REQUIRE(fakelaserdev.view(icmd));
+            REQUIRE(fakelaserdev.view(iinfo));
         }
 
         //execute tests
         yarp::dev::tests::exec_iRangefinder2D_test_1(irng);
         yarp::dev::tests::exec_iPositionControl_test_1(ipos, icmd);
+        //yarp::dev::tests::exec_iControlMode_test_1(icmd,iinfo);
 
         //"Close all polydrivers and check"
         CHECK(fakelaserdev.close());

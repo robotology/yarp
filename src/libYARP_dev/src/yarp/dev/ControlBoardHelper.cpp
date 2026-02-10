@@ -296,6 +296,10 @@ bool ControlBoardHelper::checkAxisId(int id)
     return true;
 }
 
+bool ControlBoardHelper::checkAxesIds(const std::vector<int>& axesList)
+{
+    return checkAxesIds(axesList.size(), axesList.data());
+}
 
 bool ControlBoardHelper::checkAxesIds(const int n_axes, const int* axesList)
 {

@@ -983,6 +983,18 @@ yarp::dev::ReturnValue RemoteControlBoard::getAxes(int *ax)
 
 // BEGIN IPidControl
 
+ReturnValue RemoteControlBoard::getAvailablePids(int j, std::vector<yarp::dev::PidControlTypeEnum>& avail)
+{
+    // std::lock_guard<std::mutex> lg(m_mutex);
+    auto ret = m_RPC.getAvailablePidsRPC(j);
+    if (!ret.ret) {
+        yCError(REMOTECONTROLBOARD, "Unable to getAvailablePids");
+        return ret.ret;
+    }
+    avail = ret.avail;
+    return ret.ret;
+}
+
 ReturnValue RemoteControlBoard::setPid(const PidControlTypeEnum& pidtype, int j, const Pid &pid)
 {
     // std::lock_guard<std::mutex> lg(m_mutex);
@@ -2321,34 +2333,39 @@ yarp::dev::ReturnValue RemoteControlBoard::getCurrentImpedanceLimit(int j, doubl
 
 // BEGIN IControlMode
 
-yarp::dev::ReturnValue RemoteControlBoard::getControlMode(int j, int *mode)
+ReturnValue RemoteControlBoard::getAvailableControlModes(int j, std::vector<yarp::dev::SelectableControlModeEnum>& avail)
+{
+    // std::lock_guard<std::mutex> lg(m_mutex);
+    auto ret = m_RPC.getAvailableControlModesRPC(j);
+    if (!ret.ret) {
+        yCError(REMOTECONTROLBOARD, "Unable to getAvailableControlModes");
+        return ret.ret;
+    }
+    avail =ret.avail;
+    return ret.ret;
+}
+
+yarp::dev::ReturnValue RemoteControlBoard::getControlMode(int j, yarp::dev::ControlModeEnum& mode)
 {
     double localArrivalTime=0.0;
     extendedPortMutex.lock();
-    bool ret = extendedIntputStatePort.getLastSingle(j, VOCAB_CM_CONTROL_MODE, mode, lastStamp, localArrivalTime);
+    int mode_tmp;
+    bool ret = extendedIntputStatePort.getLastSingle(j, VOCAB_CM_CONTROL_MODE, &mode_tmp, lastStamp, localArrivalTime);
+    mode = (yarp::dev::ControlModeEnum) mode_tmp;
     extendedPortMutex.unlock();
     return ret?ReturnValue_ok:ReturnValue::return_code::return_value_error_not_ready;
 }
 
-yarp::dev::ReturnValue RemoteControlBoard::getControlModes(int *modes)
+yarp::dev::ReturnValue RemoteControlBoard::getControlModes(std::vector<yarp::dev::ControlModeEnum>& modes)
 {
     double localArrivalTime=0.0;
     extendedPortMutex.lock();
-    bool ret = extendedIntputStatePort.getLastVector(VOCAB_CM_CONTROL_MODES, modes, lastStamp, localArrivalTime);
-    extendedPortMutex.unlock();
-    return ret?ReturnValue_ok:ReturnValue::return_code::return_value_error_not_ready;
-}
-
-yarp::dev::ReturnValue RemoteControlBoard::getControlModes(const int n_joint, const int *joints, int *modes)
-{
-    double localArrivalTime=0.0;
-
-    extendedPortMutex.lock();
-    bool ret = extendedIntputStatePort.getLastVector(VOCAB_CM_CONTROL_MODES, last_wholePart.controlMode.data(), lastStamp, localArrivalTime);
+    std::vector<int> modes_tmp(modes.size());
+    bool ret = extendedIntputStatePort.getLastVector(VOCAB_CM_CONTROL_MODES, modes_tmp.data(), lastStamp, localArrivalTime);
     if(ret)
     {
-        for (int i = 0; i < n_joint; i++) {
-            modes[i] = last_wholePart.controlMode[joints[i]];
+        for (int i = 0; i < modes.size(); i++) {
+            modes[i] = (yarp::dev::ControlModeEnum) modes_tmp[i];
         }
     } else {
         ret = false;
@@ -2358,64 +2375,56 @@ yarp::dev::ReturnValue RemoteControlBoard::getControlModes(const int n_joint, co
     return ret?ReturnValue_ok:ReturnValue::return_code::return_value_error_not_ready;
 }
 
-yarp::dev::ReturnValue RemoteControlBoard::setControlMode(const int j, const int mode)
+yarp::dev::ReturnValue RemoteControlBoard::getControlModes(std::vector<int> joints, std::vector<yarp::dev::ControlModeEnum>& modes)
 {
-    if (!isLive()) {
-        return ReturnValue::return_code::return_value_error_not_ready;
-    }
-    Bottle cmd, response;
-    cmd.addVocab32(VOCAB_SET);
-    cmd.addVocab32(VOCAB_ICONTROLMODE);
-    cmd.addVocab32(VOCAB_CM_CONTROL_MODE);
-    cmd.addInt32(j);
-    cmd.addVocab32(mode);
+    double localArrivalTime=0.0;
 
-    bool ok = rpc_p.write(cmd, response);
-    return CHECK_FAIL(ok, response);
+    extendedPortMutex.lock();
+    bool ret = extendedIntputStatePort.getLastVector(VOCAB_CM_CONTROL_MODES, last_wholePart.controlMode.data(), lastStamp, localArrivalTime);
+    if(ret)
+    {
+        for (int i = 0; i < joints.size(); i++) {
+            modes[i] = (yarp::dev::ControlModeEnum)last_wholePart.controlMode[joints[i]];
+        }
+    } else {
+        ret = false;
+    }
+
+    extendedPortMutex.unlock();
+    return ret?ReturnValue_ok:ReturnValue::return_code::return_value_error_not_ready;
 }
 
-yarp::dev::ReturnValue RemoteControlBoard::setControlModes(const int n_joint, const int *joints, int *modes)
+yarp::dev::ReturnValue RemoteControlBoard::setControlMode(int j, yarp::dev::SelectableControlModeEnum mode)
 {
-    if (!isLive()) {
-        return ReturnValue::return_code::return_value_error_not_ready;
+    // std::lock_guard<std::mutex> lg(m_mutex);
+    auto ret = m_RPC.setControlModeOneRPC(j, mode);
+    if (!ret) {
+        yCError(REMOTECONTROLBOARD, "Unable to setControlMode");
+        return ret;
     }
-    Bottle cmd, response;
-    cmd.addVocab32(VOCAB_SET);
-    cmd.addVocab32(VOCAB_ICONTROLMODE);
-    cmd.addVocab32(VOCAB_CM_CONTROL_MODE_GROUP);
-    cmd.addInt32(n_joint);
-    int i;
-    Bottle& l1 = cmd.addList();
-    for (i = 0; i < n_joint; i++) {
-        l1.addInt32(joints[i]);
-    }
-
-    Bottle& l2 = cmd.addList();
-    for (i = 0; i < n_joint; i++) {
-        l2.addVocab32(modes[i]);
-    }
-
-    bool ok = rpc_p.write(cmd, response);
-    return CHECK_FAIL(ok, response);
+    return ret;
 }
 
-yarp::dev::ReturnValue RemoteControlBoard::setControlModes(int *modes)
+yarp::dev::ReturnValue RemoteControlBoard::setControlModes(std::vector<int> j, std::vector<yarp::dev::SelectableControlModeEnum> modes)
 {
-    if (!isLive()) {
-        return ReturnValue::return_code::return_value_error_not_ready;
+    // std::lock_guard<std::mutex> lg(m_mutex);
+    auto ret = m_RPC.setControlModeGroupRPC(j, modes);
+    if (!ret) {
+        yCError(REMOTECONTROLBOARD, "Unable to setControlModes");
+        return ret;
     }
-    Bottle cmd, response;
-    cmd.addVocab32(VOCAB_SET);
-    cmd.addVocab32(VOCAB_ICONTROLMODE);
-    cmd.addVocab32(VOCAB_CM_CONTROL_MODES);
+    return ret;
+}
 
-    Bottle& l2 = cmd.addList();
-    for (size_t i = 0; i < nj; i++) {
-        l2.addVocab32(modes[i]);
+yarp::dev::ReturnValue RemoteControlBoard::setControlModes(const std::vector<yarp::dev::SelectableControlModeEnum> modes)
+{
+    // std::lock_guard<std::mutex> lg(m_mutex);
+    auto ret = m_RPC.setControlModeAllRPC(modes);
+    if (!ret) {
+        yCError(REMOTECONTROLBOARD, "Unable to setControlModes");
+        return ret;
     }
-
-    bool ok = rpc_p.write(cmd, response);
-    return CHECK_FAIL(ok, response);
+    return ret;
 }
 
 // END IControlMode

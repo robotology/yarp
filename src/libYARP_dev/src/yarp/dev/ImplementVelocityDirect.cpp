@@ -7,6 +7,7 @@
 
 #include <yarp/dev/ImplementVelocityDirect.h>
 #include <yarp/dev/ControlBoardHelper.h>
+#include <yarp/dev/ControlBoardHelpers.h>
 #include <yarp/os/Log.h>
 #include <yarp/dev/impl/FixedSizeBuffersManager.h>
 
@@ -24,12 +25,12 @@ ImplementVelocityDirect::~ImplementVelocityDirect()
 
 bool ImplementVelocityDirect::initialize(int size, const int* axis_map, const double* enc, const double* zeros)
 {
-    if (m_helper != nullptr) {
+    if (helper != nullptr) {
         return false;
     }
 
-    m_helper = (void*)(new ControlBoardHelper(size, axis_map, enc, zeros));
-    yAssert(m_helper != nullptr);
+    helper = (void*)(new ControlBoardHelper(size, axis_map, enc, zeros));
+    yAssert(helper != nullptr);
 
     m_buffer_ints.resize(size);
     m_buffer_doubles.resize(size);
@@ -39,10 +40,10 @@ bool ImplementVelocityDirect::initialize(int size, const int* axis_map, const do
 
 bool ImplementVelocityDirect::uninitialize()
 {
-    if (m_helper != nullptr)
+    if (helper != nullptr)
     {
-        delete castToMapper(m_helper);
-        m_helper = nullptr;
+        delete castToMapper(helper);
+        helper = nullptr;
     }
 
     return true;
@@ -50,91 +51,86 @@ bool ImplementVelocityDirect::uninitialize()
 
 yarp::dev::ReturnValue ImplementVelocityDirect::getAxes(size_t& axes)
 {
-    axes = castToMapper(m_helper)->axes();
+    axes = castToMapper(helper)->axes();
     return ReturnValue_ok;
 }
 
 yarp::dev::ReturnValue ImplementVelocityDirect::setRefVelocity(int j, double sp)
 {
-    if (j >= castToMapper(m_helper)->axes()) {
-        yError("joint id out of bound");
-        return ReturnValue::return_code::return_value_error_method_failed;
-    }
+    JOINTIDCHECK(MAPPER_MAXID)
+    std::lock_guard lock(m_imp_mutex);
+
     int k;
     double enc;
-    castToMapper(m_helper)->velA2E(sp, j, enc, k);
+    castToMapper(helper)->velA2E(sp, j, enc, k);
     return m_iVelocityDirectRaw->setRefVelocityRaw(k, enc);
 }
 
 yarp::dev::ReturnValue ImplementVelocityDirect::setRefVelocity(const std::vector<double>& vels)
 {
-    size_t axes = castToMapper(m_helper)->axes();
-    if (vels.size() != axes) {
-        yError("Input vector size does not match number of axes");
-        return ReturnValue::return_code::return_value_error_method_failed;
-    }
-    castToMapper(m_helper)->velA2E(vels.data(), m_buffer_doubles.data());
+    std::lock_guard lock(m_imp_mutex);
+
+    castToMapper(helper)->velA2E(vels.data(), m_buffer_doubles.data());
     auto ret = m_iVelocityDirectRaw->setRefVelocityRaw(m_buffer_doubles);
     return ret;
 }
 
-yarp::dev::ReturnValue ImplementVelocityDirect::setRefVelocity(const std::vector<int>& jnts, const std::vector<double>& vels)
+yarp::dev::ReturnValue ImplementVelocityDirect::setRefVelocity(const std::vector<int>& joints, const std::vector<double>& vels)
 {
-    if (jnts.size() != vels.size()) {
-        yError("Joints and velocities vectors must have the same size");
-        return ReturnValue::return_code::return_value_error_method_failed;
-    }
-    if (!castToMapper(m_helper)->checkAxesIds(static_cast<int>(jnts.size()), jnts.data())) {
-        return ReturnValue::return_code::return_value_error_method_failed;
+    JOINTSIDVECCHECK
+    std::lock_guard lock(m_imp_mutex);
+
+    std::vector<int> vectorInt_tmp(joints.size());
+    std::vector<double> vectorDouble_tmp(joints.size());
+
+    for (size_t idx = 0; idx < joints.size(); idx++) {
+        vectorInt_tmp[idx] = castToMapper(helper)->toHw(joints[idx]);
+        vectorDouble_tmp[idx] = castToMapper(helper)->velA2E(vels[idx], joints[idx]);
     }
 
-    for (size_t idx = 0; idx < jnts.size(); idx++) {
-        m_buffer_ints[idx] = castToMapper(m_helper)->toHw(jnts[idx]);
-        m_buffer_doubles[idx] = castToMapper(m_helper)->velA2E(vels[idx], jnts[idx]);
-    }
-
-    auto ret = m_iVelocityDirectRaw->setRefVelocityRaw(m_buffer_ints, m_buffer_doubles);
+    auto ret = m_iVelocityDirectRaw->setRefVelocityRaw(vectorInt_tmp, vectorDouble_tmp);
     return ret;
 }
 
 yarp::dev::ReturnValue ImplementVelocityDirect::getRefVelocity(const int j, double& vel)
 {
-    if (j >= castToMapper(m_helper)->axes()) {
-        yError("joint id out of bound");
-        return ReturnValue::return_code::return_value_error_method_failed;
-    }
-    int k = castToMapper(m_helper)->toHw(j);
+    JOINTIDCHECK(MAPPER_MAXID)
+    std::lock_guard lock(m_imp_mutex);
+
+    int k = castToMapper(helper)->toHw(j);
     double tmp;
     auto ret = m_iVelocityDirectRaw->getRefVelocityRaw(k, tmp);
-    vel = castToMapper(m_helper)->velE2A(tmp, k);
+    vel = castToMapper(helper)->velE2A(tmp, k);
     return ret;
 }
 
 yarp::dev::ReturnValue ImplementVelocityDirect::getRefVelocity(std::vector<double>& vels)
 {
-    size_t axes = castToMapper(m_helper)->axes();
+    std::lock_guard lock(m_imp_mutex);
+
+    size_t axes = castToMapper(helper)->axes();
     auto ret = m_iVelocityDirectRaw->getRefVelocityRaw(m_buffer_doubles);
     if (vels.size() != axes) { vels.resize(axes); }
-    castToMapper(m_helper)->velE2A(m_buffer_doubles.data(), vels.data());
+    castToMapper(helper)->velE2A(m_buffer_doubles.data(), vels.data());
     return ret;
 }
 
-yarp::dev::ReturnValue ImplementVelocityDirect::getRefVelocity(const std::vector<int>& jnts, std::vector<double>& vels)
+yarp::dev::ReturnValue ImplementVelocityDirect::getRefVelocity(const std::vector<int>& joints, std::vector<double>& vels)
 {
-    if (jnts.size() != vels.size()) {
-        vels.resize(jnts.size());
-    }
-    if (!castToMapper(m_helper)->checkAxesIds(static_cast<int>(jnts.size()), jnts.data())) {
-        return ReturnValue::return_code::return_value_error_method_failed;
-    }
-    for (size_t idx = 0; idx < jnts.size(); idx++) {
-        m_buffer_ints[idx] = castToMapper(m_helper)->toHw(jnts[idx]);
+    JOINTSIDVECCHECK
+    std::lock_guard lock(m_imp_mutex);
+
+    std::vector<int> vectorInt_tmp(joints.size());
+    std::vector<double> vectorDouble_tmp(joints.size());
+
+    for (size_t idx = 0; idx < joints.size(); idx++) {
+        vectorInt_tmp[idx] = castToMapper(helper)->toHw(joints[idx]);
     }
 
-    auto ret = m_iVelocityDirectRaw->getRefVelocityRaw(m_buffer_ints, m_buffer_doubles);
+    auto ret = m_iVelocityDirectRaw->getRefVelocityRaw(vectorInt_tmp, vectorDouble_tmp);
 
-    for (size_t idx = 0; idx < jnts.size(); idx++) {
-        vels[idx] = castToMapper(m_helper)->velE2A(m_buffer_doubles[idx], jnts[idx]);
+    for (size_t idx = 0; idx < joints.size(); idx++) {
+        vels[idx] = castToMapper(helper)->velE2A(vectorDouble_tmp[idx], joints[idx]);
     }
 
     return ret;

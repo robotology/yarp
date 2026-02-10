@@ -94,6 +94,7 @@ private:
 
     size_t subdevice_joints {0};
     yarp::sig::VectorOf<double> tmpVariableForFloatSignals; // temporary variable to store float signals before copying them into the jointData struct
+    std::vector<yarp::dev::ControlModeEnum> tmpVariableForControlModes;
     bool subdevice_ready = false;
 
     yarp::dev::IPidControl* iPidControl{nullptr};

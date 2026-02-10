@@ -112,7 +112,7 @@ private:
     QList<SequenceItem> m_runTimeValues;
     QList<SequenceItem> m_cycleValues;
     QList<SequenceItem> m_cycleTimeValues;
-    std::vector<int>    m_controlModes;
+    std::vector<ControlModeEnum> m_controlModes;
     std::vector<double> m_refTrajectorySpeeds;
     std::vector<double> m_refTrajectoryPositions;
     std::vector<double> m_refTorques;
