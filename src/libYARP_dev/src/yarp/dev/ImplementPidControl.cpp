@@ -5,6 +5,7 @@
 
 #include <yarp/dev/ImplementPidControl.h>
 #include <yarp/dev/ControlBoardHelper.h>
+#include <yarp/dev/ControlBoardHelpers.h>
 #include <yarp/os/LogStream.h>
 #include <yarp/dev/impl/FixedSizeBuffersManager.h>
 
@@ -12,15 +13,12 @@
 
 using namespace yarp::dev;
 using namespace yarp::os;
-#define JOINTIDCHECK if (j >= castToMapper(helper)->axes()){yError("joint id out of bound"); return ReturnValue::return_code::return_value_error_method_failed;;}
 
 //////////////////// Implement PidControl interface
 ImplementPidControl::ImplementPidControl(IPidControlRaw *y):
-helper(nullptr),
-doubleBuffManager(nullptr),
-pidBuffManager(nullptr)
+m_helper(nullptr)
 {
-    iPid= dynamic_cast<IPidControlRaw *> (y);
+    m_iraw= dynamic_cast<IPidControlRaw *> (y);
 }
 
 ImplementPidControl::~ImplementPidControl()
@@ -30,18 +28,16 @@ ImplementPidControl::~ImplementPidControl()
 
 bool ImplementPidControl:: initialize (int size, const int *amap, const double *enc, const double *zos, const double* newtons, const double* amps, const double* dutys)
 {
-    if (helper != nullptr) {
+    if (m_helper != nullptr) {
         return false;
     }
 
-    helper=(void *)(new ControlBoardHelper(size, amap, enc, zos,newtons,amps,nullptr,dutys));
-    yAssert (helper != nullptr);
+    m_helper=(void *)(new ControlBoardHelper(size, amap, enc, zos,newtons,amps,nullptr,dutys));
+    yAssert (m_helper != nullptr);
 
-    doubleBuffManager = new yarp::dev::impl::FixedSizeBuffersManager<double> (size);
-    yAssert (doubleBuffManager != nullptr);
-
-    pidBuffManager = new yarp::dev::impl::FixedSizeBuffersManager<Pid> (size, 1);
-    yAssert (pidBuffManager != nullptr);
+    m_buffer_ints.resize   (size);
+    m_buffer_doubles.resize(size);
+    m_buffer_pids.resize(size);
 
     return true;
 }
@@ -52,22 +48,10 @@ bool ImplementPidControl:: initialize (int size, const int *amap, const double *
 */
 bool ImplementPidControl::uninitialize ()
 {
-    if (helper!=nullptr)
+    if (m_helper!=nullptr)
     {
-        delete castToMapper(helper);
-        helper=nullptr;
-    }
-
-    if(doubleBuffManager)
-    {
-        delete doubleBuffManager;
-        doubleBuffManager=nullptr;
-    }
-
-    if(pidBuffManager)
-    {
-        delete pidBuffManager;
-        pidBuffManager=nullptr;
+        delete castToMapper(m_helper);
+        m_helper=nullptr;
     }
 
      return true;
@@ -75,92 +59,110 @@ bool ImplementPidControl::uninitialize ()
 
 ReturnValue ImplementPidControl::getAvailablePids(int j, std::vector<PidControlTypeEnum>& avail)
 {
-    if (j >= castToMapper(helper)->axes()){yError("joint id out of bound"); return ReturnValue::return_code::return_value_error_method_failed;}
+    std::lock_guard lock(m_imp_mutex);
+    JOINTIDCHECK(j)
+
     Pid pid_machine;
-    int k=castToMapper(helper)->toHw(j);
-    ControlBoardHelper* cb_helper = castToMapper(helper);
-    return iPid->getAvailablePidsRaw(k, avail);
+    int k=castToMapper(m_helper)->toHw(j);
+    ControlBoardHelper* cb_helper = castToMapper(m_helper);
+    return m_iraw->getAvailablePidsRaw(k, avail);
 }
 
 ReturnValue ImplementPidControl::setPid(const PidControlTypeEnum& pidtype, int j, const Pid &pid)
 {
-    if (j >= castToMapper(helper)->axes()){yError("joint id out of bound"); return ReturnValue::return_code::return_value_error_method_failed;}
+    std::lock_guard lock(m_imp_mutex);
+    JOINTIDCHECK(j)
+
     Pid pid_machine;
     int k;
-    ControlBoardHelper* cb_helper = castToMapper(helper);
+    ControlBoardHelper* cb_helper = castToMapper(m_helper);
     cb_helper->convert_pid_to_machine(pidtype, pid, j, pid_machine, k);
-    return iPid->setPidRaw(pidtype, k, pid_machine);
+    return m_iraw->setPidRaw(pidtype, k, pid_machine);
 }
 
 ReturnValue ImplementPidControl::setPids(const PidControlTypeEnum& pidtype,  const Pid *pids)
 {
-    ControlBoardHelper* cb_helper = castToMapper(helper);
+    std::lock_guard lock(m_imp_mutex);
+    POINTERCHECK(pids)
+
+    ControlBoardHelper* cb_helper = castToMapper(m_helper);
     int nj= cb_helper->axes();
-    yarp::dev::impl::Buffer<Pid> buffValues = pidBuffManager->getBuffer();
+
     for(int j=0;j<nj;j++)
     {
         Pid pid_machine;
         int k;
         cb_helper->convert_pid_to_machine(pidtype,  pids[j], j, pid_machine, k);
-        buffValues[k] = pid_machine;
+        m_buffer_pids[k] = pid_machine;
     }
 
+    auto ret = m_iraw->setPidsRaw(pidtype, m_buffer_pids.data());
 
-    auto ret = iPid->setPidsRaw(pidtype, buffValues.getData());
-    pidBuffManager->releaseBuffer(buffValues);
     return ret;
 }
 
 ReturnValue ImplementPidControl::setPidReference(const PidControlTypeEnum& pidtype,  int j, double ref)
 {
-    JOINTIDCHECK
+    std::lock_guard lock(m_imp_mutex);
+    JOINTIDCHECK(j)
+
     int k=0;
     double raw;
-    ControlBoardHelper* cb_helper = castToMapper(helper);
+    ControlBoardHelper* cb_helper = castToMapper(m_helper);
     cb_helper->convert_pidunits_to_machine(pidtype,ref,j,raw,k);
-    return iPid->setPidReferenceRaw(pidtype, k, raw);
+    return m_iraw->setPidReferenceRaw(pidtype, k, raw);
 }
 
 ReturnValue ImplementPidControl::setPidReferences(const PidControlTypeEnum& pidtype,  const double *refs)
 {
-    ControlBoardHelper* cb_helper = castToMapper(helper);
-    yarp::dev::impl::Buffer<double> buffValues = doubleBuffManager->getBuffer();
-    cb_helper->convert_pidunits_to_machine(pidtype,refs,buffValues.getData());
-    ReturnValue ret = iPid->setPidReferencesRaw(pidtype, buffValues.getData());
-    doubleBuffManager->releaseBuffer(buffValues);
+    std::lock_guard lock(m_imp_mutex);
+    POINTERCHECK(refs)
+
+    ControlBoardHelper* cb_helper = castToMapper(m_helper);
+
+    cb_helper->convert_pidunits_to_machine(pidtype,refs,m_buffer_doubles.data());
+    ReturnValue ret = m_iraw->setPidReferencesRaw(pidtype, m_buffer_doubles.data());
+
     return ret;
 }
 
 ReturnValue ImplementPidControl::setPidErrorLimit(const PidControlTypeEnum& pidtype,  int j, double limit)
 {
-    JOINTIDCHECK
+    std::lock_guard lock(m_imp_mutex);
+    JOINTIDCHECK(j)
+
     int k;
     double raw;
-    ControlBoardHelper* cb_helper = castToMapper(helper);
+    ControlBoardHelper* cb_helper = castToMapper(m_helper);
     cb_helper->convert_pidunits_to_machine(pidtype,limit,j,raw,k);
-    return iPid->setPidErrorLimitRaw(pidtype, k, raw);
+    return m_iraw->setPidErrorLimitRaw(pidtype, k, raw);
 }
 
 ReturnValue ImplementPidControl::setPidErrorLimits(const PidControlTypeEnum& pidtype,  const double *limits)
 {
-    ControlBoardHelper* cb_helper = castToMapper(helper);
-    yarp::dev::impl::Buffer<double> buffValues = doubleBuffManager->getBuffer();
-    cb_helper->convert_pidunits_to_machine(pidtype,limits,buffValues.getData());
-    ReturnValue ret = iPid->setPidErrorLimitsRaw(pidtype, buffValues.getData());
-    doubleBuffManager->releaseBuffer(buffValues);
+    std::lock_guard lock(m_imp_mutex);
+    POINTERCHECK(limits)
+
+    ControlBoardHelper* cb_helper = castToMapper(m_helper);
+
+    cb_helper->convert_pidunits_to_machine(pidtype,limits,m_buffer_doubles.data());
+    ReturnValue ret = m_iraw->setPidErrorLimitsRaw(pidtype, m_buffer_doubles.data());
+
     return ret;
 }
 
-
 ReturnValue ImplementPidControl::getPidError(const PidControlTypeEnum& pidtype, int j, double *err)
 {
-    JOINTIDCHECK
+    std::lock_guard lock(m_imp_mutex);
+    JOINTIDCHECK(j)
+    POINTERCHECK(err)
+
     int k;
     double raw;
-    ControlBoardHelper* cb_helper = castToMapper(helper);
-    k=castToMapper(helper)->toHw(j);
+    ControlBoardHelper* cb_helper = castToMapper(m_helper);
+    k=castToMapper(m_helper)->toHw(j);
 
-    ReturnValue ret=iPid->getPidErrorRaw(pidtype, k, &raw);
+    ReturnValue ret=m_iraw->getPidErrorRaw(pidtype, k, &raw);
 
     cb_helper->convert_pidunits_to_user(pidtype,raw,err,k);
     return ret;
@@ -168,26 +170,32 @@ ReturnValue ImplementPidControl::getPidError(const PidControlTypeEnum& pidtype, 
 
 ReturnValue ImplementPidControl::getPidErrors(const PidControlTypeEnum& pidtype,  double *errs)
 {
+    std::lock_guard lock(m_imp_mutex);
+    POINTERCHECK(errs)
+
     ReturnValue ret;
-    ControlBoardHelper* cb_helper = castToMapper(helper);
-    yarp::dev::impl::Buffer<double> buffValues = doubleBuffManager->getBuffer();
-    ret=iPid->getPidErrorsRaw(pidtype, buffValues.getData());
-    cb_helper->convert_pidunits_to_user(pidtype,buffValues.getData(),errs);
-    doubleBuffManager->releaseBuffer(buffValues);
+    ControlBoardHelper* cb_helper = castToMapper(m_helper);
+
+    ret=m_iraw->getPidErrorsRaw(pidtype, m_buffer_doubles.data());
+    cb_helper->convert_pidunits_to_user(pidtype,m_buffer_doubles.data(),errs);
+
     return ret;
 }
 
 ReturnValue ImplementPidControl::getPidOutput(const PidControlTypeEnum& pidtype,  int j, double *out)
 {
-    JOINTIDCHECK
+    std::lock_guard lock(m_imp_mutex);
+    JOINTIDCHECK(j)
+    POINTERCHECK(out)
+
     ReturnValue ret;
     int k_raw;
     double raw;
-    k_raw = castToMapper(helper)->toHw(j);
-    ret = iPid->getPidOutputRaw(pidtype, k_raw, &raw);
+    k_raw = castToMapper(m_helper)->toHw(j);
+    ret = m_iraw->getPidOutputRaw(pidtype, k_raw, &raw);
     if (ret)
     {
-        ControlBoardHelper* cb_helper = castToMapper(helper);
+        ControlBoardHelper* cb_helper = castToMapper(m_helper);
         double output_conversion_units_user2raw = cb_helper->get_pidoutput_conversion_factor_user2raw(pidtype, j);
         *out = raw / output_conversion_units_user2raw;
         return ret;
@@ -197,31 +205,37 @@ ReturnValue ImplementPidControl::getPidOutput(const PidControlTypeEnum& pidtype,
 
 ReturnValue ImplementPidControl::getPidOutputs(const PidControlTypeEnum& pidtype, double *outs)
 {
-    ControlBoardHelper* cb_helper = castToMapper(helper);
+    std::lock_guard lock(m_imp_mutex);
+    POINTERCHECK(outs)
+
+    ControlBoardHelper* cb_helper = castToMapper(m_helper);
     int nj = cb_helper->axes();
-    yarp::dev::impl::Buffer<double> buffValues = doubleBuffManager->getBuffer();
-    ReturnValue ret = iPid->getPidOutputsRaw(pidtype, buffValues.getData());
+
+    ReturnValue ret = m_iraw->getPidOutputsRaw(pidtype, m_buffer_doubles.data());
     if (ret)
     {
-        castToMapper(cb_helper)->toUser(buffValues.getData(), outs);
+        castToMapper(cb_helper)->toUser(m_buffer_doubles.data(), outs);
         for (int j = 0; j < nj; j++)
         {
             double output_conversion_units_user2raw = cb_helper->get_pidoutput_conversion_factor_user2raw(pidtype, j);
             outs[j] = outs[j] / output_conversion_units_user2raw;
         }
     }
-    doubleBuffManager->releaseBuffer(buffValues);
+
     return ret;
 }
 
 ReturnValue ImplementPidControl::getPid(const PidControlTypeEnum& pidtype, int j, Pid *pid)
 {
-    if (j >= castToMapper(helper)->axes()){yError("joint id out of bound"); return ReturnValue::return_code::return_value_error_method_failed;}
-    ControlBoardHelper* cb_helper = castToMapper(helper);
+    std::lock_guard lock(m_imp_mutex);
+    JOINTIDCHECK(j)
+    POINTERCHECK(pid)
+
+    ControlBoardHelper* cb_helper = castToMapper(m_helper);
     int k_raw;
     k_raw=cb_helper->toHw(j);
     Pid rawPid;
-    auto ret = iPid->getPidRaw(pidtype, k_raw, &rawPid);
+    auto ret = m_iraw->getPidRaw(pidtype, k_raw, &rawPid);
     if (ret)
     {
         cb_helper->convert_pid_to_user(pidtype, rawPid, k_raw, *pid, j);
@@ -232,38 +246,42 @@ ReturnValue ImplementPidControl::getPid(const PidControlTypeEnum& pidtype, int j
 
 ReturnValue ImplementPidControl::getPids(const PidControlTypeEnum& pidtype, Pid *pids)
 {
-    yarp::dev::impl::Buffer<Pid> buffValues = pidBuffManager->getBuffer();
-    auto ret = iPid->getPidsRaw(pidtype, buffValues.getData());
+    std::lock_guard lock(m_imp_mutex);
+    POINTERCHECK(pids)
+
+    auto ret = m_iraw->getPidsRaw(pidtype, m_buffer_pids.data());
     if(!ret)
     {
-        pidBuffManager->releaseBuffer(buffValues);
         return ret;
     }
 
-    ControlBoardHelper* cb_helper = castToMapper(helper);
+    ControlBoardHelper* cb_helper = castToMapper(m_helper);
     int nj=cb_helper->axes();
 
     for (int k_raw = 0; k_raw < nj; k_raw++)
     {
         int j_usr;
         Pid outpid;
-        cb_helper->convert_pid_to_user(pidtype, buffValues[k_raw], k_raw, outpid, j_usr);
+        cb_helper->convert_pid_to_user(pidtype, m_buffer_pids[k_raw], k_raw, outpid, j_usr);
         pids[j_usr] = outpid;
     }
-    pidBuffManager->releaseBuffer(buffValues);
+
     return ret;
 }
 
 ReturnValue ImplementPidControl::getPidReference(const PidControlTypeEnum& pidtype, int j, double *ref)
 {
-    JOINTIDCHECK
+    std::lock_guard lock(m_imp_mutex);
+    JOINTIDCHECK(j)
+    POINTERCHECK(ref)
+
     ReturnValue ret;
     int k;
     double raw;
-    ControlBoardHelper* cb_helper = castToMapper(helper);
-    k=castToMapper(helper)->toHw(j);
+    ControlBoardHelper* cb_helper = castToMapper(m_helper);
+    k=castToMapper(m_helper)->toHw(j);
 
-    ret=iPid->getPidReferenceRaw(pidtype, k, &raw);
+    ret=m_iraw->getPidReferenceRaw(pidtype, k, &raw);
 
     cb_helper->convert_pidunits_to_user(pidtype,raw,ref,k);
     return ret;
@@ -271,26 +289,32 @@ ReturnValue ImplementPidControl::getPidReference(const PidControlTypeEnum& pidty
 
 ReturnValue ImplementPidControl::getPidReferences(const PidControlTypeEnum& pidtype, double *refs)
 {
-    ReturnValue ret;
-    ControlBoardHelper* cb_helper = castToMapper(helper);
-    yarp::dev::impl::Buffer<double> buffValues = doubleBuffManager->getBuffer();
-    ret=iPid->getPidReferencesRaw(pidtype, buffValues.getData());
+    std::lock_guard lock(m_imp_mutex);
+    POINTERCHECK(refs)
 
-    cb_helper->convert_pidunits_to_user(pidtype,buffValues.getData(),refs);
-    doubleBuffManager->releaseBuffer(buffValues);
+    ReturnValue ret;
+    ControlBoardHelper* cb_helper = castToMapper(m_helper);
+
+    ret=m_iraw->getPidReferencesRaw(pidtype, m_buffer_doubles.data());
+
+    cb_helper->convert_pidunits_to_user(pidtype,m_buffer_doubles.data(),refs);
+
     return ret;
 }
 
 ReturnValue ImplementPidControl::getPidErrorLimit(const PidControlTypeEnum& pidtype, int j, double *ref)
 {
-    JOINTIDCHECK
+    std::lock_guard lock(m_imp_mutex);
+    JOINTIDCHECK(j)
+    POINTERCHECK(ref)
+
     ReturnValue ret;
     int k;
     double raw;
-    ControlBoardHelper* cb_helper = castToMapper(helper);
-    k=castToMapper(helper)->toHw(j);
+    ControlBoardHelper* cb_helper = castToMapper(m_helper);
+    k=castToMapper(m_helper)->toHw(j);
 
-    ret=iPid->getPidErrorLimitRaw(pidtype, k, &raw);
+    ret=m_iraw->getPidErrorLimitRaw(pidtype, k, &raw);
 
     cb_helper->convert_pidunits_to_user(pidtype,raw,ref,k);
     return ret;
@@ -298,76 +322,91 @@ ReturnValue ImplementPidControl::getPidErrorLimit(const PidControlTypeEnum& pidt
 
 ReturnValue ImplementPidControl::getPidErrorLimits(const PidControlTypeEnum& pidtype, double *refs)
 {
-    ReturnValue ret;
-    ControlBoardHelper* cb_helper = castToMapper(helper);
-    yarp::dev::impl::Buffer<double > buffValues = doubleBuffManager->getBuffer();
-    ret=iPid->getPidErrorLimitsRaw(pidtype, buffValues.getData());
+    std::lock_guard lock(m_imp_mutex);
+    POINTERCHECK(refs)
 
-    cb_helper->convert_pidunits_to_user(pidtype,buffValues.getData(),refs);
+    ReturnValue ret;
+    ControlBoardHelper* cb_helper = castToMapper(m_helper);
+
+    ret=m_iraw->getPidErrorLimitsRaw(pidtype, m_buffer_doubles.data());
+
+    cb_helper->convert_pidunits_to_user(pidtype,m_buffer_doubles.data(),refs);
     return ret;
 }
 
 ReturnValue ImplementPidControl::resetPid(const PidControlTypeEnum& pidtype, int j)
 {
-    if (j >= castToMapper(helper)->axes()){yError("joint id out of bound"); return ReturnValue::return_code::return_value_error_method_failed;}
-    int k=0;
-    k=castToMapper(helper)->toHw(j);
+    std::lock_guard lock(m_imp_mutex);
+    JOINTIDCHECK(j)
 
-    return iPid->resetPidRaw(pidtype, k);
+    int k=0;
+    k=castToMapper(m_helper)->toHw(j);
+
+    return m_iraw->resetPidRaw(pidtype, k);
 }
 
 ReturnValue ImplementPidControl::enablePid(const PidControlTypeEnum& pidtype, int j)
 {
-    if (j >= castToMapper(helper)->axes()){yError("joint id out of bound"); return ReturnValue::return_code::return_value_error_method_failed;}
-    int k=0;
-    k=castToMapper(helper)->toHw(j);
+    std::lock_guard lock(m_imp_mutex);
+    JOINTIDCHECK(j)
 
-    return iPid->enablePidRaw(pidtype, k);
+    int k=0;
+    k=castToMapper(m_helper)->toHw(j);
+
+    return m_iraw->enablePidRaw(pidtype, k);
 }
 
 ReturnValue ImplementPidControl::disablePid(const PidControlTypeEnum& pidtype, int j)
 {
-    if (j >= castToMapper(helper)->axes()){yError("joint id out of bound"); return ReturnValue::return_code::return_value_error_method_failed;}
-    int k=0;
-    k=castToMapper(helper)->toHw(j);
+    std::lock_guard lock(m_imp_mutex);
+    JOINTIDCHECK(j)
 
-    return iPid->disablePidRaw(pidtype, k);
+    int k=0;
+    k=castToMapper(m_helper)->toHw(j);
+
+    return m_iraw->disablePidRaw(pidtype, k);
 }
 
 ReturnValue ImplementPidControl::setPidOffset(const PidControlTypeEnum& pidtype, int j, double off)
 {
-    if (j >= castToMapper(helper)->axes()){yError("joint id out of bound"); return ReturnValue::return_code::return_value_error_method_failed;}
+    std::lock_guard lock(m_imp_mutex);
+    JOINTIDCHECK(j)
+
     int k = 0;
-    k=castToMapper(helper)->toHw(j);
+    k=castToMapper(m_helper)->toHw(j);
     double rawoff;
-    ControlBoardHelper* cb_helper = castToMapper(helper);
+    ControlBoardHelper* cb_helper = castToMapper(m_helper);
     double output_conversion_units_user2raw = cb_helper->get_pidoutput_conversion_factor_user2raw(pidtype,j);
     rawoff = off * output_conversion_units_user2raw;
-    return iPid->setPidOffsetRaw(pidtype, k, rawoff);
+    return m_iraw->setPidOffsetRaw(pidtype, k, rawoff);
 }
 
 ReturnValue ImplementPidControl::setPidFeedforward(const PidControlTypeEnum& pidtype, int j, double off)
 {
-    if (j >= castToMapper(helper)->axes()){yError("joint id out of bound"); return ReturnValue::return_code::return_value_error_method_failed;}
+    std::lock_guard lock(m_imp_mutex);
+    JOINTIDCHECK(j)
+
     int k = 0;
-    k=castToMapper(helper)->toHw(j);
+    k=castToMapper(m_helper)->toHw(j);
     double rawoff;
-    ControlBoardHelper* cb_helper = castToMapper(helper);
+    ControlBoardHelper* cb_helper = castToMapper(m_helper);
     double output_conversion_units_user2raw = cb_helper->get_pidoutput_conversion_factor_user2raw(pidtype,j);
     rawoff = off * output_conversion_units_user2raw;
-    return iPid->setPidFeedforwardRaw(pidtype, k, rawoff);
+    return m_iraw->setPidFeedforwardRaw(pidtype, k, rawoff);
 }
 
 ReturnValue ImplementPidControl::getPidOffset(const PidControlTypeEnum& pidtype, int j, double& off)
 {
-    if (j >= castToMapper(helper)->axes()){yError("joint id out of bound"); return ReturnValue::return_code::return_value_error_method_failed;}
+    std::lock_guard lock(m_imp_mutex);
+    JOINTIDCHECK(j)
+
     ReturnValue ret;
     int k;
     double raw;
-    ControlBoardHelper* cb_helper = castToMapper(helper);
-    k=castToMapper(helper)->toHw(j);
+    ControlBoardHelper* cb_helper = castToMapper(m_helper);
+    k=castToMapper(m_helper)->toHw(j);
 
-    ret=iPid->getPidOffsetRaw(pidtype, k, raw);
+    ret=m_iraw->getPidOffsetRaw(pidtype, k, raw);
 
     cb_helper->convert_pidunits_to_user(pidtype,raw,&off,k);
     return ret;
@@ -375,14 +414,16 @@ ReturnValue ImplementPidControl::getPidOffset(const PidControlTypeEnum& pidtype,
 
 ReturnValue ImplementPidControl::getPidFeedforward(const PidControlTypeEnum& pidtype, int j, double& ffd)
 {
-    if (j >= castToMapper(helper)->axes()){yError("joint id out of bound"); return ReturnValue::return_code::return_value_error_method_failed;}
+    std::lock_guard lock(m_imp_mutex);
+    JOINTIDCHECK(j)
+
     ReturnValue ret;
     int k;
     double raw;
-    ControlBoardHelper* cb_helper = castToMapper(helper);
-    k=castToMapper(helper)->toHw(j);
+    ControlBoardHelper* cb_helper = castToMapper(m_helper);
+    k=castToMapper(m_helper)->toHw(j);
 
-    ret=iPid->getPidFeedforwardRaw(pidtype, k, raw);
+    ret=m_iraw->getPidFeedforwardRaw(pidtype, k, raw);
 
     cb_helper->convert_pidunits_to_user(pidtype,raw,&ffd,k);
     return ret;
@@ -390,28 +431,48 @@ ReturnValue ImplementPidControl::getPidFeedforward(const PidControlTypeEnum& pid
 
 ReturnValue ImplementPidControl::isPidEnabled(const PidControlTypeEnum& pidtype, int j, bool& enabled)
 {
-    if (j >= castToMapper(helper)->axes()){yError("joint id out of bound"); return ReturnValue::return_code::return_value_error_method_failed;}
-    int k=0;
-    k=castToMapper(helper)->toHw(j);
+    std::lock_guard lock(m_imp_mutex);
+    JOINTIDCHECK(j)
 
-    return iPid->isPidEnabledRaw(pidtype, k, enabled);
+    int k=0;
+    k=castToMapper(m_helper)->toHw(j);
+
+    return m_iraw->isPidEnabledRaw(pidtype, k, enabled);
 }
 
 bool ImplementPidControl::setConversionUnits(const PidControlTypeEnum& pidtype, const PidFeedbackUnitsEnum fbk_conv_units, const PidOutputUnitsEnum out_conv_units)
 {
-    castToMapper(helper)->set_pid_conversion_units(pidtype, fbk_conv_units, out_conv_units);
+    std::lock_guard lock(m_imp_mutex);
+
+    castToMapper(m_helper)->set_pid_conversion_units(pidtype, fbk_conv_units, out_conv_units);
     return true;
 }
 
 yarp::dev::ReturnValue ImplementPidControl::getPidExtraInfo(const PidControlTypeEnum& pidtype, int j, yarp::dev::PidExtraInfo& units)
 {
-    if (j >= castToMapper(helper)->axes()){yError("joint id out of bound"); return ReturnValue::return_code::return_value_error_method_failed;}
+    std::lock_guard lock(m_imp_mutex);
+    JOINTIDCHECK(j)
+
     int k=0;
-    k=castToMapper(helper)->toHw(j);
-    return iPid->getPidExtraInfoRaw(pidtype, k, units);
+    k=castToMapper(m_helper)->toHw(j);
+    return m_iraw->getPidExtraInfoRaw(pidtype, k, units);
 }
 
 yarp::dev::ReturnValue ImplementPidControl::getPidExtraInfos(const PidControlTypeEnum& pidtype, std::vector<yarp::dev::PidExtraInfo>& units)
 {
-    return ReturnValue_ok;
+    std::lock_guard lock(m_imp_mutex);
+    VECCHECK_GET_ALL(units);
+
+    ReturnValue ret;
+    std::vector<yarp::dev::PidExtraInfo> tmp_infos;
+    tmp_infos.resize(units.size());
+    ret = m_iraw->getPidExtraInfosRaw(pidtype, tmp_infos);
+
+    for (size_t i = 0; i < tmp_infos.size(); i++)
+    {
+        int o = castToMapper(m_helper)->toHw(i);
+        units[o] = tmp_infos[i];
+    }
+
+    return ret;
 }

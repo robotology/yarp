@@ -6,6 +6,7 @@
 
 #include <yarp/dev/ImplementAmplifierControl.h>
 #include <yarp/dev/ControlBoardHelper.h>
+#include <yarp/dev/ControlBoardHelpers.h>
 
 #include <cmath>
 
@@ -17,10 +18,8 @@ using namespace yarp::dev;
 
 ImplementAmplifierControl::ImplementAmplifierControl(yarp::dev::IAmplifierControlRaw  *y)
 {
-    iAmplifier= y;
-    helper = nullptr;
-    dTemp=nullptr;
-    iTemp=nullptr;
+    m_iraw= y;
+    m_helper = nullptr;
 }
 
 ImplementAmplifierControl::~ImplementAmplifierControl()
@@ -30,16 +29,15 @@ ImplementAmplifierControl::~ImplementAmplifierControl()
 
 bool ImplementAmplifierControl:: initialize (int size, const int *amap, const double *enc, const double *zos, const double *ampereFactor, const double *voltFactor)
 {
-    if (helper != nullptr) {
+    if (m_helper != nullptr) {
         return false;
     }
 
-    helper=(void *)(new ControlBoardHelper(size, amap, enc, zos,nullptr, ampereFactor, voltFactor));
-    yAssert (helper != nullptr);
-    dTemp=new double[size];
-    yAssert (dTemp != nullptr);
-    iTemp=new int[size];
-    yAssert (iTemp != nullptr);
+    m_helper=(void *)(new ControlBoardHelper(size, amap, enc, zos,nullptr, ampereFactor, voltFactor));
+    yAssert (m_helper != nullptr);
+
+    m_buffer_ints.resize   (size);
+    m_buffer_doubles.resize(size);
 
     return true;
 }
@@ -50,146 +48,197 @@ bool ImplementAmplifierControl:: initialize (int size, const int *amap, const do
 */
 bool ImplementAmplifierControl::uninitialize ()
 {
-    if (helper != nullptr) {
-        delete castToMapper(helper);
+    if (m_helper != nullptr) {
+        delete castToMapper(m_helper);
     }
 
-    delete [] dTemp;
-    delete [] iTemp;
-
-    helper=nullptr;
-    dTemp=nullptr;
-    iTemp=nullptr;
+    m_helper=nullptr;
     return true;
 }
 
 ReturnValue ImplementAmplifierControl::enableAmp(int j)
 {
-    int k=castToMapper(helper)->toHw(j);
+    std::lock_guard lock(m_imp_mutex);
+    JOINTIDCHECK(j)
 
-    return iAmplifier->enableAmpRaw(k);
+    int k=castToMapper(m_helper)->toHw(j);
+
+    return m_iraw->enableAmpRaw(k);
 }
 
 ReturnValue ImplementAmplifierControl::disableAmp(int j)
 {
-    int k=castToMapper(helper)->toHw(j);
+    std::lock_guard lock(m_imp_mutex);
+    JOINTIDCHECK(j)
 
-    return iAmplifier->disableAmpRaw(k);
+    int k=castToMapper(m_helper)->toHw(j);
+
+    return m_iraw->disableAmpRaw(k);
 }
 
 ReturnValue ImplementAmplifierControl::getCurrents(double *currs)
 {
-    ReturnValue ret=iAmplifier->getCurrentsRaw(dTemp);
-    castToMapper(helper)->ampereS2A(dTemp, currs);
+    std::lock_guard lock(m_imp_mutex);
+    POINTERCHECK(currs)
+
+    ReturnValue ret=m_iraw->getCurrentsRaw(m_buffer_doubles.data());
+    castToMapper(m_helper)->ampereS2A(m_buffer_doubles.data(), currs);
     return ret;
 }
 
 ReturnValue ImplementAmplifierControl::getCurrent(int j, double *c)
 {
+    std::lock_guard lock(m_imp_mutex);
+    JOINTIDCHECK(j)
+    POINTERCHECK(c)
+
     double temp = 0;
-    int k = castToMapper(helper)->toHw(j);
-    ReturnValue ret = iAmplifier->getCurrentRaw(k, &temp);
-    castToMapper(helper)->ampereS2A(temp, k, *c, j);
+    int k = castToMapper(m_helper)->toHw(j);
+    ReturnValue ret = m_iraw->getCurrentRaw(k, &temp);
+    castToMapper(m_helper)->ampereS2A(temp, k, *c, j);
     return ret;
 }
 
 ReturnValue ImplementAmplifierControl::getAmpStatus(int *st)
 {
-    ReturnValue ret=iAmplifier->getAmpStatusRaw(iTemp);
-    castToMapper(helper)->toUser(iTemp, st);
+    std::lock_guard lock(m_imp_mutex);
+    POINTERCHECK(st)
+
+    ReturnValue ret=m_iraw->getAmpStatusRaw(m_buffer_ints.data());
+    castToMapper(m_helper)->toUser(m_buffer_ints.data(), st);
 
     return ret;
 }
 
 ReturnValue ImplementAmplifierControl::getAmpStatus(int k, int *st)
 {
-    int j=castToMapper(helper)->toHw(k);
-    ReturnValue ret=iAmplifier->getAmpStatusRaw(j, st);
+    std::lock_guard lock(m_imp_mutex);
+    JOINTIDCHECK(k)
+    POINTERCHECK(st)
+
+    int j=castToMapper(m_helper)->toHw(k);
+    ReturnValue ret=m_iraw->getAmpStatusRaw(j, st);
 
     return ret;
 }
 
 ReturnValue ImplementAmplifierControl::setMaxCurrent(int m, double v)
 {
+    std::lock_guard lock(m_imp_mutex);
+    JOINTIDCHECK(m)
+
     int k;
     double curr;
-    castToMapper(helper)->ampereA2S(v, m, curr, k);
-    return iAmplifier->setMaxCurrentRaw(k, curr);
+    castToMapper(m_helper)->ampereA2S(v, m, curr, k);
+    return m_iraw->setMaxCurrentRaw(k, curr);
 }
 
 ReturnValue ImplementAmplifierControl::getMaxCurrent(int j, double* v)
 {
+    std::lock_guard lock(m_imp_mutex);
+    JOINTIDCHECK(j)
+    POINTERCHECK(v)
+
     double val;
-    int k=castToMapper(helper)->toHw(j);
-    ReturnValue ret = iAmplifier->getMaxCurrentRaw(k, &val);
-    *v = castToMapper(helper)->ampereS2A(val, k);
+    int k=castToMapper(m_helper)->toHw(j);
+    ReturnValue ret = m_iraw->getMaxCurrentRaw(k, &val);
+    *v = castToMapper(m_helper)->ampereS2A(val, k);
     return ret;
 }
 
 ReturnValue ImplementAmplifierControl::getNominalCurrent(int m, double *curr)
 {
+    std::lock_guard lock(m_imp_mutex);
+    JOINTIDCHECK(m)
+    POINTERCHECK(curr)
+
     int k;
     ReturnValue ret;
     double tmp;
 
-    k=castToMapper(helper)->toHw(m);
-    ret=iAmplifier->getNominalCurrentRaw(k, &tmp);
-    *curr=castToMapper(helper)->ampereS2A(tmp, k);
+    k=castToMapper(m_helper)->toHw(m);
+    ret=m_iraw->getNominalCurrentRaw(k, &tmp);
+    *curr=castToMapper(m_helper)->ampereS2A(tmp, k);
     return ret;
 }
 
 ReturnValue ImplementAmplifierControl::getPeakCurrent(int m, double *curr)
 {
+    std::lock_guard lock(m_imp_mutex);
+    JOINTIDCHECK(m)
+    POINTERCHECK(curr)
+
     int k;
     ReturnValue ret;
     double tmp;
 
-    k=castToMapper(helper)->toHw(m);
-    ret=iAmplifier->getPeakCurrentRaw(k, &tmp);
-    *curr=castToMapper(helper)->ampereS2A(tmp, k);
+    k=castToMapper(m_helper)->toHw(m);
+    ret=m_iraw->getPeakCurrentRaw(k, &tmp);
+    *curr=castToMapper(m_helper)->ampereS2A(tmp, k);
     return ret;
 }
 
 ReturnValue ImplementAmplifierControl::setPeakCurrent(int m, const double curr)
 {
+    std::lock_guard lock(m_imp_mutex);
+    JOINTIDCHECK(m)
+
     int k;
     double val;
-    castToMapper(helper)->ampereA2S(curr, m, val, k);
-    return iAmplifier->setPeakCurrentRaw(k, val);
+    castToMapper(m_helper)->ampereA2S(curr, m, val, k);
+    return m_iraw->setPeakCurrentRaw(k, val);
 }
 
 ReturnValue ImplementAmplifierControl::setNominalCurrent(int m, const double curr)
 {
+    std::lock_guard lock(m_imp_mutex);
+    JOINTIDCHECK(m)
+
     int k;
     double val;
-    castToMapper(helper)->ampereA2S(curr, m, val, k);
-    return iAmplifier->setNominalCurrentRaw(k, val);
+    castToMapper(m_helper)->ampereA2S(curr, m, val, k);
+    return m_iraw->setNominalCurrentRaw(k, val);
 }
 
 ReturnValue ImplementAmplifierControl::getPWM(int m, double* pwm)
 {
+    std::lock_guard lock(m_imp_mutex);
+    JOINTIDCHECK(m)
+    POINTERCHECK(pwm)
+
     int k;
-    k=castToMapper(helper)->toHw(m);
-    return iAmplifier->getPWMRaw(k, pwm);
+    k=castToMapper(m_helper)->toHw(m);
+    return m_iraw->getPWMRaw(k, pwm);
 }
 
 ReturnValue ImplementAmplifierControl::getPWMLimit(int m, double* limit)
 {
+    std::lock_guard lock(m_imp_mutex);
+    JOINTIDCHECK(m)
+    POINTERCHECK(limit)
+
     int k;
-    k=castToMapper(helper)->toHw(m);
-    return iAmplifier->getPWMLimitRaw(k, limit);
+    k=castToMapper(m_helper)->toHw(m);
+    return m_iraw->getPWMLimitRaw(k, limit);
 }
 
 ReturnValue ImplementAmplifierControl::setPWMLimit(int m, const double limit)
 {
+    std::lock_guard lock(m_imp_mutex);
+    JOINTIDCHECK(m)
+
     int k;
-    k=castToMapper(helper)->toHw(m);
-    return iAmplifier->setPWMLimitRaw(k, limit);
+    k=castToMapper(m_helper)->toHw(m);
+    return m_iraw->setPWMLimitRaw(k, limit);
 }
 
 ReturnValue ImplementAmplifierControl::getPowerSupplyVoltage(int m, double *voltage)
 {
+    std::lock_guard lock(m_imp_mutex);
+    JOINTIDCHECK(m)
+    POINTERCHECK(voltage)
+
     int k;
-    k=castToMapper(helper)->toHw(m);
-    return iAmplifier->getPowerSupplyVoltageRaw(k, voltage);
+    k=castToMapper(m_helper)->toHw(m);
+    return m_iraw->getPowerSupplyVoltageRaw(k, voltage);
 }

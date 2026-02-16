@@ -13,10 +13,8 @@ using namespace yarp::dev;
 using namespace yarp::os;
 
 ImplementCurrentControl::ImplementCurrentControl(ICurrentControlRaw *tq):
-    iCurrentRaw(tq),
-    helper(nullptr),
-    intBuffManager(nullptr),
-    doubleBuffManager(nullptr)
+    m_iraw(tq),
+    m_helper(nullptr)
 {;}
 
 ImplementCurrentControl::~ImplementCurrentControl()
@@ -26,40 +24,26 @@ ImplementCurrentControl::~ImplementCurrentControl()
 
 bool ImplementCurrentControl::initialize(int size, const int *amap, const double* ampsToSens)
 {
-    if (helper != nullptr) {
+    if (m_helper != nullptr) {
         return false;
     }
 
-    intBuffManager = new yarp::dev::impl::FixedSizeBuffersManager<int> (size);
-    yAssert (intBuffManager != nullptr);
+    m_helper = (void *)(new ControlBoardHelper(size, amap, nullptr, nullptr, nullptr, ampsToSens, nullptr, nullptr));
+    yAssert (m_helper != nullptr);
 
-    doubleBuffManager = new yarp::dev::impl::FixedSizeBuffersManager<double> (size);
-    yAssert (doubleBuffManager != nullptr);
-
-    helper = (void *)(new ControlBoardHelper(size, amap, nullptr, nullptr, nullptr, ampsToSens, nullptr, nullptr));
-    yAssert (helper != nullptr);
+    m_buffer_doubles.resize(size);
+    m_buffer_doubles2.resize(size);
+    m_buffer_ints.resize(size);
 
     return true;
 }
 
 bool ImplementCurrentControl::uninitialize()
 {
-    if (helper!=nullptr)
+    if (m_helper!=nullptr)
     {
-        delete castToMapper(helper);
-        helper=nullptr;
-    }
-
-    if(intBuffManager)
-    {
-        delete intBuffManager;
-        intBuffManager=nullptr;
-    }
-
-    if(doubleBuffManager)
-    {
-        delete doubleBuffManager;
-        doubleBuffManager=nullptr;
+        delete castToMapper(m_helper);
+        m_helper=nullptr;
     }
 
     return true;
@@ -67,109 +51,129 @@ bool ImplementCurrentControl::uninitialize()
 
 ReturnValue  ImplementCurrentControl::getNumberOfMotors(int *axes)
 {
-    return iCurrentRaw->getNumberOfMotorsRaw(axes);
+    std::lock_guard lock(m_imp_mutex);
+    POINTERCHECK(axes)
+
+    return m_iraw->getNumberOfMotorsRaw(axes);
 }
 
 ReturnValue ImplementCurrentControl::getRefCurrent(int j, double *r)
 {
-    JOINTIDCHECK(MAPPER_MAXID)
+    std::lock_guard lock(m_imp_mutex);
+    JOINTIDCHECK(j)
+    POINTERCHECK(r)
+
     int k;
     ReturnValue ret;
     double current;
-    k=castToMapper(helper)->toHw(j);
-    ret = iCurrentRaw->getRefCurrentRaw(k, &current);
-    *r = castToMapper(helper)->ampereS2A(current, k);
+    k=castToMapper(m_helper)->toHw(j);
+    ret = m_iraw->getRefCurrentRaw(k, &current);
+    *r = castToMapper(m_helper)->ampereS2A(current, k);
     return ret;
 }
 
 ReturnValue ImplementCurrentControl::getRefCurrents(double *t)
 {
-    yarp::dev::impl::Buffer<double> buffValues = doubleBuffManager->getBuffer();
-    ReturnValue ret = iCurrentRaw->getRefCurrentsRaw(buffValues.getData());
-    castToMapper(helper)->ampereS2A(buffValues.getData(),t);
-    doubleBuffManager->releaseBuffer(buffValues);
+    std::lock_guard lock(m_imp_mutex);
+    POINTERCHECK(t)
+
+    ReturnValue ret = m_iraw->getRefCurrentsRaw(m_buffer_doubles.data());
+    castToMapper(m_helper)->ampereS2A(m_buffer_doubles.data(),t);
+
     return ret;
 }
 
 ReturnValue ImplementCurrentControl::setRefCurrents(const double *t)
 {
-    yarp::dev::impl::Buffer<double> buffValues = doubleBuffManager->getBuffer();
-    castToMapper(helper)->ampereA2S(t, buffValues.getData());
-    ReturnValue ret = iCurrentRaw->setRefCurrentsRaw(buffValues.getData());
-    doubleBuffManager->releaseBuffer(buffValues);
+    std::lock_guard lock(m_imp_mutex);
+    POINTERCHECK(t)
+
+    castToMapper(m_helper)->ampereA2S(t, m_buffer_doubles.data());
+    ReturnValue ret = m_iraw->setRefCurrentsRaw(m_buffer_doubles.data());
+
     return ret;
 }
 
 ReturnValue ImplementCurrentControl::setRefCurrent(int j, double t)
 {
-    JOINTIDCHECK(MAPPER_MAXID)
+    std::lock_guard lock(m_imp_mutex);
+    JOINTIDCHECK(j)
+
     int k;
     double sens;
-    castToMapper(helper)->ampereA2S(t,j,sens,k);
-    return iCurrentRaw->setRefCurrentRaw(k, sens);
+    castToMapper(m_helper)->ampereA2S(t,j,sens,k);
+    return m_iraw->setRefCurrentRaw(k, sens);
 }
 
 ReturnValue ImplementCurrentControl::getCurrents(double *t)
 {
-    yarp::dev::impl::Buffer<double> buffValues = doubleBuffManager->getBuffer();
-    ReturnValue ret = iCurrentRaw->getCurrentsRaw(buffValues.getData());
-    castToMapper(helper)->ampereS2A(buffValues.getData(), t);
-    doubleBuffManager->releaseBuffer(buffValues);
+    std::lock_guard lock(m_imp_mutex);
+    POINTERCHECK(t)
+
+    ReturnValue ret = m_iraw->getCurrentsRaw(m_buffer_doubles.data());
+    castToMapper(m_helper)->ampereS2A(m_buffer_doubles.data(), t);
+
     return ret;
 }
 
 ReturnValue ImplementCurrentControl::setRefCurrents(const int n_joints, const int *joints, const double *t)
 {
-    JOINTSIDCHECK
-
-    yarp::dev::impl::Buffer<double> buffValues = doubleBuffManager->getBuffer();
-    yarp::dev::impl::Buffer<int> buffJoints = intBuffManager->getBuffer();
+    std::lock_guard lock(m_imp_mutex);
+    POINTERCHECK(joints)
+    POINTERCHECK(t)
+    JOINTSIDCHECK(n_joints, joints)
 
     for(int idx=0; idx<n_joints; idx++)
     {
-        buffJoints[idx] = castToMapper(helper)->toHw(joints[idx]);
-        buffValues[idx] = castToMapper(helper)->ampereA2S(t[idx], joints[idx]);
+        m_buffer_ints[idx] = castToMapper(m_helper)->toHw(joints[idx]);
+        m_buffer_doubles[idx] = castToMapper(m_helper)->ampereA2S(t[idx], joints[idx]);
     }
 
-    ReturnValue ret = iCurrentRaw->setRefCurrentsRaw(n_joints, buffJoints.getData(), buffValues.getData());
+    ReturnValue ret = m_iraw->setRefCurrentsRaw(n_joints, m_buffer_ints.data(), m_buffer_doubles.data());
 
-    doubleBuffManager->releaseBuffer(buffValues);
-    intBuffManager->releaseBuffer(buffJoints);
     return ret;
 }
 
 ReturnValue ImplementCurrentControl::getCurrent(int j, double *t)
 {
-    JOINTIDCHECK(MAPPER_MAXID)
+    std::lock_guard lock(m_imp_mutex);
+    JOINTIDCHECK(j)
+    POINTERCHECK(t)
+
     int k;
     ReturnValue ret;
     double current;
-    k=castToMapper(helper)->toHw(j);
-    ret = iCurrentRaw->getCurrentRaw(k, &current);
-    *t = castToMapper(helper)->ampereS2A(current, k);
+    k=castToMapper(m_helper)->toHw(j);
+    ret = m_iraw->getCurrentRaw(k, &current);
+    *t = castToMapper(m_helper)->ampereS2A(current, k);
     return ret;
 }
 
 ReturnValue ImplementCurrentControl::getCurrentRanges(double *min, double *max)
 {
-    yarp::dev::impl::Buffer<double> b_min = doubleBuffManager->getBuffer();
-    yarp::dev::impl::Buffer<double> b_max = doubleBuffManager->getBuffer();
-    ReturnValue ret = iCurrentRaw->getCurrentRangesRaw(b_min.getData(), b_max.getData());
-    castToMapper(helper)->ampereS2A(b_min.getData(), min);
-    castToMapper(helper)->ampereS2A(b_max.getData(), max);
-    doubleBuffManager->releaseBuffer(b_min);
-    doubleBuffManager->releaseBuffer(b_max);
+    std::lock_guard lock(m_imp_mutex);
+    POINTERCHECK(min)
+    POINTERCHECK(max)
+
+    ReturnValue ret = m_iraw->getCurrentRangesRaw(m_buffer_doubles.data(), m_buffer_doubles2.data());
+    castToMapper(m_helper)->ampereS2A(m_buffer_doubles.data(), min);
+    castToMapper(m_helper)->ampereS2A(m_buffer_doubles2.data(), max);
+
     return ret;
 }
 
 ReturnValue ImplementCurrentControl::getCurrentRange(int j, double *min, double *max)
 {
-    JOINTIDCHECK(MAPPER_MAXID)
+    std::lock_guard lock(m_imp_mutex);
+    JOINTIDCHECK(j)
+    POINTERCHECK(min)
+    POINTERCHECK(max)
+
     int k;
-    k=castToMapper(helper)->toHw(j);
+    k=castToMapper(m_helper)->toHw(j);
     double min_t, max_t;
-    ReturnValue ret = iCurrentRaw->getCurrentRangeRaw(k, &min_t, &max_t);
-    *min = castToMapper(helper)->ampereS2A(min_t, k);
-    *max = castToMapper(helper)->ampereS2A(max_t, k);
+    ReturnValue ret = m_iraw->getCurrentRangeRaw(k, &min_t, &max_t);
+    *min = castToMapper(m_helper)->ampereS2A(min_t, k);
+    *max = castToMapper(m_helper)->ampereS2A(max_t, k);
     return ret;
 }

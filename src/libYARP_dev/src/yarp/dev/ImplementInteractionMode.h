@@ -9,6 +9,7 @@
 #include <yarp/dev/api.h>
 #include <yarp/dev/IInteractionMode.h>
 #include <yarp/os/Log.h>
+#include <vector>
 
 namespace yarp::dev {
 class ImplementInteractionMode;
@@ -31,11 +32,13 @@ class FixedSizeBuffersManager;
 class YARP_dev_API yarp::dev::ImplementInteractionMode : public yarp::dev::IInteractionMode
 {
 protected:
-    yarp::dev::IInteractionModeRaw *iInteraction;
-    void    *helper;                                // class controlBoardHelper, to handle axis map and conversion unit, where needed
+    yarp::dev::IInteractionModeRaw*  m_iraw=nullptr;
+    void*                            m_helper=nullptr;
+    std::mutex                       m_imp_mutex;
+    std::vector<int>                 m_buffer_ints;
+    std::vector<double>              m_buffer_doubles;
+    std::vector< yarp::dev::InteractionModeEnum>    m_buffer_enums;
 
-    yarp::dev::impl::FixedSizeBuffersManager<yarp::dev::InteractionModeEnum> *imodeBuffManager; //This Buffer Manager handles temporary buffers of type yarp::dev::InteractionModeEnum
-    yarp::dev::impl::FixedSizeBuffersManager<int> *intBuffManager; //This Buffer Manager handles temporary buffers  of type int
     /**
      * Initialize the internal data and alloc memory, smaller version.
      * @param size is the number of controlled axes the driver deals with.

@@ -639,14 +639,12 @@ ReturnValue FakeLaserWithMotor::getTargetVelocitiesRaw(int nj, const int* jnts, 
 
 ReturnValue FakeLaserWithMotor::getAxisNameRaw(int j, std::string& name)
 {
-    JOINTIDCHECK(m_njoints);
     name = _axisName[j];
     return ReturnValue_ok;
 }
 
 ReturnValue FakeLaserWithMotor::getJointTypeRaw(int j, yarp::dev::JointTypeEnum& type)
 {
-    JOINTIDCHECK(m_njoints);
     type = _jointType[j];
     return ReturnValue_ok;
 }

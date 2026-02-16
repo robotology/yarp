@@ -8,6 +8,7 @@
 
 #include <yarp/dev/IJointFault.h>
 #include <yarp/dev/api.h>
+#include <vector>
 
 namespace yarp::dev {
 class ImplementJointFault;
@@ -16,8 +17,11 @@ class ImplementJointFault;
 class YARP_dev_API yarp::dev::ImplementJointFault: public IJointFault
 {
 protected:
-    yarp::dev::IJointFaultRaw *raw;
-    void *helper;
+    yarp::dev::IJointFaultRaw* m_iraw=nullptr;
+    void*                      m_helper=nullptr;
+    std::mutex                 m_imp_mutex;
+    std::vector<int>           m_buffer_ints;
+    std::vector<double>        m_buffer_doubles;
 
     /**
      * Initialize the internal data and alloc memory.

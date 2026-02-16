@@ -15,10 +15,12 @@ class ImplementAxisInfo;
 class YARP_dev_API yarp::dev::ImplementAxisInfo: public IAxisInfo
 {
 protected:
-    IAxisInfoRaw *iinfo;
-    void *helper;
-    double *temp1;
-    double *temp2;
+    IAxisInfoRaw*            m_iraw=nullptr;
+    void*                    m_helper =nullptr;
+    std::vector<int>         m_buffer_ints;
+    std::vector<double>      m_buffer_doubles;
+    std::vector<double>      m_buffer_doubles2;
+    std::mutex               m_imp_mutex;
 
 
     /**

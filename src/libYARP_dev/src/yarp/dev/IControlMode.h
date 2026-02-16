@@ -64,10 +64,6 @@ class YARP_dev_API yarp::dev::IControlMode
 public:
     virtual ~IControlMode(){}
 
-    bool isAvailable(int j,yarp::dev::SelectableControlModeEnum)
-    {
-    }
-
     /**
     * Return a list of available control mode for the given joint.
     * @param j joint number

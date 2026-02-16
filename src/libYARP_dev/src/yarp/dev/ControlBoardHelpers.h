@@ -35,12 +35,15 @@ inline yarp::dev::ReturnValue CHECK_FAIL(bool ok, yarp::os::Bottle& response)
     return yarp::dev::ReturnValue::return_code::return_value_ok;
 }
 
-#define MAPPER_MAXID        (castToMapper(helper)->axes())
-#define JOINTIDCHECK(max_j) if (j >= max_j) {yError("joint id out of bound"); return yarp::dev::ReturnValue::return_code::return_value_error_input_out_of_bounds;}
-#define MOTORIDCHECK(max_m) if (m >= max_m) {yError("motor id out of bound"); return yarp::dev::ReturnValue::return_code::return_value_error_input_out_of_bounds;}
+#define POINTERCHECK(vec)                 if (vec==nullptr)                                            { yError("vec is nullptr"); return yarp::dev::ReturnValue::return_code::return_value_error_input_out_of_bounds;}
+#define JOINTIDCHECK(j)                   if (!castToMapper(m_helper)->checkAxisId(j))                 { yError("joint id out of bound"); return yarp::dev::ReturnValue::return_code::return_value_error_input_out_of_bounds;}
+#define JOINTSIDCHECK(n_joints, joints)   if (!castToMapper(m_helper)->checkAxesIds(n_joints, joints)) { yError("joint id out of bound"); return yarp::dev::ReturnValue::return_code::return_value_error_input_out_of_bounds;}
 
-#define JOINTSIDCHECK       if (!castToMapper(helper)->checkAxesIds(n_joints, joints)) { yError("joint id out of bound"); return yarp::dev::ReturnValue::return_code::return_value_error_input_out_of_bounds;}
-#define JOINTSIDVECCHECK    if (!castToMapper(helper)->checkAxesIds(joints))           { yError("joint id out of bound"); return yarp::dev::ReturnValue::return_code::return_value_error_input_out_of_bounds;}
+#define JOINTSIDVECCHECK(joints)          if (!castToMapper(m_helper)->checkAxesIds(joints))           { yError("joint id out of bound"); return yarp::dev::ReturnValue::return_code::return_value_error_input_out_of_bounds;}
+#define VECCHECK_SET_ALL(vec)             if (vec.size() != castToMapper(m_helper)->axes())            { yError("vector size does not match number of joints"); return yarp::dev::ReturnValue::return_code::return_value_error_input_out_of_bounds;}
+#define VECCHECK_GET_ALL(vec)             if (vec.size() != castToMapper(m_helper)->axes())            { vec.resize(castToMapper(m_helper)->axes());}
+#define VECCHECK_SET_SOME(jointsvec,datavec)   JOINTSIDVECCHECK(jointsvec) if (datavec.size() != jointsvec.size())                 { yError("vector size does not match number of joints"); return yarp::dev::ReturnValue::return_code::return_value_error_input_out_of_bounds;}
+#define VECCHECK_GET_SOME(jointsvec,datavec)   JOINTSIDVECCHECK(jointsvec) if (datavec.size() != jointsvec.size())                 { datavec.resize(jointsvec.size());}
 
 #endif // DOXYGEN_SHOULD_SKIP_THIS
 

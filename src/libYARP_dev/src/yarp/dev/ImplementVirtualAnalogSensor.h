@@ -17,7 +17,7 @@ class ImplementVirtualAnalogSensor;
 
 class YARP_dev_API yarp::dev::ImplementVirtualAnalogSensor: public IVirtualAnalogSensor
 {
-    void *helper;
+    void *m_helper;
     yarp::dev::IVirtualAnalogSensorRaw *iVASRaw;
 
 public:

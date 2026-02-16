@@ -15,9 +15,8 @@ using namespace yarp::os;
 ////////////////////////
 // Encoder Interface Timed Implementation
 ImplementEncodersTimed::ImplementEncodersTimed(IEncodersTimedRaw *y):
-    iEncoders(y),
-    helper(nullptr),
-    buffManager(nullptr)
+    m_iraw(y),
+    m_helper(nullptr)
 {;}
 
 ImplementEncodersTimed::~ImplementEncodersTimed()
@@ -27,15 +26,17 @@ ImplementEncodersTimed::~ImplementEncodersTimed()
 
 bool ImplementEncodersTimed:: initialize (int size, const int *amap, const double *enc, const double *zos)
 {
-    if (helper != nullptr) {
+    if (m_helper != nullptr) {
         return false;
     }
 
-    helper=(void *)(new ControlBoardHelper(size, amap, enc, zos));
-    yAssert (helper != nullptr);
+    m_helper=(void *)(new ControlBoardHelper(size, amap, enc, zos));
+    yAssert (m_helper != nullptr);
 
-    buffManager = new yarp::dev::impl::FixedSizeBuffersManager<double> (size);
-    yAssert (buffManager != nullptr);
+    m_buffer_doubles.resize(size);
+    m_buffer_doubles2.resize(size);
+    m_buffer_ints.resize(size);
+
     return true;
 }
 
@@ -45,147 +46,172 @@ bool ImplementEncodersTimed:: initialize (int size, const int *amap, const doubl
 */
 bool ImplementEncodersTimed::uninitialize ()
 {
-    if (helper!=nullptr)
+    if (m_helper!=nullptr)
     {
-        delete castToMapper(helper);
-        helper=nullptr;
+        delete castToMapper(m_helper);
+        m_helper=nullptr;
     }
 
-    if (buffManager!=nullptr)
-    {
-        delete buffManager;
-        buffManager=nullptr;
-    }
     return true;
 }
 
 ReturnValue ImplementEncodersTimed::getAxes(int *ax)
 {
-    (*ax)=castToMapper(helper)->axes();
+    std::lock_guard lock(m_imp_mutex);
+    POINTERCHECK(ax)
+
+    (*ax)=castToMapper(m_helper)->axes();
     return ReturnValue_ok;
 }
 
 ReturnValue ImplementEncodersTimed::resetEncoder(int j)
 {
-    JOINTIDCHECK(MAPPER_MAXID)
-    int k;
-    k=castToMapper(helper)->toHw(j);
+    std::lock_guard lock(m_imp_mutex);
+    JOINTIDCHECK(j)
 
-    return iEncoders->resetEncoderRaw(k);
+    int k;
+    k=castToMapper(m_helper)->toHw(j);
+
+    return m_iraw->resetEncoderRaw(k);
 }
 
 ReturnValue ImplementEncodersTimed::resetEncoders()
 {
-    return iEncoders->resetEncodersRaw();
+    std::lock_guard lock(m_imp_mutex);
+
+    return m_iraw->resetEncodersRaw();
 }
 
 ReturnValue ImplementEncodersTimed::setEncoder(int j, double val)
 {
-    JOINTIDCHECK(MAPPER_MAXID)
+    std::lock_guard lock(m_imp_mutex);
+    JOINTIDCHECK(j)
+
     int k;
     double enc;
 
-    castToMapper(helper)->posA2E(val, j, enc, k);
+    castToMapper(m_helper)->posA2E(val, j, enc, k);
 
-    return iEncoders->setEncoderRaw(k, enc);
+    return m_iraw->setEncoderRaw(k, enc);
 }
 
 ReturnValue ImplementEncodersTimed::setEncoders(const double *val)
 {
-    yarp::dev::impl::Buffer<double> buffValues = buffManager->getBuffer();
-    castToMapper(helper)->posA2E(val, buffValues.getData());
-    ReturnValue ret = iEncoders->setEncodersRaw(buffValues.getData());
-    buffManager->releaseBuffer(buffValues);
+    std::lock_guard lock(m_imp_mutex);
+    POINTERCHECK(val)
+
+    castToMapper(m_helper)->posA2E(val, m_buffer_doubles.data());
+    ReturnValue ret = m_iraw->setEncodersRaw(m_buffer_doubles.data());
+
     return ret;
 }
 
 ReturnValue ImplementEncodersTimed::getEncoder(int j, double *v)
 {
-    JOINTIDCHECK(MAPPER_MAXID)
+    std::lock_guard lock(m_imp_mutex);
+    JOINTIDCHECK(j)
+    POINTERCHECK(v)
+
     int k;
     double enc;
     ReturnValue ret;
 
-    k=castToMapper(helper)->toHw(j);
+    k=castToMapper(m_helper)->toHw(j);
 
-    ret=iEncoders->getEncoderRaw(k, &enc);
+    ret=m_iraw->getEncoderRaw(k, &enc);
 
-    *v=castToMapper(helper)->posE2A(enc, k);
+    *v=castToMapper(m_helper)->posE2A(enc, k);
 
     return ret;
 }
 
 ReturnValue ImplementEncodersTimed::getEncoders(double *v)
 {
-    yarp::dev::impl::Buffer<double> buffValues =buffManager->getBuffer();
-    ReturnValue ret = iEncoders->getEncodersRaw(buffValues.getData());
-    castToMapper(helper)->posE2A(buffValues.getData(), v);
-    buffManager->releaseBuffer(buffValues);
+    std::lock_guard lock(m_imp_mutex);
+    POINTERCHECK(v)
+
+    ReturnValue ret = m_iraw->getEncodersRaw(m_buffer_doubles.data());
+    castToMapper(m_helper)->posE2A(m_buffer_doubles.data(), v);
+
     return ret;
 }
 
 ReturnValue ImplementEncodersTimed::getEncoderSpeed(int j, double *v)
 {
-    JOINTIDCHECK(MAPPER_MAXID)
+    std::lock_guard lock(m_imp_mutex);
+    JOINTIDCHECK(j)
+    POINTERCHECK(v)
+
     int k;
     double enc;
     ReturnValue ret;
 
-    k=castToMapper(helper)->toHw(j);
+    k=castToMapper(m_helper)->toHw(j);
 
-    ret=iEncoders->getEncoderSpeedRaw(k, &enc);
+    ret=m_iraw->getEncoderSpeedRaw(k, &enc);
 
-    *v=castToMapper(helper)->velE2A(enc, k);
+    *v=castToMapper(m_helper)->velE2A(enc, k);
 
     return ret;
 }
 
 ReturnValue ImplementEncodersTimed::getEncoderSpeeds(double *v)
 {
-    yarp::dev::impl::Buffer<double> buffValues = buffManager->getBuffer();
-    ReturnValue ret=iEncoders->getEncoderSpeedsRaw(buffValues.getData());
-    castToMapper(helper)->velE2A(buffValues.getData(), v);
-    buffManager->releaseBuffer(buffValues);
+    std::lock_guard lock(m_imp_mutex);
+    POINTERCHECK(v)
+
+    ReturnValue ret=m_iraw->getEncoderSpeedsRaw(m_buffer_doubles.data());
+    castToMapper(m_helper)->velE2A(m_buffer_doubles.data(), v);
+
     return ret;
 }
 
 ReturnValue ImplementEncodersTimed::getEncoderAcceleration(int j, double *v)
 {
-    JOINTIDCHECK(MAPPER_MAXID)
+    std::lock_guard lock(m_imp_mutex);
+    JOINTIDCHECK(j)
+    POINTERCHECK(v)
+
     int k;
     double enc;
     ReturnValue ret;
 
-    k=castToMapper(helper)->toHw(j);
+    k=castToMapper(m_helper)->toHw(j);
 
-    ret=iEncoders->getEncoderAccelerationRaw(k, &enc);
+    ret=m_iraw->getEncoderAccelerationRaw(k, &enc);
 
-    *v=castToMapper(helper)->accE2A(enc, k);
+    *v=castToMapper(m_helper)->accE2A(enc, k);
 
     return ret;
 }
 
 ReturnValue ImplementEncodersTimed::getEncoderAccelerations(double *v)
 {
-    yarp::dev::impl::Buffer<double> buffValues = buffManager->getBuffer();
-    ReturnValue ret = iEncoders->getEncoderAccelerationsRaw(buffValues.getData());
-    castToMapper(helper)->accE2A(buffValues.getData(), v);
-    buffManager->releaseBuffer(buffValues);
+    std::lock_guard lock(m_imp_mutex);
+    POINTERCHECK(v)
+
+    ReturnValue ret = m_iraw->getEncoderAccelerationsRaw(m_buffer_doubles.data());
+    castToMapper(m_helper)->accE2A(m_buffer_doubles.data(), v);
+
     return ret;
 }
 
 ReturnValue ImplementEncodersTimed::getEncoderTimed(int j, double *v, double *t)
 {
-    JOINTIDCHECK(MAPPER_MAXID)
+    std::lock_guard lock(m_imp_mutex);
+    JOINTIDCHECK(j)
+    POINTERCHECK(v)
+    POINTERCHECK(t)
+
     int k;
     double enc;
     ReturnValue ret;
 
-    k=castToMapper(helper)->toHw(j);
+    k=castToMapper(m_helper)->toHw(j);
 
-    ret=iEncoders->getEncoderTimedRaw(k, &enc, t);
+    ret=m_iraw->getEncoderTimedRaw(k, &enc, t);
 
-    *v=castToMapper(helper)->posE2A(enc, k);
+    *v=castToMapper(m_helper)->posE2A(enc, k);
 
     return ret;
 }
@@ -193,14 +219,14 @@ ReturnValue ImplementEncodersTimed::getEncoderTimed(int j, double *v, double *t)
 
 ReturnValue ImplementEncodersTimed::getEncodersTimed(double *v, double *t)
 {
-    yarp::dev::impl::Buffer<double> b_v = buffManager->getBuffer();
-    yarp::dev::impl::Buffer<double> b_t = buffManager->getBuffer();
-    ReturnValue ret=iEncoders->getEncodersTimedRaw(b_v.getData(), b_t.getData());
+    std::lock_guard lock(m_imp_mutex);
+    POINTERCHECK(v)
+    POINTERCHECK(t)
 
-    castToMapper(helper)->posE2A(b_v.getData(), v);
-    castToMapper(helper)->toUser(b_t.getData(), t);
+    ReturnValue ret=m_iraw->getEncodersTimedRaw(m_buffer_doubles.data(), m_buffer_doubles2.data());
 
-    buffManager->releaseBuffer(b_v);
-    buffManager->releaseBuffer(b_t);
+    castToMapper(m_helper)->posE2A(m_buffer_doubles.data(), v);
+    castToMapper(m_helper)->toUser(m_buffer_doubles2.data(), t);
+
     return ret;
 }

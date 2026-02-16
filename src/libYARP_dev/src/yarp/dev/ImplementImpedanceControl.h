@@ -8,6 +8,7 @@
 
 #include <yarp/dev/IImpedanceControl.h>
 #include <yarp/dev/api.h>
+#include <vector>
 
 namespace yarp::dev {
 class ImplementImpedanceControl;
@@ -16,8 +17,11 @@ class ImplementImpedanceControl;
 class YARP_dev_API yarp::dev::ImplementImpedanceControl: public IImpedanceControl
 {
 protected:
-    yarp::dev::IImpedanceControlRaw *iImpedanceRaw;
-    void *helper;
+    yarp::dev::IImpedanceControlRaw* m_iraw=nullptr;
+    void*                            m_helper=nullptr;
+    std::vector<int>                 m_buffer_ints;
+    std::vector<double>              m_buffer_doubles;
+    std::mutex                       m_imp_mutex;
 
     /**
      * Initialize the internal data and alloc memory.

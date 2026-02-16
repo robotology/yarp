@@ -18,7 +18,7 @@ class YARP_dev_API yarp::dev::ImplementVelocityDirect : public IVelocityDirect
 {
 protected:
     IVelocityDirectRaw*      m_iVelocityDirectRaw=nullptr;
-    void*                    helper=nullptr;
+    void*                    m_helper=nullptr;
     std::vector<int>         m_buffer_ints;
     std::vector<double>      m_buffer_doubles;
     std::mutex               m_imp_mutex;

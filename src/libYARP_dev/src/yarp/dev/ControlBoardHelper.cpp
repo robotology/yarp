@@ -310,6 +310,13 @@ bool ControlBoardHelper::checkAxesIds(const int n_axes, const int* axesList)
         }
         return false;
     }
+    if(axesList==nullptr)
+    {
+        if (mPriv->verbose) {
+            yError("checkAxesIds: axesList is nullptr");
+        }
+        return false;
+    }
     for(int idx = 0; idx<n_axes; idx++)
     {
         if( (axesList[idx]<0) || (axesList[idx]>= mPriv->nj) )

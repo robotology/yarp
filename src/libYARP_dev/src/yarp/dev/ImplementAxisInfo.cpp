@@ -5,6 +5,7 @@
 
 #include "yarp/dev/ImplementAxisInfo.h"
 #include <yarp/dev/ControlBoardHelper.h>
+#include <yarp/dev/ControlBoardHelpers.h>
 
 #include <cstdio>
 using namespace yarp::dev;
@@ -13,8 +14,8 @@ using namespace yarp::dev;
 // Encoder Interface Timed Implementation
 ImplementAxisInfo::ImplementAxisInfo(yarp::dev::IAxisInfoRaw *y)
 {
-    iinfo=y;
-    helper = nullptr;
+    m_iraw=y;
+    m_helper = nullptr;
 }
 
 ImplementAxisInfo::~ImplementAxisInfo()
@@ -24,12 +25,15 @@ ImplementAxisInfo::~ImplementAxisInfo()
 
 bool ImplementAxisInfo::initialize(int size, const int *amap)
 {
-    if (helper != nullptr) {
+    if (m_helper != nullptr) {
         return false;
     }
 
-    helper=(void *)(new ControlBoardHelper(size, amap));
-    yAssert (helper != nullptr);
+    m_helper=(void *)(new ControlBoardHelper(size, amap));
+    yAssert (m_helper != nullptr);
+
+    m_buffer_ints.resize   (size);
+    m_buffer_doubles.resize(size);
 
     return true;
 }
@@ -40,10 +44,10 @@ bool ImplementAxisInfo::initialize(int size, const int *amap)
 */
 bool ImplementAxisInfo::uninitialize()
 {
-    if (helper!=nullptr)
+    if (m_helper!=nullptr)
     {
-        delete castToMapper(helper);
-        helper=nullptr;
+        delete castToMapper(m_helper);
+        m_helper=nullptr;
     }
 
 
@@ -53,23 +57,32 @@ bool ImplementAxisInfo::uninitialize()
 
 ReturnValue ImplementAxisInfo::getAxes(int* ax)
 {
+    std::lock_guard lock(m_imp_mutex);
+    POINTERCHECK(ax)
+
     ReturnValue ret=ReturnValue_ok;
-    (*ax) = castToMapper(helper)->axes();
+    (*ax) = castToMapper(m_helper)->axes();
     return ret;
 }
 
 ReturnValue ImplementAxisInfo::getAxisName(int axis, std::string& name)
 {
+    std::lock_guard lock(m_imp_mutex);
+    JOINTIDCHECK(axis);
+
     ReturnValue ret;
-    int k = castToMapper(helper)->toHw(axis);
-    ret = iinfo->getAxisNameRaw(k, name);
+    int k = castToMapper(m_helper)->toHw(axis);
+    ret = m_iraw->getAxisNameRaw(k, name);
     return ret;
 }
 
 ReturnValue ImplementAxisInfo::getJointType(int axis, yarp::dev::JointTypeEnum& type)
 {
+    std::lock_guard lock(m_imp_mutex);
+    JOINTIDCHECK(axis);
+
     ReturnValue ret;
-    int k = castToMapper(helper)->toHw(axis);
-    ret = iinfo->getJointTypeRaw(k, type);
+    int k = castToMapper(m_helper)->toHw(axis);
+    ret = m_iraw->getJointTypeRaw(k, type);
     return ret;
 }

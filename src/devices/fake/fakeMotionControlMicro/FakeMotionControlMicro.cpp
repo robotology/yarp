@@ -567,14 +567,12 @@ ReturnValue FakeMotionControlMicro::getMotorEncoderTimedRaw(int m, double *encs,
 ReturnValue FakeMotionControlMicro::getAxisNameRaw(int j, std::string& name)
 {
     name = "ERROR";
-    JOINTIDCHECK(_njoints);
     name = _axisName[j];
     return ReturnValue_ok;
 }
 
 ReturnValue FakeMotionControlMicro::getJointTypeRaw(int j, yarp::dev::JointTypeEnum& type)
 {
-    JOINTIDCHECK(_njoints);
     type = _jointType[j];
     return ReturnValue_ok;
 }

@@ -23,10 +23,11 @@ class FixedSizeBuffersManager;
 class YARP_dev_API yarp::dev::ImplementMotor: public IMotor
 {
 protected:
-    IMotorRaw *imotor;
-    void *helper;
-
-    yarp::dev::impl::FixedSizeBuffersManager<double> *doubleBuffManager;
+    yarp::dev::IMotorRaw*      m_iraw=nullptr;
+    void*                      m_helper=nullptr;
+    std::vector<int>           m_buffer_ints;
+    std::vector<double>        m_buffer_doubles;
+    std::mutex                 m_imp_mutex;
 
     /**
      * Initialize the internal data and alloc memory.

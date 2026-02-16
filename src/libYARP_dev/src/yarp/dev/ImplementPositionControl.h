@@ -6,8 +6,8 @@
 #ifndef YARP_DEV_IPOSITIONCONTROLIMPL_H
 #define YARP_DEV_IPOSITIONCONTROLIMPL_H
 
-
 #include <yarp/dev/IPositionControl.h>
+#include <vector>
 
 namespace yarp::dev {
 class ImplementPositionControl;
@@ -29,11 +29,11 @@ class FixedSizeBuffersManager;
 class YARP_dev_API yarp::dev::ImplementPositionControl : public IPositionControl
 {
 protected:
-    IPositionControlRaw *iPosition;
-    void    *helper;
-    yarp::dev::impl::FixedSizeBuffersManager<int> *intBuffManager;
-    yarp::dev::impl::FixedSizeBuffersManager<double> *doubleBuffManager;
-    yarp::dev::impl::FixedSizeBuffersManager<bool> *boolBuffManager;
+    IPositionControlRaw*     m_iraw=nullptr;
+    void*                    m_helper=nullptr;
+    std::vector<int>         m_buffer_ints;
+    std::vector<double>      m_buffer_doubles;
+    std::mutex               m_imp_mutex;
 
     /**
      * Initialize the internal data and alloc memory.

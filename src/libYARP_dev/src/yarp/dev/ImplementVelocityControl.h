@@ -9,6 +9,7 @@
 
 #include <yarp/dev/IVelocityControl.h>
 #include <yarp/os/Log.h>
+#include <vector>
 
 namespace yarp::dev {
 class ImplementVelocityControl;
@@ -25,10 +26,11 @@ class FixedSizeBuffersManager;
 class YARP_dev_API yarp::dev::ImplementVelocityControl : public IVelocityControl
 {
 protected:
-    IVelocityControlRaw *iVelocity;
-    void    *helper;
-    yarp::dev::impl::FixedSizeBuffersManager<int> *intBuffManager;
-    yarp::dev::impl::FixedSizeBuffersManager<double> *doubleBuffManager;
+    IVelocityControlRaw*     m_iraw=nullptr;
+    void*                    m_helper=nullptr;
+    std::vector<int>         m_buffer_ints;
+    std::vector<double>      m_buffer_doubles;
+    std::mutex               m_imp_mutex;
 
     /**
      * Initialize the internal data and alloc memory.
@@ -69,9 +71,6 @@ public:
     yarp::dev::ReturnValue getTrajAccelerations(double *accs) override;
     yarp::dev::ReturnValue stop(int j) override;
     yarp::dev::ReturnValue stop() override;
-
-
-    // specific of IVelocityControl
     yarp::dev::ReturnValue velocityMove(const int n_joint, const int *joints, const double *spds) override;
     yarp::dev::ReturnValue getTargetVelocity(const int joint, double *vel) override;
     yarp::dev::ReturnValue getTargetVelocities(double *vels) override;

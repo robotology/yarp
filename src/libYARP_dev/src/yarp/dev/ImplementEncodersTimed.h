@@ -22,9 +22,12 @@ class FixedSizeBuffersManager;
 class YARP_dev_API yarp::dev::ImplementEncodersTimed: public IEncodersTimed
 {
 protected:
-    IEncodersTimedRaw *iEncoders;
-    void *helper;
-    yarp::dev::impl::FixedSizeBuffersManager<double> *buffManager;
+    IEncodersTimedRaw*       m_iraw=nullptr;
+    void*                    m_helper=nullptr;
+    std::vector<int>         m_buffer_ints;
+    std::vector<double>      m_buffer_doubles;
+    std::vector<double>      m_buffer_doubles2;
+    std::mutex               m_imp_mutex;
 
 
     /**

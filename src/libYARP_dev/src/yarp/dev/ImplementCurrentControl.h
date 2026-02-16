@@ -23,11 +23,12 @@ class FixedSizeBuffersManager;
 class YARP_dev_API yarp::dev::ImplementCurrentControl: public ICurrentControl
 {
 protected:
-    yarp::dev::ICurrentControlRaw *iCurrentRaw;
-    void *helper;
-    yarp::dev::impl::FixedSizeBuffersManager<int> *intBuffManager;
-    yarp::dev::impl::FixedSizeBuffersManager<double> *doubleBuffManager;
-
+    yarp::dev::ICurrentControlRaw* m_iraw=nullptr;
+    void*                          m_helper=nullptr;
+    std::vector<int>               m_buffer_ints;
+    std::vector<double>            m_buffer_doubles;
+    std::vector<double>            m_buffer_doubles2;
+    std::mutex                     m_imp_mutex;
     /**
      * Initialize the internal data and alloc memory.
      * @param size is the number of controlled axes the driver deals with.

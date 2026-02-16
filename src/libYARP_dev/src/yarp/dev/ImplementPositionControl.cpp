@@ -13,14 +13,10 @@
 
 using namespace yarp::dev;
 using namespace yarp::os;
-#define JOINTIDCHECK if (j >= castToMapper(helper)->axes()){yError("joint id out of bound"); return ReturnValue::return_code::return_value_error_input_out_of_bounds;}
 
 ImplementPositionControl::ImplementPositionControl(yarp::dev::IPositionControlRaw *y) :
-    iPosition(y),
-    helper(nullptr),
-    intBuffManager(nullptr),
-    doubleBuffManager(nullptr),
-    boolBuffManager(nullptr)
+    m_iraw(y),
+    m_helper(nullptr)
 {;}
 
 
@@ -39,21 +35,16 @@ ImplementPositionControl::~ImplementPositionControl()
  */
 bool ImplementPositionControl::initialize(int size, const int *amap, const double *enc, const double *zos)
 {
-    if (helper != nullptr) {
+    if (m_helper != nullptr) {
         return false;
     }
 
-    helper=(void *)(new ControlBoardHelper(size, amap, enc, zos));
-    yAssert(helper != nullptr);
+    m_helper=(void *)(new ControlBoardHelper(size, amap, enc, zos));
+    yAssert(m_helper != nullptr);
 
-    intBuffManager = new yarp::dev::impl::FixedSizeBuffersManager<int> (size);
-    yAssert (intBuffManager != nullptr);
+    m_buffer_doubles.resize(size);
+    m_buffer_ints.resize(size);
 
-    doubleBuffManager = new yarp::dev::impl::FixedSizeBuffersManager<double> (size);
-    yAssert (doubleBuffManager != nullptr);
-
-    boolBuffManager = new yarp::dev::impl::FixedSizeBuffersManager<bool> (size, 1);
-    yAssert (boolBuffManager != nullptr);
     return true;
 }
 
@@ -63,323 +54,341 @@ bool ImplementPositionControl::initialize(int size, const int *amap, const doubl
  */
 bool ImplementPositionControl::uninitialize()
 {
-    if(helper != nullptr)
-    {
-        delete castToMapper(helper);
-        helper = nullptr;
-    }
-
-    if(intBuffManager)
-    {
-        delete intBuffManager;
-        intBuffManager=nullptr;
-    }
-
-    if(doubleBuffManager)
-    {
-        delete doubleBuffManager;
-        doubleBuffManager=nullptr;
-    }
-
-    if(boolBuffManager)
-    {
-        delete boolBuffManager;
-        boolBuffManager=nullptr;
-    }
-
     return true;
 }
 
 ReturnValue ImplementPositionControl::positionMove(int j, double ang)
 {
-    JOINTIDCHECK
+    std::lock_guard lock(m_imp_mutex);
+    JOINTIDCHECK(j)
+
     int k;
     double enc;
-    castToMapper(helper)->posA2E(ang, j, enc, k);
-    return iPosition->positionMoveRaw(k, enc);
+    castToMapper(m_helper)->posA2E(ang, j, enc, k);
+    return m_iraw->positionMoveRaw(k, enc);
 }
 
 ReturnValue ImplementPositionControl::positionMove(const int n_joints, const int *joints, const double *refs)
 {
-    JOINTSIDCHECK
-
-    yarp::dev::impl::Buffer<double> buffValues = doubleBuffManager->getBuffer();
-    yarp::dev::impl::Buffer<int> buffJoints = intBuffManager->getBuffer();
+    std::lock_guard lock(m_imp_mutex);
+    POINTERCHECK(joints);
+    POINTERCHECK(refs);
+    JOINTSIDCHECK(n_joints,joints)
 
     for(int idx=0; idx<n_joints; idx++)
     {
-        buffJoints[idx] = castToMapper(helper)->toHw(joints[idx]);
-        buffValues[idx] = castToMapper(helper)->posA2E(refs[idx], joints[idx]);
+        m_buffer_ints[idx] = castToMapper(m_helper)->toHw(joints[idx]);
+        m_buffer_doubles[idx] = castToMapper(m_helper)->posA2E(refs[idx], joints[idx]);
     }
-    ReturnValue ret = iPosition->positionMoveRaw(n_joints, buffJoints.getData(), buffValues.getData());
+    ReturnValue ret = m_iraw->positionMoveRaw(n_joints, m_buffer_ints.data(), m_buffer_doubles.data());
 
-    intBuffManager->releaseBuffer(buffJoints);
-    doubleBuffManager->releaseBuffer(buffValues);
     return ret;
 }
 
 ReturnValue ImplementPositionControl::positionMove(const double *refs)
 {
-    yarp::dev::impl::Buffer<double> buffValues = doubleBuffManager->getBuffer();
-    castToMapper(helper)->posA2E(refs, buffValues.getData());
+    std::lock_guard lock(m_imp_mutex);
+    POINTERCHECK(refs);
 
-    ReturnValue ret = iPosition->positionMoveRaw(buffValues.getData());
-    doubleBuffManager->releaseBuffer(buffValues);
+    castToMapper(m_helper)->posA2E(refs, m_buffer_doubles.data());
+
+    ReturnValue ret = m_iraw->positionMoveRaw(m_buffer_doubles.data());
+
     return ret;
 }
 
 ReturnValue ImplementPositionControl::relativeMove(int j, double delta)
 {
-    JOINTIDCHECK
+    std::lock_guard lock(m_imp_mutex);
+    JOINTIDCHECK(j)
+
     int k;
     double enc;
-    castToMapper(helper)->velA2E(delta, j, enc, k);
+    castToMapper(m_helper)->velA2E(delta, j, enc, k);
 
-    return iPosition->relativeMoveRaw(k,enc);
+    return m_iraw->relativeMoveRaw(k,enc);
 }
 
 ReturnValue ImplementPositionControl::relativeMove(const int n_joints, const int *joints, const double *deltas)
 {
-    JOINTSIDCHECK
+    std::lock_guard lock(m_imp_mutex);
+    POINTERCHECK(joints);
+    POINTERCHECK(deltas);
+    JOINTSIDCHECK(n_joints,joints)
 
-    yarp::dev::impl::Buffer<double> buffValues = doubleBuffManager->getBuffer();
-    yarp::dev::impl::Buffer<int> buffJoints = intBuffManager->getBuffer();
     for(int idx=0; idx<n_joints; idx++)
     {
-        buffJoints[idx] = castToMapper(helper)->toHw(joints[idx]);
-        buffValues[idx] = castToMapper(helper)->velA2E(deltas[idx], joints[idx]);
+        m_buffer_ints[idx] = castToMapper(m_helper)->toHw(joints[idx]);
+        m_buffer_doubles[idx] = castToMapper(m_helper)->velA2E(deltas[idx], joints[idx]);
     }
-    ReturnValue ret = iPosition->relativeMoveRaw(n_joints, buffJoints.getData(), buffValues.getData());
-    doubleBuffManager->releaseBuffer(buffValues);
-    intBuffManager->releaseBuffer(buffJoints);
+    ReturnValue ret = m_iraw->relativeMoveRaw(n_joints, m_buffer_ints.data(), m_buffer_doubles.data());
+
     return ret;
 }
 
 ReturnValue ImplementPositionControl::relativeMove(const double *deltas)
 {
-    yarp::dev::impl::Buffer<double> buffValues = doubleBuffManager->getBuffer();
-    castToMapper(helper)->velA2E(deltas, buffValues.getData());
-    ReturnValue ret = iPosition->relativeMoveRaw(buffValues.getData());
-    doubleBuffManager->releaseBuffer(buffValues);
+    std::lock_guard lock(m_imp_mutex);
+    POINTERCHECK(deltas);
+
+    castToMapper(m_helper)->velA2E(deltas, m_buffer_doubles.data());
+    ReturnValue ret = m_iraw->relativeMoveRaw(m_buffer_doubles.data());
+
     return ret;
 }
 
 ReturnValue ImplementPositionControl::checkMotionDone(int j, bool *flag)
 {
-    JOINTIDCHECK
-    int k=castToMapper(helper)->toHw(j);
+    std::lock_guard lock(m_imp_mutex);
+    JOINTIDCHECK(j)
+    POINTERCHECK(flag);
 
-    return iPosition->checkMotionDoneRaw(k,flag);
+    int k=castToMapper(m_helper)->toHw(j);
+
+    return m_iraw->checkMotionDoneRaw(k,flag);
 }
 
 ReturnValue ImplementPositionControl::checkMotionDone(const int n_joints, const int *joints, bool *flags)
 {
-    JOINTSIDCHECK
-    yarp::dev::impl::Buffer<int> buffJoints = intBuffManager->getBuffer();
+    std::lock_guard lock(m_imp_mutex);
+    POINTERCHECK(joints);
+    POINTERCHECK(flags);
+    JOINTSIDCHECK(n_joints,joints)
+
     for(int idx=0; idx<n_joints; idx++)
     {
-        buffJoints[idx] = castToMapper(helper)->toHw(joints[idx]);
+        m_buffer_ints[idx] = castToMapper(m_helper)->toHw(joints[idx]);
     }
-    ReturnValue ret = iPosition->checkMotionDoneRaw(n_joints, buffJoints.getData(), flags);
-    intBuffManager->releaseBuffer(buffJoints);
+    ReturnValue ret = m_iraw->checkMotionDoneRaw(n_joints, m_buffer_ints.data(), flags);
+
     return ret;
 }
 
 ReturnValue ImplementPositionControl::checkMotionDone(bool *flag)
 {
-    return iPosition->checkMotionDoneRaw(flag);
+    std::lock_guard lock(m_imp_mutex);
+    POINTERCHECK(flag);
+
+    return m_iraw->checkMotionDoneRaw(flag);
 }
 
 ReturnValue ImplementPositionControl::setTrajSpeed(int j, double sp)
 {
-    JOINTIDCHECK
+    std::lock_guard lock(m_imp_mutex);
+    JOINTIDCHECK(j)
+
     int k;
     double enc;
-    castToMapper(helper)->velA2E_abs(sp, j, enc, k);
-    return iPosition->setTrajSpeedRaw(k, enc);
+    castToMapper(m_helper)->velA2E_abs(sp, j, enc, k);
+    return m_iraw->setTrajSpeedRaw(k, enc);
 }
 
 ReturnValue ImplementPositionControl::setTrajSpeeds(const int n_joints, const int *joints, const double *spds)
 {
-    JOINTSIDCHECK
+    std::lock_guard lock(m_imp_mutex);
+    POINTERCHECK(joints);
+    POINTERCHECK(spds);
+    JOINTSIDCHECK(n_joints,joints)
 
-    yarp::dev::impl::Buffer<double> buffValues = doubleBuffManager->getBuffer();
-    yarp::dev::impl::Buffer<int> buffJoints = intBuffManager->getBuffer();
     for(int idx=0; idx<n_joints; idx++)
     {
-        castToMapper(helper)->velA2E_abs(spds[idx], joints[idx], buffValues[idx], buffJoints[idx]);
+        castToMapper(m_helper)->velA2E_abs(spds[idx], joints[idx], m_buffer_doubles[idx], m_buffer_ints[idx]);
     }
-    ReturnValue ret = iPosition->setTrajSpeedsRaw(n_joints, buffJoints.getData(), buffValues.getData());
-    doubleBuffManager->releaseBuffer(buffValues);
-    intBuffManager->releaseBuffer(buffJoints);
+    ReturnValue ret = m_iraw->setTrajSpeedsRaw(n_joints, m_buffer_ints.data(), m_buffer_doubles.data());
+
     return ret;
 }
 
 ReturnValue ImplementPositionControl::setTrajSpeeds(const double *spds)
 {
-    yarp::dev::impl::Buffer<double> buffValues = doubleBuffManager->getBuffer();
-    castToMapper(helper)->velA2E_abs(spds, buffValues.getData());
-    ReturnValue ret = iPosition->setTrajSpeedsRaw(buffValues.getData());
-    doubleBuffManager->releaseBuffer(buffValues);
+    std::lock_guard lock(m_imp_mutex);
+    POINTERCHECK(spds);
+
+    castToMapper(m_helper)->velA2E_abs(spds, m_buffer_doubles.data());
+    ReturnValue ret = m_iraw->setTrajSpeedsRaw(m_buffer_doubles.data());
+
     return ret;
 }
 
 ReturnValue ImplementPositionControl::setTrajAcceleration(int j, double acc)
 {
-    JOINTIDCHECK
+    std::lock_guard lock(m_imp_mutex);
+    JOINTIDCHECK(j)
+
     int k;
     double enc;
 
-    castToMapper(helper)->accA2E_abs(acc, j, enc, k);
-    return iPosition->setTrajAccelerationRaw(k, enc);
+    castToMapper(m_helper)->accA2E_abs(acc, j, enc, k);
+    return m_iraw->setTrajAccelerationRaw(k, enc);
 }
 
 ReturnValue ImplementPositionControl::setTrajAccelerations(const int n_joints, const int *joints, const double *accs)
 {
-    JOINTSIDCHECK
+    std::lock_guard lock(m_imp_mutex);
+    POINTERCHECK(joints);
+    POINTERCHECK(accs);
+    JOINTSIDCHECK(n_joints,joints)
 
-    yarp::dev::impl::Buffer<double> buffValues = doubleBuffManager->getBuffer();
-    yarp::dev::impl::Buffer<int> buffJoints = intBuffManager->getBuffer();
     for(int idx=0; idx<n_joints; idx++)
     {
-        castToMapper(helper)->accA2E_abs(accs[idx], joints[idx], buffValues[idx], buffJoints[idx]);
+        castToMapper(m_helper)->accA2E_abs(accs[idx], joints[idx], m_buffer_doubles[idx], m_buffer_ints[idx]);
     }
 
-    ReturnValue ret = iPosition->setTrajAccelerationsRaw(n_joints, buffJoints.getData(), buffValues.getData());
-    doubleBuffManager->releaseBuffer(buffValues);
-    intBuffManager->releaseBuffer(buffJoints);
+    ReturnValue ret = m_iraw->setTrajAccelerationsRaw(n_joints, m_buffer_ints.data(), m_buffer_doubles.data());
+
     return ret;
 }
 
 ReturnValue ImplementPositionControl::setTrajAccelerations(const double *accs)
 {
-    yarp::dev::impl::Buffer<double> buffValues = doubleBuffManager->getBuffer();
-    castToMapper(helper)->accA2E_abs(accs, buffValues.getData());
+    std::lock_guard lock(m_imp_mutex);
+    POINTERCHECK(accs);
 
-    ReturnValue ret = iPosition->setTrajAccelerationsRaw(buffValues.getData());
-    doubleBuffManager->releaseBuffer(buffValues);
+    castToMapper(m_helper)->accA2E_abs(accs, m_buffer_doubles.data());
+
+    ReturnValue ret = m_iraw->setTrajAccelerationsRaw(m_buffer_doubles.data());
+
     return ret;
 }
 
 ReturnValue ImplementPositionControl::getTrajSpeed(int j, double *ref)
 {
-    JOINTIDCHECK
+    std::lock_guard lock(m_imp_mutex);
+    POINTERCHECK(ref);
+    JOINTIDCHECK(j)
+
     int k;
     double enc;
-    k=castToMapper(helper)->toHw(j);
+    k=castToMapper(m_helper)->toHw(j);
 
-    ReturnValue ret = iPosition->getTrajSpeedRaw(k, &enc);
+    ReturnValue ret = m_iraw->getTrajSpeedRaw(k, &enc);
 
-    *ref=(castToMapper(helper)->velE2A_abs(enc, k));
+    *ref=(castToMapper(m_helper)->velE2A_abs(enc, k));
 
     return ret;
 }
 
 ReturnValue ImplementPositionControl::getTrajSpeeds(const int n_joints, const int *joints, double *spds)
 {
-    JOINTSIDCHECK
-
-    yarp::dev::impl::Buffer<int> buffJoints = intBuffManager->getBuffer();
-    for(int idx=0; idx<n_joints; idx++)
-    {
-        buffJoints[idx] = castToMapper(helper)->toHw(joints[idx]);
-    }
-
-    yarp::dev::impl::Buffer<double> buffValues = doubleBuffManager->getBuffer();
-    ReturnValue ret = iPosition->getTrajSpeedsRaw(n_joints, buffJoints.getData(), buffValues.getData());
+    std::lock_guard lock(m_imp_mutex);
+    POINTERCHECK(joints);
+    POINTERCHECK(spds);
+    JOINTSIDCHECK(n_joints,joints)
 
     for(int idx=0; idx<n_joints; idx++)
     {
-        spds[idx]=castToMapper(helper)->velE2A_abs(buffValues[idx], buffJoints[idx]);
+        m_buffer_ints[idx] = castToMapper(m_helper)->toHw(joints[idx]);
     }
-    doubleBuffManager->releaseBuffer(buffValues);
-    intBuffManager->releaseBuffer(buffJoints);
+
+    ReturnValue ret = m_iraw->getTrajSpeedsRaw(n_joints, m_buffer_ints.data(), m_buffer_doubles.data());
+
+    for(int idx=0; idx<n_joints; idx++)
+    {
+        spds[idx]=castToMapper(m_helper)->velE2A_abs(m_buffer_doubles[idx], m_buffer_ints[idx]);
+    }
+
     return ret;
 }
 
 ReturnValue ImplementPositionControl::getTrajSpeeds(double *spds)
 {
-    yarp::dev::impl::Buffer<double> buffValues = doubleBuffManager->getBuffer();
-    ReturnValue ret = iPosition->getTrajSpeedsRaw(buffValues.getData());
-    castToMapper(helper)->velE2A_abs(buffValues.getData(), spds);
-    doubleBuffManager->releaseBuffer(buffValues);
+    std::lock_guard lock(m_imp_mutex);
+    POINTERCHECK(spds);
+
+    ReturnValue ret = m_iraw->getTrajSpeedsRaw(m_buffer_doubles.data());
+    castToMapper(m_helper)->velE2A_abs(m_buffer_doubles.data(), spds);
+
     return ret;
 }
 
 ReturnValue ImplementPositionControl::getTrajAccelerations(double *accs)
 {
-    yarp::dev::impl::Buffer<double> buffValues = doubleBuffManager->getBuffer();
-    ReturnValue ret=iPosition->getTrajAccelerationsRaw(buffValues.getData());
-    castToMapper(helper)->accE2A_abs(buffValues.getData(), accs);
-    doubleBuffManager->releaseBuffer(buffValues);
+    std::lock_guard lock(m_imp_mutex);
+    POINTERCHECK(accs);
+
+    ReturnValue ret=m_iraw->getTrajAccelerationsRaw(m_buffer_doubles.data());
+    castToMapper(m_helper)->accE2A_abs(m_buffer_doubles.data(), accs);
+
     return ret;
 }
 
 ReturnValue ImplementPositionControl::getTrajAccelerations(const int n_joints, const int *joints, double *accs)
 {
-    JOINTSIDCHECK
-
-    yarp::dev::impl::Buffer<int> buffJoints = intBuffManager->getBuffer();
-    for(int idx=0; idx<n_joints; idx++)
-    {
-        buffJoints[idx] = castToMapper(helper)->toHw(joints[idx]);
-    }
-
-    yarp::dev::impl::Buffer<double> buffValues = doubleBuffManager->getBuffer();
-    ReturnValue ret = iPosition->getTrajAccelerationsRaw(n_joints, buffJoints.getData(), buffValues.getData());
+    std::lock_guard lock(m_imp_mutex);
+    POINTERCHECK(joints);
+    POINTERCHECK(accs);
+    JOINTSIDCHECK(n_joints,joints)
 
     for(int idx=0; idx<n_joints; idx++)
     {
-        accs[idx]=castToMapper(helper)->accE2A_abs(buffValues[idx], buffJoints[idx]);
+        m_buffer_ints[idx] = castToMapper(m_helper)->toHw(joints[idx]);
     }
-    doubleBuffManager->releaseBuffer(buffValues);
-    intBuffManager->releaseBuffer(buffJoints);
+
+    ReturnValue ret = m_iraw->getTrajAccelerationsRaw(n_joints, m_buffer_ints.data(), m_buffer_doubles.data());
+
+    for(int idx=0; idx<n_joints; idx++)
+    {
+        accs[idx]=castToMapper(m_helper)->accE2A_abs(m_buffer_doubles[idx], m_buffer_ints[idx]);
+    }
+
     return ret;
 }
 
 ReturnValue ImplementPositionControl::getTrajAcceleration(int j, double *acc)
 {
-    JOINTIDCHECK
+    std::lock_guard lock(m_imp_mutex);
+    POINTERCHECK(acc);
+    JOINTIDCHECK(j)
+
     int k;
     double enc;
-    k=castToMapper(helper)->toHw(j);
-    ReturnValue ret = iPosition->getTrajAccelerationRaw(k, &enc);
+    k=castToMapper(m_helper)->toHw(j);
+    ReturnValue ret = m_iraw->getTrajAccelerationRaw(k, &enc);
 
-    *acc=castToMapper(helper)->accE2A_abs(enc, k);
+    *acc=castToMapper(m_helper)->accE2A_abs(enc, k);
 
     return ret;
 }
 
 ReturnValue ImplementPositionControl::stop(int j)
 {
-    JOINTIDCHECK
-    int k;
-    k=castToMapper(helper)->toHw(j);
+    std::lock_guard lock(m_imp_mutex);
+    JOINTIDCHECK(j)
 
-    return iPosition->stopRaw(k);
+    int k;
+    k=castToMapper(m_helper)->toHw(j);
+
+    return m_iraw->stopRaw(k);
 }
 
 ReturnValue ImplementPositionControl::stop(const int n_joint, const int *joints)
 {
-    yarp::dev::impl::Buffer<int> buffValues =intBuffManager->getBuffer();
+    std::lock_guard lock(m_imp_mutex);
+    POINTERCHECK(joints);
+
     for(int idx=0; idx<n_joint; idx++)
     {
-        buffValues[idx] = castToMapper(helper)->toHw(joints[idx]);
+        m_buffer_ints[idx] = castToMapper(m_helper)->toHw(joints[idx]);
     }
 
-    ReturnValue ret = iPosition->stopRaw(n_joint, buffValues.getData());
-    intBuffManager->releaseBuffer(buffValues);
+    ReturnValue ret = m_iraw->stopRaw(n_joint, m_buffer_ints.data());
+
     return ret;
 }
 
 ReturnValue ImplementPositionControl::stop()
 {
-    return iPosition->stopRaw();
+    std::lock_guard lock(m_imp_mutex);
+
+    return m_iraw->stopRaw();
 }
 
 ReturnValue ImplementPositionControl::getAxes(int *axis)
 {
-    (*axis)=castToMapper(helper)->axes();
+    std::lock_guard lock(m_imp_mutex);
+    POINTERCHECK(axis);
+
+    (*axis)=castToMapper(m_helper)->axes();
 
     return ReturnValue_ok;
 }
@@ -387,45 +396,49 @@ ReturnValue ImplementPositionControl::getAxes(int *axis)
 
 ReturnValue ImplementPositionControl::getTargetPosition(const int j, double* ref)
 {
-    JOINTIDCHECK
+    std::lock_guard lock(m_imp_mutex);
+    POINTERCHECK(ref);
+    JOINTIDCHECK(j)
 
     int k;
     double enc;
-    k=castToMapper(helper)->toHw(j);
-    ReturnValue ret = iPosition->getTargetPositionRaw(k, &enc);
+    k=castToMapper(m_helper)->toHw(j);
+    ReturnValue ret = m_iraw->getTargetPositionRaw(k, &enc);
 
-    *ref=castToMapper(helper)->posE2A(enc, k);
+    *ref=castToMapper(m_helper)->posE2A(enc, k);
 
     return ret;
 }
 
 ReturnValue ImplementPositionControl::getTargetPositions(double* refs)
 {
-    yarp::dev::impl::Buffer<double> buffValues = doubleBuffManager->getBuffer();
-    ReturnValue ret=iPosition->getTargetPositionsRaw(buffValues.getData());
-    castToMapper(helper)->posE2A(buffValues.getData(), refs);
-    doubleBuffManager->releaseBuffer(buffValues);
+    std::lock_guard lock(m_imp_mutex);
+    POINTERCHECK(refs);
+
+    ReturnValue ret=m_iraw->getTargetPositionsRaw(m_buffer_doubles.data());
+    castToMapper(m_helper)->posE2A(m_buffer_doubles.data(), refs);
+
     return ret;
 }
 
 ReturnValue ImplementPositionControl::getTargetPositions(const int n_joints, const int* joints, double* refs)
 {
-    JOINTSIDCHECK
-
-    yarp::dev::impl::Buffer<int> buffJoints =intBuffManager->getBuffer();
-    for(int idx=0; idx<n_joints; idx++)
-    {
-        buffJoints[idx] = castToMapper(helper)->toHw(joints[idx]);
-    }
-    yarp::dev::impl::Buffer<double> buffValues = doubleBuffManager->getBuffer();
-    ReturnValue ret = iPosition->getTargetPositionsRaw(n_joints, buffJoints.getData(), buffValues.getData());
+    std::lock_guard lock(m_imp_mutex);
+    POINTERCHECK(joints);
+    POINTERCHECK(refs);
+    JOINTSIDCHECK(n_joints,joints)
 
     for(int idx=0; idx<n_joints; idx++)
     {
-        refs[idx]=castToMapper(helper)->posE2A(buffValues[idx], buffJoints[idx]);
+        m_buffer_ints[idx] = castToMapper(m_helper)->toHw(joints[idx]);
     }
-    doubleBuffManager->releaseBuffer(buffValues);
-    intBuffManager->releaseBuffer(buffJoints);
+    ReturnValue ret = m_iraw->getTargetPositionsRaw(n_joints, m_buffer_ints.data(), m_buffer_doubles.data());
+
+    for(int idx=0; idx<n_joints; idx++)
+    {
+        refs[idx]=castToMapper(m_helper)->posE2A(m_buffer_doubles[idx], m_buffer_ints[idx]);
+    }
+
     return ret;
 }
 /////////////////// End Implement PostionControl

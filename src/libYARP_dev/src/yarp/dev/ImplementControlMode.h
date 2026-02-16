@@ -26,8 +26,8 @@ class VectorBufferManager;
 class YARP_dev_API yarp::dev::ImplementControlMode: public IControlMode
 {
 private:
-    void *helper = nullptr;
-    yarp::dev::IControlModeRaw *raw = nullptr;
+    void*                       m_helper = nullptr;
+    yarp::dev::IControlModeRaw* m_iraw = nullptr;
 
     std::mutex                                         m_imp_mutex;
     std::vector<int>                                   m_vectorInt_tmp;

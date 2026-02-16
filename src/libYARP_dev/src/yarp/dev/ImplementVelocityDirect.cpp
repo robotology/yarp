@@ -25,12 +25,12 @@ ImplementVelocityDirect::~ImplementVelocityDirect()
 
 bool ImplementVelocityDirect::initialize(int size, const int* axis_map, const double* enc, const double* zeros)
 {
-    if (helper != nullptr) {
+    if (m_helper != nullptr) {
         return false;
     }
 
-    helper = (void*)(new ControlBoardHelper(size, axis_map, enc, zeros));
-    yAssert(helper != nullptr);
+    m_helper = (void*)(new ControlBoardHelper(size, axis_map, enc, zeros));
+    yAssert(m_helper != nullptr);
 
     m_buffer_ints.resize(size);
     m_buffer_doubles.resize(size);
@@ -40,10 +40,10 @@ bool ImplementVelocityDirect::initialize(int size, const int* axis_map, const do
 
 bool ImplementVelocityDirect::uninitialize()
 {
-    if (helper != nullptr)
+    if (m_helper != nullptr)
     {
-        delete castToMapper(helper);
-        helper = nullptr;
+        delete castToMapper(m_helper);
+        m_helper = nullptr;
     }
 
     return true;
@@ -51,41 +51,44 @@ bool ImplementVelocityDirect::uninitialize()
 
 yarp::dev::ReturnValue ImplementVelocityDirect::getAxes(size_t& axes)
 {
-    axes = castToMapper(helper)->axes();
+    std::lock_guard lock(m_imp_mutex);
+
+    axes = castToMapper(m_helper)->axes();
     return ReturnValue_ok;
 }
 
 yarp::dev::ReturnValue ImplementVelocityDirect::setRefVelocity(int j, double sp)
 {
-    JOINTIDCHECK(MAPPER_MAXID)
     std::lock_guard lock(m_imp_mutex);
+    JOINTIDCHECK(j)
 
     int k;
     double enc;
-    castToMapper(helper)->velA2E(sp, j, enc, k);
+    castToMapper(m_helper)->velA2E(sp, j, enc, k);
     return m_iVelocityDirectRaw->setRefVelocityRaw(k, enc);
 }
 
 yarp::dev::ReturnValue ImplementVelocityDirect::setRefVelocity(const std::vector<double>& vels)
 {
     std::lock_guard lock(m_imp_mutex);
+    VECCHECK_SET_ALL(vels)
 
-    castToMapper(helper)->velA2E(vels.data(), m_buffer_doubles.data());
+    castToMapper(m_helper)->velA2E(vels.data(), m_buffer_doubles.data());
     auto ret = m_iVelocityDirectRaw->setRefVelocityRaw(m_buffer_doubles);
     return ret;
 }
 
 yarp::dev::ReturnValue ImplementVelocityDirect::setRefVelocity(const std::vector<int>& joints, const std::vector<double>& vels)
 {
-    JOINTSIDVECCHECK
     std::lock_guard lock(m_imp_mutex);
+    VECCHECK_SET_SOME(joints, vels)
 
     std::vector<int> vectorInt_tmp(joints.size());
     std::vector<double> vectorDouble_tmp(joints.size());
 
     for (size_t idx = 0; idx < joints.size(); idx++) {
-        vectorInt_tmp[idx] = castToMapper(helper)->toHw(joints[idx]);
-        vectorDouble_tmp[idx] = castToMapper(helper)->velA2E(vels[idx], joints[idx]);
+        vectorInt_tmp[idx] = castToMapper(m_helper)->toHw(joints[idx]);
+        vectorDouble_tmp[idx] = castToMapper(m_helper)->velA2E(vels[idx], joints[idx]);
     }
 
     auto ret = m_iVelocityDirectRaw->setRefVelocityRaw(vectorInt_tmp, vectorDouble_tmp);
@@ -94,43 +97,44 @@ yarp::dev::ReturnValue ImplementVelocityDirect::setRefVelocity(const std::vector
 
 yarp::dev::ReturnValue ImplementVelocityDirect::getRefVelocity(const int j, double& vel)
 {
-    JOINTIDCHECK(MAPPER_MAXID)
     std::lock_guard lock(m_imp_mutex);
+    JOINTIDCHECK(j)
 
-    int k = castToMapper(helper)->toHw(j);
+    int k = castToMapper(m_helper)->toHw(j);
     double tmp;
     auto ret = m_iVelocityDirectRaw->getRefVelocityRaw(k, tmp);
-    vel = castToMapper(helper)->velE2A(tmp, k);
+    vel = castToMapper(m_helper)->velE2A(tmp, k);
     return ret;
 }
 
 yarp::dev::ReturnValue ImplementVelocityDirect::getRefVelocity(std::vector<double>& vels)
 {
     std::lock_guard lock(m_imp_mutex);
+    VECCHECK_GET_ALL(vels)
 
-    size_t axes = castToMapper(helper)->axes();
+    size_t axes = castToMapper(m_helper)->axes();
     auto ret = m_iVelocityDirectRaw->getRefVelocityRaw(m_buffer_doubles);
-    if (vels.size() != axes) { vels.resize(axes); }
-    castToMapper(helper)->velE2A(m_buffer_doubles.data(), vels.data());
+    castToMapper(m_helper)->velE2A(m_buffer_doubles.data(), vels.data());
     return ret;
 }
 
 yarp::dev::ReturnValue ImplementVelocityDirect::getRefVelocity(const std::vector<int>& joints, std::vector<double>& vels)
 {
-    JOINTSIDVECCHECK
     std::lock_guard lock(m_imp_mutex);
+    JOINTSIDVECCHECK(joints)
+    VECCHECK_GET_SOME(joints, vels)
 
     std::vector<int> vectorInt_tmp(joints.size());
     std::vector<double> vectorDouble_tmp(joints.size());
 
     for (size_t idx = 0; idx < joints.size(); idx++) {
-        vectorInt_tmp[idx] = castToMapper(helper)->toHw(joints[idx]);
+        vectorInt_tmp[idx] = castToMapper(m_helper)->toHw(joints[idx]);
     }
 
     auto ret = m_iVelocityDirectRaw->getRefVelocityRaw(vectorInt_tmp, vectorDouble_tmp);
 
     for (size_t idx = 0; idx < joints.size(); idx++) {
-        vels[idx] = castToMapper(helper)->velE2A(vectorDouble_tmp[idx], joints[idx]);
+        vels[idx] = castToMapper(m_helper)->velE2A(vectorDouble_tmp[idx], joints[idx]);
     }
 
     return ret;

@@ -148,8 +148,9 @@ if(TARGET YARP::YARP_math)
 endif()
 
 set(YARP_dev_IMPL_HDRS
-  yarp/dev/impl/FixedSizeBuffersManager.h
-  yarp/dev/impl/FixedSizeBuffersManager-inl.h
+#  These files are no more used
+#  yarp/dev/impl/FixedSizeBuffersManager.h
+#  yarp/dev/impl/FixedSizeBuffersManager-inl.h
 )
 
 set(YARP_dev_SRCS

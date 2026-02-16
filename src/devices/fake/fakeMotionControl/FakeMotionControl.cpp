@@ -2303,7 +2303,6 @@ ReturnValue FakeMotionControl::setControlModesRaw(std::vector<yarp::dev::Selecta
 
 ReturnValue FakeMotionControl::setEncoderRaw(int j, double val)
 {
-    JOINTIDCHECK(_njoints)
     pos[j] = val;
     return ReturnValue_ok;
 }
@@ -2319,7 +2318,6 @@ ReturnValue FakeMotionControl::setEncodersRaw(const double *vals)
 
 ReturnValue FakeMotionControl::resetEncoderRaw(int j)
 {
-   JOINTIDCHECK(_njoints)
     pos[j] = 0;
     return ReturnValue_ok;
 }
@@ -2648,14 +2646,12 @@ ReturnValue FakeMotionControl::getPosLimitsRaw(int j, double *min, double *max)
 
 ReturnValue FakeMotionControl::getGearboxRatioRaw(int j, double *gearbox)
 {
-    JOINTIDCHECK(_njoints)
     *gearbox = _gearbox[j];
     return ReturnValue_ok;
 }
 
 ReturnValue FakeMotionControl::setGearboxRatioRaw(int j, const double val)
 {
-    JOINTIDCHECK(_njoints)
     _gearbox[j] = val;
     return ReturnValue_ok;
 }
@@ -2722,14 +2718,12 @@ bool FakeMotionControl::getRotorIndexOffsetRaw(int j, double& rotorOffset)
 
 ReturnValue FakeMotionControl::getAxisNameRaw(int j, std::string& name)
 {
-    JOINTIDCHECK(_njoints)
     name = _axisName[j];
     return ReturnValue_ok;
 }
 
 ReturnValue FakeMotionControl::getJointTypeRaw(int j, yarp::dev::JointTypeEnum& type)
 {
-    JOINTIDCHECK(_njoints)
     type = _jointType[j];
     return ReturnValue_ok;
 }
@@ -3145,14 +3139,12 @@ ReturnValue FakeMotionControl::getTemperaturesRaw(double *vals)
 
 ReturnValue FakeMotionControl::getTemperatureLimitRaw(int m, double *temp)
 {
-    MOTORIDCHECK(_njoints)
     *temp = _tempLimit[m];
     return ReturnValue_ok;
 }
 
 ReturnValue FakeMotionControl::setTemperatureLimitRaw(int m, const double temp)
 {
-    MOTORIDCHECK(_njoints)
     _tempLimit[m] = temp;
     return ReturnValue_ok;
 }
