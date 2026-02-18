@@ -62,6 +62,7 @@ public:
 public:
     bool checkAxisId(int id);
     bool checkAxesIds(const int n_axes, const int* axesList);
+    bool checkAxesIds(const std::vector<int>& axesList);
     int toHw(int axis);
     int toUser(int axis);
     void toUser(const double *hwData, double *user);

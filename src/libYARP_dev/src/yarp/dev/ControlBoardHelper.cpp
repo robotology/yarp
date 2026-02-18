@@ -296,6 +296,10 @@ bool ControlBoardHelper::checkAxisId(int id)
     return true;
 }
 
+bool ControlBoardHelper::checkAxesIds(const std::vector<int>& axesList)
+{
+    return checkAxesIds(axesList.size(), axesList.data());
+}
 
 bool ControlBoardHelper::checkAxesIds(const int n_axes, const int* axesList)
 {
@@ -303,6 +307,13 @@ bool ControlBoardHelper::checkAxesIds(const int n_axes, const int* axesList)
     {
         if (mPriv->verbose) {
             yError("checkAxesIds: num of axes is too big");
+        }
+        return false;
+    }
+    if(axesList==nullptr)
+    {
+        if (mPriv->verbose) {
+            yError("checkAxesIds: axesList is nullptr");
         }
         return false;
     }

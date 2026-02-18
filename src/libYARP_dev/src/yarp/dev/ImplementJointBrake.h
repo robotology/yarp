@@ -8,6 +8,7 @@
 
 #include <yarp/dev/IJointBrake.h>
 #include <yarp/dev/api.h>
+#include <vector>
 
 namespace yarp::dev {
 class ImplementJointBrake;
@@ -16,8 +17,11 @@ class ImplementJointBrake;
 class YARP_dev_API yarp::dev::ImplementJointBrake: public IJointBrake
 {
 protected:
-    yarp::dev::IJointBrakeRaw *raw;
-    void *helper;
+    yarp::dev::IJointBrakeRaw* m_iraw=nullptr;
+    void*                      m_helper=nullptr;
+    std::vector<int>           m_buffer_ints;
+    std::vector<double>        m_buffer_doubles;
+    mutable std::mutex         m_imp_mutex;
 
     /**
      * Initialize the internal data and alloc memory.

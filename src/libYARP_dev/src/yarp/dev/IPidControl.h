@@ -36,6 +36,14 @@ public:
     virtual ~IPidControlRaw() {}
 
     //////////////////////////////////////
+
+    /** Return a list of available pid types mode for the given joint.
+    * @param j joint number
+    * @param avail a vector that will contain the list of available control modes for joint j.
+    * @return true/false on success/failure
+    */
+    virtual yarp::dev::ReturnValue getAvailablePidsRaw(int j, std::vector<PidControlTypeEnum>& avail) = 0;
+
     /** Set new PID value for a joint axis.
     * @param pidtype the id of the PID that will be affected by the command (e.g. position, velocity etc)
     * @param j joint number
@@ -254,6 +262,14 @@ public:
     virtual ~IPidControl() {}
 
     /////////////////////////////////////////////////////////////////
+
+    /** Return a list of available pid types mode for the given joint.
+    * @param j joint number
+    * @param avail a vector that will contain the list of available control modes for joint j.
+    * @return true/false on success/failure
+    */
+    virtual yarp::dev::ReturnValue getAvailablePids(int j, std::vector<PidControlTypeEnum>& avail) = 0;
+
     /** Set new PID value for a joint axis.
     * @param pidtype the id of the PID that will be affected by the command (e.g. position, velocity etc)
     * @param j joint number

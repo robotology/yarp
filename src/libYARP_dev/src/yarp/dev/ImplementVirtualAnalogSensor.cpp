@@ -5,16 +5,16 @@
 
 #include "yarp/dev/ImplementVirtualAnalogSensor.h"
 #include <yarp/dev/ControlBoardHelper.h>
+#include <yarp/dev/ControlBoardHelpers.h>
 #include "yarp/sig/Vector.h"
 #include <cstdio>
 
 using namespace yarp::dev;
-#define JOINTIDCHECK if (ch >= castToMapper(helper)->axes()){yError("channel id out of bound"); return false;}
 
 ImplementVirtualAnalogSensor::ImplementVirtualAnalogSensor(IVirtualAnalogSensorRaw *virt)
 {
     iVASRaw = virt;
-    helper=nullptr;
+    m_helper=nullptr;
 }
 
 ImplementVirtualAnalogSensor::~ImplementVirtualAnalogSensor()
@@ -24,35 +24,35 @@ ImplementVirtualAnalogSensor::~ImplementVirtualAnalogSensor()
 
 bool ImplementVirtualAnalogSensor::initialize(int size, const int *amap, const double *userToRaw)
 {
-    if (helper != nullptr) {
+    if (m_helper != nullptr) {
         return false;
     }
 
-    helper=(void *)(new ControlBoardHelper(size, amap, nullptr, nullptr, nullptr, nullptr, userToRaw, nullptr));
-    yAssert (helper != nullptr);
+    m_helper=(void *)(new ControlBoardHelper(size, amap, nullptr, nullptr, nullptr, nullptr, userToRaw, nullptr));
+    yAssert (m_helper != nullptr);
 
     return true;
 }
 
 bool ImplementVirtualAnalogSensor::uninitialize ()
 {
-    if (helper!=nullptr)
+    if (m_helper!=nullptr)
     {
-        delete castToMapper(helper);
-        helper=nullptr;
+        delete castToMapper(m_helper);
+        m_helper=nullptr;
     }
     return true;
 }
 
 yarp::dev::VAS_status ImplementVirtualAnalogSensor::getVirtualAnalogSensorStatus(int ch)
 {
-    if (ch >= castToMapper(helper)->axes())
+    if (ch >= castToMapper(m_helper)->axes())
     {
         return yarp::dev::VAS_status::VAS_ERROR;
     }
     else
     {
-        int ch_raw = castToMapper(helper)->toHw(ch);
+        int ch_raw = castToMapper(m_helper)->toHw(ch);
         return iVASRaw->getVirtualAnalogSensorStatusRaw(ch_raw);
     }
 }
@@ -65,18 +65,17 @@ int  ImplementVirtualAnalogSensor::getVirtualAnalogSensorChannels()
 bool ImplementVirtualAnalogSensor::updateVirtualAnalogSensorMeasure(yarp::sig::Vector &measure)
 {
     yarp::sig::Vector measure_raw;
-    castToMapper(helper)->voltageV2S(measure.data(), measure_raw.data());
+    castToMapper(m_helper)->voltageV2S(measure.data(), measure_raw.data());
     bool ret = iVASRaw->updateVirtualAnalogSensorMeasureRaw(measure_raw);
     return ret;
 }
 
 bool ImplementVirtualAnalogSensor::updateVirtualAnalogSensorMeasure(int ch, double &measure)
 {
-    JOINTIDCHECK
     int ch_raw;
     bool ret;
     double measure_raw;
-    castToMapper(helper)->voltageV2S(measure, ch, measure_raw, ch_raw);
+    castToMapper(m_helper)->voltageV2S(measure, ch, measure_raw, ch_raw);
     ret = iVASRaw->updateVirtualAnalogSensorMeasureRaw(ch_raw, measure_raw);
     return ret;
 }

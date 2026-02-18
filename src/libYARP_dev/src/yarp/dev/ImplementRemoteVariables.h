@@ -15,10 +15,11 @@ class ImplementRemoteVariables;
 class YARP_dev_API yarp::dev::ImplementRemoteVariables: public IRemoteVariables
 {
 protected:
-    IRemoteVariablesRaw *ivar;
-    void *helper;
-    double *temp1;
-    double *temp2;
+    IRemoteVariablesRaw*     m_iraw=nullptr;
+    void*                    m_helper=nullptr;
+    std::vector<int>         m_buffer_ints;
+    std::vector<double>      m_buffer_doubles;
+    std::mutex               m_imp_mutex;
 
 
     /**

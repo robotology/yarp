@@ -15,10 +15,8 @@ using namespace yarp::dev;
 using namespace yarp::os;
 
 ImplementPositionDirect::ImplementPositionDirect(IPositionDirectRaw *y):
-    iPDirect(y),
-    helper(nullptr),
-    intBuffManager(nullptr),
-    doubleBuffManager(nullptr)
+    m_iraw(y),
+    m_helper(nullptr)
 {;}
 
 
@@ -29,40 +27,25 @@ ImplementPositionDirect::~ImplementPositionDirect()
 
 bool ImplementPositionDirect::initialize(int size, const int *amap, const double *enc, const double *zos)
 {
-    if (helper != nullptr) {
+    if (m_helper != nullptr) {
         return false;
     }
 
-    helper=(void *)(new ControlBoardHelper(size, amap, enc, zos));
-    yAssert(helper != nullptr);
+    m_helper=(void *)(new ControlBoardHelper(size, amap, enc, zos));
+    yAssert(m_helper != nullptr);
 
-    intBuffManager = new yarp::dev::impl::FixedSizeBuffersManager<int> (size);
-    yAssert (intBuffManager != nullptr);
-
-    doubleBuffManager = new yarp::dev::impl::FixedSizeBuffersManager<double> (size);
-    yAssert (doubleBuffManager != nullptr);
+    m_buffer_ints.resize   (size);
+    m_buffer_doubles.resize(size);
 
     return true;
 }
 
 bool ImplementPositionDirect::uninitialize()
 {
-    if(helper!=nullptr)
+    if(m_helper!=nullptr)
     {
-        delete castToMapper(helper);
-        helper=nullptr;
-    }
-
-    if(intBuffManager)
-    {
-        delete intBuffManager;
-        intBuffManager=nullptr;
-    }
-
-    if(doubleBuffManager)
-    {
-        delete doubleBuffManager;
-        doubleBuffManager=nullptr;
+        delete castToMapper(m_helper);
+        m_helper=nullptr;
     }
 
     return true;
@@ -70,96 +53,98 @@ bool ImplementPositionDirect::uninitialize()
 
 ReturnValue ImplementPositionDirect::getAxes(int *axes)
 {
-    (*axes)=castToMapper(helper)->axes();
+    std::lock_guard lock(m_imp_mutex);
+    POINTERCHECK(axes);
+
+    (*axes)=castToMapper(m_helper)->axes();
     return ReturnValue_ok;
 }
 
 ReturnValue ImplementPositionDirect::setPosition(int j, double ref)
 {
-    JOINTIDCHECK(MAPPER_MAXID)
+    std::lock_guard lock(m_imp_mutex);
+    JOINTIDCHECK(j)
+
     int k;
     double enc;
-    castToMapper(helper)->posA2E(ref, j, enc, k);
-    return iPDirect->setPositionRaw(k, enc);
+    castToMapper(m_helper)->posA2E(ref, j, enc, k);
+    return m_iraw->setPositionRaw(k, enc);
 }
 
 ReturnValue ImplementPositionDirect::setPositions(const int n_joints, const int *joints, const double *refs)
 {
-    JOINTSIDCHECK
-
-    yarp::dev::impl::Buffer<int> buffJoints = intBuffManager->getBuffer();
-    yarp::dev::impl::Buffer<double> buffValues = doubleBuffManager->getBuffer();
-
-    if (n_joints > (int)intBuffManager->getBufferSize()) {
-        return ReturnValue::return_code::return_value_error_generic;
-    }
+    std::lock_guard lock(m_imp_mutex);
+    POINTERCHECK(joints);
+    POINTERCHECK(refs);
+    JOINTSIDCHECK(n_joints, joints)
 
     for(int idx=0; idx<n_joints; idx++)
     {
-        buffJoints.setValue(idx, castToMapper(helper)->toHw(joints[idx]));
-        buffValues.setValue(idx, castToMapper(helper)->posA2E(refs[idx], joints[idx]));
+        m_buffer_ints[idx]= castToMapper(m_helper)->toHw(joints[idx]);
+        m_buffer_doubles[idx] = castToMapper(m_helper)->posA2E(refs[idx], joints[idx]);
     }
 
-    ReturnValue ret = iPDirect->setPositionsRaw(n_joints, buffJoints.getData(), buffValues.getData());
-
-    doubleBuffManager->releaseBuffer(buffValues);
-    intBuffManager->releaseBuffer(buffJoints);
+    ReturnValue ret = m_iraw->setPositionsRaw(n_joints, m_buffer_ints.data(), m_buffer_doubles.data());
 
     return ret;
 }
 
 ReturnValue ImplementPositionDirect::setPositions(const double *refs)
 {
-    yarp::dev::impl::Buffer<double> buffValues = doubleBuffManager->getBuffer();
-    castToMapper(helper)->posA2E(refs, buffValues.getData());
-    ReturnValue ret = iPDirect->setPositionsRaw(buffValues.getData());
-    doubleBuffManager->releaseBuffer(buffValues);
+    std::lock_guard lock(m_imp_mutex);
+    POINTERCHECK(refs);
+
+    castToMapper(m_helper)->posA2E(refs, m_buffer_doubles.data());
+    ReturnValue ret = m_iraw->setPositionsRaw(m_buffer_doubles.data());
+
     return ret;
 }
 
 ReturnValue ImplementPositionDirect::getRefPosition(const int j, double* ref)
 {
-    JOINTIDCHECK(MAPPER_MAXID)
+    std::lock_guard lock(m_imp_mutex);
+    JOINTIDCHECK(j)
+    POINTERCHECK(ref);
+
     int k;
     double tmp;
-    k=castToMapper(helper)->toHw(j);
+    k=castToMapper(m_helper)->toHw(j);
 
-    ReturnValue ret = iPDirect->getRefPositionRaw(k, &tmp);
+    ReturnValue ret = m_iraw->getRefPositionRaw(k, &tmp);
 
-    *ref=(castToMapper(helper)->posE2A(tmp, k));
+    *ref=(castToMapper(m_helper)->posE2A(tmp, k));
     return ret;
 }
 
 ReturnValue ImplementPositionDirect::getRefPositions(const int n_joints, const int* joints, double* refs)
 {
-    JOINTSIDCHECK
-
-    yarp::dev::impl::Buffer<int> buffJoints = intBuffManager->getBuffer();
-
-    for(int idx=0; idx<n_joints; idx++)
-    {
-        buffJoints[idx] = castToMapper(helper)->toHw(joints[idx]);
-    }
-
-    yarp::dev::impl::Buffer<double> buffValues = doubleBuffManager->getBuffer();
-    ReturnValue ret = iPDirect->getRefPositionsRaw(n_joints, buffJoints.getData(), buffValues.getData());
+    std::lock_guard lock(m_imp_mutex);
+    JOINTSIDCHECK(n_joints, joints)
+    POINTERCHECK(joints);
+    POINTERCHECK(refs);
 
     for(int idx=0; idx<n_joints; idx++)
     {
-        refs[idx]=castToMapper(helper)->posE2A(buffValues[idx], buffJoints[idx]);
+        m_buffer_ints[idx] = castToMapper(m_helper)->toHw(joints[idx]);
     }
 
-    doubleBuffManager->releaseBuffer(buffValues);
-    intBuffManager->releaseBuffer(buffJoints);
+    ReturnValue ret = m_iraw->getRefPositionsRaw(n_joints, m_buffer_ints.data(), m_buffer_doubles.data());
+
+    for(int idx=0; idx<n_joints; idx++)
+    {
+        refs[idx]=castToMapper(m_helper)->posE2A(m_buffer_doubles[idx], m_buffer_ints[idx]);
+    }
 
     return ret;
 }
 
 ReturnValue ImplementPositionDirect::getRefPositions(double* refs)
 {
-    yarp::dev::impl::Buffer<double> buffValues = doubleBuffManager->getBuffer();
-    ReturnValue ret = iPDirect->getRefPositionsRaw(buffValues.getData());
-    castToMapper(helper)->posE2A(buffValues.getData(), refs);
-    doubleBuffManager->releaseBuffer(buffValues);
+    std::lock_guard lock(m_imp_mutex);
+    POINTERCHECK(refs);
+
+    ReturnValue ret = m_iraw->getRefPositionsRaw(m_buffer_doubles.data());
+    castToMapper(m_helper)->posE2A(m_buffer_doubles.data(), refs);
+
     return ret;
 }

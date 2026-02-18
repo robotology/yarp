@@ -29,10 +29,11 @@ class FixedSizeBuffersManager;
 class YARP_dev_API yarp::dev::ImplementPositionDirect : public yarp::dev::IPositionDirect
 {
 protected:
-    IPositionDirectRaw *iPDirect;
-    void    *helper;
-    yarp::dev::impl::FixedSizeBuffersManager<int> *intBuffManager;
-    yarp::dev::impl::FixedSizeBuffersManager<double> *doubleBuffManager;
+    IPositionDirectRaw*      m_iraw=nullptr;
+    void*                    m_helper=nullptr;
+    std::vector<int>         m_buffer_ints;
+    std::vector<double>      m_buffer_doubles;
+    std::mutex               m_imp_mutex;
 
     /**
      * Initialize the internal data and alloc memory.

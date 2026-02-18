@@ -102,10 +102,10 @@ static void checkRemapper(yarp::dev::PolyDriver & ddRemapper, int rand, size_t n
     }
 
     // Set the control mode in position direct
-    std::vector<int>    settedControlMode(nrOfRemappedAxes,VOCAB_CM_POSITION_DIRECT);
-    std::vector<int>    readedControlMode(nrOfRemappedAxes,VOCAB_CM_POSITION);
+    std::vector<yarp::dev::SelectableControlModeEnum>  settedControlMode(nrOfRemappedAxes,yarp::dev::SelectableControlModeEnum::VOCAB_CM_POSITION_DIRECT);
+    std::vector<yarp::dev::ControlModeEnum>            readedControlMode(nrOfRemappedAxes,yarp::dev::ControlModeEnum::VOCAB_CM_POSITION);
 
-    CHECK(ctrlmode->setControlModes(settedControlMode.data())); // setControlModes correctly called
+    CHECK(ctrlmode->setControlModes(settedControlMode)); // setControlModes correctly called
 
     // Check that the read control mode is actually position direct
     // Let's try 10 times because if the remapper is using some remotecontrolboards,
@@ -114,14 +114,14 @@ static void checkRemapper(yarp::dev::PolyDriver & ddRemapper, int rand, size_t n
     bool getControlModesOk = false;
     for(int wait=0; wait < 20 && !getControlModesOk; wait++)
     {
-        getControlModesOk = ctrlmode->getControlModes(readedControlMode.data());
+        getControlModesOk = ctrlmode->getControlModes(readedControlMode);
         yarp::os::Time::delay(0.005);
     }
     CHECK(getControlModesOk); // getControlModes correctly called
 
     for(size_t i=0; i < nrOfRemappedAxes; i++)
     {
-        CHECK(settedControlMode[i] == readedControlMode[i]); // Setted control mode and readed control mode match
+        CHECK(settedControlMode[i] == (yarp::dev::SelectableControlModeEnum)readedControlMode[i]); // Setted control mode and readed control mode match
     }
 
     // Test position direct methods
@@ -194,10 +194,10 @@ static void checkRemapperMicro(yarp::dev::PolyDriver & ddRemapper, int rand, siz
     }
 
     // Set the control mode in position direct
-    std::vector<int>    settedControlMode(nrOfRemappedAxes,VOCAB_CM_POSITION_DIRECT);
-    std::vector<int>    readedControlMode(nrOfRemappedAxes,VOCAB_CM_POSITION);
+    std::vector<yarp::dev::SelectableControlModeEnum>  settedControlMode(nrOfRemappedAxes,yarp::dev::SelectableControlModeEnum::VOCAB_CM_POSITION_DIRECT);
+    std::vector<yarp::dev::ControlModeEnum>            readedControlMode(nrOfRemappedAxes,yarp::dev::ControlModeEnum::VOCAB_CM_POSITION);
 
-    CHECK_FALSE(ctrlmode->setControlModes(settedControlMode.data()));
+    CHECK_FALSE(ctrlmode->setControlModes(settedControlMode));
 
     // Check that the read control mode is actually position direct
     // Let's try 10 times because if the remapper is using some remotecontrolboards,
@@ -206,7 +206,7 @@ static void checkRemapperMicro(yarp::dev::PolyDriver & ddRemapper, int rand, siz
     bool getControlModesOk = false;
     for(int wait=0; wait < 20 && !getControlModesOk; wait++)
     {
-        getControlModesOk = ctrlmode->getControlModes(readedControlMode.data());
+        getControlModesOk = ctrlmode->getControlModes(readedControlMode);
         yarp::os::Time::delay(0.005);
     }
     CHECK_FALSE(getControlModesOk);

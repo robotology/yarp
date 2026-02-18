@@ -209,6 +209,9 @@ private:
     std::vector<double> *_vdpids_ffd  = nullptr;
     std::vector<double> *_mpids_ffd  = nullptr;
 
+    std::vector<yarp::dev::SelectableControlModeEnum>* _availableControlModes = nullptr;
+    std::vector<yarp::dev::PidControlTypeEnum>*        _availablePids = nullptr;
+
     std::string* _axisName = nullptr;                      /** axis name */
     yarp::dev::JointTypeEnum* _jointType = nullptr;        /** axis type */
 //    ImpedanceLimits     *_impedance_limits= nullptr;     /** impedance limits */
@@ -313,6 +316,7 @@ public:
     void threadRelease() override;
 
     /////////   PID INTERFACE   /////////
+    yarp::dev::ReturnValue getAvailablePidsRaw(int j, std::vector<yarp::dev::PidControlTypeEnum>& avail) override;
     yarp::dev::ReturnValue setPidRaw(const yarp::dev::PidControlTypeEnum& pidtype,int j, const yarp::dev::Pid &pid) override;
     yarp::dev::ReturnValue setPidsRaw(const yarp::dev::PidControlTypeEnum& pidtype,const yarp::dev::Pid *pids) override;
     yarp::dev::ReturnValue setPidReferenceRaw(const yarp::dev::PidControlTypeEnum& pidtype,int j, double ref) override;
@@ -380,12 +384,14 @@ public:
     /////////////////////////////// END Position Control INTERFACE
 
     //////////////////////// BEGINControlMode
-    yarp::dev::ReturnValue getControlModeRaw(int j, int *v) override;
-    yarp::dev::ReturnValue getControlModesRaw(int *v) override;
-    yarp::dev::ReturnValue getControlModesRaw(const int n_joint, const int *joints, int *modes) override;
-    yarp::dev::ReturnValue setControlModeRaw(const int j, const int mode) override;
-    yarp::dev::ReturnValue setControlModesRaw(const int n_joint, const int *joints, int *modes) override;
-    yarp::dev::ReturnValue setControlModesRaw(int *modes) override;
+    yarp::dev::ReturnValue getAvailableControlModesRaw(int j, std::vector<yarp::dev::SelectableControlModeEnum>& avail) override;
+    yarp::dev::ReturnValue getControlModeRaw(int j, yarp::dev::ControlModeEnum& mode) override;
+    yarp::dev::ReturnValue getControlModesRaw(std::vector<int> joints, std::vector<yarp::dev::ControlModeEnum>& modes) override;
+    yarp::dev::ReturnValue getControlModesRaw(std::vector<yarp::dev::ControlModeEnum>& mode) override;
+    yarp::dev::ReturnValue setControlModeRaw(int j, yarp::dev::SelectableControlModeEnum mode) override;
+    yarp::dev::ReturnValue setControlModesRaw(std::vector<int> joints, std::vector<yarp::dev::SelectableControlModeEnum> modes) override;
+    yarp::dev::ReturnValue setControlModesRaw(std::vector<yarp::dev::SelectableControlModeEnum> mode) override;
+
     //////////////////////// END ControlMode
 
     //////////////////////// BEGIN EncoderInterface

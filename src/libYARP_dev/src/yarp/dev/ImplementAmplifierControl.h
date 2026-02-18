@@ -16,10 +16,11 @@ class ImplementAmplifierControl;
 class YARP_dev_API yarp::dev::ImplementAmplifierControl : public IAmplifierControl
 {
 protected:
-    IAmplifierControlRaw *iAmplifier;
-    void *helper;
-    double *dTemp;
-    int *iTemp;
+    IAmplifierControlRaw*    m_iraw=nullptr;
+    void*                    m_helper=nullptr;
+    std::vector<int>         m_buffer_ints;
+    std::vector<double>      m_buffer_doubles;
+    std::mutex               m_imp_mutex;
 
     /**
      * Initialize the internal data and alloc memory.

@@ -6,6 +6,7 @@
 
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/dev/ControlBoardInterfaces.h>
+#include <yarp/dev/ControlBoardHelpers.h>
 #include <yarp/dev/ImplementControlCalibration.h>
 #include <yarp/os/Log.h>
 
@@ -79,9 +80,8 @@ ReturnValue IControlCalibration::park(bool wait)
 // ControlCalibration Interface Implementation
 ImplementControlCalibration::ImplementControlCalibration(yarp::dev::IControlCalibrationRaw *y)
 {
-    iCalibrate = dynamic_cast<IControlCalibrationRaw *> (y);
-    helper = nullptr;
-    temp = nullptr;
+    m_iraw = dynamic_cast<IControlCalibrationRaw *> (y);
+    m_helper = nullptr;
 }
 
 ImplementControlCalibration::~ImplementControlCalibration()
@@ -91,14 +91,16 @@ ImplementControlCalibration::~ImplementControlCalibration()
 
 bool ImplementControlCalibration::initialize(int size, const int *amap, const double *enc, const double *zos)
 {
-    if (helper != nullptr) {
+    if (m_helper != nullptr) {
         return false;
     }
 
-    helper = (void *)(new ControlBoardHelper(size, amap, enc, zos));
-    yAssert(helper != nullptr);
-    temp = new double[size];
-    yAssert(temp != nullptr);
+    m_helper = (void *)(new ControlBoardHelper(size, amap, enc, zos));
+    yAssert(m_helper != nullptr);
+
+    m_buffer_ints.resize   (size);
+    m_buffer_doubles.resize(size);
+
     return true;
 }
 
@@ -108,34 +110,41 @@ bool ImplementControlCalibration::initialize(int size, const int *amap, const do
 */
 bool ImplementControlCalibration::uninitialize()
 {
-    if (helper != nullptr)
+    if (m_helper != nullptr)
     {
-        delete castToMapper(helper);
-        helper = nullptr;
+        delete castToMapper(m_helper);
+        m_helper = nullptr;
     }
-
-    checkAndDestroy(temp);
 
     return true;
 }
 
 ReturnValue ImplementControlCalibration::calibrationDone(int j)
 {
-    int k = castToMapper(helper)->toHw(j);
+    std::lock_guard lock(m_imp_mutex);
+    JOINTIDCHECK(j);
 
-    return iCalibrate->calibrationDoneRaw(k);
+    int k = castToMapper(m_helper)->toHw(j);
+
+    return m_iraw->calibrationDoneRaw(k);
 }
 
 ReturnValue ImplementControlCalibration::calibrateAxisWithParams(int axis, unsigned int type, double p1, double p2, double p3)
 {
-    int k = castToMapper(helper)->toHw(axis);
+    std::lock_guard lock(m_imp_mutex);
+    JOINTIDCHECK(axis);
 
-    return iCalibrate->calibrateAxisWithParamsRaw(k, type, p1, p2, p3);
+    int k = castToMapper(m_helper)->toHw(axis);
+
+    return m_iraw->calibrateAxisWithParamsRaw(k, type, p1, p2, p3);
 }
 
 ReturnValue ImplementControlCalibration::setCalibrationParameters(int axis, const CalibrationParameters& params)
 {
-    int k = castToMapper(helper)->toHw(axis);
+    std::lock_guard lock(m_imp_mutex);
+    JOINTIDCHECK(axis);
 
-    return iCalibrate->setCalibrationParametersRaw(k, params);
+    int k = castToMapper(m_helper)->toHw(axis);
+
+    return m_iraw->setCalibrationParametersRaw(k, params);
 }

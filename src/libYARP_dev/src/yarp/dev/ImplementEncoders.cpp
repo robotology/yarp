@@ -6,6 +6,7 @@
 
 #include <yarp/dev/ImplementEncoders.h>
 #include <yarp/dev/ControlBoardHelper.h>
+#include <yarp/dev/ControlBoardHelpers.h>
 
 #include <cmath>
 
@@ -19,9 +20,8 @@ using namespace yarp::dev;
 // Encoder Interface Implementation
 ImplementEncoders::ImplementEncoders(yarp::dev::IEncodersRaw  *y)
 {
-    iEncoders= y;
-    helper = nullptr;
-    temp=nullptr;
+    m_iraw= y;
+    m_helper = nullptr;
 }
 
 ImplementEncoders::~ImplementEncoders()
@@ -31,14 +31,16 @@ ImplementEncoders::~ImplementEncoders()
 
 bool ImplementEncoders:: initialize (int size, const int *amap, const double *enc, const double *zos)
 {
-    if (helper != nullptr) {
+    if (m_helper != nullptr) {
         return false;
     }
 
-    helper=(void *)(new ControlBoardHelper(size, amap, enc, zos));
-    yAssert (helper != nullptr);
-    temp=new double [size];
-    yAssert (temp != nullptr);
+    m_helper=(void *)(new ControlBoardHelper(size, amap, enc, zos));
+    yAssert (m_helper != nullptr);
+
+    m_buffer_doubles.resize(size);
+    m_buffer_ints.resize(size);
+
     return true;
 }
 
@@ -48,127 +50,159 @@ bool ImplementEncoders:: initialize (int size, const int *amap, const double *en
 */
 bool ImplementEncoders::uninitialize ()
 {
-    if (helper!=nullptr)
+    if (m_helper!=nullptr)
     {
-        delete castToMapper(helper);
-        helper=nullptr;
+        delete castToMapper(m_helper);
+        m_helper=nullptr;
     }
-
-    checkAndDestroy(temp);
 
     return true;
 }
 
 ReturnValue ImplementEncoders::getAxes(int *ax)
 {
-    (*ax)=castToMapper(helper)->axes();
+    std::lock_guard lock(m_imp_mutex);
+    POINTERCHECK(ax)
+
+    (*ax)=castToMapper(m_helper)->axes();
     return ReturnValue_ok;
 }
 
 ReturnValue ImplementEncoders::resetEncoder(int j)
 {
+    std::lock_guard lock(m_imp_mutex);
+    JOINTIDCHECK(j)
+
     int k;
-    k=castToMapper(helper)->toHw(j);
+    k=castToMapper(m_helper)->toHw(j);
 
-    return iEncoders->resetEncoderRaw(k);
+    return m_iraw->resetEncoderRaw(k);
 }
-
 
 ReturnValue ImplementEncoders::resetEncoders()
 {
-    return iEncoders->resetEncodersRaw();
+    std::lock_guard lock(m_imp_mutex);
+
+    return m_iraw->resetEncodersRaw();
 }
 
 ReturnValue ImplementEncoders::setEncoder(int j, double val)
 {
+    std::lock_guard lock(m_imp_mutex);
+    JOINTIDCHECK(j)
+
     int k;
     double enc;
 
-    castToMapper(helper)->posA2E(val, j, enc, k);
+    castToMapper(m_helper)->posA2E(val, j, enc, k);
 
-    return iEncoders->setEncoderRaw(k, enc);
+    return m_iraw->setEncoderRaw(k, enc);
 }
 
 ReturnValue ImplementEncoders::setEncoders(const double *val)
 {
-    castToMapper(helper)->posA2E(val, temp);
+    std::lock_guard lock(m_imp_mutex);
+    POINTERCHECK(val)
 
-    return iEncoders->setEncodersRaw(temp);
+    castToMapper(m_helper)->posA2E(val, m_buffer_doubles.data());
+
+    return m_iraw->setEncodersRaw(m_buffer_doubles.data());
 }
 
 ReturnValue ImplementEncoders::getEncoder(int j, double *v)
 {
+    std::lock_guard lock(m_imp_mutex);
+    JOINTIDCHECK(j)
+    POINTERCHECK(v)
+
     int k;
     double enc;
     ReturnValue ret;
 
-    k=castToMapper(helper)->toHw(j);
+    k=castToMapper(m_helper)->toHw(j);
 
-    ret=iEncoders->getEncoderRaw(k, &enc);
+    ret=m_iraw->getEncoderRaw(k, &enc);
 
-    *v=castToMapper(helper)->posE2A(enc, k);
+    *v=castToMapper(m_helper)->posE2A(enc, k);
 
     return ret;
 }
 
 ReturnValue ImplementEncoders::getEncoders(double *v)
 {
+    std::lock_guard lock(m_imp_mutex);
+    POINTERCHECK(v)
+
     ReturnValue ret;
-    castToMapper(helper)->axes();
+    castToMapper(m_helper)->axes();
 
-    ret=iEncoders->getEncodersRaw(temp);
+    ret=m_iraw->getEncodersRaw(m_buffer_doubles.data());
 
-    castToMapper(helper)->posE2A(temp, v);
+    castToMapper(m_helper)->posE2A(m_buffer_doubles.data(), v);
 
     return ret;
 }
 
 ReturnValue ImplementEncoders::getEncoderSpeed(int j, double *v)
 {
+    std::lock_guard lock(m_imp_mutex);
+    JOINTIDCHECK(j)
+    POINTERCHECK(v)
+
     int k;
     double enc;
     ReturnValue ret;
 
-    k=castToMapper(helper)->toHw(j);
+    k=castToMapper(m_helper)->toHw(j);
 
-    ret=iEncoders->getEncoderSpeedRaw(k, &enc);
+    ret=m_iraw->getEncoderSpeedRaw(k, &enc);
 
-    *v=castToMapper(helper)->velE2A(enc, k);
+    *v=castToMapper(m_helper)->velE2A(enc, k);
 
     return ret;
 }
 
 ReturnValue ImplementEncoders::getEncoderSpeeds(double *v)
 {
-    ReturnValue ret;
-    ret=iEncoders->getEncoderSpeedsRaw(temp);
+    std::lock_guard lock(m_imp_mutex);
+    POINTERCHECK(v)
 
-    castToMapper(helper)->velE2A(temp, v);
+    ReturnValue ret;
+    ret=m_iraw->getEncoderSpeedsRaw(m_buffer_doubles.data());
+
+    castToMapper(m_helper)->velE2A(m_buffer_doubles.data(), v);
 
     return ret;
 }
 
 ReturnValue ImplementEncoders::getEncoderAcceleration(int j, double *v)
 {
+    std::lock_guard lock(m_imp_mutex);
+    JOINTIDCHECK(j)
+    POINTERCHECK(v)
+
     int k;
     double enc;
     ReturnValue ret;
 
-    k=castToMapper(helper)->toHw(j);
+    k=castToMapper(m_helper)->toHw(j);
 
-    ret=iEncoders->getEncoderAccelerationRaw(k, &enc);
+    ret=m_iraw->getEncoderAccelerationRaw(k, &enc);
 
-    *v=castToMapper(helper)->accE2A(enc, k);
+    *v=castToMapper(m_helper)->accE2A(enc, k);
 
     return ret;
 }
 
 ReturnValue ImplementEncoders::getEncoderAccelerations(double *v)
 {
-    ReturnValue ret;
-    ret=iEncoders->getEncoderAccelerationsRaw(temp);
+    std::lock_guard lock(m_imp_mutex);
+    POINTERCHECK(v)
 
-    castToMapper(helper)->accE2A(temp, v);
+    ReturnValue ret;
+    ret=m_iraw->getEncoderAccelerationsRaw(m_buffer_doubles.data());
+
+    castToMapper(m_helper)->accE2A(m_buffer_doubles.data(), v);
 
     return ret;
 }

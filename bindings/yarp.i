@@ -1242,20 +1242,20 @@ MAKE_COMMS  (Map2DPath, yarp::dev::Nav2D::Map2DPath)
         return buffer;
     }
 
-    bool getControlModes(std::vector<int>& data) {
-        return self->getControlModes(&data[0]);
+    bool getControlModes(std::vector<yarp::dev::ControlModeEnum>& data) {
+        return self->getControlModes(data);
     }
 
-    bool getControlModes(int n_joint, std::vector<int>& joints, std::vector<int>& data) {
-        return self->getControlModes(n_joint, &joints[0], &data[0]);
+    bool getControlModes(std::vector<int>& joints, std::vector<yarp::dev::ControlModeEnum>& data) {
+        return self->getControlModes(joints, data);
     }
 
-    bool setControlModes(std::vector<int>& data) {
-        return self->setControlModes(&data[0]);
+    bool setControlModes(std::vector<yarp::dev::SelectableControlModeEnum>& data) {
+        return self->setControlModes(data);
     }
 
-    bool setControlModes(int n_joint, std::vector<int>& joints, std::vector<int>& data) {
-        return self->setControlModes(n_joint, &joints[0], &data[0]);
+    bool setControlModes(std::vector<int>& joints, std::vector<yarp::dev::SelectableControlModeEnum>& data) {
+        return self->setControlModes(joints, data);
     }
 }
 

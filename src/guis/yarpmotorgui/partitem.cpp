@@ -2209,7 +2209,7 @@ const QVector<JointItem::JointState> &PartItem::getPartModes()
 
 void PartItem::updateControlMode()
 {
-    bool ret = m_ictrlmode->getControlModes(m_controlModes.data());
+    bool ret = m_ictrlmode->getControlModes(m_controlModes);
 
 
     if(ret==false){
@@ -2220,50 +2220,50 @@ void PartItem::updateControlMode()
     for (int k = 0; k < m_layout->count(); k++){
         switch (m_controlModes[k])
         {
-        case VOCAB_CM_IDLE:
+        case yarp::dev::ControlModeEnum::VOCAB_CM_IDLE:
             m_modesList[k] = JointItem::Idle;
             break;
-        case VOCAB_CM_POSITION:
+        case yarp::dev::ControlModeEnum::VOCAB_CM_POSITION:
             m_modesList[k] = JointItem::Position;
             break;
-        case VOCAB_CM_POSITION_DIRECT:
+        case yarp::dev::ControlModeEnum::VOCAB_CM_POSITION_DIRECT:
             m_modesList[k] = JointItem::PositionDirect;
             break;
-        case VOCAB_CM_MIXED:
+        case yarp::dev::ControlModeEnum::VOCAB_CM_MIXED:
             m_modesList[k] = JointItem::Mixed;
             break;
-        case VOCAB_CM_VELOCITY:
+        case yarp::dev::ControlModeEnum::VOCAB_CM_VELOCITY:
             m_modesList[k] = JointItem::Velocity;
             break;
-        case VOCAB_CM_VELOCITY_DIRECT:
+        case yarp::dev::ControlModeEnum::VOCAB_CM_VELOCITY_DIRECT:
             m_modesList[k] = JointItem::VelocityDirect;
             break;
-        case VOCAB_CM_TORQUE:
+        case yarp::dev::ControlModeEnum::VOCAB_CM_TORQUE:
             m_modesList[k] = JointItem::Torque;
             break;
-        case VOCAB_CM_PWM:
+        case yarp::dev::ControlModeEnum::VOCAB_CM_PWM:
             m_modesList[k] = JointItem::Pwm;
             break;
-        case VOCAB_CM_CURRENT:
+        case yarp::dev::ControlModeEnum::VOCAB_CM_CURRENT:
             m_modesList[k] = JointItem::Current;
             break;
-        case VOCAB_CM_HW_FAULT:
+        case yarp::dev::ControlModeEnum::VOCAB_CM_HW_FAULT:
             m_modesList[k] = JointItem::HwFault;
             break;
-        case VOCAB_CM_CALIBRATING:
+        case yarp::dev::ControlModeEnum::VOCAB_CM_CALIBRATING:
             m_modesList[k] = JointItem::Calibrating;
             break;
-        case VOCAB_CM_CALIB_DONE:
+        case yarp::dev::ControlModeEnum::VOCAB_CM_CALIB_DONE:
             m_modesList[k] = JointItem::CalibDone;
             break;
-        case VOCAB_CM_NOT_CONFIGURED:
+        case yarp::dev::ControlModeEnum::VOCAB_CM_NOT_CONFIGURED:
             m_modesList[k] = JointItem::NotConfigured;
             break;
-        case VOCAB_CM_CONFIGURED:
+        case yarp::dev::ControlModeEnum::VOCAB_CM_CONFIGURED:
             m_modesList[k] = JointItem::Configured;
             break;
         default:
-        case VOCAB_CM_UNKNOWN:
+        case yarp::dev::ControlModeEnum::VOCAB_CM_UNKNOWN:
             m_modesList[k] = JointItem::Unknown;
             break;
         }
@@ -2449,7 +2449,7 @@ bool PartItem::updatePart()
     {
         for (int k = 0; k < number_of_joints; k++)
         {
-            if (m_controlModes[k]==VOCAB_CM_HW_FAULT)
+            if (m_controlModes[k]==yarp::dev::ControlModeEnum::VOCAB_CM_HW_FAULT)
             {
                 int fault;
                 std::string message;
@@ -2472,28 +2472,28 @@ bool PartItem::updatePart()
         auto* joint = (JointItem*)m_layout->itemAt(k)->widget();
         switch (m_controlModes[k])
         {
-            case VOCAB_CM_IDLE:
+            case yarp::dev::ControlModeEnum::VOCAB_CM_IDLE:
                 joint->setJointState(JointItem::Idle);
                 break;
-            case VOCAB_CM_POSITION:
+            case yarp::dev::ControlModeEnum::VOCAB_CM_POSITION:
                 joint->setJointState(JointItem::Position);
                 break;
-            case VOCAB_CM_POSITION_DIRECT:
+            case yarp::dev::ControlModeEnum::VOCAB_CM_POSITION_DIRECT:
                 joint->setJointState(JointItem::PositionDirect);
                 break;
-            case VOCAB_CM_MIXED:
+            case yarp::dev::ControlModeEnum::VOCAB_CM_MIXED:
                 joint->setJointState(JointItem::Mixed);
                 break;
-            case VOCAB_CM_VELOCITY:
+            case yarp::dev::ControlModeEnum::VOCAB_CM_VELOCITY:
                 joint->setJointState(JointItem::Velocity);
                 break;
-            case VOCAB_CM_VELOCITY_DIRECT:
+            case yarp::dev::ControlModeEnum::VOCAB_CM_VELOCITY_DIRECT:
                 joint->setJointState(JointItem::VelocityDirect);
                 break;
-            case VOCAB_CM_TORQUE:
+            case yarp::dev::ControlModeEnum::VOCAB_CM_TORQUE:
                 joint->setJointState(JointItem::Torque);
                 break;
-            case VOCAB_CM_CURRENT:
+            case yarp::dev::ControlModeEnum::VOCAB_CM_CURRENT:
             {
                 joint->setJointState(JointItem::Current);
                 double ref_current = 0;
@@ -2501,7 +2501,7 @@ bool PartItem::updatePart()
                 joint->setRefCurrent(ref_current);
                 break;
             }
-            case VOCAB_CM_PWM:
+            case yarp::dev::ControlModeEnum::VOCAB_CM_PWM:
             {
                 joint->setJointState(JointItem::Pwm);
                 double ref_duty = 0;
@@ -2509,23 +2509,23 @@ bool PartItem::updatePart()
                 joint->setRefPWM(ref_duty);
                 break;
             }
-            case VOCAB_CM_HW_FAULT:
+            case yarp::dev::ControlModeEnum::VOCAB_CM_HW_FAULT:
                 joint->setJointState(JointItem::HwFault);
                 break;
-            case VOCAB_CM_CALIBRATING:
+            case yarp::dev::ControlModeEnum::VOCAB_CM_CALIBRATING:
                 joint->setJointState(JointItem::Calibrating);
                 break;
-            case VOCAB_CM_CALIB_DONE:
+            case yarp::dev::ControlModeEnum::VOCAB_CM_CALIB_DONE:
                 joint->setJointState(JointItem::CalibDone);
                 break;
-            case VOCAB_CM_NOT_CONFIGURED:
+            case yarp::dev::ControlModeEnum::VOCAB_CM_NOT_CONFIGURED:
                 joint->setJointState(JointItem::NotConfigured);
                 break;
-            case VOCAB_CM_CONFIGURED:
+            case yarp::dev::ControlModeEnum::VOCAB_CM_CONFIGURED:
                 joint->setJointState(JointItem::Configured);
                 break;
             default:
-            case VOCAB_CM_UNKNOWN:
+            case yarp::dev::ControlModeEnum::VOCAB_CM_UNKNOWN:
                 joint->setJointState(JointItem::Unknown);
                 break;
         }

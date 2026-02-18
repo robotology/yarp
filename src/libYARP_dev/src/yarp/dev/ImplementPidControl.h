@@ -22,10 +22,12 @@ class FixedSizeBuffersManager;
 class YARP_dev_API yarp::dev::ImplementPidControl : public IPidControl
 {
 protected:
-    IPidControlRaw *iPid;
-    void *helper;
-    yarp::dev::impl::FixedSizeBuffersManager<double> *doubleBuffManager;
-    yarp::dev::impl::FixedSizeBuffersManager<yarp::dev::Pid> *pidBuffManager;
+    IPidControlRaw*          m_iraw=nullptr;
+    void*                    m_helper=nullptr;
+    std::vector<int>         m_buffer_ints;
+    std::vector<double>      m_buffer_doubles;
+    std::vector<Pid>         m_buffer_pids;
+    std::mutex               m_imp_mutex;
 
     /**
     * Initialize the internal data and alloc memory.
@@ -54,6 +56,7 @@ public:
     */
     virtual ~ImplementPidControl();
 
+    yarp::dev::ReturnValue getAvailablePids(int j, std::vector<PidControlTypeEnum>& avail) override;
     yarp::dev::ReturnValue setPid(const PidControlTypeEnum& pidtype, int j, const Pid &pid) override;
     yarp::dev::ReturnValue setPids(const PidControlTypeEnum& pidtype, const Pid *pids) override;
     yarp::dev::ReturnValue setPidReference(const PidControlTypeEnum& pidtype, int j, double ref) override;

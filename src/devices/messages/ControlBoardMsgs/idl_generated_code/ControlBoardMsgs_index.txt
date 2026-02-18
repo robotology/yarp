@@ -10,6 +10,10 @@ return_getRefVelocityGroup.h
 return_getRefVelocityGroup.cpp
 return_getAxes.h
 return_getAxes.cpp
+return_getAvailableControlModes.h
+return_getAvailableControlModes.cpp
+return_getAvailablePids.h
+return_getAvailablePids.cpp
 return_getPid.h
 return_getPid.cpp
 return_getPids.h

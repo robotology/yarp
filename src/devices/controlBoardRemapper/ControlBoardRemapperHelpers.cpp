@@ -227,7 +227,8 @@ bool ControlBoardSubControlBoardAxesDecomposition::configure(const RemappedContr
     m_jointsInSubControlBoard.resize(nrOfSubControlBoards);
 
     m_bufferForSubControlBoard.resize(nrOfSubControlBoards);
-    m_bufferForSubControlBoardControlModes.resize(nrOfSubControlBoards);
+    m_bufferForSubControlBoardControlModesEnum.resize(nrOfSubControlBoards);
+    m_bufferForSubControlBoardSelectableControlModesEnum.resize(nrOfSubControlBoards);
     m_bufferForSubControlBoardInteractionModes.resize(nrOfSubControlBoards);
 
     m_counterForControlBoard.resize(nrOfSubControlBoards);
@@ -237,7 +238,8 @@ bool ControlBoardSubControlBoardAxesDecomposition::configure(const RemappedContr
         m_nJointsInSubControlBoard[ctrlBrd] = 0;
         m_jointsInSubControlBoard[ctrlBrd].clear();
         m_bufferForSubControlBoard[ctrlBrd].clear();
-        m_bufferForSubControlBoardControlModes[ctrlBrd].clear();
+        m_bufferForSubControlBoardSelectableControlModesEnum[ctrlBrd].clear();
+        m_bufferForSubControlBoardControlModesEnum[ctrlBrd].clear();
         m_bufferForSubControlBoardInteractionModes[ctrlBrd].clear();
     }
 
@@ -255,7 +257,8 @@ bool ControlBoardSubControlBoardAxesDecomposition::configure(const RemappedContr
     for(size_t ctrlBrd=0; ctrlBrd < nrOfSubControlBoards; ctrlBrd++)
     {
         m_bufferForSubControlBoard[ctrlBrd].resize(m_nJointsInSubControlBoard[ctrlBrd]);
-        m_bufferForSubControlBoardControlModes[ctrlBrd].resize(m_nJointsInSubControlBoard[ctrlBrd]);
+        m_bufferForSubControlBoardSelectableControlModesEnum[ctrlBrd].resize(m_nJointsInSubControlBoard[ctrlBrd]);
+        m_bufferForSubControlBoardControlModesEnum[ctrlBrd].resize(m_nJointsInSubControlBoard[ctrlBrd]);
         m_bufferForSubControlBoardInteractionModes[ctrlBrd].resize(m_nJointsInSubControlBoard[ctrlBrd]);
 
         m_counterForControlBoard[ctrlBrd] = 0;
@@ -296,22 +299,22 @@ void ControlBoardSubControlBoardAxesDecomposition::fillCompleteJointVectorFromSu
     }
 }
 
-void ControlBoardSubControlBoardAxesDecomposition::fillSubControlBoardBuffersFromCompleteJointVector(const int* full, const RemappedControlBoards & remappedControlBoards)
+void ControlBoardSubControlBoardAxesDecomposition::fillSubControlBoardBuffersFromCompleteJointVector(const yarp::dev::SelectableControlModeEnum* full, const RemappedControlBoards & remappedControlBoards)
 {
     for(size_t ctrlBrd=0; ctrlBrd < remappedControlBoards.getNrOfSubControlBoards(); ctrlBrd++)
     {
-        m_bufferForSubControlBoardControlModes[ctrlBrd].clear();
+        m_bufferForSubControlBoardSelectableControlModesEnum[ctrlBrd].clear();
     }
 
     for(int j=0; j < m_nrOfControlledAxesInRemappedCtrlBrd; j++)
     {
         size_t subIndex=remappedControlBoards.lut[j].subControlBoardIndex;
 
-        m_bufferForSubControlBoardControlModes[subIndex].push_back(full[j]);
+        m_bufferForSubControlBoardSelectableControlModesEnum[subIndex].push_back(full[j]);
     }
 }
 
-void ControlBoardSubControlBoardAxesDecomposition::fillCompleteJointVectorFromSubControlBoardBuffers(int* full, const RemappedControlBoards& remappedControlBoards)
+void ControlBoardSubControlBoardAxesDecomposition::fillCompleteJointVectorFromSubControlBoardBuffers(yarp::dev::ControlModeEnum* full, const RemappedControlBoards& remappedControlBoards)
 {
     for(size_t ctrlBrd=0; ctrlBrd < remappedControlBoards.getNrOfSubControlBoards(); ctrlBrd++)
     {
@@ -321,7 +324,7 @@ void ControlBoardSubControlBoardAxesDecomposition::fillCompleteJointVectorFromSu
     for(int j=0; j < m_nrOfControlledAxesInRemappedCtrlBrd; j++)
     {
         size_t subIndex=remappedControlBoards.lut[j].subControlBoardIndex;
-        full[j] = m_bufferForSubControlBoardControlModes[subIndex][m_counterForControlBoard[subIndex]];
+        full[j] = m_bufferForSubControlBoardControlModesEnum[subIndex][m_counterForControlBoard[subIndex]];
         m_counterForControlBoard[subIndex]++;
     }
 }
@@ -364,7 +367,8 @@ bool ControlBoardArbitraryAxesDecomposition::configure(const RemappedControlBoar
     m_nJointsInSubControlBoard.resize(nrOfSubControlBoards,0);
     m_jointsInSubControlBoard.resize(nrOfSubControlBoards);
     m_bufferForSubControlBoard.resize(nrOfSubControlBoards);
-    m_bufferForSubControlBoardControlModes.resize(nrOfSubControlBoards);
+    m_bufferForSubControlBoardControlModesEnum.resize(nrOfSubControlBoards);
+    m_bufferForSubControlBoardSelectableControlModesEnum.resize(nrOfSubControlBoards);
     m_bufferForSubControlBoardInteractionModes.resize(nrOfSubControlBoards);
 
     m_counterForControlBoard.resize(nrOfSubControlBoards);
@@ -373,7 +377,8 @@ bool ControlBoardArbitraryAxesDecomposition::configure(const RemappedControlBoar
     {
         m_jointsInSubControlBoard[ctrlBrd].clear();
         m_bufferForSubControlBoard[ctrlBrd].clear();
-        m_bufferForSubControlBoardControlModes[ctrlBrd].clear();
+        m_bufferForSubControlBoardControlModesEnum[ctrlBrd].clear();
+        m_bufferForSubControlBoardSelectableControlModesEnum[ctrlBrd].clear();
         m_bufferForSubControlBoardInteractionModes[ctrlBrd].clear();
 
     }
@@ -390,7 +395,8 @@ bool ControlBoardArbitraryAxesDecomposition::configure(const RemappedControlBoar
     for(size_t ctrlBrd=0; ctrlBrd < nrOfSubControlBoards; ctrlBrd++)
     {
         m_bufferForSubControlBoard[ctrlBrd].resize(m_nJointsInSubControlBoard[ctrlBrd]);
-        m_bufferForSubControlBoardControlModes[ctrlBrd].resize(m_nJointsInSubControlBoard[ctrlBrd]);
+        m_bufferForSubControlBoardControlModesEnum[ctrlBrd].resize(m_nJointsInSubControlBoard[ctrlBrd]);
+        m_bufferForSubControlBoardSelectableControlModesEnum[ctrlBrd].resize(m_nJointsInSubControlBoard[ctrlBrd]);
         m_bufferForSubControlBoardInteractionModes[ctrlBrd].resize(m_nJointsInSubControlBoard[ctrlBrd]);
 
         m_counterForControlBoard[ctrlBrd] = 0;
@@ -441,7 +447,7 @@ void ControlBoardArbitraryAxesDecomposition::fillSubControlBoardBuffersFromArbit
 }
 
 
-void ControlBoardArbitraryAxesDecomposition::fillArbitraryJointVectorFromSubControlBoardBuffers(int* arbitraryVec,
+void ControlBoardArbitraryAxesDecomposition::fillArbitraryJointVectorFromSubControlBoardBuffers(yarp::dev::ControlModeEnum* arbitraryVec,
                                                                                                 const int n_joints,
                                                                                                 const int *joints,
                                                                                                 const RemappedControlBoards& remappedControlBoards)
@@ -454,13 +460,13 @@ void ControlBoardArbitraryAxesDecomposition::fillArbitraryJointVectorFromSubCont
     for(int j=0; j < n_joints; j++)
     {
         size_t subIndex=remappedControlBoards.lut[joints[j]].subControlBoardIndex;
-        arbitraryVec[j] = m_bufferForSubControlBoardControlModes[subIndex][m_counterForControlBoard[subIndex]];
+        arbitraryVec[j] = m_bufferForSubControlBoardControlModesEnum[subIndex][m_counterForControlBoard[subIndex]];
         m_counterForControlBoard[subIndex]++;
     }
 }
 
 
-void ControlBoardArbitraryAxesDecomposition::fillSubControlBoardBuffersFromArbitraryJointVector(const int* arbitraryVec,
+void ControlBoardArbitraryAxesDecomposition::fillSubControlBoardBuffersFromArbitraryJointVector(const yarp::dev::SelectableControlModeEnum* arbitraryVec,
                                                                                                 const int n_joints,
                                                                                                 const int *joints,
                                                                                                 const RemappedControlBoards& remappedControlBoards)
@@ -469,13 +475,13 @@ void ControlBoardArbitraryAxesDecomposition::fillSubControlBoardBuffersFromArbit
 
     for(size_t ctrlBrd=0; ctrlBrd < remappedControlBoards.getNrOfSubControlBoards(); ctrlBrd++)
     {
-        m_bufferForSubControlBoardControlModes[ctrlBrd].clear();
+        m_bufferForSubControlBoardSelectableControlModesEnum[ctrlBrd].clear();
     }
 
     for(int j=0; j < n_joints; j++)
     {
         size_t subIndex=remappedControlBoards.lut[joints[j]].subControlBoardIndex;
-        m_bufferForSubControlBoardControlModes[subIndex].push_back(arbitraryVec[j]);
+        m_bufferForSubControlBoardSelectableControlModesEnum[subIndex].push_back(arbitraryVec[j]);
     }
 }
 

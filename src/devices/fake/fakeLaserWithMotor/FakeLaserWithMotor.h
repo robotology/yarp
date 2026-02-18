@@ -157,6 +157,7 @@ public:
     double* _ref_speeds = nullptr;           // used for position control.
     double* _command_speeds = nullptr;       // used for velocity control.
     double* _ref_accs = nullptr;             // used for velocity control.
+    std::vector<yarp::dev::SelectableControlModeEnum>* _availableControlModes = nullptr;
 
     bool alloc(int njoints);
     bool dealloc();
@@ -209,12 +210,13 @@ public:
     yarp::dev::ReturnValue getTargetPositionsRaw(const int n_joint, const int* joints, double* refs) override;
 
     //IControlMode
-    yarp::dev::ReturnValue getControlModeRaw(int j, int* v) override;
-    yarp::dev::ReturnValue getControlModesRaw(int* v) override;
-    yarp::dev::ReturnValue getControlModesRaw(const int n_joint, const int* joints, int* modes) override;
-    yarp::dev::ReturnValue setControlModeRaw(const int j, const int mode) override;
-    yarp::dev::ReturnValue setControlModesRaw(const int n_joint, const int* joints, int* modes) override;
-    yarp::dev::ReturnValue setControlModesRaw(int* modes) override;
+    yarp::dev::ReturnValue getAvailableControlModesRaw(int j, std::vector<yarp::dev::SelectableControlModeEnum>& avail) override;
+    yarp::dev::ReturnValue getControlModeRaw(int j, yarp::dev::ControlModeEnum& mode) override;
+    yarp::dev::ReturnValue getControlModesRaw(std::vector<yarp::dev::ControlModeEnum>& mode) override;
+    yarp::dev::ReturnValue getControlModesRaw(std::vector<int> j, std::vector<yarp::dev::ControlModeEnum>& mode) override;
+    yarp::dev::ReturnValue setControlModeRaw(int j, yarp::dev::SelectableControlModeEnum mode) override;
+    yarp::dev::ReturnValue setControlModesRaw(std::vector<int> j, std::vector<yarp::dev::SelectableControlModeEnum> mode) override;
+    yarp::dev::ReturnValue setControlModesRaw(const std::vector<yarp::dev::SelectableControlModeEnum> mode) override;
 
     //IVelocityControl
     yarp::dev::ReturnValue velocityMoveRaw(int j, double sp) override;

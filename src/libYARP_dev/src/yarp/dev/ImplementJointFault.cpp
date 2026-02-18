@@ -13,18 +13,21 @@ using namespace yarp::dev;
 using namespace yarp::os;
 
 ImplementJointFault::ImplementJointFault(IJointFaultRaw *r):
-    helper(nullptr),
-    raw(r)
+    m_helper(nullptr),
+    m_iraw(r)
 {}
 
 bool ImplementJointFault::initialize(int size, const int *amap)
 {
-    if (helper != nullptr) {
+    if (m_helper != nullptr) {
         return false;
     }
 
-    helper=(void *)(new ControlBoardHelper(size, amap));
-    yAssert (helper != nullptr);
+    m_helper=(void *)(new ControlBoardHelper(size, amap));
+    yAssert (m_helper != nullptr);
+
+    m_buffer_ints.resize   (size);
+    m_buffer_doubles.resize(size);
 
     return true;
 }
@@ -36,10 +39,10 @@ ImplementJointFault::~ImplementJointFault()
 
 bool ImplementJointFault::uninitialize ()
 {
-    if (helper!=nullptr)
+    if (m_helper!=nullptr)
     {
-        delete castToMapper(helper);
-        helper=nullptr;
+        delete castToMapper(m_helper);
+        m_helper=nullptr;
     }
 
     return true;
@@ -47,7 +50,9 @@ bool ImplementJointFault::uninitialize ()
 
 ReturnValue ImplementJointFault::getLastJointFault(int j, int& fault, std::string& message)
 {
-    JOINTIDCHECK(MAPPER_MAXID)
-    int k=castToMapper(helper)->toHw(j);
-    return raw->getLastJointFaultRaw(k, fault, message);
+    std::lock_guard lock(m_imp_mutex);
+    JOINTIDCHECK(j)
+
+    int k=castToMapper(m_helper)->toHw(j);
+    return m_iraw->getLastJointFaultRaw(k, fault, message);
 }
