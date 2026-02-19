@@ -211,6 +211,7 @@ private:
 
     std::vector<yarp::dev::SelectableControlModeEnum>* _availableControlModes = nullptr;
     std::vector<yarp::dev::PidControlTypeEnum>*        _availablePids = nullptr;
+    yarp::dev::InteractionModeEnum*_interactMode   = nullptr;
 
     std::string* _axisName = nullptr;                      /** axis name */
     yarp::dev::JointTypeEnum* _jointType = nullptr;        /** axis type */
@@ -265,7 +266,6 @@ private:
     int     *_controlModes = nullptr;
     int     *_hwfault_code = nullptr;
     std::string  *_hwfault_message = nullptr;
-    int     *_interactMode = nullptr;
     bool    *_enabledAmp = nullptr;           // Middle step toward a full enabled motor controller. Amp (pwm) plus Pid enable command must be sent in order to get the joint into an active state.
     bool    *_enabledPid = nullptr;           // Depends on enabledAmp. When both are set, the joint exits the idle mode and goes into position mode. If one of them is disabled, it falls to idle.
     bool    *_calibrated = nullptr;           // Flag to know if the calibrate function has been called for the joint

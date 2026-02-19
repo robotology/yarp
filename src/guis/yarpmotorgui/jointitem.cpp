@@ -17,6 +17,8 @@
 
 #include <QDebug>
 #include <QKeyEvent>
+#include <QStandardItem>
+#include <QlistView>
 
 void JointItem::resetTarget()
 {
@@ -104,7 +106,7 @@ void JointItem::showPID()
     emit pidClicked(this);
 }
 
-QColor JointItem::GetModeColor(JointState mode)
+QColor JointItem::JointState2Color(JointState mode)
 {
     QColor output;
     switch (mode) {
@@ -175,7 +177,72 @@ QColor JointItem::GetModeColor(JointState mode)
 
 }
 
-QString JointItem::GetModeString(JointState mode)
+yarp::dev::ControlModeEnum JointItem::JointState2Mode(JointState mode)
+{
+    switch (mode) {
+    case JointItem::Idle:{
+        return yarp::dev::ControlModeEnum::VOCAB_CM_IDLE;
+        break;
+    }
+    case JointItem::Position:{
+        return yarp::dev::ControlModeEnum::VOCAB_CM_POSITION;
+        break;
+    }
+    case JointItem::PositionDirect:{
+        return yarp::dev::ControlModeEnum::VOCAB_CM_POSITION_DIRECT;
+        break;
+    }
+    case JointItem::Mixed:{
+        return yarp::dev::ControlModeEnum::VOCAB_CM_MIXED;
+        break;
+    }
+    case JointItem::Velocity:{
+        return yarp::dev::ControlModeEnum::VOCAB_CM_VELOCITY;
+        break;
+    }
+    case JointItem::VelocityDirect:{
+        return yarp::dev::ControlModeEnum::VOCAB_CM_VELOCITY_DIRECT;
+        break;
+    }
+    case JointItem::Torque:{
+        return yarp::dev::ControlModeEnum::VOCAB_CM_TORQUE;
+        break;
+    }
+    case JointItem::Pwm:{
+        return yarp::dev::ControlModeEnum::VOCAB_CM_PWM;
+        break;
+    }
+    case JointItem::Current:{
+        return yarp::dev::ControlModeEnum::VOCAB_CM_CURRENT;
+        break;
+    }
+
+    //case JointItem::Disconnected:{
+    //    return yarp::dev::ControlModeEnum::VOCAB_CM_DISCONNECTED;
+    //    break;
+    //}
+
+    case JointItem::HwFault:{
+        return yarp::dev::ControlModeEnum::VOCAB_CM_HW_FAULT;
+        break;
+    }
+    case JointItem::Calibrating:{
+        return yarp::dev::ControlModeEnum::VOCAB_CM_CALIBRATING;
+        break;
+    }
+    case JointItem::NotConfigured:{
+        return yarp::dev::ControlModeEnum::VOCAB_CM_NOT_CONFIGURED;
+        break;
+    }
+    case JointItem::Configured:{
+        return yarp::dev::ControlModeEnum::VOCAB_CM_CONFIGURED;
+        break;
+    }
+    }
+    return yarp::dev::ControlModeEnum::VOCAB_CM_UNKNOWN;
+}
+
+QString JointItem::JointState2String(JointState mode)
 {
     QString output;
     switch (mode) {
@@ -256,7 +323,10 @@ void JointItem::updateMixedPositionTarget(double val)
     ui->sliderMixedPosition->updateSliderTarget(val);
 }
 
-JointItem::JointItem(int index,QWidget *parent) :
+
+
+
+JointItem::JointItem(int index, std::vector<yarp::dev::SelectableControlModeEnum> modes, QWidget *parent) :
     QWidget(parent),
     ui(new Ui::JointItem)
 {
@@ -447,6 +517,27 @@ JointItem::JointItem(int index,QWidget *parent) :
     torqueTimer.setInterval(50);
     torqueTimer.setSingleShot(false);
     connect(&torqueTimer,SIGNAL(timeout()),this,SLOT(onTorqueTimer()));
+
+    // Enable only the modes that are supported by the joint, hiding the others from the user
+    // This works only if the order of the items in the combo box is the same as the order of the enum,
+    // which is currently true and guaranteed by construction, but it is something to keep in mind if we
+    // decide to change the order of the items in the combo box in the future.
+    int ccount = ui->comboMode->count();
+    for (int i = 0; i < ccount; ++i)
+    {
+        yarp::dev::SelectableControlModeEnum cme = (yarp::dev::SelectableControlModeEnum)(JointState2Mode(JointItem::JointState(i)));
+        bool mode_enabled = (std::find(modes.begin(), modes.end(), cme) != modes.end());
+        if (mode_enabled)
+        {
+            QListView* listView = qobject_cast<QListView*>(ui->comboMode->view());
+            if (listView) {listView->setRowHidden(i, false);}
+        }
+        else
+        {
+            QListView* listView = qobject_cast<QListView*>(ui->comboMode->view());
+            if (listView) {listView->setRowHidden(i, true);}
+        }
+    }
 }
 
 bool JointItem::eventFilter(QObject *obj, QEvent *event)

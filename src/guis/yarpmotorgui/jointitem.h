@@ -33,7 +33,7 @@ class JointItem : public QWidget
     enum JointState {Idle = 0,Position,PositionDirect,Mixed,Velocity,VelocityDirect, Torque,Pwm,Current,
                      Disconnected, HwFault, Calibrating, CalibDone, NotConfigured, Configured,Unknown, StateStarting} ;
     enum JointInteraction {Stiff, Compliant, InteractionStarting} ;
-    explicit JointItem(int index, QWidget *parent = 0);
+    explicit JointItem(int index, std::vector<yarp::dev::SelectableControlModeEnum> available_modes, QWidget *parent = 0);
     ~JointItem();
     void setJointInteraction(JointInteraction interaction);
     void setJointState(JointState);
@@ -121,8 +121,9 @@ class JointItem : public QWidget
     void idle();
     void showPID();
 
-    static QColor GetModeColor(JointState mode);
-    static QString GetModeString(JointState mode);
+    static QColor  JointState2Color(JointState mode);
+    static QString JointState2String(JointState mode);
+    static yarp::dev::ControlModeEnum JointState2Mode(JointState mode);
 
 protected:
     bool eventFilter(QObject *obj, QEvent *event) override;

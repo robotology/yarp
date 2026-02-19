@@ -35,14 +35,14 @@ namespace yarp::dev::tests
 
         for (size_t i = 0; i < ax; i++)
         {
-            b = icmd->setControlMode(i, VOCAB_CM_VELOCITY_DIRECT);
+            b = icmd->setControlMode(i, yarp::dev::SelectableControlModeEnum::VOCAB_CM_VELOCITY_DIRECT);
             CHECK(b);
             yarp::os::Time::delay(0.020); // Allow some time for the command to take effect
 
-            int mode_ret = 0;
-            b = icmd->getControlMode(i, &mode_ret);
+            yarp::dev::ControlModeEnum mode_ret;
+            b = icmd->getControlMode(i, mode_ret);
             CHECK(b);
-            CHECK(mode_ret == VOCAB_CM_VELOCITY_DIRECT);
+            CHECK(mode_ret == yarp::dev::ControlModeEnum::VOCAB_CM_VELOCITY_DIRECT);
         }
 
         {

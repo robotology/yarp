@@ -39,8 +39,8 @@ public:
     bool init();
     ~robotDriver();
     size_t getNJoints();
-    bool getControlMode(const int j, int& mode);
-    bool setControlMode(const int j, const int mode);
+    bool getControlMode(const int j, yarp::dev::ControlModeEnum& mode);
+    bool setControlMode(const int j, const yarp::dev::SelectableControlModeEnum mode);
     bool setPosition(int j, double ref);
     bool getEncoder(int j, double *v);
     bool positionMove(int j, double ref);

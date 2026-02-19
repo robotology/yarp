@@ -253,7 +253,7 @@ void ControlThread::run()
 
         for (size_t j = 0; j < nj; j++)
         {
-            m_current_driver->setControlMode((int)j, VOCAB_CM_POSITION);
+            m_current_driver->setControlMode((int)j, yarp::dev::SelectableControlModeEnum::VOCAB_CM_POSITION);
         }
 
         m_current_driver->loadRefVelocities();
@@ -296,7 +296,7 @@ void ControlThread::run()
                 yInfo("ACTION_RUNNING: sequence completed in: %.3f s", m_clock.getElapsedTime());
                 for (size_t j = 0; j < nj; j++)
                 {
-                    m_current_driver->setControlMode((int)j, VOCAB_CM_POSITION);
+                    m_current_driver->setControlMode((int)j, yarp::dev::SelectableControlModeEnum::VOCAB_CM_POSITION);
                 }
                 this->m_status=ACTION_IDLE;
             }
@@ -316,7 +316,7 @@ void ControlThread::run()
             yDebug() << "ACTION_START: switch to position mode";
             for (size_t j = 0; j < nj; j++)
             {
-                m_current_driver->setControlMode((int)j, VOCAB_CM_POSITION);
+                m_current_driver->setControlMode((int)j, yarp::dev::SelectableControlModeEnum::VOCAB_CM_POSITION);
             }
             yarp::os::Time::delay(0.1);
             for (size_t j = 0; j < nj; j++)
@@ -371,10 +371,10 @@ void ControlThread::run()
             }
             for (int j = 0; j <nj; j++)
             {
-                int mode;
+                yarp::dev::ControlModeEnum mode;
                 m_current_driver->getControlMode(j, mode);
-                if (mode!=VOCAB_CM_POSITION &&
-                    mode!=VOCAB_CM_HW_FAULT
+                if (mode!=yarp::dev::ControlModeEnum::VOCAB_CM_POSITION &&
+                    mode!=yarp::dev::ControlModeEnum::VOCAB_CM_HW_FAULT
                    )
                 {
                     this->m_status = ACTION_STOP;
@@ -388,7 +388,7 @@ void ControlThread::run()
             yDebug() << "ACTION_START: switch to position direct mode";
             for (int j = 0; j <nj; j++)
             {
-                m_current_driver->setControlMode(j, VOCAB_CM_POSITION_DIRECT);
+                m_current_driver->setControlMode(j, yarp::dev::SelectableControlModeEnum::VOCAB_CM_POSITION_DIRECT);
             }
             yarp::os::Time::delay(0.1);
 

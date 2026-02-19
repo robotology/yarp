@@ -65,7 +65,7 @@ void JointItemTree::setJointMode(const JointItem::JointState &mode)
         const int text_r = 35;
         const int text_g = 38;
         const int text_b = 41;
-        setColor(QColor(text_r, text_g, text_b), JointItem::GetModeColor(mode));
+        setColor(QColor(text_r, text_g, text_b), JointItem::JointState2Color(mode));
 
         switch (mode) {
         case JointItem::Position:
@@ -112,7 +112,7 @@ void JointItemTree::setJointMode(const JointItem::JointState &mode)
         }
         }
 
-        m_ui->jointMode->setText(JointItem::GetModeString(mode));
+        m_ui->jointMode->setText(JointItem::JointState2String(mode));
         m_modeSet = true;
         m_mode = mode;
     }
