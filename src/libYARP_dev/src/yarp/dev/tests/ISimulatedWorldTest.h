@@ -44,6 +44,9 @@ namespace yarp::dev::tests
         ret = isim->makeModel("model1", "filename", pose, frame_name,gravity_enabled,collision_enabled);
         CHECK(ret);
 
+        ret = isim->makeActor("actor1", "filename1", "filename2", pose);
+        CHECK(ret);
+
         ret = isim->deleteObject("sphere1");
         CHECK(ret);
 

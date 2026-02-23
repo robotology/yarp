@@ -41,12 +41,13 @@ public:
     yarp::dev::ReturnValue makeBox(const std::string& id_name, const double width, const double height, const double thickness, const yarp::sig::Pose6D& pose, const yarp::sig::ColorRGB& color, const std::string& frame_name, const bool gravity_enable, const bool collision_enable) override;
     yarp::dev::ReturnValue makeCylinder(const std::string& id_name, const double radius, const double length, const yarp::sig::Pose6D& pose, const yarp::sig::ColorRGB& color, const std::string& frame_name, const bool gravity_enable, const bool collision_enable) override;
     yarp::dev::ReturnValue makeFrame(const std::string& id_name, const double size, const yarp::sig::Pose6D& pose, const yarp::sig::ColorRGB& color, const std::string& frame_name, const bool gravity_enable, const bool collision_enable) override;
+    yarp::dev::ReturnValue makeModel(const std::string& id_name, const std::string& filename, const yarp::sig::Pose6D& pose, const std::string& frame_name, const bool gravity_enable, const bool collision_enable) override;
+    yarp::dev::ReturnValue makeActor(const std::string& id_name, const std::string& skin_filename, const std::string& actor_filename, const yarp::sig::Pose6D& pose) override;
     yarp::dev::ReturnValue changeColor(const std::string& id, const yarp::sig::ColorRGB& color) override;
     yarp::dev::ReturnValue setPose(const std::string& id, const yarp::sig::Pose6D& pose, const std::string& frame_name = "") override;
     yarp::dev::ReturnValue enableGravity(const std::string& id, const bool enable) override;
     yarp::dev::ReturnValue enableCollision(const std::string& id, const bool enable) override;
     getPoseReturnValue     getPose(const std::string& id, const std::string& frame_name) override;
-    yarp::dev::ReturnValue makeModel(const std::string& id_name, const std::string& filename, const yarp::sig::Pose6D& pose, const std::string& frame_name, const bool gravity_enable, const bool collision_enable) override;
     yarp::dev::ReturnValue deleteObject(const std::string& id) override;
     yarp::dev::ReturnValue deleteAll() override;
     getListReturnValue     getList() override;
