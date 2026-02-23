@@ -226,6 +226,17 @@ ReturnValue ISimulatedWorldMsgsImpl::makeModel(const std::string& id_name, const
     return ret;
 }
 
+ReturnValue ISimulatedWorldMsgsImpl::makeActor(const std::string& id_name, const std::string& skin_filename, const std::string& anim_filename, const Pose6D& pose)
+{
+    std::lock_guard <std::mutex> lg(m_mutex);
+    auto ret = m_iSim->makeActor(id_name, skin_filename, anim_filename, pose);
+    if(!ret)
+    {
+        yCError(SIMWORLDNWS) << "Could not makeActor";
+    }
+    return ret;
+}
+
 ReturnValue ISimulatedWorldMsgsImpl::detach(const std::string& id)
 {
     std::lock_guard <std::mutex> lg(m_mutex);

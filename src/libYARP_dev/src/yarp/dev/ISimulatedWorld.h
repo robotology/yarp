@@ -90,6 +90,25 @@ public:
     virtual yarp::dev::ReturnValue makeFrame (std::string id, double size, yarp::sig::Pose6D pose, yarp::sig::ColorRGB color, std::string frame_name="", bool gravity_enable=0, bool collision_enable=1) =0;
 
     /**
+    * Create a model from a file.
+    * @param id the name of the object to create
+    * @param filename string that specifies the name of the model to load
+    * @param pose the initial pose of the object [m]
+    * @return returns true or false on success failure
+    */
+    virtual yarp::dev::ReturnValue makeModel(std::string id,  std::string filename, yarp::sig::Pose6D pose,  std::string frame_name="", bool gravity_enable=0, bool collision_enable=1) =0;
+
+    /**
+    * Create an actor.
+    * @param id the name of the object to create
+    * @param skin_filename string that specifies the name of the model to load
+    * @param animation_filename string that specifies the name of the animation to load (e.g. walking, running, etc.)
+    * @param pose the initial pose of the object [m]
+    * @return returns true or false on success failure
+    */
+    virtual yarp::dev::ReturnValue makeActor(std::string id,  std::string skin_filename,  std::string animation_filename, yarp::sig::Pose6D pose) = 0;
+
+    /**
     * Change the color of an object
     * @param id object id
     * @param color the color of the frame
@@ -129,15 +148,6 @@ public:
     * @return returns true or false on success failure
     */
     virtual yarp::dev::ReturnValue getPose(std::string id, yarp::sig::Pose6D& pose,  std::string frame_name="") =0;
-
-    /**
-    * Create a model from a file.
-    * @param id the name of the object to create
-    * @param filename string that specifies the name of the model to load
-    * @param pose the pose of the object [m]
-    * @return returns true or false on success failure
-    */
-    virtual yarp::dev::ReturnValue makeModel(std::string id,  std::string filename, yarp::sig::Pose6D pose,  std::string frame_name="", bool gravity_enable=0, bool collision_enable=1) =0;
 
     /**
     * Delete an object.

@@ -41,12 +41,13 @@ public:
     yarp::dev::ReturnValue makeBox (std::string id, double width, double height, double thickness, yarp::sig::Pose6D pose, yarp::sig::ColorRGB color, std::string frame_name, bool gravity_enable, bool collision_enable)  override;
     yarp::dev::ReturnValue makeCylinder (std::string id, double radius, double length, yarp::sig::Pose6D pose, yarp::sig::ColorRGB color, std::string frame_name, bool gravity_enable, bool collision_enable)  override;
     yarp::dev::ReturnValue makeFrame (std::string id, double size, yarp::sig::Pose6D pose, yarp::sig::ColorRGB color, std::string frame_name, bool gravity_enable, bool collision_enable)  override;
+    yarp::dev::ReturnValue makeModel(std::string id,  std::string filename, yarp::sig::Pose6D pose,  std::string frame_name, bool gravity_enable, bool collision_enable)  override;
+    yarp::dev::ReturnValue makeActor(std::string id,  std::string skin_filename,  std::string animation_filename, yarp::sig::Pose6D pose) override;
     yarp::dev::ReturnValue changeColor (std::string id, yarp::sig::ColorRGB color)  override;
     yarp::dev::ReturnValue setPose(std::string id, yarp::sig::Pose6D pose, std::string frame_name)  override;
     yarp::dev::ReturnValue enableGravity (std::string id, bool enable)  override;
     yarp::dev::ReturnValue enableCollision (std::string id, bool enable)  override;
     yarp::dev::ReturnValue getPose(std::string id, yarp::sig::Pose6D& pose,  std::string frame_name)  override;
-    yarp::dev::ReturnValue makeModel(std::string id,  std::string filename, yarp::sig::Pose6D pose,  std::string frame_name, bool gravity_enable, bool collision_enable)  override;
     yarp::dev::ReturnValue deleteObject(std::string id)  override;
     yarp::dev::ReturnValue deleteAll()  override;
     yarp::dev::ReturnValue getList(std::vector<std::string>& names)  override;

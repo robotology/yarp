@@ -452,6 +452,72 @@ public:
     static constexpr const char* s_help{""};
 };
 
+// makeActor helper class declaration
+class ISimulatedWorldMsgs_makeActor_helper :
+        public yarp::os::Portable
+{
+public:
+    ISimulatedWorldMsgs_makeActor_helper() = default;
+    ISimulatedWorldMsgs_makeActor_helper(const std::string& id_name, const std::string& skinfile, const std::string& animfile, const yarp::sig::Pose6D& pose);
+    bool write(yarp::os::ConnectionWriter& connection) const override;
+    bool read(yarp::os::ConnectionReader& connection) override;
+
+    class Command :
+            public yarp::os::idl::WirePortable
+    {
+    public:
+        Command() = default;
+        Command(const std::string& id_name, const std::string& skinfile, const std::string& animfile, const yarp::sig::Pose6D& pose);
+
+        ~Command() override = default;
+
+        bool write(yarp::os::ConnectionWriter& connection) const override;
+        bool read(yarp::os::ConnectionReader& connection) override;
+
+        bool write(const yarp::os::idl::WireWriter& writer) const override;
+        bool writeTag(const yarp::os::idl::WireWriter& writer) const;
+        bool writeArgs(const yarp::os::idl::WireWriter& writer) const;
+
+        bool read(yarp::os::idl::WireReader& reader) override;
+        bool readTag(yarp::os::idl::WireReader& reader);
+        bool readArgs(yarp::os::idl::WireReader& reader);
+
+        std::string id_name{};
+        std::string skinfile{};
+        std::string animfile{};
+        yarp::sig::Pose6D pose{};
+    };
+
+    class Reply :
+            public yarp::os::idl::WirePortable
+    {
+    public:
+        Reply() = default;
+        ~Reply() override = default;
+
+        bool write(yarp::os::ConnectionWriter& connection) const override;
+        bool read(yarp::os::ConnectionReader& connection) override;
+
+        bool write(const yarp::os::idl::WireWriter& writer) const override;
+        bool read(yarp::os::idl::WireReader& reader) override;
+
+        yarp::dev::ReturnValue return_helper{};
+    };
+
+    using funcptr_t = yarp::dev::ReturnValue (*)(const std::string&, const std::string&, const std::string&, const yarp::sig::Pose6D&);
+    void call(ISimulatedWorldMsgs* ptr);
+
+    Command cmd;
+    Reply reply;
+
+    static constexpr const char* s_tag{"makeActor"};
+    static constexpr size_t s_tag_len{1};
+    static constexpr size_t s_cmd_len{5};
+    static constexpr size_t s_reply_len{1};
+    static constexpr const char* s_prototype{"yarp::dev::ReturnValue ISimulatedWorldMsgs::makeActor(const std::string& id_name, const std::string& skinfile, const std::string& animfile, const yarp::sig::Pose6D& pose)"};
+    static constexpr const char* s_help{""};
+};
+
 // changeColor helper class declaration
 class ISimulatedWorldMsgs_changeColor_helper :
         public yarp::os::Portable
@@ -2267,6 +2333,190 @@ void ISimulatedWorldMsgs_makeModel_helper::call(ISimulatedWorldMsgs* ptr)
     reply.return_helper = ptr->makeModel(cmd.id_name, cmd.filename, cmd.pose, cmd.frame_name, cmd.gravity_enable, cmd.collision_enable);
 }
 
+// makeActor helper class implementation
+ISimulatedWorldMsgs_makeActor_helper::ISimulatedWorldMsgs_makeActor_helper(const std::string& id_name, const std::string& skinfile, const std::string& animfile, const yarp::sig::Pose6D& pose) :
+        cmd{id_name, skinfile, animfile, pose}
+{
+}
+
+bool ISimulatedWorldMsgs_makeActor_helper::write(yarp::os::ConnectionWriter& connection) const
+{
+    return cmd.write(connection);
+}
+
+bool ISimulatedWorldMsgs_makeActor_helper::read(yarp::os::ConnectionReader& connection)
+{
+    return reply.read(connection);
+}
+
+ISimulatedWorldMsgs_makeActor_helper::Command::Command(const std::string& id_name, const std::string& skinfile, const std::string& animfile, const yarp::sig::Pose6D& pose) :
+        id_name{id_name},
+        skinfile{skinfile},
+        animfile{animfile},
+        pose{pose}
+{
+}
+
+bool ISimulatedWorldMsgs_makeActor_helper::Command::write(yarp::os::ConnectionWriter& connection) const
+{
+    yarp::os::idl::WireWriter writer(connection);
+    if (!writer.writeListHeader(s_cmd_len)) {
+        return false;
+    }
+    return write(writer);
+}
+
+bool ISimulatedWorldMsgs_makeActor_helper::Command::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    if (!reader.readListHeader()) {
+        reader.fail();
+        return false;
+    }
+    return read(reader);
+}
+
+bool ISimulatedWorldMsgs_makeActor_helper::Command::write(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writeTag(writer)) {
+        return false;
+    }
+    if (!writeArgs(writer)) {
+        return false;
+    }
+    return true;
+}
+
+bool ISimulatedWorldMsgs_makeActor_helper::Command::writeTag(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.writeTag(s_tag, 1, s_tag_len)) {
+        return false;
+    }
+    return true;
+}
+
+bool ISimulatedWorldMsgs_makeActor_helper::Command::writeArgs(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.writeString(id_name)) {
+        return false;
+    }
+    if (!writer.writeString(skinfile)) {
+        return false;
+    }
+    if (!writer.writeString(animfile)) {
+        return false;
+    }
+    if (!writer.writeNested(pose)) {
+        return false;
+    }
+    return true;
+}
+
+bool ISimulatedWorldMsgs_makeActor_helper::Command::read(yarp::os::idl::WireReader& reader)
+{
+    if (!readTag(reader)) {
+        return false;
+    }
+    if (!readArgs(reader)) {
+        return false;
+    }
+    return true;
+}
+
+bool ISimulatedWorldMsgs_makeActor_helper::Command::readTag(yarp::os::idl::WireReader& reader)
+{
+    std::string tag = reader.readTag(s_tag_len);
+    if (reader.isError()) {
+        return false;
+    }
+    if (tag != s_tag) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool ISimulatedWorldMsgs_makeActor_helper::Command::readArgs(yarp::os::idl::WireReader& reader)
+{
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
+    if (!reader.readString(id_name)) {
+        reader.fail();
+        return false;
+    }
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
+    if (!reader.readString(skinfile)) {
+        reader.fail();
+        return false;
+    }
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
+    if (!reader.readString(animfile)) {
+        reader.fail();
+        return false;
+    }
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
+    if (!reader.readNested(pose)) {
+        reader.fail();
+        return false;
+    }
+    if (!reader.noMore()) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+bool ISimulatedWorldMsgs_makeActor_helper::Reply::write(yarp::os::ConnectionWriter& connection) const
+{
+    yarp::os::idl::WireWriter writer(connection);
+    return write(writer);
+}
+
+bool ISimulatedWorldMsgs_makeActor_helper::Reply::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    return read(reader);
+}
+
+bool ISimulatedWorldMsgs_makeActor_helper::Reply::write(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.isNull()) {
+        if (!writer.write(return_helper)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+bool ISimulatedWorldMsgs_makeActor_helper::Reply::read(yarp::os::idl::WireReader& reader)
+{
+    if (reader.noMore()) {
+        reader.fail();
+        return false;
+    }
+    if (!reader.read(return_helper)) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+void ISimulatedWorldMsgs_makeActor_helper::call(ISimulatedWorldMsgs* ptr)
+{
+    reply.return_helper = ptr->makeActor(cmd.id_name, cmd.skinfile, cmd.animfile, cmd.pose);
+}
+
 // changeColor helper class implementation
 ISimulatedWorldMsgs_changeColor_helper::ISimulatedWorldMsgs_changeColor_helper(const std::string& id, const yarp::sig::ColorRGB& color) :
         cmd{id, color}
@@ -4017,6 +4267,16 @@ yarp::dev::ReturnValue ISimulatedWorldMsgs::makeModel(const std::string& id_name
     return ok ? helper.reply.return_helper : yarp::dev::ReturnValue{};
 }
 
+yarp::dev::ReturnValue ISimulatedWorldMsgs::makeActor(const std::string& id_name, const std::string& skinfile, const std::string& animfile, const yarp::sig::Pose6D& pose)
+{
+    if (!yarp().canWrite()) {
+        yError("Missing server method '%s'?", ISimulatedWorldMsgs_makeActor_helper::s_prototype);
+    }
+    ISimulatedWorldMsgs_makeActor_helper helper{id_name, skinfile, animfile, pose};
+    bool ok = yarp().write(helper, helper);
+    return ok ? helper.reply.return_helper : yarp::dev::ReturnValue{};
+}
+
 yarp::dev::ReturnValue ISimulatedWorldMsgs::changeColor(const std::string& id, const yarp::sig::ColorRGB& color)
 {
     if (!yarp().canWrite()) {
@@ -4139,6 +4399,7 @@ std::vector<std::string> ISimulatedWorldMsgs::help(const std::string& functionNa
         helpString.emplace_back(ISimulatedWorldMsgs_makeCylinder_helper::s_tag);
         helpString.emplace_back(ISimulatedWorldMsgs_makeFrame_helper::s_tag);
         helpString.emplace_back(ISimulatedWorldMsgs_makeModel_helper::s_tag);
+        helpString.emplace_back(ISimulatedWorldMsgs_makeActor_helper::s_tag);
         helpString.emplace_back(ISimulatedWorldMsgs_changeColor_helper::s_tag);
         helpString.emplace_back(ISimulatedWorldMsgs_setPose_helper::s_tag);
         helpString.emplace_back(ISimulatedWorldMsgs_enableGravity_helper::s_tag);
@@ -4166,6 +4427,9 @@ std::vector<std::string> ISimulatedWorldMsgs::help(const std::string& functionNa
         }
         if (functionName == ISimulatedWorldMsgs_makeModel_helper::s_tag) {
             helpString.emplace_back(ISimulatedWorldMsgs_makeModel_helper::s_prototype);
+        }
+        if (functionName == ISimulatedWorldMsgs_makeActor_helper::s_tag) {
+            helpString.emplace_back(ISimulatedWorldMsgs_makeActor_helper::s_prototype);
         }
         if (functionName == ISimulatedWorldMsgs_changeColor_helper::s_tag) {
             helpString.emplace_back(ISimulatedWorldMsgs_changeColor_helper::s_prototype);
@@ -4314,6 +4578,21 @@ bool ISimulatedWorldMsgs::read(yarp::os::ConnectionReader& connection)
         }
         if (tag == ISimulatedWorldMsgs_makeModel_helper::s_tag) {
             ISimulatedWorldMsgs_makeModel_helper helper;
+            if (!helper.cmd.readArgs(reader)) {
+                return false;
+            }
+
+            helper.call(this);
+
+            yarp::os::idl::WireWriter writer(reader);
+            if (!helper.reply.write(writer)) {
+                return false;
+            }
+            reader.accept();
+            return true;
+        }
+        if (tag == ISimulatedWorldMsgs_makeActor_helper::s_tag) {
+            ISimulatedWorldMsgs_makeActor_helper helper;
             if (!helper.cmd.readArgs(reader)) {
                 return false;
             }
