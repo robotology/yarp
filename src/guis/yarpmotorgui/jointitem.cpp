@@ -18,7 +18,6 @@
 #include <QDebug>
 #include <QKeyEvent>
 #include <QStandardItem>
-#include <QlistView>
 
 void JointItem::resetTarget()
 {
