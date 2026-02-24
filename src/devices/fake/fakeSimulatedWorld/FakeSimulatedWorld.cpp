@@ -102,6 +102,11 @@ ReturnValue FakeSimulatedWorld::makeModel(std::string id,  std::string filename,
    return ReturnValue_ok;
 }
 
+ReturnValue FakeSimulatedWorld::makeActor(std::string id,  std::string skin_filename,  std::string animation_filename, yarp::sig::Pose6D pose)
+{
+   return ReturnValue_ok;
+}
+
 ReturnValue FakeSimulatedWorld::deleteObject(std::string id)
 {
    return ReturnValue_ok;

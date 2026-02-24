@@ -43,6 +43,8 @@ public:
 
     virtual yarp::dev::ReturnValue makeModel(const std::string& id_name, const std::string& filename, const yarp::sig::Pose6D& pose, const std::string& frame_name, const bool gravity_enable, const bool collision_enable);
 
+    virtual yarp::dev::ReturnValue makeActor(const std::string& id_name, const std::string& skinfile, const std::string& animfile, const yarp::sig::Pose6D& pose);
+
     virtual yarp::dev::ReturnValue changeColor(const std::string& id, const yarp::sig::ColorRGB& color);
 
     virtual yarp::dev::ReturnValue setPose(const std::string& id, const yarp::sig::Pose6D& pose, const std::string& frame_name);

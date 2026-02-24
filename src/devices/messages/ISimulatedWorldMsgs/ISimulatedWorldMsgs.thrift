@@ -40,6 +40,7 @@ service ISimulatedWorldMsgs
     yReturnValue makeCylinder (1: string id_name, 2: double radius,   3: double length,    4: yPose6D pose,          5: yColorRGB color,      6: string frame_name,     7: bool gravity_enable,    8: bool collision_enable);
     yReturnValue makeFrame    (1: string id_name, 2: double size,     3: yPose6D pose,     4: yColorRGB color,       5: string frame_name,    6: bool gravity_enable,   7: bool collision_enable);
     yReturnValue makeModel    (1: string id_name, 2: string filename, 3: yPose6D pose,     4: string frame_name,     5: bool gravity_enable,  6: bool collision_enable);
+    yReturnValue makeActor    (1: string id_name, 2: string skinfile, 3: string animfile,  4: yPose6D pose);
 
     yReturnValue changeColor (1: string id, 2: yColorRGB color);
     yReturnValue setPose(1: string id, 2: yPose6D pose, 3: string frame_name);

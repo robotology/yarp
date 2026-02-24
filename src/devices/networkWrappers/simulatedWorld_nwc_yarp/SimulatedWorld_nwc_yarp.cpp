@@ -176,6 +176,17 @@ ReturnValue SimulatedWorld_nwc_yarp::makeModel(std::string id,  std::string file
     return ret;
 }
 
+ReturnValue SimulatedWorld_nwc_yarp::makeActor(std::string id,  std::string skin_filename,  std::string animation_filename, yarp::sig::Pose6D pose)
+{
+    std::lock_guard<std::mutex> lg(m_mutex);
+    auto ret = m_sim_RPC.makeActor(id, skin_filename, animation_filename, pose);
+    if (!ret) {
+        yCError(SIMWORLDNWC, "Unable to makeActor");
+        return ret;
+    }
+    return ret;
+}
+
 ReturnValue SimulatedWorld_nwc_yarp::deleteObject(std::string id)
 {
     std::lock_guard<std::mutex> lg(m_mutex);
