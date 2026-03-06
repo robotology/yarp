@@ -32,7 +32,7 @@ namespace yarp::dev::tests
 
         for (size_t i = 0; i < ax; i++)
         {
-            b = icmd->setControlMode(i, VOCAB_CM_TORQUE);
+            b = icmd->setControlMode(i, yarp::dev::SelectableControlModeEnum::VOCAB_CM_TORQUE);
             CHECK(b);
         }
 
@@ -79,7 +79,7 @@ namespace yarp::dev::tests
 
         for (size_t i = 0; i < ax; i++)
         {
-            b = icmd->setControlMode(i, VOCAB_CM_TORQUE);
+            b = icmd->setControlMode(i, yarp::dev::SelectableControlModeEnum::VOCAB_CM_TORQUE);
             //CHECK(b); //this will fail
         }
 

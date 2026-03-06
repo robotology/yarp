@@ -301,7 +301,7 @@ void FakeMotionControl::setInfoMPids(int j)
 {
     _axisMap = allocAndCheck<int>(nj);
     _controlModes = allocAndCheck<int>(nj);
-    _interactMode = allocAndCheck<int>(nj);
+    _interactMode = allocAndCheck<yarp::dev::InteractionModeEnum>(nj);
     _angleToEncoder = allocAndCheck<double>(nj);
     _dutycycleToPWM = allocAndCheck<double>(nj);
     _ampsToSensor = allocAndCheck<double>(nj);

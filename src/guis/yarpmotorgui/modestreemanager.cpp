@@ -139,8 +139,8 @@ void ModesTreeManager::addRobotPartInList(const std::string &robotName, const st
     {
         auto* jointNode = new QTreeWidgetItem(partItem);
         jointNode->setText(0,QString("Joint %1 (%2)").arg(i).arg(part->getJointName(i)));
-        jointNode->setText(1,JointItem::GetModeString(JointItem::Idle));
-        QColor c = JointItem::GetModeColor(JointItem::Idle);
+        jointNode->setText(1,JointItem::JointState2String(JointItem::Idle));
+        QColor c = JointItem::JointState2Color(JointItem::Idle);
         jointNode->setBackground(0,c);
         jointNode->setBackground(1,c);
         jointNode->setForeground(0,Qt::black);
@@ -184,8 +184,8 @@ void ModesTreeManager::updateRobotPartInList(int index, const QVector<JointItem:
     for(int i = 0; i < parentNode->childCount(); i++){
         QTreeWidgetItem *item = parentNode->child(i);
         QString mode;
-        QColor c = JointItem::GetModeColor(modes.at(i));
-        mode = JointItem::GetModeString(modes.at(i));
+        QColor c = JointItem::JointState2Color(modes.at(i));
+        mode = JointItem::JointState2String(modes.at(i));
 
         if(modes.at(i) == JointItem::HwFault){
             foundFaultPart = true;

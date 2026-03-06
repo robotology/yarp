@@ -95,13 +95,13 @@ robotDriver::~robotDriver()
 {
 }
 
-bool robotDriver::getControlMode(const int j, int& mode)
+bool robotDriver::getControlMode(const int j, yarp::dev::ControlModeEnum& mode)
 {
     if (!icmd_ll) return false;
-    return icmd_ll->getControlMode(j, &mode);
+    return icmd_ll->getControlMode(j, mode);
 }
 
-bool robotDriver::setControlMode(const int j, const int mode)
+bool robotDriver::setControlMode(const int j, const yarp::dev::SelectableControlModeEnum mode)
 {
     if (!icmd_ll) return false;
     return icmd_ll->setControlMode(j, mode);

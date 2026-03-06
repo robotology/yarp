@@ -15,7 +15,7 @@
 
 #include <cmath>
 
-using yarp::dev::VOCAB_IM_STIFF;
+using yarp::dev::InteractionModeEnum::VOCAB_IM_STIFF;
 
 class yarp::robottestingframework::jointsPosMotion::Private
 {
@@ -121,21 +121,21 @@ void yarp::robottestingframework::jointsPosMotion::setTolerance(double tolerance
 bool yarp::robottestingframework::jointsPosMotion::setAndCheckPosControlMode()
 {
     for (size_t i = 0; i < mPriv->jointsList.size(); i++) {
-        mPriv->icmd->setControlMode((int)mPriv->jointsList[i], VOCAB_CM_POSITION);
-        mPriv->iimd->setInteractionMode((int)mPriv->jointsList[i], VOCAB_IM_STIFF);
+        mPriv->icmd->setControlMode((int)mPriv->jointsList[i], yarp::dev::SelectableControlModeEnum::VOCAB_CM_POSITION);
+        mPriv->iimd->setInteractionMode((int)mPriv->jointsList[i], yarp::dev::InteractionModeEnum::VOCAB_IM_STIFF);
         yarp::os::Time::delay(0.010);
     }
 
-    int cmode;
+    yarp::dev::ControlModeEnum cmode;
     yarp::dev::InteractionModeEnum imode;
     double time_started = yarp::os::Time::now();
 
     while (1) {
         size_t ok = 0;
         for (size_t i = 0; i < mPriv->n_joints; i++) {
-            mPriv->icmd->getControlMode ((int)mPriv->jointsList[i], &cmode);
+            mPriv->icmd->getControlMode ((int)mPriv->jointsList[i], cmode);
             mPriv->iimd->getInteractionMode((int)mPriv->jointsList[i], &imode);
-            if (cmode == VOCAB_CM_POSITION && imode == VOCAB_IM_STIFF) {
+            if (cmode == yarp::dev::ControlModeEnum::VOCAB_CM_POSITION && imode == yarp::dev::InteractionModeEnum::VOCAB_IM_STIFF) {
                 ok++;
             }
         }

@@ -198,11 +198,17 @@ PartItem::PartItem(std::string robotName, int id, std::string partName, Resource
         double max_acc = 100;
         double min_cur = -2.0;
         double max_cur = +2.0;
+        std::vector<yarp::dev::SelectableControlModeEnum> available_modes;
         for (int k = 0; k<number_of_joints; k++)
         {
-            bool bpl = m_iLim->getPosLimits(k, &min_pos, &max_pos);
-            bool bvl = m_iLim->getVelLimits(k, &min_vel, &max_vel);
-            bool bcr = m_iCur->getCurrentRange(k, &min_cur, &max_cur);
+            bool bpl  = m_iLim->getPosLimits(k, &min_pos, &max_pos);
+            bool bvl  = m_iLim->getVelLimits(k, &min_vel, &max_vel);
+            bool bcr  = m_iCur->getCurrentRange(k, &min_cur, &max_cur);
+            bool bacm = m_ictrlmode->getAvailableControlModes(k, available_modes);
+            if (bacm == false)
+            {
+                yError() << "Error while getting position available control modes, part " << partName << " joint " << k;
+            }
             if (bpl == false)
             {
                 yError() << "Error while getting position limits, part " << partName << " joint " << k;
@@ -230,7 +236,7 @@ PartItem::PartItem(std::string robotName, int id, std::string partName, Resource
             yarp::os::SystemClock::delaySystem(0.005);
             m_iPid->getPid(PidControlTypeEnum::VOCAB_PIDTYPE_POSITION, k, &myPid);
 
-            auto* joint = new JointItem(k);
+            auto* joint = new JointItem(k,available_modes);
             joint->setJointName(jointname.c_str());
             joint->setPWMRange(-100.0, 100.0);
             joint->setCurrentRange(min_cur, max_cur);
@@ -556,9 +562,9 @@ void PartItem::onSliderPosTrajectoryVelocityCommand(double trajspeedVal, int ind
 
 void PartItem::onSliderDirectPositionCommand(double dirpos, int index)
 {
-    int mode;
-    m_ictrlmode->getControlMode(index, &mode);
-    if (mode == VOCAB_CM_POSITION_DIRECT)
+    yarp::dev::ControlModeEnum mode;
+    m_ictrlmode->getControlMode(index, mode);
+    if (mode == yarp::dev::ControlModeEnum::VOCAB_CM_POSITION_DIRECT)
     {
         m_iPosDir->setPosition(index, dirpos);
     }
@@ -608,10 +614,10 @@ void PartItem::onDumpAllRemoteVariables()
 
 void PartItem::onSliderPosTrajectoryPositionCommand(double posVal, int index)
 {
-    int mode;
-    m_ictrlmode->getControlMode(index, &mode);
+    yarp::dev::ControlModeEnum mode;
+    m_ictrlmode->getControlMode(index, mode);
 
-    if ( mode == VOCAB_CM_POSITION)
+    if ( mode == yarp::dev::ControlModeEnum::VOCAB_CM_POSITION)
     {
         m_iPos->positionMove(index, posVal);
     }
@@ -623,10 +629,10 @@ void PartItem::onSliderPosTrajectoryPositionCommand(double posVal, int index)
 
 void PartItem::onSliderMixedPositionCommand(double posVal, int index)
 {
-    int mode;
-    m_ictrlmode->getControlMode(index, &mode);
+    yarp::dev::ControlModeEnum mode;
+    m_ictrlmode->getControlMode(index, mode);
 
-    if ( mode == VOCAB_CM_MIXED)
+    if ( mode == yarp::dev::ControlModeEnum::VOCAB_CM_MIXED)
     {
         m_iPos->positionMove(index, posVal);
     }
@@ -638,10 +644,10 @@ void PartItem::onSliderMixedPositionCommand(double posVal, int index)
 
 void PartItem::onSliderMixedVelocityCommand( double vel, int index)
 {
-    int mode;
-    m_ictrlmode->getControlMode(index, &mode);
+    yarp::dev::ControlModeEnum mode;
+    m_ictrlmode->getControlMode(index, mode);
 
-    if (mode == VOCAB_CM_MIXED)
+    if (mode == yarp::dev::ControlModeEnum::VOCAB_CM_MIXED)
     {
         m_iVel->velocityMove(index, vel);
     }
@@ -657,11 +663,11 @@ void PartItem::onJointInteraction(int interaction,JointItem *joint)
     switch (interaction) {
     case JointItem::Compliant:
         yInfo("interaction mode of joint %d set to COMPLIANT", jointIndex);
-        m_iinteract->setInteractionMode(jointIndex, (yarp::dev::InteractionModeEnum) VOCAB_IM_COMPLIANT);
+        m_iinteract->setInteractionMode(jointIndex, yarp::dev::InteractionModeEnum::VOCAB_IM_COMPLIANT);
         break;
     case JointItem::Stiff:
         yInfo("interaction mode of joint %d set to STIFF", jointIndex);
-        m_iinteract->setInteractionMode(jointIndex, (yarp::dev::InteractionModeEnum) VOCAB_IM_STIFF);
+        m_iinteract->setInteractionMode(jointIndex, yarp::dev::InteractionModeEnum::VOCAB_IM_STIFF);
         break;
     default:
         break;
@@ -938,13 +944,13 @@ void PartItem::onRunClicked(JointItem *joint)
         SystemClock::delaySystem(0.001);
     }
 
-    m_ictrlmode->setControlMode(jointIndex, VOCAB_CM_POSITION);
+    m_ictrlmode->setControlMode(jointIndex, yarp::dev::SelectableControlModeEnum::VOCAB_CM_POSITION);
 }
 
 void PartItem::onIdleClicked(JointItem *joint)
 {
     const int jointIndex = joint->getJointIndex();
-    m_ictrlmode->setControlMode(jointIndex, VOCAB_CM_FORCE_IDLE);
+    m_ictrlmode->setControlMode(jointIndex, yarp::dev::SelectableControlModeEnum::VOCAB_CM_FORCE_IDLE);
 }
 
 void PartItem::onHomeClicked(JointItem *joint)
@@ -963,7 +969,7 @@ void PartItem::onJointChangeMode(int mode,JointItem *joint)
     case JointItem::Idle:{
         yInfo("joint: %d in IDLE mode", jointIndex);
         if (m_ictrlmode){
-            m_ictrlmode->setControlMode(jointIndex, VOCAB_CM_IDLE);
+            m_ictrlmode->setControlMode(jointIndex, yarp::dev::SelectableControlModeEnum::VOCAB_CM_IDLE);
         } else {
             yError("ERROR: cannot do!");
         }
@@ -972,7 +978,7 @@ void PartItem::onJointChangeMode(int mode,JointItem *joint)
     case JointItem::Position:{
         yInfo("joint: %d in POSITION mode", jointIndex);
         if (m_ictrlmode){
-            m_ictrlmode->setControlMode(jointIndex, VOCAB_CM_POSITION);
+            m_ictrlmode->setControlMode(jointIndex, yarp::dev::SelectableControlModeEnum::VOCAB_CM_POSITION);
             joint->resetTarget();
         } else {
             yError("ERROR: cannot do!");
@@ -984,7 +990,7 @@ void PartItem::onJointChangeMode(int mode,JointItem *joint)
             yInfo("joint: %d in POSITION DIRECT mode", jointIndex);
             if (m_ictrlmode){
                 joint->resetTarget();
-                m_ictrlmode->setControlMode(jointIndex, VOCAB_CM_POSITION_DIRECT);
+                m_ictrlmode->setControlMode(jointIndex, yarp::dev::SelectableControlModeEnum::VOCAB_CM_POSITION_DIRECT);
             } else {
                 yError("ERROR: cannot do!");
             }
@@ -1004,7 +1010,7 @@ void PartItem::onJointChangeMode(int mode,JointItem *joint)
             yInfo("joint: %d in MIXED mode", jointIndex);
             if (m_ictrlmode){
                 joint->resetTarget();
-                m_ictrlmode->setControlMode(jointIndex, VOCAB_CM_MIXED);
+                m_ictrlmode->setControlMode(jointIndex, yarp::dev::SelectableControlModeEnum::VOCAB_CM_MIXED);
             } else {
                 yError("ERROR: cannot do!");
             }
@@ -1026,7 +1032,7 @@ void PartItem::onJointChangeMode(int mode,JointItem *joint)
             if (m_ictrlmode)
             {
                 joint->resetTarget();
-                m_ictrlmode->setControlMode(jointIndex, VOCAB_CM_VELOCITY_DIRECT);
+                m_ictrlmode->setControlMode(jointIndex, yarp::dev::SelectableControlModeEnum::VOCAB_CM_VELOCITY_DIRECT);
             } else {
                 yError("ERROR: cannot do!");
             }
@@ -1037,7 +1043,7 @@ void PartItem::onJointChangeMode(int mode,JointItem *joint)
             yInfo("joint: %d in VELOCITY mode", jointIndex);
             if (m_ictrlmode)
             {
-                m_ictrlmode->setControlMode(jointIndex, VOCAB_CM_VELOCITY);
+                m_ictrlmode->setControlMode(jointIndex, yarp::dev::SelectableControlModeEnum::VOCAB_CM_VELOCITY);
                 yInfo() << "Changing reference acceleration of joint " << jointIndex << " to 100000";
                 m_iVel->setTrajAcceleration(jointIndex, 100000);
             } else {
@@ -1059,7 +1065,7 @@ void PartItem::onJointChangeMode(int mode,JointItem *joint)
         //if(positionDirectEnabled){
             yInfo("joint: %d in TORQUE mode", jointIndex);
             if (m_ictrlmode){
-                m_ictrlmode->setControlMode(jointIndex, VOCAB_CM_TORQUE);
+                m_ictrlmode->setControlMode(jointIndex, yarp::dev::SelectableControlModeEnum::VOCAB_CM_TORQUE);
             } else {
                 yError("ERROR: cannot do!");
             }
@@ -1078,7 +1084,7 @@ void PartItem::onJointChangeMode(int mode,JointItem *joint)
     case JointItem::Pwm:{
         yInfo("joint: %d in PWM mode", jointIndex);
         if (m_ictrlmode){
-            m_ictrlmode->setControlMode(jointIndex, VOCAB_CM_PWM);
+            m_ictrlmode->setControlMode(jointIndex, yarp::dev::SelectableControlModeEnum::VOCAB_CM_PWM);
         } else {
             yError("ERROR: cannot do!");
         }
@@ -1087,7 +1093,7 @@ void PartItem::onJointChangeMode(int mode,JointItem *joint)
     case JointItem::Current:{
         yInfo("joint: %d in CURRENT mode", jointIndex);
         if (m_ictrlmode){
-            m_ictrlmode->setControlMode(jointIndex, VOCAB_CM_CURRENT);
+            m_ictrlmode->setControlMode(jointIndex, yarp::dev::SelectableControlModeEnum::VOCAB_CM_CURRENT);
         }
         else {
             yError("ERROR: cannot do!");
@@ -1304,7 +1310,7 @@ void PartItem::idlePart()
     m_iPos->getAxes(&NUMBER_OF_JOINTS);
 
     for (int joint=0; joint < NUMBER_OF_JOINTS; joint++){
-        m_ictrlmode->setControlMode(joint, VOCAB_CM_IDLE);
+        m_ictrlmode->setControlMode(joint, yarp::dev::SelectableControlModeEnum::VOCAB_CM_IDLE);
     }
 }
 
@@ -1355,7 +1361,7 @@ void PartItem::runPart()
 
     for (int joint=0; joint < NUMBER_OF_JOINTS; joint++){
         //iencs->getEncoder(joint, &posJoint);
-        m_ictrlmode->setControlMode(joint, VOCAB_CM_POSITION);
+        m_ictrlmode->setControlMode(joint, yarp::dev::SelectableControlModeEnum::VOCAB_CM_POSITION);
     }
 }
 
@@ -2328,18 +2334,20 @@ bool PartItem::updatePart()
 
     // *** update checkMotionDone, refTorque, refTrajectorySpeed, refSpeed ***
     // (only one at a time in order to save bandwidth)
-    bool ret_motdone = false;
-    bool ret_refTrq = false;
-    bool ret_refPosSpeed = false;
-    bool ret_refVel = false;
-    bool ret_refAcc = false;
-    bool ret_refPos = false;
-    bool ret_jntbrk = false;
+    bool ret_motdone     = true;
+    bool ret_refTrq      = true;
+    bool ret_refPosSpeed = true;
+    bool ret_refVel      = true;
+    bool ret_refAcc      = true;
+    bool ret_refPos      = true;
+    bool ret_jntbrk      = true;
 
+    //if the interface is not available, the ret_xxx is true, and no error is displayed.
+    //if the interface is available, the ret_xxx is overwritten, and an error is displayed if the method was not successful
     if (m_iPos)
     {
         bool boolval = true;
-        m_iPos->checkMotionDone(m_slow_k, &boolval); // using k to save bandwidth
+        ret_motdone = m_iPos->checkMotionDone(m_slow_k, &boolval); // using k to save bandwidth
         m_done[m_slow_k] = boolval;
     }
     if (m_ijointbrake)
@@ -2372,27 +2380,27 @@ bool PartItem::updatePart()
     //Check return values of methods
     if (!ret_refPos)
     {
-        yError() << "Missing Implementation of getTargetPosition()";
+        yErrorThrottle(60.0) << "Missing Implementation of getTargetPosition()";
     }
     if (!ret_refVel)
     {
-        yError() << "Missing Implementation of getTargetVelocity()";
+        yErrorThrottle(60.0) << "Missing Implementation of getTargetVelocity()";
     }
     if (!ret_refPosSpeed)
     {
-        yError() << "Missing Implementation of getTrajSpeed()";
+        yErrorThrottle(60.0) << "Missing Implementation of getTrajSpeed()";
     }
     if (!ret_refTrq)
     {
-        yError() << "Missing Implementation of getRefTorque()";
+        yErrorThrottle(60.0) << "Missing Implementation of getRefTorque()";
     }
     if (!ret_motdone)
     {
-        yError() << "Missing Implementation of checkMotionDone()";
+        yErrorThrottle(60.0) << "Missing Implementation of checkMotionDone()";
     }
     if (!ret_jntbrk)
     {
-        yWarning() << "Missing Implementation of isJointBraked()";
+        yErrorThrottle(60.0) << "Missing Implementation of isJointBraked()";
     }
 
     // *** update the widget every cycle ***
@@ -2531,14 +2539,14 @@ bool PartItem::updatePart()
         }
         switch (m_interactionModes[k])
         {
-            case VOCAB_IM_STIFF:
+            case yarp::dev::InteractionModeEnum::VOCAB_IM_STIFF:
                 joint->setJointInteraction(JointItem::Stiff);
                 break;
-            case VOCAB_IM_COMPLIANT:
+            case yarp::dev::InteractionModeEnum::VOCAB_IM_COMPLIANT:
                 joint->setJointInteraction(JointItem::Compliant);
                 break;
             default:
-            case VOCAB_IM_UNKNOWN:
+            case yarp::dev::InteractionModeEnum::VOCAB_IM_UNKNOWN:
                 //joint->setJointInteraction(JointItem::Stiff); TODO
                 break;
         }

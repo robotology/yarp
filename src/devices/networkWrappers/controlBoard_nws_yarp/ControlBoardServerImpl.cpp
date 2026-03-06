@@ -49,7 +49,7 @@ ReturnValue ControlBoardRPCd::setControlModeOneRPC(const std::int32_t j, const y
         return ret;
     }
 
-    ret = m_iControlMode->setControlMode(j, (int)(mod));
+    ret = m_iControlMode->setControlMode(j, mod);
     if (!ret) {
         yCError(CB_RPC, "setControlMode() failed");
     }

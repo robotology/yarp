@@ -54,6 +54,8 @@ enum class ControlModeEnum
 };
 }
 
+#define ALLOW_OLD_CONTROL_MODE_INTERFACE 1
+
 /**
  * @ingroup dev_iface_motor
  *
@@ -79,6 +81,7 @@ public:
     * @return: true/false success failure.
     */
     virtual yarp::dev::ReturnValue getControlMode(int j, yarp::dev::ControlModeEnum& mode)=0;
+#if ALLOW_OLD_CONTROL_MODE_INTERFACE
     virtual yarp::dev::ReturnValue getControlMode(int j, int *mode)
     {
         yarp::dev::ControlModeEnum mode_e;
@@ -86,6 +89,7 @@ public:
         *mode = static_cast<int>(mode_e);
         return ret;
     }
+#endif
 
     /**
     * Get the current control mode (multiple joints).
@@ -116,12 +120,14 @@ public:
     *         the joint was unable to switch to the desired controlMode
     *         (e.g. the joint is on a fault condition or the desired mode is not implemented).    */
     virtual yarp::dev::ReturnValue setControlMode(int j, yarp::dev::SelectableControlModeEnum mode)=0;
+#if ALLOW_OLD_CONTROL_MODE_INTERFACE
     virtual yarp::dev::ReturnValue setControlMode(const int j, const int mode)
     {
         yarp::dev::SelectableControlModeEnum emode = static_cast<yarp::dev::SelectableControlModeEnum>(mode);
         yarp::dev::ReturnValue ret = setControlMode(j, emode);
         return ret;
     }
+#endif
 
     /**
     * Set the current control mode for a subset of axes.
@@ -164,25 +170,10 @@ public:
     virtual yarp::dev::ReturnValue getAvailableControlModesRaw(int j, std::vector<yarp::dev::SelectableControlModeEnum>& avail)=0;
 
     virtual yarp::dev::ReturnValue getControlModeRaw(int j, yarp::dev::ControlModeEnum& mode)=0;
-    virtual yarp::dev::ReturnValue getControlModeRaw(int j, int *mode)
-    {
-        yarp::dev::ControlModeEnum mode_enum;
-        yarp::dev::ReturnValue ret = getControlModeRaw(j, mode_enum);
-        *mode = static_cast<int>(mode_enum);
-        return ret;
-    }
-
     virtual yarp::dev::ReturnValue getControlModesRaw(std::vector<yarp::dev::ControlModeEnum>& mode)=0;
     virtual yarp::dev::ReturnValue getControlModesRaw(std::vector<int> joints, std::vector<yarp::dev::ControlModeEnum>& mode)=0;
 
-
     virtual yarp::dev::ReturnValue setControlModeRaw(int j, yarp::dev::SelectableControlModeEnum mode)=0;
-    virtual yarp::dev::ReturnValue setControlModeRaw(const int j, const int mode)
-    {
-        yarp::dev::ReturnValue ret = setControlModeRaw(j, static_cast<yarp::dev::SelectableControlModeEnum>(mode));
-        return ret;
-    }
-
     virtual yarp::dev::ReturnValue setControlModesRaw(std::vector<int> joints, std::vector<yarp::dev::SelectableControlModeEnum> mode)=0;
     virtual yarp::dev::ReturnValue setControlModesRaw(const std::vector<yarp::dev::SelectableControlModeEnum> mode)=0;
 };
