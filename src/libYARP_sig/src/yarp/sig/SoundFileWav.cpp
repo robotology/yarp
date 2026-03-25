@@ -56,6 +56,7 @@ public:
     NetInt32 dataLength;
 
     void setup_to_write(const Sound& sound, FILE *fp);
+    void setup_to_write_with_markers(const Sound& sound, FILE *fp);
     bool parse_from_file(FILE *fp);
 };
 YARP_END_PACK
@@ -246,6 +247,140 @@ void PcmWavHeader::setup_to_write(const Sound& src, FILE *fp)
 
 }
 
+void PcmWavHeader::setup_to_write_with_markers(const Sound& src, FILE *fp)
+{
+    int bitsPerSample = 16;
+    size_t channels = src.getChannels();
+    size_t bytes = channels*src.getSamples()*2;
+    int align = channels*((bitsPerSample+7)/8);
+
+    // Calculate sizes for marker chunks
+    size_t num_markers = src.getMarkersCount();
+
+    // Size of cue chunk: 4 bytes (chunk ID) + 4 bytes (chunk size) + 4 bytes (num cue points) + 24 bytes per cue point
+    size_t cue_chunk_size = 0;
+    if (num_markers > 0) {
+        cue_chunk_size = 4 + 4 + (4 + num_markers * 24);
+    }
+
+    // Size of LIST/adtl chunk for labels: 4 bytes (LIST) + 4 bytes (size) + 4 bytes (adtl) + labels
+    size_t list_chunk_size = 0;
+    if (num_markers > 0)
+    {
+        list_chunk_size = 4 + 4 + 4; // LIST + size + adtl
+        for (size_t i = 0; i < num_markers; i++)
+        {
+            SoundMarker marker = src.getMarker(i);
+            // Each label chunk: 'labl' (4) + size (4) + cue point ID (4) + null-terminated string
+            size_t label_len = marker.label.length() + 1; // +1 for null terminator
+            if (label_len % 2) label_len++; // Pad to even number
+            list_chunk_size += 4 + 4 + 4 + label_len;
+        }
+    }
+
+    wavHeader = yarp::os::createVocab32('R','I','F','F');
+    wavLength = bytes + sizeof(PcmWavHeader) - 2*sizeof(NetInt32) + cue_chunk_size + list_chunk_size;
+    formatHeader1 = yarp::os::createVocab32('W','A','V','E');
+    formatHeader2 = yarp::os::createVocab32('f','m','t',' ');
+    formatLength = sizeof(pcm);
+
+    pcm.pcmFormatTag = 1; /* PCM! */
+    pcm.pcmChannels = channels;
+    pcm.pcmSamplesPerSecond = (int)src.getFrequency();
+    pcm.pcmBytesPerSecond = align*pcm.pcmSamplesPerSecond;
+    pcm.pcmBlockAlign = align;
+    pcm.pcmBitsPerSample = bitsPerSample;
+
+    dataHeader = yarp::os::createVocab32('d','a','t','a');
+    dataLength = bytes;
+
+    // Write RIFF header
+    fwrite(&wavHeader,sizeof(wavHeader),1,fp);
+    fwrite(&wavLength,sizeof(wavLength),1,fp);
+    fwrite(&formatHeader1,sizeof(formatHeader1),1,fp);
+
+    // Write fmt chunk
+    fwrite(&formatHeader2,sizeof(formatHeader2),1,fp);
+    fwrite(&formatLength,sizeof(formatLength),1,fp);
+
+    fwrite(&pcm.pcmFormatTag,sizeof(pcm.pcmFormatTag),1,fp);
+    fwrite(&pcm.pcmChannels,sizeof(pcm.pcmChannels),1,fp);
+    fwrite(&pcm.pcmSamplesPerSecond,sizeof(pcm.pcmSamplesPerSecond),1,fp);
+    fwrite(&pcm.pcmBytesPerSecond,sizeof(pcm.pcmBytesPerSecond),1,fp);
+    fwrite(&pcm.pcmBlockAlign,sizeof(pcm.pcmBlockAlign),1,fp);
+    fwrite(&pcm.pcmBitsPerSample,sizeof(pcm.pcmBitsPerSample),1,fp);
+
+    // Write cue chunk if markers exist
+    if (num_markers > 0) {
+        NetInt32 cueHeader = yarp::os::createVocab32('c','u','e',' ');
+        NetInt32 cueChunkSize = 4 + num_markers * 24; // 4 bytes for num cue points + 24 bytes per cue point
+        NetInt32 numCuePoints = num_markers;
+
+        fwrite(&cueHeader, sizeof(cueHeader), 1, fp);
+        fwrite(&cueChunkSize, sizeof(cueChunkSize), 1, fp);
+        fwrite(&numCuePoints, sizeof(numCuePoints), 1, fp);
+
+        // Write each cue point
+        for (size_t i = 0; i < num_markers; i++) {
+            SoundMarker marker = src.getMarker(i);
+
+            NetInt32 cuePointId = i + 1; // Cue point IDs start from 1
+            NetInt32 position = marker.sample_id;
+            NetInt32 dataChunkId = yarp::os::createVocab32('d','a','t','a');
+            NetInt32 chunkStart = 0;
+            NetInt32 blockStart = 0;
+            NetInt32 sampleOffset = position;
+
+            fwrite(&cuePointId, sizeof(cuePointId), 1, fp);
+            fwrite(&position, sizeof(position), 1, fp);
+            fwrite(&dataChunkId, sizeof(dataChunkId), 1, fp);
+            fwrite(&chunkStart, sizeof(chunkStart), 1, fp);
+            fwrite(&blockStart, sizeof(blockStart), 1, fp);
+            fwrite(&sampleOffset, sizeof(sampleOffset), 1, fp);
+        }
+    }
+
+    // Write LIST/adtl chunk with labels if markers exist
+    if (num_markers > 0) {
+        NetInt32 listHeader = yarp::os::createVocab32('L','I','S','T');
+        NetInt32 listChunkSize = list_chunk_size - 8; // Total size minus 'LIST' and size fields
+        NetInt32 adtlHeader = yarp::os::createVocab32('a','d','t','l');
+
+        fwrite(&listHeader, sizeof(listHeader), 1, fp);
+        fwrite(&listChunkSize, sizeof(listChunkSize), 1, fp);
+        fwrite(&adtlHeader, sizeof(adtlHeader), 1, fp);
+
+        // Write each label
+        for (size_t i = 0; i < num_markers; i++) {
+            SoundMarker marker = src.getMarker(i);
+
+            NetInt32 lablHeader = yarp::os::createVocab32('l','a','b','l');
+            NetInt32 cuePointId = i + 1;
+
+            std::string label = marker.label;
+            size_t label_len = label.length() + 1; // +1 for null terminator
+            bool need_pad = (label_len % 2) == 1;
+            if (need_pad) label_len++;
+
+            NetInt32 lablChunkSize = 4 + label_len; // 4 bytes for cue point ID + label string
+
+            fwrite(&lablHeader, sizeof(lablHeader), 1, fp);
+            fwrite(&lablChunkSize, sizeof(lablChunkSize), 1, fp);
+            fwrite(&cuePointId, sizeof(cuePointId), 1, fp);
+            fwrite(label.c_str(), label.length() + 1, 1, fp); // Write null-terminated string
+
+            if (need_pad) {
+                char pad = 0;
+                fwrite(&pad, 1, 1, fp);
+            }
+        }
+    }
+
+    // Write data chunk header
+    fwrite(&dataHeader,sizeof(dataHeader),1,fp);
+    fwrite(&dataLength,sizeof(dataLength),1,fp);
+}
+
 //#######################################################################################################
 
 bool yarp::sig::file::read_wav_file(Sound& sound_data, const char * filename)
@@ -306,7 +441,13 @@ bool yarp::sig::file::write_wav_file(const Sound& sound_data, const char * filen
     }
 
     PcmWavHeader header;
-    header.setup_to_write(sound_data, fp);
+
+    // Use the new method if markers are present, otherwise use the old method
+    if (sound_data.getMarkersCount() > 0) {
+        header.setup_to_write_with_markers(sound_data, fp);
+    } else {
+        header.setup_to_write(sound_data, fp);
+    }
 
     ManagedBytes bytes(header.dataLength);
     auto* data = reinterpret_cast<NetInt16*>(bytes.get());
@@ -323,5 +464,38 @@ bool yarp::sig::file::write_wav_file(const Sound& sound_data, const char * filen
     fwrite(bytes.get(),bytes.length(),1,fp);
 
     fclose(fp);
+
+    // Write Audacity label file if markers are present
+    if (sound_data.getMarkersCount() > 0)
+    {
+        std::string label_filename(filename);
+        size_t dot_pos = label_filename.find_last_of('.');
+        if (dot_pos != std::string::npos)
+        {
+            label_filename = label_filename.substr(0, dot_pos);
+        }
+        label_filename += ".txt";
+
+        FILE *label_fp = fopen(label_filename.c_str(), "w");
+        if (!label_fp)
+        {
+            yCWarning(SOUNDFILE_WAV, "cannot open file %s for writing Audacity labels\n", label_filename.c_str());
+        }
+        else
+        {
+            double frequency = sound_data.getFrequency();
+            for (size_t i = 0; i < sound_data.getMarkersCount(); i++)
+            {
+                SoundMarker marker = sound_data.getMarker(i);
+                double time_seconds = static_cast<double>(marker.sample_id) / frequency;
+                // Audacity label format: start_time\tend_time\tlabel
+                // For point labels, start and end time are the same
+                fprintf(label_fp, "%.6f\t%.6f\t%s\n", time_seconds, time_seconds, marker.label.c_str());
+            }
+            fclose(label_fp);
+            yCInfo(SOUNDFILE_WAV, "Audacity label file written: %s\n", label_filename.c_str());
+        }
+    }
+
     return true;
 }

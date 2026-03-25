@@ -22,6 +22,7 @@ class Sound_marker : public yarp::os::MonitorObject
 {
     yarp::os::Things m_th;
     yarp::sig::Sound m_s2;
+    size_t marker_counter = 0;
 
 public:
     void getParamsFromCommandLine(std::string carrierString, yarp::os::Property& prop);

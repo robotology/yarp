@@ -103,26 +103,18 @@ yarp::os::Things & Sound_marker::update(yarp::os::Things &thing)
         return thing;
     }
 
-    size_t ss_size = s->getSamples();
-    size_t ch_size = s->getChannels();
+    // add markers at the edges of the sound
     m_s2 = *s;
-    m_s2.resize(ss_size+5, ch_size);
+    m_s2.remove_all_markers();
+    m_s2.add_marker("SND_MARKER_START" + std::to_string(marker_counter), 0);
+    m_s2.add_marker("SND_MARKER_END"   + std::to_string(marker_counter), s->getSamples()-1);
 
-    for (size_t c = 0; c < ch_size; c++)
-    {
-        for (size_t i = 0; i < ss_size; i++)
-        {
-            m_s2.set(s->get(i,c), i, c);
-        }
-        for (size_t i = ss_size; i < ss_size+5; i++)
-        {
-            m_s2.set(32000,i,c);
-        }
-        m_s2.set(-32000, 0, c);
-    }
+    yDebug() << m_s2.getMarkersCount();
 
     //send data
     m_th.setPortWriter(&m_s2);
+
+    marker_counter++;
     return m_th;
 }
 

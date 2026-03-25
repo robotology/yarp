@@ -13,7 +13,24 @@
 #include <vector>
 #include <string>
 
+#include <map>
+
 namespace yarp::sig {
+
+struct YARP_sig_API SoundMarker
+{
+public:
+    std::string label;
+    int channel=-1;
+    size_t sample_id=0;
+
+    bool operator==(const SoundMarker& other) const
+    {
+        return label == other.label &&
+               channel == other.channel &&
+               sample_id == other.sample_id;
+    }
+};
 
 /**
  * \ingroup sig_class
@@ -238,9 +255,68 @@ public:
     /**
      * Print matrix to a string. Useful for debugging.
      * The output string is represented in non-interleaved format
-     *
      */
     std::string toString() const;
+
+public:
+    /**
+     * Adds a marker to the sound, identified by a label, a sample id and an optional channel number (if not specified, the marker is valid for all channels).
+     * If a marker with the same label already exists, it will be overwritten.
+     * @param marker_label the label of the marker
+     * @param sample_id the sample id of the marker
+     * @param channel the channel number of the marker (optional, default value = -1, meaning that the marker is valid for all channels)
+     */
+    void  add_marker(std::string marker_label, size_t sample_id, int channel=-1);
+
+    /**
+     * Gets the sample id and channel number of a marker given its label. If the marker is not found, the method returns false and the output parameters are not modified.
+     * @param marker_label the label of the marker
+     * @param sample_id the sample id of the marker (output parameter)
+     * @param channel the channel number of the marker (output parameter)
+     * @return true if the marker is found, false otherwise
+     */
+    bool  get_marker(std::string marker_label, size_t&  sample_id, int& channel) const;
+
+    /**
+     * Gets the number of markers contained in the sound.
+     * @return the number of markers
+     */
+    size_t getMarkersCount() const;
+
+    /**
+     * Get the marker at the specified index. The order of the markers is not guaranteed and may change in the future.
+     * If the index is out of range, the method throws an std::out_of_range exception.
+     * Used by yarp bindings.
+     * @param index the index of the marker to retrieve
+     * @return the marker at the specified index
+     */
+    yarp::sig::SoundMarker getMarker(size_t index) const;
+
+    /**
+     * Get all the markers contained in the sound. The order of the markers is not guaranteed and may change in the future. Used by yarp bindings.
+     * @return a vector containing all the markers of the sound
+     */
+    std::vector<yarp::sig::SoundMarker> getMarkers() const;
+
+    /**
+     * Removes a marker given its label. If the marker is not found, the method does nothing.
+     * @param marker_label the label of the marker to remove
+     */
+    void  remove_marker(std::string marker_label);
+
+    /**
+     * Removes all the markers contained in the sound.
+     */
+    void  remove_all_markers();
+
+    /**
+     * Returns a subSound of the current sound, starting from the sample identified by marker_start and ending at the sample identified by marker_end (including the two markers).
+     * If one of the two markers is not found, or if marker_start is after marker_end, the method throws an std::invalid_argument exception.
+     * @param marker_start the label of the marker identifying the starting sample of the subSound
+     * @param marker_end the label of the marker identifying the ending sample of the subSound
+     * @return the subSound identified by the two markers
+     */
+    Sound subSound(std::string marker_start, std::string marker_end);
 
 private:
     /**
@@ -271,6 +347,8 @@ private:
     size_t m_channels;
     size_t m_bytesPerSample;
     int    m_frequency;
+
+    std::map<std::string,yarp::sig::SoundMarker> m_markers;
 };
 
 } // namespace yarp::sig

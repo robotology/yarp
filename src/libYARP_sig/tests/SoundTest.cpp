@@ -6,6 +6,7 @@
 
 #include <yarp/sig/Sound.h>
 #include <yarp/sig/SoundFile.h>
+#include <yarp/sig/SoundUtils.h>
 #include <yarp/os/Network.h>
 #include <yarp/os/BufferedPort.h>
 #include <yarp/os/Log.h>
@@ -21,13 +22,13 @@ using namespace yarp::os::impl;
 using namespace yarp::sig;
 using namespace yarp::os;
 
-void generate_test_sound(Sound& snd, size_t samples, size_t size_channels, int base=0)
+void generate_test_sound(Sound& snd, size_t samples, size_t size_channels, int base=0, int factor=1)
 {
     for (size_t ch = 0; ch<snd.getChannels(); ch++)
     {
         for (size_t s = 0; s<snd.getSamples(); s++)
         {
-            snd.set((Sound::audio_sample)(ch * 100 + s + base), s, ch);
+            snd.set((Sound::audio_sample)(ch * 100 + s * factor + base), s, ch);
         }
     }
 }
@@ -87,6 +88,47 @@ TEST_CASE("sig::SoundTest", "[yarp::sig]")
 
         bool b3 = (snd1 == snd2);
         CHECK(b3);
+    }
+
+    SECTION("Test Sound markers")
+    {
+        bool b;
+
+        Sound snd1;
+        snd1.resize(10, 3);
+        generate_test_sound(snd1, 10, 3);
+
+        snd1.add_marker("M1", 1, -1);
+        size_t id1;
+        int ch1;
+        b = snd1.get_marker("M1", id1, ch1);
+        CHECK(b);
+        CHECK(id1==1);
+        CHECK(ch1==-1);
+
+        snd1.add_marker("M2", 5, -1);
+        size_t id2;
+        int ch2;
+        b = snd1.get_marker("M2", id2, ch2);
+        CHECK(b);
+        CHECK(id2==5);
+        CHECK(ch2==-1);
+
+        Sound snd;
+        snd = snd1.subSound("M1", "M2");
+        CHECK (snd.getSamples()==5);
+
+        snd1.remove_marker("M1");
+        b = snd1.get_marker("M1",id1, ch1);
+        CHECK(!b);
+        CHECK(id1==0);
+        CHECK(ch1==-1);
+
+        snd1.remove_all_markers();
+        b = snd1.get_marker("M2",id2, ch2);
+        CHECK(!b);
+        CHECK(id2==0);
+        CHECK(ch2==-1);
     }
 
     SECTION("Test a very long sound")
@@ -441,6 +483,59 @@ TEST_CASE("sig::SoundTest", "[yarp::sig]")
 
         output.close();
         input.close();
+    }
+
+    SECTION("check write file with markers.")
+    {
+        Sound snd1;
+        snd1.resize(30000, 2);
+        snd1.setFrequency(44100);
+        generate_test_sound(snd1, 30000, 2);
+        snd1.add_marker("M1", 1000,  0);
+        snd1.add_marker("M2", 2000,  1);
+        snd1.add_marker("M3", 3000, -1);
+        bool b = yarp::sig::file::write(snd1, "testwav_markers.wav");
+        if (!b)
+        {
+            WARN("Failed to write file, test skipped");
+        }
+    }
+
+    SECTION("Test the mix function")
+    {
+        std::string ss;
+
+        Sound snd1;
+        snd1.resize(10, 2);
+        snd1.setFrequency(44100);
+        generate_test_sound(snd1, 10, 2, 0, 2);
+        ss = snd1.toString();
+
+        Sound snd2;
+        snd2.resize(5, 2);
+        snd2.setFrequency(44100);
+        generate_test_sound(snd2, 5, 2, 0, 4);
+        ss = snd2.toString();
+
+        Sound sndMix = yarp::sig::utils::mix(snd1, snd2, 0.5);
+        CHECK(sndMix.getSamples() == 10);
+        ss = sndMix.toString();
+        CHECK(sndMix.getSafe(0,0) == 0);
+        CHECK(sndMix.getSafe(1,0) == 3);
+        CHECK(sndMix.getSafe(2,0) == 6);
+        CHECK(sndMix.getSafe(3,0) == 9);
+        CHECK(sndMix.getSafe(4,0) == 12);
+        CHECK(sndMix.getSafe(5,0) == 5);
+        CHECK(sndMix.getSafe(6,0) == 6);
+        CHECK(sndMix.getSafe(7,0) == 7);
+        CHECK(sndMix.getSafe(8,0) == 8);
+        CHECK(sndMix.getSafe(9,0) == 9);
+
+
+        Sound stest;
+        yarp::sig::utils::makeSawTooth(stest, 1.0, 2, 44100, 1000);
+        yarp::sig::utils::makeSquareWave(stest, 1.0, 2, 44100, 1000);
+        yarp::sig::utils::makeTone(stest, 1.0, 2, 44100, 1000);
     }
 
     SECTION("check write file.")

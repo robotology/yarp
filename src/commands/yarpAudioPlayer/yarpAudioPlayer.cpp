@@ -26,7 +26,7 @@ class PlayerModule: public yarp::os::RFModule, public yarpAudioPlayer_IDL
 
     public: //yarpAudioPlayer_IDL methods
     bool play(const std::string& filename) override;
-    bool test(double duration) override;
+    bool test(const std::string& type, const double duration, const double frequency,const std::int16_t amplitude, const std::int16_t sampling_rate, const std::int16_t channels) override;
 
     protected: //internal methods
     bool openFile(const std::string& file_name);
@@ -44,6 +44,16 @@ class PlayerModule: public yarp::os::RFModule, public yarpAudioPlayer_IDL
 
         if (rf.check("split_size"))
         { m_split_size = rf.find("split_size").asInt32(); }
+
+        if (rf.check("help"))
+        {
+            yInfo() << "yarpAudioPlayer --name <portname> --split_size <value>";
+            yInfo() << "portname: prefix for the opened ports default: /yarpAudioPlayer";
+            yInfo() << "value: int32 (default value 16000) The output sound will be split into packets of <value> samples each";
+            yInfo() << "the tool accepts commands on its rpc port";
+            yInfo() << "";
+            return false;
+        }
 
         // rpc port
         ret = m_rpcPort.open((m_name + "/rpc").c_str());
@@ -112,12 +122,21 @@ bool PlayerModule::play(const std::string& filename)
     return true;
 }
 
-bool PlayerModule::test(double duration)
+bool PlayerModule::test(const std::string& type, const double duration, const double frequency,const std::int16_t amplitude, const std::int16_t sampling_rate, const std::int16_t channels)
 {
     bool ret;
-    size_t channels = 1;
-    size_t sampleRate = 16000;
-    ret = yarp::sig::utils::makeTone(m_audioFile,duration,channels,sampleRate);
+    if (type == "sine")
+    { ret = yarp::sig::utils::makeTone(m_audioFile,duration,channels, sampling_rate, frequency, amplitude); }
+    else if (type == "sawtooth" )
+    { ret = yarp::sig::utils::makeSawTooth(m_audioFile,duration,channels,sampling_rate, frequency, amplitude); }
+    else if (type == "squarewave" )
+    { ret = yarp::sig::utils::makeSquareWave(m_audioFile,duration,channels,sampling_rate, frequency, amplitude); }
+    else
+    {
+        yInfo() << "Invalid type, should be `sine`, `sawtooth`, or `squarewave`";
+        return false;
+    }
+
     yInfo() << "Generated tone of " << duration << "s, with the following properties: samples:" << m_audioFile.getSamples() << " channels:"<< m_audioFile.getChannels() << " frequency:" << m_audioFile.getFrequency() << " bytes per samples:" << m_audioFile.getBytesPerSample();
     if (!ret) { return false; }
 

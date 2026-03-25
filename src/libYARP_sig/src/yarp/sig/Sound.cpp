@@ -49,8 +49,6 @@ public:
     yarp::os::NetInt32 bytesPerSample{ 0 };
     yarp::os::NetInt32 frequencyTag{ 0 };
     yarp::os::NetInt32 frequency{ 0 };
-    yarp::os::NetInt32 listTag{ 0 };
-    yarp::os::NetInt32 listLen{ 0 };
 
     SoundHeader() = default;
 };
@@ -60,7 +58,6 @@ Sound::Sound(size_t bytesPerSample)
 {
     init(bytesPerSample);
     m_frequency = 0;
-
 }
 
 Sound::Sound(const Sound& alt) : yarp::os::Portable()
@@ -113,6 +110,10 @@ void Sound::overwrite(const Sound& alt, size_t offset, size_t len)
         unsigned char* src = &alt.getRawData()[psrc];
         memcpy((void*) dst, (void*) src, len * this->m_bytesPerSample);
     }
+
+    //invalidate all the markers
+    m_markers.clear();
+
 }
 
 Sound& Sound::operator += (const Sound& alt)
@@ -151,6 +152,9 @@ Sound& Sound::operator += (const Sound& alt)
         memcpy((void *) &pout[out2], (void *) (alt_start  + alt_pointer),  alt_singlechannel_size);
     }
 
+    //invalidate all the markers
+    m_markers.clear();
+
     return *this;
 }
 
@@ -160,6 +164,7 @@ const Sound& Sound::operator = (const Sound& alt)
     m_frequency = alt.m_frequency;
     m_channels = alt.m_channels;
     m_samples = alt.m_samples;
+    m_markers = alt.m_markers;
 
     if (m_bytesPerSample == 1)
     {
@@ -319,6 +324,10 @@ bool Sound::clearChannel(size_t chan)
     {
         set(0, i, chan);
     }
+
+    //invalidate all the markers
+    m_markers.clear();
+
     return true;
 }
 
@@ -367,19 +376,50 @@ bool Sound::read(ConnectionReader& connection)
     m_frequency = header.frequency;
     m_channels = header.channelsSize;
     m_samples = header.samplesSize;
-    size_t data_size = header.listLen;
 
+    connection.expectInt32(); //dummy list
+    size_t data_size = connection.expectInt32(); //data size
     if (data_size != m_channels * m_samples)
     {
         return false;
     }
 
+    //sound data
     auto* pp = ((std::vector<NetUint16>*)(implementation));
     pp->resize(data_size);
     for (size_t l = 0; l < data_size; l++)
     {
         pp->at(l) = connection.expectInt16();
     }
+
+    connection.expectInt32(); //dummy list
+    size_t markersListLen = connection.expectInt32(); //markers size
+
+    //markers data
+    m_markers.clear();
+    for (int i = 0; i < markersListLen; i++)
+    {
+        int innerTag = connection.expectInt32();
+        if (innerTag != BOTTLE_TAG_LIST) {
+            return false;
+        }
+
+        int innerSize = connection.expectInt32();
+        if (innerSize != 4) {
+            return false;
+        }
+
+        std::string key = connection.expectString();
+
+        yarp::sig::SoundMarker marker;
+        marker.label = connection.expectString();
+        marker.channel = connection.expectInt32();
+        marker.sample_id = static_cast<size_t>(connection.expectInt64());
+
+        m_markers[key] = marker;
+    }
+
+
     return true;
 }
 
@@ -388,24 +428,43 @@ bool Sound::write(yarp::os::ConnectionWriter& connection) const
 {
     SoundHeader header;
     header.outerListTag = BOTTLE_TAG_LIST;
-    header.outerListLen = 5;
-    header.samplesSizeTag = BOTTLE_TAG_INT32;
+    header.outerListLen = 6;
+    header.samplesSizeTag = BOTTLE_TAG_INT32; //1
     header.samplesSize = m_samples;
-    header.bytesPerSampleTag = BOTTLE_TAG_INT32;
+    header.bytesPerSampleTag = BOTTLE_TAG_INT32; //2
     header.bytesPerSample = m_bytesPerSample;
-    header.channelsSizeTag = BOTTLE_TAG_INT32;
+    header.channelsSizeTag = BOTTLE_TAG_INT32; //3
     header.channelsSize = m_channels;
-    header.frequencyTag = BOTTLE_TAG_INT32;
+    header.frequencyTag = BOTTLE_TAG_INT32; //4
     header.frequency = m_frequency;
+
+    connection.appendBlock((char*)&header, sizeof(header));
 
     auto* pp = ((std::vector<NetUint16>*)(implementation));
     size_t siz = pp->size();
-    header.listTag = BOTTLE_TAG_LIST + BOTTLE_TAG_INT16;
-    header.listLen = siz; //this must be equal to m_samples*m_channels
-    //BOTTLE_TAG_LIST is special and must be followed by its size.
-    connection.appendBlock((char*)&header, sizeof(header));
+    connection.appendInt32(BOTTLE_TAG_LIST+BOTTLE_TAG_INT16);
+    connection.appendInt32(siz);
+
+    //add the sound data
     for (size_t l = 0; l < pp->size(); l++) {
         connection.appendInt16(pp->at(l));
+    }
+
+    connection.appendInt32(BOTTLE_TAG_LIST);
+    connection.appendInt32(static_cast<int32_t>(m_markers.size()));
+
+    //add the markers data
+    for (const auto& it : m_markers) {
+        const std::string& key = it.first;
+        const yarp::sig::SoundMarker& marker = it.second;
+
+        connection.appendInt32(BOTTLE_TAG_LIST);
+        connection.appendInt32(4); // key + 3 fields of the struct
+
+        connection.appendString(key);
+        connection.appendString(marker.label);
+        connection.appendInt32(marker.channel);
+        connection.appendInt64(static_cast<int64_t>(marker.sample_id));
     }
 
     connection.convertTextMode();
@@ -429,6 +488,7 @@ unsigned char *Sound::getRawData() const
 
     yCError(SOUND, "sound only implemented for 8-16 bit samples");
     yCAssert(SOUND, false); // that's all that's implemented right now
+    return nullptr;         // unreachable, but avoids compiler warning
 }
 
 size_t Sound::getRawDataSize() const
@@ -482,6 +542,9 @@ bool Sound::operator==(const Sound& alt) const
     if (this->m_samples != alt.getSamples()) {
         return false;
     }
+    if (this->m_markers != alt.m_markers) {
+        return false;
+    }
 
     for (size_t ch = 0; ch < this->m_channels; ch++)
     {
@@ -509,6 +572,10 @@ bool Sound::replaceChannel(size_t id, Sound schannel)
     {
         this->setSafe(schannel.getSafe(s, 0), s, id);
     }
+
+    //invalidate all the markers
+    m_markers.clear();
+
     return true;
 }
 
@@ -673,4 +740,104 @@ void Sound::findPeak(size_t& channelId, size_t& sampleId, audio_sample& sampleVa
             channelId = c;
         }
     }
+}
+
+/// --------------------------------------------------
+/// MARKERS
+/// --------------------------------------------------
+
+void  Sound::add_marker(std::string marker_label, size_t sample_id, int channel)
+{
+    SoundMarker sm;
+    sm.sample_id = sample_id;
+    sm.channel=channel;
+    sm.label=marker_label;
+
+    m_markers[marker_label] = sm;
+}
+
+bool  Sound::get_marker(std::string marker_label, size_t&  sample_id, int& channel) const
+{
+    auto it = m_markers.find(marker_label);
+    if (it == m_markers.end())
+    {
+        yCWarning(SOUND) << "Sound marker not found:" << marker_label;
+        sample_id=0;
+        channel=-1;
+        return false;
+    }
+
+    const SoundMarker& sm = it->second;
+    sample_id = sm.sample_id;
+    channel = sm.channel;
+    return true;
+}
+
+void  Sound::remove_marker(std::string marker_label)
+{
+    m_markers.erase(marker_label);
+}
+
+void  Sound::remove_all_markers()
+{
+    m_markers.clear();
+}
+
+size_t yarp::sig::Sound::getMarkersCount() const
+{
+    return m_markers.size();
+}
+
+yarp::sig::SoundMarker yarp::sig::Sound::getMarker(size_t index) const
+{
+    if (index >= m_markers.size()) {
+        return yarp::sig::SoundMarker();
+    }
+    auto it = m_markers.begin();
+    std::advance(it, index);
+    return it->second;
+}
+
+std::vector<yarp::sig::SoundMarker> yarp::sig::Sound::getMarkers() const
+{
+    std::vector<yarp::sig::SoundMarker> v;
+    v.reserve(m_markers.size());
+    for (auto const& [key, val] : m_markers) {
+        v.push_back(val);
+    }
+    return v;
+}
+
+Sound Sound::subSound(std::string marker_start, std::string marker_end)
+{
+    Sound s;
+
+    SoundMarker mstart;
+    mstart.sample_id =0;
+
+    SoundMarker mend;
+    mend.sample_id = this->m_samples - 1;
+
+    auto its = m_markers.find(marker_start);
+    if (its == m_markers.end())
+    {
+        yCWarning(SOUND) << "Sound marker not found:" << marker_start;
+    }
+    else
+    {
+        mstart = its->second;
+    }
+
+    auto ite = m_markers.find(marker_end);
+    if (ite == m_markers.end())
+    {
+        yCWarning(SOUND) << "Sound marker not found:" << marker_end;
+    }
+    else
+    {
+        mend = ite->second;
+    }
+
+    s = subSound(mstart.sample_id, mend.sample_id-mstart.sample_id+1);
+    return s;
 }

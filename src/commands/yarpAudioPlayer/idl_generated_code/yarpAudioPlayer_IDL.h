@@ -39,10 +39,16 @@ public:
     virtual bool play(const std::string& filename);
 
     /**
-     * Generate and and send a sine test tone
+     * Generate and send a test sound
+     * @param type can be "sine" , "sawtooth"  , "squarewave"
+     * @param duration the duration of the sound in seconds
+     * @param frequency the signal in hertz
+     * @param amplitude the amplitude of the signal (16 bit)
+     * @param channels number of channels
+     * @param sampling_rate signal sampling rate (samples/s)
      * @return true/false on success/failure
      */
-    virtual bool test(const double duration);
+    virtual bool test(const std::string& type = "sine", const double duration = 1, const double frequency = 440, const std::int16_t amplitude = 30000, const std::int16_t sampling_rate = 16000, const std::int16_t channels = 1);
 
     // help method
     virtual std::vector<std::string> help(const std::string& functionName = "--all");
