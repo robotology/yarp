@@ -1,7 +1,8 @@
 ARG base_img=ubuntu:24.04
-ARG yarp_branch=master
 
 FROM ${base_img}
+
+ARG yarp_branch=master
 LABEL maintainer="Marco Randazzo"
 
 # Non-interactive installation mode
