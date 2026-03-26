@@ -18,14 +18,14 @@ jobs:
               base_image: "ubuntu:24.04",
               base_image_label: "ubuntu24.04",
               work_dir: "docker/",
-              yarp_branch: "yarp-3.12"
+              yarp_branch: "yarp-3.12",
               yarp_branch_label: "yarp3.12"
             }
           - {
               base_image: "ubuntu:24.04",
               base_image_label: "ubuntu:24.04",
               work_dir: "docker/",
-              yarp_branch: "master"
+              yarp_branch: "master",
               yarp_branch_label: "yarp4.0"  
           }
     permissions:
