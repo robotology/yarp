@@ -33,7 +33,7 @@ jobs:
       packages: write
       
     steps:
-     - name: Info
+      - name: Info
         run: |
          echo "Event type: ${{github.event_name}}"
       - uses: actions/checkout@v6
