@@ -1,4 +1,6 @@
 ARG base_img=ubuntu:24.04
+ARG yarp_branch=master
+
 FROM ${base_img}
 LABEL maintainer="Marco Randazzo"
 
@@ -127,7 +129,6 @@ RUN cd ycm && mkdir build && cd build && \
 ENV YCM_DIR=/home/user1/robotology/ycm/build
 
 # Build YARP
-ARG yarp_branch=master
 USER $robotology_install_user
 WORKDIR $robotology_install_folder
 RUN git clone https://github.com/robotology/yarp.git -b ${yarp_branch}
