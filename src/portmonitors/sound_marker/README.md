@@ -1,7 +1,7 @@
 
 sound_marker_portmonitor plugin
 ======================================================================
-This portmonitor adds a marker (i.e. extra audio samples with a specific pattern) at the end of each processed yarp::sig::Sound
+This portmonitor adds a marker at the beginning and at the end of each processed yarp::sig::Sound
 
 Usage:
 -----

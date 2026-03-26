@@ -177,7 +177,7 @@ class yarpAudioPlayer_IDL_test_helper :
 {
 public:
     yarpAudioPlayer_IDL_test_helper() = default;
-    explicit yarpAudioPlayer_IDL_test_helper(const double duration);
+    yarpAudioPlayer_IDL_test_helper(const std::string& type, const double duration, const double frequency, const std::int16_t amplitude, const std::int16_t sampling_rate, const std::int16_t channels);
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
 
@@ -186,7 +186,7 @@ public:
     {
     public:
         Command() = default;
-        explicit Command(const double duration);
+        Command(const std::string& type, const double duration, const double frequency, const std::int16_t amplitude, const std::int16_t sampling_rate, const std::int16_t channels);
 
         ~Command() override = default;
 
@@ -201,7 +201,12 @@ public:
         bool readTag(yarp::os::idl::WireReader& reader);
         bool readArgs(yarp::os::idl::WireReader& reader);
 
-        double duration{0.0};
+        std::string type{"sine"};
+        double duration{0.000000};
+        double frequency{0.000000};
+        std::int16_t amplitude{30000};
+        std::int16_t sampling_rate{16000};
+        std::int16_t channels{1};
     };
 
     class Reply :
@@ -220,7 +225,7 @@ public:
         bool return_helper{false};
     };
 
-    using funcptr_t = bool (*)(const double);
+    using funcptr_t = bool (*)(const std::string&, const double, const double, const std::int16_t, const std::int16_t, const std::int16_t);
     void call(yarpAudioPlayer_IDL* ptr);
 
     Command cmd;
@@ -228,11 +233,17 @@ public:
 
     static constexpr const char* s_tag{"test"};
     static constexpr size_t s_tag_len{1};
-    static constexpr size_t s_cmd_len{2};
+    static constexpr size_t s_cmd_len{7};
     static constexpr size_t s_reply_len{1};
-    static constexpr const char* s_prototype{"bool yarpAudioPlayer_IDL::test(const double duration)"};
+    static constexpr const char* s_prototype{"bool yarpAudioPlayer_IDL::test(const std::string& type, const double duration, const double frequency, const std::int16_t amplitude, const std::int16_t sampling_rate, const std::int16_t channels)"};
     static constexpr const char* s_help{
-        "Generate and and send a sine test tone\n"
+        "Generate and send a test sound\n"
+        "@param type can be \"sine\" , \"sawtooth\"  , \"squarewave\"\n"
+        "@param duration the duration of the sound in seconds\n"
+        "@param frequency the signal in hertz\n"
+        "@param amplitude the amplitude of the signal (16 bit)\n"
+        "@param channels number of channels\n"
+        "@param sampling_rate signal sampling rate (samples/s)\n"
         "@return true/false on success/failure"
     };
 };
@@ -392,8 +403,8 @@ void yarpAudioPlayer_IDL_play_helper::call(yarpAudioPlayer_IDL* ptr)
 }
 
 // test helper class implementation
-yarpAudioPlayer_IDL_test_helper::yarpAudioPlayer_IDL_test_helper(const double duration) :
-        cmd{duration}
+yarpAudioPlayer_IDL_test_helper::yarpAudioPlayer_IDL_test_helper(const std::string& type, const double duration, const double frequency, const std::int16_t amplitude, const std::int16_t sampling_rate, const std::int16_t channels) :
+        cmd{type, duration, frequency, amplitude, sampling_rate, channels}
 {
 }
 
@@ -407,8 +418,13 @@ bool yarpAudioPlayer_IDL_test_helper::read(yarp::os::ConnectionReader& connectio
     return reply.read(connection);
 }
 
-yarpAudioPlayer_IDL_test_helper::Command::Command(const double duration) :
-        duration{duration}
+yarpAudioPlayer_IDL_test_helper::Command::Command(const std::string& type, const double duration, const double frequency, const std::int16_t amplitude, const std::int16_t sampling_rate, const std::int16_t channels) :
+        type{type},
+        duration{duration},
+        frequency{frequency},
+        amplitude{amplitude},
+        sampling_rate{sampling_rate},
+        channels{channels}
 {
 }
 
@@ -452,7 +468,22 @@ bool yarpAudioPlayer_IDL_test_helper::Command::writeTag(const yarp::os::idl::Wir
 
 bool yarpAudioPlayer_IDL_test_helper::Command::writeArgs(const yarp::os::idl::WireWriter& writer) const
 {
+    if (!writer.writeString(type)) {
+        return false;
+    }
     if (!writer.writeFloat64(duration)) {
+        return false;
+    }
+    if (!writer.writeFloat64(frequency)) {
+        return false;
+    }
+    if (!writer.writeI16(amplitude)) {
+        return false;
+    }
+    if (!writer.writeI16(sampling_rate)) {
+        return false;
+    }
+    if (!writer.writeI16(channels)) {
         return false;
     }
     return true;
@@ -484,13 +515,23 @@ bool yarpAudioPlayer_IDL_test_helper::Command::readTag(yarp::os::idl::WireReader
 
 bool yarpAudioPlayer_IDL_test_helper::Command::readArgs(yarp::os::idl::WireReader& reader)
 {
-    if (reader.noMore()) {
-        reader.fail();
-        return false;
+    if (!reader.readString(type)) {
+        type = "sine";
     }
     if (!reader.readFloat64(duration)) {
-        reader.fail();
-        return false;
+        duration = 1;
+    }
+    if (!reader.readFloat64(frequency)) {
+        frequency = 440;
+    }
+    if (!reader.readI16(amplitude)) {
+        amplitude = 30000;
+    }
+    if (!reader.readI16(sampling_rate)) {
+        sampling_rate = 16000;
+    }
+    if (!reader.readI16(channels)) {
+        channels = 1;
     }
     if (!reader.noMore()) {
         reader.fail();
@@ -542,7 +583,7 @@ bool yarpAudioPlayer_IDL_test_helper::Reply::read(yarp::os::idl::WireReader& rea
 
 void yarpAudioPlayer_IDL_test_helper::call(yarpAudioPlayer_IDL* ptr)
 {
-    reply.return_helper = ptr->test(cmd.duration);
+    reply.return_helper = ptr->test(cmd.type, cmd.duration, cmd.frequency, cmd.amplitude, cmd.sampling_rate, cmd.channels);
 }
 
 // Constructor
@@ -561,12 +602,12 @@ bool yarpAudioPlayer_IDL::play(const std::string& filename)
     return ok ? helper.reply.return_helper : bool{};
 }
 
-bool yarpAudioPlayer_IDL::test(const double duration)
+bool yarpAudioPlayer_IDL::test(const std::string& type, const double duration, const double frequency, const std::int16_t amplitude, const std::int16_t sampling_rate, const std::int16_t channels)
 {
     if (!yarp().canWrite()) {
         yError("Missing server method '%s'?", yarpAudioPlayer_IDL_test_helper::s_prototype);
     }
-    yarpAudioPlayer_IDL_test_helper helper{duration};
+    yarpAudioPlayer_IDL_test_helper helper{type, duration, frequency, amplitude, sampling_rate, channels};
     bool ok = yarp().write(helper, helper);
     return ok ? helper.reply.return_helper : bool{};
 }
