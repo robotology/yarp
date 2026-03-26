@@ -413,6 +413,8 @@ void setExternal2(yarp::sig::Image *img, PyObject* mem, int w, int h) {
 %include <yarp/sig/Image.h>
 %include <yarp/sig/ImageFile.h>
 %include <yarp/sig/Sound.h>
+%include <yarp/sig/SoundFile.h>
+%include <yarp/sig/SoundUtils.h>
 %include <yarp/sig/Matrix.h>
 %include <yarp/sig/Vector.h>
 %include <yarp/sig/Pose6D.h>
