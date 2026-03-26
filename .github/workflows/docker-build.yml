@@ -23,7 +23,7 @@ jobs:
             }
           - {
               base_image: "ubuntu:24.04",
-              base_image_label: "ubuntu:24.04",
+              base_image_label: "ubuntu24.04",
               work_dir: "docker/",
               yarp_branch: "master",
               yarp_branch_label: "yarp4.0"  
@@ -53,7 +53,7 @@ jobs:
          username: ${{ github.actor }}
          password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build and push tourSim2 image
+      - name: Build and push yarp image
         uses: docker/build-push-action@v7
         with:
           context: ${{ matrix.config.work_dir }}
