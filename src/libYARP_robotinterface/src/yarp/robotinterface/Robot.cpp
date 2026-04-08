@@ -115,6 +115,7 @@ public:
     yarp::dev::PolyDriverList externalDevices;
     yarp::robotinterface::ActionPhase currentPhase {ActionPhaseUnknown};
     unsigned int currentLevel {0};
+    bool showDeviceParameters {false};
     bool dryrun {false};
     bool reverseShutdownActionOrder {false};
     yarp::dev::PolyDriver m_ddstorage;
@@ -220,8 +221,16 @@ bool yarp::robotinterface::Robot::Private::openDevices()
     m_ddstorage.view(m_istorage);
 
     bool ret = true;
-    for (auto& device : devices) {
-        yCInfo(YRI_ROBOT) << "Opening device" << device.name() << "with parameters" << device.params();
+    for (auto& device : devices)
+    {
+        if (showDeviceParameters)
+        {
+            yCInfo(YRI_ROBOT) << "Opening device" << device.name() << "with parameters" << device.params();
+        }
+        else
+        {
+            yCInfo(YRI_ROBOT) << "Opening device" << device.name() << ". Use option `show-device-parameters` for additional info.";
+        }
 
         if (dryrun) {
             continue;
@@ -582,6 +591,7 @@ yarp::robotinterface::Robot::Robot(const yarp::robotinterface::Robot& other) :
     mPriv->currentPhase = other.mPriv->currentPhase;
     mPriv->currentLevel = other.mPriv->currentLevel;
     mPriv->dryrun = other.mPriv->dryrun;
+    mPriv->showDeviceParameters = other.mPriv->showDeviceParameters;
     mPriv->reverseShutdownActionOrder = other.mPriv->reverseShutdownActionOrder;
     mPriv->devices = other.mPriv->devices;
     mPriv->params = other.mPriv->params;
@@ -596,6 +606,7 @@ yarp::robotinterface::Robot& yarp::robotinterface::Robot::operator=(const yarp::
         mPriv->currentPhase = other.mPriv->currentPhase;
         mPriv->currentLevel = other.mPriv->currentLevel;
         mPriv->dryrun = other.mPriv->dryrun;
+        mPriv->showDeviceParameters = other.mPriv->showDeviceParameters;
         mPriv->reverseShutdownActionOrder = other.mPriv->reverseShutdownActionOrder;
 
         mPriv->devices.clear();
@@ -648,6 +659,11 @@ void yarp::robotinterface::Robot::setAllowDeprecatedDevices(bool allowDeprecated
             device.params().push_back(Param("allow-deprecated-devices", "1"));
         }
     }
+}
+
+void yarp::robotinterface::Robot::setShowDeviceParameters(bool show)
+{
+    mPriv->showDeviceParameters = show;
 }
 
 void yarp::robotinterface::Robot::setDryRun(bool dryrun)
