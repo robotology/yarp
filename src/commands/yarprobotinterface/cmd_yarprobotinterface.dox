@@ -36,6 +36,9 @@ The details of the xml format of the files loaded by yarprobotinterface are docu
 - If this option is specified, then xml file is only loaded without actually opening devices.
   This option is useful to validate if xml files are well formed.
 
+`--show-device-parameters`
+- If this option is specified, then yarprobotinterface shows the complete list of parameters used to open every single device.
+
 `--enable_tags (xxx yyy ... zzz)`
 - This options can be used to enable optional devices which have been marked with the in `enabled_by` attribute in the xml file. See \ref yarp_robotinterface_xml_config_files
 

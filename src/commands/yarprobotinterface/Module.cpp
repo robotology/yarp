@@ -149,6 +149,7 @@ bool yarprobotinterface::Module::configure(yarp::os::ResourceFinder& rf)
     mPriv->robot.setVerbose(verbosity);
     mPriv->robot.setAllowDeprecatedDevices(rf.check("allow-deprecated-devices"));
     mPriv->robot.setDryRun(dryrun);
+    mPriv->robot.setShowDeviceParameters(rf.check("show-device-parameters"));
 
     std::string portprefix = mPriv->robot.portprefix();
     if (portprefix[0] != '/') {
