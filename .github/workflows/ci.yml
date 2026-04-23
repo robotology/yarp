@@ -171,16 +171,6 @@ jobs:
       matrix:
         config:
         - {
-            cmake_version: "3.20.*",
-            cmake_generator: "Ninja",
-            ycm_version: "0.18.0",
-          }
-        - {
-            cmake_version: "3.21.*",
-            cmake_generator: "Unix Makefiles",
-            ycm_version: "0.18.0",
-          }
-        - {
             cmake_version: "3.22.*",
             cmake_generator: "Unix Makefiles",
             ycm_version: "0.18.0",

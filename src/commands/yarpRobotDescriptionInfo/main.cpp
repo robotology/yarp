@@ -21,7 +21,7 @@ namespace
 void display_help ()
 {
     yCInfo(YARPDESCINFO) << "This is the tool yarpRobotDescriptionInfo.";
-    yCInfo(YARPDESCINFO) << "By default it prints on screen all the connections found on the yarp network.";
+    yCInfo(YARPDESCINFO) << "This tool generate a .dot file which describes a graph representing all the devices used by yarpobotinterface and their connections.";
     yCInfo(YARPDESCINFO) << "use the --file <filename> to choose the name of the output file. (default: outputfile.dot) ";
     yCInfo(YARPDESCINFO) << "use the --remote <remote_port> to select a specific the robotDescription_nws_yarp rpc port (default: /robotDescription_nws_yarp/rpc)";
     yCInfo(YARPDESCINFO) << "use an online dot editor (e.g. https://dreampuf.github.io/GraphvizOnline) to visualize the graph.";
