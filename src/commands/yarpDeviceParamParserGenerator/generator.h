@@ -24,7 +24,7 @@ const bool enable_debug_prints = false;
 #define S_TAB3 "            "
 
 #define MACRO_PARSER_VERSION_MAJOR 2
-#define MACRO_PARSER_VERSION_MINOR 0
+#define MACRO_PARSER_VERSION_MINOR 1
 
 class ParamsFilesGenerator
 {

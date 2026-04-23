@@ -34,7 +34,8 @@ bool ParamsFilesGenerator::parseMdParams(const std::string inputfilename)
     }
 
     //The following regex matches the presence of a block similar to |:--------------:|
-    std::regex pattern(R"(\|\s*:\-*:\s*\|)");
+    std::regex blockpattern(R"(\|\s*:\-*:\s*\|)");
+    std::regex includepattern(R"(#include\s+(.+))");
 
     //search for the line containing the pattern, then close the file.
     //the pattern can be present or not.
@@ -45,7 +46,29 @@ bool ParamsFilesGenerator::parseMdParams(const std::string inputfilename)
     size_t i=0;
     while (std::getline(inputfile, line))
     {
-        if (std::regex_search(line, pattern)) { linepattern  = i; break;}
+        //find for possible lines #include <filename> and process it if found
+        std::smatch match;
+        if (std::regex_search(line, match, includepattern))
+        {
+            bool brec = parseMdParams(match[1]);
+            if (!brec)
+            {
+                std::cerr << "Unable to process included file" << std::endl;
+                return false;
+            }
+            else
+            {
+                //success, added x params
+            }
+            linepattern  = i;
+        }
+
+        //find the end of the header block |:--------------:|
+        if (std::regex_search(line, blockpattern))
+        {
+           linepattern  = i;
+           break;
+        }
         i++;
     }
     inputfile.close();

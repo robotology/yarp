@@ -205,7 +205,7 @@ bool Battery_nwc_yarp::open(yarp::os::Searchable &config)
         return false;
     }
 
-    ok=Network::connect(local_rpc, remote_rpc);
+    ok=Network::connect(local_rpc, remote_rpc, m_rpc_carrier, m_rpc_timeout);
     if (!ok)
     {
        yCError(BATTERYCLIENT, "open() Could not connect %s -> %s", remote_rpc.c_str(), local_rpc.c_str());
