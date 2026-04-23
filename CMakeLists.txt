@@ -4,6 +4,8 @@
 
 cmake_minimum_required(VERSION 3.19)
 
+cmake_policy(SET CMP0127 NEW)
+
 # UseSWIG generates now standard target names.
 if(${CMAKE_VERSION} VERSION_GREATER_EQUAL 3.13)
   cmake_policy(SET CMP0078 OLD)

@@ -16,7 +16,6 @@ foreach(example_name
   portable_pair
   periodicthread
   periodicThreadTiming
-  queue_manager
   rfmodule
   rpc_client
   rpc_server
