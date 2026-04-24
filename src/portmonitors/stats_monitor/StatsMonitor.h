@@ -12,6 +12,8 @@
 #include <yarp/os/PeriodicThread.h>
 
 #include <string>
+#include <mutex>
+#include <memory>
 
 class StatsThread :  public yarp::os::PeriodicThread
 {
@@ -34,7 +36,7 @@ public:
         m_period = period;
         m_source =src;
         m_destination=dest;
-        m_stats_port_name = "/stats_monitor/" + m_source + m_destination + "/stats:o";
+        m_stats_port_name = "/stats_monitor" + m_source + m_destination + "/stats:o";
         m_isForward = fw;
     }
     virtual ~StatsThread() = default;
@@ -42,6 +44,7 @@ public:
     void setData(size_t datasize);
     void run() override;
     bool threadInit() override;
+    void threadRelease() override;
 };
 
  /**

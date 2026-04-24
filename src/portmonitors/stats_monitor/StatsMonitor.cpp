@@ -6,6 +6,7 @@
 #include "StatsMonitor.h"
 
 #include <map>
+#include <sstream>
 
 #include <yarp/os/Bottle.h>
 #include <yarp/os/LogComponent.h>
@@ -113,21 +114,26 @@ void StatsThread::setData(size_t datasize)
 
 void StatsThread::run()
 {
-    std::lock_guard lock(m_mutex);
+    double local_sum;
+    int local_count;
+    {
+        std::lock_guard lock(m_mutex);
+        local_sum = m_datasize_sum;
+        local_count = m_datasize_count;
+        m_datasize_count = 0;
+        m_datasize_sum = 0;
+    }
 
     yarp::os::Bottle msg;
     msg.addFloat64(yarp::os::SystemClock::nowSystem());
     msg.addString(m_source);
     msg.addString(m_destination);
     msg.addInt8(m_isForward);
-    msg.addFloat64(m_datasize_sum/m_period);
-    msg.addFloat64(m_datasize_count/m_period);
+    msg.addFloat64(local_sum/m_period);
+    msg.addFloat64(local_count/m_period);
     m_stats_port.write(msg);
 
     //yDebug("Writing: %s", msg.toString().c_str());
-
-    m_datasize_count=0;
-    m_datasize_sum=0;
 }
 
 bool StatsThread::threadInit()
@@ -138,4 +144,9 @@ bool StatsThread::threadInit()
        return false;
    }
    return true;
+}
+
+void StatsThread::threadRelease()
+{
+   m_stats_port.close();
 }
