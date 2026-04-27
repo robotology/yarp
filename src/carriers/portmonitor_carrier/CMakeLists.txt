@@ -25,6 +25,7 @@ if (NOT SKIP_portmonitor)
       dll/MonitorSharedLib.h
       dll/MonitorSharedLib.cpp
   )
+
   if(YARP_HAS_Lua)
     target_sources(yarp_portmonitor
       PRIVATE
@@ -46,9 +47,34 @@ if (NOT SKIP_portmonitor)
     endif()
   endif()
 
+  if(YARP_HAS_Python)
+    target_sources(yarp_portmonitor
+      PRIVATE
+        python/MonitorPython.cpp
+        python/MonitorPython.h
+    )
+    if(YARP_HAS_SWIG AND NOT CMAKE_CROSSCOMPILING)
+      include(${SWIG_USE_FILE})
+      add_custom_command(
+        OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/python/src_gen/swigpythonrun.h"
+        COMMAND "${CMAKE_COMMAND}" -E make_directory "${CMAKE_CURRENT_BINARY_DIR}/python/src_gen/"
+        COMMAND "${CMAKE_COMMAND}" -E env "SWIG_LIB=${SWIG_DIR}" "${SWIG_EXECUTABLE}" -c++ -python -external-runtime "${CMAKE_CURRENT_BINARY_DIR}/python/src_gen/swigpythonrun.h"
+        COMMENT "Generating swig-python runtime"
+      )
+      target_include_directories(yarp_portmonitor PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/python/src_gen")
+      target_sources(yarp_portmonitor PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/python/src_gen/swigpythonrun.h")
+    else()
+      target_include_directories(yarp_portmonitor PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/python/src_gen")
+    endif()
+  endif()
+
   target_include_directories(yarp_portmonitor PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}
                                                       ${CMAKE_CURRENT_SOURCE_DIR}/dll)
-  target_link_libraries(yarp_portmonitor PRIVATE YARP::YARP_os)
+
+  target_link_libraries(yarp_portmonitor PRIVATE YARP::YARP_os
+                                                 YARP::YARP_dev
+                                                 YARP::YARP_sig)
+
   list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS YARP_os)
 
   if(YARP_HAS_Lua)
@@ -57,6 +83,14 @@ if (NOT SKIP_portmonitor)
     target_compile_definitions(yarp_portmonitor PRIVATE ENABLED_PORTMONITOR_LUA)
     target_link_libraries(yarp_portmonitor PRIVATE ${LUA_LIBRARY})
 #     list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS Lua) (not using targets)
+  endif()
+
+  if(YARP_HAS_Python)
+    target_include_directories(yarp_portmonitor PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/python})
+    target_include_directories(yarp_portmonitor SYSTEM PRIVATE ${PYTHON_INCLUDE_DIR})
+    target_compile_definitions(yarp_portmonitor PRIVATE ENABLED_PORTMONITOR_PYTHON)
+    target_link_libraries(yarp_portmonitor PRIVATE Python::Python)
+   # target_link_libraries(yarp_portmonitor PRIVATE ${PYHTON_LIBRARY})
   endif()
 
   yarp_install(

@@ -5,6 +5,7 @@
 
 #include "MonitorBinding.h"
 #include "MonitorSharedLib.h"
+#include "python/MonitorPython.h"
 #include "MonitorLogComponent.h"
 
 #ifdef ENABLED_PORTMONITOR_LUA
@@ -24,7 +25,8 @@ MonitorBinding::~MonitorBinding() = default;
 
 MonitorBinding* MonitorBinding::create(const char* script_type)
 {
-    if(std::string(script_type) == "lua") {
+    if(std::string(script_type) == "lua")
+    {
 #ifdef ENABLED_PORTMONITOR_LUA
         return new MonitorLua();
 #else
@@ -32,10 +34,19 @@ MonitorBinding* MonitorBinding::create(const char* script_type)
         return nullptr;
 #endif
     }
-
-    if(std::string(script_type) == "dll") {
+    else if(std::string(script_type) == "dll")
+    {
         return new MonitorSharedLib();
     }
+    else if(std::string(script_type) == "python")
+    {
+        return new MonitorPython();
+    }
+    else
+    {
+        yCError(PORTMONITORCARRIER, R"(Currently only 'lua','dll','python' objects are supported by portmonitor)");
+    }
+
 
     return nullptr;
 }
