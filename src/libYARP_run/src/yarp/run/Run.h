@@ -7,10 +7,13 @@
 #ifndef YARP_RUN_RUN_H
 #define YARP_RUN_RUN_H
 
+#include <vector>
+
 #include <cstring>
 #include <yarp/run/api.h>
 #include <yarp/os/RpcServer.h>
 #include <yarp/os/Property.h>
+#include <yarp/os/SystemInfoSerializer.h>
 
 
 class YarpRunInfoVector;
@@ -72,12 +75,20 @@ namespace yarp::run {
 /**
  * \class yarp::os::Run
  * \brief yarprun provides the APIs to a client-server environment that is able to run,
- * kill and monitor applications commands on a remote machin in Windows and Linux.
+ * kill and monitor applications commands on a remote machine in Windows and Linux.
  */
 class YARP_run_API Run
 {
 public:
     // API
+    struct processInfo
+    {
+         int pid=0;
+         std::string tag;
+         std::string status;
+         std::string command;
+         std::string env;
+    };
 
     /**
      * Launch a yarprun server.
@@ -90,46 +101,73 @@ public:
      * - geometry WxH+X+Y (optional)
      * - hold (optional)
      * @param keyv is the tag that will identify the running application. It must be unique in the network.
-     * @return 0=success -1=failed.
+     * @return true=success false=failed.
      */
-    static int start(const std::string &node, yarp::os::Property &command, std::string &keyv);
+    static bool start(const std::string &node, yarp::os::Property &command, std::string &keyv);
+
     /**
      * Terminate an application running on a yarprun server.
      * @param node is the yarprun server port name. It must be unique in the network.
      * @param keyv is the tag that identifies the running application. It must be unique in the network.
-     * @return 0=success -1=failed.
+     * @return true=success false=failed.
      */
-    static int sigterm(const std::string &node, const std::string &keyv);
+    static bool sigterm(const std::string &node, const std::string &keyv);
+
     /**
      * Terminate all applications running on a yarprun server.
      * @param node is the yarprun server port name. It must be unique in the network.
-     * @return 0=success -1=failed.
+     * @return true=success false=failed.
      */
-    static int sigterm(const std::string &node);
+    static bool sigtermall(const std::string &node);
+
     /**
      * Send a SIGNAL to an application running on a yarprun server (Linux only).
      * @param node is the yarprun server port name. It must be unique in the network.
      * @param keyv is the tag that identifies the running application. It must be unique in the network.
      * @param s is the SIGNAL number.
-     * @return 0=success -1=failed.
+     * @return true=success false=failed.
      */
-    static int kill(const std::string &node, const std::string &keyv, int s);
+    static bool kill(const std::string &node, const std::string &keyv, int s);
+
     /**
      * Get a report of all applications running on a yarprun server.
      * @param node is the yarprun server port name. It must be unique in the network.
-     * @param processes is a list of applications running on the remote yarprun server. It must not be allocated
-     * and it is responsibility of the caller to delete it.
-     * @param num_processes return the number of running processes.
+     * @param processes is a list of applications running on the remote yarprun server.
      * @return 0=success -1=failed.
      */
-    // static int ps(const std::string &node, std::string** &processes, int &num_processes);
+    static bool ps(const std::string &node, std::vector<processInfo>& processes);
+
+    /**
+     * Get a report of system information of a yarprun server.
+     * @param node is the yarprun server port name. It must be unique in the network.
+     * @param info is the system information of the remote yarprun server.
+     * @return true=success false=failed.
+     */
+    static bool sysinfo(const std::string& node, yarp::os::SystemInfoSerializer& info);
+
+
     /**
      * Report if an application is still running on a yarprun server.
      * @param node is the yarprun server port name. It must be unique in the network.
      * @param keyv is the tag that identifies the application. It must be unique in the network.
      * @return true=running false=terminated.
      */
-    static bool isRunning(const std::string &node, std::string &keyv);
+    static bool isRunning(const std::string &node, const std::string &keyv);
+
+    /**
+     * Display the path of a file on a yarprun server.
+     * @param node is the yarprun server port name. It must be unique in the network.
+     * @param keyv is the tag that identifies the application. It must be unique in the network.
+     * @return true=running false=terminated.
+     */
+    static bool which(const std::string &node, const std::string &keyv);
+
+    /**
+     * Exit a yarprun server.
+     * @param node is the yarprun server port name. It must be unique in the network.
+     * @return true=success false=failed.
+     */
+    static bool exit(const std::string& node);
 
     // end API
 
@@ -166,6 +204,9 @@ YARP_DISABLE_DLL_INTERFACE_WARNING
     static YarpRunInfoVector *mStdioVector;
     static ZombieHunterThread *mBraveZombieHunter;
     static void CleanZombie(int pid);
+#define READ_FROM_PIPE 0
+#define WRITE_TO_PIPE  1
+#define REDIRECT_TO(from, to) yarp::run::impl::dup2(to, from)
 #endif
 YARP_WARNING_POP
     static yarp::os::Bottle sendMsg(yarp::os::Bottle& msg, std::string target, int RETRY=20, double DELAY=0.5);
@@ -173,10 +214,10 @@ YARP_WARNING_POP
 protected:
     static void Help(const char* msg="");
     static int server();
-    static int executeCmdAndStdio(yarp::os::Bottle& msg, yarp::os::Bottle& result);
-    static int executeCmdStdout(yarp::os::Bottle& msg, yarp::os::Bottle& result, std::string& loggerName);
-    static int executeCmd(yarp::os::Bottle& msg, yarp::os::Bottle& result);
-    static int userStdio(yarp::os::Bottle& msg, yarp::os::Bottle& result);
+    static int executeCmdAndStdio(const yarp::os::Bottle& msg, yarp::os::Bottle& result);
+    static int executeCmdStdout(const yarp::os::Bottle& msg, yarp::os::Bottle& result, std::string& loggerName);
+    static int executeCmd(const yarp::os::Bottle& msg, yarp::os::Bottle& result);
+    static int userStdio(const yarp::os::Bottle& msg, yarp::os::Bottle& result);
 
     static inline bool IS_PARENT_OF(int pid){ return pid>0; }
     static inline bool IS_NEW_PROCESS(int pid){ return !pid; }

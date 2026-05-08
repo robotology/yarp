@@ -56,9 +56,6 @@ inline std::string lastError2String()
 }
 #else
 //#define SIGSTDIO SIGHUP
-#define READ_FROM_PIPE 0
-#define WRITE_TO_PIPE  1
-#define REDIRECT_TO(from, to) yarp::run::impl::dup2(to, from)
 YarpRunInfoVector* yarp::run::Run::mProcessVector = nullptr;
 YarpRunInfoVector* yarp::run::Run::mStdioVector = nullptr;
 ZombieHunterThread* yarp::run::Run::mBraveZombieHunter = nullptr;
@@ -74,8 +71,6 @@ int yarp::run::Run::mProcCNT=0;
 bool yarp::run::Run::mStresstest=false;
 bool yarp::run::Run::mLogged=false;
 std::string yarp::run::Run::mLoggerPort("/yarplogger");
-
-namespace fs = yarp::conf::filesystem;
 
 ////////////////////////////////////
 
@@ -94,44 +89,6 @@ void sigstdio_handler(int sig)
 }
 
 ////////////////////////////////////
-
-constexpr fs::value_type slash = fs::preferred_separator;
-constexpr auto sep = yarp::conf::environment::path_separator;
-////// adapted from libYARP_OS: ResourceFinder.cpp
-static yarp::os::Bottle parsePaths(const std::string& txt)
-{
-    yarp::os::Bottle result;
-    const char *at = txt.c_str();
-    int slash_tweak = 0;
-    int len = 0;
-    for (char ch : txt) {
-        if (ch==sep) {
-            result.addString(std::string(at, len-slash_tweak));
-            at += len+1;
-            len = 0;
-            slash_tweak = 0;
-            continue;
-        }
-        slash_tweak = (ch==slash && len>0)?1:0;
-        len++;
-    }
-    if (len>0) {
-        result.addString(std::string(at, len-slash_tweak));
-    }
-    return result;
-}
-
-static bool fileExists(const char *fname)
-{
-    FILE *fp = nullptr;
-    fp = fopen(fname, "r");
-    if (!fp) {
-        return false;
-    } else {
-        fclose(fp);
-        return true;
-    }
-}
 
 static std::string getProcLabel(const yarp::os::Bottle& msg)
 {
@@ -427,16 +384,33 @@ yarp::os::Bottle yarp::run::Run::sendMsg(yarp::os::Bottle& msg, std::string targ
     {
         yarp::os::RpcClient port;
 
+#if 0
         if (!port.open("..."))
+#else
+
+        static std::random_device rd;
+        static std::mt19937 gen(rd());
+        static std::uniform_int_distribution<> dist(0, 99999);
+        int number = dist(gen);
+        std::ostringstream oss;
+        oss << std::setw(5) << std::setfill('0') << number;
+        std::string tempy = "/yarprunclient/temp" + oss.str();
+        if (!port.open(tempy))
+#endif
         {
             yarp::os::SystemClock::delaySystem(DELAY);
+            fprintf(stderr, "retrying...");
             continue;
         }
 
-        if (!yarp::os::Network::connect(port.getName(), target))
+        std::string tempportname = port.getName();
+        bool bb = yarp::os::Network::isConnected(tempportname, target);
+
+        if (!yarp::os::Network::connect(tempportname, target, "fast_tcp", false))
         {
             port.close();
             yarp::os::SystemClock::delaySystem(DELAY);
+            fprintf(stderr, "retrying...");
             continue;
         }
 
@@ -445,11 +419,11 @@ yarp::os::Bottle yarp::run::Run::sendMsg(yarp::os::Bottle& msg, std::string targ
         {
             port.close();
             yarp::os::SystemClock::delaySystem(DELAY);
+            fprintf(stderr, "retrying...");
             continue;
         }
         RUNLOG(">>>port.write(msg, response)")
 
-        yarp::os::Network::disconnect(port.getName(), target);
         port.close();
 
         fprintf(stderr, "RESPONSE:\n=========\n");
@@ -471,370 +445,14 @@ yarp::os::Bottle yarp::run::Run::sendMsg(yarp::os::Bottle& msg, std::string targ
     return response;
 }
 
-void sigint_handler(int sig)
-{
-    YARP_UNUSED(sig);
-    yarp::run::Run::mStresstest=false;
-
-    if (yarp::run::Run::pServerPort)
-    {
-        yarp::os::RpcServer *pClose=yarp::run::Run::pServerPort;
-        yarp::run::Run::pServerPort = nullptr;
-        pClose->close();
-    }
-    //else
-    //{
-    //}
-}
 
 ///////////////////////////
 // WINDOWS SERVER
 #if defined(_WIN32)
-int yarp::run::Run::server()
-{
-    yarp::os::Semaphore serializer(1);
-
-    yarp::os::RpcServer port;
-
-    if (!port.open(mPortName.c_str()))
-    {
-        yError() << "Yarprun failed to open port: " << mPortName.c_str();
-        return YARPRUN_ERROR;
-    }
-
-    yarp::os::Bottle cmd, reply;
-    cmd.addString("set");
-    cmd.addString(port.getName());
-    cmd.addString("yarprun");
-    cmd.addString("true");
-    yarp::os::impl::NameClient::getNameClient().send(cmd, reply);
-
-    yInfo() << "Yarprun successfully started on port: " << mPortName.c_str();
-
-    pServerPort=&port;
-
-    yarp::os::impl::signal(SIGINT, sigint_handler);
-    yarp::os::impl::signal(SIGTERM, sigint_handler);
-
-    // Enabling cpu load collector on windows
-    //yarp::os::impl::SystemInfo::enableCpuLoadCollector();
-
-    while (pServerPort)
-    {
-        yarp::os::Bottle msg;
-
-        RUNLOG("<<<port.read(msg, true)")
-        if (!port.read(msg, true)) break;
-        RUNLOG(">>>port.read(msg, true)")
-
-        if (!pServerPort) break;
-
-        //printf("<<< %s >>>\n", msg.toString().c_str());
-        //fflush(stdout);
-
-///////////////////////////////////////////////////
-
-        // command with stdio management
-        if (msg.check("stdio"))
-        {
-            std::string strOnPort=msg.find("on").asString();
-            std::string strStdioPort=msg.find("stdio").asString();
-
-            if (strOnPort==mPortName)
-            {
-                std::string strUUID=mPortName+"/"+int2String(getpid())+"/"+msg.find("as").asString()+"-"+int2String(mProcCNT++);
-                yarp::os::Bottle botUUID;
-                botUUID.addString("stdiouuid");
-                botUUID.addString(strUUID.c_str());
-                msg.addList()=botUUID;
-
-                if (mLogged || msg.check("log"))
-                {
-                    std::string strAlias=msg.find("as").asString();
-                    std::string portName="/log";
-                    portName+=mPortName+"/";
-                    std::string command = msg.findGroup("cmd").get(1).asString();
-                    command = command.substr(0, command.find(' '));
-                    command = command.substr(command.find_last_of("\\/") + 1);
-                    portName+=command;
-
-                    yarp::os::Bottle botFwd;
-                    botFwd.addString("forward");
-                    botFwd.addString(portName.c_str());
-                    if (msg.check("log"))
-                    {
-                        yarp::os::Bottle botLogger=msg.findGroup("log");
-
-                        if (botLogger.size()>1)
-                        {
-                            botFwd.addString(botLogger.get(1).asString());
-                        }
-                        else
-                        {
-                            botFwd.addString(mLoggerPort);
-                        }
-                    }
-                    else
-                    {
-                        botFwd.addString(mLoggerPort);
-                    }
-                    msg.addList()=botFwd;
-                }
-
-                yarp::os::Bottle cmdResult;
-                if (executeCmdAndStdio(msg, cmdResult)>0)
-                {
-                    if (strStdioPort==mPortName)
-                    {
-                        yarp::os::Bottle stdioResult;
-                        userStdio(msg, stdioResult);
-                        cmdResult.append(stdioResult);
-                    }
-                    else
-                    {
-                        cmdResult.append(sendMsg(msg, strStdioPort));
-                    }
-                }
-
-                port.reply(cmdResult);
-            }
-            else
-            {
-                yarp::os::Bottle stdioResult;
-                userStdio(msg, stdioResult);
-                port.reply(stdioResult);
-            }
-
-            continue;
-        }
-
-        // without stdio
-        if (msg.check("cmd"))
-        {
-            yarp::os::Bottle cmdResult;
-
-            if (msg.check("log"))
-            {
-                yarp::os::Bottle botLogger=msg.findGroup("log");
-
-                if (botLogger.size()>1)
-                {
-                    std::string loggerName=botLogger.get(1).asString();
-                    executeCmdStdout(msg, cmdResult, loggerName);
-                }
-                else
-                {
-                    executeCmdStdout(msg, cmdResult, mLoggerPort);
-                }
-            }
-            else if (mLogged)
-            {
-                executeCmdStdout(msg, cmdResult, mLoggerPort);
-            }
-            else
-            {
-                executeCmd(msg, cmdResult);
-            }
-            port.reply(cmdResult);
-            continue;
-        }
-
-        if (msg.check("kill"))
-        {
-            std::string alias(msg.findGroup("kill").get(1).asString());
-            int sig=msg.findGroup("kill").get(2).asInt32();
-            yarp::os::Bottle result;
-            result.addString(mProcessVector.Signal(alias, sig)?"kill OK":"kill FAILED");
-            port.reply(result);
-            continue;
-        }
-
-        if (msg.check("sigterm"))
-        {
-            std::string alias(msg.find("sigterm").asString());
-            yarp::os::Bottle result;
-            result.addString(mProcessVector.Signal(alias, SIGTERM)?"sigterm OK":"sigterm FAILED");
-            port.reply(result);
-            continue;
-        }
-
-        if (msg.check("sigtermall"))
-        {
-            mProcessVector.Killall(SIGTERM);
-            yarp::os::Bottle result;
-            result.addString("sigtermall OK");
-            port.reply(result);
-            continue;
-        }
-
-        if (msg.check("ps"))
-        {
-            yarp::os::Bottle result;
-            result.append(mProcessVector.PS());
-            port.reply(result);
-            continue;
-        }
-
-        if (msg.check("isrunning"))
-        {
-            std::string alias(msg.find("isrunning").asString());
-            yarp::os::Bottle result;
-            result.addString(mProcessVector.IsRunning(alias)?"running":"not running");
-            port.reply(result);
-            continue;
-        }
-
-        if (msg.check("killstdio"))
-        {
-            std::string alias(msg.find("killstdio").asString());
-            mStdioVector.Signal(alias, SIGTERM);
-            yarp::os::Bottle result;
-            result.addString("killstdio OK");
-            port.reply(result);
-            continue;
-        }
-
-////////////////////////////////////////////////////////////////////
-
-        if (msg.check("sysinfo"))
-        {
-            yarp::os::SystemInfoSerializer sysinfo;
-            port.reply(sysinfo);
-            continue;
-        }
-
-        if (msg.check("which"))
-        {
-            std::string fileName=msg.find("which").asString();
-            if (fileName!="")
-            {
-                yarp::os::Bottle possiblePaths = parsePaths(yarp::conf::environment::get_string("PATH"));
-                for (int i=0; i<possiblePaths.size(); ++i)
-                {
-                    std::string guessString=possiblePaths.get(i).asString() +
-                    std::string{slash} + fileName;
-                    const char* guess=guessString.c_str();
-                    if (fileExists (guess))
-                    {
-                        fileName= "\"" + std::string(guess) + "\"";
-                        break;
-                    }
-                }
-            }
-            yarp::os::Value fileNameWriter(fileName);
-            port.reply(fileNameWriter);
-            continue;
-        }
-
-        if (msg.check("exit"))
-        {
-            pServerPort=0;
-            yarp::os::Bottle result;
-            result.addString("exit OK");
-            port.reply(result);
-            port.close();
-        }
-    }
-
-
-    Run::mStdioVector.Killall(SIGTERM);
-
-    Run::mProcessVector.Killall(SIGTERM);
-
-    return 0;
-}
 
 ///////////////////////
 #else // LINUX SERVER
 ///////////////////////
-
-void yarp::run::Run::cleanBeforeExec()
-{
-    // zombie hunter stop
-
-    //yarp::os::impl::signal(SIGPIPE, SIG_IGN);
-    //yarp::os::impl::signal(SIGCHLD, SIG_DFL);
-    //yarp::os::impl::signal(SIGINT, SIG_DFL);
-    //yarp::os::impl::signal(SIGTERM, SIG_DFL);
-
-    if (mProcessVector)
-    {
-        YarpRunInfoVector *p=mProcessVector;
-        mProcessVector = nullptr;
-        delete p;
-    }
-    if (mStdioVector)
-    {
-        YarpRunInfoVector *p=mStdioVector;
-        mStdioVector = nullptr;
-        delete p;
-    }
-    if (mBraveZombieHunter)
-    {
-        ZombieHunterThread *p=mBraveZombieHunter;
-        mBraveZombieHunter = nullptr;
-        p->stop();
-        delete p;
-    }
-
-    //yarp::os::Network::fini();
-}
-
-void yarp::run::Run::writeToPipe(int fd, std::string str)
-{
-    int len = str.length() + 1;
-    int ret;
-    ret = write(fd, &len, sizeof(len));
-    if (ret != sizeof(len)) {
-        fprintf(stderr, "Warning: could not write string length to pipe.\n");
-    }
-    ret = write(fd, str.c_str(), len);
-    if (ret != len) {
-        fprintf(stderr, "Warning: could not write string to pipe.\n");
-    }
-}
-
-int yarp::run::Run::readFromPipe(int fd, char* &data, int& buffsize)
-{
-    int len=0;
-    char* buff=(char*)&len;
-
-    for (int c=4, r=0; c>0; c-=r)
-    {
-        r=read(fd, buff, c);
-
-        if (r < 1) {
-            return -1;
-        }
-
-        buff+=r;
-    }
-
-    if (len <= 0) {
-        return 0;
-    }
-
-    if (len>buffsize)
-    {
-        delete [] data;
-        data=new char[buffsize=1024+(len/1024)*1024];
-    }
-
-    buff=data;
-
-    for (int c=len, r=0; c>0; c-=r)
-    {
-        r=read(fd, buff, c);
-
-        if (r < 1) {
-            return -1;
-        }
-
-        buff+=r;
-    }
-
-    return len;
-}
 
 static void sigchld_handler(int sig)
 {
@@ -845,839 +463,8 @@ static void sigchld_handler(int sig)
     }
 }
 
-int yarp::run::Run::server()
-{
-    int pipe_server2manager[2];
-    int pipe_manager2server[2];
-
-    if (yarp::run::impl::pipe(pipe_server2manager))
-    {
-        fprintf(stderr, "Can't open pipe because %s\n", strerror(errno));
-        fflush(stderr);
-
-        return YARPRUN_ERROR;
-    }
-
-    if (yarp::run::impl::pipe(pipe_manager2server))
-    {
-        fprintf(stderr, "Can't open pipe because %s\n", strerror(errno));
-        fflush(stderr);
-
-        return YARPRUN_ERROR;
-    }
-
-    int pid_process_manager=yarp::run::impl::fork();
-
-    if (IS_INVALID(pid_process_manager))
-    {
-        int error=errno;
-
-        CLOSE(pipe_server2manager[WRITE_TO_PIPE]);
-        CLOSE(pipe_server2manager[READ_FROM_PIPE]);
-        CLOSE(pipe_manager2server[WRITE_TO_PIPE]);
-        CLOSE(pipe_manager2server[READ_FROM_PIPE]);
-
-        fprintf(stderr, "Can't fork process manager because %s\n", strerror(error));
-        fflush(stderr);
-
-        return YARPRUN_ERROR;
-    }
-
-    if (IS_PARENT_OF(pid_process_manager))
-    {
-        yarp::os::impl::signal(SIGPIPE, SIG_IGN);
-
-        CLOSE(pipe_server2manager[READ_FROM_PIPE]);
-        CLOSE(pipe_manager2server[WRITE_TO_PIPE]);
-
-        yarp::os::RpcServer port;
-
-        if (!port.open(mPortName))
-        {
-            yError() << "Yarprun failed to open port: " << mPortName.c_str();
-
-            if (mPortName[0] != '/') {
-                yError("Invalid port name '%s', it should start with '/'\n", mPortName.c_str());
-            }
-            return YARPRUN_ERROR;
-        }
-        yarp::os::Bottle cmd, reply;
-        cmd.addString("set");
-        cmd.addString(port.getName());
-        cmd.addString("yarprun");
-        cmd.addString("true");
-
-        yarp::os::impl::NameClient::getNameClient().send(cmd, reply);
-
-        yInfo() << "Yarprun successfully started on port: " << mPortName.c_str();
-
-        pServerPort=&port;
-
-        yarp::os::impl::signal(SIGINT, sigint_handler);
-        yarp::os::impl::signal(SIGTERM, sigint_handler);
-
-        int rsp_size=1024;
-        char *rsp_str=new char[rsp_size];
-
-        yarp::os::Bottle msg, response;
-
-        while (pServerPort)
-        {
-            RUNLOG("<<<port.read(msg, true)")
-            if (!port.read(msg, true)) {
-                break;
-            }
-            RUNLOG(">>>port.read(msg, true)")
-
-            if (!pServerPort) {
-                break;
-            }
-
-            if (msg.check("sysinfo"))
-            {
-                yarp::os::SystemInfoSerializer sysinfo;
-                port.reply(sysinfo);
-                continue;
-            }
-
-            if (msg.check("which"))
-            {
-                std::string fileName=msg.find("which").asString();
-                if (fileName!="")
-                {
-                    yarp::os::Bottle possiblePaths = parsePaths(yarp::conf::environment::get_string("PATH"));
-                    for (size_t i=0; i<possiblePaths.size(); ++i)
-                    {
-                        std::string guessString=possiblePaths.get(i).asString() + slash + fileName;
-                        const char* guess=guessString.c_str();
-                        if (fileExists (guess))
-                        {
-                            fileName = guess;
-                            break;
-                        }
-                    }
-                }
-                yarp::os::Value fileNameWriter(fileName);
-                port.reply(fileNameWriter);
-                continue;
-            }
-
-            if (msg.check("exit"))
-            {
-                pServerPort = nullptr;
-                yarp::os::Bottle result;
-                result.addString("exit OK");
-                port.reply(result);
-                port.close();
-                break;
-            }
-
-            RUNLOG("<<<writeToPipe")
-            writeToPipe(pipe_server2manager[WRITE_TO_PIPE], msg.toString());
-            RUNLOG(">>>writeToPipe")
-
-            RUNLOG("<<<readFromPipe")
-            int nread=readFromPipe(pipe_manager2server[READ_FROM_PIPE], rsp_str, rsp_size);
-            RUNLOG(">>>readFromPipe")
-
-            if (nread<0)
-            {
-                fprintf(stderr, "ERROR: broken pipe between server and manager\n");
-                fflush(stderr);
-                break;
-            }
-
-            if (nread)
-            {
-                response.fromString(rsp_str);
-                port.reply(response);
-            }
-        }
-
-        //yarp::os::Network::fini();
-
-        CLOSE(pipe_server2manager[WRITE_TO_PIPE]);
-        CLOSE(pipe_manager2server[READ_FROM_PIPE]);
-
-        delete [] rsp_str;
-
-        return 0;
-    }
-
-    if (IS_NEW_PROCESS(pid_process_manager))
-    {
-        yarp::os::impl::signal(SIGPIPE, SIG_IGN);
-
-        CLOSE(pipe_server2manager[WRITE_TO_PIPE]);
-        CLOSE(pipe_manager2server[READ_FROM_PIPE]);
-
-        //yarp::os::Network::init();
-
-        mProcessVector=new YarpRunInfoVector;
-        mStdioVector=new YarpRunInfoVector;
-
-        mBraveZombieHunter=new ZombieHunterThread;
-        mBraveZombieHunter->start();
-
-        yarp::os::impl::signal(SIGCHLD, sigchld_handler);
-        //yarp::os::impl::signal(SIGINT, SIG_IGN);
-        //yarp::os::impl::signal(SIGTERM, SIG_IGN);
-
-        int msg_size=1024;
-        char *msg_str=new char[msg_size];
-
-        yarp::os::Bottle msg;
-
-        //while(readFromPipe(pipe_server2manager[READ_FROM_PIPE], msg_str, msg_size)>0)
-        while (true)
-        {
-            RUNLOG("<<<readFromPipe")
-            if (readFromPipe(pipe_server2manager[READ_FROM_PIPE], msg_str, msg_size) <= 0) {
-                break;
-            }
-            RUNLOG(">>>readFromPipe")
-
-            //printf("<<< %s >>>\n", msg_str);
-            //fflush(stdout);
-
-            msg.fromString(msg_str);
-
-            // command with stdio management
-            if (msg.check("stdio"))
-            {
-                std::string strOnPort=msg.find("on").asString();
-                std::string strStdioPort=msg.find("stdio").asString();
-
-                if (strOnPort==mPortName)
-                {
-                    std::string strUUID=mPortName+"/"+int2String(getpid())+"/"+msg.find("as").asString()+"-"+int2String(mProcCNT++);
-                    yarp::os::Bottle botUUID;
-                    botUUID.addString("stdiouuid");
-                    botUUID.addString(strUUID.c_str());
-                    msg.addList()=botUUID;
-
-                    if (mLogged || msg.check("log"))
-                    {
-                        std::string strAlias=msg.find("as").asString();
-                        std::string portName="/log";
-                        portName+=mPortName+"/";
-                        std::string command = msg.findGroup("cmd").get(1).asString();
-                        command = command.substr(0, command.find(' '));
-                        command = command.substr(command.find_last_of("\\/") + 1);
-                        portName+=command;
-
-                        yarp::os::Bottle botFwd;
-                        botFwd.addString("forward");
-                        botFwd.addString(portName.c_str());
-                        if (msg.check("log"))
-                        {
-                            yarp::os::Bottle botLogger=msg.findGroup("log");
-
-                            if (botLogger.size()>1)
-                            {
-                                botFwd.addString(botLogger.get(1).asString());
-                            }
-                            else
-                            {
-                                botFwd.addString(mLoggerPort);
-                            }
-                        }
-                        else
-                        {
-                            botFwd.addString(mLoggerPort);
-                        }
-                        msg.addList()=botFwd;
-
-                        yarp::os::ContactStyle style;
-                        style.persistent=true;
-                        yarp::os::Network::connect(portName, mLoggerPort, style);
-                    }
-
-                    yarp::os::Bottle cmdResult;
-                    if (executeCmdAndStdio(msg, cmdResult)>0)
-                    {
-                        if (strStdioPort==mPortName)
-                        {
-                            yarp::os::Bottle stdioResult;
-                            userStdio(msg, stdioResult);
-                            cmdResult.append(stdioResult);
-                        }
-                        else
-                        {
-                            cmdResult.append(sendMsg(msg, strStdioPort));
-                        }
-                    }
-
-                    RUNLOG("<<<writeToPipe")
-                    writeToPipe(pipe_manager2server[WRITE_TO_PIPE], cmdResult.toString());
-                    RUNLOG(">>>writeToPipe")
-                }
-                else
-                {
-                    yarp::os::Bottle stdioResult;
-                    userStdio(msg, stdioResult);
-                    RUNLOG("<<<writeToPipe")
-                    writeToPipe(pipe_manager2server[WRITE_TO_PIPE], stdioResult.toString());
-                    RUNLOG(">>>writeToPipe")
-                }
-
-                continue;
-            }
-
-            // without stdio
-            if (msg.check("cmd"))
-            {
-                yarp::os::Bottle cmdResult;
-
-                if (msg.check("log"))
-                {
-                    yarp::os::Bottle botLogger=msg.findGroup("log");
-
-                    if (botLogger.size()>1)
-                    {
-                        std::string loggerName=botLogger.get(1).asString();
-                        executeCmdStdout(msg, cmdResult, loggerName);
-                    }
-                    else
-                    {
-                       executeCmdStdout(msg, cmdResult, mLoggerPort);
-                    }
-                }
-                else if (mLogged)
-                {
-                    executeCmdStdout(msg, cmdResult, mLoggerPort);
-                }
-                else
-                {
-                    executeCmd(msg, cmdResult);
-                }
-
-                RUNLOG("<<<writeToPipe")
-                writeToPipe(pipe_manager2server[WRITE_TO_PIPE], cmdResult.toString());
-                RUNLOG(">>>writeToPipe")
-                continue;
-            }
-
-            if (msg.check("kill"))
-            {
-                std::string alias(msg.findGroup("kill").get(1).asString());
-                int sig=msg.findGroup("kill").get(2).asInt32();
-                yarp::os::Bottle result;
-                result.addString(mProcessVector->Signal(alias, sig)?"kill OK":"kill FAILED");
-                RUNLOG("<<<writeToPipe")
-                writeToPipe(pipe_manager2server[WRITE_TO_PIPE], result.toString());
-                RUNLOG(">>>writeToPipe")
-                continue;
-            }
-
-            if (msg.check("sigterm"))
-            {
-                std::string alias(msg.find("sigterm").asString());
-                yarp::os::Bottle result;
-                result.addString(mProcessVector->Signal(alias, SIGTERM)?"sigterm OK":"sigterm FAILED");
-                RUNLOG("<<<writeToPipe")
-                writeToPipe(pipe_manager2server[WRITE_TO_PIPE], result.toString());
-                RUNLOG(">>>writeToPipe")
-                continue;
-            }
-
-            if (msg.check("sigtermall"))
-            {
-                mProcessVector->Killall(SIGTERM);
-                yarp::os::Bottle result;
-                result.addString("sigtermall OK");
-
-                RUNLOG("<<<writeToPipe")
-                writeToPipe(pipe_manager2server[WRITE_TO_PIPE], result.toString());
-                RUNLOG(">>>writeToPipe")
-                continue;
-            }
-
-            if (msg.check("ps"))
-            {
-                yarp::os::Bottle result;
-                result.append(mProcessVector->PS());
-                RUNLOG("<<<writeToPipe")
-                writeToPipe(pipe_manager2server[WRITE_TO_PIPE], result.toString());
-                RUNLOG(">>>writeToPipe")
-                continue;
-            }
-
-            if (msg.check("isrunning"))
-            {
-                std::string alias(msg.find("isrunning").asString());
-                yarp::os::Bottle result;
-                result.addString(mProcessVector->IsRunning(alias)?"running":"not running");
-                RUNLOG("<<<writeToPipe")
-                writeToPipe(pipe_manager2server[WRITE_TO_PIPE], result.toString());
-                RUNLOG(">>>writeToPipe")
-                continue;
-            }
-
-            if (msg.check("killstdio"))
-            {
-                std::string alias(msg.find("killstdio").asString());
-                mStdioVector->Signal(alias, SIGTERM);
-                yarp::os::Bottle result;
-                result.addString("killstdio OK");
-                RUNLOG("<<<writeToPipe")
-                writeToPipe(pipe_manager2server[WRITE_TO_PIPE], result.toString());
-                RUNLOG(">>>writeToPipe")
-                continue;
-            }
-        }
-
-        mStdioVector->Killall(SIGTERM);
-
-        mProcessVector->Killall(SIGTERM);
-
-        if (mBraveZombieHunter)
-        {
-            mBraveZombieHunter->stop();
-            delete mBraveZombieHunter;
-            mBraveZombieHunter = nullptr;
-        }
-
-        delete mProcessVector;
-
-        delete mStdioVector;
-
-        //yarp::os::Network::fini();
-
-        CLOSE(pipe_server2manager[READ_FROM_PIPE]);
-        CLOSE(pipe_manager2server[WRITE_TO_PIPE]);
-
-        delete [] msg_str;
-    }
-
-    return 0;
-} // LINUX SERVER
 #endif
 
-
-
-
-// CLIENT
-int yarp::run::Run::client(yarp::os::Property& config)
-{
-    // WITH STDIO
-    //
-    if (config.check("cmd") && config.check("stdio"))
-    {
-        ///////////////
-        // syntax check
-        if (config.find("stdio").asString()=="")
-        {
-            Help("SYNTAX ERROR: missing remote stdio server\n");
-            return YARPRUN_ERROR;
-        }
-        if (config.find("cmd").asString()=="")
-        {
-            Help("SYNTAX ERROR: missing command\n");
-            return YARPRUN_ERROR;
-        }
-        if (!config.check("as") || config.find("as").asString()=="")
-        {
-            Help("SYNTAX ERROR: missing tag\n");
-            return YARPRUN_ERROR;
-        }
-        if (!config.check("on") || config.find("on").asString()=="")
-        {
-            Help("SYNTAX ERROR: missing remote server\n");
-            return YARPRUN_ERROR;
-        }
-        //
-        ///////////////
-
-        printf("*********** %s ************\n", config.toString().c_str());
-
-        yarp::os::Bottle msg;
-        msg.addList()=config.findGroup("stdio");
-        msg.addList()=config.findGroup("cmd");
-        msg.addList()=config.findGroup("as");
-        msg.addList()=config.findGroup("on");
-
-        if (config.check("workdir")) {
-            msg.addList() = config.findGroup("workdir");
-        }
-        if (config.check("geometry")) {
-            msg.addList() = config.findGroup("geometry");
-        }
-        if (config.check("hold")) {
-            msg.addList() = config.findGroup("hold");
-        }
-        if (config.check("env")) {
-            msg.addList() = config.findGroup("env");
-        }
-        if (config.check("log")) {
-            msg.addList() = config.findGroup("log");
-        }
-        /*
-        {
-            yarp::os::Bottle log;
-            log.addString("log");
-            log.addString("log");
-            msg.addList()=log;
-        }
-        */
-
-        std::string on=config.find("on").asString();
-
-        yarp::os::Bottle response=sendMsg(msg, on);
-
-        if (!response.size()) {
-            return YARPRUN_ERROR;
-        }
-
-        if (response.get(0).asInt32() <= 0) {
-            return 2;
-        }
-
-        return 0;
-    }
-
-    // NO STDIO
-    //
-    if (config.check("cmd"))
-    {
-        ///////////////
-        // syntax check
-        if (config.find("cmd").asString()=="")
-        {
-            Help("SYNTAX ERROR: missing command\n");
-            return YARPRUN_ERROR;
-        }
-        if (!config.check("as") || config.find("as").asString()=="")
-        {
-            Help("SYNTAX ERROR: missing tag\n");
-            return YARPRUN_ERROR;
-        }
-        if (!config.check("on") || config.find("on").asString()=="")
-        {
-            Help("SYNTAX ERROR: missing remote server\n");
-            return YARPRUN_ERROR;
-        }
-        //
-        ///////////////
-
-        yarp::os::Bottle msg;
-        msg.addList()=config.findGroup("cmd");
-        msg.addList()=config.findGroup("as");
-
-        if (config.check("workdir")) {
-            msg.addList() = config.findGroup("workdir");
-        }
-        if (config.check("log")) {
-            msg.addList() = config.findGroup("log");
-        }
-        /*
-        {
-            yarp::os::Bottle log;
-            log.addString("log");
-            log.addString("log");
-            msg.addList()=log;
-        }
-        */
-        if (config.check("env")) {
-            msg.addList() = config.findGroup("env");
-        }
-
-        yarp::os::Bottle response=sendMsg(msg, config.find("on").asString());
-
-        if (!response.size()) {
-            return YARPRUN_ERROR;
-        }
-
-        if (response.get(0).asInt32() <= 0) {
-            return 2;
-        }
-
-        return 0;
-    }
-
-
-
-
-
-    // client -> cmd server
-    if (config.check("kill"))
-    {
-        if (!config.check("on") || config.find("on").asString()=="")
-        {
-            Help("SYNTAX ERROR: missing remote server\n");
-            return YARPRUN_ERROR;
-        }
-        if (config.findGroup("kill").get(1).asString()=="")
-        {
-            Help("SYNTAX ERROR: missing tag\n");
-            return YARPRUN_ERROR;
-        }
-        if (config.findGroup("kill").get(2).asInt32()==0)
-        {
-            Help("SYNTAX ERROR: missing signum\n");
-            return YARPRUN_ERROR;
-        }
-
-        yarp::os::Bottle msg;
-        msg.addList()=config.findGroup("kill");
-
-        yarp::os::Bottle response=sendMsg(msg, config.find("on").asString());
-
-        if (!response.size())
-        {
-            return YARPRUN_ERROR;
-        }
-
-        return response.get(0).asString()=="kill OK"?0:2;
-    }
-
-    // client -> cmd server
-    if (config.check("sigterm"))
-    {
-        if (config.find("sigterm").asString()=="")
-        {
-            Help("SYNTAX ERROR: missing tag");
-            return YARPRUN_ERROR;
-        }
-        if (!config.check("on") || config.find("on").asString()=="")
-        {
-            Help("SYNTAX ERROR: missing remote server\n");
-            return YARPRUN_ERROR;
-        }
-
-        yarp::os::Bottle msg;
-        msg.addList()=config.findGroup("sigterm");
-
-        yarp::os::Bottle response=sendMsg(msg, config.find("on").asString());
-
-        if (!response.size())
-        {
-            return YARPRUN_ERROR;
-        }
-
-        return response.get(0).asString()=="sigterm OK"?0:2;
-    }
-
-    // client -> cmd server
-    if (config.check("sigtermall"))
-    {
-        if (!config.check("on") || config.find("on").asString()=="")
-        {
-            Help("SYNTAX ERROR: missing remote server\n");
-            return YARPRUN_ERROR;
-        }
-
-        yarp::os::Bottle msg;
-        msg.addList()=config.findGroup("sigtermall");
-
-        yarp::os::Bottle response=sendMsg(msg, config.find("on").asString());
-
-        if (!response.size())
-        {
-            return YARPRUN_ERROR;
-        }
-
-        return 0;
-    }
-
-    if (config.check("ps"))
-    {
-        if (!config.check("on") || config.find("on").asString()=="")
-        {
-            Help("SYNTAX ERROR: missing remote server\n");
-            return YARPRUN_ERROR;
-        }
-
-        yarp::os::Bottle msg;
-        msg.addList()=config.findGroup("ps");
-
-        yarp::os::Bottle response=sendMsg(msg, config.find("on").asString());
-
-        if (!response.size())
-        {
-            return YARPRUN_ERROR;
-        }
-
-        return 0;
-    }
-
-    if (config.check("isrunning"))
-    {
-        if (!config.check("on") || config.find("on").asString()=="")
-        {
-            Help("SYNTAX ERROR: missing remote server\n");
-            return YARPRUN_ERROR;
-        }
-
-        if (config.find("isrunning").asString()=="")
-        {
-            Help("SYNTAX ERROR: missing tag\n");
-            return YARPRUN_ERROR;
-        }
-
-        yarp::os::Bottle msg;
-        msg.addList()=config.findGroup("isrunning");
-
-        yarp::os::Bottle response=sendMsg(msg, config.find("on").asString());
-
-        if (!response.size())
-        {
-            return YARPRUN_ERROR;
-        }
-
-        return response.get(0).asString()=="running"?0:2;
-    }
-
-    if (config.check("sysinfo"))
-    {
-        if (!config.check("on") || config.find("on").asString()=="")
-        {
-            Help("SYNTAX ERROR: missing remote server\n");
-            return YARPRUN_ERROR;
-        }
-
-        yarp::os::Bottle msg;
-        msg.addList()=config.findGroup("sysinfo");
-
-        yarp::os::RpcClient port;
-        //port.setTimeout(5.0);
-        if (!port.open("..."))
-        {
-            fprintf(stderr, "RESPONSE:\n=========\n");
-            fprintf(stderr, "Cannot open port, aborting...\n");
-
-            return YARPRUN_ERROR;
-        }
-
-        bool connected = yarp::os::Network::connect(port.getName(), config.find("on").asString());
-
-        if (!connected)
-        {
-            fprintf(stderr, "RESPONSE:\n=========\n");
-            fprintf(stderr, "Cannot connect to remote server, aborting...\n");
-            port.close();
-            //yarp::os::Network::unregisterName(port.getName());
-            return YARPRUN_ERROR;
-        }
-
-        yarp::os::SystemInfoSerializer info;
-
-        RUNLOG("<<<port.write(msg, info)")
-        int ret = port.write(msg, info);
-        RUNLOG(">>>port.write(msg, info)")
-        yarp::os::Network::disconnect(port.getName(), config.find("on").asString());
-        port.close();
-        //yarp::os::Network::unregisterName(port.getName());
-        fprintf(stdout, "RESPONSE:\n=========\n\n");
-
-        if (!ret)
-        {
-            fprintf(stdout, "No response. (timeout)\n");
-
-            return YARPRUN_ERROR;
-        }
-
-        fprintf(stdout, "Platform name    : %s\n", info.platform.name.c_str());
-        fprintf(stdout, "Platform dist    : %s\n", info.platform.distribution.c_str());
-        fprintf(stdout, "Platform release : %s\n", info.platform.release.c_str());
-        fprintf(stdout, "Platform code    : %s\n", info.platform.codename.c_str());
-        fprintf(stdout, "Platform kernel  : %s\n\n", info.platform.kernel.c_str());
-
-        fprintf(stdout, "User Id        : %d\n", info.user.userID);
-        fprintf(stdout, "User name      : %s\n", info.user.userName.c_str());
-        fprintf(stdout, "User real name : %s\n", info.user.realName.c_str());
-        fprintf(stdout, "User home dir  : %s\n\n", info.user.homeDir.c_str());
-
-        fprintf(stdout, "Cpu load Ins.: %d\n", info.load.cpuLoadInstant);
-        fprintf(stdout, "Cpu load 1   : %.2lf\n", info.load.cpuLoad1);
-        fprintf(stdout, "Cpu load 5   : %.2lf\n", info.load.cpuLoad5);
-        fprintf(stdout, "Cpu load 15  : %.2lf\n\n", info.load.cpuLoad15);
-
-        fprintf(stdout, "Memory total : %dM\n", info.memory.totalSpace);
-        fprintf(stdout, "Memory free  : %dM\n\n", info.memory.freeSpace);
-
-        fprintf(stdout, "Storage total : %dM\n", info.storage.totalSpace);
-        fprintf(stdout, "Storage free  : %dM\n\n", info.storage.freeSpace);
-
-        fprintf(stdout, "Processor model     : %s\n", info.processor.model.c_str());
-        fprintf(stdout, "Processor model num : %d\n", info.processor.modelNumber);
-        fprintf(stdout, "Processor family    : %d\n", info.processor.family);
-        fprintf(stdout, "Processor vendor    : %s\n", info.processor.vendor.c_str());
-        fprintf(stdout, "Processor arch      : %s\n", info.processor.architecture.c_str());
-        fprintf(stdout, "Processor cores     : %d\n", info.processor.cores);
-        fprintf(stdout, "Processor siblings  : %d\n", info.processor.siblings);
-        fprintf(stdout, "Processor Mhz       : %.2lf\n\n", info.processor.frequency);
-
-        fprintf(stdout, "Environment variables  :\n%s\n", info.platform.environmentVars.toString().c_str());
-        //fprintf(stdout, "Network IP4 : %s\n", info.network.ip4.c_str());
-        //fprintf(stdout, "Network IP6 : %s\n", info.network.ip6.c_str());
-        //fprintf(stdout, "Network mac : %s\n\n", info.network.mac.c_str());
-
-        return 0;
-    }
-
-    if (config.check("which"))
-    {
-        if (!config.check("on") || config.find("on").asString()=="")
-        {
-            Help("SYNTAX ERROR: missing remote server\n");
-
-            return YARPRUN_ERROR;
-        }
-
-        yarp::os::Bottle msg;
-        msg.addList()=config.findGroup("which");
-
-        yarp::os::Bottle response=sendMsg(msg, config.find("on").asString());
-
-        if (!response.size())
-        {
-            return YARPRUN_ERROR;
-        }
-        return 0;
-    }
-
-    if (config.check("exit"))
-    {
-        if (!config.check("on") || config.find("on").asString()=="")
-        {
-            Help("SYNTAX ERROR: missing remote server\n");
-
-            return YARPRUN_ERROR;
-        }
-
-        yarp::os::Bottle msg;
-        msg.addList()=config.findGroup("exit");
-
-        yarp::os::Bottle response=sendMsg(msg, config.find("on").asString());
-
-        if (!response.size())
-        {
-            return YARPRUN_ERROR;
-        }
-
-        return 0;
-    }
-
-    return 0;
-}
-
-void yarp::run::Run::Help(const char *msg)
-{
-    fprintf(stderr, "%s", msg);
-    fprintf(stderr, "\nUSAGE:\n\n");
-    fprintf(stderr, "yarp run --server SERVERPORT\nrun a server on the local machine\n\n");
-    fprintf(stderr, "yarp run --on SERVERPORT --as TAG --cmd COMMAND [ARGLIST] [--workdir WORKDIR] [--env ENVIRONMENT]\nrun a command on SERVERPORT server\n\n");
-    fprintf(stderr, "yarp run --on SERVERPORT --as TAG --stdio STDIOSERVERPORT [--hold] [--geometry WxH+X+Y] --cmd COMMAND [ARGLIST] [--workdir WORKDIR] [--env ENVIRONMENT]\n");
-    fprintf(stderr, "run a command on SERVERPORT server sending I/O to STDIOSERVERPORT server\n\n");
-    fprintf(stderr, "yarp run --on SERVERPORT --kill TAG SIGNUM\nsend SIGNUM signal to TAG command\n\n");
-    fprintf(stderr, "yarp run --on SERVERPORT --sigterm TAG\nterminate TAG command\n\n");
-    fprintf(stderr, "yarp run --on SERVERPORT --sigtermall\nterminate all commands\n\n");
-    fprintf(stderr, "yarp run --on SERVERPORT --ps\nreport commands running on SERVERPORT\n\n");
-    fprintf(stderr, "yarp run --on SERVERPORT --isrunning TAG\nTAG command is running?\n\n");
-    fprintf(stderr, "yarp run --on SERVERPORT --sysinfo\nreport system information of SERVERPORT\n\n");
-    fprintf(stderr, "yarp run --on SERVERPORT --exit\nstop SERVERPORT server\n\n");
-}
 
 /////////////////////////
 // OS DEPENDENT FUNCTIONS
@@ -1688,7 +475,7 @@ void yarp::run::Run::Help(const char *msg)
 #if defined(_WIN32)
 
 // CMD SERVER
-int yarp::run::Run::executeCmdAndStdio(yarp::os::Bottle& msg, yarp::os::Bottle& result)
+int yarp::run::Run::executeCmdAndStdio(const  yarp::os::Bottle& msg, yarp::os::Bottle& result)
 {
     std::string strAlias=msg.find("as").asString();
     std::string strStdio=msg.find("stdio").asString();
@@ -1968,7 +755,7 @@ int yarp::run::Run::executeCmdAndStdio(yarp::os::Bottle& msg, yarp::os::Bottle& 
     return cmd_process_info.dwProcessId;
 }
 
-int yarp::run::Run::executeCmdStdout(yarp::os::Bottle& msg, yarp::os::Bottle& result, std::string& loggerName)
+int yarp::run::Run::executeCmdStdout(const  yarp::os::Bottle& msg, yarp::os::Bottle& result, std::string& loggerName)
 {
     std::string proc_label = getProcLabel(msg);
 
@@ -2195,7 +982,7 @@ int yarp::run::Run::executeCmdStdout(yarp::os::Bottle& msg, yarp::os::Bottle& re
 }
 
 
-int yarp::run::Run::executeCmd(yarp::os::Bottle& msg, yarp::os::Bottle& result)
+int yarp::run::Run::executeCmd(const  yarp::os::Bottle& msg, yarp::os::Bottle& result)
 {
     std::string strAlias=msg.find("as").asString().c_str();
 
@@ -2234,12 +1021,12 @@ int yarp::run::Run::executeCmd(yarp::os::Bottle& msg, yarp::os::Bottle& result)
     }
 
     // Set the YARP_IS_YARPRUN environment variable to 1, so that the child
-    // process will now that is running inside yarprun.
+    // process will know that is running inside yarprun.
     lstrcpy(lpNew, (LPTCH) "YARP_IS_YARPRUN=1");
     lpNew += lstrlen(lpNew) + 1;
 
     // Set the YARPRUN_IS_FORWARDING_LOG environment variable to 0, so that
-    // the child process will now that yarprun is not logging the output.
+    // the child process will know that yarprun is not logging the output.
     lstrcpy(lpNew, (LPTCH) "YARPRUN_IS_FORWARDING_LOG=0");
     lpNew += lstrlen(lpNew) + 1;
 
@@ -2331,7 +1118,7 @@ int yarp::run::Run::executeCmd(yarp::os::Bottle& msg, yarp::os::Bottle& result)
 }
 
 // STDIO SERVER
-int yarp::run::Run::userStdio(yarp::os::Bottle& msg, yarp::os::Bottle& result)
+int yarp::run::Run::userStdio(const  yarp::os::Bottle& msg, yarp::os::Bottle& result)
 {
     PROCESS_INFORMATION stdio_process_info;
     ZeroMemory(&stdio_process_info, sizeof(PROCESS_INFORMATION));
@@ -2477,7 +1264,7 @@ void yarp::run::Run::CleanZombie(int pid)
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-int yarp::run::Run::executeCmdAndStdio(yarp::os::Bottle& msg, yarp::os::Bottle& result)
+int yarp::run::Run::executeCmdAndStdio(const yarp::os::Bottle& msg, yarp::os::Bottle& result)
 {
     std::string strAlias=msg.find("as").asString();
     std::string strCmd=msg.find("cmd").asString();
@@ -2923,7 +1710,7 @@ int yarp::run::Run::executeCmdAndStdio(yarp::os::Bottle& msg, yarp::os::Bottle& 
     return YARPRUN_ERROR;
 }
 
-int yarp::run::Run::executeCmdStdout(yarp::os::Bottle& msg, yarp::os::Bottle& result, std::string& loggerName)
+int yarp::run::Run::executeCmdStdout(const yarp::os::Bottle& msg, yarp::os::Bottle& result, std::string& loggerName)
 {
     std::string proc_label = getProcLabel(msg);
 
@@ -3285,7 +2072,7 @@ int yarp::run::Run::executeCmdStdout(yarp::os::Bottle& msg, yarp::os::Bottle& re
     return YARPRUN_ERROR;
 }
 
-int yarp::run::Run::userStdio(yarp::os::Bottle& msg, yarp::os::Bottle& result)
+int yarp::run::Run::userStdio(const yarp::os::Bottle& msg, yarp::os::Bottle& result)
 {
     std::string strAlias=msg.find("as").asString();
     std::string strUUID=msg.find("stdiouuid").asString();
@@ -3473,7 +2260,7 @@ int yarp::run::Run::userStdio(yarp::os::Bottle& msg, yarp::os::Bottle& result)
     return YARPRUN_ERROR;
 }
 
-int yarp::run::Run::executeCmd(yarp::os::Bottle& msg, yarp::os::Bottle& result)
+int yarp::run::Run::executeCmd(const yarp::os::Bottle& msg, yarp::os::Bottle& result)
 {
     std::string strAlias(msg.find("as").asString());
     std::string strCmd(msg.find("cmd").toString());
@@ -3714,155 +2501,3 @@ int yarp::run::Run::executeCmd(yarp::os::Bottle& msg, yarp::os::Bottle& result)
 }
 
 #endif
-
-/////////////////////////////////////////////////////////////////
-// API
-/////////////////////////////////////////////////////////////////
-
-int yarp::run::Run::start(const std::string &node, yarp::os::Property &command, std::string &keyv)
-{
-    yarp::os::Bottle msg, grp, response;
-
-    grp.clear();
-    grp.addString("on");
-    grp.addString(node.c_str());
-    msg.addList()=grp;
-
-    std::string dest_srv=node;
-
-    if (command.check("stdio"))
-    {
-        dest_srv=std::string(command.find("stdio").asString());
-
-        grp.clear();
-        grp.addString("stdio");
-        grp.addString(dest_srv.c_str());
-        msg.addList()=grp;
-
-        if (command.check("geometry"))
-        {
-            grp.clear();
-            grp.addString("geometry");
-            grp.addString(command.find("geometry").asString().c_str());
-            msg.addList()=grp;
-        }
-
-        if (command.check("hold"))
-        {
-            grp.clear();
-            grp.addString("hold");
-            msg.addList()=grp;
-        }
-    }
-
-    grp.clear();
-    grp.addString("as");
-    grp.addString(keyv.c_str());
-    msg.addList()=grp;
-
-    grp.clear();
-    grp.addString("cmd");
-    grp.addString(command.find("name").asString().c_str());
-    grp.addString(command.find("parameters").asString().c_str());
-    msg.addList()=grp;
-
-    printf(":: %s\n", msg.toString().c_str());
-
-    response=sendMsg(msg, dest_srv);
-
-    char buff[16];
-    sprintf(buff, "%d", response.get(0).asInt32());
-    keyv=std::string(buff);
-
-    return response.get(0).asInt32()>0?0:YARPRUN_ERROR;
-}
-
-int yarp::run::Run::sigterm(const std::string &node, const std::string &keyv)
-{
-    yarp::os::Bottle msg, grp, response;
-
-    grp.clear();
-    grp.addString("on");
-    grp.addString(node.c_str());
-    msg.addList()=grp;
-
-    grp.clear();
-    grp.addString("sigterm");
-    grp.addString(keyv.c_str());
-    msg.addList()=grp;
-
-    printf(":: %s\n", msg.toString().c_str());
-
-    response=sendMsg(msg, node);
-
-    return response.get(0).asString()=="sigterm OK"?0:YARPRUN_ERROR;
-}
-
-int yarp::run::Run::sigterm(const std::string &node)
-{
-    yarp::os::Bottle msg, grp, response;
-
-    grp.clear();
-    grp.addString("on");
-    grp.addString(node.c_str());
-    msg.addList()=grp;
-
-    grp.clear();
-    grp.addString("sigtermall");
-    msg.addList()=grp;
-
-    printf(":: %s\n", msg.toString().c_str());
-
-    response=sendMsg(msg, node);
-
-    return response.get(0).asString()=="sigtermall OK"?0:YARPRUN_ERROR;
-}
-
-int yarp::run::Run::kill(const std::string &node, const std::string &keyv, int s)
-{
-    yarp::os::Bottle msg, grp, response;
-
-    grp.clear();
-    grp.addString("on");
-    grp.addString(node.c_str());
-    msg.addList()=grp;
-
-    grp.clear();
-    grp.addString("kill");
-    grp.addString(keyv.c_str());
-    grp.addInt32(s);
-    msg.addList()=grp;
-
-    printf(":: %s\n", msg.toString().c_str());
-
-    response=sendMsg(msg, node);
-
-    return response.get(0).asString()=="kill OK"?0:YARPRUN_ERROR;
-}
-
-bool yarp::run::Run::isRunning(const std::string &node, std::string &keyv)
-{
-    yarp::os::Bottle msg, grp, response;
-
-    grp.clear();
-    grp.addString("on");
-    grp.addString(node.c_str());
-    msg.addList()=grp;
-
-    grp.clear();
-    grp.addString("isrunning");
-    grp.addString(keyv.c_str());
-    msg.addList()=grp;
-
-    printf(":: %s\n", msg.toString().c_str());
-
-    response=sendMsg(msg, node);
-
-    if (!response.size()) {
-        return false;
-    }
-
-    return response.get(0).asString()=="running";
-}
-
-// end API
