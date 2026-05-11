@@ -7,6 +7,7 @@
 
 #include <yarp/manager/xmlapploader.h>
 #include <yarp/manager/application.h>
+#include <yarp/manager/yarpbroker.h>
 #include <dirent.h>
 #include <yarp/conf/filesystem.h>
 #include <yarp/os/ResourceFinder.h>
@@ -19,6 +20,8 @@
 
 #include <cstring>
 #include <csignal>
+#include <map>
+#include <set>
 
 using namespace yarp::os;
 using namespace yarp::manager;
@@ -1116,9 +1119,77 @@ void YConsoleManager::checkStates()
     ExecutablePIterator moditr;
     unsigned int id = 0;
     bShouldRun = false;
+    std::cout << INFO << "[checkStates] start: modules=" << modules.size() << ENDC << '\n';
+
+    // Collect all remote yarprun servers used by this application.
+    std::set<std::string> yarprunHosts;
+    for (auto* exe : modules) {
+        if (exe && exe->getBrokerType() == BrokerType::yarp) {
+            yarprunHosts.insert(exe->getHost());
+        }
+    }
+    std::cout << INFO << "[checkStates] yarprun hosts found: " << yarprunHosts.size() << ENDC << '\n';
+
+    // Query each yarprun server once via `ps`.
+    std::map<std::string, ProcessContainer> hostProcesses;
+    std::map<std::string, bool> hostQueryOk;
+    if (!yarprunHosts.empty()) {
+        YarpBroker connector;
+        if (connector.init()) {
+            for (const auto& host : yarprunHosts) {
+                ProcessContainer processes;
+                const bool ok = connector.getAllProcesses(host, processes);
+                hostQueryOk[host] = ok;
+                if (ok) {
+                    hostProcesses[host] = processes;
+                    std::cout << INFO << "[checkStates] ps(" << host << ") ok, processes=" << processes.size() << ENDC << '\n';
+                } else {
+                    std::cout << WARNING << "[checkStates] ps(" << host << ") failed, fallback to running(id) for modules on this host." << ENDC << '\n';
+                }
+            }
+        } else {
+            for (const auto& host : yarprunHosts) {
+                hostQueryOk[host] = false;
+            }
+            std::cout << WARNING << "[checkStates] cannot initialize YarpBroker connector, fallback to running(id) for all yarprun modules." << ENDC << '\n';
+        }
+    }
+
     for(moditr=modules.begin(); moditr<modules.end(); moditr++)
     {
-        if(running(id))
+        bool isRunning = false;
+        Executable* exe = *moditr;
+        if (exe && exe->getBrokerType() == BrokerType::yarp) {
+            const std::string host = exe->getHost();
+            const auto hostOkIt = hostQueryOk.find(host);
+            if (hostOkIt != hostQueryOk.end() && hostOkIt->second) {
+                std::cout << INFO << "[checkStates] module(" << id << ") using NEW ps-based check on host " << host << ENDC << '\n';
+                const auto procIt = hostProcesses.find(host);
+                if (procIt != hostProcesses.end()) {
+                    const std::string exeCmd = exe->getCommand();
+                    const std::string exeParam = exe->getParam();
+                    for (const auto& proc : procIt->second) {
+                        const bool statusRunning = proc.status.empty() || proc.status == "running";
+                        const bool cmdMatches = proc.command.find(exeCmd) != std::string::npos;
+                        const bool paramMatches = exeParam.empty() || (proc.command.find(exeParam) != std::string::npos);
+                        if (statusRunning && cmdMatches && paramMatches) {
+                            isRunning = true;
+                            break;
+                        }
+                    }
+                }
+            } else {
+                // Fallback to the old per-module check if the remote ps query failed.
+                std::cout << WARNING << "[checkStates] module(" << id << ") using FALLBACK running(id) because ps is unavailable on host " << host << ENDC << '\n';
+                isRunning = running(id);
+            }
+        } else {
+            // Local and other brokers: keep previous behavior.
+            std::cout << INFO << "[checkStates] module(" << id << ") non-yarprun broker, using default running(id)." << ENDC << '\n';
+            isRunning = running(id);
+        }
+
+        if(isRunning)
         {
             bShouldRun = true;
             std::cout<<OKGREEN<<"<RUNNING> ";

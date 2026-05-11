@@ -161,7 +161,10 @@ private:
  * Class Computer
  */
 typedef struct _Process {
+    std::string tag;
+    std::string status;
     std::string command;
+    std::string env;
     int pid;
 } Process;
 
