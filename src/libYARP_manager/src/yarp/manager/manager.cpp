@@ -15,6 +15,7 @@
 #include <yarp/manager/xmlappsaver.h>
 #include <yarp/manager/singleapploader.h>
 #include <yarp/os/LogStream.h>
+#include <set>
 
 #include <yarp/os/impl/NameClient.h>
 
@@ -1277,6 +1278,41 @@ bool Manager::running(unsigned int id)
         return true;
     }
     return false;
+}
+
+void Manager::collectYarprunProcessesByHost(std::map<std::string, ProcessContainer>& hostProcesses,
+                                            std::map<std::string, bool>& hostQueryOk)
+{
+    hostProcesses.clear();
+    hostQueryOk.clear();
+
+    std::set<std::string> yarprunHosts;
+    for (auto* exe : runnables) {
+        if (exe && exe->getBrokerType() == BrokerType::yarp) {
+            yarprunHosts.insert(exe->getHost());
+        }
+    }
+
+    if (yarprunHosts.empty()) {
+        return;
+    }
+
+    YarpBroker queryBroker;
+    if (!queryBroker.init()) {
+        for (const auto& host : yarprunHosts) {
+            hostQueryOk[host] = false;
+        }
+        return;
+    }
+
+    for (const auto& host : yarprunHosts) {
+        ProcessContainer processes;
+        const bool ok = queryBroker.getAllProcesses(host, processes);
+        hostQueryOk[host] = ok;
+        if (ok) {
+            hostProcesses[host] = processes;
+        }
+    }
 }
 
 
