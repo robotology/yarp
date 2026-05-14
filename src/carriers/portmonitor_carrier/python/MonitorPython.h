@@ -7,14 +7,11 @@
 #define MONITORPYTHON_H
 
 #include <string>
-#include <yarp/os/PeriodicThread.h>
 #include "MonitorBinding.h"
 
 #include "Python.h"
 
 #include <mutex>
-
-class MonitorTrigger;
 
 class MonitorPython : public MonitorBinding
 {
@@ -76,30 +73,13 @@ private:
     PyObject* m_classInstance=nullptr; // Python object of the created class
 
 public:
-    MonitorTrigger* trigger=nullptr;
+    MonitorTrigger<MonitorPython>* trigger=nullptr;
 
 private:
     void trimString(std::string& str);
     void searchReplace(std::string& str,
                        const std::string& oldStr, const std::string& newStr);
     bool isKeyword(const char* str);
-};
-
-class MonitorTrigger : public yarp::os::PeriodicThread {
-public:
-    MonitorTrigger(MonitorPython* monitor, double period)
-        : yarp::os::PeriodicThread(period) {
-        MonitorTrigger::monitor = monitor;
-    }
-    virtual ~MonitorTrigger() { }
-
-    // inherited from the yarp::os::RateThread
-    void run () override {
-        monitor->peerTrigged();
-    }
-
-private:
-    MonitorPython* monitor;
 };
 
 
