@@ -350,8 +350,8 @@ public:
     yarp::dev::ReturnValue positionMoveRaw(const double *refs) override;
     yarp::dev::ReturnValue relativeMoveRaw(int j, double delta) override;
     yarp::dev::ReturnValue relativeMoveRaw(const double *deltas) override;
-    yarp::dev::ReturnValue checkMotionDoneRaw(bool *flag) override;
-    yarp::dev::ReturnValue checkMotionDoneRaw(int j, bool *flag) override;
+    yarp::dev::ReturnValue checkMotionDoneRaw(bool& flag) override;
+    yarp::dev::ReturnValue checkMotionDoneRaw(int j, bool& flag) override;
     yarp::dev::ReturnValue setTrajSpeedRaw(int j, double sp) override;
     yarp::dev::ReturnValue setTrajSpeedsRaw(const double *spds) override;
     yarp::dev::ReturnValue getTrajSpeedRaw(int j, double *ref) override;
@@ -364,7 +364,7 @@ public:
     yarp::dev::ReturnValue stopRaw() override;
     yarp::dev::ReturnValue positionMoveRaw(const int n_joint, const int *joints, const double *refs) override;
     yarp::dev::ReturnValue relativeMoveRaw(const int n_joint, const int *joints, const double *deltas) override;
-    yarp::dev::ReturnValue checkMotionDoneRaw(const int n_joint, const int *joints, bool *flags) override;
+    yarp::dev::ReturnValue checkMotionDoneRaw(const std::vector<int>& joints, bool& flag) override;
     yarp::dev::ReturnValue setTrajSpeedsRaw(const int n_joint, const int *joints, const double *spds) override;
     yarp::dev::ReturnValue setTrajAccelerationsRaw(const int n_joint, const int *joints, const double *accs) override;
     yarp::dev::ReturnValue getTrajSpeedsRaw(const int n_joint, const int *joints, double *spds) override;
@@ -509,12 +509,12 @@ public:
     yarp::dev::ReturnValue getRefPositionsRaw(const int n_joint, const int *joints, double *refs) override;
 
     // InteractionMode interface
-    yarp::dev::ReturnValue getInteractionModeRaw(int j, yarp::dev::InteractionModeEnum* _mode) override;
-    yarp::dev::ReturnValue getInteractionModesRaw(int n_joints, int *joints, yarp::dev::InteractionModeEnum* modes) override;
-    yarp::dev::ReturnValue getInteractionModesRaw(yarp::dev::InteractionModeEnum* modes) override;
+    yarp::dev::ReturnValue getInteractionModeRaw(int j, yarp::dev::InteractionModeEnum& _mode) override;
+    yarp::dev::ReturnValue getInteractionModesRaw(std::vector<int> joints, std::vector<yarp::dev::InteractionModeEnum>& modes) override;
+    yarp::dev::ReturnValue getInteractionModesRaw(std::vector<yarp::dev::InteractionModeEnum>& modes) override;
     yarp::dev::ReturnValue setInteractionModeRaw(int j, yarp::dev::InteractionModeEnum _mode) override;
-    yarp::dev::ReturnValue setInteractionModesRaw(int n_joints, int *joints, yarp::dev::InteractionModeEnum* modes) override;
-    yarp::dev::ReturnValue setInteractionModesRaw(yarp::dev::InteractionModeEnum* modes) override;
+    yarp::dev::ReturnValue setInteractionModesRaw(std::vector<int> joints, std::vector<yarp::dev::InteractionModeEnum> modes) override;
+    yarp::dev::ReturnValue setInteractionModesRaw(std::vector<yarp::dev::InteractionModeEnum> modes) override;
 
     // IMotor interface
     yarp::dev::ReturnValue getNumberOfMotorsRaw(int * num) override;

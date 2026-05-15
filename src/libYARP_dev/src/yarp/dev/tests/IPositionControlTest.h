@@ -121,16 +121,16 @@ namespace yarp::dev::tests
 
         {
             bool flag;
-            auto flags = std::make_unique<bool>(ax);
+
             auto joints = std::vector<int>(ax);
             std::iota(joints.begin(), joints.end(), 0);
-            b = ipos->checkMotionDone(0,&flag);
+            b = ipos->checkMotionDone(0,flag);
             CHECK(b);
 
-            b = ipos->checkMotionDone(flags.get());
+            b = ipos->checkMotionDone(flag);
             CHECK(b);
 
-            b = ipos->checkMotionDone(ax,joints.data(),flags.get());
+            b = ipos->checkMotionDone(joints,flag);
             CHECK(b);
         }
 

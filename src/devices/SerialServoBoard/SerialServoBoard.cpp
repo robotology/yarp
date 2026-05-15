@@ -169,7 +169,7 @@ ReturnValue SerialServoBoard::relativeMove(const double* deltas)
 }
 
 
-ReturnValue SerialServoBoard::checkMotionDone(int j, bool* flag)
+ReturnValue SerialServoBoard::checkMotionDone(int j, bool& flag)
 {
     //TODO: Q?
 
@@ -177,7 +177,7 @@ ReturnValue SerialServoBoard::checkMotionDone(int j, bool* flag)
 }
 
 
-ReturnValue SerialServoBoard::checkMotionDone(bool* flag)
+ReturnValue SerialServoBoard::checkMotionDone(bool& flag)
 {
     //TODO: Q?
 
@@ -205,13 +205,13 @@ ReturnValue SerialServoBoard::setTrajSpeeds(const double* spds)
 
 ReturnValue SerialServoBoard::setTrajAcceleration(int j, double acc)
 {
-    return ReturnValue_ok;
+    return ReturnValue::return_code::return_value_error_not_implemented_by_device;
 }
 
 
 ReturnValue SerialServoBoard::setTrajAccelerations(const double* accs)
 {
-    return ReturnValue_ok;
+    return ReturnValue::return_code::return_value_error_not_implemented_by_device;
 }
 
 
@@ -235,58 +235,58 @@ ReturnValue SerialServoBoard::getTrajSpeeds(double* spds)
 
 ReturnValue SerialServoBoard::getTrajAcceleration(int j, double* acc)
 {
-    return ReturnValue_ok;
+    return ReturnValue::return_code::return_value_error_not_implemented_by_device;
 }
 
 
 ReturnValue SerialServoBoard::getTrajAccelerations(double* accs)
 {
-    return ReturnValue_ok;
+    return ReturnValue::return_code::return_value_error_not_implemented_by_device;
 }
 
 
 ReturnValue SerialServoBoard::stop(int j)
 {
-    return ReturnValue_ok;
+    return ReturnValue::return_code::return_value_error_not_implemented_by_device;
 }
 
 
 ReturnValue SerialServoBoard::stop()
 {
-    return ReturnValue_ok;
+    return ReturnValue::return_code::return_value_error_not_implemented_by_device;
 }
 
 ReturnValue SerialServoBoard::positionMove(const int n_joint, const int* joints, const double* refs)
 {
-    return ReturnValue_ok;
+    return ReturnValue::return_code::return_value_error_not_implemented_by_device;
 }
 ReturnValue SerialServoBoard::relativeMove(const int n_joint, const int* joints, const double* deltas)
 {
-    return ReturnValue_ok;
+    return ReturnValue::return_code::return_value_error_not_implemented_by_device;
 }
-ReturnValue SerialServoBoard::checkMotionDone(const int n_joint, const int* joints, bool* flags)
+ReturnValue SerialServoBoard::checkMotionDone(const std::vector<int>& joints, bool& flags)
 {
-    return ReturnValue_ok;
+    return ReturnValue::return_code::return_value_error_not_implemented_by_device;
 }
 ReturnValue SerialServoBoard::setTrajSpeeds(const int n_joint, const int* joints, const double* spds)
 {
-    return ReturnValue_ok;
+    return ReturnValue::return_code::return_value_error_not_implemented_by_device;
 }
 ReturnValue SerialServoBoard::setTrajAccelerations(const int n_joint, const int* joints, const double* accs)
 {
-    return ReturnValue_ok;
+    return ReturnValue::return_code::return_value_error_not_implemented_by_device;
 }
 ReturnValue SerialServoBoard::getTrajSpeeds(const int n_joint, const int* joints, double* spds)
 {
-    return ReturnValue_ok;
+    return ReturnValue::return_code::return_value_error_not_implemented_by_device;
 }
 ReturnValue SerialServoBoard::getTrajAccelerations(const int n_joint, const int* joints, double* accs)
 {
-    return ReturnValue_ok;
+    return ReturnValue::return_code::return_value_error_not_implemented_by_device;
 }
 ReturnValue SerialServoBoard::stop(const int n_joint, const int* joints)
 {
-    return ReturnValue_ok;
+    return ReturnValue::return_code::return_value_error_not_implemented_by_device;
 }
 
 ReturnValue SerialServoBoard::getTargetPosition(const int,double *)

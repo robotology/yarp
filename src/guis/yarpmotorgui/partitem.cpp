@@ -229,7 +229,7 @@ PartItem::PartItem(std::string robotName, int id, std::string partName, Resource
             }
 
             m_iinfo->getAxisName(k, jointname);
-            yarp::dev::JointTypeEnum jtype = yarp::dev::VOCAB_JOINTTYPE_REVOLUTE;
+            yarp::dev::JointTypeEnum jtype = yarp::dev::JointTypeEnum::VOCAB_JOINTTYPE_REVOLUTE;
             m_iinfo->getJointType(k, jtype);
 
             Pid myPid(0,0,0,0,0,0);
@@ -2347,7 +2347,7 @@ bool PartItem::updatePart()
     if (m_iPos)
     {
         bool boolval = true;
-        ret_motdone = m_iPos->checkMotionDone(m_slow_k, &boolval); // using k to save bandwidth
+        ret_motdone = m_iPos->checkMotionDone(m_slow_k, boolval); // using k to save bandwidth
         m_done[m_slow_k] = boolval;
     }
     if (m_ijointbrake)
@@ -2447,7 +2447,7 @@ bool PartItem::updatePart()
     //    if(ret==false){
     //        LOG_ERROR("ictrl->getControlMode failed\n" );
     //    }
-    ret = m_iinteract->getInteractionModes(m_interactionModes.data());
+    ret = m_iinteract->getInteractionModes(m_interactionModes);
     if(ret==false){
         LOG_ERROR("iint->getInteractionlMode failed\n" );
     }

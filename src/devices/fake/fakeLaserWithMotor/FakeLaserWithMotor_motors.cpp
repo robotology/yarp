@@ -135,23 +135,23 @@ ReturnValue FakeLaserWithMotor::relativeMoveRaw(const double* deltas)
 }
 
 
-ReturnValue FakeLaserWithMotor::checkMotionDoneRaw(int j, bool* flag)
+ReturnValue FakeLaserWithMotor::checkMotionDoneRaw(int j, bool& flag)
 {
-    *flag = false;
+    flag = false;
     return ReturnValue_ok;
 }
 
-ReturnValue FakeLaserWithMotor::checkMotionDoneRaw(bool* flag)
+ReturnValue FakeLaserWithMotor::checkMotionDoneRaw(bool& flag)
 {
     ReturnValue ret = ReturnValue_ok;
     bool val, tot_res = true;
 
     for (int j = 0, index = 0; j < m_njoints; j++, index++)
     {
-        ret &= checkMotionDoneRaw(j, &val);
+        ret &= checkMotionDoneRaw(j, val);
         tot_res &= val;
     }
-    *flag = tot_res;
+    flag = tot_res;
     return ret;
 }
 
@@ -517,18 +517,18 @@ ReturnValue FakeLaserWithMotor::relativeMoveRaw(const int n_joint, const int* jo
     return ret;
 }
 
-ReturnValue FakeLaserWithMotor::checkMotionDoneRaw(const int n_joint, const int* joints, bool* flag)
+ReturnValue FakeLaserWithMotor::checkMotionDoneRaw(const std::vector<int>& joints, bool& flag)
 {
     ReturnValue ret = ReturnValue_ok;
     bool val = true;
     bool tot_val = true;
 
-    for (int j = 0; j < n_joint; j++)
+    for (int j = 0; j < joints.size(); j++)
     {
-        ret = ret && checkMotionDoneRaw(joints[j], &val);
+        ret = ret && checkMotionDoneRaw(joints[j], val);
         tot_val &= val;
     }
-    *flag = tot_val;
+    flag = tot_val;
     return ret;
 }
 

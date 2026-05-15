@@ -110,8 +110,6 @@ public:
 };
 
 //interface
-constexpr yarp::conf::vocab32_t VOCAB_IMPEDANCE    = yarp::os::createVocab32('i','i','m','p');
-
 constexpr yarp::conf::vocab32_t VOCAB_POSITION     = yarp::os::createVocab32('p','o','s');
 constexpr yarp::conf::vocab32_t VOCAB_VELOCITY     = yarp::os::createVocab32('v','e','l');
 

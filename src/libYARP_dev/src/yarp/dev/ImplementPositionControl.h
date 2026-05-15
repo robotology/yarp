@@ -79,9 +79,9 @@ public:
     yarp::dev::ReturnValue relativeMove(int j, double delta) override;
     yarp::dev::ReturnValue relativeMove(const int n_joint, const int *joints, const double *deltas) override;
     yarp::dev::ReturnValue relativeMove(const double *deltas) override;
-    yarp::dev::ReturnValue checkMotionDone(bool *flag) override;
-    yarp::dev::ReturnValue checkMotionDone(const int n_joint, const int *joints, bool *flags) override;
-    yarp::dev::ReturnValue checkMotionDone(int j, bool *flag) override;
+    yarp::dev::ReturnValue checkMotionDone(bool& flag) override;
+    yarp::dev::ReturnValue checkMotionDone(const std::vector<int>& joints, bool &flags) override;
+    yarp::dev::ReturnValue checkMotionDone(int j, bool &flag) override;
     yarp::dev::ReturnValue setTrajSpeed(int j, double sp) override;
     yarp::dev::ReturnValue setTrajSpeeds(const int n_joint, const int *joints, const double *spds) override;
     yarp::dev::ReturnValue setTrajSpeeds(const double *spds) override;
@@ -149,13 +149,13 @@ public:
     yarp::dev::ReturnValue relativeMoveRaw(const double *deltas) override
     {return YARP_METHOD_NOT_YET_IMPLEMENTED();}
 
-    yarp::dev::ReturnValue checkMotionDoneRaw(int j, bool *flag) override
+    yarp::dev::ReturnValue checkMotionDoneRaw(int j, bool& flag) override
     {return YARP_METHOD_NOT_YET_IMPLEMENTED();}
 
-    yarp::dev::ReturnValue checkMotionDoneRaw(const int n_joint, const int *joints, bool *flags) override
+    yarp::dev::ReturnValue checkMotionDoneRaw(const std::vector<int>& joints, bool& flag) override
     {return YARP_METHOD_NOT_YET_IMPLEMENTED();}
 
-    yarp::dev::ReturnValue checkMotionDoneRaw(bool *flag) override
+    yarp::dev::ReturnValue checkMotionDoneRaw(bool& flag) override
     {return YARP_METHOD_NOT_YET_IMPLEMENTED();}
 
     yarp::dev::ReturnValue setTrajSpeedRaw(int j, double sp) override

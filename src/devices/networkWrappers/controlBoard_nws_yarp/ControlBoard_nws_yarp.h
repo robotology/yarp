@@ -79,13 +79,12 @@ private:
 
     yarp::os::BufferedPort<yarp::sig::Vector> outputPositionStatePort; // Port /state:o streaming out the encoder positions
     yarp::os::BufferedPort<CommandMessage> inputStreamingPort;         // Input streaming port for high frequency commands
-    yarp::os::Port inputRPCPort;                                       // Input RPC port for set/get remote calls
     yarp::os::Port extendedOutputStatePort;                            // Port /stateExt:o streaming out the struct with the robot data
 
     yarp::os::PortWriterBuffer<yarp::dev::impl::jointData> extendedOutputState_buffer; // Buffer associated to the extendedOutputStatePort port
     yarp::os::PortReaderBuffer<yarp::os::Bottle> inputRPC_buffer;                      // Buffer associated to the inputRPCPort port
 
-    RPCMessagesParser RPC_parser;             // Message parser associated to the inputRPCPort port
+ //   RPCMessagesParser RPC_parser;             // Message parser associated to the inputRPCPort port
     StreamingMessagesParser streaming_parser; // Message parser associated to the inputStreamingPort port
 
     std::string partName; // to open ports and print more detailed debug messages
@@ -95,33 +94,11 @@ private:
     size_t subdevice_joints {0};
     yarp::sig::VectorOf<double> tmpVariableForFloatSignals; // temporary variable to store float signals before copying them into the jointData struct
     std::vector<yarp::dev::ControlModeEnum> tmpVariableForControlModes;
+    std::vector<yarp::dev::InteractionModeEnum> tmpVariableForInteractionModes;
     bool subdevice_ready = false;
-
-    yarp::dev::IPidControl* iPidControl{nullptr};
-    yarp::dev::IPositionControl* iPositionControl{nullptr};
-    yarp::dev::IPositionDirect* iPositionDirect{nullptr};
-    yarp::dev::IVelocityControl* iVelocityControl{nullptr};
-    yarp::dev::IEncodersTimed* iEncodersTimed{nullptr};
-    yarp::dev::IMotor* iMotor{nullptr};
-    yarp::dev::IMotorEncoders* iMotorEncoders{nullptr};
-    yarp::dev::IAmplifierControl* iAmplifierControl{nullptr};
-    yarp::dev::IControlLimits* iControlLimits{nullptr};
-    yarp::dev::IControlCalibration* iControlCalibration{nullptr};
-    yarp::dev::ITorqueControl* iTorqueControl{nullptr};
-    yarp::dev::IImpedanceControl* iImpedanceControl{nullptr};
-    yarp::dev::IControlMode* iControlMode{nullptr};
-    yarp::dev::IAxisInfo* iAxisInfo{nullptr};
-    yarp::dev::IPreciselyTimed* iPreciselyTimed{nullptr};
-    yarp::dev::IInteractionMode* iInteractionMode{nullptr};
-    yarp::dev::IRemoteVariables* iRemoteVariables{nullptr};
-    yarp::dev::IPWMControl* iPWMControl{nullptr};
-    yarp::dev::ICurrentControl* iCurrentControl{nullptr};
-    yarp::dev::IJointFault* iJointFault{ nullptr };
-    yarp::dev::IJointBrake* iJointBrake {nullptr};
-    yarp::dev::IVelocityDirect* iVelocityDirect{ nullptr };
+    AllInterfacesStruct m_allInterfaces;
 
     bool setDevice(yarp::dev::DeviceDriver* device, bool owned);
-    bool openAndAttachSubDevice(yarp::os::Property& prop);
 
     void closeDevice();
     void closePorts();

@@ -67,37 +67,35 @@ bool ImplementInteractionMode::uninitialize()
     return true;
 }
 
-ReturnValue ImplementInteractionMode::getInteractionMode(int axis, yarp::dev::InteractionModeEnum* mode)
+ReturnValue ImplementInteractionMode::getInteractionMode(int axis, yarp::dev::InteractionModeEnum& mode)
 {
     std::lock_guard lock(m_imp_mutex);
-    POINTERCHECK(mode)
 
     int j = castToMapper(m_helper)->toHw(axis);
     return m_iraw->getInteractionModeRaw(j, mode);
 }
 
-ReturnValue ImplementInteractionMode::getInteractionModes(int n_joints, int *joints, yarp::dev::InteractionModeEnum* modes)
+ReturnValue ImplementInteractionMode::getInteractionModes(std::vector<int> joints, std::vector<yarp::dev::InteractionModeEnum>& modes)
 {
     std::lock_guard lock(m_imp_mutex);
-    POINTERCHECK(modes)
-    POINTERCHECK(joints)
-    JOINTSIDCHECK(n_joints, joints);
+    VECCHECK_GET_SOME(joints,modes);
 
-    for (int i = 0; i < n_joints; i++)
+    std::vector<int> vectorInt_tmp(joints.size());
+    for (int i = 0; i < joints.size(); i++)
     {
-        m_buffer_ints[i] = castToMapper(m_helper)->toHw(joints[i]);
+        vectorInt_tmp[i] = castToMapper(m_helper)->toHw(joints[i]);
     }
-    ReturnValue ret = m_iraw->getInteractionModesRaw(n_joints, m_buffer_ints.data(), modes);
+    ReturnValue ret = m_iraw->getInteractionModesRaw(vectorInt_tmp, modes);
 
     return ret;
 }
 
-ReturnValue ImplementInteractionMode::getInteractionModes(yarp::dev::InteractionModeEnum* modes)
+ReturnValue ImplementInteractionMode::getInteractionModes(std::vector < yarp::dev::InteractionModeEnum>& modes)
 {
     std::lock_guard lock(m_imp_mutex);
-    POINTERCHECK(modes)
+    VECCHECK_GET_ALL(modes);
 
-    ReturnValue ret = m_iraw->getInteractionModesRaw(m_buffer_enums.data());
+    ReturnValue ret = m_iraw->getInteractionModesRaw(m_buffer_enums);
     if(!ret)
     {
         return ret;
@@ -119,26 +117,25 @@ ReturnValue ImplementInteractionMode::setInteractionMode(int axis, yarp::dev::In
     return m_iraw->setInteractionModeRaw(j, mode);
 }
 
-ReturnValue ImplementInteractionMode::setInteractionModes(int n_joints, int *joints, yarp::dev::InteractionModeEnum* modes)
+ReturnValue ImplementInteractionMode::setInteractionModes(std::vector<int>joints, std::vector<yarp::dev::InteractionModeEnum> modes)
 {
     std::lock_guard lock(m_imp_mutex);
-    POINTERCHECK(joints)
-    POINTERCHECK(modes)
-    JOINTSIDCHECK(n_joints, joints);
+    VECCHECK_SET_SOME(joints, modes)
 
-    for(int idx=0; idx<n_joints; idx++)
+    std::vector<int> vectorInt_tmp(joints.size());
+    for(int idx=0; idx<joints.size(); idx++)
     {
-        m_buffer_ints[idx] = castToMapper(m_helper)->toHw(joints[idx]);
+        vectorInt_tmp[idx] = castToMapper(m_helper)->toHw(joints[idx]);
     }
-    ReturnValue ret = m_iraw->setInteractionModesRaw(n_joints, m_buffer_ints.data(), modes);
+    ReturnValue ret = m_iraw->setInteractionModesRaw(vectorInt_tmp, modes);
 
     return ret;
 }
 
-ReturnValue ImplementInteractionMode::setInteractionModes(yarp::dev::InteractionModeEnum* modes)
+ReturnValue ImplementInteractionMode::setInteractionModes(std::vector<yarp::dev::InteractionModeEnum> modes)
 {
     std::lock_guard lock(m_imp_mutex);
-    POINTERCHECK(modes)
+    VECCHECK_SET_ALL(modes)
 
     for(int idx=0; idx< castToMapper(m_helper)->axes(); idx++)
     {
@@ -146,7 +143,7 @@ ReturnValue ImplementInteractionMode::setInteractionModes(yarp::dev::Interaction
         m_buffer_enums[j] = modes[idx];
     }
 
-    ReturnValue ret = m_iraw->setInteractionModesRaw(m_buffer_enums.data());
+    ReturnValue ret = m_iraw->setInteractionModesRaw(m_buffer_enums);
 
     return ret;
 }

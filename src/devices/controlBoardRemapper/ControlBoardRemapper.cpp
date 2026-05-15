@@ -1327,7 +1327,7 @@ ReturnValue ControlBoardRemapper::relativeMove(const int n_joints, const int *jo
     return ret;
 }
 
-ReturnValue ControlBoardRemapper::checkMotionDone(int j, bool *flag)
+ReturnValue ControlBoardRemapper::checkMotionDone(int j, bool& flag)
 {
     int off=(int)remappedControlBoards.lut[j].axisIndexInSubControlBoard;
     size_t subIndex=remappedControlBoards.lut[j].subControlBoardIndex;
@@ -1347,10 +1347,10 @@ ReturnValue ControlBoardRemapper::checkMotionDone(int j, bool *flag)
     return ReturnValue::return_code::return_value_error_generic;
 }
 
-ReturnValue ControlBoardRemapper::checkMotionDone(bool *flag)
+ReturnValue ControlBoardRemapper::checkMotionDone(bool& flag)
 {
     ReturnValue ret=ReturnValue_ok;
-    *flag=true;
+    flag=true;
 
     for(int l=0;l<controlledJoints;l++)
     {
@@ -1367,9 +1367,9 @@ ReturnValue ControlBoardRemapper::checkMotionDone(bool *flag)
         if (p->pos)
         {
             bool singleJointMotionDone =false;
-            ReturnValue ok = p->pos->checkMotionDone(off, &singleJointMotionDone);
+            ReturnValue ok = p->pos->checkMotionDone(off, singleJointMotionDone);
             ret = ret && ok;
-            *flag = *flag  && singleJointMotionDone;
+            flag = flag  && singleJointMotionDone;
         }
         else
         {
@@ -1379,12 +1379,12 @@ ReturnValue ControlBoardRemapper::checkMotionDone(bool *flag)
     return ret;
 }
 
-ReturnValue ControlBoardRemapper::checkMotionDone(const int n_joints, const int *joints, bool *flag)
+ReturnValue ControlBoardRemapper::checkMotionDone(const std::vector<int>& joints, bool& flag)
 {
     ReturnValue ret=ReturnValue_ok;
-    *flag=true;
+    flag=true;
 
-    for(int j=0;j<n_joints;j++)
+    for(int j=0;j<joints.size();j++)
     {
         int l = joints[j];
 
@@ -1401,9 +1401,9 @@ ReturnValue ControlBoardRemapper::checkMotionDone(const int n_joints, const int 
         if (p->pos)
         {
             bool singleJointMotionDone =false;
-            ReturnValue ok = p->pos->checkMotionDone(off, &singleJointMotionDone);
+            ReturnValue ok = p->pos->checkMotionDone(off, singleJointMotionDone);
             ret = ret && ok;
-            *flag = *flag  && singleJointMotionDone;
+            flag = flag  && singleJointMotionDone;
         }
         else
         {
@@ -4243,7 +4243,7 @@ ReturnValue ControlBoardRemapper::getTargetVelocities(const int n_joints, const 
     return ret;
 }
 
-ReturnValue ControlBoardRemapper::getInteractionMode(int j, yarp::dev::InteractionModeEnum* mode)
+ReturnValue ControlBoardRemapper::getInteractionMode(int j, yarp::dev::InteractionModeEnum& mode)
 {
     int off=(int)remappedControlBoards.lut[j].axisIndexInSubControlBoard;
     size_t subIndex=remappedControlBoards.lut[j].subControlBoardIndex;
@@ -4263,13 +4263,13 @@ ReturnValue ControlBoardRemapper::getInteractionMode(int j, yarp::dev::Interacti
     return ReturnValue::return_code::return_value_error_generic;
 }
 
-ReturnValue ControlBoardRemapper::getInteractionModes(int n_joints, int *joints, yarp::dev::InteractionModeEnum* modes)
+ReturnValue ControlBoardRemapper::getInteractionModes(std::vector<int> joints, std::vector<yarp::dev::InteractionModeEnum>& modes)
 {
     ReturnValue ret=ReturnValue_ok;
     std::lock_guard<std::mutex> lock(selectedJointsBuffers.mutex);
 
     // Resize the input buffers
-    selectedJointsBuffers.resizeSubControlBoardBuffers(n_joints,joints,remappedControlBoards);
+    selectedJointsBuffers.resizeSubControlBoardBuffers(joints.size(),joints.data(),remappedControlBoards);
 
     for(size_t ctrlBrd=0; ctrlBrd < remappedControlBoards.getNrOfSubControlBoards(); ctrlBrd++)
     {
@@ -4279,9 +4279,8 @@ ReturnValue ControlBoardRemapper::getInteractionModes(int n_joints, int *joints,
 
         if( p->iMode )
         {
-            ok = p->iInteract->getInteractionModes(selectedJointsBuffers.m_nJointsInSubControlBoard[ctrlBrd],
-                                                   selectedJointsBuffers.m_jointsInSubControlBoard[ctrlBrd].data(),
-                                                   selectedJointsBuffers.m_bufferForSubControlBoardInteractionModes[ctrlBrd].data());
+            ok = p->iInteract->getInteractionModes(selectedJointsBuffers.m_jointsInSubControlBoard[ctrlBrd],
+                                                   selectedJointsBuffers.m_bufferForSubControlBoardInteractionModes[ctrlBrd]);
         }
         else
         {
@@ -4291,12 +4290,12 @@ ReturnValue ControlBoardRemapper::getInteractionModes(int n_joints, int *joints,
         ret = ret && ok;
     }
 
-    selectedJointsBuffers.fillArbitraryJointVectorFromSubControlBoardBuffers(modes,n_joints,joints,remappedControlBoards);
+    selectedJointsBuffers.fillArbitraryJointVectorFromSubControlBoardBuffers(modes.data(), joints.size(), joints.data(), remappedControlBoards);
 
     return ret;
 }
 
-ReturnValue ControlBoardRemapper::getInteractionModes(yarp::dev::InteractionModeEnum* modes)
+ReturnValue ControlBoardRemapper::getInteractionModes(std::vector<yarp::dev::InteractionModeEnum>& modes)
 {
     ReturnValue ret=ReturnValue_ok;
     std::lock_guard<std::mutex> lock(allJointsBuffers.mutex);
@@ -4309,9 +4308,8 @@ ReturnValue ControlBoardRemapper::getInteractionModes(yarp::dev::InteractionMode
 
         if( p->iMode )
         {
-            ok = p->iInteract->getInteractionModes(allJointsBuffers.m_nJointsInSubControlBoard[ctrlBrd],
-                                                   allJointsBuffers.m_jointsInSubControlBoard[ctrlBrd].data(),
-                                                   allJointsBuffers.m_bufferForSubControlBoardInteractionModes[ctrlBrd].data());
+            ok = p->iInteract->getInteractionModes(allJointsBuffers.m_jointsInSubControlBoard[ctrlBrd],
+                                                   allJointsBuffers.m_bufferForSubControlBoardInteractionModes[ctrlBrd]);
         }
         else
         {
@@ -4321,7 +4319,7 @@ ReturnValue ControlBoardRemapper::getInteractionModes(yarp::dev::InteractionMode
         ret = ret && ok;
     }
 
-    allJointsBuffers.fillCompleteJointVectorFromSubControlBoardBuffers(modes,remappedControlBoards);
+    allJointsBuffers.fillCompleteJointVectorFromSubControlBoardBuffers(modes.data(), remappedControlBoards);
 
     return ret;
 }
@@ -4346,40 +4344,39 @@ ReturnValue ControlBoardRemapper::setInteractionMode(int j, yarp::dev::Interacti
     return ReturnValue::return_code::return_value_error_generic;
 }
 
-ReturnValue ControlBoardRemapper::setInteractionModes(int n_joints, int *joints, yarp::dev::InteractionModeEnum* modes)
+ReturnValue ControlBoardRemapper::setInteractionModes(std::vector<int> joints, std::vector<yarp::dev::InteractionModeEnum> modes)
 {
     ReturnValue ret=ReturnValue_ok;
     std::lock_guard<std::mutex> lock(selectedJointsBuffers.mutex);
 
-    selectedJointsBuffers.fillSubControlBoardBuffersFromArbitraryJointVector(modes,n_joints,joints,remappedControlBoards);
+    selectedJointsBuffers.fillSubControlBoardBuffersFromArbitraryJointVector(modes.data(), joints.size(), joints.data(), remappedControlBoards);
 
     for(size_t ctrlBrd=0; ctrlBrd < remappedControlBoards.getNrOfSubControlBoards(); ctrlBrd++)
     {
         RemappedSubControlBoard *p=remappedControlBoards.getSubControlBoard(ctrlBrd);
 
-        ReturnValue ok = p->iInteract->setInteractionModes(selectedJointsBuffers.m_nJointsInSubControlBoard[ctrlBrd],
-                                                    selectedJointsBuffers.m_jointsInSubControlBoard[ctrlBrd].data(),
-                                                    selectedJointsBuffers.m_bufferForSubControlBoardInteractionModes[ctrlBrd].data());
+        ReturnValue ok = p->iInteract->setInteractionModes(selectedJointsBuffers.m_jointsInSubControlBoard[ctrlBrd],
+                                                           selectedJointsBuffers.m_bufferForSubControlBoardInteractionModes[ctrlBrd]);
         ret = ret && ok;
     }
 
     return ret;
 }
 
-ReturnValue ControlBoardRemapper::setInteractionModes(yarp::dev::InteractionModeEnum* modes)
+ReturnValue ControlBoardRemapper::setInteractionModes(std::vector<yarp::dev::InteractionModeEnum> modes)
 {
     ReturnValue ret=ReturnValue_ok;
     std::lock_guard<std::mutex> lock(allJointsBuffers.mutex);
 
-    allJointsBuffers.fillSubControlBoardBuffersFromCompleteJointVector(modes,remappedControlBoards);
+    allJointsBuffers.fillSubControlBoardBuffersFromCompleteJointVector(modes.data(),remappedControlBoards);
 
     for(size_t ctrlBrd=0; ctrlBrd < remappedControlBoards.getNrOfSubControlBoards(); ctrlBrd++)
     {
         RemappedSubControlBoard *p=remappedControlBoards.getSubControlBoard(ctrlBrd);
 
-        ReturnValue ok = p->iInteract->setInteractionModes(allJointsBuffers.m_nJointsInSubControlBoard[ctrlBrd],
-                                                    allJointsBuffers.m_jointsInSubControlBoard[ctrlBrd].data(),
-                                                    allJointsBuffers.m_bufferForSubControlBoardInteractionModes[ctrlBrd].data());
+        ReturnValue ok = p->iInteract->setInteractionModes(
+                                                    allJointsBuffers.m_jointsInSubControlBoard[ctrlBrd],
+                                                    allJointsBuffers.m_bufferForSubControlBoardInteractionModes[ctrlBrd]);
         ret = ret && ok;
     }
 

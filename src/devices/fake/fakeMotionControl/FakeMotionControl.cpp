@@ -844,14 +844,14 @@ bool FakeMotionControl::fromConfig(yarp::os::Searchable &config)
         {
             std::string typeString = m_GENERAL_AxisType[i];
             if (typeString == "revolute") {
-                _jointType[_axisMap[i]] = VOCAB_JOINTTYPE_REVOLUTE;
+                _jointType[_axisMap[i]] = JointTypeEnum::VOCAB_JOINTTYPE_REVOLUTE;
             }
             else if (typeString == "prismatic") {
-                _jointType[_axisMap[i]] = VOCAB_JOINTTYPE_PRISMATIC;
+                _jointType[_axisMap[i]] = JointTypeEnum::VOCAB_JOINTTYPE_PRISMATIC;
             }
             else {
                 yCError(FAKEMOTIONCONTROL, "Unknown AxisType value %s!", typeString.c_str());
-                _jointType[_axisMap[i]] = VOCAB_JOINTTYPE_UNKNOWN;
+                _jointType[_axisMap[i]] = JointTypeEnum::VOCAB_JOINTTYPE_UNKNOWN;
                 return false;
             }
         }
@@ -860,7 +860,7 @@ bool FakeMotionControl::fromConfig(yarp::os::Searchable &config)
     {
         yCInfo(FAKEMOTIONCONTROL) << "Using default AxisType (revolute)";
         for (i = 0; i < _njoints; i++)  {
-            _jointType[_axisMap[i]] = VOCAB_JOINTTYPE_REVOLUTE;
+            _jointType[_axisMap[i]] = JointTypeEnum::VOCAB_JOINTTYPE_REVOLUTE;
         }
     }
 
@@ -1948,17 +1948,17 @@ ReturnValue FakeMotionControl::relativeMoveRaw(const double *deltas)
 }
 
 
-ReturnValue FakeMotionControl::checkMotionDoneRaw(int j, bool *flag)
+ReturnValue FakeMotionControl::checkMotionDoneRaw(int j, bool &flag)
 {
     if (verbose >= VERY_VERBOSE) {
         yCTrace(FAKEMOTIONCONTROL) << "j ";
     }
 
-    *flag = false;
+    flag = false;
     return ReturnValue_ok;
 }
 
-ReturnValue FakeMotionControl::checkMotionDoneRaw(bool *flag)
+ReturnValue FakeMotionControl::checkMotionDoneRaw(bool& flag)
 {
     if (verbose >= VERY_VERBOSE) {
         yCTrace(FAKEMOTIONCONTROL);
@@ -1969,10 +1969,10 @@ ReturnValue FakeMotionControl::checkMotionDoneRaw(bool *flag)
 
     for(int j=0, index=0; j< _njoints; j++, index++)
     {
-        ret &= checkMotionDoneRaw(j, &val);
+        ret &= checkMotionDoneRaw(j, val);
         tot_res &= val;
     }
-    *flag = tot_res;
+    flag = tot_res;
     return ret;
 }
 
@@ -2117,7 +2117,7 @@ ReturnValue FakeMotionControl::relativeMoveRaw(const int n_joint, const int *joi
     return ret;
 }
 
-ReturnValue FakeMotionControl::checkMotionDoneRaw(const int n_joint, const int *joints, bool *flag)
+ReturnValue FakeMotionControl::checkMotionDoneRaw(const std::vector<int>& joints, bool&flag)
 {
     if (verbose >= VERY_VERBOSE) {
         yCTrace(FAKEMOTIONCONTROL) << "n_joint " << _njoints;
@@ -2127,12 +2127,12 @@ ReturnValue FakeMotionControl::checkMotionDoneRaw(const int n_joint, const int *
     bool val = true;
     bool tot_val = true;
 
-    for(int j=0; j<n_joint; j++)
+    for(int j=0; j<joints.size(); j++)
     {
-        ret = ret && checkMotionDoneRaw(joints[j], &val);
+        ret = ret && checkMotionDoneRaw(joints[j], val);
         tot_val &= val;
     }
-    *flag = tot_val;
+    flag = tot_val;
     return ret;
 }
 
@@ -2803,7 +2803,11 @@ ReturnValue FakeMotionControl::setRefTorqueRaw(int j, double t)
 
 ReturnValue FakeMotionControl::setRefTorquesRaw(const int n_joint, const int *joints, const double *t)
 {
-    return YARP_METHOD_NOT_YET_IMPLEMENTED();
+    ReturnValue ret = ReturnValue_ok;
+    for (int j = 0; j < n_joint && ret; j++) {
+        ret &= setRefTorqueRaw(joints[j], t[j]);
+    }
+    return ret;
 }
 
 ReturnValue FakeMotionControl::getRefTorquesRaw(double *t)
@@ -3053,31 +3057,31 @@ ReturnValue FakeMotionControl::getRefPositionsRaw(int nj, const int * jnts, doub
 
 
 // InteractionMode
-ReturnValue FakeMotionControl::getInteractionModeRaw(int j, yarp::dev::InteractionModeEnum* _mode)
+ReturnValue FakeMotionControl::getInteractionModeRaw(int j, yarp::dev::InteractionModeEnum& _mode)
 {
     if (verbose > VERY_VERY_VERBOSE) {
         yCTrace(FAKEMOTIONCONTROL) << "j: " << j;
     }
 
-    *_mode = (yarp::dev::InteractionModeEnum)_interactMode[j];
+    _mode = (yarp::dev::InteractionModeEnum)_interactMode[j];
     return ReturnValue_ok;}
 
-ReturnValue FakeMotionControl::getInteractionModesRaw(int n_joints, int *joints, yarp::dev::InteractionModeEnum* modes)
+ReturnValue FakeMotionControl::getInteractionModesRaw(std::vector<int> joints, std::vector<yarp::dev::InteractionModeEnum>&  modes)
 {
     ReturnValue ret = ReturnValue_ok;
-    for(int j=0; j< n_joints; j++)
+    for(int j=0; j< joints.size(); j++)
     {
-        ret = ret && getInteractionModeRaw(joints[j], &modes[j]);
+        ret = ret && getInteractionModeRaw(joints[j], modes[j]);
     }
     return ret;
 
 }
 
-ReturnValue FakeMotionControl::getInteractionModesRaw(yarp::dev::InteractionModeEnum* modes)
+ReturnValue FakeMotionControl::getInteractionModesRaw(std::vector<yarp::dev::InteractionModeEnum>& modes)
 {
     ReturnValue ret = ReturnValue_ok;
     for (int j = 0; j < _njoints; j++) {
-        ret = ret && getInteractionModeRaw(j, &modes[j]);
+        ret = ret && getInteractionModeRaw(j, modes[j]);
     }
     return ret;
 }
@@ -3094,17 +3098,17 @@ ReturnValue FakeMotionControl::setInteractionModeRaw(int j, yarp::dev::Interacti
 }
 
 
-ReturnValue FakeMotionControl::setInteractionModesRaw(int n_joints, int *joints, yarp::dev::InteractionModeEnum* modes)
+ReturnValue FakeMotionControl::setInteractionModesRaw(std::vector<int> joints, std::vector<yarp::dev::InteractionModeEnum> modes)
 {
     ReturnValue ret = ReturnValue_ok;
-    for(int i=0; i<n_joints; i++)
+    for(int i=0; i<joints.size(); i++)
     {
         ret &= setInteractionModeRaw(joints[i], modes[i]);
     }
     return ret;
 }
 
-ReturnValue FakeMotionControl::setInteractionModesRaw(yarp::dev::InteractionModeEnum* modes)
+ReturnValue FakeMotionControl::setInteractionModesRaw(std::vector<yarp::dev::InteractionModeEnum> modes)
 {
     ReturnValue ret = ReturnValue_ok;
     for(int i=0; i<_njoints; i++)

@@ -40,6 +40,11 @@ TEST_CASE("dev::RemoteControlBoardTest", "[yarp::dev]")
 
     Network::setLocalMode(true);
 
+    auto use_streaming_config = GENERATE(
+        bool(true),
+        bool(false)
+    );
+
     SECTION("Checking remote_controlboard device (using fakeMotionControl)")
     {
         PolyDriver ddmc;
@@ -98,6 +103,7 @@ TEST_CASE("dev::RemoteControlBoardTest", "[yarp::dev]")
             p_cfg.put("device", "remote_controlboard");
             p_cfg.put("local", "/local_controlboard");
             p_cfg.put("remote", "/controlboardserver");
+            p_cfg.put("use_streaming", use_streaming_config);
             REQUIRE(ddnwc.open(p_cfg));
         }
 
@@ -196,6 +202,7 @@ TEST_CASE("dev::RemoteControlBoardTest", "[yarp::dev]")
             p_cfg.put("device", "remote_controlboard");
             p_cfg.put("local", "/local_controlboard");
             p_cfg.put("remote", "/controlboardserver");
+            p_cfg.put("use_streaming", use_streaming_config);
             REQUIRE(ddnwc.open(p_cfg));
         }
 

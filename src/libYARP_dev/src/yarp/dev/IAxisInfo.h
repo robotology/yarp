@@ -20,7 +20,7 @@ namespace yarp::dev {
 class IAxisInfo;
 class IAxisInfoRaw;
 
-enum JointTypeEnum
+enum class JointTypeEnum
 {
     VOCAB_JOINTTYPE_REVOLUTE = yarp::os::createVocab32('a', 't', 'r', 'v'),
     VOCAB_JOINTTYPE_PRISMATIC = yarp::os::createVocab32('a', 't', 'p', 'r'),

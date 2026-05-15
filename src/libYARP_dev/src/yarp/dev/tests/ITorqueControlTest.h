@@ -24,6 +24,7 @@ namespace yarp::dev::tests
         REQUIRE(icmd != nullptr);
 
         bool b;
+        double val, val1, val2;
 
         int ax;
         b = itrq->getAxes(&ax);
@@ -35,6 +36,13 @@ namespace yarp::dev::tests
             b = icmd->setControlMode(i, yarp::dev::SelectableControlModeEnum::VOCAB_CM_TORQUE);
             CHECK(b);
         }
+
+        auto vals = std::vector<double>(ax);
+        auto refvals = std::vector<double>(ax);
+        auto vals1 = std::vector<double>(ax);
+        auto vals2 = std::vector<double>(ax);
+        auto joints = std::vector<int>(ax);
+        std::iota(joints.begin(), joints.end(), 0);
 
         yarp::dev::MotorTorqueParameters params;
         //params.bemf = 0.1;
@@ -61,6 +69,33 @@ namespace yarp::dev::tests
         CHECK(res.coulombPos == 0.7); // interface seems functional
         CHECK(res.coulombNeg == 0.8); // interface seems functional
         CHECK(res.velocityThres == 0.9); // interface seems functional
+
+        b = itrq->getRefTorque(0, &val);
+        CHECK(b);
+
+        b = itrq->getRefTorques(refvals.data());
+        CHECK(b);
+
+        b = itrq->getTorque(0,&val);
+        CHECK(b);
+
+        b = itrq->getTorqueRange(0, &val1, &val2);
+        CHECK(b);
+
+        b = itrq->getTorqueRanges(vals1.data(), vals2.data());
+        CHECK(b);
+
+        b = itrq->getTorques(vals.data());
+        CHECK(b);
+
+        b = itrq->setRefTorque(0,val);
+        CHECK(b);
+
+        b = itrq->setRefTorques(refvals.data());
+        CHECK(b);
+
+        b = itrq->setRefTorques(ax, joints.data(), refvals.data());
+        CHECK(b);
     }
 
     inline void exec_iTorqueControl_test_unimplemented_interface(ITorqueControl* itrq, IControlMode* icmd)
@@ -87,6 +122,8 @@ namespace yarp::dev::tests
         auto refvals = std::vector<double>(ax);
         auto vals1 = std::vector<double>(ax);
         auto vals2 = std::vector<double>(ax);
+        auto joints = std::vector<int>(ax);
+        std::iota(joints.begin(), joints.end(), 0);
 
         b = itrq->setMotorTorqueParams(0, param);
         CHECK(!b);
@@ -109,15 +146,17 @@ namespace yarp::dev::tests
         b = itrq->getTorqueRanges(vals1.data(), vals2.data());
         CHECK(!b);
 
-        b = itrq->getTorques(vals.data()); //streaming
-   //     CHECK(!b); //this is streaming, it will return true if data is arrived in time
+        b = itrq->getTorques(vals.data());
+        CHECK(!b);
 
-        b = itrq->setRefTorque(0,val); //streaming
-   //     CHECK(!b); //this is streaming, it will return true always
+        b = itrq->setRefTorque(0,val);
+        CHECK(!b);
 
-        b = itrq->setRefTorques(refvals.data()); //streaming
-   //     CHECK(!b); //this is streaming, it will return true always
+        b = itrq->setRefTorques(refvals.data());
+        CHECK(!b);
 
+        b = itrq->setRefTorques(ax, joints.data(), refvals.data());
+        CHECK(!b);
     }
 }
 

@@ -166,9 +166,9 @@ bool FakeLaserWithMotor::open(yarp::os::Searchable& config)
         yCError(FAKE_LASER_WITH_MOTOR) << "Malloc failed";
         return false;
     }
-    _jointType[0] = VOCAB_JOINTTYPE_PRISMATIC;
-    _jointType[1] = VOCAB_JOINTTYPE_PRISMATIC;
-    _jointType[2] = VOCAB_JOINTTYPE_REVOLUTE;
+    _jointType[0] = JointTypeEnum::VOCAB_JOINTTYPE_PRISMATIC;
+    _jointType[1] = JointTypeEnum::VOCAB_JOINTTYPE_PRISMATIC;
+    _jointType[2] = JointTypeEnum::VOCAB_JOINTTYPE_REVOLUTE;
     _axisName[0] = "joint_x";
     _axisName[1] = "joint_y";
     _axisName[2] = "joint_t";

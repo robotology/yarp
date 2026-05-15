@@ -30,9 +30,9 @@ ControlBoard_nws_yarp::ControlBoard_nws_yarp() :
 
 void ControlBoard_nws_yarp::closePorts()
 {
-    inputRPCPort.interrupt();
-    inputRPCPort.removeCallbackLock();
-    inputRPCPort.close();
+    m_rpcPort.interrupt();
+    m_rpcPort.removeCallbackLock();
+    m_rpcPort.close();
 
     inputStreamingPort.interrupt();
     inputStreamingPort.close();
@@ -61,8 +61,8 @@ bool ControlBoard_nws_yarp::open(Searchable& config)
 {
     if (!parseParams(config)) { return false; }
 
-    // open rpc port
-    std::string server_rpc_portname = m_name + "/nws/rpc";
+    //rpc port
+    std::string server_rpc_portname = m_name + "/nws/rpc:i";
     if (!m_rpcPort.open(server_rpc_portname))
     {
         yCError(CONTROLBOARD, "Failed to open port %s", server_rpc_portname.c_str());
@@ -72,16 +72,7 @@ bool ControlBoard_nws_yarp::open(Searchable& config)
 
     std::string rootName = m_name;
 
-    // Open ports, then attach the readers or callbacks
-    if (!inputRPCPort.open((rootName + "/rpc:i"))) {
-        yCError(CONTROLBOARD) << "Error opening port " << rootName + "/rpc:i";
-        closePorts();
-        return false;
-    }
-    inputRPCPort.setReader(RPC_parser);
-    inputRPC_buffer.attach(inputRPCPort);
-    RPC_parser.attach(inputRPC_buffer);
-
+    //streaming port
     if (!inputStreamingPort.open(rootName + "/command:i")) {
         yCError(CONTROLBOARD) << "Error opening port " << rootName + "/rpc:i";
         closePorts();
@@ -122,142 +113,142 @@ bool ControlBoard_nws_yarp::setDevice(yarp::dev::DeviceDriver* driver, bool owne
     // Save the pointer and subDeviceOwned
     yarp::dev::DeviceDriver* subdevice_ptr = driver;
 
-    subdevice_ptr->view(iJointFault);
-    if (!iJointFault) {
+    subdevice_ptr->view(m_allInterfaces.iJointFault);
+    if (!m_allInterfaces.iJointFault) {
         yCWarning(CONTROLBOARD, "Part <%s>: iJointFault interface was not found in subdevice.", partName.c_str());
     }
 
-    subdevice_ptr->view(iPidControl);
-    if (!iPidControl) {
+    subdevice_ptr->view(m_allInterfaces.iPidControl);
+    if (!m_allInterfaces.iPidControl) {
         yCWarning(CONTROLBOARD, "Part <%s>: IPidControl interface was not found in subdevice.", partName.c_str());
     }
 
-    subdevice_ptr->view(iPositionControl);
-    if (!iPositionControl) {
+    subdevice_ptr->view(m_allInterfaces.iPositionControl);
+    if (!m_allInterfaces.iPositionControl) {
         yCWarning(CONTROLBOARD, "Part <%s>: IPositionControl interface was not found in subdevice.", partName.c_str());
     }
 
-    subdevice_ptr->view(iPositionDirect);
-    if (!iPositionDirect) {
+    subdevice_ptr->view(m_allInterfaces.iPositionDirect);
+    if (!m_allInterfaces.iPositionDirect) {
         yCWarning(CONTROLBOARD, "Part <%s>: IPositionDirect interface was not found in subdevice.", partName.c_str());
     }
 
-    subdevice_ptr->view(iVelocityControl);
-    if (!iVelocityControl) {
+    subdevice_ptr->view(m_allInterfaces.iVelocityControl);
+    if (!m_allInterfaces.iVelocityControl) {
         yCWarning(CONTROLBOARD, "Part <%s>: IVelocityControl interface was not found in subdevice.", partName.c_str());
     }
 
-    subdevice_ptr->view(iEncodersTimed);
-    if (!iEncodersTimed) {
+    subdevice_ptr->view(m_allInterfaces.iEncodersTimed);
+    if (!m_allInterfaces.iEncodersTimed) {
         yCWarning(CONTROLBOARD, "Part <%s>: IEncodersTimed interface was not found in subdevice.", partName.c_str());
     }
 
-    subdevice_ptr->view(iMotor);
-    if (!iMotor) {
+    subdevice_ptr->view(m_allInterfaces.iMotor);
+    if (!m_allInterfaces.iMotor) {
         yCWarning(CONTROLBOARD, "Part <%s>: IMotor interface was not found in subdevice.", partName.c_str());
     }
 
-    subdevice_ptr->view(iMotorEncoders);
-    if (!iMotorEncoders) {
+    subdevice_ptr->view(m_allInterfaces.iMotorEncoders);
+    if (!m_allInterfaces.iMotorEncoders) {
         yCWarning(CONTROLBOARD, "Part <%s>: IMotorEncoders interface was not found in subdevice.", partName.c_str());
     }
 
-    subdevice_ptr->view(iAmplifierControl);
-    if (!iAmplifierControl) {
+    subdevice_ptr->view(m_allInterfaces.iAmplifierControl);
+    if (!m_allInterfaces.iAmplifierControl) {
         yCWarning(CONTROLBOARD, "Part <%s>: IAmplifierControl interface was not found in subdevice.", partName.c_str());
     }
 
-    subdevice_ptr->view(iControlLimits);
-    if (!iControlLimits) {
+    subdevice_ptr->view(m_allInterfaces.iControlLimits);
+    if (!m_allInterfaces.iControlLimits) {
         yCWarning(CONTROLBOARD, "Part <%s>: IControlLimits interface was not found in subdevice.", partName.c_str());
     }
 
-     subdevice_ptr->view(iControlCalibration);
-    if (!iControlCalibration) {
+     subdevice_ptr->view(m_allInterfaces.iControlCalibration);
+    if (!m_allInterfaces.iControlCalibration) {
         yCWarning(CONTROLBOARD, "Part <%s>: IControlCalibration interface was not found in subdevice.", partName.c_str());
     }
 
-    subdevice_ptr->view(iTorqueControl);
-    if (!iTorqueControl) {
+    subdevice_ptr->view(m_allInterfaces.iTorqueControl);
+    if (!m_allInterfaces.iTorqueControl) {
         yCWarning(CONTROLBOARD, "Part <%s>: ITorqueControl interface was not found in subdevice.", partName.c_str());
     }
 
-    subdevice_ptr->view(iImpedanceControl);
-    if (!iImpedanceControl) {
+    subdevice_ptr->view(m_allInterfaces.iImpedanceControl);
+    if (!m_allInterfaces.iImpedanceControl) {
         yCWarning(CONTROLBOARD, "Part <%s>: IImpedanceControl interface was not found in subdevice.", partName.c_str());
     }
 
-    subdevice_ptr->view(iControlMode);
-    if (!iControlMode) {
+    subdevice_ptr->view(m_allInterfaces.iControlMode);
+    if (!m_allInterfaces.iControlMode) {
         yCWarning(CONTROLBOARD, "Part <%s>: IControlMode interface was not found in subdevice.", partName.c_str());
     }
 
-    subdevice_ptr->view(iAxisInfo);
-    if (!iAxisInfo) {
+    subdevice_ptr->view(m_allInterfaces.iAxisInfo);
+    if (!m_allInterfaces.iAxisInfo) {
         yCWarning(CONTROLBOARD, "Part <%s>: IAxisInfo interface was not found in subdevice.", partName.c_str());
     }
 
-    subdevice_ptr->view(iPreciselyTimed);
-    if (!iPreciselyTimed) {
+    subdevice_ptr->view(m_allInterfaces.iPreciselyTimed);
+    if (!m_allInterfaces.iPreciselyTimed) {
         yCWarning(CONTROLBOARD, "Part <%s>: IPreciselyTimed interface was not found in subdevice.", partName.c_str());
     }
 
-    subdevice_ptr->view(iInteractionMode);
-    if (!iInteractionMode) {
+    subdevice_ptr->view(m_allInterfaces.iInteractionMode);
+    if (!m_allInterfaces.iInteractionMode) {
         yCWarning(CONTROLBOARD, "Part <%s>: IInteractionMode interface was not found in subdevice.", partName.c_str());
     }
 
-    subdevice_ptr->view(iRemoteVariables);
-    if (!iRemoteVariables) {
+    subdevice_ptr->view(m_allInterfaces.iRemoteVariables);
+    if (!m_allInterfaces.iRemoteVariables) {
         yCWarning(CONTROLBOARD, "Part <%s>: IRemoteVariables interface was not found in subdevice.", partName.c_str());
     }
 
-    subdevice_ptr->view(iPWMControl);
-    if (!iPWMControl) {
+    subdevice_ptr->view(m_allInterfaces.iPWMControl);
+    if (!m_allInterfaces.iPWMControl) {
         yCWarning(CONTROLBOARD, "Part <%s>: IPWMControl interface was not found in subdevice.", partName.c_str());
     }
 
-    subdevice_ptr->view(iCurrentControl);
-    if (!iCurrentControl) {
+    subdevice_ptr->view(m_allInterfaces.iCurrentControl);
+    if (!m_allInterfaces.iCurrentControl) {
         yCWarning(CONTROLBOARD, "Part <%s>: ICurrentControl interface was not found in subdevice.", partName.c_str());
     }
 
-    subdevice_ptr->view(iJointBrake);
-    if (!iJointBrake) {
+    subdevice_ptr->view(m_allInterfaces.iJointBrake);
+    if (!m_allInterfaces.iJointBrake) {
         yCWarning(CONTROLBOARD, "Part <%s>: iJointBrake interface was not found in subdevice.", partName.c_str());
     }
 
-    subdevice_ptr->view(iVelocityDirect);
-    if (!iVelocityDirect) {
+    subdevice_ptr->view(m_allInterfaces.iVelocityDirect);
+    if (!m_allInterfaces.iVelocityDirect) {
         yCWarning(CONTROLBOARD, "Part <%s>: iVelocityDirect interface was not found in subdevice.", partName.c_str());
     }
 
     // Get the number of controlled joints
     int tmp_axes = 0;
-    if (iAxisInfo)
+    if (m_allInterfaces.iAxisInfo)
     {
-        if (!iAxisInfo->getAxes(&tmp_axes)) {
+        if (!m_allInterfaces.iAxisInfo->getAxes(&tmp_axes)) {
             yCError(CONTROLBOARD) << "Part <%s>: iAxisInfo->getAxes() failed for subdevice " << partName.c_str();
             return false;
         }
     }
-    else if (iEncodersTimed)
+    else if (m_allInterfaces.iEncodersTimed)
     {
-        if (!iEncodersTimed->getAxes(&tmp_axes)) {
+        if (!m_allInterfaces.iEncodersTimed->getAxes(&tmp_axes)) {
             yCError(CONTROLBOARD) << "Part <%s>: iEncodersTimed->getAxes() failed for subdevice " << partName.c_str();
             return false;
         }
     }
-    else if (iPositionControl)
+    else if (m_allInterfaces.iPositionControl)
     {
-        if (!iPositionControl->getAxes(&tmp_axes)) {
+        if (!m_allInterfaces.iPositionControl->getAxes(&tmp_axes)) {
             yCError(CONTROLBOARD) << "Part <%s>: iPositionControl->getAxes() failed for subdevice " << partName.c_str();
             return false;
         }
     }
-    else if (iVelocityControl)
+    else if (m_allInterfaces.iVelocityControl)
     {
-        if (!iVelocityControl->getAxes(&tmp_axes)) {
+        if (!m_allInterfaces.iVelocityControl->getAxes(&tmp_axes)) {
             yCError(CONTROLBOARD) << "Part <%s>: iVelocityControl->getAxes() failed for subdevice " << partName.c_str();
             return false;
         }
@@ -274,9 +265,6 @@ bool ControlBoard_nws_yarp::setDevice(yarp::dev::DeviceDriver* driver, bool owne
     streaming_parser.init(subdevice_ptr);
     streaming_parser.initialize();
 
-    RPC_parser.init(subdevice_ptr);
-    RPC_parser.initialize();
-
     return true;
 }
 
@@ -284,7 +272,6 @@ void ControlBoard_nws_yarp::closeDevice()
 {
     // Reset callbacks
     streaming_parser.reset();
-    RPC_parser.reset();
 
     subdevice_joints = 0;
     subdevice_ready = false;
@@ -292,27 +279,27 @@ void ControlBoard_nws_yarp::closeDevice()
     times.clear();
 
     // Clear all interfaces
-    iPidControl = nullptr;
-    iPositionControl = nullptr;
-    iPositionDirect = nullptr;
-    iVelocityControl = nullptr;
-    iEncodersTimed = nullptr;
-    iMotor = nullptr;
-    iMotorEncoders = nullptr;
-    iAmplifierControl = nullptr;
-    iControlLimits = nullptr;
-    iControlCalibration = nullptr;
-    iTorqueControl = nullptr;
-    iImpedanceControl = nullptr;
-    iControlMode = nullptr;
-    iAxisInfo = nullptr;
-    iPreciselyTimed = nullptr;
-    iInteractionMode = nullptr;
-    iRemoteVariables = nullptr;
-    iPWMControl = nullptr;
-    iCurrentControl = nullptr;
-    iJointFault = nullptr;
-    iVelocityDirect = nullptr;
+    m_allInterfaces.iPidControl = nullptr;
+    m_allInterfaces.iPositionControl = nullptr;
+    m_allInterfaces.iPositionDirect = nullptr;
+    m_allInterfaces.iVelocityControl = nullptr;
+    m_allInterfaces.iEncodersTimed = nullptr;
+    m_allInterfaces.iMotor = nullptr;
+    m_allInterfaces.iMotorEncoders = nullptr;
+    m_allInterfaces.iAmplifierControl = nullptr;
+    m_allInterfaces.iControlLimits = nullptr;
+    m_allInterfaces.iControlCalibration = nullptr;
+    m_allInterfaces.iTorqueControl = nullptr;
+    m_allInterfaces.iImpedanceControl = nullptr;
+    m_allInterfaces.iControlMode = nullptr;
+    m_allInterfaces.iAxisInfo = nullptr;
+    m_allInterfaces.iPreciselyTimed = nullptr;
+    m_allInterfaces.iInteractionMode = nullptr;
+    m_allInterfaces.iRemoteVariables = nullptr;
+    m_allInterfaces.iPWMControl = nullptr;
+    m_allInterfaces.iCurrentControl = nullptr;
+    m_allInterfaces.iJointFault = nullptr;
+    m_allInterfaces.iVelocityDirect = nullptr;
 }
 
 bool ControlBoard_nws_yarp::attach(yarp::dev::PolyDriver* poly)
@@ -332,7 +319,7 @@ bool ControlBoard_nws_yarp::attach(yarp::dev::PolyDriver* poly)
         return false;
     }
 
-    m_RPC = std::make_unique<ControlBoardRPCd>(this->subdevice_joints, iJointBrake, iVelocityDirect, iPidControl, iControlLimits, iControlMode);
+    m_RPC = std::make_unique<ControlBoardRPCd>(this->subdevice_joints, m_allInterfaces);
 
     return true;
 }
@@ -375,31 +362,32 @@ void ControlBoard_nws_yarp::run()
     // resize the temporary vector
     tmpVariableForFloatSignals.resize(subdevice_joints);
     tmpVariableForControlModes.resize(subdevice_joints);
+    tmpVariableForInteractionModes.resize(subdevice_joints);
 
     // Get data from HW
-    if (iEncodersTimed) {
-        data.jointPosition_isValid = iEncodersTimed->getEncodersTimed(data.jointPosition.data(), times.data());
-        data.jointVelocity_isValid = iEncodersTimed->getEncoderSpeeds(data.jointVelocity.data());
-        data.jointAcceleration_isValid = iEncodersTimed->getEncoderAccelerations(data.jointAcceleration.data());
+    if (m_allInterfaces.iEncodersTimed) {
+        data.jointPosition_isValid = m_allInterfaces.iEncodersTimed->getEncodersTimed(data.jointPosition.data(), times.data());
+        data.jointVelocity_isValid = m_allInterfaces.iEncodersTimed->getEncoderSpeeds(data.jointVelocity.data());
+        data.jointAcceleration_isValid = m_allInterfaces.iEncodersTimed->getEncoderAccelerations(data.jointAcceleration.data());
     } else {
         data.jointPosition_isValid = false;
         data.jointVelocity_isValid = false;
         data.jointAcceleration_isValid = false;
     }
 
-    if (iMotorEncoders) {
-        data.motorPosition_isValid = iMotorEncoders->getMotorEncoders(data.motorPosition.data());
-        data.motorVelocity_isValid = iMotorEncoders->getMotorEncoderSpeeds(data.motorVelocity.data());
-        data.motorAcceleration_isValid = iMotorEncoders->getMotorEncoderAccelerations(data.motorAcceleration.data());
+    if (m_allInterfaces.iMotorEncoders) {
+        data.motorPosition_isValid = m_allInterfaces.iMotorEncoders->getMotorEncoders(data.motorPosition.data());
+        data.motorVelocity_isValid = m_allInterfaces.iMotorEncoders->getMotorEncoderSpeeds(data.motorVelocity.data());
+        data.motorAcceleration_isValid = m_allInterfaces.iMotorEncoders->getMotorEncoderAccelerations(data.motorAcceleration.data());
     } else {
         data.motorPosition_isValid = false;
         data.motorVelocity_isValid = false;
         data.motorAcceleration_isValid = false;
     }
 
-    if (iMotor) {
+    if (m_allInterfaces.iMotor) {
         // the temperature is a double in the interface, but a float in the jointData struct.
-        data.temperature_isValid = iMotor->getTemperatures(tmpVariableForFloatSignals.data());
+        data.temperature_isValid = m_allInterfaces.iMotor->getTemperatures(tmpVariableForFloatSignals.data());
 
         // The temperature values are stored as double in the interface but need to be converted to float in the jointData struct.
         // We manually copy them, and while this conversion may lead to a minor loss of precision, it is negligible for temperature values,
@@ -409,15 +397,15 @@ void ControlBoard_nws_yarp::run()
         data.temperature_isValid = false;
     }
 
-    if (iTorqueControl) {
-        data.torque_isValid = iTorqueControl->getTorques(data.torque.data());
+    if (m_allInterfaces.iTorqueControl) {
+        data.torque_isValid = m_allInterfaces.iTorqueControl->getTorques(data.torque.data());
     } else {
         data.torque_isValid = false;
     }
 
-    if (iPWMControl) {
+    if (m_allInterfaces.iPWMControl) {
         // the pwmDutycycle is a double in the interface, but a float in the jointData struct.
-        data.pwmDutycycle_isValid = iPWMControl->getDutyCycles(tmpVariableForFloatSignals.data());
+        data.pwmDutycycle_isValid = m_allInterfaces.iPWMControl->getDutyCycles(tmpVariableForFloatSignals.data());
 
         // The pwmDutycycle values are stored as double in the interface but need to be converted to float in the jointData struct.
         // We manually copy them, and while this conversion may lead to a minor loss of precision, it is negligible for pwmDutycycle values,
@@ -427,16 +415,16 @@ void ControlBoard_nws_yarp::run()
         data.pwmDutycycle_isValid = false;
     }
 
-    if (iCurrentControl) {
-        data.current_isValid = iCurrentControl->getCurrents(data.current.data());
-    } else if (iAmplifierControl) {
-        data.current_isValid = iAmplifierControl->getCurrents(data.current.data());
+    if (m_allInterfaces.iCurrentControl) {
+        data.current_isValid = m_allInterfaces.iCurrentControl->getCurrents(data.current.data());
+    } else if (m_allInterfaces.iAmplifierControl) {
+        data.current_isValid = m_allInterfaces.iAmplifierControl->getCurrents(data.current.data());
     } else {
         data.current_isValid = false;
     }
 
-    if (iControlMode) {
-        data.controlMode_isValid = iControlMode->getControlModes(tmpVariableForControlModes);
+    if (m_allInterfaces.iControlMode) {
+        data.controlMode_isValid = m_allInterfaces.iControlMode->getControlModes(tmpVariableForControlModes);
         for (size_t i =0; i< tmpVariableForControlModes.size(); i++)
         {
             data.controlMode[i] = static_cast<int>(tmpVariableForControlModes[i]);
@@ -445,8 +433,12 @@ void ControlBoard_nws_yarp::run()
         data.controlMode_isValid = false;
     }
 
-    if (iInteractionMode) {
-        data.interactionMode_isValid = iInteractionMode->getInteractionModes(reinterpret_cast<yarp::dev::InteractionModeEnum*>(data.interactionMode.data()));
+    if (m_allInterfaces.iInteractionMode) {
+        data.interactionMode_isValid = m_allInterfaces.iInteractionMode->getInteractionModes(tmpVariableForInteractionModes);
+        for (size_t i =0; i< tmpVariableForInteractionModes.size(); i++)
+        {
+            data.interactionMode[i] = static_cast<int>(tmpVariableForInteractionModes[i]);
+        }
     } else {
         data.interactionMode_isValid = false;
     }

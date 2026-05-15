@@ -137,37 +137,33 @@ ReturnValue ImplementPositionControl::relativeMove(const double *deltas)
     return ret;
 }
 
-ReturnValue ImplementPositionControl::checkMotionDone(int j, bool *flag)
+ReturnValue ImplementPositionControl::checkMotionDone(int j, bool& flag)
 {
     std::lock_guard lock(m_imp_mutex);
     JOINTIDCHECK(j)
-    POINTERCHECK(flag);
 
     int k=castToMapper(m_helper)->toHw(j);
 
     return m_iraw->checkMotionDoneRaw(k,flag);
 }
 
-ReturnValue ImplementPositionControl::checkMotionDone(const int n_joints, const int *joints, bool *flags)
+ReturnValue ImplementPositionControl::checkMotionDone(const std::vector<int>& joints, bool& flag)
 {
     std::lock_guard lock(m_imp_mutex);
-    POINTERCHECK(joints);
-    POINTERCHECK(flags);
-    JOINTSIDCHECK(n_joints,joints)
+    JOINTSIDVECCHECK(joints)
 
-    for(int idx=0; idx<n_joints; idx++)
+    for(int idx=0; idx<joints.size(); idx++)
     {
         m_buffer_ints[idx] = castToMapper(m_helper)->toHw(joints[idx]);
     }
-    ReturnValue ret = m_iraw->checkMotionDoneRaw(n_joints, m_buffer_ints.data(), flags);
+    ReturnValue ret = m_iraw->checkMotionDoneRaw(m_buffer_ints, flag);
 
     return ret;
 }
 
-ReturnValue ImplementPositionControl::checkMotionDone(bool *flag)
+ReturnValue ImplementPositionControl::checkMotionDone(bool& flag)
 {
     std::lock_guard lock(m_imp_mutex);
-    POINTERCHECK(flag);
 
     return m_iraw->checkMotionDoneRaw(flag);
 }

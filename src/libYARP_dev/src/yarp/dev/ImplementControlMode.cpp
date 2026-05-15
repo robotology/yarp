@@ -130,7 +130,8 @@ ReturnValue ImplementControlMode::setControlModes(std::vector<yarp::dev::Selecta
 
     for(int idx=0; idx<castToMapper(m_helper)->axes(); idx++)
     {
-        m_vectorSCM_tmp[castToMapper(m_helper)->toHw(idx)] = modes[idx];
+        int j = castToMapper(m_helper)->toHw(idx);
+        m_vectorSCM_tmp[j] = modes[idx];
     }
 
     ReturnValue ret = m_iraw->setControlModesRaw(m_vectorSCM_tmp);

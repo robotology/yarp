@@ -86,7 +86,7 @@ namespace yarp::dev::tests
         CHECK(!b);
 
         b = ivel->velocityMove(0, ref);
-        //CHECK(!b); //this is streaming, it will return true always
+        CHECK(!b);
 
         b = ivel->getTargetVelocity(0, &ref);
         CHECK(!b);

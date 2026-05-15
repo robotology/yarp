@@ -28,13 +28,13 @@ namespace yarp::dev::tests
         double* test_encs = new double [ax];
         double* test_times = new double[ax];
         b = ienc->getEncoders(test_encs);
-        //CHECK(b);   //this is streaming, it will return true if data is arrived in time
+        CHECK(b);
         b = ienc->getEncoderSpeeds(test_encs);
-        //CHECK(b);   //this is streaming, it will return true if data is arrived in time
+        CHECK(b);
         b = ienc->getEncoderAccelerations(test_encs);
-        //CHECK(b);   //this is streaming, it will return true if data is arrived in time
+        CHECK(b);
         b = ienc->getEncodersTimed(test_encs, test_times);
-        //CHECK(b);   //this is streaming, it will return true if data is arrived in time
+        CHECK(b);
 
         for (size_t i=0; i< ax; i++)
         {
