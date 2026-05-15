@@ -2241,7 +2241,7 @@ ReturnValue FakeMotionControl::getControlModesRaw(std::vector<yarp::dev::Control
     return ret;
 }
 
-ReturnValue FakeMotionControl::getControlModesRaw(std::vector<int> joints, std::vector<yarp::dev::ControlModeEnum>& modes)
+ReturnValue FakeMotionControl::getControlModesRaw(const std::vector<int>& joints, std::vector<yarp::dev::ControlModeEnum>& modes)
 {
     ReturnValue ret = ReturnValue_ok;
     for(int j=0; j< joints.size(); j++)
@@ -2270,7 +2270,7 @@ ReturnValue FakeMotionControl::setControlModeRaw(int j, yarp::dev::SelectableCon
 }
 
 
-ReturnValue FakeMotionControl::setControlModesRaw(std::vector<int> joints, std::vector<yarp::dev::SelectableControlModeEnum> modes)
+ReturnValue FakeMotionControl::setControlModesRaw(const std::vector<int>& joints, const std::vector<yarp::dev::SelectableControlModeEnum>& modes)
 {
     if (verbose >= VERY_VERBOSE) {
         yCTrace(FAKEMOTIONCONTROL) << "n_joints: " << joints.size();
@@ -2284,7 +2284,7 @@ ReturnValue FakeMotionControl::setControlModesRaw(std::vector<int> joints, std::
     return ret;
 }
 
-ReturnValue FakeMotionControl::setControlModesRaw(std::vector<yarp::dev::SelectableControlModeEnum> modes)
+ReturnValue FakeMotionControl::setControlModesRaw(const std::vector<yarp::dev::SelectableControlModeEnum>& modes)
 {
     if (verbose >= VERY_VERBOSE) {
         yCTrace(FAKEMOTIONCONTROL);
@@ -3066,7 +3066,7 @@ ReturnValue FakeMotionControl::getInteractionModeRaw(int j, yarp::dev::Interacti
     _mode = (yarp::dev::InteractionModeEnum)_interactMode[j];
     return ReturnValue_ok;}
 
-ReturnValue FakeMotionControl::getInteractionModesRaw(std::vector<int> joints, std::vector<yarp::dev::InteractionModeEnum>&  modes)
+ReturnValue FakeMotionControl::getInteractionModesRaw(const std::vector<int>& joints, std::vector<yarp::dev::InteractionModeEnum>&  modes)
 {
     ReturnValue ret = ReturnValue_ok;
     for(int j=0; j< joints.size(); j++)
@@ -3098,7 +3098,7 @@ ReturnValue FakeMotionControl::setInteractionModeRaw(int j, yarp::dev::Interacti
 }
 
 
-ReturnValue FakeMotionControl::setInteractionModesRaw(std::vector<int> joints, std::vector<yarp::dev::InteractionModeEnum> modes)
+ReturnValue FakeMotionControl::setInteractionModesRaw(const std::vector<int>& joints, const std::vector<yarp::dev::InteractionModeEnum>& modes)
 {
     ReturnValue ret = ReturnValue_ok;
     for(int i=0; i<joints.size(); i++)
@@ -3108,7 +3108,7 @@ ReturnValue FakeMotionControl::setInteractionModesRaw(std::vector<int> joints, s
     return ret;
 }
 
-ReturnValue FakeMotionControl::setInteractionModesRaw(std::vector<yarp::dev::InteractionModeEnum> modes)
+ReturnValue FakeMotionControl::setInteractionModesRaw(const std::vector<yarp::dev::InteractionModeEnum>& modes)
 {
     ReturnValue ret = ReturnValue_ok;
     for(int i=0; i<_njoints; i++)

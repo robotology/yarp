@@ -7,7 +7,6 @@
 #include "ControlBoard_nws_yarp.h"
 
 #include "ControlBoardLogComponent.h"
-#include "RPCMessagesParser.h"
 #include "StreamingMessagesParser.h"
 
 #include <yarp/os/LogStream.h>

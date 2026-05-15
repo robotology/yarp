@@ -291,7 +291,7 @@ struct return_getRefCurrentOne
 struct return_getRefCurrentAll
 {
   1: yReturnValue ret;
-  2: list<double> refs
+  2: list<double> refs;
 }
 
 struct return_getRefCurrentGroup {
@@ -577,37 +577,37 @@ struct return_getTargetPositionOne
   2: double val;
 }
 
-struct return_getTargetPositionGroup  
+struct return_getTargetPositionGroup
 {
   1: yReturnValue ret;
   2: list<double> val;
 }
 
-struct return_getTargetPositionAll    
+struct return_getTargetPositionAll
 {
   1: yReturnValue ret;
   2: list<double> val;
 }
 
-struct return_getTrajSpeedOne         
+struct return_getTrajSpeedOne
 {
   1: yReturnValue ret;
   2: double val;
 }
 
-struct return_getTrajSpeedsGroup      
+struct return_getTrajSpeedsGroup
 {
   1: yReturnValue ret;
   2: list<double> val;
 }
 
-struct return_getTrajSpeedsAll        
+struct return_getTrajSpeedsAll
 {
   1: yReturnValue ret;
   2: list<double> val;
 }
 
-struct return_getTrajAccelerationOne  
+struct return_getTrajAccelerationOne
 {
   1: yReturnValue ret;
   2: double val;
@@ -619,25 +619,25 @@ struct return_getTrajAccelerationGroup
   2: list<double> val;
 }
 
-struct return_getTrajAccelerationAll  
+struct return_getTrajAccelerationAll
 {
   1: yReturnValue ret;
   2: list<double> val;
 }
 
-struct return_checkMotionDoneOne      
+struct return_checkMotionDoneOne
 {
   1: yReturnValue ret;
   2: bool flag;
 }
 
-struct return_checkMotionDoneGroup    
+struct return_checkMotionDoneGroup
 {
   1: yReturnValue ret;
   2: bool flag;
 }
 
-struct return_checkMotionDoneAll      
+struct return_checkMotionDoneAll
 {
   1: yReturnValue ret;
   2: bool flag;
@@ -652,13 +652,13 @@ struct return_getTargetVelocityOne
   2: double val;
 }
 
-struct return_getTargetVelocityGroup  
+struct return_getTargetVelocityGroup
 {
   1: yReturnValue ret;
   2: list<double> val;
 }
 
-struct return_getTargetVelocityAll    
+struct return_getTargetVelocityAll
 {
   1: yReturnValue ret;
   2: list<double> val;
@@ -672,13 +672,13 @@ struct return_getRefPositionOne
   2: double val;
 }
 
-struct return_getRefPositionGroup  
+struct return_getRefPositionGroup
 {
   1: yReturnValue ret;
   2: list<double> val;
 }
 
-struct return_getRefPositionAll    
+struct return_getRefPositionAll
 {
   1: yReturnValue ret;
   2: list<double> val;
@@ -692,13 +692,13 @@ struct return_getRefTorqueOne
   2: double val;
 }
 
-struct return_getRefTorqueGroup  
+struct return_getRefTorqueGroup
 {
   1: yReturnValue ret;
   2: list<double> val;
 }
 
-struct return_getRefTorqueAll    
+struct return_getRefTorqueAll
 {
   1: yReturnValue ret;
   2: list<double> val;
@@ -711,7 +711,7 @@ struct return_getTorqueRangeOne
   3: double max;
 }
 
-struct return_getTorqueRangeAll    
+struct return_getTorqueRangeAll
 {
   1: yReturnValue ret;
   2: list<double> mins;
@@ -766,7 +766,7 @@ service ControlBoardMsgs
     return_getRefDutyCycleAll          getRefDutyCycleAllRPC() (yarp.qualifier = "const");
     return_getDutyCycleOne             getDutyCycleOneRPC(1: i32 j) (yarp.qualifier = "const");
     return_getDutyCycleAll             getDutyCycleAllRPC() (yarp.qualifier = "const");
-    
+
     yReturnValue                     resetEncoderOneRPC(1: i32 j);
     yReturnValue                     resetEncoderAllRPC();
     yReturnValue                     setEncoderOneRPC(1: i32 j, 2: i32 val);
@@ -779,7 +779,7 @@ service ControlBoardMsgs
     return_getEncoderSpeedAll        getEncoderSpeedAllRPC() (yarp.qualifier = "const");
     return_getEncoderAccelerationOne getEncoderAccelerationOneRPC(1: i32 j) (yarp.qualifier = "const");
     return_getEncoderAccelerationAll getEncoderAccelerationAllRPC() (yarp.qualifier = "const");
-    
+
     yReturnValue                           resetMotorEncoderRPC(1: i32 j);
     yReturnValue                           resetMotorEncodersRPC();
     yReturnValue                           setMotorEncoderRPC(1: i32 j, 2: double val);
@@ -816,17 +816,17 @@ service ControlBoardMsgs
     return_getRefTorqueOne    getRefTorqueOneRPC(1:i32 j) (yarp.qualifier = "const");
     return_getRefTorqueAll    getRefTorqueAllRPC() (yarp.qualifier = "const");
     return_getRefTorqueGroup  getRefTorqueGroupRPC(1: list<i32> j) (yarp.qualifier = "const");
-    yReturnValue              setRefTorqueOneRPC(1:i32 j, 2: double val)
-    yReturnValue              setRefTorqueAllRPC(1: list<double> val)
-    yReturnValue              setRefTorqueGroupRPC(1: list<i32> j, 2: list<double> val)
+    yReturnValue              setRefTorqueOneRPC(1:i32 j, 2: double val);
+    yReturnValue              setRefTorqueAllRPC(1: list<double> val);
+    yReturnValue              setRefTorqueGroupRPC(1: list<i32> j, 2: list<double> val);
 
-    yReturnValue                setRefPositionOneRPC(1:i32 j, 2: double value)
-    yReturnValue                setRefPositionAllRPC(1: list<double> value)
-    yReturnValue                setRefPositionGroupRPC(1: list<i32> j, 2: list<double> value)
+    yReturnValue                setRefPositionOneRPC(1:i32 j, 2: double value);
+    yReturnValue                setRefPositionAllRPC(1: list<double> value);
+    yReturnValue                setRefPositionGroupRPC(1: list<i32> j, 2: list<double> value);
     return_getRefPositionOne    getRefPositionOneRPC(1:i32 j) (yarp.qualifier = "const");
     return_getRefPositionAll    getRefPositionAllRPC() (yarp.qualifier = "const");
     return_getRefPositionGroup  getRefPositionGroupRPC(1: list<i32> j) (yarp.qualifier = "const");
-    
+
     yReturnValue               setControlModeOneRPC(1:i32 j, 2:ySelectableControlModeEnum mod);
     yReturnValue               setControlModeAllRPC(1:list<ySelectableControlModeEnum> modes);
     yReturnValue               setControlModeGroupRPC(1: list<i32> j, 2: list<ySelectableControlModeEnum> modes);
@@ -841,7 +841,7 @@ service ControlBoardMsgs
     yReturnValue               calibrateAxisWithParamsRPC(1: i32 j, 2: i32 ui, 3: double v1, 4: double v2, 5: double v3);
     yReturnValue               setCalibrationParametersRPC(1: i32 j, 2: yCalibrationParameters params);
     yReturnValue               calibrationDoneRPC(1: i32 j);
-    
+
     yReturnValue               setPosLimitsRPC(1: i16 j, 2: double min, 3: double max);
     yReturnValue               setVelLimitsRPC(1: i16 j, 2: double min, 3: double max);
     return_getPosLimits        getPosLimitsRPC(1: i16 j) (yarp.qualifier = "const");
@@ -854,7 +854,7 @@ service ControlBoardMsgs
     yReturnValue               setTemperatureLimitRPC (1: i32 m, 2: double val);
     return_getGearboxRatio     getGearboxRatioRPC(1: i32 m) (yarp.qualifier = "const");
     yReturnValue               setGearboxRatioRPC(1: i32 m, 2: double val);
-    
+
     yReturnValue               enablePidRPC(1: yPidControlTypeEnum pidtype, 2: i16 j);
     yReturnValue               disablePidRPC(1: yPidControlTypeEnum pidtype, 2: i16 j);
     yReturnValue               resetPidRPC(1: yPidControlTypeEnum pidtype, 2: i16 j);
@@ -930,7 +930,7 @@ service ControlBoardMsgs
 
     yReturnValue                  setMotorTorqueParamsRPC(1: i32 j, 2: yMotorTorqueParameters params);
     return_getMotorTorqueParams   getMotorTorqueParamsRPC(1: i32 j);
-        
+
     yReturnValue                  enableAmpRPC(1: i32 j);
     yReturnValue                  disableAmpRPC(1: i32 j);
     return_getAmpStatusAll        getAmpStatusAllRPC() (yarp.qualifier = "const");

@@ -75,7 +75,7 @@ ReturnValue ImplementInteractionMode::getInteractionMode(int axis, yarp::dev::In
     return m_iraw->getInteractionModeRaw(j, mode);
 }
 
-ReturnValue ImplementInteractionMode::getInteractionModes(std::vector<int> joints, std::vector<yarp::dev::InteractionModeEnum>& modes)
+ReturnValue ImplementInteractionMode::getInteractionModes(const std::vector<int>& joints, std::vector<yarp::dev::InteractionModeEnum>& modes)
 {
     std::lock_guard lock(m_imp_mutex);
     VECCHECK_GET_SOME(joints,modes);
@@ -117,7 +117,7 @@ ReturnValue ImplementInteractionMode::setInteractionMode(int axis, yarp::dev::In
     return m_iraw->setInteractionModeRaw(j, mode);
 }
 
-ReturnValue ImplementInteractionMode::setInteractionModes(std::vector<int>joints, std::vector<yarp::dev::InteractionModeEnum> modes)
+ReturnValue ImplementInteractionMode::setInteractionModes(const std::vector<int>& joints, const std::vector<yarp::dev::InteractionModeEnum>& modes)
 {
     std::lock_guard lock(m_imp_mutex);
     VECCHECK_SET_SOME(joints, modes)
@@ -132,7 +132,7 @@ ReturnValue ImplementInteractionMode::setInteractionModes(std::vector<int>joints
     return ret;
 }
 
-ReturnValue ImplementInteractionMode::setInteractionModes(std::vector<yarp::dev::InteractionModeEnum> modes)
+ReturnValue ImplementInteractionMode::setInteractionModes(const std::vector<yarp::dev::InteractionModeEnum>& modes)
 {
     std::lock_guard lock(m_imp_mutex);
     VECCHECK_SET_ALL(modes)

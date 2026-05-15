@@ -296,11 +296,11 @@ public:
     // IControlMode
     yarp::dev::ReturnValue getAvailableControlModes(int j, std::vector<yarp::dev::SelectableControlModeEnum>& avail) override;
     yarp::dev::ReturnValue getControlMode(int j, yarp::dev::ControlModeEnum& mode) override;
-    yarp::dev::ReturnValue getControlModes(std::vector<int> joints, std::vector<yarp::dev::ControlModeEnum>& modes) override;
+    yarp::dev::ReturnValue getControlModes(const std::vector<int>& joints, std::vector<yarp::dev::ControlModeEnum>& modes) override;
     yarp::dev::ReturnValue getControlModes(std::vector<yarp::dev::ControlModeEnum>& modes) override;
     yarp::dev::ReturnValue setControlMode (int j, yarp::dev::SelectableControlModeEnum mode) override;
-    yarp::dev::ReturnValue setControlModes(std::vector<int> joints, std::vector<yarp::dev::SelectableControlModeEnum> modes) override;
-    yarp::dev::ReturnValue setControlModes(std::vector<yarp::dev::SelectableControlModeEnum> modes) override;
+    yarp::dev::ReturnValue setControlModes(const std::vector<int>& joints, const std::vector<yarp::dev::SelectableControlModeEnum>& modes) override;
+    yarp::dev::ReturnValue setControlModes(const std::vector<yarp::dev::SelectableControlModeEnum>& modes) override;
 
 
     // IPositionDirect
@@ -321,11 +321,11 @@ public:
 
     // IInteractionMode
     yarp::dev::ReturnValue getInteractionMode(int axis, yarp::dev::InteractionModeEnum& mode) override;
-    yarp::dev::ReturnValue getInteractionModes(std::vector<int> joints, std::vector <yarp::dev::InteractionModeEnum>& modes) override;
+    yarp::dev::ReturnValue getInteractionModes(const std::vector<int>& joints, std::vector <yarp::dev::InteractionModeEnum>& modes) override;
     yarp::dev::ReturnValue getInteractionModes(std::vector <yarp::dev::InteractionModeEnum>& modes) override;
     yarp::dev::ReturnValue setInteractionMode(int axis, yarp::dev::InteractionModeEnum mode) override;
-    yarp::dev::ReturnValue setInteractionModes(std::vector<int> joints, std::vector < yarp::dev::InteractionModeEnum> modes) override;
-    yarp::dev::ReturnValue setInteractionModes(std::vector<yarp::dev::InteractionModeEnum> modes) override;
+    yarp::dev::ReturnValue setInteractionModes(const std::vector<int>& joints, const std::vector < yarp::dev::InteractionModeEnum>& modes) override;
+    yarp::dev::ReturnValue setInteractionModes(const std::vector<yarp::dev::InteractionModeEnum>& modes) override;
 
     // IRemoteCalibrator
     yarp::dev::ReturnValue isCalibratorDevicePresent(bool *isCalib) override;

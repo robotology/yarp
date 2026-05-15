@@ -83,7 +83,7 @@ ReturnValue ImplementControlMode::getControlModes(std::vector<yarp::dev::Control
     return ret;
 }
 
-ReturnValue ImplementControlMode::getControlModes(std::vector<int> joints, std::vector<yarp::dev::ControlModeEnum>& modes)
+ReturnValue ImplementControlMode::getControlModes(const std::vector<int>& joints, std::vector<yarp::dev::ControlModeEnum>& modes)
 {
     std::lock_guard lock(m_imp_mutex);
     VECCHECK_GET_SOME(joints,modes);
@@ -107,7 +107,7 @@ ReturnValue ImplementControlMode::setControlMode(int j, yarp::dev::SelectableCon
     return m_iraw->setControlModeRaw(k, mode);
 }
 
-ReturnValue ImplementControlMode::setControlModes(std::vector<int> joints, std::vector<yarp::dev::SelectableControlModeEnum> modes)
+ReturnValue ImplementControlMode::setControlModes(const std::vector<int>& joints, const std::vector<yarp::dev::SelectableControlModeEnum>& modes)
 {
     std::lock_guard lock(m_imp_mutex);
     VECCHECK_SET_SOME(joints, modes)
@@ -123,7 +123,7 @@ ReturnValue ImplementControlMode::setControlModes(std::vector<int> joints, std::
     return ret;
 }
 
-ReturnValue ImplementControlMode::setControlModes(std::vector<yarp::dev::SelectableControlModeEnum> modes)
+ReturnValue ImplementControlMode::setControlModes(const std::vector<yarp::dev::SelectableControlModeEnum>& modes)
 {
     std::lock_guard lock(m_imp_mutex);
     VECCHECK_SET_ALL(modes)

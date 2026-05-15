@@ -386,11 +386,11 @@ public:
     //////////////////////// BEGINControlMode
     yarp::dev::ReturnValue getAvailableControlModesRaw(int j, std::vector<yarp::dev::SelectableControlModeEnum>& avail) override;
     yarp::dev::ReturnValue getControlModeRaw(int j, yarp::dev::ControlModeEnum& mode) override;
-    yarp::dev::ReturnValue getControlModesRaw(std::vector<int> joints, std::vector<yarp::dev::ControlModeEnum>& modes) override;
+    yarp::dev::ReturnValue getControlModesRaw(const std::vector<int>& joints, std::vector<yarp::dev::ControlModeEnum>& modes) override;
     yarp::dev::ReturnValue getControlModesRaw(std::vector<yarp::dev::ControlModeEnum>& mode) override;
     yarp::dev::ReturnValue setControlModeRaw(int j, yarp::dev::SelectableControlModeEnum mode) override;
-    yarp::dev::ReturnValue setControlModesRaw(std::vector<int> joints, std::vector<yarp::dev::SelectableControlModeEnum> modes) override;
-    yarp::dev::ReturnValue setControlModesRaw(std::vector<yarp::dev::SelectableControlModeEnum> mode) override;
+    yarp::dev::ReturnValue setControlModesRaw(const std::vector<int>& joints, const std::vector<yarp::dev::SelectableControlModeEnum>& modes) override;
+    yarp::dev::ReturnValue setControlModesRaw(const std::vector<yarp::dev::SelectableControlModeEnum>& mode) override;
 
     //////////////////////// END ControlMode
 
@@ -510,11 +510,11 @@ public:
 
     // InteractionMode interface
     yarp::dev::ReturnValue getInteractionModeRaw(int j, yarp::dev::InteractionModeEnum& _mode) override;
-    yarp::dev::ReturnValue getInteractionModesRaw(std::vector<int> joints, std::vector<yarp::dev::InteractionModeEnum>& modes) override;
+    yarp::dev::ReturnValue getInteractionModesRaw(const std::vector<int>& joints, std::vector<yarp::dev::InteractionModeEnum>& modes) override;
     yarp::dev::ReturnValue getInteractionModesRaw(std::vector<yarp::dev::InteractionModeEnum>& modes) override;
     yarp::dev::ReturnValue setInteractionModeRaw(int j, yarp::dev::InteractionModeEnum _mode) override;
-    yarp::dev::ReturnValue setInteractionModesRaw(std::vector<int> joints, std::vector<yarp::dev::InteractionModeEnum> modes) override;
-    yarp::dev::ReturnValue setInteractionModesRaw(std::vector<yarp::dev::InteractionModeEnum> modes) override;
+    yarp::dev::ReturnValue setInteractionModesRaw(const std::vector<int>& joints, const std::vector<yarp::dev::InteractionModeEnum>& modes) override;
+    yarp::dev::ReturnValue setInteractionModesRaw(const std::vector<yarp::dev::InteractionModeEnum>& modes) override;
 
     // IMotor interface
     yarp::dev::ReturnValue getNumberOfMotorsRaw(int * num) override;

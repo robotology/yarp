@@ -61,7 +61,7 @@ public:
      *          refs    VOCAB_IM_STIFF VOCAB_IM_STIFF VOCAB_IM_COMPLIANT
      * @return true or false on success or failure.
      */
-    virtual yarp::dev::ReturnValue getInteractionModes(std::vector<int>, std::vector<yarp::dev::InteractionModeEnum>& modes)=0;
+    virtual yarp::dev::ReturnValue getInteractionModes(const std::vector<int>& joints, std::vector<yarp::dev::InteractionModeEnum>& modes)=0;
 
 
     /**
@@ -94,7 +94,7 @@ public:
      *          refs    VOCAB_IM_STIFF VOCAB_IM_STIFF VOCAB_IM_COMPLIANT
      * @return true or false on success or failure. If one or more joint fails, the return value will be false.
      */
-    virtual yarp::dev::ReturnValue setInteractionModes(std::vector<int> joints, std::vector <yarp::dev::InteractionModeEnum> modes)=0;
+    virtual yarp::dev::ReturnValue setInteractionModes(const std::vector<int>& joints, const std::vector <yarp::dev::InteractionModeEnum>& modes)=0;
 
     /**
      * Set the interaction mode of the robot for a all the joints, values can be stiff or compliant.
@@ -102,7 +102,7 @@ public:
      * @param mode array with the desired interaction mode for all joints, length is the total number of joints for the part
      * @return true or false on success or failure. If one or more joint fails, the return value will be false.
      */
-    virtual yarp::dev::ReturnValue setInteractionModes(std::vector <yarp::dev::InteractionModeEnum> modes) = 0;
+    virtual yarp::dev::ReturnValue setInteractionModes(const std::vector <yarp::dev::InteractionModeEnum>& modes) = 0;
 };
 
 
@@ -141,7 +141,7 @@ public:
      *          refs    VOCAB_IM_STIFF VOCAB_IM_STIFF VOCAB_IM_COMPLIANT
      * @return true or false on success or failure.
      */
-    virtual yarp::dev::ReturnValue getInteractionModesRaw(std::vector<int> joints, std::vector<yarp::dev::InteractionModeEnum>& modes)=0;
+    virtual yarp::dev::ReturnValue getInteractionModesRaw(const std::vector<int>& joints, std::vector<yarp::dev::InteractionModeEnum>& modes)=0;
 
 
     /**
@@ -174,7 +174,7 @@ public:
      *          refs    VOCAB_IM_STIFF VOCAB_IM_STIFF VOCAB_IM_COMPLIANT
      * @return true or false on success or failure. If one or more joint fails, the return value will be false.
      */
-    virtual yarp::dev::ReturnValue setInteractionModesRaw(std::vector<int> joints, std::vector<yarp::dev::InteractionModeEnum> modes)=0;
+    virtual yarp::dev::ReturnValue setInteractionModesRaw(const std::vector<int>& joints, const std::vector<yarp::dev::InteractionModeEnum>& modes)=0;
 
     /**
      * Set the interaction mode of the robot for a all the joints, values can be stiff or compliant.
@@ -182,7 +182,7 @@ public:
      * @param mode array with the desired interaction mode for all joints, length is the total number of joints for the part
      * @return true or false on success or failure. If one or more joint fails, the return value will be false.
      */
-    virtual yarp::dev::ReturnValue setInteractionModesRaw(std::vector<yarp::dev::InteractionModeEnum> modes)=0;
+    virtual yarp::dev::ReturnValue setInteractionModesRaw(const std::vector<yarp::dev::InteractionModeEnum>& modes)=0;
 };
 
 #endif // YARP_DEV_IINTERACTIONMODE_H

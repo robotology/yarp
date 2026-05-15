@@ -282,7 +282,7 @@ ReturnValue FakeLaserWithMotor::getControlModesRaw(std::vector<yarp::dev::Contro
     return ret;
 }
 
-ReturnValue FakeLaserWithMotor::getControlModesRaw(std::vector<int> joints, std::vector<yarp::dev::ControlModeEnum>& modes)
+ReturnValue FakeLaserWithMotor::getControlModesRaw(const std::vector<int>& joints, std::vector<yarp::dev::ControlModeEnum>& modes)
 {
     ReturnValue ret = ReturnValue_ok;
     for (int j = 0; j < joints.size(); j++)
@@ -308,7 +308,7 @@ ReturnValue FakeLaserWithMotor::setControlModeRaw(int j, yarp::dev::SelectableCo
 }
 
 
-ReturnValue FakeLaserWithMotor::setControlModesRaw(std::vector<int> joints, std::vector<yarp::dev::SelectableControlModeEnum> modes)
+ReturnValue FakeLaserWithMotor::setControlModesRaw(const std::vector<int>& joints, const std::vector<yarp::dev::SelectableControlModeEnum>& modes)
 {
     ReturnValue ret = ReturnValue_ok;
     for (int i = 0; i < joints.size(); i++)
@@ -318,7 +318,7 @@ ReturnValue FakeLaserWithMotor::setControlModesRaw(std::vector<int> joints, std:
     return ret;
 }
 
-ReturnValue FakeLaserWithMotor::setControlModesRaw(std::vector<yarp::dev::SelectableControlModeEnum> modes)
+ReturnValue FakeLaserWithMotor::setControlModesRaw(const std::vector<yarp::dev::SelectableControlModeEnum>& modes)
 {
     ReturnValue ret = ReturnValue_ok;
     for (int i = 0; i < m_njoints; i++)

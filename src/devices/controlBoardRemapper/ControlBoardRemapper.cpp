@@ -3825,7 +3825,7 @@ ReturnValue ControlBoardRemapper::getControlModes(std::vector<yarp::dev::Control
 }
 
 // IControlMode interface
-ReturnValue ControlBoardRemapper::getControlModes(std::vector<int> joints, std::vector<yarp::dev::ControlModeEnum>& modes)
+ReturnValue ControlBoardRemapper::getControlModes(const std::vector<int>& joints, std::vector<yarp::dev::ControlModeEnum>& modes)
 {
     ReturnValue ret=ReturnValue_ok;
     std::lock_guard<std::mutex> lock(selectedJointsBuffers.mutex);
@@ -3883,7 +3883,7 @@ ReturnValue ControlBoardRemapper::setControlMode(int j, yarp::dev::SelectableCon
     return ret;
 }
 
-ReturnValue ControlBoardRemapper::setControlModes(std::vector<int> joints, std::vector<yarp::dev::SelectableControlModeEnum> modes)
+ReturnValue ControlBoardRemapper::setControlModes(const std::vector<int>& joints, const std::vector<yarp::dev::SelectableControlModeEnum>& modes)
 {
     ReturnValue ret=ReturnValue_ok;
     std::lock_guard<std::mutex> lock(selectedJointsBuffers.mutex);
@@ -3908,7 +3908,7 @@ ReturnValue ControlBoardRemapper::setControlModes(std::vector<int> joints, std::
     return ret;
 }
 
-ReturnValue ControlBoardRemapper::setControlModes(std::vector<yarp::dev::SelectableControlModeEnum> modes)
+ReturnValue ControlBoardRemapper::setControlModes(const std::vector<yarp::dev::SelectableControlModeEnum>& modes)
 {
     ReturnValue ret=ReturnValue_ok;
     std::lock_guard<std::mutex> lock(allJointsBuffers.mutex);
@@ -4263,7 +4263,7 @@ ReturnValue ControlBoardRemapper::getInteractionMode(int j, yarp::dev::Interacti
     return ReturnValue::return_code::return_value_error_generic;
 }
 
-ReturnValue ControlBoardRemapper::getInteractionModes(std::vector<int> joints, std::vector<yarp::dev::InteractionModeEnum>& modes)
+ReturnValue ControlBoardRemapper::getInteractionModes(const std::vector<int>& joints, std::vector<yarp::dev::InteractionModeEnum>& modes)
 {
     ReturnValue ret=ReturnValue_ok;
     std::lock_guard<std::mutex> lock(selectedJointsBuffers.mutex);
@@ -4344,7 +4344,7 @@ ReturnValue ControlBoardRemapper::setInteractionMode(int j, yarp::dev::Interacti
     return ReturnValue::return_code::return_value_error_generic;
 }
 
-ReturnValue ControlBoardRemapper::setInteractionModes(std::vector<int> joints, std::vector<yarp::dev::InteractionModeEnum> modes)
+ReturnValue ControlBoardRemapper::setInteractionModes(const std::vector<int>& joints, const std::vector<yarp::dev::InteractionModeEnum>& modes)
 {
     ReturnValue ret=ReturnValue_ok;
     std::lock_guard<std::mutex> lock(selectedJointsBuffers.mutex);
@@ -4363,7 +4363,7 @@ ReturnValue ControlBoardRemapper::setInteractionModes(std::vector<int> joints, s
     return ret;
 }
 
-ReturnValue ControlBoardRemapper::setInteractionModes(std::vector<yarp::dev::InteractionModeEnum> modes)
+ReturnValue ControlBoardRemapper::setInteractionModes(const std::vector<yarp::dev::InteractionModeEnum>& modes)
 {
     ReturnValue ret=ReturnValue_ok;
     std::lock_guard<std::mutex> lock(allJointsBuffers.mutex);

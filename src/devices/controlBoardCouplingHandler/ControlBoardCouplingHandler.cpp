@@ -292,6 +292,6 @@ ReturnValue ControlBoardCouplingHandler::getJointType(int j, yarp::dev::JointTyp
 {
     ReturnValue ok{ReturnValue::return_code::return_value_error_generic};
     // TODO I am not sure how to handle this function
-    type = VOCAB_JOINTTYPE_REVOLUTE;
+    type = JointTypeEnum::VOCAB_JOINTTYPE_REVOLUTE;
     return ReturnValue_ok;
 }

@@ -2552,7 +2552,9 @@ return_getRefTorqueGroup ControlBoardRPCd::getRefTorqueGroupRPC(const std::vecto
     }
 
     ret.val.resize(j.size());
-    ret.ret = m_allInterfaces.iTorqueControl->getRefTorques(ret.val.data());
+    //iTorqueControl interface does not have a group method
+    ret.ret=ReturnValue_error_not_implemented_by_device;
+    //ret.ret = m_allInterfaces.iTorqueControl->getRefTorques(j.size(),j.data(),ret.val.data());
     if (!ret.ret) {
         yCError(CB_RPC, "Unable to getRefTorques");
     }
@@ -2695,7 +2697,7 @@ return_getRefPositionGroup ControlBoardRPCd::getRefPositionGroupRPC(const std::v
     }
 
     ret.val.resize(j.size());
-    ret.ret = m_allInterfaces.iPositionDirect->getRefPositions(ret.val.data());
+    ret.ret = m_allInterfaces.iPositionDirect->getRefPositions(j.size(), j.data(), ret.val.data());
     if (!ret.ret) {
         yCError(CB_RPC, "Unable to getRefPositions");
     }
@@ -2864,7 +2866,7 @@ yarp::dev::ReturnValue ControlBoardRPCd::setTrajSpeedAllRPC(const std::vector<do
     return ret;
 }
 
-yarp::dev::ReturnValue ControlBoardRPCd::setTrajAccelerationOneRPC(const std::int32_t j, const double acc) 
+yarp::dev::ReturnValue ControlBoardRPCd::setTrajAccelerationOneRPC(const std::int32_t j, const double acc)
 {
     LOCKMUTEXSERVER
     ReturnValue ret;
@@ -3048,7 +3050,7 @@ return_getTargetPositionGroup ControlBoardRPCd::getTargetPositionGroupRPC(const 
     }
 
     ret.val.resize(joints.size());
-    ret.ret = m_allInterfaces.iPositionControl->getTargetPositions(ret.val.data());
+    ret.ret = m_allInterfaces.iPositionControl->getTargetPositions(joints.size(), joints.data(), ret.val.data());
     if (!ret.ret) {
         yCError(CB_RPC, "Unable to getTargetPositions");
     }

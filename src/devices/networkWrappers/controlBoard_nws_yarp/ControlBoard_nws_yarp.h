@@ -43,7 +43,6 @@
 #include <string>
 
 #include "StreamingMessagesParser.h"
-#include "RPCMessagesParser.h"
 #include "ControlBoardServerImpl.h"
 #include "ControlBoard_nws_yarp_ParamsParser.h"
 

@@ -2243,7 +2243,7 @@ yarp::dev::ReturnValue RemoteControlBoard::getControlModes(std::vector<yarp::dev
     return ret?ReturnValue_ok:ReturnValue::return_code::return_value_error_not_ready;
 }
 
-yarp::dev::ReturnValue RemoteControlBoard::getControlModes(std::vector<int> joints, std::vector<yarp::dev::ControlModeEnum>& modes)
+yarp::dev::ReturnValue RemoteControlBoard::getControlModes(const std::vector<int>& joints, std::vector<yarp::dev::ControlModeEnum>& modes)
 {
     double localArrivalTime=0.0;
 
@@ -2273,7 +2273,7 @@ yarp::dev::ReturnValue RemoteControlBoard::setControlMode(int j, yarp::dev::Sele
     return ret;
 }
 
-yarp::dev::ReturnValue RemoteControlBoard::setControlModes(std::vector<int> j, std::vector<yarp::dev::SelectableControlModeEnum> modes)
+yarp::dev::ReturnValue RemoteControlBoard::setControlModes(const std::vector<int>& j, const std::vector<yarp::dev::SelectableControlModeEnum>& modes)
 {
     LOCKMUTEX
     auto ret = m_RPC.setControlModeGroupRPC(j, modes);
@@ -2284,7 +2284,7 @@ yarp::dev::ReturnValue RemoteControlBoard::setControlModes(std::vector<int> j, s
     return ret;
 }
 
-yarp::dev::ReturnValue RemoteControlBoard::setControlModes(const std::vector<yarp::dev::SelectableControlModeEnum> modes)
+yarp::dev::ReturnValue RemoteControlBoard::setControlModes(const std::vector<yarp::dev::SelectableControlModeEnum>& modes)
 {
     LOCKMUTEX
     auto ret = m_RPC.setControlModeAllRPC(modes);
@@ -2303,7 +2303,7 @@ yarp::dev::ReturnValue RemoteControlBoard::setPosition(int j, double ref)
 {
     if (m_use_streaming)
     {
-        CHECK_INTERFACE("iDirectPosition")
+        CHECK_INTERFACE("iPositionDirect")
         if (!isLive()) {
             return ReturnValue::return_code::return_value_error_not_ready;
         }
@@ -2333,7 +2333,7 @@ yarp::dev::ReturnValue RemoteControlBoard::setPositions(const int n_joint, const
 {
     if (m_use_streaming)
     {
-        CHECK_INTERFACE("iDirectPosition")
+        CHECK_INTERFACE("iPositionDirect")
         if (!isLive()) {
             return ReturnValue::return_code::return_value_error_not_ready;
         }
@@ -2369,7 +2369,7 @@ yarp::dev::ReturnValue RemoteControlBoard::setPositions(const double *refs)
 {
     if (m_use_streaming)
     {
-        CHECK_INTERFACE("iDirectPosition")
+        CHECK_INTERFACE("iPositionDirect")
         if (!isLive()) {
             return ReturnValue::return_code::return_value_error_not_ready;
         }
@@ -2524,7 +2524,7 @@ yarp::dev::ReturnValue RemoteControlBoard::getInteractionMode(int axis, yarp::de
     return ret?ReturnValue_ok:ReturnValue::return_code::return_value_error_not_ready;
 }
 
-yarp::dev::ReturnValue RemoteControlBoard::getInteractionModes(std::vector<int> joints, std::vector<yarp::dev::InteractionModeEnum>& modes)
+yarp::dev::ReturnValue RemoteControlBoard::getInteractionModes(const std::vector<int>& joints, std::vector<yarp::dev::InteractionModeEnum>& modes)
 {
     double localArrivalTime=0.0;
 
@@ -2571,7 +2571,7 @@ yarp::dev::ReturnValue RemoteControlBoard::setInteractionMode(int axis, yarp::de
     return ret;
 }
 
-yarp::dev::ReturnValue RemoteControlBoard::setInteractionModes(std::vector<int> joints, std::vector<yarp::dev::InteractionModeEnum> modes)
+yarp::dev::ReturnValue RemoteControlBoard::setInteractionModes(const std::vector<int>& joints, const std::vector<yarp::dev::InteractionModeEnum>& modes)
 {
     LOCKMUTEX
     auto ret = m_RPC.setInteractionModesGroupRPC(joints, modes);
@@ -2581,7 +2581,7 @@ yarp::dev::ReturnValue RemoteControlBoard::setInteractionModes(std::vector<int> 
     }
     return ret;}
 
-yarp::dev::ReturnValue RemoteControlBoard::setInteractionModes( std::vector<yarp::dev::InteractionModeEnum> modes)
+yarp::dev::ReturnValue RemoteControlBoard::setInteractionModes(const std::vector<yarp::dev::InteractionModeEnum>& modes)
 {
     LOCKMUTEX
     auto ret = m_RPC.setInteractionModesAllRPC(modes);

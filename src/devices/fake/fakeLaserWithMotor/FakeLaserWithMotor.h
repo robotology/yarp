@@ -213,10 +213,10 @@ public:
     yarp::dev::ReturnValue getAvailableControlModesRaw(int j, std::vector<yarp::dev::SelectableControlModeEnum>& avail) override;
     yarp::dev::ReturnValue getControlModeRaw(int j, yarp::dev::ControlModeEnum& mode) override;
     yarp::dev::ReturnValue getControlModesRaw(std::vector<yarp::dev::ControlModeEnum>& mode) override;
-    yarp::dev::ReturnValue getControlModesRaw(std::vector<int> j, std::vector<yarp::dev::ControlModeEnum>& mode) override;
+    yarp::dev::ReturnValue getControlModesRaw(const std::vector<int>& j, std::vector<yarp::dev::ControlModeEnum>& mode) override;
     yarp::dev::ReturnValue setControlModeRaw(int j, yarp::dev::SelectableControlModeEnum mode) override;
-    yarp::dev::ReturnValue setControlModesRaw(std::vector<int> j, std::vector<yarp::dev::SelectableControlModeEnum> mode) override;
-    yarp::dev::ReturnValue setControlModesRaw(const std::vector<yarp::dev::SelectableControlModeEnum> mode) override;
+    yarp::dev::ReturnValue setControlModesRaw(const std::vector<int>& j, const std::vector<yarp::dev::SelectableControlModeEnum>& mode) override;
+    yarp::dev::ReturnValue setControlModesRaw(const std::vector<yarp::dev::SelectableControlModeEnum>& mode) override;
 
     //IVelocityControl
     yarp::dev::ReturnValue velocityMoveRaw(int j, double sp) override;
