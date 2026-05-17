@@ -54,6 +54,12 @@ bool ImplementPositionControl::initialize(int size, const int *amap, const doubl
  */
 bool ImplementPositionControl::uninitialize()
 {
+    if(m_helper != nullptr)
+    {
+        delete castToMapper(m_helper);
+        m_helper = nullptr;
+    }
+
     return true;
 }
 
