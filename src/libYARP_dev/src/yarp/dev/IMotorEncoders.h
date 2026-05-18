@@ -269,15 +269,10 @@ public:
     virtual yarp::dev::ReturnValue getMotorEncoderAccelerations(double *accs)=0;
 };
 
-// interface IMotorEncoders sets
-constexpr yarp::conf::vocab32_t VOCAB_MOTOR_E_RESET  = yarp::os::createVocab32('m','r','e');
-constexpr yarp::conf::vocab32_t VOCAB_MOTOR_E_RESETS = yarp::os::createVocab32('m','r','e','s');
-constexpr yarp::conf::vocab32_t VOCAB_MOTOR_ENCODER  = yarp::os::createVocab32('m','n','c');
-constexpr yarp::conf::vocab32_t VOCAB_MOTOR_ENCODERS = yarp::os::createVocab32('m','n','c','s');
-constexpr yarp::conf::vocab32_t VOCAB_MOTOR_CPR      = yarp::os::createVocab32('m','c','p','r');
-
 // interface IMotorEncoders gets
 constexpr yarp::conf::vocab32_t VOCAB_MOTOR_ENCODER_NUMBER        =  yarp::os::createVocab32('m','n','u','m');
+constexpr yarp::conf::vocab32_t VOCAB_MOTOR_ENCODER               = yarp::os::createVocab32('m','n','c');
+constexpr yarp::conf::vocab32_t VOCAB_MOTOR_ENCODERS              = yarp::os::createVocab32('m','n','c','s');
 constexpr yarp::conf::vocab32_t VOCAB_MOTOR_ENCODER_SPEED         = yarp::os::createVocab32('m','s','p');
 constexpr yarp::conf::vocab32_t VOCAB_MOTOR_ENCODER_SPEEDS        = yarp::os::createVocab32('m','s','p','s');
 constexpr yarp::conf::vocab32_t VOCAB_MOTOR_ENCODER_ACCELERATION  = yarp::os::createVocab32('m','a','c');

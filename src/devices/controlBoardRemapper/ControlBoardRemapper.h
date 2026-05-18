@@ -239,9 +239,9 @@ public:
     yarp::dev::ReturnValue relativeMove(int j, double delta) override;
     yarp::dev::ReturnValue relativeMove(const double *deltas) override;
     yarp::dev::ReturnValue relativeMove(const int n_joints, const int *joints, const double *deltas) override;
-    yarp::dev::ReturnValue checkMotionDone(int j, bool *flag) override;
-    yarp::dev::ReturnValue checkMotionDone(bool *flag) override;
-    yarp::dev::ReturnValue checkMotionDone(const int n_joints, const int *joints, bool *flags) override;
+    yarp::dev::ReturnValue checkMotionDone(int j, bool& flag) override;
+    yarp::dev::ReturnValue checkMotionDone(bool& flag) override;
+    yarp::dev::ReturnValue checkMotionDone(const std::vector<int>& joints, bool& flags) override;
     yarp::dev::ReturnValue setTrajSpeed(int j, double sp) override;
     yarp::dev::ReturnValue setTrajSpeeds(const double *spds) override;
     yarp::dev::ReturnValue setTrajSpeeds(const int n_joints, const int *joints, const double *spds) override;
@@ -376,11 +376,11 @@ public:
     // IControlMode interface
     yarp::dev::ReturnValue getAvailableControlModes(int j, std::vector<yarp::dev::SelectableControlModeEnum>& avail) override;
     yarp::dev::ReturnValue getControlMode(int j, yarp::dev::ControlModeEnum& mode) override;
-    yarp::dev::ReturnValue getControlModes(std::vector<int> joints, std::vector<yarp::dev::ControlModeEnum>& modes) override;
+    yarp::dev::ReturnValue getControlModes(const std::vector<int>& joints, std::vector<yarp::dev::ControlModeEnum>& modes) override;
     yarp::dev::ReturnValue getControlModes(std::vector<yarp::dev::ControlModeEnum>& mode) override;
     yarp::dev::ReturnValue setControlMode(int j, yarp::dev::SelectableControlModeEnum mode) override;
-    yarp::dev::ReturnValue setControlModes(std::vector<int> joints, std::vector<yarp::dev::SelectableControlModeEnum> modes) override;
-    yarp::dev::ReturnValue setControlModes(std::vector<yarp::dev::SelectableControlModeEnum> mode) override;
+    yarp::dev::ReturnValue setControlModes(const std::vector<int>& joints, const std::vector<yarp::dev::SelectableControlModeEnum>& modes) override;
+    yarp::dev::ReturnValue setControlModes(const std::vector<yarp::dev::SelectableControlModeEnum>& mode) override;
 
     // IPositionDirect interface
     yarp::dev::ReturnValue setPosition(int j, double ref) override;
@@ -397,12 +397,12 @@ public:
     yarp::dev::ReturnValue getTargetVelocity(const int joint, double *vel) override;
     yarp::dev::ReturnValue getTargetVelocities(double *vels) override;
     yarp::dev::ReturnValue getTargetVelocities(const int n_joint, const int *joints, double *vels) override;
-    yarp::dev::ReturnValue getInteractionMode(int j, yarp::dev::InteractionModeEnum *mode) override;
-    yarp::dev::ReturnValue getInteractionModes(int n_joints, int *joints, yarp::dev::InteractionModeEnum *modes) override;
-    yarp::dev::ReturnValue getInteractionModes(yarp::dev::InteractionModeEnum *modes) override;
+    yarp::dev::ReturnValue getInteractionMode(int j, yarp::dev::InteractionModeEnum &mode) override;
+    yarp::dev::ReturnValue getInteractionModes(const std::vector<int>& joints, std::vector<yarp::dev::InteractionModeEnum>& modes) override;
+    yarp::dev::ReturnValue getInteractionModes(std::vector <yarp::dev::InteractionModeEnum>& modes) override;
     yarp::dev::ReturnValue setInteractionMode(int j, yarp::dev::InteractionModeEnum mode) override;
-    yarp::dev::ReturnValue setInteractionModes(int n_joints, int *joints, yarp::dev::InteractionModeEnum *modes) override;
-    yarp::dev::ReturnValue setInteractionModes(yarp::dev::InteractionModeEnum *modes) override;
+    yarp::dev::ReturnValue setInteractionModes(const std::vector<int>& joints, const std::vector<yarp::dev::InteractionModeEnum>& modes) override;
+    yarp::dev::ReturnValue setInteractionModes(const std::vector < yarp::dev::InteractionModeEnum>& modes) override;
 
     // IPWMControl
     yarp::dev::ReturnValue setRefDutyCycle(int m, double ref) override;

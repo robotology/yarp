@@ -13,7 +13,6 @@ set(YARP_dev_HDRS
   yarp/dev/AudioRecorderDeviceBase.h
   yarp/dev/AudioVisualInterfaces.h
   yarp/dev/CalibratorInterfaces.h
-  yarp/dev/CalibratorVocabs.h
   yarp/dev/CanBusInterface.h
   yarp/dev/CartesianControl.h
   yarp/dev/CircularAudioBuffer.h

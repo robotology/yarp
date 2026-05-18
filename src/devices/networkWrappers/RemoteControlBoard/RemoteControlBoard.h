@@ -80,7 +80,6 @@ class RemoteControlBoard :
         public RemoteControlBoard_ParamsParser
 {
 protected:
-    yarp::os::Port rpc_p;
     yarp::os::Port command_p;
     DiagnosticThread *diagnosticThread{nullptr};
     yarp::os::Port m_rpcPort;
@@ -89,6 +88,9 @@ protected:
     yarp::os::PortWriterBuffer<CommandMessage> command_buffer;
     bool writeStrict_singleJoint{true};
     bool writeStrict_moreJoints{false};
+
+    //this map contains info if the connected device implements a specific interface
+    std::map<std::string, bool> m_device_has_interfaces;
 
     // Buffer associated to the extendedOutputStatePort port; in this case we will use the type generated
     // from the YARP .thrift file
@@ -99,55 +101,15 @@ protected:
 //    yarp::os::Port extendedIntputStatePort;         // Port /stateExt:i reading the state of the joints
     yarp::dev::impl::jointData last_wholePart;         // tmp to store last received data for whole part
 
-    mutable Stamp lastStamp;  //this is shared among all calls that read encoders
-    size_t nj{0};
-    bool njIsKnown{false};
+    mutable Stamp m_lastStamp;  //this is shared among all calls that read encoders
+    size_t m_nj{0};
+    bool m_njIsKnown{false};
 
     ControlBoardMsgs m_RPC;
 
     // Check for number of joints, if needed.
     // This is to allow for delayed connection to the remote control board.
     bool isLive();
-
-    yarp::dev::ReturnValue send1V(int v);
-    yarp::dev::ReturnValue send2V(int v1, int v2);
-    yarp::dev::ReturnValue send2V1I(int v1, int v2, int axis);
-    yarp::dev::ReturnValue send1V1I(int v, int axis);
-    yarp::dev::ReturnValue send3V1I(int v1, int v2, int v3, int j);
-    yarp::dev::ReturnValue set1V(int code);
-    yarp::dev::ReturnValue set1V2D(int code, double v);
-    yarp::dev::ReturnValue set1V1I(int code, int v);
-    yarp::dev::ReturnValue get1V1D(int code, double& v) const;
-    yarp::dev::ReturnValue get1V1I(int code, int& v) const;
-    yarp::dev::ReturnValue set1V1I1D(int code, int j, double val);
-    yarp::dev::ReturnValue set1V1I2D(int code, int j, double val1, double val2);
-    yarp::dev::ReturnValue set1VDA(int v, const double *val);
-    yarp::dev::ReturnValue set2V1DA(int v1, int v2, const double *val);
-    yarp::dev::ReturnValue set2V2DA(int v1, int v2, const double *val1, const double *val2);
-    yarp::dev::ReturnValue set1V1I1IA1DA(int v, const int len, const int *val1, const double *val2);
-    yarp::dev::ReturnValue set2V1I1D(int v1, int v2, int axis, double val);
-    yarp::dev::ReturnValue set2V1I(int v1, int v2, int axis);
-    yarp::dev::ReturnValue get1V1I1D(int v, int j, double *val);
-    yarp::dev::ReturnValue get1V1I1I(int v, int j, int *val);
-    yarp::dev::ReturnValue get2V1I1D(int v1, int v2, int j, double *val);
-    yarp::dev::ReturnValue get2V1I2D(int v1, int v2, int j, double *val1, double *val2);
-    yarp::dev::ReturnValue get1V1I2D(int code, int axis, double *v1, double *v2);
-    yarp::dev::ReturnValue get1V1I1B(int v, int j, bool &val);
-    yarp::dev::ReturnValue get1V1I1IA1B(int v,  const int len, const int *val1, bool &retVal);
-    yarp::dev::ReturnValue get2V1I1IA1DA(int v1, int v2, const int n_joints, const int *joints, double *retVals, std::string functionName = "");
-    yarp::dev::ReturnValue get1V1B(int v, bool &val);
-    yarp::dev::ReturnValue get1VIA(int v, int *val);
-    yarp::dev::ReturnValue get1VDA(int v, double *val);
-    yarp::dev::ReturnValue get1V1DA(int v1, double *val);
-    yarp::dev::ReturnValue get2V1DA(int v1, int v2, double *val);
-    yarp::dev::ReturnValue get2V2DA(int v1, int v2, double *val1, double *val2);
-    yarp::dev::ReturnValue get1V1I1S(int code, int j, std::string &name);
-    yarp::dev::ReturnValue get1V1I1IA1DA(int v, const int len, const int *val1, double *val2);
-
-    bool setValWithPidType(int voc, PidControlTypeEnum type, int axis, double val);
-    bool setValWithPidType(int voc, PidControlTypeEnum type, const double* val_arr);
-    bool getValWithPidType(int voc, PidControlTypeEnum type, int j, double *val);
-    bool getValWithPidType(int voc, PidControlTypeEnum type, double *val);
 
 public:
     RemoteControlBoard() = default;
@@ -254,9 +216,9 @@ public:
     yarp::dev::ReturnValue relativeMove(int j, double delta) override;
     yarp::dev::ReturnValue relativeMove(const int n_joint, const int *joints, const double *refs) override;
     yarp::dev::ReturnValue relativeMove(const double *deltas) override;
-    yarp::dev::ReturnValue checkMotionDone(int j, bool *flag) override;
-    yarp::dev::ReturnValue checkMotionDone(const int n_joint, const int *joints, bool *flag) override;
-    yarp::dev::ReturnValue checkMotionDone(bool *flag) override;
+    yarp::dev::ReturnValue checkMotionDone(int j, bool& flag) override;
+    yarp::dev::ReturnValue checkMotionDone(const std::vector<int>& joints, bool& flag) override;
+    yarp::dev::ReturnValue checkMotionDone(bool& flag) override;
     yarp::dev::ReturnValue setTrajSpeed(int j, double sp) override;
     yarp::dev::ReturnValue setTrajSpeeds(const int n_joint, const int *joints, const double *spds) override;
     yarp::dev::ReturnValue setTrajSpeeds(const double *spds) override;
@@ -270,7 +232,7 @@ public:
     yarp::dev::ReturnValue getTrajAccelerations(const int n_joint, const int *joints, double *accs) override;
     yarp::dev::ReturnValue getTrajAccelerations(double *accs) override;
     yarp::dev::ReturnValue stop(int j) override;
-    yarp::dev::ReturnValue stop(const int len, const int *val1) override;
+    yarp::dev::ReturnValue stop(const int len, const int *joints) override;
     yarp::dev::ReturnValue stop() override;
 
     // IJointFault
@@ -334,11 +296,11 @@ public:
     // IControlMode
     yarp::dev::ReturnValue getAvailableControlModes(int j, std::vector<yarp::dev::SelectableControlModeEnum>& avail) override;
     yarp::dev::ReturnValue getControlMode(int j, yarp::dev::ControlModeEnum& mode) override;
-    yarp::dev::ReturnValue getControlModes(std::vector<int> joints, std::vector<yarp::dev::ControlModeEnum>& modes) override;
+    yarp::dev::ReturnValue getControlModes(const std::vector<int>& joints, std::vector<yarp::dev::ControlModeEnum>& modes) override;
     yarp::dev::ReturnValue getControlModes(std::vector<yarp::dev::ControlModeEnum>& modes) override;
     yarp::dev::ReturnValue setControlMode (int j, yarp::dev::SelectableControlModeEnum mode) override;
-    yarp::dev::ReturnValue setControlModes(std::vector<int> joints, std::vector<yarp::dev::SelectableControlModeEnum> modes) override;
-    yarp::dev::ReturnValue setControlModes(std::vector<yarp::dev::SelectableControlModeEnum> modes) override;
+    yarp::dev::ReturnValue setControlModes(const std::vector<int>& joints, const std::vector<yarp::dev::SelectableControlModeEnum>& modes) override;
+    yarp::dev::ReturnValue setControlModes(const std::vector<yarp::dev::SelectableControlModeEnum>& modes) override;
 
 
     // IPositionDirect
@@ -358,12 +320,12 @@ public:
     yarp::dev::ReturnValue getTargetVelocities(const int n_joint, const int* joints, double* vels) override;
 
     // IInteractionMode
-    yarp::dev::ReturnValue getInteractionMode(int axis, yarp::dev::InteractionModeEnum* mode) override;
-    yarp::dev::ReturnValue getInteractionModes(int n_joints, int *joints, yarp::dev::InteractionModeEnum* modes) override;
-    yarp::dev::ReturnValue getInteractionModes(yarp::dev::InteractionModeEnum* modes) override;
+    yarp::dev::ReturnValue getInteractionMode(int axis, yarp::dev::InteractionModeEnum& mode) override;
+    yarp::dev::ReturnValue getInteractionModes(const std::vector<int>& joints, std::vector <yarp::dev::InteractionModeEnum>& modes) override;
+    yarp::dev::ReturnValue getInteractionModes(std::vector <yarp::dev::InteractionModeEnum>& modes) override;
     yarp::dev::ReturnValue setInteractionMode(int axis, yarp::dev::InteractionModeEnum mode) override;
-    yarp::dev::ReturnValue setInteractionModes(int n_joints, int *joints, yarp::dev::InteractionModeEnum* modes) override;
-    yarp::dev::ReturnValue setInteractionModes(yarp::dev::InteractionModeEnum* modes) override;
+    yarp::dev::ReturnValue setInteractionModes(const std::vector<int>& joints, const std::vector < yarp::dev::InteractionModeEnum>& modes) override;
+    yarp::dev::ReturnValue setInteractionModes(const std::vector<yarp::dev::InteractionModeEnum>& modes) override;
 
     // IRemoteCalibrator
     yarp::dev::ReturnValue isCalibratorDevicePresent(bool *isCalib) override;

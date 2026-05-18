@@ -11,6 +11,8 @@
 #include <yarp/os/Vocab.h>
 #include <yarp/dev/ReturnValue.h>
 
+#include <vector>
+
 namespace yarp::dev {
 class IPositionControlRaw;
 class IPositionControl;
@@ -68,17 +70,17 @@ public:
     /** Check if the current trajectory is terminated. Non blocking.
      * @param j is the axis number
      * @param flag is a pointer to return value
-     * @return true/false on network communication (value you actually want
-        is stored in *flag)
+     * @return true/false on network communication (the value you actually want
+        is stored in flag)
      */
-    virtual yarp::dev::ReturnValue checkMotionDoneRaw(int j, bool *flag)=0;
+    virtual yarp::dev::ReturnValue checkMotionDoneRaw(int j, bool& flag)=0;
 
-    /** Check if the current trajectory is terminated. Non blocking.
-     * @param flag is a pointer to return value ("and" of all joints)
-     * @return true/false on network communication (value you actually want
-        is stored in *flag)
+    /** Check if the current trajectory all joints is terminated. Non blocking.
+     * @param flag the return value ("and" of all joints)
+     * @return true/false on network communication (the value you actually want
+        is stored in flag)
      */
-    virtual yarp::dev::ReturnValue checkMotionDoneRaw(bool *flag)=0;
+    virtual yarp::dev::ReturnValue checkMotionDoneRaw(bool& flag)=0;
 
     /** Set reference speed for a joint, this is the speed used during the
      * interpolation of the trajectory.
@@ -165,12 +167,12 @@ public:
     virtual yarp::dev::ReturnValue relativeMoveRaw(const int n_joint, const int *joints, const double *deltas)=0;
 
     /** Check if the current trajectory is terminated. Non blocking.
-     * @param joints pointer to the array of joint numbers
+     * @param joints the array of joint numbers
      * @param flag true if the trajectory is terminated, false otherwise
      *        (a single value which is the 'and' of all joints')
      * @return true/false if network communication went well.
      */
-    virtual yarp::dev::ReturnValue checkMotionDoneRaw(const int n_joint, const int *joints, bool *flags)=0;
+    virtual yarp::dev::ReturnValue checkMotionDoneRaw(const std::vector<int>& joints, bool& flag)=0;
 
     /** Set reference speed on all joints. These values are used during the
      * interpolation of the trajectory.
@@ -298,14 +300,14 @@ public:
      * @return true/false on network communication (value you actually want
         is stored in *flag)
      */
-    virtual yarp::dev::ReturnValue checkMotionDone(int j, bool *flag)=0;
+    virtual yarp::dev::ReturnValue checkMotionDone(int j, bool& flag)=0;
 
     /** Check if the current trajectory is terminated. Non blocking.
      * @param flag is a pointer to return value ("and" of all joints)
      * @return true/false on network communication (value you actually want
         is stored in *flag)
      */
-    virtual yarp::dev::ReturnValue checkMotionDone(bool *flag)=0;
+    virtual yarp::dev::ReturnValue checkMotionDone(bool& flag)=0;
 
     /** Set reference speed for a joint, this is the speed used during the
      * interpolation of the trajectory.
@@ -392,11 +394,11 @@ public:
     virtual yarp::dev::ReturnValue relativeMove(const int n_joint, const int *joints, const double *deltas)=0;
 
     /** Check if the current trajectory is terminated. Non blocking.
-     * @param joints pointer to the array of joint numbers
-     * @param flag  pointer to return value (logical "and" of all set of joints)
+     * @param joints array of joint numbers
+     * @param flag  logical "and" of all set of joints
      * @return true/false if network communication went well.
      */
-    virtual yarp::dev::ReturnValue checkMotionDone(const int n_joint, const int *joints, bool *flag)=0;
+    virtual yarp::dev::ReturnValue checkMotionDone(const std::vector<int>& joints, bool& flag)=0;
 
     /** Set reference speed on all joints. These values are used during the
      * interpolation of the trajectory.

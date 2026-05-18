@@ -134,7 +134,7 @@ bool yarp::robottestingframework::jointsPosMotion::setAndCheckPosControlMode()
         size_t ok = 0;
         for (size_t i = 0; i < mPriv->n_joints; i++) {
             mPriv->icmd->getControlMode ((int)mPriv->jointsList[i], cmode);
-            mPriv->iimd->getInteractionMode((int)mPriv->jointsList[i], &imode);
+            mPriv->iimd->getInteractionMode((int)mPriv->jointsList[i], imode);
             if (cmode == yarp::dev::ControlModeEnum::VOCAB_CM_POSITION && imode == yarp::dev::InteractionModeEnum::VOCAB_IM_STIFF) {
                 ok++;
             }

@@ -913,58 +913,17 @@ MAKE_COMMS  (Map2DPath, yarp::dev::Nav2D::Map2DPath)
         return self->getTrajAccelerations(n_joint, &joints[0], &data[0]);
     }
 
-    bool checkMotionDone() {
-        bool result;
-        bool ok = self->checkMotionDone(&result);
-        if(!ok) { return 1; } //In case of error tell the motion has been completed
-        return result;
+
+    bool checkMotionDone(int joint, bool& ok) {
+        return self->checkMotionDone(joint, ok);
     }
 
-    bool checkMotionDone(std::vector<bool>& flag) {
-        // complication: vector<bool> is packed in C++
-        // and isn't a regular container.
-        std::vector<char> data(flag.size());
-        bool result = self->checkMotionDone((bool*)(&data[0]));
-        for (size_t i=0; i<data.size(); i++) {
-            flag[i] = data[i]!=0;
-        }
-        return result;
+    bool checkMotionDone(bool& ok) {
+        return self->checkMotionDone(ok);
     }
 
-    bool checkMotionDone(int i, std::vector<bool>& flag) {
-        std::vector<char> data(flag.size());
-        bool result = self->checkMotionDone(i,(bool*)(&data[0]));
-        for (size_t i=0; i<data.size(); i++) {
-            flag[i] = data[i]!=0;
-        }
-        return result;
-    }
-
-    bool checkMotionDone(int n_joint, std::vector<int>& joints, std::vector<bool>& flag) {
-        std::vector<char> data(n_joint);
-        bool result = self->checkMotionDone(n_joint, &joints[0], (bool*)(&data[0]));
-        for (size_t i=0; i<data.size(); i++) {
-            flag[i] = data[i]!=0;
-        }
-        return result;
-    }
-
-    bool isMotionDone(int i) {
-        bool buffer;
-        self->checkMotionDone(i,&buffer);
-        return buffer;
-    }
-
-    bool isMotionDone() {
-        int buffer;
-        self->getAxes(&buffer);
-        bool data = true;
-        for (int i=0; i<buffer; i++) {
-            bool buffer2;
-            self->checkMotionDone(i,&buffer2);
-            data = data && buffer2;
-            }
-        return data;
+    bool checkMotionDone(std::vector<int> joints, bool& ok) {
+        return self->checkMotionDone(joints, ok);
     }
 
     bool stop(int n_joint, std::vector<int>& joints) {
@@ -1237,11 +1196,10 @@ MAKE_COMMS  (Map2DPath, yarp::dev::Nav2D::Map2DPath)
 }
 
 %extend yarp::dev::IControlMode {
-    int getControlMode(int j) {
-        int buffer;
-        bool ok = self->getControlMode(j, &buffer);
-        if (!ok) return -1;
-        return buffer;
+        yarp::dev::ControlModeEnum getControlMode(int j) {
+        yarp::dev::ControlModeEnum mode = yarp::dev::ControlModeEnum::VOCAB_CM_UNKNOWN;
+        self->getControlMode(j, mode);
+        return mode;
     }
 
     bool getControlModes(std::vector<yarp::dev::ControlModeEnum>& data) {
@@ -1262,26 +1220,26 @@ MAKE_COMMS  (Map2DPath, yarp::dev::Nav2D::Map2DPath)
 }
 
 %extend yarp::dev::IInteractionMode {
-    yarp::dev::InteractionModeEnum getInteractionMode(int axis) {
-       yarp::dev::InteractionModeEnum mode = VOCAB_IM_UNKNOWN;
-       self->getInteractionMode(axis, &mode);
+       yarp::dev::InteractionModeEnum getInteractionMode(int axis) {
+       yarp::dev::InteractionModeEnum mode = yarp::dev::InteractionModeEnum::VOCAB_IM_UNKNOWN;
+       self->getInteractionMode(axis, mode);
        return mode;
     }
 
-    bool getInteractionModes(int n_joint, std::vector<int>& joints, std::vector<int>& data) {
-        return self->getInteractionModes(n_joint, &joints[0], (yarp::dev::InteractionModeEnum*)&data[0]);
+    bool getInteractionModes(std::vector<int>& joints, std::vector<yarp::dev::InteractionModeEnum>& data) {
+        return self->getInteractionModes(joints, data);
     }
 
-    bool getInteractionModes(std::vector<int>& data) {
-        return self->getInteractionModes((yarp::dev::InteractionModeEnum*)&data[0]);
+    bool getInteractionModes(std::vector<yarp::dev::InteractionModeEnum>& data) {
+        return self->getInteractionModes(data);
     }
 
-    bool setInteractionModes(int n_joint, std::vector<int>& joints, std::vector<int>& data) {
-        return self->setInteractionModes(n_joint, &joints[0], (yarp::dev::InteractionModeEnum*)&data[0]);
+    bool setInteractionModes(std::vector<int>& joints, std::vector<yarp::dev::InteractionModeEnum>& data) {
+        return self->setInteractionModes(joints, data);
     }
 
-    bool setInteractionModes(std::vector<int>& data) {
-        return self->setInteractionModes((yarp::dev::InteractionModeEnum*)&data[0]);
+    bool setInteractionModes(std::vector<yarp::dev::InteractionModeEnum>& data) {
+        return self->setInteractionModes(data);
     }
 }
 
@@ -1325,7 +1283,7 @@ MAKE_COMMS  (Map2DPath, yarp::dev::Nav2D::Map2DPath)
     yarp::dev::JointTypeEnum getJointType(int axis) {
         yarp::dev::JointTypeEnum type;
         bool ok = self->getJointType(axis, type);
-        if (!ok) return VOCAB_JOINTTYPE_UNKNOWN;
+        if (!ok) return yarp::dev::JointTypeEnum::VOCAB_JOINTTYPE_UNKNOWN;
         return type;
     }
 }
