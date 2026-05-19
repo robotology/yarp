@@ -8,7 +8,6 @@
 
 #include <string>
 #include <string>
-#include <yarp/os/PeriodicThread.h>
 #include "MonitorBinding.h"
 #include "swigluarun.h"
 #include <mutex>
