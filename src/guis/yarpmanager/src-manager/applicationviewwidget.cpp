@@ -443,23 +443,12 @@ void ApplicationViewWidget::onModuleItemSelectionChanged()
                 if (it->data(0,Qt::UserRole).toInt() == APPLICATION) {
                     for(int j=0;j<it->childCount();j++) {
                         QTreeWidgetItem *child = it->child(j);
-                        child->setSelected(true);
-                        if(itemsSelectedForResource.count(it->text(3).toStdString())) {
-                            itemsSelectedForResource[it->text(3).toStdString()] ++;
-                        }
-                        else if((child->text(3).toStdString() != "") && !itemsSelectedForResource.count(child->text(3).toStdString())) {
-                            itemsSelectedForResource[child->text(3).toStdString()] = 1;
-                        }
+                        selectModule(child,true);
                     }
 
                 }
                 else{
-                    if(itemsSelectedForResource.count(it->text(3).toStdString())) {
-                        itemsSelectedForResource[it->text(3).toStdString()] ++;
-                    }
-                    else if((it->text(3).toStdString() != "") && !itemsSelectedForResource.count(it->text(3).toStdString())) {
-                        itemsSelectedForResource[it->text(3).toStdString()] = 1;
-                    }
+                    selectModule(it,true);
                 }
 
             }
@@ -1421,7 +1410,7 @@ bool ApplicationViewWidget::onRefresh()
                             resourcesIDs);
     }
     else if(!m_firstRefresh && costly) {
-        yDebug() << "Performing costly refresh for all modules.";
+        yDebug() << "Using batch ps call instead of classic refresh call to check running status of modules.";
         std::map<std::string, ProcessContainer> hostProcesses;
         std::map<std::string, bool> hostQueryOk;
         safeManager.collectYarprunProcessesByHost(hostProcesses, hostQueryOk);
@@ -1460,7 +1449,6 @@ bool ApplicationViewWidget::onRefresh()
                 isRunning = safeManager.running(id);
             }
 
-            // use YARP log stream instead of std::cout with color codes
             if (isRunning) {
                 onModStart(id);
             }
@@ -1537,16 +1525,7 @@ void ApplicationViewWidget::selectAllModule(bool check)
         if (it->data(0,Qt::UserRole) == APPLICATION) {
                selectAllNestedApplicationModule(it,check);
         } else {
-            it->setSelected(check);
-            if(itemsSelectedForResource.count(it->text(3).toStdString())) {
-                itemsSelectedForResource[it->text(3).toStdString()] += check ? 1 : -1*(itemsSelectedForResource[it->text(3).toStdString()] > 0);
-                if(itemsSelectedForResource[it->text(3).toStdString()] < 0){
-                    yError() << "Error in counting selected items for resource " << it->text(3).toStdString();
-                }
-            }
-            else if(check && !itemsSelectedForResource.count(it->text(3).toStdString()) && (it->text(3).toStdString() != "")) {
-                itemsSelectedForResource[it->text(3).toStdString()] = 1;
-            }
+            selectModule(it,check);
         }
     }
     if (ui->moduleList->selectedItems().isEmpty()) {
@@ -1621,16 +1600,7 @@ void ApplicationViewWidget::selectAllNestedApplicationModule(QTreeWidgetItem *it
         if (ch->data(0,Qt::UserRole) == APPLICATION) {
             selectAllNestedApplicationModule(ch, check);
         } else {
-            ch->setSelected(check);
-            if(itemsSelectedForResource.count(ch->text(3).toStdString())) {
-                itemsSelectedForResource[ch->text(3).toStdString()] += check ? 1 : -1*(itemsSelectedForResource[it->text(3).toStdString()] > 0);
-                if(itemsSelectedForResource[ch->text(3).toStdString()] < 0){
-                    yError() << "Error in counting selected items for resource " << ch->text(3).toStdString();
-                }
-            }
-            else if(check && !itemsSelectedForResource.count(ch->text(3).toStdString()) && (ch->text(3).toStdString() != "")) {
-                itemsSelectedForResource[ch->text(3).toStdString()] = 1;
-            }
+            selectModule(ch,check);
         }
     }
 }
@@ -1729,6 +1699,20 @@ bool ApplicationViewWidget::costlyRefresh(bool& costly)
     }
 
     return true;
+}
+
+void ApplicationViewWidget::selectModule(QTreeWidgetItem *item, bool check)
+{
+    item->setSelected(check);
+    if(itemsSelectedForResource.count(item->text(3).toStdString())) {
+        itemsSelectedForResource[item->text(3).toStdString()] += check ? 1 : -1*(itemsSelectedForResource[item->text(3).toStdString()] > 0);
+        if(itemsSelectedForResource[item->text(3).toStdString()] < 0){
+            yError() << "Error in counting selected items for resource " << item->text(3).toStdString();
+        }
+    }
+    else if(check && !itemsSelectedForResource.count(item->text(3).toStdString()) && (item->text(3).toStdString() != "")) {
+        itemsSelectedForResource[item->text(3).toStdString()] = 1;
+    }
 }
 
 /*! \brief Select/deselect all connections

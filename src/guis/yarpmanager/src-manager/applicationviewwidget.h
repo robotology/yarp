@@ -108,7 +108,21 @@ private:
     void updateConnection(int index, std::vector<int> &CIDs);
     void updateConnectionItem(QTreeWidgetItem *it);
 
+    /**
+     * @brief Tells whether or not a classic module-whise refresh is more costly than a full refresh.
+     *
+     * @param costly this parameter is set to true if a classic refresh is more costly than a full refresh, false otherwise
+     * @return bool true if the function performed as expected, false if an error occurred
+     */
     bool costlyRefresh(bool &costly);
+
+    /**
+     * @brief Selects or deselects a module item.
+     *
+     * @param it The module item to select or deselect.
+     * @param check True to select the item, false to deselect it.
+     */
+    void selectModule(QTreeWidgetItem *it, bool check);
 
 
 
@@ -155,11 +169,13 @@ private:
     QList <StdoutWindow*> stdoutWinList;
 
     bool editingMode;
-    bool m_firstRefresh{true};
-    int m_resourcesNumber{0};
+    bool m_firstRefresh{true}; // flag to perform host enumeration only at the first refresh
+    int m_resourcesNumber{0}; // number of hosts
 
     std::vector<std::string> listOfResourceNames;
-    std::map<std::string,int> itemsSelectedForResource;
+    std::map<std::string,int> itemsSelectedForResource; // map resource name to number of
+                                                        //items selected for that resource,
+    // used to keep track of how many items are selected for each resource
 
 
 private slots:
