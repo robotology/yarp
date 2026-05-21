@@ -108,6 +108,8 @@ private:
     void updateConnection(int index, std::vector<int> &CIDs);
     void updateConnectionItem(QTreeWidgetItem *it);
 
+    bool costlyRefresh(bool &costly);
+
 
 
 private:
@@ -153,8 +155,11 @@ private:
     QList <StdoutWindow*> stdoutWinList;
 
     bool editingMode;
+    bool m_firstRefresh{true};
+    int m_resourcesNumber{0};
 
     std::vector<std::string> listOfResourceNames;
+    std::map<std::string,int> itemsSelectedForResource;
 
 
 private slots:
