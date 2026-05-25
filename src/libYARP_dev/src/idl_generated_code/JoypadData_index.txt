@@ -1,0 +1,6 @@
+yarp/dev/TrackballData.h
+yarp/dev/TrackballData.cpp
+yarp/dev/TouchData.h
+yarp/dev/TouchData.cpp
+yarp/dev/StickData.h
+yarp/dev/StickData.cpp

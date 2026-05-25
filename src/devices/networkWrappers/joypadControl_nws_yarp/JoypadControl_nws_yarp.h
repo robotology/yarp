@@ -14,7 +14,7 @@
 #include <yarp/dev/PolyDriverList.h>
 #include <yarp/os/BufferedPort.h>
 #include <yarp/os/Bottle.h>
-#include <yarp/os/RPCServer.h>
+#include <yarp/os/RpcServer.h>
 
 #include <map>
 
