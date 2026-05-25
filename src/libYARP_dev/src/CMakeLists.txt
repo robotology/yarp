@@ -264,6 +264,8 @@ set(YARP_dev_IDL
 
   idl/LLM_Message.thrift
   idl/SensorStreamingData.thrift
+
+  idl/JoypadData.thrift
 )
 
 if(TARGET YARP::YARP_math)

@@ -101,6 +101,26 @@ inline int BottleTagMap <int> () {
     return BOTTLE_TAG_INT32;
   }
 
+template<>
+inline int BottleTagMap <short int> () {
+    return BOTTLE_TAG_INT16;
+  }
+
+template<>
+inline int BottleTagMap <unsigned short int> () {
+    return BOTTLE_TAG_INT16;
+  }
+
+template<>
+inline int BottleTagMap <char> () {
+    return BOTTLE_TAG_INT8;
+  }
+
+template<>
+inline int BottleTagMap <unsigned char> () {
+    return BOTTLE_TAG_INT8;
+  }
+
 /**
 * \ingroup sig_class
 *

@@ -23,17 +23,27 @@ using namespace yarp::dev;
 using namespace yarp::sig;
 
 
-TEST_CASE("dev::JoypadControlClientTest", "[yarp::dev]")
+TEST_CASE("dev::JoypadControl_nwc_yarp", "[yarp::dev]")
 {
     #if defined(DISABLE_FAILING_TESTS)
         YARP_SKIP_TEST("Skipping failing tests")
     #endif
 
     YARP_REQUIRE_PLUGIN("fakeJoypad", "device");
-    YARP_REQUIRE_PLUGIN("JoypadControlClient", "device");
-    YARP_REQUIRE_PLUGIN("JoypadControlServer", "device");
+    YARP_REQUIRE_PLUGIN("JoypadControl_nwc_yarp", "device");
+    YARP_REQUIRE_PLUGIN("JoypadControl_nws_yarp", "device");
 
     Network::setLocalMode(true);
+
+    auto use_streaming_config = GENERATE(
+        bool(true),
+        bool(false)
+    );
+
+    auto publish_on_event_config = GENERATE(
+        bool(true),
+        bool(false)
+    );
 
     SECTION("Test the frameGrabber_nwc_yarp device with a frameGrabber_nws_yarp device")
     {
@@ -44,9 +54,10 @@ TEST_CASE("dev::JoypadControlClientTest", "[yarp::dev]")
         Property p_nws;
         Property p_nwc;
 
-        p_nws.put("device","JoypadControlServer");
+        p_nws.put("device","JoypadControl_nws_yarp");
         p_nws.put("use_separate_ports", true);
-        p_nws.put("name", "/joyServer");
+        p_nws.put("name", "/joy_nws_yarp");
+        p_nws.put("publish_on_event",publish_on_event_config);
         p_fake.put("device","fakeJoypad");
         REQUIRE(dd_fake.open(p_fake));
         REQUIRE(dd_nws.open(p_nws));
@@ -57,19 +68,20 @@ TEST_CASE("dev::JoypadControlClientTest", "[yarp::dev]")
         bool result_att = ww_nws->attach(&dd_fake);
         REQUIRE(result_att); }
 
-        p_nwc.put("device", "JoypadControlClient");
-        p_nwc.put("remote", "/joyServer");
-        p_nwc.put("local", "/joyclient");
+        p_nwc.put("device", "JoypadControl_nwc_yarp");
+        p_nwc.put("remote", "/joy_nws_yarp");
+        p_nwc.put("local", "/joy_nwc_yarp");
+        p_nwc.put("use_streaming", use_streaming_config);
         REQUIRE(dd_nwc.open(p_nwc));
 
         IJoypadController* ijoy = nullptr;
         REQUIRE(dd_nwc.view(ijoy));
 
-        yarp::os::SystemClock::delaySystem(0.5);
+        yarp::os::SystemClock::delaySystem(1.5);
 
         yarp::dev::tests::exec_iJoypadController_test_1(ijoy);
 
-        yarp::os::SystemClock::delaySystem(0.5);
+        yarp::os::SystemClock::delaySystem(1.5);
 
         CHECK(dd_nwc.close());
         CHECK(dd_nws.close());
