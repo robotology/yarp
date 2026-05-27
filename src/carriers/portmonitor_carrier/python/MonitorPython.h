@@ -73,6 +73,7 @@ private:
     bool ensureYarpModuleLoaded();
 
     PyObject* m_classInstance=nullptr; // Python object of the created class
+    PyObject* m_lastUpdateResult = nullptr;
 
 public:
     MonitorTrigger<MonitorPython>* trigger=nullptr;

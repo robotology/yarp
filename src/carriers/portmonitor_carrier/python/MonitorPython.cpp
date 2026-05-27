@@ -20,6 +20,7 @@ namespace {
 YARP_LOG_COMPONENT(PY_PORT_MONITOR, "yarp.portmonitor.MonitorPython")
 
 constexpr const char* yarpThingsSwigType = "yarp::os::Things *";
+constexpr const char* yarpPortWriterSwigType = "yarp::os::PortWriter *";
 
 bool appendPythonPath(const std::string& path)
 {
@@ -81,7 +82,7 @@ MonitorPython::MonitorPython() : bHasAcceptCallback(false),
 
 MonitorPython::~MonitorPython()
 {
-
+    Py_XDECREF(m_lastUpdateResult);
 }
 
 bool MonitorPython::load(const Property &options)
@@ -108,6 +109,17 @@ bool MonitorPython::load(const Property &options)
     bHasAcceptCallback = hasPythonFunction(m_pythonScriptName, "acceptData");
     bHasUpdateCallback = hasPythonFunction(m_pythonScriptName, "updateData");
     bHasUpdateReplyCallback = hasPythonFunction(m_pythonScriptName, "updateReply");
+    if(hasPythonFunction(m_pythonScriptName, "create"))
+    {
+        PyObject* pValue = nullptr;
+        PyObject* pArgs = nullptr;
+        if (!functionWrapper(m_pythonScriptName, "create", pArgs, pValue))
+        {
+            yCError(PY_PORT_MONITOR) << "Unable to call the create function from python \n";
+            return false;
+        }
+        Py_XDECREF(pValue);
+    }
 
     return ensureYarpModuleLoaded();
 }
@@ -158,6 +170,34 @@ yarp::os::Things& MonitorPython::updateData(yarp::os::Things& thing)
     }
 
     Py_DECREF(pArgs);
+
+    if (pRetValue != nullptr) {
+        yarp::os::Things* result = nullptr;
+        if (SWIG_ConvertPtr(pRetValue, (void**)(&result), type, 0) == SWIG_OK && result != nullptr) {
+            if (result != &thing) {
+                Py_XDECREF(m_lastUpdateResult);
+                m_lastUpdateResult = pRetValue;
+                pRetValue = nullptr;
+            }
+            Py_XDECREF(pRetValue);
+            return *result;
+        }
+        PyErr_Clear();
+
+        swig_type_info* writerType = SWIG_TypeQuery(yarpPortWriterSwigType);
+        yarp::os::PortWriter* writer = nullptr;
+        if (writerType != nullptr &&
+            SWIG_ConvertPtr(pRetValue, (void**)(&writer), writerType, 0) == SWIG_OK &&
+            writer != nullptr) {
+            thing.setPortWriter(writer);
+            Py_XDECREF(m_lastUpdateResult);
+            m_lastUpdateResult = pRetValue;
+            pRetValue = nullptr;
+        } else {
+            PyErr_Clear();
+        }
+    }
+
     Py_XDECREF(pRetValue);
 
     return thing;
