@@ -33,6 +33,7 @@
 #include <string>
 #include <cstring>
 #include <random>
+#include <iomanip>
 
 #if defined(_WIN32)
 # if !defined(WIN32_LEAN_AND_MEAN)
