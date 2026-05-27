@@ -77,11 +77,11 @@ TEST_CASE("dev::JoypadControl_nwc_yarp", "[yarp::dev]")
         IJoypadController* ijoy = nullptr;
         REQUIRE(dd_nwc.view(ijoy));
 
-        yarp::os::SystemClock::delaySystem(1.5);
+        yarp::os::SystemClock::delaySystem(0.5);
 
         yarp::dev::tests::exec_iJoypadController_test_1(ijoy);
 
-        yarp::os::SystemClock::delaySystem(1.5);
+        yarp::os::SystemClock::delaySystem(0.5);
 
         CHECK(dd_nwc.close());
         CHECK(dd_nws.close());

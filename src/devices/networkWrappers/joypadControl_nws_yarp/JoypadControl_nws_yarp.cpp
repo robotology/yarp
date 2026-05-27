@@ -415,7 +415,7 @@ void JoypadControl_nws_yarp::run()
         //1 Buttons
         {
             bool write;
-            write = true;
+            write = m_portButtons.getOutputCount()>0;
             auto& b = m_portButtons.prepare();
             b.value.clear();
             for(size_t i = 0; i < m_numberOfButtons; ++i)
@@ -451,7 +451,7 @@ void JoypadControl_nws_yarp::run()
         {
             bool write;
 
-            write = true;
+            write = m_portHats.getOutputCount()>0;
             auto& b = m_portHats.prepare();
             b.value.clear();
             for(size_t i = 0; i < m_numberOfHats; ++i)
@@ -491,7 +491,7 @@ void JoypadControl_nws_yarp::run()
         {
             bool write;
 
-            write = true;
+            write = m_portAxes.getOutputCount()>0;
             auto& b = m_portAxes.prepare();
             b.value.clear();
             for(size_t i = 0; i < m_numberOfAxes; ++i)
@@ -527,7 +527,7 @@ void JoypadControl_nws_yarp::run()
         {
             bool write;
 
-            write     = true;
+            write     = m_portTrackballs.getOutputCount()>0;
             auto& b = m_portTrackballs.prepare();
             b.value.clear();
             for(size_t i = 0; i < m_numberOfTrackballs; ++i)
@@ -569,7 +569,7 @@ void JoypadControl_nws_yarp::run()
         //5 Stick
         {
             bool write;
-            write = true;
+            write = m_portSticks.getOutputCount()>0;
             auto& b = m_portSticks.prepare();
             b.value.clear();
             for(size_t i = 0; i < m_numberOfSticks; ++i)
@@ -611,7 +611,7 @@ void JoypadControl_nws_yarp::run()
         //6 Touch
         {
             bool write;
-            write = true;
+            write =  m_portTouches.getOutputCount()>0;
             auto& b = m_portTouches.prepare();
             b.value.clear();
 
