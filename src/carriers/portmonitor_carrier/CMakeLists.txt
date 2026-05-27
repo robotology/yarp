@@ -86,7 +86,7 @@ if (NOT SKIP_portmonitor)
   endif()
 
   if(YARP_HAS_Python)
-    target_include_directories(yarp_portmonitor PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/python})
+    target_include_directories(yarp_portmonitor PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/python)
     target_include_directories(yarp_portmonitor SYSTEM PRIVATE ${PYTHON_INCLUDE_DIR})
     target_compile_definitions(yarp_portmonitor PRIVATE ENABLED_PORTMONITOR_PYTHON)
     target_link_libraries(yarp_portmonitor PRIVATE Python::Python)
