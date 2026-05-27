@@ -29,7 +29,7 @@ SDLJoypad::~SDLJoypad() = default;
 
 bool SDLJoypad::open(yarp::os::Searchable& rf)
 {
-    if(rf.check("help"))
+/*  if(rf.check("help"))
     {
         yCInfo(SDLJOYPAD) << "parameters:";
         yCInfo(SDLJOYPAD);
@@ -45,6 +45,7 @@ bool SDLJoypad::open(yarp::os::Searchable& rf)
         yCInfo(SDLJOYPAD) << "deadZone         - set the deadzone for this stick";
         return false;
     }
+*/
 
     int    joy_id;
     size_t joystick_num;
@@ -136,7 +137,7 @@ bool SDLJoypad::open(yarp::os::Searchable& rf)
         m_buttonCount += SDL_JoystickNumButtons(m_device[i]);
     }
 
-    if(parseActions(rf, &actionCount))
+    if(m_actionsHandler.parseActions(rf, m_buttonCount, &actionCount))
     {
         if(actionCount)
         {
@@ -166,13 +167,13 @@ bool SDLJoypad::parseStickInfo(const yarp::os::Searchable& cfg)
         return false;
     }
 
-    for(unsigned int i = 0; i < m_axisCount; i++)
+    for(size_t i = 0; i < m_axisCount; i++)
     {
         m_axes.push_back(true);
     }
 
     m_stickCount = cfg.find("sticks").asInt32();
-    for(unsigned int i = 0; i < m_stickCount; i++)
+    for(size_t i = 0; i < m_stickCount; i++)
     {
         std::string stickName;
         int    axesCount;
@@ -205,7 +206,7 @@ bool SDLJoypad::parseStickInfo(const yarp::os::Searchable& cfg)
         for(int j = 0; j < axesCount; j++)
         {
             std::string       axisName, invertName;
-            unsigned int axis_id;
+            size_t axis_id;
             axisName   = "axis"         + std::to_string(j) + "_id";
             invertName = "invert_axis_" + std::to_string(j);
 
@@ -215,7 +216,7 @@ bool SDLJoypad::parseStickInfo(const yarp::os::Searchable& cfg)
                 return false;
             }
 
-            axis_id = (unsigned int)stickParams.find(axisName).asInt32();
+            axis_id = (size_t)stickParams.find(axisName).asInt32();
             if(axis_id > m_axisCount - 1)
             {
                 yCError(SDLJOYPAD) << "Axis id out of bound";
@@ -250,61 +251,65 @@ bool SDLJoypad::close()
     return false;
 }
 
-bool SDLJoypad::getRawAxisCount(unsigned int& axes_count)
+ReturnValue SDLJoypad::getAxisCount(size_t& axes_count)
 {
     axes_count = m_axisCount;
-    return true;
+    return ReturnValue_ok;
 }
 
-bool SDLJoypad::getRawButtonCount(unsigned int& button_count)
+ReturnValue SDLJoypad::getButtonCount(size_t& button_count)
 {
     button_count = m_buttonCount;
-    return true;
+    return ReturnValue_ok;
 }
 
-bool SDLJoypad::getRawTrackballCount(unsigned int& trackball_count)
+ReturnValue SDLJoypad::getTrackballCount(size_t& trackball_count)
 {
     trackball_count = m_ballCount;
-    return true;
+    return ReturnValue_ok;
 }
 
-bool SDLJoypad::getRawHatCount(unsigned int& hat_count)
+ReturnValue SDLJoypad::getHatCount(size_t& hat_count)
 {
     hat_count = m_hatCount;
-    return true;
+    return ReturnValue_ok;
 }
 
-bool SDLJoypad::getRawTouchSurfaceCount(unsigned int& touch_count)
+ReturnValue SDLJoypad::getTouchSurfaceCount(size_t& touch_count)
 {
     touch_count = m_touchCount;
-    return true;
+    return ReturnValue_ok;
 }
 
-bool SDLJoypad::getRawStickCount(unsigned int& stick_count)
+ReturnValue SDLJoypad::getStickCount(size_t& stick_count)
 {
     stick_count = m_stickCount;
-    return true;
+    return ReturnValue_ok;
 }
 
-bool SDLJoypad::getRawStickDoF(unsigned int stick_id, unsigned int& DoF)
+ReturnValue SDLJoypad::getStickDoF(size_t stick_id, size_t& DoF)
 {
     if(stick_id > m_sticks.size()-1)
     {
         yCError(SDLJOYPAD) << "SDL_Joypad: stick_id out of bounds when calling 'getStickDoF'' method";
-        return false;
+        return ReturnValue_error_input_out_of_bounds;
     }
     DoF = 2;
-    return true;
+    return ReturnValue_ok;
 }
 
-bool SDLJoypad::getRawButton(unsigned int button_id, float& value)
+ReturnValue SDLJoypad::getButton(size_t button_id, double& value)
 {
-    if(button_id > m_buttonCount - 1){yCError(SDLJOYPAD) << "Button id out of bound!"; return false;}
+    if(button_id > m_buttonCount - 1)
+    {
+        yCError(SDLJOYPAD) << "Button id out of bound!";
+        return ReturnValue_error_input_out_of_bounds;
+    }
     updateJoypad();
     size_t i;
     for(i = 0; i < m_device.size(); ++i)
     {
-        unsigned int localCount = SDL_JoystickNumButtons(m_device[i]);
+        size_t localCount = SDL_JoystickNumButtons(m_device[i]);
         if(button_id > localCount - 1)
         {
             button_id -= localCount;
@@ -314,23 +319,29 @@ bool SDLJoypad::getRawButton(unsigned int button_id, float& value)
             break;
         }
     }
+
     value = float(SDL_JoystickGetButton(m_device[i], button_id));
-    if(value > 0.5 && m_actions.find(button_id) != m_actions.end() && yarp::os::Time::now() - m_actionTimestamp > actionsExecutionTime)
+    if(value > 0.5 && m_actionsHandler.actionDetected(button_id) &&
+       yarp::os::Time::now() - m_actionTimestamp > actionsExecutionTime)
     {
-        executeAction(button_id);
+        m_actionsHandler.executeAction(button_id);
         m_actionTimestamp = yarp::os::Time::now();
     }
-    return true;
+    return ReturnValue_ok;
 }
 
-bool SDLJoypad::getPureAxis(unsigned int axis_id, double& value)
+ReturnValue SDLJoypad::getPureAxis(size_t axis_id, double& value)
 {
-    if(axis_id > m_axisCount - 1){yCError(SDLJOYPAD) << "Axis id out of bound!"; return false;}
+    if(axis_id > m_axisCount - 1)
+    {
+        yCError(SDLJOYPAD) << "Axis id out of bound!";
+        return ReturnValue_error_input_out_of_bounds;
+    }
     size_t i;
 
     for(i = 0; i < m_device.size(); ++i)
     {
-        unsigned int localCount;
+        size_t localCount;
         localCount = SDL_JoystickNumAxes(m_device[i]);
         if(axis_id > localCount - 1)
         {
@@ -343,12 +354,16 @@ bool SDLJoypad::getPureAxis(unsigned int axis_id, double& value)
     }
 
     value = 2 * ((float(SDL_JoystickGetAxis(m_device[i], axis_id)) - (-32.768)) / 0xffff);
-    return true;
+    return ReturnValue_ok;
 }
 
-bool SDLJoypad::getRawAxis(unsigned int axis_id, double& value)
+ReturnValue SDLJoypad::getAxis(size_t axis_id, double& value)
 {
-    if(axis_id > m_axisCount - 1){yCError(SDLJOYPAD) << "Axis id out of bound!"; return false;}
+    if(axis_id > m_axisCount - 1)
+    {
+        yCError(SDLJOYPAD) << "Axis id out of bound!";
+        return ReturnValue_error_input_out_of_bounds;
+    }
     //if(!m_axes.at(axis_id)) {yCWarning(SDLJOYPAD) << "Requested axis is part of a stick!";}
     updateJoypad();
     return getPureAxis(axis_id, value);
@@ -362,45 +377,57 @@ yarp::sig::Vector Vector3(const double& x, const double& y)
     return ret;
 }
 
-bool SDLJoypad::getRawStick(unsigned int stick_id, yarp::sig::Vector& value, JoypadCtrl_coordinateMode coordinate_mode)
+ReturnValue SDLJoypad::getStick(size_t  stick_id, yarp::dev::StickData& value, JoypadCtrl_coordinateMode coordinate_mode)
 {
-    if (stick_id > m_stickCount - 1){yCError(SDLJOYPAD) << "Stick id out of bound!"; return false;}
-    value.clear();
+    if (stick_id > m_stickCount - 1)
+    {
+        yCError(SDLJOYPAD) << "Stick id out of bound!";
+        return ReturnValue_error_input_out_of_bounds;
+    }
     updateJoypad();
-    stick& stk = m_sticks[stick_id];
+    stick& stk_config = m_sticks[stick_id];
     double val;
 
-    for(size_t i = 0; i < stk.axes_ids.size(); i++)
+    if (stk_config.axes_ids.size() > 2)
     {
-        if(!getRawAxis(stk.axes_ids[i], val)) {return false;}
-        value.push_back(val * stk.direction[i] * (fabs(val) > stk.deadZone));
+        yCError(SDLJOYPAD) << "Only for 2-dimensional sticks are supported at the moment";
+        return ReturnValue_error_not_implemented_by_device;
     }
 
-    if (coordinate_mode == JypCtrlcoord_POLAR)
+    for(size_t i = 0; i < stk_config.axes_ids.size(); i++)
     {
-        if (stk.axes_ids.size() > 2)
-        {
-            yCError(SDLJOYPAD) << "Polar coordinate system is supported only for bidimensional stick at the moment";
-            return false;
-        }
-        value = Vector3(sqrt(value[0] * value[0] + value[1] * value[1]), atan2(value[0], value[1]));
+        if(!getAxis(stk_config.axes_ids[i], val)) {return ReturnValue_error_method_failed;}
+        value.s1=(val * stk_config.direction[i] * (fabs(val) > stk_config.deadZone));
+        value.s2=(val * stk_config.direction[i] * (fabs(val) > stk_config.deadZone));
     }
-    return true;
+
+    if (coordinate_mode == JoypadCtrl_coordinateMode::JypCtrlcoord_POLAR)
+    {
+        double v0= value.s1;
+        double v1= value.s2;
+        value.s1 = sqrt(v0 * v0 + v1 * v1);
+        value.s2 = atan2(v0, v1);
+    }
+    return ReturnValue_ok;
 }
 
-bool SDLJoypad::getRawTouch(unsigned int touch_id, yarp::sig::Vector& value)
+ReturnValue SDLJoypad:: getTouch(size_t  touch_id, std::vector<yarp::dev::TouchData>& value)
 {
-    return false;
+    return ReturnValue_error_not_implemented_by_device;
 }
 
-bool SDLJoypad::getRawHat(unsigned int hat_id, unsigned char& value)
+ReturnValue SDLJoypad::getHat(size_t hat_id, unsigned char& value)
 {
-    if(hat_id > m_hatCount - 1){yCError(SDLJOYPAD) << "Axis id out of bound!"; return false;}
+    if(hat_id > m_hatCount - 1)
+    {
+        yCError(SDLJOYPAD) << "Axis id out of bound!";
+        return ReturnValue_error_input_out_of_bounds;
+    }
     updateJoypad();
     size_t i;
     for(i = 0; i < m_device.size(); ++i)
     {
-        unsigned int localCount = SDL_JoystickNumHats(m_device[i]);
+        size_t localCount = SDL_JoystickNumHats(m_device[i]);
         if(hat_id > localCount - 1)
         {
             hat_id -= localCount;
@@ -412,18 +439,22 @@ bool SDLJoypad::getRawHat(unsigned int hat_id, unsigned char& value)
     }
 
     value = SDL_JoystickGetHat(m_device[i], hat_id);//TODO: map from their HAT define to our in case of #define changes
-    return true;
+    return ReturnValue_ok;
 }
 
-bool SDLJoypad::getRawTrackball(unsigned int trackball_id, yarp::sig::Vector& value)
+ReturnValue SDLJoypad::getTrackball(size_t  trackball_id, yarp::dev::TrackballData& value)
 {
-    if(trackball_id > m_ballCount - 1){yCError(SDLJOYPAD) << "Trackball id out of bound!"; return false;}
+    if(trackball_id > m_ballCount - 1)
+    {
+        yCError(SDLJOYPAD) << "Trackball id out of bound!";
+        return ReturnValue_error_input_out_of_bounds;
+    }
     updateJoypad();
     int x, y;
     size_t i;
     for(i = 0; i < m_device.size(); ++i)
     {
-        unsigned int localCount = SDL_JoystickNumBalls(m_device[i]);
+        size_t localCount = SDL_JoystickNumBalls(m_device[i]);
         if(trackball_id > localCount - 1)
         {
             trackball_id -= localCount;
@@ -436,16 +467,96 @@ bool SDLJoypad::getRawTrackball(unsigned int trackball_id, yarp::sig::Vector& va
     if(SDL_JoystickGetBall(m_device[i], trackball_id, &x, &y) == -1)
     {
         yCError(SDLJOYPAD) << "SDL_JoystickGetBall returned error";
-        return false;
+        return ReturnValue_error_method_failed;
     }
 
-    value.resize(2);
-    value[0] = x;
-    value[1] = y;
-    return true;
+    value.x = x;
+    value.y = y;
+    return ReturnValue_ok;
 }
 
 void SDLJoypad::updateJoypad()
 {
     SDL_JoystickUpdate();
+}
+
+// --------------------------------------------------------------
+
+bool JoystickActionsHandler::executeAction(int action_id)
+{
+    if (m_actions.find(action_id) != m_actions.end())
+    {
+        yCInfo(SDLJOYPAD) << "executing script" << action_id << ":" << m_actions[action_id];
+        int ret = system(m_actions[action_id].c_str());
+        YARP_UNUSED(ret);
+    }
+    else
+    {
+        yCWarning(SDLJOYPAD) << "no scripts associated to button" << action_id;
+        return false;
+    }
+    return true;
+}
+
+bool JoystickActionsHandler::parseActions(const yarp::os::Searchable& cfg, size_t maxButtons, int* count)
+{
+    int dummy = 0;
+    size_t i;
+    int& actCount = count ? *count : dummy;
+    if(!cfg.check(buttActionGroupName))
+    {
+        yCInfo(SDLJOYPAD) << "no actions found in the configuration file (no" << buttActionGroupName << "group found)";
+        actCount = 0;
+        return true;
+    }
+    Bottle& actionsGroup = cfg.findGroup(buttActionGroupName);
+
+    if(!actionsGroup.size())
+    {
+        yCError(SDLJOYPAD) << "no action found under" << buttActionGroupName << "group";
+        actCount = 0;
+        return false;
+    }
+
+    for(i = 1; i < actionsGroup.size(); i++)
+    {
+        if(!actionsGroup.get(i).isList())
+        {
+            yDebug() << "error parsing cfg";
+            return false;
+        }
+
+        Bottle& keyvalue         = *actionsGroup.get(i).asList();
+        yDebug() << keyvalue.toString();
+        if(maxButtons==0)
+        {
+            yCError(SDLJOYPAD) << "invalid button count";
+            actCount = 0;
+            return false;
+        }
+        if(!keyvalue.get(0).isInt32()                 ||
+            keyvalue.get(0).asInt32() < 0             ||
+           (unsigned int) keyvalue.get(0).asInt32() > maxButtons-1 ||
+           !keyvalue.get(1).isString())
+        {
+            yCError(SDLJOYPAD) << "Button's actions parameters must be in the format 'unsigned int string' and the button id must be in range";
+            actCount = 0;
+            return false;
+        }
+        yCInfo(SDLJOYPAD) << "assigning actions" << keyvalue.get(1).asString() << "to button" << keyvalue.get(0).asInt32();
+        m_actions[keyvalue.get(0).asInt32()] = keyvalue.get(1).asString();
+    }
+
+    actCount = i;
+    yCInfo(SDLJOYPAD) << actCount << "action parsed successfully";
+    return true;
+}
+
+bool JoystickActionsHandler::actionDetected(int button_id)
+{
+    if (m_actions.find(button_id) != m_actions.end())
+    {
+        return true;
+    }
+    return false;
 }
