@@ -8,12 +8,9 @@
 
 #include <string>
 #include <string>
-#include <yarp/os/PeriodicThread.h>
 #include "MonitorBinding.h"
 #include "swigluarun.h"
 #include <mutex>
-
-class MonitorTrigger;
 
 class MonitorLua : public MonitorBinding
 {
@@ -67,7 +64,7 @@ private:
     std::recursive_mutex luaMutex;
 
 public:
-    MonitorTrigger* trigger;
+    MonitorTrigger<MonitorLua>* trigger;
 
 private:
     bool getLocalFunction(const char *name);
@@ -89,23 +86,6 @@ private:
     static const struct luaL_reg portMonitorLib[];
 #endif
 
-};
-
-class MonitorTrigger : public yarp::os::PeriodicThread {
-public:
-    MonitorTrigger(MonitorLua* monitor, double period)
-        : yarp::os::PeriodicThread(period) {
-        MonitorTrigger::monitor = monitor;
-    }
-    virtual ~MonitorTrigger() { }
-
-    // inherited from the yarp::os::RateThread
-    void run () override {
-        monitor->peerTrigged();
-    }
-
-private:
-    MonitorLua* monitor;
 };
 
 

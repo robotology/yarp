@@ -9,8 +9,27 @@
 #include <yarp/os/ConnectionReader.h>
 #include <yarp/os/Property.h>
 #include <yarp/os/Things.h>
+#include <yarp/os/PeriodicThread.h>
 
 #include "MonitorEvent.h"
+
+template<typename T>
+class MonitorTrigger : public yarp::os::PeriodicThread {
+public:
+    MonitorTrigger(T* monitor, double period)
+        : yarp::os::PeriodicThread(period) {
+        MonitorTrigger::monitor = monitor;
+    }
+    virtual ~MonitorTrigger() { }
+
+    // inherited from the yarp::os::RateThread
+    void run () override {
+        monitor->peerTrigged();
+    }
+
+private:
+    T* monitor;
+};
 
 class MonitorBinding
 {

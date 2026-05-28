@@ -7,14 +7,11 @@
 #define MONITORPYTHON_H
 
 #include <string>
-#include <yarp/os/PeriodicThread.h>
 #include "MonitorBinding.h"
 
 #include "Python.h"
 
 #include <mutex>
-
-class MonitorTrigger;
 
 class MonitorPython : public MonitorBinding
 {
@@ -67,39 +64,25 @@ private:
     bool bHasUpdateReplyCallback;
 
     std::string m_path;
-    std::string m_pythonScriptName = "monitor.py"; // Name of the python file containing the functions/classes
+    std::string m_pythonScriptName = "monitor"; // Python module containing the functions/classes
     std::recursive_mutex m_monitor_mutex;
 
     bool classWrapper(PyObject* &pClassInstance, std::string methodName, PyObject* &pClassMethodArgs, PyObject* &pValue);
     bool functionWrapper(std::string moduleName, std::string functionName, PyObject* &pArgs, PyObject* &pValue);
+    bool hasPythonFunction(const std::string& moduleName, const std::string& functionName);
+    bool ensureYarpModuleLoaded();
 
     PyObject* m_classInstance=nullptr; // Python object of the created class
+    PyObject* m_lastUpdateResult = nullptr;
 
 public:
-    MonitorTrigger* trigger=nullptr;
+    MonitorTrigger<MonitorPython>* trigger=nullptr;
 
 private:
     void trimString(std::string& str);
     void searchReplace(std::string& str,
                        const std::string& oldStr, const std::string& newStr);
     bool isKeyword(const char* str);
-};
-
-class MonitorTrigger : public yarp::os::PeriodicThread {
-public:
-    MonitorTrigger(MonitorPython* monitor, double period)
-        : yarp::os::PeriodicThread(period) {
-        MonitorTrigger::monitor = monitor;
-    }
-    virtual ~MonitorTrigger() { }
-
-    // inherited from the yarp::os::RateThread
-    void run () override {
-        monitor->peerTrigged();
-    }
-
-private:
-    MonitorPython* monitor;
 };
 
 
