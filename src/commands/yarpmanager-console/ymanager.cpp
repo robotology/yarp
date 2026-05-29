@@ -7,6 +7,7 @@
 
 #include <yarp/manager/xmlapploader.h>
 #include <yarp/manager/application.h>
+#include <yarp/manager/yarpbroker.h>
 #include <dirent.h>
 #include <yarp/conf/filesystem.h>
 #include <yarp/os/ResourceFinder.h>
@@ -19,6 +20,8 @@
 
 #include <cstring>
 #include <csignal>
+#include <map>
+#include <set>
 
 using namespace yarp::os;
 using namespace yarp::manager;
@@ -1116,9 +1119,42 @@ void YConsoleManager::checkStates()
     ExecutablePIterator moditr;
     unsigned int id = 0;
     bShouldRun = false;
+    std::map<std::string, ProcessContainer> hostProcesses;
+    std::map<std::string, bool> hostQueryOk;
+    collectYarprunProcessesByHost(hostProcesses, hostQueryOk);
+
     for(moditr=modules.begin(); moditr<modules.end(); moditr++)
     {
-        if(running(id))
+        bool isRunning = false;
+        Executable* exe = *moditr;
+        if (exe && exe->getBrokerType() == BrokerType::yarp) {
+            const std::string host = exe->getHost();
+            const auto hostOkIt = hostQueryOk.find(host);
+            if (hostOkIt != hostQueryOk.end() && hostOkIt->second) {
+                const auto procIt = hostProcesses.find(host);
+                if (procIt != hostProcesses.end()) {
+                    const std::string exeCmd = exe->getCommand();
+                    const std::string exeParam = exe->getParam();
+                    for (const auto& proc : procIt->second) {
+                        const bool statusRunning = proc.status.empty() || proc.status == "running";
+                        const bool cmdMatches = proc.command.find(exeCmd) != std::string::npos;
+                        const bool paramMatches = exeParam.empty() || (proc.command.find(exeParam) != std::string::npos);
+                        if (statusRunning && cmdMatches && paramMatches) {
+                            isRunning = true;
+                            break;
+                        }
+                    }
+                }
+            } else {
+                // Fallback to the old per-module check if the remote ps query failed.
+                isRunning = running(id);
+            }
+        } else {
+            // Local and other brokers: keep previous behavior.
+            isRunning = running(id);
+        }
+
+        if(isRunning)
         {
             bShouldRun = true;
             std::cout<<OKGREEN<<"<RUNNING> ";

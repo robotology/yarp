@@ -11,6 +11,7 @@
 #include <yarp/manager/utility.h>
 #include <yarp/manager/executable.h>
 #include <yarp/manager/yarpbroker.h>
+#include <map>
 
 namespace yarp::manager {
 
@@ -76,6 +77,8 @@ public:
     bool waitingModuleStop(unsigned int id);
     bool waitingModuleKill(unsigned int id);
     bool loadBalance();
+    void collectYarprunProcessesByHost(std::map<std::string, ProcessContainer>& hostProcesses,
+                                       std::map<std::string, bool>& hostQueryOk);
 
     void setDefaultBroker(const char* szBroker) { if(szBroker) { strDefBroker = szBroker; } }
     const char* defaultBroker() { return strDefBroker.c_str(); }
