@@ -71,7 +71,7 @@ public:
 
 TEST_CASE("run::RunTest", "[yarp::run]")
 {
-    NetworkBase::setLocalMode(false);
+    NetworkBase::setLocalMode(true);
 
     SECTION("testRun")
     {

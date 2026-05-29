@@ -39,20 +39,25 @@ namespace fs = yarp::conf::filesystem;
 constexpr auto sep = yarp::conf::environment::path_separator;
 constexpr fs::value_type slash = fs::preferred_separator;
 
-void sigint_handler(int sig)
+//This anonymous namespace make this symbol visible only
+//inside this translation unit.
+namespace
 {
-    YARP_UNUSED(sig);
-    yarp::run::Run::mStresstest=false;
-
-    if (yarp::run::Run::pServerPort)
+    void sigint_handler(int sig)
     {
-        yarp::os::RpcServer *pClose=yarp::run::Run::pServerPort;
-        yarp::run::Run::pServerPort = nullptr;
-        pClose->close();
+        YARP_UNUSED(sig);
+        yarp::run::Run::mStresstest=false;
+
+        if (yarp::run::Run::pServerPort)
+        {
+            yarp::os::RpcServer *pClose=yarp::run::Run::pServerPort;
+            yarp::run::Run::pServerPort = nullptr;
+            pClose->close();
+        }
+        //else
+        //{
+        //}
     }
-    //else
-    //{
-    //}
 }
 
 static yarp::os::Bottle parsePaths(const std::string& txt)
