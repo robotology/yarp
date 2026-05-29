@@ -3,8 +3,8 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#ifndef YARP_DEV_JOYPADCONTROLSERVER_JOYPADCONTROLSERVER_H
-#define YARP_DEV_JOYPADCONTROLSERVER_JOYPADCONTROLSERVER_H
+#ifndef YARP_DEV_JOYPADCONTROL_NWS_YARP_H
+#define YARP_DEV_JOYPADCONTROL_NWS_YARP_H
 
 #include <yarp/os/PeriodicThread.h>
 #include <yarp/dev/DeviceDriver.h>
@@ -17,6 +17,8 @@
 #include <yarp/os/RpcServer.h>
 
 #include <map>
+#include <vector>
+#include <memory>
 
 #include <JoypadControlNetUtils.h>
 #include "JoypadControl_nws_yarp_ParamsParser.h"
@@ -31,13 +33,13 @@
 class IJoypadControlRPCd;
 
 /**
- * @ingroup dev_impl_wrapper
+ * @ingroup dev_impl_nws_yarp
  *
- * `JoypadControlServer`: joypad input network wrapper on server side
+ * `JoypadControl_nws_yarp`: joypad input network wrapper on server side
  *
- * \section JoypadControlServer Description of input parameters
+ * \section JoypadControl_nws_yarp Description of input parameters
  *
- * Parameters required by this device are shown in class: JoypadControlServer_ParamsParser
+ * Parameters required by this device are shown in class: JoypadControl_nws_yarp_ParamsParser
  */
 class JoypadControl_nws_yarp :
         public yarp::dev::DeviceDriver,

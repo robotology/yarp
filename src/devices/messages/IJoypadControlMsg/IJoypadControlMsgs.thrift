@@ -80,11 +80,6 @@ struct return_getAxisCount{
     2: i32 axis_count;
 }
 
-struct getButtonCount{
-    1: yReturnValue ret;
-    2: i32 button_count;
-}
-
 struct return_getTrackballCount{
     1: yReturnValue ret;
     2: i32 Trackball_count;

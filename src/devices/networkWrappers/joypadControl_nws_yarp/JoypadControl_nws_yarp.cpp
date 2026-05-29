@@ -5,7 +5,9 @@
 
 #include "JoypadControl_nws_yarp.h"
 #include <algorithm>
-#include <vector>
+#include <sstream>
+#include <limits>
+
 #include <yarp/os/LogComponent.h>
 #include <yarp/os/LogStream.h>
 
@@ -292,13 +294,18 @@ bool JoypadControl_nws_yarp::attach(PolyDriver* poly)
         return false;
     }
 
+    if (!openPorts())
+    {
+        yCError(JOYPADCONTROLSERVER) << "Unable to open ports";
+        return false;
+    }
+
+    m_RPCMsgs = std::make_unique<IJoypadControlRPCd>(this->m_IJoypad);
+
     PeriodicThread::setPeriod(m_period);
     if (!PeriodicThread::start()) {
         return false;
     }
-
-    openPorts();
-    m_RPCMsgs = std::make_unique<IJoypadControlRPCd>(this->m_IJoypad);
 
     return true;
 }
@@ -361,18 +368,24 @@ bool JoypadControl_nws_yarp::openPorts()
 
     if(m_use_separate_ports)
     {
-        m_portAxes.open(m_name+"/axis:o");
-        m_portButtons.open(m_name+"/buttons:o");
-        m_portSticks.open(m_name+"/stick:o");
-        m_portTouches.open(m_name+"/touch:o");
-        m_portTrackballs.open(m_name+"/trackball:o");
-        m_portHats.open(m_name+"/hat:o");
+        bool b=true;
+        b &= m_portAxes.open(m_name+"/axis:o");
+        b &= m_portButtons.open(m_name+"/buttons:o");
+        b &= m_portSticks.open(m_name+"/stick:o");
+        b &= m_portTouches.open(m_name+"/touch:o");
+        b &= m_portTrackballs.open(m_name+"/trackball:o");
+        b &= m_portHats.open(m_name+"/hat:o");
+        if (!b)
+        {
+            yCError(JOYPADCONTROLSERVER) << "Unable to streaming ports";
+            return false;
+        }
     }
     else
     {
-        return false;
-        yCError(JOYPADCONTROLSERVER) << "All ports not implemented";
         //m_allPort.open(m_name + "/joydata:o");
+        yCError(JOYPADCONTROLSERVER) << "All ports not implemented";
+        return false;
     }
 
     return true;
@@ -650,7 +663,6 @@ void JoypadControl_nws_yarp::run()
     }
     else
     {
-        return;
         //JoyData& message = m_allPort.prepare();
         yCError(JOYPADCONTROLSERVER) << "Not implemented yet";
     }

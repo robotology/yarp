@@ -3,10 +3,14 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
+#ifndef YARP_DEV_JOYPADCONTROL_NWC_YARP_H
+#define YARP_DEV_JOYPADCONTROL_NWC_YARP_H
+
 #include <yarp/dev/IJoypadController.h>
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/os/PeriodicThread.h>
 #include <vector>
+#include <mutex>
 #include <JoypadControlNetUtils.h>
 #include "JoypadControl_nwc_yarp_ParamsParser.h"
 
@@ -27,11 +31,16 @@ class ReaderPort :
    private:
    T data;
    std::mutex mtx;
+   bool test=true;
 
    public:
     using yarp::os::BufferedPort<T>::onRead;
     void onRead(T &v) override
     {
+        if constexpr (std::is_same_v<T, yarp::dev::AxisDataList>)
+        {
+            test=!test;
+        }
         std::lock_guard<std::mutex> lock(mtx);
         data = v;
     }
@@ -44,13 +53,13 @@ class ReaderPort :
 };
 
 /**
-* @ingroup dev_impl_network_clients
+* @ingroup dev_impl_nwc_yarp
 *
-* \brief `JoypadControlClient`: joypad input network wrapper on client side
+* \brief `JoypadControl_nwc_yarp`: joypad input network wrapper on client side
 *
-* \section JoypadControlClient Description of input parameters
+* \section JoypadControl_nwc_yarp Description of input parameters
 *
-* Parameters required by this device are shown in class: JoypadControlClient_ParamsParser
+* Parameters required by this device are shown in class: JoypadControl_nwc_yarp_ParamsParser
 */
 class JoypadControl_nwc_yarp :
         public yarp::dev::IJoypadController,
@@ -107,3 +116,5 @@ public:
     yarp::dev::ReturnValue getStick(size_t stick_id, yarp::dev::StickData& value, JoypadCtrl_coordinateMode coordinate_mode) override;
     yarp::dev::ReturnValue getTouch(size_t touch_id, std::vector<yarp::dev::TouchData>& value) override;
 };
+
+#endif
