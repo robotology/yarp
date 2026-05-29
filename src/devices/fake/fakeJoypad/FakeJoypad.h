@@ -19,17 +19,20 @@
  *
  */
 class FakeJoypad :
-        public yarp::dev::IJoypadEventDriven,
-        //public yarp::dev::IJoypadController,
+        public yarp::dev::IJoypadController,
         public yarp::dev::DeviceDriver,
         public FakeJoypad_ParamsParser
 {
-    unsigned int               m_buttonCount {4};
-    unsigned int               m_axisCount {4};
-    unsigned int               m_stickCount {4};
-    unsigned int               m_touchCount {4};
-    unsigned int               m_ballCount {4};
-    unsigned int               m_hatCount {4};
+    size_t                     m_buttonCount {4};
+    size_t                     m_axisCount {4};
+    size_t                     m_stickCount {4};
+    size_t                     m_touchCount {4};
+    size_t                     m_ballCount {4};
+    size_t                     m_hatCount {4};
+
+    yarp::dev::TrackballData           m_data_trackBall;
+    std::vector<yarp::dev::TouchData>  m_data_touch;
+    yarp::dev::StickData               m_data_stick;
 
 public:
     FakeJoypad();
@@ -40,31 +43,19 @@ public:
     bool close() override;
 
     //IJoypadController
-    bool getRawAxisCount(unsigned int& axis_count) override;
-
-    bool getRawButtonCount(unsigned int& button_count) override;
-
-    bool getRawHatCount(unsigned int& hat_count) override;
-
-    bool getRawTrackballCount(unsigned int& trackball_count) override;
-
-    bool getRawTouchSurfaceCount(unsigned int& touch_count) override;
-
-    bool getRawStickCount(unsigned int& stick_count) override;
-
-    bool getRawStickDoF(unsigned int  stick_id, unsigned int& DoF) override;
-
-    bool getRawButton(unsigned int  button_id, float& value) override;
-
-    bool getRawTrackball(unsigned int  trackball_id, yarp::sig::Vector& value) override;
-
-    bool getRawHat(unsigned int  hat_id, unsigned char& value) override;
-
-    bool getRawAxis(unsigned int  axis_id, double& value) override;
-
-    bool getRawStick(unsigned int  stick_id, yarp::sig::Vector& value, JoypadCtrl_coordinateMode coordinate_mode) override;
-
-    bool getRawTouch(unsigned int  touch_id, yarp::sig::Vector& value) override;
+    yarp::dev::ReturnValue getAxisCount(size_t& axis_count) override;
+    yarp::dev::ReturnValue getButtonCount(size_t& button_count) override;
+    yarp::dev::ReturnValue getHatCount(size_t& hat_count) override;
+    yarp::dev::ReturnValue getTrackballCount(size_t& trackball_count) override;
+    yarp::dev::ReturnValue getTouchSurfaceCount(size_t& touch_count) override;
+    yarp::dev::ReturnValue getStickCount(size_t& stick_count) override;
+    yarp::dev::ReturnValue getStickDoF(size_t  stick_id, size_t& DoF) override;
+    yarp::dev::ReturnValue getButton(size_t  button_id, double& value) override;
+    yarp::dev::ReturnValue getTrackball(size_t  trackball_id, yarp::dev::TrackballData& value) override;
+    yarp::dev::ReturnValue getHat(size_t  hat_id, unsigned char& value) override;
+    yarp::dev::ReturnValue getAxis(size_t  axis_id, double& value) override;
+    yarp::dev::ReturnValue getStick(size_t  stick_id, yarp::dev::StickData& value, JoypadCtrl_coordinateMode coordinate_mode) override;
+    yarp::dev::ReturnValue getTouch(size_t  touch_id, std::vector<yarp::dev::TouchData>& value) override;
 };
 
 

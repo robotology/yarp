@@ -236,7 +236,6 @@ bool RemoteControlBoard::open(Searchable& config)
         return false;
     }
 
-    state_buffer.setStrict(false);
     command_buffer.attach(command_p);
 
     // open rpc port

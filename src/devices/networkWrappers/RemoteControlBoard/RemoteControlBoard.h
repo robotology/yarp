@@ -84,7 +84,6 @@ protected:
     DiagnosticThread *diagnosticThread{nullptr};
     yarp::os::Port m_rpcPort;
 
-    yarp::os::PortReaderBuffer<yarp::sig::Vector> state_buffer;
     yarp::os::PortWriterBuffer<CommandMessage> command_buffer;
     bool writeStrict_singleJoint{true};
     bool writeStrict_moreJoints{false};
@@ -94,11 +93,9 @@ protected:
 
     // Buffer associated to the extendedOutputStatePort port; in this case we will use the type generated
     // from the YARP .thrift file
-//  yarp::os::PortReaderBuffer<jointData>           extendedInputState_buffer;  // Buffer storing new data
     StateExtendedInputPort                          extendedIntputStatePort;  // Buffered port storing new data
     std::mutex extendedPortMutex;
     yarp::dev::impl::jointData last_singleJoint;     // tmp to store last received data for a particular joint
-//    yarp::os::Port extendedIntputStatePort;         // Port /stateExt:i reading the state of the joints
     yarp::dev::impl::jointData last_wholePart;         // tmp to store last received data for whole part
 
     mutable Stamp m_lastStamp;  //this is shared among all calls that read encoders
