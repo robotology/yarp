@@ -1464,8 +1464,17 @@ bool ApplicationViewWidget::onRefresh()
                             resourcesIDs);
     }
 
-    if(m_firstRefresh) {
-        m_resourcesNumber = itemsSelectedForResource.size();
+    if (m_firstRefresh) {
+        std::vector<std::string> yarprunHosts;
+        for (auto* exe : safeManager.getExecutables()) {
+            if (exe && exe->getBrokerType() == BrokerType::yarp) {
+                const std::string host = exe->getHost();
+                if (std::find(yarprunHosts.begin(), yarprunHosts.end(), host) == yarprunHosts.end()) {
+                    yarprunHosts.push_back(host);
+                }
+            }
+        }
+        m_resourcesNumber = static_cast<int>(yarprunHosts.size());
         m_firstRefresh = false;
     }
 
@@ -1688,8 +1697,8 @@ bool ApplicationViewWidget::costlyRefresh(bool& costly)
 
     int totalSelectedModules = 0;
 
-    foreach(auto& it, itemsSelectedForResource){
-        yInfo() << "Resource " << it.first.c_str() << " has " << it.second << " modules selected.";
+    foreach(const auto& it, itemsSelectedForResource){
+        yDebug() << "Resource " << it.first.c_str() << " has " << it.second << " modules selected.";
         totalSelectedModules += it.second;
 
         if(totalSelectedModules > m_resourcesNumber) {

@@ -109,7 +109,7 @@ private:
     void updateConnectionItem(QTreeWidgetItem *it);
 
     /**
-     * @brief Tells whether or not a classic module-whise refresh is more costly than a full refresh.
+     * @brief Tells whether or not a classic module-wise refresh is more costly than a full refresh.
      *
      * @param costly this parameter is set to true if a classic refresh is more costly than a full refresh, false otherwise
      * @return bool true if the function performed as expected, false if an error occurred
