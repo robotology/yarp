@@ -64,7 +64,7 @@ bool appendPythonPath(const std::string& path)
 
 
 /**
- * Class MonitorLua
+ * Class MonitorPython
  */
 MonitorPython::MonitorPython() : bHasAcceptCallback(false),
                            bHasUpdateCallback(false),
@@ -132,16 +132,20 @@ bool MonitorPython::load(const Property &options)
 bool MonitorPython::acceptData(Things &thing)
 {
     std::lock_guard<std::recursive_mutex> guard(m_monitor_mutex);
+    PyGILState_STATE gstate = PyGILState_Ensure();
     yDebug() << "acceptData called";
     if (!bHasAcceptCallback) {
+        PyGILState_Release(gstate);
         return true;
     }
     if (!ensureYarpModuleLoaded()) {
+        PyGILState_Release(gstate);
         return false;
     }
     swig_type_info* type = SWIG_TypeQuery(yarpThingsSwigType);
     if (type == nullptr) {
         yCError(PY_PORT_MONITOR) << "Swig type of Things is not found";
+        PyGILState_Release(gstate);
         return false;
     }
     PyObject* pyThing = SWIG_NewPointerObj((void*)&thing, type, 0);
@@ -149,6 +153,7 @@ bool MonitorPython::acceptData(Things &thing)
         if (PyErr_Occurred()) {
             PyErr_Print();
         }
+        PyGILState_Release(gstate);
         return false;
     }
     PyObject* pArgs = PyTuple_New(1);
@@ -157,6 +162,7 @@ bool MonitorPython::acceptData(Things &thing)
         if (PyErr_Occurred()) {
             PyErr_Print();
         }
+        PyGILState_Release(gstate);
         return false;
     }
     if (PyTuple_SetItem(pArgs, 0, pyThing) != 0) {
@@ -165,16 +171,19 @@ bool MonitorPython::acceptData(Things &thing)
         if (PyErr_Occurred()) {
             PyErr_Print();
         }
+        PyGILState_Release(gstate);
         return false;
     }
     PyObject* pValue = nullptr;
     if (!functionWrapper("acceptData", pArgs, pValue)) {
         yCError(PY_PORT_MONITOR) << "Unable to call the acceptData function from python";
         Py_DECREF(pArgs);
+        PyGILState_Release(gstate);
         return false;
     }
     Py_DECREF(pArgs);
     if (pValue == nullptr) {
+        PyGILState_Release(gstate);
         return false;
     }
     const int accepted = PyObject_IsTrue(pValue);
@@ -183,6 +192,7 @@ bool MonitorPython::acceptData(Things &thing)
         if (PyErr_Occurred()) {
             PyErr_Print();
         }
+        PyGILState_Release(gstate);
         return false;
     }
     return accepted != 0;
@@ -192,14 +202,17 @@ bool MonitorPython::acceptData(Things &thing)
 yarp::os::Things& MonitorPython::updateData(yarp::os::Things& thing)
 {
     std::lock_guard<std::recursive_mutex> guard(m_monitor_mutex);
+    PyGILState_STATE gstate = PyGILState_Ensure();
 
     if (!ensureYarpModuleLoaded()) {
+        PyGILState_Release(gstate);
         return thing;
     }
 
     swig_type_info* type = SWIG_TypeQuery(yarpThingsSwigType);
     if (type == nullptr) {
         yCError(PY_PORT_MONITOR) << "Swig type of Things is not found";
+        PyGILState_Release(gstate);
         return thing;
     }
 
@@ -208,6 +221,7 @@ yarp::os::Things& MonitorPython::updateData(yarp::os::Things& thing)
         if (PyErr_Occurred()) {
             PyErr_Print();
         }
+        PyGILState_Release(gstate);
         return thing;
     }
 
@@ -215,6 +229,7 @@ yarp::os::Things& MonitorPython::updateData(yarp::os::Things& thing)
     Py_DECREF(pyThing);
     if (pArgs == nullptr) {
         PyErr_Print();
+        PyGILState_Release(gstate);
         return thing;
     }
 
@@ -237,6 +252,7 @@ yarp::os::Things& MonitorPython::updateData(yarp::os::Things& thing)
                 pRetValue = nullptr;
             }
             Py_XDECREF(pRetValue);
+            PyGILState_Release(gstate);
             return *result;
         }
         PyErr_Clear();
@@ -257,12 +273,14 @@ yarp::os::Things& MonitorPython::updateData(yarp::os::Things& thing)
 
     Py_XDECREF(pRetValue);
 
+    PyGILState_Release(gstate);
     return thing;
 }
 
 yarp::os::Things& MonitorPython::updateReply(yarp::os::Things& thing)
 {
     std::lock_guard<std::recursive_mutex> guard(m_monitor_mutex);
+    PyGILState_STATE gstate = PyGILState_Ensure();
 
     PyObject* pRetValue = nullptr;
     PyObject* pArgs = PyTuple_New(1);
@@ -270,6 +288,7 @@ yarp::os::Things& MonitorPython::updateReply(yarp::os::Things& thing)
     if (pArgs == nullptr) {
         PyErr_Print();
         yCError(PY_PORT_MONITOR) << "Unable to allocate arguments for the " << func_name << " function";
+        PyGILState_Release(gstate);
         return thing;
     }
     PyObject* pThing = SWIG_NewPointerObj(&thing, SWIG_TypeQuery(yarpThingsSwigType), 0);
@@ -277,6 +296,7 @@ yarp::os::Things& MonitorPython::updateReply(yarp::os::Things& thing)
         Py_DECREF(pArgs);
         PyErr_Print();
         yCError(PY_PORT_MONITOR) << "Unable to convert reply thing for the " << func_name << " function";
+        PyGILState_Release(gstate);
         return thing;
     }
     PyTuple_SetItem(pArgs, 0, pThing);
@@ -285,6 +305,7 @@ yarp::os::Things& MonitorPython::updateReply(yarp::os::Things& thing)
     {
         yCError(PY_PORT_MONITOR) << "Unable to call the " << func_name << " function from python \n";
         Py_DECREF(pArgs);
+        PyGILState_Release(gstate);
         return thing;
     }
     if (pRetValue != nullptr && pRetValue != Py_None) {
@@ -298,21 +319,24 @@ yarp::os::Things& MonitorPython::updateReply(yarp::os::Things& thing)
     }
     Py_XDECREF(pRetValue);
     Py_DECREF(pArgs);
-
+    PyGILState_Release(gstate);
     return thing;
 }
 
 bool MonitorPython::setParams(const yarp::os::Property& params)
 {
     std::lock_guard<std::recursive_mutex> guard(m_monitor_mutex);
+    PyGILState_STATE gstate = PyGILState_Ensure();
 
     if (!ensureYarpModuleLoaded()) {
+        PyGILState_Release(gstate);
         return false;
     }
 
     swig_type_info* type = SWIG_TypeQuery(yarpPropertySwigType);
     if (type == nullptr) {
         yCError(PY_PORT_MONITOR) << "Swig type of Property is not found";
+        PyGILState_Release(gstate);
         return false;
     }
 
@@ -321,6 +345,7 @@ bool MonitorPython::setParams(const yarp::os::Property& params)
         if (PyErr_Occurred()) {
             PyErr_Print();
         }
+        PyGILState_Release(gstate);
         return false;
     }
 
@@ -328,6 +353,7 @@ bool MonitorPython::setParams(const yarp::os::Property& params)
     Py_DECREF(pyParams);
     if (pArgs == nullptr) {
         PyErr_Print();
+        PyGILState_Release(gstate);
         return false;
     }
 
@@ -337,25 +363,29 @@ bool MonitorPython::setParams(const yarp::os::Property& params)
     {
         yCError(PY_PORT_MONITOR) << "Unable to call the " << func_name << " function from python";
         Py_DECREF(pArgs);
+        PyGILState_Release(gstate);
         return false;
     }
     Py_DECREF(pArgs);
     Py_XDECREF(pRetValue);
-
+    PyGILState_Release(gstate);
     return true;
 }
 
 bool MonitorPython::getParams(yarp::os::Property& params)
 {
     std::lock_guard<std::recursive_mutex> guard(m_monitor_mutex);
+    PyGILState_STATE gstate = PyGILState_Ensure();
 
     if (!ensureYarpModuleLoaded()) {
+        PyGILState_Release(gstate);
         return false;
     }
 
     swig_type_info* type = SWIG_TypeQuery(yarpPropertySwigType);
     if (type == nullptr) {
         yCError(PY_PORT_MONITOR) << "Swig type of Property is not found";
+        PyGILState_Release(gstate);
         return false;
     }
 
@@ -364,6 +394,7 @@ bool MonitorPython::getParams(yarp::os::Property& params)
         if (PyErr_Occurred()) {
             PyErr_Print();
         }
+        PyGILState_Release(gstate);
         return false;
     }
 
@@ -371,6 +402,7 @@ bool MonitorPython::getParams(yarp::os::Property& params)
     Py_DECREF(pyParams);
     if (pArgs == nullptr) {
         PyErr_Print();
+        PyGILState_Release(gstate);
         return false;
     }
 
@@ -380,6 +412,7 @@ bool MonitorPython::getParams(yarp::os::Property& params)
     {
         yCError(PY_PORT_MONITOR) << "Unable to call the " << func_name << " function from python";
         Py_DECREF(pArgs);
+        PyGILState_Release(gstate);
         return false;
     }
     Py_DECREF(pArgs);
@@ -394,21 +427,24 @@ bool MonitorPython::getParams(yarp::os::Property& params)
         }
     }
     Py_XDECREF(pRetValue);
-
+    PyGILState_Release(gstate);
     return true;
 }
 
 bool MonitorPython::peerTrigged()
 {
     std::lock_guard<std::recursive_mutex> guard(m_monitor_mutex);
+    PyGILState_STATE gstate = PyGILState_Ensure();
     PyObject* pRetValue = nullptr;
     PyObject* pArgs = nullptr;
     std::string func_name = "trig";
     if (!functionWrapper(func_name, pArgs, pRetValue))
     {
         yCError(PY_PORT_MONITOR) << "Unable to call the " << func_name << " function from python \n";
+        PyGILState_Release(gstate);
         return false;
     }
+    PyGILState_Release(gstate);
     return true;
 }
 
@@ -532,6 +568,7 @@ inline bool MonitorPython::isKeyword(const char* str)
 bool MonitorPython::loadPythonModule(const std::string& moduleName, PyObject* &pModule)
 {
     pModule = nullptr;
+    PyGILState_STATE gstate = PyGILState_Ensure();
     if (!Py_IsInitialized())
     {
         yInfo()<<"Calling loadPythonModule Py_Initialize";
@@ -539,6 +576,7 @@ bool MonitorPython::loadPythonModule(const std::string& moduleName, PyObject* &p
     }
 
     if (!appendPythonPath(m_path)) {
+        PyGILState_Release(gstate);
         return false;
     }
 
@@ -546,6 +584,7 @@ bool MonitorPython::loadPythonModule(const std::string& moduleName, PyObject* &p
     if (pName == nullptr) {
         PyErr_Print();
         yCError(PY_PORT_MONITOR) << "Unable to decode Python module name: " << moduleName;
+        PyGILState_Release(gstate);
         return false;
     }
 
@@ -555,8 +594,10 @@ bool MonitorPython::loadPythonModule(const std::string& moduleName, PyObject* &p
     if (pModule == nullptr) {
         PyErr_Print();
         yCError(PY_PORT_MONITOR) << "Failed to load Python module: " << moduleName;
+        PyGILState_Release(gstate);
         return false;
     }
+    PyGILState_Release(gstate);
     return true;
 }
 
