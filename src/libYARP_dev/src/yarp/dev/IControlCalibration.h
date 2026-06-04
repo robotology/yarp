@@ -138,8 +138,6 @@ public:
 
 /* Vocabs representing the above interfaces */
 
-constexpr yarp::conf::vocab32_t VOCAB_CALIBRATE_JOINT        = yarp::os::createVocab32('c','a','l','j');
-constexpr yarp::conf::vocab32_t VOCAB_CALIBRATE_JOINT_PARAMS = yarp::os::createVocab32('c','l','j','p');
 constexpr yarp::conf::vocab32_t VOCAB_CALIBRATE              = yarp::os::createVocab32('c','a','l');
 constexpr yarp::conf::vocab32_t VOCAB_CALIBRATE_CHANNEL      = yarp::os::createVocab32('c','a','l','c');
 constexpr yarp::conf::vocab32_t VOCAB_ABORTCALIB             = yarp::os::createVocab32('a','b','c','a');

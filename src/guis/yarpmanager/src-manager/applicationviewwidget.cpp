@@ -51,6 +51,7 @@ ApplicationViewWidget::ApplicationViewWidget(yarp::manager::Application *app,
     resSelectAllAction(nullptr)
 {
     ui->setupUi(this);
+    itemsSelectedForResource.clear();
     lazy = lazyManager;
     this->app = app;
     m_pConfig = config;
@@ -437,13 +438,17 @@ void ApplicationViewWidget::onModuleItemSelectionChanged()
 
             QList<int>selectedIds;
             QList<QTreeWidgetItem*> selectedItems = ui->moduleList->selectedItems();
+            itemsSelectedForResource.clear();
             foreach(QTreeWidgetItem *it,selectedItems) {
                 if (it->data(0,Qt::UserRole).toInt() == APPLICATION) {
                     for(int j=0;j<it->childCount();j++) {
                         QTreeWidgetItem *child = it->child(j);
-                        child->setSelected(true);
+                        selectModule(child,true);
                     }
 
+                }
+                else{
+                    selectModule(it,true);
                 }
 
             }
@@ -1356,6 +1361,9 @@ bool ApplicationViewWidget::onRefresh()
         return false;
     }
 
+    bool costly{false};
+    costlyRefresh(costly);
+
     std::vector<int> modulesIDs;
     std::vector<int> connectionsIDs;
     std::vector<int> resourcesIDs;
@@ -1395,9 +1403,81 @@ bool ApplicationViewWidget::onRefresh()
         }
     }
 
-    safeManager.safeRefresh(modulesIDs,
-                        connectionsIDs,
-                        resourcesIDs);
+    if(m_firstRefresh || !costly) {
+        yDebug() << "Performing safe refresh with module IDs:" << modulesIDs.size() << "connection IDs:" << connectionsIDs.size() << "resource IDs:" << resourcesIDs.size();
+        safeManager.safeRefresh(modulesIDs,
+                            connectionsIDs,
+                            resourcesIDs);
+    }
+    else if(!m_firstRefresh && costly) {
+        yDebug() << "Using batch ps call instead of classic refresh call to check running status of modules.";
+        std::map<std::string, ProcessContainer> hostProcesses;
+        std::map<std::string, bool> hostQueryOk;
+        safeManager.collectYarprunProcessesByHost(hostProcesses, hostQueryOk);
+        yarp::manager::ExecutablePContainer modules = safeManager.getExecutables();
+        yarp::manager::ExecutablePIterator moditr;
+        unsigned int id = 0;
+
+        for(moditr=modules.begin(); moditr<modules.end(); moditr++)
+        {
+            bool isRunning = false;
+            yarp::manager::Executable* exe = *moditr;
+            if (exe && exe->getBrokerType() == BrokerType::yarp) {
+                const std::string host = exe->getHost();
+                const auto hostOkIt = hostQueryOk.find(host);
+                if (hostOkIt != hostQueryOk.end() && hostOkIt->second) {
+                    const auto procIt = hostProcesses.find(host);
+                    if (procIt != hostProcesses.end()) {
+                        const std::string exeCmd = exe->getCommand();
+                        const std::string exeParam = exe->getParam();
+                        for (const auto& proc : procIt->second) {
+                            const bool statusRunning = proc.status.empty() || proc.status == "running";
+                            const bool cmdMatches = proc.command.find(exeCmd) != std::string::npos;
+                            const bool paramMatches = exeParam.empty() || (proc.command.find(exeParam) != std::string::npos);
+                            if (statusRunning && cmdMatches && paramMatches) {
+                                isRunning = true;
+                                break;
+                            }
+                        }
+                    }
+                } else {
+                    // Fallback to the old per-module check if the remote ps query failed.
+                    isRunning = safeManager.running(id);
+                }
+            } else {
+                // Local and other brokers: keep previous behavior.
+                isRunning = safeManager.running(id);
+            }
+
+            if (isRunning) {
+                onModStart(id);
+            }
+            else {
+                onModStop(id);
+            }
+
+            id++;
+        }
+        modulesIDs.clear();
+        safeManager.safeRefresh(modulesIDs,
+                            connectionsIDs,
+                            resourcesIDs);
+    }
+
+    if (m_firstRefresh) {
+        std::vector<std::string> yarprunHosts;
+        for (auto* exe : safeManager.getExecutables()) {
+            if (exe && exe->getBrokerType() == BrokerType::yarp) {
+                const std::string host = exe->getHost();
+                if (std::find(yarprunHosts.begin(), yarprunHosts.end(), host) == yarprunHosts.end()) {
+                    yarprunHosts.push_back(host);
+                }
+            }
+        }
+        m_resourcesNumber = static_cast<int>(yarprunHosts.size());
+        m_firstRefresh = false;
+    }
+
     yarp::os::SystemClock::delaySystem(0.1);
     selectAllConnections(false);
     selectAllModule(false);
@@ -1448,12 +1528,13 @@ void ApplicationViewWidget::selectAllResources()
 void ApplicationViewWidget::selectAllModule(bool check)
 {
     disconnect(ui->moduleList,SIGNAL(itemSelectionChanged()),this,SLOT(onModuleItemSelectionChanged()));
+    itemsSelectedForResource.clear();
     for(int i=0;i<ui->moduleList->topLevelItemCount();i++) {
         QTreeWidgetItem *it = ui->moduleList->topLevelItem(i);
         if (it->data(0,Qt::UserRole) == APPLICATION) {
                selectAllNestedApplicationModule(it,check);
         } else {
-            it->setSelected(check);
+            selectModule(it,check);
         }
     }
     if (ui->moduleList->selectedItems().isEmpty()) {
@@ -1528,7 +1609,7 @@ void ApplicationViewWidget::selectAllNestedApplicationModule(QTreeWidgetItem *it
         if (ch->data(0,Qt::UserRole) == APPLICATION) {
             selectAllNestedApplicationModule(ch, check);
         } else {
-            ch->setSelected(check);
+            selectModule(ch,check);
         }
     }
 }
@@ -1604,6 +1685,43 @@ void ApplicationViewWidget::updateConnectionItem(QTreeWidgetItem *it)
                                  it->text(3).toLatin1().data(),
                                  it->text(4).toLatin1().data(),
                                  carrier.toLatin1().data());
+}
+
+bool ApplicationViewWidget::costlyRefresh(bool& costly)
+{
+    if (safeManager.busy()) {
+        return false;
+    }
+
+    costly=false;
+
+    int totalSelectedModules = 0;
+
+    foreach(const auto& it, itemsSelectedForResource){
+        yDebug() << "Resource " << it.first.c_str() << " has " << it.second << " modules selected.";
+        totalSelectedModules += it.second;
+
+        if(totalSelectedModules > m_resourcesNumber) {
+            costly = true;
+            break;
+        }
+    }
+
+    return true;
+}
+
+void ApplicationViewWidget::selectModule(QTreeWidgetItem *item, bool check)
+{
+    item->setSelected(check);
+    if(itemsSelectedForResource.count(item->text(3).toStdString())) {
+        itemsSelectedForResource[item->text(3).toStdString()] += check ? 1 : -1*(itemsSelectedForResource[item->text(3).toStdString()] > 0);
+        if(itemsSelectedForResource[item->text(3).toStdString()] < 0){
+            yError() << "Error in counting selected items for resource " << item->text(3).toStdString();
+        }
+    }
+    else if(check && !itemsSelectedForResource.count(item->text(3).toStdString()) && (item->text(3).toStdString() != "")) {
+        itemsSelectedForResource[item->text(3).toStdString()] = 1;
+    }
 }
 
 /*! \brief Select/deselect all connections

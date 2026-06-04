@@ -26,8 +26,6 @@ if(NOT SKIP_controlBoard_nws_yarp)
       ControlBoard_nws_yarp.h
       ControlBoard_nws_yarp_ParamsParser.cpp
       ControlBoard_nws_yarp_ParamsParser.h
-      RPCMessagesParser.cpp
-      RPCMessagesParser.h
       StreamingMessagesParser.cpp
       StreamingMessagesParser.h
       ControlBoardLogComponent.cpp

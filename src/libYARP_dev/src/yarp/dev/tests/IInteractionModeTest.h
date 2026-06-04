@@ -32,39 +32,39 @@ namespace yarp::dev::tests
         yarp::dev::InteractionModeEnum val;
         yarp::dev::InteractionModeEnum ret;
 
-        b = iint->getInteractionMode(0,&ret);
+        b = iint->getInteractionMode(0,ret);
         CHECK(b);
 
         val = yarp::dev::InteractionModeEnum::VOCAB_IM_STIFF;
         b = iint->setInteractionMode(0,val);
         CHECK(b);
 
-        b = iint->getInteractionMode(0, &ret);
+        b = iint->getInteractionMode(0, ret);
         CHECK(b);
 
         val = yarp::dev::InteractionModeEnum::VOCAB_IM_COMPLIANT;
         b = iint->setInteractionMode(0, val);
         CHECK(b);
 
-        b = iint->getInteractionMode(0, &ret);
+        b = iint->getInteractionMode(0, ret);
         CHECK(b);
 
         auto modes = std::vector< yarp::dev::InteractionModeEnum>(ax);
-        b = iint->getInteractionModes(modes.data());
+        b = iint->getInteractionModes(modes);
         CHECK(b);
 
         auto joints = std::vector<int>(ax);
         std::iota(joints.begin(), joints.end(), 0);
-        b = iint->getInteractionModes(ax, joints.data(), modes.data());
+        b = iint->getInteractionModes(joints, modes);
         CHECK(b);
 
         for (size_t j = 0; j < ax; j++)
         {
             modes[j]= yarp::dev::InteractionModeEnum::VOCAB_IM_STIFF;
         }
-        b = iint->setInteractionModes(modes.data());
+        b = iint->setInteractionModes(modes);
         CHECK(b);
-        b = iint->setInteractionModes(ax, joints.data(), modes.data());
+        b = iint->setInteractionModes(joints, modes);
         CHECK(b);
 
     }

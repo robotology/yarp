@@ -29,6 +29,14 @@ public:
         count++;
         printf("[%d] updateModule\n", count);
 
+        /*
+        // Use this to make the module quit after 60 seconds
+        if (count == 60)
+        {
+           return false;
+        }
+        */
+
         return true;
     }
 

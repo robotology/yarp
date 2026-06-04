@@ -14,10 +14,57 @@
 #include <yarp/os/Wire.h>
 #include <yarp/os/idl/WireTypes.h>
 #include <yarp/os/ApplicationNetworkProtocolVersion.h>
+#include <return_checkMotionDoneAll.h>
+#include <return_checkMotionDoneGroup.h>
+#include <return_checkMotionDoneOne.h>
+#include <return_getAmpStatusAll.h>
+#include <return_getAmpStatusOne.h>
 #include <return_getAutoBrakeEnabled.h>
 #include <return_getAvailableControlModes.h>
 #include <return_getAvailablePids.h>
 #include <return_getAxes.h>
+#include <return_getAxisName.h>
+#include <return_getCurrentAll.h>
+#include <return_getCurrentImpedanceLimit.h>
+#include <return_getCurrentOne.h>
+#include <return_getCurrentRangeAll.h>
+#include <return_getCurrentRangeOne.h>
+#include <return_getDeviceInterfaces.h>
+#include <return_getDutyCycleAll.h>
+#include <return_getDutyCycleOne.h>
+#include <return_getEncoderAccelerationAll.h>
+#include <return_getEncoderAccelerationOne.h>
+#include <return_getEncoderAll.h>
+#include <return_getEncoderOne.h>
+#include <return_getEncoderSpeedAll.h>
+#include <return_getEncoderSpeedOne.h>
+#include <return_getEncoderTimedAll.h>
+#include <return_getEncoderTimedOne.h>
+#include <return_getGearboxRatio.h>
+#include <return_getImpedance.h>
+#include <return_getImpedanceOffset.h>
+#include <return_getInteractionModeAll.h>
+#include <return_getInteractionModeGroup.h>
+#include <return_getInteractionModeOne.h>
+#include <return_getJointType.h>
+#include <return_getLastJointFault.h>
+#include <return_getMaxCurrent.h>
+#include <return_getMotorEncoderAccelerationAll.h>
+#include <return_getMotorEncoderAccelerationOne.h>
+#include <return_getMotorEncoderAll.h>
+#include <return_getMotorEncoderCountsPerRevolution.h>
+#include <return_getMotorEncoderOne.h>
+#include <return_getMotorEncoderSpeedAll.h>
+#include <return_getMotorEncoderSpeedOne.h>
+#include <return_getMotorEncoderTimedAll.h>
+#include <return_getMotorEncoderTimedOne.h>
+#include <return_getMotorTorqueParams.h>
+#include <return_getNominalCurrent.h>
+#include <return_getNumberOfMotorEncoders.h>
+#include <return_getNumberOfMotors.h>
+#include <return_getPWM.h>
+#include <return_getPWMLimit.h>
+#include <return_getPeakCurrent.h>
 #include <return_getPid.h>
 #include <return_getPidError.h>
 #include <return_getPidErrorLimit.h>
@@ -33,16 +80,51 @@
 #include <return_getPidReferences.h>
 #include <return_getPids.h>
 #include <return_getPosLimits.h>
+#include <return_getPowerSupplyVoltage.h>
+#include <return_getRefCurrentAll.h>
+#include <return_getRefCurrentOne.h>
+#include <return_getRefDutyCycleAll.h>
+#include <return_getRefDutyCycleOne.h>
+#include <return_getRefPositionAll.h>
+#include <return_getRefPositionGroup.h>
+#include <return_getRefPositionOne.h>
+#include <return_getRefTorqueAll.h>
+#include <return_getRefTorqueGroup.h>
+#include <return_getRefTorqueOne.h>
 #include <return_getRefVelocityAll.h>
 #include <return_getRefVelocityGroup.h>
 #include <return_getRefVelocityOne.h>
+#include <return_getRemoteVariable.h>
+#include <return_getRemoteVariablesList.h>
+#include <return_getTargetPositionAll.h>
+#include <return_getTargetPositionGroup.h>
+#include <return_getTargetPositionOne.h>
+#include <return_getTargetVelocityAll.h>
+#include <return_getTargetVelocityGroup.h>
+#include <return_getTargetVelocityOne.h>
+#include <return_getTemperatureAll.h>
+#include <return_getTemperatureLimit.h>
+#include <return_getTemperatureOne.h>
+#include <return_getTorqueRangeAll.h>
+#include <return_getTorqueRangeOne.h>
+#include <return_getTrajAccelerationAll.h>
+#include <return_getTrajAccelerationGroup.h>
+#include <return_getTrajAccelerationOne.h>
+#include <return_getTrajSpeedOne.h>
+#include <return_getTrajSpeedsAll.h>
+#include <return_getTrajSpeedsGroup.h>
 #include <return_getVelLimits.h>
+#include <return_isCalibratorDevicePresent.h>
 #include <return_isJointBraked.h>
 #include <return_isPidEnabled.h>
+#include <yCalibrationParameters.h>
+#include <yMotorTorqueParameters.h>
 #include <yarp/dev/ControlBoardPid.h>
 #include <yarp/dev/IControlMode.h>
+#include <yarp/dev/IInteractionMode.h>
 #include <yarp/dev/PidEnums.h>
 #include <yarp/dev/ReturnValue.h>
+#include <yarp/os/Bottle.h>
 
 class ControlBoardMsgs :
         public yarp::os::Wire
@@ -57,7 +139,143 @@ public:
     ControlBoardMsgs();
 
     //Service methods
-    virtual return_getAvailableControlModes getAvailableControlModesRPC(const std::int16_t j);
+    virtual return_getDeviceInterfaces getDeviceInterfacesRPC() const;
+
+    virtual return_getAvailableControlModes getAvailableControlModesRPC(const std::int16_t j) const;
+
+    virtual return_getImpedance getImpedanceRPC(const std::int32_t j) const;
+
+    virtual yarp::dev::ReturnValue setImpedanceRPC(const std::int32_t j, const double stiffness, const double damping);
+
+    virtual yarp::dev::ReturnValue setImpedanceOffsetRPC(const std::int32_t j, const double offset);
+
+    virtual return_getImpedanceOffset getImpedanceOffsetRPC(const std::int32_t j) const;
+
+    virtual return_getCurrentImpedanceLimit getCurrentImpedanceLimitRPC(const std::int32_t j) const;
+
+    virtual return_getLastJointFault getLastJointFaultRPC(const std::int32_t j) const;
+
+    virtual return_getRemoteVariable getRemoteVariableRPC(const std::string& key) const;
+
+    virtual yarp::dev::ReturnValue setRemoteVariableRPC(const std::string& key, const yarp::os::Bottle& val);
+
+    virtual return_getRemoteVariablesList getRemoteVariablesListRPC() const;
+
+    virtual return_getInteractionModeOne getInteractionModeOneRPC(const std::int32_t axis) const;
+
+    virtual return_getInteractionModeGroup getInteractionModesGroupRPC(const std::vector<std::int32_t>& joints) const;
+
+    virtual return_getInteractionModeAll getInteractionModesAllRPC() const;
+
+    virtual yarp::dev::ReturnValue setInteractionModeOneRPC(const std::int32_t axis, const yarp::dev::InteractionModeEnum mode);
+
+    virtual yarp::dev::ReturnValue setInteractionModesGroupRPC(const std::vector<std::int32_t>& joints, const std::vector<yarp::dev::InteractionModeEnum>& modes);
+
+    virtual yarp::dev::ReturnValue setInteractionModesAllRPC(const std::vector<yarp::dev::InteractionModeEnum>& modes);
+
+    virtual return_getRefCurrentAll getRefCurrentAllRPC() const;
+
+    virtual return_getRefCurrentOne getRefCurrentOneRPC(const std::int32_t j) const;
+
+    virtual yarp::dev::ReturnValue setRefCurrentAllRPC(const std::vector<double>& refs);
+
+    virtual yarp::dev::ReturnValue setRefCurrentOneRPC(const std::int32_t j, const double ref);
+
+    virtual yarp::dev::ReturnValue setRefCurrentGroupRPC(const std::vector<std::int32_t>& j, const std::vector<double>& refs);
+
+    virtual return_getCurrentAll getCurrentAllRPC() const;
+
+    virtual return_getCurrentOne getCurrentOneRPC(const std::int32_t j) const;
+
+    virtual return_getCurrentRangeOne getCurrentRangeOneRPC(const std::int32_t j) const;
+
+    virtual return_getCurrentRangeAll getCurrentRangeAllRPC() const;
+
+    virtual yarp::dev::ReturnValue setRefDutyCycleOneRPC(const std::int32_t j, const double v);
+
+    virtual yarp::dev::ReturnValue setRefDutyCycleAllRPC(const std::vector<double>& v);
+
+    virtual yarp::dev::ReturnValue setRefDutyCycleGroupRPC(const std::vector<std::int32_t>& j, const std::vector<double>& v);
+
+    virtual return_getRefDutyCycleOne getRefDutyCycleOneRPC(const std::int32_t j) const;
+
+    virtual return_getRefDutyCycleAll getRefDutyCycleAllRPC() const;
+
+    virtual return_getDutyCycleOne getDutyCycleOneRPC(const std::int32_t j) const;
+
+    virtual return_getDutyCycleAll getDutyCycleAllRPC() const;
+
+    virtual yarp::dev::ReturnValue resetEncoderOneRPC(const std::int32_t j);
+
+    virtual yarp::dev::ReturnValue resetEncoderAllRPC();
+
+    virtual yarp::dev::ReturnValue setEncoderOneRPC(const std::int32_t j, const std::int32_t val);
+
+    virtual yarp::dev::ReturnValue setEncoderAllRPC(const std::vector<double>& vals);
+
+    virtual return_getEncoderOne getEncoderOneRPC(const std::int32_t j) const;
+
+    virtual return_getEncoderTimedOne getEncoderTimedOneRPC(const std::int32_t j) const;
+
+    virtual return_getEncoderAll getEncoderAllRPC() const;
+
+    virtual return_getEncoderTimedAll getEncoderTimedAllRPC() const;
+
+    virtual return_getEncoderSpeedOne getEncoderSpeedOneRPC(const std::int32_t j) const;
+
+    virtual return_getEncoderSpeedAll getEncoderSpeedAllRPC() const;
+
+    virtual return_getEncoderAccelerationOne getEncoderAccelerationOneRPC(const std::int32_t j) const;
+
+    virtual return_getEncoderAccelerationAll getEncoderAccelerationAllRPC() const;
+
+    virtual yarp::dev::ReturnValue resetMotorEncoderRPC(const std::int32_t j);
+
+    virtual yarp::dev::ReturnValue resetMotorEncodersRPC();
+
+    virtual yarp::dev::ReturnValue setMotorEncoderRPC(const std::int32_t j, const double val);
+
+    virtual yarp::dev::ReturnValue setMotorEncoderCountsPerRevolutionRPC(const std::int32_t j, const double val);
+
+    virtual return_getMotorEncoderCountsPerRevolution getMotorEncoderCountsPerRevolutionRPC(const std::int32_t m) const;
+
+    virtual yarp::dev::ReturnValue setMotorEncodersAllRPC(const std::vector<double>& vals);
+
+    virtual return_getMotorEncoderOne getMotorEncoderOneRPC(const std::int32_t j) const;
+
+    virtual return_getMotorEncoderAll getMotorEncoderAllRPC() const;
+
+    virtual return_getMotorEncoderTimedOne getMotorEncoderTimedOneRPC(const std::int32_t j) const;
+
+    virtual return_getMotorEncoderTimedAll getMotorEncodersTimedAllRPC() const;
+
+    virtual return_getMotorEncoderSpeedOne getMotorEncoderSpeedOneRPC(const std::int32_t j) const;
+
+    virtual return_getMotorEncoderSpeedAll getMotorEncoderSpeedAllRPC() const;
+
+    virtual return_getMotorEncoderAccelerationOne getMotorEncoderAccelerationOneRPC(const std::int32_t j) const;
+
+    virtual return_getMotorEncoderAccelerationAll getMotorEncoderAccelerationAllRPC() const;
+
+    virtual return_getNumberOfMotorEncoders getNumberOfMotorEncodersRPC() const;
+
+    virtual return_isCalibratorDevicePresent isCalibratorDevicePresentRPC() const;
+
+    virtual yarp::dev::ReturnValue calibrateSingleJointRPC(const std::int32_t j);
+
+    virtual yarp::dev::ReturnValue calibrateWholePartRPC();
+
+    virtual yarp::dev::ReturnValue homingSingleJointRPC(const std::int32_t j);
+
+    virtual yarp::dev::ReturnValue homingWholePartRPC();
+
+    virtual yarp::dev::ReturnValue parkSingleJointRPC(const std::int32_t j, const bool wait);
+
+    virtual yarp::dev::ReturnValue parkWholePartRPC();
+
+    virtual yarp::dev::ReturnValue quitCalibrateRPC();
+
+    virtual yarp::dev::ReturnValue quitParkRPC();
 
     virtual yarp::dev::ReturnValue setManualBrakeActiveRPC(const std::int32_t j, const bool active);
 
@@ -69,11 +287,29 @@ public:
 
     virtual return_getAxes getAxesRPC() const;
 
-    virtual return_getRefVelocityOne getRefVelocityOneRPC(const std::int32_t j) const;
+    virtual return_getRefTorqueOne getRefTorqueOneRPC(const std::int32_t j) const;
 
-    virtual return_getRefVelocityAll getRefVelocityAllRPC() const;
+    virtual return_getRefTorqueAll getRefTorqueAllRPC() const;
 
-    virtual return_getRefVelocityGroup getRefVelocityGroupRPC(const std::vector<std::int32_t>& j) const;
+    virtual return_getRefTorqueGroup getRefTorqueGroupRPC(const std::vector<std::int32_t>& j) const;
+
+    virtual yarp::dev::ReturnValue setRefTorqueOneRPC(const std::int32_t j, const double val);
+
+    virtual yarp::dev::ReturnValue setRefTorqueAllRPC(const std::vector<double>& val);
+
+    virtual yarp::dev::ReturnValue setRefTorqueGroupRPC(const std::vector<std::int32_t>& j, const std::vector<double>& val);
+
+    virtual yarp::dev::ReturnValue setRefPositionOneRPC(const std::int32_t j, const double value);
+
+    virtual yarp::dev::ReturnValue setRefPositionAllRPC(const std::vector<double>& value);
+
+    virtual yarp::dev::ReturnValue setRefPositionGroupRPC(const std::vector<std::int32_t>& j, const std::vector<double>& value);
+
+    virtual return_getRefPositionOne getRefPositionOneRPC(const std::int32_t j) const;
+
+    virtual return_getRefPositionAll getRefPositionAllRPC() const;
+
+    virtual return_getRefPositionGroup getRefPositionGroupRPC(const std::vector<std::int32_t>& j) const;
 
     virtual yarp::dev::ReturnValue setControlModeOneRPC(const std::int32_t j, const yarp::dev::SelectableControlModeEnum mod);
 
@@ -81,13 +317,45 @@ public:
 
     virtual yarp::dev::ReturnValue setControlModeGroupRPC(const std::vector<std::int32_t>& j, const std::vector<yarp::dev::SelectableControlModeEnum>& modes);
 
+    virtual return_getAxisName getAxisNameRPC(const std::int32_t j);
+
+    virtual return_getJointType getJointTypeRPC(const std::int32_t j);
+
+    virtual yarp::dev::ReturnValue calibrateRobotRPC();
+
+    virtual yarp::dev::ReturnValue abortCalibrationRPC();
+
+    virtual yarp::dev::ReturnValue abortParkRPC();
+
+    virtual yarp::dev::ReturnValue parkRPC(const bool wait);
+
+    virtual yarp::dev::ReturnValue calibrateAxisWithParamsRPC(const std::int32_t j, const std::int32_t ui, const double v1, const double v2, const double v3);
+
+    virtual yarp::dev::ReturnValue setCalibrationParametersRPC(const std::int32_t j, const yCalibrationParameters& params);
+
+    virtual yarp::dev::ReturnValue calibrationDoneRPC(const std::int32_t j);
+
     virtual yarp::dev::ReturnValue setPosLimitsRPC(const std::int16_t j, const double min, const double max);
 
     virtual yarp::dev::ReturnValue setVelLimitsRPC(const std::int16_t j, const double min, const double max);
 
-    virtual return_getPosLimits getPosLimitsRPC(const std::int16_t j);
+    virtual return_getPosLimits getPosLimitsRPC(const std::int16_t j) const;
 
-    virtual return_getVelLimits getVelLimitsRPC(const std::int16_t j);
+    virtual return_getVelLimits getVelLimitsRPC(const std::int16_t j) const;
+
+    virtual return_getNumberOfMotors getNumberOfMotorsRPC() const;
+
+    virtual return_getTemperatureOne getTemperatureOneRPC(const std::int32_t m) const;
+
+    virtual return_getTemperatureAll getTemperatureAllRPC() const;
+
+    virtual return_getTemperatureLimit getTemperatureLimitRPC(const std::int32_t m) const;
+
+    virtual yarp::dev::ReturnValue setTemperatureLimitRPC(const std::int32_t m, const double val);
+
+    virtual return_getGearboxRatio getGearboxRatioRPC(const std::int32_t m) const;
+
+    virtual yarp::dev::ReturnValue setGearboxRatioRPC(const std::int32_t m, const double val);
 
     virtual yarp::dev::ReturnValue enablePidRPC(const yarp::dev::PidControlTypeEnum pidtype, const std::int16_t j);
 
@@ -99,6 +367,10 @@ public:
 
     virtual yarp::dev::ReturnValue setPidsRPC(const yarp::dev::PidControlTypeEnum pidtype, const std::vector<yarp::dev::Pid>& pids);
 
+    virtual yarp::dev::ReturnValue setPidOffsetOneRPC(const yarp::dev::PidControlTypeEnum pidtype, const std::int16_t j, const double off);
+
+    virtual yarp::dev::ReturnValue setPidFeedforwardOneRPC(const yarp::dev::PidControlTypeEnum pidtype, const std::int16_t j, const double off);
+
     virtual yarp::dev::ReturnValue setPidReferenceRPC(const yarp::dev::PidControlTypeEnum pidtype, const std::int16_t j, const double ref);
 
     virtual yarp::dev::ReturnValue setPidReferencesRPC(const yarp::dev::PidControlTypeEnum pidtype, const std::vector<double>& refs);
@@ -107,37 +379,151 @@ public:
 
     virtual yarp::dev::ReturnValue setPidErrorLimitsRPC(const yarp::dev::PidControlTypeEnum pidtype, const std::vector<double>& limits);
 
-    virtual return_getAvailablePids getAvailablePidsRPC(const std::int16_t j);
+    virtual return_getAvailablePids getAvailablePidsRPC(const std::int16_t j) const;
 
-    virtual return_isPidEnabled isPidEnabledRPC(const yarp::dev::PidControlTypeEnum pidtype, const std::int16_t j);
+    virtual return_isPidEnabled isPidEnabledRPC(const yarp::dev::PidControlTypeEnum pidtype, const std::int16_t j) const;
 
-    virtual return_getPidError getPidErrorRPC(const yarp::dev::PidControlTypeEnum pidtype, const std::int16_t j);
+    virtual return_getPidError getPidErrorRPC(const yarp::dev::PidControlTypeEnum pidtype, const std::int16_t j) const;
 
-    virtual return_getPidErrors getPidErrorsRPC(const yarp::dev::PidControlTypeEnum pidtype);
+    virtual return_getPidErrors getPidErrorsRPC(const yarp::dev::PidControlTypeEnum pidtype) const;
 
-    virtual return_getPidReference getPidReferenceRPC(const yarp::dev::PidControlTypeEnum pidtype, const std::int16_t j);
+    virtual return_getPidReference getPidReferenceRPC(const yarp::dev::PidControlTypeEnum pidtype, const std::int16_t j) const;
 
-    virtual return_getPidReferences getPidReferencesRPC(const yarp::dev::PidControlTypeEnum pidtype);
+    virtual return_getPidReferences getPidReferencesRPC(const yarp::dev::PidControlTypeEnum pidtype) const;
 
-    virtual return_getPidErrorLimit getPidErrorLimitRPC(const yarp::dev::PidControlTypeEnum pidtype, const std::int16_t j);
+    virtual return_getPidErrorLimit getPidErrorLimitRPC(const yarp::dev::PidControlTypeEnum pidtype, const std::int16_t j) const;
 
-    virtual return_getPidErrorLimits getPidErrorLimitsRPC(const yarp::dev::PidControlTypeEnum pidtype);
+    virtual return_getPidErrorLimits getPidErrorLimitsRPC(const yarp::dev::PidControlTypeEnum pidtype) const;
 
-    virtual return_getPidOutput getPidOutputRPC(const yarp::dev::PidControlTypeEnum pidtype, const std::int16_t j);
+    virtual return_getPidOutput getPidOutputRPC(const yarp::dev::PidControlTypeEnum pidtype, const std::int16_t j) const;
 
-    virtual return_getPidOutputs getPidOutputsRPC(const yarp::dev::PidControlTypeEnum pidtype);
+    virtual return_getPidOutputs getPidOutputsRPC(const yarp::dev::PidControlTypeEnum pidtype) const;
 
-    virtual return_getPid getPidRPC(const yarp::dev::PidControlTypeEnum pidtype, const std::int16_t j);
+    virtual return_getPid getPidRPC(const yarp::dev::PidControlTypeEnum pidtype, const std::int16_t j) const;
 
-    virtual return_getPids getPidsRPC(const yarp::dev::PidControlTypeEnum pidtype);
+    virtual return_getPids getPidsRPC(const yarp::dev::PidControlTypeEnum pidtype) const;
 
-    virtual return_getPidExtraInfo getPidExtraInfoRPC(const yarp::dev::PidControlTypeEnum pidtype, const std::int16_t j);
+    virtual return_getPidExtraInfo getPidExtraInfoRPC(const yarp::dev::PidControlTypeEnum pidtype, const std::int16_t j) const;
 
-    virtual return_getPidExtraInfos getPidExtraInfosRPC(const yarp::dev::PidControlTypeEnum pidtype);
+    virtual return_getPidExtraInfos getPidExtraInfosRPC(const yarp::dev::PidControlTypeEnum pidtype) const;
 
-    virtual return_getPidOffset getPidOffsetRPC(const yarp::dev::PidControlTypeEnum pidtype, const std::int16_t j);
+    virtual return_getPidOffset getPidOffsetRPC(const yarp::dev::PidControlTypeEnum pidtype, const std::int16_t j) const;
 
-    virtual return_getPidFeedforward getPidFeedforwardRPC(const yarp::dev::PidControlTypeEnum pidtype, const std::int16_t j);
+    virtual return_getPidFeedforward getPidFeedforwardRPC(const yarp::dev::PidControlTypeEnum pidtype, const std::int16_t j) const;
+
+    virtual yarp::dev::ReturnValue positionMoveOneRPC(const std::int32_t j, const double ref);
+
+    virtual yarp::dev::ReturnValue positionMoveGroupRPC(const std::vector<std::int32_t>& joints, const std::vector<double>& refs);
+
+    virtual yarp::dev::ReturnValue positionMoveAllRPC(const std::vector<double>& refs);
+
+    virtual yarp::dev::ReturnValue relativeMoveOneRPC(const std::int32_t j, const double delta);
+
+    virtual yarp::dev::ReturnValue relativeMoveGroupRPC(const std::vector<std::int32_t>& joints, const std::vector<double>& refs);
+
+    virtual yarp::dev::ReturnValue relativeMoveAllRPC(const std::vector<double>& deltas);
+
+    virtual yarp::dev::ReturnValue setTrajSpeedOneRPC(const std::int32_t j, const double sp);
+
+    virtual yarp::dev::ReturnValue setTrajSpeedGroupRPC(const std::vector<std::int32_t>& joints, const std::vector<double>& spds);
+
+    virtual yarp::dev::ReturnValue setTrajSpeedAllRPC(const std::vector<double>& spds);
+
+    virtual yarp::dev::ReturnValue setTrajAccelerationOneRPC(const std::int32_t j, const double acc);
+
+    virtual yarp::dev::ReturnValue setTrajAccelerationsGroupRPC(const std::vector<std::int32_t>& joints, const std::vector<double>& accs);
+
+    virtual yarp::dev::ReturnValue setTrajAccelerationsAllRPC(const std::vector<double>& accs);
+
+    virtual yarp::dev::ReturnValue stopOneRPC(const std::int32_t j);
+
+    virtual yarp::dev::ReturnValue stopGroupRPC(const std::vector<std::int32_t>& joints);
+
+    virtual yarp::dev::ReturnValue stopAllRPC();
+
+    virtual return_getTargetPositionOne getTargetPositionOneRPC(const std::int32_t j) const;
+
+    virtual return_getTargetPositionGroup getTargetPositionGroupRPC(const std::vector<std::int32_t>& joints) const;
+
+    virtual return_getTargetPositionAll getTargetPositionAllRPC() const;
+
+    virtual return_getTrajSpeedOne getTrajSpeedOneRPC(const std::int32_t j) const;
+
+    virtual return_getTrajSpeedsGroup getTrajSpeedsGroupRPC(const std::vector<std::int32_t>& joints) const;
+
+    virtual return_getTrajSpeedsAll getTrajSpeedsAllRPC() const;
+
+    virtual return_getTrajAccelerationOne getTrajAccelerationOneRPC(const std::int32_t j) const;
+
+    virtual return_getTrajAccelerationGroup getTrajAccelerationGroupRPC(const std::vector<std::int32_t>& joints) const;
+
+    virtual return_getTrajAccelerationAll getTrajAccelerationAllRPC() const;
+
+    virtual return_checkMotionDoneOne checkMotionDoneOneRPC(const std::int32_t j) const;
+
+    virtual return_checkMotionDoneGroup checkMotionDoneGroupRPC(const std::vector<std::int32_t>& joints) const;
+
+    virtual return_checkMotionDoneAll checkMotionDoneAllRPC() const;
+
+    virtual yarp::dev::ReturnValue velocityMoveOneRPC(const std::int32_t j, const double ref);
+
+    virtual yarp::dev::ReturnValue velocityMoveGroupRPC(const std::vector<std::int32_t>& joints, const std::vector<double>& refs);
+
+    virtual yarp::dev::ReturnValue velocityMoveAllRPC(const std::vector<double>& refs);
+
+    virtual return_getTargetVelocityOne getTargetVelocityOneRPC(const std::int32_t j) const;
+
+    virtual return_getTargetVelocityGroup getTargetVelocityGroupRPC(const std::vector<std::int32_t>& joints) const;
+
+    virtual return_getTargetVelocityAll getTargetVelocityAllRPC() const;
+
+    virtual yarp::dev::ReturnValue setRefVelocityOneRPC(const std::int32_t j, const double ref);
+
+    virtual yarp::dev::ReturnValue setRefVelocityAllRPC(const std::vector<double>& ref);
+
+    virtual yarp::dev::ReturnValue setRefVelocityGroupRPC(const std::vector<std::int32_t>& j, const std::vector<double>& ref);
+
+    virtual return_getRefVelocityOne getRefVelocityOneRPC(const std::int32_t j) const;
+
+    virtual return_getRefVelocityAll getRefVelocityAllRPC() const;
+
+    virtual return_getRefVelocityGroup getRefVelocityGroupRPC(const std::vector<std::int32_t>& j) const;
+
+    virtual return_getTorqueRangeOne getTorqueRangeOneRPC(const std::int32_t j) const;
+
+    virtual return_getTorqueRangeAll getTorqueRangeAllRPC() const;
+
+    virtual yarp::dev::ReturnValue setMotorTorqueParamsRPC(const std::int32_t j, const yMotorTorqueParameters& params);
+
+    virtual return_getMotorTorqueParams getMotorTorqueParamsRPC(const std::int32_t j);
+
+    virtual yarp::dev::ReturnValue enableAmpRPC(const std::int32_t j);
+
+    virtual yarp::dev::ReturnValue disableAmpRPC(const std::int32_t j);
+
+    virtual return_getAmpStatusAll getAmpStatusAllRPC() const;
+
+    virtual return_getAmpStatusOne getAmpStatusOneRPC(const std::int32_t j) const;
+
+    virtual yarp::dev::ReturnValue setMaxCurrentRPC(const std::int32_t j, const double v);
+
+    virtual return_getMaxCurrent getMaxCurrentRPC(const std::int32_t j) const;
+
+    virtual return_getNominalCurrent getNominalCurrentRPC(const std::int32_t m) const;
+
+    virtual yarp::dev::ReturnValue setNominalCurrentRPC(const std::int32_t m, const double val);
+
+    virtual return_getPeakCurrent getPeakCurrentRPC(const std::int32_t m) const;
+
+    virtual yarp::dev::ReturnValue setPeakCurrentRPC(const std::int32_t m, const double val);
+
+    virtual return_getPWM getPWMRPC(const std::int32_t m) const;
+
+    virtual return_getPWMLimit getPWMLimitRPC(const std::int32_t m) const;
+
+    virtual yarp::dev::ReturnValue setPWMLimitRPC(const std::int32_t m, const double val);
+
+    virtual return_getPowerSupplyVoltage getPowerSupplyVoltageRPC(const std::int32_t m) const;
 
     // help method
     virtual std::vector<std::string> help(const std::string& functionName = "--all");

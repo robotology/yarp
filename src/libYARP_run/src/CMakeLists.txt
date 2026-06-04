@@ -25,6 +25,8 @@ endif()
 
 set(YARP_run_SRCS
   yarp/run/Run.cpp
+  yarp/run/RunClient.cpp
+  yarp/run/RunServer.cpp
 )
 
 set(YARP_run_IMPL_SRCS

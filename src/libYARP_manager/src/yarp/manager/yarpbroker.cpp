@@ -695,23 +695,32 @@ bool YarpBroker::getAllProcesses(const std::string& server,
     grp.addString("ps");
     msg.addList()=grp;
 
-    int ret = SendMsg(msg, server, response, 3.0);
+    std::string targetServer = server;
+    if (targetServer[0] != '/') {
+        targetServer = std::string("/") + targetServer;
+    }
+
+    int ret = SendMsg(msg, targetServer, response, 3.0);
     if((ret == YARPRUN_OK) || (ret == YARPRUN_NORESPONSE))
     {
         for(size_t i=0; i<response.size(); i++)
         {
             Process proc;
-            std::string sprc;
             if (response.get(i).check("pid")) {
                 proc.pid = response.get(i).find("pid").asInt32();
             }
+            if (response.get(i).check("tag")) {
+                proc.tag = response.get(i).find("tag").asString();
+            }
+            if (response.get(i).check("status")) {
+                proc.status = response.get(i).find("status").asString();
+            }
             if (response.get(i).check("cmd")) {
-                sprc = response.get(i).find("cmd").asString();
+                proc.command = response.get(i).find("cmd").asString();
             }
-            if (response.get(i).check("env") && response.get(i).find("env").asString().length()) {
-                sprc.append("; ").append(response.get(i).find("env").asString());
+            if (response.get(i).check("env")) {
+                proc.env = response.get(i).find("env").asString();
             }
-            proc.command = sprc;
             processes.push_back(proc);
         }
         return true;

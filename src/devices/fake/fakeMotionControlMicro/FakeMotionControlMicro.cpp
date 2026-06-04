@@ -285,14 +285,14 @@ bool FakeMotionControlMicro::fromConfig(yarp::os::Searchable &config)
         {
             std::string typeString = m_GENERAL_AxisType[i];
             if (typeString == "revolute") {
-                _jointType[_axisMap[i]] = VOCAB_JOINTTYPE_REVOLUTE;
+                _jointType[_axisMap[i]] = JointTypeEnum::VOCAB_JOINTTYPE_REVOLUTE;
             }
             else if (typeString == "prismatic") {
-                _jointType[_axisMap[i]] = VOCAB_JOINTTYPE_PRISMATIC;
+                _jointType[_axisMap[i]] = JointTypeEnum::VOCAB_JOINTTYPE_PRISMATIC;
             }
             else {
                 yCError(FAKEMOTIONCONTROLMICRO, "Unknown AxisType value %s!", typeString.c_str());
-                _jointType[_axisMap[i]] = VOCAB_JOINTTYPE_UNKNOWN;
+                _jointType[_axisMap[i]] = JointTypeEnum::VOCAB_JOINTTYPE_UNKNOWN;
                 return false;
             }
         }
@@ -301,7 +301,7 @@ bool FakeMotionControlMicro::fromConfig(yarp::os::Searchable &config)
     {
         yCInfo(FAKEMOTIONCONTROLMICRO) << "Using default AxisType (revolute)";
         for (i = 0; i < _njoints; i++)  {
-            _jointType[_axisMap[i]] = VOCAB_JOINTTYPE_REVOLUTE;
+            _jointType[_axisMap[i]] = JointTypeEnum::VOCAB_JOINTTYPE_REVOLUTE;
         }
     }
 

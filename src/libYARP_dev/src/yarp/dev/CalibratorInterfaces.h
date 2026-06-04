@@ -8,6 +8,5 @@
 
 #include <yarp/dev/ICalibrator.h>
 #include <yarp/dev/IRemoteCalibrator.h>
-#include <yarp/dev/CalibratorVocabs.h>
 
 #endif // YARP_DEV_CALIBRATORINTERFACES_H

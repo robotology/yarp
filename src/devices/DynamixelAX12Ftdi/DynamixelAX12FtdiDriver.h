@@ -220,8 +220,8 @@ public:
     yarp::dev::ReturnValue positionMove(const double *refs) override;
     yarp::dev::ReturnValue relativeMove(int j, double delta) override;
     yarp::dev::ReturnValue relativeMove(const double *deltas) override;
-    yarp::dev::ReturnValue checkMotionDone(int j, bool *flag) override;
-    yarp::dev::ReturnValue checkMotionDone(bool *flag) override;
+    yarp::dev::ReturnValue checkMotionDone(bool& flag) override;
+    yarp::dev::ReturnValue checkMotionDone(int j, bool& flag) override;
     yarp::dev::ReturnValue setTrajSpeed(int j, double sp) override;
     yarp::dev::ReturnValue setTrajSpeeds(const double *spds) override;
     yarp::dev::ReturnValue setTrajAcceleration(int j, double acc) override;
@@ -284,7 +284,7 @@ public:
     // multiple joint version
     yarp::dev::ReturnValue positionMove(const int n_joint, const int *joints, const double *refs) override;
     yarp::dev::ReturnValue relativeMove(const int n_joint, const int *joints, const double *deltas) override;
-    yarp::dev::ReturnValue checkMotionDone(const int n_joint, const int *joints, bool *flag) override;
+    yarp::dev::ReturnValue checkMotionDone(const std::vector<int>& joints, bool& flag) override;
     yarp::dev::ReturnValue setTrajSpeeds(const int n_joint, const int *joints, const double *spds) override;
     yarp::dev::ReturnValue setTrajAccelerations(const int n_joint, const int *joints, const double *accs) override;
     yarp::dev::ReturnValue getTrajSpeeds(const int n_joint, const int *joints, double *spds) override;

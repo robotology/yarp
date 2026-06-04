@@ -748,7 +748,7 @@ void JointItem::setUnits(yarp::dev::JointTypeEnum t)
     QString trq_metric_prism_title("Force:");
     QString vel_metric_prism("m/s");
 
-    if (t == yarp::dev::VOCAB_JOINTTYPE_REVOLUTE)
+    if (t == yarp::dev::JointTypeEnum::VOCAB_JOINTTYPE_REVOLUTE)
     {
         ui->labelIdlevelUnits->setText(vel_metric_revolute);
         ui->labelPositionvelUnits->setText(vel_metric_revolute);
@@ -794,7 +794,7 @@ void JointItem::setUnits(yarp::dev::JointTypeEnum t)
         ui->labelVelocitytrqUnits->setText(trq_metric_revolute);
         ui->labelVelocityDirtrqUnits->setText(trq_metric_revolute);
     }
-    else if (t == yarp::dev::VOCAB_JOINTTYPE_PRISMATIC)
+    else if (t == yarp::dev::JointTypeEnum::VOCAB_JOINTTYPE_PRISMATIC)
     {
         ui->labelIdlevelUnits->setText(vel_metric_prism);
         ui->labelPositionvelUnits->setText(vel_metric_prism);

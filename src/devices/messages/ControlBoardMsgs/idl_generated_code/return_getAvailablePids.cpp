@@ -138,21 +138,23 @@ bool return_getAvailablePids::read_avail(yarp::os::idl::WireReader& reader)
         reader.fail();
         return false;
     }
-    size_t _csize;
-    yarp::os::idl::WireState _etype;
-    reader.readListBegin(_etype, _csize);
-    // WireReader removes BOTTLE_TAG_LIST from the tag
-    constexpr int expected_tag = ((BOTTLE_TAG_INT32) & (~BOTTLE_TAG_LIST));
-    if constexpr (expected_tag != 0) {
-        if (_csize != 0 && _etype.code != expected_tag) {
+    {
+        size_t _csize;
+        yarp::os::idl::WireState _etype;
+        reader.readListBegin(_etype, _csize);
+        // WireReader removes BOTTLE_TAG_LIST from the tag
+        constexpr int expected_tag = ((BOTTLE_TAG_INT32) & (~BOTTLE_TAG_LIST));
+        if constexpr (expected_tag != 0) {
+            if (_csize != 0 && _etype.code != expected_tag) {
+                return false;
+            }
+        }
+        avail.resize(_csize);
+        if (_csize != 0 && !reader.readBlock(reinterpret_cast<char*>(avail.data()), avail.size() * sizeof(yarp::dev::PidControlTypeEnum))) {
             return false;
         }
+        reader.readListEnd();
     }
-    avail.resize(_csize);
-    if (_csize != 0 && !reader.readBlock(reinterpret_cast<char*>(avail.data()), avail.size() * sizeof(yarp::dev::PidControlTypeEnum))) {
-        return false;
-    }
-    reader.readListEnd();
     return true;
 }
 
@@ -178,21 +180,23 @@ bool return_getAvailablePids::nested_read_avail(yarp::os::idl::WireReader& reade
         reader.fail();
         return false;
     }
-    size_t _csize;
-    yarp::os::idl::WireState _etype;
-    reader.readListBegin(_etype, _csize);
-    // WireReader removes BOTTLE_TAG_LIST from the tag
-    constexpr int expected_tag = ((BOTTLE_TAG_INT32) & (~BOTTLE_TAG_LIST));
-    if constexpr (expected_tag != 0) {
-        if (_csize != 0 && _etype.code != expected_tag) {
+    {
+        size_t _csize;
+        yarp::os::idl::WireState _etype;
+        reader.readListBegin(_etype, _csize);
+        // WireReader removes BOTTLE_TAG_LIST from the tag
+        constexpr int expected_tag = ((BOTTLE_TAG_INT32) & (~BOTTLE_TAG_LIST));
+        if constexpr (expected_tag != 0) {
+            if (_csize != 0 && _etype.code != expected_tag) {
+                return false;
+            }
+        }
+        avail.resize(_csize);
+        if (_csize != 0 && !reader.readBlock(reinterpret_cast<char*>(avail.data()), avail.size() * sizeof(yarp::dev::PidControlTypeEnum))) {
             return false;
         }
+        reader.readListEnd();
     }
-    avail.resize(_csize);
-    if (_csize != 0 && !reader.readBlock(reinterpret_cast<char*>(avail.data()), avail.size() * sizeof(yarp::dev::PidControlTypeEnum))) {
-        return false;
-    }
-    reader.readListEnd();
     return true;
 }
 

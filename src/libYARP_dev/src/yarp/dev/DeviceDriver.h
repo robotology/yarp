@@ -17,7 +17,6 @@
 namespace yarp::dev {
 class DeviceDriver;
 class DeprecatedDeviceDriver;
-class DeviceResponder;
 }
 
 /**
@@ -133,92 +132,5 @@ private:
 class YARP_dev_API yarp::dev::DeprecatedDeviceDriver : virtual public yarp::dev::DeviceDriver
 {
 };
-
-
-/**
- * \ingroup dev_class
- *
- * A cheap and cheerful framework for human readable/writable forms of
- * messages to devices.  The main concern is to makes it easier to
- * document these messages.  Override DeviceResponder::respond() to
- * respond to new messages.  You don't need to use this class --
- * the network format of messages is defined independently of it.
- */
-class YARP_dev_API yarp::dev::DeviceResponder : public yarp::os::PortReader,
-            public yarp::os::TypedReaderCallback<yarp::os::Bottle>
-{
-
-private:
-    yarp::os::Bottle examples;
-    yarp::os::Bottle explains;
-    yarp::os::Bottle details;
-
-public:
-    /**
-     * Constructor
-     */
-    DeviceResponder();
-
-    /**
-     * Add information about a message that the respond() method
-     * understands.
-     * @param txt the message, in text form
-     * @param explain an (optional) what the message means
-     */
-    void addUsage(const char *txt, const char *explain = nullptr);
-
-    /**
-     * Add information about a message that the respond() method
-     * understands.
-     * @param bot the message, in bottle form
-     * @param explain an (optional) what the message means
-     */
-    void addUsage(const yarp::os::Bottle& bot, const char *explain = nullptr);
-
-    /**
-     * Respond to a message.
-     * @param command the message
-     * @param reply the response
-     * @return true if there was no critical failure
-     */
-    virtual bool respond(const yarp::os::Bottle& command,
-                         yarp::os::Bottle& reply);
-
-    /**
-     * Handler for reading messages from the network, and passing
-     * them on to the respond() method.
-     * @param connection a network connection to a port
-     * @return true if the message was read successfully
-     */
-    bool read(yarp::os::ConnectionReader& connection) override;
-
-    using yarp::os::TypedReaderCallback<yarp::os::Bottle>::onRead;
-    /**
-     * Alternative handler for reading messages from the network, and passing
-     * them on to the respond() method.  There can be no replies made
-     * if this handler is used.
-     * @param v the message
-     */
-    void onRead(yarp::os::Bottle& v) override {
-        yarp::os::Bottle reply;
-        respond(v,reply);
-    }
-
-    /**
-     * Regenerate usage information.
-     */
-    void makeUsage();
-
-    /**
-     * Attach this object to a source of messages.
-     * @param source a BufferedPort or PortReaderBuffer that
-     * receives data.
-     */
-    void attach(yarp::os::TypedReader<yarp::os::Bottle>& source) {
-        source.useCallback(*this);
-        source.setReplier(*this);
-    }
-};
-
 
 #endif // YARP_DEV_DEVICEDRIVER_H

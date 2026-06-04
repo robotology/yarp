@@ -32,6 +32,7 @@ bool ImplementTorqueControl::initialize(int size, const int *amap, const double 
     yAssert (m_helper != nullptr);
 
     m_buffer_doubles.resize(size);
+    m_buffer_doubles2.resize(size);
     m_buffer_ints.resize(size);
 
     return true;
