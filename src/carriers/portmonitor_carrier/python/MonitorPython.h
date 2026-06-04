@@ -68,12 +68,13 @@ private:
     std::recursive_mutex m_monitor_mutex;
 
     bool classWrapper(PyObject* &pClassInstance, std::string methodName, PyObject* &pClassMethodArgs, PyObject* &pValue);
-    bool functionWrapper(std::string moduleName, std::string functionName, PyObject* &pArgs, PyObject* &pValue);
-    bool hasPythonFunction(const std::string& moduleName, const std::string& functionName);
+    bool functionWrapper(std::string functionName, PyObject* &pArgs, PyObject* &pValue);
+    bool hasPythonFunction(const std::string& functionName);
     bool ensureYarpModuleLoaded();
 
-    PyObject* m_classInstance=nullptr; // Python object of the created class
-    PyObject* m_lastUpdateResult = nullptr;
+    PyObject* m_classInstance{nullptr}; // Python object of the created class
+    PyObject* m_lastUpdateResult{nullptr};
+    PyObject* m_pModule{nullptr};
 
 public:
     MonitorTrigger<MonitorPython>* trigger=nullptr;
@@ -83,6 +84,7 @@ private:
     void searchReplace(std::string& str,
                        const std::string& oldStr, const std::string& newStr);
     bool isKeyword(const char* str);
+    bool loadPythonModule(const std::string& moduleName, PyObject* &pModule);
 };
 
 

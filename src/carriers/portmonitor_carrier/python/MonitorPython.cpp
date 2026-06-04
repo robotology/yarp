@@ -21,6 +21,7 @@ YARP_LOG_COMPONENT(PY_PORT_MONITOR, "yarp.portmonitor.MonitorPython")
 
 constexpr const char* yarpThingsSwigType = "yarp::os::Things *";
 constexpr const char* yarpPortWriterSwigType = "yarp::os::PortWriter *";
+constexpr const char* yarpPropertySwigType = "yarp::os::Property *";
 
 bool appendPythonPath(const std::string& path)
 {
@@ -106,14 +107,18 @@ bool MonitorPython::load(const Property &options)
         return false;
     }
 
-    bHasAcceptCallback = hasPythonFunction(m_pythonScriptName, "acceptData");
-    bHasUpdateCallback = hasPythonFunction(m_pythonScriptName, "updateData");
-    bHasUpdateReplyCallback = hasPythonFunction(m_pythonScriptName, "updateReply");
-    if(hasPythonFunction(m_pythonScriptName, "create"))
+    if(!loadPythonModule(m_pythonScriptName, m_pModule)) {
+        return false;
+    }
+
+    bHasAcceptCallback = hasPythonFunction("acceptData");
+    bHasUpdateCallback = hasPythonFunction("updateData");
+    bHasUpdateReplyCallback = hasPythonFunction("updateReply");
+    if(hasPythonFunction("create"))
     {
         PyObject* pValue = nullptr;
         PyObject* pArgs = nullptr;
-        if (!functionWrapper(m_pythonScriptName, "create", pArgs, pValue))
+        if (!functionWrapper("create", pArgs, pValue))
         {
             yCError(PY_PORT_MONITOR) << "Unable to call the create function from python \n";
             return false;
@@ -128,7 +133,59 @@ bool MonitorPython::acceptData(Things &thing)
 {
     std::lock_guard<std::recursive_mutex> guard(m_monitor_mutex);
     yDebug() << "acceptData called";
-    return true;
+    if (!bHasAcceptCallback) {
+        return true;
+    }
+    if (!ensureYarpModuleLoaded()) {
+        return false;
+    }
+    swig_type_info* type = SWIG_TypeQuery(yarpThingsSwigType);
+    if (type == nullptr) {
+        yCError(PY_PORT_MONITOR) << "Swig type of Things is not found";
+        return false;
+    }
+    PyObject* pyThing = SWIG_NewPointerObj((void*)&thing, type, 0);
+    if (pyThing == nullptr) {
+        if (PyErr_Occurred()) {
+            PyErr_Print();
+        }
+        return false;
+    }
+    PyObject* pArgs = PyTuple_New(1);
+    if (pArgs == nullptr) {
+        Py_DECREF(pyThing);
+        if (PyErr_Occurred()) {
+            PyErr_Print();
+        }
+        return false;
+    }
+    if (PyTuple_SetItem(pArgs, 0, pyThing) != 0) {
+        Py_DECREF(pyThing);
+        Py_DECREF(pArgs);
+        if (PyErr_Occurred()) {
+            PyErr_Print();
+        }
+        return false;
+    }
+    PyObject* pValue = nullptr;
+    if (!functionWrapper("acceptData", pArgs, pValue)) {
+        yCError(PY_PORT_MONITOR) << "Unable to call the acceptData function from python";
+        Py_DECREF(pArgs);
+        return false;
+    }
+    Py_DECREF(pArgs);
+    if (pValue == nullptr) {
+        return false;
+    }
+    const int accepted = PyObject_IsTrue(pValue);
+    Py_DECREF(pValue);
+    if (accepted < 0) {
+        if (PyErr_Occurred()) {
+            PyErr_Print();
+        }
+        return false;
+    }
+    return accepted != 0;
 }
 
 
@@ -164,7 +221,7 @@ yarp::os::Things& MonitorPython::updateData(yarp::os::Things& thing)
     PyObject* pRetValue = nullptr;
     std::string func_name = "updateData";
     yDebug() << "Calling " << func_name << " function from python \n";
-    if (!functionWrapper(m_pythonScriptName, func_name, pArgs, pRetValue))
+    if (!functionWrapper(func_name, pArgs, pRetValue))
     {
         yError() << "Unable to call the " << func_name << " function from python \n";
     }
@@ -208,13 +265,39 @@ yarp::os::Things& MonitorPython::updateReply(yarp::os::Things& thing)
     std::lock_guard<std::recursive_mutex> guard(m_monitor_mutex);
 
     PyObject* pRetValue = nullptr;
-    PyObject* pArgs = nullptr;
+    PyObject* pArgs = PyTuple_New(1);
     std::string func_name = "updateReply";
-    yError() << "Calling " << func_name << " function from python \n";
-    if (!functionWrapper(m_pythonScriptName, func_name, pArgs, pRetValue))
-    {
-        yError() << "Unable to call the " << func_name << " function from python \n";
+    if (pArgs == nullptr) {
+        PyErr_Print();
+        yCError(PY_PORT_MONITOR) << "Unable to allocate arguments for the " << func_name << " function";
+        return thing;
     }
+    PyObject* pThing = SWIG_NewPointerObj(&thing, SWIG_TypeQuery(yarpThingsSwigType), 0);
+    if (pThing == nullptr) {
+        Py_DECREF(pArgs);
+        PyErr_Print();
+        yCError(PY_PORT_MONITOR) << "Unable to convert reply thing for the " << func_name << " function";
+        return thing;
+    }
+    PyTuple_SetItem(pArgs, 0, pThing);
+    yCDebug(PY_PORT_MONITOR) << "Calling " << func_name << " function from python";
+    if (!functionWrapper(func_name, pArgs, pRetValue))
+    {
+        yCError(PY_PORT_MONITOR) << "Unable to call the " << func_name << " function from python \n";
+        Py_DECREF(pArgs);
+        return thing;
+    }
+    if (pRetValue != nullptr && pRetValue != Py_None) {
+        yarp::os::Things* updatedThing = nullptr;
+        if (SWIG_ConvertPtr(pRetValue,
+                            reinterpret_cast<void**>(&updatedThing),
+                            SWIG_TypeQuery(yarpThingsSwigType),
+                            0) == SWIG_OK && updatedThing != nullptr && updatedThing != &thing) {
+            thing = *updatedThing;
+        }
+    }
+    Py_XDECREF(pRetValue);
+    Py_DECREF(pArgs);
 
     return thing;
 }
@@ -223,14 +306,42 @@ bool MonitorPython::setParams(const yarp::os::Property& params)
 {
     std::lock_guard<std::recursive_mutex> guard(m_monitor_mutex);
 
-    PyObject* pRetValue = nullptr;
-    PyObject* pArgs = nullptr;
-    std::string func_name = "setParams";
-    if (!functionWrapper(m_pythonScriptName, func_name, pArgs, pRetValue))
-    {
-        yCError(PY_PORT_MONITOR) << "Unable to call the " << func_name << " function from python \n";
+    if (!ensureYarpModuleLoaded()) {
         return false;
     }
+
+    swig_type_info* type = SWIG_TypeQuery(yarpPropertySwigType);
+    if (type == nullptr) {
+        yCError(PY_PORT_MONITOR) << "Swig type of Property is not found";
+        return false;
+    }
+
+    PyObject* pyParams = SWIG_NewPointerObj((void*)&params, type, 0);
+    if (pyParams == nullptr) {
+        if (PyErr_Occurred()) {
+            PyErr_Print();
+        }
+        return false;
+    }
+
+    PyObject* pArgs = PyTuple_Pack(1, pyParams);
+    Py_DECREF(pyParams);
+    if (pArgs == nullptr) {
+        PyErr_Print();
+        return false;
+    }
+
+    PyObject* pRetValue = nullptr;
+    std::string func_name = "setParams";
+    if (!functionWrapper(func_name, pArgs, pRetValue))
+    {
+        yCError(PY_PORT_MONITOR) << "Unable to call the " << func_name << " function from python";
+        Py_DECREF(pArgs);
+        return false;
+    }
+    Py_DECREF(pArgs);
+    Py_XDECREF(pRetValue);
+
     return true;
 }
 
@@ -238,20 +349,66 @@ bool MonitorPython::getParams(yarp::os::Property& params)
 {
     std::lock_guard<std::recursive_mutex> guard(m_monitor_mutex);
 
-    PyObject* pRetValue = nullptr;
-    PyObject* pArgs = nullptr;
-    std::string func_name = "getParams";
-    if (!functionWrapper(m_pythonScriptName, func_name, pArgs, pRetValue))
-    {
-        yCError(PY_PORT_MONITOR) << "Unable to call the " << func_name << " function from python \n";
+    if (!ensureYarpModuleLoaded()) {
         return false;
     }
+
+    swig_type_info* type = SWIG_TypeQuery(yarpPropertySwigType);
+    if (type == nullptr) {
+        yCError(PY_PORT_MONITOR) << "Swig type of Property is not found";
+        return false;
+    }
+
+    PyObject* pyParams = SWIG_NewPointerObj((void*)&params, type, 0);
+    if (pyParams == nullptr) {
+        if (PyErr_Occurred()) {
+            PyErr_Print();
+        }
+        return false;
+    }
+
+    PyObject* pArgs = PyTuple_Pack(1, pyParams);
+    Py_DECREF(pyParams);
+    if (pArgs == nullptr) {
+        PyErr_Print();
+        return false;
+    }
+
+    PyObject* pRetValue = nullptr;
+    std::string func_name = "getParams";
+    if (!functionWrapper(func_name, pArgs, pRetValue))
+    {
+        yCError(PY_PORT_MONITOR) << "Unable to call the " << func_name << " function from python";
+        Py_DECREF(pArgs);
+        return false;
+    }
+    Py_DECREF(pArgs);
+
+    if (pRetValue != nullptr && pRetValue != Py_None) {
+        yarp::os::Property* updatedParams = nullptr;
+        if (SWIG_ConvertPtr(pRetValue,
+                            reinterpret_cast<void**>(&updatedParams),
+                            type,
+                            0) == SWIG_OK && updatedParams != nullptr && updatedParams != &params) {
+            params = *updatedParams;
+        }
+    }
+    Py_XDECREF(pRetValue);
+
     return true;
 }
 
 bool MonitorPython::peerTrigged()
 {
     std::lock_guard<std::recursive_mutex> guard(m_monitor_mutex);
+    PyObject* pRetValue = nullptr;
+    PyObject* pArgs = nullptr;
+    std::string func_name = "trig";
+    if (!functionWrapper(func_name, pArgs, pRetValue))
+    {
+        yCError(PY_PORT_MONITOR) << "Unable to call the " << func_name << " function from python \n";
+        return false;
+    }
     return true;
 }
 
@@ -282,23 +439,50 @@ bool MonitorPython::canAccept()
         if(token.size() && !isKeyword(token.c_str()))
         {
             record.lock();
-            std::string value = (record.hasEvent(token.c_str())) ? "true" : "false";
+                         std::string value = (record.hasEvent(token.c_str())) ? "True" : "False";
             record.unlock();
             searchReplace(strConstraint, token, value);
         }
         strDummy.erase(0, pos + delimiter.length());
     }
-    yCTrace(PORTMONITORCARRIER, "constraint = \'%s\'", strConstraint.c_str());
-
+    yCTrace(PY_PORT_MONITOR, "constraint = \'%s\'", strConstraint.c_str());
     /*
-     *  Using lua to evaluate the boolean expression
-     *  Note: this can be replaced by a homebrew boolean
-     *  expression validator (e.g., BinNodeType from libyarpmanager)
-     */
-    strConstraint = "return " + strConstraint;
-
-
+    * Evaluate the boolean expression using the embedded Python interpreter.
+    * The expression is expected to contain only Python boolean operators and
+    * the True/False literals injected above.
+    */
+    PyGILState_STATE gstate = PyGILState_Ensure();
+    PyObject* globals = PyDict_New();
+    PyObject* locals = PyDict_New();
+    PyObject* result = nullptr;
+    bool accepted = false;
+    if ((globals == nullptr) || (locals == nullptr)) {
+        yCError(PY_PORT_MONITOR, "Failed to allocate Python dictionaries to evaluate constraint '%s'", strConstraint.c_str());
+        Py_XDECREF(globals);
+        Py_XDECREF(locals);
+        PyGILState_Release(gstate);
+        return false;
+    }
     return true;
+    PyDict_SetItemString(globals, "__builtins__", PyEval_GetBuiltins());
+    result = PyRun_String(strConstraint.c_str(), Py_eval_input, globals, locals);
+    if (result == nullptr) {
+        yCError(PY_PORT_MONITOR, "Failed to evaluate constraint '%s'", strConstraint.c_str());
+        PyErr_Clear();
+    } else {
+        int isTrue = PyObject_IsTrue(result);
+        if (isTrue < 0) {
+            yCError(PY_PORT_MONITOR, "Constraint '%s' did not evaluate to a valid boolean value", strConstraint.c_str());
+            PyErr_Clear();
+        } else {
+            accepted = (isTrue != 0);
+        }
+    }
+    Py_XDECREF(result);
+    Py_DECREF(globals);
+    Py_DECREF(locals);
+    PyGILState_Release(gstate);
+    return accepted;
 }
 
 
@@ -344,7 +528,40 @@ inline bool MonitorPython::isKeyword(const char* str)
  * static members
  */
 
-bool MonitorPython::functionWrapper(std::string moduleName, std::string functionName, PyObject* &pArgs, PyObject* &pValue)
+
+bool MonitorPython::loadPythonModule(const std::string& moduleName, PyObject* &pModule)
+{
+    pModule = nullptr;
+    if (!Py_IsInitialized())
+    {
+        yInfo()<<"Calling loadPythonModule Py_Initialize";
+        Py_Initialize();
+    }
+
+    if (!appendPythonPath(m_path)) {
+        return false;
+    }
+
+    PyObject *pName = PyUnicode_DecodeFSDefault(moduleName.c_str());
+    if (pName == nullptr) {
+        PyErr_Print();
+        yCError(PY_PORT_MONITOR) << "Unable to decode Python module name: " << moduleName;
+        return false;
+    }
+
+    pModule = PyImport_Import(pName);
+    Py_DECREF(pName);
+
+    if (pModule == nullptr) {
+        PyErr_Print();
+        yCError(PY_PORT_MONITOR) << "Failed to load Python module: " << moduleName;
+        return false;
+    }
+    return true;
+}
+
+
+bool MonitorPython::functionWrapper(std::string functionName, PyObject* &pArgs, PyObject* &pValue)
 {
     pValue = nullptr;
     if (!Py_IsInitialized())
@@ -353,26 +570,12 @@ bool MonitorPython::functionWrapper(std::string moduleName, std::string function
         Py_Initialize();
     }
 
-    if (!appendPythonPath(m_path)) {
-        return false;
-    }
+    PyObject *pFunc;    //Interpreted name of the function
 
-    PyObject *pName,    //Interpreted name of the module
-             *pModule,  //Imported py Module loaded in this object
-             *pFunc;    //Interpreted name of the function
-
-    // Build the name object (of the module)
-    pName = PyUnicode_DecodeFSDefault(moduleName.c_str());    //The string "Module" should be the name of the python file: i.e. Module.py
-
-    // Load the module object
-    pModule = PyImport_Import(pName);
-    // Destroy the pName object: not needed anymore
-    Py_DECREF(pName);
-
-    if (pModule != NULL) // Check if the Module has been found and loaded
+    if (m_pModule != NULL) // Check if the Module has been found and loaded
     {
         // Get the function inside the module
-        pFunc = PyObject_GetAttrString(pModule, functionName.c_str());
+        pFunc = PyObject_GetAttrString(m_pModule, functionName.c_str());
 
         if (pFunc && PyCallable_Check(pFunc))   // Check if the function has been found and is callable
         {
@@ -382,14 +585,11 @@ bool MonitorPython::functionWrapper(std::string moduleName, std::string function
             // Check the return value
             if (pValue != NULL)
             {
-                yCInfo(PY_PORT_MONITOR) << "Returning object " << " \n";
                 // Clear memory
-                Py_DECREF(pModule);
                 return true;
             }
             else
             {   // Call Failed
-                Py_DECREF(pModule);
                 PyErr_Print();
                 yCError(PY_PORT_MONITOR) << "Call failed";
 
@@ -402,7 +602,6 @@ bool MonitorPython::functionWrapper(std::string moduleName, std::string function
                 PyErr_Print();
             yCError(PY_PORT_MONITOR) << "Cannot find function: " << functionName;
             Py_XDECREF(pFunc);
-            Py_XDECREF(pModule);
 
             return false;
         }
@@ -415,23 +614,9 @@ bool MonitorPython::functionWrapper(std::string moduleName, std::string function
     }
 }
 
-bool MonitorPython::hasPythonFunction(const std::string& moduleName, const std::string& functionName)
+bool MonitorPython::hasPythonFunction(const std::string& functionName)
 {
-    PyObject* pName = PyUnicode_DecodeFSDefault(moduleName.c_str());
-    if (pName == nullptr) {
-        PyErr_Print();
-        return false;
-    }
-
-    PyObject* pModule = PyImport_Import(pName);
-    Py_DECREF(pName);
-
-    if (pModule == nullptr) {
-        PyErr_Print();
-        return false;
-    }
-
-    PyObject* pFunc = PyObject_GetAttrString(pModule, functionName.c_str());
+    PyObject* pFunc = PyObject_GetAttrString(m_pModule, functionName.c_str());
     if (pFunc == nullptr) {
         if (PyErr_ExceptionMatches(PyExc_AttributeError)) {
             PyErr_Clear(); // Function simply does not exist.
@@ -439,14 +624,12 @@ bool MonitorPython::hasPythonFunction(const std::string& moduleName, const std::
             PyErr_Print(); // Real error during lookup.
         }
 
-        Py_DECREF(pModule);
         return false;
     }
 
     const bool isCallable = PyCallable_Check(pFunc);
 
     Py_DECREF(pFunc);
-    Py_DECREF(pModule);
 
     return isCallable;
 }
