@@ -80,7 +80,14 @@ bool PortMonitor::configureFromProperty(yarp::os::Property& options)
         rf.configure(0, nullptr);
         strFile = rf.findFile(filename);
         if(strFile.empty()) {
-            strFile = rf.findFile(filename+(script=="lua" ? ".lua" : ".py"));
+            if (script == "lua") {
+                strFile = rf.findFile(filename + ".lua");
+            } else if (script == "python") {
+                strFile = rf.findFile(filename + ".py");
+            } else {
+                yCError(PORTMONITORCARRIER) << "Unsupported monitor script type:" << script;
+                return false;
+            }
         }
     }
 

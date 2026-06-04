@@ -90,7 +90,6 @@ if (NOT SKIP_portmonitor)
     target_include_directories(yarp_portmonitor SYSTEM PRIVATE ${PYTHON_INCLUDE_DIR})
     target_compile_definitions(yarp_portmonitor PRIVATE ENABLED_PORTMONITOR_PYTHON)
     target_link_libraries(yarp_portmonitor PRIVATE Python::Python)
-   # target_link_libraries(yarp_portmonitor PRIVATE ${PYHTON_LIBRARY})
   endif()
 
   yarp_install(
