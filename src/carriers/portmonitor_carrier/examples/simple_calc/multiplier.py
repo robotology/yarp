@@ -26,11 +26,10 @@ def destroy():
 
 def updateData(thing):
     """
-    accept is called when the port receives new data
+    updateData is called when the port monitor receives new data
+    to update before forwarding it.
     @param thing The Things abstract data type
-    @return Boolean
-    if False is returned, the data will be ignored
-    and update() will never be called
+    @return thing The updated Things object
     """
 
     global multiplier
