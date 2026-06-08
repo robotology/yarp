@@ -3,8 +3,22 @@
 
 include(YarpCatchUtils)
 
-add_executable(harness_run)
+# Test module started by the unit tests
+add_executable(testModule)
+target_sources(testModule
+  PRIVATE
+    module.cpp
+)
+target_link_libraries(testModule
+  PRIVATE
+    YARP::YARP_init
+    YARP::YARP_os
+)
+set_property(TARGET testModule PROPERTY FOLDER "Test")
 
+#  ------------------------------------------------------
+#  Harness run test (uses testModule)
+add_executable(harness_run)
 target_sources(harness_run
   PRIVATE
     RunTest.cpp
@@ -25,17 +39,3 @@ get_property(_tests SOURCE RunTest.cpp PROPERTY ParseAndAddCatchTests_TESTS)
 foreach(_test IN LISTS _tests)
   set_property(TEST ${_test} PROPERTY TIMEOUT 15)
 endforeach()
-
-
-# Test module started by the unit tests
-add_executable(testModule)
-target_sources(testModule
-  PRIVATE
-    module.cpp
-)
-target_link_libraries(testModule
-  PRIVATE
-    YARP::YARP_init
-    YARP::YARP_os
-)
-set_property(TARGET testModule PROPERTY FOLDER "Test")
