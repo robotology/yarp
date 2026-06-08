@@ -44,11 +44,11 @@ bool StatsMonitor::create(const yarp::os::Property& options)
     m_isSender = options.find("sender_side").asBool();
     m_source = options.find("source").asString();
     m_destination = options.find("destination").asString();
+    std::string full_carrier_string = options.find("carrier").asString();
+    m_carrier = full_carrier_string.substr(0, full_carrier_string.find('+'));
 
-    // Check the 'monitor' parameter
-    const std::string carrier = options.find("carrier").asString();
     std::map<std::string, std::string> parameters;
-    if (!split(carrier, parameters)) {
+    if (!split(full_carrier_string, parameters)) {
         yCError(STATSMONITOR, "Error parsing the parameters.");
         return false;
     }
@@ -59,12 +59,12 @@ bool StatsMonitor::create(const yarp::os::Property& options)
     }
 
     double period = 1.0;
-    m_stats_thread_forward = std::make_unique<StatsThread>(period, m_source, m_destination, true);
+    m_stats_thread_forward = std::make_unique<StatsThread>(period, m_source, m_destination, m_carrier, true);
     if (!m_stats_thread_forward->start())
     {
         return false;
     }
-    m_stats_thread_backward = std::make_unique<StatsThread>(period, m_destination, m_source, false);
+    m_stats_thread_backward = std::make_unique<StatsThread>(period, m_destination, m_source, m_carrier, false);
     if (!m_stats_thread_backward->start())
     {
         return false;
@@ -128,6 +128,7 @@ void StatsThread::run()
     msg.addFloat64(yarp::os::SystemClock::nowSystem());
     msg.addString(m_source);
     msg.addString(m_destination);
+    msg.addString(m_carrier);
     msg.addInt8(m_isForward);
     msg.addFloat64(local_sum/m_period);
     msg.addFloat64(local_count/m_period);

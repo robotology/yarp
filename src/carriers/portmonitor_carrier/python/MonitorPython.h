@@ -1,23 +1,24 @@
 /*
- * SPDX-FileCopyrightText: 2006-2021 Istituto Italiano di Tecnologia (IIT)
+ * SPDX-FileCopyrightText: 2026-2026 Istituto Italiano di Tecnologia (IIT)
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#ifndef MONITORLUA_INC
-#define MONITORLUA_INC
+#ifndef MONITORPYTHON_H
+#define MONITORPYTHON_H
 
-#include <string>
 #include <string>
 #include "MonitorBinding.h"
-#include "swigluarun.h"
+
+#include "Python.h"
+
 #include <mutex>
 
-class MonitorLua : public MonitorBinding
+class MonitorPython : public MonitorBinding
 {
 
 public:
-    MonitorLua();
-    ~MonitorLua() override;
+    MonitorPython();
+    ~MonitorPython() override;
 
     bool load(const yarp::os::Property& options) override;
     bool setParams(const yarp::os::Property& params) override;
@@ -30,12 +31,13 @@ public:
     bool peerTrigged() override;
     bool canAccept() override;
 
-    bool setAcceptConstraint(const char* constraint) override {
+    bool setAcceptConstraint(const char* constraint) override
+    {
         if(!constraint) {
             return false;
         }
-        MonitorLua::constraint = constraint;
-        trimString(MonitorLua::constraint);
+        MonitorPython::constraint = constraint;
+        trimString(MonitorPython::constraint);
         return true;
     }
 
@@ -56,37 +58,34 @@ public:
     }
 
 private:
-    lua_State *L;
     std::string constraint;
     bool bHasAcceptCallback;
     bool bHasUpdateCallback;
     bool bHasUpdateReplyCallback;
-    std::recursive_mutex luaMutex;
+
+    std::string m_path;
+    std::string m_pythonScriptName = "monitor"; // Python module containing the functions/classes
+    std::recursive_mutex m_monitor_mutex;
+
+    bool classWrapper(PyObject* &pClassInstance, std::string methodName, PyObject* &pClassMethodArgs, PyObject* &pValue);
+    bool functionWrapper(std::string functionName, PyObject* &pArgs, PyObject* &pValue);
+    bool hasPythonFunction(const std::string& functionName);
+    bool ensureYarpModuleLoaded();
+
+    PyObject* m_classInstance{nullptr}; // Python object of the created class
+    PyObject* m_lastUpdateResult{nullptr};
+    PyObject* m_pModule{nullptr};
 
 public:
-    MonitorTrigger<MonitorLua>* trigger;
+    MonitorTrigger<MonitorPython>* trigger=nullptr;
 
 private:
-    bool getLocalFunction(const char *name);
-    bool registerExtraFunctions();
     void trimString(std::string& str);
     void searchReplace(std::string& str,
                        const std::string& oldStr, const std::string& newStr);
     bool isKeyword(const char* str);
-
-    /* lua accessible function*/
-    static int setConstraint(lua_State* L);
-    static int getConstraint(lua_State* L);
-    static int setEvent(lua_State* L);
-    static int unsetEvent(lua_State* L);
-    static int setTrigInterval(lua_State* L);
-#if LUA_VERSION_NUM > 501
-    static const struct luaL_Reg portMonitorLib[];
-#else
-    static const struct luaL_reg portMonitorLib[];
-#endif
-
+    bool loadPythonModule(const std::string& moduleName, PyObject* &pModule);
 };
 
 
-#endif //_MONITORLUA_INC_
+#endif //MONITORPYTHON_H

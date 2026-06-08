@@ -24,6 +24,7 @@ private:
     int    m_datasize_count=0;
     std::string m_source;
     std::string m_destination;
+    std::string m_carrier;
     std::string m_stats_port_name = "/testport";
     yarp::os::Port m_stats_port;
     bool m_isForward = true;
@@ -31,13 +32,14 @@ private:
 public:
     StatsThread() = delete;;
     StatsThread(const StatsThread&) = delete;
-    StatsThread(double period, std::string src, std::string dest, bool fw) : PeriodicThread(period)
+    StatsThread(double period, std::string src, std::string dest, std::string carrier, bool fw) : PeriodicThread(period)
     {
         m_period = period;
         m_source =src;
         m_destination=dest;
         m_stats_port_name = "/stats_monitor" + m_source + m_destination + "/stats:o";
         m_isForward = fw;
+        m_carrier = carrier;
     }
     virtual ~StatsThread() = default;
 
@@ -69,6 +71,7 @@ private:
     bool           m_isSender;
     std::string    m_source;
     std::string    m_destination;
+    std::string    m_carrier;
     std::unique_ptr<StatsThread> m_stats_thread_forward;
     std::unique_ptr<StatsThread> m_stats_thread_backward;
 };

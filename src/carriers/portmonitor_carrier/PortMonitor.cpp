@@ -65,7 +65,6 @@ bool PortMonitor::configureFromProperty(yarp::os::Property& options)
     // check which monitor should be used
     if((binder = MonitorBinding::create(script.c_str())) == nullptr)
     {
-         yCError(PORTMONITORCARRIER, R"(Currently only 'lua' script and 'dll' object is supported by portmonitor)");
          return false;
     }
 
@@ -81,7 +80,14 @@ bool PortMonitor::configureFromProperty(yarp::os::Property& options)
         rf.configure(0, nullptr);
         strFile = rf.findFile(filename);
         if(strFile.empty()) {
-            strFile = rf.findFile(filename+".lua");
+            if (script == "lua") {
+                strFile = rf.findFile(filename + ".lua");
+            } else if (script == "python") {
+                strFile = rf.findFile(filename + ".py");
+            } else {
+                yCError(PORTMONITORCARRIER) << "Unsupported monitor script type:" << script;
+                return false;
+            }
         }
     }
 
