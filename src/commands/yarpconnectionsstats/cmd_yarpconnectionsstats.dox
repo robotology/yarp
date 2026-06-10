@@ -1,0 +1,35 @@
+/**
+\defgroup yarpconnectionsstats yarpconnectionsstats: A tool that displays the frequency at which YARP ports broadcast data.
+\ingroup yarp_commands
+
+\section Introduction
+
+In order to work properly, the connection we want to inspect must be monitored by a `stats_monitor` portmonitor.
+For example:
+\code
+yarp write /sender --period 0.1
+yarp read /recv
+yarp connect /sender /recv tcp+send.portmonitor+file.stats_monitor+type.dll
+\endcode
+
+When the stats_monitor is used, the connection opens two auxiliary ports, which end with the suffix "/stas:o" which
+contains real-time info about the transmission frequency and the consumed data bandwidth.
+`yarpconnectionsstats` connects to these ports and display the results in realtime.
+
+Additional options:
+\code
+- 'display_backward' (default: false) if enabled
+- 'display_zero_bps' (default: true) if enabled, displays also if the connection is not transmitting anything
+- 'display_by_source_name' order results by source port name
+- 'display_by_dest_name' order results by destination port name
+- 'display_by_bps' order results by data size
+- 'display_screen_frequency' (default value: 1) refresh frequency
+\endcode
+
+Example of output:
+\code
+[INFO] |yarp.yarpconnectionsstats| /sender1   -> /receiver1    |      135 B/s |       10 pkt/s | 1781096573.219
+[INFO] |yarp.yarpconnectionsstats| /sender2   -> /receiver2    |     1350 B/s |       10 pkt/s | 1781096573.219
+\endcode
+
+*/

@@ -373,6 +373,29 @@ set(YARP_os_IMPL_MACOS_SRCS
   yarp/os/impl/macos/MacOSAPI.mm
 )
 
+# Handle the YARP thrift messages
+include(YarpChooseIDL)
+
+set(YARP_os_IDL
+  idl/OSTestMsg.thrift
+)
+
+yarp_choose_idl(YARP_os_idl ${YARP_os_IDL})
+
+unset(YARP_os_idl_HDRS)
+unset(YARP_os_idl_IMPL_HDRS)
+foreach(_f IN LISTS YARP_os_idl_GEN_FILES)
+  if("${_f}" MATCHES "\\.h$")
+    if ("${_f}" MATCHES "yarp/os" AND NOT "${_f}" MATCHES "yarp/os/impl")
+      list(APPEND YARP_os_idl_HDRS "${_f}")
+    else()
+      list(APPEND YARP_os_idl_IMPL_HDRS ${_f})
+    endif()
+  endif()
+endforeach()
+
+#message ("YARP_os_idl_HDRS: ${YARP_dev_i_HDRS}")
+#message ("YARP_os_idl_GEN_FILES: ${YARP_os_idl_GEN_FILES}")
 source_group(
   TREE "${CMAKE_CURRENT_SOURCE_DIR}"
   PREFIX "Source Files"
@@ -395,6 +418,12 @@ source_group(
     ${YARP_os_IMPL_MACOS_HDRS}
 )
 
+source_group(
+  TREE "${YARP_os_idl_BUILD_INTERFACE_INCLUDE_DIRS}"
+  PREFIX "Generated Files"
+  FILES ${YARP_os_idl_GEN_FILES}
+)
+
 target_sources(YARP_os
   PRIVATE
     ${YARP_os_SRCS}
@@ -403,6 +432,7 @@ target_sources(YARP_os
     ${YARP_os_IDL_HDRS}
     ${YARP_os_IMPL_SRCS}
     ${YARP_os_IMPL_HDRS}
+    ${YARP_os_idl_GEN_FILES}
 )
 
 if(SKIP_ACE)
@@ -437,6 +467,7 @@ endif()
 target_include_directories(YARP_os
   PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+    $<BUILD_INTERFACE:${YARP_os_idl_BUILD_INTERFACE_INCLUDE_DIRS}>
     $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
 )
 target_compile_features(YARP_os PUBLIC cxx_std_17)

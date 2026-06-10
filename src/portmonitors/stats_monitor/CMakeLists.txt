@@ -23,6 +23,7 @@ target_sources(yarp_pm_stats_monitor
 target_link_libraries(yarp_pm_stats_monitor
   PRIVATE
     YARP::YARP_os
+    YARP::YARP_stats
 )
 list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS
   YARP_os

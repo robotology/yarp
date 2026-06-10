@@ -12,12 +12,12 @@ using namespace std;
 
 namespace
 {
-    YARP_LOG_COMPONENT(YARPCONNINFO, "yarp.yarpconnectioninfo")
+    YARP_LOG_COMPONENT(YARPCONNINFO, "yarp.yarpconnectionsinfo")
 }
 
 void display_help ()
 {
-    yCInfo(YARPCONNINFO) << "This is the tool yarpconnectioninfo.";
+    yCInfo(YARPCONNINFO) << "This is the tool yarpconnectionsinfo.";
     yCInfo(YARPCONNINFO) << "By default it prints on screen all the connections found on the yarp network.";
     yCInfo(YARPCONNINFO) << "use the --to_dotfile <filename> to write the list of connections to a file in the dot format.";
     yCInfo(YARPCONNINFO) << "use an online dot editor (e.g. https://dreampuf.github.io/GraphvizOnline) to visualize the graph.";
@@ -36,6 +36,7 @@ void display_help ()
     yCInfo(YARPCONNINFO) << "Additional options (default value: false):";
     yCInfo(YARPCONNINFO) << "--display_unconnnected_ports";
     yCInfo(YARPCONNINFO) << "--display_log_ports";
+    yCInfo(YARPCONNINFO) << "--display_stats_ports";
     yCInfo(YARPCONNINFO) << "--display_clock_ports";
     yCInfo(YARPCONNINFO) << "--display_yarprun_processes";
 }
@@ -70,12 +71,14 @@ int main(int argc, char *argv[])
     std::string to_dotfile = p.check("to_dotfile", yarp::os::Value(std::string("")), "").asString();
     bool display_yarprun_processes = false;
     bool display_log_ports = false;
+    bool display_stats_ports = false;
     bool display_clock_ports = false;
     bool display_unconnected_ports = false;
 
     if (p.check("help")) {display_help(); return 1; }
     if (p.check("display_yarprun_processes")) { display_yarprun_processes = true;}
     if (p.check("display_log_ports")) { display_log_ports = true; }
+    if (p.check("display_stats_ports")) { display_stats_ports = true; }
     if (p.check("display_clock_ports")) { display_clock_ports = true; }
     if (p.check("display_unconnnected_ports")) { display_unconnected_ports = true; }
 
@@ -164,6 +167,13 @@ int main(int argc, char *argv[])
                     if (display_log_ports == false)
                     {
                         std::size_t found = ports_it->info.name.find("/log");
+                        if (found != std::string::npos) { continue; }
+                    }
+
+                    //this option skips all stats ports (opened by `statsMonitor` portmonitor)
+                    if (display_stats_ports == false)
+                    {
+                        std::size_t found = ports_it->info.name.find("/stats:o");
                         if (found != std::string::npos) { continue; }
                     }
 

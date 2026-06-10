@@ -299,6 +299,7 @@ source_group(
   FILES
     ${YARP_dev_SRCS}
 )
+
 source_group(
   TREE "${CMAKE_CURRENT_SOURCE_DIR}"
   PREFIX "Header Files"
@@ -306,11 +307,13 @@ source_group(
     ${YARP_dev_HDRS}
     ${YARP_dev_IMPL_HDRS}
 )
+
 source_group(
   TREE "${YARP_dev_idl_BUILD_INTERFACE_INCLUDE_DIRS}"
   PREFIX "Generated Files"
   FILES ${YARP_dev_idl_GEN_FILES}
 )
+
 source_group(
   TREE "${CMAKE_CURRENT_SOURCE_DIR}"
   PREFIX "Devices Files"
