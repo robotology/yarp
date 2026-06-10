@@ -71,7 +71,7 @@ target_compile_features(YARP_stats PUBLIC cxx_std_17)
 target_link_libraries(YARP_stats PRIVATE YARP::YARP_os)
 list(APPEND YARP_stats_PRIVATE_DEPS YARP_os)
 
-set_property(TARGET YARP_stats PROPERTY PUBLIC_HEADER ${YARP_stats_HDRS})
+set_property(TARGET YARP_stats PROPERTY PUBLIC_HEADER ${YARP_stats_HDRS} ${YARP_stats_idl_HDRS})
 set_property(TARGET YARP_stats PROPERTY VERSION ${YARP_VERSION_SHORT})
 set_property(TARGET YARP_stats PROPERTY SOVERSION ${YARP_SOVERSION})
 set_property(TARGET YARP_stats PROPERTY FOLDER "Libraries/Private")

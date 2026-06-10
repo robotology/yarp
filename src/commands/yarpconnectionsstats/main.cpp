@@ -6,7 +6,7 @@
 #include <yarp/os/Network.h>
 #include <yarp/os/LogStream.h>
 #include <yarp/os/ResourceFinder.h>
-#include <yarp/os/RFmodule.h>
+#include <yarp/os/RFModule.h>
 #include <yarp/stats/Stats.h>
 
 #include <iomanip>

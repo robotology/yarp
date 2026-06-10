@@ -8,7 +8,9 @@
 // This is an automatically generated file.
 // It could get re-generated if the ALLOW_IDL_GENERATION flag is on.
 
-#include <ConnectionStats.h>
+#include <yarp/stats/ConnectionStats.h>
+
+namespace yarp::stats {
 
 // Constructor with field values
 ConnectionStats::ConnectionStats(const double timestamp,
@@ -446,3 +448,5 @@ bool ConnectionStats::nested_write_frequency(const yarp::os::idl::WireWriter& wr
     }
     return true;
 }
+
+} // namespace yarp::stats

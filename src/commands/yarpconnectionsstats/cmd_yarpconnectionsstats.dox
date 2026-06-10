@@ -12,7 +12,7 @@ yarp read /recv
 yarp connect /sender /recv tcp+send.portmonitor+file.stats_monitor+type.dll
 \endcode
 
-When the stats_monitor is used, the connection opens two auxiliary ports, which end with the suffix "/stas:o" which
+When the stats_monitor is used, the connection opens two auxiliary ports, which end with the suffix "/stats:o" which
 contains real-time info about the transmission frequency and the consumed data bandwidth.
 `yarpconnectionsstats` connects to these ports and display the results in realtime.
 

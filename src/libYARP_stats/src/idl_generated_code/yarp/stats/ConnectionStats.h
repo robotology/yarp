@@ -11,10 +11,14 @@
 #ifndef YARP_THRIFT_GENERATOR_STRUCT_CONNECTIONSTATS_H
 #define YARP_THRIFT_GENERATOR_STRUCT_CONNECTIONSTATS_H
 
+#include <yarp/stats/api.h>
+
 #include <yarp/os/Wire.h>
 #include <yarp/os/idl/WireTypes.h>
 
-class ConnectionStats :
+namespace yarp::stats {
+
+class YARP_stats_API ConnectionStats :
         public yarp::os::idl::WirePortable
 {
 public:
@@ -100,5 +104,7 @@ private:
     bool nested_read_frequency(yarp::os::idl::WireReader& reader);
     bool nested_write_frequency(const yarp::os::idl::WireWriter& writer) const;
 };
+
+} // namespace yarp::stats
 
 #endif // YARP_THRIFT_GENERATOR_STRUCT_CONNECTIONSTATS_H

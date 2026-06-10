@@ -9,9 +9,15 @@
 #include <string>
 #include <cstring>
 #include <random>
+#include <yarp/os/LogStream.h>
 
 using namespace yarp::stats;
 using namespace yarp::os;
+
+namespace
+{
+    YARP_LOG_COMPONENT(YARPSTATS, "yarp.StatsEngine")
+}
 
 void StatsEngine::disconnect ()
 {
@@ -45,6 +51,10 @@ void StatsEngine::connect (const std::list<std::string>& ports)
             //fprintf(stderr,"unable to connect to port %s\n",it->c_str());
         }
     }
+    if (b_connected == false)
+    {
+        yCError(YARPSTATS) << "Unable to connect to some ports, check the network and the port names";
+    }
 }
 
 void StatsEngine::discover  (std::list<std::string>& ports)
@@ -70,14 +80,11 @@ void StatsEngine::discover  (std::list<std::string>& ports)
             Bottle* n2 = n1->get(1).asList();
             if (n2 && n2->get(0).toString()=="name")
             {
-                char* log_off = nullptr;
-                char* yarprun_log_off = nullptr;
-                log_off = std::strstr((char*)(n2->get(1).toString().c_str()), "/stats:o");
-                if (log_off)
+                const std::string portName = n2->get(1).toString();
+                if (portName.find("/stats:o") != std::string::npos)
                 {
-                    std::string logport = n2->get(1).toString();
-                    printf ("%s\n", logport.c_str());
-                    ports.push_back(logport);
+                    printf("%s\n", portName.c_str());
+                    ports.push_back(portName);
                 }
             }
         }
@@ -107,7 +114,7 @@ void StatsEngine::update(std::list<ConnectionStats>& stats)
             }
 
             if (b->isForward == false      && m_display_backward == false) { continue; }
-            if (b->bytes_per_second == 0.0 && m_display_zero_bps == true)  { continue; }
+            if (b->bytes_per_second == 0.0 && m_display_zero_bps == false) { continue; }
 
             stats.push_back(*b);
         }

@@ -21,4 +21,4 @@
 #  endif
 #endif
 
-#endif // YARP_RUN_API_H
+#endif // YARP_STATS_API_H

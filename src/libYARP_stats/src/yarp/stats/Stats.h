@@ -11,6 +11,7 @@
 #include <list>
 #include <mutex>
 
+#include <string>
 #include <cstring>
 #include <yarp/stats/api.h>
 
