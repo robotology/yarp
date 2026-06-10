@@ -10,6 +10,7 @@
 #include <cstring>
 #include <random>
 #include <yarp/os/LogStream.h>
+#include <yarp/profiler/NetworkProfiler.h>
 
 using namespace yarp::stats;
 using namespace yarp::os;
@@ -26,17 +27,22 @@ void StatsEngine::disconnect ()
     m_local_port.close();
 }
 
-void StatsEngine::connect (const std::list<std::string>& ports)
+bool StatsEngine::connect (const std::list<std::string>& ports)
 {
     std::lock_guard<std::mutex> lock(m_mutex);
 
     std::string conn_portname = m_local_portname + ":i";
-    m_local_port.open(conn_portname);
+    if (!m_local_port.open(conn_portname))
+    {
+        yCError(YARPSTATS) << "Unable to open local port" << conn_portname;
+        return false;
+    }
     m_local_port.setStrict();
 
     yarp::os::ContactStyle style;
     style.timeout=1.0;
     style.quiet=true;
+    style.carrier = "fast_tcp";
 
     std::list<std::string>::const_iterator it;
     bool b_connected = true;
@@ -44,7 +50,7 @@ void StatsEngine::connect (const std::list<std::string>& ports)
     {
         if (yarp::os::Network::exists(*it,style) == true)
         {
-            b_connected &= yarp::os::Network::connect(*it, conn_portname);
+            b_connected &= yarp::os::Network::connect(*it, conn_portname, style);
         }
         else
         {
@@ -54,42 +60,28 @@ void StatsEngine::connect (const std::list<std::string>& ports)
     if (b_connected == false)
     {
         yCError(YARPSTATS) << "Unable to connect to some ports, check the network and the port names";
+        return false;
     }
+    return true;
 }
 
-void StatsEngine::discover  (std::list<std::string>& ports)
+bool StatsEngine::discover  (std::list<std::string>& ports, PortInfoMap& port_info_map)
 {
     std::lock_guard<std::mutex> lock(m_mutex);
 
-    RpcClient p;
-    std::string discover_portname = m_local_portname + "/discover";
-    p.open(discover_portname);
-    std::string yarpservername = yarp::os::Network::getNameServerName();
-    bool b_connected = yarp::os::Network::connect(discover_portname,yarpservername);
-    Bottle cmd,response;
-    cmd.addString("bot");
-    cmd.addString("list");
-    p.write(cmd,response);
-    printf ("%s\n\n", response.toString().c_str());
-    int size = response.size();
-    for (int i=1; i<size; i++) //beware: skip i=0 is intentional!
+    yarp::profiler::NetworkProfiler prof;
+    yarp::profiler::NetworkProfiler::ports_name_set ports_list;
+    prof.getPortsList(ports_list);
+
+    for (const auto& portName : ports_list)
     {
-        Bottle* n1 = response.get(i).asList();
-        if (n1 && n1->get(0).toString()=="port")
+        if (portName.name.find("/stats:o") != std::string::npos)
         {
-            Bottle* n2 = n1->get(1).asList();
-            if (n2 && n2->get(0).toString()=="name")
-            {
-                const std::string portName = n2->get(1).toString();
-                if (portName.find("/stats:o") != std::string::npos)
-                {
-                    printf("%s\n", portName.c_str());
-                    ports.push_back(portName);
-                }
-            }
+            ports.push_back(portName.name);
         }
+        port_info_map[portName.name] = {portName.ip, portName.port_number};
     }
-    p.close();
+    return true;
 }
 
 void StatsEngine::update(std::list<ConnectionStats>& stats)

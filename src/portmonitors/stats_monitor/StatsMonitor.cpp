@@ -14,7 +14,7 @@
 #include <yarp/os/Things.h>
 #include <yarp/os/impl/BufferedConnectionWriter.h>
 
-#include "yarp/stats/ConnectionStats.h"
+#include <yarp/stats/ConnectionStats.h>
 
 //yarp connect /mysender /myreceiver tcp+send.portmonitor+file.stats_monitor+type.dll
 

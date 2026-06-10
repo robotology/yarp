@@ -32,7 +32,7 @@ class Stats_module : public yarp::os::RFModule
         yCInfo(YARPCONNINFO) << "In order to work properly, the connection we want to inspect must be monitored by a `stats_monitor` portmonitor.";
         yCInfo(YARPCONNINFO) << "e.g. yarp connect /sender /recv tcp+send.portmonitor+file.stats_monitor+type.dll";
         yCInfo(YARPCONNINFO) << "";
-        yCInfo(YARPCONNINFO) << "Additional options (default value: false):";
+        yCInfo(YARPCONNINFO) << "Additional options:";
         yCInfo(YARPCONNINFO) << "--display_backward (default: false) if enabled";
         yCInfo(YARPCONNINFO) << "--display_zero_bps (default: true) if enabled, displays also if the connection is not transmitting anything";
         yCInfo(YARPCONNINFO) << "--display_by_source_name order results by source port name";
@@ -55,8 +55,9 @@ class Stats_module : public yarp::os::RFModule
     bool display_by_bps = false;
     double display_screen_frequency = 1.0;
 
-    yarp::stats::StatsEngine engine;
-    std::list<std::string> ports;
+    yarp::stats::StatsEngine m_engine;
+    std::list<std::string> m_ports;
+    yarp::stats::StatsEngine::PortInfoMap m_portsmap;
 
     bool configure(yarp::os::ResourceFinder &rf) override
     {
@@ -68,18 +69,18 @@ class Stats_module : public yarp::os::RFModule
         if (rf.check("display_by_bps"))            { display_by_bps = rf.find("display_by_bps").asBool(); }
         if (rf.check("display_screen_frequency"))  { display_screen_frequency = rf.find("display_screen_frequency").asFloat64(); }
 
-        engine.m_display_backward = display_backward;
-        engine.m_display_zero_bps = display_zero_bps;
+        m_engine.m_display_backward = display_backward;
+        m_engine.m_display_zero_bps = display_zero_bps;
 
-        engine.discover(ports);
-        engine.connect(ports);
+        m_engine.discover(m_ports, m_portsmap);
+        m_engine.connect(m_ports);
 
         return true;
     }
 
     bool close() override
     {
-        engine.disconnect();
+        m_engine.disconnect();
         return true;
     }
 
@@ -90,15 +91,44 @@ class Stats_module : public yarp::os::RFModule
 
     bool updateModule() override
     {
-        std::list<yarp::stats::ConnectionStats> stats;
-        engine.update(stats);
+        std::cout << "\033[2J\033[H"; //clear the screen
 
+        std::list<yarp::stats::ConnectionStats> stats;
+        m_engine.update(stats);
+
+        yCDebug(YARPCONNINFO) << "Processed data:" << stats.size();
+
+        // Compute total bytes per second for each source/destination IP pair
+        std::map<std::pair<std::string, std::string>, double> ip_pair_bytes;
+        for (const auto& stat : stats)
+        {
+            // Get IP addresses from port names
+            std::string source_ip;
+            std::string dest_ip;
+
+            auto source_it = m_portsmap.find(stat.source);
+            if (source_it != m_portsmap.end()) {
+                source_ip = source_it->second.ip;
+            }
+            auto dest_it = m_portsmap.find(stat.destination);
+            if (dest_it != m_portsmap.end()) {
+                dest_ip = dest_it->second.ip;
+            }
+
+            // Accumulate bytes per second for this IP pair
+            if (!source_ip.empty() && !dest_ip.empty()) {
+                auto ip_pair = std::make_pair(source_ip, dest_ip);
+                ip_pair_bytes[ip_pair] += stat.bytes_per_second;
+            }
+        }
+
+        // Sort the stats based on the selected sorting mode
         if      (display_by_source_name) {sortConnections(stats, SortMode::Source);}
         else if (display_by_dest_name)   {sortConnections(stats, SortMode::Destination);}
         else if (display_by_bps)         {sortConnections(stats, SortMode::BytesPerSecondDesc);}
 
         //Print the stats on screen
-        std::cout << "\033[2J\033[H"; //clear the screen
+        yCInfo(YARPCONNINFO) << "=== Connection statistics ===";
         for (auto it=stats.begin(); it!=stats.end(); it++)
         {
             std::ostringstream line;
@@ -121,6 +151,23 @@ class Stats_module : public yarp::os::RFModule
 
             yCInfo(YARPCONNINFO) << line.str();
         }
+
+        // Print IP pair totals
+        yCInfo(YARPCONNINFO);
+        yCInfo(YARPCONNINFO) << "=== Bytes per second by IP address pairs ===";
+        for (const auto& [ip_pair, total_bytes] : ip_pair_bytes)
+        {
+            std::ostringstream line;
+            line << std::left
+                 << std::setw(15) << ip_pair.first
+                 << " -> "
+                 << std::setw(15) << ip_pair.second
+                 << " | "
+                 << std::right
+                 << std::setw(12) << total_bytes << " B/s";
+            yCInfo(YARPCONNINFO) << line.str();
+        }
+
         return true;
     }
 

@@ -1,6 +1,5 @@
 /*
- * SPDX-FileCopyrightText: 2006-2021 Istituto Italiano di Tecnologia (IIT)
- * SPDX-FileCopyrightText: 2006-2010 RobotCub Consortium
+ * SPDX-FileCopyrightText: 2026-2026 Istituto Italiano di Tecnologia (IIT)
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
@@ -22,12 +21,22 @@
 #include <yarp/os/Network.h>
 #include <yarp/os/RpcClient.h>
 
-#include "yarp/stats/ConnectionStats.h"
+#include <yarp/stats/ConnectionStats.h>
 
 namespace yarp::stats {
 
 class YARP_stats_API StatsEngine
 {
+public:
+    struct port_info
+    {
+        std::string ip;
+        std::string port_number;
+    };
+
+    typedef std::map<std::string, port_info> PortInfoMap;
+
+private:
     std::mutex m_mutex;
     std::list<ConnectionStats> m_connections_stats;
     yarp::os::BufferedPort<ConnectionStats> m_local_port;
@@ -38,8 +47,8 @@ public:
     bool m_display_zero_bps = true;
 
     void disconnect();
-    void connect (const std::list<std::string>& ports);
-    void discover  (std::list<std::string>& ports);
+    bool connect (const std::list<std::string>& ports);
+    bool discover  (std::list<std::string>& ports, PortInfoMap& port_info_map);
     void update(std::list<ConnectionStats>& stats);
 };
 
