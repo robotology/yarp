@@ -1235,6 +1235,11 @@ jobs:
           file(APPEND "${_env_script}" "set(ENV{PATH} \"/usr/local/opt/ccache/libexec:\$ENV{PATH}\")\n")
         endif()
 
+        # Append output bin directory to the PATH for Linux and macOS
+        if("${{ runner.os }}" STREQUAL "Linux" OR "${{ runner.os }}" STREQUAL "macOS")
+          file(APPEND "${_env_script}" "set(ENV{PATH} \"\$ENV{GITHUB_WORKSPACE}/build/bin:\$ENV{PATH}\")\n")
+        endif()
+
         # CMake/CTest variables
         file(APPEND "${_env_script}" "set(ENV{CTEST_OUTPUT_ON_FAILURE} \"1\")\n")
         file(APPEND "${_env_script}" "set(ENV{CLICOLOR_FORCE} \"1\")\n")
