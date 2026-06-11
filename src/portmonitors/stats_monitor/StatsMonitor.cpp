@@ -14,6 +14,8 @@
 #include <yarp/os/Things.h>
 #include <yarp/os/impl/BufferedConnectionWriter.h>
 
+#include <yarp/stats/ConnectionStats.h>
+
 //yarp connect /mysender /myreceiver tcp+send.portmonitor+file.stats_monitor+type.dll
 
 // Monitor: log component
@@ -124,14 +126,14 @@ void StatsThread::run()
         m_datasize_sum = 0;
     }
 
-    yarp::os::Bottle msg;
-    msg.addFloat64(yarp::os::SystemClock::nowSystem());
-    msg.addString(m_source);
-    msg.addString(m_destination);
-    msg.addString(m_carrier);
-    msg.addInt8(m_isForward);
-    msg.addFloat64(local_sum/m_period);
-    msg.addFloat64(local_count/m_period);
+    yarp::stats::ConnectionStats msg;
+    msg.timestamp = yarp::os::SystemClock::nowSystem();
+    msg.source = m_source;
+    msg.destination = m_destination;
+    msg.carrier = m_carrier;
+    msg.isForward = m_isForward;
+    msg.bytes_per_second = local_sum/m_period;
+    msg.frequency = local_count/m_period;
     m_stats_port.write(msg);
 
     //yDebug("Writing: %s", msg.toString().c_str());

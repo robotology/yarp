@@ -33,6 +33,7 @@ Additional options (default value: false):
 \code
 --display_unconnnected_ports
 --display_log_ports
+--display_stats_ports
 --display_clock_ports
 --display_yarprun_processes
 \endcode
