@@ -22,7 +22,7 @@ using namespace yarp::sig::draw;
 namespace {
 YARP_LOG_COMPONENT(FAKEFRAMEGRABBER, "yarp.device.fakeFrameGrabber")
 
-//the following data are used by [time] test
+//the following data are used by `time` test
 constexpr char num[12][16]
 {
     // '0'
@@ -186,7 +186,7 @@ void FakeFrameGrabber::createTestImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& 
         m_bx = image.width()-1;
     }
 
-    if (m_mode == "[Time]")
+    if (m_mode == "Time")
     {
         {
             if (m_have_bg) {
@@ -205,7 +205,7 @@ void FakeFrameGrabber::createTestImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& 
             }
         }
     }
-    else if (m_mode == "[ball]")
+    else if (m_mode == "ball")
     {
         {
             if (m_have_bg) {
@@ -234,7 +234,7 @@ void FakeFrameGrabber::createTestImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& 
             }
         }
     }
-    else if (m_mode == "[grid]")
+    else if (m_mode == "grid")
     {
         {
             size_t ww = image.width();
@@ -254,7 +254,7 @@ void FakeFrameGrabber::createTestImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& 
             }
         }
     }
-    else if (m_mode == "[size]")
+    else if (m_mode == "size")
     {
         static int count = 0;
         count++;
@@ -291,7 +291,7 @@ void FakeFrameGrabber::createTestImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& 
             }
         }
     }
-    else if (m_mode == "[line]")
+    else if (m_mode == "line")
     {
         {
             if (m_have_bg) {
@@ -304,7 +304,7 @@ void FakeFrameGrabber::createTestImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& 
             }
         }
     }
-    else if (m_mode == "[rand]")
+    else if (m_mode == "rand")
     {
         {
             static unsigned char r = 128;
@@ -326,7 +326,7 @@ void FakeFrameGrabber::createTestImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& 
             }
         }
     }
-    else if (m_mode == "[none]")
+    else if (m_mode == "none")
     {
         {
             if (m_have_bg) {

@@ -511,7 +511,7 @@ yarp_dependent_option(
 
 yarp_dependent_option(
   YARP_COMPILE_GUIS "Do you want to compile GUIs" ON
-  "YARP_COMPILE_EXECUTABLES;YARP_HAS_Qt5" OFF
+  "YARP_COMPILE_EXECUTABLES" OFF
 )
 yarp_renamed_option(CREATE_GUIS YARP_COMPILE_GUIS) # Deprecated since YARP 3.2
 
