@@ -151,6 +151,10 @@ bool FakeFrameGrabber::open(yarp::os::Searchable& config)
     conf3.pixelCoding=VOCAB_PIXEL_MONO;
     configurations.push_back(conf3);
 
+    // The parameter `freq` is used to compute the period if the latter is not provided,
+    // but it can be used as an alternative to set the frequency of the grabber.
+    // The parameter `freq` has precedence over `period`, so if both are provided,
+    // `freq` will be used and `period` will be ignored.
     if (m_freq>0)
     {
         m_period = 1/ m_freq;
@@ -161,7 +165,8 @@ bool FakeFrameGrabber::open(yarp::os::Searchable& config)
     }
     else
     {
-        yCWarning(FAKEFRAMEGRABBER, "Either `period` or `freq` parameters must be a valid >0 value");
+        yCError(FAKEFRAMEGRABBER, "Either `period` or `freq` parameters must be a valid >0 value");
+        return false;
     }
 
     if (!m_src.empty())

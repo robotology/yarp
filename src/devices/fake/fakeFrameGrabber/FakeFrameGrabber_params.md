@@ -16,8 +16,8 @@
   * |      |  k3              | double  | -             |   10.0         | No    | Radial distortion coefficient of the lens(fake)                             |  |
   * |      |  t1              | double  | -             |   11.0         | No    | Tangential distortion of the lens(fake)                                     |  |
   * |      |  t2              | double  | -             |   12.0         | No    | Tangential distortion of the lens(fake)                                     |  |
-  * |      |  freq            | double  | -             |   0            | No    | rate of test images in Hz                                     |  |
-  * |      |  period          | double  | -             |   0            | No    | period of test images in seconds                              |  |
+  * |      |  freq            | double  | -             |   0            | No    | rate of test images in Hz                                     | freq is mutually exclusive with period, and has priority over it |
+  * |      |  period          | double  | -             |   0.033        | No    | period of test images in seconds                              |  |
   * |      |  mode            | string  | -             |   line         | No    | ball, line, grid, size, rand, none, time                      |  |
   * |      |  src             | string  | -             |  -             | No    | background image to use, if any       | e.g. test.ppm |
   * |      |  add_timestamp   | bool    | -             |  false       | No    | should write the timestamp in the first bytes of the image       |  |
