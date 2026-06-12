@@ -198,6 +198,8 @@ int main(int argc, char* argv[])
             //if received a new frame, then draw/save it
             if (imgdata!=nullptr)
             {
+                size_t imgdata_w = imgdata->width();
+                size_t imgdata_h = imgdata->height();
                 static double old = yarp::os::Time::now();
                 double now = yarp::os::Time::now();
                 stats.interval_time = now - old;
@@ -206,14 +208,14 @@ int main(int argc, char* argv[])
                 //if this is first received frame, allocate a buffer on the specific size
                 if (frame.empty())
                 {
-                    yDebug() << "First frame received with size" << imgdata->width() << imgdata->height();
-                    //create the buffer for the frame
-                    frame = cv::Mat(imgdata->width(), imgdata->height(), CV_8UC3);
+                    yDebug() << "First frame received with size" << imgdata_w << "x" << imgdata_h;
+                    //create the buffer for the frame (rows, cols)
+                    frame = cv::Mat(imgdata_h, imgdata_w, CV_8UC3);
                     //if optionally requested to create an avi file, create the file
                     if (filename.empty() == false)
                     {
                         int codec = cv::VideoWriter::fourcc(codec_s[0], codec_s[1], codec_s[2], codec_s[3]);
-                        cv::Size frame_size(imgdata->width(), imgdata->height());
+                        cv::Size frame_size(imgdata_w, imgdata_h);
                         bool ret = videowriter.open(filename.c_str(), codec, fps, frame_size, true);
                         if (!ret || videowriter.isOpened() == false)
                         {
@@ -223,16 +225,16 @@ int main(int argc, char* argv[])
                     }
                 }
                 //you also need to realloc the buffer if the received frame changed size
-                else if (frame.cols != (int)imgdata->width() || frame.rows != (int)imgdata->height())
+                else if (frame.cols != (int)imgdata_w || frame.rows != (int)imgdata_h)
                 {
-                    yDebug() << "Steam has received a frame with different size" << imgdata->width() << imgdata->height();
-                    frame = cv::Mat(imgdata->height(), imgdata->width(), CV_8UC3);
+                    yDebug() << "Steam has received a frame with different size" << imgdata_w << imgdata_h;
+                    frame = cv::Mat(imgdata_h, imgdata_w, CV_8UC3);
                 }
 
                 //copy the data from the yarp structure 'imgdata' to the opencv structure 'frame'
                 double a = yarp::os::Time::now();
-                for (size_t y = 0; y < imgdata->height(); y++) {
-                    for (size_t x = 0; x < imgdata->width(); x++) {
+                for (size_t y = 0; y < imgdata_h; y++) {
+                    for (size_t x = 0; x < imgdata_w; x++) {
                         PixelRgb& yarpPixel = imgdata->pixel(x, y);
                         frame.at<cv::Vec3b>(y, x) = cv::Vec3b(yarpPixel.b, yarpPixel.g, yarpPixel.r);
                     }
