@@ -18,10 +18,10 @@ yarp/dev/StickDataList.h
 yarp/dev/StickDataList.cpp
 yarp/dev/TrackballDataList.h
 yarp/dev/TrackballDataList.cpp
+yarp/dev/AllJoyData.h
+yarp/dev/AllJoyData.cpp
 yarp/dev/return_getAxisCount.h
 yarp/dev/return_getAxisCount.cpp
-yarp/dev/getButtonCount.h
-yarp/dev/getButtonCount.cpp
 yarp/dev/return_getTrackballCount.h
 yarp/dev/return_getTrackballCount.cpp
 yarp/dev/return_getHatCount.h
