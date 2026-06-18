@@ -73,6 +73,16 @@ struct TrackballDataList
     1: list<TrackballData> value;
 }
 
+struct AllJoyData
+{
+    1: list<double>          ButtonDataVal;
+    2: list<double>          AxisDataVal;
+    3: list<byte>            HatsDataVal;
+    4: list<MultipleTouches> TouchDataVal;
+    5: list<StickData>       StickDataVal;
+    6: list<TrackballData>   TrackballDataVal;
+}
+
 //-----------------------------
 
 struct return_getAxisCount{

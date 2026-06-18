@@ -44,7 +44,6 @@ yarp_begin_plugin_library(yarpmod
   add_subdirectory(usbCamera)
   add_subdirectory(controlBoardCouplingHandler)
   add_subdirectory(controlBoardRemapper)
-  add_subdirectory(JoypadControlNetUtils)
   add_subdirectory(frameGrabberCropper)
   add_subdirectory(robotDescriptionStorage)
 

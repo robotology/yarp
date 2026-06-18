@@ -54,7 +54,6 @@ TEST_CASE("dev::joypadControl_nws_yarp", "[yarp::dev]")
         Property p_nws;
 
         p_nws.put("device", "JoypadControl_nws_yarp");
-        p_nws.put("use_separate_ports", true);
         p_nws.put("profile", true);
         p_nws.put("name", "/joy_nws_yarp");
         p_nws.put("publish_on_event",publish_on_event_config);
