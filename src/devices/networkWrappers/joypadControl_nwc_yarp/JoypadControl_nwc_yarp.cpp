@@ -73,6 +73,26 @@ bool JoypadControl_nwc_yarp::open(yarp::os::Searchable& config)
     if (m_use_streaming==false) {return true;}
 
     //The code below is valid only for streaming mode
+    if (m_use_all_port)
+    {
+        bool b = true;
+        b &= m_allJoyDataPort.open(m_local + "/allJoyData:i");
+        if (!b) {
+            yCError(JOYPADCONTROLCLIENT) << "Unable to open local streaming ports";
+            close();
+            return false;
+        }
+
+        b&= yarp::os::NetworkBase::connect(m_remote+"/allJoyData:o", m_local+"/allJoyData:i");
+        if (!b) {
+            yCError(JOYPADCONTROLCLIENT) << "Unable to connect to remote streaming port";
+            close();
+            return  false;
+        }
+
+        m_allJoyDataPort.useCallback();
+    }
+    else
     {
         bool b = true;
         b&= m_buttonsPort.open(m_local+"/buttons:i");
@@ -168,6 +188,20 @@ ReturnValue JoypadControl_nwc_yarp::getButton(size_t button_id, double& value)
         value = ret.value;
         return ret.ret;
     }
+    else if (m_use_all_port)
+    {
+        auto tmp = m_allJoyDataPort.getData();
+        if(button_id < tmp.ButtonDataVal.size())
+        {
+            value = tmp.ButtonDataVal[button_id];
+            return ReturnValue_ok;
+        }
+        else
+        {
+            yCError(JOYPADCONTROLCLIENT) << "GetButton() error. button_id out of bound";
+            return ReturnValue_error_method_failed;
+        }
+    }
     else
     {
         auto tmp = m_buttonsPort.getData();
@@ -192,6 +226,20 @@ ReturnValue JoypadControl_nwc_yarp::getTrackball(size_t trackball_id, yarp::dev:
         value = ret.value;
         return ret.ret;
     }
+    else if (m_use_all_port)
+    {
+        auto tmp = m_allJoyDataPort.getData();
+        if(trackball_id < tmp.TrackballDataVal.size())
+        {
+            value = tmp.TrackballDataVal[trackball_id];
+            return ReturnValue_ok;
+        }
+        else
+        {
+            yCError(JOYPADCONTROLCLIENT) << "GetTrackball() error. trackball_id out of bound";
+            return ReturnValue_error_method_failed;
+        }
+    }
     else
     {
         auto tmp = m_trackballPort.getData();
@@ -214,6 +262,20 @@ ReturnValue JoypadControl_nwc_yarp::getHat(size_t hat_id, unsigned char& value)
         auto ret = m_rpcMsgs.getHat(hat_id);
         value = ret.value;
         return ret.ret;
+    }
+    else if (m_use_all_port)
+    {
+        auto tmp = m_allJoyDataPort.getData();
+        if(hat_id < tmp.HatsDataVal.size())
+        {
+            value = tmp.HatsDataVal[hat_id];
+            return ReturnValue_ok;
+        }
+        else
+        {
+            yCError(JOYPADCONTROLCLIENT) << "GetHat() error. hat_id out of bound";
+            return ReturnValue_error_method_failed;
+        }
     }
     else
     {
@@ -246,6 +308,20 @@ ReturnValue JoypadControl_nwc_yarp::getAxis(size_t axis_id, double& value)
             value = tmp.value[axis_id];
             return ReturnValue_ok;
         }
+        else if (m_use_all_port)
+        {
+            auto tmp = m_allJoyDataPort.getData();
+            if(axis_id < tmp.AxisDataVal.size())
+            {
+                value = tmp.AxisDataVal[axis_id];
+                return ReturnValue_ok;
+            }
+            else
+            {
+                yCError(JOYPADCONTROLCLIENT) << "GetAxis() error. axis_id out of bound";
+                return ReturnValue_error_method_failed;
+            }
+        }
         else
         {
             yCError(JOYPADCONTROLCLIENT) << "GetAxis() error. Axis_id out of bound";
@@ -261,6 +337,28 @@ ReturnValue JoypadControl_nwc_yarp::getStick(size_t stick_id, yarp::dev::StickDa
         auto ret = m_rpcMsgs.getStick(stick_id,mode);
         value = ret.value;
         return ret.ret;
+    }
+    else if (m_use_all_port)
+    {
+        //Only the polar mode is available in streaming.
+        //If cartesian mode is requested, switch back to rpc.
+        if (mode == yarp::dev::IJoypadController::JoypadCtrl_coordinateMode::JypCtrlcoord_CARTESIAN)
+        {
+            auto ret = m_rpcMsgs.getStick(stick_id,mode);
+            value = ret.value;
+            return ret.ret;
+        }
+        auto tmp = m_allJoyDataPort.getData();
+        if(stick_id < tmp.StickDataVal.size())
+        {
+            value = tmp.StickDataVal[stick_id];
+            return ReturnValue_ok;
+        }
+        else
+        {
+            yCError(JOYPADCONTROLCLIENT) << "getStick() error. stick_id out of bound";
+            return ReturnValue_error_method_failed;
+        }
     }
     else
     {
@@ -297,6 +395,20 @@ ReturnValue JoypadControl_nwc_yarp::getTouch(size_t touch_id, std::vector<yarp::
         value = ret.value;
         return ret.ret;
     }
+    else if (m_use_all_port)
+    {
+        auto tmp = m_allJoyDataPort.getData();
+        if(touch_id < tmp.TouchDataVal.size())
+        {
+            value = tmp.TouchDataVal[touch_id].touches;
+            return ReturnValue_ok;
+        }
+        else
+        {
+            yCError(JOYPADCONTROLCLIENT) << "GetTouch() error. touch_id out of bound";
+            return ReturnValue_error_method_failed;
+        }
+    }
     else
     {
         auto temp = m_touchPort.getData();
@@ -326,5 +438,7 @@ bool JoypadControl_nwc_yarp::close()
     m_stickPort.close();
 
     m_rpcPort.close();
+
+    m_allJoyDataPort.close();
     return true;
 }

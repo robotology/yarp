@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: 2006-2021 Istituto Italiano di Tecnologia (IIT)
+# SPDX-FileCopyrightText: 2026-2026 Istituto Italiano di Tecnologia (IIT)
 # SPDX-License-Identifier: BSD-3-Clause
 
 yarp_prepare_plugin(JoypadControl_nws_yarp
@@ -21,9 +21,6 @@ if(NOT SKIP_JoypadControl_nws_yarp)
       JoypadControl_nws_yarp_ParamsParser.cpp
       JoypadControl_nws_yarp_ParamsParser.h
   )
-
-  target_sources(yarp_JoypadControl_nws_yarp PRIVATE $<TARGET_OBJECTS:joypadcontrolnetutils>)
-  target_include_directories(yarp_JoypadControl_nws_yarp PRIVATE $<TARGET_PROPERTY:joypadcontrolnetutils,INTERFACE_INCLUDE_DIRECTORIES>)
 
   target_sources(yarp_JoypadControl_nws_yarp PRIVATE $<TARGET_OBJECTS:IJoypadControlMsgs>)
   target_include_directories(yarp_JoypadControl_nws_yarp PRIVATE $<TARGET_PROPERTY:IJoypadControlMsgs,INTERFACE_INCLUDE_DIRECTORIES>)

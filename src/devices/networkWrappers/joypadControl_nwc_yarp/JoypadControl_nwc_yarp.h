@@ -11,7 +11,6 @@
 #include <yarp/os/PeriodicThread.h>
 #include <vector>
 #include <mutex>
-#include <JoypadControlNetUtils.h>
 #include "JoypadControl_nwc_yarp_ParamsParser.h"
 
 #include "yarp/dev/IJoypadControlMsgs.h"
@@ -21,6 +20,7 @@
 #include <yarp/dev/StickDataList.h>
 #include <yarp/dev/ButtonDataList.h>
 #include <yarp/dev/TrackballDataList.h>
+#include <yarp/dev/AllJoyData.h>
 
 #define DEFAULT_THREAD_PERIOD 10
 
@@ -75,6 +75,7 @@ private:
     ReaderPort<yarp::dev::TouchesDataList>          m_touchPort;
     ReaderPort<yarp::dev::HatsDataList>             m_hatsPort;
     ReaderPort<yarp::dev::StickDataList>            m_stickPort;
+    ReaderPort<yarp::dev::AllJoyData>               m_allJoyDataPort;
     std::vector<size_t>                             m_stickDof;
     yarp::dev::IJoypadControlMsgs                   m_rpcMsgs;
 

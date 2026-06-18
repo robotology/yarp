@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GENERATION is ON.
 
-// Generated on: Fri Jun 12 17:59:17 2026
+// Generated on: Thu Jun 18 15:05:20 2026
 
 
 #include "FakeFrameGrabber_ParamsParser.h"

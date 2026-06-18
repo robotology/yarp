@@ -40,6 +40,11 @@ TEST_CASE("dev::JoypadControl_nwc_yarp", "[yarp::dev]")
         bool(false)
     );
 
+    auto use_all_port = GENERATE(
+        bool(true),
+        bool(false)
+    );
+
     auto publish_on_event_config = GENERATE(
         bool(true),
         bool(false)
@@ -55,7 +60,6 @@ TEST_CASE("dev::JoypadControl_nwc_yarp", "[yarp::dev]")
         Property p_nwc;
 
         p_nws.put("device","JoypadControl_nws_yarp");
-        p_nws.put("use_separate_ports", true);
         p_nws.put("name", "/joy_nws_yarp");
         p_nws.put("publish_on_event",publish_on_event_config);
         p_fake.put("device","fakeJoypad");
@@ -72,12 +76,13 @@ TEST_CASE("dev::JoypadControl_nwc_yarp", "[yarp::dev]")
         p_nwc.put("remote", "/joy_nws_yarp");
         p_nwc.put("local", "/joy_nwc_yarp");
         p_nwc.put("use_streaming", use_streaming_config);
+        p_nwc.put("use_all_port", use_all_port);
         REQUIRE(dd_nwc.open(p_nwc));
 
         IJoypadController* ijoy = nullptr;
         REQUIRE(dd_nwc.view(ijoy));
 
-        yarp::os::SystemClock::delaySystem(0.5);
+        yarp::os::SystemClock::delaySystem(1.0);
 
         yarp::dev::tests::exec_iJoypadController_test_1(ijoy);
 

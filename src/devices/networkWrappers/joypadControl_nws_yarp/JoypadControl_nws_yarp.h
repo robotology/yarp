@@ -20,7 +20,6 @@
 #include <vector>
 #include <memory>
 
-#include <JoypadControlNetUtils.h>
 #include "JoypadControl_nws_yarp_ParamsParser.h"
 #include <yarp/dev/IJoypadControlMsgs.h>
 #include <yarp/dev/AxisDataList.h>
@@ -29,6 +28,7 @@
 #include <yarp/dev/StickDataList.h>
 #include <yarp/dev/ButtonDataList.h>
 #include <yarp/dev/TrackballDataList.h>
+#include <yarp/dev/AllJoyData.h>
 
 class IJoypadControlRPCd;
 
@@ -63,6 +63,8 @@ class JoypadControl_nws_yarp :
     yarp::os::BufferedPort<yarp::dev::HatsDataList>        m_portHats;
     yarp::os::BufferedPort<yarp::dev::TrackballDataList>   m_portTrackballs;
 
+    yarp::os::BufferedPort<yarp::dev::AllJoyData>          m_allPort;
+
     size_t                               m_numberOfAxes=0;
     size_t                               m_numberOfSticks=0;
     size_t                               m_numberOfTouchSurfaces=0;
@@ -83,8 +85,6 @@ class JoypadControl_nws_yarp :
     std::vector<double>                       m_last_buttons;
     std::vector<unsigned char>                m_last_hats;
     std::vector<yarp::dev::TrackballData>     m_last_trackballs;
-
-    yarp::os::BufferedPort<JoyData>      m_allPort; //TODO: single port purpose
 
     //polar mode is used in streaming.
     const coordsMode                     m_coordsMode = yarp::dev::IJoypadController::JoypadCtrl_coordinateMode::JypCtrlcoord_POLAR;

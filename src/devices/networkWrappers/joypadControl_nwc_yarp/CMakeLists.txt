@@ -22,9 +22,6 @@ if(NOT SKIP_JoypadControl_nwc_yarp)
       JoypadControl_nwc_yarp_ParamsParser.h
   )
 
-  target_sources(yarp_JoypadControl_nwc_yarp PRIVATE $<TARGET_OBJECTS:joypadcontrolnetutils>)
-  target_include_directories(yarp_JoypadControl_nwc_yarp PRIVATE $<TARGET_PROPERTY:joypadcontrolnetutils,INTERFACE_INCLUDE_DIRECTORIES>)
-
   target_sources(yarp_JoypadControl_nwc_yarp PRIVATE $<TARGET_OBJECTS:IJoypadControlMsgs>)
   target_include_directories(yarp_JoypadControl_nwc_yarp PRIVATE $<TARGET_PROPERTY:IJoypadControlMsgs,INTERFACE_INCLUDE_DIRECTORIES>)
 

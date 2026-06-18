@@ -272,12 +272,6 @@ bool JoypadControl_nws_yarp::open(yarp::os::Searchable& config)
 {
     if (!parseParams(config)) { return false; }
 
-    if(m_use_separate_ports == false)
-    {
-        yCError(JOYPADCONTROLSERVER) << "Single port mode not supported at the moment";
-        return false;
-    }
-
     yCInfo(JOYPADCONTROLSERVER) << "Running, waiting for attach...";
     return true;
 }
@@ -366,25 +360,17 @@ bool JoypadControl_nws_yarp::openPorts()
     }
     m_rpcPort.setReader(*this);
 
-    if(m_use_separate_ports)
+    bool b=true;
+    b &= m_portAxes.open(m_name+"/axis:o");
+    b &= m_portButtons.open(m_name+"/buttons:o");
+    b &= m_portSticks.open(m_name+"/stick:o");
+    b &= m_portTouches.open(m_name+"/touch:o");
+    b &= m_portTrackballs.open(m_name+"/trackball:o");
+    b &= m_portHats.open(m_name+"/hat:o");
+    b &= m_allPort.open(m_name+"/allJoyData:o");
+    if (!b)
     {
-        bool b=true;
-        b &= m_portAxes.open(m_name+"/axis:o");
-        b &= m_portButtons.open(m_name+"/buttons:o");
-        b &= m_portSticks.open(m_name+"/stick:o");
-        b &= m_portTouches.open(m_name+"/touch:o");
-        b &= m_portTrackballs.open(m_name+"/trackball:o");
-        b &= m_portHats.open(m_name+"/hat:o");
-        if (!b)
-        {
-            yCError(JOYPADCONTROLSERVER) << "Unable to streaming ports";
-            return false;
-        }
-    }
-    else
-    {
-        //m_allPort.open(m_name + "/joydata:o");
-        yCError(JOYPADCONTROLSERVER) << "All ports not implemented";
+        yCError(JOYPADCONTROLSERVER) << "Unable to streaming ports";
         return false;
     }
 
@@ -423,248 +409,254 @@ void JoypadControl_nws_yarp::run()
 {
     std::string       profile_message;
 
-    if(m_use_separate_ports)
+    //1 Buttons
     {
-        //1 Buttons
+        bool write;
+        write = m_portButtons.getOutputCount()>0;
+        auto& b = m_portButtons.prepare();
+        b.value.clear();
+        for(size_t i = 0; i < m_numberOfButtons; ++i)
         {
-            bool write;
-            write = m_portButtons.getOutputCount()>0;
-            auto& b = m_portButtons.prepare();
-            b.value.clear();
-            for(size_t i = 0; i < m_numberOfButtons; ++i)
+            if (!m_IJoypad->getButton(i, m_curr_buttons[i]))
             {
-                if (!m_IJoypad->getButton(i, m_curr_buttons[i]))
-                {
-                    write = false;
-                    break;
-                }
-            }
-
-            if (write)
-            {
-                if (m_publish_on_event)
-                {
-                   if (VectorsDifferent(m_curr_buttons,m_last_buttons))
-                   {
-                      b.value = m_curr_buttons;
-                      m_portButtons.write();
-                      m_last_buttons = m_curr_buttons;
-                   }
-                }
-                else
-                {
-                   b.value = m_curr_buttons;
-                   m_portButtons.write();
-                   m_last_buttons = m_curr_buttons;
-                }
+                write = false;
+                break;
             }
         }
 
-        //2 Hats
+        if (write)
         {
-            bool write;
-
-            write = m_portHats.getOutputCount()>0;
-            auto& b = m_portHats.prepare();
-            b.value.clear();
-            for(size_t i = 0; i < m_numberOfHats; ++i)
+            if (m_publish_on_event)
             {
-                if (!m_IJoypad->getHat(i, m_curr_hats[i]))
+                if (VectorsDifferent(m_curr_buttons,m_last_buttons))
                 {
-                    write = false;
-                    break;
+                    b.value = m_curr_buttons;
+                    m_portButtons.write();
+                    m_last_buttons = m_curr_buttons;
                 }
             }
-
-            if (write)
+            else
             {
-                if (m_publish_on_event)
-                {
-                   if (VectorsDifferent(m_curr_hats,m_last_hats))
-                   {
-                      b.value.resize(m_curr_hats.size());
-                      std::transform(m_curr_hats.begin(), m_curr_hats.end(), b.value.begin(), [](unsigned char c) { return static_cast<char>(c); });
-                      //b.value = m_curr_hats; //using std::transform instead
-                      m_portHats.write();
-                      m_last_hats = m_curr_hats;
-                   }
-                }
-                else
-                {
-                   b.value.resize(m_curr_hats.size());
-                   std::transform(m_curr_hats.begin(), m_curr_hats.end(), b.value.begin(), [](unsigned char c) { return static_cast<char>(c); });
-                   //b.value = m_curr_hats; //using std::transform instead
-                   m_portHats.write();
-                   m_last_hats = m_curr_hats;
-                }
-            }
-        }
-
-        //3 Axis
-        {
-            bool write;
-
-            write = m_portAxes.getOutputCount()>0;
-            auto& b = m_portAxes.prepare();
-            b.value.clear();
-            for(size_t i = 0; i < m_numberOfAxes; ++i)
-            {
-                if (!m_IJoypad->getAxis(i, m_curr_axes[i]))
-                {
-                    write = false;
-                    break;
-                }
-            }
-
-            if (write)
-            {
-                if (m_publish_on_event)
-                {
-                   if (VectorsDifferent(m_curr_axes,m_last_axes))
-                   {
-                      b.value = m_curr_axes;
-                      m_portAxes.write();
-                      m_last_axes = m_curr_axes;
-                   }
-                }
-                else
-                {
-                   b.value = m_curr_axes;
-                   m_portAxes.write();
-                   m_last_axes = m_curr_axes;
-                }
-            }
-        }
-
-        //4 Trackball
-        {
-            bool write;
-
-            write     = m_portTrackballs.getOutputCount()>0;
-            auto& b = m_portTrackballs.prepare();
-            b.value.clear();
-            for(size_t i = 0; i < m_numberOfTrackballs; ++i)
-            {
-                if (!m_IJoypad->getTrackball(i, m_curr_trackballs[i]))
-                {
-                    write = false;
-                    break;
-                }
-            }
-
-            if (write)
-            {
-                if (m_publish_on_event)
-                {
-                   if (VectorsDifferentC(m_curr_trackballs,m_last_trackballs,
-                       [](const yarp::dev::TrackballData& lhs,
-                          const yarp::dev::TrackballData& rhs)
-                          {
-                              return lhs.x == rhs.x &&
-                                     lhs.y == rhs.y;
-                          }
-                       ))
-                   {
-                      b.value = m_curr_trackballs;
-                      m_portTrackballs.write();
-                      m_last_trackballs = m_curr_trackballs;
-                   }
-                }
-                else
-                {
-                   b.value = m_curr_trackballs;
-                   m_portTrackballs.write();
-                   m_last_trackballs = m_curr_trackballs;
-                }
-            }
-        }
-
-        //5 Stick
-        {
-            bool write;
-            write = m_portSticks.getOutputCount()>0;
-            auto& b = m_portSticks.prepare();
-            b.value.clear();
-            for(size_t i = 0; i < m_numberOfSticks; ++i)
-            {
-                if (!m_IJoypad->getStick(i, m_curr_sticks[i], m_coordsMode))
-                {
-                    write = false;
-                    break;
-                }
-            }
-
-            if (write)
-            {
-                if (m_publish_on_event)
-                {
-                   if (VectorsDifferentC(m_curr_sticks,m_last_sticks,
-                       [](const yarp::dev::StickData& lhs,
-                          const yarp::dev::StickData& rhs)
-                          {
-                              return lhs.s1 == rhs.s1 &&
-                                     lhs.s2 == rhs.s2;
-                          }
-                       ))
-                   {
-                      b.value = m_curr_sticks;
-                      m_portSticks.write();
-                      m_last_sticks = m_curr_sticks;
-                   }
-                }
-                else
-                {
-                   b.value = m_curr_sticks;
-                   m_portSticks.write();
-                   m_last_sticks = m_curr_sticks;
-                }
-            }
-        }
-
-        //6 Touch
-        {
-            bool write;
-            write =  m_portTouches.getOutputCount()>0;
-            auto& b = m_portTouches.prepare();
-            b.value.clear();
-
-            m_curr_touches.value.resize(m_numberOfTouchSurfaces);
-            for(unsigned int i = 0; i < m_numberOfTouchSurfaces; ++i)
-            {
-                std::vector<yarp::dev::TouchData> temp;
-                if (!m_IJoypad->getTouch(i, temp))
-                {
-                    write = false;
-                    break;
-                }
-                m_curr_touches.value[i].touches = temp;
-            }
-
-            if (write)
-            {
-                if (m_publish_on_event)
-                {
-                   if (1)
-                   //if (VectorsDifferent(m_curr_touches.value,m_last_touches.value))
-                   {
-                      b.value = m_curr_touches.value;
-                      m_portTouches.write();
-                      m_last_touches = m_curr_touches;
-                   }
-                }
-                else
-                {
-                   b.value = m_curr_touches.value;
-                   m_portTouches.write();
-                   m_last_touches = m_curr_touches;
-                }
+                b.value = m_curr_buttons;
+                m_portButtons.write();
+                m_last_buttons = m_curr_buttons;
             }
         }
     }
-    else
+
+    //2 Hats
     {
-        //JoyData& message = m_allPort.prepare();
-        yCError(JOYPADCONTROLSERVER) << "Not implemented yet";
+        bool write;
+
+        write = m_portHats.getOutputCount()>0;
+        auto& b = m_portHats.prepare();
+        b.value.clear();
+        for(size_t i = 0; i < m_numberOfHats; ++i)
+        {
+            if (!m_IJoypad->getHat(i, m_curr_hats[i]))
+            {
+                write = false;
+                break;
+            }
+        }
+
+        if (write)
+        {
+            if (m_publish_on_event)
+            {
+                if (VectorsDifferent(m_curr_hats,m_last_hats))
+                {
+                    b.value.resize(m_curr_hats.size());
+                    std::transform(m_curr_hats.begin(), m_curr_hats.end(), b.value.begin(), [](unsigned char c) { return static_cast<char>(c); });
+                    //b.value = m_curr_hats; //using std::transform instead
+                    m_portHats.write();
+                    m_last_hats = m_curr_hats;
+                }
+            }
+            else
+            {
+                b.value.resize(m_curr_hats.size());
+                std::transform(m_curr_hats.begin(), m_curr_hats.end(), b.value.begin(), [](unsigned char c) { return static_cast<char>(c); });
+                //b.value = m_curr_hats; //using std::transform instead
+                m_portHats.write();
+                m_last_hats = m_curr_hats;
+            }
+        }
+    }
+
+    //3 Axis
+    {
+        bool write;
+
+        write = m_portAxes.getOutputCount()>0;
+        auto& b = m_portAxes.prepare();
+        b.value.clear();
+        for(size_t i = 0; i < m_numberOfAxes; ++i)
+        {
+            if (!m_IJoypad->getAxis(i, m_curr_axes[i]))
+            {
+                write = false;
+                break;
+            }
+        }
+
+        if (write)
+        {
+            if (m_publish_on_event)
+            {
+                if (VectorsDifferent(m_curr_axes,m_last_axes))
+                {
+                    b.value = m_curr_axes;
+                    m_portAxes.write();
+                    m_last_axes = m_curr_axes;
+                }
+            }
+            else
+            {
+                b.value = m_curr_axes;
+                m_portAxes.write();
+                m_last_axes = m_curr_axes;
+            }
+        }
+    }
+
+    //4 Trackball
+    {
+        bool write;
+
+        write     = m_portTrackballs.getOutputCount()>0;
+        auto& b = m_portTrackballs.prepare();
+        b.value.clear();
+        for(size_t i = 0; i < m_numberOfTrackballs; ++i)
+        {
+            if (!m_IJoypad->getTrackball(i, m_curr_trackballs[i]))
+            {
+                write = false;
+                break;
+            }
+        }
+
+        if (write)
+        {
+            if (m_publish_on_event)
+            {
+                if (VectorsDifferentC(m_curr_trackballs,m_last_trackballs,
+                    [](const yarp::dev::TrackballData& lhs,
+                        const yarp::dev::TrackballData& rhs)
+                        {
+                            return lhs.x == rhs.x &&
+                                    lhs.y == rhs.y;
+                        }
+                    ))
+                {
+                    b.value = m_curr_trackballs;
+                    m_portTrackballs.write();
+                    m_last_trackballs = m_curr_trackballs;
+                }
+            }
+            else
+            {
+                b.value = m_curr_trackballs;
+                m_portTrackballs.write();
+                m_last_trackballs = m_curr_trackballs;
+            }
+        }
+    }
+
+    //5 Stick
+    {
+        bool write;
+        write = m_portSticks.getOutputCount()>0;
+        auto& b = m_portSticks.prepare();
+        b.value.clear();
+        for(size_t i = 0; i < m_numberOfSticks; ++i)
+        {
+            if (!m_IJoypad->getStick(i, m_curr_sticks[i], m_coordsMode))
+            {
+                write = false;
+                break;
+            }
+        }
+
+        if (write)
+        {
+            if (m_publish_on_event)
+            {
+                if (VectorsDifferentC(m_curr_sticks,m_last_sticks,
+                    [](const yarp::dev::StickData& lhs,
+                        const yarp::dev::StickData& rhs)
+                        {
+                            return lhs.s1 == rhs.s1 &&
+                                    lhs.s2 == rhs.s2;
+                        }
+                    ))
+                {
+                    b.value = m_curr_sticks;
+                    m_portSticks.write();
+                    m_last_sticks = m_curr_sticks;
+                }
+            }
+            else
+            {
+                b.value = m_curr_sticks;
+                m_portSticks.write();
+                m_last_sticks = m_curr_sticks;
+            }
+        }
+    }
+
+    //6 Touch
+    {
+        bool write;
+        write =  m_portTouches.getOutputCount()>0;
+        auto& b = m_portTouches.prepare();
+        b.value.clear();
+
+        m_curr_touches.value.resize(m_numberOfTouchSurfaces);
+        for(unsigned int i = 0; i < m_numberOfTouchSurfaces; ++i)
+        {
+            std::vector<yarp::dev::TouchData> temp;
+            if (!m_IJoypad->getTouch(i, temp))
+            {
+                write = false;
+                break;
+            }
+            m_curr_touches.value[i].touches = temp;
+        }
+
+        if (write)
+        {
+            if (m_publish_on_event)
+            {
+                if (1)
+                //if (VectorsDifferent(m_curr_touches.value,m_last_touches.value))
+                {
+                    b.value = m_curr_touches.value;
+                    m_portTouches.write();
+                    m_last_touches = m_curr_touches;
+                }
+            }
+            else
+            {
+                b.value = m_curr_touches.value;
+                m_portTouches.write();
+                m_last_touches = m_curr_touches;
+            }
+        }
+    }
+
+
+    //AllJoyDataPort
+    if (m_allPort.getOutputCount()>0)
+    {
+        yarp::dev::AllJoyData& message = m_allPort.prepare();
+        message.AxisDataVal = m_curr_axes;
+        message.ButtonDataVal = m_curr_buttons;
+        message.HatsDataVal = std::vector<std::int8_t>(m_curr_hats.begin(), m_curr_hats.end());
+        message.StickDataVal = m_curr_sticks;
+        message.TrackballDataVal = m_curr_trackballs;
+        message.TouchDataVal = m_curr_touches.value;
+        m_allPort.write();
     }
 
     //print data on screen
@@ -697,7 +689,10 @@ bool JoypadControl_nws_yarp::close()
     m_portTouches.close();
     m_portTrackballs.close();
     m_portHats.close();
+
     m_rpcPort.close();
+
+    m_allPort.close();
 
     return true;
 }
