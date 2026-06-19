@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE robot PUBLIC "-//YARP//DTD yarprobotinterface 3.1//EN" "http://www.yarp.it/DTD/yarprobotinterfaceV3.1.dtd">
+<robot name="RobotWithfakeCalibrator">
+  <devices>
+  
+    <device name="dummy_mc_device" type="fakeMotionControl">
+       <group name="GENERAL">
+           <param name="Joints"> 2 </param>
+       </group>
+    </device>
+    
+    <device name="mc_remapper" type="controlboardremapper">
+        <param name="axesNames">(joint0 , joint1)</param>
+        <param name="joints"> 1 </param>
+        <action phase="startup" level="5" type="attach">
+            <paramlist name="networks">
+                <elem name="part1"> dummy_mc_device   </elem>
+            </paramlist>
+        </action>
+        <action phase="shutdown" level="20" type="detach" />
+    </device>
+    
+    <device name="left_arm-mc_nws_yarp" type="controlBoard_nws_yarp">
+        <param name="period"> 0.1 </param>
+        <param name="name"> /robot_test/part_test </param>
+        <action phase="startup" level="10" type="attach">
+            <param name="device"> mc_remapper </param>
+        </action>
+        <action phase="shutdown" level="15" type="detach"/>
+    </device>
+
+    <device name="dummy_calibrator" type="fakeCalibrator">
+        <param name="param1"> 0 </param>
+        <group name="GENERAL">
+            <param name="joints">2</param>
+            <param name="deviceName"> Left_Arm_Calibrator </param>
+        </group>
+        <group name="HOME">
+            <param name="positionHome">           5             30       </param>
+            <param name="velocityHome">           10            10       </param>
+        </group>                                                        
+        <group name="CALIBRATION">                                      
+            <param name="calibrationType">        10             10      </param>
+            <param name="calibration1">           4000           -3000   </param>
+            <param name="calibration2">	          0              0       </param>
+            <param name="calibration3">           0              0       </param>
+            <param name="calibration4">           0              0       </param>
+            <param name="calibration5">           0              0       </param>
+            <param name="calibrationZero">        35            -15      </param>
+            <param name="calibrationDelta">       0              0       </param>
+            <param name="startupPosition">        34             50      </param>
+            <param name="startupVelocity">        10.0           10.0    </param>
+            <param name="startupMaxPwm">          8000           8000    </param>
+            <param name="startupPosThreshold">    2              2       </param>
+        </group>
+
+        <param name="CALIB_ORDER"> (0 1)</param> 
+
+        <action phase="startup" level="10" type="calibrate">
+            <param name="target">mc_remapper</param>
+        </action>
+
+        <action phase="interrupt1" level="1" type="park">
+            <param name="target">mc_remapper</param>
+        </action>
+
+        <action phase="interrupt3" level="1" type="abort" />
+    </device>
+
+  </devices>
+</robot>

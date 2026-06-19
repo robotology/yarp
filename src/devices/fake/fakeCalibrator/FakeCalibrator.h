@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: 2023-2023 Istituto Italiano di Tecnologia (IIT)
+ * SPDX-FileCopyrightText: 2026-2026 Istituto Italiano di Tecnologia (IIT)
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
@@ -14,10 +14,10 @@
 
 
 /**
- * @ingroup icub_calibrators
- * @brief `parametricCalibrator`: implement calibration routines for the iCub arm(s) (version 1.2).
+ * @ingroup dev_impl_fake
+ * @brief `fakeCalibrator`: A fake calibrator implementation for testing purposes.
  * 
- * A calibrator interface implementation for the Arm of the robot iCub.
+ * Parameters required by this device are shown in class: FakeCalibrator_ParamsParser
  */
 class FakeCalibrator : public yarp::dev::ICalibrator,
                        public yarp::dev::DeviceDriver,
