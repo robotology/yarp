@@ -16,7 +16,7 @@
 /**
  * @ingroup dev_impl_fake
  * @brief `fakeCalibrator`: A fake calibrator implementation for testing purposes.
- * 
+ *
  * Parameters required by this device are shown in class: FakeCalibrator_ParamsParser
  */
 class FakeCalibrator : public yarp::dev::ICalibrator,

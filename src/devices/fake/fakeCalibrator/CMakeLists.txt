@@ -8,7 +8,7 @@ endif()
 yarp_prepare_plugin(fakeCalibrator
   CATEGORY device
   TYPE FakeCalibrator
-  INCLUDE fakeCalibrator.h
+  INCLUDE FakeCalibrator.h
   GENERATE_PARSER
   DEPENDS "TARGET YARP::YARP_math")
 

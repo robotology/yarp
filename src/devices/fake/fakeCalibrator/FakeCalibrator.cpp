@@ -6,7 +6,7 @@
 #include <yarp/os/Time.h>
 #include <yarp/dev/PolyDriver.h>
 
-#include "fakeCalibrator.h"
+#include "FakeCalibrator.h"
 
 #include <yarp/os/LogStream.h>
 
@@ -57,7 +57,7 @@ ReturnValue FakeCalibrator::calibrate(DeviceDriver *device)
     }
     else
     {
-        yCWarning(FAKECALIBRATOR) << "calibrate: using parametricCalibrator on an old iCubInterface system. Upgrade to robotInterface is recommended."; 
+        yCWarning(FAKECALIBRATOR) << "calibrate: using parametricCalibrator on an old iCubInterface system. Upgrade to robotInterface is recommended.";
         device->view(m_iControlCalibration);
         device->view(m_iEncoders);
     }
