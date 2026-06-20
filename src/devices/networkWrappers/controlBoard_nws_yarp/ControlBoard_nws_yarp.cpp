@@ -197,6 +197,11 @@ bool ControlBoard_nws_yarp::setDevice(yarp::dev::DeviceDriver* driver, bool owne
         yCWarning(CONTROLBOARD, "Part <%s>: IInteractionMode interface was not found in subdevice.", partName.c_str());
     }
 
+    subdevice_ptr->view(m_allInterfaces.iRemoteCalibrator);
+    if (!m_allInterfaces.iRemoteCalibrator) {
+        yCWarning(CONTROLBOARD, "Part <%s>: iRemoteCalibrator interface was not found in subdevice.", partName.c_str());
+    }
+
     subdevice_ptr->view(m_allInterfaces.iRemoteVariables);
     if (!m_allInterfaces.iRemoteVariables) {
         yCWarning(CONTROLBOARD, "Part <%s>: IRemoteVariables interface was not found in subdevice.", partName.c_str());
