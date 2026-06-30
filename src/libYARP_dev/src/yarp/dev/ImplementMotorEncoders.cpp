@@ -12,6 +12,10 @@
 using namespace yarp::dev;
 using namespace yarp::os;
 
+namespace {
+YARP_LOG_COMPONENT(IMPLEMENT_LAYER_COMPONENT, "yarp.ImplementMotorEncoders")
+}
+
 ////////////////////////
 // Encoder Interface Timed Implementation
 ImplementMotorEncoders::ImplementMotorEncoders(IMotorEncodersRaw *y):
@@ -66,7 +70,7 @@ ReturnValue ImplementMotorEncoders::getNumberOfMotorEncoders(int *num)
 ReturnValue ImplementMotorEncoders::resetMotorEncoder(int m)
 {
     std::lock_guard lock(m_imp_mutex);
-    JOINTIDCHECK(m)
+    JOINTIDCHECK(IMPLEMENT_LAYER_COMPONENT,m)
 
     int k;
     k=castToMapper(m_helper)->toHw(m);
@@ -84,7 +88,7 @@ ReturnValue ImplementMotorEncoders::resetMotorEncoders()
 ReturnValue ImplementMotorEncoders::setMotorEncoder(int m, const double val)
 {
     std::lock_guard lock(m_imp_mutex);
-    JOINTIDCHECK(m)
+    JOINTIDCHECK(IMPLEMENT_LAYER_COMPONENT,m)
 
     int k;
     double enc;
@@ -97,8 +101,8 @@ ReturnValue ImplementMotorEncoders::setMotorEncoder(int m, const double val)
 ReturnValue ImplementMotorEncoders::getMotorEncoderCountsPerRevolution(int m, double* cpr)
 {
     std::lock_guard lock(m_imp_mutex);
-    JOINTIDCHECK(m)
-    POINTERCHECK(cpr)
+    JOINTIDCHECK(IMPLEMENT_LAYER_COMPONENT,m)
+    POINTERCHECK(IMPLEMENT_LAYER_COMPONENT,cpr)
 
     ReturnValue ret;
     int k=castToMapper(m_helper)->toHw(m);
@@ -111,7 +115,7 @@ ReturnValue ImplementMotorEncoders::getMotorEncoderCountsPerRevolution(int m, do
 ReturnValue ImplementMotorEncoders::setMotorEncoderCountsPerRevolution(int m, double cpr)
 {
     std::lock_guard lock(m_imp_mutex);
-    JOINTIDCHECK(m)
+    JOINTIDCHECK(IMPLEMENT_LAYER_COMPONENT,m)
 
     int k;
 
@@ -123,7 +127,7 @@ ReturnValue ImplementMotorEncoders::setMotorEncoderCountsPerRevolution(int m, do
 ReturnValue ImplementMotorEncoders::setMotorEncoders(const double *val)
 {
     std::lock_guard lock(m_imp_mutex);
-    POINTERCHECK(val)
+    POINTERCHECK(IMPLEMENT_LAYER_COMPONENT,val)
 
     castToMapper(m_helper)->posA2E(val, m_buffer_doubles.data());
 
@@ -135,8 +139,8 @@ ReturnValue ImplementMotorEncoders::setMotorEncoders(const double *val)
 ReturnValue ImplementMotorEncoders::getMotorEncoder(int m, double *v)
 {
     std::lock_guard lock(m_imp_mutex);
-    JOINTIDCHECK(m)
-    POINTERCHECK(v)
+    JOINTIDCHECK(IMPLEMENT_LAYER_COMPONENT,m)
+    POINTERCHECK(IMPLEMENT_LAYER_COMPONENT,v)
 
     int k;
     double enc;
@@ -154,7 +158,7 @@ ReturnValue ImplementMotorEncoders::getMotorEncoder(int m, double *v)
 ReturnValue ImplementMotorEncoders::getMotorEncoders(double *v)
 {
     std::lock_guard lock(m_imp_mutex);
-    POINTERCHECK(v)
+    POINTERCHECK(IMPLEMENT_LAYER_COMPONENT,v)
 
     ReturnValue ret=m_iraw->getMotorEncodersRaw(m_buffer_doubles.data());
     castToMapper(m_helper)->posE2A(m_buffer_doubles.data(), v);
@@ -165,8 +169,8 @@ ReturnValue ImplementMotorEncoders::getMotorEncoders(double *v)
 ReturnValue ImplementMotorEncoders::getMotorEncoderSpeed(int m, double *v)
 {
     std::lock_guard lock(m_imp_mutex);
-    JOINTIDCHECK(m)
-    POINTERCHECK(v)
+    JOINTIDCHECK(IMPLEMENT_LAYER_COMPONENT,m)
+    POINTERCHECK(IMPLEMENT_LAYER_COMPONENT,v)
 
     int k;
     double enc;
@@ -184,7 +188,7 @@ ReturnValue ImplementMotorEncoders::getMotorEncoderSpeed(int m, double *v)
 ReturnValue ImplementMotorEncoders::getMotorEncoderSpeeds(double *v)
 {
     std::lock_guard lock(m_imp_mutex);
-    POINTERCHECK(v)
+    POINTERCHECK(IMPLEMENT_LAYER_COMPONENT,v)
 
     ReturnValue ret=m_iraw->getMotorEncoderSpeedsRaw(m_buffer_doubles.data());
     castToMapper(m_helper)->velE2A(m_buffer_doubles.data(), v);
@@ -195,8 +199,8 @@ ReturnValue ImplementMotorEncoders::getMotorEncoderSpeeds(double *v)
 ReturnValue ImplementMotorEncoders::getMotorEncoderAcceleration(int m, double *v)
 {
     std::lock_guard lock(m_imp_mutex);
-    JOINTIDCHECK(m)
-    POINTERCHECK(v)
+    JOINTIDCHECK(IMPLEMENT_LAYER_COMPONENT,m)
+    POINTERCHECK(IMPLEMENT_LAYER_COMPONENT,v)
 
     int k;
     double enc;
@@ -214,7 +218,7 @@ ReturnValue ImplementMotorEncoders::getMotorEncoderAcceleration(int m, double *v
 ReturnValue ImplementMotorEncoders::getMotorEncoderAccelerations(double *v)
 {
     std::lock_guard lock(m_imp_mutex);
-    POINTERCHECK(v)
+    POINTERCHECK(IMPLEMENT_LAYER_COMPONENT,v)
 
     ReturnValue ret=m_iraw->getMotorEncoderAccelerationsRaw(m_buffer_doubles.data());
     castToMapper(m_helper)->accE2A(m_buffer_doubles.data(), v);
@@ -225,9 +229,9 @@ ReturnValue ImplementMotorEncoders::getMotorEncoderAccelerations(double *v)
 ReturnValue ImplementMotorEncoders::getMotorEncoderTimed(int m, double *v, double *t)
 {
     std::lock_guard lock(m_imp_mutex);
-    JOINTIDCHECK(m)
-    POINTERCHECK(v)
-    POINTERCHECK(t)
+    JOINTIDCHECK(IMPLEMENT_LAYER_COMPONENT,m)
+    POINTERCHECK(IMPLEMENT_LAYER_COMPONENT,v)
+    POINTERCHECK(IMPLEMENT_LAYER_COMPONENT,t)
 
     int k;
     double enc;
@@ -246,8 +250,8 @@ ReturnValue ImplementMotorEncoders::getMotorEncoderTimed(int m, double *v, doubl
 ReturnValue ImplementMotorEncoders::getMotorEncodersTimed(double *v, double *t)
 {
     std::lock_guard lock(m_imp_mutex);
-    POINTERCHECK(v)
-    POINTERCHECK(t)
+    POINTERCHECK(IMPLEMENT_LAYER_COMPONENT,v)
+    POINTERCHECK(IMPLEMENT_LAYER_COMPONENT,t)
 
     ReturnValue ret=m_iraw->getMotorEncodersTimedRaw(m_buffer_doubles.data(), m_buffer_doubles2.data());
     castToMapper(m_helper)->posE2A(m_buffer_doubles.data(), v);

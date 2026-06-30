@@ -14,6 +14,11 @@
 using namespace yarp::dev;
 using namespace yarp::os;
 
+namespace {
+YARP_LOG_COMPONENT(IMPLEMENT_LAYER_COMPONENT, "yarp.ImplementVelocityDirect")
+}
+
+
 ImplementVelocityDirect::ImplementVelocityDirect(IVelocityDirectRaw* y) :
     m_iVelocityDirectRaw(y)
 {}
@@ -60,7 +65,7 @@ yarp::dev::ReturnValue ImplementVelocityDirect::getAxes(size_t& axes)
 yarp::dev::ReturnValue ImplementVelocityDirect::setRefVelocity(int j, double sp)
 {
     std::lock_guard lock(m_imp_mutex);
-    JOINTIDCHECK(j)
+    JOINTIDCHECK(IMPLEMENT_LAYER_COMPONENT,j)
 
     int k;
     double enc;
@@ -71,7 +76,7 @@ yarp::dev::ReturnValue ImplementVelocityDirect::setRefVelocity(int j, double sp)
 yarp::dev::ReturnValue ImplementVelocityDirect::setRefVelocity(const std::vector<double>& vels)
 {
     std::lock_guard lock(m_imp_mutex);
-    VECCHECK_SET_ALL(vels)
+    VECCHECK_SET_ALL(IMPLEMENT_LAYER_COMPONENT,vels)
 
     castToMapper(m_helper)->velA2E(vels.data(), m_buffer_doubles.data());
     auto ret = m_iVelocityDirectRaw->setRefVelocityRaw(m_buffer_doubles);
@@ -81,7 +86,7 @@ yarp::dev::ReturnValue ImplementVelocityDirect::setRefVelocity(const std::vector
 yarp::dev::ReturnValue ImplementVelocityDirect::setRefVelocity(const std::vector<int>& joints, const std::vector<double>& vels)
 {
     std::lock_guard lock(m_imp_mutex);
-    VECCHECK_SET_SOME(joints, vels)
+    VECCHECK_SET_SOME(IMPLEMENT_LAYER_COMPONENT,joints, vels)
 
     std::vector<int> vectorInt_tmp(joints.size());
     std::vector<double> vectorDouble_tmp(joints.size());
@@ -98,7 +103,7 @@ yarp::dev::ReturnValue ImplementVelocityDirect::setRefVelocity(const std::vector
 yarp::dev::ReturnValue ImplementVelocityDirect::getRefVelocity(const int j, double& vel)
 {
     std::lock_guard lock(m_imp_mutex);
-    JOINTIDCHECK(j)
+    JOINTIDCHECK(IMPLEMENT_LAYER_COMPONENT,j)
 
     int k = castToMapper(m_helper)->toHw(j);
     double tmp;
@@ -110,7 +115,7 @@ yarp::dev::ReturnValue ImplementVelocityDirect::getRefVelocity(const int j, doub
 yarp::dev::ReturnValue ImplementVelocityDirect::getRefVelocity(std::vector<double>& vels)
 {
     std::lock_guard lock(m_imp_mutex);
-    VECCHECK_GET_ALL(vels)
+    VECCHECK_GET_ALL(IMPLEMENT_LAYER_COMPONENT,vels)
 
     size_t axes = castToMapper(m_helper)->axes();
     auto ret = m_iVelocityDirectRaw->getRefVelocityRaw(m_buffer_doubles);
@@ -121,8 +126,8 @@ yarp::dev::ReturnValue ImplementVelocityDirect::getRefVelocity(std::vector<doubl
 yarp::dev::ReturnValue ImplementVelocityDirect::getRefVelocity(const std::vector<int>& joints, std::vector<double>& vels)
 {
     std::lock_guard lock(m_imp_mutex);
-    JOINTSIDVECCHECK(joints)
-    VECCHECK_GET_SOME(joints, vels)
+    JOINTSIDVECCHECK(IMPLEMENT_LAYER_COMPONENT,joints)
+    VECCHECK_GET_SOME(IMPLEMENT_LAYER_COMPONENT,joints, vels)
 
     std::vector<int> vectorInt_tmp(joints.size());
     std::vector<double> vectorDouble_tmp(joints.size());

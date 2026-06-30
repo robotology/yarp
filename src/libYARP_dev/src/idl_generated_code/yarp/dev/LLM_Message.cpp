@@ -198,28 +198,30 @@ bool LLM_Message::nested_write_content(const yarp::os::idl::WireWriter& writer) 
 // read parameters field
 bool LLM_Message::read_parameters(yarp::os::idl::WireReader& reader)
 {
-    size_t _csize;
-    yarp::os::idl::WireState _etype;
-    reader.readListBegin(_etype, _csize);
-    // WireReader removes BOTTLE_TAG_LIST from the tag
-    constexpr int expected_tag = ((BOTTLE_TAG_STRING) & (~BOTTLE_TAG_LIST));
-    if constexpr (expected_tag != 0) {
-        if (_csize != 0 && _etype.code != expected_tag) {
-            return false;
+    {
+        size_t _csize;
+        yarp::os::idl::WireState _etype;
+        reader.readListBegin(_etype, _csize);
+        // WireReader removes BOTTLE_TAG_LIST from the tag
+        constexpr int expected_tag = ((BOTTLE_TAG_STRING) & (~BOTTLE_TAG_LIST));
+        if constexpr (expected_tag != 0) {
+            if (_csize != 0 && _etype.code != expected_tag) {
+                return false;
+            }
         }
+        parameters.resize(_csize);
+        for (size_t _i = 0; _i < _csize; ++_i) {
+            if (reader.noMore()) {
+                reader.fail();
+                return false;
+            }
+            if (!reader.readString(parameters[_i])) {
+                reader.fail();
+                return false;
+            }
+        }
+        reader.readListEnd();
     }
-    parameters.resize(_csize);
-    for (size_t _i = 0; _i < _csize; ++_i) {
-        if (reader.noMore()) {
-            reader.fail();
-            return false;
-        }
-        if (!reader.readString(parameters[_i])) {
-            reader.fail();
-            return false;
-        }
-    }
-    reader.readListEnd();
     return true;
 }
 
@@ -243,28 +245,30 @@ bool LLM_Message::write_parameters(const yarp::os::idl::WireWriter& writer) cons
 // read (nested) parameters field
 bool LLM_Message::nested_read_parameters(yarp::os::idl::WireReader& reader)
 {
-    size_t _csize;
-    yarp::os::idl::WireState _etype;
-    reader.readListBegin(_etype, _csize);
-    // WireReader removes BOTTLE_TAG_LIST from the tag
-    constexpr int expected_tag = ((BOTTLE_TAG_STRING) & (~BOTTLE_TAG_LIST));
-    if constexpr (expected_tag != 0) {
-        if (_csize != 0 && _etype.code != expected_tag) {
-            return false;
+    {
+        size_t _csize;
+        yarp::os::idl::WireState _etype;
+        reader.readListBegin(_etype, _csize);
+        // WireReader removes BOTTLE_TAG_LIST from the tag
+        constexpr int expected_tag = ((BOTTLE_TAG_STRING) & (~BOTTLE_TAG_LIST));
+        if constexpr (expected_tag != 0) {
+            if (_csize != 0 && _etype.code != expected_tag) {
+                return false;
+            }
         }
+        parameters.resize(_csize);
+        for (size_t _i = 0; _i < _csize; ++_i) {
+            if (reader.noMore()) {
+                reader.fail();
+                return false;
+            }
+            if (!reader.readString(parameters[_i])) {
+                reader.fail();
+                return false;
+            }
+        }
+        reader.readListEnd();
     }
-    parameters.resize(_csize);
-    for (size_t _i = 0; _i < _csize; ++_i) {
-        if (reader.noMore()) {
-            reader.fail();
-            return false;
-        }
-        if (!reader.readString(parameters[_i])) {
-            reader.fail();
-            return false;
-        }
-    }
-    reader.readListEnd();
     return true;
 }
 
@@ -288,28 +292,30 @@ bool LLM_Message::nested_write_parameters(const yarp::os::idl::WireWriter& write
 // read arguments field
 bool LLM_Message::read_arguments(yarp::os::idl::WireReader& reader)
 {
-    size_t _csize;
-    yarp::os::idl::WireState _etype;
-    reader.readListBegin(_etype, _csize);
-    // WireReader removes BOTTLE_TAG_LIST from the tag
-    constexpr int expected_tag = ((BOTTLE_TAG_STRING) & (~BOTTLE_TAG_LIST));
-    if constexpr (expected_tag != 0) {
-        if (_csize != 0 && _etype.code != expected_tag) {
-            return false;
+    {
+        size_t _csize;
+        yarp::os::idl::WireState _etype;
+        reader.readListBegin(_etype, _csize);
+        // WireReader removes BOTTLE_TAG_LIST from the tag
+        constexpr int expected_tag = ((BOTTLE_TAG_STRING) & (~BOTTLE_TAG_LIST));
+        if constexpr (expected_tag != 0) {
+            if (_csize != 0 && _etype.code != expected_tag) {
+                return false;
+            }
         }
+        arguments.resize(_csize);
+        for (size_t _i = 0; _i < _csize; ++_i) {
+            if (reader.noMore()) {
+                reader.fail();
+                return false;
+            }
+            if (!reader.readString(arguments[_i])) {
+                reader.fail();
+                return false;
+            }
+        }
+        reader.readListEnd();
     }
-    arguments.resize(_csize);
-    for (size_t _i = 0; _i < _csize; ++_i) {
-        if (reader.noMore()) {
-            reader.fail();
-            return false;
-        }
-        if (!reader.readString(arguments[_i])) {
-            reader.fail();
-            return false;
-        }
-    }
-    reader.readListEnd();
     return true;
 }
 
@@ -333,28 +339,30 @@ bool LLM_Message::write_arguments(const yarp::os::idl::WireWriter& writer) const
 // read (nested) arguments field
 bool LLM_Message::nested_read_arguments(yarp::os::idl::WireReader& reader)
 {
-    size_t _csize;
-    yarp::os::idl::WireState _etype;
-    reader.readListBegin(_etype, _csize);
-    // WireReader removes BOTTLE_TAG_LIST from the tag
-    constexpr int expected_tag = ((BOTTLE_TAG_STRING) & (~BOTTLE_TAG_LIST));
-    if constexpr (expected_tag != 0) {
-        if (_csize != 0 && _etype.code != expected_tag) {
-            return false;
+    {
+        size_t _csize;
+        yarp::os::idl::WireState _etype;
+        reader.readListBegin(_etype, _csize);
+        // WireReader removes BOTTLE_TAG_LIST from the tag
+        constexpr int expected_tag = ((BOTTLE_TAG_STRING) & (~BOTTLE_TAG_LIST));
+        if constexpr (expected_tag != 0) {
+            if (_csize != 0 && _etype.code != expected_tag) {
+                return false;
+            }
         }
+        arguments.resize(_csize);
+        for (size_t _i = 0; _i < _csize; ++_i) {
+            if (reader.noMore()) {
+                reader.fail();
+                return false;
+            }
+            if (!reader.readString(arguments[_i])) {
+                reader.fail();
+                return false;
+            }
+        }
+        reader.readListEnd();
     }
-    arguments.resize(_csize);
-    for (size_t _i = 0; _i < _csize; ++_i) {
-        if (reader.noMore()) {
-            reader.fail();
-            return false;
-        }
-        if (!reader.readString(arguments[_i])) {
-            reader.fail();
-            return false;
-        }
-    }
-    reader.readListEnd();
     return true;
 }
 

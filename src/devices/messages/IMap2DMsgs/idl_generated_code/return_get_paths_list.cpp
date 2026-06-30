@@ -138,28 +138,30 @@ bool return_get_paths_list::read_paths(yarp::os::idl::WireReader& reader)
         reader.fail();
         return false;
     }
-    size_t _csize;
-    yarp::os::idl::WireState _etype;
-    reader.readListBegin(_etype, _csize);
-    // WireReader removes BOTTLE_TAG_LIST from the tag
-    constexpr int expected_tag = ((BOTTLE_TAG_STRING) & (~BOTTLE_TAG_LIST));
-    if constexpr (expected_tag != 0) {
-        if (_csize != 0 && _etype.code != expected_tag) {
-            return false;
+    {
+        size_t _csize;
+        yarp::os::idl::WireState _etype;
+        reader.readListBegin(_etype, _csize);
+        // WireReader removes BOTTLE_TAG_LIST from the tag
+        constexpr int expected_tag = ((BOTTLE_TAG_STRING) & (~BOTTLE_TAG_LIST));
+        if constexpr (expected_tag != 0) {
+            if (_csize != 0 && _etype.code != expected_tag) {
+                return false;
+            }
         }
+        paths.resize(_csize);
+        for (size_t _i = 0; _i < _csize; ++_i) {
+            if (reader.noMore()) {
+                reader.fail();
+                return false;
+            }
+            if (!reader.readString(paths[_i])) {
+                reader.fail();
+                return false;
+            }
+        }
+        reader.readListEnd();
     }
-    paths.resize(_csize);
-    for (size_t _i = 0; _i < _csize; ++_i) {
-        if (reader.noMore()) {
-            reader.fail();
-            return false;
-        }
-        if (!reader.readString(paths[_i])) {
-            reader.fail();
-            return false;
-        }
-    }
-    reader.readListEnd();
     return true;
 }
 
@@ -187,28 +189,30 @@ bool return_get_paths_list::nested_read_paths(yarp::os::idl::WireReader& reader)
         reader.fail();
         return false;
     }
-    size_t _csize;
-    yarp::os::idl::WireState _etype;
-    reader.readListBegin(_etype, _csize);
-    // WireReader removes BOTTLE_TAG_LIST from the tag
-    constexpr int expected_tag = ((BOTTLE_TAG_STRING) & (~BOTTLE_TAG_LIST));
-    if constexpr (expected_tag != 0) {
-        if (_csize != 0 && _etype.code != expected_tag) {
-            return false;
+    {
+        size_t _csize;
+        yarp::os::idl::WireState _etype;
+        reader.readListBegin(_etype, _csize);
+        // WireReader removes BOTTLE_TAG_LIST from the tag
+        constexpr int expected_tag = ((BOTTLE_TAG_STRING) & (~BOTTLE_TAG_LIST));
+        if constexpr (expected_tag != 0) {
+            if (_csize != 0 && _etype.code != expected_tag) {
+                return false;
+            }
         }
+        paths.resize(_csize);
+        for (size_t _i = 0; _i < _csize; ++_i) {
+            if (reader.noMore()) {
+                reader.fail();
+                return false;
+            }
+            if (!reader.readString(paths[_i])) {
+                reader.fail();
+                return false;
+            }
+        }
+        reader.readListEnd();
     }
-    paths.resize(_csize);
-    for (size_t _i = 0; _i < _csize; ++_i) {
-        if (reader.noMore()) {
-            reader.fail();
-            return false;
-        }
-        if (!reader.readString(paths[_i])) {
-            reader.fail();
-            return false;
-        }
-    }
-    reader.readListEnd();
     return true;
 }
 

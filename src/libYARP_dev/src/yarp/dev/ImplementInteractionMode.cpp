@@ -14,6 +14,10 @@
 using namespace yarp::dev;
 using namespace yarp::os;
 
+namespace {
+YARP_LOG_COMPONENT(IMPLEMENT_LAYER_COMPONENT, "yarp.ImplementInteractionMode")
+}
+
 ImplementInteractionMode::ImplementInteractionMode(yarp::dev::IInteractionModeRaw *class_p) :
     m_iraw(class_p),
     m_helper(nullptr)
@@ -78,7 +82,7 @@ ReturnValue ImplementInteractionMode::getInteractionMode(int axis, yarp::dev::In
 ReturnValue ImplementInteractionMode::getInteractionModes(const std::vector<int>& joints, std::vector<yarp::dev::InteractionModeEnum>& modes)
 {
     std::lock_guard lock(m_imp_mutex);
-    VECCHECK_GET_SOME(joints,modes);
+    VECCHECK_GET_SOME(IMPLEMENT_LAYER_COMPONENT,joints,modes);
 
     std::vector<int> vectorInt_tmp(joints.size());
     for (int i = 0; i < joints.size(); i++)
@@ -93,7 +97,7 @@ ReturnValue ImplementInteractionMode::getInteractionModes(const std::vector<int>
 ReturnValue ImplementInteractionMode::getInteractionModes(std::vector < yarp::dev::InteractionModeEnum>& modes)
 {
     std::lock_guard lock(m_imp_mutex);
-    VECCHECK_GET_ALL(modes);
+    VECCHECK_GET_ALL(IMPLEMENT_LAYER_COMPONENT,modes);
 
     ReturnValue ret = m_iraw->getInteractionModesRaw(m_buffer_enums);
     if(!ret)
@@ -120,7 +124,7 @@ ReturnValue ImplementInteractionMode::setInteractionMode(int axis, yarp::dev::In
 ReturnValue ImplementInteractionMode::setInteractionModes(const std::vector<int>& joints, const std::vector<yarp::dev::InteractionModeEnum>& modes)
 {
     std::lock_guard lock(m_imp_mutex);
-    VECCHECK_SET_SOME(joints, modes)
+    VECCHECK_SET_SOME(IMPLEMENT_LAYER_COMPONENT,joints, modes)
 
     std::vector<int> vectorInt_tmp(joints.size());
     for(int idx=0; idx<joints.size(); idx++)
@@ -135,7 +139,7 @@ ReturnValue ImplementInteractionMode::setInteractionModes(const std::vector<int>
 ReturnValue ImplementInteractionMode::setInteractionModes(const std::vector<yarp::dev::InteractionModeEnum>& modes)
 {
     std::lock_guard lock(m_imp_mutex);
-    VECCHECK_SET_ALL(modes)
+    VECCHECK_SET_ALL(IMPLEMENT_LAYER_COMPONENT,modes)
 
     for(int idx=0; idx< castToMapper(m_helper)->axes(); idx++)
     {

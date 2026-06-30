@@ -14,6 +14,10 @@
 using namespace yarp::dev;
 using namespace yarp::os;
 
+namespace {
+YARP_LOG_COMPONENT(IMPLEMENT_LAYER_COMPONENT, "yarp.ImplementPositionDirect")
+}
+
 ImplementPositionDirect::ImplementPositionDirect(IPositionDirectRaw *y):
     m_iraw(y),
     m_helper(nullptr)
@@ -54,7 +58,7 @@ bool ImplementPositionDirect::uninitialize()
 ReturnValue ImplementPositionDirect::getAxes(int *axes)
 {
     std::lock_guard lock(m_imp_mutex);
-    POINTERCHECK(axes);
+    POINTERCHECK(IMPLEMENT_LAYER_COMPONENT,axes);
 
     (*axes)=castToMapper(m_helper)->axes();
     return ReturnValue_ok;
@@ -63,7 +67,7 @@ ReturnValue ImplementPositionDirect::getAxes(int *axes)
 ReturnValue ImplementPositionDirect::setPosition(int j, double ref)
 {
     std::lock_guard lock(m_imp_mutex);
-    JOINTIDCHECK(j)
+    JOINTIDCHECK(IMPLEMENT_LAYER_COMPONENT,j)
 
     int k;
     double enc;
@@ -74,9 +78,9 @@ ReturnValue ImplementPositionDirect::setPosition(int j, double ref)
 ReturnValue ImplementPositionDirect::setPositions(const int n_joints, const int *joints, const double *refs)
 {
     std::lock_guard lock(m_imp_mutex);
-    POINTERCHECK(joints);
-    POINTERCHECK(refs);
-    JOINTSIDCHECK(n_joints, joints)
+    POINTERCHECK(IMPLEMENT_LAYER_COMPONENT,joints);
+    POINTERCHECK(IMPLEMENT_LAYER_COMPONENT,refs);
+    JOINTSIDCHECK(IMPLEMENT_LAYER_COMPONENT,n_joints, joints)
 
     for(int idx=0; idx<n_joints; idx++)
     {
@@ -92,7 +96,7 @@ ReturnValue ImplementPositionDirect::setPositions(const int n_joints, const int 
 ReturnValue ImplementPositionDirect::setPositions(const double *refs)
 {
     std::lock_guard lock(m_imp_mutex);
-    POINTERCHECK(refs);
+    POINTERCHECK(IMPLEMENT_LAYER_COMPONENT,refs);
 
     castToMapper(m_helper)->posA2E(refs, m_buffer_doubles.data());
     ReturnValue ret = m_iraw->setPositionsRaw(m_buffer_doubles.data());
@@ -103,8 +107,8 @@ ReturnValue ImplementPositionDirect::setPositions(const double *refs)
 ReturnValue ImplementPositionDirect::getRefPosition(const int j, double* ref)
 {
     std::lock_guard lock(m_imp_mutex);
-    JOINTIDCHECK(j)
-    POINTERCHECK(ref);
+    JOINTIDCHECK(IMPLEMENT_LAYER_COMPONENT,j)
+    POINTERCHECK(IMPLEMENT_LAYER_COMPONENT,ref);
 
     int k;
     double tmp;
@@ -119,9 +123,9 @@ ReturnValue ImplementPositionDirect::getRefPosition(const int j, double* ref)
 ReturnValue ImplementPositionDirect::getRefPositions(const int n_joints, const int* joints, double* refs)
 {
     std::lock_guard lock(m_imp_mutex);
-    JOINTSIDCHECK(n_joints, joints)
-    POINTERCHECK(joints);
-    POINTERCHECK(refs);
+    JOINTSIDCHECK(IMPLEMENT_LAYER_COMPONENT,n_joints, joints)
+    POINTERCHECK(IMPLEMENT_LAYER_COMPONENT,joints);
+    POINTERCHECK(IMPLEMENT_LAYER_COMPONENT,refs);
 
     for(int idx=0; idx<n_joints; idx++)
     {
@@ -141,7 +145,7 @@ ReturnValue ImplementPositionDirect::getRefPositions(const int n_joints, const i
 ReturnValue ImplementPositionDirect::getRefPositions(double* refs)
 {
     std::lock_guard lock(m_imp_mutex);
-    POINTERCHECK(refs);
+    POINTERCHECK(IMPLEMENT_LAYER_COMPONENT,refs);
 
     ReturnValue ret = m_iraw->getRefPositionsRaw(m_buffer_doubles.data());
     castToMapper(m_helper)->posE2A(m_buffer_doubles.data(), refs);

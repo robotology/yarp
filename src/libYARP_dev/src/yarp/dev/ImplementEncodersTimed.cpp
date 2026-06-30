@@ -12,6 +12,11 @@
 using namespace yarp::dev;
 using namespace yarp::os;
 
+namespace {
+YARP_LOG_COMPONENT(IMPLEMENT_LAYER_COMPONENT, "yarp.ImplementEncodersTimed")
+}
+
+
 ////////////////////////
 // Encoder Interface Timed Implementation
 ImplementEncodersTimed::ImplementEncodersTimed(IEncodersTimedRaw *y):
@@ -58,7 +63,7 @@ bool ImplementEncodersTimed::uninitialize ()
 ReturnValue ImplementEncodersTimed::getAxes(int *ax)
 {
     std::lock_guard lock(m_imp_mutex);
-    POINTERCHECK(ax)
+    POINTERCHECK(IMPLEMENT_LAYER_COMPONENT,ax)
 
     (*ax)=castToMapper(m_helper)->axes();
     return ReturnValue_ok;
@@ -67,7 +72,7 @@ ReturnValue ImplementEncodersTimed::getAxes(int *ax)
 ReturnValue ImplementEncodersTimed::resetEncoder(int j)
 {
     std::lock_guard lock(m_imp_mutex);
-    JOINTIDCHECK(j)
+    JOINTIDCHECK(IMPLEMENT_LAYER_COMPONENT,j)
 
     int k;
     k=castToMapper(m_helper)->toHw(j);
@@ -85,7 +90,7 @@ ReturnValue ImplementEncodersTimed::resetEncoders()
 ReturnValue ImplementEncodersTimed::setEncoder(int j, double val)
 {
     std::lock_guard lock(m_imp_mutex);
-    JOINTIDCHECK(j)
+    JOINTIDCHECK(IMPLEMENT_LAYER_COMPONENT,j)
 
     int k;
     double enc;
@@ -98,7 +103,7 @@ ReturnValue ImplementEncodersTimed::setEncoder(int j, double val)
 ReturnValue ImplementEncodersTimed::setEncoders(const double *val)
 {
     std::lock_guard lock(m_imp_mutex);
-    POINTERCHECK(val)
+    POINTERCHECK(IMPLEMENT_LAYER_COMPONENT,val)
 
     castToMapper(m_helper)->posA2E(val, m_buffer_doubles.data());
     ReturnValue ret = m_iraw->setEncodersRaw(m_buffer_doubles.data());
@@ -109,8 +114,8 @@ ReturnValue ImplementEncodersTimed::setEncoders(const double *val)
 ReturnValue ImplementEncodersTimed::getEncoder(int j, double *v)
 {
     std::lock_guard lock(m_imp_mutex);
-    JOINTIDCHECK(j)
-    POINTERCHECK(v)
+    JOINTIDCHECK(IMPLEMENT_LAYER_COMPONENT,j)
+    POINTERCHECK(IMPLEMENT_LAYER_COMPONENT,v)
 
     int k;
     double enc;
@@ -128,7 +133,7 @@ ReturnValue ImplementEncodersTimed::getEncoder(int j, double *v)
 ReturnValue ImplementEncodersTimed::getEncoders(double *v)
 {
     std::lock_guard lock(m_imp_mutex);
-    POINTERCHECK(v)
+    POINTERCHECK(IMPLEMENT_LAYER_COMPONENT,v)
 
     ReturnValue ret = m_iraw->getEncodersRaw(m_buffer_doubles.data());
     castToMapper(m_helper)->posE2A(m_buffer_doubles.data(), v);
@@ -139,8 +144,8 @@ ReturnValue ImplementEncodersTimed::getEncoders(double *v)
 ReturnValue ImplementEncodersTimed::getEncoderSpeed(int j, double *v)
 {
     std::lock_guard lock(m_imp_mutex);
-    JOINTIDCHECK(j)
-    POINTERCHECK(v)
+    JOINTIDCHECK(IMPLEMENT_LAYER_COMPONENT,j)
+    POINTERCHECK(IMPLEMENT_LAYER_COMPONENT,v)
 
     int k;
     double enc;
@@ -158,7 +163,7 @@ ReturnValue ImplementEncodersTimed::getEncoderSpeed(int j, double *v)
 ReturnValue ImplementEncodersTimed::getEncoderSpeeds(double *v)
 {
     std::lock_guard lock(m_imp_mutex);
-    POINTERCHECK(v)
+    POINTERCHECK(IMPLEMENT_LAYER_COMPONENT,v)
 
     ReturnValue ret=m_iraw->getEncoderSpeedsRaw(m_buffer_doubles.data());
     castToMapper(m_helper)->velE2A(m_buffer_doubles.data(), v);
@@ -169,8 +174,8 @@ ReturnValue ImplementEncodersTimed::getEncoderSpeeds(double *v)
 ReturnValue ImplementEncodersTimed::getEncoderAcceleration(int j, double *v)
 {
     std::lock_guard lock(m_imp_mutex);
-    JOINTIDCHECK(j)
-    POINTERCHECK(v)
+    JOINTIDCHECK(IMPLEMENT_LAYER_COMPONENT,j)
+    POINTERCHECK(IMPLEMENT_LAYER_COMPONENT,v)
 
     int k;
     double enc;
@@ -188,7 +193,7 @@ ReturnValue ImplementEncodersTimed::getEncoderAcceleration(int j, double *v)
 ReturnValue ImplementEncodersTimed::getEncoderAccelerations(double *v)
 {
     std::lock_guard lock(m_imp_mutex);
-    POINTERCHECK(v)
+    POINTERCHECK(IMPLEMENT_LAYER_COMPONENT,v)
 
     ReturnValue ret = m_iraw->getEncoderAccelerationsRaw(m_buffer_doubles.data());
     castToMapper(m_helper)->accE2A(m_buffer_doubles.data(), v);
@@ -199,9 +204,9 @@ ReturnValue ImplementEncodersTimed::getEncoderAccelerations(double *v)
 ReturnValue ImplementEncodersTimed::getEncoderTimed(int j, double *v, double *t)
 {
     std::lock_guard lock(m_imp_mutex);
-    JOINTIDCHECK(j)
-    POINTERCHECK(v)
-    POINTERCHECK(t)
+    JOINTIDCHECK(IMPLEMENT_LAYER_COMPONENT,j)
+    POINTERCHECK(IMPLEMENT_LAYER_COMPONENT,v)
+    POINTERCHECK(IMPLEMENT_LAYER_COMPONENT,t)
 
     int k;
     double enc;
@@ -220,8 +225,8 @@ ReturnValue ImplementEncodersTimed::getEncoderTimed(int j, double *v, double *t)
 ReturnValue ImplementEncodersTimed::getEncodersTimed(double *v, double *t)
 {
     std::lock_guard lock(m_imp_mutex);
-    POINTERCHECK(v)
-    POINTERCHECK(t)
+    POINTERCHECK(IMPLEMENT_LAYER_COMPONENT,v)
+    POINTERCHECK(IMPLEMENT_LAYER_COMPONENT,t)
 
     ReturnValue ret=m_iraw->getEncodersTimedRaw(m_buffer_doubles.data(), m_buffer_doubles2.data());
 

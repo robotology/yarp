@@ -12,6 +12,10 @@
 using namespace yarp::dev;
 using namespace yarp::os;
 
+namespace {
+YARP_LOG_COMPONENT(IMPLEMENT_LAYER_COMPONENT, "yarp.ImplementCurrentControl")
+}
+
 ImplementCurrentControl::ImplementCurrentControl(ICurrentControlRaw *tq):
     m_iraw(tq),
     m_helper(nullptr)
@@ -52,7 +56,7 @@ bool ImplementCurrentControl::uninitialize()
 ReturnValue  ImplementCurrentControl::getNumberOfMotors(int *axes)
 {
     std::lock_guard lock(m_imp_mutex);
-    POINTERCHECK(axes)
+    POINTERCHECK(IMPLEMENT_LAYER_COMPONENT,axes)
 
     return m_iraw->getNumberOfMotorsRaw(axes);
 }
@@ -60,8 +64,8 @@ ReturnValue  ImplementCurrentControl::getNumberOfMotors(int *axes)
 ReturnValue ImplementCurrentControl::getRefCurrent(int j, double *r)
 {
     std::lock_guard lock(m_imp_mutex);
-    JOINTIDCHECK(j)
-    POINTERCHECK(r)
+    JOINTIDCHECK(IMPLEMENT_LAYER_COMPONENT,j)
+    POINTERCHECK(IMPLEMENT_LAYER_COMPONENT,r)
 
     int k;
     ReturnValue ret;
@@ -75,7 +79,7 @@ ReturnValue ImplementCurrentControl::getRefCurrent(int j, double *r)
 ReturnValue ImplementCurrentControl::getRefCurrents(double *t)
 {
     std::lock_guard lock(m_imp_mutex);
-    POINTERCHECK(t)
+    POINTERCHECK(IMPLEMENT_LAYER_COMPONENT,t)
 
     ReturnValue ret = m_iraw->getRefCurrentsRaw(m_buffer_doubles.data());
     castToMapper(m_helper)->ampereS2A(m_buffer_doubles.data(),t);
@@ -86,7 +90,7 @@ ReturnValue ImplementCurrentControl::getRefCurrents(double *t)
 ReturnValue ImplementCurrentControl::setRefCurrents(const double *t)
 {
     std::lock_guard lock(m_imp_mutex);
-    POINTERCHECK(t)
+    POINTERCHECK(IMPLEMENT_LAYER_COMPONENT,t)
 
     castToMapper(m_helper)->ampereA2S(t, m_buffer_doubles.data());
     ReturnValue ret = m_iraw->setRefCurrentsRaw(m_buffer_doubles.data());
@@ -97,7 +101,7 @@ ReturnValue ImplementCurrentControl::setRefCurrents(const double *t)
 ReturnValue ImplementCurrentControl::setRefCurrent(int j, double t)
 {
     std::lock_guard lock(m_imp_mutex);
-    JOINTIDCHECK(j)
+    JOINTIDCHECK(IMPLEMENT_LAYER_COMPONENT,j)
 
     int k;
     double sens;
@@ -108,7 +112,7 @@ ReturnValue ImplementCurrentControl::setRefCurrent(int j, double t)
 ReturnValue ImplementCurrentControl::getCurrents(double *t)
 {
     std::lock_guard lock(m_imp_mutex);
-    POINTERCHECK(t)
+    POINTERCHECK(IMPLEMENT_LAYER_COMPONENT,t)
 
     ReturnValue ret = m_iraw->getCurrentsRaw(m_buffer_doubles.data());
     castToMapper(m_helper)->ampereS2A(m_buffer_doubles.data(), t);
@@ -119,9 +123,9 @@ ReturnValue ImplementCurrentControl::getCurrents(double *t)
 ReturnValue ImplementCurrentControl::setRefCurrents(const int n_joints, const int *joints, const double *t)
 {
     std::lock_guard lock(m_imp_mutex);
-    POINTERCHECK(joints)
-    POINTERCHECK(t)
-    JOINTSIDCHECK(n_joints, joints)
+    POINTERCHECK(IMPLEMENT_LAYER_COMPONENT,joints)
+    POINTERCHECK(IMPLEMENT_LAYER_COMPONENT,t)
+    JOINTSIDCHECK(IMPLEMENT_LAYER_COMPONENT,n_joints, joints)
 
     for(int idx=0; idx<n_joints; idx++)
     {
@@ -137,8 +141,8 @@ ReturnValue ImplementCurrentControl::setRefCurrents(const int n_joints, const in
 ReturnValue ImplementCurrentControl::getCurrent(int j, double *t)
 {
     std::lock_guard lock(m_imp_mutex);
-    JOINTIDCHECK(j)
-    POINTERCHECK(t)
+    JOINTIDCHECK(IMPLEMENT_LAYER_COMPONENT,j)
+    POINTERCHECK(IMPLEMENT_LAYER_COMPONENT,t)
 
     int k;
     ReturnValue ret;
@@ -152,8 +156,8 @@ ReturnValue ImplementCurrentControl::getCurrent(int j, double *t)
 ReturnValue ImplementCurrentControl::getCurrentRanges(double *min, double *max)
 {
     std::lock_guard lock(m_imp_mutex);
-    POINTERCHECK(min)
-    POINTERCHECK(max)
+    POINTERCHECK(IMPLEMENT_LAYER_COMPONENT,min)
+    POINTERCHECK(IMPLEMENT_LAYER_COMPONENT,max)
 
     ReturnValue ret = m_iraw->getCurrentRangesRaw(m_buffer_doubles.data(), m_buffer_doubles2.data());
     castToMapper(m_helper)->ampereS2A(m_buffer_doubles.data(), min);
@@ -165,9 +169,9 @@ ReturnValue ImplementCurrentControl::getCurrentRanges(double *min, double *max)
 ReturnValue ImplementCurrentControl::getCurrentRange(int j, double *min, double *max)
 {
     std::lock_guard lock(m_imp_mutex);
-    JOINTIDCHECK(j)
-    POINTERCHECK(min)
-    POINTERCHECK(max)
+    JOINTIDCHECK(IMPLEMENT_LAYER_COMPONENT,j)
+    POINTERCHECK(IMPLEMENT_LAYER_COMPONENT,min)
+    POINTERCHECK(IMPLEMENT_LAYER_COMPONENT,max)
 
     int k;
     k=castToMapper(m_helper)->toHw(j);

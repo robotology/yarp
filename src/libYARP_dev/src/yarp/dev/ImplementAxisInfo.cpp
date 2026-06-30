@@ -10,6 +10,10 @@
 #include <cstdio>
 using namespace yarp::dev;
 
+namespace {
+YARP_LOG_COMPONENT(IMPLEMENT_LAYER_COMPONENT, "yarp.ImplementAxisInfo")
+}
+
 ////////////////////////
 // Encoder Interface Timed Implementation
 ImplementAxisInfo::ImplementAxisInfo(yarp::dev::IAxisInfoRaw *y)
@@ -58,7 +62,7 @@ bool ImplementAxisInfo::uninitialize()
 ReturnValue ImplementAxisInfo::getAxes(int* ax)
 {
     std::lock_guard lock(m_imp_mutex);
-    POINTERCHECK(ax)
+    POINTERCHECK(IMPLEMENT_LAYER_COMPONENT,ax)
 
     ReturnValue ret=ReturnValue_ok;
     (*ax) = castToMapper(m_helper)->axes();
@@ -68,7 +72,7 @@ ReturnValue ImplementAxisInfo::getAxes(int* ax)
 ReturnValue ImplementAxisInfo::getAxisName(int axis, std::string& name)
 {
     std::lock_guard lock(m_imp_mutex);
-    JOINTIDCHECK(axis);
+    JOINTIDCHECK(IMPLEMENT_LAYER_COMPONENT,axis);
 
     ReturnValue ret;
     int k = castToMapper(m_helper)->toHw(axis);
@@ -79,7 +83,7 @@ ReturnValue ImplementAxisInfo::getAxisName(int axis, std::string& name)
 ReturnValue ImplementAxisInfo::getJointType(int axis, yarp::dev::JointTypeEnum& type)
 {
     std::lock_guard lock(m_imp_mutex);
-    JOINTIDCHECK(axis);
+    JOINTIDCHECK(IMPLEMENT_LAYER_COMPONENT,axis);
 
     ReturnValue ret;
     int k = castToMapper(m_helper)->toHw(axis);

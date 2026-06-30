@@ -13,6 +13,10 @@
 
 using namespace yarp::dev;
 
+namespace {
+YARP_LOG_COMPONENT(CB_HELPER, "yarp.ControlBoardHelper")
+}
+
 struct PidUnits
 {
     PidFeedbackUnitsEnum fbk_units;
@@ -306,14 +310,14 @@ bool ControlBoardHelper::checkAxesIds(const int n_axes, const int* axesList)
     if(n_axes > mPriv->nj)
     {
         if (mPriv->verbose) {
-            yError("checkAxesIds: num of axes is too big");
+            yCError(CB_HELPER,"checkAxesIds: num of axes is too big");
         }
         return false;
     }
     if(axesList==nullptr)
     {
         if (mPriv->verbose) {
-            yError("checkAxesIds: axesList is nullptr");
+            yCError(CB_HELPER, "checkAxesIds: axesList is nullptr");
         }
         return false;
     }
@@ -322,7 +326,7 @@ bool ControlBoardHelper::checkAxesIds(const int n_axes, const int* axesList)
         if( (axesList[idx]<0) || (axesList[idx]>= mPriv->nj) )
         {
             if (mPriv->verbose) {
-                yError("checkAxesIds: joint id out of bound");
+                yCError(CB_HELPER, "checkAxesIds: joint id out of bound");
             }
 
             return false;

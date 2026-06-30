@@ -14,6 +14,10 @@
 using namespace yarp::dev;
 using namespace yarp::os;
 
+namespace {
+YARP_LOG_COMPONENT(IMPLEMENT_LAYER_COMPONENT, "yarp.ImplementVelocityControl")
+}
+
 ImplementVelocityControl::ImplementVelocityControl(IVelocityControlRaw *y) :
     m_iraw(y),
     m_helper(nullptr)
@@ -59,7 +63,7 @@ ReturnValue ImplementVelocityControl::getAxes(int *ax)
 ReturnValue ImplementVelocityControl::velocityMove(int j, double sp)
 {
     std::lock_guard lock(m_imp_mutex);
-    JOINTIDCHECK(j)
+    JOINTIDCHECK(IMPLEMENT_LAYER_COMPONENT,j)
 
     int k;
     double enc;
@@ -70,9 +74,9 @@ ReturnValue ImplementVelocityControl::velocityMove(int j, double sp)
 ReturnValue ImplementVelocityControl::velocityMove(const int n_joints, const int *joints, const double *spds)
 {
     std::lock_guard lock(m_imp_mutex);
-    POINTERCHECK(joints);
-    POINTERCHECK(spds);
-    JOINTSIDCHECK(n_joints, joints)
+    POINTERCHECK(IMPLEMENT_LAYER_COMPONENT,joints);
+    POINTERCHECK(IMPLEMENT_LAYER_COMPONENT,spds);
+    JOINTSIDCHECK(IMPLEMENT_LAYER_COMPONENT,n_joints, joints)
 
     std::vector<int> vectorInt_tmp(n_joints);
     std::vector<double> vectorDouble_tmp(n_joints);
@@ -90,7 +94,7 @@ ReturnValue ImplementVelocityControl::velocityMove(const int n_joints, const int
 ReturnValue ImplementVelocityControl::velocityMove(const double *sp)
 {
     std::lock_guard lock(m_imp_mutex);
-    POINTERCHECK(sp);
+    POINTERCHECK(IMPLEMENT_LAYER_COMPONENT,sp);
 
     castToMapper(m_helper)->velA2E(sp, m_buffer_doubles.data());
     ReturnValue ret = m_iraw->velocityMoveRaw(m_buffer_doubles.data());
@@ -100,8 +104,8 @@ ReturnValue ImplementVelocityControl::velocityMove(const double *sp)
 ReturnValue ImplementVelocityControl::getTargetVelocity(const int j, double* vel)
 {
     std::lock_guard lock(m_imp_mutex);
-    JOINTIDCHECK(j)
-    POINTERCHECK(vel);
+    JOINTIDCHECK(IMPLEMENT_LAYER_COMPONENT,j)
+    POINTERCHECK(IMPLEMENT_LAYER_COMPONENT,vel);
 
     int k;
     double tmp;
@@ -114,7 +118,7 @@ ReturnValue ImplementVelocityControl::getTargetVelocity(const int j, double* vel
 ReturnValue ImplementVelocityControl::getTargetVelocities(double *vels)
 {
     std::lock_guard lock(m_imp_mutex);
-    POINTERCHECK(vels);
+    POINTERCHECK(IMPLEMENT_LAYER_COMPONENT,vels);
 
     ReturnValue ret=m_iraw->getTargetVelocitiesRaw(m_buffer_doubles.data());
     castToMapper(m_helper)->velE2A(m_buffer_doubles.data(), vels);
@@ -124,9 +128,9 @@ ReturnValue ImplementVelocityControl::getTargetVelocities(double *vels)
 ReturnValue ImplementVelocityControl::getTargetVelocities(const int n_joints, const int *joints, double *vels)
 {
     std::lock_guard lock(m_imp_mutex);
-    POINTERCHECK(joints);
-    POINTERCHECK(vels);
-    JOINTSIDCHECK(n_joints,joints)
+    POINTERCHECK(IMPLEMENT_LAYER_COMPONENT,joints);
+    POINTERCHECK(IMPLEMENT_LAYER_COMPONENT,vels);
+    JOINTSIDCHECK(IMPLEMENT_LAYER_COMPONENT,n_joints,joints)
 
     std::vector<int> vectorInt_tmp(n_joints);
     std::vector<double> vectorDouble_tmp(n_joints);
@@ -149,7 +153,7 @@ ReturnValue ImplementVelocityControl::getTargetVelocities(const int n_joints, co
 ReturnValue ImplementVelocityControl::setTrajAcceleration(int j, double acc)
 {
     std::lock_guard lock(m_imp_mutex);
-    JOINTIDCHECK(j)
+    JOINTIDCHECK(IMPLEMENT_LAYER_COMPONENT,j)
 
     int k;
     double enc;
@@ -160,9 +164,9 @@ ReturnValue ImplementVelocityControl::setTrajAcceleration(int j, double acc)
 ReturnValue ImplementVelocityControl::setTrajAccelerations(const int n_joints, const int *joints, const double *accs)
 {
     std::lock_guard lock(m_imp_mutex);
-    POINTERCHECK(joints);
-    POINTERCHECK(accs);
-    JOINTSIDCHECK(n_joints,joints)
+    POINTERCHECK(IMPLEMENT_LAYER_COMPONENT,joints);
+    POINTERCHECK(IMPLEMENT_LAYER_COMPONENT,accs);
+    JOINTSIDCHECK(IMPLEMENT_LAYER_COMPONENT,n_joints,joints)
 
     std::vector<int> vectorInt_tmp(n_joints);
     std::vector<double> vectorDouble_tmp(n_joints);
@@ -179,7 +183,7 @@ ReturnValue ImplementVelocityControl::setTrajAccelerations(const int n_joints, c
 ReturnValue ImplementVelocityControl::setTrajAccelerations(const double *accs)
 {
     std::lock_guard lock(m_imp_mutex);
-    POINTERCHECK(accs);
+    POINTERCHECK(IMPLEMENT_LAYER_COMPONENT,accs);
 
     castToMapper(m_helper)->accA2E_abs(accs, m_buffer_doubles.data());
     ReturnValue ret = m_iraw->setTrajAccelerationsRaw(m_buffer_doubles.data());
@@ -189,8 +193,8 @@ ReturnValue ImplementVelocityControl::setTrajAccelerations(const double *accs)
 ReturnValue ImplementVelocityControl::getTrajAcceleration(int j, double *acc)
 {
     std::lock_guard lock(m_imp_mutex);
-    JOINTIDCHECK(j)
-    POINTERCHECK(acc);
+    JOINTIDCHECK(IMPLEMENT_LAYER_COMPONENT,j)
+    POINTERCHECK(IMPLEMENT_LAYER_COMPONENT,acc);
 
     int k;
     double enc;
@@ -203,9 +207,9 @@ ReturnValue ImplementVelocityControl::getTrajAcceleration(int j, double *acc)
 ReturnValue ImplementVelocityControl::getTrajAccelerations(const int n_joints, const int *joints, double *accs)
 {
     std::lock_guard lock(m_imp_mutex);
-    POINTERCHECK(joints);
-    POINTERCHECK(accs);
-    JOINTSIDCHECK(n_joints,joints)
+    POINTERCHECK(IMPLEMENT_LAYER_COMPONENT,joints);
+    POINTERCHECK(IMPLEMENT_LAYER_COMPONENT,accs);
+    JOINTSIDCHECK(IMPLEMENT_LAYER_COMPONENT,n_joints,joints)
 
     std::vector<int> vectorInt_tmp(n_joints);
     std::vector<double> vectorDouble_tmp(n_joints);
@@ -229,7 +233,7 @@ ReturnValue ImplementVelocityControl::getTrajAccelerations(const int n_joints, c
 ReturnValue ImplementVelocityControl::getTrajAccelerations(double *accs)
 {
     std::lock_guard lock(m_imp_mutex);
-    POINTERCHECK(accs);
+    POINTERCHECK(IMPLEMENT_LAYER_COMPONENT,accs);
 
     ReturnValue ret=m_iraw->getTrajAccelerationsRaw(m_buffer_doubles.data());
     castToMapper(m_helper)->accE2A_abs(m_buffer_doubles.data(), accs);
@@ -240,7 +244,7 @@ ReturnValue ImplementVelocityControl::getTrajAccelerations(double *accs)
 ReturnValue ImplementVelocityControl::stop(int j)
 {
     std::lock_guard lock(m_imp_mutex);
-    JOINTIDCHECK(j)
+    JOINTIDCHECK(IMPLEMENT_LAYER_COMPONENT,j)
 
     int k;
     k=castToMapper(m_helper)->toHw(j);
@@ -251,8 +255,8 @@ ReturnValue ImplementVelocityControl::stop(int j)
 ReturnValue ImplementVelocityControl::stop(const int n_joints, const int *joints)
 {
     std::lock_guard lock(m_imp_mutex);
-    JOINTSIDCHECK(n_joints,joints)
-    POINTERCHECK(joints);
+    JOINTSIDCHECK(IMPLEMENT_LAYER_COMPONENT,n_joints,joints)
+    POINTERCHECK(IMPLEMENT_LAYER_COMPONENT,joints);
 
     for(int idx=0; idx<n_joints; idx++)
     {

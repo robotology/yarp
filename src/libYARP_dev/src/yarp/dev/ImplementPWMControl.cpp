@@ -13,6 +13,10 @@
 using namespace yarp::dev;
 using namespace yarp::os;
 
+namespace {
+YARP_LOG_COMPONENT(IMPLEMENT_LAYER_COMPONENT, "yarp.ImplementPWMControl")
+}
+
 /////////////// implement ImplemenPWMControl
 ImplementPWMControl::ImplementPWMControl(IPWMControlRaw *r) :
     m_helper(nullptr),
@@ -53,7 +57,7 @@ bool ImplementPWMControl::uninitialize()
 ReturnValue ImplementPWMControl::getNumberOfMotors(int *axes)
 {
     std::lock_guard lock(m_imp_mutex);
-    POINTERCHECK(axes);
+    POINTERCHECK(IMPLEMENT_LAYER_COMPONENT,axes);
 
     return m_iraw->getNumberOfMotorsRaw(axes);
 }
@@ -61,7 +65,7 @@ ReturnValue ImplementPWMControl::getNumberOfMotors(int *axes)
 ReturnValue ImplementPWMControl::setRefDutyCycle(int j, double duty)
 {
     std::lock_guard lock(m_imp_mutex);
-    JOINTIDCHECK(j)
+    JOINTIDCHECK(IMPLEMENT_LAYER_COMPONENT,j)
 
     int k;
     double pwm;
@@ -72,7 +76,7 @@ ReturnValue ImplementPWMControl::setRefDutyCycle(int j, double duty)
 ReturnValue ImplementPWMControl::setRefDutyCycles(const double *duty)
 {
     std::lock_guard lock(m_imp_mutex);
-    POINTERCHECK(duty);
+    POINTERCHECK(IMPLEMENT_LAYER_COMPONENT,duty);
 
     castToMapper(m_helper)->dutycycle2PWM(duty, m_buffer_doubles.data());
     ReturnValue ret = m_iraw->setRefDutyCyclesRaw( m_buffer_doubles.data());
@@ -83,8 +87,8 @@ ReturnValue ImplementPWMControl::setRefDutyCycles(const double *duty)
 ReturnValue ImplementPWMControl::getRefDutyCycle(int j, double *v)
 {
     std::lock_guard lock(m_imp_mutex);
-    JOINTIDCHECK(j)
-    POINTERCHECK(v);
+    JOINTIDCHECK(IMPLEMENT_LAYER_COMPONENT,j)
+    POINTERCHECK(IMPLEMENT_LAYER_COMPONENT,v);
 
     double pwm;
     int k = castToMapper(m_helper)->toHw(j);
@@ -96,7 +100,7 @@ ReturnValue ImplementPWMControl::getRefDutyCycle(int j, double *v)
 ReturnValue ImplementPWMControl::getRefDutyCycles(double *duty)
 {
     std::lock_guard lock(m_imp_mutex);
-    POINTERCHECK(duty);
+    POINTERCHECK(IMPLEMENT_LAYER_COMPONENT,duty);
 
     ReturnValue ret = m_iraw->getRefDutyCyclesRaw(m_buffer_doubles.data());
     castToMapper(m_helper)->PWM2dutycycle(m_buffer_doubles.data(), duty);
@@ -107,8 +111,8 @@ ReturnValue ImplementPWMControl::getRefDutyCycles(double *duty)
 ReturnValue ImplementPWMControl::getDutyCycle(int j, double *duty)
 {
     std::lock_guard lock(m_imp_mutex);
-    JOINTIDCHECK(j)
-    POINTERCHECK(duty);
+    JOINTIDCHECK(IMPLEMENT_LAYER_COMPONENT,j)
+    POINTERCHECK(IMPLEMENT_LAYER_COMPONENT,duty);
 
     double pwm;
     int k = castToMapper(m_helper)->toHw(j);
@@ -120,7 +124,7 @@ ReturnValue ImplementPWMControl::getDutyCycle(int j, double *duty)
 ReturnValue ImplementPWMControl::getDutyCycles(double *duty)
 {
     std::lock_guard lock(m_imp_mutex);
-    POINTERCHECK(duty);
+    POINTERCHECK(IMPLEMENT_LAYER_COMPONENT,duty);
 
     ReturnValue ret = m_iraw->getDutyCyclesRaw(m_buffer_doubles.data());
     castToMapper(m_helper)->PWM2dutycycle(m_buffer_doubles.data(), duty);

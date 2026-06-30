@@ -24,7 +24,6 @@ class YARP_dev_API SensorMeasurement :
 {
 public:
     // Fields
-
     yarp::sig::Vector measurement{};
     double timestamp{0.0};
 

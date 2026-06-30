@@ -138,28 +138,30 @@ bool getListReturnValue::read_listnames(yarp::os::idl::WireReader& reader)
         reader.fail();
         return false;
     }
-    size_t _csize;
-    yarp::os::idl::WireState _etype;
-    reader.readListBegin(_etype, _csize);
-    // WireReader removes BOTTLE_TAG_LIST from the tag
-    constexpr int expected_tag = ((BOTTLE_TAG_STRING) & (~BOTTLE_TAG_LIST));
-    if constexpr (expected_tag != 0) {
-        if (_csize != 0 && _etype.code != expected_tag) {
-            return false;
+    {
+        size_t _csize;
+        yarp::os::idl::WireState _etype;
+        reader.readListBegin(_etype, _csize);
+        // WireReader removes BOTTLE_TAG_LIST from the tag
+        constexpr int expected_tag = ((BOTTLE_TAG_STRING) & (~BOTTLE_TAG_LIST));
+        if constexpr (expected_tag != 0) {
+            if (_csize != 0 && _etype.code != expected_tag) {
+                return false;
+            }
         }
+        listnames.resize(_csize);
+        for (size_t _i = 0; _i < _csize; ++_i) {
+            if (reader.noMore()) {
+                reader.fail();
+                return false;
+            }
+            if (!reader.readString(listnames[_i])) {
+                reader.fail();
+                return false;
+            }
+        }
+        reader.readListEnd();
     }
-    listnames.resize(_csize);
-    for (size_t _i = 0; _i < _csize; ++_i) {
-        if (reader.noMore()) {
-            reader.fail();
-            return false;
-        }
-        if (!reader.readString(listnames[_i])) {
-            reader.fail();
-            return false;
-        }
-    }
-    reader.readListEnd();
     return true;
 }
 
@@ -187,28 +189,30 @@ bool getListReturnValue::nested_read_listnames(yarp::os::idl::WireReader& reader
         reader.fail();
         return false;
     }
-    size_t _csize;
-    yarp::os::idl::WireState _etype;
-    reader.readListBegin(_etype, _csize);
-    // WireReader removes BOTTLE_TAG_LIST from the tag
-    constexpr int expected_tag = ((BOTTLE_TAG_STRING) & (~BOTTLE_TAG_LIST));
-    if constexpr (expected_tag != 0) {
-        if (_csize != 0 && _etype.code != expected_tag) {
-            return false;
+    {
+        size_t _csize;
+        yarp::os::idl::WireState _etype;
+        reader.readListBegin(_etype, _csize);
+        // WireReader removes BOTTLE_TAG_LIST from the tag
+        constexpr int expected_tag = ((BOTTLE_TAG_STRING) & (~BOTTLE_TAG_LIST));
+        if constexpr (expected_tag != 0) {
+            if (_csize != 0 && _etype.code != expected_tag) {
+                return false;
+            }
         }
+        listnames.resize(_csize);
+        for (size_t _i = 0; _i < _csize; ++_i) {
+            if (reader.noMore()) {
+                reader.fail();
+                return false;
+            }
+            if (!reader.readString(listnames[_i])) {
+                reader.fail();
+                return false;
+            }
+        }
+        reader.readListEnd();
     }
-    listnames.resize(_csize);
-    for (size_t _i = 0; _i < _csize; ++_i) {
-        if (reader.noMore()) {
-            reader.fail();
-            return false;
-        }
-        if (!reader.readString(listnames[_i])) {
-            reader.fail();
-            return false;
-        }
-    }
-    reader.readListEnd();
     return true;
 }
 
