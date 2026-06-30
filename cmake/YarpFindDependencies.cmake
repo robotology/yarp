@@ -323,14 +323,14 @@ set(SWIG_REQUIRED_VERSION 4)
 find_package(SWIG ${SWIG_REQUIRED_VERSION} QUIET)
 checkandset_dependency(SWIG)
 
-# Both OpenCV 3 and 4 are supported
-#
-# WARNING OpenCV 3 must be searched before OpenCV 4, otherwise the build will
-#         fail with OpenCV3. The opposite does not seem to happen.
-set(OpenCV_REQUIRED_VERSION 3)
+# Both OpenCV 4 and 5 are supported
+set(OpenCV_REQUIRED_VERSION 4)
 find_package(OpenCV ${OpenCV_REQUIRED_VERSION} QUIET)
 if(NOT OpenCV_FOUND)
-  find_package(OpenCV 4 QUIET)
+  find_package(OpenCV ${OpenCV_REQUIRED_VERSION} QUIET)
+endif()
+if(NOT OpenCV_FOUND)
+  find_package(OpenCV 5 QUIET)
 endif()
 checkandset_dependency(OpenCV)
 
