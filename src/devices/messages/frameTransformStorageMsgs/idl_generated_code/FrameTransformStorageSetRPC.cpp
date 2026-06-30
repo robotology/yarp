@@ -458,28 +458,30 @@ bool FrameTransformStorageSetRPC_setTransformsRPC_helper::Command::readArgs(yarp
         reader.fail();
         return false;
     }
-    size_t _csize;
-    yarp::os::idl::WireState _etype;
-    reader.readListBegin(_etype, _csize);
-    // WireReader removes BOTTLE_TAG_LIST from the tag
-    constexpr int expected_tag = ((BOTTLE_TAG_LIST) & (~BOTTLE_TAG_LIST));
-    if constexpr (expected_tag != 0) {
-        if (_csize != 0 && _etype.code != expected_tag) {
-            return false;
+    {
+        size_t _csize;
+        yarp::os::idl::WireState _etype;
+        reader.readListBegin(_etype, _csize);
+        // WireReader removes BOTTLE_TAG_LIST from the tag
+        constexpr int expected_tag = ((BOTTLE_TAG_LIST) & (~BOTTLE_TAG_LIST));
+        if constexpr (expected_tag != 0) {
+            if (_csize != 0 && _etype.code != expected_tag) {
+                return false;
+            }
         }
+        transforms.resize(_csize);
+        for (size_t _i = 0; _i < _csize; ++_i) {
+            if (reader.noMore()) {
+                reader.fail();
+                return false;
+            }
+            if (!reader.readNested(transforms[_i])) {
+                reader.fail();
+                return false;
+            }
+        }
+        reader.readListEnd();
     }
-    transforms.resize(_csize);
-    for (size_t _i = 0; _i < _csize; ++_i) {
-        if (reader.noMore()) {
-            reader.fail();
-            return false;
-        }
-        if (!reader.readNested(transforms[_i])) {
-            reader.fail();
-            return false;
-        }
-    }
-    reader.readListEnd();
     if (!reader.noMore()) {
         reader.fail();
         return false;

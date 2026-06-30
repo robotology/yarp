@@ -172,28 +172,30 @@ bool SensorRPCData::read_ThreeAxisGyroscopes(yarp::os::idl::WireReader& reader)
         reader.fail();
         return false;
     }
-    size_t _csize;
-    yarp::os::idl::WireState _etype;
-    reader.readListBegin(_etype, _csize);
-    // WireReader removes BOTTLE_TAG_LIST from the tag
-    constexpr int expected_tag = ((BOTTLE_TAG_LIST) & (~BOTTLE_TAG_LIST));
-    if constexpr (expected_tag != 0) {
-        if (_csize != 0 && _etype.code != expected_tag) {
-            return false;
+    {
+        size_t _csize;
+        yarp::os::idl::WireState _etype;
+        reader.readListBegin(_etype, _csize);
+        // WireReader removes BOTTLE_TAG_LIST from the tag
+        constexpr int expected_tag = ((BOTTLE_TAG_LIST) & (~BOTTLE_TAG_LIST));
+        if constexpr (expected_tag != 0) {
+            if (_csize != 0 && _etype.code != expected_tag) {
+                return false;
+            }
         }
+        ThreeAxisGyroscopes.resize(_csize);
+        for (size_t _i = 0; _i < _csize; ++_i) {
+            if (reader.noMore()) {
+                reader.fail();
+                return false;
+            }
+            if (!reader.readNested(ThreeAxisGyroscopes[_i])) {
+                reader.fail();
+                return false;
+            }
+        }
+        reader.readListEnd();
     }
-    ThreeAxisGyroscopes.resize(_csize);
-    for (size_t _i = 0; _i < _csize; ++_i) {
-        if (reader.noMore()) {
-            reader.fail();
-            return false;
-        }
-        if (!reader.readNested(ThreeAxisGyroscopes[_i])) {
-            reader.fail();
-            return false;
-        }
-    }
-    reader.readListEnd();
     return true;
 }
 
@@ -221,28 +223,30 @@ bool SensorRPCData::nested_read_ThreeAxisGyroscopes(yarp::os::idl::WireReader& r
         reader.fail();
         return false;
     }
-    size_t _csize;
-    yarp::os::idl::WireState _etype;
-    reader.readListBegin(_etype, _csize);
-    // WireReader removes BOTTLE_TAG_LIST from the tag
-    constexpr int expected_tag = ((BOTTLE_TAG_LIST) & (~BOTTLE_TAG_LIST));
-    if constexpr (expected_tag != 0) {
-        if (_csize != 0 && _etype.code != expected_tag) {
-            return false;
+    {
+        size_t _csize;
+        yarp::os::idl::WireState _etype;
+        reader.readListBegin(_etype, _csize);
+        // WireReader removes BOTTLE_TAG_LIST from the tag
+        constexpr int expected_tag = ((BOTTLE_TAG_LIST) & (~BOTTLE_TAG_LIST));
+        if constexpr (expected_tag != 0) {
+            if (_csize != 0 && _etype.code != expected_tag) {
+                return false;
+            }
         }
+        ThreeAxisGyroscopes.resize(_csize);
+        for (size_t _i = 0; _i < _csize; ++_i) {
+            if (reader.noMore()) {
+                reader.fail();
+                return false;
+            }
+            if (!reader.readNested(ThreeAxisGyroscopes[_i])) {
+                reader.fail();
+                return false;
+            }
+        }
+        reader.readListEnd();
     }
-    ThreeAxisGyroscopes.resize(_csize);
-    for (size_t _i = 0; _i < _csize; ++_i) {
-        if (reader.noMore()) {
-            reader.fail();
-            return false;
-        }
-        if (!reader.readNested(ThreeAxisGyroscopes[_i])) {
-            reader.fail();
-            return false;
-        }
-    }
-    reader.readListEnd();
     return true;
 }
 
@@ -270,28 +274,30 @@ bool SensorRPCData::read_ThreeAxisLinearAccelerometers(yarp::os::idl::WireReader
         reader.fail();
         return false;
     }
-    size_t _csize;
-    yarp::os::idl::WireState _etype;
-    reader.readListBegin(_etype, _csize);
-    // WireReader removes BOTTLE_TAG_LIST from the tag
-    constexpr int expected_tag = ((BOTTLE_TAG_LIST) & (~BOTTLE_TAG_LIST));
-    if constexpr (expected_tag != 0) {
-        if (_csize != 0 && _etype.code != expected_tag) {
-            return false;
+    {
+        size_t _csize;
+        yarp::os::idl::WireState _etype;
+        reader.readListBegin(_etype, _csize);
+        // WireReader removes BOTTLE_TAG_LIST from the tag
+        constexpr int expected_tag = ((BOTTLE_TAG_LIST) & (~BOTTLE_TAG_LIST));
+        if constexpr (expected_tag != 0) {
+            if (_csize != 0 && _etype.code != expected_tag) {
+                return false;
+            }
         }
+        ThreeAxisLinearAccelerometers.resize(_csize);
+        for (size_t _i = 0; _i < _csize; ++_i) {
+            if (reader.noMore()) {
+                reader.fail();
+                return false;
+            }
+            if (!reader.readNested(ThreeAxisLinearAccelerometers[_i])) {
+                reader.fail();
+                return false;
+            }
+        }
+        reader.readListEnd();
     }
-    ThreeAxisLinearAccelerometers.resize(_csize);
-    for (size_t _i = 0; _i < _csize; ++_i) {
-        if (reader.noMore()) {
-            reader.fail();
-            return false;
-        }
-        if (!reader.readNested(ThreeAxisLinearAccelerometers[_i])) {
-            reader.fail();
-            return false;
-        }
-    }
-    reader.readListEnd();
     return true;
 }
 
@@ -319,28 +325,30 @@ bool SensorRPCData::nested_read_ThreeAxisLinearAccelerometers(yarp::os::idl::Wir
         reader.fail();
         return false;
     }
-    size_t _csize;
-    yarp::os::idl::WireState _etype;
-    reader.readListBegin(_etype, _csize);
-    // WireReader removes BOTTLE_TAG_LIST from the tag
-    constexpr int expected_tag = ((BOTTLE_TAG_LIST) & (~BOTTLE_TAG_LIST));
-    if constexpr (expected_tag != 0) {
-        if (_csize != 0 && _etype.code != expected_tag) {
-            return false;
+    {
+        size_t _csize;
+        yarp::os::idl::WireState _etype;
+        reader.readListBegin(_etype, _csize);
+        // WireReader removes BOTTLE_TAG_LIST from the tag
+        constexpr int expected_tag = ((BOTTLE_TAG_LIST) & (~BOTTLE_TAG_LIST));
+        if constexpr (expected_tag != 0) {
+            if (_csize != 0 && _etype.code != expected_tag) {
+                return false;
+            }
         }
+        ThreeAxisLinearAccelerometers.resize(_csize);
+        for (size_t _i = 0; _i < _csize; ++_i) {
+            if (reader.noMore()) {
+                reader.fail();
+                return false;
+            }
+            if (!reader.readNested(ThreeAxisLinearAccelerometers[_i])) {
+                reader.fail();
+                return false;
+            }
+        }
+        reader.readListEnd();
     }
-    ThreeAxisLinearAccelerometers.resize(_csize);
-    for (size_t _i = 0; _i < _csize; ++_i) {
-        if (reader.noMore()) {
-            reader.fail();
-            return false;
-        }
-        if (!reader.readNested(ThreeAxisLinearAccelerometers[_i])) {
-            reader.fail();
-            return false;
-        }
-    }
-    reader.readListEnd();
     return true;
 }
 
@@ -368,28 +376,30 @@ bool SensorRPCData::read_ThreeAxisMagnetometers(yarp::os::idl::WireReader& reade
         reader.fail();
         return false;
     }
-    size_t _csize;
-    yarp::os::idl::WireState _etype;
-    reader.readListBegin(_etype, _csize);
-    // WireReader removes BOTTLE_TAG_LIST from the tag
-    constexpr int expected_tag = ((BOTTLE_TAG_LIST) & (~BOTTLE_TAG_LIST));
-    if constexpr (expected_tag != 0) {
-        if (_csize != 0 && _etype.code != expected_tag) {
-            return false;
+    {
+        size_t _csize;
+        yarp::os::idl::WireState _etype;
+        reader.readListBegin(_etype, _csize);
+        // WireReader removes BOTTLE_TAG_LIST from the tag
+        constexpr int expected_tag = ((BOTTLE_TAG_LIST) & (~BOTTLE_TAG_LIST));
+        if constexpr (expected_tag != 0) {
+            if (_csize != 0 && _etype.code != expected_tag) {
+                return false;
+            }
         }
+        ThreeAxisMagnetometers.resize(_csize);
+        for (size_t _i = 0; _i < _csize; ++_i) {
+            if (reader.noMore()) {
+                reader.fail();
+                return false;
+            }
+            if (!reader.readNested(ThreeAxisMagnetometers[_i])) {
+                reader.fail();
+                return false;
+            }
+        }
+        reader.readListEnd();
     }
-    ThreeAxisMagnetometers.resize(_csize);
-    for (size_t _i = 0; _i < _csize; ++_i) {
-        if (reader.noMore()) {
-            reader.fail();
-            return false;
-        }
-        if (!reader.readNested(ThreeAxisMagnetometers[_i])) {
-            reader.fail();
-            return false;
-        }
-    }
-    reader.readListEnd();
     return true;
 }
 
@@ -417,28 +427,30 @@ bool SensorRPCData::nested_read_ThreeAxisMagnetometers(yarp::os::idl::WireReader
         reader.fail();
         return false;
     }
-    size_t _csize;
-    yarp::os::idl::WireState _etype;
-    reader.readListBegin(_etype, _csize);
-    // WireReader removes BOTTLE_TAG_LIST from the tag
-    constexpr int expected_tag = ((BOTTLE_TAG_LIST) & (~BOTTLE_TAG_LIST));
-    if constexpr (expected_tag != 0) {
-        if (_csize != 0 && _etype.code != expected_tag) {
-            return false;
+    {
+        size_t _csize;
+        yarp::os::idl::WireState _etype;
+        reader.readListBegin(_etype, _csize);
+        // WireReader removes BOTTLE_TAG_LIST from the tag
+        constexpr int expected_tag = ((BOTTLE_TAG_LIST) & (~BOTTLE_TAG_LIST));
+        if constexpr (expected_tag != 0) {
+            if (_csize != 0 && _etype.code != expected_tag) {
+                return false;
+            }
         }
+        ThreeAxisMagnetometers.resize(_csize);
+        for (size_t _i = 0; _i < _csize; ++_i) {
+            if (reader.noMore()) {
+                reader.fail();
+                return false;
+            }
+            if (!reader.readNested(ThreeAxisMagnetometers[_i])) {
+                reader.fail();
+                return false;
+            }
+        }
+        reader.readListEnd();
     }
-    ThreeAxisMagnetometers.resize(_csize);
-    for (size_t _i = 0; _i < _csize; ++_i) {
-        if (reader.noMore()) {
-            reader.fail();
-            return false;
-        }
-        if (!reader.readNested(ThreeAxisMagnetometers[_i])) {
-            reader.fail();
-            return false;
-        }
-    }
-    reader.readListEnd();
     return true;
 }
 
@@ -466,28 +478,30 @@ bool SensorRPCData::read_OrientationSensors(yarp::os::idl::WireReader& reader)
         reader.fail();
         return false;
     }
-    size_t _csize;
-    yarp::os::idl::WireState _etype;
-    reader.readListBegin(_etype, _csize);
-    // WireReader removes BOTTLE_TAG_LIST from the tag
-    constexpr int expected_tag = ((BOTTLE_TAG_LIST) & (~BOTTLE_TAG_LIST));
-    if constexpr (expected_tag != 0) {
-        if (_csize != 0 && _etype.code != expected_tag) {
-            return false;
+    {
+        size_t _csize;
+        yarp::os::idl::WireState _etype;
+        reader.readListBegin(_etype, _csize);
+        // WireReader removes BOTTLE_TAG_LIST from the tag
+        constexpr int expected_tag = ((BOTTLE_TAG_LIST) & (~BOTTLE_TAG_LIST));
+        if constexpr (expected_tag != 0) {
+            if (_csize != 0 && _etype.code != expected_tag) {
+                return false;
+            }
         }
+        OrientationSensors.resize(_csize);
+        for (size_t _i = 0; _i < _csize; ++_i) {
+            if (reader.noMore()) {
+                reader.fail();
+                return false;
+            }
+            if (!reader.readNested(OrientationSensors[_i])) {
+                reader.fail();
+                return false;
+            }
+        }
+        reader.readListEnd();
     }
-    OrientationSensors.resize(_csize);
-    for (size_t _i = 0; _i < _csize; ++_i) {
-        if (reader.noMore()) {
-            reader.fail();
-            return false;
-        }
-        if (!reader.readNested(OrientationSensors[_i])) {
-            reader.fail();
-            return false;
-        }
-    }
-    reader.readListEnd();
     return true;
 }
 
@@ -515,28 +529,30 @@ bool SensorRPCData::nested_read_OrientationSensors(yarp::os::idl::WireReader& re
         reader.fail();
         return false;
     }
-    size_t _csize;
-    yarp::os::idl::WireState _etype;
-    reader.readListBegin(_etype, _csize);
-    // WireReader removes BOTTLE_TAG_LIST from the tag
-    constexpr int expected_tag = ((BOTTLE_TAG_LIST) & (~BOTTLE_TAG_LIST));
-    if constexpr (expected_tag != 0) {
-        if (_csize != 0 && _etype.code != expected_tag) {
-            return false;
+    {
+        size_t _csize;
+        yarp::os::idl::WireState _etype;
+        reader.readListBegin(_etype, _csize);
+        // WireReader removes BOTTLE_TAG_LIST from the tag
+        constexpr int expected_tag = ((BOTTLE_TAG_LIST) & (~BOTTLE_TAG_LIST));
+        if constexpr (expected_tag != 0) {
+            if (_csize != 0 && _etype.code != expected_tag) {
+                return false;
+            }
         }
+        OrientationSensors.resize(_csize);
+        for (size_t _i = 0; _i < _csize; ++_i) {
+            if (reader.noMore()) {
+                reader.fail();
+                return false;
+            }
+            if (!reader.readNested(OrientationSensors[_i])) {
+                reader.fail();
+                return false;
+            }
+        }
+        reader.readListEnd();
     }
-    OrientationSensors.resize(_csize);
-    for (size_t _i = 0; _i < _csize; ++_i) {
-        if (reader.noMore()) {
-            reader.fail();
-            return false;
-        }
-        if (!reader.readNested(OrientationSensors[_i])) {
-            reader.fail();
-            return false;
-        }
-    }
-    reader.readListEnd();
     return true;
 }
 
@@ -564,28 +580,30 @@ bool SensorRPCData::read_TemperatureSensors(yarp::os::idl::WireReader& reader)
         reader.fail();
         return false;
     }
-    size_t _csize;
-    yarp::os::idl::WireState _etype;
-    reader.readListBegin(_etype, _csize);
-    // WireReader removes BOTTLE_TAG_LIST from the tag
-    constexpr int expected_tag = ((BOTTLE_TAG_LIST) & (~BOTTLE_TAG_LIST));
-    if constexpr (expected_tag != 0) {
-        if (_csize != 0 && _etype.code != expected_tag) {
-            return false;
+    {
+        size_t _csize;
+        yarp::os::idl::WireState _etype;
+        reader.readListBegin(_etype, _csize);
+        // WireReader removes BOTTLE_TAG_LIST from the tag
+        constexpr int expected_tag = ((BOTTLE_TAG_LIST) & (~BOTTLE_TAG_LIST));
+        if constexpr (expected_tag != 0) {
+            if (_csize != 0 && _etype.code != expected_tag) {
+                return false;
+            }
         }
+        TemperatureSensors.resize(_csize);
+        for (size_t _i = 0; _i < _csize; ++_i) {
+            if (reader.noMore()) {
+                reader.fail();
+                return false;
+            }
+            if (!reader.readNested(TemperatureSensors[_i])) {
+                reader.fail();
+                return false;
+            }
+        }
+        reader.readListEnd();
     }
-    TemperatureSensors.resize(_csize);
-    for (size_t _i = 0; _i < _csize; ++_i) {
-        if (reader.noMore()) {
-            reader.fail();
-            return false;
-        }
-        if (!reader.readNested(TemperatureSensors[_i])) {
-            reader.fail();
-            return false;
-        }
-    }
-    reader.readListEnd();
     return true;
 }
 
@@ -613,28 +631,30 @@ bool SensorRPCData::nested_read_TemperatureSensors(yarp::os::idl::WireReader& re
         reader.fail();
         return false;
     }
-    size_t _csize;
-    yarp::os::idl::WireState _etype;
-    reader.readListBegin(_etype, _csize);
-    // WireReader removes BOTTLE_TAG_LIST from the tag
-    constexpr int expected_tag = ((BOTTLE_TAG_LIST) & (~BOTTLE_TAG_LIST));
-    if constexpr (expected_tag != 0) {
-        if (_csize != 0 && _etype.code != expected_tag) {
-            return false;
+    {
+        size_t _csize;
+        yarp::os::idl::WireState _etype;
+        reader.readListBegin(_etype, _csize);
+        // WireReader removes BOTTLE_TAG_LIST from the tag
+        constexpr int expected_tag = ((BOTTLE_TAG_LIST) & (~BOTTLE_TAG_LIST));
+        if constexpr (expected_tag != 0) {
+            if (_csize != 0 && _etype.code != expected_tag) {
+                return false;
+            }
         }
+        TemperatureSensors.resize(_csize);
+        for (size_t _i = 0; _i < _csize; ++_i) {
+            if (reader.noMore()) {
+                reader.fail();
+                return false;
+            }
+            if (!reader.readNested(TemperatureSensors[_i])) {
+                reader.fail();
+                return false;
+            }
+        }
+        reader.readListEnd();
     }
-    TemperatureSensors.resize(_csize);
-    for (size_t _i = 0; _i < _csize; ++_i) {
-        if (reader.noMore()) {
-            reader.fail();
-            return false;
-        }
-        if (!reader.readNested(TemperatureSensors[_i])) {
-            reader.fail();
-            return false;
-        }
-    }
-    reader.readListEnd();
     return true;
 }
 
@@ -662,28 +682,30 @@ bool SensorRPCData::read_SixAxisForceTorqueSensors(yarp::os::idl::WireReader& re
         reader.fail();
         return false;
     }
-    size_t _csize;
-    yarp::os::idl::WireState _etype;
-    reader.readListBegin(_etype, _csize);
-    // WireReader removes BOTTLE_TAG_LIST from the tag
-    constexpr int expected_tag = ((BOTTLE_TAG_LIST) & (~BOTTLE_TAG_LIST));
-    if constexpr (expected_tag != 0) {
-        if (_csize != 0 && _etype.code != expected_tag) {
-            return false;
+    {
+        size_t _csize;
+        yarp::os::idl::WireState _etype;
+        reader.readListBegin(_etype, _csize);
+        // WireReader removes BOTTLE_TAG_LIST from the tag
+        constexpr int expected_tag = ((BOTTLE_TAG_LIST) & (~BOTTLE_TAG_LIST));
+        if constexpr (expected_tag != 0) {
+            if (_csize != 0 && _etype.code != expected_tag) {
+                return false;
+            }
         }
+        SixAxisForceTorqueSensors.resize(_csize);
+        for (size_t _i = 0; _i < _csize; ++_i) {
+            if (reader.noMore()) {
+                reader.fail();
+                return false;
+            }
+            if (!reader.readNested(SixAxisForceTorqueSensors[_i])) {
+                reader.fail();
+                return false;
+            }
+        }
+        reader.readListEnd();
     }
-    SixAxisForceTorqueSensors.resize(_csize);
-    for (size_t _i = 0; _i < _csize; ++_i) {
-        if (reader.noMore()) {
-            reader.fail();
-            return false;
-        }
-        if (!reader.readNested(SixAxisForceTorqueSensors[_i])) {
-            reader.fail();
-            return false;
-        }
-    }
-    reader.readListEnd();
     return true;
 }
 
@@ -711,28 +733,30 @@ bool SensorRPCData::nested_read_SixAxisForceTorqueSensors(yarp::os::idl::WireRea
         reader.fail();
         return false;
     }
-    size_t _csize;
-    yarp::os::idl::WireState _etype;
-    reader.readListBegin(_etype, _csize);
-    // WireReader removes BOTTLE_TAG_LIST from the tag
-    constexpr int expected_tag = ((BOTTLE_TAG_LIST) & (~BOTTLE_TAG_LIST));
-    if constexpr (expected_tag != 0) {
-        if (_csize != 0 && _etype.code != expected_tag) {
-            return false;
+    {
+        size_t _csize;
+        yarp::os::idl::WireState _etype;
+        reader.readListBegin(_etype, _csize);
+        // WireReader removes BOTTLE_TAG_LIST from the tag
+        constexpr int expected_tag = ((BOTTLE_TAG_LIST) & (~BOTTLE_TAG_LIST));
+        if constexpr (expected_tag != 0) {
+            if (_csize != 0 && _etype.code != expected_tag) {
+                return false;
+            }
         }
+        SixAxisForceTorqueSensors.resize(_csize);
+        for (size_t _i = 0; _i < _csize; ++_i) {
+            if (reader.noMore()) {
+                reader.fail();
+                return false;
+            }
+            if (!reader.readNested(SixAxisForceTorqueSensors[_i])) {
+                reader.fail();
+                return false;
+            }
+        }
+        reader.readListEnd();
     }
-    SixAxisForceTorqueSensors.resize(_csize);
-    for (size_t _i = 0; _i < _csize; ++_i) {
-        if (reader.noMore()) {
-            reader.fail();
-            return false;
-        }
-        if (!reader.readNested(SixAxisForceTorqueSensors[_i])) {
-            reader.fail();
-            return false;
-        }
-    }
-    reader.readListEnd();
     return true;
 }
 
@@ -760,28 +784,30 @@ bool SensorRPCData::read_ContactLoadCellArrays(yarp::os::idl::WireReader& reader
         reader.fail();
         return false;
     }
-    size_t _csize;
-    yarp::os::idl::WireState _etype;
-    reader.readListBegin(_etype, _csize);
-    // WireReader removes BOTTLE_TAG_LIST from the tag
-    constexpr int expected_tag = ((BOTTLE_TAG_LIST) & (~BOTTLE_TAG_LIST));
-    if constexpr (expected_tag != 0) {
-        if (_csize != 0 && _etype.code != expected_tag) {
-            return false;
+    {
+        size_t _csize;
+        yarp::os::idl::WireState _etype;
+        reader.readListBegin(_etype, _csize);
+        // WireReader removes BOTTLE_TAG_LIST from the tag
+        constexpr int expected_tag = ((BOTTLE_TAG_LIST) & (~BOTTLE_TAG_LIST));
+        if constexpr (expected_tag != 0) {
+            if (_csize != 0 && _etype.code != expected_tag) {
+                return false;
+            }
         }
+        ContactLoadCellArrays.resize(_csize);
+        for (size_t _i = 0; _i < _csize; ++_i) {
+            if (reader.noMore()) {
+                reader.fail();
+                return false;
+            }
+            if (!reader.readNested(ContactLoadCellArrays[_i])) {
+                reader.fail();
+                return false;
+            }
+        }
+        reader.readListEnd();
     }
-    ContactLoadCellArrays.resize(_csize);
-    for (size_t _i = 0; _i < _csize; ++_i) {
-        if (reader.noMore()) {
-            reader.fail();
-            return false;
-        }
-        if (!reader.readNested(ContactLoadCellArrays[_i])) {
-            reader.fail();
-            return false;
-        }
-    }
-    reader.readListEnd();
     return true;
 }
 
@@ -809,28 +835,30 @@ bool SensorRPCData::nested_read_ContactLoadCellArrays(yarp::os::idl::WireReader&
         reader.fail();
         return false;
     }
-    size_t _csize;
-    yarp::os::idl::WireState _etype;
-    reader.readListBegin(_etype, _csize);
-    // WireReader removes BOTTLE_TAG_LIST from the tag
-    constexpr int expected_tag = ((BOTTLE_TAG_LIST) & (~BOTTLE_TAG_LIST));
-    if constexpr (expected_tag != 0) {
-        if (_csize != 0 && _etype.code != expected_tag) {
-            return false;
+    {
+        size_t _csize;
+        yarp::os::idl::WireState _etype;
+        reader.readListBegin(_etype, _csize);
+        // WireReader removes BOTTLE_TAG_LIST from the tag
+        constexpr int expected_tag = ((BOTTLE_TAG_LIST) & (~BOTTLE_TAG_LIST));
+        if constexpr (expected_tag != 0) {
+            if (_csize != 0 && _etype.code != expected_tag) {
+                return false;
+            }
         }
+        ContactLoadCellArrays.resize(_csize);
+        for (size_t _i = 0; _i < _csize; ++_i) {
+            if (reader.noMore()) {
+                reader.fail();
+                return false;
+            }
+            if (!reader.readNested(ContactLoadCellArrays[_i])) {
+                reader.fail();
+                return false;
+            }
+        }
+        reader.readListEnd();
     }
-    ContactLoadCellArrays.resize(_csize);
-    for (size_t _i = 0; _i < _csize; ++_i) {
-        if (reader.noMore()) {
-            reader.fail();
-            return false;
-        }
-        if (!reader.readNested(ContactLoadCellArrays[_i])) {
-            reader.fail();
-            return false;
-        }
-    }
-    reader.readListEnd();
     return true;
 }
 
@@ -858,28 +886,30 @@ bool SensorRPCData::read_EncoderArrays(yarp::os::idl::WireReader& reader)
         reader.fail();
         return false;
     }
-    size_t _csize;
-    yarp::os::idl::WireState _etype;
-    reader.readListBegin(_etype, _csize);
-    // WireReader removes BOTTLE_TAG_LIST from the tag
-    constexpr int expected_tag = ((BOTTLE_TAG_LIST) & (~BOTTLE_TAG_LIST));
-    if constexpr (expected_tag != 0) {
-        if (_csize != 0 && _etype.code != expected_tag) {
-            return false;
+    {
+        size_t _csize;
+        yarp::os::idl::WireState _etype;
+        reader.readListBegin(_etype, _csize);
+        // WireReader removes BOTTLE_TAG_LIST from the tag
+        constexpr int expected_tag = ((BOTTLE_TAG_LIST) & (~BOTTLE_TAG_LIST));
+        if constexpr (expected_tag != 0) {
+            if (_csize != 0 && _etype.code != expected_tag) {
+                return false;
+            }
         }
+        EncoderArrays.resize(_csize);
+        for (size_t _i = 0; _i < _csize; ++_i) {
+            if (reader.noMore()) {
+                reader.fail();
+                return false;
+            }
+            if (!reader.readNested(EncoderArrays[_i])) {
+                reader.fail();
+                return false;
+            }
+        }
+        reader.readListEnd();
     }
-    EncoderArrays.resize(_csize);
-    for (size_t _i = 0; _i < _csize; ++_i) {
-        if (reader.noMore()) {
-            reader.fail();
-            return false;
-        }
-        if (!reader.readNested(EncoderArrays[_i])) {
-            reader.fail();
-            return false;
-        }
-    }
-    reader.readListEnd();
     return true;
 }
 
@@ -907,28 +937,30 @@ bool SensorRPCData::nested_read_EncoderArrays(yarp::os::idl::WireReader& reader)
         reader.fail();
         return false;
     }
-    size_t _csize;
-    yarp::os::idl::WireState _etype;
-    reader.readListBegin(_etype, _csize);
-    // WireReader removes BOTTLE_TAG_LIST from the tag
-    constexpr int expected_tag = ((BOTTLE_TAG_LIST) & (~BOTTLE_TAG_LIST));
-    if constexpr (expected_tag != 0) {
-        if (_csize != 0 && _etype.code != expected_tag) {
-            return false;
+    {
+        size_t _csize;
+        yarp::os::idl::WireState _etype;
+        reader.readListBegin(_etype, _csize);
+        // WireReader removes BOTTLE_TAG_LIST from the tag
+        constexpr int expected_tag = ((BOTTLE_TAG_LIST) & (~BOTTLE_TAG_LIST));
+        if constexpr (expected_tag != 0) {
+            if (_csize != 0 && _etype.code != expected_tag) {
+                return false;
+            }
         }
+        EncoderArrays.resize(_csize);
+        for (size_t _i = 0; _i < _csize; ++_i) {
+            if (reader.noMore()) {
+                reader.fail();
+                return false;
+            }
+            if (!reader.readNested(EncoderArrays[_i])) {
+                reader.fail();
+                return false;
+            }
+        }
+        reader.readListEnd();
     }
-    EncoderArrays.resize(_csize);
-    for (size_t _i = 0; _i < _csize; ++_i) {
-        if (reader.noMore()) {
-            reader.fail();
-            return false;
-        }
-        if (!reader.readNested(EncoderArrays[_i])) {
-            reader.fail();
-            return false;
-        }
-    }
-    reader.readListEnd();
     return true;
 }
 
@@ -956,28 +988,30 @@ bool SensorRPCData::read_SkinPatches(yarp::os::idl::WireReader& reader)
         reader.fail();
         return false;
     }
-    size_t _csize;
-    yarp::os::idl::WireState _etype;
-    reader.readListBegin(_etype, _csize);
-    // WireReader removes BOTTLE_TAG_LIST from the tag
-    constexpr int expected_tag = ((BOTTLE_TAG_LIST) & (~BOTTLE_TAG_LIST));
-    if constexpr (expected_tag != 0) {
-        if (_csize != 0 && _etype.code != expected_tag) {
-            return false;
+    {
+        size_t _csize;
+        yarp::os::idl::WireState _etype;
+        reader.readListBegin(_etype, _csize);
+        // WireReader removes BOTTLE_TAG_LIST from the tag
+        constexpr int expected_tag = ((BOTTLE_TAG_LIST) & (~BOTTLE_TAG_LIST));
+        if constexpr (expected_tag != 0) {
+            if (_csize != 0 && _etype.code != expected_tag) {
+                return false;
+            }
         }
+        SkinPatches.resize(_csize);
+        for (size_t _i = 0; _i < _csize; ++_i) {
+            if (reader.noMore()) {
+                reader.fail();
+                return false;
+            }
+            if (!reader.readNested(SkinPatches[_i])) {
+                reader.fail();
+                return false;
+            }
+        }
+        reader.readListEnd();
     }
-    SkinPatches.resize(_csize);
-    for (size_t _i = 0; _i < _csize; ++_i) {
-        if (reader.noMore()) {
-            reader.fail();
-            return false;
-        }
-        if (!reader.readNested(SkinPatches[_i])) {
-            reader.fail();
-            return false;
-        }
-    }
-    reader.readListEnd();
     return true;
 }
 
@@ -1005,28 +1039,30 @@ bool SensorRPCData::nested_read_SkinPatches(yarp::os::idl::WireReader& reader)
         reader.fail();
         return false;
     }
-    size_t _csize;
-    yarp::os::idl::WireState _etype;
-    reader.readListBegin(_etype, _csize);
-    // WireReader removes BOTTLE_TAG_LIST from the tag
-    constexpr int expected_tag = ((BOTTLE_TAG_LIST) & (~BOTTLE_TAG_LIST));
-    if constexpr (expected_tag != 0) {
-        if (_csize != 0 && _etype.code != expected_tag) {
-            return false;
+    {
+        size_t _csize;
+        yarp::os::idl::WireState _etype;
+        reader.readListBegin(_etype, _csize);
+        // WireReader removes BOTTLE_TAG_LIST from the tag
+        constexpr int expected_tag = ((BOTTLE_TAG_LIST) & (~BOTTLE_TAG_LIST));
+        if constexpr (expected_tag != 0) {
+            if (_csize != 0 && _etype.code != expected_tag) {
+                return false;
+            }
         }
+        SkinPatches.resize(_csize);
+        for (size_t _i = 0; _i < _csize; ++_i) {
+            if (reader.noMore()) {
+                reader.fail();
+                return false;
+            }
+            if (!reader.readNested(SkinPatches[_i])) {
+                reader.fail();
+                return false;
+            }
+        }
+        reader.readListEnd();
     }
-    SkinPatches.resize(_csize);
-    for (size_t _i = 0; _i < _csize; ++_i) {
-        if (reader.noMore()) {
-            reader.fail();
-            return false;
-        }
-        if (!reader.readNested(SkinPatches[_i])) {
-            reader.fail();
-            return false;
-        }
-    }
-    reader.readListEnd();
     return true;
 }
 
@@ -1054,28 +1090,30 @@ bool SensorRPCData::read_PositionSensors(yarp::os::idl::WireReader& reader)
         reader.fail();
         return false;
     }
-    size_t _csize;
-    yarp::os::idl::WireState _etype;
-    reader.readListBegin(_etype, _csize);
-    // WireReader removes BOTTLE_TAG_LIST from the tag
-    constexpr int expected_tag = ((BOTTLE_TAG_LIST) & (~BOTTLE_TAG_LIST));
-    if constexpr (expected_tag != 0) {
-        if (_csize != 0 && _etype.code != expected_tag) {
-            return false;
+    {
+        size_t _csize;
+        yarp::os::idl::WireState _etype;
+        reader.readListBegin(_etype, _csize);
+        // WireReader removes BOTTLE_TAG_LIST from the tag
+        constexpr int expected_tag = ((BOTTLE_TAG_LIST) & (~BOTTLE_TAG_LIST));
+        if constexpr (expected_tag != 0) {
+            if (_csize != 0 && _etype.code != expected_tag) {
+                return false;
+            }
         }
+        PositionSensors.resize(_csize);
+        for (size_t _i = 0; _i < _csize; ++_i) {
+            if (reader.noMore()) {
+                reader.fail();
+                return false;
+            }
+            if (!reader.readNested(PositionSensors[_i])) {
+                reader.fail();
+                return false;
+            }
+        }
+        reader.readListEnd();
     }
-    PositionSensors.resize(_csize);
-    for (size_t _i = 0; _i < _csize; ++_i) {
-        if (reader.noMore()) {
-            reader.fail();
-            return false;
-        }
-        if (!reader.readNested(PositionSensors[_i])) {
-            reader.fail();
-            return false;
-        }
-    }
-    reader.readListEnd();
     return true;
 }
 
@@ -1103,28 +1141,30 @@ bool SensorRPCData::nested_read_PositionSensors(yarp::os::idl::WireReader& reade
         reader.fail();
         return false;
     }
-    size_t _csize;
-    yarp::os::idl::WireState _etype;
-    reader.readListBegin(_etype, _csize);
-    // WireReader removes BOTTLE_TAG_LIST from the tag
-    constexpr int expected_tag = ((BOTTLE_TAG_LIST) & (~BOTTLE_TAG_LIST));
-    if constexpr (expected_tag != 0) {
-        if (_csize != 0 && _etype.code != expected_tag) {
-            return false;
+    {
+        size_t _csize;
+        yarp::os::idl::WireState _etype;
+        reader.readListBegin(_etype, _csize);
+        // WireReader removes BOTTLE_TAG_LIST from the tag
+        constexpr int expected_tag = ((BOTTLE_TAG_LIST) & (~BOTTLE_TAG_LIST));
+        if constexpr (expected_tag != 0) {
+            if (_csize != 0 && _etype.code != expected_tag) {
+                return false;
+            }
         }
+        PositionSensors.resize(_csize);
+        for (size_t _i = 0; _i < _csize; ++_i) {
+            if (reader.noMore()) {
+                reader.fail();
+                return false;
+            }
+            if (!reader.readNested(PositionSensors[_i])) {
+                reader.fail();
+                return false;
+            }
+        }
+        reader.readListEnd();
     }
-    PositionSensors.resize(_csize);
-    for (size_t _i = 0; _i < _csize; ++_i) {
-        if (reader.noMore()) {
-            reader.fail();
-            return false;
-        }
-        if (!reader.readNested(PositionSensors[_i])) {
-            reader.fail();
-            return false;
-        }
-    }
-    reader.readListEnd();
     return true;
 }
 
@@ -1152,28 +1192,30 @@ bool SensorRPCData::read_LinearVelocitySensors(yarp::os::idl::WireReader& reader
         reader.fail();
         return false;
     }
-    size_t _csize;
-    yarp::os::idl::WireState _etype;
-    reader.readListBegin(_etype, _csize);
-    // WireReader removes BOTTLE_TAG_LIST from the tag
-    constexpr int expected_tag = ((BOTTLE_TAG_LIST) & (~BOTTLE_TAG_LIST));
-    if constexpr (expected_tag != 0) {
-        if (_csize != 0 && _etype.code != expected_tag) {
-            return false;
+    {
+        size_t _csize;
+        yarp::os::idl::WireState _etype;
+        reader.readListBegin(_etype, _csize);
+        // WireReader removes BOTTLE_TAG_LIST from the tag
+        constexpr int expected_tag = ((BOTTLE_TAG_LIST) & (~BOTTLE_TAG_LIST));
+        if constexpr (expected_tag != 0) {
+            if (_csize != 0 && _etype.code != expected_tag) {
+                return false;
+            }
         }
+        LinearVelocitySensors.resize(_csize);
+        for (size_t _i = 0; _i < _csize; ++_i) {
+            if (reader.noMore()) {
+                reader.fail();
+                return false;
+            }
+            if (!reader.readNested(LinearVelocitySensors[_i])) {
+                reader.fail();
+                return false;
+            }
+        }
+        reader.readListEnd();
     }
-    LinearVelocitySensors.resize(_csize);
-    for (size_t _i = 0; _i < _csize; ++_i) {
-        if (reader.noMore()) {
-            reader.fail();
-            return false;
-        }
-        if (!reader.readNested(LinearVelocitySensors[_i])) {
-            reader.fail();
-            return false;
-        }
-    }
-    reader.readListEnd();
     return true;
 }
 
@@ -1201,28 +1243,30 @@ bool SensorRPCData::nested_read_LinearVelocitySensors(yarp::os::idl::WireReader&
         reader.fail();
         return false;
     }
-    size_t _csize;
-    yarp::os::idl::WireState _etype;
-    reader.readListBegin(_etype, _csize);
-    // WireReader removes BOTTLE_TAG_LIST from the tag
-    constexpr int expected_tag = ((BOTTLE_TAG_LIST) & (~BOTTLE_TAG_LIST));
-    if constexpr (expected_tag != 0) {
-        if (_csize != 0 && _etype.code != expected_tag) {
-            return false;
+    {
+        size_t _csize;
+        yarp::os::idl::WireState _etype;
+        reader.readListBegin(_etype, _csize);
+        // WireReader removes BOTTLE_TAG_LIST from the tag
+        constexpr int expected_tag = ((BOTTLE_TAG_LIST) & (~BOTTLE_TAG_LIST));
+        if constexpr (expected_tag != 0) {
+            if (_csize != 0 && _etype.code != expected_tag) {
+                return false;
+            }
         }
+        LinearVelocitySensors.resize(_csize);
+        for (size_t _i = 0; _i < _csize; ++_i) {
+            if (reader.noMore()) {
+                reader.fail();
+                return false;
+            }
+            if (!reader.readNested(LinearVelocitySensors[_i])) {
+                reader.fail();
+                return false;
+            }
+        }
+        reader.readListEnd();
     }
-    LinearVelocitySensors.resize(_csize);
-    for (size_t _i = 0; _i < _csize; ++_i) {
-        if (reader.noMore()) {
-            reader.fail();
-            return false;
-        }
-        if (!reader.readNested(LinearVelocitySensors[_i])) {
-            reader.fail();
-            return false;
-        }
-    }
-    reader.readListEnd();
     return true;
 }
 
@@ -1250,28 +1294,30 @@ bool SensorRPCData::read_ThreeAxisAngularAccelerometers(yarp::os::idl::WireReade
         reader.fail();
         return false;
     }
-    size_t _csize;
-    yarp::os::idl::WireState _etype;
-    reader.readListBegin(_etype, _csize);
-    // WireReader removes BOTTLE_TAG_LIST from the tag
-    constexpr int expected_tag = ((BOTTLE_TAG_LIST) & (~BOTTLE_TAG_LIST));
-    if constexpr (expected_tag != 0) {
-        if (_csize != 0 && _etype.code != expected_tag) {
-            return false;
+    {
+        size_t _csize;
+        yarp::os::idl::WireState _etype;
+        reader.readListBegin(_etype, _csize);
+        // WireReader removes BOTTLE_TAG_LIST from the tag
+        constexpr int expected_tag = ((BOTTLE_TAG_LIST) & (~BOTTLE_TAG_LIST));
+        if constexpr (expected_tag != 0) {
+            if (_csize != 0 && _etype.code != expected_tag) {
+                return false;
+            }
         }
+        ThreeAxisAngularAccelerometers.resize(_csize);
+        for (size_t _i = 0; _i < _csize; ++_i) {
+            if (reader.noMore()) {
+                reader.fail();
+                return false;
+            }
+            if (!reader.readNested(ThreeAxisAngularAccelerometers[_i])) {
+                reader.fail();
+                return false;
+            }
+        }
+        reader.readListEnd();
     }
-    ThreeAxisAngularAccelerometers.resize(_csize);
-    for (size_t _i = 0; _i < _csize; ++_i) {
-        if (reader.noMore()) {
-            reader.fail();
-            return false;
-        }
-        if (!reader.readNested(ThreeAxisAngularAccelerometers[_i])) {
-            reader.fail();
-            return false;
-        }
-    }
-    reader.readListEnd();
     return true;
 }
 
@@ -1299,28 +1345,30 @@ bool SensorRPCData::nested_read_ThreeAxisAngularAccelerometers(yarp::os::idl::Wi
         reader.fail();
         return false;
     }
-    size_t _csize;
-    yarp::os::idl::WireState _etype;
-    reader.readListBegin(_etype, _csize);
-    // WireReader removes BOTTLE_TAG_LIST from the tag
-    constexpr int expected_tag = ((BOTTLE_TAG_LIST) & (~BOTTLE_TAG_LIST));
-    if constexpr (expected_tag != 0) {
-        if (_csize != 0 && _etype.code != expected_tag) {
-            return false;
+    {
+        size_t _csize;
+        yarp::os::idl::WireState _etype;
+        reader.readListBegin(_etype, _csize);
+        // WireReader removes BOTTLE_TAG_LIST from the tag
+        constexpr int expected_tag = ((BOTTLE_TAG_LIST) & (~BOTTLE_TAG_LIST));
+        if constexpr (expected_tag != 0) {
+            if (_csize != 0 && _etype.code != expected_tag) {
+                return false;
+            }
         }
+        ThreeAxisAngularAccelerometers.resize(_csize);
+        for (size_t _i = 0; _i < _csize; ++_i) {
+            if (reader.noMore()) {
+                reader.fail();
+                return false;
+            }
+            if (!reader.readNested(ThreeAxisAngularAccelerometers[_i])) {
+                reader.fail();
+                return false;
+            }
+        }
+        reader.readListEnd();
     }
-    ThreeAxisAngularAccelerometers.resize(_csize);
-    for (size_t _i = 0; _i < _csize; ++_i) {
-        if (reader.noMore()) {
-            reader.fail();
-            return false;
-        }
-        if (!reader.readNested(ThreeAxisAngularAccelerometers[_i])) {
-            reader.fail();
-            return false;
-        }
-    }
-    reader.readListEnd();
     return true;
 }
 
