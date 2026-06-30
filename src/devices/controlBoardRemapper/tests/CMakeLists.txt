@@ -4,3 +4,4 @@
 create_device_test(controlBoardRemapper_t1)
 create_device_test(controlBoardRemapper_t2)
 create_device_test(controlBoardRemapper_t3)
+create_device_test(controlBoardRemapper_t4)

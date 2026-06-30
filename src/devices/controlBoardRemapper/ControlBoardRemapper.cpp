@@ -435,16 +435,29 @@ bool ControlBoardRemapper::attachAllUsingNetworks(const PolyDriverList &polylist
 
         // find appropriate entry in list of subdevices and attach
         unsigned int k=0;
+        size_t attached_device_counter=0;
         for(k=0; k<remappedControlBoards.getNrOfSubControlBoards(); k++)
         {
             if (remappedControlBoards.subdevices[k].id==subDeviceKey)
             {
                 if (!remappedControlBoards.subdevices[k].attach(polylist[p]->poly, subDeviceKey))
                 {
-                    yCError(CONTROLBOARDREMAPPER, "attach to subdevice %s failed", polylist[p]->key.c_str());
+                    yCError(CONTROLBOARDREMAPPER, "attach to subdevice %s failed", subDeviceKey.c_str());
                     return false;
                 }
+                attached_device_counter++;
             }
+        }
+        if (attached_device_counter==0)
+        {
+            yCError(CONTROLBOARDREMAPPER, "subdevice %s not found in the list of subdevices", subDeviceKey.c_str());
+            std::string list_of_valid;
+            for (auto it = remappedControlBoards.subdevices.begin(); it != remappedControlBoards.subdevices.end(); ++it)
+            {
+                list_of_valid += it->id + " ";
+            }
+            yCError(CONTROLBOARDREMAPPER, "Valid options are: %s", list_of_valid.c_str());
+            return false;
         }
     }
 
