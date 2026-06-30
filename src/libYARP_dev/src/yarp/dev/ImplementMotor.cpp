@@ -10,6 +10,10 @@
 #include <cstdio>
 using namespace yarp::dev;
 
+namespace {
+YARP_LOG_COMPONENT(IMPLEMENT_LAYER_COMPONENT, "yarp.ImplementMotor")
+}
+
 ////////////////////////
 // Encoder Interface Timed Implementation
 ImplementMotor::ImplementMotor(IMotorRaw *y) :
@@ -55,7 +59,7 @@ bool ImplementMotor::uninitialize ()
 ReturnValue ImplementMotor::getNumberOfMotors(int *num)
 {
     std::lock_guard lock(m_imp_mutex);
-    POINTERCHECK(num)
+    POINTERCHECK(IMPLEMENT_LAYER_COMPONENT,num)
 
     (*num)=castToMapper(m_helper)->axes();
     return ReturnValue_ok;
@@ -64,8 +68,8 @@ ReturnValue ImplementMotor::getNumberOfMotors(int *num)
 ReturnValue ImplementMotor::getTemperature(int m, double* value)
 {
     std::lock_guard lock(m_imp_mutex);
-    JOINTIDCHECK(m)
-    POINTERCHECK(value)
+    JOINTIDCHECK(IMPLEMENT_LAYER_COMPONENT,m)
+    POINTERCHECK(IMPLEMENT_LAYER_COMPONENT,value)
 
     ReturnValue ret;
     int k=castToMapper(m_helper)->toHw(m);
@@ -78,8 +82,8 @@ ReturnValue ImplementMotor::getTemperature(int m, double* value)
 ReturnValue ImplementMotor::getTemperatureLimit(int m, double* value)
 {
     std::lock_guard lock(m_imp_mutex);
-    JOINTIDCHECK(m)
-    POINTERCHECK(value)
+    JOINTIDCHECK(IMPLEMENT_LAYER_COMPONENT,m)
+    POINTERCHECK(IMPLEMENT_LAYER_COMPONENT,value)
 
     ReturnValue ret;
     int k=castToMapper(m_helper)->toHw(m);
@@ -92,7 +96,7 @@ ReturnValue ImplementMotor::getTemperatureLimit(int m, double* value)
 ReturnValue ImplementMotor::setTemperatureLimit(int m, const double value)
 {
     std::lock_guard lock(m_imp_mutex);
-    JOINTIDCHECK(m)
+    JOINTIDCHECK(IMPLEMENT_LAYER_COMPONENT,m)
 
     ReturnValue ret;
     int k=castToMapper(m_helper)->toHw(m);
@@ -105,8 +109,8 @@ ReturnValue ImplementMotor::setTemperatureLimit(int m, const double value)
 ReturnValue ImplementMotor::getGearboxRatio(int m, double* value)
 {
     std::lock_guard lock(m_imp_mutex);
-    JOINTIDCHECK(m)
-    POINTERCHECK(value)
+    JOINTIDCHECK(IMPLEMENT_LAYER_COMPONENT,m)
+    POINTERCHECK(IMPLEMENT_LAYER_COMPONENT,value)
 
     ReturnValue ret;
     int k = castToMapper(m_helper)->toHw(m);
@@ -119,7 +123,7 @@ ReturnValue ImplementMotor::getGearboxRatio(int m, double* value)
 ReturnValue ImplementMotor::setGearboxRatio(int m, const double value)
 {
     std::lock_guard lock(m_imp_mutex);
-    JOINTIDCHECK(m)
+    JOINTIDCHECK(IMPLEMENT_LAYER_COMPONENT,m)
 
     ReturnValue ret;
     int k = castToMapper(m_helper)->toHw(m);
@@ -132,7 +136,7 @@ ReturnValue ImplementMotor::setGearboxRatio(int m, const double value)
 ReturnValue ImplementMotor::getTemperatures(double *v)
 {
     std::lock_guard lock(m_imp_mutex);
-    POINTERCHECK(v)
+    POINTERCHECK(IMPLEMENT_LAYER_COMPONENT,v)
 
     ReturnValue ret = m_iraw->getTemperaturesRaw(m_buffer_doubles.data());
     for (size_t i=0; i< castToMapper(m_helper)->axes(); i++)

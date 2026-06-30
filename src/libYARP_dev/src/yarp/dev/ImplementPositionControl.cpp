@@ -14,6 +14,10 @@
 using namespace yarp::dev;
 using namespace yarp::os;
 
+namespace {
+YARP_LOG_COMPONENT(IMPLEMENT_LAYER_COMPONENT, "yarp.ImplementPositionControl")
+}
+
 ImplementPositionControl::ImplementPositionControl(yarp::dev::IPositionControlRaw *y) :
     m_iraw(y),
     m_helper(nullptr)
@@ -66,7 +70,7 @@ bool ImplementPositionControl::uninitialize()
 ReturnValue ImplementPositionControl::positionMove(int j, double ang)
 {
     std::lock_guard lock(m_imp_mutex);
-    JOINTIDCHECK(j)
+    JOINTIDCHECK(IMPLEMENT_LAYER_COMPONENT,j)
 
     int k;
     double enc;
@@ -77,9 +81,9 @@ ReturnValue ImplementPositionControl::positionMove(int j, double ang)
 ReturnValue ImplementPositionControl::positionMove(const int n_joints, const int *joints, const double *refs)
 {
     std::lock_guard lock(m_imp_mutex);
-    POINTERCHECK(joints);
-    POINTERCHECK(refs);
-    JOINTSIDCHECK(n_joints,joints)
+    POINTERCHECK(IMPLEMENT_LAYER_COMPONENT,joints);
+    POINTERCHECK(IMPLEMENT_LAYER_COMPONENT,refs);
+    JOINTSIDCHECK(IMPLEMENT_LAYER_COMPONENT,n_joints,joints)
 
     for(int idx=0; idx<n_joints; idx++)
     {
@@ -94,7 +98,7 @@ ReturnValue ImplementPositionControl::positionMove(const int n_joints, const int
 ReturnValue ImplementPositionControl::positionMove(const double *refs)
 {
     std::lock_guard lock(m_imp_mutex);
-    POINTERCHECK(refs);
+    POINTERCHECK(IMPLEMENT_LAYER_COMPONENT,refs);
 
     castToMapper(m_helper)->posA2E(refs, m_buffer_doubles.data());
 
@@ -106,7 +110,7 @@ ReturnValue ImplementPositionControl::positionMove(const double *refs)
 ReturnValue ImplementPositionControl::relativeMove(int j, double delta)
 {
     std::lock_guard lock(m_imp_mutex);
-    JOINTIDCHECK(j)
+    JOINTIDCHECK(IMPLEMENT_LAYER_COMPONENT,j)
 
     int k;
     double enc;
@@ -118,9 +122,9 @@ ReturnValue ImplementPositionControl::relativeMove(int j, double delta)
 ReturnValue ImplementPositionControl::relativeMove(const int n_joints, const int *joints, const double *deltas)
 {
     std::lock_guard lock(m_imp_mutex);
-    POINTERCHECK(joints);
-    POINTERCHECK(deltas);
-    JOINTSIDCHECK(n_joints,joints)
+    POINTERCHECK(IMPLEMENT_LAYER_COMPONENT,joints);
+    POINTERCHECK(IMPLEMENT_LAYER_COMPONENT,deltas);
+    JOINTSIDCHECK(IMPLEMENT_LAYER_COMPONENT,n_joints,joints)
 
     for(int idx=0; idx<n_joints; idx++)
     {
@@ -135,7 +139,7 @@ ReturnValue ImplementPositionControl::relativeMove(const int n_joints, const int
 ReturnValue ImplementPositionControl::relativeMove(const double *deltas)
 {
     std::lock_guard lock(m_imp_mutex);
-    POINTERCHECK(deltas);
+    POINTERCHECK(IMPLEMENT_LAYER_COMPONENT,deltas);
 
     castToMapper(m_helper)->velA2E(deltas, m_buffer_doubles.data());
     ReturnValue ret = m_iraw->relativeMoveRaw(m_buffer_doubles.data());
@@ -146,7 +150,7 @@ ReturnValue ImplementPositionControl::relativeMove(const double *deltas)
 ReturnValue ImplementPositionControl::checkMotionDone(int j, bool& flag)
 {
     std::lock_guard lock(m_imp_mutex);
-    JOINTIDCHECK(j)
+    JOINTIDCHECK(IMPLEMENT_LAYER_COMPONENT,j)
 
     int k=castToMapper(m_helper)->toHw(j);
 
@@ -156,7 +160,7 @@ ReturnValue ImplementPositionControl::checkMotionDone(int j, bool& flag)
 ReturnValue ImplementPositionControl::checkMotionDone(const std::vector<int>& joints, bool& flag)
 {
     std::lock_guard lock(m_imp_mutex);
-    JOINTSIDVECCHECK(joints)
+    JOINTSIDVECCHECK(IMPLEMENT_LAYER_COMPONENT,joints)
 
     for(int idx=0; idx<joints.size(); idx++)
     {
@@ -177,7 +181,7 @@ ReturnValue ImplementPositionControl::checkMotionDone(bool& flag)
 ReturnValue ImplementPositionControl::setTrajSpeed(int j, double sp)
 {
     std::lock_guard lock(m_imp_mutex);
-    JOINTIDCHECK(j)
+    JOINTIDCHECK(IMPLEMENT_LAYER_COMPONENT,j)
 
     int k;
     double enc;
@@ -188,9 +192,9 @@ ReturnValue ImplementPositionControl::setTrajSpeed(int j, double sp)
 ReturnValue ImplementPositionControl::setTrajSpeeds(const int n_joints, const int *joints, const double *spds)
 {
     std::lock_guard lock(m_imp_mutex);
-    POINTERCHECK(joints);
-    POINTERCHECK(spds);
-    JOINTSIDCHECK(n_joints,joints)
+    POINTERCHECK(IMPLEMENT_LAYER_COMPONENT,joints);
+    POINTERCHECK(IMPLEMENT_LAYER_COMPONENT,spds);
+    JOINTSIDCHECK(IMPLEMENT_LAYER_COMPONENT,n_joints,joints)
 
     for(int idx=0; idx<n_joints; idx++)
     {
@@ -204,7 +208,7 @@ ReturnValue ImplementPositionControl::setTrajSpeeds(const int n_joints, const in
 ReturnValue ImplementPositionControl::setTrajSpeeds(const double *spds)
 {
     std::lock_guard lock(m_imp_mutex);
-    POINTERCHECK(spds);
+    POINTERCHECK(IMPLEMENT_LAYER_COMPONENT,spds);
 
     castToMapper(m_helper)->velA2E_abs(spds, m_buffer_doubles.data());
     ReturnValue ret = m_iraw->setTrajSpeedsRaw(m_buffer_doubles.data());
@@ -215,7 +219,7 @@ ReturnValue ImplementPositionControl::setTrajSpeeds(const double *spds)
 ReturnValue ImplementPositionControl::setTrajAcceleration(int j, double acc)
 {
     std::lock_guard lock(m_imp_mutex);
-    JOINTIDCHECK(j)
+    JOINTIDCHECK(IMPLEMENT_LAYER_COMPONENT,j)
 
     int k;
     double enc;
@@ -227,9 +231,9 @@ ReturnValue ImplementPositionControl::setTrajAcceleration(int j, double acc)
 ReturnValue ImplementPositionControl::setTrajAccelerations(const int n_joints, const int *joints, const double *accs)
 {
     std::lock_guard lock(m_imp_mutex);
-    POINTERCHECK(joints);
-    POINTERCHECK(accs);
-    JOINTSIDCHECK(n_joints,joints)
+    POINTERCHECK(IMPLEMENT_LAYER_COMPONENT,joints);
+    POINTERCHECK(IMPLEMENT_LAYER_COMPONENT,accs);
+    JOINTSIDCHECK(IMPLEMENT_LAYER_COMPONENT,n_joints,joints)
 
     for(int idx=0; idx<n_joints; idx++)
     {
@@ -244,7 +248,7 @@ ReturnValue ImplementPositionControl::setTrajAccelerations(const int n_joints, c
 ReturnValue ImplementPositionControl::setTrajAccelerations(const double *accs)
 {
     std::lock_guard lock(m_imp_mutex);
-    POINTERCHECK(accs);
+    POINTERCHECK(IMPLEMENT_LAYER_COMPONENT,accs);
 
     castToMapper(m_helper)->accA2E_abs(accs, m_buffer_doubles.data());
 
@@ -256,8 +260,8 @@ ReturnValue ImplementPositionControl::setTrajAccelerations(const double *accs)
 ReturnValue ImplementPositionControl::getTrajSpeed(int j, double *ref)
 {
     std::lock_guard lock(m_imp_mutex);
-    POINTERCHECK(ref);
-    JOINTIDCHECK(j)
+    POINTERCHECK(IMPLEMENT_LAYER_COMPONENT,ref);
+    JOINTIDCHECK(IMPLEMENT_LAYER_COMPONENT,j)
 
     int k;
     double enc;
@@ -273,9 +277,9 @@ ReturnValue ImplementPositionControl::getTrajSpeed(int j, double *ref)
 ReturnValue ImplementPositionControl::getTrajSpeeds(const int n_joints, const int *joints, double *spds)
 {
     std::lock_guard lock(m_imp_mutex);
-    POINTERCHECK(joints);
-    POINTERCHECK(spds);
-    JOINTSIDCHECK(n_joints,joints)
+    POINTERCHECK(IMPLEMENT_LAYER_COMPONENT,joints);
+    POINTERCHECK(IMPLEMENT_LAYER_COMPONENT,spds);
+    JOINTSIDCHECK(IMPLEMENT_LAYER_COMPONENT,n_joints,joints)
 
     for(int idx=0; idx<n_joints; idx++)
     {
@@ -295,7 +299,7 @@ ReturnValue ImplementPositionControl::getTrajSpeeds(const int n_joints, const in
 ReturnValue ImplementPositionControl::getTrajSpeeds(double *spds)
 {
     std::lock_guard lock(m_imp_mutex);
-    POINTERCHECK(spds);
+    POINTERCHECK(IMPLEMENT_LAYER_COMPONENT,spds);
 
     ReturnValue ret = m_iraw->getTrajSpeedsRaw(m_buffer_doubles.data());
     castToMapper(m_helper)->velE2A_abs(m_buffer_doubles.data(), spds);
@@ -306,7 +310,7 @@ ReturnValue ImplementPositionControl::getTrajSpeeds(double *spds)
 ReturnValue ImplementPositionControl::getTrajAccelerations(double *accs)
 {
     std::lock_guard lock(m_imp_mutex);
-    POINTERCHECK(accs);
+    POINTERCHECK(IMPLEMENT_LAYER_COMPONENT,accs);
 
     ReturnValue ret=m_iraw->getTrajAccelerationsRaw(m_buffer_doubles.data());
     castToMapper(m_helper)->accE2A_abs(m_buffer_doubles.data(), accs);
@@ -317,9 +321,9 @@ ReturnValue ImplementPositionControl::getTrajAccelerations(double *accs)
 ReturnValue ImplementPositionControl::getTrajAccelerations(const int n_joints, const int *joints, double *accs)
 {
     std::lock_guard lock(m_imp_mutex);
-    POINTERCHECK(joints);
-    POINTERCHECK(accs);
-    JOINTSIDCHECK(n_joints,joints)
+    POINTERCHECK(IMPLEMENT_LAYER_COMPONENT,joints);
+    POINTERCHECK(IMPLEMENT_LAYER_COMPONENT,accs);
+    JOINTSIDCHECK(IMPLEMENT_LAYER_COMPONENT,n_joints,joints)
 
     for(int idx=0; idx<n_joints; idx++)
     {
@@ -339,8 +343,8 @@ ReturnValue ImplementPositionControl::getTrajAccelerations(const int n_joints, c
 ReturnValue ImplementPositionControl::getTrajAcceleration(int j, double *acc)
 {
     std::lock_guard lock(m_imp_mutex);
-    POINTERCHECK(acc);
-    JOINTIDCHECK(j)
+    POINTERCHECK(IMPLEMENT_LAYER_COMPONENT,acc);
+    JOINTIDCHECK(IMPLEMENT_LAYER_COMPONENT,j)
 
     int k;
     double enc;
@@ -355,7 +359,7 @@ ReturnValue ImplementPositionControl::getTrajAcceleration(int j, double *acc)
 ReturnValue ImplementPositionControl::stop(int j)
 {
     std::lock_guard lock(m_imp_mutex);
-    JOINTIDCHECK(j)
+    JOINTIDCHECK(IMPLEMENT_LAYER_COMPONENT,j)
 
     int k;
     k=castToMapper(m_helper)->toHw(j);
@@ -366,7 +370,7 @@ ReturnValue ImplementPositionControl::stop(int j)
 ReturnValue ImplementPositionControl::stop(const int n_joint, const int *joints)
 {
     std::lock_guard lock(m_imp_mutex);
-    POINTERCHECK(joints);
+    POINTERCHECK(IMPLEMENT_LAYER_COMPONENT,joints);
 
     for(int idx=0; idx<n_joint; idx++)
     {
@@ -388,7 +392,7 @@ ReturnValue ImplementPositionControl::stop()
 ReturnValue ImplementPositionControl::getAxes(int *axis)
 {
     std::lock_guard lock(m_imp_mutex);
-    POINTERCHECK(axis);
+    POINTERCHECK(IMPLEMENT_LAYER_COMPONENT,axis);
 
     (*axis)=castToMapper(m_helper)->axes();
 
@@ -399,8 +403,8 @@ ReturnValue ImplementPositionControl::getAxes(int *axis)
 ReturnValue ImplementPositionControl::getTargetPosition(const int j, double* ref)
 {
     std::lock_guard lock(m_imp_mutex);
-    POINTERCHECK(ref);
-    JOINTIDCHECK(j)
+    POINTERCHECK(IMPLEMENT_LAYER_COMPONENT,ref);
+    JOINTIDCHECK(IMPLEMENT_LAYER_COMPONENT,j)
 
     int k;
     double enc;
@@ -415,7 +419,7 @@ ReturnValue ImplementPositionControl::getTargetPosition(const int j, double* ref
 ReturnValue ImplementPositionControl::getTargetPositions(double* refs)
 {
     std::lock_guard lock(m_imp_mutex);
-    POINTERCHECK(refs);
+    POINTERCHECK(IMPLEMENT_LAYER_COMPONENT,refs);
 
     ReturnValue ret=m_iraw->getTargetPositionsRaw(m_buffer_doubles.data());
     castToMapper(m_helper)->posE2A(m_buffer_doubles.data(), refs);
@@ -426,9 +430,9 @@ ReturnValue ImplementPositionControl::getTargetPositions(double* refs)
 ReturnValue ImplementPositionControl::getTargetPositions(const int n_joints, const int* joints, double* refs)
 {
     std::lock_guard lock(m_imp_mutex);
-    POINTERCHECK(joints);
-    POINTERCHECK(refs);
-    JOINTSIDCHECK(n_joints,joints)
+    POINTERCHECK(IMPLEMENT_LAYER_COMPONENT,joints);
+    POINTERCHECK(IMPLEMENT_LAYER_COMPONENT,refs);
+    JOINTSIDCHECK(IMPLEMENT_LAYER_COMPONENT,n_joints,joints)
 
     for(int idx=0; idx<n_joints; idx++)
     {

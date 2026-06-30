@@ -14,6 +14,10 @@
 using namespace yarp::dev;
 using namespace yarp::os;
 
+namespace {
+YARP_LOG_COMPONENT(IMPLEMENT_LAYER_COMPONENT, "yarp.ImplementPidControl")
+}
+
 //////////////////// Implement PidControl interface
 ImplementPidControl::ImplementPidControl(IPidControlRaw *y):
 m_helper(nullptr)
@@ -60,7 +64,7 @@ bool ImplementPidControl::uninitialize ()
 ReturnValue ImplementPidControl::getAvailablePids(int j, std::vector<PidControlTypeEnum>& avail)
 {
     std::lock_guard lock(m_imp_mutex);
-    JOINTIDCHECK(j)
+    JOINTIDCHECK(IMPLEMENT_LAYER_COMPONENT,j)
 
     Pid pid_machine;
     int k=castToMapper(m_helper)->toHw(j);
@@ -71,7 +75,7 @@ ReturnValue ImplementPidControl::getAvailablePids(int j, std::vector<PidControlT
 ReturnValue ImplementPidControl::setPid(const PidControlTypeEnum& pidtype, int j, const Pid &pid)
 {
     std::lock_guard lock(m_imp_mutex);
-    JOINTIDCHECK(j)
+    JOINTIDCHECK(IMPLEMENT_LAYER_COMPONENT,j)
 
     Pid pid_machine;
     int k;
@@ -83,7 +87,7 @@ ReturnValue ImplementPidControl::setPid(const PidControlTypeEnum& pidtype, int j
 ReturnValue ImplementPidControl::setPids(const PidControlTypeEnum& pidtype,  const Pid *pids)
 {
     std::lock_guard lock(m_imp_mutex);
-    POINTERCHECK(pids)
+    POINTERCHECK(IMPLEMENT_LAYER_COMPONENT,pids)
 
     ControlBoardHelper* cb_helper = castToMapper(m_helper);
     int nj= cb_helper->axes();
@@ -104,7 +108,7 @@ ReturnValue ImplementPidControl::setPids(const PidControlTypeEnum& pidtype,  con
 ReturnValue ImplementPidControl::setPidReference(const PidControlTypeEnum& pidtype,  int j, double ref)
 {
     std::lock_guard lock(m_imp_mutex);
-    JOINTIDCHECK(j)
+    JOINTIDCHECK(IMPLEMENT_LAYER_COMPONENT,j)
 
     int k=0;
     double raw;
@@ -116,7 +120,7 @@ ReturnValue ImplementPidControl::setPidReference(const PidControlTypeEnum& pidty
 ReturnValue ImplementPidControl::setPidReferences(const PidControlTypeEnum& pidtype,  const double *refs)
 {
     std::lock_guard lock(m_imp_mutex);
-    POINTERCHECK(refs)
+    POINTERCHECK(IMPLEMENT_LAYER_COMPONENT,refs)
 
     ControlBoardHelper* cb_helper = castToMapper(m_helper);
 
@@ -129,7 +133,7 @@ ReturnValue ImplementPidControl::setPidReferences(const PidControlTypeEnum& pidt
 ReturnValue ImplementPidControl::setPidErrorLimit(const PidControlTypeEnum& pidtype,  int j, double limit)
 {
     std::lock_guard lock(m_imp_mutex);
-    JOINTIDCHECK(j)
+    JOINTIDCHECK(IMPLEMENT_LAYER_COMPONENT,j)
 
     int k;
     double raw;
@@ -141,7 +145,7 @@ ReturnValue ImplementPidControl::setPidErrorLimit(const PidControlTypeEnum& pidt
 ReturnValue ImplementPidControl::setPidErrorLimits(const PidControlTypeEnum& pidtype,  const double *limits)
 {
     std::lock_guard lock(m_imp_mutex);
-    POINTERCHECK(limits)
+    POINTERCHECK(IMPLEMENT_LAYER_COMPONENT,limits)
 
     ControlBoardHelper* cb_helper = castToMapper(m_helper);
 
@@ -154,8 +158,8 @@ ReturnValue ImplementPidControl::setPidErrorLimits(const PidControlTypeEnum& pid
 ReturnValue ImplementPidControl::getPidError(const PidControlTypeEnum& pidtype, int j, double *err)
 {
     std::lock_guard lock(m_imp_mutex);
-    JOINTIDCHECK(j)
-    POINTERCHECK(err)
+    JOINTIDCHECK(IMPLEMENT_LAYER_COMPONENT,j)
+    POINTERCHECK(IMPLEMENT_LAYER_COMPONENT,err)
 
     int k;
     double raw;
@@ -171,7 +175,7 @@ ReturnValue ImplementPidControl::getPidError(const PidControlTypeEnum& pidtype, 
 ReturnValue ImplementPidControl::getPidErrors(const PidControlTypeEnum& pidtype,  double *errs)
 {
     std::lock_guard lock(m_imp_mutex);
-    POINTERCHECK(errs)
+    POINTERCHECK(IMPLEMENT_LAYER_COMPONENT,errs)
 
     ReturnValue ret;
     ControlBoardHelper* cb_helper = castToMapper(m_helper);
@@ -185,8 +189,8 @@ ReturnValue ImplementPidControl::getPidErrors(const PidControlTypeEnum& pidtype,
 ReturnValue ImplementPidControl::getPidOutput(const PidControlTypeEnum& pidtype,  int j, double *out)
 {
     std::lock_guard lock(m_imp_mutex);
-    JOINTIDCHECK(j)
-    POINTERCHECK(out)
+    JOINTIDCHECK(IMPLEMENT_LAYER_COMPONENT,j)
+    POINTERCHECK(IMPLEMENT_LAYER_COMPONENT,out)
 
     ReturnValue ret;
     int k_raw;
@@ -206,7 +210,7 @@ ReturnValue ImplementPidControl::getPidOutput(const PidControlTypeEnum& pidtype,
 ReturnValue ImplementPidControl::getPidOutputs(const PidControlTypeEnum& pidtype, double *outs)
 {
     std::lock_guard lock(m_imp_mutex);
-    POINTERCHECK(outs)
+    POINTERCHECK(IMPLEMENT_LAYER_COMPONENT,outs)
 
     ControlBoardHelper* cb_helper = castToMapper(m_helper);
     int nj = cb_helper->axes();
@@ -228,8 +232,8 @@ ReturnValue ImplementPidControl::getPidOutputs(const PidControlTypeEnum& pidtype
 ReturnValue ImplementPidControl::getPid(const PidControlTypeEnum& pidtype, int j, Pid *pid)
 {
     std::lock_guard lock(m_imp_mutex);
-    JOINTIDCHECK(j)
-    POINTERCHECK(pid)
+    JOINTIDCHECK(IMPLEMENT_LAYER_COMPONENT,j)
+    POINTERCHECK(IMPLEMENT_LAYER_COMPONENT,pid)
 
     ControlBoardHelper* cb_helper = castToMapper(m_helper);
     int k_raw;
@@ -247,7 +251,7 @@ ReturnValue ImplementPidControl::getPid(const PidControlTypeEnum& pidtype, int j
 ReturnValue ImplementPidControl::getPids(const PidControlTypeEnum& pidtype, Pid *pids)
 {
     std::lock_guard lock(m_imp_mutex);
-    POINTERCHECK(pids)
+    POINTERCHECK(IMPLEMENT_LAYER_COMPONENT,pids)
 
     auto ret = m_iraw->getPidsRaw(pidtype, m_buffer_pids.data());
     if(!ret)
@@ -272,8 +276,8 @@ ReturnValue ImplementPidControl::getPids(const PidControlTypeEnum& pidtype, Pid 
 ReturnValue ImplementPidControl::getPidReference(const PidControlTypeEnum& pidtype, int j, double *ref)
 {
     std::lock_guard lock(m_imp_mutex);
-    JOINTIDCHECK(j)
-    POINTERCHECK(ref)
+    JOINTIDCHECK(IMPLEMENT_LAYER_COMPONENT,j)
+    POINTERCHECK(IMPLEMENT_LAYER_COMPONENT,ref)
 
     ReturnValue ret;
     int k;
@@ -290,7 +294,7 @@ ReturnValue ImplementPidControl::getPidReference(const PidControlTypeEnum& pidty
 ReturnValue ImplementPidControl::getPidReferences(const PidControlTypeEnum& pidtype, double *refs)
 {
     std::lock_guard lock(m_imp_mutex);
-    POINTERCHECK(refs)
+    POINTERCHECK(IMPLEMENT_LAYER_COMPONENT,refs)
 
     ReturnValue ret;
     ControlBoardHelper* cb_helper = castToMapper(m_helper);
@@ -305,8 +309,8 @@ ReturnValue ImplementPidControl::getPidReferences(const PidControlTypeEnum& pidt
 ReturnValue ImplementPidControl::getPidErrorLimit(const PidControlTypeEnum& pidtype, int j, double *ref)
 {
     std::lock_guard lock(m_imp_mutex);
-    JOINTIDCHECK(j)
-    POINTERCHECK(ref)
+    JOINTIDCHECK(IMPLEMENT_LAYER_COMPONENT,j)
+    POINTERCHECK(IMPLEMENT_LAYER_COMPONENT,ref)
 
     ReturnValue ret;
     int k;
@@ -323,7 +327,7 @@ ReturnValue ImplementPidControl::getPidErrorLimit(const PidControlTypeEnum& pidt
 ReturnValue ImplementPidControl::getPidErrorLimits(const PidControlTypeEnum& pidtype, double *refs)
 {
     std::lock_guard lock(m_imp_mutex);
-    POINTERCHECK(refs)
+    POINTERCHECK(IMPLEMENT_LAYER_COMPONENT,refs)
 
     ReturnValue ret;
     ControlBoardHelper* cb_helper = castToMapper(m_helper);
@@ -337,7 +341,7 @@ ReturnValue ImplementPidControl::getPidErrorLimits(const PidControlTypeEnum& pid
 ReturnValue ImplementPidControl::resetPid(const PidControlTypeEnum& pidtype, int j)
 {
     std::lock_guard lock(m_imp_mutex);
-    JOINTIDCHECK(j)
+    JOINTIDCHECK(IMPLEMENT_LAYER_COMPONENT,j)
 
     int k=0;
     k=castToMapper(m_helper)->toHw(j);
@@ -348,7 +352,7 @@ ReturnValue ImplementPidControl::resetPid(const PidControlTypeEnum& pidtype, int
 ReturnValue ImplementPidControl::enablePid(const PidControlTypeEnum& pidtype, int j)
 {
     std::lock_guard lock(m_imp_mutex);
-    JOINTIDCHECK(j)
+    JOINTIDCHECK(IMPLEMENT_LAYER_COMPONENT,j)
 
     int k=0;
     k=castToMapper(m_helper)->toHw(j);
@@ -359,7 +363,7 @@ ReturnValue ImplementPidControl::enablePid(const PidControlTypeEnum& pidtype, in
 ReturnValue ImplementPidControl::disablePid(const PidControlTypeEnum& pidtype, int j)
 {
     std::lock_guard lock(m_imp_mutex);
-    JOINTIDCHECK(j)
+    JOINTIDCHECK(IMPLEMENT_LAYER_COMPONENT,j)
 
     int k=0;
     k=castToMapper(m_helper)->toHw(j);
@@ -370,7 +374,7 @@ ReturnValue ImplementPidControl::disablePid(const PidControlTypeEnum& pidtype, i
 ReturnValue ImplementPidControl::setPidOffset(const PidControlTypeEnum& pidtype, int j, double off)
 {
     std::lock_guard lock(m_imp_mutex);
-    JOINTIDCHECK(j)
+    JOINTIDCHECK(IMPLEMENT_LAYER_COMPONENT,j)
 
     int k = 0;
     k=castToMapper(m_helper)->toHw(j);
@@ -384,7 +388,7 @@ ReturnValue ImplementPidControl::setPidOffset(const PidControlTypeEnum& pidtype,
 ReturnValue ImplementPidControl::setPidFeedforward(const PidControlTypeEnum& pidtype, int j, double off)
 {
     std::lock_guard lock(m_imp_mutex);
-    JOINTIDCHECK(j)
+    JOINTIDCHECK(IMPLEMENT_LAYER_COMPONENT,j)
 
     int k = 0;
     k=castToMapper(m_helper)->toHw(j);
@@ -398,7 +402,7 @@ ReturnValue ImplementPidControl::setPidFeedforward(const PidControlTypeEnum& pid
 ReturnValue ImplementPidControl::getPidOffset(const PidControlTypeEnum& pidtype, int j, double& off)
 {
     std::lock_guard lock(m_imp_mutex);
-    JOINTIDCHECK(j)
+    JOINTIDCHECK(IMPLEMENT_LAYER_COMPONENT,j)
 
     ReturnValue ret;
     int k;
@@ -415,7 +419,7 @@ ReturnValue ImplementPidControl::getPidOffset(const PidControlTypeEnum& pidtype,
 ReturnValue ImplementPidControl::getPidFeedforward(const PidControlTypeEnum& pidtype, int j, double& ffd)
 {
     std::lock_guard lock(m_imp_mutex);
-    JOINTIDCHECK(j)
+    JOINTIDCHECK(IMPLEMENT_LAYER_COMPONENT,j)
 
     ReturnValue ret;
     int k;
@@ -432,7 +436,7 @@ ReturnValue ImplementPidControl::getPidFeedforward(const PidControlTypeEnum& pid
 ReturnValue ImplementPidControl::isPidEnabled(const PidControlTypeEnum& pidtype, int j, bool& enabled)
 {
     std::lock_guard lock(m_imp_mutex);
-    JOINTIDCHECK(j)
+    JOINTIDCHECK(IMPLEMENT_LAYER_COMPONENT,j)
 
     int k=0;
     k=castToMapper(m_helper)->toHw(j);
@@ -451,7 +455,7 @@ bool ImplementPidControl::setConversionUnits(const PidControlTypeEnum& pidtype, 
 yarp::dev::ReturnValue ImplementPidControl::getPidExtraInfo(const PidControlTypeEnum& pidtype, int j, yarp::dev::PidExtraInfo& units)
 {
     std::lock_guard lock(m_imp_mutex);
-    JOINTIDCHECK(j)
+    JOINTIDCHECK(IMPLEMENT_LAYER_COMPONENT,j)
 
     int k=0;
     k=castToMapper(m_helper)->toHw(j);
@@ -461,7 +465,7 @@ yarp::dev::ReturnValue ImplementPidControl::getPidExtraInfo(const PidControlType
 yarp::dev::ReturnValue ImplementPidControl::getPidExtraInfos(const PidControlTypeEnum& pidtype, std::vector<yarp::dev::PidExtraInfo>& units)
 {
     std::lock_guard lock(m_imp_mutex);
-    VECCHECK_GET_ALL(units);
+    VECCHECK_GET_ALL(IMPLEMENT_LAYER_COMPONENT,units);
 
     ReturnValue ret;
     std::vector<yarp::dev::PidExtraInfo> tmp_infos;

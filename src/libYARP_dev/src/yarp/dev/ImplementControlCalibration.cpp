@@ -14,6 +14,10 @@
 
 using namespace yarp::dev;
 
+namespace {
+YARP_LOG_COMPONENT(IMPLEMENT_LAYER_COMPONENT, "yarp.IControlCalibration")
+}
+
 IControlCalibration::IControlCalibration()
 {
     calibrator=nullptr;
@@ -122,7 +126,7 @@ bool ImplementControlCalibration::uninitialize()
 ReturnValue ImplementControlCalibration::calibrationDone(int j)
 {
     std::lock_guard lock(m_imp_mutex);
-    JOINTIDCHECK(j);
+    JOINTIDCHECK(IMPLEMENT_LAYER_COMPONENT,j);
 
     int k = castToMapper(m_helper)->toHw(j);
 
@@ -132,7 +136,7 @@ ReturnValue ImplementControlCalibration::calibrationDone(int j)
 ReturnValue ImplementControlCalibration::calibrateAxisWithParams(int axis, unsigned int type, double p1, double p2, double p3)
 {
     std::lock_guard lock(m_imp_mutex);
-    JOINTIDCHECK(axis);
+    JOINTIDCHECK(IMPLEMENT_LAYER_COMPONENT,axis);
 
     int k = castToMapper(m_helper)->toHw(axis);
 
@@ -142,7 +146,7 @@ ReturnValue ImplementControlCalibration::calibrateAxisWithParams(int axis, unsig
 ReturnValue ImplementControlCalibration::setCalibrationParameters(int axis, const CalibrationParameters& params)
 {
     std::lock_guard lock(m_imp_mutex);
-    JOINTIDCHECK(axis);
+    JOINTIDCHECK(IMPLEMENT_LAYER_COMPONENT,axis);
 
     int k = castToMapper(m_helper)->toHw(axis);
 

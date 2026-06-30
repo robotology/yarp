@@ -12,6 +12,10 @@
 using namespace yarp::dev;
 using namespace yarp::os;
 
+namespace {
+YARP_LOG_COMPONENT(IMPLEMENT_LAYER_COMPONENT, "yarp.ImplementJointFault")
+}
+
 ImplementJointFault::ImplementJointFault(IJointFaultRaw *r):
     m_helper(nullptr),
     m_iraw(r)
@@ -51,7 +55,7 @@ bool ImplementJointFault::uninitialize ()
 ReturnValue ImplementJointFault::getLastJointFault(int j, int& fault, std::string& message)
 {
     std::lock_guard lock(m_imp_mutex);
-    JOINTIDCHECK(j)
+    JOINTIDCHECK(IMPLEMENT_LAYER_COMPONENT,j)
 
     int k=castToMapper(m_helper)->toHw(j);
     return m_iraw->getLastJointFaultRaw(k, fault, message);

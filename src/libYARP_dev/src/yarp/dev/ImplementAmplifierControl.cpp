@@ -16,6 +16,10 @@
 
 using namespace yarp::dev;
 
+namespace {
+YARP_LOG_COMPONENT(IMPLEMENT_LAYER_COMPONENT, "yarp.ImplementAmplifierControl")
+}
+
 ImplementAmplifierControl::ImplementAmplifierControl(yarp::dev::IAmplifierControlRaw  *y)
 {
     m_iraw= y;
@@ -59,7 +63,7 @@ bool ImplementAmplifierControl::uninitialize ()
 ReturnValue ImplementAmplifierControl::enableAmp(int j)
 {
     std::lock_guard lock(m_imp_mutex);
-    JOINTIDCHECK(j)
+    JOINTIDCHECK(IMPLEMENT_LAYER_COMPONENT,j)
 
     int k=castToMapper(m_helper)->toHw(j);
 
@@ -69,7 +73,7 @@ ReturnValue ImplementAmplifierControl::enableAmp(int j)
 ReturnValue ImplementAmplifierControl::disableAmp(int j)
 {
     std::lock_guard lock(m_imp_mutex);
-    JOINTIDCHECK(j)
+    JOINTIDCHECK(IMPLEMENT_LAYER_COMPONENT,j)
 
     int k=castToMapper(m_helper)->toHw(j);
 
@@ -79,7 +83,7 @@ ReturnValue ImplementAmplifierControl::disableAmp(int j)
 ReturnValue ImplementAmplifierControl::getCurrents(double *currs)
 {
     std::lock_guard lock(m_imp_mutex);
-    POINTERCHECK(currs)
+    POINTERCHECK(IMPLEMENT_LAYER_COMPONENT,currs)
 
     ReturnValue ret=m_iraw->getCurrentsRaw(m_buffer_doubles.data());
     castToMapper(m_helper)->ampereS2A(m_buffer_doubles.data(), currs);
@@ -89,8 +93,8 @@ ReturnValue ImplementAmplifierControl::getCurrents(double *currs)
 ReturnValue ImplementAmplifierControl::getCurrent(int j, double *c)
 {
     std::lock_guard lock(m_imp_mutex);
-    JOINTIDCHECK(j)
-    POINTERCHECK(c)
+    JOINTIDCHECK(IMPLEMENT_LAYER_COMPONENT,j)
+    POINTERCHECK(IMPLEMENT_LAYER_COMPONENT,c)
 
     double temp = 0;
     int k = castToMapper(m_helper)->toHw(j);
@@ -102,7 +106,7 @@ ReturnValue ImplementAmplifierControl::getCurrent(int j, double *c)
 ReturnValue ImplementAmplifierControl::getAmpStatus(int *st)
 {
     std::lock_guard lock(m_imp_mutex);
-    POINTERCHECK(st)
+    POINTERCHECK(IMPLEMENT_LAYER_COMPONENT,st)
 
     ReturnValue ret=m_iraw->getAmpStatusRaw(m_buffer_ints.data());
     castToMapper(m_helper)->toUser(m_buffer_ints.data(), st);
@@ -113,8 +117,8 @@ ReturnValue ImplementAmplifierControl::getAmpStatus(int *st)
 ReturnValue ImplementAmplifierControl::getAmpStatus(int k, int *st)
 {
     std::lock_guard lock(m_imp_mutex);
-    JOINTIDCHECK(k)
-    POINTERCHECK(st)
+    JOINTIDCHECK(IMPLEMENT_LAYER_COMPONENT,k)
+    POINTERCHECK(IMPLEMENT_LAYER_COMPONENT,st)
 
     int j=castToMapper(m_helper)->toHw(k);
     ReturnValue ret=m_iraw->getAmpStatusRaw(j, st);
@@ -125,7 +129,7 @@ ReturnValue ImplementAmplifierControl::getAmpStatus(int k, int *st)
 ReturnValue ImplementAmplifierControl::setMaxCurrent(int m, double v)
 {
     std::lock_guard lock(m_imp_mutex);
-    JOINTIDCHECK(m)
+    JOINTIDCHECK(IMPLEMENT_LAYER_COMPONENT,m)
 
     int k;
     double curr;
@@ -136,8 +140,8 @@ ReturnValue ImplementAmplifierControl::setMaxCurrent(int m, double v)
 ReturnValue ImplementAmplifierControl::getMaxCurrent(int j, double* v)
 {
     std::lock_guard lock(m_imp_mutex);
-    JOINTIDCHECK(j)
-    POINTERCHECK(v)
+    JOINTIDCHECK(IMPLEMENT_LAYER_COMPONENT,j)
+    POINTERCHECK(IMPLEMENT_LAYER_COMPONENT,v)
 
     double val;
     int k=castToMapper(m_helper)->toHw(j);
@@ -149,8 +153,8 @@ ReturnValue ImplementAmplifierControl::getMaxCurrent(int j, double* v)
 ReturnValue ImplementAmplifierControl::getNominalCurrent(int m, double *curr)
 {
     std::lock_guard lock(m_imp_mutex);
-    JOINTIDCHECK(m)
-    POINTERCHECK(curr)
+    JOINTIDCHECK(IMPLEMENT_LAYER_COMPONENT,m)
+    POINTERCHECK(IMPLEMENT_LAYER_COMPONENT,curr)
 
     int k;
     ReturnValue ret;
@@ -165,8 +169,8 @@ ReturnValue ImplementAmplifierControl::getNominalCurrent(int m, double *curr)
 ReturnValue ImplementAmplifierControl::getPeakCurrent(int m, double *curr)
 {
     std::lock_guard lock(m_imp_mutex);
-    JOINTIDCHECK(m)
-    POINTERCHECK(curr)
+    JOINTIDCHECK(IMPLEMENT_LAYER_COMPONENT,m)
+    POINTERCHECK(IMPLEMENT_LAYER_COMPONENT,curr)
 
     int k;
     ReturnValue ret;
@@ -181,7 +185,7 @@ ReturnValue ImplementAmplifierControl::getPeakCurrent(int m, double *curr)
 ReturnValue ImplementAmplifierControl::setPeakCurrent(int m, const double curr)
 {
     std::lock_guard lock(m_imp_mutex);
-    JOINTIDCHECK(m)
+    JOINTIDCHECK(IMPLEMENT_LAYER_COMPONENT,m)
 
     int k;
     double val;
@@ -192,7 +196,7 @@ ReturnValue ImplementAmplifierControl::setPeakCurrent(int m, const double curr)
 ReturnValue ImplementAmplifierControl::setNominalCurrent(int m, const double curr)
 {
     std::lock_guard lock(m_imp_mutex);
-    JOINTIDCHECK(m)
+    JOINTIDCHECK(IMPLEMENT_LAYER_COMPONENT,m)
 
     int k;
     double val;
@@ -203,8 +207,8 @@ ReturnValue ImplementAmplifierControl::setNominalCurrent(int m, const double cur
 ReturnValue ImplementAmplifierControl::getPWM(int m, double* pwm)
 {
     std::lock_guard lock(m_imp_mutex);
-    JOINTIDCHECK(m)
-    POINTERCHECK(pwm)
+    JOINTIDCHECK(IMPLEMENT_LAYER_COMPONENT,m)
+    POINTERCHECK(IMPLEMENT_LAYER_COMPONENT,pwm)
 
     int k;
     k=castToMapper(m_helper)->toHw(m);
@@ -214,8 +218,8 @@ ReturnValue ImplementAmplifierControl::getPWM(int m, double* pwm)
 ReturnValue ImplementAmplifierControl::getPWMLimit(int m, double* limit)
 {
     std::lock_guard lock(m_imp_mutex);
-    JOINTIDCHECK(m)
-    POINTERCHECK(limit)
+    JOINTIDCHECK(IMPLEMENT_LAYER_COMPONENT,m)
+    POINTERCHECK(IMPLEMENT_LAYER_COMPONENT,limit)
 
     int k;
     k=castToMapper(m_helper)->toHw(m);
@@ -225,7 +229,7 @@ ReturnValue ImplementAmplifierControl::getPWMLimit(int m, double* limit)
 ReturnValue ImplementAmplifierControl::setPWMLimit(int m, const double limit)
 {
     std::lock_guard lock(m_imp_mutex);
-    JOINTIDCHECK(m)
+    JOINTIDCHECK(IMPLEMENT_LAYER_COMPONENT,m)
 
     int k;
     k=castToMapper(m_helper)->toHw(m);
@@ -235,8 +239,8 @@ ReturnValue ImplementAmplifierControl::setPWMLimit(int m, const double limit)
 ReturnValue ImplementAmplifierControl::getPowerSupplyVoltage(int m, double *voltage)
 {
     std::lock_guard lock(m_imp_mutex);
-    JOINTIDCHECK(m)
-    POINTERCHECK(voltage)
+    JOINTIDCHECK(IMPLEMENT_LAYER_COMPONENT,m)
+    POINTERCHECK(IMPLEMENT_LAYER_COMPONENT,voltage)
 
     int k;
     k=castToMapper(m_helper)->toHw(m);

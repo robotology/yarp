@@ -12,6 +12,10 @@
 using namespace yarp::dev;
 using namespace yarp::os;
 
+namespace {
+YARP_LOG_COMPONENT(IMPLEMENT_LAYER_COMPONENT, "yarp.ImplementJointBrake")
+}
+
 ImplementJointBrake::ImplementJointBrake(IJointBrakeRaw* r) :
     m_helper(nullptr),
     m_iraw(r)
@@ -51,7 +55,7 @@ bool ImplementJointBrake::uninitialize()
 ReturnValue ImplementJointBrake::isJointBraked(int j, bool& braked) const
 {
     std::lock_guard lock(m_imp_mutex);
-    JOINTIDCHECK(j)
+    JOINTIDCHECK(IMPLEMENT_LAYER_COMPONENT,j)
 
     int k = castToMapper(m_helper)->toHw(j);
     return m_iraw->isJointBrakedRaw(k, braked);
@@ -60,7 +64,7 @@ ReturnValue ImplementJointBrake::isJointBraked(int j, bool& braked) const
 ReturnValue ImplementJointBrake::setManualBrakeActive(int j, bool active)
 {
     std::lock_guard lock(m_imp_mutex);
-    JOINTIDCHECK(j)
+    JOINTIDCHECK(IMPLEMENT_LAYER_COMPONENT,j)
 
     int k = castToMapper(m_helper)->toHw(j);
     return m_iraw->setManualBrakeActiveRaw(k, active);
@@ -69,7 +73,7 @@ ReturnValue ImplementJointBrake::setManualBrakeActive(int j, bool active)
 ReturnValue ImplementJointBrake::setAutoBrakeEnabled(int j, bool enabled)
 {
     std::lock_guard lock(m_imp_mutex);
-    JOINTIDCHECK(j)
+    JOINTIDCHECK(IMPLEMENT_LAYER_COMPONENT,j)
 
     int k = castToMapper(m_helper)->toHw(j);
     return m_iraw->setAutoBrakeEnabledRaw(k, enabled);
@@ -78,7 +82,7 @@ ReturnValue ImplementJointBrake::setAutoBrakeEnabled(int j, bool enabled)
 ReturnValue ImplementJointBrake::getAutoBrakeEnabled(int j, bool& enabled) const
 {
     std::lock_guard lock(m_imp_mutex);
-    JOINTIDCHECK(j)
+    JOINTIDCHECK(IMPLEMENT_LAYER_COMPONENT,j)
 
     int k = castToMapper(m_helper)->toHw(j);
     return m_iraw->getAutoBrakeEnabledRaw(k, enabled);

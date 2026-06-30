@@ -10,6 +10,10 @@
 #include <cstdio>
 using namespace yarp::dev;
 
+namespace {
+YARP_LOG_COMPONENT(IMPLEMENT_LAYER_COMPONENT, "yarp.ImplementRemoteVariables")
+}
+
 ////////////////////////
 // Encoder Interface Timed Implementation
 ImplementRemoteVariables::ImplementRemoteVariables(IRemoteVariablesRaw *y)
@@ -74,7 +78,7 @@ ReturnValue ImplementRemoteVariables::setRemoteVariable(std::string key, const y
 ReturnValue ImplementRemoteVariables::getRemoteVariablesList(yarp::os::Bottle* listOfKeys)
 {
     std::lock_guard lock(m_imp_mutex);
-    POINTERCHECK(listOfKeys);
+    POINTERCHECK(IMPLEMENT_LAYER_COMPONENT,listOfKeys);
 
     ReturnValue ret;
     ret = m_iraw->getRemoteVariablesListRaw(listOfKeys);

@@ -12,6 +12,10 @@
 using namespace yarp::dev;
 using namespace yarp::os;
 
+namespace {
+YARP_LOG_COMPONENT(IMPLEMENT_LAYER_COMPONENT, "yarp.ImplementTorqueControl")
+}
+
 ImplementTorqueControl::ImplementTorqueControl(ITorqueControlRaw *tq):
     m_iraw(tq),
     m_helper(nullptr)
@@ -52,7 +56,7 @@ bool ImplementTorqueControl::uninitialize ()
 ReturnValue ImplementTorqueControl::getAxes(int *axes)
 {
     std::lock_guard lock(m_imp_mutex);
-    POINTERCHECK(axes);
+    POINTERCHECK(IMPLEMENT_LAYER_COMPONENT,axes);
 
     return m_iraw->getAxes(axes);
 }
@@ -60,8 +64,8 @@ ReturnValue ImplementTorqueControl::getAxes(int *axes)
 ReturnValue ImplementTorqueControl::getRefTorque(int j, double *r)
 {
     std::lock_guard lock(m_imp_mutex);
-    JOINTIDCHECK(j)
-    POINTERCHECK(r);
+    JOINTIDCHECK(IMPLEMENT_LAYER_COMPONENT,j)
+    POINTERCHECK(IMPLEMENT_LAYER_COMPONENT,r);
 
     int k;
     ReturnValue ret;
@@ -75,7 +79,7 @@ ReturnValue ImplementTorqueControl::getRefTorque(int j, double *r)
 ReturnValue ImplementTorqueControl::setMotorTorqueParams(int j,  const yarp::dev::MotorTorqueParameters params)
 {
     std::lock_guard lock(m_imp_mutex);
-    JOINTIDCHECK(j)
+    JOINTIDCHECK(IMPLEMENT_LAYER_COMPONENT,j)
 
     int k;
 
@@ -97,8 +101,8 @@ ReturnValue ImplementTorqueControl::setMotorTorqueParams(int j,  const yarp::dev
 ReturnValue ImplementTorqueControl::getMotorTorqueParams(int j,  yarp::dev::MotorTorqueParameters *params)
 {
     std::lock_guard lock(m_imp_mutex);
-    JOINTIDCHECK(j)
-    POINTERCHECK(params);
+    JOINTIDCHECK(IMPLEMENT_LAYER_COMPONENT,j)
+    POINTERCHECK(IMPLEMENT_LAYER_COMPONENT,params);
 
     int k=castToMapper(m_helper)->toHw(j);
 
@@ -125,7 +129,7 @@ ReturnValue ImplementTorqueControl::getMotorTorqueParams(int j,  yarp::dev::Moto
 ReturnValue ImplementTorqueControl::getRefTorques(double *t)
 {
     std::lock_guard lock(m_imp_mutex);
-    POINTERCHECK(t);
+    POINTERCHECK(IMPLEMENT_LAYER_COMPONENT,t);
 
     ReturnValue ret = m_iraw->getRefTorquesRaw(m_buffer_doubles.data());
     castToMapper(m_helper)->trqS2N(m_buffer_doubles.data(),t);
@@ -136,7 +140,7 @@ ReturnValue ImplementTorqueControl::getRefTorques(double *t)
 ReturnValue ImplementTorqueControl::setRefTorques(const double *t)
 {
     std::lock_guard lock(m_imp_mutex);
-    POINTERCHECK(t);
+    POINTERCHECK(IMPLEMENT_LAYER_COMPONENT,t);
 
     castToMapper(m_helper)->trqN2S(t, m_buffer_doubles.data());
     ReturnValue ret = m_iraw->setRefTorquesRaw(m_buffer_doubles.data());
@@ -147,7 +151,7 @@ ReturnValue ImplementTorqueControl::setRefTorques(const double *t)
 ReturnValue ImplementTorqueControl::setRefTorque(int j, double t)
 {
     std::lock_guard lock(m_imp_mutex);
-    JOINTIDCHECK(j)
+    JOINTIDCHECK(IMPLEMENT_LAYER_COMPONENT,j)
 
     int k;
     double sens;
@@ -158,7 +162,7 @@ ReturnValue ImplementTorqueControl::setRefTorque(int j, double t)
 ReturnValue ImplementTorqueControl::getTorques(double *t)
 {
     std::lock_guard lock(m_imp_mutex);
-    POINTERCHECK(t);
+    POINTERCHECK(IMPLEMENT_LAYER_COMPONENT,t);
 
     ReturnValue ret = m_iraw->getTorquesRaw(m_buffer_doubles.data());
     castToMapper(m_helper)->toUser(m_buffer_doubles.data(), t);
@@ -169,9 +173,9 @@ ReturnValue ImplementTorqueControl::getTorques(double *t)
 ReturnValue ImplementTorqueControl::setRefTorques(const int n_joints, const int *joints, const double *t)
 {
     std::lock_guard lock(m_imp_mutex);
-    POINTERCHECK(joints);
-    POINTERCHECK(t);
-    JOINTSIDCHECK(n_joints,joints);
+    POINTERCHECK(IMPLEMENT_LAYER_COMPONENT,joints);
+    POINTERCHECK(IMPLEMENT_LAYER_COMPONENT,t);
+    JOINTSIDCHECK(IMPLEMENT_LAYER_COMPONENT,n_joints,joints);
 
     for(int idx=0; idx<n_joints; idx++)
     {
@@ -186,8 +190,8 @@ ReturnValue ImplementTorqueControl::setRefTorques(const int n_joints, const int 
 ReturnValue ImplementTorqueControl::getTorque(int j, double *t)
 {
     std::lock_guard lock(m_imp_mutex);
-    JOINTIDCHECK(j)
-    POINTERCHECK(t);
+    JOINTIDCHECK(IMPLEMENT_LAYER_COMPONENT,j)
+    POINTERCHECK(IMPLEMENT_LAYER_COMPONENT,t);
 
     int k;
     k=castToMapper(m_helper)->toHw(j);
@@ -197,8 +201,8 @@ ReturnValue ImplementTorqueControl::getTorque(int j, double *t)
 ReturnValue ImplementTorqueControl::getTorqueRanges(double *min, double *max)
 {
     std::lock_guard lock(m_imp_mutex);
-    POINTERCHECK(min);
-    POINTERCHECK(max);
+    POINTERCHECK(IMPLEMENT_LAYER_COMPONENT,min);
+    POINTERCHECK(IMPLEMENT_LAYER_COMPONENT,max);
 
     ReturnValue ret = m_iraw->getTorqueRangesRaw(m_buffer_doubles.data(),m_buffer_doubles2.data());
     castToMapper(m_helper)->toUser(m_buffer_doubles.data(), min);
@@ -210,9 +214,9 @@ ReturnValue ImplementTorqueControl::getTorqueRanges(double *min, double *max)
 ReturnValue ImplementTorqueControl::getTorqueRange(int j, double *min, double *max)
 {
     std::lock_guard lock(m_imp_mutex);
-    JOINTIDCHECK(j)
-    POINTERCHECK(min);
-    POINTERCHECK(max);
+    JOINTIDCHECK(IMPLEMENT_LAYER_COMPONENT,j)
+    POINTERCHECK(IMPLEMENT_LAYER_COMPONENT,min);
+    POINTERCHECK(IMPLEMENT_LAYER_COMPONENT,max);
 
     int k;
     k=castToMapper(m_helper)->toHw(j);

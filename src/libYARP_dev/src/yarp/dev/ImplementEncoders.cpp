@@ -16,6 +16,10 @@
 
 using namespace yarp::dev;
 
+namespace {
+YARP_LOG_COMPONENT(IMPLEMENT_LAYER_COMPONENT, "yarp.ImplementEncoders")
+}
+
 ////////////////////////
 // Encoder Interface Implementation
 ImplementEncoders::ImplementEncoders(yarp::dev::IEncodersRaw  *y)
@@ -62,7 +66,7 @@ bool ImplementEncoders::uninitialize ()
 ReturnValue ImplementEncoders::getAxes(int *ax)
 {
     std::lock_guard lock(m_imp_mutex);
-    POINTERCHECK(ax)
+    POINTERCHECK(IMPLEMENT_LAYER_COMPONENT,ax)
 
     (*ax)=castToMapper(m_helper)->axes();
     return ReturnValue_ok;
@@ -71,7 +75,7 @@ ReturnValue ImplementEncoders::getAxes(int *ax)
 ReturnValue ImplementEncoders::resetEncoder(int j)
 {
     std::lock_guard lock(m_imp_mutex);
-    JOINTIDCHECK(j)
+    JOINTIDCHECK(IMPLEMENT_LAYER_COMPONENT,j)
 
     int k;
     k=castToMapper(m_helper)->toHw(j);
@@ -89,7 +93,7 @@ ReturnValue ImplementEncoders::resetEncoders()
 ReturnValue ImplementEncoders::setEncoder(int j, double val)
 {
     std::lock_guard lock(m_imp_mutex);
-    JOINTIDCHECK(j)
+    JOINTIDCHECK(IMPLEMENT_LAYER_COMPONENT,j)
 
     int k;
     double enc;
@@ -102,7 +106,7 @@ ReturnValue ImplementEncoders::setEncoder(int j, double val)
 ReturnValue ImplementEncoders::setEncoders(const double *val)
 {
     std::lock_guard lock(m_imp_mutex);
-    POINTERCHECK(val)
+    POINTERCHECK(IMPLEMENT_LAYER_COMPONENT,val)
 
     castToMapper(m_helper)->posA2E(val, m_buffer_doubles.data());
 
@@ -112,8 +116,8 @@ ReturnValue ImplementEncoders::setEncoders(const double *val)
 ReturnValue ImplementEncoders::getEncoder(int j, double *v)
 {
     std::lock_guard lock(m_imp_mutex);
-    JOINTIDCHECK(j)
-    POINTERCHECK(v)
+    JOINTIDCHECK(IMPLEMENT_LAYER_COMPONENT,j)
+    POINTERCHECK(IMPLEMENT_LAYER_COMPONENT,v)
 
     int k;
     double enc;
@@ -131,7 +135,7 @@ ReturnValue ImplementEncoders::getEncoder(int j, double *v)
 ReturnValue ImplementEncoders::getEncoders(double *v)
 {
     std::lock_guard lock(m_imp_mutex);
-    POINTERCHECK(v)
+    POINTERCHECK(IMPLEMENT_LAYER_COMPONENT,v)
 
     ReturnValue ret;
     castToMapper(m_helper)->axes();
@@ -146,8 +150,8 @@ ReturnValue ImplementEncoders::getEncoders(double *v)
 ReturnValue ImplementEncoders::getEncoderSpeed(int j, double *v)
 {
     std::lock_guard lock(m_imp_mutex);
-    JOINTIDCHECK(j)
-    POINTERCHECK(v)
+    JOINTIDCHECK(IMPLEMENT_LAYER_COMPONENT,j)
+    POINTERCHECK(IMPLEMENT_LAYER_COMPONENT,v)
 
     int k;
     double enc;
@@ -165,7 +169,7 @@ ReturnValue ImplementEncoders::getEncoderSpeed(int j, double *v)
 ReturnValue ImplementEncoders::getEncoderSpeeds(double *v)
 {
     std::lock_guard lock(m_imp_mutex);
-    POINTERCHECK(v)
+    POINTERCHECK(IMPLEMENT_LAYER_COMPONENT,v)
 
     ReturnValue ret;
     ret=m_iraw->getEncoderSpeedsRaw(m_buffer_doubles.data());
@@ -178,8 +182,8 @@ ReturnValue ImplementEncoders::getEncoderSpeeds(double *v)
 ReturnValue ImplementEncoders::getEncoderAcceleration(int j, double *v)
 {
     std::lock_guard lock(m_imp_mutex);
-    JOINTIDCHECK(j)
-    POINTERCHECK(v)
+    JOINTIDCHECK(IMPLEMENT_LAYER_COMPONENT,j)
+    POINTERCHECK(IMPLEMENT_LAYER_COMPONENT,v)
 
     int k;
     double enc;
@@ -197,7 +201,7 @@ ReturnValue ImplementEncoders::getEncoderAcceleration(int j, double *v)
 ReturnValue ImplementEncoders::getEncoderAccelerations(double *v)
 {
     std::lock_guard lock(m_imp_mutex);
-    POINTERCHECK(v)
+    POINTERCHECK(IMPLEMENT_LAYER_COMPONENT,v)
 
     ReturnValue ret;
     ret=m_iraw->getEncoderAccelerationsRaw(m_buffer_doubles.data());

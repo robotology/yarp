@@ -12,6 +12,10 @@
 using namespace yarp::dev;
 using namespace yarp::os;
 
+namespace {
+YARP_LOG_COMPONENT(IMPLEMENT_LAYER_COMPONENT, "yarp.ImplementControlMode")
+}
+
 ImplementControlMode::ImplementControlMode(IControlModeRaw *r):
     m_helper(nullptr),
     m_iraw(r)
@@ -53,7 +57,7 @@ bool ImplementControlMode::uninitialize ()
 ReturnValue ImplementControlMode::getAvailableControlModes(int j, std::vector<yarp::dev::SelectableControlModeEnum>& avail)
 {
     std::lock_guard lock(m_imp_mutex);
-    JOINTIDCHECK(j)
+    JOINTIDCHECK(IMPLEMENT_LAYER_COMPONENT,j)
 
     int k=castToMapper(m_helper)->toHw(j);
     return m_iraw->getAvailableControlModesRaw(k, avail);
@@ -62,7 +66,7 @@ ReturnValue ImplementControlMode::getAvailableControlModes(int j, std::vector<ya
 ReturnValue ImplementControlMode::getControlMode(int j, yarp::dev::ControlModeEnum& mode)
 {
     std::lock_guard lock(m_imp_mutex);
-    JOINTIDCHECK(j)
+    JOINTIDCHECK(IMPLEMENT_LAYER_COMPONENT,j)
 
     int k=castToMapper(m_helper)->toHw(j);
     return m_iraw->getControlModeRaw(k, mode);
@@ -71,7 +75,7 @@ ReturnValue ImplementControlMode::getControlMode(int j, yarp::dev::ControlModeEn
 ReturnValue ImplementControlMode::getControlModes(std::vector<yarp::dev::ControlModeEnum>& modes)
 {
     std::lock_guard lock(m_imp_mutex);
-    VECCHECK_GET_ALL(modes)
+    VECCHECK_GET_ALL(IMPLEMENT_LAYER_COMPONENT,modes)
 
     ReturnValue ret=m_iraw->getControlModesRaw(m_vectorCM_tmp);
 
@@ -86,7 +90,7 @@ ReturnValue ImplementControlMode::getControlModes(std::vector<yarp::dev::Control
 ReturnValue ImplementControlMode::getControlModes(const std::vector<int>& joints, std::vector<yarp::dev::ControlModeEnum>& modes)
 {
     std::lock_guard lock(m_imp_mutex);
-    VECCHECK_GET_SOME(joints,modes);
+    VECCHECK_GET_SOME(IMPLEMENT_LAYER_COMPONENT,joints,modes);
 
     std::vector<int> vectorInt_tmp(joints.size());
     for(int idx=0; idx<joints.size(); idx++)
@@ -101,7 +105,7 @@ ReturnValue ImplementControlMode::getControlModes(const std::vector<int>& joints
 ReturnValue ImplementControlMode::setControlMode(int j, yarp::dev::SelectableControlModeEnum mode)
 {
     std::lock_guard lock(m_imp_mutex);
-    JOINTIDCHECK(j)
+    JOINTIDCHECK(IMPLEMENT_LAYER_COMPONENT,j)
 
     int k=castToMapper(m_helper)->toHw(j);
     return m_iraw->setControlModeRaw(k, mode);
@@ -110,7 +114,7 @@ ReturnValue ImplementControlMode::setControlMode(int j, yarp::dev::SelectableCon
 ReturnValue ImplementControlMode::setControlModes(const std::vector<int>& joints, const std::vector<yarp::dev::SelectableControlModeEnum>& modes)
 {
     std::lock_guard lock(m_imp_mutex);
-    VECCHECK_SET_SOME(joints, modes)
+    VECCHECK_SET_SOME(IMPLEMENT_LAYER_COMPONENT,joints, modes)
 
     std::vector<int> vectorInt_tmp(joints.size());
     for(int idx=0; idx<joints.size(); idx++)
@@ -126,7 +130,7 @@ ReturnValue ImplementControlMode::setControlModes(const std::vector<int>& joints
 ReturnValue ImplementControlMode::setControlModes(const std::vector<yarp::dev::SelectableControlModeEnum>& modes)
 {
     std::lock_guard lock(m_imp_mutex);
-    VECCHECK_SET_ALL(modes)
+    VECCHECK_SET_ALL(IMPLEMENT_LAYER_COMPONENT,modes)
 
     for(int idx=0; idx<castToMapper(m_helper)->axes(); idx++)
     {

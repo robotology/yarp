@@ -14,6 +14,10 @@
 
 using namespace yarp::dev;
 
+namespace {
+YARP_LOG_COMPONENT(IMPLEMENT_LAYER_COMPONENT, "yarp.ImplementImpedanceControl")
+}
+
 /////////////// implement ImplementImpedanceControl
 ImplementImpedanceControl::ImplementImpedanceControl(IImpedanceControlRaw *r)
 {
@@ -54,14 +58,14 @@ bool ImplementImpedanceControl::uninitialize ()
 
 ReturnValue ImplementImpedanceControl::getAxes(int *axes)
 {
-    POINTERCHECK(axes)
+    POINTERCHECK(IMPLEMENT_LAYER_COMPONENT,axes)
     return m_iraw->getAxes(axes);
 }
 
 ReturnValue ImplementImpedanceControl::setImpedance(int j, double stiffness, double damping)
 {
     std::lock_guard lock(m_imp_mutex);
-    JOINTIDCHECK(j)
+    JOINTIDCHECK(IMPLEMENT_LAYER_COMPONENT,j)
 
     int k;
     double stiff;
@@ -74,9 +78,9 @@ ReturnValue ImplementImpedanceControl::setImpedance(int j, double stiffness, dou
 ReturnValue ImplementImpedanceControl::getImpedance(int j, double *stiffness, double *damping)
 {
     std::lock_guard lock(m_imp_mutex);
-    JOINTIDCHECK(j)
-    POINTERCHECK(stiffness)
-    POINTERCHECK(damping)
+    JOINTIDCHECK(IMPLEMENT_LAYER_COMPONENT,j)
+    POINTERCHECK(IMPLEMENT_LAYER_COMPONENT,stiffness)
+    POINTERCHECK(IMPLEMENT_LAYER_COMPONENT,damping)
 
     int k;
     k=castToMapper(m_helper)->toHw(j);
@@ -92,7 +96,7 @@ ReturnValue ImplementImpedanceControl::getImpedance(int j, double *stiffness, do
 ReturnValue ImplementImpedanceControl::setImpedanceOffset(int j, double offset)
 {
     std::lock_guard lock(m_imp_mutex);
-    JOINTIDCHECK(j)
+    JOINTIDCHECK(IMPLEMENT_LAYER_COMPONENT,j)
 
     int k;
     double off;
@@ -103,8 +107,8 @@ ReturnValue ImplementImpedanceControl::setImpedanceOffset(int j, double offset)
 ReturnValue ImplementImpedanceControl::getImpedanceOffset(int j, double *offset)
 {
     std::lock_guard lock(m_imp_mutex);
-    JOINTIDCHECK(j)
-    POINTERCHECK(offset)
+    JOINTIDCHECK(IMPLEMENT_LAYER_COMPONENT,j)
+    POINTERCHECK(IMPLEMENT_LAYER_COMPONENT,offset)
 
     int k;
     k=castToMapper(m_helper)->toHw(j);
@@ -116,11 +120,11 @@ ReturnValue ImplementImpedanceControl::getImpedanceOffset(int j, double *offset)
 ReturnValue ImplementImpedanceControl::getCurrentImpedanceLimit(int j, double *min_stiff, double *max_stiff, double *min_damp, double *max_damp)
 {
     std::lock_guard lock(m_imp_mutex);
-    JOINTIDCHECK(j)
-    POINTERCHECK(min_stiff)
-    POINTERCHECK(max_stiff)
-    POINTERCHECK(min_damp)
-    POINTERCHECK(max_damp)
+    JOINTIDCHECK(IMPLEMENT_LAYER_COMPONENT,j)
+    POINTERCHECK(IMPLEMENT_LAYER_COMPONENT,min_stiff)
+    POINTERCHECK(IMPLEMENT_LAYER_COMPONENT,max_stiff)
+    POINTERCHECK(IMPLEMENT_LAYER_COMPONENT,min_damp)
+    POINTERCHECK(IMPLEMENT_LAYER_COMPONENT,max_damp)
 
     int k;
     k=castToMapper(m_helper)->toHw(j);

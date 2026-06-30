@@ -11,6 +11,9 @@
 
 using namespace yarp::dev;
 
+namespace {
+YARP_LOG_COMPONENT(IMPLEMENT_LAYER_COMPONENT, "yarp.ImplementControlLimits")
+}
 
 ImplementControlLimits::ImplementControlLimits(yarp::dev::IControlLimitsRaw *y) :
     m_iraw(y),
@@ -56,7 +59,7 @@ bool ImplementControlLimits::initialize(int size, const int *amap, const double 
 ReturnValue ImplementControlLimits::setPosLimits(int axis, double min, double max)
 {
     std::lock_guard lock(m_imp_mutex);
-    JOINTIDCHECK(axis);
+    JOINTIDCHECK(IMPLEMENT_LAYER_COMPONENT,axis);
 
     double minEnc=0;
     double maxEnc=0;
@@ -80,9 +83,9 @@ ReturnValue ImplementControlLimits::setPosLimits(int axis, double min, double ma
 ReturnValue ImplementControlLimits::getPosLimits(int axis, double *min, double *max)
 {
     std::lock_guard lock(m_imp_mutex);
-    JOINTIDCHECK(axis)
-    POINTERCHECK(min)
-    POINTERCHECK(max)
+    JOINTIDCHECK(IMPLEMENT_LAYER_COMPONENT,axis)
+    POINTERCHECK(IMPLEMENT_LAYER_COMPONENT,min)
+    POINTERCHECK(IMPLEMENT_LAYER_COMPONENT,max)
 
     double minEnc=0;
     double maxEnc=0;
@@ -106,7 +109,7 @@ ReturnValue ImplementControlLimits::getPosLimits(int axis, double *min, double *
 ReturnValue ImplementControlLimits::setVelLimits(int axis, double min, double max)
 {
     std::lock_guard lock(m_imp_mutex);
-    JOINTIDCHECK(axis);
+    JOINTIDCHECK(IMPLEMENT_LAYER_COMPONENT,axis);
 
     double minEnc=0;
     double maxEnc=0;
@@ -121,9 +124,9 @@ ReturnValue ImplementControlLimits::setVelLimits(int axis, double min, double ma
 ReturnValue ImplementControlLimits::getVelLimits(int axis, double *min, double *max)
 {
     std::lock_guard lock(m_imp_mutex);
-    JOINTIDCHECK(axis);
-    POINTERCHECK(min)
-    POINTERCHECK(max)
+    JOINTIDCHECK(IMPLEMENT_LAYER_COMPONENT,axis);
+    POINTERCHECK(IMPLEMENT_LAYER_COMPONENT,min)
+    POINTERCHECK(IMPLEMENT_LAYER_COMPONENT,max)
 
     double minEnc=0;
     double maxEnc=0;
