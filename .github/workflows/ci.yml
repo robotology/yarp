@@ -1411,6 +1411,7 @@ jobs:
                                       octave-dev \
                                       ruby-dev \
                                       ruby \
+                                      libcrypt-dev \
                                       perl
 
           # Other tools useful in github actions
@@ -2147,6 +2148,7 @@ jobs:
                                       liboctave-dev \
                                       ruby-dev \
                                       ruby \
+                                      libcrypt-dev \
                                       perl
 
           # Other tools useful in github actions
@@ -2359,6 +2361,7 @@ jobs:
                                       liboctave-dev \
                                       ruby-dev \
                                       ruby \
+                                      libcrypt-dev \
                                       perl
 
           # Other tools useful in github actions
@@ -2587,6 +2590,7 @@ jobs:
                                       liboctave-dev \
                                       ruby-dev \
                                       ruby \
+                                      libcrypt-dev \
                                       perl
 
           # Other tools useful in github actions
