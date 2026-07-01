@@ -378,6 +378,10 @@ checkandset_dependency(ZFP)
 find_package(OpenNI2 QUIET)
 checkandset_dependency(OpenNI2)
 
+# This is required before PCL
+find_package(jsoncpp QUIET)
+checkandset_dependency(jsoncpp)
+
 find_package(PCL COMPONENTS common io QUIET)
 checkandset_dependency(PCL)
 

@@ -16,7 +16,6 @@ RUN apt-get update && apt-get install -y apt-utils \
                           psmisc \
                           lsb-release \
                           protobuf-compiler \
-                          libatlas-base-dev \
                           tmux \
                           nano \
                           geany \
