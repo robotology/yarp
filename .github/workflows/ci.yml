@@ -217,9 +217,9 @@ jobs:
           }
     steps:
     - name: remove any previous installation of cmake
-      run: | 
+      run: |
         sudo rm /usr/local/bin/cmake
-        
+
     - name: install cmake
       run: |
         wget -O - https://apt.kitware.com/keys/kitware-archive-latest.asc 2>/dev/null | gpg --dearmor - | sudo tee /usr/share/keyrings/kitware-archive-keyring.gpg >/dev/null
@@ -1413,17 +1413,6 @@ jobs:
                                       ruby \
                                       perl
 
-          # Install SWIG
-          # On Ubuntu 24.04 this corresponds to swig 4.2.0 which is affected by a bug: https://github.com/robotology/yarp/issues/3083
-          # sudo apt-get install -qq -y swig 
-          #
-          # we thus install manually swig 4.3.0
-          sudo apt-get purge -y swig
-          wget -nv https://github.com/robotology/robotology-vcpkg-ports/releases/download/storage/swig_4_3_0_ubuntu_24_04.zip
-          unzip -q swig_4_3_0_ubuntu_24_04.zip
-          sudo mv swig_4_3_0_ubuntu_24_04_install/bin/* /usr/bin
-          sudo mv swig_4_3_0_ubuntu_24_04_install/share/swig /usr/share
-
           # Other tools useful in github actions
           sudo apt-get install -qq -y jq \
                                       wget \
@@ -1485,11 +1474,31 @@ jobs:
           wget -nv https://github.com/robotology/ycm/releases/download/v0.18.0/ycm-cmake-modules-0.18.0-all.tar.gz -O /Users/runner/work/yarp/ycm.tar.gz
           7z x /Users/runner/work/yarp/ycm.tar.gz -o/Users/runner/work/yarp
           7z x -ttar /Users/runner/work/yarp/ycm.tar -o/Users/runner/work/yarp
-          
+
           brew update
           brew install ccache
           brew install ace
           brew install sqlite tinyxml2 libedit libpng qt5 opencv eigen graphviz libsoxr
+
+    - name: Install SWIG [Linux]
+      if: runner.os == 'Linux'
+      shell: bash
+      run: |
+          # Install SWIG
+          # sudo apt-get install -qq -y swig
+
+          # On Ubuntu 24.04 this corresponds to swig 4.2.0 which is affected by a bug:
+          # https://github.com/robotology/yarp/issues/3083
+          # we thus install manually swig 4.3.0
+
+          sudo apt-get purge -y swig
+          wget https://prdownloads.sourceforge.net/swig/swig-4.3.0.tar.gz
+          tar xzf swig-4.3.0.tar.gz
+          cd swig-4.3.0
+          ./autogen.sh
+          ./configure --prefix=/usr/local
+          make -j$(nproc)
+          sudo make install
 
     - name: Prepare Environment Script
       id: prepare_environment_script
@@ -2140,17 +2149,6 @@ jobs:
                                       ruby \
                                       perl
 
-          # Install SWIG
-          # On Ubuntu 24.04 this corresponds to swig 4.2.0 which is affected by a bug: https://github.com/robotology/yarp/issues/3083
-          # sudo apt-get install -qq -y swig 
-          #
-          # we thus install manually swig 4.3.0
-          sudo apt-get purge -y swig
-          wget -nv https://github.com/robotology/robotology-vcpkg-ports/releases/download/storage/swig_4_3_0_ubuntu_24_04.zip
-          unzip -q swig_4_3_0_ubuntu_24_04.zip
-          sudo mv swig_4_3_0_ubuntu_24_04_install/bin/* /usr/bin
-          sudo mv swig_4_3_0_ubuntu_24_04_install/share/swig /usr/share
-
           # Other tools useful in github actions
           sudo apt-get install -qq -y jq \
                                       wget \
@@ -2165,6 +2163,26 @@ jobs:
 
           # Remove old packages from apt cache
           sudo apt-get autoclean -qq
+
+    - name: Install SWIG [Linux]
+      if: runner.os == 'Linux'
+      shell: bash
+      run: |
+          # Install SWIG
+          # sudo apt-get install -qq -y swig
+
+          # On Ubuntu 24.04 this corresponds to swig 4.2.0 which is affected by a bug:
+          # https://github.com/robotology/yarp/issues/3083
+          # we thus install manually swig 4.3.0
+
+          sudo apt-get purge -y swig
+          wget https://prdownloads.sourceforge.net/swig/swig-4.3.0.tar.gz
+          tar xzf swig-4.3.0.tar.gz
+          cd swig-4.3.0
+          ./autogen.sh
+          ./configure --prefix=/usr/local
+          make -j$(nproc)
+          sudo make install
 
     - name: Prepare environment
       env:
@@ -2343,17 +2361,6 @@ jobs:
                                       ruby \
                                       perl
 
-          # Install SWIG
-          # On Ubuntu 24.04 this corresponds to swig 4.2.0 which is affected by a bug: https://github.com/robotology/yarp/issues/3083
-          # sudo apt-get install -qq -y swig 
-          #
-          # we thus install manually swig 4.3.0
-          sudo apt-get purge -y swig
-          wget -nv https://github.com/robotology/robotology-vcpkg-ports/releases/download/storage/swig_4_3_0_ubuntu_24_04.zip
-          unzip -q swig_4_3_0_ubuntu_24_04.zip
-          sudo mv swig_4_3_0_ubuntu_24_04_install/bin/* /usr/bin
-          sudo mv swig_4_3_0_ubuntu_24_04_install/share/swig /usr/share
-
           # Other tools useful in github actions
           sudo apt-get install -qq -y jq \
                                       wget \
@@ -2366,6 +2373,26 @@ jobs:
 
           # Remove old packages from apt cache
           sudo apt-get autoclean -qq
+
+    - name: Install SWIG [Linux]
+      if: runner.os == 'Linux'
+      shell: bash
+      run: |
+          # Install SWIG
+          # sudo apt-get install -qq -y swig
+
+          # On Ubuntu 24.04 this corresponds to swig 4.2.0 which is affected by a bug:
+          # https://github.com/robotology/yarp/issues/3083
+          # we thus install manually swig 4.3.0
+
+          sudo apt-get purge -y swig
+          wget https://prdownloads.sourceforge.net/swig/swig-4.3.0.tar.gz
+          tar xzf swig-4.3.0.tar.gz
+          cd swig-4.3.0
+          ./autogen.sh
+          ./configure --prefix=/usr/local
+          make -j$(nproc)
+          sudo make install
 
     - name: Build
       run: |
@@ -2562,17 +2589,6 @@ jobs:
                                       ruby \
                                       perl
 
-          # Install SWIG
-          # On Ubuntu 24.04 this corresponds to swig 4.2.0 which is affected by a bug: https://github.com/robotology/yarp/issues/3083
-          # sudo apt-get install -qq -y swig 
-          #
-          # we thus install manually swig 4.3.0
-          sudo apt-get purge -y swig
-          wget -nv https://github.com/robotology/robotology-vcpkg-ports/releases/download/storage/swig_4_3_0_ubuntu_24_04.zip
-          unzip -q swig_4_3_0_ubuntu_24_04.zip
-          sudo mv swig_4_3_0_ubuntu_24_04_install/bin/* /usr/bin
-          sudo mv swig_4_3_0_ubuntu_24_04_install/share/swig /usr/share
-
           # Other tools useful in github actions
           sudo apt-get install -qq -y jq \
                                       wget \
@@ -2587,6 +2603,26 @@ jobs:
 
           # Remove old packages from apt cache
           sudo apt-get autoclean -qq
+
+    - name: Install SWIG [Linux]
+      if: runner.os == 'Linux'
+      shell: bash
+      run: |
+          # Install SWIG
+          # sudo apt-get install -qq -y swig
+
+          # On Ubuntu 24.04 this corresponds to swig 4.2.0 which is affected by a bug:
+          # https://github.com/robotology/yarp/issues/3083
+          # we thus install manually swig 4.3.0
+
+          sudo apt-get purge -y swig
+          wget https://prdownloads.sourceforge.net/swig/swig-4.3.0.tar.gz
+          tar xzf swig-4.3.0.tar.gz
+          cd swig-4.3.0
+          ./autogen.sh
+          ./configure --prefix=/usr/local
+          make -j$(nproc)
+          sudo make install
 
     - name: Prepare ccache environment variables
       id: init_ccache
