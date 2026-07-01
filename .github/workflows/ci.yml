@@ -1496,7 +1496,7 @@ jobs:
           tar xzf swig-4.3.0.tar.gz
           cd swig-4.3.0
           ./autogen.sh
-          ./configure --prefix=/usr/local
+          ./configure --prefix=/usr
           make -j$(nproc)
           sudo make install
 
@@ -2180,7 +2180,7 @@ jobs:
           tar xzf swig-4.3.0.tar.gz
           cd swig-4.3.0
           ./autogen.sh
-          ./configure --prefix=/usr/local
+          ./configure --prefix=/usr
           make -j$(nproc)
           sudo make install
 
@@ -2390,7 +2390,7 @@ jobs:
           tar xzf swig-4.3.0.tar.gz
           cd swig-4.3.0
           ./autogen.sh
-          ./configure --prefix=/usr/local
+          ./configure --prefix=/usr
           make -j$(nproc)
           sudo make install
 
@@ -2620,7 +2620,7 @@ jobs:
           tar xzf swig-4.3.0.tar.gz
           cd swig-4.3.0
           ./autogen.sh
-          ./configure --prefix=/usr/local
+          ./configure --prefix=/usr
           make -j$(nproc)
           sudo make install
 
