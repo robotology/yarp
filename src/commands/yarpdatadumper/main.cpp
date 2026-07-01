@@ -26,7 +26,6 @@
 #ifdef ADD_VIDEO
 #    include <opencv2/opencv.hpp>
 #    include <yarp/cv/Cv.h>
-#    include <opencv2/core/core_c.h>
 #    include <opencv2/videoio.hpp>
 #endif // ADD_VIDEO
 
@@ -522,7 +521,7 @@ public:
                 fps=(dt<=0.0)?25:int(double(sz-1)/dt);
 
                 videoWriter.open(videoFile.c_str(),cv::VideoWriter::fourcc('H','F','Y','U'),
-                                 fps,cvSize(frameW,frameH),true);
+                                 fps,cv::Size(frameW,frameH),true);
 
                 doImgParamsExtraction=false;
                 doSaveFrame=true;

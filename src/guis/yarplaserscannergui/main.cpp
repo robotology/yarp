@@ -15,8 +15,8 @@
 #include <cmath>
 #include <opencv2/opencv.hpp>
 #include <opencv2/core/version.hpp>
-#include <opencv2/highgui/highgui_c.h>
 #include <opencv2/highgui.hpp>
+#include <opencv2/imgproc.hpp>
 #include <vector>
 
 #include <yarp/dev/Drivers.h>
@@ -39,12 +39,12 @@ using namespace yarp::sig;
 #define DEG2RAD M_PI/180.0
 #endif
 
-const CvScalar color_bwhite = cvScalar(200,200,255);
-const CvScalar color_white  = cvScalar(255,255,255);
-const CvScalar color_red    = cvScalar(0,0,255);
-const CvScalar color_yellow = cvScalar(0,255,255);
-const CvScalar color_black  = cvScalar(0,0,0);
-const CvScalar color_gray   = cvScalar(100,100,100);
+const cv::Scalar color_bwhite = cv::Scalar(200,200,255);
+const cv::Scalar color_white  = cv::Scalar(255,255,255);
+const cv::Scalar color_red    = cv::Scalar(0,0,255);
+const cv::Scalar color_yellow = cv::Scalar(0,255,255);
+const cv::Scalar color_black  = cv::Scalar(0,0,0);
+const cv::Scalar color_gray   = cv::Scalar(100,100,100);
 
 #define ASPECT_LINE  0
 #define ASPECT_POINT 1
@@ -54,10 +54,10 @@ bool g_lidar_debug_inf = false;
 
 void drawGrid(cv::Mat& img, double scale)
 {
-    cv::line(img,cvPoint(0,0),cvPoint(img.cols,img.rows),color_black);
-    cv::line(img,cvPoint(img.cols,0),cvPoint(0,img.rows),color_black);
-    cv::line(img,cvPoint(img.cols/2,0),cvPoint(img.cols/2,img.rows),color_black);
-    cv::line(img,cvPoint(0,img.rows/2),cvPoint(img.cols,img.rows/2),color_black);
+    cv::line(img,cv::Point(0,0),cv::Point(img.cols,img.rows),color_black);
+    cv::line(img,cv::Point(img.cols,0),cv::Point(0,img.rows),color_black);
+    cv::line(img,cv::Point(img.cols/2,0),cv::Point(img.cols/2,img.rows),color_black);
+    cv::line(img,cv::Point(0,img.rows/2),cv::Point(img.cols,img.rows/2),color_black);
     const float step = (0.5 * scale); //mm
 /*
     for (int xi=0; xi<img->width; xi+=step)
@@ -92,15 +92,15 @@ void drawGrid(cv::Mat& img, double scale)
     for (float rad=0; rad<80; rad+=rad_step)
     {
         sprintf (buff,fmt.c_str(),float(rad)/2);
-        cv::putText(img, buff, cvPoint(img.cols / 2, int(float(img.rows) / 2.0 - float(step) * rad)), cv::FONT_HERSHEY_SIMPLEX, 0.4, cvScalar(0, 0, 0), 1, cv::LINE_AA);
-        cv::circle(img,cvPoint(img.cols/2,img.rows/2),(int)(step*rad),color_black);
+        cv::putText(img, buff, cv::Point(img.cols / 2, int(float(img.rows) / 2.0 - float(step) * rad)), cv::FONT_HERSHEY_SIMPLEX, 0.4, cv::Scalar(0, 0, 0), 1, cv::LINE_AA);
+        cv::circle(img,cv::Point(img.cols/2,img.rows/2),(int)(step*rad),color_black);
     }
 
 }
 
 void drawRobot (cv::Mat& img, double robot_radius, double scale)
 {
-    cv::rectangle(img,cvPoint(0,0),cvPoint(img.cols,img.rows),cvScalar(0,0,0),CV_FILLED);
+    cv::rectangle(img,cv::Point(0,0),cv::Point(img.cols,img.rows),cv::Scalar(0,0,0),cv::FILLED);
 
     //draw a circle
     double v1 = robot_radius*scale;
@@ -116,7 +116,7 @@ void drawRobot (cv::Mat& img, double robot_radius, double scale)
         v3 = 0;
     }
 
-    cv::circle(img, cv::Point(img.cols/2, img.rows/2), (int)(v1),color_gray,CV_FILLED);
+    cv::circle(img, cv::Point(img.cols/2, img.rows/2), (int)(v1),color_gray,cv::FILLED);
     cv::circle(img, cv::Point(img.cols/2, img.rows/2), (int)(v2), color_black);
     cv::circle(img, cv::Point(img.cols/2, img.rows/2), (int)(v3), color_black);
 }
@@ -130,7 +130,7 @@ void drawCompass(const yarp::sig::Vector* comp, cv::Mat& img, bool absolute)
     int tx = 0;
     int ty = 0;
     char buff [20];
-    cv::circle(img,cvPoint(img.cols/2,img.rows/2),250,color_black);
+    cv::circle(img,cv::Point(img.cols/2,img.rows/2),250,color_black);
     for (int i=0; i<360; i+=10)
     {
         double ang;
@@ -145,14 +145,14 @@ void drawCompass(const yarp::sig::Vector* comp, cv::Mat& img, bool absolute)
         ey = int(260*cos(ang/180.0*M_PI)+img.rows/2);
         tx = int(-275*sin(ang/180.0*M_PI)+img.cols/2);
         ty = int(275*cos(ang/180.0*M_PI)+img.rows/2);
-        cv::line(img,cvPoint(sx,sy),cvPoint(ex,ey),color_black);
+        cv::line(img,cv::Point(sx,sy),cv::Point(ex,ey),color_black);
         cv::Size tempSize;
         int lw;
-        if      (i==0)     {sprintf(buff,"N");    tempSize = cv::getTextSize( buff, cv::FONT_HERSHEY_SIMPLEX, 0.8, 1, &lw ); cv::putText(img, buff, cvPoint(tx-tempSize.width/2,ty+tempSize.height/2), cv::FONT_HERSHEY_SIMPLEX, 0.8, cvScalar(0, 0, 0), 1, cv::LINE_AA);}
-        else if (i==90)    {sprintf(buff,"E");    tempSize = cv::getTextSize( buff, cv::FONT_HERSHEY_SIMPLEX, 0.8, 1, &lw ); cv::putText(img, buff, cvPoint(tx-tempSize.width/2,ty+tempSize.height/2), cv::FONT_HERSHEY_SIMPLEX, 0.8, cvScalar(0, 0, 0), 1, cv::LINE_AA);}
-        else if (i==180)   {sprintf(buff,"S");    tempSize = cv::getTextSize( buff, cv::FONT_HERSHEY_SIMPLEX, 0.8, 1, &lw ); cv::putText(img, buff, cvPoint(tx-tempSize.width/2,ty+tempSize.height/2), cv::FONT_HERSHEY_SIMPLEX, 0.8, cvScalar(0, 0, 0), 1, cv::LINE_AA);}
-        else if (i==270)   {sprintf(buff,"W");    tempSize = cv::getTextSize( buff, cv::FONT_HERSHEY_SIMPLEX, 0.8, 1, &lw ); cv::putText(img, buff, cvPoint(tx-tempSize.width/2,ty+tempSize.height/2), cv::FONT_HERSHEY_SIMPLEX, 0.8, cvScalar(0, 0, 0), 1, cv::LINE_AA);}
-        else               {sprintf(buff,"%d",i); tempSize = cv::getTextSize( buff, cv::FONT_HERSHEY_SIMPLEX, 0.4, 1, &lw ); cv::putText(img, buff, cvPoint(tx-tempSize.width/2,ty+tempSize.height/2), cv::FONT_HERSHEY_SIMPLEX, 0.4, cvScalar(0, 0, 0), 1, cv::LINE_AA);}
+        if      (i==0)     {sprintf(buff,"N");    tempSize = cv::getTextSize( buff, cv::FONT_HERSHEY_SIMPLEX, 0.8, 1, &lw ); cv::putText(img, buff, cv::Point(tx-tempSize.width/2,ty+tempSize.height/2), cv::FONT_HERSHEY_SIMPLEX, 0.8, cv::Scalar(0, 0, 0), 1, cv::LINE_AA);}
+        else if (i==90)    {sprintf(buff,"E");    tempSize = cv::getTextSize( buff, cv::FONT_HERSHEY_SIMPLEX, 0.8, 1, &lw ); cv::putText(img, buff, cv::Point(tx-tempSize.width/2,ty+tempSize.height/2), cv::FONT_HERSHEY_SIMPLEX, 0.8, cv::Scalar(0, 0, 0), 1, cv::LINE_AA);}
+        else if (i==180)   {sprintf(buff,"S");    tempSize = cv::getTextSize( buff, cv::FONT_HERSHEY_SIMPLEX, 0.8, 1, &lw ); cv::putText(img, buff, cv::Point(tx-tempSize.width/2,ty+tempSize.height/2), cv::FONT_HERSHEY_SIMPLEX, 0.8, cv::Scalar(0, 0, 0), 1, cv::LINE_AA);}
+        else if (i==270)   {sprintf(buff,"W");    tempSize = cv::getTextSize( buff, cv::FONT_HERSHEY_SIMPLEX, 0.8, 1, &lw ); cv::putText(img, buff, cv::Point(tx-tempSize.width/2,ty+tempSize.height/2), cv::FONT_HERSHEY_SIMPLEX, 0.8, cv::Scalar(0, 0, 0), 1, cv::LINE_AA);}
+        else               {sprintf(buff,"%d",i); tempSize = cv::getTextSize( buff, cv::FONT_HERSHEY_SIMPLEX, 0.4, 1, &lw ); cv::putText(img, buff, cv::Point(tx-tempSize.width/2,ty+tempSize.height/2), cv::FONT_HERSHEY_SIMPLEX, 0.4, cv::Scalar(0, 0, 0), 1, cv::LINE_AA);}
     }
 }
 
@@ -173,11 +173,11 @@ void drawNav(const yarp::os::Bottle *display, cv::Mat& img, double scale)
     double max_obs_dist = display->get(7).asFloat64();
     double angle_g = display->get(8).asFloat64();
 
-    CvPoint center;
+    cv::Point center;
     center.x = (int)(img.cols/2  );
     center.y = (int)(img.rows/2 );
 
-    CvPoint ray;
+    cv::Point ray;
     ray.x=int(200*sin(DEG2RAD*angle_f));
     ray.y=-int(200*cos(DEG2RAD*angle_f));
     ray.x += center.x;
@@ -198,14 +198,14 @@ void drawNav(const yarp::os::Bottle *display, cv::Mat& img, double scale)
     ray.y += center.y;
     cv::line(img,center,ray,color_yellow,thickness);
 
-    cv::circle(img,cvPoint(img.cols/2,img.rows/2),(int)(max_obs_dist*scale-1),color_black);
+    cv::circle(img,cv::Point(img.cols/2,img.rows/2),(int)(max_obs_dist*scale-1),color_black);
 }
 
 void drawLaser(const Vector *comp, std::vector<yarp::sig::LaserMeasurementData> *las, std::vector<yarp::sig::LaserMeasurementData> *lmap, cv::Mat& img, double angle_tot, int scans, double sens_position_x, double sens_position_y, double sens_position_t, double scale, bool absolute, bool verbose, int aspect)
 {
     img.setTo(cv::Scalar(0, 0, 0));
-    cv::rectangle(img, cvPoint(0, 0), cvPoint(img.cols, img.rows), cvScalar(255, 0, 0), -1);
-    CvPoint center;
+    cv::rectangle(img, cv::Point(0, 0), cv::Point(img.cols, img.rows), cv::Scalar(255, 0, 0), -1);
+    cv::Point center;
 
     double center_angle=sens_position_t;
     if (!absolute) {
@@ -254,7 +254,7 @@ void drawLaser(const Vector *comp, std::vector<yarp::sig::LaserMeasurementData> 
                 double sensor_resolution = 0.5; //@@@fixme
                 tt = -i * sensor_resolution - 90;
                 //(*las)[i].get_polar(rr,tt);
-                CvPoint ray;
+                cv::Point ray;
                 //yDebug() << rr << tt;
                 ray.x = 1.0 * cos(tt * DEG2RAD) * scale;
                 ray.y = 1.0 * sin(tt * DEG2RAD) * scale;
@@ -278,7 +278,7 @@ void drawLaser(const Vector *comp, std::vector<yarp::sig::LaserMeasurementData> 
                 double sensor_resolution = 0.5; //@@@fixme
                 tt= - i * sensor_resolution - 90;
                 //(*las)[i].get_polar(rr,tt);
-                CvPoint ray;
+                cv::Point ray;
                 //yDebug() << rr << tt;
                 ray.x = 1.0 * cos(tt*DEG2RAD) * scale;
                 ray.y = 1.0 * sin(tt*DEG2RAD) * scale;
@@ -296,7 +296,7 @@ void drawLaser(const Vector *comp, std::vector<yarp::sig::LaserMeasurementData> 
         //else if (length>15)    length = 15; //15m maximum
 
         //the following rotation is performed to have x axis aligned with screen vertical
-        CvPoint ray;
+        cv::Point ray;
         ray.x = int(-y*scale);
         ray.y = int(-x*scale);
         ray.x += center.x;
@@ -318,7 +318,7 @@ void drawLaser(const Vector *comp, std::vector<yarp::sig::LaserMeasurementData> 
             double x = 0;
             double y = 0;
             (*lmap)[i].get_cartesian(x, y);
-            CvPoint ray2;
+            cv::Point ray2;
             ray2.x = -int(x*scale);
             ray2.y = -int(y*scale);
             ray2.x += (center.x - int((sens_position_x*scale)*sin(center_angle / 180 * M_PI)));
@@ -438,7 +438,7 @@ int main(int argc, char *argv[])
     std::string window_name = "LaserScannerGui connected to " + laserport;
     cv::Mat img = cv::Mat(width, height, CV_8UC3);
     cv::Mat img2 = cv::Mat(width, height, CV_8UC3);
-    cvNamedWindow(window_name.c_str(),CV_WINDOW_AUTOSIZE);
+    cv::namedWindow(window_name.c_str(),cv::WINDOW_AUTOSIZE);
 
     bool exit = false;
     yarp::sig::Vector compass_data;
@@ -446,13 +446,6 @@ int main(int argc, char *argv[])
 
     while(!exit)
     {
-        void *v = cvGetWindowHandle(window_name.c_str());
-        if (v == nullptr)
-        {
-            exit = true;
-            break;
-        }
-
         if (compass)
         {
             yarp::sig::Vector *cmp = compassInPort.read(false);
@@ -519,7 +512,7 @@ int main(int argc, char *argv[])
         SystemClock::delaySystem(double(period)/1000.0+0.005);
 
         //if ESC is pressed, exit.
-        int keypressed = cvWaitKey(2); //wait 2ms. Lower values do not work under Linux
+        int keypressed = cv::waitKey(2); //wait 2ms. Lower values do not work under Linux
         keypressed &= 0xFF; //this mask is required in Linux systems
         if (keypressed == 27) {
             exit = true;
@@ -597,7 +590,7 @@ int main(int argc, char *argv[])
     compassInPort.close();
     laserMapInPort.close();
     navDisplayInPort.close();
-    cvDestroyAllWindows();
+    cv::destroyAllWindows();
     if (drv) {
         delete drv;
     }
