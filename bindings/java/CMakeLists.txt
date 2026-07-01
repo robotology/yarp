@@ -10,30 +10,14 @@ include(UseJava)
 # this is set in the parent directory, but for some reason it does not get inherited
 set_source_files_properties(${SWIG_BINDINGS_SOURCE_FILE} PROPERTIES CPLUSPLUS ON)
 
-if (${Java_VERSION_MAJOR} VERSION_GREATER_EQUAL 9)
-  # Java >= 9
-  set(JAVA_RELEASE_VERSION 7 CACHE STRING "Compile for a specific VM version. See javac --help (--release option)")
-  mark_as_advanced(JAVA_RELEASE_VERSION)
-  if(NOT JAVA_RELEASE_VERSION STREQUAL "")
-    list(APPEND CMAKE_JAVA_COMPILE_FLAGS "--release" "${JAVA_RELEASE_VERSION}")
-  endif()
-  # clean old variable
-  unset(JAVA_TARGET_VERSION CACHE)
-  unset(JAVA_SOURCE_VERSION CACHE)
-else()
-  # Java < 9: --release option not present
-  set(JAVA_TARGET_VERSION ${Java_VERSION_MINOR} CACHE STRING "Java target version. See javac --help (-target option)")
-  set(JAVA_SOURCE_VERSION ${Java_VERSION_MINOR} CACHE STRING "Java source version. See javac --help (-source option)")
-  mark_as_advanced(JAVA_TARGET_VERSION)
-  mark_as_advanced(JAVA_SOURCE_VERSION)
-  if(NOT JAVA_TARGET_VERSION STREQUAL "")
-    list(APPEND CMAKE_JAVA_COMPILE_FLAGS "-target" "${JAVA_TARGET_VERSION}")
-  endif()
-  if(NOT JAVA_SOURCE_VERSION STREQUAL "")
-    list(APPEND CMAKE_JAVA_COMPILE_FLAGS "-source" "${JAVA_SOURCE_VERSION}")
-  endif()
-  unset(JAVA_RELEASE_VERSION CACHE)
+set(JAVA_RELEASE_VERSION 9 CACHE STRING "Compile for a specific VM version. See javac --help (--release option)")
+mark_as_advanced(JAVA_RELEASE_VERSION)
+if(NOT JAVA_RELEASE_VERSION STREQUAL "")
+  list(APPEND CMAKE_JAVA_COMPILE_FLAGS "--release" "${JAVA_RELEASE_VERSION}")
 endif()
+# clean old variable
+unset(JAVA_TARGET_VERSION CACHE)
+unset(JAVA_SOURCE_VERSION CACHE)
 
 set(JAVA_FLAGS "" CACHE STRING "Additional flags to be passed to javac. E.g. -bootclasspath if you want to cross compile")
 mark_as_advanced(JAVA_FLAGS)
