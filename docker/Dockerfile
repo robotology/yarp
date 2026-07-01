@@ -16,7 +16,6 @@ RUN apt-get update && apt-get install -y apt-utils \
                           psmisc \
                           lsb-release \
                           protobuf-compiler \
-                          libatlas-base-dev \
                           tmux \
                           nano \
                           geany \
@@ -89,10 +88,13 @@ RUN apt-get install -y     libace-dev \
 #
 # we thus install manually swig 4.3.0
 RUN apt-get purge -y swig
-RUN wget -nv https://github.com/robotology/robotology-vcpkg-ports/releases/download/storage/swig_4_3_0_ubuntu_24_04.zip
-RUN unzip -q swig_4_3_0_ubuntu_24_04.zip
-RUN mv swig_4_3_0_ubuntu_24_04_install/bin/* /usr/bin
-RUN mv swig_4_3_0_ubuntu_24_04_install/share/swig /usr/share
+RUN https://prdownloads.sourceforge.net/swig/swig-4.3.0.tar.gz
+RUN tar xzf swig-4.3.0.tar.gz && \
+    cd swig-4.3.0 && \
+    ./autogen.sh && \
+    ./configure --prefix=/usr/local && \
+    make -j$(nproc) && \
+    make install
 
 # Install SWIG and bindings dependencies
 RUN apt-get install -qq -y mono-mcs \

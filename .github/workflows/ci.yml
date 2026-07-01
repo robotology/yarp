@@ -217,9 +217,9 @@ jobs:
           }
     steps:
     - name: remove any previous installation of cmake
-      run: | 
+      run: |
         sudo rm /usr/local/bin/cmake
-        
+
     - name: install cmake
       run: |
         wget -O - https://apt.kitware.com/keys/kitware-archive-latest.asc 2>/dev/null | gpg --dearmor - | sudo tee /usr/share/keyrings/kitware-archive-keyring.gpg >/dev/null
@@ -577,8 +577,8 @@ jobs:
             id: '102',
             os: ubuntu-24.04,
             build_type: "Release",
-            cc: "clang-17",
-            cxx: "clang++-17",
+            cc: "clang-18",
+            cxx: "clang++-18",
             cmake_generator: "Unix Makefiles",
             cmake_initial_cache_file: ".ci/initial-cache.gh.linux.cmake",
             test_external_bindings: true,
@@ -607,8 +607,8 @@ jobs:
             description: 'No ACE',
             os: ubuntu-24.04,
             build_type: "Release",
-            cc: "clang-17",
-            cxx: "clang++-17",
+            cc: "clang-18",
+            cxx: "clang++-18",
             cmake_generator: "Unix Makefiles",
             cmake_initial_cache_file: ".ci/initial-cache.gh.linux.cmake",
             cmake_extra_options: "-DCMAKE_DISABLE_FIND_PACKAGE_ACE:BOOL=ON
@@ -637,8 +637,8 @@ jobs:
             description: 'No YARP_math (bindings disabled)',
             os: ubuntu-24.04,
             build_type: "Release",
-            cc: "clang-17",
-            cxx: "clang++-17",
+            cc: "clang-18",
+            cxx: "clang++-18",
             cmake_generator: "Unix Makefiles",
             cmake_initial_cache_file: ".ci/initial-cache.gh.linux.cmake",
             cmake_extra_options: "-DCMAKE_DISABLE_FIND_PACKAGE_Eigen:BOOL=ON
@@ -664,8 +664,8 @@ jobs:
             description: 'CLEAN_API (unit tests and bindings disabled)',
             os: ubuntu-24.04,
             build_type: "Release",
-            cc: "clang-17",
-            cxx: "clang++-17",
+            cc: "clang-18",
+            cxx: "clang++-18",
             cmake_generator: "Unix Makefiles",
             cmake_initial_cache_file: ".ci/initial-cache.gh.linux.cmake",
             cmake_extra_options: "-DYARP_CLEAN_API:BOOL=ON
@@ -691,8 +691,8 @@ jobs:
             description: 'Static',
             os: ubuntu-24.04,
             build_type: "Release",
-            cc: "clang-17",
-            cxx: "clang++-17",
+            cc: "clang-18",
+            cxx: "clang++-18",
             cmake_generator: "Unix Makefiles",
             cmake_initial_cache_file: ".ci/initial-cache.gh.linux.cmake",
             cmake_extra_options: "-DBUILD_SHARED_LIBS:BOOL=OFF",
@@ -719,8 +719,8 @@ jobs:
             description: 'Static, no ACE (bindings disabled)',
             os: ubuntu-24.04,
             build_type: "Release",
-            cc: "clang-17",
-            cxx: "clang++-17",
+            cc: "clang-18",
+            cxx: "clang++-18",
             cmake_generator: "Unix Makefiles",
             cmake_initial_cache_file: ".ci/initial-cache.gh.linux.cmake",
             cmake_extra_options: "-DBUILD_SHARED_LIBS:BOOL=OFF
@@ -747,8 +747,8 @@ jobs:
             description: 'No deprecated',
             os: ubuntu-24.04,
             build_type: "Release",
-            cc: "clang-17",
-            cxx: "clang++-17",
+            cc: "clang-18",
+            cxx: "clang++-18",
             cmake_generator: "Unix Makefiles",
             cmake_initial_cache_file: ".ci/initial-cache.gh.linux.cmake",
             cmake_extra_options: "-DYARP_NO_DEPRECATED:BOOL=ON",
@@ -776,8 +776,8 @@ jobs:
             description: 'No executables (unit tests disabled)',
             os: ubuntu-24.04,
             build_type: "Release",
-            cc: "clang-17",
-            cxx: "clang++-17",
+            cc: "clang-18",
+            cxx: "clang++-18",
             cmake_generator: "Unix Makefiles",
             cmake_initial_cache_file: ".ci/initial-cache.gh.linux.cmake",
             cmake_extra_options: "-DYARP_COMPILE_EXECUTABLES:BOOL=OFF
@@ -807,8 +807,8 @@ jobs:
             description: 'Build extern dependencies',
             os: ubuntu-24.04,
             build_type: "Release",
-            cc: "clang-17",
-            cxx: "clang++-17",
+            cc: "clang-18",
+            cxx: "clang++-18",
             cmake_generator: "Unix Makefiles",
             cmake_initial_cache_file: ".ci/initial-cache.gh.linux.cmake",
             cmake_extra_options: "-DCMAKE_DISABLE_FIND_PACKAGE_SQLite:BOOL=ON
@@ -834,8 +834,8 @@ jobs:
             id: '120',
             os: ubuntu-24.04,
             build_type: "Release",
-            cc: "clang-17",
-            cxx: "clang++-17",
+            cc: "clang-18",
+            cxx: "clang++-18",
             cmake_generator: "Ninja",
             cmake_initial_cache_file: ".ci/initial-cache.gh.linux.cmake",
             #SWIGFIX temporary fix for swig 4.3.0. The following lines should be removed.
@@ -896,19 +896,353 @@ jobs:
           }
         - {
             id: '201',
-            os: windows-2025,
+            os: ubuntu-26.04,
             build_type: "Release",
-            cc: "cl",
-            cxx: "cl",
-            cmake_generator: "Visual Studio 17 2022",
-            cmake_toolset: "v143",
-            cmake_platform: "x64",
-            cmake_toolchain_file: "C:/robotology/vcpkg/scripts/buildsystems/vcpkg.cmake",
-            cmake_initial_cache_file: ".ci/initial-cache.gh.windows.cmake",
-            environment_script: "C:/Program Files (x86)/Microsoft Visual Studio/2022/Enterprise/VC/Auxiliary/Build/vcvars64.bat",
+            cc: "gcc",
+            cxx: "g++",
+            cmake_generator: "Unix Makefiles",
+            cmake_initial_cache_file: ".ci/initial-cache.gh.linux.cmake",
+            test_external_bindings: true,
+            #SWIGFIX temporary fix for swig 4.3.0. The following lines should be removed.
+            swig_extra_options: "-DSWIG_EXECUTABLE=/usr/bin/swig
+                                  -DSWIG_DIR=/usr/share/swig/4.3.0",
+          }
+        - {
+            id: '202',
+            os: ubuntu-26.04,
+            build_type: "Release",
+            cc: "clang-21",
+            cxx: "clang++-21",
+            cmake_generator: "Unix Makefiles",
+            cmake_initial_cache_file: ".ci/initial-cache.gh.linux.cmake",
+            test_external_bindings: true,
+            #SWIGFIX temporary fix for swig 4.3.0. The following lines should be removed.
+            swig_extra_options: "-DSWIG_EXECUTABLE=/usr/bin/swig
+                                  -DSWIG_DIR=/usr/share/swig/4.3.0",
           }
         - {
             id: '203',
+            description: 'No ACE',
+            os: ubuntu-26.04,
+            build_type: "Release",
+            cc: "gcc",
+            cxx: "g++",
+            cmake_generator: "Unix Makefiles",
+            cmake_initial_cache_file: ".ci/initial-cache.gh.linux.cmake",
+            cmake_extra_options: "-DCMAKE_DISABLE_FIND_PACKAGE_ACE=ON
+                                  -DSKIP_ACE:BOOL=ON",
+            #SWIGFIX temporary fix for swig 4.3.0. The following lines should be removed.
+            swig_extra_options:  "-DSWIG_EXECUTABLE=/usr/bin/swig
+                                  -DSWIG_DIR=/usr/share/swig/4.3.0",
+            test_external_bindings: true,
+          }
+        - {
+            id: '204',
+            description: 'No ACE',
+            os: ubuntu-26.04,
+            build_type: "Release",
+            cc: "clang-21",
+            cxx: "clang++-21",
+            cmake_generator: "Unix Makefiles",
+            cmake_initial_cache_file: ".ci/initial-cache.gh.linux.cmake",
+            cmake_extra_options: "-DCMAKE_DISABLE_FIND_PACKAGE_ACE:BOOL=ON
+                                  -DSKIP_ACE:BOOL=ON",
+            #SWIGFIX temporary fix for swig 4.3.0. The following lines should be removed.
+            swig_extra_options:  "-DSWIG_EXECUTABLE=/usr/bin/swig
+                                  -DSWIG_DIR=/usr/share/swig/4.3.0",
+            test_external_bindings: true,
+          }
+        - {
+            id: '205',
+            description: 'No YARP_math (bindings disabled)',
+            os: ubuntu-26.04,
+            build_type: "Release",
+            cc: "gcc",
+            cxx: "g++",
+            cmake_generator: "Unix Makefiles",
+            cmake_initial_cache_file: ".ci/initial-cache.gh.linux.cmake",
+            cmake_extra_options: "-DCMAKE_DISABLE_FIND_PACKAGE_Eigen:BOOL=ON
+                                  -DCMAKE_DISABLE_FIND_PACKAGE_GSL:BOOL=ON
+                                  -DYARP_COMPILE_libYARP_math:BOOL=OFF
+                                  -DYARP_COMPILE_BINDINGS:BOOL=OFF",
+          }
+        - {
+            id: '206',
+            description: 'No YARP_math (bindings disabled)',
+            os: ubuntu-26.04,
+            build_type: "Release",
+            cc: "clang-21",
+            cxx: "clang++-21",
+            cmake_generator: "Unix Makefiles",
+            cmake_initial_cache_file: ".ci/initial-cache.gh.linux.cmake",
+            cmake_extra_options: "-DCMAKE_DISABLE_FIND_PACKAGE_Eigen:BOOL=ON
+                                  -DCMAKE_DISABLE_FIND_PACKAGE_GSL:BOOL=ON
+                                  -DYARP_COMPILE_libYARP_math:BOOL=OFF
+                                  -DYARP_COMPILE_BINDINGS:BOOL=OFF",
+          }
+        - {
+            id: '207',
+            description: 'CLEAN_API (unit tests and bindings disabled)',
+            os: ubuntu-26.04,
+            build_type: "Release",
+            cc: "gcc",
+            cxx: "g++",
+            cmake_generator: "Unix Makefiles",
+            cmake_initial_cache_file: ".ci/initial-cache.gh.linux.cmake",
+            cmake_extra_options: "-DYARP_CLEAN_API:BOOL=ON
+                                  -DYARP_COMPILE_TESTS:BOOL=OFF
+                                  -DYARP_COMPILE_BINDINGS:BOOL=OFF",
+          }
+        - {
+            id: '208',
+            description: 'CLEAN_API (unit tests and bindings disabled)',
+            os: ubuntu-26.04,
+            build_type: "Release",
+            cc: "clang-21",
+            cxx: "clang++-21",
+            cmake_generator: "Unix Makefiles",
+            cmake_initial_cache_file: ".ci/initial-cache.gh.linux.cmake",
+            cmake_extra_options: "-DYARP_CLEAN_API:BOOL=ON
+                                  -DYARP_COMPILE_TESTS:BOOL=OFF
+                                  -DYARP_COMPILE_BINDINGS:BOOL=OFF",
+          }
+        - {
+            id: '209',
+            description: 'Static',
+            os: ubuntu-26.04,
+            build_type: "Release",
+            cc: "gcc",
+            cxx: "g++",
+            cmake_generator: "Unix Makefiles",
+            cmake_initial_cache_file: ".ci/initial-cache.gh.linux.cmake",
+            cmake_extra_options: "-DBUILD_SHARED_LIBS:BOOL=OFF",
+            #SWIGFIX temporary fix for swig 4.3.0. The following lines should be removed.
+            swig_extra_options: "-DSWIG_EXECUTABLE=/usr/bin/swig
+                                  -DSWIG_DIR=/usr/share/swig/4.3.0",
+          }
+        - {
+            id: '210',
+            description: 'Static',
+            os: ubuntu-26.04,
+            build_type: "Release",
+            cc: "clang-21",
+            cxx: "clang++-21",
+            cmake_generator: "Unix Makefiles",
+            cmake_initial_cache_file: ".ci/initial-cache.gh.linux.cmake",
+            cmake_extra_options: "-DBUILD_SHARED_LIBS:BOOL=OFF",
+            #SWIGFIX temporary fix for swig 4.3.0. The following lines should be removed.
+            swig_extra_options: "-DSWIG_EXECUTABLE=/usr/bin/swig
+                                  -DSWIG_DIR=/usr/share/swig/4.3.0",
+          }
+        - {
+            id: '211',
+            description: 'Static, no ACE (bindings disabled)',
+            os: ubuntu-26.04,
+            build_type: "Release",
+            cc: "gcc",
+            cxx: "g++",
+            cmake_generator: "Unix Makefiles",
+            cmake_initial_cache_file: ".ci/initial-cache.gh.linux.cmake",
+            cmake_extra_options: "-DBUILD_SHARED_LIBS:BOOL=OFF
+                                  -DCMAKE_DISABLE_FIND_PACKAGE_ACE:BOOL=ON
+                                  -DSKIP_ACE:BOOL=ON
+                                  -DYARP_COMPILE_BINDINGS:BOOL=OFF",
+          }
+        - {
+            id: '212',
+            description: 'Static, no ACE (bindings disabled)',
+            os: ubuntu-26.04,
+            build_type: "Release",
+            cc: "clang-21",
+            cxx: "clang++-21",
+            cmake_generator: "Unix Makefiles",
+            cmake_initial_cache_file: ".ci/initial-cache.gh.linux.cmake",
+            cmake_extra_options: "-DBUILD_SHARED_LIBS:BOOL=OFF
+                                  -DCMAKE_DISABLE_FIND_PACKAGE_ACE:BOOL=ON
+                                  -DSKIP_ACE:BOOL=ON
+                                  -DYARP_COMPILE_BINDINGS:BOOL=OFF",
+          }
+        - {
+            id: '213',
+            description: 'No deprecated',
+            os: ubuntu-26.04,
+            build_type: "Release",
+            cc: "gcc",
+            cxx: "g++",
+            cmake_generator: "Unix Makefiles",
+            cmake_initial_cache_file: ".ci/initial-cache.gh.linux.cmake",
+            cmake_extra_options: "-DYARP_NO_DEPRECATED:BOOL=ON",
+            #SWIGFIX temporary fix for swig 4.3.0. The following lines should be removed.
+            swig_extra_options: "-DSWIG_EXECUTABLE=/usr/bin/swig
+                                  -DSWIG_DIR=/usr/share/swig/4.3.0",
+          }
+        - {
+            id: '214',
+            description: 'No deprecated',
+            os: ubuntu-26.04,
+            build_type: "Release",
+            cc: "clang-21",
+            cxx: "clang++-21",
+            cmake_generator: "Unix Makefiles",
+            cmake_initial_cache_file: ".ci/initial-cache.gh.linux.cmake",
+            cmake_extra_options: "-DYARP_NO_DEPRECATED:BOOL=ON",
+            #SWIGFIX temporary fix for swig 4.3.0. The following lines should be removed.
+            swig_extra_options: "-DSWIG_EXECUTABLE=/usr/bin/swig
+                                  -DSWIG_DIR=/usr/share/swig/4.3.0",
+          }
+        - {
+            id: '215',
+            description: 'No executables (unit tests disabled)',
+            os: ubuntu-26.04,
+            build_type: "Release",
+            cc: "gcc",
+            cxx: "g++",
+            cmake_generator: "Unix Makefiles",
+            cmake_initial_cache_file: ".ci/initial-cache.gh.linux.cmake",
+            cmake_extra_options: "-DYARP_COMPILE_EXECUTABLES:BOOL=OFF
+                                  -DYARP_COMPILE_TESTS:BOOL=OFF",
+            #SWIGFIX temporary fix for swig 4.3.0. The following lines should be removed.
+            swig_extra_options: "-DSWIG_EXECUTABLE=/usr/bin/swig
+                                  -DSWIG_DIR=/usr/share/swig/4.3.0",
+          }
+        - {
+            id: '216',
+            description: 'No executables (unit tests disabled)',
+            os: ubuntu-26.04,
+            build_type: "Release",
+            cc: "clang-21",
+            cxx: "clang++-21",
+            cmake_generator: "Unix Makefiles",
+            cmake_initial_cache_file: ".ci/initial-cache.gh.linux.cmake",
+            cmake_extra_options: "-DYARP_COMPILE_EXECUTABLES:BOOL=OFF
+                                  -DYARP_COMPILE_TESTS:BOOL=OFF",
+            #SWIGFIX temporary fix for swig 4.3.0. The following lines should be removed.
+            swig_extra_options: "-DSWIG_EXECUTABLE=/usr/bin/swig
+                                  -DSWIG_DIR=/usr/share/swig/4.3.0",
+          }
+        - {
+            id: '217',
+            description: 'Build extern dependencies',
+            os: ubuntu-26.04,
+            build_type: "Release",
+            cc: "gcc",
+            cxx: "g++",
+            cmake_generator: "Unix Makefiles",
+            cmake_initial_cache_file: ".ci/initial-cache.gh.linux.cmake",
+            cmake_extra_options: "-DCMAKE_DISABLE_FIND_PACKAGE_SQLite:BOOL=ON
+                                  -DCMAKE_DISABLE_FIND_PACKAGE_TinyXML:BOOL=ON
+                                  -DCMAKE_DISABLE_FIND_PACKAGE_QCustomPlot:BOOL=ON",
+            #SWIGFIX temporary fix for swig 4.3.0. The following lines should be removed.
+            swig_extra_options: "-DSWIG_EXECUTABLE=/usr/bin/swig
+                                  -DSWIG_DIR=/usr/share/swig/4.3.0",
+          }
+        - {
+            id: '218',
+            description: 'Build extern dependencies',
+            os: ubuntu-26.04,
+            build_type: "Release",
+            cc: "clang-21",
+            cxx: "clang++-21",
+            cmake_generator: "Unix Makefiles",
+            cmake_initial_cache_file: ".ci/initial-cache.gh.linux.cmake",
+            cmake_extra_options: "-DCMAKE_DISABLE_FIND_PACKAGE_SQLite:BOOL=ON
+                                  -DCMAKE_DISABLE_FIND_PACKAGE_TinyXML:BOOL=ON
+                                  -DCMAKE_DISABLE_FIND_PACKAGE_QCustomPlot:BOOL=ON",
+            #SWIGFIX temporary fix for swig 4.3.0. The following lines should be removed.
+            swig_extra_options: "-DSWIG_EXECUTABLE=/usr/bin/swig
+                                  -DSWIG_DIR=/usr/share/swig/4.3.0",
+          }
+        - {
+            id: '219',
+            os: ubuntu-26.04,
+            build_type: "Release",
+            cc: "gcc",
+            cxx: "g++",
+            cmake_generator: "Ninja",
+            cmake_initial_cache_file: ".ci/initial-cache.gh.linux.cmake",
+            #SWIGFIX temporary fix for swig 4.3.0. The following lines should be removed.
+            swig_extra_options: "-DSWIG_EXECUTABLE=/usr/bin/swig
+                                  -DSWIG_DIR=/usr/share/swig/4.3.0",
+          }
+        - {
+            id: '220',
+            os: ubuntu-26.04,
+            build_type: "Release",
+            cc: "clang-21",
+            cxx: "clang++-21",
+            cmake_generator: "Ninja",
+            cmake_initial_cache_file: ".ci/initial-cache.gh.linux.cmake",
+            #SWIGFIX temporary fix for swig 4.3.0. The following lines should be removed.
+            swig_extra_options: "-DSWIG_EXECUTABLE=/usr/bin/swig
+                                  -DSWIG_DIR=/usr/share/swig/4.3.0",
+          }
+        - {
+            id: '221',
+            description: 'Valgrind (bindings, failing tests, guis and examples as tests disabled)',
+            os: ubuntu-26.04,
+            build_type: "Debug",
+            cc: "gcc",
+            cxx: "g++",
+            cmake_generator: "Unix Makefiles",
+            cmake_initial_cache_file: ".ci/initial-cache.gh.linux.cmake",
+            cmake_extra_options: "-DYARP_VALGRIND_TESTS:BOOL=ON
+                                  -DYARP_DISABLE_FAILING_TESTS:BOOL=ON
+                                  -DYARP_DISABLE_FAILING_VALGRIND_TESTS:BOOL=ON
+                                  -DYARP_ENABLE_EXAMPLES_AS_TESTS:BOOL=OFF
+                                  -DYARP_COMPILE_BINDINGS:BOOL=OFF
+                                  -DCMAKE_DISABLE_FIND_PACKAGE_FFMPEG=ON
+                                  -DYARP_COMPILE_GUIS:BOOL=OFF
+                                  -DENABLE_yarpmod_fakePythonSpeechTranscription:BOOL=OFF
+                                  -DENABLE_yarpmod_usbCamera:BOOL=OFF
+                                  -DENABLE_yarpmod_usbCameraRaw:BOOL=OFF
+                                  -DENABLE_yarpmod_portaudio:BOOL=OFF
+                                  -DENABLE_yarpmod_portaudioPlayer:BOOL=OFF
+                                  -DENABLE_yarpmod_portaudioRecorder:BOOL=OFF
+                                  -DENABLE_yarpmod_openCVGrabber:BOOL=OFF
+                                  -DENABLE_yarpmod_openCVWriter:BOOL=OFF",
+          }
+        - {
+            id: '222',
+            description: 'Valgrind, No ACE (bindings, failing tests, guis and examples as tests disabled)',
+            os: ubuntu-26.04,
+            build_type: "Debug",
+            cc: "gcc",
+            cxx: "g++",
+            cmake_generator: "Unix Makefiles",
+            cmake_initial_cache_file: ".ci/initial-cache.gh.linux.cmake",
+            cmake_extra_options: "-DCMAKE_DISABLE_FIND_PACKAGE_ACE:BOOL=ON
+                                  -DSKIP_ACE:BOOL=ON
+                                  -DYARP_VALGRIND_TESTS:BOOL=ON
+                                  -DYARP_DISABLE_FAILING_TESTS:BOOL=ON
+                                  -DYARP_DISABLE_FAILING_VALGRIND_TESTS:BOOL=ON
+                                  -DYARP_ENABLE_EXAMPLES_AS_TESTS:BOOL=OFF
+                                  -DYARP_COMPILE_BINDINGS:BOOL=OFF
+                                  -DCMAKE_DISABLE_FIND_PACKAGE_FFMPEG=ON
+                                  -DYARP_COMPILE_GUIS:BOOL=OFF
+                                  -DENABLE_yarpmod_fakePythonSpeechTranscription:BOOL=OFF
+                                  -DENABLE_yarpmod_usbCamera:BOOL=OFF
+                                  -DENABLE_yarpmod_usbCameraRaw:BOOL=OFF
+                                  -DENABLE_yarpmod_portaudio:BOOL=OFF
+                                  -DENABLE_yarpmod_portaudioPlayer:BOOL=OFF
+                                  -DENABLE_yarpmod_portaudioRecorder:BOOL=OFF
+                                  -DENABLE_yarpmod_openCVGrabber:BOOL=OFF
+                                  -DENABLE_yarpmod_openCVWriter:BOOL=OFF",
+          }
+        - {
+            id: '301',
+            os: windows-2025,
+            build_type: "Release",
+            cc: "cl",
+            cxx: "cl",
+            cmake_generator: "Visual Studio 17 2022",
+            cmake_toolset: "v143",
+            cmake_platform: "x64",
+            cmake_toolchain_file: "C:/robotology/vcpkg/scripts/buildsystems/vcpkg.cmake",
+            cmake_initial_cache_file: ".ci/initial-cache.gh.windows.cmake",
+            environment_script: "C:/Program Files (x86)/Microsoft Visual Studio/2022/Enterprise/VC/Auxiliary/Build/vcvars64.bat",
+          }
+        - {
+            id: '303',
             os: windows-2025,
             build_type: "Release",
             cc: "cl",
@@ -920,7 +1254,7 @@ jobs:
             environment_script: "C:/Program Files (x86)/Microsoft Visual Studio/2022/Enterprise/VC/Auxiliary/Build/vcvars64.bat",
           }
         - {
-            id: '205',
+            id: '305',
             os: windows-2022,
             build_type: "Release",
             cc: "cl",
@@ -933,7 +1267,7 @@ jobs:
             environment_script: "C:/Program Files (x86)/Microsoft Visual Studio/2022/Enterprise/VC/Auxiliary/Build/vcvars64.bat",
           }
         - {
-            id: '206',
+            id: '306',
             os: windows-2022,
             build_type: "Release",
             cc: "cl",
@@ -945,7 +1279,7 @@ jobs:
             environment_script: "C:/Program Files (x86)/Microsoft Visual Studio/2022/Enterprise/VC/Auxiliary/Build/vcvars64.bat",
           }
         - {
-            id: '301',
+            id: '401',
             os: macos-15,
             build_type: "Release",
             cc: "clang",
@@ -954,7 +1288,7 @@ jobs:
             cmake_initial_cache_file: ".ci/initial-cache.gh.macos.cmake",
           }
         - {
-            id: '302',
+            id: '402',
             os: macos-15,
             build_type: "Release",
             cc: "clang",
@@ -963,7 +1297,7 @@ jobs:
             cmake_initial_cache_file: ".ci/initial-cache.gh.macos.cmake",
           }
         - {
-            id: '303',
+            id: '403',
             os: macos-14,
             build_type: "Release",
             cc: "clang",
@@ -972,7 +1306,7 @@ jobs:
             cmake_initial_cache_file: ".ci/initial-cache.gh.macos.cmake",
           }
         - {
-            id: '304',
+            id: '404',
             os: macos-14,
             build_type: "Release",
             cc: "clang",
@@ -1007,11 +1341,13 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y      libunwind-dev
 
-          #Install clang 17
-          sudo apt-get purge -y llvm* clang*
-          wget -nv https://apt.llvm.org/llvm.sh
-          sudo chmod +x llvm.sh
-          sudo ./llvm.sh 17
+          #On Ubuntu 22.04 the default clang is 14. Here I am replacing it with clang 17
+          if [[ "${{ matrix.config.cc }}" == "clang-17" && "${{ matrix.config.os }}" == "ubuntu-22.04" ]]; then
+            sudo apt-get purge -y llvm* clang*
+            wget -nv https://apt.llvm.org/llvm.sh
+            sudo chmod +x llvm.sh
+            sudo ./llvm.sh 17
+          fi
 
           # Install Robotology dependencies from robotology ppa
           sudo apt-add-repository -y ppa:robotology/ppa
@@ -1077,17 +1413,6 @@ jobs:
                                       ruby \
                                       perl
 
-          # Install SWIG
-          # On Ubuntu 24.04 this corresponds to swig 4.2.0 which is affected by a bug: https://github.com/robotology/yarp/issues/3083
-          # sudo apt-get install -qq -y swig 
-          #
-          # we thus install manually swig 4.3.0
-          sudo apt-get purge -y swig
-          wget -nv https://github.com/robotology/robotology-vcpkg-ports/releases/download/storage/swig_4_3_0_ubuntu_24_04.zip
-          unzip -q swig_4_3_0_ubuntu_24_04.zip
-          sudo mv swig_4_3_0_ubuntu_24_04_install/bin/* /usr/bin
-          sudo mv swig_4_3_0_ubuntu_24_04_install/share/swig /usr/share
-
           # Other tools useful in github actions
           sudo apt-get install -qq -y jq \
                                       wget \
@@ -1149,11 +1474,31 @@ jobs:
           wget -nv https://github.com/robotology/ycm/releases/download/v0.18.0/ycm-cmake-modules-0.18.0-all.tar.gz -O /Users/runner/work/yarp/ycm.tar.gz
           7z x /Users/runner/work/yarp/ycm.tar.gz -o/Users/runner/work/yarp
           7z x -ttar /Users/runner/work/yarp/ycm.tar -o/Users/runner/work/yarp
-          
+
           brew update
           brew install ccache
           brew install ace
           brew install sqlite tinyxml2 libedit libpng qt5 opencv eigen graphviz libsoxr
+
+    - name: Install SWIG [Linux]
+      if: runner.os == 'Linux'
+      shell: bash
+      run: |
+          # Install SWIG
+          # sudo apt-get install -qq -y swig
+
+          # On Ubuntu 24.04 this corresponds to swig 4.2.0 which is affected by a bug:
+          # https://github.com/robotology/yarp/issues/3083
+          # we thus install manually swig 4.3.0
+
+          sudo apt-get purge -y swig
+          wget https://prdownloads.sourceforge.net/swig/swig-4.3.0.tar.gz
+          tar xzf swig-4.3.0.tar.gz
+          cd swig-4.3.0
+          ./autogen.sh
+          ./configure --prefix=/usr/local
+          make -j$(nproc)
+          sudo make install
 
     - name: Prepare Environment Script
       id: prepare_environment_script
@@ -1759,8 +2104,8 @@ jobs:
           sudo apt-get install -qq -y ccache \
                                       ninja-build \
                                       valgrind \
-                                      openjdk-17-jdk \
-                                      openjdk-17-jre
+                                      openjdk-8-jdk \
+                                      openjdk-8-jre
 
           sudo apt-get install -qq -y libace-dev \
                                       libsqlite3-dev \
@@ -1804,17 +2149,6 @@ jobs:
                                       ruby \
                                       perl
 
-          # Install SWIG
-          # On Ubuntu 24.04 this corresponds to swig 4.2.0 which is affected by a bug: https://github.com/robotology/yarp/issues/3083
-          # sudo apt-get install -qq -y swig 
-          #
-          # we thus install manually swig 4.3.0
-          sudo apt-get purge -y swig
-          wget -nv https://github.com/robotology/robotology-vcpkg-ports/releases/download/storage/swig_4_3_0_ubuntu_24_04.zip
-          unzip -q swig_4_3_0_ubuntu_24_04.zip
-          sudo mv swig_4_3_0_ubuntu_24_04_install/bin/* /usr/bin
-          sudo mv swig_4_3_0_ubuntu_24_04_install/share/swig /usr/share
-
           # Other tools useful in github actions
           sudo apt-get install -qq -y jq \
                                       wget \
@@ -1829,6 +2163,26 @@ jobs:
 
           # Remove old packages from apt cache
           sudo apt-get autoclean -qq
+
+    - name: Install SWIG [Linux]
+      if: runner.os == 'Linux'
+      shell: bash
+      run: |
+          # Install SWIG
+          # sudo apt-get install -qq -y swig
+
+          # On Ubuntu 24.04 this corresponds to swig 4.2.0 which is affected by a bug:
+          # https://github.com/robotology/yarp/issues/3083
+          # we thus install manually swig 4.3.0
+
+          sudo apt-get purge -y swig
+          wget https://prdownloads.sourceforge.net/swig/swig-4.3.0.tar.gz
+          tar xzf swig-4.3.0.tar.gz
+          cd swig-4.3.0
+          ./autogen.sh
+          ./configure --prefix=/usr/local
+          make -j$(nproc)
+          sudo make install
 
     - name: Prepare environment
       env:
@@ -1963,8 +2317,8 @@ jobs:
           sudo apt-get install -qq -y ccache \
                                       ninja-build \
                                       valgrind \
-                                      openjdk-17-jdk \
-                                      openjdk-17-jre
+                                      openjdk-8-jdk \
+                                      openjdk-8-jre
 
           sudo apt-get install -qq -y libace-dev \
                                       libsqlite3-dev \
@@ -2007,17 +2361,6 @@ jobs:
                                       ruby \
                                       perl
 
-          # Install SWIG
-          # On Ubuntu 24.04 this corresponds to swig 4.2.0 which is affected by a bug: https://github.com/robotology/yarp/issues/3083
-          # sudo apt-get install -qq -y swig 
-          #
-          # we thus install manually swig 4.3.0
-          sudo apt-get purge -y swig
-          wget -nv https://github.com/robotology/robotology-vcpkg-ports/releases/download/storage/swig_4_3_0_ubuntu_24_04.zip
-          unzip -q swig_4_3_0_ubuntu_24_04.zip
-          sudo mv swig_4_3_0_ubuntu_24_04_install/bin/* /usr/bin
-          sudo mv swig_4_3_0_ubuntu_24_04_install/share/swig /usr/share
-
           # Other tools useful in github actions
           sudo apt-get install -qq -y jq \
                                       wget \
@@ -2030,6 +2373,26 @@ jobs:
 
           # Remove old packages from apt cache
           sudo apt-get autoclean -qq
+
+    - name: Install SWIG [Linux]
+      if: runner.os == 'Linux'
+      shell: bash
+      run: |
+          # Install SWIG
+          # sudo apt-get install -qq -y swig
+
+          # On Ubuntu 24.04 this corresponds to swig 4.2.0 which is affected by a bug:
+          # https://github.com/robotology/yarp/issues/3083
+          # we thus install manually swig 4.3.0
+
+          sudo apt-get purge -y swig
+          wget https://prdownloads.sourceforge.net/swig/swig-4.3.0.tar.gz
+          tar xzf swig-4.3.0.tar.gz
+          cd swig-4.3.0
+          ./autogen.sh
+          ./configure --prefix=/usr/local
+          make -j$(nproc)
+          sudo make install
 
     - name: Build
       run: |
@@ -2182,8 +2545,8 @@ jobs:
           sudo apt-get install -qq -y ccache \
                                       ninja-build \
                                       valgrind \
-                                      openjdk-17-jdk \
-                                      openjdk-17-jre
+                                      openjdk-8-jdk \
+                                      openjdk-8-jre
 
           sudo apt-get install -qq -y libace-dev \
                                       libsqlite3-dev \
@@ -2226,17 +2589,6 @@ jobs:
                                       ruby \
                                       perl
 
-          # Install SWIG
-          # On Ubuntu 24.04 this corresponds to swig 4.2.0 which is affected by a bug: https://github.com/robotology/yarp/issues/3083
-          # sudo apt-get install -qq -y swig 
-          #
-          # we thus install manually swig 4.3.0
-          sudo apt-get purge -y swig
-          wget -nv https://github.com/robotology/robotology-vcpkg-ports/releases/download/storage/swig_4_3_0_ubuntu_24_04.zip
-          unzip -q swig_4_3_0_ubuntu_24_04.zip
-          sudo mv swig_4_3_0_ubuntu_24_04_install/bin/* /usr/bin
-          sudo mv swig_4_3_0_ubuntu_24_04_install/share/swig /usr/share
-
           # Other tools useful in github actions
           sudo apt-get install -qq -y jq \
                                       wget \
@@ -2251,6 +2603,26 @@ jobs:
 
           # Remove old packages from apt cache
           sudo apt-get autoclean -qq
+
+    - name: Install SWIG [Linux]
+      if: runner.os == 'Linux'
+      shell: bash
+      run: |
+          # Install SWIG
+          # sudo apt-get install -qq -y swig
+
+          # On Ubuntu 24.04 this corresponds to swig 4.2.0 which is affected by a bug:
+          # https://github.com/robotology/yarp/issues/3083
+          # we thus install manually swig 4.3.0
+
+          sudo apt-get purge -y swig
+          wget https://prdownloads.sourceforge.net/swig/swig-4.3.0.tar.gz
+          tar xzf swig-4.3.0.tar.gz
+          cd swig-4.3.0
+          ./autogen.sh
+          ./configure --prefix=/usr/local
+          make -j$(nproc)
+          sudo make install
 
     - name: Prepare ccache environment variables
       id: init_ccache
