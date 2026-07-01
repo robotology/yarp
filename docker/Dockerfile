@@ -88,11 +88,11 @@ RUN apt-get install -y     libace-dev \
 #
 # we thus install manually swig 4.3.0
 RUN apt-get purge -y swig
-RUN https://prdownloads.sourceforge.net/swig/swig-4.3.0.tar.gz
+RUN wget https://prdownloads.sourceforge.net/swig/swig-4.3.0.tar.gz
 RUN tar xzf swig-4.3.0.tar.gz && \
     cd swig-4.3.0 && \
     ./autogen.sh && \
-    ./configure --prefix=/usr/local && \
+    ./configure --prefix=/usr && \
     make -j$(nproc) && \
     make install
 
